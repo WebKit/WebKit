@@ -62,6 +62,7 @@
 #import "dom_textimpl.h"
 #import "html_documentimpl.h"
 #import "html_tableimpl.h"
+#import "khtml_events.h"
 #import "kjs_binding.h"
 #import "kjs_window.h"
 #import "render_canvas.h"
@@ -95,6 +96,11 @@ using namespace Bindings;
 using namespace KIO;
 
 using namespace KParts;
+
+@interface NSObject (WebPlugIn)
+- (id)objectForWebScript;
+- (void *)pluginScriptableObject;
+@end
 
 NSEvent *MacFrame::_currentEvent = nil;
 
@@ -210,12 +216,11 @@ void MacFrame::openURLRequest(const KURL &url, const URLArgs &args)
     KWQ_BLOCK_EXCEPTIONS;
 
     NSString *referrer;
-    QString argsReferrer = args.metaData()["referrer"];
-    if (!argsReferrer.isEmpty()) {
-        referrer = argsReferrer.getNSString();
-    } else {
+    DOMString argsReferrer = args.metaData().get("referrer");
+    if (!argsReferrer.isEmpty())
+        referrer = argsReferrer;
+    else
         referrer = [_bridge referrer];
-    }
 
     [_bridge loadURL:url.getNSURL()
             referrer:referrer
@@ -589,12 +594,11 @@ void MacFrame::urlSelected(const KURL &url, int button, int state, const URLArgs
     KWQ_BLOCK_EXCEPTIONS;
 
     NSString *referrer;
-    QString argsReferrer = args.metaData()["referrer"];
-    if (!argsReferrer.isEmpty()) {
-        referrer = argsReferrer.getNSString();
-    } else {
+    DOMString argsReferrer = args.metaData().get("referrer");
+    if (!argsReferrer.isEmpty())
+        referrer = argsReferrer;
+    else
         referrer = [_bridge referrer];
-    }
 
     [_bridge loadURL:url.getNSURL()
             referrer:referrer
@@ -649,7 +653,7 @@ ObjectContents *MacFrame::createPart(const ChildFrame &child, const KURL &url, c
         }
         WebCoreFrameBridge *childBridge = [_bridge createChildFrameNamed:child.m_name.getNSString()
                                                             withURL:url.getNSURL()
-                                                           referrer:child.m_args.metaData()["referrer"].getNSString()
+                                                           referrer:child.m_args.metaData().get("referrer")
                                                          renderPart:child.m_renderer
                                                     allowsScrolling:allowsScrolling
                                                         marginWidth:marginWidth
@@ -3129,11 +3133,6 @@ KJS::Bindings::Instance *MacFrame::getAppletInstanceForWidget(QWidget *widget)
     
     return 0;
 }
-
-@interface NSObject (WebPlugIn)
-- (id)objectForWebScript;
-- (void *)pluginScriptableObject;
-@end
 
 static KJS::Bindings::Instance *getInstanceForView(NSView *aView)
 {

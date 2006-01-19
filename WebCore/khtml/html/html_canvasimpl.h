@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,40 +22,30 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
 #ifndef HTML_CANVASIMPL_H
 #define HTML_CANVASIMPL_H
 
-#include "html/html_imageimpl.h"
-#include "html/html_inlineimpl.h"
-#include "khtmllayout.h"
-#include "rendering/render_object.h"
+#include "html_imageimpl.h"
 
-#include <qregion.h>
-#include <qmap.h>
-#include <qpixmap.h>
+namespace WebCore {
 
-namespace DOM {
-
-class DOMString;
-    
 class HTMLCanvasElementImpl
     : public HTMLImageElementImpl
 {
 public:
-    HTMLCanvasElementImpl(DocumentImpl *doc);
-    ~HTMLCanvasElementImpl();
+    HTMLCanvasElementImpl(DocumentImpl*);
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttributeImpl *);
+    virtual void parseMappedAttribute(MappedAttributeImpl*);
 
     virtual void attach();
-    virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void detach();
     
-    virtual bool isURLAttribute(AttributeImpl *attr) const;
+    virtual bool isURLAttribute(AttributeImpl*) const;
 };
 
-
-}; //namespace
+} //namespace
 
 #endif

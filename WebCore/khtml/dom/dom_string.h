@@ -108,14 +108,18 @@ public:
 
     DOMString copy() const;
 
-    bool isNull()  const { return (m_impl == 0); }
+    bool isNull()  const { return !m_impl; }
     bool isEmpty()  const;
 
     DOMStringImpl *impl() const { return m_impl.get(); }
 
-#ifdef __OBJC__
-    DOMString(NSString *);
-    operator NSString *() const;
+#if __APPLE__
+    DOMString(CFStringRef);
+    CFStringRef createCFString() const { return m_impl ? m_impl->createCFString() : CFSTR(""); }
+#endif
+#if __OBJC__
+    DOMString(NSString*);
+    operator NSString*() const { if (!m_impl) return @""; return *m_impl; }
 #endif
 
 #ifndef NDEBUG
@@ -146,6 +150,23 @@ inline bool operator==( const QString& b, const DOMString& a) { return a == b; }
 inline bool operator!=(const DOMString& a, const QString& b) { return !(a == b); }
 inline bool operator!=(const QString& b, const DOMString& a ) { return !(a == b); }
 
+}
+
+namespace KXMLCore {
+
+    template<> struct DefaultHash<WebCore::DOMString> {
+        static unsigned hash(const WebCore::DOMString& key) { return key.impl()->hash(); }
+        static bool equal(const WebCore::DOMString& a, const WebCore::DOMString& b)
+            { return DefaultHash<WebCore::DOMStringImpl*>::equal(a.impl(), b.impl()); }
+    };
+    
+    template<> struct HashTraits<WebCore::DOMString> {
+        typedef WebCore::DOMString TraitType;
+        static const bool emptyValueIsZero = true;
+        static const bool needsDestruction = true;
+        static TraitType emptyValue() { return TraitType(); }
+        static TraitType deletedValue() { return HashTraits<RefPtr<WebCore::DOMStringImpl> >::_deleted.get(); }
+    };
 }
 
 #endif

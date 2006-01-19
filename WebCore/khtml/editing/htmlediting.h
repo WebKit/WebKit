@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,75 +23,62 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef __htmlediting_h__
-#define __htmlediting_h__
+#ifndef htmlediting_h
+#define htmlediting_h
 
-#include "edit_command.h"
-#include "composite_edit_command.h"
-#include "apply_style_command.h"
-#include "delete_selection_command.h"
-#include "move_selection_command.h"
-#include "replace_selection_command.h"
-#include "typing_command.h"
+#include <qptrlist.h>
 
-#include "editing/edit_actions.h"
-#include "qmap.h"
-#include "qptrlist.h"
-#include "qvaluelist.h"
-#include "Shared.h"
+class QString;
 
-#define NON_BREAKING_SPACE 0xa0
+namespace WebCore {
 
-namespace DOM {
-    class CSSMutableStyleDeclarationImpl;
-    class CSSProperty;
-    class CSSStyleDeclarationImpl;
-    class DocumentFragmentImpl;
-    class HTMLElementImpl;
-    class TextImpl;
+class DOMString;
+class DocumentImpl;
+class ElementImpl;
+class NodeImpl;
+class Position;
+
+const unsigned short NON_BREAKING_SPACE = 0xa0;
+
+int maxDeepOffset(const NodeImpl*);
+bool isAtomicNode(const NodeImpl*);
+
+void rebalanceWhitespaceInTextNode(NodeImpl*, unsigned start, unsigned length);
+DOMString& nonBreakingSpaceString();
+void derefNodesInList(const QPtrList<NodeImpl>&);
+
+//------------------------------------------------------------------------------------------
+
+Position positionBeforeNode(const NodeImpl*);
+Position positionAfterNode(const NodeImpl*);
+
+bool isSpecialElement(const NodeImpl*);
+
+ElementImpl* createDefaultParagraphElement(DocumentImpl*);
+ElementImpl* createBreakElement(DocumentImpl*);
+
+bool isTabSpanNode(const NodeImpl*);
+bool isTabSpanTextNode(const NodeImpl*);
+NodeImpl* tabSpanNode(const NodeImpl*);
+Position positionBeforeTabSpan(const Position&);
+ElementImpl* createTabSpanElement(DocumentImpl*, NodeImpl* tabTextNode = 0);
+ElementImpl* createTabSpanElement(DocumentImpl*, QString* tabText);
+
+bool isNodeRendered(const NodeImpl*);
+bool isMailBlockquote(const NodeImpl*);
+NodeImpl *nearestMailBlockquote(const NodeImpl*);
+
+//------------------------------------------------------------------------------------------
+
+bool isTableStructureNode(const NodeImpl*);
+ElementImpl *createBlockPlaceholderElement(DocumentImpl*);
+
+bool isFirstVisiblePositionInSpecialElement(const Position&);
+Position positionBeforeContainingSpecialElement(const Position&);
+bool isLastVisiblePositionInSpecialElement(const Position&);
+Position positionAfterContainingSpecialElement(const Position&);
+Position positionOutsideContainingSpecialElement(const Position&);
+
 }
-
-namespace khtml {
-
-int maxDeepOffset(const DOM::NodeImpl *node);
-bool isAtomicNode(const DOM::NodeImpl *node);
-
-void rebalanceWhitespaceInTextNode(DOM::NodeImpl *node, unsigned int start, unsigned int length);
-DOM::DOMString &nonBreakingSpaceString();
-void derefNodesInList(QPtrList<DOM::NodeImpl> &list);
-
-//------------------------------------------------------------------------------------------
-
-DOM::Position positionBeforeNode(const DOM::NodeImpl *node);
-DOM::Position positionAfterNode(const DOM::NodeImpl *node);
-
-bool isSpecialElement(const DOM::NodeImpl *node);
-
-DOM::ElementImpl *createDefaultParagraphElement(DOM::DocumentImpl *document);
-DOM::ElementImpl *createBreakElement(DOM::DocumentImpl *document);
-
-bool isTabSpanNode(const DOM::NodeImpl *node);
-bool isTabSpanTextNode(const DOM::NodeImpl *node);
-DOM::NodeImpl *tabSpanNode(const DOM::NodeImpl *node);
-DOM::Position positionBeforeTabSpan(const DOM::Position& pos);
-DOM::ElementImpl *createTabSpanElement(DOM::DocumentImpl *document, DOM::NodeImpl *tabTextNode=0);
-DOM::ElementImpl *createTabSpanElement(DOM::DocumentImpl *document, QString *tabText);
-
-bool isNodeRendered(const DOM::NodeImpl *node);
-bool isMailBlockquote(const DOM::NodeImpl *node);
-DOM::NodeImpl *nearestMailBlockquote(const DOM::NodeImpl *node);
-
-//------------------------------------------------------------------------------------------
-
-bool isTableStructureNode(const DOM::NodeImpl *node);
-DOM::ElementImpl *createBlockPlaceholderElement(DOM::DocumentImpl *document);
-
-bool isFirstVisiblePositionInSpecialElement(const DOM::Position& pos);
-DOM::Position positionBeforeContainingSpecialElement(const DOM::Position& pos);
-bool isLastVisiblePositionInSpecialElement(const DOM::Position& pos);
-DOM::Position positionAfterContainingSpecialElement(const DOM::Position& pos);
-DOM::Position positionOutsideContainingSpecialElement(const DOM::Position &pos);
-
-} // end namespace khtml
 
 #endif

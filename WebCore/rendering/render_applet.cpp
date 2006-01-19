@@ -2,7 +2,7 @@
  * This file is part of the HTML widget for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,26 +20,22 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #include <config.h>
-#include <klocale.h>
+#include "render_applet.h"
 
-#include <kdebug.h>
-
-#include "rendering/render_applet.h"
-#include "rendering/render_canvas.h"
 #include "DocumentImpl.h"
 #include "Frame.h"
-
-#ifndef Q_WS_QWS // We don't have Java in Qt Embedded
-
+#include "html_objectimpl.h"
 #include "java/kjavaappletwidget.h"
-#include "html/html_objectimpl.h"
+#include "render_canvas.h"
+#include <klocale.h>
 
-using namespace khtml;
-using namespace DOM;
+namespace WebCore {
+
 using namespace HTMLNames;
 
-RenderApplet::RenderApplet(HTMLElementImpl *applet, const QMap<QString, QString> &args )
+RenderApplet::RenderApplet(HTMLElementImpl *applet, const HashMap<DOMString, DOMString> &args )
     : RenderWidget(applet), m_args(args)
 {
     // init RenderObject attributes
@@ -74,22 +70,19 @@ void RenderApplet::createWidgetIfNecessary()
 {
     if (!m_widget) {
         if (static_cast<HTMLAppletElementImpl*>(element())->allParamsAvailable()) {
-            // FIXME: Java applets can't be resized (this is a bug in Apple's Java implementation).  In order to work around
-            // this problem, we will simply use fixed widths/heights from the style system when we can, since the widget might
+            // FIXME: Java applets can't be resized (this is a bug in Apple's Java implementation).
+            // In order to work around this problem and have a correct size from the start, we will
+            // use fixed widths/heights from the style system when we can, since the widget might
             // not have an accurate m_width/m_height.
             int width = style()->width().isFixed() ? style()->width().value : 
-                        m_width - borderLeft() - borderRight() - paddingLeft() - paddingRight();
+                m_width - borderLeft() - borderRight() - paddingLeft() - paddingRight();
             int height = style()->height().isFixed() ? style()->height().value :
-                         m_height - borderTop() - borderBottom() - paddingTop() - paddingBottom();
-            NodeImpl *child = element()->firstChild();
-            while (child) {
+                m_height - borderTop() - borderBottom() - paddingTop() - paddingBottom();
+            for (NodeImpl* child = element()->firstChild(); child; child = child->nextSibling())
                 if (child->hasTagName(paramTag)) {
-                    HTMLParamElementImpl *p = static_cast<HTMLParamElementImpl *>(child);
-                    m_args.insert(p->name().qstring(), p->value().qstring());
+                    HTMLParamElementImpl* p = static_cast<HTMLParamElementImpl*>(child);
+                    m_args.set(p->name(), p->value());
                 }
-                child = child->nextSibling();
-            }
-        
             setQWidget(new KJavaAppletWidget(IntSize(width, height), element()->getDocument()->frame(), m_args));
         }
     }
@@ -97,8 +90,6 @@ void RenderApplet::createWidgetIfNecessary()
 
 void RenderApplet::layout()
 {
-    //kdDebug(6100) << "RenderApplet::layout" << endl;
-
     KHTMLAssert( needsLayout() );
     KHTMLAssert( minMaxKnown() );
 
@@ -144,4 +135,5 @@ void RenderEmptyApplet::layout()
     
     setNeedsLayout(false);
 }
-#endif
+
+}

@@ -2,7 +2,7 @@
  * This file is part of the DOM implementation for KDE.
  *
  * Copyright (C) 2000 Peter Kelly (pmk@post.com)
- * Copyright (C) 2005 Apple Computer, Inc.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,41 +21,33 @@
  *
  */
 
-#ifndef _XML_Tokenizer_h_
-#define _XML_Tokenizer_h_
+#ifndef XML_Tokenizer_h_
+#define XML_Tokenizer_h_
 
+#include <kxmlcore/HashMap.h>
 #include <qobject.h>
-#include <qmap.h>
-#include "SegmentedString.h"
-
-#include "KWQSignal.h"
 
 class FrameView;
+class QTime;
 
 namespace WebCore {
-    class SegmentedString;
-};
 
-namespace DOM {
-    class DocumentImpl;
-    class DocumentFragmentImpl;
-    class ElementImpl;
-    class NodeImpl;
-};
-
-namespace khtml {
+class DOMString;
+class DocumentFragmentImpl;
+class DocumentImpl;
+class ElementImpl;
+class NodeImpl;
+class SegmentedString;
 
 class Tokenizer : public QObject
 {
-    Q_OBJECT
-
 public:
     Tokenizer();
-    // script output must be prepended, while new data
+    // Script output must be prepended, while new data
     // received during executing a script must be appended, hence the
-    // extra bool to be able to distinguish between both cases. document.write()
-    // always uses false, while khtmlpart uses true
-    virtual bool write(const SegmentedString &str, bool appendData) = 0;
+    // extra bool to be able to distinguish between both cases.
+    // document.write() always uses false, while the loader uses true.
+    virtual bool write(const SegmentedString&, bool appendData) = 0;
     virtual void finish() = 0;
     virtual void setOnHold(bool onHold) = 0;
     virtual bool isWaitingForScripts() const = 0;
@@ -68,9 +60,9 @@ protected:
     // even when it has buffered data.
     bool m_parserStopped;
     
-#ifdef KHTML_XSLT
+#if KHTML_XSLT
 public:
-    virtual void setTransformSource(DOM::DocumentImpl* doc) {};
+    virtual void setTransformSource(DocumentImpl*) {}
 #endif
 
 signals:
@@ -80,12 +72,13 @@ private:
     KWQSignal m_finishedParsing;
 };
 
-Tokenizer *newXMLTokenizer(DOM::DocumentImpl *, FrameView * = 0);
-#ifdef KHTML_XSLT
-void *xmlDocPtrForString(const QString &source, const QString &url = QString());
+Tokenizer* newXMLTokenizer(DocumentImpl*, FrameView* = 0);
+#if KHTML_XSLT
+void* xmlDocPtrForString(const QString& source, const QString& URL = QString());
 #endif
-QMap<QString, QString> parseAttributes(const DOM::DOMString &, bool &attrsOK);
-bool parseXMLDocumentFragment(const DOM::DOMString &, DOM::DocumentFragmentImpl *, DOM::ElementImpl *parent = 0);
+HashMap<DOMString, DOMString> parseAttributes(const DOMString&, bool& attrsOK);
+bool parseXMLDocumentFragment(const DOMString&, DocumentFragmentImpl*, ElementImpl* parent = 0);
+
 }
 
 #endif

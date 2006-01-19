@@ -3,6 +3,7 @@
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,28 +21,24 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef RENDER_IMAGE_H
 #define RENDER_IMAGE_H
 
-#include "html/html_elementimpl.h"
-#include "rendering/render_replaced.h"
-#include "dom/dom_string.h"
-
-#include <qmap.h>
+#include "html_elementimpl.h"
+#include "render_replaced.h"
+#include "dom_string.h"
 #include <qpixmap.h>
 
-namespace DOM {
-    class HTMLMapElementImpl;
-}
-
-namespace khtml {
+namespace WebCore {
 
 class DocLoader;
+class HTMLMapElementImpl;
 
 class RenderImage : public RenderReplaced
 {
 public:
-    RenderImage(DOM::NodeImpl*);
+    RenderImage(NodeImpl*);
     virtual ~RenderImage();
 
     virtual const char *renderName() const { return "RenderImage"; }
@@ -57,8 +54,8 @@ public:
 
     const QPixmap& pixmap() const { return pix; }
     // don't even think about making this method virtual!
-    DOM::HTMLElementImpl* element() const
-    { return static_cast<DOM::HTMLElementImpl*>(RenderObject::element()); }
+    HTMLElementImpl* element() const
+        { return static_cast<HTMLElementImpl*>(RenderReplaced::element()); }
 
 
     // hook to keep RendeObject::m_inline() up to date
@@ -79,7 +76,7 @@ public:
     
     bool isDisplayingError() const { return berrorPic; }
     
-    DOM::HTMLMapElementImpl* imageMap();
+    HTMLMapElementImpl* imageMap();
 
     void resetAnimation();
 
@@ -102,13 +99,12 @@ private:
     QPixmap resizeCache;
 
     // text to display as long as the image isn't available
-    DOM::DOMString alt;
+    DOMString alt;
 
     CachedImage *image;
     bool berrorPic : 1;
 };
 
-
-}; //namespace
+} //namespace
 
 #endif

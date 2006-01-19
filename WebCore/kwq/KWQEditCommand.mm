@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,15 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "KWQEditCommand.h"
 
+#import "edit_command.h"
 #import <kxmlcore/Assertions.h>
-#import "KWQFoundationExtras.h"
 
-#import "htmlediting.h"
-
-using khtml::EditCommand;
+using namespace WebCore;
 
 @implementation KWQEditCommand
 

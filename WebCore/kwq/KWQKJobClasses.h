@@ -26,7 +26,7 @@
 #ifndef JOBCLASSES_H_
 #define JOBCLASSES_H_
 
-#include "KWQMap.h"
+#include <kxmlcore/HashMap.h>
 #include "KWQObject.h"
 #include "KWQString.h"
 #include "KWQKURL.h"
@@ -41,7 +41,7 @@ class NSData;
 class NSURLResponse;
 #endif
 
-namespace khtml {
+namespace WebCore {
     class FormData;
 }
 
@@ -59,7 +59,7 @@ public:
 class TransferJob : public Job {
 public:
     TransferJob(const KURL &, bool reload, bool deliverAllData=false);
-    TransferJob(const KURL &, const khtml::FormData &postData, bool deliverAllData=false);
+    TransferJob(const KURL &, const WebCore::FormData& postData, bool deliverAllData=false);
     ~TransferJob();
 
     int error() const;
@@ -68,7 +68,7 @@ public:
     bool isErrorPage() const;
     QString queryMetaData(const QString &key) const;
     void addMetaData(const QString &key, const QString &value);
-    void addMetaData(const QMap<QString, QString> &value);
+    void addMetaData(const HashMap<WebCore::DOMString, WebCore::DOMString> &value);
     void kill();
 
     void setLoader(KWQResourceLoader *);
@@ -81,7 +81,7 @@ public:
     void emitResult(NSData *allData=0);
     void emitReceivedResponse(NSURLResponse *);
 
-    khtml::FormData postData() const;
+    WebCore::FormData postData() const;
     QString method() const;
 
 private:

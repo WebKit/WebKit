@@ -4,7 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,26 +22,22 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-//#define DEBUG_LAYOUT
 
 #include "config.h"
 #include "render_image.h"
-#include "render_canvas.h"
 
+#include "CachedImage.h"
+#include "DocumentImpl.h"
+#include "HTMLInputElementImpl.h"
+#include "helper.h"
+#include "html_imageimpl.h"
+#include "render_canvas.h"
 #include <qpainter.h>
 #include <qpen.h>
-#include <qwmatrix.h>
 
-#include "css/csshelper.h"
-#include "helper.h"
-#include "html/html_imageimpl.h"
-#include "xml/dom2_eventsimpl.h"
-#include "html/html_documentimpl.h"
-#include "HTMLInputElementImpl.h"
+namespace WebCore {
 
-using namespace DOM;
 using namespace HTMLNames;
-using namespace khtml;
 
 // -------------------------------------------------------------------------
 
@@ -131,10 +127,6 @@ void RenderImage::setPixmap( const QPixmap &p, const IntRect& r, CachedImage *o)
      if ( ( o->pixmap_size().width() != intrinsicWidth() ||
            o->pixmap_size().height() != intrinsicHeight() || iwchanged) )
     {
-//          qDebug("image dimensions have been changed, old: %d/%d  new: %d/%d",
-//                 intrinsicWidth(), intrinsicHeight(),
-//               o->pixmap_size().width(), o->pixmap_size().height());
-
         if(!o->isErrorImage()) {
             setIntrinsicWidth( o->pixmap_size().width() );
             setIntrinsicHeight( o->pixmap_size().height() );
@@ -288,17 +280,9 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
             if (resizeCache.isNull() && cWidth && cHeight)
             {
                 IntRect scaledrect(image->valid_rect());
-//                 kdDebug(6040) << "time elapsed: " << dt->elapsed() << endl;
-//                  kdDebug( 6040 ) << "have to scale: " << endl;
-//                  qDebug("cw=%d ch=%d  pw=%d ph=%d  rcw=%d, rch=%d",
-//                          cWidth, cHeight, intrinsicWidth(), intrinsicHeight(), resizeCache.width(), resizeCache.height());
                 resizeCache = pix;
                 scaledrect.setWidth( ( cWidth*scaledrect.width() ) / intrinsicWidth() );
                 scaledrect.setHeight( ( cHeight*scaledrect.height() ) / intrinsicHeight() );
-//                   qDebug("resizeCache size: %d/%d", resizeCache.width(), resizeCache.height());
-//                   qDebug("valid: %d/%d, scaled: %d/%d",
-//                          image->valid_rect().width(), image->valid_rect().height(),
-//                          scaledrect.width(), scaledrect.height());
 
                 // sometimes scaledrect.width/height are off by one because
                 // of rounding errors. if the image is fully loaded, we
@@ -487,4 +471,6 @@ int RenderImage::calcReplacedHeight() const
         return calcReplacedWidth() * intrinsicHeight() / intrinsicWidth();
     }
     return RenderReplaced::calcReplacedHeight();
+}
+
 }

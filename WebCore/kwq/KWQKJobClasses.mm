@@ -23,21 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#import "KWQLogging.h"
+#import "config.h"
+#import "KWQKJobClasses.h"
 
 #import "KWQExceptions.h"
-#import "KWQKJobClasses.h"
+#import "KWQFoundationExtras.h"
 #import "KWQLoader.h"
+#import "KWQLogging.h"
 #import "KWQResourceLoader.h"
 #import "KWQString.h"
-#import "KWQFoundationExtras.h"
-
+#import "dom_string.h"
 #import "formdata.h"
 
-using khtml::FormData;
+using namespace WebCore;
 
 namespace KIO {
+
+typedef HashMap<DOMString, DOMString> StringMap;
 
     // The allocations and releases in TransferJobPrivate are
     // definitely Cocoa-exception-free (either simple Foundation
@@ -186,14 +188,11 @@ void TransferJob::addMetaData(const QString &key, const QString &value)
     [d->metaData setObject:value.getNSString() forKey:key.getNSString()];
 }
 
-void TransferJob::addMetaData(const QMap<QString, QString> &keysAndValues)
+void TransferJob::addMetaData(const StringMap& keysAndValues)
 {
-    QMapConstIterator<QString, QString> it = keysAndValues.begin();
-    QMapConstIterator<QString, QString> end = keysAndValues.end();
-    while (it != end) {
-        [d->metaData setObject:it.data().getNSString() forKey:it.key().getNSString()];
-        ++it;
-    }
+    StringMap::const_iterator end = keysAndValues.end();
+    for (StringMap::const_iterator it = keysAndValues.begin(); it != end; ++it)
+        [d->metaData setObject:it->second forKey:it->first];
 }
 
 void TransferJob::kill()

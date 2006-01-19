@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "KWQMap.h"
 #include "KWQWidget.h"
-#include "KWQString.h"
+#include <kxmlcore/HashMap.h>
 
 class Frame;
+
+namespace WebCore { class DOMString; }
 
 class KJavaAppletWidget : public QWidget
 {
 public:
-    KJavaAppletWidget(const IntSize &size, Frame *c, const QMap<QString, QString> &args);
+    KJavaAppletWidget(const IntSize&, Frame *, const HashMap<WebCore::DOMString, WebCore::DOMString>& args);
 };

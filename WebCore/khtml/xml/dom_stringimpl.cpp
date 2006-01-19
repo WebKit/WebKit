@@ -637,7 +637,7 @@ DOMStringImpl *DOMStringImpl::replace(QChar oldC, QChar newC)
 
 bool equal(const DOMStringImpl* a, const DOMStringImpl* b)
 {
-    return DefaultHash<DOM::DOMStringImpl*>::equal(a, b);
+    return DefaultHash<DOMStringImpl*>::equal(a, b);
 }
 
 bool equal(const DOMStringImpl* a, const char* b)

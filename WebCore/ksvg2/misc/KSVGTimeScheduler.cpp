@@ -33,7 +33,6 @@
 #include "SVGNames.h"
 #include "SVGStyledElementImpl.h"
 #include "SVGStyledTransformableElementImpl.h"
-#include <qmap.h>
 
 namespace KSVG {
 
@@ -132,7 +131,7 @@ void SVGTimer::notifyAll()
     // First build a list of animation elements per target element
     // This is important to decide about the order & priority of 
     // the animations -> 'additive' support is handled this way.
-    typedef QMap<SVGElementImpl *, Q3PtrList<SVGAnimationElementImpl> > TargetAnimationMap;
+    typedef HashMap<SVGElementImpl*, Q3PtrList<SVGAnimationElementImpl>, PointerHash<SVGElementImpl*> > TargetAnimationMap;
     TargetAnimationMap targetMap;
     
     for(unsigned int i = m_notifyList.count(); i > 0; i--)
@@ -158,26 +157,25 @@ void SVGTimer::notifyAll()
         }
 
         SVGElementImpl *target = const_cast<SVGElementImpl *>(animation->targetElement());
-        if(!targetMap.contains(target))
-        {
+        TargetAnimationMap::iterator i = targetMap.find(target);
+        if (i != targetMap.end())
+            i->second.prepend(animation);
+        else {
             Q3PtrList<SVGAnimationElementImpl> list;
             list.append(animation);
-                
-            targetMap.insert(target, list);
+            targetMap.set(target, list);
         }
-        else
-            targetMap[target].prepend(animation);
     }
 
-    TargetAnimationMap::Iterator tit = targetMap.begin();
-    TargetAnimationMap::Iterator tend = targetMap.end();
+    TargetAnimationMap::iterator tit = targetMap.begin();
+    TargetAnimationMap::iterator tend = targetMap.end();
 
     for(; tit != tend; ++tit)
     {
-        Q3PtrList<SVGAnimationElementImpl>::Iterator it = tit.data().begin();
-        Q3PtrList<SVGAnimationElementImpl>::Iterator end = tit.data().end();
+        Q3PtrList<SVGAnimationElementImpl>::Iterator it = tit->second.begin();
+        Q3PtrList<SVGAnimationElementImpl>::Iterator end = tit->second.end();
 
-        QMap<QString, QColor> targetColor; // special <animateColor> case
+        HashMap<DOMString, QColor> targetColor; // special <animateColor> case
         RefPtr<SVGTransformListImpl> targetTransforms; // special <animateTransform> case    
 
         for(; it != end; ++it)
@@ -260,22 +258,23 @@ void SVGTimer::notifyAll()
                         int g = animColor->initialColor().green() + color.green();
                         int b = animColor->initialColor().blue() + color.blue();
                     
-                        targetColor.insert(name, animColor->clampColor(r, g, b));
+                        targetColor.set(name, animColor->clampColor(r, g, b));
                     }
                     else
-                        targetColor.insert(name, color);
+                        targetColor.set(name, color);
                 }
                 else
                 {
                     if(!animation->isAdditive())
-                        targetColor[name] = color;
+                        targetColor.set(name, color);
                     else
                     {
-                        int r = targetColor[name].red() + color.red();
-                        int g = targetColor[name].green() + color.green();
-                        int b = targetColor[name].blue() + color.blue();
+                        QColor baseColor = targetColor.get(name);
+                        int r = baseColor.red() + color.red();
+                        int g = baseColor.green() + color.green();
+                        int b = baseColor.blue() + color.blue();
 
-                        targetColor[name] = animColor->clampColor(r, g, b);
+                        targetColor.set(name, animColor->clampColor(r, g, b));
                     }
                 }
             }
@@ -284,7 +283,7 @@ void SVGTimer::notifyAll()
         // Handle <animateTransform>...
         if(targetTransforms)
         {
-            SVGElementImpl *key = tit.key();
+            SVGElementImpl *key = tit->first;
             if(key && key->isStyled() && key->isStyledTransformable())
             {
                 SVGStyledTransformableElementImpl *transform = static_cast<SVGStyledTransformableElementImpl *>(key);
@@ -294,15 +293,14 @@ void SVGTimer::notifyAll()
         }
 
         // Handle <animateColor>...
-        QMap<QString, QColor>::Iterator cit = targetColor.begin();
-        QMap<QString, QColor>::Iterator cend = targetColor.end();
-        for(; cit != cend; ++cit)
+        HashMap<DOMString, QColor>::iterator cend = targetColor.end();
+        for(HashMap<DOMString, QColor>::iterator cit = targetColor.begin(); cit != cend; ++cit)
         {
-            if(cit.data().isValid())
+            if(cit->second.isValid())
             {
-                SVGAnimationElementImpl::setTargetAttribute(tit.key(),
-                                                            KDOM::DOMString(cit.key()).impl(),
-                                                            KDOM::DOMString(cit.data().name()).impl());
+                SVGAnimationElementImpl::setTargetAttribute(tit->first,
+                                                            cit->first.impl(),
+                                                            KDOM::DOMString(cit->second.name()).impl());
             }
         }
     }
@@ -310,7 +308,7 @@ void SVGTimer::notifyAll()
     // Optimized update logic (to avoid 4 updates, on the same element)
     for(tit = targetMap.begin(); tit != tend; ++tit)
     {
-        SVGElementImpl *key = tit.key();
+        SVGElementImpl *key = tit->first;
         if(key && key->isStyled())
             static_cast<SVGStyledElementImpl *>(key)->setChanged(true);
     }

@@ -29,7 +29,6 @@
 #include "KWQString.h"
 #include "KWQStringList.h"
 #include "KWQFont.h"
-#include "KWQMap.h"
 
 class KHTMLSettings
 {

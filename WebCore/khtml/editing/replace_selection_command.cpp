@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,39 +26,28 @@
 #include "config.h"
 #include "replace_selection_command.h"
 
-#include "visible_position.h"
-#include "htmlnames.h"
-#include "DocumentImpl.h"
 #include "DocumentFragmentImpl.h"
-#include "html_interchange.h"
-#include "xml/dom_textimpl.h"
-#include "html/html_elementimpl.h"
-#include "htmlediting.h"
-#include "css/css_valueimpl.h"
-#include "visible_units.h"
-#include "xml/dom_position.h"
+#include "DocumentImpl.h"
 #include "Frame.h"
-#include "xml/dom2_rangeimpl.h"
-#include "rendering/render_object.h"
-#include "css/css_computedstyle.h"
+#include "apply_style_command.h"
+#include "css_computedstyle.h"
+#include "css_valueimpl.h"
 #include "cssproperties.h"
-
+#include "dom2_rangeimpl.h"
+#include "dom_position.h"
+#include "dom_textimpl.h"
+#include "html_elementimpl.h"
+#include "html_interchange.h"
+#include "htmlediting.h"
+#include "htmlnames.h"
+#include "render_object.h"
+#include "visible_position.h"
+#include "visible_units.h"
 #include <kxmlcore/Assertions.h>
 
-using namespace DOM::HTMLNames;
+namespace WebCore {
 
-using DOM::CSSComputedStyleDeclarationImpl;
-using DOM::DocumentImpl;
-using DOM::NodeImpl;
-using DOM::DocumentFragmentImpl;
-using DOM::ElementImpl;
-using DOM::TextImpl;
-using DOM::DOMString;
-using DOM::HTMLElementImpl;
-using DOM::CSSMutableStyleDeclarationImpl;
-using DOM::Position;
-
-namespace khtml {
+using namespace HTMLNames;
 
 ReplacementFragment::ReplacementFragment(DocumentImpl *document, DocumentFragmentImpl *fragment, bool matchStyle)
     : m_document(document), 

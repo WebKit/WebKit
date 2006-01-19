@@ -2,7 +2,7 @@
  * This file is part of the DOM implementation for KDE.
  *
  * Copyright (C) 2000 Peter Kelly (pmk@post.com)
- * Copyright (C) 2005 Apple Computer, Inc.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.
  * Copyright (C) 2006 Alexey Proskuryakov
  *
  * This library is free software; you can redistribute it and/or
@@ -24,43 +24,34 @@
 #include "config.h"
 #include "xml_tokenizer.h"
 
-#include "DocumentImpl.h"
-#include "DocumentFragmentImpl.h"
-#include "DocumentTypeImpl.h"
-#include "xml/dom_elementimpl.h"
-#include "xml/dom_textimpl.h"
-#include "xml/dom_xmlimpl.h"
-#include "dom_node.h"
-#include "html/html_headimpl.h"
-#include "html/html_tableimpl.h"
-#include "htmlnames.h"
 #include "CachedScript.h"
 #include "DocLoader.h"
-#include <kxmlcore/HashMap.h>
-
-#include "FrameView.h"
+#include "DocumentFragmentImpl.h"
+#include "DocumentImpl.h"
+#include "DocumentTypeImpl.h"
 #include "Frame.h"
-#include <kdebug.h>
-#include <klocale.h>
-#include <qvariant.h>
-
+#include "FrameView.h"
+#include "SegmentedString.h"
+#include "dom_node.h"
+#include "dom_textimpl.h"
+#include "dom_xmlimpl.h"
+#include "html_headimpl.h"
+#include "html_tableimpl.h"
+#include "htmlnames.h"
+#include "kentities.h" // for xhtml entity name lookup
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
+#include <qptrstack.h>
+#include <qvariant.h>
 
 #if SVG_SUPPORT
 #include "SVGNames.h"
 #include "XLinkNames.h"
 #endif
 
-#include <qptrstack.h>
+namespace WebCore {
 
-#include "kentities.h"  // for xhtml entity name lookup
-#include <kxmlcore/Assertions.h>
-
-using namespace DOM;
 using namespace HTMLNames;
-
-namespace khtml {
 
 const int maxErrors = 25;
 
@@ -310,6 +301,16 @@ inline QString toQString(const xmlChar *str)
     return QString::fromUtf8(str ? reinterpret_cast<const char *>(str) : "");
 }
 
+inline DOMString toString(const xmlChar* str, unsigned int len)
+{
+    return QString::fromUtf8(reinterpret_cast<const char *>(str), len);
+}
+
+inline DOMString toString(const xmlChar* str)
+{
+    return QString::fromUtf8(str ? reinterpret_cast<const char *>(str) : "");
+}
+
 struct _xmlSAX2Namespace {
     const xmlChar *prefix;
     const xmlChar *uri;
@@ -320,11 +321,11 @@ static inline void handleElementNamespaces(ElementImpl *newElement, const xmlCha
 {
     xmlSAX2Namespace *namespaces = reinterpret_cast<xmlSAX2Namespace *>(libxmlNamespaces);
     for(int i = 0; i < nb_namespaces; i++) {
-        DOMString namespaceQName("xmlns");
-        DOMString namespaceURI = toQString(namespaces[i].uri);
-        if(namespaces[i].prefix)
-            namespaceQName = namespaceQName + QString::fromLatin1(":") + toQString(namespaces[i].prefix);
-        newElement->setAttributeNS(DOMString("http://www.w3.org/2000/xmlns/"), namespaceQName, namespaceURI, exceptioncode);
+        DOMString namespaceQName = "xmlns";
+        DOMString namespaceURI = toString(namespaces[i].uri);
+        if (namespaces[i].prefix)
+            namespaceQName = "xmlns:" + toString(namespaces[i].prefix);
+        newElement->setAttributeNS("http://www.w3.org/2000/xmlns/", namespaceQName, namespaceURI, exceptioncode);
         if (exceptioncode) // exception setting attributes
             return;
     }
@@ -1018,7 +1019,7 @@ bool parseXMLDocumentFragment(const DOMString &string, DocumentFragmentImpl *fra
 // --------------------------------
 
 struct AttributeParseState {
-    QMap<QString, QString> attributes;
+    HashMap<DOMString, DOMString> attributes;
     bool gotAttributes;
 };
 
@@ -1037,15 +1038,15 @@ static void attributesStartElementNsHandler(void *closure, const xmlChar *xmlLoc
     for(int i = 0; i < nb_attributes; i++) {
         QString attrLocalName = toQString(attributes[i].localname);
         int valueLength = (int) (attributes[i].end - attributes[i].value);
-        QString attrValue = toQString(attributes[i].value, valueLength);
-        QString attrPrefix = toQString(attributes[i].prefix);
-        QString attrQName = attrPrefix.isEmpty() ? attrLocalName : attrPrefix + QString::fromLatin1(":") + attrLocalName;
+        DOMString attrValue = toString(attributes[i].value, valueLength);
+        DOMString attrPrefix = toString(attributes[i].prefix);
+        DOMString attrQName = attrPrefix.isEmpty() ? attrLocalName : attrPrefix + ":" + attrLocalName;
         
-        state->attributes.insert(attrQName, attrValue);
+        state->attributes.set(attrQName, attrValue);
     }
 }
 
-QMap<QString, QString> parseAttributes(const DOMString &string, bool &attrsOK)
+HashMap<DOMString, DOMString> parseAttributes(const DOMString& string, bool& attrsOK)
 {
     AttributeParseState state;
     state.gotAttributes = false;

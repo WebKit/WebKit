@@ -4,7 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Stefan Schimanski (1Stein@gmx.de)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,35 +21,28 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #include "config.h"
 #include "html/html_objectimpl.h"
 
+#include "EventNames.h"
 #include "Frame.h"
-#include "dom/dom_string.h"
-#include <qstring.h>
-#include <qmap.h>
-#include <kdebug.h>
-
-#include "css/cssstyleselector.h"
-#include "css/csshelper.h"
-#include "cssproperties.h"
-#include "cssvalues.h"
-#include "html/html_documentimpl.h"
 #include "HTMLFormElementImpl.h"
-#include "rendering/render_applet.h"
-#include "rendering/render_frames.h"
-#include "rendering/render_image.h"
-#include "xml/dom2_eventsimpl.h"
-#include "xml/dom_textimpl.h"
-#include "xml/EventNames.h"
+#include "csshelper.h"
+#include "cssproperties.h"
+#include "cssstyleselector.h"
+#include "cssvalues.h"
+#include "dom2_eventsimpl.h"
+#include "dom_string.h"
+#include "dom_textimpl.h"
+#include "html_documentimpl.h"
+#include "render_applet.h"
+#include "render_frames.h"
+#include "render_image.h"
+#include <java/kjavaappletwidget.h>
+#include <qstring.h>
 
-#include "java/kjavaappletwidget.h"
-
-#include "Frame.h"
-
-using namespace khtml;
-
-namespace DOM {
+namespace WebCore {
 
 using namespace EventNames;
 using namespace HTMLNames;
@@ -168,25 +161,24 @@ RenderObject *HTMLAppletElementImpl::createRenderer(RenderArena *arena, RenderSt
 
     if( frame && frame->javaEnabled() )
     {
-	QMap<QString, QString> args;
+	HashMap<DOMString, DOMString> args;
 
-	args.insert( "code", getAttribute(codeAttr).qstring());
-	DOMString codeBase = getAttribute(codebaseAttr);
+	args.set("code", getAttribute(codeAttr));
+	const AtomicString& codeBase = getAttribute(codebaseAttr);
 	if(!codeBase.isNull())
-	    args.insert( "codeBase", codeBase.qstring() );
-	DOMString name = getDocument()->htmlMode() != DocumentImpl::XHtml ?
-			 getAttribute(nameAttr) : getAttribute(idAttr);
-	if(!name.isNull())
-	    args.insert( "name", name.qstring() );
-	DOMString archive = getAttribute(archiveAttr);
-	if(!archive.isNull())
-	    args.insert( "archive", archive.qstring() );
+	    args.set("codeBase", codeBase);
+	const AtomicString& name = getAttribute(getDocument()->htmlMode() != DocumentImpl::XHtml ? nameAttr : idAttr);
+	if (!name.isNull())
+	    args.set("name", name);
+	const AtomicString& archive = getAttribute(archiveAttr);
+	if (!archive.isNull())
+	    args.set("archive", archive);
 
-	args.insert( "baseURL", getDocument()->baseURL() );
+	args.set("baseURL", getDocument()->baseURL());
 
-        DOMString mayScript = getAttribute(mayscriptAttr);
+        const AtomicString& mayScript = getAttribute(mayscriptAttr);
         if (!mayScript.isNull())
-            args.insert("mayScript", mayScript.qstring());
+            args.set("mayScript", mayScript);
 
         // Other arguments (from <PARAM> tags) are added later.
         

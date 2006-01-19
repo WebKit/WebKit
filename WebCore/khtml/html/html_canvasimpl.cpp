@@ -25,36 +25,17 @@
 
 #include "config.h"
 #include "html/html_canvasimpl.h"
-#include "html/html_documentimpl.h"
 
-#include <kdebug.h>
+#include "render_canvasimage.h"
 
-#include "rendering/render_canvasimage.h"
-#include "rendering/render_flow.h"
-#include "css/cssstyleselector.h"
-#include "cssproperties.h"
-#include "cssvalues.h"
-#include "css/csshelper.h"
-#include "xml/dom2_eventsimpl.h"
+namespace WebCore {
 
-#include <qstring.h>
-#include "IntPoint.h"
-#include <qregion.h>
-#include <qptrstack.h>
-#include "IntPointArray.h"
-
-using namespace DOM;
 using namespace HTMLNames;
-using namespace khtml;
 
 // -------------------------------------------------------------------------
 
 HTMLCanvasElementImpl::HTMLCanvasElementImpl(DocumentImpl *doc)
     : HTMLImageElementImpl(canvasTag, doc)
-{
-}
-
-HTMLCanvasElementImpl::~HTMLCanvasElementImpl()
 {
 }
 
@@ -95,4 +76,6 @@ void HTMLCanvasElementImpl::detach()
 bool HTMLCanvasElementImpl::isURLAttribute(AttributeImpl *attr) const
 {
     return ((attr->name() == usemapAttr && attr->value().domString()[0] != '#'));
+}
+
 }

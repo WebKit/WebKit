@@ -26,9 +26,6 @@
 #ifndef KIO_GLOBAL_H_
 #define KIO_GLOBAL_H_
 
-#include "KWQString.h"
-#include "KWQMap.h"
-
 namespace KIO {
 
     enum CacheControl
@@ -38,10 +35,6 @@ namespace KIO {
         CC_Refresh,
         CC_Reload
     };
-    
-    typedef QMap<QString, QString> MetaData;
-    
-    inline QString getCacheControlString(CacheControl) { return QString::null; }
 
 }
 

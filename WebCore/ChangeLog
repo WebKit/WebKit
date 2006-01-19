@@ -1,3 +1,106 @@
+2006-01-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - removed all use of QMap
+
+        * ForwardingHeaders/qmap.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj: Removed KWQMap.h, KWQMapImpl.h, KWQMapImpl.cpp.
+        * kwq/KWQMap.h: Removed.
+        * kwq/KWQMapImpl.cpp: Removed.
+        * kwq/KWQMapImpl.h: Removed.
+
+        * bridge/BrowserExtension.h: (WebCore::URLArgs::metaData): Converted from QMap of QString
+        to HashMap of DOMString.
+        * bridge/mac/BrowserExtensionMac.mm: Ditto.
+        * bridge/mac/MacFrame.mm:
+        (MacFrame::openURLRequest): Ditto.
+        (MacFrame::urlSelected): Ditto.
+        (MacFrame::createPart): Ditto.
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::parseModalDialogFeatures): Ditto.
+        (KJS::boolFeature): Ditto.
+        (KJS::intFeature): Ditto.
+        (KJS::createNewWindow): Ditto.
+        (KJS::showModalDialog): Ditto.
+        (KJS::WindowFunc::callAsFunction): Ditto.
+        * khtml/html/html_objectimpl.cpp: (WebCore::HTMLAppletElementImpl::createRenderer): Ditto.
+        * khtml/xml/dom_xmlimpl.cpp: (DOM::ProcessingInstructionImpl::checkStyleSheet): Ditto.
+        * khtml/xml/xml_tokenizer.cpp:
+        (WebCore::toString): Added. Converts to DOMString instead of QString.
+        (WebCore::attributesStartElementNsHandler): Converted from QMap of QString to HashMap of DOMString.
+        (WebCore::parseAttributes): Ditto.
+        * khtml/xml/xml_tokenizer.h: (WebCore::Tokenizer::setTransformSource): Ditto.
+        * ksvg2/misc/KSVGTimeScheduler.cpp: (KSVG::SVGTimer::notifyAll): Ditto.
+        * kwq/KWQKJavaAppletWidget.h: Ditto.
+        * kwq/KWQKJavaAppletWidget.mm: (KJavaAppletWidget::KJavaAppletWidget): Ditto.
+        * kwq/KWQKJobClasses.h: Ditto.
+        * kwq/KWQKJobClasses.mm: (KIO::TransferJob::addMetaData): Ditto.
+        * page/Frame.cpp:
+        (Frame::didOpenURL): Ditto.
+        (Frame::changeLocation): Ditto.
+        (Frame::mark): Ditto.
+        (Frame::setMark): Ditto.
+        (Frame::urlSelected): Ditto.
+        (Frame::requestObject): Ditto.
+        (Frame::processObjectRequest): Ditto.
+        (Frame::submitForm): Ditto.
+        * rendering/render_applet.cpp:
+        (WebCore::RenderApplet::RenderApplet): Ditto.
+        (WebCore::RenderApplet::createWidgetIfNecessary): Ditto.
+        (WebCore::RenderApplet::layout): Ditto.
+        * rendering/render_applet.h:
+        (WebCore::RenderApplet::renderName): Ditto.
+        (WebCore::RenderApplet::element): Ditto.
+        (WebCore::RenderEmptyApplet::renderName): Ditto.
+
+        * khtml/dom/dom_string.h:
+        (WebCore::DOMString::createCFString): Added. Not yet implemented or used.
+        (WebCore::DOMString::operator NSString*): Updated to call through to DOMStringImpl.
+        Added hash functions and hash traits so you can use DOMString in hash tables.
+        * khtml/xml/dom_stringimpl.h: Added conversion to and from CFStringRef/NSString.
+        * khtml/xml/dom_stringimpl.cpp: Took out an excess "DOM::".
+
+        * bindings/objc/DOMInternal.mm: (DOMStringImpl::operator NSString *): Moved from DOMString
+        to DOMStringImpl.
+
+        - changed the mark from a SelectionController to a Selection
+          (maybe it can be a Position instead?)
+
+        * page/Frame.h: Changed mark() and setMark() to use a Selection.
+        * page/FramePrivate.h: Changed mark to a Selection.
+
+        * bridge/mac/WebCoreFrameBridge.mm: (-[WebCoreFrameBridge setMarkDOMRange:]):
+        Updated for change from SelectionController to Selection.
+
+        - removed extraneous includes
+
+        * kwq/KWQKHTMLSettings.h: Removed include of "KWQMap.h".
+        * kwq/KWQKIOGlobal.h: Ditto.
+
+        * khtml/editing/htmlediting.h: Removed extraneous includes and namespace prefixes.
+
+        * khtml/html/html_canvasimpl.h: Removed extraneous includes and moved into the
+        WebCore namespace.
+        * khtml/html/html_canvasimpl.cpp: Ditto.
+        * khtml/html/htmltokenizer.cpp: Ditto.
+        * khtml/html/htmltokenizer.h: Ditto.
+        * khtml/xml/DocumentImpl.cpp: Ditto.
+        * kwq/KWQEditCommand.mm: Ditto.
+        * rendering/render_canvasimage.h: Ditto.
+        * rendering/render_image.h: Ditto.
+
+        * khtml/editing/composite_edit_command.cpp: Updated includes because of ones
+        that were removed from headers.
+        * khtml/editing/htmlediting.cpp: Ditto.
+        * khtml/editing/jsediting.cpp: Ditto.
+        * khtml/editing/replace_selection_command.cpp: Ditto.
+        * rendering/render_canvasimage.cpp: Ditto.
+        * rendering/render_image.cpp: Ditto.
+
+        * loader/loader.cpp: (WebCore::Loader::servePendingRequests): Removed code to add the
+        cache control string, since that was hardcoded to empty string anyway.
+
 2006-01-19  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

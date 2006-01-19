@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "KWQKJavaAppletWidget.h"
 
 #import "DocumentImpl.h"
@@ -32,22 +32,24 @@
 #import "WebCoreFrameBridge.h"
 #import "MacFrame.h"
 
-KJavaAppletWidget::KJavaAppletWidget(const IntSize &size, Frame *frame, const QMap<QString, QString> &args)
+using namespace WebCore;
+
+typedef HashMap<DOMString, DOMString> StringMap;
+
+KJavaAppletWidget::KJavaAppletWidget(const IntSize& size, Frame* frame, const StringMap& args)
 {
     KWQ_BLOCK_EXCEPTIONS;
     
     NSMutableArray *attributeNames = [[NSMutableArray alloc] init];
     NSMutableArray *attributeValues = [[NSMutableArray alloc] init];
-    QMapConstIterator<QString, QString> it = args.begin();
-    QMapConstIterator<QString, QString> end = args.end();
+    ;
     QString baseURLString;
-    while (it != end) {
-        if (it.key().lower() == "baseurl") {
-            baseURLString = it.data();
-        }
-        [attributeNames addObject:it.key().getNSString()];
-        [attributeValues addObject:it.data().getNSString()];
-        ++it;
+    StringMap::const_iterator end = args.end();
+    for (StringMap::const_iterator it = args.begin(); it != end; ++it) {
+        if (it->first.lower() == "baseurl")
+            baseURLString = it->second.qstring();
+        [attributeNames addObject:it->first];
+        [attributeValues addObject:it->second];
     }
     
     if (baseURLString.isEmpty()) {

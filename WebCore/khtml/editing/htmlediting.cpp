@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,65 +26,18 @@
 #include "config.h"
 #include "htmlediting.h"
 
-#include "css_computedstyle.h"
-#include "css_value.h"
-#include "css_valueimpl.h"
-#include "cssparser.h"
-#include "cssproperties.h"
 #include "DocumentImpl.h"
-#include "dom_elementimpl.h"
-#include "dom_position.h"
-#include "dom_stringimpl.h"
-#include "dom_textimpl.h"
 #include "dom2_range.h"
-#include "dom2_rangeimpl.h"
-#include "html_elementimpl.h"
-#include "html_imageimpl.h"
+#include "dom_textimpl.h"
 #include "html_interchange.h"
 #include "htmlnames.h"
-#include "qcolor.h"
-#include "qptrlist.h"
 #include "render_object.h"
-#include "render_style.h"
-#include "RenderText.h"
 #include "visible_position.h"
-#include "visible_text.h"
-#include "visible_units.h"
+#include <qregexp.h>
 
-using namespace DOM::HTMLNames;
+namespace WebCore {
 
-using DOM::AttrImpl;
-using DOM::CSSComputedStyleDeclarationImpl;
-using DOM::CSSMutableStyleDeclarationImpl;
-using DOM::CSSParser;
-using DOM::CSSPrimitiveValue;
-using DOM::CSSPrimitiveValueImpl;
-using DOM::CSSProperty;
-using DOM::CSSStyleDeclarationImpl;
-using DOM::CSSValue;
-using DOM::CSSValueImpl;
-using DOM::DocumentFragmentImpl;
-using DOM::DocumentImpl;
-using DOM::DOMString;
-using DOM::DOMStringImpl;
-using DOM::DoNotUpdateLayout;
-using DOM::EditingTextImpl;
-using DOM::ElementImpl;
-using DOM::HTMLElementImpl;
-using DOM::HTMLImageElementImpl;
-using DOM::NamedAttrMapImpl;
-using DOM::NodeImpl;
-using DOM::NodeListImpl;
-using DOM::Position;
-using DOM::RangeImpl;
-using DOM::TextImpl;
-using DOM::TreeWalkerImpl;
-
-#include <kxmlcore/Assertions.h>
-#include "KWQLogging.h"
-#include "KWQRegExp.h"
-
-namespace khtml {
+using namespace HTMLNames;
 
 // Atomic means that the node has no children, or has children which are ignored for the
 // purposes of editing.
@@ -162,7 +115,7 @@ DOMString &nonBreakingSpaceString()
     return nonBreakingSpaceString;
 }
 
-void derefNodesInList(QPtrList<NodeImpl> &list)
+void derefNodesInList(const QPtrList<NodeImpl>& list)
 {
     for (QPtrListIterator<NodeImpl> it(list); it.current(); ++it)
         it.current()->deref();
@@ -170,7 +123,7 @@ void derefNodesInList(QPtrList<NodeImpl> &list)
 
 static int maxRangeOffset(NodeImpl *n)
 {
-    if (DOM::offsetInCharacters(n->nodeType()))
+    if (offsetInCharacters(n->nodeType()))
         return n->maxOffset();
 
     if (n->isElementNode())

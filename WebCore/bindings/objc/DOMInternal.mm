@@ -119,9 +119,9 @@ void raiseDOMException(int code)
 //------------------------------------------------------------------------------------------
 // DOMString/NSString bridging
 
-DOMString::operator NSString *() const
+DOMStringImpl::operator NSString *() const
 {
-    return [NSString stringWithCharacters:reinterpret_cast<const unichar *>(unicode()) length:length()];
+    return [NSString stringWithCharacters:reinterpret_cast<const unichar *>(s) length:l];
 }
 
 DOMString::DOMString(NSString *str)

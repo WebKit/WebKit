@@ -29,11 +29,17 @@
 #include <limits.h>
 #include <qstring.h>
 
-namespace khtml {
-    struct Length;
-}
+#if __APPLE__
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
+#if __OBJC__
+class NSString;
+#endif
 
 namespace WebCore {
+
+struct Length;
 
 class DOMStringImpl : public Shared<DOMStringImpl>
 {
@@ -101,6 +107,15 @@ public:
     QChar* s;
     mutable unsigned _hash;
     bool _inTable;
+
+#if __APPLE__
+    DOMStringImpl(CFStringRef);
+    CFStringRef createCFString() const;
+#endif
+#if __OBJC__
+    DOMStringImpl(NSString*);
+    operator NSString*() const;
+#endif
 };
 
 bool equal(const DOMStringImpl*, const DOMStringImpl*);

@@ -56,6 +56,7 @@
 #import "WebCoreTextRendererFactory.h"
 #import "WebCoreViewFactory.h"
 #import "csshelper.h"
+#import "delete_selection_command.h"
 #import "dom2_eventsimpl.h"
 #import "dom2_range.h"
 #import "dom2_rangeimpl.h"
@@ -69,12 +70,15 @@
 #import "kjs_window.h"
 #import "loader.h"
 #import "markup.h"
+#import "move_selection_command.h"
 #import "render_canvas.h"
 #import "render_frames.h"
 #import "render_image.h"
 #import "render_object.h"
 #import "render_replaced.h"
 #import "render_style.h"
+#import "replace_selection_command.h"
+#import "typing_command.h"
 #import "visible_position.h"
 #import "visible_text.h"
 #import "visible_units.h"
@@ -1993,7 +1997,8 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)setMarkDOMRange:(DOMRange *)range
 {
-    m_frame->setMark(SelectionController([range _rangeImpl], SEL_DEFAULT_AFFINITY));
+    RangeImpl* r = [range _rangeImpl];
+    m_frame->setMark(Selection(startPosition(r), endPosition(r), SEL_DEFAULT_AFFINITY));
 }
 
 - (DOMRange *)markDOMRange

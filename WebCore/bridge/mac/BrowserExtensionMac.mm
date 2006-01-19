@@ -26,20 +26,19 @@
 #import "config.h"
 #import "BrowserExtensionMac.h"
 
-#import <kxmlcore/Assertions.h>
 #import "KWQExceptions.h"
-#import "WebCoreFrameBridge.h"
 #import "MacFrame.h"
+#import "WebCoreFrameBridge.h"
+#import <kxmlcore/Assertions.h>
 
-using namespace WebCore;
+namespace WebCore {
 
 BrowserExtensionMac::BrowserExtensionMac(Frame *frame)
     : m_frame(Mac(frame))
 {
 }
 
-void BrowserExtensionMac::openURLRequest(const KURL &url, 
-					       const URLArgs &args)
+void BrowserExtensionMac::openURLRequest(const KURL& url, const URLArgs& args)
 {
     if (url.protocol().lower() == "javascript") {
 	m_frame->createEmptyDocument();
@@ -53,8 +52,7 @@ void BrowserExtensionMac::openURLNotify()
 {
 }
 
-void BrowserExtensionMac::createNewWindow(const KURL &url, 
-						const URLArgs &urlArgs) 
+void BrowserExtensionMac::createNewWindow(const KURL &url, const URLArgs &urlArgs) 
 {
     createNewWindow(url, urlArgs, WindowArgs(), NULL);
 }
@@ -81,13 +79,13 @@ void BrowserExtensionMac::createNewWindow(const KURL &url,
 
     NSString *frameName = urlArgs.frameName.length() == 0 ? nil : urlArgs.frameName.getNSString();
     if (frameName) {
-        // FIXME: Can't you just use m_frame->findFrame?
+        // FIXME: Can't we just use m_frame->findFrame?
         if (WebCoreFrameBridge *bridge = [m_frame->bridge() findFrameNamed:frameName]) {
             if (!url.isEmpty()) {
-                QString argsReferrer = urlArgs.metaData()["referrer"];
+                DOMString argsReferrer = urlArgs.metaData().get("referrer");
                 NSString *referrer;
-                if (argsReferrer.length() > 0)
-                    referrer = argsReferrer.getNSString();
+                if (!argsReferrer.isEmpty())
+                    referrer = argsReferrer;
                 else
                     referrer = [m_frame->bridge() referrer];
 
@@ -215,4 +213,6 @@ void BrowserExtensionMac::runModal()
     KWQ_BLOCK_EXCEPTIONS;
     [m_frame->bridge() runModal];
     KWQ_UNBLOCK_EXCEPTIONS;
+}
+
 }

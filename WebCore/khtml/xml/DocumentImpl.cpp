@@ -23,59 +23,54 @@
  */
 
 #include "config.h"
+#include "DocumentImpl.h"
 
-#include "dom/dom_exception.h"
-#include "dom/dom2_events.h"
-
-#include "xml/dom_textimpl.h"
-#include "xml/dom_xmlimpl.h"
-#include "xml/dom2_rangeimpl.h"
-#include "xml/dom2_eventsimpl.h"
-#include "xml/dom2_viewsimpl.h"
-#include "xml/EventNames.h"
-#include "xml/xml_tokenizer.h"
 #include "DOMImplementationImpl.h"
-#include "DocumentTypeImpl.h"
-#include "DocumentFragmentImpl.h"
-#include "NameNodeListImpl.h"
-
-#include "css/csshelper.h"
-#include "css/cssstyleselector.h"
-#include "css/css_stylesheetimpl.h"
-#include "css/css_valueimpl.h"
-#include "helper.h"
 #include "DocLoader.h"
-#include "ecma/kjs_proxy.h"
+#include "DocumentFragmentImpl.h"
+#include "DocumentTypeImpl.h"
+#include "EventNames.h"
+#include "FramePrivate.h"
+#include "FrameView.h"
+#include "KWQAccObjectCache.h"
+#include "KWQLogging.h"
+#include "NameNodeListImpl.h"
+#include "SegmentedString.h"
+#include "css_stylesheetimpl.h"
+#include "css_valueimpl.h"
+#include "csshelper.h"
+#include "cssstyleselector.h"
+#include "cssvalues.h"
+#include "dom2_events.h"
+#include "dom2_eventsimpl.h"
+#include "dom2_rangeimpl.h"
+#include "dom2_viewsimpl.h"
+#include "dom_exception.h"
+#include "dom_textimpl.h"
+#include "dom_xmlimpl.h"
 #include "ecma/kjs_binding.h"
-
-#include <qptrstack.h>
-#include <qpaintdevicemetrics.h>
-#include <qregexp.h>
-#include <kdebug.h>
-
+#include "ecma/kjs_proxy.h"
+#include "helper.h"
+#include "jsediting.h"
+#include "khtml_settings.h"
+#include "render_arena.h"
 #include "render_canvas.h"
 #include "render_frames.h"
-#include "render_arena.h"
-
-#include "FrameView.h"
-#include "Frame.h"
-#include "FramePrivate.h"
-
-#include "khtml_settings.h"
+#include "visible_position.h"
+#include "visible_text.h"
+#include "xml_tokenizer.h"
+#include <kdebug.h>
+#include <qpaintdevicemetrics.h>
+#include <qptrstack.h>
+#include <qregexp.h>
 
 // FIXME: We want to cut the remaining HTML dependencies so that we don't need to include these files.
+#include "HTMLInputElementImpl.h"
+#include "html/html_baseimpl.h"
 #include "html/html_documentimpl.h"
 #include "html/html_headimpl.h"
 #include "html/html_imageimpl.h"
-#include "html/html_baseimpl.h"
-#include "HTMLInputElementImpl.h"
 #include "htmlfactory.h"
-
-#include "cssvalues.h"
-
-#include "editing/jsediting.h"
-#include "editing/visible_position.h"
-#include "editing/visible_text.h"
 
 #ifdef KHTML_XSLT
 #include "xsl_stylesheetimpl.h"
@@ -87,9 +82,6 @@
 using XBL::XBLBindingManager;
 #endif
 
-#include "KWQAccObjectCache.h"
-#include "KWQLogging.h"
-
 #if SVG_SUPPORT
 #include "SVGNames.h"
 #include "SVGElementFactory.h"
@@ -97,10 +89,10 @@ using XBL::XBLBindingManager;
 #include "SVGStyleElementImpl.h"
 #endif
 
-using namespace DOM;
-using namespace DOM::EventNames;
+namespace WebCore {
+
+using namespace EventNames;
 using namespace HTMLNames;
-using namespace khtml;
 
 // #define INSTRUMENT_LAYOUT_SCHEDULING 1
 
@@ -823,7 +815,7 @@ void DocumentImpl::recalcStyle( StyleChange change )
         _style->setVisuallyOrdered( visuallyOrdered );
         // ### make the font stuff _really_ work!!!!
 
-        khtml::FontDef fontDef;
+        FontDef fontDef;
         QFont f;
         fontDef.family = *(f.firstFamily());
         fontDef.italic = f.italic();
@@ -1687,7 +1679,7 @@ bool DocumentImpl::prepareMouseEvent(bool readonly, bool active, int _x, int _y,
         if (renderInfo.URLElement()) {
             assert(renderInfo.URLElement()->isElementNode());
             ElementImpl* e =  static_cast<ElementImpl*>(renderInfo.URLElement());
-            DOMString href = khtml::parseURL(e->getAttribute(hrefAttr));
+            DOMString href = parseURL(e->getAttribute(hrefAttr));
             DOMString target = e->getAttribute(targetAttr);
 
             if (!target.isNull() && !href.isNull()) {
@@ -3074,4 +3066,6 @@ RefPtr<HTMLCollectionImpl> DocumentImpl::documentNamedItems(DOMString &name)
 RefPtr<NameNodeListImpl> DocumentImpl::getElementsByName(const DOMString &elementName)
 {
     return RefPtr<NameNodeListImpl>(new NameNodeListImpl(this, elementName));
+}
+
 }

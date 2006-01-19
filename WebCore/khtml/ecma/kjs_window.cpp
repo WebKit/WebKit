@@ -469,9 +469,9 @@ static bool allowPopUp(ExecState *exec, Window *window)
             || static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture());
 }
 
-static QMap<QString, QString> parseModalDialogFeatures(ExecState *exec, JSValue *featuresArg)
+static HashMap<DOMString, DOMString> parseModalDialogFeatures(ExecState *exec, JSValue *featuresArg)
 {
-    QMap<QString, QString> map;
+    HashMap<DOMString, DOMString> map;
 
     QStringList features = QStringList::split(';', featuresArg->toString(exec).qstring());
     QStringList::ConstIterator end = features.end();
@@ -485,35 +485,35 @@ static QMap<QString, QString> parseModalDialogFeatures(ExecState *exec, JSValue 
             pos = colonPos;
         if (pos < 0) {
             // null string for value means key without value
-            map.insert(s.stripWhiteSpace().lower(), QString());
+            map.set(s.stripWhiteSpace().lower(), DOMString());
         } else {
             QString key = s.left(pos).stripWhiteSpace().lower();
             QString val = s.mid(pos + 1).stripWhiteSpace().lower();
             int spacePos = val.find(' ');
             if (spacePos != -1)
                 val = val.left(spacePos);
-            map.insert(key, val);
+            map.set(key, val);
         }
     }
 
     return map;
 }
 
-static bool boolFeature(const QMap<QString, QString> &features, const char *key, bool defaultValue = false)
+static bool boolFeature(const HashMap<DOMString, DOMString>& features, const char* key, bool defaultValue = false)
 {
-    QMap<QString, QString>::ConstIterator it = features.find(key);
+    HashMap<DOMString, DOMString>::const_iterator it = features.find(key);
     if (it == features.end())
         return defaultValue;
-    QString value = it.data();
+    const DOMString& value = it->second;
     return value.isNull() || value == "1" || value == "yes" || value == "on";
 }
 
-static int intFeature(const QMap<QString, QString> &features, const char *key, int min, int max, int defaultValue)
+static int intFeature(const HashMap<DOMString, DOMString> &features, const char *key, int min, int max, int defaultValue)
 {
-    QMap<QString, QString>::ConstIterator it = features.find(key);
+    HashMap<DOMString, DOMString>::const_iterator it = features.find(key);
     if (it == features.end())
         return defaultValue;
-    QString value = it.data();
+    QString value = it->second.qstring();
     // FIXME: Can't distinguish "0q" from string with no digits in it -- both return d == 0 and ok == false.
     // Would be good to tell them apart somehow since string with no digits should be default value and
     // "0q" should be minimum value.
@@ -542,7 +542,7 @@ static Frame *createNewWindow(ExecState *exec, Window *openerWindow, const QStri
 
     uargs.frameName = frameName;
     if (activePart)
-        uargs.metaData()["referrer"] = activePart->referrer();
+        uargs.metaData().set("referrer", activePart->referrer());
     uargs.serviceType = "text/html";
 
     // FIXME: It's much better for client API if a new window starts with a URL, here where we
@@ -597,7 +597,7 @@ static JSValue *showModalDialog(ExecState *exec, Window *openerWindow, const Lis
     if (!canShowModalDialogNow(openerWindow) || !allowPopUp(exec, openerWindow))
         return jsUndefined();
     
-    const QMap<QString, QString> features = parseModalDialogFeatures(exec, args[2]);
+    const HashMap<DOMString, DOMString> features = parseModalDialogFeatures(exec, args[2]);
 
     bool trusted = false;
 
@@ -1636,7 +1636,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
       
       // request window (new or existing if framename is set)
       ObjectContents *newPart = 0L;
-      uargs.metaData()["referrer"] = activePart->referrer();
+      uargs.metaData().set("referrer", activePart->referrer());
       frame->browserExtension()->createNewWindow("", uargs, windowArgs, newPart);
       if (!newPart || !newPart->inherits("Frame"))
           return jsUndefined();

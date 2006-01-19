@@ -286,13 +286,13 @@ bool ProcessingInstructionImpl::checkStyleSheet()
         // ### support stylesheet included in a fragment of this (or another) document
         // ### make sure this gets called when adding from javascript
         bool attrsOk;
-        const QMap<QString, QString> attrs = parseAttributes(m_data.get(), attrsOk);
+        const HashMap<DOMString, DOMString> attrs = parseAttributes(m_data.get(), attrsOk);
         if (!attrsOk)
             return true;
-        QMap<QString, QString>::ConstIterator i = attrs.find("type");
-        QString type;
+        HashMap<DOMString, DOMString>::const_iterator i = attrs.find("type");
+        DOMString type;
         if (i != attrs.end())
-            type = *i;
+            type = i->second;
         
         bool isCSS = type.isEmpty() || type == "text/css";
 #ifdef KHTML_XSLT
@@ -309,21 +309,11 @@ bool ProcessingInstructionImpl::checkStyleSheet()
             getDocument()->tokenizer()->setTransformSource(getDocument());
 #endif
 
-        i = attrs.find("href");
-        QString href;
-        if (i != attrs.end())
-            href = *i;
+        DOMString href = attrs.get("href");
 
-        if (href.length()>1)
-        {
-            if (href[0]=='#')
-            {
-                DOMString newLocalHref = href.mid(1);
-                if (m_localHref)
-                    m_localHref->deref();
-                m_localHref = newLocalHref.impl();
-                if (m_localHref)
-                    m_localHref->ref();
+        if (href.length() > 1) {
+            if (href[0] == '#') {
+                m_localHref = href.substring(1).impl();
 #ifdef KHTML_XSLT
                 // We need to make a synthetic XSLStyleSheetImpl that is embedded.  It needs to be able
                 // to kick off import/include loads that can hang off some parent sheet.

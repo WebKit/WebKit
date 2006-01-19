@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,19 +26,16 @@
 #include "config.h"
 #include "jsediting.h"
 
-#include "css/css_valueimpl.h"
-#include "cssproperties.h"
 #include "DocumentImpl.h"
-#include "htmlediting.h"
 #include "Frame.h"
 #include "SelectionController.h"
+#include "css_valueimpl.h"
+#include "cssproperties.h"
+#include "htmlediting.h"
+#include "typing_command.h"
 #include <kxmlcore/HashMap.h>
 
-#include "Frame.h"
-
-using khtml::TypingCommand;
-
-namespace DOM {
+namespace WebCore {
 
 class DocumentImpl;
 

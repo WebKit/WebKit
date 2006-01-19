@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,23 +28,20 @@
 
 #if __APPLE__
 
-#include "html/html_elementimpl.h"
-#include "rendering/render_image.h"
-#include "dom/dom_string.h"
+#include "html_elementimpl.h"
+#include "render_image.h"
 
-#include <qmap.h>
-#include <qpixmap.h>
-
+// FIXME: Mac-specific parts need to move to the platform directory.
 #include <ApplicationServices/ApplicationServices.h>
 
-namespace khtml {
+namespace WebCore {
 
 class DocLoader;
 
 class RenderCanvasImage : public RenderImage
 {
 public:
-    RenderCanvasImage(DOM::NodeImpl*);
+    RenderCanvasImage(NodeImpl*);
     virtual ~RenderCanvasImage();
 
     virtual const char *renderName() const { return "RenderCanvasImage"; }
@@ -56,8 +53,8 @@ public:
     void setNeedsImageUpdate();
     
     // don't even think about making this method virtual!
-    DOM::HTMLElementImpl* element() const
-    { return static_cast<DOM::HTMLElementImpl*>(RenderObject::element()); }
+    HTMLElementImpl* element() const
+        { return static_cast<HTMLElementImpl*>(RenderImage::element()); }
     
     void updateDrawnImage();
     CGContextRef drawingContext();
@@ -70,11 +67,10 @@ private:
     void *_drawingContextData;
     CGImageRef _drawnImage;
     
-    unsigned _needsImageUpdate:1;
+    unsigned _needsImageUpdate : 1;
 };
 
-
-}; //namespace
+} //namespace
 
 #endif
 

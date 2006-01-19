@@ -6,7 +6,7 @@
  *                     2000-2001 Simon Hausmann <hausmann@kde.org>
  *                     2000-2001 Dirk Mueller <mueller@kde.org>
  *                     2000 Stefan Schimanski <1Stein@gmx.de>
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,29 +27,23 @@
 #ifndef khtmlpart_p_h
 #define khtmlpart_p_h
 
-#include <qtimer.h>
-#include <kcursor.h>
+#include "Frame.h"
+#include "SelectionController.h"
+#include "css_valueimpl.h"
+#include "edit_command.h"
+#include "kjs_proxy.h"
 #include <kio/global.h>
+#include <qdatetime.h>
+#include <qtimer.h>
 
-#include "khtml_factory.h"
-#include "khtml_events.h"
-#include "BrowserExtension.h"
-#include "khtml_settings.h"
-#include "decoder.h"
-#include "formdata.h"
-#include "ecma/kjs_proxy.h"
-#include "css/css_valueimpl.h"
-#include "editing/edit_command.h"
-#include "editing/SelectionController.h"
-
-namespace KIO
-{
-  class Job;
-  class TransferJob;
+namespace KIO {
+    class TransferJob;
 }
 
-namespace khtml
+namespace WebCore
 {
+    class Decoder;
+
   struct ChildFrame
   {
       enum Type { Frame, IFrame, Object };
@@ -57,7 +51,7 @@ namespace khtml
       ChildFrame() { m_bCompleted = false; m_bPreloaded = false; m_type = Frame; m_bNotify = false; m_hasFallbackContent = false; }
 
 
-    QGuardedPtr<khtml::RenderPart> m_renderer;
+    QGuardedPtr<RenderPart> m_renderer;
     QGuardedPtr<ObjectContents> m_frame;
     QGuardedPtr<BrowserExtension> m_extension;
     QString m_serviceName;
@@ -76,7 +70,7 @@ namespace khtml
   };
 }
 
-class FrameList : public QValueList<khtml::ChildFrame>
+class FrameList : public QValueList<WebCore::ChildFrame>
 {
 public:
     Iterator find( const QString &name );
@@ -98,10 +92,10 @@ class FramePrivate
 public:
   FramePrivate(QObject* parent)
   {
-    m_doc = 0L;
-    m_jscript = 0L;
+    m_doc = 0;
+    m_jscript = 0;
     m_runningScripts = 0;
-    m_job = 0L;
+    m_job = 0;
     m_bComplete = true;
     m_bLoadingMainResource = false;
     m_bLoadEventEmitted = true;
@@ -112,7 +106,7 @@ public:
     m_zoomFactor = 100;
     m_bDnd = true;
     m_haveEncoding = false;
-    m_activeFrame = 0L;
+    m_activeFrame = 0;
     m_frameNameId = 1;
 
     m_restored = false;
@@ -149,10 +143,10 @@ public:
     m_cancelWithLoadInProgress = false;
     
     // inherit settings from parent
-    if(parent && parent->inherits("Frame"))
+    if (parent && parent->inherits("Frame"))
     {
         Frame *frame = static_cast<Frame*>(parent);
-        if(frame->d)
+        if (frame->d)
         {
             m_bJScriptForce = frame->d->m_bJScriptForce;
             m_bJScriptOverride = frame->d->m_bJScriptOverride;
@@ -182,12 +176,12 @@ public:
   }
 
   FrameList m_frames;
-  QValueList<khtml::ChildFrame> m_objects;
+  QValueList<WebCore::ChildFrame> m_objects;
 
   QGuardedPtr<FrameView> m_view;
   WebCore::BrowserExtension *m_extension;
   DOM::DocumentImpl *m_doc;
-  RefPtr<khtml::Decoder> m_decoder;
+  RefPtr<WebCore::Decoder> m_decoder;
   QString m_encoding;
   QString scheduledScript;
   RefPtr<DOM::NodeImpl> scheduledScriptNode;
@@ -247,7 +241,7 @@ public:
   struct SubmitForm {
     const char *submitAction;
     QString submitUrl;
-    khtml::FormData submitFormData;
+    WebCore::FormData submitFormData;
     QString target;
     QString submitContentType;
     QString submitBoundary;
@@ -258,12 +252,12 @@ public:
   bool m_bMousePressed;
   RefPtr<DOM::NodeImpl> m_mousePressNode; //node under the mouse when the mouse was pressed (set in the mouse handler)
 
-  khtml::ETextGranularity m_selectionGranularity;
+  WebCore::ETextGranularity m_selectionGranularity;
   bool m_beganSelectingText;
 
-  khtml::SelectionController m_selection;
-  khtml::SelectionController m_dragCaret;
-  khtml::SelectionController m_mark;
+  WebCore::SelectionController m_selection;
+  WebCore::SelectionController m_dragCaret;
+  WebCore::Selection m_mark;
   int m_caretBlinkTimer;
 
   bool m_caretVisible:1;
@@ -277,7 +271,7 @@ public:
   bool m_focusNodeRestored:1;
   bool m_isFocused:1;
 
-  khtml::EditCommandPtr m_lastEditCommand;
+  WebCore::EditCommandPtr m_lastEditCommand;
   int m_xPosForVerticalArrowNavigation;
   DOM::CSSMutableStyleDeclarationImpl *m_typingStyle;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,9 @@
 #include "DocumentImpl.h"
 #include "InlineTextBox.h"
 #include "append_node_command.h"
+#include "apply_style_command.h"
 #include "delete_from_text_node_command.h"
+#include "delete_selection_command.h"
 #include "dom2_rangeimpl.h"
 #include "dom_textimpl.h"
 #include "htmlediting.h"
