@@ -100,8 +100,6 @@ using KJS::SavedProperties;
 using KJS::SavedBuiltins;
 using KJS::Window;
 
-using KParts::URLArgs;
-
 using KJS::Bindings::RootObject;
 
 NSString *WebCoreElementDOMNodeKey =            @"WebElementDOMNode";
