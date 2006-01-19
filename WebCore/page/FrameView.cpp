@@ -58,6 +58,10 @@
 
 #include "CachedImage.h"
 
+#if __APPLE__
+#include "MacFrame.h"
+#endif
+
 // #define INSTRUMENT_LAYOUT_SCHEDULING 1
 
 using namespace DOM;
