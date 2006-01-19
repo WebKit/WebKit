@@ -31,6 +31,7 @@ namespace khtml {
     class RenderLineEdit;
     class RenderFileButton;
     class RenderSlider;
+    class RenderTextField;
 }
 
 namespace DOM {

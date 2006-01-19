@@ -56,17 +56,21 @@ RenderContainer::~RenderContainer()
 
 void RenderContainer::destroy()
 {
-    destroyLeftoverAnonymousChildren();
+    destroyLeftoverChildren();
     RenderBox::destroy();
 }
 
-void RenderContainer::destroyLeftoverAnonymousChildren()
+void RenderContainer::destroyLeftoverChildren()
 {
     while (m_first) {
         if (m_first->isListMarker())
             m_first->remove();  // List markers are owned by their enclosing list and so don't get destroyed by this container.
-        else
+        else {
+        // Destroy any anonymous children remaining in the render tree, as well as implicit (shadow) DOM elements like those used in the engine-based textfields.
+            if (m_first->element())
+                m_first->element()->setRenderer(0);
             m_first->destroy();
+        }
     }
 }
 

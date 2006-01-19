@@ -461,7 +461,9 @@ void HTMLElementImpl::addHTMLAlignment(MappedAttributeImpl* attr)
 
 bool HTMLElementImpl::isFocusable() const
 {
-    return isContentEditable() && parent() && !parent()->isContentEditable();
+    // Added the check for !parent() so shadow elements, like those in engine-based textfields, can get focus.
+    // We may reevaluate this when we resolve outstanding focus issues with these shadow elements.
+    return isContentEditable() && ((parent() && !parent()->isContentEditable()) || !parent());
 }
 
 bool HTMLElementImpl::isContentEditable() const 

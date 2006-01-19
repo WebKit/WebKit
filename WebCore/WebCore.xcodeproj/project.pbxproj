@@ -1322,6 +1322,10 @@
 		A8FEFB0B0979F472005839FD /* RenderForeignObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8FEFB090979F472005839FD /* RenderForeignObject.cpp */; };
 		A8FEFB310979F4F6005839FD /* SVGForeignObjectElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8FEFB2F0979F4F6005839FD /* SVGForeignObjectElementImpl.cpp */; };
 		A8FEFB320979F4F6005839FD /* SVGForeignObjectElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8FEFB300979F4F6005839FD /* SVGForeignObjectElementImpl.h */; };
+		AB67D1A8097F3AE300F9392E /* RenderTextField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB67D1A6097F3AE300F9392E /* RenderTextField.cpp */; };
+		AB67D1A9097F3AE300F9392E /* RenderTextField.h in Headers */ = {isa = PBXBuildFile; fileRef = AB67D1A7097F3AE300F9392E /* RenderTextField.h */; };
+		AB67D1AA097F3AE300F9392E /* RenderTextField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB67D1A6097F3AE300F9392E /* RenderTextField.cpp */; };
+		AB67D1AB097F3AE300F9392E /* RenderTextField.h in Headers */ = {isa = PBXBuildFile; fileRef = AB67D1A7097F3AE300F9392E /* RenderTextField.h */; };
 		AED9800C0976B38E000609F6 /* Selection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AED9800A0976B38E000609F6 /* Selection.cpp */; };
 		AED9800D0976B38E000609F6 /* Selection.h in Headers */ = {isa = PBXBuildFile; fileRef = AED9800B0976B38E000609F6 /* Selection.h */; };
 		AED9800E0976B38E000609F6 /* Selection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AED9800A0976B38E000609F6 /* Selection.cpp */; };
@@ -2406,6 +2410,8 @@
 		A8FEFB090979F472005839FD /* RenderForeignObject.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderForeignObject.cpp; sourceTree = "<group>"; };
 		A8FEFB2F0979F4F6005839FD /* SVGForeignObjectElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGForeignObjectElementImpl.cpp; sourceTree = "<group>"; };
 		A8FEFB300979F4F6005839FD /* SVGForeignObjectElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGForeignObjectElementImpl.h; sourceTree = "<group>"; };
+		AB67D1A6097F3AE300F9392E /* RenderTextField.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTextField.cpp; sourceTree = "<group>"; };
+		AB67D1A7097F3AE300F9392E /* RenderTextField.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderTextField.h; sourceTree = "<group>"; };
 		AED9800A0976B38E000609F6 /* Selection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Selection.cpp; path = editing/Selection.cpp; sourceTree = "<group>"; };
 		AED9800B0976B38E000609F6 /* Selection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Selection.h; path = editing/Selection.h; sourceTree = "<group>"; };
 		BC06F24906D18A7E004A6FA3 /* xsl_stylesheetimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = xsl_stylesheetimpl.cpp; path = xsl/xsl_stylesheetimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -4093,6 +4099,8 @@
 		F523D2F302DE443B018635CA /* rendering */ = {
 			isa = PBXGroup;
 			children = (
+				AB67D1A6097F3AE300F9392E /* RenderTextField.cpp */,
+				AB67D1A7097F3AE300F9392E /* RenderTextField.h */,
 				BCEA4813097D93020094C9E4 /* bidi.cpp */,
 				BCEA4814097D93020094C9E4 /* bidi.h */,
 				BCEA4815097D93020094C9E4 /* break_lines.cpp */,
@@ -4959,6 +4967,7 @@
 				BCEA4890097D93020094C9E4 /* table_layout.h in Headers */,
 				BCEA4944097F0F5C0094C9E4 /* BrowserExtension.h in Headers */,
 				BCEA4947097F0F770094C9E4 /* BrowserExtensionMac.h in Headers */,
+				AB67D1A9097F3AE300F9392E /* RenderTextField.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5302,6 +5311,7 @@
 				BCEA48CB097D93020094C9E4 /* RenderText.h in Headers */,
 				BCEA48CD097D93020094C9E4 /* RenderTextFragment.h in Headers */,
 				BCEA48CF097D93020094C9E4 /* table_layout.h in Headers */,
+				AB67D1AB097F3AE300F9392E /* RenderTextField.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6863,6 +6873,7 @@
 				BCEA488F097D93020094C9E4 /* table_layout.cpp in Sources */,
 				937A36A7097E2E3200E4EE2F /* UserAgentStyleSheets.cpp in Sources */,
 				BCEA4948097F0F770094C9E4 /* BrowserExtensionMac.mm in Sources */,
+				AB67D1A8097F3AE300F9392E /* RenderTextField.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7160,6 +7171,7 @@
 				BCEA48CC097D93020094C9E4 /* RenderTextFragment.cpp in Sources */,
 				BCEA48CE097D93020094C9E4 /* table_layout.cpp in Sources */,
 				937A36A8097E2E3200E4EE2F /* UserAgentStyleSheets.cpp in Sources */,
+				AB67D1AA097F3AE300F9392E /* RenderTextField.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

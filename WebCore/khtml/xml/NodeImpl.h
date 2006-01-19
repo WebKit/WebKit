@@ -210,6 +210,7 @@ public:
     bool hovered() const { return m_hovered; }
     bool focused() const { return m_focused; }
     bool attached() const   { return m_attached; }
+    void setAttached(bool b = true) { m_attached = b; }
     bool changed() const    { return m_changed; }
     bool hasChangedChild() const { return m_hasChangedChild; }
     bool isLink() const { return m_isLink; }

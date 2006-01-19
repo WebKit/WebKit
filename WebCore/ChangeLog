@@ -1,3 +1,55 @@
+2006-01-19  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt and Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6665
+        Implement NSView-less version of <input type="text">
+        
+        Initial implementation of new and improved text fields.  
+        This will only be turned on if an input element has khtml-appearance: textfield.
+
+        * WebCore.xcodeproj/project.pbxproj: Added RenderTextField.h and RenderTextField.cpp
+        * css/cssvalues.in: Fixed omitted button-bevel value.  
+          This was causing an off-by-one error when getting khtml-appearance value.
+        * khtml/html/HTMLInputElementImpl.cpp: Added checks for khtml-appearance to decide 
+          when to use RenderTextField instead of RenderLineEdit.
+        (DOM::HTMLInputElementImpl::selectionStart):
+        (DOM::HTMLInputElementImpl::selectionEnd):
+        (DOM::HTMLInputElementImpl::setSelectionStart):
+        (DOM::HTMLInputElementImpl::setSelectionEnd):
+        (DOM::HTMLInputElementImpl::select):
+        (DOM::HTMLInputElementImpl::setSelectionRange):
+        (DOM::HTMLInputElementImpl::createRenderer):
+        (DOM::HTMLInputElementImpl::defaultEventHandler):
+        * khtml/html/HTMLInputElementImpl.h:
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::isFocusable): Also allow editable elements with no parent to be focusable.
+        * khtml/xml/NodeImpl.h:
+        (WebCore::NodeImpl::setAttached): Added to set m_attached without having to call attach().
+        * rendering/RenderTextField.cpp: Added.
+        (khtml:::RenderBlock):
+        (khtml::RenderTextField::~RenderTextField):
+        (khtml::RenderTextField::addChild):
+        (khtml::RenderTextField::removeChild):
+        (khtml::RenderTextField::setStyle):
+        (khtml::RenderTextField::getDivStyle):
+        (khtml::RenderTextField::updateFromElement):
+        (khtml::RenderTextField::selectionStart):
+        (khtml::RenderTextField::selectionEnd):
+        (khtml::RenderTextField::setSelectionStart):
+        (khtml::RenderTextField::setSelectionEnd):
+        (khtml::RenderTextField::select):
+        (khtml::RenderTextField::setSelectionRange):
+        * rendering/RenderTextField.h: Added.
+        (khtml::RenderTextField::removeLeftoverAnonymousBoxes):
+        (khtml::RenderTextField::renderName):
+        * rendering/render_container.cpp:
+        (RenderContainer::destroy): use renamed destroyLeftoverChildren.
+        (RenderContainer::destroyLeftoverChildren): renamed from destroyLeftoverAnonymousChildren.
+        * rendering/render_container.h:
+        * rendering/render_flow.cpp:
+        (RenderFlow::destroy): use renamed destroyLeftoverChildren.
+
 2006-01-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.
