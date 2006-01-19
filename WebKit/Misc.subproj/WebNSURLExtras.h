@@ -87,6 +87,7 @@
 - (BOOL)_webkit_isFTPDirectoryURL;
 - (BOOL)_webkit_isFileURL;
 - (BOOL)_webkit_looksLikeAbsoluteURL;
+- (NSRange)_webkit_rangeOfURLScheme;
 - (NSString *)_webkit_URLFragment;
 - (NSString *)_webkit_scriptIfJavaScriptURL;
 

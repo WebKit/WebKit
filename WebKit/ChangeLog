@@ -1,3 +1,11 @@
+2006-01-19  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim O.
+
+        * Misc.subproj/WebNSURLExtras.h:
+        added declaration of _webkit_rangeOfURLScheme so Safari can call it as a step
+        towards weaning Safari from Foundation SPI.
+
 2006-01-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by eric
