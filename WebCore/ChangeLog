@@ -1,3 +1,19 @@
+2006-01-19  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Remove CFDictionary usage from KWQObject.*
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6468
+
+        * kwq/KWQObject.cpp:
+        (KWQObjectTimer::KWQObjectTimer):
+        (QObject::restartTimer):
+        (QObject::timerIntervals):
+        (KWQObjectTimer::deleteTimer):
+        (QObject::killTimer):
+        (QObject::killTimers):
+        (sendDeferredTimerEvent):
+
 2006-01-18  David Hyatt <hyatt@apple.com
 
         Fix for bug 6657, remove all uses of MacFrame from cross-platform
