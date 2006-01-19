@@ -45,15 +45,13 @@ my $productDir = productDir();
 my @options = XcodeOptions();
 
 # Check that all the project directories are there.
-my @projects = ("JavaScriptCore", "WebCore", "WebKit");
+my @projects = ("JavaScriptCore", "JavaScriptGlue", "WebCore", "WebKit");
 my @otherDirs = ("WebKitLibraries");
-my $checkoutScript = "WebKitTools/checkout";
 for my $dir (@projects, @otherDirs) {
     if (! -d $dir) {
-        die "Error: No $dir directory found. Please run \"$checkoutScript\" first.\n";
+        die "Error: No $dir directory found. Please do a fresh checkout.\n";
     }
 }
-
 
 # Copy library and header from WebKitLibraries to a findable place in the product directory.
 my $srcLib = "WebKitLibraries/libWebKitSystemInterface.a";
@@ -63,6 +61,7 @@ if (!-e $lib || -M $lib > -M $srcLib) {
     system "ditto", $srcLib, $lib;
     system "ranlib", $lib;
 }
+
 my $srcHeader = "WebKitLibraries/WebKitSystemInterface.h";
 my $header = "$productDir/usr/local/include/WebKitSystemInterface.h";
 if (!-e $header || -M $header > -M $srcHeader) {
