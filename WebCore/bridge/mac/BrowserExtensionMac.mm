@@ -24,20 +24,22 @@
  */
 
 #import "config.h"
-#import "KWQKHTMLPartBrowserExtension.h"
+#import "BrowserExtensionMac.h"
 
 #import <kxmlcore/Assertions.h>
 #import "KWQExceptions.h"
 #import "WebCoreFrameBridge.h"
 #import "MacFrame.h"
 
-KHTMLPartBrowserExtension::KHTMLPartBrowserExtension(Frame *frame)
+using namespace WebCore;
+
+BrowserExtensionMac::BrowserExtensionMac(Frame *frame)
     : m_frame(Mac(frame))
 {
 }
 
-void KHTMLPartBrowserExtension::openURLRequest(const KURL &url, 
-					       const KParts::URLArgs &args)
+void BrowserExtensionMac::openURLRequest(const KURL &url, 
+					       const URLArgs &args)
 {
     if (url.protocol().lower() == "javascript") {
 	m_frame->createEmptyDocument();
@@ -47,27 +49,27 @@ void KHTMLPartBrowserExtension::openURLRequest(const KURL &url,
     }
 }
 
-void KHTMLPartBrowserExtension::openURLNotify()
+void BrowserExtensionMac::openURLNotify()
 {
 }
 
-void KHTMLPartBrowserExtension::createNewWindow(const KURL &url, 
-						const KParts::URLArgs &urlArgs) 
+void BrowserExtensionMac::createNewWindow(const KURL &url, 
+						const URLArgs &urlArgs) 
 {
-    createNewWindow(url, urlArgs, KParts::WindowArgs(), NULL);
+    createNewWindow(url, urlArgs, WindowArgs(), NULL);
 }
 
-void KHTMLPartBrowserExtension::createNewWindow(const KURL &url, 
-						const KParts::URLArgs &urlArgs, 
-						const KParts::WindowArgs &winArgs, 
+void BrowserExtensionMac::createNewWindow(const KURL &url, 
+						const URLArgs &urlArgs, 
+						const WindowArgs &winArgs, 
 						ObjectContents *&part)
 {
     createNewWindow(url, urlArgs, winArgs, &part);
 }
 
-void KHTMLPartBrowserExtension::createNewWindow(const KURL &url, 
-						const KParts::URLArgs &urlArgs, 
-						const KParts::WindowArgs &winArgs, 
+void BrowserExtensionMac::createNewWindow(const KURL &url, 
+						const URLArgs &urlArgs, 
+						const WindowArgs &winArgs, 
 						ObjectContents **partResult)
 { 
     KWQ_BLOCK_EXCEPTIONS;
@@ -166,33 +168,33 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void KHTMLPartBrowserExtension::setIconURL(const KURL &url)
+void BrowserExtensionMac::setIconURL(const KURL &url)
 {
     KWQ_BLOCK_EXCEPTIONS;
     [m_frame->bridge() setIconURL:url.getNSURL()];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void KHTMLPartBrowserExtension::setTypedIconURL(const KURL &url, const QString &type)
+void BrowserExtensionMac::setTypedIconURL(const KURL &url, const QString &type)
 {
     KWQ_BLOCK_EXCEPTIONS;
     [m_frame->bridge() setIconURL:url.getNSURL() withType:type.getNSString()];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-int KHTMLPartBrowserExtension::getHistoryLength()
+int BrowserExtensionMac::getHistoryLength()
 {
     return [m_frame->bridge() historyLength];
 }
 
-void KHTMLPartBrowserExtension::goBackOrForward(int distance)
+void BrowserExtensionMac::goBackOrForward(int distance)
 {
     KWQ_BLOCK_EXCEPTIONS;
     [m_frame->bridge() goBackOrForward:distance];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-bool KHTMLPartBrowserExtension::canRunModal()
+bool BrowserExtensionMac::canRunModal()
 {
     KWQ_BLOCK_EXCEPTIONS;
     return [m_frame->bridge() canRunModal];
@@ -200,7 +202,7 @@ bool KHTMLPartBrowserExtension::canRunModal()
     return false;
 }
 
-bool KHTMLPartBrowserExtension::canRunModalNow()
+bool BrowserExtensionMac::canRunModalNow()
 {
     KWQ_BLOCK_EXCEPTIONS;
     return [m_frame->bridge() canRunModalNow];
@@ -208,7 +210,7 @@ bool KHTMLPartBrowserExtension::canRunModalNow()
     return false;
 }
 
-void KHTMLPartBrowserExtension::runModal()
+void BrowserExtensionMac::runModal()
 {
     KWQ_BLOCK_EXCEPTIONS;
     [m_frame->bridge() runModal];

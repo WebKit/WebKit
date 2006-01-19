@@ -1068,6 +1068,8 @@ private:
   DOM::NodeImpl *mousePressNode();
 
   bool isComplete();
+  
+  void replaceContentsWithScriptResult(const KURL &url);
 
 protected:
   mutable RefPtr<DOM::NodeImpl> _elementToDraw;
@@ -1084,8 +1086,6 @@ protected:
   void emitLoadEvent();
   
   void receivedFirstData();
-
-  void replaceContentsWithScriptResult( const KURL &url );
 
   bool handleMouseMoveEventDrag(khtml::MouseMoveEvent *event);
   bool handleMouseMoveEventOver(khtml::MouseMoveEvent *event);
