@@ -31,7 +31,7 @@ for (var i = 0; i < styleSheet.cssRules.length; i++) {
 	else if (i == 9) prop = "border-bottom";
 	else if (i == 10) prop = "border-left";
 	else if (i == 11) prop = "border-right";
-	s += rule.style.getPropertyValue(prop) + "\n";
+	s += rule.style.getPropertyValue(prop) + " (" + rule.style[prop] + ")\n";
 }
 document.getElementById("result").innerText = s;
 </script>

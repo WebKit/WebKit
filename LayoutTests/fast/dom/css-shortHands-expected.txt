@@ -4,16 +4,16 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x579
       RenderBlock {PRE} at (0,0) size 784x180
-        RenderText {TEXT} at (0,0) size 120x180
-          text run at (0,0) width 24: "1px"
-          text run at (0,15) width 56: "1px 2px"
-          text run at (0,30) width 88: "1px 2px 3px"
-          text run at (0,45) width 120: "1px 2px 3px 4px"
-          text run at (0,60) width 24: "1px"
-          text run at (0,75) width 56: "1px 2px"
-          text run at (0,90) width 88: "1px 2px 3px"
-          text run at (0,105) width 120: "1px 2px 3px 4px"
-          text run at (0,120) width 24: "red"
-          text run at (0,135) width 24: "red"
-          text run at (0,150) width 24: "red"
-          text run at (0,165) width 24: "red"
+        RenderText {TEXT} at (0,0) size 264x180
+          text run at (0,0) width 72: "1px (1px)"
+          text run at (0,15) width 136: "1px 2px (1px 2px)"
+          text run at (0,30) width 200: "1px 2px 3px (1px 2px 3px)"
+          text run at (0,45) width 264: "1px 2px 3px 4px (1px 2px 3px 4px)"
+          text run at (0,60) width 72: "1px (1px)"
+          text run at (0,75) width 136: "1px 2px (1px 2px)"
+          text run at (0,90) width 200: "1px 2px 3px (1px 2px 3px)"
+          text run at (0,105) width 264: "1px 2px 3px 4px (1px 2px 3px 4px)"
+          text run at (0,120) width 72: "red (red)"
+          text run at (0,135) width 72: "red (red)"
+          text run at (0,150) width 72: "red (red)"
+          text run at (0,165) width 72: "red (red)"

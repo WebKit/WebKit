@@ -1,3 +1,16 @@
+2006-01-19  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6653
+        CSSStyleDeclaration returns empty string when trying to access shorthand 
+        properties using JS accessors.
+        
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::DOMCSSStyleDeclaration::cssPropertyGetter):
+        if getCSSPropertyValue returns 0 (which is true for shorthand properties), 
+        try getPropertyValue instead.
+
 2006-01-19  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt and Darin.

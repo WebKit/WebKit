@@ -1,3 +1,17 @@
+2006-01-19  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6653
+        CSSStyleDeclaration returns empty string when trying to access shorthand 
+        properties using JS accessors.
+
+        * fast/dom/css-shortHands-expected.checksum:
+        * fast/dom/css-shortHands-expected.png:
+        * fast/dom/css-shortHands-expected.txt:
+        * fast/dom/css-shortHands.html:
+        Update
+
 2006-01-19  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin & anders.
