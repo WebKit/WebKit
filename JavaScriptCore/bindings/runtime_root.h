@@ -49,19 +49,11 @@ class RootObject
 {
 friend class JavaJSObject;
 public:
-    RootObject (const void *nativeHandle) : _nativeHandle(nativeHandle), _imp(0), _interpreter(0) {}
-    ~RootObject () {
-        JSLock lock;
-        gcUnprotect(_imp);
-    }
+    RootObject(const void *nativeHandle) : _nativeHandle(nativeHandle), _interpreter(0) {}
     
-    void setRootObjectImp (JSObject *i) { 
-        JSLock lock;
-        _imp = i;
-        gcProtect(_imp);
-    }
+    void setRootObjectImp(JSObject* i) { _imp = i; }
     
-    JSObject *rootObjectImp() const { return _imp; }
+    JSObject *rootObjectImp() const { return _imp.get(); }
     
     void setInterpreter (Interpreter *i);
     Interpreter *interpreter() const { return _interpreter; }
@@ -84,7 +76,7 @@ public:
 
 private:
     const void *_nativeHandle;
-    JSObject *_imp;
+    ProtectedPtr<JSObject> _imp;
     Interpreter *_interpreter;
 
     static FindRootObjectForNativeHandleFunctionPtr _findRootObjectForNativeHandleFunctionPtr;

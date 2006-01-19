@@ -1,3 +1,25 @@
+2006-01-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - hash table fixes needed for my WebCore changes
+
+        * kxmlcore/HashTable.h: (KXMLCore::HashTableConstIterator::operator=):
+        Added a missing return statement.
+
+        * kxmlcore/HashTraits.h: Fix traits so they work properly for classes where you
+        can't instantiate with a 0 by using traits rather than ? : to select the default
+        emtpy value of hash table keys.
+
+        - small cleanup of "runtime" code left over from recent JavaScript crash fix
+
+        * bindings/runtime_root.h:
+        (KJS::Bindings::RootObject::RootObject): No explicit initialization of _imp needed
+        since it's now a ProtectedPtr.
+        (KJS::Bindings::RootObject::setRootObjectImp): Remove old code that relied on the
+        fact that _imp was 0 and replaced with use of ProtectedPtr.
+        (KJS::Bindings::RootObject::rootObjectImp): Updated since _imp is a ProtectedPtr.
+
 2006-01-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.

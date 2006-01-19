@@ -44,12 +44,21 @@ namespace KXMLCore {
     template <> struct IsInteger<long long>          { static const bool value = true; };
     template <> struct IsInteger<unsigned long long> { static const bool value = true; };
 
-    template<typename T> struct GenericHashTraits {
+    template<bool isInteger, typename T> struct GenericHashTraitsBase;
+    template<typename T> struct GenericHashTraitsBase<true, T> {
         typedef T TraitType;
-        static const bool emptyValueIsZero = IsInteger<T>::value;
-        static const bool needsDestruction = !IsInteger<T>::value;
-        static TraitType emptyValue() { return IsInteger<T>::value ? 0 : TraitType(); }
+        static const bool emptyValueIsZero = true;
+        static const bool needsDestruction = false;
+        static TraitType emptyValue() { return 0; }
     };
+    template<typename T> struct GenericHashTraitsBase<false, T> {
+        typedef T TraitType;
+        static const bool emptyValueIsZero = false;
+        static const bool needsDestruction = true;
+        static TraitType emptyValue() { return TraitType(); }
+    };
+
+    template<typename T> struct GenericHashTraits : GenericHashTraitsBase<IsInteger<T>::value, T> { };
 
     template<typename T> struct HashTraits : GenericHashTraits<T> { };
 

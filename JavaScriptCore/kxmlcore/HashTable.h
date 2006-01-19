@@ -139,6 +139,8 @@ namespace KXMLCore {
 
             removeIterator(this);
             addIterator(other.m_table, this);
+
+            return *this;
         }
 #endif
 
