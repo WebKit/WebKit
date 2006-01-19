@@ -1,5 +1,5 @@
 /*
- * This file is part of the KDE project.
+ * This file is part of the WebKit project.
  *
  * Copyright (C) 2006 Apple Computer, Inc.
  *
@@ -54,9 +54,17 @@ void RenderSVGText::paint(PaintInfo& paintInfo, int parentX, int parentY)
     if (paintInfo.p->paintingDisabled())
         return;
 
-    paintInfo.p->save();
+    KRenderingDevice *renderingDevice = QPainter::renderingDevice();
+    KRenderingDeviceContext *context = renderingDevice->currentContext();
+    bool shouldPopContext = false;
+    if (!context) {
+        // Need to push a device context on the stack if empty.
+        context = paintInfo.p->createRenderingDeviceContext();
+        renderingDevice->pushContext(context);
+        shouldPopContext = true;
+    } else
+        paintInfo.p->save();
 
-    KRenderingDeviceContext *context = QPainter::renderingDevice()->currentContext();
     context->concatCTM(localTransform());
     context->concatCTM(QMatrix().translate(parentX, parentY));
     context->concatCTM(translationForAttributes());
@@ -80,7 +88,12 @@ void RenderSVGText::paint(PaintInfo& paintInfo, int parentX, int parentY)
     if (filter)
         filter->applyFilter(boundingBox);
 
-    paintInfo.p->restore();
+    // restore drawing state
+    if (shouldPopContext) {
+        renderingDevice->popContext();
+        delete context;
+    } else
+        paintInfo.p->restore();
 }
 
 bool RenderSVGText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, WebCore::HitTestAction hitTestAction)

@@ -1,7 +1,8 @@
 /*
     Copyright (C) 2006 Alexander Kellett <lypanov@kde.org>
+    Copyright (C) 2006 Apple Computer, Inc.
 
-    This file is part of the WebKit project
+    This file is part of the WebKit project.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public

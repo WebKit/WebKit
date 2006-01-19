@@ -103,6 +103,20 @@
 
 2006-01-19  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by darin & anders.
+
+        Fix opacity crasher for <text> and <image>.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6668
+        Even though the crash is fixed, opacity still doesn't work.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6669
+
+        * kcanvas/RenderSVGImage.cpp:
+        (RenderSVGImage::paint):
+        * kcanvas/RenderSVGText.cpp:
+        (RenderSVGText::paint):
+
+2006-01-19  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by darin.
 
         Remove CFDictionary usage from KWQObject.*
