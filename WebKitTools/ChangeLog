@@ -1,3 +1,7 @@
+2006-01-19  Darin Adler  <darin@apple.com>
+
+        * Scripts/report-include-statistics: Added a new script.
+
 2006-01-19  Timothy Hatcher  <timothy@apple.com>
 
         * Scripts/build-webkit: include JavaScriptGlue in the build
