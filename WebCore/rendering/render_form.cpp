@@ -108,7 +108,7 @@ void RenderFormElement::layout()
 
 void RenderFormElement::slotClicked()
 {
-    // FIXME: Should share code with KHTMLView::dispatchMouseEvent, which does a lot of the same stuff.
+    // FIXME: Should share code with FrameView::dispatchMouseEvent, which does a lot of the same stuff.
 
     RenderArena *arena = ref();
 

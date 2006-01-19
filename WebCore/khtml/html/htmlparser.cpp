@@ -118,7 +118,7 @@ public:
  *    element or ignore the tag.
  *
  */
-HTMLParser::HTMLParser(KHTMLView *_parent, DocumentImpl *doc, bool includesComments) 
+HTMLParser::HTMLParser(FrameView *_parent, DocumentImpl *doc, bool includesComments) 
     : current(0), currentIsReferenced(false), includesCommentsInDOM(includesComments)
 {
     HTMLWidget    = _parent;

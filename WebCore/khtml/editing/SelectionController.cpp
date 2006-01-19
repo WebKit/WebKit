@@ -702,7 +702,7 @@ void SelectionController::needsCaretRepaint()
     if (!m_sel.start().node()->getDocument())
         return;
 
-    KHTMLView *v = m_sel.start().node()->getDocument()->view();
+    FrameView *v = m_sel.start().node()->getDocument()->view();
     if (!v)
         return;
 

@@ -835,7 +835,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
     return m_renderer->document()->topDocument()->renderer();
 }
 
-- (KHTMLView *)topView
+- (FrameView *)topView
 {
     return m_renderer->document()->topDocument()->renderer()->canvas()->view();
 }
@@ -1103,7 +1103,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
 - (id)doAXTextMarkerForPosition: (NSPoint) point
 {
     // convert absolute point to view coordinates
-    KHTMLView *docView = [self topView];
+    FrameView *docView = [self topView];
     NSView *view = docView->getView();
     RenderObject *renderer = [self topRenderer];
     NodeImpl *innerNode = NULL;
@@ -1130,16 +1130,16 @@ static IntRect boundingBoxRect(RenderObject* obj)
 
         // descend into widget (FRAME, IFRAME, OBJECT...)
         QWidget *widget = static_cast<RenderWidget *>(renderer)->widget();
-        if (!widget || !widget->inherits("KHTMLView"))
+        if (!widget || !widget->inherits("FrameView"))
             break;
-        Frame *frame = static_cast<KHTMLView *>(widget)->frame();
+        Frame *frame = static_cast<FrameView *>(widget)->frame();
         if (!frame)
             break;
         DocumentImpl *document = frame->xmlDocImpl();
         if (!document)
             break;
         renderer = document->renderer();
-        docView = static_cast<KHTMLView *>(widget);
+        docView = static_cast<FrameView *>(widget);
         view = docView->getDocumentView();
     }
     
@@ -1167,7 +1167,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
 
     // try to use the document view from the selection, so that nested WebAreas work,
     // but fall back to the top level doc if we do not find it easily
-    KHTMLView *docView = NULL;
+    FrameView *docView = NULL;
     RenderObject * renderer = startVisiblePosition.deepEquivalent().node()->renderer();
     if (renderer) {
         DocumentImpl* doc = renderer->document();

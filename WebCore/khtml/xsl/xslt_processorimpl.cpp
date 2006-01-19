@@ -187,7 +187,7 @@ static void freeXsltParamArray(const char **params)
 }
 
 
-RefPtr<DocumentImpl> XSLTProcessorImpl::createDocumentFromSource(const QString &sourceString, const QString &sourceEncoding, const QString &sourceMIMEType, NodeImpl *sourceNode, KHTMLView *view)
+RefPtr<DocumentImpl> XSLTProcessorImpl::createDocumentFromSource(const QString &sourceString, const QString &sourceEncoding, const QString &sourceMIMEType, NodeImpl *sourceNode, FrameView *view)
 {
     RefPtr<DocumentImpl> ownerDocument = sourceNode->getDocument();
     bool sourceIsDocument = (sourceNode == ownerDocument.get());

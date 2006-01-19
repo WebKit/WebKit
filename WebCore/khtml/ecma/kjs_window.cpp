@@ -1560,7 +1560,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
   if (!frame)
     return jsUndefined();
 
-  KHTMLView *widget = frame->view();
+  FrameView *widget = frame->view();
   JSValue *v = args[0];
   UString s = v->toString(exec);
   DOMString str = s.domString();

@@ -28,7 +28,7 @@
 #include <qwidget.h>
 #include <qmap.h>
 
-class KHTMLView;
+class FrameView;
 
 namespace DOM {
     class HTMLElementImpl;

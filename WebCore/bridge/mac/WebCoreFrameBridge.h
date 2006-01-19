@@ -33,7 +33,7 @@
 #ifdef __cplusplus
 
 class MacFrame;
-class KHTMLView;
+class FrameView;
 class RenderArena;
 
 namespace khtml {
@@ -46,7 +46,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 #else
 
 @class MacFrame;
-@class KHTMLView;
+@class FrameView;
 @class KHTMLRenderPart;
 @class RenderArena;
 
@@ -279,7 +279,7 @@ typedef enum
 
 - (BOOL)scrollOverflowInDirection:(WebScrollDirection)direction granularity:(WebScrollGranularity)granularity;
 
-- (void)createKHTMLViewWithNSView:(NSView *)view marginWidth:(int)mw marginHeight:(int)mh;
+- (void)createFrameViewWithNSView:(NSView *)view marginWidth:(int)mw marginHeight:(int)mh;
 
 - (BOOL)isFrameSet;
 

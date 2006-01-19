@@ -101,7 +101,7 @@ using namespace KJS;
     ASSERT(!document->inPageCache());
 
     if (document) {
-        KHTMLView *view = document->view();
+        FrameView *view = document->view();
         if (view)
             view->deref();
         document->deref();
@@ -117,7 +117,7 @@ using namespace KJS;
         ASSERT(document->view());
         ASSERT(document->inPageCache());
 
-        KHTMLView *view = document->view();
+        FrameView *view = document->view();
 
         MacFrame::clearTimers(view);
 
@@ -150,7 +150,7 @@ using namespace KJS;
         ASSERT(document->inPageCache());
         ASSERT(document->view());
 
-        KHTMLView *view = document->view();
+        FrameView *view = document->view();
 
         MacFrame::clearTimers(view);
 

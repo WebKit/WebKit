@@ -32,7 +32,7 @@
 #include <qscrollview.h>
 
 class Frame;
-class KHTMLView;
+class FrameView;
 
 namespace khtml {
     class RenderFrameSet;

@@ -118,7 +118,7 @@ void Frame::started(Job *j)
     Mac(this)->_started.call(j);
 }
 
-bool KHTMLView::isKHTMLView() const
+bool FrameView::isFrameView() const
 {
     return true;
 }
@@ -668,7 +668,7 @@ ObjectContents *MacFrame::createPart(const ChildFrame &child, const KURL &url, c
     return NULL;
 }
 
-void MacFrame::setView(KHTMLView *view)
+void MacFrame::setView(FrameView *view)
 {
     // Detach the document now, so any onUnload handlers get run - if
     // we wait until the view is destroyed, then things won't be
@@ -849,7 +849,7 @@ QString MacFrame::advanceToNextMisspelling(bool startBeforeSelection)
 
 bool MacFrame::wheelEvent(NSEvent *event)
 {
-    KHTMLView *v = d->m_view;
+    FrameView *v = d->m_view;
 
     if (v) {
         NSEvent *oldCurrentEvent = _currentEvent;
@@ -969,7 +969,7 @@ NSView *MacFrame::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirection direc
         if (renderer->isWidget()) {
             RenderWidget *renderWidget = static_cast<RenderWidget *>(renderer);
             QWidget *widget = renderWidget->widget();
-            KHTMLView *childFrameWidget = widget->isKHTMLView() ? static_cast<KHTMLView *>(widget) : 0;
+            FrameView *childFrameWidget = widget->isFrameView() ? static_cast<FrameView *>(widget) : 0;
             NSView *view = nil;
             if (childFrameWidget) {
                 view = Mac(childFrameWidget->frame())->nextKeyViewInFrame(0, direction);
@@ -1634,8 +1634,8 @@ NSView *MacFrame::mouseDownViewIfStillGood()
     if (!mouseDownView) {
         return nil;
     }
-    KHTMLView *topKHTMLView = d->m_view;
-    NSView *topView = topKHTMLView ? topKHTMLView->getView() : nil;
+    FrameView *topFrameView = d->m_view;
+    NSView *topView = topFrameView ? topFrameView->getView() : nil;
     if (!topView || !findViewInSubviews(topView, mouseDownView)) {
         _mouseDownView = nil;
         return nil;
@@ -1956,9 +1956,9 @@ bool MacFrame::passSubframeEventToSubframe(NodeImpl::MouseEvent &event)
             if (!renderer || !renderer->isWidget())
                 return false;
             QWidget *widget = static_cast<RenderWidget *>(renderer)->widget();
-            if (!widget || !widget->isKHTMLView())
+            if (!widget || !widget->isFrameView())
                 return false;
-            Frame *subframePart = static_cast<KHTMLView *>(widget)->frame();
+            Frame *subframePart = static_cast<FrameView *>(widget)->frame();
             if (!subframePart)
                 return false;
             [Mac(subframePart)->bridge() mouseMoved:_currentEvent];
@@ -1975,7 +1975,7 @@ bool MacFrame::passSubframeEventToSubframe(NodeImpl::MouseEvent &event)
                 return false;
             }
             QWidget *widget = static_cast<RenderWidget *>(renderer)->widget();
-            if (!widget || !widget->isKHTMLView())
+            if (!widget || !widget->isFrameView())
                 return false;
             if (!passWidgetMouseDownEventToWidget(static_cast<RenderWidget *>(renderer))) {
                 return false;
@@ -2051,7 +2051,7 @@ bool MacFrame::passWheelEventToChildWidget(NodeImpl *node)
 
 void MacFrame::mouseDown(NSEvent *event)
 {
-    KHTMLView *v = d->m_view;
+    FrameView *v = d->m_view;
     if (!v || _sendingEventToSubview) {
         return;
     }
@@ -2086,7 +2086,7 @@ void MacFrame::mouseDown(NSEvent *event)
 
 void MacFrame::mouseDragged(NSEvent *event)
 {
-    KHTMLView *v = d->m_view;
+    FrameView *v = d->m_view;
     if (!v || _sendingEventToSubview) {
         return;
     }
@@ -2108,7 +2108,7 @@ void MacFrame::mouseDragged(NSEvent *event)
 
 void MacFrame::mouseUp(NSEvent *event)
 {
-    KHTMLView *v = d->m_view;
+    FrameView *v = d->m_view;
     if (!v || _sendingEventToSubview) {
         return;
     }
@@ -2121,7 +2121,7 @@ void MacFrame::mouseUp(NSEvent *event)
     // Our behavior here is a little different that Qt. Qt always sends
     // a mouse release event, even for a double click. To correct problems
     // in khtml's DOM click event handling we do not send a release here
-    // for a double click. Instead we send that event from KHTMLView's
+    // for a double click. Instead we send that event from FrameView's
     // viewportMouseDoubleClickEvent. Note also that the third click of
     // a triple click is treated as a single click, but the fourth is then
     // treated as another double click. Hence the "% 2" below.
@@ -2206,7 +2206,7 @@ void MacFrame::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
 
 void MacFrame::mouseMoved(NSEvent *event)
 {
-    KHTMLView *v = d->m_view;
+    FrameView *v = d->m_view;
     // Reject a mouse moved if the button is down - screws up tracking during autoscroll
     // These happen because WebKit sometimes has to fake up moved events.
     if (!v || d->m_bMousePressed || _sendingEventToSubview) {
@@ -2248,7 +2248,7 @@ bool MacFrame::shouldDragAutoNode(NodeImpl* node, int x, int y) const
 bool MacFrame::sendContextMenuEvent(NSEvent *event)
 {
     DocumentImpl *doc = d->m_doc;
-    KHTMLView *v = d->m_view;
+    FrameView *v = d->m_view;
     if (!doc || !v) {
         return false;
     }

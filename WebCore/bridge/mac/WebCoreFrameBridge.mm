@@ -780,12 +780,12 @@ static bool initializedKJS = FALSE;
     m_frame->handleFallbackContent();
 }
 
-- (void)createKHTMLViewWithNSView:(NSView *)view marginWidth:(int)mw marginHeight:(int)mh
+- (void)createFrameViewWithNSView:(NSView *)view marginWidth:(int)mw marginHeight:(int)mh
 {
     // If we own the view, delete the old one - otherwise the render m_frame will take care of deleting the view.
     [self removeFromFrame];
 
-    KHTMLView *kview = new KHTMLView(m_frame, 0);
+    FrameView *kview = new FrameView(m_frame, 0);
     m_frame->setView(kview);
     kview->deref();
 
@@ -1013,7 +1013,7 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
     RenderCanvas* root = static_cast<RenderCanvas *>(m_frame->xmlDocImpl()->renderer());
     if (!root) return pages;
     
-    KHTMLView* view = m_frame->view();
+    FrameView* view = m_frame->view();
     NSView* documentView = view->getDocumentView();
     if (!documentView)
         return pages;
@@ -1289,14 +1289,14 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         if (!n || !n->renderer() || !n->renderer()->isWidget())
             break;
         widget = static_cast<RenderWidget *>(n->renderer())->widget();
-        if (!widget || !widget->inherits("KHTMLView"))
+        if (!widget || !widget->inherits("FrameView"))
             break;
         Frame *kpart = static_cast<HTMLFrameElementImpl *>(n)->contentPart();
         if (!kpart || !static_cast<MacFrame *>(kpart)->renderer())
             break;
         int absX, absY;
         n->renderer()->absolutePosition(absX, absY, true);
-        KHTMLView *view = static_cast<KHTMLView *>(widget);
+        FrameView *view = static_cast<FrameView *>(widget);
         widgetPoint.setX(widgetPoint.x() - absX + view->contentsX());
         widgetPoint.setY(widgetPoint.y() - absY + view->contentsY());
 
@@ -1770,7 +1770,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)adjustViewSize
 {
-    KHTMLView *view = m_frame->view();
+    FrameView *view = m_frame->view();
     if (view)
         view->adjustViewSize();
 }
@@ -2447,7 +2447,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!frameHasSelection(self))
         return;
     
-    KHTMLView *v = m_frame->view();
+    FrameView *v = m_frame->view();
     if (!v)
         return;
 
@@ -2480,7 +2480,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 {
     NSDragOperation op = NSDragOperationNone;
     if (m_frame) {
-        KHTMLView *v = m_frame->view();
+        FrameView *v = m_frame->view();
         if (v) {
             // Sending an event can result in the destruction of the view and part.
             v->ref();
@@ -2524,7 +2524,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 - (void)dragExitedWithDraggingInfo:(id <NSDraggingInfo>)info
 {
     if (m_frame) {
-        KHTMLView *v = m_frame->view();
+        FrameView *v = m_frame->view();
         if (v) {
             // Sending an event can result in the destruction of the view and part.
             v->ref();
@@ -2546,7 +2546,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 - (BOOL)concludeDragForDraggingInfo:(id <NSDraggingInfo>)info
 {
     if (m_frame) {
-        KHTMLView *v = m_frame->view();
+        FrameView *v = m_frame->view();
         if (v) {
             // Sending an event can result in the destruction of the view and part.
             v->ref();

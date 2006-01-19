@@ -31,9 +31,9 @@
 
 #include <ksvg2/misc/KSVGTimeScheduler.h>
 
-typedef KHTMLView KSVGView;
+typedef FrameView KSVGView;
 namespace KDOM {
-    typedef KHTMLView KDOMView;
+    typedef FrameView KDOMView;
 }
 
 namespace KSVG

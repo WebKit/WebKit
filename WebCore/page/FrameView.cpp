@@ -69,9 +69,9 @@ using namespace EventNames;
 using namespace HTMLNames;
 using namespace khtml;
 
-class KHTMLViewPrivate {
+class FrameViewPrivate {
 public:
-    KHTMLViewPrivate()
+    FrameViewPrivate()
     {
         repaintRects = 0;
         underMouse = 0;
@@ -86,7 +86,7 @@ public:
         firstLayout = true;
         needToInitScrollBars = true;
     }
-    ~KHTMLViewPrivate()
+    ~FrameViewPrivate()
     {
         if (underMouse)
 	    underMouse->deref();
@@ -164,7 +164,7 @@ public:
     RefPtr<NodeImpl> dragTarget;
 };
 
-KHTMLView::KHTMLView( Frame *frame, QWidget *parent, const char *name)
+FrameView::FrameView( Frame *frame, QWidget *parent, const char *name)
     : QScrollView( parent, name, WResizeNoErase | WRepaintNoErase | WPaintUnclipped ),
       _refCount(1)
 {
@@ -172,7 +172,7 @@ KHTMLView::KHTMLView( Frame *frame, QWidget *parent, const char *name)
 
     m_frame = frame;
     m_frame->ref();
-    d = new KHTMLViewPrivate;
+    d = new FrameViewPrivate;
 
     connect(this, SIGNAL(contentsMoving(int, int)), this, SLOT(slotScrollBarMoved()));
 
@@ -181,7 +181,7 @@ KHTMLView::KHTMLView( Frame *frame, QWidget *parent, const char *name)
     viewport()->show();
 }
 
-KHTMLView::~KHTMLView()
+FrameView::~FrameView()
 {
     resetScrollBars();
 
@@ -201,7 +201,7 @@ KHTMLView::~KHTMLView()
     delete d; d = 0;
 }
 
-void KHTMLView::clearPart()
+void FrameView::clearPart()
 {
     if (m_frame){
         m_frame->deref();
@@ -209,7 +209,7 @@ void KHTMLView::clearPart()
     }
 }
 
-void KHTMLView::resetScrollBars()
+void FrameView::resetScrollBars()
 {
     // Reset the document's scrollbars back to our defaults before we yield the floor.
     d->firstLayout = true;
@@ -219,7 +219,7 @@ void KHTMLView::resetScrollBars()
     suppressScrollBars(false);
 }
 
-void KHTMLView::init()
+void FrameView::init()
 {
 
     setFocusPolicy(QWidget::StrongFocus);
@@ -232,7 +232,7 @@ void KHTMLView::init()
     _height = 0;
 }
 
-void KHTMLView::clear()
+void FrameView::clear()
 {
 //    viewport()->erase();
 
@@ -254,13 +254,13 @@ void KHTMLView::clear()
     suppressScrollBars(true);
 }
 
-void KHTMLView::resizeEvent(QResizeEvent* e)
+void FrameView::resizeEvent(QResizeEvent* e)
 {
     if (m_frame && m_frame->xmlDocImpl())
         m_frame->xmlDocImpl()->dispatchWindowEvent(EventNames::resizeEvent, false, false);
 }
 
-void KHTMLView::initScrollBars()
+void FrameView::initScrollBars()
 {
     if (!d->needToInitScrollBars)
         return;
@@ -268,19 +268,19 @@ void KHTMLView::initScrollBars()
     setScrollBarsMode(hScrollBarMode());
 }
 
-void KHTMLView::setMarginWidth(int w)
+void FrameView::setMarginWidth(int w)
 {
     // make it update the rendering area when set
     _marginWidth = w;
 }
 
-void KHTMLView::setMarginHeight(int h)
+void FrameView::setMarginHeight(int h)
 {
     // make it update the rendering area when set
     _marginHeight = h;
 }
 
-void KHTMLView::adjustViewSize()
+void FrameView::adjustViewSize()
 {
     if( m_frame->xmlDocImpl() ) {
         DocumentImpl *document = m_frame->xmlDocImpl();
@@ -296,7 +296,7 @@ void KHTMLView::adjustViewSize()
     }
 }
 
-void KHTMLView::applyOverflowToViewport(RenderObject* o, ScrollBarMode& hMode, ScrollBarMode& vMode)
+void FrameView::applyOverflowToViewport(RenderObject* o, ScrollBarMode& hMode, ScrollBarMode& vMode)
 {
     // Handle the overflow:hidden/scroll case for the body/html elements.  WinIE treats
     // overflow:hidden and overflow:scroll on <body> as applying to the document's
@@ -318,22 +318,22 @@ void KHTMLView::applyOverflowToViewport(RenderObject* o, ScrollBarMode& hMode, S
     }
 }
 
-bool KHTMLView::inLayout() const
+bool FrameView::inLayout() const
 {
     return d->layoutSuppressed;
 }
 
-int KHTMLView::layoutCount() const
+int FrameView::layoutCount() const
 {
     return d->layoutCount;
 }
 
-bool KHTMLView::needsFullRepaint() const
+bool FrameView::needsFullRepaint() const
 {
     return d->doFullRepaint;
 }
 
-void KHTMLView::addRepaintInfo(RenderObject* o, const IntRect& r)
+void FrameView::addRepaintInfo(RenderObject* o, const IntRect& r)
 {
     if (!d->repaintRects) {
         d->repaintRects = new QPtrList<RenderObject::RepaintInfo>;
@@ -343,7 +343,7 @@ void KHTMLView::addRepaintInfo(RenderObject* o, const IntRect& r)
     d->repaintRects->append(new RenderObject::RepaintInfo(o, r));
 }
 
-void KHTMLView::layout()
+void FrameView::layout()
 {
     if (d->layoutSuppressed)
         return;
@@ -502,7 +502,7 @@ void KHTMLView::layout()
 }
 
 #if __APPLE__
-void KHTMLView::updateDashboardRegions()
+void FrameView::updateDashboardRegions()
 {
     DocumentImpl* document = m_frame->xmlDocImpl();
     if (document->hasDashboardRegions()) {
@@ -519,11 +519,11 @@ void KHTMLView::updateDashboardRegions()
 //
 /////////////////
 
-void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
+void FrameView::viewportMousePressEvent( QMouseEvent *_mouse )
 {
     if(!m_frame->xmlDocImpl()) return;
 
-    RefPtr<KHTMLView> protector(this);
+    RefPtr<FrameView> protector(this);
 
     int xm, ym;
     viewportToContents(_mouse->x(), _mouse->y(), xm, ym);
@@ -562,11 +562,11 @@ void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
     }
 }
 
-void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
+void FrameView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
 {
     if(!m_frame->xmlDocImpl()) return;
 
-    RefPtr<KHTMLView> protector(this);
+    RefPtr<FrameView> protector(this);
 
     int xm, ym;
     viewportToContents(_mouse->x(), _mouse->y(), xm, ym);
@@ -659,7 +659,7 @@ static QCursor selectCursor(const NodeImpl::MouseEvent &event, Frame *frame, boo
     return QCursor();
 }
 
-void KHTMLView::viewportMouseMoveEvent( QMouseEvent * _mouse )
+void FrameView::viewportMouseMoveEvent( QMouseEvent * _mouse )
 {
     // in Radar 3703768 we saw frequent crashes apparently due to the
     // part being null here, which seems impossible, so check for nil
@@ -696,7 +696,7 @@ void KHTMLView::viewportMouseMoveEvent( QMouseEvent * _mouse )
     }
 }
 
-void KHTMLView::invalidateClick()
+void FrameView::invalidateClick()
 {
     d->clickCount = 0;
     if (d->clickNode) {
@@ -705,11 +705,11 @@ void KHTMLView::invalidateClick()
     }
 }
 
-void KHTMLView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
+void FrameView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
 {
     if ( !m_frame->xmlDocImpl() ) return;
 
-    RefPtr<KHTMLView> protector(this);
+    RefPtr<FrameView> protector(this);
 
     int xm, ym;
     viewportToContents(_mouse->x(), _mouse->y(), xm, ym);
@@ -738,7 +738,7 @@ void KHTMLView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
     invalidateClick();
 }
 
-void KHTMLView::keyPressEvent( QKeyEvent *_ke )
+void FrameView::keyPressEvent( QKeyEvent *_ke )
 {
     if (m_frame->xmlDocImpl() && m_frame->xmlDocImpl()->focusNode()) {
         if (m_frame->xmlDocImpl()->focusNode()->dispatchKeyEvent(_ke))
@@ -750,7 +750,7 @@ void KHTMLView::keyPressEvent( QKeyEvent *_ke )
 
 }
 
-bool KHTMLView::dispatchDragEvent(const AtomicString &eventType, NodeImpl *dragTarget, const IntPoint &loc, ClipboardImpl *clipboard)
+bool FrameView::dispatchDragEvent(const AtomicString &eventType, NodeImpl *dragTarget, const IntPoint &loc, ClipboardImpl *clipboard)
 {
     int clientX, clientY;
     viewportToContents(loc.x(), loc.y(), clientX, clientY);
@@ -775,7 +775,7 @@ bool KHTMLView::dispatchDragEvent(const AtomicString &eventType, NodeImpl *dragT
     return accept;
 }
 
-bool KHTMLView::updateDragAndDrop(const IntPoint &loc, ClipboardImpl *clipboard)
+bool FrameView::updateDragAndDrop(const IntPoint &loc, ClipboardImpl *clipboard)
 {
     bool accept = false;
     int xm, ym;
@@ -805,7 +805,7 @@ bool KHTMLView::updateDragAndDrop(const IntPoint &loc, ClipboardImpl *clipboard)
     return accept;
 }
 
-void KHTMLView::cancelDragAndDrop(const IntPoint &loc, ClipboardImpl *clipboard)
+void FrameView::cancelDragAndDrop(const IntPoint &loc, ClipboardImpl *clipboard)
 {
     if (d->dragTarget) {
         dispatchDragEvent(dragleaveEvent, d->dragTarget.get(), loc, clipboard);
@@ -813,7 +813,7 @@ void KHTMLView::cancelDragAndDrop(const IntPoint &loc, ClipboardImpl *clipboard)
     d->dragTarget = 0;
 }
 
-bool KHTMLView::performDragAndDrop(const IntPoint &loc, ClipboardImpl *clipboard)
+bool FrameView::performDragAndDrop(const IntPoint &loc, ClipboardImpl *clipboard)
 {
     bool accept = false;
     if (d->dragTarget) {
@@ -824,12 +824,12 @@ bool KHTMLView::performDragAndDrop(const IntPoint &loc, ClipboardImpl *clipboard
 }
 
 
-NodeImpl *KHTMLView::nodeUnderMouse() const
+NodeImpl *FrameView::nodeUnderMouse() const
 {
     return d->underMouse;
 }
 
-bool KHTMLView::scrollTo(const IntRect &bounds)
+bool FrameView::scrollTo(const IntRect &bounds)
 {
     d->scrollingSelf = true; // so scroll events get ignored
 
@@ -903,7 +903,7 @@ bool KHTMLView::scrollTo(const IntRect &bounds)
 
 }
 
-void KHTMLView::focusNextPrevNode(bool next)
+void FrameView::focusNextPrevNode(bool next)
 {
     // Sets the focus node of the document to be the node after (or if next is false, before) the current focus node.
     // Only nodes that are selectable (i.e. for which isSelectable() returns true) are taken into account, and the order
@@ -980,12 +980,12 @@ void KHTMLView::focusNextPrevNode(bool next)
     m_frame->xmlDocImpl()->setFocusNode(newFocusNode);
 }
 
-void KHTMLView::setMediaType( const QString &medium )
+void FrameView::setMediaType( const QString &medium )
 {
     m_medium = medium;
 }
 
-QString KHTMLView::mediaType() const
+QString FrameView::mediaType() const
 {
     // See if we have an override type.
     QString overrideType = m_frame->overrideMediaType();
@@ -995,14 +995,14 @@ QString KHTMLView::mediaType() const
 }
 
 
-void KHTMLView::useSlowRepaints()
+void FrameView::useSlowRepaints()
 {
     kdDebug(0) << "slow repaints requested" << endl;
     d->useSlowRepaints = true;
     setStaticBackground(true);
 }
 
-void KHTMLView::setScrollBarsMode ( ScrollBarMode mode )
+void FrameView::setScrollBarsMode ( ScrollBarMode mode )
 {
 #ifndef KHTML_NO_SCROLLBARS
     d->vmode = mode;
@@ -1014,7 +1014,7 @@ void KHTMLView::setScrollBarsMode ( ScrollBarMode mode )
 #endif
 }
 
-void KHTMLView::setVScrollBarMode ( ScrollBarMode mode )
+void FrameView::setVScrollBarMode ( ScrollBarMode mode )
 {
 #ifndef KHTML_NO_SCROLLBARS
     d->vmode = mode;
@@ -1024,7 +1024,7 @@ void KHTMLView::setVScrollBarMode ( ScrollBarMode mode )
 #endif
 }
 
-void KHTMLView::setHScrollBarMode ( ScrollBarMode mode )
+void FrameView::setHScrollBarMode ( ScrollBarMode mode )
 {
 #ifndef KHTML_NO_SCROLLBARS
     d->hmode = mode;
@@ -1034,13 +1034,13 @@ void KHTMLView::setHScrollBarMode ( ScrollBarMode mode )
 #endif
 }
 
-void KHTMLView::restoreScrollBar ( )
+void FrameView::restoreScrollBar ( )
 {
     suppressScrollBars(false);
 }
 
 
-bool KHTMLView::dispatchMouseEvent(const AtomicString &eventType, NodeImpl *targetNode, bool cancelable,
+bool FrameView::dispatchMouseEvent(const AtomicString &eventType, NodeImpl *targetNode, bool cancelable,
 				   int detail,QMouseEvent *_mouse, bool setUnder,
 				   int mouseEventType)
 {
@@ -1107,12 +1107,12 @@ bool KHTMLView::dispatchMouseEvent(const AtomicString &eventType, NodeImpl *targ
     return swallowEvent;
 }
 
-void KHTMLView::setIgnoreWheelEvents( bool e )
+void FrameView::setIgnoreWheelEvents( bool e )
 {
     d->ignoreWheelEvents = e;
 }
 
-void KHTMLView::viewportWheelEvent(QWheelEvent* e)
+void FrameView::viewportWheelEvent(QWheelEvent* e)
 {
     DocumentImpl *doc = m_frame->xmlDocImpl();
     if (doc) {
@@ -1138,28 +1138,28 @@ void KHTMLView::viewportWheelEvent(QWheelEvent* e)
     }
 }
 
-void KHTMLView::focusInEvent( QFocusEvent *e )
+void FrameView::focusInEvent( QFocusEvent *e )
 {
     m_frame->setCaretVisible();
 }
 
-void KHTMLView::focusOutEvent( QFocusEvent *e )
+void FrameView::focusOutEvent( QFocusEvent *e )
 {
     m_frame->setCaretVisible(false);
 }
 
-void KHTMLView::slotScrollBarMoved()
+void FrameView::slotScrollBarMoved()
 {
     if (!d->scrollingSelf)
         d->scrollBarMoved = true;
 }
 
-void KHTMLView::repaintRectangle(const IntRect& r, bool immediate)
+void FrameView::repaintRectangle(const IntRect& r, bool immediate)
 {
     updateContents(r, immediate);
 }
 
-void KHTMLView::timerEvent ( QTimerEvent *e )
+void FrameView::timerEvent ( QTimerEvent *e )
 {
     if (e->timerId()==d->layoutTimerId) {
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
@@ -1170,7 +1170,7 @@ void KHTMLView::timerEvent ( QTimerEvent *e )
     }
 }
 
-void KHTMLView::scheduleRelayout()
+void FrameView::scheduleRelayout()
 {
     if (!d->layoutSchedulingEnabled)
         return;
@@ -1194,17 +1194,17 @@ void KHTMLView::scheduleRelayout()
     d->layoutTimerId = startTimer(delay);
 }
 
-bool KHTMLView::layoutPending()
+bool FrameView::layoutPending()
 {
     return d->layoutTimerId;
 }
 
-bool KHTMLView::haveDelayedLayoutScheduled()
+bool FrameView::haveDelayedLayoutScheduled()
 {
     return d->layoutTimerId && d->delayedLayout;
 }
 
-void KHTMLView::unscheduleRelayout()
+void FrameView::unscheduleRelayout()
 {
     if (!d->layoutTimerId)
         return;
@@ -1219,12 +1219,12 @@ void KHTMLView::unscheduleRelayout()
     d->delayedLayout = false;
 }
 
-bool KHTMLView::isTransparent() const
+bool FrameView::isTransparent() const
 {
     return d->isTransparent;
 }
 
-void KHTMLView::setTransparent(bool isTransparent)
+void FrameView::setTransparent(bool isTransparent)
 {
     d->isTransparent = isTransparent;
 }

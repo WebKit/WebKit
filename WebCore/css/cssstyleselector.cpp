@@ -247,7 +247,7 @@ CSSStyleSelector::CSSStyleSelector( CSSStyleSheetImpl *sheet )
     init();
 
     if(!defaultStyle) loadDefaultStyle();
-    KHTMLView *view = sheet->doc()->view();
+    FrameView *view = sheet->doc()->view();
     m_medium =  view ? view->mediaType() : QString("all");
 
     m_authorStyle = new CSSRuleSet();

@@ -36,7 +36,7 @@
 #include <kxmlcore/HashSet.h>
 
 class CSSStyle;
-class KHTMLView;
+class FrameView;
 class QColor;
 class QMatrix;
 class QPainter;

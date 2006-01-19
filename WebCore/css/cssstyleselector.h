@@ -31,7 +31,7 @@
 #include "css/css_ruleimpl.h"
 
 class KHTMLSettings;
-class KHTMLView;
+class FrameView;
 class Frame;
 class KURL;
 
@@ -226,7 +226,7 @@ public:
         DOM::StyledElementImpl *styledElement;
 	DOM::NodeImpl *parentNode;
         RenderStyle::PseudoId pseudoStyle;
-	KHTMLView *view;
+	FrameView *view;
 	Frame *frame;
 	const KHTMLSettings *settings;
 	QPaintDeviceMetrics *paintDeviceMetrics;

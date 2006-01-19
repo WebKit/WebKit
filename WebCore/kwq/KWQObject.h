@@ -100,7 +100,7 @@ public:
 
     virtual bool isKHTMLLoader() const;
     virtual bool isFrame() const;
-    virtual bool isKHTMLView() const;
+    virtual bool isFrameView() const;
     virtual bool isObjectContents() const;
     virtual bool isQFrame() const;
     virtual bool isQScrollView() const;

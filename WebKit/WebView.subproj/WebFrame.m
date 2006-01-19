@@ -679,7 +679,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 
     // FIXME: We could save work and not do this for a top-level view that is not a WebHTMLView.
     WebFrameView *v = _private->webFrameView;
-    [_private->bridge createKHTMLViewWithNSView:documentView marginWidth:[v _marginWidth] marginHeight:[v _marginHeight]];
+    [_private->bridge createFrameViewWithNSView:documentView marginWidth:[v _marginWidth] marginHeight:[v _marginHeight]];
     [self _updateDrawsBackground];
     [_private->bridge installInFrame:[v _scrollView]];
 

@@ -30,7 +30,7 @@
 #include "html/html_miscimpl.h"
 #include <kxmlcore/HashMap.h>
 
-class KHTMLView;
+class FrameView;
 class QString;
 
 namespace DOM {
@@ -40,7 +40,7 @@ class HTMLElementImpl;
 class HTMLDocumentImpl : public DOM::DocumentImpl, public khtml::CachedObjectClient
 {
 public:
-    HTMLDocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v = 0);
+    HTMLDocumentImpl(DOMImplementationImpl *_implementation, FrameView *v = 0);
     ~HTMLDocumentImpl();
 
     virtual bool isHTMLDocument() const { return true; }

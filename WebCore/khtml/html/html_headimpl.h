@@ -28,7 +28,7 @@
 #include "CachedObjectClient.h"
 #include "css/css_stylesheetimpl.h"
 
-class KHTMLView;
+class FrameView;
 
 namespace khtml {
     class CachedCSSStyleSheet;

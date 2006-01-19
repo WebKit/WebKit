@@ -31,7 +31,7 @@
 
 #include "html/html_documentimpl.h"
 
-class KHTMLView;
+class FrameView;
 class HTMLStackElem;
 
 namespace DOM {
@@ -55,7 +55,7 @@ namespace khtml {
 class HTMLParser
 {
 public:
-    HTMLParser(KHTMLView *w, DOM::DocumentImpl *i, bool includesComments=false);
+    HTMLParser(FrameView *w, DOM::DocumentImpl *i, bool includesComments=false);
     HTMLParser(DOM::DocumentFragmentImpl *frag, DOM::DocumentImpl *doc, bool includesComments=false);
     virtual ~HTMLParser();
 
@@ -84,7 +84,7 @@ protected:
     void setCurrent(DOM::NodeImpl* newCurrent);
     void setSkipMode(const DOM::QualifiedName& qName) { discard_until = qName.localName(); }
 
-    KHTMLView *HTMLWidget;
+    FrameView *HTMLWidget;
     DOM::DocumentImpl *document;
 
     /*

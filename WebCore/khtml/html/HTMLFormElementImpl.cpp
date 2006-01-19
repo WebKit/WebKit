@@ -335,7 +335,7 @@ bool HTMLFormElementImpl::prepareSubmit()
 
 void HTMLFormElementImpl::submit( bool activateSubmitButton )
 {
-    KHTMLView *view = getDocument()->view();
+    FrameView *view = getDocument()->view();
     Frame *frame = getDocument()->frame();
     if (!view || !frame) {
         return;

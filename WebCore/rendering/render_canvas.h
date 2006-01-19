@@ -25,7 +25,7 @@
 #include "render_block.h"
 #include <kxmlcore/HashSet.h>
 
-class KHTMLView;
+class FrameView;
 class QScrollView;
 
 namespace khtml {
@@ -33,7 +33,7 @@ namespace khtml {
 class RenderCanvas : public RenderBlock
 {
 public:
-    RenderCanvas(DOM::NodeImpl* node, KHTMLView *view);
+    RenderCanvas(DOM::NodeImpl* node, FrameView *view);
     virtual ~RenderCanvas();
 
     virtual const char *renderName() const { return "RenderCanvas"; }
@@ -49,7 +49,7 @@ public:
     int docHeight() const;
     int docWidth() const;
 
-    KHTMLView *view() const { return m_view; }
+    FrameView *view() const { return m_view; }
 
     virtual bool hasOverhangingFloats() { return false; }
     
@@ -105,7 +105,7 @@ public:
 
 protected:
 
-    KHTMLView *m_view;
+    FrameView *m_view;
 
     RenderObject* m_selectionStart;
     RenderObject* m_selectionEnd;

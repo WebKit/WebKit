@@ -106,7 +106,7 @@ void RenderFrameSet::layout( )
     KHTMLAssert( minMaxKnown() );
 
     if ( !parent()->isFrameSet() ) {
-        KHTMLView* view = canvas()->view();
+        FrameView* view = canvas()->view();
         m_width = view->visibleWidth();
         m_height = view->visibleHeight();
     }
@@ -555,7 +555,7 @@ bool RenderFrameSet::userResize( MouseEventImpl *evt )
     }
     
     else if (m_resizing || evt->type() == mouseupEvent) {
-        KHTMLView *v = canvas()->view();
+        FrameView *v = canvas()->view();
         QPainter paint;
         
         v->disableFlushDrawing();
@@ -651,8 +651,8 @@ RenderPart::RenderPart(DOM::HTMLElementImpl* node)
 
 RenderPart::~RenderPart()
 {
-    if (m_widget && m_widget->inherits("KHTMLView")) {
-        static_cast<KHTMLView *>(m_widget)->deref();
+    if (m_widget && m_widget->inherits("FrameView")) {
+        static_cast<FrameView *>(m_widget)->deref();
     }
 }
 
@@ -666,12 +666,12 @@ void RenderPart::setWidget( QWidget *widget )
         return;
     }
 
-    if (m_widget && m_widget->inherits("KHTMLView")) {
-        static_cast<KHTMLView *>(m_widget)->deref();
+    if (m_widget && m_widget->inherits("FrameView")) {
+        static_cast<FrameView *>(m_widget)->deref();
     }
     
-    if (widget && widget->inherits("KHTMLView")) {
-        static_cast<KHTMLView *>(widget)->ref();
+    if (widget && widget->inherits("FrameView")) {
+        static_cast<FrameView *>(widget)->ref();
         setQWidget( widget, false );
         connect( widget, SIGNAL( cleared() ), this, SLOT( slotViewCleared() ) );
     } else {
@@ -710,11 +710,11 @@ void RenderFrame::slotViewCleared()
             view->setFrameStyle( QFrame::StyledPanel | QFrame::Sunken );
 
 
-        if(view->inherits("KHTMLView")) {
+        if(view->inherits("FrameView")) {
 #ifdef DEBUG_LAYOUT
             kdDebug(6031) << "frame is a KHTMLview!" << endl;
 #endif
-            KHTMLView *htmlView = static_cast<KHTMLView *>(view);
+            FrameView *htmlView = static_cast<FrameView *>(view);
             if(element()->m_marginWidth != -1) htmlView->setMarginWidth(element()->m_marginWidth);
             if(element()->m_marginHeight != -1) htmlView->setMarginHeight(element()->m_marginHeight);
         }
@@ -934,7 +934,7 @@ void RenderPartObject::updateWidget()
           return;
       if (url.isEmpty())
           url = "about:blank";
-      KHTMLView *v = static_cast<KHTMLView *>(m_view);
+      FrameView *v = static_cast<FrameView *>(m_view);
       bool requestSucceeded = v->frame()->requestFrame( this, url, o->m_name.qstring(), QStringList(), QStringList(), true );
       if (requestSucceeded && url == "about:blank") {
           Frame *newPart = v->frame()->findFrame( o->m_name.qstring() );
@@ -981,11 +981,11 @@ void RenderPartObject::slotViewCleared()
       view->setFrameStyle(frameStyle);
 
 
-      if(view->inherits("KHTMLView")) {
+      if(view->inherits("FrameView")) {
 #ifdef DEBUG_LAYOUT
           kdDebug(6031) << "frame is a KHTMLview!" << endl;
 #endif
-          KHTMLView *htmlView = static_cast<KHTMLView *>(view);
+          FrameView *htmlView = static_cast<FrameView *>(view);
           htmlView->setIgnoreWheelEvents(element()->hasTagName(iframeTag));
           if(marginw != -1) htmlView->setMarginWidth(marginw);
           if(marginh != -1) htmlView->setMarginHeight(marginh);
@@ -1016,8 +1016,8 @@ void RenderPart::updateWidgetPosition()
         deref(arena);
         
         QScrollView *view = static_cast<QScrollView *>(m_widget);
-        if (view && view->inherits("KHTMLView"))
-            static_cast<KHTMLView*>(view)->layout();
+        if (view && view->inherits("FrameView"))
+            static_cast<FrameView*>(view)->layout();
     }
 }
 

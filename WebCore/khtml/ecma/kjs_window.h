@@ -28,7 +28,7 @@
 #include <qobject.h>
 
 class Frame;
-class KHTMLView;
+class FrameView;
 class QTimer;
 
 namespace DOM {
@@ -101,7 +101,7 @@ namespace KJS {
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     JSValue *getValueProperty(ExecState *exec, int token) const;
   private:
-    KHTMLView *view;
+    FrameView *view;
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
   };

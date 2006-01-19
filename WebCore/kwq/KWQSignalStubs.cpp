@@ -35,7 +35,7 @@ using khtml::DocLoader;
 using khtml::Loader;
 using khtml::Tokenizer;
 
-void KHTMLView::cleared()
+void FrameView::cleared()
 {
 }
 

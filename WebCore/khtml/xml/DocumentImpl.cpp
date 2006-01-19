@@ -187,8 +187,8 @@ static inline bool isValidNamePart(UChar32 c)
 
 QPtrList<DocumentImpl> * DocumentImpl::changedDocuments = 0;
 
-// KHTMLView might be 0
-DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
+// FrameView might be 0
+DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, FrameView *v)
     : ContainerNodeImpl(0)
       , m_domtree_version(0)
       , m_title("")
@@ -2354,7 +2354,7 @@ void DocumentImpl::timerEvent(QTimerEvent *)
 
 ElementImpl *DocumentImpl::ownerElement()
 {
-    KHTMLView *childView = view();
+    FrameView *childView = view();
     if (!childView)
         return 0;
     Frame *childPart = childView->frame();

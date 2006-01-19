@@ -30,7 +30,7 @@
 
 #include "KWQSignal.h"
 
-class KHTMLView;
+class FrameView;
 
 namespace WebCore {
     class SegmentedString;
@@ -80,7 +80,7 @@ private:
     KWQSignal m_finishedParsing;
 };
 
-Tokenizer *newXMLTokenizer(DOM::DocumentImpl *, KHTMLView * = 0);
+Tokenizer *newXMLTokenizer(DOM::DocumentImpl *, FrameView * = 0);
 #ifdef KHTML_XSLT
 void *xmlDocPtrForString(const QString &source, const QString &url = QString());
 #endif

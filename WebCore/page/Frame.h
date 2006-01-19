@@ -40,7 +40,7 @@
 class FramePrivate;
 class KHTMLPartBrowserExtension;
 class KJSProxyImpl;
-class KHTMLView;
+class FrameView;
 class KHTMLSettings;
 
 namespace KJS {
@@ -127,7 +127,7 @@ struct MarkedTextUnderline {
 };
 
 class Frame : public ObjectContents {
-  friend class KHTMLView;
+  friend class FrameView;
   friend class DOM::HTMLTitleElementImpl;
   friend class DOM::HTMLFrameElementImpl;
   friend class DOM::HTMLIFrameElementImpl;
@@ -180,7 +180,7 @@ public:
   /**
    * Returns a pointer to the HTML document's view.
    */
-  KHTMLView *view() const;
+  FrameView *view() const;
 
   /**
    * Enable/disable Javascript support. Note that this will
@@ -928,7 +928,7 @@ private:
 
   void popupMenu( const QString &url );
 
-  void init(KHTMLView *view);
+  void init(FrameView *view);
 
   virtual void clear();
 
@@ -1050,7 +1050,7 @@ private:
   virtual bool passMouseDownEventToWidget(QWidget *) = 0;
 
   void clearTimers();
-  static void clearTimers(KHTMLView *);
+  static void clearTimers(FrameView *);
 
   bool displaysWithFocusAttributes() const;
   void setWindowHasFocus(bool flag);

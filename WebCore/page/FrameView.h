@@ -64,14 +64,14 @@ namespace khtml {
 };
 
 class Frame;
-class KHTMLViewPrivate;
+class FrameViewPrivate;
 
 /**
  * Renders and displays HTML in a @ref QScrollView.
  *
  * Suitable for use as an application's main view.
  **/
-class KHTMLView : public QScrollView
+class FrameView : public QScrollView
 {
     Q_OBJECT
 
@@ -95,10 +95,10 @@ class KHTMLView : public QScrollView
 
 public:
     /**
-     * Constructs a KHTMLView.
+     * Constructs a FrameView.
      */
-    KHTMLView( Frame *frame, QWidget *parent, const char *name=0 );
-    virtual ~KHTMLView();
+    FrameView( Frame *frame, QWidget *parent, const char *name=0 );
+    virtual ~FrameView();
 
     /**
      * Returns a pointer to the Frame that is
@@ -271,7 +271,7 @@ private:
 
     void applyOverflowToViewport(khtml::RenderObject* o, ScrollBarMode& hMode, ScrollBarMode& vMode);
 
-    virtual bool isKHTMLView() const;
+    virtual bool isFrameView() const;
 
     // ------------------------------------- member variables ------------------------------------
  private:
@@ -284,7 +284,7 @@ private:
     int _marginHeight;
 
     Frame *m_frame;
-    KHTMLViewPrivate *d;
+    FrameViewPrivate *d;
 
     QString m_medium;   // media type
 };

@@ -172,7 +172,7 @@ void HTMLBodyElementImpl::insertedIntoDocument()
     // FIXME: perhaps this code should be in attach() instead of here
 
     DocumentImpl *d = getDocument();
-    KHTMLView *w = d ? d->view() : 0;
+    FrameView *w = d ? d->view() : 0;
     if (w && w->marginWidth() != -1) {
         QString s;
         s.sprintf("%d", w->marginWidth());
@@ -288,7 +288,7 @@ bool HTMLFrameElementImpl::isURLAllowed(const AtomicString &URLString) const
     }
     
     DocumentImpl *d = getDocument();
-    KHTMLView *w = d ? d->view() : 0;
+    FrameView *w = d ? d->view() : 0;
 
     if (!w) {
         return false;
@@ -355,7 +355,7 @@ void HTMLFrameElementImpl::updateForNewURL()
 void HTMLFrameElementImpl::openURL()
 {
     DocumentImpl *d = getDocument();
-    KHTMLView *w = d ? d->view() : 0;
+    FrameView *w = d ? d->view() : 0;
     if (!w) {
         return;
     }

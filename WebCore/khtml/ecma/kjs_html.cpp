@@ -232,7 +232,7 @@ JSValue *HTMLDocument::getValueProperty(ExecState *exec, int token) const
 {
   HTMLDocumentImpl &doc = *static_cast<HTMLDocumentImpl *>(impl());
 
-  KHTMLView *view = doc.view();
+  FrameView *view = doc.view();
   Frame *frame = doc.frame();
 
   HTMLElementImpl *body = doc.body();
@@ -1492,7 +1492,7 @@ JSValue *HTMLElement::bodyGetter(ExecState* exec, int token) const
             DocumentImpl *doc = body.getDocument();
             if (doc)
                 doc->updateLayoutIgnorePendingStylesheets();
-            KHTMLView *view = doc ? doc->view() : 0;
+            FrameView *view = doc ? doc->view() : 0;
             switch (token) {
                 case BodyScrollLeft:
                     return jsNumber(view ? view->contentsX() : 0);

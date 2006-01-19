@@ -26,7 +26,7 @@
 #include "render_container.h"
 #include "rendering/render_replaced.h"
 #include "html/html_baseimpl.h"
-class KHTMLView;
+class FrameView;
 
 namespace DOM
 {

@@ -79,7 +79,7 @@ void Tokenizer::finishedParsing()
 class XMLTokenizer : public Tokenizer, public CachedObjectClient
 {
 public:
-    XMLTokenizer(DocumentImpl *, KHTMLView * = 0);
+    XMLTokenizer(DocumentImpl *, FrameView * = 0);
     XMLTokenizer(DocumentFragmentImpl *, ElementImpl *);
     ~XMLTokenizer();
 
@@ -127,7 +127,7 @@ private:
     void exitText();
 
     DocumentImpl *m_doc;
-    KHTMLView *m_view;
+    FrameView *m_view;
 
     QString m_xmlCode;
 
@@ -206,7 +206,7 @@ static int parseQString(xmlParserCtxtPtr parser, const QString &string)
 
 // --------------------------------
 
-XMLTokenizer::XMLTokenizer(DocumentImpl *_doc, KHTMLView *_view)
+XMLTokenizer::XMLTokenizer(DocumentImpl *_doc, FrameView *_view)
     : m_doc(_doc)
     , m_view(_view)
     , m_context(0)
@@ -934,7 +934,7 @@ void XMLTokenizer::setTransformSource(DocumentImpl *doc)
 }
 #endif
 
-Tokenizer *newXMLTokenizer(DocumentImpl *d, KHTMLView *v)
+Tokenizer *newXMLTokenizer(DocumentImpl *d, FrameView *v)
 {
     return new XMLTokenizer(d, v);
 }

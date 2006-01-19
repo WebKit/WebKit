@@ -2316,7 +2316,7 @@ void RenderObject::recalcMinMaxWidths()
 void RenderObject::scheduleRelayout()
 {
     if (!isCanvas()) return;
-    KHTMLView *view = static_cast<RenderCanvas *>(this)->view();
+    FrameView *view = static_cast<RenderCanvas *>(this)->view();
     if (view)
         view->scheduleRelayout();
 }

@@ -34,12 +34,12 @@
     See khtml/khtmlview.cpp for the rest of the implementation.
 */
 
-QWidget *KHTMLView::topLevelWidget() const 
+QWidget *FrameView::topLevelWidget() const 
 {
     return Mac(frame())->topLevelWidget();
 }
 
-IntPoint KHTMLView::viewportToGlobal(const IntPoint &p) const
+IntPoint FrameView::viewportToGlobal(const IntPoint &p) const
 {
     return static_cast<KWQWindowWidget *>(topLevelWidget())->viewportToGlobal(p);
 }

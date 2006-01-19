@@ -146,7 +146,7 @@ void Token::addAttribute(DocumentImpl* doc, const AtomicString& attrName, const 
 
 // ----------------------------------------------------------------------------
 
-HTMLTokenizer::HTMLTokenizer(DOM::DocumentImpl *_doc, KHTMLView *_view, bool includesComments)
+HTMLTokenizer::HTMLTokenizer(DOM::DocumentImpl *_doc, FrameView *_view, bool includesComments)
     : inWrite(false)
 {
     view = _view;
@@ -1570,7 +1570,7 @@ void HTMLTokenizer::timerEvent(QTimerEvent* e)
         }
         
         // Invoke write() as though more data came in.
-        QGuardedPtr<KHTMLView> savedView = view;
+        QGuardedPtr<FrameView> savedView = view;
         bool didCallEnd = write(SegmentedString(), true);
       
         // If we called end() during the write,  we need to let WebKit know that we're done processing the data.

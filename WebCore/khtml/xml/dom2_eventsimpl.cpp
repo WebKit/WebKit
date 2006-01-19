@@ -253,7 +253,7 @@ void MouseRelatedEventImpl::computePositions()
     DocumentImpl* doc = av->document();
     if (!doc)
         return;
-    KHTMLView* kv = doc->view();
+    FrameView* kv = doc->view();
     if (!kv)
         return;
 

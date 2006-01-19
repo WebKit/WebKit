@@ -363,7 +363,7 @@ public:
     /**
      * Attaches this node to the rendering tree. This calculates the style to be applied to the node and creates an
      * appropriate RenderObject which will be inserted into the tree (except when the style has display: none). This
-     * makes the node visible in the KHTMLView.
+     * makes the node visible in the FrameView.
      */
     virtual void attach();
 

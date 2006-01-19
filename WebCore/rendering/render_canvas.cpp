@@ -32,7 +32,7 @@ using namespace khtml;
 //#define BOX_DEBUG
 //#define SPEED_DEBUG
 
-RenderCanvas::RenderCanvas(DOM::NodeImpl* node, KHTMLView *view)
+RenderCanvas::RenderCanvas(DOM::NodeImpl* node, FrameView *view)
     : RenderBlock(node)
 {
     // Clear our anonymous bit.
@@ -87,7 +87,7 @@ void RenderCanvas::calcHeight()
 
 void RenderCanvas::calcWidth()
 {
-    // the width gets set by KHTMLView::print when printing to a printer.
+    // the width gets set by FrameView::print when printing to a printer.
     if(m_printingMode || !m_view)
     {
         m_width = m_rootWidth;

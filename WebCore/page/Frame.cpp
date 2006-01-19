@@ -133,7 +133,7 @@ FrameList::Iterator FrameList::find( const QString &name )
     return it;
 }
 
-void Frame::init(KHTMLView *view)
+void Frame::init(FrameView *view)
 {
   AtomicString::init();
   QualifiedName::init();
@@ -394,7 +394,7 @@ BrowserExtension *Frame::browserExtension() const
   return d->m_extension;
 }
 
-KHTMLView *Frame::view() const
+FrameView *Frame::view() const
 {
   return d->m_view;
 }
@@ -1426,7 +1426,7 @@ void Frame::clearCaretRectIfNeeded()
 }
 
 // Helper function that tells whether a particular node is an element that has an entire
-// Frame and KHTMLView, a <frame>, <iframe>, or <object>.
+// Frame and FrameView, a <frame>, <iframe>, or <object>.
 static bool isFrameElement(const NodeImpl *n)
 {
     if (!n)
@@ -1435,7 +1435,7 @@ static bool isFrameElement(const NodeImpl *n)
     if (!renderer || !renderer->isWidget())
         return false;
     QWidget *widget = static_cast<RenderWidget *>(renderer)->widget();
-    return widget && widget->inherits("KHTMLView");
+    return widget && widget->inherits("FrameView");
 }
 
 void Frame::setFocusNodeIfNeeded()
@@ -3048,7 +3048,7 @@ void Frame::selectFrameElementInParentIfFullySelected()
     Frame *parent = parentFrame();
     if (!parent)
         return;
-    KHTMLView *parentView = parent->view();
+    FrameView *parentView = parent->view();
     if (!parentView)
         return;
 
@@ -3275,7 +3275,7 @@ bool Frame::scrollOverflow(KWQScrollDirection direction, KWQScrollGranularity gr
     return false;
 }
 
-// FIXME: why is this here instead of on the KHTMLView?
+// FIXME: why is this here instead of on the FrameView?
 void Frame::paint(QPainter *p, const IntRect& rect)
 {
 #ifndef NDEBUG
@@ -3422,9 +3422,9 @@ Frame *Frame::frameForWidget(const QWidget *widget)
     if (node)
         return frameForNode(node);
     
-    // Assume all widgets are either form controls, or KHTMLViews.
-    ASSERT(widget->isKHTMLView());
-    return static_cast<const KHTMLView *>(widget)->frame();
+    // Assume all widgets are either form controls, or FrameViews.
+    ASSERT(widget->isFrameView());
+    return static_cast<const FrameView *>(widget)->frame();
 }
 
 Frame *Frame::frameForNode(NodeImpl *node)
@@ -3481,7 +3481,7 @@ void Frame::setPolicyBaseURL(const DOMString &s)
 
 void Frame::forceLayout()
 {
-    KHTMLView *v = d->m_view;
+    FrameView *v = d->m_view;
     if (v) {
         v->layout();
         // We cannot unschedule a pending relayout, since the force can be called with
@@ -3521,7 +3521,7 @@ void Frame::forceLayoutWithPageWidthRange(float minPageWidth, float maxPageWidth
 
 void Frame::sendResizeEvent()
 {
-    KHTMLView *v = d->m_view;
+    FrameView *v = d->m_view;
     if (v) {
         QResizeEvent e;
         v->resizeEvent(&e);
@@ -3530,7 +3530,7 @@ void Frame::sendResizeEvent()
 
 void Frame::sendScrollEvent()
 {
-    KHTMLView *v = d->m_view;
+    FrameView *v = d->m_view;
     if (v) {
         DocumentImpl *doc = xmlDocImpl();
         if (!doc)
@@ -3629,7 +3629,7 @@ bool Frame::passWidgetMouseDownEventToWidget(RenderWidget *renderWidget)
     return passMouseDownEventToWidget(renderWidget->widget());
 }
 
-void Frame::clearTimers(KHTMLView *view)
+void Frame::clearTimers(FrameView *view)
 {
     if (view) {
         view->unscheduleRelayout();

@@ -285,8 +285,8 @@ bool QObject::inherits(const char *className) const
     if (strcmp(className, "Frame") == 0) {
         return isFrame();
     }
-    if (strcmp(className, "KHTMLView") == 0) {
-        return isKHTMLView();
+    if (strcmp(className, "FrameView") == 0) {
+        return isFrameView();
     }
     if (strcmp(className, "KParts::Factory") == 0) {
         return false;
@@ -314,7 +314,7 @@ bool QObject::isFrame() const
     return false;
 }
 
-bool QObject::isKHTMLView() const
+bool QObject::isFrameView() const
 {
     return false;
 }
