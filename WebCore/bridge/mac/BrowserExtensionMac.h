@@ -35,14 +35,14 @@ public:
     BrowserExtensionMac(Frame *);
  
     virtual void openURLRequest(const KURL &, 
-                                const KParts::URLArgs &args = KParts::URLArgs());
+                                const URLArgs &args = URLArgs());
     virtual void openURLNotify();
      
     virtual void createNewWindow(const KURL &url, 
-                                 const KParts::URLArgs &urlArgs = KParts::URLArgs());
+                                 const URLArgs &urlArgs = URLArgs());
     virtual void createNewWindow(const KURL &url,
-                                 const KParts::URLArgs &urlArgs, 
-                                 const KParts::WindowArgs &winArgs, 
+                                 const URLArgs &urlArgs, 
+                                 const WindowArgs &winArgs, 
                                  ObjectContents *&part);
 
     virtual void setIconURL(const KURL &url);
@@ -57,8 +57,8 @@ public:
     
 private:
      void createNewWindow(const KURL &url, 
-                          const KParts::URLArgs &urlArgs, 
-                          const KParts::WindowArgs &winArgs, 
+                          const URLArgs &urlArgs, 
+                          const WindowArgs &winArgs, 
                           ObjectContents **part);
 
      MacFrame *m_frame;

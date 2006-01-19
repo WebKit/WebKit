@@ -24,9 +24,6 @@
 		5D821DFD097CC06A00289646 /* ObjectContents.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3D8556097647B4002C85D1 /* ObjectContents.h */; };
 		5D821DFE097CC06B00289646 /* Frame.h in Headers */ = {isa = PBXBuildFile; fileRef = 65BF022A0974816300C43196 /* Frame.h */; };
 		5D821DFF097CC07B00289646 /* WebCoreFrameBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 654EC60F097778F500DAB52C /* WebCoreFrameBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		5D821E00097CC07C00289646 /* KWQKPartsBrowserExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 65BF02390974819000C43196 /* KWQKPartsBrowserExtension.h */; };
-		5D821E01097CC07C00289646 /* KWQKHTMLPartBrowserExtension.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65BF02370974819000C43196 /* KWQKHTMLPartBrowserExtension.mm */; };
-		5D821E02097CC07C00289646 /* KWQKHTMLPartBrowserExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 65BF02360974819000C43196 /* KWQKHTMLPartBrowserExtension.h */; };
 		5D821E03097CC07D00289646 /* WebCoreFrameBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 654EC610097778F500DAB52C /* WebCoreFrameBridge.mm */; };
 		5D821E04097CC07D00289646 /* KWQKHTMLView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65BF02380974819000C43196 /* KWQKHTMLView.cpp */; };
 		5D821E05097CC07E00289646 /* WebCorePageBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C7F4310979E2620022E453 /* WebCorePageBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -96,10 +93,7 @@
 		65BF022E0974816300C43196 /* Frame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65BF02290974816300C43196 /* Frame.cpp */; };
 		65BF022F0974816300C43196 /* Frame.h in Headers */ = {isa = PBXBuildFile; fileRef = 65BF022A0974816300C43196 /* Frame.h */; };
 		65BF02300974816300C43196 /* FramePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 65BF022B0974816300C43196 /* FramePrivate.h */; };
-		65BF023F0974819000C43196 /* KWQKHTMLPartBrowserExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 65BF02360974819000C43196 /* KWQKHTMLPartBrowserExtension.h */; };
-		65BF02400974819000C43196 /* KWQKHTMLPartBrowserExtension.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65BF02370974819000C43196 /* KWQKHTMLPartBrowserExtension.mm */; };
 		65BF02410974819000C43196 /* KWQKHTMLView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65BF02380974819000C43196 /* KWQKHTMLView.cpp */; };
-		65BF02420974819000C43196 /* KWQKPartsBrowserExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 65BF02390974819000C43196 /* KWQKPartsBrowserExtension.h */; };
 		65BF02440974819000C43196 /* MacFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 65BF023B0974819000C43196 /* MacFrame.h */; };
 		65BF02450974819000C43196 /* MacFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65BF023C0974819000C43196 /* MacFrame.mm */; };
 		65C7F4320979E2620022E453 /* WebCorePageBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C7F4310979E2620022E453 /* WebCorePageBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1636,6 +1630,9 @@
 		BCEA48CD097D93020094C9E4 /* RenderTextFragment.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA484F097D93020094C9E4 /* RenderTextFragment.h */; };
 		BCEA48CE097D93020094C9E4 /* table_layout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4850097D93020094C9E4 /* table_layout.cpp */; };
 		BCEA48CF097D93020094C9E4 /* table_layout.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4851097D93020094C9E4 /* table_layout.h */; };
+		BCEA4944097F0F5C0094C9E4 /* BrowserExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4943097F0F5C0094C9E4 /* BrowserExtension.h */; };
+		BCEA4947097F0F770094C9E4 /* BrowserExtensionMac.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4945097F0F770094C9E4 /* BrowserExtensionMac.h */; };
+		BCEA4948097F0F770094C9E4 /* BrowserExtensionMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4946097F0F770094C9E4 /* BrowserExtensionMac.mm */; };
 		BCEF3434087B563E00BBF833 /* htmlfactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEF3432087B563E00BBF833 /* htmlfactory.cpp */; };
 		BCEF3435087B563E00BBF833 /* htmlfactory.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEF3433087B563E00BBF833 /* htmlfactory.h */; };
 		BCF1A5F1097839600061A123 /* IntSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF1A5EF097839600061A123 /* IntSize.h */; };
@@ -1815,10 +1812,7 @@
 		65BF02290974816300C43196 /* Frame.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Frame.cpp; sourceTree = "<group>"; };
 		65BF022A0974816300C43196 /* Frame.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Frame.h; sourceTree = "<group>"; };
 		65BF022B0974816300C43196 /* FramePrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FramePrivate.h; sourceTree = "<group>"; };
-		65BF02360974819000C43196 /* KWQKHTMLPartBrowserExtension.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQKHTMLPartBrowserExtension.h; sourceTree = "<group>"; };
-		65BF02370974819000C43196 /* KWQKHTMLPartBrowserExtension.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKHTMLPartBrowserExtension.mm; sourceTree = "<group>"; };
 		65BF02380974819000C43196 /* KWQKHTMLView.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = KWQKHTMLView.cpp; sourceTree = "<group>"; };
-		65BF02390974819000C43196 /* KWQKPartsBrowserExtension.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQKPartsBrowserExtension.h; sourceTree = "<group>"; };
 		65BF023B0974819000C43196 /* MacFrame.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MacFrame.h; sourceTree = "<group>"; };
 		65BF023C0974819000C43196 /* MacFrame.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = MacFrame.mm; sourceTree = "<group>"; };
 		65C7F4310979E2620022E453 /* WebCorePageBridge.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCorePageBridge.h; sourceTree = "<group>"; };
@@ -2592,6 +2586,9 @@
 		BCEA484F097D93020094C9E4 /* RenderTextFragment.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = RenderTextFragment.h; path = rendering/RenderTextFragment.h; sourceTree = SOURCE_ROOT; };
 		BCEA4850097D93020094C9E4 /* table_layout.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = table_layout.cpp; path = rendering/table_layout.cpp; sourceTree = SOURCE_ROOT; };
 		BCEA4851097D93020094C9E4 /* table_layout.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = table_layout.h; path = rendering/table_layout.h; sourceTree = SOURCE_ROOT; };
+		BCEA4943097F0F5C0094C9E4 /* BrowserExtension.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BrowserExtension.h; sourceTree = "<group>"; };
+		BCEA4945097F0F770094C9E4 /* BrowserExtensionMac.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BrowserExtensionMac.h; sourceTree = "<group>"; };
+		BCEA4946097F0F770094C9E4 /* BrowserExtensionMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = BrowserExtensionMac.mm; sourceTree = "<group>"; };
 		BCEACC8E0592E0AD009D6AEF /* xbl_docimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = xbl_docimpl.cpp; path = xbl/xbl_docimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BCEACC8F0592E0AD009D6AEF /* xbl_docimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = xbl_docimpl.h; path = xbl/xbl_docimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BCEF3432087B563E00BBF833 /* htmlfactory.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = htmlfactory.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2996,6 +2993,7 @@
 		65BF021F097480EF00C43196 /* bridge */ = {
 			isa = PBXGroup;
 			children = (
+				BCEA4943097F0F5C0094C9E4 /* BrowserExtension.h */,
 				65BF02350974819000C43196 /* mac */,
 			);
 			path = bridge;
@@ -3004,14 +3002,13 @@
 		65BF02350974819000C43196 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				BCEA4945097F0F770094C9E4 /* BrowserExtensionMac.h */,
+				BCEA4946097F0F770094C9E4 /* BrowserExtensionMac.mm */,
 				654EC60F097778F500DAB52C /* WebCoreFrameBridge.h */,
 				65C7F4310979E2620022E453 /* WebCorePageBridge.h */,
 				65C7F44B0979E8C90022E453 /* WebCorePageBridge.mm */,
 				654EC610097778F500DAB52C /* WebCoreFrameBridge.mm */,
-				65BF02360974819000C43196 /* KWQKHTMLPartBrowserExtension.h */,
-				65BF02370974819000C43196 /* KWQKHTMLPartBrowserExtension.mm */,
 				65BF02380974819000C43196 /* KWQKHTMLView.cpp */,
-				65BF02390974819000C43196 /* KWQKPartsBrowserExtension.h */,
 				65BF023B0974819000C43196 /* MacFrame.h */,
 				65BF023C0974819000C43196 /* MacFrame.mm */,
 			);
@@ -4875,8 +4872,6 @@
 				A8136D380973A8E700D74463 /* FormDataList.h in Headers */,
 				65BF022F0974816300C43196 /* Frame.h in Headers */,
 				65BF02300974816300C43196 /* FramePrivate.h in Headers */,
-				65BF023F0974819000C43196 /* KWQKHTMLPartBrowserExtension.h in Headers */,
-				65BF02420974819000C43196 /* KWQKPartsBrowserExtension.h in Headers */,
 				65BF02440974819000C43196 /* MacFrame.h in Headers */,
 				FAE0418B09759694000540BE /* RenderSVGImage.h in Headers */,
 				FAE04190097596C9000540BE /* SVGImageLoader.h in Headers */,
@@ -4976,6 +4971,8 @@
 				BCEA488C097D93020094C9E4 /* RenderText.h in Headers */,
 				BCEA488E097D93020094C9E4 /* RenderTextFragment.h in Headers */,
 				BCEA4890097D93020094C9E4 /* table_layout.h in Headers */,
+				BCEA4944097F0F5C0094C9E4 /* BrowserExtension.h in Headers */,
+				BCEA4947097F0F770094C9E4 /* BrowserExtensionMac.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5286,8 +5283,6 @@
 				5D821DFD097CC06A00289646 /* ObjectContents.h in Headers */,
 				5D821DFE097CC06B00289646 /* Frame.h in Headers */,
 				5D821DFF097CC07B00289646 /* WebCoreFrameBridge.h in Headers */,
-				5D821E00097CC07C00289646 /* KWQKPartsBrowserExtension.h in Headers */,
-				5D821E02097CC07C00289646 /* KWQKHTMLPartBrowserExtension.h in Headers */,
 				5D821E05097CC07E00289646 /* WebCorePageBridge.h in Headers */,
 				5D821E06097CC07E00289646 /* MacFrame.h in Headers */,
 				5D821E0D097CC57200289646 /* WebCoreFrameNamespaces.h in Headers */,
@@ -6789,7 +6784,6 @@
 				A81369E5097374F600D74463 /* HTMLKeygenElementImpl.cpp in Sources */,
 				A8136D390973A8E700D74463 /* FormDataList.cpp in Sources */,
 				65BF022E0974816300C43196 /* Frame.cpp in Sources */,
-				65BF02400974819000C43196 /* KWQKHTMLPartBrowserExtension.mm in Sources */,
 				65BF02410974819000C43196 /* KWQKHTMLView.cpp in Sources */,
 				65BF02450974819000C43196 /* MacFrame.mm in Sources */,
 				FAE0418C09759694000540BE /* RenderSVGImage.cpp in Sources */,
@@ -6885,6 +6879,7 @@
 				BCEA488D097D93020094C9E4 /* RenderTextFragment.cpp in Sources */,
 				BCEA488F097D93020094C9E4 /* table_layout.cpp in Sources */,
 				937A36A7097E2E3200E4EE2F /* UserAgentStyleSheets.cpp in Sources */,
+				BCEA4948097F0F770094C9E4 /* BrowserExtensionMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7146,7 +7141,6 @@
 				BCEA47B0097CAAC80094C9E4 /* cssstyleselector.cpp in Sources */,
 				5D821DFA097CC06800289646 /* Frame.cpp in Sources */,
 				5D821DFB097CC06900289646 /* FrameView.cpp in Sources */,
-				5D821E01097CC07C00289646 /* KWQKHTMLPartBrowserExtension.mm in Sources */,
 				5D821E03097CC07D00289646 /* WebCoreFrameBridge.mm in Sources */,
 				5D821E04097CC07D00289646 /* KWQKHTMLView.cpp in Sources */,
 				5D821E07097CC07E00289646 /* WebCorePageBridge.mm in Sources */,
