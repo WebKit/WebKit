@@ -1,3 +1,24 @@
+2006-01-16  Timothy Hatcher  <timothy@apple.com>
+
+        Adding the license header to all files so we can
+        move JavaScriptGlue into the open source repository.
+
+        * LICENSE: Added.
+        * JSBase.cpp: license header added.
+        * JSBase.h: ditto.
+        * JSObject.cpp: ditto.
+        * JSObject.h: ditto.
+        * JSRun.cpp: ditto.
+        * JSRun.h: ditto.
+        * JSUtils.cpp: ditto.
+        * JSUtils.h: ditto.
+        * JSValueWrapper.cpp: ditto.
+        * JSValueWrapper.h: ditto.
+        * JavaScriptGlue.cpp: ditto.
+        * JavaScriptGlue.h: ditto.
+        * UserObjectImp.cpp: ditto.
+        * UserObjectImp.h: ditto.
+
 2005-12-21  Timothy Hatcher  <timothy@apple.com>
 
         * JavaScriptGlue.xcodeproj/project.pbxproj:
@@ -30,20 +51,20 @@
 
 2005-12-13  Geoffrey Garen  <ggaren@apple.com>
 
-	- Fixed build after Anders's last checkin to JavaScriptCore.
-	
+    - Fixed build after Anders's last checkin to JavaScriptCore.
+    
         Reviewed by darin.
 
         * UserObjectImp.cpp:
         (UserObjectImp::userObjectGetter): Updated to reflect new argument that 
-	getters take (unused here).
+    getters take (unused here).
         * UserObjectImp.h:
 
 2005-12-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
 
-	- added forwarding header for HashCountedSet
+    - added forwarding header for HashCountedSet
 
         * kxmlcore/HashCountedSet.h: Added.
 
@@ -84,7 +105,7 @@
 
         Rubber stamped by Eric.
 
-	- renamed InterpreterLock to JSLock
+    - renamed InterpreterLock to JSLock
 
         * JSUtils.cpp:
         (CFStringToUString):
@@ -108,7 +129,7 @@
 
         Reviewed by Geoff.
 
-	Updated to use new API to drop all locks.
+    Updated to use new API to drop all locks.
 
         * JavaScriptGlue.cpp:
         (JSLockInterpreter):
@@ -168,11 +189,11 @@
 
 2005-11-01  Maciej Stachowiak  <mjs@apple.com>
 
-	Reviewed by: Eric.
-	
+    Reviewed by: Eric.
+    
         <rdar://problem/4324107> get JavaScriptGlue working with TOT JavaScriptCore again
 
-	- reverted all this stuff to use ReferenceList instead of IdentifierSequencedSet
+    - reverted all this stuff to use ReferenceList instead of IdentifierSequencedSet
 
         * JSUtils.cpp:
         (KJSValueToCFTypeInternal):
@@ -229,7 +250,7 @@
 
         Reviewed by Eric and Darin.
 
-	<rdar://problem/4260506> Port JavaScriptGlue to TOT JavaScriptCore
+    <rdar://problem/4260506> Port JavaScriptGlue to TOT JavaScriptCore
 
         * JSRun.cpp:
         (JSRun::JSRun):
@@ -273,11 +294,11 @@
 
         Reviewed by Geoff.
 
-	- fixed <rdar://problem/4214783> REGRESSION: kjs_fast_malloc crash due to lack of locking on multiple threads (seen selecting volumes in the installer)
+    - fixed <rdar://problem/4214783> REGRESSION: kjs_fast_malloc crash due to lack of locking on multiple threads (seen selecting volumes in the installer)
 
-	Make sure to lock using the InterpreterLock class in all places that need it
-	(including anything that uses the collector, the parser, the protect count hash table,
-	and anything that allocates via fast_malloc).
+    Make sure to lock using the InterpreterLock class in all places that need it
+    (including anything that uses the collector, the parser, the protect count hash table,
+    and anything that allocates via fast_malloc).
 
         * JSUtils.cpp:
         (CFStringToUString):
@@ -313,7 +334,7 @@
 
         Rubber stamped by hyatt.
 
-	- initial import of JavaScriptGlue into our repository
+    - initial import of JavaScriptGlue into our repository
 
         * English.lproj/InfoPlist.strings: Added.
         * JSBase.cpp: Added.
