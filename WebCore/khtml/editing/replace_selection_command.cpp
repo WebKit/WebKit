@@ -36,7 +36,7 @@
 #include "dom2_rangeimpl.h"
 #include "dom_position.h"
 #include "dom_textimpl.h"
-#include "html_elementimpl.h"
+#include "HTMLElementImpl.h"
 #include "html_interchange.h"
 #include "htmlediting.h"
 #include "htmlnames.h"

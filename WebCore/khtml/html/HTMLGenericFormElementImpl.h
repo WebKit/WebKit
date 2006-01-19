@@ -25,7 +25,7 @@
 #ifndef HTML_HTMLGenericFormElementImpl_h
 #define HTML_HTMLGenericFormElementImpl_h
 
-#include "html/html_elementimpl.h"
+#include "HTMLElementImpl.h"
 
 namespace khtml {
     class RenderFormElement;

@@ -21,8 +21,7 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-// -------------------------------------------------------------------------
-//#define DEBUG
+
 #include "config.h"
 #include "html_blockimpl.h"
 #include "html_documentimpl.h"
@@ -30,11 +29,10 @@
 
 #include "cssproperties.h"
 #include "cssvalues.h"
+#include "htmlnames.h"
 
-#include <kdebug.h>
+namespace WebCore {
 
-using namespace khtml;
-using namespace DOM;
 using namespace HTMLNames;
 
 HTMLBlockquoteElementImpl::HTMLBlockquoteElementImpl(DocumentImpl *doc)
@@ -409,4 +407,6 @@ void HTMLMarqueeElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         m_minimumDelay = !attr->isNull() ? 0 : defaultMinimumDelay;
     } else
         HTMLElementImpl::parseMappedAttribute(attr);
+}
+
 }

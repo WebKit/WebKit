@@ -24,12 +24,13 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef HTML_TABLEIMPL_H
-#define HTML_TABLEIMPL_H
+#ifndef HTMLTableElementImpl_H
+#define HTMLTableElementImpl_H
 
-#include "html/html_elementimpl.h"
+#include "HTMLElementImpl.h"
+#include "htmlnames.h"
 
-namespace DOM {
+namespace WebCore {
 
 class HTMLCollectionImpl;
 class HTMLTableSectionElementImpl;

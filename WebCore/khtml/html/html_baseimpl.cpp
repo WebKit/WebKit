@@ -39,16 +39,16 @@
 #include "cssvalues.h"
 #include "css/csshelper.h"
 #include "loader.h"
-#include "dom/dom_string.h"
-#include "xml/dom2_eventsimpl.h"
-#include "xml/EventNames.h"
+#include "dom_string.h"
+#include "dom2_eventsimpl.h"
+#include "EventNames.h"
+#include "htmlnames.h"
 
 #include <kurl.h>
 #include <kdebug.h>
 
-using namespace DOM;
-using namespace DOM::EventNames;
-using namespace khtml;
+namespace WebCore {
+using namespace EventNames;
 using namespace HTMLNames;
 
 HTMLBodyElementImpl::HTMLBodyElementImpl(DocumentImpl *doc)
@@ -1003,4 +1003,6 @@ DOMString HTMLIFrameElementImpl::width() const
 void HTMLIFrameElementImpl::setWidth(const DOMString &value)
 {
     setAttribute(widthAttr, value);
+}
+
 }

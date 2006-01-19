@@ -47,7 +47,6 @@
 #import "KWQTextCodec.h"
 #import "KWQView.h"
 #import "MacFrame.h"
-#import "MacFrame.h"
 #import "NodeImpl.h"
 #import "SelectionController.h"
 #import "WebCoreFrameNamespaces.h"
@@ -74,7 +73,6 @@
 #import "render_canvas.h"
 #import "render_frames.h"
 #import "render_image.h"
-#import "render_object.h"
 #import "render_replaced.h"
 #import "render_style.h"
 #import "replace_selection_command.h"
@@ -83,6 +81,7 @@
 #import "visible_text.h"
 #import "visible_units.h"
 #import "xml_tokenizer.h"
+#import "htmlnames.h"
 #import <JavaScriptCore/interpreter.h>
 #import <JavaScriptCore/jni_jsobject.h>
 #import <JavaScriptCore/npruntime.h>

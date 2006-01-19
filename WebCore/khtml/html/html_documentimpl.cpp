@@ -58,9 +58,9 @@
 #include "html/html_headimpl.h"
 #include "html/html_baseimpl.h"
 #include "html/htmltokenizer.h"
-#include "html/html_miscimpl.h"
 #include "html/html_imageimpl.h"
 #include "htmlfactory.h"
+#include "htmlnames.h"
 
 #include "Frame.h"
 #include "khtml_settings.h"
@@ -91,9 +91,7 @@
 
 template class QPtrStack<DOM::NodeImpl>;
 
-using namespace khtml;
-
-namespace DOM {
+namespace WebCore {
 
 using namespace HTMLNames;
 

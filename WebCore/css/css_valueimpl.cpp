@@ -37,7 +37,7 @@
 #include "dom/css_value.h"
 #include "dom/dom_exception.h"
 #include "dom/dom_string.h"
-#include "html/html_elementimpl.h"
+#include "HTMLElementImpl.h"
 #include "misc/helper.h"
 #include "rendering/font.h"
 #include "rendering/render_style.h"

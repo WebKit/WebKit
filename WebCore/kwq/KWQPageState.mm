@@ -37,15 +37,12 @@
 #import "KWQFoundationExtras.h"
 #import "MacFrame.h"
 
-using namespace DOM;
-
-using namespace khtml;
-
+using namespace WebCore;
 using namespace KJS;
 
 @implementation KWQPageState
 
-- initWithDocument:(DocumentImpl *)doc URL:(const KURL &)u windowProperties:(SavedProperties *)wp locationProperties:(SavedProperties *)lp interpreterBuiltins:(SavedBuiltins *)ib pausedTimeouts:(PausedTimeouts *)pt
+- (id)initWithDocument:(DocumentImpl *)doc URL:(const KURL &)u windowProperties:(SavedProperties *)wp locationProperties:(SavedProperties *)lp interpreterBuiltins:(SavedBuiltins *)ib pausedTimeouts:(PausedTimeouts *)pt
 {
     [super init];
 

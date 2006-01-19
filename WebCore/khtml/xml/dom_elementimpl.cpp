@@ -39,6 +39,7 @@
 #include "htmlparser.h"
 #include "render_canvas.h"
 #include <qtextstream.h>
+#include "htmlnames.h"
 
 namespace WebCore {
 

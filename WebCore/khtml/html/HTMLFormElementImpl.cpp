@@ -26,6 +26,7 @@
 
 #include "config.h"
 #include "HTMLFormElementImpl.h"
+#include "HTMLFormCollectionImpl.h"
 #include "html_imageimpl.h"
 #include "html_documentimpl.h"
 #include "csshelper.h" // For kthml::parseURL
@@ -37,10 +38,9 @@
 #include "Frame.h"
 
 #include <qtextcodec.h>
+#include "htmlnames.h"
 
-using namespace khtml;
-
-namespace DOM {
+namespace WebCore {
 
 using namespace EventNames;
 using namespace HTMLNames;

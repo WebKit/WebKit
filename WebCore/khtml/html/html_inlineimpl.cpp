@@ -38,11 +38,9 @@
 #include "rendering/render_image.h"
 #include "xml/EventNames.h"
 #include "xml/dom2_eventsimpl.h"
-#include <kdebug.h>
+#include "htmlnames.h"
 
-using namespace khtml;
-
-namespace DOM {
+namespace WebCore {
 
 using namespace EventNames;
 using namespace HTMLNames;

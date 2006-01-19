@@ -32,13 +32,11 @@
 
 #include "DocumentImpl.h"
 #include "html_canvasimpl.h"
+#include "htmlnames.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
-using namespace khtml;
-
-// -------------------------------------------------------------------------
 
 RenderCanvasImage::RenderCanvasImage(NodeImpl *_node)
     : RenderImage(_node), _drawingContext(0), _drawingContextData(0), _drawnImage(0), _needsImageUpdate(0)

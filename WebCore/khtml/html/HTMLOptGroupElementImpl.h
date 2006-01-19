@@ -26,6 +26,7 @@
 #define HTML_HTMLOptGroupElementImpl_H
 
 #include "HTMLGenericFormElementImpl.h"
+#include "htmlnames.h"
 
 namespace DOM {
 

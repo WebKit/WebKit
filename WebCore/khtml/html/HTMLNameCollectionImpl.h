@@ -3,8 +3,7 @@
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,49 +21,26 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef HTML_HTMLLabelElementImpl_h
-#define HTML_HTMLLabelElementImpl_h
+#ifndef HTMLNameCollectionImpl_H
+#define HTMLNameCollectionImpl_H
 
-#include "HTMLElementImpl.h"
+#include "HTMLCollectionImpl.h"
+#include "dom_string.h"
 
-namespace DOM {
+namespace WebCore {
 
-class HTMLFormElementImpl;
-class MappedAttributeImpl;
+class DocumentImpl;
 
-class HTMLLabelElementImpl : public HTMLElementImpl
+class HTMLNameCollectionImpl : public HTMLCollectionImpl
 {
 public:
-    HTMLLabelElementImpl(DocumentImpl *doc);
-    virtual ~HTMLLabelElementImpl();
-
-    virtual int tagPriority() const { return 5; }
-
-    virtual bool isFocusable() const;
-
-    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
-
-    virtual void accessKeyAction(bool sendToAnyElement);
-
-    /**
-     * the form element this label is associated to.
-     */
-    ElementImpl *formElement();
-
-    HTMLFormElementImpl *form();
-
-    DOMString accessKey() const;
-    void setAccessKey(const DOMString &);
-
-    DOMString htmlFor() const;
-    void setHtmlFor(const DOMString &);
-
-    void focus();
-
+    HTMLNameCollectionImpl(DocumentImpl* _base, int _type, DOMString &name);
+    
+    virtual NodeImpl *traverseNextItem(NodeImpl *start) const;
  private:
-    DOMString m_formElementID;
+    DOMString m_name;
 };
 
-} //namespace
+}; //namespace
 
 #endif

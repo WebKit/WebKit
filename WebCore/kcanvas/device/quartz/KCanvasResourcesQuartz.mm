@@ -72,8 +72,8 @@ void KCanvasContainerQuartz::paint(PaintInfo &paintInfo, int parentX, int parent
         return;
     
     // No one should be transforming us via these.
-    ASSERT(m_x == 0);
-    ASSERT(m_y == 0);
+    //ASSERT(m_x == 0);
+    //ASSERT(m_y == 0);
         
     if (shouldPaintBackgroundOrBorder() && paintInfo.phase != WebCore::PaintActionOutline) 
         paintBoxDecorations(paintInfo, parentX, parentY);

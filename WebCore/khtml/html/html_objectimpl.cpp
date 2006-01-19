@@ -23,7 +23,7 @@
  */
 
 #include "config.h"
-#include "html/html_objectimpl.h"
+#include "html_objectimpl.h"
 
 #include "EventNames.h"
 #include "Frame.h"
@@ -41,6 +41,7 @@
 #include "render_image.h"
 #include <java/kjavaappletwidget.h>
 #include <qstring.h>
+#include "htmlnames.h"
 
 namespace WebCore {
 

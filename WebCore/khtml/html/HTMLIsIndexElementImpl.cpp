@@ -26,10 +26,9 @@
 
 #include "config.h"
 #include "HTMLIsIndexElementImpl.h"
+#include "htmlnames.h"
 
-using namespace khtml;
-
-namespace DOM {
+namespace WebCore {
 
 using namespace HTMLNames;
 

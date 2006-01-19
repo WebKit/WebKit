@@ -63,6 +63,7 @@
 #include <qpaintdevicemetrics.h>
 #include <qptrstack.h>
 #include <qregexp.h>
+#include "HTMLNameCollectionImpl.h"
 
 // FIXME: We want to cut the remaining HTML dependencies so that we don't need to include these files.
 #include "HTMLInputElementImpl.h"
@@ -71,6 +72,7 @@
 #include "html/html_headimpl.h"
 #include "html/html_imageimpl.h"
 #include "htmlfactory.h"
+#include "htmlnames.h"
 
 #ifdef KHTML_XSLT
 #include "xsl_stylesheetimpl.h"

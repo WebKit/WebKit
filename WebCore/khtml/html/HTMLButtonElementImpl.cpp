@@ -34,10 +34,9 @@
 #include "render_button.h"
 
 #include "EventNames.h"
+#include "htmlnames.h"
 
-using namespace khtml;
-
-namespace DOM {
+namespace WebCore {
 
 using namespace EventNames;
 using namespace HTMLNames;

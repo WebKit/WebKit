@@ -30,7 +30,7 @@
 #include "dom/dom_exception.h"
 #include "dom_textimpl.h"
 #include "dom_xmlimpl.h"
-#include "html/html_elementimpl.h"
+#include "HTMLElementImpl.h"
 #include "editing/markup.h"
 #include "editing/visible_position.h"
 #include "editing/visible_units.h"

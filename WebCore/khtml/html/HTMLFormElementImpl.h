@@ -25,8 +25,8 @@
 #ifndef HTML_HTMLFormElementImpl_H
 #define HTML_HTMLFormElementImpl_H
 
-#include "html/html_elementimpl.h"
-#include "html/html_miscimpl.h" // for CollectionInfo
+#include "HTMLElementImpl.h"
+#include "HTMLCollectionImpl.h" 
 
 #include <qptrvector.h>
 
@@ -38,6 +38,7 @@ namespace DOM {
 
 class HTMLGenericFormElementImpl;
 class HTMLImageElementImpl;
+class HTMLFormCollectionImpl;
 
 class HTMLFormElementImpl : public HTMLElementImpl
 {

@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "html/html_canvasimpl.h"
+#include "htmlnames.h"
 
 #include "render_canvasimage.h"
 

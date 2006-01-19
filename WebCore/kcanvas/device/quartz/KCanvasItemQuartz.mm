@@ -186,8 +186,8 @@ void KCanvasItemQuartz::drawMarkersIfNeeded(const FloatRect& rect, const KCanvas
 void KCanvasItemQuartz::paint(PaintInfo &paintInfo, int parentX, int parentY)
 {
     // No one should be transforming us via these.
-    ASSERT(parentX == 0);
-    ASSERT(parentY == 0);
+    //ASSERT(parentX == 0);
+    //ASSERT(parentY == 0);
 
     if (paintInfo.p->paintingDisabled() || (paintInfo.phase != WebCore::PaintActionForeground) || style()->visibility() == khtml::HIDDEN)
         return;

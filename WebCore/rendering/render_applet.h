@@ -24,7 +24,7 @@
 #ifndef render_applet_h
 #define render_applet_h
 
-#include "html_elementimpl.h"
+#include "HTMLElementImpl.h"
 #include "render_replaced.h"
 
 namespace WebCore {

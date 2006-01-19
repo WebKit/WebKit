@@ -26,6 +26,7 @@
 #define HTML_HTMLOptionElementImpl_H
 
 #include "HTMLGenericFormElementImpl.h"
+#include "htmlnames.h"
 
 namespace khtml {
     class RenderSelect;

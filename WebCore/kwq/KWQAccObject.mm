@@ -40,9 +40,8 @@
 #import "WebCoreViewFactory.h"
 
 #import "DocumentImpl.h"
-#import "dom_elementimpl.h"
-#import "html_elementimpl.h"
 #import "HTMLInputElementImpl.h"
+#import "HTMLCollectionImpl.h"
 #import "html_inlineimpl.h"
 #import "html_imageimpl.h"
 #import "dom_string.h"
@@ -63,43 +62,14 @@
 #import "visible_position.h"
 #import "visible_text.h"
 #import "visible_units.h"
-#import "html_miscimpl.h"
 #import "qptrstack.h"
 #import "DOMInternal.h"
 #import "EventNames.h"
+#import "htmlnames.h"
 
-using namespace DOM::EventNames;
-using namespace DOM::HTMLNames;
-
-using DOM::DocumentImpl;
-using DOM::DOMString;
-using DOM::ElementImpl;
-using DOM::HTMLAnchorElementImpl;
-using DOM::HTMLAreaElementImpl;
-using DOM::HTMLCollection;
-using DOM::HTMLCollectionImpl;
-using DOM::HTMLElementImpl;
-using DOM::HTMLInputElementImpl;
-using DOM::HTMLMapElementImpl;
-using DOM::Node;
-using DOM::NodeImpl;
-using DOM::Position;
-
-using khtml::theme;
-using khtml::EAffinity;
-using khtml::EVerticalAlign;
-using khtml::plainText;
-using khtml::RenderBlock;
-using khtml::RenderCanvas;
-using khtml::RenderImage;
-using khtml::RenderListMarker;
-using khtml::RenderObject;
-using khtml::RenderStyle;
-using khtml::RenderText;
-using khtml::RenderWidget;
-using khtml::SelectionController;
-using khtml::TextIterator;
-using khtml::VisiblePosition;
+using namespace WebCore;
+using namespace EventNames;
+using namespace HTMLNames;
 
 // FIXME: This will eventually need to really localize.
 #define UI_STRING(string, comment) ((NSString *)[NSString stringWithUTF8String:(string)])

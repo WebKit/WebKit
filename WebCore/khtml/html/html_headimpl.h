@@ -24,7 +24,7 @@
 #ifndef HTML_HEADIMPL_H
 #define HTML_HEADIMPL_H
 
-#include "html/html_elementimpl.h"
+#include "HTMLElementImpl.h"
 #include "CachedObjectClient.h"
 #include "css/css_stylesheetimpl.h"
 

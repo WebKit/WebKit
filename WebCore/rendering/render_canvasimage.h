@@ -28,7 +28,7 @@
 
 #if __APPLE__
 
-#include "html_elementimpl.h"
+#include "HTMLElementImpl.h"
 #include "render_image.h"
 
 // FIXME: Mac-specific parts need to move to the platform directory.

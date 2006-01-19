@@ -29,7 +29,7 @@
 #include "HTMLOptionsCollectionImpl.h"
 #include "HTMLOptionElementImpl.h"
 #include "HTMLFormElementImpl.h"
-#include "html_miscimpl.h" // for HTMLCollectionImpl
+#include "HTMLCollectionImpl.h"
 #include "dom2_eventsimpl.h"
 #include "FormDataList.h"
 #include "DocumentImpl.h"

@@ -24,32 +24,26 @@
     the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.
 */
-//----------------------------------------------------------------------------
-//
-// KDE HTML Widget - Tokenizers
-
-//#define TOKEN_DEBUG 1
-//#define TOKEN_DEBUG 2
 
 #include "config.h"
-#include "html/htmltokenizer.h"
+#include "htmltokenizer.h"
 
 #include "CachedScript.h"
 #include "DocLoader.h"
 #include "DocumentFragmentImpl.h"
-#include "DocumentImpl.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "csshelper.h"
 #include "html_documentimpl.h"
+#include "HTMLElementImpl.h"
 #include "htmlparser.h"
 #include "kjs_proxy.h"
 #include <assert.h>
 #include <ctype.h>
-#include <kdebug.h>
 #include <qvariant.h>
 #include <stdlib.h>
+#include "htmlnames.h"
 
 // turn off inlining to allow proper linking on newer gcc (xmltokenizer.cpp also uses findEntity())
 #undef __inline
@@ -402,9 +396,6 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
     currentPrependingSrc = &prependingSrc;
     if (!parser->skipMode() && !followingFrameset) {
         if (cs) {
-             //kdDebug( 6036 ) << "cachedscript extern!" << endl;
-             //kdDebug( 6036 ) << "src: *" << QString( src.current(), src.length() ).latin1() << "*" << endl;
-             //kdDebug( 6036 ) << "pending: *" << pendingSrc.latin1() << "*" << endl;
 	    if (savedPrependingSrc) {
 		savedPrependingSrc->append(src);
 	    } else {
@@ -432,7 +423,6 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
             //QTime dt;
             //dt.start();
             state = scriptExecution(exScript, state, QString::null, scriptStartLineno);
-	    //kdDebug( 6036 ) << "script execution time:" << dt.elapsed() << endl;
         }
     }
 
@@ -440,7 +430,6 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
     scriptCodeSize = scriptCodeResync = 0;
 
     if (!m_executingScript && !state.loadingExtScript()) {
-	// kdDebug( 6036 ) << "adding pending Output to parsed string" << endl;
 	src.append(pendingSrc);
 	pendingSrc.clear();
     } else if (!prependingSrc.isEmpty()) {
@@ -507,7 +496,6 @@ HTMLTokenizer::State HTMLTokenizer::scriptExecution(const QString& str, State st
     state.setInScript(oldscript);
 
     if (!m_executingScript && !state.loadingExtScript()) {
-	// kdDebug( 6036 ) << "adding pending Output to parsed string" << endl;
 	src.append(pendingSrc);
 	pendingSrc.clear();
     } else if (!prependingSrc.isEmpty()) {

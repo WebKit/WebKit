@@ -46,15 +46,15 @@
 #include "dom/dom_exception.h"
 
 #include "html_objectimpl.h"
+#include "htmlnames.h"
 
 #if __APPLE__
 #include <JavaScriptCore/runtime_object.h>
 #endif
 
-using namespace DOM;
-using namespace DOM::HTMLNames;
-using namespace DOM::EventNames;
-using namespace khtml;
+using namespace WebCore;
+using namespace HTMLNames;
+using namespace EventNames;
 
 #include "kjs_dom.lut.h"
 

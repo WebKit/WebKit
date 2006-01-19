@@ -28,9 +28,10 @@
  * we ignore the deprecated compact attribute. Netscape does so too...
  */
 
-#include "html_elementimpl.h"
+#include "HTMLElementImpl.h"
+#include "htmlnames.h"
 
-namespace DOM
+namespace WebCore
 {
 
 class HTMLUListElementImpl : public HTMLElementImpl

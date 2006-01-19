@@ -129,12 +129,11 @@
 		93F198E308245E59001E9ABC /* html_baseimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23802DE4396018635CA /* html_baseimpl.h */; };
 		93F198E408245E59001E9ABC /* html_blockimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23A02DE4396018635CA /* html_blockimpl.h */; };
 		93F198E508245E59001E9ABC /* html_documentimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23C02DE4396018635CA /* html_documentimpl.h */; };
-		93F198E608245E59001E9ABC /* html_elementimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23F02DE4396018635CA /* html_elementimpl.h */; };
+		93F198E608245E59001E9ABC /* HTMLElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23F02DE4396018635CA /* HTMLElementImpl.h */; };
 		93F198E808245E59001E9ABC /* html_headimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24302DE4396018635CA /* html_headimpl.h */; };
 		93F198E908245E59001E9ABC /* html_imageimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24502DE4396018635CA /* html_imageimpl.h */; };
 		93F198EA08245E59001E9ABC /* html_inlineimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24702DE4396018635CA /* html_inlineimpl.h */; };
 		93F198EB08245E59001E9ABC /* html_listimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24902DE4396018635CA /* html_listimpl.h */; };
-		93F198EC08245E59001E9ABC /* html_miscimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24B02DE4396018635CA /* html_miscimpl.h */; };
 		93F198ED08245E59001E9ABC /* html_objectimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24D02DE4396018635CA /* html_objectimpl.h */; };
 		93F198EE08245E59001E9ABC /* html_tableimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24F02DE4396018635CA /* html_tableimpl.h */; };
 		93F198EF08245E59001E9ABC /* htmlparser.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D25102DE4396018635CA /* htmlparser.h */; };
@@ -374,12 +373,11 @@
 		93F19A8F08245E59001E9ABC /* html_baseimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23702DE4396018635CA /* html_baseimpl.cpp */; };
 		93F19A9008245E59001E9ABC /* html_blockimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23902DE4396018635CA /* html_blockimpl.cpp */; };
 		93F19A9108245E59001E9ABC /* html_documentimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23B02DE4396018635CA /* html_documentimpl.cpp */; };
-		93F19A9208245E59001E9ABC /* html_elementimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23E02DE4396018635CA /* html_elementimpl.cpp */; };
+		93F19A9208245E59001E9ABC /* HTMLElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23E02DE4396018635CA /* HTMLElementImpl.cpp */; };
 		93F19A9408245E59001E9ABC /* html_headimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24202DE4396018635CA /* html_headimpl.cpp */; };
 		93F19A9508245E59001E9ABC /* html_imageimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24402DE4396018635CA /* html_imageimpl.cpp */; };
 		93F19A9608245E59001E9ABC /* html_inlineimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24602DE4396018635CA /* html_inlineimpl.cpp */; };
 		93F19A9708245E59001E9ABC /* html_listimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24802DE4396018635CA /* html_listimpl.cpp */; };
-		93F19A9808245E59001E9ABC /* html_miscimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24A02DE4396018635CA /* html_miscimpl.cpp */; };
 		93F19A9908245E59001E9ABC /* html_objectimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24C02DE4396018635CA /* html_objectimpl.cpp */; };
 		93F19A9A08245E59001E9ABC /* html_tableimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24E02DE4396018635CA /* html_tableimpl.cpp */; };
 		93F19A9B08245E59001E9ABC /* htmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D25002DE4396018635CA /* htmlparser.cpp */; };
@@ -576,12 +574,11 @@
 		A88AD1310952480A001DD196 /* html_baseimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23802DE4396018635CA /* html_baseimpl.h */; };
 		A88AD1320952480A001DD196 /* html_blockimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23A02DE4396018635CA /* html_blockimpl.h */; };
 		A88AD1330952480A001DD196 /* html_documentimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23C02DE4396018635CA /* html_documentimpl.h */; };
-		A88AD1340952480A001DD196 /* html_elementimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23F02DE4396018635CA /* html_elementimpl.h */; };
+		A88AD1340952480A001DD196 /* HTMLElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D23F02DE4396018635CA /* HTMLElementImpl.h */; };
 		A88AD1360952480A001DD196 /* html_headimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24302DE4396018635CA /* html_headimpl.h */; };
 		A88AD1370952480A001DD196 /* html_imageimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24502DE4396018635CA /* html_imageimpl.h */; };
 		A88AD1380952480A001DD196 /* html_inlineimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24702DE4396018635CA /* html_inlineimpl.h */; };
 		A88AD1390952480A001DD196 /* html_listimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24902DE4396018635CA /* html_listimpl.h */; };
-		A88AD13A0952480A001DD196 /* html_miscimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24B02DE4396018635CA /* html_miscimpl.h */; };
 		A88AD13B0952480A001DD196 /* html_objectimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24D02DE4396018635CA /* html_objectimpl.h */; };
 		A88AD13C0952480A001DD196 /* html_tableimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24F02DE4396018635CA /* html_tableimpl.h */; };
 		A88AD13D0952480A001DD196 /* htmlparser.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D25102DE4396018635CA /* htmlparser.h */; };
@@ -859,12 +856,11 @@
 		A88AD2D20952480A001DD196 /* html_baseimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23702DE4396018635CA /* html_baseimpl.cpp */; };
 		A88AD2D30952480A001DD196 /* html_blockimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23902DE4396018635CA /* html_blockimpl.cpp */; };
 		A88AD2D40952480A001DD196 /* html_documentimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23B02DE4396018635CA /* html_documentimpl.cpp */; };
-		A88AD2D50952480A001DD196 /* html_elementimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23E02DE4396018635CA /* html_elementimpl.cpp */; };
+		A88AD2D50952480A001DD196 /* HTMLElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D23E02DE4396018635CA /* HTMLElementImpl.cpp */; };
 		A88AD2D70952480A001DD196 /* html_headimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24202DE4396018635CA /* html_headimpl.cpp */; };
 		A88AD2D80952480A001DD196 /* html_imageimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24402DE4396018635CA /* html_imageimpl.cpp */; };
 		A88AD2D90952480A001DD196 /* html_inlineimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24602DE4396018635CA /* html_inlineimpl.cpp */; };
 		A88AD2DA0952480A001DD196 /* html_listimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24802DE4396018635CA /* html_listimpl.cpp */; };
-		A88AD2DB0952480A001DD196 /* html_miscimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24A02DE4396018635CA /* html_miscimpl.cpp */; };
 		A88AD2DC0952480A001DD196 /* html_objectimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24C02DE4396018635CA /* html_objectimpl.cpp */; };
 		A88AD2DD0952480A001DD196 /* html_tableimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24E02DE4396018635CA /* html_tableimpl.cpp */; };
 		A88AD2DE0952480A001DD196 /* htmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D25002DE4396018635CA /* htmlparser.cpp */; };
@@ -1316,6 +1312,22 @@
 		A88AD51E0952499F001DD196 /* SVGNamesWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A884283809308C1C00B6D461 /* SVGNamesWrapper.cpp */; };
 		A88AD52F09524B92001DD196 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A85D7A2F0879EBA9006A9172 /* QuartzCore.framework */; };
 		A88AD5AA09525131001DD196 /* SVGCSSStyleSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F6FB089701F100BA5114 /* SVGCSSStyleSelector.cpp */; };
+		A8DF3FCE097FA0FC0052981B /* HTMLFormCollectionImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF3FC6097FA0FB0052981B /* HTMLFormCollectionImpl.h */; };
+		A8DF3FCF097FA0FC0052981B /* HTMLFormCollectionImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DF3FC7097FA0FB0052981B /* HTMLFormCollectionImpl.cpp */; };
+		A8DF3FD0097FA0FC0052981B /* HTMLCollectionImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF3FC8097FA0FB0052981B /* HTMLCollectionImpl.h */; };
+		A8DF3FD1097FA0FC0052981B /* HTMLCollectionImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DF3FC9097FA0FB0052981B /* HTMLCollectionImpl.cpp */; };
+		A8DF3FD2097FA0FC0052981B /* HTMLBaseFontElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF3FCA097FA0FB0052981B /* HTMLBaseFontElementImpl.h */; };
+		A8DF3FD3097FA0FC0052981B /* HTMLBaseFontElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DF3FCB097FA0FB0052981B /* HTMLBaseFontElementImpl.cpp */; };
+		A8DF3FD4097FA0FC0052981B /* HTMLNameCollectionImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF3FCC097FA0FB0052981B /* HTMLNameCollectionImpl.h */; };
+		A8DF3FD5097FA0FC0052981B /* HTMLNameCollectionImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DF3FCD097FA0FB0052981B /* HTMLNameCollectionImpl.cpp */; };
+		A8DF3FD6097FA0FC0052981B /* HTMLFormCollectionImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF3FC6097FA0FB0052981B /* HTMLFormCollectionImpl.h */; };
+		A8DF3FD7097FA0FC0052981B /* HTMLFormCollectionImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DF3FC7097FA0FB0052981B /* HTMLFormCollectionImpl.cpp */; };
+		A8DF3FD8097FA0FC0052981B /* HTMLCollectionImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF3FC8097FA0FB0052981B /* HTMLCollectionImpl.h */; };
+		A8DF3FD9097FA0FC0052981B /* HTMLCollectionImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DF3FC9097FA0FB0052981B /* HTMLCollectionImpl.cpp */; };
+		A8DF3FDA097FA0FC0052981B /* HTMLBaseFontElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF3FCA097FA0FB0052981B /* HTMLBaseFontElementImpl.h */; };
+		A8DF3FDB097FA0FC0052981B /* HTMLBaseFontElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DF3FCB097FA0FB0052981B /* HTMLBaseFontElementImpl.cpp */; };
+		A8DF3FDC097FA0FC0052981B /* HTMLNameCollectionImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF3FCC097FA0FB0052981B /* HTMLNameCollectionImpl.h */; };
+		A8DF3FDD097FA0FC0052981B /* HTMLNameCollectionImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DF3FCD097FA0FB0052981B /* HTMLNameCollectionImpl.cpp */; };
 		A8FD8B86087CB44C00DC3707 /* KWQWMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A85D7A8C0879EC64006A9172 /* KWQWMatrix.cpp */; };
 		A8FD8B87087CB45700DC3707 /* KWQWMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = A85D7A8D0879EC64006A9172 /* KWQWMatrix.h */; };
 		A8FEFB0A0979F472005839FD /* RenderForeignObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A8FEFB080979F472005839FD /* RenderForeignObject.h */; };
@@ -2406,6 +2418,14 @@
 		A8C32967093BB7B2000B9CAC /* SVGFEPointLightElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEPointLightElementImpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C32D89093D8BFA000B9CAC /* xlinkattrs.in */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = xlinkattrs.in; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C32D96093D8EA4000B9CAC /* XLinkNamesWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XLinkNamesWrapper.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		A8DF3FC6097FA0FB0052981B /* HTMLFormCollectionImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLFormCollectionImpl.h; sourceTree = "<group>"; };
+		A8DF3FC7097FA0FB0052981B /* HTMLFormCollectionImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLFormCollectionImpl.cpp; sourceTree = "<group>"; };
+		A8DF3FC8097FA0FB0052981B /* HTMLCollectionImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLCollectionImpl.h; sourceTree = "<group>"; };
+		A8DF3FC9097FA0FB0052981B /* HTMLCollectionImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLCollectionImpl.cpp; sourceTree = "<group>"; };
+		A8DF3FCA097FA0FB0052981B /* HTMLBaseFontElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLBaseFontElementImpl.h; sourceTree = "<group>"; };
+		A8DF3FCB097FA0FB0052981B /* HTMLBaseFontElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLBaseFontElementImpl.cpp; sourceTree = "<group>"; };
+		A8DF3FCC097FA0FB0052981B /* HTMLNameCollectionImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLNameCollectionImpl.h; sourceTree = "<group>"; };
+		A8DF3FCD097FA0FB0052981B /* HTMLNameCollectionImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLNameCollectionImpl.cpp; sourceTree = "<group>"; };
 		A8FEFB080979F472005839FD /* RenderForeignObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderForeignObject.h; sourceTree = "<group>"; };
 		A8FEFB090979F472005839FD /* RenderForeignObject.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderForeignObject.cpp; sourceTree = "<group>"; };
 		A8FEFB2F0979F4F6005839FD /* SVGForeignObjectElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGForeignObjectElementImpl.cpp; sourceTree = "<group>"; };
@@ -2669,8 +2689,8 @@
 		F523D23A02DE4396018635CA /* html_blockimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = html_blockimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D23B02DE4396018635CA /* html_documentimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = html_documentimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D23C02DE4396018635CA /* html_documentimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = html_documentimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D23E02DE4396018635CA /* html_elementimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = html_elementimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D23F02DE4396018635CA /* html_elementimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = html_elementimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F523D23E02DE4396018635CA /* HTMLElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLElementImpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F523D23F02DE4396018635CA /* HTMLElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLElementImpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D24202DE4396018635CA /* html_headimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = html_headimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D24302DE4396018635CA /* html_headimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = html_headimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D24402DE4396018635CA /* html_imageimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = html_imageimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2679,8 +2699,6 @@
 		F523D24702DE4396018635CA /* html_inlineimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = html_inlineimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D24802DE4396018635CA /* html_listimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = html_listimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D24902DE4396018635CA /* html_listimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = html_listimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D24A02DE4396018635CA /* html_miscimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = html_miscimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D24B02DE4396018635CA /* html_miscimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = html_miscimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D24C02DE4396018635CA /* html_objectimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = html_objectimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D24D02DE4396018635CA /* html_objectimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = html_objectimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D24E02DE4396018635CA /* html_tableimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = html_tableimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -4029,8 +4047,8 @@
 				51F6A3D60663BF04004D2919 /* html_canvasimpl.h */,
 				F523D23B02DE4396018635CA /* html_documentimpl.cpp */,
 				F523D23C02DE4396018635CA /* html_documentimpl.h */,
-				F523D23E02DE4396018635CA /* html_elementimpl.cpp */,
-				F523D23F02DE4396018635CA /* html_elementimpl.h */,
+				F523D23E02DE4396018635CA /* HTMLElementImpl.cpp */,
+				F523D23F02DE4396018635CA /* HTMLElementImpl.h */,
 				F523D24202DE4396018635CA /* html_headimpl.cpp */,
 				F523D24302DE4396018635CA /* html_headimpl.h */,
 				F523D24402DE4396018635CA /* html_imageimpl.cpp */,
@@ -4039,8 +4057,6 @@
 				F523D24702DE4396018635CA /* html_inlineimpl.h */,
 				F523D24802DE4396018635CA /* html_listimpl.cpp */,
 				F523D24902DE4396018635CA /* html_listimpl.h */,
-				F523D24A02DE4396018635CA /* html_miscimpl.cpp */,
-				F523D24B02DE4396018635CA /* html_miscimpl.h */,
 				F523D24C02DE4396018635CA /* html_objectimpl.cpp */,
 				F523D24D02DE4396018635CA /* html_objectimpl.h */,
 				F523D24E02DE4396018635CA /* html_tableimpl.cpp */,
@@ -4078,6 +4094,14 @@
 				A81369C9097374F600D74463 /* HTMLKeygenElementImpl.cpp */,
 				A8136D360973A8E700D74463 /* FormDataList.h */,
 				A8136D370973A8E700D74463 /* FormDataList.cpp */,
+				A8DF3FC6097FA0FB0052981B /* HTMLFormCollectionImpl.h */,
+				A8DF3FC7097FA0FB0052981B /* HTMLFormCollectionImpl.cpp */,
+				A8DF3FC8097FA0FB0052981B /* HTMLCollectionImpl.h */,
+				A8DF3FC9097FA0FB0052981B /* HTMLCollectionImpl.cpp */,
+				A8DF3FCA097FA0FB0052981B /* HTMLBaseFontElementImpl.h */,
+				A8DF3FCB097FA0FB0052981B /* HTMLBaseFontElementImpl.cpp */,
+				A8DF3FCC097FA0FB0052981B /* HTMLNameCollectionImpl.h */,
+				A8DF3FCD097FA0FB0052981B /* HTMLNameCollectionImpl.cpp */,
 			);
 			path = html;
 			sourceTree = "<group>";
@@ -4474,12 +4498,11 @@
 				93F198E308245E59001E9ABC /* html_baseimpl.h in Headers */,
 				93F198E408245E59001E9ABC /* html_blockimpl.h in Headers */,
 				93F198E508245E59001E9ABC /* html_documentimpl.h in Headers */,
-				93F198E608245E59001E9ABC /* html_elementimpl.h in Headers */,
+				93F198E608245E59001E9ABC /* HTMLElementImpl.h in Headers */,
 				93F198E808245E59001E9ABC /* html_headimpl.h in Headers */,
 				93F198E908245E59001E9ABC /* html_imageimpl.h in Headers */,
 				93F198EA08245E59001E9ABC /* html_inlineimpl.h in Headers */,
 				93F198EB08245E59001E9ABC /* html_listimpl.h in Headers */,
-				93F198EC08245E59001E9ABC /* html_miscimpl.h in Headers */,
 				93F198ED08245E59001E9ABC /* html_objectimpl.h in Headers */,
 				93F198EE08245E59001E9ABC /* html_tableimpl.h in Headers */,
 				93F198EF08245E59001E9ABC /* htmlparser.h in Headers */,
@@ -4968,6 +4991,10 @@
 				BCEA4944097F0F5C0094C9E4 /* BrowserExtension.h in Headers */,
 				BCEA4947097F0F770094C9E4 /* BrowserExtensionMac.h in Headers */,
 				AB67D1A9097F3AE300F9392E /* RenderTextField.h in Headers */,
+				A8DF3FCE097FA0FC0052981B /* HTMLFormCollectionImpl.h in Headers */,
+				A8DF3FD0097FA0FC0052981B /* HTMLCollectionImpl.h in Headers */,
+				A8DF3FD2097FA0FC0052981B /* HTMLBaseFontElementImpl.h in Headers */,
+				A8DF3FD4097FA0FC0052981B /* HTMLNameCollectionImpl.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4995,12 +5022,11 @@
 				A88AD1310952480A001DD196 /* html_baseimpl.h in Headers */,
 				A88AD1320952480A001DD196 /* html_blockimpl.h in Headers */,
 				A88AD1330952480A001DD196 /* html_documentimpl.h in Headers */,
-				A88AD1340952480A001DD196 /* html_elementimpl.h in Headers */,
+				A88AD1340952480A001DD196 /* HTMLElementImpl.h in Headers */,
 				A88AD1360952480A001DD196 /* html_headimpl.h in Headers */,
 				A88AD1370952480A001DD196 /* html_imageimpl.h in Headers */,
 				A88AD1380952480A001DD196 /* html_inlineimpl.h in Headers */,
 				A88AD1390952480A001DD196 /* html_listimpl.h in Headers */,
-				A88AD13A0952480A001DD196 /* html_miscimpl.h in Headers */,
 				A88AD13B0952480A001DD196 /* html_objectimpl.h in Headers */,
 				A88AD13C0952480A001DD196 /* html_tableimpl.h in Headers */,
 				A88AD13D0952480A001DD196 /* htmlparser.h in Headers */,
@@ -5312,6 +5338,10 @@
 				BCEA48CD097D93020094C9E4 /* RenderTextFragment.h in Headers */,
 				BCEA48CF097D93020094C9E4 /* table_layout.h in Headers */,
 				AB67D1AB097F3AE300F9392E /* RenderTextField.h in Headers */,
+				A8DF3FD6097FA0FC0052981B /* HTMLFormCollectionImpl.h in Headers */,
+				A8DF3FD8097FA0FC0052981B /* HTMLCollectionImpl.h in Headers */,
+				A8DF3FDA097FA0FC0052981B /* HTMLBaseFontElementImpl.h in Headers */,
+				A8DF3FDC097FA0FC0052981B /* HTMLNameCollectionImpl.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6486,12 +6516,11 @@
 				93F19A8F08245E59001E9ABC /* html_baseimpl.cpp in Sources */,
 				93F19A9008245E59001E9ABC /* html_blockimpl.cpp in Sources */,
 				93F19A9108245E59001E9ABC /* html_documentimpl.cpp in Sources */,
-				93F19A9208245E59001E9ABC /* html_elementimpl.cpp in Sources */,
+				93F19A9208245E59001E9ABC /* HTMLElementImpl.cpp in Sources */,
 				93F19A9408245E59001E9ABC /* html_headimpl.cpp in Sources */,
 				93F19A9508245E59001E9ABC /* html_imageimpl.cpp in Sources */,
 				93F19A9608245E59001E9ABC /* html_inlineimpl.cpp in Sources */,
 				93F19A9708245E59001E9ABC /* html_listimpl.cpp in Sources */,
-				93F19A9808245E59001E9ABC /* html_miscimpl.cpp in Sources */,
 				93F19A9908245E59001E9ABC /* html_objectimpl.cpp in Sources */,
 				93F19A9A08245E59001E9ABC /* html_tableimpl.cpp in Sources */,
 				93F19A9B08245E59001E9ABC /* htmlparser.cpp in Sources */,
@@ -6874,6 +6903,10 @@
 				937A36A7097E2E3200E4EE2F /* UserAgentStyleSheets.cpp in Sources */,
 				BCEA4948097F0F770094C9E4 /* BrowserExtensionMac.mm in Sources */,
 				AB67D1A8097F3AE300F9392E /* RenderTextField.cpp in Sources */,
+				A8DF3FCF097FA0FC0052981B /* HTMLFormCollectionImpl.cpp in Sources */,
+				A8DF3FD1097FA0FC0052981B /* HTMLCollectionImpl.cpp in Sources */,
+				A8DF3FD3097FA0FC0052981B /* HTMLBaseFontElementImpl.cpp in Sources */,
+				A8DF3FD5097FA0FC0052981B /* HTMLNameCollectionImpl.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6954,12 +6987,11 @@
 				A88AD2D20952480A001DD196 /* html_baseimpl.cpp in Sources */,
 				A88AD2D30952480A001DD196 /* html_blockimpl.cpp in Sources */,
 				A88AD2D40952480A001DD196 /* html_documentimpl.cpp in Sources */,
-				A88AD2D50952480A001DD196 /* html_elementimpl.cpp in Sources */,
+				A88AD2D50952480A001DD196 /* HTMLElementImpl.cpp in Sources */,
 				A88AD2D70952480A001DD196 /* html_headimpl.cpp in Sources */,
 				A88AD2D80952480A001DD196 /* html_imageimpl.cpp in Sources */,
 				A88AD2D90952480A001DD196 /* html_inlineimpl.cpp in Sources */,
 				A88AD2DA0952480A001DD196 /* html_listimpl.cpp in Sources */,
-				A88AD2DB0952480A001DD196 /* html_miscimpl.cpp in Sources */,
 				A88AD2DC0952480A001DD196 /* html_objectimpl.cpp in Sources */,
 				A88AD2DD0952480A001DD196 /* html_tableimpl.cpp in Sources */,
 				A88AD2DE0952480A001DD196 /* htmlparser.cpp in Sources */,
@@ -7172,6 +7204,10 @@
 				BCEA48CE097D93020094C9E4 /* table_layout.cpp in Sources */,
 				937A36A8097E2E3200E4EE2F /* UserAgentStyleSheets.cpp in Sources */,
 				AB67D1AA097F3AE300F9392E /* RenderTextField.cpp in Sources */,
+				A8DF3FD7097FA0FC0052981B /* HTMLFormCollectionImpl.cpp in Sources */,
+				A8DF3FD9097FA0FC0052981B /* HTMLCollectionImpl.cpp in Sources */,
+				A8DF3FDB097FA0FC0052981B /* HTMLBaseFontElementImpl.cpp in Sources */,
+				A8DF3FDD097FA0FC0052981B /* HTMLNameCollectionImpl.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

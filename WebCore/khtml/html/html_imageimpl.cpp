@@ -33,8 +33,7 @@
 #include "cssvalues.h"
 #include "html_documentimpl.h"
 #include "render_image.h"
-
-// #define INSTRUMENT_LAYOUT_SCHEDULING 1
+#include "htmlnames.h"
 
 namespace WebCore {
 

@@ -27,13 +27,13 @@
 
 #include "DocumentImpl.h"
 #include "CachedObjectClient.h"
-#include "html/html_miscimpl.h"
+#include "HTMLCollectionImpl.h"
 #include <kxmlcore/HashMap.h>
 
 class FrameView;
 class QString;
 
-namespace DOM {
+namespace WebCore {
 
 class HTMLElementImpl;
 

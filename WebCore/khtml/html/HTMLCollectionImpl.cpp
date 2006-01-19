@@ -3,7 +3,7 @@
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,60 +21,16 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-// -------------------------------------------------------------------------
 #include "config.h"
-#include "html/html_miscimpl.h"
-#include "html/html_imageimpl.h"
-#include "html/html_documentimpl.h"
-#include "html/html_objectimpl.h"
-#include "HTMLFormElementImpl.h"
-#include "HTMLGenericFormElementImpl.h"
+#include "HTMLCollectionImpl.h"
+#include "html_documentimpl.h"
+#include "HTMLElementImpl.h"
+#include <qptrvector.h>
+#include "htmlnames.h"
 
-#include "dom/dom_node.h"
-
-#include <kdebug.h>
-#include <kxmlcore/HashSet.h>
-
-namespace DOM {
+namespace WebCore {
 
 using namespace HTMLNames;
-
-HTMLBaseFontElementImpl::HTMLBaseFontElementImpl(DocumentImpl *doc)
-    : HTMLElementImpl(basefontTag, doc)
-{
-}
-
-DOMString HTMLBaseFontElementImpl::color() const
-{
-    return getAttribute(colorAttr);
-}
-
-void HTMLBaseFontElementImpl::setColor(const DOMString &value)
-{
-    setAttribute(colorAttr, value);
-}
-
-DOMString HTMLBaseFontElementImpl::face() const
-{
-    return getAttribute(faceAttr);
-}
-
-void HTMLBaseFontElementImpl::setFace(const DOMString &value)
-{
-    setAttribute(faceAttr, value);
-}
-
-DOMString HTMLBaseFontElementImpl::size() const
-{
-    return getAttribute(sizeAttr);
-}
-
-void HTMLBaseFontElementImpl::setSize(const DOMString &value)
-{
-    setAttribute(sizeAttr, value);
-}
-
-// -------------------------------------------------------------------------
 
 HTMLCollectionImpl::HTMLCollectionImpl(NodeImpl *_base, int _type)
     : m_base(_base),
@@ -217,7 +173,7 @@ NodeImpl *HTMLCollectionImpl::traverseNextItem(NodeImpl *current) const
                 deep = false;
                 break;
             default:
-                kdDebug( 6030 ) << "Error in HTMLCollection, wrong tagId!" << endl;
+                break;
             }
 
             if (found)
@@ -364,61 +320,6 @@ NodeImpl *HTMLCollectionImpl::namedItem(const DOMString &name, bool caseSensitiv
     return info->current;
 }
 
-HTMLNameCollectionImpl::HTMLNameCollectionImpl(DocumentImpl* _base, int _type, DOMString &name)
-    : HTMLCollectionImpl(_base, _type),
-      m_name(name)
-{
-}
-    
-NodeImpl *HTMLNameCollectionImpl::traverseNextItem(NodeImpl *current) const
-{
-    assert(current);
-
-    current = current->traverseNextNode(m_base.get());
-
-    while (current) {
-        if (current->isElementNode()) {
-            bool found = false;
-            ElementImpl *e = static_cast<ElementImpl *>(current);
-            switch(type) {
-            case WINDOW_NAMED_ITEMS:
-                // find only images, forms, applets, embeds and objects by name, 
-                // but anything by id
-                if (e->hasTagName(imgTag) ||
-                    e->hasTagName(formTag) ||
-                    e->hasTagName(appletTag) ||
-                    e->hasTagName(embedTag) ||
-                    e->hasTagName(objectTag))
-                    found = e->getAttribute(nameAttr) == m_name;
-                found |= e->getAttribute(idAttr) == m_name;
-                break;
-            case DOCUMENT_NAMED_ITEMS:
-                // find images, forms, applets, embeds, objects and iframes by name, 
-                // but only applets and object by id (this strange rule matches IE)
-                if (e->hasTagName(imgTag) ||
-                    e->hasTagName(formTag) ||
-                    e->hasTagName(embedTag) ||
-                    e->hasTagName(iframeTag))
-                    found = e->getAttribute(nameAttr) == m_name;
-                else if (e->hasTagName(appletTag))
-                    found = e->getAttribute(nameAttr) == m_name ||
-                        e->getAttribute(idAttr) == m_name;
-                else if (e->hasTagName(objectTag))
-                    found = (e->getAttribute(nameAttr) == m_name || e->getAttribute(idAttr) == m_name) &&
-                        static_cast<HTMLObjectElementImpl *>(e)->isDocNamedItem();
-                break;
-            default:
-                assert(0);
-            }
-
-            if (found)
-                return current;
-        }
-        current = current->traverseNextNode(m_base.get());
-    }
-    return 0;
-}
-
 template<class T> static void appendToVector(QPtrVector<T> *vec, T *item)
 {
     unsigned size = vec->size();
@@ -516,255 +417,6 @@ NodeImpl *HTMLCollectionImpl::nextNamedItem(const DOMString &name) const
     }
 
     return 0;
-}
-
-// -----------------------------------------------------------------------------
-
-HTMLFormCollectionImpl::HTMLFormCollectionImpl(NodeImpl* _base)
-    : HTMLCollectionImpl(_base, 0)
-{
-    HTMLFormElementImpl *formBase = static_cast<HTMLFormElementImpl*>(m_base.get());
-    if (!formBase->collectionInfo) {
-        formBase->collectionInfo = new CollectionInfo();
-    }
-    info = formBase->collectionInfo;
-}
-
-HTMLFormCollectionImpl::~HTMLFormCollectionImpl()
-{
-}
-
-unsigned HTMLFormCollectionImpl::calcLength() const
-{
-    QPtrVector<HTMLGenericFormElementImpl> &l = static_cast<HTMLFormElementImpl*>(m_base.get())->formElements;
-
-    int len = 0;
-    for ( unsigned i = 0; i < l.count(); i++ )
-        if ( l.at( i )->isEnumeratable() )
-            ++len;
-
-    return len;
-}
-
-NodeImpl *HTMLFormCollectionImpl::item(unsigned index) const
-{
-    resetCollectionInfo();
-
-    if (info->current && info->position == index) {
-        return info->current;
-    }
-    if (info->haslength && info->length <= index) {
-        return 0;
-    }
-    if (!info->current || info->position > index) {
-        info->current = 0;
-        info->position = 0;
-        info->elementsArrayPosition = 0;
-    }
-
-    QPtrVector<HTMLGenericFormElementImpl> &l = static_cast<HTMLFormElementImpl*>(m_base.get())->formElements;
-    unsigned currentIndex = info->position;
-    
-    for (unsigned i = info->elementsArrayPosition; i < l.count(); i++) {
-        if (l[i]->isEnumeratable() ) {
-            if (index == currentIndex) {
-                info->position = index;
-                info->current = l[i];
-                info->elementsArrayPosition = i;
-                return l[i];
-            }
-
-            currentIndex++;
-        }
-    }
-
-    return 0;
-}
-
-NodeImpl* HTMLFormCollectionImpl::getNamedItem(NodeImpl*, const QualifiedName& attrName, const DOMString& name, bool caseSensitive) const
-{
-    info->position = 0;
-    return getNamedFormItem(attrName, name, 0, caseSensitive);
-}
-
-NodeImpl* HTMLFormCollectionImpl::getNamedFormItem(const QualifiedName& attrName, const DOMString& name, int duplicateNumber, bool caseSensitive) const
-{
-    if (m_base->isElementNode()) {
-        HTMLElementImpl* baseElement = static_cast<HTMLElementImpl*>(m_base.get());
-        bool foundInputElements = false;
-        if (baseElement->hasLocalName(formTag)) {
-            HTMLFormElementImpl* f = static_cast<HTMLFormElementImpl*>(baseElement);
-            for (unsigned i = 0; i < f->formElements.count(); ++i) {
-                HTMLGenericFormElementImpl* e = f->formElements[i];
-                if (e->isEnumeratable()) {
-                    bool found;
-                    if (caseSensitive)
-                        found = e->getAttribute(attrName) == name;
-                    else
-                        found = e->getAttribute(attrName).domString().lower() == name.lower();
-                    if (found) {
-                        foundInputElements = true;
-                        if (!duplicateNumber)
-                            return e;
-                        --duplicateNumber;
-                    }
-                }
-            }
-        }
-
-        if (!foundInputElements) {
-            HTMLFormElementImpl* f = static_cast<HTMLFormElementImpl*>(baseElement);
-
-            for(unsigned i = 0; i < f->imgElements.count(); ++i)
-            {
-                HTMLImageElementImpl* e = f->imgElements[i];
-                bool found;
-                if (caseSensitive)
-                    found = e->getAttribute(attrName) == name;
-                else
-                    found = e->getAttribute(attrName).domString().lower() == name.lower();
-                if (found) {
-                    if (!duplicateNumber)
-                        return e;
-                    --duplicateNumber;
-                }
-            }
-        }
-    }
-    return 0;
-}
-
-NodeImpl * HTMLFormCollectionImpl::firstItem() const
-{
-    return item(0);
-}
-
-NodeImpl * HTMLFormCollectionImpl::nextItem() const
-{
-    return item(info->position + 1);
-}
-
-NodeImpl * HTMLFormCollectionImpl::nextNamedItemInternal(const DOMString &name) const
-{
-    NodeImpl *retval = getNamedFormItem( idsDone ? nameAttr : idAttr, name, ++info->position, true );
-    if (retval)
-        return retval;
-    if (idsDone) // we're done
-        return 0;
-    // After doing id, do name
-    idsDone = true;
-    return getNamedItem(m_base->firstChild(), nameAttr, name, true);
-}
-
-NodeImpl *HTMLFormCollectionImpl::namedItem( const DOMString &name, bool caseSensitive ) const
-{
-    // http://msdn.microsoft.com/workshop/author/dhtml/reference/methods/nameditem.asp
-    // This method first searches for an object with a matching id
-    // attribute. If a match is not found, the method then searches for an
-    // object with a matching name attribute, but only on those elements
-    // that are allowed a name attribute.
-    resetCollectionInfo();
-    idsDone = false;
-    info->current = getNamedItem(m_base->firstChild(), idAttr, name, true);
-    if(info->current)
-        return info->current;
-    idsDone = true;
-    info->current = getNamedItem(m_base->firstChild(), nameAttr, name, true);
-    return info->current;
-}
-
-
-NodeImpl *HTMLFormCollectionImpl::nextNamedItem( const DOMString &name ) const
-{
-    // nextNamedItemInternal can return an item that has both id=<name> and name=<name>
-    // Here, we have to filter out such cases.
-    NodeImpl *impl = nextNamedItemInternal( name );
-    if (!idsDone) // looking for id=<name> -> no filtering
-        return impl;
-    // looking for name=<name> -> filter out if id=<name>
-    bool ok = false;
-    while (impl && !ok)
-    {
-        if(impl->isElementNode())
-        {
-            HTMLElementImpl *e = static_cast<HTMLElementImpl *>(impl);
-            ok = (e->getAttribute(idAttr) != name);
-            if (!ok)
-                impl = nextNamedItemInternal( name );
-        } else // can't happen
-            ok = true;
-    }
-    return impl;
-}
-
-void HTMLFormCollectionImpl::updateNameCache() const
-{
-    if (info->hasNameCache)
-        return;
-
-    HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> > foundInputElements;
-
-    if (!m_base->hasTagName(formTag)) {
-        info->hasNameCache = true;
-        return;
-    }
-
-    HTMLElementImpl* baseElement = static_cast<HTMLElementImpl*>(m_base.get());
-
-    HTMLFormElementImpl* f = static_cast<HTMLFormElementImpl*>(baseElement);
-    for (unsigned i = 0; i < f->formElements.count(); ++i) {
-        HTMLGenericFormElementImpl* e = f->formElements[i];
-        if (e->isEnumeratable()) {
-            const AtomicString& idAttrVal = e->getAttribute(idAttr);
-            const AtomicString& nameAttrVal = e->getAttribute(nameAttr);
-            if (!idAttrVal.isEmpty()) {
-                // add to id cache
-                QPtrVector<NodeImpl> *idVector = info->idCache.get(idAttrVal.impl());
-                if (!idVector) {
-                    idVector = new QPtrVector<NodeImpl>;
-                    info->idCache.add(idAttrVal.impl(), idVector);
-                }
-                appendToVector(idVector, static_cast<NodeImpl *>(e));
-                foundInputElements.insert(idAttrVal.impl());
-            }
-            if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal) {
-                // add to name cache
-                QPtrVector<NodeImpl> *nameVector = info->nameCache.get(nameAttrVal.impl());
-                if (!nameVector) {
-                    nameVector = new QPtrVector<NodeImpl>;
-                    info->nameCache.add(nameAttrVal.impl(), nameVector);
-                }
-                appendToVector(nameVector, static_cast<NodeImpl *>(e));
-                foundInputElements.insert(nameAttrVal.impl());
-            }
-        }
-    }
-
-    for (unsigned i = 0; i < f->imgElements.count(); ++i) {
-        HTMLImageElementImpl* e = f->imgElements[i];
-        const AtomicString& idAttrVal = e->getAttribute(idAttr);
-        const AtomicString& nameAttrVal = e->getAttribute(nameAttr);
-        if (!idAttrVal.isEmpty() && !foundInputElements.contains(idAttrVal.impl())) {
-            // add to id cache
-            QPtrVector<NodeImpl> *idVector = info->idCache.get(idAttrVal.impl());
-            if (!idVector) {
-                idVector = new QPtrVector<NodeImpl>;
-                info->idCache.add(idAttrVal.impl(), idVector);
-            }
-            appendToVector(idVector, static_cast<NodeImpl *>(e));
-        }
-        if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal && !foundInputElements.contains(nameAttrVal.impl())) {
-            // add to name cache
-            QPtrVector<NodeImpl> *nameVector = info->nameCache.get(nameAttrVal.impl());
-            if (!nameVector) {
-                nameVector = new QPtrVector<NodeImpl>;
-                info->nameCache.add(nameAttrVal.impl(), nameVector);
-            }
-            appendToVector(nameVector, static_cast<NodeImpl *>(e));
-        }
-    }
-
-    info->hasNameCache = true;
 }
 
 }

@@ -42,14 +42,12 @@
 #include <klocale.h>
 #include <qpainter.h>
 #include <qtimer.h>
+#include "htmlnames.h"
 
-using namespace DOM;
+namespace WebCore {
+
 using namespace EventNames;
 using namespace HTMLNames;
-
-//#define DEBUG_LAYOUT
-
-namespace khtml {
 
 RenderFrameSet::RenderFrameSet( HTMLFrameSetElementImpl *frameSet)
     : RenderContainer(frameSet)

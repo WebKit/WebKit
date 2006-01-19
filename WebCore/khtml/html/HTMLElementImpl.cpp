@@ -21,15 +21,9 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-// -------------------------------------------------------------------------
-//#define DEBUG
-//#define DEBUG_LAYOUT
-//#define PAR_DEBUG
-//#define EVENT_DEBUG
-//#define UNSUPPORTED_ATTR
 
 #include "config.h"
-#include "html/html_elementimpl.h"
+#include "HTMLElementImpl.h"
 #include "html/html_documentimpl.h"
 #include "html/htmltokenizer.h"
 #include "htmlfactory.h"
@@ -40,7 +34,6 @@
 #include "Frame.h"
 
 #include "dom/dom_exception.h"
-#include "rendering/render_object.h"
 #include "rendering/render_replaced.h"
 #include "css/css_valueimpl.h"
 #include "css/css_stylesheetimpl.h"
@@ -51,15 +44,12 @@
 #include "xml/dom2_eventsimpl.h"
 #include "xml/EventNames.h"
 #include "editing/markup.h"
+#include "htmlnames.h"
 
-#include <kdebug.h>
+namespace WebCore {
 
-using namespace DOM;
-using namespace DOM::EventNames;
+using namespace EventNames;
 using namespace HTMLNames;
-using namespace khtml;
-
-// ------------------------------------------------------------------
 
 HTMLElementImpl::HTMLElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
     : StyledElementImpl(tagName, doc)
@@ -819,4 +809,6 @@ bool HTMLElementImpl::checkDTD(const NodeImpl* newChild)
 void HTMLElementImpl::setHTMLEventListener(const AtomicString& eventType, AttributeImpl* attr)
 {
     ElementImpl::setHTMLEventListener(eventType, getDocument()->createHTMLEventListener(attr->value(), this));
+}
+
 }

@@ -32,7 +32,7 @@
 #include "css/css_valueimpl.h"
 #include "editing/visible_position.h"
 #include "editing/visible_units.h"
-#include "html/html_elementimpl.h"
+#include "HTMLElementImpl.h"
 #include "xml/dom_position.h"
 #include "xml/dom_xmlimpl.h"
 #include "xml/dom2_rangeimpl.h"

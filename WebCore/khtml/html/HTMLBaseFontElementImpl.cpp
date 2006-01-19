@@ -1,11 +1,9 @@
-/*
+/**
  * This file is part of the DOM implementation for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
- *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,44 +21,47 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-
 #include "config.h"
-#include "HTMLFieldSetElementImpl.h"
-
-#include "rendering/render_form.h"
+#include "HTMLBaseFontElementImpl.h"
 #include "htmlnames.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLFieldSetElementImpl::HTMLFieldSetElementImpl(DocumentImpl *doc, HTMLFormElementImpl *f)
-   : HTMLGenericFormElementImpl(fieldsetTag, doc, f)
+HTMLBaseFontElementImpl::HTMLBaseFontElementImpl(DocumentImpl *doc)
+    : HTMLElementImpl(basefontTag, doc)
 {
 }
 
-HTMLFieldSetElementImpl::~HTMLFieldSetElementImpl()
+DOMString HTMLBaseFontElementImpl::color() const
 {
+    return getAttribute(colorAttr);
 }
 
-bool HTMLFieldSetElementImpl::checkDTD(const NodeImpl* newChild)
+void HTMLBaseFontElementImpl::setColor(const DOMString &value)
 {
-    return newChild->hasTagName(legendTag) || HTMLElementImpl::checkDTD(newChild);
+    setAttribute(colorAttr, value);
 }
 
-bool HTMLFieldSetElementImpl::isFocusable() const
+DOMString HTMLBaseFontElementImpl::face() const
 {
-    return false;
+    return getAttribute(faceAttr);
 }
 
-DOMString HTMLFieldSetElementImpl::type() const
+void HTMLBaseFontElementImpl::setFace(const DOMString &value)
 {
-    return "fieldset";
+    setAttribute(faceAttr, value);
 }
 
-RenderObject* HTMLFieldSetElementImpl::createRenderer(RenderArena* arena, RenderStyle* style)
+DOMString HTMLBaseFontElementImpl::size() const
 {
-    return new (arena) RenderFieldset(this);
+    return getAttribute(sizeAttr);
 }
 
-} // namespace
+void HTMLBaseFontElementImpl::setSize(const DOMString &value)
+{
+    setAttribute(sizeAttr, value);
+}
+
+}

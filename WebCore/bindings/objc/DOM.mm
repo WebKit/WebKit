@@ -51,7 +51,8 @@
 #import "dom_stringimpl.h"
 #import "dom_textimpl.h"
 #import "dom_xmlimpl.h"
-#import "html_elementimpl.h"
+#import "HTMLElementImpl.h"
+#import "htmlnames.h"
 #import "render_object.h"
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
 #import <kxmlcore/Assertions.h>

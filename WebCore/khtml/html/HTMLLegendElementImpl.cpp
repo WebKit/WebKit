@@ -28,10 +28,9 @@
 #include "HTMLLegendElementImpl.h"
 
 #include "rendering/render_form.h"
+#include "htmlnames.h"
 
-using namespace khtml;
-
-namespace DOM {
+namespace WebCore {
 
 using namespace HTMLNames;
 

@@ -51,8 +51,9 @@
 #include "dom_string.h"
 #include "html_baseimpl.h"
 #include "html_documentimpl.h"
+#include "htmlnames.h"
 #include "html_imageimpl.h"
-#include "html_miscimpl.h"
+#include "HTMLCollectionImpl.h"
 #include "html_objectimpl.h"
 #include "htmlediting.h"
 #include "khtml_events.h"
@@ -72,7 +73,6 @@
 #include "xmlhttprequest.h"
 #include <assert.h>
 #include <kcursor.h>
-#include <kdebug.h>
 #include <kio/global.h>
 #include <kio/job.h>
 #include <klocale.h>
@@ -212,7 +212,6 @@ bool Frame::restoreURL( const KURL &url )
    * method gets called from restoreState() in case of a full frameset
    * restoral, and restoreState() calls closeURL() before restoring
    * anyway.
-  kdDebug( 6050 ) << "closing old URL" << endl;
   closeURL();
   */
 
@@ -356,9 +355,7 @@ void Frame::stopLoading(bool sendUnload)
   d->m_bLoadEventEmitted = true; // don't want that one either
   d->m_cachePolicy = KIO::CC_Verify; // Why here?
 
-  if ( d->m_doc && d->m_doc->parsing() )
-  {
-    kdDebug( 6050 ) << " was still parsing... calling end " << endl;
+  if (d->m_doc && d->m_doc->parsing()) {
     slotFinishedParsing();
     d->m_doc->setParsing(false);
   }
@@ -665,9 +662,7 @@ void Frame::receivedFirstData()
 
     // Support for http-refresh
     qData = d->m_job->queryMetaData("http-refresh");
-    if( !qData.isEmpty() && d->m_metaRefreshEnabled )
-    {
-      kdDebug(6050) << "HTTP Refresh Request: " << qData << endl;
+    if(!qData.isEmpty() && d->m_metaRefreshEnabled) {
       double delay;
       int pos = qData.find( ';' );
       if ( pos == -1 )
@@ -1260,10 +1255,8 @@ bool Frame::gotoAnchor( const QString &name )
   d->m_doc->setCSSTarget(n); // Setting to null will clear the current target.
   
   // Implement the rule that "" and "top" both mean top of page as in other browsers.
-  if (!n && !(name.isEmpty() || name.lower() == "top")) {
-    kdDebug(6050) << "Frame::gotoAnchor node '" << name << "' not found" << endl;
-    return false;
-  }
+  if (!n && !(name.isEmpty() || name.lower() == "top"))
+      return false;
 
   // We need to update the layout before scrolling, otherwise we could
   // really mess things up if an anchor scroll comes at a bad moment.
@@ -1617,11 +1610,9 @@ bool Frame::requestObject( RenderPart *frame, const QString &url, const QString 
 
 bool Frame::requestObject( ChildFrame *child, const KURL &url, const URLArgs &_args )
 {
-  if ( child->m_bPreloaded )
-  {
-    // kdDebug(6005) << "Frame::requestObject preload" << endl;
-    if ( child->m_renderer && child->m_frame && child->m_renderer->widget() )
-      child->m_renderer->setWidget( child->m_renderer->widget() );
+  if (child->m_bPreloaded) {
+    if (child->m_renderer && child->m_frame && child->m_renderer->widget())
+      child->m_renderer->setWidget( child->m_renderer->widget());
 
     child->m_bPreloaded = false;
     return true;
@@ -1649,8 +1640,6 @@ bool Frame::requestObject( ChildFrame *child, const KURL &url, const URLArgs &_a
 
 bool Frame::processObjectRequest( ChildFrame *child, const KURL &_url, const QString &mimetype )
 {
-  //kdDebug( 6050 ) << "Frame::processObjectRequest trying to create part for " << mimetype << endl;
-
   // IMPORTANT: create a copy of the url here, because it is just a reference, which was likely to be given
   // by an emitting frame part (emit openURLRequest( blahurl, ... ) . A few lines below we delete the part
   // though -> the reference becomes invalid -> crash is likely
@@ -1769,7 +1758,6 @@ void Frame::submitFormAgain()
 
 void Frame::submitForm( const char *action, const QString &url, const FormData &formData, const QString &_target, const QString& contentType, const QString& boundary )
 {
-  kdDebug(6000) << this << ": Frame::submitForm target=" << _target << " url=" << url << endl;
   KURL u = completeURL( url );
 
   if (!u.isValid())
@@ -1848,10 +1836,8 @@ void Frame::submitForm( const char *action, const QString &url, const FormData &
   }
 
   if ( d->m_doc->parsing() || d->m_runningScripts > 0 ) {
-    if( d->m_submitForm ) {
-      kdDebug(6000) << "Frame::submitForm ABORTING!" << endl;
-      return;
-    }
+    if(d->m_submitForm)
+        return;
     d->m_submitForm = new FramePrivate::SubmitForm;
     d->m_submitForm->submitAction = action;
     d->m_submitForm->submitUrl = url;
@@ -1868,11 +1854,8 @@ void Frame::submitForm( const char *action, const QString &url, const FormData &
 
 void Frame::slotParentCompleted()
 {
-  if ( d->m_scheduledRedirection != noRedirectionScheduled && !d->m_redirectionTimer.isActive() )
-  {
-    // kdDebug(6050) << this << ": Child redirection -> " << d->m_redirectURL << endl;
-    d->m_redirectionTimer.start( (int)(1000 * d->m_delayRedirect), true );
-  }
+if (d->m_scheduledRedirection != noRedirectionScheduled && !d->m_redirectionTimer.isActive())
+    d->m_redirectionTimer.start( (int)(1000 * d->m_delayRedirect), true);
 }
 
 void Frame::slotChildStarted( KIO::Job *job )
@@ -1933,25 +1916,16 @@ ChildFrame *Frame::childFrame( const QObject *obj )
 
 Frame *Frame::findFrame( const QString &f )
 {
-
   // ### http://www.w3.org/TR/html4/appendix/notes.html#notes-frames
   ConstFrameIt it = d->m_frames.find( f );
-  if ( it == d->m_frames.end() )
-  {
-    //kdDebug() << "Frame::findFrame frame " << f << " not found" << endl;
+  if (it == d->m_frames.end())
     return 0L;
-  }
   else {
     ObjectContents *p = (*it).m_frame;
-    if ( p && p->inherits( "Frame" ))
-    {
-      //kdDebug() << "Frame::findFrame frame " << f << " is a Frame, ok" << endl;
+    if (p && p->inherits("Frame"))
       return (Frame*)p;
-    }
     else
-    {
       return 0L;
-    }
   }
 }
 
@@ -2540,9 +2514,6 @@ void Frame::clearTypingStyle()
 
 QVariant Frame::executeScript(QString filename, int baseLine, NodeImpl *n, const QString &script)
 {
-#ifdef KJS_VERBOSE
-  kdDebug(6070) << "executeScript: filename=" << filename << " baseLine=" << baseLine << " script=" << script << endl;
-#endif
   KJSProxyImpl *proxy = jScript();
 
   if (!proxy)

@@ -32,7 +32,6 @@
 #include "html/html_inlineimpl.h"
 #include "HTMLInputElementImpl.h"
 #include "rendering/render_arena.h"
-#include "rendering/render_object.h"
 #include "rendering/render_canvas.h"
 #include "rendering/render_style.h"
 #include "rendering/render_replaced.h"
@@ -43,7 +42,7 @@
 #include "css/cssstyleselector.h"
 #include "helper.h"
 #include "khtml_settings.h"
-#include "Frame.h"
+#include "htmlnames.h"
 
 #include <kcursor.h>
 
@@ -52,7 +51,6 @@
 #include <qvariant.h>
 
 #include <assert.h>
-#include <kdebug.h>
 
 #include "KWQAccObjectCache.h"
 
@@ -62,12 +60,9 @@
 #include "MacFrame.h"
 #endif
 
-// #define INSTRUMENT_LAYOUT_SCHEDULING 1
-
-using namespace DOM;
+using namespace WebCore;
 using namespace EventNames;
 using namespace HTMLNames;
-using namespace khtml;
 
 class FrameViewPrivate {
 public:
@@ -997,7 +992,6 @@ QString FrameView::mediaType() const
 
 void FrameView::useSlowRepaints()
 {
-    kdDebug(0) << "slow repaints requested" << endl;
     d->useSlowRepaints = true;
     setStaticBackground(true);
 }

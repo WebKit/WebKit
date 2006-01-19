@@ -42,14 +42,14 @@
 #include "css/cssstyleselector.h"
 #include "css/css_stylesheetimpl.h"
 #include "css/csshelper.h"
+#include "htmlnames.h"
 
 #include <kurl.h>
-#include <kdebug.h>
 
-using namespace DOM;
+namespace WebCore {
+
 using namespace HTMLNames;
 using namespace EventNames;
-using namespace khtml;
 
 HTMLBaseElementImpl::HTMLBaseElementImpl(DocumentImpl *doc)
     : HTMLElementImpl(baseTag, doc)
@@ -274,13 +274,9 @@ void HTMLLinkElementImpl::removedFromDocument()
 
 void HTMLLinkElementImpl::setStyleSheet(const DOM::DOMString &url, const DOM::DOMString &sheetStr)
 {
-//    kdDebug( 6030 ) << "HTMLLinkElement::setStyleSheet()" << endl;
-//    kdDebug( 6030 ) << "**** current medium: " << m_media << endl;
-
     if (m_sheet)
         m_sheet->deref();
     m_sheet = new CSSStyleSheetImpl(this, url);
-    kdDebug( 6030 ) << "style sheet parse mode strict = " << ( !getDocument()->inCompatMode() ) << endl;
     m_sheet->ref();
     m_sheet->parseString( sheetStr, !getDocument()->inCompatMode() );
 
@@ -296,10 +292,8 @@ void HTMLLinkElementImpl::setStyleSheet(const DOM::DOMString &url, const DOM::DO
 
 bool HTMLLinkElementImpl::isLoading() const
 {
-//    kdDebug( 6030 ) << "link: checking if loading!" << endl;
     if(m_loading) return true;
     if(!m_sheet) return false;
-    //if(!m_sheet->isCSSStyleSheet()) return false;
     return static_cast<CSSStyleSheetImpl *>(m_sheet)->isLoading();
 }
 
@@ -886,4 +880,6 @@ void HTMLTitleElementImpl::setText(const DOMString &value)
     
         appendChild(getDocument()->createTextNode(value.impl()), exceptioncode);
     }
+}
+
 }

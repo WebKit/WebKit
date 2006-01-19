@@ -54,6 +54,7 @@
 #include "xml/dom2_eventsimpl.h"
 #include "xml/EventNames.h"
 #include "html/html_blockimpl.h"
+#include "htmlnames.h"
 
 #if SVG_SUPPORT
 #include "SVGNames.h"
@@ -68,11 +69,10 @@
 
 #define MIN_INTERSECT_FOR_REVEAL 32
 
-using namespace DOM;
-using namespace DOM::EventNames;
-using namespace HTMLNames;
+namespace WebCore {
 
-namespace khtml {
+using namespace EventNames;
+using namespace HTMLNames;
 
 QScrollBar* RenderLayer::gScrollBar = 0;
 

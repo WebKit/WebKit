@@ -24,7 +24,7 @@
 #ifndef HTML_INLINEIMPL_H
 #define HTML_INLINEIMPL_H
 
-#include "html_elementimpl.h"
+#include "HTMLElementImpl.h"
 
 namespace DOM {
 

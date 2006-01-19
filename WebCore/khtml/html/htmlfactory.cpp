@@ -23,17 +23,17 @@
 #include "config.h"
 #include "htmlfactory.h"
 
-#include "html/html_baseimpl.h"
-#include "html/html_blockimpl.h"
-#include "html/html_canvasimpl.h"
-#include "html/html_documentimpl.h"
-#include "html/html_headimpl.h"
-#include "html/html_imageimpl.h"
-#include "html/html_listimpl.h"
-#include "html/html_miscimpl.h"
-#include "html/html_tableimpl.h"
-#include "html/html_objectimpl.h"
+#include "html_baseimpl.h"
+#include "html_blockimpl.h"
+#include "html_canvasimpl.h"
+#include "html_documentimpl.h"
+#include "html_headimpl.h"
+#include "html_imageimpl.h"
+#include "html_listimpl.h"
+#include "html_tableimpl.h"
+#include "html_objectimpl.h"
 
+#include "HTMLCollectionImpl.h"
 #include "HTMLFormElementImpl.h"
 #include "HTMLInputElementImpl.h"
 #include "HTMLIsIndexElementImpl.h"
@@ -45,6 +45,7 @@
 #include "HTMLOptGroupElementImpl.h"
 #include "HTMLSelectElementImpl.h"
 #include "HTMLTextAreaElementImpl.h"
+#include "HTMLBaseFontElementImpl.h"
 
 #include <kxmlcore/HashMap.h>
 

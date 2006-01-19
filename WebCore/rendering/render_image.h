@@ -25,7 +25,7 @@
 #ifndef RENDER_IMAGE_H
 #define RENDER_IMAGE_H
 
-#include "html_elementimpl.h"
+#include "HTMLElementImpl.h"
 #include "render_replaced.h"
 #include "dom_string.h"
 #include <qpixmap.h>

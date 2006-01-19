@@ -41,11 +41,11 @@
 #include <klocale.h>
 
 #include "EventNames.h"
+#include "htmlnames.h"
 
-using namespace khtml;
-using khtml::ControlState;
+using WebCore::ControlState;
 
-namespace DOM {
+namespace WebCore {
 
 using namespace EventNames;
 using namespace HTMLNames;

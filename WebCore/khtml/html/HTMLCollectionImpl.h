@@ -3,6 +3,7 @@
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,43 +21,24 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef HTML_MISCIMPL_H
-#define HTML_MISCIMPL_H
+#ifndef HTMLCollectionImpl_H
+#define HTMLCollectionImpl_H
 
-#include "html_elementimpl.h"
 #include "Shared.h"
-#include <qptrvector.h>
 #include <kxmlcore/HashMap.h>
 
-namespace DOM {
+template <typename T> class QPtrVector;
+template <typename T> class QValueList;
 
-class Node;
+namespace WebCore {
+
+class NodeImpl;
 class DOMString;
-class HTMLCollection;
-
-class HTMLBaseFontElementImpl : public HTMLElementImpl
-{
-public:
-    HTMLBaseFontElementImpl(DocumentImpl *doc);
-
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
-    virtual int tagPriority() const { return 0; }
-
-    DOMString color() const;
-    void setColor(const DOMString &);
-
-    DOMString face() const;
-    void setFace(const DOMString &);
-
-    DOMString size() const;
-    void setSize(const DOMString &);
-};
-
-// -------------------------------------------------------------------------
+class DOMStringImpl;
+class AtomicString;
 
 class HTMLCollectionImpl : public Shared<HTMLCollectionImpl>
 {
-    friend class DOM::HTMLCollection;
 public:
     enum Type {
         // from HTMLDocument
@@ -137,44 +119,6 @@ protected:
     mutable bool m_ownsInfo;
 };
 
-class HTMLNameCollectionImpl : public HTMLCollectionImpl
-{
-public:
-    HTMLNameCollectionImpl(DocumentImpl* _base, int _type, DOMString &name);
-    
-    virtual NodeImpl *traverseNextItem(NodeImpl *start) const;
- private:
-    DOMString m_name;
-};
-
-// this whole class is just a big hack to find form elements even in
-// malformed HTML elements
-// the famous <table><tr><form><td> problem
-class HTMLFormCollectionImpl : public HTMLCollectionImpl
-{
-public:
-    // base must inherit HTMLGenericFormElementImpl or this won't work
-    HTMLFormCollectionImpl(NodeImpl* _base);
-    ~HTMLFormCollectionImpl();
-
-    virtual NodeImpl *item ( unsigned index ) const;
-    virtual NodeImpl *firstItem() const;
-    virtual NodeImpl *nextItem() const;
-
-    virtual NodeImpl *namedItem ( const DOMString &name, bool caseSensitive = true ) const;
-    virtual NodeImpl *nextNamedItem( const DOMString &name ) const;
-
-protected:
-    virtual void updateNameCache() const;
-    virtual unsigned calcLength() const;
-    virtual NodeImpl *getNamedItem(NodeImpl* current, const QualifiedName& attrName, const DOMString& name, bool caseSensitive) const;
-    virtual NodeImpl *nextNamedItemInternal( const DOMString &name ) const;
-private:
-    NodeImpl* getNamedFormItem(const QualifiedName& attrName, const DOMString& name, int duplicateNumber, bool caseSensitive) const;
-    mutable int currentPos;
-};
-
-
-}; //namespace
+} //namespace
 
 #endif

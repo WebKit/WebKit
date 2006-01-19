@@ -34,12 +34,11 @@
 #include "render_canvas.h"
 #include <qpainter.h>
 #include <qpen.h>
+#include "htmlnames.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
-
-// -------------------------------------------------------------------------
 
 RenderImage::RenderImage(NodeImpl *_node)
     : RenderReplaced(_node)

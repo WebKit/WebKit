@@ -1,3 +1,108 @@
+2006-01-19  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Split html_miscimpl.* into separate files and move html_elementimpl
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6670
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.mm:
+        * bindings/objc/DOMHTML.mm:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        * css/css_valueimpl.cpp:
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * khtml/ecma/kjs_dom.cpp:
+        * khtml/ecma/kjs_html.cpp:
+        * khtml/editing/apply_style_command.cpp:
+        * khtml/editing/markup.cpp:
+        * khtml/editing/replace_selection_command.cpp:
+        * khtml/html/HTMLBaseFontElementImpl.cpp: Added.
+        * khtml/html/HTMLBaseFontElementImpl.h: Added.
+        * khtml/html/HTMLButtonElementImpl.cpp:
+        * khtml/html/HTMLCollectionImpl.cpp: Added.
+        (WebCore::HTMLCollectionImpl::traverseNextItem):
+        * khtml/html/HTMLCollectionImpl.h: Added.
+        * khtml/html/HTMLElementImpl.cpp: Added.
+        * khtml/html/HTMLElementImpl.h: Added.
+        * khtml/html/HTMLFieldSetElementImpl.cpp:
+        * khtml/html/HTMLFormCollectionImpl.cpp: Added.
+        * khtml/html/HTMLFormCollectionImpl.h: Added.
+        * khtml/html/HTMLFormElementImpl.cpp:
+        * khtml/html/HTMLFormElementImpl.h:
+        * khtml/html/HTMLGenericFormElementImpl.cpp:
+        * khtml/html/HTMLGenericFormElementImpl.h:
+        * khtml/html/HTMLInputElementImpl.cpp:
+        * khtml/html/HTMLIsIndexElementImpl.cpp:
+        * khtml/html/HTMLLabelElementImpl.h:
+        * khtml/html/HTMLLegendElementImpl.cpp:
+        * khtml/html/HTMLNameCollectionImpl.cpp: Added.
+        * khtml/html/HTMLNameCollectionImpl.h: Added.
+        * khtml/html/HTMLOptGroupElementImpl.cpp:
+        * khtml/html/HTMLOptGroupElementImpl.h:
+        * khtml/html/HTMLOptionElementImpl.h:
+        * khtml/html/HTMLSelectElementImpl.cpp:
+        * khtml/html/HTMLTextAreaElementImpl.cpp:
+        * khtml/html/html_baseimpl.cpp:
+        * khtml/html/html_baseimpl.h:
+        * khtml/html/html_blockimpl.cpp:
+        * khtml/html/html_blockimpl.h:
+        * khtml/html/html_canvasimpl.cpp:
+        * khtml/html/html_documentimpl.cpp:
+        * khtml/html/html_documentimpl.h:
+        * khtml/html/html_elementimpl.cpp: Removed.
+        * khtml/html/html_elementimpl.h: Removed.
+        * khtml/html/html_headimpl.cpp:
+        (WebCore::HTMLLinkElementImpl::setStyleSheet):
+        (WebCore::HTMLLinkElementImpl::isLoading):
+        * khtml/html/html_headimpl.h:
+        * khtml/html/html_imageimpl.cpp:
+        * khtml/html/html_inlineimpl.cpp:
+        * khtml/html/html_inlineimpl.h:
+        * khtml/html/html_listimpl.h:
+        * khtml/html/html_miscimpl.cpp: Removed.
+        * khtml/html/html_miscimpl.h: Removed.
+        * khtml/html/html_objectimpl.cpp:
+        * khtml/html/html_tableimpl.h:
+        * khtml/html/htmlfactory.cpp:
+        * khtml/html/htmlparser.cpp:
+        * khtml/html/htmltokenizer.cpp:
+        (WebCore::HTMLTokenizer::scriptHandler):
+        (WebCore::HTMLTokenizer::scriptExecution):
+        * khtml/xml/DocumentImpl.cpp:
+        * khtml/xml/dom2_rangeimpl.cpp:
+        * khtml/xml/dom_elementimpl.cpp:
+        * kwq/KWQAccObject.mm:
+        * loader/loader.cpp:
+        * page/Frame.cpp:
+        (Frame::restoreURL):
+        (Frame::stopLoading):
+        (Frame::receivedFirstData):
+        (Frame::gotoAnchor):
+        (Frame::requestObject):
+        (Frame::processObjectRequest):
+        (Frame::submitForm):
+        (Frame::slotParentCompleted):
+        (Frame::findFrame):
+        (Frame::executeScript):
+        * page/FrameView.cpp:
+        (FrameView::useSlowRepaints):
+        * rendering/render_applet.cpp:
+        * rendering/render_applet.h:
+        * rendering/render_box.cpp:
+        (WebCore::RenderBox::contentWidth):
+        (WebCore::RenderBox::paintRootBoxDecorations):
+        (WebCore::RenderBox::paintBoxDecorations):
+        (WebCore::RenderBox::getClipRect):
+        (WebCore::RenderBox::calcWidth):
+        (WebCore::RenderBox::calcHeight):
+        * rendering/render_canvasimage.cpp:
+        * rendering/render_canvasimage.h:
+        * rendering/render_frames.cpp:
+        * rendering/render_image.cpp:
+        * rendering/render_image.h:
+        * rendering/render_layer.cpp:
+
 2006-01-19  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Darin.

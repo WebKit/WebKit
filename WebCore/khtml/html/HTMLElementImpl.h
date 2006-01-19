@@ -21,13 +21,12 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef HTML_ELEMENTIMPL_H
-#define HTML_ELEMENTIMPL_H
+#ifndef HTMLElementImpl_H
+#define HTMLElementImpl_H
 
 #include "xml/dom_elementimpl.h"
-#include "htmlnames.h"
 
-namespace DOM {
+namespace WebCore {
 
 class DocumentFragmentImpl;
 class DOMString;

@@ -3,9 +3,7 @@
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
- *           (C) 2006 Alexey Proskuryakov (ap@nypop.com)
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,44 +21,31 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+#ifndef HTMLBaseFontElementImpl_H
+#define HTMLBaseFontElementImpl_H
 
-#include "config.h"
-#include "HTMLFieldSetElementImpl.h"
-
-#include "rendering/render_form.h"
-#include "htmlnames.h"
+#include "HTMLElementImpl.h"
 
 namespace WebCore {
 
-using namespace HTMLNames;
-
-HTMLFieldSetElementImpl::HTMLFieldSetElementImpl(DocumentImpl *doc, HTMLFormElementImpl *f)
-   : HTMLGenericFormElementImpl(fieldsetTag, doc, f)
+class HTMLBaseFontElementImpl : public HTMLElementImpl
 {
-}
+public:
+    HTMLBaseFontElementImpl(DocumentImpl *doc);
 
-HTMLFieldSetElementImpl::~HTMLFieldSetElementImpl()
-{
-}
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
+    virtual int tagPriority() const { return 0; }
 
-bool HTMLFieldSetElementImpl::checkDTD(const NodeImpl* newChild)
-{
-    return newChild->hasTagName(legendTag) || HTMLElementImpl::checkDTD(newChild);
-}
+    DOMString color() const;
+    void setColor(const DOMString &);
 
-bool HTMLFieldSetElementImpl::isFocusable() const
-{
-    return false;
-}
+    DOMString face() const;
+    void setFace(const DOMString &);
 
-DOMString HTMLFieldSetElementImpl::type() const
-{
-    return "fieldset";
-}
+    DOMString size() const;
+    void setSize(const DOMString &);
+};
 
-RenderObject* HTMLFieldSetElementImpl::createRenderer(RenderArena* arena, RenderStyle* style)
-{
-    return new (arena) RenderFieldset(this);
-}
+} //namespace
 
-} // namespace
+#endif

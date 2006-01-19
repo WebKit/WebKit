@@ -52,6 +52,7 @@
 #include "HTMLFieldSetElementImpl.h"
 #include "HTMLOptionElementImpl.h"
 #include "HTMLOptionsCollectionImpl.h"
+#include "HTMLBaseFontElementImpl.h"
 
 #include "Frame.h"
 #include "FrameView.h"
