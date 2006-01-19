@@ -68,19 +68,19 @@ foreach my $suite (@suites) {
     my $count = 0;
 
     foreach my $result (@results) {
-	$count++;
-	my $success = 0;
-	open RESULT, "<$result";
-	while (<RESULT>) {
-	    if (/Success/) {
-		$success = 1;
-		last;
-	    }
-	}
-	close RESULT;
-	if (!$success) {
-	    push @failures, $result;
-	}
+        $count++;
+        my $success = 0;
+        open RESULT, "<$result";
+        while (<RESULT>) {
+            if (/Success/) {
+                $success = 1;
+                last;
+            }
+        }
+        close RESULT;
+        if (!$success) {
+            push @failures, $result;
+        }
     }
 
     my $disabledCount = (scalar @disabled);
@@ -99,29 +99,29 @@ foreach my $suite (@suites) {
     print " ($disabledCount disabled)" if $disabledCount;
     print "\n";
     if ($verbose) {
-	print "\n";
-	if (@disabled) {
-	    print "    Disabled:\n";
-	    
-	    foreach my $failure (sort @disabled) {
-		$failure =~ s|.*/||;
-		$failure =~ s|-disabled||;
-		print "        ${directory}/${failure}";
-	    }
-	}
-	if (@failures) {
-	    print "    Failed:\n";
-	    
-	    foreach my $failure (sort @failures) {
+        print "\n";
+        if (@disabled) {
+            print "    Disabled:\n";
+            
+            foreach my $failure (sort @disabled) {
+                $failure =~ s|.*/||;
+                $failure =~ s|-disabled||;
+                print "        ${directory}/${failure}";
+            }
+        }
+        if (@failures) {
+            print "    Failed:\n";
+            
+            foreach my $failure (sort @failures) {
                 $directory =~ m|^dom/(\w+)|;
                 my $extension = $1;
-		$failure =~ s|.*/||;
-		$failure =~ s|-expected\.txt|.${extension}|;
-		print "        ${directory}/${failure}";
-	    }
-	}
+                $failure =~ s|.*/||;
+                $failure =~ s|-expected\.txt|.${extension}|;
+                print "        ${directory}/${failure}";
+            }
+        }
 
-	print "\n";
+        print "\n";
     }
 
     $totalCount += $count;

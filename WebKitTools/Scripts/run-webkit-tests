@@ -109,7 +109,7 @@ my $extensionPart = "-name '*.html' -or -name '*.xml' -or -name '*.xhtml'";
 if ($testSVGs) {
     $extensionPart = "-name '*.svg' -or -name '*.xml'";
 } elsif ($haveSVGSupport) { 
-	$extensionPart .= " -or -name '*.svg'";
+    $extensionPart .= " -or -name '*.svg'";
 } else {
     $prunePart .= " -or \\( -name svg \\! -prune \\)";
 }

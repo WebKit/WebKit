@@ -76,9 +76,9 @@ sub patch
     return if !$patch;
 
     my $previousRevision = 0;
-	if($patch =~ /\n--- .+\(revision (\d+)\)\n/) { 
-	    $previousRevision = $1;
-	}
+        if($patch =~ /\n--- .+\(revision (\d+)\)\n/) { 
+            $previousRevision = $1;
+        }
 
     if ($previousRevision != 0 || $patch !~ /\ndiff -N/) {
         # Standard patch, patch tool can handle this.

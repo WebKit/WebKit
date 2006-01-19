@@ -1,3 +1,9 @@
+2006-01-19  Darin Adler  <darin@apple.com>
+
+        * Scripts/webkitdirs.pm: Changed SVG check to work even if the path has
+        spaces in it by using the form of open that treats each argument as a string
+        rather than backtick syntax for reading the output of the nm tool.
+
 2006-01-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

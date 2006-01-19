@@ -1,4 +1,4 @@
-# Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+# Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -128,12 +128,12 @@ sub XcodeOptions
 
 sub XcodeOptionString
 {
-	return join " ", XcodeOptions();
+    return join " ", XcodeOptions();
 }
 
 sub XcodeOptionStringNoConfig
 {
-	return join " ", @baseProductDirOption;
+    return join " ", @baseProductDirOption;
 }
 
 my $passedConfiguration;
@@ -209,8 +209,12 @@ sub checkFrameworks
 sub hasSVGSupport
 {
     my $path = shift;
-    my $frameworkSymbols = `nm $path`;
-    my $hasSVGSupport = ($frameworkSymbols =~ /SVGElementImpl/);
+    open NM, "-|", "nm", $path or die;
+    my $hasSVGSupport = 0;
+    while (<NM>) {
+        $hasSVGSupport = 1 if /SVGElement/;
+    }
+    close NM;
     return $hasSVGSupport;
 }
 
@@ -228,12 +232,12 @@ sub removeLibraryDependingOnSVG
 
 sub checkWebCoreSVGSupport
 {
-	my $required = shift;
+    my $required = shift;
     my $framework = "WebCore";
     my $path = builtDylibPathForName($framework);
     my $hasSVG = hasSVGSupport($path);
     if ($required && !$hasSVG) {
-    	die "$framework at \"$path\" does not include SVG Support, please run build-webkit --svg\n";
+        die "$framework at \"$path\" does not include SVG Support, please run build-webkit --svg\n";
     }
     return $hasSVG;
 }
