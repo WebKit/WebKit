@@ -23,21 +23,18 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-// -------------------------------------------------------------------------
-//#define DEBUG_LAYOUT
-
 
 #include "config.h"
 #include <qpainter.h>
 #include <qpen.h>
 
-#include "rendering/render_box.h"
-#include "rendering/render_replaced.h"
-#include "rendering/render_canvas.h"
-#include "rendering/render_table.h"
+#include "render_box.h"
+#include "render_replaced.h"
+#include "render_canvas.h"
 #include "render_flexbox.h"
 #include "render_arena.h"
 #include "render_theme.h"
+#include "RenderTableCell.h"
 
 #include "DocumentImpl.h"
 #include "HTMLElementImpl.h"

@@ -23,7 +23,7 @@
 #ifndef RENDER_FLEXIBLE_BOX_H
 #define RENDER_FLEXIBLE_BOX_H
 
-#include "render_block.h"
+#include "RenderBlock.h"
 #include "render_style.h"
 
 namespace khtml {

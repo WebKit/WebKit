@@ -86,7 +86,7 @@ private:
     bool m_isContinuation : 1; // Whether or not we're a continuation of an inline.
 };
 
-}; // namespace
+} // namespace
 
-#endif // RENDER_BLOCK_H
+#endif
 

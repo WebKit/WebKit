@@ -31,7 +31,7 @@
 #include "htmlnames.h"
 #include "helper.h"
 #include "InlineTextBox.h"
-#include "rendering/render_block.h"
+#include "RenderBlock.h"
 #include "visible_position.h"
 #include "visible_text.h"
 #include "DocumentImpl.h"

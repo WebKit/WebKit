@@ -22,7 +22,7 @@
 #ifndef render_canvas_h
 #define render_canvas_h
 
-#include "render_block.h"
+#include "RenderBlock.h"
 #include <kxmlcore/HashSet.h>
 
 class FrameView;

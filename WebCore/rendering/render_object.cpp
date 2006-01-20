@@ -40,13 +40,17 @@
 #include "visible_position.h"
 #include "htmlnames.h"
 #include "render_arena.h"
-#include "render_block.h"
+#include "RenderBlock.h"
 #include "render_canvas.h"
 #include "render_flexbox.h"
 #include "render_inline.h"
 #include "render_line.h"
 #include "render_list.h"
-#include "render_table.h"
+#include "RenderTable.h"
+#include "RenderTableRow.h"
+#include "RenderTableCol.h"
+#include "RenderTableCell.h"
+
 #include <assert.h>
 #include <kdebug.h>
 #include <qpainter.h>

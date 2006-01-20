@@ -24,11 +24,11 @@
 #ifndef RENDER_FLOW_H
 #define RENDER_FLOW_H
 
-#include "render_container.h"
+#include "RenderContainer.h"
 #include "bidi.h"
 #include "render_line.h"
 
-namespace khtml {
+namespace WebCore {
 
 /**
  * all geometry managing stuff is only in the block elements.

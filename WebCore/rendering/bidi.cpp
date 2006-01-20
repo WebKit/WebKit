@@ -28,7 +28,7 @@
 #include "FrameView.h"
 #include <kxmlcore/AlwaysInline.h>
 #include "render_arena.h"
-#include "render_block.h"
+#include "RenderBlock.h"
 #include "render_canvas.h"
 #include "InlineTextBox.h"
 

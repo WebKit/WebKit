@@ -24,11 +24,10 @@
  */
 #include "config.h"
 #include "table_layout.h"
-#include "render_table.h"
-
-using namespace khtml;
-
-// #define DEBUG_LAYOUT
+#include "RenderTable.h"
+#include "RenderTableCol.h"
+#include "RenderTableSection.h"
+#include "RenderTableCell.h"
 
 /*
   The text below is from the CSS 2.1 specs.
@@ -78,6 +77,8 @@ _____________________________________________________
   a lot of sense, and is implemented here the same way.
 
 */
+
+namespace WebCore {
 
 FixedTableLayout::FixedTableLayout( RenderTable *table )
     : TableLayout ( table )
@@ -1163,3 +1164,5 @@ void AutoTableLayout::calcPercentages() const
 }
 
 #undef DEBUG_LAYOUT
+
+}

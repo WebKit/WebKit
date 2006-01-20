@@ -4,7 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,8 +24,8 @@
  */
 
 #include "config.h"
-#include "render_container.h"
-#include "render_table.h"
+#include "RenderContainer.h"
+#include "RenderTable.h"
 #include "RenderTextFragment.h"
 #include "render_image.h"
 #include "render_canvas.h"
@@ -33,14 +33,13 @@
 #include "xml/dom_position.h"
 #include "visible_position.h"
 
-#include <kdebug.h>
 #include <assert.h>
 
 // For accessibility
 #include "KWQAccObjectCache.h" 
 
 using DOM::Position;
-using namespace khtml;
+namespace WebCore {
 
 RenderContainer::RenderContainer(DOM::NodeImpl* node)
     : RenderBox(node)
@@ -129,7 +128,6 @@ void RenderContainer::addChild(RenderObject *newChild, RenderObject *beforeChild
                 needsTable = false;
             break;
         case NONE:
-            kdDebug( 6000 ) << "error in RenderObject::addChild()!!!!" << endl;
             break;
         }
     }
@@ -522,3 +520,5 @@ QValueList<IntRect> RenderContainer::lineBoxRects()
 }
 
 #undef DEBUG_LAYOUT
+
+}

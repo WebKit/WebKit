@@ -37,7 +37,9 @@
 #include "dom_exception.h"
 #include "dom_node.h"
 #include "html_documentimpl.h"
-#include "render_table.h"
+#include "RenderTable.h"
+#include "RenderTableCell.h"
+#include "RenderTableCol.h"
 
 namespace WebCore {
 
@@ -222,7 +224,6 @@ HTMLElementImpl *HTMLTableElementImpl::insertRow( int index, int &exceptioncode 
     if(!firstBody && !head && !foot)
         setTBody( new HTMLTableSectionElementImpl(tbodyTag, getDocument(), true /* implicit */) );
 
-    //kdDebug(6030) << k_funcinfo << index << endl;
     // IE treats index=-1 as default value meaning 'append after last'
     // This isn't in the DOM. So, not implemented yet.
     HTMLTableSectionElementImpl* section = 0L;
@@ -238,16 +239,13 @@ HTMLElementImpl *HTMLTableElementImpl::insertRow( int index, int &exceptioncode 
         {
             section = static_cast<HTMLTableSectionElementImpl *>(node);
             lastSection = section;
-            //kdDebug(6030) << k_funcinfo << "section id=" << node->id() << " rows:" << section->numRows() << endl;
-            if ( !append )
-            {
+            if (!append) {
                 int rows = section->numRows();
                 if (rows >= index) {
                     found = true;
                     break;
                 } else
                     index -= rows;
-                //kdDebug(6030) << "       index is now " << index << endl;
             }
         }
     }
@@ -261,10 +259,9 @@ HTMLElementImpl *HTMLTableElementImpl::insertRow( int index, int &exceptioncode 
         section = lastSection;
         index = section ? section->numRows() : 0;
     }
-    if ( section && (index >= 0 || append) ) {
-        //kdDebug(6030) << "Inserting row into section " << section << " at index " << index << endl;
-        return section->insertRow( index, exceptioncode );
-    } else {
+    if (section && (index >= 0 || append))
+        return section->insertRow(index, exceptioncode);
+    else {
         // No more sections => index is too big
         exceptioncode = DOMException::INDEX_SIZE_ERR;
         return 0L;

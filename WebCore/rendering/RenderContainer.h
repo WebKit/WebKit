@@ -2,6 +2,7 @@
  * This file is part of the html renderer for KDE.
  *
  * Copyright (C) 2001 Antti Koivisto (koivisto@kde.org)
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,20 +18,16 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
  */
-#ifndef render_container_h
-#define render_container_h
+
+#ifndef RenderContainer_H
+#define RenderContainer_H
 
 #include "render_box.h"
 
-namespace DOM {
-    class Position;
-};
+namespace WebCore {
 
-namespace khtml
-{
-
+class Position;
 
 /**
  * Base class for rendering objects that can have children
@@ -74,5 +71,6 @@ protected:
     RenderObject *m_first;
     RenderObject *m_last;
 };
-};
+
+}
 #endif

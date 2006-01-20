@@ -28,7 +28,7 @@
 #include "break_lines.h"
 #include "kxmlcore/AlwaysInline.h"
 #include "render_arena.h"
-#include "render_block.h"
+#include "RenderBlock.h"
 #include "xml/dom2_rangeimpl.h"
 #include "DocumentImpl.h"
 #include <qpen.h>

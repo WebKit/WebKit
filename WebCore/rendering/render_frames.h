@@ -23,20 +23,18 @@
 #ifndef __render_frames_h__
 #define __render_frames_h__
 
-#include "render_container.h"
-#include "rendering/render_replaced.h"
-#include "html/html_baseimpl.h"
+#include "RenderContainer.h"
+#include "render_replaced.h"
+#include "html_baseimpl.h"
+
 class FrameView;
 
-namespace DOM
+namespace WebCore
 {
   class HTMLFrameElementImpl;
   class HTMLElementImpl;
   class MouseEventImpl;
-};
 
-namespace khtml
-{
   struct ChildFrame;
 
 class RenderFrameSet : public RenderContainer

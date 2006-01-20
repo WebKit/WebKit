@@ -22,16 +22,15 @@
 #ifndef render_replaced_h
 #define render_replaced_h
 
-#include "render_container.h"
+#include "render_box.h"
 #include <qobject.h>
+
 class FrameView;
 class QWidget;
 
-namespace DOM {
-    class Position;
-}
+namespace WebCore {
 
-namespace khtml {
+    class Position;
 
 class RenderReplaced : public RenderBox
 {

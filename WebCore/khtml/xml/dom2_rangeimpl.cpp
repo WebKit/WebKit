@@ -37,7 +37,7 @@
 #include "editing/visible_text.h"
 #include "xml/dom_position.h"
 
-#include "render_block.h"
+#include "RenderBlock.h"
 
 using khtml::createMarkup;
 using khtml::RenderBlock;

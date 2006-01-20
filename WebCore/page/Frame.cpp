@@ -62,7 +62,7 @@
 #include "kjs_window.h"
 #include "loader.h"
 #include "markup.h"
-#include "render_block.h"
+#include "RenderBlock.h"
 #include "render_canvas.h"
 #include "render_frames.h"
 #include "typing_command.h"

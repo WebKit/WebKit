@@ -24,7 +24,7 @@
 #ifndef RENDER_LIST_H
 #define RENDER_LIST_H
 
-#include "render_block.h"
+#include "RenderBlock.h"
 
 // ### list-style-position, list-style-image is still missing
 

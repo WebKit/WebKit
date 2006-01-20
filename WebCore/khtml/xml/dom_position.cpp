@@ -39,12 +39,12 @@
 #include "text_affinity.h"
 #include "visible_position.h"
 #include "visible_units.h"
-#include "rendering/render_block.h"
-#include "rendering/render_flow.h"
-#include "rendering/render_line.h"
-#include "rendering/render_style.h"
+#include "RenderBlock.h"
+#include "render_flow.h"
+#include "render_line.h"
+#include "render_style.h"
 #include "InlineTextBox.h"
-#include "editing/visible_text.h"
+#include "visible_text.h"
 #include "htmlnames.h"
 
 #include <kxmlcore/Assertions.h>

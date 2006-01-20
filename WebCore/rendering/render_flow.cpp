@@ -29,11 +29,10 @@
 
 #include "rendering/render_flow.h"
 #include "InlineTextBox.h"
-#include "rendering/render_table.h"
 #include "rendering/render_canvas.h"
 #include "DocumentImpl.h"
 #include "render_inline.h"
-#include "render_block.h"
+#include "RenderBlock.h"
 #include "render_arena.h"
 #include "render_line.h"
 #include "htmlnames.h"

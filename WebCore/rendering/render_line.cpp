@@ -21,28 +21,24 @@
 // -------------------------------------------------------------------------
 
 #include "config.h"
-#include <kdebug.h>
 #include <assert.h>
 #include <qpainter.h>
 #include <qpen.h>
 
-#include "rendering/render_flow.h"
 #include "InlineTextBox.h"
-#include "rendering/render_table.h"
 #include "DocumentImpl.h"
 #include "CachedImage.h"
 #include "render_inline.h"
-#include "render_block.h"
+#include "RenderBlock.h"
 #include "render_arena.h"
 #include "render_line.h"
-
-using namespace DOM;
+#include "RenderTableCell.h"
 
 #ifndef NDEBUG
 static bool inInlineBoxDetach;
 #endif
 
-namespace khtml {
+namespace WebCore {
     
 class EllipsisBox : public InlineBox
 {

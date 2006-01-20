@@ -29,7 +29,7 @@
 #include "break_lines.h"
 #include "dom2_rangeimpl.h"
 #include "render_arena.h"
-#include "render_block.h"
+#include "RenderBlock.h"
 #include "visible_position.h"
 #include <kxmlcore/AlwaysInline.h>
 #include <qpen.h>

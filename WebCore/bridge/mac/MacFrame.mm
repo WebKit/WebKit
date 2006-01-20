@@ -70,11 +70,12 @@
 #import "render_image.h"
 #import "render_list.h"
 #import "render_style.h"
-#import "render_table.h"
 #import "render_theme.h"
+#import "RenderTableCell.h"
 #import "visible_position.h"
 #import "visible_text.h"
 #import "visible_units.h"
+
 #import <JavaScriptCore/NP_jsobject.h>
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
 #import <JavaScriptCore/identifier.h>

@@ -19,11 +19,10 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
  */
 
 #include "config.h"
-#include "render_block.h"
+#include "RenderBlock.h"
 
 #include "DocumentImpl.h"
 #include "Frame.h"
@@ -33,18 +32,14 @@
 #include "SelectionController.h"
 #include "htmlnames.h"
 #include "render_canvas.h"
-#include "render_table.h"
+#include "RenderTableCell.h"
 #include "render_theme.h"
 #include "visible_position.h"
 #include <kdebug.h>
 
-using namespace DOM;
-
 namespace WebCore {
 
 using namespace HTMLNames;
-
-// -------------------------------------------------------------------------------------------------------
 
 // Our MarginInfo state used when laying out block children.
 RenderBlock::MarginInfo::MarginInfo(RenderBlock* block, int top, int bottom)
@@ -3560,9 +3555,5 @@ void RenderBlock::dump(QTextStream *stream, QString ind) const
 }
 #endif
 
-#undef DEBUG
-#undef DEBUG_LAYOUT
-#undef BOX_DEBUG
-
-} // namespace khtml
+} // namespace WebCore
 

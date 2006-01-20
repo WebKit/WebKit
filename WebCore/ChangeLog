@@ -12,6 +12,73 @@
 
 2006-01-19  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by beth.
+
+        Break classes in render_table out into separate files.
+        Move render_block to RenderBlock.
+        Move render_container to RenderContainer.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/MacFrame.mm:
+        * kcanvas/KCanvasContainer.h:
+        * kcanvas/RenderForeignObject.h:
+        * kcanvas/RenderSVGText.h:
+        * khtml/editing/visible_units.cpp:
+        * khtml/html/html_tableimpl.cpp:
+        (WebCore::HTMLTableElementImpl::insertRow):
+        * khtml/xml/dom2_rangeimpl.cpp:
+        * khtml/xml/dom_position.cpp:
+        * kwq/KWQRenderTreeDebug.cpp:
+        * page/Frame.cpp:
+        * rendering/InlineTextBox.cpp:
+        * rendering/RenderBlock.cpp: Added.
+        * rendering/RenderBlock.h: Added.
+        * rendering/RenderContainer.cpp: Added.
+        (WebCore::RenderContainer::addChild):
+        * rendering/RenderContainer.h: Added.
+        * rendering/RenderTable.cpp: Added.
+        (WebCore::RenderTable::RenderTable):
+        (WebCore::RenderTable::updateFirstLetter):
+        * rendering/RenderTable.h: Added.
+        * rendering/RenderTableCell.cpp: Added.
+        (WebCore::RenderTableCell::RenderTableCell):
+        (WebCore::RenderTableCell::updateFromElement):
+        * rendering/RenderTableCell.h: Added.
+        * rendering/RenderTableCol.cpp: Added.
+        (WebCore::RenderTableCol::RenderTableCol):
+        (WebCore::RenderTableCol::updateFromElement):
+        * rendering/RenderTableCol.h: Added.
+        * rendering/RenderTableRow.cpp: Added.
+        (WebCore::RenderTableRow::RenderTableRow):
+        * rendering/RenderTableRow.h: Added.
+        * rendering/RenderTableSection.cpp: Added.
+        (WebCore::RenderTableSection::RenderTableSection):
+        * rendering/RenderTableSection.h: Added.
+        * rendering/RenderText.cpp:
+        * rendering/bidi.cpp:
+        * rendering/render_block.cpp: Removed.
+        * rendering/render_block.h: Removed.
+        * rendering/render_box.cpp:
+        * rendering/render_canvas.h:
+        * rendering/render_container.cpp: Removed.
+        * rendering/render_container.h: Removed.
+        * rendering/render_flexbox.h:
+        * rendering/render_flow.cpp:
+        * rendering/render_flow.h:
+        * rendering/render_form.h:
+        * rendering/render_frames.h:
+        * rendering/render_inline.cpp:
+        * rendering/render_inline.h:
+        * rendering/render_line.cpp:
+        * rendering/render_list.h:
+        * rendering/render_object.cpp:
+        * rendering/render_replaced.h:
+        * rendering/render_table.cpp: Removed.
+        * rendering/render_table.h: Removed.
+        * rendering/table_layout.cpp:
+
+2006-01-19  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by darin.
 
         <embed> and <object> tags show up blank when going back/forward.
