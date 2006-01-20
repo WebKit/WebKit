@@ -291,11 +291,6 @@ function updateStylePane() {
     var propertyCount = new Array();
 
     styleRules = new Array();
-    var matchedStyleRules = focusedNode.ownerDocument.defaultView.getMatchedCSSRules(focusedNode, "");
-    for (var i = 0; i < matchedStyleRules.length; i++) {
-        styleRules.push(matchedStyleRules[i]);
-    }
-
     var focusedNodeName = focusedNode.nodeName.toLowerCase();
     for (i = 0; i < focusedNode.attributes.length; i++) {
         var attr = focusedNode.attributes[i];
@@ -308,9 +303,14 @@ function updateStylePane() {
         }
     }
 
+    var matchedStyleRules = focusedNode.ownerDocument.defaultView.getMatchedCSSRules(focusedNode, "");
+    for (var i = 0; i < matchedStyleRules.length; i++) {
+        styleRules.push(matchedStyleRules[i]);
+    }
+
     if (focusedNode.style.length) {
         var inlineStyle = new Object();
-        inlineStyle.selectorText = "Inline Style";
+        inlineStyle.selectorText = "Inline Style Attribute";
         inlineStyle.style = focusedNode.style;
         inlineStyle.subtitle = "element's \"style\" attribute";
         styleRules.push(inlineStyle);
@@ -335,16 +335,16 @@ function updateStylePane() {
         cell.textContent = cell.title;
         row.appendChild(cell);
 
-        if (styleRules[i].parentStyleSheet != null || styleRules[i].subtitle != null) {
-            cell = document.createElement("div");
-            cell.className = "cell stylesheet";
-            if (styleRules[i].subtitle != null)
-                cell.title = styleRules[i].subtitle;
-            else
-                cell.title = styleRules[i].parentStyleSheet.href;
-            cell.textContent = cell.title;
-            row.appendChild(cell);
-        }
+        cell = document.createElement("div");
+        cell.className = "cell stylesheet";
+        if (styleRules[i].subtitle != null)
+            cell.title = styleRules[i].subtitle;
+        else if (styleRules[i].parentStyleSheet != null && styleRules[i].parentStyleSheet.href != null)
+            cell.title = styleRules[i].parentStyleSheet.href;
+        else
+            cell.title = "inline stylesheet";
+        cell.textContent = cell.title;
+        row.appendChild(cell);
 
         row.styleRuleIndex = i;
         row.addEventListener("click", styleRuleSelect, true);
