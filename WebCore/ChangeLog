@@ -2,6 +2,16 @@
 
         Reviewed by beth.
 
+        Unbreak build (partial commit of animation patch)
+
+        * khtml/xml/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::implicitClose):
+        * khtml/xml/DocumentImpl.h:
+
+2006-01-20  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by beth.
+
         Missed the kcanvas directory in my previous commit.
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6683
 

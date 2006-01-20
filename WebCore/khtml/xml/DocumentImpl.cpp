@@ -1240,14 +1240,6 @@ void DocumentImpl::implicitClose()
     if (renderer() && KWQAccObjectCache::accessibilityEnabled())
         getAccObjectCache()->postNotification(renderer(), "AXLoadComplete");
 #endif
-
-#if SVG_SUPPORT
-    // FIXME: Officially, time 0 is when the outermost <svg> recieves its
-    // SVGLoad event, but we don't implement those yet.  This is close enough
-    // for now.  In some cases we should have fired earlier.
-    if (svgExtensions())
-        accessSVGExtensions()->timeScheduler()->startAnimations();
-#endif
 }
 
 void DocumentImpl::setParsing(bool b)
@@ -2978,20 +2970,6 @@ AttrImpl *DocumentImpl::createAttributeNS(const DOMString &namespaceURI, const D
                                                                        localName.impl(),
                                                                        namespaceURI.impl()), DOMString("").impl()), false);
 }
-
-#if SVG_SUPPORT
-const SVGDocumentExtensions* DocumentImpl::svgExtensions()
-{
-    return m_svgExtensions.get();
-}
-
-SVGDocumentExtensions* DocumentImpl::accessSVGExtensions()
-{
-    if (!m_svgExtensions)
-        m_svgExtensions = new SVGDocumentExtensions(this);
-    return m_svgExtensions.get();
-}
-#endif
 
 void DocumentImpl::radioButtonChecked(HTMLInputElementImpl *caller, HTMLFormElementImpl *form)
 {
