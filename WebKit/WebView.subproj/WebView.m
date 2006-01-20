@@ -64,6 +64,7 @@
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebNSDataExtras.h>
+#import <WebKit/WebNSDataExtrasPrivate.h>
 #import <WebKit/WebNSDictionaryExtras.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>

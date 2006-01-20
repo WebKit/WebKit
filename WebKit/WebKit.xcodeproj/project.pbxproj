@@ -297,6 +297,7 @@
 		ABDDF20D08EB0DDC001E1241 /* WebDownloadInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDF20C08EB0DDC001E1241 /* WebDownloadInternal.h */; };
 		ED6BE2E7088C32B50044DEDC /* WebNSAttributedStringExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = ED6BE2E5088C32B50044DEDC /* WebNSAttributedStringExtras.h */; };
 		ED6BE2E8088C32B50044DEDC /* WebNSAttributedStringExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = ED6BE2E6088C32B50044DEDC /* WebNSAttributedStringExtras.m */; };
+		ED7F6D8B0980683500C235ED /* WebNSDataExtrasPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = ED7F6D8A0980683500C235ED /* WebNSDataExtrasPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -555,6 +556,7 @@
 		ED2B2475033A2DA800C1A526 /* WebNSPasteboardExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSPasteboardExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		ED6BE2E5088C32B50044DEDC /* WebNSAttributedStringExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSAttributedStringExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		ED6BE2E6088C32B50044DEDC /* WebNSAttributedStringExtras.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSAttributedStringExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		ED7F6D8A0980683500C235ED /* WebNSDataExtrasPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNSDataExtrasPrivate.h; sourceTree = "<group>"; };
 		EDD1A5C605C83987008E3150 /* WebNSPrintOperationExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSPrintOperationExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		EDD1A5C705C83987008E3150 /* WebNSPrintOperationExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSPrintOperationExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		EDE850CD06ECC79E005FAB05 /* WebPreferenceKeysPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPreferenceKeysPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -768,6 +770,7 @@
 				65EEDE51084FFB920002DB25 /* WebNSCalendarDateExtras.h */,
 				65EEDE52084FFB920002DB25 /* WebNSCalendarDateExtras.m */,
 				BECD14290565830A005BB09C /* WebNSDataExtras.h */,
+				ED7F6D8A0980683500C235ED /* WebNSDataExtrasPrivate.h */,
 				BECD142A0565830A005BB09C /* WebNSDataExtras.m */,
 				65488D9F084FBCCB00831AD0 /* WebNSDictionaryExtras.h */,
 				65488DA0084FBCCB00831AD0 /* WebNSDictionaryExtras.m */,
@@ -1308,6 +1311,7 @@
 				1C68F66F095B5FC100C2984E /* WebNodeHighlight.h in Headers */,
 				1C68F671095B5FC100C2984E /* WebNodeHighlightView.h in Headers */,
 				65C7F42C0979DE640022E453 /* WebPageBridge.h in Headers */,
+				ED7F6D8B0980683500C235ED /* WebNSDataExtrasPrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
