@@ -2,6 +2,18 @@
 
         Reviewed by darin.
 
+        <embed> and <object> tags show up blank when going back/forward.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6679
+
+        No test currently possible.
+
+        * page/Frame.cpp:
+        (Frame::canCachePage):
+
+2006-01-19  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
         Split html_miscimpl.* into separate files and move html_elementimpl
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6670
 
