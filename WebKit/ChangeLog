@@ -1,6 +1,14 @@
 2006-01-19  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Omernick.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        made WebNSUserDefaultsExtras.h private (SPI) so its one method can be called from
+        Safari, so Safari can stop calling the similar method in Foundation.
+
+2006-01-19  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick.
         
         Made _webKit_guessedMIMEType SPI so Safari can use it in order to stop using
         the similar SPI method in Foundation. This involved splitting it out of the file

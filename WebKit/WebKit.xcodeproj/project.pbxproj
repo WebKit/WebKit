@@ -30,7 +30,7 @@
 		65C7F42D0979DE640022E453 /* WebPageBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 65C7F42B0979DE640022E453 /* WebPageBridge.m */; };
 		65E0F88408500917007E5CB9 /* WebNSURLRequestExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E0F88208500917007E5CB9 /* WebNSURLRequestExtras.h */; };
 		65E0F88508500917007E5CB9 /* WebNSURLRequestExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 65E0F88308500917007E5CB9 /* WebNSURLRequestExtras.m */; };
-		65E0F9E608500F23007E5CB9 /* WebNSUserDefaultsExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E0F9E408500F23007E5CB9 /* WebNSUserDefaultsExtras.h */; };
+		65E0F9E608500F23007E5CB9 /* WebNSUserDefaultsExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E0F9E408500F23007E5CB9 /* WebNSUserDefaultsExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65E0F9E708500F23007E5CB9 /* WebNSUserDefaultsExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 65E0F9E508500F23007E5CB9 /* WebNSUserDefaultsExtras.m */; };
 		65EEDE53084FFB920002DB25 /* WebNSCalendarDateExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65EEDE51084FFB920002DB25 /* WebNSCalendarDateExtras.h */; };
 		65EEDE54084FFB920002DB25 /* WebNSCalendarDateExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 65EEDE52084FFB920002DB25 /* WebNSCalendarDateExtras.m */; };
