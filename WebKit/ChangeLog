@@ -1,3 +1,13 @@
+2006-01-19  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+        
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6631
+        Inspector window has inappropriate maximum height
+
+        * WebInspector.subproj/WebInspector.m:
+        (-[WebInspector window]): removes the maximum size constraint
+
 2006-01-19  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Omernick.

@@ -110,7 +110,6 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
         [window setMovableByWindowBackground:YES];
         [window setDelegate:self];
         [window setMinSize:NSMakeSize(280.0, 450.0)];
-        [window setMaxSize:NSMakeSize(600.0, 700.0)];
 
         _private->webView = [[WebView alloc] initWithFrame:[[window contentView] frame] frameName:nil groupName:nil];
         [_private->webView setFrameLoadDelegate:self];
