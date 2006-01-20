@@ -1,3 +1,15 @@
+2006-01-20  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Test: fast/overflow/image-selection-highlight.html
+
+        Reviewed by Darin, committed by Adele.
+        
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6673
+          Selection highlight doesn't scroll along with an image contained in an overflow:scroll block
+
+        * rendering/render_replaced.cpp:
+        (WebCore::RenderReplaced::selectionRect): Subtract the containing block's scroll offset.
+
 2006-01-19  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

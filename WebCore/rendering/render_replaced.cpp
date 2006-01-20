@@ -186,6 +186,8 @@ IntRect RenderReplaced::selectionRect()
     
     int absx, absy;
     cb->absolutePosition(absx, absy);
+    if (cb->hasOverflowClip())
+        cb->layer()->subtractScrollOffset(absx, absy);
 
     return IntRect(selectionLeft + absx, selectionTop + absy, selectionRight - selectionLeft, selectionHeight);
 }
