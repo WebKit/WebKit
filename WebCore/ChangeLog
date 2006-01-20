@@ -1,3 +1,11 @@
+2006-01-20  mrmacwow  <cpetersen@apple.com>
+
+        Reviewed by eseidel.
+
+        Build fix.
+
+        * khtml/xml/DocumentImpl.cpp:
+
 2006-01-20  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by beth.

@@ -89,7 +89,6 @@ using XBL::XBLBindingManager;
 #include "SVGElementFactory.h"
 #include "SVGZoomEventImpl.h"
 #include "SVGStyleElementImpl.h"
-#include "SVGDocumentExtensions.h"
 #include "KSVGTimeScheduler.h"
 #endif
 
