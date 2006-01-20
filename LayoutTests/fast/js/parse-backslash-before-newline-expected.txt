@@ -1,0 +1,8 @@
+PASS "teststring with CR LF" is "teststring with CR LF"
+PASS "teststring with LF CR" is "teststring with LF CR"
+PASS "teststring with CR" is "teststring with CR"
+PASS "teststring with LF" is "teststring with LF"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

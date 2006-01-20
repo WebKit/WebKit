@@ -1,3 +1,12 @@
+2006-01-20  Maciej Stachowiak  <mjs@apple.com>
+
+        - added test case for a parsing bug that was fixed in different ways in KJS
+        and JSC. In older KJS versions, there would have been a parse error.
+
+        * fast/js/parse-backslash-before-newline-expected.txt: Added.
+        * fast/js/parse-backslash-before-newline.html: Added.
+        * fast/js/resources/parse-backslash-before-newline.js: Added.
+
 2006-01-20  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin, committed by Adele.
