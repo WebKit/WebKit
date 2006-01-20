@@ -23,7 +23,7 @@
 #ifndef RenderSVGText_H
 #define RenderSVGText_H
 
-#include "render_block.h"
+#include "RenderBlock.h"
 #include <qmatrix.h>
 
 namespace KSVG {

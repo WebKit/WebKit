@@ -1,3 +1,14 @@
+2006-01-20  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by beth.
+
+        Missed the kcanvas directory in my previous commit.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6683
+
+        * kcanvas/KCanvasContainer.h:
+        * kcanvas/RenderForeignObject.h:
+        * kcanvas/RenderSVGText.h:
+
 2006-01-20  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Test: fast/overflow/image-selection-highlight.html
@@ -17,6 +28,7 @@
         Break classes in render_table out into separate files.
         Move render_block to RenderBlock.
         Move render_container to RenderContainer.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6683
 
         * WebCore.xcodeproj/project.pbxproj:
         * bridge/mac/MacFrame.mm:

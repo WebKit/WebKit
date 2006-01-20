@@ -23,7 +23,7 @@
 #ifndef RenderForeignObject_H
 #define RenderForeignObject_H
 
-#include "render_block.h"
+#include "RenderBlock.h"
 #include <qmatrix.h>
 
 namespace KSVG {
