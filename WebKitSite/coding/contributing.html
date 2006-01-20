@@ -23,13 +23,13 @@ Contributing Code
 One you have checked out and built the code, you can make changes to it and then produce a <i>patch file</i>
 that contains only the differences between the current version of WebKit and your version of WebKit with your code changes.</p>
 
-<p>The <tt>cvs-create-patch</tt> script, found in WebKitTools/Scripts along with the other WebKit scripts, should be used to produce patches.
-It does a cvs diff operation, using the unified (-u) patch format, also handling files added and removed from the repository,
-and working around path problems that normally prevent some patches created with <tt>cvs diff</tt> from being applied by <tt>patch</tt>.
+<p>The <tt>svn-create-patch</tt> script, found in WebKitTools/Scripts along with the other WebKit scripts, should be used to produce patches.
+It does a svn diff operation, handling files added and removed from the repository,
+and working around path problems that normally prevent some patches created with <tt>svn diff</tt> from being applied by <tt>patch</tt>.
 Use it to create a patch as follows:</p>
-<p class="code">WebKitTools/Scripts/cvs-create-patch > MyExcellentPatch.txt</p>
-<p>It's handy to put the <tt>WebKitTools/Scripts</tt> directory in your shell path so you can type commands like <tt>cvs-create-patch</tt> without specifying the path to the script.</p>
-<p>The <tt>cvs-apply</tt> and <tt>cvs-unapply</tt> scripts are handy for applying patches to a tree, and rolling patches out of a tree.
+<p class="code">WebKitTools/Scripts/svn-create-patch > MyExcellentPatch.txt</p>
+<p>It's handy to put the <tt>WebKitTools/Scripts</tt> directory in your shell path so you can type commands like <tt>svn-create-patch</tt> without specifying the path to the script.</p>
+<p>The <tt>svn-apply</tt> and <tt>svn-unapply</tt> scripts are handy for applying patches to a tree, and rolling patches out of a tree.
 They go beyond the capabilities of the <tt>patch</tt> tool by handling files added and removed from the repository.</p>
 
 <p>Once you have a patch file, it must be reviewed by one of the approved WebKit reviewers.
