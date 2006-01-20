@@ -5950,7 +5950,7 @@
 			name = "User Agent Style Sheet";
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/UserAgentStyleSheets.h",
-				"$(DERIVED_FILE_DIR)/UserAgentStyleSheets.cpp",
+				"$(DERIVED_FILE_DIR)/UserAgentStyleSheetsData.cpp",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
