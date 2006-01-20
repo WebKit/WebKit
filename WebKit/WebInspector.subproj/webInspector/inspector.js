@@ -136,9 +136,13 @@ function loaded()
 }
 
 function refreshScrollbars() {
-    nodeContentsScrollArea.refresh();
-    styleRulesScrollArea.refresh();
-    stylePropertiesScrollArea.refresh();
+    if (currentPane == "node") {
+        nodeContentsScrollArea.refresh();
+        elementAttributesScrollArea.refresh();
+    } else if (currentPane == "style") {
+        styleRulesScrollArea.refresh();
+        stylePropertiesScrollArea.refresh();
+    }
 }
 
 var tabNames = ["node","metrics","style","javascript"];
@@ -193,30 +197,34 @@ function updateElementAttributes() {
     var attributesList = document.getElementById("elementAttributesList")
 
     attributesList.innerHTML = "";
-    
-    var namesArray = new Array();
-    for (i = 0; i < focusedNode.attributes.length; i++)
-        namesArray.push(focusedNode.attributes[i].name);
-    namesArray.sort();
-    
-    for (i = 0; i < namesArray.length; i++) {
-        var attr = focusedNode.getAttributeNode(namesArray[i]);
+
+    for (i = 0; i < focusedNode.attributes.length; i++) {
+        var attr = focusedNode.attributes[i];
         var li = document.createElement("li");
-        
+
         var span = document.createElement("span");
         span.className = "property";
-        span.title = attr.namespaceURI;
-        span.textContent = namesArray[i];
+        if (attr.namespaceURI != null)
+            span.title = attr.namespaceURI;
+        span.textContent = attr.name;
         li.appendChild(span);
-        
+
         span = document.createElement("span");
         span.className = "value";
         span.textContent = attr.value;
+        span.title = span.textContent;
         li.appendChild(span);
-        
+
+        if (attr.style != null) {
+            span = document.createElement("span");
+            span.className = "presentational";
+            span.textContent = "(presentational)";
+            li.appendChild(span);
+        }
+
         attributesList.appendChild(li);
     }
-    
+
     elementAttributesScrollArea.refresh();
 }
 
@@ -238,6 +246,7 @@ function updateNodePane() {
         
         if (focusedNode.namespaceURI.length > 0) {
             document.getElementById("nodeNamespace").textContent = focusedNode.namespaceURI;
+            document.getElementById("nodeNamespace").title = focusedNode.namespaceURI;
             document.getElementById("nodeNamespaceRow").style.display = null;
         } else {
             document.getElementById("nodeNamespaceRow").style.display = "none";
@@ -281,7 +290,32 @@ function updateStylePane() {
 
     var propertyCount = new Array();
 
-    styleRules = focusedNode.ownerDocument.defaultView.getMatchedCSSRules(focusedNode, "");
+    styleRules = new Array();
+    var matchedStyleRules = focusedNode.ownerDocument.defaultView.getMatchedCSSRules(focusedNode, "");
+    for (var i = 0; i < matchedStyleRules.length; i++) {
+        styleRules.push(matchedStyleRules[i]);
+    }
+
+    var focusedNodeName = focusedNode.nodeName.toLowerCase();
+    for (i = 0; i < focusedNode.attributes.length; i++) {
+        var attr = focusedNode.attributes[i];
+        if (attr.style) {
+            var attrStyle = new Object();
+            attrStyle.selectorText = focusedNodeName + "[" + attr.name + "=" + attr.value + "]";
+            attrStyle.style = attr.style;
+            attrStyle.subtitle = "element's \"" + attr.name + "\" attribute";
+            styleRules.push(attrStyle);
+        }
+    }
+
+    if (focusedNode.style.length) {
+        var inlineStyle = new Object();
+        inlineStyle.selectorText = "Inline Style";
+        inlineStyle.style = focusedNode.style;
+        inlineStyle.subtitle = "element's \"style\" attribute";
+        styleRules.push(inlineStyle);
+    }
+
     styleProperties = new Array();
 
     if (selectedStyleRuleIndex >= styleRules.length)
@@ -301,11 +335,16 @@ function updateStylePane() {
         cell.textContent = cell.title;
         row.appendChild(cell);
 
-        cell = document.createElement("div");
-        cell.className = "cell stylesheet";
-        cell.title = styleRules[i].parentStyleSheet.href;
-        cell.textContent = cell.title;
-        row.appendChild(cell);
+        if (styleRules[i].parentStyleSheet != null || styleRules[i].subtitle != null) {
+            cell = document.createElement("div");
+            cell.className = "cell stylesheet";
+            if (styleRules[i].subtitle != null)
+                cell.title = styleRules[i].subtitle;
+            else
+                cell.title = styleRules[i].parentStyleSheet.href;
+            cell.textContent = cell.title;
+            row.appendChild(cell);
+        }
 
         row.styleRuleIndex = i;
         row.addEventListener("click", styleRuleSelect, true);

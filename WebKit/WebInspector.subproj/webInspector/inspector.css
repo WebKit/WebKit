@@ -619,13 +619,23 @@ button.toggle.right {
 }
 
 .attributeList li .property::after {
-    content: ": ";
+    margin: 0.3em;
+    content: "=";
 }
 
 .attributeList li .value {
     color: rgb(255,255,180);
 }
-    
+
+.attributeList li .value::before, .attributeList li .value::after {
+    content: "\"";
+}
+
+.attributeList li .presentational {
+    margin-left: 0.5em;
+    color: rgba(255,255,255,0.6);
+}
+
 #nodeContents {
     display: -apple-box;
     -apple-box-flex: 12;

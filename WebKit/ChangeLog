@@ -1,5 +1,16 @@
 2006-01-19  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Eric.
+
+        Adds inline style reporting and mapped attribute support to the Inspector Style pane.
+        Cleans up the node attributes area with a more natural attr = "value" look.
+        Slight optimization to only update visible scrollbars during a window resize.
+
+        * WebInspector.subproj/webInspector/inspector.css:
+        * WebInspector.subproj/webInspector/inspector.js:
+
+2006-01-19  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Darin.
         
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6631
