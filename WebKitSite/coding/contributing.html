@@ -24,7 +24,7 @@ One you have checked out and built the code, you can make changes to it and then
 that contains only the differences between the current version of WebKit and your version of WebKit with your code changes.</p>
 
 <p>The <tt>svn-create-patch</tt> script, found in WebKitTools/Scripts along with the other WebKit scripts, should be used to produce patches.
-It does a svn diff operation, handling files added and removed from the repository,
+It does a <tt>svn diff</tt> operation, handling files added and removed from the repository,
 and working around path problems that normally prevent some patches created with <tt>svn diff</tt> from being applied by <tt>patch</tt>.
 Use it to create a patch as follows:</p>
 <p class="code">WebKitTools/Scripts/svn-create-patch > MyExcellentPatch.txt</p>
