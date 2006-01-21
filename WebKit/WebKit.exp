@@ -3,7 +3,6 @@
 .objc_class_name_WebBackForwardList
 .objc_class_name_WebCoreStatistics
 .objc_class_name_WebDataSource
-.objc_class_name_WebDebugDOMNode
 .objc_class_name_WebDefaultPolicyDelegate
 .objc_class_name_WebDownload
 .objc_class_name_WebDynamicScrollBarsView
@@ -16,6 +15,7 @@
 .objc_class_name_WebHistoryItem
 .objc_class_name_WebIconDatabase
 .objc_class_name_WebIconLoader
+.objc_class_name_WebInspector
 .objc_class_name_WebJavaScriptTextInputPanel
 .objc_class_name_WebKeyGenerator
 .objc_class_name_WebKitStatistics

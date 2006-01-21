@@ -1,5 +1,22 @@
 2006-01-20  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by John, some parts by Darin.
+
+        Removes the old WebDebugDOMNode code, superseded by the ObjC DOM and the Web Inspector.
+        Since Safari 2.0 still relies on these classes for the Debug menu's "Show DOM Tree", we remove
+        that menu item to prevent a crash.
+
+        * WebKit.exp: adds WebInspector, removes WebDebugDOMNode
+        * WebKit.xcodeproj/project.pbxproj: added the REMOVE_SAFARI_DOM_TREE_DEBUG_ITEM define so the new WebView code doesn't build in the Default config
+        * WebView.subproj/WebDebugDOMNode.h: Removed.
+        * WebView.subproj/WebDebugDOMNode.m: Removed.
+        * WebView.subproj/WebView.m:
+        (+[WebView initialize]): check if we are in Safari and IncludeDebugMenu is true then observe for NSApplicationDidFinishLaunchingNotification and call _finishedLaunching
+        (+[WebView _finishedLaunching]): observe for NSMenuDidAddItemNotification now that the main menu is loaded and wait for the Debug menu to be added
+        (+[WebView _removeDOMTreeMenuItem:]): when the debug menu is added remove the "Show DOM Tree" item
+
+2006-01-20  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Hyatt.
 
         Corrects the cascade order for mapped attributes.

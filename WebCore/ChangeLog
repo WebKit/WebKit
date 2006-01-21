@@ -1,3 +1,12 @@
+2006-01-20  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by John.
+
+        Removes code that is no longer needed with the new Web Inspector.
+
+        * bridge/mac/WebCoreFrameBridge.h: removes the WebCoreDOMTreeCopier protocol.
+        * bridge/mac/WebCoreFrameBridge.mm: removes copyDOMNode:copier:
+
 2006-01-21  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by David Hyatt.

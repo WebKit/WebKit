@@ -96,7 +96,6 @@
 		939810490824BF01008DF038 /* WebClipView.h in Headers */ = {isa = PBXBuildFile; fileRef = 933D659903413FF2008635CE /* WebClipView.h */; };
 		9398104B0824BF01008DF038 /* WebDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 39446070020F50ED0ECA1767 /* WebDataSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9398104C0824BF01008DF038 /* WebDataSourcePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 39446072020F50ED0ECA1767 /* WebDataSourcePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		9398104D0824BF01008DF038 /* WebDebugDOMNode.h in Headers */ = {isa = PBXBuildFile; fileRef = F57FB8C4034E180101A80180 /* WebDebugDOMNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9398104E0824BF01008DF038 /* WebDefaultContextMenuDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5152FADD033FC50400CA2ACD /* WebDefaultContextMenuDelegate.h */; settings = {ATTRIBUTES = (); }; };
 		9398104F0824BF01008DF038 /* WebDefaultPolicyDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5152FADF033FC50400CA2ACD /* WebDefaultPolicyDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810500824BF01008DF038 /* WebDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 35081DAE02B6D4F50ACA2ACA /* WebDocument.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -232,7 +231,6 @@
 		939810EA0824BF01008DF038 /* WebLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 51F6866D0366057300CA2D3A /* WebLoader.m */; };
 		939810EB0824BF01008DF038 /* WebClipView.m in Sources */ = {isa = PBXBuildFile; fileRef = 933D659A03413FF2008635CE /* WebClipView.m */; };
 		939810ED0824BF01008DF038 /* WebDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 39446071020F50ED0ECA1767 /* WebDataSource.m */; };
-		939810EE0824BF01008DF038 /* WebDebugDOMNode.m in Sources */ = {isa = PBXBuildFile; fileRef = F57FB8C5034E180101A80180 /* WebDebugDOMNode.m */; };
 		939810EF0824BF01008DF038 /* WebDefaultContextMenuDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5152FADE033FC50400CA2ACD /* WebDefaultContextMenuDelegate.m */; };
 		939810F00824BF01008DF038 /* WebDefaultPolicyDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5152FAE0033FC50400CA2ACD /* WebDefaultPolicyDelegate.m */; };
 		939810F10824BF01008DF038 /* WebDynamicScrollBarsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3944606C020F50ED0ECA1767 /* WebDynamicScrollBarsView.m */; };
@@ -574,8 +572,6 @@
 		F5488CF502CB04EE01FF6274 /* WebCookieAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebCookieAdapter.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F560BEBC030DAF4401C1A526 /* WebSearchableTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebSearchableTextView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F560BEBD030DAF4401C1A526 /* WebSearchableTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebSearchableTextView.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F57FB8C4034E180101A80180 /* WebDebugDOMNode.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = WebDebugDOMNode.h; path = ../WebView.subproj/WebDebugDOMNode.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F57FB8C5034E180101A80180 /* WebDebugDOMNode.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; name = WebDebugDOMNode.m; path = ../WebView.subproj/WebDebugDOMNode.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5883BDE025E5C6A01000102 /* nullplugin.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = nullplugin.tiff; path = Resources/nullplugin.tiff; sourceTree = "<group>"; };
 		F5883BE0025E5E9D01000102 /* WebNullPluginView.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNullPluginView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5883BE1025E5E9D01000102 /* WebNullPluginView.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNullPluginView.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1004,8 +1000,6 @@
 				BEE18F930472A0CF00CA289C /* WebAssertions.m */,
 				F59EAE3E0253C7EE018635CA /* WebCoreStatistics.h */,
 				F59EAE410253C8DE018635CA /* WebCoreStatistics.m */,
-				F57FB8C4034E180101A80180 /* WebDebugDOMNode.h */,
-				F57FB8C5034E180101A80180 /* WebDebugDOMNode.m */,
 				93AEB17D032C1735008635CE /* WebKitLogging.h */,
 				93AEB17E032C1735008635CE /* WebKitLogging.m */,
 				F53444CE02E87CBA018635CA /* WebKitStatistics.h */,
@@ -1208,7 +1202,6 @@
 				939810490824BF01008DF038 /* WebClipView.h in Headers */,
 				9398104B0824BF01008DF038 /* WebDataSource.h in Headers */,
 				9398104C0824BF01008DF038 /* WebDataSourcePrivate.h in Headers */,
-				9398104D0824BF01008DF038 /* WebDebugDOMNode.h in Headers */,
 				9398104E0824BF01008DF038 /* WebDefaultContextMenuDelegate.h in Headers */,
 				9398104F0824BF01008DF038 /* WebDefaultPolicyDelegate.h in Headers */,
 				939810500824BF01008DF038 /* WebDocument.h in Headers */,
@@ -1772,7 +1765,6 @@
 				939810EA0824BF01008DF038 /* WebLoader.m in Sources */,
 				939810EB0824BF01008DF038 /* WebClipView.m in Sources */,
 				939810ED0824BF01008DF038 /* WebDataSource.m in Sources */,
-				939810EE0824BF01008DF038 /* WebDebugDOMNode.m in Sources */,
 				939810EF0824BF01008DF038 /* WebDefaultContextMenuDelegate.m in Sources */,
 				939810F00824BF01008DF038 /* WebDefaultPolicyDelegate.m in Sources */,
 				939810F10824BF01008DF038 /* WebDynamicScrollBarsView.m in Sources */,
@@ -2158,7 +2150,7 @@
 			buildSettings = {
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_THREADSAFE_STATICS = NO;
-				PER_CONFIGURATION_PREPROCESSOR_DEFINES = ENABLE_WEBKIT_UNSET_DYLD_FRAMEWORK_PATH;
+				PER_CONFIGURATION_PREPROCESSOR_DEFINES = "ENABLE_WEBKIT_UNSET_DYLD_FRAMEWORK_PATH REMOVE_SAFARI_DOM_TREE_DEBUG_ITEM";
 			};
 			name = Development;
 		};
@@ -2166,7 +2158,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_THREADSAFE_STATICS = NO;
-				PER_CONFIGURATION_PREPROCESSOR_DEFINES = ENABLE_WEBKIT_UNSET_DYLD_FRAMEWORK_PATH;
+				PER_CONFIGURATION_PREPROCESSOR_DEFINES = "ENABLE_WEBKIT_UNSET_DYLD_FRAMEWORK_PATH REMOVE_SAFARI_DOM_TREE_DEBUG_ITEM";
 			};
 			name = Deployment;
 		};
@@ -2174,7 +2166,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_THREADSAFE_STATICS = NO;
-				PER_CONFIGURATION_PREPROCESSOR_DEFINES = ENABLE_WEBKIT_UNSET_DYLD_FRAMEWORK_PATH;
+				PER_CONFIGURATION_PREPROCESSOR_DEFINES = "ENABLE_WEBKIT_UNSET_DYLD_FRAMEWORK_PATH REMOVE_SAFARI_DOM_TREE_DEBUG_ITEM";
 			};
 			name = OptimizedWithSymbols;
 		};

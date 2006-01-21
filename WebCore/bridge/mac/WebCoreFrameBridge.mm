@@ -1049,29 +1049,6 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
     [self _setupRootForPrinting:NO];
 }
 
-- (NSObject *)copyDOMNode:(NodeImpl *)node copier:(id <WebCoreDOMTreeCopier>)copier
-{
-    NSMutableArray *children = [[NSMutableArray alloc] init];
-    for (NodeImpl *child = node->firstChild(); child; child = child->nextSibling()) {
-        [children addObject:[self copyDOMNode:child copier:copier]];
-    }
-    NSObject *copiedNode = [copier nodeWithName:node->nodeName().qstring().getNSString()
-                                          value:node->nodeValue().qstring().getNSString()
-                                         source:createMarkup(node, ChildrenOnly).getNSString()
-                                       children:children];
-    [children release];
-    return copiedNode;
-}
-
-- (NSObject *)copyDOMTree:(id <WebCoreDOMTreeCopier>)copier
-{
-    DocumentImpl *doc = m_frame->document();
-    if (!doc) {
-        return nil;
-    }
-    return [self copyDOMNode:doc copier:copier];
-}
-
 - (NSObject *)copyRenderNode:(RenderObject *)node copier:(id <WebCoreRenderTreeCopier>)copier
 {
     NSMutableArray *children = [[NSMutableArray alloc] init];
