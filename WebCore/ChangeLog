@@ -1,3 +1,13 @@
+2006-01-21  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Darin.
+
+        - fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=6691
+        TinyMCE: strikethrough unimplemented
+        
+        * khtml/editing/jsediting.cpp:
+        Add support for the "Strikethrough" command.
+        
 2006-01-21  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Test: fast/dynamic/hovered-detach.html
