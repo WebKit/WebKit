@@ -1,3 +1,15 @@
+2006-01-20  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 6666, pseudo-element rules incorrectly displayed
+        in Web Inspector.
+        
+        Reviewed by darin
+
+        Added fast/inspector/matchedrules.html as test case.
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::matchRulesForList):
+
 2006-01-20  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by John.

@@ -399,9 +399,11 @@ void CSSStyleSelector::matchRulesForList(CSSRuleDataList* rules,
             
             // If we're matching normal rules, set a pseudo bit if 
             // we really just matched a pseudo-element.
-            if (!m_collectRulesOnly && dynamicPseudo != RenderStyle::NOPSEUDO && pseudoStyle == RenderStyle::NOPSEUDO)
+            if (dynamicPseudo != RenderStyle::NOPSEUDO && pseudoStyle == RenderStyle::NOPSEUDO) {
+                if (m_collectRulesOnly)
+                    return;
                 style->setHasPseudoStyle(dynamicPseudo);
-            else {
+            } else {
                 // Update our first/last rule indices in the matched rules array.
                 lastRuleIndex = m_matchedDeclCount + m_matchedRuleCount;
                 if (firstRuleIndex == -1) firstRuleIndex = m_matchedDeclCount + m_matchedRuleCount;
