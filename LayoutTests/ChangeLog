@@ -1,5 +1,10 @@
 2006-01-21  Anders Carlsson  <andersca@mac.com>
 
+        * editing/editing.js:
+        Fix typo which made editing test cases fail.
+
+2006-01-21  Anders Carlsson  <andersca@mac.com>
+
         Reviewed by Darin.
 
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6691

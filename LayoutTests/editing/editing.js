@@ -426,7 +426,7 @@ function selectAllCommand() {
 function execStrikethroughCommand() {
     document.execCommand("Strikethrough");
 }
-function boldCommand() {
+function strikethroughCommand() {
     if (commandDelay > 0) {
         window.setTimeout(execStrikethroughCommand, commandCount * commandDelay);
         commandCount++;
