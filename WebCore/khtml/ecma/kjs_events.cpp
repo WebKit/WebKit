@@ -26,18 +26,21 @@
 #include "kjs_window.h"
 #include "kjs_views.h"
 #include "kjs_proxy.h"
+#include "html/html_imageimpl.h"
 #include "DocumentImpl.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom2_viewsimpl.h"
 #include "xml/EventNames.h"
 #include "rendering/render_object.h"
 #include "CachedImage.h"
+#include "htmlnames.h"
 
 #include <kdebug.h>
 
 using namespace DOM;
 using namespace EventNames;
 using namespace khtml;
+using namespace HTMLNames;
 
 namespace KJS {
 
@@ -1131,24 +1134,19 @@ JSValue *ClipboardProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, 
 
             // See if they passed us a node
             NodeImpl *node = toNode(args[0]);
-            if (node) {
-                if (node->isElementNode()) {
-                    cb->clipboard->setDragImageElement(node, IntPoint(x,y));                    
-                    return jsUndefined();
-                } else {
-                    return throwError(exec, SyntaxError, "setDragImageFromElement: Invalid first argument");
-                }
-            }
-
-            // See if they passed us an Image object
-            JSObject *o = static_cast<JSObject*>(args[0]);
-            if (o->isObject() && o->inherits(&Image::info)) {
-                Image *JSImage = static_cast<Image*>(o);
-                cb->clipboard->setDragImage(JSImage->image()->pixmap(), IntPoint(x,y));                
-                return jsUndefined();
-            } else {
+            if (!node)
                 return throwError(exec, TypeError);
-            }
+            
+            if (!node->isElementNode())
+                return throwError(exec, SyntaxError, "setDragImageFromElement: Invalid first argument");
+
+            if (static_cast<ElementImpl*>(node)->hasLocalName(imgTag) && 
+                !node->inDocument())
+                cb->clipboard->setDragImage(static_cast<HTMLImageElementImpl*>(node)->pixmap(), IntPoint(x, y));
+            else
+                cb->clipboard->setDragImageElement(node, IntPoint(x, y));                    
+                
+            return jsUndefined();
         }
     }
     return jsUndefined();

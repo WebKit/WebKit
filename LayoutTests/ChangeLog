@@ -1,5 +1,19 @@
 2006-01-21  Anders Carlsson  <andersca@mac.com>
 
+        Reviewed by Darin.
+
+        - tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=3869
+        Should use HTML Image element instead of JS Image object
+
+        * fast/dom/image-object-expected.txt: Added.
+        * fast/dom/image-object-in-canvas-expected.checksum: Added.
+        * fast/dom/image-object-in-canvas-expected.png: Added.
+        * fast/dom/image-object-in-canvas-expected.txt: Added.
+        * fast/dom/image-object-in-canvas.html: Added.
+        * fast/dom/image-object.html: Added.
+
+2006-01-21  Anders Carlsson  <andersca@mac.com>
+
         * editing/editing.js:
         Fix typo which made editing test cases fail.
 

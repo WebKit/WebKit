@@ -999,6 +999,7 @@ const HTMLElement::Accessors* HTMLElement::accessors() const
   align         KJS::HTMLElement::ImageAlign            DontDelete
   alt           KJS::HTMLElement::ImageAlt              DontDelete
   border        KJS::HTMLElement::ImageBorder           DontDelete
+  complete      KJS::HTMLElement::ImageComplete         DontDelete|ReadOnly
   height        KJS::HTMLElement::ImageHeight           DontDelete
   hspace        KJS::HTMLElement::ImageHspace           DontDelete
   isMap         KJS::HTMLElement::ImageIsMap            DontDelete
@@ -1883,6 +1884,7 @@ JSValue *HTMLElement::imageGetter(ExecState* exec, int token) const
         case ImageAlign:           return jsString(image.align());
         case ImageAlt:             return jsString(image.alt());
         case ImageBorder:          return jsNumber(image.border());
+        case ImageComplete:        return jsBoolean(image.complete());
         case ImageHeight:          return jsNumber(image.height(true));
         case ImageHspace:          return jsNumber(image.hspace());
         case ImageIsMap:           return jsBoolean(image.isMap());
@@ -3543,130 +3545,15 @@ JSObject *ImageConstructorImp::construct(ExecState * exec, const List & list)
         height = h->toInt32(exec);
     }
         
-    JSObject *result(new Image(m_doc.get(), widthSet, width, heightSet, height));
-  
-    /* TODO: do we need a prototype ? */
-    return result;
-}
-
-const ClassInfo KJS::Image::info = { "Image", 0, &ImageTable, 0 };
-
-/* Source for ImageTable. Use "make hashtables" to regenerate.
-@begin ImageTable 6
-  src           Image::Src              DontDelete
-  complete      Image::Complete         DontDelete|ReadOnly
-  onload        Image::OnLoad           DontDelete
-  width         Image::Width            DontDelete|ReadOnly
-  height        Image::Height           DontDelete|ReadOnly
-@end
-*/
-
-bool Image::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  return getStaticValueSlot<Image,DOMObject>(exec, &ImageTable, this, propertyName, slot);
-}
-
-JSValue *Image::getValueProperty(ExecState *, int token) const
-{
-  switch (token) {
-  case Src:
-    return jsString(doc ? doc->completeURL(src.domString()) : src);
-  case Complete:
-    return jsBoolean(!img || img->status() >= khtml::CachedObject::Persistent);
-  case OnLoad:
-    if (onLoadListener && onLoadListener->listenerObj()) {
-      return onLoadListener->listenerObj();
-    } else {
-      return jsNull();
-    }
-  case Width: {
+    HTMLImageElementImpl *result = new HTMLImageElementImpl(m_doc.get());
+    
     if (widthSet)
-        return jsNumber(width);
-    int w = 0;
-    if (img) {
-      IntSize size = img->pixmap_size();
-      if (size.isValid())
-        w = size.width();
-    }
-    return jsNumber(w);
-  }
-  case Height: {
+        result->setWidth(width);
     if (heightSet)
-        return jsNumber(height);
-    int h = 0;
-    if (img) {
-      IntSize size = img->pixmap_size();
-      if (size.isValid())
-        h = size.height();
-    }
-    return jsNumber(h);
-  }
-  default:
-    kdWarning() << "Image::getValueProperty unhandled token " << token << endl;
-    return NULL;
-  }
+        result->setHeight(height);
+    
+    return static_cast<JSObject*>(getDOMNode(exec, result));
 }
-
-void Image::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
-{
-  lookupPut<Image,DOMObject>(exec, propertyName, value, attr, &ImageTable, this );
-}
-
-void Image::putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/)
-{
-  switch(token) {
-  case Src:
-  {
-    src = value->toString(exec);
-    if ( img ) img->deref(this);
-    img = doc ? doc->docLoader()->requestImage( src.domString() ) : 0;
-    if ( img ) img->ref(this);
-    break;
-  }
-  case OnLoad:
-    onLoadListener = Window::retrieveActive(exec)->getJSEventListener(value, true);
-    if (onLoadListener) onLoadListener->ref();
-    break;
-  case Width:
-    widthSet = true;
-    width = value->toInt32(exec);
-    break;
-  case Height:
-    heightSet = true;
-    height = value->toInt32(exec);
-    break;
-  default:
-    kdWarning() << "HTMLDocument::putValueProperty unhandled token " << token << endl;
-  }
-}
-
-void Image::notifyFinished(khtml::CachedObject *)
-{
-  if (onLoadListener && doc->frame()) {
-    int ignoreException;
-    EventImpl *ev = doc->createEvent("HTMLEvents", ignoreException);
-    ev->ref();
-    ev->initEvent(loadEvent, true, true);
-    onLoadListener->handleEventImpl(ev, true);
-    ev->deref();
-  }
-}
-
-Image::Image(DocumentImpl *d, bool ws, int w, bool hs, int h)
-  : doc(d), img(0), onLoadListener(0)
-{
-      widthSet = ws;
-      width = w;
-      heightSet = hs;
-      height = h;
-}
-
-Image::~Image()
-{
-  if ( img ) img->deref(this);
-  if ( onLoadListener ) onLoadListener->deref();
-}
-
 
 ////////////////////// Context2D Object ////////////////////////
 
@@ -4198,21 +4085,8 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
             QPixmap pixmap;
             CGContextRef sourceContext = 0;
             
-            // Check for JavaScript Image, <img> or <canvas>.
-            if (o->inherits(&Image::info)) {
-                Image *i = static_cast<Image*>(o);
-                khtml::CachedImage *ci = i->image();
-                if (ci) {
-                    pixmap = ci->pixmap();
-                }
-                else {
-                    // No image.
-                    return jsUndefined();
-                }
-                w = pixmap.width();
-                h = pixmap.height();
-            }
-            else if (o->inherits(&KJS::HTMLElement::img_info)){
+            // Check for <img> or <canvas>.
+            if (o->inherits(&KJS::HTMLElement::img_info)){
                 NodeImpl *n = static_cast<HTMLElement *>(args[0])->impl();
                 HTMLImageElementImpl *e = static_cast<HTMLImageElementImpl*>(n);
                 pixmap = e->pixmap();
@@ -4312,9 +4186,12 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
             if (args.size() != 10)
                 return throwError(exec, SyntaxError);
             JSObject *o = static_cast<JSObject*>(args[0]);
-            if (!o->isObject() || !o->inherits(&Image::info))
+            if (!o->inherits(&KJS::HTMLElement::img_info))
                 return throwError(exec, TypeError);
-            Image *i = static_cast<Image*>(o);
+            NodeImpl *n = static_cast<HTMLElement *>(args[0])->impl();
+            HTMLImageElementImpl *e = static_cast<HTMLImageElementImpl*>(n);
+            
+            QPixmap pixmap = e->pixmap();
             float sx = args[1]->toNumber(exec);
             float sy = args[2]->toNumber(exec);
             float sw = args[3]->toNumber(exec);
@@ -4324,18 +4201,15 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
             float dw = args[7]->toNumber(exec);
             float dh = args[8]->toNumber(exec);
             QString compositeOperator = args[9]->toString(exec).qstring().lower();
-            khtml::CachedImage *ci = i->image();
-            if (ci) {
-                QPixmap pixmap = ci->pixmap();
-                QPainter p;
+            
+            QPainter p;
 
-                p.drawFloatPixmap (dx, dy, dw, dh, pixmap, sx, sy, sw, sh, QPainter::compositeOperatorFromString(compositeOperator), drawingContext);
+            p.drawFloatPixmap (dx, dy, dw, dh, pixmap, sx, sy, sw, sh, QPainter::compositeOperatorFromString(compositeOperator), drawingContext);
                 
-                if (contextObject->_needsFlushRasterCache)
-                    pixmap.flushRasterCache();
+            if (contextObject->_needsFlushRasterCache)
+                pixmap.flushRasterCache();
 
-                renderer->setNeedsImageUpdate();
-            }
+            renderer->setNeedsImageUpdate();
             break;
         }
         case Context2D::SetAlpha: {
@@ -4381,7 +4255,7 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
             if (args.size() != 2)
                 return throwError(exec, SyntaxError);
             JSObject *o = static_cast<JSObject*>(args[0]);
-            if (!o->isObject() || !o->inherits(&Image::info))
+            if (!o->inherits(&KJS::HTMLElement::img_info))
                 return throwError(exec, TypeError);
             int repetitionType = ImagePattern::Repeat;
             DOMString repetitionString = args[1]->toString(exec).domString().lower();
@@ -4391,7 +4265,8 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
                 repetitionType = ImagePattern::RepeatY;
             else if (repetitionString == "no-repeat")
                 repetitionType = ImagePattern::NoRepeat;
-            return new ImagePattern(static_cast<Image*>(o), repetitionType);
+            NodeImpl *n = static_cast<HTMLElement *>(args[0])->impl();
+            return new ImagePattern(static_cast<HTMLImageElementImpl *>(n)->pixmap(), repetitionType);
         }
     }
 #endif
@@ -5194,29 +5069,26 @@ static void drawPattern (void * info, CGContextRef context)
 CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
 #endif
 
-ImagePattern::ImagePattern(Image *i, int repetitionType)
+ImagePattern::ImagePattern(const QPixmap& pixmap, int repetitionType)
     :_rw(0), _rh(0)
 {
-    khtml::CachedImage *ci = i->image();
-    if (ci) {
-        _pixmap = ci->pixmap();
-        float w = _pixmap.width();
-        float h = _pixmap.height();
+    _pixmap = pixmap;
+    float w = _pixmap.width();
+    float h = _pixmap.height();
 #if __APPLE__
-        _bounds = CGRectMake (0, 0, w, h);
+    _bounds = CGRectMake (0, 0, w, h);
 #endif
-        if (repetitionType == Repeat) {
-            _rw = w; _rh = h;
-        }
-        else if (repetitionType == RepeatX) {
-            _rw = w; _rh = 0;
-        }
-        else if (repetitionType == RepeatY) {
-            _rw = 0; _rh = h;
-        }
-        else if (repetitionType == NoRepeat) {
-            _rw = 0; _rh = 0;
-        }
+    if (repetitionType == Repeat) {
+        _rw = w; _rh = h;
+    }
+    else if (repetitionType == RepeatX) {
+        _rw = w; _rh = 0;
+    }
+    else if (repetitionType == RepeatY) {
+        _rw = 0; _rh = h;
+    }
+    else if (repetitionType == NoRepeat) {
+        _rw = 0; _rh = 0;
     }
 }
 

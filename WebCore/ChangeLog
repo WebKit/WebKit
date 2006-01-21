@@ -2,6 +2,48 @@
 
         Reviewed by Darin.
 
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3869
+        Should use HTML Image element instead of JS Image object
+
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::ClipboardProtoFunc::callAsFunction):
+        Don't check Image object. Instead, if the element passed in
+        is an image element which isn't in any document, use its pixmap.
+        
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElement::imageGetter):
+        Add complete.
+        
+        (KJS::ImageConstructorImp::construct):
+        Take a QPixmap instead of an Image.
+        
+        (KJS::KJS::Context2DFunction::callAsFunction):
+        Remove usage of Image and use HTMLImageElementImpl instead.
+
+        * khtml/ecma/kjs_html.h:
+        Remove Image class.
+        
+        (KJS::HTMLElement::):
+        Add ImgComplete.
+        
+        * khtml/html/html_imageimpl.cpp:
+        (WebCore::HTMLImageElementImpl::width):
+        (WebCore::HTMLImageElementImpl::height):
+        If the element has no renderer but its image size is known
+        return that instead.
+        
+        (WebCore::HTMLImageElementImpl::complete):
+        New function, returns true if an image has finished loading.
+        
+        * khtml/html/html_imageimpl.h:
+        Add complete.
+        
+        * manual-tests/drag-image.html: Added.
+
+2006-01-21  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Darin.
+
         - fixes http://bugzilla.opendarwin.org/show_bug.cgi?id=6691
         TinyMCE: strikethrough unimplemented
         

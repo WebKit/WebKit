@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<script>
+function debug(str) {
+    var c = document.getElementById('console')
+    c.appendChild(document.createTextNode(str + '\n'));
+}
+
+var numErrs = 0;
+
+function getContext(id) {
+    return document.getElementById(id).getContext('2d');
+}
+
+function imageLoaded() {
+    var c1 = getContext('canvas1')
+    c1.drawImage(i, 0, 0, i.width * 2, i.height * 2)
+    
+    var c2 = getContext('canvas2');
+    c2.drawImageFromRect(i, 0, 0, i.width, i.height, 0, 0, i.width, i.height, 'over')
+    
+    var c3 = getContext('canvas3');
+    var pattern = c3.createPattern(i, 'repeat');
+    c3.fillStyle = pattern;
+    c3.arc(75, 75, 60, 0, 2*Math.PI, 0);
+    c3.fill();
+    
+    if (window.layoutTestController) { 
+        layoutTestController.notifyDone();
+    }
+}
+
+function runTests() {
+    if (window.layoutTestController) {
+        layoutTestController.waitUntilDone();
+    }
+    
+    i = new Image();
+    i.onload = imageLoaded;
+    i.src = 'resources/apple.gif';
+}
+
+</script>
+</head>
+<body onload="runTests();">
+<p>This tests that the Image JavaScript object works as expected when used in a canvas. If the test is successful, the Apple logo should appear scaled, normal and finally tiled in a circle.</p>
+<div><canvas id="canvas1" width="150" height="150"/>Using drawImage.</div>
+<div><canvas id="canvas2" width="150" height="150"/>Using drawImageFromRect.</div>
+<div><canvas id="canvas3" width="150" height="150"/>Using ImagePattern.</div>
+
+<pre id="console">
+</pre>
+</body>
+</html>
