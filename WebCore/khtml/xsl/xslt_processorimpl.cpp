@@ -208,8 +208,8 @@ RefPtr<DocumentImpl> XSLTProcessorImpl::createDocumentFromSource(const QString &
     // in place. We have to do this only if we're rendering the result document.
     if (view) {
         view->clear();
-        result->setTransformSourceDocument(view->frame()->xmlDocImpl());
-        view->frame()->replaceDocImpl(result.get());
+        result->setTransformSourceDocument(view->frame()->document());
+        view->frame()->setDocument(result.get());
     }
     
     result->open();

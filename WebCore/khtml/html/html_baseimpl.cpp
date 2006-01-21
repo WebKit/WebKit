@@ -549,7 +549,7 @@ DocumentImpl* HTMLFrameElementImpl::contentDocument() const
     }
 
     // Return the document for that part, which is our contentDocument.
-    return frame->xmlDocImpl();
+    return frame->document();
 }
 
 bool HTMLFrameElementImpl::isURLAttribute(AttributeImpl *attr) const

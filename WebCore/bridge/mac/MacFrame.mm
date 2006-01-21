@@ -442,7 +442,7 @@ bool MacFrame::findString(NSString *string, bool forward, bool caseFlag, bool wr
     }
     
     // Initially search from the start (if forward) or end (if backward) of the selection, and search to edge of document.
-    RefPtr<RangeImpl> searchRange(rangeOfContents(xmlDocImpl()));
+    RefPtr<RangeImpl> searchRange(rangeOfContents(document()));
     if (selection().start().node()) {
         if (forward) {
             setStart(searchRange.get(), VisiblePosition(selection().start(), selection().affinity()));
@@ -454,7 +454,7 @@ bool MacFrame::findString(NSString *string, bool forward, bool caseFlag, bool wr
     
     // If we re-found the (non-empty) selected range, then search again starting just past the selected range.
     if (selection().start().node() && *resultRange == *selection().toRange()) {
-        searchRange = rangeOfContents(xmlDocImpl());
+        searchRange = rangeOfContents(document());
         if (forward) {
             setStart(searchRange.get(), VisiblePosition(selection().end(), selection().affinity()));
         } else {
@@ -468,7 +468,7 @@ bool MacFrame::findString(NSString *string, bool forward, bool caseFlag, bool wr
     // if we didn't find anything and we're wrapping, search again in the entire document (this will
     // redundantly re-search the area already searched in some cases).
     if (resultRange->collapsed(exception) && wrapFlag) {
-        searchRange = rangeOfContents(xmlDocImpl());
+        searchRange = rangeOfContents(document());
         resultRange = findPlainText(searchRange.get(), target, forward, caseFlag);
         // We used to return false here if we ended up with the same range that we started with
         // (e.g., the selection was already the only instance of this text). But we decided that
@@ -751,7 +751,7 @@ QString MacFrame::advanceToNextMisspelling(bool startBeforeSelection)
     
     // Start at the end of the selection, search to edge of document.  Starting at the selection end makes
     // repeated "check spelling" commands work.
-    RefPtr<RangeImpl> searchRange(rangeOfContents(xmlDocImpl()));
+    RefPtr<RangeImpl> searchRange(rangeOfContents(document()));
     bool startedWithSelection = false;
     if (selection().start().node()) {
         startedWithSelection = true;
@@ -818,7 +818,7 @@ QString MacFrame::advanceToNextMisspelling(bool startBeforeSelection)
                 if (misspelling.length > 0) {
                     // Build up result range and string.  Note the misspelling may span many text nodes,
                     // but the CharIterator insulates us from this complexity
-                    RefPtr<RangeImpl> misspellingRange(rangeOfContents(xmlDocImpl()));
+                    RefPtr<RangeImpl> misspellingRange(rangeOfContents(document()));
                     CharacterIterator chars(it.range().get());
                     chars.advance(misspelling.location);
                     misspellingRange->setStart(chars.range()->startContainer(exception), chars.range()->startOffset(exception), exception);
@@ -828,7 +828,7 @@ QString MacFrame::advanceToNextMisspelling(bool startBeforeSelection)
                     setSelection(SelectionController(misspellingRange.get(), DOWNSTREAM));
                     revealSelection();
                     // Mark misspelling in document.
-                    xmlDocImpl()->addMarker(misspellingRange.get(), DocumentMarker::Spelling);
+                    document()->addMarker(misspellingRange.get(), DocumentMarker::Spelling);
                     return result;
                 }
             }
@@ -960,7 +960,7 @@ QString MacFrame::mimeTypeForFileName(const QString &fileName) const
 
 NSView *MacFrame::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirection direction)
 {
-    DocumentImpl *doc = xmlDocImpl();
+    DocumentImpl *doc = document();
     if (!doc) {
         return nil;
     }
@@ -1004,7 +1004,7 @@ NSView *MacFrame::nextKeyViewInFrameHierarchy(NodeImpl *node, KWQSelectionDirect
     
     // remove focus from currently focused node if we're giving focus to another view
     if (next && (next != [_bridge documentView])) {
-        DocumentImpl *doc = xmlDocImpl();
+        DocumentImpl *doc = document();
         if (doc) {
             doc->setFocusNode(0);
         }            
@@ -1441,7 +1441,7 @@ bool MacFrame::keyEvent(NSEvent *event)
 
     // Check for cases where we are too early for events -- possible unmatched key up
     // from pressing return in the location bar.
-    DocumentImpl *doc = xmlDocImpl();
+    DocumentImpl *doc = document();
     if (!doc) {
         return false;
     }
@@ -1859,8 +1859,8 @@ void MacFrame::khtmlMouseMoveEvent(MouseMoveEvent *event)
 bool MacFrame::dispatchCPPEvent(const AtomicString &eventType, KWQClipboard::AccessPolicy policy)
 {
     NodeImpl *target = d->m_selection.start().element();
-    if (!target && xmlDocImpl()) {
-        target = xmlDocImpl()->body();
+    if (!target && document()) {
+        target = document()->body();
     }
     if (!target) {
         return true;
@@ -3045,7 +3045,7 @@ void MacFrame::setDisplaysWithFocusAttributes(bool flag)
     setCaretVisible(flag);
     
     // 3. The drawing of a focus ring around links in web pages.
-    DocumentImpl *doc = xmlDocImpl();
+    DocumentImpl *doc = document();
     if (doc) {
         NodeImpl *node = doc->focusNode();
         if (node) {
@@ -3071,8 +3071,8 @@ void MacFrame::setDisplaysWithFocusAttributes(bool flag)
 
 NSColor *MacFrame::bodyBackgroundColor() const
 {
-    if (xmlDocImpl() && xmlDocImpl()->body() && xmlDocImpl()->body()->renderer()) {
-        QColor bgColor = xmlDocImpl()->body()->renderer()->style()->backgroundColor();
+    if (document() && document()->body() && document()->body()->renderer()) {
+        QColor bgColor = document()->body()->renderer()->style()->backgroundColor();
         if (bgColor.isValid()) {
             return nsColor(bgColor);
         }
@@ -3310,14 +3310,14 @@ void MacFrame::markMisspellings(const SelectionController &selection)
                 else {
                     // Build up result range and string.  Note the misspelling may span many text nodes,
                     // but the CharIterator insulates us from this complexity
-                    RefPtr<RangeImpl> misspellingRange(rangeOfContents(xmlDocImpl()));
+                    RefPtr<RangeImpl> misspellingRange(rangeOfContents(document()));
                     CharacterIterator chars(it.range().get());
                     chars.advance(misspelling.location);
                     misspellingRange->setStart(chars.range()->startContainer(exception), chars.range()->startOffset(exception), exception);
                     chars.advance(misspelling.length);
                     misspellingRange->setEnd(chars.range()->startContainer(exception), chars.range()->startOffset(exception), exception);
                     // Mark misspelling in document.
-                    xmlDocImpl()->addMarker(misspellingRange.get(), DocumentMarker::Spelling);
+                    document()->addMarker(misspellingRange.get(), DocumentMarker::Spelling);
                     startIndex = misspelling.location + misspelling.length;
                 }
             }
@@ -3330,7 +3330,7 @@ void MacFrame::markMisspellings(const SelectionController &selection)
 
 void MacFrame::respondToChangedSelection(const SelectionController &oldSelection, bool closeTyping)
 {
-    if (xmlDocImpl()) {
+    if (document()) {
         if ([_bridge isContinuousSpellCheckingEnabled]) {
             SelectionController oldAdjacentWords = SelectionController();
             
@@ -3359,11 +3359,11 @@ void MacFrame::respondToChangedSelection(const SelectionController &oldSelection
 
                 // This only erases a marker in the first word of the selection.
                 // Perhaps peculiar, but it matches AppKit.
-                xmlDocImpl()->removeMarkers(newAdjacentWords.toRange().get(), DocumentMarker::Spelling);
+                document()->removeMarkers(newAdjacentWords.toRange().get(), DocumentMarker::Spelling);
             }
         } else {
             // When continuous spell checking is off, no markers appear after the selection changes.
-            xmlDocImpl()->removeMarkers(DocumentMarker::Spelling);
+            document()->removeMarkers(DocumentMarker::Spelling);
         }
     }
 
@@ -3451,7 +3451,7 @@ void MacFrame::setMarkedTextRange(const RangeImpl *range, NSArray *attributes, N
         m_markedTextUnderlines = convertAttributesToUnderlines(range, attributes, ranges);
     }
 
-    if (m_markedTextRange.get() && xmlDocImpl() && m_markedTextRange->startContainer(exception)->renderer())
+    if (m_markedTextRange.get() && document() && m_markedTextRange->startContainer(exception)->renderer())
         m_markedTextRange->startContainer(exception)->renderer()->repaint();
 
     if ( range && range->collapsed(exception) ) {
@@ -3460,7 +3460,7 @@ void MacFrame::setMarkedTextRange(const RangeImpl *range, NSArray *attributes, N
         m_markedTextRange = const_cast<RangeImpl *>(range);
     }
 
-    if (m_markedTextRange.get() && xmlDocImpl() && m_markedTextRange->startContainer(exception)->renderer()) {
+    if (m_markedTextRange.get() && document() && m_markedTextRange->startContainer(exception)->renderer()) {
         m_markedTextRange->startContainer(exception)->renderer()->repaint();
     }
 }
@@ -3477,7 +3477,7 @@ void MacFrame::didFirstLayout()
 
 NSMutableDictionary *MacFrame::dashboardRegionsDictionary()
 {
-    DocumentImpl *doc = xmlDocImpl();
+    DocumentImpl *doc = document();
     if (!doc) {
         return nil;
     }
@@ -3545,19 +3545,19 @@ bool MacFrame::shouldClose()
     if (![_bridge canRunBeforeUnloadConfirmPanel])
         return true;
 
-    RefPtr<DocumentImpl> document = xmlDocImpl();
-    if (!document)
+    RefPtr<DocumentImpl> doc = document();
+    if (!doc)
         return true;
-    HTMLElementImpl* body = document->body();
+    HTMLElementImpl* body = doc->body();
     if (!body)
         return true;
 
     RefPtr<BeforeUnloadEventImpl> event = new BeforeUnloadEventImpl;
-    event->setTarget(document.get());
+    event->setTarget(doc.get());
     int exception = 0;
     body->dispatchGenericEvent(event.get(), exception);
-    if (!event->defaultPrevented() && document)
-        document->defaultEventHandler(event.get());
+    if (!event->defaultPrevented() && doc)
+        doc->defaultEventHandler(event.get());
     if (event->result().isNull())
         return true;
 

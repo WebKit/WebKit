@@ -378,7 +378,7 @@ void KJS::HTMLDocument::putValueProperty(ExecState *exec, int token, JSValue *va
       // the target frame.
       Frame *activePart = static_cast<KJS::ScriptInterpreter *>( exec->dynamicInterpreter() )->frame();
       if (activePart)
-        str = activePart->xmlDocImpl()->completeURL(str);
+        str = activePart->document()->completeURL(str);
 
       // We want a new history item if this JS was called via a user gesture
       bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();

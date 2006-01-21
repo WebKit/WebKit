@@ -468,7 +468,7 @@ HTMLTokenizer::State HTMLTokenizer::scriptExecution(const QString& str, State st
     state.setInScript(false);
     QString url;    
     if (scriptURL.isNull())
-      url = view->frame()->xmlDocImpl()->URL();
+      url = view->frame()->document()->URL();
     else
       url = scriptURL;
 

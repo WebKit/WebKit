@@ -1,3 +1,149 @@
+2006-01-21  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by David Hyatt.
+
+        Rename Frame::xmlDocImpl => Frame::document and
+        Frame::replaceDocImpl => Frame::setDocument
+        
+        * bridge/mac/MacFrame.mm:
+        (MacFrame::findString):
+        (MacFrame::advanceToNextMisspelling):
+        (MacFrame::nextKeyViewInFrame):
+        (MacFrame::nextKeyViewInFrameHierarchy):
+        (MacFrame::keyEvent):
+        (MacFrame::dispatchCPPEvent):
+        (MacFrame::setDisplaysWithFocusAttributes):
+        (MacFrame::bodyBackgroundColor):
+        (MacFrame::markMisspellings):
+        (MacFrame::respondToChangedSelection):
+        (MacFrame::setMarkedTextRange):
+        (MacFrame::dashboardRegionsDictionary):
+        (MacFrame::shouldClose):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (updateRenderingForBindings):
+        (frameHasSelection):
+        (-[WebCoreFrameBridge addData:]):
+        (-[WebCoreFrameBridge didNotOpenURL:pageCache:]):
+        (-[WebCoreFrameBridge saveDocumentState]):
+        (-[WebCoreFrameBridge restoreDocumentState]):
+        (-[WebCoreFrameBridge saveDocumentToPageCache]):
+        (-[WebCoreFrameBridge _documentTypeString]):
+        (-[WebCoreFrameBridge deselectAll]):
+        (-[WebCoreFrameBridge reapplyStylesForDeviceType:]):
+        (nowPrinting):
+        (-[WebCoreFrameBridge _setupRootForPrinting:]):
+        (-[WebCoreFrameBridge computePageRectsWithPrintWidthScaleFactor:printHeight:]):
+        (-[WebCoreFrameBridge copyDOMTree:]):
+        (-[WebCoreFrameBridge URLWithAttributeString:]):
+        (-[WebCoreFrameBridge unmarkAllMisspellings]):
+        (-[WebCoreFrameBridge nextKeyView]):
+        (-[WebCoreFrameBridge previousKeyView]):
+        (-[WebCoreFrameBridge nextKeyViewInsideWebFrameViews]):
+        (-[WebCoreFrameBridge previousKeyViewInsideWebFrameViews]):
+        (-[WebCoreFrameBridge DOMDocument]):
+        (-[WebCoreFrameBridge baseURL]):
+        (-[WebCoreFrameBridge domain]):
+        (-[WebCoreFrameBridge numPendingOrLoadingRequests]):
+        (-[WebCoreFrameBridge doneProcessingData]):
+        (-[WebCoreFrameBridge selectionColor]):
+        (-[WebCoreFrameBridge accessibilityTree]):
+        (-[WebCoreFrameBridge setSelectedDOMRange:affinity:closeTyping:]):
+        (-[WebCoreFrameBridge convertToNSRange:]):
+        (-[WebCoreFrameBridge convertToDOMRange:]):
+        (-[WebCoreFrameBridge replaceMarkedTextWithText:]):
+        (-[WebCoreFrameBridge smartDeleteRangeForProposedRange:]):
+        (-[WebCoreFrameBridge documentFragmentWithMarkupString:baseURLString:]):
+        (-[WebCoreFrameBridge documentFragmentWithText:]):
+        (-[WebCoreFrameBridge documentFragmentWithNodesAsParagraphs:]):
+        (-[WebCoreFrameBridge replaceSelectionWithFragment:selectReplacement:smartReplace:matchStyle:]):
+        (-[WebCoreFrameBridge insertLineBreak]):
+        (-[WebCoreFrameBridge insertParagraphSeparator]):
+        (-[WebCoreFrameBridge insertParagraphSeparatorInQuotedContent]):
+        (-[WebCoreFrameBridge insertText:selectInsertedText:]):
+        (-[WebCoreFrameBridge moveSelectionToDragCaret:smartMove:]):
+        (-[WebCoreFrameBridge deleteSelectionWithSmartDelete:]):
+        (-[WebCoreFrameBridge deleteKeyPressedWithSmartDelete:]):
+        (-[WebCoreFrameBridge forwardDeleteKeyPressedWithSmartDelete:]):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::KJS::HTMLDocument::putValueProperty):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::createNewWindow):
+        (KJS::Window::getValueProperty):
+        (KJS::Window::namedItemGetter):
+        (KJS::Window::getOwnPropertySlot):
+        (KJS::Window::put):
+        (KJS::Window::isSafeScript):
+        (KJS::Window::setListener):
+        (KJS::Window::getListener):
+        (KJS::WindowFunc::callAsFunction):
+        (KJS::Window::updateLayout):
+        (KJS::ScheduledAction::execute):
+        (KJS::Location::put):
+        (KJS::LocationFunc::callAsFunction):
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequestProtoFunc::callAsFunction):
+        * khtml/editing/jsediting.cpp:
+        * khtml/html/html_baseimpl.cpp:
+        (WebCore::HTMLFrameElementImpl::contentDocument):
+        * khtml/html/htmltokenizer.cpp:
+        (WebCore::HTMLTokenizer::scriptExecution):
+        * khtml/xml/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::parentDocument):
+        * khtml/xsl/xslt_processorimpl.cpp:
+        (DOM::XSLTProcessorImpl::createDocumentFromSource):
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject textUnderElement]):
+        (-[KWQAccObject doAXTextMarkerForPosition:]):
+        (-[KWQAccObject rendererForView:]):
+        * kwq/KWQKJavaAppletWidget.mm:
+        (KJavaAppletWidget::KJavaAppletWidget):
+        * page/Frame.cpp:
+        (Frame::document):
+        (Frame::setDocument):
+        (Frame::setFocusNodeIfNeeded):
+        (Frame::isPointInsideSelection):
+        (Frame::computeAndSetTypingStyle):
+        (Frame::applyStyle):
+        (Frame::applyParagraphStyle):
+        (Frame::selectionComputedStyle):
+        (Frame::selectFrameElementInParentIfFullySelected):
+        (Frame::renderer):
+        (Frame::scrollOverflow):
+        (Frame::paint):
+        (Frame::adjustPageHeight):
+        (Frame::updatePolicyBaseURL):
+        (Frame::setPolicyBaseURL):
+        (Frame::forceLayoutWithPageWidthRange):
+        (Frame::sendScrollEvent):
+        (Frame::clearTimers):
+        (Frame::styleForSelectionStart):
+        (Frame::setSelectionFromNone):
+        (Frame::setWindowHasFocus):
+        (Frame::backslashAsCurrencySymbol):
+        * page/Frame.h:
+        * page/FrameView.cpp:
+        (FrameView::~FrameView):
+        (FrameView::clear):
+        (FrameView::resizeEvent):
+        (FrameView::adjustViewSize):
+        (FrameView::layout):
+        (FrameView::updateDashboardRegions):
+        (FrameView::viewportMousePressEvent):
+        (FrameView::viewportMouseDoubleClickEvent):
+        (FrameView::viewportMouseMoveEvent):
+        (FrameView::viewportMouseReleaseEvent):
+        (FrameView::keyPressEvent):
+        (FrameView::dispatchDragEvent):
+        (FrameView::updateDragAndDrop):
+        (FrameView::focusNextPrevNode):
+        (FrameView::dispatchMouseEvent):
+        (FrameView::viewportWheelEvent):
+        (FrameView::timerEvent):
+        (FrameView::scheduleRelayout):
+        (FrameView::unscheduleRelayout):
+        * rendering/render_frames.cpp:
+        (WebCore::RenderPartObject::updateWidget):
+
 2006-01-20  mrmacwow  <cpetersen@apple.com>
 
         Reviewed by eseidel.

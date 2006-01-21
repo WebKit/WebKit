@@ -53,7 +53,7 @@ KJavaAppletWidget::KJavaAppletWidget(const IntSize& size, Frame* frame, const St
     }
     
     if (baseURLString.isEmpty()) {
-        baseURLString = frame->xmlDocImpl()->baseURL();
+        baseURLString = frame->document()->baseURL();
     }
     setView([Mac(frame)->bridge() viewForJavaAppletWithFrame:NSMakeRect(0, 0, size.width(), size.height())
                                         attributeNames:attributeNames

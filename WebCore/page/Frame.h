@@ -952,8 +952,8 @@ private:
   WebCore::EventListener *createHTMLEventListener(const WebCore::DOMString& code, WebCore::NodeImpl *node);
 
 public:
-  WebCore::DocumentImpl *xmlDocImpl() const;
-  void replaceDocImpl(WebCore::DocumentImpl* newDoc);
+  WebCore::DocumentImpl *document() const;
+  void setDocument(WebCore::DocumentImpl* newDoc);
 
   // Workaround for the fact that it's hard to delete a frame.
   // Call this after doing user-triggered selections to make it easy to delete the frame you entirely selected.

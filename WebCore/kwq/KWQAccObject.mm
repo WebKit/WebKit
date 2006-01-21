@@ -474,7 +474,7 @@ using namespace HTMLNames;
         Frame* p = d->frame();
         if (p) {
             // catch stale KWQAccObject (see <rdar://problem/3960196>)
-            if (p->xmlDocImpl() != d)
+            if (p->document() != d)
                 return nil;
             return plainText(rangeOfContents(e).get()).getNSString();
         }
@@ -1105,7 +1105,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
         Frame *frame = static_cast<FrameView *>(widget)->frame();
         if (!frame)
             break;
-        DocumentImpl *document = frame->xmlDocImpl();
+        DocumentImpl *document = frame->document();
         if (!document)
             break;
         renderer = document->renderer();
@@ -1831,7 +1831,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     if (!frame)
         return NULL;
         
-    DocumentImpl *document = frame->xmlDocImpl();
+    DocumentImpl *document = frame->document();
     if (!document)
         return NULL;
         

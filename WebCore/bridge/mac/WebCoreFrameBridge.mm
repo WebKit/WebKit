@@ -151,7 +151,7 @@ static void updateRenderingForBindings (ExecState *exec, JSObject *rootObject)
     if (!window)
         return;
         
-    DocumentImpl *doc = static_cast<DocumentImpl*>(window->frame()->xmlDocImpl());
+    DocumentImpl *doc = static_cast<DocumentImpl*>(window->frame()->document());
     if (doc)
         doc->updateRendering();
 }
@@ -169,7 +169,7 @@ static BOOL frameHasSelection(WebCoreFrameBridge *bridge)
         return NO;
 
     // If a part has a selection, it should also have a document.        
-    ASSERT(frame->xmlDocImpl());
+    ASSERT(frame->document());
 
     return YES;
 }
@@ -626,7 +626,7 @@ static bool initializedKJS = FALSE;
 
 - (void)addData:(NSData *)data
 {
-    DocumentImpl *doc = m_frame->xmlDocImpl();
+    DocumentImpl *doc = m_frame->document();
     
     // Document may be nil if the part is about to redirect
     // as a result of JS executing during load, i.e. one frame
@@ -655,7 +655,7 @@ static bool initializedKJS = FALSE;
     // We might have made a page cache item, but now we're bailing out due to an error before we ever
     // transitioned to the new page (before WebFrameState==commit).  The goal here is to restore any state
     // so that the existing view (that wenever got far enough to replace) can continue being used.
-    DocumentImpl *doc = m_frame->xmlDocImpl();
+    DocumentImpl *doc = m_frame->document();
     if (doc) {
         doc->setInPageCache(NO);
     }
@@ -675,7 +675,7 @@ static bool initializedKJS = FALSE;
 
 - (void)saveDocumentState
 {
-    DocumentImpl *doc = m_frame->xmlDocImpl();
+    DocumentImpl *doc = m_frame->document();
     if (doc != 0){
         QStringList list = doc->docState();
         NSMutableArray *documentState = [[[NSMutableArray alloc] init] autorelease];
@@ -690,7 +690,7 @@ static bool initializedKJS = FALSE;
 
 - (void)restoreDocumentState
 {
-    DocumentImpl *doc = m_frame->xmlDocImpl();
+    DocumentImpl *doc = m_frame->document();
     
     if (doc != 0){
         NSArray *documentState = [self documentState];
@@ -725,7 +725,7 @@ static bool initializedKJS = FALSE;
 
 - (BOOL)saveDocumentToPageCache
 {
-    DocumentImpl *doc = m_frame->xmlDocImpl();
+    DocumentImpl *doc = m_frame->document();
     if (!doc)
         return NO;
     if (!doc->view())
@@ -829,7 +829,7 @@ static bool initializedKJS = FALSE;
 - (NSString *)_documentTypeString
 {
     NSString *documentTypeString = nil;
-    DocumentImpl *doc = m_frame->xmlDocImpl();
+    DocumentImpl *doc = m_frame->document();
     if (doc) {
         DocumentTypeImpl *doctype = doc->realDocType();
         if (doctype) {
@@ -906,7 +906,7 @@ static bool initializedKJS = FALSE;
 - (void)deselectAll
 {
     [self deselectText];
-    DocumentImpl *doc = m_frame->xmlDocImpl();
+    DocumentImpl *doc = m_frame->document();
     if (doc) {
         doc->setFocusNode(0);
     }
@@ -926,7 +926,7 @@ static bool initializedKJS = FALSE;
 - (void)reapplyStylesForDeviceType:(WebCoreDeviceType)deviceType
 {
     m_frame->setMediaType(deviceType == WebCoreDeviceScreen ? "screen" : "print");
-    DocumentImpl *doc = m_frame->xmlDocImpl();
+    DocumentImpl *doc = m_frame->document();
     if (doc) {
         static QPaintDevice screen;
         static QPrinter printer;
@@ -937,7 +937,7 @@ static bool initializedKJS = FALSE;
 
 static BOOL nowPrinting(WebCoreFrameBridge *self)
 {
-    DocumentImpl *doc = self->m_frame->xmlDocImpl();
+    DocumentImpl *doc = self->m_frame->document();
     return doc && doc->paintDevice() && doc->paintDevice()->devType() == QInternal::Printer;
 }
 
@@ -945,7 +945,7 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
 - (void)_setupRootForPrinting:(BOOL)onOrOff
 {
     if (nowPrinting(self)) {
-        RenderCanvas *root = static_cast<RenderCanvas *>(m_frame->xmlDocImpl()->renderer());
+        RenderCanvas *root = static_cast<RenderCanvas *>(m_frame->document()->renderer());
         if (root) {
             root->setPrintingMode(onOrOff);
         }
@@ -1012,8 +1012,8 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
         return pages;
     }
 
-    if (!m_frame || !m_frame->xmlDocImpl() || !m_frame->view()) return pages;
-    RenderCanvas* root = static_cast<RenderCanvas *>(m_frame->xmlDocImpl()->renderer());
+    if (!m_frame || !m_frame->document() || !m_frame->view()) return pages;
+    RenderCanvas* root = static_cast<RenderCanvas *>(m_frame->document()->renderer());
     if (!root) return pages;
     
     FrameView* view = m_frame->view();
@@ -1065,7 +1065,7 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
 
 - (NSObject *)copyDOMTree:(id <WebCoreDOMTreeCopier>)copier
 {
-    DocumentImpl *doc = m_frame->xmlDocImpl();
+    DocumentImpl *doc = m_frame->document();
     if (!doc) {
         return nil;
     }
@@ -1411,7 +1411,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (NSURL *)URLWithAttributeString:(NSString *)string
 {
-    DocumentImpl *doc = m_frame->xmlDocImpl();
+    DocumentImpl *doc = m_frame->document();
     if (!doc) {
         return nil;
     }
@@ -1436,7 +1436,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)unmarkAllMisspellings
 {
-    DocumentImpl *doc = m_frame->xmlDocImpl();
+    DocumentImpl *doc = m_frame->document();
     if (!doc) {
         return;
     }
@@ -1459,7 +1459,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (NSView *)nextKeyView
 {
-    DocumentImpl *doc = m_frame->xmlDocImpl();
+    DocumentImpl *doc = m_frame->document();
     if (!doc) {
         return nil;
     }
@@ -1468,7 +1468,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (NSView *)previousKeyView
 {
-    DocumentImpl *doc = m_frame->xmlDocImpl();
+    DocumentImpl *doc = m_frame->document();
     if (!doc) {
         return nil;
     }
@@ -1477,7 +1477,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (NSView *)nextKeyViewInsideWebFrameViews
 {
-    DocumentImpl *doc = m_frame->xmlDocImpl();
+    DocumentImpl *doc = m_frame->document();
     if (!doc) {
         return nil;
     }
@@ -1487,7 +1487,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (NSView *)previousKeyViewInsideWebFrameViews
 {
-    DocumentImpl *doc = m_frame->xmlDocImpl();
+    DocumentImpl *doc = m_frame->document();
     if (!doc) {
         return nil;
     }
@@ -1519,7 +1519,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (DOMDocument *)DOMDocument
 {
-    return [DOMDocument _documentWithImpl:m_frame->xmlDocImpl()];
+    return [DOMDocument _documentWithImpl:m_frame->document()];
 }
 
 - (DOMHTMLElement *)frameElement
@@ -1632,7 +1632,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (NSURL *)baseURL
 {
-    return m_frame->completeURL(m_frame->xmlDocImpl()->baseURL()).getNSURL();
+    return m_frame->completeURL(m_frame->document()->baseURL()).getNSURL();
 }
 
 - (NSString *)referrer
@@ -1642,7 +1642,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (NSString *)domain
 {
-    DocumentImpl *doc = m_frame->xmlDocImpl();
+    DocumentImpl *doc = m_frame->document();
     if (doc && doc->isHTMLDocument()) {
         return doc->domain().qstring().getNSString();
     }
@@ -1731,7 +1731,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (int)numPendingOrLoadingRequests
 {
-    DocumentImpl *doc = m_frame->xmlDocImpl();
+    DocumentImpl *doc = m_frame->document();
     
     if (doc)
         return KWQNumberOfPendingOrLoadingRequests (doc->docLoader());
@@ -1740,7 +1740,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (BOOL)doneProcessingData
 {
-    DocumentImpl *doc = m_frame->xmlDocImpl();
+    DocumentImpl *doc = m_frame->document();
     if (doc) {
         Tokenizer* tok = doc->tokenizer();
         if (tok)
@@ -1761,7 +1761,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (NSColor *)selectionColor
 {
-    RenderCanvas* root = static_cast<RenderCanvas *>(m_frame->xmlDocImpl()->renderer());
+    RenderCanvas* root = static_cast<RenderCanvas *>(m_frame->document()->renderer());
     if (root) {
         RenderStyle *pseudoStyle = root->getPseudoStyle(RenderStyle::SELECTION);
         if (pseudoStyle && pseudoStyle->backgroundColor().isValid()) {
@@ -1781,10 +1781,10 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 -(id)accessibilityTree
 {
     KWQAccObjectCache::enableAccessibility();
-    if (!m_frame || !m_frame->xmlDocImpl()) return nil;
-    RenderCanvas* root = static_cast<RenderCanvas *>(m_frame->xmlDocImpl()->renderer());
+    if (!m_frame || !m_frame->document()) return nil;
+    RenderCanvas* root = static_cast<RenderCanvas *>(m_frame->document()->renderer());
     if (!root) return nil;
-    return m_frame->xmlDocImpl()->getAccObjectCache()->accObject(root);
+    return m_frame->document()->getAccObjectCache()->accObject(root);
 }
 
 - (void)setDrawsBackground:(BOOL)drawsBackground
@@ -1920,7 +1920,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     ASSERT(startContainer->getDocument());
     ASSERT(startContainer->getDocument() == endContainer->getDocument());
     
-    m_frame->xmlDocImpl()->updateLayoutIgnorePendingStylesheets();
+    m_frame->document()->updateLayoutIgnorePendingStylesheets();
 
     EAffinity affinity = static_cast<EAffinity>(selectionAffinity);
     
@@ -1947,7 +1947,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         return NSMakeRange(NSNotFound, 0);
     }
 
-    RefPtr<RangeImpl> fromStartRange(m_frame->xmlDocImpl()->createRange());
+    RefPtr<RangeImpl> fromStartRange(m_frame->document()->createRange());
     int exception = 0;
 
     fromStartRange->setEnd(range->startContainer(exception), range->startOffset(exception), exception);
@@ -1966,7 +1966,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (nsrange.length > INT_MAX || nsrange.location + nsrange.length > INT_MAX)
         nsrange.length = INT_MAX - nsrange.location;
 
-    return TextIterator::rangeFromLocationAndLength(m_frame->xmlDocImpl(), nsrange.location, nsrange.length);
+    return TextIterator::rangeFromLocationAndLength(m_frame->document(), nsrange.location, nsrange.length);
 }
 
 - (DOMRange *)convertNSRangeToDOMRange:(NSRange)nsrange
@@ -2029,10 +2029,10 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
     RangeImpl *markedTextRange = m_frame->markedTextRange();
     if (markedTextRange && !markedTextRange->collapsed(exception))
-        TypingCommand::deleteKeyPressed(m_frame->xmlDocImpl(), NO);
+        TypingCommand::deleteKeyPressed(m_frame->document(), NO);
     
     if ([text length] > 0)
-        TypingCommand::insertText(m_frame->xmlDocImpl(), text, YES);
+        TypingCommand::insertText(m_frame->document(), text, YES);
     
     [self ensureSelectionVisible];
 }
@@ -2069,7 +2069,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     ASSERT(startContainer->getDocument());
     ASSERT(startContainer->getDocument() == endContainer->getDocument());
     
-    m_frame->xmlDocImpl()->updateLayoutIgnorePendingStylesheets();
+    m_frame->document()->updateLayoutIgnorePendingStylesheets();
 
     Position start(startContainer, [proposedRange startOffset]);
     Position end(endContainer, [proposedRange endOffset]);
@@ -2080,7 +2080,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (newEnd.isNull())
         newEnd = end;
 
-    RangeImpl *range = m_frame->xmlDocImpl()->createRange();
+    RangeImpl *range = m_frame->document()->createRange();
     int exception = 0;
     range->setStart(newStart.node(), newStart.offset(), exception);
     range->setEnd(newStart.node(), newStart.offset(), exception);
@@ -2153,10 +2153,10 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (DOMDocumentFragment *)documentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString 
 {
-    if (!m_frame || !m_frame->xmlDocImpl())
+    if (!m_frame || !m_frame->document())
         return 0;
 
-    PassRefPtr<DocumentFragmentImpl> fragment = createFragmentFromMarkup(m_frame->xmlDocImpl(), QString::fromNSString(markupString), QString::fromNSString(baseURLString));
+    PassRefPtr<DocumentFragmentImpl> fragment = createFragmentFromMarkup(m_frame->document(), QString::fromNSString(markupString), QString::fromNSString(baseURLString));
     return [DOMDocumentFragment _documentFragmentWithImpl:fragment.get()];
 }
 
@@ -2165,7 +2165,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!frameHasSelection(self) || !text)
         return 0;
     
-    return [DOMDocumentFragment _documentFragmentWithImpl:createFragmentFromText(m_frame->xmlDocImpl(), QString::fromNSString(text)).get()];
+    return [DOMDocumentFragment _documentFragmentWithImpl:createFragmentFromText(m_frame->document(), QString::fromNSString(text)).get()];
 }
 
 - (DOMDocumentFragment *)documentFragmentWithNodesAsParagraphs:(NSArray *)nodes
@@ -2174,14 +2174,14 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     DOMNode *node;
     QPtrList<NodeImpl> nodeList;
     
-    if (!m_frame || !m_frame->xmlDocImpl())
+    if (!m_frame || !m_frame->document())
         return 0;
     
     while ((node = [nodeEnum nextObject])) {
         nodeList.append([node _nodeImpl]);
     }
     
-    return [DOMDocumentFragment _documentFragmentWithImpl:createFragmentFromNodeList(m_frame->xmlDocImpl(), nodeList).get()];
+    return [DOMDocumentFragment _documentFragmentWithImpl:createFragmentFromNodeList(m_frame->document(), nodeList).get()];
 }
 
 - (void)replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle
@@ -2189,7 +2189,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!frameHasSelection(self) || !fragment)
         return;
     
-    EditCommandPtr(new ReplaceSelectionCommand(m_frame->xmlDocImpl(), [fragment _fragmentImpl], selectReplacement, smartReplace, matchStyle)).apply();
+    EditCommandPtr(new ReplaceSelectionCommand(m_frame->document(), [fragment _fragmentImpl], selectReplacement, smartReplace, matchStyle)).apply();
     [self ensureSelectionVisible];
 }
 
@@ -2216,7 +2216,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!frameHasSelection(self))
         return;
     
-    TypingCommand::insertLineBreak(m_frame->xmlDocImpl());
+    TypingCommand::insertLineBreak(m_frame->document());
     [self ensureSelectionVisible];
 }
 
@@ -2225,7 +2225,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!frameHasSelection(self))
         return;
     
-    TypingCommand::insertParagraphSeparator(m_frame->xmlDocImpl());
+    TypingCommand::insertParagraphSeparator(m_frame->document());
     [self ensureSelectionVisible];
 }
 
@@ -2234,7 +2234,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!frameHasSelection(self))
         return;
     
-    TypingCommand::insertParagraphSeparatorInQuotedContent(m_frame->xmlDocImpl());
+    TypingCommand::insertParagraphSeparatorInQuotedContent(m_frame->document());
     [self ensureSelectionVisible];
 }
 
@@ -2243,7 +2243,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!frameHasSelection(self))
         return;
     
-    TypingCommand::insertText(m_frame->xmlDocImpl(), text, selectInsertedText);
+    TypingCommand::insertText(m_frame->document(), text, selectInsertedText);
     [self ensureSelectionVisible];
 }
 
@@ -2255,7 +2255,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 - (void)moveSelectionToDragCaret:(DOMDocumentFragment *)selectionFragment smartMove:(BOOL)smartMove
 {
     Position base = m_frame->dragCaret().base();
-    EditCommandPtr(new MoveSelectionCommand(m_frame->xmlDocImpl(), [selectionFragment _fragmentImpl], base, smartMove)).apply();
+    EditCommandPtr(new MoveSelectionCommand(m_frame->document(), [selectionFragment _fragmentImpl], base, smartMove)).apply();
 }
 
 - (VisiblePosition)_visiblePositionForPoint:(NSPoint)point
@@ -2326,24 +2326,24 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!frameHasSelection(self))
         return;
     
-    EditCommandPtr(new DeleteSelectionCommand(m_frame->xmlDocImpl(), smartDelete)).apply();
+    EditCommandPtr(new DeleteSelectionCommand(m_frame->document(), smartDelete)).apply();
 }
 
 - (void)deleteKeyPressedWithSmartDelete:(BOOL)smartDelete
 {
-    if (!m_frame || !m_frame->xmlDocImpl())
+    if (!m_frame || !m_frame->document())
         return;
     
-    TypingCommand::deleteKeyPressed(m_frame->xmlDocImpl(), smartDelete);
+    TypingCommand::deleteKeyPressed(m_frame->document(), smartDelete);
     [self ensureSelectionVisible];
 }
 
 - (void)forwardDeleteKeyPressedWithSmartDelete:(BOOL)smartDelete
 {
-    if (!m_frame || !m_frame->xmlDocImpl())
+    if (!m_frame || !m_frame->document())
         return;
     
-    TypingCommand::forwardDeleteKeyPressed(m_frame->xmlDocImpl(), smartDelete);
+    TypingCommand::forwardDeleteKeyPressed(m_frame->document(), smartDelete);
     [self ensureSelectionVisible];
 }
 

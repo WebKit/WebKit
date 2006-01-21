@@ -186,7 +186,7 @@ FrameView::~FrameView()
     {
         //WABA: Is this Ok? Do I need to deref it as well?
         //Does this need to be done somewhere else?
-        DocumentImpl *doc = m_frame->xmlDocImpl();
+        DocumentImpl *doc = m_frame->document();
         if (doc)
             doc->detach();
 
@@ -239,8 +239,8 @@ void FrameView::clear()
     d->reset();
 
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
-    if (d->layoutTimerId && m_frame->xmlDocImpl() && !m_frame->xmlDocImpl()->ownerElement())
-        printf("Killing the layout timer from a clear at %d\n", m_frame->xmlDocImpl()->elapsedTime());
+    if (d->layoutTimerId && m_frame->document() && !m_frame->document()->ownerElement())
+        printf("Killing the layout timer from a clear at %d\n", m_frame->document()->elapsedTime());
 #endif
     
     killTimers();
@@ -251,8 +251,8 @@ void FrameView::clear()
 
 void FrameView::resizeEvent(QResizeEvent* e)
 {
-    if (m_frame && m_frame->xmlDocImpl())
-        m_frame->xmlDocImpl()->dispatchWindowEvent(EventNames::resizeEvent, false, false);
+    if (m_frame && m_frame->document())
+        m_frame->document()->dispatchWindowEvent(EventNames::resizeEvent, false, false);
 }
 
 void FrameView::initScrollBars()
@@ -277,8 +277,8 @@ void FrameView::setMarginHeight(int h)
 
 void FrameView::adjustViewSize()
 {
-    if( m_frame->xmlDocImpl() ) {
-        DocumentImpl *document = m_frame->xmlDocImpl();
+    if( m_frame->document() ) {
+        DocumentImpl *document = m_frame->document();
 
         RenderCanvas* root = static_cast<RenderCanvas *>(document->renderer());
         if ( !root )
@@ -354,7 +354,7 @@ void FrameView::layout()
         return;
     }
 
-    DocumentImpl* document = m_frame->xmlDocImpl();
+    DocumentImpl* document = m_frame->document();
     if (!document) {
         // FIXME: Should we set _height here too?
         _width = visibleWidth();
@@ -499,7 +499,7 @@ void FrameView::layout()
 #if __APPLE__
 void FrameView::updateDashboardRegions()
 {
-    DocumentImpl* document = m_frame->xmlDocImpl();
+    DocumentImpl* document = m_frame->document();
     if (document->hasDashboardRegions()) {
         QValueList<DashboardRegionValue> newRegions = document->renderer()->computeDashboardRegions();
         QValueList<DashboardRegionValue> currentRegions = document->dashboardRegions();
@@ -516,7 +516,7 @@ void FrameView::updateDashboardRegions()
 
 void FrameView::viewportMousePressEvent( QMouseEvent *_mouse )
 {
-    if(!m_frame->xmlDocImpl()) return;
+    if(!m_frame->document()) return;
 
     RefPtr<FrameView> protector(this);
 
@@ -526,7 +526,7 @@ void FrameView::viewportMousePressEvent( QMouseEvent *_mouse )
     d->mousePressed = true;
 
     NodeImpl::MouseEvent mev( _mouse->stateAfter(), NodeImpl::MousePress );
-    m_frame->xmlDocImpl()->prepareMouseEvent( false, xm, ym, &mev );
+    m_frame->document()->prepareMouseEvent( false, xm, ym, &mev );
 
     if (m_frame->passSubframeEventToSubframe(mev)) {
         invalidateClick();
@@ -559,7 +559,7 @@ void FrameView::viewportMousePressEvent( QMouseEvent *_mouse )
 
 void FrameView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
 {
-    if(!m_frame->xmlDocImpl()) return;
+    if(!m_frame->document()) return;
 
     RefPtr<FrameView> protector(this);
 
@@ -570,7 +570,7 @@ void FrameView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
     d->mousePressed = false;
 
     NodeImpl::MouseEvent mev( _mouse->stateAfter(), NodeImpl::MouseDblClick );
-    m_frame->xmlDocImpl()->prepareMouseEvent( false, xm, ym, &mev );
+    m_frame->document()->prepareMouseEvent( false, xm, ym, &mev );
 
     if (m_frame->passSubframeEventToSubframe(mev))
         return;
@@ -661,7 +661,7 @@ void FrameView::viewportMouseMoveEvent( QMouseEvent * _mouse )
     // but also assert so that we can try to figure this out in debug
     // builds, if it happens.
     assert(m_frame);
-    if(!m_frame || !m_frame->xmlDocImpl()) return;
+    if(!m_frame || !m_frame->document()) return;
 
     int xm, ym;
     viewportToContents(_mouse->x(), _mouse->y(), xm, ym);
@@ -671,7 +671,7 @@ void FrameView::viewportMouseMoveEvent( QMouseEvent * _mouse )
     // This means that :hover and :active freeze in the state they were in when the mouse
     // was pressed, rather than updating for nodes the mouse moves over as you hold the mouse down.
     NodeImpl::MouseEvent mev( _mouse->stateAfter(), NodeImpl::MouseMove );
-    m_frame->xmlDocImpl()->prepareMouseEvent(d->mousePressed && m_frame->mouseDownMayStartSelect(), d->mousePressed, xm, ym, &mev );
+    m_frame->document()->prepareMouseEvent(d->mousePressed && m_frame->mouseDownMayStartSelect(), d->mousePressed, xm, ym, &mev );
 
     if (!m_frame->passSubframeEventToSubframe(mev))
         viewport()->setCursor(selectCursor(mev, m_frame, d->mousePressed));
@@ -702,7 +702,7 @@ void FrameView::invalidateClick()
 
 void FrameView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
 {
-    if ( !m_frame->xmlDocImpl() ) return;
+    if ( !m_frame->document() ) return;
 
     RefPtr<FrameView> protector(this);
 
@@ -712,7 +712,7 @@ void FrameView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
     d->mousePressed = false;
 
     NodeImpl::MouseEvent mev( _mouse->stateAfter(), NodeImpl::MouseRelease );
-    m_frame->xmlDocImpl()->prepareMouseEvent( false, xm, ym, &mev );
+    m_frame->document()->prepareMouseEvent( false, xm, ym, &mev );
 
     if (m_frame->passSubframeEventToSubframe(mev))
         return;
@@ -735,8 +735,8 @@ void FrameView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
 
 void FrameView::keyPressEvent( QKeyEvent *_ke )
 {
-    if (m_frame->xmlDocImpl() && m_frame->xmlDocImpl()->focusNode()) {
-        if (m_frame->xmlDocImpl()->focusNode()->dispatchKeyEvent(_ke))
+    if (m_frame->document() && m_frame->document()->focusNode()) {
+        if (m_frame->document()->focusNode()->dispatchKeyEvent(_ke))
         {
             _ke->accept();
             return;
@@ -758,7 +758,7 @@ bool FrameView::dispatchDragEvent(const AtomicString &eventType, NodeImpl *dragT
     bool metaKey = 0;
     
     MouseEventImpl *me = new MouseEventImpl(eventType,
-                                            true, true, m_frame->xmlDocImpl()->defaultView(),
+                                            true, true, m_frame->document()->defaultView(),
                                             0, screenX, screenY, clientX, clientY,
                                             ctrlKey, altKey, shiftKey, metaKey,
                                             0, 0, clipboard);
@@ -776,7 +776,7 @@ bool FrameView::updateDragAndDrop(const IntPoint &loc, ClipboardImpl *clipboard)
     int xm, ym;
     viewportToContents(loc.x(), loc.y(), xm, ym);
     NodeImpl::MouseEvent mev(0, NodeImpl::MouseMove);
-    m_frame->xmlDocImpl()->prepareMouseEvent(true, xm, ym, &mev);
+    m_frame->document()->prepareMouseEvent(true, xm, ym, &mev);
     NodeImpl *newTarget = mev.innerNode.get();
 
     // Drag events should never go to text nodes (following IE, and proper mouseover/out dispatch)
@@ -905,7 +905,7 @@ void FrameView::focusNextPrevNode(bool next)
     // used is that specified in the HTML spec (see DocumentImpl::nextFocusNode() and DocumentImpl::previousFocusNode()
     // for details).
 
-    DocumentImpl *doc = m_frame->xmlDocImpl();
+    DocumentImpl *doc = m_frame->document();
     NodeImpl *oldFocusNode = doc->focusNode();
     NodeImpl *newFocusNode;
 
@@ -972,7 +972,7 @@ void FrameView::focusNextPrevNode(bool next)
         }
     }
     // Set focus node on the document
-    m_frame->xmlDocImpl()->setFocusNode(newFocusNode);
+    m_frame->document()->setFocusNode(newFocusNode);
 }
 
 void FrameView::setMediaType( const QString &medium )
@@ -1059,7 +1059,7 @@ bool FrameView::dispatchMouseEvent(const AtomicString &eventType, NodeImpl *targ
             RefPtr<NodeImpl> oldUnder;
             if (d->prevMouseX >= 0 && d->prevMouseY >= 0) {
                 NodeImpl::MouseEvent mev( _mouse->stateAfter(), static_cast<NodeImpl::MouseEventType>(mouseEventType));
-                m_frame->xmlDocImpl()->prepareMouseEvent( true, d->prevMouseX, d->prevMouseY, &mev );
+                m_frame->document()->prepareMouseEvent( true, d->prevMouseX, d->prevMouseY, &mev );
                 oldUnder = mev.innerNode;
                 if (oldUnder && oldUnder->isTextNode())
                     oldUnder = oldUnder->parentNode();
@@ -1090,10 +1090,10 @@ bool FrameView::dispatchMouseEvent(const AtomicString &eventType, NodeImpl *targ
         // If focus shift is blocked, we eat the event.  Note we should never clear swallowEvent
         // if the page already set it (e.g., by canceling default behavior).
         if (node && node->isMouseFocusable()) {
-            if (!m_frame->xmlDocImpl()->setFocusNode(node))
+            if (!m_frame->document()->setFocusNode(node))
                 swallowEvent = true;
         } else if (!node || !node->focused()) {
-            if (!m_frame->xmlDocImpl()->setFocusNode(0))
+            if (!m_frame->document()->setFocusNode(0))
             swallowEvent = true;
         }
     }
@@ -1108,7 +1108,7 @@ void FrameView::setIgnoreWheelEvents( bool e )
 
 void FrameView::viewportWheelEvent(QWheelEvent* e)
 {
-    DocumentImpl *doc = m_frame->xmlDocImpl();
+    DocumentImpl *doc = m_frame->document();
     if (doc) {
         RenderObject *docRenderer = doc->renderer();
         if (docRenderer) {
@@ -1157,8 +1157,8 @@ void FrameView::timerEvent ( QTimerEvent *e )
 {
     if (e->timerId()==d->layoutTimerId) {
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
-        if (m_frame->xmlDocImpl() && !m_frame->xmlDocImpl()->ownerElement())
-            printf("Layout timer fired at %d\n", m_frame->xmlDocImpl()->elapsedTime());
+        if (m_frame->document() && !m_frame->document()->ownerElement())
+            printf("Layout timer fired at %d\n", m_frame->document()->elapsedTime());
 #endif
         layout();
     }
@@ -1169,10 +1169,10 @@ void FrameView::scheduleRelayout()
     if (!d->layoutSchedulingEnabled)
         return;
 
-    if (!m_frame->xmlDocImpl() || !m_frame->xmlDocImpl()->shouldScheduleLayout())
+    if (!m_frame->document() || !m_frame->document()->shouldScheduleLayout())
         return;
 
-    int delay = m_frame->xmlDocImpl()->minimumLayoutDelay();
+    int delay = m_frame->document()->minimumLayoutDelay();
     if (d->layoutTimerId && d->delayedLayout && !delay)
         unscheduleRelayout();
     if (d->layoutTimerId)
@@ -1181,7 +1181,7 @@ void FrameView::scheduleRelayout()
     d->delayedLayout = delay != 0;
 
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
-    if (!m_frame->xmlDocImpl()->ownerElement())
+    if (!m_frame->document()->ownerElement())
         printf("Scheduling layout for %d\n", delay);
 #endif
 
@@ -1204,8 +1204,8 @@ void FrameView::unscheduleRelayout()
         return;
 
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
-    if (m_frame->xmlDocImpl() && !m_frame->xmlDocImpl()->ownerElement())
-        printf("Layout timer unscheduled at %d\n", m_frame->xmlDocImpl()->elapsedTime());
+    if (m_frame->document() && !m_frame->document()->ownerElement())
+        printf("Layout timer unscheduled at %d\n", m_frame->document()->elapsedTime());
 #endif
     
     killTimer(d->layoutTimerId);

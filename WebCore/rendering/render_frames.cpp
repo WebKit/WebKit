@@ -936,8 +936,8 @@ void RenderPartObject::updateWidget()
       bool requestSucceeded = v->frame()->requestFrame( this, url, o->m_name.qstring(), QStringList(), QStringList(), true );
       if (requestSucceeded && url == "about:blank") {
           Frame *newPart = v->frame()->findFrame( o->m_name.qstring() );
-          if (newPart && newPart->xmlDocImpl()) {
-              newPart->xmlDocImpl()->setBaseURL( v->frame()->baseURL().url() );
+          if (newPart && newPart->document()) {
+              newPart->document()->setBaseURL( v->frame()->baseURL().url() );
           }
       }
   }
