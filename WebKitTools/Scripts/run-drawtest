@@ -38,7 +38,7 @@ my $productDir = productDir();
 
 # Check to see that all the frameworks are built (w/ SVG support).
 checkFrameworks();
-checkWebCoreSVGSupport(true);
+checkWebCoreSVGSupport(1);
 
 # Set up DYLD_FRAMEWORK_PATH to point to the product directory.
 print "Start DrawTest with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";

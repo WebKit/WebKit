@@ -1,3 +1,13 @@
+2006-01-20  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by eseidel.
+
+        - fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6682
+        Call to checkWebCoreSVGSupport() broken in build-drawtest and run-drawtest
+
+        * Scripts/build-drawtest: Changed bareword 'true' to 1.
+        * Scripts/run-drawtest: Changed bareword 'true' to 1.
+
 2006-01-19  Darin Adler  <darin@apple.com>
 
         * Scripts/report-include-statistics: Added a new script.

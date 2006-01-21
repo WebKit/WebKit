@@ -623,6 +623,7 @@
 				141BF223096A441E00E0753C /* Deployment */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Deployment;
 		};
 		149C29BF08902C6D008A9EFC /* Build configuration list for PBXNativeTarget "DumpRenderTree" */ = {
 			isa = XCConfigurationList;
@@ -649,6 +650,7 @@
 				A84F609408B1371400E9745F /* Deployment */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Deployment;
 		};
 		B5A7526408AF4A4A00138E45 /* Build configuration list for PBXNativeTarget "ImageDiff" */ = {
 			isa = XCConfigurationList;
