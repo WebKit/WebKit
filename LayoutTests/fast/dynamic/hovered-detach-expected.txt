@@ -1,0 +1,8 @@
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of BODY > HTML > #document to 0 of BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+This should not be red.
+This tests for a regression against http://bugzilla.opendarwin.org/show_bug.cgi?id=5983 REGRESSION: onmouseover-powered navbar at MacNN renders incorrectly.
+
+Test result: PASS
+
+

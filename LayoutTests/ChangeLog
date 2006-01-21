@@ -1,3 +1,13 @@
+2006-01-21  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5983
+          REGRESSION: onmouseover-powered navbar at MacNN renders incorrectly
+
+        * fast/dynamic/hovered-detach.html: Added.
+        * fast/dynamic/hovered-detach-expected.txt: Added.
+
 2006-01-20  Maciej Stachowiak  <mjs@apple.com>
 
         - added test case for a parsing bug that was fixed in different ways in KJS

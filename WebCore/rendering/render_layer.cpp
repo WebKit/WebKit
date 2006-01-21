@@ -1348,20 +1348,13 @@ void RenderLayer::clearClipRect()
     }
 }
 
-// This code has been written to anticipate the addition of CSS3-::outside and ::inside generated
-// content (and perhaps XBL).  That's why it uses the render tree and not the DOM tree.
-static RenderObject* hoverAncestor(RenderObject* obj)
-{
-    return (!obj->isInline() && obj->continuation()) ? obj->continuation() : obj->parent();
-}
-
 static RenderObject* commonAncestor(RenderObject* obj1, RenderObject* obj2)
 {
     if (!obj1 || !obj2)
         return 0;
 
-    for (RenderObject* currObj1 = obj1; currObj1; currObj1 = hoverAncestor(currObj1))
-        for (RenderObject* currObj2 = obj2; currObj2; currObj2 = hoverAncestor(currObj2))
+    for (RenderObject* currObj1 = obj1; currObj1; currObj1 = currObj1->hoverAncestor())
+        for (RenderObject* currObj2 = obj2; currObj2; currObj2 = currObj2->hoverAncestor())
             if (currObj1 == currObj2)
                 return currObj1;
 
@@ -1421,7 +1414,7 @@ void RenderLayer::updateHoverActiveState(RenderObject::NodeInfo& info)
 
     if (oldHoverObj != newHoverObj) {
         // The old hover path only needs to be cleared up to (and not including) the common ancestor;
-        for (RenderObject* curr = oldHoverObj; curr && curr != ancestor; curr = hoverAncestor(curr)) {
+        for (RenderObject* curr = oldHoverObj; curr && curr != ancestor; curr = curr->hoverAncestor()) {
             if (curr->element() && !curr->isText() && (!mustBeInActiveChain || curr->element()->inActiveChain())) {
                 curr->element()->setActive(false);
                 curr->element()->setHovered(false);
@@ -1430,7 +1423,7 @@ void RenderLayer::updateHoverActiveState(RenderObject::NodeInfo& info)
     }
 
     // Now set the hover state for our new object up to the root.
-    for (RenderObject* curr = newHoverObj; curr; curr = hoverAncestor(curr)) {
+    for (RenderObject* curr = newHoverObj; curr; curr = curr->hoverAncestor()) {
         if (curr->element() && !curr->isText() && (!mustBeInActiveChain || curr->element()->inActiveChain())) {
             curr->element()->setActive(info.active());
             curr->element()->setHovered(true);

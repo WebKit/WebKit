@@ -2032,6 +2032,13 @@ RenderObject *RenderObject::container() const
     return o;
 }
 
+// This code has been written to anticipate the addition of CSS3-::outside and ::inside generated
+// content (and perhaps XBL).  That's why it uses the render tree and not the DOM tree.
+RenderObject* RenderObject::hoverAncestor() const
+{
+    return (!isInline() && continuation()) ? continuation() : parent();
+}
+
 bool RenderObject::isSelectionBorder() const
 {
     SelectionState st = selectionState();

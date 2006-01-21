@@ -338,6 +338,7 @@ public:
      * positioned elements
      */
     RenderObject *container() const;
+    RenderObject* hoverAncestor() const;
 
     virtual void markAllDescendantsWithFloatsForLayout(RenderObject* floatToRemove = 0);
     void markContainingBlocksForLayout();

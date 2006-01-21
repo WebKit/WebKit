@@ -1234,13 +1234,24 @@ void NodeImpl::detach()
     m_inDetach = true;
 //    assert(m_attached);
 
-    if (m_render)
+    DocumentImpl* doc = getDocument();
+    if (m_render) {
+        if (m_hovered && doc->hoverNode() == this) {
+            NodeImpl* e = this;
+            RenderObject* o = m_render;
+            while (o && (!e || e == this)) {
+                o = o->hoverAncestor();
+                e = o ? o->element() : 0;
+            }
+            doc->setHoverNode(e);
+        }
         m_render->destroy();
+    }
     m_render = 0;
 
-    DocumentImpl *doc = getDocument();
     if (doc)
         doc->incDOMTreeVersion();
+    m_hovered = false;
     m_attached = false;
     m_inDetach = false;
 }
