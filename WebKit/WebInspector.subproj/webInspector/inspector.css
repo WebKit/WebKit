@@ -39,8 +39,8 @@ body {
     -apple-user-select: none;
 }
 
-a {
-    cursor: default;
+a:link {
+    color: inherit;
 }
 
 button {
@@ -596,7 +596,7 @@ button.toggle.right {
 }
 
 .attributeList {
-    padding: 3px 0;
+    padding: 0;
     margin: 0;
     list-style-type: none;
     white-space: nowrap;
@@ -631,7 +631,7 @@ button.toggle.right {
     content: "\"";
 }
 
-.attributeList li .presentational {
+.attributeList li .mapped {
     margin-left: 0.5em;
     color: rgba(255,255,255,0.6);
 }
@@ -674,7 +674,7 @@ button.toggle.right {
 
 .scrollArea > .scrollbar {
     position: relative;
-    margin-left: 3px;
+    margin-left: 2px;
     width: 19px;
     -apple-dashboard-region: dashboard-region(control rectangle);
 }
@@ -686,10 +686,19 @@ button.toggle.right {
     overflow: hidden;
 }
 
+#noStyle {
+    font-size: 16px;
+    font-weight: bold;
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    margin-top: 40%;
+}
+
 #styleRules {
     background-color: rgba(0,0,0,0.2);
     border: 1px solid rgba(255,255,255,0.4);
     margin-bottom: 6px;
+    padding: 3px;
 }
 
 #styleRulesScrollview {
@@ -699,9 +708,13 @@ button.toggle.right {
     -apple-box-flex: 1;
 }
 
+#styleRulesScrollview hr.divider {
+    margin: 3px auto;
+    opacity: 0.8;
+}
+
 #styleRulesScrollview > .row {
     padding: 1px 6px;
-    margin: 2px 0 0 3px;
 }
 
 #styleRulesScrollview > .row.focused {
@@ -727,10 +740,11 @@ button.toggle.right {
     border: 1px solid rgba(255,255,255,0.4);
     -apple-box-flex: 1;
     -apple-dashboard-region: dashboard-region(control rectangle);
+    padding: 3px;
 }
 
 .treeList {
-    padding: 3px 0;
+    padding: 0;
     margin: 0;
     list-style-type: none;
     white-space: nowrap;

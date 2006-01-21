@@ -1,3 +1,14 @@
+2006-01-21  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Adds computed style to the Web Inspector.
+        Adds a "mapped style" link to the mapped attributes.
+
+        * WebInspector.subproj/webInspector/inspector.css:
+        * WebInspector.subproj/webInspector/inspector.html:
+        * WebInspector.subproj/webInspector/inspector.js:
+
 2006-01-20  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by John, some parts by Darin.
