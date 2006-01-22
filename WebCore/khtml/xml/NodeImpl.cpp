@@ -183,9 +183,9 @@ void NodeImpl::setNodeValue( const DOMString &/*_nodeValue*/, int &exceptioncode
     // be default nodeValue is null, so setting it has no effect
 }
 
-RefPtr<NodeListImpl> NodeImpl::childNodes()
+PassRefPtr<NodeListImpl> NodeImpl::childNodes()
 {
-    return RefPtr<NodeListImpl>(new ChildNodeListImpl(this));
+    return new ChildNodeListImpl(this);
 }
 
 NodeImpl *NodeImpl::firstChild() const
@@ -206,33 +206,27 @@ NodeImpl *NodeImpl::lastDescendant() const
     return n;
 }
 
-NodeImpl *NodeImpl::insertBefore( NodeImpl *newChild, NodeImpl *, int &exceptioncode )
+PassRefPtr<NodeImpl> NodeImpl::insertBefore(PassRefPtr<NodeImpl>, NodeImpl*, ExceptionCode& ec)
 {
-    newChild->ref();
-    newChild->deref();
-    exceptioncode = DOMException::HIERARCHY_REQUEST_ERR;
+    ec = DOMException::HIERARCHY_REQUEST_ERR;
     return 0;
 }
 
-NodeImpl *NodeImpl::replaceChild( NodeImpl *newChild, NodeImpl *, int &exceptioncode )
+PassRefPtr<NodeImpl> NodeImpl::replaceChild(PassRefPtr<NodeImpl>, NodeImpl*, ExceptionCode& ec)
 {
-  newChild->ref();
-  newChild->deref();
-  exceptioncode = DOMException::HIERARCHY_REQUEST_ERR;
-  return 0;
+    ec = DOMException::HIERARCHY_REQUEST_ERR;
+    return 0;
 }
 
-NodeImpl *NodeImpl::removeChild( NodeImpl *, int &exceptioncode )
+PassRefPtr<NodeImpl> NodeImpl::removeChild(NodeImpl*, ExceptionCode& ec)
 {
-  exceptioncode = DOMException::NOT_FOUND_ERR;
-  return 0;
+    ec = DOMException::NOT_FOUND_ERR;
+    return 0;
 }
 
-NodeImpl *NodeImpl::appendChild( NodeImpl *newChild, int &exceptioncode )
+PassRefPtr<NodeImpl> NodeImpl::appendChild(PassRefPtr<NodeImpl>, ExceptionCode& ec)
 {
-    newChild->ref();
-    newChild->deref();
-    exceptioncode = DOMException::HIERARCHY_REQUEST_ERR;
+    ec = DOMException::HIERARCHY_REQUEST_ERR;
     return 0;
 }
 
@@ -331,17 +325,8 @@ const AtomicString& NodeImpl::namespaceURI() const
     return nullAtom;
 }
 
-void NodeImpl::setFirstChild(NodeImpl *)
+ContainerNodeImpl* NodeImpl::addChild(PassRefPtr<NodeImpl>)
 {
-}
-
-void NodeImpl::setLastChild(NodeImpl *)
-{
-}
-
-NodeImpl *NodeImpl::addChild(NodeImpl *newChild)
-{
-    RefPtr<NodeImpl> protectNewChild(newChild); // make sure the new child is ref'd and deref'd so we don't leak it
     return 0;
 }
 
@@ -399,7 +384,7 @@ unsigned NodeImpl::nodeIndex() const
     return count;
 }
 
-void NodeImpl::addEventListener(const AtomicString &eventType, EventListener *listener, const bool useCapture)
+void NodeImpl::addEventListener(const AtomicString &eventType, PassRefPtr<EventListener> listener, const bool useCapture)
 {
     if (getDocument() && !getDocument()->attached())
         return;
@@ -427,19 +412,15 @@ void NodeImpl::addEventListener(const AtomicString &eventType, EventListener *li
         m_regdListeners->setAutoDelete(true);
     }
 
-    listener->ref();
-
     // Remove existing identical listener set with identical arguments.
     // The DOM2 spec says that "duplicate instances are discarded" in this case.
-    removeEventListener(eventType, listener, useCapture);
+    removeEventListener(eventType, listener.get(), useCapture);
 
     // adding the first one
     if (m_regdListeners->isEmpty() && getDocument() && !inDocument())
         getDocument()->registerDisconnectedNodeWithEventListeners(this);
         
-    m_regdListeners->append(new RegisteredEventListener(eventType, listener, useCapture));
-
-    listener->deref();
+    m_regdListeners->append(new RegisteredEventListener(eventType, listener.get(), useCapture));
 }
 
 void NodeImpl::removeEventListener(const AtomicString &eventType, EventListener *listener, bool useCapture)
@@ -482,16 +463,12 @@ void NodeImpl::removeHTMLEventListener(const AtomicString &eventType)
         }
 }
 
-void NodeImpl::setHTMLEventListener(const AtomicString &eventType, EventListener *listener)
+void NodeImpl::setHTMLEventListener(const AtomicString &eventType, PassRefPtr<EventListener> listener)
 {
     // In case we are the only one holding a reference to it, we don't want removeHTMLEventListener to destroy it.
-    if (listener)
-        listener->ref();
     removeHTMLEventListener(eventType);
-    if (listener) {
-        addEventListener(eventType, listener, false);
-        listener->deref();
-    }
+    if (listener)
+        addEventListener(eventType, listener.get(), false);
 }
 
 EventListener *NodeImpl::getHTMLEventListener(const AtomicString &eventType)
@@ -1717,8 +1694,8 @@ bool NodeImpl::isDefaultNamespace(const DOMString &namespaceURI) const
                         return attr->value() == namespaceURI;
                 }
             }
-            
-            if (ElementImpl *ancestor = getAncestorElement())
+
+            if (ElementImpl* ancestor = ancestorElement())
                 return ancestor->isDefaultNamespace(namespaceURI);
 
             return false;
@@ -1732,16 +1709,13 @@ bool NodeImpl::isDefaultNamespace(const DOMString &namespaceURI) const
             return false;
         case Node::ATTRIBUTE_NODE: {
             const AttrImpl *attr = static_cast<const AttrImpl *>(this);
-            
             if (attr->ownerElement())
                 return attr->ownerElement()->isDefaultNamespace(namespaceURI);
-            
             return false;
         }
         default:
-            if (ElementImpl *ancestor = getAncestorElement())
+            if (ElementImpl* ancestor = ancestorElement())
                 return ancestor->isDefaultNamespace(namespaceURI);
-            
             return false;
     }
 }
@@ -1766,16 +1740,13 @@ DOMString NodeImpl::lookupPrefix(const DOMString &namespaceURI) const
             return DOMString();
         case Node::ATTRIBUTE_NODE: {
             const AttrImpl *attr = static_cast<const AttrImpl *>(this);
-            
             if (attr->ownerElement())
                 return attr->ownerElement()->lookupPrefix(namespaceURI);
-            
             return DOMString();
         }
         default:
-            if (ElementImpl *ancestor = getAncestorElement())
+            if (ElementImpl* ancestor = ancestorElement())
                 return ancestor->lookupPrefix(namespaceURI);
-            
             return DOMString();
     }
 }
@@ -1814,10 +1785,8 @@ DOMString NodeImpl::lookupNamespaceURI(const DOMString &prefix) const
                     }
                 }
             }
-            
-            if (ElementImpl *ancestor = getAncestorElement())
+            if (ElementImpl* ancestor = ancestorElement())
                 return ancestor->lookupNamespaceURI(prefix);
-            
             return DOMString();
         }
         case Node::DOCUMENT_NODE:
@@ -1836,9 +1805,8 @@ DOMString NodeImpl::lookupNamespaceURI(const DOMString &prefix) const
                 return DOMString();
         }
         default:
-            if (ElementImpl *ancestor = getAncestorElement())
+            if (ElementImpl* ancestor = ancestorElement())
                 return ancestor->lookupNamespaceURI(prefix);
-            
             return DOMString();
     }
 }
@@ -1864,9 +1832,8 @@ DOMString NodeImpl::lookupNamespacePrefix(const DOMString &_namespaceURI, const 
         }
     }
     
-    if (ElementImpl *ancestor = getAncestorElement())
+    if (ElementImpl* ancestor = ancestorElement())
         return ancestor->lookupNamespacePrefix(_namespaceURI, originalElement);
-    
     return DOMString();
 }
 
@@ -1936,15 +1903,13 @@ void NodeImpl::setTextContent(const DOMString &text, int &exception)
     }
 }
 
-ElementImpl *NodeImpl::getAncestorElement() const
+ElementImpl* NodeImpl::ancestorElement() const
 {
-    // In theory, there can be EntityReference nodes between elements
-    // but this is currently not supported.
-    for (NodeImpl *n = parentNode(); n; n = n->parentNode()) {
+    // In theory, there can be EntityReference nodes between elements, but this is currently not supported.
+    for (NodeImpl* n = parentNode(); n; n = n->parentNode()) {
         if (n->isElementNode())
-            return static_cast<ElementImpl *>(n);
+            return static_cast<ElementImpl*>(n);
     }
-    
     return 0;
 }
 

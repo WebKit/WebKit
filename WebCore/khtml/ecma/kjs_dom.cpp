@@ -1,7 +1,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004 Apple Computer, Inc.
+ *  Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -1657,8 +1657,9 @@ bool checkNodeSecurity(ExecState *exec, NodeImpl *n)
   return win && win->isSafeScript(exec);
 }
 
-JSValue *getDOMNode(ExecState *exec, NodeImpl *n)
+JSValue *getDOMNode(ExecState *exec, PassRefPtr<NodeImpl> node)
 {
+  NodeImpl* n = node.get();
   DOMNode *ret = 0;
   if (!n)
     return jsNull();

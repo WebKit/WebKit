@@ -6,7 +6,7 @@
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,6 +24,7 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef HTMLTableElementImpl_H
 #define HTMLTableElementImpl_H
 
@@ -118,7 +119,7 @@ public:
     void setWidth( const DOMString & );
 
     // overrides
-    virtual NodeImpl *addChild(NodeImpl *child);
+    virtual ContainerNodeImpl* addChild(PassRefPtr<NodeImpl> newChild);
     virtual void childrenChanged();
     
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
@@ -164,13 +165,12 @@ public:
 class HTMLTableSectionElementImpl : public HTMLTablePartElementImpl
 {
 public:
-    HTMLTableSectionElementImpl(const QualifiedName& tagName, DocumentImpl *doc, bool implicit);
+    HTMLTableSectionElementImpl(const QualifiedName& tagName, DocumentImpl*, bool implicit);
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusOptional; }
     virtual int tagPriority() const { return 8; }
     virtual bool checkDTD(const NodeImpl* newChild);
-
-    virtual NodeImpl *addChild(NodeImpl *child);
+    virtual ContainerNodeImpl* addChild(PassRefPtr<NodeImpl> newChild);
     
     HTMLElementImpl *insertRow ( int index, int& exceptioncode );
     void deleteRow ( int index, int& exceptioncode );
@@ -203,8 +203,7 @@ public:
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusOptional; }
     virtual int tagPriority() const { return 7; }
     virtual bool checkDTD(const NodeImpl* newChild);
-
-    virtual NodeImpl *addChild(NodeImpl *child);
+    virtual ContainerNodeImpl* addChild(PassRefPtr<NodeImpl> newChild);
     
     int rowIndex() const;
     int sectionRowIndex() const;

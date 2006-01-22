@@ -284,7 +284,7 @@ namespace KJS {
   JSValue *getDOMDocumentNode(ExecState *exec, DOM::DocumentImpl *n);
   bool checkNodeSecurity(ExecState *exec, DOM::NodeImpl *n);
   JSValue *getRuntimeObject(ExecState *exec, DOM::NodeImpl *n);
-  JSValue *getDOMNode(ExecState *exec, DOM::NodeImpl *n);
+  JSValue *getDOMNode(ExecState*, PassRefPtr<DOM::NodeImpl>);
   JSValue *getDOMNamedNodeMap(ExecState *exec, DOM::NamedNodeMapImpl *m);
   JSValue *getDOMNodeList(ExecState *exec, DOM::NodeListImpl *l);
   JSValue *getDOMDOMImplementation(ExecState *exec, DOM::DOMImplementationImpl *i);

@@ -597,7 +597,7 @@ void ElementImpl::recalcStyle( StyleChange change )
         }
     }
 
-    for (NodeImpl *n = _first; n; n = n->nextSibling()) {
+    for (NodeImpl *n = fastFirstChild(); n; n = n->nextSibling()) {
         if (change >= Inherit || n->isTextNode() || n->hasChangedChild() || n->changed())
             n->recalcStyle(change);
     }

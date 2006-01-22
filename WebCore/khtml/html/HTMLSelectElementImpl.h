@@ -22,6 +22,7 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef HTML_HTMLSelectElementImpl_H
 #define HTML_HTMLSelectElementImpl_H
 
@@ -46,7 +47,6 @@ public:
     HTMLSelectElementImpl(DocumentImpl *doc, HTMLFormElementImpl *f = 0);
     HTMLSelectElementImpl(const QualifiedName& tagName, DocumentImpl *doc, HTMLFormElementImpl *f = 0);
     ~HTMLSelectElementImpl();
-    void init();
 
     virtual int tagPriority() const { return 6; }
     virtual bool checkDTD(const NodeImpl* newChild);
@@ -74,18 +74,18 @@ public:
     DOMString value();
     void setValue(const DOMString &);
     
-    HTMLOptionsCollectionImpl *options();
+    HTMLOptionsCollectionImpl* options();
     RefPtr<HTMLCollectionImpl> optionsHTMLCollection(); // FIXME: Remove this and migrate to options().
 
     virtual bool maintainsState() { return true; }
     virtual QString state();
     virtual void restoreState(QStringList &);
 
-    virtual NodeImpl *insertBefore ( NodeImpl *newChild, NodeImpl *refChild, int &exceptioncode );
-    virtual NodeImpl *replaceChild ( NodeImpl *newChild, NodeImpl *oldChild, int &exceptioncode );
-    virtual NodeImpl *removeChild ( NodeImpl *oldChild, int &exceptioncode );
-    virtual NodeImpl *appendChild ( NodeImpl *newChild, int &exceptioncode );
-    virtual NodeImpl *addChild( NodeImpl* newChild );
+    virtual PassRefPtr<NodeImpl> insertBefore(PassRefPtr<NodeImpl> newChild, NodeImpl* refChild, ExceptionCode&);
+    virtual PassRefPtr<NodeImpl> replaceChild(PassRefPtr<NodeImpl> newChild, NodeImpl* oldChild, ExceptionCode&);
+    virtual PassRefPtr<NodeImpl> removeChild(NodeImpl* child, ExceptionCode&);
+    virtual PassRefPtr<NodeImpl> appendChild(PassRefPtr<NodeImpl> newChild, ExceptionCode&);
+    virtual ContainerNodeImpl* addChild(PassRefPtr<NodeImpl>);
 
     virtual void childrenChanged();
 
@@ -101,11 +101,11 @@ public:
 
     void setRecalcListItems();
 
-    Array<HTMLElementImpl*> listItems() const
-     {
-         if (m_recalcListItems) const_cast<HTMLSelectElementImpl*>(this)->recalcListItems();
-         return m_listItems;
-     }
+    Array<HTMLElementImpl*> listItems() const {
+        if (m_recalcListItems)
+            const_cast<HTMLSelectElementImpl*>(this)->recalcListItems();
+        return m_listItems;
+    }
     virtual void reset();
     void notifyOptionSelected(HTMLOptionElementImpl *selectedOption, bool selected);
 
@@ -121,7 +121,7 @@ private:
 
 protected:
     mutable Array<HTMLElementImpl*> m_listItems;
-    HTMLOptionsCollectionImpl *m_options;
+    RefPtr<HTMLOptionsCollectionImpl> m_options;
     short m_minwidth;
     short m_size;
     bool m_multiple;

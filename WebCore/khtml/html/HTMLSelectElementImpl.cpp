@@ -26,58 +26,41 @@
  
 #include "config.h"
 #include "HTMLSelectElementImpl.h"
-#include "HTMLOptionsCollectionImpl.h"
-#include "HTMLOptionElementImpl.h"
-#include "HTMLFormElementImpl.h"
-#include "HTMLCollectionImpl.h"
-#include "dom2_eventsimpl.h"
-#include "FormDataList.h"
+
 #include "DocumentImpl.h"
-
-#include "css/cssstyleselector.h"
+#include "EventNames.h"
+#include "FormDataList.h"
+#include "HTMLCollectionImpl.h"
+#include "HTMLFormElementImpl.h"
+#include "HTMLOptionElementImpl.h"
+#include "HTMLOptionsCollectionImpl.h"
 #include "cssproperties.h"
-#include "xml/EventNames.h"
-
-#include "rendering/render_form.h"
-
+#include "cssstyleselector.h"
+#include "dom2_eventsimpl.h"
+#include "render_form.h"
 #include <assert.h>
 
-using namespace khtml;
-
-namespace DOM {
+namespace WebCore {
 
 using namespace EventNames;
 using namespace HTMLNames;
 
 HTMLSelectElementImpl::HTMLSelectElementImpl(DocumentImpl *doc, HTMLFormElementImpl *f)
-    : HTMLGenericFormElementImpl(selectTag, doc, f), m_options(0)
+    : HTMLGenericFormElementImpl(selectTag, doc, f), m_minwidth(0), m_size(0), m_multiple(false), m_recalcListItems(false)
 {
-    init();
 }
 
 HTMLSelectElementImpl::HTMLSelectElementImpl(const QualifiedName& tagName, DocumentImpl *doc, HTMLFormElementImpl *f)
-    : HTMLGenericFormElementImpl(tagName, doc, f), m_options(0)
+    : HTMLGenericFormElementImpl(tagName, doc, f)
 {
-    init();
-}
-
-void HTMLSelectElementImpl::init()
-{
-    m_options = 0;
-    m_multiple = false;
-    m_recalcListItems = false;
-    // 0 means invalid (i.e. not set)
-    m_size = 0;
-    m_minwidth = 0;
 }
 
 HTMLSelectElementImpl::~HTMLSelectElementImpl()
 {
-    if (getDocument()) getDocument()->deregisterMaintainsState(this);
-    if (m_options) {
+    if (getDocument())
+        getDocument()->deregisterMaintainsState(this);
+    if (m_options)
         m_options->detach();
-        m_options->deref();
-    }
 }
 
 bool HTMLSelectElementImpl::checkDTD(const NodeImpl* newChild)
@@ -88,9 +71,8 @@ bool HTMLSelectElementImpl::checkDTD(const NodeImpl* newChild)
 
 void HTMLSelectElementImpl::recalcStyle( StyleChange ch )
 {
-    if (hasChangedChild() && m_render) {
-        static_cast<khtml::RenderSelect*>(m_render)->setOptionsChanged(true);
-    }
+    if (hasChangedChild() && m_render)
+        static_cast<RenderSelect*>(m_render)->setOptionsChanged(true);
 
     HTMLGenericFormElementImpl::recalcStyle( ch );
 }
@@ -231,8 +213,8 @@ void HTMLSelectElementImpl::restoreState(QStringList &_states)
     Array<HTMLElementImpl*> items = listItems();
 
     int l = items.count();
-    for(int i = 0; i < l; i++) {
-        if(items[i]->hasLocalName(optionTag)) {
+    for (int i = 0; i < l; i++) {
+        if (items[i]->hasLocalName(optionTag)) {
             HTMLOptionElementImpl* oe = static_cast<HTMLOptionElementImpl*>(items[i]);
             oe->setSelected(state[i] == 'X');
         }
@@ -240,43 +222,44 @@ void HTMLSelectElementImpl::restoreState(QStringList &_states)
     setChanged(true);
 }
 
-NodeImpl *HTMLSelectElementImpl::insertBefore ( NodeImpl *newChild, NodeImpl *refChild, int &exceptioncode )
+PassRefPtr<NodeImpl> HTMLSelectElementImpl::insertBefore(PassRefPtr<NodeImpl> newChild, NodeImpl* refChild, ExceptionCode& ec)
 {
-    NodeImpl *result = HTMLGenericFormElementImpl::insertBefore(newChild,refChild, exceptioncode );
-    if (!exceptioncode)
+    PassRefPtr<NodeImpl> result = HTMLGenericFormElementImpl::insertBefore(newChild, refChild, ec);
+    if (result)
         setRecalcListItems();
     return result;
 }
 
-NodeImpl *HTMLSelectElementImpl::replaceChild ( NodeImpl *newChild, NodeImpl *oldChild, int &exceptioncode )
+PassRefPtr<NodeImpl> HTMLSelectElementImpl::replaceChild(PassRefPtr<NodeImpl> newChild, NodeImpl *oldChild, ExceptionCode& ec)
 {
-    NodeImpl *result = HTMLGenericFormElementImpl::replaceChild(newChild,oldChild, exceptioncode);
-    if( !exceptioncode )
+    PassRefPtr<NodeImpl> result = HTMLGenericFormElementImpl::replaceChild(newChild, oldChild, ec);
+    if (result)
         setRecalcListItems();
     return result;
 }
 
-NodeImpl *HTMLSelectElementImpl::removeChild ( NodeImpl *oldChild, int &exceptioncode )
+PassRefPtr<NodeImpl> HTMLSelectElementImpl::removeChild(NodeImpl* oldChild, ExceptionCode& ec)
 {
-    NodeImpl *result = HTMLGenericFormElementImpl::removeChild(oldChild, exceptioncode);
-    if( !exceptioncode )
+    PassRefPtr<NodeImpl> result = HTMLGenericFormElementImpl::removeChild(oldChild, ec);
+    if (result)
         setRecalcListItems();
     return result;
 }
 
-NodeImpl *HTMLSelectElementImpl::appendChild ( NodeImpl *newChild, int &exceptioncode )
+PassRefPtr<NodeImpl> HTMLSelectElementImpl::appendChild(PassRefPtr<NodeImpl> newChild, ExceptionCode& ec)
 {
-    NodeImpl *result = HTMLGenericFormElementImpl::appendChild(newChild, exceptioncode);
-    if( !exceptioncode )
+    PassRefPtr<NodeImpl> result = HTMLGenericFormElementImpl::appendChild(newChild, ec);
+    if (result)
         setRecalcListItems();
-    setChanged(true);
     return result;
 }
 
-NodeImpl* HTMLSelectElementImpl::addChild(NodeImpl* newChild)
+ContainerNodeImpl* HTMLSelectElementImpl::addChild(PassRefPtr<NodeImpl> newChild)
 {
-    setRecalcListItems();
-    return HTMLGenericFormElementImpl::addChild(newChild);
+    ContainerNodeImpl* result = HTMLGenericFormElementImpl::addChild(newChild);
+    if (result)
+        setRecalcListItems();
+    return result;
 }
 
 void HTMLSelectElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
@@ -304,7 +287,7 @@ RenderObject *HTMLSelectElementImpl::createRenderer(RenderArena *arena, RenderSt
     return new (arena) RenderSelect(this);
 }
 
-bool HTMLSelectElementImpl::appendFormData(FormDataList& encoded_values, bool)
+bool HTMLSelectElementImpl::appendFormData(FormDataList& list, bool)
 {
     bool successful = false;
     Array<HTMLElementImpl*> items = listItems();
@@ -314,7 +297,7 @@ bool HTMLSelectElementImpl::appendFormData(FormDataList& encoded_values, bool)
         if (items[i]->hasLocalName(optionTag)) {
             HTMLOptionElementImpl *option = static_cast<HTMLOptionElementImpl*>(items[i]);
             if (option->selected()) {
-                encoded_values.appendData(name(), option->value());
+                list.appendData(name(), option->value());
                 successful = true;
             }
         }
@@ -327,9 +310,9 @@ bool HTMLSelectElementImpl::appendFormData(FormDataList& encoded_values, bool)
         (items[0]->hasLocalName(optionTag))) {
         HTMLOptionElementImpl *option = static_cast<HTMLOptionElementImpl*>(items[0]);
         if (option->value().isNull())
-            encoded_values.appendData(name(), option->text().qstring().stripWhiteSpace());
+            list.appendData(name(), option->text().qstring().stripWhiteSpace());
         else
-            encoded_values.appendData(name(), option->value());
+            list.appendData(name(), option->value());
         successful = true;
     }
 
@@ -369,18 +352,16 @@ int HTMLSelectElementImpl::listToOptionIndex(int listIndex) const
     return optionIndex;
 }
 
-// FIXME 4197997: this method is used by the public API -[DOMHTMLSelectElement options], but always returns
-// an empty list.
-HTMLOptionsCollectionImpl *HTMLSelectElementImpl::options()
+// FIXME 4197997: This method is used by the public Objective-C DOM API -[DOMHTMLSelectElement options],
+// but always returns an empty list.
+HTMLOptionsCollectionImpl* HTMLSelectElementImpl::options()
 {
-    if (!m_options) {
+    if (!m_options)
         m_options = new HTMLOptionsCollectionImpl(this);
-        m_options->ref();
-    }
-    return m_options;
+    return m_options.get();
 }
 
-// FIXME: Delete once the above function is working well enough to use for real.
+// FIXME: Delete this once the above function is working well enough to use for real.
 RefPtr<HTMLCollectionImpl> HTMLSelectElementImpl::optionsHTMLCollection()
 {
     return RefPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::SELECT_OPTIONS));
@@ -435,7 +416,7 @@ void HTMLSelectElementImpl::setRecalcListItems()
 {
     m_recalcListItems = true;
     if (m_render)
-        static_cast<khtml::RenderSelect*>(m_render)->setOptionsChanged(true);
+        static_cast<RenderSelect*>(m_render)->setOptionsChanged(true);
     setChanged();
 }
 
@@ -491,7 +472,7 @@ void HTMLSelectElementImpl::defaultEventHandler(EventImpl *evt)
     HTMLGenericFormElementImpl::defaultEventHandler(evt);
 }
 
-void HTMLSelectElementImpl::accessKeyAction(bool sendToAnyElement)
+void HTMLSelectElementImpl::accessKeyAction(bool)
 {
     focus();
 }

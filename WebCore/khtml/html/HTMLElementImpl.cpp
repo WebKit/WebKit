@@ -3,7 +3,7 @@
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,27 +24,26 @@
 
 #include "config.h"
 #include "HTMLElementImpl.h"
-#include "html/html_documentimpl.h"
-#include "html/htmltokenizer.h"
-#include "htmlfactory.h"
 
-#include <kxmlcore/HashSet.h>
-#include "editing/visible_text.h"
-
+#include "EventNames.h"
 #include "Frame.h"
-
-#include "dom/dom_exception.h"
-#include "rendering/render_replaced.h"
-#include "css/css_valueimpl.h"
-#include "css/css_stylesheetimpl.h"
+#include "css_ruleimpl.h"
+#include "css_stylesheetimpl.h"
+#include "css_valueimpl.h"
 #include "cssproperties.h"
 #include "cssvalues.h"
-#include "css/css_ruleimpl.h"
-#include "xml/dom_textimpl.h"
-#include "xml/dom2_eventsimpl.h"
-#include "xml/EventNames.h"
-#include "editing/markup.h"
+#include "dom2_events.h"
+#include "dom2_eventsimpl.h"
+#include "dom_exception.h"
+#include "dom_textimpl.h"
+#include "html_documentimpl.h"
+#include "htmlfactory.h"
 #include "htmlnames.h"
+#include "htmltokenizer.h"
+#include "markup.h"
+#include "render_replaced.h"
+#include "visible_text.h"
+#include <kxmlcore/HashSet.h>
 
 namespace WebCore {
 
@@ -153,9 +152,9 @@ void HTMLElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     else if (attr->name() == onclickAttr) {
         setHTMLEventListener(clickEvent, attr);
     } else if (attr->name() == oncontextmenuAttr) {
-    	setHTMLEventListener(contextmenuEvent, attr);
+        setHTMLEventListener(contextmenuEvent, attr);
     } else if (attr->name() == ondblclickAttr) {
-	setHTMLEventListener(khtmlDblclickEvent, attr);
+        setHTMLEventListener(khtmlDblclickEvent, attr);
     } else if (attr->name() == onmousedownAttr) {
         setHTMLEventListener(mousedownEvent, attr);
     } else if (attr->name() == onmousemoveAttr) {
@@ -271,23 +270,23 @@ DocumentFragmentImpl *HTMLElementImpl::createContextualFragment(const DOMString 
     NodeImpl *nextNode;
     for (NodeImpl *node = fragment->firstChild(); node != NULL; node = nextNode) {
         nextNode = node->nextSibling();
-	node->ref();
+        node->ref();
         if (node->hasTagName(htmlTag) || node->hasTagName(bodyTag)) {
-	    NodeImpl *firstChild = node->firstChild();
+            NodeImpl *firstChild = node->firstChild();
             if (firstChild != NULL) {
                 nextNode = firstChild;
             }
-	    NodeImpl *nextChild;
+            NodeImpl *nextChild;
             for (NodeImpl *child = firstChild; child != NULL; child = nextChild) {
-		nextChild = child->nextSibling();
+                nextChild = child->nextSibling();
                 child->ref();
                 node->removeChild(child, ignoredExceptionCode);
-		fragment->insertBefore(child, node, ignoredExceptionCode);
+                fragment->insertBefore(child, node, ignoredExceptionCode);
                 child->deref();
-	    }
+            }
             fragment->removeChild(node, ignoredExceptionCode);
-	} else if (node->hasTagName(headTag))
-	    fragment->removeChild(node, ignoredExceptionCode);
+        } else if (node->hasTagName(headTag))
+            fragment->removeChild(node, ignoredExceptionCode);
 
         // Important to do this deref after removeChild, because if the only thing
         // keeping a node around is a parent that is non-0, removeChild will not
@@ -309,7 +308,7 @@ void HTMLElementImpl::setInnerHTML(const DOMString &html, int &exception)
 {
     DocumentFragmentImpl *fragment = createContextualFragment(html);
     if (fragment == NULL) {
-	exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
 
@@ -321,14 +320,14 @@ void HTMLElementImpl::setOuterHTML(const DOMString &html, int &exception)
 {
     NodeImpl *p = parent();
     if (!p || !p->isHTMLElement()) {
-	exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
     HTMLElementImpl *parent = static_cast<HTMLElementImpl *>(p);
     DocumentFragmentImpl *fragment = parent->createContextualFragment(html);
 
     if (!fragment) {
-	exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
     
@@ -342,7 +341,7 @@ void HTMLElementImpl::setInnerText(const DOMString &text, int &exception)
 {
     // following the IE specs.
     if (endTagRequirement() == TagStatusForbidden) {
-	exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
 
@@ -362,7 +361,7 @@ void HTMLElementImpl::setOuterText(const DOMString &text, int &exception)
 {
     // following the IE specs.
     if (endTagRequirement() == TagStatusForbidden) {
-	exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
 
@@ -391,21 +390,21 @@ void HTMLElementImpl::setOuterText(const DOMString &text, int &exception)
     // is previous node a text node? if so, merge into it
     NodeImpl *prev = t->previousSibling();
     if (prev && prev->isTextNode()) {
-	TextImpl *textPrev = static_cast<TextImpl *>(prev);
-	textPrev->appendData(t->data(), exception);
+        TextImpl *textPrev = static_cast<TextImpl *>(prev);
+        textPrev->appendData(t->data(), exception);
         if (exception)
             return;
         t->remove(exception);
         if (exception)
             return;
-	t = textPrev;
+        t = textPrev;
     }
 
     // is next node a text node? if so, merge it in
     NodeImpl *next = t->nextSibling();
     if (next && next->isTextNode()) {
-	TextImpl *textNext = static_cast<TextImpl *>(next);
-	t->appendData(textNext->data(), exception);
+        TextImpl *textNext = static_cast<TextImpl *>(next);
+        t->appendData(textNext->data(), exception);
         if (exception)
             return;
         textNext->remove(exception);
@@ -426,27 +425,27 @@ void HTMLElementImpl::addHTMLAlignment(MappedAttributeImpl* attr)
     } else if (equalIgnoringCase(alignment, "absbottom")) {
         propvalign = CSS_VAL_BOTTOM;
     } else if (equalIgnoringCase(alignment, "left")) {
-	propfloat = CSS_VAL_LEFT;
-	propvalign = CSS_VAL_TOP;
+        propfloat = CSS_VAL_LEFT;
+        propvalign = CSS_VAL_TOP;
     } else if (equalIgnoringCase(alignment, "right")) {
-	propfloat = CSS_VAL_RIGHT;
-	propvalign = CSS_VAL_TOP;
+        propfloat = CSS_VAL_RIGHT;
+        propvalign = CSS_VAL_TOP;
     } else if (equalIgnoringCase(alignment, "top")) {
-	propvalign = CSS_VAL_TOP;
+        propvalign = CSS_VAL_TOP;
     } else if (equalIgnoringCase(alignment, "middle")) {
-	propvalign = CSS_VAL__KHTML_BASELINE_MIDDLE;
+        propvalign = CSS_VAL__KHTML_BASELINE_MIDDLE;
     } else if (equalIgnoringCase(alignment, "center")) {
-	propvalign = CSS_VAL_MIDDLE;
+        propvalign = CSS_VAL_MIDDLE;
     } else if (equalIgnoringCase(alignment, "bottom")) {
-	propvalign = CSS_VAL_BASELINE;
+        propvalign = CSS_VAL_BASELINE;
     } else if (equalIgnoringCase(alignment, "texttop")) {
-	propvalign = CSS_VAL_TEXT_TOP;
+        propvalign = CSS_VAL_TEXT_TOP;
     }
     
     if ( propfloat != -1 )
-	addCSSProperty( attr, CSS_PROP_FLOAT, propfloat );
+        addCSSProperty( attr, CSS_PROP_FLOAT, propfloat );
     if ( propvalign != -1 )
-	addCSSProperty( attr, CSS_PROP_VERTICAL_ALIGN, propvalign );
+        addCSSProperty( attr, CSS_PROP_VERTICAL_ALIGN, propvalign );
 }
 
 bool HTMLElementImpl::isFocusable() const
@@ -550,16 +549,16 @@ void HTMLElementImpl::accessKeyAction(bool sendToAnyElement)
 DOMString HTMLElementImpl::toString() const
 {
     if (!hasChildNodes() && getDocument()->isHTMLDocument()) {
-	DOMString result = openTagStartToString();
-	result += ">";
+        DOMString result = openTagStartToString();
+        result += ">";
 
-	if (endTagRequirement() == TagStatusRequired) {
-	    result += "</";
-	    result += nodeName();
-	    result += ">";
-	}
+        if (endTagRequirement() == TagStatusRequired) {
+            result += "</";
+            result += nodeName();
+            result += ">";
+        }
 
-	return result;
+        return result;
     }
 
     return ElementImpl::toString();

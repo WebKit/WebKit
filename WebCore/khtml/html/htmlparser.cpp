@@ -5,7 +5,7 @@
               (C) 1997 Torben Weis (weis@kde.org)
               (C) 1999,2001 Lars Knoll (knoll@kde.org)
               (C) 2000,2001 Dirk Mueller (mueller@kde.org)
-    Copyright (C) 2004 Apple Computer, Inc.
+    Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -25,45 +25,38 @@
 //----------------------------------------------------------------------------
 //
 // KDE HTML Widget -- HTML Parser
-//#define PARSER_DEBUG
 
 #include "config.h"
-#include "html/htmlparser.h"
+#include "htmlparser.h"
 
-#include "dom/dom_exception.h"
-
-#include "html/html_baseimpl.h"
-#include "html/html_blockimpl.h"
-#include "html/html_canvasimpl.h"
-#include "html/html_documentimpl.h"
-#include "html/html_headimpl.h"
-#include "html/html_imageimpl.h"
-#include "html/html_inlineimpl.h"
-#include "html/html_listimpl.h"
-#include "html/html_tableimpl.h"
-#include "html/html_objectimpl.h"
+#include "DocumentFragmentImpl.h"
+#include "Frame.h"
+#include "FrameView.h"
 #include "HTMLFormElementImpl.h"
 #include "HTMLIsIndexElementImpl.h"
-#include "htmlfactory.h"
-#include "xml/dom_textimpl.h"
-#include "DocumentFragmentImpl.h"
-#include <kxmlcore/HashSet.h>
-#include "html/htmltokenizer.h"
-#include "FrameView.h"
-#include "Frame.h"
 #include "cssproperties.h"
 #include "cssvalues.h"
-
-#include "rendering/render_object.h"
-
-#include <kxmlcore/HashMap.h>
-
-#include <kdebug.h>
+#include "dom_exception.h"
+#include "dom_textimpl.h"
+#include "html_baseimpl.h"
+#include "html_blockimpl.h"
+#include "html_canvasimpl.h"
+#include "html_documentimpl.h"
+#include "html_headimpl.h"
+#include "html_imageimpl.h"
+#include "html_inlineimpl.h"
+#include "html_listimpl.h"
+#include "html_objectimpl.h"
+#include "html_tableimpl.h"
+#include "htmlfactory.h"
+#include "htmltokenizer.h"
+#include "render_object.h"
 #include <klocale.h>
+#include <kxmlcore/HashMap.h>
+#include <kxmlcore/HashSet.h>
 
-using namespace DOM;
+using namespace WebCore;
 using namespace HTMLNames;
-using namespace khtml;
 
 //----------------------------------------------------------------------------
 
@@ -1059,7 +1052,6 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
     NodeImpl* currNode = blockElem->firstChild();
     while (currNode) {
         NodeImpl* nextNode = currNode->nextSibling();
-        blockElem->removeChild(currNode, exceptionCode);
         newNode->appendChild(currNode, exceptionCode);
         currNode = nextNode;
     }

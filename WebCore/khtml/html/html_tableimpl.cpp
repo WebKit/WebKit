@@ -78,52 +78,40 @@ bool HTMLTableElementImpl::checkDTD(const NodeImpl* newChild)
 NodeImpl* HTMLTableElementImpl::setCaption( HTMLTableCaptionElementImpl *c )
 {
     int exceptioncode = 0;
-    NodeImpl *r;
-    if (NodeImpl *oc = tCaption) {
-        oc->ref();
+    if (NodeImpl *oc = tCaption)
         replaceChild(c, oc, exceptioncode);
-        oc->deref();
-        r = c;
-    } else
-        r = insertBefore(c, firstChild(), exceptioncode);
+    else
+        insertBefore(c, firstChild(), exceptioncode);
     tCaption = c;
-    return r;
+    return tCaption;
 }
 
 NodeImpl* HTMLTableElementImpl::setTHead( HTMLTableSectionElementImpl *s )
 {
     int exceptioncode = 0;
-    NodeImpl *r;
-    if (NodeImpl *h = head) {
-        h->ref();
+    if (NodeImpl *h = head)
         replaceChild(s, h, exceptioncode);
-        h->deref();
-        r = s;
-    } else if (foot)
-        r = insertBefore(s, foot, exceptioncode);
+    else if (foot)
+        insertBefore(s, foot, exceptioncode);
     else if (firstBody)
-        r = insertBefore(s, firstBody, exceptioncode);
+        insertBefore(s, firstBody, exceptioncode);
     else
-        r = appendChild(s, exceptioncode);
+        appendChild(s, exceptioncode);
     head = s;
-    return r;
+    return head;
 }
 
 NodeImpl* HTMLTableElementImpl::setTFoot( HTMLTableSectionElementImpl *s )
 {
     int exceptioncode = 0;
-    NodeImpl* r;
-    if (NodeImpl *f = foot) {
-        f->ref();
+    if (NodeImpl *f = foot)
         replaceChild(s, f, exceptioncode);
-        f->deref();
-        r = s;
-    } else if (firstBody)
-        r = insertBefore(s, firstBody, exceptioncode);
+    else if (firstBody)
+        insertBefore(s, firstBody, exceptioncode);
     else
-        r = appendChild(s, exceptioncode);
+        appendChild(s, exceptioncode);
     foot = s;
-    return r;
+    return foot;
 }
 
 NodeImpl* HTMLTableElementImpl::setTBody( HTMLTableSectionElementImpl *s )
@@ -136,9 +124,9 @@ NodeImpl* HTMLTableElementImpl::setTBody( HTMLTableSectionElementImpl *s )
         fb->deref();
         r = s;
     } else
-        r = appendChild(s, exceptioncode);
+        appendChild(s, exceptioncode);
     firstBody = s;
-    return r;
+    return firstBody;
 }
 
 HTMLElementImpl *HTMLTableElementImpl::createTHead(  )
@@ -304,49 +292,37 @@ void HTMLTableElementImpl::deleteRow( int index, int &exceptioncode )
         exceptioncode = DOMException::INDEX_SIZE_ERR;
 }
 
-NodeImpl *HTMLTableElementImpl::addChild(NodeImpl *child)
+ContainerNodeImpl* HTMLTableElementImpl::addChild(PassRefPtr<NodeImpl> child)
 {
     if (child->hasTagName(formTag)) {
         // First add the child.
         HTMLElementImpl::addChild(child);
-        // Now simply return ourselves as the newnode.  This has the effect of
-        // demoting the form to a leaf and moving it safely out of the way.
+
+        // Now simply return ourselves as the container to insert into.
+        // This has the effect of demoting the form to a leaf and moving it safely out of the way.
         return this;
     }
-    
-    // We do not want this check-node-allowed test here, however the code to
-    // build up tables relies on childAllowed failing to make sure that the
-    // table is well-formed, the primary work being to add a tbody element.
-    // As 99.9999% of tables on the weeb do not have tbody elements, it seems
-    // odd to traverse an "error" case for the most common table markup.
-    // See <rdar://problem/3719373> Table parsing and construction relies on 
-    // childAllowed failures to build up proper DOM
-    if (child->nodeType() == Node::DOCUMENT_FRAGMENT_NODE) {
-        // child is a DocumentFragment... check all its children instead of child itself
-        for (NodeImpl *c = child->firstChild(); c; c = c->nextSibling())
-            if (!childAllowed(c))
-                return 0;
-    }
-    else if (!childAllowed(child)) {
-        // child is not a DocumentFragment... check if it's allowed directly
-        return 0;
-    }
 
-    int exceptioncode = 0;
-    NodeImpl *retval = appendChild( child, exceptioncode );
-    if (retval) {
+    // The creation of <tbody> elements relies on the "childAllowed" check,
+    // so we need to do it even for XML documents.
+    assert(child->nodeType() != Node::DOCUMENT_FRAGMENT_NODE);
+    if (!getDocument()->isHTMLDocument() && !childAllowed(child.get()))
+        return 0;
+
+    ContainerNodeImpl* container = HTMLElementImpl::addChild(child.get());
+    if (container) {
         if (!tCaption && child->hasTagName(captionTag))
-            tCaption = static_cast<HTMLTableCaptionElementImpl *>(child);
+            tCaption = static_cast<HTMLTableCaptionElementImpl *>(child.get());
         else if (!head && child->hasTagName(theadTag))
-            head = static_cast<HTMLTableSectionElementImpl *>(child);
+            head = static_cast<HTMLTableSectionElementImpl *>(child.get());
         else if (!foot && child->hasTagName(tfootTag))
-            foot = static_cast<HTMLTableSectionElementImpl *>(child);
+            foot = static_cast<HTMLTableSectionElementImpl *>(child.get());
         else if (!firstBody && child->hasTagName(tbodyTag)) {
-            firstBody = static_cast<HTMLTableSectionElementImpl *>(child);
+            firstBody = static_cast<HTMLTableSectionElementImpl *>(child.get());
             firstBody->ref();
         }
     }
-    return retval;
+    return container;
 }
 
 void HTMLTableElementImpl::childrenChanged()
@@ -728,15 +704,17 @@ bool HTMLTableSectionElementImpl::checkDTD(const NodeImpl* newChild)
            newChild->hasTagName(scriptTag);
 }
 
-NodeImpl *HTMLTableSectionElementImpl::addChild(NodeImpl *child)
+ContainerNodeImpl* HTMLTableSectionElementImpl::addChild(PassRefPtr<NodeImpl> child)
 {
     if (child->hasTagName(formTag)) {
         // First add the child.
-        HTMLElementImpl::addChild(child);
-        // Now simply return ourselves as the newnode.  This has the effect of
-        // demoting the form to a leaf and moving it safely out of the way.
+        HTMLTablePartElementImpl::addChild(child);
+
+        // Now simply return ourselves as the container to insert into.
+        // This has the effect of demoting the form to a leaf and moving it safely out of the way.
         return this;
     }
+
     return HTMLTablePartElementImpl::addChild(child);
 }
 
@@ -847,15 +825,17 @@ bool HTMLTableRowElementImpl::checkDTD(const NodeImpl* newChild)
            newChild->hasTagName(formTag) || newChild->hasTagName(scriptTag);
 }
 
-NodeImpl *HTMLTableRowElementImpl::addChild(NodeImpl *child)
+ContainerNodeImpl* HTMLTableRowElementImpl::addChild(PassRefPtr<NodeImpl> child)
 {
     if (child->hasTagName(formTag)) {
         // First add the child.
-        HTMLElementImpl::addChild(child);
-        // Now simply return ourselves as the newnode.  This has the effect of
-        // demoting the form to a leaf and moving it safely out of the way.
+        HTMLTablePartElementImpl::addChild(child);
+
+        // Now simply return ourselves as the container to insert into.
+        // This has the effect of demoting the form to a leaf and moving it safely out of the way.
         return this;
     }
+
     return HTMLTablePartElementImpl::addChild(child);
 }
 

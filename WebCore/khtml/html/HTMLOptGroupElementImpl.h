@@ -22,36 +22,34 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef HTML_HTMLOptGroupElementImpl_H
 #define HTML_HTMLOptGroupElementImpl_H
 
 #include "HTMLGenericFormElementImpl.h"
-#include "htmlnames.h"
 
 namespace DOM {
 
 class HTMLOptGroupElementImpl : public HTMLGenericFormElementImpl
 {
 public:
-    HTMLOptGroupElementImpl(DocumentImpl *doc, HTMLFormElementImpl *f = 0);
+    HTMLOptGroupElementImpl(DocumentImpl*, HTMLFormElementImpl* = 0);
     virtual ~HTMLOptGroupElementImpl();
 
-    virtual bool checkDTD(const NodeImpl* newChild) { return newChild->hasTagName(HTMLNames::optionTag) || newChild->hasTagName(HTMLNames::hrTag); }
-
-    DOMString type() const;
-
+    virtual bool checkDTD(const NodeImpl*);
+    virtual DOMString type() const;
     virtual bool isFocusable() const;
-    
-    virtual NodeImpl *insertBefore ( NodeImpl *newChild, NodeImpl *refChild, int &exceptioncode );
-    virtual NodeImpl *replaceChild ( NodeImpl *newChild, NodeImpl *oldChild, int &exceptioncode );
-    virtual NodeImpl *removeChild ( NodeImpl *oldChild, int &exceptioncode );
-    virtual NodeImpl *appendChild ( NodeImpl *newChild, int &exceptioncode );
-    virtual NodeImpl *addChild( NodeImpl* newChild );
-    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
+    virtual PassRefPtr<NodeImpl> insertBefore(PassRefPtr<NodeImpl> newChild, NodeImpl* refChild, ExceptionCode&);
+    virtual PassRefPtr<NodeImpl> replaceChild(PassRefPtr<NodeImpl> newChild, NodeImpl* oldChild, ExceptionCode&);
+    virtual PassRefPtr<NodeImpl> removeChild(NodeImpl* child, ExceptionCode&);
+    virtual PassRefPtr<NodeImpl> appendChild(PassRefPtr<NodeImpl> newChild, ExceptionCode&);
+    virtual ContainerNodeImpl* addChild(PassRefPtr<NodeImpl>);
+    virtual void parseMappedAttribute(MappedAttributeImpl*);
+
     void recalcSelectOptions();
 
     DOMString label() const;
-    void setLabel(const DOMString &);
+    void setLabel(const DOMString&);
 };
 
 } //namespace

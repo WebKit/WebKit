@@ -4,7 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,6 +22,7 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef DOM_ContainerNodeImpl_h
 #define DOM_ContainerNodeImpl_h
 
@@ -35,59 +36,48 @@ public:
     ContainerNodeImpl(DocumentImpl *doc);
     virtual ~ContainerNodeImpl();
 
-    // DOM methods overridden from  parent classes
-    virtual NodeImpl *firstChild() const;
-    virtual NodeImpl *lastChild() const;
-    virtual NodeImpl *insertBefore ( NodeImpl *newChild, NodeImpl *refChild, int &exceptioncode );
-    virtual NodeImpl *replaceChild ( NodeImpl *newChild, NodeImpl *oldChild, int &exceptioncode );
-    virtual NodeImpl *removeChild ( NodeImpl *oldChild, int &exceptioncode );
-    virtual NodeImpl *appendChild ( NodeImpl *newChild, int &exceptioncode );
-    virtual bool hasChildNodes (  ) const;
-
-    // Other methods (not part of DOM)
-    void willRemove();
-    int willRemoveChild(NodeImpl *child);
-    void removeAllChildren();
-    void removeChildren();
-    void cloneChildNodes(NodeImpl *clone);
-
-    virtual void setFirstChild(NodeImpl *child);
-    virtual void setLastChild(NodeImpl *child);
-    virtual NodeImpl *addChild(NodeImpl *newChild);
+    virtual NodeImpl* firstChild() const;
+    virtual NodeImpl* lastChild() const;
+    virtual PassRefPtr<NodeImpl> insertBefore(PassRefPtr<NodeImpl> newChild, NodeImpl* refChild, ExceptionCode&);
+    virtual PassRefPtr<NodeImpl> replaceChild(PassRefPtr<NodeImpl> newChild, NodeImpl* oldChild, ExceptionCode&);
+    virtual PassRefPtr<NodeImpl> removeChild(NodeImpl* child, ExceptionCode&);
+    virtual PassRefPtr<NodeImpl> appendChild(PassRefPtr<NodeImpl> newChild, ExceptionCode&);
+    virtual ContainerNodeImpl* addChild(PassRefPtr<NodeImpl>);
+    virtual bool hasChildNodes() const;
     virtual void attach();
     virtual void detach();
-
-    virtual WebCore::IntRect getRect() const;
-    bool getUpperLeftCorner(int &xPos, int &yPos) const;
-    bool getLowerRightCorner(int &xPos, int &yPos) const;
-
-    virtual void setFocus(bool=true);
+    virtual void willRemove();
+    virtual IntRect getRect() const;
+    virtual void setFocus(bool = true);
     virtual void setActive(bool active = true, bool pause = false);
-    virtual void setHovered(bool=true);
+    virtual void setHovered(bool = true);
     virtual unsigned childNodeCount() const;
-    virtual NodeImpl *childNode(unsigned index);
-
+    virtual NodeImpl* childNode(unsigned index);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
     virtual void insertedIntoTree(bool deep);
     virtual void removedFromTree(bool deep);
 
-    NodeImpl *_first;
-    NodeImpl *_last;
+    NodeImpl* fastFirstChild() const { return m_firstChild; }
+    NodeImpl* fastLastChild() const { return m_lastChild; }
+    
+    void removeAllChildren();
+    void removeChildren();
+    void cloneChildNodes(NodeImpl* clone);
 
-    // helper functions for inserting children:
+private:
+    NodeImpl* m_firstChild;
+    NodeImpl* m_lastChild;
 
-    // ### this should vanish. do it in dom/ !
-    // check for same source document:
-    bool checkSameDocument( NodeImpl *newchild, int &exceptioncode );
-    // check for being child:
-    bool checkIsChild( NodeImpl *oldchild, int &exceptioncode );
-    // ###
+    ExceptionCode willRemoveChild(NodeImpl* child);
 
-    // find out if a node is allowed to be our child
-    void dispatchChildInsertedEvents( NodeImpl *child, int &exceptioncode );
-    void dispatchChildRemovalEvents( NodeImpl *child, int &exceptioncode );
+    void dispatchChildInsertedEvents(NodeImpl* child, ExceptionCode&);
+    void dispatchChildRemovalEvents(NodeImpl* child, ExceptionCode&);
+
+    bool getUpperLeftCorner(int& x, int& y) const;
+    bool getLowerRightCorner(int& x, int& y) const;
 };
 
-}; //namespace
+} //namespace
+
 #endif

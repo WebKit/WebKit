@@ -22,22 +22,23 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-#include <kdom/kdom.h>
-#include <kdom/Namespace.h>
-#include <kdom/DOMString.h>
-#include <kdom/core/domattrs.h>
-#include <kdom/core/AttrImpl.h>
-#include "css_stylesheetimpl.h"
-#include <kdom/events/EventListenerImpl.h>
-#include "DocumentImpl.h"
-
-#include "ksvg.h"
-#include "SVGNames.h"
-#include "EventNames.h"
-#include "htmlnames.h"
 #include "SVGElementImpl.h"
-#include "SVGSVGElementImpl.h"
+
+#include "DocumentImpl.h"
+#include "EventNames.h"
 #include "SVGDOMImplementationImpl.h"
+#include "SVGNames.h"
+#include "SVGSVGElementImpl.h"
+#include "css_stylesheetimpl.h"
+#include "dom2_events.h"
+#include "htmlnames.h"
+#include "ksvg.h"
+#include <kdom/DOMString.h>
+#include <kdom/Namespace.h>
+#include <kdom/core/AttrImpl.h>
+#include <kdom/core/domattrs.h>
+#include <kdom/events/EventListenerImpl.h>
+#include <kdom/kdom.h>
 
 using namespace KSVG;
 using namespace DOM::HTMLNames;
@@ -133,6 +134,6 @@ bool SVGElementImpl::childShouldCreateRenderer(DOM::NodeImpl *child) const
     return false;
 }
 
-// vim:ts=4:noet
 #endif // SVG_SUPPORT
 
+// vim:ts=4:noet

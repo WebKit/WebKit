@@ -1,3 +1,117 @@
+2006-01-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=6705
+          use PassRefPtr in more of the basic DOM operations
+
+        Once we do the same with cloneNode, I believe we'll fix one of our P1 bugs,
+        but cloneNode was a little too much to do without doing this first pass.
+
+        * khtml/xml/NodeImpl.cpp:
+        (WebCore::NodeImpl::childNodes): Updated for parameter changes.
+        (WebCore::NodeImpl::insertBefore): Ditto.
+        (WebCore::NodeImpl::replaceChild): Ditto.
+        (WebCore::NodeImpl::removeChild): Ditto.
+        (WebCore::NodeImpl::appendChild): Ditto.
+        (WebCore::NodeImpl::addChild): Ditto.
+        (WebCore::NodeImpl::addEventListener): Ditto.
+        (WebCore::NodeImpl::setHTMLEventListener): Ditto.
+        (WebCore::NodeImpl::isDefaultNamespace): Updated for changed name of ancestorElement.
+        (WebCore::NodeImpl::lookupPrefix): Ditto.
+        (WebCore::NodeImpl::lookupNamespaceURI): Ditto.
+        (WebCore::NodeImpl::lookupNamespacePrefix): Ditto.
+        (WebCore::NodeImpl::ancestorElement): Changed name from getAncestorElement.
+        * khtml/xml/NodeImpl.h: Changed most functions where it makes sense to take and return
+        PassRefPtr instead of raw pointers. Even non-obvious cases like appendChild, where the
+        return value has to be PassRefPtr only because it might be removed when the JavaScript
+        triggered by the DOM mutation event runs (normally, there's no need to return an "owning"
+        pointer because the tree now owns the newly-inserted node). Made the ancestorElement
+        function private.
+
+        * khtml/xml/ContainerNodeImpl.cpp:
+        (WebCore::ContainerNodeImpl::ContainerNodeImpl): Updated for changes from
+        _first to m_firstChild and _last to m_lastChild.
+        (WebCore::ContainerNodeImpl::removeAllChildren): Ditto.
+        (WebCore::ContainerNodeImpl::firstChild): Ditto.
+        (WebCore::ContainerNodeImpl::lastChild): Ditto.
+        (WebCore::ContainerNodeImpl::insertBefore): Updated for parameter changes.
+        (WebCore::ContainerNodeImpl::replaceChild): Ditto.
+        (WebCore::ContainerNodeImpl::willRemove): Updated for m_lastChild.
+        (WebCore::ContainerNodeImpl::removeChild): Updated for parameter changes.
+        (WebCore::ContainerNodeImpl::removeChildren): Updated for m_first/lastChild.
+        (WebCore::ContainerNodeImpl::appendChild): Updated for parameter changes.
+        (WebCore::ContainerNodeImpl::hasChildNodes): Updated for m_firstChild.
+        (WebCore::ContainerNodeImpl::addChild): Updated for parameter changes.
+        (WebCore::ContainerNodeImpl::attach): Updated for m_firstChild.
+        (WebCore::ContainerNodeImpl::detach): Ditto.
+        (WebCore::ContainerNodeImpl::insertedIntoDocument): Ditto.
+        (WebCore::ContainerNodeImpl::removedFromDocument): Ditto.
+        (WebCore::ContainerNodeImpl::insertedIntoTree): Ditto.
+        (WebCore::ContainerNodeImpl::removedFromTree): Ditto.
+        * khtml/xml/ContainerNodeImpl.h: Removed unused checkSameDocument and checkIsChild.
+        Made more things private, updated parameters for NodeImpl functions.
+
+        * khtml/html/HTMLSelectElementImpl.cpp:
+        (DOM::HTMLSelectElementImpl::insertBefore): Ditto.
+        (DOM::HTMLSelectElementImpl::replaceChild): Ditto.
+        (DOM::HTMLSelectElementImpl::removeChild): Ditto.
+        (DOM::HTMLSelectElementImpl::appendChild): Ditto.
+        (DOM::HTMLSelectElementImpl::addChild): Ditto.
+        * khtml/html/HTMLSelectElementImpl.h: Ditto.
+
+        * khtml/html/HTMLOptGroupElementImpl.cpp:
+        (WebCore::HTMLOptGroupElementImpl::insertBefore): Updated for parameter type change.
+        Also changed to look at return value, not exception code, to check for success.
+        (WebCore::HTMLOptGroupElementImpl::replaceChild): Ditto.
+        (WebCore::HTMLOptGroupElementImpl::removeChild): Ditto.
+        (WebCore::HTMLOptGroupElementImpl::appendChild): Ditto.
+        (WebCore::HTMLOptGroupElementImpl::addChild): Ditto.
+        * khtml/html/HTMLOptGroupElementImpl.h: Ditto.
+
+        * WebCore+SVG/kdom.h: Renamed enum from ExceptionCode to ExceptionCodes
+        to avoid conflict with a typedef ExceptionCode I added.
+
+        * bindings/objc/DOM.mm:
+        (-[DOMNode insertBefore::]): Added get() call since return value is a PassRefPtr.
+        (-[DOMNode replaceChild::]): Ditto.
+        (-[DOMNode removeChild:]): Ditto.
+        (-[DOMNode appendChild:]): Ditto.
+
+        * khtml/ecma/kjs_dom.h: Changed getDOMNode to take PassRefPtr.
+        * khtml/ecma/kjs_dom.cpp: (KJS::getDOMNode): Changed to take PassRefPtr.
+
+        * khtml/html/HTMLElementImpl.cpp: Added dom2_events.h include, now needed.
+        Re-sorted includes.
+        * ksvg2/svg/SVGElementImpl.cpp: Ditto.
+
+        * khtml/html/html_documentimpl.cpp: (WebCore::HTMLDocumentImpl::documentElement):
+        Changed access to now-private data member _first to equivalent inline function
+        fastFirstChild().
+        * khtml/xml/DocumentImpl.cpp: (WebCore::DocumentImpl::recalcStyle): Ditto.
+        * khtml/xml/dom_elementimpl.cpp: (WebCore::ElementImpl::recalcStyle): Ditto.
+
+        * khtml/html/html_tableimpl.cpp:
+        (WebCore::HTMLTableElementImpl::setCaption): Updated to work with new replaceChild
+        that returns PassRefPtr.
+        (WebCore::HTMLTableElementImpl::setTHead): Ditto.
+        (WebCore::HTMLTableElementImpl::setTFoot): Ditto.
+        (WebCore::HTMLTableElementImpl::setTBody): Ditto.
+        (WebCore::HTMLTableElementImpl::addChild): Updated for parameter type change.
+        (WebCore::HTMLTableSectionElementImpl::addChild): Ditto.
+        (WebCore::HTMLTableRowElementImpl::addChild): Ditto.
+        * khtml/html/html_tableimpl.h: Ditto.
+
+        * khtml/html/htmlparser.cpp: (HTMLParser::handleResidualStyleCloseTagAcrossBlocks):
+        Removed an unneeded explicit call to removeChild. appendChild already takes care of
+        removing the child from its own location. This avoids the fact that removeChild was
+        removing the parent, the only thing keeping the node alive. This is sort of the
+        "flip side" of our removeChild leaks -- code that depended on the behavior that
+        caused the leaks.
+
+        * khtml/xml/xml_tokenizer.cpp: (WebCore::XMLTokenizer::startElementNs):
+        Removed unneeded isHTMLElement() calls from before the "qualified name" change.
+
 2006-01-22  Eric Seidel  <eseidel@apple.com
 
         Rubber-stamped by anders.

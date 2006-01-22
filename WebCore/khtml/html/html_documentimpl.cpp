@@ -3,7 +3,7 @@
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -54,40 +54,35 @@
 
 #include "config.h"
 #include "html/html_documentimpl.h"
-#include "html/html_imageimpl.h"
-#include "html/html_headimpl.h"
+
+#include "DocumentTypeImpl.h"
+#include "Frame.h"
+#include "KWQKCookieJar.h"
+#include "css/css_stylesheetimpl.h"
+#include "css/cssstyleselector.h"
+#include "cssproperties.h"
+#include "dom/dom_exception.h"
 #include "html/html_baseimpl.h"
-#include "html/htmltokenizer.h"
+#include "html/html_headimpl.h"
 #include "html/html_imageimpl.h"
+#include "html/html_imageimpl.h"
+#include "html/htmltokenizer.h"
 #include "htmlfactory.h"
 #include "htmlnames.h"
-
-#include "Frame.h"
-#include "khtml_settings.h"
-
-#include "xml/xml_tokenizer.h"
-#include "xml/dom2_eventsimpl.h"
-#include "DocumentTypeImpl.h"
-
 #include "khtml_factory.h"
+#include "khtml_settings.h"
 #include "rendering/render_object.h"
-#include "dom/dom_exception.h"
-
+#include "xml/dom2_eventsimpl.h"
+#include "xml/xml_tokenizer.h"
 #include <kurl.h>
-
-#include "cssproperties.h"
-#include "css/cssstyleselector.h"
-#include "css/css_stylesheetimpl.h"
-#include <stdlib.h>
 #include <qptrstack.h>
-
-#include "KWQKCookieJar.h"
+#include <stdlib.h>
 
 // Turn off inlining to avoid warning with newer gcc.
-#undef __inline
-#define __inline
+//#undef __inline
+//#define __inline
 #include "doctypes.cpp"
-#undef __inline
+//#undef __inline
 
 template class QPtrStack<DOM::NodeImpl>;
 
@@ -108,7 +103,7 @@ HTMLDocumentImpl::~HTMLDocumentImpl()
 
 ElementImpl* HTMLDocumentImpl::documentElement() const
 {
-    return static_cast<ElementImpl*>(_first);
+    return static_cast<ElementImpl*>(fastFirstChild());
 }
 
 DOMString HTMLDocumentImpl::lastModified() const
@@ -130,15 +125,15 @@ void HTMLDocumentImpl::setCookie( const DOMString & value )
 
 void HTMLDocumentImpl::setBody(HTMLElementImpl *_body, int &exceptioncode)
 {
-    HTMLElementImpl *b = body();
-    if ( !_body ) { 
+    if (!_body) { 
         exceptioncode = DOMException::HIERARCHY_REQUEST_ERR;
         return;
     }
-    if ( !b )
-        documentElement()->appendChild( _body, exceptioncode );
+    HTMLElementImpl* b = body();
+    if (!b)
+        documentElement()->appendChild(_body, exceptioncode);
     else
-        documentElement()->replaceChild( _body, b, exceptioncode );
+        documentElement()->replaceChild(_body, b, exceptioncode);
 }
 
 Tokenizer *HTMLDocumentImpl::createTokenizer()
@@ -152,8 +147,7 @@ Tokenizer *HTMLDocumentImpl::createTokenizer()
 
 bool HTMLDocumentImpl::childAllowed( NodeImpl *newChild )
 {
-    // ### support comments. etc as a child
-    return (newChild->hasTagName(htmlTag) || newChild->isCommentNode());
+    return newChild->hasTagName(htmlTag) || newChild->isCommentNode();
 }
 
 ElementImpl *HTMLDocumentImpl::createElement(const DOMString &name, int &exceptioncode)
@@ -381,8 +375,6 @@ static bool parseDocTypeDeclaration(const QString& buffer,
 
 void HTMLDocumentImpl::determineParseMode( const QString &str )
 {
-    //kdDebug() << "DocumentImpl::determineParseMode str=" << str<< endl;
-
     // This code more or less mimics Mozilla's implementation (specifically the
     // doctype parsing implemented by David Baron in Mozilla's nsParser.cpp).
     //
@@ -457,15 +449,6 @@ void HTMLDocumentImpl::determineParseMode( const QString &str )
     }
   
     m_styleSelector->strictParsing = !inCompatMode();
-
-//     kdDebug() << "DocumentImpl::determineParseMode: publicId =" << publicId << " systemId = " << systemId << endl;
-//     kdDebug() << "DocumentImpl::determineParseMode: htmlMode = " << hMode<< endl;
-//     if( pMode == Strict )
-//         kdDebug(6020) << " using strict parseMode" << endl;
-//     else if (pMode == Compat )
-//         kdDebug(6020) << " using compatibility parseMode" << endl;
-//     else
-//         kdDebug(6020) << " using almost strict parseMode" << endl;
  
 }
 
