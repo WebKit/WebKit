@@ -1,5 +1,7 @@
 2006-01-21  George Staikos <staikos@opensource.apple.com>
 
+        Reviewed by Maciej.
+
         * kjs/nodes2string.cpp
         * kjs/operations.h
         * kjs/debugger.h
