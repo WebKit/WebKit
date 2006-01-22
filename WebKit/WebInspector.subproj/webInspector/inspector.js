@@ -141,7 +141,7 @@ function loaded() {
 
     AppleScrollbar.prototype.show = function() {
         this._track.style.display = "block";
-        this.scrollbar.style.removeProperty("display");
+        this.scrollbar.style.display = null;
         if (this.hidden) {
             this.hidden = false;
             this.refresh();
@@ -169,7 +169,7 @@ function switchPane(pane) {
     currentPane = pane;
     for (var i = 0; i < tabNames.length; i++) {
         if (pane == tabNames[i]) {
-            document.getElementById(tabNames[i] + "Pane").style.removeProperty("display");
+            document.getElementById(tabNames[i] + "Pane").style.display = null;
             document.getElementById(tabNames[i] + "Button").className = "square selected";
         } else {
             document.getElementById(tabNames[i] + "Pane").style.display = "none";
@@ -225,7 +225,7 @@ function updateElementAttributes() {
 
         var span = document.createElement("span");
         span.className = "property";
-        if (attr.namespaceURI != null)
+        if (attr.namespaceURI)
             span.title = attr.namespaceURI;
         span.textContent = attr.name;
         li.appendChild(span);
@@ -236,7 +236,7 @@ function updateElementAttributes() {
         span.title = span.textContent;
         li.appendChild(span);
 
-        if (attr.style != null) {
+        if (attr.style) {
             span = document.createElement("span");
             span.className = "mapped";
             span.innerHTML = "(<a href=\"javascript:selectMappedStyleRule('" + attr.name + "')\">mapped style</a>)";
@@ -362,6 +362,7 @@ function updateStylePane() {
         if (styleRules.length && selectedStyleRuleIndex >= styleRules.length)
             selectedStyleRuleIndex = (styleRules.length - 1);
 
+        var priorityUsed = false;
         for (var i = (styleRules.length - 1); i >= 0; --i) {
             styleProperties[i] = new Array();
 
@@ -369,7 +370,7 @@ function updateStylePane() {
             row.className = "row";
             if (i == selectedStyleRuleIndex)
                 row.className += " focused";
-            if (styleRules[i].computedStyle == true)
+            if (styleRules[i].computedStyle)
                 row.className += " computedStyle";
 
             var cell = document.createElement("div");
@@ -382,7 +383,7 @@ function updateStylePane() {
             cell.className = "cell stylesheet";
             if (styleRules[i].subtitle != null)
                 cell.title = styleRules[i].subtitle;
-            else if (styleRules[i].parentStyleSheet != null && styleRules[i].parentStyleSheet.href != null)
+            else if (styleRules[i].parentStyleSheet && styleRules[i].parentStyleSheet.href)
                 cell.title = styleRules[i].parentStyleSheet.href;
             else
                 cell.title = "inline stylesheet";
@@ -393,55 +394,85 @@ function updateStylePane() {
             row.addEventListener("click", styleRuleSelect, true);
 
             var style = styleRules[i].style;
-            var stylePropertyLookup = new Array();
+            var styleShorthandLookup = new Array();
             for (var j = 0; j < style.length; j++) {
-                var originalProperty = null;
-                var shorthand = style.getPropertyShorthand(style[j]);
-                if (shorthand != null)
-                    originalProperty = stylePropertyLookup[shorthand];
+                var prop = null;
+                var name = style[j];
+                var shorthand = style.getPropertyShorthand(name);
+                if (shorthand)
+                    prop = styleShorthandLookup[shorthand];
 
-                if (originalProperty != null) {
-                    originalProperty.subProperties.push(style[j]);
+                if (!priorityUsed && style.getPropertyPriority(name).length)
+                    priorityUsed = true;
+
+                if (prop) {
+                    prop.subProperties.push(name);
                 } else {
-                    originalProperty = new Object();
-                    originalProperty.style = style;
-                    originalProperty.subProperties = new Array(style[j]);
-                    originalProperty.unusedProperties = new Array();
-                    if (shorthand != null && propertyCount[shorthand] > 0)
-                        originalProperty.unusedProperties[shorthand] = true;
-                    if (shorthand != null) {
-                        if (propertyCount[shorthand] == null)
+                    prop = new Object();
+                    prop.style = style;
+                    prop.subProperties = new Array(name);
+                    prop.unusedProperties = new Array();
+                    prop.name = (shorthand ? shorthand : name);
+                    styleProperties[i].push(prop);
+                    if (shorthand) {
+                        styleShorthandLookup[shorthand] = prop;
+                        if (!propertyCount[shorthand]) {
                             propertyCount[shorthand] = 1;
-                        else
+                        } else {
+                            prop.unusedProperties[shorthand] = true;
                             propertyCount[shorthand]++;
+                        }
                     }
-                    originalProperty.name = (shorthand != null ? shorthand : style[j]);
-                    styleProperties[i].push(originalProperty);
-                    if (shorthand != null)
-                        stylePropertyLookup[originalProperty.name] = originalProperty;
                 }
 
-                if (!styleRules[i].computedStyle) {
-                    if (propertyCount[style[j]] > 0)
-                        originalProperty.unusedProperties[style[j]] = true;
+                if (styleRules[i].computedStyle)
+                    continue;
 
-                    if (propertyCount[style[j]] == null)
-                        propertyCount[style[j]] = 1;
-                    else
-                        propertyCount[style[j]]++;
+                if (!propertyCount[name]) {
+                    propertyCount[name] = 1;
+                } else {
+                    prop.unusedProperties[name] = true;
+                    propertyCount[name]++;
                 }
             }
 
-            if (styleRules[i].computedStyle == true && styleRules.length > 1) {
+            if (styleRules[i].computedStyle && styleRules.length > 1) {
                 var divider = document.createElement("hr");
                 divider.className = "divider";
                 rulesArea.insertBefore(divider, rulesArea.firstChild);
             }
 
-            if (rulesArea.firstChild != null)
+            if (rulesArea.firstChild)
                 rulesArea.insertBefore(row, rulesArea.firstChild);
             else
                 rulesArea.appendChild(row);
+        }
+
+        if (priorityUsed) {
+            // walk the properties again and account for !important
+            var priorityCount = new Array();
+            for (var i = 0; i < styleRules.length; i++) {
+                var style = styleRules[i].style;
+                if (style.computedStyle)
+                    continue;
+                for (var j = 0; j < styleProperties[i].length; j++) {
+                    var prop = styleProperties[i][j];
+                    for (var k = 0; k < prop.subProperties.length; k++) {
+                        var name = prop.subProperties[k];
+                        if (style.getPropertyPriority(name).length) {
+                            if (!priorityCount[name]) {
+                                if (prop.unusedProperties[name])
+                                    prop.unusedProperties[name] = false;
+                                priorityCount[name] = 1;
+                            } else {
+                                priorityCount[name]++;
+                            }
+                        } else if (priorityCount[name]) {
+                            prop.unusedProperties[name] = true;
+                        }
+                    }
+                }
+            }
         }
 
         updateStyleProperties();
@@ -481,8 +512,9 @@ function updateStyleProperties() {
         return;
     }
 
-    for (var i = 0; i < styleProperties[selectedStyleRuleIndex].length; i++) {
-        var prop = styleProperties[selectedStyleRuleIndex][i];
+    var properties = styleProperties[selectedStyleRuleIndex];
+    for (var i = 0; i < properties.length; i++) {
+        var prop = properties[i];
         var mainli = document.createElement("li");
         if (prop.subProperties.length > 1) {
             mainli.className = "hasChildren";
@@ -502,35 +534,40 @@ function updateStyleProperties() {
         span = document.createElement("span");
         span.className = "value";
         span.title = prop.style.getPropertyValue(prop.name);
+        if (prop.style.getPropertyPriority(prop.name).length)
+            span.title += " !" + prop.style.getPropertyPriority(prop.name);
         span.textContent = span.title;
         mainli.appendChild(span);
 
         propertiesTree.appendChild(mainli);
 
         var overloadCount = 0;
-        if (prop.subProperties != null && prop.subProperties.length > 1) {
+        if (prop.subProperties && prop.subProperties.length > 1) {
             var subTree = document.createElement("ul");
             if (!expandedStyleShorthands[prop.name])
-                subTree.style.setProperty("display", "none", "");
+                subTree.style.display = "none";
 
             for (var j = 0; j < prop.subProperties.length; j++) {
+                var name = prop.subProperties[j];
                 var li = document.createElement("li");
-                if (prop.style.isPropertyImplicit(prop.subProperties[j]) || prop.style.getPropertyValue(prop.subProperties[j]) == "initial")
+                if (prop.style.isPropertyImplicit(name) || prop.style.getPropertyValue(name) == "initial")
                     li.className = "implicit";
 
-                if (prop.unusedProperties[prop.subProperties[j]] == true || prop.unusedProperties[prop.name] == true) {
+                if (prop.unusedProperties[name] || prop.unusedProperties[prop.name]) {
                     li.className += " overloaded";
                     overloadCount++;
                 }
 
                 var span = document.createElement("span");
                 span.className = "property";
-                span.textContent = prop.subProperties[j];
+                span.textContent = name;
                 li.appendChild(span);
 
                 span = document.createElement("span");
                 span.className = "value";
-                span.title = prop.style.getPropertyValue(prop.subProperties[j]);
+                span.title = prop.style.getPropertyValue(name);
+                if (prop.style.getPropertyPriority(name).length)
+                    span.title += " !" + prop.style.getPropertyPriority(name);
                 span.textContent = span.title;
                 li.appendChild(span);
 
@@ -540,7 +577,7 @@ function updateStyleProperties() {
             propertiesTree.appendChild(subTree);
         }
 
-        if (prop.unusedProperties[prop.name] == true || overloadCount == prop.subProperties.length)
+        if (prop.unusedProperties[prop.name] || overloadCount == prop.subProperties.length)
             mainli.className += " overloaded";
     }
 
@@ -551,11 +588,11 @@ function toggleStyleShorthand(event) {
     var li = event.currentTarget.parentNode;
     if (li.className.indexOf("expanded") != -1) {
         li.className = li.className.replace(/ expanded/, "");
-        li.nextSibling.style.setProperty("display", "none", "");
+        li.nextSibling.style.display = "none";
         expandedStyleShorthands[li.shorthand] = false;
     } else {
         li.className += " expanded";
-        li.nextSibling.style.removeProperty("display");
+        li.nextSibling.style.display = null;
         expandedStyleShorthands[li.shorthand] = true;
     }
 

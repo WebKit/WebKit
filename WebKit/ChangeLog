@@ -1,3 +1,12 @@
+2006-01-22  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Anders Carlsson.
+        
+        Makes the Inspector's Style pane take !important into account
+        when marking overloaded properties.
+
+        * WebInspector.subproj/webInspector/inspector.js:
+
 2006-01-21  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Anders Carlsson.
