@@ -41,7 +41,6 @@ class FramePrivate;
 class FrameView;
 class KHTMLPartBrowserExtension;
 class KHTMLSettings;
-class KJSProxyImpl;
 
 namespace KJS {
     class PausedTimeouts;
@@ -94,6 +93,7 @@ namespace WebCore {
     class SelectionController;
     class VisiblePosition;
     class XMLTokenizer;
+    class KJSProxyImpl;
 
     struct ChildFrame;
 }
@@ -944,12 +944,9 @@ private:
    */
   QString requestFrameName();
 
-  bool requestObject( WebCore::RenderPart *frame, const QString &url, const QString &serviceType,
-                      const QStringList &paramNames = QStringList(), const QStringList &paramValues = QStringList()  );
-
-  bool requestObject( WebCore::ChildFrame *child, const KURL &url, const WebCore::URLArgs &args = WebCore::URLArgs() );
-
-  WebCore::EventListener *createHTMLEventListener(const WebCore::DOMString& code, WebCore::NodeImpl *node);
+  bool requestObject(WebCore::RenderPart *frame, const QString &url, const QString &serviceType,
+                      const QStringList &paramNames = QStringList(), const QStringList &paramValues = QStringList());
+  bool requestObject(WebCore::ChildFrame *child, const KURL &url, const WebCore::URLArgs &args = WebCore::URLArgs());
 
 public:
   WebCore::DocumentImpl *document() const;
@@ -976,7 +973,7 @@ private:
   void cancelRedirection(bool newLoadInProgress = false);
 
  public:
-  KJSProxyImpl *jScript();
+  WebCore::KJSProxyImpl *jScript();
   Frame *opener();
   void setOpener(Frame *_opener);
   bool openedByJS();

@@ -234,19 +234,19 @@ void SVGSVGElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
         // Only handle events if we're the outermost <svg> element
         QString value = attr->value().qstring();
         if (attr->name() == onloadAttr)
-            getDocument()->setHTMLWindowEventListener(loadEvent, getDocument()->createHTMLEventListener(value, this));
+            getDocument()->setHTMLWindowEventListener(loadEvent, getDocument()->createSVGEventListener(value, this));
         else if (attr->name() == onunloadAttr)
-            getDocument()->setHTMLWindowEventListener(unloadEvent, getDocument()->createHTMLEventListener(value, this));
+            getDocument()->setHTMLWindowEventListener(unloadEvent, getDocument()->createSVGEventListener(value, this));
         else if (attr->name() == onabortAttr)
-            getDocument()->setHTMLWindowEventListener(abortEvent, getDocument()->createHTMLEventListener(value, this));
+            getDocument()->setHTMLWindowEventListener(abortEvent, getDocument()->createSVGEventListener(value, this));
         else if (attr->name() == onerrorAttr)
-            getDocument()->setHTMLWindowEventListener(errorEvent, getDocument()->createHTMLEventListener(value, this));
+            getDocument()->setHTMLWindowEventListener(errorEvent, getDocument()->createSVGEventListener(value, this));
         else if (attr->name() == onresizeAttr)
-            getDocument()->setHTMLWindowEventListener(resizeEvent, getDocument()->createHTMLEventListener(value, this));
+            getDocument()->setHTMLWindowEventListener(resizeEvent, getDocument()->createSVGEventListener(value, this));
         else if (attr->name() == onscrollAttr)
-            getDocument()->setHTMLWindowEventListener(scrollEvent, getDocument()->createHTMLEventListener(value, this));
+            getDocument()->setHTMLWindowEventListener(scrollEvent, getDocument()->createSVGEventListener(value, this));
         else if (attr->name() == SVGNames::onzoomAttr)
-            getDocument()->setHTMLWindowEventListener(zoomEvent, getDocument()->createHTMLEventListener(value, this));
+            getDocument()->setHTMLWindowEventListener(zoomEvent, getDocument()->createSVGEventListener(value, this));
     }
     if (attr->name() == SVGNames::xAttr) {
         x()->baseVal()->setValueAsString(value.impl());

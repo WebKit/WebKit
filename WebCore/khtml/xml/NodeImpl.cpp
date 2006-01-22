@@ -502,15 +502,12 @@ bool NodeImpl::dispatchEvent(EventImpl *evt, int &exceptioncode, bool tempEvent)
     // FIXME: Much code in this class assumes document is non-null; it would be better to
     // ensure that document can never be null.
     Frame *frame = 0;
-    FrameView *view = 0;
+    RefPtr<FrameView> view;
 
     if (DocumentImpl *doc = getDocument()) {
         frame = doc->frame();
         view = doc->view();
-        // Since event handling code could cause this object to be deleted, grab a reference to the view now
-        if (view)
-            view->ref();
-    }    
+    }
 
     bool ret = dispatchGenericEvent( evt, exceptioncode );
 
@@ -519,9 +516,6 @@ bool NodeImpl::dispatchEvent(EventImpl *evt, int &exceptioncode, bool tempEvent)
     // So there is no need for the interpreter to keep the event in it's cache
     if (tempEvent && frame && frame->jScript())
         frame->jScript()->finishedWithEvent(evt);
-
-    if (view)
-        view->deref();
 
     evt->deref();
 

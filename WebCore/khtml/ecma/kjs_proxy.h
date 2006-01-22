@@ -26,25 +26,28 @@
 class Frame;
 class QString;
 
-namespace DOM {
+namespace KJS {
+    class ScriptInterpreter;
+}
+
+namespace WebCore {
+
     class DOMString;
     class EventImpl;
     class EventListener;
     class NodeImpl;
-};
-
-namespace KJS {
-    class ScriptInterpreter;
-}
 
 class KJSProxyImpl {
 public:
     KJSProxyImpl(Frame*);
     ~KJSProxyImpl();
-    QVariant evaluate(const DOM::DOMString& filename, int baseLine, const DOM::DOMString& code, DOM::NodeImpl*);
+    QVariant evaluate(const DOMString& filename, int baseLine, const DOMString& code, NodeImpl*);
     void clear();
-    DOM::EventListener* createHTMLEventHandler(const DOM::DOMString& code, DOM::NodeImpl*);
-    void finishedWithEvent(DOM::EventImpl*);
+    EventListener* createHTMLEventHandler(const DOMString& code, NodeImpl*);
+#if SVG_SUPPORT
+    EventListener* createSVGEventHandler(const DOMString& code, NodeImpl*);
+#endif
+    void finishedWithEvent(EventImpl*);
     KJS::ScriptInterpreter *interpreter();
     void setEventHandlerLineno(int lineno) { m_handlerLineno = lineno; }
 
@@ -55,5 +58,7 @@ private:
     Frame *m_frame;
     int m_handlerLineno;
 };
+
+}
 
 #endif

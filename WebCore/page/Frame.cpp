@@ -2530,13 +2530,6 @@ void Frame::slotPartRemoved(ObjectContents  *part)
         d->m_activeFrame = 0;
 }
 
-EventListener *Frame::createHTMLEventListener(const DOMString& code, NodeImpl *node)
-{
-    if (KJSProxyImpl *proxy = jScript())
-        return proxy->createHTMLEventHandler(code, node);
-    return 0;
-}
-
 Frame *Frame::opener()
 {
     return d->m_opener;

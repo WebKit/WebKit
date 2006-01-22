@@ -37,9 +37,8 @@
 
 #include <kdebug.h>
 
-using namespace DOM;
+using namespace WebCore;
 using namespace EventNames;
-using namespace khtml;
 using namespace HTMLNames;
 
 namespace KJS {

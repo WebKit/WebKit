@@ -1,3 +1,37 @@
+2006-01-22  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        SVG needs to support "evt" instead of "event" in event handlers.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5874
+
+        * WebCore.xcodeproj/project.pbxproj: added new classes
+        * khtml/ecma/kjs_events.cpp:
+        * khtml/ecma/kjs_events.h:
+        * khtml/ecma/kjs_proxy.cpp:
+        (WebCore::KJSProxyImpl::createHTMLEventHandler): simplified
+        (WebCore::KJSProxyImpl::createSVGEventHandler): new
+        * khtml/ecma/kjs_proxy.h:
+        * khtml/ecma/kjs_window.cpp:
+        * khtml/ecma/kjs_window.h:
+        * khtml/xml/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::createHTMLEventListener): simplified
+        (WebCore::DocumentImpl::createSVGEventListener): new
+        * khtml/xml/DocumentImpl.h:
+        * khtml/xml/NodeImpl.cpp:
+        (WebCore::NodeImpl::dispatchEvent): use RefPtr
+        * ksvg2/events/JSSVGLazyEventListener.cpp: Added.
+        (WebCore::JSSVGLazyEventListener::JSSVGLazyEventListener): added.
+        (WebCore::JSSVGLazyEventListener::eventParameterName): added.
+        * ksvg2/events/JSSVGLazyEventListener.h: Added.
+        * ksvg2/svg/SVGElementImpl.cpp:
+        (SVGElementImpl::parseMappedAttribute): use new SVG event handler
+        * ksvg2/svg/SVGSVGElementImpl.cpp:
+        (SVGSVGElementImpl::parseMappedAttribute): use new SVG event handler
+        * page/Frame.cpp: updated KJSProxyImpl namespace
+        * page/Frame.h: updated KJSProxyImpl namespace
+        * page/FramePrivate.h: updated KJSProxyImpl namespace
+
 2006-01-22  Darin Adler  <darin@apple.com>
 
        Reviewed by Maciej.

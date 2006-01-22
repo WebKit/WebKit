@@ -420,6 +420,11 @@ public:
 
     EventListener *createHTMLEventListener(const DOMString& code, NodeImpl*);
     
+#if SVG_SUPPORT
+    // FIXME: Move to SVGDocumentExtensions, when that lands w/ animation
+    EventListener *createSVGEventListener(const DOMString& code, NodeImpl*);
+#endif
+    
     /**
      * Searches through the document, starting from fromNode, for the next selectable element that comes after fromNode.
      * The order followed is as specified in section 17.11.1 of the HTML4 spec, which is elements with tab indexes

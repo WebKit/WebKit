@@ -83,9 +83,8 @@ namespace KJS {
     public:
         JSLazyEventListener(const DOM::DOMString& code, Window*, DOM::NodeImpl*, int lineno = 0);
         virtual JSObject *listenerObj() const;
-    protected:
-        virtual JSValue *eventParameterName() const;
     private:
+        virtual JSValue *eventParameterName() const;
         void parseCode() const;
 
         mutable DOM::DOMString code;

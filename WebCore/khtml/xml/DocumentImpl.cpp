@@ -2281,12 +2281,23 @@ bool DocumentImpl::hasWindowEventListener(const AtomicString &eventType)
 
 EventListener *DocumentImpl::createHTMLEventListener(const DOMString& code, NodeImpl *node)
 {
-    if (frame()) {
-        return frame()->createHTMLEventListener(code, node);
-    } else {
-        return NULL;
+    if (Frame *frm = frame()) {
+        if (KJSProxyImpl *proxy = frm->jScript())
+            return proxy->createHTMLEventHandler(code, node);
     }
+    return 0;
 }
+
+#if SVG_SUPPORT
+EventListener *DocumentImpl::createSVGEventListener(const DOMString& code, NodeImpl *node)
+{
+    if (Frame *frm = frame()) {
+        if (KJSProxyImpl *proxy = frm->jScript())
+            return proxy->createSVGEventHandler(code, node);
+    }
+    return 0;
+}
+#endif
 
 void DocumentImpl::setHTMLWindowEventListener(const AtomicString& eventType, AttributeImpl* attr)
 {

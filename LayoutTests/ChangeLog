@@ -1,3 +1,15 @@
+2006-01-22  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        SVG needs to support "evt" instead of "event" in event handlers.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5874
+
+        * svg/custom/evt-onload-expected.checksum: Added.
+        * svg/custom/evt-onload-expected.png: Added.
+        * svg/custom/evt-onload-expected.txt: Added.
+        * svg/custom/evt-onload.svg: Added.
+
 2006-01-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

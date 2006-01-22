@@ -186,7 +186,7 @@ public:
   QString scheduledScript;
   RefPtr<DOM::NodeImpl> scheduledScriptNode;
 
-  KJSProxyImpl *m_jscript;
+  WebCore::KJSProxyImpl *m_jscript;
   int m_runningScripts;
   bool m_bJScriptEnabled :1;
   bool m_bJavaEnabled :1;
