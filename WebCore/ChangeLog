@@ -1,3 +1,28 @@
+2006-01-22  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+       - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3702
+         Web page is laid out incorrectly after printing with print-specific style sheet.
+
+        Also replaced tabs with spaces in the changed files.
+
+        Test cases: 
+        * fast/table/append-cells.html
+        * fast/table/append-cells2.html
+        * fast/table/remove-td-display-none.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::recalcSections): Shrink columns and columnPos to the
+          actual number of columns.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::numColumns): New function.
+        (WebCore::RenderTableSection::dump): Use gridRows instead of grid.size() for row count,
+          preventing crashes.
+
+        * rendering/RenderTableSection.h: Added numColumns() and a comment about cCol/cRow.
+
 2006-01-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.
@@ -112,7 +137,7 @@
         * khtml/xml/xml_tokenizer.cpp: (WebCore::XMLTokenizer::startElementNs):
         Removed unneeded isHTMLElement() calls from before the "qualified name" change.
 
-2006-01-22  Eric Seidel  <eseidel@apple.com
+2006-01-22  Eric Seidel  <eseidel@apple.com>
 
         Rubber-stamped by anders.
 

@@ -7,6 +7,7 @@
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -90,20 +91,20 @@ void RenderTableSection::addChild(RenderObject *child, RenderObject *beforeChild
         if (beforeChild && beforeChild->isAnonymous())
             row = beforeChild;
         else {
-	    RenderObject *lastBox = beforeChild;
-	    while (lastBox && lastBox->parent()->isAnonymous() && !lastBox->isTableRow())
-		lastBox = lastBox->parent();
-	    if (lastBox && lastBox->isAnonymous()) {
-		lastBox->addChild( child, beforeChild );
-		return;
-	    } else {
-		row = new (renderArena()) RenderTableRow(document() /* anonymous table */);
-		RenderStyle *newStyle = new (renderArena()) RenderStyle();
-		newStyle->inheritFrom(style());
-		newStyle->setDisplay(TABLE_ROW);
-		row->setStyle(newStyle);
-		addChild(row, beforeChild);
-	    }
+            RenderObject *lastBox = beforeChild;
+            while (lastBox && lastBox->parent()->isAnonymous() && !lastBox->isTableRow())
+                lastBox = lastBox->parent();
+            if (lastBox && lastBox->isAnonymous()) {
+                lastBox->addChild( child, beforeChild );
+                return;
+            } else {
+                row = new (renderArena()) RenderTableRow(document() /* anonymous table */);
+                RenderStyle *newStyle = new (renderArena()) RenderStyle();
+                newStyle->inheritFrom(style());
+                newStyle->setDisplay(TABLE_ROW);
+                row->setStyle(newStyle);
+                addChild(row, beforeChild);
+            }
         }
         row->addChild(child);
         child->setNeedsLayoutAndMinMaxRecalc();
@@ -111,7 +112,7 @@ void RenderTableSection::addChild(RenderObject *child, RenderObject *beforeChild
     }
 
     if (beforeChild)
-	setNeedCellRecalc();
+        setNeedCellRecalc();
 
     cRow++;
     cCol = 0;
@@ -141,12 +142,12 @@ bool RenderTableSection::ensureRows(int numRows)
         CellStruct emptyCellStruct;
         emptyCellStruct.cell = 0;
         emptyCellStruct.inColSpan = false;
-	for (int r = nRows; r < numRows; r++) {
-	    grid[r].row = new Row(nCols);
-	    grid[r].row->fill(emptyCellStruct);
-	    grid[r].baseLine = 0;
-	    grid[r].height = Length();
-	}
+        for (int r = nRows; r < numRows; r++) {
+            grid[r].row = new Row(nCols);
+            grid[r].row->fill(emptyCellStruct);
+            grid[r].baseLine = 0;
+            grid[r].height = Length();
+        }
     }
 
     return true;
@@ -167,14 +168,14 @@ void RenderTableSection::addCell(RenderTableCell *cell)
     // </TABLE>
 
     while (cCol < nCols && (cellAt(cRow, cCol).cell || cellAt(cRow, cCol).inColSpan))
-	cCol++;
+        cCol++;
 
     if (rSpan == 1) {
-	// we ignore height settings on rowspan cells
-	Length height = cell->style()->height();
-	if (height.value > 0 || (height.type == Relative && height.value >= 0)) {
-	    Length cRowHeight = grid[cRow].height;
-	    switch (height.type) {
+        // we ignore height settings on rowspan cells
+        Length height = cell->style()->height();
+        if (height.value > 0 || (height.type == Relative && height.value >= 0)) {
+            Length cRowHeight = grid[cRow].height;
+            switch (height.type) {
                 case Percent:
                     if (!(cRowHeight.type == Percent) ||
                         (cRowHeight.type == Percent && cRowHeight.value < height.value))
@@ -188,8 +189,8 @@ void RenderTableSection::addCell(RenderTableCell *cell)
                 case Relative:
                 default:
                     break;
-	    }
-	}
+            }
+        }
     }
 
     // make sure we have enough rows
@@ -202,31 +203,31 @@ void RenderTableSection::addCell(RenderTableCell *cell)
     currentCell.cell = cell;
     currentCell.inColSpan = false;
     while (cSpan) {
-	int currentSpan;
-	if (cCol >= nCols) {
-	    table()->appendColumn(cSpan);
-	    currentSpan = cSpan;
-	} else {
-	    if (cSpan < columns[cCol].span)
-		table()->splitColumn(cCol, cSpan);
-	    currentSpan = columns[cCol].span;
-	}
+        int currentSpan;
+        if (cCol >= nCols) {
+            table()->appendColumn(cSpan);
+            currentSpan = cSpan;
+        } else {
+            if (cSpan < columns[cCol].span)
+                table()->splitColumn(cCol, cSpan);
+            currentSpan = columns[cCol].span;
+        }
 
-	for (int r = 0; r < rSpan; r++) {
+        for (int r = 0; r < rSpan; r++) {
             CellStruct& c = cellAt(cRow + r, cCol);
             if (currentCell.cell && !c.cell)
                 c.cell = currentCell.cell;
             if (currentCell.inColSpan)
                 c.inColSpan = true;
-	}
-	cCol++;
-	cSpan -= currentSpan;
+        }
+        cCol++;
+        cSpan -= currentSpan;
         currentCell.cell = 0;
-	currentCell.inColSpan = true;
+        currentCell.inColSpan = true;
     }
     if (cell) {
-	cell->setRow(cRow);
-	cell->setCol(table()->effColToCol(col));
+        cell->setRow(cRow);
+        cell->setCol(table()->effColToCol(col));
     }
 }
 
@@ -238,27 +239,27 @@ void RenderTableSection::setCellWidths()
 
     int rows = gridRows;
     for (int i = 0; i < rows; i++) {
-	Row &row = *grid[i].row;
-	int cols = row.size();
-	for (int j = 0; j < cols; j++) {
-	    CellStruct current = row[j];
+        Row &row = *grid[i].row;
+        int cols = row.size();
+        for (int j = 0; j < cols; j++) {
+            CellStruct current = row[j];
             RenderTableCell *cell = current.cell;
 
-	    if (!cell)
-		continue;
-	    int endCol = j;
-	    int cspan = cell->colSpan();
-	    while (cspan && endCol < cols) {
-		cspan -= table()->columns[endCol].span;
-		endCol++;
-	    }
-	    int w = columnPos[endCol] - columnPos[j] - table()->hBorderSpacing();
-	    int oldWidth = cell->width();
-	    if (w != oldWidth) {
-		cell->setNeedsLayout(true);
-		cell->setWidth(w);
-	    }
-	}
+            if (!cell)
+                continue;
+            int endCol = j;
+            int cspan = cell->colSpan();
+            while (cspan && endCol < cols) {
+                cspan -= table()->columns[endCol].span;
+                endCol++;
+            }
+            int w = columnPos[endCol] - columnPos[j] - table()->hBorderSpacing();
+            int oldWidth = cell->width();
+            if (w != oldWidth) {
+                cell->setNeedsLayout(true);
+                cell->setWidth(w);
+            }
+        }
     }
 }
 
@@ -275,30 +276,30 @@ void RenderTableSection::calcRowHeight()
     rowPos[0] = spacing;
 
     for (int r = 0; r < totalRows; r++) {
-	rowPos[r + 1] = 0;
+        rowPos[r + 1] = 0;
 
-	int baseline = 0;
-	int bdesc = 0;
-	int ch = grid[r].height.minWidth(0);
-	int pos = rowPos[r + 1] + ch + spacing;
+        int baseline = 0;
+        int bdesc = 0;
+        int ch = grid[r].height.minWidth(0);
+        int pos = rowPos[r + 1] + ch + spacing;
 
-	if (pos > rowPos[r + 1])
-	    rowPos[r + 1] = pos;
+        if (pos > rowPos[r + 1])
+            rowPos[r + 1] = pos;
 
-	Row *row = grid[r].row;
-	int totalCols = row->size();
-	int totalRows = gridRows;
+        Row *row = grid[r].row;
+        int totalCols = row->size();
+        int totalRows = gridRows;
 
-	for (int c = 0; c < totalCols; c++) {
-	    CellStruct current = cellAt(r, c);
+        for (int c = 0; c < totalCols; c++) {
+            CellStruct current = cellAt(r, c);
             cell = current.cell;
-	    if (!cell || current.inColSpan)
-		continue;
-	    if (r < totalRows - 1 && cellAt(r + 1, c).cell == cell)
-		continue;
+            if (!cell || current.inColSpan)
+                continue;
+            if (r < totalRows - 1 && cellAt(r + 1, c).cell == cell)
+                continue;
 
-	    if ((indx = r - cell->rowSpan() + 1) < 0)
-		indx = 0;
+            if ((indx = r - cell->rowSpan() + 1) < 0)
+                indx = 0;
 
             if (cell->overrideSize() != -1) {
                 cell->setOverrideSize(-1);
@@ -308,22 +309,22 @@ void RenderTableSection::calcRowHeight()
             
             // Explicit heights use the border box in quirks mode.  In strict mode do the right
             // thing and actually add in the border and padding.
-	    ch = cell->style()->height().width(0) + 
+            ch = cell->style()->height().width(0) + 
                 (cell->style()->htmlHacks() ? 0 : (cell->paddingTop() + cell->paddingBottom() +
                                                    cell->borderTop() + cell->borderBottom()));
-	    if (cell->height() > ch)
-		ch = cell->height();
+            if (cell->height() > ch)
+                ch = cell->height();
 
             pos = rowPos[ indx ] + ch + spacing;
 
-	    if (pos > rowPos[r + 1])
-		rowPos[r + 1] = pos;
+            if (pos > rowPos[r + 1])
+                rowPos[r + 1] = pos;
 
-	    // find out the baseline
-	    EVerticalAlign va = cell->style()->verticalAlign();
-	    if (va == BASELINE || va == TEXT_BOTTOM || va == TEXT_TOP
-		|| va == SUPER || va == SUB) {
-		int b = cell->baselinePosition();
+            // find out the baseline
+            EVerticalAlign va = cell->style()->verticalAlign();
+            if (va == BASELINE || va == TEXT_BOTTOM || va == TEXT_TOP
+                || va == SUPER || va == SUB) {
+                int b = cell->baselinePosition();
                 if (b > cell->borderTop() + cell->paddingTop()) {
                     if (b > baseline)
                         baseline = b;
@@ -332,21 +333,21 @@ void RenderTableSection::calcRowHeight()
                     if (td > bdesc)
                         bdesc = td;
                 }
-	    }
-	}
+            }
+        }
 
-	//do we have baseline aligned elements?
-	if (baseline) {
-	    // increase rowheight if baseline requires
-	    int bRowPos = baseline + bdesc  + spacing ; // + 2*padding
-	    if (rowPos[r + 1] < bRowPos)
-		rowPos[r + 1] = bRowPos;
+        //do we have baseline aligned elements?
+        if (baseline) {
+            // increase rowheight if baseline requires
+            int bRowPos = baseline + bdesc  + spacing ; // + 2*padding
+            if (rowPos[r + 1] < bRowPos)
+                rowPos[r + 1] = bRowPos;
 
-	    grid[r].baseLine = baseline;
-	}
+            grid[r].baseLine = baseline;
+        }
 
-	if (rowPos[r + 1] < rowPos[r])
-	    rowPos[r + 1] = rowPos[r];
+        if (rowPos[r + 1] < rowPos[r])
+            rowPos[r + 1] = rowPos[r];
     }
 }
 
@@ -360,53 +361,53 @@ int RenderTableSection::layoutRows(int toAdd)
     
     if (toAdd && totalRows && (rowPos[totalRows] || !nextSibling())) {
 
-	int totalHeight = rowPos[totalRows] + toAdd;
+        int totalHeight = rowPos[totalRows] + toAdd;
 
         int dh = toAdd;
-	int totalPercent = 0;
-	int numAuto = 0;
-	for (int r = 0; r < totalRows; r++) {
-	    if (grid[r].height.type == Auto)
-		numAuto++;
-	    else if (grid[r].height.type == Percent)
-		totalPercent += grid[r].height.value;
-	}
-	if (totalPercent) {
-	    // try to satisfy percent
-	    int add = 0;
-	    if (totalPercent > 100)
-		totalPercent = 100;
-	    int rh = rowPos[1] - rowPos[0];
-	    for (int r = 0; r < totalRows; r++) {
-		if (totalPercent > 0 && grid[r].height.type == Percent) {
-		    int toAdd = kMin(dh, (totalHeight * grid[r].height.value / 100) - rh);
+        int totalPercent = 0;
+        int numAuto = 0;
+        for (int r = 0; r < totalRows; r++) {
+            if (grid[r].height.type == Auto)
+                numAuto++;
+            else if (grid[r].height.type == Percent)
+                totalPercent += grid[r].height.value;
+        }
+        if (totalPercent) {
+            // try to satisfy percent
+            int add = 0;
+            if (totalPercent > 100)
+                totalPercent = 100;
+            int rh = rowPos[1] - rowPos[0];
+            for (int r = 0; r < totalRows; r++) {
+                if (totalPercent > 0 && grid[r].height.type == Percent) {
+                    int toAdd = kMin(dh, (totalHeight * grid[r].height.value / 100) - rh);
                     // If toAdd is negative, then we don't want to shrink the row (this bug
                     // affected Outlook Web Access).
                     toAdd = kMax(0, toAdd);
-		    add += toAdd;
-		    dh -= toAdd;
-		    totalPercent -= grid[r].height.value;
-		}
-		if (r < totalRows - 1)
-		    rh = rowPos[r + 2] - rowPos[r + 1];
+                    add += toAdd;
+                    dh -= toAdd;
+                    totalPercent -= grid[r].height.value;
+                }
+                if (r < totalRows - 1)
+                    rh = rowPos[r + 2] - rowPos[r + 1];
                 rowPos[r + 1] += add;
-	    }
-	}
-	if (numAuto) {
-	    // distribute over variable cols
-	    int add = 0;
-	    for (int r = 0; r < totalRows; r++) {
-		if (numAuto > 0 && grid[r].height.type == Auto) {
-		    int toAdd = dh/numAuto;
-		    add += toAdd;
-		    dh -= toAdd;
+            }
+        }
+        if (numAuto) {
+            // distribute over variable cols
+            int add = 0;
+            for (int r = 0; r < totalRows; r++) {
+                if (numAuto > 0 && grid[r].height.type == Auto) {
+                    int toAdd = dh/numAuto;
+                    add += toAdd;
+                    dh -= toAdd;
                     numAuto--;
-		}
+                }
                 rowPos[r + 1] += add;
-	    }
-	}
+            }
+        }
         if (dh > 0 && rowPos[totalRows]) {
-	    // if some left overs, distribute equally.
+            // if some left overs, distribute equally.
             int tot = rowPos[totalRows];
             int add = 0;
             int prev = rowPos[0];
@@ -423,8 +424,8 @@ int RenderTableSection::layoutRows(int toAdd)
 
     int nEffCols = table()->numEffCols();
     for (int r = 0; r < totalRows; r++) {
-	Row *row = grid[r].row;
-	int totalCols = row->size();
+        Row *row = grid[r].row;
+        int totalCols = row->size();
         for (int c = 0; c < nEffCols; c++) {
             CellStruct current = cellAt(r, c);
             RenderTableCell* cell = current.cell;
@@ -432,7 +433,7 @@ int RenderTableSection::layoutRows(int toAdd)
             if (!cell)
                 continue;
             if (r < totalRows - 1 && cell == cellAt(r + 1, c).cell)
-		continue;
+                continue;
 
             if ((rindx = r-cell->rowSpan() + 1) < 0)
                 rindx = 0;
@@ -511,9 +512,9 @@ int RenderTableSection::layoutRows(int toAdd)
         
             if (style()->direction() == RTL) {
                 cell->setPos(
-		    table()->columnPos[(int)totalCols] -
-		    table()->columnPos[table()->colToEffCol(cell->col()+cell->colSpan())] +
-		    leftOffset,
+                    table()->columnPos[(int)totalCols] -
+                    table()->columnPos[table()->colToEffCol(cell->col()+cell->colSpan())] +
+                    leftOffset,
                     rowPos[rindx]);
             } else
                 cell->setPos(table()->columnPos[c] + leftOffset, rowPos[rindx]);
@@ -551,49 +552,49 @@ void RenderTableSection::paint(PaintInfo& i, int tx, int ty)
     unsigned int startrow = 0;
     unsigned int endrow = totalRows;
     for (; startrow < totalRows; startrow++)
-	if (ty + rowPos[startrow+1] >= y - os)
-	    break;
+        if (ty + rowPos[startrow+1] >= y - os)
+            break;
 
     for (; endrow > 0; endrow--)
-	if ( ty + rowPos[endrow-1] <= y + h + os)
+        if ( ty + rowPos[endrow-1] <= y + h + os)
             break;
 
     unsigned int startcol = 0;
     unsigned int endcol = totalCols;
     if (style()->direction() == LTR) {
-	for (; startcol < totalCols; startcol++) {
-	    if (tx + table()->columnPos[startcol + 1] >= x - os)
+        for (; startcol < totalCols; startcol++) {
+            if (tx + table()->columnPos[startcol + 1] >= x - os)
                 break;
-	}
-	for (; endcol > 0; endcol--) {
-	    if (tx + table()->columnPos[endcol - 1] <= x + w + os)
-		break;
-	}
+        }
+        for (; endcol > 0; endcol--) {
+            if (tx + table()->columnPos[endcol - 1] <= x + w + os)
+                break;
+        }
     }
 
     if (startcol < endcol) {
-	// draw the cells
-	for (unsigned int r = startrow; r < endrow; r++) {
-	    unsigned int c = startcol;
-	    // since a cell can be -1 (indicating a colspan) we might have to search backwards to include it
-	    while (c && cellAt(r, c).inColSpan)
-		c--;
-	    for (; c < endcol; c++) {
+        // draw the cells
+        for (unsigned int r = startrow; r < endrow; r++) {
+            unsigned int c = startcol;
+            // since a cell can be -1 (indicating a colspan) we might have to search backwards to include it
+            while (c && cellAt(r, c).inColSpan)
+                c--;
+            for (; c < endcol; c++) {
                 CellStruct current = cellAt(r, c);
                 RenderTableCell *cell = current.cell;
-		
+                
                 if (!cell || (cell->layer() && i.phase != PaintActionCollapsedTableBorders)) 
-		    continue;
+                    continue;
                 
                 // Cells must always paint in the order in which they appear taking into account
                 // their upper left originating row/column.  For cells with rowspans, avoid repainting
                 // if we've already seen the cell.
-		if (r > startrow && (cellAt(r-1, c).cell == cell))
-		    continue;
+                if (r > startrow && (cellAt(r-1, c).cell == cell))
+                    continue;
 
-		cell->paint(i, tx, ty);
-	    }
-	}
+                cell->paint(i, tx, ty);
+            }
+        }
     }
 }
 
@@ -605,12 +606,12 @@ void RenderTableSection::recalcCells()
     gridRows = 0;
 
     for (RenderObject *row = firstChild(); row; row = row->nextSibling()) {
-	cRow++;
-	cCol = 0;
-	ensureRows(cRow + 1);
-	for (RenderObject *cell = row->firstChild(); cell; cell = cell->nextSibling())
-	    if (cell->isTableCell())
-		addCell(static_cast<RenderTableCell *>(cell));
+        cRow++;
+        cCol = 0;
+        ensureRows(cRow + 1);
+        for (RenderObject *cell = row->firstChild(); cell; cell = cell->nextSibling())
+            if (cell->isTableCell())
+                addCell(static_cast<RenderTableCell *>(cell));
     }
     needCellRecalc = false;
     setNeedsLayout(true);
@@ -620,7 +621,22 @@ void RenderTableSection::clearGrid()
 {
     int rows = gridRows;
     while (rows--)
-	delete grid[rows].row;
+        delete grid[rows].row;
+}
+
+int RenderTableSection::numColumns() const
+{
+    int result = 0;
+    
+    for (int r = 0; r < gridRows; ++r) {
+        for (int c = result; c < table()->numEffCols(); ++c) {
+            const CellStruct& cell = cellAt(r, c);
+            if (cell.cell || cell.inColSpan)
+                result = c;
+        }
+    }
+    
+    return result + 1;
 }
 
 RenderObject* RenderTableSection::removeChildNode(RenderObject* child)
@@ -632,16 +648,16 @@ RenderObject* RenderTableSection::removeChildNode(RenderObject* child)
 #ifndef NDEBUG
 void RenderTableSection::dump(QTextStream *stream, QString ind) const
 {
-    *stream << endl << ind << "grid=(" << grid.size() << "," << table()->numEffCols() << ")" << endl << ind;
-    for (unsigned int r = 0; r < grid.size(); r++) {
-	for (int c = 0; c < table()->numEffCols(); c++) {
-	    if (cellAt( r, c).cell && !cellAt(r, c).inColSpan)
-		*stream << "(" << cellAt(r, c).cell->row() << "," << cellAt(r, c).cell->col() << ","
-			<< cellAt(r, c).cell->rowSpan() << "," << cellAt(r, c).cell->colSpan() << ") ";
-	    else
-		*stream << cellAt(r, c).cell << "null cell ";
-	}
-	*stream << endl << ind;
+    *stream << endl << ind << "grid=(" << gridRows << "," << table()->numEffCols() << ")" << endl << ind;
+    for (int r = 0; r < gridRows; r++) {
+        for (int c = 0; c < table()->numEffCols(); c++) {
+            if (cellAt( r, c).cell && !cellAt(r, c).inColSpan)
+                *stream << "(" << cellAt(r, c).cell->row() << "," << cellAt(r, c).cell->col() << ","
+                        << cellAt(r, c).cell->rowSpan() << "," << cellAt(r, c).cell->colSpan() << ") ";
+            else
+                *stream << cellAt(r, c).cell << "null cell ";
+        }
+        *stream << endl << ind;
     }
     RenderContainer::dump(stream,ind);
 }

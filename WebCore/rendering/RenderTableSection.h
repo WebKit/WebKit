@@ -69,21 +69,22 @@ public:
     };
     typedef Array<CellStruct> Row;
     struct RowStruct {
-	Row *row;
-	int baseLine;
-	Length height;
+        Row *row;
+        int baseLine;
+        Length height;
     };
 
     CellStruct& cellAt(int row,  int col) {
-	return (*grid[row].row)[col];
+        return (*grid[row].row)[col];
     }
     const CellStruct& cellAt(int row, int col) const {
-	return (*grid[row].row)[col];
+        return (*grid[row].row)[col];
     }
 
     virtual void paint(PaintInfo& i, int tx, int ty);
 
     int numRows() const { return gridRows; }
+    int numColumns() const;
     int getBaseline(int row) {return grid[row].baseLine;}
 
     void setNeedCellRecalc() {
@@ -99,6 +100,7 @@ public:
     int gridRows;
     Array<int> rowPos;
 
+    // the current insertion position
     int cCol;
     int cRow;
     bool needCellRecalc;

@@ -1,3 +1,23 @@
+2006-01-22  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+       - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=3702
+         Web page is laid out incorrectly after printing with print-specific style sheet
+
+        * fast/table/append-cells-expected.checksum: Added.
+        * fast/table/append-cells-expected.png: Added.
+        * fast/table/append-cells-expected.txt: Added.
+        * fast/table/append-cells.html: Added.
+        * fast/table/append-cells2-expected.checksum: Added.
+        * fast/table/append-cells2-expected.png: Added.
+        * fast/table/append-cells2-expected.txt: Added.
+        * fast/table/append-cells2.html: Added.
+        * fast/table/remove-td-display-none-expected.checksum: Added.
+        * fast/table/remove-td-display-none-expected.png: Added.
+        * fast/table/remove-td-display-none-expected.txt: Added.
+        * fast/table/remove-td-display-none.html: Added.
+
 2006-01-22  Alexander Kellett  <lypanov@kde.org>
 
         Reviewed by eseidel.
