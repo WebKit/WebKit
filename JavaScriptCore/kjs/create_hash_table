@@ -6,7 +6,9 @@
 #                  David Faure <faure@kde.org>
 # Modified (c) 2004 by Nikolas Zimmermann <wildfox@kde.org>
 
-$file = $ARGV[0];
+use strict;
+
+my $file = $ARGV[0];
 shift;
 my $findSize = 0;
 my $includelookup = 0;
@@ -16,16 +18,18 @@ $findSize = 1 if (defined($ARGV[0]) && $ARGV[0] eq "-s");
 $includelookup = 1 if (defined($ARGV[0]) && $ARGV[0] eq "-i");
 # Use -n as second argument to make it use the third
 #      argument as namespace parameter ie. -n KDOM
-$useNameSpace = $ARGV[1] if (defined($ARGV[0]) && $ARGV[0] eq "-n");
+my $useNameSpace = $ARGV[1] if (defined($ARGV[0]) && $ARGV[0] eq "-n");
 
 print STDERR "Creating hashtable for $file\n";
 open(IN, $file) or die "No such file $file";
 
-@keys = ();
-@values = ();
-@attrs = ();
-@params = ();
-@hashes = ();
+my @keys = ();
+my @values = ();
+my @attrs = ();
+my @params = ();
+my @hashes = ();
+my @table = ();
+my @links = ();
 
 my $inside = 0;
 my $name;
@@ -54,7 +58,7 @@ while (<IN>) {
       if($findSize) {
 	my $entriesnum=@keys;
         print STDERR "Table: $name   $entriesnum entries\n";
-	for( $i=3 ; $i<79 ; ++$i) { $hashsize=$i ; calcTable(); }
+	for( my $i=3 ; $i<79 ; ++$i) { $hashsize=$i ; calcTable(); }
       } else {
         calcTable();
       }
@@ -64,6 +68,8 @@ while (<IN>) {
       @values = ();
       @attrs = ();
       @params = ();
+      @table = ();
+      @links = ();
       @hashes = ();
       $inside = 0;
     } elsif (/^(\S+)\s*(\S+)\s*([\w\|]*)\s*(\w*)\s*$/ && $inside) {
@@ -86,13 +92,11 @@ while (<IN>) {
 die "missing closing \@end" if ($inside);
 
 sub calcTable() {
-  @table = ();
-  @links = ();
   $size = $hashsize;
   my $collisions = 0;
   my $maxdepth = 0;
   my $i = 0;
-  foreach $key (@keys) {
+  foreach my $key (@keys) {
     my $depth = 0;
     my $h = hashValue($key) % $hashsize;
     while (defined($table[$h])) {
@@ -120,13 +124,13 @@ sub calcTable() {
 
   if ($findSize) {
     my $emptycount = 0;
-    foreach $entry (@table) {
+    foreach my $entry (@table) {
       $emptycount++ if (!defined($entry));
     }
     print STDERR "Hashsize: $hashsize  Total Size: $size Empty: $emptycount MaxDepth: $maxdepth Collisions: $collisions\n";
   }
 #  my $debugtable = 0;
-#  foreach $entry (@table) {
+#  foreach my $entry (@table) {
 #    print STDERR "$debugtable " . (defined $entry ? $entry : '<undefined>');
 #    print STDERR " -> " . $links[$debugtable] if (defined($links[$debugtable]));
 #    print STDERR "\n";
@@ -138,7 +142,7 @@ sub calcTable() {
 # http://www.azillionmonkeys.com/qed/hash.html
 # Ported from UString..
 sub hashValue($) {
-  @chars = split(/ */, $_[0]);
+  my @chars = split(/ */, $_[0]);
 
   # This hash is designed to work on 16-bit chunks at a time. But since the normal case
   # (above) is to hash UTF-16 characters, we just treat the 8-bit chars as if they
@@ -213,7 +217,7 @@ sub output() {
     $hashsize = 1;
     $size = 1;
   } else {
-    foreach $entry (@table) {
+    foreach my $entry (@table) {
       if (defined($entry)) {
         my $key = $keys[$entry];
         print "   \{ \"" . $key . "\"";
@@ -222,7 +226,7 @@ sub output() {
         print ", " . $params[$entry];
         print ", ";
         if (defined($links[$i])) {
-          print "&${nameEntries}[$links[$i]]" . " \}";
+          print "&" . $nameEntries . "[" . $links[$i] . "]" . " \}";
         } else {
           print "0 \}"
         }

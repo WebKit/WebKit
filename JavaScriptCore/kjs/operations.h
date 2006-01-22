@@ -75,6 +75,6 @@ namespace KJS {
    */
   JSValue *mult(ExecState *exec, JSValue *v1, JSValue *v2, char oper);
 
-};
+}
 
 #endif

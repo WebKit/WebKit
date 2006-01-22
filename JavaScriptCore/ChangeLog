@@ -1,3 +1,13 @@
+2006-01-21  George Staikos <staikos@opensource.apple.com>
+
+        * kjs/nodes2string.cpp
+        * kjs/operations.h
+        * kjs/debugger.h
+          Fix pedantic compile with some gcc versions (Merge from KDE)
+
+        * kjs/create_hash_table:
+	  Fix build with Perl 5.8.0 (Merge from KDE)
+
 2006-01-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.
