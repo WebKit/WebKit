@@ -1,3 +1,12 @@
+2006-01-22  Mark Rowe  <opendarwin.org@bdash.net.nz>
+
+        Reviewed by Anders.
+        
+        Build fix.  build-webkit dies with "invalid build action: (empty string)"
+
+        * Scripts/build-webkit:
+        Use svgOptions in an array context so xcodebuild doesn't choke on an empty argument.
+
 2006-01-22  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by anders.

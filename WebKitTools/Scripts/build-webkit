@@ -43,8 +43,8 @@ setConfiguration();
 chdirWebKit();
 my $productDir = productDir();
 my @options = XcodeOptions();
-my $svgOptionsString = "";
-$svgOptionsString = "GCC_PREPROCESSOR_DEFINITIONS=\$(DEBUG_DEFINES)" if (!$svgSupport);
+my @svgOptions = ();
+@svgOptions = ("GCC_PREPROCESSOR_DEFINITIONS=\$(DEBUG_DEFINES)") if (!$svgSupport);
 
 # Check that all the project directories are there.
 my @projects = ("JavaScriptCore", "JavaScriptGlue", "WebCore", "WebKit");
@@ -82,7 +82,7 @@ for my $dir (@projects) {
     if ($dir eq "JavaScriptCore") {
         $result = system "xcodebuild", "-project", "$dir.xcodeproj", "-target", "All", @options, @ARGV;
     } elsif ($dir eq "WebCore") {
-        $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, @ARGV, $svgOptionsString;
+        $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, @ARGV, @svgOptions;
     } else {
         $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, @ARGV;
     }
