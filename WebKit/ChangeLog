@@ -1,5 +1,14 @@
 2006-01-21  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Anders Carlsson.
+
+        Make sure shorthand properties get striked-out if
+        all the properties they expand into are overloaded.
+
+        * WebInspector.subproj/webInspector/inspector.js:
+
+2006-01-21  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Darin.
 
         Adds computed style to the Web Inspector.

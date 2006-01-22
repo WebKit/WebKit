@@ -483,43 +483,46 @@ function updateStyleProperties() {
 
     for (var i = 0; i < styleProperties[selectedStyleRuleIndex].length; i++) {
         var prop = styleProperties[selectedStyleRuleIndex][i];
-        var li = document.createElement("li");
+        var mainli = document.createElement("li");
         if (prop.subProperties.length > 1) {
-            li.className = "hasChildren";
+            mainli.className = "hasChildren";
             if (expandedStyleShorthands[prop.name])
-                li.className += " expanded";
-            li.shorthand = prop.name;
+                mainli.className += " expanded";
+            mainli.shorthand = prop.name;
             var button = document.createElement("button");
             button.addEventListener("click", toggleStyleShorthand, false);
-            li.appendChild(button);
+            mainli.appendChild(button);
         }
 
-        if (prop.unusedProperties[prop.name] == true)
-            li.className += " overloaded";
- 
         var span = document.createElement("span");
         span.className = "property";
         span.textContent = prop.name;
-        li.appendChild(span);
+        mainli.appendChild(span);
 
         span = document.createElement("span");
         span.className = "value";
         span.title = prop.style.getPropertyValue(prop.name);
         span.textContent = span.title;
-        li.appendChild(span);
+        mainli.appendChild(span);
 
-        propertiesTree.appendChild(li);
+        propertiesTree.appendChild(mainli);
 
+        var overloadCount = 0;
         if (prop.subProperties != null && prop.subProperties.length > 1) {
             var subTree = document.createElement("ul");
             if (!expandedStyleShorthands[prop.name])
                 subTree.style.setProperty("display", "none", "");
+
             for (var j = 0; j < prop.subProperties.length; j++) {
                 var li = document.createElement("li");
                 if (prop.style.isPropertyImplicit(prop.subProperties[j]) || prop.style.getPropertyValue(prop.subProperties[j]) == "initial")
                     li.className = "implicit";
-                if (prop.unusedProperties[prop.subProperties[j]] == true)
+
+                if (prop.unusedProperties[prop.subProperties[j]] == true || prop.unusedProperties[prop.name] == true) {
                     li.className += " overloaded";
+                    overloadCount++;
+                }
+
                 var span = document.createElement("span");
                 span.className = "property";
                 span.textContent = prop.subProperties[j];
@@ -536,6 +539,9 @@ function updateStyleProperties() {
 
             propertiesTree.appendChild(subTree);
         }
+
+        if (prop.unusedProperties[prop.name] == true || overloadCount == prop.subProperties.length)
+            mainli.className += " overloaded";
     }
 
     stylePropertiesScrollArea.refresh();
