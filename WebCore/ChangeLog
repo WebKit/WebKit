@@ -1,3 +1,15 @@
+2006-01-21  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+        
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3509
+          REGRESSION(125-412) Portion of nested table is not painted correctly on cafepress site
+
+        * manual-tests/bugzilla-3509.html: Added.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlockChildren): Force repaint if the child didn't move but
+        didn't repaint correctly during layout because it was not at its final position then.
+
 2006-01-21  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Darin.
