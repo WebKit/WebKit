@@ -1,3 +1,57 @@
+2006-01-22  Alexander Kellett  <lypanov@kde.org>
+
+        Reviewed by eseidel.
+
+        Add support for custom fill/strokes on text.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6448
+
+        * kcanvas/RenderSVGText.cpp:
+        (RenderSVGText::paint): use new painter setup/teardown infrastructure
+        * kcanvas/device/KRenderingPaintServer.h:
+        (KRenderingPaintServer::KRenderingPaintServer):
+        (KRenderingPaintServer::setup):
+        (KRenderingPaintServer::render):
+        (KRenderingPaintServer::teardown):
+        (KRenderingPaintServer::isPaintingText):
+        (KRenderingPaintServer::setPaintingText):
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.mm:
+        (setupShadingWithStyle):
+        (renderShadingWithStyle):
+        (teardownShadingWithStyle):
+        (KRenderingPaintServerLinearGradientQuartz::draw):
+        (KRenderingPaintServerLinearGradientQuartz::setup):
+        (KRenderingPaintServerLinearGradientQuartz::render):
+        (KRenderingPaintServerLinearGradientQuartz::teardown):
+        (KRenderingPaintServerRadialGradientQuartz::draw):
+        (KRenderingPaintServerRadialGradientQuartz::setup):
+        (KRenderingPaintServerRadialGradientQuartz::render):
+        (KRenderingPaintServerRadialGradientQuartz::teardown):
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.h:
+        (KRenderingPaintServerPatternQuartz::KRenderingPaintServerPatternQuartz):
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.mm:
+        (KRenderingPaintServerQuartzHelper::strokePath):
+        (KRenderingPaintServerQuartzHelper::clipToStrokePath):
+        (KRenderingPaintServerQuartzHelper::fillPath):
+        (KRenderingPaintServerQuartzHelper::clipToFillPath):
+        (KRenderingPaintServerSolidQuartz::draw):
+        (KRenderingPaintServerSolidQuartz::setup):
+        (KRenderingPaintServerSolidQuartz::render):
+        (KRenderingPaintServerSolidQuartz::teardown):
+        (KRenderingPaintServerPatternQuartz::draw):
+        (KRenderingPaintServerPatternQuartz::setup):
+        (KRenderingPaintServerPatternQuartz::render):
+        (KRenderingPaintServerPatternQuartz::teardown):
+        * kcanvas/device/quartz/QuartzSupport.h: fix prototype
+        * kcanvas/device/quartz/QuartzSupport.mm:
+        (applyStrokeStyleToContext):
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        (KSVGPainterFactory::fillPaintServer):
+        (KSVGPainterFactory::strokePaintServer):
+        (KSVGPainterFactory::cssPrimitiveToLength):
+        (KSVGPainterFactory::strokePainter):
+        (KSVGPainterFactory::fillPainter):
+        * ksvg2/misc/KCanvasRenderingStyle.h:
+
 2006-01-21  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

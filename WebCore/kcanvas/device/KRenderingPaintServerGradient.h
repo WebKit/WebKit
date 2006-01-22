@@ -83,7 +83,7 @@ public:
 
     KCanvasMatrix gradientTransform() const;
     void setGradientTransform(const KCanvasMatrix &mat);
-
+    
     KCanvasResourceListener *listener() const;
     void setListener(KCanvasResourceListener *listener);
 

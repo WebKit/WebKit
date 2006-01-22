@@ -1,3 +1,117 @@
+2006-01-22  Alexander Kellett  <lypanov@kde.org>
+
+        Reviewed by eseidel.
+
+        Add support for custom fill/strokes on text.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6448
+
+        * svg/W3C-SVG-1.1/animate-elem-02-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-02-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-03-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-03-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-04-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-04-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-05-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-05-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-06-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-06-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-07-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-07-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-08-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-08-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-13-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-13-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-14-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-14-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-15-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-15-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-16-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-16-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-17-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-17-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-18-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-18-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-19-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-19-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-20-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-20-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-21-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-21-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-24-t-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-24-t-expected.png:
+        * svg/W3C-SVG-1.1/animate-elem-29-b-expected.checksum:
+        * svg/W3C-SVG-1.1/animate-elem-29-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-blend-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-blend-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-example-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-example-01-b-expected.png:
+        * svg/W3C-SVG-1.1/fonts-elem-02-t-expected.checksum:
+        * svg/W3C-SVG-1.1/fonts-elem-02-t-expected.png:
+        * svg/W3C-SVG-1.1/interact-cursor-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/interact-cursor-01-f-expected.png:
+        * svg/W3C-SVG-1.1/interact-events-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/interact-events-01-b-expected.png:
+        * svg/W3C-SVG-1.1/linking-uri-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/linking-uri-01-b-expected.png:
+        * svg/W3C-SVG-1.1/linking-uri-02-b-expected.checksum:
+        * svg/W3C-SVG-1.1/linking-uri-02-b-expected.png:
+        * svg/W3C-SVG-1.1/masking-mask-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/masking-mask-01-b-expected.png:
+        * svg/W3C-SVG-1.1/masking-path-04-b-expected.checksum:
+        * svg/W3C-SVG-1.1/masking-path-04-b-expected.png:
+        * svg/W3C-SVG-1.1/metadata-example-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/metadata-example-01-b-expected.png:
+        * svg/W3C-SVG-1.1/painting-fill-02-t-expected.checksum:
+        * svg/W3C-SVG-1.1/painting-fill-02-t-expected.png:
+        * svg/W3C-SVG-1.1/pservers-grad-05-b-expected.checksum:
+        * svg/W3C-SVG-1.1/pservers-grad-05-b-expected.png:
+        * svg/W3C-SVG-1.1/pservers-grad-08-b-expected.checksum:
+        * svg/W3C-SVG-1.1/pservers-grad-08-b-expected.png:
+        * svg/W3C-SVG-1.1/pservers-grad-11-b-expected.checksum:
+        * svg/W3C-SVG-1.1/pservers-grad-11-b-expected.png:
+        * svg/W3C-SVG-1.1/pservers-pattern-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/pservers-pattern-01-b-expected.png:
+        * svg/W3C-SVG-1.1/render-elems-06-t-expected.checksum:
+        * svg/W3C-SVG-1.1/render-elems-06-t-expected.png:
+        * svg/W3C-SVG-1.1/render-elems-07-t-expected.checksum:
+        * svg/W3C-SVG-1.1/render-elems-07-t-expected.png:
+        * svg/W3C-SVG-1.1/render-elems-08-t-expected.checksum:
+        * svg/W3C-SVG-1.1/render-elems-08-t-expected.png:
+        * svg/W3C-SVG-1.1/text-align-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-align-01-b-expected.png:
+        * svg/W3C-SVG-1.1/text-align-03-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-align-03-b-expected.png:
+        * svg/W3C-SVG-1.1/text-align-04-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-align-04-b-expected.png:
+        * svg/W3C-SVG-1.1/text-align-05-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-align-05-b-expected.png:
+        * svg/W3C-SVG-1.1/text-altglyph-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-altglyph-01-b-expected.png:
+        * svg/W3C-SVG-1.1/text-deco-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-deco-01-b-expected.png:
+        * svg/W3C-SVG-1.1/text-fonts-01-t-expected.checksum:
+        * svg/W3C-SVG-1.1/text-fonts-01-t-expected.png:
+        * svg/W3C-SVG-1.1/text-fonts-02-t-expected.checksum:
+        * svg/W3C-SVG-1.1/text-fonts-02-t-expected.png:
+        * svg/W3C-SVG-1.1/text-text-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-text-01-b-expected.png:
+        * svg/W3C-SVG-1.1/text-text-03-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-text-03-b-expected.png:
+        * svg/W3C-SVG-1.1/text-tref-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-tref-01-b-expected.png:
+        * svg/W3C-SVG-1.1/text-tspan-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/text-tspan-01-b-expected.png:
+        * svg/W3C-SVG-1.1/text-ws-01-t-expected.checksum:
+        * svg/W3C-SVG-1.1/text-ws-01-t-expected.png:
+        * svg/W3C-SVG-1.1/text-ws-02-t-expected.checksum:
+        * svg/W3C-SVG-1.1/text-ws-02-t-expected.png:
+        * svg/custom/text-clip-expected.checksum:
+        * svg/custom/text-clip-expected.png:
+        * svg/custom/text-filter-expected.checksum:
+        * svg/custom/text-filter-expected.png:
+        * svg/custom/text-image-opacity-expected.checksum:
+        * svg/custom/text-image-opacity-expected.png:
+
 2006-01-21  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Darin.

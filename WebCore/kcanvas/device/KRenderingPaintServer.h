@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
+                  2006 Alexander Kellett <lypanov@kde.org>
 
     This file is part of the KDE project
 
@@ -42,7 +43,7 @@ typedef enum
     APPLY_TO_STROKE = 2
 } KCPaintTargetType;
 
-namespace khtml {
+namespace WebCore {
     class RenderStyle;
 }
 
@@ -52,7 +53,7 @@ class KRenderingDeviceContext;
 class KRenderingPaintServer : public KCanvasResource
 {
 public:
-    KRenderingPaintServer() : KCanvasResource() { m_activeClient = 0; }
+    KRenderingPaintServer() : KCanvasResource(), m_activeClient(0), m_paintingText(false) { }
     virtual ~KRenderingPaintServer() { }
     
     virtual bool isPaintServer() const { return true; }
@@ -64,14 +65,23 @@ public:
     void setIdInRegistry(const QString& newId) { m_registryId = newId; } 
     
     virtual KCPaintServerType type() const = 0;
-
+    
     // Actual rendering function
-    virtual void draw(KRenderingDeviceContext *context, const RenderPath *renderPath, KCPaintTargetType type) const = 0;
+    virtual void draw(KRenderingDeviceContext*, const RenderPath* renderPath, KCPaintTargetType) const = 0;
+
+    virtual bool setup(KRenderingDeviceContext*, const WebCore::RenderObject*, KCPaintTargetType) const = 0;
+    virtual void teardown(KRenderingDeviceContext*, const WebCore::RenderObject*, KCPaintTargetType) const = 0;
+    
+    bool isPaintingText() const { return m_paintingText; }
+    void setPaintingText(bool paintingText) { m_paintingText = paintingText; }
 
     virtual QTextStream &externalRepresentation(QTextStream &) const = 0;
+protected:
+    virtual void renderPath(KRenderingDeviceContext*, const RenderPath*, KCPaintTargetType) const = 0;
 private:
     const RenderPath *m_activeClient;
     QString m_registryId;
+    bool m_paintingText;
 };
 
 QTextStream &operator<<(QTextStream &, const KRenderingPaintServer &);

@@ -31,7 +31,6 @@
 #include "KCanvasContainer.h"
 #include "KCanvasResources.h"
 #include "KRenderingDevice.h"
-#include "KCanvasResourceListener.h"
 
 #include "SVGStyledElementImpl.h"
 

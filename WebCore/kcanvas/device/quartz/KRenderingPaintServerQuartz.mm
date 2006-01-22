@@ -40,39 +40,91 @@
 
 #import "KWQLogging.h"
 
-void KRenderingPaintServerSolidQuartz::draw(KRenderingDeviceContext *renderingContext, const RenderPath *renderPath, KCPaintTargetType type) const
+void KRenderingPaintServerQuartzHelper::strokePath(CGContextRef context, const RenderPath *renderPath)
+{
+    CGContextStrokePath(context);
+}
+
+void KRenderingPaintServerQuartzHelper::clipToStrokePath(CGContextRef context, const RenderPath *renderPath)
+{
+    CGContextReplacePathWithStrokedPath(context);
+    CGContextClip(context);
+}    
+
+void KRenderingPaintServerQuartzHelper::fillPath(CGContextRef context, const RenderPath *renderPath)
+{
+    if (KSVG::KSVGPainterFactory::fillPainter(renderPath->style(), renderPath).fillRule() == RULE_EVENODD)
+        CGContextEOFillPath(context);
+    else
+        CGContextFillPath(context);
+}
+
+void KRenderingPaintServerQuartzHelper::clipToFillPath(CGContextRef context, const RenderPath *renderPath)
+{
+    if (KSVG::KSVGPainterFactory::fillPainter(renderPath->style(), renderPath).fillRule() == RULE_EVENODD)
+        CGContextEOClip(context);
+    else
+        CGContextClip(context);
+}    
+
+void KRenderingPaintServerSolidQuartz::draw(KRenderingDeviceContext *renderingContext, const RenderPath* path, KCPaintTargetType type) const
+{
+    if (!setup(renderingContext, path, type))
+        return;
+    renderPath(renderingContext, path, type);
+    teardown(renderingContext, path, type);
+}
+
+bool KRenderingPaintServerSolidQuartz::setup(KRenderingDeviceContext *renderingContext, const khtml::RenderObject* renderObject, KCPaintTargetType type) const
 {
     KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(renderingContext);
     CGContextRef context = quartzContext->cgContext();
-    khtml::RenderStyle *renderStyle = renderPath->style();
+    khtml::RenderStyle *renderStyle = renderObject->style();
 
     CGContextSetAlpha(context, renderStyle->opacity());
         
     if ((type & APPLY_TO_FILL) && KSVG::KSVGPainterFactory::isFilled(renderStyle)) {
         CGColorRef colorCG = cgColor(color());
-        CGColorRef withAlpha = CGColorCreateCopyWithAlpha(colorCG, KSVG::KSVGPainterFactory::fillPainter(renderStyle, renderPath).opacity());
+        CGColorRef withAlpha = CGColorCreateCopyWithAlpha(colorCG, KSVG::KSVGPainterFactory::fillPainter(renderStyle, renderObject).opacity());
         CGContextSetFillColorWithColor(context, withAlpha);
         CGColorRelease(colorCG);
         CGColorRelease(withAlpha);
-        if (KSVG::KSVGPainterFactory::fillPainter(renderStyle, renderPath).fillRule() == RULE_EVENODD)
-            CGContextEOFillPath(context);
-        else
-            CGContextFillPath(context);
+        if (isPaintingText()) {
+            const_cast<khtml::RenderObject *>(renderObject)->style()->setColor(color());
+            CGContextSetTextDrawingMode(context, kCGTextFill);
+        }
     }
 
     if ((type & APPLY_TO_STROKE) && KSVG::KSVGPainterFactory::isStroked(renderStyle)) {
         CGColorRef colorCG = cgColor(color());
-        CGColorRef withAlpha = CGColorCreateCopyWithAlpha(colorCG, KSVG::KSVGPainterFactory::strokePainter(renderStyle, renderPath).opacity());         
+        CGColorRef withAlpha = CGColorCreateCopyWithAlpha(colorCG, KSVG::KSVGPainterFactory::strokePainter(renderStyle, renderObject).opacity());         
         CGContextSetStrokeColorWithColor(context, withAlpha);
         CGColorRelease(colorCG);
         CGColorRelease(withAlpha);
-        
-        applyStrokeStyleToContext(context, renderStyle, renderPath);
-        
-        CGContextStrokePath(context);
+        applyStrokeStyleToContext(context, renderStyle, renderObject);
+        if (isPaintingText()) {
+            const_cast<khtml::RenderObject *>(renderObject)->style()->setColor(color());
+            CGContextSetTextDrawingMode(context, kCGTextStroke);
+        }
     }
+    
+    return true;
 }
 
+void KRenderingPaintServerSolidQuartz::renderPath(KRenderingDeviceContext* renderingContext, const RenderPath* renderPath, KCPaintTargetType type) const
+{
+    khtml::RenderStyle *renderStyle = renderPath->style();
+    KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(renderingContext);
+    CGContextRef context = quartzContext->cgContext();    
+    if ((type & APPLY_TO_FILL) && KSVG::KSVGPainterFactory::isFilled(renderStyle))
+        KRenderingPaintServerQuartzHelper::fillPath(context, renderPath);
+    if ((type & APPLY_TO_STROKE) && KSVG::KSVGPainterFactory::isStroked(renderStyle))
+        KRenderingPaintServerQuartzHelper::strokePath(context, renderPath);
+}
+
+void KRenderingPaintServerSolidQuartz::teardown(KRenderingDeviceContext* renderingContext, const khtml::RenderObject* renderObject, KCPaintTargetType type) const
+{
+}
 
 void patternCallback(void *info, CGContextRef context)
 {
@@ -81,19 +133,27 @@ void patternCallback(void *info, CGContextRef context)
     CGContextDrawLayerAtPoint(context, CGPointZero, layer);
 }
 
-void KRenderingPaintServerPatternQuartz::draw(KRenderingDeviceContext *renderingContext, const RenderPath *renderPath, KCPaintTargetType type) const
+void KRenderingPaintServerPatternQuartz::draw(KRenderingDeviceContext* renderingContext, const RenderPath* path, KCPaintTargetType type) const
+{
+    if (!setup(renderingContext, path, type))
+        return;
+    renderPath(renderingContext, path, type);
+    teardown(renderingContext, path, type);
+}
+
+bool KRenderingPaintServerPatternQuartz::setup(KRenderingDeviceContext* renderingContext, const khtml::RenderObject* renderObject, KCPaintTargetType type) const
 {
     if(listener()) // this seems like bad design to me, should be in a common baseclass. -- ecs 8/6/05
         listener()->resourceNotification();
 
-    khtml::RenderStyle *renderStyle = renderPath->style();
+    khtml::RenderStyle *renderStyle = renderObject->style();
 
     KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(renderingContext);
     CGContextRef context = quartzContext->cgContext();
 
     KCanvasImage *cell = tile();
     if (!cell)
-        return;
+        return false;
 
     CGContextSaveGState(context);
 
@@ -110,7 +170,7 @@ void KRenderingPaintServerPatternQuartz::draw(KRenderingDeviceContext *rendering
     CGContextSetPatternPhase(context, phase);
 
     CGPatternCallbacks callbacks = {0, patternCallback, NULL};
-    CGPatternRef pattern = CGPatternCreate (
+    m_pattern = CGPatternCreate(
         tile(),
         CGRectMake(0,0,cellSize.width,cellSize.height),
         transform,
@@ -118,30 +178,53 @@ void KRenderingPaintServerPatternQuartz::draw(KRenderingDeviceContext *rendering
         bbox().height(), //cellSize.height,
         kCGPatternTilingConstantSpacing,  // FIXME: should ask CG guys.
         true, // has color
-        &callbacks );
+        &callbacks);
 
     CGContextSetAlpha(context, renderStyle->opacity()); // or do I set the alpha above?
 
-    CGColorSpaceRef patternSpace = CGColorSpaceCreatePattern(NULL);
+    m_patternSpace = CGColorSpaceCreatePattern(NULL);
 
     if ((type & APPLY_TO_FILL) && KSVG::KSVGPainterFactory::isFilled(renderStyle)) {
-        CGContextSetFillColorSpace(context, patternSpace);
-        CGContextSetFillPattern(context, pattern, &alpha);
-        if (KSVG::KSVGPainterFactory::fillPainter(renderStyle, renderPath).fillRule() == RULE_EVENODD)
-            CGContextEOFillPath(context);
-        else
-            CGContextFillPath(context);
+        CGContextSetFillColorSpace(context, m_patternSpace);
+        CGContextSetFillPattern(context, m_pattern, &alpha);
+        if (isPaintingText()) {
+            const_cast<khtml::RenderObject *>(renderObject)->style()->setColor(QColor());
+            CGContextSetTextDrawingMode(context, kCGTextFill);
+        }
     }
     
     if ((type & APPLY_TO_STROKE) && KSVG::KSVGPainterFactory::isStroked(renderStyle)) {
-        CGContextSetStrokeColorSpace(context, patternSpace);
-        CGContextSetStrokePattern(context, pattern, &alpha);
-        applyStrokeStyleToContext(context, renderStyle, renderPath);
-        CGContextStrokePath(context);
+        CGContextSetStrokeColorSpace(context, m_patternSpace);
+        CGContextSetStrokePattern(context, m_pattern, &alpha);
+        applyStrokeStyleToContext(context, renderStyle, renderObject);
+        if (isPaintingText()) {
+            const_cast<khtml::RenderObject *>(renderObject)->style()->setColor(QColor());
+            CGContextSetTextDrawingMode(context, kCGTextStroke);
+        }
     }
+    
+    return true;
+}
 
-    CGPatternRelease(pattern);
-    CGColorSpaceRelease (patternSpace);
+void KRenderingPaintServerPatternQuartz::renderPath(KRenderingDeviceContext* renderingContext, const RenderPath* renderPath, KCPaintTargetType type) const
+{
+    khtml::RenderStyle *renderStyle = renderPath->style();
 
+    KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(renderingContext);
+    CGContextRef context = quartzContext->cgContext();
+
+    if ((type & APPLY_TO_FILL) && KSVG::KSVGPainterFactory::isFilled(renderStyle))
+        KRenderingPaintServerQuartzHelper::fillPath(context, renderPath);
+    
+    if ((type & APPLY_TO_STROKE) && KSVG::KSVGPainterFactory::isStroked(renderStyle))
+        KRenderingPaintServerQuartzHelper::strokePath(context, renderPath);
+}
+
+void KRenderingPaintServerPatternQuartz::teardown(KRenderingDeviceContext* renderingContext, const khtml::RenderObject* renderObject, KCPaintTargetType type) const
+{
+    KRenderingDeviceContextQuartz *quartzContext = static_cast<KRenderingDeviceContextQuartz *>(renderingContext);
+    CGContextRef context = quartzContext->cgContext();
+    CGPatternRelease(m_pattern);
+    CGColorSpaceRelease(m_patternSpace);
     CGContextRestoreGState(context);
 }
