@@ -44,13 +44,6 @@ using namespace HTMLNames;
 
 namespace KJS {
 
-static JSValue* jsStringOrUndefined(const DOMString& str)
-{
-    return str.isNull() ? jsUndefined() : jsString(str);
-}
-
-// -------------------------------------------------------------------------
-
 JSAbstractEventListener::JSAbstractEventListener(bool _html)
     : html(_html)
 {

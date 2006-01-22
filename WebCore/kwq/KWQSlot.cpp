@@ -54,7 +54,7 @@ using khtml::RenderWidget;
 using khtml::RenderScrollMediator;
 using KIO::Job;
 using KJS::WindowQObject;
-using KJS::XMLHttpRequestQObject;
+using WebCore::XMLHttpRequestQObject;
 #ifdef SVG_SUPPORT
 using KSVG::TimeScheduler;
 #endif

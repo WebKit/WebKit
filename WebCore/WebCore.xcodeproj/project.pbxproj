@@ -251,7 +251,6 @@
 		93F199BD08245E59001E9ABC /* KWQAccObjectCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 55998A5C052B59CC0017A6C1 /* KWQAccObjectCache.h */; };
 		93F199BE08245E59001E9ABC /* KWQExceptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 65A640F00533BB1F0085E777 /* KWQExceptions.h */; settings = {ATTRIBUTES = (); }; };
 		93F199BF08245E59001E9ABC /* WebCoreGraphicsBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = BE26F15305517DE000BFA0C3 /* WebCoreGraphicsBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93F199C008245E59001E9ABC /* xmlhttprequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 654E7EE10569FD4600358BD2 /* xmlhttprequest.h */; };
 		93F199C208245E59001E9ABC /* WebCoreKeyGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B2B1F7056BEF3A00D2B771 /* WebCoreKeyGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199C308245E59001E9ABC /* xmlserializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 65912B0E0586921000123A69 /* xmlserializer.h */; };
 		93F199C508245E59001E9ABC /* xbl_binding_manager.h in Headers */ = {isa = PBXBuildFile; fileRef = BC41978E059293F30016347F /* xbl_binding_manager.h */; };
@@ -413,7 +412,6 @@
 		93F19AE008245E59001E9ABC /* KWQAccObjectCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55998A5D052B59CC0017A6C1 /* KWQAccObjectCache.mm */; };
 		93F19AE108245E59001E9ABC /* KWQExceptions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65F80697054D9F86008BF776 /* KWQExceptions.mm */; };
 		93F19AE308245E59001E9ABC /* WebCoreGraphicsBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = BE26F15405517DE000BFA0C3 /* WebCoreGraphicsBridge.m */; };
-		93F19AE408245E59001E9ABC /* xmlhttprequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 654E7EE00569FD4600358BD2 /* xmlhttprequest.cpp */; };
 		93F19AE508245E59001E9ABC /* WebCoreKeyGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 84B2B1F8056BEF3A00D2B771 /* WebCoreKeyGenerator.m */; };
 		93F19AE608245E59001E9ABC /* KWQKSSLKeyGen.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84B2B24F056BF15F00D2B771 /* KWQKSSLKeyGen.mm */; };
 		93F19AE708245E59001E9ABC /* xmlserializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65912B0D0586921000123A69 /* xmlserializer.cpp */; };
@@ -696,7 +694,6 @@
 		A88AD1F90952480A001DD196 /* KWQAccObjectCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 55998A5C052B59CC0017A6C1 /* KWQAccObjectCache.h */; };
 		A88AD1FA0952480A001DD196 /* KWQExceptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 65A640F00533BB1F0085E777 /* KWQExceptions.h */; settings = {ATTRIBUTES = (); }; };
 		A88AD1FB0952480A001DD196 /* WebCoreGraphicsBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = BE26F15305517DE000BFA0C3 /* WebCoreGraphicsBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A88AD1FC0952480A001DD196 /* xmlhttprequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 654E7EE10569FD4600358BD2 /* xmlhttprequest.h */; };
 		A88AD1FD0952480A001DD196 /* WebCoreKeyGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 84B2B1F7056BEF3A00D2B771 /* WebCoreKeyGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A88AD1FE0952480A001DD196 /* xmlserializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 65912B0E0586921000123A69 /* xmlserializer.h */; };
 		A88AD1FF0952480A001DD196 /* xbl_binding_manager.h in Headers */ = {isa = PBXBuildFile; fileRef = BC41978E059293F30016347F /* xbl_binding_manager.h */; };
@@ -896,7 +893,6 @@
 		A88AD31C0952480A001DD196 /* KWQAccObjectCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55998A5D052B59CC0017A6C1 /* KWQAccObjectCache.mm */; };
 		A88AD31D0952480A001DD196 /* KWQExceptions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65F80697054D9F86008BF776 /* KWQExceptions.mm */; };
 		A88AD31F0952480A001DD196 /* WebCoreGraphicsBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = BE26F15405517DE000BFA0C3 /* WebCoreGraphicsBridge.m */; };
-		A88AD3200952480A001DD196 /* xmlhttprequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 654E7EE00569FD4600358BD2 /* xmlhttprequest.cpp */; };
 		A88AD3210952480A001DD196 /* WebCoreKeyGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 84B2B1F8056BEF3A00D2B771 /* WebCoreKeyGenerator.m */; };
 		A88AD3220952480A001DD196 /* KWQKSSLKeyGen.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84B2B24F056BF15F00D2B771 /* KWQKSSLKeyGen.mm */; };
 		A88AD3230952480A001DD196 /* xmlserializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65912B0D0586921000123A69 /* xmlserializer.cpp */; };
@@ -1679,6 +1675,14 @@
 		BCFB2F79097A2E1A00BA703D /* Arena.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFB2F75097A2E1A00BA703D /* Arena.h */; };
 		E1EE773708F1086C00166870 /* WebCoreTextDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE773508F1086C00166870 /* WebCoreTextDecoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1EE773808F1086C00166870 /* WebCoreTextDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1EE773608F1086C00166870 /* WebCoreTextDecoder.mm */; };
+		E1F0424609839389006694EA /* xmlhttprequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1F0424409839389006694EA /* xmlhttprequest.cpp */; };
+		E1F0424709839389006694EA /* xmlhttprequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F0424509839389006694EA /* xmlhttprequest.h */; };
+		E1F0424809839389006694EA /* xmlhttprequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1F0424409839389006694EA /* xmlhttprequest.cpp */; };
+		E1F0424909839389006694EA /* xmlhttprequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F0424509839389006694EA /* xmlhttprequest.h */; };
+		E1F7F5600981AF570073BE6A /* JSXMLHttpRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1F7F55E0981AF570073BE6A /* JSXMLHttpRequest.cpp */; };
+		E1F7F5610981AF570073BE6A /* JSXMLHttpRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F7F55F0981AF570073BE6A /* JSXMLHttpRequest.h */; };
+		E1F7F5620981AF570073BE6A /* JSXMLHttpRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1F7F55E0981AF570073BE6A /* JSXMLHttpRequest.cpp */; };
+		E1F7F5630981AF570073BE6A /* JSXMLHttpRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F7F55F0981AF570073BE6A /* JSXMLHttpRequest.h */; };
 		ED048ABC0833F132006E1E67 /* textAreaResizeCorner.tiff in Resources */ = {isa = PBXBuildFile; fileRef = ED048ABB0833F132006E1E67 /* textAreaResizeCorner.tiff */; };
 		FAE0418B09759694000540BE /* RenderSVGImage.h in Headers */ = {isa = PBXBuildFile; fileRef = FAE0418909759694000540BE /* RenderSVGImage.h */; };
 		FAE0418C09759694000540BE /* RenderSVGImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAE0418A09759694000540BE /* RenderSVGImage.cpp */; };
@@ -1820,8 +1824,6 @@
 		6543606E083DB9FB00C20475 /* wrap_contents_in_dummy_span_command.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wrap_contents_in_dummy_span_command.cpp; path = editing/wrap_contents_in_dummy_span_command.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		654D87B50831973B0082DCA1 /* edit_command.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = edit_command.cpp; path = editing/edit_command.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		654D87B60831973B0082DCA1 /* edit_command.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = edit_command.h; path = editing/edit_command.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		654E7EE00569FD4600358BD2 /* xmlhttprequest.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xmlhttprequest.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		654E7EE10569FD4600358BD2 /* xmlhttprequest.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = xmlhttprequest.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		654EC60F097778F500DAB52C /* WebCoreFrameBridge.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreFrameBridge.h; sourceTree = "<group>"; };
 		654EC610097778F500DAB52C /* WebCoreFrameBridge.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreFrameBridge.mm; sourceTree = "<group>"; };
 		6552E7A8096AA11B0006F248 /* WebCoreFrameNamespaces.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreFrameNamespaces.h; sourceTree = "<group>"; };
@@ -2665,6 +2667,10 @@
 		BEF7EEA105FF8F0D009717EE /* KWQEditCommand.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQEditCommand.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		E1EE773508F1086C00166870 /* WebCoreTextDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreTextDecoder.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		E1EE773608F1086C00166870 /* WebCoreTextDecoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreTextDecoder.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		E1F0424409839389006694EA /* xmlhttprequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xmlhttprequest.cpp; sourceTree = "<group>"; };
+		E1F0424509839389006694EA /* xmlhttprequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xmlhttprequest.h; sourceTree = "<group>"; };
+		E1F7F55E0981AF570073BE6A /* JSXMLHttpRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXMLHttpRequest.cpp; sourceTree = "<group>"; };
+		E1F7F55F0981AF570073BE6A /* JSXMLHttpRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSXMLHttpRequest.h; sourceTree = "<group>"; };
 		ED048ABB0833F132006E1E67 /* textAreaResizeCorner.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = textAreaResizeCorner.tiff; path = Resources/textAreaResizeCorner.tiff; sourceTree = "<group>"; };
 		EDA4AC97076FB89100DD23EC /* edit_actions.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = edit_actions.h; path = editing/edit_actions.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5117BC902F9FFEF018635CE /* KWQSignal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = KWQSignal.h; path = kwq/KWQSignal.h; sourceTree = SOURCE_ROOT; };
@@ -2969,6 +2975,7 @@
 				BCF1A5BA097832090061A123 /* platform */,
 				F523D2F302DE443B018635CA /* rendering */,
 				F523D16302DE42AE018635CA /* khtml */,
+				E1F0424309839389006694EA /* xml */,
 				F58785E802DE377601EA4122 /* kwq */,
 				F58785E902DE378A01EA4122 /* WebCore SPI */,
 				A8C0FB51089701F700BA5114 /* kcanvas */,
@@ -3906,6 +3913,15 @@
 			name = editing;
 			sourceTree = "<group>";
 		};
+		E1F0424309839389006694EA /* xml */ = {
+			isa = PBXGroup;
+			children = (
+				E1F0424409839389006694EA /* xmlhttprequest.cpp */,
+				E1F0424509839389006694EA /* xmlhttprequest.h */,
+			);
+			path = xml;
+			sourceTree = "<group>";
+		};
 		F523D15002DE4271018635CA /* other */ = {
 			isa = PBXGroup;
 			children = (
@@ -4044,8 +4060,8 @@
 				F523D20E02DE4369018635CA /* kjs_views.h */,
 				F523D21002DE4369018635CA /* kjs_window.cpp */,
 				F523D21102DE4369018635CA /* kjs_window.h */,
-				654E7EE00569FD4600358BD2 /* xmlhttprequest.cpp */,
-				654E7EE10569FD4600358BD2 /* xmlhttprequest.h */,
+				E1F7F55E0981AF570073BE6A /* JSXMLHttpRequest.cpp */,
+				E1F7F55F0981AF570073BE6A /* JSXMLHttpRequest.h */,
 				65912B0D0586921000123A69 /* xmlserializer.cpp */,
 				65912B0E0586921000123A69 /* xmlserializer.h */,
 				1A69D380085627410009880D /* domparser.cpp */,
@@ -4654,7 +4670,6 @@
 				93F199BD08245E59001E9ABC /* KWQAccObjectCache.h in Headers */,
 				93F199BE08245E59001E9ABC /* KWQExceptions.h in Headers */,
 				93F199BF08245E59001E9ABC /* WebCoreGraphicsBridge.h in Headers */,
-				93F199C008245E59001E9ABC /* xmlhttprequest.h in Headers */,
 				93F199C208245E59001E9ABC /* WebCoreKeyGenerator.h in Headers */,
 				93F199C308245E59001E9ABC /* xmlserializer.h in Headers */,
 				93F199C508245E59001E9ABC /* xbl_binding_manager.h in Headers */,
@@ -5031,6 +5046,8 @@
 				A8DF4AEE0980C42C0052981B /* RenderTableRow.h in Headers */,
 				A8DF4AEF0980C42C0052981B /* RenderTableSection.h in Headers */,
 				A8DF4AF10980C42C0052981B /* RenderTableCol.h in Headers */,
+				E1F7F5610981AF570073BE6A /* JSXMLHttpRequest.h in Headers */,
+				E1F0424709839389006694EA /* xmlhttprequest.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5182,7 +5199,6 @@
 				A88AD1F90952480A001DD196 /* KWQAccObjectCache.h in Headers */,
 				A88AD1FA0952480A001DD196 /* KWQExceptions.h in Headers */,
 				A88AD1FB0952480A001DD196 /* WebCoreGraphicsBridge.h in Headers */,
-				A88AD1FC0952480A001DD196 /* xmlhttprequest.h in Headers */,
 				A88AD1FD0952480A001DD196 /* WebCoreKeyGenerator.h in Headers */,
 				A88AD1FE0952480A001DD196 /* xmlserializer.h in Headers */,
 				A88AD1FF0952480A001DD196 /* xbl_binding_manager.h in Headers */,
@@ -5382,6 +5398,8 @@
 				A8DF4AF80980C42C0052981B /* RenderTableRow.h in Headers */,
 				A8DF4AF90980C42C0052981B /* RenderTableSection.h in Headers */,
 				A8DF4AFB0980C42C0052981B /* RenderTableCol.h in Headers */,
+				E1F7F5630981AF570073BE6A /* JSXMLHttpRequest.h in Headers */,
+				E1F0424909839389006694EA /* xmlhttprequest.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5409,7 +5427,7 @@
 				932FC0DA0824A337005B3C75 /* KWQColorData.c */,
 				93EA68440824979000687F56 /* libxml2-WebCore */,
 				932FC38F0824BA30005B3C75 /* tokenizer.cpp */,
-				932FC1710824A913005B3C75 /* xmlhttprequest.lut.h */,
+				932FC1710824A913005B3C75 /* JSXMLHttpRequest.lut.h */,
 				932FC1730824A919005B3C75 /* xmlserializer.lut.h */,
 				A83C867D0911AA19009BF4A7 /* XSLTProcessor.lut.h */,
 				1A69D387085628650009880D /* domparser.lut.h */,
@@ -5508,7 +5526,7 @@
 				A88AD1110952480A001DD196 /* KWQColorData.c */,
 				A88AD1120952480A001DD196 /* libxml2-WebCore */,
 				A88AD1130952480A001DD196 /* tokenizer.cpp */,
-				A88AD1140952480A001DD196 /* xmlhttprequest.lut.h */,
+				A88AD1140952480A001DD196 /* JSXMLHttpRequest.lut.h */,
 				A88AD1150952480A001DD196 /* xmlserializer.lut.h */,
 				A88AD1160952480A001DD196 /* XSLTProcessor.lut.h */,
 				A88AD1170952480A001DD196 /* domparser.lut.h */,
@@ -5889,22 +5907,22 @@
 			shellPath = /bin/sh;
 			shellScript = "\"$CREATE_HASH_TABLE\" khtml/ecma/kjs_window.cpp > \"$DERIVED_FILE_DIR/kjs_window.lut.h\"";
 		};
-		932FC1710824A913005B3C75 /* xmlhttprequest.lut.h */ = {
+		932FC1710824A913005B3C75 /* JSXMLHttpRequest.lut.h */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 				"$(CREATE_HASH_TABLE)",
-				khtml/ecma/xmlhttprequest.cpp,
+				khtml/ecma/JSXMLHttpRequest.cpp,
 			);
-			name = xmlhttprequest.lut.h;
+			name = JSXMLHttpRequest.lut.h;
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/xmlhttprequest.lut.h",
+				"$(DERIVED_FILE_DIR)/JSXMLHttpRequest.lut.h",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"$CREATE_HASH_TABLE\" khtml/ecma/xmlhttprequest.cpp > \"$DERIVED_FILE_DIR/xmlhttprequest.lut.h\"";
+			shellScript = "\"$CREATE_HASH_TABLE\" khtml/ecma/JSXMLHttpRequest.cpp > \"$DERIVED_FILE_DIR/JSXMLHttpRequest.lut.h\"";
 		};
 		932FC1730824A919005B3C75 /* xmlserializer.lut.h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -6333,22 +6351,22 @@
 			shellPath = /bin/sh;
 			shellScript = "flex -t css/tokenizer.flex | perl css/maketokenizer > \"$DERIVED_FILE_DIR/tokenizer.cpp\"";
 		};
-		A88AD1140952480A001DD196 /* xmlhttprequest.lut.h */ = {
+		A88AD1140952480A001DD196 /* JSXMLHttpRequest.lut.h */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 				"$(CREATE_HASH_TABLE)",
-				khtml/ecma/xmlhttprequest.cpp,
+				khtml/ecma/JSXMLHttpRequest.cpp,
 			);
-			name = xmlhttprequest.lut.h;
+			name = JSXMLHttpRequest.lut.h;
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/xmlhttprequest.lut.h",
+				"$(DERIVED_FILE_DIR)/JSXMLHttpRequest.lut.h",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"$CREATE_HASH_TABLE\" khtml/ecma/xmlhttprequest.cpp > \"$DERIVED_FILE_DIR/xmlhttprequest.lut.h\"";
+			shellScript = "\"$CREATE_HASH_TABLE\" khtml/ecma/JSXMLHttpRequest.cpp > \"$DERIVED_FILE_DIR/JSXMLHttpRequest.lut.h\"";
 		};
 		A88AD1150952480A001DD196 /* xmlserializer.lut.h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -6596,7 +6614,6 @@
 				93F19AE008245E59001E9ABC /* KWQAccObjectCache.mm in Sources */,
 				93F19AE108245E59001E9ABC /* KWQExceptions.mm in Sources */,
 				93F19AE308245E59001E9ABC /* WebCoreGraphicsBridge.m in Sources */,
-				93F19AE408245E59001E9ABC /* xmlhttprequest.cpp in Sources */,
 				93F19AE508245E59001E9ABC /* WebCoreKeyGenerator.m in Sources */,
 				93F19AE608245E59001E9ABC /* KWQKSSLKeyGen.mm in Sources */,
 				93F19AE708245E59001E9ABC /* xmlserializer.cpp in Sources */,
@@ -6951,6 +6968,8 @@
 				A8DF4AEC0980C42C0052981B /* RenderTable.cpp in Sources */,
 				A8DF4AED0980C42C0052981B /* RenderTableSection.cpp in Sources */,
 				A8DF4AF00980C42C0052981B /* RenderTableRow.cpp in Sources */,
+				E1F7F5600981AF570073BE6A /* JSXMLHttpRequest.cpp in Sources */,
+				E1F0424609839389006694EA /* xmlhttprequest.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7071,7 +7090,6 @@
 				A88AD31C0952480A001DD196 /* KWQAccObjectCache.mm in Sources */,
 				A88AD31D0952480A001DD196 /* KWQExceptions.mm in Sources */,
 				A88AD31F0952480A001DD196 /* WebCoreGraphicsBridge.m in Sources */,
-				A88AD3200952480A001DD196 /* xmlhttprequest.cpp in Sources */,
 				A88AD3210952480A001DD196 /* WebCoreKeyGenerator.m in Sources */,
 				A88AD3220952480A001DD196 /* KWQKSSLKeyGen.mm in Sources */,
 				A88AD3230952480A001DD196 /* xmlserializer.cpp in Sources */,
@@ -7256,6 +7274,8 @@
 				A8DF4AF60980C42C0052981B /* RenderTable.cpp in Sources */,
 				A8DF4AF70980C42C0052981B /* RenderTableSection.cpp in Sources */,
 				A8DF4AFA0980C42C0052981B /* RenderTableRow.cpp in Sources */,
+				E1F7F5620981AF570073BE6A /* JSXMLHttpRequest.cpp in Sources */,
+				E1F0424809839389006694EA /* xmlhttprequest.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

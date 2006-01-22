@@ -35,6 +35,7 @@
 #include "DocLoader.h"
 #include "EventNames.h"
 #include "FrameView.h"
+#include "NodeListImpl.h"
 #include "HTMLFormElementImpl.h"
 #include "HTMLGenericFormElementImpl.h"
 #include "Frame.h"
@@ -365,7 +366,7 @@ void Frame::stopLoading(bool sendUnload)
   if (DocumentImpl *doc = d->m_doc) {
     if (DocLoader *docLoader = doc->docLoader())
       Cache::loader()->cancelRequests(docLoader);
-    KJS::XMLHttpRequest::cancelRequests(doc);
+      XMLHttpRequest::cancelRequests(doc);
   }
 
   // tell all subframes to stop as well

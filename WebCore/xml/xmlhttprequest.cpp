@@ -1,7 +1,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2004 Apple Computer, Inc.
- *  Copyright (C) 2005 Alexey Proskuryakov <ap@nypop.com>
+ *  Copyright (C) 2005, 2006 Alexey Proskuryakov <ap@nypop.com>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -21,20 +21,18 @@
 #include "config.h"
 #include "xmlhttprequest.h"
 
-#include "kjs_window.h"
-#include "kjs_events.h"
+#include "kjs/protect.h"
 
 #include "dom/dom_exception.h"
 #include "dom/dom_string.h"
+#include "dom/dom2_events.h"
 #include "Cache.h"
 #include "html/html_documentimpl.h"
+#include "misc/formdata.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/EventNames.h"
 #include "DOMImplementationImpl.h"
 
-#include "Frame.h"
-
-#include <kdebug.h>
 #include <kio/job.h>
 #include <qobject.h>
 #include <qregexp.h>
@@ -42,12 +40,7 @@
 
 #include "KWQLoader.h"
 
-#include "xmlhttprequest.lut.h"
-
-using namespace DOM;
-using namespace DOM::EventNames;
-
-using khtml::Decoder;
+using namespace WebCore::EventNames;
 
 static inline QString getMIMEType(const QString& contentTypeString)
 {
@@ -93,24 +86,7 @@ static QString getCharset(const QString& contentTypeString)
     return QString();
 }
 
-namespace KJS {
-
-////////////////////// XMLHttpRequest Object ////////////////////////
-
-/* Source for XMLHttpRequestProtoTable.
-@begin XMLHttpRequestProtoTable 7
-  abort                 XMLHttpRequest::Abort                   DontDelete|Function 0
-  getAllResponseHeaders XMLHttpRequest::GetAllResponseHeaders   DontDelete|Function 0
-  getResponseHeader     XMLHttpRequest::GetResponseHeader       DontDelete|Function 1
-  open                  XMLHttpRequest::Open                    DontDelete|Function 5
-  overrideMimeType      XMLHttpRequest::OverrideMIMEType        DontDelete|Function 1
-  send                  XMLHttpRequest::Send                    DontDelete|Function 1
-  setRequestHeader      XMLHttpRequest::SetRequestHeader        DontDelete|Function 2
-@end
-*/
-KJS_DEFINE_PROTOTYPE(XMLHttpRequestProto)
-KJS_IMPLEMENT_PROTOFUNC(XMLHttpRequestProtoFunc)
-KJS_IMPLEMENT_PROTOTYPE("XMLHttpRequest",XMLHttpRequestProto,XMLHttpRequestProtoFunc)
+namespace WebCore {
 
 XMLHttpRequestQObject::XMLHttpRequestQObject(XMLHttpRequest *_jsObject) 
 {
@@ -132,56 +108,20 @@ void XMLHttpRequestQObject::slotRedirection( KIO::Job* job, const KURL& url)
   jsObject->slotRedirection( job, url ); 
 }
 
-XMLHttpRequestConstructorImp::XMLHttpRequestConstructorImp(ExecState *exec, DOM::DocumentImpl *d)
-    : doc(d)
+XMLHttpRequestState XMLHttpRequest::getReadyState() const
 {
-    putDirect(prototypePropertyName, XMLHttpRequestProto::self(exec), DontEnum|DontDelete|ReadOnly);
+    return state;
 }
 
-XMLHttpRequestConstructorImp::~XMLHttpRequestConstructorImp()
+DOMString XMLHttpRequest::getResponseText() const
 {
+    return response;
 }
 
-bool XMLHttpRequestConstructorImp::implementsConstruct() const
+PassRefPtr<DocumentImpl> XMLHttpRequest::getResponseXML() const
 {
-  return true;
-}
-
-JSObject *XMLHttpRequestConstructorImp::construct(ExecState *exec, const List &)
-{
-  return new XMLHttpRequest(exec, doc.get());
-}
-
-const ClassInfo XMLHttpRequest::info = { "XMLHttpRequest", 0, &XMLHttpRequestTable, 0 };
-
-/* Source for XMLHttpRequestTable.
-@begin XMLHttpRequestTable 7
-  readyState            XMLHttpRequest::ReadyState              DontDelete|ReadOnly
-  responseText          XMLHttpRequest::ResponseText            DontDelete|ReadOnly
-  responseXML           XMLHttpRequest::ResponseXML             DontDelete|ReadOnly
-  status                XMLHttpRequest::Status                  DontDelete|ReadOnly
-  statusText            XMLHttpRequest::StatusText              DontDelete|ReadOnly
-  onreadystatechange    XMLHttpRequest::Onreadystatechange      DontDelete
-  onload                XMLHttpRequest::Onload                  DontDelete
-@end
-*/
-
-bool XMLHttpRequest::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  return getStaticValueSlot<XMLHttpRequest, DOMObject>(exec, &XMLHttpRequestTable, this, propertyName, slot);
-}
-
-JSValue *XMLHttpRequest::getValueProperty(ExecState *exec, int token) const
-{
-  switch (token) {
-  case ReadyState:
-    return jsNumber(state);
-  case ResponseText:
-    return jsStringOrNull(DOM::DOMString(response));
-  case ResponseXML:
-    if (state != Completed) {
-      return jsUndefined();
-    }
+    if (state != Completed)
+      return 0;
 
     if (!createdDocument) {
       if (typeIsXML = responseIsXML()) {
@@ -197,65 +137,33 @@ JSValue *XMLHttpRequest::getValueProperty(ExecState *exec, int token) const
       createdDocument = true;
     }
 
-    if (!typeIsXML) {
-      return jsUndefined();
-    }
+    if (!typeIsXML)
+      return 0;
 
-    return getDOMNode(exec, responseXML.get());
-  case Status:
-    return getStatus();
-  case StatusText:
-    return getStatusText();
-  case Onreadystatechange:
-   if (onReadyStateChangeListener && onReadyStateChangeListener->listenerObj()) {
-     return onReadyStateChangeListener->listenerObj();
-   } else {
-     return jsNull();
-   }
-  case Onload:
-   if (onLoadListener && onLoadListener->listenerObj()) {
-     return onLoadListener->listenerObj();
-   } else {
-     return jsNull();
-   }
-  default:
-    kdWarning() << "XMLHttpRequest::getValueProperty unhandled token " << token << endl;
-    return NULL;
-  }
+    return responseXML;
 }
 
-void XMLHttpRequest::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
+PassRefPtr<EventListener> XMLHttpRequest::getOnReadyStateChangeListener() const
 {
-  lookupPut<XMLHttpRequest,DOMObject>(exec, propertyName, value, attr, &XMLHttpRequestTable, this );
+    return onReadyStateChangeListener;
 }
 
-void XMLHttpRequest::putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/)
+void XMLHttpRequest::setOnReadyStateChangeListener(EventListener* eventListener)
 {
-  switch(token) {
-  case Onreadystatechange:
-    onReadyStateChangeListener = Window::retrieveActive(exec)->getJSUnprotectedEventListener(value, true);
-    break;
-  case Onload:
-    onLoadListener = Window::retrieveActive(exec)->getJSUnprotectedEventListener(value, true);
-    break;
-  default:
-    kdWarning() << "HTMLDocument::putValueProperty unhandled token " << token << endl;
-  }
+    onReadyStateChangeListener = eventListener;
 }
 
-void XMLHttpRequest::mark()
+PassRefPtr<EventListener> XMLHttpRequest::getOnLoadListener() const
 {
-  DOMObject::mark();
-
-  if (onReadyStateChangeListener)
-    onReadyStateChangeListener->mark();
-
-  if (onLoadListener)
-    onLoadListener->mark();
+    return onLoadListener;
 }
 
+void XMLHttpRequest::setOnLoadListener(EventListener* eventListener)
+{
+    onLoadListener = eventListener;
+}
 
-XMLHttpRequest::XMLHttpRequest(ExecState *exec, DOM::DocumentImpl *d)
+XMLHttpRequest::XMLHttpRequest(DocumentImpl *d)
   : qObject(new XMLHttpRequestQObject(this)),
     doc(d),
     async(true),
@@ -264,7 +172,6 @@ XMLHttpRequest::XMLHttpRequest(ExecState *exec, DOM::DocumentImpl *d)
     createdDocument(false),
     aborted(false)
 {
-  setPrototype(XMLHttpRequestProto::self(exec));
 }
 
 XMLHttpRequest::~XMLHttpRequest()
@@ -312,7 +219,7 @@ bool XMLHttpRequest::urlMatchesDocumentDomain(const KURL& _url) const
   return false;
 }
 
-void XMLHttpRequest::open(const QString& _method, const KURL& _url, bool _async)
+void XMLHttpRequest::open(const DOMString& _method, const KURL& _url, bool _async, const DOMString& user, const DOMString& password)
 {
   abort();
   aborted = false;
@@ -334,9 +241,15 @@ void XMLHttpRequest::open(const QString& _method, const KURL& _url, bool _async)
     return;
   }
 
-  
-  method = _method;
   url = _url;
+
+  if (!user.isNull())
+    url.setUser(user.qstring());
+
+  if (!password.isNull())
+    url.setPass(password.qstring());
+
+  method = _method.qstring();
   async = _async;
 
   changeState(Loading);
@@ -347,6 +260,9 @@ void XMLHttpRequest::send(const DOMString& _body)
   if (!doc)
     return;
 
+  if (state != Loading)
+    return;
+  
   // FIXME: Should this abort instead if we already have a job going?
   if (job)
     return;
@@ -382,7 +298,7 @@ void XMLHttpRequest::send(const DOMString& _body)
 
     { // scope
         // avoid deadlock in case the loader wants to use JS on a background thread
-        JSLock::DropAllLocks dropLocks;
+        KJS::JSLock::DropAllLocks dropLocks;
 
         data = KWQServeSynchronousRequest(khtml::Cache::loader(), doc->docLoader(), job, finalURL, headers);
     }
@@ -393,10 +309,7 @@ void XMLHttpRequest::send(const DOMString& _body)
     return;
   }
 
-  {
-    JSLock lock;
-    gcProtect(this);
-  }
+  ref(); // this object should not be deleted while a request is in progress
   
   qObject->connect( job, SIGNAL( result( KIO::Job* ) ),
                     SLOT( slotFinished( KIO::Job* ) ) );
@@ -422,20 +335,23 @@ void XMLHttpRequest::abort()
   decoder = 0;
   aborted = true;
 
-  if (hadJob) {
-    JSLock lock;
-    gcUnprotect(this);
-  }
+  if (hadJob)
+    deref();
 }
 
-void XMLHttpRequest::setRequestHeader(const QString& name, const QString &value)
+void XMLHttpRequest::overrideMIMEType(const DOMString& override)
+{
+  MIMETypeOverride = override.qstring();
+}
+
+void XMLHttpRequest::setRequestHeader(const DOMString& name, const DOMString &value)
 {
   if (requestHeaders.length() > 0) {
     requestHeaders += "\r\n";
   }
-  requestHeaders += name;
+  requestHeaders += name.qstring();
   requestHeaders += ": ";
-  requestHeaders += value;
+  requestHeaders += value.qstring();
 }
 
 QString XMLHttpRequest::getRequestHeader(const QString& name) const
@@ -443,24 +359,24 @@ QString XMLHttpRequest::getRequestHeader(const QString& name) const
   return getSpecificHeader(requestHeaders, name);
 }
 
-JSValue *XMLHttpRequest::getAllResponseHeaders() const
+DOMString XMLHttpRequest::getAllResponseHeaders() const
 {
   if (responseHeaders.isEmpty()) {
-    return jsUndefined();
+    return DOMString();
   }
 
   int endOfLine = responseHeaders.find("\n");
 
   if (endOfLine == -1) {
-    return jsUndefined();
+    return DOMString();
   }
 
-  return jsString(responseHeaders.mid(endOfLine + 1) + "\n");
+  return responseHeaders.mid(endOfLine + 1) + "\n";
 }
 
-QString XMLHttpRequest::getResponseHeader(const QString& name) const
+DOMString XMLHttpRequest::getResponseHeader(const DOMString& name) const
 {
-  return getSpecificHeader(responseHeaders, name);
+  return getSpecificHeader(responseHeaders, name.qstring());
 }
 
 QString XMLHttpRequest::getSpecificHeader(const QString& headers, const QString& name)
@@ -492,43 +408,40 @@ bool XMLHttpRequest::responseIsXML() const
 {
     QString mimeType = getMIMEType(MIMETypeOverride);
     if (mimeType.isEmpty())
-        mimeType = getMIMEType(getResponseHeader("Content-Type"));
+        mimeType = getMIMEType(getResponseHeader("Content-Type").qstring());
     if (mimeType.isEmpty())
       mimeType = "text/xml";
     
     return DOMImplementationImpl::isXMLMIMEType(mimeType);
 }
 
-JSValue *XMLHttpRequest::getStatus() const
+int XMLHttpRequest::getStatus() const
 {
-  if (responseHeaders.isEmpty()) {
-    return jsUndefined();
-  }
+  if (responseHeaders.isEmpty())
+    return -1;
   
   int endOfLine = responseHeaders.find("\n");
   QString firstLine = endOfLine == -1 ? responseHeaders : responseHeaders.left(endOfLine);
   int codeStart = firstLine.find(" ");
   int codeEnd = firstLine.find(" ", codeStart + 1);
   
-  if (codeStart == -1 || codeEnd == -1) {
-    return jsUndefined();
-  }
+  if (codeStart == -1 || codeEnd == -1)
+    return -1;
   
   QString number = firstLine.mid(codeStart + 1, codeEnd - (codeStart + 1));
   
   bool ok = false;
   int code = number.toInt(&ok);
-  if (!ok) {
-    return jsUndefined();
-  }
+  if (!ok)
+    return -1;
 
-  return jsNumber(code);
+  return code;
 }
 
-JSValue *XMLHttpRequest::getStatusText() const
+DOMString XMLHttpRequest::getStatusText() const
 {
   if (responseHeaders.isEmpty()) {
-    return jsUndefined();
+    return DOMString();
   }
   
   int endOfLine = responseHeaders.find("\n");
@@ -537,12 +450,12 @@ JSValue *XMLHttpRequest::getStatusText() const
   int codeEnd = firstLine.find(" ", codeStart + 1);
 
   if (codeStart == -1 || codeEnd == -1) {
-    return jsUndefined();
+    return DOMString();
   }
   
   QString statusText = firstLine.mid(codeEnd + 1, endOfLine - (codeEnd + 1)).stripWhiteSpace();
   
-  return jsString(statusText);
+  return DOMString(statusText);
 }
 
 void XMLHttpRequest::processSyncLoadResults(const ByteArray &data, const KURL &finalURL, const QString &headers)
@@ -581,14 +494,15 @@ void XMLHttpRequest::slotFinished(KIO::Job *)
   if (decoder)
     response += decoder->flush();
 
+  bool hadJob = job;
   removeFromRequestsByDocument();
   job = 0;
 
   changeState(Completed);
   decoder = 0;
 
-  JSLock lock;
-  gcUnprotect(this);
+  if (hadJob)
+    deref();
 }
 
 void XMLHttpRequest::slotRedirection(KIO::Job*, const KURL& url)
@@ -609,7 +523,7 @@ void XMLHttpRequest::slotData(KIO::Job*, const char *data, int len)
   if (!decoder) {
     encoding = getCharset(MIMETypeOverride);
     if (encoding.isEmpty())
-      encoding = getCharset(getResponseHeader("Content-Type"));
+      encoding = getCharset(getResponseHeader("Content-Type").qstring());
     if (encoding.isEmpty() && job)
       encoding = job->queryMetaData("charset");
     
@@ -674,115 +588,10 @@ void XMLHttpRequest::removeFromRequestsByDocument()
   }
 }
 
-void XMLHttpRequest::cancelRequests(DOM::DocumentImpl* d)
+void XMLHttpRequest::cancelRequests(DocumentImpl* d)
 {
   while (RequestsSet* requests = requestsByDocument().get(d))
     (*requests->begin())->abort();
-}
-
-JSValue *XMLHttpRequestProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
-{
-  if (!thisObj->inherits(&XMLHttpRequest::info))
-    return throwError(exec, TypeError);
-
-  XMLHttpRequest *request = static_cast<XMLHttpRequest *>(thisObj);
-
-  switch (id) {
-  case XMLHttpRequest::Abort: {
-    request->abort();
-    return jsUndefined();
-  }
-  case XMLHttpRequest::GetAllResponseHeaders: {
-    if (args.size() != 0) {
-      return jsUndefined();
-    }
-
-    return request->getAllResponseHeaders();
-  }
-  case XMLHttpRequest::GetResponseHeader: {
-    if (args.size() != 1) {
-      return jsUndefined();
-    }
-    
-    QString header = request->getResponseHeader(args[0]->toString(exec).qstring());
-
-    if (header.isNull())
-      return jsUndefined();
-
-    return jsString(header);
-  }
-  case XMLHttpRequest::Open:
-    {
-      if (args.size() < 2 || args.size() > 5) {
-        return jsUndefined();
-      }
-    
-      QString method = args[0]->toString(exec).qstring();
-      KURL url = KURL(Window::retrieveActive(exec)->frame()->document()->completeURL(args[1]->toString(exec).qstring()));
-
-      bool async = true;
-      if (args.size() >= 3) {
-        async = args[2]->toBoolean(exec);
-      }
-    
-      if (args.size() >= 4) {
-        url.setUser(args[3]->toString(exec).qstring());
-      }
-      
-      if (args.size() >= 5) {
-        url.setPass(args[4]->toString(exec).qstring());
-      }
-
-      request->open(method, url, async);
-
-      return jsUndefined();
-    }
-  case XMLHttpRequest::Send:
-    {
-      if (args.size() > 1) {
-        return jsUndefined();
-      }
-
-      if (request->state != Loading) {
-        return jsUndefined();
-      }
-
-      DOMString body;
-
-      if (args.size() >= 1) {
-        if (args[0]->toObject(exec)->inherits(&DOMDocument::info)) {
-          DocumentImpl *doc = static_cast<DocumentImpl *>(static_cast<DOMDocument *>(args[0]->toObject(exec))->impl());
-          body = doc->toString().qstring();
-        } else {
-          // converting certain values (like null) to object can set an exception
-          exec->clearException();
-          body = args[0]->toString(exec).domString();
-        }
-      }
-
-      request->send(body);
-
-      return jsUndefined();
-    }
-  case XMLHttpRequest::SetRequestHeader: {
-    if (args.size() != 2) {
-      return jsUndefined();
-    }
-    
-    request->setRequestHeader(args[0]->toString(exec).qstring(), args[1]->toString(exec).qstring());
-    
-    return jsUndefined();
-  }
-  case XMLHttpRequest::OverrideMIMEType: {
-    if (args.size() != 1) {
-      return jsUndefined();
-    }
-    request->MIMETypeOverride = args[0]->toString(exec).qstring();
-    return jsUndefined();
-  }
-  }
-
-  return jsUndefined();
 }
 
 } // end namespace

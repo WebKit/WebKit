@@ -1,3 +1,29 @@
+2006-01-22  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Maciej.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=6642
+          Split XMLHttpRequest class into JS binding and implementation
+
+        * WebCore.xcodeproj/project.pbxproj: Adjusted for moved and renamed files.
+        New group "xml" to match directory structure.
+        * xml: Added.
+        * khtml/ecma/JSXMLHttpRequest.cpp: Added.
+        * khtml/ecma/JSXMLHttpRequest.h: Added.
+        * khtml/ecma/xmlhttprequest.cpp: Removed.
+        * khtml/ecma/xmlhttprequest.h: Removed.
+        * xml/xmlhttprequest.cpp: Added.
+        * xml/xmlhttprequest.h: Added.
+        * khtml/ecma/kjs_binding.cpp:
+        (KJS::jsStringOrUndefined): Moved from kjs_events.cpp.
+        * khtml/ecma/kjs_binding.h: Added prototype for jsStringOrUndefined().
+        * khtml/ecma/kjs_events.cpp: Removed jsStringOrUndefined().
+        * khtml/ecma/kjs_window.cpp: 
+        (KJS::Window::getValueProperty): Use new class name for JSXMLHttpRequest.
+        * kwq/KWQSlot.cpp: XMLHttpRequestQObject is now in WebCore, not KJS.
+        * page/Frame.cpp:
+        (Frame::stopLoading): XMLHttpRequest is now in WebCore, not KJS.
+
 2006-01-22  Alexander Kellett  <lypanov@kde.org>
 
         Reviewed by eseidel.

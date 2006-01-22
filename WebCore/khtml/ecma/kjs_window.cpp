@@ -43,7 +43,7 @@
 #include "kjs_traversal.h"
 #include "kjs_css.h"
 #include "kjs_events.h"
-#include "xmlhttprequest.h"
+#include "JSXMLHttpRequest.h"
 #include "xmlserializer.h"
 #ifdef KHTML_XSLT
 #include "XSLTProcessor.h"
@@ -805,7 +805,7 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
     case Option:
       return new OptionConstructorImp(exec, m_frame->document());
     case XMLHttpRequest:
-      return new XMLHttpRequestConstructorImp(exec, m_frame->document());
+      return new JSXMLHttpRequestConstructorImp(exec, m_frame->document());
     case XMLSerializer:
       return new XMLSerializerConstructorImp(exec);
     case DOMParser:
