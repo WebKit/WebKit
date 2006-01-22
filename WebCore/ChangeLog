@@ -1,3 +1,17 @@
+2006-01-22  Darin Adler  <darin@apple.com>
+
+       Reviewed by Maciej.
+
+       - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3508
+         REGRESSION (125-412): problem with negative margin-top and position: absolute (vre.aitg.com)
+
+       Test: fast/css/position-negative-top-margin.html
+
+       * rendering/RenderBlock.cpp: (WebCore::RenderBlock::adjustPositionedBlock):
+       Fixed two different problems that contributed to the bug: (1) Added a call to calcVerticalMargins
+       otherwise the margin will always be 0. (2) Corrected logic for the negative margin case, which
+       was comparing a negative margin-top to a number representing the absolute value of the margin.
+
 2006-01-22  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

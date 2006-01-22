@@ -1,3 +1,31 @@
+2006-01-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=3508
+          REGRESSION (125-412): problem with negative margin-top and position: absolute (vre.aitg.com)
+
+        * fast/css/position-negative-top-margin.html: Added.
+        * fast/css/position-negative-top-margin-expected.txt: Added.
+        * fast/css/position-negative-top-margin-expected.png: Added.
+        * fast/css/position-negative-top-margin-expected.checksum: Added.
+
+        * fast/box-sizing/box-sizing-expected.txt: Updated, since absolute position box locations changed.
+        * fast/box-sizing/box-sizing-expected.png: Ditto.
+        * fast/box-sizing/box-sizing-expected.checksum: Ditto.
+
+        - changed a few suitable tests to dump as text (in part to fix a failing pixel test in one)
+
+        * fast/parser/entity-surrogate-pairs.html: Added a call to dumpAsText().
+        * fast/parser/entity-surrogate-pairs-expected.txt: Now a plain text file instead of a render tree.
+        * fast/parser/entity-surrogate-pairs-expected.png: Removed.
+        * fast/parser/entity-surrogate-pairs-expected.checksum: Removed.
+
+        * fast/parser/head-comment.html Added a call to dumpAsText().
+        * fast/parser/head-comment-expected.txt: Now a plain text file instead of a render tree.
+        * fast/parser/head-comment-expected.png: Removed.
+        * fast/parser/head-comment-expected.checksum: Removed.
+
 2006-01-22  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

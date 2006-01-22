@@ -564,19 +564,22 @@ void RenderBlock::adjustPositionedBlock(RenderObject* child, const MarginInfo& m
     }
 
     if (child->hasStaticY()) {
-        int marginOffset = 0;
+        int y = m_height;
         if (!marginInfo.canCollapseWithTop()) {
+            child->calcVerticalMargins();
+            int marginTop = child->marginTop();
             int collapsedTopPos = marginInfo.posMargin();
             int collapsedTopNeg = marginInfo.negMargin();
-            bool posMargin = child->marginTop() >= 0;
-            if (posMargin && child->marginTop() > collapsedTopPos)
-                collapsedTopPos = child->marginTop();
-            else if (!posMargin && child->marginTop() > collapsedTopNeg)
-                collapsedTopNeg = child->marginTop();
-            marginOffset += (collapsedTopPos - collapsedTopNeg) - child->marginTop();
+            if (marginTop > 0) {
+                if (marginTop > collapsedTopPos)
+                    collapsedTopPos = marginTop;
+            } else {
+                if (-marginTop > collapsedTopNeg)
+                    collapsedTopNeg = -marginTop;
+            }
+            y += (collapsedTopPos - collapsedTopNeg) - marginTop;
         }
-        
-        child->setStaticY(m_height + marginOffset);
+        child->setStaticY(y);
     }
 }
 
