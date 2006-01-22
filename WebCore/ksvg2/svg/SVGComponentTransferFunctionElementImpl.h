@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGComponentTransferFunctionElementImpl_H
 #define KSVG_SVGComponentTransferFunctionElementImpl_H
+#if SVG_SUPPORT
 
 #include "SVGElementImpl.h"
 #include "KCanvasFilters.h"
@@ -63,6 +64,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

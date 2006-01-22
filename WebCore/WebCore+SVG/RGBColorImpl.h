@@ -22,6 +22,7 @@
 
 #ifndef KDOM_RGBColorImpl_H
 #define KDOM_RGBColorImpl_H
+#if SVG_SUPPORT
 
 #include "Shared.h"
 
@@ -48,6 +49,7 @@ namespace KDOM
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

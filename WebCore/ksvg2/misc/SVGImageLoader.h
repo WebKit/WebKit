@@ -21,6 +21,7 @@
 
 #ifndef KSVG_SVGImageLoader_H
 #define KSVG_SVGImageLoader_H
+#if SVG_SUPPORT
 
 #include "khtml/html/html_imageimpl.h"
 
@@ -36,6 +37,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

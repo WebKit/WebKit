@@ -22,6 +22,7 @@
  */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include "RenderSVGText.h"
 
 #include "render_object.h"
@@ -129,3 +130,5 @@ bool RenderSVGText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty
     totalTransform.invert().map(_x, _y, &localX, &localY);
     return RenderBlock::nodeAtPoint(info, (int)localX, (int)localY, _tx, _ty, hitTestAction);
 }
+#endif // SVG_SUPPORT
+

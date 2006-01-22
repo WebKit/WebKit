@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include "SVGLengthListImpl.h"
 #include "SVGAnimatedLengthListImpl.h"
 
@@ -49,3 +50,5 @@ SVGLengthListImpl *SVGAnimatedLengthListImpl::create() const
 //}
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

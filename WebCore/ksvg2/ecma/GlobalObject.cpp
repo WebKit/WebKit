@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include <kdom/core/NodeImpl.h>
 #include <kdom/core/DocumentImpl.h>
 
@@ -107,3 +108,5 @@ KJS::JSValue *GlobalObject::get(KJS::ExecState *exec, const KJS::Identifier &p) 
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

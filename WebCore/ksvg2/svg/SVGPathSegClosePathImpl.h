@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGPathSegClosePathImpl_H
 #define KSVG_SVGPathSegClosePathImpl_H
+#if SVG_SUPPORT
 
 #include <ksvg2/svg/SVGPathSegImpl.h>
 
@@ -39,6 +40,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

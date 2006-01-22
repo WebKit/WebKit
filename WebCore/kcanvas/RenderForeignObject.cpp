@@ -21,6 +21,7 @@
  */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include "RenderForeignObject.h"
 
 #include "KCanvasMatrix.h"
@@ -78,3 +79,5 @@ bool RenderForeignObject::nodeAtPoint(NodeInfo& info, int x, int y, int tx, int 
     totalTransform.invert().map(x, y, &localX, &localY);
     return RenderBlock::nodeAtPoint(info, (int)localX, (int)localY, tx, ty, hitTestAction);
 }
+#endif // SVG_SUPPORT
+

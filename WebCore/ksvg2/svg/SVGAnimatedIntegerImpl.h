@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGAnimatedIntegerImpl_H
 #define KSVG_SVGAnimatedIntegerImpl_H
+#if SVG_SUPPORT
 
 #include "Shared.h"
 
@@ -49,6 +50,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

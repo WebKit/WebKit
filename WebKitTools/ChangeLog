@@ -1,3 +1,11 @@
+2006-01-22  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by anders.
+
+        Update build-webkit to use -USVG_SUPPORT instead of -no-SVG target.
+
+        * Scripts/build-webkit:
+
 2006-01-20  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by eseidel.

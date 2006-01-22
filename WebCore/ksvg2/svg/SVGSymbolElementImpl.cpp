@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include <kdom/DOMString.h>
 
 #include "SVGHelper.h"
@@ -48,3 +49,5 @@ void SVGSymbolElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include <kdom/core/AttrImpl.h>
 
 #include "SVGHelper.h"
@@ -54,3 +55,5 @@ void SVGFEMergeNodeElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *
 
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

@@ -18,6 +18,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include "svgpathparser.h"
 #include <qstring.h>
 #include <math.h>
@@ -599,3 +600,5 @@ SVGPathParser::svgArcTo( double, double, double, double, double, bool, bool, boo
 } 
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

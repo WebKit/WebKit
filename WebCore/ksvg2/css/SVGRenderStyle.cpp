@@ -27,6 +27,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include "SVGRenderStyle.h"
 
 using namespace KSVG;
@@ -110,3 +111,5 @@ void SVGRenderStyle::inheritFrom(const SVGRenderStyle *svgInheritParent)
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGExternalResourcesRequiredImpl_H
 #define KSVG_SVGExternalResourcesRequiredImpl_H
+#if SVG_SUPPORT
 
 namespace KDOM
 {
@@ -47,6 +48,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGPathSegListImpl_H
 #define KSVG_SVGPathSegListImpl_H
+#if SVG_SUPPORT
 
 #include "SVGList.h"
 #include "SVGPathSegImpl.h"
@@ -36,6 +37,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

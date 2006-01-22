@@ -22,6 +22,7 @@
 
 //#include "SVGAngle.h"
 #include "config.h"
+#if SVG_SUPPORT
 #include <math.h>
 
 #include <ksvg2/ksvg.h>
@@ -190,3 +191,5 @@ void SVGAngleImpl::setContext(const SVGStyledElementImpl *context)
 
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

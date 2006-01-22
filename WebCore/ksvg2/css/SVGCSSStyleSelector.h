@@ -26,6 +26,7 @@
 
 #ifndef KSVG_SVGCSSStyleSelector_H
 #define KSVG_SVGCSSStyleSelector_H
+#if SVG_SUPPORT
 
 #include <kdom/css/CSSStyleSelector.h>
 
@@ -84,6 +85,7 @@ namespace KSVG
     };
 }
 
+#endif //SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

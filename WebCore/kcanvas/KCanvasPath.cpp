@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#if SVG_SUPPORT
 
 #include <qpainter.h>
 #include <qtextstream.h>
@@ -54,3 +55,5 @@ QTextStream &operator<<(QTextStream &ts, const KCClipData &d)
     ts << " [path=" << QPainter::renderingDevice()->stringForPath(d.path.get()) << "]";
     return ts;
 }
+#endif // SVG_SUPPORT
+

@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 
 #include <kdom/kdom.h>
 #include <kdom/Helper.h>
@@ -223,3 +224,5 @@ void SVGDOMImplementationImpl::setAnimationContext(bool value)
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

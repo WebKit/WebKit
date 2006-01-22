@@ -22,6 +22,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include <q3paintdevicemetrics.h>
 #include <qpaintdevice.h>
 
@@ -203,3 +204,5 @@ KRenderingFillPainter KSVGPainterFactory::fillPainter(const RenderStyle* style, 
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

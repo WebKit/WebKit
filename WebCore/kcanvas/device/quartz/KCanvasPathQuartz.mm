@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include "KCanvasPathQuartz.h"
 
 KCanvasPathQuartz::KCanvasPathQuartz()
@@ -60,3 +61,5 @@ void KCanvasPathQuartz::closeSubpath()
 {
     CGPathCloseSubpath(m_cgPath);
 }
+#endif // SVG_SUPPORT
+

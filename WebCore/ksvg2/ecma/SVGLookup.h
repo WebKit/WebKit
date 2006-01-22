@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGLookup_H
 #define KSVG_SVGLookup_H
+#if SVG_SUPPORT
 
 #include <kdom/ecma/DOMLookup.h>
 
@@ -39,6 +40,7 @@ ClassName##Impl *handle() const { return impl; }
 
 #define KSVG_IMPLEMENT_PROTOTYPE(ClassName,ClassProto,ClassFunc) ECMA_IMPLEMENT_PROTOTYPE(KSVG, ClassName, ClassProto, ClassFunc)
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

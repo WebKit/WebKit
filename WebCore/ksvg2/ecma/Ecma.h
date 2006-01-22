@@ -22,6 +22,7 @@
 
 #ifndef KSVG_Ecma_H
 #define KSVG_Ecma_H
+#if SVG_SUPPORT
 
 #include <kdom/ecma/Ecma.h>
 
@@ -53,6 +54,7 @@ namespace KSVG
     KJS::JSValue *getSVGPathSeg(KJS::ExecState *exec, SVGPathSeg s);
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

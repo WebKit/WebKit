@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGPointListImpl_H
 #define KSVG_SVGPointListImpl_H
+#if SVG_SUPPORT
 
 #include "SVGList.h"
 #include "SVGPointImpl.h"
@@ -36,6 +37,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

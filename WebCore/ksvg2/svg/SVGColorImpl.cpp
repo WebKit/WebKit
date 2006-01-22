@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include <qstringlist.h>
 
 #include "css_valueimpl.h"
@@ -285,3 +286,5 @@ const QColor &SVGColorImpl::color() const
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

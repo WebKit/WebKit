@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include "SVGDescElementImpl.h"
 
 using namespace KSVG;
@@ -39,3 +40,5 @@ KDOM::DOMStringImpl *SVGDescElementImpl::description() const
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

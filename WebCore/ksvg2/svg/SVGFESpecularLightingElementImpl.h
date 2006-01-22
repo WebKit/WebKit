@@ -21,6 +21,7 @@
 
 #ifndef KSVG_SVGFESpecularLightingElementImpl_H
 #define KSVG_SVGFESpecularLightingElementImpl_H
+#if SVG_SUPPORT
 
 #include "SVGFilterPrimitiveStandardAttributesImpl.h"
 #include "KCanvasFilters.h"
@@ -66,4 +67,5 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif

@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGNumberListImpl_H
 #define KSVG_SVGNumberListImpl_H
+#if SVG_SUPPORT
 
 #include "SVGList.h"
 #include "SVGNumberImpl.h"
@@ -38,6 +39,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

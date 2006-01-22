@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGPathSegCurvetoCubicSmoothImpl_H
 #define KSVG_SVGPathSegCurvetoCubicSmoothImpl_H
+#if SVG_SUPPORT
 
 #include "SVGPathSegImpl.h"
 
@@ -86,6 +87,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

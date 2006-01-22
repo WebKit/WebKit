@@ -21,6 +21,7 @@
 
 #ifndef KSVG_GlobalObject_H
 #define KSVG_GlobalObject_H
+#if SVG_SUPPORT
 
 #include <kdom/ecma/GlobalObject.h>
 
@@ -46,6 +47,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

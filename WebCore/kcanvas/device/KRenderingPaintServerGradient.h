@@ -22,6 +22,7 @@
 
 #ifndef KRenderingPaintServerGradient_H
 #define KRenderingPaintServerGradient_H
+#if SVG_SUPPORT
 
 #include <qcolor.h>
 #include <q3ptrlist.h>
@@ -138,6 +139,7 @@ private:
     Private *d;
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

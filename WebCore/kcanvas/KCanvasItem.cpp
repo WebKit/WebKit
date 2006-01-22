@@ -22,6 +22,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include "IntRect.h"
 #include <kdebug.h>
 #include <kxmlcore/Assertions.h>
@@ -114,3 +115,5 @@ KCanvasPath* RenderPath::path() const
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

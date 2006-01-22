@@ -23,6 +23,7 @@
 
 #ifndef KCanvasFilters_H
 #define KCanvasFilters_H
+#if SVG_SUPPORT
 
 #include "KCanvasResources.h"
 #include "FloatSize.h"
@@ -33,6 +34,7 @@
 @class CIFilter;
 #else
 class CIFilter;
+#endif // SVG_SUPPORT
 #endif
 class KCanvasFilterQuartz;
 

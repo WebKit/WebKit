@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include "KRenderingDevice.h"
 #include "KRenderingFillPainter.h"
 #include "KRenderingPaintServer.h"
@@ -68,3 +69,5 @@ void KRenderingFillPainter::setOpacity(float opacity)
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

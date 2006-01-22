@@ -22,6 +22,7 @@
 
 #ifndef KRenderingStrokePainter_H
 #define KRenderingStrokePainter_H
+#if SVG_SUPPORT
 
 #include "KCanvasRenderingStyle.h"
 
@@ -67,6 +68,7 @@ private:
     Private *d;
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

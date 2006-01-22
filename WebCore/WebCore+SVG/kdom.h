@@ -22,6 +22,7 @@
 
 #ifndef KDOM_H
 #define KDOM_H
+#if SVG_SUPPORT
 
 #include <kdebug.h>
 
@@ -130,6 +131,7 @@ namespace KDOM
     inline kdbgstream  &operator<<(kdbgstream  &stream, const DOMString &string) { return (stream << string.qstring()); }
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

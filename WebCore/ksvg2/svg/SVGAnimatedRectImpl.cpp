@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include "SVGAnimatedRectImpl.h"
 
 using namespace KSVG;
@@ -50,3 +51,5 @@ void SVGAnimatedRectImpl::assign(SVGRectImpl *src, SVGRectImpl *dst) const
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

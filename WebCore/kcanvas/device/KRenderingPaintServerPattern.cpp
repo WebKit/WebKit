@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include "KCanvasMatrix.h"
 #include "KCanvasImage.h"
 #include "KRenderingPaintServerPattern.h"
@@ -122,3 +123,5 @@ QTextStream &KRenderingPaintServerPattern::externalRepresentation(QTextStream &t
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

@@ -22,6 +22,7 @@
 
 #ifndef KDOM_SVGZoomEventImpl_H
 #define KDOM_SVGZoomEventImpl_H
+#if SVG_SUPPORT
 
 #include <kdom/events/UIEventImpl.h>
 
@@ -59,6 +60,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

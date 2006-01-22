@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include "SVGMatrixImpl.h"
 #include "SVGTransformImpl.h"
 #include "SVGSVGElementImpl.h"
@@ -75,3 +76,5 @@ SVGTransformImpl *SVGTransformListImpl::concatenate() const
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

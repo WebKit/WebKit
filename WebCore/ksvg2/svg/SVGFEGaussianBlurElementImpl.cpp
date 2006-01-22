@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include <qstringlist.h>
 
 #include <kdom/core/AttrImpl.h>
@@ -105,3 +106,5 @@ KCanvasFEGaussianBlur *SVGFEGaussianBlurElementImpl::filterEffect() const
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

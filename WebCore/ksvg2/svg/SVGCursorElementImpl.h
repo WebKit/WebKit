@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGCursorElementImpl_H
 #define KSVG_SVGCursorElementImpl_H
+#if SVG_SUPPORT
 
 #include <qpixmap.h>
 
@@ -66,6 +67,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

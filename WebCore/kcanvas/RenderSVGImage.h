@@ -22,6 +22,7 @@
 
 #ifndef KCanvas_RenderSVGImage_H
 #define KCanvas_RenderSVGImage_H
+#if SVG_SUPPORT
 
 #include "render_image.h"
 #include <qmatrix.h>
@@ -44,6 +45,7 @@ namespace KSVG
     };
 }
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

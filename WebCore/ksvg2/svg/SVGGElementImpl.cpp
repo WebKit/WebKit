@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include "SVGGElementImpl.h"
 
 #include <kcanvas/KCanvasCreator.h>
@@ -72,3 +73,5 @@ const KDOM::AtomicString& SVGDummyElementImpl::localName() const
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

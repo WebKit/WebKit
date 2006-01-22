@@ -22,6 +22,7 @@
 
 #ifndef KRenderingPaintServerSolid_H
 #define KRenderingPaintServerSolid_H
+#if SVG_SUPPORT
 
 #include <qcolor.h>
 
@@ -45,6 +46,7 @@ private:
     Private *d;
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

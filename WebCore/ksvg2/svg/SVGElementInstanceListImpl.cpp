@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include "SVGElementInstanceListImpl.h"
 
 using namespace KSVG;
@@ -35,3 +36,5 @@ SVGElementInstanceListImpl::~SVGElementInstanceListImpl()
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

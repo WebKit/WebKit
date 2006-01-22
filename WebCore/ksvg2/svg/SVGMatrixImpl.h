@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGMatrixImpl_H
 #define KSVG_SVGMatrixImpl_H
+#if SVG_SUPPORT
 
 #include <qmatrix.h>
 
@@ -99,6 +100,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

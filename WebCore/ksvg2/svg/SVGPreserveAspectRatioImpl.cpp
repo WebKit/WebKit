@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include <qstring.h>
 #include <qstringlist.h>
 
@@ -150,3 +151,5 @@ SVGMatrixImpl *SVGPreserveAspectRatioImpl::getCTM(float logicX, float logicY, fl
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

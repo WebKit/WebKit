@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGAngleImpl_H
 #define KSVG_SVGAngleImpl_H
+#if SVG_SUPPORT
 
 #include "Shared.h"
 #include <kdom/DOMString.h>
@@ -71,6 +72,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

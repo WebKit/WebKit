@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include <qstringlist.h>
 
 #include <kdom/core/AttrImpl.h>
@@ -96,3 +97,5 @@ KCanvasFEComponentTransfer *SVGFEComponentTransferElementImpl::filterEffect() co
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

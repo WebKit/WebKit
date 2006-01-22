@@ -20,6 +20,7 @@
  */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include <qstringlist.h>
 
 #include <kdom/core/AttrImpl.h>
@@ -136,3 +137,5 @@ void SVGFELightElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr
     else
         SVGElementImpl::parseMappedAttribute(attr);
 }
+#endif // SVG_SUPPORT
+

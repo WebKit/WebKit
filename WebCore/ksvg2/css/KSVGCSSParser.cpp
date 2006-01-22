@@ -20,6 +20,8 @@
     Boston, MA 02111-1307, USA.
 */
 
+#if SVG_SUPPORT
+
 #include "ksvg.h"
 
 #include "ksvgcssvalues.c"
@@ -461,5 +463,7 @@ CSSValueImpl *CSSParser::parseSVGColor()
 }
 
 } // end namespace DOM
+
+#endif // SVG_SUPPORT
 
 // vim:ts=4:noet

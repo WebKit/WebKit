@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGStringListImpl_H
 #define KSVG_SVGStringListImpl_H
+#if SVG_SUPPORT
 
 #include <kdom/core/DOMStringImpl.h>
 
@@ -40,6 +41,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

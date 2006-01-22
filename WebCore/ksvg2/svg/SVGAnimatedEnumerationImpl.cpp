@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include "SVGStyledElementImpl.h"
 #include "SVGAnimatedEnumerationImpl.h"
 
@@ -69,3 +70,5 @@ void SVGAnimatedEnumerationImpl::setAnimVal(unsigned short animVal)
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

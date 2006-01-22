@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include <assert.h>
 
 #include <kurl.h>
@@ -306,3 +307,5 @@ void SVGDocumentImpl::addForwardReference(const SVGElementImpl *element)
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

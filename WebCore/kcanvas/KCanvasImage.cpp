@@ -22,5 +22,8 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include "KCanvasImage.h"
+
+#endif // SVG_SUPPORT
 

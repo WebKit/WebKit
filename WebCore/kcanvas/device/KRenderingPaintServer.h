@@ -23,6 +23,7 @@
 
 #ifndef KRenderingPaintServer_H
 #define KRenderingPaintServer_H
+#if SVG_SUPPORT
 
 #include <kcanvas/KCanvasResources.h>
 
@@ -86,6 +87,7 @@ private:
 
 QTextStream &operator<<(QTextStream &, const KRenderingPaintServer &);
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include <kdom/core/AttrImpl.h>
 
 #include "SVGNames.h"
@@ -112,3 +113,5 @@ void SVGTextContentElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

@@ -20,6 +20,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 
 #include "SVGForeignObjectElementImpl.h"
 
@@ -101,3 +102,5 @@ bool SVGForeignObjectElementImpl::childShouldCreateRenderer(DOM::NodeImpl *child
 };
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

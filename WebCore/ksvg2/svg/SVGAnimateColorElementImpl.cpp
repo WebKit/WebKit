@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include "SVGAnimateColorElementImpl.h"
 #include "SVGSVGElementImpl.h"
 #include "KSVGTimeScheduler.h"
@@ -278,3 +279,5 @@ QColor SVGAnimateColorElementImpl::initialColor() const
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

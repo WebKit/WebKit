@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGImageElementImpl_H
 #define KSVG_SVGImageElementImpl_H
+#if SVG_SUPPORT
 
 #include "SVGTestsImpl.h"
 #include "SVGImageLoader.h"
@@ -74,6 +75,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

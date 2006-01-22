@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGViewElementImpl_H
 #define KSVG_SVGViewElementImpl_H
+#if SVG_SUPPORT
 
 #include "SVGStyledElementImpl.h"
 #include "SVGExternalResourcesRequiredImpl.h"
@@ -50,6 +51,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

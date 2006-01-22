@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#if SVG_SUPPORT
 #import "KCanvasPathQuartz.h"
 #import "KRenderingDeviceQuartz.h"
 #import "KCanvasMaskerQuartz.h"
@@ -268,3 +269,5 @@ KCanvasFilterEffect *KRenderingDeviceQuartz::createFilterEffect(const KCFilterEf
         return 0;
     }
 }
+#endif // SVG_SUPPORT
+

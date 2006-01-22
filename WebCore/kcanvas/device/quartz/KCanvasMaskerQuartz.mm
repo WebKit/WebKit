@@ -25,6 +25,7 @@
 
 
 #include "config.h"
+#if SVG_SUPPORT
 #import "KCanvasMaskerQuartz.h"
 
 #import "kcanvas/KCanvas.h"
@@ -109,3 +110,5 @@ void KCanvasMaskerQuartz::applyMask(const FloatRect& boundingBox) const
     CGContextRelease(grayscaleContext);
     fastFree(imageBuffer);
 }
+#endif // SVG_SUPPORT
+

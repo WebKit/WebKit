@@ -22,6 +22,7 @@
 
 #ifndef KSVG_TimeScheduler_H
 #define KSVG_TimeScheduler_H
+#if SVG_SUPPORT
 
 #include <qtimer.h>
 #include <qobject.h>
@@ -120,6 +121,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

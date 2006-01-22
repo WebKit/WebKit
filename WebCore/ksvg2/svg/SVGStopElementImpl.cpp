@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include <kdom/core/AttrImpl.h>
 #include "DocumentImpl.h"
 
@@ -71,3 +72,5 @@ void SVGStopElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include <qstringlist.h>
 
 #include <kdom/core/AttrImpl.h>
@@ -141,3 +142,5 @@ KCanvasFETurbulence *SVGFETurbulenceElementImpl::filterEffect() const
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

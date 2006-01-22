@@ -22,6 +22,7 @@
 
 #ifndef KSVG_H
 #define KSVG_H
+#if SVG_SUPPORT
 
 /**
  * @short General namespace specific definitions.
@@ -292,6 +293,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

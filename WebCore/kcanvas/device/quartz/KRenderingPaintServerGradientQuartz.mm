@@ -26,6 +26,7 @@
 
 
 #include "config.h"
+#if SVG_SUPPORT
 #import "KRenderingPaintServerQuartz.h"
 #import "QuartzSupport.h"
 
@@ -410,3 +411,5 @@ void KRenderingPaintServerRadialGradientQuartz::teardown(KRenderingDeviceContext
 {
     teardownShadingWithStyle(this, m_shadingCache, renderObject, type, isPaintingText(), m_maskImage);
 }
+#endif // SVG_SUPPORT
+

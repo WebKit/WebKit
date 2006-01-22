@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include <kdom/core/AttrImpl.h>
 
 #include "ksvg.h"
@@ -426,3 +427,5 @@ KCanvasPath* SVGPathElementImpl::toPathData() const
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

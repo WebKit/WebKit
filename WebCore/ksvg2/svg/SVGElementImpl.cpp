@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include <kdom/kdom.h>
 #include <kdom/Namespace.h>
 #include <kdom/DOMString.h>
@@ -133,3 +134,5 @@ bool SVGElementImpl::childShouldCreateRenderer(DOM::NodeImpl *child) const
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

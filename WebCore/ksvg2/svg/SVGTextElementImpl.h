@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGTextElementImpl_H
 #define KSVG_SVGTextElementImpl_H
+#if SVG_SUPPORT
 
 #include "SVGTextPositioningElementImpl.h"
 #include "SVGTransformableImpl.h"
@@ -62,6 +63,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

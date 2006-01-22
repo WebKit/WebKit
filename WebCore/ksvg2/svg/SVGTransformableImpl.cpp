@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include <qregexp.h>
 #include <qstringlist.h>
 #include <kxmlcore/PassRefPtr.h>
@@ -123,3 +124,5 @@ void SVGTransformableImpl::parseTransformAttribute(SVGTransformListImpl *list, c
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

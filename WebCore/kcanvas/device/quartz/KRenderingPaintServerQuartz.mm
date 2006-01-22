@@ -26,6 +26,7 @@
 
 
 #include "config.h"
+#if SVG_SUPPORT
 #import "KRenderingPaintServerQuartz.h"
 #import "QuartzSupport.h"
 #import "KCanvasResourcesQuartz.h"
@@ -228,3 +229,5 @@ void KRenderingPaintServerPatternQuartz::teardown(KRenderingDeviceContext* rende
     CGColorSpaceRelease(m_patternSpace);
     CGContextRestoreGState(context);
 }
+#endif // SVG_SUPPORT
+

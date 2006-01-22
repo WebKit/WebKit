@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include <kdom/core/AttrImpl.h>
 
 #include "SVGNames.h"
@@ -105,3 +106,5 @@ const SVGStyledElementImpl *SVGLineElementImpl::pushAttributeContext(const SVGSt
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

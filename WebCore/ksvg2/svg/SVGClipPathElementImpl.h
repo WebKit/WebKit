@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGClipPathElementImpl_H
 #define KSVG_SVGClipPathElementImpl_H
+#if SVG_SUPPORT
 
 #include "SVGTestsImpl.h"
 #include "SVGLangSpaceImpl.h"
@@ -57,6 +58,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

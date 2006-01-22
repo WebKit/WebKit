@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include "SVGPathSegLinetoHorizontalImpl.h"
 #include "SVGStyledElementImpl.h"
 
@@ -75,3 +76,5 @@ double SVGPathSegLinetoHorizontalRelImpl::x() const
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

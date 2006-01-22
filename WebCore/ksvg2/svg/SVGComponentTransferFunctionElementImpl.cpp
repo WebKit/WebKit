@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include <qstringlist.h>
 
 #include <kdom/core/AttrImpl.h>
@@ -133,3 +134,5 @@ KCComponentTransferFunction SVGComponentTransferFunctionElementImpl::transferFun
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

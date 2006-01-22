@@ -25,6 +25,7 @@
 
 
 #include "config.h"
+#if SVG_SUPPORT
 #import "KCanvasFilterQuartz.h"
 #import "KCanvasRenderingStyle.h"
 #import "KCanvasMatrix.h"
@@ -662,3 +663,5 @@ CIFilter *KCanvasFETileQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) co
     FE_QUARTZ_SETUP_INPUT(@"CIAffineTile");
     FE_QUARTZ_OUTPUT_RETURN;
 }
+#endif // SVG_SUPPORT
+

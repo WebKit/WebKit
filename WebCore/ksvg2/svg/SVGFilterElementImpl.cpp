@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include <kdom/core/AttrImpl.h>
 
 #include <kcanvas/KCanvas.h>
@@ -203,3 +204,5 @@ KCanvasFilter *SVGFilterElementImpl::canvasResource()
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

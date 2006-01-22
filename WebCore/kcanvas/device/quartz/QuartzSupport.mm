@@ -25,6 +25,7 @@
 
 
 #include "config.h"
+#if SVG_SUPPORT
 #import "QuartzSupport.h"
 
 #import "KCanvasMatrix.h"
@@ -151,4 +152,6 @@ CFStringRef CFStringFromCGPath(CGPathRef path)
 
     return string;
 }
+
+#endif // SVG_SUPPORT
 

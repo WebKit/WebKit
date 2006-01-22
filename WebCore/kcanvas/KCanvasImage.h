@@ -23,6 +23,7 @@
 
 #ifndef KCanvasImage_H
 #define KCanvasImage_H
+#if SVG_SUPPORT
 
 #include <kcanvas/KCanvasResources.h>
 class QPixmap;
@@ -39,5 +40,6 @@ public:
     virtual IntSize size() = 0;
 };
 
+#endif // SVG_SUPPORT
 #endif
 

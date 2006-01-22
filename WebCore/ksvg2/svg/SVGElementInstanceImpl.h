@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGElementInstanceImpl_H
 #define KSVG_SVGElementInstanceImpl_H
+#if SVG_SUPPORT
 
 #include <kdom/events/EventTargetImpl.h>
 
@@ -49,6 +50,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

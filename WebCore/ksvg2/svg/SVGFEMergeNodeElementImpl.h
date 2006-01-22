@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGFEMergeNodeElementImpl_H
 #define KSVG_SVGFEMergeNodeElementImpl_H
+#if SVG_SUPPORT
 
 #include <SVGElementImpl.h>
 
@@ -45,6 +46,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

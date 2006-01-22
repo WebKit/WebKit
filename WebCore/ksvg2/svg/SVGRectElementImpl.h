@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGRectElementImpl_H
 #define KSVG_SVGRectElementImpl_H
+#if SVG_SUPPORT
 
 #include "SVGTestsImpl.h"
 #include "SVGLangSpaceImpl.h"
@@ -69,6 +70,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

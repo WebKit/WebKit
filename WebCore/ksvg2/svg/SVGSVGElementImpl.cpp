@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include <kdom/core/AttrImpl.h>
 #include <kdom/core/DOMStringImpl.h>
 #include <kdom/core/NamedAttrMapImpl.h>
@@ -461,3 +462,5 @@ void SVGSVGElementImpl::setZoomAndPan(unsigned short zoomAndPan)
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

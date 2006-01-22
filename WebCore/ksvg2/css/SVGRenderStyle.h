@@ -23,6 +23,7 @@
 
 #ifndef KSVG_SVGRenderStyle_H
 #define KSVG_SVGRenderStyle_H
+#if SVG_SUPPORT
 
 #include "Shared.h"
 #include "DataRef.h"
@@ -210,6 +211,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

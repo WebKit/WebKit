@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include <qstringlist.h>
 
 #include <kdom/core/AttrImpl.h>
@@ -109,3 +110,5 @@ bool SVGFitToViewBoxImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

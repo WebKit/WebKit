@@ -23,6 +23,7 @@
 
 #ifndef KCanvasItem_H
 #define KCanvasItem_H
+#if SVG_SUPPORT
 
 #include "IntRect.h"
 #include "IntPoint.h"
@@ -78,6 +79,7 @@ private:
 // Helper data structure
 typedef Q3ValueList<const RenderPath *> KCanvasItemList;
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

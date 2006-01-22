@@ -18,6 +18,7 @@
  */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include "SVGFEDistantLightElementImpl.h"
 
 #include "SVGAnimatedNumberImpl.h"
@@ -39,3 +40,5 @@ KCLightSource *SVGFEDistantLightElementImpl::lightSource() const
 }
 
 }
+#endif // SVG_SUPPORT
+

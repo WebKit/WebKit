@@ -22,6 +22,7 @@
 
 #ifndef KSVG_KSVGSettings_H
 #define KSVG_KSVGSettings_H
+#if SVG_SUPPORT
 
 #include <kdom/KDOMSettings.h>
 
@@ -67,6 +68,7 @@ namespace KSVG
     };
 }
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

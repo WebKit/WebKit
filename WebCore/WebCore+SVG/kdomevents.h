@@ -22,6 +22,7 @@
 
 #ifndef KDOMEVENTS_H
 #define KDOMEVENTS_H
+#if SVG_SUPPORT
 
 // General namespace specific definitions
 namespace KDOM
@@ -112,6 +113,7 @@ namespace KDOM
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

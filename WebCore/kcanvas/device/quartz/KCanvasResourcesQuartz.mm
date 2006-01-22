@@ -26,6 +26,7 @@
 
 
 #include "config.h"
+#if SVG_SUPPORT
 #import "KCanvasResourcesQuartz.h"
 
 #import "kcanvas/KCanvas.h"
@@ -251,3 +252,5 @@ void KCanvasImageQuartz::setCGLayer(CGLayerRef layer)
         m_cgLayer = CGLayerRetain(layer);
     }
 }
+#endif // SVG_SUPPORT
+

@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include <kdom/core/AttrImpl.h>
 #include <kdom/Namespace.h>
 #include "DocumentImpl.h"
@@ -101,3 +102,5 @@ void SVGPolyElementImpl::notifyAttributeChange() const
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

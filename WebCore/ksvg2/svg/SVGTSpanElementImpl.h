@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGTSpanElementImpl_H
 #define KSVG_SVGTSpanElementImpl_H
+#if SVG_SUPPORT
 
 #include "SVGTextPositioningElementImpl.h"
 
@@ -39,6 +40,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

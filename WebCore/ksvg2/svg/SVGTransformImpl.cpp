@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include <kdebug.h>
 
 #include "SVGMatrixImpl.h"
@@ -114,3 +115,5 @@ void SVGTransformImpl::setSkewY(double angle)
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

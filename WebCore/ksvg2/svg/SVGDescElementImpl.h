@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGDescElementImpl_H
 #define KSVG_SVGDescElementImpl_H
+#if SVG_SUPPORT
 
 #include "SVGLangSpaceImpl.h"
 #include "SVGStyledElementImpl.h"
@@ -39,6 +40,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

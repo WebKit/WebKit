@@ -21,6 +21,7 @@
 
 #ifndef KDOM_Namespace_h
 #define KDOM_Namespace_h
+#if SVG_SUPPORT
 
 /**
  * @file Namespace.h
@@ -186,6 +187,7 @@ namespace KDOM
 
 };
 
+#endif // SVG_SUPPORT
 #endif // KDOM_Namespace_h
 
 // vim:ts=4:noet

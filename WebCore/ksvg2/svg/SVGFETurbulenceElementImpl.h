@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGFETurbulenceElementImpl_H
 #define KSVG_SVGFETurbulenceElementImpl_H
+#if SVG_SUPPORT
 
 #include "SVGFilterPrimitiveStandardAttributesImpl.h"
 #include "KCanvasFilters.h"
@@ -62,6 +63,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

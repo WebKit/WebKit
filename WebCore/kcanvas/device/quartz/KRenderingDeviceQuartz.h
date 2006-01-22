@@ -26,6 +26,7 @@
 
 #ifndef KRenderingDeviceQuartz_H
 #define KRenderingDeviceQuartz_H
+#if SVG_SUPPORT
 
 #import <kcanvas/device/KRenderingDevice.h>
 
@@ -36,6 +37,7 @@ typedef struct CGContext *CGContextRef;
 @class NSGraphicsContext;
 #else
 class NSGraphicsContext;
+#endif // SVG_SUPPORT
 #endif
 
 class KRenderingDeviceContextQuartz : public KRenderingDeviceContext

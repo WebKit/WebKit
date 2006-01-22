@@ -23,6 +23,7 @@
 
 #ifndef KCanvasPath_H
 #define KCanvasPath_H
+#if SVG_SUPPORT
 
 #include <q3valuelist.h>
 #include <kxmlcore/RefPtr.h>
@@ -87,6 +88,7 @@ public:
     }
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

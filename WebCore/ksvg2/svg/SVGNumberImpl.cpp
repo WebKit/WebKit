@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include "SVGNumberImpl.h"
 #include "SVGStyledElementImpl.h"
 
@@ -50,3 +51,5 @@ void SVGNumberImpl::setValue(float value)
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

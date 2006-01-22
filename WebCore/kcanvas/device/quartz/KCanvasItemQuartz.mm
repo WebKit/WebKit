@@ -25,6 +25,7 @@
  */
 
 #include "config.h"
+#if SVG_SUPPORT
 #import "KCanvasItemQuartz.h"
 
 #import <kxmlcore/Assertions.h>
@@ -334,3 +335,5 @@ bool KCanvasItemQuartz::hitsPath(const FloatPoint &hitPoint, bool fill) const
 
     return hitSuccess;
 }
+#endif // SVG_SUPPORT
+

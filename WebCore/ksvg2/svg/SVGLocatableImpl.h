@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGLocatableImpl_H
 #define KSVG_SVGLocatableImpl_H
+#if SVG_SUPPORT
 
 namespace KSVG
 {
@@ -53,6 +54,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGFEImageElementImpl_H
 #define KSVG_SVGFEImageElementImpl_H
+#if SVG_SUPPORT
 
 #include "SVGFilterPrimitiveStandardAttributesImpl.h"
 #include "SVGURIReferenceImpl.h"
@@ -61,6 +62,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

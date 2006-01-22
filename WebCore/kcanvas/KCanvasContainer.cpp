@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include "KCanvasRenderingStyle.h"
 #include "KRenderingDevice.h"
 #include "KCanvasContainer.h"
@@ -162,3 +163,5 @@ KCanvasMatrix KCanvasContainer::getAspectRatio(const FloatRect logical, const Fl
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

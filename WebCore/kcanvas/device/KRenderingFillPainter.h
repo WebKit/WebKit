@@ -22,6 +22,7 @@
 
 #ifndef KRenderingFillPainter_H
 #define KRenderingFillPainter_H
+#if SVG_SUPPORT
 
 #include <kcanvas/KCanvasPath.h>
 
@@ -44,6 +45,7 @@ private:
     Private *d;
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGAnimatedStringImpl_H
 #define KSVG_SVGAnimatedStringImpl_H
+#if SVG_SUPPORT
 
 #include "kdom/core/DOMStringImpl.h"
 #include "SVGAnimatedTemplate.h"
@@ -40,6 +41,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

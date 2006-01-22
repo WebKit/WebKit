@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include "SVGAnimatedPathDataImpl.h"
 
 using namespace KSVG;
@@ -34,3 +35,5 @@ SVGAnimatedPathDataImpl::~SVGAnimatedPathDataImpl()
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

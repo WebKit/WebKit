@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include "NodeImpl.h"
 #include <kdom/core/AttrImpl.h>
 
@@ -76,3 +77,5 @@ QString SVGURIReferenceImpl::getTarget(const QString &url)
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

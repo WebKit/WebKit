@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include "SVGPointListImpl.h"
 #include "SVGPolygonElementImpl.h"
 
@@ -57,3 +58,5 @@ KCanvasPath* SVGPolygonElementImpl::toPathData() const
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

@@ -22,6 +22,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include "KCanvasFilters.h"
 
 #include <qtextstream.h>
@@ -452,3 +453,5 @@ QTextStream &KCanvasFETurbulence::externalRepresentation(QTextStream &ts) const
         << " [stitch tiles=" << stitchTiles() << "]";
    return ts;
 }
+#endif // SVG_SUPPORT
+

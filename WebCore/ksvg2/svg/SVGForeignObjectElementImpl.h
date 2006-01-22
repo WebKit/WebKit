@@ -21,6 +21,7 @@
 
 #ifndef KSVG_SVGForeignObjectElementImpl_H
 #define KSVG_SVGForeignObjectElementImpl_H
+#if SVG_SUPPORT
 
 #include "SVGTestsImpl.h"
 #include "SVGLangSpaceImpl.h"
@@ -65,6 +66,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

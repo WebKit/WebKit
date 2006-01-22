@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include "KRenderingPaintServer.h"
 #include "KRenderingStrokePainter.h"
 
@@ -148,3 +149,5 @@ void KRenderingStrokePainter::setDirty(bool dirty)
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

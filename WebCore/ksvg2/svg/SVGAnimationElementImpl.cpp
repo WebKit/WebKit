@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include <float.h>
 
 #include <kdom/kdom.h>
@@ -615,3 +616,5 @@ bool SVGAnimationElementImpl::isIndefinite(double value) const
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

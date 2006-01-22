@@ -21,6 +21,7 @@
 
 #ifndef KSVG_SVGFEDiffuseLightingElementImpl_H
 #define KSVG_SVGFEDiffuseLightingElementImpl_H
+#if SVG_SUPPORT
 
 #include "SVGFilterPrimitiveStandardAttributesImpl.h"
 
@@ -66,4 +67,5 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif

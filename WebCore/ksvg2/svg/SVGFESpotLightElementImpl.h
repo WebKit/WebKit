@@ -19,6 +19,7 @@
 
 #ifndef KSVG_SVGFESpotLightElementImpl_H
 #define KSVG_SVGFESpotLightElementImpl_H
+#if SVG_SUPPORT
 
 #include "SVGFELightElementImpl.h"
 
@@ -33,4 +34,5 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif

@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGAnimateTransformElementImpl_H
 #define KSVG_SVGAnimateTransformElementImpl_H
+#if SVG_SUPPORT
 
 #include <kcanvas/KCanvasMatrix.h>
 
@@ -64,6 +65,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGFEColorMatrixElementImpl_H
 #define KSVG_SVGFEColorMatrixElementImpl_H
+#if SVG_SUPPORT
 
 #include "SVGFilterPrimitiveStandardAttributesImpl.h"
 #include "KCanvasFilters.h"
@@ -56,6 +57,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

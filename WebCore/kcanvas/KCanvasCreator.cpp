@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include <math.h>
 
 #include <kdebug.h>
@@ -160,3 +161,5 @@ KCanvasPath* KCanvasCreator::createLine(float x1, float y1, float x2, float y2) 
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

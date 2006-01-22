@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include <klocale.h>
 
 #include <kdom/core/AttrImpl.h>
@@ -105,3 +106,5 @@ bool SVGTestsImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

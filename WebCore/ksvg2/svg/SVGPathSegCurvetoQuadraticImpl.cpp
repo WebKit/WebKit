@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include "SVGPathSegCurvetoQuadraticImpl.h"
 #include "SVGStyledElementImpl.h"
 
@@ -154,3 +155,5 @@ double SVGPathSegCurvetoQuadraticRelImpl::y1() const
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+

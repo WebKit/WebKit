@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGSVGElementImpl_H
 #define KSVG_SVGSVGElementImpl_H
+#if SVG_SUPPORT
 
 #include "IntPoint.h"
 
@@ -146,6 +147,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

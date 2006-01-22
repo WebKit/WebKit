@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGFEFuncRElementImpl_H
 #define KSVG_SVGFEFuncRElementImpl_H
+#if SVG_SUPPORT
 
 #include "SVGComponentTransferFunctionElementImpl.h"
 
@@ -35,4 +36,5 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif

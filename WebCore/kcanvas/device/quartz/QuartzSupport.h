@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#if SVG_SUPPORT
 
 #import "KCanvasRenderingStyle.h" // for all the CAP_BUTT contstants, etc.
 
@@ -44,7 +45,8 @@ CGAffineTransform CGAffineTransformMakeMapBetweenRects(CGRect source, CGRect des
 
 void applyStrokeStyleToContext(CGContextRef, WebCore::RenderStyle*, const WebCore::RenderObject*);
 
-static inline CGLineCap CGLineCapFromKC(KCCapStyle cap) {
+static inline CGLineCap CGLineCapFromKC(KCCapStyle cap)
+{
     if (cap == CAP_BUTT)
         return kCGLineCapButt;
     else if (cap == CAP_ROUND)
@@ -55,7 +57,8 @@ static inline CGLineCap CGLineCapFromKC(KCCapStyle cap) {
     return kCGLineCapButt;
 }
 
-static inline CGLineJoin CGLineJoinFromKC(KCJoinStyle join) {
+static inline CGLineJoin CGLineJoinFromKC(KCJoinStyle join)
+{
     if (join == JOIN_MITER)
         return kCGLineJoinMiter;
     else if (join == JOIN_ROUND)
@@ -66,4 +69,9 @@ static inline CGLineJoin CGLineJoinFromKC(KCJoinStyle join) {
     return kCGLineJoinMiter;
 }
 
-static inline CGPoint CGPointSubtractPoints(CGPoint a, CGPoint b) { return CGPointMake(a.x - b.x, a.y - b.y); }
+static inline CGPoint CGPointSubtractPoints(CGPoint a, CGPoint b)
+{
+    return CGPointMake(a.x - b.x, a.y - b.y);
+}
+
+#endif // SVG_SUPPORT

@@ -1,3 +1,10 @@
+2006-01-22  Eric Seidel  <eseidel@apple.com
+
+        Rubber-stamped by anders.
+
+        Remove WebCore-no-SVG target and wrap files in #if SVG_SUPPORT
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6633
+
 2006-01-22  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Maciej.

@@ -22,6 +22,7 @@
 
 #ifndef KSVG_SVGTransformListImpl_H
 #define KSVG_SVGTransformListImpl_H
+#if SVG_SUPPORT
 
 #include "SVGList.h"
 #include "SVGTransformImpl.h"
@@ -42,6 +43,7 @@ namespace KSVG
     };
 };
 
+#endif // SVG_SUPPORT
 #endif
 
 // vim:ts=4:noet

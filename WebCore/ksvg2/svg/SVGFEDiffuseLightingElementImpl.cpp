@@ -18,6 +18,7 @@
  */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include <qstringlist.h>
 
 #include <kdom/core/AttrImpl.h>
@@ -138,3 +139,5 @@ void SVGFEDiffuseLightingElementImpl::updateLights() const
     }
     m_filterEffect->setLightSource(light);
 }
+#endif // SVG_SUPPORT
+

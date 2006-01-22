@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#if SVG_SUPPORT
 
 #import "KCanvasFilters.h"
 
@@ -124,3 +125,5 @@ class KCanvasFETileQuartz : public KCanvasFETile {
 public:
     virtual CIFilter *getCIFilter(KCanvasFilterQuartz *quartzFilter) const;
 };
+
+#endif // SVG_SUPPORT

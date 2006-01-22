@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include <kdom/DOMString.h>
 #include <kdom/core/AttrImpl.h>
 #include <kdom/core/NamedAttrMapImpl.h>
@@ -63,4 +64,6 @@ void SVGViewElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
         SVGStyledElementImpl::parseMappedAttribute(attr);
     }
 }
+
+#endif // SVG_SUPPORT
 

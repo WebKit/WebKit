@@ -21,6 +21,7 @@
 */
 
 #include "config.h"
+#if SVG_SUPPORT
 #include <math.h>
 #include <qwmatrix.h>
 
@@ -286,3 +287,5 @@ QMatrix KCanvasMatrix::qmatrix() const
 }
 
 // vim:ts=4:noet
+#endif // SVG_SUPPORT
+
