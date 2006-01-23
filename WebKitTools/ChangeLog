@@ -1,3 +1,10 @@
+2006-01-23  Darin Adler  <darin@apple.com>
+
+        - added a couple of scripts -- more about these two soon
+
+        * Scripts/extract-localizable-strings: Added.
+        * Scripts/merge-changelog: Added.
+
 2006-01-22  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
         Reviewed by Anders.
