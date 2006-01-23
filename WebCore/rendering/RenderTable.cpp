@@ -121,6 +121,7 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
             if (!foot) {
                 if (child->isTableSection())
                     foot = static_cast<RenderTableSection *>(child);
+                wrapInAnonymousSection = false;
                 break;
             }
             // fall through

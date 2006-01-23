@@ -1,3 +1,11 @@
+2006-01-22  Darin Adler  <darin@apple.com>
+
+        - fix layout tests
+
+        * rendering/RenderTable.cpp: (WebCore::RenderTable::addChild): Added
+        missing code to set wrapInAnonymousSection false in the case where
+        adding a footer.
+
 2006-01-22  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
