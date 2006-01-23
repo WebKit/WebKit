@@ -2,6 +2,12 @@
 
 	Reviewed by Maciej.
 
+	* kxmlcore/Assertions.h: This file only works with __APPLE__ right now
+
+2006-01-23  George Staikos <staikos@opensource.apple.com>
+
+	Reviewed by Maciej.
+
 	* kjs/config.h: unbreak preprocessor change
 
 2006-01-23  George Staikos <staikos@opensource.apple.com>

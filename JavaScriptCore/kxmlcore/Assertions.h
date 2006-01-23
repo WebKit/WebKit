@@ -35,7 +35,7 @@
 // For non-debug builds, everything is disabled by default.
 // Defining any of the symbols explicitly prevents this from having any effect.
 
-#ifdef WIN32
+#if !__APPLE__
 #define ASSERT_DISABLED 1 // FIXME: We have to undo all the assert macros, since they are currently in a .mm file and use obj-c.
 #else
 #ifdef NDEBUG
