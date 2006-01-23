@@ -178,7 +178,7 @@ namespace KJS {
      *
      * @return The interpreter global execution state object
      */
-    ExecState *globalExec();
+    virtual ExecState *globalExec();
 
     /**
      * Parses the supplied ECMAScript code and checks for syntax errors.
