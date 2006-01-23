@@ -38,6 +38,7 @@
 #include "xml/dom2_eventsimpl.h"
 #include "xml/EventNames.h"
 #include "dom/css_stylesheet.h"
+#include "Frame.h"
 
 #include <kdebug.h>
 
@@ -172,6 +173,14 @@ void ScriptInterpreter::mark()
             node->mark();
       }
   }
+}
+
+ExecState *ScriptInterpreter::globalExec()
+{
+    // we need to make sure that any script execution happening in this
+    // frame does not destroy it
+    m_frame->keepAlive();
+    return Interpreter::globalExec();
 }
 
 void ScriptInterpreter::updateDOMNodeDocument(DOM::NodeImpl *node, DOM::DocumentImpl *oldDoc, DOM::DocumentImpl *newDoc)

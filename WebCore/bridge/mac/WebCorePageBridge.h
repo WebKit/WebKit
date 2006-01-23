@@ -47,7 +47,6 @@ class WebCoreFrameBridge;
 @interface WebCorePageBridge : NSObject
 {
     Page *_page;
-    WebCoreFrameBridge *_mainFrame;
 }
 
 - (id)initWithMainFrame:(WebCoreFrameBridge *)mainFrame;

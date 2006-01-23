@@ -68,6 +68,9 @@
 		6552E7AB096AA11B0006F248 /* WebCoreFrameNamespaces.m in Sources */ = {isa = PBXBuildFile; fileRef = 6552E7A9096AA11B0006F248 /* WebCoreFrameNamespaces.m */; };
 		65743B52097076F8001E7CEF /* RenderSVGText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65743B50097076F8001E7CEF /* RenderSVGText.cpp */; };
 		65743B53097076F8001E7CEF /* RenderSVGText.h in Headers */ = {isa = PBXBuildFile; fileRef = 65743B51097076F8001E7CEF /* RenderSVGText.h */; };
+		65A21468097A329100B9050A /* Page.h in Headers */ = {isa = PBXBuildFile; fileRef = 65A21467097A329100B9050A /* Page.h */; };
+		65A21484097A3F5300B9050A /* FrameTreeNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65A21482097A3F5300B9050A /* FrameTreeNode.cpp */; };
+		65A21485097A3F5300B9050A /* FrameTreeNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 65A21483097A3F5300B9050A /* FrameTreeNode.h */; };
 		65AC79A10831ED6D009385CE /* append_node_command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65AC799F0831ED6D009385CE /* append_node_command.cpp */; };
 		65AC79A20831ED6D009385CE /* append_node_command.h in Headers */ = {isa = PBXBuildFile; fileRef = 65AC79A00831ED6D009385CE /* append_node_command.h */; };
 		65AC79A90831F006009385CE /* apply_style_command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65AC79A70831F006009385CE /* apply_style_command.cpp */; };
@@ -85,6 +88,7 @@
 		65CBFEFA0974F607001DAC25 /* FrameView.h in Headers */ = {isa = PBXBuildFile; fileRef = 65CBFEF80974F607001DAC25 /* FrameView.h */; };
 		65DC16C40831DD6F0022744E /* composite_edit_command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65DC16C20831DD6F0022744E /* composite_edit_command.cpp */; };
 		65DC16C50831DD6F0022744E /* composite_edit_command.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DC16C30831DD6F0022744E /* composite_edit_command.h */; };
+		65FEA86909833ADE00BED4AB /* Page.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FEA86809833ADE00BED4AB /* Page.cpp */; };
 		7E6FEED80898582300C44C3F /* WebCoreScriptDebugger.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E6FEED60898582300C44C3F /* WebCoreScriptDebugger.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7E6FEED90898582300C44C3F /* WebCoreScriptDebugger.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7E6FEED70898582300C44C3F /* WebCoreScriptDebugger.mm */; };
 		937A36A7097E2E3200E4EE2F /* UserAgentStyleSheets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 937A36A6097E2E3200E4EE2F /* UserAgentStyleSheets.cpp */; };
@@ -1162,6 +1166,9 @@
 		65743B51097076F8001E7CEF /* RenderSVGText.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSVGText.h; sourceTree = "<group>"; };
 		65912B0D0586921000123A69 /* xmlserializer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xmlserializer.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65912B0E0586921000123A69 /* xmlserializer.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = xmlserializer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		65A21467097A329100B9050A /* Page.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Page.h; sourceTree = "<group>"; };
+		65A21482097A3F5300B9050A /* FrameTreeNode.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FrameTreeNode.cpp; sourceTree = "<group>"; };
+		65A21483097A3F5300B9050A /* FrameTreeNode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FrameTreeNode.h; sourceTree = "<group>"; };
 		65A640F00533BB1F0085E777 /* KWQExceptions.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQExceptions.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65AC799F0831ED6D009385CE /* append_node_command.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = append_node_command.cpp; path = editing/append_node_command.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65AC79A00831ED6D009385CE /* append_node_command.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = append_node_command.h; path = editing/append_node_command.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1181,6 +1188,7 @@
 		65DC16C20831DD6F0022744E /* composite_edit_command.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = composite_edit_command.cpp; path = editing/composite_edit_command.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65DC16C30831DD6F0022744E /* composite_edit_command.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = composite_edit_command.h; path = editing/composite_edit_command.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65F80697054D9F86008BF776 /* KWQExceptions.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQExceptions.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		65FEA86809833ADE00BED4AB /* Page.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Page.cpp; sourceTree = "<group>"; };
 		7E6FEED60898582300C44C3F /* WebCoreScriptDebugger.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreScriptDebugger.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		7E6FEED70898582300C44C3F /* WebCoreScriptDebugger.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreScriptDebugger.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		840633070731A77200DB1FD1 /* libxslt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxslt.dylib; path = /usr/lib/libxslt.dylib; sourceTree = "<absolute>"; };
@@ -2345,12 +2353,16 @@
 		65BF02180974806300C43196 /* page */ = {
 			isa = PBXGroup;
 			children = (
-				65BF02290974816300C43196 /* Frame.cpp */,
 				65BF022A0974816300C43196 /* Frame.h */,
+				65BF02290974816300C43196 /* Frame.cpp */,
 				65BF022B0974816300C43196 /* FramePrivate.h */,
-				65CBFEF70974F607001DAC25 /* FrameView.cpp */,
+				65A21483097A3F5300B9050A /* FrameTreeNode.h */,
+				65A21482097A3F5300B9050A /* FrameTreeNode.cpp */,
 				65CBFEF80974F607001DAC25 /* FrameView.h */,
+				65CBFEF70974F607001DAC25 /* FrameView.cpp */,
 				1A3D8556097647B4002C85D1 /* ObjectContents.h */,
+				65A21467097A329100B9050A /* Page.h */,
+				65FEA86809833ADE00BED4AB /* Page.cpp */,
 			);
 			path = page;
 			sourceTree = "<group>";
@@ -4301,6 +4313,8 @@
 				A8FEFB0A0979F472005839FD /* RenderForeignObject.h in Headers */,
 				A8FEFB320979F4F6005839FD /* SVGForeignObjectElementImpl.h in Headers */,
 				BCFB2E840979FD4F00BA703D /* Shared.h in Headers */,
+				65A21468097A329100B9050A /* Page.h in Headers */,
+				65A21485097A3F5300B9050A /* FrameTreeNode.h in Headers */,
 				BCFB2F42097A24B500BA703D /* SegmentedString.h in Headers */,
 				BCFB2F77097A2E1A00BA703D /* Arena.h in Headers */,
 				BC1A37AD097C715F0019F3D8 /* DOM.h in Headers */,
@@ -5409,6 +5423,7 @@
 				BCFB2F41097A24B500BA703D /* SegmentedString.cpp in Sources */,
 				A8FEFB0B0979F472005839FD /* RenderForeignObject.cpp in Sources */,
 				A8FEFB310979F4F6005839FD /* SVGForeignObjectElementImpl.cpp in Sources */,
+				65A21484097A3F5300B9050A /* FrameTreeNode.cpp in Sources */,
 				BCFB2F76097A2E1A00BA703D /* Arena.cpp in Sources */,
 				BC1A37AE097C715F0019F3D8 /* DOM.mm in Sources */,
 				BC1A37B1097C715F0019F3D8 /* DOMCSS.mm in Sources */,
@@ -5456,6 +5471,7 @@
 				BCEA488B097D93020094C9E4 /* RenderText.cpp in Sources */,
 				BCEA488D097D93020094C9E4 /* RenderTextFragment.cpp in Sources */,
 				BCEA488F097D93020094C9E4 /* table_layout.cpp in Sources */,
+				65FEA86909833ADE00BED4AB /* Page.cpp in Sources */,
 				937A36A7097E2E3200E4EE2F /* UserAgentStyleSheets.cpp in Sources */,
 				BCEA4948097F0F770094C9E4 /* BrowserExtensionMac.mm in Sources */,
 				AB67D1A8097F3AE300F9392E /* RenderTextField.cpp in Sources */,

@@ -1,3 +1,124 @@
+2006-01-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - Set up Page class and invert Frame / WebCoreFrameBridge ownership
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6577
+
+        * bridge/mac/MacFrame.h:
+        * bridge/mac/MacFrame.mm:
+        (MacFrame::MacFrame): Initialize _bridge
+        (MacFrame::~MacFrame): Clear the bridge's frame pointer and release it.
+        (Frame::frameDetached): Reverse order of removing from old-style frames
+        array and calling frameDetached.
+        (MacFrame::createPart): Don't ref the part when creating it, since the child
+        bridge is no longer going to own a ref.
+        (MacFrame::setBridge): KWQRetain / KWQRelease since we know own the bridge.
+        (MacFrame::detachFromView): New method; clear out the view.
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (Bridge): Helper method to get a WebCoreFrameBridge from a Frame.
+        (-[WebCoreFrameBridge firstChild]): Call through Frame.
+        (-[WebCoreFrameBridge lastChild]): ditto
+        (-[WebCoreFrameBridge childCount]): ditto
+        (-[WebCoreFrameBridge previousSibling]): ditto
+        (-[WebCoreFrameBridge nextSibling]): ditto
+        (-[WebCoreFrameBridge isDescendantOfFrame:]): No need to cast parent
+        pointer.
+        (-[WebCoreFrameBridge appendChild:]): Call through Frame.
+        (-[WebCoreFrameBridge _clearRenderPart]): New helper method to free
+        the renderPart when removing a child.
+        (-[WebCoreFrameBridge removeChild:]): Clear child's render part
+        and call through to Frame.
+        (-[WebCoreFrameBridge dealloc]): Remove unneeded m_frame-related code.
+        (-[WebCoreFrameBridge finalize]): ditto
+        (-[WebCoreFrameBridge clearFrame]): New helper method, needed now that
+        bridge can outlive frame.
+        (-[WebCoreFrameBridge handleFallbackContent]): Make safe against a null
+        frame.
+        (-[WebCoreFrameBridge removeFromFrame]): ditto
+        * bridge/mac/WebCorePageBridge.h:
+        * bridge/mac/WebCorePageBridge.mm:
+        (-[WebCorePageBridge initWithMainFrame:]): Create a Page instance.
+        (-[WebCorePageBridge dealloc]): Delete the Page.
+        (-[WebCorePageBridge mainFrame]): Get the main frame from the Page.
+        * khtml/ecma/kjs_binding.cpp:
+        (KJS::ScriptInterpreter::globalExec): Override; keep frame alive, then
+        call superclass.
+        * khtml/ecma/kjs_binding.h:
+        * khtml/ecma/kjs_proxy.cpp:
+        (KJSProxyImpl::clear): Don't pass exec to window.
+        (KJSProxyImpl::interpreter): Don't do keepAlive.
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::isSafeScript): If the active part's document is gone, use the frame's
+        URL for security check purposes.
+        (KJS::Window::clear): Don't take an ExecState parameter any more - it
+        wasn't used.
+        * khtml/ecma/kjs_window.h:
+        * khtml/xml/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::implicitOpen): If we've got a tokenizer, delete
+        it before closing - you don't ever want to fire an onload handler because of
+        an open.
+        * page/Frame.cpp:
+        (Frame::init): Pass `this' to FramePrivate constructor.
+        (FrameCounter::~FrameCounter): Added debug counting of leftover
+        Frame objects on exit.
+        (Frame::Frame): Moved out-of-line. Increment debug counter.
+        (Frame::~Frame): Assert that there is no life support going, either at the
+        start or end of this method. Decrement frame counter.
+        (Frame::stopLoading): tweaked for the fact that ChildFrame::m_frame is now
+        a RefPtr.
+        (Frame::clear): ditto
+        (Frame::stop): ditto
+        (Frame::stopAnimations): ditto
+        (Frame::checkEmitLoadEvent): ditto
+        (Frame::processObjectRequest): ditto
+        (Frame::childFrame): ditto
+        (Frame::findFrame): ditto
+        (Frame::setZoomFactor): ditto
+        (Frame::frames): ditto
+        (Frame::connectChild): ditto
+        (Frame::disconnectChild): ditto
+        (Frame::endAllLifeSupport): Method that, in debug mode, will clear
+        all life suppor timers so the Frame exit counter works.
+        (Frame::keepAlive): In debug mode, add proper support for
+        endAllLifeSupport
+        (Frame::slotEndLifeSupport): ditto
+        (Frame::setPolicyBaseURL): Update for the fact that ChildFrame::m_frame is now
+        a RefPtr.
+        (Frame::treeNode): New helper method, get the FrameTreeNode class that implements
+        frame tree traversal.
+        (Frame::nextSibling): Simple wrapper that calls through to treeNode().
+        (Frame::previousSibling): ditto
+        (Frame::firstChild): ditto
+        (Frame::lastChild): ditto
+        (Frame::childCount): ditto
+        (Frame::appendChild): ditto
+        (Frame::removeChild): ditto
+        (Frame::detachFromView): no-op, just a virtual base for the MAcFrame method.
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        (FramePrivate::FramePrivate): Add FrameTreeNode member.
+        * page/FrameTreeNode.cpp: Added.
+        (FrameTreeNode::~FrameTreeNode): detach all children from their view
+        (FrameTreeNode::appendChild): implemented
+        (FrameTreeNode::removeChild): implemented - make sure to detach child
+        from its view.
+        * page/FrameTreeNode.h: Added.
+        (FrameTreeNode::FrameTreeNode): New; initialize fields tht need it.
+        (FrameTreeNode::nextSibling): Trivial inline.
+        (FrameTreeNode::previousSibling): ditto
+        (FrameTreeNode::firstChild): ditto
+        (FrameTreeNode::lastChild): ditto
+        (FrameTreeNode::childCount): ditto
+        * page/Page.cpp: Added.
+        (Page::Page): Initialize mainFrame and bump pageCount appropriately.
+        (Page::~Page): Detach main frame from view, handle ending life support
+        when last frame is destroyed.
+        * page/Page.h: Added.
+        (Page::mainFrame): Trivial inline.
+        * WebCore.xcodeproj/project.pbxproj: Add new files.
+
 2006-01-22  Darin Adler  <darin@apple.com>
 
         * Info.plist: Updated Apple copyright date. Need to update others

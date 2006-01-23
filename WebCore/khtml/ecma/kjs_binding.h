@@ -102,6 +102,7 @@ namespace KJS {
     bool wasRunByUserGesture() const;
 
     virtual void mark();
+    virtual ExecState *globalExec();
     
     DOM::EventImpl *getCurrentEvent() const { return m_evt; }
 

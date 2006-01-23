@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WebCorePageBridge.h"
 
+#import "MacFrame.h"
+#import "Page.h"
 #import "WebCoreFrameBridge.h"
 
 
@@ -36,20 +38,20 @@
     if (!(self = [super init]))
         return nil;
 
-    _mainFrame = [mainFrame retain];
+    _page = new Page(adoptRef([mainFrame part]));
     
     return self;
 }
 
 - (void)dealloc
 {
-    [_mainFrame release];
+    delete _page;
     [super dealloc];
 }
 
 - (WebCoreFrameBridge *)mainFrame
 {
-    return _mainFrame;
+    return Mac(_page->mainFrame())->bridge();
 }
 
 @end

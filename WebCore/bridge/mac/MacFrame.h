@@ -331,6 +331,8 @@ private:
 
     void registerCommandForUndoOrRedo(const khtml::EditCommandPtr &cmd, bool isRedo);
 
+    virtual void detachFromView();
+
     WebCoreFrameBridge *_bridge;
     
     KWQSignal _started;

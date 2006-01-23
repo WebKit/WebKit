@@ -156,7 +156,7 @@ void Frame::init(FrameView *view)
   
   frameCount = 0;
 
-  d = new FramePrivate(parent());
+  d = new FramePrivate(parent(), this);
 
   d->m_view = view;
   setWidget( d->m_view );
@@ -181,8 +181,31 @@ void Frame::init(FrameView *view)
   connect(&d->m_lifeSupportTimer, SIGNAL(timeout()), this, SLOT(slotEndLifeSupport()));
 }
 
+#ifndef NDEBUG
+struct FrameCounter { 
+    static int count; 
+    ~FrameCounter() { if (count != 0) fprintf(stderr, "LEAK: %d Frame\n", count); }
+};
+int FrameCounter::count = 0;
+static FrameCounter frameCounter;
+#endif NDEBUG
+
+Frame::Frame() 
+    : d(0) 
+{ 
+#ifndef NDEBUG
+    ++FrameCounter::count;
+#endif
+}
+
 Frame::~Frame()
 {
+    assert(!d->m_lifeSupportTimer.isActive());
+
+#ifndef NDEBUG
+    --FrameCounter::count;
+#endif
+
   cancelRedirection();
 
   if (!d->m_bComplete)
@@ -201,6 +224,8 @@ Frame::~Frame()
     d->m_view->m_frame = 0;
   }
   
+  assert(!d->m_lifeSupportTimer.isActive());
+
   delete d; d = 0;
 }
 
@@ -374,7 +399,7 @@ void Frame::stopLoading(bool sendUnload)
   ConstFrameIt it = d->m_frames.begin();
   ConstFrameIt end = d->m_frames.end();
   for (; it != end; ++it ) {
-      ObjectContents *part = (*it).m_frame;
+      ObjectContents *part = (*it).m_frame.get();
       if (part) {
           Frame *frame = static_cast<Frame *>(part);
 
@@ -584,25 +609,12 @@ void Frame::clear()
   {
     ConstFrameIt it = d->m_frames.begin();
     ConstFrameIt end = d->m_frames.end();
-    for(; it != end; ++it )
-    {
-      if ( (*it).m_frame )
-      {
+    for(; it != end; ++it ) {
+      if ((*it).m_frame)
         disconnectChild(&*it);
-        (*it).m_frame->deref();
-      }
     }
   }
   d->m_frames.clear();
-
-  {
-    ConstFrameIt it = d->m_objects.begin();
-    ConstFrameIt end = d->m_objects.end();
-    for(; it != end; ++it ) {
-      if ( (*it).m_frame )
-        (*it).m_frame->deref();
-    }
-  }
   d->m_objects.clear();
 
   d->m_scheduledRedirection = noRedirectionScheduled;
@@ -887,17 +899,10 @@ void Frame::endIfNotLoading()
 
 void Frame::stop()
 {
-    // make sure nothing's left in there...
     if (d->m_doc) {
         if (d->m_doc->tokenizer())
             d->m_doc->tokenizer()->stopParsing();
         d->m_doc->finishParsing();
-    } else {
-        // WebKit partially uses WebCore when loading non-HTML docs.  In these cases doc==nil, but
-        // WebCore is enough involved that we need to checkCompleted() in order for m_bComplete to
-        // become true.  An example is when a subframe is a pure text doc, and that subframe is the
-        // last one to complete.
-        checkCompleted();
     }
 }
 
@@ -910,8 +915,8 @@ void Frame::stopAnimations()
   ConstFrameIt it = d->m_frames.begin();
   ConstFrameIt end = d->m_frames.end();
   for (; it != end; ++it )
-    if ( !( *it ).m_frame.isNull() && ( *it ).m_frame->inherits( "Frame" ) ) {
-      ObjectContents* p = ( *it ).m_frame;
+    if ((*it).m_frame && (*it).m_frame->inherits( "Frame" ) ) {
+      ObjectContents* p = (*it).m_frame.get();
       static_cast<Frame*>( p )->stopAnimations();
     }
 }
@@ -1032,7 +1037,7 @@ void Frame::checkEmitLoadEvent()
     ConstFrameIt it = d->m_frames.begin();
     ConstFrameIt end = d->m_frames.end();
     for (; it != end; ++it ) {
-      ObjectContents *p = (*it).m_frame;
+      ObjectContents *p = (*it).m_frame.get();
       if (p && p->inherits("Frame")) {
         Frame* htmlFrame = static_cast<Frame *>(p);
         if (htmlFrame->d->m_doc)
@@ -1686,10 +1691,7 @@ bool Frame::processObjectRequest( ChildFrame *child, const KURL &_url, const QSt
 
     //CRITICAL STUFF
     if (child->m_frame)
-    {
       disconnectChild(child);
-      child->m_frame->deref();
-    }
 
     child->m_serviceType = mimetype;
     if (child->m_renderer && frame->widget() )
@@ -1697,7 +1699,7 @@ bool Frame::processObjectRequest( ChildFrame *child, const KURL &_url, const QSt
 
 
     child->m_frame = part;
-    assert( ((void*) child->m_frame) != 0);
+    assert(child->m_frame);
 
     connectChild(child);
 
@@ -1737,7 +1739,7 @@ bool Frame::processObjectRequest( ChildFrame *child, const KURL &_url, const QSt
   // it's being added to the child list.  It would be a good idea to
   // create the child first, then invoke the loader separately  
   if (url.isEmpty() || url.url() == "about:blank") {
-      ObjectContents *part = child->m_frame;
+      ObjectContents *part = child->m_frame.get();
       Frame *frame = static_cast<Frame *>(part);
       if (frame && frame->inherits("Frame")) {
           frame->completed();
@@ -1904,13 +1906,13 @@ ChildFrame *Frame::childFrame( const QObject *obj )
     FrameIt it = d->m_frames.begin();
     FrameIt end = d->m_frames.end();
     for (; it != end; ++it )
-      if (static_cast<ObjectContents *>((*it).m_frame) == part)
+      if ((*it).m_frame == part)
         return &(*it);
 
     it = d->m_objects.begin();
     end = d->m_objects.end();
     for (; it != end; ++it )
-      if (static_cast<ObjectContents *>((*it).m_frame) == part)
+      if ((*it).m_frame == part)
         return &(*it);
 
     return 0L;
@@ -1923,7 +1925,7 @@ Frame *Frame::findFrame( const QString &f )
   if (it == d->m_frames.end())
     return 0L;
   else {
-    ObjectContents *p = (*it).m_frame;
+    ObjectContents *p = (*it).m_frame.get();
     if (p && p->inherits("Frame"))
       return (Frame*)p;
     else
@@ -2005,9 +2007,9 @@ void Frame::setZoomFactor (int percent)
   ConstFrameIt it = d->m_frames.begin();
   ConstFrameIt end = d->m_frames.end();
   for (; it != end; ++it )
-    if (!(*it).m_frame.isNull() && (*it).m_frame->inherits( "Frame" ) ) {
-      ObjectContents* p = ( *it ).m_frame;
-      static_cast<Frame*>( p )->setZoomFactor(d->m_zoomFactor);
+    if ((*it).m_frame && (*it).m_frame->inherits("Frame")) {
+      ObjectContents* p = (*it).m_frame.get();
+      static_cast<Frame*>(p)->setZoomFactor(d->m_zoomFactor);
     }
 
   if (d->m_doc && d->m_doc->renderer() && d->m_doc->renderer()->needsLayout())
@@ -2087,7 +2089,7 @@ QPtrList<ObjectContents> Frame::frames() const
   ConstFrameIt end = d->m_frames.end();
   for (; it != end; ++it )
     if (!(*it).m_bPreloaded)
-      res.append((*it).m_frame);
+      res.append((*it).m_frame.get());
 
   return res;
 }
@@ -2954,7 +2956,7 @@ bool Frame::isCharacterSmartReplaceExempt(const QChar &, bool)
 
 void Frame::connectChild(const ChildFrame *child) const
 {
-    ObjectContents *part = child->m_frame;
+    ObjectContents *part = child->m_frame.get();
     if (part && child->m_type != ChildFrame::Object)
     {
         connect( part, SIGNAL( started( KIO::Job *) ),
@@ -2974,7 +2976,7 @@ void Frame::connectChild(const ChildFrame *child) const
 
 void Frame::disconnectChild(const ChildFrame *child) const
 {
-    ObjectContents *part = child->m_frame;
+    ObjectContents *part = child->m_frame.get();
     if (part && child->m_type != ChildFrame::Object)
     {
         disconnect( part, SIGNAL( started( KIO::Job *) ),
@@ -2992,19 +2994,41 @@ void Frame::disconnectChild(const ChildFrame *child) const
     }
 }
 
+#ifndef NDEBUG
+typedef HashSet<Frame *, PointerHash<Frame *> > FrameSet;
+static FrameSet lifeSupportSet;
+#endif
+
+void Frame::endAllLifeSupport()
+{
+#ifndef NDEBUG
+    FrameSet lifeSupportCopy = lifeSupportSet;
+    FrameSet::iterator end = lifeSupportCopy.end();
+    for (FrameSet::iterator it = lifeSupportCopy.begin(); it != end; ++it)
+        (*it)->slotEndLifeSupport();
+#endif
+}
+
 void Frame::keepAlive()
 {
     if (d->m_lifeSupportTimer.isActive())
         return;
     ref();
     d->m_lifeSupportTimer.start(0, true);
+#ifndef NDEBUG
+    lifeSupportSet.insert(this);
+#endif
 }
 
 void Frame::slotEndLifeSupport()
 {
     d->m_lifeSupportTimer.stop();
     deref();
+#ifndef NDEBUG
+    lifeSupportSet.remove(this);
+#endif
 }
+
 
 // Workaround for the fact that it's hard to delete a frame.
 // Call this after doing user-triggered selections to make it easy to delete the frame you entirely selected.
@@ -3453,7 +3477,7 @@ void Frame::setPolicyBaseURL(const DOMString &s)
         document()->setPolicyBaseURL(s);
     ConstFrameIt end = d->m_frames.end();
     for (ConstFrameIt it = d->m_frames.begin(); it != end; ++it) {
-        ObjectContents *subpart = (*it).m_frame;
+        ObjectContents *subpart = (*it).m_frame.get();
         static_cast<Frame *>(subpart)->setPolicyBaseURL(s);
     }
 }
@@ -3797,4 +3821,13 @@ NodeImpl *Frame::mousePressNode()
 bool Frame::isComplete()
 {
     return d->m_bComplete;
+}
+
+FrameTreeNode *Frame::treeNode()
+{
+    return &d->m_treeNode;
+}
+
+void Frame::detachFromView()
+{
 }

@@ -47,6 +47,7 @@
 #import "KWQTextCodec.h"
 #import "KWQView.h"
 #import "MacFrame.h"
+#import "FrameTreeNode.h"
 #import "NodeImpl.h"
 #import "SelectionController.h"
 #import "WebCoreFrameNamespaces.h"
@@ -190,34 +191,41 @@ static BOOL isCaseSensitiveEqual(NSString *a, NSString *b)
 static bool initializedObjectCacheSize = FALSE;
 static bool initializedKJS = FALSE;
 
+static inline WebCoreFrameBridge *bridge(Frame *frame)
+{
+    if (!frame)
+        return nil;
+    return Mac(frame)->bridge();
+}
+
 - (WebCoreFrameBridge *)firstChild
 {
-    return _firstChild;
+    return bridge(m_frame->treeNode()->firstChild());
 }
 
 - (WebCoreFrameBridge *)lastChild
 {
-    return _lastChild;
+    return bridge(m_frame->treeNode()->lastChild());
 }
 
 - (unsigned)childCount
 {
-    return _childCount;
+    return m_frame->treeNode()->childCount();
 }
 
 - (WebCoreFrameBridge *)previousSibling;
 {
-    return _previousSibling;
+    return bridge(m_frame->treeNode()->previousSibling());
 }
 
 - (WebCoreFrameBridge *)nextSibling;
 {
-    return _nextSibling;
+    return bridge(m_frame->treeNode()->nextSibling());
 }
 
 - (BOOL)isDescendantOfFrame:(WebCoreFrameBridge *)ancestor
 {
-    for (WebCoreFrameBridge *frame = self; frame; frame = (WebCoreFrameBridge *)[frame parent])
+    for (WebCoreFrameBridge *frame = self; frame; frame = [frame parent])
         if (frame == ancestor)
             return YES;
 
@@ -257,43 +265,20 @@ static bool initializedKJS = FALSE;
 
 - (void)appendChild:(WebCoreFrameBridge *)child
 {
-    [child retain];
+    m_frame->treeNode()->appendChild(adoptRef([child part]));
+}
 
-    [child setParent:self];
-
-    WebCoreFrameBridge *last = _lastChild;
-
-    if (last) {
-        last->_nextSibling = child;
-        child->_previousSibling = last;
-    } else
-        _firstChild = child;
-
-    _lastChild = child;
-
-    _childCount++;
-
-    ASSERT(child->_nextSibling == nil);
+- (void)_clearRenderPart
+{
+    if (_renderPart)
+        _renderPart->deref(_renderPartArena);
+    _renderPart = 0;
 }
 
 - (void)removeChild:(WebCoreFrameBridge *)child
 {
-    if (child->_previousSibling)
-        child->_previousSibling->_nextSibling = child->_nextSibling;
-    else
-        _firstChild = child->_nextSibling;
-    
-    if (child->_nextSibling)
-        child->_nextSibling->_previousSibling = child->_previousSibling; 
-    else
-        _lastChild = child->_previousSibling;
-
-    child->_previousSibling = nil;
-    child->_nextSibling = nil;
-
-    _childCount--;
-
-    [child release];
+    [child _clearRenderPart];
+    m_frame->treeNode()->removeChild([child part]);
 }
 
 - (WebCoreFrameBridge *)childFrameNamed:(NSString *)name
@@ -526,11 +511,8 @@ static bool initializedKJS = FALSE;
 {
     [self removeFromFrame];
     
-    if (_renderPart) {
+    if (_renderPart)
         _renderPart->deref(_renderPartArena);
-    }
-    m_frame->setBridge(nil);
-    m_frame->deref();
         
     [super dealloc];
 }
@@ -546,7 +528,6 @@ static bool initializedKJS = FALSE;
         _renderPart->deref(_renderPartArena);
     }
     m_frame->setBridge(nil);
-    m_frame->deref();
         
     [super finalize];
 }
@@ -778,8 +759,16 @@ static bool initializedKJS = FALSE;
     m_frame->stop();
 }
 
+- (void)clearFrame
+{
+    m_frame = 0;
+}
+
 - (void)handleFallbackContent
 {
+    // this needs to be callable even after teardown of the frame
+    if (!m_frame)
+        return;
     m_frame->handleFallbackContent();
 }
 
@@ -1087,7 +1076,8 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
 
 - (void)removeFromFrame
 {
-    m_frame->setView(0);
+    if (m_frame)
+        m_frame->setView(0);
 }
 
 - (void)installInFrame:(NSView *)view

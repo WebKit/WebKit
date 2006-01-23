@@ -137,7 +137,8 @@ static void redirectionTimerMonitor(void *context)
 }
 
 MacFrame::MacFrame()
-    : _started(this, SIGNAL(started(KIO::Job *)))
+    : _bridge(nil)
+    , _started(this, SIGNAL(started(KIO::Job *)))
     , _completed(this, SIGNAL(completed()))
     , _completedWithBool(this, SIGNAL(completed(bool)))
     , _mouseDownView(nil)
@@ -170,7 +171,9 @@ MacFrame::~MacFrame()
     freeClipboard();
     clearRecordedFormValues();    
     
-    delete _windowWidget;
+    [_bridge clearFrame];
+    KWQRelease(_bridge);
+    _bridge = nil;
 }
 
 void MacFrame::freeClipboard()
@@ -567,12 +570,8 @@ void MacFrame::submitForm(const KURL &url, const URLArgs &args)
 
 void Frame::frameDetached()
 {
-    // FIXME: This should be a virtual function, with the first part in MacFrame, and the second
+    // FIXME: This should be a virtual function, with the second part in MacFrame, and the first
     // part in Frame, so it works for KHTML too.
-
-    KWQ_BLOCK_EXCEPTIONS;
-    [Mac(this)->bridge() frameDetached];
-    KWQ_UNBLOCK_EXCEPTIONS;
 
     Frame *parent = parentFrame();
     if (parent) {
@@ -583,11 +582,14 @@ void Frame::frameDetached()
             if (child.m_frame == this) {
                 parent->disconnectChild(&child);
                 parentFrames.remove(it);
-                deref();
                 break;
             }
         }
     }
+
+    KWQ_BLOCK_EXCEPTIONS;
+    [Mac(this)->bridge() frameDetached];
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 void MacFrame::urlSelected(const KURL &url, int button, int state, const URLArgs &args)
@@ -659,11 +661,7 @@ ObjectContents *MacFrame::createPart(const ChildFrame &child, const KURL &url, c
                                                     allowsScrolling:allowsScrolling
                                                         marginWidth:marginWidth
                                                        marginHeight:marginHeight];
-        // This call needs to return an object with a ref, since the caller will expect to own it.
-        // childBridge owns the only ref so far.
         part = [childBridge part];
-        if (part)
-            part->ref();
     }
 
     return part;
@@ -3009,11 +3007,15 @@ void MacFrame::tokenizerProcessedData()
     [_bridge tokenizerProcessedData];
 }
 
-void MacFrame::setBridge(WebCoreFrameBridge *p)
+void MacFrame::setBridge(WebCoreFrameBridge *bridge)
 { 
-    if (_bridge != p)
-        delete _windowWidget;
-    _bridge = p;
+    if (_bridge == bridge)
+        return;
+
+    delete _windowWidget;
+    KWQRetain(bridge);
+    KWQRelease(_bridge);
+    _bridge = bridge;
     _windowWidget = new KWQWindowWidget(_bridge);
 }
 
@@ -3595,4 +3597,9 @@ bool MacFrame::dispatchDragSrcEvent(const AtomicString &eventType, const IntPoin
 {
     bool noDefaultProc = d->m_view->dispatchDragEvent(eventType, _dragSrc.get(), loc, _dragClipboard);
     return !noDefaultProc;
+}
+
+void MacFrame::detachFromView()
+{
+    setView(0);
 }

@@ -1124,8 +1124,13 @@ void DocumentImpl::open(  )
 
 void DocumentImpl::implicitOpen()
 {
-    if (m_tokenizer)
+    if (m_tokenizer) {
+        // We have to clear the tokenizer to avoid possibly triggering
+        // the onload handler when closing as a side effect of opening
+        delete m_tokenizer;
+        m_tokenizer = 0;
         close();
+    }
 
     clear();
     m_tokenizer = createTokenizer();
