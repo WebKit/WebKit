@@ -36,7 +36,7 @@
 #include "nodes.h"
 #include "object.h"
 #include "operations.h"
-#if !WIN32
+#if __APPLE__
 #include "runtime.h"
 #endif
 #include "types.h"

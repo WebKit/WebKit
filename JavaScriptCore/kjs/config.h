@@ -19,8 +19,6 @@
 #define HAVE_SYS_TIMEB_H 1
 #define USE_SYSTEM_MALLOC 1
 
-#include <assert.h>
-
 #else
 
 #define HAVE_ERRNO_H 1

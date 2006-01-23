@@ -1,8 +1,12 @@
 2006-01-23  George Staikos <staikos@opensource.apple.com>
 
-	Reviewed by Maciej.
+	Reviewed by Maciej and Darin.
 
 	* kxmlcore/Assertions.h: This file only works with __APPLE__ right now
+        * kjs/interpreter.cpp: ditto
+        * kjs/simple_number.h: Add assert.h and remove from config.h
+        * kjs/array_object.cpp: Use relative paths for kxmlcore includes
+        * kjs/testkjs.cpp: Use relative paths for kxmlcore includes
 
 2006-01-23  George Staikos <staikos@opensource.apple.com>
 

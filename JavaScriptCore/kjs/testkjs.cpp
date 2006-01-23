@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "HashTraits.h"
+#include <kxmlcore/HashTraits.h>
 #include "value.h"
 #include "object.h"
 #include "types.h"

@@ -22,6 +22,7 @@
 #ifndef KJS_SIMPLE_NUMBER_H
 #define KJS_SIMPLE_NUMBER_H
 
+#include <assert.h>
 #include <stdlib.h>
 #include "kxmlcore/AlwaysInline.h"
 
