@@ -60,7 +60,7 @@ for my $in (@ARGV) {
     print OUT "extern const unsigned short ${name}UserAgentStyleSheet[${length}] = {\n";
     my $i = 0;
     while ($i < $length) {
-        print "    ";
+        print OUT "    ";
         my $j = 0;
         while ($j < 16 && $i < $length) {
             print OUT ", " unless $j == 0;

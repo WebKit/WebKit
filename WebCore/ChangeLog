@@ -1,3 +1,9 @@
+2006-01-22  Darin Adler  <darin@apple.com>
+
+        * css/make-css-file-arrays.pl: Fix typo that was resulting in a bunch
+        of whitespace that was supposed to go into a derived source file going
+        to the console instead.
+
 2006-01-22  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
