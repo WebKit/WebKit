@@ -1,3 +1,10 @@
+2006-01-22  George Staikos <staikos@opensource.apple.com>
+
+        Reviewed by Maciej.
+
+        * kjs/collector.cpp: merge FreeBSD compile fix from KDE
+                             -> requires build magic for use
+
 2006-01-21  George Staikos <staikos@opensource.apple.com>
 
         Reviewed by Maciej.
