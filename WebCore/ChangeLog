@@ -1,3 +1,10 @@
+2006-01-22  Darin Adler  <darin@apple.com>
+
+        * Info.plist: Updated Apple copyright date. Need to update others
+        too at some point.
+
+        * WebCore-svg.exp: Removed unused empty file.
+
 2006-01-22  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
