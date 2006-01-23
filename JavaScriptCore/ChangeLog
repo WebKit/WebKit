@@ -1,3 +1,83 @@
+2006-01-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Tim Hatcher.
+        
+        - it's "Franklin Street", not "Franklin Steet"
+
+        * kjs/array_instance.h:
+        * kjs/array_object.cpp:
+        * kjs/array_object.h:
+        * kjs/bool_object.cpp:
+        * kjs/bool_object.h:
+        * kjs/collector.cpp:
+        * kjs/collector.h:
+        * kjs/completion.h:
+        * kjs/context.h:
+        * kjs/date_object.cpp:
+        * kjs/date_object.h:
+        * kjs/debugger.cpp:
+        * kjs/debugger.h:
+        * kjs/dtoa.h:
+        * kjs/error_object.cpp:
+        * kjs/error_object.h:
+        * kjs/function.cpp:
+        * kjs/function.h:
+        * kjs/function_object.cpp:
+        * kjs/function_object.h:
+        * kjs/grammar.y:
+        * kjs/identifier.cpp:
+        * kjs/identifier.h:
+        * kjs/internal.cpp:
+        * kjs/internal.h:
+        * kjs/interpreter.cpp:
+        * kjs/interpreter.h:
+        * kjs/lexer.cpp:
+        * kjs/lexer.h:
+        * kjs/list.cpp:
+        * kjs/list.h:
+        * kjs/lookup.cpp:
+        * kjs/lookup.h:
+        * kjs/math_object.cpp:
+        * kjs/math_object.h:
+        * kjs/nodes.cpp:
+        * kjs/nodes.h:
+        * kjs/nodes2string.cpp:
+        * kjs/number_object.cpp:
+        * kjs/number_object.h:
+        * kjs/object.cpp:
+        * kjs/object.h:
+        * kjs/object_object.cpp:
+        * kjs/object_object.h:
+        * kjs/operations.cpp:
+        * kjs/operations.h:
+        * kjs/property_map.cpp:
+        * kjs/property_map.h:
+        * kjs/property_slot.cpp:
+        * kjs/property_slot.h:
+        * kjs/reference.cpp:
+        * kjs/reference.h:
+        * kjs/reference_list.cpp:
+        * kjs/reference_list.h:
+        * kjs/regexp.cpp:
+        * kjs/regexp.h:
+        * kjs/regexp_object.cpp:
+        * kjs/regexp_object.h:
+        * kjs/scope_chain.cpp:
+        * kjs/scope_chain.h:
+        * kjs/simple_number.h:
+        * kjs/string_object.cpp:
+        * kjs/string_object.h:
+        * kjs/testkjs.cpp:
+        * kjs/types.h:
+        * kjs/ustring.cpp:
+        * kjs/ustring.h:
+        * kjs/value.cpp:
+        * kjs/value.h:
+        * kxmlcore/AlwaysInline.h:
+        * kxmlcore/ListRefPtr.h:
+        * kxmlcore/PassRefPtr.h:
+        * kxmlcore/RefPtr.h:
+
 2006-01-23  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.
