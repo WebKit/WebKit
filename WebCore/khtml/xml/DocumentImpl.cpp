@@ -86,6 +86,7 @@ using XBL::XBLBindingManager;
 
 #if SVG_SUPPORT
 #include "SVGNames.h"
+#include "SVGDocumentExtensions.h"
 #include "SVGElementFactory.h"
 #include "SVGZoomEventImpl.h"
 #include "SVGStyleElementImpl.h"
@@ -1238,6 +1239,14 @@ void DocumentImpl::implicitClose()
     if (renderer() && KWQAccObjectCache::accessibilityEnabled())
         getAccObjectCache()->postNotification(renderer(), "AXLoadComplete");
 #endif
+
+#if SVG_SUPPORT
+    // FIXME: Officially, time 0 is when the outermost <svg> recieves its
+    // SVGLoad event, but we don't implement those yet.  This is close enough
+    // for now.  In some cases we should have fired earlier.
+    if (svgExtensions())
+        accessSVGExtensions()->timeScheduler()->startAnimations();
+#endif
 }
 
 void DocumentImpl::setParsing(bool b)
@@ -2288,17 +2297,6 @@ EventListener *DocumentImpl::createHTMLEventListener(const DOMString& code, Node
     return 0;
 }
 
-#if SVG_SUPPORT
-EventListener *DocumentImpl::createSVGEventListener(const DOMString& code, NodeImpl *node)
-{
-    if (Frame *frm = frame()) {
-        if (KJSProxyImpl *proxy = frm->jScript())
-            return proxy->createSVGEventHandler(code, node);
-    }
-    return 0;
-}
-#endif
-
 void DocumentImpl::setHTMLWindowEventListener(const AtomicString& eventType, AttributeImpl* attr)
 {
     setHTMLWindowEventListener(eventType, createHTMLEventListener(attr->value(), 0));
@@ -2979,6 +2977,20 @@ AttrImpl *DocumentImpl::createAttributeNS(const DOMString &namespaceURI, const D
                                                                        localName.impl(),
                                                                        namespaceURI.impl()), DOMString("").impl()), false);
 }
+
+#if SVG_SUPPORT
+const SVGDocumentExtensions* DocumentImpl::svgExtensions()
+{
+    return m_svgExtensions.get();
+}
+
+SVGDocumentExtensions* DocumentImpl::accessSVGExtensions()
+{
+    if (!m_svgExtensions)
+        m_svgExtensions = new SVGDocumentExtensions(this);
+    return m_svgExtensions.get();
+}
+#endif
 
 void DocumentImpl::radioButtonChecked(HTMLInputElementImpl *caller, HTMLFormElementImpl *form)
 {

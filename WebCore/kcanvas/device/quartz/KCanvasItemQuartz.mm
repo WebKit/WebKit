@@ -184,6 +184,11 @@ void KCanvasItemQuartz::drawMarkersIfNeeded(const FloatRect& rect, const KCanvas
     drawMarkerWithData(data.previousMarkerData);
 }
 
+IntRect KCanvasItemQuartz::getAbsoluteRepaintRect()
+{
+    return enclosingIntRect(absoluteTransform().mapRect(relativeBBox(true)));
+}
+
 void KCanvasItemQuartz::paint(PaintInfo &paintInfo, int parentX, int parentY)
 {
     // No one should be transforming us via these.

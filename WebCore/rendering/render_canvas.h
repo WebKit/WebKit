@@ -28,7 +28,7 @@
 class FrameView;
 class QScrollView;
 
-namespace khtml {
+namespace WebCore {
 
 class RenderCanvas : public RenderBlock
 {

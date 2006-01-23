@@ -98,13 +98,6 @@ namespace KSVG
         void unsuspendRedrawAll();
         void forceRedraw();
 
-        void pauseAnimations();
-        void unpauseAnimations();
-        bool animationsPaused();
-
-        float getCurrentTime();
-        void setCurrentTime(float seconds);
-
         KDOM::NodeListImpl *getIntersectionList(SVGRectImpl *rect, SVGElementImpl *referenceElement);
         KDOM::NodeListImpl *getEnclosureList(SVGRectImpl *rect, SVGElementImpl *referenceElement);
         bool checkIntersection(SVGElementImpl *element, SVGRectImpl *rect);
@@ -131,19 +124,16 @@ namespace KSVG
 
         // 'virtual SVGZoomAndPan functions
         virtual void setZoomAndPan(unsigned short zoomAndPan);
-        
-        // Animations
-        TimeScheduler *timeScheduler() const { return m_timeScheduler; }
 
     private:
+        void addSVGWindowEventListner(const AtomicString& eventType, const AttributeImpl* attr);   
+
         mutable RefPtr<SVGAnimatedLengthImpl> m_x;
         mutable RefPtr<SVGAnimatedLengthImpl> m_y;
         mutable RefPtr<SVGAnimatedLengthImpl> m_width;
         mutable RefPtr<SVGAnimatedLengthImpl> m_height;
 
         bool m_useCurrentView;
-
-        TimeScheduler *m_timeScheduler;
     };
 };
 

@@ -731,10 +731,7 @@ void KDOM::CSSStyleSelector::applySVGProperty(int id, KDOM::CSSValueImpl *value)
             break;
         }
         default:
-        {
-            kdDebug() << "RULE UNIMPLEMENTED! FIX ME :) id=" << id << endl;
             return;
-        }
     }
 }
 

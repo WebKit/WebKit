@@ -35,7 +35,7 @@ public:
     virtual FloatRect bboxForPath(bool includeStroke) const;
     virtual bool hitsPath(const FloatPoint&, bool fill /* false means stroke */) const;
     
-    virtual IntRect getAbsoluteRepaintRect() { return enclosingIntRect(absoluteTransform().mapRect(relativeBBox(true))); }
+    virtual IntRect getAbsoluteRepaintRect();
     
     virtual bool requiresLayer() { return false; }
     virtual void layout() { setNeedsLayout(false); }

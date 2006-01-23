@@ -23,8 +23,9 @@
 #include "config.h"
 #if SVG_SUPPORT
 #include "SVGAnimateElementImpl.h"
-#include "SVGSVGElementImpl.h"
 #include "KSVGTimeScheduler.h"
+#include "DocumentImpl.h"
+#include "SVGDocumentExtensions.h"
 
 #include <kdebug.h>
 
@@ -119,10 +120,8 @@ void SVGAnimateElementImpl::handleTimerEvent(double timePercentage)
             }
         }
 
-        SVGSVGElementImpl *ownerSVG = ownerSVGElement();
-        if(ownerSVG)
-        {
-            ownerSVG->timeScheduler()->connectIntervalTimer(this);
+        if (DocumentImpl *doc = getDocument()) {
+            doc->accessSVGExtensions()->timeScheduler()->connectIntervalTimer(this);
             m_connected = true;
         }
 
@@ -207,10 +206,8 @@ void SVGAnimateElementImpl::handleTimerEvent(double timePercentage)
             return;
         }
 
-        SVGSVGElementImpl *ownerSVG = ownerSVGElement();
-        if(ownerSVG)
-        {
-            ownerSVG->timeScheduler()->disconnectIntervalTimer(this);
+        if (DocumentImpl *doc = getDocument()) {
+            doc->accessSVGExtensions()->timeScheduler()->disconnectIntervalTimer(this);
             m_connected = false;
         }
 

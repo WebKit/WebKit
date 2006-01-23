@@ -1,3 +1,57 @@
+2006-01-22  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Make <animateColor> work again (broke during DOM merger).
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5964
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * kcanvas/device/quartz/KCanvasItemQuartz.h:
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (KCanvasItemQuartz::getAbsoluteRepaintRect): moved to .cpp file
+        * khtml/xml/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::implicitClose): start svg animations
+        (WebCore::DocumentImpl::svgExtensions): svg document extensions
+        (WebCore::DocumentImpl::accessSVGExtensions): svg doc extensions
+        * khtml/xml/DocumentImpl.h:
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        (KDOM::CSSStyleSelector::applySVGProperty):
+        * ksvg2/svg/SVGAElementImpl.cpp:
+        (SVGAElementImpl::defaultEventHandler): cleanup
+        * ksvg2/svg/SVGAnimateColorElementImpl.cpp:
+        (SVGAnimateColorElementImpl::handleTimerEvent): update css lookup
+        * ksvg2/svg/SVGAnimateElementImpl.cpp:
+        (SVGAnimateElementImpl::handleTimerEvent): fix css property lookup
+        * ksvg2/svg/SVGAnimateTransformElementImpl.cpp:
+        (SVGAnimateTransformElementImpl::handleTimerEvent):
+        * ksvg2/svg/SVGAnimationElementImpl.cpp:
+        (SVGAnimationElementImpl::closeRenderer): use doc extensions
+        (SVGAnimationElementImpl::targetAttribute): fix css properties
+        (SVGAnimationElementImpl::setTargetAttribute): fix css properties
+        * ksvg2/svg/SVGDocumentImpl.cpp:
+        (SVGDocumentImpl::svgView): remove unnecessary static cast
+        (SVGDocumentImpl::executeScripts):
+        * ksvg2/svg/SVGDocumentImpl.h:
+        * ksvg2/svg/SVGElementImpl.cpp:
+        (WebCore::SVGElementImpl::addSVGEventListener): helper function
+        (WebCore::SVGElementImpl::parseMappedAttribute): use helper
+        * ksvg2/svg/SVGElementImpl.h:
+        * ksvg2/svg/SVGGElementImpl.cpp:
+        * ksvg2/svg/SVGGElementImpl.h:
+        * ksvg2/svg/SVGSVGElementImpl.cpp:
+        (WebCore::SVGSVGElementImpl::SVGSVGElementImpl):
+        (WebCore::SVGSVGElementImpl::~SVGSVGElementImpl):
+        (WebCore::SVGSVGElementImpl::addSVGWindowEventListner): helper
+        (WebCore::SVGSVGElementImpl::parseMappedAttribute): use helper
+        * ksvg2/svg/SVGSVGElementImpl.h:
+        * ksvg2/svg/SVGSetElementImpl.cpp:
+        (SVGSetElementImpl::handleTimerEvent): use doc extensions
+        * ksvg2/svg/SVGStyledElementImpl.h:
+        * page/Frame.cpp:
+        (Frame::pauseTimeouts): pause svg animation
+        (Frame::resumeTimeouts): resume svg animation
+        * rendering/render_canvas.h:
+
 2006-01-22  Darin Adler  <darin@apple.com>
 
         - fix deployment builds

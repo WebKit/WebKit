@@ -34,8 +34,9 @@
 #include "SVGTransformListImpl.h"
 #include "SVGAnimatedTransformListImpl.h"
 #include "SVGAnimateTransformElementImpl.h"
-#include "SVGSVGElementImpl.h"
 #include "KSVGTimeScheduler.h"
+#include "DocumentImpl.h"
+#include "SVGDocumentExtensions.h"
 
 #include <kdebug.h>
 
@@ -169,10 +170,8 @@ void SVGAnimateTransformElementImpl::handleTimerEvent(double timePercentage)
             }
         }
         
-        SVGSVGElementImpl *ownerSVG = ownerSVGElement();
-        if(ownerSVG)
-        {
-            ownerSVG->timeScheduler()->connectIntervalTimer(this);
+        if (DocumentImpl *doc = getDocument()) {
+            doc->accessSVGExtensions()->timeScheduler()->connectIntervalTimer(this);
             m_connected = true;
         }
 
@@ -325,10 +324,8 @@ void SVGAnimateTransformElementImpl::handleTimerEvent(double timePercentage)
             return;
         }
 
-        SVGSVGElementImpl *ownerSVG = ownerSVGElement();
-        if(ownerSVG)
-        {
-            ownerSVG->timeScheduler()->disconnectIntervalTimer(this);
+        if (DocumentImpl *doc = getDocument()) {
+            doc->accessSVGExtensions()->timeScheduler()->disconnectIntervalTimer(this);
             m_connected = false;
         }
 

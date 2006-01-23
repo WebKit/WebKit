@@ -92,6 +92,9 @@ namespace WebCore {
 #if __APPLE__
     struct DashboardRegionValue;
 #endif
+#if SVG_SUPPORT
+    class SVGDocumentExtensions;
+#endif
 
     // A range of a node within a document that is "marked", such as being misspelled
     struct DocumentMarker
@@ -420,11 +423,6 @@ public:
 
     EventListener *createHTMLEventListener(const DOMString& code, NodeImpl*);
     
-#if SVG_SUPPORT
-    // FIXME: Move to SVGDocumentExtensions, when that lands w/ animation
-    EventListener *createSVGEventListener(const DOMString& code, NodeImpl*);
-#endif
-    
     /**
      * Searches through the document, starting from fromNode, for the next selectable element that comes after fromNode.
      * The order followed is as specified in section 17.11.1 of the HTML4 spec, which is elements with tab indexes
@@ -720,6 +718,11 @@ public:
     void radioButtonChecked(HTMLInputElementImpl *caller, HTMLFormElementImpl *form);
     HTMLInputElementImpl* checkedRadioButtonForGroup(DOMStringImpl* name, HTMLFormElementImpl *form);
     void removeRadioButtonGroup(DOMStringImpl* name, HTMLFormElementImpl *form);
+    
+#if SVG_SUPPORT
+    const SVGDocumentExtensions* svgExtensions();
+    SVGDocumentExtensions* accessSVGExtensions();
+#endif
 
 private:
     void updateTitle();
@@ -749,6 +752,10 @@ private:
     typedef HashMap<DOMStringImpl*, HTMLInputElementImpl*, PointerHash<DOMStringImpl*> > NameToInputMap;
     typedef HashMap<HTMLFormElementImpl*, NameToInputMap*, PointerHash<HTMLFormElementImpl*> > FormToGroupMap;
     FormToGroupMap m_selectedRadioButtons;
+    
+#if SVG_SUPPORT
+    RefPtr<SVGDocumentExtensions> m_svgExtensions;
+#endif
     
 #if __APPLE__
     QValueList<DashboardRegionValue> m_dashboardRegions;

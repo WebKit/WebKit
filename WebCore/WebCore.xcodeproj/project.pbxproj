@@ -846,6 +846,8 @@
 		A8DF4AF10980C42C0052981B /* RenderTableCol.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF4AE70980C42C0052981B /* RenderTableCol.h */; };
 		A8DF5F49098448C70052981B /* JSSVGLazyEventListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DF545D0983A7510052981B /* JSSVGLazyEventListener.cpp */; };
 		A8DF5F4A098448C80052981B /* JSSVGLazyEventListener.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF545C0983A7510052981B /* JSSVGLazyEventListener.h */; };
+		A8DF5FA3098460AA0052981B /* SVGDocumentExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF5FA1098460AA0052981B /* SVGDocumentExtensions.h */; };
+		A8DF5FA4098460AA0052981B /* SVGDocumentExtensions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DF5FA2098460AA0052981B /* SVGDocumentExtensions.cpp */; };
 		A8FD8B86087CB44C00DC3707 /* KWQWMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A85D7A8C0879EC64006A9172 /* KWQWMatrix.cpp */; };
 		A8FD8B87087CB45700DC3707 /* KWQWMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = A85D7A8D0879EC64006A9172 /* KWQWMatrix.h */; };
 		A8FEFB0A0979F472005839FD /* RenderForeignObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A8FEFB080979F472005839FD /* RenderForeignObject.h */; };
@@ -1783,6 +1785,8 @@
 		A8DF4AE70980C42C0052981B /* RenderTableCol.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderTableCol.h; sourceTree = "<group>"; };
 		A8DF545C0983A7510052981B /* JSSVGLazyEventListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGLazyEventListener.h; sourceTree = "<group>"; };
 		A8DF545D0983A7510052981B /* JSSVGLazyEventListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGLazyEventListener.cpp; sourceTree = "<group>"; };
+		A8DF5FA1098460AA0052981B /* SVGDocumentExtensions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGDocumentExtensions.h; sourceTree = "<group>"; };
+		A8DF5FA2098460AA0052981B /* SVGDocumentExtensions.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGDocumentExtensions.cpp; sourceTree = "<group>"; };
 		A8FEFB080979F472005839FD /* RenderForeignObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderForeignObject.h; sourceTree = "<group>"; };
 		A8FEFB090979F472005839FD /* RenderForeignObject.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderForeignObject.cpp; sourceTree = "<group>"; };
 		A8FEFB2F0979F4F6005839FD /* SVGForeignObjectElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGForeignObjectElementImpl.cpp; sourceTree = "<group>"; };
@@ -2583,6 +2587,8 @@
 			children = (
 				A8C0F6EB089701F100BA5114 /* KCanvasRenderingStyle.cpp */,
 				A8C0F6EC089701F100BA5114 /* KCanvasRenderingStyle.h */,
+				A8DF5FA2098460AA0052981B /* SVGDocumentExtensions.cpp */,
+				A8DF5FA1098460AA0052981B /* SVGDocumentExtensions.h */,
 				FAE0418D097596C9000540BE /* SVGImageLoader.cpp */,
 				FAE0418E097596C9000540BE /* SVGImageLoader.h */,
 				A8C0F6EF089701F100BA5114 /* KSVGTimeScheduler.cpp */,
@@ -4366,6 +4372,7 @@
 				E1F7F5610981AF570073BE6A /* JSXMLHttpRequest.h in Headers */,
 				E1F0424709839389006694EA /* xmlhttprequest.h in Headers */,
 				A8DF5F4A098448C80052981B /* JSSVGLazyEventListener.h in Headers */,
+				A8DF5FA3098460AA0052981B /* SVGDocumentExtensions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5464,6 +5471,7 @@
 				E1F7F5600981AF570073BE6A /* JSXMLHttpRequest.cpp in Sources */,
 				E1F0424609839389006694EA /* xmlhttprequest.cpp in Sources */,
 				A8DF5F49098448C70052981B /* JSSVGLazyEventListener.cpp in Sources */,
+				A8DF5FA4098460AA0052981B /* SVGDocumentExtensions.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

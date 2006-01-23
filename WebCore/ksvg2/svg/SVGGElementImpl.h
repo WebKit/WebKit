@@ -46,8 +46,6 @@ namespace KSVG
 
         virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
         virtual khtml::RenderObject *createRenderer(RenderArena *arena, khtml::RenderStyle *style);
-
-        virtual void setChanged(bool b = true, bool deep = false);
     };
 
     class SVGDummyElementImpl : public SVGGElementImpl

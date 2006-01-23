@@ -55,6 +55,7 @@
 #include "KCanvasRenderingStyle.h"
 #include "SVGPreserveAspectRatioImpl.h"
 #include "SVGAnimatedPreserveAspectRatioImpl.h"
+#include "SVGDocumentExtensions.h"
 
 #include "cssproperties.h"
 
@@ -64,9 +65,10 @@
 #include "htmlnames.h"
 #include "EventNames.h"
 
-using namespace KSVG;
-using namespace DOM::HTMLNames;
-using namespace DOM::EventNames;
+namespace WebCore {
+
+using namespace HTMLNames;
+using namespace EventNames;
 
 SVGSVGElementImpl::SVGSVGElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
 : SVGStyledLocatableElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(),
@@ -74,12 +76,10 @@ SVGSVGElementImpl::SVGSVGElementImpl(const KDOM::QualifiedName& tagName, KDOM::D
   SVGZoomAndPanImpl()
 {
     m_useCurrentView = false;
-    m_timeScheduler = new TimeScheduler(getDocument());
 }
 
 SVGSVGElementImpl::~SVGSVGElementImpl()
 {
-    delete m_timeScheduler;
 }
 
 SVGAnimatedLengthImpl *SVGSVGElementImpl::x() const
@@ -227,26 +227,33 @@ SVGPointImpl *SVGSVGElementImpl::currentTranslate() const
     //return createSVGPoint(canvasView()->pan());
 }
 
+void SVGSVGElementImpl::addSVGWindowEventListner(const AtomicString& eventType, const AttributeImpl* attr)
+{
+    // FIXME: None of these should be window events long term.
+    // Once we propertly support SVGLoad, etc.
+    EventListener *listener = getDocument()->accessSVGExtensions()->createSVGEventListener(attr->value(), this);
+    getDocument()->setHTMLWindowEventListener(eventType, listener);
+}
+
 void SVGSVGElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 {
     const KDOM::AtomicString& value = attr->value();
     if (!nearestViewportElement()) {
         // Only handle events if we're the outermost <svg> element
-        QString value = attr->value().qstring();
         if (attr->name() == onloadAttr)
-            getDocument()->setHTMLWindowEventListener(loadEvent, getDocument()->createSVGEventListener(value, this));
+            addSVGWindowEventListner(loadEvent, attr);
         else if (attr->name() == onunloadAttr)
-            getDocument()->setHTMLWindowEventListener(unloadEvent, getDocument()->createSVGEventListener(value, this));
+            addSVGWindowEventListner(unloadEvent, attr);
         else if (attr->name() == onabortAttr)
-            getDocument()->setHTMLWindowEventListener(abortEvent, getDocument()->createSVGEventListener(value, this));
+            addSVGWindowEventListner(abortEvent, attr);
         else if (attr->name() == onerrorAttr)
-            getDocument()->setHTMLWindowEventListener(errorEvent, getDocument()->createSVGEventListener(value, this));
+            addSVGWindowEventListner(errorEvent, attr);
         else if (attr->name() == onresizeAttr)
-            getDocument()->setHTMLWindowEventListener(resizeEvent, getDocument()->createSVGEventListener(value, this));
+            addSVGWindowEventListner(resizeEvent, attr);
         else if (attr->name() == onscrollAttr)
-            getDocument()->setHTMLWindowEventListener(scrollEvent, getDocument()->createSVGEventListener(value, this));
+            addSVGWindowEventListner(scrollEvent, attr);
         else if (attr->name() == SVGNames::onzoomAttr)
-            getDocument()->setHTMLWindowEventListener(zoomEvent, getDocument()->createSVGEventListener(value, this));
+            addSVGWindowEventListner(zoomEvent, attr);
     }
     if (attr->name() == SVGNames::xAttr) {
         x()->baseVal()->setValueAsString(value.impl());
@@ -287,33 +294,6 @@ void SVGSVGElementImpl::unsuspendRedrawAll()
 }
 
 void SVGSVGElementImpl::forceRedraw()
-{
-    // TODO
-}
-
-void SVGSVGElementImpl::pauseAnimations()
-{
-    if(!m_timeScheduler->animationsPaused())
-        m_timeScheduler->toggleAnimations();
-}
-
-void SVGSVGElementImpl::unpauseAnimations()
-{
-    if(m_timeScheduler->animationsPaused())
-        m_timeScheduler->toggleAnimations();
-}
-
-bool SVGSVGElementImpl::animationsPaused()
-{
-    return m_timeScheduler->animationsPaused();
-}
-
-float SVGSVGElementImpl::getCurrentTime()
-{
-    return m_timeScheduler->elapsed();
-}
-
-void SVGSVGElementImpl::setCurrentTime(float /* seconds */)
 {
     // TODO
 }
@@ -459,6 +439,8 @@ void SVGSVGElementImpl::setZoomAndPan(unsigned short zoomAndPan)
 {
     SVGZoomAndPanImpl::setZoomAndPan(zoomAndPan);
     //canvasView()->enableZoomAndPan(zoomAndPan == SVG_ZOOMANDPAN_MAGNIFY);
+}
+
 }
 
 // vim:ts=4:noet

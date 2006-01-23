@@ -37,6 +37,9 @@
 #include "SVGAnimationElementImpl.h"
 #include "SVGSVGElementImpl.h"
 #include "KSVGTimeScheduler.h"
+#include "SVGDocumentExtensions.h"
+#include "cssproperties.h"
+#include "ksvgcssproperties.h"
 
 #include "XLinkNames.h"
 
@@ -413,12 +416,8 @@ double SVGAnimationElementImpl::parseClockValue(const QString &data) const
 
 void SVGAnimationElementImpl::closeRenderer()
 {
-    kdDebug() << " --> ADDING " << KDOM::DOMString(localName()) << " animation (startTime = " << getStartTime() << " ms) to scheduler!" << endl;
-    SVGSVGElementImpl *ownerSVG = ownerSVGElement();
-    if(!ownerSVG)
-        return;
-
-    ownerSVG->timeScheduler()->addTimer(this, lround(getStartTime()));
+    if (DocumentImpl *doc = getDocument())
+        doc->accessSVGExtensions()->timeScheduler()->addTimer(this, lround(getStartTime()));
 }
 
 KDOM::DOMString SVGAnimationElementImpl::targetAttribute() const
@@ -442,21 +441,15 @@ KDOM::DOMString SVGAnimationElementImpl::targetAttribute() const
         // for the target element. The implementation must first search through the
         // list of CSS properties for a matching property name, and if none is found,
         // search the default XML namespace for the element.
-        if(styled && styled->style())
-        {
-            int id = KDOM::getPropertyID(m_attributeName.ascii(), m_attributeName.length());
-            if(styled->style()->getPropertyCSSValue(id))
+        if (styled && styled->style()) {
+            if (styled->style()->getPropertyCSSValue(m_attributeName))
                 attributeType = ATTRIBUTETYPE_CSS;
         }
     }
     
-    if(attributeType == ATTRIBUTETYPE_CSS)
-    {
-        if(styled && styled->style())
-        {
-            int id = KDOM::getPropertyID(m_attributeName.ascii(), m_attributeName.length());
-            ret = styled->style()->getPropertyValue(id);
-        }
+    if (attributeType == ATTRIBUTETYPE_CSS) {
+        if (styled && styled->style())
+            ret = styled->style()->getPropertyValue(m_attributeName);
     }
 
     if(attributeType == ATTRIBUTETYPE_XML || ret.isEmpty())
@@ -489,22 +482,15 @@ void SVGAnimationElementImpl::setTargetAttribute(SVGElementImpl *target, KDOM::D
         // for the target element. The implementation must first search through the
         // list of CSS properties for a matching property name, and if none is found,
         // search the default XML namespace for the element.
-        if(styled && styled->style())
-        {
-            QString attrName = name.qstring();
-            int id = KDOM::getPropertyID(attrName.ascii(), attrName.length());
-            if(styled->style()->getPropertyCSSValue(id))
+        if (styled && styled->style()) {
+            if (styled->style()->getPropertyCSSValue(name))
                 attributeType = ATTRIBUTETYPE_CSS;
         }
     }
     int exceptioncode;
-    if(attributeType == ATTRIBUTETYPE_CSS && styled && styled->style())
-    {
-        QString attrName = name.qstring();
-        int id = KDOM::getPropertyID(attrName.ascii(), attrName.length());
-        styled->style()->setProperty(id, value, false, exceptioncode);
-    }
-    else if(attributeType == ATTRIBUTETYPE_XML)
+    if (attributeType == ATTRIBUTETYPE_CSS && styled && styled->style())
+        styled->style()->setProperty(name, value, "", exceptioncode);
+    else if (attributeType == ATTRIBUTETYPE_XML)
         target->setAttribute(nameImpl, value, exceptioncode);
 }
 
