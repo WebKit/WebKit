@@ -1,6 +1,6 @@
 2006-01-22  Maciej Stachowiak  <mjs@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by Darin.
 
         - Set up Page class and invert Frame / WebCoreFrameBridge ownership
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6577
