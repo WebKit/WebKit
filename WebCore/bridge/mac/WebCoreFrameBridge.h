@@ -28,7 +28,6 @@
 #import <JavaScriptCore/npruntime.h>
 #import <JavaVM/jni.h>
 #import <WebCore/WebCoreKeyboardAccess.h>
-#import <WebKit/WebView.h>
 
 #ifdef __cplusplus
 
@@ -494,7 +493,7 @@ typedef enum
 - (WebCoreFrameBridge *)mainFrame;
 - (void)frameDetached;
 - (NSView *)documentView;
-- (WebView *)webView;
+- (NSView *)webView;
 
 - (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer reload:(BOOL)reload userGesture:(BOOL)forUser target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
 - (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSArray *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
