@@ -26,24 +26,16 @@
 #include "config.h"
 #include "break_blockquote_command.h"
 
+#include "dom_elementimpl.h"
+#include "dom_textimpl.h"
 #include "htmlediting.h"
-#include "visible_position.h"
-
 #include "htmlnames.h"
-#include "xml/dom_elementimpl.h"
-#include "xml/dom_textimpl.h"
-
+#include "visible_position.h"
 #include <kxmlcore/Assertions.h>
 
-using namespace DOM::HTMLNames;
+namespace WebCore {
 
-using DOM::DocumentImpl;
-using DOM::ElementImpl;
-using DOM::NodeImpl;
-using DOM::Position;
-using DOM::TextImpl;
-
-namespace khtml {
+using namespace HTMLNames;
 
 BreakBlockquoteCommand::BreakBlockquoteCommand(DocumentImpl *document)
     : CompositeEditCommand(document)
@@ -117,17 +109,17 @@ void BreakBlockquoteCommand::doApply()
             ancestors.prepend(node);
         
         // Insert a clone of the top blockquote after the break.
-        NodeImpl *clonedBlockquote = topBlockquote->cloneNode(false);
-        insertNodeAfter(clonedBlockquote, breakNode);
+        RefPtr<NodeImpl> clonedBlockquote = topBlockquote->cloneNode(false);
+        insertNodeAfter(clonedBlockquote.get(), breakNode);
         
         // Clone startNode's ancestors into the cloned blockquote.
         // On exiting this loop, clonedAncestor is the lowest ancestor
         // that was cloned (i.e. the clone of either ancestors.last()
         // or clonedBlockquote if ancestors is empty).
-        NodeImpl *clonedAncestor = clonedBlockquote;
+        RefPtr<NodeImpl> clonedAncestor = clonedBlockquote;
         for (QPtrListIterator<NodeImpl> it(ancestors); it.current(); ++it) {
-            NodeImpl *clonedChild = it.current()->cloneNode(false); // shallow clone
-            appendNode(clonedChild, clonedAncestor);
+            RefPtr<NodeImpl> clonedChild = it.current()->cloneNode(false); // shallow clone
+            appendNode(clonedChild.get(), clonedAncestor.get());
             clonedAncestor = clonedChild;
         }
         
@@ -136,7 +128,7 @@ void BreakBlockquoteCommand::doApply()
         while (moveNode) {
             NodeImpl *next = moveNode->nextSibling();
             removeNode(moveNode);
-            appendNode(moveNode, clonedAncestor);
+            appendNode(moveNode, clonedAncestor.get());
             moveNode = next;
         }
 
@@ -161,7 +153,7 @@ void BreakBlockquoteCommand::doApply()
         }
         
         // Make sure the cloned block quote renders.
-        addBlockPlaceholderIfNeeded(clonedBlockquote);
+        addBlockPlaceholderIfNeeded(clonedBlockquote.get());
     }
     
     // Put the selection right before the break.

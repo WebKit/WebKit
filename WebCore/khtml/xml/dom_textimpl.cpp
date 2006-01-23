@@ -72,8 +72,8 @@ void CharacterDataImpl::setData( const DOMString &_data, int &exceptioncode )
     DOMStringImpl *oldStr = str;
     str = _data.impl();
     if(str) str->ref();
-    if (m_render)
-      (static_cast<RenderText*>(m_render))->setText(str);
+    if (renderer())
+        static_cast<RenderText*>(renderer())->setText(str);
     
     dispatchModifiedEvent(oldStr);
     if(oldStr) oldStr->deref();
@@ -110,8 +110,8 @@ void CharacterDataImpl::appendData( const DOMString &arg, int &exceptioncode )
     str = str->copy();
     str->ref();
     str->append(arg.impl());
-    if (m_render)
-      (static_cast<RenderText*>(m_render))->setTextWithOffset(str, oldStr->l, 0);
+    if (renderer())
+        static_cast<RenderText*>(renderer())->setTextWithOffset(str, oldStr->l, 0);
     
     dispatchModifiedEvent(oldStr);
     oldStr->deref();
@@ -128,8 +128,8 @@ void CharacterDataImpl::insertData( const unsigned offset, const DOMString &arg,
     str = str->copy();
     str->ref();
     str->insert(arg.impl(), offset);
-    if (m_render)
-      (static_cast<RenderText*>(m_render))->setTextWithOffset(str, offset, 0);
+    if (renderer())
+        static_cast<RenderText*>(renderer())->setTextWithOffset(str, offset, 0);
     
     dispatchModifiedEvent(oldStr);
     oldStr->deref();
@@ -150,8 +150,8 @@ void CharacterDataImpl::deleteData( const unsigned offset, const unsigned count,
     str = str->copy();
     str->ref();
     str->remove(offset,count);
-    if (m_render)
-      (static_cast<RenderText*>(m_render))->setTextWithOffset(str, offset, count);
+    if (renderer())
+        static_cast<RenderText*>(renderer())->setTextWithOffset(str, offset, count);
     
     dispatchModifiedEvent(oldStr);
     oldStr->deref();
@@ -179,8 +179,8 @@ void CharacterDataImpl::replaceData( const unsigned offset, const unsigned count
     str->ref();
     str->remove(offset,realCount);
     str->insert(arg.impl(), offset);
-    if (m_render)
-      (static_cast<RenderText*>(m_render))->setTextWithOffset(str, offset, count);
+    if (renderer())
+        static_cast<RenderText*>(renderer())->setTextWithOffset(str, offset, count);
     
     dispatchModifiedEvent(oldStr);
     oldStr->deref();
@@ -320,7 +320,7 @@ unsigned short CommentImpl::nodeType() const
     return Node::COMMENT_NODE;
 }
 
-NodeImpl *CommentImpl::cloneNode(bool /*deep*/)
+PassRefPtr<NodeImpl> CommentImpl::cloneNode(bool /*deep*/)
 {
     return getDocument()->createComment( str );
 }
@@ -390,8 +390,9 @@ TextImpl *TextImpl::splitText( const unsigned offset, int &exceptioncode )
     if ( exceptioncode )
         return 0;
 
-    if (m_render)
-        (static_cast<RenderText*>(m_render))->setText(str);
+    if (renderer())
+        static_cast<RenderText*>(renderer())->setText(str);
+
     return newText;
 }
 
@@ -410,7 +411,7 @@ unsigned short TextImpl::nodeType() const
     return Node::TEXT_NODE;
 }
 
-NodeImpl *TextImpl::cloneNode(bool /*deep*/)
+PassRefPtr<NodeImpl> TextImpl::cloneNode(bool /*deep*/)
 {
     return getDocument()->createTextNode(str);
 }
@@ -471,10 +472,10 @@ void TextImpl::attach()
 void TextImpl::recalcStyle( StyleChange change )
 {
     if (change != NoChange && parentNode())
-        if (m_render)
-            m_render->setStyle(parentNode()->renderer()->style());
-    if (changed() && m_render && m_render->isText())
-        static_cast<RenderText*>(m_render)->setText(str);
+        if (renderer())
+            renderer()->setStyle(parentNode()->renderer()->style());
+    if (changed() && renderer() && renderer()->isText())
+        static_cast<RenderText*>(renderer())->setText(str);
     setChanged(false);
 }
 
@@ -542,7 +543,7 @@ unsigned short CDATASectionImpl::nodeType() const
     return Node::CDATA_SECTION_NODE;
 }
 
-NodeImpl *CDATASectionImpl::cloneNode(bool /*deep*/)
+PassRefPtr<NodeImpl> CDATASectionImpl::cloneNode(bool /*deep*/)
 {
     int ignoreException = 0;
     return getDocument()->createCDATASection(str, ignoreException);

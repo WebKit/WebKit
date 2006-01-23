@@ -84,7 +84,7 @@ unsigned short DocumentTypeImpl::nodeType() const
     return Node::DOCUMENT_TYPE_NODE;
 }
 
-NodeImpl* DocumentTypeImpl::cloneNode(bool /*deep*/)
+PassRefPtr<NodeImpl> DocumentTypeImpl::cloneNode(bool /*deep*/)
 {
     // The DOM Level 2 specification says cloning DocumentType nodes is "implementation dependent" so for now we do not support it.
     return 0;

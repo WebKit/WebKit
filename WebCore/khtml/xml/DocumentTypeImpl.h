@@ -48,13 +48,12 @@ public:
     DOMString systemId() const { return m_systemId; }
     DOMString internalSubset() const { return m_subset; }
 
-    // DOM methods overridden from parent classes
-    virtual DOMString nodeName() const;
-    virtual unsigned short nodeType() const;
-    virtual NodeImpl *cloneNode(bool deep);
-
     // Other methods (not part of DOM)
     DOMImplementationImpl *implementation() const { return m_implementation.get(); }
+
+    virtual DOMString nodeName() const;
+    virtual unsigned short nodeType() const;
+    virtual PassRefPtr<NodeImpl> cloneNode(bool deep);
     virtual DOMString toString() const;
 
 private:

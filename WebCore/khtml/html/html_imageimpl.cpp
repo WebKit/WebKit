@@ -159,7 +159,8 @@ void HTMLImageElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     const QualifiedName& attrName = attr->name();
     if (attrName == altAttr) {
-        if (m_render) static_cast<RenderImage*>(m_render)->updateAltText();
+        if (renderer())
+            static_cast<RenderImage*>(renderer())->updateAltText();
     } else if (attrName == srcAttr) {
         m_imageLoader.updateFromElement();
     } else if (attrName == widthAttr) {
@@ -258,7 +259,7 @@ void HTMLImageElementImpl::removedFromDocument()
 
 int HTMLImageElementImpl::width(bool ignorePendingStylesheets) const
 {
-    if (!m_render) {
+    if (!renderer()) {
         // check the attribute first for an explicit pixel value
         bool ok;
         int width = getAttribute(widthAttr).qstring().toInt(&ok);
@@ -277,12 +278,12 @@ int HTMLImageElementImpl::width(bool ignorePendingStylesheets) const
             doc->updateLayout();
     }
 
-    return m_render ? m_render->contentWidth() : 0;
+    return renderer() ? renderer()->contentWidth() : 0;
 }
 
 int HTMLImageElementImpl::height(bool ignorePendingStylesheets) const
 {
-    if (!m_render) {
+    if (!renderer()) {
         // check the attribute first for an explicit pixel value
         bool ok;
         int height = getAttribute(heightAttr).qstring().toInt(&ok);
@@ -301,7 +302,7 @@ int HTMLImageElementImpl::height(bool ignorePendingStylesheets) const
             doc->updateLayout();
     }
 
-    return m_render ? m_render->contentHeight() : 0;
+    return renderer() ? renderer()->contentHeight() : 0;
 }
 
 bool HTMLImageElementImpl::isURLAttribute(AttributeImpl *attr) const

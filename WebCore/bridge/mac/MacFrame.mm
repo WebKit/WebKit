@@ -148,7 +148,7 @@ MacFrame::MacFrame()
     , _activationEventNumber(0)
     , _formValuesAboutToBeSubmitted(nil)
     , _formAboutToBeSubmitted(nil)
-    , _windowWidget(NULL)
+    , _windowWidget(0)
     , _bindingRoot(0)
     , _windowScriptObject(0)
     , _windowScriptNPObject(0)
@@ -174,6 +174,8 @@ MacFrame::~MacFrame()
     [_bridge clearFrame];
     KWQRelease(_bridge);
     _bridge = nil;
+
+    delete _windowWidget;
 }
 
 void MacFrame::freeClipboard()

@@ -184,11 +184,10 @@ void AttrImpl::setNodeValue( const DOMString &v, int &exceptioncode )
     setValue(v, exceptioncode);
 }
 
-NodeImpl *AttrImpl::cloneNode ( bool /*deep*/)
+PassRefPtr<NodeImpl> AttrImpl::cloneNode(bool /*deep*/)
 {
-    AttrImpl *clone = new AttrImpl(0, getDocument(), m_attribute->clone(), false);
-    
-    cloneChildNodes(clone);
+    PassRefPtr<AttrImpl> clone = new AttrImpl(0, getDocument(), m_attribute->clone(), false);
+    cloneChildNodes(clone.get());
     return clone;
 }
 
@@ -295,10 +294,10 @@ ElementImpl::~ElementImpl()
         namedAttrMap->detachFromElement();
 }
 
-NodeImpl *ElementImpl::cloneNode(bool deep)
+PassRefPtr<NodeImpl> ElementImpl::cloneNode(bool deep)
 {
     int exceptionCode = 0;
-    ElementImpl *clone = getDocument()->createElementNS(namespaceURI(), nodeName(), exceptionCode);
+    PassRefPtr<ElementImpl> clone = getDocument()->createElementNS(namespaceURI(), nodeName(), exceptionCode);
     assert(!exceptionCode);
     
     // clone attributes
@@ -308,7 +307,7 @@ NodeImpl *ElementImpl::cloneNode(bool deep)
     clone->copyNonAttributeProperties(this);
     
     if (deep)
-        cloneChildNodes(clone);
+        cloneChildNodes(clone.get());
 
     return clone;
 }
@@ -377,23 +376,23 @@ const AtomicString& ElementImpl::getAttribute(const QualifiedName& name) const
 void ElementImpl::scrollIntoView(bool alignToTop) 
 {
     IntRect bounds = this->getRect();    
-    if (m_render) {
+    if (renderer()) {
         // Align to the top / bottom and to the closest edge.
         if (alignToTop)
-            m_render->enclosingLayer()->scrollRectToVisible(bounds, RenderLayer::gAlignToEdgeIfNeeded, RenderLayer::gAlignTopAlways);
+            renderer()->enclosingLayer()->scrollRectToVisible(bounds, RenderLayer::gAlignToEdgeIfNeeded, RenderLayer::gAlignTopAlways);
         else
-            m_render->enclosingLayer()->scrollRectToVisible(bounds, RenderLayer::gAlignToEdgeIfNeeded, RenderLayer::gAlignBottomAlways);
+            renderer()->enclosingLayer()->scrollRectToVisible(bounds, RenderLayer::gAlignToEdgeIfNeeded, RenderLayer::gAlignBottomAlways);
     }
 }
 
 void ElementImpl::scrollIntoViewIfNeeded(bool centerIfNeeded)
 {
     IntRect bounds = this->getRect();    
-    if (m_render) {
+    if (renderer()) {
         if (centerIfNeeded)
-            m_render->enclosingLayer()->scrollRectToVisible(bounds, RenderLayer::gAlignCenterIfNeeded, RenderLayer::gAlignCenterIfNeeded);
+            renderer()->enclosingLayer()->scrollRectToVisible(bounds, RenderLayer::gAlignCenterIfNeeded, RenderLayer::gAlignCenterIfNeeded);
         else
-            m_render->enclosingLayer()->scrollRectToVisible(bounds, RenderLayer::gAlignToEdgeIfNeeded, RenderLayer::gAlignToEdgeIfNeeded);
+            renderer()->enclosingLayer()->scrollRectToVisible(bounds, RenderLayer::gAlignToEdgeIfNeeded, RenderLayer::gAlignToEdgeIfNeeded);
     }
 }
 
@@ -556,7 +555,7 @@ void ElementImpl::attach()
 void ElementImpl::recalcStyle( StyleChange change )
 {
     // ### should go away and be done in renderobject
-    RenderStyle* _style = m_render ? m_render->style() : 0;
+    RenderStyle* _style = renderer() ? renderer()->style() : 0;
     bool hasParentRenderer = parent() ? parent()->renderer() : false;
     
     if ( hasParentRenderer && (change >= Inherit || changed()) ) {
@@ -574,17 +573,15 @@ void ElementImpl::recalcStyle( StyleChange change )
             return;
         }
         else if (ch != NoChange) {
-            if( m_render && newStyle ) {
-                //qDebug("--> setting style on render element bgcolor=%s", newStyle->backgroundColor().name().latin1());
-                m_render->setStyle(newStyle);
-            }
+            if (renderer() && newStyle)
+                renderer()->setStyle(newStyle);
         }
-        else if (changed() && m_render && newStyle && (getDocument()->usesSiblingRules() || getDocument()->usesDescendantRules())) {
+        else if (changed() && renderer() && newStyle && (getDocument()->usesSiblingRules() || getDocument()->usesDescendantRules())) {
             // Although no change occurred, we use the new style so that the cousin style sharing code won't get
             // fooled into believing this style is the same.  This is only necessary if the document actually uses
             // sibling/descendant rules, since otherwise it isn't possible for ancestor styles to affect sharing of
             // descendants.
-            m_render->setStyleInternal(newStyle);
+            renderer()->setStyleInternal(newStyle);
         }
 
         newStyle->deref(getDocument()->renderArena());
@@ -752,25 +749,25 @@ void ElementImpl::formatForDebugger(char *buffer, unsigned length) const
 }
 #endif
 
-RefPtr<AttrImpl> ElementImpl::setAttributeNode(AttrImpl *attr, int &exception)
+PassRefPtr<AttrImpl> ElementImpl::setAttributeNode(AttrImpl *attr, int &exception)
 {
     return static_pointer_cast<AttrImpl>(attributes(false)->setNamedItem(attr, exception));
 }
 
-RefPtr<AttrImpl> ElementImpl::removeAttributeNode(AttrImpl *attr, int &exception)
+PassRefPtr<AttrImpl> ElementImpl::removeAttributeNode(AttrImpl *attr, int &exception)
 {
     if (!attr || attr->ownerElement() != this) {
         exception = DOMException::NOT_FOUND_ERR;
-        return RefPtr<AttrImpl>();
+        return 0;
     }
     if (getDocument() != attr->getDocument()) {
         exception = DOMException::WRONG_DOCUMENT_ERR;
-        return RefPtr<AttrImpl>();
+        return 0;
     }
 
     NamedAttrMapImpl *attrs = attributes(true);
     if (!attrs)
-        return RefPtr<AttrImpl>();
+        return 0;
 
     return static_pointer_cast<AttrImpl>(attrs->removeNamedItem(attr->m_attribute->name(), exception));
 }
@@ -876,7 +873,7 @@ NodeImpl *NamedAttrMapImpl::getNamedItemNS(const DOMString &namespaceURI, const 
     return getNamedItem(QualifiedName(nullAtom, ln.impl(), namespaceURI.impl()));
 }
 
-RefPtr<NodeImpl> NamedAttrMapImpl::removeNamedItemNS(const DOMString &namespaceURI, const DOMString &localName, int &exception)
+PassRefPtr<NodeImpl> NamedAttrMapImpl::removeNamedItemNS(const DOMString &namespaceURI, const DOMString &localName, int &exception)
 {
     DOMString ln(localName);
     if (element->getDocument()->isHTMLDocument())
@@ -895,29 +892,29 @@ AttrImpl *NamedAttrMapImpl::getNamedItem(const QualifiedName& name) const
     return a->attrImpl();
 }
 
-RefPtr<NodeImpl> NamedAttrMapImpl::setNamedItem ( NodeImpl* arg, int &exceptioncode )
+PassRefPtr<NodeImpl> NamedAttrMapImpl::setNamedItem(NodeImpl* arg, int& exceptioncode)
 {
     if (!element) {
         exceptioncode = DOMException::NOT_FOUND_ERR;
-        return RefPtr<NodeImpl>();
+        return 0;
     }
 
     // NO_MODIFICATION_ALLOWED_ERR: Raised if this map is readonly.
     if (isReadOnly()) {
         exceptioncode = DOMException::NO_MODIFICATION_ALLOWED_ERR;
-        return RefPtr<NodeImpl>();
+        return 0;
     }
 
     // WRONG_DOCUMENT_ERR: Raised if arg was created from a different document than the one that created this map.
     if (arg->getDocument() != element->getDocument()) {
         exceptioncode = DOMException::WRONG_DOCUMENT_ERR;
-        return RefPtr<NodeImpl>();
+        return 0;
     }
 
     // Not mentioned in spec: throw a HIERARCHY_REQUEST_ERROR if the user passes in a non-attribute node
     if (!arg->isAttributeNode()) {
         exceptioncode = DOMException::HIERARCHY_REQUEST_ERR;
-        return RefPtr<NodeImpl>();
+        return 0;
     }
     AttrImpl *attr = static_cast<AttrImpl*>(arg);
 
@@ -930,14 +927,14 @@ RefPtr<NodeImpl> NamedAttrMapImpl::setNamedItem ( NodeImpl* arg, int &exceptionc
     // The DOM user must explicitly clone Attr nodes to re-use them in other elements.
     if (attr->ownerElement()) {
         exceptioncode = DOMException::INUSE_ATTRIBUTE_ERR;
-        return RefPtr<NodeImpl>();
+        return 0;
     }
 
     if (a->name() == idAttr)
         element->updateId(old ? old->value() : nullAtom, a->value());
 
     // ### slightly inefficient - resizes attribute array twice.
-    RefPtr<NodeImpl> r;
+    PassRefPtr<NodeImpl> r;
     if (old) {
         if (!old->attrImpl())
             old->allocateImpl(element);
@@ -952,23 +949,24 @@ RefPtr<NodeImpl> NamedAttrMapImpl::setNamedItem ( NodeImpl* arg, int &exceptionc
 // The DOM2 spec doesn't say that removeAttribute[NS] throws NOT_FOUND_ERR
 // if the attribute is not found, but at this level we have to throw NOT_FOUND_ERR
 // because of removeNamedItem, removeNamedItemNS, and removeAttributeNode.
-RefPtr<NodeImpl> NamedAttrMapImpl::removeNamedItem(const QualifiedName& name, int &exceptioncode)
+PassRefPtr<NodeImpl> NamedAttrMapImpl::removeNamedItem(const QualifiedName& name, int &exceptioncode)
 {
     // ### should this really be raised when the attribute to remove isn't there at all?
     // NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly
     if (isReadOnly()) {
         exceptioncode = DOMException::NO_MODIFICATION_ALLOWED_ERR;
-        return RefPtr<NodeImpl>();
+        return 0;
     }
 
     AttributeImpl* a = getAttributeItem(name);
     if (!a) {
         exceptioncode = DOMException::NOT_FOUND_ERR;
-        return RefPtr<NodeImpl>();
+        return 0;
     }
 
-    if (!a->attrImpl())  a->allocateImpl(element);
-    RefPtr<NodeImpl> r(a->attrImpl());
+    if (!a->attrImpl())
+        a->allocateImpl(element);
+    PassRefPtr<NodeImpl> r(a->attrImpl());
 
     if (name == idAttr)
         element->updateId(a->value(), nullAtom);

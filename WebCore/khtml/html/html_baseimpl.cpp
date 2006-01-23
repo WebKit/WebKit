@@ -339,7 +339,7 @@ void HTMLFrameElementImpl::updateForNewURL()
     
     // Handle the common case where we decided not to make a frame the first time.
     // Detach and the let attach() decide again whether to make the frame for this URL.
-    if (!m_render) {
+    if (!renderer()) {
         detach();
         attach();
         return;
@@ -371,7 +371,7 @@ void HTMLFrameElementImpl::openURL()
     if (framePart) {
         framePart->openURL(getDocument()->completeURL(relativeURL.qstring()));
     } else {
-        frame->requestFrame(static_cast<RenderFrame *>(m_render), relativeURL.qstring(), m_name.qstring());
+        frame->requestFrame(static_cast<RenderFrame *>(renderer()), relativeURL.qstring(), m_name.qstring());
     }
 }
 
@@ -449,7 +449,7 @@ void HTMLFrameElementImpl::attach()
 
     HTMLElementImpl::attach();
 
-    if (!m_render)
+    if (!renderer())
         return;
 
     Frame *frame = getDocument()->frame();
@@ -469,14 +469,14 @@ void HTMLFrameElementImpl::attach()
         m_name = AtomicString(frame->requestFrameName());
 
     // load the frame contents
-    frame->requestFrame(static_cast<RenderFrame*>(m_render), relativeURL.qstring(), m_name.qstring());
+    frame->requestFrame(static_cast<RenderFrame*>(renderer()), relativeURL.qstring(), m_name.qstring());
 }
 
 void HTMLFrameElementImpl::close()
 {
     Frame *frame = getDocument()->frame();
 
-    if (m_render && frame) {
+    if (renderer() && frame) {
         frame->decrementFrameCount();
         Frame *framePart = frame->findFrame(m_name.qstring());
         if (framePart)
@@ -490,9 +490,9 @@ void HTMLFrameElementImpl::willRemove()
     // node attached so that frame does not get re-attached before
     // actually leaving the document.  see <rdar://problem/4132581>
     close();
-    if (m_render) {
-        m_render->destroy();
-        m_render = 0;
+    if (renderer()) {
+        renderer()->destroy();
+        setRenderer(0);
     }
     
     HTMLElementImpl::willRemove();
@@ -514,13 +514,13 @@ void HTMLFrameElementImpl::setLocation( const DOMString& str )
 
 bool HTMLFrameElementImpl::isFocusable() const
 {
-    return m_render!=0;
+    return renderer();
 }
 
 void HTMLFrameElementImpl::setFocus(bool received)
 {
     HTMLElementImpl::setFocus(received);
-    khtml::RenderFrame *renderFrame = static_cast<khtml::RenderFrame *>(m_render);
+    khtml::RenderFrame *renderFrame = static_cast<khtml::RenderFrame *>(renderer());
     if (!renderFrame || !renderFrame->widget())
         return;
     if (received)
@@ -635,21 +635,21 @@ void HTMLFrameElementImpl::setSrc(const DOMString &value)
 int HTMLFrameElementImpl::frameWidth() const
 {
     DocumentImpl* d = getDocument();
-    if (!d || !m_render)
+    if (!d || !renderer())
         return 0;
     
     d->updateLayoutIgnorePendingStylesheets();
-    return m_render->width();
+    return renderer()->width();
 }
 
 int HTMLFrameElementImpl::frameHeight() const
 {
     DocumentImpl* d = getDocument();
-    if (!d || !m_render)
+    if (!d || !renderer())
         return 0;
     
     d->updateLayoutIgnorePendingStylesheets();
-    return m_render->height();
+    return renderer()->height();
 }
 
 // -------------------------------------------------------------------------
@@ -754,8 +754,8 @@ void HTMLFrameSetElementImpl::attach()
 
 void HTMLFrameSetElementImpl::defaultEventHandler(EventImpl *evt)
 {
-    if (evt->isMouseEvent() && !noresize && m_render) {
-        static_cast<khtml::RenderFrameSet *>(m_render)->userResize(static_cast<MouseEventImpl*>(evt));
+    if (evt->isMouseEvent() && !noresize && renderer()) {
+        static_cast<khtml::RenderFrameSet *>(renderer())->userResize(static_cast<MouseEventImpl*>(evt));
         evt->setDefaultHandled();
     }
 
@@ -764,9 +764,8 @@ void HTMLFrameSetElementImpl::defaultEventHandler(EventImpl *evt)
 
 void HTMLFrameSetElementImpl::recalcStyle( StyleChange ch )
 {
-    if (changed() && m_render) {
-        m_render->setNeedsLayout(true);
-//         m_render->layout();
+    if (changed() && renderer()) {
+        renderer()->setNeedsLayout(true);
         setChanged(false);
     }
     HTMLElementImpl::recalcStyle( ch );
@@ -939,13 +938,13 @@ void HTMLIFrameElementImpl::attach()
     HTMLElementImpl::attach();
 
     Frame *frame = getDocument()->frame();
-    if (m_render && frame) {
+    if (renderer() && frame) {
         // we need a unique name for every frame in the frameset. Hope that's unique enough.
         frame->incrementFrameCount();
         if (m_name.isEmpty() || frame->frameExists(m_name.qstring()))
             m_name = AtomicString(frame->requestFrameName());
 
-        static_cast<RenderPartObject*>(m_render)->updateWidget();
+        static_cast<RenderPartObject*>(renderer())->updateWidget();
         needWidgetUpdate = false;
     }
 }
@@ -953,7 +952,8 @@ void HTMLIFrameElementImpl::attach()
 void HTMLIFrameElementImpl::recalcStyle( StyleChange ch )
 {
     if (needWidgetUpdate) {
-        if(m_render)  static_cast<RenderPartObject*>(m_render)->updateWidget();
+        if (renderer())
+            static_cast<RenderPartObject*>(renderer())->updateWidget();
         needWidgetUpdate = false;
     }
     HTMLElementImpl::recalcStyle( ch );

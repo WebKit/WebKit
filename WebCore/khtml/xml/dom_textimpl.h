@@ -21,19 +21,19 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef DOM_TextImpl_h
 #define DOM_TextImpl_h
 
-#include "dom/dom_string.h"
 #include "NodeImpl.h"
 
-namespace DOM {
+namespace WebCore {
 
 class CharacterDataImpl : public NodeImpl
 {
 public:
-    CharacterDataImpl(DocumentImpl *doc, const DOMString &_text);
-    CharacterDataImpl(DocumentImpl *doc);
+    CharacterDataImpl(DocumentImpl*, const DOMString &_text);
+    CharacterDataImpl(DocumentImpl*);
     virtual ~CharacterDataImpl();
 
     // DOM methods & attributes for CharacterData
@@ -65,7 +65,7 @@ public:
     virtual int caretMaxOffset() const;
     virtual unsigned caretMaxRenderedOffset() const;
 
-    virtual bool rendererIsNeeded(khtml::RenderStyle *);
+    virtual bool rendererIsNeeded(RenderStyle *);
     
 #ifndef NDEBUG
     virtual void dump(QTextStream *stream, QString ind = "") const;
@@ -84,15 +84,15 @@ protected:
 class CommentImpl : public CharacterDataImpl
 {
 public:
-    CommentImpl(DocumentImpl *doc, const DOMString &_text);
-    CommentImpl(DocumentImpl *doc);
+    CommentImpl(DocumentImpl*, const DOMString &_text);
+    CommentImpl(DocumentImpl*);
     virtual ~CommentImpl();
 
     // DOM methods overridden from  parent classes
     const AtomicString& localName() const;
     virtual DOMString nodeName() const;
     virtual unsigned short nodeType() const;
-    virtual NodeImpl *cloneNode(bool deep);
+    virtual PassRefPtr<NodeImpl> cloneNode(bool deep);
 
     // Other methods (not part of DOM)
     virtual bool isCommentNode() const { return true; }
@@ -118,14 +118,14 @@ public:
     const AtomicString& localName() const;
     virtual DOMString nodeName() const;
     virtual unsigned short nodeType() const;
-    virtual NodeImpl *cloneNode(bool deep);
+    virtual PassRefPtr<NodeImpl> cloneNode(bool deep);
 
     // Other methods (not part of DOM)
 
     virtual bool isTextNode() const { return true; }
     virtual void attach();
-    virtual bool rendererIsNeeded(khtml::RenderStyle *);
-    virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
+    virtual bool rendererIsNeeded(RenderStyle *);
+    virtual RenderObject *createRenderer(RenderArena *, RenderStyle *);
     virtual void recalcStyle( StyleChange = NoChange );
     virtual bool childTypeAllowed( unsigned short type );
 
@@ -136,7 +136,7 @@ public:
 #endif
 
 protected:
-    virtual TextImpl *createNew(DOMStringImpl *_str);
+    virtual TextImpl* createNew(DOMStringImpl*);
 };
 
 // ----------------------------------------------------------------------------
@@ -149,19 +149,14 @@ public:
     CDATASectionImpl(DocumentImpl *impl);
     virtual ~CDATASectionImpl();
 
-    // DOM methods overridden from  parent classes
     virtual DOMString nodeName() const;
     virtual unsigned short nodeType() const;
-    virtual NodeImpl *cloneNode(bool deep);
-
-    // Other methods (not part of DOM)
-
+    virtual PassRefPtr<NodeImpl> cloneNode(bool deep);
     virtual bool childTypeAllowed( unsigned short type );
-
     virtual DOMString toString() const;
 
 protected:
-    virtual TextImpl *createNew(DOMStringImpl *_str);
+    virtual TextImpl* createNew(DOMStringImpl*);
 };
 
 // ----------------------------------------------------------------------------
@@ -173,8 +168,9 @@ public:
     EditingTextImpl(DocumentImpl *impl);
     virtual ~EditingTextImpl();
 
-    virtual bool rendererIsNeeded(khtml::RenderStyle *);
+    virtual bool rendererIsNeeded(RenderStyle *);
 };
 
 } //namespace
+
 #endif

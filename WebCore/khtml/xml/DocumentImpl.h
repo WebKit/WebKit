@@ -355,9 +355,9 @@ public:
     bool prepareMouseEvent(bool readonly, int x, int y, MouseEvent* ev);
     bool prepareMouseEvent(bool readonly, bool active, int x, int y, MouseEvent *ev);
 
-    virtual bool childAllowed( NodeImpl *newChild );
-    virtual bool childTypeAllowed( unsigned short nodeType );
-    virtual NodeImpl *cloneNode ( bool deep );
+    virtual bool childAllowed(NodeImpl*);
+    virtual bool childTypeAllowed(unsigned short nodeType);
+    virtual PassRefPtr<NodeImpl> cloneNode(bool deep);
 
     StyleSheetListImpl* styleSheets();
 

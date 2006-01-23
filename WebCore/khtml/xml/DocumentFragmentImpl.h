@@ -22,26 +22,23 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef DOM_DocumentFragmentImpl_h
 #define DOM_DocumentFragmentImpl_h
 
 #include "ContainerNodeImpl.h"
 
-namespace DOM {
+namespace WebCore {
 
 class DocumentFragmentImpl : public ContainerNodeImpl
 {
 public:
-    DocumentFragmentImpl(DocumentImpl *doc);
+    DocumentFragmentImpl(DocumentImpl*);
 
-    // DOM methods overridden from  parent classes
     virtual DOMString nodeName() const;
     virtual unsigned short nodeType() const;
-    virtual NodeImpl *cloneNode ( bool deep );
-
-    // Other methods (not part of DOM)
-    virtual bool childTypeAllowed( unsigned short type );
-
+    virtual PassRefPtr<NodeImpl> cloneNode(bool deep);
+    virtual bool childTypeAllowed(unsigned short type);
     virtual DOMString toString() const;
 };
 

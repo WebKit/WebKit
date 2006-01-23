@@ -71,8 +71,8 @@ bool HTMLSelectElementImpl::checkDTD(const NodeImpl* newChild)
 
 void HTMLSelectElementImpl::recalcStyle( StyleChange ch )
 {
-    if (hasChangedChild() && m_render)
-        static_cast<RenderSelect*>(m_render)->setOptionsChanged(true);
+    if (hasChangedChild() && renderer())
+        static_cast<RenderSelect*>(renderer())->setOptionsChanged(true);
 
     HTMLGenericFormElementImpl::recalcStyle( ch );
 }
@@ -415,8 +415,8 @@ void HTMLSelectElementImpl::childrenChanged()
 void HTMLSelectElementImpl::setRecalcListItems()
 {
     m_recalcListItems = true;
-    if (m_render)
-        static_cast<RenderSelect*>(m_render)->setOptionsChanged(true);
+    if (renderer())
+        static_cast<RenderSelect*>(renderer())->setOptionsChanged(true);
     setChanged();
 }
 
@@ -431,9 +431,9 @@ void HTMLSelectElementImpl::reset()
             option->setSelected(selected);
         }
     }
-    if ( m_render )
-        static_cast<RenderSelect*>(m_render)->setSelectionChanged(true);
-    setChanged( true );
+    if (renderer())
+        static_cast<RenderSelect*>(renderer())->setSelectionChanged(true);
+    setChanged(true);
 }
 
 void HTMLSelectElementImpl::notifyOptionSelected(HTMLOptionElementImpl *selectedOption, bool selected)
@@ -447,8 +447,8 @@ void HTMLSelectElementImpl::notifyOptionSelected(HTMLOptionElementImpl *selected
                 static_cast<HTMLOptionElementImpl*>(items[i])->m_selected = (items[i] == selectedOption);
         }
     }
-    if (m_render)
-        static_cast<RenderSelect*>(m_render)->setSelectionChanged(true);
+    if (renderer())
+        static_cast<RenderSelect*>(renderer())->setSelectionChanged(true);
 
     setChanged(true);
 }
@@ -459,7 +459,7 @@ void HTMLSelectElementImpl::defaultEventHandler(EventImpl *evt)
     // on key down blocks the proper sending of the key press event.
     if (evt->type() == keypressEvent) {
     
-        if (!m_form || !m_render || !evt->isKeyboardEvent())
+        if (!m_form || !renderer() || !evt->isKeyboardEvent())
             return;
         
         DOMString key = static_cast<KeyboardEventImpl *>(evt)->keyIdentifier();

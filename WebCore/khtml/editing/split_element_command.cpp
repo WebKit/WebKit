@@ -53,7 +53,7 @@ void SplitElementCommand::doApply()
     if (!m_element1) {
         // create only if needed.
         // if reapplying, this object will already exist.
-        m_element1 = static_cast<ElementImpl *>(m_element2->cloneNode(false));
+        m_element1 = static_pointer_cast<ElementImpl>(m_element2->cloneNode(false));
         ASSERT(m_element1);
     }
 

@@ -305,7 +305,7 @@ void DocumentImpl::removedLastRef()
 
 DocumentImpl::~DocumentImpl()
 {
-    assert(!m_render);
+    assert(!renderer());
     assert(!m_inPageCache);
     assert(m_savedRenderer == 0);
     
@@ -336,7 +336,7 @@ DocumentImpl::~DocumentImpl()
     m_defaultView->deref();
     m_styleSheets->deref();
 
-    if (m_renderArena){
+    if (m_renderArena) {
         delete m_renderArena;
         m_renderArena = 0;
     }
@@ -632,11 +632,11 @@ ElementImpl *DocumentImpl::getElementById(const AtomicString& elementId) const
 
 ElementImpl* DocumentImpl::elementFromPoint(int x, int y) const
 {
-    if (!m_render)
+    if (!renderer())
         return 0;
 
     RenderObject::NodeInfo nodeInfo(true, true);
-    m_render->layer()->hitTest(nodeInfo, x, y); 
+    renderer()->layer()->hitTest(nodeInfo, x, y); 
 
     NodeImpl* n = nodeInfo.innerNode();
     while (n && !n->isElementNode())
@@ -808,10 +808,11 @@ void DocumentImpl::recalcStyle( StyleChange change )
         
     m_inStyleRecalc = true;
     
-    if( !m_render ) goto bail_out;
+    if (!renderer())
+        goto bail_out;
 
     if ( change == Force ) {
-        RenderStyle* oldStyle = m_render->style();
+        RenderStyle* oldStyle = renderer()->style();
         if ( oldStyle ) oldStyle->ref();
         RenderStyle* _style = new (m_renderArena) RenderStyle();
         _style->ref();
@@ -845,8 +846,8 @@ void DocumentImpl::recalcStyle( StyleChange change )
             _style->setHtmlHacks(true); // enable html specific rendering tricks
 
         StyleChange ch = diff( _style, oldStyle );
-        if(m_render && ch != NoChange)
-            m_render->setStyle(_style);
+        if (renderer() && ch != NoChange)
+            renderer()->setStyle(_style);
         if ( change != Force )
             change = ch;
 
@@ -935,27 +936,28 @@ void DocumentImpl::attach()
         m_renderArena = new RenderArena();
     
     // Create the rendering tree
-    m_render = new (m_renderArena) RenderCanvas(this, m_view);
+    setRenderer(new (m_renderArena) RenderCanvas(this, m_view));
     recalcStyle( Force );
 
-    RenderObject* render = m_render;
-    m_render = 0;
+    RenderObject* render = renderer();
+    setRenderer(0);
 
     ContainerNodeImpl::attach();
-    m_render = render;
+
+    setRenderer(render);
 }
 
 void DocumentImpl::restoreRenderer(RenderObject* render)
 {
-    m_render = render;
+    setRenderer(render);
 }
 
 void DocumentImpl::detach()
 {
-    RenderObject* render = m_render;
+    RenderObject* render = renderer();
 
-    // indicate destruction mode,  i.e. attached() but m_render == 0
-    m_render = 0;
+    // indicate destruction mode,  i.e. attached() but renderer == 0
+    setRenderer(0);
     
     if (m_inPageCache) {
 #if __APPLE__
@@ -980,7 +982,7 @@ void DocumentImpl::detach()
         setPaintDevice(0);
     m_view = 0;
     
-    if (m_renderArena){
+    if (m_renderArena) {
         delete m_renderArena;
         m_renderArena = 0;
     }
@@ -1055,16 +1057,16 @@ KWQAccObjectCache* DocumentImpl::getAccObjectCache()
 void DocumentImpl::setVisuallyOrdered()
 {
     visuallyOrdered = true;
-    if (m_render)
-        m_render->style()->setVisuallyOrdered(true);
+    if (renderer())
+        renderer()->style()->setVisuallyOrdered(true);
 }
 
 void DocumentImpl::updateSelection()
 {
-    if (!m_render)
+    if (!renderer())
         return;
     
-    RenderCanvas *canvas = static_cast<RenderCanvas*>(m_render);
+    RenderCanvas *canvas = static_cast<RenderCanvas*>(renderer());
     SelectionController s = frame()->selection();
     if (!s.isRange()) {
         canvas->clearSelection();
@@ -1075,7 +1077,7 @@ void DocumentImpl::updateSelection()
         if (startPos.isNotNull() && endPos.isNotNull()) {
             RenderObject *startRenderer = startPos.node()->renderer();
             RenderObject *endRenderer = endPos.node()->renderer();
-            static_cast<RenderCanvas*>(m_render)->setSelection(startRenderer, startPos.offset(), endRenderer, endPos.offset());
+            static_cast<RenderCanvas*>(renderer())->setSelection(startRenderer, startPos.offset(), endRenderer, endPos.offset());
         }
     }
     
@@ -1685,10 +1687,10 @@ bool DocumentImpl::prepareMouseEvent(bool readonly, int x, int y, MouseEvent* ev
 
 bool DocumentImpl::prepareMouseEvent(bool readonly, bool active, int _x, int _y, MouseEvent *ev)
 {
-    if ( m_render ) {
-        assert(m_render->isCanvas());
+    if (renderer()) {
+        assert(renderer()->isCanvas());
         RenderObject::NodeInfo renderInfo(readonly, active, ev->type == MouseMove);
-        bool isInside = m_render->layer()->hitTest(renderInfo, _x, _y);
+        bool isInside = renderer()->layer()->hitTest(renderInfo, _x, _y);
         ev->innerNode = renderInfo.innerNode();
 
         if (renderInfo.URLElement()) {
@@ -1752,7 +1754,7 @@ bool DocumentImpl::childTypeAllowed( unsigned short type )
     }
 }
 
-NodeImpl *DocumentImpl::cloneNode ( bool /*deep*/ )
+PassRefPtr<NodeImpl> DocumentImpl::cloneNode(bool /*deep*/)
 {
     // Spec says cloning Document nodes is "implementation dependent"
     // so we do not support it...
@@ -1832,7 +1834,7 @@ QStringList DocumentImpl::availableStyleSheets() const
 
 void DocumentImpl::recalcStyleSelector()
 {
-    if (!m_render || !attached())
+    if (!renderer() || !attached())
         return;
 
     QPtrList<StyleSheetImpl> oldStyleSheets = m_styleSheets->styleSheets;
@@ -2544,13 +2546,13 @@ void DocumentImpl::setInPageCache(bool flag)
     m_inPageCache = flag;
     if (flag) {
         assert(m_savedRenderer == 0);
-        m_savedRenderer = m_render;
+        m_savedRenderer = renderer();
         if (m_view) {
             m_view->resetScrollBars();
         }
     } else {
-        assert(m_render == 0 || m_render == m_savedRenderer);
-        m_render = m_savedRenderer;
+        assert(renderer() == 0 || renderer() == m_savedRenderer);
+        setRenderer(m_savedRenderer);
         m_savedRenderer = 0;
     }
 }

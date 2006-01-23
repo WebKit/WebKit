@@ -4,7 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -68,21 +68,21 @@ bool HTMLAnchorElementImpl::isFocusable() const
 
     // FIXME: Even if we are not visible, we might have a child that is visible.
     // Dave wants to fix that some day with a "has visible content" flag or the like.
-    if (!(m_isLink && m_render && m_render->style()->visibility() == VISIBLE))
+    if (!(m_isLink && renderer() && renderer()->style()->visibility() == VISIBLE))
         return false;
 
     // Before calling absoluteRects, check for the common case where the renderer
     // or one of the continuations is non-empty, since this is a faster check and
     // almost always returns true.
-    for (RenderObject *r = m_render; r; r = r->continuation()) {
+    for (RenderObject *r = renderer(); r; r = r->continuation()) {
         if (r->width() > 0 && r->height() > 0)
             return true;
     }
 
     QValueList<IntRect> rects;
     int x = 0, y = 0;
-    m_render->absolutePosition(x, y);
-    m_render->absoluteRects(rects, x, y);
+    renderer()->absolutePosition(x, y);
+    renderer()->absoluteRects(rects, x, y);
     for (QValueList<IntRect>::ConstIterator it = rects.begin(); it != rects.end(); ++it) {
         if ((*it).isValid())
             return true;
@@ -102,7 +102,7 @@ bool HTMLAnchorElementImpl::isKeyboardFocusable() const
         return false;
     
     if (!getDocument()->frame())
-	return false;
+        return false;
 
     return getDocument()->frame()->tabsToLinks();
 }
@@ -126,8 +126,8 @@ void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
         QString url;
 
         if ( e && e->button() == 2 ) {
-	    HTMLElementImpl::defaultEventHandler(evt);
-	    return;
+            HTMLElementImpl::defaultEventHandler(evt);
+            return;
         }
 
         if ( k ) {
@@ -164,8 +164,8 @@ void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
                 }
                 else {
                     evt->setDefaultHandled();
-		    HTMLElementImpl::defaultEventHandler(evt);
-		    return;
+                    HTMLElementImpl::defaultEventHandler(evt);
+                    return;
                 }
             }
         }
@@ -190,15 +190,15 @@ void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
                 else if ( e->button() == 2 )
                     button = Qt::RightButton;
             }
-	    else if ( k )
-	    {
-	      if ( k->shiftKey() )
+            else if ( k )
+            {
+              if ( k->shiftKey() )
                 state |= Qt::ShiftButton;
-	      if ( k->altKey() )
+              if ( k->altKey() )
                 state |= Qt::AltButton;
-	      if ( k->ctrlKey() )
+              if ( k->ctrlKey() )
                 state |= Qt::ControlButton;
-	    }
+            }
 
             if (getDocument() && getDocument()->frame()) {
                 getDocument()->frame()->

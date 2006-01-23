@@ -431,10 +431,10 @@ void HTMLTableElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
             padding = kMax( 0, attr->value().toInt() );
         else
             padding = 1;
-        if (m_render && m_render->isTable()) {
-            static_cast<RenderTable *>(m_render)->setCellPadding(padding);
-            if (!m_render->needsLayout())
-                m_render->setNeedsLayout(true);
+        if (renderer() && renderer()->isTable()) {
+            static_cast<RenderTable *>(renderer())->setCellPadding(padding);
+            if (!renderer()->needsLayout())
+                renderer()->setNeedsLayout(true);
         }
     } else if (attr->name() == colsAttr) {
         // ###
@@ -518,8 +518,8 @@ void HTMLTableElementImpl::attach()
 {
     assert(!m_attached);
     HTMLElementImpl::attach();
-    if ( m_render && m_render->isTable() )
-        static_cast<RenderTable *>(m_render)->setCellPadding( padding );
+    if (renderer() && renderer()->isTable())
+        static_cast<RenderTable *>(renderer())->setCellPadding( padding );
 }
 
 bool HTMLTableElementImpl::isURLAttribute(AttributeImpl *attr) const

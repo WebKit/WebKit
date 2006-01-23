@@ -169,11 +169,9 @@ void HTMLLIElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         isValued = true;
         requestedValue = !attr->isNull() ? attr->value().toInt() : 0;
 
-        if(m_render && m_render->isListItem())
-        {
-            RenderListItem *list = static_cast<RenderListItem *>(m_render);
+        if (renderer() && renderer()->isListItem()) {
+            RenderListItem *list = static_cast<RenderListItem *>(renderer());
             // ### work out what to do when attribute removed - use default of some sort?
-
             list->setValue(requestedValue);
         }
     } else if (attr->name() == typeAttr) {
@@ -199,8 +197,8 @@ void HTMLLIElementImpl::attach()
 
     HTMLElementImpl::attach();
 
-    if ( m_render && m_render->style()->display() == LIST_ITEM ) {
-        RenderListItem *render = static_cast<RenderListItem *>(m_render);
+    if ( renderer() && renderer()->style()->display() == LIST_ITEM ) {
+        RenderListItem *render = static_cast<RenderListItem *>(renderer());
         
         // Find the enclosing list node.
         NodeImpl *listNode = 0;
@@ -216,7 +214,7 @@ void HTMLLIElementImpl::attach()
             render->setNotInList(true);
 
         // If we are first, and the OL has a start attr, set the value.
-        if (listNode && listNode->hasTagName(olTag) && !m_render->previousSibling()) {
+        if (listNode && listNode->hasTagName(olTag) && !renderer()->previousSibling()) {
             HTMLOListElementImpl *ol = static_cast<HTMLOListElementImpl *>(listNode);
             render->setValue(ol->start());
         }

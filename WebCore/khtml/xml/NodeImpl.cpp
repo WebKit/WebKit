@@ -116,7 +116,7 @@ NodeImpl::NodeImpl(DocumentImpl *doc)
     : document(doc),
       m_previous(0),
       m_next(0),
-      m_render(0),
+      m_renderer(0),
       m_regdListeners(0),
       m_nodeLists(0),
       m_tabIndex(0),
@@ -155,7 +155,7 @@ NodeImpl::~NodeImpl()
 #ifndef NDEBUG
     --NodeImplCounter::count;
 #endif
-    if (m_render)
+    if (renderer())
         detach();
     if (m_regdListeners && !m_regdListeners->isEmpty() && getDocument() && !inDocument())
         getDocument()->unregisterDisconnectedNodeWithEventListeners(this);
@@ -338,8 +338,8 @@ bool NodeImpl::isContentEditable() const
 IntRect NodeImpl::getRect() const
 {
     int _x, _y;
-    if(m_render && m_render->absolutePosition(_x, _y))
-        return IntRect( _x, _y, m_render->width(), m_render->height() );
+    if (renderer() && renderer()->absolutePosition(_x, _y))
+        return IntRect( _x, _y, renderer()->width(), renderer()->height() );
 
     return IntRect();
 }
@@ -1191,7 +1191,7 @@ void NodeImpl::dump(QTextStream *stream, QString ind) const
 void NodeImpl::attach()
 {
     assert(!attached());
-    assert(!m_render || (m_render->style() && m_render->parent()));
+    assert(!renderer() || (renderer()->style() && renderer()->parent()));
     getDocument()->incDOMTreeVersion();
     m_attached = true;
 }
@@ -1206,19 +1206,19 @@ void NodeImpl::detach()
 //    assert(m_attached);
 
     DocumentImpl* doc = getDocument();
-    if (m_render) {
+    if (renderer()) {
         if (m_hovered && doc->hoverNode() == this) {
             NodeImpl* e = this;
-            RenderObject* o = m_render;
+            RenderObject* o = renderer();
             while (o && (!e || e == this)) {
                 o = o->hoverAncestor();
                 e = o ? o->element() : 0;
             }
             doc->setHoverNode(e);
         }
-        m_render->destroy();
+        renderer()->destroy();
     }
-    m_render = 0;
+    setRenderer(0);
 
     if (doc)
         doc->incDOMTreeVersion();
@@ -1388,7 +1388,7 @@ void NodeImpl::createRendererIfNeeded()
         return;
         
     assert(!attached());
-    assert(!m_render);
+    assert(!renderer());
     
     NodeImpl *parent = parentNode();    
     assert(parent);
@@ -1412,10 +1412,10 @@ void NodeImpl::createRendererIfNeeded()
 #else
         if (rendererIsNeeded(style)) {
 #endif
-            m_render = createRenderer(getDocument()->renderArena(), style);
-            if (m_render) {
-                m_render->setStyle(style);
-                parentRenderer->addChild(m_render, nextRenderer());
+            setRenderer(createRenderer(getDocument()->renderArena(), style));
+            if (renderer()) {
+                renderer()->setStyle(style);
+                parentRenderer->addChild(renderer(), nextRenderer());
             }
 #ifndef KHTML_NO_XBL
         } // avoid confusing the change log code parser by having two close braces to match the two open braces above
@@ -1577,20 +1577,20 @@ bool NodeImpl::inSameContainingBlockFlowElement(NodeImpl *n)
 
 // FIXME: End of obviously misplaced HTML editing functions.  Try to move these out of NodeImpl.
 
-RefPtr<NodeListImpl> NodeImpl::getElementsByTagName(const DOMString& name)
+PassRefPtr<NodeListImpl> NodeImpl::getElementsByTagName(const DOMString& name)
 {
     return getElementsByTagNameNS("*", name);
 }
  
-RefPtr<NodeListImpl> NodeImpl::getElementsByTagNameNS(const DOMString &namespaceURI, const DOMString &localName)
+PassRefPtr<NodeListImpl> NodeImpl::getElementsByTagNameNS(const DOMString &namespaceURI, const DOMString &localName)
 {
     if (namespaceURI.isNull() || localName.isNull())
-        return RefPtr<NodeListImpl>(); // FIXME: Who cares about this additional check?
+        return 0; // FIXME: Who relies on getting 0 instead of a node list in this case?
     
     DOMString name = localName;
     if (getDocument()->isHTMLDocument())
         name = localName.lower();
-    return RefPtr<NodeListImpl>(new TagNodeListImpl(this, AtomicString(namespaceURI), AtomicString(name)));
+    return new TagNodeListImpl(this, AtomicString(namespaceURI), AtomicString(name));
 }
 
 bool NodeImpl::isSupported(const DOMString &feature, const DOMString &version)

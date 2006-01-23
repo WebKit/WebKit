@@ -90,9 +90,9 @@ int HTMLElementImpl::tagPriority() const
     return 1;
 }
 
-NodeImpl *HTMLElementImpl::cloneNode(bool deep)
+PassRefPtr<NodeImpl> HTMLElementImpl::cloneNode(bool deep)
 {
-    HTMLElementImpl *clone = HTMLElementFactory::createHTMLElement(m_tagName.localName(), getDocument(), 0, false);
+    PassRefPtr<HTMLElementImpl> clone = HTMLElementFactory::createHTMLElement(m_tagName.localName(), getDocument(), 0, false);
     if (!clone)
         return 0;
 
@@ -105,7 +105,7 @@ NodeImpl *HTMLElementImpl::cloneNode(bool deep)
     clone->copyNonAttributeProperties(this);
 
     if (deep)
-        cloneChildNodes(clone);
+        cloneChildNodes(clone.get());
 
     return clone;
 }
@@ -614,9 +614,9 @@ void HTMLElementImpl::setClassName(const DOMString &value)
     setAttribute(classAttr, value);
 }
 
-RefPtr<HTMLCollectionImpl> HTMLElementImpl::children()
+PassRefPtr<HTMLCollectionImpl> HTMLElementImpl::children()
 {
-    return RefPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::NODE_CHILDREN));
+    return new HTMLCollectionImpl(this, HTMLCollectionImpl::NODE_CHILDREN);
 }
 
 // DOM Section 1.1.1

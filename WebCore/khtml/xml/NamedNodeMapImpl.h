@@ -22,45 +22,46 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef DOM_NamedNodeMapImpl_h
 #define DOM_NamedNodeMapImpl_h
 
 #include "Shared.h"
-#include "kxmlcore/RefPtr.h"
 #include "dom_string.h"
+#include <kxmlcore/PassRefPtr.h>
 
-namespace DOM {
+namespace WebCore {
 
 class NodeImpl;
 class QualifiedName;
 
 // Generic NamedNodeMap interface
-// Other classes implement this for more specific situations e.g. attributes
-// of an element
+// Other classes implement this for more specific situations e.g. attributes of an element.
 class NamedNodeMapImpl : public Shared<NamedNodeMapImpl>
 {
 public:
     NamedNodeMapImpl() { }
     virtual ~NamedNodeMapImpl() { }
 
-    NodeImpl *getNamedItem(const DOMString &name) const { return getNamedItemNS(DOMString(), name); }
-    RefPtr<NodeImpl> removeNamedItem(const DOMString &name, int &exception) { return removeNamedItemNS(DOMString(), name, exception); }
+    NodeImpl* getNamedItem(const DOMString& name) const { return getNamedItemNS(DOMString(), name); }
+    PassRefPtr<NodeImpl> removeNamedItem(const DOMString& name, int &exception) { return removeNamedItemNS(DOMString(), name, exception); }
 
-    virtual NodeImpl *getNamedItemNS(const DOMString &namespaceURI, const DOMString &localName) const = 0;
-    RefPtr<NodeImpl> setNamedItemNS(NodeImpl *arg, int &exception) { return setNamedItem(arg, exception); }
-    virtual RefPtr<NodeImpl> removeNamedItemNS(const DOMString &namespaceURI, const DOMString &localName, int &exception) = 0;
+    virtual NodeImpl* getNamedItemNS(const DOMString &namespaceURI, const DOMString &localName) const = 0;
+    PassRefPtr<NodeImpl> setNamedItemNS(NodeImpl *arg, int &exception) { return setNamedItem(arg, exception); }
+    virtual PassRefPtr<NodeImpl> removeNamedItemNS(const DOMString &namespaceURI, const DOMString &localName, int &exception) = 0;
 
     // DOM methods & attributes for NamedNodeMap
-    virtual NodeImpl *getNamedItem(const QualifiedName& attrName) const = 0;
-    virtual RefPtr<NodeImpl> removeNamedItem (const QualifiedName& attrName, int &exceptioncode) = 0;
-    virtual RefPtr<NodeImpl> setNamedItem (NodeImpl* arg, int &exceptioncode) = 0;
+    virtual NodeImpl* getNamedItem(const QualifiedName& attrName) const = 0;
+    virtual PassRefPtr<NodeImpl> removeNamedItem (const QualifiedName& attrName, int &exceptioncode) = 0;
+    virtual PassRefPtr<NodeImpl> setNamedItem (NodeImpl* arg, int &exceptioncode) = 0;
 
-    virtual NodeImpl *item ( unsigned index ) const = 0;
+    virtual NodeImpl* item(unsigned index) const = 0;
     virtual unsigned length() const = 0;
 
     // Other methods (not part of DOM)
     virtual bool isReadOnly() { return false; }
 };
 
-}; //namespace
+} //namespace
+
 #endif

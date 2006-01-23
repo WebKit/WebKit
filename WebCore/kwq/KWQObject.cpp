@@ -91,7 +91,6 @@ void QObject::connect(const QObject *sender, const char *signalName, const QObje
 #if !ERROR_DISABLED
         if (1
             && !KWQNamesMatch(member, SIGNAL(setStatusBarText(const QString &)))
-            && !KWQNamesMatch(member, SLOT(slotHistoryChanged()))
             && !KWQNamesMatch(member, SLOT(slotJobPercent(KIO::Job *, unsigned long)))
             && !KWQNamesMatch(member, SLOT(slotJobSpeed(KIO::Job *, unsigned long)))
             && !KWQNamesMatch(member, SLOT(slotScrollBarMoved()))

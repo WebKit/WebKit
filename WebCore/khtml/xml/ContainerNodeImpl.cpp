@@ -547,9 +547,9 @@ void ContainerNodeImpl::cloneChildNodes(NodeImpl *clone)
 
 bool ContainerNodeImpl::getUpperLeftCorner(int &xPos, int &yPos) const
 {
-    if (!m_render)
+    if (!renderer())
         return false;
-    RenderObject *o = m_render;
+    RenderObject *o = renderer();
     RenderObject *p = o;
 
     xPos = yPos = 0;
@@ -606,10 +606,10 @@ bool ContainerNodeImpl::getUpperLeftCorner(int &xPos, int &yPos) const
 
 bool ContainerNodeImpl::getLowerRightCorner(int &xPos, int &yPos) const
 {
-    if (!m_render)
+    if (!renderer())
         return false;
 
-    RenderObject *o = m_render;
+    RenderObject *o = renderer();
     xPos = yPos = 0;
     if (!o->isInline() || o->isReplaced())
     {
@@ -691,8 +691,8 @@ void ContainerNodeImpl::setActive(bool down, bool pause)
 
     // note that we need to recalc the style
     // FIXME: Move to ElementImpl
-    if (m_render) {
-        bool reactsToPress = m_render->style()->affectedByActiveRules();
+    if (renderer()) {
+        bool reactsToPress = renderer()->style()->affectedByActiveRules();
         if (reactsToPress)
             setChanged();
         if (renderer() && renderer()->style()->hasAppearance()) {
@@ -708,7 +708,7 @@ void ContainerNodeImpl::setActive(bool down, bool pause)
             startTime.restart();
 
             // Do an immediate repaint.
-            m_render->repaint(true);
+            renderer()->repaint(true);
             
 #if !WIN32
             // FIXME: Find a substitute for usleep.  Better yet, come up with a way of doing this that 
@@ -731,8 +731,8 @@ void ContainerNodeImpl::setHovered(bool over)
 
     // note that we need to recalc the style
     // FIXME: Move to ElementImpl
-    if (m_render) {
-        if (m_render->style()->affectedByHoverRules())
+    if (renderer()) {
+        if (renderer()->style()->affectedByHoverRules())
             setChanged();
         if (renderer() && renderer()->style()->hasAppearance())
             theme()->stateChanged(renderer(), HoverState);

@@ -89,8 +89,7 @@ public:
     virtual PassRefPtr<NodeImpl> appendChild(PassRefPtr<NodeImpl> newChild, ExceptionCode&);
     virtual void remove(ExceptionCode&);
     virtual bool hasChildNodes() const;
-    // FIXME: Change to return PassRefPtr.
-    virtual NodeImpl* cloneNode(bool deep) = 0;
+    virtual PassRefPtr<NodeImpl> cloneNode(bool deep) = 0;
     virtual const AtomicString& localName() const;
     virtual const AtomicString& namespaceURI() const;
     virtual const AtomicString& prefix() const;
@@ -303,7 +302,7 @@ public:
     virtual bool isReadOnly();
     virtual bool childTypeAllowed(unsigned short /*type*/) { return false; }
     virtual unsigned childNodeCount() const;
-    virtual NodeImpl *childNode(unsigned index);
+    virtual NodeImpl* childNode(unsigned index);
 
     /**
      * Does a pre-order traversal of the tree to find the node next node after this one. This uses the same order that
@@ -334,12 +333,12 @@ public:
     NodeImpl* previousEditable() const;
     NodeImpl* nextEditable() const;
 
-    RenderObject* renderer() const { return m_render; }
+    RenderObject* renderer() const { return m_renderer; }
     RenderObject* nextRenderer();
     RenderObject* previousRenderer();
-    void setRenderer(RenderObject* renderer) { m_render = renderer; }
+    void setRenderer(RenderObject* renderer) { m_renderer = renderer; }
     
-    void checkSetPrefix(const AtomicString &_prefix, ExceptionCode&);
+    void checkSetPrefix(const AtomicString& prefix, ExceptionCode&);
     bool isAncestor(const NodeImpl*) const;
 
     // These two methods are mutually exclusive.  The former is used to do strict error-checking
@@ -411,7 +410,7 @@ public:
      *
      * @param states The strings previously returned by nodes' state methods.
      */
-    virtual void restoreState(QStringList &stateList);
+    virtual void restoreState(QStringList& stateList);
 
     // -----------------------------------------------------------------------------
     // Notification of document stucture changes
@@ -465,21 +464,21 @@ public:
     void notifyNodeListsAttributeChanged();
     void notifyLocalNodeListsAttributeChanged();
     
-    RefPtr<NodeListImpl> getElementsByTagName(const DOMString&);
-    RefPtr<NodeListImpl> getElementsByTagNameNS(const DOMString& namespaceURI, const DOMString& localName);
+    PassRefPtr<NodeListImpl> getElementsByTagName(const DOMString&);
+    PassRefPtr<NodeListImpl> getElementsByTagNameNS(const DOMString& namespaceURI, const DOMString& localName);
 
 private: // members
     DocPtr<DocumentImpl> document;
     NodeImpl* m_previous;
     NodeImpl* m_next;
+    RenderObject* m_renderer;
 protected:
-    RenderObject* m_render;
     QPtrList<RegisteredEventListener>* m_regdListeners;
     typedef HashSet<NodeListImpl*, PointerHash<NodeListImpl*> > NodeListSet;
     NodeListSet* m_nodeLists;
 
     unsigned short m_tabIndex : 15;
-    bool m_hasTabIndex  : 1;
+    bool m_hasTabIndex : 1;
 
     bool m_hasId : 1;
     bool m_hasClass : 1;

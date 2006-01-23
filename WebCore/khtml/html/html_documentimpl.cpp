@@ -160,15 +160,6 @@ ElementImpl *HTMLDocumentImpl::createElement(const DOMString &name, int &excepti
     return HTMLElementFactory::createHTMLElement(AtomicString(lowerName), this, 0, false);
 }
 
-void HTMLDocumentImpl::slotHistoryChanged()
-{
-    if ( true || !m_render ) // disabled for now
-        return;
-
-    recalcStyle( Force );
-    m_render->repaint();
-}
-
 static void addItemToMap(HTMLDocumentImpl::NameCountMap& map, const DOMString& name)
 {
     if (name.length() == 0)

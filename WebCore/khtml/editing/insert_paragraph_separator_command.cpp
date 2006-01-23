@@ -133,7 +133,7 @@ void InsertParagraphSeparatorCommand::doApply()
     bool startBlockIsRoot = startBlock == startBlock->rootEditableElement();
 
     // This is the block that is going to be inserted.
-    NodeImpl *blockToInsert = startBlockIsRoot ? createParagraphElement() : startBlock->cloneNode(false);
+    RefPtr<NodeImpl> blockToInsert = startBlockIsRoot ? createParagraphElement() : startBlock->cloneNode(false);
 
     //---------------------------------------------------------------------
     // Handle empty block case.
@@ -143,13 +143,13 @@ void InsertParagraphSeparatorCommand::doApply()
             NodeImpl *extraBlock = createParagraphElement();
             appendNode(extraBlock, startBlock);
             appendBlockPlaceholder(extraBlock);
-            appendNode(blockToInsert, startBlock);
+            appendNode(blockToInsert.get(), startBlock);
         }
         else {
-            insertNodeAfter(blockToInsert, startBlock);
+            insertNodeAfter(blockToInsert.get(), startBlock);
         }
-        appendBlockPlaceholder(blockToInsert);
-        setEndingSelection(Position(blockToInsert, 0), DOWNSTREAM);
+        appendBlockPlaceholder(blockToInsert.get());
+        setEndingSelection(Position(blockToInsert.get(), 0), DOWNSTREAM);
         applyStyleAfterInsertion();
         return;
     }
@@ -159,11 +159,11 @@ void InsertParagraphSeparatorCommand::doApply()
     if (isLastInBlock) {
         LOG(Editing, "insert paragraph separator: last in block case");
         if (startBlockIsRoot)
-            appendNode(blockToInsert, startBlock);
+            appendNode(blockToInsert.get(), startBlock);
         else
-            insertNodeAfter(blockToInsert, startBlock);
-        appendBlockPlaceholder(blockToInsert);
-        setEndingSelection(Position(blockToInsert, 0), DOWNSTREAM);
+            insertNodeAfter(blockToInsert.get(), startBlock);
+        appendBlockPlaceholder(blockToInsert.get());
+        setEndingSelection(Position(blockToInsert.get(), 0), DOWNSTREAM);
         applyStyleAfterInsertion();
         return;
     }
@@ -188,9 +188,9 @@ void InsertParagraphSeparatorCommand::doApply()
             refNode = pos.node();
         }
 
-        insertNodeBefore(blockToInsert, refNode);
-        appendBlockPlaceholder(blockToInsert);
-        setEndingSelection(Position(blockToInsert, 0), DOWNSTREAM);
+        insertNodeBefore(blockToInsert.get(), refNode);
+        appendBlockPlaceholder(blockToInsert.get());
+        setEndingSelection(Position(blockToInsert.get(), 0), DOWNSTREAM);
         applyStyleAfterInsertion();
         setEndingSelection(pos, DOWNSTREAM);
         return;
@@ -241,19 +241,19 @@ void InsertParagraphSeparatorCommand::doApply()
 
     // Put the added block in the tree.
     if (startBlockIsRoot) {
-        appendNode(blockToInsert, startBlock);
+        appendNode(blockToInsert.get(), startBlock);
     } else {
-        insertNodeAfter(blockToInsert, startBlock);
+        insertNodeAfter(blockToInsert.get(), startBlock);
     }
 
     // Make clones of ancestors in between the start node and the start block.
-    NodeImpl *parent = blockToInsert;
+    NodeImpl *parent = blockToInsert.get();
     for (QPtrListIterator<NodeImpl> it(ancestors); it.current(); ++it) {
-        NodeImpl *child = it.current()->cloneNode(false); // shallow clone
+        RefPtr<NodeImpl> child = it.current()->cloneNode(false); // shallow clone
         child->ref();
-        clonedNodes.append(child);
-        appendNode(child, parent);
-        parent = child;
+        clonedNodes.append(child.get());
+        appendNode(child.get(), parent);
+        parent = child.get();
     }
 
     // Insert a block placeholder if the next visible position is in a different paragraph,
@@ -261,7 +261,7 @@ void InsertParagraphSeparatorCommand::doApply()
     // before the first block child. So, we need the placeholder to "hold the first line open".
     VisiblePosition next = visiblePos.next();
     if (!next.isNull() && !inSameBlock(visiblePos, next))
-        appendBlockPlaceholder(blockToInsert);
+        appendBlockPlaceholder(blockToInsert.get());
 
     // Move the start node and the siblings of the start node.
     if (startNode != startBlock) {
@@ -303,7 +303,7 @@ void InsertParagraphSeparatorCommand::doApply()
         }
     }
 
-    setEndingSelection(Position(blockToInsert, 0), DOWNSTREAM);
+    setEndingSelection(Position(blockToInsert.get(), 0), DOWNSTREAM);
     rebalanceWhitespace();
     applyStyleAfterInsertion();
 }

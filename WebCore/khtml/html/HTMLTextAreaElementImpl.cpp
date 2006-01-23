@@ -74,40 +74,40 @@ void HTMLTextAreaElementImpl::restoreState(QStringList &states)
 
 int HTMLTextAreaElementImpl::selectionStart()
 {
-    if (m_render)
-        return static_cast<RenderTextArea *>(m_render)->selectionStart();
+    if (renderer())
+        return static_cast<RenderTextArea *>(renderer())->selectionStart();
     return 0;
 }
 
 int HTMLTextAreaElementImpl::selectionEnd()
 {
-    if (m_render)
-        return static_cast<RenderTextArea *>(m_render)->selectionEnd();
+    if (renderer())
+        return static_cast<RenderTextArea *>(renderer())->selectionEnd();
     return 0;
 }
 
 void HTMLTextAreaElementImpl::setSelectionStart(int start)
 {
-    if (m_render)
-        static_cast<RenderTextArea *>(m_render)->setSelectionStart(start);
+    if (renderer())
+        static_cast<RenderTextArea *>(renderer())->setSelectionStart(start);
 }
 
 void HTMLTextAreaElementImpl::setSelectionEnd(int end)
 {
-    if (m_render)
-        static_cast<RenderTextArea *>(m_render)->setSelectionEnd(end);
+    if (renderer())
+        static_cast<RenderTextArea *>(renderer())->setSelectionEnd(end);
 }
 
 void HTMLTextAreaElementImpl::select(  )
 {
-    if (m_render)
-        static_cast<RenderTextArea*>(m_render)->select();
+    if (renderer())
+        static_cast<RenderTextArea*>(renderer())->select();
 }
 
 void HTMLTextAreaElementImpl::setSelectionRange(int start, int end)
 {
-    if (m_render)
-        static_cast<RenderTextArea *>(m_render)->setSelectionRange(start, end);
+    if (renderer())
+        static_cast<RenderTextArea *>(renderer())->setSelectionRange(start, end);
 }
 
 void HTMLTextAreaElementImpl::childrenChanged()
@@ -171,9 +171,9 @@ void HTMLTextAreaElementImpl::reset()
 
 void HTMLTextAreaElementImpl::updateValue()
 {
-    if ( !m_valueIsValid ) {
-        if ( m_render ) {
-            m_value = static_cast<RenderTextArea*>( m_render )->text().qstring();
+    if (!m_valueIsValid) {
+        if (renderer()) {
+            m_value = static_cast<RenderTextArea*>(renderer())->text().qstring();
             m_valueMatchesRenderer = true;
         } else {
             m_value = defaultValue().qstring();
@@ -194,8 +194,8 @@ void HTMLTextAreaElementImpl::setValue(const DOMString &value)
     m_value = value.qstring();
     m_valueMatchesRenderer = false;
     m_valueIsValid = true;
-    if (m_render)
-        m_render->updateFromElement();
+    if (renderer())
+        renderer()->updateFromElement();
     // FIXME: Force reload from renderer, as renderer may have normalized line endings.
     m_valueIsValid = false;
     setChanged(true);

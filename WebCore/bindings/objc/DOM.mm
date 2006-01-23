@@ -296,7 +296,7 @@ static ListenerMap *listenerMap;
 
 - (DOMNode *)cloneNode:(BOOL)deep
 {
-    return [DOMNode _nodeWithImpl:[self _nodeImpl]->cloneNode(deep)];
+    return [DOMNode _nodeWithImpl:[self _nodeImpl]->cloneNode(deep).get()];
 }
 
 - (void)normalize

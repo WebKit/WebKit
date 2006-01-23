@@ -84,15 +84,15 @@ void HTMLGenericFormElementImpl::attach()
     // The call to updateFromElement() needs to go after the call through
     // to the base class's attach() because that can sometimes do a close
     // on the renderer.
-    if (m_render) {
-        m_render->updateFromElement();
+    if (renderer()) {
+        renderer()->updateFromElement();
     
         // Delayed attachment in order to prevent FOUC can result in an object being
         // programmatically focused before it has a render object.  If we have been focused
         // (i.e., if we are the focusNode) then go ahead and focus our corresponding native widget.
         // (Attach/detach can also happen as a result of display type changes, e.g., making a widget
         // block instead of inline, and focus should be restored in that case as well.)
-        if (getDocument()->focusNode() == this && m_render->isWidget() && 
+        if (getDocument()->focusNode() == this && renderer()->isWidget() && 
             static_cast<RenderWidget*>(renderer())->widget())
             static_cast<RenderWidget*>(renderer())->widget()->setFocus();
     }
@@ -188,15 +188,15 @@ void HTMLGenericFormElementImpl::recalcStyle( StyleChange ch )
     //bool changed = changed();
     HTMLElementImpl::recalcStyle( ch );
 
-    if (m_render /*&& changed*/)
-        m_render->updateFromElement();
+    if (renderer() /*&& changed*/)
+        renderer()->updateFromElement();
 }
 
 bool HTMLGenericFormElementImpl::isFocusable() const
 {
-    if (disabled() || !m_render || 
-        (m_render->style() && m_render->style()->visibility() != VISIBLE) || 
-        m_render->width() == 0 || m_render->height() == 0)
+    if (disabled() || !renderer() || 
+        (renderer()->style() && renderer()->style()->visibility() != VISIBLE) || 
+        renderer()->width() == 0 || renderer()->height() == 0)
         return false;
     return true;
 }
@@ -204,9 +204,9 @@ bool HTMLGenericFormElementImpl::isFocusable() const
 bool HTMLGenericFormElementImpl::isKeyboardFocusable() const
 {
     if (isFocusable()) {
-        if (m_render->isWidget()) {
-            return static_cast<RenderWidget*>(m_render)->widget() &&
-                (static_cast<RenderWidget*>(m_render)->widget()->focusPolicy() & QWidget::TabFocus);
+        if (renderer()->isWidget()) {
+            return static_cast<RenderWidget*>(renderer())->widget() &&
+                (static_cast<RenderWidget*>(renderer())->widget()->focusPolicy() & QWidget::TabFocus);
         }
         if (getDocument()->frame())
             return getDocument()->frame()->tabsToAllControls();
@@ -217,9 +217,9 @@ bool HTMLGenericFormElementImpl::isKeyboardFocusable() const
 bool HTMLGenericFormElementImpl::isMouseFocusable() const
 {
     if (isFocusable()) {
-        if (m_render->isWidget()) {
-            return static_cast<RenderWidget*>(m_render)->widget() &&
-                (static_cast<RenderWidget*>(m_render)->widget()->focusPolicy() & QWidget::ClickFocus);
+        if (renderer()->isWidget()) {
+            return static_cast<RenderWidget*>(renderer())->widget() &&
+                (static_cast<RenderWidget*>(renderer())->widget()->focusPolicy() & QWidget::ClickFocus);
         }
         // For <input type=image> and <button>, we will assume no mouse focusability.  This is
         // consistent with OS X behavior for buttons.

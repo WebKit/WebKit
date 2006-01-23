@@ -1,3 +1,193 @@
+2006-01-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6617
+          REGRESSION: Crash in cloneChildNodes when clicking element
+
+        Test: fast/dom/clone-node-form-elements-with-attr.html
+
+        Changed cloneNode and some other functions to return PassRefPtr.
+        Also made m_render private and changed its name to m_renderer.
+
+        * bindings/objc/DOM.mm: (-[DOMNode cloneNode:]): Add call to get() needed
+        now that cloneNode returns a PassRefPtr.
+
+        * khtml/editing/break_blockquote_command.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply):
+        * khtml/editing/insert_paragraph_separator_command.cpp:
+        (khtml::InsertParagraphSeparatorCommand::doApply):
+        * khtml/editing/split_element_command.cpp:
+        (khtml::SplitElementCommand::doApply):
+        * khtml/html/htmlparser.cpp:
+        (HTMLParser::handleResidualStyleCloseTagAcrossBlocks):
+        (HTMLParser::reopenResidualStyleTags):
+        * khtml/xml/dom2_rangeimpl.cpp: (DOM::RangeImpl::processContents):
+        * ksvg2/svg/SVGUseElementImpl.cpp: (SVGUseElementImpl::closeRenderer):
+        Use RefPtr and PassRefPtr as appropriate, since the result of cloneNode
+        is now a referenced object in a PassRefPtr rather than a floating one and
+        so needs to be kept referenced until used.
+
+        * khtml/html/HTMLElementImpl.h:
+        * khtml/html/HTMLElementImpl.cpp:
+        (WebCore::HTMLElementImpl::cloneNode): Changed to return a PassRefPtr.
+        (WebCore::HTMLElementImpl::children): Ditto.
+        * khtml/xml/DocumentFragmentImpl.h:
+        * khtml/xml/DocumentFragmentImpl.cpp:
+        (DOM::DocumentFragmentImpl::cloneNode): Changed to return a PassRefPtr.
+        * khtml/xml/DocumentImpl.h:
+        * khtml/xml/DocumentTypeImpl.h:
+        * khtml/xml/DocumentTypeImpl.cpp:
+        (DOM::DocumentTypeImpl::cloneNode): Changed to return a PassRefPtr.
+        * khtml/xml/NamedNodeMapImpl.h:
+        (WebCore::NamedNodeMapImpl::getNamedItem): Changed to return PassRefPtr.
+        (WebCore::NamedNodeMapImpl::removeNamedItem): Ditto.
+        (WebCore::NamedNodeMapImpl::setNamedItemNS): Ditto.
+
+        * khtml/html/HTMLGenericFormElementImpl.cpp:
+        (WebCore::HTMLGenericFormElementImpl::attach): Use renderer() instead of
+        getting at m_render directly.
+        (WebCore::HTMLGenericFormElementImpl::recalcStyle): Ditto.
+        (WebCore::HTMLGenericFormElementImpl::isFocusable): Ditto.
+        (WebCore::HTMLGenericFormElementImpl::isKeyboardFocusable): Ditto.
+        (WebCore::HTMLGenericFormElementImpl::isMouseFocusable): Ditto.
+        * khtml/html/HTMLInputElementImpl.cpp:
+        (WebCore::HTMLInputElementImpl::selectionStart): Ditto.
+        (WebCore::HTMLInputElementImpl::selectionEnd): Ditto.
+        (WebCore::HTMLInputElementImpl::setSelectionStart): Ditto.
+        (WebCore::HTMLInputElementImpl::setSelectionEnd): Ditto.
+        (WebCore::HTMLInputElementImpl::select): Ditto.
+        (WebCore::HTMLInputElementImpl::setSelectionRange): Ditto.
+        (WebCore::HTMLInputElementImpl::parseMappedAttribute): Ditto.
+        (WebCore::HTMLInputElementImpl::setValue): Ditto.
+        (WebCore::HTMLInputElementImpl::defaultEventHandler): Ditto.
+        * khtml/html/HTMLSelectElementImpl.cpp:
+        (WebCore::HTMLSelectElementImpl::recalcStyle): Ditto.
+        (WebCore::HTMLSelectElementImpl::setRecalcListItems): Ditto.
+        (WebCore::HTMLSelectElementImpl::reset): Ditto.
+        (WebCore::HTMLSelectElementImpl::notifyOptionSelected): Ditto.
+        (WebCore::HTMLSelectElementImpl::defaultEventHandler): Ditto.
+        * khtml/html/HTMLTextAreaElementImpl.cpp:
+        (WebCore::HTMLTextAreaElementImpl::selectionStart): Ditto.
+        (WebCore::HTMLTextAreaElementImpl::selectionEnd): Ditto.
+        (WebCore::HTMLTextAreaElementImpl::setSelectionStart): Ditto.
+        (WebCore::HTMLTextAreaElementImpl::setSelectionEnd): Ditto.
+        (WebCore::HTMLTextAreaElementImpl::select): Ditto.
+        (WebCore::HTMLTextAreaElementImpl::setSelectionRange): Ditto.
+        (WebCore::HTMLTextAreaElementImpl::updateValue): Ditto.
+        (WebCore::HTMLTextAreaElementImpl::setValue): Ditto.
+        * khtml/html/html_baseimpl.cpp:
+        (WebCore::HTMLFrameElementImpl::updateForNewURL): Ditto.
+        (WebCore::HTMLFrameElementImpl::openURL): Ditto.
+        (WebCore::HTMLFrameElementImpl::attach): Ditto.
+        (WebCore::HTMLFrameElementImpl::close): Ditto.
+        (WebCore::HTMLFrameElementImpl::willRemove): Ditto.
+        (WebCore::HTMLFrameElementImpl::isFocusable): Ditto.
+        (WebCore::HTMLFrameElementImpl::setFocus): Ditto.
+        (WebCore::HTMLFrameElementImpl::frameWidth): Ditto.
+        (WebCore::HTMLFrameElementImpl::frameHeight): Ditto.
+        (WebCore::HTMLFrameSetElementImpl::defaultEventHandler): Ditto.
+        (WebCore::HTMLFrameSetElementImpl::recalcStyle): Ditto.
+        (WebCore::HTMLIFrameElementImpl::attach): Ditto.
+        (WebCore::HTMLIFrameElementImpl::recalcStyle): Ditto.
+        * khtml/html/html_imageimpl.cpp:
+        (WebCore::HTMLImageElementImpl::parseMappedAttribute): Ditto.
+        (WebCore::HTMLImageElementImpl::width): Ditto.
+        (WebCore::HTMLImageElementImpl::height): Ditto.
+        * khtml/html/html_inlineimpl.cpp:
+        (WebCore::HTMLAnchorElementImpl::isFocusable): Ditto.
+        * khtml/html/html_listimpl.cpp:
+        (DOM::HTMLLIElementImpl::parseMappedAttribute): Ditto.
+        (DOM::HTMLLIElementImpl::attach): Ditto.
+        * khtml/html/html_objectimpl.cpp:
+        (WebCore::HTMLAppletElementImpl::getAppletInstance): Ditto.
+        (WebCore::HTMLAppletElementImpl::closeRenderer): Ditto.
+        (WebCore::HTMLEmbedElementImpl::getEmbedInstance): Ditto.
+        (WebCore::HTMLEmbedElementImpl::attach): Ditto.
+        (WebCore::HTMLObjectElementImpl::getObjectInstance): Ditto.
+        (WebCore::HTMLObjectElementImpl::parseMappedAttribute): Ditto.
+        (WebCore::HTMLObjectElementImpl::attach): Ditto.
+        (WebCore::HTMLObjectElementImpl::detach): Ditto.
+        (WebCore::HTMLObjectElementImpl::recalcStyle): Ditto.
+        * khtml/html/html_tableimpl.cpp:
+        (WebCore::HTMLTableElementImpl::parseMappedAttribute): Ditto.
+        (WebCore::HTMLTableElementImpl::attach): Ditto.
+        * khtml/xml/ContainerNodeImpl.cpp:
+        (WebCore::ContainerNodeImpl::getUpperLeftCorner): Ditto.
+        (WebCore::ContainerNodeImpl::getLowerRightCorner): Ditto.
+        (WebCore::ContainerNodeImpl::setActive): Ditto.
+        (WebCore::ContainerNodeImpl::setHovered): Ditto.
+        * khtml/xml/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::~DocumentImpl): Ditto.
+        (WebCore::DocumentImpl::elementFromPoint): Ditto.
+        (WebCore::DocumentImpl::recalcStyle): Ditto.
+        (WebCore::DocumentImpl::attach): Ditto.
+        (WebCore::DocumentImpl::restoreRenderer): Ditto.
+        (WebCore::DocumentImpl::detach): Ditto.
+        (WebCore::DocumentImpl::setVisuallyOrdered): Ditto.
+        (WebCore::DocumentImpl::updateSelection): Ditto.
+        (WebCore::DocumentImpl::prepareMouseEvent): Ditto.
+        (WebCore::DocumentImpl::cloneNode): Changed to return PassRefPtr.
+        (WebCore::DocumentImpl::recalcStyleSelector): Use renderer() instead
+        of getting at m_render directly.
+        (WebCore::DocumentImpl::setInPageCache): Ditto.
+
+        * khtml/xml/NodeImpl.h:
+        * khtml/xml/NodeImpl.cpp:
+        (WebCore::NodeImpl::NodeImpl): Changed m_render to m_renderer.
+        (WebCore::NodeImpl::~NodeImpl): Changed use of m_render to renderer().
+        (WebCore::NodeImpl::getRect): Ditto.
+        (WebCore::NodeImpl::attach): Ditto.
+        (WebCore::NodeImpl::detach): Ditto.
+        (WebCore::NodeImpl::createRendererIfNeeded): Ditto.
+        (WebCore::NodeImpl::getElementsByTagName): Changed to return PassRefPtr.
+        (WebCore::NodeImpl::getElementsByTagNameNS): Ditto.
+
+        * khtml/xml/dom_elementimpl.h:
+        * khtml/xml/dom_elementimpl.cpp:
+        (WebCore::AttrImpl::cloneNode): Changed to return PassRefPtr.
+        (WebCore::ElementImpl::cloneNode): Ditto.
+        (WebCore::ElementImpl::scrollIntoView): Use renderer() instead of m_render.
+        (WebCore::ElementImpl::scrollIntoViewIfNeeded): Ditto.
+        (WebCore::ElementImpl::recalcStyle): Ditto.
+        (WebCore::ElementImpl::setAttributeNode): Changed to return PassRefPtr.
+        (WebCore::ElementImpl::removeAttributeNode): Ditto.
+        (WebCore::NamedAttrMapImpl::removeNamedItemNS): Ditto.
+        (WebCore::NamedAttrMapImpl::setNamedItem): Ditto.
+        (WebCore::NamedAttrMapImpl::removeNamedItem): Ditto.
+        (DOM::ElementImpl::setAttributeNodeNS): Ditto.
+
+        * khtml/xml/dom_textimpl.h:
+        * khtml/xml/dom_textimpl.cpp:
+        (CharacterDataImpl::setData): Changed use of m_render to renderer().
+        (CharacterDataImpl::appendData): Ditto.
+        (CharacterDataImpl::insertData): Ditto.
+        (CharacterDataImpl::deleteData): Ditto.
+        (CharacterDataImpl::replaceData): Ditto.
+        (CommentImpl::cloneNode): Changed to return PassRefPtr.
+        (TextImpl::splitText): Changed use of m_render to renderer().
+        (TextImpl::cloneNode): Changed to return PassRefPtr.
+        (TextImpl::recalcStyle): Changed use of m_render to renderer().
+        (CDATASectionImpl::cloneNode): Changed to return PassRefPtr.
+
+        * khtml/xml/dom_xmlimpl.h:
+        * khtml/xml/dom_xmlimpl.cpp:
+        (DOM::EntityImpl::cloneNode): Changed to return PassRefPtr.
+        (DOM::EntityReferenceImpl::cloneNode): Ditto.
+        (DOM::NotationImpl::cloneNode): Ditto.
+        (DOM::ProcessingInstructionImpl::cloneNode): Ditto.
+
+        - removed unused code
+
+        * khtml/html/html_documentimpl.cpp: Removed unused slotHistoryChanged function.
+        * khtml/html/html_documentimpl.h: Ditto.
+        * kwq/KWQObject.cpp: (QObject::connect): Removed special case for
+        slotHistoryChanged, no longer used.
+
+        - fixed storage leak
+
+        * bridge/mac/MacFrame.mm: (MacFrame::~MacFrame): Delete window widget.
+
 2006-01-23  Anders Carlsson  <andersca@mac.com>
 
         Forgot to add this as part of 
