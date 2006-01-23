@@ -1,0 +1,79 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of #text > LI > UL > DIV > DIV > BODY > HTML > #document to 5 of #text > LI > UL > DIV > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > LI > UL to 5 of #text > LI > UL toDOMRange:range from 1 of #text > SPAN > FONT > LI > UL > DIV > DIV > BODY > HTML > #document to 1 of #text > SPAN > FONT > LI > UL > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x340 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x84
+          RenderText {TEXT} at (0,0) size 67x28
+            text run at (0,0) width 67: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {TEXT} at (0,28) size 113x28
+            text run at (0,28) width 113: "Bug fix for "
+          RenderInline {A} at (0,0) size 260x28 [color=#0000EE]
+            RenderText {TEXT} at (113,28) size 260x28
+              text run at (113,28) width 260: "<rdar://problem/4039777>"
+          RenderText {TEXT} at (373,28) size 726x56
+            text run at (373,28) width 353: " Pasting particular snippet of HTML"
+            text run at (0,56) width 566: "containing list items and a link creates too many list items"
+        RenderBlock {DIV} at (14,114) size 756x188
+          RenderBlock (anonymous) at (0,0) size 756x56
+            RenderText {TEXT} at (0,0) size 189x28
+              text run at (0,0) width 189: "Expected Results: "
+            RenderBR {BR} at (0,0) size 0x0
+            RenderText {TEXT} at (0,28) size 147x28
+              text run at (0,28) width 147: "Should match: "
+            RenderBR {BR} at (0,0) size 0x0
+          RenderBlock {UL} at (0,80) size 756x28
+            RenderListItem {LI} at (40,0) size 716x28
+              RenderListMarker at (699,0) size 0x22
+              RenderText {TEXT} at (699,0) size 17x28
+                text run at (699,0) width 17: "A"
+          RenderBlock {DIV} at (0,132) size 756x56
+            RenderBlock {UL} at (0,0) size 756x56
+              RenderListItem {LI} at (40,0) size 716x56
+                RenderListMarker at (0,0) size 0x22
+                RenderInline {A} at (0,0) size 16x28 [color=#0000EE]
+                  RenderText {TEXT} at (0,0) size 16x28
+                    text run at (0,0) width 16: "B"
+                RenderText {TEXT} at (16,0) size 6x28
+                  text run at (16,0) width 6: " "
+                RenderBR {BR} at (0,0) size 0x0
+                RenderText {TEXT} at (0,28) size 16x28
+                  text run at (0,28) width 16: "C"
+      RenderBlock {DIV} at (0,364) size 784x120
+        RenderBlock {UL} at (0,0) size 784x28
+          RenderListItem {LI} at (40,0) size 744x28
+            RenderListMarker at (727,8) size 0x14
+            RenderInline {FONT} at (0,0) size 0x28
+            RenderInline {SPAN} at (0,0) size 0x28
+            RenderInline {FONT} at (0,0) size 17x28
+              RenderInline {SPAN} at (0,0) size 17x28
+                RenderText {TEXT} at (727,0) size 17x28
+                  text run at (727,0) width 17: "A"
+        RenderBlock {DIV} at (0,44) size 784x56
+          RenderBlock {UL} at (0,0) size 784x56
+            RenderListItem {LI} at (40,0) size 744x56
+              RenderListMarker at (0,8) size 0x14
+              RenderInline {A} at (0,0) size 16x18 [color=#0000EE]
+                RenderInline {FONT} at (0,0) size 16x28
+                  RenderInline {SPAN} at (0,0) size 16x28
+                    RenderText {TEXT} at (0,0) size 16x28
+                      text run at (0,0) width 16: "B"
+              RenderInline {FONT} at (0,0) size 22x56
+                RenderInline {SPAN} at (0,0) size 22x56
+                  RenderText {TEXT} at (16,0) size 6x28
+                    text run at (16,0) width 6: " "
+                  RenderBR {BR} at (0,0) size 0x0
+                  RenderText {TEXT} at (0,28) size 16x28
+                    text run at (0,28) width 16: "C"
+        RenderBlock {DIV} at (0,116) size 784x4 [border: (2px solid #FF0000)]
+          RenderBlock {DIV} at (2,2) size 780x0
+caret: position 1 of child 2 {TEXT} of child 0 {SPAN} of child 1 {FONT} of child 0 {LI} of child 0 {UL} of child 2 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document

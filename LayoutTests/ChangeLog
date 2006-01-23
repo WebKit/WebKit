@@ -1,3 +1,12 @@
+2006-01-23  David Harrison  <harrison@apple.com>
+
+        <rdar://problem/4026906> Paste of HTML table content can break table structure
+
+        * editing/pasteboard/paste-4039777-fix-expected.checksum: Added.
+        * editing/pasteboard/paste-4039777-fix-expected.png: Added.
+        * editing/pasteboard/paste-4039777-fix-expected.txt: Added.
+        * editing/pasteboard/paste-4039777-fix.html: Added.
+
 2006-01-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
