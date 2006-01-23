@@ -1,3 +1,10 @@
+2006-01-23  Anders Carlsson  <andersca@mac.com>
+
+        Forgot to add this as part of 
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3869
+        
+        * manual-tests/resources/webkit-background.png: Added.
+
 2006-01-22  Darin Adler  <darin@apple.com>
 
         - fix layout tests
