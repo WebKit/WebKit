@@ -313,19 +313,24 @@ void Collector::markCurrentThreadConservatively()
     }
     void *stackBase = (void *)pTib->StackBase;
 #else
-    void *stackBase = 0;
-    pthread_attr_t sattr;
+    static void *stackBase = 0;
+    static pthread_t stackThread;
+    pthread_t thread = pthread_self();
+    if (stackBase == 0 || thread != stackThread) {
+        pthread_attr_t sattr;
 #ifdef HAVE_PTHREAD_NP_H
-    // e.g. on FreeBSD 5.4, neundorf@kde.org
-    pthread_attr_get_np(thread, &sattr);
+        // e.g. on FreeBSD 5.4, neundorf@kde.org
+        pthread_attr_get_np(thread, &sattr);
 #else
-    // FIXME: this function is non-portable; other POSIX systems may have different np alternatives
-    pthread_getattr_np(pthread_self(), &sattr);
+        // FIXME: this function is non-portable; other POSIX systems may have different np alternatives
+        pthread_getattr_np(thread, &sattr);
 #endif
-    // Should work but fails on Linux (?)
-    //  pthread_attr_getstack(&sattr, &stackBase, &stackSize);
-    pthread_attr_getstackaddr(&sattr, &stackBase);
-    assert(stackBase);
+        // Should work but fails on Linux (?)
+        //  pthread_attr_getstack(&sattr, &stackBase, &stackSize);
+        pthread_attr_getstackaddr(&sattr, &stackBase);
+        assert(stackBase);
+        stackThread = thread;
+    }
 #endif
 
     int dummy;
@@ -342,15 +347,15 @@ void Collector::markOtherThreadConservatively(Thread *thread)
 {
   thread_suspend(thread->machThread);
 
-#if __i386__
+#if KJS_CPU_X86
   i386_thread_state_t regs;
   unsigned user_count = sizeof(regs)/sizeof(int);
   thread_state_flavor_t flavor = i386_THREAD_STATE;
-#elif __ppc__
+#elif KJS_CPU_PPC
   ppc_thread_state_t  regs;
   unsigned user_count = PPC_THREAD_STATE_COUNT;
   thread_state_flavor_t flavor = PPC_THREAD_STATE;
-#elif __ppc64__
+#elif KJS_CPU_PPC64
   ppc_thread_state64_t  regs;
   unsigned user_count = PPC_THREAD_STATE64_COUNT;
   thread_state_flavor_t flavor = PPC_THREAD_STATE64;
@@ -364,9 +369,9 @@ void Collector::markOtherThreadConservatively(Thread *thread)
   markStackObjectsConservatively((void *)&regs, (void *)((char *)&regs + (user_count * sizeof(usword_t))));
   
   // scan the stack
-#if __i386__
+#if KJS_CPU_X86
   markStackObjectsConservatively((void *)regs.esp, pthread_get_stackaddr_np(thread->posixThread));
-#elif defined(__ppc__) || defined(__ppc64__)
+#elif KJS_CPU_PPC || KJS_CPU_PPC64
   markStackObjectsConservatively((void *)regs.r1, pthread_get_stackaddr_np(thread->posixThread));
 #else
 #error Unknown Architecture

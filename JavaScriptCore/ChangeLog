@@ -2,6 +2,15 @@
 
         Reviewed by Maciej.
 
+        * kjs/collector.cpp: merge major speedup from KDE on Linux
+                             patch by Maks Orlovich, bug #6145
+                             Also unify cpu detection
+        * kjs/config.h: define simpler CPU macros
+
+2006-01-22  George Staikos <staikos@opensource.apple.com>
+
+        Reviewed by Maciej.
+
         * kjs/collector.cpp: merge FreeBSD compile fix from KDE
                              -> requires build magic for use
 
