@@ -74,7 +74,7 @@ namespace KXMLCore {
 
     template <typename T> RefPtr<T>& RefPtr<T>::operator=(const RefPtr<T>& o)
     {
-        T* optr = o.m_ptr;
+        T* optr = o.get();
         if (optr)
             optr->ref();
         T* ptr = m_ptr;
@@ -86,7 +86,7 @@ namespace KXMLCore {
     
     template <typename T> template <typename U> RefPtr<T>& RefPtr<T>::operator=(const RefPtr<U>& o)
     {
-        T *optr = o.m_ptr;
+        T* optr = o.get();
         if (optr)
             optr->ref();
         T* ptr = m_ptr;

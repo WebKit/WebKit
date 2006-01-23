@@ -380,7 +380,7 @@
 		933A3499038AE7C6008635CE /* grammar.y */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.yacc; path = grammar.y; sourceTree = "<group>"; tabWidth = 8; };
 		933A349A038AE7C6008635CE /* identifier.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = identifier.h; sourceTree = "<group>"; tabWidth = 8; };
 		933A349D038AE80F008635CE /* identifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = identifier.cpp; sourceTree = "<group>"; tabWidth = 8; };
-		935F69F608244FEA003D1A45 /* dftables */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "compiled.mach-o.executable"; path = dftables; sourceTree = BUILT_PRODUCTS_DIR; };
+		935F69F608244FEA003D1A45 /* dftables */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = dftables; sourceTree = BUILT_PRODUCTS_DIR; };
 		9364B273045B7D6C00A9CAC1 /* fpconst.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fpconst.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		9373524E038DA8C2008635CE /* context.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = context.h; sourceTree = "<group>"; tabWidth = 8; };
 		9374D3A7038D9D74008635CE /* scope_chain.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = scope_chain.h; sourceTree = "<group>"; tabWidth = 8; };

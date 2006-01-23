@@ -1,3 +1,23 @@
+2006-01-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - change needed for fix to http://bugzilla.opendarwin.org/show_bug.cgi?id=6617
+          REGRESSION: Crash in cloneChildNodes when clicking element
+
+        * kxmlcore/PassRefPtr.h: Fix assignment operator from RefPtr of a different
+        type by calling get() instead of going directly at m_ptr.
+        * kxmlcore/RefPtr.h: Ditto.
+
+        - other changes
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Xcode decided to change this file.
+        It's just a resorted list of keys in a dictionary.
+
+        * kjs/fpconst.cpp: Wrap this file in #if __APPLE__ since the alternate version
+        in internal.cpp is in #if !__APPLE__. This file is to give us the "no init
+        routine" property we want to have on OS X.
+
 2006-01-22  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
