@@ -26,6 +26,7 @@
 
 #include "config.h"
 #include "RenderTableCol.h"
+
 #include "html_tableimpl.h"
 #include "htmlnames.h"
 #include <qtextstream.h>
@@ -35,47 +36,37 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderTableCol::RenderTableCol(NodeImpl* node)
-    : RenderContainer(node)
+    : RenderContainer(node), m_span(1)
 {
     // init RenderObject attributes
-    setInline(true);   // our object is not Inline
-
-    _span = 1;
+    setInline(true); // our object is not Inline
     updateFromElement();
 }
 
 void RenderTableCol::updateFromElement()
 {
-    int oldSpan = _span;
-    NodeImpl *node = element();
+    int oldSpan = m_span;
+    NodeImpl* node = element();
     if (node && (node->hasTagName(colTag) || node->hasTagName(colgroupTag))) {
         HTMLTableColElementImpl *tc = static_cast<HTMLTableColElementImpl *>(node);
-        _span = tc->span();
+        m_span = tc->span();
     } else
-      _span = !(style() && style()->display() == TABLE_COLUMN_GROUP);
-    if (_span != oldSpan && style() && parent())
+        m_span = !(style() && style()->display() == TABLE_COLUMN_GROUP);
+    if (m_span != oldSpan && style() && parent())
         setNeedsLayoutAndMinMaxRecalc();
 }
 
 bool RenderTableCol::canHaveChildren() const
 {
-    // cols cannot have children.  This is actually necessary to fix a bug
+    // Cols cannot have children. This is actually necessary to fix a bug
     // with libraries.uc.edu, which makes a <p> be a table-column.
     return style()->display() == TABLE_COLUMN_GROUP;
 }
 
-void RenderTableCol::addChild(RenderObject *child, RenderObject *beforeChild)
-{
-    KHTMLAssert(child->style()->display() == TABLE_COLUMN);
-
-    // these have to come before the table definition!
-    RenderContainer::addChild(child, beforeChild);
-}
-
 #ifndef NDEBUG
-void RenderTableCol::dump(QTextStream *stream, QString ind) const
+void RenderTableCol::dump(QTextStream* stream, QString ind) const
 {
-    *stream << " _span=" << _span;
+    *stream << " span=" << m_span;
     RenderContainer::dump(stream, ind);
 }
 #endif

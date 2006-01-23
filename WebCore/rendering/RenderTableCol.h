@@ -23,6 +23,7 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #ifndef RenderTableCol_H
 #define RenderTableCol_H
 
@@ -33,30 +34,25 @@ namespace WebCore {
 class RenderTableCol : public RenderContainer
 {
 public:
-    RenderTableCol(DOM::NodeImpl* node);
+    RenderTableCol(NodeImpl*);
 
-    virtual const char *renderName() const { return "RenderTableCol"; }
-
-    int span() const { return _span; }
-    void setSpan(int s) { _span = s; }
-
-    virtual void addChild(RenderObject *child, RenderObject *beforeChild = 0);
-
+    virtual const char* renderName() const { return "RenderTableCol"; }
     virtual bool isTableCol() const { return true; }
-
     virtual short lineHeight(bool) const { return 0; }
-
     virtual void updateFromElement();
-
     virtual bool canHaveChildren() const;
-    
+
 #ifndef NDEBUG
-    virtual void dump(QTextStream *stream, QString ind = "") const;
+    virtual void dump(QTextStream*, QString) const;
 #endif
 
-protected:
-    int _span;
+    int span() const { return m_span; }
+    void setSpan(int s) { m_span = s; }
+    
+private:
+    int m_span;
 };
 
 }
+
 #endif

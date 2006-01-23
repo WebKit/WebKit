@@ -23,10 +23,10 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #ifndef RenderTableRow_H
 #define RenderTableRow_H
 
-#include "RenderContainer.h"
 #include "RenderTableSection.h"
 
 namespace WebCore {
@@ -34,32 +34,22 @@ namespace WebCore {
 class RenderTableRow : public RenderContainer
 {
 public:
-    RenderTableRow(DOM::NodeImpl* node);
+    RenderTableRow(NodeImpl*);
 
     virtual void destroy();
-
     virtual void setStyle(RenderStyle*);
-    virtual const char *renderName() const { return "RenderTableRow"; }
-
+    virtual const char* renderName() const { return "RenderTableRow"; }
     virtual bool isTableRow() const { return true; }
-
-    // overrides
-    virtual void addChild(RenderObject *child, RenderObject *beforeChild = 0);
-    virtual RenderObject* removeChildNode(RenderObject* child);
-
+    virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
     virtual short lineHeight(bool) const { return 0; }
-    virtual void position(int, int, int, int, int, bool, bool, int) {}
-
+    virtual void position(int, int, int, int, int, bool, bool, int) { }
     virtual void layout();
     virtual IntRect getAbsoluteRepaintRect();
-    
-    RenderTable *table() const { return static_cast<RenderTable *>(parent()->parent()); }
-    RenderTableSection *section() const { return static_cast<RenderTableSection *>(parent()); }
 
-#ifndef NDEBUG
-    virtual void dump(QTextStream *stream, QString ind = "") const;
-#endif
+    RenderTable* table() const { return static_cast<RenderTable*>(parent()->parent()); }
+    RenderTableSection* section() const { return static_cast<RenderTableSection*>(parent()); }
 };
 
 }
+
 #endif

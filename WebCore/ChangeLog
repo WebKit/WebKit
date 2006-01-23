@@ -2,6 +2,53 @@
 
         Reviewed by Maciej.
 
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5731
+          Form element as display table-cell hangs Safari (will eventually crash)
+
+        Test: fast/table/form-with-table-style.html
+
+        Hang was caused by the fact that RenderContainer has code to wrap table
+        styled elements in appropriate anonymous table elements, but the table
+        elements themselves have a special case for form elements that causes them
+        to call through, which led to infinite recursion as RenderContainer kept
+        making new tables which kept calling through to RenderContainer::addChild.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addChild): Improved logic about wrapping children
+        in anonymous table sections in the following ways: (1) Do wrap a form
+        properly it has a table display style (such as table-cell or table-row).
+        (2) When an item has a particular display style, check that it has the
+        right type of render object before casting it to that type. Also
+        restructured the code a little to make it slightly more readable.
+        (WebCore::RenderTable::layout): Added a FIXME about forms that have a
+        display style that makes it a table section, since they will be skipped
+        here in the loop to lay children out.
+        (WebCore::RenderTable::recalcSections): Added checks similar to the ones
+        in addChild above.
+
+        * rendering/RenderTableSection.cpp: (WebCore::RenderTableSection::addChild):
+        Moved form tag logic inside render object type check so that a table row
+        that happens to be a form element won't be affected by the special form
+        tag logic. Also added an explicit check for the table-cell style so we
+        will wrap it in a row rather than just putting the form at this level.
+
+        * rendering/RenderTableRow.h: Removed removeChildNode and dump functions
+        that just called through to the base class.
+        * rendering/RenderTableRow.cpp: (WebCore::RenderTableRow::addChild):
+        Moved form tag logic inside render object type check so that a table cell
+        that happens to be a form element won't be affected by the special form
+        tag logic. Removed unnecessary null check of section() at end of function.
+
+        * rendering/RenderTableCol.h: Removed addChild because all it did was
+        assert (incorrectly) and then call through to the base class. Changed
+        _span to be m_span.
+        * rendering/RenderTableCol.cpp: Removed addChild function. Updated for
+        change in name of m_span field.
+
+2006-01-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3518
           REGRESSION (312-412): mojibake left behind when scrolling a clipped <select>
 
