@@ -1,5 +1,11 @@
 2006-01-22  Darin Adler  <darin@apple.com>
 
+        - fix deployment builds
+
+        * rendering/RenderTable.cpp: (WebCore::RenderTable::addChild): Init bool.
+
+2006-01-22  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5731

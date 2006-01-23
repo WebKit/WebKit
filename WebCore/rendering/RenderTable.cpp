@@ -94,7 +94,7 @@ void RenderTable::setStyle(RenderStyle *_style)
 
 void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
 {
-    bool wrapInAnonymousSection;
+    bool wrapInAnonymousSection = true;
 
     switch (child->style()->display()) {
         case TABLE_CAPTION:
