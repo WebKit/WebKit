@@ -1,3 +1,21 @@
+2006-01-22  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Maciej.
+
+        - fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5656
+        REGRESSION: Buttons on Yahoo! Mail misplaced in ToT
+        <rdar://problem/4404335>
+        Tests whether white-space mode on buttons is inheritied and not forced.
+        Originally broken in Subversion revision r10909.
+
+        * css/html4.css: Remove default white-space value for <button> tag to
+        allow it to be inherited.
+        * rendering/render_theme_mac.mm:
+        (khtml::RenderThemeMac::adjustButtonStyle): Fix misleading comment.
+
+        * css/UserAgentStyleSheets.cpp: Touched this file to make the rebuild
+        of html4.css work (shouldn't have to do this).
+
 2006-01-22  Darin Adler  <darin@apple.com>
 
         * css/make-css-file-arrays.pl: Fix typo that was resulting in a bunch

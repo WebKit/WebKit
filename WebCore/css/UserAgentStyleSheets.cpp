@@ -17,4 +17,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
+// Added this comment because it doesn't seem to recompile without a change,
+// even though the included file is regenerated. We can just tweak this
+// comment every time, remove it, reword it, whatever, until we solve the
+// Xcode problem.
 #include "UserAgentStyleSheetsData.cpp"

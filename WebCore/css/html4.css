@@ -292,7 +292,6 @@ fieldset {
 
 button {
     -khtml-appearance: button;
-    white-space: normal
 }
 
 /* If we add support for CSS2 system fonts, then we won't have to hard code Lucida Grande here. */

@@ -1,3 +1,17 @@
+2006-01-22  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Maciej.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5656
+        REGRESSION: Buttons on Yahoo! Mail misplaced in ToT
+        <rdar://problem/4404335>
+        Tests whether white-space mode on buttons is inherited and not forced.
+
+        * fast/forms/button-white-space-expected.checksum: Added.
+        * fast/forms/button-white-space-expected.png: Added.
+        * fast/forms/button-white-space-expected.txt: Added.
+        * fast/forms/button-white-space.html: Added.
+
 2006-01-22  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

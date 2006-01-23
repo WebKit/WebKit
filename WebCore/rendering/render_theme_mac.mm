@@ -409,7 +409,7 @@ void RenderThemeMac::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* 
         // Height is locked to auto.
         style->setHeight(Length(Auto));
         
-        // White-space is locked to nowrap
+        // White-space is locked to pre
         style->setWhiteSpace(PRE);
 
         // Set the button's vertical size.
