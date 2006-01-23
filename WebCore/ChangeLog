@@ -62,6 +62,7 @@
 
        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3508
          REGRESSION (125-412): problem with negative margin-top and position: absolute (vre.aitg.com)
+         <rdar://problem/4093277> REGRESSION (125-312): layout problem at vre.aitg.com (3508)
 
        Test: fast/css/position-negative-top-margin.html
 
@@ -76,6 +77,7 @@
 
        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3702
          Web page is laid out incorrectly after printing with print-specific style sheet.
+         <rdar://problem/3706259> Web page distorts after printing with print-specific style sheet (3702)
 
         Also replaced tabs with spaces in the changed files.
 
@@ -302,6 +304,7 @@
         
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3509
           REGRESSION(125-412) Portion of nested table is not painted correctly on cafepress site
+          <rdar://problem/4039615> REGRESSION(125-188) Portion of nested table is not painted correctly on cafepress site
 
         * manual-tests/bugzilla-3509.html: Added.
         * rendering/RenderBlock.cpp:
@@ -314,6 +317,7 @@
 
         http://bugzilla.opendarwin.org/show_bug.cgi?id=3869
         Should use HTML Image element instead of JS Image object
+        <rdar://problem/3852987> JavaScript image.complete property never returns true (3869)
 
         * khtml/ecma/kjs_events.cpp:
         (KJS::ClipboardProtoFunc::callAsFunction):
@@ -368,6 +372,7 @@
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5983
           REGRESSION: onmouseover-powered navbar at MacNN renders incorrectly
+          <rdar://problem/4403730> REGRESSION: onmouseover powered navbar renders incorrectly at macnn.com (5983)
 
         * khtml/xml/NodeImpl.cpp:
         (WebCore::NodeImpl::detach): Set m_hovered to false and set the document's
