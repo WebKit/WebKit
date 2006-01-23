@@ -163,7 +163,10 @@ const float LargeNumberForText = 1.0e7;
 
     [self _createTextView];
     [self _updateTextViewWidth];
-    
+
+    // Another element might overlap this one, so we have to do the slower-style scrolling.
+    [[self contentView] setCopiesOnScroll:NO];
+
     // In WebHTMLView, we set a clip. This is not typical to do in an
     // NSView, and while correct for any one invocation of drawRect:,
     // it causes some bad problems if that clip is cached between calls.

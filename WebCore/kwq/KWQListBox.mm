@@ -147,6 +147,9 @@ QListBox::QListBox(QWidget *parent)
     [scrollView setHasVerticalScroller:YES];
     [[scrollView verticalScroller] setControlSize:NSSmallControlSize];
 
+    // Another element might overlap this one, so we have to do the slower-style scrolling.
+    [[scrollView contentView] setCopiesOnScroll:NO];
+    
     // In WebHTMLView, we set a clip. This is not typical to do in an
     // NSView, and while correct for any one invocation of drawRect:,
     // it causes some bad problems if that clip is cached between calls.
@@ -157,7 +160,7 @@ QListBox::QListBox(QWidget *parent)
     // See these bugs for more information:
     // <rdar://problem/3226083>: REGRESSION (Panther): white box overlaying select lists at nvidia.com drivers page
     [[scrollView contentView] releaseGState];
-    
+
     KWQTableView *tableView = [[KWQTableView alloc] initWithListBox:this];
     [scrollView setDocumentView:tableView];
     [tableView release];
