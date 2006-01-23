@@ -1,3 +1,13 @@
+2006-01-23  Darin Adler  <darin@apple.com>
+
+        Suggested by Anders.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6617
+          REGRESSION: Crash in cloneChildNodes when clicking element
+
+        * fast/dom/clone-node-form-elements-with-attr.html: Added.
+        * fast/dom/clone-node-form-elements-with-attr-expected.txt: Added.
+
 2006-01-23  David Harrison  <harrison@apple.com>
 
         <rdar://problem/4026906> Paste of HTML table content can break table structure
