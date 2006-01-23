@@ -40,7 +40,7 @@
 #define HAVE_STDINT_H 1
 #define HAVE_STRING_H 1
 
-#ifdef __ppc__ || __PPC__ || __powerpc__
+#if __ppc__ || __PPC__ || __powerpc__
 #define KJS_CPU_PPC 1
 #define WORDS_BIGENDIAN 1
 #elif __ppc64__ || __PPC64__

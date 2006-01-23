@@ -1,5 +1,11 @@
 2006-01-23  George Staikos <staikos@opensource.apple.com>
 
+	Reviewed by Maciej.
+
+	* kjs/config.h: unbreak preprocessor change
+
+2006-01-23  George Staikos <staikos@opensource.apple.com>
+
         Approved by Maciej and Darin.
 
         * kjs/:
