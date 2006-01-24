@@ -41,6 +41,9 @@ namespace WebCore {
 
 using namespace EventNames;
 
+static void dispatchChildInsertionEvents(NodeImpl*, ExceptionCode&);
+static void dispatchChildRemovalEvents(NodeImpl*, ExceptionCode&);
+
 ContainerNodeImpl::ContainerNodeImpl(DocumentImpl* doc)
     : NodeImpl(doc), m_firstChild(0), m_lastChild(0)
 {
@@ -142,44 +145,63 @@ PassRefPtr<NodeImpl> ContainerNodeImpl::insertBefore(PassRefPtr<NodeImpl> newChi
         return newChild;
 
     // Now actually add the child(ren)
-    NodeImpl* nextChild;
-    NodeImpl* child = isFragment ? newChild->firstChild() : newChild.get();
-
-    NodeImpl* prev = refChild->previousSibling();
-    if (prev == newChild || refChild == newChild) // nothing to do
+    if (refChild->previousSibling() == newChild || refChild == newChild) // nothing to do
         return newChild;
-    
-    while (child) {
-        nextChild = isFragment ? child->nextSibling() : 0;
 
-        // If child is already present in the tree, first remove it
-        NodeImpl *newParent = child->parentNode();
-        if (newParent)
-            newParent->removeChild(child, ec);
+    RefPtr<NodeImpl> next = refChild;
+
+    RefPtr<NodeImpl> child = isFragment ? newChild->firstChild() : newChild;
+    while (child) {
+        PassRefPtr<NodeImpl> nextChild = isFragment ? child->nextSibling() : 0;
+
+        // If child is already present in the tree, first remove it from the old location.
+        if (NodeImpl* oldParent = child->parentNode())
+            oldParent->removeChild(child.get(), ec);
         if (ec)
             return 0;
 
-        // Add child in the correct position
+        // FIXME: After sending the mutation events, "this" could be destroyed.
+        // We can prevent that by doing a "ref", but first we have to make sure
+        // that no callers call with ref count == 0 and parent = 0 (as of this
+        // writing, there are definitely callers who call that way).
+
+        // Due to arbitrary code running in response to a DOM mutation event it's
+        // possible that "next" is no longer a child of "this".
+        // It's also possible that "child" has been inserted elsewhere.
+        // In either of those cases, we'll just stop.
+        if (next->parentNode() != this)
+            break;
+        if (child->parentNode())
+            break;
+
+        assert(!child->nextSibling());
+        assert(!child->previousSibling());
+
+        // Add child before "next".
         forbidEventDispatch();
-        if (prev)
-            prev->setNextSibling(child);
-        else
-            m_firstChild = child;
-        refChild->setPreviousSibling(child);
+        NodeImpl* prev = next->previousSibling();
+        assert(m_lastChild != prev);
+        next->setPreviousSibling(child.get());
+        if (prev) {
+            assert(m_firstChild != next);
+            assert(prev->nextSibling() == next);
+            prev->setNextSibling(child.get());
+        } else {
+            assert(m_firstChild == next);
+            m_firstChild = child.get();
+        }
         child->setParent(this);
         child->setPreviousSibling(prev);
-        child->setNextSibling(refChild);
+        child->setNextSibling(next.get());
         allowEventDispatch();
 
-        // Add child to the rendering tree
-        // ### should we detach() it first if it's already attached?
+        // Add child to the rendering tree.
         if (attached() && !child->attached())
             child->attach();
-        
-        // Dispatch the mutation events
-        dispatchChildInsertedEvents(child, ec);
 
-        prev = child;
+        // Dispatch the mutation events.
+        dispatchChildInsertionEvents(child.get(), ec);
+
         child = nextChild;
     }
 
@@ -206,53 +228,78 @@ PassRefPtr<NodeImpl> ContainerNodeImpl::replaceChild(PassRefPtr<NodeImpl> newChi
         return 0;
     }
 
-    bool isFragment = newChild->nodeType() == Node::DOCUMENT_FRAGMENT_NODE;
-    RefPtr<NodeImpl> child = isFragment ? newChild->firstChild() : newChild.get();
-
-    // Remove the old child
     RefPtr<NodeImpl> prev = oldChild->previousSibling();
-    RefPtr<NodeImpl> next = oldChild->nextSibling();
 
+    // Remove the node we're replacing
     PassRefPtr<NodeImpl> removedChild = removeChild(oldChild, ec);
     if (ec)
         return 0;
 
-    // If the new child was right before or right after the old child, nothing else needs to change
-    if (prev == child || next == child)
-        child = 0;
+    // FIXME: After sending the mutation events, "this" could be destroyed.
+    // We can prevent that by doing a "ref", but first we have to make sure
+    // that no callers call with ref count == 0 and parent = 0 (as of this
+    // writing, there are definitely callers who call that way).
+
+    bool isFragment = newChild->nodeType() == Node::DOCUMENT_FRAGMENT_NODE;
+
     // Add the new child(ren)
+    RefPtr<NodeImpl> child = isFragment ? newChild->firstChild() : newChild.get();
     while (child) {
+        // If the new child is already in the right place, we're done.
+        if (prev == child || prev == child->previousSibling())
+            break;
+
+        // For a fragment we have more children to do.
         RefPtr<NodeImpl> nextChild = isFragment ? child->nextSibling() : 0;
 
-        // If child is already present in the tree, first remove it
-        NodeImpl* newParent = child->parentNode();
-        if (newParent)
-            newParent->removeChild(child.get(), ec);
+        // Remove child from its old position.
+        if (NodeImpl* oldParent = child->parentNode())
+            oldParent->removeChild(child.get(), ec);
         if (ec)
             return 0;
 
-        // Add child in the correct position
+        // Due to arbitrary code running in response to a DOM mutation event it's
+        // possible that "prev" is no longer a child of "this".
+        // It's also possible that "child" has been inserted elsewhere.
+        // In either of those cases, we'll just stop.
+        if (prev && prev->parentNode() != this)
+            break;
+        if (child->parentNode())
+            break;
+
+        assert(!child->nextSibling());
+        assert(!child->previousSibling());
+
+        // Add child after "prev".
         forbidEventDispatch();
-        if (prev)
+        NodeImpl* next;
+        if (prev) {
+            next = prev->nextSibling();
+            assert(m_firstChild != next);
             prev->setNextSibling(child.get());
-        if (next)
-            next->setPreviousSibling(child.get());
-        if (!prev)
+        } else {
+            next = m_firstChild;
             m_firstChild = child.get();
-        if (!next)
+        }
+        if (next) {
+            assert(m_lastChild != prev);
+            assert(next->previousSibling() == prev);
+            next->setPreviousSibling(child.get());
+        } else {
+            assert(m_lastChild == prev);
             m_lastChild = child.get();
+        }
         child->setParent(this);
         child->setPreviousSibling(prev.get());
-        child->setNextSibling(next.get());
+        child->setNextSibling(next);
         allowEventDispatch();
 
         // Add child to the rendering tree
-        // ### should we detach() it first if it's already attached?
         if (attached() && !child->attached())
             child->attach();
 
         // Dispatch the mutation events
-        dispatchChildInsertedEvents(child.get(), ec);
+        dispatchChildInsertionEvents(child.get(), ec);
 
         prev = child;
         child = nextChild;
@@ -270,14 +317,14 @@ void ContainerNodeImpl::willRemove()
         n->willRemove();
 }
 
-int ContainerNodeImpl::willRemoveChild(NodeImpl *child)
+static ExceptionCode willRemoveChild(NodeImpl *child)
 {
-    int exceptionCode = 0;
+    ExceptionCode ec = 0;
 
     // fire removed from document mutation events.
-    dispatchChildRemovalEvents(child, exceptionCode);
-    if (exceptionCode)
-        return exceptionCode;
+    dispatchChildRemovalEvents(child, ec);
+    if (ec)
+        return ec;
 
     if (child->attached())
         child->willRemove();
@@ -314,6 +361,17 @@ PassRefPtr<NodeImpl> ContainerNodeImpl::removeChild(NodeImpl* oldChild, Exceptio
     ec = willRemoveChild(child.get());
     if (ec)
         return 0;
+
+    // Mutation events might have moved this child into a different parent.
+    if (child->parentNode() != this) {
+        ec = DOMException::NOT_FOUND_ERR;
+        return 0;
+    }
+
+    // FIXME: After sending the mutation events, "this" could be destroyed.
+    // We can prevent that by doing a "ref", but first we have to make sure
+    // that no callers call with ref count == 0 and parent = 0 (as of this
+    // writing, there are definitely callers who call that way).
 
     forbidEventDispatch();
 
@@ -415,10 +473,9 @@ PassRefPtr<NodeImpl> ContainerNodeImpl::appendChild(PassRefPtr<NodeImpl> newChil
         return newChild;
 
     // Now actually add the child(ren)
-    RefPtr<NodeImpl> child = newChild.get();
-    if (isFragment)
-        child = newChild->firstChild();
+    RefPtr<NodeImpl> child = isFragment ? newChild->firstChild() : newChild;
     while (child) {
+        // For a fragment we have more children to do.
         RefPtr<NodeImpl> nextChild = isFragment ? child->nextSibling() : 0;
 
         // If child is already present in the tree, first remove it
@@ -426,6 +483,12 @@ PassRefPtr<NodeImpl> ContainerNodeImpl::appendChild(PassRefPtr<NodeImpl> newChil
             oldParent->removeChild(child.get(), ec);
             if (ec)
                 return 0;
+            
+            // If the child has a parent again, just stop what we're doing, because
+            // that means someone is doing something with DOM mutation -- can't re-parent
+            // a child that already has a parent.
+            if (child->parentNode())
+                break;
         }
 
         // Append child to the end of the list
@@ -445,7 +508,7 @@ PassRefPtr<NodeImpl> ContainerNodeImpl::appendChild(PassRefPtr<NodeImpl> newChil
             child->attach();
         
         // Dispatch the mutation events
-        dispatchChildInsertedEvents(child.get(), ec);
+        dispatchChildInsertionEvents(child.get(), ec);
 
         child = nextChild;
     }
@@ -537,12 +600,9 @@ void ContainerNodeImpl::removedFromTree(bool deep)
 
 void ContainerNodeImpl::cloneChildNodes(NodeImpl *clone)
 {
-    int exceptioncode = 0;
-    NodeImpl *n;
-    for(n = firstChild(); n && !exceptioncode; n = n->nextSibling())
-    {
-        clone->appendChild(n->cloneNode(true),exceptioncode);
-    }
+    ExceptionCode ec = 0;
+    for (NodeImpl* n = firstChild(); n && !ec; n = n->nextSibling())
+        clone->appendChild(n->cloneNode(true), ec);
 }
 
 bool ContainerNodeImpl::getUpperLeftCorner(int &xPos, int &yPos) const
@@ -757,60 +817,63 @@ NodeImpl *ContainerNodeImpl::childNode(unsigned index)
     return n;
 }
 
-void ContainerNodeImpl::dispatchChildInsertedEvents( NodeImpl *child, int &exceptioncode )
+static void dispatchChildInsertionEvents(NodeImpl* child, ExceptionCode& ec)
 {
     assert(!eventDispatchForbidden());
-    if (inDocument())
-        child->insertedIntoDocument();
-    else
-        child->insertedIntoTree(true);
 
-    if (getDocument()->hasListenerType(DocumentImpl::DOMNODEINSERTED_LISTENER)) {
-        child->dispatchEvent(new MutationEventImpl(DOMNodeInsertedEvent,
-                                                   true,false,this,DOMString(),DOMString(),DOMString(),0),exceptioncode,true);
-        if (exceptioncode)
+    RefPtr<NodeImpl> c = child;
+    RefPtr<DocumentImpl> doc = child->getDocument();
+
+    if (c->parentNode() && c->parentNode()->inDocument())
+        c->insertedIntoDocument();
+    else
+        c->insertedIntoTree(true);
+
+    if (c->parentNode() && doc->hasListenerType(DocumentImpl::DOMNODEINSERTED_LISTENER)) {
+        ec = 0;
+        child->dispatchEvent(new MutationEventImpl(DOMNodeInsertedEvent, true, false,
+            c->parentNode(), DOMString(), DOMString(), DOMString(), 0), ec, true);
+        if (ec)
             return;
     }
 
     // dispatch the DOMNodeInsertedIntoDocument event to all descendants
-    bool hasInsertedListeners = getDocument()->hasListenerType(DocumentImpl::DOMNODEINSERTEDINTODOCUMENT_LISTENER);
-
-    if (hasInsertedListeners && inDocument()) {
-        for (NodeImpl *c = child; c; c = c->traverseNextNode(child)) {
-            c->dispatchEvent(new MutationEventImpl(DOMNodeInsertedIntoDocumentEvent,
-                                                   false,false,0,DOMString(),DOMString(),DOMString(),0),exceptioncode,true);
-            if (exceptioncode)
+    if (c->inDocument() && doc->hasListenerType(DocumentImpl::DOMNODEINSERTEDINTODOCUMENT_LISTENER))
+        for (; c; c = c->traverseNextNode(child)) {
+            ec = 0;
+            c->dispatchEvent(new MutationEventImpl(DOMNodeInsertedIntoDocumentEvent, false, false,
+                0, DOMString(), DOMString(), DOMString(), 0), ec, true);
+            if (ec)
                 return;
         }
-    }
 }
 
-// base class for nodes that may have children
-void ContainerNodeImpl::dispatchChildRemovalEvents( NodeImpl *child, int &exceptioncode )
+static void dispatchChildRemovalEvents(NodeImpl* child, ExceptionCode& ec)
 {
+    RefPtr<NodeImpl> c = child;
+    RefPtr<DocumentImpl> doc = child->getDocument();
+
     // update auxiliary doc info (e.g. iterators) to note that node is being removed
-    getDocument()->notifyBeforeNodeRemoval(child); // ### use events instead
+    doc->notifyBeforeNodeRemoval(child); // ### use events instead
 
     // dispatch pre-removal mutation events
-    if (getDocument()->hasListenerType(DocumentImpl::DOMNODEREMOVED_LISTENER)) {
-        child->dispatchEvent(new MutationEventImpl(DOMNodeRemovedEvent,
-                             true,false,this,DOMString(),DOMString(),DOMString(),0),exceptioncode,true);
-        if (exceptioncode)
+    if (c->parentNode() && doc->hasListenerType(DocumentImpl::DOMNODEREMOVED_LISTENER)) {
+        ec = 0;
+        child->dispatchEvent(new MutationEventImpl(DOMNodeRemovedEvent, true, false,
+            c->parentNode(), DOMString(), DOMString(), DOMString(), 0), ec, true);
+        if (ec)
             return;
     }
 
-    bool hasRemovalListeners = getDocument()->hasListenerType(DocumentImpl::DOMNODEREMOVEDFROMDOCUMENT_LISTENER);
-
     // dispatch the DOMNodeRemovedFromDocument event to all descendants
-    if (inDocument()) {
-        for (NodeImpl *c = child; c; c = c->traverseNextNode(child)) {
-            if (hasRemovalListeners) {
-                c->dispatchEvent(new MutationEventImpl(DOMNodeRemovedFromDocumentEvent,
-                                 false,false,0,DOMString(),DOMString(),DOMString(),0),exceptioncode,true);
-                if (exceptioncode)
-                    return;
-            }
+    if (c->inDocument() && doc->hasListenerType(DocumentImpl::DOMNODEREMOVEDFROMDOCUMENT_LISTENER))
+        for (; c; c = c->traverseNextNode(child)) {
+            ec = 0;
+            c->dispatchEvent(new MutationEventImpl(DOMNodeRemovedFromDocumentEvent, false, false,
+                0, DOMString(), DOMString(), DOMString(), 0), ec, true);
+            if (ec)
+                return;
         }
-    }
 }
+
 }

@@ -69,11 +69,6 @@ private:
     NodeImpl* m_firstChild;
     NodeImpl* m_lastChild;
 
-    ExceptionCode willRemoveChild(NodeImpl* child);
-
-    void dispatchChildInsertedEvents(NodeImpl* child, ExceptionCode&);
-    void dispatchChildRemovalEvents(NodeImpl* child, ExceptionCode&);
-
     bool getUpperLeftCorner(int& x, int& y) const;
     bool getLowerRightCorner(int& x, int& y) const;
 };

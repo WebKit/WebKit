@@ -1,5 +1,30 @@
 2006-01-24  Darin Adler  <darin@apple.com>
 
+        Reviewed by Justin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6753
+          REGRESSION (r12282-12292): Crash loading TinyMCE test app
+
+        * khtml/xml/ContainerNodeImpl.h: Remove some internals that don't need
+        to be member functions.
+        * khtml/xml/ContainerNodeImpl.cpp:
+        (WebCore::ContainerNodeImpl::insertBefore): Improved algorithm to keep
+        refs to more things so that we don't end up with a dangling pointer (fixes
+        the crash) and so that we do not crash if someone modifies the tree inside
+        a DOM mutation event handler (theoretical only at this point, needs test
+        cases).
+        (WebCore::ContainerNodeImpl::replaceChild): Ditto.
+        (WebCore::willRemoveChild): Changed from member function to free function.
+        (WebCore::ContainerNodeImpl::removeChild): Fix potential problem if the
+        mutation event handler moves the node into a different parent.
+        (WebCore::ContainerNodeImpl::appendChild): Made changes like those in
+        insertBefore above.
+        (WebCore::dispatchChildInsertionEvents): Changed from member function to
+        free function. Tightened up handling of some edge cases.
+        (WebCore::dispatchChildRemovalEvents): Ditto.
+
+2006-01-24  Darin Adler  <darin@apple.com>
+
         Reviewed by John Sullivan.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6696
