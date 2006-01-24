@@ -130,7 +130,8 @@ void BrowserExtensionMac::createNewWindow(const KURL &url,
     
     NSRect windowFrame = [bridge windowFrame];
 
-    NSSize scaleRect = [[bridge webView] convertSize:NSMakeSize(1, 1) toView:nil];
+    NSSize size = { 1, 1 }; // workaround for 4213314
+    NSSize scaleRect = [[bridge webView] convertSize:size toView:nil];
     float scaleX = scaleRect.width;
     float scaleY = scaleRect.height;
 
