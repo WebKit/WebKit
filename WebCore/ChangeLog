@@ -1,3 +1,11 @@
+2006-01-23  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by thatcher
+        
+        Turned on -O2 for B&I build.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2006-01-23  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.
