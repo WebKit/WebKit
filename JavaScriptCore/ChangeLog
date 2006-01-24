@@ -1,5 +1,46 @@
 2006-01-23  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Tim Omernick.
+        
+        - use classes instead of free functions for extractors, this better matches how other
+        things work and should avoid the need for hacky workarounds on other compilers
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6748
+
+        * kjs/array_object.cpp:
+        * kjs/identifier.cpp:
+        * kjs/internal.cpp:
+        * kxmlcore/HashMap.h:
+        (KXMLCore::PairFirstExtractor::extract):
+        * kxmlcore/HashMapPtrSpec.h:
+        (KXMLCore::):
+        * kxmlcore/HashSet.h:
+        (KXMLCore::IdentityExtractor::extract):
+        * kxmlcore/HashTable.h:
+        (KXMLCore::addIterator):
+        (KXMLCore::removeIterator):
+        (KXMLCore::HashTable::add):
+        (KXMLCore::HashTable::isEmptyBucket):
+        (KXMLCore::HashTable::isDeletedBucket):
+        (KXMLCore::HashTable::HashTable):
+        (KXMLCore::HashTable::lookup):
+        (KXMLCore::HashTable::add):
+        (KXMLCore::HashTable::reinsert):
+        (KXMLCore::HashTable::find):
+        (KXMLCore::HashTable::contains):
+        (KXMLCore::HashTable::remove):
+        (KXMLCore::HashTable::allocateTable):
+        (KXMLCore::HashTable::deallocateTable):
+        (KXMLCore::HashTable::expand):
+        (KXMLCore::HashTable::rehash):
+        (KXMLCore::HashTable::clear):
+        (KXMLCore::HashTable::swap):
+        (KXMLCore::HashTable::operator):
+        (KXMLCore::HashTable::checkTableConsistency):
+        (KXMLCore::HashTable::checkTableConsistencyExceptSize):
+        (KXMLCore::HashTable::invalidateIterators):
+
+2006-01-23  Maciej Stachowiak  <mjs@apple.com>
+
         Rubber stamped by Tim Hatcher.
         
         - renamed inert() operation on HashSet, HashCountedSet and HashTable to add()

@@ -55,41 +55,41 @@ namespace KXMLCore {
 
 #endif
 
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     class HashTable;
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     class HashTableIterator;
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     class HashTableConstIterator;
 
 #if CHECK_HASHTABLE_ITERATORS
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
-    void addIterator(const HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>*,
-        HashTableConstIterator<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>*);
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    void addIterator(const HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>*,
+        HashTableConstIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>*);
 
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
-    void removeIterator(HashTableConstIterator<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>*);
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    void removeIterator(HashTableConstIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>*);
 #else
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
-    inline void addIterator(const HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>*,
-        HashTableConstIterator<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>*) { }
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    inline void addIterator(const HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>*,
+        HashTableConstIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>*) { }
 
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
-    inline void removeIterator(HashTableConstIterator<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>*) { }
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    inline void removeIterator(HashTableConstIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>*) { }
 #endif
 
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     class HashTableConstIterator {
     private:
-        typedef HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits> HashTableType;
-        typedef HashTableIterator<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits> iterator;
-        typedef HashTableConstIterator<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits> const_iterator;
+        typedef HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> HashTableType;
+        typedef HashTableIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> iterator;
+        typedef HashTableConstIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> const_iterator;
         typedef Value ValueType;
         typedef const ValueType& ReferenceType;
         typedef const ValueType* PointerType;
 
-        friend class HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>;
-        friend class HashTableIterator<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>;
+        friend class HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>;
+        friend class HashTableIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>;
 
         void skipEmptyBuckets()
         {
@@ -202,17 +202,17 @@ namespace KXMLCore {
 #endif
     };
 
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     class HashTableIterator {
     private:
-        typedef HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits> HashTableType;
-        typedef HashTableIterator<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits> iterator;
-        typedef HashTableConstIterator<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits> const_iterator;
+        typedef HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> HashTableType;
+        typedef HashTableIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> iterator;
+        typedef HashTableConstIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> const_iterator;
         typedef Value ValueType;
         typedef ValueType& ReferenceType;
         typedef ValueType* PointerType;
 
-        friend class HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>;
+        friend class HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>;
 
         HashTableIterator(HashTableType* table, PointerType pos, PointerType end) : m_iterator(table, pos, end) { }
 
@@ -260,11 +260,11 @@ namespace KXMLCore {
         static void translate(Value& location, const Key& key, const Value& value, unsigned) { location = value; }
     };
 
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     class HashTable {
     public:
-        typedef HashTableIterator<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits> iterator;
-        typedef HashTableConstIterator<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits> const_iterator;
+        typedef HashTableIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> iterator;
+        typedef HashTableConstIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> const_iterator;
         typedef Key KeyType;
         typedef Value ValueType;
         typedef IdentityHashTranslator<Key, Value, HashFunctions> IdentityTranslatorType;
@@ -284,7 +284,7 @@ namespace KXMLCore {
         int size() const { return m_keyCount; }
         int capacity() const { return m_tableSize; }
 
-        pair<iterator, bool> add(const ValueType& value) { return add<KeyType, ValueType, IdentityTranslatorType>(ExtractKey(value), value); }
+        pair<iterator, bool> add(const ValueType& value) { return add<KeyType, ValueType, IdentityTranslatorType>(Extractor::extract(value), value); }
 
         // A special version of add() that finds the object by hashing and comparing
         // with some other type, to avoid the cost of type conversion if the object is already
@@ -299,8 +299,8 @@ namespace KXMLCore {
         void remove(iterator);
         void clear();
 
-        static bool isEmptyBucket(const ValueType& value) { return ExtractKey(value) == KeyTraits::emptyValue(); }
-        static bool isDeletedBucket(const ValueType& value) { return ExtractKey(value) == KeyTraits::deletedValue(); }
+        static bool isEmptyBucket(const ValueType& value) { return Extractor::extract(value) == KeyTraits::emptyValue(); }
+        static bool isDeletedBucket(const ValueType& value) { return Extractor::extract(value) == KeyTraits::deletedValue(); }
         static bool isEmptyOrDeletedBucket(const ValueType& value) { return isEmptyBucket(value) || isDeletedBucket(value); }
 
     private:
@@ -363,8 +363,8 @@ namespace KXMLCore {
 #endif
     };
 
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
-    inline HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>::HashTable()
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    inline HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::HashTable()
         : m_table(0)
         , m_tableSize(0)
         , m_tableSizeMask(0)
@@ -376,9 +376,9 @@ namespace KXMLCore {
     {
     }
 
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     template<typename T, typename HashTranslator>
-    inline typename HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>::FullLookupType HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>::lookup(const T& key)
+    inline typename HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::FullLookupType HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::lookup(const T& key)
     {
         assert(m_table);
 
@@ -398,7 +398,7 @@ namespace KXMLCore {
         while (!isEmptyBucket(*(entry = table + i))) {
             if (isDeletedBucket(*entry))
                 deletedEntry = entry;
-            else if (HashTranslator::equal(ExtractKey(*entry), key))
+            else if (HashTranslator::equal(Extractor::extract(*entry), key))
                 return makeLookupResult(entry, true, h);
 #if DUMP_HASHTABLE_STATS
             ++probeCount;
@@ -413,9 +413,9 @@ namespace KXMLCore {
     }
 
 
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     template<typename T, typename Extra, typename HashTranslator>
-    inline pair<typename HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>::iterator, bool> HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>::add(const T& key, const Extra &extra)
+    inline pair<typename HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::iterator, bool> HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::add(const T& key, const Extra &extra)
     {
         invalidateIterators();
 
@@ -443,7 +443,7 @@ namespace KXMLCore {
             // FIXME: this makes an extra copy on expand. Probably not that bad since
             // expand is rare, but would be better to have a version of expand that can
             // follow a pivot entry and return the new position
-            KeyType enteredKey = ExtractKey(*entry);
+            KeyType enteredKey = Extractor::extract(*entry);
             expand();
             return std::make_pair(find(enteredKey), true);
         }
@@ -453,21 +453,21 @@ namespace KXMLCore {
         return std::make_pair(makeIterator(entry), true);
     }
 
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
-    inline void HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>::reinsert(ValueType& entry)
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    inline void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::reinsert(ValueType& entry)
     {
         assert(m_table);
-        assert(!lookup(ExtractKey(entry)).second);
-        assert(!isDeletedBucket(*(lookup(ExtractKey(entry)).first)));
+        assert(!lookup(Extractor::extract(entry)).second);
+        assert(!isDeletedBucket(*(lookup(Extractor::extract(entry)).first)));
 #if DUMP_HASHTABLE_STATS
         ++HashTableStats::numReinserts;
 #endif
 
-        Mover<ValueType, Traits::needsDestruction>::move(entry, *(lookup(ExtractKey(entry)).first));
+        Mover<ValueType, Traits::needsDestruction>::move(entry, *(lookup(Extractor::extract(entry)).first));
     }
 
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
-    inline typename HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>::iterator HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>::find(const Key& key)
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    inline typename HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::iterator HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::find(const Key& key)
     {
         if (!m_table)
             return end();
@@ -478,8 +478,8 @@ namespace KXMLCore {
         return makeIterator(result.first);
     }
 
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
-    inline typename HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>::const_iterator HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>::find(const Key& key) const
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    inline typename HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::const_iterator HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::find(const Key& key) const
     {
         if (!m_table)
             return end();
@@ -490,8 +490,8 @@ namespace KXMLCore {
         return makeConstIterator(result.first);
     }
 
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
-    inline bool HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>::contains(const KeyType& key) const
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    inline bool HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::contains(const KeyType& key) const
     {
         if (!m_table)
             return false;
@@ -499,8 +499,8 @@ namespace KXMLCore {
         return const_cast<HashTable *>(this)->lookup(key).second;
     }
 
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
-    inline void HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>::remove(ValueType* pos)
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    inline void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::remove(ValueType* pos)
     {
         invalidateIterators();
         checkTableConsistency();
@@ -519,8 +519,8 @@ namespace KXMLCore {
         checkTableConsistency();
     }
 
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
-    inline void HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>::remove(const KeyType& key)
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    inline void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::remove(const KeyType& key)
     {
         if (!m_table)
             return;
@@ -528,8 +528,8 @@ namespace KXMLCore {
         remove(find(key));
     }
 
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
-    inline void HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>::remove(iterator it)
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    inline void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::remove(iterator it)
     {
         if (it == end())
             return;
@@ -538,8 +538,8 @@ namespace KXMLCore {
     }
 
 
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
-    inline Value *HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>::allocateTable(int size)
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    inline Value *HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::allocateTable(int size)
     {
         // would use a template member function with explicit specializations here, but
         // gcc doesn't appear to support that
@@ -554,8 +554,8 @@ namespace KXMLCore {
         }
     }
 
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
-    inline void HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>::deallocateTable(ValueType *table, int size)
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    inline void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::deallocateTable(ValueType *table, int size)
     {
         if (Traits::needsDestruction) {
             for (int i = 0; i < size; ++i) {
@@ -566,8 +566,8 @@ namespace KXMLCore {
         fastFree(table);
     }
 
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
-    inline void HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>::expand()
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    inline void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::expand()
     {
         int newSize;
         if (m_tableSize == 0)
@@ -580,8 +580,8 @@ namespace KXMLCore {
         rehash(newSize);
     }
 
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
-    void HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>::rehash(int newTableSize)
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::rehash(int newTableSize)
     {
         checkTableConsistencyExceptSize();
 
@@ -609,8 +609,8 @@ namespace KXMLCore {
         checkTableConsistency();
     }
 
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
-    inline void HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>::clear()
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    inline void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::clear()
     {
         invalidateIterators();
         deallocateTable(m_table, m_tableSize);
@@ -620,8 +620,8 @@ namespace KXMLCore {
         m_keyCount = 0;
     }
 
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
-    HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>::HashTable(const HashTable& other)
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::HashTable(const HashTable& other)
         : m_table(0)
         , m_tableSize(0)
         , m_tableSizeMask(0)
@@ -638,8 +638,8 @@ namespace KXMLCore {
             add(*it);
     }
 
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
-    void HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>::swap(HashTable& other)
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::swap(HashTable& other)
     {
         invalidateIterators();
         other.invalidateIterators();
@@ -665,8 +665,8 @@ namespace KXMLCore {
         other.m_deletedCount = tmp_deletedCount;
     }
 
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
-    HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>& HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>::operator=(const HashTable& other)
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>& HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::operator=(const HashTable& other)
     {
         HashTable tmp(other);
         swap(tmp);
@@ -675,16 +675,16 @@ namespace KXMLCore {
 
 #if CHECK_HASHTABLE_CONSISTENCY
 
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
-    void HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>::checkTableConsistency() const
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::checkTableConsistency() const
     {
         checkTableConsistencyExceptSize();
         assert(!shouldExpand());
         assert(!shouldShrink());
     }
 
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
-    void HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>::checkTableConsistencyExceptSize() const
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::checkTableConsistencyExceptSize() const
     {
         if (!m_table)
             return;
@@ -701,7 +701,7 @@ namespace KXMLCore {
                 continue;
             }
 
-            const_iterator it = find(ExtractKey(*entry));
+            const_iterator it = find(Extractor::extract(*entry));
             assert(entry == it.m_position);
             ++count;
         }
@@ -717,8 +717,8 @@ namespace KXMLCore {
 
 #if CHECK_HASHTABLE_ITERATORS
 
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
-    void HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>::invalidateIterators()
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::invalidateIterators()
     {
         const_iterator* next;
         for (const_iterator* p = m_iterators; p; p = next) {
@@ -730,9 +730,9 @@ namespace KXMLCore {
         m_iterators = 0;
     }
 
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
-    void addIterator(const HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>* table,
-        HashTableConstIterator<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>* it)
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    void addIterator(const HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>* table,
+        HashTableConstIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>* it)
     {
         it->m_table = table;
         it->m_previous = 0;
@@ -751,11 +751,11 @@ namespace KXMLCore {
         }
     }
 
-    template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
-    void removeIterator(HashTableConstIterator<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>* it)
+    template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
+    void removeIterator(HashTableConstIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>* it)
     {
-        typedef HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits> HashTableType;
-        typedef HashTableConstIterator<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits> const_iterator;
+        typedef HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> HashTableType;
+        typedef HashTableConstIterator<Key, Value, Extractor, HashFunctions, Traits, KeyTraits> const_iterator;
 
         // Delete iterator from doubly-linked list of iterators.
         if (!it->m_table) {
