@@ -1,3 +1,14 @@
+2006-01-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - fixed a storage leak found by running run-webkit-tests fast --leak
+
+        * khtml/xml/dom_xmlimpl.cpp:
+        (ProcessingInstructionImpl::checkStyleSheet): Removed bogus deref call,
+        since the RefPtr handles it for us. Also deployed PassRefPtr in one place.
+        (ProcessingInstructionImpl::setStyleSheet): Removed more bogus ref/deref calls.
+
 2006-01-23  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Eric.
