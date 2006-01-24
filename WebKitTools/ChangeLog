@@ -1,5 +1,12 @@
 2006-01-23  Darin Adler  <darin@apple.com>
 
+         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3608
+           need script to update localizable strings file in WebKit
+
+        * Scripts/update-webkit-localizable-strings: Added.
+
+2006-01-23  Darin Adler  <darin@apple.com>
+
         - added a couple of scripts -- more about these two soon
 
         * Scripts/extract-localizable-strings: Added.
