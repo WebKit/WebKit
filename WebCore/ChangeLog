@@ -1,5 +1,21 @@
 2006-01-23  Maciej Stachowiak  <mjs@apple.com>
 
+        Rubber stamped by Eric.
+
+        - Made some functions return const AtomicString& instead of
+        AtomicString because they could. 
+        
+        Result of Darin's and Eric's comments on the last patch.
+
+        * khtml/html/HTMLGenericFormElementImpl.cpp:
+        (WebCore::HTMLGenericFormElementImpl::name):
+        * khtml/html/HTMLGenericFormElementImpl.h:
+        * khtml/html/HTMLInputElementImpl.cpp:
+        (WebCore::HTMLInputElementImpl::name):
+        * khtml/html/HTMLInputElementImpl.h:
+
+2006-01-23  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Eric.
 
         - renamed PointerHash to PtrHash

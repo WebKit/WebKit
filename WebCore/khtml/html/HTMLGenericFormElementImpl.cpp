@@ -145,9 +145,9 @@ HTMLFormElementImpl* HTMLGenericFormElementImpl::getForm() const
     return 0;
 }
 
-AtomicString HTMLGenericFormElementImpl::name() const
+const AtomicString& HTMLGenericFormElementImpl::name() const
 {
-    AtomicString n = getAttribute(nameAttr);
+    const AtomicString& n = getAttribute(nameAttr);
     return n.isNull() ? emptyAtom : n;
 }
 

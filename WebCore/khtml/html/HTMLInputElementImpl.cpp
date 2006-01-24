@@ -94,7 +94,7 @@ HTMLInputElementImpl::~HTMLInputElementImpl()
     delete m_imageLoader;
 }
 
-AtomicString HTMLInputElementImpl::name() const
+const AtomicString& HTMLInputElementImpl::name() const
 {
     return m_name.isNull() ? emptyAtom : m_name;
 }
