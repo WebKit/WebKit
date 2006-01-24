@@ -169,7 +169,7 @@ namespace WebCore
     protected:
         void setSize(int size);
 
-        HashSet<CachedObjectClient*, PointerHash<CachedObjectClient*> > m_clients;
+        HashSet<CachedObjectClient*> m_clients;
 
         DOMString m_url;
         QString m_accept;

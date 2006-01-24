@@ -1,3 +1,87 @@
+2006-01-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - renamed PointerHash to PtrHash
+        - made PtrHash the default hash function for int and pointer types that aren't further specialized
+        - added an AtomicStringImpl class to make it easier and more typesafe to identity hash atomic strings
+        - did appropriate consequent cleanup (very few places now need to declare a hash function)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6752
+        
+        * bindings/objc/DOM.mm:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge elementWithName:inForm:]):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSRuleSet::getIDRules):
+        (WebCore::CSSRuleSet::getClassRules):
+        (WebCore::CSSRuleSet::getTagRules):
+        (WebCore::CSSRuleSet::addToRuleSet):
+        * khtml/dom/dom_string.h:
+        (KXMLCore::):
+        * khtml/ecma/kjs_binding.cpp:
+        (KJS::UString::UString):
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNode::mark):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::KJS::HTMLElement::classInfo):
+        (KJS::HTMLElement::accessors):
+        (KJS::HTMLElement::selectSetter):
+        (KJS::HTMLElement::inputSetter):
+        (KJS::HTMLElement::textAreaSetter):
+        (KJS::HTMLElement::buttonSetter):
+        * khtml/ecma/kjs_window.h:
+        * khtml/editing/apply_style_command.cpp:
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        * khtml/html/HTMLCollectionImpl.h:
+        * khtml/html/HTMLElementImpl.cpp:
+        (WebCore::HTMLElementImpl::isRecognizedTagName):
+        (WebCore::inlineTagList):
+        (WebCore::blockTagList):
+        * khtml/html/HTMLFormCollectionImpl.cpp:
+        (WebCore::HTMLFormCollectionImpl::updateNameCache):
+        * khtml/html/HTMLGenericFormElementImpl.cpp:
+        (WebCore::HTMLGenericFormElementImpl::name):
+        (WebCore::HTMLGenericFormElementImpl::setName):
+        * khtml/html/HTMLGenericFormElementImpl.h:
+        * khtml/html/HTMLInputElementImpl.cpp:
+        (WebCore::HTMLInputElementImpl::name):
+        * khtml/html/HTMLInputElementImpl.h:
+        * khtml/html/htmlfactory.cpp:
+        (DOM::HTMLElementFactory::createHTMLElement):
+        * khtml/html/htmlparser.cpp:
+        (HTMLParser::isHeaderTag):
+        (HTMLParser::isResidualStyleTag):
+        (HTMLParser::isAffectedByResidualStyle):
+        * khtml/xml/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::checkedRadioButtonForGroup):
+        (WebCore::DocumentImpl::removeRadioButtonGroup):
+        * khtml/xml/DocumentImpl.h:
+        * khtml/xml/NodeImpl.h:
+        * khtml/xml/dom_atomicstring.h:
+        (DOM::AtomicString::AtomicString):
+        (DOM::AtomicString::impl):
+        (KXMLCore::):
+        * khtml/xml/dom_stringimpl.cpp:
+        (DOM::equal):
+        * khtml/xml/dom_stringimpl.h:
+        (KXMLCore::):
+        * khtml/xml/xml_tokenizer.h:
+        * ksvg2/misc/KSVGTimeScheduler.cpp:
+        (KSVG::SVGTimer::notifyAll):
+        * kwq/KWQKJobClasses.h:
+        * kwq/KWQObject.cpp:
+        * loader/CachedObject.h:
+        * loader/CachedObjectClientWalker.h:
+        * loader/loader.h:
+        * page/Frame.cpp:
+        (Frame::endAllLifeSupport):
+        * rendering/render_canvas.cpp:
+        (RenderCanvas::selectionRect):
+        (RenderCanvas::setSelection):
+        * rendering/render_canvas.h:
+        * rendering/render_object.h:
+        * xml/xmlhttprequest.h:
+
 2006-01-23 Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

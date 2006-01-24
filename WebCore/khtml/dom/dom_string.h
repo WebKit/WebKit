@@ -154,12 +154,16 @@ inline bool operator!=(const QString& b, const DOMString& a ) { return !(a == b)
 
 namespace KXMLCore {
 
-    template<> struct DefaultHash<WebCore::DOMString> {
+    template<> struct StrHash<WebCore::DOMString> {
         static unsigned hash(const WebCore::DOMString& key) { return key.impl()->hash(); }
         static bool equal(const WebCore::DOMString& a, const WebCore::DOMString& b)
-            { return DefaultHash<WebCore::DOMStringImpl*>::equal(a.impl(), b.impl()); }
+            { return StrHash<WebCore::DOMStringImpl*>::equal(a.impl(), b.impl()); }
     };
     
+    template<> struct DefaultHash<WebCore::DOMString> {
+        typedef StrHash<WebCore::DOMString> Hash;
+    };
+
     template<> struct HashTraits<WebCore::DOMString> {
         typedef WebCore::DOMString TraitType;
         static const bool emptyValueIsZero = true;

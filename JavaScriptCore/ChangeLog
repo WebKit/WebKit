@@ -1,5 +1,36 @@
 2006-01-23  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Eric.
+
+        - renamed PointerHash to PtrHash
+        - made PtrHash the default hash function for int and pointer types that aren't further specialized
+        - added an AtomicStringImpl class to make it easier and more typesafe to identity hash atomic strings
+        - did appropriate consequent cleanup (very few places now need to declare a hash function)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6752
+        
+        * kjs/array_object.cpp:
+        (ArrayProtoFunc::callAsFunction): no need to mention PointerHash
+        * kjs/collector.cpp: ditto
+        * kjs/identifier.cpp:
+        (KXMLCore::): declare DefaultHash the new way
+        * kjs/internal.cpp: no need to mention PointerHash
+        * kjs/ustring.h:
+        * kxmlcore/HashCountedSet.h: change how we get the default hash to make it
+        easier to specialize on PtrHash
+        * kxmlcore/HashFunctions.h:
+        (KXMLCore::): renamed PointerHash to PtrHash; changed DefaultHash so that it has
+        a Hash typedef rather than being a hash function class itself; declared DefaultHash
+        for int and partializy specialized for pointer types
+        * kxmlcore/HashMapPtrSpec.h:
+        (KXMLCore::PtrHashIteratorAdapter::PtrHashIteratorAdapter): Slight tweaks for new
+        way of handling pointer hash
+        (KXMLCore::PtrHashConstIteratorAdapter::PtrHashConstIteratorAdapter): ditto
+        (KXMLCore::): ditto
+        * kxmlcore/HashMap.h: ditto
+        * kxmlcore/HashSet.h: ditto
+
+2006-01-23  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Tim Omernick.
         
         - use classes instead of free functions for extractors, this better matches how other

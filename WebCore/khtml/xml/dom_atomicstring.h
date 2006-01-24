@@ -27,6 +27,10 @@
 
 namespace DOM {
 
+class AtomicStringImpl : public DOMStringImpl
+{
+};
+
 class AtomicString {
 public:
     static void init();
@@ -37,13 +41,14 @@ public:
     AtomicString(const unsigned short* s, int length) : m_string(add((QChar*)s, length)) { }
     AtomicString(const QString& s) : m_string(add(s.unicode(), s.length())) { }
     AtomicString(DOMStringImpl* imp) : m_string(add(imp)) { }
+    AtomicString(AtomicStringImpl* imp) : m_string(imp) { }
     explicit AtomicString(const DOMString &s) : m_string(add(s.impl())) { }
     
     operator const DOMString&() const { return m_string; }
     const DOMString& domString() const { return m_string; };
     QString qstring() const { return m_string.qstring(); };
     
-    DOMStringImpl* impl() const { return m_string.impl(); }
+    AtomicStringImpl* impl() const { return static_cast<AtomicStringImpl *>(m_string.impl()); }
     
     const QChar *unicode() const { return m_string.unicode(); }
     uint length() const { return m_string.length(); }
@@ -82,17 +87,6 @@ private:
     static DOMStringImpl *add(const char *);
     static DOMStringImpl *add(const QChar *, int length);
     static DOMStringImpl *add(DOMStringImpl *);
-    
-    static void insert(DOMStringImpl *);
-    
-    static void rehash(int newTableSize);
-    static void expand();
-    static void shrink();
-    
-    static DOMStringImpl **_table;
-    static int _tableSize;
-    static int _tableSizeMask;
-    static int _keyCount;
 };
 
 inline bool operator==(const AtomicString& a, const AtomicString& b) { return a.impl() == b.impl(); }
@@ -122,6 +116,14 @@ inline bool equalIgnoringCase(const DOMString& a, const AtomicString& b) { retur
     extern const AtomicString starAtom;
 #endif
 
+}
+namespace KXMLCore {
+
+    template<typename T> class StrHash;
+
+    template<> struct StrHash<DOM::AtomicStringImpl*> : public StrHash<DOM::DOMStringImpl*>
+    {
+    };
 }
 
 #endif

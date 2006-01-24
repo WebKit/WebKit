@@ -425,7 +425,7 @@ void Parser::accept(ProgramNode *prog)
 
 InterpreterImp* InterpreterImp::s_hook = 0L;
 
-typedef HashMap<JSObject *, InterpreterImp *, PointerHash<JSObject *> > InterpreterMap;
+typedef HashMap<JSObject *, InterpreterImp *> InterpreterMap;
 
 static inline InterpreterMap &interpreterMap()
 {

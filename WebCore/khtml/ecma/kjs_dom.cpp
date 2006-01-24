@@ -130,7 +130,7 @@ void DOMNode::mark()
     root = current;
   }
 
-  static HashSet<NodeImpl*, PointerHash<NodeImpl*> > markingRoots;
+  static HashSet<NodeImpl*> markingRoots;
 
   // If we're already marking this tree, then we can simply mark this wrapper
   // by calling the base class; our caller is iterating the tree.

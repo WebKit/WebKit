@@ -2995,16 +2995,15 @@ void Frame::disconnectChild(const ChildFrame *child) const
 }
 
 #ifndef NDEBUG
-typedef HashSet<Frame *, PointerHash<Frame *> > FrameSet;
-static FrameSet lifeSupportSet;
+static HashSet<Frame*> lifeSupportSet;
 #endif
 
 void Frame::endAllLifeSupport()
 {
 #ifndef NDEBUG
-    FrameSet lifeSupportCopy = lifeSupportSet;
-    FrameSet::iterator end = lifeSupportCopy.end();
-    for (FrameSet::iterator it = lifeSupportCopy.begin(); it != end; ++it)
+    HashSet<Frame*> lifeSupportCopy = lifeSupportSet;
+    HashSet<Frame*>::iterator end = lifeSupportCopy.end();
+    for (HashSet<Frame*>::iterator it = lifeSupportCopy.begin(); it != end; ++it)
         (*it)->slotEndLifeSupport();
 #endif
 }

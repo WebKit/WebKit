@@ -96,8 +96,8 @@ namespace WebCore {
 
     void changeState(XMLHttpRequestState newState);
 
-    typedef HashSet<XMLHttpRequest*, PointerHash<XMLHttpRequest*> > RequestsSet;
-    typedef HashMap<DocumentImpl*, RequestsSet*, PointerHash<DocumentImpl*> > RequestsMap;
+    typedef HashSet<XMLHttpRequest*> RequestsSet;
+    typedef HashMap<DocumentImpl*, RequestsSet*> RequestsMap;
     static RequestsMap &requestsByDocument();
     void addToRequestsByDocument();
     void removeFromRequestsByDocument();

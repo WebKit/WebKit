@@ -395,7 +395,7 @@ void Collector::markStackObjectsConservatively()
 #endif
 }
 
-typedef HashCountedSet<JSCell *, PointerHash<JSCell *> > ProtectCounts;
+typedef HashCountedSet<JSCell *> ProtectCounts;
 
 static ProtectCounts& protectedValues()
 {

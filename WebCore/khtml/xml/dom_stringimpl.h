@@ -131,8 +131,9 @@ bool equalIgnoringCase(const char*, const DOMStringImpl*);
 namespace KXMLCore {
 
     template<typename T> class DefaultHash;
+    template<typename T> class StrHash;
 
-    template<> struct DefaultHash<DOM::DOMStringImpl *> {
+    template<> struct StrHash<DOM::DOMStringImpl *> {
         static unsigned hash(const DOM::DOMStringImpl *key) { return key->hash(); }
         static bool equal(const DOM::DOMStringImpl *a, const DOM::DOMStringImpl *b)
         {
@@ -271,16 +272,24 @@ namespace KXMLCore {
         }
     };
 
-    template<> struct DefaultHash<RefPtr<DOM::DOMStringImpl> > {
+    template<> struct StrHash<RefPtr<DOM::DOMStringImpl> > {
         static unsigned hash(const RefPtr<DOM::DOMStringImpl>& key) 
         { 
-            return DefaultHash<DOM::DOMStringImpl *>::hash(key.get());
+            return StrHash<DOM::DOMStringImpl *>::hash(key.get());
         }
 
         static bool equal(const RefPtr<DOM::DOMStringImpl>& a, const RefPtr<DOM::DOMStringImpl>& b)
         {
-            return DefaultHash<DOM::DOMStringImpl *>::equal(a.get(), b.get());
+            return StrHash<DOM::DOMStringImpl *>::equal(a.get(), b.get());
         }
+    };
+
+    template<> struct DefaultHash<DOM::DOMStringImpl*> {
+        typedef StrHash<DOM::DOMStringImpl*> Hash;
+    };
+
+    template<> struct DefaultHash<RefPtr<DOM::DOMStringImpl> > {
+        typedef StrHash<RefPtr<DOM::DOMStringImpl> > Hash;
     };
     
     template <typename T> class HashTraits;

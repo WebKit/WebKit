@@ -226,7 +226,7 @@ void HTMLFormCollectionImpl::updateNameCache() const
     if (info->hasNameCache)
         return;
 
-    HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> > foundInputElements;
+    HashSet<AtomicStringImpl*> foundInputElements;
 
     if (!m_base->hasTagName(formTag)) {
         info->hasNameCache = true;

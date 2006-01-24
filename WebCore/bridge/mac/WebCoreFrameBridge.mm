@@ -1166,7 +1166,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     HTMLFormElementImpl *formElement = formElementFromDOMElement(form);
     if (formElement) {
         QPtrVector<HTMLGenericFormElementImpl> &elements = formElement->formElements;
-        QString targetName = QString::fromNSString(name);
+        AtomicString targetName = name;
         for (unsigned int i = 0; i < elements.count(); i++) {
             HTMLGenericFormElementImpl *elt = elements.at(i);
             // Skip option elements, other duds

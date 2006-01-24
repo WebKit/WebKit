@@ -33,7 +33,7 @@ namespace WebCore {
 
     class CachedObjectClient;
 
-    typedef HashSet<CachedObjectClient*, PointerHash<CachedObjectClient*> > CachedObjectClientSet;
+    typedef HashSet<CachedObjectClient*> CachedObjectClientSet;
 
     // Call this "walker" instead of iterator so people won't expect Qt or STL-style iterator interface.
     // Just keep calling next() on this. It's safe from deletions of items.

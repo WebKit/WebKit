@@ -88,7 +88,7 @@ namespace WebCore
         virtual bool isKHTMLLoader() const;
 
         QPtrList<Request> m_requestsPending;
-        typedef HashMap<KIO::Job*, Request*, PointerHash<KIO::Job*> > RequestMap;
+        typedef HashMap<KIO::Job*, Request*> RequestMap;
         RequestMap m_requestsLoading;
 
         QPtrList<Request> m_requestsBackgroundDecoding;

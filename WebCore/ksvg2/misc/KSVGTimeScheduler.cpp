@@ -132,7 +132,7 @@ void SVGTimer::notifyAll()
     // First build a list of animation elements per target element
     // This is important to decide about the order & priority of 
     // the animations -> 'additive' support is handled this way.
-    typedef HashMap<SVGElementImpl*, Q3PtrList<SVGAnimationElementImpl>, PointerHash<SVGElementImpl*> > TargetAnimationMap;
+    typedef HashMap<SVGElementImpl*, Q3PtrList<SVGAnimationElementImpl> > TargetAnimationMap;
     TargetAnimationMap targetMap;
     
     for(unsigned int i = m_notifyList.count(); i > 0; i--)

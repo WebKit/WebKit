@@ -646,7 +646,7 @@ protected:
     
     RenderArena* m_renderArena;
 
-    typedef HashMap<NodeImpl*, QValueList<DocumentMarker>*, PointerHash<NodeImpl*> > MarkerMap;
+    typedef HashMap<NodeImpl*, QValueList<DocumentMarker>*> MarkerMap;
     MarkerMap m_markers;
 
     KWQAccObjectCache* m_accCache;
@@ -670,12 +670,12 @@ protected:
     XBL::XBLBindingManager* m_bindingManager; // The access point through which documents and elements communicate with XBL.
 #endif
     
-    typedef HashMap<DOMStringImpl*, HTMLMapElementImpl*, PointerHash<DOMStringImpl*> > ImageMapsByName;
+    typedef HashMap<AtomicStringImpl*, HTMLMapElementImpl*> ImageMapsByName;
     ImageMapsByName m_imageMapsByName;
 
     DOMString m_policyBaseURL;
 
-    typedef HashSet<NodeImpl*, PointerHash<NodeImpl*> > NodeSet;
+    typedef HashSet<NodeImpl*> NodeSet;
     NodeSet m_disconnectedNodesWithEventListeners;
 
     int m_docID; // A unique document identifier used for things like document-specific mapped attributes.
@@ -716,8 +716,8 @@ public:
     void unregisterDisconnectedNodeWithEventListeners(NodeImpl*);
     
     void radioButtonChecked(HTMLInputElementImpl *caller, HTMLFormElementImpl *form);
-    HTMLInputElementImpl* checkedRadioButtonForGroup(DOMStringImpl* name, HTMLFormElementImpl *form);
-    void removeRadioButtonGroup(DOMStringImpl* name, HTMLFormElementImpl *form);
+    HTMLInputElementImpl* checkedRadioButtonForGroup(AtomicStringImpl* name, HTMLFormElementImpl *form);
+    void removeRadioButtonGroup(AtomicStringImpl* name, HTMLFormElementImpl *form);
     
 #if SVG_SUPPORT
     const SVGDocumentExtensions* svgExtensions();
@@ -741,16 +741,16 @@ private:
     
     RefPtr<Decoder> m_decoder;
 
-    mutable HashMap<DOMStringImpl*, ElementImpl*, PointerHash<DOMStringImpl*> > m_elementsById;
-    mutable HashCountedSet<DOMStringImpl*, PointerHash<DOMStringImpl*> > m_duplicateIds;
+    mutable HashMap<AtomicStringImpl*, ElementImpl*> m_elementsById;
+    mutable HashCountedSet<AtomicStringImpl*> m_duplicateIds;
     
     HashMap<DOMStringImpl*, ElementImpl*, CaseInsensitiveHash> m_elementsByAccessKey;
     
     InheritedBool m_designMode;
     
     int m_selfOnlyRefCount;
-    typedef HashMap<DOMStringImpl*, HTMLInputElementImpl*, PointerHash<DOMStringImpl*> > NameToInputMap;
-    typedef HashMap<HTMLFormElementImpl*, NameToInputMap*, PointerHash<HTMLFormElementImpl*> > FormToGroupMap;
+    typedef HashMap<AtomicStringImpl*, HTMLInputElementImpl*> NameToInputMap;
+    typedef HashMap<HTMLFormElementImpl*, NameToInputMap*> FormToGroupMap;
     FormToGroupMap m_selectedRadioButtons;
     
 #if SVG_SUPPORT

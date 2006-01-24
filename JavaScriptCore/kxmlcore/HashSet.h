@@ -57,7 +57,7 @@ namespace KXMLCore {
         }
     };
     
-    template<typename Value, typename HashFunctions = DefaultHash<Value>, typename Traits = HashTraits<Value> >
+    template<typename Value, typename HashFunctions = typename DefaultHash<Value>::Hash, typename Traits = HashTraits<Value> >
     class HashSet {
     private:
         typedef HashTable<Value, Value, IdentityExtractor<Value>, HashFunctions, Traits, Traits> ImplType;

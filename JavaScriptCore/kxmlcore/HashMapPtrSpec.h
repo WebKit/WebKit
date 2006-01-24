@@ -31,22 +31,26 @@
 
 namespace KXMLCore {
 
+    struct VoidPtrHash : public PtrHash<void *>
+    {
+    };
+
     template<typename P, typename Mapped>
-    class PointerHashIteratorAdapter {
+    class PtrHashIteratorAdapter {
     private:
-        typedef HashMap<P *, Mapped, PointerHash<P *>, HashTraits<P *>, HashTraits<Mapped> > MapType;
+        typedef HashMap<P *, Mapped, PtrHash<P *>, HashTraits<P *>, HashTraits<Mapped> > MapType;
         typedef typename MapType::ValueType ValueType;
         typedef typename MapType::ImplValueType ImplValueType;
-        typedef typename HashMap<P *, Mapped, PointerHash<P *>, HashTraits<P *>, HashTraits<Mapped> >::ImplIterator ImplIterator;
-        typedef PointerHashIteratorAdapter<P, Mapped> iterator;
+        typedef typename HashMap<P *, Mapped, PtrHash<P *>, HashTraits<P *>, HashTraits<Mapped> >::ImplIterator ImplIterator;
+        typedef PtrHashIteratorAdapter<P, Mapped> iterator;
         typedef ValueType& ReferenceType;
         typedef ValueType *PointerType;
         
-        friend class HashMap<P *, Mapped, PointerHash<P *>, HashTraits<P *>, HashTraits<Mapped> >;
+        friend class HashMap<P *, Mapped, PtrHash<P *>, HashTraits<P *>, HashTraits<Mapped> >;
         
     public:
-        PointerHashIteratorAdapter() {}
-        PointerHashIteratorAdapter(const ImplIterator &impl) : m_impl(impl) {}
+        PtrHashIteratorAdapter() {}
+        PtrHashIteratorAdapter(const ImplIterator &impl) : m_impl(impl) {}
         
         // default copy, assignment and destructor are ok
         
@@ -77,24 +81,24 @@ namespace KXMLCore {
     };
 
     template<typename P, typename Mapped>
-    class PointerHashConstIteratorAdapter {
+    class PtrHashConstIteratorAdapter {
     private:
-        typedef HashMap<P *, Mapped, PointerHash<P *>, HashTraits<P *>, HashTraits<Mapped> > MapType;
+        typedef HashMap<P *, Mapped, PtrHash<P *>, HashTraits<P *>, HashTraits<Mapped> > MapType;
         typedef typename MapType::ValueType ValueType;
         typedef typename MapType::ImplValueType ImplValueType;
         typedef typename MapType::ImplIterator ImplIterator;
         typedef typename MapType::ImplConstIterator ImplConstIterator;
-        typedef PointerHashIteratorAdapter<P, Mapped> iterator;
-        typedef PointerHashConstIteratorAdapter<P, Mapped> const_iterator;
+        typedef PtrHashIteratorAdapter<P, Mapped> iterator;
+        typedef PtrHashConstIteratorAdapter<P, Mapped> const_iterator;
         typedef const ValueType& ReferenceType;
         typedef const ValueType *PointerType;
         
-        friend class HashMap<P *, Mapped, PointerHash<P *>, HashTraits<P *>, HashTraits<Mapped> >;
+        friend class HashMap<P *, Mapped, PtrHash<P *>, HashTraits<P *>, HashTraits<Mapped> >;
         
     public:
-        PointerHashConstIteratorAdapter() {}
-        PointerHashConstIteratorAdapter(const ImplConstIterator &impl) : m_impl(impl) {}
-        PointerHashConstIteratorAdapter(const iterator &other) : m_impl(other.m_impl) { }
+        PtrHashConstIteratorAdapter() {}
+        PtrHashConstIteratorAdapter(const ImplConstIterator &impl) : m_impl(impl) {}
+        PtrHashConstIteratorAdapter(const iterator &other) : m_impl(other.m_impl) { }
         
         // default copy, assignment and destructor are ok
         
@@ -125,20 +129,20 @@ namespace KXMLCore {
     };
 
     template<typename P, typename Mapped>
-    class HashMap<P *, Mapped, PointerHash<P *>, HashTraits<P *>, HashTraits<Mapped> > {
+    class HashMap<P *, Mapped, PtrHash<P *>, HashTraits<P *>, HashTraits<Mapped> > {
     public:
         typedef P *KeyType;
         typedef Mapped MappedType;
         typedef std::pair<KeyType, Mapped> ValueType;
     private:
         // important not to use pointerHash/pointerEqual here or instantiation would recurse
-        typedef HashMap<void *, MappedType, DefaultHash<void *>, HashTraits<void *>, HashTraits<Mapped> > ImplType;
+        typedef HashMap<void *, MappedType, VoidPtrHash, HashTraits<void *>, HashTraits<Mapped> > ImplType;
     public:
         typedef typename ImplType::ValueType ImplValueType;
         typedef typename ImplType::iterator ImplIterator;
         typedef typename ImplType::const_iterator ImplConstIterator;
-        typedef PointerHashIteratorAdapter<P, Mapped> iterator;
-        typedef PointerHashConstIteratorAdapter<P, Mapped> const_iterator;
+        typedef PtrHashIteratorAdapter<P, Mapped> iterator;
+        typedef PtrHashConstIteratorAdapter<P, Mapped> const_iterator;
         
         HashMap() {}
         
@@ -171,20 +175,20 @@ namespace KXMLCore {
     };
     
     template<typename P, typename Q>
-    class HashMap<P *, Q *, PointerHash<P *>, HashTraits<P *>, HashTraits<Q *> > {
+    class HashMap<P *, Q *, PtrHash<P *>, HashTraits<P *>, HashTraits<Q *> > {
     private:
-        // important not to use PointerHash here or instantiation would recurse
-        typedef HashMap<void *, void *, DefaultHash<void *>, HashTraits<void *>, HashTraits<void *> > ImplMapType;
+        // important not to use PtrHash here or instantiation would recurse
+        typedef HashMap<void *, void *, VoidPtrHash, HashTraits<void *>, HashTraits<void *> > ImplMapType;
     public:
         typedef P *KeyType;
         typedef Q *MappedType;
         typedef std::pair<KeyType, MappedType> ValueType;
         typedef typename std::pair<void *, void *> ImplValueType;
-        typedef HashTableIterator<void *, ImplValueType, PairFirstExtractor<void *, void*>, DefaultHash<void *>, PairHashTraits<HashTraits<void *>, HashTraits<void *> >, HashTraits<void *> > ImplIterator;
-        typedef HashTableConstIterator<void *, ImplValueType, PairFirstExtractor<void *, void*>, DefaultHash<void *>, PairHashTraits<HashTraits<void *>, HashTraits<void *> >, HashTraits<void *> > ImplConstIterator;
+        typedef HashTableIterator<void *, ImplValueType, PairFirstExtractor<void *, void*>, VoidPtrHash, PairHashTraits<HashTraits<void *>, HashTraits<void *> >, HashTraits<void *> > ImplIterator;
+        typedef HashTableConstIterator<void *, ImplValueType, PairFirstExtractor<void *, void*>, VoidPtrHash, PairHashTraits<HashTraits<void *>, HashTraits<void *> >, HashTraits<void *> > ImplConstIterator;
         
-        typedef PointerHashIteratorAdapter<P, Q *> iterator;
-        typedef PointerHashConstIteratorAdapter<P, Q *> const_iterator;
+        typedef PtrHashIteratorAdapter<P, Q *> iterator;
+        typedef PtrHashConstIteratorAdapter<P, Q *> const_iterator;
         
         HashMap() {}
         

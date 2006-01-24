@@ -28,7 +28,7 @@
 
 namespace KXMLCore {
 
-    template<typename Value, typename HashFunctions = DefaultHash<Value>, typename Traits = HashTraits<Value> >
+    template<typename Value, typename HashFunctions = typename DefaultHash<Value>::Hash, typename Traits = HashTraits<Value> >
     class HashCountedSet {
     private:
         typedef HashMap<Value, unsigned, HashFunctions, Traits> ImplType;

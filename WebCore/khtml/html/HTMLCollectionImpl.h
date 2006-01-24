@@ -34,8 +34,8 @@ namespace WebCore {
 
 class NodeImpl;
 class DOMString;
-class DOMStringImpl;
 class AtomicString;
+class AtomicStringImpl;
 
 class HTMLCollectionImpl : public Shared<HTMLCollectionImpl>
 {
@@ -94,8 +94,8 @@ public:
         unsigned int position;
         unsigned int length;
         int elementsArrayPosition;
-        HashMap<DOMStringImpl*, QPtrVector<NodeImpl>*, PointerHash<DOMStringImpl*> > idCache;
-        HashMap<DOMStringImpl*, QPtrVector<NodeImpl>*, PointerHash<DOMStringImpl*> > nameCache;
+        HashMap<AtomicStringImpl*, QPtrVector<NodeImpl>*> idCache;
+        HashMap<AtomicStringImpl*, QPtrVector<NodeImpl>*> nameCache;
         bool haslength;
         bool hasNameCache;
      };

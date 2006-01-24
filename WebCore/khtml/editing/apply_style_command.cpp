@@ -454,7 +454,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(CSSMutableStyleDeclarationI
 
     // Store away font size before making any changes to the document.
     // This ensures that changes to one node won't effect another.
-    HashMap<NodeImpl*, float, PointerHash<NodeImpl*> > startingFontSizes;
+    HashMap<NodeImpl*, float> startingFontSizes;
     for (NodeImpl *node = startNode; node != beyondEnd; node = node->traverseNextNode())
         startingFontSizes.set(node, computedFontSize(node));
 

@@ -62,27 +62,31 @@ namespace KXMLCore {
         key ^= (key >> 31);
         return key;
     }
-    
-    template<> struct DefaultHash<void *> {
-        static unsigned hash(void *key) { return pointerHash<sizeof(void *)>(key); }
-        static bool equal(void *a, void *b) { return a == b; }
-    };
-    
-    // pointer identity hash - default for void *, must be requested explicitly for other 
-    // pointer types; also should work for integer types
-    template<typename T> struct PointerHash {
+
+    // pointer identity hash - default for pointer types that don't
+    // explicitly specialize otherwise; also should work for integer
+    // types
+    template<typename T> struct PtrHash {
         static unsigned hash(T key) { return pointerHash<sizeof(void *)>((void *)key); }
         static bool equal(T a, T b) { return a == b; }
     };
 
-    template<typename P> struct PointerHash<RefPtr<P> > {
+    template<typename P> struct PtrHash<RefPtr<P> > {
         static unsigned hash(const RefPtr<P>& key) { return  pointerHash<sizeof(void *)>((void *)key.get()); }
         static bool equal(const RefPtr<P>& a, const RefPtr<P>& b) { return a == b; }
+    };
+
+    template<typename P> struct DefaultHash<P *> {
+        typedef PtrHash<P *> Hash;
+    };
+
+    template<> struct DefaultHash<int> {
+        typedef PtrHash<int> Hash;
     };
     
 } // namespace KXMLCore
 
 using KXMLCore::DefaultHash;
-using KXMLCore::PointerHash;
+using KXMLCore::PtrHash;
 
 #endif // KXLMCORE_HASH_FUNCTIONS_H

@@ -59,9 +59,9 @@ UString DOMObject::toString(ExecState *) const
   return "[object " + className() + "]";
 }
 
-typedef HashMap<void *, DOMObject *> DOMObjectMap;
-typedef HashMap<NodeImpl *, DOMNode *, PointerHash<NodeImpl *> > NodeMap;
-typedef HashMap<DocumentImpl *, NodeMap *, PointerHash<DocumentImpl *> > NodePerDocMap;
+typedef HashMap<void*, DOMObject*> DOMObjectMap;
+typedef HashMap<NodeImpl*, DOMNode*> NodeMap;
+typedef HashMap<DocumentImpl*, NodeMap*> NodePerDocMap;
 
 static DOMObjectMap *domObjects()
 { 
@@ -276,6 +276,17 @@ UString::UString(const DOMString &d)
   // reinterpret_cast is ugly but in this case safe, since QChar and UChar have the same
   // memory layout
   m_rep = UString::Rep::createCopying(reinterpret_cast<const UChar *>(d.unicode()), d.length());
+}
+
+UString::UString(const AtomicString &d)
+{
+  if (d.isNull()) {
+    m_rep = &Rep::null;
+    return;
+  }
+  // reinterpret_cast is ugly but in this case safe, since QChar and UChar have the same
+  // memory layout
+  m_rep = UString::Rep::createCopying(reinterpret_cast<const UChar *>(d.domString().unicode()), d.domString().length());
 }
 
 DOMString UString::domString() const

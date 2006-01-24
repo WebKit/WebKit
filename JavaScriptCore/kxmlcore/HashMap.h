@@ -65,7 +65,7 @@ public:
 };
 
 
-template<typename Key, typename Mapped, typename HashFunctions = DefaultHash<Key>, typename KeyTraits = HashTraits<Key>, typename MappedTraits = HashTraits<Mapped> >
+template<typename Key, typename Mapped, typename HashFunctions = typename DefaultHash<Key>::Hash, typename KeyTraits = HashTraits<Key>, typename MappedTraits = HashTraits<Mapped> >
 class HashMap {
  public:
     typedef Key KeyType;

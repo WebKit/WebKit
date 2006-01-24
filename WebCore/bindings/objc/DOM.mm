@@ -94,7 +94,7 @@ private:
     id <DOMEventListener> m_listener;
 };
 
-typedef HashMap< id, ObjCEventListener *, PointerHash<id> > ListenerMap;
+typedef HashMap<id, ObjCEventListener*> ListenerMap;
 
 static ListenerMap *listenerMap;
 

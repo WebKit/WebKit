@@ -94,9 +94,9 @@ HTMLInputElementImpl::~HTMLInputElementImpl()
     delete m_imageLoader;
 }
 
-DOMString HTMLInputElementImpl::name() const
+AtomicString HTMLInputElementImpl::name() const
 {
-    return m_name.isNull() ? "" : m_name;
+    return m_name.isNull() ? emptyAtom : m_name;
 }
 
 bool HTMLInputElementImpl::isKeyboardFocusable() const

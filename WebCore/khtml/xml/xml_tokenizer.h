@@ -26,6 +26,7 @@
 
 #include <kxmlcore/HashMap.h>
 #include <qobject.h>
+#include "dom_string.h"
 
 class FrameView;
 class QTime;

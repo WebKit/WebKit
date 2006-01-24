@@ -510,7 +510,7 @@ const ClassInfo KJS::HTMLElement::marquee_info = { "HTMLMarqueeElement", &KJS::H
 
 const ClassInfo* KJS::HTMLElement::classInfo() const
 {
-    static HashMap<DOM::DOMStringImpl*, const ClassInfo*, PointerHash<DOM::DOMStringImpl*> > classInfoMap;
+    static HashMap<DOM::AtomicStringImpl*, const ClassInfo*> classInfoMap;
     if (classInfoMap.isEmpty()) {
         classInfoMap.set(aTag.localName().impl(), &a_info);
         classInfoMap.set(appletTag.localName().impl(), &applet_info);
@@ -644,7 +644,7 @@ const HTMLElement::Accessors HTMLElement::marquee_accessors = { &HTMLElement::ma
 
 const HTMLElement::Accessors* HTMLElement::accessors() const
 {
-    static HashMap<DOM::DOMStringImpl *, const Accessors *, PointerHash<DOM::DOMStringImpl *> > accessorMap;
+    static HashMap<DOM::AtomicStringImpl*, const Accessors*> accessorMap;
     if (accessorMap.isEmpty()) {
         accessorMap.add(aTag.localName().impl(), &a_accessors);
         accessorMap.add(appletTag.localName().impl(), &applet_accessors);
@@ -2612,7 +2612,7 @@ void HTMLElement::selectSetter(ExecState *exec, int token, JSValue *value, const
         // read-only: options
         case SelectDisabled:        { select.setDisabled(value->toBoolean(exec)); return; }
         case SelectMultiple:        { select.setMultiple(value->toBoolean(exec)); return; }
-        case SelectName:            { select.setName(str); return; }
+        case SelectName:            { select.setName(AtomicString(str)); return; }
         case SelectSize:            { select.setSize(value->toInt32(exec)); return; }
         case SelectTabIndex:        { select.setTabIndex(value->toInt32(exec)); return; }
     }
@@ -2658,7 +2658,7 @@ void HTMLElement::inputSetter(ExecState *exec, int token, JSValue *value, const 
         case InputDisabled:        { input.setDisabled(value->toBoolean(exec)); return; }
         case InputIndeterminate:   { input.setIndeterminate(value->toBoolean(exec)); return; }
         case InputMaxLength:       { input.setMaxLength(value->toInt32(exec)); return; }
-        case InputName:            { input.setName(str); return; }
+        case InputName:            { input.setName(AtomicString(str)); return; }
         case InputReadOnly:        { input.setReadOnly(value->toBoolean(exec)); return; }
         case InputSize:            { input.setSize(value->toInt32(exec)); return; }
         case InputSelectionStart:  { input.setSelectionStart(value->toInt32(exec)); return; }
@@ -2680,7 +2680,7 @@ void HTMLElement::textAreaSetter(ExecState *exec, int token, JSValue *value, con
         case TextAreaAccessKey:       { textarea.setAccessKey(str); return; }
         case TextAreaCols:            { textarea.setCols(value->toInt32(exec)); return; }
         case TextAreaDisabled:        { textarea.setDisabled(value->toBoolean(exec)); return; }
-        case TextAreaName:            { textarea.setName(str); return; }
+        case TextAreaName:            { textarea.setName(AtomicString(str)); return; }
         case TextAreaReadOnly:        { textarea.setReadOnly(value->toBoolean(exec)); return; }
         case TextAreaRows:            { textarea.setRows(value->toInt32(exec)); return; }
         case TextAreaSelectionStart:  { textarea.setSelectionStart(value->toInt32(exec)); return; }
@@ -2698,7 +2698,7 @@ void HTMLElement::buttonSetter(ExecState *exec, int token, JSValue *value, const
         // read-only: form
         case ButtonAccessKey:       { button.setAccessKey(str); return; }
         case ButtonDisabled:        { button.setDisabled(value->toBoolean(exec)); return; }
-        case ButtonName:            { button.setName(str); return; }
+        case ButtonName:            { button.setName(AtomicString(str)); return; }
         case ButtonTabIndex:        { button.setTabIndex(value->toInt32(exec)); return; }
         // read-only: type
         case ButtonValue:           { button.setValue(str); return; }
