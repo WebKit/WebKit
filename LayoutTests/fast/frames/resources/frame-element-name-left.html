@@ -1,0 +1,14 @@
+<head>
+<title>Left</title>
+</head>
+<body>
+<script>
+try {
+
+	document.write("window.frameElement.name='" + window.frameElement.name + "' (should be 'left')");
+
+} catch (ex) {
+	document.write('Exception: ' + ex.description);
+}
+</script>
+</body>

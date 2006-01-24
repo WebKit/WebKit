@@ -1,5 +1,15 @@
 2006-01-23  Darin Adler  <darin@apple.com>
 
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6385
+          REGRESSION: Unnamed frames return a generated name as window.frameElement.name
+
+        * fast/frames/frame-element-name.html: Added.
+        * fast/frames/frame-element-name-expected.txt: Added.
+        * fast/frames/frame-element-name-expected.png: Added.
+        * fast/frames/frame-element-name-expected.checksum: Added.
+
+2006-01-23  Darin Adler  <darin@apple.com>
+
         Suggested by Anders.
 
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6617

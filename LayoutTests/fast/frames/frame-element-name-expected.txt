@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderFrameSet {FRAMESET} at (0,0) size 800x600 [border: (1px solid #000000)]
+      RenderFrame {FRAME} at (0,0) size 500x600
+      RenderFrame {FRAME} at (501,0) size 299x600
+        layer at (0,0) size 297x596
+          RenderCanvas at (0,0) size 297x596
+        layer at (0,0) size 297x596
+          RenderBlock {HTML} at (0,0) size 297x596
+            RenderBody {BODY} at (8,8) size 281x580
+              RenderText {TEXT} at (0,0) size 267x36
+                text run at (0,0) width 267: "window.frameElement.name='' (should be"
+                text run at (0,18) width 11: "'')"
+              RenderText {TEXT} at (0,0) size 0x0
