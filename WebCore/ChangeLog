@@ -1,3 +1,14 @@
+2006-01-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6696
+          REGRESSION: JavaScript window.opener set incorrectly
+
+        * khtml/ecma/kjs_window.cpp: (KJS::WindowFunc::callAsFunction):
+        Fix local variable "frame" that was shadowing another local variable
+        named "frame" by naming the one for the new frame "newFrame".
+
 2006-01-24  Maciej Stachowiak  <mjs@apple.com>
 
         - fix build
