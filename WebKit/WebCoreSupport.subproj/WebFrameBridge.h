@@ -30,6 +30,7 @@
 
 @class WebDataSource;
 @class WebFrame;
+@class WebFrameView;
 @protocol WebOpenPanelResultListener;
 
 @interface WebFrameBridge : WebCoreFrameBridge <WebCoreFrameBridge>
