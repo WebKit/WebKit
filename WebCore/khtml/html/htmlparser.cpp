@@ -837,12 +837,12 @@ bool HTMLParser::isHeaderTag(const AtomicString& tagName)
 {
     static HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> > headerTags;
     if (headerTags.isEmpty()) {
-        headerTags.insert(h1Tag.localName().impl());
-        headerTags.insert(h2Tag.localName().impl());
-        headerTags.insert(h3Tag.localName().impl());
-        headerTags.insert(h4Tag.localName().impl());
-        headerTags.insert(h5Tag.localName().impl());
-        headerTags.insert(h6Tag.localName().impl());
+        headerTags.add(h1Tag.localName().impl());
+        headerTags.add(h2Tag.localName().impl());
+        headerTags.add(h3Tag.localName().impl());
+        headerTags.add(h4Tag.localName().impl());
+        headerTags.add(h5Tag.localName().impl());
+        headerTags.add(h6Tag.localName().impl());
     }
     
     return headerTags.contains(tagName.impl());
@@ -889,25 +889,25 @@ bool HTMLParser::isResidualStyleTag(const AtomicString& tagName)
 {
     static HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> > residualStyleTags;
     if (residualStyleTags.isEmpty()) {
-        residualStyleTags.insert(aTag.localName().impl());
-        residualStyleTags.insert(fontTag.localName().impl());
-        residualStyleTags.insert(ttTag.localName().impl());
-        residualStyleTags.insert(uTag.localName().impl());
-        residualStyleTags.insert(bTag.localName().impl());
-        residualStyleTags.insert(iTag.localName().impl());
-        residualStyleTags.insert(sTag.localName().impl());
-        residualStyleTags.insert(strikeTag.localName().impl());
-        residualStyleTags.insert(bigTag.localName().impl());
-        residualStyleTags.insert(smallTag.localName().impl());
-        residualStyleTags.insert(emTag.localName().impl());
-        residualStyleTags.insert(strongTag.localName().impl());
-        residualStyleTags.insert(dfnTag.localName().impl());
-        residualStyleTags.insert(codeTag.localName().impl());
-        residualStyleTags.insert(sampTag.localName().impl());
-        residualStyleTags.insert(kbdTag.localName().impl());
-        residualStyleTags.insert(varTag.localName().impl());
-        residualStyleTags.insert(nobrTag.localName().impl());
-        residualStyleTags.insert(wbrTag.localName().impl());
+        residualStyleTags.add(aTag.localName().impl());
+        residualStyleTags.add(fontTag.localName().impl());
+        residualStyleTags.add(ttTag.localName().impl());
+        residualStyleTags.add(uTag.localName().impl());
+        residualStyleTags.add(bTag.localName().impl());
+        residualStyleTags.add(iTag.localName().impl());
+        residualStyleTags.add(sTag.localName().impl());
+        residualStyleTags.add(strikeTag.localName().impl());
+        residualStyleTags.add(bigTag.localName().impl());
+        residualStyleTags.add(smallTag.localName().impl());
+        residualStyleTags.add(emTag.localName().impl());
+        residualStyleTags.add(strongTag.localName().impl());
+        residualStyleTags.add(dfnTag.localName().impl());
+        residualStyleTags.add(codeTag.localName().impl());
+        residualStyleTags.add(sampTag.localName().impl());
+        residualStyleTags.add(kbdTag.localName().impl());
+        residualStyleTags.add(varTag.localName().impl());
+        residualStyleTags.add(nobrTag.localName().impl());
+        residualStyleTags.add(wbrTag.localName().impl());
     }
     
     return residualStyleTags.contains(tagName.impl());
@@ -920,24 +920,24 @@ bool HTMLParser::isAffectedByResidualStyle(const AtomicString& tagName)
 
     static HashSet<DOMStringImpl*, PointerHash<DOMStringImpl*> > affectedBlockTags;
     if (affectedBlockTags.isEmpty()) {
-        affectedBlockTags.insert(h1Tag.localName().impl());
-        affectedBlockTags.insert(h2Tag.localName().impl());
-        affectedBlockTags.insert(h3Tag.localName().impl());
-        affectedBlockTags.insert(h4Tag.localName().impl());
-        affectedBlockTags.insert(h5Tag.localName().impl());
-        affectedBlockTags.insert(h6Tag.localName().impl());
-        affectedBlockTags.insert(pTag.localName().impl());
-        affectedBlockTags.insert(divTag.localName().impl());
-        affectedBlockTags.insert(blockquoteTag.localName().impl());
-        affectedBlockTags.insert(addressTag.localName().impl());
-        affectedBlockTags.insert(centerTag.localName().impl());
-        affectedBlockTags.insert(ulTag.localName().impl());
-        affectedBlockTags.insert(olTag.localName().impl());
-        affectedBlockTags.insert(liTag.localName().impl());
-        affectedBlockTags.insert(dlTag.localName().impl());
-        affectedBlockTags.insert(dtTag.localName().impl());
-        affectedBlockTags.insert(ddTag.localName().impl());
-        affectedBlockTags.insert(preTag.localName().impl());
+        affectedBlockTags.add(h1Tag.localName().impl());
+        affectedBlockTags.add(h2Tag.localName().impl());
+        affectedBlockTags.add(h3Tag.localName().impl());
+        affectedBlockTags.add(h4Tag.localName().impl());
+        affectedBlockTags.add(h5Tag.localName().impl());
+        affectedBlockTags.add(h6Tag.localName().impl());
+        affectedBlockTags.add(pTag.localName().impl());
+        affectedBlockTags.add(divTag.localName().impl());
+        affectedBlockTags.add(blockquoteTag.localName().impl());
+        affectedBlockTags.add(addressTag.localName().impl());
+        affectedBlockTags.add(centerTag.localName().impl());
+        affectedBlockTags.add(ulTag.localName().impl());
+        affectedBlockTags.add(olTag.localName().impl());
+        affectedBlockTags.add(liTag.localName().impl());
+        affectedBlockTags.add(dlTag.localName().impl());
+        affectedBlockTags.add(dtTag.localName().impl());
+        affectedBlockTags.add(ddTag.localName().impl());
+        affectedBlockTags.add(preTag.localName().impl());
     }
     
     return affectedBlockTags.contains(tagName.impl());

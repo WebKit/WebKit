@@ -851,7 +851,7 @@ void RenderPartObject::updateWidget()
                   }
               }
               if (!embed) {
-                  uniqueParamNames.insert(p->name().impl());
+                  uniqueParamNames.add(p->name().impl());
                   paramNames.append(p->name().qstring());
                   paramValues.append(p->value().qstring());
               }
@@ -867,7 +867,7 @@ void RenderPartObject::updateWidget()
       DOMString codebase;
       if (!embed && serviceType.lower() == "application/x-java-applet") {
           codebase = "codebase";
-          uniqueParamNames.insert(codebase.impl()); // pretend we found it in a PARAM already
+          uniqueParamNames.add(codebase.impl()); // pretend we found it in a PARAM already
       }
       
       // Turn the attributes of either the EMBED tag or OBJECT tag into arrays, but don't override PARAM values.

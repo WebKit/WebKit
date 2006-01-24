@@ -1,3 +1,46 @@
+2006-01-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Tim Hatcher.
+        
+        - renamed inert() operation on HashSet, HashCountedSet and HashTable to add()
+        for consistency with HashMap
+
+        * bridge/mac/MacFrame.mm:
+        (MacFrame::didTellBridgeAboutLoad):
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNode::mark):
+        * khtml/html/HTMLElementImpl.cpp:
+        (WebCore::HTMLElementImpl::isRecognizedTagName):
+        (WebCore::inlineTagList):
+        (WebCore::blockTagList):
+        * khtml/html/HTMLFormCollectionImpl.cpp:
+        (WebCore::HTMLFormCollectionImpl::updateNameCache):
+        * khtml/html/htmlparser.cpp:
+        (HTMLParser::isHeaderTag):
+        (HTMLParser::isResidualStyleTag):
+        (HTMLParser::isAffectedByResidualStyle):
+        * khtml/xml/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::addElementById):
+        (WebCore::DocumentImpl::registerDisconnectedNodeWithEventListeners):
+        * khtml/xml/NodeImpl.cpp:
+        (WebCore::NodeImpl::registerNodeList):
+        * khtml/xml/dom_atomicstring.cpp:
+        (DOM::AtomicString::add):
+        * khtml/xml/dom_qname.cpp:
+        (DOM::QualifiedName::QualifiedName):
+        * loader/CachedObject.cpp:
+        (WebCore::CachedObject::ref):
+        * page/Frame.cpp:
+        (Frame::keepAlive):
+        * rendering/render_canvas.cpp:
+        (RenderCanvas::addWidget):
+        * rendering/render_frames.cpp:
+        (WebCore::RenderPartObject::updateWidget):
+        * rendering/render_line.cpp:
+        (WebCore::InlineFlowBox::paint):
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::addToRequestsByDocument):
+
 2006-01-23  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by thatcher

@@ -1,3 +1,27 @@
+2006-01-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Tim Hatcher.
+        
+        - renamed inert() operation on HashSet, HashCountedSet and HashTable to add()
+        for consistency with HashMap
+
+        * kjs/array_object.cpp:
+        (ArrayProtoFunc::callAsFunction):
+        * kjs/collector.cpp:
+        (KJS::Collector::protect):
+        * kjs/identifier.cpp:
+        (KJS::Identifier::add):
+        * kxmlcore/HashCountedSet.h:
+        (KXMLCore::::add):
+        * kxmlcore/HashMap.h:
+        (KXMLCore::::inlineAdd):
+        * kxmlcore/HashSet.h:
+        (KXMLCore::::add):
+        * kxmlcore/HashTable.h:
+        (KXMLCore::HashTable::add):
+        (KXMLCore::::add):
+        (KXMLCore::::HashTable):
+
 2006-01-23  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by thatcher

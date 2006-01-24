@@ -480,7 +480,7 @@ JSValue *ArrayProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, cons
     UString separator = ",";
     UString str = "";
 
-    visitedElems.insert(thisObj);
+    visitedElems.add(thisObj);
     if (id == Join && !args[0]->isUndefined())
       separator = args[0]->toString(exec);
     for (unsigned int k = 0; k < length; k++) {

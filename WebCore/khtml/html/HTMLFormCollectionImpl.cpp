@@ -249,7 +249,7 @@ void HTMLFormCollectionImpl::updateNameCache() const
                     info->idCache.add(idAttrVal.impl(), idVector);
                 }
                 appendToVector(idVector, static_cast<NodeImpl *>(e));
-                foundInputElements.insert(idAttrVal.impl());
+                foundInputElements.add(idAttrVal.impl());
             }
             if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal) {
                 // add to name cache
@@ -259,7 +259,7 @@ void HTMLFormCollectionImpl::updateNameCache() const
                     info->nameCache.add(nameAttrVal.impl(), nameVector);
                 }
                 appendToVector(nameVector, static_cast<NodeImpl *>(e));
-                foundInputElements.insert(nameAttrVal.impl());
+                foundInputElements.add(nameAttrVal.impl());
             }
         }
     }

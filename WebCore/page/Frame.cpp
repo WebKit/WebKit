@@ -3016,7 +3016,7 @@ void Frame::keepAlive()
     ref();
     d->m_lifeSupportTimer.start(0, true);
 #ifndef NDEBUG
-    lifeSupportSet.insert(this);
+    lifeSupportSet.add(this);
 #endif
 }
 

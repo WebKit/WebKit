@@ -411,7 +411,7 @@ void Collector::protect(JSValue *k)
     if (SimpleNumber::is(k))
       return;
 
-    protectedValues().insert(k->downcast());
+    protectedValues().add(k->downcast());
 }
 
 void Collector::unprotect(JSValue *k)

@@ -138,7 +138,7 @@ PassRefPtr<UString::Rep> Identifier::add(const char *c)
     if (length == 0)
         return &UString::Rep::empty;
     
-    return *identifierTable().insert<const char *, CStringTranslator>(c).first;
+    return *identifierTable().add<const char *, CStringTranslator>(c).first;
 }
 
 struct UCharBuffer {
@@ -179,7 +179,7 @@ PassRefPtr<UString::Rep> Identifier::add(const UChar *s, int length)
         return &UString::Rep::empty;
     
     UCharBuffer buf = {s, length}; 
-    return *identifierTable().insert<UCharBuffer, UCharBufferTranslator>(buf).first;
+    return *identifierTable().add<UCharBuffer, UCharBufferTranslator>(buf).first;
 }
 
 PassRefPtr<UString::Rep> Identifier::add(UString::Rep *r)
@@ -190,7 +190,7 @@ PassRefPtr<UString::Rep> Identifier::add(UString::Rep *r)
     if (r->len == 0)
         return &UString::Rep::empty;
 
-    UString::Rep *result = *identifierTable().insert(r).first;
+    UString::Rep *result = *identifierTable().add(r).first;
     if (result == r)
         r->isIdentifier = true;
     return result;

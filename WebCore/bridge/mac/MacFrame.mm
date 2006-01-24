@@ -3095,7 +3095,7 @@ WebCoreKeyboardUIMode MacFrame::keyboardUIMode() const
 
 void MacFrame::didTellBridgeAboutLoad(const DOM::DOMString& URL)
 {
-    urlsBridgeKnowsAbout.insert(URL.impl());
+    urlsBridgeKnowsAbout.add(URL.impl());
 }
 
 bool MacFrame::haveToldBridgeAboutLoad(const DOM::DOMString& URL)

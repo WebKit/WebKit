@@ -564,7 +564,7 @@ void RenderCanvas::updateWidgetPositions()
 
 void RenderCanvas::addWidget(RenderObject *o)
 {
-    m_widgets.insert(o);
+    m_widgets.add(o);
 }
 
 void RenderCanvas::removeWidget(RenderObject *o)

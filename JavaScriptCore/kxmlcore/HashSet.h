@@ -79,16 +79,18 @@ namespace KXMLCore {
         const_iterator find(const ValueType& value) const;
         bool contains(const ValueType& value) const;
         
-        std::pair<iterator, bool> insert(const ValueType &value);
+        // the return value is a pair of an interator to the new value's location, 
+        // and a bool that is true if an new entry was added
+        std::pair<iterator, bool> add(const ValueType &value);
         
-        // a special version of insert() that finds the object by hashing and comparing
+        // a special version of add() that finds the object by hashing and comparing
         // with some other type, to avoid the cost of type conversion if the object is already
         // in the table. HashTranslator should have the following methods:
         //   static unsigned hash(const T&);
         //   static bool equal(const ValueType&, const T&);
         //   static translate(ValueType&, const T&, unsigned hashCode);
         template<typename T, typename HashTranslator> 
-        std::pair<iterator, bool> insert(const T& value);
+        std::pair<iterator, bool> add(const T& value);
         
         void remove(const ValueType& value);
         void remove(iterator it);
@@ -159,16 +161,16 @@ namespace KXMLCore {
     }
     
     template<typename Value, typename HashFunctions, typename Traits>
-    std::pair<typename HashSet<Value, HashFunctions, Traits>::iterator, bool> HashSet<Value, HashFunctions, Traits>::insert(const ValueType &value)
+    std::pair<typename HashSet<Value, HashFunctions, Traits>::iterator, bool> HashSet<Value, HashFunctions, Traits>::add(const ValueType &value)
     {
-        return m_impl.insert(value); 
+        return m_impl.add(value); 
     }
     
     template<typename Value, typename HashFunctions, typename Traits>
     template<typename T, typename HashSetTranslator> 
-    std::pair<typename HashSet<Value, HashFunctions, Traits>::iterator, bool> HashSet<Value, HashFunctions, Traits>::insert(const T& value)
+    std::pair<typename HashSet<Value, HashFunctions, Traits>::iterator, bool> HashSet<Value, HashFunctions, Traits>::add(const T& value)
     {
-        return m_impl.template insert<T, T, HashSetTranslatorAdapter<ValueType, T, HashSetTranslator> >(value, value); 
+        return m_impl.template add<T, T, HashSetTranslatorAdapter<ValueType, T, HashSetTranslator> >(value, value); 
     }
     
     template<typename Value, typename HashFunctions, typename Traits>

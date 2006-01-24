@@ -284,12 +284,12 @@ namespace KXMLCore {
         int size() const { return m_keyCount; }
         int capacity() const { return m_tableSize; }
 
-        pair<iterator, bool> insert(const ValueType& value) { return insert<KeyType, ValueType, IdentityTranslatorType>(ExtractKey(value), value); }
+        pair<iterator, bool> add(const ValueType& value) { return add<KeyType, ValueType, IdentityTranslatorType>(ExtractKey(value), value); }
 
-        // A special version of insert() that finds the object by hashing and comparing
+        // A special version of add() that finds the object by hashing and comparing
         // with some other type, to avoid the cost of type conversion if the object is already
         // in the table.
-        template<typename T, typename Extra, typename HashTranslator> pair<iterator, bool> insert(const T& key, const Extra&);
+        template<typename T, typename Extra, typename HashTranslator> pair<iterator, bool> add(const T& key, const Extra&);
 
         iterator find(const KeyType&);
         const_iterator find(const KeyType&) const;
@@ -415,7 +415,7 @@ namespace KXMLCore {
 
     template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>
     template<typename T, typename Extra, typename HashTranslator>
-    inline pair<typename HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>::iterator, bool> HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>::insert(const T& key, const Extra &extra)
+    inline pair<typename HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>::iterator, bool> HashTable<Key, Value, ExtractKey, HashFunctions, Traits, KeyTraits>::add(const T& key, const Extra &extra)
     {
         invalidateIterators();
 
@@ -631,11 +631,11 @@ namespace KXMLCore {
         , m_iterators(0)
 #endif
     {
-        // Copy the hash table the dumb way, by inserting each element into the new table.
+        // Copy the hash table the dumb way, by adding each element to the new table.
         // It might be more efficient to copy the table slots, but it's not clear that efficiency is needed.
         const_iterator end = other.end();
         for (const_iterator it = other.begin(); it != end; ++it)
-            insert(*it);
+            add(*it);
     }
 
     template<typename Key, typename Value, const Key& ExtractKey(const Value&), typename HashFunctions, typename Traits, typename KeyTraits>

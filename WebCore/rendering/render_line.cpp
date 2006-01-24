@@ -760,7 +760,7 @@ void InlineFlowBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
             // outlines.
             if (object()->style()->visibility() == VISIBLE && object()->style()->outlineWidth() > 0 &&
                 !object()->isInlineContinuation() && !isRootInlineBox()) {
-                i.outlineObjects.insert(flowObject());
+                i.outlineObjects.add(flowObject());
             }
         }
         else {

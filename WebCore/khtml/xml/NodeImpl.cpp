@@ -807,7 +807,7 @@ void NodeImpl::registerNodeList(NodeListImpl* list)
 {
     if (!m_nodeLists)
         m_nodeLists = new NodeListSet;
-    m_nodeLists->insert(list);
+    m_nodeLists->add(list);
 }
 
 void NodeImpl::unregisterNodeList(NodeListImpl* list)

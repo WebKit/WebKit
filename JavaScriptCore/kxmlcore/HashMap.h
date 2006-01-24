@@ -173,7 +173,7 @@ bool HashMap<Key, Mapped, HashFunctions, KeyTraits, MappedTraits>::contains(cons
 template<typename Key, typename Mapped, typename HashFunctions, typename KeyTraits, typename MappedTraits>
 pair<typename HashMap<Key, Mapped, HashFunctions, KeyTraits, MappedTraits>::iterator, bool> HashMap<Key, Mapped, HashFunctions, KeyTraits, MappedTraits>::inlineAdd(const KeyType &key, const MappedType &mapped) 
 {
-    return m_impl.template insert<KeyType, MappedType, TranslatorType>(key, mapped); 
+    return m_impl.template add<KeyType, MappedType, TranslatorType>(key, mapped); 
 }
 
 template<typename Key, typename Mapped, typename HashFunctions, typename KeyTraits, typename MappedTraits>

@@ -142,7 +142,7 @@ void DOMNode::mark()
   DocumentImpl *document = m_impl->getDocument();
 
   // Mark the whole tree; use the global set of roots to avoid reentering.
-  markingRoots.insert(root);
+  markingRoots.add(root);
   for (NodeImpl *nodeToMark = root; nodeToMark; nodeToMark = nodeToMark->traverseNextNode()) {
     DOMNode *wrapper = ScriptInterpreter::getDOMNodeForDocument(document, nodeToMark);
     if (wrapper) {
