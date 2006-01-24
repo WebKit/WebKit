@@ -1,3 +1,16 @@
+2006-01-23  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6737
+        KJS_DEFINE_PROTOTYPE should work outside of the KJS namespace
+        
+        * kjs/lookup.h:
+        Prefix all KJS types with KJS:: in KJS_DEFINE_PROTOTYPE.
+        
+        (cacheGlobalObject):
+        Move this out of the KJS namespace.
+
 2006-01-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

@@ -248,54 +248,62 @@ namespace KJS {
       thisObj->putValueProperty(exec, entry->value, value, attr);
   }
   
-  /**
-   * This template method retrieves or create an object that is unique
-   * (for a given interpreter) The first time this is called (for a given
-   * property name), the Object will be constructed, and set as a property
-   * of the interpreter's global object. Later calls will simply retrieve
-   * that cached object. Note that the object constructor must take 1 argument, exec.
-   */
-  template <class ClassCtor>
-  inline JSObject *cacheGlobalObject(ExecState *exec, const Identifier &propertyName)
-  {
-    JSObject *globalObject = static_cast<JSObject *>(exec->lexicalInterpreter()->globalObject());
-    JSValue *obj = globalObject->getDirect(propertyName);
-    if (obj) {
-      assert(obj->isObject());
-      return static_cast<JSObject *>(obj);
-    }
-    JSObject *newObject = new ClassCtor(exec);
-    globalObject->put(exec, propertyName, newObject, Internal);
-    return newObject;
-  }
+} // namespace
 
-  /**
-   * Helpers to define prototype objects (each of which simply implements
-   * the functions for a type of objects).
-   * Sorry for this not being very readable, but it actually saves much copy-n-paste.
-   * ParentProto is not our base class, it's the object we use as fallback.
-   * The reason for this is that there should only be ONE DOMNode.hasAttributes (e.g.),
-   * not one in each derived class. So we link the (unique) prototypes between them.
-   *
-   * Using those macros is very simple: define the hashtable (e.g. "DOMNodeProtoTable"), then
-   * KJS_DEFINE_PROTOTYPE(DOMNodeProto)
-   * KJS_IMPLEMENT_PROTOFUNC(DOMNodeProtoFunc)
-   * KJS_IMPLEMENT_PROTOTYPE("DOMNode", DOMNodeProto,DOMNodeProtoFunc)
-   * and use DOMNodeProto::self(exec) as prototype in the DOMNode constructor.
-   * If the prototype has a "parent prototype", e.g. DOMElementProto falls back on DOMNodeProto,
-   * then the last line will use IMPLEMENT_PROTOTYPE_WITH_PARENT, with DOMNodeProto as last argument.
-   */
+/*
+ * The template method below can't be in the KJS namespace because it's used in 
+ * KJS_DEFINE_PROPERTY which can be used outside of the KJS namespace. It can be moved back
+ * when a gcc with http://gcc.gnu.org/bugzilla/show_bug.cgi?id=8355 is mainstream enough.
+ */
+ 
+/**
+ * This template method retrieves or create an object that is unique
+ * (for a given interpreter) The first time this is called (for a given
+ * property name), the Object will be constructed, and set as a property
+ * of the interpreter's global object. Later calls will simply retrieve
+ * that cached object. Note that the object constructor must take 1 argument, exec.
+ */
+template <class ClassCtor>
+inline KJS::JSObject *cacheGlobalObject(KJS::ExecState *exec, const KJS::Identifier &propertyName)
+{
+  KJS::JSObject *globalObject = static_cast<KJS::JSObject *>(exec->lexicalInterpreter()->globalObject());
+  KJS::JSValue *obj = globalObject->getDirect(propertyName);
+  if (obj) {
+    assert(obj->isObject());
+    return static_cast<KJS::JSObject *>(obj);
+  }
+  KJS::JSObject *newObject = new ClassCtor(exec);
+  globalObject->put(exec, propertyName, newObject, KJS::Internal);
+  return newObject;
+}
+
+/**
+ * Helpers to define prototype objects (each of which simply implements
+ * the functions for a type of objects).
+ * Sorry for this not being very readable, but it actually saves much copy-n-paste.
+ * ParentProto is not our base class, it's the object we use as fallback.
+ * The reason for this is that there should only be ONE DOMNode.hasAttributes (e.g.),
+ * not one in each derived class. So we link the (unique) prototypes between them.
+ *
+ * Using those macros is very simple: define the hashtable (e.g. "DOMNodeProtoTable"), then
+ * KJS_DEFINE_PROTOTYPE(DOMNodeProto)
+ * KJS_IMPLEMENT_PROTOFUNC(DOMNodeProtoFunc)
+ * KJS_IMPLEMENT_PROTOTYPE("DOMNode", DOMNodeProto,DOMNodeProtoFunc)
+ * and use DOMNodeProto::self(exec) as prototype in the DOMNode constructor.
+ * If the prototype has a "parent prototype", e.g. DOMElementProto falls back on DOMNodeProto,
+ * then the last line will use IMPLEMENT_PROTOTYPE_WITH_PARENT, with DOMNodeProto as last argument.
+ */
 #define KJS_DEFINE_PROTOTYPE(ClassProto) \
-  class ClassProto : public JSObject { \
-    friend JSObject *cacheGlobalObject<ClassProto>(ExecState *exec, const Identifier &propertyName); \
+  class ClassProto : public KJS::JSObject { \
+    friend KJS::JSObject *cacheGlobalObject<ClassProto>(KJS::ExecState *exec, const KJS::Identifier &propertyName); \
   public: \
-    static JSObject *ClassProto::self(ExecState *exec); \
-    virtual const ClassInfo *classInfo() const { return &info; } \
-    static const ClassInfo info; \
-    bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&); \
+    static KJS::JSObject *ClassProto::self(KJS::ExecState *exec); \
+    virtual const KJS::ClassInfo *classInfo() const { return &info; } \
+    static const KJS::ClassInfo info; \
+    bool getOwnPropertySlot(KJS::ExecState *, const KJS::Identifier&, KJS::PropertySlot&); \
   protected: \
-    ClassProto( ExecState *exec ) \
-      : JSObject( exec->lexicalInterpreter()->builtinObjectPrototype() ) {} \
+    ClassProto(KJS::ExecState *exec) \
+      : JSObject(exec->lexicalInterpreter()->builtinObjectPrototype()) { } \
     \
   };
 
@@ -336,18 +344,18 @@ namespace KJS {
     int id; \
   };
 
-  /*
-   * List of things to do when porting an objectimp to the 'static hashtable' mechanism:
-   * - write the hashtable source, between @begin and @end
-   * - add a rule to build the .lut.h
-   * - include the .lut.h
-   * - mention the table in the classinfo (add a classinfo if necessary)
-   * - write/update the class enum (for the tokens)
-   * - turn get() into getValueProperty(), put() into putValueProperty(), using a switch and removing funcs
-   * - write get() and/or put() using a template method
-   * - cleanup old stuff (e.g. hasProperty)
-   * - compile, test, commit ;)
-   */
-} // namespace
+/*
+ * List of things to do when porting an objectimp to the 'static hashtable' mechanism:
+ * - write the hashtable source, between @begin and @end
+ * - add a rule to build the .lut.h
+ * - include the .lut.h
+ * - mention the table in the classinfo (add a classinfo if necessary)
+ * - write/update the class enum (for the tokens)
+ * - turn get() into getValueProperty(), put() into putValueProperty(), using a switch and removing funcs
+ * - write get() and/or put() using a template method
+ * - cleanup old stuff (e.g. hasProperty)
+ * - compile, test, commit ;)
+ */
+
 
 #endif
