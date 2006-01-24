@@ -20,19 +20,17 @@
 
 #include "config.h"
 #include "JSXMLHttpRequest.h"
-#include "xmlhttprequest.h"
-
-#include "kjs_window.h"
-#include "kjs_events.h"
-
-#include "dom/dom_string.h"
-#include "html/html_documentimpl.h"
 
 #include "Frame.h"
+#include "dom_string.h"
+#include "html_documentimpl.h"
+#include "kjs_events.h"
+#include "kjs_window.h"
+#include "xmlhttprequest.h"
+
 #include "JSXMLHttpRequest.lut.h"
 
 using namespace WebCore;
-
 
 namespace KJS {
 
@@ -52,7 +50,6 @@ namespace KJS {
 KJS_DEFINE_PROTOTYPE(JSXMLHttpRequestProto)
 KJS_IMPLEMENT_PROTOFUNC(JSXMLHttpRequestProtoFunc)
 KJS_IMPLEMENT_PROTOTYPE("JSXMLHttpRequest", JSXMLHttpRequestProto, JSXMLHttpRequestProtoFunc)
-
 
 JSXMLHttpRequestConstructorImp::JSXMLHttpRequestConstructorImp(ExecState *exec, DocumentImpl *d)
     : doc(d)
@@ -93,53 +90,43 @@ bool JSXMLHttpRequest::getOwnPropertySlot(ExecState *exec, const Identifier& pro
   return getStaticValueSlot<JSXMLHttpRequest, DOMObject>(exec, &JSXMLHttpRequestTable, this, propertyName, slot);
 }
 
-JSValue *JSXMLHttpRequest::getValueProperty(ExecState *exec, int token) const
+JSValue* JSXMLHttpRequest::getValueProperty(ExecState *exec, int token) const
 {
   switch (token) {
   case ReadyState:
     return jsNumber(m_impl->getReadyState());
   case ResponseText:
     return jsStringOrNull(m_impl->getResponseText());
-  case ResponseXML: {
-    RefPtr<DocumentImpl> responseXML = m_impl->getResponseXML();
-    if (responseXML.get())
-      return getDOMNode(exec, responseXML.get());
-    else
-      return jsUndefined();
-  }
+  case ResponseXML:
+    if (DocumentImpl* responseXML = m_impl->getResponseXML())
+      return getDOMNode(exec, responseXML);
+    return jsUndefined();
   case Status:
     int status = m_impl->getStatus();
     return status > 0 ? jsNumber(status) : jsUndefined();
   case StatusText:
     return jsStringOrUndefined(m_impl->getStatusText());
   case Onreadystatechange:
-   JSUnprotectedEventListener* onReadyStateChangeListener = static_cast<JSUnprotectedEventListener*>(m_impl->getOnReadyStateChangeListener().get());
-   if (onReadyStateChangeListener) {
-      JSObject* listenerObj = onReadyStateChangeListener->listenerObj();
-      if (listenerObj)
+   if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(m_impl->onReadyStateChangeListener()))
+      if (JSObject* listenerObj = listener->listenerObj())
         return listenerObj;
-   }
    return jsNull();
   case Onload:
-   JSUnprotectedEventListener* onLoadListener = static_cast<JSUnprotectedEventListener*>(m_impl->getOnLoadListener().get());
-   if (onLoadListener) {
-      JSObject* listenerObj = onLoadListener->listenerObj();
-      if (listenerObj)
+   if (JSUnprotectedEventListener* listener = static_cast<JSUnprotectedEventListener*>(m_impl->onLoadListener()))
+      if (JSObject* listenerObj = listener->listenerObj())
         return listenerObj;
-   }
    return jsNull();
   default:
-//    kdWarning() << "JSXMLHttpRequest::getValueProperty unhandled token " << token << endl;
-    return NULL;
+    return 0;
   }
 }
 
-void JSXMLHttpRequest::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
+void JSXMLHttpRequest::put(ExecState *exec, const Identifier &propertyName, JSValue* value, int attr)
 {
   lookupPut<JSXMLHttpRequest,DOMObject>(exec, propertyName, value, attr, &JSXMLHttpRequestTable, this );
 }
 
-void JSXMLHttpRequest::putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/)
+void JSXMLHttpRequest::putValueProperty(ExecState *exec, int token, JSValue* value, int /*attr*/)
 {
   switch(token) {
   case Onreadystatechange:
@@ -148,9 +135,6 @@ void JSXMLHttpRequest::putValueProperty(ExecState *exec, int token, JSValue *val
   case Onload:
     m_impl->setOnLoadListener(Window::retrieveActive(exec)->getJSUnprotectedEventListener(value, true));
     break;
-  default:
-      ;
-//    kdWarning() << "HTMLDocument::putValueProperty unhandled token " << token << endl;
   }
 }
 
@@ -158,8 +142,8 @@ void JSXMLHttpRequest::mark()
 {
   DOMObject::mark();
 
-  JSUnprotectedEventListener* onReadyStateChangeListener = static_cast<JSUnprotectedEventListener*>(m_impl->getOnReadyStateChangeListener().get());
-  JSUnprotectedEventListener* onLoadListener = static_cast<JSUnprotectedEventListener*>(m_impl->getOnLoadListener().get());
+  JSUnprotectedEventListener* onReadyStateChangeListener = static_cast<JSUnprotectedEventListener*>(m_impl->onReadyStateChangeListener());
+  JSUnprotectedEventListener* onLoadListener = static_cast<JSUnprotectedEventListener*>(m_impl->onLoadListener());
 
   if (onReadyStateChangeListener)
     onReadyStateChangeListener->mark();
@@ -173,13 +157,17 @@ JSXMLHttpRequest::JSXMLHttpRequest(ExecState *exec, DocumentImpl *d)
   : m_impl(new XMLHttpRequest(d))
 {
   setPrototype(JSXMLHttpRequestProto::self(exec));
+  ScriptInterpreter::putDOMObject(m_impl.get(), this);
 }
 
 JSXMLHttpRequest::~JSXMLHttpRequest()
 {
+  m_impl->setOnReadyStateChangeListener(0);
+  m_impl->setOnLoadListener(0);
+  ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-JSValue *JSXMLHttpRequestProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
+JSValue* JSXMLHttpRequestProtoFunc::callAsFunction(ExecState *exec, JSObject* thisObj, const List& args)
 {
   if (!thisObj->inherits(&JSXMLHttpRequest::info))
     return throwError(exec, TypeError);
@@ -187,34 +175,19 @@ JSValue *JSXMLHttpRequestProtoFunc::callAsFunction(ExecState *exec, JSObject *th
   JSXMLHttpRequest *request = static_cast<JSXMLHttpRequest *>(thisObj);
 
   switch (id) {
-  case JSXMLHttpRequest::Abort: {
+  case JSXMLHttpRequest::Abort:
     request->m_impl->abort();
     return jsUndefined();
-  }
-  case JSXMLHttpRequest::GetAllResponseHeaders: {
-    if (args.size() != 0) {
-      return jsUndefined();
-    }
-    
+  case JSXMLHttpRequest::GetAllResponseHeaders:
     return jsStringOrUndefined(request->m_impl->getAllResponseHeaders());
-  }
-  case JSXMLHttpRequest::GetResponseHeader: {
-    if (args.size() != 1) {
+  case JSXMLHttpRequest::GetResponseHeader:
+    if (args.size() != 1)
       return jsUndefined();
-    }
-    
-    DOMString header = request->m_impl->getResponseHeader(args[0]->toString(exec).domString());
-
-    if (header.isNull())
-      return jsUndefined();
-
-    return jsString(header);
-  }
+    return jsStringOrUndefined(request->m_impl->getResponseHeader(args[0]->toString(exec).domString()));
   case JSXMLHttpRequest::Open:
     {
-      if (args.size() < 2 || args.size() > 5) {
+      if (args.size() < 2 || args.size() > 5)
         return jsUndefined();
-      }
     
       DOMString method = args[0]->toString(exec).domString();
       KURL url = KURL(Window::retrieveActive(exec)->frame()->document()->completeURL(args[1]->toString(exec).qstring()));
@@ -237,9 +210,8 @@ JSValue *JSXMLHttpRequestProtoFunc::callAsFunction(ExecState *exec, JSObject *th
     }
   case JSXMLHttpRequest::Send:
     {
-      if (args.size() > 1) {
+      if (args.size() > 1)
         return jsUndefined();
-      }
 
       DOMString body;
 
@@ -258,22 +230,16 @@ JSValue *JSXMLHttpRequestProtoFunc::callAsFunction(ExecState *exec, JSObject *th
 
       return jsUndefined();
     }
-  case JSXMLHttpRequest::SetRequestHeader: {
-    if (args.size() != 2) {
+  case JSXMLHttpRequest::SetRequestHeader:
+    if (args.size() != 2)
       return jsUndefined();
-    }
-    
     request->m_impl->setRequestHeader(args[0]->toString(exec).domString(), args[1]->toString(exec).domString());
-    
     return jsUndefined();
-  }
-  case JSXMLHttpRequest::OverrideMIMEType: {
-    if (args.size() != 1) {
+  case JSXMLHttpRequest::OverrideMIMEType:
+    if (args.size() != 1)
       return jsUndefined();
-    }
     request->m_impl->overrideMIMEType(args[0]->toString(exec).domString());
     return jsUndefined();
-  }
   }
 
   return jsUndefined();

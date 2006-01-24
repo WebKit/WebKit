@@ -1,5 +1,37 @@
 2006-01-24  Darin Adler  <darin@apple.com>
 
+        Reviewed by John and Anders.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6732
+          REGRESSION: Repro crash at Google Maps
+
+        * khtml/ecma/JSXMLHttpRequest.cpp:
+        (KJS::JSXMLHttpRequest::getValueProperty): Clean up a bit, using PassRefPtr where appropriate.
+        (KJS::JSXMLHttpRequest::mark): Remove get calls now that getter functions don't return PassRefPtr.
+        (KJS::JSXMLHttpRequest::JSXMLHttpRequest): Put the object into the DOM objects map.
+        (KJS::JSXMLHttpRequest::~JSXMLHttpRequest): Remove the object from the DOM objects map. Also clear
+        out both listeners so the implementation object isn't left with dangling pointers (since we won't
+        be around to mark those objects any more).
+        (KJS::JSXMLHttpRequestProtoFunc::callAsFunction): Tightened up the code a bit.
+
+        * xml/xmlhttprequest.h:
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::getResponseXML): Change to return just a plain old pointer. Remove
+        the unnecessary typeIsXML boolean.
+        (WebCore::XMLHttpRequest::onReadyStateChangeListener): Change to return just a plain old pointer.
+        Update for name changes.
+        (WebCore::XMLHttpRequest::setOnReadyStateChangeListener): Ditto.
+        (WebCore::XMLHttpRequest::onLoadListener): Ditto.
+        (WebCore::XMLHttpRequest::setOnLoadListener): Ditto.
+        (WebCore::XMLHttpRequest::send): Protect the DOM wrapper if any as well as ourselves while
+        the load is in progress.
+        (WebCore::XMLHttpRequest::abort): Unprotect to balance out the above.
+        (WebCore::XMLHttpRequest::slotFinished): Ditto.
+
+        * khtml/ecma/JSXMLHttpRequest.h: Just formatting changes.
+
+2006-01-24  Darin Adler  <darin@apple.com>
+
         Reviewed by Justin.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6753

@@ -28,8 +28,7 @@
 namespace WebCore {
     class XMLHttpRequest;
     class DocumentImpl;
-};
-
+}
 
 namespace KJS {
 
@@ -64,6 +63,7 @@ namespace KJS {
     friend class JSXMLHttpRequestProtoFunc;
     RefPtr<WebCore::XMLHttpRequest> m_impl;
   };
+
 } // namespace
 
 #endif
