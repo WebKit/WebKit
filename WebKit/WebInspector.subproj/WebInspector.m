@@ -1225,7 +1225,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
         case DOM_ENTITY_NODE: return UI_STRING("Entity", "entity node type name");
         case DOM_PROCESSING_INSTRUCTION_NODE: return UI_STRING("Processing Instruction", "processing instruction node type name");
         case DOM_COMMENT_NODE: return UI_STRING("Comment", "comment node type name");
-        case DOM_DOCUMENT_NODE: return UI_STRING("Document", "document node type name");
+        case DOM_DOCUMENT_NODE: return UI_STRING_KEY("Document", "Document (node type)", "document node type name");
         case DOM_DOCUMENT_TYPE_NODE: return UI_STRING("Document Type", "document type node type name");
         case DOM_DOCUMENT_FRAGMENT_NODE: return UI_STRING("Document Fragment", "document fragment node type name");
         case DOM_NOTATION_NODE: return UI_STRING("Notation", "notation node type name");
@@ -1244,7 +1244,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 {
     switch([self nodeType]) {
         case DOM_DOCUMENT_NODE:
-            return UI_STRING("Document", "document node name");
+            return UI_STRING_KEY("Document", "Document (node)", "document node name");
         case DOM_ELEMENT_NODE: {
             if ([self hasAttributes]) {
                 NSMutableString *name = [NSMutableString stringWithFormat:@"<%@", [[self nodeName] lowercaseString]];

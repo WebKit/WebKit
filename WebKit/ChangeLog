@@ -1,3 +1,16 @@
+2006-01-23  Darin Adler  <darin@apple.com>
+
+        - fixed some small localizable strings issues
+
+        * WebInspector.subproj/WebInspector.m:
+        (-[DOMNode _nodeTypeName]): Changed so we don't have two localizable strings that
+        are both "Document". I'm not sure we want to localize the DOM inspector UI at all,
+        but this fixes things for now.
+        (-[DOMNode _displayName]): Ditto.
+
+        * English.lproj/Localizable.strings: Updated.
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.
+
 2006-01-23  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by thatcher
