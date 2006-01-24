@@ -1,3 +1,10 @@
+2006-01-24  Maciej Stachowiak  <mjs@apple.com>
+
+        - fix build
+
+        * ksvg2/scripts/make_names.pl: Update script to generate code that
+        works with the new HashMap.
+
 2006-01-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

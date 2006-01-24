@@ -118,7 +118,7 @@ sub printFunctionInits
 {
 	my @names = @_;
 	for my $name (@names) {
-		print "    gFunctionMap->set(${name}Tag.localName().impl(), (void*)&${name}Constructor);\n";
+		print "    gFunctionMap->set(${name}Tag.localName().impl(), ${name}Constructor);\n";
 	}
 }
 
@@ -351,27 +351,34 @@ sub printFactoryCppFile
 
 printLicenseHeader();
 
-print "#include \"config.h\"\n\n";
-print "#include \"${namespace}ElementFactory.h\"\n";
-print "#include \"${namespace}Names.h\"\n\n";
+print <<END
+#include "config.h"
+#include "${namespace}ElementFactory.h"
+#include "${namespace}Names.h"
+END
+;
 
 printElementIncludes(@tags);
 
-print "\n\n#include <kxmlcore/HashMap.h>\n\n";
+print <<END
+#include <kxmlcore/HashMap.h>
 
-print "using namespace KDOM;\n";
-print "using namespace ${cppNamespace}::${namespace}Names;\n\n";
+using namespace KDOM;
+using namespace ${cppNamespace}::${namespace}Names;
 
-print "typedef KXMLCore::HashMap<DOMStringImpl *, void *, KXMLCore::PointerHash<DOMStringImpl *> > FunctionMap;\n";
-print "static FunctionMap *gFunctionMap = 0;\n\n";
+typedef ${namespace}ElementImpl *(*ConstructorFunc)(DocumentImpl *doc, bool createdByParser);
+typedef KXMLCore::HashMap<AtomicStringImpl*, ConstructorFunc> FunctionMap;
 
-print "namespace ${cppNamespace}\n{\n\n";
+static FunctionMap *gFunctionMap = 0;
 
-print "typedef ${namespace}ElementImpl *(*ConstructorFunc)(DocumentImpl *doc, bool createdByParser);\n\n";
+namespace ${cppNamespace} {
+
+END
+;
 
 printConstructors(@tags);
 
-print "
+print <<END
 static inline void createFunctionMapIfNecessary()
 {
     if (gFunctionMap)
@@ -380,31 +387,32 @@ static inline void createFunctionMapIfNecessary()
     gFunctionMap = new FunctionMap;
     
     // Populate it with constructor functions.
-";
+END
+;
 
 printFunctionInits(@tags);
 
-print "}\n";
+print <<END
+}
 
-print "
 ${namespace}ElementImpl *${namespace}ElementFactory::create${namespace}Element(const QualifiedName& qName, DocumentImpl* doc, bool createdByParser)
 {
     if (!doc)
         return 0; // Don't allow elements to ever be made without having a doc.
 
     createFunctionMapIfNecessary();
-    void* result = gFunctionMap->get(qName.localName().impl());
-    if (result) {
-        ConstructorFunc func = (ConstructorFunc)result;
-        return (func)(doc, createdByParser);
-    }
+    ConstructorFunc func = gFunctionMap->get(qName.localName().impl());
+    if (func)
+        return func(doc, createdByParser);
     
     return new ${namespace}ElementImpl(qName, doc);
 }
 
 }; // namespace
 
-";
+END
+;
+
 	restoreSTDOUT();
 }
 
