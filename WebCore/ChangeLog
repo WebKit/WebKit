@@ -1,3 +1,17 @@
+2006-01-23 Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6733
+          REGRESSION: html input doesn't honor change to value
+
+        * rendering/render_form.cpp: (RenderLineEdit::slotTextChanged): Made newText a
+        DOMString. Assigning the empty DOMString to a QString and back to a DOMString
+        resulted in a null string, which should be avoided here.
+
+        * khtml/dom/dom_string.cpp: (DOM::DOMString::qstring): Don't turn an empty
+        DOMString into a null QString; make an empty QString instead.
+
 2006-01-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

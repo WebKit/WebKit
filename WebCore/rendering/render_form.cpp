@@ -336,7 +336,7 @@ void RenderLineEdit::slotTextChanged(const DOMString &string)
     // A null string value is used to indicate that the form control has not altered the original
     // default value.  That means that we should never use the null string value when the user
     // empties a textfield, but should always force an empty textfield to use the empty string.
-    QString newText = string.isNull() ? "" : string.qstring();
+    DOMString newText = string.isNull() ? "" : string;
     newText.replace(backslashAsCurrencySymbol(), QChar('\\'));
     element()->setValueFromRenderer(newText);
 }
