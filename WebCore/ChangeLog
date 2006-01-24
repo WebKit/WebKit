@@ -1,8 +1,22 @@
+2006-01-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6385
+          REGRESSION: Unnamed frames return a generated name as window.frameElement.name
+
+        Test: fast/frames/frame-element-name.html
+
+        * khtml/ecma/kjs_html.cpp: (KJS::HTMLElement::getOwnPropertySlot):
+        Remove the quirk where frame and iframe elements reflect all the
+        properties of the window inside the frame. Testing indicates that
+        no other browser does this -- not sure why we were doing it.
+
 2006-01-23  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Tim Hatcher.
         
-        - renamed inert() operation on HashSet, HashCountedSet and HashTable to add()
+        - renamed insert() operation on HashSet, HashCountedSet and HashTable to add()
         for consistency with HashMap
 
         * bridge/mac/MacFrame.mm:
