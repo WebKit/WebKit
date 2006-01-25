@@ -35,7 +35,6 @@
 #include <kxmlcore/HashCountedSet.h>
 #include <kxmlcore/HashMap.h>
 #include "Color.h"
-#include <qdatetime.h>
 #include <qobject.h>
 #include <qptrlist.h>
 #include <qstringlist.h>
@@ -658,7 +657,7 @@ protected:
     NodeImpl* m_cssTarget;
     
     bool m_processingLoadEvent;
-    QTime m_startTime;
+    double m_startTime;
     bool m_overMinimumLayoutThreshold;
     
 #ifdef KHTML_XSLT

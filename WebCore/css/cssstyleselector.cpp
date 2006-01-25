@@ -50,7 +50,6 @@
 #include <assert.h>
 #include <kurl.h>
 #include <kxmlcore/HashMap.h>
-#include <qdatetime.h>
 #include <qpaintdevicemetrics.h>
 #include <qstring.h>
 #include <qvaluelist.h>

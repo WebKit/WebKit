@@ -27,6 +27,10 @@
 #define KSVG WebCore
 #define khtml WebCore
 
+#if __APPLE__
+#define HAVE_FUNC_USLEEP 1
+#endif
+
 #if WIN32
 
 // Hack to match configuration of JavaScriptCore.

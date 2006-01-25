@@ -34,16 +34,17 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "HTMLElementImpl.h"
+#include "SystemTime.h"
 #include "csshelper.h"
 #include "html_documentimpl.h"
-#include "HTMLElementImpl.h"
+#include "htmlnames.h"
 #include "htmlparser.h"
 #include "kjs_proxy.h"
 #include <assert.h>
 #include <ctype.h>
 #include <qvariant.h>
 #include <stdlib.h>
-#include "htmlnames.h"
 
 // turn off inlining to allow proper linking on newer gcc (xmltokenizer.cpp also uses findEntity())
 #undef __inline
@@ -55,15 +56,15 @@
 
 #define TOKENIZER_CHUNK_SIZE  4096
 
-// FIXME: We would like this constant to be 200ms.  Yielding more aggressively results in increased
-// responsiveness and better incremental rendering.  It slows down overall page-load on slower machines,
-// though, so for now we set a value of 500.
-#define TOKENIZER_TIME_DELAY  500
-
 namespace WebCore {
 
 using namespace HTMLNames;
 using namespace EventNames;
+
+// FIXME: We would like this constant to be 200ms.
+// Yielding more aggressively results in increased responsiveness and better incremental rendering.
+// It slows down overall page-load on slower machines, though, so for now we set a value of 500.
+const double tokenizerTimeDelay = 0.500;
 
 static const char commentStart [] = "<!--";
 static const char scriptEnd [] = "</script";
@@ -363,7 +364,7 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
     if (!scriptSrc.isEmpty() && parser->doc()->frame()) {
         // forget what we just got; load from src url instead
         if (!parser->skipMode() && !followingFrameset) {
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
+#if INSTRUMENT_LAYOUT_SCHEDULING
             if (!parser->doc()->ownerElement())
                 printf("Requesting script at time %d\n", parser->doc()->elapsedTime());
 #endif
@@ -396,11 +397,11 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
     currentPrependingSrc = &prependingSrc;
     if (!parser->skipMode() && !followingFrameset) {
         if (cs) {
-	    if (savedPrependingSrc) {
-		savedPrependingSrc->append(src);
-	    } else {
-		pendingSrc.prepend(src);
-	    }
+            if (savedPrependingSrc) {
+                savedPrependingSrc->append(src);
+            } else {
+                pendingSrc.prepend(src);
+            }
             setSrc(SegmentedString());
             scriptCodeSize = scriptCodeResync = 0;
 
@@ -430,27 +431,27 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
     scriptCodeSize = scriptCodeResync = 0;
 
     if (!m_executingScript && !state.loadingExtScript()) {
-	src.append(pendingSrc);
-	pendingSrc.clear();
+        src.append(pendingSrc);
+        pendingSrc.clear();
     } else if (!prependingSrc.isEmpty()) {
-	// restore first so that the write appends in the right place
-	// (does not hurt to do it again below)
-	currentPrependingSrc = savedPrependingSrc;
+        // restore first so that the write appends in the right place
+        // (does not hurt to do it again below)
+        currentPrependingSrc = savedPrependingSrc;
 
-	// we need to do this slightly modified bit of one of the write() cases
-	// because we want to prepend to pendingSrc rather than appending
-	// if there's no previous prependingSrc
-	if (state.loadingExtScript()) {
-	    if (currentPrependingSrc) {
-		currentPrependingSrc->append(prependingSrc);
-	    } else {
-		pendingSrc.prepend(prependingSrc);
-	    }
-	} else {
+        // we need to do this slightly modified bit of one of the write() cases
+        // because we want to prepend to pendingSrc rather than appending
+        // if there's no previous prependingSrc
+        if (state.loadingExtScript()) {
+            if (currentPrependingSrc) {
+                currentPrependingSrc->append(prependingSrc);
+            } else {
+                pendingSrc.prepend(prependingSrc);
+            }
+        } else {
             m_state = state;
-	    write(prependingSrc, false);
+            write(prependingSrc, false);
             state = m_state;
-	}
+        }
     }
 
     currentPrependingSrc = savedPrependingSrc;
@@ -476,7 +477,7 @@ HTMLTokenizer::State HTMLTokenizer::scriptExecution(const QString& str, State st
     SegmentedString prependingSrc;
     currentPrependingSrc = &prependingSrc;
 
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
+#if INSTRUMENT_LAYOUT_SCHEDULING
     if (!parser->doc()->ownerElement())
         printf("beginning script execution at %d\n", parser->doc()->elapsedTime());
 #endif
@@ -487,7 +488,7 @@ HTMLTokenizer::State HTMLTokenizer::scriptExecution(const QString& str, State st
 
     state.setAllowYield(true);
 
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
+#if INSTRUMENT_LAYOUT_SCHEDULING
     if (!parser->doc()->ownerElement())
         printf("ending script execution at %d\n", parser->doc()->elapsedTime());
 #endif
@@ -496,27 +497,27 @@ HTMLTokenizer::State HTMLTokenizer::scriptExecution(const QString& str, State st
     state.setInScript(oldscript);
 
     if (!m_executingScript && !state.loadingExtScript()) {
-	src.append(pendingSrc);
-	pendingSrc.clear();
+        src.append(pendingSrc);
+        pendingSrc.clear();
     } else if (!prependingSrc.isEmpty()) {
-	// restore first so that the write appends in the right place
-	// (does not hurt to do it again below)
-	currentPrependingSrc = savedPrependingSrc;
+        // restore first so that the write appends in the right place
+        // (does not hurt to do it again below)
+        currentPrependingSrc = savedPrependingSrc;
 
-	// we need to do this slightly modified bit of one of the write() cases
-	// because we want to prepend to pendingSrc rather than appending
-	// if there's no previous prependingSrc
-	if (state.loadingExtScript()) {
-	    if (currentPrependingSrc) {
-		currentPrependingSrc->append(prependingSrc);
-	    } else {
-		pendingSrc.prepend(prependingSrc);
-	    }
-	} else {
+        // we need to do this slightly modified bit of one of the write() cases
+        // because we want to prepend to pendingSrc rather than appending
+        // if there's no previous prependingSrc
+        if (state.loadingExtScript()) {
+            if (currentPrependingSrc) {
+                currentPrependingSrc->append(prependingSrc);
+            } else {
+                pendingSrc.prepend(prependingSrc);
+            }
+        } else {
             m_state = state;
-	    write(prependingSrc, false);
+            write(prependingSrc, false);
             state = m_state;
-	}
+        }
     }
 
     currentPrependingSrc = savedPrependingSrc;
@@ -865,7 +866,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                           if (!src.isEmpty())
                               cBuffer[cBufferPos++] = src->cell();
                         }
-		        else
+                        else
                           state = parseComment(src, state);
 
                         m_cBufferPos = cBufferPos;
@@ -1182,7 +1183,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                 scriptSrc = QString::null;
                 scriptSrcCharset = QString::null;
                 if ( currToken.attrs && /* potentially have a ATTR_SRC ? */
-		     parser->doc()->frame() &&
+                     parser->doc()->frame() &&
                      parser->doc()->frame()->jScriptEnabled() && /* jscript allowed at all? */
                      view /* are we a regular tokenizer or just for innerHTML ? */
                     ) {
@@ -1305,7 +1306,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
     return state;
 }
 
-inline bool HTMLTokenizer::continueProcessing(int& processedCount, const QTime& startTime, State &state)
+inline bool HTMLTokenizer::continueProcessing(int& processedCount, double startTime, State &state)
 {
     // We don't want to be checking elapsed time with every character, so we only check after we've
     // processed a certain number of characters.
@@ -1313,7 +1314,7 @@ inline bool HTMLTokenizer::continueProcessing(int& processedCount, const QTime& 
     state.setAllowYield(false);
     if (!state.loadingExtScript() && !state.forceSynchronous() && !m_executingScript && (processedCount > TOKENIZER_CHUNK_SIZE || allowedYield)) {
         processedCount = 0;
-        if (startTime.elapsed() > TOKENIZER_TIME_DELAY) {
+        if (currentTime() - startTime > tokenizerTimeDelay) {
             /* FIXME: We'd like to yield aggressively to give stylesheets the opportunity to
                load, but this hurts overall performance on slower machines.  For now turn this
                off.
@@ -1322,9 +1323,9 @@ inline bool HTMLTokenizer::continueProcessing(int& processedCount, const QTime& 
             // Schedule the timer to keep processing as soon as possible.
             if (!timerId)
                 timerId = startTimer(0);
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
-            if (startTime.elapsed() > TOKENIZER_TIME_DELAY)
-                printf("Deferring processing of data because 200ms elapsed away from event loop.\n");
+#if INSTRUMENT_LAYOUT_SCHEDULING
+            if (currentTime() - startTime > tokenizerTimeDelay)
+                printf("Deferring processing of data because 500ms elapsed away from event loop.\n");
 #endif
             return false;
         }
@@ -1348,11 +1349,11 @@ bool HTMLTokenizer::write(const SegmentedString &str, bool appendData)
 
     if ( ( m_executingScript && appendData ) || !pendingScripts.isEmpty() ) {
         // don't parse; we will do this later
-	if (currentPrependingSrc) {
-	    currentPrependingSrc->append(str);
-	} else {
-	    pendingSrc.append(str);
-	}
+        if (currentPrependingSrc) {
+            currentPrependingSrc->append(str);
+        } else {
+            pendingSrc.append(str);
+        }
         return false;
     }
 
@@ -1373,14 +1374,13 @@ bool HTMLTokenizer::write(const SegmentedString &str, bool appendData)
     bool wasInWrite = inWrite;
     inWrite = true;
     
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
+#if INSTRUMENT_LAYOUT_SCHEDULING
     if (!parser->doc()->ownerElement())
         printf("Beginning write at time %d\n", parser->doc()->elapsedTime());
 #endif
     
     int processedCount = 0;
-    QTime startTime;
-    startTime.start();
+    double startTime = currentTime();
 
     Frame *frame = parser->doc()->frame();
 
@@ -1497,7 +1497,7 @@ bool HTMLTokenizer::write(const SegmentedString &str, bool appendData)
         }
     }
     
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
+#if INSTRUMENT_LAYOUT_SCHEDULING
     if (!parser->doc()->ownerElement())
         printf("Ending write at time %d\n", parser->doc()->elapsedTime());
 #endif
@@ -1539,7 +1539,7 @@ void HTMLTokenizer::timerEvent(QTimerEvent* e)
         killTimer(timerId);
         timerId = 0;
 
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
+#if INSTRUMENT_LAYOUT_SCHEDULING
         if (!parser->doc()->ownerElement())
             printf("Beginning timer write at time %d\n", parser->doc()->elapsedTime());
 #endif
@@ -1724,7 +1724,7 @@ void HTMLTokenizer::enlargeScriptBuffer(int len)
 
 void HTMLTokenizer::notifyFinished(CachedObject */*finishedObj*/)
 {
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
+#if INSTRUMENT_LAYOUT_SCHEDULING
     if (!parser->doc()->ownerElement())
         printf("script loaded at %d\n", parser->doc()->elapsedTime());
 #endif
@@ -1752,12 +1752,12 @@ void HTMLTokenizer::notifyFinished(CachedObject */*finishedObj*/)
         RefPtr<NodeImpl> n = scriptNode;
         scriptNode = 0;
 
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
+#if INSTRUMENT_LAYOUT_SCHEDULING
         if (!parser->doc()->ownerElement())
             printf("external script beginning execution at %d\n", parser->doc()->elapsedTime());
 #endif
 
-	if (errorOccurred)
+        if (errorOccurred)
             n->dispatchHTMLEvent(errorEvent, false, false);
         else {
             m_state = scriptExecution(scriptSource.qstring(), m_state, cachedScriptUrl);
@@ -1769,7 +1769,7 @@ void HTMLTokenizer::notifyFinished(CachedObject */*finishedObj*/)
         finished = pendingScripts.isEmpty();
         if (finished) {
             m_state.setLoadingExtScript(false);
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
+#if INSTRUMENT_LAYOUT_SCHEDULING
             if (!parser->doc()->ownerElement())
                 printf("external script finished execution at %d\n", parser->doc()->elapsedTime());
 #endif

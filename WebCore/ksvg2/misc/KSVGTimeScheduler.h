@@ -26,7 +26,6 @@
 
 #include <qtimer.h>
 #include <qobject.h>
-#include <qdatetime.h>
 #include <q3valuelist.h>
 
 #include "SVGAnimationElementImpl.h"
@@ -99,7 +98,7 @@ namespace KSVG
         bool animationsPaused() const;
 
         // time elapsed in seconds after creation of this object
-        float elapsed() const;
+        double elapsed() const;
 
         static const unsigned int staticTimerInterval;
 
@@ -111,8 +110,8 @@ namespace KSVG
         KDOM::DocumentImpl *document() const { return m_document; }
 
     private:
-        int m_savedTime;
-        QTime m_creationTime;
+        double m_creationTime;
+        double m_savedTime;
         
         SVGTimerList m_timerList;
         

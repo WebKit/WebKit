@@ -27,7 +27,6 @@
 #include "dom/dom_string.h"
 #include "dom_qname.h"
 #include "Shared.h"
-#include <qdatetime.h>
 #include <qptrlist.h>
 
 namespace DOM {

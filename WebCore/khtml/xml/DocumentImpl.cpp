@@ -36,6 +36,7 @@
 #include "KWQLogging.h"
 #include "NameNodeListImpl.h"
 #include "SegmentedString.h"
+#include "SystemTime.h"
 #include "css_stylesheetimpl.h"
 #include "css_valueimpl.h"
 #include "csshelper.h"
@@ -271,7 +272,7 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, FrameView *v)
     resetActiveLinkColor();
 
     m_processingLoadEvent = false;
-    m_startTime.restart();
+    m_startTime = currentTime();
     m_overMinimumLayoutThreshold = false;
     
     m_jsEditor = 0;
@@ -1222,7 +1223,7 @@ void DocumentImpl::implicitClose()
     // fires. This will improve onload scores, and other browsers do it.
     // If they wanna cheat, we can too. -dwh
 
-    if (frame() && frame()->isScheduledLocationChangePending() && m_startTime.elapsed() < cLayoutScheduleThreshold) {
+    if (frame() && frame()->isScheduledLocationChangePending() && elapsedTime() < cLayoutScheduleThreshold) {
         // Just bail out. Before or during the onload we were shifted to another page.
         // The old i-Bench suite does this. When this happens don't bother painting or laying out.        
         view()->unscheduleRelayout();
@@ -1284,7 +1285,7 @@ int DocumentImpl::minimumLayoutDelay()
     if (m_overMinimumLayoutThreshold)
         return 0;
     
-    int elapsed = m_startTime.elapsed();
+    int elapsed = elapsedTime();
     m_overMinimumLayoutThreshold = elapsed > cLayoutScheduleThreshold;
     
     // We'll want to schedule the timer to fire at the minimum layout threshold.
@@ -1293,7 +1294,7 @@ int DocumentImpl::minimumLayoutDelay()
 
 int DocumentImpl::elapsedTime() const
 {
-    return m_startTime.elapsed();
+    return static_cast<int>((currentTime() - m_startTime) * 1000);
 }
 
 void DocumentImpl::write( const DOMString &text )

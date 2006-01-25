@@ -29,7 +29,6 @@
 #include "dom_string.h"
 
 class FrameView;
-class QTime;
 
 namespace WebCore {
 

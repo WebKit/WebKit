@@ -34,11 +34,13 @@
 #include "DOMImplementationImpl.h"
 #include "DocLoader.h"
 #include "EventNames.h"
+#include "Frame.h"
 #include "FrameView.h"
-#include "NodeListImpl.h"
+#include "HTMLCollectionImpl.h"
 #include "HTMLFormElementImpl.h"
 #include "HTMLGenericFormElementImpl.h"
-#include "Frame.h"
+#include "NodeListImpl.h"
+#include "RenderBlock.h"
 #include "RenderText.h"
 #include "SegmentedString.h"
 #include "apply_style_command.h"
@@ -52,18 +54,16 @@
 #include "dom_string.h"
 #include "html_baseimpl.h"
 #include "html_documentimpl.h"
-#include "htmlnames.h"
 #include "html_imageimpl.h"
-#include "HTMLCollectionImpl.h"
 #include "html_objectimpl.h"
 #include "htmlediting.h"
+#include "htmlnames.h"
 #include "khtml_events.h"
 #include "khtml_settings.h"
 #include "kjs_proxy.h"
 #include "kjs_window.h"
 #include "loader.h"
 #include "markup.h"
-#include "RenderBlock.h"
 #include "render_canvas.h"
 #include "render_frames.h"
 #include "typing_command.h"
@@ -632,9 +632,6 @@ void Frame::clear()
 
   if ( !d->m_haveEncoding )
     d->m_encoding = QString::null;
-#ifdef SPEED_DEBUG
-  d->m_parsetime.restart();
-#endif
 }
 
 bool Frame::openFile()

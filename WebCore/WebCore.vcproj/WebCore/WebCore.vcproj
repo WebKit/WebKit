@@ -199,10 +199,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQDateTime.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQDef.h"
 				>
 			</File>
@@ -1878,6 +1874,14 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\Shared.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\SystemTime.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\win\SystemTime.cpp"
 				>
 			</File>
 		</Filter>

@@ -1,3 +1,58 @@
+2006-01-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=6750
+          replace QDateTime with a simpler platform abstraction
+
+        * ForwardingHeaders/qdatetime.h: Removed.
+        * kwq/KWQDateTime.cpp: Removed.
+        * kwq/KWQDateTime.h: Removed.
+
+        * platform/SystemTime.h: Added.
+        * platform/mac/SystemTime.cpp: (WebCore::currentTime): Added.
+        * platform/win: Added.
+        * platform/win/SystemTime.cpp: (WebCore::currentTime): Added.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Added new files, removed old.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * css/css_base.h: Removed include of <qdatetime.h>.
+        * css/cssstyleselector.cpp: Ditto.
+
+        * khtml/html/htmltokenizer.h:
+        * khtml/html/htmltokenizer.cpp: Convert tabs to spaces.
+        (WebCore::HTMLTokenizer::continueProcessing): Change parameter from QTime to double.
+        Use currentTime() instead of QTime::elapsed().
+        (WebCore::HTMLTokenizer::write): Use currentTime() instead of QTime::elapsed().
+
+        * config.h: Added HAVE_FUNC_USLEEP for now, not sure this is really a
+        good way to handle this.
+        * khtml/xml/ContainerNodeImpl.cpp: (WebCore::ContainerNodeImpl::setActive):
+        Use currentTime() instead of QTime::elapsed(). Use HAVE_FUNC_USLEEP for the if.
+
+        * khtml/xml/DocumentImpl.h:
+        * khtml/xml/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::DocumentImpl): Use currentTime() instead of QTime::elapsed().
+        (WebCore::DocumentImpl::implicitClose): Ditto.
+        (WebCore::DocumentImpl::minimumLayoutDelay): Ditto.
+        (WebCore::DocumentImpl::elapsedTime): Ditto.
+
+        * khtml/xml/dom2_eventsimpl.cpp: (WebCore::EventImpl::EventImpl): Use currentTime()
+        instead of local function called currentTimeStamp().
+
+        * khtml/xml/xml_tokenizer.h: Removed declaration of class QTime.
+
+        * ksvg2/misc/KSVGTimeScheduler.h:
+        * ksvg2/misc/KSVGTimeScheduler.cpp:
+        (KSVG::TimeScheduler::TimeScheduler): Use currentTime instead of QTime::elapsed.
+        (KSVG::TimeScheduler::startAnimations): Ditto.
+        (KSVG::TimeScheduler::toggleAnimations): Ditto.
+        (KSVG::TimeScheduler::elapsed): Ditto.
+
+        * page/Frame.cpp: (Frame::clear): Removed unused m_parsetime.
+        * page/FramePrivate.h: Ditto.
+
 2006-01-24  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 6781, convert QColor to Color (and QRgb to RGBA32).  r=maciej.

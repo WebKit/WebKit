@@ -31,11 +31,11 @@
 #include "InlineTextBox.h"
 #include "IntRect.h"
 #include "RenderText.h"
+#include "SystemTime.h"
 #include "dom2_eventsimpl.h"
 #include "dom_exception.h"
 #include "dom_node.h"
 #include "render_theme.h"
-#include <qdatetime.h>
 
 namespace WebCore {
 
@@ -764,20 +764,20 @@ void ContainerNodeImpl::setActive(bool down, bool pause)
             // to repaint the "down" state of the control is about the same time as it would take to repaint the
             // "up" state.  Once you assume this, you can just delay for 100ms - that time (assuming that after you
             // leave this method, it will be about that long before the flush of the up state happens again).
-            QTime startTime;
-            startTime.restart();
+#if HAVE_FUNC_USLEEP
+            double startTime = currentTime();
+#endif
 
             // Do an immediate repaint.
             renderer()->repaint(true);
             
-#if !WIN32
-            // FIXME: Find a substitute for usleep.  Better yet, come up with a way of doing this that 
-            // doesn't use usleep at all.
-            int remainingTime = 100 - startTime.elapsed();
-            
+            // FIXME: Find a substitute for usleep for Win32.
+            // Better yet, come up with a way of doing this that doesn't use this sort of thing at all.            
+#if HAVE_FUNC_USLEEP
             // Now pause for a small amount of time (1/10th of a second from before we repainted in the pressed state)
+            double remainingTime = 0.1 - (currentTime() - startTime);
             if (remainingTime > 0)
-                usleep(remainingTime * 1000);
+                usleep(static_cast<useconds_t>(remainingTime * 1000000.0));
 #endif
         }
     }

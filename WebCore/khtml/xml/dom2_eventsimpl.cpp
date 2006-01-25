@@ -22,35 +22,19 @@
  */
 
 #include "config.h"
-#include "xml/dom2_eventsimpl.h"
+#include "dom2_eventsimpl.h"
 
-#include "dom/dom2_events.h"
-#include "FrameView.h"
-#include "rendering/render_layer.h"
-#include "xml/EventNames.h"
-#include "xml/dom2_viewsimpl.h"
 #include "DocumentImpl.h"
+#include "EventNames.h"
+#include "FrameView.h"
+#include "SystemTime.h"
+#include "dom2_events.h"
+#include "dom2_viewsimpl.h"
+#include "render_layer.h"
 
-using namespace khtml;
-
-namespace DOM {
+namespace WebCore {
 
 using namespace EventNames;
-
-#if __APPLE__
-static inline DOMTimeStamp currentTimeStamp()
-{
-    // Since this shows up on profiles, do this an even faster way on Mac OS X.
-    return static_cast<DOMTimeStamp>((CFAbsoluteTimeGetCurrent() + kCFAbsoluteTimeIntervalSince1970) * 1000);
-}
-#else
-static DOMTimeStamp currentTimeStamp()
-{
-    QDateTime currentDateTime = QDateTime::currentDateTime();
-    QDateTime epoch(QDate(1970, 1, 1), QTime());
-    return epoch.secsTo(currentDateTime) * 1000LL + currentDateTime.time().msec();
-}
-#endif
 
 EventImpl::EventImpl()
     : m_canBubble(false)
@@ -61,7 +45,7 @@ EventImpl::EventImpl()
     , m_cancelBubble(false)
     , m_currentTarget(0)
     , m_eventPhase(0)
-    , m_createTime(currentTimeStamp())
+    , m_createTime(static_cast<DOMTimeStamp>(currentTime() * 1000.0))
 {
 }
 
@@ -75,7 +59,7 @@ EventImpl::EventImpl(const AtomicString &eventType, bool canBubbleArg, bool canc
     , m_cancelBubble(false)
     , m_currentTarget(0)
     , m_eventPhase(0)
-    , m_createTime(currentTimeStamp())
+    , m_createTime(static_cast<DOMTimeStamp>(currentTime() * 1000.0))
 {
 }
 
@@ -288,12 +272,12 @@ void MouseRelatedEventImpl::computePositions()
         // If we want to, then we'll have to wait until setTarget is called.
         RenderObject::NodeInfo hitTestResult(true, false);
         docRenderer->layer()->hitTest(hitTestResult, m_pageX, m_pageY);
-        NodeImpl *n = hitTestResult.innerNonSharedNode();
+        NodeImpl* n = hitTestResult.innerNonSharedNode();
         while (n && !n->renderer())
             n = n->parent();
         if (n) {
             n->renderer()->enclosingLayer()->updateLayerPosition();    
-            for (RenderLayer *layer = n->renderer()->enclosingLayer(); layer; layer = layer->parent()) {
+            for (RenderLayer* layer = n->renderer()->enclosingLayer(); layer; layer = layer->parent()) {
                 m_layerX -= layer->xPos();
                 m_layerY -= layer->yPos();
             }
