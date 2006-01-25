@@ -37,7 +37,7 @@ namespace KXMLCore {
     // http://www.cris.com/~Ttwang/tech/inthash.htm
     template<> inline unsigned pointerHash<4>(void *pointer) 
     {
-        uint32_t key = reinterpret_cast<uint32_t>(pointer);
+        uint32_t key = static_cast<uint32_t>(reinterpret_cast<uintptr_t>(pointer));
         key += ~(key << 15);
         key ^= (key >> 10);
         key += (key << 3);

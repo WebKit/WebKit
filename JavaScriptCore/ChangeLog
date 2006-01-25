@@ -1,3 +1,9 @@
+2006-01-25  George Staikos <staikos@opensource.apple.com>
+
+	Reviewed by Darin.
+
+	* kxmlcore/HashFunctions.h: Merge build fix from KDE.
+
 2006-01-25  Darin Adler  <darin@apple.com>
 
         - removed an unused source file
