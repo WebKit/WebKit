@@ -1,3 +1,29 @@
+2006-01-24  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Dave Harrison.
+
+        <rdar://problem/4339024>
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=6785> "Fix for possible leak of applet, object, or embed
+        (and plugin view)"
+        
+        * khtml/html/html_objectimpl.cpp:
+        (WebCore::HTMLAppletElementImpl::~HTMLAppletElementImpl):
+        Assert that appletInstance has been deleted by detach().
+        (WebCore::HTMLAppletElementImpl::detach):
+        Delete appletInstance, because it references the widget owned by the renderer we're about to destroy.
+        It is assumed elsewhere (getRuntimeObject(), kjs_dom.cpp) that the instance is owned by the applet
+        element.  Therefore, it is required that the element destroy the instance in its tear-down phase.
+        (WebCore::HTMLEmbedElementImpl::~HTMLEmbedElementImpl):
+        Assert that embedInstance has been deleted by detach().
+        (WebCore::HTMLEmbedElementImpl::detach):
+        Delete embedInstance, same reason.  This is the one that fixes <rdar://problem/4339024>.
+        (WebCore::HTMLObjectElementImpl::~HTMLObjectElementImpl):
+        Assert that objectInstance has been deleted by detach().
+        (WebCore::HTMLObjectElementImpl::detach):
+        Delete embedInstance, same reason.
+        * khtml/html/html_objectimpl.h:
+        Declared HTMLAppletElementImpl::detach() and HTMLEmbedElementImpl::detach().
+
 2006-01-24  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Darin.
