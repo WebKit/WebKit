@@ -1,3 +1,16 @@
+2006-01-25  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        Corrected a test case for http://bugzilla.opendarwin.org/show_bug.cgi?id=6385.
+
+        * fast/frames/frame-element-name.html: Fix a reference to the left frame.
+        * fast/frames/frame-element-name-expected.txt: Updated results.
+        * fast/frames/frame-element-name-expected.png: Updated results.
+        * fast/frames/frame-element-name-expected.checksum: Updated results.
+        * fast/frames/resources/frame-element-name-left.html: Use escape() on the name.
+        * fast/frames/resources/frame-element-name-right.html: Ditto.
+
 2006-01-24  Darin Adler  <darin@apple.com>
 
        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6731

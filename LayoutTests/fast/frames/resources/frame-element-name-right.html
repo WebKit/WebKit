@@ -5,7 +5,7 @@
 <script>
 try {
 
-	document.write("window.frameElement.name='" + window.frameElement.name + "' (should be '')");
+	document.write("escape(window.frameElement.name)='" + escape(window.frameElement.name) + "' (should be '')");
 
 } catch (ex) {
 	document.write('Exception: ' + ex.description);
