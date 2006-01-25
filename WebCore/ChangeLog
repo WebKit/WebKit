@@ -1,3 +1,16 @@
+2006-01-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave Hyatt.
+        
+        - fixed crash if a node is removed from the DOM before being reparented due to residual style
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6778
+
+        * khtml/html/htmlparser.cpp:
+        (HTMLParser::handleResidualStyleCloseTagAcrossBlocks): If the
+        block has been removed from the document, then do not remove it
+        from its parent or add it to its new location. This prevents the
+        crash and matches Mozilla.
+
 2006-01-24  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

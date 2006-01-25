@@ -1032,6 +1032,11 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
             elem->node->appendChild(prevNode, exceptionCode);
     }
          
+    // Check if the block is still in the tree. If it isn't, then we don't
+    // want to remove it from its parent (that would crash) or insert it into
+    // a new parent later. See http://bugzilla.opendarwin.org/show_bug.cgi?id=6778
+    bool isBlockStillInTree = blockElem->parentNode();
+
     // We need to make a clone of |residualElem| and place it just inside |blockElem|.
     // All content of |blockElem| is reparented to be under this clone.  We then
     // reparent |blockElem| using real DOM calls so that attachment/detachment will
@@ -1040,7 +1045,8 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
     // The end result will be: <b>...</b><p><b>Foo</b>Goo</p>
     //
     // Step 1: Remove |blockElem| from its parent, doing a batch detach of all the kids.
-    blockElem->parentNode()->removeChild(blockElem, exceptionCode);
+    if (isBlockStillInTree)
+        blockElem->parentNode()->removeChild(blockElem, exceptionCode);
         
     // Step 2: Clone |residualElem|.
     PassRefPtr<NodeImpl> newNode = residualElem->cloneNode(false); // Shallow clone. We don't pick up the same kids.
@@ -1060,7 +1066,8 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
     blockElem->appendChild(newNode, exceptionCode);
     
     // Step 5: Reparent |blockElem|.  Now the full attachment of the fixed up tree takes place.
-    parentElem->appendChild(blockElem, exceptionCode);
+    if (isBlockStillInTree)
+        parentElem->appendChild(blockElem, exceptionCode);
         
     // Step 6: Elide |elem|, since it is effectively no longer open.  Also update
     // the node associated with the previous stack element so that when it gets popped,

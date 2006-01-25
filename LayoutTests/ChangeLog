@@ -1,3 +1,14 @@
+2006-01-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - test case for http://bugzilla.opendarwin.org/show_bug.cgi?id=6778
+        (Crash if a node is removed from the DOM before being reparented due to residual style)
+        
+        * fast/parser/remove-block-in-residual-style-expected.checksum: Added.
+        * fast/parser/remove-block-in-residual-style-expected.png: Added.
+        * fast/parser/remove-block-in-residual-style-expected.txt: Added.
+
 2006-01-23  Darin Adler  <darin@apple.com>
 
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6385
