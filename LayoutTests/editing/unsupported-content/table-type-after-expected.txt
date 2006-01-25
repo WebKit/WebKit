@@ -8,7 +8,8 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > TD > TR > TBODY > TABLE > DIV > DIV > BODY > HTML > #document to 1 of #text > TD > TR > TBODY > TABLE > DIV > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of TABLE > DIV > DIV > BODY > HTML > #document to 2 of TABLE > DIV > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > DIV > DIV > BODY > HTML > #document to 2 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
@@ -33,8 +34,8 @@ layer at (0,0) size 800x600
           RenderInline {I} at (0,0) size 99x22
             RenderText {TEXT} at (0,50) size 99x22
               text run at (0,50) width 99: "For this test: "
-          RenderText {TEXT} at (99,50) size 236x22
-            text run at (99,50) width 236: "Test typing at the end of a table."
+          RenderText {TEXT} at (99,50) size 178x22
+            text run at (99,50) width 178: "Test typing after a table."
         RenderBlock (anonymous) at (20,92) size 744x22
           RenderBR {BR} at (0,0) size 0x22
         RenderBlock {DIV} at (20,114) size 744x94

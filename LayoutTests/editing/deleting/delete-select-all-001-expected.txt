@@ -1,7 +1,7 @@
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document to 0 of TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document toDOMRange:range from 0 of #text > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document to 5 of #text > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document to 0 of TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document toDOMRange:range from 0 of TABLE > DIV > BODY > HTML > #document to 2 of TABLE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > TD > TR > TBODY > TABLE to 5 of #text > TD > TR > TBODY > TABLE toDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of TABLE to 2 of TABLE toDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600

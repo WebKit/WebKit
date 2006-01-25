@@ -21,7 +21,8 @@
 <script>
 
 function editingTest() {
-    moveSelectionForwardByLineCommand();
+    for (i = 0; i < 6; i++)
+        moveSelectionForwardByCharacterCommand();
     for (i = 0; i < 10; i++)
         extendSelectionForwardByLineCommand();
     deleteCommand();
@@ -58,19 +59,19 @@ before
 <div id="test" class="editing">
 before<table border="1">
 <tr>
-<td>1</td>
-<td>2</td>
-<td>3</td>
+<td>one</td>
+<td>two</td>
+<td>three</td>
 </tr>
 <tr>
-<td>4</td>
-<td>5</td>
-<td>6</td>
+<td>four</td>
+<td>five</td>
+<td>six</td>
 </tr>
 <tr>
-<td>7</td>
-<td>8</td>
-<td>9</td>
+<td>seven</td>
+<td>eight</td>
+<td>nine</td>
 </tr>
 </table>
 after

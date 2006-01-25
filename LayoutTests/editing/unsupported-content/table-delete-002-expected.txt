@@ -10,6 +10,11 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 6 of #text to 6 of #text toDOMRange:range from 7 of #text > DIV > DIV > BODY > HTML > #document to 7 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
@@ -55,7 +60,4 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (0,0) size 784x32 [border: (2px solid #FF0000)]
           RenderText {TEXT} at (2,2) size 62x28
             text run at (2,2) width 62: "before"
-          RenderInline {FONT} at (0,0) size 0x22
-            RenderInline {SPAN} at (0,0) size 0x18
-              RenderBR {BR} at (0,0) size 0x0
 caret: position 7 of child 0 {TEXT} of child 1 {DIV} of child 5 {DIV} of child 1 {BODY} of child 0 {HTML} of document

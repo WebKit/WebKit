@@ -4,7 +4,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 21 of #text > LI > OL > DIV > BODY > HTML > #document to 21 of #text > LI > OL > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 21 of #text > LI > OL > DIV > BODY > HTML > #document to 21 of #text > LI > OL > DIV > BODY > HTML > #document toDOMRange:range from 21 of #text > LI > OL > DIV > BODY > HTML > #document to 21 of #text > LI > OL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 21 of #text > LI > OL > DIV > BODY > HTML > #document to 21 of #text > LI > OL > DIV > BODY > HTML > #document toDOMRange:range from 21 of #text > LI > OL > OL > DIV > BODY > HTML > #document to 21 of #text > LI > OL > OL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -12,14 +12,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x296 [border: (2px solid #FF0000)]
+      RenderBlock {DIV} at (0,0) size 784x272 [border: (2px solid #FF0000)]
         RenderBlock (anonymous) at (14,14) size 756x28
           RenderInline {SPAN} at (0,0) size 151x28
             RenderText {TEXT} at (0,0) size 151x28
               text run at (0,0) width 151: "Empty list item"
           RenderText {TEXT} at (0,0) size 0x0
         RenderBlock {P} at (14,66) size 756x0
-        RenderBlock {OL} at (14,66) size 756x84
+        RenderBlock {OL} at (14,66) size 756x168
           RenderListItem {LI} at (40,0) size 716x28
             RenderListMarker at (0,0) size 0x22
             RenderText {TEXT} at (0,0) size 211x28
@@ -30,15 +30,15 @@ layer at (0,0) size 800x600
             RenderListMarker at (0,0) size 0x22
             RenderText {TEXT} at (0,0) size 211x28
               text run at (0,0) width 211: "I should be number 3."
-        RenderBlock {OL} at (14,174) size 756x84
-          RenderListItem {LI} at (40,0) size 716x28
-            RenderListMarker at (0,0) size 0x22
-            RenderText {TEXT} at (0,0) size 211x28
-              text run at (0,0) width 211: "I should be number 1."
-          RenderListItem {LI} at (40,28) size 716x28
-            RenderListMarker at (0,0) size 0x22
-          RenderListItem {LI} at (40,56) size 716x28
-            RenderListMarker at (0,0) size 0x22
-            RenderText {TEXT} at (0,0) size 211x28
-              text run at (0,0) width 211: "I should be number 3."
-caret: position 21 of child 0 {TEXT} of child 2 {LI} of child 5 {OL} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document
+          RenderBlock {OL} at (40,84) size 716x84
+            RenderListItem {LI} at (40,0) size 676x28
+              RenderListMarker at (0,0) size 0x22
+              RenderText {TEXT} at (0,0) size 211x28
+                text run at (0,0) width 211: "I should be number 1."
+            RenderListItem {LI} at (40,28) size 676x28
+              RenderListMarker at (0,0) size 0x22
+            RenderListItem {LI} at (40,56) size 676x28
+              RenderListMarker at (0,0) size 0x22
+              RenderText {TEXT} at (0,0) size 211x28
+                text run at (0,0) width 211: "I should be number 3."
+caret: position 21 of child 0 {TEXT} of child 2 {LI} of child 6 {OL} of child 4 {OL} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

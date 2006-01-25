@@ -1,3 +1,51 @@
+2006-01-25  David Harrison  <harrison@apple.com>
+
+        Updated for fixes of:
+        
+        <rdar://problem/3907635> copy/paste of list item text moves list item up one <LI>
+        <rdar://problem/3907647> Enhance list editing: return inserts <li></li>
+        <rdar://problem/4060158> deleting selection within table deletes more than intended
+        <rdar://problem/4061232> Deleting a list can delete unselected content
+        <rdar://problem/4062212> after pasting in contents of web.apple.com, typing before start adds to table instead of before table
+        <rdar://problem/4064437> After copy/paste from bugweb cannot go back to entering text at left side of page
+        <rdar://problem/4259845> Table editing in design mode is broken
+        <rdar://problem/4287667> Insertion point goes before table instead of inside first cell
+        <rdar://problem/4345749> Editing HTML - Enter at end of <LI> inserts uneditable blank <LI>
+        <rdar://problem/4345794> HTML editing: Enter at end of last <LI> does not add new <LI>
+        <rdar://problem/4345825> HTML Editing: editing first <LI> element removes first <LI> and more
+        <rdar://problem/4345835> HTML editing: editing last <LI> removes everything within <BODY>
+        <rdar://problem/4345879> HTML editing: editing first <TD> moves data out of table
+
+        * editing/deleting/delete-4083333-fix-expected.txt:
+        * editing/deleting/delete-at-paragraph-boundaries-003-expected.txt:
+        * editing/deleting/delete-at-paragraph-boundaries-006-expected.txt:
+        * editing/deleting/delete-at-paragraph-boundaries-011-expected.txt:
+        * editing/deleting/delete-image-004-expected.txt:
+        * editing/deleting/delete-line-015-expected.txt:
+        * editing/deleting/delete-select-all-001-expected.txt:
+        * editing/pasteboard/paste-list-001-expected.txt:
+        * editing/pasteboard/paste-table-001-expected.txt:
+        * editing/pasteboard/paste-table-001.html:
+        * editing/selection/3690703-2-expected.txt:
+        * editing/selection/3690703-2.html:
+        * editing/selection/3690703-expected.txt:
+        * editing/selection/3690719-expected.txt:
+        * editing/selection/move-by-line-001-expected.txt:
+        * editing/selection/move-by-line-001.html:
+        * editing/selection/replaced-boundaries-3-expected.txt:
+        * editing/unsupported-content/list-type-after-expected.txt:
+        * editing/unsupported-content/list-type-after.html:
+        * editing/unsupported-content/list-type-before-expected.txt:
+        * editing/unsupported-content/list-type-before.html:
+        * editing/unsupported-content/table-delete-001-expected.txt:
+        * editing/unsupported-content/table-delete-001.html:
+        * editing/unsupported-content/table-delete-002-expected.txt:
+        * editing/unsupported-content/table-delete-002.html:
+        * editing/unsupported-content/table-type-after-expected.txt:
+        * editing/unsupported-content/table-type-after.html:
+        * editing/unsupported-content/table-type-before-expected.txt:
+        * editing/unsupported-content/table-type-before.html:
+
 2006-01-25  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

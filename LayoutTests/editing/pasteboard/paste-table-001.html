@@ -14,8 +14,10 @@
 
 function editingTest() {
     moveSelectionForwardByLineCommand();
-    for (i = 0; i < 4; i++)
+    for (i = 0; i < 3; i++)
         extendSelectionForwardByLineCommand();
+    for (i = 0; i < 32; i++)
+        extendSelectionForwardByCharacterCommand();
     copyCommand();
     moveSelectionForwardByLineCommand();
     pasteCommand();
