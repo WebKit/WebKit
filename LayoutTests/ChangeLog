@@ -1,3 +1,13 @@
+2006-01-24  Darin Adler  <darin@apple.com>
+
+       Reviewed by Eric.
+
+       - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6782
+         REGRESSION: replaceChild broken when node to replace is first (TinyMCE test app broken)
+
+       * fast/dom/replace-first-child.html: Added.
+       * fast/dom/replace-first-child-expected.txt: Added
+
 2006-01-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave Hyatt.
