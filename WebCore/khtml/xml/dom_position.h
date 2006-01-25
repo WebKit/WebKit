@@ -119,6 +119,11 @@ inline bool operator!=(const Position &a, const Position &b)
 Position startPosition(const RangeImpl *);
 Position endPosition(const RangeImpl *);
 
+#ifndef NDEBUG
+void showTree(const Position &pos);
+void showTree(const Position *pos);
+#endif
+
 } // namespace DOM
 
 #endif // __dom_position_h__

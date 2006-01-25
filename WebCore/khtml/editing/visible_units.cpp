@@ -29,6 +29,7 @@
 #include <qstring.h>
 
 #include "htmlnames.h"
+#include "htmlediting.h"
 #include "helper.h"
 #include "InlineTextBox.h"
 #include "RenderBlock.h"
@@ -70,7 +71,7 @@ static VisiblePosition previousBoundary(const VisiblePosition &c, unsigned (*sea
     RefPtr<RangeImpl> searchRange(d->createRange());
     int exception = 0;
     searchRange->setStartBefore(boundary, exception);
-    Position end(pos.equivalentRangeCompliantPosition());
+    Position end(rangeCompliantEquivalent(pos));
     searchRange->setEnd(end.node(), end.offset(), exception);
     SimplifiedBackwardsTextIterator it(searchRange.get());
     QString string;
@@ -145,7 +146,7 @@ static VisiblePosition nextBoundary(const VisiblePosition &c, unsigned (*searchF
     }
 
     RefPtr<RangeImpl> searchRange(d->createRange());
-    Position start(pos.equivalentRangeCompliantPosition());
+    Position start(rangeCompliantEquivalent(pos));
     int exception = 0;
     searchRange->setStart(start.node(), start.offset(), exception);
     searchRange->setEndAfter(boundary, exception);
@@ -294,18 +295,26 @@ VisiblePosition startOfLine(const VisiblePosition &c)
     if (!rootBox)
         return VisiblePosition();
     
+    // Generated content (e.g. list markers and CSS :before and :after
+    // pseudoelements) have no corresponding DOM element, and so cannot be
+    // represented by a VisiblePosition.  Use whatever follows instead.
     InlineBox *startBox = rootBox->firstLeafChild();
-    if (!startBox)
-        return VisiblePosition();
+    NodeImpl *startNode;
+    while (1) {
+        if (!startBox)
+            return VisiblePosition();
 
-    RenderObject *startRenderer = startBox->object();
-    if (!startRenderer)
-        return VisiblePosition();
+        RenderObject *startRenderer = startBox->object();
+        if (!startRenderer)
+            return VisiblePosition();
 
-    NodeImpl *startNode = startRenderer->element();
-    if (!startNode)
-        return VisiblePosition();
-
+        startNode = startRenderer->element();
+        if (startNode)
+            break;
+        
+        startBox = startBox->nextLeafChild();
+    }
+    
     int startOffset = 0;
     if (startBox->isInlineTextBox()) {
         InlineTextBox *startTextBox = static_cast<InlineTextBox *>(startBox);
@@ -321,18 +330,26 @@ VisiblePosition endOfLine(const VisiblePosition &c)
     if (!rootBox)
         return VisiblePosition();
     
+    // Generated content (e.g. list markers and CSS :before and :after
+    // pseudoelements) have no corresponding DOM element, and so cannot be
+    // represented by a VisiblePosition.  Use whatever precedes instead.
+    NodeImpl *endNode;
     InlineBox *endBox = rootBox->lastLeafChild();
-    if (!endBox)
-        return VisiblePosition();
+    while (1) {
+        if (!endBox)
+            return VisiblePosition();
 
-    RenderObject *endRenderer = endBox->object();
-    if (!endRenderer)
-        return VisiblePosition();
+        RenderObject *endRenderer = endBox->object();
+        if (!endRenderer)
+            return VisiblePosition();
 
-    NodeImpl *endNode = endRenderer->element();
-    if (!endNode)
-        return VisiblePosition();
-
+        endNode = endRenderer->element();
+        if (endNode)
+            break;
+        
+        endBox = endBox->prevLeafChild();
+    }
+    
     int endOffset = 1;
     if (endNode->hasTagName(brTag)) {
         endOffset = 0;
@@ -449,7 +466,7 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
         // Need to move forward to next containing editable block in this root editable
         // block and find the first root line box in that block.
         NodeImpl *startBlock = node->enclosingBlockFlowElement();
-        NodeImpl *n = node->nextEditable();
+        NodeImpl *n = node->nextEditable(p.offset());
         while (n && startBlock == n->enclosingBlockFlowElement())
             n = n->nextEditable();
         while (n) {
@@ -544,14 +561,20 @@ VisiblePosition startOfParagraph(const VisiblePosition &c)
     NodeImpl *node = startNode;
     int offset = p.offset();
 
-    for (NodeImpl *n = startNode; n; n = n->traversePreviousNodePostOrder(startBlock)) {
+    NodeImpl *n = startNode;
+    while (n) {
         RenderObject *r = n->renderer();
-        if (!r)
+        if (!r) {
+            n = n->traversePreviousNodePostOrder(startBlock);
             continue;
+        }
         RenderStyle *style = r->style();
-        if (style->visibility() != VISIBLE)
+        if (style->visibility() != VISIBLE) {
+            n = n->traversePreviousNodePostOrder(startBlock);
             continue;
-        if (r->isBR() || r->isBlockFlow())
+        }
+        // FIXME: isBlockFlow should not exclude non-inline tables
+        if (r->isBR() || r->isBlockFlow() || (r->isTable() && !r->isInline()))
             break;
         if (r->isText()) {
             // FIXME: Not clear what to do with pre-wrap or pre-line here.
@@ -567,10 +590,13 @@ VisiblePosition startOfParagraph(const VisiblePosition &c)
             }
             node = n;
             offset = 0;
-        } else if (r->isReplaced()) {
+            n = n->traversePreviousNodePostOrder(startBlock);
+        } else if (editingIgnoresContent(n) || isTableElement(n)) {
             node = n;
             offset = 0;
-        }
+            n = n->previousSibling() ? n->previousSibling() : n->traversePreviousNodePostOrder(startBlock);
+        } else
+            n = n->traversePreviousNodePostOrder(startBlock);
     }
 
     return VisiblePosition(node, offset, DOWNSTREAM);
@@ -589,17 +615,23 @@ VisiblePosition endOfParagraph(const VisiblePosition &c)
     NodeImpl *node = startNode;
     int offset = p.offset();
 
-    for (NodeImpl *n = startNode; n; n = n->traverseNextNode(stayInsideBlock)) {
+    NodeImpl *n = startNode;
+    while (n) {
         if (n->isContentEditable() != startNode->isContentEditable())
             break;
         RenderObject *r = n->renderer();
-        if (!r)
+        if (!r) {
+            n = n->traverseNextNode(stayInsideBlock);
             continue;
+        }
         RenderStyle *style = r->style();
-        if (style->visibility() != VISIBLE)
+        if (style->visibility() != VISIBLE) {
+            n = n->traverseNextNode(stayInsideBlock);
             continue;
-            
-        if (r->isBR() || r->isBlockFlow())
+        }
+        
+        // FIXME: isBlockFlow should not exclude non-inline tables
+        if (r->isBR() || r->isBlockFlow() || (r->isTable() && !r->isInline()))
             break;
             
         // FIXME: We avoid returning a position where the renderer can't accept the caret.
@@ -616,10 +648,13 @@ VisiblePosition endOfParagraph(const VisiblePosition &c)
             }
             node = n;
             offset = r->caretMaxOffset();
-        } else if (r->isReplaced()) {
+            n = n->traverseNextNode(stayInsideBlock);
+        } else if (editingIgnoresContent(n) || isTableElement(n)) {
             node = n;
-            offset = 1;
-        }
+            offset = maxDeepOffset(n);
+            n = n->traverseNextSibling(stayInsideBlock);
+        } else
+            n = n->traverseNextNode(stayInsideBlock);
     }
 
     return VisiblePosition(node, offset, DOWNSTREAM);

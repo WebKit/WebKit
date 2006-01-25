@@ -257,15 +257,16 @@ RenderObject *RenderObject::nextRenderer() const
 {
     if (firstChild())
         return firstChild();
-    else if (nextSibling())
+
+    if (nextSibling())
         return nextSibling();
-    else {
-        const RenderObject *r = this;
-        while (r && !r->nextSibling())
-            r = r->parent();
-        if (r)
-            return r->nextSibling();
-    }
+
+    const RenderObject *r = this;
+    while (r && !r->nextSibling())
+        r = r->parent();
+    if (r)
+        return r->nextSibling();
+
     return 0;
 }
 
@@ -277,12 +278,8 @@ RenderObject *RenderObject::previousRenderer() const
             r = r->lastChild();
         return r;
     }
-    else if (parent()) {
-        return parent();
-    }
-    else {
-        return 0;
-    }
+
+    return parent();
 }
 
 bool RenderObject::isEditable() const
@@ -1621,6 +1618,12 @@ void RenderObject::showTree() const
 {
     if (element())
         element()->showTree();
+}
+
+void showTree(const RenderObject *ro)
+{
+    if (ro)
+        ro->showTree();
 }
 #endif
 

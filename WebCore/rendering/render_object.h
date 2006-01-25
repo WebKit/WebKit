@@ -170,7 +170,8 @@ public:
     bool hasClip() { return isPositioned() &&  style()->hasClip(); }
     
     virtual int getBaselineOfFirstLineBox() const { return -1; } 
-    virtual int getBaselineOfLastLineBox() const { return -1; } 
+    virtual int getBaselineOfLastLineBox() const { return -1; }
+    virtual bool isEmpty() const { return firstChild() == 0; }
     
     // Obtains the nearest enclosing block (including this block) that contributes a first-line style to our inline
     // children.
@@ -224,6 +225,7 @@ public:
     virtual void printTree(int indent=0) const;
     virtual void dump(QTextStream *stream, QString ind = "") const;
     void showTree() const;
+    static void showTree(const RenderObject *ro);
 #endif
 
     static RenderObject *createObject(DOM::NodeImpl* node, RenderStyle* style);

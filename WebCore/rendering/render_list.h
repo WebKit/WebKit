@@ -60,9 +60,9 @@ public:
 
     virtual short lineHeight(bool b, bool isRootLineBox=false) const;
     virtual short baselinePosition(bool b, bool isRootLineBox=false) const;
-    
-    virtual bool isListMarker() const { return true; }
 
+    virtual bool isListMarker() const { return true; }
+    
     CachedImage* listImage() const { return m_listImage; }
     
     RenderListItem* listItem() { return m_listItem; }
@@ -107,6 +107,7 @@ public:
     void setValue( int v ) { predefVal = v; }
     void calcListValue();
     
+    virtual bool isEmpty() const;
     virtual void paint(PaintInfo& i, int xoff, int yoff);
 
     virtual void layout( );
@@ -119,6 +120,7 @@ public:
     void setNotInList(bool notInList) { _notInList = notInList; }
     bool notInList() const { return _notInList; }
 
+    void resetMarkerValue();
     QString markerStringValue() { if (m_marker) return m_marker->m_item; return ""; }
 
 protected:

@@ -132,7 +132,10 @@ DOM::NodeImpl *enclosingBlockFlowElement(const VisiblePosition &);
 
 bool isFirstVisiblePositionInNode(const VisiblePosition &, const DOM::NodeImpl *);
 bool isLastVisiblePositionInNode(const VisiblePosition &, const DOM::NodeImpl *);
-
+#ifndef NDEBUG
+void showTree(const VisiblePosition *vpos);
+void showTree(const VisiblePosition &vpos);
+#endif
 } // namespace khtml
 
 #endif // KHTML_EDITING_VISIBLE_POSITION_H

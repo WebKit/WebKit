@@ -29,6 +29,7 @@
 #include "DocumentImpl.h"
 #include "dom2_range.h"
 #include "dom_textimpl.h"
+#include "HTMLElementImpl.h"
 #include "html_interchange.h"
 #include "htmlnames.h"
 #include "render_object.h"
@@ -43,23 +44,99 @@ using namespace HTMLNames;
 // purposes of editing.
 bool isAtomicNode(const NodeImpl *node)
 {
-    return node && (!node->hasChildNodes() || node->renderer() && node->renderer()->isWidget());
+    return node && (!node->hasChildNodes() || editingIgnoresContent(node));
+}
+
+bool editingIgnoresContent(const NodeImpl *node)
+{
+    if (!node || !node->isHTMLElement())
+        return false;
+    
+    if (node->renderer()) {
+        if (node->renderer()->isWidget())
+            return true;
+        if (node->renderer()->isImage())
+            return true;
+    } else {
+        // widgets
+        if (static_cast<const HTMLElementImpl *>(node)->isGenericFormElement())
+            return true;
+        if (node->hasTagName(appletTag))
+            return true;
+        if (node->hasTagName(embedTag))
+            return true;
+        if (node->hasTagName(iframeTag))
+            return true;
+
+        // images
+        if (node->hasTagName(imgTag))
+            return true;
+    }
+    
+    return false;
+}
+
+// antidote for maxDeepOffset()
+Position rangeCompliantEquivalent(const Position& pos)
+{
+    if (pos.isNull())
+        return Position();
+
+    NodeImpl *node = pos.node();
+    
+    if (pos.offset() <= 0) {
+        // FIXME: createMarkup has a problem with BR 0 as the starting position
+        // so workaround until I can come back and fix createMarkup.  The problem
+        // is that createMarkup fails to include the initial BR in the markup.
+        if (node->parentNode() && node->hasTagName(brTag))
+            return positionBeforeNode(node);
+        return Position(node, 0);
+    }
+    
+    if (offsetInCharacters(node->nodeType()))
+        return Position(node, kMin(node->maxOffset(), pos.offset()));
+    
+    int maxCompliantOffset = node->childNodeCount();
+    if (pos.offset() > maxCompliantOffset) {
+        if (node->parentNode())
+            return positionAfterNode(node);
+        
+        // there is no other option at this point than to
+        // use the highest allowed position in the node
+        return Position(node, maxCompliantOffset);
+    } 
+    
+    // "select" nodes, e.g., are ignored by editing but can have children.
+    // For us, a range inside of that node is tough to deal with, so use
+    // a more generic position.
+    if ((pos.offset() < maxCompliantOffset) && editingIgnoresContent(node)) {
+        // ... but we should not have generated any such positions
+        ASSERT_NOT_REACHED();
+        return node->parentNode() ? positionBeforeNode(node) : Position(node, 0);
+    }
+    
+    return Position(pos);
+}
+
+Position rangeCompliantEquivalent(const VisiblePosition& vpos)
+{
+    return rangeCompliantEquivalent(vpos.deepEquivalent());
 }
 
 // This method is used to create positions in the DOM. It returns the maximum valid offset
-// in a node.  It returns 1 for <br>s and replaced elements, which creates 
-// technically invalid DOM Positions.  Be sure to call equivalentRangeCompliantPosition
+// in a node.  It returns 1 for some elements even though they do not have children, which
+// creates technically invalid DOM Positions.  Be sure to call rangeCompliantEquivalent
 // on a Position before using it to create a DOM Range, or an exception will be thrown.
 int maxDeepOffset(const NodeImpl *node)
 {
-    if (node->isTextNode())
-        return static_cast<const TextImpl*>(node)->length();
+    if (offsetInCharacters(node->nodeType()))
+        return node->maxOffset();
         
     if (node->hasChildNodes())
         return node->childNodeCount();
     
-    RenderObject *renderer = node->renderer();
-    if (node->hasTagName(brTag) || (renderer && renderer->isReplaced()))
+    // NOTE: This should preempt the childNodeCount for, e.g., select nodes
+    if (node->hasTagName(brTag) || editingIgnoresContent(node))
         return 1;
 
     return 0;
@@ -121,6 +198,7 @@ void derefNodesInList(const QPtrList<NodeImpl>& list)
         it.current()->deref();
 }
 
+// FIXME: Why use this instead of maxDeepOffset???
 static int maxRangeOffset(NodeImpl *n)
 {
     if (offsetInCharacters(n->nodeType()))
@@ -132,6 +210,8 @@ static int maxRangeOffset(NodeImpl *n)
     return 1;
 }
 
+#if 1
+// FIXME: need to dump this
 bool isSpecialElement(const NodeImpl *n)
 {
     if (!n)
@@ -167,8 +247,12 @@ bool isFirstVisiblePositionInSpecialElement(const Position& pos)
     VisiblePosition vPos = VisiblePosition(pos, DOWNSTREAM);
 
     for (NodeImpl *n = pos.node(); n; n = n->parentNode()) {
-        if (VisiblePosition(n, 0, DOWNSTREAM) != vPos)
+        VisiblePosition checkVP = VisiblePosition(n, 0, DOWNSTREAM);
+        if (checkVP != vPos) {
+            if (isTableElement(n) && checkVP.next() == vPos)
+                return true;
             return false;
+        }
         if (n->rootEditableElement() == NULL)
             return false;
         if (isSpecialElement(n))
@@ -178,12 +262,7 @@ bool isFirstVisiblePositionInSpecialElement(const Position& pos)
     return false;
 }
 
-Position positionBeforeNode(const NodeImpl *node)
-{
-    return Position(node->parentNode(), node->nodeIndex());
-}
-
-Position positionBeforeContainingSpecialElement(const Position& pos)
+Position positionBeforeContainingSpecialElement(const Position& pos, NodeImpl **containingSpecialElement)
 {
     ASSERT(isFirstVisiblePositionInSpecialElement(pos));
 
@@ -192,8 +271,12 @@ Position positionBeforeContainingSpecialElement(const Position& pos)
     NodeImpl *outermostSpecialElement = NULL;
 
     for (NodeImpl *n = pos.node(); n; n = n->parentNode()) {
-        if (VisiblePosition(n, 0, DOWNSTREAM) != vPos)
+        VisiblePosition checkVP = VisiblePosition(n, 0, DOWNSTREAM);
+        if (checkVP != vPos) {
+            if (isTableElement(n) && checkVP.next() == vPos)
+                outermostSpecialElement = n;
             break;
+        }
         if (n->rootEditableElement() == NULL)
             break;
         if (isSpecialElement(n))
@@ -201,7 +284,9 @@ Position positionBeforeContainingSpecialElement(const Position& pos)
     }
     
     ASSERT(outermostSpecialElement);
-
+    if (containingSpecialElement)
+        *containingSpecialElement = outermostSpecialElement;
+        
     Position result = positionBeforeNode(outermostSpecialElement);
     if (result.isNull() || !result.node()->rootEditableElement())
         return pos;
@@ -213,13 +298,14 @@ bool isLastVisiblePositionInSpecialElement(const Position& pos)
 {
     // make sure to get a range-compliant version of the position
     // FIXME: rangePos isn't being used to create DOM Ranges, so why does it need to be range compliant?
-    Position rangePos = VisiblePosition(pos, DOWNSTREAM).deepEquivalent().equivalentRangeCompliantPosition();
+    Position rangePos = rangeCompliantEquivalent(VisiblePosition(pos, DOWNSTREAM));
 
     VisiblePosition vPos = VisiblePosition(rangePos, DOWNSTREAM);
 
     for (NodeImpl *n = rangePos.node(); n; n = n->parentNode()) {
-        if (VisiblePosition(n, maxRangeOffset(n), DOWNSTREAM) != vPos)
-            return false;
+        VisiblePosition checkVP = VisiblePosition(n, maxRangeOffset(n), DOWNSTREAM);
+        if (checkVP != vPos)
+            return (isTableElement(n) && checkVP.previous() == vPos);
         if (n->rootEditableElement() == NULL)
             return false;
         if (isSpecialElement(n))
@@ -229,26 +315,24 @@ bool isLastVisiblePositionInSpecialElement(const Position& pos)
     return false;
 }
 
-Position positionAfterNode(const NodeImpl *node)
-{
-    return Position(node->parentNode(), node->nodeIndex() + 1);
-}
-
-Position positionAfterContainingSpecialElement(const Position& pos)
+Position positionAfterContainingSpecialElement(const Position& pos, NodeImpl **containingSpecialElement)
 {
     ASSERT(isLastVisiblePositionInSpecialElement(pos));
 
     // make sure to get a range-compliant version of the position
     // FIXME: rangePos isn't being used to create DOM Ranges, so why does it need to be range compliant?
-    Position rangePos = VisiblePosition(pos, DOWNSTREAM).deepEquivalent().equivalentRangeCompliantPosition();
-
+    Position rangePos = rangeCompliantEquivalent(VisiblePosition(pos, DOWNSTREAM));
     VisiblePosition vPos = VisiblePosition(rangePos, DOWNSTREAM);
 
     NodeImpl *outermostSpecialElement = NULL;
 
     for (NodeImpl *n = rangePos.node(); n; n = n->parentNode()) {
-        if (VisiblePosition(n, maxRangeOffset(n), DOWNSTREAM) != vPos)
+        VisiblePosition checkVP = VisiblePosition(n, maxRangeOffset(n), DOWNSTREAM);
+        if (checkVP != vPos) {
+            if (isTableElement(n) && checkVP.previous() == vPos)
+                outermostSpecialElement = n;
             break;
+        }
         if (n->rootEditableElement() == NULL)
             break;
         if (isSpecialElement(n))
@@ -256,6 +340,8 @@ Position positionAfterContainingSpecialElement(const Position& pos)
     }
     
     ASSERT(outermostSpecialElement);
+    if (containingSpecialElement)
+        *containingSpecialElement = outermostSpecialElement;
 
     Position result = positionAfterNode(outermostSpecialElement);
     if (result.isNull() || !result.node()->rootEditableElement())
@@ -264,15 +350,129 @@ Position positionAfterContainingSpecialElement(const Position& pos)
     return result;
 }
 
-Position positionOutsideContainingSpecialElement(const Position &pos)
+Position positionOutsideContainingSpecialElement(const Position &pos, NodeImpl **containingSpecialElement)
 {
-    if (isFirstVisiblePositionInSpecialElement(pos)) {
-        return positionBeforeContainingSpecialElement(pos);
-    } else if (isLastVisiblePositionInSpecialElement(pos)) {
-        return positionAfterContainingSpecialElement(pos);
-    }
+    if (isFirstVisiblePositionInSpecialElement(pos))
+        return positionBeforeContainingSpecialElement(pos, containingSpecialElement);
+    
+    if (isLastVisiblePositionInSpecialElement(pos))
+        return positionAfterContainingSpecialElement(pos, containingSpecialElement);
 
     return pos;
+}
+#endif
+
+Position positionBeforeNode(const NodeImpl *node)
+{
+    return Position(node->parentNode(), node->nodeIndex());
+}
+
+Position positionAfterNode(const NodeImpl *node)
+{
+    return Position(node->parentNode(), node->nodeIndex() + 1);
+}
+
+bool isListElement(NodeImpl *n)
+{
+    return (n->hasTagName(ulTag) || n->hasTagName(olTag) || n->hasTagName(dlTag));
+}
+
+// FIXME: do not require renderer, so that this can be used within fragments, or rename to isRenderedTable()
+bool isTableElement(NodeImpl *n)
+{
+    RenderObject *renderer = n->renderer();
+    // all editing tests pass with this, but I don't want to commit it until I check more
+//  ASSERT(renderer != 0);
+    return (renderer && (renderer->style()->display() == TABLE || renderer->style()->display() == INLINE_TABLE));
+}
+
+bool isFirstVisiblePositionAfterTableElement(const Position& pos)
+{
+    VisiblePosition vPos = VisiblePosition(pos, DOWNSTREAM).previous();
+    // FIXME: rangePos isn't being used to create DOM Ranges, so why does it need to be range compliant?
+    Position rangePos = rangeCompliantEquivalent(vPos.deepEquivalent().downstream());
+    for (NodeImpl *n = rangePos.node(); n; n = n->parentNode()) {
+        // FIXME: can we not create a VP every time thru this loop?
+        VisiblePosition checkVP = VisiblePosition(n, maxRangeOffset(n), DOWNSTREAM);
+        if (checkVP != vPos) {
+            if (isTableElement(n) && checkVP.previous() == vPos)
+                return true;
+            return false;
+        }
+        if (n->rootEditableElement() == NULL)
+            return false;
+        if (isTableElement(n))
+            return true;
+    }
+
+    return false;
+}
+
+Position positionBeforePrecedingTableElement(const Position& pos)
+{
+    ASSERT(isFirstVisiblePositionAfterTableElement(pos));
+    VisiblePosition vPos = VisiblePosition(pos, DOWNSTREAM).previous();
+    // FIXME: rangePos isn't being used to create DOM Ranges, so why does it need to be range compliant?
+    Position rangePos = rangeCompliantEquivalent(vPos);
+    NodeImpl *outermostTableElement = NULL;
+
+    for (NodeImpl *n = rangePos.node(); n; n = n->parentNode()) {
+        // FIXME: can we not create a VP every time thru this loop?
+        VisiblePosition checkVP = VisiblePosition(n, maxRangeOffset(n), DOWNSTREAM);
+        if (checkVP != vPos) {
+            if (isTableElement(n) && checkVP.previous() == vPos)
+                outermostTableElement = n;
+            break;
+        }
+        if (n->rootEditableElement() == NULL)
+            break;
+        if (isTableElement(n))
+            outermostTableElement = n;
+    }
+    
+    ASSERT(outermostTableElement);        
+    Position result = positionBeforeNode(outermostTableElement);
+    
+    if (result.isNull() || !result.node()->rootEditableElement())
+        return pos;
+    return result;
+}
+
+// This function is necessary because a VisiblePosition is allowed
+// to be at the start or end of elements where we do not want to
+// add content directly.  For example, clicking at the end of a hyperlink,
+// then typing, needs to add the text after the link.  Also, table
+// offset 0 and table offset childNodeCount are valid VisiblePostions,
+// but we can not add more content right there... it needs to go before
+// or after the table.
+// FIXME: Consider editable/non-editable boundaries?
+Position positionAvoidingSpecialElementBoundary(const Position &pos)
+{
+    NodeImpl *compNode = pos.node();
+    if (!compNode)
+        return pos;
+    
+    if (compNode->parentNode() && compNode->parentNode()->isLink())
+        compNode = compNode->parentNode();
+    else if (!isTableElement(compNode))
+        return pos;
+    
+    // FIXME: rangePos isn't being used to create DOM Ranges, so why does it need to be range compliant?
+    Position rangePos = rangeCompliantEquivalent(VisiblePosition(pos, DOWNSTREAM));
+    VisiblePosition vPos = VisiblePosition(rangePos, DOWNSTREAM);
+
+    Position result;
+    if (VisiblePosition(compNode, maxRangeOffset(compNode), DOWNSTREAM) == vPos)
+        result = positionAfterNode(compNode);
+    else if (VisiblePosition(compNode, 0, DOWNSTREAM) == vPos)
+        result = positionBeforeNode(compNode);
+    else
+        return pos;
+        
+    if (result.isNull() || !result.node()->rootEditableElement())
+        result = pos;
+    
+    return result;
 }
 
 ElementImpl *createDefaultParagraphElement(DocumentImpl *document)

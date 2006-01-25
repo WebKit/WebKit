@@ -61,24 +61,22 @@ Position InsertTextCommand::prepareForTextInsertion(const Position& pos)
 {
     // Prepare for text input by looking at the specified position.
     // It may be necessary to insert a text node to receive characters.
+    // FIXME: What is the rootEditable() check about?  Seems like it
+    // assumes that the content before (or after) pos.node() is editable
+    // (i.e. pos is at an editable/non-editable boundary).  That seems
+    // like a bad assumption.
     if (!pos.node()->isTextNode()) {
         NodeImpl *textNode = document()->createEditingTextNode("");
         NodeImpl *nodeToInsert = textNode;
 
         // Now insert the node in the right place
         if (pos.node()->rootEditableElement() != NULL) {
-            LOG(Editing, "prepareForTextInsertion case 1");
             insertNodeAt(nodeToInsert, pos.node(), pos.offset());
-        }
-        else if (pos.node()->caretMinOffset() == pos.offset()) {
-            LOG(Editing, "prepareForTextInsertion case 2");
+        } else if (pos.node()->caretMinOffset() == pos.offset()) {
             insertNodeBefore(nodeToInsert, pos.node());
-        }
-        else if (pos.node()->caretMaxOffset() == pos.offset()) {
-            LOG(Editing, "prepareForTextInsertion case 3");
+        } else if (pos.node()->caretMaxOffset() == pos.offset()) {
             insertNodeAfter(nodeToInsert, pos.node());
-        }
-        else
+        } else
             ASSERT_NOT_REACHED();
         
         return Position(textNode, 0);
@@ -121,7 +119,7 @@ void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
         startPosition = startPosition.downstream();
     else
         startPosition = startPosition.upstream();
-    startPosition = positionOutsideContainingSpecialElement(startPosition);
+    startPosition = positionAvoidingSpecialElementBoundary(startPosition);
     
     if (text == "\t") {
         endPosition = insertTab(startPosition);

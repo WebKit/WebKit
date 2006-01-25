@@ -42,6 +42,7 @@ public:
 private:
     virtual bool preservesTypingStyle() const;
 
+    void initializeStartEnd();
     void initializePositionData();
     void saveTypingStyleState();
     void insertPlaceholderForAncestorBlockContent();

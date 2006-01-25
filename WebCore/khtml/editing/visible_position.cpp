@@ -207,21 +207,11 @@ bool VisiblePosition::isCandidate(const Position &pos)
     if (renderer->style()->visibility() != VISIBLE)
         return false;
 
-    if (renderer->isReplaced())
+    if (isTableElement(pos.node()) || editingIgnoresContent(pos.node()))
         return pos.offset() == 0 || pos.offset() == maxDeepOffset(pos.node());
 
-    if (renderer->isBR()) {
-        if (pos.offset() == 0) {
-            InlineBox* box = static_cast<RenderText*>(renderer)->firstTextBox();
-            if (box) {
-                // return true for offset 0 into BR element on a line by itself
-                RootInlineBox* root = box->root();
-                if (root)
-                    return root->firstLeafChild() == box && root->lastLeafChild() == box;
-            }
-        }   
-        return false;
-    }
+    if (renderer->isBR())
+        return pos.offset() == 0;
     
     // True if at a rendered offset inside a text node
     if (renderer->isText()) {
@@ -329,12 +319,24 @@ void VisiblePosition::showTree() const
     if (m_deepPosition.node())
         m_deepPosition.node()->showTreeAndMark(m_deepPosition.node(), "*", NULL, NULL);
 }
+
+void showTree(const VisiblePosition *vpos)
+{
+    if (vpos)
+        vpos->showTree();
+}
+
+void showTree(const VisiblePosition &vpos)
+{
+    vpos.showTree();
+}
+
 #endif
 
 PassRefPtr<RangeImpl> makeRange(const VisiblePosition &start, const VisiblePosition &end)
 {
-    Position s = start.deepEquivalent().equivalentRangeCompliantPosition();
-    Position e = end.deepEquivalent().equivalentRangeCompliantPosition();
+    Position s = rangeCompliantEquivalent(start);
+    Position e = rangeCompliantEquivalent(end);
     return new RangeImpl(s.node()->getDocument(), s.node(), s.offset(), e.node(), e.offset());
 }
 
@@ -354,7 +356,7 @@ bool setStart(RangeImpl *r, const VisiblePosition &visiblePosition)
 {
     if (!r)
         return false;
-    Position p = visiblePosition.deepEquivalent().equivalentRangeCompliantPosition();
+    Position p = rangeCompliantEquivalent(visiblePosition);
     int code = 0;
     r->setStart(p.node(), p.offset(), code);
     return code == 0;
@@ -364,7 +366,7 @@ bool setEnd(RangeImpl *r, const VisiblePosition &visiblePosition)
 {
     if (!r)
         return false;
-    Position p = visiblePosition.deepEquivalent().equivalentRangeCompliantPosition();
+    Position p = rangeCompliantEquivalent(visiblePosition);
     int code = 0;
     r->setEnd(p.node(), p.offset(), code);
     return code == 0;

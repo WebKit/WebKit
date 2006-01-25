@@ -621,7 +621,7 @@ bool ContainerNodeImpl::getUpperLeftCorner(int &xPos, int &yPos) const
     // find the next text/image child, to get a position
     while(o) {
         p = o;
-        if(o->firstChild())
+        if (o->firstChild())
             o = o->firstChild();
         else if(o->nextSibling())
             o = o->nextSibling();
@@ -640,14 +640,12 @@ bool ContainerNodeImpl::getUpperLeftCorner(int &xPos, int &yPos) const
 
         if (p->element() && p->element() == this && o->isText() && !o->isBR() && !static_cast<RenderText*>(o)->firstTextBox()) {
                 // do nothing - skip unrendered whitespace that is a child or next sibling of the anchor
-        }
-        else if((o->isText() && !o->isBR()) || o->isReplaced()) {
+        } else if ((o->isText() && !o->isBR()) || o->isReplaced()) {
             o->container()->absolutePosition( xPos, yPos );
             if (o->isText() && static_cast<RenderText *>(o)->firstTextBox()) {
                 xPos += static_cast<RenderText *>(o)->minXPos();
                 yPos += static_cast<RenderText *>(o)->firstTextBox()->root()->topOverflow();
-            }
-            else {
+            } else {
                 xPos += o->xPos();
                 yPos += o->yPos();
             }
@@ -808,7 +806,7 @@ unsigned ContainerNodeImpl::childNodeCount() const
     return count;
 }
 
-NodeImpl *ContainerNodeImpl::childNode(unsigned index)
+NodeImpl *ContainerNodeImpl::childNode(unsigned index) const
 {
     unsigned i;
     NodeImpl *n = firstChild();

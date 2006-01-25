@@ -384,9 +384,10 @@ Position Position::upstream() const
         // return position after replaced or BR elements
         // NOTE: caretMaxOffset() can be less than childNodeCount()!!
         // e.g. SELECT and APPLET nodes
-        if (renderer->isReplaced() || renderer->isBR()) {
-            if (currentOffset >= renderer->caretMaxOffset())
-                return Position(currentNode, renderer->caretMaxOffset());
+        if (editingIgnoresContent(currentNode) || renderer->isBR() || isTableElement(currentNode)) {
+            int maxOffset = maxDeepOffset(currentNode);
+            if (currentOffset >= maxOffset)
+                return Position(currentNode, maxOffset);
             continue;
         }
 
@@ -497,7 +498,7 @@ Position Position::downstream() const
         }
 
         // return position before replaced or BR elements
-        if (renderer->isReplaced() || renderer->isBR()) {
+        if (editingIgnoresContent(currentNode) || renderer->isBR() || isTableElement(currentNode)) {
             if (currentOffset <= renderer->caretMinOffset())
                 return Position(currentNode, renderer->caretMinOffset());
             continue;
@@ -532,38 +533,6 @@ Position Position::downstream() const
     return lastVisible;
 }
 
-Position Position::equivalentRangeCompliantPosition() const
-{
-    if (isNull())
-        return Position();
-
-    // Make sure that 0 <= constrainedOffset <= num kids, otherwise using this Position
-    // in DOM calls can result in exceptions.
-    int maxOffset = node()->isTextNode() ? static_cast<TextImpl *>(node())->length(): node()->childNodeCount();
-    int constrainedOffset = offset() <= 0 ? 0 : kMin(maxOffset, offset());
-
-    if (!node()->parentNode())
-        return Position(node(), constrainedOffset);
-
-    RenderObject *renderer = node()->renderer();
-    if (!renderer)
-        return Position(node(), constrainedOffset);
-        
-    if (!renderer->isReplaced() && !renderer->isBR())
-        return Position(node(), constrainedOffset);
-    
-    int o = offset();
-    const NodeImpl *n = node();
-    while ((n = n->previousSibling()))
-        o++;
-    
-    // Make sure that 0 <= constrainedOffset <= num kids, as above.
-    NodeImpl *parent = node()->parentNode();
-    maxOffset = parent->isTextNode() ? static_cast<TextImpl *>(parent)->length(): parent->childNodeCount();
-    constrainedOffset = o <= 0 ? 0 : kMin(maxOffset, o);
-    return Position(parent, constrainedOffset);
-}
-
 bool Position::inRenderedContent() const
 {
     if (isNull())
@@ -577,24 +546,22 @@ bool Position::inRenderedContent() const
         return false;
 
     // FIXME: This check returns false for a <br> at the end of a line!
-    if (renderer->isBR() && static_cast<RenderText *>(renderer)->firstTextBox()) {
+    if (renderer->isBR() && static_cast<RenderText *>(renderer)->firstTextBox())
         return offset() == 0;
-    }
-    else if (renderer->isText()) {
+
+    if (renderer->isText()) {
         RenderText *textRenderer = static_cast<RenderText *>(renderer);
         for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
-            if (offset() >= box->m_start && offset() <= box->m_start + box->m_len) {
+            if (offset() >= box->m_start && offset() <= box->m_start + box->m_len)
                 return true;
-            }
-            else if (offset() < box->m_start) {
+            if (offset() < box->m_start) {
                 // The offset we're looking for is before this node
                 // this means the offset must be in content that is
                 // not rendered. Return false.
                 return false;
             }
         }
-    }
-    else if (offset() >= renderer->caretMinOffset() && offset() <= renderer->caretMaxOffset()) {
+    } else if (offset() >= renderer->caretMinOffset() && offset() <= renderer->caretMaxOffset()) {
         // return true for replaced elements, for inline flows if they have a line box
         // and for blocks if they are empty
         if (renderer->isReplaced() ||
@@ -821,6 +788,17 @@ void Position::showTree() const
 {
     if (m_node)
         m_node->showTree();
+}
+
+void showTree(const Position &pos)
+{
+    pos.showTree();
+}
+
+void showTree(const Position *pos)
+{
+    if (pos)
+        pos->showTree();
 }
 #endif
 

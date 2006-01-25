@@ -37,11 +37,15 @@ class DocumentImpl;
 class ElementImpl;
 class NodeImpl;
 class Position;
+class VisiblePosition;
 
 const unsigned short NON_BREAKING_SPACE = 0xa0;
 
-int maxDeepOffset(const NodeImpl*);
-bool isAtomicNode(const NodeImpl*);
+Position rangeCompliantEquivalent(const Position& pos);
+Position rangeCompliantEquivalent(const VisiblePosition& vpos);
+int maxDeepOffset(const NodeImpl* node);
+bool isAtomicNode(const NodeImpl* node);
+bool editingIgnoresContent(const NodeImpl* node);
 
 void rebalanceWhitespaceInTextNode(NodeImpl*, unsigned start, unsigned length);
 DOMString& nonBreakingSpaceString();
@@ -66,18 +70,24 @@ ElementImpl* createTabSpanElement(DocumentImpl*, QString* tabText);
 
 bool isNodeRendered(const NodeImpl*);
 bool isMailBlockquote(const NodeImpl*);
-NodeImpl *nearestMailBlockquote(const NodeImpl*);
+NodeImpl* nearestMailBlockquote(const NodeImpl*);
 
 //------------------------------------------------------------------------------------------
 
 bool isTableStructureNode(const NodeImpl*);
 ElementImpl *createBlockPlaceholderElement(DocumentImpl*);
 
-bool isFirstVisiblePositionInSpecialElement(const Position&);
-Position positionBeforeContainingSpecialElement(const Position&);
-bool isLastVisiblePositionInSpecialElement(const Position&);
-Position positionAfterContainingSpecialElement(const Position&);
-Position positionOutsideContainingSpecialElement(const Position&);
+bool isFirstVisiblePositionInSpecialElement(const Position& pos);
+Position positionBeforeContainingSpecialElement(const Position& pos, NodeImpl** containingSpecialElement=0);
+bool isLastVisiblePositionInSpecialElement(const Position& pos);
+Position positionAfterContainingSpecialElement(const Position& pos, NodeImpl** containingSpecialElement=0);
+Position positionOutsideContainingSpecialElement(const Position &pos, NodeImpl** containingSpecialElement=0);
+
+bool isListElement(NodeImpl* n);
+bool isTableElement(NodeImpl* n);
+bool isFirstVisiblePositionAfterTableElement(const Position &pos);
+Position positionBeforePrecedingTableElement(const Position &pos);
+Position positionAvoidingSpecialElementBoundary(const Position &pos);
 
 }
 

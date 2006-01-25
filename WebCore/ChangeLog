@@ -1,3 +1,141 @@
+2006-01-25  David Harrison  <harrison@apple.com>
+
+        Reviewed by Justin.
+
+        <rdar://problem/3907635> copy/paste of list item text moves list item up one <LI>
+        <rdar://problem/3907647> Enhance list editing: return inserts <li></li>
+        <rdar://problem/4060158> deleting selection within table deletes more than intended
+        <rdar://problem/4061232> Deleting a list can delete unselected content
+        <rdar://problem/4062212> after pasting in contents of web.apple.com, typing before start adds to table instead of before table
+        <rdar://problem/4064437> After copy/paste from bugweb cannot go back to entering text at left side of page
+        <rdar://problem/4259845> Table editing in design mode is broken
+        <rdar://problem/4287667> Insertion point goes before table instead of inside first cell
+        <rdar://problem/4345749> Editing HTML - Enter at end of <LI> inserts uneditable blank <LI>
+        <rdar://problem/4345794> HTML editing: Enter at end of last <LI> does not add new <LI>
+        <rdar://problem/4345825> HTML Editing: editing first <LI> element removes first <LI> and more
+        <rdar://problem/4345835> HTML editing: editing last <LI> removes everything within <BODY>
+        <rdar://problem/4345879> HTML editing: editing first <TD> moves data out of table
+
+        ...also added showTree() static functions because switch to gcc 4.0 makes calling instance methods unreliable
+
+        - numerous small changes to handle empty list items
+        - fix numeric list marker updating when adding/deleting list items
+        - start to decompose "special element" handling, replacing it with appropriate handling of the different
+          kinds of special elements in various situations, rather than giving a blanket treatment.  I will do more
+          of this in subsequent checkins.
+        - numerous small editing/selection changes to handle VisiblePosition at table offset childNodeCount()
+        - simplify and fix equivalentRangeCompliantPosition, rename it to rangeCompliantEquivalent and make it static
+        - some minor reformatting to current standards
+        - the comments in the list below are for changes not covered by the above comments
+        
+        * khtml/editing/Selection.cpp:
+        (WebCore::Selection::toRange):
+        (WebCore::Selection::validate):
+        * khtml/editing/SelectionController.cpp:
+        (WebCore::SelectionController::modifyExtendingLeftBackward):
+        - character selection backward from after table selects the table
+        (WebCore::showTree):
+        * khtml/editing/composite_edit_command.cpp:
+        (WebCore::CompositeEditCommand::removeFullySelectedNode):
+        - make sure empty cell has some height
+        (WebCore::CompositeEditCommand::positionOutsideTabSpan):
+        - check for !isTabSpanTextNode() to make calling this function easier
+        (WebCore::CompositeEditCommand::addBlockPlaceholderIfNeeded):
+        * khtml/editing/delete_selection_command.cpp:
+        (WebCore::positionBeforePossibleContainingSpecialElement):
+        (WebCore::positionAfterPossibleContainingSpecialElement):
+        (WebCore::DeleteSelectionCommand::initializeStartEnd):
+        - new.  more consistent handling of special element boundaries.
+        (WebCore::DeleteSelectionCommand::initializePositionData):
+        (WebCore::DeleteSelectionCommand::handleGeneralDelete):
+        - handle childless block (e.g. empty table cell)
+        - allow merging across list items
+        (WebCore::DeleteSelectionCommand::moveNodesAfterNode):
+        - use new isEmpty() method for renderers, to handle empty list items
+        * khtml/editing/delete_selection_command.h:
+        * khtml/editing/htmlediting.cpp:
+        (WebCore::isAtomicNode):
+        (WebCore::editingIgnoresContent):
+        - new.  smarter check than isReplaced()
+        (WebCore::rangeCompliantEquivalent):
+        (WebCore::maxDeepOffset):
+        (WebCore::isFirstVisiblePositionInSpecialElement):
+        (WebCore::positionBeforeContainingSpecialElement):
+        (WebCore::isLastVisiblePositionInSpecialElement):
+        (WebCore::positionAfterContainingSpecialElement):
+        (WebCore::positionOutsideContainingSpecialElement):
+        (WebCore::positionBeforeNode):
+        (WebCore::positionAfterNode):
+        (WebCore::isListElement):
+        (WebCore::isTableElement):
+        (WebCore::isFirstVisiblePositionAfterTableElement):
+        (WebCore::positionBeforePrecedingTableElement):
+        (WebCore::positionAvoidingSpecialElementBoundary):
+        * khtml/editing/htmlediting.h:
+        * khtml/editing/insert_line_break_command.cpp:
+        (khtml::InsertLineBreakCommand::doApply):
+        * khtml/editing/insert_paragraph_separator_command.cpp:
+        (khtml::InsertParagraphSeparatorCommand::doApply):
+        * khtml/editing/insert_text_command.cpp:
+        (khtml::InsertTextCommand::prepareForTextInsertion):
+        (khtml::InsertTextCommand::input):
+        * khtml/editing/replace_selection_command.cpp:
+        (WebCore::isMailPasteAsQuotationNode):
+        (WebCore::ReplacementFragment::countRenderedBlocks):
+        (WebCore::ReplaceSelectionCommand::doApply):
+        - allow for fact that fragments have no VisiblePositions
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::isCandidate):
+        (khtml::showTree):
+        (khtml::makeRange):
+        (khtml::setStart):
+        (khtml::setEnd):
+        * khtml/editing/visible_position.h:
+        * khtml/editing/visible_units.cpp:
+        (khtml::previousBoundary):
+        (khtml::nextBoundary):
+        (khtml::startOfLine):
+        - allow for fact that renderers for list markers and other generated content
+          have no corresponding NodeImpl.
+        (khtml::endOfLine):
+        - ditto
+        (khtml::nextLinePosition):
+        (khtml::startOfParagraph):
+        (khtml::endOfParagraph):
+        * khtml/xml/ContainerNodeImpl.cpp:
+        (WebCore::ContainerNodeImpl::getUpperLeftCorner):
+        (WebCore::ContainerNodeImpl::childNode):
+        * khtml/xml/ContainerNodeImpl.h:
+        * khtml/xml/NodeImpl.cpp:
+        (WebCore::NodeImpl::childNode):
+        (WebCore::NodeImpl::traversePreviousNode):
+        (WebCore::NodeImpl::nextEditable):
+        (WebCore::showTree):
+        * khtml/xml/NodeImpl.h:
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::upstream):
+        (DOM::Position::downstream):
+        (DOM::Position::inRenderedContent):
+        (DOM::showTree):
+        * khtml/xml/dom_position.h:
+        * rendering/render_canvas.cpp:
+        (RenderCanvas::selectionRect):
+        * rendering/render_list.cpp:
+        (RenderListItem::calcListValue):
+        (RenderListItem::isEmpty):
+        (getParentOfFirstLineBox):
+        (RenderListItem::resetMarkerValue):
+        (RenderListItem::updateMarkerLocation):
+        * rendering/render_list.h:
+        (khtml::RenderListMarker::isListMarker):
+        * rendering/render_object.cpp:
+        (WebCore::RenderObject::nextRenderer):
+        (WebCore::RenderObject::previousRenderer):
+        (WebCore::showTree):
+        * rendering/render_object.h:
+        (WebCore::RenderObject::getBaselineOfLastLineBox):
+        (WebCore::RenderObject::isEmpty):
+
 2006-01-25  Timothy Hatcher  <timothy@apple.com>
 
         Build fix, -[NSFont defaultLineHeightForFont] is deprecated.
@@ -6,6 +144,7 @@
         * kwq/KWQLineEdit.mm:
         (QLineEdit::sizeForCharacterWidth):
         (QLineEdit::baselinePosition):
+
 
 2006-01-24  Darin Adler  <darin@apple.com>
 

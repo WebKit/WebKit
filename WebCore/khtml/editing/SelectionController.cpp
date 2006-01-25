@@ -267,9 +267,17 @@ VisiblePosition SelectionController::modifyMovingRightForward(ETextGranularity g
 VisiblePosition SelectionController::modifyExtendingLeftBackward(ETextGranularity granularity)
 {
     VisiblePosition pos(m_sel.extent(), m_sel.affinity());
+        
     switch (granularity) {
         case CHARACTER:
-            pos = pos.previous();
+            // Extending a selection backward by character from just after a table selects
+            // the table.  This "makes sense" from the user perspective, esp. when deleting.
+            // It was done here instead of in VisiblePosition because we want VPs to iterate
+            // over everything.
+            if (isFirstVisiblePositionAfterTableElement(pos.deepEquivalent()))
+                pos = VisiblePosition(positionBeforePrecedingTableElement(pos.deepEquivalent()), VP_DEFAULT_AFFINITY);
+            else
+                pos = pos.previous();
             break;
         case WORD:
             pos = previousWordPosition(pos);
@@ -842,6 +850,17 @@ void SelectionController::showTree() const
 {
     if (m_sel.start().node())
         m_sel.start().node()->showTreeAndMark(m_sel.start().node(), "S", m_sel.end().node(), "E");
+}
+
+void showTree(const SelectionController &sel)
+{
+    sel.showTree();
+}
+
+void showTree(const SelectionController *sel)
+{
+    if (sel)
+        sel->showTree();
 }
 #endif
 

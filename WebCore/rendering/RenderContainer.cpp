@@ -29,6 +29,7 @@
 #include "RenderTextFragment.h"
 #include "render_image.h"
 #include "render_canvas.h"
+#include "render_list.h"
 #include "DocumentImpl.h"
 #include "xml/dom_position.h"
 #include "visible_position.h"
@@ -78,6 +79,12 @@ bool RenderContainer::canHaveChildren() const
     return true;
 }
 
+static void updateListMarkerNumbers(RenderObject *child)
+{
+    for (RenderObject *r = child; r && r->isListItem(); r = r->nextSibling())
+        static_cast<RenderListItem *>(r)->resetMarkerValue();
+}
+
 void RenderContainer::addChild(RenderObject *newChild, RenderObject *beforeChild)
 {
 #ifdef DEBUG_LAYOUT
@@ -89,10 +96,12 @@ void RenderContainer::addChild(RenderObject *newChild, RenderObject *beforeChild
 
     if(!newChild->isText() && !newChild->isReplaced()) {
         switch(newChild->style()->display()) {
+        case LIST_ITEM:
+            updateListMarkerNumbers(beforeChild);
+            break;
         case INLINE:
         case BLOCK:
         case INLINE_BLOCK:
-        case LIST_ITEM:
         case RUN_IN:
         case COMPACT:
         case BOX:
@@ -179,6 +188,10 @@ RenderObject* RenderContainer::removeChildNode(RenderObject* oldChild)
     
         if (oldChild->isSelectionBorder())
             canvas()->clearSelection();
+
+        // renumber ordered lists
+        if (oldChild->isListItem())
+            updateListMarkerNumbers(oldChild->nextSibling());
     }
     
     // remove the child

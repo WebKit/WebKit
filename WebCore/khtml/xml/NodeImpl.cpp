@@ -940,7 +940,7 @@ unsigned NodeImpl::childNodeCount() const
     return 0;
 }
 
-NodeImpl *NodeImpl::childNode(unsigned /*index*/)
+NodeImpl *NodeImpl::childNode(unsigned /*index*/) const
 {
     return 0;
 }
@@ -993,12 +993,8 @@ NodeImpl *NodeImpl::traversePreviousNode() const
             n = n->lastChild();
         return n;
     }
-    else if (parentNode()) {
-        return parentNode();
-    }
-    else {
-        return 0;
-    }
+    
+    return parentNode();
 }
 
 NodeImpl *NodeImpl::traversePreviousNodePostOrder(const NodeImpl *stayWithin) const
@@ -1290,6 +1286,24 @@ NodeImpl *NodeImpl::previousEditable() const
         if (node->isContentEditable())
             return node;
         node = node->previousLeafNode();
+    }
+    return 0;
+}
+
+// Offset specifies the child node to start at.  If it is past
+// the last child, it specifies to start at next sibling.
+NodeImpl *NodeImpl::nextEditable(int offset) const
+{
+    assert(offset>=0);
+    NodeImpl *node;
+    if (hasChildNodes())
+        node = (offset >= (int)childNodeCount()) ? nextSibling() : childNode(offset)->nextLeafNode();
+    else
+        node = nextLeafNode();
+    while (node) {
+        if (node->isContentEditable())
+            return node;
+        node = node->nextLeafNode();
     }
     return 0;
 }
@@ -1940,6 +1954,12 @@ void NodeImpl::showNode(const char *prefix) const
 void NodeImpl::showTree() const
 {
     showTreeAndMark((NodeImpl *)this, "*", NULL, NULL);
+}
+
+void showTree(const NodeImpl *node)
+{
+    if (node)
+        node->showTree();
 }
 
 void NodeImpl::showTreeAndMark(NodeImpl * markedNode1, const char * markedLabel1, NodeImpl * markedNode2, const char * markedLabel2) const

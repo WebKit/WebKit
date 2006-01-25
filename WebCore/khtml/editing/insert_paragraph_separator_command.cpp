@@ -117,7 +117,7 @@ void InsertParagraphSeparatorCommand::doApply()
         affinity = endingSelection().affinity();
     }
 
-    pos = positionOutsideContainingSpecialElement(pos);
+    pos = positionAvoidingSpecialElementBoundary(pos);
 
     calculateStyleBeforeInsertion(pos);
 
@@ -201,8 +201,8 @@ void InsertParagraphSeparatorCommand::doApply()
 
     LOG(Editing, "insert paragraph separator: general case");
 
-    // Check if pos.node() is a <br>. If it is, and the document is in quirks mode, 
-    // then this <br> will collapse away when we add a block after it. Add an extra <br>.
+    // If pos.node() is a <br> and the document is in quirks mode, this <br>
+    // will collapse away when we add a block after it. Add an extra <br>.
     if (!document()->inStrictMode()) {
         Position upstreamPos = pos.upstream();
         if (upstreamPos.node()->hasTagName(brTag))

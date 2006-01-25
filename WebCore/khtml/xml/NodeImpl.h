@@ -302,7 +302,7 @@ public:
     virtual bool isReadOnly();
     virtual bool childTypeAllowed(unsigned short /*type*/) { return false; }
     virtual unsigned childNodeCount() const;
-    virtual NodeImpl* childNode(unsigned index);
+    virtual NodeImpl* childNode(unsigned index) const;
 
     /**
      * Does a pre-order traversal of the tree to find the node next node after this one. This uses the same order that
@@ -330,8 +330,12 @@ public:
     /* Like traversePreviousNode, but visits nodes before their children. */
     NodeImpl* traversePreviousNodePostOrder(const NodeImpl *stayWithin = 0) const;
 
+    /**
+     * Finds previous or next editable leaf node.
+     */
     NodeImpl* previousEditable() const;
     NodeImpl* nextEditable() const;
+    NodeImpl* nextEditable(int offset) const;
 
     RenderObject* renderer() const { return m_renderer; }
     RenderObject* nextRenderer();
@@ -504,6 +508,8 @@ private:
 };
 
 #ifndef NDEBUG
+
+void showTree(const NodeImpl *node);
 
 extern int gEventDispatchForbidden;
 inline void forbidEventDispatch() { ++gEventDispatchForbidden; }
