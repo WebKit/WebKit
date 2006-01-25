@@ -271,7 +271,9 @@ IntSize QLineEdit::sizeForCharacterWidth(int numCharacters) const
     font.forPrinter = ![NSGraphicsContext currentContextDrawingToScreen];
     id <WebCoreTextRenderer> renderer = [[WebCoreTextRendererFactory sharedFactory] rendererWithFont:font];
 
-    size.height += [font.font defaultLineHeightForFont];
+    NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
+    size.height += [layoutManager defaultLineHeightForFont:font.font];
+    [layoutManager release];
 
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);
@@ -295,7 +297,9 @@ int QLineEdit::baselinePosition(int height) const
 
     KWQ_BLOCK_EXCEPTIONS;
     NSFont *font = [textField font];
-    float lineHeight = [font defaultLineHeightForFont];
+    NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
+    float lineHeight = [layoutManager defaultLineHeightForFont:font];
+    [layoutManager release];
     NSRect bounds = NSMakeRect(0, 0, 100, textFieldMargins.height + lineHeight); // bounds width is arbitrary, height same as what sizeForCharacterWidth returns
     NSRect drawingRect = [[textField cell] drawingRectForBounds:bounds];
     return static_cast<int>(ceilf(drawingRect.origin.y - bounds.origin.y + lineHeight + [font descender]));

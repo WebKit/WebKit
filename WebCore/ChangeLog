@@ -1,3 +1,12 @@
+2006-01-25  Timothy Hatcher  <timothy@apple.com>
+
+        Build fix, -[NSFont defaultLineHeightForFont] is deprecated.
+        We need to use -[NSLayoutManager defaultLineHeightForFont:] instead.
+
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::sizeForCharacterWidth):
+        (QLineEdit::baselinePosition):
+
 2006-01-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.
