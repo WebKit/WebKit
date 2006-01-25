@@ -32,7 +32,7 @@
 // Turn off inlining to avoid warning with newer gcc.
 #undef __inline
 #define __inline
-#import "ColorData.c"
+#include "ColorData.c"
 #undef __inline
 
 namespace WebCore {
@@ -174,8 +174,9 @@ void Color::setHsv(int h, int s, int v)
         return;
     }
     
+    // FIXME: The math here is totally wrong.  Why did it floor an int?
     h /= 60;                    // sector 0 to 5
-    i = (int)floor(h);
+    i = h;
     f = h - i;                  // factorial part of h
     p = v * (1 - s);
     q = v * (1 - s * f);

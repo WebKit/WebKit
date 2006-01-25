@@ -179,10 +179,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQColor.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQComboBox.h"
 				>
 			</File>
@@ -1814,6 +1810,14 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\ArrayImpl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\Color.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\Color.h"
 				>
 			</File>
 			<File

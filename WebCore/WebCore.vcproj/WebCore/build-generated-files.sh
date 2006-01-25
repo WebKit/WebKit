@@ -56,6 +56,12 @@ if [ css/make-css-file-arrays.pl -nt "$DerivedSourcesDir/UserAgentStyleSheets.h"
   touch css/UserAgentStyleSheets.cpp
 fi
 
+# Generate the color data table.
+if [ platform/ColorData.gperf -nt "$DerivedSourcesDir/ColorData.c" ]; then
+  echo "Generating the color table data for the Color class..."
+  gperf -CDEot -L 'ANSI-C' -k '*' -N findColor platform/ColorData.gperf > "$DerivedSourcesDir/ColorData.c"
+fi
+
 # Generate the lookup tables for the JS bindings
 
 if [ ../JavaScriptCore/kjs/create_hash_table -nt "$DerivedSourcesDir/domparser.lut.h" -o khtml/ecma/domparser.cpp -nt "$DerivedSourcesDir/domparser.lut.h" ]; then
