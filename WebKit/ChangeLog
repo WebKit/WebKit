@@ -1,3 +1,11 @@
+2006-01-25  Timothy Hatcher  <timothy@apple.com>
+
+        Move off of -[NSFont widthOfString:] since it is now deprecated.
+        Use the NSStringDrawing -[NSString sizeWithAttributes:] API.
+
+        * WebCoreSupport.subproj/WebFileButton.m:
+        (-[WebFileChooserButton bestVisualFrameSizeForCharacterCount:]):
+
 2006-01-23  Darin Adler  <darin@apple.com>
 
         - fixed some small localizable strings issues

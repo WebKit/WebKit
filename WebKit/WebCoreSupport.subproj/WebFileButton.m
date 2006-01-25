@@ -201,7 +201,7 @@
     size.height -= BUTTON_TOP_MARGIN + BUTTON_BOTTOM_MARGIN;
     size.width -= BUTTON_LEFT_MARGIN + BUTTON_RIGHT_MARGIN;
     size.width += AFTER_BUTTON_SPACING + ICON_WIDTH + ICON_FILENAME_SPACING;
-    size.width += count * [[_button font] widthOfString:@"x"];
+    size.width += count * [@"x" sizeWithAttributes:[NSDictionary dictionaryWithObject:[_button font] forKey:NSFontAttributeName]].width;
     return size;
 }
 

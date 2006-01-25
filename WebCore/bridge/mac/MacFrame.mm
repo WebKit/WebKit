@@ -2538,7 +2538,7 @@ NSAttributedString *MacFrame::attributedString(NodeImpl *_start, int startOffset
                                 QString marker = listRenderer->markerStringValue();
                                 listText += marker;
                                 // Use AppKit metrics.  Will be rendered by AppKit.
-                                float markerWidth = [font widthOfString: marker.getNSString()];
+                                float markerWidth = [marker.getNSString() sizeWithAttributes:[NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName]].width;
                                 maxMarkerWidth = MAX(markerWidth, maxMarkerWidth);
                         }
 

@@ -862,8 +862,9 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     // because the text view will return a substituted font if the first character in
     // the text view requires font substitution, and we don't want the size to depend on
     // the text in the text view.
-    
-    NSSize textSize = NSMakeSize(ceil(numColumns * [_font widthOfString:@"0"]), numRows * [_font defaultLineHeightForFont]);
+
+    float columnWidth = [@"0" sizeWithAttributes:[NSDictionary dictionaryWithObject:_font forKey:NSFontAttributeName]].width;
+    NSSize textSize = NSMakeSize(ceil(numColumns * columnWidth), numRows * [[textView layoutManager] defaultLineHeightForFont:_font]);
     NSSize textContainerSize = NSMakeSize(textSize.width + [[textView textContainer] lineFragmentPadding] * 2, textSize.height);
     NSSize textContainerInset = [textView textContainerInset];
     NSSize textViewSize = NSMakeSize(textContainerSize.width + textContainerInset.width, textContainerSize.height + textContainerInset.height); 
