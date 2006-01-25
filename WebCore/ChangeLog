@@ -1,3 +1,16 @@
+2006-01-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6731
+          REGRESSION: change event fires at load time for checked items
+
+        Test: fast/forms/radio-button-no-change-event.html
+
+        * khtml/html/HTMLInputElementImpl.cpp: (WebCore::HTMLInputElementImpl::setChecked):
+        One of many possible fixes: Don't send the event if the element is not yet in
+        a document (as in when parsing the initial attributes).
+
 2006-01-24  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.
@@ -38,6 +51,8 @@
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6784
           REGRESSION: 25 layout tests failing (basic DOM operations)
+
+        Test: fast/dom/replace-first-child.html
 
         * khtml/xml/ContainerNodeImpl.cpp:
         (WebCore::ContainerNodeImpl::insertBefore): Change one place that hands off ownership of
