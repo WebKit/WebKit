@@ -1,3 +1,20 @@
+2006-01-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6782
+          REGRESSION: replaceChild broken when node to replace is first (TinyMCE test app broken)
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6784
+          REGRESSION: 25 layout tests failing (basic DOM operations)
+
+        * khtml/xml/ContainerNodeImpl.cpp:
+        (WebCore::ContainerNodeImpl::insertBefore): Change one place that hands off ownership of
+        as PassRefPtr that causes us to almost always return 0. Fix test that would screw up when
+        both "prev" and "refChild->previousSibling()" were 0.
+        (WebCore::ContainerNodeImpl::appendChild): Changed a nearly-identical place handing off
+        ownership as above.
+
 2006-01-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave Hyatt.

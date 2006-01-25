@@ -150,7 +150,7 @@ PassRefPtr<NodeImpl> ContainerNodeImpl::insertBefore(PassRefPtr<NodeImpl> newChi
 
     RefPtr<NodeImpl> next = refChild;
 
-    RefPtr<NodeImpl> child = isFragment ? newChild->firstChild() : newChild;
+    RefPtr<NodeImpl> child = isFragment ? newChild->firstChild() : newChild.get();
     while (child) {
         PassRefPtr<NodeImpl> nextChild = isFragment ? child->nextSibling() : 0;
 
@@ -246,7 +246,7 @@ PassRefPtr<NodeImpl> ContainerNodeImpl::replaceChild(PassRefPtr<NodeImpl> newChi
     RefPtr<NodeImpl> child = isFragment ? newChild->firstChild() : newChild.get();
     while (child) {
         // If the new child is already in the right place, we're done.
-        if (prev == child || prev == child->previousSibling())
+        if (prev && (prev == child || prev == child->previousSibling()))
             break;
 
         // For a fragment we have more children to do.
@@ -473,7 +473,7 @@ PassRefPtr<NodeImpl> ContainerNodeImpl::appendChild(PassRefPtr<NodeImpl> newChil
         return newChild;
 
     // Now actually add the child(ren)
-    RefPtr<NodeImpl> child = isFragment ? newChild->firstChild() : newChild;
+    RefPtr<NodeImpl> child = isFragment ? newChild->firstChild() : newChild.get();
     while (child) {
         // For a fragment we have more children to do.
         RefPtr<NodeImpl> nextChild = isFragment ? child->nextSibling() : 0;
