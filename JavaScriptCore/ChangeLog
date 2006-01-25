@@ -1,3 +1,10 @@
+2006-01-25  Darin Adler  <darin@apple.com>
+
+        - removed an unused source file
+
+        * kjs/pointer_hash.h: Removed.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Removed reference to pointer_hash.h.
+
 2006-01-23  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Maciej.

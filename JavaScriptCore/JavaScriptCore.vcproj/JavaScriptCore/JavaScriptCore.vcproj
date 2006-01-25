@@ -371,10 +371,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\pointer_hash.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kjs\property_map.cpp"
 				>
 			</File>
