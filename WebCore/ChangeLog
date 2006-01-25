@@ -1,3 +1,34 @@
+2006-01-24  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        This change will allow the new text field elements to get focus, and to respond to the focus and blur events.
+
+        Added: fast/forms/input-appearance-focus.html
+
+        * khtml/html/HTMLElementImpl.cpp: (WebCore::HTMLElementImpl::isFocusable): 
+          Removed recently added code that allowed editable elements with no parent to be focusable.  
+          We don't need to do this now that we try to focus the input element, instead of the inner div.
+        * khtml/html/HTMLGenericFormElementImpl.cpp: (WebCore::HTMLGenericFormElementImpl::isMouseFocusable): Added case to for text fields.
+        * khtml/html/HTMLInputElementImpl.cpp:
+        (WebCore::HTMLInputElementImpl::focus): Added. Selects contents of text field.
+        (WebCore::HTMLInputElementImpl::setSelectionStart): Added break; in switch statement.
+        (WebCore::HTMLInputElementImpl::setSelectionEnd): ditto.
+        (WebCore::HTMLInputElementImpl::select): ditto.
+        (WebCore::HTMLInputElementImpl::setSelectionRange): ditto.
+        * khtml/html/HTMLInputElementImpl.h: Added focus()
+        * khtml/xml/dom_elementimpl.h: Made focus() virtual.
+        * page/Frame.cpp: (Frame::setFocusNodeIfNeeded):
+          Walk up the Render Tree instead of the DOM tree when trying to find a node to focus.  
+          This will let us choose the input node instead of one of the nodes in the shadow tree.
+        * page/FrameView.cpp: (FrameView::dispatchMouseEvent): ditto.
+        * rendering/RenderContainer.cpp: (WebCore::RenderContainer::destroyLeftoverChildren): Corrected misspelling. 
+        * rendering/RenderTextField.cpp:
+        (WebCore::RenderTextField::select): Implemented.  Select contents of inner div.
+        * rendering/RenderTextField.h:
+        (WebCore::RenderTextField::renderName): Changed order.
+        (WebCore::RenderTextField::removeLeftoverAnonymousBoxes): ditto.
+
 2006-01-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

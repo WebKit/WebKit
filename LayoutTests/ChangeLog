@@ -1,3 +1,12 @@
+2006-01-24  Adele Peterson <adele@apple.com>
+
+        Test for focus and blur for new text fields.
+
+        * fast/forms/input-appearance-focus.html: Added.
+        * fast/forms/input-appearance-focus-expected.txt: Added.
+        * fast/forms/input-appearance-focus-expected.png: Added.
+        * fast/forms/input-appearance-focus-expected.checksum: Added.
+
 2006-01-24  Darin Adler  <darin@apple.com>
 
        Reviewed by Eric.

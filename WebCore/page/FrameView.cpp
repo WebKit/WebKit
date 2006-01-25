@@ -1086,7 +1086,16 @@ bool FrameView::dispatchMouseEvent(const AtomicString &eventType, NodeImpl *targ
         // is expected by some sites that rely on onChange handlers running
         // from form fields before the button click is processed.
         NodeImpl* node = targetNode;
-        for ( ; node && !node->isFocusable(); node = node->parentNode());
+        RenderObject* renderer = node->renderer();
+                
+        // Walk up the render tree to search for a node to focus.
+        // Walking up the DOM tree wouldn't work for shadow trees, like those behind the engine-based text fields.
+        while (renderer) {
+            node = renderer->element();
+            if (node && node->isFocusable())
+                break;
+            renderer = renderer->parent();
+        }
         // If focus shift is blocked, we eat the event.  Note we should never clear swallowEvent
         // if the page already set it (e.g., by canceling default behavior).
         if (node && node->isMouseFocusable()) {

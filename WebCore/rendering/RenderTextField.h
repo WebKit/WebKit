@@ -29,22 +29,20 @@ namespace WebCore
 class RenderTextField : public RenderBlock
 {
 public:
-    RenderTextField(DOM::NodeImpl* node);
+    RenderTextField(NodeImpl* node);
     virtual ~RenderTextField();
 
-    virtual void removeLeftoverAnonymousBoxes() {};
-
-    virtual void setStyle(RenderStyle* style);
-    RenderStyle* createDivStyle(RenderStyle* startStyle);
-    virtual void updateFromElement();
-
     virtual const char *renderName() const { return "RenderTextField"; }
+    virtual void removeLeftoverAnonymousBoxes() {};
+    virtual void setStyle(RenderStyle* style);
+    virtual void updateFromElement();
     
+    RenderStyle* createDivStyle(RenderStyle* startStyle);
+
     int selectionStart();
     int selectionEnd();
     void setSelectionStart(int);
-    void setSelectionEnd(int);
-    
+    void setSelectionEnd(int);    
     void select();
     void setSelectionRange(int, int);
 

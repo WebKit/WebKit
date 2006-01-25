@@ -19,16 +19,17 @@
  */
 
 #include "config.h"
-#include "DocumentImpl.h"
 #include "RenderTextField.h"
+
+#include "DocumentImpl.h"
+#include "Frame.h"
 #include "RenderText.h"
 #include "htmlnames.h"
 #include "HTMLInputElementImpl.h"
 
-using namespace DOM;
-using namespace HTMLNames;
-
 namespace WebCore {
+
+using namespace HTMLNames;
 
 RenderTextField::RenderTextField(NodeImpl* node)
 :RenderBlock(node)
@@ -147,7 +148,9 @@ void RenderTextField::setSelectionEnd(int end)
     
 void RenderTextField::select()
 {
-    // FIXME: Implement this.
+    DocumentImpl* doc = document();
+    if (doc && m_div)
+        doc->frame()->selectContentsOfNode(m_div.get());
 }
 
 void RenderTextField::setSelectionRange(int start, int end)
