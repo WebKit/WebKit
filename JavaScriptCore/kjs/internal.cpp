@@ -68,6 +68,10 @@ namespace KJS {
  
 #endif
 
+#if WIN32
+#define copysign _copysign
+#endif
+
 // ------------------------------ UndefinedImp ---------------------------------
 
 JSValue *UndefinedImp::toPrimitive(ExecState *, Type) const
