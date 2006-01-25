@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003-6 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,15 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QPEN_H_
-#define QPEN_H_
+#ifndef PEN_H_
+#define PEN_H_
 
 #include "KWQNamespace.h"
 #include "Color.h"
 
-class QPen : public Qt {
+namespace WebCore {
+
+class Pen {
 public:
-    QPen(const Color &c = Color::black, uint w = 0, PenStyle ps = SolidLine);
+    enum PenStyle {
+        NoPen,
+        SolidLine,
+        DotLine,
+        DashLine
+    };
+
+    Pen(const Color &c = Color::black, uint w = 0, PenStyle ps = SolidLine);
 
     const Color &color() const;
     uint width() const;
@@ -41,13 +50,18 @@ public:
     void setWidth(uint);
     void setStyle(PenStyle);
 
-    bool operator==(const QPen &) const;
-    bool operator!=(const QPen &) const;
-    
+    bool operator==(const Pen &) const;
+    bool operator!=(const Pen &) const;
+
 private:
-    PenStyle  penStyle;
-    uint      penWidth;
-    Color    penColor;
+    PenStyle  m_style;
+    uint      m_width;
+    Color     m_color;
 };
+
+}
+
+// FIXME: Remove when everything is in the WebCore namespace.
+using WebCore::Pen;
 
 #endif

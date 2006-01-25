@@ -31,7 +31,7 @@
 #include "RenderBlock.h"
 #include "xml/dom2_rangeimpl.h"
 #include "DocumentImpl.h"
-#include <qpen.h>
+#include "Pen.h"
 
 #include "Frame.h"
 
@@ -625,7 +625,7 @@ void InlineTextBox::paintMarkedTextUnderline(QPainter *pt, int _tx, int _ty, Mar
     }
 
     int underlineOffset = m_height - 3;
-    pt->setPen(QPen(underline.color, underline.thick ? 2 : 0));
+    pt->setPen(Pen(underline.color, underline.thick ? 2 : 0));
     pt->drawLineForText(_tx + start, _ty, underlineOffset, width);
 }
 

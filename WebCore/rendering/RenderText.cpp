@@ -32,7 +32,7 @@
 #include "RenderBlock.h"
 #include "visible_position.h"
 #include <kxmlcore/AlwaysInline.h>
-#include <qpen.h>
+#include "Pen.h"
 #include <unicode/ubrk.h>
 
 namespace WebCore {

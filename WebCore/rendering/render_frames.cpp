@@ -569,7 +569,7 @@ bool RenderFrameSet::userResize( MouseEventImpl *evt )
             if ( m_oldpos >= 0 )
                 v->updateContents( m_oldpos + sw/2 - rBord , r.y(), 2*rBord, r.height(), true );
             if ( p >= 0 ){
-                paint.setPen( Qt::NoPen );
+                paint.setPen(Pen::NoPen);
                 paint.setBrush( Color::gray );
                 v->setDrawingAlpha((float)0.25);
                 paint.drawRect( p  + sw/2 - rBord, r.y(), 2*rBord, r.height() );
@@ -579,7 +579,7 @@ bool RenderFrameSet::userResize( MouseEventImpl *evt )
             if ( m_oldpos >= 0 )
                 v->updateContents( r.x(), m_oldpos + sw/2 - rBord, r.width(), 2*rBord, true );
             if ( p >= 0 ){
-                paint.setPen( Qt::NoPen );
+                paint.setPen(Pen::NoPen);
                 paint.setBrush( Color::gray );
                 v->setDrawingAlpha((float)0.25);
                 paint.drawRect( r.x(), p + sw/2 - rBord, r.width(), 2*rBord );

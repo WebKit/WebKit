@@ -26,7 +26,7 @@
 
 #include "config.h"
 #include <qpainter.h>
-#include <qpen.h>
+#include "Pen.h"
 
 #include "render_box.h"
 #include "render_replaced.h"
@@ -591,7 +591,7 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const Color& c, const Backg
 
 void RenderBox::outlineBox(QPainter *p, int _tx, int _ty, const char *color)
 {
-    p->setPen(QPen(Color(color), 1, Qt::DotLine));
+    p->setPen(Pen(Color(color), 1, Pen::DotLine));
     p->setBrush( Qt::NoBrush );
     p->drawRect(_tx, _ty, m_width, m_height);
 }

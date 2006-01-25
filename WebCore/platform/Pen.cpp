@@ -24,50 +24,54 @@
  */
 
 #include "config.h"
-#include "KWQPen.h"
+#include "Pen.h"
 
-QPen::QPen(const Color &color, uint width, PenStyle style) : penStyle(style), penWidth(width), penColor(color)
+namespace WebCore {
+
+Pen::Pen(const Color &color, uint width, PenStyle style) : m_style(style), m_width(width), m_color(color)
 {
 }
 
-const Color &QPen::color() const
+const Color &Pen::color() const
 {
-    return penColor;
+    return m_color;
 }
 
-uint QPen::width() const
+uint Pen::width() const
 {
-    return penWidth;
+    return m_width;
 }
 
-QPen::PenStyle QPen::style() const
+Pen::PenStyle Pen::style() const
 {
-    return penStyle;
+    return m_style;
 }
 
-void QPen::setColor(const Color &color)
+void Pen::setColor(const Color &color)
 {
-    penColor = color;
+    m_color = color;
 }
 
-void QPen::setWidth(uint width)
+void Pen::setWidth(uint width)
 {
-    penWidth = width;
+    m_width = width;
 }
 
-void QPen::setStyle(PenStyle style)
+void Pen::setStyle(PenStyle style)
 {
-    penStyle = style;
+    m_style = style;
 }
 
-bool QPen::operator==(const QPen &compareTo) const
+bool Pen::operator==(const Pen &compareTo) const
 {
-    return (penWidth == compareTo.penWidth) &&
-        (penStyle == compareTo.penStyle) &&
-        (penColor == compareTo.penColor);
+    return (m_width == compareTo.m_width) &&
+        (m_style == compareTo.m_style) &&
+        (m_color == compareTo.m_color);
 }
 
-bool QPen::operator!=(const QPen &compareTo) const
+bool Pen::operator!=(const Pen &compareTo) const
 {
     return !(*this == compareTo);
+}
+
 }

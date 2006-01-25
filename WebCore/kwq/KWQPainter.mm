@@ -32,7 +32,7 @@
 #import "KWQFont.h"
 #import "KWQFoundationExtras.h"
 #import "KWQPaintDevice.h"
-#import "KWQPen.h"
+#import "Pen.h"
 #import "KWQPixmap.h"
 #import "KWQPrinter.h"
 #import "KWQPtrStack.h"
@@ -54,7 +54,7 @@
 struct QPState {
     QPState() : paintingDisabled(false) { }
     QFont font;
-    QPen pen;
+    Pen pen;
     QBrush brush;
     QRegion clip;
     bool paintingDisabled;
@@ -126,17 +126,17 @@ QFontMetrics QPainter::fontMetrics() const
     return data->state.font;
 }
 
-const QPen &QPainter::pen() const
+const Pen &QPainter::pen() const
 {
     return data->state.pen;
 }
 
-void QPainter::setPen(const QPen &pen)
+void QPainter::setPen(const Pen &pen)
 {
     data->state.pen = pen;
 }
 
-void QPainter::setPen(PenStyle style)
+void QPainter::setPen(Pen::PenStyle style)
 {
     data->state.pen.setStyle(style);
     data->state.pen.setColor(Color::black);
@@ -145,7 +145,7 @@ void QPainter::setPen(PenStyle style)
 
 void QPainter::setPen(RGBA32 rgb)
 {
-    data->state.pen.setStyle(SolidLine);
+    data->state.pen.setStyle(Pen::SolidLine);
     data->state.pen.setColor(rgb);
     data->state.pen.setWidth(0);
 }
@@ -213,7 +213,7 @@ void QPainter::drawRect(int x, int y, int w, int h)
     if (data->state.brush.style() != NoBrush)
         _fillRectXX(x, y, w, h, data->state.brush.color());
 
-    if (data->state.pen.style() != NoPen) {
+    if (data->state.pen.style() != Pen::Pen::NoPen) {
         _setColorFromPen();
         NSFrameRect(NSMakeRect(x, y, w, h));
     }
@@ -235,8 +235,8 @@ void QPainter::drawLine(int x1, int y1, int x2, int y2)
     if (data->state.paintingDisabled)
         return;
 
-    PenStyle penStyle = data->state.pen.style();
-    if (penStyle == NoPen)
+    Pen::PenStyle penStyle = data->state.pen.style();
+    if (penStyle == Pen::Pen::NoPen)
         return;
     float width = data->state.pen.width();
     if (width < 1)
@@ -249,7 +249,7 @@ void QPainter::drawLine(int x1, int y1, int x2, int y2)
     // works out.  For example, with a border width of 3, KHTML will pass us (y1+y2)/2, e.g.,
     // (50+53)/2 = 103/2 = 51 when we want 51.5.  It is always true that an even width gave
     // us a perfect position, but an odd width gave us a position that is off by exactly 0.5.
-    if (penStyle == DotLine || penStyle == DashLine) {
+    if (penStyle == Pen::DotLine || penStyle == Pen::DashLine) {
         if (x1 == x2) {
             p1.y += width;
             p2.y -= width;
@@ -278,13 +278,13 @@ void QPainter::drawLine(int x1, int y1, int x2, int y2)
 
     int patWidth = 0;
     switch (penStyle) {
-    case NoPen:
-    case SolidLine:
+    case Pen::NoPen:
+    case Pen::SolidLine:
         break;
-    case DotLine:
+    case Pen::DotLine:
         patWidth = (int)width;
         break;
-    case DashLine:
+    case Pen::DashLine:
         patWidth = 3*(int)width;
         break;
     }
@@ -371,7 +371,7 @@ void QPainter::drawEllipse(int x, int y, int w, int h)
 
     if (data->state.brush.style() != NoBrush) {
         _setColorFromBrush();
-	if (data->state.pen.style() != NoPen) {
+	if (data->state.pen.style() != Pen::NoPen) {
 	    // stroke and fill
 	    _setColorFromPen();
 	    uint penWidth = data->state.pen.width();
@@ -383,7 +383,7 @@ void QPainter::drawEllipse(int x, int y, int w, int h)
 	    CGContextFillPath(context);
 	}
     }
-    if (data->state.pen.style() != NoPen) {
+    if (data->state.pen.style() != Pen::NoPen) {
         _setColorFromPen();
 	uint penWidth = data->state.pen.width();
 	if (penWidth == 0) 
@@ -402,7 +402,7 @@ void QPainter::drawArc (int x, int y, int w, int h, int a, int alen)
     if (data->state.paintingDisabled)
         return;
     
-    if (data->state.pen.style() != NoPen) {
+    if (data->state.pen.style() != Pen::NoPen) {
         CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
         CGContextBeginPath(context);
 	
@@ -443,7 +443,7 @@ void QPainter::drawConvexPolygon(const IntPointArray &points)
         CGContextEOFillPath(context);
     }
 
-    if (data->state.pen.style() != NoPen) {
+    if (data->state.pen.style() != Pen::NoPen) {
         _setColorFromPen();
         CGContextSetLineWidth(context, data->state.pen.width());
         CGContextStrokePath(context);

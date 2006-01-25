@@ -23,7 +23,7 @@
 #include "config.h"
 #include <assert.h>
 #include <qpainter.h>
-#include <qpen.h>
+#include "Pen.h"
 
 #include "InlineTextBox.h"
 #include "DocumentImpl.h"

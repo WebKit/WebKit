@@ -507,7 +507,7 @@ int RenderTableCell::borderBottom() const
 #ifdef BOX_DEBUG
 static void outlineBox(QPainter *p, int _tx, int _ty, int w, int h)
 {
-    p->setPen(QPen(Color("yellow"), 3, Qt::DotLine));
+    p->setPen(Pen(Color("yellow"), 3, Qt::DotLine));
     p->setBrush(Qt::NoBrush);
     p->drawRect(_tx, _ty, w, h);
 }

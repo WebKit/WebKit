@@ -33,7 +33,7 @@
 #include "html_imageimpl.h"
 #include "render_canvas.h"
 #include <qpainter.h>
-#include <qpen.h>
+#include "Pen.h"
 #include "htmlnames.h"
 
 namespace WebCore {

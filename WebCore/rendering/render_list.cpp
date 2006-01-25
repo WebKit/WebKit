@@ -32,7 +32,7 @@
 #include "htmlnames.h"
 
 #include <qpainter.h>
-#include <qpen.h>
+#include "Pen.h"
 
 #include "helper.h"
 

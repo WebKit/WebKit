@@ -1,3 +1,49 @@
+2006-01-25  David Hyatt  <hyatt@apple.com>
+
+        Rename QPen to Pen and move it to the platform/ directory.
+
+        * ForwardingHeaders/qpen.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * kwq/KWQNamespace.h:
+        (Qt::):
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainter::pen):
+        (QPainter::setPen):
+        (QPainter::drawRect):
+        (QPainter::drawLine):
+        (QPainter::drawEllipse):
+        (QPainter::drawArc):
+        (QPainter::drawConvexPolygon):
+        * kwq/KWQPen.cpp: Removed.
+        * kwq/KWQPen.h: Removed.
+        * platform/Pen.cpp: Added.
+        (WebCore::Pen::Pen):
+        (WebCore::Pen::color):
+        (WebCore::Pen::width):
+        (WebCore::Pen::style):
+        (WebCore::Pen::setColor):
+        (WebCore::Pen::setWidth):
+        (WebCore::Pen::setStyle):
+        (WebCore::Pen::operator==):
+        (WebCore::Pen::operator!=):
+        * platform/Pen.h: Added.
+        (WebCore::Pen::):
+        * rendering/InlineTextBox.cpp:
+        (khtml::InlineTextBox::paintMarkedTextUnderline):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::outlineBox):
+        * rendering/RenderText.cpp:
+        * rendering/render_box.cpp:
+        (WebCore::RenderBox::outlineBox):
+        * rendering/render_frames.cpp:
+        (WebCore::RenderFrameSet::userResize):
+        * rendering/render_image.cpp:
+        * rendering/render_line.cpp:
+        * rendering/render_list.cpp:
+        * rendering/render_object.cpp:
+        (WebCore::RenderObject::drawBorder):
+
 2006-01-25  Timothy Hatcher  <timothy@apple.com>
 
         Move off of -[NSFont widthOfString:] since it is now deprecated.

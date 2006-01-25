@@ -27,6 +27,7 @@
 #define QPAINTER_H_
 
 #include "Color.h"
+#include "Pen.h"
 #include "KWQFontMetrics.h"
 #include "KWQNamespace.h"
 #include "IntRect.h"
@@ -40,7 +41,6 @@ class QBrush;
 class QFont;
 class QPaintDevice;
 class QPainterPrivate;
-class QPen;
 class QPixmap;
 class QString;
 class QWidget;
@@ -65,9 +65,9 @@ public:
     void setFont(const QFont &);
     QFontMetrics fontMetrics() const;
     
-    const QPen &pen() const;
-    void setPen(const QPen &);
-    void setPen(PenStyle);
+    const Pen &pen() const;
+    void setPen(const Pen &);
+    void setPen(Pen::PenStyle);
     void setPen(RGBA32);
     
     const QBrush &QPainter::brush() const;

@@ -184,7 +184,6 @@
 		93F1997908245E59001E9ABC /* KWQPaintDeviceMetrics.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786A202DE3B8601EA4122 /* KWQPaintDeviceMetrics.h */; };
 		93F1997A08245E59001E9ABC /* KWQPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786A302DE3B8601EA4122 /* KWQPainter.h */; };
 		93F1997B08245E59001E9ABC /* KWQPalette.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786A402DE3B8601EA4122 /* KWQPalette.h */; };
-		93F1997C08245E59001E9ABC /* KWQPen.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786A502DE3B8601EA4122 /* KWQPen.h */; };
 		93F1997D08245E59001E9ABC /* KWQPixmap.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786A602DE3B8601EA4122 /* KWQPixmap.h */; };
 		93F1997F08245E59001E9ABC /* KWQPrinter.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786AA02DE3B8601EA4122 /* KWQPrinter.h */; };
 		93F1998208245E59001E9ABC /* KWQPtrList.h in Headers */ = {isa = PBXBuildFile; fileRef = F587869902DE3B8601EA4122 /* KWQPtrList.h */; };
@@ -316,7 +315,6 @@
 		93F19A4008245E59001E9ABC /* KWQObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587851D02DE375901EA4122 /* KWQObject.cpp */; };
 		93F19A4108245E59001E9ABC /* KWQPaintDeviceMetrics.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587851E02DE375901EA4122 /* KWQPaintDeviceMetrics.mm */; };
 		93F19A4208245E59001E9ABC /* KWQPainter.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587851F02DE375901EA4122 /* KWQPainter.mm */; };
-		93F19A4308245E59001E9ABC /* KWQPen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587852102DE375901EA4122 /* KWQPen.cpp */; };
 		93F19A4408245E59001E9ABC /* KWQPixmap.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587852202DE375901EA4122 /* KWQPixmap.mm */; };
 		93F19A4A08245E59001E9ABC /* KWQRegExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587852B02DE375901EA4122 /* KWQRegExp.cpp */; };
 		93F19A4B08245E59001E9ABC /* KWQRegion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587852C02DE375901EA4122 /* KWQRegion.cpp */; };
@@ -932,6 +930,8 @@
 		BCC8CFCC0986CD2400140BF2 /* Color.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC8CFC90986CD2400140BF2 /* Color.h */; };
 		BCC8CFCD0986CD2400140BF2 /* ColorData.gperf in Resources */ = {isa = PBXBuildFile; fileRef = BCC8CFCA0986CD2400140BF2 /* ColorData.gperf */; };
 		BCC8CFE50986CEA400140BF2 /* Color.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCC8CFE40986CEA400140BF2 /* Color.mm */; };
+		BCC8D1730988301200140BF2 /* Pen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC8D1710988301200140BF2 /* Pen.cpp */; };
+		BCC8D1740988301200140BF2 /* Pen.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC8D1720988301200140BF2 /* Pen.h */; };
 		BCEA478D097CAAC80094C9E4 /* css_base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA477A097CAAC80094C9E4 /* css_base.cpp */; };
 		BCEA478E097CAAC80094C9E4 /* css_base.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA477B097CAAC80094C9E4 /* css_base.h */; };
 		BCEA478F097CAAC80094C9E4 /* css_computedstyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA477C097CAAC80094C9E4 /* css_computedstyle.cpp */; };
@@ -1900,6 +1900,8 @@
 		BCC8CFC90986CD2400140BF2 /* Color.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Color.h; path = platform/Color.h; sourceTree = "<group>"; };
 		BCC8CFCA0986CD2400140BF2 /* ColorData.gperf */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = ColorData.gperf; path = platform/ColorData.gperf; sourceTree = "<group>"; };
 		BCC8CFE40986CEA400140BF2 /* Color.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = Color.mm; path = platform/mac/Color.mm; sourceTree = "<group>"; };
+		BCC8D1710988301200140BF2 /* Pen.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Pen.cpp; path = platform/Pen.cpp; sourceTree = "<group>"; };
+		BCC8D1720988301200140BF2 /* Pen.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Pen.h; path = platform/Pen.h; sourceTree = "<group>"; };
 		BCD990D90594B9E500AB848D /* xbl_tokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = xbl_tokenizer.cpp; path = xbl/xbl_tokenizer.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BCD990DD0594B9FC00AB848D /* xbl_tokenizer.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = xbl_tokenizer.h; path = xbl/xbl_tokenizer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BCEA477A097CAAC80094C9E4 /* css_base.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = css_base.cpp; path = css/css_base.cpp; sourceTree = SOURCE_ROOT; };
@@ -2158,7 +2160,6 @@
 		F587851D02DE375901EA4122 /* KWQObject.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KWQObject.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587851E02DE375901EA4122 /* KWQPaintDeviceMetrics.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQPaintDeviceMetrics.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587851F02DE375901EA4122 /* KWQPainter.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQPainter.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587852102DE375901EA4122 /* KWQPen.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KWQPen.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587852202DE375901EA4122 /* KWQPixmap.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQPixmap.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587852B02DE375901EA4122 /* KWQRegExp.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KWQRegExp.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587852C02DE375901EA4122 /* KWQRegion.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KWQRegion.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2229,7 +2230,6 @@
 		F58786A202DE3B8601EA4122 /* KWQPaintDeviceMetrics.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQPaintDeviceMetrics.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58786A302DE3B8601EA4122 /* KWQPainter.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQPainter.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58786A402DE3B8601EA4122 /* KWQPalette.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQPalette.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F58786A502DE3B8601EA4122 /* KWQPen.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQPen.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58786A602DE3B8601EA4122 /* KWQPixmap.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQPixmap.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58786AA02DE3B8601EA4122 /* KWQPrinter.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQPrinter.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58786AC02DE3B8601EA4122 /* KWQPtrList.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQPtrList.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3138,6 +3138,8 @@
 		BCF1A5BA097832090061A123 /* platform */ = {
 			isa = PBXGroup;
 			children = (
+				BCC8D1710988301200140BF2 /* Pen.cpp */,
+				BCC8D1720988301200140BF2 /* Pen.h */,
 				BCC8CFC80986CD2400140BF2 /* Color.cpp */,
 				BCC8CFC90986CD2400140BF2 /* Color.h */,
 				BCC8CFE40986CEA400140BF2 /* Color.mm */,
@@ -3812,8 +3814,6 @@
 				F58786A302DE3B8601EA4122 /* KWQPainter.h */,
 				F587851F02DE375901EA4122 /* KWQPainter.mm */,
 				F58786A402DE3B8601EA4122 /* KWQPalette.h */,
-				F58786A502DE3B8601EA4122 /* KWQPen.h */,
-				F587852102DE375901EA4122 /* KWQPen.cpp */,
 				F58786A602DE3B8601EA4122 /* KWQPixmap.h */,
 				F587852202DE375901EA4122 /* KWQPixmap.mm */,
 				F58786AA02DE3B8601EA4122 /* KWQPrinter.h */,
@@ -3955,7 +3955,6 @@
 				93F1997908245E59001E9ABC /* KWQPaintDeviceMetrics.h in Headers */,
 				93F1997A08245E59001E9ABC /* KWQPainter.h in Headers */,
 				93F1997B08245E59001E9ABC /* KWQPalette.h in Headers */,
-				93F1997C08245E59001E9ABC /* KWQPen.h in Headers */,
 				93F1997D08245E59001E9ABC /* KWQPixmap.h in Headers */,
 				93F1997F08245E59001E9ABC /* KWQPrinter.h in Headers */,
 				93F1998208245E59001E9ABC /* KWQPtrList.h in Headers */,
@@ -4394,6 +4393,7 @@
 				A8DF5FA3098460AA0052981B /* SVGDocumentExtensions.h in Headers */,
 				93E62D9B0985F41600E1B5E3 /* SystemTime.h in Headers */,
 				BCC8CFCC0986CD2400140BF2 /* Color.h in Headers */,
+				BCC8D1740988301200140BF2 /* Pen.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5069,7 +5069,6 @@
 				93F19A4008245E59001E9ABC /* KWQObject.cpp in Sources */,
 				93F19A4108245E59001E9ABC /* KWQPaintDeviceMetrics.mm in Sources */,
 				93F19A4208245E59001E9ABC /* KWQPainter.mm in Sources */,
-				93F19A4308245E59001E9ABC /* KWQPen.cpp in Sources */,
 				93F19A4408245E59001E9ABC /* KWQPixmap.mm in Sources */,
 				93F19A4A08245E59001E9ABC /* KWQRegExp.cpp in Sources */,
 				93F19A4B08245E59001E9ABC /* KWQRegion.cpp in Sources */,
@@ -5512,6 +5511,7 @@
 				93E62D9A0985F41600E1B5E3 /* SystemTime.cpp in Sources */,
 				BCC8CFCB0986CD2400140BF2 /* Color.cpp in Sources */,
 				BCC8CFE50986CEA400140BF2 /* Color.mm in Sources */,
+				BCC8D1730988301200140BF2 /* Pen.cpp in Sources */,
 				1ADB5699098827AD0032EEE2 /* JSEvents.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
