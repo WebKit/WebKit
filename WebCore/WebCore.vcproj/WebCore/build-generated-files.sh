@@ -10,19 +10,19 @@ mkdir -p "$DerivedSourcesDir"
 # Rebuild cssproperties.h and cssvalues.h if the .in files have changed
 cd ../..
 WebCoreSourceRoot=`pwd`
-if [ khtml/css/cssproperties.in -nt "$DerivedSourcesDir/cssproperties.h" ]; then
+if [ css/cssproperties.in -nt "$DerivedSourcesDir/cssproperties.h" ]; then
   echo "Generating CSS properties table..."
-  cat khtml/css/cssproperties.in > "$DerivedSourcesDir/cssproperties.in"
+  cat css/cssproperties.in > "$DerivedSourcesDir/cssproperties.in"
   cd "$DerivedSourcesDir"
-  sh "$WebCoreSourceRoot/khtml/css/makeprop"
+  sh "$WebCoreSourceRoot/css/makeprop"
 fi
 
 cd "$WebCoreSourceRoot"
-  if [ khtml/css/cssvalues.in -nt "$DerivedSourcesDir/cssvalues.h" ]; then
+  if [ css/cssvalues.in -nt "$DerivedSourcesDir/cssvalues.h" ]; then
   echo "Generating CSS values table..."
-  cat khtml/css/cssvalues.in > "$DerivedSourcesDir/cssvalues.in"
+  cat css/cssvalues.in > "$DerivedSourcesDir/cssvalues.in"
   cd "$DerivedSourcesDir"
-  sh "$WebCoreSourceRoot/khtml/css/makevalues"
+  sh "$WebCoreSourceRoot/css/makevalues"
 fi
 
 cd "$WebCoreSourceRoot"
@@ -98,8 +98,8 @@ if [ ../JavaScriptCore/kjs/create_hash_table -nt "$DerivedSourcesDir/kjs_window.
   ../JavaScriptCore/kjs/create_hash_table khtml/ecma/kjs_window.cpp > "$DerivedSourcesDir/kjs_window.lut.h"
 fi
 
-if [ ../JavaScriptCore/kjs/create_hash_table -nt "$DerivedSourcesDir/xmlhttprequest.lut.h" -o khtml/ecma/xmlhttprequest.cpp -nt "$DerivedSourcesDir/xmlhttprequest.lut.h" ]; then
-  ../JavaScriptCore/kjs/create_hash_table khtml/ecma/xmlhttprequest.cpp > "$DerivedSourcesDir/xmlhttprequest.lut.h"
+if [ ../JavaScriptCore/kjs/create_hash_table -nt "$DerivedSourcesDir/xmlhttprequest.lut.h" -o xml/xmlhttprequest.cpp -nt "$DerivedSourcesDir/xmlhttprequest.lut.h" ]; then
+  ../JavaScriptCore/kjs/create_hash_table xml/xmlhttprequest.cpp > "$DerivedSourcesDir/xmlhttprequest.lut.h"
 fi
 
 if [ ../JavaScriptCore/kjs/create_hash_table -nt "$DerivedSourcesDir/xmlserializer.lut.h" -o khtml/ecma/xmlserializer.cpp -nt "$DerivedSourcesDir/xmlserializer.lut.h" ]; then

@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\iconv\include&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\libxml\include&quot;;&quot;$(SolutionDir)\..\..\libxslt\include&quot;;&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\css&quot;;&quot;$(SolutionDir)\..\khtml\dom&quot;;&quot;$(SolutionDir)\..\khtml\ecma&quot;;&quot;$(SolutionDir)\..\khtml\editing&quot;;&quot;$(SolutionDir)\..\khtml\html&quot;;&quot;$(SolutionDir)\..\khtml\misc&quot;;&quot;$(SolutionDir)\..\rendering&quot;;&quot;$(SolutionDir)\..\khtml\xml&quot;;&quot;$(SolutionDir)\..\khtml\xsl&quot;;&quot;$(SolutionDir)\..\khtml&quot;;&quot;$(SolutionDir)\..\kwq&quot;;&quot;$(SolutionDir)\..\bridge&quot;;&quot;$(SolutionDir)\..\loader&quot;;&quot;$(SolutionDir)\..\page&quot;;&quot;$(SolutionDir)\..\platform&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\kjs&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\iconv\include&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\libxml\include&quot;;&quot;$(SolutionDir)\..\..\libxslt\include&quot;;&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\css&quot;;&quot;$(SolutionDir)\..\khtml\dom&quot;;&quot;$(SolutionDir)\..\khtml\ecma&quot;;&quot;$(SolutionDir)\..\khtml\editing&quot;;&quot;$(SolutionDir)\..\khtml\html&quot;;&quot;$(SolutionDir)\..\khtml\misc&quot;;&quot;$(SolutionDir)\..\rendering&quot;;&quot;$(SolutionDir)\..\khtml\xml&quot;;&quot;$(SolutionDir)\..\khtml\xsl&quot;;&quot;$(SolutionDir)\..\khtml&quot;;&quot;$(SolutionDir)\..\kwq&quot;;&quot;$(SolutionDir)\..\bridge&quot;;&quot;$(SolutionDir)\..\loader&quot;;&quot;$(SolutionDir)\..\page&quot;;&quot;$(SolutionDir)\..\platform&quot;;&quot;$(SolutionDir)\..\xml&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\kjs&quot;"
 				PreprocessorDefinitions="WIN32; KHTML_NO_XBL; KHTML_XSLT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -106,7 +106,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\iconv\include&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\libxml\include&quot;;&quot;$(SolutionDir)\..\..\libxslt\include&quot;;&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\css&quot;;&quot;$(SolutionDir)\..\khtml\dom&quot;;&quot;$(SolutionDir)\..\khtml\ecma&quot;;&quot;$(SolutionDir)\..\khtml\editing&quot;;&quot;$(SolutionDir)\..\khtml\html&quot;;&quot;$(SolutionDir)\..\khtml\misc&quot;;&quot;$(SolutionDir)\..\rendering&quot;;&quot;$(SolutionDir)\..\khtml\xml&quot;;&quot;$(SolutionDir)\..\khtml\xsl&quot;;&quot;$(SolutionDir)\..\khtml&quot;;&quot;$(SolutionDir)\..\kwq&quot;;&quot;$(SolutionDir)\..\bridge&quot;;&quot;$(SolutionDir)\..\loader&quot;;&quot;$(SolutionDir)\..\page&quot;;&quot;$(SolutionDir)\..\platform&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\kjs&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\iconv\include&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\libxml\include&quot;;&quot;$(SolutionDir)\..\..\libxslt\include&quot;;&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\css&quot;;&quot;$(SolutionDir)\..\khtml\dom&quot;;&quot;$(SolutionDir)\..\khtml\ecma&quot;;&quot;$(SolutionDir)\..\khtml\editing&quot;;&quot;$(SolutionDir)\..\khtml\html&quot;;&quot;$(SolutionDir)\..\khtml\misc&quot;;&quot;$(SolutionDir)\..\rendering&quot;;&quot;$(SolutionDir)\..\khtml\xml&quot;;&quot;$(SolutionDir)\..\khtml\xsl&quot;;&quot;$(SolutionDir)\..\khtml&quot;;&quot;$(SolutionDir)\..\kwq&quot;;&quot;$(SolutionDir)\..\bridge&quot;;&quot;$(SolutionDir)\..\loader&quot;;&quot;$(SolutionDir)\..\page&quot;;&quot;$(SolutionDir)\..\platform&quot;;&quot;$(SolutionDir)\..\xml&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\kjs&quot;"
 				PreprocessorDefinitions="WIN32; KHTML_NO_XBL; KHTML_XSLT"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -196,6 +196,10 @@
 			</File>
 			<File
 				RelativePath="..\..\kwq\KWQCursor.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kwq\KWQDateTime.h"
 				>
 			</File>
 			<File
@@ -372,18 +376,6 @@
 			</File>
 			<File
 				RelativePath="..\..\kwq\KWQLogging.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQMap.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQMapImpl.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQMapImpl.h"
 				>
 			</File>
 			<File
@@ -918,14 +910,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\html\html_elementimpl.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\khtml\html\html_elementimpl.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\khtml\html\html_headimpl.cpp"
 					>
 				</File>
@@ -958,14 +942,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\html\html_miscimpl.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\khtml\html\html_miscimpl.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\khtml\html\html_objectimpl.cpp"
 					>
 				</File>
@@ -982,11 +958,35 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\khtml\html\HTMLBaseFontElementImpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLBaseFontElementImpl.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\khtml\html\HTMLButtonElementImpl.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\..\khtml\html\HTMLButtonElementImpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLCollectionImpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLCollectionImpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLElementImpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLElementImpl.h"
 					>
 				</File>
 				<File
@@ -1003,6 +1003,14 @@
 				</File>
 				<File
 					RelativePath="..\..\khtml\html\HTMLFieldSetElementImpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLFormCollectionImpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLFormCollectionImpl.h"
 					>
 				</File>
 				<File
@@ -1059,6 +1067,14 @@
 				</File>
 				<File
 					RelativePath="..\..\khtml\html\HTMLLegendElementImpl.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLNameCollectionImpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLNameCollectionImpl.h"
 					>
 				</File>
 				<File
@@ -1550,14 +1566,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\ecma\xmlhttprequest.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\khtml\ecma\xmlhttprequest.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\khtml\ecma\xmlserializer.cpp"
 					>
 				</File>
@@ -1877,11 +1885,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\SystemTime.h"
+				RelativePath="..\..\platform\win\SystemTime.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\win\SystemTime.cpp"
+				RelativePath="..\..\platform\SystemTime.h"
 				>
 			</File>
 		</Filter>
@@ -2037,14 +2045,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_block.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\render_block.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\rendering\render_box.cpp"
 				>
 			</File>
@@ -2082,14 +2082,6 @@
 			</File>
 			<File
 				RelativePath="..\..\rendering\render_canvasimage.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\render_container.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\render_container.h"
 				>
 			</File>
 			<File
@@ -2189,14 +2181,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_table.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\render_table.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\rendering\render_theme.cpp"
 				>
 			</File>
@@ -2205,11 +2189,79 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\rendering\render_theme_mac.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderBlock.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderBlock.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderContainer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderContainer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderTable.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderTable.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderTableCell.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderTableCell.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderTableCol.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderTableCol.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderTableRow.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderTableRow.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderTableSection.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderTableSection.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\rendering\RenderText.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\rendering\RenderText.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderTextField.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderTextField.h"
 				>
 			</File>
 			<File
@@ -2234,6 +2286,36 @@
 			>
 			<File
 				RelativePath="..\..\bridge\BrowserExtension.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="xml"
+			>
+			<File
+				RelativePath="..\..\xml\xmlhttprequest.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\xml\xmlhttprequest.h"
 				>
 			</File>
 		</Filter>
