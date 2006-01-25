@@ -35,6 +35,8 @@
 #include "CachedImage.h"
 #include "htmlnames.h"
 
+#include "JSWheelEvent.h"
+
 #include <kdebug.h>
 
 using namespace WebCore;
@@ -502,7 +504,7 @@ JSValue *getDOMEvent(ExecState *exec, EventImpl *e)
     else if (e->isMouseEvent())
       ret = new DOMMouseEvent(exec, static_cast<MouseEventImpl *>(e));
     else if (e->isWheelEvent())
-      ret = new DOMWheelEvent(exec, static_cast<WheelEventImpl *>(e));
+      ret = new JSWheelEvent(exec, static_cast<WheelEventImpl *>(e));
     else if (e->isUIEvent())
       ret = new DOMUIEvent(exec, static_cast<UIEventImpl *>(e));
     else if (e->isMutationEvent())
@@ -912,83 +914,6 @@ JSValue *DOMMutationEventProtoFunc::callAsFunction(ExecState *exec, JSObject *th
       return jsUndefined();
   }
   return jsUndefined();
-}
-
-// -------------------------------------------------------------------------
-
-const ClassInfo DOMWheelEvent::info = { "WheelEvent", &DOMEvent::info, &DOMWheelEventTable, 0 };
-/*
-@begin DOMWheelEventTable 10
-    altKey      DOMWheelEvent::AltKey       DontDelete|ReadOnly
-    clientX     DOMWheelEvent::ClientX      DontDelete|ReadOnly
-    clientY     DOMWheelEvent::ClientY      DontDelete|ReadOnly
-    ctrlKey     DOMWheelEvent::CtrlKey      DontDelete|ReadOnly
-    metaKey     DOMWheelEvent::MetaKey      DontDelete|ReadOnly
-    offsetX     DOMWheelEvent::OffsetX      DontDelete|ReadOnly
-    offsetY     DOMWheelEvent::OffsetY      DontDelete|ReadOnly
-    screenX     DOMWheelEvent::ScreenX      DontDelete|ReadOnly
-    screenY     DOMWheelEvent::ScreenY      DontDelete|ReadOnly
-    shiftKey    DOMWheelEvent::ShiftKey     DontDelete|ReadOnly
-    wheelDelta  DOMWheelEvent::WheelDelta   DontDelete|ReadOnly
-    x           DOMWheelEvent::X            DontDelete|ReadOnly
-    y           DOMWheelEvent::Y            DontDelete|ReadOnly
-@end
-@begin DOMWheelEventProtoTable 1
-@end
-*/
-KJS_DEFINE_PROTOTYPE(DOMWheelEventProto)
-KJS_IMPLEMENT_PROTOFUNC(DOMWheelEventProtoFunc)
-KJS_IMPLEMENT_PROTOTYPE_WITH_PARENT("DOMWheelEvent",DOMWheelEventProto,DOMWheelEventProtoFunc,DOMEventProto)
-
-DOMWheelEvent::DOMWheelEvent(ExecState *exec, DOM::WheelEventImpl *e)
-    : DOMUIEvent(exec, e)
-{
-}
-
-bool DOMWheelEvent::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    return getStaticValueSlot<DOMWheelEvent, DOMEvent>(exec, &DOMWheelEventTable, this, propertyName, slot);
-}
-
-JSValue *DOMWheelEvent::getValueProperty(ExecState *exec, int token) const
-{
-    DOM::WheelEventImpl *e = static_cast<DOM::WheelEventImpl *>(impl());
-    switch (token) {
-        case AltKey:
-            return jsBoolean(e->altKey());
-        case ClientX:
-            return jsNumber(e->clientX());
-        case ClientY:
-            return jsNumber(e->clientY());
-        case CtrlKey:
-            return jsNumber(e->ctrlKey());
-        case MetaKey:
-            return jsNumber(e->metaKey());
-        case OffsetX:
-            return jsNumber(e->offsetX());
-        case OffsetY:
-            return jsNumber(e->offsetY());
-        case ScreenX:
-            return jsNumber(e->screenX());
-        case ScreenY:
-            return jsNumber(e->screenY());
-        case ShiftKey:
-            return jsBoolean(e->shiftKey());
-        case WheelDelta:
-            return jsNumber(e->wheelDelta());
-        case X:
-            return jsNumber(e->x());
-        case Y:
-            return jsNumber(e->y());
-    }
-    return jsUndefined();
-}
-
-JSValue *DOMWheelEventProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
-{
-    if (!thisObj->inherits(&DOMWheelEvent::info))
-        return throwError(exec, TypeError);
-    return jsUndefined();
 }
 
 // -------------------------------------------------------------------------

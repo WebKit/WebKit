@@ -10,6 +10,7 @@
 		1A3D8557097647B5002C85D1 /* ObjectContents.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3D8556097647B4002C85D1 /* ObjectContents.h */; };
 		1A69D381085627410009880D /* domparser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A69D37F085627410009880D /* domparser.h */; };
 		1A69D382085627410009880D /* domparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A69D380085627410009880D /* domparser.cpp */; };
+		1ADB5699098827AD0032EEE2 /* JSEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ADB5698098827AD0032EEE2 /* JSEvents.cpp */; };
 		550A0BC9085F6039007353D6 /* dom_qname.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* dom_qname.cpp */; };
 		550A0BCA085F6039007353D6 /* dom_qname.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* dom_qname.h */; };
 		550A0BCD085F604D007353D6 /* htmlnames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BCB085F604D007353D6 /* htmlnames.cpp */; };
@@ -1097,6 +1098,7 @@
 		1A3D8556097647B4002C85D1 /* ObjectContents.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ObjectContents.h; sourceTree = "<group>"; };
 		1A69D37F085627410009880D /* domparser.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = domparser.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1A69D380085627410009880D /* domparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = domparser.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		1ADB5698098827AD0032EEE2 /* JSEvents.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSEvents.cpp; path = bindings/js/JSEvents.cpp; sourceTree = "<group>"; };
 		2D90660B0665D937006B6F1A /* KWQClipboard.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQClipboard.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D90660C0665D937006B6F1A /* KWQClipboard.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQClipboard.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		4758C44308C5F217009BAF05 /* KCanvasPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasPath.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3036,17 +3038,18 @@
 		BC1A3790097C6F970019F3D8 /* bindings */ = {
 			isa = PBXGroup;
 			children = (
-				BC1A3793097C6FB10019F3D8 /* JavaScript */,
+				BC1A3793097C6FB10019F3D8 /* Javascript */,
 				BC1A3794097C6FC40019F3D8 /* Objective-C */,
 			);
 			name = bindings;
 			sourceTree = "<group>";
 		};
-		BC1A3793097C6FB10019F3D8 /* JavaScript */ = {
+		BC1A3793097C6FB10019F3D8 /* Javascript */ = {
 			isa = PBXGroup;
 			children = (
+				1ADB5698098827AD0032EEE2 /* JSEvents.cpp */,
 			);
-			name = JavaScript;
+			name = Javascript;
 			sourceTree = "<group>";
 		};
 		BC1A3794097C6FC40019F3D8 /* Objective-C */ = {
@@ -4427,6 +4430,7 @@
 				A88AD52909524A4A001DD196 /* ksvgcssproperties.c/h */,
 				A88AD52B09524A52001DD196 /* ksvgcssvalues.c/h */,
 				937A3651097E257B00E4EE2F /* User Agent Style Sheet */,
+				1ADB56AF098828730032EEE2 /* Generate Javascript Bindings */,
 				93F198A608245E59001E9ABC /* Headers */,
 				93F199FD08245E59001E9ABC /* Resources */,
 				93F19A0C08245E59001E9ABC /* Sources */,
@@ -4578,6 +4582,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"$CREATE_HASH_TABLE\" khtml/ecma/domparser.cpp > \"$DERIVED_FILE_DIR/domparser.lut.h\"";
+		};
+		1ADB56AF098828730032EEE2 /* Generate Javascript Bindings */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate Javascript Bindings";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/bin/perl -I\"$SRCROOT/bindings/scripts\" \"$SRCROOT/bindings/scripts/generate-bindings.pl\" --generator JS --idldir \"$SRCROOT/khtml/xml\" --outputdir \"$DERIVED_FILE_DIR\"\n";
 		};
 		932FC0B70824A175005B3C75 /* doctypes.cpp */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5494,6 +5512,7 @@
 				93E62D9A0985F41600E1B5E3 /* SystemTime.cpp in Sources */,
 				BCC8CFCB0986CD2400140BF2 /* Color.cpp in Sources */,
 				BCC8CFE50986CEA400140BF2 /* Color.mm in Sources */,
+				1ADB5699098827AD0032EEE2 /* JSEvents.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
