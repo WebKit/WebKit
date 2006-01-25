@@ -1,0 +1,7 @@
+A test to make sure we don't fire an extra onchange event for checked radio buttons. Bug 6731 has the details.
+
+If you see this paragraph and the one below and both agree, the test has succeeded.
+
+If you see this paragraph and the one above and both agree, the test has succeeded.
+
+
