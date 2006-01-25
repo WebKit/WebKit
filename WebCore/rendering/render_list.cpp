@@ -449,7 +449,7 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
     p->drawRect( _tx + xoff, _ty + yoff, offset, offset );
 #endif
 
-    const QColor color( style()->color() );
+    const Color color( style()->color() );
     p->setPen( color );
 
     switch(style()->listStyleType()) {

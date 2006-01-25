@@ -34,7 +34,7 @@
 #include "edit_actions.h"
 #include "text_affinity.h"
 #include "text_granularity.h"
-#include <qcolor.h>
+#include "Color.h"
 #include <qscrollbar.h>
 
 class FramePrivate;
@@ -112,7 +112,7 @@ namespace KJS {
 }
 
 struct MarkedTextUnderline {
-  MarkedTextUnderline(unsigned _startOffset, unsigned _endOffset, const QColor &_color, bool _thick) 
+  MarkedTextUnderline(unsigned _startOffset, unsigned _endOffset, const Color &_color, bool _thick) 
     : startOffset(_startOffset)
        , endOffset(_endOffset)
        , color(_color)
@@ -120,7 +120,7 @@ struct MarkedTextUnderline {
   {}
   unsigned startOffset;
   unsigned endOffset;
-  QColor color;
+  Color color;
   bool thick;
 };
 

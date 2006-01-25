@@ -26,16 +26,16 @@
 #ifndef QBRUSH_H_
 #define QBRUSH_H_
 
-#include "KWQColor.h"
+#include "Color.h"
 #include "KWQNamespace.h"
 
 class QBrush : public Qt {
 public: 
-    QBrush::QBrush(const QColor &c = black, BrushStyle style = SolidPattern)
+    QBrush::QBrush(const Color &c = Color::black, BrushStyle style = SolidPattern)
         : brushColor(c), brushStyle(style) { }
 
-    const QColor &color() const { return brushColor; }
-    void setColor(const QColor &c) { brushColor = c; }
+    const Color &color() const { return brushColor; }
+    void setColor(const Color &c) { brushColor = c; }
     BrushStyle style() const { return brushStyle; }
     void setStyle(BrushStyle s) { brushStyle = s; }
     
@@ -43,7 +43,7 @@ public:
     bool operator!=(const QBrush &b) const { return !(*this == b); }
 
 private:
-    QColor brushColor;
+    Color brushColor;
     BrushStyle brushStyle;
 };
 

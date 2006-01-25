@@ -26,7 +26,7 @@
 #ifndef QPAINTER_H_
 #define QPAINTER_H_
 
-#include "KWQColor.h"
+#include "Color.h"
 #include "KWQFontMetrics.h"
 #include "KWQNamespace.h"
 #include "IntRect.h"
@@ -68,12 +68,12 @@ public:
     const QPen &pen() const;
     void setPen(const QPen &);
     void setPen(PenStyle);
-    void setPen(QRgb);
+    void setPen(RGBA32);
     
     const QBrush &QPainter::brush() const;
     void setBrush(const QBrush &);
     void setBrush(BrushStyle);
-    void setBrush(QRgb);
+    void setBrush(RGBA32);
 
     IntRect xForm(const IntRect &) const;
 
@@ -123,16 +123,16 @@ public:
     void drawText(int x, int y, int tabWidth, int xpos, int, int, int alignmentFlags, const QString &);
     void drawHighlightForText(int x, int y, int h, int tabWidth, int xpos,
                   const QChar *, int length, int from, int to, int toAdd,
-                  const QColor& backgroundColor, QPainter::TextDirection d, bool visuallyOrdered,
+                  const Color& backgroundColor, QPainter::TextDirection d, bool visuallyOrdered,
                   int letterSpacing, int wordSpacing, bool smallCaps);
     void drawText(int x, int y, int tabWidth, int xpos, const QChar *, int length, int from, int to, int toAdd,
-                  const QColor& backgroundColor, QPainter::TextDirection d, bool visuallyOrdered,
+                  const Color& backgroundColor, QPainter::TextDirection d, bool visuallyOrdered,
                   int letterSpacing, int wordSpacing, bool smallCaps);
     void drawLineForText(int x, int y, int yOffset, int width);
     void drawLineForMisspelling(int x, int y, int width);
     int misspellingLineThickness() const;
 
-    QColor selectedTextBackgroundColor() const;
+    Color selectedTextBackgroundColor() const;
     void setUsesInactiveTextBackgroundColor(bool u) { _usesInactiveTextBackgroundColor = u; }
     
     bool paintingDisabled() const;
@@ -144,11 +144,11 @@ public:
     void beginTransparencyLayer(float opacity);
     void endTransparencyLayer();
 
-    void setShadow(int x, int y, int blur, const QColor& color);
+    void setShadow(int x, int y, int blur, const Color& color);
     void clearShadow();
 
     void initFocusRing(int width, int offset);
-    void initFocusRing(int width, int offset, const QColor& color);
+    void initFocusRing(int width, int offset, const Color& color);
     void addFocusRingRect(int x, int y, int width, int height);
     void drawFocusRing();
     void clearFocusRing();
@@ -177,7 +177,7 @@ private:
     void _setColorFromBrush();
     void _setColorFromPen();
 
-    void _fillRect(float x, float y, float w, float h, const QColor& color);
+    void _fillRect(float x, float y, float w, float h, const Color& color);
     
     void _updateRenderer();
 

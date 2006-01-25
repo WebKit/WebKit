@@ -63,7 +63,7 @@ public:
     virtual void setSelectionState(SelectionState s);
     virtual IntRect selectionRect();
     bool isSelected();
-    virtual QColor selectionColor(QPainter *p) const;
+    virtual Color selectionColor(QPainter *p) const;
 
 protected:
     int m_intrinsicWidth;

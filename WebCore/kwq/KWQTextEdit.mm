@@ -405,9 +405,9 @@ void QTextEdit::setPalette(const QPalette &palette)
 
     [textArea setTextColor:nsColor(palette.foreground())];
 
-    QColor background = palette.background();
+    Color background = palette.background();
     if (!background.isValid())
-        background = Qt::white;
+        background = Color::white;
     [textArea setBackgroundColor:nsColor(background)];
     [textArea setDrawsBackground:background.alpha() != 0];
 

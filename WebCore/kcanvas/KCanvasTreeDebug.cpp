@@ -172,7 +172,7 @@ QTextStream &operator<<(QTextStream &ts, const QMatrix &m)
     return ts;
 }
 
-QTextStream &operator<<(QTextStream &ts, const QColor &c)
+QTextStream &operator<<(QTextStream &ts, const Color &c)
 {
     return ts << c.name();
 }

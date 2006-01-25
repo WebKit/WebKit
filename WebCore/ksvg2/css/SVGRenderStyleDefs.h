@@ -171,7 +171,7 @@ namespace KSVG
         }
 
         float opacity;
-        QColor color;
+        Color color;
 
     private:
         StyleStopData &operator=(const StyleStopData &);
@@ -244,7 +244,7 @@ namespace KSVG
         }
 
         QString filter;
-        QColor floodColor;
+        Color floodColor;
         float floodOpacity;
 
     private:

@@ -24,7 +24,7 @@
 #define KRenderingPaintServerSolid_H
 #if SVG_SUPPORT
 
-#include <qcolor.h>
+#include "Color.h"
 
 #include <kcanvas/device/KRenderingPaintServer.h>
 
@@ -37,8 +37,8 @@ public:
     virtual KCPaintServerType type() const;
 
     // 'Solid' interface
-    QColor color() const;
-    void setColor(const QColor &color);
+    Color color() const;
+    void setColor(const Color &color);
 
     QTextStream &externalRepresentation(QTextStream &) const;
 private:

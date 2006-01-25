@@ -136,9 +136,9 @@ void QLineEdit::setPalette(const QPalette &palette)
         
     [textField setTextColor:nsColor(palette.foreground())];
 
-    QColor background = palette.background();
+    Color background = palette.background();
     if (!background.isValid() || background.alpha() == 0)
-        background = Qt::white;
+        background = Color::white;
     [textField setBackgroundColor:nsColor(background)];
 
     KWQ_UNBLOCK_EXCEPTIONS;

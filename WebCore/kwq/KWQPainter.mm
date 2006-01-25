@@ -71,7 +71,7 @@ struct QPainterPrivate {
     int focusRingWidth;
     int focusRingOffset;
     bool hasFocusRingColor;
-    QColor focusRingColor;
+    Color focusRingColor;
 #if SVG_SUPPORT
     KRenderingDevice *renderingDevice;
 #endif
@@ -89,7 +89,7 @@ QPainterPrivate::~QPainterPrivate()
     KWQRelease(focusRingPath);
 }
 
-static inline void _fillRectXX(float x, float y, float w, float h, const QColor& col);
+static inline void _fillRectXX(float x, float y, float w, float h, const Color& col);
 QPainter::QPainter() : data(new QPainterPrivate), _isForPrinting(false), _usesInactiveTextBackgroundColor(false), _updatingControlTints(false)
 {
 }
@@ -139,11 +139,11 @@ void QPainter::setPen(const QPen &pen)
 void QPainter::setPen(PenStyle style)
 {
     data->state.pen.setStyle(style);
-    data->state.pen.setColor(Qt::black);
+    data->state.pen.setColor(Color::black);
     data->state.pen.setWidth(0);
 }
 
-void QPainter::setPen(QRgb rgb)
+void QPainter::setPen(RGBA32 rgb)
 {
     data->state.pen.setStyle(SolidLine);
     data->state.pen.setColor(rgb);
@@ -158,10 +158,10 @@ void QPainter::setBrush(const QBrush &brush)
 void QPainter::setBrush(BrushStyle style)
 {
     data->state.brush.setStyle(style);
-    data->state.brush.setColor(Qt::black);
+    data->state.brush.setColor(Color::black);
 }
 
-void QPainter::setBrush(QRgb rgb)
+void QPainter::setBrush(RGBA32 rgb)
 {
     data->state.brush.setStyle(SolidPattern);
     data->state.brush.setColor(rgb);
@@ -639,7 +639,7 @@ void QPainter::drawText(int x, int y, int tabWidth, int xpos, int, int, int alig
     [data->textRenderer drawRun:&run style:&style geometry:&geometry];
 }
 
-void QPainter::drawText(int x, int y, int tabWidth, int xpos, const QChar *str, int len, int from, int to, int toAdd, const QColor &backgroundColor, QPainter::TextDirection d, bool visuallyOrdered, int letterSpacing, int wordSpacing, bool smallCaps)
+void QPainter::drawText(int x, int y, int tabWidth, int xpos, const QChar *str, int len, int from, int to, int toAdd, const Color &backgroundColor, QPainter::TextDirection d, bool visuallyOrdered, int letterSpacing, int wordSpacing, bool smallCaps)
 {
     if (data->state.paintingDisabled || len <= 0)
         return;
@@ -677,7 +677,7 @@ void QPainter::drawText(int x, int y, int tabWidth, int xpos, const QChar *str, 
 }
 
 void QPainter::drawHighlightForText(int x, int y, int h, int tabWidth, int xpos,
-    const QChar *str, int len, int from, int to, int toAdd, const QColor &backgroundColor, 
+    const QChar *str, int len, int from, int to, int toAdd, const Color &backgroundColor, 
     QPainter::TextDirection d, bool visuallyOrdered, int letterSpacing, int wordSpacing, bool smallCaps)
 {
     if (data->state.paintingDisabled || len <= 0)
@@ -753,14 +753,14 @@ static int getBlendedColorComponent(int c, int a)
     return (int)(c/alpha);
 }
 
-QColor QPainter::selectedTextBackgroundColor() const
+Color QPainter::selectedTextBackgroundColor() const
 {
     NSColor *color = _usesInactiveTextBackgroundColor ? [NSColor secondarySelectedControlColor] : [NSColor selectedTextBackgroundColor];
     // this needs to always use device colorspace so it can de-calibrate the color for
-    // QColor to possibly recalibrate it
+    // Color to possibly recalibrate it
     color = [color colorUsingColorSpaceName:NSDeviceRGBColorSpace];
     
-    QColor col = QColor((int)(255 * [color redComponent]), (int)(255 * [color greenComponent]), (int)(255 * [color blueComponent]));
+    Color col = Color((int)(255 * [color redComponent]), (int)(255 * [color greenComponent]), (int)(255 * [color blueComponent]));
     
     // Attempt to make the selection 60% transparent.  We do this by applying a standard blend and then
     // seeing if the resultant color is still within the 0-255 range.
@@ -769,12 +769,12 @@ QColor QPainter::selectedTextBackgroundColor() const
     int green = getBlendedColorComponent(col.green(), alpha);
     int blue = getBlendedColorComponent(col.blue(), alpha);
     if (red >= 0 && red <= 255 && green >= 0 && green <= 255 && blue >= 0 && blue <= 255)
-        return QColor(qRgba(red, green, blue, alpha));
+        return Color(red, green, blue, alpha);
     return col;
 }
 
 // A fillRect helper to work around the fact that NSRectFill uses copy mode, not source over.
-static inline void _fillRectXX(float x, float y, float w, float h, const QColor& col)
+static inline void _fillRectXX(float x, float y, float w, float h, const Color& col)
 {
     [nsColor(col) set];
     NSRectFillUsingOperation(NSMakeRect(x,y,w,h), NSCompositeSourceOver);
@@ -913,7 +913,7 @@ void QPainter::endTransparencyLayer()
     [NSGraphicsContext restoreGraphicsState];
 }
 
-void QPainter::setShadow(int x, int y, int blur, const QColor& color)
+void QPainter::setShadow(int x, int y, int blur, const Color& color)
 {
     if (data->state.paintingDisabled)
         return;
@@ -952,7 +952,7 @@ void QPainter::initFocusRing(int width, int offset)
     [data->focusRingPath setWindingRule:NSNonZeroWindingRule];
 }
 
-void QPainter::initFocusRing(int width, int offset, const QColor &color)
+void QPainter::initFocusRing(int width, int offset, const Color &color)
 {
     if (data->state.paintingDisabled)
         return;

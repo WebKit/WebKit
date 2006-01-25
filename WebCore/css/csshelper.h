@@ -22,7 +22,7 @@
 #ifndef css_helper_h
 #define css_helper_h
 
-#include <qcolor.h>
+#include "Color.h"
 #include <qfont.h>
 
 #include "dom/dom_string.h"

@@ -189,7 +189,7 @@ bool KRenderingPaintServerPatternQuartz::setup(KRenderingDeviceContext* renderin
         CGContextSetFillColorSpace(context, m_patternSpace);
         CGContextSetFillPattern(context, m_pattern, &alpha);
         if (isPaintingText()) {
-            const_cast<khtml::RenderObject *>(renderObject)->style()->setColor(QColor());
+            const_cast<khtml::RenderObject *>(renderObject)->style()->setColor(Color());
             CGContextSetTextDrawingMode(context, kCGTextFill);
         }
     }
@@ -199,7 +199,7 @@ bool KRenderingPaintServerPatternQuartz::setup(KRenderingDeviceContext* renderin
         CGContextSetStrokePattern(context, m_pattern, &alpha);
         applyStrokeStyleToContext(context, renderStyle, renderObject);
         if (isPaintingText()) {
-            const_cast<khtml::RenderObject *>(renderObject)->style()->setColor(QColor());
+            const_cast<khtml::RenderObject *>(renderObject)->style()->setColor(Color());
             CGContextSetTextDrawingMode(context, kCGTextStroke);
         }
     }

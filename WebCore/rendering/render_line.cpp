@@ -783,7 +783,7 @@ void InlineFlowBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
         paintDecorations(i, tx, ty, true);
 }
 
-void InlineFlowBox::paintBackgrounds(QPainter* p, const QColor& c, const BackgroundLayer* bgLayer,
+void InlineFlowBox::paintBackgrounds(QPainter* p, const Color& c, const BackgroundLayer* bgLayer,
                                      int my, int mh, int _tx, int _ty, int w, int h)
 {
     if (!bgLayer)
@@ -792,7 +792,7 @@ void InlineFlowBox::paintBackgrounds(QPainter* p, const QColor& c, const Backgro
     paintBackground(p, c, bgLayer, my, mh, _tx, _ty, w, h);
 }
 
-void InlineFlowBox::paintBackground(QPainter* p, const QColor& c, const BackgroundLayer* bgLayer,
+void InlineFlowBox::paintBackground(QPainter* p, const Color& c, const BackgroundLayer* bgLayer,
                                     int my, int mh, int _tx, int _ty, int w, int h)
 {
     CachedImage* bg = bgLayer->backgroundImage();
@@ -854,7 +854,7 @@ void InlineFlowBox::paintBackgroundAndBorder(RenderObject::PaintInfo& i, int _tx
     RenderStyle* styleToUse = object()->style(m_firstLine);
     if ((!parent() && m_firstLine && styleToUse != object()->style()) || 
         (parent() && object()->shouldPaintBackgroundOrBorder())) {
-        QColor c = styleToUse->backgroundColor();
+        Color c = styleToUse->backgroundColor();
         paintBackgrounds(p, c, styleToUse->backgroundLayers(), my, mh, _tx, _ty, w, h);
 
         // :first-line cannot be used to put borders on a line. Always paint borders with our
@@ -965,7 +965,7 @@ void InlineFlowBox::paintDecorations(RenderObject::PaintInfo& i, int _tx, int _t
         // We must have child boxes and have decorations defined.
         _tx += borderLeft() + paddingLeft();
         
-        QColor underline, overline, linethrough;
+        Color underline, overline, linethrough;
         underline = overline = linethrough = styleToUse->color();
         if (!parent())
             object()->getTextDecorationColors(deco, underline, overline, linethrough);
@@ -1060,7 +1060,7 @@ void EllipsisBox::paint(RenderObject::PaintInfo& i, int _tx, int _ty)
         p->setFont(_style->font());
 
     const Font* font = &_style->htmlFont();
-    QColor textColor = _style->color();
+    Color textColor = _style->color();
     if (textColor != p->pen().color())
         p->setPen(textColor);
     bool setShadow = false;

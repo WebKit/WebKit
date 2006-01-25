@@ -38,16 +38,16 @@ namespace KSVG
         virtual void handleTimerEvent(double timePercentage);
 
         // Helper
-        QColor clampColor(int r, int g, int b) const;
+        Color clampColor(int r, int g, int b) const;
         void calculateColor(double time, int &r, int &g, int &b) const;
 
-        QColor color() const;
-        QColor initialColor() const;
+        Color color() const;
+        Color initialColor() const;
 
     private:
-        QColor m_lastColor;
-        QColor m_currentColor;
-        QColor m_initialColor;
+        Color m_lastColor;
+        Color m_currentColor;
+        Color m_initialColor;
 
         RefPtr<SVGColorImpl> m_toColor;
         RefPtr<SVGColorImpl> m_fromColor;

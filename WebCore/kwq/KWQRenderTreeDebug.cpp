@@ -161,7 +161,7 @@ static QTextStream &operator<<(QTextStream &ts, const RenderObject &o)
                 else {
                     ts << " (" << o.borderTop() << "px ";
                     printBorderStyle(ts, o, o.style()->borderTopStyle());
-                    QColor col = o.style()->borderTopColor();
+                    Color col = o.style()->borderTopColor();
                     if (!col.isValid()) col = o.style()->color();
                     ts << col.name() << ")";
                 }
@@ -174,7 +174,7 @@ static QTextStream &operator<<(QTextStream &ts, const RenderObject &o)
                 else {
                     ts << " (" << o.borderRight() << "px ";
                     printBorderStyle(ts, o, o.style()->borderRightStyle());
-                    QColor col = o.style()->borderRightColor();
+                    Color col = o.style()->borderRightColor();
                     if (!col.isValid()) col = o.style()->color();
                     ts << col.name() << ")";
                 }
@@ -187,7 +187,7 @@ static QTextStream &operator<<(QTextStream &ts, const RenderObject &o)
                 else {
                     ts << " (" << o.borderBottom() << "px ";
                     printBorderStyle(ts, o, o.style()->borderBottomStyle());
-                    QColor col = o.style()->borderBottomColor();
+                    Color col = o.style()->borderBottomColor();
                     if (!col.isValid()) col = o.style()->color();
                     ts << col.name() << ")";
                 }
@@ -200,7 +200,7 @@ static QTextStream &operator<<(QTextStream &ts, const RenderObject &o)
                 else {                    
                     ts << " (" << o.borderLeft() << "px ";
                     printBorderStyle(ts, o, o.style()->borderLeftStyle());
-                    QColor col = o.style()->borderLeftColor();
+                    Color col = o.style()->borderLeftColor();
                     if (!col.isValid()) col = o.style()->color();
                     ts << col.name() << ")";
                 }

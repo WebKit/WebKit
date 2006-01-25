@@ -156,7 +156,7 @@ bool StyleChange::checkForLegacyHTMLStyleChange(const CSSProperty *property)
             }
             break;
         case CSS_PROP_COLOR: {
-            QColor color(CSSParser::parseColor(valueText));
+            Color color(CSSParser::parseColor(valueText));
             m_applyFontColor = color.name();
             return true;
         }

@@ -240,7 +240,7 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, FrameView *v)
         m_implementation->ref();
     pMode = Strict;
     hMode = XHtml;
-    m_textColor = Qt::black;
+    m_textColor = Color::black;
     m_elementNames = 0;
     m_elementNameAlloc = 0;
     m_elementNameCount = 0;
@@ -367,12 +367,12 @@ DocumentImpl::~DocumentImpl()
 
 void DocumentImpl::resetLinkColor()
 {
-    m_linkColor = QColor(0, 0, 238);
+    m_linkColor = Color(0, 0, 238);
 }
 
 void DocumentImpl::resetVisitedLinkColor()
 {
-    m_visitedLinkColor = QColor(85, 26, 139);    
+    m_visitedLinkColor = Color(85, 26, 139);    
 }
 
 void DocumentImpl::resetActiveLinkColor()

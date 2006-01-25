@@ -44,7 +44,7 @@
 #ifndef render_layer_h
 #define render_layer_h
 
-#include <qcolor.h>
+#include "Color.h"
 #include "IntRect.h"
 #include <assert.h>
 

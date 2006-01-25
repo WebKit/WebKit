@@ -48,7 +48,7 @@
 
 static QString KCPreviousFilterOutputName = "__previousOutput__";
 
-static inline CIColor *ciColor(const QColor &c)
+static inline CIColor *ciColor(const Color &c)
 {
     CGColorRef colorCG = cgColor(c);
     CIColor *colorCI = [CIColor colorWithCGColor:colorCG];

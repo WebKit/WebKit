@@ -37,7 +37,6 @@
 
 class CSSStyle;
 class FrameView;
-class QColor;
 class QMatrix;
 class QPainter;
 class QTextStream;
@@ -65,6 +64,7 @@ class RenderArena;
 
 namespace WebCore {
 
+class Color;
 class CollapsedBorderValue;
 class DOMString;
 class DocumentImpl;
@@ -418,7 +418,7 @@ public:
     // RenderBox implements this.
     virtual void paintBoxDecorations(PaintInfo& i, int _tx, int _ty) {};
 
-    virtual void paintBackgroundExtended(QPainter *p, const QColor& c, const BackgroundLayer* bgLayer, int clipy, int cliph,
+    virtual void paintBackgroundExtended(QPainter *p, const Color& c, const BackgroundLayer* bgLayer, int clipy, int cliph,
                                          int _tx, int _ty, int w, int height,
                                          int bleft, int bright, int pleft, int pright) {};
 
@@ -684,14 +684,14 @@ public:
     RenderStyle* style(bool firstLine) const { return firstLine ? firstLineStyle() : style(); }
 
 
-    void getTextDecorationColors(int decorations, QColor& underline, QColor& overline,
-                                 QColor& linethrough, bool quirksMode=false);
+    void getTextDecorationColors(int decorations, Color& underline, Color& overline,
+                                 Color& linethrough, bool quirksMode=false);
 
     enum BorderSide {
         BSTop, BSBottom, BSLeft, BSRight
     };
     void drawBorder(QPainter *p, int x1, int y1, int x2, int y2, BorderSide s,
-                    QColor c, const QColor& textcolor, EBorderStyle style,
+                    Color c, const Color& textcolor, EBorderStyle style,
                     int adjbw1, int adjbw2, bool invalidisInvert = false);
 
     virtual void setTable(RenderTable*) {};
@@ -782,7 +782,7 @@ public:
     bool shouldSelect() const;
     
     // Obtains the selection background color that should be used when painting a selection.
-    virtual QColor selectionColor(QPainter *p) const;
+    virtual Color selectionColor(QPainter *p) const;
     
     // Whether or not a given block needs to paint selection gaps.
     virtual bool shouldPaintSelectionGaps() const { return false; }

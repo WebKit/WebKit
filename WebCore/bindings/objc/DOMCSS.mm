@@ -27,7 +27,7 @@
 #import "DOMCSS.h"
 
 #import "DOMInternal.h"
-#import "KWQColor.h"
+#import "Color.h"
 #import "KWQFoundationExtras.h"
 #import "css_base.h"
 #import "css_ruleimpl.h"
@@ -71,7 +71,7 @@ using namespace DOM;
 @end
 
 @interface DOMRGBColor (WebCoreInternal)
-+ (DOMRGBColor *)_RGBColorWithRGB:(QRgb)value;
++ (DOMRGBColor *)_RGBColorWithRGB:(RGBA32)value;
 @end
 
 @interface DOMRect (WebCoreInternal)
@@ -995,14 +995,14 @@ using namespace DOM;
 
 static CFMutableDictionaryRef wrapperCache = NULL;
 
-id getWrapperForRGB(QRgb value)
+id getWrapperForRGB(RGBA32 value)
 {
     if (!wrapperCache)
         return nil;
     return (id)CFDictionaryGetValue(wrapperCache, reinterpret_cast<const void *>(value));
 }
 
-void setWrapperForRGB(id wrapper, QRgb value)
+void setWrapperForRGB(id wrapper, RGBA32 value)
 {
     if (!wrapperCache) {
         // No need to retain/free either impl key, or id value.  Items will be removed
@@ -1012,7 +1012,7 @@ void setWrapperForRGB(id wrapper, QRgb value)
     CFDictionarySetValue(wrapperCache, reinterpret_cast<const void *>(value), wrapper);
 }
 
-void removeWrapperForRGB(QRgb value)
+void removeWrapperForRGB(RGBA32 value)
 {
     if (!wrapperCache)
         return;
@@ -1023,33 +1023,33 @@ void removeWrapperForRGB(QRgb value)
 
 - (void)dealloc
 {
-    removeWrapperForRGB(reinterpret_cast<QRgb>(_internal));
+    removeWrapperForRGB(reinterpret_cast<RGBA32>(_internal));
     [super dealloc];
 }
 
 - (void)finalize
 {
-    removeWrapperForRGB(reinterpret_cast<QRgb>(_internal));
+    removeWrapperForRGB(reinterpret_cast<RGBA32>(_internal));
     [super finalize];
 }
 
 - (DOMCSSPrimitiveValue *)red
 {
-    QRgb rgb = reinterpret_cast<QRgb>(_internal);
+    RGBA32 rgb = reinterpret_cast<RGBA32>(_internal);
     int value = (rgb >> 16) & 0xFF;
     return [DOMCSSPrimitiveValue _valueWithImpl:new CSSPrimitiveValueImpl(value, DOM::CSSPrimitiveValue::CSS_NUMBER)];
 }
 
 - (DOMCSSPrimitiveValue *)green
 {
-    QRgb rgb = reinterpret_cast<QRgb>(_internal);
+    RGBA32 rgb = reinterpret_cast<RGBA32>(_internal);
     int value = (rgb >> 8) & 0xFF;
     return [DOMCSSPrimitiveValue _valueWithImpl:new CSSPrimitiveValueImpl(value, DOM::CSSPrimitiveValue::CSS_NUMBER)];
 }
 
 - (DOMCSSPrimitiveValue *)blue
 {
-    QRgb rgb = reinterpret_cast<QRgb>(_internal);
+    RGBA32 rgb = reinterpret_cast<RGBA32>(_internal);
     int value = rgb & 0xFF;
     return [DOMCSSPrimitiveValue _valueWithImpl:new CSSPrimitiveValueImpl(value, DOM::CSSPrimitiveValue::CSS_NUMBER)];
 }
@@ -1063,7 +1063,7 @@ void removeWrapperForRGB(QRgb value)
 
 @implementation DOMRGBColor (WebCoreInternal)
 
-- (id)_initWithRGB:(QRgb)value
+- (id)_initWithRGB:(RGBA32)value
 {
     [super _init];
     _internal = reinterpret_cast<DOMObjectInternal *>(value);
@@ -1071,7 +1071,7 @@ void removeWrapperForRGB(QRgb value)
     return self;
 }
 
-+ (DOMRGBColor *)_RGBColorWithRGB:(QRgb)value
++ (DOMRGBColor *)_RGBColorWithRGB:(RGBA32)value
 {
     id cachedInstance;
     cachedInstance = getWrapperForRGB(value);
@@ -1087,8 +1087,8 @@ void removeWrapperForRGB(QRgb value)
 
 - (DOMCSSPrimitiveValue *)alpha
 {
-    QRgb rgb = reinterpret_cast<QRgb>(_internal);
-    float value = (float)qAlpha(rgb) / 0xFF;
+    RGBA32 rgb = reinterpret_cast<RGBA32>(_internal);
+    float value = (float)Color(rgb).alpha() / 0xFF;
     return [DOMCSSPrimitiveValue _valueWithImpl:new CSSPrimitiveValueImpl(value, DOM::CSSPrimitiveValue::CSS_NUMBER)];
     
 }
@@ -1099,8 +1099,8 @@ void removeWrapperForRGB(QRgb value)
 
 - (NSColor *)_color
 {
-    QRgb rgb = reinterpret_cast<QRgb>(_internal);
-    return nsColor(QColor(rgb));
+    RGBA32 rgb = reinterpret_cast<RGBA32>(_internal);
+    return nsColor(Color(rgb));
 }
 
 @end

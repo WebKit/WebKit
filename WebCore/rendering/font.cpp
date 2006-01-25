@@ -43,14 +43,14 @@ IntRect Font::selectionRectForText(int x, int y, int h, int tabWidth, int xpos,
 
 void Font::drawHighlightForText( QPainter *p, int x, int y, int h, int tabWidth, int xpos, 
                      QChar *str, int slen, int pos, int len,
-                     int toAdd, QPainter::TextDirection d, bool visuallyOrdered, int from, int to, QColor bg) const
+                     int toAdd, QPainter::TextDirection d, bool visuallyOrdered, int from, int to, Color bg) const
 {
     p->drawHighlightForText(x, y, h, tabWidth, xpos, str + pos, std::min(slen - pos, len), from, to, toAdd, bg, d, visuallyOrdered,
                 letterSpacing, wordSpacing, fontDef.smallCaps);
 }
                      
 void Font::drawText( QPainter *p, int x, int y, int tabWidth, int xpos, QChar *str, int slen, int pos, int len,
-                     int toAdd, QPainter::TextDirection d, bool visuallyOrdered, int from, int to, QColor bg ) const
+                     int toAdd, QPainter::TextDirection d, bool visuallyOrdered, int from, int to, Color bg ) const
 {
     p->drawText(x, y, tabWidth, xpos, str + pos, std::min(slen - pos, len), from, to, toAdd, bg, d, visuallyOrdered,
                 letterSpacing, wordSpacing, fontDef.smallCaps);

@@ -782,7 +782,7 @@ CSSPrimitiveValueImpl::CSSPrimitiveValueImpl( DashboardRegionImpl *r)
 }
 #endif
 
-CSSPrimitiveValueImpl::CSSPrimitiveValueImpl(QRgb color)
+CSSPrimitiveValueImpl::CSSPrimitiveValueImpl(RGBA32 color)
 {
     m_value.rgbcolor = color;
     m_type = CSSPrimitiveValue::CSS_RGBCOLOR;
@@ -1055,16 +1055,16 @@ DOMString CSSPrimitiveValueImpl::cssText() const
             break;
         }
         case CSSPrimitiveValue::CSS_RGBCOLOR: {
-            QColor color(m_value.rgbcolor);
-            if (qAlpha(m_value.rgbcolor) < 0xFF)
+            Color color(m_value.rgbcolor);
+            if (color.alpha() < 0xFF)
                 text = "rgba(";
             else
                 text = "rgb(";
             text += QString::number(color.red()) + ", ";
             text += QString::number(color.green()) + ", ";
             text += QString::number(color.blue());
-            if (qAlpha(m_value.rgbcolor) < 0xFF)
-                text += ", " + QString::number((float)qAlpha(m_value.rgbcolor) / 0xFF);
+            if (color.alpha() < 0xFF)
+                text += ", " + QString::number((float)color.alpha() / 0xFF);
             text += ")";
             break;
         }

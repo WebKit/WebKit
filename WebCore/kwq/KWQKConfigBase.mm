@@ -26,7 +26,7 @@
 #include "config.h"
 #import "KWQKConfigBase.h"
 
-#import "KWQColor.h"
+#import "Color.h"
 #import "KWQExceptions.h"
 #import "KWQKHTMLSettings.h"
 #import "KWQLogging.h"
@@ -137,9 +137,9 @@ unsigned KConfig::readUnsignedNumEntry(const KHTMLSettings *settings, const char
     return nDefault;
 }
 
-QColor KConfig::readColorEntry(const char *pKey, const QColor *pDefault) const
+Color KConfig::readColorEntry(const char *pKey, const Color *pDefault) const
 {
-    return pDefault ? *pDefault : QColor(0, 0, 0);
+    return pDefault ? *pDefault : Color(0, 0, 0);
 }
 
 void RefreshPlugins(bool reload)

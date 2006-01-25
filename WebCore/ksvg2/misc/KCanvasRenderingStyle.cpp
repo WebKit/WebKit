@@ -77,7 +77,7 @@ KRenderingPaintServer *KSVGPainterFactory::fillPaintServer(const RenderStyle* st
     if (!fill) {
         // initial value (black)
         fillPaintServer = sharedSolidPaintServer();
-        static_cast<KRenderingPaintServerSolid *>(fillPaintServer)->setColor(Qt::black);
+        static_cast<KRenderingPaintServerSolid *>(fillPaintServer)->setColor(Color::black);
     } else if (fill->paintType() == SVG_PAINTTYPE_URI) {
         DOMString id(fill->uri());
         fillPaintServer = getPaintServerById(item->document(), id.qstring().mid(1));

@@ -102,7 +102,7 @@ namespace KSVG
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(KDOM::CSSValueImpl *, stroke, dashOffset, StrokeDashOffset, strokeDashOffset, 0);
     
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, stops, opacity, StopOpacity, stopOpacity, 1.0)
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(QColor, stops, color, StopColor, stopColor, QColor(0, 0, 0))    
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(Color, stops, color, StopColor, stopColor, Color(0, 0, 0))    
         
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(QString, clip, clipPath, ClipPath, clipPath, QString())
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(QString, mask, maskElement, MaskElement, maskElement, QString())
@@ -112,7 +112,7 @@ namespace KSVG
 
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(QString, misc, filter, Filter, filter, QString())
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, misc, floodOpacity, FloodOpacity, floodOpacity, 1.0)
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(QColor, misc, floodColor, FloodColor, floodColor, QColor(0, 0, 0))    
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(Color, misc, floodColor, FloodColor, floodColor, Color(0, 0, 0))    
 
     protected:
         // inherit

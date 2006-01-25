@@ -34,7 +34,7 @@
 #include <kurl.h>
 #include <kxmlcore/HashCountedSet.h>
 #include <kxmlcore/HashMap.h>
-#include <qcolor.h>
+#include "Color.h"
 #include <qdatetime.h>
 #include <qobject.h>
 #include <qptrlist.h>
@@ -339,15 +339,15 @@ public:
     bool shouldScheduleLayout();
     int elapsedTime() const;
     
-    void setTextColor(const QColor& color) { m_textColor = color; }
-    QColor textColor() const { return m_textColor; }
+    void setTextColor(const Color& color) { m_textColor = color; }
+    Color textColor() const { return m_textColor; }
 
-    const QColor& linkColor() const { return m_linkColor; }
-    const QColor& visitedLinkColor() const { return m_visitedLinkColor; }
-    const QColor& activeLinkColor() const { return m_activeLinkColor; }
-    void setLinkColor(const QColor& c) { m_linkColor = c; }
-    void setVisitedLinkColor(const QColor& c) { m_visitedLinkColor = c; }
-    void setActiveLinkColor(const QColor& c) { m_activeLinkColor = c; }
+    const Color& linkColor() const { return m_linkColor; }
+    const Color& visitedLinkColor() const { return m_visitedLinkColor; }
+    const Color& activeLinkColor() const { return m_activeLinkColor; }
+    void setLinkColor(const Color& c) { m_linkColor = c; }
+    void setVisitedLinkColor(const Color& c) { m_visitedLinkColor = c; }
+    void setActiveLinkColor(const Color& c) { m_activeLinkColor = c; }
     void resetLinkColor();
     void resetVisitedLinkColor();
     void resetActiveLinkColor();
@@ -592,7 +592,7 @@ protected:
     ParseMode pMode;
     HTMLMode hMode;
 
-    QColor m_textColor;
+    Color m_textColor;
 
     RefPtr<NodeImpl> m_focusNode;
     RefPtr<NodeImpl> m_hoverNode;
@@ -622,9 +622,9 @@ protected:
     QPtrList<RegisteredEventListener> m_windowEventListeners;
     QPtrList<NodeImpl> m_maintainsState;
 
-    QColor m_linkColor;
-    QColor m_visitedLinkColor;
-    QColor m_activeLinkColor;
+    Color m_linkColor;
+    Color m_visitedLinkColor;
+    Color m_activeLinkColor;
 
     DOMString m_preferredStylesheetSet;
     DOMString m_selectedStylesheetSet;

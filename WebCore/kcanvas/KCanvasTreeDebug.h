@@ -28,7 +28,6 @@
 #include <q3valuelist.h>
 
 class QMatrix;
-class QColor;
 class QStringList;
 class KCClipData;
 class KCPathData;
@@ -37,6 +36,7 @@ class RenderPath;
 class KCanvasContainer;
 
 namespace WebCore {
+    class Color;
     class FloatSize;
     class FloatPoint;
     class FloatRect;
@@ -56,7 +56,7 @@ void writeRenderResources(QTextStream &ts, KDOM::NodeImpl *parent);
 // helper operators defined used in various classes to dump the render tree. 
 QTextStream &operator<<(QTextStream &ts, const QMatrix &);
 QTextStream &operator<<(QTextStream &ts, const WebCore::IntRect &);
-QTextStream &operator<<(QTextStream &ts, const QColor &);
+QTextStream &operator<<(QTextStream &ts, const WebCore::Color &);
 QTextStream &operator<<(QTextStream &ts, const WebCore::IntPoint &);
 QTextStream &operator<<(QTextStream &ts, const WebCore::FloatSize &);
 QTextStream &operator<<(QTextStream &ts, const WebCore::FloatRect &);

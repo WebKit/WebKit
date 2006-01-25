@@ -92,7 +92,7 @@ static KCanvasImage* setupShadingWithStyle(const KRenderingPaintServerGradient *
             KRenderingDeviceContext* maskImageContext = quartzDevice->contextForImage(maskImage);
             quartzDevice->pushContext(maskImageContext);
             CGContextRef maskContext = static_cast<KRenderingDeviceContextQuartz*>(maskImageContext)->cgContext();
-            const_cast<khtml::RenderObject *>(renderObject)->style()->setColor(QColor(255, 255, 255));
+            const_cast<khtml::RenderObject *>(renderObject)->style()->setColor(Color(255, 255, 255));
             CGContextSetTextDrawingMode(maskContext, kCGTextStroke);
         }
     }

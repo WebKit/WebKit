@@ -27,17 +27,17 @@
 #define QPEN_H_
 
 #include "KWQNamespace.h"
-#include "KWQColor.h"
+#include "Color.h"
 
 class QPen : public Qt {
 public:
-    QPen(const QColor &c = Qt::black, uint w = 0, PenStyle ps = SolidLine);
+    QPen(const Color &c = Color::black, uint w = 0, PenStyle ps = SolidLine);
 
-    const QColor &color() const;
+    const Color &color() const;
     uint width() const;
     PenStyle style() const;
 
-    void setColor(const QColor &);
+    void setColor(const Color &);
     void setWidth(uint);
     void setStyle(PenStyle);
 
@@ -47,7 +47,7 @@ public:
 private:
     PenStyle  penStyle;
     uint      penWidth;
-    QColor    penColor;
+    Color    penColor;
 };
 
 #endif

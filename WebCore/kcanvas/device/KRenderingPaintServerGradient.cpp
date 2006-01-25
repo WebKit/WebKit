@@ -51,7 +51,7 @@ KCSortedGradientStopList::KCSortedGradientStopList()
     setAutoDelete(true);
 }
 
-void KCSortedGradientStopList::addStop(float offset, const QColor &color)
+void KCSortedGradientStopList::addStop(float offset, const Color &color)
 {
     KCGradientOffsetPair *pair = new KCGradientOffsetPair;
     pair->offset = offset;

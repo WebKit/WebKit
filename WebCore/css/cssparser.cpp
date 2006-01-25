@@ -229,9 +229,9 @@ bool CSSParser::parseValue( CSSMutableStyleDeclarationImpl *declaration, int _id
     return ok;
 }
 
-QRgb CSSParser::parseColor(const DOMString &string)
+RGBA32 CSSParser::parseColor(const DOMString &string)
 {
-    QRgb color = 0;
+    RGBA32 color = 0;
     RefPtr<CSSMutableStyleDeclarationImpl>dummyStyleDeclaration = new CSSMutableStyleDeclarationImpl;
 
     CSSParser parser(true);
@@ -2163,7 +2163,7 @@ CSSValueListImpl *CSSParser::parseFontFamily()
 }
 
 
-bool CSSParser::parseColor(const QString &name, QRgb& rgb)
+bool CSSParser::parseColor(const QString &name, RGBA32& rgb)
 {
     int len = name.length();
 
@@ -2192,7 +2192,7 @@ bool CSSParser::parseColor(const QString &name, QRgb& rgb)
     }
 
     // try a little harder
-    QColor tc;
+    Color tc;
     tc.setNamedColor(name.lower());
     if (tc.isValid()) {
         rgb = tc.rgb();
@@ -2210,7 +2210,7 @@ CSSPrimitiveValueImpl *CSSParser::parseColor()
 
 CSSPrimitiveValueImpl *CSSParser::parseColorFromValue(Value* value)
 {
-    QRgb c = transparentColor;
+    RGBA32 c = Color::transparent;
     if ( !strict && value->unit == CSSPrimitiveValue::CSS_NUMBER &&
         value->fValue >= 0. && value->fValue < 1000000. ) {
         QString str;
@@ -2249,7 +2249,7 @@ CSSPrimitiveValueImpl *CSSParser::parseColorFromValue(Value* value)
 	r = kMax( 0, kMin( 255, r ) );
 	g = kMax( 0, kMin( 255, g ) );
 	b = kMax( 0, kMin( 255, b ) );
-	c = qRgb( r, g, b );
+	c = makeRGB( r, g, b );
     }
     else if ( value->unit == Value::Function &&
               value->function->args != 0 &&
@@ -2284,7 +2284,7 @@ CSSPrimitiveValueImpl *CSSParser::parseColorFromValue(Value* value)
         g = kMax( 0, kMin( 255, g ) );
         b = kMax( 0, kMin( 255, b ) );
         int a = (int)(kMax( 0.0, kMin( 1.0, v->fValue ) ) * 255);
-        c = qRgba( r, g, b, a );
+        c = makeRGBA( r, g, b, a );
     }
     else
         return 0;

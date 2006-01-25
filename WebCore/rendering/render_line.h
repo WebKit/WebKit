@@ -243,9 +243,9 @@ public:
     virtual void clearTruncation();
     
     virtual void paintBackgroundAndBorder(RenderObject::PaintInfo& i, int _tx, int _ty);
-    void paintBackgrounds(QPainter* p, const QColor& c, const BackgroundLayer* bgLayer,
+    void paintBackgrounds(QPainter* p, const Color& c, const BackgroundLayer* bgLayer,
                           int my, int mh, int _tx, int _ty, int w, int h);
-    void paintBackground(QPainter* p, const QColor& c, const BackgroundLayer* bgLayer,
+    void paintBackground(QPainter* p, const Color& c, const BackgroundLayer* bgLayer,
                          int my, int mh, int _tx, int _ty, int w, int h);
     virtual void paintDecorations(RenderObject::PaintInfo& i, int _tx, int _ty, bool paintedChildren = false);
     virtual void paint(RenderObject::PaintInfo& i, int _tx, int _ty);

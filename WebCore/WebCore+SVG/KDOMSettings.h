@@ -24,7 +24,7 @@
 #define KDOM_KDOMSettings_H
 #if SVG_SUPPORT
 
-#include <qcolor.h>
+#include "Color.h"
 #include <qstring.h>
 
 class KConfig;
@@ -32,9 +32,9 @@ struct KPerDomainSettings;
 
 // browser window color defaults -- Bernd
 #define DOM_DEFAULT_LNK_COLOR Qt::blue
-#define DOM_DEFAULT_TXT_COLOR Qt::black
+#define DOM_DEFAULT_TXT_COLOR Color::black
 #define DOM_DEFAULT_VLNK_COLOR Qt::magenta
-#define DOM_DEFAULT_BASE_COLOR Qt::white
+#define DOM_DEFAULT_BASE_COLOR Color::white
 
 // KEEP IN SYNC WITH konqdefaults.h in kdebase/libkonq!
 // lets be modern .. -- Bernd
@@ -158,10 +158,10 @@ namespace KDOM
         const QString &encoding() const;
 
         // Color settings
-        const QColor &textColor() const;
-        const QColor &baseColor() const;
-        const QColor &linkColor() const;
-        const QColor &vLinkColor() const;
+        const Color &textColor() const;
+        const Color &baseColor() const;
+        const Color &linkColor() const;
+        const Color &vLinkColor() const;
 
         // Java and JavaScript
         bool isJavaEnabled(const QString &hostname = QString::null) const;

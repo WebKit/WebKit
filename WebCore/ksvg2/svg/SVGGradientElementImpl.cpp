@@ -154,10 +154,10 @@ void SVGGradientElementImpl::rebuildStops() const
                 float stopOffset = stop->offset()->baseVal();
                 
                 khtml::RenderStyle *stopStyle = getDocument()->styleSelector()->styleForElement(stop, gradientStyle);
-                QColor c = stopStyle->svgStyle()->stopColor();
+                Color c = stopStyle->svgStyle()->stopColor();
                 float opacity = stopStyle->svgStyle()->stopOpacity();
                 
-                stops.addStop(stopOffset, qRgba(c.red(), c.green(), c.blue(), int(opacity * 255.)));
+                stops.addStop(stopOffset, makeRGBA(c.red(), c.green(), c.blue(), int(opacity * 255.)));
                 stopStyle->deref(canvas()->renderArena());
             }
         }

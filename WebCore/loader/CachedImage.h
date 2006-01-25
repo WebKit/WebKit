@@ -46,7 +46,7 @@ namespace WebCore
         virtual ~CachedImage();
 
         const QPixmap& pixmap() const;
-        const QPixmap& tiled_pixmap(const QColor& background);
+        const QPixmap& tiled_pixmap(const Color& background);
 
         IntSize pixmap_size() const;    // returns the size of the complete (i.e. when finished) loading
         IntRect valid_rect() const;     // returns the rectangle of pixmap that has been loaded already

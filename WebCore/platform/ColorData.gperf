@@ -1,4 +1,4 @@
-struct Color { const char *name; int RGBValue; };
+struct NamedColor { const char *name; int RGBValue; };
 %%
 aliceblue, 0xf0f8ff
 antiquewhite, 0xfaebd7

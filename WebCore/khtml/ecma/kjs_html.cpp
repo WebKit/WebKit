@@ -72,7 +72,7 @@
 #include "css/css_stylesheetimpl.h"
 #include "css/css_ruleimpl.h"
 
-#include <qcolor.h>
+#include "Color.h"
 #include <qpixmap.h>
 #include <qpainter.h>
 
@@ -3608,8 +3608,8 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
             switch (numArgs) {
                 case 1: {
                     if (args[0]->isString()) {                    
-                        QRgb color = DOM::CSSParser::parseColor(args[0]->toString(exec).domString());
-                        QColor qc(color);
+                        RGBA32 color = DOM::CSSParser::parseColor(args[0]->toString(exec).domString());
+                        Color qc(color);
                         CGContextSetRGBStrokeColor(drawingContext, qc.red()/255., qc.green()/255., qc.blue()/255., qc.alpha()/255.);
 
                     }
@@ -3622,8 +3622,8 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
                 case 2: {
                     float a = args[1]->toNumber(exec);
                     if (args[0]->isString()) {
-                        QRgb color = DOM::CSSParser::parseColor(args[0]->toString(exec).domString());
-                        QColor qc(color);
+                        RGBA32 color = DOM::CSSParser::parseColor(args[0]->toString(exec).domString());
+                        Color qc(color);
                         CGContextSetRGBStrokeColor(drawingContext, qc.red()/255., qc.green()/255., qc.blue()/255., a);
                     }
                     else {
@@ -3665,8 +3665,8 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
             switch (numArgs) {
                 case 1: {
                     if (args[0]->isString()) {
-                        QRgb color = DOM::CSSParser::parseColor(args[0]->toString(exec).domString());
-                        QColor qc(color);
+                        RGBA32 color = DOM::CSSParser::parseColor(args[0]->toString(exec).domString());
+                        Color qc(color);
                         CGContextSetRGBFillColor(drawingContext, qc.red()/255., qc.green()/255., qc.blue()/255., qc.alpha()/255.);
                     }
                     else {
@@ -3678,8 +3678,8 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
                 case 2: {
                     float a = args[1]->toNumber(exec);
                     if (args[0]->isString()) {
-                        QRgb color = DOM::CSSParser::parseColor(args[0]->toString(exec).domString());
-                        QColor qc(color);
+                        RGBA32 color = DOM::CSSParser::parseColor(args[0]->toString(exec).domString());
+                        Color qc(color);
                         CGContextSetRGBFillColor(drawingContext, qc.red()/255., qc.green()/255., qc.blue()/255., a);
                     }
                     else {
@@ -3964,7 +3964,7 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
             offset.height = (float)args[1]->toNumber(exec);
             float blur = (float)args[2]->toNumber(exec);
             
-            QColor color = QColor(args[3]->toString(exec).ascii());
+            Color color = Color(args[3]->toString(exec).ascii());
 
              if (numArgs == 3) {
                 CGContextSetShadow (drawingContext, offset, blur);
@@ -3975,8 +3975,8 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
                 switch (numArgs - 3) {
                     case 1: {
                         if (args[3]->isString()) {
-                            QRgb color = DOM::CSSParser::parseColor(args[3]->toString(exec).domString());
-                            QColor qc(color);
+                            RGBA32 color = DOM::CSSParser::parseColor(args[3]->toString(exec).domString());
+                            Color qc(color);
                             components[0] = qc.red()/255.;
                             components[1] = qc.green()/255.;
                             components[2] = qc.blue()/255.;
@@ -3993,8 +3993,8 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
                     case 2: {
                         float a = args[4]->toNumber(exec);
                         if (args[3]->isString()) {
-                            QRgb color = DOM::CSSParser::parseColor(args[3]->toString(exec).domString());
-                            QColor qc(color);
+                            RGBA32 color = DOM::CSSParser::parseColor(args[3]->toString(exec).domString());
+                            Color qc(color);
                             components[0] = qc.red()/255.;
                             components[1] = qc.green()/255.;
                             components[2] = qc.blue()/255.;
@@ -4397,8 +4397,8 @@ CGColorRef colorRefFromValue(ExecState *exec, JSValue *value)
     float components[4];
     
     if (value->isString()) {
-        QRgb color = DOM::CSSParser::parseColor(value->toString(exec).domString());
-        QColor qc(color);
+        RGBA32 color = DOM::CSSParser::parseColor(value->toString(exec).domString());
+        Color qc(color);
         components[0] = qc.red()/255.;
         components[1] = qc.green()/255.;
         components[2] = qc.blue()/255.;
@@ -4415,10 +4415,10 @@ CGColorRef colorRefFromValue(ExecState *exec, JSValue *value)
 }
 #endif
 
-QColor colorFromValue(ExecState *exec, JSValue *value)
+Color colorFromValue(ExecState *exec, JSValue *value)
 {
-    QRgb color = DOM::CSSParser::parseColor(value->toString(exec).domString());
-    return QColor(color);
+    RGBA32 color = DOM::CSSParser::parseColor(value->toString(exec).domString());
+    return Color(color);
 }
 
 void Context2D::setShadow(ExecState *exec)
@@ -4491,7 +4491,7 @@ void Context2D::putValueProperty(ExecState *exec, int token, JSValue *value, int
         case StrokeStyle: {
             _strokeStyle = value;
             if (value->isString()) {
-                QColor qc = colorFromValue(exec, value);
+                Color qc = colorFromValue(exec, value);
                 CGContextSetRGBStrokeColor(context, qc.red()/255., qc.green()/255., qc.blue()/255., qc.alpha()/255.);
             }
             else {
@@ -4508,7 +4508,7 @@ void Context2D::putValueProperty(ExecState *exec, int token, JSValue *value, int
         case FillStyle: {
             _fillStyle = value;
             if (value->isString()) {
-                QColor qc = colorFromValue(exec, value);
+                Color qc = colorFromValue(exec, value);
                 CGContextSetRGBFillColor(context, qc.red()/255., qc.green()/255., qc.blue()/255., qc.alpha()/255.);
             }
             else {
@@ -4778,7 +4778,7 @@ JSValue *GradientFunction::callAsFunction(ExecState *exec, JSObject *thisObj, co
             if (args.size() != 2)
                 return throwError(exec, SyntaxError);
 
-            QColor color = colorFromValue(exec, args[1]);
+            Color color = colorFromValue(exec, args[1]);
             gradient->addColorStop ((float)args[0]->toNumber(exec), color.red()/255.f, color.green()/255.f, color.blue()/255.f, color.alpha()/255.f);
         }
     }

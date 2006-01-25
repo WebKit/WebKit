@@ -82,7 +82,7 @@ void CachedImage::deref( CachedObjectClient *c )
         delete this;
 }
 
-const QPixmap &CachedImage::tiled_pixmap(const QColor& newc)
+const QPixmap &CachedImage::tiled_pixmap(const Color& newc)
 {
     return pixmap();
 }

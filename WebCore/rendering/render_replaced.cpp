@@ -227,13 +227,13 @@ bool RenderReplaced::isSelected()
     return false;
 }
 
-QColor RenderReplaced::selectionColor(QPainter *p) const
+Color RenderReplaced::selectionColor(QPainter *p) const
 {
-    QColor color = RenderBox::selectionColor(p);
+    Color color = RenderBox::selectionColor(p);
          
     // Force a 60% alpha so that no user-specified selection color can obscure selected images.
-    if (qAlpha(color.rgb()) > 153)
-        color = QColor(qRgba(color.red(), color.green(), color.blue(), 153));
+    if (color.alpha() > 153)
+        color = Color(color.red(), color.green(), color.blue(), 153);
 
     return color;
 }

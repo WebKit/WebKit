@@ -226,7 +226,7 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
         if(cWidth > 2 && cHeight > 2)
         {
             if ( !berrorPic ) {
-                p->setPen (Qt::lightGray);
+                p->setPen (Color::lightGray);
                 p->setBrush (Qt::NoBrush);
                 p->drawRect (_tx + leftBorder + leftPad, _ty + topBorder + topPad, cWidth, cHeight);
             }

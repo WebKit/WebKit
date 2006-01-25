@@ -68,7 +68,7 @@ public:
 
     // Whether or not the control has been styled enough by the author to disable the native appearance.
     virtual bool isControlStyled(const RenderStyle* style, const BorderData& border, 
-                                 const BackgroundLayer& background, const QColor& backgroundColor) const;
+                                 const BackgroundLayer& background, const Color& backgroundColor) const;
 
     // A general method asking if any control tinting is supported at all.
     virtual bool supportsControlTints() const { return false; }

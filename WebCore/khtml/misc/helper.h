@@ -26,14 +26,12 @@
 class QPainter;
 class QChar;
 
-#include <qcolor.h>
+#include "Color.h"
 #include <qfontmetrics.h>
 #include <qfont.h>
 
 namespace khtml
 {
-    const QRgb transparentColor = 0x00000000;
-    
     extern QPainter *printpainter;
     void setPrintPainter(QPainter *printer);
 

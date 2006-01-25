@@ -34,7 +34,7 @@
  * and produce invaliud results.
  */
 
-#include <qcolor.h>
+#include "Color.h"
 #include <qfont.h>
 #include <qfontmetrics.h>
 #include <qlist.h>
@@ -133,7 +133,7 @@ public:
         style = BNONE;
     }
 
-    QColor color;
+    Color color;
     unsigned short width : 12;
     EBorderStyle style : 4;
 
@@ -142,7 +142,7 @@ public:
     }
 
     bool isTransparent() const {
-        return color.isValid() && qAlpha(color.rgb()) == 0;
+        return color.isValid() && color.alpha() == 0;
     }
     
     bool operator==(const BorderValue& o) const
@@ -189,7 +189,7 @@ struct CollapsedBorderValue
     int width() const { return border && border->nonZero() ? border->width : 0; }
     EBorderStyle style() const { return border ? border->style : BHIDDEN; }
     bool exists() const { return border; }
-    QColor color() const { return border ? border->color : QColor(); }
+    Color color() const { return border ? border->color : Color(); }
     bool isTransparent() const { return border ? border->isTransparent() : true; }
     
     bool operator==(const CollapsedBorderValue& o) const
@@ -537,7 +537,7 @@ public:
     }
 
     BackgroundLayer m_background;
-    QColor m_color;
+    Color m_color;
     OutlineValue m_outline;
 };
 
@@ -598,7 +598,7 @@ public:
 
 // This struct holds information about shadows for the text-shadow and box-shadow properties.
 struct ShadowData {
-    ShadowData(int _x, int _y, int _blur, const QColor& _color)
+    ShadowData(int _x, int _y, int _blur, const Color& _color)
     :x(_x), y(_y), blur(_blur), color(_color), next(0) {}
     ShadowData(const ShadowData& o);
     
@@ -612,7 +612,7 @@ struct ShadowData {
     int x;
     int y;
     int blur;
-    QColor color;
+    Color color;
     ShadowData* next;
 };
 
@@ -803,7 +803,7 @@ public:
     CachedImage *cursor_image;
 
     khtml::Font font;
-    QColor color;
+    Color color;
     
     short horizontal_border_spacing;
     short vertical_border_spacing;
@@ -1099,7 +1099,7 @@ public:
     bool        hasBorder() const { return surround->border.hasBorder(); }
     bool        hasOffset() const { return surround->offset.nonZero(); }
 
-    bool hasBackground() const { if (backgroundColor().isValid() && qAlpha(backgroundColor().rgb()) > 0)
+    bool hasBackground() const { if (backgroundColor().isValid() && backgroundColor().alpha() > 0)
                                     return true;
                                  return background->m_background.hasImage(); }
     bool hasFixedBackgroundImage() const { return background->m_background.hasFixedImage(); }
@@ -1149,26 +1149,26 @@ public:
 
     unsigned short  borderLeftWidth() const { return surround->border.borderLeftWidth(); }
     EBorderStyle    borderLeftStyle() const { return surround->border.left.style; }
-    const QColor &  borderLeftColor() const { return surround->border.left.color; }
+    const Color &  borderLeftColor() const { return surround->border.left.color; }
     bool borderLeftIsTransparent() const { return surround->border.left.isTransparent(); }
     unsigned short  borderRightWidth() const { return surround->border.borderRightWidth(); }
     EBorderStyle    borderRightStyle() const {  return surround->border.right.style; }
-    const QColor &  	    borderRightColor() const {  return surround->border.right.color; }
+    const Color &  	    borderRightColor() const {  return surround->border.right.color; }
     bool borderRightIsTransparent() const { return surround->border.right.isTransparent(); }
     unsigned short  borderTopWidth() const { return surround->border.borderTopWidth(); }
     EBorderStyle    borderTopStyle() const {return surround->border.top.style; }
-    const QColor &  borderTopColor() const {  return surround->border.top.color; }
+    const Color &  borderTopColor() const {  return surround->border.top.color; }
     bool borderTopIsTransparent() const { return surround->border.top.isTransparent(); }
     unsigned short  borderBottomWidth() const { return surround->border.borderBottomWidth(); }
     EBorderStyle    borderBottomStyle() const {  return surround->border.bottom.style; }
-    const QColor &  	    borderBottomColor() const {  return surround->border.bottom.color; }
+    const Color &  	    borderBottomColor() const {  return surround->border.bottom.color; }
     bool borderBottomIsTransparent() const { return surround->border.bottom.isTransparent(); }
     
     unsigned short outlineSize() const { return outlineWidth() + outlineOffset(); }
     unsigned short outlineWidth() const { if (background->m_outline.style == BNONE || background->m_outline.style == BHIDDEN) return 0; return background->m_outline.width; }
     EBorderStyle    outlineStyle() const {  return background->m_outline.style; }
     bool outlineStyleIsAuto() const { return background->m_outline._auto; }
-    const QColor &  	    outlineColor() const {  return background->m_outline.color; }
+    const Color &  	    outlineColor() const {  return background->m_outline.color; }
 
     EOverflow overflow() const { return  noninherited_flags._overflow; }
     EVisibility visibility() const { return inherited_flags._visibility; }
@@ -1195,7 +1195,7 @@ public:
     const Font &htmlFont() { return inherited->font; }
     const QFontMetrics & fontMetrics() const { return inherited->font.fm; }
 
-    const QColor & color() const { return inherited->color; }
+    const Color & color() const { return inherited->color; }
     Length textIndent() const { return inherited->indent; }
     ETextAlign textAlign() const { return inherited_flags._text_align; }
     ETextTransform textTransform() const { return inherited_flags._text_transform; }
@@ -1243,7 +1243,7 @@ public:
         return whiteSpace() == PRE_WRAP || khtmlLineBreak() == AFTER_WHITE_SPACE;
     }
 
-    const QColor & backgroundColor() const { return background->m_color; }
+    const Color & backgroundColor() const { return background->m_color; }
     CachedImage *backgroundImage() const { return background->m_background.m_image; }
     EBackgroundRepeat backgroundRepeat() const { return background->m_background.m_bgRepeat; }
     bool backgroundAttachment() const { return background->m_background.m_bgAttachment; }
@@ -1378,7 +1378,7 @@ public:
     
     void resetOutline() { SET_VAR(background, m_outline, OutlineValue()) }
     
-    void setBackgroundColor(const QColor& v)    { SET_VAR(background, m_color, v) }
+    void setBackgroundColor(const Color& v)    { SET_VAR(background, m_color, v) }
 
     void setBorderImage(const BorderImage& b)   { SET_VAR(surround, border.image, b) }
 
@@ -1392,23 +1392,23 @@ public:
 
     void setBorderLeftWidth(unsigned short v)   {  SET_VAR(surround,border.left.width,v) }
     void setBorderLeftStyle(EBorderStyle v)     {  SET_VAR(surround,border.left.style,v) }
-    void setBorderLeftColor(const QColor & v)   {  SET_VAR(surround,border.left.color,v) }
+    void setBorderLeftColor(const Color & v)   {  SET_VAR(surround,border.left.color,v) }
     void setBorderRightWidth(unsigned short v)  {  SET_VAR(surround,border.right.width,v) }
     void setBorderRightStyle(EBorderStyle v)    {  SET_VAR(surround,border.right.style,v) }
-    void setBorderRightColor(const QColor & v)  {  SET_VAR(surround,border.right.color,v) }
+    void setBorderRightColor(const Color & v)  {  SET_VAR(surround,border.right.color,v) }
     void setBorderTopWidth(unsigned short v)    {  SET_VAR(surround,border.top.width,v) }
     void setBorderTopStyle(EBorderStyle v)      {  SET_VAR(surround,border.top.style,v) }
-    void setBorderTopColor(const QColor & v)    {  SET_VAR(surround,border.top.color,v) }    
+    void setBorderTopColor(const Color & v)    {  SET_VAR(surround,border.top.color,v) }    
     void setBorderBottomWidth(unsigned short v) {  SET_VAR(surround,border.bottom.width,v) }
     void setBorderBottomStyle(EBorderStyle v)   {  SET_VAR(surround,border.bottom.style,v) }
-    void setBorderBottomColor(const QColor & v) {  SET_VAR(surround,border.bottom.color,v) }
+    void setBorderBottomColor(const Color & v) {  SET_VAR(surround,border.bottom.color,v) }
     void setOutlineWidth(unsigned short v) {  SET_VAR(background,m_outline.width,v) }
     void setOutlineStyle(EBorderStyle v, bool isAuto = false)   
     {  
         SET_VAR(background,m_outline.style,v)
         SET_VAR(background,m_outline._auto, isAuto)
     }
-    void setOutlineColor(const QColor & v) {  SET_VAR(background,m_outline.color,v) }
+    void setOutlineColor(const Color & v) {  SET_VAR(background,m_outline.color,v) }
 
     void setOverflow(EOverflow v) {  noninherited_flags._overflow = v; }
     void setVisibility(EVisibility v) { inherited_flags._visibility = v; }
@@ -1437,7 +1437,7 @@ public:
         return false;
     }
 
-    void setColor(const QColor & v) { SET_VAR(inherited,color,v) }
+    void setColor(const Color & v) { SET_VAR(inherited,color,v) }
     void setTextIndent(Length v) { SET_VAR(inherited,indent,v) }
     void setTextAlign(ETextAlign v) { inherited_flags._text_align = v; }
     void setTextTransform(ETextTransform v) { inherited_flags._text_transform = v; }
@@ -1616,7 +1616,7 @@ public:
     static short initialHorizontalBorderSpacing() { return 0; }
     static short initialVerticalBorderSpacing() { return 0; }
     static ECursor initialCursor() { return CURSOR_AUTO; }
-    static QColor initialColor() { return Qt::black; }
+    static Color initialColor() { return Color::black; }
     static CachedImage* initialBackgroundImage() { return 0; }
     static CachedImage* initialListStyleImage() { return 0; }
     static unsigned short initialBorderWidth() { return 3; }

@@ -41,8 +41,7 @@
 
 class QBitmap;
 class QBrush;
-class QColor;
-class QColorGroup;
+class ColorGroup;
 class QEvent;
 class QFont;
 class QFontMetrics;
@@ -60,6 +59,7 @@ class KWQGuardedPtrBase;
 class KWQSignal;
 
 namespace WebCore {
+    class Color;
     class IntRect;
 }
 

@@ -24,7 +24,7 @@
 
 #include "CachedObjectClient.h"
 #include "kjs_dom.h"
-#include <qcolor.h>
+#include "Color.h"
 #include <qguardedptr.h>
 #include <qpixmap.h>
 
@@ -448,7 +448,7 @@ private:
     CGColorRef colorRefFromValue(ExecState *exec, JSValue *value);
 #endif
 
-    QColor colorFromValue(ExecState *exec, JSValue *value);
+    Color colorFromValue(ExecState *exec, JSValue *value);
 
     struct ColorStop {
         float stop;

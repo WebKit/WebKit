@@ -44,19 +44,19 @@ public:
         Base = Background
     };
 
-    QColorGroup() : m_background(Qt::white) { }
-    QColorGroup(const QColor &b, const QColor &f) : m_background(b), m_foreground(f) { }
+    QColorGroup() : m_background(Color::white) { }
+    QColorGroup(const Color &b, const Color &f) : m_background(b), m_foreground(f) { }
 
     const QBrush &brush(ColorRole role) const { return role == Background ? m_background : m_foreground; }
 
-    const QColor &color(ColorRole role) const { return brush(role).color(); }
-    void setColor(ColorRole role, const QColor &color)
+    const Color &color(ColorRole role) const { return brush(role).color(); }
+    void setColor(ColorRole role, const Color &color)
         { (role == Background ? m_background : m_foreground).setColor(color); }
 
-    const QColor &background() const { return m_background.color(); }
-    const QColor &foreground() const { return m_foreground.color(); }
+    const Color &background() const { return m_background.color(); }
+    const Color &foreground() const { return m_foreground.color(); }
 
-    const QColor &base() const { return background(); }
+    const Color &base() const { return background(); }
 
     bool operator==(const QColorGroup &other) const
         { return m_background == other.m_background && m_foreground == other.m_foreground; }
@@ -70,7 +70,7 @@ private:
 class QPalette {
 public:
     QPalette() { }
-    QPalette(const QColor &b, const QColor &f) : m_active(b, f) { }
+    QPalette(const Color &b, const Color &f) : m_active(b, f) { }
     
     enum ColorGroup {
         Disabled,
@@ -82,10 +82,10 @@ public:
 
     const QColorGroup &active() const { return m_active; }
 
-    const QColor &background() const { return m_active.background(); }
-    const QColor &foreground() const { return m_active.foreground(); }
+    const Color &background() const { return m_active.background(); }
+    const Color &foreground() const { return m_active.foreground(); }
     
-    void setColor(ColorGroup g, QColorGroup::ColorRole r, const QColor &c);
+    void setColor(ColorGroup g, QColorGroup::ColorRole r, const Color &c);
 
     bool operator==(const QPalette &other) const { return m_active == other.m_active; }
 

@@ -2472,9 +2472,9 @@ NSAttributedString *MacFrame::attributedString(NodeImpl *_start, int startOffset
                 if (text.length() > 0 || needSpace) {
                     NSMutableDictionary *attrs = [[NSMutableDictionary alloc] init];
                     [attrs setObject:font forKey:NSFontAttributeName];
-                    if (style && style->color().isValid() && qAlpha(style->color().rgb()) != 0)
+                    if (style && style->color().isValid() && style->color().alpha() != 0)
                         [attrs setObject:nsColor(style->color()) forKey:NSForegroundColorAttributeName];
-                    if (style && style->backgroundColor().isValid() && qAlpha(style->backgroundColor().rgb()) != 0)
+                    if (style && style->backgroundColor().isValid() && style->backgroundColor().alpha() != 0)
                         [attrs setObject:nsColor(style->backgroundColor()) forKey:NSBackgroundColorAttributeName];
 
                     if (text.length() > 0) {
@@ -2923,7 +2923,7 @@ NSDictionary *MacFrame::fontAttributesForSelectionStart() const
     if (style->font().getNSFont())
         [result setObject:style->font().getNSFont() forKey:NSFontAttributeName];
 
-    if (style->color().isValid() && style->color() != black)
+    if (style->color().isValid() && style->color() != Color::black)
         [result setObject:nsColor(style->color()) forKey:NSForegroundColorAttributeName];
 
     ShadowData *shadow = style->textShadow();
@@ -3076,7 +3076,7 @@ void MacFrame::setDisplaysWithFocusAttributes(bool flag)
 NSColor *MacFrame::bodyBackgroundColor() const
 {
     if (document() && document()->body() && document()->body()->renderer()) {
-        QColor bgColor = document()->body()->renderer()->style()->backgroundColor();
+        Color bgColor = document()->body()->renderer()->style()->backgroundColor();
         if (bgColor.isValid()) {
             return nsColor(bgColor);
         }
@@ -3422,13 +3422,13 @@ static QValueList<MarkedTextUnderline> convertAttributesToUnderlines(const Range
             continue;
         NSRange range = [[ranges objectAtIndex:i] rangeValue];
         NSColor *color = [[attributes objectAtIndex:i] objectForKey:NSUnderlineColorAttributeName];
-        QColor qColor = Qt::black;
+        Color qColor = Color::black;
         if (color) {
             NSColor* deviceColor = [color colorUsingColorSpaceName:NSDeviceRGBColorSpace];
-            qColor = QColor(qRgba((int)(255 * [deviceColor redComponent]),
-                                  (int)(255 * [deviceColor blueComponent]),
-                                  (int)(255 * [deviceColor greenComponent]),
-                                  (int)(255 * [deviceColor alphaComponent])));
+            qColor = Color(makeRGBA((int)(255 * [deviceColor redComponent]),
+                                    (int)(255 * [deviceColor blueComponent]),
+                                    (int)(255 * [deviceColor greenComponent]),
+                                    (int)(255 * [deviceColor alphaComponent])));
         }
 
         result.append(MarkedTextUnderline(range.location + baseOffset, 

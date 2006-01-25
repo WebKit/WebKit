@@ -1267,7 +1267,7 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString *attrString, Ren
     if ((decor & (khtml::UNDERLINE | khtml::LINE_THROUGH)) != 0) {
         // find colors using quirk mode approach (strict mode would use current
         // color for all but the root line box, which would use getTextDecorationColors)
-        QColor underline, overline, linethrough;
+        Color underline, overline, linethrough;
         renderer->getTextDecorationColors(decor, underline, overline, linethrough);
         
         if ((decor & khtml::UNDERLINE) != 0) {

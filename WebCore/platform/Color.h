@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003-6 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,11 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QCOLOR_H_
-#define QCOLOR_H_
+#ifndef COLOR_H_
+#define COLOR_H_
 
 #include "KWQString.h"
 
+#if __APPLE__
 #ifdef __OBJC__
 @class NSColor;
 #else
@@ -35,23 +36,23 @@ class NSColor;
 #endif
 
 typedef struct CGColor *CGColorRef;
+#endif
 
-typedef unsigned int QRgb;                      // RGBA quadruplet
+namespace WebCore {
 
-QRgb qRgb(int r, int g, int b);
-QRgb qRgba(int r, int g, int b, int a);
-int qAlpha(QRgb rgba);
-int qRed(QRgb rgba);
-int qGreen(QRgb rgba);
-int qBlue(QRgb rgba);
+typedef unsigned int RGBA32;                      // RGBA quadruplet
 
-class QColor {
+RGBA32 makeRGB(int r, int g, int b);
+RGBA32 makeRGBA(int r, int g, int b, int a);
+
+class Color {
 public:
-    QColor() : color(0), valid(false) { }
-    QColor(QRgb col) : color(col), valid(true) { }
-    QColor(int r, int g, int b) : color(qRgb(r, g, b)), valid(true) { }
-    explicit QColor(const QString &);
-    explicit QColor(const char *);
+    Color() : color(0), valid(false) { }
+    Color(RGBA32 col) : color(col), valid(true) { }
+    Color(int r, int g, int b) : color(makeRGB(r, g, b)), valid(true) { }
+    Color(int r, int g, int b, int a) : color(makeRGBA(r, g, b, a)), valid(true) { }
+    explicit Color(const QString &);
+    explicit Color(const char *);
     
     QString name() const;
     void setNamedColor(const QString&);
@@ -62,36 +63,51 @@ public:
     int green() const { return (color >> 8) & 0xFF; }
     int blue() const { return color & 0xFF; }
     int alpha() const { return (color >> 24) & 0xFF; }
-    QRgb rgb() const { return color & 0xFFFFFFFF; } // Preserve the alpha.
-    void setRgb(int r, int g, int b) { color = qRgb(r, g, b); valid = true; }
+    RGBA32 rgb() const { return color & 0xFFFFFFFF; } // Preserve the alpha.
+    void setRgb(int r, int g, int b) { color = makeRGB(r, g, b); valid = true; }
     void setRgb(int rgb) { color = rgb; valid = true; /* Alpha may be set. Preserve it. */ }
     void getRgbaF(float *, float *, float *, float *) const;
 
     void hsv(int *, int *, int *) const;
     void setHsv(int h, int s, int v);
 
-    QColor light(int f = 150) const;
-    QColor dark(int f = 200) const;
+    Color light(int f = 150) const;
+    Color dark(int f = 200) const;
 
-    friend bool operator==(const QColor &a, const QColor &b);
-    friend bool operator!=(const QColor &a, const QColor &b);
+    friend bool operator==(const Color &a, const Color &b);
+    friend bool operator!=(const Color &a, const Color &b);
 
+    static const RGBA32 black = 0xFF000000;
+    static const RGBA32 white = 0xFFFFFFFF;
+    static const RGBA32 darkGray = 0xFF808080;
+    static const RGBA32 gray = 0xFFA0A0A0;
+    static const RGBA32 lightGray = 0xFFC0C0C0;
+    static const RGBA32 transparent = 0x00000000;
+    
 private:
-    QRgb color;
+    RGBA32 color;
     bool valid : 1;
 };
 
-inline bool operator==(const QColor &a, const QColor &b)
+inline bool operator==(const Color &a, const Color &b)
 {
     return a.color == b.color && a.valid == b.valid;
 }
 
-inline bool operator!=(const QColor &a, const QColor &b)
+inline bool operator!=(const Color &a, const Color &b)
 {
     return a.color != b.color || a.valid != b.valid;
 }
 
-NSColor *nsColor(const QColor &);
-CGColorRef cgColor(const QColor &);
+#if __APPLE__
+NSColor *nsColor(const Color &);
+CGColorRef cgColor(const Color &);
+#endif
+
+}
+
+// FIXME: Remove usings when the rest of KWQ has been converted.
+using WebCore::RGBA32;
+using WebCore::Color;
 
 #endif

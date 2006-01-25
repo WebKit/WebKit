@@ -1,3 +1,269 @@
+2006-01-24  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 6781, convert QColor to Color (and QRgb to RGBA32).  r=maciej.
+
+        * ForwardingHeaders/qcolor.h: Removed.
+        * WebCore+SVG/KDOMSettings.h:
+        * WebCore+SVG/RGBColorImpl.cpp:
+        (RGBColorImpl::RGBColorImpl):
+        (RGBColorImpl::red):
+        (RGBColorImpl::green):
+        (RGBColorImpl::blue):
+        * WebCore+SVG/RGBColorImpl.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOMCSS.mm:
+        (getWrapperForRGB):
+        (setWrapperForRGB):
+        (removeWrapperForRGB):
+        (-[DOMRGBColor dealloc]):
+        (-[DOMRGBColor finalize]):
+        (-[DOMRGBColor red]):
+        (-[DOMRGBColor green]):
+        (-[DOMRGBColor blue]):
+        (-[DOMRGBColor _initWithRGB:]):
+        (+[DOMRGBColor _RGBColorWithRGB:]):
+        (-[DOMRGBColor alpha]):
+        (-[DOMRGBColor _color]):
+        * bridge/mac/MacFrame.mm:
+        (MacFrame::attributedString):
+        (MacFrame::fontAttributesForSelectionStart):
+        (MacFrame::bodyBackgroundColor):
+        (convertAttributesToUnderlines):
+        * css/css_valueimpl.cpp:
+        (WebCore::CSSPrimitiveValueImpl::CSSPrimitiveValueImpl):
+        (WebCore::CSSPrimitiveValueImpl::cssText):
+        * css/csshelper.h:
+        * css/cssparser.cpp:
+        (CSSParser::parseColor):
+        (CSSParser::parseColorFromValue):
+        * css/cssparser.h:
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+        (WebCore::):
+        (WebCore::colorForCSSValue):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::getColorFromPrimitiveValue):
+        * css/cssstyleselector.h:
+        * kcanvas/KCanvasFilters.h:
+        (KCanvasFEDiffuseLighting::lightingColor):
+        (KCanvasFEDiffuseLighting::setLightingColor):
+        (KCanvasFEFlood::floodColor):
+        (KCanvasFEFlood::setFloodColor):
+        (KCanvasFESpecularLighting::lightingColor):
+        (KCanvasFESpecularLighting::setLightingColor):
+        * kcanvas/KCanvasTreeDebug.cpp:
+        (operator<<):
+        * kcanvas/KCanvasTreeDebug.h:
+        * kcanvas/device/KRenderingDevice.h:
+        * kcanvas/device/KRenderingPaintServerGradient.cpp:
+        (KCSortedGradientStopList::addStop):
+        * kcanvas/device/KRenderingPaintServerGradient.h:
+        * kcanvas/device/KRenderingPaintServerSolid.cpp:
+        (KRenderingPaintServerSolid::color):
+        (KRenderingPaintServerSolid::setColor):
+        * kcanvas/device/KRenderingPaintServerSolid.h:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (ciColor):
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.mm:
+        (setupShadingWithStyle):
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.mm:
+        (KRenderingPaintServerPatternQuartz::setup):
+        * khtml/ecma/kjs_css.h:
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::KJS::Context2DFunction::callAsFunction):
+        (KJS::colorRefFromValue):
+        (KJS::colorFromValue):
+        (KJS::Context2D::putValueProperty):
+        (KJS::GradientFunction::callAsFunction):
+        * khtml/ecma/kjs_html.h:
+        * khtml/editing/apply_style_command.cpp:
+        (WebCore::StyleChange::checkForLegacyHTMLStyleChange):
+        * khtml/html/html_baseimpl.cpp:
+        (WebCore::HTMLBodyElementImpl::parseMappedAttribute):
+        * khtml/misc/helper.h:
+        * khtml/xml/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::DocumentImpl):
+        (WebCore::DocumentImpl::resetLinkColor):
+        (WebCore::DocumentImpl::resetVisitedLinkColor):
+        * khtml/xml/DocumentImpl.h:
+        (WebCore::DocumentImpl::setTextColor):
+        (WebCore::DocumentImpl::textColor):
+        (WebCore::DocumentImpl::linkColor):
+        (WebCore::DocumentImpl::visitedLinkColor):
+        (WebCore::DocumentImpl::activeLinkColor):
+        (WebCore::DocumentImpl::setLinkColor):
+        (WebCore::DocumentImpl::setVisitedLinkColor):
+        (WebCore::DocumentImpl::setActiveLinkColor):
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        (KDOM::CSSStyleSelector::applySVGProperty):
+        * ksvg2/css/SVGRenderStyle.h:
+        * ksvg2/css/SVGRenderStyleDefs.h:
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        (WebCore::KSVGPainterFactory::fillPaintServer):
+        * ksvg2/misc/KSVGTimeScheduler.cpp:
+        (KSVG::SVGTimer::notifyAll):
+        * ksvg2/svg/SVGAnimateColorElementImpl.cpp:
+        (SVGAnimateColorElementImpl::handleTimerEvent):
+        (SVGAnimateColorElementImpl::clampColor):
+        (SVGAnimateColorElementImpl::color):
+        (SVGAnimateColorElementImpl::initialColor):
+        * ksvg2/svg/SVGAnimateColorElementImpl.h:
+        * ksvg2/svg/SVGAnimateElementImpl.cpp:
+        (SVGAnimateElementImpl::handleTimerEvent):
+        * ksvg2/svg/SVGColorImpl.cpp:
+        (SVGColorImpl::setRGBColor):
+        (SVGColorImpl::color):
+        * ksvg2/svg/SVGColorImpl.h:
+        * ksvg2/svg/SVGGradientElementImpl.cpp:
+        (SVGGradientElementImpl::rebuildStops):
+        * kwq/KWQAccObject.mm:
+        (AXAttributeStringSetStyle):
+        * kwq/KWQBrush.h:
+        (QBrush::QBrush::QBrush):
+        (QBrush::color):
+        (QBrush::setColor):
+        * kwq/KWQColor.h: Removed.
+        * kwq/KWQColor.mm: Removed.
+        * kwq/KWQColorData.gperf: Removed.
+        * kwq/KWQKConfigBase.h:
+        * kwq/KWQKConfigBase.mm:
+        (KConfig::readColorEntry):
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::setPalette):
+        * kwq/KWQNamespace.h:
+        (Qt::):
+        * kwq/KWQObject.h:
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainter::setPen):
+        (QPainter::setBrush):
+        (QPainter::drawText):
+        (QPainter::drawHighlightForText):
+        (QPainter::selectedTextBackgroundColor):
+        (_fillRectXX):
+        (QPainter::setShadow):
+        (QPainter::initFocusRing):
+        * kwq/KWQPalette.h:
+        (QColorGroup::QColorGroup):
+        (QColorGroup::color):
+        (QColorGroup::setColor):
+        (QColorGroup::background):
+        (QColorGroup::foreground):
+        (QColorGroup::base):
+        (QPalette::QPalette):
+        (QPalette::background):
+        (QPalette::foreground):
+        * kwq/KWQPen.cpp:
+        (QPen::QPen):
+        (QPen::color):
+        (QPen::setColor):
+        * kwq/KWQPen.h:
+        * kwq/KWQRenderTreeDebug.cpp:
+        (operator<<):
+        * kwq/KWQTextEdit.mm:
+        (QTextEdit::setPalette):
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::tiled_pixmap):
+        * loader/CachedImage.h:
+        * page/Frame.cpp:
+        (Frame::paint):
+        * page/Frame.h:
+        (MarkedTextUnderline::MarkedTextUnderline):
+        * platform/Color.cpp: Added.
+        (WebCore::makeRGB):
+        (WebCore::makeRGBA):
+        (WebCore::parseHexColor):
+        (WebCore::Color::Color):
+        (WebCore::Color::name):
+        (WebCore::Color::setNamedColor):
+        (WebCore::Color::hsv):
+        (WebCore::Color::setHsv):
+        (WebCore::Color::light):
+        (WebCore::Color::dark):
+        (WebCore::Color::getRgbaF):
+        * platform/Color.h: Added.
+        (WebCore::Color::Color):
+        (WebCore::Color::rgb):
+        (WebCore::Color::setRgb):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        * platform/ColorData.gperf: Added.
+        * rendering/InlineTextBox.cpp:
+        (khtml::simpleDifferenceBetweenColors):
+        (khtml::correctedTextColor):
+        (khtml::InlineTextBox::paint):
+        (khtml::InlineTextBox::paintSelection):
+        (khtml::InlineTextBox::paintMarkedTextBackground):
+        (khtml::InlineTextBox::paintDecoration):
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::bgColor):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::outlineBox):
+        (WebCore::RenderTableCell::paintBoxDecorations):
+        * rendering/font.cpp:
+        (khtml::Font::drawHighlightForText):
+        (khtml::Font::drawText):
+        * rendering/font.h:
+        * rendering/render_box.cpp:
+        (WebCore::RenderBox::paintRootBoxDecorations):
+        (WebCore::RenderBox::paintBackgrounds):
+        (WebCore::RenderBox::paintBackground):
+        (WebCore::RenderBox::paintBackgroundExtended):
+        (WebCore::RenderBox::outlineBox):
+        * rendering/render_box.h:
+        * rendering/render_flow.cpp:
+        (RenderFlow::paintFocusRing):
+        (RenderFlow::paintOutlineForLine):
+        * rendering/render_form.cpp:
+        (RenderFieldset::paintBorderMinusLegend):
+        * rendering/render_frames.cpp:
+        (WebCore::RenderFrameSet::userResize):
+        * rendering/render_image.cpp:
+        (WebCore::RenderImage::paint):
+        * rendering/render_layer.h:
+        * rendering/render_line.cpp:
+        (WebCore::InlineFlowBox::paintBackgrounds):
+        (WebCore::InlineFlowBox::paintBackground):
+        (WebCore::InlineFlowBox::paintBackgroundAndBorder):
+        (WebCore::InlineFlowBox::paintDecorations):
+        (WebCore::EllipsisBox::paint):
+        * rendering/render_line.h:
+        * rendering/render_list.cpp:
+        (RenderListMarker::paint):
+        * rendering/render_object.cpp:
+        (WebCore::RenderObject::drawBorder):
+        (WebCore::RenderObject::paintBorder):
+        (WebCore::RenderObject::paintOutline):
+        (WebCore::RenderObject::selectionColor):
+        (WebCore::RenderObject::getTextDecorationColors):
+        * rendering/render_object.h:
+        (WebCore::RenderObject::paintBackgroundExtended):
+        * rendering/render_replaced.cpp:
+        (WebCore::RenderReplaced::selectionColor):
+        * rendering/render_replaced.h:
+        * rendering/render_style.h:
+        (khtml::BorderValue::isTransparent):
+        (khtml::CollapsedBorderValue::color):
+        (khtml::RenderStyle::hasBackground):
+        (khtml::RenderStyle::borderLeftColor):
+        (khtml::RenderStyle::borderRightColor):
+        (khtml::RenderStyle::borderTopColor):
+        (khtml::RenderStyle::borderBottomColor):
+        (khtml::RenderStyle::outlineColor):
+        (khtml::RenderStyle::color):
+        (khtml::RenderStyle::backgroundColor):
+        (khtml::RenderStyle::setBackgroundColor):
+        (khtml::RenderStyle::setBorderLeftColor):
+        (khtml::RenderStyle::setBorderRightColor):
+        (khtml::RenderStyle::setBorderTopColor):
+        (khtml::RenderStyle::setBorderBottomColor):
+        (khtml::RenderStyle::setOutlineColor):
+        (khtml::RenderStyle::setColor):
+        (khtml::RenderStyle::initialColor):
+        * rendering/render_theme.cpp:
+        (khtml::RenderTheme::isControlStyled):
+        * rendering/render_theme.h:
+
 2006-01-24  Darin Adler  <darin@apple.com>
 
         Reviewed by John and Anders.

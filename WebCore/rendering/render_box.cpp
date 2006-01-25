@@ -277,7 +277,7 @@ void RenderBox::paint(PaintInfo& i, int _tx, int _ty)
 void RenderBox::paintRootBoxDecorations(PaintInfo& i, int _tx, int _ty)
 {
     const BackgroundLayer* bgLayer = style()->backgroundLayers();
-    QColor bgColor = style()->backgroundColor();
+    Color bgColor = style()->backgroundColor();
     if (document()->isHTMLDocument() && !style()->hasBackground()) {
         // Locate the <body> element using the DOM.  This is easier than trying
         // to crawl around a render tree with potential :before/:after content and
@@ -355,20 +355,20 @@ void RenderBox::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
         paintBorder(i.p, _tx, _ty, w, h, style());
 }
 
-void RenderBox::paintBackgrounds(QPainter *p, const QColor& c, const BackgroundLayer* bgLayer, int clipy, int cliph, int _tx, int _ty, int w, int height)
+void RenderBox::paintBackgrounds(QPainter *p, const Color& c, const BackgroundLayer* bgLayer, int clipy, int cliph, int _tx, int _ty, int w, int height)
 {
     if (!bgLayer) return;
     paintBackgrounds(p, c, bgLayer->next(), clipy, cliph, _tx, _ty, w, height);
     paintBackground(p, c, bgLayer, clipy, cliph, _tx, _ty, w, height);
 }
 
-void RenderBox::paintBackground(QPainter *p, const QColor& c, const BackgroundLayer* bgLayer, int clipy, int cliph, int _tx, int _ty, int w, int height)
+void RenderBox::paintBackground(QPainter *p, const Color& c, const BackgroundLayer* bgLayer, int clipy, int cliph, int _tx, int _ty, int w, int height)
 {
     paintBackgroundExtended(p, c, bgLayer, clipy, cliph, _tx, _ty, w, height,
                             borderLeft(), borderRight(), paddingLeft(), paddingRight());
 }
 
-void RenderBox::paintBackgroundExtended(QPainter *p, const QColor& c, const BackgroundLayer* bgLayer, int clipy, int cliph,
+void RenderBox::paintBackgroundExtended(QPainter *p, const Color& c, const BackgroundLayer* bgLayer, int clipy, int cliph,
                                         int _tx, int _ty, int w, int h,
                                         int bleft, int bright, int pleft, int pright)
 {
@@ -397,7 +397,7 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const QColor& c, const Back
 
     CachedImage* bg = bgLayer->backgroundImage();
     bool shouldPaintBackgroundImage = bg && bg->pixmap_size() == bg->valid_rect().size() && !bg->isTransparent() && !bg->isErrorImage();
-    QColor bgColor = c;
+    Color bgColor = c;
     
     // When this style flag is set, change existing background colors and images to a solid white background.
     // If there's no bg color or image, leave it untouched to avoid affecting transparency.
@@ -407,16 +407,16 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const QColor& c, const Back
     // while rendering.)
     if (style()->forceBackgroundsToWhite()) {
         // Note that we can't reuse this variable below because the bgColor might be changed
-        bool shouldPaintBackgroundColor = !bgLayer->next() && bgColor.isValid() && qAlpha(bgColor.rgb()) > 0;
+        bool shouldPaintBackgroundColor = !bgLayer->next() && bgColor.isValid() && bgColor.alpha() > 0;
         if (shouldPaintBackgroundImage || shouldPaintBackgroundColor) {
-            bgColor = Qt::white;
+            bgColor = Color::white;
             shouldPaintBackgroundImage = false;
         }
     }
 
     // Only fill with a base color (e.g., white) if we're the root document, since iframes/frames with
     // no background in the child document should show the parent's background.
-    if (!bgLayer->next() && isRoot() && !(bgColor.isValid() && qAlpha(bgColor.rgb()) > 0) && canvas()->view()) {
+    if (!bgLayer->next() && isRoot() && !(bgColor.isValid() && bgColor.alpha() > 0) && canvas()->view()) {
         bool isTransparent;
         DOM::NodeImpl* elt = document()->ownerElement();
         if (elt) {
@@ -440,10 +440,10 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const QColor& c, const Back
     }
 
     // Paint the color first underneath all images.
-    if (!bgLayer->next() && bgColor.isValid() && qAlpha(bgColor.rgb()) > 0) {
+    if (!bgLayer->next() && bgColor.isValid() && bgColor.alpha() > 0) {
         // If we have an alpha and we are painting the root element, go ahead and blend with our default
         // background color (typically white).
-        if (qAlpha(bgColor.rgb()) < 0xFF && isRoot() && !canvas()->view()->isTransparent())
+        if (bgColor.alpha() < 0xFF && isRoot() && !canvas()->view()->isTransparent())
             p->fillRect(_tx, clipy, w, cliph, canvas()->view()->palette().active().color(QColorGroup::Base));
         p->fillRect(_tx, clipy, w, cliph, bgColor);
     }
@@ -591,7 +591,7 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const QColor& c, const Back
 
 void RenderBox::outlineBox(QPainter *p, int _tx, int _ty, const char *color)
 {
-    p->setPen(QPen(QColor(color), 1, Qt::DotLine));
+    p->setPen(QPen(Color(color), 1, Qt::DotLine));
     p->setBrush( Qt::NoBrush );
     p->drawRect(_tx, _ty, m_width, m_height);
 }

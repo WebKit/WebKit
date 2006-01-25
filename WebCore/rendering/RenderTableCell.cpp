@@ -507,7 +507,7 @@ int RenderTableCell::borderBottom() const
 #ifdef BOX_DEBUG
 static void outlineBox(QPainter *p, int _tx, int _ty, int w, int h)
 {
-    p->setPen(QPen(QColor("yellow"), 3, Qt::DotLine));
+    p->setPen(QPen(Color("yellow"), 3, Qt::DotLine));
     p->setBrush(Qt::NoBrush);
     p->drawRect(_tx, _ty, w, h);
 }
@@ -691,7 +691,7 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
     int h = height() + borderTopExtra() + borderBottomExtra();
     _ty -= borderTopExtra();
 
-    QColor c = style()->backgroundColor();
+    Color c = style()->backgroundColor();
     if (!c.isValid() && parent()) // take from row
         c = parent()->style()->backgroundColor();
     if (!c.isValid() && parent() && parent()->parent()) // take from rowgroup
