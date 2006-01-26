@@ -155,10 +155,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQBrush.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQBuffer.cpp"
 				>
 			</File>
@@ -1802,6 +1798,10 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\ArrayImpl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\Brush.h"
 				>
 			</File>
 			<File
