@@ -28,6 +28,7 @@
 
 #include "IntRect.h"
 #include "Selection.h"
+#include "dom2_events.h"
 #include "dom2_rangeimpl.h"
 
 class Frame;
@@ -37,6 +38,21 @@ namespace WebCore {
 
 class RenderObject;
 class VisiblePosition;
+class SelectionController;
+
+class MutationListener : public EventListener
+{
+public:
+    MutationListener() { m_selectionController = 0; }
+    MutationListener(SelectionController *s) { m_selectionController = s; }
+    SelectionController *selectionController() const { return m_selectionController; }
+    void setSelectionController(SelectionController *s) { m_selectionController = s; }
+    
+    virtual void handleEvent(EventListenerEvent evt, bool isWindowEvent);
+    
+private:
+    SelectionController *m_selectionController;
+};
 
 class SelectionController
 {
@@ -53,6 +69,8 @@ public:
     SelectionController(const Position &, EAffinity affinity);
     SelectionController(const Position &, const Position &, EAffinity);
     SelectionController(const SelectionController &);
+    
+    ~SelectionController();
 
     SelectionController &operator=(const SelectionController &o);
     SelectionController &operator=(const VisiblePosition &r) { moveTo(r); return *this; }
@@ -65,6 +83,7 @@ public:
     void moveTo(const SelectionController &);
 
     const Selection &selection() const { return m_sel; }
+    void setSelection(const Selection &);
 
     Selection::EState state() const { return m_sel.state(); }
 
@@ -104,6 +123,8 @@ public:
     friend class ::Frame;
     
     Frame *frame() const;
+    
+    void nodeWillBeRemoved(NodeImpl *);
 
     // Safari Selection Object API
     NodeImpl *baseNode() const { return m_sel.base().node(); }
@@ -176,6 +197,7 @@ private:
     bool m_needsLayout : 1;       // true if the caret and expectedVisible rectangles need to be calculated
     bool m_modifyBiasSet : 1;     // true if the selection has been horizontally 
                                   // modified with EAlter::EXTEND
+    RefPtr<MutationListener> m_mutationListener;
 };
 
 inline bool operator==(const SelectionController &a, const SelectionController &b)

@@ -191,6 +191,8 @@ void RenderFlow::destroy()
         if (m_firstLineBox) {
             // We can't wait for RenderContainer::destroy to clear the selection,
             // because by then we will have nuked the line boxes.
+            // FIXME: The SelectionController should be responsible for this when it
+            // is notified of DOM mutations.
             if (isSelectionBorder())
                 canvas()->clearSelection();
 

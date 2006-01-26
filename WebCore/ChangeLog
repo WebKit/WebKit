@@ -1,3 +1,39 @@
+2006-01-25  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by mjs
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=6644>
+        TinyMCE: Undo operation crashes Safari
+        <rdar://problem/4343068>
+        Some shouldChangeSelection calls are nonsensical
+
+        Notify the SelectionController of node removals,
+        and blow away the selection when end points are removed.
+
+        Tests added:
+        * editing/selection/remove-node-1.html
+        * editing/selection/remove-node-2.html
+        
+        * khtml/editing/SelectionController.cpp:
+        (WebCore::MutationListener::handleEvent):
+        (WebCore::SelectionController::SelectionController):
+        (WebCore::SelectionController::~SelectionController):
+        (WebCore::SelectionController::operator=):
+        (WebCore::SelectionController::moveTo):
+        (WebCore::SelectionController::setSelection):
+        (WebCore::SelectionController::nodeWillBeRemoved):
+        (WebCore::SelectionController::clear):
+        (WebCore::SelectionController::setBase):
+        (WebCore::SelectionController::setExtent):
+        * khtml/editing/SelectionController.h:
+        (WebCore::MutationListener::MutationListener):
+        (WebCore::MutationListener::selectionController):
+        (WebCore::MutationListener::setSelectionController):
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::removeChildNode):
+        * rendering/render_flow.cpp:
+        (RenderFlow::destroy):
+
 2006-01-25  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.

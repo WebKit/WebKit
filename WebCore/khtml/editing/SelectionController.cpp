@@ -34,14 +34,17 @@
 #include "dom/dom_node.h"
 #include "dom/dom_string.h"
 #include "htmlediting.h"
+#include "rendering/render_canvas.h"
 #include "rendering/render_object.h"
 #include "rendering/render_style.h"
 #include "visible_position.h"
 #include "visible_text.h"
 #include "visible_units.h"
 #include "xml/dom2_rangeimpl.h"
+#include "xml/dom2_eventsimpl.h"
 #include "xml/dom_elementimpl.h"
 #include "xml/dom_textimpl.h"
+#include "xml/EventNames.h"
 #include <kxmlcore/Assertions.h>
 #include <qevent.h>
 #include <qpainter.h>
@@ -50,59 +53,78 @@
 
 namespace WebCore {
 
+using namespace EventNames;
+
+void MutationListener::handleEvent(EventImpl *event, bool isWindowEvent)
+{
+    if (!m_selectionController)
+        return;
+    
+    if (event->type() == DOMNodeRemovedEvent)
+        m_selectionController->nodeWillBeRemoved(event->target());
+}
+
 SelectionController::SelectionController()
     : m_needsLayout(true)
-    , m_modifyBiasSet(false)
+    , m_mutationListener(new MutationListener(this))
 {
+    setSelection(Selection());
 }
 
 SelectionController::SelectionController(const Selection &sel)
-    : m_sel(sel)
-    , m_needsLayout(true)
+    : m_needsLayout(true)
     , m_modifyBiasSet(false)
+    , m_mutationListener(new MutationListener(this))
 {
+    setSelection(sel);
 }
 
 SelectionController::SelectionController(const Position &pos, EAffinity affinity)
-    : m_sel(pos, pos, affinity)
-    , m_needsLayout(true)
+    : m_needsLayout(true)
     , m_modifyBiasSet(false)
+    , m_mutationListener(new MutationListener(this))
 {
+    setSelection(Selection(pos, pos, affinity));
 }
 
 SelectionController::SelectionController(const RangeImpl *r, EAffinity affinity)
-    : m_sel(startPosition(r), endPosition(r), affinity)
-    , m_needsLayout(true)
+    : m_needsLayout(true)
     , m_modifyBiasSet(false)
+    , m_mutationListener(new MutationListener(this))
 {
+    setSelection(Selection(startPosition(r), endPosition(r), affinity));
 }
 
 SelectionController::SelectionController(const Position &base, const Position &extent, EAffinity affinity)
-    : m_sel(base, extent, affinity)
-    , m_needsLayout(true)
+    : m_needsLayout(true)
     , m_modifyBiasSet(false)
+    , m_mutationListener(new MutationListener(this))
 {
+    setSelection(Selection(base, extent, affinity));
 }
 
 SelectionController::SelectionController(const VisiblePosition &visiblePos)
-    : m_sel(visiblePos.deepEquivalent(), visiblePos.deepEquivalent(), visiblePos.affinity())
-    , m_needsLayout(true)
+    : m_needsLayout(true)
     , m_modifyBiasSet(false)
+    , m_mutationListener(new MutationListener(this))
 {
+    setSelection(Selection(visiblePos.deepEquivalent(), visiblePos.deepEquivalent(), visiblePos.affinity()));
 }
 
 SelectionController::SelectionController(const VisiblePosition &base, const VisiblePosition &extent)
-    : m_sel(base.deepEquivalent(), extent.deepEquivalent(), base.affinity())
-    , m_needsLayout(true)
+    : m_needsLayout(true)
     , m_modifyBiasSet(false)
+    , m_mutationListener(new MutationListener(this))
 {
+    setSelection(Selection(base.deepEquivalent(), extent.deepEquivalent(), base.affinity()));
 }
 
 SelectionController::SelectionController(const SelectionController &o)
-    : m_sel(o.m_sel)
-    , m_needsLayout(o.m_needsLayout)
+    : m_needsLayout(o.m_needsLayout)
     , m_modifyBiasSet(o.m_modifyBiasSet)
+    , m_mutationListener(new MutationListener(this))
 {
+    setSelection(o.m_sel); 
     // Only copy the coordinates over if the other object
     // has had a layout, otherwise keep the current
     // coordinates. This prevents drawing artifacts from
@@ -114,9 +136,17 @@ SelectionController::SelectionController(const SelectionController &o)
     }
 }
 
+SelectionController::~SelectionController()
+{
+    if (!isNone()) {
+        DocumentImpl *document = m_sel.start().node()->getDocument();
+        document->removeEventListener(DOMNodeRemovedEvent, m_mutationListener.get(), false);
+    }
+}
+
 SelectionController &SelectionController::operator=(const SelectionController &o)
 {
-    m_sel = o.m_sel;
+    setSelection(o.m_sel);
 
     m_needsLayout = o.m_needsLayout;
     m_modifyBiasSet = o.m_modifyBiasSet;
@@ -136,38 +166,90 @@ SelectionController &SelectionController::operator=(const SelectionController &o
 
 void SelectionController::moveTo(const VisiblePosition &pos)
 {
-    m_sel = Selection(pos.deepEquivalent(), pos.deepEquivalent(), pos.affinity());
+    setSelection(Selection(pos.deepEquivalent(), pos.deepEquivalent(), pos.affinity()));
     m_needsLayout = true;
 }
 
 void SelectionController::moveTo(const VisiblePosition &base, const VisiblePosition &extent)
 {
-    m_sel = Selection(base.deepEquivalent(), extent.deepEquivalent(), base.affinity());
+    setSelection(Selection(base.deepEquivalent(), extent.deepEquivalent(), base.affinity()));
     m_needsLayout = true;
 }
 
 void SelectionController::moveTo(const SelectionController &o)
 {
-    m_sel = o.m_sel;
+    setSelection(o.m_sel);
     m_needsLayout = true;
 }
 
 void SelectionController::moveTo(const Position &pos, EAffinity affinity)
 {
-    m_sel = Selection(pos, affinity);
+    setSelection(Selection(pos, affinity));
     m_needsLayout = true;
 }
 
 void SelectionController::moveTo(const RangeImpl *r, EAffinity affinity)
 {
-    m_sel = Selection(startPosition(r), endPosition(r), affinity);
+    setSelection(Selection(startPosition(r), endPosition(r), affinity));
     m_needsLayout = true;
 }
 
 void SelectionController::moveTo(const Position &base, const Position &extent, EAffinity affinity)
 {
-    m_sel = Selection(base, extent, affinity);
+    setSelection(Selection(base, extent, affinity));
     m_needsLayout = true;
+}
+
+void SelectionController::setSelection(const Selection &newSelection)
+{
+    Selection oldSelection = m_sel;
+    DocumentImpl *oldDocument = oldSelection.start().node() ? oldSelection.start().node()->getDocument() : 0;
+    DocumentImpl *newDocument = newSelection.start().node() ? newSelection.start().node()->getDocument() : 0;
+    
+    if (oldDocument != newDocument) {
+        if (oldDocument)
+            oldDocument->removeEventListener(DOMNodeRemovedEvent, m_mutationListener.get(), false);
+        if (newDocument)
+            newDocument->addEventListener(DOMNodeRemovedEvent, m_mutationListener.get(), false);
+    }
+    
+    m_sel = newSelection;
+}
+
+void SelectionController::nodeWillBeRemoved(NodeImpl *node)
+{
+    if (isNone())
+        return;
+    
+    NodeImpl *base = m_sel.base().node();
+    NodeImpl *extent = m_sel.extent().node();
+    NodeImpl *start = m_sel.start().node();
+    NodeImpl *end = m_sel.end().node();
+    
+    bool baseRemoved = node == base || base->isAncestor(node);
+    bool extentRemoved = node == extent || extent->isAncestor(node);
+    bool startRemoved = node == start || start->isAncestor(node);
+    bool endRemoved = node == end || end->isAncestor(node);
+    
+    if (startRemoved || endRemoved) {
+    
+        // FIXME (6498): This doesn't notify the editing delegate of a selection change.
+        // FIXME: When endpoints are removed, we should just alter the selection, instead of blowing it away.
+        // FIXME: The SelectionController should be responsible for scheduling a repaint, 
+        // but it can't do a proper job of it until it handles the other types of DOM mutations.
+        // For now, we'll continue to let RenderObjects handle it when they are destroyed.
+        
+        setSelection(Selection());
+        
+    } else if (baseRemoved || extentRemoved) {
+        if (m_sel.isBaseFirst()) {
+            m_sel.setBase(m_sel.start());
+            m_sel.setExtent(m_sel.end());
+        } else {
+            m_sel.setBase(m_sel.start());
+            m_sel.setExtent(m_sel.end());
+        }
+    }
 }
 
 void SelectionController::setModifyBias(EAlter alter, EDirection direction)
@@ -550,31 +632,31 @@ int SelectionController::xPosForVerticalArrowNavigation(EPositionType type, bool
 
 void SelectionController::clear()
 {
-    m_sel = Selection();
+    setSelection(Selection());
     m_needsLayout = true;
 }
 
 void SelectionController::setBase(const VisiblePosition &pos)
 {
-    m_sel = Selection(pos.deepEquivalent(), m_sel.extent(), pos.affinity());
+    setSelection(Selection(pos.deepEquivalent(), m_sel.extent(), pos.affinity()));
     m_needsLayout = true;
 }
 
 void SelectionController::setExtent(const VisiblePosition &pos)
 {
-    m_sel = Selection(m_sel.base(), pos.deepEquivalent(), pos.affinity());
+    setSelection(Selection(m_sel.base(), pos.deepEquivalent(), pos.affinity()));
     m_needsLayout = true;
 }
 
 void SelectionController::setBase(const Position &pos, EAffinity affinity)
 {
-    m_sel = Selection(pos, m_sel.extent(), affinity);
+    setSelection(Selection(pos, m_sel.extent(), affinity));
     m_needsLayout = true;
 }
 
 void SelectionController::setExtent(const Position &pos, EAffinity affinity)
 {
-    m_sel = Selection(m_sel.base(), pos, affinity);
+    setSelection(Selection(m_sel.base(), pos, affinity));
     m_needsLayout = true;
 }
 

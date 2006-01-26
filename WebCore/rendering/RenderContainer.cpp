@@ -176,16 +176,11 @@ RenderObject* RenderContainer::removeChildNode(RenderObject* oldChild)
         
         // Keep our layer hierarchy updated.
         oldChild->removeLayers(enclosingLayer());
-    
-        // if oldChild is the start or end of the selection, then clear the selection to
-        // avoid problems of invalid pointers
-    
-        // ### This is not the "proper" solution... ideally the selection should be maintained
-        // based on DOM Nodes and a Range, which gets adjusted appropriately when nodes are
-        // deleted/inserted near etc. But this at least prevents crashes caused when the start
-        // or end of the selection is deleted and then accessed when the user next selects
-        // something.
-    
+        
+        // If oldChild is the start or end of the selection, then clear the selection to
+        // avoid problems of invalid pointers.
+        // FIXME: The SelectionController should be responsible for this when it
+        // is notified of DOM mutations.
         if (oldChild->isSelectionBorder())
             canvas()->clearSelection();
 
