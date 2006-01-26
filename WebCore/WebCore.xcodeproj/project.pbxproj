@@ -4902,10 +4902,12 @@
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/UserAgentStyleSheets.h",
 				"$(DERIVED_FILE_DIR)/UserAgentStyleSheetsData.cpp",
+				css/UserAgentStyleSheets.cpp,
+				css/cssstyleselector.cpp,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "css/make-css-file-arrays.pl \"$DERIVED_FILE_DIR/UserAgentStyleSheets.h\" \"$DERIVED_FILE_DIR/UserAgentStyleSheetsData.cpp\" css/html4.css css/quirks.css css/svg.css\ntouch css/UserAgentStyleSheets.cpp\n";
+			shellScript = "css/make-css-file-arrays.pl \"$DERIVED_FILE_DIR/UserAgentStyleSheets.h\" \"$DERIVED_FILE_DIR/UserAgentStyleSheetsData.cpp\" css/html4.css css/quirks.css css/svg.css\ntouch css/UserAgentStyleSheets.cpp\ntouch css/cssstyleselector.cpp\n";
 		};
 		93EA68440824979000687F56 /* libxml2-WebCore */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -4972,10 +4974,12 @@
 				"$(DERIVED_FILE_DIR)/SVGNames.h",
 				"$(DERIVED_FILE_DIR)/SVGElementFactory.h",
 				"$(DERIVED_FILE_DIR)/SVGElementFactory.cpp",
+				"WebCore+SVG/SVGNamesWrapper.cpp",
+				"WebCore+SVG/SVGElementFactoryWrapper.cpp",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "ksvg2/scripts/make_names.pl --tags ksvg2/svg/svgtags.in --attrs ksvg2/svg/svgattrs.in \\\n    --namespace SVG --cppNamespace KSVG --namespaceURI \"http://www.w3.org/2000/svg\" \\\n    --factory --attrsNullNamespace --output \"$DERIVED_FILE_DIR\"";
+			shellScript = "ksvg2/scripts/make_names.pl --tags ksvg2/svg/svgtags.in --attrs ksvg2/svg/svgattrs.in \\\n    --namespace SVG --cppNamespace KSVG --namespaceURI \"http://www.w3.org/2000/svg\" \\\n    --factory --attrsNullNamespace --output \"$DERIVED_FILE_DIR\"\ntouch WebCore+SVG/SVGNamesWrapper.cpp\ntouch WebCore+SVG/SVGElementFactoryWrapper.cpp\n";
 		};
 		A88AD52509524A34001DD196 /* XLinkNames */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -4990,10 +4994,11 @@
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/XLinkNames.cpp",
 				"$(DERIVED_FILE_DIR)/XLinkNames.h",
+				"WebCore+SVG/XLinkNamesWrapper.cpp",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "ksvg2/scripts/make_names.pl --attrs ksvg2/misc/xlinkattrs.in --namespace XLink --cppNamespace DOM --namespaceURI \"http://www.w3.org/1999/xlink\" --output \"$DERIVED_FILE_DIR\"";
+			shellScript = "ksvg2/scripts/make_names.pl --attrs ksvg2/misc/xlinkattrs.in --namespace XLink --cppNamespace DOM --namespaceURI \"http://www.w3.org/1999/xlink\" --output \"$DERIVED_FILE_DIR\"\ntouch WebCore+SVG/XLinkNamesWrapper.cpp";
 		};
 		A88AD52909524A4A001DD196 /* ksvgcssproperties.c/h */ = {
 			isa = PBXShellScriptBuildPhase;

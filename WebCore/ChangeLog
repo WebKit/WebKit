@@ -1,3 +1,10 @@
+2006-01-26  Eric Seidel  <eseidel@apple.com>
+
+        Fixes xcode project to better notice when generated files change.
+        Also fixes failing test cases on build slaves.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2006-01-26  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin, committed by ap.
