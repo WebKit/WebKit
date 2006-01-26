@@ -37,6 +37,11 @@ svg:root {
     overflow: visible !important
 }
 
+svg {
+    width: 100%;
+    height: 100%;
+}
+
 svg, symbol, marker, pattern, foreignObject {
     overflow: hidden
 }

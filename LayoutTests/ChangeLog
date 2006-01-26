@@ -1,3 +1,18 @@
+2006-01-26  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        * svg/custom/junk-data-expected.checksum:
+        * svg/custom/junk-data-expected.png:
+        * svg/custom/junk-data-expected.txt:
+        * svg/custom/missing-xlink-expected.checksum:
+        * svg/custom/missing-xlink-expected.png:
+        * svg/custom/missing-xlink-expected.txt:
+        * viewport-no-width-height.svg: Added.
+        * viewport-no-width-height-expected.checksum: Added.
+        * viewport-no-width-height-expected.png: Added.
+        * viewport-no-width-height-expected.txt: Added.
+
 2006-01-25  Alexander Kellett  <lypanov@kde.org>
 
         Reviewed by eseidel.

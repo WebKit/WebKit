@@ -1,3 +1,12 @@
+2006-01-26  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        SVG shows up blank in WebKit+SVG
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6620
+
+        * css/svg.css: default to width/height 100% for <svg>
+
 2006-01-26  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Darin.
