@@ -2107,6 +2107,13 @@ static WebHTMLView *lastHitView = nil;
             name:NSViewFrameDidChangeNotification object:superview];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_frameOrBoundsChanged) 
             name:NSViewBoundsDidChangeNotification object:superview];
+
+        // In addition to registering for frame/bounds change notifications, call -_frameOrBoundsChanged.
+        // It will check the current size/scroll against the previous layout's size/scroll.  We need to
+        // do this here to catch the case where the WebView is laid out at one size, removed from its
+        // window, resized, and inserted into another window.  Our frame/bounds changed notifications
+        // will not be sent in that situation, since we only watch for changes while in the view hierarchy.
+        [self _frameOrBoundsChanged];
     }
 }
 
