@@ -2355,6 +2355,7 @@ static NodeImpl* isTextFirstInListItem(NodeImpl *e)
 
 NSAttributedString *MacFrame::attributedString(NodeImpl *_start, int startOffset, NodeImpl *endNode, int endOffset)
 {
+    ListItemInfo info;
     NSMutableAttributedString *result;
     KWQ_BLOCK_EXCEPTIONS;
 
@@ -2512,7 +2513,6 @@ NSAttributedString *MacFrame::attributedString(NodeImpl *_start, int startOffset
                     hasNewLine = true;
 
                     listItems.append(static_cast<ElementImpl*>(n));
-                    ListItemInfo info;
                     info.start = [result length];
                     info.end = 0;
                     listItemLocations.append (info);
@@ -2705,7 +2705,6 @@ NSAttributedString *MacFrame::attributedString(NodeImpl *_start, int startOffset
     {
         unsigned i, count = listItems.count();
         ElementImpl *e;
-        ListItemInfo info;
 
 #ifdef POSITION_LIST
         NodeImpl *containingBlock;
