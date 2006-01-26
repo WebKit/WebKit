@@ -1,3 +1,13 @@
+2006-01-26  Alexander Kellett  <lypanov@kde.org>
+
+        Reviewed by eseidel.
+
+        <text> elements with a scale on a parent <g> breaks nodeAtPoint
+        Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6843
+
+        * kcanvas/RenderSVGText.cpp:
+        (RenderSVGText::nodeAtPoint):
+
 2006-01-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.

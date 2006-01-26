@@ -1,3 +1,16 @@
+2006-01-26  Alexander Kellett  <lypanov@kde.org>
+
+        Reviewed by eseidel.
+
+        Implemented automated testcasing for RenderSVGText's nodeAtPoint()
+        This provides an automated way to test for regressions on bug:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6843
+
+        * svg/custom/text-hit-test.svg: Added.
+        * svg/custom/text-hit-test-expected.checksum: Added.
+        * svg/custom/text-hit-test-expected.png: Added.
+        * svg/custom/text-hit-test-expected.txt: Added.
+
 2006-01-26  David Harrison  <harrison@apple.com>
 
         Adding test case for:

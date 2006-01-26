@@ -122,10 +122,9 @@ void RenderSVGText::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
 bool RenderSVGText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, WebCore::HitTestAction hitTestAction)
 {
-    QMatrix totalTransform = absoluteTransform();
-    totalTransform *= localTransform();
-    totalTransform *= translationForAttributes();
+    QMatrix totalTransform = translationForAttributes();
     totalTransform *= translationTopToBaseline();
+    totalTransform *= absoluteTransform();
     double localX, localY;
     totalTransform.invert().map(_x, _y, &localX, &localY);
     return RenderBlock::nodeAtPoint(info, (int)localX, (int)localY, _tx, _ty, hitTestAction);
