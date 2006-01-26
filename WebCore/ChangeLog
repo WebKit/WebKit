@@ -1,3 +1,25 @@
+2006-01-25  Alexander Kellett  <lypanov@kde.org>
+
+        Reviewed by eseidel.
+
+        Percentage values for width, height are not rendered correctly.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5331
+
+        Create items for even empty paths to prevent an empty render tree.
+        Calculate the viewport element on the fly rather than caching it,
+        unless there is no context from which to calculate it. Call 
+        notifyAttributeChange() on layout to fix usage of viewport
+        percentages for lengths. Remove portion of code which appears to 
+        do nothing but worsen the situation.
+
+        * kcanvas/device/quartz/KCanvasItemQuartz.h:
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (KCanvasItemQuartz::layout):
+        * ksvg2/svg/SVGLengthImpl.cpp:
+        (SVGLengthImpl::value):
+        * ksvg2/svg/SVGStyledElementImpl.cpp:
+        (SVGStyledElementImpl::createRenderer):
+
 2006-01-26  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.

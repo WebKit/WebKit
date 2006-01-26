@@ -8,7 +8,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (0,0) size 465x14
           RenderText {TEXT} at (0,0) size 181x14
             text run at (0,0) width 181: "Initial viewport and CSS units test"
-        KCanvasContainer {g} at (20,80) size 200x181 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,60.00)}]
+        KCanvasContainer {g} at (20,80) size 200.02x181 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,60.00)}]
           RenderSVGText {text} at (0,0) size 465x15
             RenderText {TEXT} at (0,0) size 21x15
               text run at (0,0) width 21: "200"
@@ -30,6 +30,7 @@ layer at (0,0) size 480x360
             RenderText {TEXT} at (0,0) size 136x15
               text run at (0,0) width 136: "Relative to font size (em)"
           KCanvasContainer {g} at (0,60) size 0x0
+            KCanvasItem {rect} at (inf,inf) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data=""]
           RenderSVGText {text} at (0,0) size 465x15
             RenderText {TEXT} at (0,0) size 30x15
               text run at (0,0) width 30: "40 ex"
@@ -37,12 +38,14 @@ layer at (0,0) size 480x360
             RenderText {TEXT} at (0,0) size 158x15
               text run at (0,0) width 158: "Relative to font x-height (ex)"
           KCanvasContainer {g} at (0,60) size 0x0
+            KCanvasItem {rect} at (inf,inf) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data=""]
           RenderSVGText {text} at (0,0) size 465x15
             RenderText {TEXT} at (0,0) size 93x15
               text run at (0,0) width 93: "41.67% = 200 px"
           RenderSVGText {text} at (0,0) size 465x15
             RenderText {TEXT} at (0,0) size 81x15
               text run at (0,0) width 81: "Percentage (%)"
+          KCanvasItem {rect} at (20,160) size 200.02x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,100.00L220.02,100.00L220.02,101.00L20.00,101.00"]
           RenderSVGText {text} at (0,0) size 465x15
             RenderText {TEXT} at (0,0) size 21x15
               text run at (0,0) width 21: "1 in"

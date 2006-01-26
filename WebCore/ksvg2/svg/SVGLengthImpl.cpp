@@ -91,27 +91,8 @@ float SVGLengthImpl::value() const
     if(m_bboxRelative)
         return value;
 
-    // Spec: When percentages are used with attributes that define the
-    // gradient vector, the pattern tile, the filter region or the masking
-    // region, a percentage represents the same value as the corresponding
-    // decimal value (e.g., 50% means the same as 0.5). 
-    khtml::RenderObject *item = (m_context ? m_context->renderer() : 0);
-    if(item)
-    {
-        FloatRect bbox = item->relativeBBox();
-
-        float result = 0;
-        if(m_mode == LM_WIDTH)
-            result = value * (bbox.width() - 1);
-        else if(m_mode == LM_HEIGHT)
-            result = value * (bbox.height() - 1);
-        else if(m_mode == LM_OTHER)
-            result = value * sqrt(pow(double(bbox.width() - 1), 2) + pow(double(bbox.height() - 1), 2)) / sqrt(2.0);
-
-        return result;
-    }
-
-    return SVGHelper::PercentageOfViewport(value, m_viewportElement, m_mode);
+    // Use the manual override "m_viewportElement" when there is no context element off of which to establish the viewport.
+    return SVGHelper::PercentageOfViewport(value, m_context ? m_context->viewportElement() : m_viewportElement, m_mode);
 }
 
 void SVGLengthImpl::setValueInSpecifiedUnits(float valueInSpecifiedUnits)

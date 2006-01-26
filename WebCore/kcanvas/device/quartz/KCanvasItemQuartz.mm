@@ -45,11 +45,21 @@
 #import "QuartzSupport.h"
 
 #import "SVGRenderStyle.h"
+#import "SVGStyledElementImpl.h"
 #import "KCanvasRenderingStyle.h"
 
 
 KCanvasItemQuartz::KCanvasItemQuartz(khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node) : RenderPath(style, node)
 {
+}
+
+void KCanvasItemQuartz::layout()
+{
+    // FIXME: Currently the DOM does all of the % length calculations, so we
+    // pretend that one of the attributes of the element has changed on the DOM
+    // to force the DOM object to update this render object with new aboslute position values.
+    static_cast<KSVG::SVGStyledElementImpl*>(element())->notifyAttributeChange();
+    setNeedsLayout(false);
 }
 
 typedef enum {

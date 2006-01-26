@@ -73,7 +73,7 @@ SVGAnimatedStringImpl *SVGStyledElementImpl::className() const
 khtml::RenderObject *SVGStyledElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
 {
     RefPtr<KCanvasPath> pathData = toPathData();
-    if (!pathData || pathData->isEmpty())
+    if (!pathData)
         return 0;
     return QPainter::renderingDevice()->createItem(arena, style, this, pathData.get());
 }

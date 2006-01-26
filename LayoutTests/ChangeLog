@@ -1,3 +1,43 @@
+2006-01-25  Alexander Kellett  <lypanov@kde.org>
+
+        Reviewed by eseidel.
+
+        Percentage values for width, height are not rendered correctly.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5331
+
+        * svg/W3C-SVG-1.1/coords-units-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/coords-units-01-b-expected.png:
+        * svg/W3C-SVG-1.1/coords-units-02-b-expected.checksum:
+        * svg/W3C-SVG-1.1/coords-units-02-b-expected.png:
+        * svg/W3C-SVG-1.1/coords-units-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/coords-units-03-b-expected.checksum:
+        * svg/W3C-SVG-1.1/coords-units-03-b-expected.png:
+        * svg/W3C-SVG-1.1/coords-units-03-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-blend-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-color-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-composite-02-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-composite-02-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-composite-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-displace-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-displace-01-f-expected.png:
+        * svg/W3C-SVG-1.1/filters-displace-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-example-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-gauss-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-light-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-offset-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-specular-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-tile-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/struct-image-02-b-expected.checksum:
+        * svg/W3C-SVG-1.1/struct-image-02-b-expected.png:
+        * svg/W3C-SVG-1.1/struct-image-02-b-expected.txt:
+        * svg/custom/image-with-transform-clip-filter-expected.txt:
+        * svg/custom/percentage-rect-expected.checksum: Added.
+        * svg/custom/percentage-rect-expected.png: Added.
+        * svg/custom/percentage-rect-expected.txt: Added.
+        * svg/custom/percentage-rect.svg: Added.
+        * svg/custom/text-filter-expected.txt:
+
 2006-01-25  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

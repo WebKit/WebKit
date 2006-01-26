@@ -38,7 +38,7 @@ public:
     virtual IntRect getAbsoluteRepaintRect();
     
     virtual bool requiresLayer() { return false; }
-    virtual void layout() { setNeedsLayout(false); }
+    virtual void layout();
     virtual void paint(PaintInfo&, int parentX, int parentY);
     virtual bool nodeAtPoint(NodeInfo&, int x, int y, int tx, int ty, WebCore::HitTestAction);
 private:
