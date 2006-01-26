@@ -1086,7 +1086,7 @@ bool FrameView::dispatchMouseEvent(const AtomicString &eventType, NodeImpl *targ
         // is expected by some sites that rely on onChange handlers running
         // from form fields before the button click is processed.
         NodeImpl* node = targetNode;
-        RenderObject* renderer = node->renderer();
+        RenderObject* renderer = node ? node->renderer() : 0;
                 
         // Walk up the render tree to search for a node to focus.
         // Walking up the DOM tree wouldn't work for shadow trees, like those behind the engine-based text fields.

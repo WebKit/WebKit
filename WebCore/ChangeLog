@@ -1,3 +1,12 @@
+2006-01-25  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6816
+        Crash in dispatchMouseEvent - Missing nil check
+
+        * page/FrameView.cpp: (FrameView::dispatchMouseEvent):
+
 2006-01-25  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by mjs
