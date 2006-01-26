@@ -176,12 +176,43 @@ sub GetLegacyHeaderIncludes
   }
 }
 
+sub AddIncludesForType
+{
+  my $type = shift;
+  
+  # When we're finished with the one-file-per-class 
+  # reorganization, we don't need these special cases.
+  
+  if ($type eq "DocumentType" or 
+      $type eq "Document" or
+      $type eq "DOMImplementation") {
+    $implIncludes{"${type}Impl.h"} = 1;
+  } elsif ($type eq "CSSStyleSheet") {
+    $implIncludes{"css_stylesheetimpl.h"} = 1;
+  } elsif ($type eq "HTMLDocument") {
+    $implIncludes{"html_documentimpl.h"} = 1;
+  } elsif ($type eq "MutationEvent" or
+           $type eq "WheelEvent") {
+    $implIncludes{"dom2_eventsimpl.h"} = 1;
+  } elsif ($codeGenerator->IsPrimitiveType($type)) {
+    # Do nothing
+  } else {
+    die "Don't know what to include for interface $type";
+  }
+}
+
 sub GetLegacyImplementationIncludes
 {
+  my $interfaceName = shift;
+  
   if ($module eq "events") {
     return "#include \"dom2_eventsimpl.h\"\n";
   } elsif ($module eq "core") {
-    return "#include \"dom_textimpl.h\"\n";
+    if ($interfaceName eq "DocumentType") {
+      return "#include \"${interfaceName}Impl.h\"\n";
+    } else {
+      return "#include \"dom_textimpl.h\"\n";
+    }
   } else {
     die ("Don't know what headers to include for module $module");
   }  
@@ -354,11 +385,8 @@ sub GenerateImplementation
   push(@implContentHeader, "\n");
   push(@implContentHeader, "#include \"$className.h\"\n\n");
 
-  if (exists $dataNode->extendedAttributes->{"LegacyParent"}) {
-    push(@implContentHeader, GetLegacyImplementationIncludes());
-  } else {
-    push(@implContentHeader, "#include \"$implClassName.h\"\n\n");
-  }
+
+  AddIncludesForType($interfaceName);
 
   @implContent = ();
 
@@ -614,6 +642,8 @@ sub GenerateImplementation
     foreach my $function (@{$dataNode->functions}) {      
       push(@implContent, "    case ${className}::" . ucfirst($function->signature->name) . ": {\n");
       
+      AddIncludesForType($function->signature->type);
+      
       my $paramIndex = 0;
       my $functionString = "impl->" . $function->signature->name . "(";
       my $numParameters = @{$function->parameters};
@@ -674,6 +704,8 @@ sub GetNativeType
     return "AbstractViewImpl*";
   } elsif ($type eq "Node") {
     return "NodeImpl*";
+  } elsif ($type eq "DocumentType") {
+    return "DocumentTypeImpl*";
   } else {
     die "Don't know how the native type of $type";
   }
@@ -695,13 +727,20 @@ sub JSValueToNative
   } elsif ($type eq "AtomicString") {
     return "AtomicString($value->toString(exec).domString())";
   } elsif ($type eq "DOMString") {
-    return "$value->toString(exec).domString()";
+    if ($signature->extendedAttributes->{"ConvertNullToNullString"}) {
+      return "valueToStringWithNullCheck(exec, $value)";
+    } else {
+      return "$value->toString(exec).domString()";
+    }
   } elsif ($type eq "views::AbstractView") {
     $implIncludes{"kjs_views.h"} = 1;
     return "toAbstractView($value)";
   } elsif ($type eq "Node") {
     $implIncludes{"kjs_dom.h"} = 1;
     return "toNode($value)";
+  } elsif ($type eq "DocumentType") {
+      $implIncludes{"kjs_dom.h"} = 1;
+      return "toDocumentType($value)";
   } else {
     die "Don't know how to convert a JS value of type $type."
   }
@@ -720,12 +759,32 @@ sub NativeToJSValue
            $type eq "unsigned short") {
     return "jsNumber($value)";
   } elsif ($type eq "DOMString") {
-    return "jsString($value)";
-  } elsif ($type eq "Node" or $type eq "Text") {
+    my $conv = $signature->extendedAttributes->{"ConvertNullStringTo"};
+    if (defined $conv) {
+      if ($conv eq "Null") {
+        return "jsStringOrNull($value)";
+      } else {
+        die "Unknown value for ConvertNullStringTo extended attribute";
+      }
+    } else {
+      return "jsString($value)";
+    }
+  } elsif ($type eq "Node" or $type eq "Text" or
+           $type eq "DocumentType" or $type eq "Document" or
+           $type eq "HTMLDocument") {
     # Add necessary includes
     $implIncludes{"kjs_dom.h"} = 1;   
     $implIncludes{"NodeImpl.h"} = 1;     
     return "getDOMNode(exec, $value)";
+  } elsif ($type eq "NamedNodeMap") {
+    # Add necessary includes
+    $implIncludes{"kjs_dom.h"} = 1;    
+    return "getDOMNamedNodeMap(exec, $value)";
+  } elsif ($type eq "CSSStyleSheet") {
+    # Add necessary includes
+    $implIncludes{"css_ruleimpl.h"} = 1;    
+    $implIncludes{"kjs_css.h"} = 1;        
+    return "getDOMStyleSheet(exec, $value)";    
   } else {
     die "Don't know how to convert a value of type $type to a JS Value";
   }

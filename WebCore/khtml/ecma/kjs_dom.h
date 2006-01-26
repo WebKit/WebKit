@@ -178,32 +178,6 @@ namespace KJS {
 
   DOM::ElementImpl *toElement(JSValue *); // returns 0 if passed-in value is not a DOMElement object
 
-  class DOMDOMImplementation : public DOMObject {
-  public:
-    // Build a DOMDOMImplementation
-    DOMDOMImplementation(ExecState *, DOM::DOMImplementationImpl *i);
-    ~DOMDOMImplementation();
-    // no put - all functions
-    virtual const ClassInfo* classInfo() const { return &info; }
-    virtual bool toBoolean(ExecState *) const { return true; }
-    static const ClassInfo info;
-    enum { HasFeature, CreateDocumentType, CreateDocument, CreateCSSStyleSheet, CreateHTMLDocument };
-    DOM::DOMImplementationImpl *impl() const { return m_impl.get(); }
-  private:
-    RefPtr<DOM::DOMImplementationImpl> m_impl;
-  };
-
-  class DOMDocumentType : public DOMNode {
-  public:
-    DOMDocumentType(ExecState *exec, DOM::DocumentTypeImpl *dt);
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *exec, int token) const;
-    // no put - all read-only
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-    enum { Name, Entities, Notations, PublicId, SystemId, InternalSubset };
-  };
-
   DOM::DocumentTypeImpl *toDocumentType(JSValue *); // returns 0 if passed-in value is not a DOMDocumentType object
 
   class DOMNamedNodeMap : public DOMObject {

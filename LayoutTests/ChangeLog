@@ -1,3 +1,16 @@
+2006-01-26  Anders Carlsson  <andersca@mac.com>
+        
+        Reviewed by Eric.
+
+        Update test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6845
+        Autogenerate more classes.
+
+        * fast/dom/features-expected.checksum: Removed.
+        * fast/dom/features-expected.png: Removed.
+        * fast/dom/features-expected.txt:
+        * fast/dom/features.html:
+        Update test case result, also use layoutTestController.dumpAsText()
+        
 2006-01-26  Alexander Kellett  <lypanov@kde.org>
 
         Reviewed by eseidel.

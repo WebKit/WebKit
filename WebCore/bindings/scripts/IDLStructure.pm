@@ -55,7 +55,6 @@ struct( domAttribute => {
     signature => '$',          # Attribute signature
     exceptionName => '$',      # Name of exception
     raisesExceptions => '@',  # Possibly raised exceptions.
-    extendedAttributes => '%' # Extended attributes
 });
 
 # Used to represent a map of 'variable name' <-> 'variable type'

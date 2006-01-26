@@ -1,383 +1,126 @@
-layer at (0,0) size 785x2284
-  RenderCanvas at (0,0) size 785x600
-layer at (0,0) size 785x2284
-  RenderBlock {HTML} at (0,0) size 785x2284
-    RenderBody {BODY} at (8,8) size 769x2268
-      RenderBlock {DIV} at (0,0) size 769x18
-        RenderText {TEXT} at (0,0) size 180x18
-          text run at (0,0) width 180: "\"Core\", undefined: true, true"
-      RenderBlock {DIV} at (0,18) size 769x18
-        RenderText {TEXT} at (0,0) size 195x18
-          text run at (0,0) width 195: "\"HTML\", undefined: true, true"
-      RenderBlock {DIV} at (0,36) size 769x18
-        RenderText {TEXT} at (0,0) size 185x18
-          text run at (0,0) width 185: "\"XML\", undefined: true, true"
-      RenderBlock {DIV} at (0,54) size 769x18
-        RenderText {TEXT} at (0,0) size 190x18
-          text run at (0,0) width 190: "\"Views\", undefined: true, true"
-      RenderBlock {DIV} at (0,72) size 769x18
-        RenderText {TEXT} at (0,0) size 222x18
-          text run at (0,0) width 222: "\"StyleSheets\", undefined: true, true"
-      RenderBlock {DIV} at (0,90) size 769x18
-        RenderText {TEXT} at (0,0) size 178x18
-          text run at (0,0) width 178: "\"CSS\", undefined: true, true"
-      RenderBlock {DIV} at (0,108) size 769x18
-        RenderText {TEXT} at (0,0) size 186x18
-          text run at (0,0) width 186: "\"CSS2\", undefined: true, true"
-      RenderBlock {DIV} at (0,126) size 769x18
-        RenderText {TEXT} at (0,0) size 196x18
-          text run at (0,0) width 196: "\"CSS3\", undefined: false, false"
-      RenderBlock {DIV} at (0,144) size 769x18
-        RenderText {TEXT} at (0,0) size 192x18
-          text run at (0,0) width 192: "\"Events\", undefined: true, true"
-      RenderBlock {DIV} at (0,162) size 769x18
-        RenderText {TEXT} at (0,0) size 209x18
-          text run at (0,0) width 209: "\"UIEvents\", undefined: true, true"
-      RenderBlock {DIV} at (0,180) size 769x18
-        RenderText {TEXT} at (0,0) size 235x18
-          text run at (0,0) width 235: "\"MouseEvents\", undefined: true, true"
-      RenderBlock {DIV} at (0,198) size 769x18
-        RenderText {TEXT} at (0,0) size 238x18
-          text run at (0,0) width 238: "\"HTMLEvents\", undefined: true, true"
-      RenderBlock {DIV} at (0,216) size 769x18
-        RenderText {TEXT} at (0,0) size 249x18
-          text run at (0,0) width 249: "\"MutationEvents\", undefined: true, true"
-      RenderBlock {DIV} at (0,234) size 769x18
-        RenderText {TEXT} at (0,0) size 190x18
-          text run at (0,0) width 190: "\"Range\", undefined: true, true"
-      RenderBlock {DIV} at (0,252) size 769x18
-        RenderText {TEXT} at (0,0) size 208x18
-          text run at (0,0) width 208: "\"Traversal\", undefined: true, true"
-      RenderBlock {DIV} at (0,270) size 769x18
-        RenderText {TEXT} at (0,0) size 141x18
-          text run at (0,0) width 141: "\"Core\", null: true, true"
-      RenderBlock {DIV} at (0,288) size 769x18
-        RenderText {TEXT} at (0,0) size 156x18
-          text run at (0,0) width 156: "\"HTML\", null: true, true"
-      RenderBlock {DIV} at (0,306) size 769x18
-        RenderText {TEXT} at (0,0) size 146x18
-          text run at (0,0) width 146: "\"XML\", null: true, true"
-      RenderBlock {DIV} at (0,324) size 769x18
-        RenderText {TEXT} at (0,0) size 151x18
-          text run at (0,0) width 151: "\"Views\", null: true, true"
-      RenderBlock {DIV} at (0,342) size 769x18
-        RenderText {TEXT} at (0,0) size 183x18
-          text run at (0,0) width 183: "\"StyleSheets\", null: true, true"
-      RenderBlock {DIV} at (0,360) size 769x18
-        RenderText {TEXT} at (0,0) size 139x18
-          text run at (0,0) width 139: "\"CSS\", null: true, true"
-      RenderBlock {DIV} at (0,378) size 769x18
-        RenderText {TEXT} at (0,0) size 147x18
-          text run at (0,0) width 147: "\"CSS2\", null: true, true"
-      RenderBlock {DIV} at (0,396) size 769x18
-        RenderText {TEXT} at (0,0) size 157x18
-          text run at (0,0) width 157: "\"CSS3\", null: false, false"
-      RenderBlock {DIV} at (0,414) size 769x18
-        RenderText {TEXT} at (0,0) size 153x18
-          text run at (0,0) width 153: "\"Events\", null: true, true"
-      RenderBlock {DIV} at (0,432) size 769x18
-        RenderText {TEXT} at (0,0) size 170x18
-          text run at (0,0) width 170: "\"UIEvents\", null: true, true"
-      RenderBlock {DIV} at (0,450) size 769x18
-        RenderText {TEXT} at (0,0) size 196x18
-          text run at (0,0) width 196: "\"MouseEvents\", null: true, true"
-      RenderBlock {DIV} at (0,468) size 769x18
-        RenderText {TEXT} at (0,0) size 199x18
-          text run at (0,0) width 199: "\"HTMLEvents\", null: true, true"
-      RenderBlock {DIV} at (0,486) size 769x18
-        RenderText {TEXT} at (0,0) size 210x18
-          text run at (0,0) width 210: "\"MutationEvents\", null: true, true"
-      RenderBlock {DIV} at (0,504) size 769x18
-        RenderText {TEXT} at (0,0) size 151x18
-          text run at (0,0) width 151: "\"Range\", null: true, true"
-      RenderBlock {DIV} at (0,522) size 769x18
-        RenderText {TEXT} at (0,0) size 169x18
-          text run at (0,0) width 169: "\"Traversal\", null: true, true"
-      RenderBlock {DIV} at (0,540) size 769x18
-        RenderText {TEXT} at (0,0) size 131x18
-          text run at (0,0) width 131: "\"Core\", \"\": true, true"
-      RenderBlock {DIV} at (0,558) size 769x18
-        RenderText {TEXT} at (0,0) size 146x18
-          text run at (0,0) width 146: "\"HTML\", \"\": true, true"
-      RenderBlock {DIV} at (0,576) size 769x18
-        RenderText {TEXT} at (0,0) size 136x18
-          text run at (0,0) width 136: "\"XML\", \"\": true, true"
-      RenderBlock {DIV} at (0,594) size 769x18
-        RenderText {TEXT} at (0,0) size 141x18
-          text run at (0,0) width 141: "\"Views\", \"\": true, true"
-      RenderBlock {DIV} at (0,612) size 769x18
-        RenderText {TEXT} at (0,0) size 173x18
-          text run at (0,0) width 173: "\"StyleSheets\", \"\": true, true"
-      RenderBlock {DIV} at (0,630) size 769x18
-        RenderText {TEXT} at (0,0) size 129x18
-          text run at (0,0) width 129: "\"CSS\", \"\": true, true"
-      RenderBlock {DIV} at (0,648) size 769x18
-        RenderText {TEXT} at (0,0) size 137x18
-          text run at (0,0) width 137: "\"CSS2\", \"\": true, true"
-      RenderBlock {DIV} at (0,666) size 769x18
-        RenderText {TEXT} at (0,0) size 147x18
-          text run at (0,0) width 147: "\"CSS3\", \"\": false, false"
-      RenderBlock {DIV} at (0,684) size 769x18
-        RenderText {TEXT} at (0,0) size 143x18
-          text run at (0,0) width 143: "\"Events\", \"\": true, true"
-      RenderBlock {DIV} at (0,702) size 769x18
-        RenderText {TEXT} at (0,0) size 160x18
-          text run at (0,0) width 160: "\"UIEvents\", \"\": true, true"
-      RenderBlock {DIV} at (0,720) size 769x18
-        RenderText {TEXT} at (0,0) size 186x18
-          text run at (0,0) width 186: "\"MouseEvents\", \"\": true, true"
-      RenderBlock {DIV} at (0,738) size 769x18
-        RenderText {TEXT} at (0,0) size 189x18
-          text run at (0,0) width 189: "\"HTMLEvents\", \"\": true, true"
-      RenderBlock {DIV} at (0,756) size 769x18
-        RenderText {TEXT} at (0,0) size 200x18
-          text run at (0,0) width 200: "\"MutationEvents\", \"\": true, true"
-      RenderBlock {DIV} at (0,774) size 769x18
-        RenderText {TEXT} at (0,0) size 141x18
-          text run at (0,0) width 141: "\"Range\", \"\": true, true"
-      RenderBlock {DIV} at (0,792) size 769x18
-        RenderText {TEXT} at (0,0) size 159x18
-          text run at (0,0) width 159: "\"Traversal\", \"\": true, true"
-      RenderBlock {DIV} at (0,810) size 769x18
-        RenderText {TEXT} at (0,0) size 151x18
-          text run at (0,0) width 151: "\"Core\", \"1.0\": true, true"
-      RenderBlock {DIV} at (0,828) size 769x18
-        RenderText {TEXT} at (0,0) size 166x18
-          text run at (0,0) width 166: "\"HTML\", \"1.0\": true, true"
-      RenderBlock {DIV} at (0,846) size 769x18
-        RenderText {TEXT} at (0,0) size 156x18
-          text run at (0,0) width 156: "\"XML\", \"1.0\": true, true"
-      RenderBlock {DIV} at (0,864) size 769x18
-        RenderText {TEXT} at (0,0) size 171x18
-          text run at (0,0) width 171: "\"Views\", \"1.0\": false, false"
-      RenderBlock {DIV} at (0,882) size 769x18
-        RenderText {TEXT} at (0,0) size 203x18
-          text run at (0,0) width 203: "\"StyleSheets\", \"1.0\": false, false"
-      RenderBlock {DIV} at (0,900) size 769x18
-        RenderText {TEXT} at (0,0) size 159x18
-          text run at (0,0) width 159: "\"CSS\", \"1.0\": false, false"
-      RenderBlock {DIV} at (0,918) size 769x18
-        RenderText {TEXT} at (0,0) size 167x18
-          text run at (0,0) width 167: "\"CSS2\", \"1.0\": false, false"
-      RenderBlock {DIV} at (0,936) size 769x18
-        RenderText {TEXT} at (0,0) size 167x18
-          text run at (0,0) width 167: "\"CSS3\", \"1.0\": false, false"
-      RenderBlock {DIV} at (0,954) size 769x18
-        RenderText {TEXT} at (0,0) size 173x18
-          text run at (0,0) width 173: "\"Events\", \"1.0\": false, false"
-      RenderBlock {DIV} at (0,972) size 769x18
-        RenderText {TEXT} at (0,0) size 190x18
-          text run at (0,0) width 190: "\"UIEvents\", \"1.0\": false, false"
-      RenderBlock {DIV} at (0,990) size 769x18
-        RenderText {TEXT} at (0,0) size 216x18
-          text run at (0,0) width 216: "\"MouseEvents\", \"1.0\": false, false"
-      RenderBlock {DIV} at (0,1008) size 769x18
-        RenderText {TEXT} at (0,0) size 219x18
-          text run at (0,0) width 219: "\"HTMLEvents\", \"1.0\": false, false"
-      RenderBlock {DIV} at (0,1026) size 769x18
-        RenderText {TEXT} at (0,0) size 230x18
-          text run at (0,0) width 230: "\"MutationEvents\", \"1.0\": false, false"
-      RenderBlock {DIV} at (0,1044) size 769x18
-        RenderText {TEXT} at (0,0) size 171x18
-          text run at (0,0) width 171: "\"Range\", \"1.0\": false, false"
-      RenderBlock {DIV} at (0,1062) size 769x18
-        RenderText {TEXT} at (0,0) size 189x18
-          text run at (0,0) width 189: "\"Traversal\", \"1.0\": false, false"
-      RenderBlock {DIV} at (0,1080) size 769x18
-        RenderText {TEXT} at (0,0) size 151x18
-          text run at (0,0) width 151: "\"Core\", \"2.0\": true, true"
-      RenderBlock {DIV} at (0,1098) size 769x18
-        RenderText {TEXT} at (0,0) size 166x18
-          text run at (0,0) width 166: "\"HTML\", \"2.0\": true, true"
-      RenderBlock {DIV} at (0,1116) size 769x18
-        RenderText {TEXT} at (0,0) size 156x18
-          text run at (0,0) width 156: "\"XML\", \"2.0\": true, true"
-      RenderBlock {DIV} at (0,1134) size 769x18
-        RenderText {TEXT} at (0,0) size 161x18
-          text run at (0,0) width 161: "\"Views\", \"2.0\": true, true"
-      RenderBlock {DIV} at (0,1152) size 769x18
-        RenderText {TEXT} at (0,0) size 193x18
-          text run at (0,0) width 193: "\"StyleSheets\", \"2.0\": true, true"
-      RenderBlock {DIV} at (0,1170) size 769x18
-        RenderText {TEXT} at (0,0) size 149x18
-          text run at (0,0) width 149: "\"CSS\", \"2.0\": true, true"
-      RenderBlock {DIV} at (0,1188) size 769x18
-        RenderText {TEXT} at (0,0) size 157x18
-          text run at (0,0) width 157: "\"CSS2\", \"2.0\": true, true"
-      RenderBlock {DIV} at (0,1206) size 769x18
-        RenderText {TEXT} at (0,0) size 167x18
-          text run at (0,0) width 167: "\"CSS3\", \"2.0\": false, false"
-      RenderBlock {DIV} at (0,1224) size 769x18
-        RenderText {TEXT} at (0,0) size 163x18
-          text run at (0,0) width 163: "\"Events\", \"2.0\": true, true"
-      RenderBlock {DIV} at (0,1242) size 769x18
-        RenderText {TEXT} at (0,0) size 180x18
-          text run at (0,0) width 180: "\"UIEvents\", \"2.0\": true, true"
-      RenderBlock {DIV} at (0,1260) size 769x18
-        RenderText {TEXT} at (0,0) size 206x18
-          text run at (0,0) width 206: "\"MouseEvents\", \"2.0\": true, true"
-      RenderBlock {DIV} at (0,1278) size 769x18
-        RenderText {TEXT} at (0,0) size 209x18
-          text run at (0,0) width 209: "\"HTMLEvents\", \"2.0\": true, true"
-      RenderBlock {DIV} at (0,1296) size 769x18
-        RenderText {TEXT} at (0,0) size 220x18
-          text run at (0,0) width 220: "\"MutationEvents\", \"2.0\": true, true"
-      RenderBlock {DIV} at (0,1314) size 769x18
-        RenderText {TEXT} at (0,0) size 161x18
-          text run at (0,0) width 161: "\"Range\", \"2.0\": true, true"
-      RenderBlock {DIV} at (0,1332) size 769x18
-        RenderText {TEXT} at (0,0) size 179x18
-          text run at (0,0) width 179: "\"Traversal\", \"2.0\": true, true"
-      RenderBlock {DIV} at (0,1350) size 769x18
-        RenderText {TEXT} at (0,0) size 161x18
-          text run at (0,0) width 161: "\"Core\", \"3.0\": false, false"
-      RenderBlock {DIV} at (0,1368) size 769x18
-        RenderText {TEXT} at (0,0) size 176x18
-          text run at (0,0) width 176: "\"HTML\", \"3.0\": false, false"
-      RenderBlock {DIV} at (0,1386) size 769x18
-        RenderText {TEXT} at (0,0) size 166x18
-          text run at (0,0) width 166: "\"XML\", \"3.0\": false, false"
-      RenderBlock {DIV} at (0,1404) size 769x18
-        RenderText {TEXT} at (0,0) size 171x18
-          text run at (0,0) width 171: "\"Views\", \"3.0\": false, false"
-      RenderBlock {DIV} at (0,1422) size 769x18
-        RenderText {TEXT} at (0,0) size 203x18
-          text run at (0,0) width 203: "\"StyleSheets\", \"3.0\": false, false"
-      RenderBlock {DIV} at (0,1440) size 769x18
-        RenderText {TEXT} at (0,0) size 159x18
-          text run at (0,0) width 159: "\"CSS\", \"3.0\": false, false"
-      RenderBlock {DIV} at (0,1458) size 769x18
-        RenderText {TEXT} at (0,0) size 167x18
-          text run at (0,0) width 167: "\"CSS2\", \"3.0\": false, false"
-      RenderBlock {DIV} at (0,1476) size 769x18
-        RenderText {TEXT} at (0,0) size 167x18
-          text run at (0,0) width 167: "\"CSS3\", \"3.0\": false, false"
-      RenderBlock {DIV} at (0,1494) size 769x18
-        RenderText {TEXT} at (0,0) size 173x18
-          text run at (0,0) width 173: "\"Events\", \"3.0\": false, false"
-      RenderBlock {DIV} at (0,1512) size 769x18
-        RenderText {TEXT} at (0,0) size 190x18
-          text run at (0,0) width 190: "\"UIEvents\", \"3.0\": false, false"
-      RenderBlock {DIV} at (0,1530) size 769x18
-        RenderText {TEXT} at (0,0) size 216x18
-          text run at (0,0) width 216: "\"MouseEvents\", \"3.0\": false, false"
-      RenderBlock {DIV} at (0,1548) size 769x18
-        RenderText {TEXT} at (0,0) size 219x18
-          text run at (0,0) width 219: "\"HTMLEvents\", \"3.0\": false, false"
-      RenderBlock {DIV} at (0,1566) size 769x18
-        RenderText {TEXT} at (0,0) size 230x18
-          text run at (0,0) width 230: "\"MutationEvents\", \"3.0\": false, false"
-      RenderBlock {DIV} at (0,1584) size 769x18
-        RenderText {TEXT} at (0,0) size 171x18
-          text run at (0,0) width 171: "\"Range\", \"3.0\": false, false"
-      RenderBlock {DIV} at (0,1602) size 769x18
-        RenderText {TEXT} at (0,0) size 189x18
-          text run at (0,0) width 189: "\"Traversal\", \"3.0\": false, false"
-      RenderBlock {DIV} at (0,1620) size 769x18
-        RenderText {TEXT} at (0,0) size 199x18
-          text run at (0,0) width 199: "\"Core\", \"nonsense\": false, false"
-      RenderBlock {DIV} at (0,1638) size 769x18
-        RenderText {TEXT} at (0,0) size 214x18
-          text run at (0,0) width 214: "\"HTML\", \"nonsense\": false, false"
-      RenderBlock {DIV} at (0,1656) size 769x18
-        RenderText {TEXT} at (0,0) size 204x18
-          text run at (0,0) width 204: "\"XML\", \"nonsense\": false, false"
-      RenderBlock {DIV} at (0,1674) size 769x18
-        RenderText {TEXT} at (0,0) size 209x18
-          text run at (0,0) width 209: "\"Views\", \"nonsense\": false, false"
-      RenderBlock {DIV} at (0,1692) size 769x18
-        RenderText {TEXT} at (0,0) size 241x18
-          text run at (0,0) width 241: "\"StyleSheets\", \"nonsense\": false, false"
-      RenderBlock {DIV} at (0,1710) size 769x18
-        RenderText {TEXT} at (0,0) size 197x18
-          text run at (0,0) width 197: "\"CSS\", \"nonsense\": false, false"
-      RenderBlock {DIV} at (0,1728) size 769x18
-        RenderText {TEXT} at (0,0) size 205x18
-          text run at (0,0) width 205: "\"CSS2\", \"nonsense\": false, false"
-      RenderBlock {DIV} at (0,1746) size 769x18
-        RenderText {TEXT} at (0,0) size 205x18
-          text run at (0,0) width 205: "\"CSS3\", \"nonsense\": false, false"
-      RenderBlock {DIV} at (0,1764) size 769x18
-        RenderText {TEXT} at (0,0) size 211x18
-          text run at (0,0) width 211: "\"Events\", \"nonsense\": false, false"
-      RenderBlock {DIV} at (0,1782) size 769x18
-        RenderText {TEXT} at (0,0) size 228x18
-          text run at (0,0) width 228: "\"UIEvents\", \"nonsense\": false, false"
-      RenderBlock {DIV} at (0,1800) size 769x18
-        RenderText {TEXT} at (0,0) size 254x18
-          text run at (0,0) width 254: "\"MouseEvents\", \"nonsense\": false, false"
-      RenderBlock {DIV} at (0,1818) size 769x18
-        RenderText {TEXT} at (0,0) size 257x18
-          text run at (0,0) width 257: "\"HTMLEvents\", \"nonsense\": false, false"
-      RenderBlock {DIV} at (0,1836) size 769x18
-        RenderText {TEXT} at (0,0) size 268x18
-          text run at (0,0) width 268: "\"MutationEvents\", \"nonsense\": false, false"
-      RenderBlock {DIV} at (0,1854) size 769x18
-        RenderText {TEXT} at (0,0) size 209x18
-          text run at (0,0) width 209: "\"Range\", \"nonsense\": false, false"
-      RenderBlock {DIV} at (0,1872) size 769x18
-        RenderText {TEXT} at (0,0) size 227x18
-          text run at (0,0) width 227: "\"Traversal\", \"nonsense\": false, false"
-      RenderBlock {DIV} at (0,1890) size 769x18
-        RenderText {TEXT} at (0,0) size 159x18
-          text run at (0,0) width 159: "undefined, \"\": false, false"
-      RenderBlock {DIV} at (0,1908) size 769x18
-        RenderText {TEXT} at (0,0) size 179x18
-          text run at (0,0) width 179: "undefined, \"1.0\": false, false"
-      RenderBlock {DIV} at (0,1926) size 769x18
-        RenderText {TEXT} at (0,0) size 179x18
-          text run at (0,0) width 179: "undefined, \"2.0\": false, false"
-      RenderBlock {DIV} at (0,1944) size 769x18
-        RenderText {TEXT} at (0,0) size 179x18
-          text run at (0,0) width 179: "undefined, \"3.0\": false, false"
-      RenderBlock {DIV} at (0,1962) size 769x18
-        RenderText {TEXT} at (0,0) size 217x18
-          text run at (0,0) width 217: "undefined, \"nonsense\": false, false"
-      RenderBlock {DIV} at (0,1980) size 769x18
-        RenderText {TEXT} at (0,0) size 208x18
-          text run at (0,0) width 208: "undefined, undefined: false, false"
-      RenderBlock {DIV} at (0,1998) size 769x18
-        RenderText {TEXT} at (0,0) size 169x18
-          text run at (0,0) width 169: "undefined, null: false, false"
-      RenderBlock {DIV} at (0,2016) size 769x18
-        RenderText {TEXT} at (0,0) size 120x18
-          text run at (0,0) width 120: "null, \"\": false, false"
-      RenderBlock {DIV} at (0,2034) size 769x18
-        RenderText {TEXT} at (0,0) size 140x18
-          text run at (0,0) width 140: "null, \"1.0\": false, false"
-      RenderBlock {DIV} at (0,2052) size 769x18
-        RenderText {TEXT} at (0,0) size 140x18
-          text run at (0,0) width 140: "null, \"2.0\": false, false"
-      RenderBlock {DIV} at (0,2070) size 769x18
-        RenderText {TEXT} at (0,0) size 140x18
-          text run at (0,0) width 140: "null, \"3.0\": false, false"
-      RenderBlock {DIV} at (0,2088) size 769x18
-        RenderText {TEXT} at (0,0) size 178x18
-          text run at (0,0) width 178: "null, \"nonsense\": false, false"
-      RenderBlock {DIV} at (0,2106) size 769x18
-        RenderText {TEXT} at (0,0) size 169x18
-          text run at (0,0) width 169: "null, undefined: false, false"
-      RenderBlock {DIV} at (0,2124) size 769x18
-        RenderText {TEXT} at (0,0) size 130x18
-          text run at (0,0) width 130: "null, null: false, false"
-      RenderBlock {DIV} at (0,2142) size 769x18
-        RenderText {TEXT} at (0,0) size 168x18
-          text run at (0,0) width 168: "\"nonsense\", \"\": false, false"
-      RenderBlock {DIV} at (0,2160) size 769x18
-        RenderText {TEXT} at (0,0) size 188x18
-          text run at (0,0) width 188: "\"nonsense\", \"1.0\": false, false"
-      RenderBlock {DIV} at (0,2178) size 769x18
-        RenderText {TEXT} at (0,0) size 188x18
-          text run at (0,0) width 188: "\"nonsense\", \"2.0\": false, false"
-      RenderBlock {DIV} at (0,2196) size 769x18
-        RenderText {TEXT} at (0,0) size 188x18
-          text run at (0,0) width 188: "\"nonsense\", \"3.0\": false, false"
-      RenderBlock {DIV} at (0,2214) size 769x18
-        RenderText {TEXT} at (0,0) size 226x18
-          text run at (0,0) width 226: "\"nonsense\", \"nonsense\": false, false"
-      RenderBlock {DIV} at (0,2232) size 769x18
-        RenderText {TEXT} at (0,0) size 217x18
-          text run at (0,0) width 217: "\"nonsense\", undefined: false, false"
-      RenderBlock {DIV} at (0,2250) size 769x18
-        RenderText {TEXT} at (0,0) size 178x18
-          text run at (0,0) width 178: "\"nonsense\", null: false, false"
+"Core", undefined: false, false
+"HTML", undefined: false, false
+"XML", undefined: false, false
+"Views", undefined: false, false
+"StyleSheets", undefined: false, false
+"CSS", undefined: false, false
+"CSS2", undefined: false, false
+"CSS3", undefined: false, false
+"Events", undefined: false, false
+"UIEvents", undefined: false, false
+"MouseEvents", undefined: false, false
+"HTMLEvents", undefined: false, false
+"MutationEvents", undefined: false, false
+"Range", undefined: false, false
+"Traversal", undefined: false, false
+"Core", null: true, true
+"HTML", null: true, true
+"XML", null: true, true
+"Views", null: true, true
+"StyleSheets", null: true, true
+"CSS", null: true, true
+"CSS2", null: true, true
+"CSS3", null: false, false
+"Events", null: true, true
+"UIEvents", null: true, true
+"MouseEvents", null: true, true
+"HTMLEvents", null: true, true
+"MutationEvents", null: true, true
+"Range", null: true, true
+"Traversal", null: true, true
+"Core", "": true, true
+"HTML", "": true, true
+"XML", "": true, true
+"Views", "": true, true
+"StyleSheets", "": true, true
+"CSS", "": true, true
+"CSS2", "": true, true
+"CSS3", "": false, false
+"Events", "": true, true
+"UIEvents", "": true, true
+"MouseEvents", "": true, true
+"HTMLEvents", "": true, true
+"MutationEvents", "": true, true
+"Range", "": true, true
+"Traversal", "": true, true
+"Core", "1.0": true, true
+"HTML", "1.0": true, true
+"XML", "1.0": true, true
+"Views", "1.0": false, false
+"StyleSheets", "1.0": false, false
+"CSS", "1.0": false, false
+"CSS2", "1.0": false, false
+"CSS3", "1.0": false, false
+"Events", "1.0": false, false
+"UIEvents", "1.0": false, false
+"MouseEvents", "1.0": false, false
+"HTMLEvents", "1.0": false, false
+"MutationEvents", "1.0": false, false
+"Range", "1.0": false, false
+"Traversal", "1.0": false, false
+"Core", "2.0": true, true
+"HTML", "2.0": true, true
+"XML", "2.0": true, true
+"Views", "2.0": true, true
+"StyleSheets", "2.0": true, true
+"CSS", "2.0": true, true
+"CSS2", "2.0": true, true
+"CSS3", "2.0": false, false
+"Events", "2.0": true, true
+"UIEvents", "2.0": true, true
+"MouseEvents", "2.0": true, true
+"HTMLEvents", "2.0": true, true
+"MutationEvents", "2.0": true, true
+"Range", "2.0": true, true
+"Traversal", "2.0": true, true
+"Core", "3.0": false, false
+"HTML", "3.0": false, false
+"XML", "3.0": false, false
+"Views", "3.0": false, false
+"StyleSheets", "3.0": false, false
+"CSS", "3.0": false, false
+"CSS2", "3.0": false, false
+"CSS3", "3.0": false, false
+"Events", "3.0": false, false
+"UIEvents", "3.0": false, false
+"MouseEvents", "3.0": false, false
+"HTMLEvents", "3.0": false, false
+"MutationEvents", "3.0": false, false
+"Range", "3.0": false, false
+"Traversal", "3.0": false, false
+"Core", "nonsense": false, false
+"HTML", "nonsense": false, false
+"XML", "nonsense": false, false
+"Views", "nonsense": false, false
+"StyleSheets", "nonsense": false, false
+"CSS", "nonsense": false, false
+"CSS2", "nonsense": false, false
+"CSS3", "nonsense": false, false
+"Events", "nonsense": false, false
+"UIEvents", "nonsense": false, false
+"MouseEvents", "nonsense": false, false
+"HTMLEvents", "nonsense": false, false
+"MutationEvents", "nonsense": false, false
+"Range", "nonsense": false, false
+"Traversal", "nonsense": false, false
+undefined, "": false, false
+undefined, "1.0": false, false
+undefined, "2.0": false, false
+undefined, "3.0": false, false
+undefined, "nonsense": false, false
+undefined, undefined: false, false
+undefined, null: false, false
+null, "": false, false
+null, "1.0": false, false
+null, "2.0": false, false
+null, "3.0": false, false
+null, "nonsense": false, false
+null, undefined: false, false
+null, null: false, false
+"nonsense", "": false, false
+"nonsense", "1.0": false, false
+"nonsense", "2.0": false, false
+"nonsense", "3.0": false, false
+"nonsense", "nonsense": false, false
+"nonsense", undefined: false, false
+"nonsense", null: false, false

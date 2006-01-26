@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A37F63A0988EE3300D05E90 /* JSCore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A37F6390988EE3300D05E90 /* JSCore.cpp */; };
 		1A3D8557097647B5002C85D1 /* ObjectContents.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3D8556097647B4002C85D1 /* ObjectContents.h */; };
 		1A69D381085627410009880D /* domparser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A69D37F085627410009880D /* domparser.h */; };
 		1A69D382085627410009880D /* domparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A69D380085627410009880D /* domparser.cpp */; };
@@ -1095,6 +1096,7 @@
 /* End PBXBuildStyle section */
 
 /* Begin PBXFileReference section */
+		1A37F6390988EE3300D05E90 /* JSCore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCore.cpp; sourceTree = "<group>"; };
 		1A3D8556097647B4002C85D1 /* ObjectContents.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ObjectContents.h; sourceTree = "<group>"; };
 		1A69D37F085627410009880D /* domparser.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = domparser.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1A69D380085627410009880D /* domparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = domparser.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3047,6 +3049,7 @@
 		BC1A3793097C6FB10019F3D8 /* Javascript */ = {
 			isa = PBXGroup;
 			children = (
+				1A37F6390988EE3300D05E90 /* JSCore.cpp */,
 				1ADB5698098827AD0032EEE2 /* JSEvents.cpp */,
 			);
 			name = Javascript;
@@ -5518,6 +5521,7 @@
 				BCC8CFE50986CEA400140BF2 /* Color.mm in Sources */,
 				BCC8D1730988301200140BF2 /* Pen.cpp in Sources */,
 				1ADB5699098827AD0032EEE2 /* JSEvents.cpp in Sources */,
+				1A37F63A0988EE3300D05E90 /* JSCore.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -243,6 +243,7 @@ sub ParseInterface
 
         my $attributeType = (defined($1) ? $1 : die("Parsing error!\nSource:\n$line\n)"));
         my $attributeExtendedAttributes = (defined($2) ? $2 : " "); chop($attributeExtendedAttributes);
+        
         my $attributeDataType = (defined($3) ? $3 : die("Parsing error!\nSource:\n$line\n)"));
         my $attributeDataName = (defined($4) ? $4 : die("Parsing error!\nSource:\n$line\n)"));
           
@@ -254,10 +255,10 @@ sub ParseInterface
         my $newDataNode = new domAttribute();
         $newDataNode->type($attributeType);
         $newDataNode->signature(new domSignature());
-        $newDataNode->extendedAttributes(parseExtendedAttributes($attributeExtendedAttributes));
 
         $newDataNode->signature->name($attributeDataName);
         $newDataNode->signature->type($attributeDataType);
+        $newDataNode->signature->extendedAttributes(parseExtendedAttributes($attributeExtendedAttributes));
 
         my $arrayRef = $dataNode->attributes;
         push(@$arrayRef, $newDataNode);

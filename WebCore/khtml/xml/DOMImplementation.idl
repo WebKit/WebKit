@@ -1,0 +1,23 @@
+module core {
+    interface DOMImplementation {
+        boolean hasFeature(in DOMString feature, 
+                           in [ConvertNullToNullString] DOMString version);
+                           
+                           
+        DocumentType createDocumentType(in DOMString qualifiedName,
+                                        in DOMString publicId,
+                                        in DOMString systemId)
+            raises(DOMException);
+            
+        Document createDocument(in [ConvertNullToNullString] DOMString namespaceURI, 
+                                in [ConvertNullToNullString] DOMString qualifiedName, 
+                                in [ConvertNullToNullString] DocumentType doctype)
+            raises(DOMException);
+
+        CSSStyleSheet createCSSStyleSheet(in DOMString title,
+                                          in DOMString media)
+            raises(DOMException);
+            
+        HTMLDocument createHTMLDocument(in DOMString title);
+    };
+}

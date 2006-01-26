@@ -36,6 +36,9 @@
 #include "css/css_ruleimpl.h"
 #include "css/css_stylesheetimpl.h"
 
+#include "JSDOMImplementation.h"
+#include "JSDocumentType.h"
+
 #include "kjs_html.h"
 #include "kjs_css.h"
 #include "kjs_range.h"
@@ -629,7 +632,7 @@ JSValue *DOMNodeProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, co
       return jsUndefined();
     case DOMNode::IsSupported:
         return jsBoolean(node.isSupported(args[0]->toString(exec).domString(),
-            args[1]->isUndefinedOrNull() ? DOMString() : args[1]->toString(exec).domString()));
+                                          valueToStringWithNullCheck(exec, args[1])));
     case DOMNode::IsSameNode:
         return jsBoolean(node.isSameNode(toNode(args[0])));
     case DOMNode::IsEqualNode:
@@ -1285,110 +1288,9 @@ ElementImpl *toElement(JSValue *val)
     return static_cast<ElementImpl *>(static_cast<DOMElement *>(val)->impl());
 }
 
-// -------------------------------------------------------------------------
-
-/* Source for DOMDOMImplementationProtoTable. Use "make hashtables" to regenerate.
-@begin DOMDOMImplementationProtoTable 5
-  hasFeature            DOMDOMImplementation::HasFeature                DontDelete|Function 2
-# DOM2
-  createCSSStyleSheet   DOMDOMImplementation::CreateCSSStyleSheet       DontDelete|Function 2
-  createDocumentType    DOMDOMImplementation::CreateDocumentType        DontDelete|Function 3
-  createDocument        DOMDOMImplementation::CreateDocument            DontDelete|Function 3
-  createHTMLDocument    DOMDOMImplementation::CreateHTMLDocument        DontDelete|Function 1
-@end
-*/
-KJS_DEFINE_PROTOTYPE(DOMDOMImplementationProto)
-KJS_IMPLEMENT_PROTOFUNC(DOMDOMImplementationProtoFunc)
-KJS_IMPLEMENT_PROTOTYPE("DOMImplementation",DOMDOMImplementationProto,DOMDOMImplementationProtoFunc)
-
-const ClassInfo DOMDOMImplementation::info = { "DOMImplementation", 0, 0, 0 };
-
-DOMDOMImplementation::DOMDOMImplementation(ExecState *exec, DOMImplementationImpl *i)
-  : m_impl(i) 
-{ 
-  setPrototype(DOMDOMImplementationProto::self(exec));
-}
-
-DOMDOMImplementation::~DOMDOMImplementation()
-{
-  ScriptInterpreter::forgetDOMObject(m_impl.get());
-}
-
-JSValue *DOMDOMImplementationProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
-{
-  if (!thisObj->inherits(&KJS::DOMDOMImplementation::info))
-    return throwError(exec, TypeError);
-  DOMExceptionTranslator exception(exec);
-  DOMImplementationImpl &implementation = *static_cast<DOMDOMImplementation *>(thisObj)->impl();
-
-  switch(id) {
-  case DOMDOMImplementation::HasFeature:
-    return jsBoolean(implementation.hasFeature(args[0]->toString(exec).domString(),
-        args[1]->isUndefinedOrNull() ? DOMString() : args[1]->toString(exec).domString()));
-  case DOMDOMImplementation::CreateDocumentType: // DOM2
-    return getDOMNode(exec, implementation.createDocumentType(args[0]->toString(exec).domString(),
-        args[1]->toString(exec).domString(), args[2]->toString(exec).domString(), exception));
-  case DOMDOMImplementation::CreateDocument: // DOM2
-    return getDOMNode(exec, implementation.createDocument(valueToStringWithNullCheck(exec, args[0]),
-        valueToStringWithNullCheck(exec, args[1]), toDocumentType(args[2]), exception));
-  case DOMDOMImplementation::CreateCSSStyleSheet: // DOM2
-    return getDOMStyleSheet(exec, implementation.createCSSStyleSheet(args[0]->toString(exec).domString(), args[1]->toString(exec).domString(), exception));
-  case DOMDOMImplementation::CreateHTMLDocument: // DOM2-HTML
-    return getDOMNode(exec, implementation.createHTMLDocument(args[0]->toString(exec).domString()));
-  default:
-    break;
-  }
-  return jsUndefined();
-}
-
-// -------------------------------------------------------------------------
-
-const ClassInfo DOMDocumentType::info = { "DocumentType", &DOMNode::info, &DOMDocumentTypeTable, 0 };
-
-/* Source for DOMDocumentTypeTable. Use "make hashtables" to regenerate.
-@begin DOMDocumentTypeTable 6
-  name                  DOMDocumentType::Name           DontDelete|ReadOnly
-  entities              DOMDocumentType::Entities       DontDelete|ReadOnly
-  notations             DOMDocumentType::Notations      DontDelete|ReadOnly
-# DOM2
-  publicId              DOMDocumentType::PublicId       DontDelete|ReadOnly
-  systemId              DOMDocumentType::SystemId       DontDelete|ReadOnly
-  internalSubset        DOMDocumentType::InternalSubset DontDelete|ReadOnly
-@end
-*/
-DOMDocumentType::DOMDocumentType(ExecState *exec, DocumentTypeImpl *dt)
-  : DOMNode( /*### no proto yet*/exec, dt ) { }
-
-bool DOMDocumentType::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  return getStaticValueSlot<DOMDocumentType, DOMNode>(exec, &DOMDocumentTypeTable, this, propertyName, slot);
-}
-
-JSValue *DOMDocumentType::getValueProperty(ExecState *exec, int token) const
-{
-  DocumentTypeImpl &type = *static_cast<DocumentTypeImpl *>(impl());
-  switch (token) {
-  case Name:
-    return jsStringOrNull(type.name());
-  case Entities:
-    return getDOMNamedNodeMap(exec,type.entities());
-  case Notations:
-    return getDOMNamedNodeMap(exec,type.notations());
-  case PublicId: // DOM2
-    return jsStringOrNull(type.publicId());
-  case SystemId: // DOM2
-    return jsStringOrNull(type.systemId());
-  case InternalSubset: // DOM2
-    return jsStringOrNull(type.internalSubset());
-  default:
-    kdWarning() << "DOMDocumentType::getValueProperty unhandled token " << token << endl;
-    return NULL;
-  }
-}
-
 DocumentTypeImpl *toDocumentType(JSValue *val)
 {
-    if (!val || !val->isObject(&DOMDocumentType::info))
+    if (!val || !val->isObject(&JSDocumentType::info))
         return 0;
     return static_cast<DocumentTypeImpl *>(static_cast<DOMNode *>(val)->impl());
 }
@@ -1696,7 +1598,7 @@ JSValue *getDOMNode(ExecState *exec, PassRefPtr<NodeImpl> node)
       // we don't want to cache the document itself in the per-document dictionary
       return getDOMDocumentNode(exec, static_cast<DocumentImpl *>(n));
     case DOM::Node::DOCUMENT_TYPE_NODE:
-      ret = new DOMDocumentType(exec, static_cast<DocumentTypeImpl *>(n));
+      ret = new JSDocumentType(exec, static_cast<DocumentTypeImpl *>(n));
       break;
     case DOM::Node::NOTATION_NODE:
       ret = new DOMNotation(exec, static_cast<NotationImpl *>(n));
@@ -1752,7 +1654,7 @@ JSValue *getDOMNodeList(ExecState *exec, NodeListImpl *l)
 
 JSValue *getDOMDOMImplementation(ExecState *exec, DOMImplementationImpl *i)
 {
-  return cacheDOMObject<DOMImplementationImpl, DOMDOMImplementation>(exec, i);
+  return cacheDOMObject<DOMImplementationImpl, JSDOMImplementation>(exec, i);
 }
 
 // -------------------------------------------------------------------------
