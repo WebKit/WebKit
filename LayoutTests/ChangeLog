@@ -1,5 +1,15 @@
 2006-01-26  Eric Seidel  <eseidel@apple.com>
 
+        Adding additional test case from:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6801
+
+        * svg/custom/percentage-rect2-expected.checksum: Added.
+        * svg/custom/percentage-rect2-expected.png: Added.
+        * svg/custom/percentage-rect2-expected.txt: Added.
+        * svg/custom/percentage-rect2.svg: Added.
+
+2006-01-26  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by mjs.
 
         * svg/custom/junk-data-expected.checksum:
