@@ -380,14 +380,10 @@ void HTMLTableElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     } else if (attr->name() == borderAttr)  {
         m_noBorder = true;
         if (attr->decl()) {
-            CSSValueImpl* val = attr->decl()->getPropertyCSSValue(CSS_PROP_BORDER_LEFT_WIDTH);
-            if (val) {
-                val->ref();
-                if (val->isPrimitiveValue()) {
-                    CSSPrimitiveValueImpl* primVal = static_cast<CSSPrimitiveValueImpl*>(val);
-                    m_noBorder = !primVal->getFloatValue(CSSPrimitiveValue::CSS_NUMBER);
-                }
-                val->deref();
+            RefPtr<CSSValueImpl> val = attr->decl()->getPropertyCSSValue(CSS_PROP_BORDER_LEFT_WIDTH);
+            if (val && val->isPrimitiveValue()) {
+                CSSPrimitiveValueImpl* primVal = static_cast<CSSPrimitiveValueImpl*>(val.get());
+                m_noBorder = !primVal->getFloatValue(CSSPrimitiveValue::CSS_NUMBER);
             }
         }
         else if (!attr->isNull()) {
@@ -735,7 +731,7 @@ HTMLElementImpl *HTMLTableSectionElementImpl::insertRow( int index, int& excepti
             appendChild(r, exceptioncode);
         else {
             NodeImpl *n;
-            if(index < 1)
+            if (index < 1)
                 n = firstChild();
             else
                 n = children->item(index);
@@ -749,12 +745,11 @@ void HTMLTableSectionElementImpl::deleteRow( int index, int &exceptioncode )
 {
     RefPtr<NodeListImpl> children = childNodes();
     int numRows = children ? (int)children->length() : 0;
-    if ( index == -1 ) index = numRows - 1;
-    if( index >= 0 && index < numRows ) {
-        NodeImpl *row = children->item(index);
-        row->ref();
-        HTMLElementImpl::removeChild(row, exceptioncode);
-        row->deref();
+    if (index == -1)
+        index = numRows - 1;
+    if (index >= 0 && index < numRows) {
+        RefPtr<NodeImpl> row = children->item(index);
+        HTMLElementImpl::removeChild(row.get(), exceptioncode);
     } else
         exceptioncode = DOMException::INDEX_SIZE_ERR;
 }
@@ -928,12 +923,11 @@ void HTMLTableRowElementImpl::deleteCell( int index, int &exceptioncode )
 {
     RefPtr<NodeListImpl> children = childNodes();
     int numCells = children ? children->length() : 0;
-    if ( index == -1 ) index = numCells-1;
-    if( index >= 0 && index < numCells ) {
-        NodeImpl *row = children->item(index);
-        row->ref();
-        HTMLElementImpl::removeChild(row, exceptioncode);
-        row->deref();
+    if (index == -1 )
+        index = numCells-1;
+    if (index >= 0 && index < numCells) {
+        RefPtr<NodeImpl> row = children->item(index);
+        HTMLElementImpl::removeChild(row.get(), exceptioncode);
     } else
         exceptioncode = DOMException::INDEX_SIZE_ERR;
 }

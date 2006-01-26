@@ -267,32 +267,20 @@ DocumentFragmentImpl *HTMLElementImpl::createContextualFragment(const DOMString 
     // accommodate folks passing complete HTML documents to make the
     // child of an element.
 
-    NodeImpl *nextNode;
-    for (NodeImpl *node = fragment->firstChild(); node != NULL; node = nextNode) {
+    RefPtr<NodeImpl> nextNode;
+    for (RefPtr<NodeImpl> node = fragment->firstChild(); node; node = nextNode) {
         nextNode = node->nextSibling();
-        node->ref();
         if (node->hasTagName(htmlTag) || node->hasTagName(bodyTag)) {
             NodeImpl *firstChild = node->firstChild();
-            if (firstChild != NULL) {
+            if (firstChild)
                 nextNode = firstChild;
+            for (RefPtr<NodeImpl> child = firstChild; child; child = child->nextSibling()) {
+                node->removeChild(child.get(), ignoredExceptionCode);
+                fragment->insertBefore(child, node.get(), ignoredExceptionCode);
             }
-            NodeImpl *nextChild;
-            for (NodeImpl *child = firstChild; child != NULL; child = nextChild) {
-                nextChild = child->nextSibling();
-                child->ref();
-                node->removeChild(child, ignoredExceptionCode);
-                fragment->insertBefore(child, node, ignoredExceptionCode);
-                child->deref();
-            }
-            fragment->removeChild(node, ignoredExceptionCode);
+            fragment->removeChild(node.get(), ignoredExceptionCode);
         } else if (node->hasTagName(headTag))
-            fragment->removeChild(node, ignoredExceptionCode);
-
-        // Important to do this deref after removeChild, because if the only thing
-        // keeping a node around is a parent that is non-0, removeChild will not
-        // delete the node. This works fine in JavaScript because there's always
-        // a ref of the node, but here in C++ we need to do it explicitly.
-        node->deref();
+            fragment->removeChild(node.get(), ignoredExceptionCode);
     }
 
     // Trick to get the fragment back to the floating state, with 0

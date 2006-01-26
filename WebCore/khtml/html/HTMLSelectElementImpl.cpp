@@ -148,10 +148,8 @@ void HTMLSelectElementImpl::remove( int index )
     if(listIndex < 0 || index >= int(items.size()))
         return; // ### what should we do ? remove the last item?
 
-    NodeImpl *item = items[listIndex];
-    item->ref();
-    removeChild(item, exceptioncode);
-    item->deref();
+    RefPtr<NodeImpl> item = items[listIndex];
+    removeChild(item.get(), exceptioncode);
     if( !exceptioncode )
         setRecalcListItems();
 }

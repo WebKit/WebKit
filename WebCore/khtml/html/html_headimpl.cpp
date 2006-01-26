@@ -117,7 +117,6 @@ void HTMLBaseElementImpl::setTarget(const DOMString &value)
 HTMLLinkElementImpl::HTMLLinkElementImpl(DocumentImpl *doc)
     : HTMLElementImpl(linkTag, doc)
 {
-    m_sheet = 0;
     m_loading = false;
     m_cachedSheet = 0;
     m_isStyleSheet = m_isIcon = m_alternate = false;
@@ -126,8 +125,8 @@ HTMLLinkElementImpl::HTMLLinkElementImpl(DocumentImpl *doc)
 
 HTMLLinkElementImpl::~HTMLLinkElementImpl()
 {
-    if(m_sheet) m_sheet->deref();
-    if(m_cachedSheet) m_cachedSheet->deref(this);
+    if (m_cachedSheet)
+        m_cachedSheet->deref(this);
 }
 
 void HTMLLinkElementImpl::setDisabledState(bool _disabled)
@@ -254,7 +253,6 @@ void HTMLLinkElementImpl::process()
     }
     else if (m_sheet) {
         // we no longer contain a stylesheet, e.g. perhaps rel or type was changed
-        m_sheet->deref();
         m_sheet = 0;
         getDocument()->updateStyleSelector();
     }
@@ -274,13 +272,10 @@ void HTMLLinkElementImpl::removedFromDocument()
 
 void HTMLLinkElementImpl::setStyleSheet(const DOM::DOMString &url, const DOM::DOMString &sheetStr)
 {
-    if (m_sheet)
-        m_sheet->deref();
     m_sheet = new CSSStyleSheetImpl(this, url);
-    m_sheet->ref();
-    m_sheet->parseString( sheetStr, !getDocument()->inCompatMode() );
+    m_sheet->parseString(sheetStr, !getDocument()->inCompatMode());
 
-    MediaListImpl *media = new MediaListImpl( m_sheet, m_media );
+    MediaListImpl *media = new MediaListImpl(m_sheet.get(), m_media);
     m_sheet->setMedia( media );
 
     m_loading = false;
@@ -292,9 +287,11 @@ void HTMLLinkElementImpl::setStyleSheet(const DOM::DOMString &url, const DOM::DO
 
 bool HTMLLinkElementImpl::isLoading() const
 {
-    if(m_loading) return true;
-    if(!m_sheet) return false;
-    return static_cast<CSSStyleSheetImpl *>(m_sheet)->isLoading();
+    if (m_loading)
+        return true;
+    if (!m_sheet)
+        return false;
+    return static_cast<CSSStyleSheetImpl *>(m_sheet.get())->isLoading();
 }
 
 void HTMLLinkElementImpl::sheetLoaded()
@@ -707,13 +704,7 @@ void HTMLScriptElementImpl::setType(const DOMString &value)
 
 HTMLStyleElementImpl::HTMLStyleElementImpl(DocumentImpl *doc) : HTMLElementImpl(styleTag, doc)
 {
-    m_sheet = 0;
     m_loading = false;
-}
-
-HTMLStyleElementImpl::~HTMLStyleElementImpl()
-{
-    if(m_sheet) m_sheet->deref();
 }
 
 // other stuff...
@@ -753,9 +744,8 @@ void HTMLStyleElementImpl::childrenChanged()
     }
 
     if (m_sheet) {
-        if (static_cast<CSSStyleSheetImpl *>(m_sheet)->isLoading())
+        if (static_cast<CSSStyleSheetImpl *>(m_sheet.get())->isLoading())
             getDocument()->stylesheetLoaded(); // Remove ourselves from the sheet list.
-        m_sheet->deref();
         m_sheet = 0;
     }
 
@@ -765,10 +755,9 @@ void HTMLStyleElementImpl::childrenChanged()
         getDocument()->addPendingSheet();
         m_loading = true;
         m_sheet = new CSSStyleSheetImpl(this);
-        m_sheet->ref();
-        m_sheet->parseString( text, !getDocument()->inCompatMode() );
-        MediaListImpl *media = new MediaListImpl( m_sheet, m_media );
-        m_sheet->setMedia( media );
+        m_sheet->parseString(text, !getDocument()->inCompatMode());
+        MediaListImpl *media = new MediaListImpl(m_sheet.get(), m_media);
+        m_sheet->setMedia(media);
         m_loading = false;
     }
 
@@ -778,9 +767,11 @@ void HTMLStyleElementImpl::childrenChanged()
 
 bool HTMLStyleElementImpl::isLoading() const
 {
-    if (m_loading) return true;
-    if(!m_sheet) return false;
-    return static_cast<CSSStyleSheetImpl *>(m_sheet)->isLoading();
+    if (m_loading)
+        return true;
+    if (!m_sheet)
+        return false;
+    return static_cast<CSSStyleSheetImpl *>(m_sheet.get())->isLoading();
 }
 
 void HTMLStyleElementImpl::sheetLoaded()

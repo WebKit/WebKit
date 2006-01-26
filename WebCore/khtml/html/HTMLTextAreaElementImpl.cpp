@@ -233,10 +233,8 @@ void HTMLTextAreaElementImpl::setDefaultValue(const DOMString &defaultValue)
     QPtrListIterator<NodeImpl> it(toRemove);
     int exceptioncode = 0;
     for (; it.current(); ++it) {
-        NodeImpl *n = it.current();
-        n->ref();
-        removeChild(n, exceptioncode);
-        n->deref();
+        RefPtr<NodeImpl> n = it.current();
+        removeChild(n.get(), exceptioncode);
     }
     insertBefore(getDocument()->createTextNode(defaultValue),firstChild(), exceptioncode);
     setValue(defaultValue);

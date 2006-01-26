@@ -52,7 +52,7 @@ using namespace EventNames;
 using namespace HTMLNames;
 
 HTMLBodyElementImpl::HTMLBodyElementImpl(DocumentImpl *doc)
-    : HTMLElementImpl(bodyTag, doc), m_linkDecl(0)
+    : HTMLElementImpl(bodyTag, doc)
 {
 }
 
@@ -61,14 +61,12 @@ HTMLBodyElementImpl::~HTMLBodyElementImpl()
     if (m_linkDecl) {
         m_linkDecl->setNode(0);
         m_linkDecl->setParent(0);
-        m_linkDecl->deref();
     }
 }
 
 void HTMLBodyElementImpl::createLinkDecl()
 {
     m_linkDecl = new CSSMutableStyleDeclarationImpl;
-    m_linkDecl->ref();
     m_linkDecl->setParent(getDocument()->elementSheet());
     m_linkDecl->setNode(this);
     m_linkDecl->setStrictParsing(!getDocument()->inCompatMode());
@@ -129,19 +127,15 @@ void HTMLBodyElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
             if (!m_linkDecl)
                 createLinkDecl();
             m_linkDecl->setProperty(CSS_PROP_COLOR, attr->value(), false, false);
-            CSSValueImpl* val = m_linkDecl->getPropertyCSSValue(CSS_PROP_COLOR);
-            if (val) {
-                val->ref();
-                if (val->isPrimitiveValue()) {
-                    Color col = getDocument()->styleSelector()->getColorFromPrimitiveValue(static_cast<CSSPrimitiveValueImpl*>(val));
-                    if (attr->name() == linkAttr)
-                        getDocument()->setLinkColor(col);
-                    else if (attr->name() == vlinkAttr)
-                        getDocument()->setVisitedLinkColor(col);
-                    else
-                        getDocument()->setActiveLinkColor(col);
-                }
-                val->deref();
+            RefPtr<CSSValueImpl> val = m_linkDecl->getPropertyCSSValue(CSS_PROP_COLOR);
+            if (val && val->isPrimitiveValue()) {
+                Color col = getDocument()->styleSelector()->getColorFromPrimitiveValue(static_cast<CSSPrimitiveValueImpl*>(val.get()));
+                if (attr->name() == linkAttr)
+                    getDocument()->setLinkColor(col);
+                else if (attr->name() == vlinkAttr)
+                    getDocument()->setVisitedLinkColor(col);
+                else
+                    getDocument()->setActiveLinkColor(col);
             }
         }
         

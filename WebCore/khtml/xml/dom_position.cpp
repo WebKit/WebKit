@@ -96,51 +96,14 @@ static NodeImpl *previousRenderedEditable(NodeImpl *node)
     return 0;
 }
 
-
 Position::Position(NodeImpl *node, int offset) 
     : m_node(node), m_offset(offset) 
-{ 
-    if (node) {
-        node->ref();
-    }
-}
-
-Position::Position(const Position &o)
-    : m_node(o.m_node), m_offset(o.m_offset) 
 {
-    if (m_node) {
-        m_node->ref();
-    }
-}
-
-Position::~Position()
-{
-    if (m_node) {
-        m_node->deref();
-    }
-}
-
-Position &Position::operator=(const Position &o)
-{
-    if (m_node) {
-        m_node->deref();
-    }
-    m_node = o.m_node;
-    if (m_node) {
-        m_node->ref();
-    }
-
-    m_offset = o.m_offset;
-    
-    return *this;
 }
 
 void Position::clear()
 {
-    if (m_node) {
-        m_node->deref();
-        m_node = 0;
-    }
+    m_node = 0;
     m_offset = 0;
 }
 

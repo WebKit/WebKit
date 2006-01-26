@@ -484,16 +484,14 @@ EventListener *NodeImpl::getHTMLEventListener(const AtomicString &eventType)
 }
 
 
-bool NodeImpl::dispatchEvent(EventImpl *evt, int &exceptioncode, bool tempEvent)
+bool NodeImpl::dispatchEvent(PassRefPtr<EventImpl> e, int &exceptioncode, bool tempEvent)
 {
+    RefPtr<EventImpl> evt(e);
     assert(!eventDispatchForbidden());
     if (!evt || evt->type().isEmpty()) { 
         exceptioncode = EventException::_EXCEPTION_OFFSET + EventException::UNSPECIFIED_EVENT_TYPE_ERR;
         return false;
     }
-
-    evt->ref();
-
     evt->setTarget(this);
 
     // We've had at least one report of a crash on a page where document is null here.
@@ -509,26 +507,23 @@ bool NodeImpl::dispatchEvent(EventImpl *evt, int &exceptioncode, bool tempEvent)
         view = doc->view();
     }
 
-    bool ret = dispatchGenericEvent( evt, exceptioncode );
+    bool ret = dispatchGenericEvent(evt, exceptioncode);
 
     // If tempEvent is true, this means that the DOM implementation will not be storing a reference to the event, i.e.
     // there is no way to retrieve it from javascript if a script does not already have a reference to it in a variable.
     // So there is no need for the interpreter to keep the event in it's cache
     if (tempEvent && frame && frame->jScript())
-        frame->jScript()->finishedWithEvent(evt);
-
-    evt->deref();
+        frame->jScript()->finishedWithEvent(evt.get());
 
     return ret;
 }
 
-bool NodeImpl::dispatchGenericEvent( EventImpl *evt, int &/*exceptioncode */)
+bool NodeImpl::dispatchGenericEvent(PassRefPtr<EventImpl> e, int &/*exceptioncode */)
 {
+    RefPtr<EventImpl> evt(e);
     assert(!eventDispatchForbidden());
     assert(evt->target());
-
-    evt->ref();
-
+    
     // ### check that type specified
 
     // work out what nodes to send event to
@@ -544,14 +539,14 @@ bool NodeImpl::dispatchGenericEvent( EventImpl *evt, int &/*exceptioncode */)
     
     // Before we begin dispatching events, give the target node a chance to do some work prior
     // to the DOM event handlers getting a crack.
-    void* data = preDispatchEventHandler(evt);
+    void* data = preDispatchEventHandler(evt.get());
 
     // trigger any capturing event handlers on our way down
     evt->setEventPhase(Event::CAPTURING_PHASE);
     it.toFirst();
     for (; it.current() && it.current() != this && !evt->propagationStopped(); ++it) {
         evt->setCurrentTarget(it.current());
-        it.current()->handleLocalEvents(evt,true);
+        it.current()->handleLocalEvents(evt.get(), true);
     }
 
     // dispatch to the actual target node
@@ -561,7 +556,7 @@ bool NodeImpl::dispatchGenericEvent( EventImpl *evt, int &/*exceptioncode */)
         evt->setCurrentTarget(it.current());
 
         if (!evt->propagationStopped())
-            it.current()->handleLocalEvents(evt,false);
+            it.current()->handleLocalEvents(evt.get(), false);
     }
     --it;
 
@@ -581,7 +576,7 @@ bool NodeImpl::dispatchGenericEvent( EventImpl *evt, int &/*exceptioncode */)
         evt->setEventPhase(Event::BUBBLING_PHASE);
         for (; it.current() && !evt->propagationStopped() && !evt->getCancelBubble(); --it) {
             evt->setCurrentTarget(it.current());
-            it.current()->handleLocalEvents(evt,false);
+            it.current()->handleLocalEvents(evt.get(), false);
         }
     }
 
@@ -591,14 +586,14 @@ bool NodeImpl::dispatchGenericEvent( EventImpl *evt, int &/*exceptioncode */)
 
 
     // Now call the post dispatch.
-    postDispatchEventHandler(evt, data);
+    postDispatchEventHandler(evt.get(), data);
     
     if (evt->bubbles()) {
         // now we call all default event handlers (this is not part of DOM - it is internal to khtml)
 
         it.toLast();
         for (; it.current() && !evt->defaultPrevented() && !evt->defaultHandled(); --it)
-            it.current()->defaultEventHandler(evt);
+            it.current()->defaultEventHandler(evt.get());
     }
     
     // deref all nodes in chain
@@ -608,11 +603,7 @@ bool NodeImpl::dispatchGenericEvent( EventImpl *evt, int &/*exceptioncode */)
 
     DocumentImpl::updateDocumentsRendering();
 
-    bool defaultPrevented = evt->defaultPrevented();
-
-    evt->deref();
-
-    return !defaultPrevented; // ### what if defaultPrevented was called before dispatchEvent?
+    return !evt->defaultPrevented(); // ### what if defaultPrevented was called before dispatchEvent?
 }
 
 bool NodeImpl::dispatchHTMLEvent(const AtomicString &eventType, bool canBubbleArg, bool cancelableArg)
@@ -629,7 +620,7 @@ bool NodeImpl::dispatchWindowEvent(const AtomicString &eventType, bool canBubble
     RefPtr<EventImpl> evt = new EventImpl(eventType, canBubbleArg, cancelableArg);
     RefPtr<DocumentImpl> doc = getDocument();
     evt->setTarget(doc.get());
-    bool r = dispatchGenericEvent(evt.get(), exceptioncode);
+    bool r = dispatchGenericEvent(evt, exceptioncode);
     if (!evt->defaultPrevented() && doc)
         doc->defaultEventHandler(evt.get());
 
@@ -747,33 +738,30 @@ bool NodeImpl::dispatchMouseEvent(const AtomicString &eventType, int button, int
 
     bool swallowEvent = false;
 
-    EventImpl *me = new MouseEventImpl(eventType,true,cancelable,getDocument()->defaultView(),
+    RefPtr<EventImpl> me = new MouseEventImpl(eventType,true,cancelable,getDocument()->defaultView(),
                    detail,screenX,screenY,clientX,clientY,ctrlKey,altKey,shiftKey,metaKey,
                    button, 0, 0, isSimulated);
-    me->ref();
+    
     dispatchEvent(me, exceptioncode, true);
     bool defaultHandled = me->defaultHandled();
     bool defaultPrevented = me->defaultPrevented();
     if (defaultHandled || defaultPrevented)
         swallowEvent = true;
-    me->deref();
 
     // Special case: If it's a double click event, we also send the KHTML_DBLCLICK event. This is not part
     // of the DOM specs, but is used for compatibility with the ondblclick="" attribute.  This is treated
     // as a separate event in other DOM-compliant browsers like Firefox, and so we do the same.
     if (eventType == clickEvent && detail == 2) {
         me = new MouseEventImpl(khtmlDblclickEvent,
-                                true,cancelable,getDocument()->defaultView(),
-                                detail,screenX,screenY,clientX,clientY,
-                                ctrlKey,altKey,shiftKey,metaKey,
-                                button,0, 0, isSimulated);
-        me->ref();
+                                true, cancelable,getDocument()->defaultView(),
+                                detail, screenX, screenY, clientX, clientY,
+                                ctrlKey, altKey, shiftKey, metaKey,
+                                button, 0, 0, isSimulated);
         if (defaultHandled)
             me->setDefaultHandled();
         dispatchEvent(me,exceptioncode,true);
         if (me->defaultHandled() || me->defaultPrevented())
             swallowEvent = true;
-        me->deref();
     }
 
     // Also send a DOMActivate event, which causes things like form submissions to occur.
@@ -871,20 +859,16 @@ bool NodeImpl::dispatchKeyEvent(QKeyEvent *key)
 {
     assert(!eventDispatchForbidden());
     int exceptioncode = 0;
-    //kdDebug(6010) << "DOM::NodeImpl: dispatching keyboard event" << endl;
-    KeyboardEventImpl *keyboardEventImpl = new KeyboardEventImpl(key, getDocument()->defaultView());
-    keyboardEventImpl->ref();
+    RefPtr<KeyboardEventImpl> keyboardEventImpl = new KeyboardEventImpl(key, getDocument()->defaultView());
     bool r = dispatchEvent(keyboardEventImpl,exceptioncode,true);
 
     // we want to return false if default is prevented (already taken care of)
     // or if the element is default-handled by the DOM. Otherwise we let it just
     // let it get handled by AppKit 
     if (keyboardEventImpl->defaultHandled())
-      r = false;
-
-    keyboardEventImpl->deref();
+        r = false;
+    
     return r;
-
 }
 
 void NodeImpl::dispatchWheelEvent(QWheelEvent *e)
@@ -1397,23 +1381,22 @@ NodeImpl *NodeImpl::nextLeafNode() const
 
 void NodeImpl::createRendererIfNeeded()
 {
-
     if (!getDocument()->shouldCreateRenderers())
         return;
-        
+    
     assert(!attached());
     assert(!renderer());
     
     NodeImpl *parent = parentNode();    
     assert(parent);
-        
+    
     RenderObject *parentRenderer = parent->renderer();
     if (parentRenderer && parentRenderer->canHaveChildren()
 #if SVG_SUPPORT
         && parent->childShouldCreateRenderer(this)
 #endif
         ) {
-        RenderStyle *style = styleForRenderer(parentRenderer);
+        RenderStyle* style = styleForRenderer(parentRenderer);
         style->ref();
 #ifndef KHTML_NO_XBL
         bool resolveStyle = false;

@@ -1192,15 +1192,9 @@ void StyledElementImpl::updateStyleAttributeIfNeeded() const
     }
 }
 
-MappedAttributeImpl::~MappedAttributeImpl()
-{
-    if (m_styleDecl)
-        m_styleDecl->deref();
-}
-
 AttributeImpl* MappedAttributeImpl::clone(bool preserveDecl) const
 {
-    return new MappedAttributeImpl(m_name, m_value, preserveDecl ? m_styleDecl : 0);
+    return new MappedAttributeImpl(m_name, m_value, preserveDecl ? m_styleDecl.get() : 0);
 }
 
 NamedMappedAttrMapImpl::NamedMappedAttrMapImpl(ElementImpl *e)
@@ -1285,7 +1279,6 @@ void NamedMappedAttrMapImpl::parseClassAttribute(const DOMString& classStr)
 StyledElementImpl::StyledElementImpl(const QualifiedName& name, DocumentImpl *doc)
     : ElementImpl(name, doc)
 {
-    m_inlineStyleDecl = 0;
     m_isStyleAttributeValid = true;
     m_synchronizingStyleAttribute = false;
 }
@@ -1303,7 +1296,6 @@ AttributeImpl* StyledElementImpl::createAttribute(const QualifiedName& name, DOM
 void StyledElementImpl::createInlineStyleDecl()
 {
     m_inlineStyleDecl = new CSSMutableStyleDeclarationImpl;
-    m_inlineStyleDecl->ref();
     m_inlineStyleDecl->setParent(getDocument()->elementSheet());
     m_inlineStyleDecl->setNode(this);
     m_inlineStyleDecl->setStrictParsing(!getDocument()->inCompatMode());
@@ -1314,7 +1306,6 @@ void StyledElementImpl::destroyInlineStyleDecl()
     if (m_inlineStyleDecl) {
         m_inlineStyleDecl->setNode(0);
         m_inlineStyleDecl->setParent(0);
-        m_inlineStyleDecl->deref();
         m_inlineStyleDecl = 0;
     }
 }
@@ -1414,7 +1405,7 @@ CSSMutableStyleDeclarationImpl* StyledElementImpl::getInlineStyleDecl()
 {
     if (!m_inlineStyleDecl)
         createInlineStyleDecl();
-    return m_inlineStyleDecl;
+    return m_inlineStyleDecl.get();
 }
 
 CSSStyleDeclarationImpl* StyledElementImpl::style()

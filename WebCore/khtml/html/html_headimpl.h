@@ -109,7 +109,7 @@ public:
     DOMString type() const;
     void setType(const DOMString &);
 
-    StyleSheetImpl* sheet() const { return m_sheet; }
+    StyleSheetImpl* sheet() const { return m_sheet.get(); }
 
     // overload from HTMLElementImpl
     virtual void parseMappedAttribute(MappedAttributeImpl *attr);
@@ -137,7 +137,7 @@ public:
 
 protected:
     khtml::CachedCSSStyleSheet *m_cachedSheet;
-    CSSStyleSheetImpl *m_sheet;
+    RefPtr<CSSStyleSheetImpl> m_sheet;
     DOMString m_url;
     DOMString m_type;
     QString m_media;
@@ -241,13 +241,12 @@ class HTMLStyleElementImpl : public HTMLElementImpl
 {
 public:
     HTMLStyleElementImpl(DocumentImpl *doc);
-    ~HTMLStyleElementImpl();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 1; }
     virtual bool checkDTD(const NodeImpl* newChild) { return newChild->isTextNode(); }
 
-    StyleSheetImpl *sheet() const { return m_sheet; }
+    StyleSheetImpl *sheet() const { return m_sheet.get(); }
 
     // overload from HTMLElementImpl
     virtual void parseMappedAttribute(MappedAttributeImpl *attr);
@@ -268,7 +267,7 @@ public:
     void setType(const DOMString &);
 
 protected:
-    CSSStyleSheetImpl *m_sheet;
+    RefPtr<CSSStyleSheetImpl> m_sheet;
     bool m_loading;
     DOMString m_type;
     QString m_media;

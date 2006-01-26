@@ -1,3 +1,67 @@
+2006-01-26  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Deploy RefPtr throughout more of WebCore
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6754
+
+        * bridge/mac/MacFrame.mm:
+        (MacFrame::shouldClose): no need to call .get()
+        * khtml/html/HTMLElementImpl.cpp:
+        (WebCore::HTMLElementImpl::createContextualFragment):
+        * khtml/html/HTMLSelectElementImpl.cpp:
+        (WebCore::HTMLSelectElementImpl::remove):
+        * khtml/html/HTMLTextAreaElementImpl.cpp:
+        (WebCore::HTMLTextAreaElementImpl::setDefaultValue):
+        * khtml/html/html_baseimpl.cpp:
+        (WebCore::HTMLBodyElementImpl::HTMLBodyElementImpl):
+        (WebCore::HTMLBodyElementImpl::~HTMLBodyElementImpl):
+        (WebCore::HTMLBodyElementImpl::createLinkDecl):
+        (WebCore::HTMLBodyElementImpl::parseMappedAttribute):
+        * khtml/html/html_baseimpl.h:
+        * khtml/html/html_headimpl.cpp:
+        (WebCore::HTMLLinkElementImpl::HTMLLinkElementImpl):
+        (WebCore::HTMLLinkElementImpl::~HTMLLinkElementImpl):
+        (WebCore::HTMLLinkElementImpl::process):
+        (WebCore::HTMLLinkElementImpl::setStyleSheet):
+        (WebCore::HTMLLinkElementImpl::isLoading):
+        (WebCore::HTMLStyleElementImpl::HTMLStyleElementImpl):
+        (WebCore::HTMLStyleElementImpl::childrenChanged):
+        (WebCore::HTMLStyleElementImpl::isLoading):
+        * khtml/html/html_headimpl.h:
+        (DOM::HTMLLinkElementImpl::sheet):
+        (DOM::HTMLStyleElementImpl::sheet):
+        * khtml/html/html_tableimpl.cpp:
+        (WebCore::HTMLTableElementImpl::parseMappedAttribute):
+        (WebCore::HTMLTableSectionElementImpl::insertRow):
+        (WebCore::HTMLTableSectionElementImpl::deleteRow):
+        (WebCore::HTMLTableRowElementImpl::deleteCell):
+        * khtml/xml/NodeImpl.cpp:
+        (WebCore::NodeImpl::dispatchEvent):
+        (WebCore::NodeImpl::dispatchGenericEvent):
+        (WebCore::NodeImpl::dispatchWindowEvent):
+        (WebCore::NodeImpl::dispatchMouseEvent):
+        (WebCore::NodeImpl::dispatchKeyEvent):
+        (WebCore::NodeImpl::createRendererIfNeeded):
+        * khtml/xml/NodeImpl.h:
+        * khtml/xml/dom_elementimpl.cpp:
+        (WebCore::MappedAttributeImpl::clone):
+        (WebCore::StyledElementImpl::StyledElementImpl):
+        (WebCore::StyledElementImpl::createInlineStyleDecl):
+        (WebCore::StyledElementImpl::destroyInlineStyleDecl):
+        (WebCore::StyledElementImpl::getInlineStyleDecl):
+        * khtml/xml/dom_elementimpl.h:
+        (DOM::MappedAttributeImpl::MappedAttributeImpl):
+        (DOM::MappedAttributeImpl::style):
+        (DOM::MappedAttributeImpl::decl):
+        (DOM::MappedAttributeImpl::setDecl):
+        (DOM::StyledElementImpl::inlineStyleDecl):
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::Position):
+        (DOM::Position::clear):
+        * khtml/xml/dom_position.h:
+        (DOM::Position::node):
+
 2006-01-25  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave Hyatt.

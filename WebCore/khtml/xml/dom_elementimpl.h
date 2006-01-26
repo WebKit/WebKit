@@ -379,33 +379,22 @@ public:
     MappedAttributeImpl(const QualifiedName& name, const AtomicString& value, CSSMappedAttributeDeclarationImpl* decl = 0)
     : AttributeImpl(name, value), m_styleDecl(decl)
     {
-        if (decl)
-            decl->ref();
     }
 
     MappedAttributeImpl(const AtomicString& name, const AtomicString& value, CSSMappedAttributeDeclarationImpl* decl = 0)
     : AttributeImpl(name, value), m_styleDecl(decl)
     {
-        if (decl)
-            decl->ref();
     }
-
-    ~MappedAttributeImpl();
 
     virtual AttributeImpl* clone(bool preserveDecl=true) const;
 
-    virtual CSSStyleDeclarationImpl* style() const { return m_styleDecl; }
+    virtual CSSStyleDeclarationImpl* style() const { return m_styleDecl.get(); }
 
-    CSSMappedAttributeDeclarationImpl* decl() const { return m_styleDecl; }
-    void setDecl(CSSMappedAttributeDeclarationImpl* decl) 
-    { 
-        if (m_styleDecl) m_styleDecl->deref();
-        m_styleDecl = decl;
-        if (m_styleDecl) m_styleDecl->ref();
-    }
+    CSSMappedAttributeDeclarationImpl* decl() const { return m_styleDecl.get(); }
+    void setDecl(CSSMappedAttributeDeclarationImpl* decl) { m_styleDecl = decl; }
 
 private:
-    CSSMappedAttributeDeclarationImpl* m_styleDecl;
+    RefPtr<CSSMappedAttributeDeclarationImpl> m_styleDecl;
 };
 
 class NamedMappedAttrMapImpl : public NamedAttrMapImpl
@@ -460,7 +449,7 @@ public:
     static void setMappedAttributeDecl(MappedAttributeEntry type, AttributeImpl* attr, CSSMappedAttributeDeclarationImpl* decl);
     static void removeMappedAttributeDecl(MappedAttributeEntry type, const QualifiedName& attrName, const AtomicString& attrValue);
     
-    CSSMutableStyleDeclarationImpl* inlineStyleDecl() const { return m_inlineStyleDecl; }
+    CSSMutableStyleDeclarationImpl* inlineStyleDecl() const { return m_inlineStyleDecl.get(); }
     virtual CSSMutableStyleDeclarationImpl* additionalAttributeStyleDecl();
     CSSMutableStyleDeclarationImpl* getInlineStyleDecl();
     CSSStyleDeclarationImpl* style();
@@ -477,7 +466,7 @@ public:
     virtual AttributeImpl* createAttribute(const QualifiedName& name, DOMStringImpl* value);
 
 protected:
-    CSSMutableStyleDeclarationImpl* m_inlineStyleDecl;
+    RefPtr<CSSMutableStyleDeclarationImpl> m_inlineStyleDecl;
     mutable bool m_isStyleAttributeValid : 1;
     mutable bool m_synchronizingStyleAttribute : 1;
 };
