@@ -130,11 +130,11 @@ bool HTMLInputElementImpl::isKeyboardFocusable() const
 
 void HTMLInputElementImpl::focus()
 {
-    if ((m_type == TEXT) || (m_type == PASSWORD) && renderer()->style()->appearance() == TextFieldAppearance) {
+    if ((m_type == TEXT) || (m_type == PASSWORD)) {
         DocumentImpl* doc = getDocument();
         if (doc) {
             doc->updateLayout();
-            if (isFocusable()) {
+            if (isFocusable() && renderer() && renderer()->style()->appearance() == TextFieldAppearance) {
                 doc->setFocusNode(this);
                 select();
                 doc->frame()->revealSelection();
