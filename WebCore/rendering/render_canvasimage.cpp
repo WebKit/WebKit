@@ -181,7 +181,7 @@ void RenderCanvasImage::paint(PaintInfo& i, int _tx, int _ty)
     }
 
     if (drawSelectionTint) {
-        QBrush brush(selectionColor(p));
+        Brush brush(selectionColor(p));
         IntRect selRect(selectionRect());
         p->fillRect(selRect.x(), selRect.y(), selRect.width(), selRect.height(), brush);
     }

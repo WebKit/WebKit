@@ -746,7 +746,7 @@ void SelectionController::paintCaret(QPainter *p, const IntRect &rect)
     IntRect caret = caretRect();
 
     if (caret.isValid())
-        p->fillRect(caret & rect, QBrush());
+        p->fillRect(caret & rect, Brush());
 }
 
 void SelectionController::debugRenderer(RenderObject *r, bool selected) const

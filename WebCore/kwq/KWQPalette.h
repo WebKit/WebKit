@@ -26,7 +26,7 @@
 #ifndef QPALETTE_H_
 #define QPALETTE_H_
 
-#include "KWQBrush.h"
+#include "Brush.h"
 
 class QColorGroup {
 public:
@@ -47,7 +47,7 @@ public:
     QColorGroup() : m_background(Color::white) { }
     QColorGroup(const Color &b, const Color &f) : m_background(b), m_foreground(f) { }
 
-    const QBrush &brush(ColorRole role) const { return role == Background ? m_background : m_foreground; }
+    const WebCore::Brush &brush(ColorRole role) const { return role == Background ? m_background : m_foreground; }
 
     const Color &color(ColorRole role) const { return brush(role).color(); }
     void setColor(ColorRole role, const Color &color)
@@ -62,8 +62,8 @@ public:
         { return m_background == other.m_background && m_foreground == other.m_foreground; }
 
 private:
-    QBrush m_background;
-    QBrush m_foreground;
+    WebCore::Brush m_background;
+    WebCore::Brush m_foreground;
 };
 
 

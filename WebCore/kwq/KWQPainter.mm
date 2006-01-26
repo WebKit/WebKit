@@ -27,7 +27,7 @@
 #import "KWQPainter.h"
 
 #import <kxmlcore/Assertions.h>
-#import "KWQBrush.h"
+#import "Brush.h"
 #import "KWQExceptions.h"
 #import "KWQFont.h"
 #import "KWQFoundationExtras.h"
@@ -55,7 +55,7 @@ struct QPState {
     QPState() : paintingDisabled(false) { }
     QFont font;
     Pen pen;
-    QBrush brush;
+    WebCore::Brush brush;
     QRegion clip;
     bool paintingDisabled;
 };
@@ -150,12 +150,12 @@ void QPainter::setPen(RGBA32 rgb)
     data->state.pen.setWidth(0);
 }
 
-void QPainter::setBrush(const QBrush &brush)
+void QPainter::setBrush(const WebCore::Brush &brush)
 {
     data->state.brush = brush;
 }
 
-void QPainter::setBrush(BrushStyle style)
+void QPainter::setBrush(WebCore::Brush::BrushStyle style)
 {
     data->state.brush.setStyle(style);
     data->state.brush.setColor(Color::black);
@@ -163,11 +163,11 @@ void QPainter::setBrush(BrushStyle style)
 
 void QPainter::setBrush(RGBA32 rgb)
 {
-    data->state.brush.setStyle(SolidPattern);
+    data->state.brush.setStyle(WebCore::Brush::SolidPattern);
     data->state.brush.setColor(rgb);
 }
 
-const QBrush& QPainter::brush() const
+const WebCore::Brush& QPainter::brush() const
 {
     return data->state.brush;
 }
@@ -210,7 +210,7 @@ void QPainter::drawRect(int x, int y, int w, int h)
     if (data->state.paintingDisabled)
         return;
          
-    if (data->state.brush.style() != NoBrush)
+    if (data->state.brush.style() != WebCore::Brush::NoBrush)
         _fillRectXX(x, y, w, h, data->state.brush.color());
 
     if (data->state.pen.style() != Pen::Pen::NoPen) {
@@ -369,7 +369,7 @@ void QPainter::drawEllipse(int x, int y, int w, int h)
     CGContextAddArc(context, x + r, y + r, r, 0, 2*M_PI, true);
     CGContextClosePath(context);
 
-    if (data->state.brush.style() != NoBrush) {
+    if (data->state.brush.style() != WebCore::Brush::NoBrush) {
         _setColorFromBrush();
 	if (data->state.pen.style() != Pen::NoPen) {
 	    // stroke and fill
@@ -438,7 +438,7 @@ void QPainter::drawConvexPolygon(const IntPointArray &points)
         CGContextAddLineToPoint(context, points[i].x(), points[i].y());
     CGContextClosePath(context);
 
-    if (data->state.brush.style() != NoBrush) {
+    if (data->state.brush.style() != WebCore::Brush::NoBrush) {
         _setColorFromBrush();
         CGContextEOFillPath(context);
     }
@@ -780,16 +780,16 @@ static inline void _fillRectXX(float x, float y, float w, float h, const Color& 
     NSRectFillUsingOperation(NSMakeRect(x,y,w,h), NSCompositeSourceOver);
 }
 
-void QPainter::fillRect(int x, int y, int w, int h, const QBrush &brush)
+void QPainter::fillRect(int x, int y, int w, int h, const WebCore::Brush &brush)
 {
     if (data->state.paintingDisabled)
         return;
 
-    if (brush.style() == SolidPattern)
+    if (brush.style() == WebCore::Brush::SolidPattern)
         _fillRectXX(x, y, w, h, brush.color());
 }
 
-void QPainter::fillRect(const IntRect &rect, const QBrush &brush)
+void QPainter::fillRect(const IntRect &rect, const WebCore::Brush &brush)
 {
     fillRect(rect.left(), rect.top(), rect.width(), rect.height(), brush);
 }

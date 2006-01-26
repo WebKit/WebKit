@@ -40,7 +40,6 @@
 #define Q_PROPERTY(text)
 
 class QBitmap;
-class QBrush;
 class ColorGroup;
 class QEvent;
 class QFont;

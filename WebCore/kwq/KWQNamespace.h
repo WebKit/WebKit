@@ -68,11 +68,6 @@ public:
         Vertical
     };
 
-    enum BrushStyle {
-        NoBrush,
-        SolidPattern,
-    };
-
     enum RasterOp { // raster op mode
         CopyROP,
         OrROP,

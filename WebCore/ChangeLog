@@ -1,3 +1,48 @@
+2006-01-25  David Hyatt  <hyatt@apple.com>
+
+        Rename QBrush to Brush and move it to platform/.  Remove unused QPoint/Size/RectF forwarding
+        headers.
+
+        * ForwardingHeaders/QPointF: Removed.
+        * ForwardingHeaders/QRectF: Removed.
+        * ForwardingHeaders/QSizeF: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * khtml/editing/SelectionController.cpp:
+        (WebCore::SelectionController::paintCaret):
+        * kwq/KWQBrush.h: Removed.
+        * kwq/KWQNamespace.h:
+        * kwq/KWQObject.h:
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainter::setBrush):
+        (QPainter::brush):
+        (QPainter::drawRect):
+        (QPainter::drawEllipse):
+        (QPainter::drawConvexPolygon):
+        (QPainter::fillRect):
+        * kwq/KWQPalette.h:
+        (QColorGroup::brush):
+        * platform/Brush.h: Added.
+        (WebCore::Brush::):
+        (WebCore::Brush::Brush::Brush):
+        (WebCore::Brush::operator==):
+        (WebCore::Brush::operator!=):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::fillHorizontalSelectionGap):
+        (WebCore::RenderBlock::fillVerticalSelectionGap):
+        (WebCore::RenderBlock::fillLeftSelectionGap):
+        (WebCore::RenderBlock::fillRightSelectionGap):
+        * rendering/render_box.cpp:
+        (WebCore::RenderBox::outlineBox):
+        * rendering/render_canvasimage.cpp:
+        (WebCore::RenderCanvasImage::paint):
+        * rendering/render_image.cpp:
+        (WebCore::RenderImage::paint):
+        * rendering/render_list.cpp:
+        (RenderListMarker::paint):
+        * rendering/render_replaced.cpp:
+        (WebCore::RenderWidget::paint):
+
 2006-01-25  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Timothy Hatcher.

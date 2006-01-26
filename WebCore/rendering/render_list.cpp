@@ -467,7 +467,7 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
         p->drawEllipse(_tx + xoff, _ty + (3 * yoff)/2, bulletWidth, bulletWidth);
         return;
     case CIRCLE:
-        p->setBrush(Qt::NoBrush);
+        p->setBrush(WebCore::Brush::NoBrush);
         p->drawEllipse(_tx + xoff, _ty + (3 * yoff)/2, bulletWidth, bulletWidth);
         return;
     case SQUARE:

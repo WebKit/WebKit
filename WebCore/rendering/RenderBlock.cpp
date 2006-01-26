@@ -1606,7 +1606,7 @@ IntRect RenderBlock::fillHorizontalSelectionGap(RenderObject* selObj, int xPos, 
     IntRect gapRect(xPos, yPos, width, height);
     if (i) {
         // Paint the rect.
-        QBrush selBrush(selObj->selectionColor(i->p));
+        Brush selBrush(selObj->selectionColor(i->p));
         i->p->fillRect(gapRect, selBrush);
     }
     return gapRect;
@@ -1631,7 +1631,7 @@ IntRect RenderBlock::fillVerticalSelectionGap(int lastTop, int lastLeft, int las
     IntRect gapRect(left, top, width, height);
     if (i) {
         // Paint the rect.
-        QBrush selBrush(selectionColor(i->p));
+        Brush selBrush(selectionColor(i->p));
         i->p->fillRect(gapRect, selBrush);
     }
     return gapRect;
@@ -1648,7 +1648,7 @@ IntRect RenderBlock::fillLeftSelectionGap(RenderObject* selObj, int xPos, int yP
     IntRect gapRect(left, top, width, height);
     if (i) {
         // Paint the rect.
-        QBrush selBrush(selObj->selectionColor(i->p));
+        Brush selBrush(selObj->selectionColor(i->p));
         i->p->fillRect(gapRect, selBrush);
     }
     return gapRect;
@@ -1666,7 +1666,7 @@ IntRect RenderBlock::fillRightSelectionGap(RenderObject* selObj, int xPos, int y
     IntRect gapRect(left, top, width, height);
     if (i) {
         // Paint the rect.
-        QBrush selBrush(selObj->selectionColor(i->p));
+        Brush selBrush(selObj->selectionColor(i->p));
         i->p->fillRect(gapRect, selBrush);
     }
     return gapRect;

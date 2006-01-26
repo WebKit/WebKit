@@ -28,6 +28,7 @@
 
 #include "Color.h"
 #include "Pen.h"
+#include "Brush.h"
 #include "KWQFontMetrics.h"
 #include "KWQNamespace.h"
 #include "IntRect.h"
@@ -37,7 +38,6 @@
 #endif
 
 class IntPointArray;
-class QBrush;
 class QFont;
 class QPaintDevice;
 class QPainterPrivate;
@@ -70,9 +70,9 @@ public:
     void setPen(Pen::PenStyle);
     void setPen(RGBA32);
     
-    const QBrush &QPainter::brush() const;
-    void setBrush(const QBrush &);
-    void setBrush(BrushStyle);
+    const WebCore::Brush &QPainter::brush() const;
+    void setBrush(const WebCore::Brush &);
+    void setBrush(WebCore::Brush::BrushStyle);
     void setBrush(RGBA32);
 
     IntRect xForm(const IntRect &) const;
@@ -86,8 +86,8 @@ public:
     void drawArc(int, int, int, int, int, int);
     void drawConvexPolygon(const IntPointArray &);
 
-    void fillRect(int, int, int, int, const QBrush &);
-    void fillRect(const IntRect &, const QBrush &);
+    void fillRect(int, int, int, int, const WebCore::Brush &);
+    void fillRect(const IntRect &, const WebCore::Brush &);
 
     void drawPixmap(const IntPoint &, const QPixmap &);
     void drawPixmap(const IntPoint &, const QPixmap &, const IntRect &);

@@ -23,15 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QBRUSH_H_
-#define QBRUSH_H_
+#ifndef BRUSH_H_
+#define BRUSH_H_
 
 #include "Color.h"
 #include "KWQNamespace.h"
 
-class QBrush : public Qt {
-public: 
-    QBrush::QBrush(const Color &c = Color::black, BrushStyle style = SolidPattern)
+namespace WebCore {
+
+class Brush {
+public:    
+    enum BrushStyle {
+        NoBrush,
+        SolidPattern,
+    };
+
+    Brush::Brush(const Color &c = Color::black, BrushStyle style = SolidPattern)
         : brushColor(c), brushStyle(style) { }
 
     const Color &color() const { return brushColor; }
@@ -39,12 +46,14 @@ public:
     BrushStyle style() const { return brushStyle; }
     void setStyle(BrushStyle s) { brushStyle = s; }
     
-    bool operator==(const QBrush &b) const { return brushColor == b.brushColor && brushStyle == b.brushStyle; }
-    bool operator!=(const QBrush &b) const { return !(*this == b); }
+    bool operator==(const Brush &b) const { return brushColor == b.brushColor && brushStyle == b.brushStyle; }
+    bool operator!=(const Brush &b) const { return !(*this == b); }
 
 private:
     Color brushColor;
     BrushStyle brushStyle;
 };
+
+}
 
 #endif
