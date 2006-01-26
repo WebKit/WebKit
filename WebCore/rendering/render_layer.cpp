@@ -161,8 +161,10 @@ RenderLayer::~RenderLayer()
 void RenderLayer::computeRepaintRects()
 {
     // FIXME: Child object could override visibility.
-    if (m_object->style()->visibility() == VISIBLE)
+    if (m_object->style()->visibility() == VISIBLE) {
         m_object->getAbsoluteRepaintRectIncludingFloats(m_repaintRect, m_fullRepaintRect);
+        m_object->absolutePosition(m_repaintX, m_repaintY);
+    }
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
         child->computeRepaintRects();
 }
@@ -188,8 +190,22 @@ void RenderLayer::updateLayerPositions(bool doFullRepaint, bool checkForRepaint)
     }
 
     // FIXME: Child object could override visibility.
-    if (checkForRepaint && (m_object->style()->visibility() == VISIBLE))
-        m_object->repaintAfterLayoutIfNeeded(m_repaintRect, m_fullRepaintRect);
+    if (checkForRepaint && (m_object->style()->visibility() == VISIBLE)) {
+        int x, y;
+        m_object->absolutePosition(x, y);
+        if (x == m_repaintX && y == m_repaintY)
+            m_object->repaintAfterLayoutIfNeeded(m_repaintRect, m_fullRepaintRect);
+        else {
+            RenderCanvas *c = m_object->canvas();
+            if (c && !c->printingMode()) {
+                c->repaintViewRectangle(m_fullRepaintRect);
+                IntRect newRect, newFullRect;
+                m_object->getAbsoluteRepaintRectIncludingFloats(newRect, newFullRect);
+                if (newRect != m_repaintRect)
+                    c->repaintViewRectangle(newFullRect);
+            }
+        }
+    }
     
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
         child->updateLayerPositions(doFullRepaint, checkForRepaint);

@@ -1,3 +1,18 @@
+2006-01-26  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin, landed by ap.
+        
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6388
+          REGRESSION: Incomplete repaint when dragging the map on Google maps
+
+        * manual-tests/bugzilla-6388.html: Added.
+        * rendering/render_layer.cpp:
+        (WebCore::RenderLayer::computeRepaintRects): Cache the object's absolute position
+        before update.
+        (WebCore::RenderLayer::updateLayerPositions): Use the cached position to determine if
+        the object moved. If it did, do a full repaint.
+        * rendering/render_layer.h:
+
 2006-01-26  Eric Seidel  <eseidel@apple.com>
 
         Fixes xcode project to better notice when generated files change.

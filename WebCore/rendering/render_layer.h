@@ -352,6 +352,8 @@ protected:
 
     IntRect m_repaintRect; // Cached repaint rects. Used by layout.
     IntRect m_fullRepaintRect;
+    int m_repaintX;
+    int m_repaintY;
 
     // Our current relative position offset.
     int m_relX;
