@@ -6,7 +6,7 @@ module events {
                 readonly attribute boolean ctrlKey;
                 readonly attribute boolean metaKey;
                 readonly attribute boolean shiftKey;
-
+ 
                 readonly attribute long    wheelDelta;
                 readonly attribute long    offsetX;
                 readonly attribute long    offsetY;
