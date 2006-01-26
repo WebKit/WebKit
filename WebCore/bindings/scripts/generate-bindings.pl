@@ -40,10 +40,12 @@ use CodeGenerator;
 my @idlDirectories;
 my $outputDirectory;
 my $generator;
+my $forceGeneration = 0;
 
 GetOptions('idldir=s@' => \@idlDirectories,
 			  'outputdir=s' => \$outputDirectory,
-			  'generator=s' => \$generator);
+			  'generator=s' => \$generator,
+			  'force-generation' => \$forceGeneration);
 
 if (!defined($generator)) {
   die('Must specify generator')
@@ -87,5 +89,5 @@ for my $idlPath (@idlFiles) {
 	
 	# Generate desired output for given IDL file.
 	my $codeGen = CodeGenerator->new(\@idlDirectories, $generator, $outputDirectory);
-	$codeGen->ProcessDocument($document);
+	$codeGen->ProcessDocument($document, $forceGeneration);
 }

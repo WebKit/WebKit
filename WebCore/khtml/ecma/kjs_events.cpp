@@ -35,6 +35,7 @@
 #include "CachedImage.h"
 #include "htmlnames.h"
 
+#include "JSMutationEvent.h"
 #include "JSWheelEvent.h"
 
 #include <kdebug.h>
@@ -367,7 +368,6 @@ const ClassInfo DOMEvent::info = { "Event", 0, &DOMEventTable, 0 };
   initEvent             DOMEvent::InitEvent             DontDelete|Function 3
 @end
 */
-KJS_DEFINE_PROTOTYPE(DOMEventProto)
 KJS_IMPLEMENT_PROTOFUNC(DOMEventProtoFunc)
 KJS_IMPLEMENT_PROTOTYPE("DOMEvent", DOMEventProto, DOMEventProtoFunc)
 
@@ -508,7 +508,7 @@ JSValue *getDOMEvent(ExecState *exec, EventImpl *e)
     else if (e->isUIEvent())
       ret = new DOMUIEvent(exec, static_cast<UIEventImpl *>(e));
     else if (e->isMutationEvent())
-      ret = new DOMMutationEvent(exec, static_cast<MutationEventImpl *>(e));
+      ret = new JSMutationEvent(exec, static_cast<MutationEventImpl *>(e));
     else
       ret = new DOMEvent(exec, e);
 
@@ -815,102 +815,6 @@ JSValue *DOMKeyboardEventProtoFunc::callAsFunction(ExecState *exec, JSObject *th
                               args[8]->toBoolean(exec), // shiftKeyArg
                               args[9]->toBoolean(exec), // metaKeyArg
                               args[10]->toBoolean(exec)); // altGraphKeyArg
-      return jsUndefined();
-  }
-  return jsUndefined();
-}
-
-// -------------------------------------------------------------------------
-
-const ClassInfo MutationEventConstructor::info = { "MutationEventConstructor", 0, &MutationEventConstructorTable, 0 };
-/*
-@begin MutationEventConstructorTable 3
-  MODIFICATION  DOM::MutationEvent::MODIFICATION        DontDelete|ReadOnly
-  ADDITION      DOM::MutationEvent::ADDITION            DontDelete|ReadOnly
-  REMOVAL       DOM::MutationEvent::REMOVAL             DontDelete|ReadOnly
-@end
-*/
-bool MutationEventConstructor::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  return getStaticValueSlot<MutationEventConstructor, DOMObject>(exec, &MutationEventConstructorTable, this, propertyName, slot);
-}
-
-JSValue *MutationEventConstructor::getValueProperty(ExecState *, int token) const
-{
-  // We use the token as the value to return directly
-  return jsNumber(token);
-}
-
-JSValue *getMutationEventConstructor(ExecState *exec)
-{
-  return cacheGlobalObject<MutationEventConstructor>(exec, "[[mutationEvent.constructor]]");
-}
-
-// -------------------------------------------------------------------------
-
-const ClassInfo DOMMutationEvent::info = { "MutationEvent", &DOMEvent::info, &DOMMutationEventTable, 0 };
-/*
-@begin DOMMutationEventTable 5
-  relatedNode   DOMMutationEvent::RelatedNode   DontDelete|ReadOnly
-  prevValue     DOMMutationEvent::PrevValue     DontDelete|ReadOnly
-  newValue      DOMMutationEvent::NewValue      DontDelete|ReadOnly
-  attrName      DOMMutationEvent::AttrName      DontDelete|ReadOnly
-  attrChange    DOMMutationEvent::AttrChange    DontDelete|ReadOnly
-@end
-@begin DOMMutationEventProtoTable 1
-  initMutationEvent     DOMMutationEvent::InitMutationEvent     DontDelete|Function 8
-@end
-*/
-KJS_DEFINE_PROTOTYPE(DOMMutationEventProto)
-KJS_IMPLEMENT_PROTOFUNC(DOMMutationEventProtoFunc)
-KJS_IMPLEMENT_PROTOTYPE_WITH_PARENT("DOMMutationEvent",DOMMutationEventProto,DOMMutationEventProtoFunc,DOMEventProto)
-
-DOMMutationEvent::DOMMutationEvent(ExecState *exec, MutationEventImpl *e)
-  : DOMEvent(exec, e)
-{
-  setPrototype(DOMMutationEventProto::self(exec));
-}
-
-bool DOMMutationEvent::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  return getStaticValueSlot<DOMMutationEvent, DOMEvent>(exec, &DOMMutationEventTable, this, propertyName, slot);
-}
-
-JSValue *DOMMutationEvent::getValueProperty(ExecState *exec, int token) const
-{
-  MutationEventImpl &event = *static_cast<MutationEventImpl *>(impl());
-  switch (token) {
-  case RelatedNode:
-    return getDOMNode(exec, event.relatedNode());
-  case PrevValue:
-    return jsString(event.prevValue());
-  case NewValue:
-    return jsString(event.newValue());
-  case AttrName:
-    return jsString(event.attrName());
-  case AttrChange:
-    return jsNumber(event.attrChange());
-  default:
-    kdWarning() << "Unhandled token in DOMMutationEvent::getValueProperty : " << token << endl;
-    return NULL;
-  }
-}
-
-JSValue *DOMMutationEventProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
-{
-  if (!thisObj->inherits(&DOMMutationEvent::info))
-    return throwError(exec, TypeError);
-  MutationEventImpl &mutationEvent = *static_cast<MutationEventImpl *>(static_cast<DOMEvent *>(thisObj)->impl());
-  switch (id) {
-    case DOMMutationEvent::InitMutationEvent:
-      mutationEvent.initMutationEvent(AtomicString(args[0]->toString(exec).domString()), // typeArg,
-                                      args[1]->toBoolean(exec), // canBubbleArg
-                                      args[2]->toBoolean(exec), // cancelableArg
-                                      toNode(args[3]), // relatedNodeArg
-                                      args[4]->toString(exec).domString(), // prevValueArg
-                                      args[5]->toString(exec).domString(), // newValueArg
-                                      args[6]->toString(exec).domString(), // attrNameArg
-                                      args[7]->toInt32(exec)); // attrChangeArg
       return jsUndefined();
   }
   return jsUndefined();

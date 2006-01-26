@@ -175,7 +175,7 @@ namespace KJS {
     UnprotectedListenersMap jsUnprotectedEventListeners;
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
-    enum { Closed, Crypto, DefaultStatus, Status, Document, Node, EventCtor, Range,
+    enum { Closed, Crypto, DefaultStatus, Status, Document, Node, EventCtor, MutationEventCtor, Range,
            NodeFilter, DOMException, CSSRule, Frames, _History, Event, InnerHeight,
            InnerWidth, Length, _Location, Locationbar, Name, _Navigator, ClientInformation,
            Menubar, OffscreenBuffering, Opener, OuterHeight, OuterWidth, PageXOffset, PageYOffset,

@@ -61,7 +61,8 @@ sub ProcessDocument
 {
   my $object = shift;
   $useDocument = shift;
-
+  $forceGeneration = shift;
+  
   my $ifaceName = $useGenerator;
   $ifaceName =~ s/\b(\w)/\U$1/g; # Make first letter of each word uppercase
   $ifaceName = "CodeGenerator$ifaceName";
@@ -79,7 +80,7 @@ sub ProcessDocument
   foreach(@$arrayRef) {
     my $class = $_;
 
-    if ($codeGenerator->ShouldGenerateFiles($useDocument, $class->name)) {
+    if ($forceGeneration || $codeGenerator->ShouldGenerateFiles($useDocument, $class->name)) {
       print " |- Processing interface \"" . $class->name . "\"...\n";
 
       $codeGenerator->GenerateInterface($class);

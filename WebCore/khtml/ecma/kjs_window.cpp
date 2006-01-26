@@ -43,6 +43,7 @@
 #include "kjs_traversal.h"
 #include "kjs_css.h"
 #include "kjs_events.h"
+#include "JSMutationEvent.h"
 #include "JSXMLHttpRequest.h"
 #include "xmlserializer.h"
 #ifdef KHTML_XSLT
@@ -204,6 +205,7 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
   NodeFilter    Window::NodeFilter      DontDelete
   DOMException  Window::DOMException    DontDelete
   CSSRule       Window::CSSRule         DontDelete
+  MutationEvent Window::MutationEventCtor   DontDelete
   frames        Window::Frames          DontDelete|ReadOnly
   history       Window::_History        DontDelete|ReadOnly
   event         Window::Event           DontDelete
@@ -680,6 +682,8 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
       return getCSSRuleConstructor(exec);
     case EventCtor:
       return getEventConstructor(exec);
+    case MutationEventCtor:
+      return JSMutationEvent::getConstructor(exec);
     case Frames:
       if (!frames)
         frames = new FrameArray(exec, m_frame);

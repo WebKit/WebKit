@@ -224,6 +224,7 @@ sub GenerateHeader
   
   my $numAttributes = @{$dataNode->attributes};
   my $numFunctions = @{$dataNode->functions};
+  my $numConstants = @{$dataNode->constants};
   
   push(@headerContent, "\nnamespace WebCore {\n\n");
   
@@ -266,6 +267,11 @@ sub GenerateHeader
   push(@headerContent, "    virtual const KJS::ClassInfo* classInfo() const { return &info; }\n");
   push(@headerContent, "    static const KJS::ClassInfo info;\n");
   
+  # Constructor object getter
+  if ($numConstants ne 0) {
+    push(@headerContent, "    static KJS::JSValue* getConstructor(KJS::ExecState*);\n")
+  }
+
   # Attribute and function enums
   if ($numAttributes + $numFunctions > 0) {
     push(@headerContent, "    enum {\n")
@@ -345,7 +351,7 @@ sub GenerateImplementation
   
   # - Add default header template
   @implContentHeader = split("\r", $headerTemplate);
-  push(@implContentHeader, "\n#include \"config.h\"\n");
+  push(@implContentHeader, "\n");
   push(@implContentHeader, "#include \"$className.h\"\n\n");
 
   if (exists $dataNode->extendedAttributes->{"LegacyParent"}) {
@@ -388,6 +394,58 @@ sub GenerateImplementation
     $object->GenerateHashTable($hashName, $hashSize,
                             \@hashKeys, \@hashValues,
                              \@hashSpecials, \@hashParameters);
+  }
+  
+  # - Add all constants
+  my $numConstants = @{$dataNode->constants};
+  if ($numConstants ne 0) {
+    $hashSize = $numConstants;
+    $hashName = $className . "ConstructorTable";
+
+    @hashKeys = ();
+    @hashValues = ();
+    @hashSpecials = ();
+    @hashParameters = ();
+    
+    foreach my $constant (@{$dataNode->constants}) {
+      my $name = $constant->name;
+      push(@hashKeys, $name);
+     
+      my $value = "DOM::${interfaceName}::$name";
+      push(@hashValues, $value);
+
+      my $special = "DontDelete|ReadOnly";
+      push(@hashSpecials, $special);
+
+      my $numParameters = 0;
+      push(@hashParameters, $numParameters); 
+    }
+    
+    $object->GenerateHashTable($hashName, $hashSize,
+                               \@hashKeys, \@hashValues,
+                               \@hashSpecials, \@hashParameters);
+                               
+    # Add Constructor class
+    push(@implContent, "class ${className}Constructor : public DOMObject {\n");
+    push(@implContent, "public:\n");
+    push(@implContent, "    ${className}Constructor(ExecState* exec) { " . 
+                       "setPrototype(exec->lexicalInterpreter()->builtinObjectPrototype()); }\n");
+    push(@implContent, "    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);\n");
+    push(@implContent, "    JSValue* getValueProperty(ExecState*, int token) const;\n");
+    push(@implContent, "    virtual const ClassInfo* classInfo() const { return &info; }\n");
+    push(@implContent, "    static const ClassInfo info;\n");    
+    push(@implContent, "};\n\n");
+    
+    push(@implContent, "const ClassInfo ${className}Constructor::info = { \"${interfaceName}Constructor\", 0, " .
+                       "&${className}ConstructorTable, 0 };\n\n");
+                       
+    push(@implContent, "bool ${className}Constructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n{\n");
+    push(@implContent, "    return getStaticValueSlot<${className}Constructor, DOMObject>" .
+                       "(exec, &${className}ConstructorTable, this, propertyName, slot);\n}\n\n");
+
+    push(@implContent, "JSValue* ${className}Constructor::getValueProperty(ExecState*, int token) const\n{\n");
+    push(@implContent, "    // We use the token as the value to return directly\n");
+    push(@implContent, "    return jsNumber(token);\n}\n\n");
   }
   
   # - Add all functions in a hashtable definition, if we have any.
@@ -521,10 +579,16 @@ sub GenerateImplementation
           push(@implContent, ");\n        break;\n");
         }
       }
-      push(@implContent, "    }\n}\n\n");
-      
+      push(@implContent, "    }\n}\n\n");      
     }
   }
+
+    
+  if ($numConstants ne 0) {
+    push(@implContent, "JSValue* ${className}::getConstructor(ExecState* exec)\n{\n");
+    push(@implContent, "    return cacheGlobalObject<${className}Constructor>(exec, \"[[${className}.constructor]]\");\n");
+    push(@implContent, "}\n");
+  }    
   
   # Functions
   if($numFunctions ne 0) {
@@ -652,7 +716,8 @@ sub NativeToJSValue
   
   if ($type eq "boolean") {
     return "jsBoolean($value)";
-  } elsif ($type eq "long" or $type eq "unsigned long") {
+  } elsif ($type eq "long" or $type eq "unsigned long" or 
+           $type eq "unsigned short") {
     return "jsNumber($value)";
   } elsif ($type eq "DOMString") {
     return "jsString($value)";

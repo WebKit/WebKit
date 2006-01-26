@@ -131,6 +131,8 @@ namespace KJS {
 
     DOM::EventImpl* toEvent(JSValue*); // returns 0 if value is not a DOMEvent object
 
+    KJS_DEFINE_PROTOTYPE(DOMEventProto)
+
     // Constructor object EventException
     class EventExceptionConstructor : public DOMObject {
     public:
@@ -181,31 +183,6 @@ namespace KJS {
         enum { KeyIdentifier, KeyLocation, CtrlKey, ShiftKey, AltKey, MetaKey, AltGraphKey, InitKeyboardEvent};
     };
 
-    // Constructor object MutationEvent
-    class MutationEventConstructor : public DOMObject {
-    public:
-        MutationEventConstructor(ExecState*) { }
-        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-        JSValue* getValueProperty(ExecState*, int token) const;
-        // no put - all read-only
-        virtual const ClassInfo* classInfo() const { return &info; }
-        static const ClassInfo info;
-    };
-
-    JSValue* getMutationEventConstructor(ExecState*);
-
-    class DOMMutationEvent : public DOMEvent {
-    public:
-        DOMMutationEvent(ExecState*, DOM::MutationEventImpl *me);
-        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-        JSValue* getValueProperty(ExecState*, int token) const;
-        // no put - all read-only
-        virtual const ClassInfo* classInfo() const { return &info; }
-        static const ClassInfo info;
-        enum { AttrChange, RelatedNode, AttrName, PrevValue, NewValue,
-               InitMutationEvent };
-    };
-  
     class Clipboard : public DOMObject {
     friend class ClipboardProtoFunc;
     public:
