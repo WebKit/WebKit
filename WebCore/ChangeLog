@@ -1,3 +1,15 @@
+2006-01-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+
+        - fixed ~40 DOM nodes leaked when running any two of the outerHTML DOM tests (actually just a false positive)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6822
+
+        * kwq/KWQPageState.mm:
+        (-[KWQPageState clear]): Garbage collect after deleting a bunch of
+        stuff that holds onto JS objects. This should avoid false positive leaks
+        and is good in any case since page state deallocation is already deferred.
+
 2006-01-26  Adele Peterson  <adele@apple.com>
 
         Reviewed by Vicki.

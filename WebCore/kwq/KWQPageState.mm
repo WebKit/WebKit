@@ -88,6 +88,8 @@ using namespace KJS;
 
     delete pausedTimeouts;
     pausedTimeouts = 0;
+
+    Collector::collect();
 }
 
 - (void)invalidate
