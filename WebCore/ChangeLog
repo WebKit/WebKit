@@ -1,5 +1,16 @@
 2006-01-25  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Darin.
+
+        - Turn on NodeImpl leak counter for debug builds
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6808
+
+        * khtml/xml/NodeImpl.cpp:
+        (WebCore::NodeImplCounter::~NodeImplCounter): Uncomment node
+        counter now tit won't give a lot of false positives.
+
+2006-01-25  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Dave Hyatt.
         
         - fixed "Whole DOM tree can leak if Document is hover/active/focus node on quit"
