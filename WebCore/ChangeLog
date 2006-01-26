@@ -1,5 +1,14 @@
 2006-01-26  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by hyatt.
+
+        Disable <animateTransform> to stop layout test crashes.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6780
+
+        * ksvg2/misc/KSVGTimeScheduler.cpp: hack out animateTransform.
+
+2006-01-26  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by mjs.
 
         Deploy RefPtr throughout more of WebCore

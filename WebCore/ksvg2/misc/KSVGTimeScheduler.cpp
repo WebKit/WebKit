@@ -203,6 +203,8 @@ void SVGTimer::notifyAll()
             if(percentage <= 1.0 || animation->connected())
                 animation->handleTimerEvent(percentage);
 
+// FIXME: Disable animateTransform until SVGList can be fixed.
+#if 0
             // Special cases for animate* objects depending on 'additive' attribute
             if(animation->hasTagName(SVGNames::animateTransformTag))
             {
@@ -244,7 +246,9 @@ void SVGTimer::notifyAll()
 
                 targetTransforms->appendItem(data.get());
             }
-            else if(animation->hasTagName(SVGNames::animateColorTag))
+            else
+#endif
+            if(animation->hasTagName(SVGNames::animateColorTag))
             {
                 SVGAnimateColorElementImpl *animColor = static_cast<SVGAnimateColorElementImpl *>(animation);
                 if(!animColor)
