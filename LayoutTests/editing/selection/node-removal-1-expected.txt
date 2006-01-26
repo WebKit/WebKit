@@ -1,0 +1,22 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {TEXT} at (0,0) size 748x36
+          text run at (0,0) width 678: "This tests behavior when a node that serves as the start or end of a selection is removed from the document. "
+          text run at (678,0) width 70: "Ideally, we"
+          text run at (0,18) width 650: "would just adjust the selection when an endpoint is removed, for now, we just blow away the selection."
+      RenderBlock {P} at (0,52) size 784x36
+        RenderText {TEXT} at (0,0) size 769x36
+          text run at (0,0) width 475: "This test creates a selection that ends inside of a node that will be removed. "
+          text run at (475,0) width 172: "Then the node is removed. "
+          text run at (647,0) width 122: "There should be no"
+          text run at (0,18) width 123: "selection afterward."
+      RenderBlock {DIV} at (0,104) size 784x18
+        RenderText {TEXT} at (0,0) size 35x18
+          text run at (0,0) width 35: "hello "
+        RenderText {TEXT} at (35,0) size 42x18
+          text run at (35,0) width 42: "world!"

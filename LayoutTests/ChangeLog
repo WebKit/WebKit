@@ -1,3 +1,187 @@
+2006-01-25  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=6644>
+        TinyMCE: Undo operation crashes Safari
+        <rdar://problem/4343068>
+        Some shouldChangeSelection calls are nonsensical
+        
+        Selections are blown away if their endpoints are removed from the document.
+        This changed the selections that editing delegates see during deletion/replacement.
+
+        * editing/deleting/collapse-whitespace-3587601-fix-expected.txt:
+        * editing/deleting/delete-3608430-fix-expected.txt:
+        * editing/deleting/delete-3608462-fix-expected.txt:
+        * editing/deleting/delete-3775172-fix-expected.txt:
+        * editing/deleting/delete-3800834-fix-expected.txt:
+        * editing/deleting/delete-3857753-fix-expected.txt:
+        * editing/deleting/delete-3865854-fix-expected.txt:
+        * editing/deleting/delete-3928305-fix-expected.txt:
+        * editing/deleting/delete-3959464-fix-expected.txt:
+        * editing/deleting/delete-4038408-fix-expected.txt:
+        * editing/deleting/delete-at-paragraph-boundaries-001-expected.txt:
+        * editing/deleting/delete-at-paragraph-boundaries-002-expected.txt:
+        * editing/deleting/delete-at-paragraph-boundaries-003-expected.txt:
+        * editing/deleting/delete-at-paragraph-boundaries-004-expected.txt:
+        * editing/deleting/delete-at-paragraph-boundaries-005-expected.txt:
+        * editing/deleting/delete-at-paragraph-boundaries-006-expected.txt:
+        * editing/deleting/delete-at-paragraph-boundaries-007-expected.txt:
+        * editing/deleting/delete-at-paragraph-boundaries-009-expected.txt:
+        * editing/deleting/delete-at-paragraph-boundaries-010-expected.txt:
+        * editing/deleting/delete-at-paragraph-boundaries-011-expected.txt:
+        * editing/deleting/delete-block-contents-001-expected.txt:
+        * editing/deleting/delete-block-contents-002-expected.txt:
+        * editing/deleting/delete-block-contents-003-expected.txt:
+        * editing/deleting/delete-block-merge-contents-001-expected.txt:
+        * editing/deleting/delete-block-merge-contents-002-expected.txt:
+        * editing/deleting/delete-block-merge-contents-003-expected.txt:
+        * editing/deleting/delete-block-merge-contents-004-expected.txt:
+        * editing/deleting/delete-block-merge-contents-005-expected.txt:
+        * editing/deleting/delete-block-merge-contents-006-expected.txt:
+        * editing/deleting/delete-block-merge-contents-007-expected.txt:
+        * editing/deleting/delete-block-merge-contents-008-expected.txt:
+        * editing/deleting/delete-block-merge-contents-009-expected.txt:
+        * editing/deleting/delete-block-merge-contents-010-expected.txt:
+        * editing/deleting/delete-block-merge-contents-012-expected.txt:
+        * editing/deleting/delete-block-merge-contents-013-expected.txt:
+        * editing/deleting/delete-block-merge-contents-014-expected.txt:
+        * editing/deleting/delete-block-merge-contents-015-expected.txt:
+        * editing/deleting/delete-block-merge-contents-016-expected.txt:
+        * editing/deleting/delete-block-merge-contents-017-expected.txt:
+        * editing/deleting/delete-block-merge-contents-018-expected.txt:
+        * editing/deleting/delete-block-merge-contents-019-expected.txt:
+        * editing/deleting/delete-block-merge-contents-020-expected.txt:
+        * editing/deleting/delete-block-merge-contents-021-expected.txt:
+        * editing/deleting/delete-br-008-expected.txt:
+        * editing/deleting/delete-br-010-expected.txt:
+        * editing/deleting/delete-image-001-expected.txt:
+        * editing/deleting/delete-image-002-expected.txt:
+        * editing/deleting/delete-image-003-expected.txt:
+        * editing/deleting/delete-image-004-expected.txt:
+        * editing/deleting/delete-line-001-expected.txt:
+        * editing/deleting/delete-line-002-expected.txt:
+        * editing/deleting/delete-line-003-expected.txt:
+        * editing/deleting/delete-line-004-expected.txt:
+        * editing/deleting/delete-line-005-expected.txt:
+        * editing/deleting/delete-line-006-expected.txt:
+        * editing/deleting/delete-line-007-expected.txt:
+        * editing/deleting/delete-line-008-expected.txt:
+        * editing/deleting/delete-line-009-expected.txt:
+        * editing/deleting/delete-line-010-expected.txt:
+        * editing/deleting/delete-line-011-expected.txt:
+        * editing/deleting/delete-line-012-expected.txt:
+        * editing/deleting/delete-line-013-expected.txt:
+        * editing/deleting/delete-line-014-expected.txt:
+        * editing/deleting/delete-line-015-expected.txt:
+        * editing/deleting/delete-line-016-expected.txt:
+        * editing/deleting/delete-line-017-expected.txt:
+        * editing/deleting/delete-select-all-001-expected.txt:
+        * editing/deleting/delete-select-all-002-expected.txt:
+        * editing/deleting/delete-select-all-003-expected.txt:
+        * editing/execCommand/boldSelection-expected.txt:
+        * editing/execCommand/strikethroughSelection-expected.txt:
+        * editing/input/attributed-substring-from-range-lines-expected.txt:
+        * editing/input/text-input-controller-expected.txt:
+        * editing/inserting/insert-3654864-fix-expected.txt:
+        * editing/inserting/insert-3659587-fix-expected.txt:
+        * editing/inserting/insert-3775316-fix-expected.txt:
+        * editing/inserting/insert-3851164-fix-expected.txt:
+        * editing/inserting/insert-3907422-fix-expected.txt:
+        * editing/inserting/insert-after-delete-001-expected.txt:
+        * editing/inserting/insert-div-001-expected.txt:
+        * editing/inserting/insert-div-002-expected.txt:
+        * editing/inserting/insert-div-003-expected.txt:
+        * editing/inserting/insert-div-005-expected.txt:
+        * editing/inserting/insert-div-007-expected.txt:
+        * editing/inserting/insert-div-009-expected.txt:
+        * editing/inserting/insert-div-010-expected.txt:
+        * editing/inserting/insert-div-020-expected.txt:
+        * editing/inserting/insert-div-023-expected.txt:
+        * editing/inserting/insert-div-024-expected.txt:
+        * editing/inserting/insert-div-025-expected.txt:
+        * editing/inserting/insert-div-026-expected.txt:
+        * editing/inserting/return-key-with-selection-001-expected.txt:
+        * editing/inserting/return-key-with-selection-002-expected.txt:
+        * editing/inserting/return-key-with-selection-003-expected.txt:
+        * editing/pasteboard/3976872-expected.txt:
+        * editing/pasteboard/4076267-3-expected.txt:
+        * editing/pasteboard/4076267-expected.txt:
+        * editing/pasteboard/block-wrappers-necessary-expected.txt:
+        * editing/pasteboard/paste-4035648-fix-expected.txt:
+        * editing/pasteboard/paste-4039777-fix-expected.txt:
+        * editing/pasteboard/paste-line-endings-001-expected.txt:
+        * editing/pasteboard/paste-line-endings-006-expected.txt:
+        * editing/pasteboard/paste-line-endings-007-expected.txt:
+        * editing/pasteboard/paste-line-endings-008-expected.txt:
+        * editing/pasteboard/paste-line-endings-009-expected.txt:
+        * editing/pasteboard/paste-line-endings-010-expected.txt:
+        * editing/pasteboard/paste-match-style-001-expected.txt:
+        * editing/pasteboard/paste-match-style-002-expected.txt:
+        * editing/pasteboard/paste-pre-001-expected.txt:
+        * editing/pasteboard/paste-pre-002-expected.txt:
+        * editing/pasteboard/paste-text-002-expected.txt:
+        * editing/pasteboard/paste-text-003-expected.txt:
+        * editing/pasteboard/paste-text-006-expected.txt:
+        * editing/pasteboard/paste-text-007-expected.txt:
+        * editing/pasteboard/paste-text-008-expected.txt:
+        * editing/pasteboard/paste-text-009-expected.txt:
+        * editing/pasteboard/paste-text-011-expected.txt:
+        * editing/pasteboard/paste-text-015-expected.txt:
+        * editing/pasteboard/paste-text-016-expected.txt:
+        * editing/pasteboard/paste-text-017-expected.txt:
+        * editing/pasteboard/paste-text-018-expected.txt:
+        * editing/pasteboard/smart-paste-006-expected.txt:
+        * editing/pasteboard/smart-paste-007-expected.txt:
+        * editing/selection/node-removal-1-expected.checksum: Added.
+        * editing/selection/node-removal-1-expected.png: Added.
+        * editing/selection/node-removal-1-expected.txt: Added.
+        * editing/selection/node-removal-1.html: Added.
+        * editing/selection/node-removal-2-expected.checksum: Added.
+        * editing/selection/node-removal-2-expected.png: Added.
+        * editing/selection/node-removal-2-expected.txt: Added.
+        * editing/selection/node-removal-2.html: Added.
+        * editing/style/block-style-004-expected.txt:
+        * editing/style/block-style-005-expected.txt:
+        * editing/style/block-style-006-expected.txt:
+        * editing/style/create-block-for-style-001-expected.txt:
+        * editing/style/create-block-for-style-002-expected.txt:
+        * editing/style/create-block-for-style-003-expected.txt:
+        * editing/style/create-block-for-style-004-expected.txt:
+        * editing/style/create-block-for-style-007-expected.txt:
+        * editing/style/create-block-for-style-009-expected.txt:
+        * editing/style/create-block-for-style-010-expected.txt:
+        * editing/style/create-block-for-style-011-expected.txt:
+        * editing/style/create-block-for-style-012-expected.txt:
+        * editing/style/create-block-for-style-013-expected.txt:
+        * editing/style/relative-font-size-change-001-expected.txt:
+        * editing/style/relative-font-size-change-002-expected.txt:
+        * editing/style/remove-underline-across-paragraph-expected.txt:
+        * editing/style/remove-underline-across-paragraph-in-bold-expected.txt:
+        * editing/style/remove-underline-after-paragraph-expected.txt:
+        * editing/style/remove-underline-after-paragraph-in-bold-expected.txt:
+        * editing/style/remove-underline-from-stylesheet-expected.txt:
+        * editing/style/smoosh-styles-001-expected.txt:
+        * editing/style/smoosh-styles-002-expected.txt:
+        * editing/style/smoosh-styles-003-expected.txt:
+        * editing/style/style-3681552-fix-001-expected.txt:
+        * editing/style/style-3681552-fix-002-expected.txt:
+        * editing/style/style-3690704-fix-expected.txt:
+        * editing/style/style-3998892-fix-expected.txt:
+        * editing/style/style-boundary-001-expected.txt:
+        * editing/style/style-boundary-003-expected.txt:
+        * editing/style/style-boundary-004-expected.txt:
+        * editing/style/typing-style-001-expected.txt:
+        * editing/style/typing-style-003-expected.txt:
+        * editing/unsupported-content/list-delete-001-expected.txt:
+        * editing/unsupported-content/list-delete-002-expected.txt:
+        * editing/unsupported-content/list-delete-003-expected.txt:
+        * editing/unsupported-content/table-delete-001-expected.txt:
+        * editing/unsupported-content/table-delete-002-expected.txt:
+        * editing/unsupported-content/table-delete-003-expected.txt:
+        * fast/events/updateLayoutForHitTest-expected.txt:
+        * fast/forms/attributed-strings-expected.txt:
+
 2006-01-25  Adele Peterson  <adele@apple.com>
 
         Updating test results for aqua text fields.
