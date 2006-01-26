@@ -1,5 +1,20 @@
 2006-01-25  David Harrison  <harrison@apple.com>
 
+        Reviewed by Justin.
+        
+        Updated pixel tests for my recent checkin.
+
+        * editing/pasteboard/paste-list-001-expected.png:
+        * editing/selection/3690703-2-expected.png:
+        * editing/selection/3690703-expected.png:
+        * editing/selection/3690719-expected.png:
+        * editing/unsupported-content/list-type-after-expected.png:
+        * editing/unsupported-content/list-type-before-expected.png:
+        * editing/unsupported-content/table-type-after-expected.png:
+        * editing/unsupported-content/table-type-before-expected.png:
+
+2006-01-25  David Harrison  <harrison@apple.com>
+
         Updated for fixes of:
         
         <rdar://problem/3907635> copy/paste of list item text moves list item up one <LI>
