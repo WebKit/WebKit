@@ -53,10 +53,30 @@ if (!@idlDirectories or !defined($outputDirectory)) {
 	die('Must specify both idldir and outputdir');
 }
 
-
 my @idlFiles;
+
+sub addIdlFiles {
+  my ($dir) = @_;
+  my @dirs = ();
+
+  opendir DIR, $dir or die "Can't open directory $dir.\n";
+  while (my $file = readdir DIR) {
+    next if $file =~ /^\./;
+    if (-d "$dir/$file") {
+      push @dirs, "$dir/$file";
+    } elsif ($file =~ /\.idl$/) {
+      push @idlFiles, "$dir/$file";
+    }
+  }
+  closedir DIR;
+  
+  for my $subdir (@dirs) {
+    addIdlFiles($subdir);
+  }
+}
+
 foreach my $idlDirectory (@idlDirectories) {
-  push @idlFiles, map { chomp; $_ } `find '$idlDirectory' -name '*.idl' -print | grep -v defs`;
+  addIdlFiles($idlDirectory);
 }
 
 for my $idlPath (@idlFiles) {   

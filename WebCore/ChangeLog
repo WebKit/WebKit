@@ -1,3 +1,13 @@
+2006-01-25  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Timothy Hatcher.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6807
+        generate-bindings.pl should not use find command
+        
+        * bindings/scripts/generate-bindings.pl:
+        Use opendir and readdir instead of find.
+
 2006-01-25  David Hyatt <hyatt@apple.com
 
         Fix Win32 build bustage. Make the autogeneration from .idl work
