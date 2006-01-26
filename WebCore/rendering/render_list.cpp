@@ -153,8 +153,7 @@ void RenderListItem::setStyle(RenderStyle *_style)
             m_marker = new (renderArena()) RenderListMarker(document());
             m_marker->setStyle(newStyle);
             m_marker->setListItem(this);
-        }
-        else
+        } else
             m_marker->setStyle(newStyle);
         newStyle->deref(renderArena());
     } else if (m_marker) {
@@ -235,6 +234,9 @@ static RenderObject* getParentOfFirstLineBox(RenderObject* curr, RenderObject* m
 
 void RenderListItem::resetMarkerValue()
 {
+    if (!m_marker)
+        return;
+
     m_marker->m_value = -1;
     m_marker->setNeedsLayoutAndMinMaxRecalc();
 }
@@ -316,8 +318,7 @@ IntRect RenderListItem::getAbsoluteRepaintRect()
         if (xoff < 0) {
             result.setX(result.x() + xoff);
             result.setWidth(result.width() - xoff);
-        }
-        else
+        } else
             result.setWidth(result.width() + xoff);
     }
     return result;
@@ -405,8 +406,7 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
         if (style()->direction() == LTR) {
             leftLineOffset = m_listItem->leftRelOffset(yOffset, m_listItem->leftOffset(yOffset));
             _tx -= (xOffset - leftLineOffset) + m_listItem->paddingLeft() + m_listItem->borderLeft();
-        }
-        else {
+        } else {
             rightLineOffset = m_listItem->rightRelOffset(yOffset, m_listItem->rightOffset(yOffset));
             _tx += (rightLineOffset-xOffset) + m_listItem->paddingRight() + m_listItem->borderRight();
         }
@@ -443,8 +443,7 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
             xoff = -cMarkerPadding - offset;
         else
             xoff = cMarkerPadding + (haveImage ? 0 : (offset - bulletWidth));
-    }
-    else if (style()->direction() == RTL)
+    } else if (style()->direction() == RTL)
         xoff += haveImage ? cMarkerPadding : (m_width - bulletWidth);
     
     if (m_listImage && !m_listImage->isErrorImage()) {
@@ -488,8 +487,7 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
                     p->drawText(_tx, _ty, 0, 0, 0, 0, Qt::AlignLeft|Qt::DontClip, m_item);
                     p->drawText(_tx + fm.width(m_item, 0, 0), _ty, 0, 0, 0, 0, Qt::AlignLeft|Qt::DontClip, 
                             QString::fromLatin1(". "));
-                }
-            	else {
+                } else {
                     const QString& punct(QString::fromLatin1(" ."));
                     p->drawText(_tx, _ty, 0, 0, 0, 0, Qt::AlignLeft|Qt::DontClip, punct);
             	    p->drawText(_tx + fm.width(punct, 0, 0), _ty, 0, 0, 0, 0, Qt::AlignLeft|Qt::DontClip, m_item);
@@ -499,8 +497,7 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
                     const QString& punct(QString::fromLatin1(". "));
                     p->drawText(_tx-offset/2, _ty, 0, 0, 0, 0, Qt::AlignRight|Qt::DontClip, punct);
                     p->drawText(_tx-offset/2-fm.width(punct, 0, 0), _ty, 0, 0, 0, 0, Qt::AlignRight|Qt::DontClip, m_item);
-                }
-            	else {
+                } else {
                     const QString& punct(QString::fromLatin1(" ."));
             	    p->drawText(_tx+offset/2, _ty, 0, 0, 0, 0, Qt::AlignLeft|Qt::DontClip, punct);
                     p->drawText(_tx+offset/2+fm.width(punct, 0, 0), _ty, 0, 0, 0, 0, Qt::AlignLeft|Qt::DontClip, m_item);
