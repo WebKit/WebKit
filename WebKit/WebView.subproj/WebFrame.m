@@ -769,7 +769,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
             {
                 WebHistoryItem *currItem = [_private currentItem];
                 LOG(PageCache, "Clearing back/forward cache, %@\n", [currItem URL]);
-                // FIXME: rjw sez this cache clearing is no longer needed
                 [currItem setHasPageCache:NO];
                 if (loadType == WebFrameLoadTypeReload) {
                     [self _saveScrollPositionAndViewStateToItem:currItem];
@@ -1911,9 +1910,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                                        andCall:self
                                   withSelector:@selector(_continueFragmentScrollAfterNavigationPolicy:formState:)];
     } else {
+        // must grab this now, since this load may stop the previous load and clear this flag
+        BOOL isRedirect = _private->quickRedirectComing;
         [self _loadRequest:request triggeringAction:action loadType:loadType formState:formState];
-        if (_private->quickRedirectComing) {
-            LOG(Redirect, "%@(%p) _private->quickRedirectComing = %d", [self name], self, (int)_private->quickRedirectComing);
+        if (isRedirect) {
+            LOG(Redirect, "%@(%p) _private->quickRedirectComing was %d", [self name], self, (int)isRedirect);
             _private->quickRedirectComing = NO;
             [[self provisionalDataSource] _setIsClientRedirect:YES];
         } else if (sameURL) {

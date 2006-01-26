@@ -333,6 +333,7 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
 - (void)setURL:(NSURL *)URL
 {
     [self setURLString:[URL _web_originalDataAsString]];
+    [self setHasPageCache:NO];
 }
 
 // The first URL we loaded to get to where this history item points.  Includes both client
