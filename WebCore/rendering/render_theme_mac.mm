@@ -43,6 +43,8 @@ enum {
     
 namespace khtml {
 
+static const int textFieldMargins[4] = { 3, 4, 3, 4 };
+
 RenderTheme* theme()
 {
     static RenderThemeMac macTheme;
@@ -86,6 +88,14 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject* o, IntRect& r)
                 r = inflateRect(r, buttonSizes()[[button controlSize]], buttonMargins());
             break;
         }
+        case TextFieldAppearance:
+            // Since we query the prototype cell, we need to update its state to match.
+            setTextFieldCellState(o, r);
+            
+            // We inflate the rect as needed to account for padding.
+            // We don't consider this part of the bounds of the control in WebKit.
+            r = inflateRect(r, r.size(), textFieldMargins);
+            break;
         default:
             break;
     }
@@ -510,6 +520,31 @@ bool RenderThemeMac::paintButton(RenderObject* o, const RenderObject::PaintInfo&
     [button setControlView: nil];
 
     return false;
+}
+
+bool RenderThemeMac::paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+{
+    // Initialize text field and update state.
+    setTextFieldCellState(o, r);
+    
+    IntRect inflatedRect = inflateRect(r, r.size(), textFieldMargins);
+    
+    [textField drawWithFrame:NSRect(inflatedRect) inView:o->canvas()->view()->getDocumentView()];
+    [textField setControlView: nil];
+    
+    return false;
+}
+
+void RenderThemeMac::setTextFieldCellState(const RenderObject* o, const IntRect& r)
+{
+    if (!textField) {
+        textField = [[NSTextFieldCell alloc] initTextCell:@""];
+        [textField setBezeled:YES];
+        [textField setBezelStyle:NSTextFieldSquareBezel];
+        [textField setDrawsBackground:NO];
+        [textField setEditable:true];
+    }
+    updateEnabledState(textField, o);
 }
 
 }

@@ -1,3 +1,26 @@
+2006-01-25  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        This change lets us display an aqua appearance for the new text fields.
+
+        Updated results for:
+        * fast/forms/input-appearance-focus.html
+
+        * rendering/RenderTextField.cpp: (WebCore::RenderTextField::createDivStyle): 
+          remove styling of the div, since RenderTheme handles that now.
+        * rendering/render_theme.cpp:
+        (khtml::RenderTheme::adjustStyle): call adjustTextFieldStyle.
+        (khtml::RenderTheme::paint): call paintTextField.
+        (khtml::RenderTheme::adjustTextFieldStyle): added FIXME to turn off appearance later.
+        * rendering/render_theme.h: added adjustTextFieldStyle, paintTextField
+        * rendering/render_theme_mac.h: added paintTextField, setTextFieldState, and NSTextFieldCell.
+        * rendering/render_theme_mac.mm:
+        (khtml::): Added static textFieldMargins.
+        (khtml::RenderThemeMac::adjustRepaintRect): update text field state and size.
+        (khtml::RenderThemeMac::paintTextField): Added. Paints the NSTextFieldCell
+        (khtml::RenderThemeMac::setTextFieldCellState): Initialize NSTextFieldCell, and update enabled state.
+
 2006-01-25  David Hyatt  <hyatt@apple.com>
 
         Rename QBrush to Brush and move it to platform/.  Remove unused QPoint/Size/RectF forwarding

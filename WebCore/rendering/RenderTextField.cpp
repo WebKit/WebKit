@@ -65,14 +65,8 @@ RenderStyle* RenderTextField::createDivStyle(RenderStyle* startStyle)
     divStyle->setWhiteSpace(NOWRAP);
     divStyle->setUserModify(READ_WRITE);
     
-    // FIXME: Remove these once we get the render theme up and working.
-    divStyle->setOutlineWidth(1);
-    divStyle->setOutlineStyle(SOLID);
-    divStyle->setPaddingTop(Length(2, Fixed));
-    divStyle->setPaddingBottom(Length(2, Fixed));
-    divStyle->setPaddingLeft(Length(2, Fixed));
-    divStyle->setPaddingRight(Length(2, Fixed));
-    divStyle->setWidth(Length(150, Fixed));
+    // FIXME: Remove this once we calculate size correctly.
+    divStyle->setWidth(Length(140, Fixed));
     
     return divStyle;
 }
