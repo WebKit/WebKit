@@ -411,14 +411,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQPen.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQPen.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQPixmap.h"
 				>
 			</File>
@@ -1874,6 +1866,14 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\IntSize.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\Pen.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\Pen.h"
 				>
 			</File>
 			<File

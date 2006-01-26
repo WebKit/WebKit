@@ -56,7 +56,7 @@ if (!@idlDirectories or !defined($outputDirectory)) {
 
 my @idlFiles;
 foreach my $idlDirectory (@idlDirectories) {
-  push @idlFiles, map { chomp; $_ } `find $idlDirectory -name '*.idl' -print | grep -v defs`;
+  push @idlFiles, map { chomp; $_ } `find '$idlDirectory' -name '*.idl' -print | grep -v defs`;
 }
 
 for my $idlPath (@idlFiles) {   

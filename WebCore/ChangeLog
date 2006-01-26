@@ -1,3 +1,13 @@
+2006-01-25  David Hyatt <hyatt@apple.com
+
+        Fix Win32 build bustage. Make the autogeneration from .idl work
+        just like it does on Mac.  Also update the project to account for
+        the move of QPen.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.vcproj/WebCore/build-generated-files.sh:
+        * bindings/scripts/generate-bindings.pl:
+
 2006-01-25  David Hyatt  <hyatt@apple.com>
 
         Rename QPen to Pen and move it to the platform/ directory.

@@ -115,3 +115,7 @@ fi
 if [ ../JavaScriptCore/kjs/create_hash_table -nt "$DerivedSourcesDir/XSLTProcessor.lut.h" -o khtml/ecma/XSLTProcessor.cpp -nt "$DerivedSourcesDir/XSLTProcessor.lut.h" ]; then
   ../JavaScriptCore/kjs/create_hash_table khtml/ecma/XSLTProcessor.cpp > "$DerivedSourcesDir/XSLTProcessor.lut.h"
 fi
+
+# Auto-generate bindings from .idl files
+echo "Auto-generating bindings from .idl files for the khtml/xml directory..."
+perl -I"$WebCoreSourceRoot/bindings/scripts" "$WebCoreSourceRoot/bindings/scripts/generate-bindings.pl" --generator JS --idldir "$WebCoreSourceRoot/khtml/xml" --outputdir "$DerivedSourcesDir"
