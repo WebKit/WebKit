@@ -46,6 +46,7 @@ KJSProxyImpl::~KJSProxyImpl()
 {
     JSLock lock;
     delete m_script;
+    Collector::collect();
 }
 
 QVariant KJSProxyImpl::evaluate(const DOMString& filename, int baseLine, const DOMString& str, NodeImpl *n) 

@@ -1,5 +1,21 @@
 2006-01-25  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Dave Hyatt.
+        
+        - garbage collect a bit later when destroying Frame (fixes node leak false positives)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6818       
+
+        * khtml/ecma/kjs_proxy.cpp:
+        (WebCore::KJSProxyImpl::~KJSProxyImpl): Garbage collect after destroying
+        the script interpreter.
+        * page/Frame.cpp:
+        (Frame::clear): Add a boolean parameter to indicate whether properties
+        of the window object should also be cleared (defaults to true).
+        (Frame::~Frame): Call clear(false) instead of clear()
+        * page/Frame.h:
+
+2006-01-25  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
 
         - Turn on NodeImpl leak counter for debug builds

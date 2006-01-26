@@ -216,7 +216,7 @@ Frame::~Frame()
   disconnect( Cache::loader(), SIGNAL( requestFailed( khtml::DocLoader*, khtml::CachedObject *) ),
            this, SLOT( slotLoaderRequestDone( khtml::DocLoader*, khtml::CachedObject *) ) );
 
-  clear();
+  clear(false);
 
   if (d->m_view) {
     d->m_view->hide();
@@ -581,7 +581,7 @@ bool Frame::autoloadImages() const
   return true;
 }
 
-void Frame::clear()
+void Frame::clear(bool clearWindowProperties)
 {
   if ( d->m_bCleared )
     return;
@@ -589,11 +589,11 @@ void Frame::clear()
   d->m_bClearing = true;
   d->m_mousePressNode = 0;
 
-  if ( d->m_doc )
+  if (d->m_doc)
     d->m_doc->detach();
 
   // Moving past doc so that onUnload works.
-  if ( d->m_jscript )
+  if (clearWindowProperties && d->m_jscript)
     d->m_jscript->clear();
 
   if ( d->m_view )
