@@ -2,6 +2,55 @@
 
         Reviewed by Geoff.
 
+        - fixed a couple hundred node leaks on the traversal layout tests
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6828
+
+        There were three basic problems here, any one of which was enough
+        to cause the leak.
+        
+        1) If the filter function for a NodeFilter, NodeIterator or TreeWalker
+        had that object in scope, it would cause a GC reference cycle. I fixed
+        this by making these JS functions get marked by the corresponding JS object,
+        as for XMLHttpRequest.
+        
+        2) The TraversalImpl class that's a base class for NodeIteratorImpl and 
+        TreeWalkerImpl did not have a virtual destructor, leading the Shared
+        template to call the base class destructor on deref.
+        
+        3) ref/deref on the document were mismatched, I fixed all that sort of nonsense
+        by using RefPtr instead of manual ref/deref.
+        
+        * khtml/dom/dom2_traversal.h:
+        (DOM::NodeFilterCondition::mark): Add no-op virtual mark method, JS subclass
+        will do something useful here.
+        * khtml/ecma/kjs_traversal.cpp:
+        (KJS::DOMNodeIterator::mark): Mark the DOM-level filter.
+        (KJS::DOMNodeFilter::mark): ditto
+        (KJS::DOMTreeWalker::mark): ditto
+        (KJS::JSNodeFilterCondition::JSNodeFilterCondition): reformatted.
+        (KJS::JSNodeFilterCondition::mark): Mark the filter function.
+        * khtml/ecma/kjs_traversal.h:
+        * khtml/xml/dom2_traversalimpl.cpp:
+        (DOM::NodeFilterImpl::NodeFilterImpl): diligently applied RefPtr
+        (DOM::TraversalImpl::TraversalImpl): ditto
+        (DOM::TraversalImpl::~TraversalImpl): ditto
+        (DOM::NodeIteratorImpl::NodeIteratorImpl): ditto
+        (DOM::NodeIteratorImpl::~NodeIteratorImpl): ditto
+        (DOM::NodeIteratorImpl::setReferenceNode): ditto
+        (DOM::TreeWalkerImpl::TreeWalkerImpl): ditto
+        (DOM::TreeWalkerImpl::setCurrentNode): ditto
+        * khtml/xml/dom2_traversalimpl.h:
+        (DOM::NodeFilterImpl::mark): call mark() on the codition
+        (DOM::TraversalImpl::root): Use .get()
+        (DOM::TraversalImpl::filter): ditto
+        (DOM::NodeIteratorImpl::referenceNode): ditto
+        (DOM::NodeIteratorImpl::document): ditto
+        (DOM::TreeWalkerImpl::currentNode): ditto
+
+2006-01-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+
         - fixed ~40 DOM nodes leaked when running any two of the outerHTML DOM tests (actually just a false positive)
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6822
 

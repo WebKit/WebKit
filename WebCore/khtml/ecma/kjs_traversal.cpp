@@ -65,6 +65,12 @@ DOMNodeIterator::~DOMNodeIterator()
   ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
+void DOMNodeIterator::mark()
+{
+    m_impl->filter()->mark();
+    DOMObject::mark();
+}
+
 bool DOMNodeIterator::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
   return getStaticValueSlot<DOMNodeIterator, DOMObject>(exec, &DOMNodeIteratorTable, this, propertyName, slot);
@@ -178,6 +184,12 @@ DOMNodeFilter::~DOMNodeFilter()
   ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
+void DOMNodeFilter::mark()
+{
+    m_impl->mark();
+    DOMObject::mark();
+}
+
 JSValue *DOMNodeFilterProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
   if (!thisObj->inherits(&KJS::DOMNodeFilter::info))
@@ -236,6 +248,12 @@ DOMTreeWalker::DOMTreeWalker(ExecState *exec, TreeWalkerImpl *tw)
 DOMTreeWalker::~DOMTreeWalker()
 {
   ScriptInterpreter::forgetDOMObject(m_impl.get());
+}
+
+void DOMTreeWalker::mark()
+{
+    m_impl->filter()->mark();
+    DOMObject::mark();
 }
 
 bool DOMTreeWalker::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -305,8 +323,14 @@ JSValue *getDOMTreeWalker(ExecState *exec, TreeWalkerImpl *tw)
 
 // -------------------------------------------------------------------------
 
-JSNodeFilterCondition::JSNodeFilterCondition(JSObject * _filter) : filter( _filter )
+JSNodeFilterCondition::JSNodeFilterCondition(JSObject * _filter)
+    : filter( _filter )
 {
+}
+
+void JSNodeFilterCondition::mark()
+{
+    filter->mark();
 }
 
 short JSNodeFilterCondition::acceptNode(NodeImpl* filterNode) const
