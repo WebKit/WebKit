@@ -1,3 +1,13 @@
+2006-01-26  David Harrison  <harrison@apple.com>
+
+        Adding test case for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6835
+
+        * editing/deleting/delete-listitem-001-expected.checksum: Added.
+        * editing/deleting/delete-listitem-001-expected.png: Added.
+        * editing/deleting/delete-listitem-001-expected.txt: Added.
+        * editing/deleting/delete-listitem-001.html: Added.
+
 2006-01-26  Eric Seidel  <eseidel@apple.com>
 
         Adding additional test case from:
