@@ -974,6 +974,10 @@ void DocumentImpl::detach()
     m_imageLoadEventDispatchSoonList.clear();
     m_imageLoadEventDispatchingList.clear();
     
+    m_hoverNode = 0;
+    m_focusNode = 0;
+    m_activeNode = 0;
+
     ContainerNodeImpl::detach();
 
     if ( render )
