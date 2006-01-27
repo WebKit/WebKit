@@ -32,6 +32,7 @@ use strict;
 use IPC::Open2;
 use Getopt::Long;
 use File::Path;
+use File::Copy;
 use FindBin;
 use Cwd;
 use lib $FindBin::Bin;
@@ -326,7 +327,8 @@ for my $test (@tests) {
         $result = "mismatch";
 
         my $dir = "$testResultsDirectory/$base";
-        $dir =~ s|/[^/]+$|| or die;
+        $dir =~ s|/([^/]+)$|| or die "Failed to find test name from base\n";
+        my $testName = $1;
         mkpath $dir;
 
         open ACTUAL, ">", "$testResultsDirectory/$base-actual.txt" or die;
@@ -345,6 +347,8 @@ for my $test (@tests) {
             open DIFF, ">", "$testResultsDirectory/$base-diffs.png" or die;
             print DIFF $diffPNG;
             close DIFF;
+            
+            copy("$testDirectory/$base-expected.png", "$testResultsDirectory/$base-expected.png");
 
             open DIFFHTML, ">$testResultsDirectory/$base-diffs.html" or die;
             print DIFFHTML "<html>\n";
@@ -353,10 +357,11 @@ for my $test (@tests) {
             print DIFFHTML "<script language=\"Javascript\" type=\"text/javascript\">\n";
             print DIFFHTML "var currentImage = 0;\n";
             print DIFFHTML "var imageNames = new Array(\"Actual\", \"Expected\");\n";
-            print DIFFHTML "var imagePaths = new Array(\"$testResultsDirectory/$base-actual.png\", \"$testDirectory/$base-expected.png\");\n";
+            print DIFFHTML "var imagePaths = new Array(\"$testName-actual.png\", \"$testName-expected.png\");\n";
             if (-f "$testDirectory/$base-w3c.png") {
+                copy("$testDirectory/$base-w3c.png", "$testResultsDirectory/$base-w3c.png");
                 print DIFFHTML "imageNames.push(\"W3C\");\n";
-                print DIFFHTML "imagePaths.push(\"$testDirectory/$base-w3c.png\");\n";
+                print DIFFHTML "imagePaths.push(\"$testName-w3c.png\");\n";
             }
             print DIFFHTML "function animateImage() {\n";
             print DIFFHTML "    var image = document.getElementById(\"animatedImage\");\n";
@@ -372,14 +377,14 @@ for my $test (@tests) {
             print DIFFHTML "<table>\n";
             if ($diffPercentage) {
                 print DIFFHTML "<tr>\n";
-                print DIFFHTML "<td>Difference between images: <a href=\"$testResultsDirectory/$base-diffs.png\">$diffPercentage%</a></td>\n";
+                print DIFFHTML "<td>Difference between images: <a href=\"$testName-diffs.png\">$diffPercentage%</a></td>\n";
                 print DIFFHTML "</tr>\n";
             }
             print DIFFHTML "<tr>\n";
             print DIFFHTML "<td id=\"imageText\" style=\"text-weight: bold;\">Actual Image</td>\n";
             print DIFFHTML "</tr>\n";
             print DIFFHTML "<tr>\n";
-            print DIFFHTML "<td><img src=\"$testResultsDirectory/$base-actual.png\" id=\"animatedImage\"></td>\n";
+            print DIFFHTML "<td><img src=\"$testName-actual.png\" id=\"animatedImage\"></td>\n";
             print DIFFHTML "</tr>\n";
             print DIFFHTML "</table>\n";
             print DIFFHTML "</body>\n";
@@ -477,10 +482,11 @@ if ($counts{match} && $counts{match} == $count) {
         for my $test (@{$tests{mismatch}}) {
             my $base = $test;
             $base =~ s/\.(html|xml|xhtml|svg)$//;
-            print HTML "<tr>\n";
+            copy("$testDirectory/$base-expected.txt", "$testResultsDirectory/$base-expected.txt");
+            print HTML "<tr>\n";            
             print HTML "<td><a href=\"$testDirectory/$test\">$base</a></td>\n";
             if (-s "$testResultsDirectory/$base-diffs.txt") {
-                print HTML "<td><a href=\"$testDirectory/$base-expected.txt\">expected</a></td>\n";
+                print HTML "<td><a href=\"$base-expected.txt\">expected</a></td>\n";
                 print HTML "<td><a href=\"$base-actual.txt\">actual</a></td>\n";
                 print HTML "<td><a href=\"$base-diffs.txt\">diffs</a></td>\n";
             } else {
@@ -488,7 +494,7 @@ if ($counts{match} && $counts{match} == $count) {
             }
             if ($pixelTests) {
                 if ($imagesPresent{$base}) {
-                    print HTML "<td><a href=\"$testDirectory/$base-expected.png\">expected image</a></td>\n";
+                    print HTML "<td><a href=\"$base-expected.png\">expected image</a></td>\n";
                     print HTML "<td><a href=\"$base-diffs.html\">image diffs</a></td>\n";
                 } else {
                     print HTML "<td></td><td></td>\n";
@@ -520,9 +526,9 @@ if ($counts{match} && $counts{match} == $count) {
             $base =~ s/\.(html|xml|xhtml|svg)$//;
             print HTML "<tr>\n";
             print HTML "<td><a href=\"$testDirectory/$test\">$base</a></td>\n";
-            print HTML "<td><a href=\"$testDirectory/$base-expected.txt\">results</a></td>\n";
+            print HTML "<td><a href=\"$base-expected.txt\">results</a></td>\n";
             if ($pixelTests && -f "$testDirectory/$base-expected.png") {
-                print HTML "<td><a href=\"$testDirectory/$base-expected.png\">image</a></td>\n";
+                print HTML "<td><a href=\"$base-expected.png\">image</a></td>\n";
             }
             print HTML "</tr>\n";
         }
