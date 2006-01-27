@@ -858,6 +858,10 @@
         <http://bugzilla.opendarwin.org/show_bug.cgi?id=6785> "Fix for possible leak of applet, object, or embed
         (and plugin view)"
         
+        No test cases added.  This is a fix for a leak which is difficult to trigger under normal page load
+        circumstances, because it requires that the host application modify an <embed> using the Objective C
+        API.
+
         * khtml/html/html_objectimpl.cpp:
         (WebCore::HTMLAppletElementImpl::~HTMLAppletElementImpl):
         Assert that appletInstance has been deleted by detach().
