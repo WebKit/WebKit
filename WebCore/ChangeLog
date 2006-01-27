@@ -355,10 +355,12 @@
 
 2006-01-26  Alexander Kellett  <lypanov@kde.org>
 
-        Reviewed by eseidel.
+        Reviewed by eseidel.  Landed by eseidel.
 
         <text> elements with a scale on a parent <g> breaks nodeAtPoint
         Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6843
+        
+        Test: svg/custom/text-hit-test.svg
 
         * kcanvas/RenderSVGText.cpp:
         (RenderSVGText::nodeAtPoint):
@@ -489,6 +491,8 @@
 
         SVG shows up blank in WebKit+SVG
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6620
+        
+        Test: svg/custom/viewport-no-width-height.svg
 
         * css/svg.css: default to width/height 100% for <svg>
 
@@ -527,10 +531,14 @@
 
 2006-01-25  Alexander Kellett  <lypanov@kde.org>
 
-        Reviewed by eseidel.
+        Reviewed by eseidel.  Landed by eseidel
 
         Percentage values for width, height are not rendered correctly.
         http://bugzilla.opendarwin.org/show_bug.cgi?id=5331
+        
+        Tests:
+        * svg/custom/percentage-rect.svg
+        * svg/custom/percentage-rect2.svg
 
         Create items for even empty paths to prevent an empty render tree.
         Calculate the viewport element on the fly rather than caching it,
@@ -2068,6 +2076,8 @@
 
         Make <animateColor> work again (broke during DOM merger).
         http://bugzilla.opendarwin.org/show_bug.cgi?id=5964
+        
+        No layout test possible.
 
         * WebCore.xcodeproj/project.pbxproj:
         * kcanvas/device/quartz/KCanvasItemQuartz.h:
@@ -2209,6 +2219,8 @@
 
         SVG needs to support "evt" instead of "event" in event handlers.
         http://bugzilla.opendarwin.org/show_bug.cgi?id=5874
+        
+        Test: svg/custom/evt-onload.svg
 
         * WebCore.xcodeproj/project.pbxproj: added new classes
         * khtml/ecma/kjs_events.cpp:
@@ -2427,10 +2439,12 @@
 
 2006-01-22  Alexander Kellett  <lypanov@kde.org>
 
-        Reviewed by eseidel.
+        Reviewed by eseidel.  Landed by eseidel.
 
         Add support for custom fill/strokes on text.
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6448
+        
+        40+ layout tests already cover this.
 
         * kcanvas/RenderSVGText.cpp:
         (RenderSVGText::paint): use new painter setup/teardown infrastructure
@@ -2733,7 +2747,7 @@
         * rendering/render_frames.cpp:
         (WebCore::RenderPartObject::updateWidget):
 
-2006-01-20  mrmacwow  <cpetersen@apple.com>
+2006-01-20  Chris Petersen  <cpetersen@apple.com>
 
         Reviewed by eseidel.
 
@@ -3135,6 +3149,8 @@
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6668
         Even though the crash is fixed, opacity still doesn't work.
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6669
+        
+        Test: svg/custom/text-image-opacity.svg
 
         * kcanvas/RenderSVGImage.cpp:
         (RenderSVGImage::paint):
@@ -3433,7 +3449,7 @@
 
 2006-01-17  Justin Garcia  <justin.garcia@apple.com>
 
-        Reviewed by eric
+        Reviewed by eric.
         
         Deployment builds now use -O2
 
@@ -3723,7 +3739,7 @@
 
 2006-01-17  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
-        Reviewed by eseidel.
+        Reviewed by eseidel.  Landed by eseidel.
 
         Fix second part of WebCore-no-SVG fails to build.
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6607
@@ -3740,7 +3756,7 @@
 
 2006-01-17  Mark Rowe  <opendarwin.org@bdash.net.nz>
 
-        Reviewed by eseidel.
+        Reviewed by eseidel.  Landed by eseidel.
 
         WebCore-no-SVG fails to build.
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6607
@@ -4607,10 +4623,12 @@
 
 2006-01-15  Alexander Kellett  <lypanov@kde.org>
 
-        Reviewed by eseidel.
+        Reviewed by eseidel.  Landed by eseidel.
 
         <mask> inside <defs> crashes Safari.
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6548
+        
+        Test: svg/custom/mask-inside-defs.svg
 
         * ksvg2/svg/SVGMaskElementImpl.cpp:
         (KSVG::SVGMaskElementImpl::drawMaskerContent):
@@ -4623,6 +4641,8 @@
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6428
         Also fix <text transform=""> while we're at it.
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6552
+        
+        Covered by several existing tests.
 
         * ksvg2/svg/SVGGradientElementImpl.cpp:
         (SVGGradientElementImpl::parseMappedAttribute): code cleanup
@@ -4846,6 +4866,10 @@
         http://bugzilla.opendarwin.org/show_bug.cgi?id=5974
         Also fixed <image> to support clip, filter and mask
         Updated <text> to support hit testing and clip, filter, mask
+        
+        Tests:
+        * svg/custom/image-with-transform-clip-filter.svg
+        * svg/custom/foreign-object-skew.svg
 
         * WebCore.xcodeproj/project.pbxproj: added files.
         * kcanvas/RenderForeignObject.cpp: Added.
@@ -4914,10 +4938,12 @@
 
 2006-01-15  Alexander Kellett  <lypanov@kde.org>
 
-        Reviewed by eseidel.
+        Reviewed by eseidel.  Landed by eseidel.
 
         Add support for svg css property writing-mode.
-
+        
+        No tests possible.
+        
         * ksvg2/css/SVGCSSStyleSelector.cpp:
         (KDOM::CSSStyleSelector::applySVGProperty):
         * ksvg2/css/SVGRenderStyle.h:
@@ -4928,11 +4954,13 @@
 
 2006-01-14  Alexander Kellett  <lypanov@kde.org>
 
-        Reviewed by eseidel.
+        Reviewed by eseidel.  Landed by eseidel.
 
         Refactor out cases of KCanvasRenderingStyle used as an instance to
         store the current style. Temporarily unify the data passing via 
         KCanvasCommonArgs.
+        
+        No tests needed, no functional change.
 
         * kcanvas/KCanvasItem.cpp: Removing override of setStyle used to hook
         into KCanvasRenderingStyle::updateStyle.
@@ -6918,14 +6946,17 @@
 
 2006-01-12  Alexander Kellett  <lypanov@kde.org>
 
-        Reviewed by eseidel.
+        Reviewed by eseidel.  Landed by eseidel.
 
         Refactor HTMLImageLoader to make subclassing possible. Implement
         RenderSVGText-style RenderImage subclass. Use this to reimplement
         SVGImageElementImpl.
 
         As a side effect, this should fix:
-        http://bugzilla.opendarwin.org/show_bug.cgi?id=5965 
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5965
+        
+        Already covered by several existing tests.
+        Re-enabled disabled image tests.
 
         * WebCore.xcodeproj/project.pbxproj:
         * kcanvas/RenderSVGImage.cpp: Added.
@@ -9428,7 +9459,7 @@
 
 2006-01-06  Alexander Kellett  <lypanov@kde.org>
 
-        Reviewed by eseidel.
+        Reviewed by eseidel.  Landed by eseidel.
 
         Basic support for <mask> tag.
         http://bugzilla.opendarwin.org/show_bug.cgi?id=5969
@@ -9440,6 +9471,8 @@
 
         This also tickles a (known) gradient update issue:
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6052
+        
+        Test: svg/custom/grayscale-gradient-mask.svg
 
         * WebCore.xcodeproj/project.pbxproj: added Mask files
         * kcanvas/KCanvasResources.cpp:
@@ -9608,7 +9641,7 @@
 
 2005-12-30  Kimmo Kinnunen  <kimmo.kinnunen@nokia.com>
 
-        Reviewed by eseidel.
+        Reviewed by eseidel.  Landed by eseidel.
 
         Changed use of QRect to QRectF in the points where SVG can have
         fractional numbers
@@ -10445,10 +10478,12 @@
 
 2005-12-29  Rob Buis  <rwlbuis@xs4all.nl>
 
-        Reviewed by eseidel.
+        Reviewed by eseidel.  Landed by eseidel.
 
         WebCore+SVG has some problems with rounded rectangles
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6157
+        
+        Test: svg/custom/rounded-rects.svg
 
         * ksvg2/svg/SVGRectElementImpl.cpp:
         (SVGRectElementImpl::toPathData): fixed round rect calculations
