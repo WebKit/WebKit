@@ -1,3 +1,21 @@
+2006-01-26  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Leak fixes in SVG code.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6588
+
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.mm:
+        (teardownShadingWithStyle): delete image and context when through.
+        (KRenderingPaintServerGradientQuartz::KRenderingPaintServerGradientQuartz): zero out cached mask
+        (KRenderingPaintServerGradientQuartz::~KRenderingPaintServerGradientQuartz): destroy cached mask image.
+        (KRenderingPaintServerLinearGradientQuartz::setup): delete mask before making new
+        (KRenderingPaintServerRadialGradientQuartz::setup): delete mask before making new
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        (WebCore::sharedSolidPaintServer): forgot "static" keyword
+        * ksvg2/svg/SVGPolyElementImpl.cpp:
+        (SVGPolyElementImpl::notifyAttributeChange): use RefPtr
+
 2006-01-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

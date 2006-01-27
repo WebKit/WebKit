@@ -138,6 +138,8 @@ static void teardownShadingWithStyle(const KRenderingPaintServerGradient *server
             CGContextDrawLayerAtPoint(grayscaleContext, CGPointMake(0, 0), qMaskImage->cgLayer());
             CGImageRef grayscaleImage = CGBitmapContextCreateImage(grayscaleContext);
             CGContextClipToMask(context, CGRectMake(0, 0, width, height), grayscaleImage);
+            CGContextRelease(grayscaleContext);
+            CGImageRelease(grayscaleImage);
         }
         CGContextDrawShading(context, shading);
         CGContextRestoreGState(context);
@@ -261,7 +263,7 @@ static CGShadingRef CGShadingRefForRadialGradient(const KRenderingPaintServerRad
 }
 
 KRenderingPaintServerGradientQuartz::KRenderingPaintServerGradientQuartz() :
-m_stopsCache(0), m_stopsCount(0), m_shadingCache(0)
+m_stopsCache(0), m_stopsCount(0), m_shadingCache(0), m_maskImage(0)
 {
 }
 
@@ -270,6 +272,7 @@ KRenderingPaintServerGradientQuartz::~KRenderingPaintServerGradientQuartz()
     if (m_stopsCache)
         free(m_stopsCache);
     CGShadingRelease(m_shadingCache);
+    delete m_maskImage;
 }
 
 void KRenderingPaintServerGradientQuartz::updateQuartzGradientCache(const KRenderingPaintServerGradient *server)
@@ -364,6 +367,7 @@ bool KRenderingPaintServerLinearGradientQuartz::setup(KRenderingDeviceContext* r
     if (!m_shadingCache)
         const_cast<KRenderingPaintServerLinearGradientQuartz *>(this)->updateQuartzGradientCache(this);
 
+    delete m_maskImage;
     m_maskImage = setupShadingWithStyle(this, m_shadingCache, renderObject, type, isPaintingText());
 
     return true;
@@ -397,6 +401,7 @@ bool KRenderingPaintServerRadialGradientQuartz::setup(KRenderingDeviceContext* r
     if (!m_shadingCache)
         const_cast<KRenderingPaintServerRadialGradientQuartz *>(this)->updateQuartzGradientCache(this);
 
+    delete m_maskImage;
     m_maskImage = setupShadingWithStyle(this, m_shadingCache, renderObject, type, isPaintingText());
         
     return true;

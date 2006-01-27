@@ -52,7 +52,7 @@ namespace WebCore {
 
 static KRenderingPaintServerSolid* sharedSolidPaintServer()
 {
-    KRenderingPaintServerSolid* _sharedSolidPaintServer = 0;
+    static KRenderingPaintServerSolid* _sharedSolidPaintServer = 0;
     if (!_sharedSolidPaintServer)
         _sharedSolidPaintServer = static_cast<KRenderingPaintServerSolid *>(QPainter::renderingDevice()->createPaintServer(PS_SOLID));
     return _sharedSolidPaintServer;

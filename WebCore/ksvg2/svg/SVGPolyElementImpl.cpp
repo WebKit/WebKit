@@ -82,18 +82,16 @@ void SVGPolyElementImpl::notifyAttributeChange() const
     // Spec: Additionally, the 'points' attribute on the original element
     // accessed via the XML DOM (e.g., using the getAttribute() method call)
     // will reflect any changes made to points.
-    KDOM::DOMString _points;
+    DOMString _points;
     int len = points()->numberOfItems();
-    for(int i = 0; i < len; ++i)
-    {
+    for (int i = 0; i < len; ++i) {
         SVGPointImpl *p = points()->getItem(i);
-        _points += QString::fromLatin1("%1 %2 ").arg(p->x()).arg(p->y());
+        _points += QString("%1 %2 ").arg(p->x()).arg(p->y());
     }
 
     KDOM::DOMString p("points");
-    KDOM::AttrImpl *attr = const_cast<SVGPolyElementImpl *>(this)->getAttributeNode(p.impl());
-    if(attr)
-    {
+    RefPtr<AttrImpl> attr = const_cast<SVGPolyElementImpl *>(this)->getAttributeNode(p.impl());
+    if (attr) {
         int exceptionCode;
         ignoreNotifications = true; // prevent recursion.
         attr->setValue(_points, exceptionCode);
