@@ -432,6 +432,9 @@
 
         - fix for <rdar://problem/4422624> REGRESSION: crash loading webmail.mac.com
 
+        Test added:
+        fast/forms/input-no-renderer.html
+
         * khtml/html/HTMLInputElementImpl.cpp:
         (WebCore::HTMLInputElementImpl::focus): Nil check for renderer.
 

@@ -1,3 +1,13 @@
+2006-01-27  Adele Peterson  <adele@apple.com>
+
+        Adding test for 
+        <rdar://problem/4422624> REGRESSION: crash loading webmail.mac.com
+
+        * fast/forms/input-no-renderer-expected.checksum: Added.
+        * fast/forms/input-no-renderer-expected.png: Added.
+        * fast/forms/input-no-renderer-expected.txt: Added.
+        * fast/forms/input-no-renderer.html: Added.
+
 2006-01-27  Darin Adler  <darin@apple.com>
 
        - revised test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6731
