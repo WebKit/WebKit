@@ -32,6 +32,16 @@
         * fast/inline/positionedLifetime-expected.txt: Added.
         * fast/inline/positionedLifetime.html: Added.
 
+2006-01-26  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Anders.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6841
+          REGRESSION: WebKit (Thursday, January 26, 2006) crash in HTMLImageElementImpl::width()
+
+        * fast/dom/HTMLImageElement/image-without-renderer-width-expected.txt: Added.
+        * fast/dom/HTMLImageElement/image-without-renderer-width.html: Added.
+
 2006-01-26  Anders Carlsson  <andersca@mac.com>
         
         Reviewed by Eric.

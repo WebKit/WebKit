@@ -67,6 +67,20 @@
         (WebCore::RenderContainer::insertChildNode): Only check the the 
         child is not floating; it can be positioned.
 
+2006-01-26  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Test: fast/dom/HTMLImageElement/image-without-renderer-width.html
+
+        Reviewed and landed by Anders.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6841
+          REGRESSION: WebKit (Thursday, January 26, 2006) crash in HTMLImageElementImpl::width()
+
+        * khtml/html/html_imageimpl.cpp:
+        (WebCore::HTMLImageElementImpl::width): Return the image's dimensions only if it isn't
+        null, but even if it hasn't finished loading.
+        (WebCore::HTMLImageElementImpl::height): Ditto.
+
 2006-01-26  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt and Vicki.
