@@ -1,3 +1,11 @@
+2006-01-27  Darin Adler  <darin@apple.com>
+
+       - revised test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6731
+         REGRESSION: change event fires at load time for checked items
+
+        * fast/forms/radio-button-no-change-event.html: Updated to add a second radio button.
+        * fast/forms/radio-button-no-change-event-expected.txt: Updated.
+
 2006-01-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Tim Omernick.
