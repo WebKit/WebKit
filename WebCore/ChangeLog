@@ -1,3 +1,21 @@
+2006-01-26  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        Fix for <rdar://problem/4256504> khtml::RenderBlock::skipWhitespace 
+        crashes upon interaction with radio buttons.
+
+        The old code held an assumption that positioned elements would 
+        always have line boxes. This is not necessarily the case, so this 
+        patch makes sure that the lines are dirtied appropriately.
+
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::removeChildNode): Call 
+        dirtyLinesFromChangedChild() if oldChild is positioned and has
+        inline children.
+        (WebCore::RenderContainer::insertChildNode): Only check the the 
+        child is not floating; it can be positioned.
+
 2006-01-26  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt and Vicki.

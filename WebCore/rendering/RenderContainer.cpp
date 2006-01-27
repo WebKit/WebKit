@@ -187,6 +187,9 @@ RenderObject* RenderContainer::removeChildNode(RenderObject* oldChild)
         // renumber ordered lists
         if (oldChild->isListItem())
             updateListMarkerNumbers(oldChild->nextSibling());
+        
+        if (oldChild->isPositioned() && childrenInline())
+            dirtyLinesFromChangedChild(oldChild);
     }
     
     // remove the child
@@ -396,7 +399,7 @@ void RenderContainer::insertChildNode(RenderObject* child, RenderObject* beforeC
     if (!normalChildNeedsLayout())
         setChildNeedsLayout(true); // We may supply the static position for an absolute positioned child.
     
-    if (!child->isFloatingOrPositioned() && childrenInline())
+    if (!child->isFloating() && childrenInline())
         dirtyLinesFromChangedChild(child);
     
 #if __APPLE__
