@@ -1,3 +1,14 @@
+2006-01-26  Beth Dakin  <bdakin@apple.com>
+
+        Test case for <rdar://problem/4256504>
+        khtml::RenderBlock::skipWhitespace crashes upon interaction with
+        radio buttons
+
+        * fast/inline/positionedLifetime-expected.checksum: Added.
+        * fast/inline/positionedLifetime-expected.png: Added.
+        * fast/inline/positionedLifetime-expected.txt: Added.
+        * fast/inline/positionedLifetime.html: Added.
+
 2006-01-26  Anders Carlsson  <andersca@mac.com>
         
         Reviewed by Eric.
