@@ -830,7 +830,13 @@ void HTMLInputElementImpl::setChecked(bool nowChecked)
     setChanged();
     if (renderer() && renderer()->style()->hasAppearance())
         theme()->stateChanged(renderer(), CheckedState);
-    if (inDocument())
+
+    // Only send a change event for items in the document (avoid firing during
+    // parsing) and don't send a change event for a radio button that's getting
+    // unchecked to match other browsers. DOM is not a useful standard for this
+    // because it says only to fire change events at "lose focus" time, which is
+    // definitely wrong in practice for these types of elements.
+    if (inDocument() && (m_type != RADIO || nowChecked))
         onChange();
 }
 

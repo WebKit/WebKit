@@ -1,3 +1,15 @@
+2006-01-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix another part of http://bugzilla.opendarwin.org/show_bug.cgi?id=6731
+          REGRESSION: change event fires at load time for checked items
+
+        Revised test: fast/forms/radio-button-no-change-event.html
+
+        * khtml/html/HTMLInputElementImpl.cpp: (WebCore::HTMLInputElementImpl::setChecked):
+        Don't send a change event for a radio button getting unchecked (matches Gecko at least).
+
 2006-01-26  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
@@ -813,7 +825,6 @@
         * kwq/KWQLineEdit.mm:
         (QLineEdit::sizeForCharacterWidth):
         (QLineEdit::baselinePosition):
-
 
 2006-01-24  Darin Adler  <darin@apple.com>
 
