@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+# Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -148,6 +148,7 @@ my %durations;
 my $count = 0;
 my $maxTestsPerLeaksRun = 1000; # more than 3000 and malloc logging will normally run out of memory
 my $leaksOutputFileNumber = 1;
+my $totalLeaks = 0;
 
 my @toolArgs = ();
 
@@ -423,11 +424,12 @@ for my $test (@tests) {
 
     if ($checkLeaks && $toolOpen) {
         if ($singly) {
-            printLeaks($dumpToolName, $dumpToolPID, "$testResultsDirectory/$base-leaks.txt");
+            $totalLeaks += countAndPrintLeaks($dumpToolName, $dumpToolPID, "$testResultsDirectory/$base-leaks.txt");
         } elsif ($count && (($count % $maxTestsPerLeaksRun) == 0)) {
             my $leaksFileName = fileNameWithNumber($dumpToolName, $leaksOutputFileNumber);
-            my $leaksCount = printLeaks($dumpToolName, $dumpToolPID, "$testResultsDirectory/$leaksFileName-leaks.txt");
+            my $leaksCount = countAndPrintLeaks($dumpToolName, $dumpToolPID, "$testResultsDirectory/$leaksFileName-leaks.txt");
             $leaksOutputFileNumber++ if ($leaksCount);
+            $totalLeaks += $leaksCount;
             closeDumpRenderTree();
         }
     }
@@ -443,13 +445,18 @@ for my $test (@tests) {
 
 if ($checkLeaks && !$singly && $toolOpen) {
     my $leaksFileName = fileNameWithNumber($dumpToolName, $leaksOutputFileNumber);
-    printLeaks($dumpToolName, $dumpToolPID, "$testResultsDirectory/$leaksFileName-leaks.txt");
+    $totalLeaks += countAndPrintLeaks($dumpToolName, $dumpToolPID, "$testResultsDirectory/$leaksFileName-leaks.txt");
     $leaksOutputFileNumber++;
 }
 
 # FIXME: Do we really want to check the image-comparison tool for leaks every time?
 if ($checkLeaks && $pixelTests) {
-    printLeaks("ImageDiff", $imageDiffToolPID, "$testResultsDirectory/ImageDiff-leaks.txt");
+    $totalLeaks += countAndPrintLeaks("ImageDiff", $imageDiffToolPID, "$testResultsDirectory/ImageDiff-leaks.txt");
+}
+
+if ($totalLeaks) {
+    print "\nWARNING: $totalLeaks total leaks found!\n";
+    print "See above for individual leaks results.\n" if ($leaksOutputFileNumber > 1);
 }
 
 close IN;
@@ -572,7 +579,7 @@ if ($counts{match} && $counts{match} == $count) {
     exit 1;
 }
 
-sub printLeaks
+sub countAndPrintLeaks
 {
     my ($toolName, $toolPID, $leaksFilePath) = @_;
 
