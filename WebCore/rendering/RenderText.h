@@ -30,7 +30,6 @@
 #include <assert.h>
 #include <kxmlcore/PassRefPtr.h>
 
-class QPainter;
 class QFontMetrics;
 
 namespace DOM {
@@ -38,6 +37,7 @@ namespace DOM {
     class DOMStringImpl;
     class DocumentMarker;
     class Position;
+    class QPainter;
 };
 
 // Define a constant for soft hyphen's unicode value.

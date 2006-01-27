@@ -32,10 +32,10 @@
 #include "dom2_rangeimpl.h"
 
 class Frame;
-class QPainter;
 
 namespace WebCore {
 
+class QPainter;
 class RenderObject;
 class VisiblePosition;
 class SelectionController;

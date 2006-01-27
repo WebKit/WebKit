@@ -43,7 +43,7 @@ using namespace HTMLNames;
 RenderImage::RenderImage(NodeImpl *_node)
     : RenderReplaced(_node)
 {
-    image = 0;
+    m_image = 0;
     berrorPic = false;
     m_selectionState = SelectionNone;
     setIntrinsicWidth( 0 );
@@ -53,7 +53,8 @@ RenderImage::RenderImage(NodeImpl *_node)
 
 RenderImage::~RenderImage()
 {
-    if(image) image->deref(this);
+    if (m_image)
+        m_image->deref(this);
     pix.decreaseUseCount();
 }
 
@@ -66,30 +67,32 @@ void RenderImage::setStyle(RenderStyle* _style)
 
 void RenderImage::setContentObject(CachedObject* co)
 {
-    if (co && image != co) {
-        if (image) image->deref(this);
-        image = static_cast<CachedImage*>(co);
-        if (image) image->ref(this);
+    if (co && m_image != co) {
+        if (m_image)
+            m_image->deref(this);
+        m_image = static_cast<CachedImage*>(co);
+        if (m_image)
+            m_image->ref(this);
     }
 }
 
 void RenderImage::setImage(CachedImage* newImage)
 {
-    if (image != newImage) {
-        if (image)
-            image->deref(this);
-        image = newImage;
-        if (image)
-            image->ref(this);
-        if (image->isErrorImage())
-            setPixmap(image->pixmap(), IntRect(0,0,16,16), image);
+    if (m_image != newImage) {
+        if (m_image)
+            m_image->deref(this);
+        m_image = newImage;
+        if (m_image)
+            m_image->ref(this);
+        if (m_image->isErrorImage())
+            setImage(m_image->image(), IntRect(0,0,16,16), m_image);
     }
 }
 
-void RenderImage::setPixmap( const QPixmap &p, const IntRect& r, CachedImage *o)
+void RenderImage::setImage( const Image &p, const IntRect& r, CachedImage *o)
 {
-    if(o != image) {
-        RenderReplaced::setPixmap(p, r, o);
+    if (o != m_image) {
+        RenderReplaced::setImage(p, r, o);
         return;
     }
 
@@ -123,12 +126,12 @@ void RenderImage::setPixmap( const QPixmap &p, const IntRect& r, CachedImage *o)
     bool needlayout = false;
 
     // Image dimensions have been changed, see what needs to be done
-     if ( ( o->pixmap_size().width() != intrinsicWidth() ||
-           o->pixmap_size().height() != intrinsicHeight() || iwchanged) )
+     if ( ( o->image_size().width() != intrinsicWidth() ||
+           o->image_size().height() != intrinsicHeight() || iwchanged) )
     {
         if(!o->isErrorImage()) {
-            setIntrinsicWidth( o->pixmap_size().width() );
-            setIntrinsicHeight( o->pixmap_size().height() );
+            setIntrinsicWidth( o->image_size().width() );
+            setIntrinsicHeight( o->image_size().height() );
         }
 
         // In the case of generated image content using :before/:after, we might not be in the
@@ -163,9 +166,9 @@ void RenderImage::setPixmap( const QPixmap &p, const IntRect& r, CachedImage *o)
             setMinMaxKnown(false);
     }
     else {
-        // FIXME: We always just do a complete repaint, since we always pass in the full pixmap
+        // FIXME: We always just do a complete repaint, since we always pass in the full image
         // rect at the moment anyway.
-        resizeCache = QPixmap();
+        resizeCache = Image();
         repaintRectangle(IntRect(borderLeft()+paddingLeft(), borderTop()+paddingTop(), contentWidth(), contentHeight()));
     }
 }
@@ -198,7 +201,7 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
     if (!shouldPaintWithinRoot(i))
         return;
         
-    bool isPrinting = (i.p->device()->devType() == QInternal::Printer);
+    bool isPrinting = i.p->printing();
     bool drawSelectionTint = isSelected() && !isPrinting;
     if (i.phase == PaintActionSelection) {
         if (selectionState() == SelectionNone) {
@@ -246,7 +249,7 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
                     centerY = 0;
                 imageX = leftBorder + leftPad + centerX;
                 imageY = topBorder + topPad + centerY;
-                p->drawPixmap(IntPoint(_tx + imageX, _ty + imageY), pix, pix.rect());
+                p->drawImage(IntPoint(_tx + imageX, _ty + imageY), pix, pix.rect());
                 errorPictureDrawn = true;
             }
             
@@ -271,14 +274,14 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
             }
         }
     }
-    else if (image && !image->isTransparent()) {
+    else if (m_image && !m_image->isTransparent()) {
         if ( (cWidth != intrinsicWidth() ||  cHeight != intrinsicHeight()) &&
-             pix.width() > 0 && pix.height() > 0 && image->valid_rect().isValid())
+             pix.width() > 0 && pix.height() > 0 && m_image->valid_rect().isValid())
         {
             IntSize tintSize;
             if (resizeCache.isNull() && cWidth && cHeight)
             {
-                IntRect scaledrect(image->valid_rect());
+                IntRect scaledrect(m_image->valid_rect());
                 resizeCache = pix;
                 scaledrect.setWidth( ( cWidth*scaledrect.width() ) / intrinsicWidth() );
                 scaledrect.setHeight( ( cHeight*scaledrect.height() ) / intrinsicHeight() );
@@ -287,18 +290,18 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
                 // of rounding errors. if the image is fully loaded, we
                 // make sure that we don't do unnecessary resizes during painting
                 IntSize s(scaledrect.size());
-                if(image->valid_rect().size() == IntSize( intrinsicWidth(), intrinsicHeight() )) // fully loaded
+                if (m_image->valid_rect().size() == IntSize( intrinsicWidth(), intrinsicHeight() )) // fully loaded
                     s = IntSize(cWidth, cHeight);
-                if(QABS(s.width() - cWidth) < 2) // rounding errors
+                if (QABS(s.width() - cWidth) < 2) // rounding errors
                     s.setWidth(cWidth);
-                if(resizeCache.size() != s)
+                if (resizeCache.size() != s)
                     resizeCache.resize(s);
 
-                p->drawPixmap( IntPoint( _tx + leftBorder + leftPad, _ty + topBorder + topPad),
+                p->drawImage( IntPoint( _tx + leftBorder + leftPad, _ty + topBorder + topPad),
                                resizeCache, scaledrect );
                 tintSize = s;
             } else {
-                p->drawPixmap( IntPoint( _tx + leftBorder + leftPad, _ty + topBorder + topPad), resizeCache );
+                p->drawImage( IntPoint( _tx + leftBorder + leftPad, _ty + topBorder + topPad), resizeCache );
                 tintSize = resizeCache.rect().size();
             }
             if (drawSelectionTint) {
@@ -313,27 +316,16 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
             // so pix contains the old one (we want to paint), but image->valid_rect is still invalid
             // so use intrinsic Size instead.
             // ### maybe no progressive loading for the second image ?
-            IntRect rect(image->valid_rect().isValid() ? image->valid_rect()
+            IntRect rect(m_image->valid_rect().isValid() ? m_image->valid_rect()
                        : IntRect(0, 0, intrinsicWidth(), intrinsicHeight()));
 
             IntPoint offs( _tx + leftBorder + leftPad, _ty + topBorder + topPad);
-//             qDebug("normal paint rect %d/%d/%d/%d", rect.x(), rect.y(), rect.width(), rect.height());
-//             rect = rect & IntRect( 0 , y - offs.y() - 10, w, 10 + y + h  - offs.y());
-
-//             qDebug("normal paint rect after %d/%d/%d/%d", rect.x(), rect.y(), rect.width(), rect.height());
-//             qDebug("normal paint: offs.y(): %d, y: %d, diff: %d", offs.y(), y, y - offs.y());
-//             qDebug("");
-
-//           p->setClipRect(IntRect(x,y,w,h));
-
-
-//             p->drawPixmap( offs.x(), y, pix, rect.x(), rect.y(), rect.width(), rect.height() );
              HTMLImageElementImpl* i = (element() && element()->hasTagName(imgTag)) ? static_cast<HTMLImageElementImpl*>(element()) : 0;
              if (i && !i->compositeOperator().isNull()){
-                p->drawPixmap (offs, pix, rect, i->compositeOperator());
+                p->drawImage (offs, pix, rect, i->compositeOperator());
              }
              else {
-                 p->drawPixmap(offs, pix, rect);
+                 p->drawImage(offs, pix, rect);
              }
              if (drawSelectionTint) {
                  Brush brush(selectionColor(p));
@@ -358,7 +350,7 @@ void RenderImage::layout()
     int oldheight = m_height;
 
     // minimum height
-    m_height = image && image->isErrorImage() ? intrinsicHeight() : 0;
+    m_height = m_image && m_image->isErrorImage() ? intrinsicHeight() : 0;
 
     calcWidth();
     calcHeight();
@@ -375,7 +367,7 @@ void RenderImage::layout()
 // original width, causing the image to be compressed vertically.
 
     if ( m_width != oldwidth || m_height != oldheight )
-        resizeCache = QPixmap();
+        resizeCache = Image();
 
     if (checkForRepaint)
         repaintAfterLayoutIfNeeded(oldBounds, oldBounds);
@@ -452,7 +444,7 @@ int RenderImage::calcReplacedWidth() const
     if (isHeightSpecified() && !isWidthSpecified()) {
         if (intrinsicHeight() == 0)
             return 0;
-        if (!image || image->isErrorImage())
+        if (!m_image || m_image->isErrorImage())
             return intrinsicWidth(); // Don't bother scaling.
         return calcReplacedHeight() * intrinsicWidth() / intrinsicHeight();
     }
@@ -465,7 +457,7 @@ int RenderImage::calcReplacedHeight() const
     if (isWidthSpecified() && !isHeightSpecified()) {
         if (intrinsicWidth() == 0)
             return 0;
-        if (!image || image->isErrorImage())
+        if (!m_image || m_image->isErrorImage())
             return intrinsicHeight(); // Don't bother scaling.
         return calcReplacedWidth() * intrinsicHeight() / intrinsicWidth();
     }

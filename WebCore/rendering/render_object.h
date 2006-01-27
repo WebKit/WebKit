@@ -38,7 +38,6 @@
 class CSSStyle;
 class FrameView;
 class QMatrix;
-class QPainter;
 class QTextStream;
 class RenderArena;
 
@@ -73,6 +72,7 @@ class EventImpl;
 class HTMLAreaElementImpl;
 class InlineBox;
 class InlineFlowBox;
+class QPainter;
 class Position;
 class RenderBlock;
 class RenderCanvas;
@@ -851,7 +851,7 @@ public:
     virtual int previousOffset (int current) const;
     virtual int nextOffset (int current) const;
 
-    virtual void setPixmap(const QPixmap&, const IntRect&, CachedImage *);
+    virtual void setImage(const Image&, const IntRect&, CachedImage *);
 
     virtual void selectionStartEnd(int& spos, int& epos);
 

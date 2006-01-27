@@ -143,8 +143,6 @@ namespace khtml
         
         Color getColorFromPrimitiveValue(DOM::CSSPrimitiveValueImpl* primitiveValue);
         
-        QPaintDeviceMetrics* paintMetrics() const { return paintDeviceMetrics; }
-
     protected:
 
 	/* checks if a compound selector (which can consist of multiple simple selectors)
@@ -229,8 +227,7 @@ public:
 	FrameView *view;
 	Frame *frame;
 	const KHTMLSettings *settings;
-	QPaintDeviceMetrics *paintDeviceMetrics;
-        bool fontDirty;
+	bool fontDirty;
         bool isXMLDoc;
         
 	void applyProperty(int id, DOM::CSSValueImpl *value);

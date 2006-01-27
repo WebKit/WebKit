@@ -494,16 +494,16 @@ public:
     KCanvasFEImage() { }
     virtual ~KCanvasFEImage() { };
     
-    // FIXME: Eventually we need to support <svg> (RenderObject *) as well as pixmap data.
+    // FIXME: Eventually we need to support <svg> (RenderObject *) as well as image data.
     
-    QPixmap pixmap() const { return m_pixmap; }
-    void setPixmap(const QPixmap& pixmap) { m_pixmap = pixmap; }
+    WebCore::Image image() const { return m_image; }
+    void setImage(const WebCore::Image& image) { m_image = image; }
 
     QTextStream &externalRepresentation(QTextStream &) const;
     
 private:
-    khtml::RenderObject *m_renderObject;
-    QPixmap m_pixmap;
+    WebCore::RenderObject *m_renderObject;
+    WebCore::Image m_image;
 };
 
 class KCanvasFEMerge : public KCanvasFilterEffect

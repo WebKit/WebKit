@@ -35,8 +35,6 @@
 #include <qfontmetrics.h>
 #include <qpainter.h>
 
-class QPaintDeviceMetrics;
-
 namespace khtml {
 
 class RenderStyle;
@@ -101,7 +99,7 @@ public:
 
     const FontDef& getFontDef() const { return fontDef; }
     
-    void update(QPaintDeviceMetrics *devMetrics) const;
+    void update() const;
 
     void drawText(QPainter *p, int x, int y, int tabWidth, int xpos, QChar *str, int slen, int pos, int len, int width,
                   QPainter::TextDirection d, bool visuallyOrdered = false, int from = -1, int to = -1, Color bg = Color()) const;

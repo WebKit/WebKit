@@ -409,8 +409,7 @@ void RenderWidget::paint(PaintInfo& i, int _tx, int _ty)
     m_widget->paint(i.p, i.r);
     
     // Paint a partially transparent wash over selected widgets.
-    bool isPrinting = (i.p->device()->devType() == QInternal::Printer);
-    if (isSelected() && !isPrinting) {
+    if (isSelected() && !i.p->printing()) {
         Brush brush(selectionColor(i.p));
         IntRect selRect(selectionRect());
         i.p->fillRect(selRect.x(), selRect.y(), selRect.width(), selRect.height(), brush);

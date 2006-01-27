@@ -26,7 +26,10 @@
 #if SVG_SUPPORT
 
 #include <kcanvas/KCanvasResources.h>
-class QPixmap;
+
+namespace WebCore {
+    class Image;
+}
 
 class KCanvasImage : public KCanvasResource
 {
@@ -34,7 +37,7 @@ public:
     KCanvasImage() { };
     virtual ~KCanvasImage() { };
 
-    virtual void init(const QPixmap &) = 0;
+    virtual void init(const WebCore::Image &) = 0;
     virtual void init(IntSize) = 0;
 
     virtual IntSize size() = 0;

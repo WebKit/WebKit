@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,11 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QPIXMAP_H_
-#define QPIXMAP_H_
+#ifndef IMAGE_H_
+#define IMAGE_H_
 
 #include "KWQNamespace.h"
-#include "KWQPaintDevice.h"
 #include "KWQString.h"
 #include "IntSize.h"
 #include "IntRect.h"
@@ -48,32 +47,30 @@ class NSString;
 #endif // __APPLE__
 
 class QWMatrix;
+
+namespace WebCore {
+
+class CachedImageCallback;
 class QPainter;
-class QPixmap;
 
-namespace khtml {
-    class CachedImageCallback;
-}
-
-bool canRenderImageType(const QString &type);
-QPixmap *KWQLoadPixmap(const char *name);
-
-class QPixmap : public QPaintDevice, public Qt {
+class Image {
 public:
-    QPixmap();
-    QPixmap(void *MIMEType);
-    QPixmap(const IntSize&);
-    QPixmap(const ByteArray&);
+    Image();
+    Image(void *MIMEType);
+    Image(const IntSize&);
+    Image(const ByteArray&);
 #if __APPLE__
-    QPixmap(const ByteArray&, NSString *MIMEType);
+    Image(const ByteArray&, NSString *MIMEType);
 #endif
-    QPixmap(int, int);
+    Image(int, int);
 #if __APPLE__
-    QPixmap(WebCoreImageRendererPtr);
+    Image(WebCoreImageRendererPtr);
 #endif
-    QPixmap(const QPixmap &);
-    ~QPixmap();
+    Image(const Image &);
+    ~Image();
     
+    static Image* loadResource(const char *name);
+
     bool isNull() const;
 
     IntSize size() const;
@@ -85,7 +82,7 @@ public:
 
     bool mask() const;
 
-    QPixmap &operator=(const QPixmap &);
+    Image &operator=(const Image &);
 
     bool receivedData(const ByteArray &bytes, bool isComplete, khtml::CachedImageCallback *decoderCallback);
     void stopAnimations();
@@ -115,5 +112,9 @@ private:
     friend class QPainter;
 
 };
+
+bool canRenderImageType(const QString &type);
+
+}
 
 #endif

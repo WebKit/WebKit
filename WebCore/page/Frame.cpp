@@ -3278,7 +3278,7 @@ void Frame::paint(QPainter *p, const IntRect& rect)
 {
 #ifndef NDEBUG
     bool fillWithRed;
-    if (p->device()->devType() == QInternal::Printer)
+    if (p->printing())
         fillWithRed = false; // Printing, don't fill with red (can't remember why).
     else if (!document() || document()->ownerElement())
         fillWithRed = false; // Subframe, don't fill with red.

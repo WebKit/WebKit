@@ -70,6 +70,11 @@ IntRect QDesktopWidget::availableGeometry(QWidget *widget)
     return IntRect(rect);
 }
 
+int QDesktopWidget::screenDepth() const
+{
+    return CGDisplayBitsPerPixel(kCGDirectMainDisplay);
+}
+
 void QApplication::setOverrideCursor(const QCursor &c)
 {
     // FIXME: Should implement this so that frame border dragging has the proper cursor.

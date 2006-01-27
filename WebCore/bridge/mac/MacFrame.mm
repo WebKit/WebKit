@@ -2308,7 +2308,7 @@ NSFileWrapper *MacFrame::fileWrapperForElement(ElementImpl *e)
     if (!wrapper) {
         RenderImage *renderer = static_cast<RenderImage *>(e->renderer());
         if (renderer->isImage()) {
-            wrapper = [[NSFileWrapper alloc] initRegularFileWithContents:[renderer->pixmap().imageRenderer() TIFFRepresentation]];
+            wrapper = [[NSFileWrapper alloc] initRegularFileWithContents:[renderer->image().imageRenderer() TIFFRepresentation]];
             [wrapper setPreferredFilename:@"image.tiff"];
             [wrapper autorelease];
         }

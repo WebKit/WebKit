@@ -23,8 +23,6 @@
 #include "csshelper.h"
 
 #include <qfontmetrics.h>
-#include <qpaintdevice.h>
-#include <qpaintdevicemetrics.h>
 
 #include "rendering/render_style.h"
 #include "css_valueimpl.h"

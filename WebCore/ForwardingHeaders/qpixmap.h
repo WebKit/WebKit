@@ -1,1 +1,0 @@
-#include "KWQPixmap.h"

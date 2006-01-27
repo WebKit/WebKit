@@ -26,16 +26,14 @@
 #ifndef KWQPRINTER_H_
 #define KWQPRINTER_H_
 
-#include "KWQPaintDevice.h"
-
-class QPrinter : public QPaintDevice {
+class QPrinter {
  public:
     typedef enum {
         PrinterResolution,
         ScreenResolution
     } PrinterMode;
 
-    QPrinter() : QPaintDevice(QInternal::Printer) { }
+    QPrinter() { }
 };
 
 #endif /* KWQPRINTER_H_ */

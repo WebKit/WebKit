@@ -1247,7 +1247,7 @@ void RenderBlock::paintChildren(PaintInfo& i, int _tx, int _ty)
     // We don't paint our own background, but we do let the kids paint their backgrounds.
     PaintInfo paintInfo(i.p, i.r, i.phase == PaintActionChildBlockBackgrounds ? PaintActionChildBlockBackground : i.phase,
                         paintingRootForChildren(i));
-    bool isPrinting = (i.p->device()->devType() == QInternal::Printer);
+    bool isPrinting = i.p->printing();
 
     for (RenderObject *child = firstChild(); child; child = child->nextSibling()) {        
         // Check for page-break-before: always, and if it's set, break and bail.
@@ -1316,7 +1316,7 @@ void RenderBlock::paintObject(PaintInfo& i, int _tx, int _ty)
         paintChildren(i, scrolledX, scrolledY);
     
     // 3. paint selection
-    bool isPrinting = (i.p->device()->devType() == QInternal::Printer);
+    bool isPrinting = i.p->printing();
     if (!inlineFlow && !isPrinting)
         paintSelection(i, scrolledX, scrolledY); // Fill in gaps in selection on lines and between blocks.
 

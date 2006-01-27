@@ -27,7 +27,6 @@
 #define QWIDGET_H_
 
 #include "KWQObject.h"
-#include "KWQPaintDevice.h"
 #include "IntSize.h"
 #include "KWQFont.h"
 #include "KWQCursor.h"
@@ -41,10 +40,13 @@ class NSView;
 class KWQWidgetPrivate;
 class QEvent;
 class QPalette;
-class QPainter;
 class QStyle;
 
-class QWidget : public QObject, public QPaintDevice {
+namespace WebCore {
+    class QPainter;
+}
+
+class QWidget : public QObject {
 public:
 
     enum WidgetFlags {
@@ -83,7 +85,7 @@ public:
     void move(int, int);
     void move(const IntPoint &);
 
-    virtual void paint(QPainter *, const IntRect &);
+    virtual void paint(WebCore::QPainter *, const IntRect &);
     
     virtual IntRect frameGeometry() const;
     virtual void setFrameGeometry(const IntRect &);

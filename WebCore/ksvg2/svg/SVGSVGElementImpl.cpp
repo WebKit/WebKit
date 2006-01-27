@@ -59,7 +59,6 @@
 
 #include "cssproperties.h"
 
-#include <q3paintdevicemetrics.h>
 #include <qtextstream.h>
 
 #include "htmlnames.h"

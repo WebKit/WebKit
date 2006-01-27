@@ -23,7 +23,6 @@
 #ifndef html_helper_h
 #define html_helper_h
 
-class QPainter;
 class QChar;
 
 #include "Color.h"
@@ -32,6 +31,8 @@ class QChar;
 
 namespace khtml
 {
+    class QPainter;
+
     extern QPainter *printpainter;
     void setPrintPainter(QPainter *printer);
 

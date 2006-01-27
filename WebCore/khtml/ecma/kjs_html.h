@@ -26,7 +26,7 @@
 #include "kjs_dom.h"
 #include "Color.h"
 #include <qguardedptr.h>
-#include <qpixmap.h>
+#include "Image.h"
 
 #if __APPLE__
 #include <ApplicationServices/ApplicationServices.h>
@@ -515,7 +515,7 @@ private:
 
   class ImagePattern : public DOMObject {
   public:
-    ImagePattern(const QPixmap& pixmap, int repetitionType);
+    ImagePattern(const WebCore::Image& image, int repetitionType);
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     JSValue *getValueProperty(ExecState *exec, int token) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
@@ -529,7 +529,7 @@ private:
     CGPatternRef createPattern(CGAffineTransform transform);
 #endif
 
-    QPixmap pixmap() { return _pixmap; }
+    WebCore::Image image() { return _image; }
     
     enum {
         Repeat, RepeatX, RepeatY, NoRepeat
@@ -537,7 +537,7 @@ private:
     
 private:
     float _rw, _rh;
-    QPixmap _pixmap;
+    WebCore::Image _image;
 #if __APPLE__
     // FIXME: Macintosh specific, and should be abstracted by KWQ in QPainter.
     CGRect _bounds;

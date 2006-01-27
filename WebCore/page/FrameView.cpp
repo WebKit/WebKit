@@ -47,7 +47,6 @@
 #include <kcursor.h>
 
 #include <qpainter.h>
-#include <qpaintdevicemetrics.h>
 #include <qvariant.h>
 
 #include <assert.h>
@@ -610,8 +609,8 @@ static QCursor selectCursor(const NodeImpl::MouseEvent &event, Frame *frame, boo
     RenderObject *renderer = node ? node->renderer() : 0;
     RenderStyle *style = renderer ? renderer->style() : 0;
 
-    if (style && style->cursorImage() && !style->cursorImage()->pixmap().isNull())
-        return QCursor(style->cursorImage()->pixmap());
+    if (style && style->cursorImage() && !style->cursorImage()->image().isNull())
+        return QCursor(style->cursorImage()->image());
 
     switch (style ? style->cursor() : CURSOR_AUTO) {
         case CURSOR_AUTO:

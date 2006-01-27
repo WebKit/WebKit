@@ -916,18 +916,15 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 {
     m_frame->setMediaType(deviceType == WebCoreDeviceScreen ? "screen" : "print");
     DocumentImpl *doc = m_frame->document();
-    if (doc) {
-        static QPaintDevice screen;
-        static QPrinter printer;
-        doc->setPaintDevice(deviceType == WebCoreDeviceScreen ? &screen : &printer);
-    }
+    if (doc)
+        doc->setPrinting(deviceType == WebCoreDevicePrinter);
     return m_frame->reparseConfiguration();
 }
 
 static BOOL nowPrinting(WebCoreFrameBridge *self)
 {
     DocumentImpl *doc = self->m_frame->document();
-    return doc && doc->paintDevice() && doc->paintDevice()->devType() == QInternal::Printer;
+    return doc && doc->printing();
 }
 
 // Set or unset the printing mode in the view.  We only toy with this if we're printing.
@@ -1334,7 +1331,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         if (node->renderer() && node->renderer()->isImage()) {
             RenderImage *r = static_cast<RenderImage *>(node->renderer());
             if (!r->isDisplayingError()) {
-                const QPixmap& p = r->pixmap();
+                const Image& p = r->image();
                 if (p.imageRenderer())
                     [element setObject:p.imageRenderer() forKey:WebCoreElementImageRendererKey];
             }

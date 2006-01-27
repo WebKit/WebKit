@@ -23,7 +23,6 @@
 #include "kjs_window.h"
 
 #include <qtimer.h>
-#include <qpaintdevicemetrics.h>
 #include <qapplication.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -162,8 +161,7 @@ JSValue *Screen::getValueProperty(ExecState *exec, int token) const
     return jsNumber(sg.width());
   case ColorDepth:
   case PixelDepth: {
-    QPaintDeviceMetrics m(QApplication::desktop());
-    return jsNumber(m.depth());
+    return jsNumber(QApplication::desktop()->screenDepth());
   }
   case AvailLeft: {
     IntRect clipped = info.workArea().intersect(sg);

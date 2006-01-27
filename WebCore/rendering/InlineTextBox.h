@@ -29,7 +29,6 @@
 #include <assert.h>
 #include "RenderText.h"
 
-class QPainter;
 class QFontMetrics;
 class MarkedTextUnderline;
 
@@ -38,6 +37,7 @@ namespace DOM {
     class DOMStringImpl;
     class DocumentMarker;
     class Position;
+    class QPainter;
 };
 
 const int cNoTruncation = -1;

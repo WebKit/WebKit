@@ -61,7 +61,6 @@
 #include "visible_text.h"
 #include "xml_tokenizer.h"
 #include <kdebug.h>
-#include <qpaintdevicemetrics.h>
 #include <qptrstack.h>
 #include <qregexp.h>
 #include "HTMLNameCollectionImpl.h"
@@ -213,20 +212,14 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, FrameView *v)
 {
     document.resetSkippingRef(this);
 
-    m_paintDevice = 0;
-    m_paintDeviceMetrics = 0;
+    m_printing = false;
 
     m_view = v;
     m_renderArena = 0;
 
     m_accCache = 0;
     
-    if ( v ) {
-        m_docLoader = new DocLoader(v->frame(), this );
-        setPaintDevice( m_view );
-    }
-    else
-        m_docLoader = new DocLoader( 0, this );
+    m_docLoader = new DocLoader(v ? v->frame() : 0, this);
 
     visuallyOrdered = false;
     m_loadingSheet = false;
@@ -322,7 +315,6 @@ DocumentImpl::~DocumentImpl()
     if (m_elemSheet )  m_elemSheet->deref();
     if (m_implementation)
         m_implementation->deref();
-    delete m_paintDeviceMetrics;
     
     if (m_elementNames) {
         for (unsigned short id = 0; id < m_elementNameCount; id++)
@@ -826,13 +818,11 @@ void DocumentImpl::recalcStyle( StyleChange change )
         fontDef.family = *(f.firstFamily());
         fontDef.italic = f.italic();
         fontDef.weight = f.weight();
-        bool printing = m_paintDevice && (m_paintDevice->devType() == QInternal::Printer);
-        fontDef.usePrinterFont = printing;
+        fontDef.usePrinterFont = printing();
         if (m_view) {
             const KHTMLSettings *settings = m_view->frame()->settings();
-            if (printing && !settings->shouldPrintBackgrounds()) {
+            if (printing() && !settings->shouldPrintBackgrounds())
                 _style->setForceBackgroundsToWhite(true);
-            }
             QString stdfont = settings->stdFontName();
             if ( !stdfont.isEmpty() ) {
                 fontDef.family.setFamily(stdfont);
@@ -842,7 +832,7 @@ void DocumentImpl::recalcStyle( StyleChange change )
         }
 
         _style->setFontDef(fontDef);
-        _style->htmlFont().update( paintDeviceMetrics() );
+        _style->htmlFont().update();
         if ( inCompatMode() )
             _style->setHtmlHacks(true); // enable html specific rendering tricks
 
@@ -930,9 +920,6 @@ void DocumentImpl::attach()
     assert(!attached());
     assert(!m_inPageCache);
 
-    if ( m_view )
-        setPaintDevice( m_view );
-
     if (!m_renderArena)
         m_renderArena = new RenderArena();
     
@@ -983,8 +970,6 @@ void DocumentImpl::detach()
     if ( render )
         render->destroy();
 
-    if (m_paintDevice == m_view)
-        setPaintDevice(0);
     m_view = 0;
     
     if (m_renderArena) {
@@ -1098,16 +1083,6 @@ void DocumentImpl::updateSelection()
 Tokenizer *DocumentImpl::createTokenizer()
 {
     return newXMLTokenizer(this, m_view);
-}
-
-void DocumentImpl::setPaintDevice( QPaintDevice *dev )
-{
-    if (m_paintDevice == dev) {
-        return;
-    }
-    m_paintDevice = dev;
-    delete m_paintDeviceMetrics;
-    m_paintDeviceMetrics = dev ? new QPaintDeviceMetrics( dev ) : 0;
 }
 
 void DocumentImpl::open(  )

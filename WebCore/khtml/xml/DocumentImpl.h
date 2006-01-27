@@ -42,8 +42,6 @@
 class Frame;
 class FrameView;
 class KWQAccObjectCache;
-class QPaintDevice;
-class QPaintDeviceMetrics;
 class RenderArena;
 
 #ifndef KHTML_NO_XBL
@@ -307,9 +305,8 @@ public:
     virtual Tokenizer *createTokenizer();
     Tokenizer *tokenizer() { return m_tokenizer; }
     
-    QPaintDeviceMetrics *paintDeviceMetrics() { return m_paintDeviceMetrics; }
-    QPaintDevice *paintDevice() const { return m_paintDevice; }
-    void setPaintDevice( QPaintDevice *dev );
+    bool printing() const { return m_printing; }
+    void setPrinting(bool p) { m_printing = p; }
 
     enum HTMLMode {
         Html3,
@@ -588,8 +585,8 @@ protected:
 
     CSSStyleSheetImpl *m_elemSheet;
 
-    QPaintDevice *m_paintDevice;
-    QPaintDeviceMetrics *m_paintDeviceMetrics;
+    bool m_printing;
+
     ParseMode pMode;
     HTMLMode hMode;
 

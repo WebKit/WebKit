@@ -25,7 +25,6 @@
 
 #include "config.h"
 #import "KWQComboBox.h"
-
 #import <kxmlcore/Assertions.h>
 #import "KWQLineEdit.h"
 #import "KWQExceptions.h"
@@ -35,7 +34,6 @@
 #import "WebCoreFrameBridge.h"
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
-
 #import "render_form.h"
 
 using khtml::RenderWidget;

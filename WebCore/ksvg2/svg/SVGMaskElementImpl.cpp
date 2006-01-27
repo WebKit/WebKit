@@ -112,7 +112,7 @@ void SVGMaskElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 KCanvasImage *SVGMaskElementImpl::drawMaskerContent()
 {
     KRenderingDevice *device = QPainter::renderingDevice();
-    if (!device->currentContext()) // FIXME: hack for now until QPixmap::lockFocus exists
+    if (!device->currentContext()) // FIXME: hack for now until Image::lockFocus exists
         return 0;
     if (!renderer())
         return 0;

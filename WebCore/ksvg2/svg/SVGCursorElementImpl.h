@@ -24,7 +24,7 @@
 #define KSVG_SVGCursorElementImpl_H
 #if SVG_SUPPORT
 
-#include <qpixmap.h>
+#include "Image.h"
 
 #include "SVGElementImpl.h"
 #include "SVGTestsImpl.h"
@@ -57,13 +57,13 @@ namespace KSVG
 
         virtual void notifyFinished(KDOM::CachedObject *finishedObj);
 
-        const QPixmap &pixmap() const { return m_image; }
+        const Image &image() const { return m_image; }
 
     private:
         mutable RefPtr<SVGAnimatedLengthImpl> m_x;
         mutable RefPtr<SVGAnimatedLengthImpl> m_y;
         KDOM::CachedImage *m_cachedImage;
-        QPixmap m_image;
+        Image m_image;
     };
 };
 

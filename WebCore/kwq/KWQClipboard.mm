@@ -37,6 +37,8 @@
 using DOM::DOMString;
 using DOM::NodeImpl;
 
+namespace WebCore {
+
 KWQClipboard::KWQClipboard(bool forDragging, NSPasteboard *pasteboard, AccessPolicy policy, MacFrame *frame)
   : m_pasteboard(KWQRetain(pasteboard)), m_forDragging(forDragging),
     m_policy(policy), m_dragStarted(false), m_frame(frame)
@@ -288,12 +290,12 @@ IntPoint KWQClipboard::dragLocation() const
     return m_dragLoc;
 }
 
-QPixmap KWQClipboard::dragImage() const
+Image KWQClipboard::dragImage() const
 {
     return m_dragImage;
 }
 
-void KWQClipboard::setDragImage(const QPixmap &pm, const IntPoint &loc)
+void KWQClipboard::setDragImage(const Image &pm, const IntPoint &loc)
 {
     setDragImage(pm, 0, loc);
 }
@@ -305,10 +307,10 @@ DOM::NodeImpl *KWQClipboard::dragImageElement()
 
 void KWQClipboard::setDragImageElement(NodeImpl *node, const IntPoint &loc)
 {
-    setDragImage(QPixmap(), node, loc);
+    setDragImage(Image(), node, loc);
 }
 
-void KWQClipboard::setDragImage(const QPixmap &pm, NodeImpl *node, const IntPoint &loc)
+void KWQClipboard::setDragImage(const Image &pm, NodeImpl *node, const IntPoint &loc)
 {
     if (m_policy == ImageWritable || m_policy == Writable) {
         m_dragImage = pm;
@@ -455,4 +457,6 @@ void KWQClipboard::setSourceOperation(NSDragOperation op)
 void KWQClipboard::setDestinationOperation(NSDragOperation op)
 {
     m_dropEffect = IEOpFromCocoaOp(op);
+}
+
 }

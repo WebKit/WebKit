@@ -47,6 +47,7 @@ class QDesktopWidget : public QWidget {
 public:
     static int screenNumber(QWidget *);
     static IntRect screenGeometry(int screenNumber);
+    int screenDepth() const; // FIXME: Do we really always assume main display here? That's how it used to work in QPaintDeviceMetrics.
     static IntRect availableGeometry(QWidget *);
     static int width();
     static int height();

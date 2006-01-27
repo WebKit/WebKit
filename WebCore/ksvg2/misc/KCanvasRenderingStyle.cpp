@@ -23,8 +23,6 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-#include <q3paintdevicemetrics.h>
-#include <qpaintdevice.h>
 
 #include <render_object.h>
 
@@ -137,14 +135,9 @@ double KSVGPainterFactory::cssPrimitiveToLength(const RenderObject* item, CSSVal
     if(!(cssType > CSSPrimitiveValue::CSS_UNKNOWN && cssType <= CSSPrimitiveValue::CSS_PC))
         return defaultValue;
 
-    Q3PaintDeviceMetrics *paintDeviceMetrics = 0;
-
-    SVGElementImpl *element = static_cast<SVGElementImpl *>(item->element());
-    if(element && element->ownerDocument())
-        paintDeviceMetrics = element->ownerDocument()->paintDeviceMetrics();
-
     if(cssType == CSSPrimitiveValue::CSS_PERCENTAGE)
     {
+        SVGElementImpl *element = static_cast<SVGElementImpl *>(item->element());
         SVGElementImpl *viewportElement = (element ? element->viewportElement() : 0);
         if(viewportElement)
         {
@@ -153,7 +146,7 @@ double KSVGPainterFactory::cssPrimitiveToLength(const RenderObject* item, CSSVal
         }
     }
 
-    return primitive->computeLengthFloat(const_cast<RenderStyle *>(item->style()), paintDeviceMetrics);
+    return primitive->computeLengthFloat(const_cast<RenderStyle *>(item->style()));
 }
 
 KRenderingStrokePainter KSVGPainterFactory::strokePainter(const RenderStyle* style, const RenderObject* item)
@@ -166,18 +159,12 @@ KRenderingStrokePainter KSVGPainterFactory::strokePainter(const RenderStyle* sty
     CSSValueListImpl *dashes = style->svgStyle()->strokeDashArray();
     if (dashes) {
         CSSPrimitiveValueImpl *dash = 0;
-        Q3PaintDeviceMetrics *paintDeviceMetrics = 0;
-
-        SVGElementImpl *element = static_cast<SVGElementImpl *>(item->element());
-        if (element && element->ownerDocument())
-            paintDeviceMetrics = element->ownerDocument()->paintDeviceMetrics();
-
         KCDashArray array;
         unsigned long len = dashes->length();
         for (unsigned long i = 0; i < len; i++) {
             dash = static_cast<CSSPrimitiveValueImpl *>(dashes->item(i));
             if (dash)
-                array.append((float) dash->computeLengthFloat(const_cast<RenderStyle *>(style), paintDeviceMetrics));
+                array.append((float) dash->computeLengthFloat(const_cast<RenderStyle *>(style)));
         }
 
         strokePainter.setDashArray(array);

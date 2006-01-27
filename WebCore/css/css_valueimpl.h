@@ -177,10 +177,9 @@ public:
      * this is screen/printer dependent, so we probably need a config option for this,
      * and some tool to calibrate.
      */
-    int computeLength( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics );
-    int computeLength( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics, double multiplier );
-    double computeLengthFloat( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics,
-                               bool applyZoomFactor = true );
+    int computeLength(RenderStyle *style);
+    int computeLength(RenderStyle *style, double multiplier);
+    double computeLengthFloat(RenderStyle *style, bool applyZoomFactor = true);
 
     // use with care!!!
     void setPrimitiveType(unsigned short type) { m_type = type; }

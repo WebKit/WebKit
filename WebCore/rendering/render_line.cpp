@@ -796,7 +796,7 @@ void InlineFlowBox::paintBackground(QPainter* p, const Color& c, const Backgroun
                                     int my, int mh, int _tx, int _ty, int w, int h)
 {
     CachedImage* bg = bgLayer->backgroundImage();
-    bool hasBackgroundImage = bg && (bg->pixmap_size() == bg->valid_rect().size()) &&
+    bool hasBackgroundImage = bg && (bg->image_size() == bg->valid_rect().size()) &&
                               !bg->isTransparent() && !bg->isErrorImage();
     if (!hasBackgroundImage || (!prevLineBox() && !nextLineBox()) || !parent())
         object()->paintBackgroundExtended(p, c, bgLayer, my, mh, _tx, _ty, w, h, 
@@ -861,7 +861,7 @@ void InlineFlowBox::paintBackgroundAndBorder(RenderObject::PaintInfo& i, int _tx
         // non-first-line style.
         if (parent() && object()->style()->hasBorder()) {
             CachedImage* borderImage = object()->style()->borderImage().image();
-            bool hasBorderImage = borderImage && (borderImage->pixmap_size() == borderImage->valid_rect().size()) &&
+            bool hasBorderImage = borderImage && (borderImage->image_size() == borderImage->valid_rect().size()) &&
                                   !borderImage->isTransparent() && !borderImage->isErrorImage();
             if (hasBorderImage && !borderImage->isLoaded())
                 return; // Don't paint anything while we wait for the image to load.

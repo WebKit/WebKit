@@ -193,7 +193,7 @@ void DocLoader::setAutoloadImages( bool enable )
     if ( !m_bautoloadImages ) return;
 
     for ( const CachedObject* co=m_docObjects.first(); co; co=m_docObjects.next() )
-        if ( co->type() == CachedObject::Image )
+        if ( co->type() == CachedObject::ImageResource )
         {
             CachedImage *img = const_cast<CachedImage*>( static_cast<const CachedImage *>( co ) );
 
@@ -217,7 +217,7 @@ void DocLoader::setShowAnimations( KHTMLSettings::KAnimationAdvice showAnimation
 
     const CachedObject* co;
     for ( co=m_docObjects.first(); co; co=m_docObjects.next() )
-        if ( co->type() == CachedObject::Image )
+        if ( co->type() == CachedObject::ImageResource )
         {
             CachedImage *img = const_cast<CachedImage*>( static_cast<const CachedImage *>( co ) );
 

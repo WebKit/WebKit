@@ -43,8 +43,6 @@
 #include "rendering/render_style.h"
 #include "xml/dom_stringimpl.h"
 #include <kdebug.h>
-#include <qpaintdevice.h>
-#include <qpaintdevicemetrics.h>
 #include <qregexp.h>
 
 #if SVG_SUPPORT
@@ -828,69 +826,65 @@ void CSSPrimitiveValueImpl::cleanup()
     m_type = 0;
 }
 
-int CSSPrimitiveValueImpl::computeLength(RenderStyle *style, QPaintDeviceMetrics *devMetrics)
+int CSSPrimitiveValueImpl::computeLength(RenderStyle *style)
 {
-    double result = computeLengthFloat( style, devMetrics );
+    double result = computeLengthFloat(style);
     // This conversion is imprecise, often resulting in values of, e.g., 44.99998.  We
     // need to go ahead and round if we're really close to the next integer value.
     int intResult = (int)(result + (result < 0 ? -0.01 : +0.01));
     return intResult;    
 }
 
-int CSSPrimitiveValueImpl::computeLength(RenderStyle *style, QPaintDeviceMetrics *devMetrics, double multiplier)
+int CSSPrimitiveValueImpl::computeLength(RenderStyle *style, double multiplier)
 {
-    double result = multiplier * computeLengthFloat( style, devMetrics );
+    double result = multiplier * computeLengthFloat(style);
     // This conversion is imprecise, often resulting in values of, e.g., 44.99998.  We
     // need to go ahead and round if we're really close to the next integer value.
     int intResult = (int)(result + (result < 0 ? -0.01 : +0.01));
     return intResult;    
 }
 
-double CSSPrimitiveValueImpl::computeLengthFloat(RenderStyle *style, QPaintDeviceMetrics *devMetrics,
-                                                  bool applyZoomFactor )
+double CSSPrimitiveValueImpl::computeLengthFloat(RenderStyle *style, bool applyZoomFactor)
 {
     unsigned short type = primitiveType();
 
-    double dpiY = 72.; // fallback
-    if ( devMetrics )
-        dpiY = devMetrics->logicalDpiY();
-    if ( !printpainter && dpiY < 96 )
-        dpiY = 96.;
+    // We always assume 96 CSS pixels in a CSS inch. This is the cold hard truth of the Web.
+    // At high DPI, we may scale a CSS pixel, but the ratio of the CSS pixel to the so-called
+    // "absolute" CSS length units like inch and pt is always fixed and never changes.
+    double cssPixelsPerInch = 96.;
 
     double factor = 1.;
-    switch(type)
-    {
+    switch(type) {
     case CSSPrimitiveValue::CSS_EMS:
         factor = applyZoomFactor ?
           style->htmlFont().getFontDef().computedSize :
           style->htmlFont().getFontDef().specifiedSize;
         break;
-    case CSSPrimitiveValue::CSS_EXS:
+    case CSSPrimitiveValue::CSS_EXS: {
         // FIXME: We have a bug right now where the zoom will be applied multiple times to EX units.
         // We really need to compute EX using fontMetrics for the original specifiedSize and not use
         // our actual constructed rendering font.
-        {
         QFontMetrics fm = style->fontMetrics();
         factor = fm.xHeight();
         break;
-        }
+    }
     case CSSPrimitiveValue::CSS_PX:
         break;
     case CSSPrimitiveValue::CSS_CM:
-        factor = dpiY/2.54; //72dpi/(2.54 cm/in)
+        factor = cssPixelsPerInch/2.54; // (2.54 cm/in)
         break;
     case CSSPrimitiveValue::CSS_MM:
-        factor = dpiY/25.4;
+        factor = cssPixelsPerInch/25.4;
         break;
     case CSSPrimitiveValue::CSS_IN:
-            factor = dpiY;
+        factor = cssPixelsPerInch;
         break;
     case CSSPrimitiveValue::CSS_PT:
-            factor = dpiY/72.;
+        factor = cssPixelsPerInch/72.;
         break;
     case CSSPrimitiveValue::CSS_PC:
         // 1 pc == 12 pt
-            factor = dpiY*12./72.;
+        factor = cssPixelsPerInch*12./72.;
         break;
     default:
         return -1;

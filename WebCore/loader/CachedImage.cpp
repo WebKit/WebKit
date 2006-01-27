@@ -34,12 +34,12 @@
 #include "CachedObjectClientWalker.h"
 #include "DocLoader.h"
 #include "KWQLoader.h"
-#include <qpixmap.h>
+#include "Image.h"
 
 namespace WebCore {
 
 CachedImage::CachedImage(DocLoader* dl, const DOMString &url, KIO::CacheControl _cachePolicy, time_t _expireDate)
-    : QObject(), CachedObject(url, Image, _cachePolicy, _expireDate)
+    : QObject(), CachedObject(url, ImageResource, _cachePolicy, _expireDate)
     , m_dataSize(0)
 {
     p = 0;
@@ -51,7 +51,7 @@ CachedImage::CachedImage(DocLoader* dl, const DOMString &url, KIO::CacheControl 
     m_status = Unknown;
     m_loading = true;
     m_showAnimations = dl->showAnimations();
-    if (QPixmap::shouldUseThreadedDecoding())
+    if (Image::shouldUseThreadedDecoding())
         m_decoderCallback = new CachedImageCallback(this);
     else
         m_decoderCallback = 0;
@@ -68,7 +68,7 @@ void CachedImage::ref( CachedObjectClient *c )
 
     // for mouseovers, dynamic changes
     if (!valid_rect().isNull())
-        c->setPixmap( pixmap(), valid_rect(), this);
+        c->setImage( image(), valid_rect(), this);
 
     if(!m_loading)
         c->notifyFinished(this);
@@ -82,23 +82,23 @@ void CachedImage::deref( CachedObjectClient *c )
         delete this;
 }
 
-const QPixmap &CachedImage::tiled_pixmap(const Color& newc)
+const Image &CachedImage::tiled_image(const Color& newc)
 {
-    return pixmap();
+    return image();
 }
 
-const QPixmap &CachedImage::pixmap( ) const
+const Image &CachedImage::image( ) const
 {
     if(errorOccured)
-        return *Cache::brokenPixmap;
+        return *Cache::brokenImage;
 
     if (p)
         return *p;
 
-    return *Cache::nullPixmap;
+    return *Cache::nullImage;
 }
 
-IntSize CachedImage::pixmap_size() const
+IntSize CachedImage::image_size() const
 {
     return (p ? p->size() : IntSize());
 }
@@ -108,11 +108,11 @@ IntRect CachedImage::valid_rect() const
     return (p ? p->rect() : IntRect());
 }
 
-void CachedImage::do_notify(const QPixmap& p, const IntRect& r)
+void CachedImage::do_notify(const Image& p, const IntRect& r)
 {
     CachedObjectClientWalker w(m_clients);
     while (CachedObjectClient *c = w.next())
-        c->setPixmap(p, r, this);
+        c->setImage(p, r, this);
 }
 
 void CachedImage::setShowAnimations( KHTMLSettings::KAnimationAdvice showAnimations )
@@ -145,12 +145,12 @@ void CachedImage::data(QBuffer& _buffer, bool eof)
     
     m_dataSize = _buffer.size();
         
-    // If we're at eof and don't have a pixmap yet, the data
+    // If we're at eof and don't have a image yet, the data
     // must have arrived in one chunk.  This avoids the attempt
     // to perform incremental decoding.
     if (eof && !p) {
 #if __APPLE__
-        p = new QPixmap(_buffer.buffer(), KWQResponseMIMEType(m_response));
+        p = new Image(_buffer.buffer(), KWQResponseMIMEType(m_response));
 #endif
         if (m_decoderCallback)
             m_decoderCallback->notifyFinished();
@@ -159,7 +159,7 @@ void CachedImage::data(QBuffer& _buffer, bool eof)
         // Always attempt to load the image incrementally.
 #if __APPLE__
         if (!p)
-            p = new QPixmap(KWQResponseMIMEType(m_response));
+            p = new Image(KWQResponseMIMEType(m_response));
 #endif
         canDraw = p->receivedData(_buffer.buffer(), eof, m_decoderCallback);
     }
@@ -169,14 +169,14 @@ void CachedImage::data(QBuffer& _buffer, bool eof)
         if (canDraw || eof) {
             if (p->isNull()) {
                 errorOccured = true;
-                QPixmap ep = pixmap();
+                Image ep = image();
                 do_notify(ep, ep.rect());
                 Cache::remove(this);
             }
             else
                 do_notify(*p, p->rect());
 
-            IntSize s = pixmap_size();
+            IntSize s = image_size();
             setSize(s.width() * s.height() * 2);
         }
         if (eof) {
@@ -190,7 +190,7 @@ void CachedImage::error( int /*err*/, const char */*text*/ )
 {
     clear();
     errorOccured = true;
-    do_notify(pixmap(), IntRect(0, 0, 16, 16));
+    do_notify(image(), IntRect(0, 0, 16, 16));
     m_loading = false;
     checkNotify();
 }

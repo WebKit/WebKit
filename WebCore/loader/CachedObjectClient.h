@@ -27,8 +27,6 @@
 #ifndef LOADER_CACHED_OBJECT_CLIENT_H
 #define LOADER_CACHED_OBJECT_CLIENT_H
 
-class QPixmap;
-
 #ifndef KHTML_NO_XBL
 namespace XBL {
     class XBLDocumentImpl;
@@ -40,6 +38,7 @@ namespace WebCore {
     class CachedObject;
     class CachedImage;
     class DOMString;
+    class Image;
     class IntRect;
 
     /**
@@ -54,11 +53,11 @@ namespace WebCore {
     public:
         virtual ~CachedObjectClient() { }
 
-        // clipped pixmap (if it is not yet completely loaded),
-        // size of the complete (finished loading) pixmap
+        // clipped image (if it is not yet completely loaded),
+        // size of the complete (finished loading) image
         // rectangle of the part that has been loaded very recently
         // pointer to us
-        virtual void setPixmap(const QPixmap&, const IntRect&, CachedImage*) { }
+        virtual void setImage(const Image&, const IntRect&, CachedImage*) { }
 
         virtual void setStyleSheet(const DOMString& /*URL*/, const DOMString& /*sheet*/) { }
 

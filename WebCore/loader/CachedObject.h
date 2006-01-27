@@ -64,7 +64,7 @@ namespace WebCore
     {
     public:
         enum Type {
-            Image,
+            ImageResource,
             CSSStyleSheet,
             Script
 #ifdef KHTML_XSLT

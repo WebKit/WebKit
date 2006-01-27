@@ -29,12 +29,14 @@
 #import "KWQFoundationExtras.h"
 #import "WebCoreImageRenderer.h"
 
-static NSCursor *createCustomCursor(const QPixmap& pixmap)
+namespace WebCore {
+
+static NSCursor *createCustomCursor(const Image& image)
 {
-    NSImage *image = [pixmap.imageRenderer() image];
-    if (!image)
+    NSImage *img = [image.imageRenderer() image];
+    if (!img)
         return nil;
-    return [[NSCursor alloc] initWithImage:image hotSpot:NSZeroPoint];
+    return [[NSCursor alloc] initWithImage:img hotSpot:NSZeroPoint];
 }
 
 QCursor::QCursor()
@@ -42,8 +44,8 @@ QCursor::QCursor()
 {
 }
 
-QCursor::QCursor(const QPixmap& pixmap)
-    : cursor(createCustomCursor(pixmap))
+QCursor::QCursor(const Image& image)
+    : cursor(createCustomCursor(image))
 {
 }
 
@@ -75,4 +77,6 @@ QCursor& QCursor::operator=(const QCursor& other)
 NSCursor *QCursor::handle() const
 {
     return cursor;
+}
+
 }

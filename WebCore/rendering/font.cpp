@@ -56,7 +56,7 @@ void Font::drawText( QPainter *p, int x, int y, int tabWidth, int xpos, QChar *s
                 letterSpacing, wordSpacing, fontDef.smallCaps);
 }
 
-void Font::update(QPaintDeviceMetrics* devMetrics) const
+void Font::update() const
 {
     if (fontDef.family.familyIsEmpty())
         f.setFamily(KHTMLFactory::defaultHTMLSettings()->stdFontName());

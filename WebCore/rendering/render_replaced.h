@@ -30,7 +30,7 @@ class QWidget;
 
 namespace WebCore {
 
-    class Position;
+class Position;
 
 class RenderReplaced : public RenderBox
 {
@@ -115,6 +115,6 @@ protected:
     int m_refCount;
 };
 
-};
+}
 
 #endif

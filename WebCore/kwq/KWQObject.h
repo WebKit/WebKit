@@ -44,9 +44,7 @@ class ColorGroup;
 class QEvent;
 class QFont;
 class QFontMetrics;
-class QPaintDevice;
 class QPaintDeviceMetrics;
-class QPainter;
 class QPalette;
 class QRegion;
 class QSizePolicy;
@@ -60,6 +58,7 @@ class KWQSignal;
 namespace WebCore {
     class Color;
     class IntRect;
+    class QPainter;
 }
 
 class QObject : public Qt {

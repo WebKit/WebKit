@@ -143,7 +143,7 @@ void RenderCanvasImage::paint(PaintInfo& i, int _tx, int _ty)
     if (!shouldPaintWithinRoot(i))
         return;
 
-    bool isPrinting = (i.p->device()->devType() == QInternal::Printer);
+    bool isPrinting = i.p->printing();
     bool drawSelectionTint = (selectionState() != SelectionNone) && !isPrinting;
     if (i.phase == PaintActionSelection) {
         if (selectionState() == SelectionNone) {

@@ -1,3 +1,224 @@
+2006-01-27  David Hyatt  <hyatt@apple.com>
+
+        Fix for 6867.  Rename QPixmap to Image and move it to platform/.
+        Eliminate QPaintDevice and QPaintDeviceMetrics completely, since
+        they aren't necessary.
+
+        Reviewed by anders
+
+        * ForwardingHeaders/q3paintdevicemetrics.h: Removed.
+        * ForwardingHeaders/qpaintdevice.h: Removed.
+        * ForwardingHeaders/qpaintdevicemetrics.h: Removed.
+        * ForwardingHeaders/qpixmap.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/MacFrame.mm:
+        (MacFrame::fileWrapperForElement):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge reapplyStylesForDeviceType:]):
+        (nowPrinting):
+        (-[WebCoreFrameBridge elementAtPoint:]):
+        * css/css_valueimpl.cpp:
+        (WebCore::CSSPrimitiveValueImpl::computeLength):
+        (WebCore::CSSPrimitiveValueImpl::computeLengthFloat):
+        * css/css_valueimpl.h:
+        * css/csshelper.cpp:
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::CSSStyleSelector::init):
+        (WebCore::CSSStyleSelector::initForStyleResolve):
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::pseudoStyleForElement):
+        (WebCore::convertToLength):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::mapBackgroundXPosition):
+        (WebCore::CSSStyleSelector::mapBackgroundYPosition):
+        * css/cssstyleselector.h:
+        * kcanvas/KCanvasFilters.h:
+        (KCanvasFEImage::image):
+        (KCanvasFEImage::setImage):
+        * kcanvas/KCanvasImage.h:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (KCanvasFEImageQuartz::getCIFilter):
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.h:
+        (KCanvasImageQuartz::init):
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::ClipboardProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::KJS::Context2DFunction::callAsFunction):
+        (KJS::drawPattern):
+        (KJS::_rh):
+        (KJS::ImagePattern::createPattern):
+        * khtml/ecma/kjs_html.h:
+        (KJS::ImagePattern::image):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Screen::getValueProperty):
+        * khtml/editing/SelectionController.h:
+        * khtml/html/html_imageimpl.h:
+        (WebCore::HTMLImageElementImpl::image):
+        * khtml/misc/helper.h:
+        * khtml/xml/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::DocumentImpl):
+        (WebCore::DocumentImpl::~DocumentImpl):
+        (WebCore::DocumentImpl::recalcStyle):
+        (WebCore::DocumentImpl::attach):
+        (WebCore::DocumentImpl::detach):
+        * khtml/xml/DocumentImpl.h:
+        (WebCore::DocumentImpl::printing):
+        (WebCore::DocumentImpl::setPrinting):
+        * khtml/xml/dom2_eventsimpl.h:
+        * ksvg2/css/SVGCSSStyleSelector.cpp:
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        (WebCore::KSVGPainterFactory::cssPrimitiveToLength):
+        (WebCore::KSVGPainterFactory::strokePainter):
+        * ksvg2/svg/SVGCursorElementImpl.cpp:
+        (SVGCursorElementImpl::notifyFinished):
+        * ksvg2/svg/SVGCursorElementImpl.h:
+        (KSVG::SVGCursorElementImpl::image):
+        * ksvg2/svg/SVGDocumentImpl.cpp:
+        (SVGDocumentImpl::SVGDocumentImpl):
+        * ksvg2/svg/SVGFEImageElementImpl.cpp:
+        (SVGFEImageElementImpl::notifyFinished):
+        * ksvg2/svg/SVGMaskElementImpl.cpp:
+        (KSVG::SVGMaskElementImpl::drawMaskerContent):
+        * ksvg2/svg/SVGSVGElementImpl.cpp:
+        * kwq/KWQApplication.h:
+        * kwq/KWQApplication.mm:
+        (QDesktopWidget::screenDepth):
+        * kwq/KWQClipboard.h:
+        * kwq/KWQClipboard.mm:
+        (WebCore::KWQClipboard::dragImage):
+        (WebCore::KWQClipboard::setDragImage):
+        (WebCore::KWQClipboard::setDragImageElement):
+        * kwq/KWQComboBox.mm:
+        * kwq/KWQCursor.h:
+        * kwq/KWQCursor.mm:
+        (WebCore::createCustomCursor):
+        (WebCore::QCursor::QCursor):
+        * kwq/KWQKPartsEvent.h:
+        * kwq/KWQObject.h:
+        * kwq/KWQPaintDevice.h: Removed.
+        * kwq/KWQPaintDeviceMetrics.h: Removed.
+        * kwq/KWQPaintDeviceMetrics.mm: Removed.
+        * kwq/KWQPainter.h:
+        (WebCore::QPainter::printing):
+        * kwq/KWQPainter.mm:
+        (WebCore::QPainter::drawImage):
+        (WebCore::QPainter::drawFloatImage):
+        (WebCore::QPainter::drawTiledImage):
+        (WebCore::QPainter::drawScaledAndTiledImage):
+        * kwq/KWQPixmap.h: Removed.
+        * kwq/KWQPixmap.mm: Removed.
+        * kwq/KWQPrinter.h:
+        (QPrinter::QPrinter):
+        * kwq/KWQWidget.h:
+        * loader/Cache.cpp:
+        (khtml::Cache::init):
+        (khtml::Cache::clear):
+        (khtml::Cache::requestImage):
+        (khtml::Cache::getStatistics):
+        * loader/Cache.h:
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::CachedImage):
+        (WebCore::CachedImage::ref):
+        (WebCore::CachedImage::tiled_image):
+        (WebCore::CachedImage::image):
+        (WebCore::CachedImage::image_size):
+        (WebCore::CachedImage::do_notify):
+        (WebCore::CachedImage::data):
+        (WebCore::CachedImage::error):
+        * loader/CachedImage.h:
+        * loader/CachedImageCallback.cpp:
+        (WebCore::CachedImageCallback::notifyUpdate):
+        (WebCore::CachedImageCallback::notifyFinished):
+        (WebCore::CachedImageCallback::handleError):
+        * loader/CachedObject.h:
+        (WebCore::CachedObject::):
+        * loader/CachedObjectClient.h:
+        (WebCore::CachedObjectClient::setImage):
+        * loader/DocLoader.cpp:
+        (khtml::DocLoader::setAutoloadImages):
+        (khtml::DocLoader::setShowAnimations):
+        * loader/loader.cpp:
+        (WebCore::Loader::servePendingRequests):
+        (WebCore::Loader::slotFinished):
+        * page/Frame.cpp:
+        (Frame::paint):
+        * page/Frame.h:
+        * page/FrameView.cpp:
+        (selectCursor):
+        * page/FrameView.h:
+        * platform/Image.h: Added.
+        * platform/mac/Image.mm: Added.
+        (WebCore::Image::loadResource):
+        (WebCore::Image::Image):
+        (WebCore::Image::~Image):
+        (WebCore::Image::imageRef):
+        (WebCore::Image::resetAnimation):
+        (WebCore::Image::setAnimationRect):
+        (-[WebImageCallback initWithCallback:WebCore::]):
+        (WebCore::Image::shouldUseThreadedDecoding):
+        (WebCore::Image::receivedData):
+        (WebCore::Image::mask):
+        (WebCore::Image::isNull):
+        (WebCore::Image::size):
+        (WebCore::Image::rect):
+        (WebCore::Image::width):
+        (WebCore::Image::height):
+        (WebCore::Image::resize):
+        (WebCore::Image::operator=):
+        (WebCore::Image::increaseUseCount):
+        (WebCore::Image::decreaseUseCount):
+        (WebCore::Image::stopAnimations):
+        (WebCore::Image::flushRasterCache):
+        * rendering/InlineTextBox.cpp:
+        (khtml::InlineTextBox::paint):
+        * rendering/InlineTextBox.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintChildren):
+        (WebCore::RenderBlock::paintObject):
+        * rendering/RenderText.h:
+        * rendering/font.cpp:
+        (khtml::Font::update):
+        * rendering/font.h:
+        * rendering/render_box.cpp:
+        (WebCore::RenderBox::paintBackgroundExtended):
+        * rendering/render_canvasimage.cpp:
+        (WebCore::RenderCanvasImage::paint):
+        * rendering/render_flow.cpp:
+        (RenderFlow::paintLines):
+        * rendering/render_image.cpp:
+        (WebCore::RenderImage::RenderImage):
+        (WebCore::RenderImage::~RenderImage):
+        (WebCore::RenderImage::setContentObject):
+        (WebCore::RenderImage::setImage):
+        (WebCore::RenderImage::paint):
+        (WebCore::RenderImage::layout):
+        (WebCore::RenderImage::calcReplacedWidth):
+        (WebCore::RenderImage::calcReplacedHeight):
+        * rendering/render_image.h:
+        (WebCore::RenderImage::image):
+        (WebCore::RenderImage::getImage):
+        * rendering/render_line.cpp:
+        (WebCore::InlineFlowBox::paintBackground):
+        (WebCore::InlineFlowBox::paintBackgroundAndBorder):
+        * rendering/render_list.cpp:
+        (RenderListItem::getAbsoluteRepaintRect):
+        (RenderListMarker::paint):
+        (RenderListMarker::setImage):
+        (RenderListMarker::calcMinMaxWidth):
+        * rendering/render_list.h:
+        * rendering/render_object.cpp:
+        (WebCore::RenderObject::mustRepaintBackgroundOrBorder):
+        (WebCore::RenderObject::paintBorderImage):
+        (WebCore::RenderObject::paintBorder):
+        (WebCore::RenderObject::setImage):
+        * rendering/render_object.h:
+        * rendering/render_replaced.cpp:
+        (WebCore::RenderWidget::paint):
+        * rendering/render_replaced.h:
+        * rendering/render_theme_mac.mm:
+        (khtml::RenderThemeMac::setFontFromControlSize):
+
 2006-01-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

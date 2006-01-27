@@ -29,10 +29,9 @@
 // qt includes and classes
 #include <qscrollview.h>
 
-class QPainter;
-
 namespace WebCore {
     class IntRect;
+    class QPainter;
 }
 
 namespace DOM {
@@ -232,7 +231,7 @@ private:
      * more, if nonzero will be set to true if the documents extends
      * beyond the rc or false if everything below yOff was painted.
      **/
-    void paint(QPainter *p, const IntRect &rc, int yOff = 0, bool *more = 0);
+    void paint(WebCore::QPainter *p, const IntRect &rc, int yOff = 0, bool *more = 0);
 
     /**
      * Get/set the CSS Media Type.

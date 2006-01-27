@@ -38,7 +38,7 @@
 #include <kio/job.h>
 #include <kio/jobclasses.h>
 #include <kxmlcore/Assertions.h>
-#include <qpixmap.h>
+#include "Image.h"
 
 using namespace DOM;
 
@@ -70,8 +70,8 @@ int Cache::maxSize = defaultCacheSize;
 int Cache::maxCacheable = minMaxCacheableObjectSize;
 int Cache::flushCount = 0;
 
-QPixmap *Cache::nullPixmap = 0;
-QPixmap *Cache::brokenPixmap = 0;
+Image *Cache::nullImage = 0;
+Image *Cache::brokenImage = 0;
 
 CachedObject *Cache::m_headOfUncacheableList = 0;
 int Cache::m_totalSizeOfLRULists = 0;
@@ -86,11 +86,11 @@ void Cache::init()
     if ( !docloader )
         docloader = new QPtrList<DocLoader>;
 
-    if ( !nullPixmap )
-        nullPixmap = new QPixmap;
+    if ( !nullImage )
+        nullImage = new Image;
 
-    if ( !brokenPixmap )
-        brokenPixmap = KWQLoadPixmap("missing_image");
+    if ( !brokenImage )
+        brokenImage = Image::loadResource("missing_image");
 
     if ( !m_loader )
         m_loader = new Loader();
@@ -104,8 +104,8 @@ void Cache::clear()
     deleteAllValues(*cache);
 
     delete cache; cache = 0;
-    delete nullPixmap; nullPixmap = 0;
-    delete brokenPixmap; brokenPixmap = 0;
+    delete nullImage; nullImage = 0;
+    delete brokenImage; brokenImage = 0;
     delete m_loader;   m_loader = 0;
     delete docloader; docloader = 0;
 }
@@ -155,13 +155,8 @@ CachedImage *Cache::requestImage( DocLoader* dl, const KURL & url, bool reload, 
     }
 
     
-    if(o->type() != CachedObject::Image)
-    {
-#ifdef CACHE_DEBUG
-        kdDebug( 6060 ) << "Cache::Internal Error in requestImage url=" << kurl.url() << "!" << endl;
-#endif
+    if (o->type() != CachedObject::ImageResource)
         return 0;
-    }
 
 #ifdef CACHE_DEBUG
     if( o->status() == CachedObject::Pending )
@@ -608,7 +603,7 @@ Cache::Statistics Cache::getStatistics()
     for (CacheMap::iterator i = cache->begin(); i != e; ++i) {
         CachedObject *o = i->second;
         switch (o->type()) {
-            case CachedObject::Image:
+            case CachedObject::ImageResource:
                 stats.images.count++;
                 stats.images.size += o->size();
                 break;

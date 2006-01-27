@@ -31,7 +31,6 @@
 #if SVG_SUPPORT
 
 #include <q3cstring.h>
-#include <qpaintdevice.h>
 
 #include "css_ruleimpl.h"
 

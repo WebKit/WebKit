@@ -26,7 +26,7 @@
 #ifndef QCURSOR_H
 #define QCURSOR_H
 
-#include "KWQPixmap.h"
+#include "Image.h"
 #include "IntPointArray.h"
 
 #ifdef __OBJC__
@@ -35,10 +35,12 @@
 class NSCursor;
 #endif
 
+namespace WebCore {
+
 class QCursor {
 public:
     QCursor();
-    QCursor(const QPixmap &);
+    QCursor(const Image &);
     QCursor(const QCursor &);
     ~QCursor();
     
@@ -51,5 +53,10 @@ public:
  private:
     NSCursor *cursor;
 };
+
+}
+
+// FIXME: Remove when everything is in the WebCore namespace.
+using WebCore::QCursor;
 
 #endif

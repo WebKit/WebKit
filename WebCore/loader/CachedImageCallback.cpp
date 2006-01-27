@@ -32,15 +32,15 @@
 #include "CachedImage.h"
 #include "Request.h"
 #include "loader.h"
-#include <qpixmap.h>
+#include "Image.h"
 
 namespace WebCore {
 
 void CachedImageCallback::notifyUpdate() 
 { 
     if (cachedImage) {
-        cachedImage->do_notify(cachedImage->pixmap(), cachedImage->pixmap().rect()); 
-        IntSize s = cachedImage->pixmap_size();
+        cachedImage->do_notify(cachedImage->image(), cachedImage->image().rect()); 
+        IntSize s = cachedImage->image_size();
         cachedImage->setSize(s.width() * s.height() * 2);
 
         // After receiving the image header we are guaranteed to know
@@ -72,10 +72,10 @@ void CachedImageCallback::notifyUpdate()
 void CachedImageCallback::notifyFinished()
 {
     if (cachedImage) {
-        cachedImage->do_notify(cachedImage->pixmap(), cachedImage->pixmap().rect()); 
+        cachedImage->do_notify(cachedImage->image(), cachedImage->image().rect()); 
         cachedImage->m_loading = false;
         cachedImage->checkNotify();
-        IntSize s = cachedImage->pixmap_size();
+        IntSize s = cachedImage->image_size();
         cachedImage->setSize(s.width() * s.height() * 2);
 
         Request *r = cachedImage->m_request;
@@ -101,7 +101,7 @@ void CachedImageCallback::handleError()
 {
     if (cachedImage) {
         cachedImage->errorOccured = true;
-        QPixmap ep = cachedImage->pixmap();
+        Image ep = cachedImage->image();
         cachedImage->do_notify(ep, ep.rect());
         Cache::remove(cachedImage);
 

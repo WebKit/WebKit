@@ -31,9 +31,8 @@
 #import "KWQExceptions.h"
 #import "KWQFont.h"
 #import "KWQFoundationExtras.h"
-#import "KWQPaintDevice.h"
 #import "Pen.h"
-#import "KWQPixmap.h"
+#import "Image.h"
 #import "KWQPrinter.h"
 #import "KWQPtrStack.h"
 #import "KWQRegion.h"
@@ -46,6 +45,8 @@
 #if SVG_SUPPORT
 #import "kcanvas/device/quartz/KRenderingDeviceQuartz.h"
 #endif
+
+namespace WebCore {
 
 // NSColor, NSBezierPath, NSGraphicsContext and WebCoreTextRenderer
 // calls in this file are all exception-safe, so we don't block
@@ -102,13 +103,6 @@ QPainter::QPainter(bool forPrinting) : data(new QPainterPrivate), _isForPrinting
 QPainter::~QPainter()
 {
     delete data;
-}
-
-QPaintDevice *QPainter::device() const
-{
-    static QPrinter printer;
-    static QPaintDevice screen;
-    return _isForPrinting ? &printer : &screen;
 }
 
 const QFont &QPainter::font() const
@@ -452,14 +446,14 @@ void QPainter::drawConvexPolygon(const IntPointArray &points)
     CGContextRestoreGState(context);
 }
 
-void QPainter::drawPixmap(const IntPoint &p, const QPixmap &pix)
+void QPainter::drawImage(const IntPoint &p, const Image &pix)
 {        
-    drawPixmap(p.x(), p.y(), pix);
+    drawImage(p.x(), p.y(), pix);
 }
 
-void QPainter::drawPixmap(const IntPoint &p, const QPixmap &pix, const IntRect &r)
+void QPainter::drawImage(const IntPoint &p, const Image &pix, const IntRect &r)
 {
-    drawPixmap(p.x(), p.y(), pix, r.x(), r.y(), r.width(), r.height());
+    drawImage(p.x(), p.y(), pix, r.x(), r.y(), r.width(), r.height());
 }
 
 struct CompositeOperator
@@ -517,24 +511,24 @@ int QPainter::compositeOperatorFromString(const QString &aString)
     return (int)op;
 }
 
-void QPainter::drawPixmap(const IntPoint &p, const QPixmap &pix, const IntRect &r, const QString &compositeOperator)
+void QPainter::drawImage(const IntPoint &p, const Image &pix, const IntRect &r, const QString &compositeOperator)
 {
-    drawPixmap(p.x(), p.y(), pix, r.x(), r.y(), r.width(), r.height(), compositeOperatorFromString(compositeOperator));
+    drawImage(p.x(), p.y(), pix, r.x(), r.y(), r.width(), r.height(), compositeOperatorFromString(compositeOperator));
 }
 
-void QPainter::drawPixmap( int x, int y, const QPixmap &pixmap,
+void QPainter::drawImage( int x, int y, const Image &image,
                            int sx, int sy, int sw, int sh, int compositeOperator, CGContextRef context)
 {
-    drawPixmap (x, y, sw, sh, pixmap, sx, sy, sw, sh, compositeOperator, context);
+    drawImage (x, y, sw, sh, image, sx, sy, sw, sh, compositeOperator, context);
 }
 
-void QPainter::drawPixmap( int x, int y, int w, int h, const QPixmap &pixmap,
+void QPainter::drawImage( int x, int y, int w, int h, const Image &image,
                            int sx, int sy, int sw, int sh, int compositeOperator, CGContextRef context)
 {
-    drawFloatPixmap ((float)x, (float)y, (float)w, (float)h, pixmap, (float)sx, (float)sy, (float)sw, (float)sh, compositeOperator, context);
+    drawFloatImage ((float)x, (float)y, (float)w, (float)h, image, (float)sx, (float)sy, (float)sw, (float)sh, compositeOperator, context);
 }
 
-void QPainter::drawFloatPixmap( float x, float y, float w, float h, const QPixmap &pixmap,
+void QPainter::drawFloatImage( float x, float y, float w, float h, const Image &image,
                            float sx, float sy, float sw, float sh, int compositeOperator, CGContextRef context)
 {
     if (data->state.paintingDisabled)
@@ -548,25 +542,25 @@ void QPainter::drawFloatPixmap( float x, float y, float w, float h, const QPixma
     float th = h;
         
     if (tsw == -1)
-        tsw = pixmap.width();
+        tsw = image.width();
     if (tsh == -1)
-        tsh = pixmap.height();
+        tsh = image.height();
 
     if (tw == -1)
-        tw = pixmap.width();
+        tw = image.width();
     if (th == -1)
-        th = pixmap.height();
+        th = image.height();
 
     NSRect inRect = NSMakeRect(x, y, tw, th);
     NSRect fromRect = NSMakeRect(sx, sy, tsw, tsh);
     
-    [pixmap.imageRenderer() drawImageInRect:inRect fromRect:fromRect compositeOperator:(NSCompositingOperation)compositeOperator context:context];
+    [image.imageRenderer() drawImageInRect:inRect fromRect:fromRect compositeOperator:(NSCompositingOperation)compositeOperator context:context];
 
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QPainter::drawTiledPixmap( int x, int y, int w, int h,
-				const QPixmap &pixmap, int sx, int sy, CGContextRef context)
+void QPainter::drawTiledImage( int x, int y, int w, int h,
+				const Image &image, int sx, int sy, CGContextRef context)
 {
     if (data->state.paintingDisabled)
         return;
@@ -574,11 +568,11 @@ void QPainter::drawTiledPixmap( int x, int y, int w, int h,
     KWQ_BLOCK_EXCEPTIONS;
     NSRect tempRect = { {x, y}, {w, h} }; // workaround for 4213314
     NSPoint tempPoint = { sx, sy };
-    [pixmap.imageRenderer() tileInRect:tempRect fromPoint:tempPoint context:context];
+    [image.imageRenderer() tileInRect:tempRect fromPoint:tempPoint context:context];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QPainter::drawScaledAndTiledPixmap(int x, int y, int w, int h, const QPixmap &pixmap, int sx, int sy, int sw, int sh, 
+void QPainter::drawScaledAndTiledImage(int x, int y, int w, int h, const Image &image, int sx, int sy, int sw, int sh, 
                                         TileRule hRule, TileRule vRule, CGContextRef context)
 {
     if (data->state.paintingDisabled)
@@ -586,10 +580,10 @@ void QPainter::drawScaledAndTiledPixmap(int x, int y, int w, int h, const QPixma
     
     if (hRule == STRETCH && vRule == STRETCH)
         // Just do a scale.
-        return drawPixmap(x, y, w, h, pixmap, sx, sy, sw, sh, -1, context);
+        return drawImage(x, y, w, h, image, sx, sy, sw, sh, -1, context);
 
     KWQ_BLOCK_EXCEPTIONS;
-    [pixmap.imageRenderer() scaleAndTileInRect:NSMakeRect(x, y, w, h) fromRect:NSMakeRect(sx, sy, sw, sh) 
+    [image.imageRenderer() scaleAndTileInRect:NSMakeRect(x, y, w, h) fromRect:NSMakeRect(sx, sy, sw, sh) 
                         withHorizontalTileRule:(WebImageTileRule)hRule withVerticalTileRule:(WebImageTileRule)vRule context:context];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
@@ -1001,4 +995,6 @@ void QPainter::clearFocusRing()
         KWQRelease(data->focusRingPath);
         data->focusRingPath = nil;
     }
+}
+
 }
