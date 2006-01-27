@@ -146,6 +146,8 @@ my %tests;
 my %imagesPresent;
 my %durations;
 my $count = 0;
+my $maxTestsPerLeaksRun = 1000; # more than 3000 and malloc logging will normally run out of memory
+my $leaksOutputFileNumber = 1;
 
 my @toolArgs = ();
 
@@ -170,18 +172,39 @@ my $toolOpen = 0;
 my $atLineStart = 1;
 my $lastDirectory = "";
 
+printf("Testing %d test cases.\n", $#tests + 1);
+
+sub openDumpRenderTreeIfNeeded()
+{
+    return if ($toolOpen);
+    local %ENV;
+    $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
+    $ENV{XML_CATALOG_FILES} = ""; # work around missing /etc/catalog <rdar://problem/4292995>
+    $ENV{MallocStackLogging} = 1 if $checkLeaks;
+    $ENV{DYLD_INSERT_LIBRARIES} = "/usr/lib/libgmalloc.dylib" if $guardMalloc;
+    $dumpToolPID = open2(\*IN, \*OUT, $tool, @toolArgs) or die "Failed to start tool: $tool\n";
+    $toolOpen = 1;
+}
+
+sub closeDumpRenderTree()
+{
+    close IN;
+    close OUT;
+    waitpid $dumpToolPID, 0;
+    $toolOpen = 0;
+}
+
+sub fileNameWithNumber($$)
+{
+    my ($base, $number) = @_;
+    return "$base$number" if ($number > 1);
+    return $base;
+}
+
 for my $test (@tests) {
     next if $test eq 'results.html';
 
-    if (!$toolOpen) {
-        local %ENV;
-        $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
-        $ENV{XML_CATALOG_FILES} = ""; # work around missing /etc/catalog <rdar://problem/4292995>
-        $ENV{MallocStackLogging} = 1 if $checkLeaks;
-        $ENV{DYLD_INSERT_LIBRARIES} = "/usr/lib/libgmalloc.dylib" if $guardMalloc;
-        $dumpToolPID = open2(\*IN, \*OUT, $tool, @toolArgs) or die;
-        $toolOpen = 1;
-    }
+    openDumpRenderTreeIfNeeded();
 
     my $base = $test;
     $base =~ s/\.(html|xml|xhtml|svg)$//;
@@ -395,21 +418,22 @@ for my $test (@tests) {
         print "\n" unless $atLineStart;
         print "$test -> crashed?\n";
         $atLineStart = 1;
-
-        close IN;
-        close OUT;
-        $toolOpen = 0;
+        closeDumpRenderTree();
     }
 
-    if ($checkLeaks && $singly && $toolOpen) {
-        printLeaks($dumpToolName, $dumpToolPID, "$testResultsDirectory/$base-leaks.txt");
+    if ($checkLeaks && $toolOpen) {
+        if ($singly) {
+            printLeaks($dumpToolName, $dumpToolPID, "$testResultsDirectory/$base-leaks.txt");
+        } elsif ($count && (($count % $maxTestsPerLeaksRun) == 0)) {
+            my $leaksFileName = fileNameWithNumber($dumpToolName, $leaksOutputFileNumber);
+            my $leaksCount = printLeaks($dumpToolName, $dumpToolPID, "$testResultsDirectory/$leaksFileName-leaks.txt");
+            $leaksOutputFileNumber++ if ($leaksCount);
+            closeDumpRenderTree();
+        }
     }
 
     if ($singly && $toolOpen) {
-        close IN;
-        close OUT;
-        waitpid $dumpToolPID, 0;
-        $toolOpen = 0;
+        closeDumpRenderTree();
     }
 
     $count += 1;
@@ -418,10 +442,12 @@ for my $test (@tests) {
 }
 
 if ($checkLeaks && !$singly && $toolOpen) {
-    printLeaks($dumpToolName, $dumpToolPID, "$testResultsDirectory/$dumpToolName-leaks.txt");
+    my $leaksFileName = fileNameWithNumber($dumpToolName, $leaksOutputFileNumber);
+    printLeaks($dumpToolName, $dumpToolPID, "$testResultsDirectory/$leaksFileName-leaks.txt");
+    $leaksOutputFileNumber++;
 }
 
-# FIXME: Do we really want to check the image-comparison tool for leaks?
+# FIXME: Do we really want to check the image-comparison tool for leaks every time?
 if ($checkLeaks && $pixelTests) {
     printLeaks("ImageDiff", $imageDiffToolPID, "$testResultsDirectory/ImageDiff-leaks.txt");
 }
@@ -576,6 +602,7 @@ sub printLeaks
     if ($count == 0 || ($excluded && $count <= $excluded)) {
         print " - no leaks found\n";
         unlink $leaksFilePath;
+        return 0;
     } else {
         my $dir = $leaksFilePath;
         $dir =~ s|/[^/]+$|| or die;
@@ -586,6 +613,7 @@ sub printLeaks
         print LEAKS $leaksOutput;
         close LEAKS;
     }
+    return $count;
 }
 
 # Break up a path into the directory (with slash) and base name.

@@ -1,3 +1,12 @@
+2006-01-27  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        run-webkit-test --leaks crashes (malloc logging runs out of memory)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6869
+
+        * Scripts/run-webkit-tests: fix --leaks to not crash
+
 2006-01-26  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
