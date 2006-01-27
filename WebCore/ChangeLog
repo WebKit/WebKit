@@ -668,6 +668,8 @@
         http://bugzilla.opendarwin.org/show_bug.cgi?id=6816
         Crash in dispatchMouseEvent - Missing nil check
 
+        No test added because I was not able to reproduce the crash reliably. 
+
         * page/FrameView.cpp: (FrameView::dispatchMouseEvent):
 
 2006-01-25  Justin Garcia  <justin.garcia@apple.com>
