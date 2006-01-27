@@ -589,8 +589,10 @@ void Frame::clear(bool clearWindowProperties)
   d->m_bClearing = true;
   d->m_mousePressNode = 0;
 
-  if (d->m_doc)
+  if (d->m_doc) {
+    d->m_doc->cancelParsing();
     d->m_doc->detach();
+  }
 
   // Moving past doc so that onUnload works.
   if (clearWindowProperties && d->m_jscript)

@@ -1129,15 +1129,22 @@ void DocumentImpl::open(  )
     }
 }
 
-void DocumentImpl::implicitOpen()
+void DocumentImpl::cancelParsing()
 {
     if (m_tokenizer) {
         // We have to clear the tokenizer to avoid possibly triggering
-        // the onload handler when closing as a side effect of opening
+        // the onload handler when closing as a side effect of a cancel-style
+        // change, such as opening a new document or closing the window while
+        // still parsing
         delete m_tokenizer;
         m_tokenizer = 0;
         close();
     }
+}
+
+void DocumentImpl::implicitOpen()
+{
+    cancelParsing();
 
     clear();
     m_tokenizer = createTokenizer();

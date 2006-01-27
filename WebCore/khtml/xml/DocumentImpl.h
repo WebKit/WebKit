@@ -276,6 +276,8 @@ public:
     void implicitOpen();
     void close();
     void implicitClose();
+    void cancelParsing();
+
     void write ( const DOMString &text );
     void write ( const QString &text );
     void writeln ( const DOMString &text );
