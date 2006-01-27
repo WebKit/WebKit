@@ -1,3 +1,18 @@
+2006-01-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Tim Omernick.
+
+        - test case for REGRESSION: crash when setting a list with list-style: none to display: none
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6860
+        
+        (This bug was fixed independently by Dave Harrison but I'm landing the test
+        case anyway.)
+
+        * fast/lists/list-style-none-crash-expected.checksum: Added.
+        * fast/lists/list-style-none-crash-expected.png: Added.
+        * fast/lists/list-style-none-crash-expected.txt: Added.
+        * fast/lists/list-style-none-crash.html: Added.
+
 2006-01-26  Beth Dakin  <bdakin@apple.com>
 
         Test case for <rdar://problem/4256504>
