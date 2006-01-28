@@ -126,12 +126,10 @@ void RenderImage::setImage( const Image &p, const IntRect& r, CachedImage *o)
     bool needlayout = false;
 
     // Image dimensions have been changed, see what needs to be done
-     if ( ( o->image_size().width() != intrinsicWidth() ||
-           o->image_size().height() != intrinsicHeight() || iwchanged) )
-    {
+     if ((o->imageSize().width() != intrinsicWidth() || o->imageSize().height() != intrinsicHeight() || iwchanged)) {
         if(!o->isErrorImage()) {
-            setIntrinsicWidth( o->image_size().width() );
-            setIntrinsicHeight( o->image_size().height() );
+            setIntrinsicWidth(o->imageSize().width());
+            setIntrinsicHeight(o->imageSize().height());
         }
 
         // In the case of generated image content using :before/:after, we might not be in the
@@ -274,14 +272,14 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
             }
         }
     }
-    else if (m_image && !m_image->isTransparent()) {
+    else if (m_image) {
         if ( (cWidth != intrinsicWidth() ||  cHeight != intrinsicHeight()) &&
-             pix.width() > 0 && pix.height() > 0 && m_image->valid_rect().isValid())
+             pix.width() > 0 && pix.height() > 0 && m_image->decodedRect().isValid())
         {
             IntSize tintSize;
             if (resizeCache.isNull() && cWidth && cHeight)
             {
-                IntRect scaledrect(m_image->valid_rect());
+                IntRect scaledrect(m_image->decodedRect());
                 resizeCache = pix;
                 scaledrect.setWidth( ( cWidth*scaledrect.width() ) / intrinsicWidth() );
                 scaledrect.setHeight( ( cHeight*scaledrect.height() ) / intrinsicHeight() );
@@ -290,7 +288,7 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
                 // of rounding errors. if the image is fully loaded, we
                 // make sure that we don't do unnecessary resizes during painting
                 IntSize s(scaledrect.size());
-                if (m_image->valid_rect().size() == IntSize( intrinsicWidth(), intrinsicHeight() )) // fully loaded
+                if (m_image->decodedRect().size() == IntSize( intrinsicWidth(), intrinsicHeight() )) // fully loaded
                     s = IntSize(cWidth, cHeight);
                 if (QABS(s.width() - cWidth) < 2) // rounding errors
                     s.setWidth(cWidth);
@@ -316,7 +314,7 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
             // so pix contains the old one (we want to paint), but image->valid_rect is still invalid
             // so use intrinsic Size instead.
             // ### maybe no progressive loading for the second image ?
-            IntRect rect(m_image->valid_rect().isValid() ? m_image->valid_rect()
+            IntRect rect(m_image->decodedRect().isValid() ? m_image->decodedRect()
                        : IntRect(0, 0, intrinsicWidth(), intrinsicHeight()));
 
             IntPoint offs( _tx + leftBorder + leftPad, _ty + topBorder + topPad);

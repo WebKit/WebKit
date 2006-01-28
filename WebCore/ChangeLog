@@ -1,3 +1,54 @@
+2006-01-28  David Hyatt  <hyatt@apple.com>
+
+        Fix CachedImage.h/.cpp up.  Lots of cleanup.  Eliminated
+        unused code and cleaned up method and member names.
+
+        Reviewed by darin
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * khtml/html/html_imageimpl.cpp:
+        (WebCore::HTMLImageElementImpl::width):
+        (WebCore::HTMLImageElementImpl::height):
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::CachedImage):
+        (WebCore::CachedImage::ref):
+        (WebCore::CachedImage::deref):
+        (WebCore::CachedImage::image):
+        (WebCore::CachedImage::imageSize):
+        (WebCore::CachedImage::decodedRect):
+        (WebCore::CachedImage::notifyObservers):
+        (WebCore::CachedImage::clear):
+        (WebCore::CachedImage::data):
+        (WebCore::CachedImage::error):
+        (WebCore::CachedImage::checkNotify):
+        * loader/CachedImage.h:
+        (WebCore::CachedImage::isDecoded):
+        (WebCore::CachedImage::isErrorImage):
+        (WebCore::CachedImage::schedule):
+        (WebCore::CachedImage::isImage):
+        * loader/CachedImageCallback.cpp: Removed.
+        * loader/CachedImageCallback.h: Removed.
+        * loader/loader.cpp:
+        (WebCore::Loader::servePendingRequests):
+        (WebCore::Loader::slotFinished):
+        * platform/Image.h:
+        * platform/mac/Image.mm:
+        (WebCore::Image::receivedData):
+        * rendering/render_box.cpp:
+        (WebCore::RenderBox::paintBackgroundExtended):
+        * rendering/render_image.cpp:
+        (WebCore::RenderImage::setImage):
+        (WebCore::RenderImage::paint):
+        * rendering/render_line.cpp:
+        (WebCore::InlineFlowBox::paintBackground):
+        (WebCore::InlineFlowBox::paintBackgroundAndBorder):
+        * rendering/render_list.cpp:
+        (RenderListMarker::setImage):
+        * rendering/render_object.cpp:
+        (WebCore::RenderObject::mustRepaintBackgroundOrBorder):
+        (WebCore::RenderObject::paintBorder):
+        (WebCore::RenderObject::setImage):
+
 2006-01-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.

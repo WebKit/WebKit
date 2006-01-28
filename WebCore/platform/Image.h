@@ -50,7 +50,6 @@ class QWMatrix;
 
 namespace WebCore {
 
-class CachedImageCallback;
 class QPainter;
 
 class Image {
@@ -84,7 +83,7 @@ public:
 
     Image &operator=(const Image &);
 
-    bool receivedData(const ByteArray &bytes, bool isComplete, khtml::CachedImageCallback *decoderCallback);
+    bool receivedData(const ByteArray &bytes, bool isComplete);
     void stopAnimations();
 
 #if __APPLE__
@@ -96,8 +95,6 @@ public:
     void decreaseUseCount() const;
     
     void flushRasterCache();
-   
-    static bool shouldUseThreadedDecoding();
 
     void resetAnimation();
     void setAnimationRect(const IntRect&) const;

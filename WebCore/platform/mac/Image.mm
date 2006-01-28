@@ -28,7 +28,6 @@
 #import "IntSize.h"
 #import "IntRect.h"
 
-#import "CachedImageCallback.h"
 #import "KWQFoundationExtras.h"
 #import "WebCoreImageRenderer.h"
 #import "WebCoreImageRendererFactory.h"
@@ -124,86 +123,13 @@ void Image::setAnimationRect(const IntRect& rect) const
     [m_imageRenderer setAnimationRect:NSMakeRect(rect.x(), rect.y(), rect.width(), rect.height())];
 }
 
-}
-
-@interface WebImageCallback : NSObject
-{
-    WebCore::CachedImageCallback *callback;
-    CGImageSourceStatus status;
-}
-- (void)notify;
-- (void)setImageSourceStatus:(CGImageSourceStatus)status;
-- (CGImageSourceStatus)status;
-@end
-
-@implementation WebImageCallback
-- initWithCallback:(WebCore::CachedImageCallback *)c
-{
-    self = [super init];
-    callback = c;
-    c->ref();
-    return self;
-}
-
-- (void)_commonTermination
-{
-    callback->deref();
-}
-
-- (void)dealloc
-{
-    [self _commonTermination];
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    [self _commonTermination];
-    [super finalize];
-}
-
-- (void)notify
-{
-    if (status < kCGImageStatusReadingHeader)
-        callback->notifyDecodingError();
-    else if (status == kCGImageStatusIncomplete)
-        callback->notifyUpdate();
-    else if (status == kCGImageStatusComplete)
-        callback->notifyFinished();
-}
-
-- (void)setImageSourceStatus:(CGImageSourceStatus)s
-{
-    status = s;
-}
-
-- (CGImageSourceStatus)status
-{
-    return status;
-}
-
-@end
-
-namespace WebCore {
-
-bool Image::shouldUseThreadedDecoding()
-{
-    return [WebCoreImageRendererFactory shouldUseThreadedDecoding] ? true : false;
-}
-
-bool Image::receivedData(const ByteArray& bytes, bool isComplete, CachedImageCallback *decoderCallback)
+bool Image::receivedData(const ByteArray& bytes, bool isComplete)
 {
     if (!m_imageRenderer)
         m_imageRenderer = KWQRetain([[WebCoreImageRendererFactory sharedFactory] imageRendererWithMIMEType:m_MIMEType]);
     
-    WebImageCallback *callbackWrapper = nil;
-    if (decoderCallback)
-        callbackWrapper = [[WebImageCallback alloc] initWithCallback:decoderCallback];
-
-    bool result = [m_imageRenderer incrementalLoadWithBytes:bytes.data() length:bytes.size() complete:isComplete callback:callbackWrapper];
-
-    [callbackWrapper release];
-    
+    bool result = [m_imageRenderer incrementalLoadWithBytes:bytes.data() length:bytes.size() complete:isComplete callback:nil];
+  
     return result;
 }
 

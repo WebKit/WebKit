@@ -904,8 +904,6 @@
 		BCB16C1A0979C3BD00467741 /* CachedCSSStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C010979C3BD00467741 /* CachedCSSStyleSheet.h */; };
 		BCB16C1B0979C3BD00467741 /* CachedImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C020979C3BD00467741 /* CachedImage.cpp */; };
 		BCB16C1C0979C3BD00467741 /* CachedImage.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C030979C3BD00467741 /* CachedImage.h */; };
-		BCB16C1D0979C3BD00467741 /* CachedImageCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C040979C3BD00467741 /* CachedImageCallback.cpp */; };
-		BCB16C1E0979C3BD00467741 /* CachedImageCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C050979C3BD00467741 /* CachedImageCallback.h */; };
 		BCB16C1F0979C3BD00467741 /* CachedObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C060979C3BD00467741 /* CachedObject.cpp */; };
 		BCB16C200979C3BD00467741 /* CachedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C070979C3BD00467741 /* CachedObject.h */; };
 		BCB16C210979C3BD00467741 /* CachedObjectClientWalker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C080979C3BD00467741 /* CachedObjectClientWalker.cpp */; };
@@ -1874,8 +1872,6 @@
 		BCB16C010979C3BD00467741 /* CachedCSSStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CachedCSSStyleSheet.h; path = loader/CachedCSSStyleSheet.h; sourceTree = "<group>"; };
 		BCB16C020979C3BD00467741 /* CachedImage.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CachedImage.cpp; path = loader/CachedImage.cpp; sourceTree = "<group>"; };
 		BCB16C030979C3BD00467741 /* CachedImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CachedImage.h; path = loader/CachedImage.h; sourceTree = "<group>"; };
-		BCB16C040979C3BD00467741 /* CachedImageCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CachedImageCallback.cpp; path = loader/CachedImageCallback.cpp; sourceTree = "<group>"; };
-		BCB16C050979C3BD00467741 /* CachedImageCallback.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CachedImageCallback.h; path = loader/CachedImageCallback.h; sourceTree = "<group>"; };
 		BCB16C060979C3BD00467741 /* CachedObject.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CachedObject.cpp; path = loader/CachedObject.cpp; sourceTree = "<group>"; };
 		BCB16C070979C3BD00467741 /* CachedObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CachedObject.h; path = loader/CachedObject.h; sourceTree = "<group>"; };
 		BCB16C080979C3BD00467741 /* CachedObjectClientWalker.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CachedObjectClientWalker.cpp; path = loader/CachedObjectClientWalker.cpp; sourceTree = "<group>"; };
@@ -3110,8 +3106,6 @@
 				BCB16C010979C3BD00467741 /* CachedCSSStyleSheet.h */,
 				BCB16C020979C3BD00467741 /* CachedImage.cpp */,
 				BCB16C030979C3BD00467741 /* CachedImage.h */,
-				BCB16C040979C3BD00467741 /* CachedImageCallback.cpp */,
-				BCB16C050979C3BD00467741 /* CachedImageCallback.h */,
 				BCB16C060979C3BD00467741 /* CachedObject.cpp */,
 				BCB16C070979C3BD00467741 /* CachedObject.h */,
 				BCB16C080979C3BD00467741 /* CachedObjectClientWalker.cpp */,
@@ -4294,7 +4288,6 @@
 				BCB16C180979C3BD00467741 /* Cache.h in Headers */,
 				BCB16C1A0979C3BD00467741 /* CachedCSSStyleSheet.h in Headers */,
 				BCB16C1C0979C3BD00467741 /* CachedImage.h in Headers */,
-				BCB16C1E0979C3BD00467741 /* CachedImageCallback.h in Headers */,
 				BCB16C200979C3BD00467741 /* CachedObject.h in Headers */,
 				BCB16C220979C3BD00467741 /* CachedObjectClientWalker.h in Headers */,
 				BCB16C240979C3BD00467741 /* CachedScript.h in Headers */,
@@ -5426,7 +5419,6 @@
 				BCB16C170979C3BD00467741 /* Cache.cpp in Sources */,
 				BCB16C190979C3BD00467741 /* CachedCSSStyleSheet.cpp in Sources */,
 				BCB16C1B0979C3BD00467741 /* CachedImage.cpp in Sources */,
-				BCB16C1D0979C3BD00467741 /* CachedImageCallback.cpp in Sources */,
 				BCB16C1F0979C3BD00467741 /* CachedObject.cpp in Sources */,
 				BCB16C210979C3BD00467741 /* CachedObjectClientWalker.cpp in Sources */,
 				BCB16C230979C3BD00467741 /* CachedScript.cpp in Sources */,

@@ -30,7 +30,6 @@
 
 #include "Cache.h"
 #include "CachedImage.h"
-#include "CachedImageCallback.h"
 #include "CachedObject.h"
 #include "DocLoader.h"
 #include "Frame.h"
@@ -122,14 +121,8 @@ void Loader::servePendingRequests()
            SLOT( slotData( KIO::Job*, const char *, int)));
   connect( job, SIGNAL( receivedResponse( KIO::Job *, NSURLResponse *)), SLOT( slotReceivedResponse( KIO::Job *, NSURLResponse *)) );
 
-  if (KWQServeRequest(this, req, job)) {
-      if (req->object->type() == CachedObject::ImageResource) {
-        CachedImage *ci = static_cast<CachedImage*>(req->object);
-        if (ci->decoderCallback())
-            m_requestsBackgroundDecoding.append(req);
-      }
-      m_requestsLoading.add(job, req);
-  }
+  if (KWQServeRequest(this, req, job))
+    m_requestsLoading.add(job, req);
 }
 
 void Loader::slotFinished(KIO::Job* job, NSData *allData)
@@ -144,23 +137,13 @@ void Loader::slotFinished(KIO::Job* job, NSData *allData)
 
     CachedObject *object = r->object;
     DocLoader *docLoader = r->m_docLoader;
-    
-    bool backgroundImageDecoding = (object->type() == CachedObject::ImageResource &&
-        static_cast<CachedImage*>(object)->decoderCallback());
 
     if (j->error() || j->isErrorPage()) {
-        // Use the background image decoder's callback to handle the error.
-        if (backgroundImageDecoding) {
-            CachedImageCallback *callback = static_cast<CachedImage*>(object)->decoderCallback();
-            callback->handleError();
-        }
-        else {
-            docLoader->setLoadInProgress(true);
-            r->object->error( job->error(), job->errorText().ascii() );
-            docLoader->setLoadInProgress(false);
-            emit requestFailed( docLoader, object );
-            Cache::remove( object );
-        }
+        docLoader->setLoadInProgress(true);
+        r->object->error( job->error(), job->errorText().ascii() );
+        docLoader->setLoadInProgress(false);
+        emit requestFailed( docLoader, object );
+        Cache::remove( object );
     }
     else {
         docLoader->setLoadInProgress(true);
@@ -168,18 +151,12 @@ void Loader::slotFinished(KIO::Job* job, NSData *allData)
         r->object->setAllData(allData);
         docLoader->setLoadInProgress(false);
         
-        // Let the background image decoder trigger the done signal.
-        if (!backgroundImageDecoding)
-            emit requestDone( docLoader, object );
+        emit requestDone( docLoader, object );
 
         object->finish();
     }
 
-    // Let the background image decoder release the request when it is
-    // finished.
-    if (!backgroundImageDecoding) {
-        delete r;
-    }
+    delete r;
 
     servePendingRequests();
 }
