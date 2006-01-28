@@ -1,3 +1,12 @@
+2006-01-28  Alexander Kellett  <lypanov@kde.org>
+
+        Reviewed by eseidel.
+
+        * svg/custom/filter-source-alpha-expected.checksum
+        * svg/custom/filter-source-alpha-expected.png
+        * svg/custom/filter-source-alpha-expected.txt
+        * svg/custom/filter-source-alpha.svg
+
 2006-01-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

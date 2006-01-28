@@ -206,7 +206,8 @@ CIImage *KCanvasFilterQuartz::inputImage(const KCanvasFilterEffect *filterEffect
             CIImage *sourceGraphic = imageForName("SourceGraphic");
             if (!sourceGraphic)
                 return nil;
-            setImageForName(alphaImageForImage(sourceGraphic), "SourceAlpha");
+            sourceAlpha = alphaImageForImage(sourceGraphic);
+            setImageForName(sourceAlpha, "SourceAlpha");
         }
         return sourceAlpha;
     }

@@ -1,3 +1,15 @@
+2006-01-28  Alexander Kellett  <lypanov@kde.org>
+
+        Reviewed by eseidel.
+
+        SourceAlpha does not display until window is redrawn (resized)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6375
+
+        Test: svg/custom/filter-source-alpha.svg
+
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (KCanvasFilterQuartz::inputImage):
+
 2006-01-28  David Hyatt  <hyatt@apple.com>
 
         Fix CachedImage.h/.cpp up.  Lots of cleanup.  Eliminated
