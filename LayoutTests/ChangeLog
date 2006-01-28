@@ -1,3 +1,13 @@
+2006-01-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6075
+          REGRESSION: event.relatedTarget not working, breaks menus at www.ati.com
+
+        * fast/events/related-target-expected.txt: Added.
+        * fast/events/related-target.html: Added.
+
 2006-01-27  Adele Peterson  <adele@apple.com>
 
         Adding test for 
