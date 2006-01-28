@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,6 +49,12 @@ void convertUTF8ToUTF16(const NPUTF8 *UTF8Chars, int UTF8Length, NPUTF16 **UTF16
         UTF8Length = strlen(UTF8Chars);
 
     CFStringRef stringRef = CFStringCreateWithBytes(NULL, (const UInt8*)UTF8Chars, (CFIndex)UTF8Length, kCFStringEncodingUTF8, false);
+    
+    // Some plugins return invalid UTF-8 in NPVariantType_String, see <http://bugzilla.opendarwin.org/show_bug.cgi?id=5163>
+    if (!stringRef)
+        stringRef = CFStringCreateWithBytes(NULL, (const UInt8*)UTF8Chars, (CFIndex)UTF8Length, kCFStringEncodingWindowsLatin1, false);
+
+    assert(stringRef); // there is no "bad data" for kCFStringEncodingWindowsLatin1
 
     *UTF16Length = (unsigned int)CFStringGetLength(stringRef);
     *UTF16Chars = (NPUTF16 *)malloc(sizeof(NPUTF16) * (*UTF16Length));
