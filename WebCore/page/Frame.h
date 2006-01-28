@@ -35,7 +35,8 @@
 #include "text_affinity.h"
 #include "text_granularity.h"
 #include "Color.h"
-#include <qscrollbar.h>
+#include "FrameView.h"
+#include "qscrollbar.h"
 
 class FramePrivate;
 class FrameView;
@@ -779,7 +780,6 @@ public:
    */
   void htmlError(int errorCode, const QString& text, const KURL& reqUrl);
 
-  virtual void customEvent(QCustomEvent *event);
   virtual void khtmlMouseDoubleClickEvent(WebCore::MouseDoubleClickEvent *event);
   virtual void khtmlMousePressEvent(WebCore::MousePressEvent *event);
   virtual void khtmlMouseMoveEvent(WebCore::MouseMoveEvent *event);
@@ -1047,8 +1047,9 @@ private:
   // Convenience, to avoid repeating the code to dig down to get this.
 
   QChar backslashAsCurrencySymbol() const;
-  void setName(const QString &name);
-  
+  void setName(const QString& name);
+  const QString& name();
+
   QValueList<MarkedTextUnderline> markedTextUnderlines() const;  
   bool markedTextUsesUnderlines() const;
   // Call this method before handling a new user action, like on a mouse down or key down.
@@ -1109,6 +1110,10 @@ public:
   int frameCount;
 
   virtual void detachFromView();
+
+  KURL url() const;
+  void setParent(Frame* parent);
+  Frame* parent() const;
 
   // split out controller objects
   FrameTreeNode *treeNode();

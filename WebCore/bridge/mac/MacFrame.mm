@@ -617,10 +617,14 @@ void MacFrame::urlSelected(const KURL &url, int button, int state, const URLArgs
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-class KWQPluginPart : public ObjectContents
+class Plugin : public ObjectContents
 {
-    virtual bool openURL(const KURL &) { return true; }
-    virtual bool closeURL() { return true; }
+public:
+    Plugin(QWidget *view) : m_view(view) { }
+    virtual QWidget *view() const { return m_view; }
+
+private:
+    QWidget *m_view;
 };
 
 ObjectContents *MacFrame::createPart(const ChildFrame &child, const KURL &url, const QString &mimeType)
@@ -639,12 +643,10 @@ ObjectContents *MacFrame::createPart(const ChildFrame &child, const KURL &url, c
     }
 
     if (objectType == ObjectElementPlugin) {
-        KWQPluginPart *newPart = new KWQPluginPart;
-        newPart->setWidget(new QWidget([_bridge viewForPluginWithURL:url.getNSURL()
-                                                      attributeNames:child.m_paramNames.getNSArray()
-                                                     attributeValues:child.m_paramValues.getNSArray()
-                                                             MIMEType:child.m_args.serviceType.getNSString()]));
-        part = newPart;
+        part = new Plugin(new QWidget([_bridge viewForPluginWithURL:url.getNSURL()
+                                       attributeNames:child.m_paramNames.getNSArray()
+                                       attributeValues:child.m_paramValues.getNSArray()
+                                       MIMEType:child.m_args.serviceType.getNSString()]));
     } else {
         LOG(Frames, "name %s", child.m_name.ascii());
         BOOL allowsScrolling = YES;
@@ -686,7 +688,6 @@ void MacFrame::setView(FrameView *view)
     if (d->m_view)
         d->m_view->deref();
     d->m_view = view;
-    setWidget(view);
     
     // Delete old PlugIn data structures
     cleanupPluginRootObjects();
@@ -941,7 +942,7 @@ void MacFrame::redirectionTimerStartedOrStopped()
 QString MacFrame::userAgent() const
 {
     KWQ_BLOCK_EXCEPTIONS;
-    return QString::fromNSString([_bridge userAgentForURL:m_url.getNSURL()]);
+    return QString::fromNSString([_bridge userAgentForURL:url().getNSURL()]);
     KWQ_UNBLOCK_EXCEPTIONS;
          
     return QString();
@@ -1207,7 +1208,7 @@ void MacFrame::openURLFromPageCache(KWQPageState *state)
 
     DocumentImpl *doc = [state document];
     NodeImpl *mousePressNode = [state mousePressNode];
-    KURL *url = [state URL];
+    KURL *kurl = [state URL];
     SavedProperties *windowProperties = [state windowProperties];
     SavedProperties *locationProperties = [state locationProperties];
     SavedBuiltins *interpreterBuiltins = [state interpreterBuiltins];
@@ -1230,17 +1231,17 @@ void MacFrame::openURLFromPageCache(KWQPageState *state)
         d->m_kjsDefaultStatusBarText = QString::null;
     }
 
-    ASSERT(url);
+    ASSERT(kurl);
     
-    m_url = *url;
+    d->m_url = *kurl;
     
     // initializing m_url to the new url breaks relative links when opening such a link after this call and _before_ begin() is called (when the first
     // data arrives) (Simon)
-    if (m_url.protocol().startsWith("http") && !m_url.host().isEmpty() && m_url.path().isEmpty())
-        m_url.setPath("/");
+    if (url().protocol().startsWith("http") && !url().host().isEmpty() && url().path().isEmpty())
+        d->m_url.setPath("/");
     
-    // copy to m_workingURL after fixing m_url above
-    d->m_workingURL = m_url;
+    // copy to m_workingURL after fixing url() above
+    d->m_workingURL = url();
         
     emit started(NULL);
     
@@ -1252,7 +1253,7 @@ void MacFrame::openURLFromPageCache(KWQPageState *state)
     d->m_bCleared = false;
     d->m_bComplete = false;
     d->m_bLoadEventEmitted = false;
-    d->m_referrer = m_url.url();
+    d->m_referrer = url().url();
     
     setView(doc->view());
     

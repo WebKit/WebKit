@@ -1,3 +1,59 @@
+2006-01-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - remove nearly all the substance of ObjectContents and put it on Frame
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6885
+
+        * ForwardingHeaders/kjs/JSLock.h: Added.
+        * bridge/mac/MacFrame.mm:
+        (Plugin::Plugin): renamed from KWQPluginPart, make it able to store a view.
+        (Plugin::view): And return the QWidget* view.
+        (MacFrame::createPart): Use Plugin instead of KWQPluginPart, avoid setWidget.
+        (MacFrame::setView): Don't use m_url directly so much, and use through d-> if
+        needed.
+        (MacFrame::userAgent): ditto
+        (MacFrame::openURLFromPageCache): ditto
+        * kwq/KWQObject.cpp:
+        (QObject::inherits): Removed case for ObjectContents, which is not long for this
+        world.
+        * kwq/KWQObject.h:
+        * page/Frame.cpp:
+        (Frame::init): Don't pass parent() to FramePrivate, we can't possibly have one
+        yet.
+        (Frame::restoreURL): d->m_url, not m_url
+        (Frame::didOpenURL): ditto
+        (Frame::executeScript): ditto
+        (Frame::receivedFirstData): ditto
+        (Frame::begin): ditto
+        (Frame::gotoAnchor): ditto
+        (Frame::requestObject): ditto, plus only use Frame methods when we really have a Frame.
+        (Frame::processObjectRequest): ditto, also get view() not widget().
+        (Frame::childFrame): remove excess spaces and pointless assert.
+        (Frame::parentFrame): just call parent() (could probably remove this).
+        (Frame::reparseConfiguration): d->m_url not m_url
+        (Frame::canCachePage): ditto
+        (Frame::updatePolicyBaseURL): ditto
+        (Frame::scrollToAnchor): ditto
+        (Frame::setName): set in FramePrivate
+        (Frame::name): get from FramePrivate
+        (Frame::setParent): similarly
+        (Frame::parent): similarly
+        (Frame::url): similarly
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        (FramePrivate::FramePrivate): Added m_parent, m_name and m_url.
+        * page/FrameView.cpp:
+        (FrameView::viewportMousePressEvent): Call frame directly instead of
+        sending through QApplication.
+        (FrameView::viewportMouseDoubleClickEvent): ditto
+        (FrameView::viewportMouseMoveEvent): ditto
+        (FrameView::viewportMouseReleaseEvent): ditto
+        * page/ObjectContents.h:
+        (ObjectContents::ObjectContents): Removed url, setParent, parent, name,
+        setName, openURL, closeURL, widget, setWidget, event and customEvent methods,
+        and corresponding fields. Add pure virtual view() method.
+
 2006-01-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

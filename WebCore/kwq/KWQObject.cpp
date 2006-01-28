@@ -296,9 +296,6 @@ bool QObject::inherits(const char *className) const
     if (strcmp(className, "KParts::Factory") == 0) {
         return false;
     }
-    if (strcmp(className, "ObjectContents") == 0) {
-        return isObjectContents();
-    }
     if (strcmp(className, "QFrame") == 0) {
         return isQFrame();
     }
@@ -320,11 +317,6 @@ bool QObject::isFrame() const
 }
 
 bool QObject::isFrameView() const
-{
-    return false;
-}
-
-bool QObject::isObjectContents() const
 {
     return false;
 }

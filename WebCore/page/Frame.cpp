@@ -156,10 +156,10 @@ void Frame::init(FrameView *view)
   
   frameCount = 0;
 
-  d = new FramePrivate(parent(), this);
+  // FIXME: FramePrivate constructor wants to take a parent but we do not have one yet
+  d = new FramePrivate(0, this);
 
   d->m_view = view;
-  setWidget( d->m_view );
   
   d->m_extension = createBrowserExtension();
 
@@ -251,7 +251,7 @@ bool Frame::restoreURL( const KURL &url )
   d->m_bJavaEnabled = d->m_settings->isJavaEnabled(url.host());
   d->m_bPluginsEnabled = d->m_settings->isPluginsEnabled(url.host());
 
-  m_url = url;
+  d->m_url = url;
 
   emit started( 0L );
 
@@ -319,13 +319,13 @@ bool Frame::didOpenURL(const KURL &url)
   d->m_bJavaEnabled = d->m_settings->isJavaEnabled(url.host());
   d->m_bPluginsEnabled = d->m_settings->isPluginsEnabled(url.host());
 
-  // initializing m_url to the new url breaks relative links when opening such a link after this call and _before_ begin() is called (when the first
+  // initializing d->m_url to the new url breaks relative links when opening such a link after this call and _before_ begin() is called (when the first
   // data arrives) (Simon)
-  m_url = url;
-  if(m_url.protocol().startsWith("http") && !m_url.host().isEmpty() && m_url.path().isEmpty())
-    m_url.setPath("/");
-  // copy to m_workingURL after fixing m_url above
-  d->m_workingURL = m_url;
+  d->m_url = url;
+  if(d->m_url.protocol().startsWith("http") && !d->m_url.host().isEmpty() && d->m_url.path().isEmpty())
+    d->m_url.setPath("/");
+  // copy to m_workingURL after fixing d->m_url above
+  d->m_workingURL = d->m_url;
 
   connect( d->m_job, SIGNAL( speed( KIO::Job*, unsigned long ) ),
            this, SLOT( slotJobSpeed( KIO::Job*, unsigned long ) ) );
@@ -490,7 +490,7 @@ QVariant Frame::executeScript( NodeImpl *n, const QString &script, bool forceUse
   // If forceUserGesture is true, then make the script interpreter
   // treat it as if triggered by a user gesture even if there is no
   // current DOM event being processed.
-  QVariant ret = proxy->evaluate( forceUserGesture ? QString::null : m_url.url(), 0, script, n );
+  QVariant ret = proxy->evaluate( forceUserGesture ? QString::null : d->m_url.url(), 0, script, n );
   d->m_runningScripts--;
   if (!d->m_runningScripts && d->m_doc && !d->m_doc->parsing() && d->m_submitForm )
       submitFormAgain();
@@ -685,7 +685,7 @@ void Frame::receivedFirstData()
       {
         delay = qData.stripWhiteSpace().toDouble();
         // We want a new history item if the refresh timeout > 1 second
-        scheduleRedirection( delay, m_url.url(), delay <= 1);
+        scheduleRedirection( delay, d->m_url.url(), delay <= 1);
       }
       else
       {
@@ -780,12 +780,12 @@ void Frame::begin( const KURL &url, int xOffset, int yOffset )
   ref.setPass(QSTRING_NULL);
   ref.setRef(QSTRING_NULL);
   d->m_referrer = ref.url();
-  m_url = url;
+  d->m_url = url;
   KURL baseurl;
 
   // We don't need KDE chained URI handling or window caption setting
-  if (!m_url.isEmpty())
-    baseurl = m_url;
+  if (!d->m_url.isEmpty())
+    baseurl = d->m_url;
 
   if (DOMImplementationImpl::isXMLMIMEType(args.serviceType))
     d->m_doc = DOMImplementationImpl::instance()->createDocument( d->m_view );
@@ -795,8 +795,8 @@ void Frame::begin( const KURL &url, int xOffset, int yOffset )
   d->m_doc->ref();
   if (!d->m_doc->attached())
     d->m_doc->attach( );
-  d->m_doc->setURL( m_url.url() );
-  // We prefer m_baseURL over m_url because m_url changes when we are
+  d->m_doc->setURL( d->m_url.url() );
+  // We prefer m_baseURL over d->m_url because d->m_url changes when we are
   // about to load a new page.
   d->m_doc->setBaseURL( baseurl.url() );
   if (d->m_decoder)
@@ -923,10 +923,10 @@ void Frame::stopAnimations()
 void Frame::gotoAnchor()
 {
     // If our URL has no ref, then we have no place we need to jump to.
-    if (!m_url.hasRef())
+    if (!d->m_url.hasRef())
         return;
 
-    QString ref = m_url.encodedHtmlRef();
+    QString ref = d->m_url.encodedHtmlRef();
     if (!gotoAnchor(ref)) {
         // Can't use htmlRef() here because it doesn't know which encoding to use to decode.
         // Decoding here has to match encoding in completeURL, which means it has to use the
@@ -1634,7 +1634,7 @@ bool Frame::requestObject( ChildFrame *child, const KURL &url, const URLArgs &_a
   URLArgs args( _args );
 
 
-  if ( child->m_frame && !args.reload && urlcmp( child->m_frame->url().url(), url.url(), true, true ) )
+  if (child->m_frame && !args.reload && child->m_frame->isFrame() && urlcmp(static_cast<Frame *>(child->m_frame.get())->url().url(), url.url(), true, true))
     args.serviceType = child->m_serviceType;
 
   child->m_args = args;
@@ -1676,7 +1676,7 @@ bool Frame::processObjectRequest( ChildFrame *child, const KURL &_url, const QSt
   if (child->m_frame)
   {
     Frame *frame = static_cast<Frame *>(&*child->m_frame);
-    if (frame && frame->inherits("Frame")) {
+    if (frame && frame->isFrame()) {
       URLArgs args;
       if (!d->m_referrer.isEmpty())
         args.metaData().set("referrer", d->m_referrer);
@@ -1686,9 +1686,10 @@ bool Frame::processObjectRequest( ChildFrame *child, const KURL &_url, const QSt
   else
   {
     ObjectContents *part = createPart(*child, url, mimetype);
-    Frame *frame = static_cast<Frame *>(part);
-    if (frame && frame->inherits("Frame"))
-      frame->childBegin();
+    if (part && part->isFrame()) {
+        Frame *frame = static_cast<Frame *>(part);
+        frame->childBegin();
+    }
 
     if (!part) {
         checkEmitLoadEvent();
@@ -1700,15 +1701,14 @@ bool Frame::processObjectRequest( ChildFrame *child, const KURL &_url, const QSt
       disconnectChild(child);
 
     child->m_serviceType = mimetype;
-    if (child->m_renderer && frame->widget() )
-      child->m_renderer->setWidget( frame->widget() );
+    if (child->m_renderer && part->view())
+      child->m_renderer->setWidget(part->view());
 
 
     child->m_frame = part;
     assert(child->m_frame);
 
     connectChild(child);
-
   }
 
   checkEmitLoadEvent();
@@ -1746,8 +1746,8 @@ bool Frame::processObjectRequest( ChildFrame *child, const KURL &_url, const QSt
   // create the child first, then invoke the loader separately  
   if (url.isEmpty() || url.url() == "about:blank") {
       ObjectContents *part = child->m_frame.get();
-      Frame *frame = static_cast<Frame *>(part);
-      if (frame && frame->inherits("Frame")) {
+      if (part && part->isFrame()) {
+          Frame *frame = static_cast<Frame *>(part);
           frame->completed();
           frame->checkCompleted();
       }
@@ -1904,10 +1904,9 @@ void Frame::slotChildCompleted( bool complete )
 }
 
 
-ChildFrame *Frame::childFrame( const QObject *obj )
+ChildFrame *Frame::childFrame(const QObject *obj)
 {
-    assert( obj->inherits( "ObjectContents" ) );
-    const ObjectContents *part = static_cast<const ObjectContents *>( obj );
+    const ObjectContents *part = static_cast<const ObjectContents *>(obj);
 
     FrameIt it = d->m_frames.begin();
     FrameIt end = d->m_frames.end();
@@ -1954,10 +1953,7 @@ bool Frame::frameExists( const QString &frameName )
 
 Frame *Frame::parentFrame() const
 {
-  if ( !parent() || !parent()->inherits( "Frame" ) )
-    return 0L;
-
-  return (Frame *)parent();
+  return parent();
 }
 
 int Frame::zoomFactor() const
@@ -2061,9 +2057,9 @@ void Frame::reparseConfiguration()
   if (d->m_doc)
      d->m_doc->docLoader()->setShowAnimations( d->m_settings->showAnimations() );
 
-  d->m_bJScriptEnabled = d->m_settings->isJavaScriptEnabled(m_url.host());
-  d->m_bJavaEnabled = d->m_settings->isJavaEnabled(m_url.host());
-  d->m_bPluginsEnabled = d->m_settings->isPluginsEnabled(m_url.host());
+  d->m_bJScriptEnabled = d->m_settings->isJavaScriptEnabled(d->m_url.host());
+  d->m_bJavaEnabled = d->m_settings->isJavaEnabled(d->m_url.host());
+  d->m_bPluginsEnabled = d->m_settings->isPluginsEnabled(d->m_url.host());
 
   QString userStyleSheet = d->m_settings->userStyleSheet();
   if ( !userStyleSheet.isEmpty() )
@@ -2112,41 +2108,6 @@ bool Frame::shouldDragAutoNode(NodeImpl *node, int x, int y) const
 {
     // No KDE impl yet
     return false;
-}
-
-void Frame::customEvent( QCustomEvent *event )
-{
-  if ( MousePressEvent::test( event ) )
-  {
-    khtmlMousePressEvent( static_cast<MousePressEvent *>( event ) );
-    return;
-  }
-
-  if ( MouseDoubleClickEvent::test( event ) )
-  {
-    khtmlMouseDoubleClickEvent( static_cast<MouseDoubleClickEvent *>( event ) );
-    return;
-  }
-
-  if ( MouseMoveEvent::test( event ) )
-  {
-    khtmlMouseMoveEvent( static_cast<MouseMoveEvent *>( event ) );
-    return;
-  }
-
-  if ( MouseReleaseEvent::test( event ) )
-  {
-    khtmlMouseReleaseEvent( static_cast<MouseReleaseEvent *>( event ) );
-    return;
-  }
-
-  if ( DrawContentsEvent::test( event ) )
-  {
-    khtmlDrawContentsEvent( static_cast<DrawContentsEvent *>( event ) );
-    return;
-  }
-
-  ObjectContents::customEvent( event );
 }
 
 bool Frame::isPointInsideSelection(int x, int y)
@@ -3367,7 +3328,7 @@ bool Frame::canCachePage()
     // 5.  The page has no applets.
     if (d->m_frames.count() || d->m_objects.count() ||
         parentFrame() ||
-        m_url.protocol().startsWith("https") || 
+        d->m_url.protocol().startsWith("https") || 
         (d->m_doc && (d->m_doc->applets()->length() != 0 ||
                       d->m_doc->hasWindowEventListener(unloadEvent) ||
                       d->m_doc->hasPasswordField()))) {
@@ -3473,7 +3434,7 @@ void Frame::updatePolicyBaseURL()
     if (parentFrame() && parentFrame()->document())
         setPolicyBaseURL(parentFrame()->document()->policyBaseURL());
     else
-        setPolicyBaseURL(m_url.url());
+        setPolicyBaseURL(d->m_url.url());
 }
 
 void Frame::setPolicyBaseURL(const DOMString &s)
@@ -3567,7 +3528,7 @@ void Frame::addMetaData(const QString &key, const QString &value)
 // that a higher level already checked that the URLs match and the scrolling is the right thing to do.
 void Frame::scrollToAnchor(const KURL &URL)
 {
-    m_url = URL;
+    d->m_url = URL;
     started(0);
     
     gotoAnchor();
@@ -3783,7 +3744,7 @@ QChar Frame::backslashAsCurrencySymbol() const
     return codec->backslashAsCurrencySymbol();
 }
 
-void Frame::setName(const QString &name)
+void Frame::setName(const QString& name)
 {
     QString n = name;
     
@@ -3793,7 +3754,22 @@ void Frame::setName(const QString &name)
     if (parent && (name.isEmpty() || parent->frameExists(name) || name == "_blank"))
         n = parent->requestFrameName();
     
-    ObjectContents::setName(n);
+    d->m_name = name;
+}
+
+const QString& Frame::name()
+{
+    return d->m_name;
+}
+
+void Frame::setParent(Frame* parent) 
+{ 
+    d->m_parent = parent; 
+}
+
+Frame* Frame::parent() const 
+{ 
+    return d->m_parent; 
 }
 
 bool Frame::markedTextUsesUnderlines() const
@@ -3836,3 +3812,9 @@ FrameTreeNode *Frame::treeNode()
 void Frame::detachFromView()
 {
 }
+
+KURL Frame::url() const
+{
+    return d->m_url;
+}
+

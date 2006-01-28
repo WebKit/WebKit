@@ -543,16 +543,15 @@ void FrameView::viewportMousePressEvent( QMouseEvent *_mouse )
                                            d->clickCount,_mouse,true,NodeImpl::MousePress);
 
     if (!swallowEvent) {
-	MousePressEvent event( _mouse, xm, ym, mev.url, mev.target, mev.innerNode.get() );
-	QApplication::sendEvent( m_frame, &event );
+	MousePressEvent event(_mouse, xm, ym, mev.url, mev.target, mev.innerNode.get());
+        m_frame->khtmlMousePressEvent(&event);
         // Many AK widgets run their own event loops and consume events while the mouse is down.
         // When they finish, currentEvent is the mouseUp that they exited on.  We need to update
         // the khtml state with this mouseUp, which khtml never saw.
         // If this event isn't a mouseUp, we assume that the mouseUp will be coming later.  There
         // is a hole here if the widget consumes the mouseUp and subsequent events.
-        if (m_frame->lastEventIsMouseUp()) {
+        if (m_frame->lastEventIsMouseUp())
             d->mousePressed = false;
-        }
     }
 }
 
@@ -584,11 +583,11 @@ void FrameView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
 
     // Qt delivers a release event AND a double click event.
     if (!swallowEvent) {
-	MouseReleaseEvent event1( _mouse, xm, ym, mev.url, mev.target, mev.innerNode.get() );
-	QApplication::sendEvent( m_frame, &event1 );
+	MouseReleaseEvent event1(_mouse, xm, ym, mev.url, mev.target, mev.innerNode.get());
+	m_frame->khtmlMouseReleaseEvent(&event1);
 
-	MouseDoubleClickEvent event2( _mouse, xm, ym, mev.url, mev.target, mev.innerNode.get() );
-	QApplication::sendEvent( m_frame, &event2 );
+	MouseDoubleClickEvent event2(_mouse, xm, ym, mev.url, mev.target, mev.innerNode.get());
+        m_frame->khtmlMouseDoubleClickEvent(&event2);
     }
 
     invalidateClick();
@@ -683,7 +682,7 @@ void FrameView::viewportMouseMoveEvent( QMouseEvent * _mouse )
 
     if (!swallowEvent) {
         MouseMoveEvent event(_mouse, xm, ym, mev.url, mev.target, mev.innerNode.get());
-        QApplication::sendEvent(m_frame, &event);
+        m_frame->khtmlMouseMoveEvent(&event);
     }
 }
 
@@ -722,8 +721,8 @@ void FrameView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
 			   d->clickCount,_mouse,true,NodeImpl::MouseRelease);
 
     if (!swallowEvent) {
-	MouseReleaseEvent event( _mouse, xm, ym, mev.url, mev.target, mev.innerNode.get() );
-	QApplication::sendEvent( m_frame, &event );
+	MouseReleaseEvent event(_mouse, xm, ym, mev.url, mev.target, mev.innerNode.get());
+        m_frame->khtmlMouseReleaseEvent(&event);
     }
 
     invalidateClick();
