@@ -1,5 +1,19 @@
 2006-01-27  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Geoff.
+
+        - GC after destroying the very last frame to avoid node leak false positives
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6884
+
+        * ForwardingHeaders/JSLock.h: added
+        * page/Page.cpp:
+        (Page::~Page): In debug mode, when destroying the last page,
+        0 out m_mainFrame to destroy the very last frame and then garbage collect,
+        so a GC happens at a time when the stack won't have references into the JS
+        heap for the conservative GC to catch.
+
+2006-01-27  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Eric.
 
         - remove nearly all the substance of ObjectContents and put it on Frame
