@@ -681,9 +681,6 @@ void FrameView::viewportMouseMoveEvent( QMouseEvent * _mouse )
     // execute the scheduled script. This is to make sure the mouseover events come after the mouseout events
     m_frame->executeScheduledScript();
 
-    d->prevMouseX = xm;
-    d->prevMouseY = ym;
-
     if (!swallowEvent) {
         MouseMoveEvent event(_mouse, xm, ym, mev.url, mev.target, mev.innerNode.get());
         QApplication::sendEvent(m_frame, &event);
@@ -1033,9 +1030,8 @@ void FrameView::restoreScrollBar ( )
 }
 
 
-bool FrameView::dispatchMouseEvent(const AtomicString &eventType, NodeImpl *targetNode, bool cancelable,
-				   int detail,QMouseEvent *_mouse, bool setUnder,
-				   int mouseEventType)
+bool FrameView::dispatchMouseEvent(const AtomicString &eventType, NodeImpl* targetNode, bool cancelable,
+    int detail, QMouseEvent *_mouse, bool setUnder, int mouseEventType)
 {
     // if the target node is a text node, dispatch on the parent node - rdar://4196646
     if (targetNode && targetNode->isTextNode())
@@ -1056,20 +1052,22 @@ bool FrameView::dispatchMouseEvent(const AtomicString &eventType, NodeImpl *targ
             // Also, there's no guarantee that the old under node is even around any more,
             // so we could be sending a mouseout to a node that never got a mouseover.
             RefPtr<NodeImpl> oldUnder;
-            if (d->prevMouseX >= 0 && d->prevMouseY >= 0) {
+            if (d->prevMouseX >= 0) {
                 NodeImpl::MouseEvent mev( _mouse->stateAfter(), static_cast<NodeImpl::MouseEventType>(mouseEventType));
-                m_frame->document()->prepareMouseEvent( true, d->prevMouseX, d->prevMouseY, &mev );
+                m_frame->document()->prepareMouseEvent(true, d->prevMouseX, d->prevMouseY, &mev);
                 oldUnder = mev.innerNode;
                 if (oldUnder && oldUnder->isTextNode())
                     oldUnder = oldUnder->parentNode();
             }
+            d->prevMouseX = clientX;
+            d->prevMouseY = clientY;
             if (oldUnder != targetNode) {
                 // send mouseout event to the old node
                 if (oldUnder)
-                    oldUnder->dispatchMouseEvent(_mouse, mouseoutEvent);
+                    oldUnder->dispatchMouseEvent(_mouse, mouseoutEvent, 0, targetNode);
                 // send mouseover event to the new node
                 if (targetNode)
-                    targetNode->dispatchMouseEvent(_mouse, mouseoverEvent);
+                    targetNode->dispatchMouseEvent(_mouse, mouseoverEvent, 0, oldUnder.get());
             }
         }
     }

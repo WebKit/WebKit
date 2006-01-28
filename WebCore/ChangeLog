@@ -1,3 +1,25 @@
+2006-01-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6075
+          REGRESSION: event.relatedTarget not working, breaks menus at www.ati.com
+
+        Test: fast/events/related-target.html
+
+        * khtml/xml/NodeImpl.h:
+        * khtml/xml/NodeImpl.cpp: (WebCore::NodeImpl::dispatchMouseEvent): Added a
+        relatedTarget parameter to a couple overloads.
+
+        * page/FrameView.cpp:
+        (FrameView::viewportMouseMoveEvent): Moved code to set prevMouseX/Y out of here
+        and into dispatchMouseEvent, because it now handles mouseout and mouseover events,
+        and that's what these globals are used for. This fixes DumpRenderTree to work
+        properly with mouseout and mouseover (because it delivers only mouse down and up,
+        no mouse move events).
+        (FrameView::dispatchMouseEvent): Passed in the "other" node as the related target
+        for mouseout and mouseover events. Also set prevMouseX/Y.
+
 2006-01-27  David Hyatt  <hyatt@apple.com>
 
         Fix for 6867.  Rename QPixmap to Image and move it to platform/.

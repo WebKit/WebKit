@@ -270,12 +270,13 @@ public:
     bool dispatchGenericEvent(PassRefPtr<EventImpl>, ExceptionCode&);
     bool dispatchHTMLEvent(const AtomicString& eventType, bool canBubble, bool cancelable);
     bool dispatchWindowEvent(const AtomicString& eventType, bool canBubble, bool cancelable);
-    bool dispatchMouseEvent(QMouseEvent*, const AtomicString& overrideType, int overrideDetail = 0);
+    bool dispatchMouseEvent(QMouseEvent*, const AtomicString& overrideType,
+        int overrideDetail = 0, NodeImpl* relatedTarget = 0);
     bool dispatchSimulatedMouseEvent(const AtomicString& eventType);
     bool dispatchMouseEvent(const AtomicString& eventType, int button, int detail,
         int clientX, int clientY, int screenX, int screenY,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
-        bool isSimulated = false);
+        bool isSimulated = false, NodeImpl* relatedTarget = 0);
     bool dispatchUIEvent(const AtomicString& eventType, int detail = 0);
     bool dispatchSubtreeModifiedEvent(bool childrenChanged = true);
     bool dispatchKeyEvent(QKeyEvent*);

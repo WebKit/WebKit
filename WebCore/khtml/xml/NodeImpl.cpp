@@ -649,7 +649,8 @@ bool NodeImpl::dispatchWindowEvent(const AtomicString &eventType, bool canBubble
     return r;
 }
 
-bool NodeImpl::dispatchMouseEvent(QMouseEvent *_mouse, const AtomicString &overrideType, int overrideDetail)
+bool NodeImpl::dispatchMouseEvent(QMouseEvent *_mouse, const AtomicString &overrideType,
+    int overrideDetail, NodeImpl* relatedTarget)
 {
     assert(!eventDispatchForbidden());
     int detail = overrideDetail; // defaults to 0
@@ -705,7 +706,8 @@ bool NodeImpl::dispatchMouseEvent(QMouseEvent *_mouse, const AtomicString &overr
     
     return dispatchMouseEvent(eventType, button, detail,
         clientX, clientY, screenX, screenY,
-        ctrlKey, altKey, shiftKey, metaKey);
+        ctrlKey, altKey, shiftKey, metaKey,
+        false, relatedTarget);
 }
 
 bool NodeImpl::dispatchSimulatedMouseEvent(const AtomicString &eventType)
@@ -718,7 +720,7 @@ bool NodeImpl::dispatchSimulatedMouseEvent(const AtomicString &eventType)
 
 bool NodeImpl::dispatchMouseEvent(const AtomicString &eventType, int button, int detail,
     int clientX, int clientY, int screenX, int screenY,
-    bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool isSimulated)
+    bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool isSimulated, NodeImpl* relatedTarget)
 {
     assert(!eventDispatchForbidden());
     if (disabled()) // Don't even send DOM events for disabled controls..
@@ -734,15 +736,16 @@ bool NodeImpl::dispatchMouseEvent(const AtomicString &eventType, int button, int
 
     bool cancelable = eventType != mousemoveEvent;
     
-    int exceptioncode = 0;
+    ExceptionCode ec = 0;
 
     bool swallowEvent = false;
 
-    RefPtr<EventImpl> me = new MouseEventImpl(eventType,true,cancelable,getDocument()->defaultView(),
-                   detail,screenX,screenY,clientX,clientY,ctrlKey,altKey,shiftKey,metaKey,
-                   button, 0, 0, isSimulated);
+    RefPtr<EventImpl> me = new MouseEventImpl(eventType, true, cancelable, getDocument()->defaultView(),
+        detail, screenX, screenY, clientX, clientY,
+        ctrlKey, altKey, shiftKey, metaKey, button,
+        relatedTarget, 0, isSimulated);
     
-    dispatchEvent(me, exceptioncode, true);
+    dispatchEvent(me, ec, true);
     bool defaultHandled = me->defaultHandled();
     bool defaultPrevented = me->defaultPrevented();
     if (defaultHandled || defaultPrevented)
@@ -752,14 +755,13 @@ bool NodeImpl::dispatchMouseEvent(const AtomicString &eventType, int button, int
     // of the DOM specs, but is used for compatibility with the ondblclick="" attribute.  This is treated
     // as a separate event in other DOM-compliant browsers like Firefox, and so we do the same.
     if (eventType == clickEvent && detail == 2) {
-        me = new MouseEventImpl(khtmlDblclickEvent,
-                                true, cancelable,getDocument()->defaultView(),
-                                detail, screenX, screenY, clientX, clientY,
-                                ctrlKey, altKey, shiftKey, metaKey,
-                                button, 0, 0, isSimulated);
+        me = new MouseEventImpl(khtmlDblclickEvent, true, cancelable, getDocument()->defaultView(),
+            detail, screenX, screenY, clientX, clientY,
+            ctrlKey, altKey, shiftKey, metaKey, button,
+            relatedTarget, 0, isSimulated);
         if (defaultHandled)
             me->setDefaultHandled();
-        dispatchEvent(me,exceptioncode,true);
+        dispatchEvent(me, ec, true);
         if (me->defaultHandled() || me->defaultPrevented())
             swallowEvent = true;
     }
@@ -774,21 +776,16 @@ bool NodeImpl::dispatchMouseEvent(const AtomicString &eventType, int button, int
 bool NodeImpl::dispatchUIEvent(const AtomicString &eventType, int detail)
 {
     assert(!eventDispatchForbidden());
-    assert (!( (eventType != DOMFocusInEvent &&
-                eventType != DOMFocusOutEvent &&
-                eventType != DOMActivateEvent)));
+    assert(eventType == DOMFocusInEvent || eventType == DOMFocusOutEvent || eventType == DOMActivateEvent);
 
     if (!getDocument())
         return false;
 
-    bool cancelable = false;
-    if (eventType == DOMActivateEvent)
-        cancelable = true;
+    bool cancelable = eventType == DOMActivateEvent;
 
     int exceptioncode = 0;
-
-    UIEventImpl *evt = new UIEventImpl(eventType, true, cancelable, getDocument()->defaultView(), detail);
-    return dispatchEvent(evt,exceptioncode,true);
+    UIEventImpl* evt = new UIEventImpl(eventType, true, cancelable, getDocument()->defaultView(), detail);
+    return dispatchEvent(evt, exceptioncode, true);
 }
 
 void NodeImpl::registerNodeList(NodeListImpl* list)
