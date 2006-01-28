@@ -456,7 +456,7 @@ if ($checkLeaks && $pixelTests) {
 
 if ($totalLeaks) {
     print "\nWARNING: $totalLeaks total leaks found!\n";
-    print "See above for individual leaks results.\n" if ($leaksOutputFileNumber > 1);
+    print "See above for individual leaks results.\n" if ($leaksOutputFileNumber > 2);
 }
 
 close IN;
@@ -559,9 +559,9 @@ if ($counts{match} && $counts{match} == $count) {
             $base =~ s/\.(html|xml|xhtml|svg)$//;
             print HTML "<tr>\n";
             print HTML "<td><a href=\"$testDirectory/$test\">$base</a></td>\n";
-            print HTML "<td><a href=\"$base-expected.txt\">results</a></td>\n";
+            print HTML "<td><a href=\"$testDirectory/$base-expected.txt\">results</a></td>\n";
             if ($pixelTests && -f "$testDirectory/$base-expected.png") {
-                print HTML "<td><a href=\"$base-expected.png\">image</a></td>\n";
+                print HTML "<td><a href=\"$testDirectory/$base-expected.png\">image</a></td>\n";
             }
             print HTML "</tr>\n";
         }

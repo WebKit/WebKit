@@ -1,5 +1,11 @@
 2006-01-27  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by adele.
+
+        * Scripts/run-webkit-tests: make new tests use absolute urls
+
+2006-01-27  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by mjs.
 
         make run-webkit-tests output total leaks count
