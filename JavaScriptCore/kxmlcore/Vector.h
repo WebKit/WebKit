@@ -323,6 +323,8 @@ namespace KXMLCore {
         const T& operator[](size_t i) const { return at(i); }
         T& operator[](int i) { return at(i); }
         const T& operator[](int i) const { return at(i); }
+        T& operator[](unsigned i) { return at(i); }
+        const T& operator[](unsigned i) const { return at(i); }
 
         T* data() { return m_impl.buffer(); }
         const T* data() const { return m_impl.buffer(); }
