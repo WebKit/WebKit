@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -274,9 +274,14 @@ static void dump(void)
     
     if (dumpPixels) {
         if (!dumpAsText) {
+            // FIXME: It's unfortunate that we hardcode the file naming scheme here.
+            // At one time, the perl script had all the knowledge about file layout.
+            // Some day we should restore that setup by passing in more parameters to this tool.
+
             NSString *baseTestPath = [currentTest stringByDeletingPathExtension];
             NSString *baselineHashPath = [baseTestPath stringByAppendingString:@"-expected.checksum"];
             NSString *baselineHash = [NSString stringWithContentsOfFile:baselineHashPath encoding:NSUTF8StringEncoding error:nil];
+            NSString *baselineImagePath = [baseTestPath stringByAppendingString:@"-expected.png"];
             
             // grab a bitmap from the view
             WebView *view = [frame webView];
@@ -289,7 +294,7 @@ static void dump(void)
             printf("BaselineHash: %s\n", [baselineHash UTF8String]);
             
             // if the hashes don't match, send image back to stdout for diff comparision
-            if ([baselineHash isEqualToString:actualHash] == NO) {            
+            if (![baselineHash isEqualToString:actualHash] || access([baselineImagePath fileSystemRepresentation], F_OK) != 0) {            
                 NSData *imageData = [imageRep representationUsingType:NSPNGFileType properties:nil];
                 printf("Content-length: %d\n", [imageData length]);
                 fwrite([imageData bytes], 1, [imageData length], stdout);
