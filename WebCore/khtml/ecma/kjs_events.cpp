@@ -77,7 +77,6 @@ void JSAbstractEventListener::handleEvent(EventListenerEvent ele, bool isWindowE
     ScriptInterpreter* interpreter = proxy->interpreter();
     ExecState* exec = interpreter->globalExec();
   
-    bool hasHandleEvent = false;
     JSValue* handleEventFuncValue = listener->get(exec, "handleEvent");
     JSObject* handleEventFunc = 0;
     if (handleEventFuncValue->isObject()) {      
@@ -98,7 +97,7 @@ void JSAbstractEventListener::handleEvent(EventListenerEvent ele, bool isWindowE
         interpreter->setCurrentEvent(event);
       
         JSValue* retval;
-        if (hasHandleEvent)
+        if (handleEventFunc)
             retval = handleEventFunc->call(exec, listener, args);
         else {
             JSObject* thisObj;

@@ -1,3 +1,13 @@
+2006-01-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6711
+          crash if an event is dispatched to a listener that uses handleEvent
+
+        * fast/events/dispatch-to-handle-event.html: Added.
+        * fast/events/dispatch-to-handle-event-expected.txt: Added.
+
 2006-01-28  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

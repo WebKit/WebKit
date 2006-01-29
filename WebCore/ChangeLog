@@ -1,3 +1,16 @@
+2006-01-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6711
+          crash if an event is dispatched to a listener that uses handleEvent
+
+        Test: fast/events/dispatch-to-handle-event.html
+
+        * khtml/ecma/kjs_events.cpp: (KJS::JSAbstractEventListener::handleEvent):
+        Remove boolean that is always false, and correct the one place that was
+        checking it to check the correct pointer instead.
+
 2006-01-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
