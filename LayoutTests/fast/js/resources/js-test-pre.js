@@ -13,14 +13,19 @@ function debug(msg)
     document.getElementById("console").appendChild(span);
 }
 
+function escapeHTML(text)
+{
+    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+}
+
 function testPassed(msg)
 {
-    debug('<span class="pass">PASS</span> ' + msg + '</span>');
+    debug('<span class="pass">PASS</span> ' + escapeHTML(msg) + '</span>');
 }
 
 function testFailed(msg)
 {
-    debug('<span class="fail">FAIL</span> ' + msg + '</span>');
+    debug('<span class="fail">FAIL</span> ' + escapeHTML(msg) + '</span>');
 }
 
 function shouldBe(_a, _b)
@@ -104,7 +109,7 @@ function shouldThrow(_a, _e)
     if (typeof _e == "undefined" || exception == _ev)
       testPassed(_a + " threw exception " + exception + ".");
     else
-      testFailed(_a + " should throw exception " + _e + ". Threw exception " + exception + ".");
+      testFailed(_a + " should throw exception " + _ev + ". Threw exception " + exception + ".");
   } else if (typeof _av == "undefined")
     testFailed(_a + " should throw exception " + _e + ". Was undefined.");
   else

@@ -1,3 +1,17 @@
+2006-01-20  Darin Adler  <darin@apple.com>
+
+        - added a test for the names of range exceptions, which were wrong
+          in my last commit until I made the fix Alexey suggested
+
+        * fast/dom/Range: Added.
+        * fast/dom/Range/range-exceptions.html: Added.
+        * fast/dom/Range/resources: Added.
+        * fast/dom/Range/resources/range-exceptions.js: Added.
+        * fast/dom/Range/resources/TEMPLATE.html: Added.
+
+        * fast/js/resources/js-test-pre.js: Escape & and < characters in the
+        output so you can have tests with HTML fragments as expected results.
+
 2006-01-29  David Harrison  <harrison@apple.com>
 
         Adding test cases for:
