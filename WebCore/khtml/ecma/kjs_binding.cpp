@@ -391,7 +391,7 @@ static const char * const exceptionNames[] = {
 };
 
 static const char * const rangeExceptionNames[] = {
-    "BAD_BOUNDARYPOINTS_ERR", "INVALID_NODE_TYPE_ERR"
+    0, "BAD_BOUNDARYPOINTS_ERR", "INVALID_NODE_TYPE_ERR"
 };
 
 static const char * const cssExceptionNames[] = {
@@ -411,7 +411,7 @@ void setDOMException(ExecState *exec, int DOMExceptionCode)
   int code = DOMExceptionCode;
 
   const char * const * nameTable;
-  int nameTableSize;;
+  int nameTableSize;
   if (code >= RangeException::_EXCEPTION_OFFSET && code <= RangeException::_EXCEPTION_MAX) {
     type = "DOM Range";
     code -= RangeException::_EXCEPTION_OFFSET;

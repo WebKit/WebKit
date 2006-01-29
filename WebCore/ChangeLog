@@ -1,4 +1,15 @@
-2006-01-27  David Harrison  <harrison@apple.com>
+2006-01-29  Darin Adler  <darin@apple.com>
+
+        Suggested by Alexey.
+
+        - fixed something Alexey noticed in the new exception names
+
+        Test: fast/dom/Range/range-exceptions.html
+
+        * khtml/ecma/kjs_binding.cpp: Added 0 to fix an off-by-one error for the
+        names of the two DOM range exceptions.
+
+2006-01-29  David Harrison  <harrison@apple.com>
 
         Reviewed by John.
 
