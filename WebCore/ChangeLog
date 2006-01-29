@@ -1,3 +1,30 @@
+2006-01-27  David Harrison  <harrison@apple.com>
+
+        Reviewed by John.
+
+        Fix two problems with editing around empty list items:
+        1) Arrowing up or down to an empty list item skipped the list item
+        2) Deleting the content of a list item made it so you could never get the cursor inside the empty item
+
+        Added tests:
+        * selection/move-by-line-002.html
+        * deleting/delete-listitem-002.html
+        
+        * khtml/editing/composite_edit_command.cpp:
+        (WebCore::CompositeEditCommand::addBlockPlaceholderIfNeeded):
+        - special check for empty list item because list marker assures non-zero height()
+        
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::inRenderedContent):
+        - fix check wrt BRs because text box is not required
+        
+        * rendering/bidi.cpp:
+        (khtml::RenderBlock::constructLine):
+        - make sure that br by itself in a list item gets a text-style box
+        
+        (khtml::RenderBlock::findNextLineBreak):
+        - make sure that br by itself in a list item gets a box at all
+
 2006-01-29  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt & darin.

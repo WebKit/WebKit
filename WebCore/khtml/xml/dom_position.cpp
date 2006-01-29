@@ -508,8 +508,7 @@ bool Position::inRenderedContent() const
     if (renderer->style()->visibility() != VISIBLE)
         return false;
 
-    // FIXME: This check returns false for a <br> at the end of a line!
-    if (renderer->isBR() && static_cast<RenderText *>(renderer)->firstTextBox())
+    if (renderer->isBR())
         return offset() == 0;
 
     if (renderer->isText()) {

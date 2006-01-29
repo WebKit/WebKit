@@ -493,10 +493,8 @@ NodeImpl *CompositeEditCommand::addBlockPlaceholderIfNeeded(NodeImpl *node)
     
     // append the placeholder to make sure it follows
     // any unrendered blocks
-    // FIXME: use contentHeight() instead so to not be confused by bordere, e.g.
-    if (renderer->height() == 0) {
+    if (renderer->height() == 0 || (renderer->isListItem() && renderer->isEmpty()))
         return appendBlockPlaceholder(node);
-    }
 
     return NULL;
 }
