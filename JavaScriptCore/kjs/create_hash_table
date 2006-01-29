@@ -5,6 +5,23 @@
 # (c) 2000-2002 by Harri Porten <porten@kde.org> and
 #                  David Faure <faure@kde.org>
 # Modified (c) 2004 by Nikolas Zimmermann <wildfox@kde.org>
+#
+# Part of the KJS library.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+#
 
 use strict;
 
@@ -12,12 +29,14 @@ my $file = $ARGV[0];
 shift;
 my $findSize = 0;
 my $includelookup = 0;
+
 # Use -s as second argument to make it try many hash sizes
 $findSize = 1 if (defined($ARGV[0]) && $ARGV[0] eq "-s");
+
 # Use -i as second argument to make it include "lookup.h"
 $includelookup = 1 if (defined($ARGV[0]) && $ARGV[0] eq "-i");
-# Use -n as second argument to make it use the third
-#      argument as namespace parameter ie. -n KDOM
+
+# Use -n as second argument to make it use the third argument as namespace parameter ie. -n KDOM
 my $useNameSpace = $ARGV[1] if (defined($ARGV[0]) && $ARGV[0] eq "-n");
 
 print STDERR "Creating hashtable for $file\n";

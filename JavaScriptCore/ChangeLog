@@ -1,3 +1,7 @@
+2006-01-28  Darin Adler  <darin@apple.com>
+
+        * kjs/create_hash_table: Added missing license.
+
 2006-01-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave Hyatt.
