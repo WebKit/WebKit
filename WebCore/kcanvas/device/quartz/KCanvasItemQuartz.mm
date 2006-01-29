@@ -59,6 +59,9 @@ void KCanvasItemQuartz::layout()
     // pretend that one of the attributes of the element has changed on the DOM
     // to force the DOM object to update this render object with new aboslute position values.
     static_cast<KSVG::SVGStyledElementImpl*>(element())->notifyAttributeChange();
+    IntRect layoutRect = getAbsoluteRepaintRect();
+    setWidth(layoutRect.width());
+    setHeight(layoutRect.height());
     setNeedsLayout(false);
 }
 
@@ -196,7 +199,31 @@ void KCanvasItemQuartz::drawMarkersIfNeeded(const FloatRect& rect, const KCanvas
 
 IntRect KCanvasItemQuartz::getAbsoluteRepaintRect()
 {
-    return enclosingIntRect(absoluteTransform().mapRect(relativeBBox(true)));
+    FloatRect repaintRect = absoluteTransform().mapRect(relativeBBox(true));
+    
+    // Filters can expand the bounding box
+    KCanvasFilter *filter = getFilterById(document(), style()->svgStyle()->filter().mid(1));
+    if (filter)
+        repaintRect = repaintRect.unite(filter->filterBBoxForItemBBox(repaintRect));
+    
+    if (!repaintRect.isEmpty())
+        repaintRect.inflate(1); // inflate 1 pixel for antialiasing
+    return enclosingIntRect(repaintRect);
+}
+
+bool KCanvasItemQuartz::requiresLayer()
+{
+    return false;
+}
+
+short KCanvasItemQuartz::lineHeight(bool b, bool isRootLineBox) const
+{
+    return static_cast<short>(bboxForPath(true).height());
+}
+
+short KCanvasItemQuartz::baselinePosition(bool b, bool isRootLineBox) const
+{
+    return static_cast<short>(bboxForPath(true).height());
 }
 
 void KCanvasItemQuartz::paint(PaintInfo &paintInfo, int parentX, int parentY)

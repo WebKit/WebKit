@@ -1,8 +1,8 @@
 KRenderingPaintServer {id="MyGradient" [type=LINEAR-GRADIENT] [stops=[(0.00,#FF0000), (0.33,#00FF00), (0.67,#0000FF), (1.00,#000000)]] [bounding box mode=0] [start=(10,0)] [end=(590,0)]}
-KCanvasResource {id="Identity" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0]}
-KCanvasResource {id="Table" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0]}
-KCanvasResource {id="Linear" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0]}
-KCanvasResource {id="Gamma" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0]}
+KCanvasResource {id="Identity" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0]}
+KCanvasResource {id="Table" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0]}
+KCanvasResource {id="Linear" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0]}
+KCanvasResource {id="Gamma" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0]}
 layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 629x419

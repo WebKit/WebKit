@@ -116,7 +116,7 @@ void KCanvasFilterQuartz::applyFilter(const FloatRect &bbox)
     if ([filterStack count]) {
         CIImage *outputImage = [[filterStack lastObject] valueForKey:@"outputImage"];
         if (outputImage) {
-            CGRect filterRect = filterBBoxForItemBBox(CGRect(bbox));
+            CGRect filterRect = CGRect(filterBBoxForItemBBox(bbox));
             CGRect translated = filterRect;
             CGPoint bboxOrigin = CGRect(bbox).origin;
             CGRect sourceRect = CGRectIntersection(translated,[outputImage extent]);
@@ -131,18 +131,6 @@ void KCanvasFilterQuartz::applyFilter(const FloatRect &bbox)
     
     CGLayerRelease(m_filterCGLayer);
     [m_filterCIContext release];
-}
-
-CGRect KCanvasFilterQuartz::filterBBoxForItemBBox(CGRect itemBBox) const
-{
-    // FIXME: hack for now
-    CGRect filterBBox = CGRect(filterRect());
-    if(filterBoundingBoxMode())
-        filterBBox = CGRectMake((filterBBox.origin.x/100.f * itemBBox.size.width), 
-                                (filterBBox.origin.y/100.f * itemBBox.size.height), 
-                                (filterBBox.size.width/100.f * itemBBox.size.width), 
-                                (filterBBox.size.height/100.f * itemBBox.size.height));
-    return filterBBox;
 }
 
 NSArray *KCanvasFilterQuartz::getCIFilterStack(CIImage *inputImage)
@@ -542,7 +530,7 @@ CIFilter *KCanvasFEFloodQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) c
     CGColorRelease(withAlpha);
     [filter setValue:inputColor forKey:@"inputColor"];
     
-    CGRect cropRect = CGRectMake(0,0,1000,1000); // HACK
+    CGRect cropRect = CGRectMake(-100,-100,1000,1000); // HACK
     if (subRegion().isValid())
         cropRect = CGRect(subRegion());
     FE_QUARTZ_CROP_TO_RECT(cropRect);

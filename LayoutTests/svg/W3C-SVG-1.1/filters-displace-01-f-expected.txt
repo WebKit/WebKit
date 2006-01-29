@@ -1,8 +1,8 @@
-KCanvasResource {id="DispMapChecker" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=IMAGE]  [subregion="at (0,0) size 480x360"]]]}
-KCanvasResource {id="RotateMap" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=IMAGE]  [subregion="at (0,0) size 480x360"]]]}
-KCanvasResource {id="SphereMap" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=IMAGE]  [subregion="at (0,0) size 480x360"]]]}
-KCanvasResource {id="RotateMapTest" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=IMAGE]  [result="Map"] [subregion="at (0,0) size 480x360"], [type=IMAGE]  [result="Texture"] [subregion="at (0,0) size 480x360"]]]}
-KCanvasResource {id="SphereMapTest" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=IMAGE]  [result="Map"] [subregion="at (0,0) size 480x360"], [type=IMAGE]  [result="Texture"] [subregion="at (0,0) size 480x360"]]]}
+KCanvasResource {id="DispMapChecker" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=IMAGE]  [subregion="at (0,0) size 480x360"]]]}
+KCanvasResource {id="RotateMap" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=IMAGE]  [subregion="at (0,0) size 480x360"]]]}
+KCanvasResource {id="SphereMap" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=IMAGE]  [subregion="at (0,0) size 480x360"]]]}
+KCanvasResource {id="RotateMapTest" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=IMAGE]  [result="Map"] [subregion="at (0,0) size 480x360"], [type=IMAGE]  [result="Texture"] [subregion="at (0,0) size 480x360"]]]}
+KCanvasResource {id="SphereMapTest" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=IMAGE]  [result="Map"] [subregion="at (0,0) size 480x360"], [type=IMAGE]  [result="Texture"] [subregion="at (0,0) size 480x360"]]]}
 layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359

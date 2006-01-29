@@ -53,8 +53,6 @@ public:
     
 private:
     NSArray *getCIFilterStack(CIImage *inputImage);
-    
-    CGRect filterBBoxForItemBBox(CGRect itemBBox) const;
 
     CIContext *m_filterCIContext;
     CGLayerRef m_filterCGLayer;

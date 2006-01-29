@@ -1,5 +1,85 @@
 2006-01-29  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by hyatt & darin.
+
+        Remaining fixes for SVGTetris:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6889
+        Fix for CDF support:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6025
+        Fix for filter updating:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6849
+        Also, as a side effect of 6849, fixed double-apply of filters, improving:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6713
+
+        Results updated for most tests, pixel results improved for filter tests.
+
+        * svg/W3C-SVG-1.1/color-prof-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/coords-trans-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/coords-trans-02-t-expected.txt:
+        * svg/W3C-SVG-1.1/coords-trans-03-t-expected.txt:
+        * svg/W3C-SVG-1.1/coords-trans-04-t-expected.txt:
+        * svg/W3C-SVG-1.1/coords-trans-05-t-expected.txt:
+        * svg/W3C-SVG-1.1/coords-trans-06-t-expected.txt:
+        * svg/W3C-SVG-1.1/coords-viewattr-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.checksum:
+        * svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.png:
+        * svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-blend-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-color-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-composite-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-comptran-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-conv-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-displace-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-gauss-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-gauss-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-gauss-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-image-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-light-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-morph-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-offset-01-b-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-offset-01-b-expected.png:
+        * svg/W3C-SVG-1.1/filters-offset-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/filters-specular-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/filters-turb-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/fonts-elem-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/fonts-elem-02-t-expected.txt:
+        * svg/W3C-SVG-1.1/fonts-elem-03-b-expected.txt:
+        * svg/W3C-SVG-1.1/fonts-elem-04-b-expected.txt:
+        * svg/W3C-SVG-1.1/masking-path-04-b-expected.txt:
+        * svg/W3C-SVG-1.1/metadata-example-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/painting-marker-01-f-expected.txt:
+        * svg/W3C-SVG-1.1/painting-marker-02-f-expected.txt:
+        * svg/W3C-SVG-1.1/render-groups-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/render-groups-03-t-expected.txt:
+        * svg/W3C-SVG-1.1/struct-image-01-t-expected.txt:
+        * svg/W3C-SVG-1.1/struct-image-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/struct-image-03-t-expected.txt:
+        * svg/W3C-SVG-1.1/struct-image-04-t-expected.txt:
+        * svg/W3C-SVG-1.1/struct-image-05-b-expected.txt:
+        * svg/W3C-SVG-1.1/struct-symbol-01-b-expected.txt:
+        * svg/W3C-SVG-1.1/styling-css-02-b-expected.txt:
+        * svg/W3C-SVG-1.1/text-text-01-b-expected.txt:
+        * svg/custom/filter-source-alpha-expected.txt:
+        * svg/custom/image-with-transform-clip-filter-expected.checksum:
+        * svg/custom/image-with-transform-clip-filter-expected.png:
+        * svg/custom/image-with-transform-clip-filter-expected.txt:
+        * svg/custom/junk-data-expected.checksum:
+        * svg/custom/junk-data-expected.png:
+        * svg/custom/junk-data-expected.txt:
+        * svg/custom/missing-xlink-expected.checksum:
+        * svg/custom/missing-xlink-expected.png:
+        * svg/custom/missing-xlink-expected.txt:
+        * svg/custom/simpleCDF-expected.checksum:
+        * svg/custom/simpleCDF-expected.png:
+        * svg/custom/simpleCDF-expected.txt:
+        * svg/custom/text-filter-expected.checksum:
+        * svg/custom/text-filter-expected.png:
+        * svg/custom/text-filter-expected.txt:
+        * svg/custom/text-image-opacity-expected.txt:
+
+2006-01-29  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by hyatt.
 
         * svg/custom/viewport-update-expected.checksum: Added.

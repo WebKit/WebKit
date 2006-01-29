@@ -1,5 +1,65 @@
 2006-01-29  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by hyatt & darin.
+
+        There are a few small, but intertwined fixes in this patch:
+
+        Remaining fixes for SVGTetris:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6889
+
+        Testing blocked by: http://bugzilla.opendarwin.org/show_bug.cgi?id=6905
+
+        Fix for CDF support:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6025
+
+        Updated test: svg/custom/simpleCDF.xml
+
+        Fix for filter updating:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6849
+
+        Testing blocked by: http://bugzilla.opendarwin.org/show_bug.cgi?id=6904
+
+        Also, as a side effect of 6849, fixed double-apply of filters, improving:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6713
+
+        Results updated for most tests, pixel results improved for filter tests.
+
+        * kcanvas/KCanvasFilters.cpp:
+        (KCanvasFilter::filterBBoxForItemBBox): moved into baseclass
+        * kcanvas/KCanvasFilters.h:
+        * kcanvas/RenderSVGImage.cpp:
+        (RenderSVGImage::paint): use relativeBBox
+        (RenderSVGImage::relativeBBox): added
+        (RenderSVGImage::imageChanged): added
+        (RenderSVGImage::getAbsoluteRepaintRect): fixed
+        * kcanvas/RenderSVGImage.h:
+        (KSVG::RenderSVGImage::imageChanged): added.
+        * kcanvas/device/quartz/KCanvasFilterQuartz.h:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (KCanvasFilterQuartz::applyFilter): use new baseclass method
+        (KCanvasFEFloodQuartz::getCIFilter): fixed.
+        * kcanvas/device/quartz/KCanvasItemQuartz.h:
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        (KCanvasItemQuartz::layout): update width/height
+        (KCanvasItemQuartz::getAbsoluteRepaintRect): fixed.
+        (KCanvasItemQuartz::requiresLayer): moved to .cpp
+        (KCanvasItemQuartz::lineHeight): added.
+        (KCanvasItemQuartz::baselinePosition): added.
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.h:
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.mm:
+        (KCanvasContainerQuartz::canHaveChildren): moved to .cpp
+        (KCanvasContainerQuartz::requiresLayer): moved to .cpp
+        (KCanvasContainerQuartz::lineHeight): added.
+        (KCanvasContainerQuartz::baselinePosition): added.
+        (KCanvasContainerQuartz::paint): fixed.
+        (KCanvasContainerQuartz::viewportTransform): fixed.
+        (KCanvasContainerQuartz::getAbsoluteRepaintRect): fixed.
+        (KCanvasContainerQuartz::absoluteTransform): fixed.
+        * rendering/render_object.cpp:
+        (WebCore::RenderObject::absoluteTransform): fixed apply order.
+
+2006-01-29  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by hyatt.
 
         First set of fixes for SVG Tetris:

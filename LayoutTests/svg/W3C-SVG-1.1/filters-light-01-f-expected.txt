@@ -1,23 +1,23 @@
-KCanvasResource {id="distantLightA" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=DIFFUSE-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]]}
-KCanvasResource {id="distantLightB" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=DIFFUSE-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]]}
-KCanvasResource {id="distantLightC" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=DIFFUSE-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]]}
-KCanvasResource {id="distantLightD" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=DIFFUSE-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]]}
-KCanvasResource {id="pointLightA" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=DIFFUSE-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]]}
-KCanvasResource {id="pointLightB" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=DIFFUSE-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]]}
-KCanvasResource {id="pointLightC" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=DIFFUSE-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]]}
-KCanvasResource {id="pointLightD" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=DIFFUSE-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]]}
-KCanvasResource {id="spotLightA" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=DIFFUSE-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]]}
-KCanvasResource {id="spotLightB" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=DIFFUSE-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]]}
-KCanvasResource {id="spotLightC" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=DIFFUSE-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]]}
-KCanvasResource {id="spotLightD" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=DIFFUSE-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]]}
+KCanvasResource {id="distantLightA" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=DIFFUSE-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]]}
+KCanvasResource {id="distantLightB" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=DIFFUSE-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]]}
+KCanvasResource {id="distantLightC" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=DIFFUSE-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]]}
+KCanvasResource {id="distantLightD" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=DIFFUSE-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]]}
+KCanvasResource {id="pointLightA" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=DIFFUSE-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]]}
+KCanvasResource {id="pointLightB" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=DIFFUSE-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]]}
+KCanvasResource {id="pointLightC" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=DIFFUSE-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]]}
+KCanvasResource {id="pointLightD" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=DIFFUSE-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]]}
+KCanvasResource {id="spotLightA" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=DIFFUSE-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]]}
+KCanvasResource {id="spotLightB" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=DIFFUSE-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]]}
+KCanvasResource {id="spotLightC" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=DIFFUSE-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]]}
+KCanvasResource {id="spotLightD" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=DIFFUSE-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [diffuse constant=1.00] [kernel unit length 0.00, 0.00]]]}
 layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
-    KCanvasContainer {svg} at (0.50,0.50) size 479x359
-      KCanvasContainer {g} at (70,245) size 335x30
+    KCanvasContainer {svg} at (0,0.50) size 479.50x359
+      KCanvasContainer {g} at (0,40) size 405x235
         RenderSVGText {text} at (0,0) size 465x14
           RenderText {TEXT} at (0,0) size 253x14
             text run at (0,0) width 253: "Filters: feDistantLight, fePointLight, feSpotLight"
-        KCanvasContainer {g} at (0,40) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}]
+        KCanvasContainer {g} at (0,40) size 50x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}]
           RenderSVGText {text} at (0,0) size 465x18
             RenderText {TEXT} at (0,0) size 353x18
               text run at (0,0) width 353: "Various values for feDistantLight azimuth and elevation"
@@ -53,7 +53,7 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,0) size 465x18
             RenderText {TEXT} at (0,0) size 74x18
               text run at (0,0) width 74: "(50, 30, 10)"
-        KCanvasContainer {g} at (0,0) size 0x0
+        KCanvasContainer {g} at (70,150) size 335x30
           RenderImage {image} at (0,0) size 50x30
           RenderImage {image} at (0,0) size 50x30
           RenderImage {image} at (0,0) size 50x30

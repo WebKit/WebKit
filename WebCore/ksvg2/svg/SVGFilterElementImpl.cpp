@@ -166,10 +166,10 @@ void SVGFilterElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 
 KCanvasFilter *SVGFilterElementImpl::canvasResource()
 {
-    if(!canvas())
+    if (!attached())
         return 0;
 
-    if(!m_filter)
+    if (!m_filter)
         m_filter = static_cast<KCanvasFilter *>(QPainter::renderingDevice()->createResource(RS_FILTER));
 
     bool filterBBoxMode = filterUnits()->baseVal() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
@@ -181,18 +181,15 @@ KCanvasFilter *SVGFilterElementImpl::canvasResource()
     height()->baseVal()->setBboxRelative(filterBBoxMode);
     float _x = x()->baseVal()->value(), _y = y()->baseVal()->value();
     float _width = width()->baseVal()->value(), _height = height()->baseVal()->value();
-    if(filterBBoxMode)
-        m_filter->setFilterRect(FloatRect(_x * 100.f, _y * 100.f, _width * 100.f, _height * 100.f));
-    else
-        m_filter->setFilterRect(FloatRect(_x, _y, _width, _height));
+    m_filter->setFilterRect(FloatRect(_x, _y, _width, _height));
     
     bool primitiveBBoxMode = primitiveUnits()->baseVal() == SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
     m_filter->setEffectBoundingBoxMode(primitiveBBoxMode);
     // FIXME: When does this info get passed to the filters elements?
 
     // TODO : use switch/case instead?
-    for(KDOM::NodeImpl *n = firstChild(); n != 0; n = n->nextSibling())
-    {
+    m_filter->clearEffects();
+    for (KDOM::NodeImpl *n = firstChild(); n != 0; n = n->nextSibling()) {
         SVGElementImpl *element = svg_dynamic_cast(n);
         if(element && element->isFilterEffect()) {
             SVGFilterPrimitiveStandardAttributesImpl *fe = static_cast<SVGFilterPrimitiveStandardAttributesImpl *>(element);

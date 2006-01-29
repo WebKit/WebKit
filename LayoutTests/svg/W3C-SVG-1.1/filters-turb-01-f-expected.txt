@@ -1,9 +1,9 @@
-KCanvasResource {id="Turb1" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0]}
-KCanvasResource {id="Turb2" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0]}
-KCanvasResource {id="Turb3" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0]}
-KCanvasResource {id="Turb4" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0]}
-KCanvasResource {id="Turb5" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0]}
-KCanvasResource {id="Turb6" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0]}
+KCanvasResource {id="Turb1" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0]}
+KCanvasResource {id="Turb2" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0]}
+KCanvasResource {id="Turb3" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0]}
+KCanvasResource {id="Turb4" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0]}
+KCanvasResource {id="Turb5" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0]}
+KCanvasResource {id="Turb6" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0]}
 layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359

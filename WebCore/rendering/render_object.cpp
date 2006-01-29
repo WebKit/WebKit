@@ -2614,7 +2614,7 @@ QMatrix RenderObject::localTransform() const
 QMatrix RenderObject::absoluteTransform() const
 {
     if (parent())
-        return parent()->absoluteTransform() * localTransform();
+        return localTransform() * parent()->absoluteTransform();
     return localTransform();
 }
 

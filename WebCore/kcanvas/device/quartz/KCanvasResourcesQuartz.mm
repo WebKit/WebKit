@@ -41,6 +41,26 @@
 
 #import <kxmlcore/Assertions.h>
 
+bool KCanvasContainerQuartz::canHaveChildren() const
+{
+    return true;
+}
+    
+bool KCanvasContainerQuartz::requiresLayer()
+{
+    return false;
+}
+
+short KCanvasContainerQuartz::lineHeight(bool b, bool isRootLineBox) const
+{
+    return height() + marginTop() + marginBottom();
+}
+
+short KCanvasContainerQuartz::baselinePosition(bool b, bool isRootLineBox) const
+{
+    return height() + marginTop() + marginBottom();
+}
+
 void KCanvasContainerQuartz::calcMinMaxWidth()
 {
     KHTMLAssert( !minMaxKnown());
@@ -125,12 +145,8 @@ void KCanvasContainerQuartz::paint(PaintInfo &paintInfo, int parentX, int parent
     if (filter)
         filter->prepareFilter(relativeBBox(true));
     
-    if (!viewBox().isNull()) {
-        FloatRect viewportRect = viewport();
-        if (!parent()->isKCanvasContainer())
-            viewportRect = FloatRect(viewport().x(), viewport().y(), width(), height());
-        deviceContext->concatCTM(getAspectRatio(viewBox(), viewportRect));
-    }
+    if (!viewBox().isNull())
+        deviceContext->concatCTM(viewportTransform());
     
     RenderContainer::paint(paintInfo, 0, 0);
     
@@ -178,16 +194,35 @@ KCAlign KCanvasContainerQuartz::align() const
     return m_align;
 }
 
-QMatrix KCanvasContainerQuartz::absoluteTransform() const
+QMatrix KCanvasContainerQuartz::viewportTransform() const
 {
-    QMatrix transform = KCanvasContainer::absoluteTransform();
     if (!viewBox().isNull()) {
         FloatRect viewportRect = viewport();
         if (!parent()->isKCanvasContainer())
             viewportRect = FloatRect(viewport().x(), viewport().y(), width(), height());
-        transform *= getAspectRatio(viewBox(), viewportRect).qmatrix();
+        return getAspectRatio(viewBox(), viewportRect).qmatrix();
     }
-    return transform;
+    return QMatrix();
+}
+
+IntRect KCanvasContainerQuartz::getAbsoluteRepaintRect()
+{
+    IntRect repaintRect;
+    
+    for (WebCore::RenderObject *current = firstChild(); current != 0; current = current->nextSibling())
+        repaintRect = repaintRect.unite(current->getAbsoluteRepaintRect());
+    
+    // Filters can expand the bounding box
+    KCanvasFilter *filter = getFilterById(document(), style()->svgStyle()->filter().mid(1));
+    if (filter)
+        repaintRect = repaintRect.unite(enclosingIntRect(filter->filterBBoxForItemBBox(repaintRect)));
+
+    return repaintRect;
+}
+
+QMatrix KCanvasContainerQuartz::absoluteTransform() const
+{
+    return viewportTransform() * KCanvasContainer::absoluteTransform();
 }
 
 void KCanvasClipperQuartz::applyClip(const FloatRect& boundingBox) const

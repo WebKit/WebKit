@@ -1,23 +1,23 @@
-KCanvasResource {id="surfaceScaleA" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=1.00] [specual constant=1.00] [specular exponent=1.00]]]}
-KCanvasResource {id="surfaceScaleB" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [specual constant=1.00] [specular exponent=1.00]]]}
-KCanvasResource {id="surfaceScaleC" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=-10.00] [specual constant=1.00] [specular exponent=1.00]]]}
-KCanvasResource {id="specularConstantA" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [specual constant=0.00] [specular exponent=1.00]]]}
-KCanvasResource {id="specularConstantB" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [specual constant=1.00] [specular exponent=1.00]]]}
-KCanvasResource {id="specularConstantC" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [specual constant=2.00] [specular exponent=1.00]]]}
-KCanvasResource {id="specularExponentA" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [specual constant=1.00] [specular exponent=1.00]]]}
-KCanvasResource {id="specularExponentB" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [specual constant=1.00] [specular exponent=2.00]]]}
-KCanvasResource {id="specularExponentC" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [specual constant=1.00] [specular exponent=4.00]]]}
-KCanvasResource {id="lightingColorA" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [specual constant=1.00] [specular exponent=1.00]]]}
-KCanvasResource {id="lightingColorB" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [specual constant=1.00] [specular exponent=1.00]]]}
-KCanvasResource {id="lightingColorC" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0] [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [specual constant=1.00] [specular exponent=1.00]]]}
+KCanvasResource {id="surfaceScaleA" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=1.00] [specual constant=1.00] [specular exponent=1.00]]]}
+KCanvasResource {id="surfaceScaleB" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [specual constant=1.00] [specular exponent=1.00]]]}
+KCanvasResource {id="surfaceScaleC" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=-10.00] [specual constant=1.00] [specular exponent=1.00]]]}
+KCanvasResource {id="specularConstantA" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [specual constant=0.00] [specular exponent=1.00]]]}
+KCanvasResource {id="specularConstantB" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [specual constant=1.00] [specular exponent=1.00]]]}
+KCanvasResource {id="specularConstantC" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [specual constant=2.00] [specular exponent=1.00]]]}
+KCanvasResource {id="specularExponentA" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [specual constant=1.00] [specular exponent=1.00]]]}
+KCanvasResource {id="specularExponentB" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [specual constant=1.00] [specular exponent=2.00]]]}
+KCanvasResource {id="specularExponentC" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [specual constant=1.00] [specular exponent=4.00]]]}
+KCanvasResource {id="lightingColorA" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [specual constant=1.00] [specular exponent=1.00]]]}
+KCanvasResource {id="lightingColorB" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [specual constant=1.00] [specular exponent=1.00]]]}
+KCanvasResource {id="lightingColorC" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0] [effects=[[type=SPECULAR-LIGHTING] [in="SourceGraphic"] [subregion="at (0,0) size 480x360"] [surface scale=10.00] [specual constant=1.00] [specular exponent=1.00]]]}
 layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
-    KCanvasContainer {svg} at (0.50,0.50) size 479x359
-      KCanvasContainer {g} at (90,50) size 280x240
+    KCanvasContainer {svg} at (0,0.50) size 479.50x359
+      KCanvasContainer {g} at (0,20) size 370x270
         RenderSVGText {text} at (0,0) size 465x14
           RenderText {TEXT} at (0,0) size 142x14
             text run at (0,0) width 142: "Filters: feSpecularLighting"
-        KCanvasContainer {g} at (90,50) size 280x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,20.00)}]
+        KCanvasContainer {g} at (0,20) size 370x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,20.00)}]
           RenderSVGText {text} at (0,0) size 465x18
             RenderText {TEXT} at (0,0) size 291x18
               text run at (0,0) width 291: "Various values for surfaceScale: 1, 10 and -10"
@@ -28,7 +28,7 @@ layer at (0,0) size 480x360
           RenderImage {image} at (0,0) size 50x30
           RenderImage {image} at (0,0) size 50x30
           RenderImage {image} at (0,0) size 50x30
-        KCanvasContainer {g} at (90,120) size 280x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,90.00)}]
+        KCanvasContainer {g} at (0,90) size 370x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,90.00)}]
           RenderSVGText {text} at (0,0) size 465x18
             RenderText {TEXT} at (0,0) size 305x18
               text run at (0,0) width 305: "Various values for specularConstants: 0, 1 and 2"
@@ -39,7 +39,7 @@ layer at (0,0) size 480x360
           RenderImage {image} at (0,0) size 50x30
           RenderImage {image} at (0,0) size 50x30
           RenderImage {image} at (0,0) size 50x30
-        KCanvasContainer {g} at (90,190) size 280x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,160.00)}]
+        KCanvasContainer {g} at (0,160) size 370x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,160.00)}]
           RenderSVGText {text} at (0,0) size 465x18
             RenderText {TEXT} at (0,0) size 310x18
               text run at (0,0) width 310: "Various values for specularExponents: 1, 2 and 4"
@@ -50,7 +50,7 @@ layer at (0,0) size 480x360
           RenderImage {image} at (0,0) size 50x30
           RenderImage {image} at (0,0) size 50x30
           RenderImage {image} at (0,0) size 50x30
-        KCanvasContainer {g} at (90,260) size 280x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,230.00)}]
+        KCanvasContainer {g} at (0,230) size 370x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,230.00)}]
           RenderSVGText {text} at (0,0) size 465x18
             RenderText {TEXT} at (0,0) size 341x18
               text run at (0,0) width 341: "Various values for lighting color: red, yellow and blue"

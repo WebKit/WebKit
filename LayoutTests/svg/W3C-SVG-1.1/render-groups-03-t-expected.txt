@@ -1,8 +1,8 @@
 layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
-    KCanvasContainer {svg} at (0.50,0.50) size 479x359
-      KCanvasContainer {g} at (35.10,17.10) size 428.40x297.90
-        KCanvasContainer {g} at (35.10,17.10) size 428.40x297.90 [transform={m=((1.80,0.00)(0.00,1.80)) t=(0.00,0.00)}]
+    KCanvasContainer {svg} at (0,0) size 479.50x359.50
+      KCanvasContainer {g} at (0,0) size 463.50x315
+        KCanvasContainer {g} at (0,0) size 463.50x315 [transform={m=((1.80,0.00)(0.00,1.80)) t=(0.00,0.00)}]
           KCanvasItem {rect} at (36,18) size 414x279 [fill={[type=SOLID] [color=#C0C0C0]}] [data="M20.00,10.00L250.00,10.00L250.00,165.00L20.00,165.00"]
           KCanvasItem {line} at (58.50,18) size 27x297 [stroke={[type=SOLID] [color=#FFFFFF] [stroke width=15.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M40.00,10.00L40.00,175.00"]
           KCanvasItem {line} at (112.50,18) size 27x297 [stroke={[type=SOLID] [color=#FFFFFF] [stroke width=15.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M70.00,10.00L70.00,175.00"]

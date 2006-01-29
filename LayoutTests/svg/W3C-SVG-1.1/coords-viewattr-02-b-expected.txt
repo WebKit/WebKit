@@ -1,12 +1,12 @@
 layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
-      KCanvasContainer {g} at (0,30) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,30.00)}]
-        KCanvasContainer {g} at (0,30) size 0x0
+      KCanvasContainer {g} at (20,70) size 410x225 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,30.00)}]
+        KCanvasContainer {g} at (20,70) size 410x225
           RenderSVGText {text} at (0,0) size 465x10
             RenderText {TEXT} at (0,0) size 45x10
               text run at (0,0) width 45: "Raster to fit"
-          KCanvasContainer {g} at (20,70) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,40.00)}]
+          KCanvasContainer {g} at (20,70) size 40x40 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,40.00)}]
             RenderImage {image} at (0,0) size 40x40
           RenderSVGText {text} at (0,0) size 465x10
             RenderText {TEXT} at (0,0) size 42x10
@@ -16,78 +16,78 @@ layer at (0,0) size 480x360
             RenderText {TEXT} at (0,0) size 42x10
               text run at (0,0) width 42: "Viewport 2"
           KCanvasContainer {g} at (20,220) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,190.00)}]
-          KCanvasContainer {g} at (120,80) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,50.00)}]
+          KCanvasContainer {g} at (120,80) size 120x80 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,50.00)}]
             RenderSVGText {text} at (0,0) size 465x10
               RenderText {TEXT} at (0,0) size 112x10
                 text run at (0,0) width 112: "---------- meet --------------------"
-            KCanvasContainer {g} at (120,80) size 0x0
+            KCanvasContainer {g} at (120,80) size 50x30
               RenderSVGText {text} at (0,0) size 465x10
                 RenderText {TEXT} at (0,0) size 26x10
                   text run at (0,0) width 26: "xMin*"
               RenderImage {image} at (0,0) size 50x30
-            KCanvasContainer {g} at (190,80) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,0.00)}]
+            KCanvasContainer {g} at (190,80) size 50x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,0.00)}]
               RenderSVGText {text} at (0,0) size 465x10
                 RenderText {TEXT} at (0,0) size 26x10
                   text run at (0,0) width 26: "xMid*"
               RenderImage {image} at (0,0) size 50x30
-            KCanvasContainer {g} at (120,130) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
+            KCanvasContainer {g} at (120,130) size 50x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
               RenderSVGText {text} at (0,0) size 465x10
                 RenderText {TEXT} at (0,0) size 27x10
                   text run at (0,0) width 27: "xMax*"
               RenderImage {image} at (0,0) size 50x30
-          KCanvasContainer {g} at (300,80) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,50.00)}]
+          KCanvasContainer {g} at (300,80) size 130x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,50.00)}]
             RenderSVGText {text} at (0,0) size 465x10
               RenderText {TEXT} at (0,0) size 124x10
                 text run at (0,0) width 124: "---------- meet ------------------------"
-            KCanvasContainer {g} at (300,80) size 0x0
+            KCanvasContainer {g} at (300,80) size 30x60
               RenderSVGText {text} at (0,0) size 465x10
                 RenderText {TEXT} at (0,0) size 27x10
                   text run at (0,0) width 27: "*YMin"
               RenderImage {image} at (0,0) size 30x60
-            KCanvasContainer {g} at (350,80) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,0.00)}]
+            KCanvasContainer {g} at (350,80) size 30x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,0.00)}]
               RenderSVGText {text} at (0,0) size 465x10
                 RenderText {TEXT} at (0,0) size 27x10
                   text run at (0,0) width 27: "*YMid"
               RenderImage {image} at (0,0) size 30x60
-            KCanvasContainer {g} at (400,80) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}]
+            KCanvasContainer {g} at (400,80) size 30x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}]
               RenderSVGText {text} at (0,0) size 465x10
                 RenderText {TEXT} at (0,0) size 28x10
                   text run at (0,0) width 28: "*YMax"
               RenderImage {image} at (0,0) size 30x60
-          KCanvasContainer {g} at (120,215) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,185.00)}]
+          KCanvasContainer {g} at (120,215) size 130x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,185.00)}]
             RenderSVGText {text} at (0,0) size 465x10
               RenderText {TEXT} at (0,0) size 127x10
                 text run at (0,0) width 127: "---------- slice -------------------------"
-            KCanvasContainer {g} at (120,215) size 0x0
+            KCanvasContainer {g} at (120,215) size 30x60
               RenderSVGText {text} at (0,0) size 465x10
                 RenderText {TEXT} at (0,0) size 26x10
                   text run at (0,0) width 26: "xMin*"
               RenderImage {image} at (0,0) size 30x60
-            KCanvasContainer {g} at (170,215) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,0.00)}]
+            KCanvasContainer {g} at (170,215) size 30x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,0.00)}]
               RenderSVGText {text} at (0,0) size 465x10
                 RenderText {TEXT} at (0,0) size 26x10
                   text run at (0,0) width 26: "xMid*"
               RenderImage {image} at (0,0) size 30x60
-            KCanvasContainer {g} at (220,215) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}]
+            KCanvasContainer {g} at (220,215) size 30x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}]
               RenderSVGText {text} at (0,0) size 465x10
                 RenderText {TEXT} at (0,0) size 27x10
                   text run at (0,0) width 27: "xMax*"
               RenderImage {image} at (0,0) size 30x60
-          KCanvasContainer {g} at (300,215) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,185.00)}]
+          KCanvasContainer {g} at (300,215) size 120x80 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,185.00)}]
             RenderSVGText {text} at (0,0) size 465x10
               RenderText {TEXT} at (0,0) size 115x10
                 text run at (0,0) width 115: "---------- slice ---------------------"
-            KCanvasContainer {g} at (300,215) size 0x0
+            KCanvasContainer {g} at (300,215) size 50x30
               RenderSVGText {text} at (0,0) size 465x10
                 RenderText {TEXT} at (0,0) size 27x10
                   text run at (0,0) width 27: "*YMin"
               RenderImage {image} at (0,0) size 50x30
-            KCanvasContainer {g} at (370,215) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,0.00)}]
+            KCanvasContainer {g} at (370,215) size 50x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,0.00)}]
               RenderSVGText {text} at (0,0) size 465x10
                 RenderText {TEXT} at (0,0) size 27x10
                   text run at (0,0) width 27: "*YMid"
               RenderImage {image} at (0,0) size 50x30
-            KCanvasContainer {g} at (300,265) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
+            KCanvasContainer {g} at (300,265) size 50x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
               RenderSVGText {text} at (0,0) size 465x10
                 RenderText {TEXT} at (0,0) size 28x10
                   text run at (0,0) width 28: "*YMax"

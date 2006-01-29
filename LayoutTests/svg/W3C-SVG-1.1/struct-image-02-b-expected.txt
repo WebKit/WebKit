@@ -2,9 +2,9 @@ layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
     KCanvasContainer {svg} at (0,0) size 480x359.50
       KCanvasContainer {g} at (0,0) size 480x300
-        KCanvasContainer {g} at (0,0) size 0x0
-          KCanvasContainer {use} at (0,0) size 0x0
-            KCanvasContainer {g} at (0,0) size 0x0
+        KCanvasContainer {g} at (0,0) size 240x150
+          KCanvasContainer {use} at (0,0) size 240x150
+            KCanvasContainer {g} at (0,0) size 240x150
               RenderImage {image} at (0,0) size 240x150
         KCanvasContainer {g} at (0,0) size 240x225
           KCanvasContainer {use} at (0,0) size 240x225

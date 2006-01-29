@@ -35,14 +35,17 @@ class KCanvasContainerQuartz : public KCanvasContainer {
 public:
     KCanvasContainerQuartz(KSVG::SVGStyledElementImpl *node) : KCanvasContainer(node) { }
     
-    virtual bool canHaveChildren() const { return true; }
+    virtual bool canHaveChildren() const;
     
-    virtual bool requiresLayer() { return false; }
+    virtual bool requiresLayer();
+    virtual short lineHeight(bool b, bool isRootLineBox = false) const;
+    virtual short baselinePosition(bool b, bool isRootLineBox = false) const;
+    
     virtual void calcMinMaxWidth();
     virtual void layout();
     virtual void paint(PaintInfo &paintInfo, int parentX, int parentY);
     
-    virtual IntRect getAbsoluteRepaintRect() { return enclosingIntRect(absoluteTransform().mapRect(relativeBBox(true))); }
+    virtual IntRect getAbsoluteRepaintRect();
     virtual QMatrix absoluteTransform() const;
 
     virtual void setViewport(const FloatRect&);
@@ -55,6 +58,8 @@ public:
     virtual KCAlign align() const;
     
 private:
+    QMatrix viewportTransform() const;
+
     FloatRect m_viewport;
     FloatRect m_viewBox;
     KCAlign m_align;

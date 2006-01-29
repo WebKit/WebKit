@@ -1,7 +1,7 @@
 layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
-    KCanvasContainer {svg} at (0.50,0.50) size 479x359
-      KCanvasContainer {g} at (23,13) size 434x224
+    KCanvasContainer {svg} at (0,0) size 479.50x359.50
+      KCanvasContainer {g} at (0,0) size 457x237
         KCanvasItem {rect} at (23,13) size 434x224 [fill={[type=SOLID] [color=#000000]}] [data="M23.00,13.00L457.00,13.00L457.00,237.00L23.00,237.00"]
         RenderImage {image} at (0,0) size 430x48
         RenderImage {image} at (0,0) size 430x48

@@ -69,7 +69,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
     context->concatCTM(localTransform());
     translateForAttributes();
     
-    FloatRect boundingBox(0, 0, width(), height());
+    FloatRect boundingBox = relativeBBox(true);
     const KSVG::SVGRenderStyle *svgStyle = style()->svgStyle();
             
     if (KCanvasClipper *clipper = getClipperById(document(), svgStyle->clipPath().mid(1)))
@@ -95,6 +95,30 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
         paintInfo.p->restore();
 }
 
+FloatRect RenderSVGImage::relativeBBox(bool includeStroke) const
+{
+    return FloatRect(0, 0, width(), height());
+}
+
+void RenderSVGImage::imageChanged(CachedImage* image, const IntRect& rect)
+{
+    RenderImage::imageChanged(image, rect);
+    // We override to invalidate a larger rect, since SVG images can draw outside their "bounds"
+    repaintRectangle(getAbsoluteRepaintRect());
+}
+
+IntRect RenderSVGImage::getAbsoluteRepaintRect()
+{
+    FloatRect repaintRect = absoluteTransform().mapRect(relativeBBox(true));
+
+    // Filters can expand the bounding box
+    KCanvasFilter *filter = getFilterById(document(), style()->svgStyle()->filter().mid(1));
+    if (filter)
+        repaintRect = repaintRect.unite(filter->filterBBoxForItemBBox(repaintRect));
+
+    return enclosingIntRect(repaintRect);
+}
+
 void RenderSVGImage::translateForAttributes()
 {
     KRenderingDeviceContext *context = QPainter::renderingDevice()->currentContext();
@@ -103,5 +127,5 @@ void RenderSVGImage::translateForAttributes()
     float yOffset = image->y()->baseVal() ? image->y()->baseVal()->value() : 0;
     context->concatCTM(QMatrix().translate(xOffset, yOffset));
 }
-#endif // SVG_SUPPORT
 
+#endif // SVG_SUPPORT

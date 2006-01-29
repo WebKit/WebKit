@@ -1,19 +1,19 @@
 layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
-    KCanvasContainer {svg} at (0.50,0.50) size 1239.50x1149.50
-      KCanvasContainer {g} at (240,150) size 1000x1000
-        KCanvasContainer {g} at (240,150) size 1000x1000
-          KCanvasContainer {use} at (0,0) size 0x0
-            KCanvasContainer {g} at (0,0) size 0x0
-              KCanvasContainer {svg} at (45,0) size 0x0
+    KCanvasContainer {svg} at (0,0) size 1240x1150
+      KCanvasContainer {g} at (0,0) size 1240x1150
+        KCanvasContainer {g} at (0,0) size 1240x1150
+          KCanvasContainer {use} at (0,0) size 1000x1000
+            KCanvasContainer {g} at (0,0) size 1000x1000
+              KCanvasContainer {svg} at (45,0) size 150x150
                 RenderImage {image} at (0,0) size 1000x1000
           KCanvasContainer {use} at (240,150) size 1000x1000
             KCanvasContainer {g} at (240,150) size 1000x1000 [transform={m=((1.00,0.00)(0.00,1.00)) t=(240.00,150.00)}]
-              KCanvasContainer {svg} at (81,22.50) size 150x150
-                KCanvasItem {rect} at (81,22.50) size 75x75 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00L500.00,0.00L500.00,500.00L0.00,500.00"]
-                KCanvasItem {rect} at (156,22.50) size 75x75 [fill={[type=SOLID] [color=#FF0000]}] [data="M500.00,0.00L1000.00,0.00L1000.00,500.00L500.00,500.00"]
-                KCanvasItem {rect} at (81,97.50) size 75x75 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,500.00L500.00,500.00L500.00,1000.00L0.00,1000.00"]
-                KCanvasItem {rect} at (156,97.50) size 75x75 [fill={[type=SOLID] [color=#FFFF00]}] [data="M500.00,500.00L1000.00,500.00L1000.00,1000.00L500.00,1000.00"]
+              KCanvasContainer {svg} at (285,150) size 150x150
+                KCanvasItem {rect} at (285,150) size 75x75 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00L500.00,0.00L500.00,500.00L0.00,500.00"]
+                KCanvasItem {rect} at (360,150) size 75x75 [fill={[type=SOLID] [color=#FF0000]}] [data="M500.00,0.00L1000.00,0.00L1000.00,500.00L500.00,500.00"]
+                KCanvasItem {rect} at (285,225) size 75x75 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,500.00L500.00,500.00L500.00,1000.00L0.00,1000.00"]
+                KCanvasItem {rect} at (360,225) size 75x75 [fill={[type=SOLID] [color=#FFFF00]}] [data="M500.00,500.00L1000.00,500.00L1000.00,1000.00L500.00,1000.00"]
       RenderSVGText {text} at (0,0) size 465x46
         RenderText {TEXT} at (0,0) size 264x46
           text run at (0,0) width 264: "$Revision: 1.3 $"

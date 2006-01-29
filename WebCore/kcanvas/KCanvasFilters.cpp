@@ -39,11 +39,27 @@ void KCanvasPoint3F::normalize()
 
 // Filters
 
+void KCanvasFilter::clearEffects()
+{
+    m_effects.clear();
+}
+
 void KCanvasFilter::addFilterEffect(KCanvasFilterEffect *effect)
 {
     ASSERT(effect);
     if (effect)
         m_effects.append(effect);
+}
+
+FloatRect KCanvasFilter::filterBBoxForItemBBox(FloatRect itemBBox) const
+{
+    FloatRect filterBBox = filterRect();
+    if (filterBoundingBoxMode())
+        filterBBox = FloatRect(filterBBox.x() * itemBBox.width(),
+                               filterBBox.y() * itemBBox.height(),
+                               filterBBox.width() * itemBBox.width(),
+                               filterBBox.height() * itemBBox.height());
+    return filterBBox;
 }
 
 QTextStream &KCanvasFilter::externalRepresentation(QTextStream &ts) const

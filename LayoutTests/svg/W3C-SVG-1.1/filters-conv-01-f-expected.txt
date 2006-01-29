@@ -1,44 +1,44 @@
-KCanvasResource {id="convolve1" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0]}
-KCanvasResource {id="convolve2" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0]}
-KCanvasResource {id="convolve3" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0]}
-KCanvasResource {id="convolve4" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0]}
-KCanvasResource {id="convolve5" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0]}
-KCanvasResource {id="convolve6" [type=FILTER]  [bounding box=at (0,0) size 100x100] [effect bounding box mode=0]}
+KCanvasResource {id="convolve1" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0]}
+KCanvasResource {id="convolve2" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0]}
+KCanvasResource {id="convolve3" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0]}
+KCanvasResource {id="convolve4" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0]}
+KCanvasResource {id="convolve5" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0]}
+KCanvasResource {id="convolve6" [type=FILTER]  [bounding box=at (0,0) size 1x1] [effect bounding box mode=0]}
 layer at (0,0) size 480x360
   RenderCanvas at (0,0) size 480x360
     KCanvasContainer {svg} at (0.50,0.50) size 479x359
-      KCanvasContainer {g} at (0,0) size 0x0
-        KCanvasContainer {g} at (20,40) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,40.00)}]
-          KCanvasContainer {g} at (20,40) size 0x0
+      KCanvasContainer {g} at (20,40) size 350x156
+        KCanvasContainer {g} at (20,40) size 350x156 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,40.00)}]
+          KCanvasContainer {g} at (20,40) size 350x156
             RenderSVGText {text} at (0,0) size 465x18
               RenderText {TEXT} at (0,0) size 66x18
                 text run at (0,0) width 66: "Blur (3x3)"
-            KCanvasContainer {g} at (20,40) size 0x0
+            KCanvasContainer {g} at (20,40) size 50x63
               RenderImage {image} at (0,0) size 50x63
             RenderSVGText {text} at (0,0) size 465x18
               RenderText {TEXT} at (0,0) size 136x18
                 text run at (0,0) width 136: "Edge Detection (3x3)"
-            KCanvasContainer {g} at (170,40) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,0.00)}]
+            KCanvasContainer {g} at (170,40) size 50x63 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,0.00)}]
               RenderImage {image} at (0,0) size 50x63
             RenderSVGText {text} at (0,0) size 465x18
               RenderText {TEXT} at (0,0) size 110x18
                 text run at (0,0) width 110: "Sharpening (3x3)"
-            KCanvasContainer {g} at (320,40) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,0.00)}]
+            KCanvasContainer {g} at (320,40) size 50x63 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,0.00)}]
               RenderImage {image} at (0,0) size 50x63
             RenderSVGText {text} at (0,0) size 465x18
               RenderText {TEXT} at (0,0) size 108x18
                 text run at (0,0) width 108: "Embossing (3x3)"
-            KCanvasContainer {g} at (20,133) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,93.00)}]
+            KCanvasContainer {g} at (20,133) size 50x63 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,93.00)}]
               RenderImage {image} at (0,0) size 50x63
             RenderSVGText {text} at (0,0) size 465x18
               RenderText {TEXT} at (0,0) size 134x18
                 text run at (0,0) width 134: "Horizontal blur (3x1)"
-            KCanvasContainer {g} at (170,133) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,93.00)}]
+            KCanvasContainer {g} at (170,133) size 50x63 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,93.00)}]
               RenderImage {image} at (0,0) size 50x63
             RenderSVGText {text} at (0,0) size 465x18
               RenderText {TEXT} at (0,0) size 117x18
                 text run at (0,0) width 117: "Vertical blur (1x3)"
-            KCanvasContainer {g} at (320,133) size 0x0 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,93.00)}]
+            KCanvasContainer {g} at (320,133) size 50x63 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,93.00)}]
               RenderImage {image} at (0,0) size 50x63
       RenderSVGText {text} at (0,0) size 465x46
         RenderText {TEXT} at (0,0) size 264x46
