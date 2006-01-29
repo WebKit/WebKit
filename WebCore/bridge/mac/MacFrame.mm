@@ -1448,10 +1448,12 @@ bool MacFrame::keyEvent(NSEvent *event)
     }
     NodeImpl *node = doc->focusNode();
     if (!node) {
-        node = doc->body();
-        if (!node) {
+        if (doc->isHTMLDocument())
+            node = doc->body();
+        else
+            node = doc->documentElement();
+        if (!node)
             return false;
-        }
     }
     
     if ([event type] == NSKeyDown) {

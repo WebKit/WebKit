@@ -1,5 +1,22 @@
 2006-01-29  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by hyatt.
+
+        First set of fixes for SVG Tetris:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6889
+
+        Tests:
+        * svg/custom/viewport-update.svg
+        Key press test not yet possible:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6906
+
+        * bridge/mac/MacFrame.mm:
+        (MacFrame::keyEvent): pass key events to things other than HTML
+        * ksvg2/svg/SVGSVGElementImpl.cpp:
+        (WebCore::SVGSVGElementImpl::parseMappedAttribute): update viewport
+
+2006-01-29  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by mjs.
 
         Fix SVG layout tests crash due to Vector change.

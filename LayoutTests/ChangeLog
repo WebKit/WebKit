@@ -1,3 +1,12 @@
+2006-01-29  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        * svg/custom/viewport-update-expected.checksum: Added.
+        * svg/custom/viewport-update-expected.png: Added.
+        * svg/custom/viewport-update-expected.txt: Added.
+        * svg/custom/viewport-update.svg: Added.
+
 2006-01-29  Darin Adler  <darin@apple.com>
 
         - updated tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=6895
