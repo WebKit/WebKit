@@ -27,7 +27,7 @@
 #include "HTMLFormElementImpl.h"
 #include "html_imageimpl.h"
 #include "htmlnames.h"
-#include <qptrvector.h>
+#include <kxmlcore/Vector.h>
 
 namespace WebCore {
 
@@ -36,22 +36,12 @@ using namespace HTMLNames;
 // since the collections are to be "live", we have to do the
 // calculation every time if anything has changed
 
-template<class T> static void appendToVector(QPtrVector<T> *vec, T *item)
-{
-    unsigned size = vec->size();
-    unsigned count = vec->count();
-    if (size == count)
-        vec->resize(size == 0 ? 8 : (int)(size * 1.5));
-    vec->insert(count, item);
-}
-
 HTMLFormCollectionImpl::HTMLFormCollectionImpl(NodeImpl* _base)
     : HTMLCollectionImpl(_base, 0)
 {
     HTMLFormElementImpl *formBase = static_cast<HTMLFormElementImpl*>(m_base.get());
-    if (!formBase->collectionInfo) {
+    if (!formBase->collectionInfo)
         formBase->collectionInfo = new CollectionInfo();
-    }
     info = formBase->collectionInfo;
 }
 
@@ -61,36 +51,29 @@ HTMLFormCollectionImpl::~HTMLFormCollectionImpl()
 
 unsigned HTMLFormCollectionImpl::calcLength() const
 {
-    QPtrVector<HTMLGenericFormElementImpl> &l = static_cast<HTMLFormElementImpl*>(m_base.get())->formElements;
-
-    int len = 0;
-    for ( unsigned i = 0; i < l.count(); i++ )
-        if ( l.at( i )->isEnumeratable() )
-            ++len;
-
-    return len;
+    return static_cast<HTMLFormElementImpl*>(m_base.get())->length();
 }
 
 NodeImpl *HTMLFormCollectionImpl::item(unsigned index) const
 {
     resetCollectionInfo();
 
-    if (info->current && info->position == index) {
+    if (info->current && info->position == index)
         return info->current;
-    }
-    if (info->haslength && info->length <= index) {
+
+    if (info->haslength && info->length <= index)
         return 0;
-    }
+
     if (!info->current || info->position > index) {
         info->current = 0;
         info->position = 0;
         info->elementsArrayPosition = 0;
     }
 
-    QPtrVector<HTMLGenericFormElementImpl> &l = static_cast<HTMLFormElementImpl*>(m_base.get())->formElements;
+    Vector<HTMLGenericFormElementImpl*>& l = static_cast<HTMLFormElementImpl*>(m_base.get())->formElements;
     unsigned currentIndex = info->position;
     
-    for (unsigned i = info->elementsArrayPosition; i < l.count(); i++) {
+    for (unsigned i = info->elementsArrayPosition; i < l.size(); i++) {
         if (l[i]->isEnumeratable() ) {
             if (index == currentIndex) {
                 info->position = index;
@@ -119,7 +102,7 @@ NodeImpl* HTMLFormCollectionImpl::getNamedFormItem(const QualifiedName& attrName
         bool foundInputElements = false;
         if (baseElement->hasLocalName(formTag)) {
             HTMLFormElementImpl* f = static_cast<HTMLFormElementImpl*>(baseElement);
-            for (unsigned i = 0; i < f->formElements.count(); ++i) {
+            for (unsigned i = 0; i < f->formElements.size(); ++i) {
                 HTMLGenericFormElementImpl* e = f->formElements[i];
                 if (e->isEnumeratable()) {
                     bool found;
@@ -140,7 +123,7 @@ NodeImpl* HTMLFormCollectionImpl::getNamedFormItem(const QualifiedName& attrName
         if (!foundInputElements) {
             HTMLFormElementImpl* f = static_cast<HTMLFormElementImpl*>(baseElement);
 
-            for(unsigned i = 0; i < f->imgElements.count(); ++i)
+            for(unsigned i = 0; i < f->imgElements.size(); ++i)
             {
                 HTMLImageElementImpl* e = f->imgElements[i];
                 bool found;
@@ -236,55 +219,55 @@ void HTMLFormCollectionImpl::updateNameCache() const
     HTMLElementImpl* baseElement = static_cast<HTMLElementImpl*>(m_base.get());
 
     HTMLFormElementImpl* f = static_cast<HTMLFormElementImpl*>(baseElement);
-    for (unsigned i = 0; i < f->formElements.count(); ++i) {
+    for (unsigned i = 0; i < f->formElements.size(); ++i) {
         HTMLGenericFormElementImpl* e = f->formElements[i];
         if (e->isEnumeratable()) {
             const AtomicString& idAttrVal = e->getAttribute(idAttr);
             const AtomicString& nameAttrVal = e->getAttribute(nameAttr);
             if (!idAttrVal.isEmpty()) {
                 // add to id cache
-                QPtrVector<NodeImpl> *idVector = info->idCache.get(idAttrVal.impl());
+                Vector<NodeImpl*>* idVector = info->idCache.get(idAttrVal.impl());
                 if (!idVector) {
-                    idVector = new QPtrVector<NodeImpl>;
+                    idVector = new Vector<NodeImpl*>;
                     info->idCache.add(idAttrVal.impl(), idVector);
                 }
-                appendToVector(idVector, static_cast<NodeImpl *>(e));
+                idVector->append(e);
                 foundInputElements.add(idAttrVal.impl());
             }
             if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal) {
                 // add to name cache
-                QPtrVector<NodeImpl> *nameVector = info->nameCache.get(nameAttrVal.impl());
+                Vector<NodeImpl*>* nameVector = info->nameCache.get(nameAttrVal.impl());
                 if (!nameVector) {
-                    nameVector = new QPtrVector<NodeImpl>;
+                    nameVector = new Vector<NodeImpl*>;
                     info->nameCache.add(nameAttrVal.impl(), nameVector);
                 }
-                appendToVector(nameVector, static_cast<NodeImpl *>(e));
+                nameVector->append(e);
                 foundInputElements.add(nameAttrVal.impl());
             }
         }
     }
 
-    for (unsigned i = 0; i < f->imgElements.count(); ++i) {
+    for (unsigned i = 0; i < f->imgElements.size(); ++i) {
         HTMLImageElementImpl* e = f->imgElements[i];
         const AtomicString& idAttrVal = e->getAttribute(idAttr);
         const AtomicString& nameAttrVal = e->getAttribute(nameAttr);
         if (!idAttrVal.isEmpty() && !foundInputElements.contains(idAttrVal.impl())) {
             // add to id cache
-            QPtrVector<NodeImpl> *idVector = info->idCache.get(idAttrVal.impl());
+            Vector<NodeImpl*>* idVector = info->idCache.get(idAttrVal.impl());
             if (!idVector) {
-                idVector = new QPtrVector<NodeImpl>;
+                idVector = new Vector<NodeImpl*>;
                 info->idCache.add(idAttrVal.impl(), idVector);
             }
-            appendToVector(idVector, static_cast<NodeImpl *>(e));
+            idVector->append(e);
         }
         if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal && !foundInputElements.contains(nameAttrVal.impl())) {
             // add to name cache
-            QPtrVector<NodeImpl> *nameVector = info->nameCache.get(nameAttrVal.impl());
+            Vector<NodeImpl*>* nameVector = info->nameCache.get(nameAttrVal.impl());
             if (!nameVector) {
-                nameVector = new QPtrVector<NodeImpl>;
+                nameVector = new Vector<NodeImpl*>;
                 info->nameCache.add(nameAttrVal.impl(), nameVector);
             }
-            appendToVector(nameVector, static_cast<NodeImpl *>(e));
+            nameVector->append(e);
         }
     }
 

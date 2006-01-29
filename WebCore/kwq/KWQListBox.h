@@ -85,7 +85,7 @@ public:
 private:
     void appendItem(const QString &, KWQListBoxItemType, bool);
 
-    // A vector<KWQListBoxItem> or QValueVector<KWQListBoxItem> might be more efficient for large lists.
+    // A Vector<KWQListBoxItem> might be more efficient for large lists.
     QValueList<KWQListBoxItem> _items;
 
     bool _changingSelection;

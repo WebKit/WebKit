@@ -47,11 +47,11 @@
 #include "Color.h"
 #include "IntRect.h"
 #include <assert.h>
+#include <kxmlcore/Vector.h>
 
 #include "render_object.h"
 
 class QScrollBar;
-template <class T> class QPtrVector;
 
 namespace khtml {
     class RenderStyle;
@@ -278,8 +278,8 @@ public:
 
     void dirtyZOrderLists();
     void updateZOrderLists();
-    QPtrVector<RenderLayer>* posZOrderList() const { return m_posZOrderList; }
-    QPtrVector<RenderLayer>* negZOrderList() const { return m_negZOrderList; }
+    Vector<RenderLayer*>* posZOrderList() const { return m_posZOrderList; }
+    Vector<RenderLayer*>* negZOrderList() const { return m_negZOrderList; }
     
     // Gets the nearest enclosing positioned ancestor layer (also includes
     // the <html> layer and the root layer).
@@ -332,7 +332,7 @@ private:
     void setFirstChild(RenderLayer* first) { m_first = first; }
     void setLastChild(RenderLayer* last) { m_last = last; }
 
-    void collectLayers(QPtrVector<RenderLayer>*&, QPtrVector<RenderLayer>*&);
+    void collectLayers(Vector<RenderLayer*>*&, Vector<RenderLayer*>*&);
 
     void paintLayer(RenderLayer* rootLayer, QPainter *p, const IntRect& paintDirtyRect, 
                     bool haveTransparency, bool selectionOnly, RenderObject *paintingRoot);
@@ -386,8 +386,8 @@ protected:
     // descendant layers within the stacking context that have z-indices of 0 or greater
     // (auto will count as 0).  m_negZOrderList holds descendants within our stacking context with negative
     // z-indices.
-    QPtrVector<RenderLayer>* m_posZOrderList;
-    QPtrVector<RenderLayer>* m_negZOrderList;
+    Vector<RenderLayer*>* m_posZOrderList;
+    Vector<RenderLayer*>* m_negZOrderList;
     
     ClipRects* m_clipRects;      // Cached clip rects used when painting and hit testing.
 

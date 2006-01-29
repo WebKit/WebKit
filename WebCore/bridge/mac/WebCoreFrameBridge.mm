@@ -1162,14 +1162,13 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 {
     HTMLFormElementImpl *formElement = formElementFromDOMElement(form);
     if (formElement) {
-        QPtrVector<HTMLGenericFormElementImpl> &elements = formElement->formElements;
+        Vector<HTMLGenericFormElementImpl*>& elements = formElement->formElements;
         AtomicString targetName = name;
-        for (unsigned int i = 0; i < elements.count(); i++) {
-            HTMLGenericFormElementImpl *elt = elements.at(i);
+        for (unsigned int i = 0; i < elements.size(); i++) {
+            HTMLGenericFormElementImpl *elt = elements[i];
             // Skip option elements, other duds
-            if (elt->name() == targetName) {
+            if (elt->name() == targetName)
                 return [DOMElement _elementWithImpl:elt];
-            }
         }
     }
     return nil;
@@ -1213,8 +1212,8 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     NSMutableArray *results = nil;
     HTMLFormElementImpl *formElement = formElementFromDOMElement(form);
     if (formElement) {
-        QPtrVector<HTMLGenericFormElementImpl> &elements = formElement->formElements;
-        for (unsigned int i = 0; i < elements.count(); i++) {
+        Vector<HTMLGenericFormElementImpl*>& elements = formElement->formElements;
+        for (unsigned int i = 0; i < elements.size(); i++) {
             if (elements.at(i)->isEnumeratable()) { // Skip option elements, other duds
                 DOMElement *de = [DOMElement _elementWithImpl:elements.at(i)];
                 if (!results) {

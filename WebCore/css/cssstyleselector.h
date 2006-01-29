@@ -23,8 +23,6 @@
 #ifndef _CSS_cssstyleselector_h_
 #define _CSS_cssstyleselector_h_
 
-#include <qptrvector.h>
-
 #include "rendering/render_style.h"
 #include "dom/dom_string.h"
 #include "xml/dom_stringimpl.h"

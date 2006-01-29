@@ -35,8 +35,6 @@
 #include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/RenderSVGText.h>
 
-#include <qvector.h>
-
 using namespace KSVG;
 
 SVGTextElementImpl::SVGTextElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)

@@ -65,9 +65,9 @@ HTMLFormElementImpl::~HTMLFormElementImpl()
 {
     delete collectionInfo;
     
-    for (unsigned i = 0; i < formElements.count(); ++i)
+    for (unsigned i = 0; i < formElements.size(); ++i)
         formElements[i]->m_form = 0;
-    for (unsigned i = 0; i < imgElements.count(); ++i)
+    for (unsigned i = 0; i < imgElements.size(); ++i)
         imgElements[i]->m_form = 0;
 }
 
@@ -112,7 +112,7 @@ void HTMLFormElementImpl::removedFromDocument()
 int HTMLFormElementImpl::length() const
 {
     int len = 0;
-    for (unsigned i = 0; i < formElements.count(); ++i)
+    for (unsigned i = 0; i < formElements.size(); ++i)
         if (formElements[i]->isEnumeratable())
             ++len;
 
@@ -123,7 +123,7 @@ int HTMLFormElementImpl::length() const
 void HTMLFormElementImpl::submitClick()
 {
     bool submitFound = false;
-    for (unsigned i = 0; i < formElements.count(); ++i) {
+    for (unsigned i = 0; i < formElements.size(); ++i) {
         if (formElements[i]->hasLocalName(inputTag)) {
             HTMLInputElementImpl *element = static_cast<HTMLInputElementImpl *>(formElements[i]);
             if (element->isSuccessfulSubmitButton() && element->renderer()) {
@@ -212,7 +212,7 @@ bool HTMLFormElementImpl::formData(FormData &form_data) const
         codec = QTextCodec::codecForLocale();
 
 
-    for (unsigned i = 0; i < formElements.count(); ++i) {
+    for (unsigned i = 0; i < formElements.size(); ++i) {
         HTMLGenericFormElementImpl* current = formElements[i];
         FormDataList lst(codec);
 
@@ -352,7 +352,7 @@ void HTMLFormElementImpl::submit( bool activateSubmitButton )
     bool needButtonActivation = activateSubmitButton; // do we need to activate a submit button?
     
     frame->clearRecordedFormValues();
-    for (unsigned i = 0; i < formElements.count(); ++i) {
+    for (unsigned i = 0; i < formElements.size(); ++i) {
         HTMLGenericFormElementImpl* current = formElements[i];
         // Our app needs to get form values for password fields for doing password autocomplete,
         // so we are more lenient in pushing values, and let the app decide what to save when.
@@ -419,7 +419,7 @@ void HTMLFormElementImpl::reset(  )
         return;
     }
 
-    for (unsigned i = 0; i < formElements.count(); ++i)
+    for (unsigned i = 0; i < formElements.size(); ++i)
         formElements[i]->reset();
 
     m_inreset = false;
@@ -472,36 +472,25 @@ void HTMLFormElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         HTMLElementImpl::parseMappedAttribute(attr);
 }
 
-template<class T> static void insertIntoVector(QPtrVector<T> &vec, unsigned pos, T* item)
+template<class T, size_t i> static void insertIntoVector(Vector<T*, i>& vec, unsigned pos, T* item)
 {
-    unsigned size = vec.size();
-    unsigned count = vec.count();
-    assert(pos <= count);
-    if (size == count)
-        vec.resize(size == 0 ? 8 : size * 3 / 2);
-    for (unsigned i = count; i > pos; --i)
-        vec.insert(i, vec[i - 1]);    
-    vec.insert(pos, item);
+    vec.resize(vec.size() + 1);
+    typename Vector<T*, i>::iterator it;
+    for (it = &vec.last(); it != vec.begin() + pos; --it)
+        *it = it[-1];
+    *it = item;
 }
 
-template<class T> static void appendToVector(QPtrVector<T> &vec, T *item)
+template<class T, size_t i> static void removeFromVector(Vector<T*, i> & vec, T* item)
 {
-    unsigned size = vec.size();
-    unsigned count = vec.count();
-    if (size == count)
-        vec.resize(size == 0 ? 8 : size * 3 / 2);
-    vec.insert(count, item);
-}
-
-template<class T> static void removeFromVector(QPtrVector<T> &vec, T *item)
-{
-    int pos = vec.findRef(item);
-    if (pos < 0)
-        return;
-    unsigned count = vec.count();
-    for (unsigned i = pos; i < count - 1; ++i)
-        vec.insert(i, vec[i + 1]);
-    vec.remove(count - 1);
+    for (typename Vector<T*, i>::iterator it = vec.begin(); it != vec.end(); ++it) {
+        if (*it == item) {
+            for (typename Vector<T*, i>::iterator it2 = it; it2 != &vec.last(); ++it2)
+                *it2 = it2[1];
+            vec.removeLast();
+            return;
+        }
+    }
 }
 
 unsigned HTMLFormElementImpl::formElementIndex(HTMLGenericFormElementImpl *e)
@@ -521,7 +510,7 @@ unsigned HTMLFormElementImpl::formElementIndex(HTMLGenericFormElementImpl *e)
                 ++i;
         }
     }
-    return formElements.count();
+    return formElements.size();
 }
 
 void HTMLFormElementImpl::registerFormElement(HTMLGenericFormElementImpl *e)
@@ -554,7 +543,7 @@ bool HTMLFormElementImpl::isURLAttribute(AttributeImpl *attr) const
 
 void HTMLFormElementImpl::registerImgElement(HTMLImageElementImpl *e)
 {
-    appendToVector(imgElements, e);
+    imgElements.append(e);
 }
 
 void HTMLFormElementImpl::removeImgElement(HTMLImageElementImpl *e)

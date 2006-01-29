@@ -25,7 +25,7 @@
 #include "HTMLCollectionImpl.h"
 #include "html_documentimpl.h"
 #include "HTMLElementImpl.h"
-#include <qptrvector.h>
+#include <kxmlcore/Vector.h>
 #include "htmlnames.h"
 
 namespace WebCore {
@@ -320,15 +320,6 @@ NodeImpl *HTMLCollectionImpl::namedItem(const DOMString &name, bool caseSensitiv
     return info->current;
 }
 
-template<class T> static void appendToVector(QPtrVector<T> *vec, T *item)
-{
-    unsigned size = vec->size();
-    unsigned count = vec->count();
-    if (size == count)
-        vec->resize(size == 0 ? 8 : (int)(size * 1.5));
-    vec->insert(count, item);
-}
-
 void HTMLCollectionImpl::updateNameCache() const
 {
     if (info->hasNameCache)
@@ -342,12 +333,12 @@ void HTMLCollectionImpl::updateNameCache() const
         const AtomicString& nameAttrVal = e->getAttribute(nameAttr);
         if (!idAttrVal.isEmpty()) {
             // add to id cache
-            QPtrVector<NodeImpl> *idVector = info->idCache.get(idAttrVal.impl());
+            Vector<NodeImpl*>* idVector = info->idCache.get(idAttrVal.impl());
             if (!idVector) {
-                idVector = new QPtrVector<NodeImpl>;
+                idVector = new Vector<NodeImpl*>;
                 info->idCache.add(idAttrVal.impl(), idVector);
             }
-            appendToVector(idVector, n);
+            idVector->append(n);
         }
         if (!nameAttrVal.isEmpty() && idAttrVal != nameAttrVal
             && (type != DOC_ALL || 
@@ -355,12 +346,12 @@ void HTMLCollectionImpl::updateNameCache() const
                  e->hasLocalName(appletTag) || e->hasLocalName(objectTag) ||
                  e->hasLocalName(embedTag)))) {
             // add to name cache
-            QPtrVector<NodeImpl> *nameVector = info->nameCache.get(nameAttrVal.impl());
+            Vector<NodeImpl*>* nameVector = info->nameCache.get(nameAttrVal.impl());
             if (!nameVector) {
-                nameVector = new QPtrVector<NodeImpl>;
+                nameVector = new Vector<NodeImpl*>;
                 info->nameCache.add(nameAttrVal.impl(), nameVector);
             }
-            appendToVector(nameVector, n);
+            nameVector->append(n);
         }
     }
 
@@ -377,16 +368,14 @@ QValueList< RefPtr<NodeImpl> > HTMLCollectionImpl::namedItems(const AtomicString
     resetCollectionInfo();
     updateNameCache();
     
-    QPtrVector<NodeImpl> *idResults = info->idCache.get(name.impl());
-    QPtrVector<NodeImpl> *nameResults = info->nameCache.get(name.impl());
+    Vector<NodeImpl*>* idResults = info->idCache.get(name.impl());
+    Vector<NodeImpl*>* nameResults = info->nameCache.get(name.impl());
     
-    for (unsigned i = 0; idResults && i < idResults->count(); ++i) {
+    for (unsigned i = 0; idResults && i < idResults->size(); ++i)
         result.append(RefPtr<NodeImpl>(idResults->at(i)));
-    }
 
-    for (unsigned i = 0; nameResults && i < nameResults->count(); ++i) {
+    for (unsigned i = 0; nameResults && i < nameResults->size(); ++i)
         result.append(RefPtr<NodeImpl>(nameResults->at(i)));
-    }
 
     return result;
 }

@@ -27,8 +27,7 @@
 
 #include "HTMLElementImpl.h"
 #include "HTMLCollectionImpl.h" 
-
-#include <qptrvector.h>
+#include <kxmlcore/Vector.h>
 
 namespace khtml {
     class FormData;
@@ -105,8 +104,8 @@ public:
 
     HTMLCollectionImpl::CollectionInfo *collectionInfo;
 
-    QPtrVector<HTMLGenericFormElementImpl> formElements;
-    QPtrVector<HTMLImageElementImpl> imgElements;
+    Vector<HTMLGenericFormElementImpl*> formElements;
+    Vector<HTMLImageElementImpl*> imgElements;
     DOMString m_url;
     DOMString m_target;
     DOMString m_enctype;

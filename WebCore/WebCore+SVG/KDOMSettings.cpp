@@ -32,8 +32,8 @@
 #include <kglobalsettings.h>
 
 #include <qregexp.h>
-#include <q3valuevector.h>
 #include <qfontdatabase.h>
+#include <kxmlcore/Vector.h>
 
 #include "KDOMSettings.h"
 
@@ -103,7 +103,7 @@ public:
 
     PolicyMap domainPolicy;
 
-    Q3ValueVector<QRegExp> adFilters;
+    Vector<QRegExp> adFilters;
     Q3ValueList< QPair< QString, QChar > > fallbackAccessKeysAssignments;
 
     // Flags
@@ -445,7 +445,7 @@ void KDOMSettings::init(KConfig *config, bool reset)
 
         QMap<QString,QString> entryMap = config->entryMap(QString::fromLatin1("Filter Settings"));
         QMap<QString,QString>::ConstIterator it;
-        d->adFilters.reserve(entryMap.count());
+        d->adFilters.reserveCapacity(entryMap.count());
         for( it = entryMap.constBegin(); it != entryMap.constEnd(); ++it)
         {
             QString name = it.key();
@@ -599,10 +599,10 @@ bool KDOMSettings::isAdFiltered(const QString &url) const
     {
         if(!url.startsWith(QString::fromLatin1("data:")))
         {
-            Q3ValueVector<QRegExp>::iterator it;
+            Vector<QRegExp>::iterator it;
             for(it = d->adFilters.begin(); it != d->adFilters.end(); ++it)
             {
-                if((*it).search(url) != -1)
+                if(it->search(url) != -1)
                 {
                     kdDebug(6080) << "Filtered: " << url << endl;
                     return true;

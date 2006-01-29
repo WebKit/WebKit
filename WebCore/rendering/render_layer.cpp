@@ -61,7 +61,7 @@
 #endif
 
 #include <qscrollbar.h>
-#include <qptrvector.h>
+#include <kxmlcore/Vector.h>
 
 // These match the numbers we use over in WebKit (WebFrameView.m).
 #define LINE_STEP   40
@@ -1056,13 +1056,9 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, QPainter *p,
     }
 
     // Now walk the sorted list of children with negative z-indices.
-    if (m_negZOrderList) {
-        uint count = m_negZOrderList->count();
-        for (uint i = 0; i < count; i++) {
-            RenderLayer* child = m_negZOrderList->at(i);
-            child->paintLayer(rootLayer, p, paintDirtyRect, haveTransparency, selectionOnly, paintingRoot);
-        }
-    }
+    if (m_negZOrderList)
+        for (Vector<RenderLayer*>::iterator it = m_negZOrderList->begin(); it != m_negZOrderList->end(); ++it)
+            it[0]->paintLayer(rootLayer, p, paintDirtyRect, haveTransparency, selectionOnly, paintingRoot);
     
     // Now establish the appropriate clip and paint our child RenderObjects.
     if (shouldPaint && !clipRectToApply.isEmpty()) {
@@ -1096,13 +1092,9 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, QPainter *p,
     }
     
     // Now walk the sorted list of children with positive z-indices.
-    if (m_posZOrderList) {
-        uint count = m_posZOrderList->count();
-        for (uint i = 0; i < count; i++) {
-            RenderLayer* child = m_posZOrderList->at(i);
-            child->paintLayer(rootLayer, p, paintDirtyRect, haveTransparency, selectionOnly, paintingRoot);
-        }
-    }
+    if (m_posZOrderList)
+        for (Vector<RenderLayer*>::iterator it = m_posZOrderList->begin(); it != m_posZOrderList->end(); ++it)
+            it[0]->paintLayer(rootLayer, p, paintDirtyRect, haveTransparency, selectionOnly, paintingRoot);
     
     // End our transparency layer
     if (isTransparent() && m_usedTransparency) {
@@ -1157,10 +1149,8 @@ RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderObject::NodeInfo& info,
     // Begin by walking our list of positive layers from highest z-index down to the lowest
     // z-index.
     if (m_posZOrderList) {
-        uint count = m_posZOrderList->count();
-        for (int i = count-1; i >= 0; i--) {
-            RenderLayer* child = m_posZOrderList->at(i);
-            insideLayer = child->hitTestLayer(rootLayer, info, xMousePos, yMousePos, hitTestRect);
+        for (Vector<RenderLayer*>::iterator it = &m_posZOrderList->last(); it >= m_posZOrderList->begin(); --it) {
+            insideLayer = it[0]->hitTestLayer(rootLayer, info, xMousePos, yMousePos, hitTestRect);
             if (insideLayer)
                 return insideLayer;
         }
@@ -1197,10 +1187,8 @@ RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderObject::NodeInfo& info,
         
     // Now check our negative z-index children.
     if (m_negZOrderList) {
-        uint count = m_negZOrderList->count();
-        for (int i = count-1; i >= 0; i--) {
-            RenderLayer* child = m_negZOrderList->at(i);
-            insideLayer = child->hitTestLayer(rootLayer, info, xMousePos, yMousePos, hitTestRect);
+        for (Vector<RenderLayer*>::iterator it = &m_negZOrderList->last(); it >= m_negZOrderList->begin(); --it) {
+            insideLayer = it[0]->hitTestLayer(rootLayer, info, xMousePos, yMousePos, hitTestRect);
             if (insideLayer)
                 return insideLayer;
         }
@@ -1456,83 +1444,11 @@ static inline bool isOverflowOnly(const RenderLayer* layer)
            !layer->isTransparent();
 }
 
-static inline bool compare(const RenderLayer* layer1, const RenderLayer* layer2)
+static inline bool compareZIndex(RenderLayer* first, RenderLayer* second)
 {
-    // Just compare z-index.
-    return (layer1->zIndex() <= layer2->zIndex());
+    return first->zIndex() < second->zIndex();
 }
 
-// Sort the buffer from lowest z-index to highest.  The common scenario will have
-// most z-indices equal, so we optimize for that case (i.e., the list will be mostly
-// sorted already).
-static void sortByZOrder(QPtrVector<RenderLayer>* buffer,
-                         QPtrVector<RenderLayer>* mergeBuffer,
-                         uint start, uint end)
-{
-    if (start >= end)
-        return; // Sanity check.
-
-    if (end - start <= 6) {
-        // Apply a bubble sort for smaller lists.
-        for (uint i = end-1; i > start; i--) {
-            bool sorted = true;
-            for (uint j = start; j < i; j++) {
-                RenderLayer* elt = buffer->at(j);
-                RenderLayer* elt2 = buffer->at(j+1);
-                if (!compare(elt, elt2)) {
-                    sorted = false;
-                    buffer->insert(j, elt2);
-                    buffer->insert(j+1, elt);
-                }
-            }
-            if (sorted)
-                return;
-        }
-    }
-    else {
-        // Peform a merge sort for larger lists.
-        uint mid = (start+end)/2;
-        sortByZOrder(buffer, mergeBuffer, start, mid);
-        sortByZOrder(buffer, mergeBuffer, mid, end);
-
-        RenderLayer* elt = buffer->at(mid-1);
-        RenderLayer* elt2 = buffer->at(mid);
-
-        // Handle the fast common case (of equal z-indices).  The list may already
-        // be completely sorted.
-        if (compare(elt, elt2))
-            return;
-
-        // We have to merge sort.  Ensure our merge buffer is big enough to hold
-        // all the items.
-        mergeBuffer->resize(end - start);
-        uint i1 = start;
-        uint i2 = mid;
-
-        elt = buffer->at(i1);
-        elt2 = buffer->at(i2);
-
-        while (i1 < mid || i2 < end) {
-            if (i1 < mid && (i2 == end || elt->zIndex() <= elt2->zIndex())) {
-                mergeBuffer->insert(mergeBuffer->count(), elt);
-                i1++;
-                if (i1 < mid)
-                    elt = buffer->at(i1);
-            }
-            else {
-                mergeBuffer->insert(mergeBuffer->count(), elt2);
-                i2++;
-                if (i2 < end)
-                    elt2 = buffer->at(i2);
-            }
-        }
-
-        for (uint i = start; i < end; i++)
-            buffer->insert(i, mergeBuffer->at(i-start));
-
-        mergeBuffer->clear();
-    }
-}
 
 void RenderLayer::dirtyZOrderLists()
 {
@@ -1552,19 +1468,15 @@ void RenderLayer::updateZOrderLists()
         child->collectLayers(m_posZOrderList, m_negZOrderList);
 
     // Sort the two lists.
-    if (m_posZOrderList) {
-        QPtrVector<RenderLayer> mergeBuffer;
-        sortByZOrder(m_posZOrderList, &mergeBuffer, 0, m_posZOrderList->count());
-    }
-    if (m_negZOrderList) {
-        QPtrVector<RenderLayer> mergeBuffer;
-        sortByZOrder(m_negZOrderList, &mergeBuffer, 0, m_negZOrderList->count());
-    }
+    if (m_posZOrderList)
+        std::stable_sort(m_posZOrderList->begin(), m_posZOrderList->end(), compareZIndex);
+    if (m_negZOrderList)
+        std::stable_sort(m_negZOrderList->begin(), m_negZOrderList->end(), compareZIndex);
 
     m_zOrderListsDirty = false;
 }
 
-void RenderLayer::collectLayers(QPtrVector<RenderLayer>*& posBuffer, QPtrVector<RenderLayer>*& negBuffer)
+void RenderLayer::collectLayers(Vector<RenderLayer*>*& posBuffer, Vector<RenderLayer*>*& negBuffer)
 {
     // FIXME: A child render object or layer could override visibility.  Don't remove this
     // optimization though until RenderObject's nodeAtPoint is patched to understand what to do
@@ -1573,25 +1485,20 @@ void RenderLayer::collectLayers(QPtrVector<RenderLayer>*& posBuffer, QPtrVector<
         return;
     
     // Determine which buffer the child should be in.
-    QPtrVector<RenderLayer>*& buffer = (zIndex() >= 0) ? posBuffer : negBuffer;
+    Vector<RenderLayer*>*& buffer = (zIndex() >= 0) ? posBuffer : negBuffer;
 
     // Create the buffer if it doesn't exist yet.
     if (!buffer)
-        buffer = new QPtrVector<RenderLayer>();
+        buffer = new Vector<RenderLayer*>;
     
-    // Resize by a power of 2 when our buffer fills up.
-    if (buffer->count() == buffer->size())
-        buffer->resize(2*(buffer->size()+1));
-
     // Append ourselves at the end of the appropriate buffer.
-    buffer->insert(buffer->count(), this);
+    buffer->append(this);
 
     // Recur into our children to collect more layers, but only if we don't establish
     // a stacking context.
-    if (!isStackingContext()) {
+    if (!isStackingContext())
         for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
             child->collectLayers(posBuffer, negBuffer);
-    }
 }
 
 void RenderLayer::repaintIncludingDescendants()
