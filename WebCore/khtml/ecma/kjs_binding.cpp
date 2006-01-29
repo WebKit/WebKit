@@ -371,26 +371,82 @@ QVariant ValueToVariant(ExecState* exec, JSValue *val) {
   return res;
 }
 
+static const char * const exceptionNames[] = {
+    0,
+    "INDEX_SIZE_ERR",
+    "DOMSTRING_SIZE_ERR",
+    "HIERARCHY_REQUEST_ERR",
+    "WRONG_DOCUMENT_ERR",
+    "INVALID_CHARACTER_ERR",
+    "NO_DATA_ALLOWED_ERR",
+    "NO_MODIFICATION_ALLOWED_ERR",
+    "NOT_FOUND_ERR",
+    "NOT_SUPPORTED_ERR",
+    "INUSE_ATTRIBUTE_ERR",
+    "INVALID_STATE_ERR",
+    "SYNTAX_ERR",
+    "INVALID_MODIFICATION_ERR",
+    "NAMESPACE_ERR",
+    "INVALID_ACCESS_ERR",
+};
+
+static const char * const rangeExceptionNames[] = {
+    "BAD_BOUNDARYPOINTS_ERR", "INVALID_NODE_TYPE_ERR"
+};
+
+static const char * const cssExceptionNames[] = {
+    "SYNTAX_ERR", "INVALID_MODIFICATION_ERR"
+};
+
+static const char * const eventExceptionNames[] = {
+    "UNSPECIFIED_EVENT_TYPE_ERR"
+};
+
 void setDOMException(ExecState *exec, int DOMExceptionCode)
 {
   if (DOMExceptionCode == 0 || exec->hadException())
     return;
 
-  const char *type = "DOM";
+  const char* type = "DOM";
   int code = DOMExceptionCode;
 
+  const char * const * nameTable;
+  int nameTableSize;;
   if (code >= RangeException::_EXCEPTION_OFFSET && code <= RangeException::_EXCEPTION_MAX) {
     type = "DOM Range";
     code -= RangeException::_EXCEPTION_OFFSET;
+    nameTable = rangeExceptionNames;
+    nameTableSize = sizeof(rangeExceptionNames) / sizeof(rangeExceptionNames[0]);
   } else if (code >= CSSException::_EXCEPTION_OFFSET && code <= CSSException::_EXCEPTION_MAX) {
     type = "CSS";
     code -= CSSException::_EXCEPTION_OFFSET;
+    nameTable = cssExceptionNames;
+    nameTableSize = sizeof(cssExceptionNames) / sizeof(cssExceptionNames[0]);
   } else if (code >= EventException::_EXCEPTION_OFFSET && code <= EventException::_EXCEPTION_MAX) {
     type = "DOM Events";
     code -= EventException::_EXCEPTION_OFFSET;
+    nameTable = eventExceptionNames;
+    nameTableSize = sizeof(eventExceptionNames) / sizeof(eventExceptionNames[0]);
+  } else {
+    nameTable = exceptionNames;
+    nameTableSize = sizeof(exceptionNames) / sizeof(exceptionNames[0]);
   }
-  char buffer[100]; // needs to fit 20 characters, plus an integer in ASCII, plus a null character
-  sprintf(buffer, "%s exception %d", type, code);
+
+  const char* name = code < nameTableSize ? nameTable[code] : 0;
+
+  // 100 characters is a big enough buffer, because there are:
+  //   13 characters in the message
+  //   10 characters in the longest type, "DOM Events"
+  //   27 characters in the longest name, "NO_MODIFICATION_ALLOWED_ERR"
+  //   20 or so digits in the longest integer's ASCII form (even if int is 64-bit)
+  //   1 byte for a null character
+  // That adds up to about 70 bytes.
+  char buffer[100];
+
+  if (name)
+    sprintf(buffer, "%s: %s Exception %d", name, type, code);
+  else
+    sprintf(buffer, "%s Exception %d", name, type, code);
 
   JSObject *errorObject = throwError(exec, GeneralError, buffer);
   errorObject->put(exec, "code", jsNumber(code));
