@@ -1,3 +1,50 @@
+2006-01-29  Darin Adler  <darin@apple.com>
+
+        - updated tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=6895
+          include exception names in JavaScript form of DOM exception
+
+        * dom/xhtml/level1/core/hc_nodevalue03-expected.txt:
+        * dom/xhtml/level3/core/canonicalform06-expected.txt:
+        * dom/xhtml/level3/core/documentgetdoctype01-expected.txt:
+        * dom/xhtml/level3/core/infoset06-expected.txt:
+        * dom/xhtml/level3/core/infoset07-expected.txt:
+        * dom/xhtml/level3/core/nodecomparedocumentposition02-expected.txt:
+        * dom/xhtml/level3/core/nodeinsertbefore02-expected.txt:
+        * dom/xhtml/level3/core/nodeinsertbefore05-expected.txt:
+        * dom/xhtml/level3/core/nodeisequalnode17-expected.txt:
+        * dom/xhtml/level3/core/noderemovechild04-expected.txt:
+        * dom/xhtml/level3/core/noderemovechild05-expected.txt:
+        * dom/xhtml/level3/core/nodereplacechild13-expected.txt:
+        * dom/xhtml/level3/core/wellformed01-expected.txt:
+        * dom/xhtml/level3/core/wellformed02-expected.txt:
+        * dom/xhtml/level3/core/wellformed03-expected.txt:
+        * dom/xhtml/level3/core/wellformed04-expected.txt:
+
+        - for these, also changed the tests to be dumpAsText at the same time
+
+        * fast/dom/outerText-no-element.html:
+        * fast/dom/outerText-no-element-expected.txt:
+        * fast/dynamic/outerHTML-no-element.html:
+        * fast/dynamic/outerHTML-no-element-expected.txt:
+
+        * fast/dom/outerText-no-element-expected.checksum: Removed.
+        * fast/dom/outerText-no-element-expected.png: Removed.
+        * fast/dynamic/outerHTML-no-element-expected.checksum: Removed.
+        * fast/dynamic/outerHTML-no-element-expected.png: Removed.
+
+        - removed test results for tests that are either disabled or not checked in
+
+        * dom/xhtml/level2/html/HTMLIFrameElement11-expected.txt: Removed.
+        * dom/xhtml/level3/core/documentadoptnode22-expected.txt: Removed.
+        * editing/execCommand/boldCharacter-expected.txt: Removed.
+        * fast/parser/remove-block-in-residual-style-expected.checksum: Removed.
+        * fast/parser/remove-block-in-residual-style-expected.png: Removed.
+        * fast/parser/remove-block-in-residual-style-expected.txt: Removed.
+        * fast/plugins: Removed.
+        * fast/plugins/netscape-back-forward-expected.txt: Removed.
+        * fast/plugins/resources: Removed.
+        * fast/plugins/resources/go-back.html: Removed.
+
 2006-01-28  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

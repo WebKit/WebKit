@@ -1,4 +1,4 @@
 Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/noderemovechild05
 Status	error
-Message	Error: DOM exception 8
+Message	Error: NOT_FOUND_ERR: DOM Exception 8
 

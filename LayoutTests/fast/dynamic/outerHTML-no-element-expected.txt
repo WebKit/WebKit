@@ -1,21 +1,6 @@
-layer at (0,0) size 800x600
-  RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x18
-        RenderText {TEXT} at (0,0) size 47x18
-          text run at (0,0) width 47: "test for "
-        RenderInline {A} at (0,0) size 56x18 [color=#0000EE]
-          RenderText {TEXT} at (47,0) size 56x18
-            text run at (47,0) width 56: "4110775"
-        RenderText {TEXT} at (103,0) size 473x18
-          text run at (103,0) width 473: " Crash will occur when double-clicking outerHTML link on W3 DOM test"
-      RenderBlock {P} at (0,34) size 784x36
-        RenderText {TEXT} at (0,0) size 783x36
-          text run at (0,0) width 468: "If the test fails, Safari may crash, or you may see a failure message below. "
-          text run at (468,0) width 315: "If the test passes, you should see a message with a"
-          text run at (0,18) width 238: "description of the expected exception."
-      RenderBlock {DIV} at (0,86) size 784x18
-        RenderText {TEXT} at (0,0) size 371x18
-          text run at (0,0) width 371: "This test passed - expected error - Error: DOM exception 7"
+test for 4110775 Crash will occur when double-clicking outerHTML link on W3 DOM test
+
+If the test fails, Safari may crash, or you may see a failure message below. If the test passes, you should see a message with a description of the expected exception.
+
+This test passed - expected error - Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7
+

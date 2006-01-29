@@ -1,4 +1,4 @@
 Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/wellformed04
 Status	error
-Message	Error: DOM exception 5
+Message	Error: INVALID_CHARACTER_ERR: DOM Exception 5
 

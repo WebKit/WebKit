@@ -5,6 +5,8 @@
 <div id="test">This test failed.</div>
 
 <script type="text/javascript">
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
 var t = document.getElementById("test");
 var outerStr = "<div id='test2'>This test failed!</div>";
 t.outerHTML = outerStr;

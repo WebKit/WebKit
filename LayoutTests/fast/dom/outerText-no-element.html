@@ -5,6 +5,8 @@ You should see a description of an expected error.
 <div id="div">this is a <i id="test">test</i> or something</div>
 
 <script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
 var test = document.getElementById("test");
 test.outerText = "big test";
 try {
