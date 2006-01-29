@@ -166,24 +166,9 @@ Image& Image::operator=(const Image& assignFrom)
     return *this;
 }
 
-void Image::increaseUseCount() const
-{
-    [m_imageRenderer increaseUseCount];
-}
-
-void Image::decreaseUseCount() const
-{
-    [m_imageRenderer decreaseUseCount];
-}
-
 void Image::stopAnimations()
 {
     [m_imageRenderer stopAnimation];
-}
-
-void Image::flushRasterCache()
-{
-    [m_imageRenderer flushRasterCache];
 }
 
 }

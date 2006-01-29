@@ -44,9 +44,6 @@ typedef enum {
 - (void)scaleAndTileInRect:(NSRect)ir fromRect:(NSRect)fr withHorizontalTileRule:(WebImageTileRule)hRule withVerticalTileRule:(WebImageTileRule)vRule context:(CGContextRef)context;
 - (BOOL)isNull;
 - (id <WebCoreImageRenderer>)retainOrCopyIfNeeded;
-- (void)increaseUseCount;
-- (void)decreaseUseCount;
-- (void)flushRasterCache;
 - (void)resetAnimation;
 - (void)setAnimationRect:(NSRect)r;
 

@@ -3810,7 +3810,6 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
             float sx = (float)args[0]->toNumber(exec);
             float sy = (float)args[1]->toNumber(exec);
             CGContextScaleCTM (drawingContext, sx, sy);
-            contextObject->_needsFlushRasterCache = true;
             break;
         }
         case Context2D::Rotate: {
@@ -3818,7 +3817,6 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
                 return throwError(exec, SyntaxError);
             float angle = (float)args[0]->toNumber(exec);
             CGContextRotateCTM (drawingContext, angle);
-            contextObject->_needsFlushRasterCache = true;
             break;
         }
         case Context2D::Translate: {
@@ -4153,9 +4151,6 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
                 
                 CGImageRelease (sourceImage);
             }
-            
-            if (contextObject->_needsFlushRasterCache)
-                image.flushRasterCache();
 
             renderer->setNeedsImageUpdate();
 
@@ -4184,10 +4179,7 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
             QPainter p;
 
             p.drawFloatImage (dx, dy, dw, dh, image, sx, sy, sw, sh, QPainter::compositeOperatorFromString(compositeOperator), drawingContext);
-                
-            if (contextObject->_needsFlushRasterCache)
-                image.flushRasterCache();
-
+          
             renderer->setNeedsImageUpdate();
             break;
         }
@@ -4657,7 +4649,7 @@ void Context2D::restore()
 
 Context2D::Context2D(HTMLElementImpl *e)
   : _validFillImagePattern(false), _validStrokeImagePattern(false),
-    _element(e), _needsFlushRasterCache(false),
+    _element(e),
     _strokeStyle(jsUndefined()),
     _fillStyle(jsUndefined()),
     _lineWidth(jsUndefined()),

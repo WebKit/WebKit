@@ -425,7 +425,6 @@ private:
     void setShadow(ExecState *exec);
 
     RefPtr<DOM::HTMLElementImpl> _element;
-    bool _needsFlushRasterCache;
     
     QPtrList<List> stateStack;
     
