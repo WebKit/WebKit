@@ -1,6 +1,6 @@
 2006-01-28  David Hyatt  <hyatt@apple.com>
 
-        Clean up the Image class.  Eliminate the MIME type memebr variable.
+        Clean up the Image class.  Eliminate the MIME type member variable.
         Eliminate an unused constructor.  Fix the constructor to take
         a QString rather than an NSString so that it's portable.  Rename
         the receivedData method to decode.  Move canRenderImageType into
