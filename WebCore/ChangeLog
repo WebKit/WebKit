@@ -1,3 +1,9 @@
+2006-01-28  Maciej Stachowiak  <mjs@apple.com>
+
+        - added missing forwarding header to fix build.
+        
+        * ForwardingHeaders/kxmlcore/Vector.h: Added.
+
 2006-01-28  Darin Adler  <darin@apple.com>
 
         * khtml/ecma/kjs_binding.cpp: (KJS::setDOMException): Removed extra parameter
