@@ -90,8 +90,8 @@ void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild
             return;
         }
 
-        // FIXME: Not sure why this code is needed to pop back up out of the table.
-        // It doesn't affect any of our layout tests, but I'm going to leave it in for now.
+        // If beforeChild is inside an anonymous cell/row, insert into the cell or into
+        // the anonymous row containing it, if there is one.
         RenderObject* lastBox = last;
         while (lastBox && lastBox->parent()->isAnonymous() && !lastBox->isTableRow())
             lastBox = lastBox->parent();

@@ -72,6 +72,12 @@ void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)
             return;
         }
 
+        // If beforeChild is inside an anonymous cell, insert into the cell.
+        if (last && !last->isTableCell() && last->parent() && last->parent()->isAnonymous()) {
+            last->parent()->addChild(child, beforeChild);
+            return;
+        }
+
         RenderTableCell* cell = new (renderArena()) RenderTableCell(document() /* anonymous object */);
         RenderStyle* newStyle = new (renderArena()) RenderStyle();
         newStyle->inheritFrom(style());
