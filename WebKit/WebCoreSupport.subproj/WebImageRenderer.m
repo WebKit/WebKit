@@ -248,18 +248,6 @@
     [self _startOrContinueAnimationIfNecessary];
 }
 
-- (void)increaseUseCount
-{
-}
-
-- (void)decreaseUseCount
-{
-}
-
-- (void)flushRasterCache
-{
-}
-
 - (CGImageRef)imageRef
 {
     return [imageData imageAtIndex:0];
