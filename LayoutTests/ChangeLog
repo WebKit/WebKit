@@ -1,3 +1,22 @@
+2006-01-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=6550
+          REGRESSION: window.open('myurl', '_self') fails to load myurl in current window
+
+        * fast/dom/Window/window-open-parent.html: Added.
+        * fast/dom/Window/window-open-parent-no-parent.html: Added.
+        * fast/dom/Window/window-open-self.html: Added.
+        * fast/dom/Window/window-open-top.html: Added.
+
+        * fast/dom/Window/resources: Added.
+        * fast/dom/Window/resources/destination.html: Added.
+        * fast/dom/Window/window-open-parent-expected.txt: Added.
+        * fast/dom/Window/window-open-parent-no-parent-expected.txt: Added.
+        * fast/dom/Window/window-open-self-expected.txt: Added.
+        * fast/dom/Window/window-open-top-expected.txt: Added.
+
 2006-01-20  Darin Adler  <darin@apple.com>
 
         - added a test for the names of range exceptions, which were wrong
