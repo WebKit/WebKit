@@ -30,19 +30,12 @@
 #import "KWQFoundationExtras.h"
 #import "KWQRegExp.h"
 #import "KWQTextCodec.h"
-#import "Array.h"
-#import "KWQValueList.h"
-
-// FIXME: Should get this from a header.
-extern "C" int malloc_good_size(int size);
-
+#import <kxmlcore/Vector.h>
 #import <unicode/uidna.h>
+#import <utility>
 
-struct KWQIntegerPair {
-    KWQIntegerPair(int s, int e) : start(s), end(e) { }
-    int start;
-    int end;
-};
+using std::pair;
+using std::make_pair;
 
 // The simple Cocoa calls to NSString, NSURL and NSData can't throw so
 // no need to block NSExceptions here.
@@ -238,15 +231,9 @@ KURL::KURL() : m_isValid(false)
 KURL::KURL(const char *url)
 {
     if (url && url[0] == '/') {
-        char staticBuffer[2048];
-        char *buffer;
+         // 5 for "file:", 1 for terminator
         size_t urlLength = strlen(url) + 1;
-        size_t bufferLength = urlLength + 5; // 5 for "file:"
-        if (bufferLength > sizeof(staticBuffer)) {
-            buffer = (char *)fastMalloc(bufferLength);
-        } else {
-            buffer = staticBuffer;
-        }
+        Vector<char, 2048> buffer(urlLength + 5);
         buffer[0] = 'f';
         buffer[1] = 'i';
         buffer[2] = 'l';
@@ -254,25 +241,15 @@ KURL::KURL(const char *url)
         buffer[4] = ':';
         memcpy(&buffer[5], url, urlLength);
         parse(buffer, 0);
-        if (buffer != staticBuffer) {
-            fastFree(buffer);
-        }
-    } else {
+    } else
         parse(url, 0);
-    }
 }
 
 KURL::KURL(const QString &url)
 {
     if (!url.isEmpty() && url[0] == '/') {
-        char staticBuffer[2048];
-        char *buffer;
-        size_t bufferLength = url.length() + 6; // 5 for "file:", 1 for terminator
-        if (bufferLength > sizeof(staticBuffer)) {
-            buffer = (char *)fastMalloc(bufferLength);
-        } else {
-            buffer = staticBuffer;
-        }
+        // 5 for "file:", 1 for terminator
+        Vector<char, 2048> buffer(url.length() + 6);
         buffer[0] = 'f';
         buffer[1] = 'i';
         buffer[2] = 'l';
@@ -280,26 +257,15 @@ KURL::KURL(const QString &url)
         buffer[4] = ':';
         url.copyLatin1(&buffer[5]);
         parse(buffer, 0);
-        if (buffer != staticBuffer) {
-            fastFree(buffer);
-        }
-    } else {
+    } else
         parse(url.ascii(), &url);
-    }
 }
 
 KURL::KURL(NSURL *url)
 {
     if (url) {
         CFIndex bytesLength = CFURLGetBytes((CFURLRef)url, 0, 0);
-        size_t bufferLength = bytesLength + 6; // 5 for "file:", 1 for NUL terminator
-        char staticBuffer[2048];
-        char *buffer;
-        if (bufferLength > sizeof(staticBuffer)) {
-            buffer = (char *)fastMalloc(bufferLength);
-        } else {
-            buffer = staticBuffer;
-        }
+        Vector<char, 2048> buffer(bytesLength + 6);  // 5 for "file:", 1 for NUL terminator
         char *bytes = &buffer[5];
         CFURLGetBytes((CFURLRef)url, (UInt8 *)bytes, bytesLength);
         bytes[bytesLength] = '\0';
@@ -310,16 +276,10 @@ KURL::KURL(NSURL *url)
             buffer[3] = 'e';
             buffer[4] = ':';
             parse(buffer, 0);
-        } else {
+        } else
             parse(bytes, 0);
-        }
-        if (buffer != staticBuffer) {
-            fastFree(buffer);
-        }
-    }
-    else {
+    } else
         parse("", 0);
-    }
 }
 
 KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
@@ -449,18 +409,9 @@ KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
             {
                 // must be relative-path reference
 
-                char staticBuffer[2048];
-                char *buffer;
-                
                 // Base part plus relative part plus one possible slash added in between plus terminating \0 byte.
-                size_t bufferLength = base.pathEndPos + 1 + strlen(str) + 1;
+                Vector<char, 2048> buffer(base.pathEndPos + 1 + strlen(str) + 1);
 
-                if (bufferLength > sizeof(staticBuffer)) {
-                    buffer = (char *)fastMalloc(bufferLength);
-                } else {
-                    buffer = staticBuffer;
-                }
-                
                 char *bufferPos = buffer;
                 
                 // first copy everything before the path from the base
@@ -531,12 +482,7 @@ KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
 
                 parse(buffer, 0);
                 
-                ASSERT(strlen(buffer) + 1 <= bufferLength);
-                
-                if (buffer != staticBuffer) {
-                    fastFree(buffer);
-                }
-                
+                ASSERT(strlen(buffer) + 1 <= buffer.size());
                 break;
             }
         }
@@ -807,9 +753,7 @@ QString KURL::decode_string(const QString &urlString, const QTextCodec *codec)
 
     QString result("");
 
-    char staticBuffer[2048];
-    char *buffer = staticBuffer;
-    int bufferLength = sizeof(staticBuffer);
+    Vector<char, 2048> buffer(0);
 
     int length = urlString.length();
     int decodedPosition = 0;
@@ -831,12 +775,8 @@ QString KURL::decode_string(const QString &urlString, const QTextCodec *codec)
 
         // Copy the entire %-escape sequence into an 8-bit buffer.
         int encodedRunLength = encodedRunEnd - encodedRunPosition;
-        if (encodedRunLength + 1 > bufferLength) {
-            if (buffer != staticBuffer)
-                fastFree(buffer);
-            bufferLength = malloc_good_size(encodedRunLength + 1);
-            buffer = static_cast<char *>(fastMalloc(bufferLength));
-        }
+        buffer.clear();
+        buffer.resize(encodedRunLength + 1);
         urlString.copyLatin1(buffer, encodedRunPosition, encodedRunLength);
 
         // Decode the %-escapes into bytes.
@@ -860,10 +800,6 @@ QString KURL::decode_string(const QString &urlString, const QTextCodec *codec)
     }
 
     result.append(urlString.mid(decodedPosition, length - decodedPosition));
-
-    if (buffer != staticBuffer)
-        fastFree(buffer);
-
     return result;
 }
 
@@ -1151,14 +1087,7 @@ void KURL::parse(const char *url, const QString *originalString)
 
     // assemble it all, remembering the real ranges
 
-    char staticBuffer[4096];
-    char *buffer;
-    uint bufferLength = fragmentEnd * 3 + 1;
-    if (bufferLength <= sizeof(staticBuffer)) {
-        buffer = staticBuffer;
-    } else {
-        buffer = (char *)fastMalloc(bufferLength);
-    }
+    Vector<char, 4096> buffer(fragmentEnd * 3 + 1);
 
     char *p = buffer;
     const char *strPtr = url;
@@ -1277,23 +1206,12 @@ void KURL::parse(const char *url, const QString *originalString)
     // add path, escaping bad characters
     
     if (hierarchical && hasSlashDotOrDotDot(url)) {
-        char static_path_buffer[4096];
-        char *path_buffer;
-        uint pathBufferLength = pathEnd - pathStart + 1;
-        if (pathBufferLength <= sizeof(static_path_buffer)) {
-            path_buffer = static_path_buffer;
-        } else {
-            path_buffer = (char *)fastMalloc(pathBufferLength);
-        }
+        Vector<char, 4096> path_buffer(pathEnd - pathStart + 1);
         copyPathRemovingDots(path_buffer, url, pathStart, pathEnd);
         appendEscapingBadChars(p, path_buffer, strlen(path_buffer));
-        if (path_buffer != static_path_buffer) {
-            fastFree(path_buffer);
-        }
-    }
-    else {
+    } else
         appendEscapingBadChars(p, url + pathStart, pathEnd - pathStart);
-    }
+
     pathEndPos = p - buffer;
     
     
@@ -1317,11 +1235,7 @@ void KURL::parse(const char *url, const QString *originalString)
         urlString = QString(buffer, fragmentEndPos);
     }
 
-    ASSERT(p - buffer <= (int)bufferLength);
-                
-    if (buffer != staticBuffer) {
-        fastFree(buffer);
-    }
+    ASSERT(p - buffer <= (int)buffer.size());
 }
 
 bool operator==(const KURL &a, const KURL &b)
@@ -1345,15 +1259,7 @@ QString KURL::encode_string(const QString& notEncodedString)
 {
     QCString asUTF8 = notEncodedString.utf8();
     
-    char staticBuffer[4096];
-    char *buffer;
-    uint bufferLength = asUTF8.length() * 3 + 1;
-    if (bufferLength <= sizeof(staticBuffer)) {
-        buffer = staticBuffer;
-    } else {
-        buffer = (char *)fastMalloc(bufferLength);
-    }
-    
+    Vector<char, 4096> buffer(asUTF8.length() * 3 + 1);
     char *p = buffer;
 
     const char *str = asUTF8;
@@ -1371,11 +1277,7 @@ QString KURL::encode_string(const QString& notEncodedString)
     
     QString result(buffer, p - buffer);
     
-    ASSERT(p - buffer <= (int)bufferLength);
-                
-    if (buffer != staticBuffer) {
-        fastFree(buffer);
-    }
+    ASSERT(p - buffer <= (int)buffer.size());
 
     return result;
 }
@@ -1418,13 +1320,13 @@ static QString encodeHostname(const QString &s)
     return QString(reinterpret_cast<QChar *>(buffer), numCharactersConverted);
 }
 
-static Array<KWQIntegerPair> findHostnamesInMailToURL(const QString &s)
+static Vector<pair<int, int> > findHostnamesInMailToURL(const QString &s)
 {
     // In a mailto: URL, host names come after a '@' character and end with a '>' or ',' or '?' or end of string character.
     // Skip quoted strings so that characters in them don't confuse us.
     // When we find a '?' character, we are past the part of the URL that contains host names.
 
-    Array<KWQIntegerPair> a;
+    Vector<pair<int, int> > a;
 
     int p = 0;
     while (1) {
@@ -1453,34 +1355,30 @@ static Array<KWQIntegerPair> findHostnamesInMailToURL(const QString &s)
                 done = false;
             }
 
-            int i = a.size();
-            a.resize(i + 1);
-            a[i] = KWQIntegerPair(hostnameStart, hostnameEnd);
+            a.append(make_pair(hostnameStart, hostnameEnd));
 
-            if (done) {
+            if (done)
                 return a;
-            }
         } else {
             // Skip quoted string.
             ASSERT(c == '"');
             while (1) {
                 int escapedCharacterOrStringEnd = s.find(QRegExp("[\"\\]"), p);
-                if (escapedCharacterOrStringEnd == -1) {
+                if (escapedCharacterOrStringEnd == -1)
                     return a;
-                }
+
                 c = s[escapedCharacterOrStringEnd];
                 p = escapedCharacterOrStringEnd + 1;
                 
                 // If we are the end of the string, then break from the string loop back to the host name loop.
-                if (c == '"') {
+                if (c == '"')
                     break;
-                }
                 
                 // Skip escaped character.
                 ASSERT(c == '\\');
-                if (p == static_cast<int>(s.length())) {
+                if (p == static_cast<int>(s.length()))
                     return a;
-                }                
+
                 ++p;
             }
         }
@@ -1539,16 +1437,16 @@ static bool findHostnameInHierarchicalURL(const QString &s, int &startOffset, in
 static QString encodeHostnames(const QString &s)
 {
     if (s.startsWith("mailto:", false)) {
-        const Array<KWQIntegerPair> hostnameRanges = findHostnamesInMailToURL(s);
-        uint n = hostnameRanges.size();
+        const Vector<pair<int, int> > hostnameRanges = findHostnamesInMailToURL(s);
+        int n = hostnameRanges.size();
         if (n != 0) {
             QString result;
             uint p = 0;
-            for (uint i = 0; i < n; ++i) {
-                const KWQIntegerPair &r = hostnameRanges[i];
-                result += s.mid(p, r.start);
-                result += encodeHostname(s.mid(r.start, r.end - r.start));
-                p = r.end;
+            for (int i = 0; i < n; ++i) {
+                const pair<int, int> &r = hostnameRanges[i];
+                result += s.mid(p, r.first);
+                result += encodeHostname(s.mid(r.first, r.second - r.first));
+                p = r.second;
             }
             result += s.mid(p);
             return result;

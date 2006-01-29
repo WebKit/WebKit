@@ -1,3 +1,21 @@
+2006-01-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - converted KWQKURL to use Vector
+        ://bugzilla.opendarwin.org/show_bug.cgi?id=6900
+
+        Use Vector in place of Array, and in place of the custom stack
+        buffers with overflow.
+        
+        * kwq/KWQKURL.mm:
+        (KURL::KURL):
+        (KURL::decode_string):
+        (KURL::parse):
+        (KURL::encode_string):
+        (findHostnamesInMailToURL):
+        (encodeHostnames):
+
 2006-01-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
