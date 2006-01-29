@@ -540,7 +540,8 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
             e = new HTMLDivElementImpl(document);
             insertNode(e);
             handled = true;
-        } else if (h->hasLocalName(dlTag) || h->hasLocalName(dtTag)) {
+        } else if (h->hasLocalName(addressTag) || h->hasLocalName(buttonTag) ||
+                h->hasLocalName(dlTag) || h->hasLocalName(dtTag) ||  h->hasLocalName(fontTag)) {
             popBlock(currentTagName);
             handled = true;
         } else if (h->hasLocalName(selectTag)) {
@@ -559,17 +560,11 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
                 // IE treats a nested select as </select>. Let's do the same
                 popBlock(localName);
             }
-        } else if (h->hasLocalName(addressTag)) {
-            popBlock(currentTagName);
-            handled = true;
         } else if (h->hasLocalName(colgroupTag)) {
             if (!n->isTextNode()) {
                 popBlock(currentTagName);
                 handled = true;
             }
-        } else if (h->hasLocalName(fontTag)) {
-            popBlock(currentTagName);
-            handled = true;
         } else if (!h->hasLocalName(bodyTag)) {
             if (isInline(current)) {
                 popInlineBlocks();

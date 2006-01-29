@@ -1,5 +1,23 @@
 2006-01-29  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6550
+          REGRESSION: window.open('myurl', '_self') fails to load myurl in current window
+
+        Tests:
+        * fast/dom/Window/window-open-parent-no-parent.html: Added.
+        * fast/dom/Window/window-open-parent.html: Added.
+        * fast/dom/Window/window-open-self.html: Added.
+        * fast/dom/Window/window-open-top.html: Added.
+
+        * khtml/ecma/kjs_window.cpp: (KJS::WindowFunc::callAsFunction):
+        Fix check for special frame names. These special frame names are supposed
+        to always be unaffected by pop-up blocking. But the code instead was
+        saying that the special frame names are always blocked. Oops!
+
+2006-01-29  Darin Adler  <darin@apple.com>
+
         Suggested by Alexey.
 
         - fixed something Alexey noticed in the new exception names
