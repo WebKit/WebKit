@@ -305,13 +305,13 @@ QString KWQResponseURL(NSURLResponse *response)
     return NULL;
 }
 
-NSString *KWQResponseMIMEType(NSURLResponse *response)
+QString KWQResponseMIMEType(NSURLResponse *response)
 {
     KWQ_BLOCK_EXCEPTIONS;
-    return [(NSURLResponse *)response MIMEType];
+    return QString::fromNSString([(NSURLResponse *)response MIMEType]);
     KWQ_UNBLOCK_EXCEPTIONS;
 
-    return NULL;
+    return QString();
 }
 
 bool KWQResponseIsMultipart(NSURLResponse *response)

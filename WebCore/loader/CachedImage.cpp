@@ -118,22 +118,18 @@ void CachedImage::data(QBuffer& _buffer, bool eof)
     bool canDraw = false;
     
     m_dataSize = _buffer.size();
-        
+
     // If we're at eof and don't have a image yet, the data
     // must have arrived in one chunk.  This avoids the attempt
     // to perform incremental decoding.
     if (eof && !m_image) {
-#if __APPLE__
         m_image = new Image(_buffer.buffer(), KWQResponseMIMEType(m_response));
-#endif
         canDraw = true;
     } else {
         // Always attempt to load the image incrementally.
-#if __APPLE__
         if (!m_image)
             m_image = new Image(KWQResponseMIMEType(m_response));
-#endif
-        canDraw = m_image->receivedData(_buffer.buffer(), eof);
+        canDraw = m_image->decode(_buffer.buffer(), eof);
     }
     
     // If we have a decoder, we'll be notified when decoding has completed.
@@ -148,7 +144,7 @@ void CachedImage::data(QBuffer& _buffer, bool eof)
             notifyObservers(*m_image, m_image->rect());
 
         IntSize s = imageSize();
-        setSize(s.width() * s.height() * 2);
+        setSize(s.width() * s.height() * 2); // This is really just a rough estimate of the decoded size.
     }
     if (eof) {
         m_loading = false;

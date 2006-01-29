@@ -829,7 +829,7 @@ bool HTMLObjectElementImpl::isImageType()
         }
     }
     
-    return canRenderImageType(serviceType);
+    return Image::supportsType(serviceType);
 }
 
 void HTMLObjectElementImpl::renderFallbackContent()

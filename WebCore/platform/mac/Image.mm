@@ -40,7 +40,7 @@ Image * Image::loadResource(const char *name)
     return p;
 }
 
-bool canRenderImageType(const QString& type)
+bool Image::supportsType(const QString& type)
 {
     return [[[WebCoreImageRendererFactory sharedFactory] supportedMIMETypes] containsObject:type.getNSString()];
 }
@@ -48,49 +48,36 @@ bool canRenderImageType(const QString& type)
 Image::Image()
 {
     m_imageRenderer = nil;
-    m_MIMEType = nil;
     m_needCopyOnWrite = false;
 }
 
 Image::Image(WebCoreImageRendererPtr r)
 {
     m_imageRenderer = KWQRetain(r);
-    m_MIMEType = nil;
     m_needCopyOnWrite = false;
 }
 
-Image::Image(void *MIME)
+Image::Image(const QString& type)
 {
-    m_imageRenderer = nil;
-    m_MIMEType = KWQRetainNSRelease([(NSString *)MIME copy]);
+    m_imageRenderer = KWQRetain([[WebCoreImageRendererFactory sharedFactory] imageRendererWithMIMEType:type.getNSString()]);
     m_needCopyOnWrite = false;
 }
 
 Image::Image(const IntSize& sz)
 {
     m_imageRenderer = KWQRetain([[WebCoreImageRendererFactory sharedFactory] imageRendererWithSize:sz]);
-    m_MIMEType = nil;
     m_needCopyOnWrite = false;
 }
 
-Image::Image(const ByteArray& bytes)
+Image::Image(const ByteArray& bytes, const QString& type)
 {
-    m_imageRenderer = KWQRetain([[WebCoreImageRendererFactory sharedFactory] imageRendererWithBytes:bytes.data() length:bytes.size()]);
-    m_MIMEType = nil;
-    m_needCopyOnWrite = false;
-}
-
-Image::Image(const ByteArray& bytes, NSString *MIME)
-{
-    m_MIMEType = KWQRetainNSRelease([MIME copy]);
-    m_imageRenderer = KWQRetain([[WebCoreImageRendererFactory sharedFactory] imageRendererWithBytes:bytes.data() length:bytes.size() MIMEType:m_MIMEType]);
+    m_imageRenderer = KWQRetain([[WebCoreImageRendererFactory sharedFactory] imageRendererWithBytes:bytes.data() length:bytes.size() MIMEType:type.getNSString()]);
     m_needCopyOnWrite = false;
 }
 
 Image::Image(int w, int h)
 {
     m_imageRenderer = KWQRetain([[WebCoreImageRendererFactory sharedFactory] imageRendererWithSize:NSMakeSize(w, h)]);
-    m_MIMEType = nil;
     m_needCopyOnWrite = false;
 }
 
@@ -98,12 +85,10 @@ Image::Image(const Image& copyFrom)
 {
     m_imageRenderer = KWQRetainNSRelease([copyFrom.m_imageRenderer copyWithZone:NULL]);;
     m_needCopyOnWrite = false;
-    m_MIMEType = KWQRetainNSRelease([copyFrom.m_MIMEType copy]);
 }
 
 Image::~Image()
 {
-    KWQRelease(m_MIMEType);
     KWQRelease(m_imageRenderer);
 }
 
@@ -123,14 +108,9 @@ void Image::setAnimationRect(const IntRect& rect) const
     [m_imageRenderer setAnimationRect:NSMakeRect(rect.x(), rect.y(), rect.width(), rect.height())];
 }
 
-bool Image::receivedData(const ByteArray& bytes, bool isComplete)
+bool Image::decode(const ByteArray& bytes, bool allDataReceived)
 {
-    if (!m_imageRenderer)
-        m_imageRenderer = KWQRetain([[WebCoreImageRendererFactory sharedFactory] imageRendererWithMIMEType:m_MIMEType]);
-    
-    bool result = [m_imageRenderer incrementalLoadWithBytes:bytes.data() length:bytes.size() complete:isComplete callback:nil];
-  
-    return result;
+    return [m_imageRenderer incrementalLoadWithBytes:bytes.data() length:bytes.size() complete:allDataReceived callback:nil];
 }
 
 bool Image::mask() const
@@ -186,9 +166,6 @@ Image& Image::operator=(const Image& assignFrom)
     id <WebCoreImageRenderer> oldImageRenderer = m_imageRenderer;
     m_imageRenderer = KWQRetainNSRelease([assignFrom.m_imageRenderer retainOrCopyIfNeeded]);
     KWQRelease(oldImageRenderer);
-    NSString *newMIMEType = KWQRetainNSRelease([assignFrom.m_MIMEType copy]);
-    KWQRelease(m_MIMEType);
-    m_MIMEType = newMIMEType;
     assignFrom.m_needCopyOnWrite = true;
     m_needCopyOnWrite = true;
     return *this;

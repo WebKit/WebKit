@@ -1,3 +1,28 @@
+2006-01-28  David Hyatt  <hyatt@apple.com>
+
+        Clean up the Image class.  Eliminate the MIME type memebr variable.
+        Eliminate an unused constructor.  Fix the constructor to take
+        a QString rather than an NSString so that it's portable.  Rename
+        the receivedData method to decode.  Move canRenderImageType into
+        the Image class as a static method.
+
+        Reviewed by mjs
+
+        * khtml/html/html_objectimpl.cpp:
+        (WebCore::HTMLObjectElementImpl::isImageType):
+        * kwq/KWQLoader.h:
+        * kwq/KWQLoader.mm:
+        (KWQResponseMIMEType):
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::data):
+        * platform/Image.h:
+        * platform/mac/Image.mm:
+        (WebCore::Image::supportsType):
+        (WebCore::Image::Image):
+        (WebCore::Image::~Image):
+        (WebCore::Image::decode):
+        (WebCore::Image::operator=):
+
 2006-01-28  Alexander Kellett  <lypanov@kde.org>
 
         Reviewed by eseidel.
