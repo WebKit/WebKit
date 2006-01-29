@@ -1,3 +1,11 @@
+2006-01-28  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Remove bogus IntRect operator.
+
+        * platform/FloatRect.h:
+
 2006-01-28  David Hyatt  <hyatt@apple.com>
 
         Cleanup of RenderImage.  Eliminate unneeded members and methods.
