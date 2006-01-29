@@ -1,3 +1,15 @@
+2006-01-28  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5868
+          Crash on HP.com with ToT and Safari 2.0.2 in khtml::RenderContainer::detach()
+
+        * fast/table/add-before-anonymous-child.html: Added.
+        * fast/table/add-before-anonymous-child-expected.txt: Added.
+        * fast/table/add-before-anonymous-child-expected.png: Added.
+        * fast/table/add-before-anonymous-child-expected.checksum: Added.
+
 2006-01-28  Alexander Kellett  <lypanov@kde.org>
 
         Reviewed by eseidel.
