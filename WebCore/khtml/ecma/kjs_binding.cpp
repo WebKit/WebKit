@@ -446,7 +446,7 @@ void setDOMException(ExecState *exec, int DOMExceptionCode)
   if (name)
     sprintf(buffer, "%s: %s Exception %d", name, type, code);
   else
-    sprintf(buffer, "%s Exception %d", name, type, code);
+    sprintf(buffer, "%s Exception %d", type, code);
 
   JSObject *errorObject = throwError(exec, GeneralError, buffer);
   errorObject->put(exec, "code", jsNumber(code));
