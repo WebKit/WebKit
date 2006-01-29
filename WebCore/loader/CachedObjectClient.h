@@ -53,11 +53,10 @@ namespace WebCore {
     public:
         virtual ~CachedObjectClient() { }
 
-        // clipped image (if it is not yet completely loaded),
-        // size of the complete (finished loading) image
-        // rectangle of the part that has been loaded very recently
-        // pointer to us
-        virtual void setImage(const Image&, const IntRect&, CachedImage*) { }
+        // Called whenever a frame of an image changes (FIXME: not yet called for animating frames but will be
+        // soon).  The rect represents the portion of the image that changed.  Clients that transform
+        // the image should similarly transform the rect to determine the correct invalidation to perform.
+        virtual void imageChanged(CachedImage*, const IntRect&) { };
 
         virtual void setStyleSheet(const DOMString& /*URL*/, const DOMString& /*sheet*/) { }
 

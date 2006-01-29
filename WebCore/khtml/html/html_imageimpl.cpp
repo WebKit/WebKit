@@ -113,7 +113,7 @@ void HTMLImageLoader::notifyFinished(CachedObject *image)
 #endif
     }
     if (RenderImage* renderer = static_cast<RenderImage*>(elem->renderer()))
-        renderer->setImage(m_image);
+        renderer->setCachedImage(m_image);
 }
 
 // -------------------------------------------------------------------------
@@ -236,7 +236,7 @@ void HTMLImageElementImpl::attach()
     HTMLElementImpl::attach();
 
     if (RenderImage* imageObj = static_cast<RenderImage*>(renderer()))
-        imageObj->setImage(m_imageLoader.image());
+        imageObj->setCachedImage(m_imageLoader.image());
 }
 
 void HTMLImageElementImpl::insertedIntoDocument()

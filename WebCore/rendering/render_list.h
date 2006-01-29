@@ -52,7 +52,7 @@ public:
     virtual void layout( );
     virtual void calcMinMaxWidth();
 
-    virtual void setImage( const Image &, const IntRect&, CachedImage *);
+    virtual void imageChanged(CachedImage*, const IntRect&);
 
     virtual void calcWidth();
 

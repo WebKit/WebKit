@@ -1,3 +1,80 @@
+2006-01-28  David Hyatt  <hyatt@apple.com>
+
+        Cleanup of RenderImage.  Eliminate unneeded members and methods.
+
+        Reviewed by darin
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge elementAtPoint:]):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::KJS::Context2DFunction::callAsFunction):
+        (KJS::drawPattern):
+        * khtml/html/HTMLInputElementImpl.cpp:
+        (WebCore::HTMLInputElementImpl::attach):
+        * khtml/html/html_imageimpl.cpp:
+        (WebCore::HTMLImageLoader::notifyFinished):
+        (WebCore::HTMLImageElementImpl::attach):
+        * khtml/html/html_imageimpl.h:
+        (WebCore::HTMLImageElementImpl::compositeOperator):
+        * khtml/html/html_objectimpl.cpp:
+        (WebCore::HTMLObjectElementImpl::attach):
+        * ksvg2/svg/SVGImageElementImpl.cpp:
+        (SVGImageElementImpl::attach):
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (WebCore::QPainter::drawImageAtPoint):
+        (WebCore::QPainter::drawImageInRect):
+        (WebCore::QPainter::drawImage):
+        (WebCore::QPainter::drawFloatImage):
+        (WebCore::QPainter::drawTiledImage):
+        (WebCore::QPainter::drawScaledAndTiledImage):
+        * kwq/WebCoreImageRenderer.h:
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::ref):
+        (WebCore::CachedImage::notifyObservers):
+        (WebCore::CachedImage::data):
+        (WebCore::CachedImage::error):
+        * loader/CachedImage.h:
+        * loader/CachedObjectClient.h:
+        (WebCore::CachedObjectClient::imageChanged):
+        * platform/Image.h:
+        (WebCore::Image::):
+        * platform/mac/Image.mm:
+        (WebCore::Image::Image):
+        (WebCore::Image::resetAnimation):
+        (WebCore::Image::operator=):
+        (WebCore::Image::stopAnimations):
+        (WebCore::):
+        (WebCore::Image::compositeOperatorFromString):
+        * rendering/render_box.cpp:
+        (WebCore::RenderBox::paintBackgroundExtended):
+        * rendering/render_canvasimage.cpp:
+        (WebCore::RenderCanvasImage::paint):
+        * rendering/render_image.cpp:
+        (WebCore::RenderImage::RenderImage):
+        (WebCore::RenderImage::~RenderImage):
+        (WebCore::RenderImage::setContentObject):
+        (WebCore::RenderImage::setCachedImage):
+        (WebCore::RenderImage::imageChanged):
+        (WebCore::RenderImage::resetAnimation):
+        (WebCore::RenderImage::paint):
+        (WebCore::RenderImage::layout):
+        (WebCore::RenderImage::updateAltText):
+        (WebCore::RenderImage::calcReplacedWidth):
+        (WebCore::RenderImage::calcReplacedHeight):
+        * rendering/render_image.h:
+        (WebCore::RenderImage::cachedImage):
+        (WebCore::RenderImage::image):
+        (WebCore::RenderImage::errorOccurred):
+        * rendering/render_list.cpp:
+        (RenderListMarker::paint):
+        (RenderListMarker::imageChanged):
+        * rendering/render_list.h:
+        * rendering/render_object.cpp:
+        (WebCore::RenderObject::paintBorderImage):
+        (WebCore::RenderObject::setImage):
+        * rendering/render_object.h:
+
 2006-01-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

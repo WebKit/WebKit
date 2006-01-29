@@ -1330,7 +1330,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         // Only return image information if there is an image.
         if (node->renderer() && node->renderer()->isImage()) {
             RenderImage *r = static_cast<RenderImage *>(node->renderer());
-            if (!r->isDisplayingError()) {
+            if (!r->errorOccurred()) {
                 const Image& p = r->image();
                 if (p.imageRenderer())
                     [element setObject:p.imageRenderer() forKey:WebCoreElementImageRendererKey];

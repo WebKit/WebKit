@@ -36,7 +36,6 @@ typedef enum {
 - (BOOL)incrementalLoadWithBytes:(const void *)bytes length:(unsigned)length complete:(BOOL)isComplete callback:(id)c;
 
 - (NSSize)size;
-- (void)resize:(NSSize)s;
 - (void)drawImageInRect:(NSRect)ir fromRect:(NSRect)fr;
 - (void)drawImageInRect:(NSRect)ir fromRect:(NSRect)fr compositeOperator:(NSCompositingOperation)compsiteOperator context:(CGContextRef)context;
 - (void)stopAnimation;

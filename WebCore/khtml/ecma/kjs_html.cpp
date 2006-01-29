@@ -4114,8 +4114,8 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
 
             if (!sourceContext) {
                 QPainter p;
-                p.drawFloatImage (dx, dy, dw, dh, image, sx, sy, sw, sh, 
-                    QPainter::compositeOperatorFromString(contextObject->_globalComposite->toString(exec).qstring().lower()), drawingContext);
+                p.drawFloatImage(image, dx, dy, dw, dh, sx, sy, sw, sh, 
+                                 Image::compositeOperatorFromString(contextObject->_globalComposite->toString(exec).qstring().lower()), drawingContext);
             }
             else {
                 // Cheap, because the image is backed by copy-on-write memory, and we're
@@ -4178,7 +4178,7 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
             
             QPainter p;
 
-            p.drawFloatImage (dx, dy, dw, dh, image, sx, sy, sw, sh, QPainter::compositeOperatorFromString(compositeOperator), drawingContext);
+            p.drawFloatImage(image, dx, dy, dw, dh, sx, sy, sw, sh, Image::compositeOperatorFromString(compositeOperator), drawingContext);
           
             renderer->setNeedsImageUpdate();
             break;
@@ -5033,8 +5033,7 @@ static void drawPattern (void * info, CGContextRef context)
         CGContextDrawImage (context, CGRectMake(0, 0, w, h), ref);    
     }
     else
-        p.drawFloatImage (0, 0, w, h, image, 0.f, 0.f, w, h, 
-            QPainter::compositeOperatorFromString(QString("source-over")), context);
+        p.drawFloatImage(image, 0, 0, w, h, 0.f, 0.f, w, h, Image::CompositeSourceOver, context);
 }
 
 CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };

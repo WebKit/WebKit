@@ -71,7 +71,7 @@ public:
     void clear();
     
 private:
-    void notifyObservers(const Image&, const IntRect&);
+    void notifyObservers(const IntRect&);
 
     Image* m_image;
     int m_dataSize;

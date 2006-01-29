@@ -1,3 +1,15 @@
+2006-01-28  David Hyatt  <hyatt@apple.com>
+
+        Clean up RenderImage, eliminating unneeded members and methods.
+	
+        Reviewed by darin
+
+        * WebCoreSupport.subproj/WebImageRenderer.h:
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer copyWithZone:]):
+        (-[WebImageRenderer size]):
+        (-[WebImageRenderer drawImageInRect:fromRect:compositeOperator:context:]):
+
 2006-01-26  Tim Omernick  <timo@apple.com>
 
         Reviewed by John Sullivan.

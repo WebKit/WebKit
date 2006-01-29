@@ -48,43 +48,36 @@ bool Image::supportsType(const QString& type)
 Image::Image()
 {
     m_imageRenderer = nil;
-    m_needCopyOnWrite = false;
 }
 
 Image::Image(WebCoreImageRendererPtr r)
 {
     m_imageRenderer = KWQRetain(r);
-    m_needCopyOnWrite = false;
 }
 
 Image::Image(const QString& type)
 {
     m_imageRenderer = KWQRetain([[WebCoreImageRendererFactory sharedFactory] imageRendererWithMIMEType:type.getNSString()]);
-    m_needCopyOnWrite = false;
 }
 
 Image::Image(const IntSize& sz)
 {
     m_imageRenderer = KWQRetain([[WebCoreImageRendererFactory sharedFactory] imageRendererWithSize:sz]);
-    m_needCopyOnWrite = false;
 }
 
 Image::Image(const ByteArray& bytes, const QString& type)
 {
     m_imageRenderer = KWQRetain([[WebCoreImageRendererFactory sharedFactory] imageRendererWithBytes:bytes.data() length:bytes.size() MIMEType:type.getNSString()]);
-    m_needCopyOnWrite = false;
 }
 
 Image::Image(int w, int h)
 {
     m_imageRenderer = KWQRetain([[WebCoreImageRendererFactory sharedFactory] imageRendererWithSize:NSMakeSize(w, h)]);
-    m_needCopyOnWrite = false;
 }
 
 Image::Image(const Image& copyFrom)
 {
     m_imageRenderer = KWQRetainNSRelease([copyFrom.m_imageRenderer copyWithZone:NULL]);;
-    m_needCopyOnWrite = false;
 }
 
 Image::~Image()
@@ -97,7 +90,7 @@ CGImageRef Image::imageRef() const
     return [m_imageRenderer imageRef];
 }
 
-void Image::resetAnimation()
+void Image::resetAnimation() const
 {
     if (m_imageRenderer)
         [m_imageRenderer resetAnimation];
@@ -140,35 +133,57 @@ int Image::height() const
     return size().height();
 }
 
-void Image::resize(const IntSize& sz)
-{
-    resize(sz.width(), sz.height());
-}
-
-void Image::resize(int w, int h)
-{
-    if (m_needCopyOnWrite) {
-        id <WebCoreImageRenderer> newImageRenderer = KWQRetainNSRelease([m_imageRenderer copyWithZone:NULL]);
-        KWQRelease(m_imageRenderer);
-        m_imageRenderer = newImageRenderer;
-        m_needCopyOnWrite = false;
-    }
-    [m_imageRenderer resize:NSMakeSize(w, h)];
-}
-
 Image& Image::operator=(const Image& assignFrom)
 {
     id <WebCoreImageRenderer> oldImageRenderer = m_imageRenderer;
     m_imageRenderer = KWQRetainNSRelease([assignFrom.m_imageRenderer retainOrCopyIfNeeded]);
     KWQRelease(oldImageRenderer);
-    assignFrom.m_needCopyOnWrite = true;
-    m_needCopyOnWrite = true;
     return *this;
 }
 
-void Image::stopAnimations()
+void Image::stopAnimations() const
 {
     [m_imageRenderer stopAnimation];
+}
+
+const int NUM_COMPOSITE_OPERATORS = 14;
+
+struct CompositeOperatorEntry
+{
+    const char *name;
+    Image::CompositeOperator value;
+};
+
+struct CompositeOperatorEntry compositeOperators[NUM_COMPOSITE_OPERATORS] = {
+    { "clear", Image::CompositeClear },
+    { "copy", Image::CompositeCopy },
+    { "source-over", Image::CompositeSourceOver },
+    { "source-in", Image::CompositeSourceIn },
+    { "source-out", Image::CompositeSourceOut },
+    { "source-atop", Image::CompositeSourceAtop },
+    { "destination-over", Image::CompositeDestinationOver },
+    { "destination-in", Image::CompositeDestinationIn },
+    { "destination-out", Image::CompositeDestinationOut },
+    { "destination-atop", Image::CompositeDestinationAtop },
+    { "xor", Image::CompositeXOR },
+    { "darker", Image::CompositePlusDarker },
+    { "highlight", Image::CompositeHighlight },
+    { "lighter", Image::CompositePlusLighter }
+};
+
+Image::CompositeOperator Image::compositeOperatorFromString(const QString &aString)
+{
+    CompositeOperator op = CompositeSourceOver;
+    
+    if (aString.length()) {
+        const char *operatorString = aString.ascii();
+        for (int i = 0; i < NUM_COMPOSITE_OPERATORS; i++) {
+            if (strcasecmp (operatorString, compositeOperators[i].name) == 0) {
+                return compositeOperators[i].value;
+            }
+        }
+    }
+    return op;
 }
 
 }

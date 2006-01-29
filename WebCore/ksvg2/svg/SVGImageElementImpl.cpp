@@ -128,7 +128,7 @@ void SVGImageElementImpl::attach()
 {
     SVGStyledTransformableElementImpl::attach();
     if (KSVG::RenderSVGImage* imageObj = static_cast<KSVG::RenderSVGImage*>(renderer()))
-        imageObj->setImage(m_imageLoader.image());
+        imageObj->setCachedImage(m_imageLoader.image());
 }
 
 // vim:ts=4:noet

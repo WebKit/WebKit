@@ -28,7 +28,7 @@
 #include "HTMLElementImpl.h"
 #include "render_replaced.h"
 #include "dom_string.h"
-#include "Image.h"
+#include "CachedImage.h"
 
 namespace WebCore {
 
@@ -50,9 +50,8 @@ public:
 
     virtual void layout();
 
-    virtual void setImage( const Image &, const IntRect&, CachedImage *);
-
-    const Image& image() const { return pix; }
+    virtual void imageChanged(CachedImage*, const IntRect&);
+    
     // don't even think about making this method virtual!
     HTMLElementImpl* element() const
         { return static_cast<HTMLElementImpl*>(RenderReplaced::element()); }
@@ -62,9 +61,11 @@ public:
     virtual void setStyle(RenderStyle *style);
     void updateAltText();
     
-    void setImage(CachedImage* image);
-    CachedImage* getImage() const { return m_image; }
+    void setCachedImage(CachedImage* image);
+    CachedImage* cachedImage() const { return m_cachedImage; }
     
+    const Image& image() { return m_cachedImage->image(); }
+
     virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty,
                              HitTestAction hitTestAction);
     
@@ -74,7 +75,7 @@ public:
     // Called to set generated content images (e.g., :before/:after generated images).
     void setContentObject(CachedObject* co);
     
-    bool isDisplayingError() const { return berrorPic; }
+    bool errorOccurred() const { return m_cachedImage->isErrorImage(); }
     
     HTMLMapElementImpl* imageMap();
 
@@ -84,25 +85,11 @@ private:
     bool isWidthSpecified() const;
     bool isHeightSpecified() const;
 
-    /*
-     * Pointer to the image
-     * If this pointer is 0L, that means that the picture could not be loaded
-     * for some strange reason or that the image is waiting to be downloaded
-     * from the internet for example.
-     */
+    // The image we are rendering.
+    CachedImage* m_cachedImage;
 
-    Image pix;
-
-    /*
-     * Cache for images that need resizing
-     */
-    Image resizeCache;
-
-    // text to display as long as the image isn't available
-    DOMString alt;
-
-    CachedImage* m_image;
-    bool berrorPic : 1;
+    // Text to display as long as the image isn't available
+    DOMString m_altText;
 };
 
 } //namespace

@@ -579,7 +579,7 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const Color& c, const Backg
         }
 
         if (cw>0 && ch>0)
-            p->drawTiledImage(cx, cy, cw, ch, bg->image(), sx, sy);
+            p->drawTiledImage(bg->image(), cx, cy, cw, ch, sx, sy);
     }
     
     if (bgLayer->backgroundClip() != BGBORDER)

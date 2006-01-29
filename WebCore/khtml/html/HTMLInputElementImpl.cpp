@@ -682,7 +682,7 @@ void HTMLInputElementImpl::attach()
         m_imageLoader->updateFromElement();
         if (renderer()) {
             RenderImage* imageObj = static_cast<RenderImage*>(renderer());
-            imageObj->setImage(m_imageLoader->image());    
+            imageObj->setCachedImage(m_imageLoader->image());    
         }
     }
 

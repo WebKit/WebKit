@@ -29,6 +29,7 @@
 #include "Color.h"
 #include "Pen.h"
 #include "Brush.h"
+#include "Image.h"
 #include "KWQFontMetrics.h"
 #include "KWQNamespace.h"
 #include "IntRect.h"
@@ -88,29 +89,22 @@ public:
     void fillRect(int, int, int, int, const WebCore::Brush &);
     void fillRect(const IntRect &, const WebCore::Brush &);
 
-    void drawImage(const IntPoint &, const Image &);
-    void drawImage(const IntPoint &, const Image &, const IntRect &);
-    void drawImage(const IntPoint &, const Image &, const IntRect &, const QString &);
-#if __APPLE__
-    void drawImage( int x, int y, const Image &,
-                     int sx=0, int sy=0, int sw=-1, int sh=-1, int compositeOperator=-1, CGContextRef context=0);
-    void drawImage( int x, int y, int w, int h, const Image &,
-                      int sx=0, int sy=0, int sw=-1, int sh=-1, int compositeOperator=-1, CGContextRef context=0);
-    void drawFloatImage( float x, float y, float w, float h, const Image &,
-                          float sx=0, float sy=0, float sw=-1, float sh=-1, int compositeOperator=-1, CGContextRef context=0);
-    void drawTiledImage(int, int, int, int, const Image &, int sx=0, int sy=0, CGContextRef context=0);
-    void drawScaledAndTiledImage(int, int, int, int, const Image &, int, int, int, int, TileRule hRule = STRETCH, TileRule vRule = STRETCH,
-                                  CGContextRef context=0);
-#else
-    void drawImage( int x, int y, const Image &,
-                     int sx=0, int sy=0, int sw=-1, int sh=-1, int compositeOperator=-1);
-    void drawImage( int x, int y, int w, int h, const Image &,
-                     int sx=0, int sy=0, int sw=-1, int sh=-1, int compositeOperator=-1);
-    void drawFloatImage( float x, float y, float w, float h, const Image &,
-                          float sx=0, float sy=0, float sw=-1, float sh=-1, int compositeOperator=-1);
-    void drawTiledImage(int, int, int, int, const Image &, int sx=0, int sy=0);
-    void drawScaledAndTiledImage(int, int, int, int, const Image &, int, int, int, int, TileRule hRule = STRETCH, TileRule vRule = STRETCH);
-#endif
+    void drawImageAtPoint(const Image&, const IntPoint&, Image::CompositeOperator compositeOperator = Image::CompositeSourceOver);
+    void drawImageInRect(const Image&, const IntRect&, Image::CompositeOperator compositeOperator = Image::CompositeSourceOver);
+
+    void drawImage(const Image &, int x, int y, 
+                   int sx=0, int sy=0, int sw=-1, int sh=-1, Image::CompositeOperator compositeOperator = Image::CompositeSourceOver, 
+                   void* nativeData = 0);
+    void drawImage(const Image&, int x, int y, int w, int h,
+                   int sx=0, int sy=0, int sw=-1, int sh=-1, Image::CompositeOperator compositeOperator = Image::CompositeSourceOver,
+                   void* nativeData = 0);
+    void drawFloatImage(const Image&, float x, float y, float w, float h,
+                        float sx=0, float sy=0, float sw=-1, float sh=-1, Image::CompositeOperator compositeOperator = Image::CompositeSourceOver,
+                        void* nativeData = 0);
+    void drawTiledImage(const Image&, int, int, int, int, int sx=0, int sy=0, void* nativeData = 0);
+    void drawScaledAndTiledImage(const Image &, int, int, int, int, int, int, int, int, 
+                                 TileRule hRule = STRETCH, TileRule vRule = STRETCH,
+                                 void* nativeData = 0);
 
     void addClip(const IntRect &);
     void addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight,
@@ -162,7 +156,6 @@ public:
 #endif
     
 #if __APPLE__
-    static int compositeOperatorFromString (const QString &aString);
     static int getCompositeOperation(CGContextRef context);
     static void setCompositeOperation (CGContextRef context, const QString &operation);
     static void setCompositeOperation (CGContextRef context, int operation);

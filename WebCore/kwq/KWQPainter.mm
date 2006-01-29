@@ -446,40 +446,15 @@ void QPainter::drawConvexPolygon(const IntPointArray &points)
     CGContextRestoreGState(context);
 }
 
-void QPainter::drawImage(const IntPoint &p, const Image &pix)
+void QPainter::drawImageAtPoint(const Image& image, const IntPoint &p, Image::CompositeOperator compositeOperator)
 {        
-    drawImage(p.x(), p.y(), pix);
+    drawImage(image, p.x(), p.y(), 0, 0, -1, -1, compositeOperator);
 }
 
-void QPainter::drawImage(const IntPoint &p, const Image &pix, const IntRect &r)
+void QPainter::drawImageInRect(const Image& image, const IntRect &r, Image::CompositeOperator compositeOperator)
 {
-    drawImage(p.x(), p.y(), pix, r.x(), r.y(), r.width(), r.height());
+    drawImage(image, r.x(), r.y(), r.width(), r.height(), 0, 0, -1, -1, compositeOperator);
 }
-
-struct CompositeOperator
-{
-    const char *name;
-    NSCompositingOperation value;
-};
-
-const int NUM_COMPOSITE_OPERATORS = 14;
-
-struct CompositeOperator compositeOperators[NUM_COMPOSITE_OPERATORS] = {
-    { "clear", NSCompositeClear },
-    { "copy", NSCompositeCopy },
-    { "source-over", NSCompositeSourceOver },
-    { "source-in", NSCompositeSourceIn },
-    { "source-out", NSCompositeSourceOut },
-    { "source-atop", NSCompositeSourceAtop },
-    { "destination-over", NSCompositeDestinationOver },
-    { "destination-in", NSCompositeDestinationIn },
-    { "destination-out", NSCompositeDestinationOut },
-    { "destination-atop", NSCompositeDestinationAtop },
-    { "xor", NSCompositeXOR },
-    { "darker", NSCompositePlusDarker },
-    { "highlight", NSCompositeHighlight },
-    { "lighter", NSCompositePlusLighter }
-};
 
 int QPainter::getCompositeOperation(CGContextRef context)
 {
@@ -496,40 +471,20 @@ void QPainter::setCompositeOperation (CGContextRef context, int op)
     [[WebCoreImageRendererFactory sharedFactory] setCGCompositeOperation:op inContext:context];
 }
 
-int QPainter::compositeOperatorFromString(const QString &aString)
+void QPainter::drawImage(const Image& image, int x, int y,
+                         int sx, int sy, int sw, int sh, Image::CompositeOperator compositeOperator, void* context)
 {
-    NSCompositingOperation op = NSCompositeSourceOver;
-    
-    if (aString.length()) {
-        const char *operatorString = aString.ascii();
-        for (int i = 0; i < NUM_COMPOSITE_OPERATORS; i++) {
-            if (strcasecmp (operatorString, compositeOperators[i].name) == 0) {
-                return compositeOperators[i].value;
-            }
-        }
-    }
-    return (int)op;
+    drawImage(image, x, y, sw, sh, sx, sy, sw, sh, compositeOperator, context);
 }
 
-void QPainter::drawImage(const IntPoint &p, const Image &pix, const IntRect &r, const QString &compositeOperator)
+void QPainter::drawImage(const Image& image, int x, int y, int w, int h,
+                         int sx, int sy, int sw, int sh, Image::CompositeOperator compositeOperator, void* context)
 {
-    drawImage(p.x(), p.y(), pix, r.x(), r.y(), r.width(), r.height(), compositeOperatorFromString(compositeOperator));
+    drawFloatImage(image, (float)x, (float)y, (float)w, (float)h, (float)sx, (float)sy, (float)sw, (float)sh, compositeOperator, context);
 }
 
-void QPainter::drawImage( int x, int y, const Image &image,
-                           int sx, int sy, int sw, int sh, int compositeOperator, CGContextRef context)
-{
-    drawImage (x, y, sw, sh, image, sx, sy, sw, sh, compositeOperator, context);
-}
-
-void QPainter::drawImage( int x, int y, int w, int h, const Image &image,
-                           int sx, int sy, int sw, int sh, int compositeOperator, CGContextRef context)
-{
-    drawFloatImage ((float)x, (float)y, (float)w, (float)h, image, (float)sx, (float)sy, (float)sw, (float)sh, compositeOperator, context);
-}
-
-void QPainter::drawFloatImage( float x, float y, float w, float h, const Image &image,
-                           float sx, float sy, float sw, float sh, int compositeOperator, CGContextRef context)
+void QPainter::drawFloatImage(const Image &image, float x, float y, float w, float h, 
+                              float sx, float sy, float sw, float sh, Image::CompositeOperator compositeOperator, void* context)
 {
     if (data->state.paintingDisabled)
         return;
@@ -554,13 +509,13 @@ void QPainter::drawFloatImage( float x, float y, float w, float h, const Image &
     NSRect inRect = NSMakeRect(x, y, tw, th);
     NSRect fromRect = NSMakeRect(sx, sy, tsw, tsh);
     
-    [image.imageRenderer() drawImageInRect:inRect fromRect:fromRect compositeOperator:(NSCompositingOperation)compositeOperator context:context];
+    [image.imageRenderer() drawImageInRect:inRect fromRect:fromRect compositeOperator:(NSCompositingOperation)compositeOperator context:(CGContextRef)context];
 
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QPainter::drawTiledImage( int x, int y, int w, int h,
-				const Image &image, int sx, int sy, CGContextRef context)
+void QPainter::drawTiledImage(const Image& image, int x, int y, int w, int h,
+                              int sx, int sy, void* context)
 {
     if (data->state.paintingDisabled)
         return;
@@ -568,23 +523,23 @@ void QPainter::drawTiledImage( int x, int y, int w, int h,
     KWQ_BLOCK_EXCEPTIONS;
     NSRect tempRect = { {x, y}, {w, h} }; // workaround for 4213314
     NSPoint tempPoint = { sx, sy };
-    [image.imageRenderer() tileInRect:tempRect fromPoint:tempPoint context:context];
+    [image.imageRenderer() tileInRect:tempRect fromPoint:tempPoint context:(CGContextRef)context];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QPainter::drawScaledAndTiledImage(int x, int y, int w, int h, const Image &image, int sx, int sy, int sw, int sh, 
-                                        TileRule hRule, TileRule vRule, CGContextRef context)
+void QPainter::drawScaledAndTiledImage(const Image &image, int x, int y, int w, int h, int sx, int sy, int sw, int sh, 
+                                       TileRule hRule, TileRule vRule, void* context)
 {
     if (data->state.paintingDisabled)
         return;
     
     if (hRule == STRETCH && vRule == STRETCH)
         // Just do a scale.
-        return drawImage(x, y, w, h, image, sx, sy, sw, sh, -1, context);
+        return drawImage(image, x, y, w, h, sx, sy, sw, sh, Image::CompositeSourceOver, context);
 
     KWQ_BLOCK_EXCEPTIONS;
     [image.imageRenderer() scaleAndTileInRect:NSMakeRect(x, y, w, h) fromRect:NSMakeRect(sx, sy, sw, sh) 
-                        withHorizontalTileRule:(WebImageTileRule)hRule withVerticalTileRule:(WebImageTileRule)vRule context:context];
+                        withHorizontalTileRule:(WebImageTileRule)hRule withVerticalTileRule:(WebImageTileRule)vRule context:(CGContextRef)context];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 

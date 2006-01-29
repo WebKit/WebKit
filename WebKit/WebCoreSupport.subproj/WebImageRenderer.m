@@ -95,8 +95,6 @@
 
     copy = [[WebImageRenderer alloc] init];
     copy->MIMEType = [MIMEType copy];
-    copy->adjustedSize = adjustedSize;
-    copy->isSizeAdjusted = isSizeAdjusted;
     copy->imageData = [imageData retain];
         
     return copy;
@@ -107,17 +105,8 @@
     return [self copyWithZone:0];
 }
 
-- (void)resize:(NSSize)s
-{
-    isSizeAdjusted = YES;
-    adjustedSize = s;
-}
-
 - (NSSize)size
 {
-    if (isSizeAdjusted)
-        return adjustedSize;
-        
     if (!imageData)
         return NSZeroSize;
 
@@ -165,17 +154,9 @@
     if (aContext == 0)
         aContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
 
-    if (isSizeAdjusted) {
-        [imageData drawImageAtIndex:[imageData currentFrame] inRect:CGRectMake(ir.origin.x, ir.origin.y, ir.size.width, ir.size.height) 
-                fromRect:CGRectMake(fr.origin.x, fr.origin.y, fr.size.width, fr.size.height) 
-                adjustedSize:CGSizeMake(adjustedSize.width, adjustedSize.height)
-                compositeOperation:operator context:aContext];
-    }
-    else {
-        [imageData drawImageAtIndex:[imageData currentFrame] inRect:CGRectMake(ir.origin.x, ir.origin.y, ir.size.width, ir.size.height) 
+    [imageData drawImageAtIndex:[imageData currentFrame] inRect:CGRectMake(ir.origin.x, ir.origin.y, ir.size.width, ir.size.height) 
                 fromRect:CGRectMake(fr.origin.x, fr.origin.y, fr.size.width, fr.size.height) 
                 compositeOperation:operator context:aContext];
-    }
 
     targetAnimationRect = ir;
     [self _startOrContinueAnimationIfNecessary];
