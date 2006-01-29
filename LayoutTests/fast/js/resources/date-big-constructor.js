@@ -1,5 +1,6 @@
 description(
-'This test case checks that months greater than 11 are handled correctly when passed to the Date constructor and the Date.UTC function. The ECMA 262 specification says that months &gt; 11 should be treated as month % 12 and the year as year + floor(month / 12).'
+'This test case checks that months greater than 11 are handled correctly when passed to the Date constructor and the Date.UTC function. ' +
+'The ECMA 262 specification says that months &gt; 11 should be treated as month % 12 and the year as year + floor(month / 12).'
 );
 
 var expectedUTC = [1104537600000, 1107216000000, 1109635200000, 1112313600000,

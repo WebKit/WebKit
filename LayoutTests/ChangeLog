@@ -1,5 +1,18 @@
 2006-01-28  Darin Adler  <darin@apple.com>
 
+        Reviewed by John Sullivan.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6870
+          REGRESSION: JavaScript Date constructor won't accept another Date object
+
+        * fast/js/date-constructor.html: Added.
+        * fast/js/date-constructor-expected.txt: Added.
+        * fast/js/resources/date-constructor.js: Added.
+
+        * fast/js/resources/date-big-constructor.js: Formatting tweak.
+
+2006-01-28  Darin Adler  <darin@apple.com>
+
         Reviewed by Eric.
 
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6711

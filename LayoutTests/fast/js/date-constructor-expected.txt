@@ -1,0 +1,31 @@
+This test case tests the Date constructor. In particular, it tests many cases of creating a Date from another Date and creating a Date from an object that has both valueOf and toString functions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS new Date(1111).getTime() is 1111
+PASS new Date(object).getTime() is 1111
+PASS new Date(new Date(1111)).getTime() is 1111
+PASS new Date(new Date(1111).toString()).getTime() is 1000
+PASS new Date(1111, 1).getTime() - timeZoneOffset is -27104803200000
+PASS new Date(1111, 1, 1).getTime() - timeZoneOffset is -27104803200000
+PASS new Date(1111, 1, 1, 1).getTime() - timeZoneOffset is -27104799600000
+PASS new Date(1111, 1, 1, 1, 1).getTime() - timeZoneOffset is -27104799540000
+PASS new Date(1111, 1, 1, 1, 1, 1).getTime() - timeZoneOffset is -27104799539000
+PASS new Date(1111, 1, 1, 1, 1, 1, 1).getTime() - timeZoneOffset is -27104799538999
+PASS new Date(1111, 1, 1, 1, 1, 1, 1, 1).getTime() - timeZoneOffset is -27104799538999
+PASS new Date(1111, 1, 1, 1, 1, 1, 1, 1, 1).getTime() - timeZoneOffset is -27104799538999
+PASS new Date(1111, 1, 1, 1, 1, 1, 1, 1, 1).getTime() - timeZoneOffset is -27104799538999
+PASS new Date(new Date(1111, 1)).getTime() - timeZoneOffset is -27104803200000
+PASS new Date(new Date(1111, 1, 1)).getTime() - timeZoneOffset is -27104803200000
+PASS new Date(new Date(1111, 1, 1, 1)).getTime() - timeZoneOffset is -27104799600000
+PASS new Date(new Date(1111, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset is -27104799539000
+PASS new Date(new Date(1111, 1, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset is -27104799538999
+PASS new Date(new Date(1111, 1, 1, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset is -27104799538999
+PASS new Date(new Date(1111, 1, 1, 1, 1, 1, 1, 1, 1)).getTime() - timeZoneOffset is -27104799538999
+PASS new Date(1111, 1111, 1111, 1111, 1111, 1111, 1111, 1111).getTime() - timeZoneOffset is -28085817599889
+PASS new Date(new Date(1111, 1111, 1111, 1111, 1111, 1111, 1111, 1111)).getTime() - timeZoneOffset is -28085817599889
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
