@@ -83,8 +83,6 @@ public:
     void resize(const IntSize &);
     void resize(int, int);
 
-    bool mask() const;
-
     bool decode(const ByteArray &bytes, bool allDataReceived);
 
 #if __APPLE__

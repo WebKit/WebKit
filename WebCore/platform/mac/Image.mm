@@ -113,11 +113,6 @@ bool Image::decode(const ByteArray& bytes, bool allDataReceived)
     return [m_imageRenderer incrementalLoadWithBytes:bytes.data() length:bytes.size() complete:allDataReceived callback:nil];
 }
 
-bool Image::mask() const
-{
-    return false;
-}
-
 bool Image::isNull() const
 {
     return !m_imageRenderer || [m_imageRenderer isNull];

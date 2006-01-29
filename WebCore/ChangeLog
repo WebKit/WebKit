@@ -1,5 +1,12 @@
 2006-01-28  David Hyatt  <hyatt@apple.com>
 
+        Eliminate the mask() method on Image.  It's unused.
+
+        * platform/Image.h:
+        * platform/mac/Image.mm:
+
+2006-01-28  David Hyatt  <hyatt@apple.com>
+
         Clean up the Image class.  Eliminate the MIME type member variable.
         Eliminate an unused constructor.  Fix the constructor to take
         a QString rather than an NSString so that it's portable.  Rename
