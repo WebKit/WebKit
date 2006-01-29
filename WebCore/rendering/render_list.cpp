@@ -517,7 +517,7 @@ void RenderListMarker::layout()
 void RenderListMarker::imageChanged(CachedImage *o, const IntRect& r)
 {
     if (o != m_listImage) {
-        RenderBox::setImage(o, r);
+        RenderBox::imageChanged(o, r);
         return;
     }
 

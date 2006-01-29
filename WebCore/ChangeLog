@@ -1,3 +1,30 @@
+2006-01-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6914
+          REGRESSION: fast/block/basic/014.html crashes Safari
+
+        * rendering/render_image.h:
+        (WebCore::RenderImage::image): Return a null image when m_cachedImage is 0.
+        (WebCore::RenderImage::errorOccurred): Return false when m_cachedImage is 0.
+        * rendering/render_image.cpp: (WebCore::RenderImage::nullImage): Added.
+        Returns a global null image for use when we have no cached image.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6919
+          REGRESSION: Background images don't paint when they are finished loading
+
+        * rendering/render_object.h: Renamed the old setImage to imageChanged, the
+        new name for the same function.
+        * rendering/render_object.cpp: (WebCore::RenderObject::imageChanged): Ditto.
+        * rendering/render_list.cpp: (RenderListMarker::imageChanged): Changed the
+        call to parent to call the new imageChanged instead of the old setImage.
+
+        - fixed something else that was causing some layout test crashes
+
+        * kwq/KWQRenderTreeDebug.cpp: (externalRepresentation): Rearrange so we won't
+        ever dereference a null pointer here.
+
 2006-01-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

@@ -385,4 +385,10 @@ int RenderImage::calcReplacedHeight() const
     return RenderReplaced::calcReplacedHeight();
 }
 
+const Image& RenderImage::nullImage()
+{
+    static Image sharedNullImage;
+    return sharedNullImage;
+}
+
 }

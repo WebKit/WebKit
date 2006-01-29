@@ -851,7 +851,7 @@ public:
     virtual int previousOffset (int current) const;
     virtual int nextOffset (int current) const;
 
-    virtual void setImage(CachedImage*, const IntRect&);
+    virtual void imageChanged(CachedImage*, const IntRect&);
 
     virtual void selectionStartEnd(int& spos, int& epos);
 

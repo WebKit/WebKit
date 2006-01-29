@@ -2549,14 +2549,13 @@ QChar RenderObject::backslashAsCurrencySymbol() const
     return codec->backslashAsCurrencySymbol();
 }
 
-void RenderObject::setImage(CachedImage *image, const IntRect&)
+void RenderObject::imageChanged(CachedImage *image, const IntRect&)
 {
     // Repaint when the background image or border image finishes loading.
     // This is needed for RenderBox objects, and also for table objects that hold
     // backgrounds that are then respected by the table cells (which are RenderBox
     // subclasses). It would be even better to find a more elegant way of doing this that
     // would avoid putting this function and the CachedObjectClient base class into RenderObject.
-
     if (image && image->imageSize() == image->decodedRect().size() && parent()) {
         if (canvas() && element() && (element()->hasTagName(htmlTag) || element()->hasTagName(bodyTag)))
             canvas()->repaint();    // repaint the entire canvas since the background gets propagated up
