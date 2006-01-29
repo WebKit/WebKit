@@ -1,3 +1,12 @@
+2006-01-29  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Fix SVG layout tests crash due to Vector change.
+
+        * kcanvas/device/KRenderingDevice.cpp:
+        (KRenderingDevice::currentContext): check isEmpty, return 0
+
 2006-01-28  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

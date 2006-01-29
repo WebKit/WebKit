@@ -35,6 +35,8 @@ KRenderingDevice::~KRenderingDevice()
 
 KRenderingDeviceContext *KRenderingDevice::currentContext() const
 {
+    if (m_contextStack.isEmpty())
+        return 0;
     return m_contextStack.last();
 }
 
