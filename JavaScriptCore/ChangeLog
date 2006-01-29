@@ -1,3 +1,13 @@
+2006-01-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=6895
+          include exception names in JavaScript form of DOM exception
+
+        * khtml/ecma/kjs_binding.cpp: (KJS::setDOMException): Include the name of the
+        exception in the error message.
+
 2006-01-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
@@ -9,6 +19,24 @@
         (KXMLCore::Vector::first): Added as a convenience.
         (KXMLCore::Vector::last): Convenience for stack-style use.
         (KXMLCore::Vector::removeLast): ditto
+
+2006-01-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by xxx
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6870
+          REGRESSION: JavaScript Date constructor won't accept another Date object
+
+        Test: fast/js/date-constructor.html
+
+        * kjs/date_object.cpp: (KJS::DateObjectImp::construct):
+        Added a special case for constructing one date from another (to avoid losing
+        milliseconds, which are not in the text form, to match Firefox), and changed
+        the base code to convert to primitive before checking for string to match
+        the standard. Also corrected a couple silly things in the "construct from
+        current time" code path (removed a floor that does no good, and changed
+        the constant used to convert microseconds to milliseconds to be a 1000
+        rather than "msPerSecond").
 
 2006-01-28  Darin Adler  <darin@apple.com>
 

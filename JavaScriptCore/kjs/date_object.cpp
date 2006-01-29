@@ -716,7 +716,7 @@ JSObject *DateObjectImp::construct(ExecState *exec, const List &args)
 #if !WIN32
     struct timeval tv;
     gettimeofday(&tv, 0);
-    double utc = floor(tv.tv_sec * msPerSecond + tv.tv_usec / msPerSecond);
+    double utc = floor(tv.tv_sec * msPerSecond + tv.tv_usec / 1000);
 #else
 #  if __BORLANDC__
     struct timeb timebuffer;
@@ -725,14 +725,19 @@ JSObject *DateObjectImp::construct(ExecState *exec, const List &args)
     struct _timeb timebuffer;
     _ftime(&timebuffer);
 #  endif
-    double utc = floor(timebuffer.time * msPerSecond + timebuffer.millitm);
+    double utc = timebuffer.time * msPerSecond + timebuffer.millitm;
 #endif
     value = utc;
   } else if (numArgs == 1) {
-      if (args[0]->isString())
-          value = parseDate(args[0]->toString(exec));
+    if (args[0]->isObject(&DateInstance::info))
+      value = static_cast<JSObject*>(args[0])->internalValue()->toNumber(exec);
+    else {
+      JSValue* primitive = args[0]->toPrimitive(exec);
+      if (primitive->isString())
+        value = parseDate(primitive->getString());
       else
-          value = args[0]->toPrimitive(exec)->toNumber(exec);
+        value = primitive->toNumber(exec);
+    }
   } else {
     if (isNaN(args[0]->toNumber(exec))
         || isNaN(args[1]->toNumber(exec))
