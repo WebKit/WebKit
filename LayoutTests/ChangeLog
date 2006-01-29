@@ -1,3 +1,18 @@
+2006-01-29  David Harrison  <harrison@apple.com>
+
+        Adding test cases for:
+        1) Arrowing up or down to an empty list item skipped the list item
+        2) Deleting the content of a list item made it so you could never get the cursor inside the empty item
+
+        * editing/selection/move-by-line-002-expected.png: Added.
+        * editing/selection/move-by-line-002-expected.checksum: Added.
+        * editing/selection/move-by-line-002-expected.txt: Added.
+        * editing/selection/move-by-line-002.html: Added.
+        * editing/deleting/delete-listitem-002-expected.checksum: Added.
+        * editing/deleting/delete-listitem-002-expected.png: Added.
+        * editing/deleting/delete-listitem-002-expected.txt: Added.
+        * editing/deleting/delete-listitem-002.html: Added.
+
 2006-01-29  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt & darin.
