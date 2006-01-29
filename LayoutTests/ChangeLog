@@ -1,3 +1,30 @@
+2006-01-29  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Darin.
+
+        - fixed some tests that were missing test images
+
+        * fast/replaced/resources/sample.gif: Added.
+        * fast/replaced/resources/1x1-green.png: Added.
+        * fast/replaced/resources/1x1-red.png: Added.
+
+        * fast/replaced/001.html: Changed images to point to actual images.
+        * fast/replaced/002.html: Ditto.
+        * fast/replaced/003.html: Ditto.
+        * fast/replaced/004.html: Ditto.
+
+        * fast/replaced/002-expected.txt: Updated.
+        * fast/replaced/003-expected.txt: Updated.
+
+        * fast/replaced/001-expected.png: Updated.
+        * fast/replaced/001-expected.checksum: Updated.
+        * fast/replaced/002-expected.png: Updated.
+        * fast/replaced/002-expected.checksum: Updated.
+        * fast/replaced/003-expected.png: Updated.
+        * fast/replaced/003-expected.checksum: Updated.
+        * fast/replaced/004-expected.png: Updated.
+        * fast/replaced/004-expected.checksum: Updated.
+
 2006-01-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.
