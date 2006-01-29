@@ -1,3 +1,15 @@
+2006-01-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - miscellaneous Vector improvements
+
+        * kxmlcore/Vector.h:
+        (KXMLCore::Vector::at): Add range-checking asserts.
+        (KXMLCore::Vector::first): Added as a convenience.
+        (KXMLCore::Vector::last): Convenience for stack-style use.
+        (KXMLCore::Vector::removeLast): ditto
+
 2006-01-28  Darin Adler  <darin@apple.com>
 
         * kjs/create_hash_table: Added missing license.

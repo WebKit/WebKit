@@ -25,8 +25,8 @@
 
 #include "Assertions.h"
 #include <stdlib.h>
-#include "VectorTraits.h"
 #include <utility>
+#include "VectorTraits.h"
 
 namespace KXMLCore {
 
@@ -308,8 +308,17 @@ namespace KXMLCore {
         size_t capacity() const { return m_impl.capacity(); }
         bool isEmpty() const { return !size(); }
 
-        T& at(size_t i) { return m_impl.buffer()[i]; }
-        const T& at(size_t i) const { return m_impl.buffer()[i]; }
+        T& at(size_t i) 
+        { 
+            ASSERT(i < size());
+            return m_impl.buffer()[i]; 
+        }
+        const T& at(size_t i) const 
+        {
+            ASSERT(i < size());
+            return m_impl.buffer()[i]; 
+        }
+
         T& operator[](size_t i) { return at(i); }
         const T& operator[](size_t i) const { return at(i); }
         T& operator[](int i) { return at(i); }
@@ -325,6 +334,11 @@ namespace KXMLCore {
         const_iterator begin() const { return data(); }
         const_iterator end() const { return begin() + m_size; }
         
+        T& first() { return at(0); }
+        const T& first() const { return at(0); }
+        T& last() { return at(size() - 1); }
+        const T& last() const { return at(size() - 1); }
+
         void resize(size_t size);
         void reserveCapacity(size_t newCapacity);
 
@@ -332,6 +346,12 @@ namespace KXMLCore {
 
         template<typename U>
         void append(const U& u);
+
+        void removeLast() 
+        {
+            ASSERT(!isEmpty());
+            resize(size() - 1); 
+        }
 
         Vector(size_t size, const T& val)
             : m_size(size)
