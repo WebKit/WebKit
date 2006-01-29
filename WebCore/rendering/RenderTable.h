@@ -35,8 +35,7 @@ class RenderTableCell;
 class RenderTableSection;
 class TableLayout;
 
-class RenderTable : public RenderBlock
-{
+class RenderTable : public RenderBlock {
 public:
     enum Rules {
         None    = 0x00,
@@ -58,17 +57,16 @@ public:
         Box    = 0x0f
     };
 
-    RenderTable(DOM::NodeImpl* node);
+    RenderTable(NodeImpl*);
     ~RenderTable();
 
-    virtual const char *renderName() const { return "RenderTable"; }
+    virtual const char* renderName() const { return "RenderTable"; }
 
-    virtual void setStyle(RenderStyle *style);
+    virtual void setStyle(RenderStyle*);
 
     virtual bool isTable() const { return true; }
 
-    int getColumnPos(int col) const
-        { return columnPos[col]; }
+    int getColumnPos(int col) const { return columnPos[col]; }
 
     int hBorderSpacing() const { return hspacing; }
     int vBorderSpacing() const { return vspacing; }
@@ -81,17 +79,17 @@ public:
     
     Rules getRules() const { return rules; }
 
-    const Color &bgColor() const { return style()->backgroundColor(); }
+    const Color& bgColor() const { return style()->backgroundColor(); }
 
-    uint cellPadding() const { return padding; }
-    void setCellPadding(uint p) { padding = p; }
+    unsigned cellPadding() const { return padding; }
+    void setCellPadding(unsigned p) { padding = p; }
 
     // overrides
     virtual int overflowHeight(bool includeInterior = true) const { return height(); }
     virtual int overflowWidth(bool includeInterior = true) const { return width(); }
-    virtual void addChild(RenderObject *child, RenderObject *beforeChild = 0);
-    virtual void paint(PaintInfo& i, int tx, int ty);
-    virtual void paintBoxDecorations(PaintInfo& i, int _tx, int _ty);
+    virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
+    virtual void paint(PaintInfo&, int tx, int ty);
+    virtual void paintBoxDecorations(PaintInfo&, int _tx, int _ty);
     virtual void layout();
     virtual void calcMinMaxWidth();
 
@@ -106,15 +104,15 @@ public:
     virtual void dump(QTextStream *stream, QString ind = "") const;
 #endif
     struct ColumnStruct {
-	enum {
-	    WidthUndefined = 0xffff
-	};
-	ColumnStruct() {
-	    span = 1;
-	    width = WidthUndefined;
-	}
-	ushort span;
-	uint width; // the calculated position of the column
+        enum {
+            WidthUndefined = 0xffff
+        };
+        ColumnStruct() {
+            span = 1;
+            width = WidthUndefined;
+        }
+        unsigned short span;
+        unsigned width; // the calculated position of the column
     };
 
     Array<int> columnPos;
@@ -125,67 +123,67 @@ public:
     int numEffCols() const { return columns.size(); }
     int spanOfEffCol(int effCol) const { return columns[effCol].span; }
     int colToEffCol(int col) const {
-	int c = 0;
-	int i = 0;
-	while (c < col && i < (int)columns.size()) {
-	    c += columns[i].span;
-	    i++;
-	}
-	return i;
+        int c = 0;
+        int i = 0;
+        while (c < col && i < (int)columns.size()) {
+            c += columns[i].span;
+            i++;
+        }
+        return i;
     }
     int effColToCol(int effCol) const {
-	int c = 0;
-	for (int i = 0; i < effCol; i++)
-	    c += columns[i].span;
-	return c;
+        int c = 0;
+        for (int i = 0; i < effCol; i++)
+            c += columns[i].span;
+        return c;
     }
 
     int bordersPaddingAndSpacing() const {
-	return borderLeft() + borderRight() + 
+        return borderLeft() + borderRight() + 
                (collapseBorders() ? 0 : (paddingLeft() + paddingRight() + (numEffCols() + 1) * hBorderSpacing()));
     }
 
-    RenderTableCol *colElement(int col);
+    RenderTableCol* colElement(int col);
 
     void setNeedSectionRecalc() { needSectionRecalc = true; }
 
-    virtual RenderObject* removeChildNode(RenderObject* child);
+    virtual RenderObject* removeChildNode(RenderObject*);
 
-    RenderTableCell* cellAbove(const RenderTableCell* cell) const;
-    RenderTableCell* cellBelow(const RenderTableCell* cell) const;
-    RenderTableCell* cellLeft(const RenderTableCell* cell) const;
-    RenderTableCell* cellRight(const RenderTableCell* cell) const;
+    RenderTableCell* cellAbove(const RenderTableCell*) const;
+    RenderTableCell* cellBelow(const RenderTableCell*) const;
+    RenderTableCell* cellBefore(const RenderTableCell*) const;
+    RenderTableCell* cellAfter(const RenderTableCell*) const;
  
     CollapsedBorderValue* currentBorderStyle() { return m_currentBorder; }
     
     bool hasSections() const { return head || foot || firstBody; }
 
-protected:
-
+private:
     void recalcSections();
 
     friend class AutoTableLayout;
     friend class FixedTableLayout;
 
-    RenderBlock *tCaption;
-    RenderTableSection *head;
-    RenderTableSection *foot;
-    RenderTableSection *firstBody;
+    RenderBlock* tCaption;
+    RenderTableSection* head;
+    RenderTableSection* foot;
+    RenderTableSection* firstBody;
 
-    TableLayout *tableLayout;
+    TableLayout* tableLayout;
 
     CollapsedBorderValue* m_currentBorder;
     
     Frame frame                 : 4;
     Rules rules                 : 4;
 
-    bool has_col_elems		: 1;
-    uint padding		: 22;
-    uint needSectionRecalc	: 1;
+    bool has_col_elems          : 1;
+    unsigned padding            : 22;
+    uint needSectionRecalc      : 1;
     
     short hspacing;
     short vspacing;
 };
 
 }
+
 #endif

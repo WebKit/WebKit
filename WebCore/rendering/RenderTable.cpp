@@ -736,7 +736,7 @@ RenderTableCell* RenderTable::cellBelow(const RenderTableCell* cell) const
         return 0;
 }
 
-RenderTableCell* RenderTable::cellLeft(const RenderTableCell* cell) const
+RenderTableCell* RenderTable::cellBefore(const RenderTableCell* cell) const
 {
     RenderTableSection* section = cell->section();
     int effCol = colToEffCol(cell->col());
@@ -752,7 +752,7 @@ RenderTableCell* RenderTable::cellLeft(const RenderTableCell* cell) const
     return prevCell.cell;
 }
 
-RenderTableCell* RenderTable::cellRight(const RenderTableCell* cell) const
+RenderTableCell* RenderTable::cellAfter(const RenderTableCell* cell) const
 {
     int effCol = colToEffCol(cell->col() + cell->colSpan());
     if (effCol >= numEffCols())

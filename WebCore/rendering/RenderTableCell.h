@@ -23,6 +23,7 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #ifndef RenderTableCell_H
 #define RenderTableCell_H
 
@@ -32,20 +33,16 @@
 
 namespace WebCore {
 
-class RenderTableCell : public RenderBlock
-{
+class RenderTableCell : public RenderBlock {
 public:
-    RenderTableCell(DOM::NodeImpl* node);
+    RenderTableCell(NodeImpl*);
 
     virtual void destroy();
 
-    virtual const char *renderName() const { return "RenderTableCell"; }
+    virtual const char* renderName() const { return "RenderTableCell"; }
     virtual bool isTableCell() const { return true; }
 
-    // overrides RenderObject
-    virtual bool requiresLayer();
-
-    // ### FIX these two...
+    // FIXME: need to implement cellIndex
     int cellIndex() const { return 0; }
     void setCellIndex(int) { }
 
@@ -62,22 +59,22 @@ public:
 
     Length styleOrColWidth();
 
-    // overrides
+    virtual bool requiresLayer();
     virtual void calcMinMaxWidth();
     virtual void calcWidth();
-    virtual void setWidth(int width);
-    virtual void setStyle(RenderStyle *style);
+    virtual void setWidth(int);
+    virtual void setStyle(RenderStyle*);
 
     int borderLeft() const;
     int borderRight() const;
     int borderTop() const;
     int borderBottom() const;
 
-    CollapsedBorderValue collapsedLeftBorder() const;
-    CollapsedBorderValue collapsedRightBorder() const;
+    CollapsedBorderValue collapsedLeftBorder(bool rtl) const;
+    CollapsedBorderValue collapsedRightBorder(bool rtl) const;
     CollapsedBorderValue collapsedTopBorder() const;
     CollapsedBorderValue collapsedBottomBorder() const;
-    virtual void collectBorders(QValueList<CollapsedBorderValue>& borderStyles);
+    virtual void collectBorders(QValueList<CollapsedBorderValue>&);
 
     virtual void updateFromElement();
 
@@ -90,28 +87,28 @@ public:
 
     void paintCollapsedBorder(QPainter* p, int x, int y, int w, int h);
     
-    // lie position to outside observers
+    // lie about position to outside observers
     virtual int yPos() const { return m_y + _topExtra; }
 
-    virtual void computeAbsoluteRepaintRect(IntRect& r, bool f=false);
-    virtual bool absolutePosition(int &xPos, int &yPos, bool f = false);
+    virtual void computeAbsoluteRepaintRect(IntRect&, bool f=false);
+    virtual bool absolutePosition(int& xPos, int& yPos, bool f = false);
 
     virtual short baselinePosition(bool = false) const;
 
     virtual int borderTopExtra() const { return _topExtra; }
     virtual int borderBottomExtra() const { return _bottomExtra; }
 
-    RenderTable *table() const { return static_cast<RenderTable *>(parent()->parent()->parent()); }
-    RenderTableSection *section() const { return static_cast<RenderTableSection *>(parent()->parent()); }
+    RenderTable* table() const { return static_cast<RenderTable*>(parent()->parent()->parent()); }
+    RenderTableSection* section() const { return static_cast<RenderTableSection*>(parent()->parent()); }
 
-#ifndef NDEBUG
+#if !NDEBUG
     virtual void dump(QTextStream *stream, QString ind = "") const;
 #endif
 
     virtual IntRect getAbsoluteRepaintRect();
     
 protected:
-    virtual void paintBoxDecorations(PaintInfo& i, int _tx, int _ty);
+    virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
     
     int _row;
     int _col;
@@ -126,4 +123,5 @@ protected:
 };
 
 }
+
 #endif

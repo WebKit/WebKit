@@ -1,3 +1,25 @@
+2006-01-29  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Test: fast/table/border-collapsing/rtl-border-collapsing.html
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6888
+          Collapsed borders appear on the wrong side or on the wrong cell in RTL tables
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::cellBefore): Renamed cellLeft to this.
+        (WebCore::RenderTable::cellAfter): Renamed cellRight to this.
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::collapsedLeftBorder): Added the RTL case.
+        (WebCore::RenderTableCell::collapsedRightBorder): Ditto.
+        (WebCore::RenderTableCell::borderLeft):
+        (WebCore::RenderTableCell::borderRight):
+        (WebCore::RenderTableCell::collectBorders):
+        (WebCore::RenderTableCell::paintCollapsedBorder):
+        * rendering/RenderTableCell.h:
+
 2006-01-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
