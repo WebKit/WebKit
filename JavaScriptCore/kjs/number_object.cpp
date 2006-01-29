@@ -29,10 +29,13 @@
 #include "error_object.h"
 #include "dtoa.h"
 
+#include <kxmlcore/Vector.h>
+
 #include "number_object.lut.h"
 
 #include <assert.h>
 #include <math.h>
+
 using namespace KJS;
 
 
@@ -94,20 +97,16 @@ static UString integer_part_noexp(double d)
     } else if (decimalPoint <= 0) {
         str += UString("0");
     } else {
-        char *buf;
+        Vector<char, 1024> buf(decimalPoint + 1);
         
         if (length <= decimalPoint) {
-            buf = (char*)fastMalloc(decimalPoint+1);
-            strcpy(buf,result);
-            memset(buf+length,'0',decimalPoint-length);
-        } else {
-            buf = (char*)fastMalloc(decimalPoint+1);
-            strncpy(buf,result,decimalPoint);
-        }
+            strcpy(buf, result);
+            memset(buf + length, '0', decimalPoint - length);
+        } else
+            strncpy(buf, result, decimalPoint);
         
         buf[decimalPoint] = '\0';
         str += UString(buf);
-        fastFree(buf);
     }
     
     kjs_freedtoa(result);
@@ -117,12 +116,10 @@ static UString integer_part_noexp(double d)
 
 static UString char_sequence(char c, int count)
 {
-    char *buf = (char*)fastMalloc(count+1);
-    memset(buf,c,count);
+    Vector<char, 2048> buf(count + 1, c);
     buf[count] = '\0';
-    UString s(buf);
-    fastFree(buf);
-    return s;
+
+    return UString(buf);
 }
 
 // ECMA 15.7.4.2 - 15.7.4.7

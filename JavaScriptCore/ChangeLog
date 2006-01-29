@@ -1,3 +1,63 @@
+2006-01-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave Hyatt.
+        
+        - added a Vector class
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6894
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/internal.cpp:
+        (KJS::Parser::saveNewNode): Apply Vector.
+        (KJS::clearNewNodes): ditto
+        * kjs/number_object.cpp:
+        (integer_part_noexp): ditto
+        (char_sequence): ditto
+        * kjs/ustring.cpp:
+        (KJS::UString::UTF8String): ditto
+        * kxmlcore/HashMap.h:
+        (KXMLCore::deleteAllValues): Tweaked this to only apply to HashMap,
+        other versions are useful for other containers.
+        * kxmlcore/Vector.h: Added. Implemented a Vector class, which should
+        be usable for all Array/QVector style purposes, and also as a stack buffer
+        with oversize handling. Also some helper classes to make vector operations
+        as efficient as possible for POD types and for simple non-PODs like RefPtr.
+        (KXMLCore::):
+        (KXMLCore::VectorTypeOperations::destruct):
+        (KXMLCore::VectorTypeOperations::initialize):
+        (KXMLCore::VectorTypeOperations::move):
+        (KXMLCore::VectorTypeOperations::uninitializedCopy):
+        (KXMLCore::VectorTypeOperations::uninitializedFill):
+        (KXMLCore::VectorBuffer::VectorBuffer):
+        (KXMLCore::VectorBuffer::~VectorBuffer):
+        (KXMLCore::VectorBuffer::deallocateBuffer):
+        (KXMLCore::VectorBuffer::inlineBuffer):
+        (KXMLCore::Vector::Vector):
+        (KXMLCore::Vector::~Vector):
+        (KXMLCore::Vector::size):
+        (KXMLCore::Vector::capacity):
+        (KXMLCore::Vector::isEmpty):
+        (KXMLCore::Vector::at):
+        (KXMLCore::Vector::operator[]):
+        (KXMLCore::Vector::data):
+        (KXMLCore::Vector::operator T*):
+        (KXMLCore::Vector::operator const T*):
+        (KXMLCore::Vector::begin):
+        (KXMLCore::Vector::end):
+        (KXMLCore::Vector::clear):
+        (KXMLCore::Vector::fill):
+        (KXMLCore::Vector::operator=):
+        (KXMLCore::::Vector):
+        (KXMLCore::::operator):
+        (KXMLCore::::fill):
+        (KXMLCore::::expandCapacity):
+        (KXMLCore::::resize):
+        (KXMLCore::::reserveCapacity):
+        (KXMLCore::::append):
+        (KXMLCore::deleteAllValues):
+        * kxmlcore/VectorTraits.h: Added.
+        (KXMLCore::VectorTraits): Traits to enable making Vector efficient for
+        simple types.
+
 2006-01-28  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

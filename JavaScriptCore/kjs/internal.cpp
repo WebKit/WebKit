@@ -43,6 +43,7 @@
 #include "string_object.h"
 #include <assert.h>
 #include <kxmlcore/HashMap.h>
+#include <kxmlcore/Vector.h>
 #include <math.h>
 #include <stdio.h>
 
@@ -352,33 +353,20 @@ void ContextImp::mark()
 static RefPtr<ProgramNode> *progNode;
 int Parser::sid = 0;
 
-const int initialCapacity = 64;
-const int growthFactor = 2;
-
-static int numNewNodes;
-static int newNodesCapacity;
-static Node **newNodes;
+static Vector<RefPtr<Node> >* newNodes;
 
 void Parser::saveNewNode(Node *node)
 {
-  if (numNewNodes == newNodesCapacity) {
-    newNodesCapacity = (newNodesCapacity == 0) ? initialCapacity : newNodesCapacity * growthFactor;
-    newNodes = (Node **)fastRealloc(newNodes, sizeof(Node *) * newNodesCapacity);
-  }
+    if (!newNodes)
+        newNodes = new Vector<RefPtr<Node> >;
 
-  newNodes[numNewNodes++] = node;
+    newNodes->append(node);
 }
 
 static void clearNewNodes()
 {
-  for (int i = 0; i < numNewNodes; i++) {
-    if (newNodes[i]->refcount() == 0)
-      delete newNodes[i];
-  }
-  fastFree(newNodes);
-  newNodes = 0;
-  numNewNodes = 0;
-  newNodesCapacity = 0;
+    delete newNodes;
+    newNodes = 0;
 }
 
 RefPtr<ProgramNode> Parser::parse(const UString &sourceURL, int startingLineNumber,
