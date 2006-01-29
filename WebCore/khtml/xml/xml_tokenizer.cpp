@@ -41,8 +41,8 @@
 #include "kentities.h" // for xhtml entity name lookup
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
-#include <qptrstack.h>
 #include <qvariant.h>
+#include <kxmlcore/Vector.h>
 
 #if SVG_SUPPORT
 #include "SVGNames.h"
@@ -237,16 +237,16 @@ XMLTokenizer::XMLTokenizer(DocumentFragmentImpl *fragment, ElementImpl *parentEl
         m_doc->ref();
           
     // Add namespaces based on the parent node
-    QPtrStack<ElementImpl> elemStack;
+    Vector<ElementImpl*> elemStack;
     while (parentElement) {
-        elemStack.push(parentElement);
+        elemStack.append(parentElement);
         
         NodeImpl *n = parentElement->parentNode();
         if (!n || !n->isElementNode())
             break;
         parentElement = static_cast<ElementImpl *>(n);
     }
-    while (ElementImpl *element = elemStack.pop()) {
+    for (ElementImpl *element = elemStack.last(); !elemStack.isEmpty(); elemStack.removeLast()) {
         if (NamedAttrMapImpl *attrs = element->attributes()) {
             for (unsigned i = 0; i < attrs->length(); i++) {
                 AttributeImpl *attr = attrs->attributeItem(i);

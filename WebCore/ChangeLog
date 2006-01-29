@@ -1,5 +1,30 @@
 2006-01-28  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Darin.
+
+        - remove QPtrStack, replace with Vector or traverseNextNode as appropriate
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * kcanvas/device/KRenderingDevice.cpp:
+        (KRenderingDevice::currentContext):
+        (KRenderingDevice::popContext):
+        (KRenderingDevice::pushContext):
+        * kcanvas/device/KRenderingDevice.h:
+        * khtml/html/html_documentimpl.cpp:
+        * khtml/xml/DocumentImpl.cpp:
+        * khtml/xml/xml_tokenizer.cpp:
+        (WebCore::XMLTokenizer::XMLTokenizer):
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject addChildrenToArray:]):
+        * kwq/KWQPainter.mm:
+        (WebCore::QPainter::save):
+        (WebCore::QPainter::restore):
+        * kwq/KWQPtrStack.h: Removed.
+        * ForwardingHeaders/qptrstack.h: Removed.
+        * ForwardingHeaders/q3ptrstack.h: Removed.
+
+2006-01-28  Maciej Stachowiak  <mjs@apple.com>
+
         - added missing forwarding header to fix build.
         
         * ForwardingHeaders/kxmlcore/Vector.h: Added.

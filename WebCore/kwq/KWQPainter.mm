@@ -27,6 +27,7 @@
 #import "KWQPainter.h"
 
 #import <kxmlcore/Assertions.h>
+#import <kxmlcore/Vector.h>
 #import "Brush.h"
 #import "KWQExceptions.h"
 #import "KWQFont.h"
@@ -34,7 +35,6 @@
 #import "Pen.h"
 #import "Image.h"
 #import "KWQPrinter.h"
-#import "KWQPtrStack.h"
 #import "KWQRegion.h"
 #import "WebCoreGraphicsBridge.h"
 #import "WebCoreImageRenderer.h"
@@ -65,7 +65,8 @@ struct QPainterPrivate {
     QPainterPrivate();
     ~QPainterPrivate();
     QPState state;
-    QPtrStack<QPState> stack;
+    
+    Vector<QPState> stack;
     id <WebCoreTextRenderer> textRenderer;
     QFont textRendererFont;
     NSBezierPath *focusRingPath;
@@ -177,7 +178,7 @@ void QPainter::save()
     if (data->state.paintingDisabled)
         return;
 
-    data->stack.push(new QPState(data->state));
+    data->stack.append(data->state);
 
     [NSGraphicsContext saveGraphicsState]; 
 }
@@ -191,9 +192,8 @@ void QPainter::restore()
         ERROR("ERROR void QPainter::restore() stack is empty");
 	return;
     }
-    QPState *ps = data->stack.pop();
-    data->state = *ps;
-    delete ps;
+    data->state = data->stack.last();
+    data->stack.removeLast();
      
     [NSGraphicsContext restoreGraphicsState];
 }

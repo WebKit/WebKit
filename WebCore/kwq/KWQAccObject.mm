@@ -62,7 +62,6 @@
 #import "visible_position.h"
 #import "visible_text.h"
 #import "visible_units.h"
-#import "qptrstack.h"
 #import "DOMInternal.h"
 #import "EventNames.h"
 #import "htmlnames.h"
@@ -273,23 +272,7 @@ using namespace HTMLNames;
     if (m_renderer->isImage() && !m_areaElement) {
         HTMLMapElementImpl* map = static_cast<RenderImage*>(m_renderer)->imageMap();
         if (map) {
-            QPtrStack<NodeImpl> nodeStack;
-            NodeImpl *current = map->firstChild();
-            while (1) {
-                // make sure we have a node to process
-                if (!current) {
-                    // done if there is no node and no remembered node
-                    if(nodeStack.isEmpty())
-                        break;
-                    
-                    // pop the previously processed parent
-                    current = nodeStack.pop();
-                    
-                    // move on
-                    current = current->nextSibling();
-                    continue;
-                }
-                
+            for (NodeImpl *current = map->firstChild(); current; current = current->traverseNextNode(map)) {
                 // add an <area> element for this child if it has a link
                 // NOTE: can't cache these because they all have the same renderer, which is the cache key, right?
                 // plus there may be little reason to since they are being added to the handy array
@@ -298,16 +281,6 @@ using namespace HTMLNames;
                     obj->m_areaElement = static_cast<HTMLAreaElementImpl*>(current);
                     [array addObject: obj];
                 }
-                
-                // move on to children (if any) or next sibling
-                NodeImpl *child = current->firstChild();
-                if (child) {
-                    // switch to doing all the children, remember the parent to pop later
-                    nodeStack.push(current);
-                    current = child;
-                }
-                else
-                    current = current->nextSibling();
             }
         }
     }

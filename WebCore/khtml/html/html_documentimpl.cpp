@@ -75,7 +75,6 @@
 #include "xml/dom2_eventsimpl.h"
 #include "xml/xml_tokenizer.h"
 #include <kurl.h>
-#include <qptrstack.h>
 #include <stdlib.h>
 
 // Turn off inlining to avoid warning with newer gcc.
@@ -83,8 +82,6 @@
 //#define __inline
 #include "doctypes.cpp"
 //#undef __inline
-
-template class QPtrStack<DOM::NodeImpl>;
 
 namespace WebCore {
 

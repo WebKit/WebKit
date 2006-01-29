@@ -61,7 +61,6 @@
 #include "visible_text.h"
 #include "xml_tokenizer.h"
 #include <kdebug.h>
-#include <qptrstack.h>
 #include <qregexp.h>
 #include "HTMLNameCollectionImpl.h"
 

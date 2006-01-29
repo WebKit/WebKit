@@ -35,17 +35,19 @@ KRenderingDevice::~KRenderingDevice()
 
 KRenderingDeviceContext *KRenderingDevice::currentContext() const
 {
-    return m_contextStack.current();
+    return m_contextStack.last();
 }
 
 KRenderingDeviceContext *KRenderingDevice::popContext()
 {
-    return m_contextStack.pop();
+    KRenderingDeviceContext *result = m_contextStack.last();
+    m_contextStack.removeLast();
+    return result;
 }
 
 void KRenderingDevice::pushContext(KRenderingDeviceContext *context)
 {
-    m_contextStack.push(context);
+    m_contextStack.append(context);
 }
 
 // vim:ts=4:noet

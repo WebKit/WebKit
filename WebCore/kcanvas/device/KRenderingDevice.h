@@ -26,7 +26,7 @@
 
 #include "Color.h"
 #include <qobject.h>
-#include <q3ptrstack.h>
+#include <kxmlcore/Vector.h>
 
 #include <kcanvas/KCanvasFilters.h>
 #include <kcanvas/device/KRenderingPaintServer.h>
@@ -83,7 +83,7 @@ public:
     virtual KCanvasPath* createPath() const = 0;
 
 private:
-    Q3PtrStack<KRenderingDeviceContext> m_contextStack;
+    Vector<KRenderingDeviceContext*> m_contextStack;
 };
 
 #endif // SVG_SUPPORT
