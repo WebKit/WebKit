@@ -41,7 +41,6 @@ namespace KSVG
         SVGAnimatedNumberImpl *offset() const;
 
         virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
-
     private:
         mutable RefPtr<SVGAnimatedNumberImpl> m_offset;
     };

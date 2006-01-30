@@ -25,7 +25,7 @@
 #if SVG_SUPPORT
 
 #include "Color.h"
-#include <q3ptrlist.h>
+#include <kxmlcore/Vector.h>
 
 #include <kcanvas/device/KRenderingPaintServer.h>
 #include <kcanvas/KCanvasResourceListener.h>
@@ -39,27 +39,8 @@ typedef enum
 
 QTextStream &operator<<(QTextStream &ts, KCGradientSpreadMethod m);
 
-struct KCGradientOffsetPair
-{
-    float offset;
-    Color color;
-};
-
-class KCSortedGradientStopList : public Q3PtrList<KCGradientOffsetPair>
-{
-public:
-    KCSortedGradientStopList();
-    void addStop(float offset, const Color &color);
-
-    typedef Q3PtrListIterator<KCGradientOffsetPair> Iterator;
-
-protected:
-    virtual int compareItems(Q3PtrCollection::Item item1, Q3PtrCollection::Item item2);
-private:
-    friend QTextStream &operator<<(QTextStream &, const KCSortedGradientStopList &);
-};
-
-QTextStream &operator<<(QTextStream &, const KCSortedGradientStopList &);
+typedef std::pair<float, Color> KCGradientStop;
+inline KCGradientStop makeGradientStop(float offset, const Color& color) { return std::make_pair(offset, color); }
 
 class KCanvasMatrix;
 class KRenderingPaintServerGradient : public KRenderingPaintServer
@@ -69,8 +50,9 @@ public:
     virtual ~KRenderingPaintServerGradient();
 
     // 'Gradient' interface
-    KCSortedGradientStopList &gradientStops() const;
-    void setGradientStops(const KCSortedGradientStopList &stops);
+    const Vector<KCGradientStop>& gradientStops() const;
+    void setGradientStops(const Vector<KCGradientStop>&);
+    void setGradientStops(KRenderingPaintServerGradient*);
 
     KCGradientSpreadMethod spreadMethod() const;
     void setGradientSpreadMethod(const KCGradientSpreadMethod &method);

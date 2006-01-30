@@ -143,8 +143,7 @@ void SVGGradientElementImpl::resourceNotification() const
 void SVGGradientElementImpl::rebuildStops() const
 {
     if (m_resource && !ownerDocument()->parsing()) {
-        KCSortedGradientStopList &stops = m_resource->gradientStops();
-        stops.clear();
+        Vector<KCGradientStop> stops;
          // FIXME: Manual style resolution is a hack
         khtml::RenderStyle *gradientStyle = const_cast<SVGGradientElementImpl *>(this)->styleForRenderer(parent()->renderer());
         for (KDOM::NodeImpl *n = firstChild(); n; n = n->nextSibling()) {
@@ -157,11 +156,12 @@ void SVGGradientElementImpl::rebuildStops() const
                 Color c = stopStyle->svgStyle()->stopColor();
                 float opacity = stopStyle->svgStyle()->stopOpacity();
                 
-                stops.addStop(stopOffset, makeRGBA(c.red(), c.green(), c.blue(), int(opacity * 255.)));
+                stops.append(makeGradientStop(stopOffset, makeRGBA(c.red(), c.green(), c.blue(), int(opacity * 255.))));
                 stopStyle->deref(canvas()->renderArena());
             }
         }
         gradientStyle->deref(canvas()->renderArena());
+        m_resource->setGradientStops(stops);
     }
 }
 

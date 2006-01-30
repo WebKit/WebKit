@@ -99,10 +99,6 @@ public:
     // Overridden to prevent the normal delete from being called.
     void operator delete(void* ptr, size_t sz);
     
-    // Current used only for sorting, == could be made more robust if needed
-    bool operator ==(const InlineTextBox &b) { return m_start == b.m_start; }
-    bool operator <(const InlineTextBox &b) { return m_start < b.m_start; }
-        
 private:
     // The normal operator new is disallowed.
     void* operator new(size_t sz) throw();

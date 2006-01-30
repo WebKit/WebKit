@@ -28,7 +28,7 @@
 
 #include "xml/dom2_rangeimpl.h"
 #include "InlineTextBox.h"
-#include "qsortedlist.h"
+#include <kxmlcore/Vector.h>
 
 #include <qstring.h>
 
@@ -116,7 +116,8 @@ private:
     QChar m_singleCharacterBuffer;
     
     // Used when text boxes are out of order (Hebrew/Arabic w/ embeded LTR text)
-    QSortedList<InlineTextBox> m_sortedTextBoxes;
+    Vector<InlineTextBox*> m_sortedTextBoxes;
+    size_t m_sortedTextBoxesPosition;
 };
 
 // Iterates through the DOM range, returning all the text, and 0-length boundaries

@@ -269,8 +269,7 @@ m_stopsCache(0), m_stopsCount(0), m_shadingCache(0), m_maskImage(0)
 
 KRenderingPaintServerGradientQuartz::~KRenderingPaintServerGradientQuartz()
 {
-    if (m_stopsCache)
-        free(m_stopsCache);
+    delete m_stopsCache;
     CGShadingRelease(m_shadingCache);
     delete m_maskImage;
 }
@@ -303,38 +302,30 @@ void KRenderingPaintServerGradientQuartz::updateQuartzGradientCache(const KRende
     }
 }
 
-void KRenderingPaintServerGradientQuartz::updateQuartzGradientStopsCache(const KCSortedGradientStopList &stops)
+void KRenderingPaintServerGradientQuartz::updateQuartzGradientStopsCache(const Vector<KCGradientStop>& stops)
 {
-    if (m_stopsCache) {
-        free(m_stopsCache);
-    }
-    m_stopsCount = stops.count();
-    m_stopsCache = (QuartzGradientStop *)malloc(m_stopsCount * sizeof(QuartzGradientStop));
+    delete m_stopsCache;
+
+    m_stopsCount = stops.size();
+    m_stopsCache = new QuartzGradientStop[m_stopsCount];
     
-    KCSortedGradientStopList::Iterator it = stops.begin();
-    KCSortedGradientStopList::Iterator end = stops.end();
-    
-    int index = 0;
     float previousOffset = 0.0f;
-    for(; it.current(); ++it) {
-        KCGradientOffsetPair *stop = (*it);
-        m_stopsCache[index].offset = stop->offset;
-        m_stopsCache[index].previousDeltaInverse = 1.0f/(stop->offset - previousOffset);
-        previousOffset = stop->offset;
-        float *ca = m_stopsCache[index].colorArray;
-        stop->color.getRgbaF(ca, ca+1, ca+2, ca+3);
-        index++;
+    for (unsigned i = 0; i < stops.size(); ++i) {
+        m_stopsCache[i].offset = stops[i].first;
+        m_stopsCache[i].previousDeltaInverse = 1.0f / (stops[i].first - previousOffset);
+        previousOffset = stops[i].first;
+        float *ca = m_stopsCache[i].colorArray;
+        stops[i].second.getRgbaF(ca, ca+1, ca+2, ca+3);
     }
 }
 
 void KRenderingPaintServerGradientQuartz::invalidateCaches()
 {
-    if (m_stopsCache)
-        free(m_stopsCache);
+    delete m_stopsCache;
     CGShadingRelease(m_shadingCache);
     
-    m_stopsCache = NULL;
-    m_shadingCache = NULL;
+    m_stopsCache = 0;
+    m_shadingCache = 0;
 }
 
 void KRenderingPaintServerLinearGradientQuartz::invalidate()

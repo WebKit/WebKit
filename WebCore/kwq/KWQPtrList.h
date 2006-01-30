@@ -42,7 +42,6 @@ public:
     bool isEmpty() const { return impl.isEmpty(); }
     uint count() const { return impl.count(); }
     void clear() { impl.clear(del_item); }
-    void sort() { impl.sort(compareFunc, this); }
 
     T *at(uint n) { return (T *)impl.at(n); }
 

@@ -76,8 +76,8 @@ public:
     KRenderingPaintServerGradientQuartz();
     ~KRenderingPaintServerGradientQuartz();
     
-    void updateQuartzGradientStopsCache(const KCSortedGradientStopList &stops);
-    void updateQuartzGradientCache(const KRenderingPaintServerGradient *server);
+    void updateQuartzGradientStopsCache(const Vector<KCGradientStop>& stops);
+    void updateQuartzGradientCache(const KRenderingPaintServerGradient* server);
 
 public:
     // due to c functions

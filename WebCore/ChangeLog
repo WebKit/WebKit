@@ -1,3 +1,45 @@
+2006-01-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - Remove QSortedList and QPtrList sorting support
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6929
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * kcanvas/device/KRenderingPaintServerGradient.cpp:
+        (operator<<): Implement for Vector<KCGradientStop>
+        (KRenderingPaintServerGradient::gradientStops): Use a Vector, not a subclass of
+        QPtrList that sorts on every insert
+        (compareStopOffset): Comparison function for sorting.
+        (KRenderingPaintServerGradient::setGradientStops): Add a version that takes a Vector which sorts,
+        and another which knows how to copy from another gradient paint server.
+        * kcanvas/device/KRenderingPaintServerGradient.h:
+        (makeGradientStop): Make a gradient stop pair.
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.mm:
+        (KRenderingPaintServerGradientQuartz::~KRenderingPaintServerGradientQuartz): use delete
+        on stops cache
+        (KRenderingPaintServerGradientQuartz::updateQuartzGradientStopsCache): adapt to Vector
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.h:
+        * khtml/editing/visible_text.cpp:
+        (khtml::compareBoxStart): Comparison function for sorting.
+        (khtml::TextIterator::handleTextNode): Use Vector and std::sort instead of QSortedList
+        for sorting. Keep current position as an index.
+        (khtml::TextIterator::handleTextBox): Adapt for Vector use.
+        * khtml/editing/visible_text.h:
+        * ksvg2/svg/SVGGradientElementImpl.cpp:
+        (SVGGradientElementImpl::rebuildStops): Use a Vector. Instead of modifying the existing one,
+        make a fresh one and assign it.
+        * ksvg2/svg/SVGLinearGradientElementImpl.cpp:
+        (SVGLinearGradientElementImpl::buildGradient): don't copy item by item, just assign directly.
+        * ksvg2/svg/SVGRadialGradientElementImpl.cpp:
+        (SVGRadialGradientElementImpl::buildGradient): ditto
+        * ksvg2/svg/SVGStopElementImpl.h:
+        * kwq/KWQListImpl.cpp:
+        * kwq/KWQPtrList.h:
+        (QPtrList::sort): Removed.
+        * kwq/KWQSortedList.h: Removed.
+        * rendering/InlineTextBox.h: Remove now unneeded operator< and operator=
+
 2006-01-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

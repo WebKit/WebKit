@@ -208,6 +208,11 @@ void TextIterator::advance()
     }
 }
 
+static inline bool compareBoxStart(const InlineTextBox *first, const InlineTextBox *second)
+{
+    return first->start() < second->start();
+}
+
 bool TextIterator::handleTextNode()
 {
     m_lastTextNode = m_node;
@@ -252,10 +257,11 @@ bool TextIterator::handleTextNode()
         for (InlineTextBox * textBox = renderer->firstTextBox(); textBox; textBox = textBox->nextTextBox()) {
             m_sortedTextBoxes.append(textBox);
         }
-        m_sortedTextBoxes.sort(); 
+        std::sort(m_sortedTextBoxes.begin(), m_sortedTextBoxes.end(), compareBoxStart); 
+        m_sortedTextBoxesPosition = 0;
     }
     
-    m_textBox = renderer->containsReversedText() ? m_sortedTextBoxes.first() : renderer->firstTextBox();
+    m_textBox = renderer->containsReversedText() ? m_sortedTextBoxes[0] : renderer->firstTextBox();
     handleTextBox();
     return true;
 }
@@ -271,7 +277,7 @@ void TextIterator::handleTextBox()
         int runStart = kMax(textBoxStart, start);
 
         // Check for collapsed space at the start of this run.
-        InlineTextBox *firstTextBox = renderer->containsReversedText() ? m_sortedTextBoxes.getFirst() : renderer->firstTextBox();
+        InlineTextBox *firstTextBox = renderer->containsReversedText() ? m_sortedTextBoxes[0] : renderer->firstTextBox();
         bool needSpace = m_lastTextNodeEndedWithCollapsedSpace
             || (m_textBox == firstTextBox && textBoxStart == runStart && runStart > 0);
         if (needSpace && !isCollapsibleWhitespace(m_lastCharacter) && !m_lastCharacter.isNull()) {
@@ -282,7 +288,12 @@ void TextIterator::handleTextBox()
         int runEnd = kMin(textBoxEnd, end);
         
         // Determine what the next text box will be, but don't advance yet
-        InlineTextBox *nextTextBox = renderer->containsReversedText() ? m_sortedTextBoxes.getNext() : m_textBox->nextTextBox();
+        InlineTextBox *nextTextBox = 0;
+        if (renderer->containsReversedText()) {
+            if (m_sortedTextBoxesPosition + 1 < m_sortedTextBoxes.size())
+                nextTextBox = m_sortedTextBoxes[m_sortedTextBoxesPosition + 1];
+        } else 
+            nextTextBox = m_textBox->nextTextBox();
 
         if (runStart < runEnd) {
             // Handle either a single newline character (which becomes a space),
@@ -323,13 +334,13 @@ void TextIterator::handleTextBox()
             }
             m_textBox = nextTextBox;
             if (renderer->containsReversedText())
-                m_sortedTextBoxes.next();
+                ++m_sortedTextBoxesPosition;
             return;
         }
         // Advance and continue
         m_textBox = nextTextBox;
         if (renderer->containsReversedText())
-            m_sortedTextBoxes.next();
+            ++m_sortedTextBoxesPosition;
     }
 }
 

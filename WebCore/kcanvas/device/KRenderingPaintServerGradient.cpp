@@ -45,44 +45,12 @@ QTextStream &operator<<(QTextStream &ts, KCGradientSpreadMethod m)
     return ts;
 }
 
-//KCSortedGradientStopList
-KCSortedGradientStopList::KCSortedGradientStopList()
-{
-    setAutoDelete(true);
-}
-
-void KCSortedGradientStopList::addStop(float offset, const Color &color)
-{
-    KCGradientOffsetPair *pair = new KCGradientOffsetPair;
-    pair->offset = offset;
-    pair->color = color;
-
-    append(pair);
-    sort();
-}
-
-int KCSortedGradientStopList::compareItems(Q3PtrCollection::Item item1, Q3PtrCollection::Item item2)
-{
-    KCGradientOffsetPair *pair1 = static_cast<KCGradientOffsetPair *>(item1);
-    KCGradientOffsetPair *pair2 = static_cast<KCGradientOffsetPair *>(item2);
-
-    if(pair1->offset == pair2->offset)
-        return 0;
-    else if(pair1->offset < pair2->offset)
-        return -1;
-
-    return 1;
-}
-
-QTextStream &operator<<(QTextStream &ts, const KCSortedGradientStopList &l)
+QTextStream &operator<<(QTextStream &ts, const Vector<KCGradientStop>& l)
 {
     ts << "[";
-    KCSortedGradientStopList::Iterator it(l); 
-    while(*it)
-    {
-        ts << "(" << (*it)->offset << "," << (*it)->color << ")";
-        ++it;
-        if (*it)
+    for (Vector<KCGradientStop>::const_iterator it = l.begin(); it != l.end(); ++it) { 
+        ts << "(" << it->first << "," << it->second << ")";
+        if (it + 1 != l.end())
             ts << ", ";
     }
     ts << "]";
@@ -96,7 +64,7 @@ public:
     Private() { boundingBoxMode = true; spreadMethod = SPREADMETHOD_PAD; listener = 0; }
     ~Private() { }
 
-    KCSortedGradientStopList stops;
+    Vector<KCGradientStop> stops;
     KCGradientSpreadMethod spreadMethod;
     bool boundingBoxMode;
     KCanvasMatrix gradientTransform;
@@ -112,14 +80,25 @@ KRenderingPaintServerGradient::~KRenderingPaintServerGradient()
     delete d;
 }
 
-KCSortedGradientStopList &KRenderingPaintServerGradient::gradientStops() const{
-
+const Vector<KCGradientStop>& KRenderingPaintServerGradient::gradientStops() const
+{
     return d->stops;
 }
 
-void KRenderingPaintServerGradient::setGradientStops(const KCSortedGradientStopList &stops)
+static inline bool compareStopOffset(const KCGradientStop& first, const KCGradientStop& second)
+{
+    return first.first < second.first;
+}
+
+void KRenderingPaintServerGradient::setGradientStops(const Vector<KCGradientStop>& stops)
 {
     d->stops = stops;
+    std::sort(d->stops.begin(), d->stops.end(), compareStopOffset);
+} 
+
+void KRenderingPaintServerGradient::setGradientStops(KRenderingPaintServerGradient* server)
+{
+    d->stops = server->gradientStops();
 }
 
 KCGradientSpreadMethod KRenderingPaintServerGradient::spreadMethod() const

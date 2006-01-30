@@ -181,18 +181,14 @@ void SVGRadialGradientElementImpl::buildGradient(KRenderingPaintServerGradient *
             _r *= 100.0;
         }
 
-        if(!hasAttribute(SVGNames::gradientTransformAttr))
+        if (!hasAttribute(SVGNames::gradientTransformAttr))
             mat = gradient->gradientTransform();
 
         // Inherit color stops if empty
-        if(grad->gradientStops().count() == 0)
-        {
-            KCSortedGradientStopList::Iterator it(gradient->gradientStops());
-            for(; it.current(); ++it)
-                grad->gradientStops().addStop(it.current()->offset, it.current()->color);
-        }
+        if (grad->gradientStops().isEmpty())
+            grad->setGradientStops(gradient);
 
-        if(!hasAttribute(SVGNames::spreadMethodAttr))
+        if (!hasAttribute(SVGNames::spreadMethodAttr))
             grad->setGradientSpreadMethod(gradient->spreadMethod());
     }
     else
