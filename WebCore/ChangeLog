@@ -1,3 +1,11 @@
+2006-01-29  Eric Seidel <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Added back #include <qvaluelist.h> to fix WIN32 build.
+
+        * rendering/render_style.h:
+
 2006-01-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt (drag image fix) and Maciej (the rest).

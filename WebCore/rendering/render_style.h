@@ -39,6 +39,7 @@
 #include <qfontmetrics.h>
 #include <qlist.h>
 #include <qpalette.h>
+#include <qvaluelist.h>
 
 #include "khtmllayout.h"
 #include "Shared.h"
