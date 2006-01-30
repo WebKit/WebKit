@@ -1,5 +1,15 @@
 2006-01-30  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Tim O.
+
+        Add -Wno-deprecated-declarations to the compile flags for WebNetscapePluginPackage.m.
+        <rdar://problem/4427068> LMGetCurApRefNum, CloseConnection and GetDiskFragment now deprecated.
+        When we workaround these we can remove this compile flag.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2006-01-30  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Justin.
 
         Remove the only use of -[NSFont glyphPacking]. This method was deprecated in Tiger
