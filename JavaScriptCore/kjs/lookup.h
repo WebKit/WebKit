@@ -293,9 +293,17 @@ inline KJS::JSObject *cacheGlobalObject(KJS::ExecState *exec, const KJS::Identif
  * If the prototype has a "parent prototype", e.g. DOMElementProto falls back on DOMNodeProto,
  * then the last line will use IMPLEMENT_PROTOTYPE_WITH_PARENT, with DOMNodeProto as last argument.
  */
+
+// Work around a bug in GCC 4.1
+#if !__GNUC__
+#define KJS_GCC_ROOT_NS_HACK ::
+#else
+#define KJS_GCC_ROOT_NS_HACK
+#endif
+
 #define KJS_DEFINE_PROTOTYPE(ClassProto) \
   class ClassProto : public KJS::JSObject { \
-  friend KJS::JSObject *::cacheGlobalObject<ClassProto>(KJS::ExecState *exec, const KJS::Identifier &propertyName); \
+  friend KJS::JSObject *KJS_GCC_ROOT_NS_HACK cacheGlobalObject<ClassProto>(KJS::ExecState *exec, const KJS::Identifier &propertyName); \
   public: \
     static KJS::JSObject *ClassProto::self(KJS::ExecState *exec); \
     virtual const KJS::ClassInfo *classInfo() const { return &info; } \
