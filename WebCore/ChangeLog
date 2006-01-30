@@ -1,3 +1,11 @@
+2006-01-29  Eric Seidel <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Fix build for Win32.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+
 2006-01-29  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 6910, don't let Image be assignable or copiable.  It will soon represent  the actual

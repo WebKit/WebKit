@@ -571,14 +571,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQVectorImpl.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQVectorImpl.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQView.h"
 				>
 			</File>
@@ -1652,14 +1644,6 @@
 			</File>
 			<File
 				RelativePath="..\..\loader\CachedImage.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\loader\CachedImageCallback.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\loader\CachedImageCallback.h"
 				>
 			</File>
 			<File
