@@ -98,9 +98,6 @@ public:
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
 
-protected:
-    khtml::VAlign valign;
-
 private:
     DOMString oldNameAttr;
     DOMString oldIdAttr;

@@ -231,7 +231,7 @@ static QString quoteAndEscapeNonPrintables(const QString &s)
         } else if (c == '\n' || c.unicode() == 0x00A0) {
             result += ' ';
         } else {
-            ushort u = c.unicode();
+            unsigned short u = c.unicode();
             if (u >= 0x20 && u < 0x7F) {
                 result += c;
             } else {

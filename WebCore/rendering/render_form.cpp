@@ -28,8 +28,6 @@
 #include <klocale.h>
 #include <kcursor.h>
 
-#include <qstyle.h>
-
 #include "helper.h"
 #include "HTMLInputElementImpl.h"
 #include "HTMLTextAreaElementImpl.h"
@@ -40,7 +38,6 @@
 #include "xml/dom2_eventsimpl.h"
 
 #include "rendering/render_form.h"
-#include <assert.h>
 
 #include "FrameView.h"
 #include "BrowserExtension.h"
@@ -135,7 +132,7 @@ Qt::AlignmentFlags RenderFormElement::textAlignment() const
         case TAAUTO:
             return style()->direction() == RTL ? AlignRight : AlignLeft;
     }
-    assert(false); // Should never be reached.
+    ASSERT(false); // Should never be reached.
     return AlignLeft;
 }
 
@@ -962,7 +959,7 @@ void RenderSelect::updateSelection()
                 firstOption = i;
             }
 
-        Q_ASSERT(firstOption == listItems.size() || found);
+        ASSERT(firstOption == listItems.size() || found);
     }
 
     m_selectionChanged = false;

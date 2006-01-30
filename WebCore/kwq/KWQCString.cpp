@@ -39,8 +39,8 @@ QCString::QCString(int size) : ByteArray(size)
 {
     if( size>0 && data() )
     {
-        data()[0] = 0;		// first null
-        data()[size-1] = 0;	// last byte
+        data()[0] = 0;          // first null
+        data()[size-1] = 0;     // last byte
     }
     // else null
 }
@@ -49,7 +49,7 @@ QCString::QCString(int size) : ByteArray(size)
 QCString::QCString(const char *str)
 {
     size_t len;
-    if( str && (len=strlen(str)+1) && resize(len) )	// include null
+    if( str && (len=strlen(str)+1) && resize(len) )     // include null
         strcpy( data(), str );
     // else null
 }
@@ -61,7 +61,7 @@ QCString::QCString(const char *str, uint max)
     {
         // perform a truncated strlen on str
         const char* p = str;
-	uint len = 1;			// for the null
+        uint len = 1;                   // for the null
         while( *p++ && len<max )
             len ++;
 
@@ -69,7 +69,7 @@ QCString::QCString(const char *str, uint max)
         {
             char *dest = data();
             strncpy( dest, str, len );
-            dest[len-1] = 0;	// re-terminate
+            dest[len-1] = 0;            // re-terminate
         }
     }
     // else null
@@ -90,7 +90,7 @@ bool QCString::resize(uint len)
 {
     bool success = ByteArray::resize(len);
     if( success && len>0 )
-        data()[len-1] = 0;	// always terminate last byte
+        data()[len-1] = 0;      // always terminate last byte
 
     return success;
 }
@@ -105,7 +105,7 @@ bool QCString::truncate(uint pos)
 QCString QCString::lower() const
 {
     // convert
-    QCString tmp = *this;	// copy
+    QCString tmp = *this;       // copy
     char* str = tmp.data();
     if( str )
     {
@@ -122,7 +122,7 @@ QCString QCString::lower() const
 
 QCString QCString::upper() const
 {
-    QCString tmp = *this;	// copy
+    QCString tmp = *this;       // copy
     char* str = tmp.data();
     if( str )
     {
@@ -148,14 +148,14 @@ inline QCString QCString::right(uint len) const
 QCString QCString::mid(uint index, uint len) const
 {
     uint size = length();
-    if( data() && index<size )	// return null if index out-of-range
+    if( data() && index<size )      // return null if index out-of-range
     {
         // clip length
         if( len > size - index )
             len = size - index;
 
         // copy and return
-        return QCString( &(data()[index]), len+1);		// include nul
+        return QCString( &(data()[index]), len+1);  // include nul
     }
 
     // degenerate case
@@ -165,13 +165,13 @@ QCString QCString::mid(uint index, uint len) const
 int QCString::find(const char *sub, int index, bool cs) const
 {
     const char* str = data();
-    if( str && str[0] && sub && index>=0 )	// don't search empty strings
+    if( str && str[0] && sub && index>=0 )  // don't search empty strings
     {
         // advance until we get to index
         int pos = 0;
         while( pos < index )
             if( str[pos++] == 0 )
-                return -1;		// index is beyond end of str
+                return -1;                  // index is beyond end of str
         
         // now search from index onward
         while( str[index] != 0 )
@@ -295,11 +295,9 @@ QCString &QCString::replace(char c1, char c2)
 
 bool operator==(const QCString &s1, const char *s2)
 {
-    if (s1.size() == 0 && !s2) {
-        return TRUE;
-    }
-    else if (s1.size() == 0 && s2) {
-        return FALSE;
-    }
-    return (strcmp(s1, s2) == 0);
+    if (s1.size() == 0 && !s2)
+        return true;
+    if (s1.size() == 0 && s2)
+        return false;
+    return strcmp(s1, s2) == 0;
 }

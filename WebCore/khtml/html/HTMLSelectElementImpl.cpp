@@ -38,7 +38,6 @@
 #include "cssstyleselector.h"
 #include "dom2_eventsimpl.h"
 #include "render_form.h"
-#include <assert.h>
 
 namespace WebCore {
 
@@ -95,7 +94,7 @@ int HTMLSelectElementImpl::selectedIndex() const
             o++;
         }
     }
-    Q_ASSERT(m_multiple);
+    ASSERT(m_multiple);
     return -1;
 }
 
@@ -203,7 +202,6 @@ void HTMLSelectElementImpl::restoreState(QStringList &_states)
 
     QString state = _state;
     if(!state.isEmpty() && !state.contains('X') && !m_multiple) {
-        qWarning("should not happen in restoreState!");
         // KWQString doesn't support this operation. Should never get here anyway.
         //state[0] = 'X';
     }

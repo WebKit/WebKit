@@ -41,7 +41,6 @@
 #include "htmlnames.h"
 #include "htmlparser.h"
 #include "kjs_proxy.h"
-#include <assert.h>
 #include <ctype.h>
 #include <qvariant.h>
 #include <stdlib.h>
@@ -95,7 +94,7 @@ static const char titleEnd [] = "</title";
 // To cover non-entity text, I think this function would need to be called
 // in more places. There seem to be some places that don't call fixUpChar.
 
-static const ushort windowsLatin1ExtensionArray[32] = {
+static const unsigned short windowsLatin1ExtensionArray[32] = {
     0x20AC, 0x0081, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021, // 80-87
     0x02C6, 0x2030, 0x0160, 0x2039, 0x0152, 0x008D, 0x017D, 0x008F, // 88-8F
     0x0090, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, // 90-97
@@ -104,7 +103,7 @@ static const ushort windowsLatin1ExtensionArray[32] = {
 
 static inline QChar fixUpChar(QChar c)
 {
-    ushort code = c.unicode();
+    unsigned short code = c.unicode();
     if ((code & ~0x1F) != 0x0080)
         return c;
     return windowsLatin1ExtensionArray[code - 0x80];
@@ -169,12 +168,12 @@ HTMLTokenizer::HTMLTokenizer(DocumentImpl *_doc, DocumentFragmentImpl *i, bool i
 
 void HTMLTokenizer::reset()
 {
-    assert(m_executingScript == 0);
-    assert(onHold == false);
+    ASSERT(m_executingScript == 0);
+    ASSERT(onHold == false);
 
     while (!pendingScripts.isEmpty()) {
       CachedScript *cs = pendingScripts.dequeue();
-      assert(cs->accessCount() > 0);
+      ASSERT(cs->accessCount() > 0);
       cs->deref(this);
     }
     
@@ -267,9 +266,9 @@ HTMLTokenizer::State HTMLTokenizer::processListing(SegmentedString list, State s
 
 HTMLTokenizer::State HTMLTokenizer::parseSpecial(SegmentedString &src, State state)
 {
-    assert(state.inTextArea() || state.inTitle() || !state.hasEntityState());
-    assert(!state.hasTagState());
-    assert(state.inXmp() + state.inTextArea() + state.inTitle() + state.inStyle() + state.inScript() == 1 );
+    ASSERT(state.inTextArea() || state.inTitle() || !state.hasEntityState());
+    ASSERT(!state.hasTagState());
+    ASSERT(state.inXmp() + state.inTextArea() + state.inTitle() + state.inStyle() + state.inScript() == 1 );
     if (state.inScript())
         scriptStartLineno = lineno + src.lineCount();
 
@@ -643,7 +642,7 @@ HTMLTokenizer::State HTMLTokenizer::parseProcessingInstruction(SegmentedString &
 HTMLTokenizer::State HTMLTokenizer::parseText(SegmentedString &src, State state)
 {
     while (!src.isEmpty()) {
-        ushort cc = src->unicode();
+        unsigned short cc = src->unicode();
 
         if (state.skipLF()) {
             state.setSkipLF(false);
@@ -679,10 +678,10 @@ HTMLTokenizer::State HTMLTokenizer::parseEntity(SegmentedString &src, QChar *&de
 
     while(!src.isEmpty())
     {
-        ushort cc = src->unicode();
+        unsigned short cc = src->unicode();
         switch(state.entityState()) {
         case NoEntity:
-            assert(state.entityState() != NoEntity);
+            ASSERT(state.entityState() != NoEntity);
             return state;
         
         case SearchEntity:
@@ -816,7 +815,7 @@ HTMLTokenizer::State HTMLTokenizer::parseEntity(SegmentedString &src, QChar *&de
 
 HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
 {
-    assert(!state.hasEntityState());
+    ASSERT(!state.hasEntityState());
 
     unsigned cBufferPos = m_cBufferPos;
 
@@ -884,7 +883,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
             bool finish = false;
             unsigned int ll = kMin(src.length(), CBUFLEN-cBufferPos);
             while(ll--) {
-                ushort curchar = *src;
+                unsigned short curchar = *src;
                 if(curchar <= ' ' || curchar == '>' ) {
                     finish = true;
                     break;
@@ -937,7 +936,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                 qDebug("SearchAttribute");
 #endif
             bool atespace = false;
-            ushort curchar;
+            unsigned short curchar;
             while(!src.isEmpty()) {
                 curchar = *src;
                 // In this mode just ignore any quotes we encounter and treat them like spaces.
@@ -960,7 +959,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
 #if defined(TOKEN_DEBUG) && TOKEN_DEBUG > 1
                 qDebug("AttributeName");
 #endif
-            ushort curchar;
+            unsigned short curchar;
             int ll = kMin(src.length(), CBUFLEN-cBufferPos);
 
             while(ll--) {
@@ -1002,7 +1001,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
 #if defined(TOKEN_DEBUG) && TOKEN_DEBUG > 1
                 qDebug("SearchEqual");
 #endif
-            ushort curchar;
+            unsigned short curchar;
             bool atespace = false;
             while(!src.isEmpty()) {
                 curchar = src->unicode();
@@ -1029,7 +1028,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
         }
         case SearchValue:
         {
-            ushort curchar;
+            unsigned short curchar;
             while(!src.isEmpty()) {
                 curchar = src->unicode();
                 if(curchar > ' ') {
@@ -1051,7 +1050,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
 #if defined(TOKEN_DEBUG) && TOKEN_DEBUG > 1
                 qDebug("QuotedValue");
 #endif
-            ushort curchar;
+            unsigned short curchar;
             while(!src.isEmpty()) {
                 checkBuffer();
 
@@ -1111,7 +1110,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
 #if defined(TOKEN_DEBUG) && TOKEN_DEBUG > 1
             qDebug("Value");
 #endif
-            ushort curchar;
+            unsigned short curchar;
             while(!src.isEmpty()) {
                 checkBuffer();
                 curchar = src->unicode();
@@ -1254,7 +1253,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
             if (tagName == preTag) {
                 state.setDiscardLF(true); // Discard the first LF after we open a pre.
             } else if (tagName == scriptTag) {
-                assert(!scriptNode);
+                ASSERT(!scriptNode);
                 scriptNode = n;
                 if (beginTag) {
                     searchStopper = scriptEnd;
@@ -1393,7 +1392,7 @@ bool HTMLTokenizer::write(const SegmentedString &str, bool appendData)
         // do we need to enlarge the buffer?
         checkBuffer();
 
-        ushort cc = src->unicode();
+        unsigned short cc = src->unicode();
 
         bool wasSkipLF = state.skipLF();
         if (wasSkipLF)
@@ -1567,7 +1566,7 @@ void HTMLTokenizer::timerEvent(QTimerEvent* e)
 
 void HTMLTokenizer::end()
 {
-    assert(timerId == 0);
+    ASSERT(timerId == 0);
     if (timerId) {
         // Clean up anyway.
         killTimer(timerId);
@@ -1645,7 +1644,7 @@ NodeImpl *HTMLTokenizer::processToken()
 #ifdef TOKEN_DEBUG
         if(currToken.tagName.length()) {
             qDebug( "unexpected token: %s, str: *%s*", currToken.tagName.qstring().latin1(),QConstString( buffer,dest-buffer ).qstring().latin1() );
-            assert(0);
+            ASSERT(0);
         }
 
 #endif
@@ -1699,7 +1698,7 @@ NodeImpl *HTMLTokenizer::processToken()
 
 HTMLTokenizer::~HTMLTokenizer()
 {
-    assert(!inWrite);
+    ASSERT(!inWrite);
     reset();
     delete parser;
 }
@@ -1729,14 +1728,14 @@ void HTMLTokenizer::notifyFinished(CachedObject */*finishedObj*/)
         printf("script loaded at %d\n", parser->doc()->elapsedTime());
 #endif
 
-    assert(!pendingScripts.isEmpty());
+    ASSERT(!pendingScripts.isEmpty());
     bool finished = false;
     while (!finished && pendingScripts.head()->isLoaded()) {
 #ifdef TOKEN_DEBUG
         kdDebug( 6036 ) << "Finished loading an external script" << endl;
 #endif
         CachedScript* cs = pendingScripts.dequeue();
-        assert(cs->accessCount() > 0);
+        ASSERT(cs->accessCount() > 0);
 
         DOMString scriptSource = cs->script();
 #ifdef TOKEN_DEBUG
@@ -1811,7 +1810,7 @@ void parseHTMLDocumentFragment(const DOMString &source, DocumentFragmentImpl *fr
     tok.setForceSynchronous(true);
     tok.write(source.qstring(), true);
     tok.finish();
-    assert(!tok.processingData());      // make sure we're done (see 3963151)
+    ASSERT(!tok.processingData());      // make sure we're done (see 3963151)
 }
 
 }

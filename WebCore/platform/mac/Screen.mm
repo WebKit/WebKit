@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,16 +20,44 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
+#import "Screen.h"
 
-void qDebug(const char *msg, ...)
+#import "IntRect.h"
+#import "KWQWidget.h"
+
+namespace WebCore {
+
+static NSScreen* screen(QWidget* widget)
 {
+    if (widget)
+        if (NSScreen* screen = [[widget->getView() window] screen])
+            return screen;
+    return [NSScreen mainScreen];
 }
 
-void qWarning(const char *msg, ...)
+static NSRect flipGlobalRect(NSRect rect)
 {
+    rect.origin.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(rect);
+    return rect;
 }
 
+int screenDepth(QWidget* widget)
+{
+    return [screen(widget) depth];
+}
+
+IntRect screenRect(QWidget* widget)
+{
+    return IntRect(flipGlobalRect([screen(widget) frame]));
+}
+
+IntRect usableScreenRect(QWidget* widget)
+{
+    return IntRect(flipGlobalRect([screen(widget) visibleFrame]));
+}
+
+}

@@ -33,8 +33,6 @@ class QWidget;
 class KCursor {
 public:
 
-    static void setAutoHideCursor(QWidget *w, bool enable);
-
     static QCursor arrowCursor();
     static QCursor crossCursor();
     static QCursor handCursor();

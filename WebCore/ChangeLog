@@ -1,3 +1,96 @@
+2006-01-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt (drag image fix) and Maciej (the rest).
+
+        - fixed just-introduced crash dragging images
+
+        I don't know how to make a layout test for this.
+
+        * kwq/KWQClipboard.mm: (WebCore::KWQClipboard::dragImage): Fixed crash on
+        dragging by initializing m_dragImage to 0.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=6923
+          remove more of KWQ, including the screen functions from QDesktopWidget
+
+        * kwq/KWQApplication.h: Removed.
+        * kwq/KWQApplication.mm: Removed.
+        * kwq/KWQGlobal.cpp: Removed.
+        * kwq/KWQKPartsEvent.cpp: Removed.
+        * kwq/KWQKPartsEvent.h: Removed.
+        * kwq/KWQPair.h: Removed.
+        * kwq/KWQStyle.cpp: Removed.
+        * kwq/KWQStyle.h: Removed.
+
+        * ForwardingHeaders/kparts/event.h: Removed.
+        * ForwardingHeaders/qapplication.h: Removed.
+        * ForwardingHeaders/qstyle.h: Removed.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Updated for above changes.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * platform/Screen.h: Added. Replaces the desktop widget stuff in KWQApplication.mm.
+        * platform/mac/Screen.mm: Added.
+
+        * kwq/KWQDef.h: Removed everything except for kMin and kMax from here.
+        We should port to std::min and std::max, and then we can get rid of this
+        header altogether.
+
+        * kwq/KWQKCursor.h: Removed setAutoHideCursor.
+        * kwq/KWQKCursor.mm: Ditto.
+
+        * kwq/KWQWidget.h: Removed style() and setStyle() functions.
+        * kwq/KWQWidget.mm: Ditto.
+
+        * khtml/ecma/kjs_window.h:
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Screen::Screen): Store a pointer to the Frame.
+        (KJS::Screen::getValueProperty): Port to use the new Screen.h functions.
+        (KJS::showModalDialog): Ditto.
+        (KJS::Window::getValueProperty): Ditto.
+        (KJS::WindowFunc::callAsFunction): Ditto.
+
+        * khtml/khtml_events.h:
+        * khtml/khtml_events.cpp: Removed much of the code here.
+        This can be cut down even more.
+
+        * khtml/misc/khtmllayout.h: Removed unused stuff and updated for KWQ changes.
+
+        * kwq/KWQCString.cpp:
+        * kwq/KWQKURL.mm:
+        * kwq/KWQPainter.mm:
+        * kwq/KWQRegExp.cpp:
+        * kwq/KWQRenderTreeDebug.cpp:
+        * kwq/KWQString.h:
+        * kwq/KWQString.mm:
+        * kwq/KWQTextCodec.cpp:
+        * WebCore+SVG/KDOMSettings.cpp:
+        * bridge/mac/MacFrame.mm:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        * css/cssparser.cpp:
+        * kcanvas/KCanvasItem.cpp:
+        * khtml/ecma/kjs_navigator.cpp:
+        * khtml/html/HTMLSelectElementImpl.cpp:
+        * khtml/html/html_tableimpl.h:
+        * khtml/html/htmltokenizer.cpp:
+        * khtml/misc/decoder.cpp:
+        * ksvg2/css/KSVGCSSParser.cpp:
+        * ksvg2/css/SVGRenderStyle.h:
+        * page/Frame.h:
+        * page/Frame.cpp:
+        * page/FrameView.cpp:
+        * platform/IntPointArray.cpp:
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderTable.cpp:
+        * rendering/bidi.cpp:
+        * rendering/bidi.h:
+        * rendering/render_form.cpp:
+        * rendering/render_object.cpp:
+        * rendering/render_object.h:
+        * rendering/render_replaced.cpp:
+        * rendering/render_style.h:
+        * rendering/table_layout.cpp:
+        Updated for above KWQ changes. Changed tabs to spaces.
+
 2006-01-29  Eric Seidel <eseidel@apple.com>
 
         Reviewed by hyatt.

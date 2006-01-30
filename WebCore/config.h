@@ -37,11 +37,10 @@
 // Maybe there's a better way to do this.
 #define USE_SYSTEM_MALLOC 1
 
-// FIXME: Should probably just dump these eventually, but they're needed for now.
-// We get these defines from some system place on OS X; probably better not to use them
+// FIXME: Should probably just dump this eventually, but it's needed for now.
+// We get this from some system place on OS X; probably better not to use it
 // in WebCore code.
 typedef unsigned uint;
-typedef unsigned short ushort;
 
 #include <assert.h>
 

@@ -29,7 +29,7 @@
 #import "KWQExceptions.h"
 
 // Simple NSDictionary and NSCursor calls shouldn't need protection,
-// but creating a cursor with a bad image might throw...
+// but creating a cursor with a bad image might throw.
 
 @interface KWQKCursorBundleDummy : NSObject { }
 @end
@@ -71,8 +71,6 @@
 }
 
 @end
-
-void KCursor::setAutoHideCursor(QWidget *w, bool enable) {}
 
 QCursor KCursor::arrowCursor() { return QCursor(); }
 QCursor KCursor::crossCursor() { return QCursor::makeWithNSCursor([NSCursor crosshairCursor]); }

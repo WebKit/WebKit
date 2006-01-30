@@ -867,8 +867,6 @@ private slots:
   void slotFinishedParsing();
   void slotRedirect();
   void slotRedirection(KIO::Job*, const KURL&);
-  void slotDebugDOMTree();
-  void slotDebugRenderTree();
 
   void slotIncZoom();
   void slotDecZoom();
@@ -1035,7 +1033,7 @@ private:
   bool scrollbarsVisible();
   void scrollToAnchor(const KURL &);
   bool canMouseDownStartSelect(WebCore::NodeImpl* node);
-  bool passWidgetMouseDownEventToWidget(WebCore::MouseEvent *);
+  bool passWidgetMouseDownEventToWidget(WebCore::MouseEvent *, bool isDoubleClick);
   bool passWidgetMouseDownEventToWidget(WebCore::RenderWidget *);
   virtual bool passMouseDownEventToWidget(QWidget *) = 0;
 

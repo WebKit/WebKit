@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,7 @@ using DOM::NodeImpl;
 namespace WebCore {
 
 KWQClipboard::KWQClipboard(bool forDragging, NSPasteboard *pasteboard, AccessPolicy policy, MacFrame *frame)
-  : m_pasteboard(KWQRetain(pasteboard)), m_forDragging(forDragging),
+  : m_pasteboard(KWQRetain(pasteboard)), m_forDragging(forDragging), m_dragImage(0),
     m_policy(policy), m_dragStarted(false), m_frame(frame)
 {
     m_changeCount = [m_pasteboard changeCount];

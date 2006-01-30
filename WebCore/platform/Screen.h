@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,35 +20,22 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef KWQKPARTSEVENT_H_
-#define KWQKPARTSEVENT_H_
+#ifndef SCREEN_H
+#define SCREEN_H
 
-#include "KWQEvent.h"
+class QWidget;
 
 namespace WebCore {
-    class QPainter;
+
+    class IntRect;
+
+    int screenDepth(QWidget*);
+    IntRect screenRect(QWidget*);
+    IntRect usableScreenRect(QWidget*);
+
 }
-
-namespace KParts {
-
-class Event : public QEvent {
-public:
-    Event(const char *);
-    ~Event();
-
-    static bool test(const QEvent *);
-    static bool test(const QEvent *, const char *);
-
-private:
-    char *_name;
-
-    Event(const Event &);
-    Event &operator=(const Event &);
-};
-
-} // namespace KParts
 
 #endif

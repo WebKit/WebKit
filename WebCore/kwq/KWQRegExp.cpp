@@ -221,7 +221,6 @@ int QRegExp::matchedLength() const
 
 QString QRegExp::cap(int n) const
 {
-    Q_ASSERT(!d->lastSearchString.isNull());
     const pcre_char *substring = NULL;
     int substringLength = pcre_get_substring(reinterpret_cast<const uint16_t *>(d->lastMatchString.unicode()), d->lastMatchOffsets, d->lastMatchCount, n, &substring);
     if (substringLength > 0) {

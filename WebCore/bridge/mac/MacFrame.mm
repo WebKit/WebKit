@@ -96,8 +96,6 @@ using namespace Bindings;
 
 using namespace KIO;
 
-using namespace KParts;
-
 @interface NSObject (WebPlugIn)
 - (id)objectForWebScript;
 - (void *)pluginScriptableObject;
@@ -1501,7 +1499,7 @@ void MacFrame::khtmlMousePressEvent(MousePressEvent *event)
 
     d->m_mousePressNode = event->innerNode();
     
-    if (!passWidgetMouseDownEventToWidget(event)) {
+    if (!passWidgetMouseDownEventToWidget(event, false)) {
         // We don't do this at the start of mouse down handling (before calling into WebCore),
         // because we don't want to do it until we know we didn't hit a widget.
         NSView *view = d->m_view->getDocumentView();
@@ -1689,8 +1687,8 @@ bool MacFrame::dragHysteresisExceeded(float dragLocationX, float dragLocationY) 
 {
     int dragX, dragY;
     d->m_view->viewportToContents((int)dragLocationX, (int)dragLocationY, dragX, dragY);
-    float deltaX = QABS(dragX - _mouseDownX);
-    float deltaY = QABS(dragY - _mouseDownY);
+    float deltaX = fabsf(dragX - _mouseDownX);
+    float deltaY = fabsf(dragY - _mouseDownY);
     
     float threshold = GeneralDragHysteresis;
     if (_dragSrcIsImage) {

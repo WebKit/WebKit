@@ -31,6 +31,10 @@
 #include <ksvg2/svg/SVGPaintImpl.h>
 #include <ksvg2/css/SVGRenderStyleDefs.h>
 
+#if WIN32
+typedef unsigned long long uint64_t;
+#endif
+
 // Helper macros for SVG's 'RenderStyle' properties
 #define RS_DEFINE_ATTRIBUTE(Data, Type, Name, Initial) \
     void set##Type(Data val) { noninherited_flags.f._##Name = val; } \
@@ -143,7 +147,7 @@ namespace KSVG
                     unsigned int unused : 32;
                     unsigned int unused2 : 5;
                 } f;
-                Q_UINT64 _iflags;
+                uint64_t _iflags;
             };
         } svg_inherited_flags;
 
@@ -164,7 +168,7 @@ namespace KSVG
                     unsigned int unused : 32;
                     unsigned int unused2 : 24;
                 } f;
-                Q_UINT64 _niflags;
+                uint64_t _niflags;
             };
         } svg_noninherited_flags;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,15 +63,15 @@ public:
 
     QChar();
     QChar(char);
-    QChar(uchar);
+    QChar(unsigned char);
     QChar(short);
-    QChar(ushort);
+    QChar(unsigned short);
     QChar(int);
     QChar(uint);
 
-    ushort unicode() const;
-    uchar cell() const;
-    uchar row() const;
+    unsigned short unicode() const;
+    unsigned char cell() const;
+    unsigned char row() const;
     char latin1() const;
     bool isNull() const;
     bool isSpace() const;
@@ -125,11 +125,11 @@ inline QChar::QChar() : c(0)
 {
 }
 
-inline QChar::QChar(char ch) : c((uchar) ch)
+inline QChar::QChar(char ch) : c((unsigned char) ch)
 {
 }
 
-inline QChar::QChar(uchar uch) : c(uch)
+inline QChar::QChar(unsigned char uch) : c(uch)
 {
 }
 
@@ -137,7 +137,7 @@ inline QChar::QChar(short n) : c(n)
 {
 }
 
-inline QChar::QChar(ushort n) : c(n)
+inline QChar::QChar(unsigned short n) : c(n)
 {
 }
 
@@ -149,12 +149,12 @@ inline QChar::QChar(int n) : c(n)
 {
 }
 
-inline ushort QChar::unicode() const
+inline unsigned short QChar::unicode() const
 {
     return c;
 }
 
-inline uchar QChar::cell() const
+inline unsigned char QChar::cell() const
 {
     return c;
 }
@@ -233,7 +233,7 @@ inline QChar QChar::mirroredChar() const
     return QChar(static_cast<uint>(u_charMirror(c)));
 }
 
-inline uchar QChar::row() const
+inline unsigned char QChar::row() const
 {
     return c >> 8;
 }
@@ -255,12 +255,12 @@ inline bool operator==(QChar qc1, QChar qc2)
 
 inline bool operator==(QChar qc, char ch)
 {
-    return qc.c == (uchar) ch;
+    return qc.c == (unsigned char) ch;
 }
 
 inline bool operator==(char ch, QChar qc)
 {
-    return (uchar) ch == qc.c;
+    return (unsigned char) ch == qc.c;
 }
 
 inline bool operator!=(QChar qc1, QChar qc2)
@@ -270,12 +270,12 @@ inline bool operator!=(QChar qc1, QChar qc2)
 
 inline bool operator!=(QChar qc, char ch)
 {
-    return qc.c != (uchar) ch;
+    return qc.c != (unsigned char) ch;
 }
 
 inline bool operator!=(char ch, QChar qc)
 {
-    return (uchar) ch != qc.c;
+    return (unsigned char) ch != qc.c;
 }
 
 inline bool operator>=(QChar qc1, QChar qc2)
@@ -285,12 +285,12 @@ inline bool operator>=(QChar qc1, QChar qc2)
 
 inline bool operator>=(QChar qc, char ch)
 {
-    return qc.c >= (uchar) ch;
+    return qc.c >= (unsigned char) ch;
 }
 
 inline bool operator>=(char ch, QChar qc)
 {
-    return (uchar) ch >= qc.c;
+    return (unsigned char) ch >= qc.c;
 }
 
 inline bool operator>(QChar qc1, QChar qc2)
@@ -300,12 +300,12 @@ inline bool operator>(QChar qc1, QChar qc2)
 
 inline bool operator>(QChar qc, char ch)
 {
-    return qc.c > (uchar) ch;
+    return qc.c > (unsigned char) ch;
 }
 
 inline bool operator>(char ch, QChar qc)
 {
-    return (uchar) ch > qc.c;
+    return (unsigned char) ch > qc.c;
 }
 
 inline bool operator<=(QChar qc1, QChar qc2)
@@ -315,12 +315,12 @@ inline bool operator<=(QChar qc1, QChar qc2)
 
 inline bool operator<=(QChar qc, char ch)
 {
-    return qc.c <= (uchar) ch;
+    return qc.c <= (unsigned char) ch;
 }
 
 inline bool operator<=(char ch, QChar qc)
 {
-    return (uchar) ch <= qc.c;
+    return (unsigned char) ch <= qc.c;
 }
 
 inline bool operator<(QChar qc1, QChar qc2)
@@ -330,12 +330,12 @@ inline bool operator<(QChar qc1, QChar qc2)
 
 inline bool operator<(QChar qc, char ch)
 {
-    return qc.c < (uchar) ch;
+    return qc.c < (unsigned char) ch;
 }
 
 inline bool operator<(char ch, QChar qc)
 {
-    return (uchar) ch < qc.c;
+    return (unsigned char) ch < qc.c;
 }
 
 // Keep this struct to <= 46 bytes, that's what the system will allocate.
@@ -477,27 +477,27 @@ public:
 
     bool endsWith(const QString &) const;
 
-    short toShort(bool *ok = NULL, int base = 10) const;
-    ushort toUShort(bool *ok = NULL, int base = 10) const;
-    int toInt(bool *ok = NULL, int base = 10) const;
-    uint toUInt(bool *ok = NULL, int base = 10) const;
-    double toDouble(bool *ok = NULL) const;
+    short toShort(bool *ok = 0, int base = 10) const;
+    unsigned short toUShort(bool *ok = 0, int base = 10) const;
+    int toInt(bool *ok = 0, int base = 10) const;
+    uint toUInt(bool *ok = 0, int base = 10) const;
+    double toDouble(bool *ok = 0) const;
 
     static QString number(int);
     static QString number(uint);
     static QString number(long);
-    static QString number(ulong);
+    static QString number(unsigned long);
     static QString number(double);
 
     bool findArg(int& pos, int& len) const;
     
     QString arg(const QString &, int width=0) const;
     QString arg(short, int width=0) const;
-    QString arg(ushort, int width=0) const;
+    QString arg(unsigned short, int width=0) const;
     QString arg(int, int width=0) const;
     QString arg(uint, int width=0) const;
     QString arg(long, int width=0) const;
-    QString arg(ulong, int width=0) const;
+    QString arg(unsigned long, int width=0) const;
     QString arg(double, int width=0) const;
 
     QString left(uint) const;
@@ -514,11 +514,11 @@ public:
     QString &setLatin1(const char *, int len=-1);
 
     QString &setNum(short);
-    QString &setNum(ushort);
+    QString &setNum(unsigned short);
     QString &setNum(int);
     QString &setNum(uint);
     QString &setNum(long);
-    QString &setNum(ulong);
+    QString &setNum(unsigned long);
     QString &setNum(double);
 
     QString &sprintf(const char *, ...) 

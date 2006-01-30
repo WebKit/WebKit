@@ -142,7 +142,7 @@ protected:
     bool m_noBorder     : 1;
     bool m_solid        : 1;
     uint unused         : 14;
-    ushort padding      : 16;
+    unsigned padding    : 16;
     friend class HTMLTableCellElementImpl;
 };
 

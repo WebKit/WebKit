@@ -4,7 +4,7 @@
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
  *  Copyright (c) 2000 Daniel Molkentin (molkentin@kde.org)
  *  Copyright (c) 2000 Stefan Schimanski (schimmi@kde.org)
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -140,19 +140,19 @@ int KJS::PluginBase::m_refCount = 0;
 const ClassInfo Navigator::info = { "Navigator", 0, &NavigatorTable, 0 };
 /*
 @begin NavigatorTable 13
-  appCodeName	Navigator::AppCodeName	DontDelete|ReadOnly
-  appName	Navigator::AppName	DontDelete|ReadOnly
-  appVersion	Navigator::AppVersion	DontDelete|ReadOnly
-  language	Navigator::Language	DontDelete|ReadOnly
-  userAgent	Navigator::UserAgent	DontDelete|ReadOnly
-  platform	Navigator::Platform	DontDelete|ReadOnly
-  plugins	Navigator::_Plugins	DontDelete|ReadOnly
-  mimeTypes	Navigator::_MimeTypes	DontDelete|ReadOnly
-  product	Navigator::Product	DontDelete|ReadOnly
-  productSub	Navigator::ProductSub	DontDelete|ReadOnly
-  vendor	Navigator::Vendor	DontDelete|ReadOnly
-  cookieEnabled	Navigator::CookieEnabled DontDelete|ReadOnly
-  javaEnabled	Navigator::JavaEnabled	DontDelete|Function 0
+  appCodeName   Navigator::AppCodeName  DontDelete|ReadOnly
+  appName       Navigator::AppName      DontDelete|ReadOnly
+  appVersion    Navigator::AppVersion   DontDelete|ReadOnly
+  language      Navigator::Language     DontDelete|ReadOnly
+  userAgent     Navigator::UserAgent    DontDelete|ReadOnly
+  platform      Navigator::Platform     DontDelete|ReadOnly
+  plugins       Navigator::_Plugins     DontDelete|ReadOnly
+  mimeTypes     Navigator::_MimeTypes   DontDelete|ReadOnly
+  product       Navigator::Product      DontDelete|ReadOnly
+  productSub    Navigator::ProductSub   DontDelete|ReadOnly
+  vendor        Navigator::Vendor       DontDelete|ReadOnly
+  cookieEnabled Navigator::CookieEnabled DontDelete|ReadOnly
+  javaEnabled   Navigator::JavaEnabled  DontDelete|Function 0
 @end
 */
 KJS_IMPLEMENT_PROTOFUNC(NavigatorFunc)
@@ -260,7 +260,7 @@ PluginBase::PluginBase(ExecState *exec)
 
                 // get mime information
                 MimeClassInfo *mime = new MimeClassInfo;
-                QStringList tokens = QStringList::split(':', *type, TRUE);
+                QStringList tokens = QStringList::split(':', *type, true);
                 QStringList::Iterator token;
 
                 token = tokens.begin();
@@ -322,8 +322,8 @@ void PluginBase::refresh(bool reload)
 
 /*
 @begin PluginsTable 2
-  length	Plugins::Length		DontDelete|ReadOnly
-  refresh	Plugins::Refresh	DontDelete|Function 0
+  length        Plugins::Length         DontDelete|ReadOnly
+  refresh       Plugins::Refresh        DontDelete|Function 0
 @end
 */
 KJS_IMPLEMENT_PROTOFUNC(PluginsFunc)
@@ -383,7 +383,7 @@ bool Plugins::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName
 
 /*
 @begin MimeTypesTable 1
-  length	MimeTypes::Length	DontDelete|ReadOnly
+  length        MimeTypes::Length       DontDelete|ReadOnly
 @end
 */
 
@@ -439,10 +439,10 @@ bool MimeTypes::getOwnPropertySlot(ExecState *exec, const Identifier& propertyNa
 
 /*
 @begin PluginTable 4
-  name		Plugin::Name		DontDelete|ReadOnly
-  filename	Plugin::Filename	DontDelete|ReadOnly
-  description	Plugin::Description	DontDelete|ReadOnly
-  length	Plugin::Length		DontDelete|ReadOnly
+  name          Plugin::Name            DontDelete|ReadOnly
+  filename      Plugin::Filename        DontDelete|ReadOnly
+  description   Plugin::Description     DontDelete|ReadOnly
+  length        Plugin::Length          DontDelete|ReadOnly
 @end
 */
 
@@ -511,10 +511,10 @@ bool Plugin::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName,
 
 /*
 @begin MimeTypeTable 4
-  type		MimeType::Type		DontDelete|ReadOnly
-  suffixes	MimeType::Suffixes	DontDelete|ReadOnly
-  description	MimeType::Description	DontDelete|ReadOnly
-  enabledPlugin	MimeType::EnabledPlugin	DontDelete|ReadOnly
+  type          MimeType::Type          DontDelete|ReadOnly
+  suffixes      MimeType::Suffixes      DontDelete|ReadOnly
+  description   MimeType::Description   DontDelete|ReadOnly
+  enabledPlugin MimeType::EnabledPlugin DontDelete|ReadOnly
 @end
 */
 

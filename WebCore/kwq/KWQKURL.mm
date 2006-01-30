@@ -1289,9 +1289,9 @@ CFURLRef KURL::createCFURL() const
     // (e.g calls to NSURL -path). However, this function is not tolerant of illegal UTF-8 sequences, which
     // could either be a malformed string or bytes in a different encoding, like Shift-JIS, so we fall back
     // onto using ISO Latin-1 in those cases.
-    CFURLRef result = CFURLCreateAbsoluteURLWithBytes(0, bytes, urlString.length(), kCFStringEncodingUTF8, 0, TRUE);
+    CFURLRef result = CFURLCreateAbsoluteURLWithBytes(0, bytes, urlString.length(), kCFStringEncodingUTF8, 0, true);
     if (!result)
-        result = CFURLCreateAbsoluteURLWithBytes(0, bytes, urlString.length(), kCFStringEncodingISOLatin1, 0, TRUE);
+        result = CFURLCreateAbsoluteURLWithBytes(0, bytes, urlString.length(), kCFStringEncodingISOLatin1, 0, true);
     return result;
 }
 

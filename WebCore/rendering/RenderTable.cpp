@@ -462,7 +462,6 @@ void RenderTable::splitColumn(int pos, int firstSpan)
     int oldSize = columns.size();
     columns.resize(oldSize + 1);
     int oldSpan = columns[pos].span;
-//     qDebug("splitColumn( %d,%d ), oldSize=%d, oldSpan=%d", pos, firstSpan, oldSize, oldSpan );
     KHTMLAssert(oldSpan > firstSpan);
     columns[pos].span = firstSpan;
     memmove(columns.data() + pos + 1, columns.data() + pos, (oldSize-pos)*sizeof(ColumnStruct));

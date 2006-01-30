@@ -2,7 +2,7 @@
     This file is part of the KDE libraries
 
     Copyright (C) 1999 Lars Knoll (knoll@mpi-hd.mpg.de)
-    Copyright (C) 2003 Apple Computer, Inc.
+    Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -27,21 +27,16 @@
 
 #include "config.h"
 #include "decoder.h"
-using namespace khtml;
 
+#include "htmlnames.h"
+#include <ctype.h>
+#include <klocale.h>
+#include <kxmlcore/Assertions.h>
 #include <qregexp.h>
 #include <qtextcodec.h>
 
-#include <ctype.h>
-#include <kdebug.h>
-#include <klocale.h>
-
-#include "htmlnames.h"
-
-using namespace DOM::HTMLNames;
-
-using DOM::AtomicString;
-using DOM::nullAtom;
+using namespace WebCore;
+using namespace HTMLNames;
 
 class KanjiCode
 {
@@ -53,16 +48,16 @@ public:
     static const unsigned char kanji_map_sjis[];
     static int ISkanji(int code)
     {
-	if (code >= 0x100)
-		    return 0;
-	return (kanji_map_sjis[code & 0xff] & 1);
+        if (code >= 0x100)
+                    return 0;
+        return (kanji_map_sjis[code & 0xff] & 1);
     }
 
     static int ISkana(int code)
     {
-	if (code >= 0x100)
-		    return 0;
-	return (kanji_map_sjis[code & 0xff] & 2);
+        if (code >= 0x100)
+                    return 0;
+        return (kanji_map_sjis[code & 0xff] & 2);
     }
 
 };
@@ -119,8 +114,8 @@ enum KanjiCode::Type KanjiCode::judge(const char *str, int size)
 {
     enum Type code;
     int i;
-    int bfr = FALSE;		/* Kana Moji */
-    int bfk = 0;		/* EUC Kana */
+    int bfr = false;            /* Kana Moji */
+    int bfk = 0;                /* EUC Kana */
     int sjis = 0;
     int euc = 0;
 
@@ -130,136 +125,136 @@ enum KanjiCode::Type KanjiCode::judge(const char *str, int size)
 
     i = 0;
     while (i < size) {
-	if (ptr[i] == ESC && (size - i >= 3)) {
-	    if ((ptr[i + 1] == '$' && ptr[i + 2] == 'B')
-	    || (ptr[i + 1] == '(' && ptr[i + 2] == 'B')) {
-		code = JIS;
-		goto breakBreak;
-	    } else if ((ptr[i + 1] == '$' && ptr[i + 2] == '@')
-		    || (ptr[i + 1] == '(' && ptr[i + 2] == 'J')) {
-		code = JIS;
-		goto breakBreak;
-	    } else if (ptr[i + 1] == '(' && ptr[i + 2] == 'I') {
-		code = JIS;
-		i += 3;
-	    } else if (ptr[i + 1] == ')' && ptr[i + 2] == 'I') {
-		code = JIS;
-		i += 3;
-	    } else {
-		i++;
-	    }
-	    bfr = FALSE;
-	    bfk = 0;
-	} else {
-	    if (ptr[i] < 0x20) {
-		bfr = FALSE;
-		bfk = 0;
-		/* ?? check kudokuten ?? && ?? hiragana ?? */
-		if ((i >= 2) && (ptr[i - 2] == 0x81)
-			&& (0x41 <= ptr[i - 1] && ptr[i - 1] <= 0x49)) {
-		    code = SJIS;
-		    sjis += 100;	/* kudokuten */
-		} else if ((i >= 2) && (ptr[i - 2] == 0xa1)
-			&& (0xa2 <= ptr[i - 1] && ptr[i - 1] <= 0xaa)) {
-		    code = EUC;
-		    euc += 100;		/* kudokuten */
-		} else if ((i >= 2) && (ptr[i - 2] == 0x82) && (0xa0 <= ptr[i - 1])) {
-		    sjis += 40;		/* hiragana */
-		} else if ((i >= 2) && (ptr[i - 2] == 0xa4) && (0xa0 <= ptr[i - 1])) {
-		    euc += 40;	/* hiragana */
-		}
-	    } else {
-		/* ?? check hiragana or katana ?? */
-		if ((size - i > 1) && (ptr[i] == 0x82) && (0xa0 <= ptr[i + 1])) {
-		    sjis++;	/* hiragana */
-		} else if ((size - i > 1) && (ptr[i] == 0x83)
-			 && (0x40 <= ptr[i + 1] && ptr[i + 1] <= 0x9f)) {
-		    sjis++;	/* katakana */
-		} else if ((size - i > 1) && (ptr[i] == 0xa4) && (0xa0 <= ptr[i + 1])) {
-		    euc++;	/* hiragana */
-		} else if ((size - i > 1) && (ptr[i] == 0xa5) && (0xa0 <= ptr[i + 1])) {
-		    euc++;	/* katakana */
-		}
-		if (bfr) {
-		    if ((i >= 1) && (0x40 <= ptr[i] && ptr[i] <= 0xa0) && ISkanji(ptr[i - 1])) {
-			code = SJIS;
-			goto breakBreak;
-		    } else if ((i >= 1) && (0x81 <= ptr[i - 1] && ptr[i - 1] <= 0x9f) && ((0x40 <= ptr[i] && ptr[i] < 0x7e) || (0x7e < ptr[i] && ptr[i] <= 0xfc))) {
-			code = SJIS;
-			goto breakBreak;
-		    } else if ((i >= 1) && (0xfd <= ptr[i] && ptr[i] <= 0xfe) && (0xa1 <= ptr[i - 1] && ptr[i - 1] <= 0xfe)) {
-			code = EUC;
-			goto breakBreak;
-		    } else if ((i >= 1) && (0xfd <= ptr[i - 1] && ptr[i - 1] <= 0xfe) && (0xa1 <= ptr[i] && ptr[i] <= 0xfe)) {
-			code = EUC;
-			goto breakBreak;
-		    } else if ((i >= 1) && (ptr[i] < 0xa0 || 0xdf < ptr[i]) && (0x8e == ptr[i - 1])) {
-			code = SJIS;
-			goto breakBreak;
-		    } else if (ptr[i] <= 0x7f) {
-			code = SJIS;
-			goto breakBreak;
-		    } else {
-			if (0xa1 <= ptr[i] && ptr[i] <= 0xa6) {
-			    euc++;	/* sjis hankaku kana kigo */
-			} else if (0xa1 <= ptr[i] && ptr[i] <= 0xdf) {
-			    ;	/* sjis hankaku kana */
-			} else if (0xa1 <= ptr[i] && ptr[i] <= 0xfe) {
-			    euc++;
-			} else if (0x8e == ptr[i]) {
-			    euc++;
-			} else if (0x20 <= ptr[i] && ptr[i] <= 0x7f) {
-			    sjis++;
-			}
-			bfr = FALSE;
-			bfk = 0;
-		    }
-		} else if (0x8e == ptr[i]) {
-		    if (size - i <= 1) {
-			;
-		    } else if (0xa1 <= ptr[i + 1] && ptr[i + 1] <= 0xdf) {
-			/* EUC KANA or SJIS KANJI */
-			if (bfk == 1) {
-			    euc += 100;
-			}
-			bfk++;
-			i++;
-		    } else {
-			/* SJIS only */
-			code = SJIS;
-			goto breakBreak;
-		    }
-		} else if (0x81 <= ptr[i] && ptr[i] <= 0x9f) {
-		    /* SJIS only */
-		    code = SJIS;
-		    if ((size - i >= 1)
-			    && ((0x40 <= ptr[i + 1] && ptr[i + 1] <= 0x7e)
-			    || (0x80 <= ptr[i + 1] && ptr[i + 1] <= 0xfc))) {
-			goto breakBreak;
-		    }
-		} else if (0xfd <= ptr[i] && ptr[i] <= 0xfe) {
-		    /* EUC only */
-		    code = EUC;
-		    if ((size - i >= 1)
-			    && (0xa1 <= ptr[i + 1] && ptr[i + 1] <= 0xfe)) {
-			goto breakBreak;
-		    }
-		} else if (ptr[i] <= 0x7f) {
-		    ;
-		} else {
-		    bfr = TRUE;
-		    bfk = 0;
-		}
-	    }
-	    i++;
-	}
+        if (ptr[i] == ESC && (size - i >= 3)) {
+            if ((ptr[i + 1] == '$' && ptr[i + 2] == 'B')
+            || (ptr[i + 1] == '(' && ptr[i + 2] == 'B')) {
+                code = JIS;
+                goto breakBreak;
+            } else if ((ptr[i + 1] == '$' && ptr[i + 2] == '@')
+                    || (ptr[i + 1] == '(' && ptr[i + 2] == 'J')) {
+                code = JIS;
+                goto breakBreak;
+            } else if (ptr[i + 1] == '(' && ptr[i + 2] == 'I') {
+                code = JIS;
+                i += 3;
+            } else if (ptr[i + 1] == ')' && ptr[i + 2] == 'I') {
+                code = JIS;
+                i += 3;
+            } else {
+                i++;
+            }
+            bfr = false;
+            bfk = 0;
+        } else {
+            if (ptr[i] < 0x20) {
+                bfr = false;
+                bfk = 0;
+                /* ?? check kudokuten ?? && ?? hiragana ?? */
+                if ((i >= 2) && (ptr[i - 2] == 0x81)
+                        && (0x41 <= ptr[i - 1] && ptr[i - 1] <= 0x49)) {
+                    code = SJIS;
+                    sjis += 100;        /* kudokuten */
+                } else if ((i >= 2) && (ptr[i - 2] == 0xa1)
+                        && (0xa2 <= ptr[i - 1] && ptr[i - 1] <= 0xaa)) {
+                    code = EUC;
+                    euc += 100;         /* kudokuten */
+                } else if ((i >= 2) && (ptr[i - 2] == 0x82) && (0xa0 <= ptr[i - 1])) {
+                    sjis += 40;         /* hiragana */
+                } else if ((i >= 2) && (ptr[i - 2] == 0xa4) && (0xa0 <= ptr[i - 1])) {
+                    euc += 40;          /* hiragana */
+                }
+            } else {
+                /* ?? check hiragana or katana ?? */
+                if ((size - i > 1) && (ptr[i] == 0x82) && (0xa0 <= ptr[i + 1])) {
+                    sjis++;     /* hiragana */
+                } else if ((size - i > 1) && (ptr[i] == 0x83)
+                         && (0x40 <= ptr[i + 1] && ptr[i + 1] <= 0x9f)) {
+                    sjis++;     /* katakana */
+                } else if ((size - i > 1) && (ptr[i] == 0xa4) && (0xa0 <= ptr[i + 1])) {
+                    euc++;      /* hiragana */
+                } else if ((size - i > 1) && (ptr[i] == 0xa5) && (0xa0 <= ptr[i + 1])) {
+                    euc++;      /* katakana */
+                }
+                if (bfr) {
+                    if ((i >= 1) && (0x40 <= ptr[i] && ptr[i] <= 0xa0) && ISkanji(ptr[i - 1])) {
+                        code = SJIS;
+                        goto breakBreak;
+                    } else if ((i >= 1) && (0x81 <= ptr[i - 1] && ptr[i - 1] <= 0x9f) && ((0x40 <= ptr[i] && ptr[i] < 0x7e) || (0x7e < ptr[i] && ptr[i] <= 0xfc))) {
+                        code = SJIS;
+                        goto breakBreak;
+                    } else if ((i >= 1) && (0xfd <= ptr[i] && ptr[i] <= 0xfe) && (0xa1 <= ptr[i - 1] && ptr[i - 1] <= 0xfe)) {
+                        code = EUC;
+                        goto breakBreak;
+                    } else if ((i >= 1) && (0xfd <= ptr[i - 1] && ptr[i - 1] <= 0xfe) && (0xa1 <= ptr[i] && ptr[i] <= 0xfe)) {
+                        code = EUC;
+                        goto breakBreak;
+                    } else if ((i >= 1) && (ptr[i] < 0xa0 || 0xdf < ptr[i]) && (0x8e == ptr[i - 1])) {
+                        code = SJIS;
+                        goto breakBreak;
+                    } else if (ptr[i] <= 0x7f) {
+                        code = SJIS;
+                        goto breakBreak;
+                    } else {
+                        if (0xa1 <= ptr[i] && ptr[i] <= 0xa6) {
+                            euc++;      /* sjis hankaku kana kigo */
+                        } else if (0xa1 <= ptr[i] && ptr[i] <= 0xdf) {
+                            ;           /* sjis hankaku kana */
+                        } else if (0xa1 <= ptr[i] && ptr[i] <= 0xfe) {
+                            euc++;
+                        } else if (0x8e == ptr[i]) {
+                            euc++;
+                        } else if (0x20 <= ptr[i] && ptr[i] <= 0x7f) {
+                            sjis++;
+                        }
+                        bfr = false;
+                        bfk = 0;
+                    }
+                } else if (0x8e == ptr[i]) {
+                    if (size - i <= 1) {
+                        ;
+                    } else if (0xa1 <= ptr[i + 1] && ptr[i + 1] <= 0xdf) {
+                        /* EUC KANA or SJIS KANJI */
+                        if (bfk == 1) {
+                            euc += 100;
+                        }
+                        bfk++;
+                        i++;
+                    } else {
+                        /* SJIS only */
+                        code = SJIS;
+                        goto breakBreak;
+                    }
+                } else if (0x81 <= ptr[i] && ptr[i] <= 0x9f) {
+                    /* SJIS only */
+                    code = SJIS;
+                    if ((size - i >= 1)
+                            && ((0x40 <= ptr[i + 1] && ptr[i + 1] <= 0x7e)
+                            || (0x80 <= ptr[i + 1] && ptr[i + 1] <= 0xfc))) {
+                        goto breakBreak;
+                    }
+                } else if (0xfd <= ptr[i] && ptr[i] <= 0xfe) {
+                    /* EUC only */
+                    code = EUC;
+                    if ((size - i >= 1)
+                            && (0xa1 <= ptr[i + 1] && ptr[i + 1] <= 0xfe)) {
+                        goto breakBreak;
+                    }
+                } else if (ptr[i] <= 0x7f) {
+                    ;
+                } else {
+                    bfr = true;
+                    bfk = 0;
+                }
+            }
+            i++;
+        }
     }
     if (code == ASCII) {
-	if (sjis > euc) {
-	    code = SJIS;
-	} else if (sjis < euc) {
-	    code = EUC;
-	}
+        if (sjis > euc) {
+            code = SJIS;
+        } else if (sjis < euc) {
+            code = EUC;
+        }
     }
 breakBreak:
     return (code);
@@ -400,11 +395,11 @@ QString Decoder::decode(const char *data, int len)
             // Extract the first three bytes.
             // Handle the case where some of bytes are already in the buffer.
             // The last byte is always guaranteed to not be in the buffer.
-            const uchar *udata = (const uchar *)data;
-            uchar c1 = bufferLength >= 1 ? (uchar)buffer[0] : *udata++;
-            uchar c2 = bufferLength >= 2 ? (uchar)buffer[1] : *udata++;
-            assert(bufferLength < 3);
-            uchar c3 = *udata;
+            const unsigned char *udata = (const unsigned char *)data;
+            unsigned char c1 = bufferLength >= 1 ? (unsigned char)buffer[0] : *udata++;
+            unsigned char c2 = bufferLength >= 2 ? (unsigned char)buffer[1] : *udata++;
+            ASSERT(bufferLength < 3);
+            unsigned char c3 = *udata;
 
             // Check for the BOM.
             const char *autoDetectedEncoding;
@@ -420,7 +415,7 @@ QString Decoder::decode(const char *data, int len)
             if (autoDetectedEncoding != 0) {
                 m_type = AutoDetectedEncoding;
                 m_codec = QTextCodec::codecForName(autoDetectedEncoding);
-                assert(m_codec);
+                ASSERT(m_codec);
                 enc = m_codec->name();
                 delete m_decoder;
                 m_decoder = m_codec->makeDecoder();
@@ -502,7 +497,7 @@ QString Decoder::decode(const char *data, int len)
                         ptr++;
                         len++;
                     }
-		    tmp[len] = 0;
+                    tmp[len] = 0;
                     AtomicString tag(tmp);
                     
                     if (tag == titleTag)
@@ -515,35 +510,35 @@ QString Decoder::decode(const char *data, int len)
                         QCString str( ptr, (end-ptr)+1);
                         str = str.lower();
                         int pos = 0;
-			while( pos < ( int ) str.length() ) {
-			    if( (pos = str.find("charset", pos, false)) == -1) break;
-			    pos += 7;
+                        while( pos < ( int ) str.length() ) {
+                            if( (pos = str.find("charset", pos, false)) == -1) break;
+                            pos += 7;
                             // skip whitespace..
-			    while(  pos < (int)str.length() && str[pos] <= ' ' ) pos++;
+                            while(  pos < (int)str.length() && str[pos] <= ' ' ) pos++;
                             if ( pos == ( int )str.length()) break;
                             if ( str[pos++] != '=' ) continue;
                             while ( pos < ( int )str.length() &&
                                     ( str[pos] <= ' ' ) || str[pos] == '=' || str[pos] == '"' || str[pos] == '\'')
-				pos++;
+                                pos++;
 
                             // end ?
                             if ( pos == ( int )str.length() ) break;
-			    uint endpos = pos;
-			    while( endpos < str.length() &&
+                            uint endpos = pos;
+                            while( endpos < str.length() &&
                                    (str[endpos] != ' ' && str[endpos] != '"' && str[endpos] != '\''
                                     && str[endpos] != ';' && str[endpos] != '>') )
-				endpos++;
+                                endpos++;
 #ifdef DECODE_DEBUG
-			    kdDebug( 6005 ) << "Decoder: found charset: " << str.mid(pos, endpos-pos) << endl;
+                            kdDebug( 6005 ) << "Decoder: found charset: " << str.mid(pos, endpos-pos) << endl;
 #endif
-			    setEncoding(str.mid(pos, endpos-pos), EncodingFromMetaTag);
-			    if( m_type == EncodingFromMetaTag ) goto found;
+                            setEncoding(str.mid(pos, endpos-pos), EncodingFromMetaTag);
+                            if( m_type == EncodingFromMetaTag ) goto found;
 
                             if ( endpos >= str.length() || str[endpos] == '/' || str[endpos] == '>' ) break;
 
-			    pos = endpos + 1;
-			}
-		    } else if (tag != scriptTag && tag != noscriptTag && tag != styleTag &&
+                            pos = endpos + 1;
+                        }
+                    } else if (tag != scriptTag && tag != noscriptTag && tag != styleTag &&
                                tag != linkTag && tag != metaTag && tag != objectTag &&
                                tag != titleTag && tag != baseTag && 
                                (end || tag != htmlTag) && !withinTitle &&
@@ -567,30 +562,30 @@ QString Decoder::decode(const char *data, int len)
     if (m_type != UserChosenEncoding && m_type != AutoDetectedEncoding && m_codec && m_codec->isJapanese())
     {
 #ifdef DECODE_DEBUG
-	kdDebug( 6005 ) << "Decoder: use auto-detect (" << strlen(data) << ")" << endl;
+        kdDebug( 6005 ) << "Decoder: use auto-detect (" << strlen(data) << ")" << endl;
 #endif
-	const char *autoDetectedEncoding;
+        const char *autoDetectedEncoding;
         switch ( KanjiCode::judge( data, len ) ) {
-	case KanjiCode::JIS:
-	    autoDetectedEncoding = "jis7";
-	    break;
-	case KanjiCode::EUC:
-	    autoDetectedEncoding = "eucjp";
-	    break;
-	case KanjiCode::SJIS:
-	    autoDetectedEncoding = "sjis";
-	    break;
-	default:
-	    autoDetectedEncoding = NULL;
-	    break;
-	}
+        case KanjiCode::JIS:
+            autoDetectedEncoding = "jis7";
+            break;
+        case KanjiCode::EUC:
+            autoDetectedEncoding = "eucjp";
+            break;
+        case KanjiCode::SJIS:
+            autoDetectedEncoding = "sjis";
+            break;
+        default:
+            autoDetectedEncoding = NULL;
+            break;
+        }
 #ifdef DECODE_DEBUG
-	kdDebug( 6005 ) << "Decoder: auto detect encoding is "
+        kdDebug( 6005 ) << "Decoder: auto detect encoding is "
             << (autoDetectedEncoding ? autoDetectedEncoding : "NULL") << endl;
 #endif
-	if (autoDetectedEncoding != 0) {
-	    setEncoding(autoDetectedEncoding, AutoDetectedEncoding);
-	}
+        if (autoDetectedEncoding != 0) {
+            setEncoding(autoDetectedEncoding, AutoDetectedEncoding);
+        }
     }
 
     // if we still haven't found an encoding latin1 will be used...

@@ -30,7 +30,6 @@
 #import "KWQFoundationExtras.h"
 #import "MacFrame.h"
 #import "KWQLogging.h"
-#import "KWQStyle.h"
 #import "KWQView.h"
 #import "KWQWindowWidget.h"
 #import "WebCoreFrameBridge.h"
@@ -54,7 +53,6 @@ static QWidget *deferredFirstResponder;
 class KWQWidgetPrivate
 {
 public:
-    QStyle *style;
     QFont font;
     QPalette pal;
     NSView *view;
@@ -65,8 +63,6 @@ public:
 
 QWidget::QWidget() : data(new KWQWidgetPrivate)
 {
-    static QStyle defaultStyle;
-    data->style = &defaultStyle;
     data->view = nil;
     data->visible = true;
     data->mustStayInWindow = false;
@@ -75,8 +71,6 @@ QWidget::QWidget() : data(new KWQWidgetPrivate)
 
 QWidget::QWidget(NSView *view) : data(new KWQWidgetPrivate)
 {
-    static QStyle defaultStyle;
-    data->style = &defaultStyle;
     data->view = KWQRetain(view);
     data->visible = true;
     data->mustStayInWindow = false;
@@ -309,21 +303,6 @@ const QPalette& QWidget::palette() const
 void QWidget::setPalette(const QPalette &palette)
 {
     data->pal = palette;
-}
-
-QStyle &QWidget::style() const
-{
-    return *data->style;
-}
-
-void QWidget::setStyle(QStyle *style)
-{
-    // According to the Qt implementation 
-    /*
-    Sets the widget's GUI style to \a style. Ownership of the style
-    object is not transferred.
-    */
-    data->style = style;
 }
 
 QFont QWidget::font() const

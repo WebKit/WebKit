@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -190,7 +190,7 @@ void QPainter::restore()
 
     if (data->stack.isEmpty()) {
         ERROR("ERROR void QPainter::restore() stack is empty");
-	return;
+        return;
     }
     data->state = data->stack.last();
     data->stack.removeLast();
@@ -365,23 +365,23 @@ void QPainter::drawEllipse(int x, int y, int w, int h)
 
     if (data->state.brush.style() != WebCore::Brush::NoBrush) {
         _setColorFromBrush();
-	if (data->state.pen.style() != Pen::NoPen) {
-	    // stroke and fill
-	    _setColorFromPen();
-	    uint penWidth = data->state.pen.width();
-	    if (penWidth == 0) 
-		penWidth++;
-	    CGContextSetLineWidth(context, penWidth);
-	    CGContextDrawPath(context, kCGPathFillStroke);
-	} else {
-	    CGContextFillPath(context);
-	}
+        if (data->state.pen.style() != Pen::NoPen) {
+            // stroke and fill
+            _setColorFromPen();
+            uint penWidth = data->state.pen.width();
+            if (penWidth == 0) 
+                penWidth++;
+            CGContextSetLineWidth(context, penWidth);
+            CGContextDrawPath(context, kCGPathFillStroke);
+        } else {
+            CGContextFillPath(context);
+        }
     }
     if (data->state.pen.style() != Pen::NoPen) {
         _setColorFromPen();
-	uint penWidth = data->state.pen.width();
-	if (penWidth == 0) 
-	    penWidth++;
+        uint penWidth = data->state.pen.width();
+        if (penWidth == 0) 
+            penWidth++;
         CGContextSetLineWidth(context, penWidth);
         CGContextStrokePath(context);
     }
@@ -399,12 +399,12 @@ void QPainter::drawArc (int x, int y, int w, int h, int a, int alen)
     if (data->state.pen.style() != Pen::NoPen) {
         CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
         CGContextBeginPath(context);
-	
-	float r = (float)w / 2;
+        
+        float r = (float)w / 2;
         float fa = (float)a / 16;
         float falen =  fa + (float)alen / 16;
         CGContextAddArc(context, x + r, y + r, r, -fa * M_PI/180, -falen * M_PI/180, true);
-	
+        
         _setColorFromPen();
         CGContextSetLineWidth(context, data->state.pen.width());
         CGContextStrokePath(context);
@@ -424,7 +424,7 @@ void QPainter::drawConvexPolygon(const IntPointArray &points)
 
     CGContextSaveGState(context);
 
-    CGContextSetShouldAntialias(context, FALSE);
+    CGContextSetShouldAntialias(context, false);
     
     CGContextBeginPath(context);
     CGContextMoveToPoint(context, points[0].x(), points[0].y());
@@ -488,7 +488,7 @@ void QPainter::drawFloatImage(const Image &image, float x, float y, float w, flo
 {
     if (data->state.paintingDisabled)
         return;
-		
+                
     KWQ_BLOCK_EXCEPTIONS;
 
     float tsw = sw;
@@ -548,11 +548,11 @@ void QPainter::_updateRenderer()
     if (data->textRenderer == 0 || data->state.font != data->textRendererFont) {
         data->textRendererFont = data->state.font;
         id <WebCoreTextRenderer> oldRenderer = data->textRenderer;
-	KWQ_BLOCK_EXCEPTIONS;
+        KWQ_BLOCK_EXCEPTIONS;
         data->textRenderer = KWQRetain([[WebCoreTextRendererFactory sharedFactory]
             rendererWithFont:data->textRendererFont.getWebCoreFont()]);
         KWQRelease(oldRenderer);
-	KWQ_UNBLOCK_EXCEPTIONS;
+        KWQ_UNBLOCK_EXCEPTIONS;
     }
 }
     
@@ -872,7 +872,7 @@ void QPainter::setShadow(int x, int y, int blur, const Color& color)
     if (!color.isValid()) {
         CGContextSetShadow(context, CGSizeMake(x,-y), blur); // y is flipped.
     } else {
-	CGColorRef colorCG = cgColor(color);
+        CGColorRef colorCG = cgColor(color);
         CGContextSetShadowWithColor(context,
                                     CGSizeMake(x,-y), // y is flipped.
                                     blur, 

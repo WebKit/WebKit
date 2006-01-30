@@ -151,10 +151,6 @@
 			Name="kwq"
 			>
 			<File
-				RelativePath="..\..\kwq\KWQApplication.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQBuffer.cpp"
 				>
 			</File>
@@ -239,10 +235,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQGlobal.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQGuardedPtr.cpp"
 				>
 			</File>
@@ -319,14 +311,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQKPartsEvent.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQKPartsEvent.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQKPartsHistoryProvider.h"
 				>
 			</File>
@@ -396,10 +380,6 @@
 			</File>
 			<File
 				RelativePath="..\..\kwq\KWQPainter.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQPair.h"
 				>
 			</File>
 			<File
@@ -504,14 +484,6 @@
 			</File>
 			<File
 				RelativePath="..\..\kwq\KWQStringList.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQStyle.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQStyle.h"
 				>
 			</File>
 			<File

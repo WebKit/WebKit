@@ -93,17 +93,15 @@ namespace KJS {
 
   class Screen : public JSObject {
   public:
-    Screen(ExecState*);
-    enum {
-      Height, Width, ColorDepth, PixelDepth, AvailLeft, AvailTop, AvailHeight,
-      AvailWidth
-    };
+    enum { Height, Width, ColorDepth, PixelDepth, AvailLeft, AvailTop, AvailHeight, AvailWidth };
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     JSValue *getValueProperty(ExecState *exec, int token) const;
-  private:
-    FrameView *view;
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
+  private:
+    friend class Window;
+    Screen(ExecState*, Frame*);
+    QGuardedPtr<Frame> m_frame;
   };
 
   class Window : public JSObject {

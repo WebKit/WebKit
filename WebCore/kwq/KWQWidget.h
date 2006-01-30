@@ -40,7 +40,6 @@ class NSView;
 class KWQWidgetPrivate;
 class QEvent;
 class QPalette;
-class QStyle;
 
 namespace WebCore {
     class QPainter;
@@ -106,9 +105,6 @@ public:
 
     const QPalette& palette() const;
     virtual void setPalette(const QPalette &);
-    
-    QStyle &style() const;
-    void setStyle(QStyle *);
     
     QFont font() const;
     virtual void setFont(const QFont &);

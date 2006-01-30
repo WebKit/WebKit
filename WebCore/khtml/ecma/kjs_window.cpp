@@ -2,7 +2,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -22,53 +22,49 @@
 #include "config.h"
 #include "kjs_window.h"
 
-#include <qtimer.h>
-#include <qapplication.h>
-#include <kdebug.h>
-#include <klocale.h>
-#include <kwinmodule.h>
-#include <kconfig.h>
-#include <assert.h>
-#include <qstyle.h>
-#include "rendering/render_canvas.h"
-
-#include "KWQLogging.h"
-#include "KWQKConfigBase.h"
-#include <kjs/collector.h>
-#include "kjs_proxy.h"
-#include "kjs_navigator.h"
-#include "kjs_html.h"
-#include "kjs_range.h"
-#include "kjs_traversal.h"
-#include "kjs_css.h"
-#include "kjs_events.h"
+#include "EventNames.h"
+#include "Frame.h"
+#include "FrameView.h"
 #include "JSMutationEvent.h"
 #include "JSXMLHttpRequest.h"
+#include "KWQKConfigBase.h"
+#include "KWQLogging.h"
+#include "Screen.h"
+#include "SelectionController.h"
+#include "Shared.h"
+#include "css_ruleimpl.h"
+#include "css_stylesheetimpl.h"
+#include "dom2_eventsimpl.h"
+#include "dom2_rangeimpl.h"
+#include "dom_elementimpl.h"
+#include "dom_node.h"
+#include "dom_position.h"
+#include "dom_string.h"
+#include "domparser.h"
+#include "html_documentimpl.h"
+#include "htmlediting.h"
+#include "kjs_css.h"
+#include "kjs_events.h"
+#include "kjs_html.h"
+#include "kjs_navigator.h"
+#include "kjs_proxy.h"
+#include "kjs_range.h"
+#include "kjs_traversal.h"
+#include "render_canvas.h"
 #include "xmlserializer.h"
-#ifdef KHTML_XSLT
+#include <kconfig.h>
+#include <kdebug.h>
+#include <kjs/collector.h>
+#include <klocale.h>
+#include <kwinmodule.h>
+#include <qtimer.h>
+
+#if KHTML_XSLT
 #include "XSLTProcessor.h"
 #endif
-#include "domparser.h"
 
-#include "FrameView.h"
-#include "Frame.h"
-#include "dom/dom_string.h"
-#include "dom/dom_node.h"
-#include "editing/htmlediting.h"
-#include "editing/SelectionController.h"
-#include "xml/dom2_eventsimpl.h"
-#include "xml/dom2_rangeimpl.h"
-#include "xml/dom_elementimpl.h"
-#include "xml/dom_position.h"
-#include "xml/EventNames.h"
-#include "html/html_documentimpl.h"
-#include "css/css_ruleimpl.h"
-#include "css/css_stylesheetimpl.h"
-#include "Shared.h"
-
-using namespace DOM;
+using namespace WebCore;
 using namespace EventNames;
-using namespace khtml;
 
 namespace KJS {
 
@@ -140,45 +136,36 @@ namespace KJS {
 const ClassInfo Screen::info = { "Screen", 0, &ScreenTable, 0 };
 
 // We set the object prototype so that toString is implemented
-Screen::Screen(ExecState *exec)
-  : JSObject(exec->lexicalInterpreter()->builtinObjectPrototype()) {}
+Screen::Screen(ExecState* exec, Frame* f)
+  : JSObject(exec->lexicalInterpreter()->builtinObjectPrototype()), m_frame(f)
+{
+}
 
 bool Screen::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
   return getStaticValueSlot<Screen, JSObject>(exec, &ScreenTable, this, propertyName, slot);
 }
 
-JSValue *Screen::getValueProperty(ExecState *exec, int token) const
+JSValue* Screen::getValueProperty(ExecState*, int token) const
 {
-  KWinModule info;
-  QWidget *thisWidget = Window::retrieveActive(exec)->frame()->view();
-  IntRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(thisWidget));
+  QWidget* widget = m_frame ? m_frame->view() : 0;
 
-  switch( token ) {
+  switch (token) {
   case Height:
-    return jsNumber(sg.height());
+    return jsNumber(screenRect(widget).height());
   case Width:
-    return jsNumber(sg.width());
+    return jsNumber(screenRect(widget).width());
   case ColorDepth:
-  case PixelDepth: {
-    return jsNumber(QApplication::desktop()->screenDepth());
-  }
-  case AvailLeft: {
-    IntRect clipped = info.workArea().intersect(sg);
-    return jsNumber(clipped.x()-sg.x());
-  }
-  case AvailTop: {
-    IntRect clipped = info.workArea().intersect(sg);
-    return jsNumber(clipped.y()-sg.y());
-  }
-  case AvailHeight: {
-    IntRect clipped = info.workArea().intersect(sg);
-    return jsNumber(clipped.height());
-  }
-  case AvailWidth: {
-    IntRect clipped = info.workArea().intersect(sg);
-    return jsNumber(clipped.width());
-  }
+  case PixelDepth:
+    return jsNumber(screenDepth(widget));
+  case AvailLeft:
+    return jsNumber(usableScreenRect(widget).x() - screenRect(widget).x());
+  case AvailTop:
+    return jsNumber(usableScreenRect(widget).y() - screenRect(widget).y());
+  case AvailHeight:
+    return jsNumber(usableScreenRect(widget).height());
+  case AvailWidth:
+    return jsNumber(usableScreenRect(widget).width());
   default:
     kdWarning() << "Screen::getValueProperty unhandled token " << token << endl;
     return jsUndefined();
@@ -346,11 +333,8 @@ ScriptInterpreter *Window::interpreter() const
 Window *Window::retrieveWindow(Frame *p)
 {
   JSObject *obj = retrieve(p)->getObject();
-#ifndef NDEBUG
   // obj should never be null, except when javascript has been disabled in that frame.
-  if (p && p->jScriptEnabled())
-    assert(obj);
-#endif
+  ASSERT(obj || (p && p->jScriptEnabled()));
   if (!obj) // JS disabled
     return 0;
   return static_cast<Window*>(obj);
@@ -359,13 +343,13 @@ Window *Window::retrieveWindow(Frame *p)
 Window *Window::retrieveActive(ExecState *exec)
 {
     JSValue *imp = exec->dynamicInterpreter()->globalObject();
-    assert(imp);
+    ASSERT(imp);
     return static_cast<Window*>(imp);
 }
 
 JSValue *Window::retrieve(Frame *p)
 {
-    assert(p);
+    ASSERT(p);
     if (KJSProxyImpl *proxy = p->jScript())
         return proxy->interpreter()->globalObject(); // the Global object is the "window"
   
@@ -611,7 +595,7 @@ static JSValue *showModalDialog(ExecState *exec, Window *openerWindow, const Lis
     // - help: boolFeature(features, "help", true), makes help icon appear in dialog (what does it do on Windows?)
     // - unadorned: trusted && boolFeature(features, "unadorned");
 
-    IntRect screenRect = QApplication::desktop()->availableGeometry(openerWindow->frame()->view());
+    IntRect screenRect = usableScreenRect(openerWindow->frame()->view());
 
     wargs.width = intFeature(features, "dialogwidth", 100, screenRect.width(), 620); // default here came from frame size of dialog in MacIE
     wargs.widthSet = true;
@@ -657,7 +641,7 @@ static JSValue *showModalDialog(ExecState *exec, Window *openerWindow, const Lis
 
 JSValue *Window::getValueProperty(ExecState *exec, int token) const
 {
-   assert(token == Closed || m_frame);
+   ASSERT(token == Closed || m_frame);
 
    switch (token) {
    case Closed:
@@ -798,7 +782,7 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
     }
     case _Screen:
       if (!screen)
-        screen = new Screen(exec);
+        screen = new Screen(exec, m_frame);
       return screen;
     case Image:
       // FIXME: this property (and the few below) probably shouldn't create a new object every
@@ -895,7 +879,7 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
     case Onunload:
      return getListener(exec,scrollEvent);
    }
-   assert(0);
+   ASSERT(0);
    return jsUndefined();
 }
 
@@ -917,7 +901,7 @@ JSValue *Window::indexGetter(ExecState *exec, JSObject *originalObject, const Id
   
   QPtrList<ObjectContents> frames = thisObj->m_frame->frames();
   ObjectContents* frame = frames.at(slot.index());
-  assert(frame && frame->inherits("Frame"));
+  ASSERT(frame && frame->inherits("Frame"));
 
   return retrieve(static_cast<Frame*>(frame));
 }
@@ -926,7 +910,7 @@ JSValue *Window::namedItemGetter(ExecState *exec, JSObject *originalObject, cons
 {
   Window *thisObj = static_cast<Window *>(slot.slotBase());
   DocumentImpl *doc = thisObj->m_frame->document();
-  assert(thisObj->isSafeScript(exec) && doc && doc->isHTMLDocument());
+  ASSERT(thisObj->isSafeScript(exec) && doc && doc->isHTMLDocument());
 
   DOMString name = propertyName.domString();
   RefPtr<DOM::HTMLCollectionImpl> collection = doc->windowNamedItems(name);
@@ -1202,7 +1186,7 @@ bool Window::toBoolean(ExecState *) const
 void Window::scheduleClose()
 {
   kdDebug(6070) << "Window::scheduleClose window.close() " << m_frame << endl;
-  Q_ASSERT(winq);
+  ASSERT(winq);
   m_frame->scheduleClose();
 }
 
@@ -1597,8 +1581,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
       QString features = args[2]->isUndefinedOrNull() ? QString() : args[2]->toString(exec).qstring();
       parseWindowFeatures(features, windowArgs);
       
-      int screenNumber = QApplication::desktop()->screenNumber(widget->topLevelWidget());
-      constrainToVisible(QApplication::desktop()->screenGeometry(screenNumber), windowArgs);
+      constrainToVisible(screenRect(widget), windowArgs);
       
       // prepare arguments
       KURL url;
@@ -1682,7 +1665,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
     if(args.size() >= 2 && widget)
     {
       QWidget * tl = widget->topLevelWidget();
-          IntRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(tl));
+      IntRect sg = screenRect(widget);
       IntPoint dest = tl->pos() + IntPoint( args[0]->toInt32(exec), args[1]->toInt32(exec) );
       // Security check (the spec talks about UniversalBrowserWrite to disable this check...)
       if ( dest.x() >= sg.x() && dest.y() >= sg.x() &&
@@ -1695,7 +1678,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
     if(args.size() >= 2 && widget)
     {
       QWidget * tl = widget->topLevelWidget();
-          IntRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(tl));
+      IntRect sg = screenRect(widget);
       IntPoint dest( args[0]->toInt32(exec)+sg.x(), args[1]->toInt32(exec)+sg.y() );
       // Security check (the spec talks about UniversalBrowserWrite to disable this check...)
       if ( dest.x() >= sg.x() && dest.y() >= sg.y() &&
@@ -1709,7 +1692,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
     {
       QWidget * tl = widget->topLevelWidget();
       IntSize dest = tl->size() + IntSize( args[0]->toInt32(exec), args[1]->toInt32(exec) );
-          IntRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(tl));
+      IntRect sg = screenRect(widget);
       // Security check: within desktop limits and bigger than 100x100 (per spec)
       if ( tl->x()+dest.width() <= sg.x()+sg.width() &&
            tl->y()+dest.height() <= sg.y()+sg.height() &&
@@ -1727,7 +1710,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
     {
       QWidget * tl = widget->topLevelWidget();
       IntSize dest = IntSize( args[0]->toInt32(exec), args[1]->toInt32(exec) );
-          IntRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(tl));
+      IntRect sg = screenRect(widget);
       // Security check: within desktop limits and bigger than 100x100 (per spec)
       if ( tl->x()+dest.width() <= sg.x()+sg.width() &&
            tl->y()+dest.height() <= sg.y()+sg.height() &&
@@ -1874,7 +1857,7 @@ void ScheduledAction::execute(Window *window)
     if (JSValue* func = m_func.get()) {
         if (func->isObject() && static_cast<JSObject *>(func)->implementsCall()) {
             ExecState *exec = interpreter->globalExec();
-            assert(window == interpreter->globalObject());
+            ASSERT(window == interpreter->globalObject());
             JSLock lock;
             static_cast<JSObject *>(func)->call(exec, window, m_args);
             if (exec->hadException()) {
@@ -2020,7 +2003,7 @@ JSValue *FrameArray::getValueProperty(ExecState *exec, int token)
       return obj->get(exec, "location");
     return jsUndefined();
   default:
-    assert(0);
+    ASSERT(0);
     return jsUndefined();
   }
 }
@@ -2142,7 +2125,7 @@ JSValue *Location::getValueProperty(ExecState *exec, int token) const
   case Search:
     return jsString(url.query());
   default:
-    assert(0);
+    ASSERT(0);
     return jsUndefined();
   }
 }
@@ -2351,7 +2334,7 @@ JSValue *Selection::getValueProperty(ExecState *exec, int token) const
     case _Type:
         return jsString(s.type());
     default:
-        assert(0);
+        ASSERT(0);
         return jsUndefined();
     }
 }
@@ -2434,7 +2417,7 @@ BarInfo::BarInfo(ExecState *exec, Frame *p, Type barType)
 
 JSValue *BarInfo::getValueProperty(ExecState *exec, int token) const
 {
-    assert(token == Visible);
+    ASSERT(token == Visible);
     switch (m_type) {
     case Locationbar:
         return jsBoolean(m_frame->locationbarVisible());

@@ -39,7 +39,6 @@
 #include <qfontmetrics.h>
 #include <qlist.h>
 #include <qpalette.h>
-#include <qapplication.h>
 
 #include "khtmllayout.h"
 #include "Shared.h"
@@ -75,37 +74,33 @@ enum PseudoState { PseudoUnknown, PseudoNone, PseudoAnyLink, PseudoLink, PseudoV
 //------------------------------------------------
 // Box model attributes. Not inherited.
 
-struct LengthBox
-{
-    LengthBox()
-    {
-    }
-    LengthBox( LengthType t )
-	: left( t ), right ( t ), top( t ), bottom( t ) {}
+struct LengthBox {
+    LengthBox() { }
+    LengthBox(LengthType t)
+        : left(t), right(t), top(t), bottom(t) { }
 
     Length left;
     Length right;
     Length top;
     Length bottom;
-    Length& operator=(Length& len)
+
+    LengthBox& operator=(const Length& len)
     {
-    	left=len;
-	right=len;
-	top=len;
-	bottom=len;
-	return len;
+        left = len;
+        right = len;
+        top = len;
+        bottom = len;
+        return *this;
     }
 
     bool operator==(const LengthBox& o) const
     {
-    	return left==o.left && right==o.right && top==o.top && bottom==o.bottom;
+        return left == o.left && right == o.right && top == o.top && bottom == o.bottom;
     }
 
 
-    bool nonZero() const { return left.value!=0 || right.value!=0 || top.value!=0 || bottom.value!=0; }
+    bool nonZero() const { return left.value || right.value || top.value || bottom.value; }
 };
-
-
 
 enum EPosition {
     STATIC, RELATIVE, ABSOLUTE, FIXED
@@ -114,7 +109,6 @@ enum EPosition {
 enum EFloat {
     FNONE = 0, FLEFT, FRIGHT
 };
-
 
 //------------------------------------------------
 // Border attributes. Not inherited.
@@ -129,7 +123,7 @@ class BorderValue
 {
 public:
     BorderValue() {
-	width = 3; // medium is default value
+        width = 3; // medium is default value
         style = BNONE;
     }
 
@@ -147,7 +141,7 @@ public:
     
     bool operator==(const BorderValue& o) const
     {
-    	return width==o.width && style==o.style && color==o.color;
+        return width==o.width && style==o.style && color==o.color;
     }
 
     bool operator!=(const BorderValue& o) const
@@ -167,7 +161,7 @@ public:
     
     bool operator==(const OutlineValue& o) const
     {
-    	return width==o.width && style==o.style && color==o.color && _offset == o._offset && _auto == o._auto;
+        return width==o.width && style==o.style && color==o.color && _offset == o._offset && _auto == o._auto;
     }
     
     bool operator!=(const OutlineValue& o) const
@@ -247,7 +241,7 @@ public:
     bool hasBorder() const
     {
         bool haveImage = image.hasImage();
-    	return left.nonZero(!haveImage) || right.nonZero(!haveImage) || top.nonZero(!haveImage) || bottom.nonZero(!haveImage);
+        return left.nonZero(!haveImage) || right.nonZero(!haveImage) || top.nonZero(!haveImage) || bottom.nonZero(!haveImage);
     }
 
     bool hasBorderRadius() const {
@@ -288,7 +282,7 @@ public:
     
     bool operator==(const BorderData& o) const
     {
-    	return left == o.left && right == o.right && top == o.top && bottom == o.bottom && image == o.image &&
+        return left == o.left && right == o.right && top == o.top && bottom == o.bottom && image == o.image &&
                topLeft == o.topLeft && topRight == o.topRight && bottomLeft == o.bottomLeft && bottomRight == o.bottomRight;
     }
     
@@ -406,11 +400,11 @@ public:
     StyleVisualData(const StyleVisualData& o );
 
     bool operator==( const StyleVisualData &o ) const {
-	return ( clip == o.clip &&
+        return ( clip == o.clip &&
                  hasClip == o.hasClip &&
-		 colspan == o.colspan &&
-		 counter_increment == o.counter_increment &&
-		 counter_reset == o.counter_reset &&
+                 colspan == o.colspan &&
+                 counter_increment == o.counter_increment &&
+                 counter_reset == o.counter_reset &&
                  textDecoration == o.textDecoration);
     }
     bool operator!=( const StyleVisualData &o ) const {
@@ -533,7 +527,7 @@ public:
 
     bool operator==(const StyleBackgroundData& o) const;
     bool operator!=(const StyleBackgroundData &o) const {
-	return !(*this == o);
+        return !(*this == o);
     }
 
     BackgroundLayer m_background;
@@ -791,7 +785,7 @@ public:
 
     bool operator==(const StyleInheritedData& o) const;
     bool operator != ( const StyleInheritedData &o ) const {
-	return !(*this == o);
+        return !(*this == o);
     }
 
     Length indent;
@@ -889,9 +883,9 @@ public:
 
     void ref() { m_ref++;  }
     void deref(RenderArena* arena) { 
-	if (m_ref) m_ref--; 
-	if (!m_ref)
-	    arenaDelete(arena);
+        if (m_ref) m_ref--; 
+        if (!m_ref)
+            arenaDelete(arena);
     }
     bool hasOneRef() { return m_ref==1; }
     int refCount() const { return m_ref; }
@@ -912,8 +906,8 @@ protected:
 
     // inherit
     struct InheritedFlags {
-    	bool operator==( const InheritedFlags &other ) const {
-	    return (_empty_cells == other._empty_cells) &&
+        bool operator==( const InheritedFlags &other ) const {
+            return (_empty_cells == other._empty_cells) &&
                    (_caption_side == other._caption_side) &&
                    (_list_style_type == other._list_style_type) &&
                    (_list_style_position == other._list_style_position) &&
@@ -930,25 +924,25 @@ protected:
                    (_visuallyOrdered == other._visuallyOrdered) &&
                    (_htmlHacks == other._htmlHacks) &&
                    (_force_backgrounds_to_white == other._force_backgrounds_to_white);
-	}
+        }
         
-	bool operator!=( const InheritedFlags &other ) const {
+        bool operator!=( const InheritedFlags &other ) const {
             return !(*this == other);
-	}
+        }
 
-	EEmptyCell _empty_cells : 1 ;
-	ECaptionSide _caption_side : 2;
-	EListStyleType _list_style_type : 5 ;
-	EListStylePosition _list_style_position :1;
-	EVisibility _visibility : 2;
-	ETextAlign _text_align : 4;
-	ETextTransform _text_transform : 2;
-	int _text_decorations : 4;
-	ECursor _cursor_style : 4;
-	EDirection _direction : 1;
-	bool _border_collapse : 1 ;
-	EWhiteSpace _white_space : 3;
-	EBoxDirection _box_direction : 1; // CSS3 box_direction property (flexible box layout module)
+        EEmptyCell _empty_cells : 1 ;
+        ECaptionSide _caption_side : 2;
+        EListStyleType _list_style_type : 5 ;
+        EListStylePosition _list_style_position :1;
+        EVisibility _visibility : 2;
+        ETextAlign _text_align : 4;
+        ETextTransform _text_transform : 2;
+        int _text_decorations : 4;
+        ECursor _cursor_style : 4;
+        EDirection _direction : 1;
+        bool _border_collapse : 1 ;
+        EWhiteSpace _white_space : 3;
+        EBoxDirection _box_direction : 1; // CSS3 box_direction property (flexible box layout module)
         
         // non CSS2 inherited
         bool _visuallyOrdered : 1;
@@ -976,7 +970,7 @@ protected:
             (_affectedByDrag == other._affectedByDrag) &&
             (_pseudoBits == other._pseudoBits) &&
             (_unicodeBidi == other._unicodeBidi);
-	}
+        }
 
         bool operator!=( const NonInheritedFlags &other ) const {
             return !(*this == other);
@@ -1035,38 +1029,38 @@ protected:
 protected:
     void setBitDefaults()
     {
-	inherited_flags._empty_cells = initialEmptyCells();
-	inherited_flags._caption_side = initialCaptionSide();
-	inherited_flags._list_style_type = initialListStyleType();
-	inherited_flags._list_style_position = initialListStylePosition();
-	inherited_flags._visibility = initialVisibility();
-	inherited_flags._text_align = initialTextAlign();
-	inherited_flags._text_transform = initialTextTransform();
-	inherited_flags._text_decorations = initialTextDecoration();
-	inherited_flags._cursor_style = initialCursor();
-	inherited_flags._direction = initialDirection();
-	inherited_flags._border_collapse = initialBorderCollapse();
-	inherited_flags._white_space = initialWhiteSpace();
-	inherited_flags._visuallyOrdered = initialVisuallyOrdered();
-	inherited_flags._htmlHacks=false;
+        inherited_flags._empty_cells = initialEmptyCells();
+        inherited_flags._caption_side = initialCaptionSide();
+        inherited_flags._list_style_type = initialListStyleType();
+        inherited_flags._list_style_position = initialListStylePosition();
+        inherited_flags._visibility = initialVisibility();
+        inherited_flags._text_align = initialTextAlign();
+        inherited_flags._text_transform = initialTextTransform();
+        inherited_flags._text_decorations = initialTextDecoration();
+        inherited_flags._cursor_style = initialCursor();
+        inherited_flags._direction = initialDirection();
+        inherited_flags._border_collapse = initialBorderCollapse();
+        inherited_flags._white_space = initialWhiteSpace();
+        inherited_flags._visuallyOrdered = initialVisuallyOrdered();
+        inherited_flags._htmlHacks=false;
         inherited_flags._box_direction = initialBoxDirection();
         inherited_flags._force_backgrounds_to_white = false;
         
-	noninherited_flags._effectiveDisplay = noninherited_flags._originalDisplay = initialDisplay();
-	noninherited_flags._overflow = initialOverflow();
-	noninherited_flags._vertical_align = initialVerticalAlign();
-	noninherited_flags._clear = initialClear();
-	noninherited_flags._position = initialPosition();
-	noninherited_flags._floating = initialFloating();
-	noninherited_flags._table_layout = initialTableLayout();
+        noninherited_flags._effectiveDisplay = noninherited_flags._originalDisplay = initialDisplay();
+        noninherited_flags._overflow = initialOverflow();
+        noninherited_flags._vertical_align = initialVerticalAlign();
+        noninherited_flags._clear = initialClear();
+        noninherited_flags._position = initialPosition();
+        noninherited_flags._floating = initialFloating();
+        noninherited_flags._table_layout = initialTableLayout();
         noninherited_flags._page_break_before = initialPageBreak();
         noninherited_flags._page_break_after = initialPageBreak();
-	noninherited_flags._styleType = NOPSEUDO;
+        noninherited_flags._styleType = NOPSEUDO;
         noninherited_flags._affectedByHover = false;
         noninherited_flags._affectedByActive = false;
         noninherited_flags._affectedByDrag = false;
         noninherited_flags._pseudoBits = 0;
-	noninherited_flags._unicodeBidi = initialUnicodeBidi();
+        noninherited_flags._unicodeBidi = initialUnicodeBidi();
     }
 
 public:
@@ -1115,23 +1109,23 @@ public:
     
 // attribute getter methods
 
-    EDisplay 	display() const { return noninherited_flags._effectiveDisplay; }
+    EDisplay    display() const { return noninherited_flags._effectiveDisplay; }
     EDisplay    originalDisplay() const { return noninherited_flags._originalDisplay; }
     
-    Length  	left() const {  return surround->offset.left; }
-    Length  	right() const {  return surround->offset.right; }
-    Length  	top() const {  return surround->offset.top; }
-    Length  	bottom() const {  return surround->offset.bottom; }
+    Length      left() const {  return surround->offset.left; }
+    Length      right() const {  return surround->offset.right; }
+    Length      top() const {  return surround->offset.top; }
+    Length      bottom() const {  return surround->offset.bottom; }
 
-    EPosition 	position() const { return  noninherited_flags._position; }
-    EFloat  	floating() const { return  noninherited_flags._floating; }
+    EPosition   position() const { return  noninherited_flags._position; }
+    EFloat      floating() const { return  noninherited_flags._floating; }
 
-    Length  	width() const { return box->width; }
-    Length  	height() const { return box->height; }
-    Length  	minWidth() const { return box->min_width; }
-    Length  	maxWidth() const { return box->max_width; }
-    Length  	minHeight() const { return box->min_height; }
-    Length  	maxHeight() const { return box->max_height; }
+    Length      width() const { return box->width; }
+    Length      height() const { return box->height; }
+    Length      minWidth() const { return box->min_width; }
+    Length      maxWidth() const { return box->max_width; }
+    Length      minHeight() const { return box->min_height; }
+    Length      maxHeight() const { return box->max_height; }
 
     const BorderData& border() const { return surround->border; }
     const BorderValue& borderLeft() const { return surround->border.left; }
@@ -1153,7 +1147,7 @@ public:
     bool borderLeftIsTransparent() const { return surround->border.left.isTransparent(); }
     unsigned short  borderRightWidth() const { return surround->border.borderRightWidth(); }
     EBorderStyle    borderRightStyle() const {  return surround->border.right.style; }
-    const Color &  	    borderRightColor() const {  return surround->border.right.color; }
+    const Color &   borderRightColor() const {  return surround->border.right.color; }
     bool borderRightIsTransparent() const { return surround->border.right.isTransparent(); }
     unsigned short  borderTopWidth() const { return surround->border.borderTopWidth(); }
     EBorderStyle    borderTopStyle() const {return surround->border.top.style; }
@@ -1161,14 +1155,14 @@ public:
     bool borderTopIsTransparent() const { return surround->border.top.isTransparent(); }
     unsigned short  borderBottomWidth() const { return surround->border.borderBottomWidth(); }
     EBorderStyle    borderBottomStyle() const {  return surround->border.bottom.style; }
-    const Color &  	    borderBottomColor() const {  return surround->border.bottom.color; }
+    const Color &   borderBottomColor() const {  return surround->border.bottom.color; }
     bool borderBottomIsTransparent() const { return surround->border.bottom.isTransparent(); }
     
     unsigned short outlineSize() const { return outlineWidth() + outlineOffset(); }
     unsigned short outlineWidth() const { if (background->m_outline.style == BNONE || background->m_outline.style == BHIDDEN) return 0; return background->m_outline.width; }
-    EBorderStyle    outlineStyle() const {  return background->m_outline.style; }
+    EBorderStyle   outlineStyle() const {  return background->m_outline.style; }
     bool outlineStyleIsAuto() const { return background->m_outline._auto; }
-    const Color &  	    outlineColor() const {  return background->m_outline.color; }
+    const Color &  outlineColor() const {  return background->m_outline.color; }
 
     EOverflow overflow() const { return  noninherited_flags._overflow; }
     EVisibility visibility() const { return inherited_flags._visibility; }

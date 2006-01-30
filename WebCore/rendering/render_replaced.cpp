@@ -34,9 +34,7 @@
 #include "render_canvas.h"
 #include "render_line.h"
 #include "visible_position.h"
-#include <assert.h>
 #include <kdebug.h>
-#include <qapplication.h>
 #include <qevent.h>
 #include <qpainter.h>
 #include <qwidget.h>
@@ -223,7 +221,7 @@ bool RenderReplaced::isSelected()
     if (s == SelectionBoth)
         return selectionStart == 0 && selectionEnd == end;
         
-    assert(0);
+    ASSERT(0);
     return false;
 }
 
@@ -247,7 +245,7 @@ RenderWidget::RenderWidget(DOM::NodeImpl* node)
 {
     m_widget = 0;
     // a replaced element doesn't support being anonymous
-    assert(node);
+    ASSERT(node);
     m_view = node->getDocument()->view();
 
     canvas()->addWidget(this);

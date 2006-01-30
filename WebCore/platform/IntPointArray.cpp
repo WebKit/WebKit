@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-6 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -87,23 +87,23 @@ void IntPointArray::setPoint( uint index, int x, int y )
 bool IntPointArray::setPoints( int nPoints, const int *points )
 {
     if ( !resize(nPoints) )
-	return FALSE;
+        return false;
     int i = 0;
-    while ( nPoints-- ) {			// make array of points
-	setPoint( i++, *points, *(points+1) );
-	points++;
-	points++;
+    while ( nPoints-- ) {                   // make array of points
+        setPoint( i++, *points, *(points+1) );
+        points++;
+        points++;
     }
-    return TRUE;
+    return true;
 }
 
 bool IntPointArray::setPoints( int nPoints, int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3)
 {
     if ( !resize(nPoints) )
-	return FALSE;
+        return false;
     setPoint( 0, x0, y0 );
     setPoint( 1, x1, y1 );
     setPoint( 2, x2, y2 );
     setPoint( 3, x3, y3 );
-    return TRUE;
+    return true;
 }

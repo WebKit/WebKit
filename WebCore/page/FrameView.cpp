@@ -4,7 +4,7 @@
  *                     1999 Lars Knoll <knoll@kde.org>
  *                     1999 Antti Koivisto <koivisto@kde.org>
  *                     2000 Dirk Mueller <mueller@kde.org>
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -83,32 +83,32 @@ public:
     ~FrameViewPrivate()
     {
         if (underMouse)
-	    underMouse->deref();
+            underMouse->deref();
         if (clickNode)
-	    clickNode->deref();
+            clickNode->deref();
         delete repaintRects;
     }
     void reset()
     {
         if (underMouse)
-	    underMouse->deref();
-	underMouse = 0;
+            underMouse->deref();
+        underMouse = 0;
         linkPressed = false;
         useSlowRepaints = false;
         dragTarget = 0;
-	borderTouched = false;
+        borderTouched = false;
         scrollBarMoved = false;
         ignoreWheelEvents = false;
-	borderX = 30;
-	borderY = 30;
+        borderX = 30;
+        borderY = 30;
         prevMouseX = -1;
         prevMouseY = -1;
-	clickCount = 0;
+        clickCount = 0;
         if (clickNode)
-	    clickNode->deref();
+            clickNode->deref();
         clickNode = 0;
-	scrollingSelf = false;
-	layoutTimerId = 0;
+        scrollingSelf = false;
+        layoutTimerId = 0;
         delayedLayout = false;
         mousePressed = false;
         doFullRepaint = true;
@@ -304,7 +304,7 @@ void FrameView::applyOverflowToViewport(RenderObject* o, ScrollBarMode& hMode, S
             hMode = vMode = AlwaysOn;
             break;
         case OAUTO:
-	    hMode = vMode = Auto;
+            hMode = vMode = Auto;
             break;
         default:
             // Don't set it at all.
@@ -502,8 +502,8 @@ void FrameView::updateDashboardRegions()
     if (document->hasDashboardRegions()) {
         QValueList<DashboardRegionValue> newRegions = document->renderer()->computeDashboardRegions();
         QValueList<DashboardRegionValue> currentRegions = document->dashboardRegions();
-	document->setDashboardRegions(newRegions);
-	Mac(m_frame)->dashboardRegionsChanged();
+        document->setDashboardRegions(newRegions);
+        Mac(m_frame)->dashboardRegionsChanged();
     }
 }
 #endif
@@ -543,7 +543,7 @@ void FrameView::viewportMousePressEvent( QMouseEvent *_mouse )
                                            d->clickCount,_mouse,true,NodeImpl::MousePress);
 
     if (!swallowEvent) {
-	MousePressEvent event(_mouse, xm, ym, mev.url, mev.target, mev.innerNode.get());
+        MousePressEvent event(_mouse, xm, ym, mev.url, mev.target, mev.innerNode.get());
         m_frame->khtmlMousePressEvent(&event);
         // Many AK widgets run their own event loops and consume events while the mouse is down.
         // When they finish, currentEvent is the mouseUp that they exited on.  We need to update
@@ -579,14 +579,14 @@ void FrameView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
 
     if (mev.innerNode == d->clickNode)
         dispatchMouseEvent(clickEvent,mev.innerNode.get(),true,
-			   d->clickCount,_mouse,true,NodeImpl::MouseRelease);
+                           d->clickCount,_mouse,true,NodeImpl::MouseRelease);
 
     // Qt delivers a release event AND a double click event.
     if (!swallowEvent) {
-	MouseReleaseEvent event1(_mouse, xm, ym, mev.url, mev.target, mev.innerNode.get());
-	m_frame->khtmlMouseReleaseEvent(&event1);
+        MouseReleaseEvent event1(_mouse, xm, ym, mev.url, mev.target, mev.innerNode.get());
+        m_frame->khtmlMouseReleaseEvent(&event1);
 
-	MouseDoubleClickEvent event2(_mouse, xm, ym, mev.url, mev.target, mev.innerNode.get());
+        MouseDoubleClickEvent event2(_mouse, xm, ym, mev.url, mev.target, mev.innerNode.get());
         m_frame->khtmlMouseDoubleClickEvent(&event2);
     }
 
@@ -717,11 +717,11 @@ void FrameView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
 
     if (d->clickCount > 0 && mev.innerNode == d->clickNode
         )
-	dispatchMouseEvent(clickEvent,mev.innerNode.get(),true,
-			   d->clickCount,_mouse,true,NodeImpl::MouseRelease);
+        dispatchMouseEvent(clickEvent,mev.innerNode.get(),true,
+                           d->clickCount,_mouse,true,NodeImpl::MouseRelease);
 
     if (!swallowEvent) {
-	MouseReleaseEvent event(_mouse, xm, ym, mev.url, mev.target, mev.innerNode.get());
+        MouseReleaseEvent event(_mouse, xm, ym, mev.url, mev.target, mev.innerNode.get());
         m_frame->khtmlMouseReleaseEvent(&event);
     }
 
@@ -836,10 +836,10 @@ bool FrameView::scrollTo(const IntRect &bounds)
     int curWidth = visibleWidth();
 
     if (ye-y>curHeight-d->borderY)
-	ye  = y + curHeight - d->borderY;
+        ye  = y + curHeight - d->borderY;
 
     if (xe-x>curWidth-d->borderX)
-	xe = x + curWidth - d->borderX;
+        xe = x + curWidth - d->borderX;
 
     // is xpos of target left of the view's border?
     if (x < contentsX() + d->borderX )
@@ -868,14 +868,14 @@ bool FrameView::scrollTo(const IntRect &bounds)
     scrollY = deltay > 0 ? (deltay > maxy ? maxy : deltay) : deltay == 0 ? 0 : (deltay>-maxy ? deltay : -maxy);
 
     if (contentsX() + scrollX < 0)
-	scrollX = -contentsX();
+        scrollX = -contentsX();
     else if (contentsWidth() - visibleWidth() - contentsX() < scrollX)
-	scrollX = contentsWidth() - visibleWidth() - contentsX();
+        scrollX = contentsWidth() - visibleWidth() - contentsX();
 
     if (contentsY() + scrollY < 0)
-	scrollY = -contentsY();
+        scrollY = -contentsY();
     else if (contentsHeight() - visibleHeight() - contentsY() < scrollY)
-	scrollY = contentsHeight() - visibleHeight() - contentsY();
+        scrollY = contentsHeight() - visibleHeight() - contentsY();
 
     scrollBy(scrollX, scrollY);
 
@@ -888,7 +888,7 @@ bool FrameView::scrollTo(const IntRect &bounds)
     d->scrollingSelf = false;
 
     if ( (scrollX!=maxx) && (scrollY!=maxy) )
-	return true;
+        return true;
     else return false;
 
 }
@@ -991,37 +991,43 @@ void FrameView::useSlowRepaints()
     setStaticBackground(true);
 }
 
-void FrameView::setScrollBarsMode ( ScrollBarMode mode )
+#if !KHTML_NO_SCROLLBARS
+
+void FrameView::setScrollBarsMode(ScrollBarMode mode)
 {
-#ifndef KHTML_NO_SCROLLBARS
     d->vmode = mode;
     d->hmode = mode;
     
     QScrollView::setScrollBarsMode(mode);
-#else
-    Q_UNUSED( mode );
-#endif
 }
 
-void FrameView::setVScrollBarMode ( ScrollBarMode mode )
+void FrameView::setVScrollBarMode(ScrollBarMode mode)
 {
-#ifndef KHTML_NO_SCROLLBARS
     d->vmode = mode;
     QScrollView::setVScrollBarMode(mode);
-#else
-    Q_UNUSED( mode );
-#endif
 }
 
-void FrameView::setHScrollBarMode ( ScrollBarMode mode )
+void FrameView::setHScrollBarMode(ScrollBarMode mode)
 {
-#ifndef KHTML_NO_SCROLLBARS
     d->hmode = mode;
     QScrollView::setHScrollBarMode(mode);
-#else
-    Q_UNUSED( mode );
-#endif
 }
+
+#else
+
+void FrameView::setScrollBarsMode(ScrollBarMode)
+{
+}
+
+void FrameView::setVScrollBarMode(ScrollBarMode)
+{
+}
+
+void FrameView::setHScrollBarMode(ScrollBarMode)
+{
+}
+
+#endif
 
 void FrameView::restoreScrollBar ( )
 {
@@ -1036,10 +1042,10 @@ bool FrameView::dispatchMouseEvent(const AtomicString &eventType, NodeImpl* targ
     if (targetNode && targetNode->isTextNode())
         targetNode = targetNode->parentNode();
     if (d->underMouse)
-	d->underMouse->deref();
+        d->underMouse->deref();
     d->underMouse = targetNode;
     if (d->underMouse)
-	d->underMouse->ref();
+        d->underMouse->ref();
 
     // mouseout/mouseover
     if (setUnder) {

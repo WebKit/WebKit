@@ -188,8 +188,8 @@ static BOOL isCaseSensitiveEqual(NSString *a, NSString *b)
 
 @implementation WebCoreFrameBridge
 
-static bool initializedObjectCacheSize = FALSE;
-static bool initializedKJS = FALSE;
+static bool initializedObjectCacheSize = false;
+static bool initializedKJS = false;
 
 static inline WebCoreFrameBridge *bridge(Frame *frame)
 {
@@ -484,7 +484,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
     if (!initializedObjectCacheSize){
         Cache::setSize([self getObjectCacheSize]);
-        initializedObjectCacheSize = TRUE;
+        initializedObjectCacheSize = true;
     }
     
     if (!initializedKJS) {
@@ -494,7 +494,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
         KJS::Bindings::Instance::setDidExecuteFunction(updateRenderingForBindings);
         
-        initializedKJS = TRUE;
+        initializedKJS = true;
     }
     
     _shouldCreateRenderers = YES;
