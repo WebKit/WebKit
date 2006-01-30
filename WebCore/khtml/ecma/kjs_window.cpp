@@ -27,6 +27,7 @@
 #include "FrameView.h"
 #include "JSMutationEvent.h"
 #include "JSXMLHttpRequest.h"
+#include "KWQEvent.h"
 #include "KWQKConfigBase.h"
 #include "KWQLogging.h"
 #include "Screen.h"
@@ -56,7 +57,6 @@
 #include <kdebug.h>
 #include <kjs/collector.h>
 #include <klocale.h>
-#include <kwinmodule.h>
 #include <qtimer.h>
 
 #if KHTML_XSLT
@@ -1871,7 +1871,7 @@ void ScheduledAction::execute(Window *window)
             }
         }
     } else
-        window->m_frame->executeScript(m_code);
+        window->m_frame->executeScript(0, m_code);
   
     // Update our document's rendering following the execution of the timeout callback.
     // FIXME: Why? Why not other documents, for example?

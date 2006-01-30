@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,12 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "KWQTextField.h"
 
 #import <kxmlcore/Assertions.h>
 #import "MacFrame.h"
 #import "KWQLineEdit.h"
+#import "KWQEvent.h"
 #import "KWQView.h"
 #import "WebCoreFrameBridge.h"
 #import "render_form.h"

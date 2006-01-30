@@ -28,17 +28,16 @@
 #define KHTML_CachedImage_h
 
 #include "CachedObject.h"
+#include "IntRect.h"
 #include <khtml_settings.h>
 
-namespace WebCore
-{
+namespace WebCore {
 
 class DocLoader;
 class Cache;
 class Image;
 
-class CachedImage : public CachedObject
-{
+class CachedImage : public CachedObject {
 public:
     CachedImage(DocLoader*, const DOMString &url, KIO::CacheControl cachePolicy, time_t expireDate);
     virtual ~CachedImage();
@@ -83,4 +82,5 @@ private:
 };
 
 }
+
 #endif

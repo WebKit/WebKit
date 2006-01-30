@@ -26,6 +26,7 @@
 #include <kxmlcore/HashMap.h>
 #include <qguardedptr.h>
 #include <qobject.h>
+#include <qstring.h>
 
 class Frame;
 class FrameView;

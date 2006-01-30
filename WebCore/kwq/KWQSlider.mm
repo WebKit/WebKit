@@ -26,10 +26,11 @@
 #include "config.h"
 #import "KWQSlider.h"
 
-#import "KWQLineEdit.h"
+#import "KWQEvent.h"
 #import "KWQExceptions.h"
-#import "MacFrame.h"
+#import "KWQLineEdit.h"
 #import "KWQView.h"
+#import "MacFrame.h"
 #import "WebCoreFrameBridge.h"
 #import "render_form.h"
 

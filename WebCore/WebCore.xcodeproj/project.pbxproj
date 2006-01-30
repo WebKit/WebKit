@@ -171,7 +171,6 @@
 		93F1996008245E59001E9ABC /* KWQKPartsHistoryProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866B02DE3B3201EA4122 /* KWQKPartsHistoryProvider.h */; };
 		93F1996308245E59001E9ABC /* KWQKSSLKeyGen.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866202DE3B1101EA4122 /* KWQKSSLKeyGen.h */; };
 		93F1996708245E59001E9ABC /* KWQKURL.h in Headers */ = {isa = PBXBuildFile; fileRef = F587860202DE382001EA4122 /* KWQKURL.h */; };
-		93F1996908245E59001E9ABC /* KWQKWinModule.h in Headers */ = {isa = PBXBuildFile; fileRef = F587860502DE382001EA4122 /* KWQKWinModule.h */; };
 		93F1996B08245E59001E9ABC /* KWQLineEdit.h in Headers */ = {isa = PBXBuildFile; fileRef = F587869802DE3B8601EA4122 /* KWQLineEdit.h */; };
 		93F1996C08245E59001E9ABC /* KWQListBox.h in Headers */ = {isa = PBXBuildFile; fileRef = F587851302DE375901EA4122 /* KWQListBox.h */; };
 		93F1996D08245E59001E9ABC /* KWQListImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F587851502DE375901EA4122 /* KWQListImpl.h */; };
@@ -203,7 +202,6 @@
 		93F1999C08245E59001E9ABC /* KWQTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786C002DE3B8601EA4122 /* KWQTimer.h */; };
 		93F1999D08245E59001E9ABC /* KWQValueList.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786C202DE3B8601EA4122 /* KWQValueList.h */; };
 		93F1999E08245E59001E9ABC /* KWQValueListImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F587853B02DE375901EA4122 /* KWQValueListImpl.h */; };
-		93F1999F08245E59001E9ABC /* KWQVariant.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786C302DE3B8601EA4122 /* KWQVariant.h */; };
 		93F199A108245E59001E9ABC /* KWQView.h in Headers */ = {isa = PBXBuildFile; fileRef = F587854002DE375901EA4122 /* KWQView.h */; };
 		93F199A208245E59001E9ABC /* KWQWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786C502DE3B8601EA4122 /* KWQWidget.h */; };
 		93F199A308245E59001E9ABC /* KWQWindowWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = F587854302DE375901EA4122 /* KWQWindowWidget.h */; };
@@ -297,7 +295,6 @@
 		93F19A3108245E59001E9ABC /* KWQLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587850302DE375901EA4122 /* KWQLoader.mm */; };
 		93F19A3208245E59001E9ABC /* KWQKLocale.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587850402DE375901EA4122 /* KWQKLocale.mm */; };
 		93F19A3608245E59001E9ABC /* KWQKURL.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587850E02DE375901EA4122 /* KWQKURL.mm */; };
-		93F19A3808245E59001E9ABC /* KWQKWinModule.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587851002DE375901EA4122 /* KWQKWinModule.mm */; };
 		93F19A3A08245E59001E9ABC /* KWQLineEdit.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587851202DE375901EA4122 /* KWQLineEdit.mm */; };
 		93F19A3B08245E59001E9ABC /* KWQListBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587851402DE375901EA4122 /* KWQListBox.mm */; };
 		93F19A3C08245E59001E9ABC /* KWQListImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587851602DE375901EA4122 /* KWQListImpl.cpp */; };
@@ -316,7 +313,6 @@
 		93F19A5408245E59001E9ABC /* KWQTextStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587853902DE375901EA4122 /* KWQTextStream.cpp */; };
 		93F19A5508245E59001E9ABC /* KWQTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587853A02DE375901EA4122 /* KWQTimer.cpp */; };
 		93F19A5608245E59001E9ABC /* KWQValueListImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587853C02DE375901EA4122 /* KWQValueListImpl.cpp */; };
-		93F19A5708245E59001E9ABC /* KWQVariant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587853D02DE375901EA4122 /* KWQVariant.cpp */; };
 		93F19A5908245E59001E9ABC /* KWQWidget.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587854202DE375901EA4122 /* KWQWidget.mm */; };
 		93F19A5A08245E59001E9ABC /* KWQWindowWidget.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587854402DE375901EA4122 /* KWQWindowWidget.mm */; };
 		93F19A5C08245E59001E9ABC /* WebCoreCookieAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = F587854A02DE375901EA4122 /* WebCoreCookieAdapter.m */; };
@@ -2135,7 +2131,6 @@
 		F587850302DE375901EA4122 /* KWQLoader.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQLoader.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587850402DE375901EA4122 /* KWQKLocale.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKLocale.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587850E02DE375901EA4122 /* KWQKURL.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKURL.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587851002DE375901EA4122 /* KWQKWinModule.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKWinModule.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587851202DE375901EA4122 /* KWQLineEdit.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQLineEdit.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587851302DE375901EA4122 /* KWQListBox.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQListBox.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587851402DE375901EA4122 /* KWQListBox.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQListBox.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2160,7 +2155,6 @@
 		F587853A02DE375901EA4122 /* KWQTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KWQTimer.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587853B02DE375901EA4122 /* KWQValueListImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQValueListImpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587853C02DE375901EA4122 /* KWQValueListImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KWQValueListImpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587853D02DE375901EA4122 /* KWQVariant.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KWQVariant.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587854002DE375901EA4122 /* KWQView.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587854202DE375901EA4122 /* KWQWidget.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQWidget.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587854302DE375901EA4122 /* KWQWindowWidget.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQWindowWidget.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2181,7 +2175,6 @@
 		F58785F402DE382001EA4122 /* KWQKDebug.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKDebug.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58785FA02DE382001EA4122 /* KWQKLocale.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKLocale.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587860202DE382001EA4122 /* KWQKURL.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKURL.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587860502DE382001EA4122 /* KWQKWinModule.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKWinModule.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587862002DE398401EA4122 /* KWQKCursor.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKCursor.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587863402DE3A1401EA4122 /* KWQKHTMLFactory.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKHTMLFactory.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587863A02DE3A1401EA4122 /* KWQKHTMLSettings.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKHTMLSettings.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2222,7 +2215,6 @@
 		F58786BF02DE3B8601EA4122 /* KWQTextStream.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQTextStream.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58786C002DE3B8601EA4122 /* KWQTimer.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQTimer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58786C202DE3B8601EA4122 /* KWQValueList.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQValueList.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F58786C302DE3B8601EA4122 /* KWQVariant.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQVariant.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58786C502DE3B8601EA4122 /* KWQWidget.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQWidget.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58EF58E02DFDFB7018635CA /* WebCore.exp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.exports; name = WebCore.exp; path = ../WebCore.exp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5A1B04902DE8ABA018635CA /* linkCursor.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = linkCursor.tiff; path = Resources/linkCursor.tiff; sourceTree = "<group>"; };
@@ -3691,8 +3683,6 @@
 				F587850402DE375901EA4122 /* KWQKLocale.mm */,
 				F587860202DE382001EA4122 /* KWQKURL.h */,
 				F587850E02DE375901EA4122 /* KWQKURL.mm */,
-				F587860502DE382001EA4122 /* KWQKWinModule.h */,
-				F587851002DE375901EA4122 /* KWQKWinModule.mm */,
 			);
 			name = kdecore;
 			sourceTree = "<group>";
@@ -3808,8 +3798,6 @@
 				F58786C202DE3B8601EA4122 /* KWQValueList.h */,
 				F587853B02DE375901EA4122 /* KWQValueListImpl.h */,
 				F587853C02DE375901EA4122 /* KWQValueListImpl.cpp */,
-				F58786C302DE3B8601EA4122 /* KWQVariant.h */,
-				F587853D02DE375901EA4122 /* KWQVariant.cpp */,
 				F58786C502DE3B8601EA4122 /* KWQWidget.h */,
 				F587854202DE375901EA4122 /* KWQWidget.mm */,
 				A85D7A8D0879EC64006A9172 /* KWQWMatrix.h */,
@@ -3896,7 +3884,6 @@
 				93F1996008245E59001E9ABC /* KWQKPartsHistoryProvider.h in Headers */,
 				93F1996308245E59001E9ABC /* KWQKSSLKeyGen.h in Headers */,
 				93F1996708245E59001E9ABC /* KWQKURL.h in Headers */,
-				93F1996908245E59001E9ABC /* KWQKWinModule.h in Headers */,
 				93F1996B08245E59001E9ABC /* KWQLineEdit.h in Headers */,
 				93F1996C08245E59001E9ABC /* KWQListBox.h in Headers */,
 				93F1996D08245E59001E9ABC /* KWQListImpl.h in Headers */,
@@ -3928,7 +3915,6 @@
 				93F1999C08245E59001E9ABC /* KWQTimer.h in Headers */,
 				93F1999D08245E59001E9ABC /* KWQValueList.h in Headers */,
 				93F1999E08245E59001E9ABC /* KWQValueListImpl.h in Headers */,
-				93F1999F08245E59001E9ABC /* KWQVariant.h in Headers */,
 				93F199A108245E59001E9ABC /* KWQView.h in Headers */,
 				93F199A208245E59001E9ABC /* KWQWidget.h in Headers */,
 				93F199A308245E59001E9ABC /* KWQWindowWidget.h in Headers */,
@@ -5010,7 +4996,6 @@
 				93F19A3108245E59001E9ABC /* KWQLoader.mm in Sources */,
 				93F19A3208245E59001E9ABC /* KWQKLocale.mm in Sources */,
 				93F19A3608245E59001E9ABC /* KWQKURL.mm in Sources */,
-				93F19A3808245E59001E9ABC /* KWQKWinModule.mm in Sources */,
 				93F19A3A08245E59001E9ABC /* KWQLineEdit.mm in Sources */,
 				93F19A3B08245E59001E9ABC /* KWQListBox.mm in Sources */,
 				93F19A3C08245E59001E9ABC /* KWQListImpl.cpp in Sources */,
@@ -5029,7 +5014,6 @@
 				93F19A5408245E59001E9ABC /* KWQTextStream.cpp in Sources */,
 				93F19A5508245E59001E9ABC /* KWQTimer.cpp in Sources */,
 				93F19A5608245E59001E9ABC /* KWQValueListImpl.cpp in Sources */,
-				93F19A5708245E59001E9ABC /* KWQVariant.cpp in Sources */,
 				93F19A5908245E59001E9ABC /* KWQWidget.mm in Sources */,
 				93F19A5A08245E59001E9ABC /* KWQWindowWidget.mm in Sources */,
 				93F19A5C08245E59001E9ABC /* WebCoreCookieAdapter.m in Sources */,

@@ -23,21 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "KWQComboBox.h"
-#import <kxmlcore/Assertions.h>
-#import "KWQLineEdit.h"
+
+#import "KWQEvent.h"
 #import "KWQExceptions.h"
-#import "MacFrame.h"
 #import "KWQFoundationExtras.h"
+#import "KWQLineEdit.h"
 #import "KWQView.h"
+#import "MacFrame.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
 #import "render_form.h"
+#import <kxmlcore/Assertions.h>
 
-using khtml::RenderWidget;
-using khtml::RenderLayer;
+using namespace WebCore;
 
 @interface NSCell (KWQComboBoxKnowsAppKitSecrets)
 - (NSMutableDictionary *)_textAttributes;

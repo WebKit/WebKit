@@ -124,8 +124,8 @@ void JSAbstractEventListener::handleEvent(EventListenerEvent ele, bool isWindowE
             if (!retval->isUndefinedOrNull() && event->storesResultAsString())
                 event->storeResult(retval->toString(exec).domString());
             if (html) {
-                QVariant ret = ValueToVariant(exec, retval);
-                if (ret.type() == QVariant::Bool && !ret.toBool())
+                bool retvalbool;
+                if (retval->getBoolean(retvalbool) && !retvalbool)
                     event->preventDefault();
             }
         }

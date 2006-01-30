@@ -37,6 +37,7 @@
 #import "KWQAccObjectCache.h"
 #import "KWQClipboard.h"
 #import "KWQEditCommand.h"
+#import "KWQEvent.h"
 #import "KWQExceptions.h"
 #import "KWQFormData.h"
 #import "KWQFoundationExtras.h"

@@ -21,39 +21,33 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+
 #include "config.h"
 #include "FrameView.h"
 
-#include "Frame.h"
-#include "SelectionController.h"
-#include "khtml_events.h"
-
-#include "html/html_documentimpl.h"
-#include "html/html_inlineimpl.h"
-#include "HTMLInputElementImpl.h"
-#include "rendering/render_arena.h"
-#include "rendering/render_canvas.h"
-#include "rendering/render_style.h"
-#include "rendering/render_replaced.h"
-#include "rendering/render_line.h"
-#include "RenderText.h"
-#include "xml/dom2_eventsimpl.h"
-#include "xml/EventNames.h"
-#include "css/cssstyleselector.h"
-#include "helper.h"
-#include "khtml_settings.h"
-#include "htmlnames.h"
-
-#include <kcursor.h>
-
-#include <qpainter.h>
-#include <qvariant.h>
-
-#include <assert.h>
-
-#include "KWQAccObjectCache.h"
-
 #include "CachedImage.h"
+#include "EventNames.h"
+#include "Frame.h"
+#include "HTMLInputElementImpl.h"
+#include "KWQAccObjectCache.h"
+#include "KWQEvent.h"
+#include "RenderText.h"
+#include "SelectionController.h"
+#include "cssstyleselector.h"
+#include "dom2_eventsimpl.h"
+#include "helper.h"
+#include "html_documentimpl.h"
+#include "html_inlineimpl.h"
+#include "htmlnames.h"
+#include "khtml_events.h"
+#include "khtml_settings.h"
+#include "render_arena.h"
+#include "render_canvas.h"
+#include "render_line.h"
+#include "render_replaced.h"
+#include "render_style.h"
+#include <kcursor.h>
+#include <qpainter.h>
 
 #if __APPLE__
 #include "MacFrame.h"
@@ -179,7 +173,7 @@ FrameView::~FrameView()
 {
     resetScrollBars();
 
-    assert(_refCount == 0);
+    ASSERT(_refCount == 0);
 
     if (m_frame)
     {
@@ -658,7 +652,7 @@ void FrameView::viewportMouseMoveEvent( QMouseEvent * _mouse )
     // part being null here, which seems impossible, so check for nil
     // but also assert so that we can try to figure this out in debug
     // builds, if it happens.
-    assert(m_frame);
+    ASSERT(m_frame);
     if(!m_frame || !m_frame->document()) return;
 
     int xm, ym;

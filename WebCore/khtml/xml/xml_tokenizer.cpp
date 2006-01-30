@@ -41,7 +41,6 @@
 #include "kentities.h" // for xhtml entity name lookup
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
-#include <qvariant.h>
 #include <kxmlcore/Vector.h>
 
 #if SVG_SUPPORT
@@ -879,7 +878,7 @@ void XMLTokenizer::executeScripts()
             // another page, etc. (also in notifyFinished())
             // ### the script may add another script node after this one which should be executed
             if (m_view)
-                m_view->frame()->executeScript(scriptCode);
+                m_view->frame()->executeScript(0, scriptCode);
         }
     }
 
@@ -897,7 +896,7 @@ void XMLTokenizer::notifyFinished(CachedObject *finishedObj)
         DOMString scriptSource = m_cachedScript->script();
         m_cachedScript->deref(this);
         m_cachedScript = 0;
-        m_view->frame()->executeScript(scriptSource.qstring());
+        m_view->frame()->executeScript(0, scriptSource.qstring());
         executeScripts();
     }
 }

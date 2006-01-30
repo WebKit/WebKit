@@ -535,14 +535,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQVariant.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQVariant.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQView.h"
 				>
 			</File>

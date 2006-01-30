@@ -1,3 +1,64 @@
+2006-01-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - killed more KWQ, KWinModule and QVariant
+
+        * ForwardingHeaders/kwinmodule.h: Removed.
+        * ForwardingHeaders/qvariant.h: Removed.
+
+        * kwq/KWQKWinModule.h: Removed.
+        * kwq/KWQKWinModule.mm: Removed.
+        * kwq/KWQVariant.cpp: Removed.
+        * kwq/KWQVariant.h: Removed.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Updated for removal.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * khtml/ecma/kjs_binding.h:
+        * khtml/ecma/kjs_binding.cpp: Remove QVariant stuff.
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge stringByEvaluatingJavaScriptFromString:forceUserGesture:]):
+        * khtml/ecma/kjs_events.cpp: (KJS::JSAbstractEventListener::handleEvent):
+        * khtml/ecma/kjs_proxy.h:
+        * khtml/ecma/kjs_proxy.cpp: (WebCore::KJSProxyImpl::evaluate):
+        * page/Frame.h:
+        * page/Frame.cpp:
+        (getString):
+        (Frame::replaceContentsWithScriptResult):
+        (Frame::executeScript):
+        (Frame::executeScheduledScript):
+        (Frame::changeLocation):
+        (Frame::urlSelected):
+        (Frame::submitForm):
+        Changed to use JSValue instead of QVariant for result of executing JavaScript.
+
+        * kwq/KWQObject.h: Removed a bunch of unneeded includes and forward declarations.
+
+        * bridge/mac/MacFrame.mm:
+        * khtml/ecma/kjs_window.h:
+        * khtml/ecma/kjs_window.cpp:
+        * khtml/html/html_inlineimpl.cpp:
+        * khtml/html/htmltokenizer.cpp:
+        * khtml/xml/DocumentImpl.cpp:
+        * khtml/xml/NodeImpl.cpp:
+        * khtml/xml/dom2_eventsimpl.cpp:
+        * khtml/xml/xml_tokenizer.cpp:
+        * kwq/KWQComboBox.mm:
+        * kwq/KWQFileButton.mm:
+        * kwq/KWQListBox.mm:
+        * kwq/KWQObject.cpp:
+        * kwq/KWQSlider.mm:
+        * kwq/KWQTextArea.mm:
+        * kwq/KWQTextField.mm:
+        * loader/CachedImage.h:
+        * page/FrameView.h:
+        * page/FrameView.cpp:
+        * rendering/render_form.cpp:
+        Updated includes, since KWQObject.h now includes less.
+        Also updated callers to executeScript since one overload was removed.
+
 2006-01-29  Eric Seidel <eseidel@apple.com>
 
         Reviewed by darin.

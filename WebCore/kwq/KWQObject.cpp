@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #include "config.h"
 #include "KWQObject.h"
 
+#include "KWQEvent.h"
 #include <kxmlcore/Assertions.h>
 #include <kxmlcore/HashMap.h>
 
@@ -57,7 +58,7 @@ static CFMutableArrayRef deferredTimers;
 static CFRunLoopTimerRef sendDeferredTimerEventsTimer;
 static int lastTimerIdUsed;
 
-QObject::QObject(QObject *parent, const char *name)
+QObject::QObject()
     : _signalListHead(0), _signalsBlocked(false)
     , _destroyed(this, SIGNAL(destroyed()))
     , _eventFilterObject(0)

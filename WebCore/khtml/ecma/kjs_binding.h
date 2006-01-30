@@ -2,7 +2,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -19,11 +19,10 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _KJS_BINDING_H_
-#define _KJS_BINDING_H_
+#ifndef KJS_BINDING_H_
+#define KJS_BINDING_H_
 
 #include <kjs/interpreter.h>
-#include <qvariant.h>
 #include <kjs/lookup.h>
 
 #if __APPLE__
@@ -165,11 +164,6 @@ namespace KJS {
    */
   DOM::DOMString valueToStringWithNullCheck(ExecState* exec, JSValue *val);
   
-  /**
-   * Convert a KJS value into a QVariant
-   */
-  QVariant ValueToVariant(ExecState* exec, JSValue *val);
-
 } // namespace
 
 #endif

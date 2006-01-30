@@ -23,18 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "KWQFileButton.h"
 
-#import <kxmlcore/Assertions.h>
+#import "KWQEvent.h"
 #import "KWQExceptions.h"
-#import "MacFrame.h"
 #import "KWQFoundationExtras.h"
+#import "MacFrame.h"
 #import "WebCoreFrameBridge.h"
 #import "render_form.h"
+#import <kxmlcore/Assertions.h>
 
-using khtml::RenderWidget;
-using khtml::RenderLayer;
+using namespace WebCore;
 
 @interface KWQFileButtonAdapter : NSObject <WebCoreFileButtonDelegate>
 {

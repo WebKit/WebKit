@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "KWQTextArea.h"
 
 #import "DOMCSS.h"
@@ -31,14 +31,14 @@
 #import "EventNames.h"
 #import <kxmlcore/Assertions.h>
 #import "MacFrame.h"
+#import "KWQEvent.h"
 #import "KWQTextEdit.h"
 #import "render_replaced.h"
 #import "WebCoreFrameBridge.h"
 #import "KWQKHTMLSettings.h"
 
-using namespace DOM;
-using namespace DOM::EventNames;
-using namespace khtml;
+using namespace WebCore;
+using namespace EventNames;
 
 @interface NSTextView (WebCoreKnowsCertainAppKitSecrets)
 - (void)setWantsNotificationForMarkedText:(BOOL)wantsNotification;

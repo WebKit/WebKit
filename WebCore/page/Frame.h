@@ -29,26 +29,21 @@
 #define FRAME_H
 
 #include "BrowserExtension.h"
+#include "Color.h"
+#include "FrameView.h"
 #include "NodeImpl.h"
 #include "ObjectContents.h"
 #include "edit_actions.h"
 #include "text_affinity.h"
 #include "text_granularity.h"
-#include "Color.h"
-#include "FrameView.h"
-#include "qscrollbar.h"
+#include <qscrollbar.h>
+#include <qstringlist.h>
 
 class FramePrivate;
 class FrameView;
 class KHTMLPartBrowserExtension;
 class KHTMLSettings;
 class FrameTreeNode;
-
-namespace KJS {
-    class PausedTimeouts;
-    class SavedProperties;
-    class SavedBuiltins;
-}
 
 namespace WebCore {
     class CSSComputedStyleDeclarationImpl;
@@ -102,6 +97,10 @@ namespace WebCore {
 
 namespace KJS {
     class DOMDocument;
+    class JSValue;
+    class PausedTimeouts;
+    class SavedBuiltins;
+    class SavedProperties;
     class Selection;
     class SelectionFunc;
     class Window;
@@ -206,17 +205,8 @@ public:
 
   /**
    * Execute the specified snippet of JavaScript code.
-   *
-   * Returns @p true if JavaScript was enabled, no error occured
-   * and the code returned true itself or @p false otherwise.
-   * @deprecated, use the one below.
    */
-  QVariant executeScript( const QString &script, bool forceUserGesture = false );
-
-  /**
-   * Same as above except the Node parameter specifying the 'this' value.
-   */
-  QVariant executeScript( WebCore::NodeImpl *n, const QString &script, bool forceUserGesture = false );
+  KJS::JSValue* executeScript(WebCore::NodeImpl*, const QString& script, bool forceUserGesture = false);
 
   /**
    * Implementation of CSS property -khtml-user-drag == auto
@@ -926,7 +916,7 @@ private:
 
   bool scheduleScript( WebCore::NodeImpl *n, const QString& script);
 
-  QVariant executeScheduledScript();
+  KJS::JSValue* executeScheduledScript();
 
   bool requestFrame( WebCore::RenderPart *frame, const QString &url, const QString &frameName,
                      const QStringList &paramNames = QStringList(), const QStringList &paramValues = QStringList(), bool isIFrame = false );
@@ -964,7 +954,7 @@ private:
   void disconnectChild(const WebCore::ChildFrame *) const;
 
   bool checkLinkSecurity(const KURL &linkURL,const QString &message = QString::null, const QString &button = QString::null);
-  QVariant executeScript(QString filename, int baseLine, WebCore::NodeImpl *n, const QString &script);
+  KJS::JSValue* executeScript(const QString& filename, int baseLine, WebCore::NodeImpl*, const QString& script);
   
   void cancelRedirection(bool newLoadInProgress = false);
 

@@ -35,6 +35,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLElementImpl.h"
+#include "KWQEvent.h"
 #include "SystemTime.h"
 #include "csshelper.h"
 #include "html_documentimpl.h"
@@ -42,7 +43,6 @@
 #include "htmlparser.h"
 #include "kjs_proxy.h"
 #include <ctype.h>
-#include <qvariant.h>
 #include <stdlib.h>
 
 // turn off inlining to allow proper linking on newer gcc (xmltokenizer.cpp also uses findEntity())

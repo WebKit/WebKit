@@ -27,6 +27,7 @@
 #include "DocumentImpl.h"
 #include "EventNames.h"
 #include "FrameView.h"
+#include "KWQEvent.h"
 #include "SystemTime.h"
 #include "dom2_events.h"
 #include "dom2_viewsimpl.h"

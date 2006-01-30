@@ -29,38 +29,40 @@
 // qt includes and classes
 #include <qscrollview.h>
 
+class QFocusEvent;
+class QKeyEvent;
+class QMouseEvent;
+class QResizeEvent;
+class QStringList;
+class QWheelEvent;
+
 namespace WebCore {
-    class IntRect;
-    class QPainter;
-}
-
-namespace DOM {
-    class HTMLDocumentImpl;
-    class DocumentImpl;
-    class ClipboardImpl;
-    class ElementImpl;
-    class HTMLElementImpl;
-    class HTMLTitleElementImpl;
-    class HTMLGenericFormElementImpl;
-    class HTMLFormElementImpl;
-    class HTMLAnchorElementImpl;
-    class NodeImpl;
     class CSSProperty;
-};
-
-namespace khtml {
-    class RenderObject;
+    class CSSStyleSelector;
+    class ClipboardImpl;
+    class DocumentImpl;
+    class ElementImpl;
+    class HTMLAnchorElementImpl;
+    class HTMLDocumentImpl;
+    class HTMLElementImpl;
+    class HTMLFormElementImpl;
+    class HTMLGenericFormElementImpl;
+    class HTMLTitleElementImpl;
+    class InlineBox;
+    class IntRect;
+    class NodeImpl;
+    class QPainter;
     class RenderBox;
     class RenderCanvas;
-    class RenderStyle;
     class RenderLineEdit;
+    class RenderObject;
     class RenderPart;
     class RenderPartObject;
+    class RenderStyle;
     class RenderWidget;
-    class CSSStyleSelector;
-    class InlineBox;
-    void applyRule(DOM::CSSProperty *prop);
-};
+
+    void applyRule(CSSProperty*);
+}
 
 class Frame;
 class FrameViewPrivate;

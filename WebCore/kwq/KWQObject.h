@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,10 +26,9 @@
 #ifndef QOBJECT_H_
 #define QOBJECT_H_
 
-#include "KWQEvent.h"
+#include "KWQNamespace.h"
 #include "KWQPtrList.h"
 #include "KWQSignal.h"
-#include "KWQStringList.h"
 
 #define slots : public
 #define SLOT(x) "SLOT:" #x
@@ -39,31 +38,14 @@
 #define Q_OBJECT
 #define Q_PROPERTY(text)
 
-class QBitmap;
-class ColorGroup;
 class QEvent;
-class QFont;
-class QFontMetrics;
-class QPaintDeviceMetrics;
-class QPalette;
-class QRegion;
-class QSizePolicy;
-class QTimer;
-class QVariant;
-class QWidget;
+class QTimerEvent;
 
 class KWQGuardedPtrBase;
-class KWQSignal;
-
-namespace WebCore {
-    class Color;
-    class IntRect;
-    class QPainter;
-}
 
 class QObject : public Qt {
 public:
-    QObject(QObject *parent = 0, const char *name = 0);
+    QObject();
     virtual ~QObject();
 
     static void connect(const QObject *sender, const char *signal, const QObject *receiver, const char *member);

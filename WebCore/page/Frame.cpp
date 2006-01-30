@@ -39,6 +39,7 @@
 #include "HTMLCollectionImpl.h"
 #include "HTMLFormElementImpl.h"
 #include "HTMLGenericFormElementImpl.h"
+#include "KWQEvent.h"
 #include "NodeListImpl.h"
 #include "RenderBlock.h"
 #include "RenderText.h"
@@ -463,38 +464,47 @@ KJSProxyImpl *Frame::jScript()
     return d->m_jscript;
 }
 
-void Frame::replaceContentsWithScriptResult( const KURL &url )
+static bool getString(JSValue* result, QString& string)
 {
-  QString script = KURL::decode_string(url.url().mid(strlen("javascript:")));
-  QVariant ret = executeScript(script);
-  
-  if (ret.type() == QVariant::String) {
-    begin();
-    write(ret.asString());
-    end();
-  }
+    if (!result)
+        return false;
+    JSLock lock;
+    UString ustring;
+    if (!result->getString(ustring))
+        return false;
+    string = ustring.qstring();
+    return true;
 }
 
-QVariant Frame::executeScript( const QString &script, bool forceUserGesture )
+void Frame::replaceContentsWithScriptResult(const KURL& url)
 {
-    return executeScript( 0, script, forceUserGesture );
+    JSValue* ret = executeScript(0, KURL::decode_string(url.url().mid(strlen("javascript:"))));
+    QString scriptResult;
+    if (getString(ret, scriptResult)) {
+        begin();
+        write(scriptResult);
+        end();
+    }
 }
 
-QVariant Frame::executeScript( NodeImpl *n, const QString &script, bool forceUserGesture )
+JSValue* Frame::executeScript(NodeImpl* n, const QString& script, bool forceUserGesture)
 {
   KJSProxyImpl *proxy = jScript();
 
   if (!proxy)
-    return QVariant();
+    return 0;
+
   d->m_runningScripts++;
   // If forceUserGesture is true, then make the script interpreter
   // treat it as if triggered by a user gesture even if there is no
   // current DOM event being processed.
-  QVariant ret = proxy->evaluate( forceUserGesture ? QString::null : d->m_url.url(), 0, script, n );
+  JSValue* ret = proxy->evaluate(forceUserGesture ? QString::null : d->m_url.url(), 0, script, n);
   d->m_runningScripts--;
-  if (!d->m_runningScripts && d->m_doc && !d->m_doc->parsing() && d->m_submitForm )
+
+  if (!d->m_runningScripts && d->m_doc && !d->m_doc->parsing() && d->m_submitForm)
       submitFormAgain();
-    DocumentImpl::updateDocumentsRendering();
+
+  DocumentImpl::updateDocumentsRendering();
 
   return ret;
 }
@@ -507,12 +517,13 @@ bool Frame::scheduleScript(NodeImpl *n, const QString& script)
     return true;
 }
 
-QVariant Frame::executeScheduledScript()
+JSValue* Frame::executeScheduledScript()
 {
-  if( d->scheduledScript.isEmpty() )
-    return QVariant();
+  if (d->scheduledScript.isEmpty())
+    return 0;
 
-  QVariant ret = executeScript( d->scheduledScriptNode.get(), d->scheduledScript );
+  JSValue* ret = executeScript(d->scheduledScriptNode.get(), d->scheduledScript);
+
   d->scheduledScript = QString();
   d->scheduledScriptNode = 0;
 
@@ -1151,10 +1162,11 @@ void Frame::changeLocation(const QString &URL, const QString &referrer, bool loc
 {
     if (URL.find("javascript:", 0, false) == 0) {
         QString script = KURL::decode_string(URL.mid(11));
-        QVariant result = executeScript(script, userGesture);
-        if (result.type() == QVariant::String) {
+        JSValue* result = executeScript(0, script, userGesture);
+        QString scriptResult;
+        if (getString(result, scriptResult)) {
             begin(url());
-            write(result.asString());
+            write(scriptResult);
             end();
         }
         return;
@@ -1525,9 +1537,8 @@ void Frame::urlSelected( const QString &url, int button, int state, const QStrin
   if ( !target.isEmpty() )
       hasTarget = true;
 
-  if ( url.find( QString::fromLatin1( "javascript:" ), 0, false ) == 0 )
-  {
-    executeScript( KURL::decode_string( url.right( url.length() - 11) ), true );
+  if (url.startsWith("javascript:", false)) {
+    executeScript(0, KURL::decode_string(url.mid(11)), true);
     return;
   }
 
@@ -1763,7 +1774,7 @@ void Frame::submitForm( const char *action, const QString &url, const FormData &
   if (urlstring.startsWith("javascript:", false)) {
     urlstring = KURL::decode_string(urlstring);
     d->m_executingJavaScriptFormAction = true;
-    executeScript( urlstring.right( urlstring.length() - 11) );
+    executeScript(0, urlstring.mid(11));
     d->m_executingJavaScriptFormAction = false;
     return;
   }
@@ -2467,14 +2478,15 @@ void Frame::clearTypingStyle()
     setTypingStyle(0);
 }
 
-
-QVariant Frame::executeScript(QString filename, int baseLine, NodeImpl *n, const QString &script)
+JSValue* Frame::executeScript(const QString& filename, int baseLine, NodeImpl* n, const QString &script)
 {
+  // FIXME: This is missing stuff that the other executeScript has.
+  // --> d->m_runningScripts and submitFormAgain.
+  // Why is that OK?
   KJSProxyImpl *proxy = jScript();
-
   if (!proxy)
-    return QVariant();
-  QVariant ret = proxy->evaluate(filename,baseLine,script, n );
+    return 0;
+  JSValue* ret = proxy->evaluate(filename, baseLine, script, n);
   DocumentImpl::updateDocumentsRendering();
   return ret;
 }

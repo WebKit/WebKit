@@ -4,7 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,32 +24,27 @@
  */
 
 #include "config.h"
-#include <kdebug.h>
-#include <klocale.h>
-#include <kcursor.h>
+#include "render_form.h"
 
-#include "helper.h"
+#include "BrowserExtension.h"
+#include "EventNames.h"
+#include "FrameView.h"
+#include "HTMLFormElementImpl.h"
 #include "HTMLInputElementImpl.h"
-#include "HTMLTextAreaElementImpl.h"
+#include "HTMLOptGroupElementImpl.h"
 #include "HTMLOptionElementImpl.h"
 #include "HTMLSelectElementImpl.h"
-#include "HTMLOptGroupElementImpl.h"
-#include "HTMLFormElementImpl.h"
-#include "xml/dom2_eventsimpl.h"
-
-#include "rendering/render_form.h"
-
-#include "FrameView.h"
-#include "BrowserExtension.h"
-#include "xml/EventNames.h"
-
-#include <kdebug.h>
-
+#include "HTMLTextAreaElementImpl.h"
+#include "KWQEvent.h"
 #include "KWQFileButton.h"
 #include "KWQSlider.h"
+#include "dom2_eventsimpl.h"
+#include "helper.h"
+#include <kcursor.h>
+#include <klocale.h>
 
-using namespace khtml;
-using namespace DOM;
+namespace WebCore {
+
 using namespace EventNames;
 using namespace HTMLNames;
 
@@ -1221,4 +1216,6 @@ void RenderSlider::slotClicked()
 {
     // emit mouseClick event etc
     RenderFormElement::slotClicked();
+}
+
 }

@@ -33,6 +33,7 @@
 #include "FramePrivate.h"
 #include "FrameView.h"
 #include "KWQAccObjectCache.h"
+#include "KWQEvent.h"
 #include "KWQLogging.h"
 #include "NameNodeListImpl.h"
 #include "SegmentedString.h"

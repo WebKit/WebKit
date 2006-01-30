@@ -31,6 +31,7 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "KWQEvent.h"
 #include "dom2_events.h"
 #include "dom2_eventsimpl.h"
 #include "dom_atomicstring.h"

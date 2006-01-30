@@ -100,6 +100,7 @@ using KJS::ExecState;
 using KJS::Interpreter;
 using KJS::JSLock;
 using KJS::JSObject;
+using KJS::JSValue;
 using KJS::SavedProperties;
 using KJS::SavedBuiltins;
 using KJS::Window;
@@ -1463,11 +1464,14 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return [self stringByEvaluatingJavaScriptFromString:string forceUserGesture:true];
 }
 
-// 
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)string forceUserGesture:(BOOL)forceUserGesture
 {
     m_frame->createEmptyDocument();
-    return m_frame->executeScript(QString::fromNSString(string), forceUserGesture).asString().getNSString();
+    JSValue* result = m_frame->executeScript(0, QString::fromNSString(string), forceUserGesture);
+    if (!result || !result->isString())
+        return 0;
+    JSLock lock;
+    return result->getString().domString();
 }
 
 - (WebScriptObject *)windowScriptObject
