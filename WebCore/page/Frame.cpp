@@ -3071,15 +3071,14 @@ void Frame::provisionalLoadStarted()
 
 bool Frame::userGestureHint()
 {
-    if (jScript() && jScript()->interpreter()) {
-        Frame *rootPart = this;
-        while (rootPart->parentFrame() != 0)
-            rootPart = rootPart->parentFrame();
-        KJS::ScriptInterpreter *interpreter = rootPart->jScript()->interpreter();
-        return interpreter->wasRunByUserGesture();
-    } else
-        // if no JS, assume the user initiated this nav
-        return true;
+    Frame *rootFrame = this;
+    while (rootFrame->parentFrame())
+        rootFrame = rootFrame->parentFrame();
+
+    if (rootFrame->jScript() && rootFrame->jScript()->interpreter())
+        return rootFrame->jScript()->interpreter()->wasRunByUserGesture();
+
+    return true; // If JavaScript is disabled, a user gesture must have initiated the navigation
 }
 
 RenderObject *Frame::renderer() const
