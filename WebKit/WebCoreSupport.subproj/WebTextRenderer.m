@@ -340,17 +340,6 @@ static NSString *webFallbackFontFamily(void)
 {
     [super init];
     
-    // Quartz can only handle fonts with these glyph packings.  Other packings have
-    // been deprecated.
-    if ([f.font glyphPacking] != NSNativeShortGlyphPacking && [f.font glyphPacking] != NSTwoByteGlyphPacking) {
-        // Apparently there are many deprecated fonts out there with unsupported packing types.
-        // Log and use fallback font.
-        // This change fixes the many crashes reported in 3782533.
-        // Most likely, the problem is encountered when people upgrade from OS 9, or have OS 9 fonts installed on OS X.
-        NSLog(@"%s:%d  Unable to use deprecated font %@ %f, using system font instead", __FILE__, __LINE__, [f.font displayName], [f.font pointSize]);
-        f.font = [NSFont systemFontOfSize:[f.font pointSize]];
-    }
-
     font = f;
 
     syntheticBoldOffset = f.syntheticBold ? ceilf([f.font pointSize] / 24.0f) : 0.f;
