@@ -49,9 +49,12 @@ using namespace KJS;
     doc->ref();
     document = doc;
     doc->setInPageCache(YES);
-    mousePressNode = static_cast<MacFrame *>(doc->frame())->mousePressNode();
+    
+    MacFrame *frame = static_cast<MacFrame *>(doc->frame());
+    mousePressNode = frame ? frame->mousePressNode() : 0;
     if (mousePressNode)
         mousePressNode->ref();
+    
     URL = new KURL(u);
     windowProperties = wp;
     locationProperties = lp;

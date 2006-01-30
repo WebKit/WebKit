@@ -1,3 +1,21 @@
+2006-01-30  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Geoff
+
+        Fix for <rdar://problem/4298052> Crash in KWQCheckIfReloading at 
+        http://www.inquisitorx.com/beta/
+
+        It is possible for the DocLoader's frame to be nil when the 
+        DocLoader is not nil, so we need nil checks.
+
+        * kwq/KWQLoader.mm:
+        (KWQServeRequest): Nil check.
+        (KWQServeSynchronousRequest): Same.
+        (KWQCheckIfReloading): Same.
+        (KWQCheckCacheObjectStatus): Same.
+        (KWQCacheObjectExpiresTime): Same.
+        * kwq/KWQPageState.mm: Same.
+
 2006-01-30  Eric Seidel  <eseidel@apple.com>
 
         Add #import "KWQFontMetrics.h" to fix no-svg build.

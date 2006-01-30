@@ -110,6 +110,10 @@ bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
 bool KWQServeRequest(Loader *loader, DocLoader *docLoader, TransferJob *job)
 {
     MacFrame *frame = static_cast<MacFrame *>(docLoader->frame());
+    
+    if (!frame)
+        return false;
+    
     WebCoreFrameBridge *bridge = frame->bridge();
 
     frame->didTellBridgeAboutLoad(job->url().url());
@@ -167,6 +171,10 @@ NSString *KWQHeaderStringFromDictionary(NSDictionary *headers, int statusCode)
 ByteArray KWQServeSynchronousRequest(Loader *loader, DocLoader *docLoader, TransferJob *job, KURL &finalURL, QString &responseHeaders)
 {
     MacFrame *frame = static_cast<MacFrame *>(docLoader->frame());
+    
+    if (!frame)
+        return ByteArray();
+    
     WebCoreFrameBridge *bridge = frame->bridge();
 
     frame->didTellBridgeAboutLoad(job->url().url());
@@ -215,7 +223,8 @@ int KWQNumberOfPendingOrLoadingRequests(khtml::DocLoader *dl)
 bool KWQCheckIfReloading(DocLoader *loader)
 {
     KWQ_BLOCK_EXCEPTIONS;
-    return [static_cast<MacFrame *>(loader->frame())->bridge() isReloading];
+    if (MacFrame *frame = static_cast<MacFrame *>(loader->frame()))
+        return [frame->bridge() isReloading];
     KWQ_UNBLOCK_EXCEPTIONS;
 
     return false;
@@ -243,7 +252,7 @@ void KWQCheckCacheObjectStatus(DocLoader *loader, CachedObject *cachedObject)
     // Notify the caller that we "loaded".
     MacFrame *frame = static_cast<MacFrame *>(loader->frame());
 
-    if (!frame->haveToldBridgeAboutLoad(cachedObject->url())) {
+    if (frame && !frame->haveToldBridgeAboutLoad(cachedObject->url())) {
         WebCoreFrameBridge *bridge = frame->bridge();
         
         KWQ_BLOCK_EXCEPTIONS;
@@ -328,8 +337,10 @@ time_t KWQCacheObjectExpiresTime(khtml::DocLoader *docLoader, NSURLResponse *res
     KWQ_BLOCK_EXCEPTIONS;
     
     MacFrame *frame = static_cast<MacFrame *>(docLoader->frame());
-    WebCoreFrameBridge *bridge = frame->bridge();
-    return [bridge expiresTimeForResponse:(NSURLResponse *)response];
+    if (frame) {
+        WebCoreFrameBridge *bridge = frame->bridge();
+        return [bridge expiresTimeForResponse:(NSURLResponse *)response];
+    }
     
     KWQ_UNBLOCK_EXCEPTIONS;
     
