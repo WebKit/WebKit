@@ -36,6 +36,7 @@
 #import "Image.h"
 #import "KWQPrinter.h"
 #import "KWQRegion.h"
+#import "KWQFontMetrics.h"
 #import "WebCoreGraphicsBridge.h"
 #import "WebCoreImageRenderer.h"
 #import "WebCoreImageRendererFactory.h"

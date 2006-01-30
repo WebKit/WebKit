@@ -1,3 +1,9 @@
+2006-01-30  Eric Seidel  <eseidel@apple.com>
+
+        Add #import "KWQFontMetrics.h" to fix no-svg build.
+
+        * kwq/KWQPainter.mm:
+
 2006-01-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.
