@@ -301,6 +301,7 @@ namespace KXMLCore {
         template<size_t otherCapacity> 
         Vector(const Vector<T, otherCapacity>&);
 
+        Vector& operator=(const Vector&);
         template<size_t otherCapacity> 
         Vector& operator=(const Vector<T, otherCapacity>&);
 
@@ -368,8 +369,6 @@ namespace KXMLCore {
     private:
         void expandCapacity(size_t newMinCapacity);
 
-        Vector& operator=(const Vector&) { return *this; }
-
         size_t m_size;
         Impl m_impl;
     };
@@ -389,6 +388,26 @@ namespace KXMLCore {
         , m_impl(other.capacity())
     {
         TypeOperations::uninitializedCopy(other.begin(), other.end(), begin());
+    }
+
+    template<typename T, size_t inlineCapacity>
+    Vector<T, inlineCapacity>& Vector<T, inlineCapacity>::operator=(const Vector<T, inlineCapacity>& other)
+    {
+        if (&other == this)
+            return *this;
+        
+        if (size() > other.size())
+            resize(other.size());
+        else if (other.size() > capacity()) {
+            clear();
+            reserveCapacity(other.size());
+        }
+        
+        std::copy(other.begin(), other.begin() + size(), begin());
+        TypeOperations::uninitializedCopy(other.begin() + size(), other.end(), end());
+        m_size = other.size();
+
+        return *this;
     }
 
     template<typename T, size_t inlineCapacity>
