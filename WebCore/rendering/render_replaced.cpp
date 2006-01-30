@@ -79,9 +79,9 @@ bool RenderReplaced::shouldPaint(PaintInfo& i, int& _tx, int& _ty)
     }
     
     int os = 2*maximalOutlineSize(i.phase);
-    if ((tx >= i.r.x() + i.r.width() + os) || (tx + m_width <= i.r.x() - os))
+    if (tx >= i.r.right() + os || tx + m_width <= i.r.x() - os)
         return false;
-    if ((top >= i.r.y() + i.r.height() + os) || (bottom <= i.r.y() - os))
+    if (top >= i.r.bottom() + os || bottom <= i.r.y() - os)
         return false;
 
     return true;
@@ -407,11 +407,8 @@ void RenderWidget::paint(PaintInfo& i, int _tx, int _ty)
     m_widget->paint(i.p, i.r);
     
     // Paint a partially transparent wash over selected widgets.
-    if (isSelected() && !i.p->printing()) {
-        Brush brush(selectionColor(i.p));
-        IntRect selRect(selectionRect());
-        i.p->fillRect(selRect.x(), selRect.y(), selRect.width(), selRect.height(), brush);
-    }
+    if (isSelected() && !i.p->printing())
+        i.p->fillRect(selectionRect(), selectionColor(i.p));
 }
 
 void RenderWidget::handleFocusOut()

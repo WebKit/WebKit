@@ -26,19 +26,16 @@
 #ifndef QPAINTER_H_
 #define QPAINTER_H_
 
-#include "Color.h"
-#include "Pen.h"
 #include "Brush.h"
 #include "Image.h"
-#include "KWQFontMetrics.h"
-#include "KWQNamespace.h"
-#include "IntRect.h"
+#include "Pen.h"
 
 #if __APPLE__
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
 class QFont;
+class QFontMetrics;
 class QString;
 class QWidget;
 
@@ -49,7 +46,8 @@ class KRenderingDeviceContext;
 
 namespace WebCore {
 
-class Image;
+class IntPoint;
+class IntPointArray;
 class QPainterPrivate;
 
 class QPainter : public Qt {
@@ -61,21 +59,21 @@ public:
     QPainter(bool forPrinting);
     ~QPainter();
    
-    const QFont &font() const;
-    void setFont(const QFont &);
+    const QFont& font() const;
+    void setFont(const QFont&);
     QFontMetrics fontMetrics() const;
     
-    const Pen &pen() const;
-    void setPen(const Pen &);
+    const Pen& pen() const;
+    void setPen(const Pen&);
     void setPen(Pen::PenStyle);
     void setPen(RGBA32);
     
-    const WebCore::Brush &QPainter::brush() const;
-    void setBrush(const WebCore::Brush &);
-    void setBrush(WebCore::Brush::BrushStyle);
+    const Brush& brush() const;
+    void setBrush(const Brush&);
+    void setBrush(Brush::BrushStyle);
     void setBrush(RGBA32);
 
-    IntRect xForm(const IntRect &) const;
+    IntRect xForm(const IntRect&) const;
 
     void save();
     void restore();
@@ -84,43 +82,46 @@ public:
     void drawLine(int, int, int, int);
     void drawEllipse(int, int, int, int);
     void drawArc(int, int, int, int, int, int);
-    void drawConvexPolygon(const IntPointArray &);
+    void drawConvexPolygon(const IntPointArray&);
 
-    void fillRect(int, int, int, int, const WebCore::Brush &);
-    void fillRect(const IntRect &, const WebCore::Brush &);
+    void fillRect(int, int, int, int, const Brush&);
+    void fillRect(const IntRect&, const Brush&);
 
-    void drawImageAtPoint(const Image&, const IntPoint&, Image::CompositeOperator compositeOperator = Image::CompositeSourceOver);
-    void drawImageInRect(const Image&, const IntRect&, Image::CompositeOperator compositeOperator = Image::CompositeSourceOver);
+    void drawImageAtPoint(const Image&, const IntPoint&, Image::CompositeOperator = Image::CompositeSourceOver);
+    void drawImageInRect(const Image&, const IntRect&, Image::CompositeOperator = Image::CompositeSourceOver);
 
-    void drawImage(const Image &, int x, int y, 
-                   int sx=0, int sy=0, int sw=-1, int sh=-1, Image::CompositeOperator compositeOperator = Image::CompositeSourceOver, 
-                   void* nativeData = 0);
+    void drawImage(const Image&, int x, int y, 
+        int sx = 0, int sy = 0, int sw = -1, int sh = -1,
+        Image::CompositeOperator = Image::CompositeSourceOver, 
+        void* nativeData = 0);
     void drawImage(const Image&, int x, int y, int w, int h,
-                   int sx=0, int sy=0, int sw=-1, int sh=-1, Image::CompositeOperator compositeOperator = Image::CompositeSourceOver,
-                   void* nativeData = 0);
+        int sx = 0, int sy = 0, int sw = -1, int sh = -1,
+        Image::CompositeOperator = Image::CompositeSourceOver, 
+        void* nativeData = 0);
     void drawFloatImage(const Image&, float x, float y, float w, float h,
-                        float sx=0, float sy=0, float sw=-1, float sh=-1, Image::CompositeOperator compositeOperator = Image::CompositeSourceOver,
-                        void* nativeData = 0);
-    void drawTiledImage(const Image&, int, int, int, int, int sx=0, int sy=0, void* nativeData = 0);
+        float sx = 0, float sy = 0, float sw = -1, float sh = -1,
+        Image::CompositeOperator = Image::CompositeSourceOver, 
+        void* nativeData = 0);
+    void drawTiledImage(const Image&, int, int, int, int, int sx = 0, int sy = 0, void* nativeData = 0);
     void drawScaledAndTiledImage(const Image &, int, int, int, int, int, int, int, int, 
-                                 TileRule hRule = STRETCH, TileRule vRule = STRETCH,
-                                 void* nativeData = 0);
+        TileRule hRule = STRETCH, TileRule vRule = STRETCH,
+        void* nativeData = 0);
 
-    void addClip(const IntRect &);
-    void addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight,
-                            const IntSize& bottomLeft, const IntSize& bottomRight);
+    void addClip(const IntRect&);
+    void addRoundedRectClip(const IntRect&, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight);
 
     RasterOp rasterOp() const;
     void setRasterOp(RasterOp);
 
-    void drawText(int x, int y, int tabWidth, int xpos, int, int, int alignmentFlags, const QString &);
+    void drawText(int x, int y, int tabWidth, int xpos, int, int, int alignmentFlags, const QString&);
     void drawHighlightForText(int x, int y, int h, int tabWidth, int xpos,
-                  const QChar *, int length, int from, int to, int toAdd,
-                  const Color& backgroundColor, QPainter::TextDirection d, bool visuallyOrdered,
-                  int letterSpacing, int wordSpacing, bool smallCaps);
-    void drawText(int x, int y, int tabWidth, int xpos, const QChar *, int length, int from, int to, int toAdd,
-                  const Color& backgroundColor, QPainter::TextDirection d, bool visuallyOrdered,
-                  int letterSpacing, int wordSpacing, bool smallCaps);
+        const QChar*, int length, int from, int to, int toAdd,
+        const Color& backgroundColor, TextDirection, bool visuallyOrdered,
+        int letterSpacing, int wordSpacing, bool smallCaps);
+    void drawText(int x, int y, int tabWidth, int xpos,
+        const QChar*, int length, int from, int to, int toAdd,
+        const Color& backgroundColor, TextDirection, bool visuallyOrdered,
+        int letterSpacing, int wordSpacing, bool smallCaps);
     void drawLineForText(int x, int y, int yOffset, int width);
     void drawLineForMisspelling(int x, int y, int width);
     int misspellingLineThickness() const;
@@ -137,42 +138,40 @@ public:
     void beginTransparencyLayer(float opacity);
     void endTransparencyLayer();
 
-    void setShadow(int x, int y, int blur, const Color& color);
+    void setShadow(int x, int y, int blur, const Color&);
     void clearShadow();
 
     void initFocusRing(int width, int offset);
-    void initFocusRing(int width, int offset, const Color& color);
+    void initFocusRing(int width, int offset, const Color&);
     void addFocusRingRect(int x, int y, int width, int height);
     void drawFocusRing();
     void clearFocusRing();
     
 #if __APPLE__
     CGContextRef currentContext();
+
+    static int getCompositeOperation(CGContextRef);
+    static void setCompositeOperation(CGContextRef, const QString& operation);
+    static void setCompositeOperation(CGContextRef, int operation);
 #endif
 
 #if SVG_SUPPORT
-    KRenderingDeviceContext *createRenderingDeviceContext();
-    static KRenderingDevice *renderingDevice();
-#endif
-    
-#if __APPLE__
-    static int getCompositeOperation(CGContextRef context);
-    static void setCompositeOperation (CGContextRef context, const QString &operation);
-    static void setCompositeOperation (CGContextRef context, int operation);
+    KRenderingDeviceContext* createRenderingDeviceContext();
+    static KRenderingDevice* renderingDevice();
 #endif
 
     bool printing() const { return _isForPrinting; }
 
 private:
     // no copying or assignment
-    QPainter(const QPainter &);
-    QPainter &operator=(const QPainter &);
+    QPainter(const QPainter&);
+    QPainter& operator=(const QPainter&);
 
     void _setColorFromBrush();
     void _setColorFromPen();
 
-    void _fillRect(float x, float y, float w, float h, const Color& color);
-    
+    void _fillRect(float x, float y, float w, float h, const Color&);
+
     void _updateRenderer();
 
     QPainterPrivate *data;

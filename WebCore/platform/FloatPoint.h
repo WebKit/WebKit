@@ -28,17 +28,20 @@
 #define FLOATPOINT_H_
 
 #if __APPLE__
+
+typedef struct CGPoint CGPoint;
+
 // workaround for <rdar://problem/4294625>
-#if ! __LP64__ && ! NS_BUILD_32_LIKE_64
+#if !__LP64__ && !NS_BUILD_32_LIKE_64
 #undef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 #endif
 
-#ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+#if NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 typedef struct CGPoint NSPoint;
 #else
 typedef struct _NSPoint NSPoint;
 #endif
-typedef struct CGPoint CGPoint;
+
 #endif
 
 namespace WebCore {
@@ -47,41 +50,65 @@ class IntPoint;
 
 class FloatPoint {
 public:
-    FloatPoint();
-    FloatPoint(float, float);
+    FloatPoint() : m_x(0), m_y(0) { }
+    FloatPoint(float x, float y) : m_x(x), m_y(y) { }
     FloatPoint(const IntPoint&);
-    
-#if __APPLE__
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-    explicit FloatPoint(const NSPoint&);
-#endif
-    explicit FloatPoint(const CGPoint&);
-#endif
 
-    float x() const { return xCoord; }
-    float y() const { return yCoord; }
+    float x() const { return m_x; }
+    float y() const { return m_y; }
 
-    void setX(int x) { xCoord = x; }
-    void setY(int y) { yCoord = y; }
-
-    bool isNull() const { return xCoord == 0.0f && yCoord == 0.0f; }
-
-    FloatPoint& operator -=(const FloatPoint& two) { xCoord -= two.xCoord; yCoord -= two.yCoord; return *this; }
-    friend const FloatPoint operator*(const FloatPoint& p, double s);
-    friend FloatPoint operator+(const FloatPoint&, const FloatPoint&);
-    friend FloatPoint operator-(const FloatPoint&, const FloatPoint&);
+    void setX(float x) { m_x = x; }
+    void setY(float y) { m_y = y; }
 
 #if __APPLE__
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+
+    FloatPoint(const CGPoint&);
+    operator CGPoint() const;
+
+#if !NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+    FloatPoint(const NSPoint&);
     operator NSPoint() const;
 #endif
-    operator CGPoint() const;
+
 #endif
 
 private:
-    float xCoord;
-    float yCoord;
+    float m_x, m_y;
 };
+
+inline FloatPoint& operator+=(FloatPoint& a, const FloatPoint& b)
+{
+    a.setX(a.x() + b.x());
+    a.setY(a.y() + b.y());
+    return a;
+}
+
+inline FloatPoint& operator-=(FloatPoint& a, const FloatPoint& b)
+{
+    a.setX(a.x() - b.x());
+    a.setY(a.y() - b.y());
+    return a;
+}
+
+inline FloatPoint operator+(const FloatPoint& a, const FloatPoint& b)
+{
+    return FloatPoint(a.x() + b.x(), a.y() + b.y());
+}
+
+inline FloatPoint operator-(const FloatPoint& a, const FloatPoint& b)
+{
+    return FloatPoint(a.x() - b.x(), a.y() - b.y());
+}
+
+inline bool operator==(const FloatPoint& a, const FloatPoint& b)
+{
+    return a.x() == b.x() && a.y() == b.y();
+}
+
+inline bool operator!=(const FloatPoint& a, const FloatPoint& b)
+{
+    return a.x() != b.x() || a.y() != b.y();
+}
 
 }
 

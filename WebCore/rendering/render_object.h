@@ -27,7 +27,6 @@
 #define render_object_h
 
 #include "CachedObjectClient.h"
-#include "FloatRect.h"
 #include "KWQScrollBar.h"
 #include "NodeImpl.h"
 #include "render_style.h"
@@ -41,18 +40,7 @@ class QMatrix;
 class QTextStream;
 class RenderArena;
 
-#if !NDEBUG
-    #define KHTMLAssert(x) \
-        if (!(x)) { \
-            const RenderObject* o = this; \
-            while (o->parent()) \
-                o = o->parent(); \
-            o->printTree(); \
-            ASSERT(false); \
-        }
-#else
-    #define KHTMLAssert(x)
-#endif
+#define KHTMLAssert(x) ASSERT(x)
 
 /*
  *  The painting of a layer occurs in three distinct phases.  Each phase involves
@@ -65,12 +53,14 @@ class RenderArena;
 
 namespace WebCore {
 
+class AffineTransform;
 class Color;
 class CollapsedBorderValue;
 class DOMString;
 class DocumentImpl;
 class ElementImpl;
 class EventImpl;
+class FloatRect;
 class HTMLAreaElementImpl;
 class InlineBox;
 class InlineFlowBox;
@@ -81,7 +71,6 @@ class RenderCanvas;
 class RenderFlow;
 class RenderFrameSet;
 class RenderLayer;
-class RenderStyle;
 class RenderTable;
 class RenderText;
 class VisiblePosition;
@@ -224,7 +213,6 @@ public:
     virtual const char *renderName() const { return "RenderObject"; }
 #if !NDEBUG
     QString information() const;
-    virtual void printTree(int indent=0) const;
     virtual void dump(QTextStream *stream, QString ind = "") const;
     void showTree() const;
     static void showTree(const RenderObject *ro);
@@ -280,10 +268,10 @@ public:
 #if SVG_SUPPORT
     virtual bool isKCanvasContainer() const { return false; }
     virtual bool isRenderPath() const { return false; }
-    virtual FloatRect relativeBBox(bool includeStroke = true) const { return FloatRect(); }
+    virtual FloatRect relativeBBox(bool includeStroke = true) const;
     // We may eventually want to make these non-virtual
     virtual QMatrix localTransform() const;
-    virtual void setLocalTransform(const QMatrix&) { ASSERT(false); }
+    virtual void setLocalTransform(const QMatrix&);
     virtual QMatrix absoluteTransform() const;
 #endif
     

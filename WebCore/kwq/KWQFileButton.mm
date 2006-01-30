@@ -106,10 +106,8 @@ IntRect KWQFileButton::frameGeometry() const
 {
     NSView <WebCoreFileButton> *button = getView();
 
-    NSRect frame = {{0,0},{0,0}};
     KWQ_BLOCK_EXCEPTIONS;
-    frame = [button visualFrame];
-    return IntRect(frame);
+    return enclosingIntRect([button visualFrame]);
     KWQ_UNBLOCK_EXCEPTIONS;
     return IntRect();
 }

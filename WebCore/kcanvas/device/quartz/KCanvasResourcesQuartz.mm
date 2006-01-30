@@ -126,7 +126,7 @@ void KCanvasContainerQuartz::paint(PaintInfo &paintInfo, int parentX, int parent
         parentX = parentY = 0;
     }
     
-    if (viewport().isValid())
+    if (!viewport().isEmpty())
         deviceContext->concatCTM(QMatrix().translate(viewport().x(), viewport().y()));
     
     if (!localTransform().isIdentity())
@@ -145,7 +145,7 @@ void KCanvasContainerQuartz::paint(PaintInfo &paintInfo, int parentX, int parent
     if (filter)
         filter->prepareFilter(relativeBBox(true));
     
-    if (!viewBox().isNull())
+    if (!viewBox().isEmpty())
         deviceContext->concatCTM(viewportTransform());
     
     RenderContainer::paint(paintInfo, 0, 0);
@@ -196,7 +196,7 @@ KCAlign KCanvasContainerQuartz::align() const
 
 QMatrix KCanvasContainerQuartz::viewportTransform() const
 {
-    if (!viewBox().isNull()) {
+    if (!viewBox().isEmpty()) {
         FloatRect viewportRect = viewport();
         if (!parent()->isKCanvasContainer())
             viewportRect = FloatRect(viewport().x(), viewport().y(), width(), height());
@@ -210,12 +210,12 @@ IntRect KCanvasContainerQuartz::getAbsoluteRepaintRect()
     IntRect repaintRect;
     
     for (WebCore::RenderObject *current = firstChild(); current != 0; current = current->nextSibling())
-        repaintRect = repaintRect.unite(current->getAbsoluteRepaintRect());
+        repaintRect.unite(current->getAbsoluteRepaintRect());
     
     // Filters can expand the bounding box
     KCanvasFilter *filter = getFilterById(document(), style()->svgStyle()->filter().mid(1));
     if (filter)
-        repaintRect = repaintRect.unite(enclosingIntRect(filter->filterBBoxForItemBBox(repaintRect)));
+        repaintRect.unite(enclosingIntRect(filter->filterBBoxForItemBBox(repaintRect)));
 
     return repaintRect;
 }

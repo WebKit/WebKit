@@ -539,7 +539,7 @@ using namespace HTMLNames;
 
 static IntRect boundingBoxRect(RenderObject* obj)
 {
-    IntRect rect(0,0,0,0);
+    IntRect rect;
     if (obj) {
         if (obj->isInlineContinuation())
             obj = obj->element()->renderer();
@@ -549,7 +549,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
         obj->absoluteRects(rects, x, y);
         for (QValueList<IntRect>::ConstIterator it = rects.begin(); it != rects.end(); ++it) {
             IntRect r = *it;
-            if (r.isValid()) {
+            if (!r.isEmpty()) {
                 if (obj->style()->hasAppearance())
                     theme()->adjustRepaintRect(obj, r);
                 if (rect.isEmpty())
@@ -566,8 +566,8 @@ static IntRect boundingBoxRect(RenderObject* obj)
 {
     IntRect rect = m_areaElement ? m_areaElement->getRect(m_renderer) : boundingBoxRect(m_renderer);
     
-    // The Cocoa accessibility API wants the lower-left corner, not the upper-left, so we add in our height.
-    NSPoint point = NSMakePoint(rect.x(), rect.y() + rect.height());
+    // The Cocoa accessibility API wants the lower-left corner.
+    NSPoint point = NSMakePoint(rect.x(), rect.bottom());
     if (m_renderer && m_renderer->canvas() && m_renderer->canvas()->view()) {
         NSView* view = m_renderer->canvas()->view()->getDocumentView();
         point = [[view window] convertBaseToScreen: [view convertPoint: point toView:nil]];
@@ -1106,7 +1106,8 @@ static IntRect boundingBoxRect(RenderObject* obj)
     // use the SelectionController class to help calculate the corresponding rectangle
     IntRect rect1 = SelectionController(startVisiblePosition, startVisiblePosition).caretRect();
     IntRect rect2 = SelectionController(endVisiblePosition, endVisiblePosition).caretRect();
-    IntRect ourrect = rect1.unite(rect2);
+    IntRect ourrect = rect1;
+    ourrect.unite(rect2);
 
     // try to use the document view from the selection, so that nested WebAreas work,
     // but fall back to the top level doc if we do not find it easily
@@ -1124,12 +1125,12 @@ static IntRect boundingBoxRect(RenderObject* obj)
     // if the selection spans lines, the rectangle is to extend
     // across the width of the view
     if (rect1.bottom() != rect2.bottom()) {
-        ourrect.setX((int)[view frame].origin.x);
-        ourrect.setWidth((int)[view frame].size.width);
+        ourrect.setX(static_cast<int>([view frame].origin.x));
+        ourrect.setWidth(static_cast<int>([view frame].size.width));
     }
  
     // convert our rectangle to screen coordinates
-    NSRect rect = NSMakeRect(ourrect.left(), ourrect.top(), ourrect.width(), ourrect.height());
+    NSRect rect = ourrect;
     rect = NSOffsetRect(rect, -docView->contentsX(), -docView->contentsY());
     rect = [view convertRect:rect toView:nil];
     rect.origin = [[view window] convertBaseToScreen:rect.origin];

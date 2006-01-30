@@ -101,7 +101,7 @@ FloatRect KCanvasContainer::relativeBBox(bool includeStroke) const
     for(; current != 0; current = current->nextSibling()) {
         FloatRect childBBox = current->relativeBBox(includeStroke);
         FloatRect mappedBBox = current->localTransform().mapRect(childBBox);
-        rect = rect.unite(mappedBBox);
+        rect.unite(mappedBBox);
     }
 
     return rect;

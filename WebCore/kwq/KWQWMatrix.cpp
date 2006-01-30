@@ -27,6 +27,7 @@
 #include "KWQWMatrix.h"
 
 #include "FloatRect.h"
+#include "IntRect.h"
 
 static const double deg2rad = 0.017453292519943295769; // pi/180
 
@@ -58,7 +59,7 @@ void QMatrix::map(double x, double y, double *x2, double *y2) const
 
 IntRect QMatrix::mapRect(const IntRect &rect) const
 {
-    return IntRect(CGRectApplyAffineTransform(CGRect(rect), m_transform));
+    return enclosingIntRect(CGRectApplyAffineTransform(CGRect(rect), m_transform));
 }
 
 FloatRect QMatrix::mapRect(const FloatRect &rect) const

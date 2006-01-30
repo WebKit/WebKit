@@ -27,6 +27,7 @@
 #define MacFrame_H
 
 #include "Frame.h"
+#include "IntRect.h"
 #include "KWQClipboard.h"
 #include "KWQScrollBar.h"
 #include "NodeImpl.h"

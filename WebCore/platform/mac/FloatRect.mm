@@ -29,26 +29,26 @@
 
 namespace WebCore {
 
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-FloatRect::FloatRect(const NSRect &r) : xp(r.origin.x), yp(r.origin.y), w(r.size.width), h(r.size.height)
+FloatRect::FloatRect(const CGRect& r) : m_location(r.origin), m_size(r.size)
 {
 }
-#endif
-
-FloatRect::FloatRect(const CGRect &r) : xp(r.origin.x), yp(r.origin.y), w(r.size.width), h(r.size.height)
-{
-}
-
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-FloatRect::operator NSRect() const
-{
-    return NSMakeRect(xp, yp, w, h);
-}
-#endif
 
 FloatRect::operator CGRect() const
 {
-    return CGRectMake(xp, yp, w, h);
+    return CGRectMake(x(), y(), width(), height());
 }
+
+#if !NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+
+FloatRect::FloatRect(const NSRect& r) : m_location(r.origin), m_size(r.size)
+{
+}
+
+FloatRect::operator NSRect() const
+{
+    return NSMakeRect(x(), y(), width(), height());
+}
+
+#endif
 
 }

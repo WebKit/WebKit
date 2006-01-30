@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,9 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "KWQWindowWidget.h"
 
+#import "IntRect.h"
 #import "WebCoreFrameBridge.h"
 
 #import <Cocoa/Cocoa.h>
@@ -87,6 +88,6 @@ IntPoint KWQWindowWidget::viewportToGlobal(const IntPoint &p) const
 void KWQWindowWidget::setFrameGeometry(const IntRect &r)
 {
     // FIXME: Could do something to make it easy for the browser to avoid saving this change.
-    [d->bridge setWindowFrame:NSMakeRect(r.x(), NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - (r.y() + r.height()),
+    [d->bridge setWindowFrame:NSMakeRect(r.x(), NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - r.bottom(),
         r.width(), r.height())];
 }

@@ -23,14 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "Image.h"
-#import "IntSize.h"
-#import "IntRect.h"
 
+#import "IntRect.h"
 #import "KWQFoundationExtras.h"
 #import "WebCoreImageRenderer.h"
 #import "WebCoreImageRendererFactory.h"
+#import <qstring.h>
 
 namespace WebCore {
 

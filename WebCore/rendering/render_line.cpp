@@ -748,11 +748,9 @@ bool InlineFlowBox::nodeAtPoint(RenderObject::NodeInfo& i, int x, int y, int tx,
 
 void InlineFlowBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
 {
-    bool intersectsDamageRect = true;
     int xPos = tx + m_x - object()->maximalOutlineSize(i.phase);
     int w = width() + 2 * object()->maximalOutlineSize(i.phase);
-    if ((xPos >= i.r.x() + i.r.width()) || (xPos + w <= i.r.x()))
-        intersectsDamageRect = false;
+    bool intersectsDamageRect = xPos < i.r.right() && xPos + w > i.r.x();
     
     if (intersectsDamageRect) {
         if (i.phase == PaintActionOutline) {
@@ -842,7 +840,7 @@ void InlineFlowBox::paintBackgroundAndBorder(RenderObject::PaintInfo& i, int _tx
     int my = kMax(_ty, i.r.y());
     int mh;
     if (_ty < i.r.y())
-        mh= kMax(0, h - (i.r.y() - _ty));
+        mh = kMax(0, h - (i.r.y() - _ty));
     else
         mh = kMin(i.r.height(), h);
 
@@ -1088,23 +1086,26 @@ void EllipsisBox::paint(RenderObject::PaintInfo& i, int _tx, int _ty)
     }
 }
 
-bool EllipsisBox::nodeAtPoint(RenderObject::NodeInfo& info, int _x, int _y, int _tx, int _ty)
+bool EllipsisBox::nodeAtPoint(RenderObject::NodeInfo& info, int x, int y, int tx, int ty)
 {
+    tx += m_x;
+    ty += m_y;
+
     // Hit test the markup box.
     if (m_markupBox) {
-        _tx += m_x + m_width - m_markupBox->xPos();
-        _ty += m_y + m_baseline - (m_markupBox->yPos() + m_markupBox->baseline());
-        if (m_markupBox->nodeAtPoint(info, _x, _y, _tx, _ty)) {
+        int mtx = tx + m_width - m_markupBox->xPos();
+        int mty = ty + m_baseline - (m_markupBox->yPos() + m_markupBox->baseline());
+        if (m_markupBox->nodeAtPoint(info, x, y, mtx, mty)) {
             object()->setInnerNode(info);
             return true;
         }
     }
 
-    IntRect rect(_tx + m_x, _ty + m_y, m_width, m_height);
-    if (object()->style()->visibility() == VISIBLE && rect.contains(_x, _y)) {
+    if (object()->style()->visibility() == VISIBLE && IntRect(tx, ty, m_width, m_height).contains(x, y)) {
         object()->setInnerNode(info);
         return true;
     }
+
     return false;
 }
 

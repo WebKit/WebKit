@@ -3042,7 +3042,7 @@ void MacFrame::setDisplaysWithFocusAttributes(bool flag)
 
     // 1. The background color used to draw behind selected content (active | inactive color)
     if (d->m_view)
-        d->m_view->updateContents(IntRect(visibleSelectionRect()));
+        d->m_view->updateContents(enclosingIntRect(visibleSelectionRect()));
 
     // 2. Caret blinking (blinks | does not blink)
     if (flag)
@@ -3066,7 +3066,7 @@ void MacFrame::setDisplaysWithFocusAttributes(bool flag)
         NSView *documentView = d->m_view ? d->m_view->getDocumentView() : 0;
         if (documentView && renderer()) {
             doc->updateLayout(); // Ensure layout is up to date.
-            IntRect visibleRect([documentView visibleRect]);
+            IntRect visibleRect(enclosingIntRect([documentView visibleRect]));
             QPainter p;
             p.setUpdatingControlTints(true);
             paint(&p, visibleRect);

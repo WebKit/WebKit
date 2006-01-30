@@ -1,3 +1,10 @@
+2006-01-30  Darin Adler  <darin@apple.com>
+
+        - updated test result for rect changes
+
+        * fast/box-sizing/percentage-height-expected.txt: A bunch of strange empty
+        clip rects are now dumping as (0,0) 0x0.
+
 2006-01-29  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Darin.

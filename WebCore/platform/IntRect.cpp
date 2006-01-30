@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "IntRect.h"
+
 #include <algorithm>
 
 using std::max;
@@ -32,160 +33,60 @@ using std::min;
 
 namespace WebCore {
 
-IntRect::IntRect() : xp(0), yp(0), w(0), h(0)
+bool IntRect::intersects(const IntRect& other) const
 {
+    // Checking emptiness handles negative widths as well as zero.
+    return !isEmpty() && !other.isEmpty()
+        && x() < other.right() && other.x() < right()
+        && y() < other.bottom() && other.y() < bottom();
 }
 
-IntRect::IntRect(int x, int y, int width, int height) : xp(x), yp(y), w(width), h(height)
+bool IntRect::contains(const IntRect& other) const
 {
+    return x() <= other.x() && right() >= other.right()
+        && y() <= other.y() && bottom() >= other.bottom();
 }
 
-IntRect::IntRect(IntPoint p, IntSize s) : xp(p.x()), yp(p.y()), w(s.width()), h(s.height())
+void IntRect::intersect(const IntRect& other)
 {
-}
+    int l = max(x(), other.x());
+    int t = max(y(), other.y());
+    int r = min(right(), other.right());
+    int b = min(bottom(), other.bottom());
 
-IntRect::IntRect(const IntPoint &topLeft, const IntPoint &bottomRight)
-{
-    xp = topLeft.x();
-    yp = topLeft.y();
-    w = bottomRight.x() - topLeft.x() + 1;
-    h = bottomRight.y() - topLeft.y() + 1;
-}
-
-bool IntRect::isNull() const
-{
-    return w == 0 && h == 0;
-}
-
-bool IntRect::isValid() const
-{
-    return w > 0 && h > 0;
-}
-
-bool IntRect::isEmpty() const
-{
-    return w <= 0 || h <= 0;
-}
-
-int IntRect::right() const
-{
-    return xp + w - 1;
-}
-
-int IntRect::bottom() const
-{
-    return yp + h - 1;
-}
-
-IntPoint IntRect::topLeft() const
-{
-    return IntPoint(xp,yp);
-}
-
-IntPoint IntRect::topRight() const
-{
-    return IntPoint(right(),top());
-}
-
-IntPoint IntRect::bottomRight() const
-{
-    return IntPoint(right(),bottom());
-}
-
-IntPoint IntRect::bottomLeft() const
-{
-    return IntPoint(left(),bottom());
-}
-
-IntSize IntRect::size() const
-{
-    return IntSize(w,h);
-}
-
-IntRect IntRect::unite(const IntRect &r) const
-{
-    if (r.isEmpty())
-        return *this;
-    
-    if (isEmpty())
-        return r;
-
-    int nx, ny, nw, nh;
-
-    nx = min(xp, r.xp);
-    ny = min(yp, r.yp);
-
-    if (xp + w >= r.xp + r.w) {
-        nw = xp + w - nx;
-    } else {
-        nw = r.xp + r.w - nx; 
+    // Return a clean empty rectangle for non-intersecting cases.
+    if (l >= r || t >= b) {
+        l = 0;
+        t = 0;
+        r = 0;
+        b = 0;
     }
 
-    if (yp + h >= r.yp + r.h) {
-        nh = yp + h - ny;
-    } else {
-        nh = r.yp + r.h - ny; 
+    m_location.setX(l);
+    m_location.setY(t);
+    m_size.setWidth(r - l);
+    m_size.setHeight(b - t);
+}
+
+void IntRect::unite(const IntRect& other)
+{
+    // Handle empty special cases first.
+    if (other.isEmpty())
+        return;
+    if (isEmpty()) {
+        *this = other;
+        return;
     }
 
-    return IntRect(nx, ny, nw, nh);
-}
+    int l = min(x(), other.x());
+    int t = min(y(), other.y());
+    int r = max(right(), other.right());
+    int b = max(bottom(), other.bottom());
 
-IntRect IntRect::normalize() const
-{
-    IntRect newRect;
-    
-    newRect.xp  = (w < 0) ? (xp - w) : xp;
-    newRect.w   = (w < 0) ? -w : w;
-    
-    newRect.yp  = (h < 0) ? (yp - h) : yp;
-    newRect.h   = (h < 0) ? -h : h;
-    
-    return newRect;
-}
-
-bool IntRect::intersects(const IntRect &r) const
-{
-    return intersect(r).isValid();
-}
-
-IntRect IntRect::intersect(const IntRect &r) const
-{
-    int nx, ny, nw, nh;
-
-    nx = max(xp, r.xp);
-    ny = max(yp, r.yp);
-
-    if (xp + w <= r.xp + r.w) {
-        nw = xp + w - nx;
-    } else {
-        nw = r.xp + r.w - nx; 
-    }
-
-    if (yp + h <= r.yp + r.h) {
-        nh = yp + h - ny;
-    } else {
-        nh = r.yp + r.h - ny; 
-    }
-
-    return IntRect(nx, ny, nw, nh);
-}
-
-void IntRect::inflate(int s)
-{
-    xp -= s;
-    yp -= s;
-    w += 2*s;
-    h += 2*s;
-}
-
-bool operator==(const IntRect &a, const IntRect &b)
-{
-    return a.xp == b.xp && a.yp == b.yp && a.w == b.w && a.h == b.h;
-}
-
-bool operator!=(const IntRect &a, const IntRect &b)
-{
-    return !(a == b);
+    m_location.setX(l);
+    m_location.setY(t);
+    m_size.setWidth(r - l);
+    m_size.setHeight(b - t);
 }
 
 }

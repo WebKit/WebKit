@@ -1,3 +1,102 @@
+2006-01-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - cleanup of Int/Float-Size/Point/Rect classes
+
+        I did this as part of a redo of QMatrix, but I decided I should
+        land this part separately.
+
+        Eliminated the concept of a null rect or point, which used to be
+        indicated by negative width and height.
+
+        Changed right and bottom to to be, e.g., 2 for a rect at (0,0) 2x2.
+        The old code followed Qt's system that says right is 1 in those cases,
+        which is inappropriate for floating point, and old fashioned because
+        modern graphics systems use coordinates for lines between pixels, not
+        the pixels themselves.
+
+        Other API improvements to the point, size, and rect classes. For example,
+        functions named with verbs now always modify the object itself.
+
+        * rendering/render_theme_mac.mm: (RenderThemeMac::paintButton): Fixed
+        a bug where it said x() where it should say y().
+
+        * bridge/mac/MacFrame.h:
+        * bridge/mac/MacFrame.mm:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        * kcanvas/KCanvasContainer.cpp:
+        * kcanvas/KCanvasItem.cpp:
+        * kcanvas/RenderSVGImage.cpp:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.mm:
+        * khtml/ecma/kjs_dom.cpp:
+        * khtml/ecma/kjs_window.cpp:
+        * khtml/editing/SelectionController.cpp:
+        * khtml/html/html_inlineimpl.cpp:
+        * khtml/html/html_objectimpl.cpp:
+        * khtml/html/html_objectimpl.h:
+        * khtml/misc/khtmllayout.h:
+        * ksvg2/svg/SVGSVGElementImpl.cpp:
+        * kwq/KWQAccObject.mm:
+        * kwq/KWQComboBox.mm:
+        * kwq/KWQFileButton.mm:
+        * kwq/KWQFontMetrics.mm:
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        * kwq/KWQRegion.cpp:
+        * kwq/KWQRenderTreeDebug.cpp:
+        * kwq/KWQScrollView.mm:
+        * kwq/KWQWMatrix.cpp:
+        * kwq/KWQWidget.h:
+        * kwq/KWQWidget.mm:
+        * kwq/KWQWindowWidget.mm:
+        * loader/CachedImage.cpp:
+        * page/Frame.cpp:
+        * page/FrameView.cpp:
+        * platform/FloatPoint.cpp:
+        * platform/FloatPoint.h:
+        * platform/FloatRect.cpp:
+        * platform/FloatRect.h:
+        * platform/FloatSize.cpp:
+        * platform/FloatSize.h:
+        * platform/Image.h:
+        * platform/IntPoint.cpp:
+        * platform/IntPoint.h:
+        * platform/IntPointArray.cpp:
+        * platform/IntPointArray.h:
+        * platform/IntRect.cpp:
+        * platform/IntRect.h:
+        * platform/IntSize.cpp:
+        * platform/IntSize.h:
+        * platform/mac/FloatPoint.mm:
+        * platform/mac/FloatRect.mm:
+        * platform/mac/FloatSize.mm:
+        * platform/mac/Image.mm:
+        * platform/mac/IntPoint.mm:
+        * platform/mac/IntRect.mm:
+        * platform/mac/IntSize.mm:
+        * platform/mac/Screen.mm:
+        * rendering/InlineTextBox.cpp:
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBlock.h:
+        * rendering/RenderTable.cpp:
+        * rendering/RenderTableCell.cpp:
+        * rendering/RenderText.cpp:
+        * rendering/render_box.cpp:
+        * rendering/render_canvas.cpp:
+        * rendering/render_canvasimage.cpp:
+        * rendering/render_flow.cpp:
+        * rendering/render_form.cpp:
+        * rendering/render_frames.cpp:
+        * rendering/render_layer.cpp:
+        * rendering/render_line.cpp:
+        * rendering/render_list.cpp:
+        * rendering/render_object.cpp:
+        * rendering/render_object.h:
+        * rendering/render_replaced.cpp:
+
 2006-01-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

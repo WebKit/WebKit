@@ -528,15 +528,14 @@ void RenderTableCell::paint(PaintInfo& i, int _tx, int _ty)
 
     // check if we need to do anything at all...
     int os = 2*maximalOutlineSize(i.phase);
-    if ((_ty >= i.r.y() + i.r.height() + os) || (_ty + _topExtra + m_height + _bottomExtra <= i.r.y() - os))
+    if (_ty >= i.r.bottom() + os || _ty + _topExtra + m_height + _bottomExtra <= i.r.y() - os)
         return;
 
     if (i.phase == PaintActionCollapsedTableBorders && style()->visibility() == VISIBLE) {
         int w = width();
         int h = height() + borderTopExtra() + borderBottomExtra();
         paintCollapsedBorder(i.p, _tx, _ty, w, h);
-    }
-    else
+    } else
         RenderBlock::paintObject(i, _tx, _ty + _topExtra);
 
 #ifdef BOX_DEBUG
@@ -743,7 +742,7 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
     }
 
     int my = kMax(_ty, i.r.y());
-    int end = kMin(i.r.y() + i.r.height(), _ty + h);
+    int end = kMin(i.r.bottom(), _ty + h);
     int mh = end - my;
 
     if (bgLayer->hasImage() || c.isValid()) {

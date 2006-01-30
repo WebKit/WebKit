@@ -740,7 +740,7 @@ void QPainter::fillRect(int x, int y, int w, int h, const WebCore::Brush &brush)
 
 void QPainter::fillRect(const IntRect &rect, const WebCore::Brush &brush)
 {
-    fillRect(rect.left(), rect.top(), rect.width(), rect.height(), brush);
+    fillRect(rect.x(), rect.y(), rect.width(), rect.height(), brush);
 }
 
 void QPainter::addClip(const IntRect &rect)
@@ -777,12 +777,12 @@ void QPainter::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, c
     // normal use cases these ellipses won't overlap one another (or when they do the curvature of one will
     // be subsumed by the other).
     CGContextAddEllipseInRect(context, CGRectMake(rect.x(), rect.y(), topLeft.width() * 2, topLeft.height() * 2));
-    CGContextAddEllipseInRect(context, CGRectMake(rect.x() + rect.width() - topRight.width() * 2, rect.y(),
+    CGContextAddEllipseInRect(context, CGRectMake(rect.right() - topRight.width() * 2, rect.y(),
                                                   topRight.width() * 2, topRight.height() * 2));
-    CGContextAddEllipseInRect(context, CGRectMake(rect.x(), rect.y() + rect.height() - bottomLeft.height() * 2,
+    CGContextAddEllipseInRect(context, CGRectMake(rect.x(), rect.bottom() - bottomLeft.height() * 2,
                                                   bottomLeft.width() * 2, bottomLeft.height() * 2));
-    CGContextAddEllipseInRect(context, CGRectMake(rect.x() + rect.width() - bottomRight.width() * 2,
-                                                  rect.y() + rect.height() - bottomRight.height() * 2,
+    CGContextAddEllipseInRect(context, CGRectMake(rect.right() - bottomRight.width() * 2,
+                                                  rect.bottom() - bottomRight.height() * 2,
                                                   bottomRight.width() * 2, bottomRight.height() * 2));
     
     // Now add five rects (one for each edge rect in between the rounded corners and one for the interior).
@@ -790,12 +790,12 @@ void QPainter::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, c
                                          rect.width() - topLeft.width() - topRight.width(),
                                          kMax(topLeft.height(), topRight.height())));
     CGContextAddRect(context, CGRectMake(rect.x() + bottomLeft.width(), 
-                                         rect.y() + rect.height() - kMax(bottomLeft.height(), bottomRight.height()),
+                                         rect.bottom() - kMax(bottomLeft.height(), bottomRight.height()),
                                          rect.width() - bottomLeft.width() - bottomRight.width(),
                                          kMax(bottomLeft.height(), bottomRight.height())));
     CGContextAddRect(context, CGRectMake(rect.x(), rect.y() + topLeft.height(),
                                          kMax(topLeft.width(), bottomLeft.width()), rect.height() - topLeft.height() - bottomLeft.height()));
-    CGContextAddRect(context, CGRectMake(rect.x() + rect.width() - kMax(topRight.width(), bottomRight.width()),
+    CGContextAddRect(context, CGRectMake(rect.right() - kMax(topRight.width(), bottomRight.width()),
                                          rect.y() + topRight.height(),
                                          kMax(topRight.width(), bottomRight.width()), rect.height() - topRight.height() - bottomRight.height()));
     CGContextAddRect(context, CGRectMake(rect.x() + kMax(topLeft.width(), bottomLeft.width()),

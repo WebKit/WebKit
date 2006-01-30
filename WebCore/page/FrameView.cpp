@@ -818,10 +818,10 @@ bool FrameView::scrollTo(const IntRect &bounds)
     d->scrollingSelf = true; // so scroll events get ignored
 
     int x, y, xe, ye;
-    x = bounds.left();
-    y = bounds.top();
-    xe = bounds.right();
-    ye = bounds.bottom();
+    x = bounds.x();
+    y = bounds.y();
+    xe = bounds.right() - 1;
+    ye = bounds.bottom() - 1;
     
     int deltax;
     int deltay;
@@ -829,37 +829,35 @@ bool FrameView::scrollTo(const IntRect &bounds)
     int curHeight = visibleHeight();
     int curWidth = visibleWidth();
 
-    if (ye-y>curHeight-d->borderY)
-        ye  = y + curHeight - d->borderY;
+    if (ye - y>curHeight-d->borderY)
+        ye = y + curHeight - d->borderY;
 
-    if (xe-x>curWidth-d->borderX)
+    if (xe - x>curWidth-d->borderX)
         xe = x + curWidth - d->borderX;
 
     // is xpos of target left of the view's border?
     if (x < contentsX() + d->borderX )
-            deltax = x - contentsX() - d->borderX;
+        deltax = x - contentsX() - d->borderX;
     // is xpos of target right of the view's right border?
     else if (xe + d->borderX > contentsX() + curWidth)
-            deltax = xe + d->borderX - ( contentsX() + curWidth );
+        deltax = xe + d->borderX - ( contentsX() + curWidth );
     else
         deltax = 0;
 
     // is ypos of target above upper border?
     if (y < contentsY() + d->borderY)
-            deltay = y - contentsY() - d->borderY;
+        deltay = y - contentsY() - d->borderY;
     // is ypos of target below lower border?
     else if (ye + d->borderY > contentsY() + curHeight)
-            deltay = ye + d->borderY - ( contentsY() + curHeight );
+        deltay = ye + d->borderY - ( contentsY() + curHeight );
     else
         deltay = 0;
 
-    int maxx = curWidth-d->borderX;
-    int maxy = curHeight-d->borderY;
+    int maxx = curWidth - d->borderX;
+    int maxy = curHeight - d->borderY;
 
-    int scrollX,scrollY;
-
-    scrollX = deltax > 0 ? (deltax > maxx ? maxx : deltax) : deltax == 0 ? 0 : (deltax>-maxx ? deltax : -maxx);
-    scrollY = deltay > 0 ? (deltay > maxy ? maxy : deltay) : deltay == 0 ? 0 : (deltay>-maxy ? deltay : -maxy);
+    int scrollX = deltax > 0 ? (deltax > maxx ? maxx : deltax) : deltax == 0 ? 0 : (deltax > -maxx ? deltax : -maxx);
+    int scrollY = deltay > 0 ? (deltay > maxy ? maxy : deltay) : deltay == 0 ? 0 : (deltay > -maxy ? deltay : -maxy);
 
     if (contentsX() + scrollX < 0)
         scrollX = -contentsX();
@@ -874,17 +872,14 @@ bool FrameView::scrollTo(const IntRect &bounds)
     scrollBy(scrollX, scrollY);
 
     // generate abs(scroll.)
-    if (scrollX<0)
-        scrollX=-scrollX;
-    if (scrollY<0)
-        scrollY=-scrollY;
+    if (scrollX < 0)
+        scrollX = -scrollX;
+    if (scrollY < 0)
+        scrollY = -scrollY;
 
     d->scrollingSelf = false;
 
-    if ( (scrollX!=maxx) && (scrollY!=maxy) )
-        return true;
-    else return false;
-
+    return scrollX != maxx && scrollY != maxy;
 }
 
 void FrameView::focusNextPrevNode(bool next)
@@ -910,13 +905,10 @@ void FrameView::focusNextPrevNode(bool next)
         bool visible = false;
         NodeImpl *toFocus = newFocusNode;
         while (!visible && toFocus) {
-            IntRect focusNodeRect = toFocus->getRect();
-            if ((focusNodeRect.left() > contentsX()) && (focusNodeRect.right() < contentsX() + visibleWidth()) &&
-                (focusNodeRect.top() > contentsY()) && (focusNodeRect.bottom() < contentsY() + visibleHeight())) {
+            if (toFocus->getRect().intersects(IntRect(contentsX(), contentsY(), visibleWidth(), visibleHeight()))) {
                 // toFocus is visible in the contents area
                 visible = true;
-            }
-            else {
+            } else {
                 // toFocus is _not_ visible in the contents area, pick the next node
                 if (next)
                     toFocus = doc->nextFocusNode(toFocus);

@@ -92,11 +92,11 @@ FloatRect RenderPath::relativeBBox(bool includeStroke) const
         return result;
 
     if (includeStroke) {
-        if(!d->strokeBbox.isValid())
+        if (d->strokeBbox.isEmpty())
             d->strokeBbox = bboxForPath(true);
         result = d->strokeBbox;
     } else {
-        if(!d->fillBBox.isValid())
+        if (d->fillBBox.isEmpty())
             d->fillBBox = bboxForPath(false);
         result = d->fillBBox;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-6 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,55 +27,92 @@
 #define INTSIZE_H_
 
 #if __APPLE__
+
+typedef struct CGSize CGSize;
+
 // workaround for <rdar://problem/4294625>
-#if ! __LP64__ && ! NS_BUILD_32_LIKE_64
+#if !__LP64__ && !NS_BUILD_32_LIKE_64
 #undef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 #endif
 
-#ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+#if NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 typedef struct CGSize NSSize;
 #else
 typedef struct _NSSize NSSize;
 #endif
-typedef struct CGSize CGSize;
+
 #endif
 
 namespace WebCore {
 
 class IntSize {
 public:
-    IntSize();
-    IntSize(int,int);
+    IntSize() : m_width(0), m_height(0) { }
+    IntSize(int width, int height) : m_width(width), m_height(height) { }
     
+    int width() const { return m_width; }
+    int height() const { return m_height; }
+
+    void setWidth(int width) { m_width = width; }
+    void setHeight(int height) { m_height = height; }
+
+    bool isEmpty() const { return m_width <= 0 || m_height <= 0; }
+
+    IntSize expandedTo(const IntSize& other) const
+    {
+        return IntSize(m_width > other.m_width ? m_width : other.m_width,
+            m_height > other.m_height ? m_height : other.m_height);
+    }
+
 #if __APPLE__
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-    explicit IntSize(const NSSize &);
-#endif
-    explicit IntSize(const CGSize &);
-#endif
 
-    bool isValid() const;
-    int width() const { return w; }
-    int height() const { return h; }
-    void setWidth(int width) { w = width; }
-    void setHeight(int height) { h = height; }
-    IntSize expandedTo(const IntSize &) const;
+    explicit IntSize(const CGSize&); // don't do this implicitly since it's lossy
+    operator CGSize() const;
 
-#if __APPLE__    
 #ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+    explicit IntSize(const NSSize &); // don't do this implicitly since it's lossy
     operator NSSize() const;
 #endif
-    operator CGSize() const;
+
 #endif
 
-    friend IntSize operator+(const IntSize &, const IntSize &);
-    friend bool operator==(const IntSize &, const IntSize &);
-    friend bool operator!=(const IntSize &, const IntSize &);
-
 private:
-    int w;
-    int h;
+    int m_width, m_height;
 };
+
+inline IntSize& operator+=(IntSize& a, const IntSize& b)
+{
+    a.setWidth(a.width() + b.width());
+    a.setHeight(a.height() + b.height());
+    return a;
+}
+
+inline IntSize& operator-=(IntSize& a, const IntSize& b)
+{
+    a.setWidth(a.width() - b.width());
+    a.setHeight(a.height() - b.height());
+    return a;
+}
+
+inline IntSize operator+(const IntSize& a, const IntSize& b)
+{
+    return IntSize(a.width() + b.width(), a.height() + b.height());
+}
+
+inline IntSize operator-(const IntSize& a, const IntSize& b)
+{
+    return IntSize(a.width() - b.width(), a.height() - b.height());
+}
+
+inline bool operator==(const IntSize& a, const IntSize& b)
+{
+    return a.width() == b.width() && a.height() == b.height();
+}
+
+inline bool operator!=(const IntSize& a, const IntSize& b)
+{
+    return a.width() != b.width() || a.height() != b.height();
+}
 
 }
 

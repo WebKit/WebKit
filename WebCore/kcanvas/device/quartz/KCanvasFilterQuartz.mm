@@ -79,7 +79,7 @@ KCanvasFilterQuartz::~KCanvasFilterQuartz()
 
 void KCanvasFilterQuartz::prepareFilter(const FloatRect &bbox)
 {
-    if (!bbox.isValid() || !KRenderingDeviceQuartz::filtersEnabled())
+    if (bbox.isEmpty() || !KRenderingDeviceQuartz::filtersEnabled())
         return;
 
     if (m_effects.isEmpty())
@@ -105,7 +105,7 @@ void KCanvasFilterQuartz::prepareFilter(const FloatRect &bbox)
 
 void KCanvasFilterQuartz::applyFilter(const FloatRect &bbox)
 {
-    if (!bbox.isValid() || !KRenderingDeviceQuartz::filtersEnabled() || m_effects.isEmpty())
+    if (bbox.isEmpty() || !KRenderingDeviceQuartz::filtersEnabled() || m_effects.isEmpty())
         return;
 
     // restore the previous context, delete the filter context.
@@ -532,8 +532,8 @@ CIFilter *KCanvasFEFloodQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) c
     [filter setValue:inputColor forKey:@"inputColor"];
     
     CGRect cropRect = CGRectMake(-100,-100,1000,1000); // HACK
-    if (subRegion().isValid())
-        cropRect = CGRect(subRegion());
+    if (!subRegion().isEmpty())
+        cropRect = subRegion();
     FE_QUARTZ_CROP_TO_RECT(cropRect);
     
     FE_QUARTZ_OUTPUT_RETURN;
@@ -559,7 +559,7 @@ CIFilter *KCanvasFEImageQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) c
     [nsTransform setTransformStruct:*((NSAffineTransformStruct *)&cgTransform)];
     [filter setValue:nsTransform forKey:@"inputTransform"];
     
-    if (subRegion().isValid()) {
+    if (!subRegion().isEmpty()) {
         CIFilter *scaleImage = [CIFilter filterWithName:@"CIAffineTransform"];
         [scaleImage setDefaults];
         [scaleImage setValue:[filter valueForKey:@"outputImage"] forKey:@"inputImage"];

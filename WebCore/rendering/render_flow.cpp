@@ -370,7 +370,7 @@ void RenderFlow::paintLines(PaintInfo& i, int _tx, int _ty)
     int yPos = firstLineBox()->root()->selectionTop() - maximalOutlineSize(i.phase);
     int h = maximalOutlineSize(i.phase) + lastLineBox()->root()->selectionTop() + lastLineBox()->root()->selectionHeight() - yPos;
     yPos += _ty;
-    if ((yPos >= i.r.y() + i.r.height()) || (yPos + h <= i.r.y()))
+    if (yPos >= i.r.bottom() || yPos + h <= i.r.y())
         return;
 
     // See if our root lines intersect with the dirty rect.  If so, then we paint
@@ -386,7 +386,7 @@ void RenderFlow::paintLines(PaintInfo& i, int _tx, int _ty)
             // Try to avoid splitting a line vertically, but only if it's less than the height
             // of the entire page.
             if (curr->root()->bottomOverflow() - curr->root()->topOverflow() <= c->printRect().height()) {
-                if (_ty + curr->root()->bottomOverflow() > c->printRect().y() + c->printRect().height()) {
+                if (_ty + curr->root()->bottomOverflow() > c->printRect().bottom()) {
                     if (_ty + curr->root()->topOverflow() < c->truncatedAt())
                         c->setBestTruncatedAt(_ty + curr->root()->topOverflow(), this);
                     // If we were able to truncate, don't paint.
@@ -400,7 +400,7 @@ void RenderFlow::paintLines(PaintInfo& i, int _tx, int _ty)
         int bottom = kMax(curr->root()->selectionTop() + curr->root()->selectionHeight(), curr->root()->bottomOverflow()) + maximalOutlineSize(i.phase);
         h = bottom - top;
         yPos = _ty + top;
-        if ((yPos < i.r.y() + i.r.height()) && (yPos + h > i.r.y()))
+        if (yPos < i.r.bottom() && yPos + h > i.r.y())
             curr->paint(i, _tx, _ty);
     }
 
@@ -483,12 +483,12 @@ IntRect RenderFlow::getAbsoluteRepaintRect()
             // cb->height() is inaccurate if we're in the middle of a layout of |cb|, so use the
             // layer's size instead.  Even if the layer's size is wrong, the layer itself will repaint
             // anyway if its size does change.
-            int x = r.left();
-            int y = r.top();
+            int x = r.x();
+            int y = r.y();
             IntRect boxRect(0, 0, cb->layer()->width(), cb->layer()->height());
-            cb->layer()->subtractScrollOffset(x,y); // For overflow:auto/scroll/hidden.
+            cb->layer()->subtractScrollOffset(x, y); // For overflow:auto/scroll/hidden.
             IntRect repaintRect(x, y, r.width(), r.height());
-            r = repaintRect.intersect(boxRect);
+            r = intersection(repaintRect, boxRect);
         }
         cb->computeAbsoluteRepaintRect(r);
         
@@ -496,13 +496,13 @@ IntRect RenderFlow::getAbsoluteRepaintRect()
             for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
                 if (!curr->isText()) {
                     IntRect childRect = curr->getAbsoluteRepaintRectWithOutline(ow);
-                    r = r.unite(childRect);
+                    r.unite(childRect);
                 }
             }
             
             if (continuation() && !continuation()->isInline()) {
                 IntRect contRect = continuation()->getAbsoluteRepaintRectWithOutline(ow);
-                r = r.unite(contRect);
+                r.unite(contRect);
             }
         }
         
@@ -696,11 +696,11 @@ void RenderFlow::paintOutlines(QPainter *p, int _tx, int _ty)
     QPtrList <IntRect> rects;
     rects.setAutoDelete(true);
     
-    rects.append(new IntRect(0,0,0,0));
+    rects.append(new IntRect);
     for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
         rects.append(new IntRect(curr->xPos(), curr->yPos(), curr->width(), curr->height()));
     }
-    rects.append(new IntRect(0,0,0,0));
+    rects.append(new IntRect);
     
     for (unsigned int i = 1; i < rects.count() - 1; i++)
         paintOutlineForLine(p, _tx, _ty, *rects.at(i-1), *rects.at(i), *rects.at(i+1));
@@ -716,77 +716,77 @@ void RenderFlow::paintOutlineForLine(QPainter *p, int tx, int ty, const IntRect 
     
     int offset = style()->outlineOffset();
     
-    int t = ty + thisline.top() - offset;
-    int l = tx + thisline.left() - offset;
-    int b = ty + thisline.bottom() + offset + 1;
-    int r = tx + thisline.right() + offset + 1;
+    int t = ty + thisline.y() - offset;
+    int l = tx + thisline.x() - offset;
+    int b = ty + thisline.bottom() + offset;
+    int r = tx + thisline.right() + offset;
     
     // left edge
     drawBorder(p,
                l - ow,
-               t - (lastline.isEmpty() || thisline.left() < lastline.left() || lastline.right() <= thisline.left() ? ow : 0),
+               t - (lastline.isEmpty() || thisline.x() < lastline.x() || (lastline.right() - 1) <= thisline.x() ? ow : 0),
                l,
-               b + (nextline.isEmpty() || thisline.left() <= nextline.left() || nextline.right() <= thisline.left() ? ow : 0),
+               b + (nextline.isEmpty() || thisline.x() <= nextline.x() || (nextline.right() - 1) <= thisline.x() ? ow : 0),
                BSLeft,
                oc, style()->color(), os,
-               (lastline.isEmpty() || thisline.left() < lastline.left() || lastline.right() <= thisline.left() ? ow : -ow),
-               (nextline.isEmpty() || thisline.left() <= nextline.left() || nextline.right() <= thisline.left() ? ow : -ow),
+               (lastline.isEmpty() || thisline.x() < lastline.x() || (lastline.right() - 1) <= thisline.x() ? ow : -ow),
+               (nextline.isEmpty() || thisline.x() <= nextline.x() || (nextline.right() - 1) <= thisline.x() ? ow : -ow),
                true);
     
     // right edge
     drawBorder(p,
                r,
-               t - (lastline.isEmpty() || lastline.right() < thisline.right() || thisline.right() <= lastline.left() ? ow : 0),
+               t - (lastline.isEmpty() || lastline.right() < thisline.right() || (thisline.right() - 1) <= lastline.x() ? ow : 0),
                r + ow,
-               b + (nextline.isEmpty() || nextline.right() <= thisline.right() || thisline.right() <= nextline.left() ? ow : 0),
+               b + (nextline.isEmpty() || nextline.right() <= thisline.right() || (thisline.right() - 1) <= nextline.x() ? ow : 0),
                BSRight,
                oc, style()->color(), os,
-               (lastline.isEmpty() || lastline.right() < thisline.right() || thisline.right() <= lastline.left() ? ow : -ow),
-               (nextline.isEmpty() || nextline.right() <= thisline.right() || thisline.right() <= nextline.left() ? ow : -ow),
+               (lastline.isEmpty() || lastline.right() < thisline.right() || (thisline.right() - 1) <= lastline.x() ? ow : -ow),
+               (nextline.isEmpty() || nextline.right() <= thisline.right() || (thisline.right() - 1) <= nextline.x() ? ow : -ow),
                true);
     // upper edge
-    if ( thisline.left() < lastline.left())
+    if (thisline.x() < lastline.x())
         drawBorder(p,
                    l - ow,
                    t - ow,
-                   kMin(r+ow, (lastline.isValid()? tx+lastline.left() : 1000000)),
+                   kMin(r+ow, (lastline.isEmpty() ? 1000000 : tx + lastline.x())),
                    t ,
                    BSTop, oc, style()->color(), os,
                    ow,
-                   (lastline.isValid() && tx+lastline.left()+1<r+ow ? -ow : ow),
+                   (!lastline.isEmpty() && tx + lastline.x() + 1 < r + ow) ? -ow : ow,
                    true);
     
     if (lastline.right() < thisline.right())
         drawBorder(p,
-                   kMax(lastline.isValid()?tx + lastline.right() + 1:-1000000, l - ow),
+                   kMax(lastline.isEmpty() ? -1000000 : tx + lastline.right(), l - ow),
                    t - ow,
                    r + ow,
                    t ,
                    BSTop, oc, style()->color(), os,
-                   (lastline.isValid() && l-ow < tx+lastline.right()+1 ? -ow : ow),
+                   (!lastline.isEmpty() && l - ow < tx + lastline.right()) ? -ow : ow,
                    ow,
                    true);
     
     // lower edge
-    if ( thisline.left() < nextline.left())
+    if (thisline.x() < nextline.x())
         drawBorder(p,
                    l - ow,
                    b,
-                   kMin(r+ow, nextline.isValid()? tx+nextline.left()+1 : 1000000),
+                   kMin(r + ow, !nextline.isEmpty() ? tx + nextline.x() + 1 : 1000000),
                    b + ow,
                    BSBottom, oc, style()->color(), os,
                    ow,
-                   (nextline.isValid() && tx+nextline.left()+1<r+ow? -ow : ow),
+                   (!nextline.isEmpty() && tx + nextline.x() + 1 < r + ow) ? -ow : ow,
                    true);
     
     if (nextline.right() < thisline.right())
         drawBorder(p,
-                   kMax(nextline.isValid()?tx+nextline.right()+1:-1000000 , l-ow),
+                   kMax(!nextline.isEmpty() ? tx + nextline.right() : -1000000, l - ow),
                    b,
                    r + ow,
                    b + ow,
                    BSBottom, oc, style()->color(), os,
-                   (nextline.isValid() && l-ow < tx+nextline.right()+1? -ow : ow),
+                   (!nextline.isEmpty() && l - ow < tx + nextline.right()) ? -ow : ow,
                    ow,
                    true);
 }

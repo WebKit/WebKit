@@ -372,9 +372,9 @@ void RenderTable::paint(PaintInfo& i, int _tx, int _ty)
     PaintAction paintAction = i.phase;
     
     int os = 2*maximalOutlineSize(paintAction);
-    if ((_ty >= i.r.y() + i.r.height() + os) || (_ty + height() <= i.r.y() - os))
+    if (_ty >= i.r.bottom() + os || _ty + height() <= i.r.y() - os)
         return;
-    if ((_tx >= i.r.x() + i.r.width() + os) || (_tx + width() <= i.r.x() - os))
+    if (_tx >= i.r.right() + os || _tx + width() <= i.r.x() - os)
         return;
 
     if ((paintAction == PaintActionBlockBackground || paintAction == PaintActionChildBlockBackground)

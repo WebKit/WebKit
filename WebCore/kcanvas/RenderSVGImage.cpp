@@ -114,7 +114,7 @@ IntRect RenderSVGImage::getAbsoluteRepaintRect()
     // Filters can expand the bounding box
     KCanvasFilter *filter = getFilterById(document(), style()->svgStyle()->filter().mid(1));
     if (filter)
-        repaintRect = repaintRect.unite(filter->filterBBoxForItemBBox(repaintRect));
+        repaintRect.unite(filter->filterBBoxForItemBBox(repaintRect));
 
     return enclosingIntRect(repaintRect);
 }

@@ -376,7 +376,7 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
     _tx += m_x;
     _ty += m_y;
 
-    if ((_ty > i.r.y() + i.r.height()) || (_ty + m_height < i.r.y()))
+    if (_ty > i.r.bottom() || _ty + m_height < i.r.y())
         return;
 
     if (shouldPaintBackgroundOrBorder()) 
@@ -418,7 +418,7 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
             return;
         
         RenderCanvas* c = canvas();
-        if (_ty + m_height + paddingBottom() + borderBottom() >= c->printRect().y() + c->printRect().height()) {
+        if (_ty + m_height + paddingBottom() + borderBottom() >= c->printRect().bottom()) {
             if (_ty < c->truncatedAt())
                 c->setBestTruncatedAt(_ty, this);
             // Let's print this on the next page.

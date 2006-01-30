@@ -26,6 +26,8 @@
 
 #include "config.h"
 #include "FloatRect.h"
+
+#include "IntRect.h"
 #include <algorithm>
 
 using std::max;
@@ -33,158 +35,73 @@ using std::min;
 
 namespace WebCore {
 
-FloatRect::FloatRect() : xp(0.0f), yp(0.0f), w(0.0f), h(0.0f)
+FloatRect::FloatRect(const IntRect& r) : m_location(r.location()), m_size(r.size())
 {
 }
 
-FloatRect::FloatRect(float x, float y, float width, float height) : xp(x), yp(y), w(width), h(height)
+bool FloatRect::intersects(const FloatRect& other) const
 {
+    // Checking emptiness handles negative widths as well as zero.
+    return !isEmpty() && !other.isEmpty()
+        && x() < other.right() && other.x() < right()
+        && y() < other.bottom() && other.y() < bottom();
 }
 
-FloatRect::FloatRect(FloatPoint p, FloatSize s) : xp(p.x()), yp(p.y()), w(s.width()), h(s.height())
+bool FloatRect::contains(const FloatRect& other) const
 {
+    return x() <= other.x() && right() >= other.right()
+        && y() <= other.y() && bottom() >= other.bottom();
 }
 
-FloatRect::FloatRect(const FloatPoint &topLeft, const FloatPoint &bottomRight)
-  : xp(topLeft.x()), yp(topLeft.y()),
-  w(bottomRight.x() - topLeft.x() + 1.0f), h(bottomRight.y() - topLeft.y() + 1.0f)
+void FloatRect::intersect(const FloatRect& other)
 {
+    float l = max(x(), other.x());
+    float t = max(y(), other.y());
+    float r = min(right(), other.right());
+    float b = min(bottom(), other.bottom());
+
+    // Return a clean empty rectangle for non-intersecting cases.
+    if (l >= r || t >= b) {
+        l = 0;
+        t = 0;
+        r = 0;
+        b = 0;
+    }
+
+    m_location.setX(l);
+    m_location.setY(t);
+    m_size.setWidth(r - l);
+    m_size.setHeight(b - t);
 }
 
-FloatRect::FloatRect(const IntRect& r) : xp(r.x()), yp(r.y()), w(r.width()), h(r.height())
+void FloatRect::unite(const FloatRect& other)
 {
+    // Handle empty special cases first.
+    if (other.isEmpty())
+        return;
+    if (isEmpty()) {
+        *this = other;
+        return;
+    }
+
+    float l = min(x(), other.x());
+    float t = min(y(), other.y());
+    float r = max(right(), other.right());
+    float b = max(bottom(), other.bottom());
+
+    m_location.setX(l);
+    m_location.setY(t);
+    m_size.setWidth(r - l);
+    m_size.setHeight(b - t);
 }
 
-bool FloatRect::isNull() const
+IntRect enclosingIntRect(const FloatRect& rect)
 {
-    return w == 0.0f && h == 0.0f;
-}
-
-bool FloatRect::isValid() const
-{
-    return w > 0.0f && h > 0.0f;
-}
-
-bool FloatRect::isEmpty() const
-{
-    return w <= 0.0f || h <= 0.0f;
-}
-
-float FloatRect::right() const
-{
-    return xp + w - 1.0f;
-}
-
-float FloatRect::bottom() const
-{
-    return yp + h - 1.0f;
-}
-
-FloatPoint FloatRect::topLeft() const
-{
-    return FloatPoint(xp,yp);
-}
-
-FloatPoint FloatRect::topRight() const
-{
-    return FloatPoint(right(),top());
-}
-
-FloatPoint FloatRect::bottomRight() const
-{
-    return FloatPoint(right(),bottom());
-}
-
-FloatPoint FloatRect::bottomLeft() const
-{
-    return FloatPoint(left(),bottom());
-}
-
-FloatSize FloatRect::size() const
-{
-    return FloatSize(w,h);
-}
-
-FloatRect FloatRect::unite(const FloatRect &r) const
-{
-    if (r.isEmpty())
-        return *this;
-
-    if (isEmpty())
-        return r;
-
-    float nx, ny, nw, nh;
-
-    nx = min(xp, r.xp);
-    ny = min(yp, r.yp);
-
-    if (xp + w >= r.xp + r.w)
-        nw = xp + w - nx;
-    else
-        nw = r.xp + r.w - nx;
-
-    if (yp + h >= r.yp + r.h)
-        nh = yp + h - ny;
-    else
-        nh = r.yp + r.h - ny;
-
-    return FloatRect(nx, ny, nw, nh);
-}
-
-FloatRect FloatRect::normalize() const
-{
-    FloatRect newRect;
-
-    newRect.xp  = (w < 0.0f) ? (xp - w) : xp;
-    newRect.w   = (w < 0.0f) ? -w : w;
-
-    newRect.yp  = (h < 0.0f) ? (yp - h) : yp;
-    newRect.h   = (h < 0.0f) ? -h : h;
-
-    return newRect;
-}
-
-bool FloatRect::intersects(const FloatRect &r) const
-{
-    return intersect(r).isValid();
-}
-
-FloatRect FloatRect::intersect(const FloatRect &r) const
-{
-    float nx, ny, nw, nh;
-
-    nx = max(xp, r.xp);
-    ny = max(yp, r.yp);
-
-    if (xp + w <= r.xp + r.w)
-        nw = xp + w - nx;
-    else
-        nw = r.xp + r.w - nx;
-
-    if (yp + h <= r.yp + r.h)
-        nh = yp + h - ny;
-    else
-        nh = r.yp + r.h - ny;
-
-    return FloatRect(nx, ny, nw, nh);
-}
-
-void FloatRect::inflate(float s)
-{
-    xp -= s;
-    yp -= s;
-    w += 2.0f * s;
-    h += 2.0f * s;
-}
-
-bool operator==(const FloatRect& a, const FloatRect &b)
-{
-    return a.xp == b.xp && a.yp == b.yp && a.w == b.w && a.h == b.h;
-}
-
-bool operator!=(const FloatRect &a, const FloatRect &b)
-{
-    return !(a == b);
+    int l = static_cast<int>(floorf(rect.x()));
+    int t = static_cast<int>(floorf(rect.y()));
+    int r = static_cast<int>(ceilf(rect.right()));
+    int b = static_cast<int>(ceilf(rect.bottom()));
+    return IntRect(l, t, r - l, b - t);
 }
 
 }

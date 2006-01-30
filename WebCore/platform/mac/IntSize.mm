@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-6 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,26 +28,26 @@
 
 namespace WebCore {
 
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-IntSize::IntSize(const NSSize &s) : w((int)s.width), h((int)s.height)
+IntSize::IntSize(const CGSize& s) : m_width(static_cast<int>(s.width)), m_height(static_cast<int>(s.height))
 {
 }
-#endif
-
-IntSize::IntSize(const CGSize &s) : w((int)s.width), h((int)s.height)
-{
-}
-
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-IntSize::operator NSSize() const
-{
-    return NSMakeSize(w, h);
-}
-#endif
 
 IntSize::operator CGSize() const
 {
-    return CGSizeMake(w, h);
+    return CGSizeMake(m_width, m_height);
 }
+
+#if !NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+
+IntSize::IntSize(const NSSize& s) : m_width(static_cast<int>(s.width)), m_height(static_cast<int>(s.height))
+{
+}
+
+IntSize::operator NSSize() const
+{
+    return NSMakeSize(m_width, m_height);
+}
+
+#endif
 
 }

@@ -224,7 +224,7 @@ IntRect QComboBox::frameGeometry() const
         r.height() - (dimensions()[topMargin] + dimensions()[bottomMargin]));
 }
 
-void QComboBox::setFrameGeometry(const IntRect &r)
+void QComboBox::setFrameGeometry(const IntRect& r)
 {
     QWidget::setFrameGeometry(IntRect(-dimensions()[leftMargin] + r.x(), -dimensions()[topMargin] + r.y(),
         dimensions()[leftMargin] + r.width() + dimensions()[rightMargin],

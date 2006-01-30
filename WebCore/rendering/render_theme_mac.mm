@@ -508,7 +508,7 @@ bool RenderThemeMac::paintButton(RenderObject* o, const RenderObject::PaintInfo&
     if ([button bezelStyle] == NSRoundedBezelStyle) {
         // Center the button within the available space.
         if (inflatedRect.height() > size.height()) {
-            inflatedRect.setX(inflatedRect.x() + (inflatedRect.height() - size.height())/2);
+            inflatedRect.setY(inflatedRect.y() + (inflatedRect.height() - size.height()) / 2);
             inflatedRect.setHeight(size.height());
         }
         

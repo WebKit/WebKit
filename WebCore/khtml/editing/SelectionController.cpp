@@ -759,17 +759,15 @@ void SelectionController::layout()
 
 IntRect SelectionController::caretRect() const
 {
-    if (m_needsLayout) {
+    if (m_needsLayout)
         const_cast<SelectionController *>(this)->layout();
-    }
     
     IntRect caret = m_caretRect;
-    
+
     if (m_sel.start().node() && m_sel.start().node()->renderer()) {
         int x, y;
         m_sel.start().node()->renderer()->absolutePosition(x, y);
-        IntPoint diff = IntPoint(x, y) - m_caretPositionOnLayout;
-        caret.moveTopLeft(diff);
+        caret.move(IntPoint(x, y) - m_caretPositionOnLayout);
     }
 
     return caret;
@@ -781,7 +779,7 @@ IntRect SelectionController::caretRepaintRect() const
     IntRect r = caretRect();
     if (r.isEmpty())
         return IntRect();
-    return IntRect(r.left() - 1, r.top() - 1, r.width() + 2, r.height() + 2);
+    return IntRect(r.x() - 1, r.y() - 1, r.width() + 2, r.height() + 2);
 }
 
 void SelectionController::needsCaretRepaint()
@@ -825,10 +823,9 @@ void SelectionController::paintCaret(QPainter *p, const IntRect &rect)
     if (m_needsLayout)
         layout();
         
-    IntRect caret = caretRect();
-
-    if (caret.isValid())
-        p->fillRect(caret & rect, Brush());
+    IntRect caret = intersection(caretRect(), rect);
+    if (!caret.isEmpty())
+        p->fillRect(caret, Brush());
 }
 
 void SelectionController::debugRenderer(RenderObject *r, bool selected) const

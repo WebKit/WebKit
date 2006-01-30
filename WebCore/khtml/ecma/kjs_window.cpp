@@ -602,9 +602,9 @@ static JSValue *showModalDialog(ExecState *exec, Window *openerWindow, const Lis
     wargs.height = intFeature(features, "dialogheight", 100, screenRect.height(), 450); // default here came from frame size of dialog in MacIE
     wargs.heightSet = true;
 
-    wargs.x = intFeature(features, "dialogleft", screenRect.x(), screenRect.x() + screenRect.width() - wargs.width, -1);
+    wargs.x = intFeature(features, "dialogleft", screenRect.x(), screenRect.right() - wargs.width, -1);
     wargs.xSet = wargs.x > 0;
-    wargs.y = intFeature(features, "dialogtop", screenRect.y(), screenRect.y() + screenRect.height() - wargs.height, -1);
+    wargs.y = intFeature(features, "dialogtop", screenRect.y(), screenRect.bottom() - wargs.height, -1);
     wargs.ySet = wargs.y > 0;
 
     if (boolFeature(features, "center", true)) {
@@ -617,7 +617,7 @@ static JSValue *showModalDialog(ExecState *exec, Window *openerWindow, const Lis
             wargs.ySet = true;
         }
     }
-        
+
     wargs.dialog = true;
     wargs.resizable = boolFeature(features, "resizable");
     wargs.scrollBarsVisible = boolFeature(features, "scroll", true);
@@ -737,24 +737,19 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
     case Personalbar:
       return personalbar(exec);
     case ScreenLeft:
-    case ScreenX: {
-      if (m_frame->view()) {
-        // We want to use frameGeometry here instead of mapToGlobal because it goes through
-        // the windowFrame method of the WebKit's UI delegate. Also we don't want to try
-        // to do anything relative to the screen the window is on, so the code below is no
-        // good of us anyway.
-        return jsNumber(m_frame->view()->topLevelWidget()->frameGeometry().x());
-      } else
+    case ScreenX:
+      if (!m_frame->view())
         return jsUndefined();
-    }
+      // We want to use frameGeometry here instead of mapToGlobal because it goes through
+      // the windowFrame method of the WebKit's UI delegate. Also we don't want to try
+      // to do anything relative to the screen the window is on.
+      return jsNumber(m_frame->view()->topLevelWidget()->frameGeometry().x());
     case ScreenTop:
-    case ScreenY: {
-      if (m_frame->view()) {
-        // See comment above in ScreenX.
-        return jsNumber(m_frame->view()->topLevelWidget()->frameGeometry().y());
-      } else 
+    case ScreenY:
+      if (!m_frame->view())
         return jsUndefined();
-    }
+      // See comment above in ScreenX.
+      return jsNumber(m_frame->view()->topLevelWidget()->frameGeometry().y());
     case ScrollX:
       if (!m_frame->view())
         return jsUndefined();
@@ -1513,22 +1508,22 @@ static void parseWindowFeatures(const QString& features, WindowArgs& windowArgs)
     }
 }
 
-static void constrainToVisible(const IntRect &screen, WindowArgs& windowArgs)
+static void constrainToVisible(const IntRect& screen, WindowArgs& windowArgs)
 {
     windowArgs.x += screen.x();
-    if (windowArgs.x < screen.x() || windowArgs.x > screen.right())
+    if (windowArgs.x < screen.x() || windowArgs.x >= screen.right())
         windowArgs.x = screen.x(); // only safe choice until size is determined
     
     windowArgs.y += screen.y();
-    if (windowArgs.y < screen.y() || windowArgs.y > screen.bottom())
+    if (windowArgs.y < screen.y() || windowArgs.y >= screen.bottom())
         windowArgs.y = screen.y(); // only safe choice until size is determined
     
-    if (windowArgs.height > screen.height())  // should actually check workspace
+    if (windowArgs.height > screen.height()) // should actually check workspace
         windowArgs.height = screen.height();
     if (windowArgs.height < 100)
         windowArgs.height = 100;
     
-    if (windowArgs.width > screen.width())    // should actually check workspace
+    if (windowArgs.width > screen.width()) // should actually check workspace
         windowArgs.width = screen.width();
     if (windowArgs.width < 100)
         windowArgs.width = 100;
@@ -1658,68 +1653,61 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
   case Window::Scroll:
   case Window::ScrollTo:
     window->updateLayout();
-    if(args.size() >= 2 && widget)
+    if (args.size() >= 2 && widget)
       widget->setContentsPos(args[0]->toInt32(exec), args[1]->toInt32(exec));
     return jsUndefined();
   case Window::MoveBy:
     if(args.size() >= 2 && widget)
     {
-      QWidget * tl = widget->topLevelWidget();
+      QWidget* tl = widget->topLevelWidget();
       IntRect sg = screenRect(widget);
-      IntPoint dest = tl->pos() + IntPoint( args[0]->toInt32(exec), args[1]->toInt32(exec) );
+      IntPoint dest = tl->pos() + IntPoint(args[0]->toInt32(exec), args[1]->toInt32(exec));
       // Security check (the spec talks about UniversalBrowserWrite to disable this check...)
-      if ( dest.x() >= sg.x() && dest.y() >= sg.x() &&
-           dest.x()+tl->width() <= sg.width()+sg.x() &&
-           dest.y()+tl->height() <= sg.height()+sg.y() )
-        tl->move( dest );
+      if (sg.contains(IntRect(dest, IntSize(tl->width(), tl->height()))))
+        tl->move(dest);
     }
     return jsUndefined();
   case Window::MoveTo:
     if(args.size() >= 2 && widget)
     {
-      QWidget * tl = widget->topLevelWidget();
+      QWidget* tl = widget->topLevelWidget();
       IntRect sg = screenRect(widget);
-      IntPoint dest( args[0]->toInt32(exec)+sg.x(), args[1]->toInt32(exec)+sg.y() );
+      IntPoint dest(args[0]->toInt32(exec) + sg.x(), args[1]->toInt32(exec) + sg.y());
       // Security check (the spec talks about UniversalBrowserWrite to disable this check...)
-      if ( dest.x() >= sg.x() && dest.y() >= sg.y() &&
-           dest.x()+tl->width() <= sg.width()+sg.x() &&
-           dest.y()+tl->height() <= sg.height()+sg.y() )
-        tl->move( dest );
+      if (sg.contains(IntRect(dest, IntSize(tl->width(), tl->height()))))
+        tl->move(dest);
     }
     return jsUndefined();
   case Window::ResizeBy:
     if(args.size() >= 2 && widget)
     {
-      QWidget * tl = widget->topLevelWidget();
-      IntSize dest = tl->size() + IntSize( args[0]->toInt32(exec), args[1]->toInt32(exec) );
+      QWidget* tl = widget->topLevelWidget();
+      IntSize dest = tl->size() + IntSize(args[0]->toInt32(exec), args[1]->toInt32(exec));
       IntRect sg = screenRect(widget);
       // Security check: within desktop limits and bigger than 100x100 (per spec)
-      if ( tl->x()+dest.width() <= sg.x()+sg.width() &&
-           tl->y()+dest.height() <= sg.y()+sg.height() &&
-           dest.width() >= 100 && dest.height() >= 100 )
+      if (tl->x() + dest.width() <= sg.right() && tl->y() + dest.height() <= sg.bottom()
+           && dest.width() >= 100 && dest.height() >= 100)
       {
         // Take into account the window frame
         int deltaWidth = tl->frameGeometry().width() - tl->width();
         int deltaHeight = tl->frameGeometry().height() - tl->height();
-        tl->resize( dest.width() - deltaWidth, dest.height() - deltaHeight );
+        tl->resize(dest.width() - deltaWidth, dest.height() - deltaHeight);
       }
     }
     return jsUndefined();
   case Window::ResizeTo:
-    if(args.size() >= 2 && widget)
-    {
-      QWidget * tl = widget->topLevelWidget();
-      IntSize dest = IntSize( args[0]->toInt32(exec), args[1]->toInt32(exec) );
+    if (args.size() >= 2 && widget) {
+      QWidget* tl = widget->topLevelWidget();
+      IntSize dest = IntSize(args[0]->toInt32(exec), args[1]->toInt32(exec));
       IntRect sg = screenRect(widget);
       // Security check: within desktop limits and bigger than 100x100 (per spec)
-      if ( tl->x()+dest.width() <= sg.x()+sg.width() &&
-           tl->y()+dest.height() <= sg.y()+sg.height() &&
-           dest.width() >= 100 && dest.height() >= 100 )
+      if (tl->x() + dest.width() <= sg.right() && tl->y() + dest.height() <= sg.bottom() &&
+           dest.width() >= 100 && dest.height() >= 100)
       {
         // Take into account the window frame
         int deltaWidth = tl->frameGeometry().width() - tl->width();
         int deltaHeight = tl->frameGeometry().height() - tl->height();
-        tl->resize( dest.width() - deltaWidth, dest.height() - deltaHeight );
+        tl->resize(dest.width() - deltaWidth, dest.height() - deltaHeight);
       }
     }
     return jsUndefined();

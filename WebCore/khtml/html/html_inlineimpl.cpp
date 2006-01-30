@@ -75,19 +75,17 @@ bool HTMLAnchorElementImpl::isFocusable() const
     // Before calling absoluteRects, check for the common case where the renderer
     // or one of the continuations is non-empty, since this is a faster check and
     // almost always returns true.
-    for (RenderObject *r = renderer(); r; r = r->continuation()) {
+    for (RenderObject *r = renderer(); r; r = r->continuation())
         if (r->width() > 0 && r->height() > 0)
             return true;
-    }
 
     QValueList<IntRect> rects;
     int x = 0, y = 0;
     renderer()->absolutePosition(x, y);
     renderer()->absoluteRects(rects, x, y);
-    for (QValueList<IntRect>::ConstIterator it = rects.begin(); it != rects.end(); ++it) {
-        if ((*it).isValid())
+    for (QValueList<IntRect>::ConstIterator it = rects.begin(); it != rects.end(); ++it)
+        if (!(*it).isEmpty())
             return true;
-    }
 
     return false;
 }

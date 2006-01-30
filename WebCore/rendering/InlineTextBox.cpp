@@ -128,10 +128,10 @@ IntRect InlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos)
     const Font *f = textObj->htmlFont(m_firstLine);
 
     IntRect r = f->selectionRectForText(tx + m_x, ty + selTop, selHeight, textObj->tabWidth(), textPos(), textObj->str->s, textObj->str->l, m_start, m_len, m_toAdd, m_reversed, m_dirOverride, sPos, ePos);
-    if (r.left() > tx + m_x + m_width)
+    if (r.x() > tx + m_x + m_width)
         r.setWidth(0);
-    else if (r.right() > tx + m_x + m_width)
-        r.setWidth(tx + m_x + m_width - r.left());
+    else if (r.right() - 1 > tx + m_x + m_width)
+        r.setWidth(tx + m_x + m_width - r.x());
     return r;
 }
 
@@ -236,8 +236,7 @@ bool InlineTextBox::nodeAtPoint(RenderObject::NodeInfo& i, int x, int y, int tx,
         return false;
 
     IntRect rect(tx + m_x, ty + m_y, m_width, m_height);
-    if (m_truncation != cFullTruncation && 
-        object()->style()->visibility() == VISIBLE && rect.contains(x, y)) {
+    if (m_truncation != cFullTruncation && object()->style()->visibility() == VISIBLE && rect.contains(x, y)) {
         object()->setInnerNode(i);
         return true;
     }
@@ -252,7 +251,7 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
 
     int xPos = tx + m_x;
     int w = width();
-    if ((xPos >= i.r.x() + i.r.width()) || (xPos + w <= i.r.x()))
+    if (xPos >= i.r.right() || xPos + w <= i.r.x())
         return;
         
     bool isPrinting = i.p->printing();
@@ -659,7 +658,9 @@ int InlineTextBox::offsetForPosition(int _x, bool includePartialGlyphs) const
     RenderText* text = static_cast<RenderText*>(m_object);
     RenderStyle *style = text->style(m_firstLine);
     const Font* f = &style->htmlFont();
-    return f->checkSelectionPoint(text->str->s, text->str->l, m_start, m_len, m_toAdd, text->tabWidth(), textPos(), _x - m_x, m_reversed ? QPainter::RTL : QPainter::LTR, m_dirOverride || style->visuallyOrdered(), includePartialGlyphs);
+    return f->checkSelectionPoint(text->str->s, text->str->l, m_start, m_len,
+        m_toAdd, text->tabWidth(), textPos(), _x - m_x,
+        m_reversed ? QPainter::RTL : QPainter::LTR, m_dirOverride || style->visuallyOrdered(), includePartialGlyphs);
 }
 
 int InlineTextBox::positionForOffset(int offset) const
@@ -669,7 +670,8 @@ int InlineTextBox::positionForOffset(int offset) const
     int from = m_reversed ? offset - m_start : 0;
     int to = m_reversed ? m_len : offset - m_start;
     // FIXME: Do we need to add rightBearing here?
-    return f->selectionRectForText(m_x, 0, 0, text->tabWidth(), textPos(), text->str->s, text->str->l, m_start, m_len, m_toAdd, m_reversed, m_dirOverride, from, to).right();
+    return f->selectionRectForText(m_x, 0, 0, text->tabWidth(), textPos(), text->str->s, text->str->l, m_start, m_len,
+        m_toAdd, m_reversed, m_dirOverride, from, to).right() - 1;
 }
 
 }

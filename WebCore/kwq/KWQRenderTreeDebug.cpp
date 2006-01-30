@@ -314,12 +314,14 @@ static void write(QTextStream &ts, RenderLayer &l,
     ts << "layer";
     ts << " " << layerBounds;
 
-    if (layerBounds != layerBounds.intersect(backgroundClipRect))
-        ts << " backgroundClip " << backgroundClipRect;
-    if (layerBounds != layerBounds.intersect(clipRect))
-        ts << " clip " << clipRect;
-    if (layerBounds != layerBounds.intersect(outlineClipRect))
-        ts << " outlineClip " << outlineClipRect;
+    if (!layerBounds.isEmpty()) {
+        if (!backgroundClipRect.contains(layerBounds))
+            ts << " backgroundClip " << backgroundClipRect;
+        if (!clipRect.contains(layerBounds))
+            ts << " clip " << clipRect;
+        if (!outlineClipRect.contains(layerBounds))
+            ts << " outlineClip " << outlineClipRect;
+    }
 
     if (l.renderer()->hasOverflowClip()) {
         if (l.scrollXOffset())

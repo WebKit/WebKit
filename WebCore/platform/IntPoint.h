@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-6 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,57 +27,84 @@
 #define INTPOINT_H_
 
 #if __APPLE__
+
+typedef struct CGPoint CGPoint;
+
 // workaround for <rdar://problem/4294625>
-#if ! __LP64__ && ! NS_BUILD_32_LIKE_64
+#if !__LP64__ && !NS_BUILD_32_LIKE_64
 #undef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 #endif
 
-#ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+#if NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 typedef struct CGPoint NSPoint;
 #else
 typedef struct _NSPoint NSPoint;
 #endif
-typedef struct CGPoint CGPoint;
+
 #endif
 
 namespace WebCore {
 
 class IntPoint {
 public:
-    IntPoint();
-    IntPoint(int, int);
-    
+    IntPoint() : m_x(0), m_y(0) { }
+    IntPoint(int x, int y) : m_x(x), m_y(y) { }
+
+    int x() const { return m_x; }
+    int y() const { return m_y; }
+
+    void setX(int x) { m_x = x; }
+    void setY(int y) { m_y = y; }
+
 #if __APPLE__
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-    explicit IntPoint(const NSPoint &); // don't do this implicitly since it's lossy
-#endif
-    explicit IntPoint(const CGPoint &); // don't do this implicitly since it's lossy
-#endif
 
-    int x() const { return xCoord; }
-    int y() const { return yCoord; }
-    
-    void setX(int x) { xCoord = x; }
-    void setY(int y) { yCoord = y; }
-    
-    bool isNull() const { return xCoord == 0 && yCoord == 0; }
-    
-    IntPoint &operator -=(const IntPoint &two) { xCoord -= two.xCoord; yCoord -= two.yCoord; return *this; }
-    friend const IntPoint operator*(const IntPoint &p, double s);
-    friend IntPoint operator+(const IntPoint &, const IntPoint &);
-    friend IntPoint operator-(const IntPoint &, const IntPoint &);
+    explicit IntPoint(const CGPoint&); // don't do this implicitly since it's lossy
+    operator CGPoint() const;
 
-#if __APPLE__    
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+#if !NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+    explicit IntPoint(const NSPoint&); // don't do this implicitly since it's lossy
     operator NSPoint() const;
 #endif
-    operator CGPoint() const;
+
 #endif
 
 private:
-    int xCoord;
-    int yCoord;
+    int m_x, m_y;
 };
+
+inline IntPoint& operator+=(IntPoint& a, const IntPoint& b)
+{
+    a.setX(a.x() + b.x());
+    a.setY(a.y() + b.y());
+    return a;
+}
+
+inline IntPoint& operator-=(IntPoint& a, const IntPoint& b)
+{
+    a.setX(a.x() - b.x());
+    a.setY(a.y() - b.y());
+    return a;
+}
+
+inline IntPoint operator+(const IntPoint& a, const IntPoint& b)
+{
+    return IntPoint(a.x() + b.x(), a.y() + b.y());
+}
+
+inline IntPoint operator-(const IntPoint& a, const IntPoint& b)
+{
+    return IntPoint(a.x() - b.x(), a.y() - b.y());
+}
+
+inline bool operator==(const IntPoint& a, const IntPoint& b)
+{
+    return a.x() == b.x() && a.y() == b.y();
+}
+
+inline bool operator!=(const IntPoint& a, const IntPoint& b)
+{
+    return a.x() != b.x() || a.y() != b.y();
+}
 
 }
 

@@ -29,26 +29,26 @@
 
 namespace WebCore {
 
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-FloatPoint::FloatPoint(const NSPoint& p) : xCoord(p.x), yCoord(p.y)
+FloatPoint::FloatPoint(const CGPoint& p) : m_x(p.x), m_y(p.y)
 {
 }
-#endif
-
-FloatPoint::FloatPoint(const CGPoint& p) : xCoord(p.x), yCoord(p.y)
-{
-}
-
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-FloatPoint::operator NSPoint() const
-{
-    return NSMakePoint(xCoord, yCoord);
-}
-#endif
 
 FloatPoint::operator CGPoint() const
 {
-    return CGPointMake(xCoord, yCoord);
+    return CGPointMake(m_x, m_y);
 }
+
+#if !NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+
+FloatPoint::FloatPoint(const NSPoint& p) : m_x(p.x), m_y(p.y)
+{
+}
+
+FloatPoint::operator NSPoint() const
+{
+    return NSMakePoint(m_x, m_y);
+}
+
+#endif
 
 }

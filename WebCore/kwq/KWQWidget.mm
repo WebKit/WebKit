@@ -132,22 +132,22 @@ bool QWidget::isEnabled() const
 
 int QWidget::x() const
 {
-    return frameGeometry().topLeft().x();
+    return frameGeometry().x();
 }
 
 int QWidget::y() const 
 {
-    return frameGeometry().topLeft().y();
+    return frameGeometry().y();
 }
 
 int QWidget::width() const 
 { 
-    return frameGeometry().size().width();
+    return frameGeometry().width();
 }
 
 int QWidget::height() const 
 {
-    return frameGeometry().size().height();
+    return frameGeometry().height();
 }
 
 IntSize QWidget::size() const 
@@ -162,7 +162,7 @@ void QWidget::resize(const IntSize &s)
 
 IntPoint QWidget::pos() const 
 {
-    return frameGeometry().topLeft();
+    return frameGeometry().location();
 }
 
 void QWidget::move(int x, int y) 
@@ -177,10 +177,8 @@ void QWidget::move(const IntPoint &p)
 
 IntRect QWidget::frameGeometry() const
 {
-    IntRect rect;
     KWQ_BLOCK_EXCEPTIONS;
-    rect = IntRect([getOuterView() frame]);
-    return rect;
+    return enclosingIntRect([getOuterView() frame]);
     KWQ_UNBLOCK_EXCEPTIONS;
     return IntRect();
 }

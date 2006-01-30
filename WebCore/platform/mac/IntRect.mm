@@ -1,5 +1,5 @@
- /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+/*
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,35 +24,40 @@
  */
 
 #include "config.h"
-#import "IntRect.h"
-
-#import <algorithm>
-
-using std::max;
-using std::min;
+#include "IntRect.h"
 
 namespace WebCore {
 
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-IntRect::IntRect(const NSRect &r) : xp((int)r.origin.x), yp((int)r.origin.y), w((int)r.size.width), h((int)r.size.height)
-{
-}
-#endif
-
-IntRect::IntRect(const CGRect &r) : xp((int)r.origin.x), yp((int)r.origin.y), w((int)r.size.width), h((int)r.size.height)
-{
-}
-
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-IntRect::operator NSRect() const
-{
-    return NSMakeRect(xp, yp, w, h);
-}
-#endif
-
 IntRect::operator CGRect() const
 {
-    return CGRectMake(xp, yp, w, h);
+    return CGRectMake(x(), y(), width(), height());
 }
+
+IntRect enclosingIntRect(const CGRect& rect)
+{
+    int l = static_cast<int>(floorf(rect.origin.x));
+    int t = static_cast<int>(floorf(rect.origin.y));
+    int r = static_cast<int>(ceilf(CGRectGetMaxX(rect)));
+    int b = static_cast<int>(ceilf(CGRectGetMaxY(rect)));
+    return IntRect(l, t, r - l, b - t);
+}
+
+#if !NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+
+IntRect::operator NSRect() const
+{
+    return NSMakeRect(x(), y(), width(), height());
+}
+
+IntRect enclosingIntRect(const NSRect& rect)
+{
+    int l = static_cast<int>(floorf(rect.origin.x));
+    int t = static_cast<int>(floorf(rect.origin.y));
+    int r = static_cast<int>(ceilf(NSMaxX(rect)));
+    int b = static_cast<int>(ceilf(NSMaxY(rect)));
+    return IntRect(l, t, r - l, b - t);
+}
+
+#endif
 
 }

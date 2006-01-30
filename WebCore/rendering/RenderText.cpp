@@ -1042,18 +1042,11 @@ IntRect RenderText::selectionRect()
 
     int absx, absy;
     cb->absolutePosition(absx, absy);
-    RenderLayer *layer = cb->layer();
+    RenderLayer* layer = cb->layer();
     if (layer)
        layer->subtractScrollOffset(absx, absy); 
-    for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
-        IntRect r = box->selectionRect(absx, absy, startPos, endPos);
-        if (!r.isEmpty()) {
-            if (rect.isEmpty())
-                rect = r;
-            else
-                rect = rect.unite(r);
-        }
-    }
+    for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
+        rect.unite(box->selectionRect(absx, absy, startPos, endPos));
 
     return rect;
 }

@@ -26,6 +26,7 @@
 #include "config.h"
 #import "KWQScrollView.h"
 
+#import "IntRect.h"
 #import "KWQExceptions.h"
 #import "KWQLogging.h"
 #import "WebCoreFrameView.h"

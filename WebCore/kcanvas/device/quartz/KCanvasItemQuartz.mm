@@ -204,7 +204,7 @@ IntRect KCanvasItemQuartz::getAbsoluteRepaintRect()
     // Filters can expand the bounding box
     KCanvasFilter *filter = getFilterById(document(), style()->svgStyle()->filter().mid(1));
     if (filter)
-        repaintRect = repaintRect.unite(filter->filterBBoxForItemBBox(repaintRect));
+        repaintRect.unite(filter->filterBBoxForItemBBox(repaintRect));
     
     if (!repaintRect.isEmpty())
         repaintRect.inflate(1); // inflate 1 pixel for antialiasing

@@ -433,7 +433,7 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
     _ty += yOff - borderTopExtra();
 
     int my = kMax(_ty, i.r.y());
-    int end = kMin(i.r.y() + i.r.height(),  _ty + h);
+    int end = kMin(i.r.bottom(),  _ty + h);
     int mh = end - my;
 
     paintBackground(i.p, style()->backgroundColor(), style()->backgroundLayers(), my, mh, _tx, _ty, w, h);

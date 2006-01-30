@@ -566,24 +566,24 @@ bool RenderFrameSet::userResize( MouseEventImpl *evt )
         int sw = element()->border();
         int p = m_resizing ? (m_vSplit > -1 ? _x : _y) : -1;
         if (m_vSplit > -1) {
-            if ( m_oldpos >= 0 )
-                v->updateContents( m_oldpos + sw/2 - rBord , r.y(), 2*rBord, r.height(), true );
-            if ( p >= 0 ){
+            if (m_oldpos >= 0)
+                v->updateContents(m_oldpos + sw/2 - rBord, r.y(), 2 * rBord, r.height(), true );
+            if (p >= 0) {
                 paint.setPen(Pen::NoPen);
-                paint.setBrush( Color::gray );
-                v->setDrawingAlpha((float)0.25);
-                paint.drawRect( p  + sw/2 - rBord, r.y(), 2*rBord, r.height() );
-                v->setDrawingAlpha((float)1.0);
+                paint.setBrush(Color::gray);
+                v->setDrawingAlpha(0.25);
+                paint.drawRect(p + sw/2 - rBord, r.y(), 2*rBord, r.height());
+                v->setDrawingAlpha(1.0);
             }
         } else {
-            if ( m_oldpos >= 0 )
-                v->updateContents( r.x(), m_oldpos + sw/2 - rBord, r.width(), 2*rBord, true );
-            if ( p >= 0 ){
+            if (m_oldpos >= 0)
+                v->updateContents(r.x(), m_oldpos + sw/2 - rBord, r.width(), 2*rBord, true);
+            if (p >= 0) {
                 paint.setPen(Pen::NoPen);
-                paint.setBrush( Color::gray );
-                v->setDrawingAlpha((float)0.25);
-                paint.drawRect( r.x(), p + sw/2 - rBord, r.width(), 2*rBord );
-                v->setDrawingAlpha((float)1.0);
+                paint.setBrush(Color::gray);
+                v->setDrawingAlpha(0.25);
+                paint.drawRect(r.x(), p + sw/2 - rBord, r.width(), 2 * rBord);
+                v->setDrawingAlpha(1.0);
             }
         }
         m_oldpos = p;

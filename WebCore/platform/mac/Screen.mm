@@ -52,12 +52,12 @@ int screenDepth(QWidget* widget)
 
 IntRect screenRect(QWidget* widget)
 {
-    return IntRect(flipGlobalRect([screen(widget) frame]));
+    return enclosingIntRect(flipGlobalRect([screen(widget) frame]));
 }
 
 IntRect usableScreenRect(QWidget* widget)
 {
-    return IntRect(flipGlobalRect([screen(widget) visibleFrame]));
+    return enclosingIntRect(flipGlobalRect([screen(widget) visibleFrame]));
 }
 
 }

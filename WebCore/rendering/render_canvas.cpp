@@ -250,8 +250,7 @@ void RenderCanvas::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
     if (elt || view()->isTransparent())
         view()->useSlowRepaints(); // The parent must show behind the child.
     else
-        i.p->fillRect(i.r.x(), i.r.y(), i.r.width(), i.r.height(), 
-                    view()->palette().active().color(QColorGroup::Base));
+        i.p->fillRect(i.r, view()->palette().active().color(QColorGroup::Base));
 }
 
 void RenderCanvas::repaintViewRectangle(const IntRect& ur, bool immediate)
@@ -262,21 +261,20 @@ void RenderCanvas::repaintViewRectangle(const IntRect& ur, bool immediate)
     if (m_view && ur.intersects(vr)) {
         // We always just invalidate the root view, since we could be an iframe that is clipped out
         // or even invisible.
-        IntRect r = ur.intersect(vr);
+        IntRect r = intersection(ur, vr);
         DOM::ElementImpl* elt = element()->getDocument()->ownerElement();
         if (!elt)
             m_view->repaintRectangle(r, immediate);
         else {
             // Subtract out the contentsX and contentsY offsets to get our coords within the viewing
             // rectangle.
-            r.setX(r.x() - m_view->contentsX());
-            r.setY(r.y() - m_view->contentsY());
+            r.move(-m_view->contentsX(), -m_view->contentsY());
 
             RenderObject* obj = elt->renderer();
             int yFrameOffset = (m_view->frameStyle() != QFrame::NoFrame) ? 2 : 0;
             int xFrameOffset = (m_view->frameStyle() != QFrame::NoFrame) ? 1 : 0;
-            r.setX(r.x() + obj->borderLeft()+obj->paddingLeft() + xFrameOffset);
-            r.setY(r.y() + obj->borderTop()+obj->paddingTop() + yFrameOffset);
+            r.move(obj->borderLeft() + obj->paddingLeft() + xFrameOffset,
+                obj->borderTop() + obj->paddingTop() + yFrameOffset);
             obj->repaintRectangle(r, immediate);
         }
     }
@@ -293,12 +291,11 @@ IntRect RenderCanvas::getAbsoluteRepaintRect()
 
 void RenderCanvas::computeAbsoluteRepaintRect(IntRect& r, bool f)
 {
-    if (m_printingMode) return;
+    if (m_printingMode)
+        return;
 
-    if (f && m_view) {
-        r.setX(r.x() + m_view->contentsX());
-        r.setY(r.y() + m_view->contentsY());
-    }
+    if (f && m_view)
+        r.move(m_view->contentsX(), m_view->contentsY());
 }
 
 void RenderCanvas::absoluteRects(QValueList<IntRect>& rects, int _tx, int _ty)
@@ -348,7 +345,7 @@ IntRect RenderCanvas::selectionRect() const
     SelectionMap::iterator end = selectedObjects.end();
     for (SelectionMap::iterator i = selectedObjects.begin(); i != end; ++i) {
         SelectionInfo* info = i->second;
-        selRect = selRect.unite(info->rect());
+        selRect.unite(info->rect());
         delete info;
     }
     return selRect;

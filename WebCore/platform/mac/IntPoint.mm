@@ -1,6 +1,5 @@
- 
- /*
- * Copyright (C) 2004-6 Apple Computer, Inc.  All rights reserved.
+/*
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,31 +24,30 @@
  */
 
 #include "config.h"
-#import "IntPoint.h"
+#include "IntPoint.h"
 
 namespace WebCore {
 
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-IntPoint::IntPoint(const NSPoint &p) : xCoord((int)p.x), yCoord((int)p.y)
+IntPoint::IntPoint(const CGPoint& p) : m_x(static_cast<int>(p.x)), m_y(static_cast<int>(p.y))
 {
 }
-#endif
-
-IntPoint::IntPoint(const CGPoint &p) : xCoord((int)p.x), yCoord((int)p.y)
-{
-}
-
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-IntPoint::operator NSPoint() const
-{
-    return NSMakePoint(xCoord, yCoord);
-}
-#endif
 
 IntPoint::operator CGPoint() const
 {
-    return CGPointMake(xCoord, yCoord);
+    return CGPointMake(m_x, m_y);
 }
 
+#if !NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+
+IntPoint::IntPoint(const NSPoint& p) : m_x(static_cast<int>(p.x)), m_y(static_cast<int>(p.y))
+{
+}
+
+IntPoint::operator NSPoint() const
+{
+    return NSMakePoint(m_x, m_y);
+}
+
+#endif
 
 }

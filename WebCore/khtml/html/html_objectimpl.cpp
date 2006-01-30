@@ -36,6 +36,7 @@
 #include "dom_string.h"
 #include "dom_textimpl.h"
 #include "html_documentimpl.h"
+#include "html_imageimpl.h"
 #include "render_applet.h"
 #include "render_frames.h"
 #include "render_image.h"

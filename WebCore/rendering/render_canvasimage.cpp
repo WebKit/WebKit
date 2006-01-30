@@ -179,11 +179,8 @@ void RenderCanvasImage::paint(PaintInfo& i, int _tx, int _ty)
             QPainter::setCompositeOperation (p->currentContext(), oldOperation);
     }
 
-    if (drawSelectionTint) {
-        Brush brush(selectionColor(p));
-        IntRect selRect(selectionRect());
-        p->fillRect(selRect.x(), selRect.y(), selRect.width(), selRect.height(), brush);
-    }
+    if (drawSelectionTint)
+        p->fillRect(selectionRect(), selectionColor(p));
 }
 
 void RenderCanvasImage::layout()

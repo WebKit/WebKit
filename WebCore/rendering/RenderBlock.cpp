@@ -1176,7 +1176,7 @@ void RenderBlock::getAbsoluteRepaintRectIncludingFloats(IntRect& bounds, IntRect
             if (!r->noPaint && !r->node->layer()) {
                 IntRect childRect, childFullRect;
                 r->node->getAbsoluteRepaintRectIncludingFloats(childRect, childFullRect);
-                fullBounds = fullBounds.unite(childFullRect);
+                fullBounds.unite(childFullRect);
             }
         }
     }
@@ -1223,8 +1223,7 @@ void RenderBlock::paint(PaintInfo& i, int _tx, int _ty)
     if (!isInlineFlow() && !isRoot()) {
         IntRect overflowBox = overflowRect(false);
         overflowBox.inflate(maximalOutlineSize(i.phase));
-        overflowBox.setX(overflowBox.x() + _tx);
-        overflowBox.setY(overflowBox.y() + _ty);
+        overflowBox.move(_tx, _ty);
         bool intersectsOverflowBox = overflowBox.intersects(i.r);
         if (!intersectsOverflowBox) {
             // Check floats next.
@@ -1232,8 +1231,7 @@ void RenderBlock::paint(PaintInfo& i, int _tx, int _ty)
                 return;
             IntRect floatBox = floatRect();
             floatBox.inflate(maximalOutlineSize(i.phase));
-            floatBox.setX(floatBox.x() + _tx);
-            floatBox.setY(floatBox.y() + _ty);
+            floatBox.move(_tx, _ty);
             if (!floatBox.intersects(i.r))
                 return;
         }
@@ -1253,7 +1251,7 @@ void RenderBlock::paintChildren(PaintInfo& i, int _tx, int _ty)
         // Check for page-break-before: always, and if it's set, break and bail.
         if (isPrinting && !childrenInline() && child->style()->pageBreakBefore() == PBALWAYS &&
             inRootBlockContext() && (_ty + child->yPos()) > i.r.y() && 
-            (_ty + child->yPos()) < i.r.y() + i.r.height()) {
+            (_ty + child->yPos()) < i.r.bottom()) {
             canvas()->setBestTruncatedAt(_ty + child->yPos(), this, true);
             return;
         }
@@ -1264,7 +1262,7 @@ void RenderBlock::paintChildren(PaintInfo& i, int _tx, int _ty)
         // Check for page-break-after: always, and if it's set, break and bail.
         if (isPrinting && !childrenInline() && child->style()->pageBreakAfter() == PBALWAYS && 
             inRootBlockContext() && (_ty + child->yPos() + child->height()) > i.r.y() && 
-            (_ty + child->yPos() + child->height()) < i.r.y() + i.r.height()) {
+            (_ty + child->yPos() + child->height()) < i.r.bottom()) {
             canvas()->setBestTruncatedAt(_ty + child->yPos() + child->height() + child->collapsedMarginBottom(), this, true);
             return;
         }
@@ -1387,7 +1385,7 @@ void RenderBlock::paintEllipsisBoxes(PaintInfo& i, int _tx, int _ty)
         // intersect.
         int yPos = _ty + firstLineBox()->yPos();;
         int h = lastLineBox()->yPos() + lastLineBox()->height() - firstLineBox()->yPos();
-        if( (yPos >= i.r.y() + i.r.height()) || (yPos + h <= i.r.y()))
+        if (yPos >= i.r.bottom() || yPos + h <= i.r.y())
             return;
 
         // See if our boxes intersect with the dirty rect.  If so, then we paint
@@ -1396,7 +1394,7 @@ void RenderBlock::paintEllipsisBoxes(PaintInfo& i, int _tx, int _ty)
         for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
             yPos = _ty + curr->yPos();
             h = curr->height();
-            if (curr->ellipsisBox() && (yPos < i.r.y() + i.r.height()) && (yPos + h > i.r.y()))
+            if (curr->ellipsisBox() && yPos < i.r.bottom() && yPos + h > i.r.y())
                 curr->paintEllipsisBox(i, _tx, _ty);
         }
     }
@@ -1513,7 +1511,7 @@ GapRects RenderBlock::fillInlineSelectionGaps(RenderBlock* rootBlock, int blockX
             result.uniteCenter(fillVerticalSelectionGap(lastTop, lastLeft, lastRight, ty + selTop,
                                                         rootBlock, blockX, blockY, i));
 
-        if (!i || (ty + selTop < i->r.y() + i->r.height()) && (ty + selTop + selHeight > i->r.y()))
+        if (!i || ty + selTop < i->r.bottom() && ty + selTop + selHeight > i->r.y())
             result.unite(curr->fillLineSelectionGap(selTop, selHeight, rootBlock, blockX, blockY, tx, ty, i));
 
         lastSelectedLine = curr;
@@ -2056,26 +2054,20 @@ IntRect RenderBlock::floatRect() const
     for (; (r = it.current()); ++it) {
         if (!r->noPaint && !r->node->layer()) {
             // Check this float.
-            int bottomDelta = kMax(0, r->startY + r->node->marginTop() + r->node->overflowHeight(false) -
-                                      (result.y() + result.height()));
+            int bottomDelta = kMax(0, r->startY + r->node->marginTop() + r->node->overflowHeight(false) - result.bottom());
             if (bottomDelta)
                 result.setHeight(result.height() + bottomDelta);
-            int rightDelta = kMax(0, r->left + r->node->marginLeft() + r->node->overflowWidth(false) -
-                                     (result.x() + result.width()));
+            int rightDelta = kMax(0, r->left + r->node->marginLeft() + r->node->overflowWidth(false) - result.right());
             if (rightDelta)
                 result.setWidth(result.width() + rightDelta);
             
             // Now check left and top
             int topDelta = kMin(0, r->startY + r->node->marginTop() - result.y());
-            if (topDelta < 0) {
-                result.setY(result.y() + topDelta);
-                result.setHeight(result.height() - 2*topDelta);
-            }
+            if (topDelta < 0)
+                result.inflateY(-topDelta);
             int leftDelta = kMin(0, r->left + r->node->marginLeft() - result.x());
-            if (topDelta < 0) {
-                result.setX(result.x() + leftDelta);
-                result.setHeight(result.width() - 2*leftDelta);
-            }
+            if (leftDelta < 0)
+                result.inflateX(-leftDelta);
         }
     }
 
@@ -2454,8 +2446,7 @@ bool RenderBlock::isPointInScrollbar(int _x, int _y, int _tx, int _ty)
     return false;    
 }
 
-bool RenderBlock::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
-                              HitTestAction hitTestAction)
+bool RenderBlock::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
 {
     bool inlineFlow = isInlineFlow();
 
@@ -2465,16 +2456,14 @@ bool RenderBlock::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
     if (!inlineFlow && !isRoot()) {
         // Check if we need to do anything at all.
         IntRect overflowBox = overflowRect(false);
-        overflowBox.setX(overflowBox.x() + tx);
-        overflowBox.setY(overflowBox.y() + ty);
+        overflowBox.move(tx, ty);
         bool insideOverflowBox = overflowBox.contains(_x, _y);
         if (!insideOverflowBox) {
             // Check floats next.
             if (hitTestAction != HitTestFloat)
                 return false;
             IntRect floatBox = floatRect();
-            floatBox.setX(floatBox.x() + tx);
-            floatBox.setY(floatBox.y() + ty);
+            floatBox.move(tx, ty);
             if (!floatBox.contains(_x, _y))
                 return false;
         }
@@ -3522,25 +3511,6 @@ const char *RenderBlock::renderName() const
 }
 
 #ifndef NDEBUG
-void RenderBlock::printTree(int indent) const
-{
-    RenderFlow::printTree(indent);
-
-    if (m_floatingObjects)
-    {
-        QPtrListIterator<FloatingObject> it(*m_floatingObjects);
-        FloatingObject *r;
-        for ( ; (r = it.current()); ++it )
-        {
-            QString s;
-            s.fill(' ', indent);
-            kdDebug() << s << renderName() << ":  " <<
-                (r->type == FloatingObject::FloatLeft ? "FloatLeft" : "FloatRight" )  <<
-                "[" << r->node->renderName() << ": " << (void*)r->node << "] (" << r->startY << " - " << r->endY << ")" << "width: " << r->width <<
-                endl;
-        }
-    }
-}
 
 void RenderBlock::dump(QTextStream *stream, QString ind) const
 {
@@ -3567,6 +3537,7 @@ void RenderBlock::dump(QTextStream *stream, QString ind) const
 
     RenderFlow::dump(stream,ind);
 }
+
 #endif
 
 } // namespace WebCore

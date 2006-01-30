@@ -26,13 +26,9 @@
 #ifndef IMAGE_H_
 #define IMAGE_H_
 
-#include "KWQNamespace.h"
-#include "KWQString.h"
-#include "IntSize.h"
-#include "IntRect.h"
-
 #if __APPLE__
-#include <ApplicationServices/ApplicationServices.h>
+
+typedef struct CGImage *CGImageRef;
 
 #ifdef __OBJC__
 @protocol WebCoreImageRenderer;
@@ -46,11 +42,16 @@ class NSString;
 
 #endif // __APPLE__
 
-class QWMatrix;
+class QString;
 
 namespace WebCore {
 
+class IntRect;
+class IntSize;
 class QPainter;
+
+template <typename T> class Array;
+typedef Array<char> ByteArray;
 
 class Image {
 public:
@@ -59,9 +60,6 @@ public:
     Image(const IntSize&);
     Image(const ByteArray&, const QString& type);
     Image(int, int);
-#if __APPLE__
-    Image(WebCoreImageRendererPtr);
-#endif
 
     ~Image();
     
@@ -76,11 +74,6 @@ public:
     int height() const;
 
     bool decode(const ByteArray &bytes, bool allDataReceived);
-
-#if __APPLE__
-    WebCoreImageRendererPtr imageRenderer() const { return m_imageRenderer; }
-    CGImageRef imageRef() const;
-#endif
 
     void stopAnimations() const;
     void resetAnimation() const;
@@ -105,6 +98,12 @@ public:
     };
 
     static CompositeOperator compositeOperatorFromString(const QString& compositeOperator);
+
+#if __APPLE__
+    Image(WebCoreImageRendererPtr);
+    WebCoreImageRendererPtr imageRenderer() const { return m_imageRenderer; }
+    CGImageRef imageRef() const;
+#endif
 
 private:
     // We do not allow images to be assigned to or copied.

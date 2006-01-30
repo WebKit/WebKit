@@ -42,8 +42,10 @@ class QEvent;
 class QPalette;
 
 namespace WebCore {
+    class IntRect;
     class QPainter;
 }
+using WebCore::IntRect; // move QWidget into WebCore and remove this line
 
 class QWidget : public QObject {
 public:

@@ -3,7 +3,7 @@
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,11 +21,11 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef HTML_OBJECTIMPL_H
 #define HTML_OBJECTIMPL_H
 
-#include "html_imageimpl.h"
-#include "xml/dom_stringimpl.h"
+#include "HTMLElementImpl.h"
 
 #if __APPLE__
 #include <JavaScriptCore/runtime.h>
@@ -33,16 +33,15 @@
 namespace KJS { namespace Bindings { class Instance; } }
 #endif
 
-class QStringList;
-
 namespace DOM {
 
 class HTMLFormElementImpl;
+class HTMLImageLoader;
 
 class HTMLAppletElementImpl : public HTMLElementImpl
 {
 public:
-    HTMLAppletElementImpl(DocumentImpl *doc);
+    HTMLAppletElementImpl(DocumentImpl*);
     ~HTMLAppletElementImpl();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
@@ -50,50 +49,50 @@ public:
     virtual bool checkDTD(const NodeImpl* newChild);
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttributeImpl *token);
+    virtual void parseMappedAttribute(MappedAttributeImpl*);
     
-    virtual bool rendererIsNeeded(khtml::RenderStyle *);
-    virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
+    virtual bool rendererIsNeeded(RenderStyle*);
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void closeRenderer();
     virtual void detach();
     
     DOMString align() const;
-    void setAlign(const DOMString &);
+    void setAlign(const DOMString&);
 
     DOMString alt() const;
-    void setAlt(const DOMString &);
+    void setAlt(const DOMString&);
 
     DOMString archive() const;
-    void setArchive(const DOMString &);
+    void setArchive(const DOMString&);
 
     DOMString code() const;
-    void setCode(const DOMString &);
+    void setCode(const DOMString&);
 
     DOMString codeBase() const;
-    void setCodeBase(const DOMString &);
+    void setCodeBase(const DOMString&);
 
     DOMString height() const;
-    void setHeight(const DOMString &);
+    void setHeight(const DOMString&);
 
     DOMString hspace() const;
-    void setHspace(const DOMString &);
+    void setHspace(const DOMString&);
 
     DOMString name() const;
-    void setName(const DOMString &);
+    void setName(const DOMString&);
 
     DOMString object() const;
-    void setObject(const DOMString &);
+    void setObject(const DOMString&);
 
     DOMString vspace() const;
-    void setVspace(const DOMString &);
+    void setVspace(const DOMString&);
 
     DOMString width() const;
-    void setWidth(const DOMString &);
+    void setWidth(const DOMString&);
 
     virtual bool allParamsAvailable();
     void setupApplet() const;
 
-    KJS::Bindings::Instance *getAppletInstance() const;
+    KJS::Bindings::Instance* getAppletInstance() const;
 
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
@@ -102,7 +101,7 @@ private:
     DOMString oldNameAttr;
     DOMString oldIdAttr;
 
-    mutable KJS::Bindings::Instance *appletInstance;
+    mutable KJS::Bindings::Instance* appletInstance;
 
     bool m_allParamsAvailable;
 };
@@ -112,7 +111,7 @@ private:
 class HTMLEmbedElementImpl : public HTMLElementImpl
 {
 public:
-    HTMLEmbedElementImpl(DocumentImpl *doc);
+    HTMLEmbedElementImpl(DocumentImpl*);
     ~HTMLEmbedElementImpl();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
@@ -120,18 +119,18 @@ public:
     virtual bool checkDTD(const NodeImpl* newChild);
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttributeImpl*);
 
     virtual void attach();
     virtual void detach();
-    virtual bool rendererIsNeeded(khtml::RenderStyle *);
-    virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
+    virtual bool rendererIsNeeded(RenderStyle*);
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
     
-    virtual bool isURLAttribute(AttributeImpl *attr) const;
+    virtual bool isURLAttribute(AttributeImpl*) const;
 
-    KJS::Bindings::Instance *getEmbedInstance() const;
+    KJS::Bindings::Instance* getEmbedInstance() const;
 
     QString url;
     QString pluginPage;
@@ -140,7 +139,7 @@ public:
 private:
     DOMString oldNameAttr;
 
-    mutable KJS::Bindings::Instance *embedInstance;
+    mutable KJS::Bindings::Instance* embedInstance;
 };
 
 // -------------------------------------------------------------------------
@@ -148,21 +147,21 @@ private:
 class HTMLObjectElementImpl : public HTMLElementImpl
 {
 public:
-    HTMLObjectElementImpl(DocumentImpl *doc);
+    HTMLObjectElementImpl(DocumentImpl*);
     ~HTMLObjectElementImpl();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 7; }
     virtual bool checkDTD(const NodeImpl* newChild);
 
-    HTMLFormElementImpl *form() const;
+    HTMLFormElementImpl* form() const;
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttributeImpl *token);
+    virtual void parseMappedAttribute(MappedAttributeImpl*);
 
     virtual void attach();
-    virtual bool rendererIsNeeded(khtml::RenderStyle *);
-    virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
+    virtual bool rendererIsNeeded(RenderStyle*);
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void closeRenderer();
     virtual void detach();
     virtual void insertedIntoDocument();
@@ -173,69 +172,69 @@ public:
 
     DocumentImpl* contentDocument() const;
     
-    virtual bool isURLAttribute(AttributeImpl *attr) const;
+    virtual bool isURLAttribute(AttributeImpl*) const;
 
     bool isImageType();
 
     void renderFallbackContent();
 
     DOMString code() const;
-    void setCode(const DOMString &);
+    void setCode(const DOMString&);
 
     DOMString align() const;
-    void setAlign(const DOMString &);
+    void setAlign(const DOMString&);
 
     DOMString archive() const;
-    void setArchive(const DOMString &);
+    void setArchive(const DOMString&);
 
     DOMString border() const;
-    void setBorder(const DOMString &);
+    void setBorder(const DOMString&);
 
     DOMString codeBase() const;
-    void setCodeBase(const DOMString &);
+    void setCodeBase(const DOMString&);
 
     DOMString codeType() const;
-    void setCodeType(const DOMString &);
+    void setCodeType(const DOMString&);
 
     DOMString data() const;
-    void setData(const DOMString &);
+    void setData(const DOMString&);
 
     bool declare() const;
     void setDeclare(bool);
 
     DOMString height() const;
-    void setHeight(const DOMString &);
+    void setHeight(const DOMString&);
 
     DOMString hspace() const;
-    void setHspace(const DOMString &);
+    void setHspace(const DOMString&);
 
     DOMString name() const;
-    void setName(const DOMString &);
+    void setName(const DOMString&);
 
     DOMString standby() const;
-    void setStandby(const DOMString &);
+    void setStandby(const DOMString&);
 
     int tabIndex() const;
     void setTabIndex(int);
 
     DOMString type() const;
-    void setType(const DOMString &);
+    void setType(const DOMString&);
 
     DOMString useMap() const;
-    void setUseMap(const DOMString &);
+    void setUseMap(const DOMString&);
 
     DOMString vspace() const;
-    void setVspace(const DOMString &);
+    void setVspace(const DOMString&);
 
     DOMString width() const;
-    void setWidth(const DOMString &);
+    void setWidth(const DOMString&);
 
     bool isComplete() const { return m_complete; }
     void setComplete(bool complete);
     
     bool isDocNamedItem() const { return m_docNamedItem; }
 
-    KJS::Bindings::Instance *getObjectInstance() const;
+    KJS::Bindings::Instance* getObjectInstance() const;
 
     QString serviceType;
     QString url;
@@ -249,7 +248,7 @@ private:
     DOMString oldIdAttr;
     DOMString oldNameAttr;
 
-    mutable KJS::Bindings::Instance *objectInstance;
+    mutable KJS::Bindings::Instance* objectInstance;
 
     bool m_complete;
     bool m_docNamedItem;
@@ -261,27 +260,27 @@ class HTMLParamElementImpl : public HTMLElementImpl
 {
     friend class HTMLAppletElementImpl;
 public:
-    HTMLParamElementImpl(DocumentImpl *doc);
+    HTMLParamElementImpl(DocumentImpl*);
     ~HTMLParamElementImpl();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
     virtual int tagPriority() const { return 0; }
 
-    virtual void parseMappedAttribute(MappedAttributeImpl *token);
+    virtual void parseMappedAttribute(MappedAttributeImpl*);
 
-    virtual bool isURLAttribute(AttributeImpl *attr) const;
+    virtual bool isURLAttribute(AttributeImpl*) const;
 
     DOMString name() const { return m_name; }
-    void setName(const DOMString &);
+    void setName(const DOMString&);
 
     DOMString type() const;
-    void setType(const DOMString &);
+    void setType(const DOMString&);
 
     DOMString value() const { return m_value; }
-    void setValue(const DOMString &);
+    void setValue(const DOMString&);
 
     DOMString valueType() const;
-    void setValueType(const DOMString &);
+    void setValueType(const DOMString&);
 
  protected:
     AtomicString m_name;

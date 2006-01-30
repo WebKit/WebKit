@@ -88,5 +88,5 @@ void QRegion::translate(int deltaX, int deltaY)
 
 IntRect QRegion::boundingRect() const
 {
-    return path ? IntRect(CGPathGetBoundingBox(path)) : IntRect();
+    return path ? enclosingIntRect(CGPathGetBoundingBox(path)) : IntRect();
 }

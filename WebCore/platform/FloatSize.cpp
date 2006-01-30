@@ -26,45 +26,13 @@
 
 #include "config.h"
 #include "FloatSize.h"
+
 #include "IntSize.h"
 
 namespace WebCore {
 
-FloatSize::FloatSize() : w(-1.0f), h(-1.0f)
+FloatSize::FloatSize(const IntSize& size) : m_width(size.width()), m_height(size.height())
 {
-}
-
-FloatSize::FloatSize(float width, float height) : w(width), h(height)
-{
-}
-
-FloatSize::FloatSize(const IntSize& o) : w(o.width()), h(o.height())
-{
-}
-
-bool FloatSize::isValid() const
-{
-    return w >= 0.0f && h >= 0.0f;
-}
-
-FloatSize FloatSize::expandedTo(const FloatSize& o) const
-{
-    return FloatSize(w > o.w ? w : o.w, h > o.h ? h : o.h);
-}
-
-FloatSize operator+(const FloatSize& a, const FloatSize& b)
-{
-    return FloatSize(a.w + b.w, a.h + b.h);
-}
-
-bool operator==(const FloatSize& a, const FloatSize& b)
-{
-    return a.w == b.w && a.h == b.h;
-}
-
-bool operator!=(const FloatSize& a, const FloatSize& b)
-{
-    return a.w != b.w || a.h != b.h;
 }
 
 }

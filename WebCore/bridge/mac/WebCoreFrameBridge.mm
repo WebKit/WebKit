@@ -972,7 +972,7 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
 - (void)drawRect:(NSRect)rect withPainter:(QPainter *)p
 {
     [self _setupRootForPrinting:YES];
-    m_frame->paint(p, IntRect(rect));
+    m_frame->paint(p, enclosingIntRect(rect));
     [self _setupRootForPrinting:NO];
 }
 

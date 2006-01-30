@@ -29,26 +29,26 @@
 
 namespace WebCore {
 
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-FloatSize::FloatSize(const NSSize& s) : w(s.width), h(s.height)
+FloatSize::FloatSize(const CGSize& s) : m_width(s.width), m_height(s.height)
 {
 }
-#endif
-
-FloatSize::FloatSize(const CGSize& s) : w(s.width), h(s.height)
-{
-}
-
-#ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
-FloatSize::operator NSSize() const
-{
-    return NSMakeSize(w, h);
-}
-#endif
 
 FloatSize::operator CGSize() const
 {
-    return CGSizeMake(w, h);
+    return CGSizeMake(m_width, m_height);
 }
+
+#if !NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+
+FloatSize::FloatSize(const NSSize& s) : m_width(s.width), m_height(s.height)
+{
+}
+
+FloatSize::operator NSSize() const
+{
+    return NSMakeSize(m_width, m_height);
+}
+
+#endif
 
 }

@@ -32,14 +32,6 @@ IntPointArray::IntPointArray(int nPoints, const int *points)
     setPoints(nPoints, points);
 }
 
-IntPointArray::IntPointArray(const IntRect &rect)
-{
-    setPoints(4, rect.topLeft().x(), rect.topLeft().y(),
-              rect.topRight().x(), rect.topRight().y(),
-              rect.bottomRight().x(), rect.bottomRight().y(),
-              rect.bottomLeft().x(), rect.bottomLeft().y());
-}
-
 IntPointArray IntPointArray::copy() const
 {
     IntPointArray copy;
@@ -51,7 +43,7 @@ IntRect IntPointArray::boundingRect() const
 {
     int nPoints = count();
     
-    if (nPoints < 1) return IntRect(0,0,0,0);
+    if (nPoints < 1) return IntRect();
     
     int minX = INT_MAX, maxX = 0;
     int minY = INT_MAX, maxY = 0;

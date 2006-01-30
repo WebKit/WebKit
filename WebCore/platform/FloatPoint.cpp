@@ -26,35 +26,13 @@
 
 #include "config.h"
 #include "IntPoint.h"
+
 #include "FloatPoint.h"
 
 namespace WebCore {
 
-FloatPoint::FloatPoint() : xCoord(0), yCoord(0)
+FloatPoint::FloatPoint(const IntPoint& p) : m_x(p.x()), m_y(p.y())
 {
-}
-
-FloatPoint::FloatPoint(float xIn, float yIn) : xCoord(xIn), yCoord(yIn)
-{
-}
-
-FloatPoint::FloatPoint(const IntPoint& p) :xCoord(p.x()), yCoord(p.y())
-{
-}
-
-FloatPoint operator+(const FloatPoint& a, const FloatPoint& b)
-{
-    return FloatPoint(a.xCoord + b.xCoord, a.yCoord + b.yCoord);
-}
-
-FloatPoint operator-(const FloatPoint& a, const FloatPoint& b)
-{
-    return FloatPoint(a.xCoord - b.xCoord, a.yCoord - b.yCoord);
-}
-
-const FloatPoint operator*(const FloatPoint& p, double s)
-{
-    return FloatPoint(p.xCoord * s, p.yCoord * s);
 }
 
 }
