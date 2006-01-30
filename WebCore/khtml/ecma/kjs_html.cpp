@@ -4059,16 +4059,17 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
 
             float w = 0; // quiet incorrect gcc 4.0 warning
             float h = 0; // quiet incorrect gcc 4.0 warning
-            Image image;
             CGContextRef sourceContext = 0;
             
             // Check for <img> or <canvas>.
+            HTMLImageElementImpl* imgElt = 0;
             if (o->inherits(&KJS::HTMLElement::img_info)){
                 NodeImpl *n = static_cast<HTMLElement *>(args[0])->impl();
-                HTMLImageElementImpl *e = static_cast<HTMLImageElementImpl*>(n);
-                image = e->image();
-                w = image.width();
-                h = image.height();
+                imgElt = static_cast<HTMLImageElementImpl*>(n);
+                if (imgElt->cachedImage()) {
+                    w = imgElt->cachedImage()->image().width();
+                    h = imgElt->cachedImage()->image().height();
+                }
             }
             else if (o->inherits(&KJS::HTMLElement::canvas_info)){
                 NodeImpl *n = static_cast<HTMLElement *>(args[0])->impl();
@@ -4112,9 +4113,9 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
             else
                 return throwError(exec, SyntaxError);
 
-            if (!sourceContext) {
+            if (!sourceContext && imgElt && imgElt->cachedImage()) {
                 QPainter p;
-                p.drawFloatImage(image, dx, dy, dw, dh, sx, sy, sw, sh, 
+                p.drawFloatImage(imgElt->cachedImage()->image(), dx, dy, dw, dh, sx, sy, sw, sh, 
                                  Image::compositeOperatorFromString(contextObject->_globalComposite->toString(exec).qstring().lower()), drawingContext);
             }
             else {
@@ -4165,7 +4166,6 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
             NodeImpl *n = static_cast<HTMLElement *>(args[0])->impl();
             HTMLImageElementImpl *e = static_cast<HTMLImageElementImpl*>(n);
             
-            Image image = e->image();
             float sx = args[1]->toNumber(exec);
             float sy = args[2]->toNumber(exec);
             float sw = args[3]->toNumber(exec);
@@ -4178,7 +4178,8 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
             
             QPainter p;
 
-            p.drawFloatImage(image, dx, dy, dw, dh, sx, sy, sw, sh, Image::compositeOperatorFromString(compositeOperator), drawingContext);
+            if (e->cachedImage())
+                p.drawFloatImage(e->cachedImage()->image(), dx, dy, dw, dh, sx, sy, sw, sh, Image::compositeOperatorFromString(compositeOperator), drawingContext);
           
             renderer->setNeedsImageUpdate();
             break;
@@ -4237,7 +4238,7 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
             else if (repetitionString == "no-repeat")
                 repetitionType = ImagePattern::NoRepeat;
             NodeImpl *n = static_cast<HTMLElement *>(args[0])->impl();
-            return new ImagePattern(static_cast<HTMLImageElementImpl *>(n)->image(), repetitionType);
+            return new ImagePattern(static_cast<HTMLImageElementImpl *>(n)->cachedImage(), repetitionType);
         }
     }
 #endif
@@ -5022,29 +5023,36 @@ const ClassInfo ImagePattern::info = { "ImagePattern", 0, &ImagePatternTable, 0 
 static void drawPattern (void * info, CGContextRef context)
 {
     ImagePattern *pattern = static_cast<ImagePattern*>(info);
+    if (!pattern->cachedImage())
+        return;
+
     QPainter p;
-    Image image = pattern->image();
-    float w = image.width();
-    float h = image.height();
+    float w = pattern->cachedImage()->image().width();
+    float h = pattern->cachedImage()->image().height();
     
     // Try and draw bitmap directly
-    CGImageRef ref = image.imageRef();
+    CGImageRef ref = pattern->cachedImage()->image().imageRef();
     if (ref) {
         CGContextDrawImage (context, CGRectMake(0, 0, w, h), ref);    
     }
     else
-        p.drawFloatImage(image, 0, 0, w, h, 0.f, 0.f, w, h, Image::CompositeSourceOver, context);
+        p.drawFloatImage(pattern->cachedImage()->image(), 0, 0, w, h, 0.f, 0.f, w, h, Image::CompositeSourceOver, context);
 }
 
 CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
 #endif
 
-ImagePattern::ImagePattern(const Image& image, int repetitionType)
+ImagePattern::ImagePattern(CachedImage* cachedImage, int repetitionType)
     :_rw(0), _rh(0)
 {
-    _image = image;
-    float w = _image.width();
-    float h = _image.height();
+    m_cachedImage = cachedImage;
+    if (!m_cachedImage)
+        return;
+
+    m_cachedImage->ref(this);
+    
+    float w = m_cachedImage->image().width();
+    float h = m_cachedImage->image().height();
 #if __APPLE__
     _bounds = CGRectMake (0, 0, w, h);
 #endif
@@ -5062,15 +5070,21 @@ ImagePattern::ImagePattern(const Image& image, int repetitionType)
     }
 }
 
+ImagePattern::~ImagePattern()
+{
+    if (m_cachedImage)
+        m_cachedImage->deref(this);
+}
+
 #if __APPLE__
 CGPatternRef ImagePattern::createPattern(CGAffineTransform transform)
 {
-    if (_image.isNull())
+    if (!m_cachedImage || m_cachedImage->image().isNull())
         return 0;
           
     CGAffineTransform patternTransform = transform;
     patternTransform = CGAffineTransformScale(patternTransform, -1, -1);
-    patternTransform = CGAffineTransformTranslate(patternTransform, 0, -_image.height());
+    patternTransform = CGAffineTransformTranslate(patternTransform, 0, -m_cachedImage->image().height());
 
     return CGPatternCreate(this, _bounds, patternTransform, _rw, _rh, kCGPatternTilingConstantSpacing, true, &patternCallbacks);
 }

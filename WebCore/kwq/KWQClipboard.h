@@ -47,7 +47,7 @@ class QStringList;
 
 namespace WebCore {
 
-class KWQClipboard : public DOM::ClipboardImpl
+class KWQClipboard : public DOM::ClipboardImpl, public CachedObjectClient
 {
 public:
     // security mechanisms
@@ -74,8 +74,8 @@ public:
     virtual QStringList types() const;
 
     IntPoint dragLocation() const;    // same point as client passed us
-    Image dragImage() const;
-    void setDragImage(const Image &, const IntPoint &);
+    CachedImage* dragImage() const;
+    void setDragImage(CachedImage*, const IntPoint &);
     DOM::NodeImpl *dragImageElement();
     void setDragImageElement(DOM::NodeImpl *, const IntPoint &);
 
@@ -92,15 +92,17 @@ public:
     AccessPolicy accessPolicy() const;
     void setDragHasStarted() { m_dragStarted = true; }
 
+    virtual void imageChanged(CachedImage*, const IntRect&);
+    
 private:
-    void setDragImage(const Image &pm, DOM::NodeImpl *, const IntPoint &loc);
+    void setDragImage(CachedImage* cachedImage, DOM::NodeImpl *, const IntPoint &loc);
 
     NSPasteboard *m_pasteboard;
     bool m_forDragging;
     DOM::DOMString m_dropEffect;
     DOM::DOMString m_effectAllowed;
     IntPoint m_dragLoc;
-    Image m_dragImage;
+    CachedImage* m_dragImage;
     RefPtr<DOM::NodeImpl> m_dragImageElement;
     AccessPolicy m_policy;
     int m_changeCount;

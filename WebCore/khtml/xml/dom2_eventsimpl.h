@@ -417,8 +417,8 @@ public:
     virtual QStringList types() const = 0;
     
     virtual WebCore::IntPoint dragLocation() const = 0;
-    virtual Image dragImage() const = 0;
-    virtual void setDragImage(const Image &, const WebCore::IntPoint &) = 0;
+    virtual CachedImage* dragImage() const = 0;
+    virtual void setDragImage(CachedImage*, const WebCore::IntPoint &) = 0;
     virtual NodeImpl *dragImageElement() = 0;
     virtual void setDragImageElement(NodeImpl *, const WebCore::IntPoint &) = 0;
 };

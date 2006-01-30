@@ -56,6 +56,8 @@ SVGFEImageElementImpl::SVGFEImageElementImpl(const KDOM::QualifiedName& tagName,
 SVGFEImageElementImpl::~SVGFEImageElementImpl()
 {
     delete m_filterEffect;
+    if (m_cachedImage)
+        m_cachedImage->deref(this);
 }
 
 SVGAnimatedPreserveAspectRatioImpl *SVGFEImageElementImpl::preserveAspectRatio() const
@@ -70,11 +72,11 @@ void SVGFEImageElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr
         preserveAspectRatio()->baseVal()->parsePreserveAspectRatio(value.impl());
     else
     {
-        if(SVGURIReferenceImpl::parseMappedAttribute(attr)) {
+        if (SVGURIReferenceImpl::parseMappedAttribute(attr)) {
             if (m_cachedImage)
                 m_cachedImage->deref(this);
             m_cachedImage = ownerDocument()->docLoader()->requestImage(href()->baseVal());
-            if(m_cachedImage)
+            if (m_cachedImage)
                 m_cachedImage->ref(this);
             return;
         }
@@ -87,13 +89,8 @@ void SVGFEImageElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr
 
 void SVGFEImageElementImpl::notifyFinished(KDOM::CachedObject *finishedObj)
 {
-    if(finishedObj == m_cachedImage)
-    {
-        filterEffect()->setImage(m_cachedImage->image());
-
-        m_cachedImage->deref(this);
-        m_cachedImage = 0;
-    }
+    if (finishedObj == m_cachedImage && filterEffect())
+        filterEffect()->setCachedImage(m_cachedImage);
 }
 
 KCanvasFEImage *SVGFEImageElementImpl::filterEffect() const

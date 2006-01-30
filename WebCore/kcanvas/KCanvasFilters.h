@@ -491,22 +491,21 @@ private:
     float m_y;
 };
 
-class KCanvasFEImage : public KCanvasFilterEffect
+class KCanvasFEImage : public KCanvasFilterEffect, public WebCore::CachedObjectClient
 {
 public:
-    KCanvasFEImage() { }
-    virtual ~KCanvasFEImage() { };
+    KCanvasFEImage(): m_cachedImage(0) { }
+    virtual ~KCanvasFEImage();
     
     // FIXME: Eventually we need to support <svg> (RenderObject *) as well as image data.
     
-    WebCore::Image image() const { return m_image; }
-    void setImage(const WebCore::Image& image) { m_image = image; }
+    WebCore::CachedImage* cachedImage() const { return m_cachedImage; }
+    void setCachedImage(WebCore::CachedImage* image);
 
     QTextStream &externalRepresentation(QTextStream &) const;
     
 private:
-    WebCore::RenderObject *m_renderObject;
-    WebCore::Image m_image;
+    WebCore::CachedImage* m_cachedImage;
 };
 
 class KCanvasFEMerge : public KCanvasFilterEffect

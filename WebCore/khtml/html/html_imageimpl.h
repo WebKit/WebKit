@@ -97,7 +97,7 @@ public:
 
     Image::CompositeOperator compositeOperator() const { return Image::compositeOperatorFromString(_compositeOperator); }
 
-    const Image& image() { return m_imageLoader.image()->image(); }
+    CachedImage* cachedImage() { return m_imageLoader.image(); }
     
     DOMString name() const;
     void setName( const DOMString & );

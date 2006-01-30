@@ -43,6 +43,8 @@ SVGCursorElementImpl::SVGCursorElementImpl(const KDOM::QualifiedName& tagName, K
 
 SVGCursorElementImpl::~SVGCursorElementImpl()
 {
+    if (m_cachedImage)
+        m_cachedImage->deref(this);
 }
 
 SVGAnimatedLengthImpl *SVGCursorElementImpl::x() const
@@ -66,25 +68,16 @@ void SVGCursorElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
     {
         if(SVGTestsImpl::parseMappedAttribute(attr)) return;
         if(SVGExternalResourcesRequiredImpl::parseMappedAttribute(attr)) return;
-        if(SVGURIReferenceImpl::parseMappedAttribute(attr))
-        {
+        if (SVGURIReferenceImpl::parseMappedAttribute(attr)) {
+            if (m_cachedImage)
+                m_cachedImage->deref(this);
             m_cachedImage = ownerDocument()->docLoader()->requestImage(href()->baseVal());
-
-            if(m_cachedImage)
+            if (m_cachedImage)
                 m_cachedImage->ref(this);
             return;
         }
 
         SVGElementImpl::parseMappedAttribute(attr);
-    }
-}
-
-void SVGCursorElementImpl::notifyFinished(KDOM::CachedObject *finishedObj)
-{
-    if(finishedObj == m_cachedImage) {
-        m_image = m_cachedImage->image();
-        m_cachedImage->deref(this);
-        m_cachedImage = 0;
     }
 }
 

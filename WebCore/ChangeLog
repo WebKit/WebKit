@@ -1,3 +1,49 @@
+2006-01-29  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 6910, don't let Image be assignable or copiable.  It will soon represent  the actual
+        original Image (including the data) and as such must remain unique.
+
+        Reviewed by darin
+
+        * kcanvas/KCanvasFilters.cpp:
+        (KCanvasFEImage::~KCanvasFEImage):
+        (KCanvasFEImage::setCachedImage):
+        * kcanvas/KCanvasFilters.h:
+        (KCanvasFEImage::KCanvasFEImage):
+        (KCanvasFEImage::cachedImage):
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (KCanvasFEImageQuartz::getCIFilter):
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::ClipboardProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::KJS::Context2DFunction::callAsFunction):
+        (KJS::drawPattern):
+        (KJS::_rh):
+        (KJS::ImagePattern::~ImagePattern):
+        (KJS::ImagePattern::createPattern):
+        * khtml/ecma/kjs_html.h:
+        (KJS::ImagePattern::cachedImage):
+        * khtml/html/html_imageimpl.h:
+        (WebCore::HTMLImageElementImpl::cachedImage):
+        * khtml/xml/dom2_eventsimpl.h:
+        * ksvg2/svg/SVGCursorElementImpl.cpp:
+        (SVGCursorElementImpl::~SVGCursorElementImpl):
+        (SVGCursorElementImpl::parseMappedAttribute):
+        * ksvg2/svg/SVGCursorElementImpl.h:
+        (KSVG::SVGCursorElementImpl::cachedImage):
+        * ksvg2/svg/SVGFEImageElementImpl.cpp:
+        (SVGFEImageElementImpl::~SVGFEImageElementImpl):
+        (SVGFEImageElementImpl::parseMappedAttribute):
+        (SVGFEImageElementImpl::notifyFinished):
+        * kwq/KWQClipboard.h:
+        * kwq/KWQClipboard.mm:
+        (WebCore::KWQClipboard::dragImage):
+        (WebCore::KWQClipboard::setDragImage):
+        (WebCore::KWQClipboard::setDragImageElement):
+        (WebCore::KWQClipboard::imageChanged):
+        (WebCore::KWQClipboard::dragNSImage):
+        * platform/Image.h:
+
 2006-01-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

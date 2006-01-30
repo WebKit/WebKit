@@ -63,12 +63,6 @@ public:
     Image(WebCoreImageRendererPtr);
 #endif
 
-    // FIXME: Eliminate these soon and make them private so that Images can't be copied or assigned.
-    // We will be switching to RefPtr<Image> in WebCore so that Image doesn't have to do its own
-    // copy-on-write nonsense.
-    Image(const Image &);
-    Image &operator=(const Image &);
-
     ~Image();
     
     static Image* loadResource(const char *name);
@@ -113,6 +107,10 @@ public:
     static CompositeOperator compositeOperatorFromString(const QString& compositeOperator);
 
 private:
+    // We do not allow images to be assigned to or copied.
+    Image(const Image&);
+    Image &operator=(const Image&);
+
 #if __APPLE__
     WebCoreImageRendererPtr m_imageRenderer;
 #endif

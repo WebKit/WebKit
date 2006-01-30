@@ -25,6 +25,8 @@
 #if SVG_SUPPORT
 #include "KCanvasFilters.h"
 
+#include "CachedImage.h"
+
 #include <qtextstream.h>
 #include "KCanvasTreeDebug.h"
 #include <kxmlcore/Assertions.h>
@@ -469,5 +471,21 @@ QTextStream &KCanvasFETurbulence::externalRepresentation(QTextStream &ts) const
         << " [stitch tiles=" << stitchTiles() << "]";
    return ts;
 }
+
+KCanvasFEImage::~KCanvasFEImage()
+{
+    if (m_cachedImage)
+        m_cachedImage->deref(this);
+}
+
+void KCanvasFEImage::setCachedImage(WebCore::CachedImage* image)
+{
+    if (m_cachedImage)
+        m_cachedImage->deref(this);
+    m_cachedImage = image;
+    if (m_cachedImage)
+        m_cachedImage->ref(this);
+}
+
 #endif // SVG_SUPPORT
 

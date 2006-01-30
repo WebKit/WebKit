@@ -962,7 +962,7 @@ JSValue *ClipboardProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, 
 
             if (static_cast<ElementImpl*>(node)->hasLocalName(imgTag) && 
                 !node->inDocument())
-                cb->clipboard->setDragImage(static_cast<HTMLImageElementImpl*>(node)->image(), IntPoint(x, y));
+                cb->clipboard->setDragImage(static_cast<HTMLImageElementImpl*>(node)->cachedImage(), IntPoint(x, y));
             else
                 cb->clipboard->setDragImageElement(node, IntPoint(x, y));                    
                 
