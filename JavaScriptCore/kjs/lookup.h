@@ -295,7 +295,7 @@ inline KJS::JSObject *cacheGlobalObject(KJS::ExecState *exec, const KJS::Identif
  */
 #define KJS_DEFINE_PROTOTYPE(ClassProto) \
   class ClassProto : public KJS::JSObject { \
-    friend KJS::JSObject *cacheGlobalObject<ClassProto>(KJS::ExecState *exec, const KJS::Identifier &propertyName); \
+  friend KJS::JSObject *::cacheGlobalObject<ClassProto>(KJS::ExecState *exec, const KJS::Identifier &propertyName); \
   public: \
     static KJS::JSObject *ClassProto::self(KJS::ExecState *exec); \
     virtual const KJS::ClassInfo *classInfo() const { return &info; } \
@@ -311,7 +311,7 @@ inline KJS::JSObject *cacheGlobalObject(KJS::ExecState *exec, const KJS::Identif
     const ClassInfo ClassProto::info = { ClassName, 0, &ClassProto##Table, 0 }; \
     JSObject *ClassProto::self(ExecState *exec) \
     { \
-      return cacheGlobalObject<ClassProto>(exec, "[[" ClassName ".prototype]]"); \
+        return ::cacheGlobalObject<ClassProto>(exec, "[[" ClassName ".prototype]]"); \
     } \
     bool ClassProto::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot) \
     { \
@@ -322,7 +322,7 @@ inline KJS::JSObject *cacheGlobalObject(KJS::ExecState *exec, const KJS::Identif
     const ClassInfo ClassProto::info = { ClassName, 0, &ClassProto##Table, 0 }; \
     JSObject *ClassProto::self(ExecState *exec) \
     { \
-      return cacheGlobalObject<ClassProto>(exec, "[[" ClassName ".prototype]]"); \
+        return ::cacheGlobalObject<ClassProto>(exec, "[[" ClassName ".prototype]]"); \
     } \
     bool ClassProto::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot) \
     { \

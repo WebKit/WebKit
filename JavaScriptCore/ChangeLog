@@ -1,3 +1,13 @@
+2006-01-29  Eric Seidel <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Fix build on Win32.
+
+        * kjs/lookup.h: fixed ::cacheGlobalObject
+        * kxmlcore/Vector.h:
+        (KXMLCore::Vector::operator[]): use unsigned long
+
 2006-01-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave Hyatt.
