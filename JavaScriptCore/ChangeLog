@@ -1,3 +1,14 @@
+2006-01-31  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        * bindings/c/c_utility.cpp:
+        (KJS::Bindings::convertUTF8ToUTF16):
+	Fixed an invalid assertion that UTF8Chars is not NULL.  It is valid for it to be NULL as long as
+	UTF8Length is 0.
+	This fixes an assertion failure on TOT at <http://www.musicindiaonline.com/p/x/tJO0OOBME9.As1NMvHdW/>,
+	where JavaScript is getting a NULL string back from some call on the Real Player plugin.
+
 2006-01-30  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Darin.
