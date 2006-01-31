@@ -1,3 +1,11 @@
+2006-01-30  Darin Adler  <darin@apple.com>
+
+        Pointed out by Dave Kilzer.
+
+        - added test result I forgot to check in
+
+        * fast/dom/Range/range-exceptions-expected.txt: Added.
+
 2006-01-30  Beth Dakin  <bdakin@apple.com>
 
         Layout test for <rdar://problem/4298052> Crash in 
@@ -73,7 +81,7 @@
         * fast/dom/Window/window-open-self-expected.txt: Added.
         * fast/dom/Window/window-open-top-expected.txt: Added.
 
-2006-01-20  Darin Adler  <darin@apple.com>
+2006-01-29  Darin Adler  <darin@apple.com>
 
         - added a test for the names of range exceptions, which were wrong
           in my last commit until I made the fix Alexey suggested
