@@ -1,3 +1,13 @@
+2006-01-31  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6584
+          REGRESSION: button after unclosed button gives trouble
+
+        * khtml/html/htmlparser.cpp: (HTMLParser::getNode):
+        Add buttonTag to error handling table to take care of unclosed tags.
+
 2006-01-31  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Test: fast/parser/script-after-frameset-assert.html
