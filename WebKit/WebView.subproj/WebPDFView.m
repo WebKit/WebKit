@@ -552,7 +552,7 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
 
 - (NSEvent *)_fakeKeyEventWithFunctionKey:(unichar)functionKey
 {
-    // FIXME 4400480: when PDFView implements the four standard scrolling selectors that this
+    // FIXME 4400480: when PDFView implements the standard scrolling selectors that this
     // method is used to mimic, we can eliminate this method and call them directly.
     NSString *keyAsString = [NSString stringWithCharacters:&functionKey length:1];
     return [NSEvent keyEventWithType:NSKeyDown
@@ -577,6 +577,18 @@ static BOOL PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *select
 {
     // PDFView doesn't support this responder method directly, so we pass it a fake key event
     [PDFSubview keyDown:[self _fakeKeyEventWithFunctionKey:NSPageUpFunctionKey]];
+}
+
+- (void)scrollLineDown:(id)sender
+{
+    // PDFView doesn't support this responder method directly, so we pass it a fake key event
+    [PDFSubview keyDown:[self _fakeKeyEventWithFunctionKey:NSDownArrowFunctionKey]];
+}
+
+- (void)scrollLineUp:(id)sender
+{
+    // PDFView doesn't support this responder method directly, so we pass it a fake key event
+    [PDFSubview keyDown:[self _fakeKeyEventWithFunctionKey:NSUpArrowFunctionKey]];
 }
 
 - (void)scrollToBeginningOfDocument:(id)sender

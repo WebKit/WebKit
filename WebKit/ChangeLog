@@ -1,3 +1,18 @@
+2006-01-31  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick.
+        
+        Support for programmatic scrolling one line at a time for PDFs. (We already had support for
+        programmatic scrolling one page at a time, and to top/end.)
+
+        * WebView.subproj/WebPDFView.m:
+        (-[WebPDFView _fakeKeyEventWithFunctionKey:]):
+        generalized comment
+        (-[WebPDFView scrollLineDown:]):
+        pass a faked arrow-down key event
+        (-[WebPDFView scrollLineUp:]):
+        pass a faked arrow-up key event
+
 2006-01-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.
