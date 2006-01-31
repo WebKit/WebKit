@@ -26,7 +26,6 @@
 #include "config.h"
 #include "font.h"
 
-#include "khtml_factory.h"
 #include "khtml_settings.h"
 
 #include <algorithm>
