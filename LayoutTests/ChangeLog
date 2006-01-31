@@ -1,3 +1,15 @@
+2006-01-31  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Hyatt.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6584
+          REGRESSION: button after unclosed button gives trouble
+
+        * fast/forms/button-cannot-be-nested-expected.checksum: Added.
+        * fast/forms/button-cannot-be-nested-expected.png: Added.
+        * fast/forms/button-cannot-be-nested-expected.txt: Added.
+        * fast/forms/button-cannot-be-nested.html: Added.
+
 2006-01-31  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.
