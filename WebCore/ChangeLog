@@ -1,3 +1,14 @@
+2006-01-31  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by John.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6964
+        ImagePatterns are always rendered mirrored
+        
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::ImagePattern::createPattern):
+        Don't mirror the x coordinate when creating the pattern.
+
 2006-01-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

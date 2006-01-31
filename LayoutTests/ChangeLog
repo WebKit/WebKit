@@ -1,3 +1,13 @@
+2006-01-31  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by John.
+
+        - update tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=6964
+        ImagePatterns are always rendered mirrored
+        
+        * fast/dom/image-object-in-canvas-expected.checksum:
+        * fast/dom/image-object-in-canvas-expected.png:
+
 2006-01-31  Maciej Stachowiak  <mjs@apple.com>
 
         Added test case I forgot to commit earlier.
