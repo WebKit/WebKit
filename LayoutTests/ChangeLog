@@ -1,3 +1,15 @@
+2006-01-31  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6960
+          REGRESSION: Assertion failure in table_layout.cpp:216 calcWidthArray()
+
+        * fast/table/fixed-table-non-cell-in-row.html: Added.
+        * fast/table/fixed-table-non-cell-in-row-expected.txt: Added.
+        * fast/table/fixed-table-non-cell-in-row-expected.png: Added.
+        * fast/table/fixed-table-non-cell-in-row-expected.checksum: Added.
+
 2006-01-31  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by John.
