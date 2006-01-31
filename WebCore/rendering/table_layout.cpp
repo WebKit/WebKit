@@ -212,8 +212,6 @@ int FixedTableLayout::calcWidthArray(int tableWidth)
                     i++;
                 }
                 cCol += i;
-            } else {
-                ASSERT( false );
             }
             child = child->nextSibling();
         }
