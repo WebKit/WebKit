@@ -330,14 +330,12 @@ ScriptInterpreter *Window::interpreter() const
     return m_frame->jScript()->interpreter();
 }
 
-Window *Window::retrieveWindow(Frame *p)
+Window *Window::retrieveWindow(Frame *f)
 {
-  JSObject *obj = retrieve(p)->getObject();
-  // obj should never be null, except when javascript has been disabled in that frame.
-  ASSERT(obj || (p && p->jScriptEnabled()));
-  if (!obj) // JS disabled
-    return 0;
-  return static_cast<Window*>(obj);
+    JSObject *o = retrieve(f)->getObject();
+
+    ASSERT(o || !f->jScriptEnabled());
+    return static_cast<Window *>(o);
 }
 
 Window *Window::retrieveActive(ExecState *exec)
@@ -1835,10 +1833,10 @@ void Window::updateLayout() const
 
 void ScheduledAction::execute(Window *window)
 {
-    if (!window->m_frame)
+    if (!window->m_frame || !window->m_frame->jScript())
         return;
 
-    ScriptInterpreter *interpreter = window->interpreter();
+    ScriptInterpreter *interpreter = window->m_frame->jScript()->interpreter();
 
     interpreter->setProcessingTimerCallback(true);
   

@@ -120,11 +120,11 @@ namespace KJS {
      * for the specified frame p this will be returned in order to have unique
      * bindings.
      */
-    static JSValue *retrieve(Frame *p);
+    static JSValue *retrieve(Frame *);
     /**
      * Returns the Window object for a given HTML frame
      */
-    static Window *retrieveWindow(Frame *p);
+    static Window *retrieveWindow(Frame *);
     /**
      * returns a pointer to the Window object this javascript interpreting instance
      * was called from.

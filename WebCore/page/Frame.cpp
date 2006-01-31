@@ -316,7 +316,7 @@ bool Frame::didOpenURL(const KURL &url)
      d->m_kjsDefaultStatusBarText = QString::null;
   }
 
-  // set the javascript flags according to the current url
+  d->m_bJScriptEnabled = d->m_settings->isJavaScriptEnabled(url.host());
   d->m_bJavaEnabled = d->m_settings->isJavaEnabled(url.host());
   d->m_bPluginsEnabled = d->m_settings->isPluginsEnabled(url.host());
 
@@ -754,12 +754,7 @@ void Frame::begin( const KURL &url, int xOffset, int yOffset )
   }
 
   clear();
-
   partClearedInBegin();
-
-  // Only do this after clearing the part, so that JavaScript can
-  // clean up properly if it was on for the last load.
-  d->m_bJScriptEnabled = d->m_settings->isJavaScriptEnabled(url.host());
 
   d->m_bCleared = false;
   d->m_bComplete = false;

@@ -1,5 +1,40 @@
 2006-01-30  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by mjs.
+
+        - Speculative fix for <rdar://problem/4135845> Crash executing 
+        cross-frame script on timeout in KJS::ScheduledAction::execute
+
+        If we ever get a reproducible case of 4135845, I'll add a test for it.
+
+        This is a re-working of Maciej's fix for 3157014 (circa 2003!). Since
+        you can't reliably predict what the state of the page will be when
+        a timer fires, I've made the timer responsbile for making sure that
+        everything is OK to execute.
+
+        I tested @ http://www.javascriptkit.com/script/cut3.shtml with various
+        combinations of reload, back, and regular navigations with JS enabled/
+        disabled to ensure that the previous crash didn't return. I also ran a 
+        leaks test and discovered some, but none unique to this patch. (See 
+        <rdar://problem/4427420> TOT REGRESSION: Leaks seen on page with 
+        JavaScript timer.)
+
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::ScheduledAction::execute): Return early if there's no window
+        object. (This happens when JavaScript is disabled.)
+        (KJS::Window::retrieveWindow): Reversed a backwards ASSERT, increased
+        prettiness. (The assert fired while I was testing. Not sure why we
+        haven't seen it before.)
+        * page/Frame.cpp:
+        (Frame::didOpenURL): Returned setting of JavaScript enabled/disabled
+        preference to its rightful place. This introduces a new behavior: now,
+        the unload event does not fire after you've disabled JavaScript. That 
+        seems like a good thing. (See <rdar://problem/4426506> Disabling 
+        JavaScript should immediately end JavaScript execution.)
+        (Frame::begin): Ditto.
+
+2006-01-30  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Dave Harrison.
 
         - Fixed <rdar://problem/4378159> crash in KWQKHTMLPart::userGestureHint
