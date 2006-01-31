@@ -1,6 +1,16 @@
 2006-01-31  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.
+        
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6959
+          REGRESSION: Assertion failure in HTMLTokenizer::parseTag (!scriptNode) on page with ignored scripts
+
+        * fast/parser/script-after-frameset-assert-expected.txt: Added.
+        * fast/parser/script-after-frameset-assert.html: Added.
+
+2006-01-31  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
 
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6960
           REGRESSION: Assertion failure in table_layout.cpp:216 calcWidthArray()
