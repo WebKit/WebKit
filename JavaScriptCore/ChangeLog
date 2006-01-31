@@ -1,3 +1,22 @@
+2006-01-30  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Darin.
+
+        Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6907
+        REGRESSION: United.com menus messed up due to document.all/MSIE sniff
+        
+        * kjs/nodes.cpp:
+        (typeStringForValue):
+        Return "undefined" if the given object should masquerade as undefined.
+        
+        * kjs/object.h:
+        (KJS::JSObject::masqueradeAsUndefined):
+        Rename from isEqualToNull.
+        
+        * kjs/operations.cpp:
+        (KJS::equal):
+        Update for name change.
+
 2006-01-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

@@ -848,10 +848,16 @@ static JSValue *typeStringForValue(JSValue *v)
     case StringType:
         return jsString("string");
     default:
-        if (v->isObject() && static_cast<JSObject*>(v)->implementsCall())
-            return jsString("function");
-        else
-            return jsString("object");
+        if (v->isObject()) {
+            // Return "undefined" for objects that should be treated
+            // as null when doing comparisons.
+            if (static_cast<JSObject*>(v)->masqueradeAsUndefined())
+                return jsString("undefined");            
+            else if (static_cast<JSObject*>(v)->implementsCall())
+                return jsString("function");
+        }
+        
+        return jsString("object");
     }
 }
 
