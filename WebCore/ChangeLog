@@ -1,3 +1,23 @@
+2006-01-31  Vicki Murley <vicki@apple.com>
+
+        Reviewed by Geoff.
+
+        - fix <rdar://problem/4426668> REGRESSION: sometimes URLs with named anchors in a
+        page don't jump to proper location in document (6916). Added test cases for this
+        fix and past link jumping bug fixes.
+
+        * khtml/xml/ContainerNodeImpl.cpp:
+        (WebCore::ContainerNodeImpl::getUpperLeftCorner): Traverse up the parent node chain
+        until you find one that has a sibling.
+        * manual-tests/linkjump-1.html: Added a note here - the bug for this test case is
+        still broken in TOT.
+        * manual-tests/linkjump-2.html: Added. Renamed scrollToAnchor.html, to group it with the
+        rest of the link jumping tests.
+        * manual-tests/linkjump-3.html: Added. Test case for this bug, <rdar://problem/4426668>.
+        * manual-tests/linkjump-4.html: Added. Test case for past fix, <rdar://problem/4247537>.
+        * manual-tests/linkjump-5.html: Added. Test case for past fix, <rdar://problem/4256060>.
+        * manual-tests/scrollToAnchor.html: Removed.
+
 2006-01-31  David Harrison  <harrison@apple.com>
 
         Reviewed by John.

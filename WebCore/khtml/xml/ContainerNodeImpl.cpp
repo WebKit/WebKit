@@ -626,9 +626,13 @@ bool ContainerNodeImpl::getUpperLeftCorner(int &xPos, int &yPos) const
         else if(o->nextSibling())
             o = o->nextSibling();
         else {
-            o = o->parent();
-            if (o) 
-                o = o->nextSibling();
+            RenderObject *next = 0;
+            while (!next && o->parent()) {
+                o = o->parent();
+                next = o->nextSibling();
+            }
+            o = next;
+
             if (!o)
                 break;
         }
