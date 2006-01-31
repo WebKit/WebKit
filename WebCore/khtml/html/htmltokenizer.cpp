@@ -371,7 +371,8 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
                 pendingScripts.enqueue(cs);
             else
                 scriptNode = 0;
-        }
+        } else
+            scriptNode = 0;
         scriptSrc=QString::null;
     }
     else {
