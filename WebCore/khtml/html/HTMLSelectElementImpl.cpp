@@ -94,7 +94,6 @@ int HTMLSelectElementImpl::selectedIndex() const
             o++;
         }
     }
-    ASSERT(m_multiple);
     return -1;
 }
 

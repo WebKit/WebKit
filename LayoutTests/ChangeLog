@@ -1,3 +1,13 @@
+2006-01-31  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Adele.
+        
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6942
+          Assertion failure in HTMLSelectElementImpl::selectedIndex (m_multiple)
+
+        * fast/forms/selected-index-assert-expected.txt: Added.
+        * fast/forms/selected-index-assert.html: Added.
+
 2006-01-31  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Hyatt.
