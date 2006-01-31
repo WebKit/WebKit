@@ -1,3 +1,9 @@
+2006-01-29  Darin Adler  <darin@apple.com>
+
+        * Scripts/svn-apply: Added comments about things we should do to improve.
+        * Scripts/svn-create-patch: Ditto.
+        * Scripts/svn-unapply: Ditto.
+
 2006-01-28  Darin Adler  <darin@apple.com>
 
         * DumpRenderTree/DumpRenderTree.m: (dump): Dump the image if it's not

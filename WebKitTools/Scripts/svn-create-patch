@@ -30,11 +30,12 @@
 
 # Differences from standard "svn diff":
 #
+#   Uses the real diff, not svn's built-in diff.
 #   Always passes "-p" to diff so it will try to include function names.
-#   Other command line options are not supported.
 #
-# Missing feature:
+# Missing features:
 #
+#   Sort the diffs, since svn emits them in a seemingly-random order.
 #   Handle binary files (some text form of the binary file).
 #   Handle moved files.
 
@@ -112,7 +113,7 @@ sub diff
     my ($dir, $base) = getDirAndBase($path);
     my $errors = "";
     chdir $dir or die;
-    open DIFF, "svn diff --diff-cmd diff -x -uNp  '$base' |" or die;
+    open DIFF, "svn diff --diff-cmd diff -x -uNp '$base' |" or die;
     my $indexPath;
     while (<DIFF>) {
         if (/^Index: (.*)/) {
