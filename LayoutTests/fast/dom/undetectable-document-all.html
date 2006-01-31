@@ -59,6 +59,12 @@ function runTests() {
         return;
     }
     
+    // Check typeof document.all
+    if (typeof document.all != 'undefined') {
+        debug('FAILURE: typeof document.all should be undefined');
+        return;
+    }
+
     debug('SUCCESS!')
 }
 </script>

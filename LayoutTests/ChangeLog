@@ -1,3 +1,13 @@
+2006-01-30  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Darin.
+
+        Update test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6907
+        REGRESSION: United.com menus messed up due to document.all/MSIE sniff
+        
+        * fast/dom/undetectable-document-all.html:
+        Test that typeof document.all is undefined.
+
 2006-01-30  Darin Adler  <darin@apple.com>
 
         Pointed out by Dave Kilzer.
