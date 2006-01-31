@@ -1,3 +1,13 @@
+2006-01-31  David Harrison  <harrison@apple.com>
+
+        Adding test cases for:
+        <rdar://problem/4423922> TOT REGRESSION (r12358): first iframe in pair fails to copy
+        
+        * editing/pasteboard/paste-empty-startcontainer-expected.png: Added.
+        * editing/pasteboard/paste-empty-startcontainer-expected.checksum: Added.
+        * editing/pasteboard/paste-empty-startcontainer-expected.txt: Added.
+        * editing/pasteboard/paste-empty-startcontainer.html: Added.
+
 2006-01-31  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Adele.

@@ -1,0 +1,63 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 4 of DIV > DIV > BODY > HTML > #document to 4 of DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of DIV > DIV > BODY > HTML > #document to 4 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 7 of DIV > DIV > BODY > HTML > #document to 7 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x72
+        RenderBlock {DIV} at (0,0) size 784x36
+          RenderText {TEXT} at (0,0) size 41x18
+            text run at (0,0) width 41: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {TEXT} at (0,18) size 105x18
+            text run at (0,18) width 105: "Fix for this bug: "
+          RenderInline {A} at (0,0) size 167x18 [color=#0000EE]
+            RenderText {TEXT} at (105,18) size 167x18
+              text run at (105,18) width 167: "<rdar://problem/4045511>"
+          RenderText {TEXT} at (272,18) size 421x18
+            text run at (272,18) width 421: " TOT REGRESSION (r12358): second iframe in pair fails to copy"
+        RenderBlock {DIV} at (0,36) size 784x36
+          RenderText {TEXT} at (0,0) size 117x18
+            text run at (0,0) width 117: "Expected Results: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {TEXT} at (0,18) size 192x18
+            text run at (0,18) width 192: "Should see four blank iframes "
+          RenderBR {BR} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,72) size 784x348 [border: (2px solid #FF0000)]
+        RenderBlock {DIV} at (14,14) size 756x320
+          RenderPartObject {IFRAME} at (0,0) size 304x154 [border: (2px solid #0000FF)]
+            layer at (0,0) size 300x150
+              RenderCanvas at (0,0) size 300x150
+            layer at (0,0) size 300x8
+              RenderBlock {HTML} at (0,0) size 300x8
+                RenderBody {BODY} at (8,8) size 284x0
+          RenderText {TEXT} at (304,132) size 6x28
+            text run at (304,132) width 6: " "
+          RenderPartObject {IFRAME} at (310,0) size 304x154 [border: (2px solid #008000)]
+            layer at (0,0) size 300x150
+              RenderCanvas at (0,0) size 300x150
+            layer at (0,0) size 300x8
+              RenderBlock {HTML} at (0,0) size 300x8
+                RenderBody {BODY} at (8,8) size 284x0
+          RenderPartObject {IFRAME} at (0,160) size 304x154 [border: (2px solid #0000FF)]
+            layer at (0,0) size 300x150
+              RenderCanvas at (0,0) size 300x150
+            layer at (0,0) size 300x8
+              RenderBlock {HTML} at (0,0) size 300x8
+                RenderBody {BODY} at (8,8) size 284x0
+          RenderText {TEXT} at (304,292) size 6x28
+            text run at (304,292) width 6: " "
+          RenderPartObject {IFRAME} at (310,160) size 304x154 [border: (2px solid #008000)]
+            layer at (0,0) size 300x150
+              RenderCanvas at (0,0) size 300x150
+            layer at (0,0) size 300x8
+              RenderBlock {HTML} at (0,0) size 300x8
+                RenderBody {BODY} at (8,8) size 284x0
+          RenderText {TEXT} at (0,0) size 0x0
+caret: position 1 of child 6 {IFRAME} of child 1 {DIV} of child 3 {DIV} of child 1 {BODY} of child 0 {HTML} of document
