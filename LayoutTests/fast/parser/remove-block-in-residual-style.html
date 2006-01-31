@@ -1,0 +1,17 @@
+<!DOCTYPE HTML>
+<html>
+ <head>
+  <title>Reparenting in the presence of malformed content</title>
+ </head>
+ <body>
+  <font>
+   <p>
+    <script>
+     var p = document.getElementsByTagName('p')[0];
+     p.parentNode.removeChild(p);
+    </script>
+   </font>
+  </p>
+  PASS - this test checks that removing a block element while it's in an imporperly closed inline doesn't crash. This is checking for regression against <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=6778">bug 6778</a>.
+ </body>
+</html>
