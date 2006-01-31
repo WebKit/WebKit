@@ -538,7 +538,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     return m_frame;
 }
 
-- (void)setRenderPart:(KHTMLRenderPart *)newPart;
+- (void)setRenderPart:(RenderPart *)newPart;
 {
     RenderArena *arena = newPart->ref();
     if (_renderPart) {
@@ -548,7 +548,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     _renderPartArena = arena;
 }
 
-- (KHTMLRenderPart *)renderPart
+- (RenderPart *)renderPart
 {
     return _renderPart;
 }

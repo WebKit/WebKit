@@ -2,7 +2,7 @@
  * This file is part of the CSS implementation for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,65 +20,52 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef _CSS_cssstyleselector_h_
-#define _CSS_cssstyleselector_h_
 
-#include "rendering/render_style.h"
-#include "dom/dom_string.h"
-#include "xml/dom_stringimpl.h"
-#include "css/css_ruleimpl.h"
+#ifndef CSS_cssstyleselector_h_
+#define CSS_cssstyleselector_h_
+
+#include "css_ruleimpl.h"
+#include "dom_string.h"
+#include "render_style.h"
 
 class KHTMLSettings;
-class FrameView;
-class Frame;
 class KURL;
 
-namespace DOM {
-    class DocumentImpl;
-    class NodeImpl;
-    class ElementImpl;
-    class StyledElementImpl;
-    class StyleSheetImpl;
-    class CSSStyleSheetImpl;
-    class CSSSelector;
-    class CSSProperty;
-    class StyleSheetListImpl;
-    class CSSValueImpl;
-}
+namespace WebCore {
 
-namespace khtml
-{
-    class CSSRuleData;
-    class CSSRuleDataList;
-    class CSSRuleSet;
-    class RenderStyle;
+class CSSProperty;
+class CSSRuleData;
+class CSSRuleDataList;
+class CSSRuleSet;
+class CSSSelector;
+class CSSStyleSheetImpl;
+class CSSValueImpl;
+class DocumentImpl;
+class ElementImpl;
+class Frame;
+class FrameView;
+class NodeImpl;
+class StyleSheetImpl;
+class StyleSheetListImpl;
+class StyledElementImpl;
 
     /**
      * this class selects a RenderStyle for a given Element based on the
      * collection of styleshets it contains. This is just a vrtual base class
      * for specific implementations of the Selector. At the moment only CSSStyleSelector
-     * exists, but someone may wish to implement XSL...
+     * exists, but someone may wish to implement XSL.
      */
     class StyleSelector
     {
     public:
-	StyleSelector() {};
-
-	/* as noone has implemented a second style selector up to now comment out
-	   the virtual methods until then, so the class has no vptr.
-	*/
-// 	virtual ~StyleSelector() {};
-// 	virtual RenderStyle *styleForElement(DOM::ElementImpl *e) = 0;
-
-	enum State {
-	    None = 0x00,
-	    Hover = 0x01,
-	    Focus = 0x02,
-	    Active = 0x04,
-	    Drag = 0x08
-	};
+        enum State {
+            None = 0x00,
+            Hover = 0x01,
+            Focus = 0x02,
+            Active = 0x04,
+            Drag = 0x08
+        };
     };
-
 
     /**
      * the StyleSelector implementation for CSS.
@@ -86,43 +73,43 @@ namespace khtml
     class CSSStyleSelector : public StyleSelector
     {
     public:
-	/**
-	 * creates a new StyleSelector for a Document.
-	 * goes through all StyleSheets defined in the document and
-	 * creates a list of rules it needs to apply to objects
-	 */
-	CSSStyleSelector(DOM::DocumentImpl* doc, QString userStyleSheet, 
-                         DOM::StyleSheetListImpl *styleSheets,
+        /**
+         * creates a new StyleSelector for a Document.
+         * goes through all StyleSheets defined in the document and
+         * creates a list of rules it needs to apply to objects
+         */
+        CSSStyleSelector(DocumentImpl* doc, QString userStyleSheet, 
+                         StyleSheetListImpl *styleSheets,
                          bool _strictParsing);
-	/**
-	 * same as above but for a single stylesheet.
-	 */
-	CSSStyleSelector(DOM::CSSStyleSheetImpl *sheet);
-	~CSSStyleSelector();
+        /**
+         * same as above but for a single stylesheet.
+         */
+        CSSStyleSelector(CSSStyleSheetImpl *sheet);
+        ~CSSStyleSelector();
 
-	static void loadDefaultStyle();
+        static void loadDefaultStyle();
 
-        void initElementAndPseudoState(DOM::ElementImpl* e);
-        void initForStyleResolve(DOM::ElementImpl* e, RenderStyle* parentStyle);
-	RenderStyle *styleForElement(DOM::ElementImpl* e, RenderStyle* parentStyle=0, bool allowSharing=true);
+        void initElementAndPseudoState(ElementImpl* e);
+        void initForStyleResolve(ElementImpl* e, RenderStyle* parentStyle);
+        RenderStyle *styleForElement(ElementImpl* e, RenderStyle* parentStyle=0, bool allowSharing=true);
         RenderStyle* pseudoStyleForElement(RenderStyle::PseudoId pseudoStyle, 
-                                           DOM::ElementImpl* e, RenderStyle* parentStyle=0);
+                                           ElementImpl* e, RenderStyle* parentStyle=0);
 
         RenderStyle* locateSharedStyle();
-        DOM::NodeImpl* locateCousinList(DOM::ElementImpl* parent);
-        bool canShareStyleWithElement(DOM::NodeImpl* n);
+        NodeImpl* locateCousinList(ElementImpl* parent);
+        bool canShareStyleWithElement(NodeImpl* n);
         
         // These methods will give back the set of rules that matched for a given element (or a pseudo-element).
-        RefPtr<DOM::CSSRuleListImpl> styleRulesForElement(DOM::ElementImpl* e, bool authorOnly);
-        RefPtr<DOM::CSSRuleListImpl> pseudoStyleRulesForElement(DOM::ElementImpl* e, DOM::DOMStringImpl* pseudoStyle, bool authorOnly);
+        RefPtr<CSSRuleListImpl> styleRulesForElement(ElementImpl* e, bool authorOnly);
+        RefPtr<CSSRuleListImpl> pseudoStyleRulesForElement(ElementImpl* e, DOMStringImpl* pseudoStyle, bool authorOnly);
 
-	bool strictParsing;
-	
+        bool strictParsing;
+        
         struct Encodedurl {
-	    QString host; //also contains protocol
-	    QString path;
-	    QString file;
-	} encodedurl;
+            QString host; //also contains protocol
+            QString path;
+            QString file;
+        } encodedurl;
         void setEncodedURL(const KURL& url);
         
         // Given a CSS keyword in the range (xx-small to -khtml-xxx-large), this function will return
@@ -139,43 +126,43 @@ namespace khtml
         void setFontSize(FontDef& fontDef, float size);
         float getComputedSizeFromSpecifiedSize(bool isAbsoluteSize, float specifiedSize);
         
-        Color getColorFromPrimitiveValue(DOM::CSSPrimitiveValueImpl* primitiveValue);
+        Color getColorFromPrimitiveValue(CSSPrimitiveValueImpl* primitiveValue);
         
     protected:
 
-	/* checks if a compound selector (which can consist of multiple simple selectors)
+        /* checks if a compound selector (which can consist of multiple simple selectors)
            matches the given Element */
-        bool checkSelector(DOM::CSSSelector* selector, DOM::ElementImpl *e);
+        bool checkSelector(CSSSelector* selector, ElementImpl *e);
         
-	/* checks if the selector matches the given Element */
-	bool checkOneSelector(DOM::CSSSelector *selector, DOM::ElementImpl *e);
+        /* checks if the selector matches the given Element */
+        bool checkOneSelector(CSSSelector *selector, ElementImpl *e);
 
-	/* This function fixes up the default font size if it detects that the
-	   current generic font family has changed. -dwh */
-	void checkForGenericFamilyChange(RenderStyle* aStyle, RenderStyle* aParentStyle);
+        /* This function fixes up the default font size if it detects that the
+           current generic font family has changed. -dwh */
+        void checkForGenericFamilyChange(RenderStyle* aStyle, RenderStyle* aParentStyle);
         void checkForTextSizeAdjust();
 
-        void adjustRenderStyle(RenderStyle* style, DOM::ElementImpl *e);
+        void adjustRenderStyle(RenderStyle* style, ElementImpl *e);
     
         void matchRules(CSSRuleSet* rules, int& firstRuleIndex, int& lastRuleIndex);
         void matchRulesForList(CSSRuleDataList* rules,
                                int& firstRuleIndex, int& lastRuleIndex);
         void sortMatchedRules(uint firstRuleIndex, uint lastRuleIndex);
         void addMatchedRule(CSSRuleData* rule);
-        void addMatchedDeclaration(DOM::CSSMutableStyleDeclarationImpl* decl);
+        void addMatchedDeclaration(CSSMutableStyleDeclarationImpl* decl);
         void applyDeclarations(bool firstPass, bool important, int startIndex, int endIndex);
         
-	static DOM::CSSStyleSheetImpl *defaultSheet;
-        static DOM::CSSStyleSheetImpl *quirksSheet;
+        static CSSStyleSheetImpl *defaultSheet;
+        static CSSStyleSheetImpl *quirksSheet;
 #if SVG_SUPPORT
-        static DOM::CSSStyleSheetImpl *svgSheet;
+        static CSSStyleSheetImpl *svgSheet;
 #endif
-	static CSSRuleSet* defaultStyle;
+        static CSSRuleSet* defaultStyle;
         static CSSRuleSet* defaultQuirksStyle;
-	static CSSRuleSet* defaultPrintStyle;
-	CSSRuleSet* m_authorStyle;
+        static CSSRuleSet* defaultPrintStyle;
+        CSSRuleSet* m_authorStyle;
         CSSRuleSet* m_userStyle;
-        DOM::CSSStyleSheetImpl* m_userSheet;
+        CSSStyleSheetImpl* m_userSheet;
         
         bool m_hasUAAppearance;
         BorderData m_borderData;
@@ -183,24 +170,24 @@ namespace khtml
         Color m_backgroundColor;
 
 public:
-	static RenderStyle* styleNotYetAvailable;
+        static RenderStyle* styleNotYetAvailable;
  
     private:
         void init();
         
-        void mapBackgroundAttachment(BackgroundLayer* layer, DOM::CSSValueImpl* value);
-        void mapBackgroundClip(BackgroundLayer* layer, DOM::CSSValueImpl* value);
-        void mapBackgroundOrigin(BackgroundLayer* layer, DOM::CSSValueImpl* value);
-        void mapBackgroundImage(BackgroundLayer* layer, DOM::CSSValueImpl* value);
-        void mapBackgroundRepeat(BackgroundLayer* layer, DOM::CSSValueImpl* value);
-        void mapBackgroundXPosition(BackgroundLayer* layer, DOM::CSSValueImpl* value);
-        void mapBackgroundYPosition(BackgroundLayer* layer, DOM::CSSValueImpl* value);
+        void mapBackgroundAttachment(BackgroundLayer* layer, CSSValueImpl* value);
+        void mapBackgroundClip(BackgroundLayer* layer, CSSValueImpl* value);
+        void mapBackgroundOrigin(BackgroundLayer* layer, CSSValueImpl* value);
+        void mapBackgroundImage(BackgroundLayer* layer, CSSValueImpl* value);
+        void mapBackgroundRepeat(BackgroundLayer* layer, CSSValueImpl* value);
+        void mapBackgroundXPosition(BackgroundLayer* layer, CSSValueImpl* value);
+        void mapBackgroundYPosition(BackgroundLayer* layer, CSSValueImpl* value);
         
         // We collect the set of decls that match in |m_matchedDecls|.  We then walk the
         // set of matched decls four times, once for those properties that others depend on (like font-size),
         // and then a second time for all the remaining properties.  We then do the same two passes
         // for any !important rules.
-        Array<DOM::CSSMutableStyleDeclarationImpl*> m_matchedDecls;
+        Array<CSSMutableStyleDeclarationImpl*> m_matchedDecls;
         unsigned m_matchedDeclCount;
         
         // A buffer used to hold the set of matched rules for an element, and a temporary buffer used for
@@ -209,59 +196,59 @@ public:
         unsigned m_matchedRuleCount;
         Array<CSSRuleData*> m_tmpRules;
         unsigned m_tmpRuleCount;
-        DOM::CSSRuleListImpl* m_ruleList;
+        CSSRuleListImpl* m_ruleList;
         bool m_collectRulesOnly;
 
         QString m_medium;
 
-	RenderStyle::PseudoId dynamicPseudo;
-	
-	RenderStyle *style;
-	RenderStyle *parentStyle;
-	DOM::ElementImpl *element;
-        DOM::StyledElementImpl *styledElement;
-	DOM::NodeImpl *parentNode;
+        RenderStyle::PseudoId dynamicPseudo;
+        
+        RenderStyle *style;
+        RenderStyle *parentStyle;
+        ElementImpl *element;
+        StyledElementImpl *styledElement;
+        NodeImpl *parentNode;
         RenderStyle::PseudoId pseudoStyle;
-	FrameView *view;
-	Frame *frame;
-	const KHTMLSettings *settings;
-	bool fontDirty;
+        FrameView *view;
+        Frame *frame;
+        const KHTMLSettings *settings;
+        bool fontDirty;
         bool isXMLDoc;
         
-	void applyProperty(int id, DOM::CSSValueImpl *value);
+        void applyProperty(int id, CSSValueImpl *value);
 #if SVG_SUPPORT
-        void applySVGProperty(int id, DOM::CSSValueImpl *value);
+        void applySVGProperty(int id, CSSValueImpl *value);
 #endif
     };
 
     class CSSRuleData {
     public:
-        CSSRuleData(uint pos, DOM::CSSStyleRuleImpl* r, DOM::CSSSelector* sel, CSSRuleData* prev = 0)
+        CSSRuleData(uint pos, CSSStyleRuleImpl* r, CSSSelector* sel, CSSRuleData* prev = 0)
         :m_position(pos), m_rule(r), m_selector(sel), m_next(0) { if (prev) prev->m_next = this; }
         ~CSSRuleData() { delete m_next; }
 
         uint position() { return m_position; }
-        DOM::CSSStyleRuleImpl* rule() { return m_rule; }
-        DOM::CSSSelector* selector() { return m_selector; }
+        CSSStyleRuleImpl* rule() { return m_rule; }
+        CSSSelector* selector() { return m_selector; }
         CSSRuleData* next() { return m_next; }
         
     private:
         uint m_position;
-        DOM::CSSStyleRuleImpl* m_rule;
-        DOM::CSSSelector* m_selector;
+        CSSStyleRuleImpl* m_rule;
+        CSSSelector* m_selector;
         CSSRuleData* m_next;
     };
 
     class CSSRuleDataList {
     public:
-        CSSRuleDataList(uint pos, DOM::CSSStyleRuleImpl* rule, DOM::CSSSelector* sel)
+        CSSRuleDataList(uint pos, CSSStyleRuleImpl* rule, CSSSelector* sel)
         { m_first = m_last = new CSSRuleData(pos, rule, sel); }
         ~CSSRuleDataList() { delete m_first; }
 
         CSSRuleData* first() { return m_first; }
         CSSRuleData* last() { return m_last; }
         
-        void append(uint pos, DOM::CSSStyleRuleImpl* rule, DOM::CSSSelector* sel) {
+        void append(uint pos, CSSStyleRuleImpl* rule, CSSSelector* sel) {
             m_last = new CSSRuleData(pos, rule, sel, m_last);
         }
         
@@ -271,4 +258,5 @@ public:
     };
     
 }
+
 #endif

@@ -30,11 +30,11 @@
 #include "HTMLCollectionImpl.h"
 #include <kxmlcore/HashMap.h>
 
-class FrameView;
 class QString;
 
 namespace WebCore {
 
+class FrameView;
 class HTMLElementImpl;
 
 class HTMLDocumentImpl : public DOM::DocumentImpl, public khtml::CachedObjectClient

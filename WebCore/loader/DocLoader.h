@@ -27,31 +27,24 @@
 #ifndef KHTML_DocLoader_h
 #define KHTML_DocLoader_h
 
-#include <qptrlist.h>
+#include <dom/dom_string.h>
+#include <khtml_settings.h>
+#include <kio/global.h>
 #include <qbuffer.h>
+#include <qptrlist.h>
 #include <qstringlist.h>
 
-#include <kio/global.h>
-
-#include <khtml_settings.h>
-#include <dom/dom_string.h>
-
-class Frame;
 class KURL;
-
-namespace DOM {
-    class DocumentImpl;
-};
-
 class KWQLoader;
 
-namespace khtml
-{
+namespace WebCore {
+    class CachedCSSStyleSheet;
+    class CachedImage;
     class CachedObject;
     class CachedScript;
-    class CachedImage;
-    class CachedCSSStyleSheet;
     class CachedXSLStyleSheet;
+    class DocumentImpl;
+    class Frame;
 
     /**
      * Manages the loading of scripts/images/stylesheets for a particular document

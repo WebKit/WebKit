@@ -39,61 +39,8 @@
 #include <qscrollbar.h>
 #include <qstringlist.h>
 
-class FramePrivate;
-class FrameView;
 class KHTMLPartBrowserExtension;
 class KHTMLSettings;
-class FrameTreeNode;
-
-namespace WebCore {
-    class CSSComputedStyleDeclarationImpl;
-    class CSSMutableStyleDeclarationImpl;
-    class CSSStyleDeclarationImpl;
-    class CSSStyleSelector;
-    class CachedObject;
-    class DOMString;
-    class DocLoader;
-    class Document;
-    class DocumentImpl;
-    class DrawContentsEvent;
-    class EditCommandPtr;
-    class ElementImpl;
-    class EventListener;
-    class FormData;
-    class HTMLAnchorElementImpl;
-    class HTMLDocument;
-    class HTMLDocumentImpl;
-    class HTMLElementImpl;
-    class HTMLEventListener;
-    class HTMLFormElementImpl;
-    class HTMLFrameElementImpl;
-    class HTMLIFrameElementImpl;
-    class HTMLMetaElementImpl;
-    class HTMLObjectElementImpl;
-    class HTMLTitleElementImpl;
-    class HTMLTokenizer;
-    class MouseDoubleClickEvent;
-    class MouseEvent;
-    class MouseMoveEvent;
-    class MousePressEvent;
-    class MouseReleaseEvent;
-    class Node;
-    class NodeImpl;
-    class Range;
-    class RangeImpl;
-    class RenderObject;
-    class RenderPart;
-    class RenderPartObject;
-    class RenderStyle;
-    class RenderWidget;
-    class Selection;
-    class SelectionController;
-    class VisiblePosition;
-    class XMLTokenizer;
-    class KJSProxyImpl;
-
-    struct ChildFrame;
-}
 
 namespace KJS {
     class DOMDocument;
@@ -111,17 +58,68 @@ namespace KJS {
     }
 }
 
+namespace WebCore {
+
+class CSSComputedStyleDeclarationImpl;
+class CSSMutableStyleDeclarationImpl;
+class CSSStyleDeclarationImpl;
+class CSSStyleSelector;
+class CachedObject;
+class DOMString;
+class DocLoader;
+class Document;
+class DocumentImpl;
+class DrawContentsEvent;
+class EditCommandPtr;
+class ElementImpl;
+class EventListener;
+class FormData;
+class FramePrivate;
+class FrameTreeNode;
+class HTMLAnchorElementImpl;
+class HTMLDocument;
+class HTMLDocumentImpl;
+class HTMLElementImpl;
+class HTMLEventListener;
+class HTMLFormElementImpl;
+class HTMLFrameElementImpl;
+class HTMLIFrameElementImpl;
+class HTMLMetaElementImpl;
+class HTMLObjectElementImpl;
+class HTMLTitleElementImpl;
+class HTMLTokenizer;
+class KJSProxyImpl;
+class MacFrame;
+class MouseDoubleClickEvent;
+class MouseEvent;
+class MouseMoveEvent;
+class MousePressEvent;
+class MouseReleaseEvent;
+class Node;
+class NodeImpl;
+class Range;
+class RangeImpl;
+class RenderObject;
+class RenderPart;
+class RenderPartObject;
+class RenderStyle;
+class RenderWidget;
+class Selection;
+class SelectionController;
+class VisiblePosition;
+class XMLTokenizer;
+
+struct ChildFrame;
+
+template <typename T> class Timer;
+
 struct MarkedTextUnderline {
-  MarkedTextUnderline(unsigned _startOffset, unsigned _endOffset, const Color &_color, bool _thick) 
-    : startOffset(_startOffset)
-       , endOffset(_endOffset)
-       , color(_color)
-       , thick(_thick)
-  {}
-  unsigned startOffset;
-  unsigned endOffset;
-  Color color;
-  bool thick;
+    MarkedTextUnderline(unsigned s, unsigned e, const Color& c, bool t) 
+        : startOffset(s), endOffset(e), color(c), thick(t) { }
+    unsigned startOffset;
+    unsigned endOffset;
+    Color color;
+    bool thick;
 };
 
 class Frame : public ObjectContents {
@@ -132,21 +130,21 @@ class Frame : public ObjectContents {
   friend class KJS::SelectionFunc;
   friend class KJS::Window;
   friend class KJS::WindowFunc;
-  friend class WebCore::CSSStyleSelector;
-  friend class WebCore::DocumentImpl;
-  friend class WebCore::HTMLAnchorElementImpl;
-  friend class WebCore::HTMLDocumentImpl;
-  friend class WebCore::HTMLFormElementImpl;
-  friend class WebCore::HTMLFrameElementImpl;
-  friend class WebCore::HTMLIFrameElementImpl;
-  friend class WebCore::HTMLMetaElementImpl;
-  friend class WebCore::HTMLObjectElementImpl;
-  friend class WebCore::HTMLTitleElementImpl;
-  friend class WebCore::HTMLTokenizer;
-  friend class WebCore::NodeImpl;
-  friend class WebCore::RenderPartObject;
-  friend class WebCore::RenderWidget;
-  friend class WebCore::XMLTokenizer;
+  friend class CSSStyleSelector;
+  friend class DocumentImpl;
+  friend class HTMLAnchorElementImpl;
+  friend class HTMLDocumentImpl;
+  friend class HTMLFormElementImpl;
+  friend class HTMLFrameElementImpl;
+  friend class HTMLIFrameElementImpl;
+  friend class HTMLMetaElementImpl;
+  friend class HTMLObjectElementImpl;
+  friend class HTMLTitleElementImpl;
+  friend class HTMLTokenizer;
+  friend class NodeImpl;
+  friend class RenderPartObject;
+  friend class RenderWidget;
+  friend class XMLTokenizer;
 
 public:
   enum { NoXPosForVerticalArrowNavigation = INT_MIN };
@@ -170,9 +168,9 @@ public:
   virtual bool closeURL();
 
   /**
-   * Returns a pointer to the @ref WebCore::BrowserExtension.
+   * Returns a pointer to the @ref BrowserExtension.
    */
-  WebCore::BrowserExtension *browserExtension() const;
+  BrowserExtension *browserExtension() const;
 
   /**
    * Returns a pointer to the HTML document's view.
@@ -206,12 +204,12 @@ public:
   /**
    * Execute the specified snippet of JavaScript code.
    */
-  KJS::JSValue* executeScript(WebCore::NodeImpl*, const QString& script, bool forceUserGesture = false);
+  KJS::JSValue* executeScript(NodeImpl*, const QString& script, bool forceUserGesture = false);
 
   /**
    * Implementation of CSS property -khtml-user-drag == auto
    */
-  virtual bool shouldDragAutoNode(WebCore::NodeImpl*, int x, int y) const;
+  virtual bool shouldDragAutoNode(NodeImpl*, int x, int y) const;
   
   /**
    * Enables/disables Java applet support. Note that calling this function
@@ -366,7 +364,7 @@ public:
    */
   void stop();
 
-  void paint(WebCore::QPainter *, const IntRect&);
+  void paint(QPainter *, const IntRect&);
 
   void setEncoding(const QString &encoding, bool userChosen);
 
@@ -434,7 +432,7 @@ public:
   /**
    * Initiates a text search.
    */
-  void findTextBegin(WebCore::NodeImpl *startNode = 0, int startPos = -1);
+  void findTextBegin(NodeImpl *startNode = 0, int startPos = -1);
 
   /**
    * Finds the next occurrence of the string or expression.
@@ -467,42 +465,42 @@ public:
   /**
    * Returns the granularity of the selection (character, word, line, paragraph).
    */
-  WebCore::ETextGranularity selectionGranularity() const;
+  ETextGranularity selectionGranularity() const;
   
   /**
    * Sets the granularity of the selection (character, word, line, paragraph).
    */
-  void setSelectionGranularity(WebCore::ETextGranularity granularity) const;
+  void setSelectionGranularity(ETextGranularity granularity) const;
 
   /**
    * Returns the drag caret of the HTML.
    */
-  const WebCore::SelectionController &dragCaret() const;
+  const SelectionController &dragCaret() const;
 
   /**
    * Sets the current selection.
    */
-  void setSelection(const WebCore::SelectionController &, bool closeTyping = true, bool keepTypingStyle = false);
+  void setSelection(const SelectionController &, bool closeTyping = true, bool keepTypingStyle = false);
 
   /**
    * Returns whether selection can be changed.
    */
-  bool shouldChangeSelection(const WebCore::SelectionController &) const;
+  bool shouldChangeSelection(const SelectionController &) const;
 
   /**
    * Returns a mark, to be used as emacs uses it.
    */
-  const WebCore::Selection &mark() const;
+  const Selection &mark() const;
 
   /**
    * Returns the mark.
    */
-  void setMark(const WebCore::Selection &);
+  void setMark(const Selection &);
 
   /**
    * Sets the current drag caret.
    */
-  void setDragCaret(const WebCore::SelectionController &);
+  void setDragCaret(const SelectionController &);
   
   /**
    * Transposes characters either side of caret selection.
@@ -522,12 +520,12 @@ public:
   /**
    * Paints the caret.
    */
-  void paintCaret(WebCore::QPainter *p, const IntRect &rect) const;
+  void paintCaret(QPainter *p, const IntRect &rect) const;
   
  /**
    * Paints the drag caret.
    */
-  void paintDragCaret(WebCore::QPainter *p, const IntRect &rect) const;
+  void paintDragCaret(QPainter *p, const IntRect &rect) const;
 
   /**
    * Set info for vertical arrow navigation.
@@ -558,17 +556,17 @@ public:
    * Marks contents of node as selected.
    * Returns whether the selection changed.
    */
-  bool selectContentsOfNode(WebCore::NodeImpl*);
+  bool selectContentsOfNode(NodeImpl*);
  
   /**
    * Returns whether editing should end in the given range
    */
-  virtual bool shouldBeginEditing(const WebCore::RangeImpl *) const;
+  virtual bool shouldBeginEditing(const RangeImpl *) const;
 
   /**
    * Returns whether editing should end in the given range
    */
-  virtual bool shouldEndEditing(const WebCore::RangeImpl *) const;
+  virtual bool shouldEndEditing(const RangeImpl *) const;
 
   /**
    * Returns the contentEditable "override" value for the part
@@ -578,32 +576,32 @@ public:
   /**
    * Returns the most recent edit command applied.
    */
-  WebCore::EditCommandPtr lastEditCommand();
+  EditCommandPtr lastEditCommand();
 
   /**
    * Called when editing has been applied.
    */
-  void appliedEditing(WebCore::EditCommandPtr &);
+  void appliedEditing(EditCommandPtr &);
 
   /**
    * Called when editing has been unapplied.
    */
-  void unappliedEditing(WebCore::EditCommandPtr &);
+  void unappliedEditing(EditCommandPtr &);
 
   /**
    * Called when editing has been reapplied.
    */
-  void reappliedEditing(WebCore::EditCommandPtr &);
+  void reappliedEditing(EditCommandPtr &);
 
   /**
    * Returns the typing style for the document.
    */
-  WebCore::CSSMutableStyleDeclarationImpl *typingStyle() const;
+  CSSMutableStyleDeclarationImpl *typingStyle() const;
 
   /**
    * Sets the typing style for the document.
    */
-  void setTypingStyle(WebCore::CSSMutableStyleDeclarationImpl *);
+  void setTypingStyle(CSSMutableStyleDeclarationImpl *);
 
   /**
    * Clears the typing style for the document.
@@ -721,16 +719,16 @@ public:
   void undo();
   bool canRedo() const;
   bool canUndo() const;
-  void computeAndSetTypingStyle(WebCore::CSSStyleDeclarationImpl *, WebCore::EditAction editingAction=WebCore::EditActionUnspecified);
-  void applyStyle(WebCore::CSSStyleDeclarationImpl *, WebCore::EditAction editingAction=WebCore::EditActionUnspecified);
-  void applyParagraphStyle(WebCore::CSSStyleDeclarationImpl *, WebCore::EditAction editingAction=WebCore::EditActionUnspecified);
-  TriState selectionHasStyle(WebCore::CSSStyleDeclarationImpl *) const;
-  bool selectionStartHasStyle(WebCore::CSSStyleDeclarationImpl *) const;
-  WebCore::DOMString selectionStartStylePropertyValue(int stylePropertyID) const;
+  void computeAndSetTypingStyle(CSSStyleDeclarationImpl *, EditAction editingAction=EditActionUnspecified);
+  void applyStyle(CSSStyleDeclarationImpl *, EditAction editingAction=EditActionUnspecified);
+  void applyParagraphStyle(CSSStyleDeclarationImpl *, EditAction editingAction=EditActionUnspecified);
+  TriState selectionHasStyle(CSSStyleDeclarationImpl *) const;
+  bool selectionStartHasStyle(CSSStyleDeclarationImpl *) const;
+  DOMString selectionStartStylePropertyValue(int stylePropertyID) const;
   void applyEditingStyleToBodyElement() const;
   void removeEditingStyleFromBodyElement() const;
-  void applyEditingStyleToElement(WebCore::ElementImpl *) const;
-  void removeEditingStyleFromElement(WebCore::ElementImpl *) const;
+  void applyEditingStyleToElement(ElementImpl *) const;
+  void removeEditingStyleFromElement(ElementImpl *) const;
   void print();
   virtual bool isCharacterSmartReplaceExempt(const QChar &, bool);
 
@@ -770,13 +768,13 @@ public:
    */
   void htmlError(int errorCode, const QString& text, const KURL& reqUrl);
 
-  virtual void khtmlMouseDoubleClickEvent(WebCore::MouseDoubleClickEvent *event);
-  virtual void khtmlMousePressEvent(WebCore::MousePressEvent *event);
-  virtual void khtmlMouseMoveEvent(WebCore::MouseMoveEvent *event);
-  virtual void khtmlMouseReleaseEvent(WebCore::MouseReleaseEvent *event);
-  virtual void khtmlDrawContentsEvent(WebCore::DrawContentsEvent*) { }
+  virtual void khtmlMouseDoubleClickEvent(MouseDoubleClickEvent *event);
+  virtual void khtmlMousePressEvent(MousePressEvent *event);
+  virtual void khtmlMouseMoveEvent(MouseMoveEvent *event);
+  virtual void khtmlMouseReleaseEvent(MouseReleaseEvent *event);
+  virtual void khtmlDrawContentsEvent(DrawContentsEvent*) { }
   
-  void selectClosestWordFromMouseEvent(QMouseEvent *mouse, WebCore::NodeImpl *innerNode, int x, int y);
+  void selectClosestWordFromMouseEvent(QMouseEvent *mouse, NodeImpl *innerNode, int x, int y);
 
   /**
    * Internal empty reimplementation of @ref ObjectContents::openFile .
@@ -784,27 +782,27 @@ public:
   virtual bool openFile();
 
   virtual void urlSelected( const QString &url, int button, int state,
-                            const QString &_target, WebCore::URLArgs args = WebCore::URLArgs());
+                            const QString &_target, URLArgs args = URLArgs());
 
 
   // Methods with platform-specific overrides (and no base class implementation).
-  virtual WebCore::BrowserExtension* createBrowserExtension() = 0;
-  virtual void setTitle(const WebCore::DOMString &) = 0;
+  virtual BrowserExtension* createBrowserExtension() = 0;
+  virtual void setTitle(const DOMString &) = 0;
   virtual void handledOnloadEvents() = 0;
   virtual QString userAgent() const = 0;
   virtual QString incomingReferrer() const = 0;
   virtual QString mimeTypeForFileName(const QString &) const = 0;
   virtual void clearRecordedFormValues() = 0;
-  virtual void recordFormValue(const QString &name, const QString &value, WebCore::HTMLFormElementImpl *element) = 0;
+  virtual void recordFormValue(const QString &name, const QString &value, HTMLFormElementImpl *element) = 0;
   virtual KJS::Bindings::Instance *getEmbedInstanceForWidget(QWidget*) = 0;
   virtual KJS::Bindings::Instance *getObjectInstanceForWidget(QWidget*) = 0;
   virtual KJS::Bindings::Instance *getAppletInstanceForWidget(QWidget*) = 0;
-  virtual void markMisspellingsInAdjacentWords(const WebCore::VisiblePosition &) = 0;
-  virtual void markMisspellings(const WebCore::SelectionController &) = 0;
-  virtual void addMessageToConsole(const WebCore::DOMString& message,  unsigned int lineNumber, const WebCore::DOMString& sourceID) = 0;
-  virtual void runJavaScriptAlert(const WebCore::DOMString& message) = 0;
-  virtual bool runJavaScriptConfirm(const WebCore::DOMString& message) = 0;
-  virtual bool runJavaScriptPrompt(const WebCore::DOMString& message, const WebCore::DOMString& defaultValue, WebCore::DOMString& result) = 0;  
+  virtual void markMisspellingsInAdjacentWords(const VisiblePosition &) = 0;
+  virtual void markMisspellings(const SelectionController &) = 0;
+  virtual void addMessageToConsole(const DOMString& message,  unsigned int lineNumber, const DOMString& sourceID) = 0;
+  virtual void runJavaScriptAlert(const DOMString& message) = 0;
+  virtual bool runJavaScriptConfirm(const DOMString& message) = 0;
+  virtual bool runJavaScriptPrompt(const DOMString& message, const DOMString& defaultValue, DOMString& result) = 0;  
   virtual bool locationbarVisible() = 0;
   virtual bool menubarVisible() = 0;
   virtual bool personalbarVisible() = 0;
@@ -813,9 +811,9 @@ public:
   virtual void scheduleClose() = 0;
   virtual void unfocusWindow() = 0;
   virtual void createEmptyDocument() = 0;
-  virtual WebCore::RangeImpl *markedTextRange() const = 0;
-  virtual void registerCommandForUndo(const WebCore::EditCommandPtr &) = 0;
-  virtual void registerCommandForRedo(const WebCore::EditCommandPtr &) = 0;
+  virtual RangeImpl *markedTextRange() const = 0;
+  virtual void registerCommandForUndo(const EditCommandPtr &) = 0;
+  virtual void registerCommandForRedo(const EditCommandPtr &) = 0;
   virtual void clearUndoRedoOperations() = 0;
   virtual void issueUndoCommand() = 0;
   virtual void issueRedoCommand() = 0;
@@ -824,19 +822,19 @@ public:
   virtual void issuePasteCommand() = 0;
   virtual void issuePasteAndMatchStyleCommand() = 0;
   virtual void issueTransposeCommand() = 0;
-  virtual void respondToChangedSelection(const WebCore::SelectionController &oldSelection, bool closeTyping) = 0;
+  virtual void respondToChangedSelection(const SelectionController &oldSelection, bool closeTyping) = 0;
   virtual void respondToChangedContents() = 0;
-  virtual bool shouldChangeSelection(const WebCore::SelectionController &oldSelection, const WebCore::SelectionController &newSelection, WebCore::EAffinity affinity, bool stillSelecting) const = 0;
+  virtual bool shouldChangeSelection(const SelectionController &oldSelection, const SelectionController &newSelection, EAffinity affinity, bool stillSelecting) const = 0;
   virtual void partClearedInBegin() = 0; 
   virtual void saveDocumentState() = 0;
   virtual void restoreDocumentState() = 0;
   virtual bool canGoBackOrForward(int distance) const = 0;
-  virtual void openURLRequest(const KURL &, const WebCore::URLArgs &) = 0;
-  virtual void submitForm(const KURL &, const WebCore::URLArgs &) = 0;
-  virtual void urlSelected(const KURL &url, int button, int state, const WebCore::URLArgs &args) = 0;
-  virtual ObjectContents *createPart(const WebCore::ChildFrame &child, const KURL &url, const QString &mimeType) = 0;
-  virtual bool passSubframeEventToSubframe(WebCore::NodeImpl::MouseEvent &) = 0;
-  virtual bool passWheelEventToChildWidget(WebCore::NodeImpl *) = 0;
+  virtual void openURLRequest(const KURL &, const URLArgs &) = 0;
+  virtual void submitForm(const KURL &, const URLArgs &) = 0;
+  virtual void urlSelected(const KURL &url, int button, int state, const URLArgs &args) = 0;
+  virtual ObjectContents *createPart(const ChildFrame &child, const KURL &url, const QString &mimeType) = 0;
+  virtual bool passSubframeEventToSubframe(NodeImpl::MouseEvent &) = 0;
+  virtual bool passWheelEventToChildWidget(NodeImpl *) = 0;
   virtual bool lastEventIsMouseUp() const = 0;
   virtual QString overrideMediaType() const = 0;
 protected:
@@ -855,7 +853,7 @@ private slots:
   void slotRestoreData( const ByteArray &data );
   void slotFinished( KIO::Job* );
   void slotFinishedParsing();
-  void slotRedirect();
+  void redirectionTimerFired(Timer<Frame>*);
   void slotRedirection(KIO::Job*, const KURL&);
 
   void slotIncZoom();
@@ -878,8 +876,8 @@ private slots:
   void slotChildCompleted();
   void slotChildCompleted( bool );
   void slotParentCompleted();
-  void slotChildURLRequest( const KURL &url, const WebCore::URLArgs &args );
-  void slotLoaderRequestDone( WebCore::DocLoader*, WebCore::CachedObject *obj );
+  void slotChildURLRequest( const KURL &url, const URLArgs &args );
+  void slotLoaderRequestDone( DocLoader*, CachedObject *obj );
   void checkCompleted();
   
   void slotShowDocument( const QString &url, const QString &target );
@@ -900,13 +898,13 @@ private:
   void setFocusNodeIfNeeded();
   void selectionLayoutChanged();
   void timerEvent(QTimerEvent *);
-  bool openURLInFrame( const KURL &url, const WebCore::URLArgs &urlArgs );
+  bool openURLInFrame( const KURL &url, const URLArgs &urlArgs );
 
   void overURL( const QString &url, const QString &target, bool shiftPressed = false );
 
-  bool processObjectRequest( WebCore::ChildFrame *child, const KURL &url, const QString &mimetype );
+  bool processObjectRequest( ChildFrame *child, const KURL &url, const QString &mimetype );
   
-  void submitForm( const char *action, const QString &url, const WebCore::FormData &formData,
+  void submitForm( const char *action, const QString &url, const FormData &formData,
                    const QString &target, const QString& contentType = QString::null,
                    const QString& boundary = QString::null );
 
@@ -914,11 +912,11 @@ private:
 
   void init(FrameView *view);
 
-  bool scheduleScript( WebCore::NodeImpl *n, const QString& script);
+  bool scheduleScript( NodeImpl *n, const QString& script);
 
   KJS::JSValue* executeScheduledScript();
 
-  bool requestFrame( WebCore::RenderPart *frame, const QString &url, const QString &frameName,
+  bool requestFrame( RenderPart *frame, const QString &url, const QString &frameName,
                      const QStringList &paramNames = QStringList(), const QStringList &paramValues = QStringList(), bool isIFrame = false );
 
   /**
@@ -930,13 +928,13 @@ private:
    */
   QString requestFrameName();
 
-  bool requestObject(WebCore::RenderPart *frame, const QString &url, const QString &serviceType,
+  bool requestObject(RenderPart *frame, const QString &url, const QString &serviceType,
                       const QStringList &paramNames = QStringList(), const QStringList &paramValues = QStringList());
-  bool requestObject(WebCore::ChildFrame *child, const KURL &url, const WebCore::URLArgs &args = WebCore::URLArgs());
+  bool requestObject(ChildFrame *child, const KURL &url, const URLArgs &args = URLArgs());
 
 public:
-  WebCore::DocumentImpl *document() const;
-  void setDocument(WebCore::DocumentImpl* newDoc);
+  DocumentImpl *document() const;
+  void setDocument(DocumentImpl* newDoc);
 
   // Workaround for the fact that it's hard to delete a frame.
   // Call this after doing user-triggered selections to make it easy to delete the frame you entirely selected.
@@ -947,19 +945,19 @@ public:
   void handleFallbackContent();
 
 private:
-  WebCore::ChildFrame* childFrame(const QObject*);
-  WebCore::ChildFrame* recursiveFrameRequest(const KURL&, const WebCore::URLArgs&, bool callParent = true);
+  ChildFrame* childFrame(const QObject*);
+  ChildFrame* recursiveFrameRequest(const KURL&, const URLArgs&, bool callParent = true);
 
-  void connectChild(const WebCore::ChildFrame *) const;
-  void disconnectChild(const WebCore::ChildFrame *) const;
+  void connectChild(const ChildFrame *) const;
+  void disconnectChild(const ChildFrame *) const;
 
   bool checkLinkSecurity(const KURL &linkURL,const QString &message = QString::null, const QString &button = QString::null);
-  KJS::JSValue* executeScript(const QString& filename, int baseLine, WebCore::NodeImpl*, const QString& script);
+  KJS::JSValue* executeScript(const QString& filename, int baseLine, NodeImpl*, const QString& script);
   
   void cancelRedirection(bool newLoadInProgress = false);
 
  public:
-  WebCore::KJSProxyImpl *jScript();
+  KJSProxyImpl *jScript();
   Frame *opener();
   void setOpener(Frame *_opener);
   bool openedByJS();
@@ -974,13 +972,13 @@ private:
   void addMetaData(const QString &key, const QString &value);
   void setMediaType(const QString &);
 
-  WebCore::RenderObject *renderer() const;
+  RenderObject *renderer() const;
   IntRect selectionRect() const;
   bool isFrameSet() const;
 
-  WebCore::HTMLFormElementImpl *currentForm() const;
+  HTMLFormElementImpl *currentForm() const;
 
-  WebCore::RenderStyle *styleForSelectionStart(WebCore::NodeImpl *&nodeToRemove) const;
+  RenderStyle *styleForSelectionStart(NodeImpl *&nodeToRemove) const;
 
   // Scrolls as necessary to reveal the selection
   void revealSelection();
@@ -1003,8 +1001,8 @@ private:
   void restoreInterpreterBuiltins(const KJS::SavedBuiltins &interpreterBuiltins);
 
   static Frame *frameForWidget(const QWidget *);
-  static WebCore::NodeImpl *nodeForWidget(const QWidget *);
-  static Frame *frameForNode(WebCore::NodeImpl *);
+  static NodeImpl *nodeForWidget(const QWidget *);
+  static Frame *frameForNode(NodeImpl *);
 
   static void setDocumentFocus(QWidget *);
   static void clearDocumentFocus(QWidget *);
@@ -1013,7 +1011,7 @@ private:
   static QPtrList<Frame> &mutableInstances();
 
   void updatePolicyBaseURL();
-  void setPolicyBaseURL(const WebCore::DOMString &);
+  void setPolicyBaseURL(const DOMString &);
 
   void forceLayout();
   void forceLayoutWithPageWidthRange(float minPageWidth, float maxPageWidth);
@@ -1022,9 +1020,9 @@ private:
   void sendScrollEvent();
   bool scrollbarsVisible();
   void scrollToAnchor(const KURL &);
-  bool canMouseDownStartSelect(WebCore::NodeImpl* node);
-  bool passWidgetMouseDownEventToWidget(WebCore::MouseEvent *, bool isDoubleClick);
-  bool passWidgetMouseDownEventToWidget(WebCore::RenderWidget *);
+  bool canMouseDownStartSelect(NodeImpl* node);
+  bool passWidgetMouseDownEventToWidget(MouseEvent *, bool isDoubleClick);
+  bool passWidgetMouseDownEventToWidget(RenderWidget *);
   virtual bool passMouseDownEventToWidget(QWidget *) = 0;
 
   void clearTimers();
@@ -1044,14 +1042,17 @@ private:
   // Currently, all this does is clear the "don't submit form twice" data member.
   void prepareForUserAction();
   virtual bool isFrame() const;
-  WebCore::NodeImpl *mousePressNode();
+  NodeImpl *mousePressNode();
 
   bool isComplete();
   
   void replaceContentsWithScriptResult(const KURL &url);
 
 protected:
-  mutable RefPtr<WebCore::NodeImpl> _elementToDraw;
+    virtual void startRedirectionTimer();
+    virtual void stopRedirectionTimer();
+
+  mutable RefPtr<NodeImpl> _elementToDraw;
   mutable bool _drawSelectionOnly;
   KURL _submittedFormURL;
   bool m_markedTextUsesUnderlines;
@@ -1066,25 +1067,25 @@ protected:
   
   void receivedFirstData();
 
-  bool handleMouseMoveEventDrag(WebCore::MouseMoveEvent *event);
-  bool handleMouseMoveEventOver(WebCore::MouseMoveEvent *event);
-  void handleMouseMoveEventSelection(WebCore::MouseMoveEvent *event);
+  bool handleMouseMoveEventDrag(MouseMoveEvent *event);
+  bool handleMouseMoveEventOver(MouseMoveEvent *event);
+  void handleMouseMoveEventSelection(MouseMoveEvent *event);
 
   /**
    * @internal Extracts anchor and tries both encoded and decoded form.
    */
   void gotoAnchor();
 
-  void handleMousePressEventSingleClick(WebCore::MousePressEvent *event);
-  void handleMousePressEventDoubleClick(WebCore::MousePressEvent *event);
-  void handleMousePressEventTripleClick(WebCore::MousePressEvent *event);
+  void handleMousePressEventSingleClick(MousePressEvent *event);
+  void handleMousePressEventDoubleClick(MousePressEvent *event);
+  void handleMousePressEventTripleClick(MousePressEvent *event);
 
-  WebCore::CSSComputedStyleDeclarationImpl *selectionComputedStyle(WebCore::NodeImpl *&nodeToRemove) const;
+  CSSComputedStyleDeclarationImpl *selectionComputedStyle(NodeImpl *&nodeToRemove) const;
 
-  FramePrivate *d;
+  FramePrivate* d;
   friend class FramePrivate;
 
-public:  
+public:
   friend class MacFrame;
 
   void completed();
@@ -1104,8 +1105,10 @@ public:
   Frame* parent() const;
 
   // split out controller objects
-  FrameTreeNode *treeNode();
-  WebCore::SelectionController &selection() const;
+  FrameTreeNode* treeNode();
+  SelectionController& selection() const;
 };
+
+}
 
 #endif

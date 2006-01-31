@@ -29,6 +29,7 @@
 
 #include "Frame.h"
 #include "SelectionController.h"
+#include "Timer.h"
 #include "css_valueimpl.h"
 #include "edit_command.h"
 #include "kjs_proxy.h"
@@ -68,7 +69,6 @@ namespace WebCore
     bool m_bNotify;
     bool m_hasFallbackContent;
   };
-}
 
 class FrameList : public QValueList<WebCore::ChildFrame>
 {
@@ -91,8 +91,8 @@ class FramePrivate
 {
 public:
   FramePrivate(Frame *parent, Frame *thisFrame)
-      : m_treeNode(thisFrame),
-        m_parent(parent)
+      : m_treeNode(thisFrame), m_parent(parent)
+      , m_redirectionTimer(thisFrame, &Frame::redirectionTimerFired)
   {
     m_doc = 0;
     m_jscript = 0;
@@ -231,7 +231,7 @@ public:
   KURL m_workingURL;
 
   KIO::CacheControl m_cachePolicy;
-  QTimer m_redirectionTimer;
+  Timer<Frame> m_redirectionTimer;
 
   RedirectionScheduled m_scheduledRedirection;
   double m_delayRedirect;
@@ -296,5 +296,7 @@ public:
 
   QTimer m_lifeSupportTimer;
 };
+
+}
 
 #endif

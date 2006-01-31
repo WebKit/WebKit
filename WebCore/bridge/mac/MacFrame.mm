@@ -88,19 +88,20 @@
 
 #undef _KWQ_TIMING
 
-using namespace WebCore;
-using namespace EventNames;
-using namespace HTMLNames;
+@interface NSObject (WebPlugIn)
+- (id)objectForWebScript;
+- (void *)pluginScriptableObject;
+@end
 
 using namespace KJS;
 using namespace Bindings;
 
 using namespace KIO;
 
-@interface NSObject (WebPlugIn)
-- (id)objectForWebScript;
-- (void *)pluginScriptableObject;
-@end
+namespace WebCore {
+
+using namespace EventNames;
+using namespace HTMLNames;
 
 NSEvent *MacFrame::_currentEvent = nil;
 
@@ -129,12 +130,6 @@ bool FrameView::isFrameView() const
     return true;
 }
 
-static void redirectionTimerMonitor(void *context)
-{
-    MacFrame *kwq = static_cast<MacFrame *>(context);
-    kwq->redirectionTimerStartedOrStopped();
-}
-
 MacFrame::MacFrame()
     : _bridge(nil)
     , _started(this, SIGNAL(started(KIO::Job *)))
@@ -160,7 +155,6 @@ MacFrame::MacFrame()
     Frame::init(0);
 
     mutableInstances().prepend(this);
-    d->m_redirectionTimer.setMonitor(redirectionTimerMonitor, this);
 }
 
 MacFrame::~MacFrame()
@@ -916,27 +910,36 @@ bool MacFrame::wheelEvent(NSEvent *event)
     return r->scroll(direction, KWQScrollWheel, multiplier);
 }
 
-void MacFrame::redirectionTimerStartedOrStopped()
+void MacFrame::startRedirectionTimer()
 {
+    stopRedirectionTimer();
+
+    Frame::startRedirectionTimer();
+
     // Don't report history navigations, just actual redirection.
-    if (d->m_scheduledRedirection == historyNavigationScheduled) {
-        return;
-    }
-    
-    KWQ_BLOCK_EXCEPTIONS;
-    if (d->m_redirectionTimer.isActive()) {
-        NSDate *fireDate = [[NSDate alloc] initWithTimeIntervalSinceReferenceDate:d->m_redirectionTimer.fireDate()];
+    if (d->m_scheduledRedirection != historyNavigationScheduled) {
+        NSTimeInterval fireDateNumber = d->m_redirectionTimer.nextFireTime() - NSTimeIntervalSince1970;
+        NSDate *fireDate = [[NSDate alloc] initWithTimeIntervalSinceReferenceDate:fireDateNumber];
         [_bridge reportClientRedirectToURL:KURL(d->m_redirectURL).getNSURL()
                                      delay:d->m_delayRedirect
                                   fireDate:fireDate
                                lockHistory:d->m_redirectLockHistory
                                isJavaScriptFormAction:d->m_executingJavaScriptFormAction];
         [fireDate release];
-    } else {
-        [_bridge reportClientRedirectCancelled:d->m_cancelWithLoadInProgress];
     }
-    KWQ_UNBLOCK_EXCEPTIONS;
 }
+
+void MacFrame::stopRedirectionTimer()
+{
+    bool wasActive = d->m_redirectionTimer.isActive();
+
+    Frame::stopRedirectionTimer();
+
+    // Don't report history navigations, just actual redirection.
+    if (wasActive && d->m_scheduledRedirection != historyNavigationScheduled)
+        [_bridge reportClientRedirectCancelled:d->m_cancelWithLoadInProgress];
+}
+
 
 QString MacFrame::userAgent() const
 {
@@ -3605,4 +3608,6 @@ bool MacFrame::dispatchDragSrcEvent(const AtomicString &eventType, const IntPoin
 void MacFrame::detachFromView()
 {
     setView(0);
+}
+
 }

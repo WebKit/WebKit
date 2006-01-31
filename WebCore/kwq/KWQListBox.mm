@@ -38,8 +38,7 @@
 
 #import "render_form.h"
 
-using khtml::RenderWidget;
-using khtml::RenderLayer;
+using namespace WebCore;
 
 @interface NSTableView (KWQListBoxKnowsAppKitSecrets)
 - (NSCell *)_accessibilityTableCell:(int)row tableColumn:(NSTableColumn *)tableColumn;

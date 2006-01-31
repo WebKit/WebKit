@@ -42,6 +42,7 @@ namespace WebCore {
     class ClipboardImpl;
     class DocumentImpl;
     class ElementImpl;
+    class Frame;
     class HTMLAnchorElementImpl;
     class HTMLDocumentImpl;
     class HTMLElementImpl;
@@ -50,6 +51,7 @@ namespace WebCore {
     class HTMLTitleElementImpl;
     class InlineBox;
     class IntRect;
+    class MacFrame;
     class NodeImpl;
     class QPainter;
     class RenderBox;
@@ -62,9 +64,7 @@ namespace WebCore {
     class RenderWidget;
 
     void applyRule(CSSProperty*);
-}
 
-class Frame;
 class FrameViewPrivate;
 
 /**
@@ -76,29 +76,29 @@ class FrameView : public QScrollView
 {
     Q_OBJECT
 
-    friend class DOM::HTMLDocumentImpl;
-    friend class DOM::HTMLTitleElementImpl;
-    friend class DOM::HTMLGenericFormElementImpl;
-    friend class DOM::HTMLFormElementImpl;
-    friend class DOM::HTMLAnchorElementImpl;
-    friend class DOM::DocumentImpl;
+    friend class CSSStyleSelector;
+    friend class DocumentImpl;
     friend class Frame;
-    friend class khtml::RenderCanvas;
-    friend class khtml::RenderObject;
-    friend class khtml::RenderBox;
-    friend class khtml::RenderLineEdit;
-    friend class khtml::RenderPart;
-    friend class khtml::RenderPartObject;
-    friend class khtml::RenderWidget;
-    friend class khtml::CSSStyleSelector;
-    friend void khtml::applyRule(DOM::CSSProperty *prop);
+    friend class HTMLAnchorElementImpl;
+    friend class HTMLDocumentImpl;
+    friend class HTMLFormElementImpl;
+    friend class HTMLGenericFormElementImpl;
+    friend class HTMLTitleElementImpl;
     friend class MacFrame;
+    friend class RenderBox;
+    friend class RenderCanvas;
+    friend class RenderLineEdit;
+    friend class RenderObject;
+    friend class RenderPart;
+    friend class RenderPartObject;
+    friend class RenderWidget;
+    friend void applyRule(DOM::CSSProperty *prop);
 
 public:
     /**
      * Constructs a FrameView.
      */
-    FrameView( Frame *frame, QWidget *parent, const char *name=0 );
+    FrameView(Frame *frame, QWidget *parent, const char *name=0 );
     virtual ~FrameView();
 
     /**
@@ -233,7 +233,7 @@ private:
      * more, if nonzero will be set to true if the documents extends
      * beyond the rc or false if everything below yOff was painted.
      **/
-    void paint(WebCore::QPainter *p, const IntRect &rc, int yOff = 0, bool *more = 0);
+    void paint(QPainter *p, const IntRect &rc, int yOff = 0, bool *more = 0);
 
     /**
      * Get/set the CSS Media Type.
@@ -289,6 +289,8 @@ private:
 
     QString m_medium;   // media type
 };
+
+}
 
 #endif
 

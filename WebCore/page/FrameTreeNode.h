@@ -24,6 +24,8 @@
 #include <kxmlcore/RefPtr.h>
 #include <kxmlcore/PassRefPtr.h>
 
+namespace WebCore {
+
 class Frame;
 
 class FrameTreeNode
@@ -57,9 +59,11 @@ public:
     Frame* m_lastChild;
     int m_childCount;
 
-    // uncopiable
+    // uncopyable
     FrameTreeNode(const FrameTreeNode&);
     FrameTreeNode& operator=(const FrameTreeNode&);
 };
+
+}
 
 #endif // FRAME_TREE_NODE_H

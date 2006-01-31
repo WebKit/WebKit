@@ -42,15 +42,8 @@
 
 #include <kdebug.h>
 
-using namespace DOM::EventNames;
-
-using DOM::AtomicString;
-using DOM::CSSException;
-using DOM::DOMString;
-using DOM::DocumentImpl;
-using DOM::EventException;
-using DOM::NodeImpl;
-using DOM::RangeException;
+using namespace WebCore;
+using namespace EventNames;
 
 namespace KJS {
 

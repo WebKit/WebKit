@@ -28,14 +28,13 @@
 #include <qobject.h>
 #include "dom_string.h"
 
-class FrameView;
-
 namespace WebCore {
 
 class DOMString;
 class DocumentFragmentImpl;
 class DocumentImpl;
 class ElementImpl;
+class FrameView;
 class NodeImpl;
 class SegmentedString;
 

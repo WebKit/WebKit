@@ -35,6 +35,8 @@
 
 #include "KWQKCookieJar.h"
 
+using namespace WebCore;
+
 namespace KJS {
 
     class PluginBase : public JSObject {

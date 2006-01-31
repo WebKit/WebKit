@@ -38,21 +38,8 @@
 
 #import <CoreFoundation/CoreFoundation.h>
 
-class FramePrivate;
 class KWQWindowWidget;
 class NPObject;
-
-namespace DOM {
-    class DocumentFragmentImpl;
-    class HTMLTableCellElementImpl;
-}
-
-namespace khtml {
-    class RenderObject;
-    class RenderStyle;
-    class VisiblePosition;
-    struct DashboardRegionValue;
-}
 
 namespace KJS {
     class PausedTimeouts;
@@ -112,6 +99,17 @@ typedef int NSWritingDirection;
 
 #endif
 
+namespace WebCore {
+
+class DocumentFragmentImpl;
+class FramePrivate;
+class HTMLTableCellElementImpl;
+class RenderObject;
+class RenderStyle;
+class VisiblePosition;
+
+struct DashboardRegionValue;
+
 enum KWQSelectionDirection {
     KWQSelectingNext,
     KWQSelectingPrevious
@@ -131,18 +129,18 @@ public:
 
     virtual bool openURL(const KURL &);
     
-    virtual void openURLRequest(const KURL &, const WebCore::URLArgs &);
-    virtual void submitForm(const KURL &, const WebCore::URLArgs &);
+    virtual void openURLRequest(const KURL &, const URLArgs &);
+    virtual void submitForm(const KURL &, const URLArgs &);
 
     void scheduleHistoryNavigation( int steps );
     
     QString advanceToNextMisspelling(bool startBeforeSelection = false);
     
-    virtual void setTitle(const DOM::DOMString &);
+    virtual void setTitle(const DOMString &);
     void setStatusBarText(const QString &status);
 
-    virtual void urlSelected(const KURL &url, int button, int state, const WebCore::URLArgs &args);
-    virtual ObjectContents *createPart(const khtml::ChildFrame &child, const KURL &url, const QString &mimeType);
+    virtual void urlSelected(const KURL &url, int button, int state, const URLArgs &args);
+    virtual ObjectContents *createPart(const ChildFrame &child, const KURL &url, const QString &mimeType);
 
     virtual void scheduleClose();
 
@@ -153,11 +151,11 @@ public:
     virtual void saveDocumentState();
     virtual void restoreDocumentState();
     
-    virtual void addMessageToConsole(const DOM::DOMString& message,  unsigned int lineNumber, const DOM::DOMString& sourceID);
+    virtual void addMessageToConsole(const DOMString& message,  unsigned int lineNumber, const DOMString& sourceID);
     void setDisplaysWithFocusAttributes(bool flag);
     
-    NSView *nextKeyView(DOM::NodeImpl *startingPoint, KWQSelectionDirection);
-    NSView *nextKeyViewInFrameHierarchy(DOM::NodeImpl *startingPoint, KWQSelectionDirection);
+    NSView *nextKeyView(NodeImpl *startingPoint, KWQSelectionDirection);
+    NSView *nextKeyViewInFrameHierarchy(NodeImpl *startingPoint, KWQSelectionDirection);
     static NSView *nextKeyViewForWidget(QWidget *startingPoint, KWQSelectionDirection);
     static bool currentEventIsKeyboardOptionTab();
     static bool handleKeyboardOptionTabInView(NSView *view);
@@ -167,9 +165,9 @@ public:
     
     static bool currentEventIsMouseDownInWidget(QWidget *candidate);
     
-    virtual void runJavaScriptAlert(const DOM::DOMString& message);
-    virtual bool runJavaScriptConfirm(const DOM::DOMString& message);
-    virtual bool runJavaScriptPrompt(const DOM::DOMString& message, const DOM::DOMString& defaultValue, DOM::DOMString& result);
+    virtual void runJavaScriptAlert(const DOMString& message);
+    virtual bool runJavaScriptConfirm(const DOMString& message);
+    virtual bool runJavaScriptPrompt(const DOMString& message, const DOMString& defaultValue, DOMString& result);
     virtual bool locationbarVisible();
     virtual bool menubarVisible();
     virtual bool personalbarVisible();
@@ -180,7 +178,7 @@ public:
 
     virtual void createEmptyDocument();
 
-    virtual WebCore::BrowserExtension* createBrowserExtension() { return new WebCore::BrowserExtensionMac(this); }
+    virtual BrowserExtension* createBrowserExtension() { return new BrowserExtensionMac(this); }
 
     static WebCoreFrameBridge *bridgeForWidget(const QWidget *);
     
@@ -192,20 +190,20 @@ public:
 
     NSRect visibleSelectionRect() const;
     NSImage *selectionImage() const;
-    NSImage *snapshotDragImage(DOM::NodeImpl *node, NSRect *imageRect, NSRect *elementRect) const;
+    NSImage *snapshotDragImage(NodeImpl *node, NSRect *imageRect, NSRect *elementRect) const;
 
-    bool dispatchDragSrcEvent(const DOM::AtomicString &eventType, const IntPoint &loc) const;
+    bool dispatchDragSrcEvent(const AtomicString &eventType, const IntPoint &loc) const;
 
     NSFont *fontForSelection(bool *hasMultipleFonts) const;
     NSDictionary *fontAttributesForSelectionStart() const;
     
     NSWritingDirection baseWritingDirectionForSelectionStart() const;
 
-    virtual void markMisspellingsInAdjacentWords(const khtml::VisiblePosition &);
-    virtual void markMisspellings(const khtml::SelectionController &);
+    virtual void markMisspellingsInAdjacentWords(const VisiblePosition &);
+    virtual void markMisspellings(const SelectionController &);
 
-    NSFileWrapper *fileWrapperForElement(DOM::ElementImpl *);
-    NSAttributedString *attributedString(DOM::NodeImpl *startNode, int startOffset, DOM::NodeImpl *endNode, int endOffset);
+    NSFileWrapper *fileWrapperForElement(ElementImpl *);
+    NSAttributedString *attributedString(NodeImpl *startNode, int startOffset, NodeImpl *endNode, int endOffset);
 
     void mouseDown(NSEvent *);
     void mouseDragged(NSEvent *);
@@ -234,17 +232,15 @@ public:
     bool sendContextMenuEvent(NSEvent *);
 
     bool passMouseDownEventToWidget(QWidget *);
-    virtual bool passSubframeEventToSubframe(DOM::NodeImpl::MouseEvent &);
-    virtual bool passWheelEventToChildWidget(DOM::NodeImpl *);
-    
-    void redirectionTimerStartedOrStopped();
+    virtual bool passSubframeEventToSubframe(NodeImpl::MouseEvent &);
+    virtual bool passWheelEventToChildWidget(NodeImpl *);
     
     virtual void clearRecordedFormValues();
-    virtual void recordFormValue(const QString &name, const QString &value, DOM::HTMLFormElementImpl *element);
+    virtual void recordFormValue(const QString &name, const QString &value, HTMLFormElementImpl *element);
 
-    NSString *searchForLabelsAboveCell(QRegExp *regExp, DOM::HTMLTableCellElementImpl *cell);
-    NSString *searchForLabelsBeforeElement(NSArray *labels, DOM::ElementImpl *element);
-    NSString *matchLabelsAgainstElement(NSArray *labels, DOM::ElementImpl *element);
+    NSString *searchForLabelsAboveCell(QRegExp *regExp, HTMLTableCellElementImpl *cell);
+    NSString *searchForLabelsBeforeElement(NSArray *labels, ElementImpl *element);
+    NSString *matchLabelsAgainstElement(NSArray *labels, ElementImpl *element);
 
     bool findString(NSString *str, bool forward, bool caseFlag, bool wrapFlag);
 
@@ -258,8 +254,8 @@ public:
     
     WebCoreKeyboardUIMode keyboardUIMode() const;
 
-    void didTellBridgeAboutLoad(const DOM::DOMString& URL);
-    bool haveToldBridgeAboutLoad(const DOM::DOMString& URL);
+    void didTellBridgeAboutLoad(const DOMString& URL);
+    bool haveToldBridgeAboutLoad(const DOMString& URL);
 
     virtual KJS::Bindings::Instance *getEmbedInstanceForWidget(QWidget*);
     virtual KJS::Bindings::Instance *getObjectInstanceForWidget(QWidget*);
@@ -267,8 +263,8 @@ public:
     void addPluginRootObject(const KJS::Bindings::RootObject *root);
     void cleanupPluginRootObjects();
     
-    virtual void registerCommandForUndo(const khtml::EditCommandPtr &);
-    virtual void registerCommandForRedo(const khtml::EditCommandPtr &);
+    virtual void registerCommandForUndo(const EditCommandPtr &);
+    virtual void registerCommandForRedo(const EditCommandPtr &);
     virtual void clearUndoRedoOperations();
     virtual void issueUndoCommand();
     virtual void issueRedoCommand();
@@ -277,12 +273,12 @@ public:
     virtual void issuePasteCommand();
     virtual void issuePasteAndMatchStyleCommand();
     virtual void issueTransposeCommand();
-    virtual void respondToChangedSelection(const khtml::SelectionController &oldSelection, bool closeTyping);
+    virtual void respondToChangedSelection(const SelectionController &oldSelection, bool closeTyping);
     virtual void respondToChangedContents();
     virtual bool isContentEditable() const;
-    virtual bool shouldChangeSelection(const khtml::SelectionController &oldSelection, const khtml::SelectionController &newSelection, khtml::EAffinity affinity, bool stillSelecting) const;
-    virtual bool shouldBeginEditing(const DOM::RangeImpl *) const;
-    virtual bool shouldEndEditing(const DOM::RangeImpl *) const;
+    virtual bool shouldChangeSelection(const SelectionController &oldSelection, const SelectionController &newSelection, EAffinity affinity, bool stillSelecting) const;
+    virtual bool shouldBeginEditing(const RangeImpl *) const;
+    virtual bool shouldEndEditing(const RangeImpl *) const;
 
     KJS::Bindings::RootObject *executionContextForDOM();
     KJS::Bindings::RootObject *bindingRootObject();
@@ -293,10 +289,10 @@ public:
     virtual void partClearedInBegin();
     
     // Implementation of CSS property -khtml-user-drag == auto
-    bool shouldDragAutoNode(DOM::NodeImpl*, int x, int y) const;
+    bool shouldDragAutoNode(NodeImpl*, int x, int y) const;
 
-    void setMarkedTextRange(const DOM::RangeImpl *, NSArray *attributes, NSArray *ranges);
-    virtual DOM::RangeImpl *markedTextRange() const { return m_markedTextRange.get(); }
+    void setMarkedTextRange(const RangeImpl *, NSArray *attributes, NSArray *ranges);
+    virtual RangeImpl *markedTextRange() const { return m_markedTextRange.get(); }
 
     virtual bool canGoBackOrForward(int distance) const;
 
@@ -314,23 +310,26 @@ public:
 protected:
     virtual QString generateFrameName();
 
+    virtual void startRedirectionTimer();
+    virtual void stopRedirectionTimer();
+
 private:
-    virtual void khtmlMousePressEvent(khtml::MousePressEvent *);
-    virtual void khtmlMouseMoveEvent(khtml::MouseMoveEvent *);
-    virtual void khtmlMouseReleaseEvent(khtml::MouseReleaseEvent *);
+    virtual void khtmlMousePressEvent(MousePressEvent *);
+    virtual void khtmlMouseMoveEvent(MouseMoveEvent *);
+    virtual void khtmlMouseReleaseEvent(MouseReleaseEvent *);
     
     NSView *mouseDownViewIfStillGood();
 
-    NSView *nextKeyViewInFrame(DOM::NodeImpl *startingPoint, KWQSelectionDirection);
-    static NSView *documentViewForNode(DOM::NodeImpl *);
+    NSView *nextKeyViewInFrame(NodeImpl *startingPoint, KWQSelectionDirection);
+    static NSView *documentViewForNode(NodeImpl *);
     
-    bool dispatchCPPEvent(const DOM::AtomicString &eventType, KWQClipboard::AccessPolicy policy);
+    bool dispatchCPPEvent(const AtomicString &eventType, KWQClipboard::AccessPolicy policy);
 
     NSImage *imageFromRect(NSRect rect) const;
 
     void freeClipboard();
 
-    void registerCommandForUndoOrRedo(const khtml::EditCommandPtr &cmd, bool isRedo);
+    void registerCommandForUndoOrRedo(const EditCommandPtr &cmd, bool isRedo);
 
     virtual void detachFromView();
 
@@ -361,7 +360,7 @@ private:
 
     bool _haveUndoRedoOperations;
     
-    HashSet<RefPtr<DOM::DOMStringImpl> > urlsBridgeKnowsAbout;
+    HashSet<RefPtr<DOMStringImpl> > urlsBridgeKnowsAbout;
 
     friend class Frame;
 
@@ -371,7 +370,7 @@ private:
     WebScriptObject *_windowScriptObject;
     NPObject *_windowScriptNPObject;
     
-    RefPtr<DOM::NodeImpl> _dragSrc;     // element that may be a drag source, for the current mouse gesture
+    RefPtr<NodeImpl> _dragSrc;     // element that may be a drag source, for the current mouse gesture
     bool _dragSrcIsLink;
     bool _dragSrcIsImage;
     bool _dragSrcInSelection;
@@ -379,10 +378,12 @@ private:
     bool _dragSrcIsDHTML;
     KWQClipboard *_dragClipboard;   // used on only the source side of dragging
     
-    RefPtr<DOM::RangeImpl> m_markedTextRange;
+    RefPtr<RangeImpl> m_markedTextRange;
 };
 
 inline MacFrame *Mac(Frame *frame) { return static_cast<MacFrame *>(frame); }
 inline const MacFrame *Mac(const Frame *frame) { return static_cast<const MacFrame *>(frame); }
+
+}
 
 #endif

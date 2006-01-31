@@ -53,7 +53,8 @@
 #include "MacFrame.h"
 #endif
 
-using namespace WebCore;
+namespace WebCore {
+
 using namespace EventNames;
 using namespace HTMLNames;
 
@@ -1218,4 +1219,6 @@ bool FrameView::isTransparent() const
 void FrameView::setTransparent(bool isTransparent)
 {
     d->isTransparent = isTransparent;
+}
+
 }

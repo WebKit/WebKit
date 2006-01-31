@@ -25,10 +25,10 @@
 
 #include "BrowserExtension.h"
 
+namespace WebCore {
+
 class Frame;
 class MacFrame;
-
-namespace WebCore {
 
 class BrowserExtensionMac : public BrowserExtension {
 public:

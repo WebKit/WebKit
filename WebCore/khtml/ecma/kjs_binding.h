@@ -29,11 +29,10 @@
 #include <JavaScriptCore/runtime.h>
 #endif
 
-class Frame;
-
-namespace DOM {
+namespace WebCore {
     class DocumentImpl;
     class EventImpl;
+    class Frame;
     class NodeImpl;
 }
 
@@ -72,7 +71,7 @@ namespace KJS {
   class ScriptInterpreter : public Interpreter
   {
   public:
-    ScriptInterpreter(JSObject *global, Frame *frame);
+    ScriptInterpreter(JSObject *global, WebCore::Frame *frame);
     virtual ~ScriptInterpreter();
 
     static DOMObject* getDOMObject(void* objectHandle);
@@ -85,7 +84,7 @@ namespace KJS {
     static void forgetAllDOMNodesForDocument(DOM::DocumentImpl *document);
     static void updateDOMNodeDocument(DOM::NodeImpl *nodeHandle, DOM::DocumentImpl *oldDoc, DOM::DocumentImpl *newDoc);
 
-    Frame* frame() const { return m_frame; }
+    WebCore::Frame* frame() const { return m_frame; }
 
     virtual int rtti() { return 1; }
 
@@ -112,7 +111,7 @@ namespace KJS {
     void *createObjcInstanceForValue (ExecState *exec, JSObject *value, const Bindings::RootObject *origin, const Bindings::RootObject *current);
 
   private:
-    Frame* m_frame;
+    WebCore::Frame* m_frame;
 
     DOM::EventImpl *m_evt;
     bool m_inlineCode;

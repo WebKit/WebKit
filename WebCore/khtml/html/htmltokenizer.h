@@ -41,13 +41,13 @@
 #endif
 
 class HTMLParser;
-class FrameView;
 
 namespace WebCore {
 
 class CachedScript;
 class DocumentFragmentImpl;
 class DocumentImpl;
+class FrameView;
 class NamedMappedAttrMapImpl;
 
 /**

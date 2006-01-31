@@ -25,13 +25,11 @@
 #include "RenderBlock.h"
 #include <kxmlcore/HashSet.h>
 
-class FrameView;
-class QScrollView;
-
 namespace WebCore {
 
-class RenderCanvas : public RenderBlock
-{
+class FrameView;
+
+class RenderCanvas : public RenderBlock {
 public:
     RenderCanvas(DOM::NodeImpl* node, FrameView *view);
     virtual ~RenderCanvas();

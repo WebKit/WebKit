@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,25 +25,21 @@
 #ifndef DOM_EVENTSIMPL_H
 #define DOM_EVENTSIMPL_H
 
-#include "dom/dom_node.h"
+#include "dom_node.h"
 #include "NodeImpl.h"
-#include "xml/dom_atomicstring.h"
-#include "xml/dom2_viewsimpl.h"
+#include "dom_atomicstring.h"
+#include "dom2_viewsimpl.h"
 #include "Shared.h"
 
-class Frame;
 class QKeyEvent;
 class QStringList;
 
 namespace WebCore {
-    class IntPoint;
-    class Image;
-}
 
-namespace DOM {
-
-class EventListener;
 class ClipboardImpl;
+class EventListener;
+class Image;
+class IntPoint;
 
 class EventImpl : public Shared<EventImpl>
 {
@@ -111,17 +107,17 @@ class UIEventImpl : public EventImpl
 public:
     UIEventImpl();
     UIEventImpl(const AtomicString &type,
-		bool canBubbleArg,
-		bool cancelableArg,
-		AbstractViewImpl *viewArg,
-		int detailArg);
+                bool canBubbleArg,
+                bool cancelableArg,
+                AbstractViewImpl *viewArg,
+                int detailArg);
     AbstractViewImpl *view() const { return m_view.get(); }
     int detail() const { return m_detail; }
     void initUIEvent(const AtomicString &typeArg,
-		     bool canBubbleArg,
-		     bool cancelableArg,
-		     AbstractViewImpl *viewArg,
-		     int detailArg);
+                     bool canBubbleArg,
+                     bool cancelableArg,
+                     AbstractViewImpl *viewArg,
+                     int detailArg);
     virtual bool isUIEvent() const;
 
     virtual int keyCode() const;
@@ -212,20 +208,20 @@ class MouseEventImpl : public MouseRelatedEventImpl {
 public:
     MouseEventImpl();
     MouseEventImpl(const AtomicString &type,
-		   bool canBubbleArg,
-		   bool cancelableArg,
-		   AbstractViewImpl *viewArg,
-		   int detailArg,
-		   int screenXArg,
-		   int screenYArg,
-		   int clientXArg,
-		   int clientYArg,
-		   bool ctrlKeyArg,
-		   bool altKeyArg,
-		   bool shiftKeyArg,
-		   bool metaKeyArg,
-		   unsigned short buttonArg,
-		   NodeImpl *relatedTargetArg,
+                   bool canBubbleArg,
+                   bool cancelableArg,
+                   AbstractViewImpl *viewArg,
+                   int detailArg,
+                   int screenXArg,
+                   int screenYArg,
+                   int clientXArg,
+                   int clientYArg,
+                   bool ctrlKeyArg,
+                   bool altKeyArg,
+                   bool shiftKeyArg,
+                   bool metaKeyArg,
+                   unsigned short buttonArg,
+                   NodeImpl *relatedTargetArg,
                    ClipboardImpl *clipboardArg = 0,
                    bool isSimulated = false);
     virtual ~MouseEventImpl();
@@ -237,20 +233,20 @@ public:
     NodeImpl *toElement() const;
     NodeImpl *fromElement() const;
     void initMouseEvent(const AtomicString &typeArg,
-			bool canBubbleArg,
-			bool cancelableArg,
-			AbstractViewImpl *viewArg,
-			int detailArg,
-			int screenXArg,
-			int screenYArg,
-			int clientXArg,
-			int clientYArg,
-			bool ctrlKeyArg,
-			bool altKeyArg,
-			bool shiftKeyArg,
-			bool metaKeyArg,
-			unsigned short buttonArg,
-			NodeImpl *relatedTargetArg);
+                        bool canBubbleArg,
+                        bool cancelableArg,
+                        AbstractViewImpl *viewArg,
+                        int detailArg,
+                        int screenXArg,
+                        int screenYArg,
+                        int clientXArg,
+                        int clientYArg,
+                        bool ctrlKeyArg,
+                        bool altKeyArg,
+                        bool shiftKeyArg,
+                        bool metaKeyArg,
+                        unsigned short buttonArg,
+                        NodeImpl *relatedTargetArg);
     virtual bool isMouseEvent() const;
     virtual bool isDragEvent() const;
     virtual int which() const;
@@ -317,13 +313,13 @@ class MutationEventImpl : public EventImpl {
 public:
     MutationEventImpl();
     MutationEventImpl(const AtomicString &type,
-		      bool canBubbleArg,
-		      bool cancelableArg,
-		      NodeImpl *relatedNodeArg,
-		      const DOMString &prevValueArg,
-		      const DOMString &newValueArg,
-		      const DOMString &attrNameArg,
-		      unsigned short attrChangeArg);
+                      bool canBubbleArg,
+                      bool cancelableArg,
+                      NodeImpl *relatedNodeArg,
+                      const DOMString &prevValueArg,
+                      const DOMString &newValueArg,
+                      const DOMString &attrNameArg,
+                      unsigned short attrChangeArg);
 
     NodeImpl *relatedNode() const { return m_relatedNode.get(); }
     DOMString prevValue() const { return m_prevValue.get(); }
@@ -331,13 +327,13 @@ public:
     DOMString attrName() const { return m_attrName.get(); }
     unsigned short attrChange() const { return m_attrChange; }
     void initMutationEvent(const AtomicString &typeArg,
-			   bool canBubbleArg,
-			   bool cancelableArg,
-			   NodeImpl *relatedNodeArg,
-			   const DOMString &prevValueArg,
-			   const DOMString &newValueArg,
-			   const DOMString &attrNameArg,
-			   unsigned short attrChangeArg);
+                           bool canBubbleArg,
+                           bool cancelableArg,
+                           NodeImpl *relatedNodeArg,
+                           const DOMString &prevValueArg,
+                           const DOMString &newValueArg,
+                           const DOMString &attrNameArg,
+                           unsigned short attrChangeArg);
     virtual bool isMutationEvent() const;
 private:
     RefPtr<NodeImpl> m_relatedNode;

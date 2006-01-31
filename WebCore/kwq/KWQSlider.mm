@@ -34,8 +34,7 @@
 #import "WebCoreFrameBridge.h"
 #import "render_form.h"
 
-using khtml::RenderWidget;
-using khtml::RenderLayer;
+using namespace WebCore;
 
 @interface KWQSlider : NSSlider <KWQWidgetHolder>
 {

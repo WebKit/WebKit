@@ -26,12 +26,13 @@
 #include "KWQWidget.h"
 #include <kxmlcore/HashMap.h>
 
-class Frame;
-
-namespace WebCore { class DOMString; }
+namespace WebCore {
+    class DOMString;
+    class Frame;
+}
 
 class KJavaAppletWidget : public QWidget
 {
 public:
-    KJavaAppletWidget(const IntSize&, Frame *, const HashMap<WebCore::DOMString, WebCore::DOMString>& args);
+    KJavaAppletWidget(const IntSize&, WebCore::Frame *, const HashMap<WebCore::DOMString, WebCore::DOMString>& args);
 };

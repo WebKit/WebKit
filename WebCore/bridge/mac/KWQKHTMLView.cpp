@@ -29,6 +29,8 @@
 #include "MacFrame.h"
 #include "KWQWindowWidget.h"
 
+namespace WebCore {
+
 /*
     Currently this file just extends the KDE implementation.
     See khtml/khtmlview.cpp for the rest of the implementation.
@@ -42,4 +44,6 @@ QWidget *FrameView::topLevelWidget() const
 IntPoint FrameView::viewportToGlobal(const IntPoint &p) const
 {
     return static_cast<KWQWindowWidget *>(topLevelWidget())->viewportToGlobal(p);
+}
+
 }

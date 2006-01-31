@@ -43,12 +43,7 @@
 #import <JavaScriptCore/runtime_root.h>
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
 
-using DOM::CSSException;
-using DOM::DOMString;
-using DOM::DOMStringImpl;
-using DOM::EventException;
-using DOM::NodeImpl;
-using DOM::RangeException;
+using namespace WebCore;
 
 using KJS::ExecState;
 using KJS::Interpreter;
@@ -97,7 +92,7 @@ void raiseDOMException(int code)
 {
     ASSERT(code);
 
-    NSString *name = DOMException;
+    NSString *name = ::DOMException;
 
     if (code >= RangeException::_EXCEPTION_OFFSET && code <= RangeException::_EXCEPTION_MAX) {
         name = DOMRangeException;

@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "WebCoreTextRendererFactory.h"
 
 #import <kxmlcore/Assertions.h>
@@ -31,6 +31,8 @@
 #import "KWQListBox.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreTextRenderer.h"
+
+using namespace WebCore;
 
 void WebCoreInitializeFont(WebCoreFont *font)
 {

@@ -1,3 +1,108 @@
+2006-01-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - added a Timer class
+        - used the Timer class for the redirection timer
+        - moved Frame, FrameView, MacFrame, and FrameNodeTree into WebCore namespace
+        - removed more KWQ
+
+        * ForwardingHeaders/khtml_factory.h: Removed.
+        * kwq/KWQKHTMLFactory.cpp: Removed.
+        * kwq/KWQKHTMLFactory.h: Removed.
+
+        * platform/Timer.h: Added.
+        * platform/mac/Timer.cpp: Added.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Updated for added and removed files.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * page/Frame.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::init): Remove code to set up slotRedirect.
+        (WebCore::Frame::checkCompleted): Call start/stopRedirectionTimer instead of using
+        the redirection timer directly.
+        (WebCore::Frame::scheduleRedirection): Ditto.
+        (WebCore::Frame::scheduleLocationChange): Ditto.
+        (WebCore::Frame::scheduleHistoryNavigation): Ditto.
+        (WebCore::Frame::cancelRedirection): Ditto.
+        (WebCore::Frame::redirectionTimerFired): Renamed from slotRedirect.
+        (WebCore::Frame::slotParentCompleted): More startRedirectionTimer.
+        (WebCore::Frame::startRedirectionTimer): Added. Virtual bottleneck to start the
+        redirection timer.
+        (WebCore::Frame::stopRedirectionTimer): Added. Virtual bottleneck to stop the
+        redirection timer.
+
+        * page/FramePrivate.h: Changed m_redirectionTimer from a QTimer to a Timer.
+
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::startRedirectionTimer): Added. Avoids the need for the QTimer
+        "monitor" feature that I had added a while back to implement the client-redirected
+        callback.
+        (WebCore::MacFrame::stopRedirectionTimer): Ditto.
+
+        * kwq/KWQSlot.cpp: Removed slotRedirected.
+
+        * ForwardingHeaders/ksvg2/KSVGPart.h: Removed using to put Frame into various
+        namespaces (all of which are WebCore now anyway).
+
+        * bindings/objc/DOMInternal.mm:
+        * bridge/mac/BrowserExtensionMac.h:
+        * bridge/mac/KWQKHTMLView.cpp:
+        * bridge/mac/MacFrame.h:
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        * bridge/mac/WebCorePageBridge.h:
+        * bridge/mac/WebCorePageBridge.mm:
+        * css/cssstyleselector.cpp:
+        * css/cssstyleselector.h:
+        * khtml/ecma/kjs_binding.cpp:
+        * khtml/ecma/kjs_binding.h:
+        * khtml/ecma/kjs_navigator.cpp:
+        * khtml/ecma/kjs_navigator.h:
+        * khtml/ecma/kjs_proxy.h:
+        * khtml/ecma/kjs_window.h:
+        * khtml/editing/SelectionController.h:
+        * khtml/editing/jsediting.h:
+        * khtml/html/html_baseimpl.h:
+        * khtml/html/html_documentimpl.cpp:
+        * khtml/html/html_documentimpl.h:
+        * khtml/html/html_headimpl.h:
+        * khtml/html/htmlparser.h:
+        * khtml/html/htmltokenizer.h:
+        * khtml/xml/DOMImplementationImpl.h:
+        * khtml/xml/DocumentImpl.h:
+        * khtml/xml/dom2_eventsimpl.h:
+        * khtml/xml/xml_tokenizer.h:
+        * khtml/xsl/xslt_processorimpl.h:
+        * ksvg2/svg/SVGDocumentImpl.cpp:
+        * kwq/KWQClipboard.h:
+        * kwq/KWQComboBox.mm:
+        * kwq/KWQFileButton.h:
+        * kwq/KWQFrame.mm:
+        * kwq/KWQKJavaAppletWidget.h:
+        * kwq/KWQListBox.mm:
+        * kwq/KWQSignalStubs.cpp:
+        * kwq/KWQSlider.mm:
+        * kwq/KWQTextField.mm:
+        * kwq/KWQWidget.mm:
+        * kwq/WebCoreSettings.mm:
+        * kwq/WebCoreTextRendererFactory.mm:
+        * loader/DocLoader.h:
+        * page/FrameTreeNode.cpp:
+        * page/FrameTreeNode.h:
+        * page/FrameView.cpp:
+        * page/FrameView.h:
+        * page/Page.cpp:
+        * page/Page.h:
+        * rendering/InlineTextBox.h:
+        * rendering/font.cpp:
+        * rendering/render_canvas.h:
+        * rendering/render_frames.h:
+        * rendering/render_object.h:
+        * rendering/render_replaced.h:
+        Updated for namespace and header changes.
+
 2006-01-31  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Darin.
@@ -6,7 +111,7 @@
         REGRESSION: United.com menus messed up due to document.all/MSIE sniff
         
         * khtml/ecma/kjs_html.h:
-        (KJS::HTMLAllCollection::masqueradeAsNull):
+        (KJS::HTMLAllCollection::masqueradeAsUndefined):
         Update for name change.
         
 2006-01-30  Geoffrey Garen  <ggaren@apple.com>

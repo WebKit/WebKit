@@ -28,20 +28,15 @@
 #include "CachedObjectClient.h"
 #include "css/css_stylesheetimpl.h"
 
-class FrameView;
+namespace WebCore {
 
-namespace khtml {
-    class CachedCSSStyleSheet;
-    class CachedScript;
-}
-
-
-namespace DOM {
-
+class CSSStyleSheetImpl;
+class CachedCSSStyleSheet;
+class CachedScript;
 class DOMString;
+class FrameView;
 class HTMLFormElementImpl;
 class StyleSheetImpl;
-class CSSStyleSheetImpl;
 
 class HTMLBaseElementImpl : public HTMLElementImpl
 {

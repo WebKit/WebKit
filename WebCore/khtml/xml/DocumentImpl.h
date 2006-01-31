@@ -39,8 +39,6 @@
 #include <qptrlist.h>
 #include <qstringlist.h>
 
-class Frame;
-class FrameView;
 class KWQAccObjectCache;
 class RenderArena;
 
@@ -64,6 +62,8 @@ namespace WebCore {
     class EntityReferenceImpl;
     class EventImpl;
     class EventListener;
+    class Frame;
+    class FrameView;
     class HTMLCollectionImpl;
     class HTMLDocumentImpl;
     class HTMLElementImpl;

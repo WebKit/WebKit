@@ -27,6 +27,8 @@
 #include "CachedImage.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "HTMLElementImpl.h"
+#include "KWQKPartsHistoryProvider.h"
 #include "UserAgentStyleSheets.h"
 #include "css_rule.h"
 #include "css_ruleimpl.h"
@@ -39,8 +41,7 @@
 #include "font.h"
 #include "helper.h"
 #include "html_documentimpl.h"
-#include "HTMLElementImpl.h"
-#include "khtml_factory.h"
+#include "htmlnames.h"
 #include "khtml_settings.h"
 #include "khtmllayout.h"
 #include "loader.h"
@@ -53,7 +54,6 @@
 #include <qstring.h>
 #include <qvaluelist.h>
 #include <stdlib.h>
-#include "htmlnames.h"
 
 namespace WebCore {
 
@@ -591,7 +591,7 @@ static void checkPseudoState( ElementImpl *e, bool checkVisited = true )
             u.prepend(currentEncodedURL->path);
         cleanpath( u );
     }
-    pseudoState = KHTMLFactory::vLinks()->contains( u ) ? PseudoVisited : PseudoLink;
+    pseudoState = KParts::HistoryProvider::self()->contains(u) ? PseudoVisited : PseudoLink;
 }
 
 #ifdef STYLE_SHARING_STATS

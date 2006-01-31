@@ -60,8 +60,7 @@
 #include "SVGDocumentImpl.h"
 #include "EventNames.h"
 
-using namespace KSVG;
-using namespace khtml;
+namespace WebCore {
 
 SVGDocumentImpl::SVGDocumentImpl(SVGDOMImplementationImpl *i, KDOM::KDOMView *view) : KDOM::DocumentImpl(i, view), KDOM::CachedObjectClient()
 {
@@ -300,6 +299,7 @@ void SVGDocumentImpl::addForwardReference(const SVGElementImpl *element)
     m_forwardReferences.append(element);
 }
 
+}
+
 // vim:ts=4:noet
 #endif // SVG_SUPPORT
-

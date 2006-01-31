@@ -25,23 +25,20 @@
 
 #ifdef KHTML_XSLT
 
-#include <libxml/parser.h>
-#include <libxml/parserInternals.h>
-
-#include <libxslt/transform.h>
-#include <libxslt/documents.h>
-
-#include <Shared.h>
+#include "Shared.h"
 #include "dom_stringimpl.h"
 #include "xsl_stylesheetimpl.h"
+#include <libxml/parser.h>
+#include <libxml/parserInternals.h>
+#include <libxslt/documents.h>
+#include <libxslt/transform.h>
 #include <qstring.h>
 
 #include <kxmlcore/HashMap.h>
 
+namespace WebCore {
+
 class FrameView;
-
-namespace DOM {
-
 class NodeImpl;
 class DocumentImpl;
 class DocumentFragmentImpl;

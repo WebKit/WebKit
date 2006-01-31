@@ -28,7 +28,6 @@
 
 #include "dom_string.h"
 
-class Frame;
 class QString;
 
 namespace DOM {

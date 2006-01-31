@@ -69,7 +69,6 @@
 #include "html/htmltokenizer.h"
 #include "htmlfactory.h"
 #include "htmlnames.h"
-#include "khtml_factory.h"
 #include "khtml_settings.h"
 #include "rendering/render_object.h"
 #include "xml/dom2_eventsimpl.h"
@@ -77,11 +76,7 @@
 #include <kurl.h>
 #include <stdlib.h>
 
-// Turn off inlining to avoid warning with newer gcc.
-//#undef __inline
-//#define __inline
 #include "doctypes.cpp"
-//#undef __inline
 
 namespace WebCore {
 

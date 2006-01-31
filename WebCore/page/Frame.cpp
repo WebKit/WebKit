@@ -93,15 +93,15 @@
 #include "SVGDocumentExtensions.h"
 #endif
 
-using namespace WebCore;
+using namespace KJS;
+
+namespace WebCore {
+
 using namespace EventNames;
 using namespace HTMLNames;
 
-using namespace KJS;
-
 const int CARET_BLINK_FREQUENCY = 500;
 
-namespace WebCore {
     class PartStyleSheetLoader : public CachedObjectClient
     {
     public:
@@ -126,7 +126,6 @@ namespace WebCore {
         QGuardedPtr<Frame> m_frame;
         CachedCSSStyleSheet *m_cachedSheet;
     };
-}
 
 FrameList::Iterator FrameList::find( const QString &name )
 {
@@ -178,7 +177,6 @@ void Frame::init(FrameView *view)
   connect( Cache::loader(), SIGNAL( requestFailed( khtml::DocLoader*, khtml::CachedObject *) ),
            this, SLOT( slotLoaderRequestDone( khtml::DocLoader*, khtml::CachedObject *) ) );
 
-  connect(&d->m_redirectionTimer, SIGNAL(timeout()), this, SLOT(slotRedirect()));
   connect(&d->m_lifeSupportTimer, SIGNAL(timeout()), this, SLOT(slotEndLifeSupport()));
 }
 
@@ -994,8 +992,8 @@ void Frame::checkCompleted()
   {
     // Do not start redirection for frames here! That action is
     // deferred until the parent emits a completed signal.
-    if ( parentFrame() == 0 )
-      d->m_redirectionTimer.start( (int)(1000 * d->m_delayRedirect), true );
+    if (!parentFrame())
+      startRedirectionTimer();
 
     emit completed( true );
   }
@@ -1082,9 +1080,9 @@ void Frame::scheduleRedirection( double delay, const QString &url, bool doLockHi
        d->m_redirectLockHistory = doLockHistory;
        d->m_redirectUserGesture = false;
 
-       d->m_redirectionTimer.stop();
-       if ( d->m_bComplete )
-         d->m_redirectionTimer.start( (int)(1000 * d->m_delayRedirect), true );
+       stopRedirectionTimer();
+       if (d->m_bComplete)
+         startRedirectionTimer();
     }
 }
 
@@ -1106,9 +1104,9 @@ void Frame::scheduleLocationChange(const QString &url, const QString &referrer, 
     d->m_redirectReferrer = referrer;
     d->m_redirectLockHistory = lockHistory;
     d->m_redirectUserGesture = userGesture;
-    d->m_redirectionTimer.stop();
+    stopRedirectionTimer();
     if (d->m_bComplete)
-        d->m_redirectionTimer.start(0, true);
+        startRedirectionTimer();
 }
 
 bool Frame::isScheduledLocationChangePending() const
@@ -1139,9 +1137,9 @@ void Frame::scheduleHistoryNavigation( int steps )
     d->m_redirectURL = QString::null;
     d->m_redirectReferrer = QString::null;
     d->m_scheduledHistoryNavigationSteps = steps;
-    d->m_redirectionTimer.stop();
+    stopRedirectionTimer();
     if (d->m_bComplete)
-        d->m_redirectionTimer.start(0, true);
+        startRedirectionTimer();
 }
 
 void Frame::cancelRedirection(bool cancelWithLoadInProgress)
@@ -1149,7 +1147,7 @@ void Frame::cancelRedirection(bool cancelWithLoadInProgress)
     if (d) {
         d->m_cancelWithLoadInProgress = cancelWithLoadInProgress;
         d->m_scheduledRedirection = noRedirectionScheduled;
-        d->m_redirectionTimer.stop();
+        stopRedirectionTimer();
     }
 }
 
@@ -1176,7 +1174,7 @@ void Frame::changeLocation(const QString &URL, const QString &referrer, bool loc
     urlSelected(URL, 0, 0, "_self", args);
 }
 
-void Frame::slotRedirect()
+void Frame::redirectionTimerFired(Timer<Frame>*)
 {
     if (d->m_scheduledRedirection == historyNavigationScheduled) {
         d->m_scheduledRedirection = noRedirectionScheduled;
@@ -1449,7 +1447,7 @@ void Frame::setFocusNodeIfNeeded()
             // We don't want to set focus on a subframe when selecting in a parent frame,
             // so add the !isFrameElement check here. There's probably a better way to make this
             // work in the long term, but this is the safest fix at this time.
-            if (target && target->isMouseFocusable() && !::isFrameElement(target)) {
+            if (target && target->isMouseFocusable() && !isFrameElement(target)) {
                 document()->setFocusNode(target);
                 return;
             }
@@ -1855,8 +1853,8 @@ void Frame::submitForm( const char *action, const QString &url, const FormData &
 
 void Frame::slotParentCompleted()
 {
-if (d->m_scheduledRedirection != noRedirectionScheduled && !d->m_redirectionTimer.isActive())
-    d->m_redirectionTimer.start( (int)(1000 * d->m_delayRedirect), true);
+    if (d->m_scheduledRedirection != noRedirectionScheduled && !d->m_redirectionTimer.isActive())
+        startRedirectionTimer();
 }
 
 void Frame::slotChildStarted( KIO::Job *job )
@@ -3808,3 +3806,14 @@ KURL Frame::url() const
     return d->m_url;
 }
 
+void Frame::startRedirectionTimer()
+{
+    d->m_redirectionTimer.startOneShot(d->m_delayRedirect);
+}
+
+void Frame::stopRedirectionTimer()
+{
+    d->m_redirectionTimer.stop();
+}
+
+}

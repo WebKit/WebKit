@@ -31,9 +31,6 @@
 
 #include <qscrollview.h>
 
-class Frame;
-class FrameView;
-
 namespace khtml {
     class RenderFrameSet;
     class RenderFrame;
@@ -42,8 +39,9 @@ namespace khtml {
 
 namespace DOM {
 
-class DOMString;
 class CSSStyleSheetImpl;
+class DOMString;
+class Frame;
 class HTMLFrameElement;
 
 // -------------------------------------------------------------------------

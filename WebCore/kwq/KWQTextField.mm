@@ -34,8 +34,7 @@
 #import "WebCoreFrameBridge.h"
 #import "render_form.h"
 
-using khtml::RenderWidget;
-using khtml::RenderLayer;
+using namespace WebCore;
 
 @interface NSString (KWQTextField)
 - (int)_KWQ_numComposedCharacterSequences;
@@ -120,7 +119,7 @@ using khtml::RenderLayer;
 - (void)action:(id)sender
 {
     if (!widget)
-	return;
+        return;
     widget->textChanged();
     if (!widget)
         return;
@@ -165,7 +164,7 @@ using khtml::RenderLayer;
 - (void)controlTextDidBeginEditing:(NSNotification *)notification
 {
     if (!widget)
-	return;
+        return;
     
     [[field _KWQ_currentEditor] setWantsNotificationForMarkedText:YES];
 
@@ -176,7 +175,7 @@ using khtml::RenderLayer;
 - (void)controlTextDidEndEditing:(NSNotification *)notification
 {
     if (!widget)
-	return;
+        return;
     
     WebCoreFrameBridge *bridge = MacFrame::bridgeForWidget(widget);
     [bridge textFieldDidEndEditing:(DOMHTMLInputElement *)[bridge elementForView:field]];
@@ -188,7 +187,7 @@ using khtml::RenderLayer;
 - (void)controlTextDidChange:(NSNotification *)notification
 {
     if (!widget)
-	return;
+        return;
     
     if (MacFrame::handleKeyboardOptionTabInView(field))
         return;
@@ -226,7 +225,7 @@ using khtml::RenderLayer;
 - (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor
 {
     if (!widget)
-	return NO;
+        return NO;
     
     return YES;
 }
@@ -234,7 +233,7 @@ using khtml::RenderLayer;
 - (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector
 {
     if (!widget)
-	return NO;
+        return NO;
     
     WebCoreFrameBridge *bridge = MacFrame::bridgeForWidget(widget);
     return [bridge textField:(DOMHTMLInputElement *)[bridge elementForView:field] doCommandBySelector:commandSelector];
@@ -279,7 +278,7 @@ using khtml::RenderLayer;
 - (BOOL)textView:(NSTextView *)view shouldHandleEvent:(NSEvent *)event
 {
     if (!widget)
-	return YES;
+        return YES;
     
     NSEventType type = [event type];
     if ((type == NSKeyDown || type == NSKeyUp) && ![[NSInputManager currentInputManager] hasMarkedText]) {
@@ -313,7 +312,7 @@ using khtml::RenderLayer;
     QWidget::setDeferFirstResponderChanges(false);
 
     if (!widget)
-	return;
+        return;
 
     if ([event type] == NSLeftMouseUp) {
         widget->sendConsumedMouseUp();
@@ -382,7 +381,7 @@ using khtml::RenderLayer;
 - (void)setHasFocus:(BOOL)nowHasFocus
 {
     if (!widget || nowHasFocus == hasFocus)
-	return;
+        return;
 
     hasFocus = nowHasFocus;
     hasFocusAndSelectionSet = NO;
@@ -411,17 +410,17 @@ using khtml::RenderLayer;
                 const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
         }
         
-	// Sending the onFocus event above, may have resulted in a blur() - if this
-	// happens when tabbing from another text field, then endEditing: and
-	// controlTextDidEndEditing: will never be called. The bad side effects of this 
-	// include the fact that our idea of the focus state will be wrong;
-	// and the text field will think it's still editing, so it will continue to draw
-	// the focus ring. So we call endEditing: manually if we detect this inconsistency,
-	// and the correct our internal impression of the focus state.
-	if ([field _KWQ_currentEditor] == nil && [field currentEditor] != nil) {
-	    [[field cell] endEditing:[field currentEditor]];
-	    [self setHasFocus:NO];
-	}
+        // Sending the onFocus event above, may have resulted in a blur() - if this
+        // happens when tabbing from another text field, then endEditing: and
+        // controlTextDidEndEditing: will never be called. The bad side effects of this 
+        // include the fact that our idea of the focus state will be wrong;
+        // and the text field will think it's still editing, so it will continue to draw
+        // the focus ring. So we call endEditing: manually if we detect this inconsistency,
+        // and the correct our internal impression of the focus state.
+        if ([field _KWQ_currentEditor] == nil && [field currentEditor] != nil) {
+            [[field cell] endEditing:[field currentEditor]];
+            [self setHasFocus:NO];
+        }
     } else {
         lastSelectedRange = [self selectedRange];
         
@@ -546,20 +545,20 @@ using khtml::RenderLayer;
 - (NSView *)nextKeyView
 {
     if (!inNextValidKeyView)
-	return [super nextKeyView];
+        return [super nextKeyView];
     QWidget* widget = [controller widget];
     if (!widget)
-	return [super nextKeyView];
+        return [super nextKeyView];
     return MacFrame::nextKeyViewForWidget(widget, KWQSelectingNext);
 }
 
 - (NSView *)previousKeyView
 {
     if (!inNextValidKeyView)
-	return [super previousKeyView];
+        return [super previousKeyView];
     QWidget* widget = [controller widget];
     if (!widget)
-	return [super previousKeyView];
+        return [super previousKeyView];
     return MacFrame::nextKeyViewForWidget(widget, KWQSelectingPrevious);
 }
 
@@ -712,20 +711,20 @@ using khtml::RenderLayer;
 - (NSView *)nextKeyView
 {
     if (!inNextValidKeyView)
-	return [super nextKeyView];
+        return [super nextKeyView];
     QWidget* widget = [controller widget];
     if (!widget)
-	return [super nextKeyView];
+        return [super nextKeyView];
     return MacFrame::nextKeyViewForWidget(widget, KWQSelectingNext);
 }
 
 - (NSView *)previousKeyView
 {
     if (!inNextValidKeyView)
-	return [super previousKeyView];
+        return [super previousKeyView];
     QWidget* widget = [controller widget];
     if (!widget)
-	return [super previousKeyView];
+        return [super previousKeyView];
     return MacFrame::nextKeyViewForWidget(widget, KWQSelectingPrevious);
 }
 
@@ -844,9 +843,9 @@ using khtml::RenderLayer;
     NSTextView *textObject = [notification object];
     id delegate = [textObject delegate];
     if ([delegate isKindOfClass:[NSSecureTextField class]]) {
-	BOOL oldSelectable = [textObject isSelectable];
-	[textObject setSelectable:YES];
-	[textObject setSelectable:oldSelectable];
+        BOOL oldSelectable = [textObject isSelectable];
+        [textObject setSelectable:YES];
+        [textObject setSelectable:oldSelectable];
     }
 }
 
@@ -940,20 +939,20 @@ using khtml::RenderLayer;
 - (NSView *)nextKeyView
 {
     if (!inNextValidKeyView)
-	return [super nextKeyView];
+        return [super nextKeyView];
     QWidget* widget = [controller widget];
     if (!widget)
-	return [super nextKeyView];
+        return [super nextKeyView];
     return MacFrame::nextKeyViewForWidget(widget, KWQSelectingNext);
 }
 
 - (NSView *)previousKeyView
 {
     if (!inNextValidKeyView)
-	return [super previousKeyView];
+        return [super previousKeyView];
     QWidget* widget = [controller widget];
     if (!widget)
-	return [super previousKeyView];
+        return [super previousKeyView];
     return MacFrame::nextKeyViewForWidget(widget, KWQSelectingPrevious);
 }
 

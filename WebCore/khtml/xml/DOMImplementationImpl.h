@@ -27,18 +27,16 @@
 
 #include "Shared.h"
 
-class FrameView;
+namespace WebCore {
 
-namespace DOM {
-
-class DOMString;
 class CSSStyleSheetImpl;
+class DOMString;
 class DocumentImpl;
 class DocumentTypeImpl;
+class FrameView;
 class HTMLDocumentImpl;
 
-class DOMImplementationImpl : public Shared<DOMImplementationImpl>
-{
+class DOMImplementationImpl : public Shared<DOMImplementationImpl> {
 public:
     DOMImplementationImpl();
     ~DOMImplementationImpl();

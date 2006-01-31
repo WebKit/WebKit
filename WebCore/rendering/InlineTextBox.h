@@ -25,26 +25,22 @@
 #ifndef KHTML_InlineTextBox_H
 #define KHTML_InlineTextBox_H
 
-#include "rendering/render_line.h"
-#include <assert.h>
 #include "RenderText.h"
+#include "render_line.h"
 
 class QFontMetrics;
-class MarkedTextUnderline;
 
-namespace DOM {
-    class DOMString;
-    class DOMStringImpl;
-    class DocumentMarker;
-    class Position;
-    class QPainter;
-};
+namespace WebCore {
 
 const int cNoTruncation = -1;
 const int cFullTruncation = -2;
 
-namespace khtml
-{
+class DOMString;
+class DOMStringImpl;
+class DocumentMarker;
+class MarkedTextUnderline;
+class Position;
+class QPainter;
 
 class InlineTextBox : public InlineRunBox
 {

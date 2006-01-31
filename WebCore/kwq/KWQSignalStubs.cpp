@@ -30,10 +30,9 @@
 
 #include "KWQLoader.h"
 
-using khtml::CachedObject;
-using khtml::DocLoader;
-using khtml::Loader;
-using khtml::Tokenizer;
+using namespace WebCore;
+
+namespace WebCore {
 
 void FrameView::cleared()
 {
@@ -52,4 +51,6 @@ void Loader::requestFailed(DocLoader *l, CachedObject *o)
 void Loader::requestStarted(DocLoader *l, CachedObject *o)
 {
     kwq->_requestStarted.call(l, o);
+}
+
 }

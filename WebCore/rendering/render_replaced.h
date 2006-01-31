@@ -25,11 +25,11 @@
 #include "render_box.h"
 #include <qobject.h>
 
-class FrameView;
 class QWidget;
 
 namespace WebCore {
 
+class FrameView;
 class Position;
 
 class RenderReplaced : public RenderBox

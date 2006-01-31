@@ -263,14 +263,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQKHTMLFactory.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQKHTMLFactory.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\kwqkhtmlpart.h"
 				>
 			</File>

@@ -31,6 +31,8 @@
 #import "WebCoreFrameBridge.h"
 #import "FrameView.h"
 
+using namespace WebCore;
+
 void QFrame::setFrameStyle(int s)
 {
     _frameStyle = s;

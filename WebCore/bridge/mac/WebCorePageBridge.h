@@ -33,9 +33,10 @@
 // non-WebCore side of the bridge.
 
 #ifdef __cplusplus
-class Page;
+namespace WebCore { class Page; }
+typedef WebCore::Page WebCorePage;
 #else
-@class Page;
+@class WebCorePage;
 #endif
 
 #ifdef __OBJC__
@@ -46,11 +47,11 @@ class WebCoreFrameBridge;
 
 @interface WebCorePageBridge : NSObject
 {
-    Page *_page;
+    WebCorePage* _page;
 }
 
-- (id)initWithMainFrame:(WebCoreFrameBridge *)mainFrame;
-- (WebCoreFrameBridge *)mainFrame;
+- (id)initWithMainFrame:(WebCoreFrameBridge*)mainFrame;
+- (WebCoreFrameBridge*)mainFrame;
 @end
 
 // The WebCorePageBridge protocol contains methods for use by the WebCore side of the bridge.

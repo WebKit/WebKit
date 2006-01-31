@@ -35,7 +35,6 @@
 #include <kxmlcore/HashSet.h>
 
 class CSSStyle;
-class FrameView;
 class QMatrix;
 class QTextStream;
 class RenderArena;
@@ -61,6 +60,7 @@ class DocumentImpl;
 class ElementImpl;
 class EventImpl;
 class FloatRect;
+class FrameView;
 class HTMLAreaElementImpl;
 class InlineBox;
 class InlineFlowBox;

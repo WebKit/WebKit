@@ -39,7 +39,7 @@
 #import "render_replaced.h"
 #import "render_style.h"
 
-using khtml::RenderWidget;
+using namespace WebCore;
 
 static bool deferFirstResponderChanges;
 static QWidget *deferredFirstResponder;

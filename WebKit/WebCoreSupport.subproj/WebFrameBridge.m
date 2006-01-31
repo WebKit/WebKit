@@ -753,7 +753,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 - (WebCoreFrameBridge *)createChildFrameNamed:(NSString *)frameName 
                                  withURL:(NSURL *)URL
                                 referrer:(NSString *)referrer
-                              renderPart:(KHTMLRenderPart *)childRenderPart
+                              renderPart:(WebCoreRenderPart *)childRenderPart
                          allowsScrolling:(BOOL)allowsScrolling 
                              marginWidth:(int)width
                             marginHeight:(int)height

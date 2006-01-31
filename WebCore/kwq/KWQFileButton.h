@@ -34,11 +34,13 @@
 class KWQFileButtonAdapter;
 #endif
 
-class Frame;
+namespace WebCore {
+    class Frame;
+}
 
 class KWQFileButton : public QWidget {
 public:
-    KWQFileButton(Frame *frame);
+    KWQFileButton(WebCore::Frame*);
     ~KWQFileButton();
     
     void setFilename(const QString &);

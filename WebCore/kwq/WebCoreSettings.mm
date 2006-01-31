@@ -31,6 +31,8 @@
 #import "KWQKHTMLSettings.h"
 #import "WebCoreFrameBridge.h"
 
+using namespace WebCore;
+
 @implementation WebCoreSettings
 
 - (void)dealloc

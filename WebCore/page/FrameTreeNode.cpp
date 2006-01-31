@@ -29,6 +29,8 @@
 
 using std::swap;
 
+namespace WebCore {
+
 FrameTreeNode::~FrameTreeNode()
 {
     for (Frame* child = firstChild(); child; child = child->treeNode()->nextSibling())
@@ -71,4 +73,6 @@ void FrameTreeNode::removeChild(Frame* child)
     child->treeNode()->m_nextSibling = 0;
 
     m_childCount--;
+}
+
 }

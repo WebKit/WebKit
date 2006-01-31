@@ -30,6 +30,7 @@
 #import "Page.h"
 #import "WebCoreFrameBridge.h"
 
+using namespace WebCore;
 
 @implementation WebCorePageBridge
 
