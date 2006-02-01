@@ -1,3 +1,16 @@
+2006-01-31  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - fixed leak of hundreds of thousands of JS parser nodes on the layout tests, and added an exit counter
+        that would catch them
+
+        * kjs/nodes.cpp:
+        (NodeCounter::~NodeCounter): Added debug-only node counter.
+        (Node::Node):
+        (Node::~Node):
+        * kxmlcore/VectorTraits.h: Simple classes like RefPtr do in fact need destruction.
+
 2006-01-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

@@ -78,7 +78,7 @@ namespace KXMLCore {
 
     struct SimpleClassVectorTraits
     {
-        static const bool needsDestruction = false;
+        static const bool needsDestruction = true;
         static const bool needsInitialization = true;
         static const bool canInitializeWithMemset = true;
         static const bool canMoveWithMemcpy = true;
