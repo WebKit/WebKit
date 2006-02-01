@@ -5501,6 +5501,7 @@
 					"-Wwrite-strings",
 					"-Wno-format-y2k",
 					"-Wno-unused-parameter",
+					"-Wno-long-double",
 				);
 			};
 			name = Development;
@@ -5560,6 +5561,7 @@
 					"-Wwrite-strings",
 					"-Wno-format-y2k",
 					"-Wno-unused-parameter",
+					"-Wno-long-double",
 				);
 			};
 			name = Deployment;
@@ -5619,6 +5621,7 @@
 					"-Wwrite-strings",
 					"-Wno-format-y2k",
 					"-Wno-unused-parameter",
+					"-Wno-long-double",
 				);
 			};
 			name = OptimizedWithSymbols;
@@ -5681,6 +5684,7 @@
 					"-Wwrite-strings",
 					"-Wno-format-y2k",
 					"-Wno-unused-parameter",
+					"-Wno-long-double",
 				);
 			};
 			name = Default;
