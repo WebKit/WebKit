@@ -110,14 +110,6 @@ namespace KXMLCore {
             addIterator(0, this);
         }
 
-        HashTableConstIterator(const iterator& other)
-            : m_position(other.m_position), m_endPosition(other.m_endPosition)
-        {
-#if CHECK_HASHTABLE_ITERATORS
-            addIterator(other.m_table, this);
-#endif
-        }
-
         // default copy, assignment and destructor are OK if CHECK_HASHTABLE_ITERATORS is 0
 
 #if CHECK_HASHTABLE_ITERATORS
@@ -231,6 +223,8 @@ namespace KXMLCore {
         // Comparison.
         bool operator==(const iterator& other) const { return m_iterator == other.m_iterator; }
         bool operator!=(const iterator& other) const { return m_iterator != other.m_iterator; }
+
+        operator const_iterator() const { return m_iterator; }
 
     private:
         const_iterator m_iterator;

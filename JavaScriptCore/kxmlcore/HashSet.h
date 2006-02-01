@@ -1,7 +1,8 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
  * This file is part of the KDE libraries
- * Copyright (C) 2005 Apple Computer, Inc.
+ *
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -191,6 +192,15 @@ namespace KXMLCore {
     void HashSet<Value, HashFunctions, Traits>::clear()
     {
         m_impl.clear(); 
+    }
+
+    template<typename Value, typename HashFunctions, typename Traits>
+    void deleteAllValues(HashSet<Value, HashFunctions, Traits>& collection)
+    {
+        typedef HashSet<Value, HashFunctions, Traits> T;
+        typename T::iterator end = collection.end();
+        for (typename T::iterator it = collection.begin(); it != end; ++it)
+            delete (*it);
     }
 
 } // namespace khtml
