@@ -1,3 +1,32 @@
+2006-01-31  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6862
+        Input's value doesn't get updated after typing in new text field
+
+        Added test:
+        fast/forms/input-changing-value.html
+
+        Added an event listener for a DOMCharacterDataModifiedEvent on the inner div.
+        When we get the event, then we update the input element's value field.
+
+        There may be performance problems with this approach that we will have to
+        address before flipping the switch to use these new text fields.
+
+        * rendering/RenderTextField.cpp:
+        (WebCore::InputMutationListener::handleEvent): calls subtreeHasChanged
+        (WebCore::m_mutationListener):
+        (WebCore::RenderTextField::~RenderTextField): remove the event listener.
+        (WebCore::RenderTextField::setStyle): Remove unnecessary setStyle on text node.  
+         It should inherit style from the div already.
+        (WebCore::RenderTextField::updateFromElement): add the event listener.
+        (WebCore::RenderTextField::subtreeHasChanged): updates the input element's value.
+        * rendering/RenderTextField.h:
+        (WebCore::InputMutationListener::InputMutationListener): Added.
+        (WebCore::InputMutationListener::renderTextField): Added.
+        (WebCore::InputMutationListener::setInputElement): Added.
+
 2006-01-31  Antti Koivisto <koivisto@iki.fi>
 
         Reviewed by Dave Hyatt.

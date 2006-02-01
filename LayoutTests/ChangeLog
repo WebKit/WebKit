@@ -1,3 +1,11 @@
+2006-01-31  Adele Peterson  <adele@apple.com>
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6862
+        Input's value doesn't get updated after typing in new text field
+
+        * fast/forms/input-changing-value-expected.txt: Added.
+        * fast/forms/input-changing-value.html: Added.
+
 2006-01-31  Timothy Hatcher  <timothy@apple.com>
 
         Adding test cases for:
