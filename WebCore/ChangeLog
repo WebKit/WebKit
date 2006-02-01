@@ -1,3 +1,33 @@
+2006-02-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Beth.
+
+        Fix for <rdar://problem/4424126> REGRESSION(412-420+): yellow 
+        highlight fails to follow cursor when mousing over star rating
+        (6232)
+
+        Event coordinates cannot be calculated until there is a target. 
+        This patch restructures the code so that the coordinates are 
+        initialized when the mouse event is created but are not calculated
+        until the target is set.
+
+        * khtml/xml/dom2_eventsimpl.cpp:
+        (WebCore::EventImpl::setTarget): Now calls receievdTarget() if the
+        target is not nil.
+        (WebCore::EventImpl::receivedTarget): virtual receivedTarget()
+        (WebCore::MouseRelatedEventImpl::MouseRelatedEventImpl): Call 
+        initCoordinates()
+        (WebCore::MouseRelatedEventImpl::initCoordinates): Formerly called 
+        computePositions(), this now only initializes the coordinates and 
+        lets receivedTarget() take care of the computations. 
+        (WebCore::MouseRelatedEventImpl::receivedTarget): Takes care of 
+        computing the coordinates.
+        (WebCore::MouseEventImpl::initMouseEvent): Call initCoordinates()
+        * khtml/xml/dom2_eventsimpl.h:
+        (WebCore::EventImpl::target): Fix spacing.
+        (WebCore::EventImpl::currentTarget): Same.
+        (WebCore::EventImpl::setCurrentTarget): Same.
+
 2006-01-31  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

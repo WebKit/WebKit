@@ -122,6 +122,17 @@ void EventImpl::storeResult(const DOMString&)
 {
 }
 
+void EventImpl::setTarget(NodeImpl* target)
+{
+    m_target = target;
+    if (target)
+        receivedTarget();
+}
+
+void EventImpl::receivedTarget()
+{
+}
+
 // -----------------------------------------------------------------------------
 
 UIEventImpl::UIEventImpl()
@@ -218,30 +229,38 @@ MouseRelatedEventImpl::MouseRelatedEventImpl(const AtomicString &eventType,
     , m_screenX(screenXArg), m_screenY(screenYArg)
     , m_clientX(clientXArg), m_clientY(clientYArg)
 {
-    computePositions();
+    initCoordinates();
 }
 
-void MouseRelatedEventImpl::computePositions()
+void MouseRelatedEventImpl::initCoordinates()
 {
+    // Set up initial values for coordinates.
+    // Correct values can't be computed until we have at target, so receivedTarget
+    // does the "real" computation.
     m_pageX = m_clientX;
     m_pageY = m_clientY;
-
     m_layerX = m_pageX;
     m_layerY = m_pageY;
-
     m_offsetX = m_pageX;
     m_offsetY = m_pageY;
+}
 
-    AbstractViewImpl* av = view();
-    if (!av)
-        return;
-    DocumentImpl* doc = av->document();
+void MouseRelatedEventImpl::receivedTarget()
+{
+    // Compute coordinates that are based on the target.
+    m_offsetX = m_pageX;
+    m_offsetY = m_pageY;
+    m_layerX = m_pageX;    
+    m_layerY = m_pageY;    
+
+    // Can't do anything if the target is not in a document.
+    NodeImpl* targ = target();
+    ASSERT(targ);
+    DocumentImpl* doc = targ->getDocument();
     if (!doc)
         return;
-    FrameView* kv = doc->view();
-    if (!kv)
-        return;
 
+    // Must have an updated render tree for this math to work correctly.
     doc->updateRendering();
 
     // FIXME: clientX/Y should not be the same as pageX/Y!
@@ -250,38 +269,30 @@ void MouseRelatedEventImpl::computePositions()
     // we started passing in correct clientX and clientY, we'd want to compute
     // pageX and pageY here.
 
-    // Compute offset position.
-    // FIXME: This won't work because setTarget wasn't called yet!
-    m_offsetX = m_pageX;
-    m_offsetY = m_pageY;
+    // Adjust offsetX/Y to be relative to the target's position.
     if (!isSimulated()) {
-        if (NodeImpl *n = target())
-            if (RenderObject *r = n->renderer()) {
-                int rx, ry;
-                if (r->absolutePosition(rx, ry)) {
-                    m_offsetX -= rx;
-                    m_offsetY -= ry;
-                }
+        if (RenderObject* r = targ->renderer()) {
+            int rx, ry;
+            if (r->absolutePosition(rx, ry)) {
+                m_offsetX -= rx;
+                m_offsetY -= ry;
             }
+        }
     }
 
-    // Compute layer position.
-    m_layerX = m_pageX;
-    m_layerY = m_pageY;
-    if (RenderObject* docRenderer = doc->renderer()) {
-        // FIXME: Should we use the target node instead of hit testing?
-        // If we want to, then we'll have to wait until setTarget is called.
-        RenderObject::NodeInfo hitTestResult(true, false);
-        docRenderer->layer()->hitTest(hitTestResult, m_pageX, m_pageY);
-        NodeImpl* n = hitTestResult.innerNonSharedNode();
-        while (n && !n->renderer())
-            n = n->parent();
-        if (n) {
-            n->renderer()->enclosingLayer()->updateLayerPosition();    
-            for (RenderLayer* layer = n->renderer()->enclosingLayer(); layer; layer = layer->parent()) {
-                m_layerX -= layer->xPos();
-                m_layerY -= layer->yPos();
-            }
+    // Adjust layerX/Y to be relative to the layer.
+    // FIXME: We're pretty sure this is the wrong defintion of "layer."
+    // Our RenderLayer is a more modern concept, and layerX/Y is some
+    // other notion about groups of elements; we should test and fix this.
+    NodeImpl* n = targ;
+    while (n && !n->renderer())
+        n = n->parent();
+    if (n) {
+        RenderLayer* layer = n->renderer()->enclosingLayer();
+        layer->updateLayerPosition();
+        for (; layer; layer = layer->parent()) {
+            m_layerX -= layer->xPos();
+            m_layerY -= layer->yPos();
         }
     }
 }
@@ -380,7 +391,7 @@ void MouseEventImpl::initMouseEvent(const AtomicString &typeArg,
     m_button = buttonArg;
     m_relatedTarget = relatedTargetArg;
 
-    computePositions();
+    initCoordinates();
 }
 
 bool MouseEventImpl::isMouseEvent() const

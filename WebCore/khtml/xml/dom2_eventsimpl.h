@@ -45,14 +45,14 @@ class EventImpl : public Shared<EventImpl>
 {
 public:
     EventImpl();
-    EventImpl(const AtomicString &type, bool canBubbleArg, bool cancelableArg);
+    EventImpl(const AtomicString& type, bool canBubbleArg, bool cancelableArg);
     virtual ~EventImpl();
 
     const AtomicString &type() const { return m_type; }
-    NodeImpl *target() const { return m_target.get(); }
-    void setTarget(NodeImpl *target) { m_target = target; }
-    NodeImpl *currentTarget() const { return m_currentTarget; }
-    void setCurrentTarget(NodeImpl *currentTarget) { m_currentTarget = currentTarget; }
+    NodeImpl* target() const { return m_target.get(); }
+    void setTarget(NodeImpl*);
+    NodeImpl* currentTarget() const { return m_currentTarget; }
+    void setCurrentTarget(NodeImpl* currentTarget) { m_currentTarget = currentTarget; }
     unsigned short eventPhase() const { return m_eventPhase; }
     void setEventPhase(unsigned short eventPhase) { m_eventPhase = eventPhase; }
     bool bubbles() const { return m_canBubble; }
@@ -84,6 +84,7 @@ public:
     virtual void storeResult(const DOMString&);
 
 protected:
+    virtual void receivedTarget();
     bool dispatched() const { return m_target; }
 
 private:
@@ -96,7 +97,7 @@ private:
     bool m_defaultHandled;
     bool m_cancelBubble;
 
-    NodeImpl *m_currentTarget; // ref > 0 maintained externally
+    NodeImpl* m_currentTarget; // ref > 0 maintained externally
     unsigned short m_eventPhase;
     RefPtr<NodeImpl> m_target;
     DOMTimeStamp m_createTime;
@@ -192,7 +193,8 @@ protected: // expose these so MouseEventImpl::initMouseEvent can set them
     int m_screenY;
     int m_clientX;
     int m_clientY;
-    void computePositions();
+    void initCoordinates();
+    virtual void receivedTarget();
 private:
     int m_pageX;
     int m_pageY;
