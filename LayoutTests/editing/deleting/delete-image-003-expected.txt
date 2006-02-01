@@ -16,4 +16,5 @@ layer at (0,0) size 800x600
             text run at (14,14) width 11: "a"
           RenderText {TEXT} at (25,14) size 74x28
             text run at (25,14) width 74: " lincoln"
+        RenderText {TEXT} at (0,0) size 0x0
 caret: position 1 of child 0 {TEXT} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

@@ -909,6 +909,7 @@ bool HTMLParser::isResidualStyleTag(const AtomicString& tagName)
         residualStyleTags.add(varTag.localName().impl());
         residualStyleTags.add(nobrTag.localName().impl());
         residualStyleTags.add(wbrTag.localName().impl());
+        residualStyleTags.add(spanTag.localName().impl());
     }
     
     return residualStyleTags.contains(tagName.impl());
@@ -939,6 +940,7 @@ bool HTMLParser::isAffectedByResidualStyle(const AtomicString& tagName)
         affectedBlockTags.add(dtTag.localName().impl());
         affectedBlockTags.add(ddTag.localName().impl());
         affectedBlockTags.add(preTag.localName().impl());
+        affectedBlockTags.add(formTag.localName().impl());
     }
     
     return affectedBlockTags.contains(tagName.impl());

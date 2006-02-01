@@ -1,3 +1,15 @@
+2006-01-31  Antti Koivisto <koivisto@iki.fi>
+
+        Reviewed by Dave Hyatt.
+        Landed by Timothy Hatcher.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4959
+        Bug 4959: inline style not terminated properly after <form>
+
+        * khtml/html/htmlparser.cpp:
+        (HTMLParser::isResidualStyleTag): add <span> as residual style tag
+        (HTMLParser::isAffectedByResidualStyle): add <form> as tag affected by residual style
+
 2006-01-31  Vicki Murley <vicki@apple.com>
 
         Reviewed by Geoff.

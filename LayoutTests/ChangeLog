@@ -1,3 +1,25 @@
+2006-01-31  Timothy Hatcher  <timothy@apple.com>
+
+        Adding test cases for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4959
+        Bug 4959: inline style not terminated properly after <form>
+
+        Updated older tests/results to work with the patch.
+        Some of the tests had an open <span> with no close.
+
+        * editing/deleting/delete-image-003-expected.txt:
+        * editing/deleting/delete-image-003.html:
+        * editing/undo/redo-typing-001-expected.txt:
+        * editing/undo/redo-typing-001.html:
+        * editing/undo/undo-typing-001-expected.txt:
+        * editing/undo/undo-typing-001.html:
+        * fast/block/float/031.html:
+        * fast/parser/residual-style-span-form-expected.checksum: Added.
+        * fast/parser/residual-style-span-form-expected.png: Added.
+        * fast/parser/residual-style-span-form-expected.txt: Added.
+        * fast/parser/residual-style-span-form.html: Added.
+        * fast/text/whitespace/006-expected.txt:
+
 2006-01-31  David Harrison  <harrison@apple.com>
 
         Adding test cases for:
