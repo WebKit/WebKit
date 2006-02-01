@@ -2,6 +2,28 @@
 
         Reviewed by Tim Omernick.
         
+        - fixed <rdar://problem/4267144> REGRESSION (10.4.2): Safari pages auto-scroll too easily 
+        during drag over content [5853]
+        
+        There were two issues here:
+        (1) dragging over a non-editable webview (such as a typical Safari page) should not have
+        auto-scrolled at all; the fact that it did was an uninentional side effect of making
+        auto-scroll work for editable webviews a la Blot.
+        (2) the speed & hot area of the auto-scroll changed between 10.4.1 and 10.4.2.
+        
+        I have a fix for (1), which is the much more important issue. I'll modify the bugzilla bug
+        to be about the remaining issue.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView _autoscrollForDraggingInfo:timeDelta:]):
+        do nothing if not editable
+        (-[WebView _shouldAutoscrollForDraggingInfo:]):
+        return NO if not editable
+
+2006-01-31  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick.
+        
         Support for programmatic scrolling one line at a time for PDFs. (We already had support for
         programmatic scrolling one page at a time, and to top/end.)
 

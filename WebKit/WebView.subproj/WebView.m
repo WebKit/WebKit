@@ -2143,12 +2143,18 @@ NS_ENDHANDLER
 // Forward these calls to the document subview to make its scroll view scroll.
 - (void)_autoscrollForDraggingInfo:(id)draggingInfo timeDelta:(NSTimeInterval)repeatDelta
 {
+    if (![self isEditable])
+        return;
+    
     NSView <WebDocumentView> *documentView = [self documentViewAtWindowPoint:[draggingInfo draggingLocation]];
     [documentView _autoscrollForDraggingInfo:draggingInfo timeDelta:repeatDelta];
 }
 
 - (BOOL)_shouldAutoscrollForDraggingInfo:(id)draggingInfo
 {
+    if (![self isEditable])
+        return NO;
+    
     NSView <WebDocumentView> *documentView = [self documentViewAtWindowPoint:[draggingInfo draggingLocation]];
     return [documentView _shouldAutoscrollForDraggingInfo:draggingInfo];
 }
