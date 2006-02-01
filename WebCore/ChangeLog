@@ -1,3 +1,13 @@
+2006-01-31  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - fixed REGRESSION: assertion failure mousing over DHTML menus at www.worldofwarcraft.com
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6931
+
+        * rendering/render_layer.cpp:
+        (WebCore::RenderLayer::hitTestLayer): Iterate vectors in a way that won't break on empty ones.
+
 2006-01-31  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

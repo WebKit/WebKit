@@ -1,3 +1,15 @@
+2006-01-31  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - test case for REGRESSION: assertion failure mousing over DHTML menus at www.worldofwarcraft.com
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6931
+
+        * fast/dynamic/layer-hit-test-crash-expected.checksum: Added.
+        * fast/dynamic/layer-hit-test-crash-expected.png: Added.
+        * fast/dynamic/layer-hit-test-crash-expected.txt: Added.
+        * fast/dynamic/layer-hit-test-crash.html: Added.
+
 2006-01-31  Adele Peterson  <adele@apple.com>
 
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6862
