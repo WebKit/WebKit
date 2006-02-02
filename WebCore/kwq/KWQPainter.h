@@ -53,7 +53,6 @@ class QPainterPrivate;
 class QPainter : public Qt {
 public:
     enum TextDirection { RTL, LTR };
-    enum TileRule { STRETCH, ROUND, REPEAT };
 
     QPainter();
     QPainter(bool forPrinting);
@@ -104,8 +103,8 @@ public:
         void* nativeData = 0);
     void drawTiledImage(const Image&, int, int, int, int, int sx = 0, int sy = 0, void* nativeData = 0);
     void drawScaledAndTiledImage(const Image &, int, int, int, int, int, int, int, int, 
-        TileRule hRule = STRETCH, TileRule vRule = STRETCH,
-        void* nativeData = 0);
+                                 Image::TileRule hRule = Image::StretchTile, Image::TileRule vRule = Image::StretchTile,
+                                 void* nativeData = 0);
 
     void addClip(const IntRect&);
     void addRoundedRectClip(const IntRect&, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight);

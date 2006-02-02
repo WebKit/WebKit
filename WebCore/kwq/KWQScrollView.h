@@ -88,6 +88,8 @@ public:
         
     NSView *getDocumentView() const;
 
+    bool inWindow() const;
+
 private:
     virtual bool isQScrollView() const;
 };

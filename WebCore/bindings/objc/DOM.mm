@@ -53,7 +53,7 @@
 #import "dom_xmlimpl.h"
 #import "HTMLElementImpl.h"
 #import "htmlnames.h"
-#import "render_object.h"
+#import "render_image.h"
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
 #import <kxmlcore/Assertions.h>
 #import <kxmlcore/HashMap.h>
@@ -1488,6 +1488,28 @@ static ListenerMap *listenerMap;
     RenderObject *renderer = [self _elementImpl]->renderer();
     if (renderer) {
         return renderer->style()->font().getNSFont();
+    }
+    return nil;
+}
+
+- (NSImage*)_image
+{
+    RenderObject *renderer = [self _elementImpl]->renderer();
+    if (renderer && renderer->isImage()) {
+        RenderImage* img = static_cast<RenderImage*>(renderer);
+        if (img->cachedImage() && !img->cachedImage()->isErrorImage())
+            return img->cachedImage()->image().getNSImage();
+    }
+    return nil;
+}
+
+- (NSData*)_imageTIFFRepresentation
+{
+    RenderObject *renderer = [self _elementImpl]->renderer();
+    if (renderer && renderer->isImage()) {
+        RenderImage* img = static_cast<RenderImage*>(renderer);
+        if (img->cachedImage() && !img->cachedImage()->isErrorImage())
+            return (NSData*)(img->cachedImage()->image().getTIFFRepresentation());
     }
     return nil;
 }

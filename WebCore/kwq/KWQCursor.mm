@@ -33,7 +33,8 @@ namespace WebCore {
 
 static NSCursor *createCustomCursor(const Image& image)
 {
-    NSImage *img = [image.imageRenderer() image];
+    // FIXME: The cursor won't animate properly.  Not sure if that's a big deal.
+    NSImage *img = image.getNSImage();
     if (!img)
         return nil;
     return [[NSCursor alloc] initWithImage:img hotSpot:NSZeroPoint];

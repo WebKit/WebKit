@@ -5031,10 +5031,9 @@ static void drawPattern (void * info, CGContextRef context)
     float h = pattern->cachedImage()->image().height();
     
     // Try and draw bitmap directly
-    CGImageRef ref = pattern->cachedImage()->image().imageRef();
-    if (ref) {
+    CGImageRef ref = pattern->cachedImage()->image().getCGImageRef();
+    if (ref)
         CGContextDrawImage (context, CGRectMake(0, 0, w, h), ref);    
-    }
     else
         p.drawFloatImage(pattern->cachedImage()->image(), 0, 0, w, h, 0.f, 0.f, w, h, Image::CompositeSourceOver, context);
 }

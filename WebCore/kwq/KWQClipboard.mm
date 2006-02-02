@@ -336,17 +336,6 @@ void KWQClipboard::setDragImage(CachedImage* image, NodeImpl *node, const IntPoi
     }
 }
 
-void KWQClipboard::imageChanged(CachedImage* image, const IntRect&)
-{
-    // Update the drag image as the image decodes or animates.
-    if (image == m_dragImage && !m_dragImageElement && m_dragStarted && m_changeCount == [m_pasteboard changeCount]) {
-        NSPoint cocoaLoc;
-        NSImage *cocoaImage = dragNSImage(&cocoaLoc);
-        if (cocoaImage)
-            [[WebCoreGraphicsBridge sharedBridge] setDraggingImage:cocoaImage at:cocoaLoc];
-    }
-}
-
 NSImage *KWQClipboard::dragNSImage(NSPoint *loc)
 {
     NSImage *result = nil;
@@ -364,7 +353,8 @@ NSImage *KWQClipboard::dragNSImage(NSPoint *loc)
             }
         }
     } else if (m_dragImage) {
-        result = [m_dragImage->image().imageRenderer() image];
+        result = m_dragImage->image().getNSImage();
+        
         if (loc) {
             *loc = m_dragLoc;
             loc->y = [result size].height - loc->y;

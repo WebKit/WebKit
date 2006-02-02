@@ -547,7 +547,7 @@ CIFilter *KCanvasFEImageQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) c
     CIFilter *filter;
     KWQ_BLOCK_EXCEPTIONS;
     // FIXME: This is only partially implemented (only supports images)
-    CIImage *ciImage = [CIImage imageWithCGImage:cachedImage()->image().imageRef()];
+    CIImage *ciImage = [CIImage imageWithCGImage:cachedImage()->image().getCGImageRef()];
     
     // FIXME: There is probably a nicer way to perform both of these transforms.
     filter = [CIFilter filterWithName:@"CIAffineTransform"];

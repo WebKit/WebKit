@@ -53,10 +53,15 @@ namespace WebCore {
     public:
         virtual ~CachedObjectClient() { }
 
-        // Called whenever a frame of an image changes (FIXME: not yet called for animating frames but will be
-        // soon).  The rect represents the portion of the image that changed.  Clients that transform
-        // the image should similarly transform the rect to determine the correct invalidation to perform.
-        virtual void imageChanged(CachedImage*, const IntRect&) { };
+        // Called whenever a frame of an image changes, either because we got more data from the network or
+        // because we are animating.
+        virtual void imageChanged(CachedImage*) { };
+        
+        // Called to find out if this client wants to actually display the image.  Used to tell when we
+        // can halt animation.  Content nodes that hold image refs for example would not render the image,
+        // but RenderImages would (assuming they have visibility: visible and their render tree isn't hidden
+        // e.g., in the b/f cache or in a background tab).
+        virtual bool willRenderImage(CachedImage*) { return false; }
 
         virtual void setStyleSheet(const DOMString& /*URL*/, const DOMString& /*sheet*/) { }
 

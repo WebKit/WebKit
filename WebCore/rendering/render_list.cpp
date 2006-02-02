@@ -514,10 +514,10 @@ void RenderListMarker::layout()
     setNeedsLayout(false);
 }
 
-void RenderListMarker::imageChanged(CachedImage *o, const IntRect& r)
+void RenderListMarker::imageChanged(CachedImage *o)
 {
     if (o != m_listImage) {
-        RenderBox::imageChanged(o, r);
+        RenderBox::imageChanged(o);
         return;
     }
 

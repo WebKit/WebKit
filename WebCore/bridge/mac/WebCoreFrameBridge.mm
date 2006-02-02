@@ -51,7 +51,6 @@
 #import "NodeImpl.h"
 #import "SelectionController.h"
 #import "WebCoreFrameNamespaces.h"
-#import "WebCoreImageRenderer.h"
 #import "WebCoreSettings.h"
 #import "WebCoreTextRendererFactory.h"
 #import "WebCoreViewFactory.h"
@@ -110,7 +109,6 @@ using KJS::Bindings::RootObject;
 NSString *WebCoreElementDOMNodeKey =            @"WebElementDOMNode";
 NSString *WebCoreElementFrameKey =              @"WebElementFrame";
 NSString *WebCoreElementImageAltStringKey =     @"WebElementImageAltString";
-NSString *WebCoreElementImageRendererKey =      @"WebCoreElementImageRenderer";
 NSString *WebCoreElementImageRectKey =          @"WebElementImageRect";
 NSString *WebCoreElementImageURLKey =           @"WebElementImageURL";
 NSString *WebCoreElementIsSelectedKey =         @"WebElementIsSelected";
@@ -1331,12 +1329,6 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         // Only return image information if there is an image.
         if (node->renderer() && node->renderer()->isImage()) {
             RenderImage *r = static_cast<RenderImage *>(node->renderer());
-            if (!r->errorOccurred()) {
-                const Image& p = r->image();
-                if (p.imageRenderer())
-                    [element setObject:p.imageRenderer() forKey:WebCoreElementImageRendererKey];
-            }
-
             int x, y;
             if (r->absolutePosition(x, y)) {
                 NSValue *rect = [NSValue valueWithRect:NSMakeRect(x, y, r->contentWidth(), r->contentHeight())];

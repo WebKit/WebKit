@@ -50,7 +50,7 @@ public:
 
     virtual void layout();
 
-    virtual void imageChanged(CachedImage*, const IntRect&);
+    virtual void imageChanged(CachedImage*);
     
     // don't even think about making this method virtual!
     HTMLElementImpl* element() const

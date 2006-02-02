@@ -100,9 +100,9 @@ FloatRect RenderSVGImage::relativeBBox(bool includeStroke) const
     return FloatRect(0, 0, width(), height());
 }
 
-void RenderSVGImage::imageChanged(CachedImage* image, const IntRect& rect)
+void RenderSVGImage::imageChanged(CachedImage* image)
 {
-    RenderImage::imageChanged(image, rect);
+    RenderImage::imageChanged(image);
     // We override to invalidate a larger rect, since SVG images can draw outside their "bounds"
     repaintRectangle(getAbsoluteRepaintRect());
 }

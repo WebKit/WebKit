@@ -26,26 +26,21 @@
 #ifndef IMAGE_H_
 #define IMAGE_H_
 
-#if __APPLE__
-
-typedef struct CGImage *CGImageRef;
-
-#ifdef __OBJC__
-@protocol WebCoreImageRenderer;
-typedef id <WebCoreImageRenderer> WebCoreImageRendererPtr;
-@class NSString;
-#else
-class WebCoreImageRenderer;
-typedef WebCoreImageRenderer *WebCoreImageRendererPtr;
-class NSString;
-#endif // __OBJC__
-
-#endif // __APPLE__
-
 class QString;
+
+#if __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#if __OBJC__
+@class NSImage;
+#else
+class NSImage;
+#endif
+#endif
 
 namespace WebCore {
 
+class FloatPoint;
+class FloatRect;
 class IntRect;
 class IntSize;
 class QPainter;
@@ -53,14 +48,23 @@ class QPainter;
 template <typename T> class Array;
 typedef Array<char> ByteArray;
 
+// This class represents the platform-specific image data.  It is found in the implementation file for 
+// each platform (e.g., Image.mm on the Mac).
+class ImageData;
+class Image;
+
+// This class gets notified when an image advances animation frames.
+class ImageAnimationObserver {
+public:
+    virtual ~ImageAnimationObserver() {};
+    virtual bool shouldStopAnimation(const Image*) = 0;
+    virtual void animationAdvanced(const Image*) = 0;
+};
+
 class Image {
 public:
     Image();
-    Image(const QString& type);
-    Image(const IntSize&);
-    Image(const ByteArray&, const QString& type);
-    Image(int, int);
-
+    Image(const QString& type, ImageAnimationObserver* observer);
     ~Image();
     
     static Image* loadResource(const char *name);
@@ -73,11 +77,23 @@ public:
     int width() const;
     int height() const;
 
-    bool decode(const ByteArray &bytes, bool allDataReceived);
+    bool setData(const ByteArray& bytes, bool allDataReceived);
 
-    void stopAnimations() const;
+    // It may look unusual that there are no start/stop animation calls as public API.  This is because
+    // we start and stop animating lazily.  Animation begins whenever someone draws the image.  It will
+    // automatically pause once all observers no longer want to render the image anywhere.
+    void stopAnimation() const;
     void resetAnimation() const;
-    void setAnimationRect(const IntRect&) const;
+    
+    // Typically the CachedImage that owns us.
+    ImageAnimationObserver* animationObserver() const { return m_animationObserver; }
+    
+#if __APPLE__
+    // Apple Image accessors for native formats.
+    CGImageRef getCGImageRef() const;
+    NSImage* getNSImage() const;
+    CFDataRef getTIFFRepresentation() const;
+#endif
 
     // Note: These constants exactly match the NSCompositeOperator constants of AppKit.
     enum CompositeOperator {
@@ -97,24 +113,27 @@ public:
         CompositePlusLighter
     };
 
+    enum TileRule { StretchTile, RoundTile, RepeatTile };
+
     static CompositeOperator compositeOperatorFromString(const QString& compositeOperator);
 
-#if __APPLE__
-    Image(WebCoreImageRendererPtr);
-    WebCoreImageRendererPtr imageRenderer() const { return m_imageRenderer; }
-    CGImageRef imageRef() const;
-#endif
+    // Drawing routines.
+    void drawInRect(const FloatRect& dstRect, const FloatRect& srcRect,
+                    CompositeOperator compositeOp, void* context) const;
+    void tileInRect(const FloatRect& dstRect, const FloatPoint& point, void* context) const;
+    void scaleAndTileInRect(const FloatRect& dstRect, const FloatRect& srcRect,
+                            TileRule hRule, TileRule vRule, void* context) const;
 
 private:
     // We do not allow images to be assigned to or copied.
     Image(const Image&);
     Image &operator=(const Image&);
 
-#if __APPLE__
-    WebCoreImageRendererPtr m_imageRenderer;
-#endif
+    // The platform-specific image data representation.
+    ImageData* m_data;
 
-    friend class QPainter;
+    // Our animation observer.
+    ImageAnimationObserver* m_animationObserver;
 };
 
 }

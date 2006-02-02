@@ -35,7 +35,10 @@
 - (id <WebCoreImageRenderer>)imageRendererWithBytes:(const void *)bytes length:(unsigned)length MIMEType:(NSString *)MIMEType;
 - (id <WebCoreImageRenderer>)imageRendererWithSize:(NSSize)size;
 - (id <WebCoreImageRenderer>)imageRendererWithName:(NSString *)name;
+
+- (NSData *)imageDataForName:(NSString *)name;
 - (NSArray *)supportedMIMETypes;
+- (void)setPatternPhaseForContext:(CGContextRef)context inUserSpace:(CGPoint)point;
 - (int)CGCompositeOperationInContext:(CGContextRef)context;
 - (void)setCGCompositeOperation:(int)op inContext:(CGContextRef)context;
 - (void)setCGCompositeOperationFromString:(NSString *)op inContext:(CGContextRef)context;
@@ -47,8 +50,7 @@
 }
 
 + (WebCoreImageRendererFactory *)sharedFactory;
-+ (BOOL)shouldUseThreadedDecoding;
-+ (void)setShouldUseThreadedDecoding:(BOOL)flag;
+
 @end
 
 @interface WebCoreImageRendererFactory (SubclassResponsibility) <WebCoreImageRendererFactory>

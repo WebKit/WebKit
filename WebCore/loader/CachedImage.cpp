@@ -57,8 +57,8 @@ void CachedImage::ref(CachedObjectClient* c)
 {
     CachedObject::ref(c);
 
-    if (!decodedRect().isEmpty())
-        c->imageChanged(this, decodedRect());
+    if (!imageRect().isEmpty())
+        c->imageChanged(this);
 
     if (!m_loading)
         c->notifyFinished(this);
@@ -88,16 +88,16 @@ IntSize CachedImage::imageSize() const
     return (m_image ? m_image->size() : IntSize());
 }
 
-IntRect CachedImage::decodedRect() const
+IntRect CachedImage::imageRect() const
 {
     return (m_image ? m_image->rect() : IntRect());
 }
 
-void CachedImage::notifyObservers(const IntRect& r)
+void CachedImage::notifyObservers()
 {
     CachedObjectClientWalker w(m_clients);
     while (CachedObjectClient *c = w.next())
-        c->imageChanged(this, r);
+        c->imageChanged(this);
 }
 
 void CachedImage::setShowAnimations( KHTMLSettings::KAnimationAdvice showAnimations )
@@ -114,32 +114,30 @@ void CachedImage::clear()
 
 void CachedImage::data(QBuffer& _buffer, bool eof)
 {
-    bool canDraw = false;
+    bool sizeAvailable = false;
     
     m_dataSize = _buffer.size();
 
-    // If we're at eof and don't have a image yet, the data
-    // must have arrived in one chunk.  This avoids the attempt
-    // to perform incremental decoding.
-    if (eof && !m_image) {
-        m_image = new Image(_buffer.buffer(), KWQResponseMIMEType(m_response));
-        canDraw = true;
-    } else {
-        // Always attempt to load the image incrementally.
-        if (!m_image)
-            m_image = new Image(KWQResponseMIMEType(m_response));
-        canDraw = m_image->decode(_buffer.buffer(), eof);
-    }
+    // Create the image if it doesn't yet exist.
+    if (!m_image)
+        m_image = new Image(KWQResponseMIMEType(m_response), this);
+        
+    // Give the data to the image object for processing.  It will
+    // not do anything now, but will delay decoding until queried for info (like size or specific image frames).
+    sizeAvailable = m_image->setData(_buffer.buffer(), eof);
     
-    // If we have a decoder, we'll be notified when decoding has completed.
-    if (canDraw || eof) {
+    // Go ahead and tell our observers to try to draw if we have either
+    // received all the data or the size is known.  Each chunk from the
+    // network causes observers to repaint, which will force that chunk
+    // to decode.
+    if (sizeAvailable || eof) {
         if (m_image->isNull()) {
             m_errorOccurred = true;
-            notifyObservers(image().rect());
+            notifyObservers();
             Cache::remove(this);
         }
         else
-            notifyObservers(m_image->rect());
+            notifyObservers();
 
         IntSize s = imageSize();
         setSize(s.width() * s.height() * 2); // This is really just a rough estimate of the decoded size.
@@ -154,7 +152,7 @@ void CachedImage::error( int /*err*/, const char */*text*/ )
 {
     clear();
     m_errorOccurred = true;
-    notifyObservers(IntRect(0, 0, 16, 16));
+    notifyObservers();
     m_loading = false;
     checkNotify();
 }
@@ -167,6 +165,25 @@ void CachedImage::checkNotify()
     CachedObjectClientWalker w(m_clients);
     while (CachedObjectClient *c = w.next())
         c->notifyFinished(this);
+}
+
+bool CachedImage::shouldStopAnimation(const Image* image)
+{
+    if (image != m_image)
+        return false;
+    
+    CachedObjectClientWalker w(m_clients);
+    while (CachedObjectClient *c = w.next())
+        if (c->willRenderImage(this))
+            return false;
+    
+    return true;
+}
+
+void CachedImage::animationAdvanced(const Image* image)
+{
+    if (image == m_image)
+        notifyObservers();
 }
 
 }

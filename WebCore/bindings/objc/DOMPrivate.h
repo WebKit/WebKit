@@ -39,6 +39,8 @@
 
 @interface DOMElement (WebPrivate)
 - (NSFont *)_font;
+- (NSImage *)_image;
+- (NSData *)_imageTIFFRepresentation;
 - (NSURL *)_getURLAttribute:(NSString *)name;
 @end
 

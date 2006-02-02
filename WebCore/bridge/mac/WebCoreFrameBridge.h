@@ -71,7 +71,6 @@ typedef WebCore::RenderPart WebCoreRenderPart;
 extern NSString *WebCoreElementDOMNodeKey;
 extern NSString *WebCoreElementFrameKey;
 extern NSString *WebCoreElementImageAltStringKey;
-extern NSString *WebCoreElementImageRendererKey;
 extern NSString *WebCoreElementImageRectKey;
 extern NSString *WebCoreElementImageURLKey;
 extern NSString *WebCoreElementIsSelectedKey;

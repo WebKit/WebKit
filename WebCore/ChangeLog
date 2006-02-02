@@ -1,3 +1,143 @@
+2006-02-02  David Hyatt  <hyatt@apple.com>
+
+       Fix for bug 6957, rewrite image rendering in C++ and move it to
+       WebCore.  Animation now stops lazily and just uses the CachedObject
+       notification system to push updates so that rects no longer need to
+       be cached (or sets of animating renderers in specific views).
+       
+       Reviewed by darin
+
+        * WebCore.exp:
+        * bindings/objc/DOM.mm:
+        (-[DOMElement _image]):
+        (-[DOMElement _imageTIFFRepresentation]):
+        * bindings/objc/DOMPrivate.h:
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::khtmlMouseMoveEvent):
+        (WebCore::MacFrame::fileWrapperForElement):
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge elementAtPoint:]):
+        * kcanvas/RenderSVGImage.cpp:
+        (RenderSVGImage::imageChanged):
+        * kcanvas/RenderSVGImage.h:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (KCanvasFEImageQuartz::getCIFilter):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::drawPattern):
+        * kwq/KWQClipboard.h:
+        (WebCore::KWQClipboard::setDragHasStarted):
+        * kwq/KWQClipboard.mm:
+        (WebCore::KWQClipboard::dragNSImage):
+        * kwq/KWQCursor.mm:
+        (WebCore::createCustomCursor):
+        * kwq/KWQPainter.h:
+        (WebCore::QPainter::):
+        * kwq/KWQPainter.mm:
+        (WebCore::QPainter::drawFloatImage):
+        (WebCore::QPainter::drawTiledImage):
+        (WebCore::QPainter::drawScaledAndTiledImage):
+        * kwq/KWQScrollView.h:
+        * kwq/KWQScrollView.mm:
+        (QScrollView::inWindow):
+        * kwq/WebCoreImageRendererFactory.h:
+        * kwq/WebCoreImageRendererFactory.m:
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::ref):
+        (WebCore::CachedImage::imageRect):
+        (WebCore::CachedImage::notifyObservers):
+        (WebCore::CachedImage::data):
+        (WebCore::CachedImage::error):
+        (WebCore::CachedImage::shouldStopAnimation):
+        (WebCore::CachedImage::animationAdvanced):
+        * loader/CachedImage.h:
+        (WebCore::CachedImage::canRender):
+        * loader/CachedObjectClient.h:
+        (WebCore::CachedObjectClient::imageChanged):
+        (WebCore::CachedObjectClient::willRenderImage):
+        * platform/Image.h:
+        (WebCore::ImageAnimationObserver::~ImageAnimationObserver):
+        (WebCore::Image::animationObserver):
+        (WebCore::Image::):
+        * platform/mac/Image.mm:
+        (WebCore::releasePDFDocumentData):
+        (WebCore::PDFDocumentImage::PDFDocumentImage):
+        (WebCore::PDFDocumentImage::~PDFDocumentImage):
+        (WebCore::PDFDocumentImage::documentRef):
+        (WebCore::PDFDocumentImage::mediaBox):
+        (WebCore::PDFDocumentImage::bounds):
+        (WebCore::PDFDocumentImage::adjustCTM):
+        (WebCore::PDFDocumentImage::setCurrentPage):
+        (WebCore::PDFDocumentImage::currentPage):
+        (WebCore::PDFDocumentImage::pageCount):
+        (WebCore::PDFDocumentImage::draw):
+        (WebCore::ImageData::setIsPDF):
+        (WebCore::ImageData::currentFrame):
+        (WebCore::m_PDFDoc):
+        (WebCore::ImageData::~ImageData):
+        (WebCore::ImageData::invalidateData):
+        (WebCore::ImageData::cacheFrame):
+        (WebCore::ImageData::checkForSolidColor):
+        (WebCore::ImageData::isNull):
+        (WebCore::ImageData::size):
+        (WebCore::ImageData::setData):
+        (WebCore::ImageData::setCFData):
+        (WebCore::ImageData::imageSourceOptions):
+        (WebCore::ImageData::frameCount):
+        (WebCore::ImageData::isSizeAvailable):
+        (WebCore::ImageData::frameAtIndex):
+        (WebCore::ImageData::getTIFFRepresentation):
+        (WebCore::ImageData::getNSImage):
+        (WebCore::ImageData::frameDurationAtIndex):
+        (WebCore::ImageData::shouldAnimate):
+        (WebCore::ImageData::startAnimation):
+        (WebCore::ImageData::stopAnimation):
+        (WebCore::ImageData::resetAnimation):
+        (WebCore::ImageData::advanceAnimation):
+        (WebCore::ImageData::setCompositingOperation):
+        (WebCore::ImageData::fillSolidColorInRect):
+        (WebCore::ImageData::drawInRect):
+        (WebCore::drawPattern):
+        (WebCore::):
+        (WebCore::ImageData::tileInRect):
+        (WebCore::ImageData::scaleAndTileInRect):
+        (WebCore::Image::loadResource):
+        (WebCore::Image::supportsType):
+        (WebCore::m_animationObserver):
+        (WebCore::Image::Image):
+        (WebCore::Image::~Image):
+        (WebCore::Image::getCGImageRef):
+        (WebCore::Image::getNSImage):
+        (WebCore::Image::getTIFFRepresentation):
+        (WebCore::Image::resetAnimation):
+        (WebCore::Image::setData):
+        (WebCore::Image::isNull):
+        (WebCore::Image::size):
+        (WebCore::Image::rect):
+        (WebCore::graphicsContext):
+        (WebCore::Image::drawInRect):
+        (WebCore::Image::tileInRect):
+        (WebCore::Image::scaleAndTileInRect):
+        * rendering/render_box.cpp:
+        (WebCore::RenderBox::paintBackgroundExtended):
+        * rendering/render_image.cpp:
+        (WebCore::RenderImage::setCachedImage):
+        (WebCore::RenderImage::imageChanged):
+        * rendering/render_image.h:
+        * rendering/render_line.cpp:
+        (WebCore::InlineFlowBox::paintBackground):
+        (WebCore::InlineFlowBox::paintBackgroundAndBorder):
+        * rendering/render_list.cpp:
+        (RenderListMarker::imageChanged):
+        * rendering/render_list.h:
+        * rendering/render_object.cpp:
+        (WebCore::RenderObject::mustRepaintBackgroundOrBorder):
+        (WebCore::RenderObject::paintBorderImage):
+        (WebCore::RenderObject::paintBorder):
+        (WebCore::RenderObject::imageChanged):
+        (WebCore::RenderObject::willRenderImage):
+        * rendering/render_object.h:
+
 2006-02-02  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Test: LayoutTests/fast/block/positioning/height-change.html

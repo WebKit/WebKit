@@ -83,14 +83,14 @@ void RenderImage::setCachedImage(CachedImage* newImage)
         if (m_cachedImage)
             m_cachedImage->ref(this);
         if (m_cachedImage->isErrorImage())
-            imageChanged(m_cachedImage, IntRect(0,0,16,16));
+            imageChanged(m_cachedImage);
     }
 }
 
-void RenderImage::imageChanged(CachedImage* o, const IntRect& r)
+void RenderImage::imageChanged(CachedImage* o)
 {
     if (o != m_cachedImage) {
-        RenderReplaced::imageChanged(o, r);
+        RenderReplaced::imageChanged(o);
         return;
     }
 
@@ -123,7 +123,7 @@ void RenderImage::imageChanged(CachedImage* o, const IntRect& r)
     bool needlayout = false;
 
     // Image dimensions have been changed, see what needs to be done
-     if ((o->imageSize().width() != intrinsicWidth() || o->imageSize().height() != intrinsicHeight() || iwchanged)) {
+    if ((o->imageSize().width() != intrinsicWidth() || o->imageSize().height() != intrinsicHeight() || iwchanged)) {
         if(!o->isErrorImage()) {
             setIntrinsicWidth(o->imageSize().width());
             setIntrinsicHeight(o->imageSize().height());
@@ -146,9 +146,6 @@ void RenderImage::imageChanged(CachedImage* o, const IntRect& r)
             m_height = oldheight;
         }
     }
-
-    // Stop the previous image, if it may be animating.
-    image().stopAnimations();
 
     if (needlayout) {
         if (!selfNeedsLayout())

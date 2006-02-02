@@ -489,8 +489,6 @@ void QPainter::drawFloatImage(const Image &image, float x, float y, float w, flo
 {
     if (data->state.paintingDisabled)
         return;
-                
-    KWQ_BLOCK_EXCEPTIONS;
 
     float tsw = sw;
     float tsh = sh;
@@ -507,12 +505,7 @@ void QPainter::drawFloatImage(const Image &image, float x, float y, float w, flo
     if (th == -1)
         th = image.height();
 
-    NSRect inRect = NSMakeRect(x, y, tw, th);
-    NSRect fromRect = NSMakeRect(sx, sy, tsw, tsh);
-    
-    [image.imageRenderer() drawImageInRect:inRect fromRect:fromRect compositeOperator:(NSCompositingOperation)compositeOperator context:(CGContextRef)context];
-
-    KWQ_UNBLOCK_EXCEPTIONS;
+    image.drawInRect(FloatRect(x, y, tw, th), FloatRect(sx, sy, tsw, tsh), compositeOperator, context);
 }
 
 void QPainter::drawTiledImage(const Image& image, int x, int y, int w, int h,
@@ -521,27 +514,21 @@ void QPainter::drawTiledImage(const Image& image, int x, int y, int w, int h,
     if (data->state.paintingDisabled)
         return;
     
-    KWQ_BLOCK_EXCEPTIONS;
-    NSRect tempRect = { {x, y}, {w, h} }; // workaround for 4213314
-    NSPoint tempPoint = { sx, sy };
-    [image.imageRenderer() tileInRect:tempRect fromPoint:tempPoint context:(CGContextRef)context];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    image.tileInRect(FloatRect(x, y, w, h), FloatPoint(sx, sy), context);
 }
 
 void QPainter::drawScaledAndTiledImage(const Image &image, int x, int y, int w, int h, int sx, int sy, int sw, int sh, 
-                                       TileRule hRule, TileRule vRule, void* context)
+                                       Image::TileRule hRule, Image::TileRule vRule, void* context)
 {
     if (data->state.paintingDisabled)
         return;
-    
-    if (hRule == STRETCH && vRule == STRETCH)
+
+    if (hRule == Image::StretchTile && vRule == Image::StretchTile)
         // Just do a scale.
         return drawImage(image, x, y, w, h, sx, sy, sw, sh, Image::CompositeSourceOver, context);
 
-    KWQ_BLOCK_EXCEPTIONS;
-    [image.imageRenderer() scaleAndTileInRect:NSMakeRect(x, y, w, h) fromRect:NSMakeRect(sx, sy, sw, sh) 
-                        withHorizontalTileRule:(WebImageTileRule)hRule withVerticalTileRule:(WebImageTileRule)vRule context:(CGContextRef)context];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    image.scaleAndTileInRect(FloatRect(x, y, w, h), FloatRect(sx, sy, sw, sh),
+                             hRule, vRule, context);
 }
 
 void QPainter::_updateRenderer()

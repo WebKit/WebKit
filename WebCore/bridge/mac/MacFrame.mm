@@ -52,7 +52,6 @@
 #import "SelectionController.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreGraphicsBridge.h"
-#import "WebCoreImageRenderer.h"
 #import "WebCoreViewFactory.h"
 #import "WebDashboardRegion.h"
 #import "css_computedstyle.h"
@@ -1743,7 +1742,7 @@ void MacFrame::khtmlMouseMoveEvent(MouseMoveEvent *event)
 
                 node = nodeInfo.innerNonSharedNode();
                 _dragSrcIsImage = node && node->renderer() && node->renderer()->isImage();
-
+                
                 _dragSrcInSelection = isPointInsideSelection(_mouseDownX, _mouseDownY);
             }                
         }
@@ -1789,8 +1788,8 @@ void MacFrame::khtmlMouseMoveEvent(MouseMoveEvent *event)
                         int srcX, srcY;
                         _dragSrc->renderer()->absolutePosition(srcX, srcY);
                         _dragClipboard->setDragImageElement(_dragSrc.get(), IntPoint(_mouseDownX - srcX, _mouseDownY - srcY));
-                    }
-                    
+                    } 
+
                     _mouseDownMayStartDrag = dispatchDragSrcEvent(dragstartEvent, IntPoint(_mouseDownWinX, _mouseDownWinY));
                     // Invalidate clipboard here against anymore pasteboard writing for security.  The drag
                     // image can still be changed as we drag, but not the pasteboard data.
@@ -2309,8 +2308,8 @@ NSFileWrapper *MacFrame::fileWrapperForElement(ElementImpl *e)
     }    
     if (!wrapper) {
         RenderImage *renderer = static_cast<RenderImage *>(e->renderer());
-        if (renderer->isImage()) {
-            wrapper = [[NSFileWrapper alloc] initRegularFileWithContents:[renderer->image().imageRenderer() TIFFRepresentation]];
+        if (renderer->cachedImage() && !renderer->cachedImage()->isErrorImage()) {
+            wrapper = [[NSFileWrapper alloc] initRegularFileWithContents:(NSData*)(renderer->cachedImage()->image().getTIFFRepresentation())];
             [wrapper setPreferredFilename:@"image.tiff"];
             [wrapper autorelease];
         }
