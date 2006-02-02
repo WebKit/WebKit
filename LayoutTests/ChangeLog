@@ -1,3 +1,13 @@
+2006-02-02  Darin Adler  <darin@apple.com>
+
+        - tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=7000
+          REGRESSION: Scrolling is triggering onunload in TOT
+
+        * fast/events/onunload-body-property.html: Added.
+        * fast/events/onunload-body-property-expected.txt: Added.
+        * fast/events/onunload-window-property.html: Added.
+        * fast/events/onunload-window-property-expected.txt: Added.
+
 2006-02-02  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

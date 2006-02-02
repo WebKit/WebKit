@@ -1,0 +1,29 @@
+<html>
+
+<head>
+<script>
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function unload()
+{
+    alert("unload");
+}
+
+function load()
+{
+    document.body.onunload = unload;
+    location = "data:text/html,You should have seen an unload alert appear.<script>if (window.layoutTestController) layoutTestController.notifyDone(); </" + "script>";
+}
+
+</script>
+</head>
+
+<body onload="load()">
+start document
+</body>
+
+</html>
