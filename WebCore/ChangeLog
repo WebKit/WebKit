@@ -1,5 +1,33 @@
 2006-02-02  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7000
+          REGRESSION: Scrolling is triggering onunload in TOT
+
+        Tests:
+        - fast/events/onunload-body-property.html
+        - fast/events/onunload-window-property.html
+
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNode::getValueProperty): Change onunload case to use unloadEvent, not scrollEvent.
+        (KJS::DOMNode::putValueProperty): Ditto.
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::getValueProperty): Ditto.
+        (KJS::Window::putValueProperty): Ditto.
+
+2006-02-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6998
+          setTimeout(0) tight loop uses almost all CPU (need 10ms minimum for timeout?)
+
+        * khtml/ecma/kjs_window.cpp: (KJS::WindowQObject::installTimeout): When converting
+        the timeout number from an integer ms to a double seconds, use a 10 ms minimum.
+
+2006-02-02  Darin Adler  <darin@apple.com>
+
         - added a FIXME about an incorrect change made to FloatRect
           to fix the Win32 compile
 

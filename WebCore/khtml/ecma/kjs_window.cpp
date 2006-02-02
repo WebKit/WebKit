@@ -890,7 +890,7 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
    case Onbeforeunload:
       return getListener(exec, beforeunloadEvent);
     case Onunload:
-     return getListener(exec,scrollEvent);
+     return getListener(exec, unloadEvent);
    }
    ASSERT(0);
    return jsUndefined();
@@ -1176,7 +1176,7 @@ void Window::put(ExecState* exec, const Identifier &propertyName, JSValue *value
       return;
     case Onunload:
       if (isSafeScript(exec))
-        setListener(exec,scrollEvent,value);
+        setListener(exec, unloadEvent, value);
       return;
     case Name:
       if (isSafeScript(exec))
@@ -1908,10 +1908,13 @@ int WindowQObject::installTimeout(ScheduledAction* a, int t, bool singleShot)
     DOMWindowTimer* timer = new DOMWindowTimer(timeoutId, this, a);
     ASSERT(!m_timeouts.get(timeoutId));
     m_timeouts.set(timeoutId, timer);
+    // Use a minimum interval of 10 ms to match other browsers.
+    // Faster timers might be "better", but they're incompatible.
+    double interval = t <= 10 ? 0.010 : t * 0.001;
     if (singleShot)
-        timer->startOneShot(t * 0.001);
+        timer->startOneShot(interval);
     else
-        timer->startRepeating(t * 0.001);
+        timer->startRepeating(interval);
     return timeoutId;
 }
 

@@ -370,7 +370,7 @@ JSValue *DOMNode::getValueProperty(ExecState *exec, int token) const
   case OnSubmit:
     return getListener(submitEvent);
   case OnUnload:
-    return getListener(scrollEvent);
+    return getListener(unloadEvent);
   default:
     // no DOM standard, found in IE only
 
@@ -559,7 +559,7 @@ void DOMNode::putValueProperty(ExecState *exec, int token, JSValue *value, int /
     setListener(exec,submitEvent,value);
     break;
   case OnUnload:
-    setListener(exec,scrollEvent,value);
+    setListener(exec, unloadEvent, value);
     break;
   case ScrollTop: {
     RenderObject *rend = node.renderer();
