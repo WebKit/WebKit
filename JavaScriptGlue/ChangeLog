@@ -1,3 +1,12 @@
+2006-02-01  Darin Adler  <darin@apple.com>
+
+        - added some forwarding headers to make new JavaScriptCore changes work
+
+        * kxmlcore/Assertions.h: Added.
+        * kxmlcore/Noncopyable.h: Added.
+        * kxmlcore/OwnPtr.h: Added.
+        * kxmlcore/OwnArrayPtr.h: Added.
+
 2006-01-16  Timothy Hatcher  <timothy@apple.com>
 
         Adding the license header to all files so we can
