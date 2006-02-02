@@ -1,3 +1,13 @@
+2006-02-02  David Hyatt  <hyatt@apple.com>
+
+        Fix for PLT performance regression.  Make sure that the document's load event timer
+        isn't started again if it's already active.
+
+        Reviewed by mjs
+
+        * khtml/xml/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::dispatchImageLoadEventSoon):
+
 2006-02-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
