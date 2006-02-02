@@ -32,6 +32,7 @@
 #include "dom_node.h"
 
 #include "Frame.h"
+#include "FrameTreeNode.h"
 #include "kjs_proxy.h"
 
 #include "CachedCSSStyleSheet.h"
@@ -222,7 +223,7 @@ void HTMLLinkElementImpl::process()
     Frame *frame = getDocument()->frame();
 
     // IE extension: location of small icon for locationbar / bookmarks
-    if (frame && m_isIcon && !m_url.isEmpty() && !frame->parentFrame()) {
+    if (frame && m_isIcon && !m_url.isEmpty() && !frame->treeNode()->parent()) {
         if (!type.isEmpty()) // Mozilla extension to IE extension: icon specified with type
             frame->browserExtension()->setTypedIconURL(KURL(m_url.qstring()), type);
         else 

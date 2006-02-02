@@ -555,12 +555,13 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (void)setParent:(WebCoreFrameBridge *)parent
 {
-    m_frame->setParent([parent part]);
+    // FIXME: frames should be created with the right parent in the first place
+    m_frame->treeNode()->setParent([parent part]);
 }
 
 - (WebCoreFrameBridge *)parent
 {
-    MacFrame *parentFrame = Mac(m_frame->parentFrame());
+    MacFrame *parentFrame = Mac(m_frame->treeNode()->parent());
     if (!parentFrame)
         return nil;
     return parentFrame->bridge();
@@ -1552,12 +1553,12 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)setName:(NSString *)name
 {
-    m_frame->setName(QString::fromNSString(name));
+    m_frame->treeNode()->setName(name);
 }
 
 - (NSString *)name
 {
-    return m_frame->name().getNSString();
+    return m_frame->treeNode()->name();
 }
 
 - (void)_addFramePathToString:(NSMutableString *)path

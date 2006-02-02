@@ -28,6 +28,7 @@
 
 #include "DocumentImpl.h"
 #include "Frame.h"
+#include "FrameTreeNode.h"
 #include "FrameView.h"
 #include "html/html_baseimpl.h"
 #include "html/html_objectimpl.h"
@@ -739,7 +740,7 @@ static bool isURLAllowed(DOM::DocumentImpl *doc, const QString &url)
     // We allow one level of self-reference because some sites depend on that.
     // But we don't allow more than one.
     bool foundSelfReference = false;
-    for (Frame *frame = doc->frame(); frame; frame = frame->parentFrame()) {
+    for (Frame *frame = doc->frame(); frame; frame = frame->treeNode()->parent()) {
         KURL frameURL = frame->url();
         frameURL.setRef(QString::null);
         if (frameURL == newURL) {

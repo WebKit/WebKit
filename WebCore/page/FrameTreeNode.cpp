@@ -37,9 +37,20 @@ FrameTreeNode::~FrameTreeNode()
         child->detachFromView();
 }
 
+void FrameTreeNode::setName(const DOMString& name) 
+{ 
+    DOMString n = name;
+        
+    // FIXME: is the blank rule needed or useful?
+    if (parent() && (name.isEmpty() || parent()->frameExists(name.qstring()) || name == "_blank"))
+        n = parent()->requestFrameName();
+    
+    m_name = n;
+}
+
 void FrameTreeNode::appendChild(PassRefPtr<Frame> child)
 {
-    child->setParent(m_thisFrame);
+    child->treeNode()->m_parent = m_thisFrame;
 
     Frame* oldLast = m_lastChild;
     m_lastChild = child.get();
@@ -57,7 +68,7 @@ void FrameTreeNode::appendChild(PassRefPtr<Frame> child)
 
 void FrameTreeNode::removeChild(Frame* child)
 {
-    child->setParent(0);
+    child->treeNode()->m_parent = 0;
     child->detachFromView();
 
     // Slightly tricky way to prevent deleting the child until we are done with it, w/o

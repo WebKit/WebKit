@@ -614,13 +614,6 @@ public:
   const KHTMLSettings *settings() const;
 
   /**
-   * Returns a pointer to the parent Frame, if any.
-   *
-   *  Returns 0L otherwise.
-   */
-  Frame *parentFrame() const;
-
-  /**
    * Returns a list of names of all frame (including iframe) objects of
    * the current document. Note that this method is not working recursively
    * for sub-frames.
@@ -839,7 +832,7 @@ public:
   virtual bool lastEventIsMouseUp() const = 0;
   virtual QString overrideMediaType() const = 0;
 protected:
-  virtual QString generateFrameName() = 0;
+  virtual DOMString generateFrameName() = 0;
 
 public slots:
   /**
@@ -928,13 +921,14 @@ private:
    * always the same.
    * The sequence is reset in clear().
    */
-  QString requestFrameName();
 
   bool requestObject(RenderPart *frame, const QString &url, const QString &serviceType,
                       const QStringList &paramNames = QStringList(), const QStringList &paramValues = QStringList());
   bool requestObject(ChildFrame *child, const KURL &url, const URLArgs &args = URLArgs());
 
 public:
+  DOMString requestFrameName();
+
   DocumentImpl *document() const;
   void setDocument(DocumentImpl* newDoc);
 
@@ -1035,8 +1029,6 @@ private:
   // Convenience, to avoid repeating the code to dig down to get this.
 
   QChar backslashAsCurrencySymbol() const;
-  void setName(const QString& name);
-  const QString& name();
 
   QValueList<MarkedTextUnderline> markedTextUnderlines() const;  
   bool markedTextUsesUnderlines() const;
@@ -1103,8 +1095,6 @@ public:
   virtual void detachFromView();
 
   KURL url() const;
-  void setParent(Frame* parent);
-  Frame* parent() const;
 
   // split out controller objects
   FrameTreeNode* treeNode();

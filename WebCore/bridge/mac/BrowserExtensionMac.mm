@@ -30,6 +30,7 @@
 #import "MacFrame.h"
 #import "WebCoreFrameBridge.h"
 #import <kxmlcore/Assertions.h>
+#import "FrameTreeNode.h"
 
 namespace WebCore {
 
@@ -118,7 +119,7 @@ void BrowserExtensionMac::createNewWindow(const KURL &url,
         return;
     
     if ([bridge part])
-	[bridge part]->setName(urlArgs.frameName);
+	[bridge part]->treeNode()->setName(urlArgs.frameName);
     
     if (partResult)
 	*partResult = [bridge part];

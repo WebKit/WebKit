@@ -180,10 +180,10 @@ void MacFrame::freeClipboard()
     }
 }
 
-QString MacFrame::generateFrameName()
+DOMString MacFrame::generateFrameName()
 {
     KWQ_BLOCK_EXCEPTIONS;
-    return QString::fromNSString([_bridge generateFrameName]);
+    return [_bridge generateFrameName];
     KWQ_UNBLOCK_EXCEPTIONS;
 
     return QString();
@@ -525,7 +525,7 @@ void MacFrame::submitForm(const KURL &url, const URLArgs &args)
     WebCoreFrameBridge *target = args.frameName.isEmpty() ? _bridge : [_bridge findFrameNamed:args.frameName.getNSString()];
     Frame *targetPart = [target part];
     bool willReplaceThisFrame = false;
-    for (Frame *p = this; p; p = p->parentFrame()) {
+    for (Frame *p = this; p; p = p->treeNode()->parent()) {
         if (p == targetPart) {
             willReplaceThisFrame = true;
             break;
@@ -568,7 +568,7 @@ void Frame::frameDetached()
     // FIXME: This should be a virtual function, with the second part in MacFrame, and the first
     // part in Frame, so it works for KHTML too.
 
-    Frame *parent = parentFrame();
+    Frame *parent = treeNode()->parent();
     if (parent) {
         FrameList& parentFrames = parent->d->m_frames;
         FrameIt end = parentFrames.end();
@@ -999,7 +999,7 @@ NSView *MacFrame::nextKeyViewInFrameHierarchy(NodeImpl *node, KWQSelectionDirect
 {
     NSView *next = nextKeyViewInFrame(node, direction);
     if (!next) {
-        MacFrame *parent = Mac(parentFrame());
+        MacFrame *parent = Mac(treeNode()->parent());
         if (parent) {
             next = parent->nextKeyViewInFrameHierarchy(parent->childFrame(this)->m_renderer->element(), direction);
         }
@@ -1428,9 +1428,9 @@ void MacFrame::createEmptyDocument()
         [_bridge loadEmptyDocumentSynchronously];
         KWQ_UNBLOCK_EXCEPTIONS;
 
-        if (parentFrame() && (parentFrame()->childFrame(this)->m_type == ChildFrame::IFrame ||
-                parentFrame()->childFrame(this)->m_type == ChildFrame::Object)) {
-            d->m_doc->setBaseURL(parentFrame()->d->m_doc->baseURL());
+        if (treeNode()->parent() && (treeNode()->parent()->childFrame(this)->m_type == ChildFrame::IFrame ||
+                treeNode()->parent()->childFrame(this)->m_type == ChildFrame::Object)) {
+            d->m_doc->setBaseURL(treeNode()->parent()->d->m_doc->baseURL());
         }
     }
 }

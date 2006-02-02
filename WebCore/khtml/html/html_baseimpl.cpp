@@ -31,6 +31,7 @@
 
 #include "FrameView.h"
 #include "Frame.h"
+#include "FrameTreeNode.h"
 
 #include "rendering/render_frames.h"
 #include "css/cssstyleselector.h"
@@ -311,7 +312,7 @@ bool HTMLFrameElementImpl::isURLAllowed(const AtomicString &URLString) const
     // We allow one level of self-reference because some sites depend on that.
     // But we don't allow more than one.
     bool foundSelfReference = false;
-    for (Frame *frame = w->frame(); frame; frame = frame->parentFrame()) {
+    for (Frame *frame = w->frame(); frame; frame = frame->treeNode()->parent()) {
         KURL frameURL = frame->url();
         frameURL.setRef(QString::null);
         if (frameURL == newURL) {

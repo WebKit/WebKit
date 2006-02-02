@@ -1,3 +1,64 @@
+2006-01-31  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - Move name and parent from Frame to FrameTreeNode
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6994
+
+        * bridge/mac/BrowserExtensionMac.mm:
+        (WebCore::BrowserExtensionMac::createNewWindow):
+        * bridge/mac/MacFrame.h:
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::generateFrameName):
+        (WebCore::MacFrame::submitForm):
+        (WebCore::Frame::frameDetached):
+        (WebCore::MacFrame::nextKeyViewInFrameHierarchy):
+        (WebCore::MacFrame::createEmptyDocument):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge setParent:]):
+        (-[WebCoreFrameBridge parent]):
+        (-[WebCoreFrameBridge setName:]):
+        (-[WebCoreFrameBridge name]):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::getValueProperty):
+        (KJS::Window::put):
+        (KJS::Window::isSafeScript):
+        (KJS::WindowFunc::callAsFunction):
+        * khtml/html/html_baseimpl.cpp:
+        (WebCore::HTMLFrameElementImpl::isURLAllowed):
+        * khtml/html/html_headimpl.cpp:
+        (WebCore::HTMLLinkElementImpl::process):
+        * khtml/xml/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::ownerElement):
+        (WebCore::DocumentImpl::parentDocument):
+        * page/Frame.cpp:
+        (WebCore::Frame::checkCompleted):
+        (WebCore::Frame::redirectionTimerFired):
+        (WebCore::Frame::requestFrameName):
+        (WebCore::Frame::slotChildCompleted):
+        (WebCore::Frame::incrementFrameCount):
+        (WebCore::Frame::decrementFrameCount):
+        (WebCore::Frame::topLevelFrameCount):
+        (WebCore::Frame::selectFrameElementInParentIfFullySelected):
+        (WebCore::Frame::handleFallbackContent):
+        (WebCore::Frame::userGestureHint):
+        (WebCore::Frame::canCachePage):
+        (WebCore::Frame::updatePolicyBaseURL):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        (WebCore::FramePrivate::FramePrivate):
+        * page/FrameTreeNode.cpp:
+        (WebCore::FrameTreeNode::setName):
+        (WebCore::FrameTreeNode::appendChild):
+        (WebCore::FrameTreeNode::removeChild):
+        * page/FrameTreeNode.h:
+        (WebCore::FrameTreeNode::FrameTreeNode):
+        (WebCore::FrameTreeNode::name):
+        (WebCore::FrameTreeNode::parent):
+        (WebCore::FrameTreeNode::setParent):
+        * rendering/render_frames.cpp:
+        (WebCore::isURLAllowed):
+
 2006-02-01  Darin Adler  <darin@apple.com>
 
         Checking in without review because I *just* broke this with my last check-in.

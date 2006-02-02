@@ -57,6 +57,7 @@
 #include <kdebug.h>
 #include <kjs/collector.h>
 #include <klocale.h>
+#include "FrameTreeNode.h"
 
 #if KHTML_XSLT
 #include "XSLTProcessor.h"
@@ -708,7 +709,7 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
     case _Location:
       return location();
     case Name:
-      return jsString(m_frame->name());
+      return jsString(m_frame->treeNode()->name());
     case _Navigator:
     case ClientInformation: {
       // Store the navigator in the object so we get the same one each time.
@@ -750,7 +751,7 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
       updateLayout();
       return jsNumber(m_frame->view()->contentsY());
     case Parent:
-      return retrieve(m_frame->parentFrame() ? m_frame->parentFrame() : (Frame*)m_frame);
+      return retrieve(m_frame->treeNode()->parent() ? m_frame->treeNode()->parent() : (Frame*)m_frame);
     case Personalbar:
       return personalbar(exec);
     case ScreenLeft:
@@ -788,8 +789,8 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
       return retrieve(m_frame);
     case Top: {
       Frame *p = m_frame;
-      while (p->parentFrame())
-        p = p->parentFrame();
+      while (p->treeNode()->parent())
+        p = p->treeNode()->parent();
       return retrieve(p);
     }
     case _Screen:
@@ -1179,7 +1180,7 @@ void Window::put(ExecState* exec, const Identifier &propertyName, JSValue *value
       return;
     case Name:
       if (isSafeScript(exec))
-        m_frame->setName( value->toString(exec).qstring() );
+        m_frame->treeNode()->setName(value->toString(exec).qstring());
       return;
     default:
       break;
@@ -1240,9 +1241,9 @@ bool Window::isSafeScript(const ScriptInterpreter *origin, const ScriptInterpret
     // or opener, allow access from any document in the same domain as
     // the parent or opener.
     if (shouldLoadAsEmptyDocument(targetPart->url())) {
-        Frame *ancestorPart = targetPart->opener() ? targetPart->opener() : targetPart->parentFrame();
+        Frame *ancestorPart = targetPart->opener() ? targetPart->opener() : targetPart->treeNode()->parent();
         while (ancestorPart && shouldLoadAsEmptyDocument(ancestorPart->url())) {
-            ancestorPart = ancestorPart->parentFrame();
+            ancestorPart = ancestorPart->treeNode()->parent();
         }
 
         if (ancestorPart)
@@ -1305,9 +1306,9 @@ bool Window::isSafeScript(ExecState *exec) const
   // or opener, allow access from any document in the same domain as
   // the parent or opener.
   if (shouldLoadAsEmptyDocument(m_frame->url())) {
-    Frame *ancestorPart = m_frame->opener() ? m_frame->opener() : m_frame->parentFrame();
+    Frame *ancestorPart = m_frame->opener() ? m_frame->opener() : m_frame->treeNode()->parent();
     while (ancestorPart && shouldLoadAsEmptyDocument(ancestorPart->url())) {
-      ancestorPart = ancestorPart->parentFrame();
+      ancestorPart = ancestorPart->treeNode()->parent();
     }
     
     if (ancestorPart)
@@ -1604,8 +1605,8 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
       URLArgs uargs;
       uargs.frameName = frameName;
       if (uargs.frameName == "_top") {
-          while (frame->parentFrame())
-              frame = frame->parentFrame();
+          while (frame->treeNode()->parent())
+              frame = frame->treeNode()->parent();
           
           const Window* window = Window::retrieveWindow(frame);
           if (!url.url().startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {
@@ -1615,8 +1616,8 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
           return Window::retrieve(frame);
       }
       if (uargs.frameName == "_parent") {
-          if (frame->parentFrame())
-              frame = frame->parentFrame();
+          if (frame->treeNode()->parent())
+              frame = frame->treeNode()->parent();
           
           const Window* window = Window::retrieveWindow(frame);
           if (!url.url().startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {

@@ -121,7 +121,8 @@ DOMStringImpl::operator NSString *() const
 
 DOMString::DOMString(NSString *str)
 {
-    ASSERT(str);
+    if (!str)
+        return;
 
     CFIndex size = CFStringGetLength(reinterpret_cast<CFStringRef>(str));
     if (size == 0)
