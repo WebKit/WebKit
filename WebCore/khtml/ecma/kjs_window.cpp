@@ -1968,7 +1968,7 @@ void WindowQObject::resumeTimeouts(PausedTimeouts *timeouts)
 void WindowQObject::clearTimeout(int timeoutId, bool delAction)
 {
     TimeoutsMap::iterator it = m_timeouts.find(timeoutId);
-    if (it != m_timeouts.end())
+    if (it == m_timeouts.end())
         return;
     DOMWindowTimer* timer = it->second;
     m_timeouts.remove(it);

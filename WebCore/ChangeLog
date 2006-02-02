@@ -1,5 +1,17 @@
 2006-02-01  Darin Adler  <darin@apple.com>
 
+        Checking in without review because I *just* broke this with my last check-in.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7018
+          REGRESSION: clearTimeout no longer works
+
+        Test: fast/dom/Window/clear-timeout.html
+
+        * khtml/ecma/kjs_window.cpp: (WindowQObject::clearTimeout): Fixed a
+        != that should have been a ==.
+
+2006-02-01  Darin Adler  <darin@apple.com>
+
         Reviewed by Hyatt.
 
         - use Timer for everything, kill timer features of QObject, QTimer, QTimerEvent
