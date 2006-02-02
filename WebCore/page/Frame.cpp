@@ -100,32 +100,33 @@ namespace WebCore {
 using namespace EventNames;
 using namespace HTMLNames;
 
-const int CARET_BLINK_FREQUENCY = 500;
+const double caretBlinkFrequency = 0.5;
 
-    class PartStyleSheetLoader : public CachedObjectClient
+class PartStyleSheetLoader : public CachedObjectClient
+{
+public:
+    PartStyleSheetLoader(Frame* frame, DOMString url, DocLoader* dl)
     {
-    public:
-        PartStyleSheetLoader(Frame *frame, DOMString url, DocLoader* dl)
-        {
-            m_frame = frame;
-            m_cachedSheet = Cache::requestStyleSheet(dl, url );
-            if (m_cachedSheet)
-                m_cachedSheet->ref( this );
-        }
-        virtual ~PartStyleSheetLoader()
-        {
-            if ( m_cachedSheet ) m_cachedSheet->deref(this);
-        }
-        virtual void setStyleSheet(const DOMString&, const DOMString &sheet)
-        {
-          if ( m_frame )
+        m_frame = frame;
+        m_cachedSheet = Cache::requestStyleSheet(dl, url);
+        if (m_cachedSheet)
+            m_cachedSheet->ref(this);
+    }
+    virtual ~PartStyleSheetLoader()
+    {
+        if (m_cachedSheet)
+            m_cachedSheet->deref(this);
+    }
+    virtual void setStyleSheet(const DOMString&, const DOMString &sheet)
+    {
+        if (m_frame)
             m_frame->setUserStyleSheet( sheet.qstring() );
+        delete this;
+    }
 
-            delete this;
-        }
-        QGuardedPtr<Frame> m_frame;
-        CachedCSSStyleSheet *m_cachedSheet;
-    };
+    QGuardedPtr<Frame> m_frame;
+    CachedCSSStyleSheet* m_cachedSheet;
+};
 
 FrameList::Iterator FrameList::find( const QString &name )
 {
@@ -176,32 +177,30 @@ void Frame::init(FrameView *view)
            this, SLOT( slotLoaderRequestDone( khtml::DocLoader*, khtml::CachedObject *) ) );
   connect( Cache::loader(), SIGNAL( requestFailed( khtml::DocLoader*, khtml::CachedObject *) ),
            this, SLOT( slotLoaderRequestDone( khtml::DocLoader*, khtml::CachedObject *) ) );
-
-  connect(&d->m_lifeSupportTimer, SIGNAL(timeout()), this, SLOT(slotEndLifeSupport()));
 }
 
-#ifndef NDEBUG
+#if !NDEBUG
 struct FrameCounter { 
     static int count; 
     ~FrameCounter() { if (count != 0) fprintf(stderr, "LEAK: %d Frame\n", count); }
 };
 int FrameCounter::count = 0;
 static FrameCounter frameCounter;
-#endif NDEBUG
+#endif
 
 Frame::Frame() 
     : d(0) 
 { 
-#ifndef NDEBUG
+#if !NDEBUG
     ++FrameCounter::count;
 #endif
 }
 
 Frame::~Frame()
 {
-    assert(!d->m_lifeSupportTimer.isActive());
+    ASSERT(!d->m_lifeSupportTimer.isActive());
 
-#ifndef NDEBUG
+#if !NDEBUG
     --FrameCounter::count;
 #endif
 
@@ -223,7 +222,7 @@ Frame::~Frame()
     d->m_view->m_frame = 0;
   }
   
-  assert(!d->m_lifeSupportTimer.isActive());
+  ASSERT(!d->m_lifeSupportTimer.isActive());
 
   delete d; d = 0;
 }
@@ -1342,12 +1341,12 @@ const SelectionController &Frame::dragCaret() const
     return d->m_dragCaret;
 }
 
-const WebCore::Selection& Frame::mark() const
+const Selection& Frame::mark() const
 {
     return d->m_mark;
 }
 
-void Frame::setMark(const WebCore::Selection& s)
+void Frame::setMark(const Selection& s)
 {
     d->m_mark = s;
 }
@@ -1462,15 +1461,12 @@ void Frame::setFocusNodeIfNeeded()
 void Frame::selectionLayoutChanged()
 {
     // kill any caret blink timer now running
-    if (d->m_caretBlinkTimer >= 0) {
-        killTimer(d->m_caretBlinkTimer);
-        d->m_caretBlinkTimer = -1;
-    }
+    d->m_caretBlinkTimer.stop();
 
     // see if a new caret blink timer needs to be started
     if (d->m_caretVisible && d->m_caretBlinks && 
         d->m_selection.isCaret() && d->m_selection.start().node()->isContentEditable()) {
-        d->m_caretBlinkTimer = startTimer(CARET_BLINK_FREQUENCY);
+        d->m_caretBlinkTimer.startRepeating(caretBlinkFrequency);
         d->m_caretPaint = true;
         d->m_selection.needsCaretRepaint();
     }
@@ -1489,23 +1485,23 @@ int Frame::xPosForVerticalArrowNavigation() const
     return d->m_xPosForVerticalArrowNavigation;
 }
 
-void Frame::timerEvent(QTimerEvent *e)
+void Frame::caretBlinkTimerFired(Timer<Frame>*)
 {
-    if (e->timerId() == d->m_caretBlinkTimer && 
-        d->m_caretVisible && 
-        d->m_caretBlinks && 
-        d->m_selection.isCaret()) {
-        if (d->m_bMousePressed) {
-            if (!d->m_caretPaint) {
-                d->m_caretPaint = true;
-                d->m_selection.needsCaretRepaint();
-            }
-        }
-        else {
-            d->m_caretPaint = !d->m_caretPaint;
-            d->m_selection.needsCaretRepaint();
-        }
-    }
+    // Might be better to turn the timer off during some of these circumstances
+    // and assert rather then letting the timer fire and do nothing here.
+    // Could do that in selectionLayoutChanged.
+
+    if (!d->m_caretVisible)
+        return;
+    if (!d->m_caretBlinks)
+        return;
+    if (!d->m_selection.isCaret())
+        return;
+    bool caretPaint = d->m_caretPaint;
+    if (d->m_bMousePressed && caretPaint)
+        return;
+    d->m_caretPaint = !caretPaint;
+    d->m_selection.needsCaretRepaint();
 }
 
 void Frame::paintCaret(QPainter *p, const IntRect &rect) const
@@ -2636,14 +2632,14 @@ void Frame::computeAndSetTypingStyle(CSSStyleDeclarationImpl *style, EditAction 
 void Frame::applyStyle(CSSStyleDeclarationImpl *style, EditAction editingAction)
 {
     switch (selection().state()) {
-        case WebCore::Selection::NONE:
+        case Selection::NONE:
             // do nothing
             break;
-        case WebCore::Selection::CARET: {
+        case Selection::CARET: {
             computeAndSetTypingStyle(style, editingAction);
             break;
         }
-        case WebCore::Selection::RANGE:
+        case Selection::RANGE:
             if (document() && style) {
                 EditCommandPtr cmd(new ApplyStyleCommand(document(), style, editingAction));
                 cmd.apply();
@@ -2655,11 +2651,11 @@ void Frame::applyStyle(CSSStyleDeclarationImpl *style, EditAction editingAction)
 void Frame::applyParagraphStyle(CSSStyleDeclarationImpl *style, EditAction editingAction)
 {
     switch (selection().state()) {
-        case WebCore::Selection::NONE:
+        case Selection::NONE:
             // do nothing
             break;
-        case WebCore::Selection::CARET:
-        case WebCore::Selection::RANGE:
+        case Selection::CARET:
+        case Selection::RANGE:
             if (document() && style) {
                 EditCommandPtr cmd(new ApplyStyleCommand(document(), style, editingAction, ApplyStyleCommand::ForceBlockProperties));
                 cmd.apply();
@@ -2951,17 +2947,17 @@ void Frame::disconnectChild(const ChildFrame *child) const
     }
 }
 
-#ifndef NDEBUG
+#if !NDEBUG
 static HashSet<Frame*> lifeSupportSet;
 #endif
 
 void Frame::endAllLifeSupport()
 {
-#ifndef NDEBUG
+#if !NDEBUG
     HashSet<Frame*> lifeSupportCopy = lifeSupportSet;
     HashSet<Frame*>::iterator end = lifeSupportCopy.end();
     for (HashSet<Frame*>::iterator it = lifeSupportCopy.begin(); it != end; ++it)
-        (*it)->slotEndLifeSupport();
+        (*it)->endLifeSupport();
 #endif
 }
 
@@ -2970,21 +2966,30 @@ void Frame::keepAlive()
     if (d->m_lifeSupportTimer.isActive())
         return;
     ref();
-    d->m_lifeSupportTimer.start(0, true);
-#ifndef NDEBUG
+#if !NDEBUG
     lifeSupportSet.add(this);
 #endif
+    d->m_lifeSupportTimer.startOneShot(0);
 }
 
-void Frame::slotEndLifeSupport()
+void Frame::endLifeSupport()
 {
+    if (!d->m_lifeSupportTimer.isActive())
+        return;
     d->m_lifeSupportTimer.stop();
-    deref();
-#ifndef NDEBUG
+#if !NDEBUG
     lifeSupportSet.remove(this);
 #endif
+    deref();
 }
 
+void Frame::lifeSupportTimerFired(Timer<Frame>*)
+{
+#if !NDEBUG
+    lifeSupportSet.remove(this);
+#endif
+    deref();
+}
 
 // Workaround for the fact that it's hard to delete a frame.
 // Call this after doing user-triggered selections to make it easy to delete the frame you entirely selected.
@@ -3176,14 +3181,14 @@ void Frame::revealSelection()
     IntRect rect;
     
     switch (selection().state()) {
-        case WebCore::Selection::NONE:
+        case Selection::NONE:
             return;
             
-        case WebCore::Selection::CARET:
+        case Selection::CARET:
             rect = selection().caretRect();
             break;
             
-        case WebCore::Selection::RANGE:
+        case Selection::RANGE:
             rect = selectionRect();
             break;
     }
@@ -3226,7 +3231,7 @@ bool Frame::scrollOverflow(KWQScrollDirection direction, KWQScrollGranularity gr
 // FIXME: why is this here instead of on the FrameView?
 void Frame::paint(QPainter *p, const IntRect& rect)
 {
-#ifndef NDEBUG
+#if !NDEBUG
     bool fillWithRed;
     if (p->printing())
         fillWithRed = false; // Printing, don't fill with red (can't remember why).
@@ -3609,14 +3614,14 @@ void Frame::centerSelectionInVisibleArea() const
     IntRect rect;
     
     switch (selection().state()) {
-        case WebCore::Selection::NONE:
+        case Selection::NONE:
             return;
             
-        case WebCore::Selection::CARET:
+        case Selection::CARET:
             rect = selection().caretRect();
             break;
             
-        case WebCore::Selection::RANGE:
+        case Selection::RANGE:
             rect = selectionRect();
             break;
     }

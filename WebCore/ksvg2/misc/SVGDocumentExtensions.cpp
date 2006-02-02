@@ -22,9 +22,10 @@
 #include "config.h"
 #if SVG_SUPPORT
 #include "SVGDocumentExtensions.h"
+
 #include "DocumentImpl.h"
-#include "KSVGTimeScheduler.h"
 #include "Frame.h"
+#include "KSVGTimeScheduler.h"
 #include "kjs_proxy.h"
 
 namespace WebCore {
@@ -47,11 +48,6 @@ EventListener *SVGDocumentExtensions::createSVGEventListener(const DOMString& co
             return proxy->createSVGEventHandler(code, node);
     }
     return 0;
-}
-
-TimeScheduler *SVGDocumentExtensions::timeScheduler() const
-{
-    return m_timeScheduler;
 }
 
 void SVGDocumentExtensions::pauseAnimations()

@@ -26,39 +26,82 @@
 #import "config.h"
 #import "Timer.h"
 
+#import <kxmlcore/Assertions.h>
+#import <kxmlcore/HashSet.h>
+
 namespace WebCore {
+
+static bool deferringTimers;
+static HashSet<TimerBase*>* deferredTimers;
+static CFRunLoopTimerRef fireDeferredTimer;
 
 static void timerFired(CFRunLoopTimerRef, void* p)
 {
-    static_cast<TimerBase*>(p)->fire();
+    TimerBase* timer = static_cast<TimerBase*>(p);
+    if (!deferringTimers)
+        timer->fire();
+    else {
+        deferredTimers = new HashSet<TimerBase*>;
+        deferredTimers->add(timer);
+    }
 }
 
-TimerBase::TimerBase(TimerBaseFiredFunction f)
-    : m_function(f), m_runLoopTimer(0)
+static void fireDeferred(CFRunLoopTimerRef, void*)
+{
+    CFRunLoopTimerInvalidate(fireDeferredTimer);
+    CFRelease(fireDeferredTimer);
+    fireDeferredTimer = 0;
+
+    if (!deferredTimers)
+        return;
+
+    HashSet<TimerBase*> timers = *deferredTimers;
+    HashSet<TimerBase*>::iterator end = timers.end();
+    for (HashSet<TimerBase*>::iterator it = timers.begin(); !deferringTimers && it != end; ++it) {
+        TimerBase* timer = *it;
+        HashSet<TimerBase*>::iterator j = deferredTimers->find(timer);
+        if (j != deferredTimers->end()) {
+            deferredTimers->remove(j);
+            timer->fire();
+        }
+    }
+}
+
+TimerBase::TimerBase()
+    : m_runLoopTimer(0)
 {
 }
 
-void TimerBase::start(double nextFireTime, double repeatInterval)
+TimerBase::~TimerBase()
+{
+    stop();
+}
+
+void TimerBase::start(double nextFireInterval, double repeatInterval)
 {
     stop();
     CFRunLoopTimerContext context = { 0, this, 0, 0, 0 };
-    m_runLoopTimer = CFRunLoopTimerCreate(0, nextFireTime - kCFAbsoluteTimeIntervalSince1970,
+    m_runLoopTimer = CFRunLoopTimerCreate(0, CFAbsoluteTimeGetCurrent() + nextFireInterval,
         repeatInterval, 0, 0, timerFired, &context);
     CFRunLoopAddTimer(CFRunLoopGetCurrent(), m_runLoopTimer, kCFRunLoopDefaultMode);
 }
 
 void TimerBase::startRepeating(double repeatInterval)
 {
-    start(CFAbsoluteTimeGetCurrent() + repeatInterval + kCFAbsoluteTimeIntervalSince1970, repeatInterval);
+    ASSERT(repeatInterval > 0);
+    start(repeatInterval, repeatInterval);
 }
 
 void TimerBase::startOneShot(double interval)
 {
-    start(CFAbsoluteTimeGetCurrent() + interval + kCFAbsoluteTimeIntervalSince1970, 0);
+    start(interval, 0);
 }
 
 void TimerBase::stop()
 {
+    if (deferredTimers)
+        deferredTimers->remove(this);
+
     if (!m_runLoopTimer)
         return;
 
@@ -72,9 +115,15 @@ bool TimerBase::isActive() const
     return m_runLoopTimer;
 }
 
-double TimerBase::nextFireTime() const
+double TimerBase::nextFireInterval() const
 {
-    return m_runLoopTimer ? CFRunLoopTimerGetNextFireDate(m_runLoopTimer) : 0;
+    if (!m_runLoopTimer)
+        return 0;
+    double nextFireDate = CFRunLoopTimerGetNextFireDate(m_runLoopTimer);
+    double currentTime = CFAbsoluteTimeGetCurrent();
+    if (nextFireDate < currentTime)
+        return 0;
+    return nextFireDate - currentTime;
 }
 
 double TimerBase::repeatInterval() const
@@ -84,14 +133,42 @@ double TimerBase::repeatInterval() const
 
 void TimerBase::fire()
 {
-    if (m_runLoopTimer && !CFRunLoopTimerIsValid(m_runLoopTimer)) {
+    ASSERT(!deferringTimers);
+    ASSERT(!deferredTimers || !deferredTimers->contains(this));
+
+    if (m_runLoopTimer && (!CFRunLoopTimerIsValid(m_runLoopTimer) || !CFRunLoopTimerDoesRepeat(m_runLoopTimer))) {
         CFRunLoopTimerInvalidate(m_runLoopTimer);
         CFRelease(m_runLoopTimer);
         m_runLoopTimer = 0;
     }
 
     // Note: This call may destroy the timer object, so be sure not to touch any fields afterward.
-    m_function(this);
+    fired();
+}
+
+bool isDeferringTimers()
+{
+    return deferringTimers;
+}
+
+void setDeferringTimers(bool shouldDefer)
+{
+    if (shouldDefer == deferringTimers)
+        return;
+
+    if (shouldDefer) {
+        deferringTimers = true;
+        if (fireDeferredTimer) {
+            CFRunLoopTimerInvalidate(fireDeferredTimer);
+            CFRelease(fireDeferredTimer);
+            fireDeferredTimer = 0;
+        }
+    } else {
+        deferringTimers = false;
+        ASSERT(!fireDeferredTimer);
+        fireDeferredTimer = CFRunLoopTimerCreate(0, CFAbsoluteTimeGetCurrent(), 0, 0, 0, fireDeferred, 0);
+        CFRunLoopAddTimer(CFRunLoopGetCurrent(), fireDeferredTimer, kCFRunLoopDefaultMode);
+    }
 }
 
 }

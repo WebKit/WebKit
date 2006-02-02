@@ -507,10 +507,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQTimer.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQValueList.h"
 				>
 			</File>

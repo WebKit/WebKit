@@ -37,35 +37,37 @@ class QStringList;
 class QWheelEvent;
 
 namespace WebCore {
-    class CSSProperty;
-    class CSSStyleSelector;
-    class ClipboardImpl;
-    class DocumentImpl;
-    class ElementImpl;
-    class Frame;
-    class HTMLAnchorElementImpl;
-    class HTMLDocumentImpl;
-    class HTMLElementImpl;
-    class HTMLFormElementImpl;
-    class HTMLGenericFormElementImpl;
-    class HTMLTitleElementImpl;
-    class InlineBox;
-    class IntRect;
-    class MacFrame;
-    class NodeImpl;
-    class QPainter;
-    class RenderBox;
-    class RenderCanvas;
-    class RenderLineEdit;
-    class RenderObject;
-    class RenderPart;
-    class RenderPartObject;
-    class RenderStyle;
-    class RenderWidget;
 
-    void applyRule(CSSProperty*);
-
+class CSSProperty;
+class CSSStyleSelector;
+class ClipboardImpl;
+class DocumentImpl;
+class ElementImpl;
+class Frame;
 class FrameViewPrivate;
+class HTMLAnchorElementImpl;
+class HTMLDocumentImpl;
+class HTMLElementImpl;
+class HTMLFormElementImpl;
+class HTMLGenericFormElementImpl;
+class HTMLTitleElementImpl;
+class InlineBox;
+class IntRect;
+class MacFrame;
+class NodeImpl;
+class QPainter;
+class RenderBox;
+class RenderCanvas;
+class RenderLineEdit;
+class RenderObject;
+class RenderPart;
+class RenderPartObject;
+class RenderStyle;
+class RenderWidget;
+
+template <typename T> class Timer;
+
+void applyRule(CSSProperty*);
 
 /**
  * Renders and displays HTML in a @ref QScrollView.
@@ -105,7 +107,7 @@ public:
      * Returns a pointer to the Frame that is
      * rendering the page.
      **/
-    Frame *frame() const { return m_frame; }
+    Frame *frame() const { return m_frame.get(); }
 
     int frameWidth() const { return _width; }
 
@@ -190,7 +192,7 @@ public:
     void cancelDragAndDrop(const IntPoint &, DOM::ClipboardImpl *clipboard);
     bool performDragAndDrop(const IntPoint &, DOM::ClipboardImpl *clipboard);
 
-    void timerEvent ( QTimerEvent * );
+    void layoutTimerFired(Timer<FrameView>*);
 
     void repaintRectangle(const IntRect& r, bool immediate);
 
@@ -284,8 +286,8 @@ private:
     int _marginWidth;
     int _marginHeight;
 
-    Frame *m_frame;
-    FrameViewPrivate *d;
+    RefPtr<Frame> m_frame;
+    FrameViewPrivate* d;
 
     QString m_medium;   // media type
 };

@@ -918,8 +918,8 @@ void MacFrame::startRedirectionTimer()
 
     // Don't report history navigations, just actual redirection.
     if (d->m_scheduledRedirection != historyNavigationScheduled) {
-        NSTimeInterval fireDateNumber = d->m_redirectionTimer.nextFireTime() - NSTimeIntervalSince1970;
-        NSDate *fireDate = [[NSDate alloc] initWithTimeIntervalSinceReferenceDate:fireDateNumber];
+        NSTimeInterval interval = d->m_redirectionTimer.nextFireInterval();
+        NSDate *fireDate = [[NSDate alloc] initWithTimeIntervalSinceNow:interval];
         [_bridge reportClientRedirectToURL:KURL(d->m_redirectURL).getNSURL()
                                      delay:d->m_delayRedirect
                                   fireDate:fireDate
@@ -1570,24 +1570,21 @@ bool MacFrame::passMouseDownEventToWidget(QWidget* widget)
     // That's because we don't want the new page to load while the user is holding the mouse down.
     
     BOOL wasDeferringLoading = [_bridge defersLoading];
-    if (!wasDeferringLoading) {
+    if (!wasDeferringLoading)
         [_bridge setDefersLoading:YES];
-    }
-    BOOL wasDeferringTimers = QObject::defersTimers();
-    if (!wasDeferringTimers) {
-        QObject::setDefersTimers(true);
-    }
+    BOOL wasDeferringTimers = isDeferringTimers();
+    if (!wasDeferringTimers)
+        setDeferringTimers(true);
+
     ASSERT(!_sendingEventToSubview);
     _sendingEventToSubview = true;
     [view mouseDown:_currentEvent];
     _sendingEventToSubview = false;
     
-    if (!wasDeferringTimers) {
-        QObject::setDefersTimers(false);
-    }
-    if (!wasDeferringLoading) {
+    if (!wasDeferringTimers)
+        setDeferringTimers(false);
+    if (!wasDeferringLoading)
         [_bridge setDefersLoading:NO];
-    }
 
     // Remember which view we sent the event to, so we can direct the release event properly.
     _mouseDownView = view;

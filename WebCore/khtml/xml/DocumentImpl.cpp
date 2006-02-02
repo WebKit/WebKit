@@ -184,16 +184,18 @@ static inline bool isValidNamePart(UChar32 c)
 QPtrList<DocumentImpl> * DocumentImpl::changedDocuments = 0;
 
 // FrameView might be 0
-DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, FrameView *v)
+DocumentImpl::DocumentImpl(DOMImplementationImpl* impl, FrameView *v)
     : ContainerNodeImpl(0)
-      , m_domtree_version(0)
-      , m_title("")
-      , m_titleSetExplicitly(false)
-      , m_imageLoadEventTimer(0)
-#ifndef KHTML_NO_XBL
-      , m_bindingManager(new XBLBindingManager(this))
+    , m_implementation(impl)
+    , m_domtree_version(0)
+    , m_styleSheets(new StyleSheetListImpl)
+    , m_title("")
+    , m_titleSetExplicitly(false)
+    , m_imageLoadEventTimer(this, &DocumentImpl::imageLoadEventTimerFired)
+#if !KHTML_NO_XBL
+    , m_bindingManager(new XBLBindingManager(this))
 #endif
-#ifdef KHTML_XSLT
+#if KHTML_XSLT
     , m_transformSource(0)
 #endif
     , m_finishedParsing(this, SIGNAL(finishedParsing()))
@@ -202,6 +204,9 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, FrameView *v)
     , m_secureForms(0)
     , m_designMode(inherit)
     , m_selfOnlyRefCount(0)
+#if SVG_SUPPORT
+    , m_svgExtensions(0)
+#endif
 #if __APPLE__
     , m_hasDashboardRegions(false)
     , m_dashboardRegionsDirty(false)
@@ -226,12 +231,8 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, FrameView *v)
     m_bParsing = false;
     m_docChanged = false;
     m_sheet = 0;
-    m_elemSheet = 0;
     m_tokenizer = 0;
 
-    m_implementation = _implementation;
-    if (m_implementation)
-        m_implementation->ref();
     pMode = Strict;
     hMode = XHtml;
     m_textColor = Color::black;
@@ -244,8 +245,6 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, FrameView *v)
     m_defaultView = new AbstractViewImpl(this);
     m_defaultView->ref();
     m_listenerTypes = 0;
-    m_styleSheets = new StyleSheetListImpl;
-    m_styleSheets->ref();
     m_inDocument = true;
     m_styleSelectorDirty = false;
     m_inStyleRecalc = false;
@@ -253,7 +252,7 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, FrameView *v)
     m_usesDescendantRules = false;
     m_usesSiblingRules = false;
 
-    m_styleSelector = new CSSStyleSelector(this, m_usersheet, m_styleSheets, !inCompatMode());
+    m_styleSelector = new CSSStyleSelector(this, m_usersheet, m_styleSheets.get(), !inCompatMode());
     m_windowEventListeners.setAutoDelete(true);
     m_pendingStylesheets = 0;
     m_ignorePendingStylesheets = false;
@@ -302,7 +301,11 @@ DocumentImpl::~DocumentImpl()
     assert(!renderer());
     assert(!m_inPageCache);
     assert(m_savedRenderer == 0);
-    
+
+#if SVG_SUPPORT
+    delete m_svgExtensions;
+#endif
+
     KJS::ScriptInterpreter::forgetAllDOMNodesForDocument(this);
 
     if (m_docChanged && changedDocuments)
@@ -312,9 +315,6 @@ DocumentImpl::~DocumentImpl()
     delete m_sheet;
     delete m_styleSelector;
     delete m_docLoader;
-    if (m_elemSheet )  m_elemSheet->deref();
-    if (m_implementation)
-        m_implementation->deref();
     
     if (m_elementNames) {
         for (unsigned short id = 0; id < m_elementNameCount; id++)
@@ -327,7 +327,6 @@ DocumentImpl::~DocumentImpl()
         delete [] m_attrNames;
     }
     m_defaultView->deref();
-    m_styleSheets->deref();
 
     if (m_renderArena) {
         delete m_renderArena;
@@ -383,9 +382,9 @@ DocumentTypeImpl *DocumentImpl::doctype() const
     return m_docType.get();
 }
 
-DOMImplementationImpl *DocumentImpl::implementation() const
+DOMImplementationImpl* DocumentImpl::implementation() const
 {
-    return m_implementation;
+    return m_implementation.get();
 }
 
 ElementImpl *DocumentImpl::documentElement() const
@@ -1368,11 +1367,9 @@ void DocumentImpl::setUserStyleSheet( const QString& sheet )
 
 CSSStyleSheetImpl* DocumentImpl::elementSheet()
 {
-    if (!m_elemSheet) {
-        m_elemSheet = new CSSStyleSheetImpl(this, baseURL() );
-        m_elemSheet->ref();
-    }
-    return m_elemSheet;
+    if (!m_elemSheet)
+        m_elemSheet = new CSSStyleSheetImpl(this, baseURL());
+    return m_elemSheet.get();
 }
 
 void DocumentImpl::determineParseMode( const QString &/*str*/ )
@@ -1750,7 +1747,7 @@ PassRefPtr<NodeImpl> DocumentImpl::cloneNode(bool /*deep*/)
 
 StyleSheetListImpl* DocumentImpl::styleSheets()
 {
-    return m_styleSheets;
+    return m_styleSheets.get();
 }
 
 DOMString DocumentImpl::preferredStylesheetSet()
@@ -1958,7 +1955,7 @@ void DocumentImpl::recalcStyleSelector()
     QString usersheet = m_usersheet;
     if ( m_view && m_view->mediaType() == "print" )
         usersheet += m_printSheet;
-    m_styleSelector = new CSSStyleSelector(this, usersheet, m_styleSheets, !inCompatMode());
+    m_styleSelector = new CSSStyleSelector(this, usersheet, m_styleSheets.get(), !inCompatMode());
     m_styleSelector->setEncodedURL(m_url);
     m_styleSelectorDirty = false;
 }
@@ -2299,9 +2296,7 @@ void DocumentImpl::setHTMLWindowEventListener(const AtomicString& eventType, Att
 void DocumentImpl::dispatchImageLoadEventSoon(HTMLImageLoader *image)
 {
     m_imageLoadEventDispatchSoonList.append(image);
-    if (!m_imageLoadEventTimer) {
-        m_imageLoadEventTimer = startTimer(0);
-    }
+    m_imageLoadEventTimer.startOneShot(0);
 }
 
 void DocumentImpl::removeImage(HTMLImageLoader* image)
@@ -2310,10 +2305,8 @@ void DocumentImpl::removeImage(HTMLImageLoader* image)
     // Use loops because we allow multiple instances to get into the lists.
     while (m_imageLoadEventDispatchSoonList.removeRef(image)) { }
     while (m_imageLoadEventDispatchingList.removeRef(image)) { }
-    if (m_imageLoadEventDispatchSoonList.isEmpty() && m_imageLoadEventTimer) {
-        killTimer(m_imageLoadEventTimer);
-        m_imageLoadEventTimer = 0;
-    }
+    if (m_imageLoadEventDispatchSoonList.isEmpty())
+        m_imageLoadEventTimer.stop();
 }
 
 void DocumentImpl::dispatchImageLoadEventsNow()
@@ -2325,10 +2318,7 @@ void DocumentImpl::dispatchImageLoadEventsNow()
         return;
     }
 
-    if (m_imageLoadEventTimer) {
-        killTimer(m_imageLoadEventTimer);
-        m_imageLoadEventTimer = 0;
-    }
+    m_imageLoadEventTimer.stop();
     
     m_imageLoadEventDispatchingList = m_imageLoadEventDispatchSoonList;
     m_imageLoadEventDispatchSoonList.clear();
@@ -2344,7 +2334,7 @@ void DocumentImpl::dispatchImageLoadEventsNow()
     m_imageLoadEventDispatchingList.clear();
 }
 
-void DocumentImpl::timerEvent(QTimerEvent *)
+void DocumentImpl::imageLoadEventTimerFired(Timer<DocumentImpl>*)
 {
     dispatchImageLoadEventsNow();
 }
@@ -2975,14 +2965,14 @@ AttrImpl *DocumentImpl::createAttributeNS(const DOMString &namespaceURI, const D
 #if SVG_SUPPORT
 const SVGDocumentExtensions* DocumentImpl::svgExtensions()
 {
-    return m_svgExtensions.get();
+    return m_svgExtensions;
 }
 
 SVGDocumentExtensions* DocumentImpl::accessSVGExtensions()
 {
     if (!m_svgExtensions)
         m_svgExtensions = new SVGDocumentExtensions(this);
-    return m_svgExtensions.get();
+    return m_svgExtensions;
 }
 #endif
 

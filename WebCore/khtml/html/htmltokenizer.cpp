@@ -135,7 +135,7 @@ void Token::addAttribute(DocumentImpl* doc, const AtomicString& attrName, const 
 // ----------------------------------------------------------------------------
 
 HTMLTokenizer::HTMLTokenizer(DocumentImpl* _doc, FrameView* _view, bool includesComments)
-    : inWrite(false)
+    : m_timer(this, &HTMLTokenizer::timerFired), inWrite(false)
 {
     view = _view;
     buffer = 0;
@@ -144,14 +144,13 @@ HTMLTokenizer::HTMLTokenizer(DocumentImpl* _doc, FrameView* _view, bool includes
     parser = new HTMLParser(_view, _doc, includesComments);
     m_executingScript = 0;
     onHold = false;
-    timerId = 0;
     includesCommentsInDOM = includesComments;
     
     begin();
 }
 
 HTMLTokenizer::HTMLTokenizer(DocumentImpl *_doc, DocumentFragmentImpl *i, bool includesComments)
-    : inWrite(false)
+    : m_timer(this, &HTMLTokenizer::timerFired), inWrite(false)
 {
     view = 0;
     buffer = 0;
@@ -160,7 +159,6 @@ HTMLTokenizer::HTMLTokenizer(DocumentImpl *_doc, DocumentFragmentImpl *i, bool i
     parser = new HTMLParser(i, _doc, includesComments);
     m_executingScript = 0;
     onHold = false;
-    timerId = 0;
     includesCommentsInDOM = includesComments;
 
     begin();
@@ -187,11 +185,7 @@ void HTMLTokenizer::reset()
     scriptCode = 0;
     scriptCodeSize = scriptCodeMaxSize = scriptCodeResync = 0;
 
-    if (timerId) {
-        killTimer(timerId);
-        timerId = 0;
-    }
-    timerId = 0;
+    m_timer.stop();
     m_state.setAllowYield(false);
     m_state.setForceSynchronous(false);
 
@@ -1321,8 +1315,7 @@ inline bool HTMLTokenizer::continueProcessing(int& processedCount, double startT
             || (!parser->doc()->haveStylesheetsLoaded() && 
                 (parser->doc()->documentElement()->id() != ID_HTML || parser->doc()->body()))) {*/
             // Schedule the timer to keep processing as soon as possible.
-            if (!timerId)
-                timerId = startTimer(0);
+            m_timer.startOneShot(0);
 #if INSTRUMENT_LAYOUT_SCHEDULING
             if (currentTime() - startTime > tokenizerTimeDelay)
                 printf("Deferring processing of data because 500ms elapsed away from event loop.\n");
@@ -1368,7 +1361,7 @@ bool HTMLTokenizer::write(const SegmentedString &str, bool appendData)
         setSrc(str);
 
     // Once a timer is set, it has control of when the tokenizer continues.
-    if (timerId)
+    if (m_timer.isActive())
         return false;
 
     bool wasInWrite = inWrite;
@@ -1506,7 +1499,7 @@ bool HTMLTokenizer::write(const SegmentedString &str, bool appendData)
 
     m_state = state;
 
-    if (noMoreData && !inWrite && !state.loadingExtScript() && !m_executingScript && !timerId) {
+    if (noMoreData && !inWrite && !state.loadingExtScript() && !m_executingScript && !m_timer.isActive()) {
         end(); // this actually causes us to be deleted
         return true;
     }
@@ -1516,63 +1509,50 @@ bool HTMLTokenizer::write(const SegmentedString &str, bool appendData)
 void HTMLTokenizer::stopParsing()
 {
     Tokenizer::stopParsing();
-    if (timerId) {
-        killTimer(timerId);
-        timerId = 0;
-    }
+    m_timer.stop();
 
     // The part needs to know that the tokenizer has finished with its data,
     // regardless of whether it happened naturally or due to manual intervention.
     if (view && view->frame())
-      view->frame()->tokenizerProcessedData();
+        view->frame()->tokenizerProcessedData();
 }
 
 bool HTMLTokenizer::processingData() const
 {
-    return timerId != 0;
+    return m_timer.isActive();
 }
 
-void HTMLTokenizer::timerEvent(QTimerEvent* e)
+void HTMLTokenizer::timerFired(Timer<HTMLTokenizer>*)
 {
-    if (e->timerId() == timerId) {
-        // Kill the timer.
-        killTimer(timerId);
-        timerId = 0;
-
 #if INSTRUMENT_LAYOUT_SCHEDULING
-        if (!parser->doc()->ownerElement())
-            printf("Beginning timer write at time %d\n", parser->doc()->elapsedTime());
+    if (!parser->doc()->ownerElement())
+        printf("Beginning timer write at time %d\n", parser->doc()->elapsedTime());
 #endif
 
-        if (parser->doc()->view() && parser->doc()->view()->layoutPending() && !parser->doc()->minimumLayoutDelay()) {
-            // Restart the timer and let layout win.  This is basically a way of ensuring that the layout
-            // timer has higher priority than our timer.
-            timerId = startTimer(0);
-            return;
-        }
-        
-        // Invoke write() as though more data came in.
-        QGuardedPtr<FrameView> savedView = view;
-        bool didCallEnd = write(SegmentedString(), true);
-      
-        // If we called end() during the write,  we need to let WebKit know that we're done processing the data.
-        if (didCallEnd && savedView) {
-            Frame *frame = savedView->frame();
-            if (frame) {
-                frame->tokenizerProcessedData();
-            }
+    if (parser->doc()->view() && parser->doc()->view()->layoutPending() && !parser->doc()->minimumLayoutDelay()) {
+        // Restart the timer and let layout win.  This is basically a way of ensuring that the layout
+        // timer has higher priority than our timer.
+        m_timer.startOneShot(0);
+        return;
+    }
+    
+    // Invoke write() as though more data came in.
+    QGuardedPtr<FrameView> savedView = view;
+    bool didCallEnd = write(SegmentedString(), true);
+  
+    // If we called end() during the write,  we need to let WebKit know that we're done processing the data.
+    if (didCallEnd && savedView) {
+        Frame *frame = savedView->frame();
+        if (frame) {
+            frame->tokenizerProcessedData();
         }
     }
 }
 
 void HTMLTokenizer::end()
 {
-    ASSERT(timerId == 0);
-    if (timerId) {
-        // Clean up anyway.
-        killTimer(timerId);
-        timerId = 0;
-    }
+    ASSERT(!m_timer.isActive());
+    m_timer.stop(); // Only helps if assertion above fires, but do it anyway.
 
     if ( buffer == 0 ) {
         parser->finished();
@@ -1631,7 +1611,7 @@ void HTMLTokenizer::finish()
     // this indicates we will not receive any more data... but if we are waiting on
     // an external script to load, we can't finish parsing until that is done
     noMoreData = true;
-    if (!inWrite && !m_state.loadingExtScript() && !m_executingScript && !onHold && !timerId)
+    if (!inWrite && !m_state.loadingExtScript() && !m_executingScript && !onHold && !m_timer.isActive())
         end(); // this actually causes us to be deleted
 }
 

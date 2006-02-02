@@ -28,8 +28,6 @@
 #include <qobject.h>
 #include <qstring.h>
 
-class QTimer;
-
 namespace WebCore {
     class AtomicString;
     class Frame;
@@ -69,6 +67,8 @@ namespace KJS {
         PausedTimeouts& operator=(const PausedTimeouts&);
     };
 
+    class DOMWindowTimer;
+
     class WindowQObject : public QObject {
         Q_OBJECT
     public:
@@ -82,15 +82,17 @@ namespace KJS {
         PausedTimeouts *pauseTimeouts();
         void resumeTimeouts(PausedTimeouts *);
 
+        void timerFired(DOMWindowTimer*);
+
     private slots:
         void parentDestroyed();
     private:
-        virtual void timerEvent(QTimerEvent *);
+        int installTimeout(ScheduledAction*, int interval, bool singleShot);
 
-        Window *m_parent;
-        typedef HashMap<int, ScheduledAction*> TimeoutsMap;
+        Window* m_parent;
+        typedef HashMap<int, DOMWindowTimer*> TimeoutsMap;
         TimeoutsMap m_timeouts;
-  };
+    };
 
   class Screen : public JSObject {
   public:
@@ -225,18 +227,16 @@ namespace KJS {
    */
     class ScheduledAction {
     public:
-        ScheduledAction(JSValue *func, const List& args, bool singleShot)
-            : m_func(func), m_args(args), m_singleShot(singleShot) { }
-        ScheduledAction(const QString& code, bool singleShot)
-            : m_code(code), m_singleShot(singleShot) { }
+        ScheduledAction(JSValue *func, const List& args)
+            : m_func(func), m_args(args) { }
+        ScheduledAction(const QString& code)
+            : m_code(code) { }
         void execute(Window *);
-        bool singleShot() const { return m_singleShot; }
 
     private:
         ProtectedPtr<JSValue> m_func;
         List m_args;
         QString m_code;
-        bool m_singleShot;
     };
 
   class Location : public JSObject {

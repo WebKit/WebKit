@@ -26,9 +26,7 @@
 #ifndef ObjectContents_H
 #define ObjectContents_H
 
-#include "KWQKURL.h"
 #include "KWQObject.h"
-#include "KWQTimer.h"
 
 class ObjectContents : public QObject {
 public:
@@ -44,6 +42,5 @@ private:
 
     unsigned int _ref;
 };
-
 
 #endif

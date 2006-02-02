@@ -57,7 +57,6 @@
 #include <kdebug.h>
 #include <kjs/collector.h>
 #include <klocale.h>
-#include <qtimer.h>
 
 #if KHTML_XSLT
 #include "XSLTProcessor.h"
@@ -68,11 +67,31 @@ using namespace EventNames;
 
 namespace KJS {
 
+static int lastUsedTimeoutId;
+
+class DOMWindowTimer : public TimerBase {
+public:
+    DOMWindowTimer(int timeoutId, WindowQObject* o, ScheduledAction* a)
+        : m_timeoutId(timeoutId), m_object(o), m_action(a) { }
+    virtual ~DOMWindowTimer() { delete m_action; }
+
+    int timeoutId() const { return m_timeoutId; }
+    ScheduledAction* action() const { return m_action; }
+    ScheduledAction* takeAction() { ScheduledAction* a = m_action; m_action = 0; return a; }
+
+private:
+    virtual void fired();
+
+    int m_timeoutId;
+    WindowQObject* m_object;
+    ScheduledAction* m_action;
+};
+
 class PausedTimeout {
 public:
-    int timerId;
-    int nextFireInterval;
-    int repeatInterval;
+    int timeoutId;
+    double nextFireInterval;
+    double repeatInterval;
     ScheduledAction *action;
 };
 
@@ -1878,25 +1897,31 @@ WindowQObject::WindowQObject(Window *w)
 
 void WindowQObject::parentDestroyed()
 {
-    killTimers();
-    TimeoutsMap::iterator end = m_timeouts.end();
-    for (TimeoutsMap::iterator it = m_timeouts.begin(); it != end; ++it)
-        delete it->second;
+    deleteAllValues(m_timeouts);
     m_timeouts.clear();
+}
+
+int WindowQObject::installTimeout(ScheduledAction* a, int t, bool singleShot)
+{
+    int timeoutId = ++lastUsedTimeoutId;
+    DOMWindowTimer* timer = new DOMWindowTimer(timeoutId, this, a);
+    ASSERT(!m_timeouts.get(timeoutId));
+    m_timeouts.set(timeoutId, timer);
+    if (singleShot)
+        timer->startOneShot(t * 0.001);
+    else
+        timer->startRepeating(t * 0.001);
+    return timeoutId;
 }
 
 int WindowQObject::installTimeout(const UString& handler, int t, bool singleShot)
 {
-    int id = startTimer(t);
-    m_timeouts.set(id, new ScheduledAction(handler.qstring(), singleShot));
-    return id;
+    return installTimeout(new ScheduledAction(handler.qstring()), t, singleShot);
 }
 
-int WindowQObject::installTimeout(JSValue *func, const List& args, int t, bool singleShot)
+int WindowQObject::installTimeout(JSValue* func, const List& args, int t, bool singleShot)
 {
-    int id = startTimer(t);
-    m_timeouts.set(id, new ScheduledAction(func, args, singleShot));
-    return id;
+    return installTimeout(new ScheduledAction(func, args), t, singleShot);
 }
 
 PausedTimeouts *WindowQObject::pauseTimeouts()
@@ -1904,18 +1929,24 @@ PausedTimeouts *WindowQObject::pauseTimeouts()
     size_t count = m_timeouts.size();
     if (count == 0)
         return 0;
-    PausedTimeout *t = new PausedTimeout [count];
-    PausedTimeouts *result = new PausedTimeouts(t, count);
-    TimeoutsMap::iterator end = m_timeouts.end();
-    for (TimeoutsMap::iterator it = m_timeouts.begin(); it != end; ++it) {
-        int timerId = it->first;
-        timerIntervals(timerId, t->nextFireInterval, t->repeatInterval);
-        t->timerId = timerId;
-        t->action = it->second;
-        ++t;
-        killTimer(timerId);
+
+    PausedTimeout* t = new PausedTimeout [count];
+    PausedTimeouts* result = new PausedTimeouts(t, count);
+
+    TimeoutsMap::iterator it = m_timeouts.begin();
+    for (size_t i = 0; i != count; ++i, ++it) {
+        int timeoutId = it->first;
+        DOMWindowTimer* timer = it->second;
+        t[i].timeoutId = timeoutId;
+        t[i].nextFireInterval = timer->nextFireInterval();
+        t[i].repeatInterval = timer->repeatInterval();
+        t[i].action = timer->takeAction();
     }
+    ASSERT(it == m_timeouts.end());
+
+    deleteAllValues(m_timeouts);
     m_timeouts.clear();
+
     return result;
 }
 
@@ -1926,44 +1957,38 @@ void WindowQObject::resumeTimeouts(PausedTimeouts *timeouts)
     size_t count = timeouts->numTimeouts();
     PausedTimeout *array = timeouts->takeTimeouts();
     for (size_t i = 0; i != count; ++i) {
-        int timerId = array[i].timerId;
-        m_timeouts.set(timerId, array[i].action);
-        restartTimer(timerId, array[i].nextFireInterval, array[i].repeatInterval);
+        int timeoutId = array[i].timeoutId;
+        DOMWindowTimer* timer = new DOMWindowTimer(timeoutId, this, array[i].action);
+        m_timeouts.set(timeoutId, timer);
+        timer->start(array[i].nextFireInterval, array[i].repeatInterval);
     }
     delete [] array;
 }
 
-void WindowQObject::clearTimeout(int timerId, bool delAction)
+void WindowQObject::clearTimeout(int timeoutId, bool delAction)
 {
-    killTimer(timerId);
-    if (delAction) {
-        TimeoutsMap::iterator it = m_timeouts.find(timerId);
-        if (it != m_timeouts.end()) {
-            delete it->second;
-            m_timeouts.remove(it);
-        }
-    }
+    TimeoutsMap::iterator it = m_timeouts.find(timeoutId);
+    if (it != m_timeouts.end())
+        return;
+    DOMWindowTimer* timer = it->second;
+    m_timeouts.remove(it);
+    delete timer;
 }
 
-void WindowQObject::timerEvent(QTimerEvent *e)
+void WindowQObject::timerFired(DOMWindowTimer* timer)
 {
-    TimeoutsMap::iterator it = m_timeouts.find(e->timerId());
-    ScheduledAction* action = it->second;
-    bool singleShot = action->singleShot();
-
-    // remove single shots before executing
-    if (singleShot) {
-        clearTimeout(e->timerId(), false);
-        m_timeouts.remove(it);
+    // Simple case for non-one-shot timers.
+    if (timer->isActive()) {
+        timer->action()->execute(m_parent);
+        return;
     }
 
+    // Delete timer before executing the action for one-shot timers.
+    ScheduledAction* action = timer->takeAction();
+    m_timeouts.remove(timer->timeoutId());
+    delete timer;
     action->execute(m_parent);
-
-    // It is important not to use action->singleShot here.
-    // The action could have been deleted already if not single shot the
-    // JS code called by execute() calls clearTimeout().
-    if (singleShot)
-        delete action;
+    delete action;
 }
 
 const ClassInfo FrameArray::info = { "FrameArray", 0, &FrameArrayTable, 0 };
@@ -2506,6 +2531,11 @@ PausedTimeouts::~PausedTimeouts()
     for (size_t i = 0; i != count; ++i)
         delete array[i].action;
     delete [] array;
+}
+
+void DOMWindowTimer::fired()
+{
+    m_object->timerFired(this);
 }
 
 } // namespace KJS

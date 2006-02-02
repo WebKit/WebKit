@@ -36,6 +36,7 @@
 #include "edit_actions.h"
 #include "text_affinity.h"
 #include "text_granularity.h"
+#include <kurl.h>
 #include <qscrollbar.h>
 #include <qstringlist.h>
 
@@ -853,7 +854,7 @@ private slots:
   void slotRestoreData( const ByteArray &data );
   void slotFinished( KIO::Job* );
   void slotFinishedParsing();
-  void redirectionTimerFired(Timer<Frame>*);
+    void redirectionTimerFired(Timer<Frame>*);
   void slotRedirection(KIO::Job*, const KURL&);
 
   void slotIncZoom();
@@ -888,7 +889,8 @@ private slots:
   void slotJobPercent(KIO::Job*, unsigned long);
   void slotJobSpeed(KIO::Job*, unsigned long);
 
-  void slotEndLifeSupport();
+    void lifeSupportTimerFired(Timer<Frame>*);
+    void endLifeSupport();
 
   virtual void clear(bool clearWindowProperties = true);
 
@@ -897,7 +899,7 @@ private:
   void clearCaretRectIfNeeded();
   void setFocusNodeIfNeeded();
   void selectionLayoutChanged();
-  void timerEvent(QTimerEvent *);
+    void caretBlinkTimerFired(Timer<Frame>*);
   bool openURLInFrame( const KURL &url, const URLArgs &urlArgs );
 
   void overURL( const QString &url, const QString &target, bool shiftPressed = false );
@@ -910,14 +912,14 @@ private:
 
   void popupMenu( const QString &url );
 
-  void init(FrameView *view);
+  void init(FrameView*);
 
-  bool scheduleScript( NodeImpl *n, const QString& script);
+  bool scheduleScript(NodeImpl*, const QString& script);
 
   KJS::JSValue* executeScheduledScript();
 
-  bool requestFrame( RenderPart *frame, const QString &url, const QString &frameName,
-                     const QStringList &paramNames = QStringList(), const QStringList &paramValues = QStringList(), bool isIFrame = false );
+    bool requestFrame(RenderPart *frame, const QString &url, const QString &frameName,
+        const QStringList &paramNames = QStringList(), const QStringList &paramValues = QStringList(), bool isIFrame = false);
 
   /**
    * @internal returns a name for a frame without a name.

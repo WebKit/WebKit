@@ -28,17 +28,14 @@
 
 namespace WebCore {
 
-    // Fire times are in the same units as currentTime() in SystemTime.h.
-    // In seconds, using the classic POSIX epoch of January 1, 1970.
+    // Time intervals are all in seconds.
 
     class TimerBase {
     public:
-        typedef void (*TimerBaseFiredFunction)(TimerBase*);
+        TimerBase();
+        virtual ~TimerBase();
 
-        TimerBase(TimerBaseFiredFunction);
-        ~TimerBase() { stop(); }
-
-        void start(double nextFireTime, double repeatInterval);
+        void start(double nextFireInterval, double repeatInterval);
 
         void startRepeating(double repeatInterval);
         void startOneShot(double interval);
@@ -46,20 +43,20 @@ namespace WebCore {
         void stop();
         bool isActive() const;
 
-        double nextFireTime() const;
+        double nextFireInterval() const;
         double repeatInterval() const;
 
         void fire();
 
     private:
+        virtual void fired() = 0;
+
         TimerBase(const TimerBase&);
         TimerBase& operator=(const TimerBase&);
 
-        TimerBaseFiredFunction m_function;
-
-    #if __APPLE__
+#if __APPLE__
         CFRunLoopTimerRef m_runLoopTimer;
-    #endif
+#endif
     };
 
     template <typename TimerFiredClass> class Timer : public TimerBase {
@@ -67,20 +64,19 @@ namespace WebCore {
         typedef void (TimerFiredClass::*TimerFiredFunction)(Timer*);
 
         Timer(TimerFiredClass* o, TimerFiredFunction f)
-            : TimerBase(fired), m_object(o), m_memberFunction(f)
-        {
-        }
-
-        static void fired(TimerBase* b)
-        {
-            Timer* t = static_cast<Timer*>(b);
-            (t->m_object->*t->m_memberFunction)(t);
-        }
+            : m_object(o), m_function(f) { }
 
     private:
+        virtual void fired() { (m_object->*m_function)(this); }
+
         TimerFiredClass* m_object;
-        TimerFiredFunction m_memberFunction;
+        TimerFiredFunction m_function;
     };
+
+    // Set to true to prevent any timers from firing.
+    // When set back to false, timers that were deferred will fire.
+    bool isDeferringTimers();
+    void setDeferringTimers(bool);
 
 }
 

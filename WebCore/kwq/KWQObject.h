@@ -36,10 +36,8 @@
 #define SIGNAL(x) "SIGNAL:" #x
 #define emit
 #define Q_OBJECT
-#define Q_PROPERTY(text)
 
 class QEvent;
-class QTimerEvent;
 
 class KWQGuardedPtrBase;
 
@@ -55,14 +53,6 @@ public:
 
     bool inherits(const char *className) const;
 
-    int startTimer(int interval);
-    void killTimer(int timerId);
-    void killTimers();
-    void timerIntervals(int timerId, int& nextFireInterval, int& repeatInterval) const;
-    void restartTimer(int timerId, int nextFireInterval, int repeatInterval);
-    
-    virtual void timerEvent(QTimerEvent *);
-
     void installEventFilter(const QObject *o) { _eventFilterObject = o; }
     void removeEventFilter(const QObject *) { _eventFilterObject = 0; }
     const QObject *eventFilterObject() const { return _eventFilterObject; }
@@ -75,9 +65,6 @@ public:
 
     static const QObject *sender() { return _sender; }
     
-    static bool defersTimers() { return _defersTimers; }
-    static void setDefersTimers(bool defers);
-
     virtual bool isKHTMLLoader() const;
     virtual bool isFrame() const;
     virtual bool isFrameView() const;
@@ -101,8 +88,6 @@ private:
     
     const QObject *_eventFilterObject;
     
-    static bool _defersTimers;
-
     friend class KWQGuardedPtrBase;
     friend class KWQSignal;
     friend class KWQObjectSenderScope;

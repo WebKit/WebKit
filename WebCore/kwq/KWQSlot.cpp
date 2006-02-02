@@ -35,19 +35,10 @@
 #include "render_layer.h"
 #include "xmlhttprequest.h"
 
-#if SVG_SUPPORT
-#define id ID_HACK
-#import "ksvg2/misc/KSVGTimeScheduler.h"
-#undef id
-#endif
-
 using namespace WebCore;
 
 using KIO::Job;
 using KJS::WindowQObject;
-#if SVG_SUPPORT
-using KSVG::TimeScheduler;
-#endif
 
 enum FunctionNumber {
     signalFinishedParsing,
@@ -55,7 +46,6 @@ enum FunctionNumber {
     slotChildCompletedWithBool,
     slotChildStarted,
     slotClicked,
-    slotEndLifeSupport,
     slotFinishedParsing,
     slotLoaderRequestDone,
     slotParentCompleted,
@@ -79,9 +69,6 @@ enum FunctionNumber {
     slotFinished_Loader,
     slotFinished_XMLHttpRequest,
     slotReceivedResponse,
-#if SVG_SUPPORT
-    slotTimerNotify,
-#endif
 };
 
 KWQSlot::KWQSlot(QObject *object, const char *member)
@@ -94,7 +81,6 @@ KWQSlot::KWQSlot(QObject *object, const char *member)
     CASE(slotClicked, (), RenderFormElement)
     CASE(slotChildCompleted, (), Frame)
     CASE(slotChildStarted, (KIO::Job *), Frame)
-    CASE(slotEndLifeSupport, (), Frame)
     CASE(slotFinishedParsing, (), Frame)
     CASE(slotLoaderRequestDone, (khtml::DocLoader *, khtml::CachedObject *), Frame)
     CASE(slotParentCompleted, (), Frame)
@@ -106,9 +92,6 @@ KWQSlot::KWQSlot(QObject *object, const char *member)
     CASE(slotTextChanged, (), RenderTextArea)
     CASE(slotValueChanged, (int), RenderScrollMediator)
     CASE(slotWidgetDestructed, (), RenderWidget)
-#if SVG_SUPPORT
-    CASE(slotTimerNotify, (), TimeScheduler)
-#endif
        
     #undef CASE
 
@@ -167,7 +150,6 @@ void KWQSlot::call() const
         CASE(signalFinishedParsing, DocumentImpl, m_finishedParsing.call)
         CASE(slotChildCompleted, Frame, slotChildCompleted)
         CASE(slotClicked, RenderFormElement, slotClicked)
-        CASE(slotEndLifeSupport, Frame, slotEndLifeSupport)
         CASE(slotFinishedParsing, Frame, slotFinishedParsing)
         CASE(slotParentCompleted, Frame, slotParentCompleted)
         CASE(slotParentDestroyed, WindowQObject, parentDestroyed)
@@ -178,9 +160,6 @@ void KWQSlot::call() const
         CASE(slotSubmitFormAgain, Frame, submitFormAgain)
         CASE(slotTextChanged, RenderTextArea, slotTextChanged)
         CASE(slotWidgetDestructed, RenderWidget, slotWidgetDestructed)
-#if SVG_SUPPORT
-        CASE(slotTimerNotify, TimeScheduler, slotTimerNotify)
-#endif
     }
     
     #undef CASE

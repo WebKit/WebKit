@@ -1,5 +1,148 @@
 2006-02-01  Darin Adler  <darin@apple.com>
 
+        Reviewed by Hyatt.
+
+        - use Timer for everything, kill timer features of QObject, QTimer, QTimerEvent
+
+        * ForwardingHeaders/kxmlcore/Noncopyable.h: Added.
+        * ForwardingHeaders/kxmlcore/OwnArrayPtr.h: Added.
+        * ForwardingHeaders/kxmlcore/OwnPtr.h: Added.
+        * ForwardingHeaders/qtimer.h: Removed.
+        * kwq/KWQTimer.cpp: Removed.
+        * kwq/KWQTimer.h: Removed.
+
+        * kwq/KWQObject.h:
+        * kwq/KWQObject.cpp: Remove timer-related features.
+
+        * kwq/KWQEvent.h: Remove QTimerEvent.
+
+        * WebCore.xcodeproj/project.pbxproj: Updated for file changes.
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Ditto.
+
+        * platform/Timer.h: Change to use nextFireInterval rather than nextFireTime.
+        More convenient and also no need to define what the epoch is. Change TimerBase
+        to use a virtual function rather than a function pointer. Added setDeferringTimers
+        function to ensure timers don't fire while handling an event.
+        * platform/mac/Timer.cpp:
+        (WebCore::timerFired): Added deferral support.
+        (WebCore::fireDeferred): Added.
+        (WebCore::TimerBase::TimerBase): Simplify to remove function pointer.
+        (WebCore::TimerBase::~TimerBase): Put in here, no longer inline.
+        (WebCore::TimerBase::start): Change to use interval.
+        (WebCore::TimerBase::startRepeating): Change since we use interval now.
+        (WebCore::TimerBase::startOneShot): Ditto.
+        (WebCore::TimerBase::stop): Added deferral support.
+        (WebCore::TimerBase::nextFireInterval): Added.
+        (WebCore::TimerBase::fire): Added.
+        (WebCore::isDeferringTimers): Added.
+        (WebCore::setDeferringTimers): Added.
+
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::startRedirectionTimer): Update for change to Timer class.
+        (WebCore::MacFrame::passMouseDownEventToWidget): Update to use setDeferringTimers
+        instead of QObject::setDefersTimers.
+
+        * khtml/ecma/kjs_window.h:
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::DOMWindowTimer): Added. Class for JavaScript "timeout".
+        (KJS::WindowQObject::parentDestroyed): Update to use DOMWindowTimer.
+        (KJS::WindowQObject::installTimeout): Ditto.
+        (KJS::WindowQObject::pauseTimeouts): Ditto.
+        (KJS::WindowQObject::resumeTimeouts): Ditto.
+        (KJS::WindowQObject::clearTimeout): Ditto.
+        (KJS::WindowQObject::timerFired): Ditto.
+        (KJS::DOMWindowTimer::fired): Added.
+
+        * khtml/html/htmltokenizer.h:
+        * khtml/html/htmltokenizer.cpp:
+        (WebCore::HTMLTokenizer::HTMLTokenizer): Use Timer instead of timer ID.
+        (WebCore::HTMLTokenizer::reset): Ditto.
+        (WebCore::HTMLTokenizer::continueProcessing): Ditto.
+        (WebCore::HTMLTokenizer::write): Ditto.
+        (WebCore::HTMLTokenizer::stopParsing): Ditto.
+        (WebCore::HTMLTokenizer::processingData): Ditto.
+        (WebCore::HTMLTokenizer::timerFired): Ditto.
+        (WebCore::HTMLTokenizer::end): Ditto.
+        (WebCore::HTMLTokenizer::finish): Ditto.
+
+        * khtml/xml/DocumentImpl.h:
+        * khtml/xml/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::DocumentImpl): Updated for changes to use RefPtr
+        more cases, and not use it for m_svgExtensions.
+        (WebCore::DocumentImpl::~DocumentImpl): Delete m_svgExtensions instead of
+        just deref'ing it since it's no longer shared.
+        (WebCore::DocumentImpl::implementation): Update for RefPtr.
+        (WebCore::DocumentImpl::elementSheet): Ditto.
+        (WebCore::DocumentImpl::styleSheets): Ditto.
+        (WebCore::DocumentImpl::recalcStyleSelector): Ditto.
+        (WebCore::DocumentImpl::dispatchImageLoadEventSoon): Update to use new style timer.
+        (WebCore::DocumentImpl::removeImage): Ditto.
+        (WebCore::DocumentImpl::dispatchImageLoadEventsNow): Ditto.
+        (WebCore::DocumentImpl::imageLoadEventTimerFired): Ditto.
+        (WebCore::DocumentImpl::svgExtensions): Update for RefPtr.
+        (WebCore::DocumentImpl::accessSVGExtensions): Ditto.
+
+        * ksvg2/misc/KSVGTimeScheduler.h:
+        (WebCore::TimeScheduler::document):
+        * ksvg2/misc/KSVGTimeScheduler.cpp:
+        (WebCore::SVGTimer::downcast):
+        (WebCore::SVGTimer::SVGTimer):
+        (WebCore::SVGTimer::start):
+        (WebCore::SVGTimer::calculateTimePercentage):
+        (WebCore::SVGTimer::notifyAll):
+        (WebCore::SVGTimer::addNotify):
+        (WebCore::SVGTimer::removeNotify):
+        (WebCore::TimeScheduler::TimeScheduler):
+        (WebCore::TimeScheduler::~TimeScheduler):
+        (WebCore::TimeScheduler::addTimer):
+        (WebCore::TimeScheduler::connectIntervalTimer):
+        (WebCore::TimeScheduler::disconnectIntervalTimer):
+        (WebCore::TimeScheduler::startAnimations):
+        (WebCore::TimeScheduler::toggleAnimations):
+        (WebCore::TimeScheduler::timerFired):
+        Rework to use new timer.
+
+        * ksvg2/misc/SVGDocumentExtensions.h:
+        * ksvg2/misc/SVGDocumentExtensions.cpp:
+        Make SVGDocumentExtensions no longer be shared, be solely owned by the document.
+
+        * ksvg2/svg/SVGDocumentImpl.cpp:
+        (WebCore::SVGDocumentImpl::createStyleSelector): Update for RefPtr use.
+
+        * kwq/KWQSlot.cpp: Remove endLifeSupport and timerNotify slots.
+
+        * page/Frame.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::selectionLayoutChanged): Update to use new style timer.
+        (WebCore::Frame::caretBlinkTimerFired): Ditto.
+        * page/FramePrivate.h: (WebCore::FramePrivate::FramePrivate): Ditto.
+
+        * page/FrameView.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameViewPrivate::FrameViewPrivate): Update to use new style timer.
+        (WebCore::FrameView::clear): Ditto.
+        (WebCore::FrameView::layout): Ditto.
+        (WebCore::FrameView::layoutTimerFired): Ditto.
+        (WebCore::FrameView::scheduleRelayout): Ditto.
+        (WebCore::FrameView::layoutPending): Ditto.
+        (WebCore::FrameView::haveDelayedLayoutScheduled): Ditto.
+        (WebCore::FrameView::unscheduleRelayout): Ditto.
+
+        * page/ObjectContents.h: Remove unneeded includes.
+
+        * rendering/render_frames.cpp: Removed include of <qtimer.h>.
+
+        * rendering/render_layer.h:
+        * rendering/render_layer.cpp:
+        (WebCore::Marquee::Marquee): Use new style timers.
+        (WebCore::Marquee::start): Ditto.
+        (WebCore::Marquee::suspend): Ditto.
+        (WebCore::Marquee::stop): Ditto.
+        (WebCore::Marquee::updateMarqueeStyle): Ditto.
+        (WebCore::Marquee::timerFired): Ditto.
+
+2006-02-01  Darin Adler  <darin@apple.com>
+
         Reviewed by Beth.
 
         Fix for <rdar://problem/4424126> REGRESSION(412-420+): yellow 
@@ -12,7 +155,7 @@
         until the target is set.
 
         * khtml/xml/dom2_eventsimpl.cpp:
-        (WebCore::EventImpl::setTarget): Now calls receievdTarget() if the
+        (WebCore::EventImpl::setTarget): Now calls receivedTarget() if the
         target is not nil.
         (WebCore::EventImpl::receivedTarget): virtual receivedTarget()
         (WebCore::MouseRelatedEventImpl::MouseRelatedEventImpl): Call 

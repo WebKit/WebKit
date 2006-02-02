@@ -41,7 +41,6 @@
 #include <kdebug.h>
 #include <klocale.h>
 #include <qpainter.h>
-#include <qtimer.h>
 #include "htmlnames.h"
 
 namespace WebCore {

@@ -1532,8 +1532,10 @@ void RenderLayer::suspendMarquees()
 // Marquee implementation
 
 Marquee::Marquee(RenderLayer* l)
-:m_layer(l), m_currentLoop(0), m_timerId(0), m_start(0), m_end(0), m_speed(0), m_unfurlPos(0), m_reset(false),
- m_suspended(false), m_stopped(false), m_whiteSpace(NORMAL), m_direction(MAUTO)
+    : m_layer(l), m_currentLoop(0)
+    , m_timer(this, &Marquee::timerFired)
+    , m_start(0), m_end(0), m_speed(0), m_unfurlPos(0), m_reset(false)
+    , m_suspended(false), m_stopped(false), m_whiteSpace(NORMAL), m_direction(MAUTO)
 {
 }
 
@@ -1629,7 +1631,7 @@ int Marquee::computePosition(EMarqueeDirection dir, bool stopAtContentEdge)
 
 void Marquee::start()
 {
-    if (m_timerId || m_layer->renderer()->style()->marqueeIncrement().value == 0)
+    if (m_timer.isActive() || m_layer->renderer()->style()->marqueeIncrement().value == 0)
         return;
     
     if (!m_suspended && !m_stopped) {
@@ -1651,26 +1653,18 @@ void Marquee::start()
         m_stopped = false;
     }
 
-    m_timerId = startTimer(speed());
+    m_timer.startRepeating(speed() * 0.001);
 }
 
 void Marquee::suspend()
 {
-    if (m_timerId) {
-        killTimer(m_timerId);
-        m_timerId = 0;
-    }
-    
+    m_timer.stop();
     m_suspended = true;
 }
 
 void Marquee::stop()
 {
-    if (m_timerId) {
-        killTimer(m_timerId);
-        m_timerId = 0;
-    }
-    
+    m_timer.stop();
     m_stopped = true;
 }
 
@@ -1727,35 +1721,30 @@ void Marquee::updateMarqueeStyle()
         }
     }
     
-    //Marquee height hack!! Make sure that, if it is a horizontal marquee, the height attribute is overridden 
-    //if it is smaller than the font size. If it is a vertical marquee and height is not specified, we default
-    //to a marquee of 200px.
+    // Marquee height hack!! Make sure that, if it is a horizontal marquee, the height attribute is overridden 
+    // if it is smaller than the font size. If it is a vertical marquee and height is not specified, we default
+    // to a marquee of 200px.
     if (isHorizontal()) {
         if (s->height().isFixed() && (s->height().value < s->fontSize())) 
             s->setHeight(Length(s->fontSize(),Fixed));
     } else if (s->height().isAuto())  //vertical marquee with no specified height
-        s->setHeight(Length(200,Fixed)); 
+        s->setHeight(Length(200, Fixed)); 
    
     if (speed() != marqueeSpeed()) {
         m_speed = marqueeSpeed();
-        if (m_timerId) {
-            killTimer(m_timerId);
-            m_timerId = startTimer(speed());
-        }
+        if (m_timer.isActive())
+            m_timer.startRepeating(speed() * 0.001);
     }
     
     // Check the loop count to see if we should now stop.
     bool activate = (m_totalLoops <= 0 || m_currentLoop < m_totalLoops);
-    if (activate && !m_timerId)
+    if (activate && !m_timer.isActive())
         m_layer->renderer()->setNeedsLayout(true);
-    else if (!activate && m_timerId) {
-        // Destroy the timer.
-        killTimer(m_timerId);
-        m_timerId = 0;
-    }
+    else if (!activate && m_timer.isActive())
+        m_timer.stop();
 }
 
-void Marquee::timerEvent(QTimerEvent* evt)
+void Marquee::timerFired(Timer<Marquee>*)
 {
     if (m_layer->renderer()->needsLayout())
         return;
@@ -1805,10 +1794,8 @@ void Marquee::timerEvent(QTimerEvent* evt)
 
     if (newPos == endPoint) {
         m_currentLoop++;
-        if (m_totalLoops > 0 && m_currentLoop >= m_totalLoops) {
-            killTimer(m_timerId);
-            m_timerId = 0;
-        }
+        if (m_totalLoops > 0 && m_currentLoop >= m_totalLoops)
+            m_timer.stop();
         else if (s->marqueeBehavior() != MALTERNATE && s->marqueeBehavior() != MUNFURL)
             m_reset = true;
     }

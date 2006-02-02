@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2006 Apple Computer, Inc.
 
     This file is part of the KDE project
 
@@ -24,74 +25,28 @@
 #define KSVG_TimeScheduler_H
 #if SVG_SUPPORT
 
-#include <qtimer.h>
-#include <qobject.h>
-#include <q3valuelist.h>
+#include <kxmlcore/HashSet.h>
 
-#include "SVGAnimationElementImpl.h"
-
-namespace KDOM {
+namespace WebCore {
     class DocumentImpl;
-}
+    class SVGAnimationElementImpl;
+    class SVGTimer;
 
-namespace KSVG
-{
-    typedef struct
-    {
-        bool enabled : 1;
-        SVGAnimationElementImpl *animation;
-    } SVGNotificationStruct;
-    
-    typedef Q3ValueList<SVGNotificationStruct> SVGNotifyList;
+    template <typename T> class Timer;
 
-    class TimeScheduler;
-    class SVGTimer
-    {
+    typedef HashSet<SVGTimer*> SVGTimerSet;
+
+    class TimeScheduler {
     public:
-        SVGTimer(TimeScheduler *scheduler, unsigned int ms, bool singleShot);
-        ~SVGTimer();
-
-        bool operator==(const QTimer *timer);
-        const QTimer *qtimer() const;
-
-        void start(QObject *receiver, const char *member);
-        void stop();
-
-        bool isActive() const;
-
-        unsigned int ms() const;
-        bool singleShot() const;
-
-        void notifyAll();
-        void addNotify(SVGAnimationElementImpl *element, bool enabled = false);
-        void removeNotify(SVGAnimationElementImpl *element);
-
-    private:
-        double calculateTimePercentage(double elapsed, double start, double end, double duration, double repeations);
-
-        unsigned int m_ms;
-        bool m_invoked, m_singleShot;
-
-        QTimer *m_timer;
-        TimeScheduler *m_scheduler;
-        SVGNotifyList m_notifyList;
-    };
-
-    typedef Q3ValueList<SVGTimer *> SVGTimerList;
-
-    class TimeScheduler : public QObject
-    {
-    Q_OBJECT
-    public:
-        TimeScheduler(KDOM::DocumentImpl *doc);
+        TimeScheduler(DocumentImpl*);
         ~TimeScheduler();
 
         // Adds singleShot Timers
-        void addTimer(SVGAnimationElementImpl *element, unsigned int ms);
+        void addTimer(SVGAnimationElementImpl*, unsigned int ms);
 
-        // (Dis-)Connects to interval timer with ms = 'staticTimerInterval'
-        void connectIntervalTimer(SVGAnimationElementImpl *element);
-        void disconnectIntervalTimer(SVGAnimationElementImpl *element);
+        // (Dis-)Connects to interval timer with 'staticTimerInterval'
+        void connectIntervalTimer(SVGAnimationElementImpl*);
+        void disconnectIntervalTimer(SVGAnimationElementImpl*);
 
         void startAnimations();
         void toggleAnimations();
@@ -100,25 +55,21 @@ namespace KSVG
         // time elapsed in seconds after creation of this object
         double elapsed() const;
 
-        static const unsigned int staticTimerInterval;
-
-    private slots:
-        void slotTimerNotify();
-
-    private: // Helper
+    private:
         friend class SVGTimer;
-        KDOM::DocumentImpl *document() const { return m_document; }
+        void timerFired(Timer<TimeScheduler>*);
+        DocumentImpl* document() const { return m_document; }
 
     private:
         double m_creationTime;
         double m_savedTime;
         
-        SVGTimerList m_timerList;
+        SVGTimerSet m_timerSet;
         
-        SVGTimer *m_intervalTimer;
-        KDOM::DocumentImpl *m_document;
+        SVGTimer* m_intervalTimer;
+        DocumentImpl* m_document;
     };
-};
+}
 
 #endif // SVG_SUPPORT
 #endif

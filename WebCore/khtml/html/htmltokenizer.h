@@ -31,14 +31,11 @@
 
 #include "CachedObjectClient.h"
 #include "SegmentedString.h"
+#include "Timer.h"
 #include "dom_qname.h"
 #include "xml_tokenizer.h"
 #include <qptrqueue.h>
 #include <qstring.h>
-
-#if __OBJC__
-#define id id_AVOID_KEYWORD
-#endif
 
 class HTMLParser;
 
@@ -99,7 +96,7 @@ public:
     virtual void stopParsing();
     virtual bool processingData() const;
 
-protected:
+private:
     class State;
 
     // Where we are in parsing a tag
@@ -138,13 +135,12 @@ protected:
     void enlargeScriptBuffer(int len);
 
     bool continueProcessing(int& processedCount, double startTime, State &state);
-    void timerEvent(QTimerEvent*);
+    void timerFired(Timer<HTMLTokenizer>*);
     void allDataProcessed();
 
     // from CachedObjectClient
     void notifyFinished(CachedObject *finishedObj);
 
-protected:
     // Internal buffers
     ///////////////////
     QChar *buffer;
@@ -333,7 +329,7 @@ protected:
     int tagStartLineno;
 
     // The timer for continued processing.
-    int timerId;
+    Timer<HTMLTokenizer> m_timer;
 
     bool includesCommentsInDOM;
 
@@ -353,7 +349,5 @@ protected:
 void parseHTMLDocumentFragment(const DOMString &, DocumentFragmentImpl *);
 
 }
-
-#undef id
 
 #endif // HTMLTOKENIZER
