@@ -25,6 +25,7 @@
 #include "internal.h"
 #include "function_object.h"
 #include "regexp.h"
+#include <kxmlcore/OwnArrayPtr.h>
 
 namespace KJS {
   class ExecState;
@@ -71,7 +72,6 @@ namespace KJS {
     RegExpObjectImp(ExecState *exec,
                     FunctionPrototype *funcProto,
                     RegExpPrototype *regProto);
-    virtual ~RegExpObjectImp();
     virtual bool implementsConstruct() const;
     virtual JSObject *construct(ExecState *exec, const List &args);
     virtual bool implementsCall() const;
@@ -95,7 +95,7 @@ namespace KJS {
     // Global search cache / settings
     bool multiline;
     UString lastInput;
-    int *lastOvector;
+    OwnArrayPtr<int> lastOvector;
     unsigned lastNumSubPatterns;
     
     static const ClassInfo info;

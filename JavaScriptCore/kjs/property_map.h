@@ -1,7 +1,7 @@
 // -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
- *  Copyright (C) 2004 Apple Computer, Inc.
+ *  Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -20,10 +20,11 @@
  *
  */
 
-#ifndef _KJS_PROPERTY_MAP_H_
-#define _KJS_PROPERTY_MAP_H_
+#ifndef KJS_PROPERTY_MAP_H_
+#define KJS_PROPERTY_MAP_H_
 
 #include "identifier.h"
+#include <kxmlcore/OwnArrayPtr.h>
 
 namespace KJS {
 
@@ -46,10 +47,7 @@ namespace KJS {
         
     private:
         int _count;
-        SavedProperty *_properties;
-        
-        SavedProperties(const SavedProperties&);
-        SavedProperties& operator=(const SavedProperties&);
+        OwnArrayPtr<SavedProperty> _properties;
     };
     
 /**
@@ -64,10 +62,10 @@ namespace KJS {
         short globalGetterSetterFlag;
         int index;
     };
+
 /**
 * Javascript Property Map.
 */
-
     class PropertyMap {
     public:
         PropertyMap();

@@ -50,10 +50,9 @@ const ClassInfo FunctionImp::info = {"Function", &InternalFunctionImp::info, 0, 
 
   class Parameter {
   public:
-    Parameter(const Identifier &n) : name(n), next(0L) { }
-    ~Parameter() { delete next; }
+    Parameter(const Identifier &n) : name(n) { }
     Identifier name;
-    Parameter *next;
+    OwnPtr<Parameter> next;
   };
 
 FunctionImp::FunctionImp(ExecState *exec, const Identifier &n)
@@ -65,7 +64,6 @@ FunctionImp::FunctionImp(ExecState *exec, const Identifier &n)
 
 FunctionImp::~FunctionImp()
 {
-  delete param;
 }
 
 bool FunctionImp::implementsCall() const
@@ -145,22 +143,22 @@ JSValue *FunctionImp::callAsFunction(ExecState *exec, JSObject *thisObj, const L
 
 void FunctionImp::addParameter(const Identifier &n)
 {
-  Parameter **p = &param;
+  OwnPtr<Parameter> *p = &param;
   while (*p)
     p = &(*p)->next;
 
-  *p = new Parameter(n);
+  p->set(new Parameter(n));
 }
 
 UString FunctionImp::parameterString() const
 {
   UString s;
-  const Parameter *p = param;
+  const Parameter *p = param.get();
   while (p) {
     if (!s.isEmpty())
         s += ", ";
     s += p->name.ustring();
-    p = p->next;
+    p = p->next.get();
   }
 
   return s;
@@ -180,7 +178,7 @@ void FunctionImp::processParameters(ExecState *exec, const List &args)
 
   if (param) {
     ListIterator it = args.begin();
-    Parameter *p = param;
+    Parameter *p = param.get();
     JSValue  *v = *it;
     while (p) {
       if (it != args.end()) {
@@ -192,7 +190,7 @@ void FunctionImp::processParameters(ExecState *exec, const List &args)
 	v = ++it;
       } else
 	variable->put(exec, p->name, jsUndefined());
-      p = p->next;
+      p = p->next.get();
     }
   }
 #ifdef KJS_VERBOSE
@@ -223,11 +221,11 @@ JSValue *FunctionImp::argumentsGetter(ExecState *exec, JSObject *originalObject,
 JSValue *FunctionImp::lengthGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   FunctionImp *thisObj = static_cast<FunctionImp *>(slot.slotBase());
-  const Parameter *p = thisObj->param;
+  const Parameter *p = thisObj->param.get();
   int count = 0;
   while (p) {
     ++count;
-    p = p->next;
+    p = p->next.get();
   }
   return jsNumber(count);
 }
@@ -273,13 +271,13 @@ bool FunctionImp::deleteProperty(ExecState *exec, const Identifier &propertyName
 Identifier FunctionImp::getParameterName(int index)
 {
   int i = 0;
-  Parameter *p = param;
+  Parameter *p = param.get();
   
   if(!p)
     return Identifier::null();
   
   // skip to the parameter we want
-  while (i++ < index && (p = p->next))
+  while (i++ < index && (p = p->next.get()))
     ;
   
   if (!p)
@@ -288,7 +286,7 @@ Identifier FunctionImp::getParameterName(int index)
   Identifier name = p->name;
 
   // Are there any subsequent parameters with the same name?
-  while ((p = p->next))
+  while ((p = p->next.get()))
     if (p->name == name)
       return Identifier::null();
   

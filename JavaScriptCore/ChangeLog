@@ -1,3 +1,30 @@
+2006-02-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7005
+          add Noncopyable, OwnPtr, OwnArrayPtr to KXMLCore
+
+        * kxmlcore/Noncopyable.h: Added.
+        * kxmlcore/OwnArrayPtr.h: Added.
+        * kxmlcore/OwnPtr.h: Added.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Added new files.
+
+        * kjs/function.h:
+        * kjs/function.cpp: Use OwnPtr for Parameter pointers.
+
+        * kjs/internal.h: Use Noncopyable for LabelStack.
+
+        * kjs/list.cpp: Use OwnArrayPtr for overflow.
+
+        * kjs/property_map.h:
+        * kjs/property_map.cpp: Use OwnArrayPtr for SavedProperties.
+        Use Vector for some stack buffers.
+
+        * kjs/regexp_object.h:
+        * kjs/regexp_object.cpp: Use OwnArrayPtr for lastOvector.
+
 2006-01-31  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

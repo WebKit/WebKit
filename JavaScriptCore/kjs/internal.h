@@ -31,6 +31,7 @@
 #include "types.h"
 #include "interpreter.h"
 #include "scope_chain.h"
+#include <kxmlcore/Noncopyable.h>
 #include <kxmlcore/RefPtr.h>
 
 #define I18N_NOOP(s) s
@@ -131,9 +132,9 @@ namespace KJS {
   /**
    * @short The "label set" in Ecma-262 spec
    */
-  class LabelStack {
+  class LabelStack : Noncopyable {
   public:
-    LabelStack(): tos(0L), iterationDepth(0), switchDepth(0) {}
+    LabelStack(): tos(0), iterationDepth(0), switchDepth(0) {}
     ~LabelStack();
 
     /**
@@ -159,9 +160,6 @@ namespace KJS {
     bool inSwitch() const { return (switchDepth > 0); }
     
   private:
-    LabelStack(const LabelStack &other);
-    LabelStack &operator=(const LabelStack &other);
-
     struct StackElem {
       Identifier id;
       StackElem *prev;

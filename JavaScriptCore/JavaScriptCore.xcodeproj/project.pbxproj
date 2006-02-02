@@ -52,6 +52,9 @@
 		65E217C008E7EECC0023E5F6 /* FastMalloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E217BA08E7EECC0023E5F6 /* FastMalloc.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65EA4C9B092AF9E20093D800 /* JSLock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65EA4C99092AF9E20093D800 /* JSLock.cpp */; };
 		65EA4C9C092AF9E20093D800 /* JSLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 65EA4C9A092AF9E20093D800 /* JSLock.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9303F568099118FA00AD71B8 /* OwnPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 9303F567099118FA00AD71B8 /* OwnPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9303F56A0991190000AD71B8 /* Noncopyable.h in Headers */ = {isa = PBXBuildFile; fileRef = 9303F5690991190000AD71B8 /* Noncopyable.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9303F5A509911A5800AD71B8 /* OwnArrayPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 9303F5A409911A5800AD71B8 /* OwnArrayPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		930754C108B0F68000AB3056 /* pcre_compile.c in Sources */ = {isa = PBXBuildFile; fileRef = 930754BF08B0F68000AB3056 /* pcre_compile.c */; };
 		930754D008B0F74600AB3056 /* pcre_tables.c in Sources */ = {isa = PBXBuildFile; fileRef = 930754CE08B0F74500AB3056 /* pcre_tables.c */; };
 		930754D308B0F76300AB3056 /* pcre_globals.c in Sources */ = {isa = PBXBuildFile; fileRef = 930754D108B0F76200AB3056 /* pcre_globals.c */; };
@@ -370,6 +373,9 @@
 		70B16A270569A10900DB756D /* runtime_object.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = runtime_object.h; path = bindings/runtime_object.h; sourceTree = "<group>"; tabWidth = 8; };
 		8442A376074175C2000AE2ED /* softlinking.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.c; name = softlinking.c; path = bindings/softlinking.c; sourceTree = "<group>"; tabWidth = 8; };
 		84ABF1DE070B628C00A3AC05 /* npruntime_impl.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = npruntime_impl.h; path = bindings/npruntime_impl.h; sourceTree = "<group>"; tabWidth = 8; };
+		9303F567099118FA00AD71B8 /* OwnPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OwnPtr.h; sourceTree = "<group>"; };
+		9303F5690991190000AD71B8 /* Noncopyable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Noncopyable.h; sourceTree = "<group>"; };
+		9303F5A409911A5800AD71B8 /* OwnArrayPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OwnArrayPtr.h; sourceTree = "<group>"; };
 		930754BF08B0F68000AB3056 /* pcre_compile.c */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.c; name = pcre_compile.c; path = pcre/pcre_compile.c; sourceTree = "<group>"; tabWidth = 8; };
 		930754CE08B0F74500AB3056 /* pcre_tables.c */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.c; name = pcre_tables.c; path = pcre/pcre_tables.c; sourceTree = "<group>"; tabWidth = 8; };
 		930754D108B0F76200AB3056 /* pcre_globals.c */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.c; name = pcre_globals.c; path = pcre/pcre_globals.c; sourceTree = "<group>"; tabWidth = 8; };
@@ -668,6 +674,9 @@
 		65162EF108E6A21C007556CD /* kxmlcore */ = {
 			isa = PBXGroup;
 			children = (
+				9303F5690991190000AD71B8 /* Noncopyable.h */,
+				9303F567099118FA00AD71B8 /* OwnPtr.h */,
+				9303F5A409911A5800AD71B8 /* OwnArrayPtr.h */,
 				6592C316098B7DE10003D4F6 /* Vector.h */,
 				6592C317098B7DE10003D4F6 /* VectorTraits.h */,
 				657EEBBF094E445E008C9C7B /* HashCountedSet.h */,
@@ -864,6 +873,9 @@
 				148A1627095D16BB00666D0D /* ListRefPtr.h in Headers */,
 				6592C318098B7DE10003D4F6 /* Vector.h in Headers */,
 				6592C319098B7DE10003D4F6 /* VectorTraits.h in Headers */,
+				9303F568099118FA00AD71B8 /* OwnPtr.h in Headers */,
+				9303F56A0991190000AD71B8 /* Noncopyable.h in Headers */,
+				9303F5A509911A5800AD71B8 /* OwnArrayPtr.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,6 +1,6 @@
 /*
  *  This file is part of the KDE libraries
- *  Copyright (C) 2004 Apple Computer, Inc.
+ *  Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -22,12 +22,12 @@
 #include "config.h"
 #include "property_map.h"
 
-#include <kxmlcore/FastMalloc.h>
 #include "object.h"
 #include "protect.h"
 #include "reference_list.h"
-
 #include <algorithm>
+#include <kxmlcore/FastMalloc.h>
+#include <kxmlcore/Vector.h>
 
 using std::max;
 
@@ -94,12 +94,8 @@ public:
     int attributes;
 };
 
-SavedProperties::SavedProperties() : _count(0), _properties(0) { }
-
-SavedProperties::~SavedProperties()
-{
-    delete [] _properties;
-}
+SavedProperties::SavedProperties() : _count(0) { }
+SavedProperties::~SavedProperties() { }
 
 // Algorithm concepts from Algorithms in C++, Sedgewick.
 
@@ -597,34 +593,24 @@ void PropertyMap::addEnumerablesToReferenceList(ReferenceList &list, JSObject *b
     }
 
     // Allocate a buffer to use to sort the keys.
-    Entry *fixedSizeBuffer[smallMapThreshold];
-    Entry **sortedEnumerables;
-    if (_table->keyCount <= smallMapThreshold)
-        sortedEnumerables = fixedSizeBuffer;
-    else
-        sortedEnumerables = new Entry *[_table->keyCount];
+    Vector<Entry*, smallMapThreshold> sortedEnumerables(_table->keyCount);
 
     // Get pointers to the enumerable entries in the buffer.
-    Entry **p = sortedEnumerables;
+    Entry** p = sortedEnumerables.data();
     int size = _table->size;
-    Entry *entries = _table->entries;
+    Entry* entries = _table->entries;
     for (int i = 0; i != size; ++i) {
-        Entry *e = &entries[i];
+        Entry* e = &entries[i];
         if (e->key && !(e->attributes & DontEnum))
             *p++ = e;
     }
 
     // Sort the entries by index.
-    qsort(sortedEnumerables, p - sortedEnumerables, sizeof(sortedEnumerables[0]), comparePropertyMapEntryIndices);
+    qsort(sortedEnumerables.data(), p - sortedEnumerables.data(), sizeof(Entry*), comparePropertyMapEntryIndices);
 
     // Put the keys of the sorted entries into the reference list.
-    Entry **q = sortedEnumerables;
-    while (q != p)
-        list.append(Reference(base, Identifier((*q++)->key)));
-
-    // Deallocate the buffer.
-    if (sortedEnumerables != fixedSizeBuffer)
-        delete [] sortedEnumerables;
+    for (Entry** q = sortedEnumerables.data(); q != p; ++q)
+        list.append(Reference(base, Identifier((*q)->key)));
 }
 
 void PropertyMap::addSparseArrayPropertiesToReferenceList(ReferenceList &list, JSObject *base) const
@@ -674,18 +660,15 @@ void PropertyMap::save(SavedProperties &p) const
                 ++count;
     }
 
-    delete [] p._properties;
-
+    p._properties.clear();
     p._count = count;
 
-    if (count == 0) {
-        p._properties = 0;
+    if (count == 0)
         return;
-    }
     
-    p._properties = new SavedProperty [count];
+    p._properties.set(new SavedProperty [count]);
     
-    SavedProperty *prop = p._properties;
+    SavedProperty *prop = p._properties.get();
     
     if (!_table) {
 #if USE_SINGLE_ENTRY
@@ -701,40 +684,29 @@ void PropertyMap::save(SavedProperties &p) const
         // Another possibility would be to save the indices.
 
         // Allocate a buffer to use to sort the keys.
-        Entry *fixedSizeBuffer[smallMapThreshold];
-        Entry **sortedEntries;
-        if (count <= smallMapThreshold)
-            sortedEntries = fixedSizeBuffer;
-        else
-            sortedEntries = new Entry *[count];
+        Vector<Entry*, smallMapThreshold> sortedEntries(count);
 
         // Get pointers to the entries in the buffer.
-        Entry **p = sortedEntries;
+        Entry** p = sortedEntries.data();
         int size = _table->size;
-        Entry *entries = _table->entries;
+        Entry* entries = _table->entries;
         for (int i = 0; i != size; ++i) {
             Entry *e = &entries[i];
             if (e->key && !(e->attributes & (ReadOnly | Function)))
                 *p++ = e;
         }
-        assert(p - sortedEntries == count);
+        assert(p - sortedEntries.data() == count);
 
         // Sort the entries by index.
-        qsort(sortedEntries, p - sortedEntries, sizeof(sortedEntries[0]), comparePropertyMapEntryIndices);
+        qsort(sortedEntries.data(), p - sortedEntries.data(), sizeof(Entry*), comparePropertyMapEntryIndices);
 
         // Put the sorted entries into the saved properties list.
-        Entry **q = sortedEntries;
-        while (q != p) {
-            Entry *e = *q++;
+        for (Entry** q = sortedEntries.data(); q != p; ++q, ++prop) {
+            Entry* e = *q;
             prop->key = Identifier(e->key);
             prop->value = e->value;
             prop->attributes = e->attributes;
-            ++prop;
         }
-
-        // Deallocate the buffer.
-        if (sortedEntries != fixedSizeBuffer)
-            delete [] sortedEntries;
     }
 }
 
