@@ -50,7 +50,7 @@ public:
     KJS::ScriptInterpreter *interpreter();
     void setEventHandlerLineno(int lineno) { m_handlerLineno = lineno; }
 
-    void initScript();
+    void initScriptIfNeeded();
 
 private:
     KJS::ScriptInterpreter* m_script;

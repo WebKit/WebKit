@@ -117,12 +117,6 @@ public:
     m_focusNodeNumber = -1;
     m_focusNodeRestored = false;
 
-    m_bJScriptForce = false;
-    m_bJScriptOverride = false;
-    m_bJavaForce = false;
-    m_bJavaOverride = false;
-    m_bPluginsForce = false;
-    m_bPluginsOverride = false;
     m_onlyLocalReferences = false;
 
     m_caretVisible = false;
@@ -150,12 +144,6 @@ public:
         Frame *frame = static_cast<Frame*>(parent);
         if (frame->d)
         {
-            m_bJScriptForce = frame->d->m_bJScriptForce;
-            m_bJScriptOverride = frame->d->m_bJScriptOverride;
-            m_bJavaForce = frame->d->m_bJavaForce;
-            m_bJavaOverride = frame->d->m_bJavaOverride;
-            m_bPluginsForce = frame->d->m_bPluginsForce;
-            m_bPluginsOverride = frame->d->m_bPluginsOverride;
             // Same for SSL settings
             m_onlyLocalReferences = frame->d->m_onlyLocalReferences;
             m_zoomFactor = frame->d->m_zoomFactor;
@@ -196,13 +184,7 @@ public:
   bool m_bJScriptEnabled :1;
   bool m_bJavaEnabled :1;
   bool m_bPluginsEnabled :1;
-  bool m_bJScriptForce :1;
-  bool m_bJScriptOverride :1;
-  bool m_bJavaForce :1;
-  bool m_bJavaOverride :1;
-  bool m_bPluginsForce :1;
   bool m_metaRefreshEnabled :1;
-  bool m_bPluginsOverride :1;
   bool m_restored :1;
   int m_frameNameId;
 

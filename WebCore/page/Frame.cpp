@@ -227,42 +227,11 @@ Frame::~Frame()
   delete d; d = 0;
 }
 
-bool Frame::restoreURL( const KURL &url )
-{
-  cancelRedirection();
-
-  /*
-   * That's not a good idea as it will call closeURL() on all
-   * child frames, preventing them from further loading. This
-   * method gets called from restoreState() in case of a full frameset
-   * restoral, and restoreState() calls closeURL() before restoring
-   * anyway.
-  closeURL();
-  */
-
-  d->m_bComplete = false;
-  d->m_bLoadEventEmitted = false;
-  d->m_workingURL = url;
-
-  // set the java(script) flags according to the current host.
-  d->m_bJScriptEnabled = d->m_settings->isJavaScriptEnabled(url.host());
-  d->m_bJavaEnabled = d->m_settings->isJavaEnabled(url.host());
-  d->m_bPluginsEnabled = d->m_settings->isPluginsEnabled(url.host());
-
-  d->m_url = url;
-
-  emit started( 0L );
-
-  return true;
-}
-
-
 bool Frame::didOpenURL(const KURL &url)
 {
   if (d->m_scheduledRedirection == locationChangeScheduledDuringLoad) {
-    // We're about to get a redirect that happened before the document was
-    // created.  This can happen when one frame may change the location of a 
-    // sibling.
+    // A redirect was shceduled before the document was created. This can happen
+    // when one frame changes another frame's location.
     return false;
   }
   
@@ -306,12 +275,8 @@ bool Frame::didOpenURL(const KURL &url)
   d->m_bLoadingMainResource = true;
   d->m_bLoadEventEmitted = false;
 
-  // delete old status bar msg's from kjs (if it _was_ activated on last URL)
-  if( d->m_bJScriptEnabled )
-  {
-     d->m_kjsStatusBarText = QString::null;
-     d->m_kjsDefaultStatusBarText = QString::null;
-  }
+  d->m_kjsStatusBarText = QString::null;
+  d->m_kjsDefaultStatusBarText = QString::null;
 
   d->m_bJScriptEnabled = d->m_settings->isJavaScriptEnabled(url.host());
   d->m_bJavaEnabled = d->m_settings->isJavaEnabled(url.host());
@@ -322,7 +287,6 @@ bool Frame::didOpenURL(const KURL &url)
   d->m_url = url;
   if(d->m_url.protocol().startsWith("http") && !d->m_url.host().isEmpty() && d->m_url.path().isEmpty())
     d->m_url.setPath("/");
-  // copy to m_workingURL after fixing d->m_url above
   d->m_workingURL = d->m_url;
 
   connect( d->m_job, SIGNAL( speed( KIO::Job*, unsigned long ) ),
@@ -410,7 +374,6 @@ void Frame::stopLoading(bool sendUnload)
 
   d->m_bPendingChildRedirection = false;
 
-  // Stop any started redirections as well!! (DA)
   cancelRedirection();
 }
 
@@ -424,19 +387,8 @@ FrameView *Frame::view() const
   return d->m_view;
 }
 
-void Frame::setJScriptEnabled( bool enable )
-{
-  if ( !enable && jScriptEnabled() && d->m_jscript ) {
-    d->m_jscript->clear();
-  }
-  d->m_bJScriptForce = enable;
-  d->m_bJScriptOverride = true;
-}
-
 bool Frame::jScriptEnabled() const
 {
-  if ( d->m_bJScriptOverride )
-      return d->m_bJScriptForce;
   return d->m_bJScriptEnabled;
 }
 
@@ -452,7 +404,7 @@ bool Frame::metaRefreshEnabled() const
 
 KJSProxyImpl *Frame::jScript()
 {
-    if (!jScriptEnabled())
+    if (!d->m_bJScriptEnabled)
         return 0;
 
     if (!d->m_jscript)
@@ -527,33 +479,17 @@ JSValue* Frame::executeScheduledScript()
   return ret;
 }
 
-void Frame::setJavaEnabled( bool enable )
-{
-  d->m_bJavaForce = enable;
-  d->m_bJavaOverride = true;
-}
-
 bool Frame::javaEnabled() const
 {
 #ifndef Q_WS_QWS
-  if( d->m_bJavaOverride )
-      return d->m_bJavaForce;
   return d->m_bJavaEnabled;
 #else
   return false;
 #endif
 }
 
-void Frame::setPluginsEnabled( bool enable )
-{
-  d->m_bPluginsForce = enable;
-  d->m_bPluginsOverride = true;
-}
-
 bool Frame::pluginsEnabled() const
 {
-  if ( d->m_bPluginsOverride )
-      return d->m_bPluginsForce;
   return d->m_bPluginsEnabled;
 }
 
@@ -743,12 +679,8 @@ void Frame::childBegin()
 
 void Frame::begin( const KURL &url, int xOffset, int yOffset )
 {
-  // If we aren't loading an actual URL, then we need to make sure
-  // that we have at least an empty document. createEmptyDocument will
-  // do that if we don't have a document already.
-  if (d->m_workingURL.isEmpty()) {
-    createEmptyDocument();
-  }
+  if (d->m_workingURL.isEmpty())
+    createEmptyDocument(); // Creates an empty document if we don't have one already
 
   clear();
   partClearedInBegin();
@@ -3066,7 +2998,7 @@ bool Frame::userGestureHint()
     while (rootFrame->treeNode()->parent())
         rootFrame = rootFrame->treeNode()->parent();
 
-    if (rootFrame->jScript() && rootFrame->jScript()->interpreter())
+    if (rootFrame->jScript())
         return rootFrame->jScript()->interpreter()->wasRunByUserGesture();
 
     return true; // If JavaScript is disabled, a user gesture must have initiated the navigation
@@ -3284,8 +3216,7 @@ PausedTimeouts *Frame::pauseTimeouts()
 #endif
 
     if (d->m_doc && d->m_jscript) {
-        Window *w = Window::retrieveWindow(this);
-        if (w)
+        if (Window *w = Window::retrieveWindow(this))
             return w->pauseTimeouts();
     }
     return 0;
@@ -3299,8 +3230,7 @@ void Frame::resumeTimeouts(PausedTimeouts *t)
 #endif
 
     if (d->m_doc && d->m_jscript && d->m_bJScriptEnabled) {
-        Window *w = Window::retrieveWindow(this);
-        if (w)
+        if (Window *w = Window::retrieveWindow(this))
             w->resumeTimeouts(t);
     }
 }
@@ -3360,13 +3290,13 @@ void Frame::restoreLocationProperties(SavedProperties *locationProperties)
 
 void Frame::saveInterpreterBuiltins(SavedBuiltins &interpreterBuiltins)
 {
-    if (jScript() && jScript()->interpreter())
+    if (jScript())
         jScript()->interpreter()->saveBuiltins(interpreterBuiltins);
 }
 
 void Frame::restoreInterpreterBuiltins(const SavedBuiltins &interpreterBuiltins)
 {
-    if (jScript() && jScript()->interpreter())
+    if (jScript())
         jScript()->interpreter()->restoreBuiltins(interpreterBuiltins);
 }
 

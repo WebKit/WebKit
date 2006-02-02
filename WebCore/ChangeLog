@@ -1,3 +1,44 @@
+2006-01-31  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by mjs.
+
+        Cleaned up some stuff I came across when working with JS enabled/
+        disabled code:
+
+        (1) Renamed initScript to initScriptIfNeeded, because that's what it
+            does
+        (2) Removed dead or otherwise irrelevent code
+        (3) Fixed up comments
+        (4) Removed NULL checks for interpreter() since it never returns NULL,
+            replaced with single assert().
+
+        No test case because there's no change in behavior.
+
+        * khtml/ecma/kjs_proxy.cpp:
+        (WebCore::KJSProxyImpl::evaluate): 1
+        (WebCore::KJSProxyImpl::createHTMLEventHandler): 1
+        (WebCore::KJSProxyImpl::createSVGEventHandler): 1
+        (WebCore::KJSProxyImpl::interpreter): 4
+        (WebCore::KJSProxyImpl::initScriptIfNeeded): 1
+        * khtml/ecma/kjs_proxy.h: 1
+        * page/Frame.cpp:
+        (Frame::didOpenURL): 2, 3
+        (Frame::stopLoading): 2
+        (Frame::jScriptEnabled): 2
+        (Frame::jScript): changed method call to data member access to match
+                          style of rest of class
+        (Frame::javaEnabled): 2
+        (Frame::pluginsEnabled): 2
+        (Frame::begin): 3
+        (Frame::userGestureHint): 4
+        (Frame::pauseTimeouts): collapsed a line
+        (Frame::resumeTimeouts): ditto
+        (Frame::saveInterpreterBuiltins): 4
+        (Frame::restoreInterpreterBuiltins): 4
+        * page/Frame.h: 2
+        * page/FramePrivate.h: 2
+        (FramePrivate::FramePrivate): 2
+
 2006-02-02  David Hyatt  <hyatt@apple.com>
 
         Fix for PLT performance regression.  Make sure that the document's load event timer

@@ -179,19 +179,20 @@ public:
   FrameView *view() const;
 
   /**
-   * Enable/disable Javascript support. Note that this will
-   * in either case permanently override the default usersetting.
-   * If you want to have the default UserSettings, don't call this
-   * method.
-   */
-  void setJScriptEnabled( bool enable );
-
-  /**
-   * Returns @p true if Javascript support is enabled or @p false
-   * otherwise.
+   * Returns @p true if Javascript is enabled, @p false otherwise.
    */
   bool jScriptEnabled() const;
 
+  /**
+   * Returns true if Java is enabled, false otherwise.
+   */
+  bool javaEnabled() const;
+  
+  /**
+   * Returns true if plugins are enabled, false otherwise.
+   */
+  bool pluginsEnabled() const;
+  
   /**
    * Enable/disable the automatic forwarding by <meta http-equiv="refresh" ....>
    */
@@ -212,29 +213,6 @@ public:
    */
   virtual bool shouldDragAutoNode(NodeImpl*, int x, int y) const;
   
-  /**
-   * Enables/disables Java applet support. Note that calling this function
-   * will permanently override the User settings about Java applet support.
-   * Not calling this function is the only way to let the default settings
-   * apply.
-   */
-  void setJavaEnabled( bool enable );
-
-  /**
-   * Return if Java applet support is enabled/disabled.
-   */
-  bool javaEnabled() const;
-
-  /**
-   * Enables or disables plugins via, default is enabled
-   */
-  void setPluginsEnabled( bool enable );
-
-  /**
-   * Returns trie if plugins are enabled/disabled.
-   */
-  bool pluginsEnabled() const;
-
   /**
    * Specifies whether images contained in the document should be loaded
    * automatically or not.
@@ -264,9 +242,6 @@ public:
    **/
   bool onlyLocalReferences() const;
 
-  void enableJScript(bool e) { setJScriptEnabled(e); }
-  void enableJava(bool e) { setJavaEnabled(e); }
-  void enablePlugins(bool e) { setPluginsEnabled(e); }
   void autoloadImages(bool e) { setAutoloadImages(e); }
   void enableMetaRefresh(bool e) { setMetaRefreshEnabled(e); }
   bool setCharset( const QString &, bool ) { return true; }
@@ -888,7 +863,6 @@ private slots:
   virtual void clear(bool clearWindowProperties = true);
 
 private:
-  bool restoreURL( const KURL &url );
   void clearCaretRectIfNeeded();
   void setFocusNodeIfNeeded();
   void selectionLayoutChanged();
