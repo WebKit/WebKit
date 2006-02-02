@@ -144,6 +144,9 @@ IntRect enclosingIntRect(const NSRect&);
 
 // FIXME: Remove when everything is in the WebCore namespace.
 using WebCore::IntRect;
+
+#if __APPLE__
 using WebCore::enclosingIntRect;
+#endif
 
 #endif

@@ -97,10 +97,10 @@ void FloatRect::unite(const FloatRect& other)
 
 IntRect enclosingIntRect(const FloatRect& rect)
 {
-    int l = static_cast<int>(floorf(rect.x()));
-    int t = static_cast<int>(floorf(rect.y()));
-    int r = static_cast<int>(ceilf(rect.right()));
-    int b = static_cast<int>(ceilf(rect.bottom()));
+    int l = static_cast<int>(rect.x());
+    int t = static_cast<int>(rect.y());
+    int r = static_cast<int>(rect.right() + 0.5f);
+    int b = static_cast<int>(rect.bottom() + 0.5f);
     return IntRect(l, t, r - l, b - t);
 }
 
