@@ -1,4 +1,20 @@
-2006-01-31  Maciej Stachowiak  <mjs@apple.com>
+2006-02-02  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Test: LayoutTests/fast/block/positioning/height-change.html
+
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6881
+          Block with position:absolute bottom:0 doesn't always move when height
+          of containing block changes (affects Safari RSS)
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock): Relayout positioned children if the
+        block's height changed during layout.
+        * rendering/render_flexbox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock): Ditto.
+
+2006-02-02  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
 

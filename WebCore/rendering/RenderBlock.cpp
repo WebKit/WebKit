@@ -447,6 +447,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
 
     clearFloats();
 
+    int previousHeight = m_height;
     m_height = 0;
     m_overflowHeight = 0;
     m_clearStatus = CNONE;
@@ -502,14 +503,14 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     int oldHeight = m_height;
     calcHeight();
     if (oldHeight != m_height) {
-        relayoutChildren = true;
-
         // If the block got expanded in size, then increase our overflowheight to match.
         if (m_overflowHeight > m_height)
             m_overflowHeight -= paddingBottom() + borderBottom();
         if (m_overflowHeight < m_height)
             m_overflowHeight = m_height;
     }
+    if (previousHeight != m_height)
+        relayoutChildren = true;
 
     if (isTableCell()) {
         // Table cells need to grow to accommodate both overhanging floats and

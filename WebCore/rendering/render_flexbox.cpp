@@ -258,14 +258,14 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren)
     if (checkForRepaint)
         oldBounds = getAbsoluteRepaintRect();
     
-    int oldWidth = m_width;
-    int oldHeight = m_height;
+    int previousWidth = m_width;
+    int previousHeight = m_height;
     
     calcWidth();
     calcHeight();
     m_overflowWidth = m_width;
 
-    if (oldWidth != m_width || oldHeight != m_height ||
+    if (previousWidth != m_width || previousHeight != m_height ||
         (parent()->isFlexibleBox() && parent()->style()->boxOrient() == HORIZONTAL &&
          parent()->style()->boxAlign() == BSTRETCH))
         relayoutChildren = true;
@@ -293,17 +293,17 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren)
     else
         layoutVerticalBox(relayoutChildren);
     
-    oldHeight = m_height;
+    int oldHeight = m_height;
     calcHeight();
     if (oldHeight != m_height) {
-        relayoutChildren = true;
-
         // If the block got expanded in size, then increase our overflowheight to match.
         if (m_overflowHeight > m_height)
             m_overflowHeight -= (borderBottom()+paddingBottom());
         if (m_overflowHeight < m_height)
             m_overflowHeight = m_height;
     }
+    if (previousHeight != m_height)
+        relayoutChildren = true;
 
     layoutPositionedObjects( relayoutChildren );
 
