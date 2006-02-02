@@ -30,6 +30,7 @@
 
 #define WebDragImageAlpha    0.75
 
+@class DOMElement;
 @class WebArchive;
 @class WebFrameBridge;
 @class WebDataSource;
@@ -70,6 +71,7 @@
 
 // Resizes and applies alpha to image and drags it.
 - (void)_web_dragImage:(WebImageRenderer *)image
+               element:(DOMElement *)element
                   rect:(NSRect)rect
                  event:(NSEvent *)event
             pasteboard:(NSPasteboard *)pasteboard 

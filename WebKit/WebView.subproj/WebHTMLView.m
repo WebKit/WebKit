@@ -1266,19 +1266,19 @@ static WebHTMLView *lastHitView = nil;
     
     WebView *webView = [self _webView];
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-    WebImageRenderer *image = [element objectForKey:WebCoreElementImageRendererKey];
     BOOL startedDrag = YES;  // optimism - we almost always manage to start the drag
 
     // note per kwebster, the offset arg below is always ignored in positioning the image
-    if (imageURL != nil && image != nil && (_private->dragSourceActionMask & WebDragSourceActionImage)) {
+    DOMHTMLElement *imageElement = [element objectForKey:WebElementDOMNodeKey];
+    if (imageURL != nil && [imageElement _image] != nil && (_private->dragSourceActionMask & WebDragSourceActionImage)) {
         id source = self;
         if (!dhtmlWroteData) {
             // Select the image when it is dragged. This allows the image to be moved via MoveSelectionCommandImpl and this matches NSTextView's behavior.
-            DOMHTMLElement *imageElement = [element objectForKey:WebElementDOMNodeKey];
             ASSERT(imageElement != nil);
             [webView setSelectedDOMRange:[[[self _bridge] DOMDocument] _createRangeWithNode:imageElement] affinity:NSSelectionAffinityDownstream];
             _private->draggingImageURL = [imageURL retain];
-            source = [pasteboard _web_declareAndWriteDragImage:image
+            source = [pasteboard _web_declareAndWriteDragImage:nil
+                                                       element:imageElement
                                                            URL:linkURL ? linkURL : imageURL
                                                          title:[element objectForKey:WebElementImageAltStringKey]
                                                        archive:[imageElement webArchive]
@@ -1286,7 +1286,8 @@ static WebHTMLView *lastHitView = nil;
         }
         [[webView _UIDelegateForwarder] webView:webView willPerformDragSourceAction:WebDragSourceActionImage fromPoint:mouseDownPoint withPasteboard:pasteboard];
         if (dragImage == nil) {
-            [self _web_dragImage:[element objectForKey:WebCoreElementImageRendererKey]
+            [self _web_dragImage:nil
+                         element:[element objectForKey:WebElementDOMNodeKey]
                             rect:[[element objectForKey:WebElementImageRectKey] rectValue]
                            event:_private->mouseDownEvent
                       pasteboard:pasteboard
@@ -2888,10 +2889,9 @@ done:
     // Convert URL strings to NSURLs.
     [elementInfo _web_setObjectIfNotNil:[NSURL _web_URLWithDataAsString:[elementInfoWC objectForKey:WebElementLinkURLKey]] forKey:WebElementLinkURLKey];
     [elementInfo _web_setObjectIfNotNil:[NSURL _web_URLWithDataAsString:[elementInfoWC objectForKey:WebElementImageURLKey]] forKey:WebElementImageURLKey];
+    if ([elementInfoWC objectForKey:WebElementImageURLKey])
+        [elementInfo _web_setObjectIfNotNil:[[elementInfoWC objectForKey:WebElementDOMNodeKey] _image] forKey:WebElementImageKey];
 
-    // Convert image renderer to NSImage.
-    [elementInfo _web_setObjectIfNotNil:[(id <WebCoreImageRenderer>)[elementInfoWC objectForKey:WebCoreElementImageRendererKey] image] forKey:WebElementImageKey];
-    
     WebFrameView *webFrameView = [self _web_parentWebFrameView];
     ASSERT(webFrameView);
     WebFrame *webFrame = [webFrameView webFrame];

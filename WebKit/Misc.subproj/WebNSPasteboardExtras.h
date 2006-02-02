@@ -30,6 +30,7 @@
 
 @class WebArchive;
 @class WebImageRenderer;
+@class DOMElement;
 
 extern NSString *WebURLPboardType;
 extern NSString *WebURLNamePboardType;
@@ -62,12 +63,14 @@ extern NSString *WebURLNamePboardType;
 
 // Writes an image, URL and other optional types to the pasteboard.
 - (void)_web_writeImage:(WebImageRenderer *)image 
+                element:(DOMElement*)element
                     URL:(NSURL *)URL 
                   title:(NSString *)title
                 archive:(WebArchive *)archive
                   types:(NSArray *)types;
 
 - (id)_web_declareAndWriteDragImage:(WebImageRenderer *)image 
+                            element:(DOMElement *)element
                                 URL:(NSURL *)URL 
                               title:(NSString *)title
                             archive:(WebArchive *)archive

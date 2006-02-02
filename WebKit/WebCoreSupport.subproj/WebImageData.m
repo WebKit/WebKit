@@ -57,21 +57,10 @@
 
 @implementation WebImageData
 
-+ (void)initialize
-{
-    // Currently threaded decoding doesn't play well with the WebCore cache.
-    // Until those issues are resolved threaded decoding is OFF by default, even on dual CPU machines.
-    //[WebImageRendererFactory setShouldUseThreadedDecoding:(WebNumberOfCPUs() >= 2 ? YES : NO)];
-    [WebImageRendererFactory setShouldUseThreadedDecoding:NO];
-}
-
 - init
 {
     self = [super init];
     
-    if ([WebImageRendererFactory shouldUseThreadedDecoding])
-        decodeLock = [[NSLock alloc] init];
-
     imageSource = CGImageSourceCreateIncremental([self _imageSourceOptions]);
     sizeAvailable = NO;
     

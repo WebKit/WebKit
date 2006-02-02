@@ -1,3 +1,36 @@
+2006-02-02  David Hyatt  <hyatt@apple.com>
+
+	Fix for bug 6957, rewrite image rendering in C++ and move it to
+        WebCore.  Animation now stops lazily and just uses the CachedObject
+        notification system to push updates so that rects no longer need to
+        be cached (or sets of animating renderers in specific views).
+
+        Reviewed by darin
+
+        * Misc.subproj/WebNSPasteboardExtras.h:
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_writeImage:element:URL:title:archive:types:]):
+        (-[NSPasteboard _web_declareAndWriteDragImage:element:URL:title:archive:source:]):
+        * Misc.subproj/WebNSViewExtras.h:
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_dragImage:element:rect:event:pasteboard:source:offset:]):
+        * WebCoreSupport.subproj/WebImageData.m:
+        (-[WebImageData init]):
+        * WebCoreSupport.subproj/WebImageRendererFactory.m:
+        (+[WebImageRendererFactory shouldUseThreadedDecoding]):
+        (+[WebImageRendererFactory setShouldUseThreadedDecoding:]):
+        (-[WebImageRendererFactory setPatternPhaseForContext:inUserSpace:]):
+        (-[WebImageRendererFactory imageDataForName:]):
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]):
+        (-[NSArray elementAtPoint:]):
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView writeImageToPasteboard:types:]):
+        (-[WebImageView elementAtPoint:]):
+        (-[WebImageView mouseDragged:]):
+        * WebView.subproj/WebView.m:
+        (-[WebView _writeImageElement:withPasteboardTypes:toPasteboard:]):
+
 2006-01-31  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Omernick.

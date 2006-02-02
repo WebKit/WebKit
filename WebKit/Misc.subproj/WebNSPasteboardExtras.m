@@ -29,6 +29,7 @@
 #import <WebKit/WebNSPasteboardExtras.h>
 
 #import <WebCore/WebCoreImageRenderer.h>
+#import <WebKit/DOMPrivate.h>
 #import <WebKit/WebArchive.h>
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebImageRenderer.h>
@@ -220,19 +221,23 @@ static NSArray *_writableTypesForImageWithArchive (void)
     [self setData:RTFDData forType:NSRTFDPboardType];
 }
 
-- (void)_web_writeImage:(WebImageRenderer *)image 
+- (void)_web_writeImage:(WebImageRenderer *)image
+                element:(DOMElement *)element
                     URL:(NSURL *)URL 
                   title:(NSString *)title
                 archive:(WebArchive *)archive
                   types:(NSArray *)types
 {
-    ASSERT(image);
+    ASSERT(image || element);
     ASSERT(URL);
 
     [self _web_writeURL:URL andTitle:title types:types];
     
     if ([types containsObject:NSTIFFPboardType]) {
-        [self setData:[image TIFFRepresentation] forType:NSTIFFPboardType];
+        if (image)
+            [self setData:[image TIFFRepresentation] forType:NSTIFFPboardType];
+        else if (element)
+            [self setData:[element _imageTIFFRepresentation] forType:NSTIFFPboardType];
     }
     
     if (archive) {
@@ -258,7 +263,8 @@ static NSArray *_writableTypesForImageWithArchive (void)
     }
 }
 
-- (id)_web_declareAndWriteDragImage:(WebImageRenderer *)image 
+- (id)_web_declareAndWriteDragImage:(WebImageRenderer *)image
+                            element:(DOMElement *)element
                                 URL:(NSURL *)URL 
                               title:(NSString *)title
                             archive:(WebArchive *)archive
@@ -268,7 +274,7 @@ static NSArray *_writableTypesForImageWithArchive (void)
     NSMutableArray *types = [[NSMutableArray alloc] initWithObjects:NSFilesPromisePboardType, nil];
     [types addObjectsFromArray:[NSPasteboard _web_writableTypesForImageIncludingArchive:(archive != nil)]];
     [self declareTypes:types owner:source];    
-    [self _web_writeImage:image URL:URL title:title archive:archive types:types];
+    [self _web_writeImage:image element:element URL:URL title:title archive:archive types:types];
     [types release];
     
     NSString *extension = WKGetPreferredExtensionForMIMEType([image MIMEType]);

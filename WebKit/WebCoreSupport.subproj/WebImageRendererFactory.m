@@ -47,6 +47,22 @@
     return (WebImageRendererFactory *)[super sharedFactory];
 }
 
+// Have to leave these in because Safari calls them from its Debug menu.
++ (BOOL)shouldUseThreadedDecoding
+{
+    return NO;
+}
+
++ (void)setShouldUseThreadedDecoding:(BOOL)threadedDecode
+{
+    // Do nothing. We don't support this now.
+}
+
+- (void)setPatternPhaseForContext:(CGContextRef)context inUserSpace:(CGPoint)point
+{
+    WKSetPatternPhaseInUserSpace(context, point);
+}
+
 - (id <WebCoreImageRenderer>)imageRendererWithMIMEType:(NSString *)MIMEType
 {
     return [[[WebImageRenderer alloc] initWithMIMEType:MIMEType] autorelease];
@@ -162,6 +178,14 @@ struct CompositeOperator NSCompositingOperations[NUM_COMPOSITE_OPERATORS] = {
     }
 
     return imageMIMETypes;
+}
+
+- (NSData *)imageDataForName:(NSString *)filename
+{
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSString *imagePath = [bundle pathForResource:filename ofType:@"tiff"];
+    NSData *data = [NSData dataWithContentsOfFile:imagePath];
+    return data;
 }
 
 

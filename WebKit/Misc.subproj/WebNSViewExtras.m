@@ -29,6 +29,7 @@
 #import <WebKit/WebNSViewExtras.h>
 
 #import <WebCore/WebCoreImageRenderer.h>
+#import <WebCore/DOMPrivate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameViewInternal.h>
@@ -165,6 +166,7 @@
 }
 
 - (void)_web_dragImage:(WebImageRenderer *)wir
+               element:(DOMElement *)element
                   rect:(NSRect)rect
                  event:(NSEvent *)event
             pasteboard:(NSPasteboard *)pasteboard 
@@ -175,7 +177,7 @@
     NSImage *dragImage;
     NSPoint origin;
 
-    NSImage *image = [wir image];
+    NSImage *image = (wir != nil) ? [wir image] : [element _image];
     if (image != nil && [image size].height * [image size].width <= WebMaxOriginalImageArea) {
         NSSize originalSize = rect.size;
         origin = rect.origin;

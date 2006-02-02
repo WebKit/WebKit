@@ -210,7 +210,7 @@
 - (BOOL)writeImageToPasteboard:(NSPasteboard *)pasteboard types:(NSArray *)types
 {    
     if ([self haveCompleteImage]) {
-        [pasteboard _web_writeImage:[rep image] URL:[rep URL] title:nil archive:[rep archive] types:types];
+        [pasteboard _web_writeImage:[rep image] element:nil URL:[rep URL] title:nil archive:[rep archive] types:types];
         return YES;
     }
     
@@ -237,7 +237,6 @@
     ASSERT(frame);
     
     return [NSDictionary dictionaryWithObjectsAndKeys:
-        [rep image],                            WebCoreElementImageRendererKey,
         [[rep image] image],                    WebElementImageKey,
         [NSValue valueWithRect:[self bounds]],  WebElementImageRectKey,
         [rep URL],                              WebElementImageURLKey,
@@ -273,6 +272,7 @@
     
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
     id source = [pasteboard _web_declareAndWriteDragImage:[rep image]
+                                                  element:nil
                                                       URL:[rep URL]
                                                     title:nil
                                                   archive:[rep archive]
@@ -288,6 +288,7 @@
     [self retain];
     
     [self _web_dragImage:[rep image]
+                 element:nil
                     rect:[self drawingRect]
                    event:mouseDraggedEvent
               pasteboard:pasteboard
