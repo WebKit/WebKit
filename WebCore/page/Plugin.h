@@ -18,25 +18,25 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef PAGE_H
-#define PAGE_H
+#ifndef PLUGIN_H
+#define PLUGIN_H
 
-#include <kxmlcore/RefPtr.h>
-#include <kxmlcore/PassRefPtr.h>
+#include <ObjectContents.h>
+
+class QWidget;
 
 namespace WebCore {
 
-class Frame;
+class Plugin : public ObjectContents
+{
+public:
+    Plugin(QWidget *view) : m_view(view) { }
+    virtual QWidget *view() const { return m_view; }
 
-class Page {
- public:
-    Page(PassRefPtr<Frame> mainFrame);
-    ~Page();
-    Frame* mainFrame() { return m_mainFrame.get(); }
- private:
-    RefPtr<Frame> m_mainFrame;
+private:
+    QWidget *m_view;
 };
 
-}
-    
-#endif // PAGE_H
+} // namespace WebCore
+
+#endif // PLUGIN_H

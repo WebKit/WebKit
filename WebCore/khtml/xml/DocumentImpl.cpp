@@ -30,8 +30,10 @@
 #include "DocumentFragmentImpl.h"
 #include "DocumentTypeImpl.h"
 #include "EventNames.h"
-#include "FramePrivate.h"
+#include "Frame.h"
+#include "FrameTreeNode.h"
 #include "FrameView.h"
+#include "SelectionController.h"
 #include "KWQAccObjectCache.h"
 #include "KWQEvent.h"
 #include "KWQLogging.h"
@@ -2342,22 +2344,9 @@ void DocumentImpl::imageLoadEventTimerFired(Timer<DocumentImpl>*)
 
 ElementImpl *DocumentImpl::ownerElement()
 {
-    FrameView *childView = view();
-    if (!childView)
+    if (!frame())
         return 0;
-    Frame *childPart = childView->frame();
-    if (!childPart)
-        return 0;
-    Frame *parent = childPart->treeNode()->parent();
-    if (!parent)
-        return 0;
-    ChildFrame *childFrame = parent->childFrame(childPart);
-    if (!childFrame)
-        return 0;
-    RenderPart *renderPart = childFrame->m_renderer;
-    if (!renderPart)
-        return 0;
-    return static_cast<ElementImpl *>(renderPart->element());
+    return frame()->ownerElement();
 }
 
 DOMString DocumentImpl::referrer() const

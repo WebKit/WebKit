@@ -82,6 +82,7 @@
 #include <qptrlist.h>
 #include <qtextcodec.h>
 #include <sys/types.h>
+#include "Plugin.h"
 
 #if !WIN32
 #include <unistd.h>
@@ -1672,6 +1673,23 @@ bool Frame::processObjectRequest( ChildFrame *child, const KURL &_url, const QSt
       return true;
 }
 
+ObjectContents* Frame::createPart(const ChildFrame& child, const KURL& url, const QString& mimeType)
+{
+    bool isObject = child.m_type == ChildFrame::Object;
+    
+    ObjectContentType objectType = isObject ? objectContentType(url, mimeType) : ObjectContentFrame;
+    
+    if (objectType == ObjectContentNone) {
+        if (child.m_hasFallbackContent)
+            return 0;
+        objectType = ObjectContentPlugin; // Since no fallback content exists, we'll make a plugin and show the error dialog.
+    }
+
+    if (objectType == ObjectContentPlugin)
+        return createPlugin(url, child.m_paramNames, child.m_paramValues, mimeType);
+
+    return createFrame(url, child.m_name, child.m_renderer, child.m_args.metaData().get("referrer"), isObject);
+}
 
 void Frame::submitFormAgain()
 {
@@ -3010,6 +3028,20 @@ RenderObject *Frame::renderer() const
     return doc ? doc->renderer() : 0;
 }
 
+ElementImpl* Frame::ownerElement()
+{
+    Frame* parent = treeNode()->parent();
+    if (!parent)
+        return 0;
+    ChildFrame* childFrame = parent->childFrame(this);
+    if (!childFrame)
+        return 0;
+    RenderPart* ownerElementRenderer = childFrame->m_renderer;
+    if (!ownerElementRenderer)
+        return 0;
+    return static_cast<ElementImpl*>(ownerElementRenderer->element());
+}
+
 IntRect Frame::selectionRect() const
 {
     RenderCanvas *root = static_cast<RenderCanvas *>(renderer());
@@ -3716,4 +3748,28 @@ void Frame::stopRedirectionTimer()
     d->m_redirectionTimer.stop();
 }
 
+void Frame::frameDetached()
+{
+    Frame *parent = treeNode()->parent();
+    if (parent) {
+        FrameList& parentFrames = parent->d->m_frames;
+        FrameIt end = parentFrames.end();
+        for (FrameIt it = parentFrames.begin(); it != end; ++it) {
+            ChildFrame &child = *it;
+            if (child.m_frame == this) {
+                parent->disconnectChild(&child);
+                parentFrames.remove(it);
+                break;
+            }
+        }
+    }
 }
+
+void Frame::updateBaseURLForEmptyDocument()
+{
+    if (treeNode()->parent() && (treeNode()->parent()->childFrame(this)->m_type == ChildFrame::IFrame ||
+                                 treeNode()->parent()->childFrame(this)->m_type == ChildFrame::Object))
+        d->m_doc->setBaseURL(treeNode()->parent()->d->m_doc->baseURL());
+}
+
+} // namespace WebCore

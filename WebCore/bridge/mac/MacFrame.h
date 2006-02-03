@@ -126,6 +126,7 @@ public:
     void setBridge(WebCoreFrameBridge *p);
     WebCoreFrameBridge *bridge() const { return _bridge; }
     void setView(FrameView *view);
+    virtual void frameDetached();
 
     virtual bool openURL(const KURL &);
     
@@ -140,7 +141,10 @@ public:
     void setStatusBarText(const QString &status);
 
     virtual void urlSelected(const KURL &url, int button, int state, const URLArgs &args);
-    virtual ObjectContents *createPart(const ChildFrame &child, const KURL &url, const QString &mimeType);
+
+    virtual ObjectContentType objectContentType(const KURL& url, const QString& mimeType);
+    virtual Plugin* createPlugin(const KURL& url, const QStringList& paramNames, const QStringList& paramValues, const QString& mimeType);
+    virtual Frame* createFrame(const KURL& url, const QString& name, RenderPart* renderer, const DOMString& referrer, bool isObject);
 
     virtual void scheduleClose();
 

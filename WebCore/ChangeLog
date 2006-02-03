@@ -1,3 +1,35 @@
+2006-02-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adele.
+
+        - remove all use of the ChildFrame from outside Frame.cpp, in preparation for removing it
+
+        * bridge/mac/MacFrame.h:
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::frameDetached): Factor out the ChildFrame manipulations into a base
+        class method.
+        (WebCore::MacFrame::objectContentType): factored out from createPart, calls the bridge to
+        determine contents for an Object tag.
+        (WebCore::MacFrame::createPlugin): factor out code from createPart that makes a Plugin.
+        (WebCore::MacFrame::createFrame): ditto for code that makes a Frame.
+        (WebCore::MacFrame::createEmptyDocument): factored out part into the superclass
+        * khtml/xml/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::ownerElement): Call new ownerElement method on Frame
+        instead of mucking at Frame internals.
+        * page/Frame.cpp:
+        (WebCore::Frame::createPart): Moved here from MacFrame, but some of the guts were
+        factored out.
+        (WebCore::Frame::ownerElement): New method, logic moved from DocumentImpl.
+        (WebCore::Frame::frameDetached): New virtual method, the part of this that
+        pokes at ChildFrame structures.
+        (WebCore::Frame::updateBaseURLForEmptyDocument): Helper that looks at the ChildFrame
+        array for the benefit of createEmptyDocument.
+        * page/Frame.h:
+        * page/Page.h: Fix up modeline.
+        * page/Plugin.h: Added.
+        (WebCore::Plugin::Plugin): Moved here from MacFrame.mm, since it is now used by Frame.
+        (WebCore::Plugin::view): ditto
+
 2006-02-02  David Hyatt  <hyatt@apple.com>
 
         Avoid extra copies of all the decoded image bytes.

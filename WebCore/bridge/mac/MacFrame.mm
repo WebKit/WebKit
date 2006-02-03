@@ -49,6 +49,7 @@
 #import "KWQScrollBar.h"
 #import "KWQTextCodec.h"
 #import "KWQWindowWidget.h"
+#import "Plugin.h"
 #import "SelectionController.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreGraphicsBridge.h"
@@ -562,24 +563,9 @@ void MacFrame::submitForm(const KURL &url, const URLArgs &args)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void Frame::frameDetached()
+void MacFrame::frameDetached()
 {
-    // FIXME: This should be a virtual function, with the second part in MacFrame, and the first
-    // part in Frame, so it works for KHTML too.
-
-    Frame *parent = treeNode()->parent();
-    if (parent) {
-        FrameList& parentFrames = parent->d->m_frames;
-        FrameIt end = parentFrames.end();
-        for (FrameIt it = parentFrames.begin(); it != end; ++it) {
-            ChildFrame &child = *it;
-            if (child.m_frame == this) {
-                parent->disconnectChild(&child);
-                parentFrames.remove(it);
-                break;
-            }
-        }
-    }
+    Frame::frameDetached();
 
     KWQ_BLOCK_EXCEPTIONS;
     [Mac(this)->bridge() frameDetached];
@@ -609,62 +595,51 @@ void MacFrame::urlSelected(const KURL &url, int button, int state, const URLArgs
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-class Plugin : public ObjectContents
+ObjectContentType MacFrame::objectContentType(const KURL& url, const QString& mimeType)
 {
-public:
-    Plugin(QWidget *view) : m_view(view) { }
-    virtual QWidget *view() const { return m_view; }
+    return (ObjectContentType)[_bridge determineObjectFromMIMEType:mimeType.getNSString() URL:url.getNSURL()];
+}
 
-private:
-    QWidget *m_view;
-};
 
-ObjectContents *MacFrame::createPart(const ChildFrame &child, const KURL &url, const QString &mimeType)
+Plugin* MacFrame::createPlugin(const KURL& url, const QStringList& paramNames, const QStringList& paramValues, const QString& mimeType)
 {
-    ObjectContents *part;
     KWQ_BLOCK_EXCEPTIONS;
 
-    ObjectElementType objectType = ObjectElementFrame;
-    if (child.m_type == ChildFrame::Object)
-        objectType = [_bridge determineObjectFromMIMEType:mimeType.getNSString() URL:url.getNSURL()];
-    
-    if (objectType == ObjectElementNone) {
-        if (child.m_hasFallbackContent)
-            return NULL;
-        objectType = ObjectElementPlugin; // Since no fallback content exists, we'll make a plugin and show the error dialog.
-    }
-
-    if (objectType == ObjectElementPlugin) {
-        part = new Plugin(new QWidget([_bridge viewForPluginWithURL:url.getNSURL()
-                                       attributeNames:child.m_paramNames.getNSArray()
-                                       attributeValues:child.m_paramValues.getNSArray()
-                                       MIMEType:child.m_args.serviceType.getNSString()]));
-    } else {
-        LOG(Frames, "name %s", child.m_name.ascii());
-        BOOL allowsScrolling = YES;
-        int marginWidth = -1;
-        int marginHeight = -1;
-        if (child.m_type != ChildFrame::Object) {
-            HTMLFrameElementImpl *o = static_cast<HTMLFrameElementImpl *>(child.m_renderer->element());
-            allowsScrolling = o->scrollingMode() != QScrollView::AlwaysOff;
-            marginWidth = o->getMarginWidth();
-            marginHeight = o->getMarginHeight();
-        }
-        WebCoreFrameBridge *childBridge = [_bridge createChildFrameNamed:child.m_name.getNSString()
-                                                            withURL:url.getNSURL()
-                                                           referrer:child.m_args.metaData().get("referrer")
-                                                         renderPart:child.m_renderer
-                                                    allowsScrolling:allowsScrolling
-                                                        marginWidth:marginWidth
-                                                       marginHeight:marginHeight];
-        part = [childBridge part];
-    }
-
-    return part;
+    return new Plugin(new QWidget([_bridge viewForPluginWithURL:url.getNSURL()
+                                  attributeNames:paramNames.getNSArray()
+                                  attributeValues:paramValues.getNSArray()
+                                  MIMEType:mimeType.getNSString()]));
 
     KWQ_UNBLOCK_EXCEPTIONS;
+    return 0;
+}
 
-    return NULL;
+
+Frame* MacFrame::createFrame(const KURL& url, const QString& name, RenderPart* renderer, const DOMString& referrer, bool isObject)
+{
+    KWQ_BLOCK_EXCEPTIONS;
+    
+    BOOL allowsScrolling = YES;
+    int marginWidth = -1;
+    int marginHeight = -1;
+    if (!isObject) {
+        HTMLFrameElementImpl *o = static_cast<HTMLFrameElementImpl *>(renderer->element());
+        allowsScrolling = o->scrollingMode() != QScrollView::AlwaysOff;
+        marginWidth = o->getMarginWidth();
+        marginHeight = o->getMarginHeight();
+    }
+
+    WebCoreFrameBridge *childBridge = [_bridge createChildFrameNamed:name.getNSString()
+                                                             withURL:url.getNSURL()
+                                                            referrer:referrer 
+                                                          renderPart:renderer
+                                                     allowsScrolling:allowsScrolling
+                                                         marginWidth:marginWidth
+                                                        marginHeight:marginHeight];
+    return [childBridge part];
+
+    KWQ_UNBLOCK_EXCEPTIONS;
+    return 0;
 }
 
 void MacFrame::setView(FrameView *view)
@@ -1427,10 +1402,7 @@ void MacFrame::createEmptyDocument()
         [_bridge loadEmptyDocumentSynchronously];
         KWQ_UNBLOCK_EXCEPTIONS;
 
-        if (treeNode()->parent() && (treeNode()->parent()->childFrame(this)->m_type == ChildFrame::IFrame ||
-                treeNode()->parent()->childFrame(this)->m_type == ChildFrame::Object)) {
-            d->m_doc->setBaseURL(treeNode()->parent()->d->m_doc->baseURL());
-        }
+        updateBaseURLForEmptyDocument();
     }
 }
 
