@@ -1,3 +1,12 @@
+2006-02-02  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by thatcher
+        
+        Enabled spell checking for layout tests.
+        
+        * DumpRenderTree/DumpRenderTree.m:
+        (main):
+
 2006-01-29  Darin Adler  <darin@apple.com>
 
         * Scripts/svn-apply: Added comments about things we should do to improve.

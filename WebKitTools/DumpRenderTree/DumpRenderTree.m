@@ -134,6 +134,8 @@ static void setDefaultColorProfileToRGB(void)
 int main(int argc, const char *argv[])
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    
+    [NSApplication sharedApplication];
 
     class_poseAs(objc_getClass("DumpRenderTreePasteboard"), objc_getClass("NSPasteboard"));
     
@@ -196,6 +198,8 @@ int main(int argc, const char *argv[])
     [webView setEditingDelegate:editingDelegate];
     [webView setUIDelegate:delegate];
     frame = [webView mainFrame];
+    
+    [webView setContinuousSpellCheckingEnabled:YES];
     
     // For reasons that are not entirely clear, the following pair of calls makes WebView handle its
     // dynamic scrollbars properly. Without it, every frame will always have scrollbars.
