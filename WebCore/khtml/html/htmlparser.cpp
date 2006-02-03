@@ -1245,8 +1245,8 @@ void HTMLParser::popOneBlock(bool delBlock)
     // we should never get here, but some bad html might cause it.
     if (!Elem) return;
     
-    if ((Elem->node != current)) {
-        if (current->maintainsState() && doc()){
+    if (current && Elem->node != current) {
+        if (current->maintainsState() && doc()) {
             doc()->registerMaintainsState(current);
             QStringList &states = doc()->restoreState();
             if (!states.isEmpty())

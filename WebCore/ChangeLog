@@ -1,3 +1,19 @@
+2006-02-03  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt.
+
+        No test cases added because this is an unreproducible crash.
+
+        This is a speculative fix for <rdar://problem/4048026> 
+        CrashTracer: [BOUNCE BACK] 1219 crashes in Safari at 
+        com.apple.WebCore: KHTMLParser::popOneBlock + 36
+
+        It seems possible that current could be nil when this function is 
+        called, so the speculative fix is to add a nil check.
+
+        * khtml/html/htmlparser.cpp:
+        (HTMLParser::popOneBlock): Added nil check.
+
 2006-02-03  David Hyatt  <hyatt@apple.com>
 
         Refactoring of the image classes to make them even more
