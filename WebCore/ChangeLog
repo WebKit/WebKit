@@ -1,5 +1,85 @@
 2006-02-03  David Hyatt  <hyatt@apple.com>
 
+        Refactoring of the image classes to make them even more
+        portable.
+
+        Reviewed by mjs
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/Image.cpp:
+        (WebCore::m_animationObserver):
+        (WebCore::Image::Image):
+        (WebCore::Image::~Image):
+        (WebCore::Image::resetAnimation):
+        (WebCore::Image::setData):
+        (WebCore::Image::isNull):
+        (WebCore::Image::size):
+        (WebCore::Image::rect):
+        (WebCore::Image::width):
+        (WebCore::Image::height):
+        (WebCore::):
+        (WebCore::Image::compositeOperatorFromString):
+        * platform/ImageData.cpp: Added.
+        (WebCore::FrameData::clear):
+        (WebCore::ImageData::ImageData):
+        (WebCore::ImageData::~ImageData):
+        (WebCore::ImageData::invalidateData):
+        (WebCore::ImageData::cacheFrame):
+        (WebCore::ImageData::isNull):
+        (WebCore::ImageData::size):
+        (WebCore::ImageData::setData):
+        (WebCore::ImageData::setNativeData):
+        (WebCore::ImageData::frameCount):
+        (WebCore::ImageData::isSizeAvailable):
+        (WebCore::ImageData::frameAtIndex):
+        (WebCore::ImageData::frameDurationAtIndex):
+        (WebCore::ImageData::shouldAnimate):
+        (WebCore::ImageData::startAnimation):
+        (WebCore::ImageData::stopAnimation):
+        (WebCore::ImageData::resetAnimation):
+        (WebCore::ImageData::advanceAnimation):
+        * platform/ImageData.h: Added.
+        (KXMLCore::):
+        (WebCore::FrameData::m_duration):
+        (WebCore::FrameData::~FrameData):
+        (WebCore::ImageData::setIsPDF):
+        (WebCore::ImageData::currentFrame):
+        * platform/ImageDecoder.h:
+        * platform/mac/Image.mm:
+        (WebCore::Image::loadResource):
+        (WebCore::Image::supportsType):
+        (WebCore::Image::getCGImageRef):
+        (WebCore::Image::getNSImage):
+        (WebCore::Image::getTIFFRepresentation):
+        (WebCore::graphicsContext):
+        (WebCore::setCompositingOperation):
+        (WebCore::fillSolidColorInRect):
+        (WebCore::Image::drawInRect):
+        (WebCore::drawPattern):
+        (WebCore::Image::tileInRect):
+        (WebCore::Image::scaleAndTileInRect):
+        * platform/mac/ImageData.mm: Added.
+        (WebCore::setCompositingOperation):
+        (WebCore::ImageData::invalidateAppleSpecificData):
+        (WebCore::ImageData::checkForSolidColor):
+        (WebCore::ImageData::getTIFFRepresentation):
+        (WebCore::ImageData::getNSImage):
+        * platform/mac/PDFDocumentImage.h: Added.
+        * platform/mac/PDFDocumentImage.mm: Added.
+        (WebCore::releasePDFDocumentData):
+        (WebCore::PDFDocumentImage::PDFDocumentImage):
+        (WebCore::PDFDocumentImage::~PDFDocumentImage):
+        (WebCore::PDFDocumentImage::documentRef):
+        (WebCore::PDFDocumentImage::mediaBox):
+        (WebCore::PDFDocumentImage::bounds):
+        (WebCore::PDFDocumentImage::adjustCTM):
+        (WebCore::PDFDocumentImage::setCurrentPage):
+        (WebCore::PDFDocumentImage::currentPage):
+        (WebCore::PDFDocumentImage::pageCount):
+        (WebCore::PDFDocumentImage::draw):
+
+2006-02-03  David Hyatt  <hyatt@apple.com>
+
         Make a new class called ImageDecoder that wraps a CGImageSource.
         This paves the way for ImageData to become portable as well.
 

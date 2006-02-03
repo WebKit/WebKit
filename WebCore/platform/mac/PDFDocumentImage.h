@@ -23,56 +23,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef IMAGE_DECODER_H_
-#define IMAGE_DECODER_H_
+// ================================================
+// PDF Images (Apple-Only)
+// ================================================
 
 #if __APPLE__
 #include <ApplicationServices/ApplicationServices.h>
+#if __OBJC__
+@class NSData;
+#else
+class NSData;
+#endif
 #endif
 
 namespace WebCore {
 
-class IntSize;
-
-template <typename T> class Array;
-typedef Array<char> ByteArray;
-
-#if __APPLE__
-typedef CGImageSourceRef NativeImageDecoderPtr;
-typedef CGImageRef NativeImagePtr;
-typedef CFDataRef NativeBytePtr;
-#else
-class ImageDecoderPlugin;
-typedef ImageDecoderPlugin* NativeImageDecoderPtr;
-typedef ByteArray* NativeBytePtr;
-typedef void* NativeImagePtr;
-#endif
-
-const int cAnimationLoopOnce = -1;
-const int cAnimationNone = -2;
-
-class ImageDecoder {
+class PDFDocumentImage {
 public:
-    ImageDecoder();
-    ~ImageDecoder();
+    PDFDocumentImage(NSData* data);
+    ~PDFDocumentImage();
+    
+    CGPDFDocumentRef documentRef();
+    CGRect mediaBox();
+    CGRect bounds(); // adjust for rotation
+    void setCurrentPage(int page);
+    int currentPage();
+    int pageCount();
+    void adjustCTM(CGContextRef context);
 
-    bool initialized() const;
-    
-    void setData(NativeBytePtr data, bool allDataReceived);
+    void draw(NSRect fromRect, NSRect toRect, Image::CompositeOperator op, float alpha, bool flipped, CGContextRef context);
 
-    bool isSizeAvailable();
-    IntSize size() const;
-    
-    int repetitionCount();
-    
-    size_t frameCount() const;
-    NativeImagePtr createFrameAtIndex(size_t index);
-    float frameDurationAtIndex(size_t index);
-    
 private:
-    NativeImageDecoderPtr m_decoder;
+    CGPDFDocumentRef m_document;
+    CGRect           m_mediaBox;
+    CGRect           m_cropBox;
+    float            m_rotation;
+    int              m_currentPage;
 };
 
 }
-
-#endif

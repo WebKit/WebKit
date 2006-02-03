@@ -864,6 +864,12 @@
 		BC1A37C2097C715F0019F3D8 /* DOMViewsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37AC097C715F0019F3D8 /* DOMViewsInternal.h */; };
 		BC6B7A9809933F2E0052867B /* ImageDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6B7A9709933F2E0052867B /* ImageDecoder.h */; };
 		BC6B7AA1099340400052867B /* ImageDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6B7AA0099340400052867B /* ImageDecoder.cpp */; };
+		BC6B7B3C099355460052867B /* ImageData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6B7B3B099355460052867B /* ImageData.h */; };
+		BC6B7B47099357710052867B /* ImageData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6B7B46099357710052867B /* ImageData.cpp */; };
+		BC6B7B4E0993578B0052867B /* ImageData.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC6B7B4D0993578B0052867B /* ImageData.mm */; };
+		BC6B7BAF0993603C0052867B /* Image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6B7BAE0993603C0052867B /* Image.cpp */; };
+		BC6B7BBC0993611A0052867B /* PDFDocumentImage.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6B7BBB0993611A0052867B /* PDFDocumentImage.h */; };
+		BC6B7BC3099361560052867B /* PDFDocumentImage.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC6B7BC2099361560052867B /* PDFDocumentImage.mm */; };
 		BC73E2130978546300EDFF8A /* IntSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC73E2120978546300EDFF8A /* IntSize.mm */; };
 		BC73E25D0978682700EDFF8A /* FloatSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC73E25B0978682700EDFF8A /* FloatSize.cpp */; };
 		BC73E25E0978682700EDFF8A /* FloatSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BC73E25C0978682700EDFF8A /* FloatSize.h */; };
@@ -1832,6 +1838,12 @@
 		BC419795059294CA0016347F /* xbl_binding_manager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = xbl_binding_manager.cpp; path = xbl/xbl_binding_manager.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC6B7A9709933F2E0052867B /* ImageDecoder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ImageDecoder.h; path = platform/ImageDecoder.h; sourceTree = "<group>"; };
 		BC6B7AA0099340400052867B /* ImageDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ImageDecoder.cpp; path = platform/mac/ImageDecoder.cpp; sourceTree = "<group>"; };
+		BC6B7B3B099355460052867B /* ImageData.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ImageData.h; path = platform/ImageData.h; sourceTree = "<group>"; };
+		BC6B7B46099357710052867B /* ImageData.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ImageData.cpp; path = platform/ImageData.cpp; sourceTree = "<group>"; };
+		BC6B7B4D0993578B0052867B /* ImageData.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = ImageData.mm; path = platform/mac/ImageData.mm; sourceTree = "<group>"; };
+		BC6B7BAE0993603C0052867B /* Image.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Image.cpp; path = platform/Image.cpp; sourceTree = "<group>"; };
+		BC6B7BBB0993611A0052867B /* PDFDocumentImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PDFDocumentImage.h; path = platform/mac/PDFDocumentImage.h; sourceTree = "<group>"; };
+		BC6B7BC2099361560052867B /* PDFDocumentImage.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFDocumentImage.mm; path = platform/mac/PDFDocumentImage.mm; sourceTree = "<group>"; };
 		BC73E2120978546300EDFF8A /* IntSize.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = IntSize.mm; path = platform/mac/IntSize.mm; sourceTree = "<group>"; };
 		BC73E25B0978682700EDFF8A /* FloatSize.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FloatSize.cpp; path = platform/FloatSize.cpp; sourceTree = "<group>"; };
 		BC73E25C0978682700EDFF8A /* FloatSize.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FloatSize.h; path = platform/FloatSize.h; sourceTree = "<group>"; };
@@ -3109,6 +3121,12 @@
 				BCD75ABD0989A45C003E28DF /* Image.mm */,
 				BCD75ABB0989A446003E28DF /* Image.h */,
 				BC6B7AA0099340400052867B /* ImageDecoder.cpp */,
+				BC6B7B4D0993578B0052867B /* ImageData.mm */,
+				BC6B7B46099357710052867B /* ImageData.cpp */,
+				BC6B7BC2099361560052867B /* PDFDocumentImage.mm */,
+				BC6B7BBB0993611A0052867B /* PDFDocumentImage.h */,
+				BC6B7BAE0993603C0052867B /* Image.cpp */,
+				BC6B7B3B099355460052867B /* ImageData.h */,
 				BC6B7A9709933F2E0052867B /* ImageDecoder.h */,
 				BC075985098861A400407B48 /* Brush.h */,
 				BCC8D1710988301200140BF2 /* Pen.cpp */,
@@ -4331,6 +4349,8 @@
 				BC9C328B09933A6E001D6924 /* ImageAnimationObserver.h in Headers */,
 				65D1C1CA09932B22000CB324 /* Plugin.h in Headers */,
 				BC6B7A9809933F2E0052867B /* ImageDecoder.h in Headers */,
+				BC6B7B3C099355460052867B /* ImageData.h in Headers */,
+				BC6B7BBC0993611A0052867B /* PDFDocumentImage.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5448,6 +5468,10 @@
 				9385F774098D9CB900D90D24 /* Screen.mm in Sources */,
 				9305B250098F1B8B00C28855 /* Timer.cpp in Sources */,
 				BC6B7AA1099340400052867B /* ImageDecoder.cpp in Sources */,
+				BC6B7B47099357710052867B /* ImageData.cpp in Sources */,
+				BC6B7B4E0993578B0052867B /* ImageData.mm in Sources */,
+				BC6B7BAF0993603C0052867B /* Image.cpp in Sources */,
+				BC6B7BC3099361560052867B /* PDFDocumentImage.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
