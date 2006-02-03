@@ -1,0 +1,52 @@
+<html>
+<style>
+blockquote {
+    color: blue;
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript"></script>
+<script>
+function editingTest() {
+    selectAllCommand();
+    moveSelectionForwardByCharacterCommand();
+    moveSelectionBackwardByLineCommand();
+}
+</script>
+
+<body>
+<div id="test" contentEditable style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
+
+<DIV class=3D"AppleOriginalContents"><DIV>On Feb 1, 2006, at 7:37 PM, David Hyatt wrote:</DIV><BR class=3D"Apple-interchange-newline"><BLOCKQUOTE type=3D"cite"><DIV
+style=3D"margin-top: 0px; margin-right: 0px; margin-bottom: 0px;
+margin-left: 0px; ">While reworking images I ran into something that
+really concerns me.<SPAN class=3D"Apple-converted-space">
+</SPAN>WebElementImageKey is a key added to the elementAtPoint
+dictionary and the key's value is an NSImage.<SPAN
+class=3D"Apple-converted-space"> </SPAN>Unfortunately we use
+CGImageRef now.<SPAN class=3D"Apple-converted-space"> </SPAN>What
+this means is that as you move the mouse around a web page we are
+aggressively mallocing NSImages that then move into our image cache and
+stay around until the CGImageRef goes away (which could be a long
+time).</DIV><DIV style=3D"margin-top: 0px; margin-right: 0px;
+margin-bottom: 0px; margin-left: 0px; min-height: 14px; "><BR></DIV><DIV
+style=3D"margin-top: 0px; margin-right: 0px; margin-bottom: 0px;
+margin-left: 0px; ">I think this is terrible but am not sure how to fix
+it.<SPAN class=3D"Apple-converted-space"> </SPAN>I assume this key is
+public API.<SPAN class=3D"Apple-converted-space"> </SPAN>Could we
+change the key's value to be a CGImageRef instead?<SPAN
+class=3D"Apple-converted-space"> </SPAN>Could we just eliminate the
+key in favor of a DOM extension method for accessing an
+NSImage?</DIV><DIV style=3D"margin-top: 0px; margin-right: 0px;
+margin-bottom: 0px; margin-left: 0px; min-height: 14px; "><BR></DIV><DIV
+style=3D"margin-top: 0px; margin-right: 0px; margin-bottom: 0px;
+margin-left: 0px; ">dave</DIV><DIV style=3D"margin-top: 0px;
+margin-right: 0px; margin-bottom: 0px; margin-left: 0px;
+">(hyatt@apple.com)</DIV><DIV style=3D"margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px; min-height: 14px;"><BR></DIV> </BLOCKQUOTE></DIV><BR>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

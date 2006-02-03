@@ -1,3 +1,157 @@
+2006-02-02  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        Turned on continuous spell checking to test the fix for:
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=6586>
+        REGRESSION: visible_text.cpp assertion failure in Mail.app
+
+        Added:
+        * editing/selection/end-of-document.html
+
+        Pixel results for editing tests now include misspelling markers.
+        A few of them are incorrect, filed 7038 to cover this.
+        * editing/deleting/delete-3928305-fix-expected.checksum:
+        * editing/deleting/delete-3928305-fix-expected.png:
+        * editing/deleting/delete-3959464-fix-expected.checksum:
+        * editing/deleting/delete-3959464-fix-expected.png:
+        * editing/deleting/delete-after-span-ws-001-expected.checksum:
+        * editing/deleting/delete-after-span-ws-001-expected.png:
+        * editing/deleting/delete-after-span-ws-002-expected.checksum:
+        * editing/deleting/delete-after-span-ws-002-expected.png:
+        * editing/deleting/delete-after-span-ws-003-expected.checksum:
+        * editing/deleting/delete-after-span-ws-003-expected.png:
+        * editing/deleting/delete-and-undo-expected.checksum:
+        * editing/deleting/delete-and-undo-expected.png:
+        * editing/deleting/delete-block-contents-003-expected.checksum:
+        * editing/deleting/delete-block-contents-003-expected.png:
+        * editing/deleting/delete-block-merge-contents-010-expected.checksum:
+        * editing/deleting/delete-block-merge-contents-010-expected.png:
+        * editing/deleting/delete-contiguous-ws-001-expected.checksum:
+        * editing/deleting/delete-contiguous-ws-001-expected.png:
+        * editing/deleting/delete-tab-002-expected.checksum:
+        * editing/deleting/delete-tab-002-expected.png:
+        * editing/deleting/delete-tab-003-expected.checksum:
+        * editing/deleting/delete-tab-003-expected.png:
+        * editing/deleting/delete-trailing-ws-002-expected.checksum:
+        * editing/deleting/delete-trailing-ws-002-expected.png:
+        * editing/deleting/delete-ws-fixup-001-expected.checksum:
+        * editing/deleting/delete-ws-fixup-001-expected.png:
+        * editing/deleting/delete-ws-fixup-002-expected.checksum:
+        * editing/deleting/delete-ws-fixup-002-expected.png:
+        * editing/inserting/editing-empty-divs-expected.checksum:
+        * editing/inserting/editing-empty-divs-expected.png:
+        * editing/inserting/insert-3659587-fix-expected.checksum:
+        * editing/inserting/insert-3659587-fix-expected.png:
+        * editing/inserting/insert-br-004-expected.checksum:
+        * editing/inserting/insert-br-004-expected.png:
+        * editing/inserting/insert-br-005-expected.checksum:
+        * editing/inserting/insert-br-005-expected.png:
+        * editing/inserting/insert-br-007-expected.checksum:
+        * editing/inserting/insert-br-007-expected.png:
+        * editing/inserting/insert-div-007-expected.checksum:
+        * editing/inserting/insert-div-007-expected.png:
+        * editing/inserting/insert-div-012-expected.checksum:
+        * editing/inserting/insert-div-012-expected.png:
+        * editing/inserting/insert-div-013-expected.checksum:
+        * editing/inserting/insert-div-013-expected.png:
+        * editing/inserting/insert-div-014-expected.checksum:
+        * editing/inserting/insert-div-014-expected.png:
+        * editing/inserting/insert-div-015-expected.checksum:
+        * editing/inserting/insert-div-015-expected.png:
+        * editing/inserting/insert-div-016-expected.checksum:
+        * editing/inserting/insert-div-016-expected.png:
+        * editing/inserting/insert-div-017-expected.checksum:
+        * editing/inserting/insert-div-017-expected.png:
+        * editing/inserting/insert-div-018-expected.checksum:
+        * editing/inserting/insert-div-018-expected.png:
+        * editing/inserting/insert-div-019-expected.checksum:
+        * editing/inserting/insert-div-019-expected.png:
+        * editing/inserting/insert-div-020-expected.checksum:
+        * editing/inserting/insert-div-020-expected.png:
+        * editing/inserting/insert-div-021-expected.checksum:
+        * editing/inserting/insert-div-021-expected.png:
+        * editing/inserting/insert-div-022-expected.checksum:
+        * editing/inserting/insert-div-022-expected.png:
+        * editing/inserting/insert-div-025-expected.checksum:
+        * editing/inserting/insert-div-025-expected.png:
+        * editing/inserting/insert-div-027-expected.checksum:
+        * editing/inserting/insert-div-027-expected.png:
+        * editing/inserting/insert-tab-002-expected.checksum:
+        * editing/inserting/insert-tab-002-expected.png:
+        * editing/inserting/insert-tab-003-expected.checksum:
+        * editing/inserting/insert-tab-003-expected.png:
+        * editing/inserting/insert-text-with-newlines-expected.checksum:
+        * editing/inserting/insert-text-with-newlines-expected.png:
+        * editing/inserting/return-key-with-selection-001-expected.checksum:
+        * editing/inserting/return-key-with-selection-001-expected.png:
+        * editing/inserting/return-key-with-selection-002-expected.checksum:
+        * editing/inserting/return-key-with-selection-002-expected.png:
+        * editing/inserting/return-key-with-selection-003-expected.checksum:
+        * editing/inserting/return-key-with-selection-003-expected.png:
+        * editing/inserting/typing-002-expected.checksum:
+        * editing/inserting/typing-002-expected.png:
+        * editing/inserting/typing-around-br-001-expected.checksum:
+        * editing/inserting/typing-around-br-001-expected.png:
+        * editing/pasteboard/cut-text-001-expected.checksum:
+        * editing/pasteboard/cut-text-001-expected.png:
+        * editing/pasteboard/paste-list-001-expected.checksum:
+        * editing/pasteboard/paste-text-001-expected.checksum:
+        * editing/pasteboard/paste-text-001-expected.png:
+        * editing/pasteboard/paste-text-012-expected.checksum:
+        * editing/pasteboard/paste-text-012-expected.png:
+        * editing/pasteboard/paste-text-013-expected.checksum:
+        * editing/pasteboard/paste-text-013-expected.png:
+        * editing/pasteboard/paste-text-014-expected.checksum:
+        * editing/pasteboard/paste-text-014-expected.png:
+        * editing/pasteboard/paste-text-019-expected.checksum:
+        * editing/pasteboard/paste-text-019-expected.png:
+        * editing/selection/3690703-2-expected.checksum:
+        * editing/selection/3690703-expected.checksum:
+        * editing/selection/3690719-expected.checksum:
+        * editing/selection/extend-by-word-001-expected.checksum:
+        * editing/selection/extend-by-word-001-expected.png:
+        * editing/selection/iframe-expected.checksum:
+        * editing/selection/iframe-expected.png:
+        * editing/selection/move-backwords-by-word-001-expected.checksum:
+        * editing/selection/move-backwords-by-word-001-expected.png:
+        * editing/selection/move-by-character-001-expected.checksum:
+        * editing/selection/move-by-character-001-expected.png:
+        * editing/selection/move-by-line-001-expected.checksum:
+        * editing/selection/move-by-line-001-expected.png:
+        * editing/selection/move-by-word-001-expected.checksum:
+        * editing/selection/move-by-word-001-expected.png:
+        * editing/selection/replaced-boundaries-1-expected.checksum:
+        * editing/selection/replaced-boundaries-1-expected.png:
+        * editing/selection/unrendered-002-expected.checksum:
+        * editing/selection/unrendered-002-expected.png:
+        * editing/style/block-styles-007-expected.checksum:
+        * editing/style/block-styles-007-expected.png:
+        * editing/style/create-block-for-style-002-expected.checksum:
+        * editing/style/create-block-for-style-002-expected.png:
+        * editing/style/create-block-for-style-003-expected.checksum:
+        * editing/style/create-block-for-style-003-expected.png:
+        * editing/style/create-block-for-style-004-expected.checksum:
+        * editing/style/create-block-for-style-004-expected.png:
+        * editing/style/create-block-for-style-006-expected.checksum:
+        * editing/style/create-block-for-style-006-expected.png:
+        * editing/style/create-block-for-style-008-expected.checksum:
+        * editing/style/create-block-for-style-008-expected.png:
+        * editing/style/create-block-for-style-009-expected.checksum:
+        * editing/style/create-block-for-style-009-expected.png:
+        * editing/style/create-block-for-style-011-expected.checksum:
+        * editing/style/create-block-for-style-011-expected.png:
+        * editing/style/create-block-for-style-012-expected.checksum:
+        * editing/style/create-block-for-style-012-expected.png:
+        * editing/style/create-block-for-style-013-expected.checksum:
+        * editing/style/create-block-for-style-013-expected.png:
+        * editing/unsupported-content/list-type-after-expected.checksum:
+        * editing/unsupported-content/list-type-before-expected.checksum:
+        * editing/unsupported-content/table-type-after-expected.checksum:
+        * editing/unsupported-content/table-type-before-expected.checksum:
+        * fast/dom/blur-contenteditable-expected.checksum:
+        * fast/dom/blur-contenteditable-expected.png:
+
 2006-02-02  Darin Adler  <darin@apple.com>
 
         - tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=7000
