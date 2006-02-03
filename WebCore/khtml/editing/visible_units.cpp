@@ -68,11 +68,18 @@ static VisiblePosition previousBoundary(const VisiblePosition &c, unsigned (*sea
         boundary = boundary->parentNode();
     }
 
-    RefPtr<RangeImpl> searchRange(d->createRange());
+    Position start = rangeCompliantEquivalent(Position(boundary, 0));
+    Position end = rangeCompliantEquivalent(pos);
+    RefPtr<RangeImpl> searchRange = new RangeImpl(d);
+    
     int exception = 0;
-    searchRange->setStartBefore(boundary, exception);
-    Position end(rangeCompliantEquivalent(pos));
+    searchRange->setStart(start.node(), start.offset(), exception);
     searchRange->setEnd(end.node(), end.offset(), exception);
+    
+    ASSERT(!exception);
+    if (exception)
+        return VisiblePosition();
+        
     SimplifiedBackwardsTextIterator it(searchRange.get());
     QString string;
     unsigned next = 0;

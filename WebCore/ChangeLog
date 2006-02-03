@@ -1,3 +1,23 @@
+2006-02-02  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin, harrison
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=6586>
+        REGRESSION: visible_text.cpp assertion failure in Mail.app
+
+        Calling range() on a WordIterator destroyed its RangeImpl, use
+        RefPtr instead of PassRefPtr.
+        Turned on continuous spell checking to test the fix, found
+        a crasher caused by invalid positions created in
+        previousBoundary.
+
+        Added layout test:
+        * editing/selection/end-of-document.html
+
+        * khtml/editing/visible_text.h:
+        * khtml/editing/visible_units.cpp:
+        (khtml::previousBoundary):
+
 2006-02-02  David Hyatt  <hyatt@apple.com>
 
         Vectorize Image.  Optimize so that we no longer throw away
