@@ -28,6 +28,7 @@
 #import "FloatRect.h"
 #import "IntRect.h"
 #import "Image.h"
+#import "ImageAnimationObserver.h"
 #import "Timer.h"
 #import <kxmlcore/Vector.h>
 

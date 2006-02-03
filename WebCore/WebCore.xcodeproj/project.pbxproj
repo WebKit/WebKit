@@ -874,6 +874,7 @@
 		BC73E38E0978CEB300EDFF8A /* FloatPoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC73E38D0978CEB300EDFF8A /* FloatPoint.mm */; };
 		BC73E3920978CED700EDFF8A /* FloatPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC73E3900978CED700EDFF8A /* FloatPoint.cpp */; };
 		BC73E3930978CED700EDFF8A /* FloatPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = BC73E3910978CED700EDFF8A /* FloatPoint.h */; };
+		BC9C328B09933A6E001D6924 /* ImageAnimationObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9C328A09933A6D001D6924 /* ImageAnimationObserver.h */; };
 		BCB16AF90979A08500467741 /* FloatRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16AF50979A08500467741 /* FloatRect.cpp */; };
 		BCB16AFA0979A08500467741 /* FloatRect.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16AF60979A08500467741 /* FloatRect.h */; };
 		BCB16AFB0979A08500467741 /* IntRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16AF70979A08500467741 /* IntRect.cpp */; };
@@ -1847,6 +1848,7 @@
 		BC7B2AF90450824100A8000F /* KWQScrollBar.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQScrollBar.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC86FB8D061F5C23006BB822 /* KWQSlider.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQSlider.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC86FB8E061F5C23006BB822 /* KWQSlider.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQSlider.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		BC9C328A09933A6D001D6924 /* ImageAnimationObserver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ImageAnimationObserver.h; path = platform/ImageAnimationObserver.h; sourceTree = "<group>"; };
 		BCB16AF50979A08500467741 /* FloatRect.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FloatRect.cpp; path = platform/FloatRect.cpp; sourceTree = "<group>"; };
 		BCB16AF60979A08500467741 /* FloatRect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FloatRect.h; path = platform/FloatRect.h; sourceTree = "<group>"; };
 		BCB16AF70979A08500467741 /* IntRect.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = IntRect.cpp; path = platform/IntRect.cpp; sourceTree = "<group>"; };
@@ -3099,6 +3101,7 @@
 			isa = PBXGroup;
 			children = (
 				9305B24C098F1B6B00C28855 /* Timer.h */,
+				BC9C328A09933A6D001D6924 /* ImageAnimationObserver.h */,
 				BCD75ABD0989A45C003E28DF /* Image.mm */,
 				BCD75ABB0989A446003E28DF /* Image.h */,
 				BC075985098861A400407B48 /* Brush.h */,
@@ -4319,6 +4322,7 @@
 				BCD75ABC0989A446003E28DF /* Image.h in Headers */,
 				9385F762098D9C3100D90D24 /* Screen.h in Headers */,
 				9305B24D098F1B6B00C28855 /* Timer.h in Headers */,
+				BC9C328B09933A6E001D6924 /* ImageAnimationObserver.h in Headers */,
 				65D1C1CA09932B22000CB324 /* Plugin.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

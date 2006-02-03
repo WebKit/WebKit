@@ -48,18 +48,13 @@ class QPainter;
 template <typename T> class Array;
 typedef Array<char> ByteArray;
 
-// This class represents the platform-specific image data.  It is found in the implementation file for 
-// each platform (e.g., Image.mm on the Mac).
+// This class represents the platform-specific image data.
 class ImageData;
+
 class Image;
 
 // This class gets notified when an image advances animation frames.
-class ImageAnimationObserver {
-public:
-    virtual ~ImageAnimationObserver() {};
-    virtual bool shouldStopAnimation(const Image*) = 0;
-    virtual void animationAdvanced(const Image*) = 0;
-};
+class ImageAnimationObserver;
 
 class Image {
 public:
