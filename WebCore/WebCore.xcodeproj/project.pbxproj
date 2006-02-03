@@ -862,6 +862,8 @@
 		BC1A37C0097C715F0019F3D8 /* DOMViews.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37AA097C715F0019F3D8 /* DOMViews.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC1A37C1097C715F0019F3D8 /* DOMViews.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC1A37AB097C715F0019F3D8 /* DOMViews.mm */; };
 		BC1A37C2097C715F0019F3D8 /* DOMViewsInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37AC097C715F0019F3D8 /* DOMViewsInternal.h */; };
+		BC6B7A9809933F2E0052867B /* ImageDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6B7A9709933F2E0052867B /* ImageDecoder.h */; };
+		BC6B7AA1099340400052867B /* ImageDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6B7AA0099340400052867B /* ImageDecoder.cpp */; };
 		BC73E2130978546300EDFF8A /* IntSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC73E2120978546300EDFF8A /* IntSize.mm */; };
 		BC73E25D0978682700EDFF8A /* FloatSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC73E25B0978682700EDFF8A /* FloatSize.cpp */; };
 		BC73E25E0978682700EDFF8A /* FloatSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BC73E25C0978682700EDFF8A /* FloatSize.h */; };
@@ -1828,6 +1830,8 @@
 		BC3B364705C9D5E200E42902 /* dom_atomicstringlist.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = dom_atomicstringlist.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC41978E059293F30016347F /* xbl_binding_manager.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = xbl_binding_manager.h; path = xbl/xbl_binding_manager.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC419795059294CA0016347F /* xbl_binding_manager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = xbl_binding_manager.cpp; path = xbl/xbl_binding_manager.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		BC6B7A9709933F2E0052867B /* ImageDecoder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ImageDecoder.h; path = platform/ImageDecoder.h; sourceTree = "<group>"; };
+		BC6B7AA0099340400052867B /* ImageDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ImageDecoder.cpp; path = platform/mac/ImageDecoder.cpp; sourceTree = "<group>"; };
 		BC73E2120978546300EDFF8A /* IntSize.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = IntSize.mm; path = platform/mac/IntSize.mm; sourceTree = "<group>"; };
 		BC73E25B0978682700EDFF8A /* FloatSize.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FloatSize.cpp; path = platform/FloatSize.cpp; sourceTree = "<group>"; };
 		BC73E25C0978682700EDFF8A /* FloatSize.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FloatSize.h; path = platform/FloatSize.h; sourceTree = "<group>"; };
@@ -3104,6 +3108,8 @@
 				BC9C328A09933A6D001D6924 /* ImageAnimationObserver.h */,
 				BCD75ABD0989A45C003E28DF /* Image.mm */,
 				BCD75ABB0989A446003E28DF /* Image.h */,
+				BC6B7AA0099340400052867B /* ImageDecoder.cpp */,
+				BC6B7A9709933F2E0052867B /* ImageDecoder.h */,
 				BC075985098861A400407B48 /* Brush.h */,
 				BCC8D1710988301200140BF2 /* Pen.cpp */,
 				BCC8D1720988301200140BF2 /* Pen.h */,
@@ -4324,6 +4330,7 @@
 				9305B24D098F1B6B00C28855 /* Timer.h in Headers */,
 				BC9C328B09933A6E001D6924 /* ImageAnimationObserver.h in Headers */,
 				65D1C1CA09932B22000CB324 /* Plugin.h in Headers */,
+				BC6B7A9809933F2E0052867B /* ImageDecoder.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5440,6 +5447,7 @@
 				1A37F63A0988EE3300D05E90 /* JSCore.cpp in Sources */,
 				9385F774098D9CB900D90D24 /* Screen.mm in Sources */,
 				9305B250098F1B8B00C28855 /* Timer.cpp in Sources */,
+				BC6B7AA1099340400052867B /* ImageDecoder.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

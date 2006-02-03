@@ -29,6 +29,7 @@
 #import "IntRect.h"
 #import "Image.h"
 #import "ImageAnimationObserver.h"
+#import "ImageDecoder.h"
 #import "Timer.h"
 #import <kxmlcore/Vector.h>
 
@@ -279,7 +280,6 @@ public:
                             Image::TileRule hRule, Image::TileRule vRule, CGContextRef context);
 
 private:
-    static CFDictionaryRef imageSourceOptions();
     bool isSizeAvailable();
     
     void invalidateData();
@@ -292,7 +292,7 @@ private:
     
     ByteArray m_data; // The encoded raw data for the image.
     Image* m_image;
-    CGImageSourceRef m_imageSource;
+    ImageDecoder m_decoder;
     mutable IntSize m_size; // The size to use for the overall image (will just be the size of the first image).
     
     size_t m_currentFrame; // The index of the current frame of animation.
@@ -318,7 +318,7 @@ private:
 };
 
 ImageData::ImageData(Image* image) 
-     :m_image(image), m_imageSource(0), m_currentFrame(0), m_frames(0), m_nsImage(0), m_tiffRep(0),
+     :m_image(image), m_currentFrame(0), m_frames(0), m_nsImage(0), m_tiffRep(0),
       m_frameTimer(0), m_repetitionCount(0), m_repetitionsComplete(0),
       m_solidColor(0), m_isSolidColor(0), m_animatingImageType(true), m_animationFinished(0),
       m_haveSize(false), m_sizeAvailable(false), 
@@ -329,8 +329,6 @@ ImageData::~ImageData()
 {
     invalidateData();
     stopAnimation();
-    if (m_imageSource)
-        CFRelease(m_imageSource);
     delete m_PDFDoc;
 }
 
@@ -338,7 +336,7 @@ void ImageData::invalidateData()
 {
     // Destroy the cached images and release them.
     if (m_frames) {
-        int count = m_frames.size();
+        size_t count = m_frames.size();
         if (count) {
             m_frames.last().clear();
             if (count == 1) {
@@ -367,51 +365,17 @@ void ImageData::cacheFrame(size_t index)
     size_t numFrames = frameCount();
     if (!m_frames.size() && shouldAnimate()) {            
         // Snag the repetition count.
-        m_repetitionCount = -1; // No property means loop once.
-        
-        // A property with value 0 means loop forever.
-        CFDictionaryRef properties = CGImageSourceCopyProperties(m_imageSource, imageSourceOptions());
-        if (properties) {
-            CFDictionaryRef gifProperties = (CFDictionaryRef)CFDictionaryGetValue(properties, kCGImagePropertyGIFDictionary);
-            if (gifProperties) {
-                CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(gifProperties, kCGImagePropertyGIFLoopCount);
-                if (num) {
-                    int value = 0;
-                    CFNumberGetValue(num, kCFNumberIntType, &value);
-                    m_repetitionCount = value;
-                }
-            } else
-                m_animatingImageType = false; // Turns out we're not a GIF after all, so we don't animate.
-            
-            CFRelease(properties);
-        }
+        m_repetitionCount = m_decoder.repetitionCount();
+        if (m_repetitionCount == cAnimationNone)
+            m_animatingImageType = false;
     }
     
     if (m_frames.size() < numFrames)
         m_frames.resize(numFrames);
 
-    m_frames[index].m_frame = CGImageSourceCreateImageAtIndex(m_imageSource, index, imageSourceOptions());
-
-    if (shouldAnimate()) {
-        CFDictionaryRef properties = CGImageSourceCopyPropertiesAtIndex(m_imageSource, index, imageSourceOptions());
-        if (properties) {
-            CFDictionaryRef typeProperties = (CFDictionaryRef)CFDictionaryGetValue(properties, kCGImagePropertyGIFDictionary);
-            if (typeProperties) {
-                CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(typeProperties, kCGImagePropertyGIFDelayTime);
-                if (num) {
-                    float duration = 0.;
-                    CFNumberGetValue(num, kCFNumberFloatType, &duration);
-                    // Init the frame duration. Many annoying ads specify a 0 duration to make an image flash
-                    // as quickly as possible.  We follow Firefox's behavior and set the minimum duration to 
-                    // 100 ms.  See 4051389 for more details.
-                    if (duration < 0.1)
-                        duration = 0.1;
-                    m_frames[index].m_duration = duration;
-                }
-            }
-            CFRelease(properties);
-        }
-    }
+    m_frames[index].m_frame = m_decoder.createFrameAtIndex(index);
+    if (shouldAnimate())
+        m_frames[index].m_duration = m_decoder.frameDurationAtIndex(index);
 }
 
 void ImageData::checkForSolidColor(CGImageRef image)
@@ -461,19 +425,8 @@ IntSize ImageData::size() const
             return IntSize((int)mediaBox.size.width, (int)mediaBox.size.height);
         }
     } else if (m_sizeAvailable && !m_haveSize && frameCount() > 0) {
-        CFDictionaryRef properties = CGImageSourceCopyPropertiesAtIndex(m_imageSource, 0, imageSourceOptions());
-        if (properties) {
-            int w = 0, h = 0;
-            CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(properties, kCGImagePropertyPixelWidth);
-            if (num)
-                CFNumberGetValue(num, kCFNumberIntType, &w);
-            num = (CFNumberRef)CFDictionaryGetValue(properties, kCGImagePropertyPixelHeight);
-            if (num)
-                CFNumberGetValue(num, kCFNumberIntType, &h);
-            m_size = IntSize(w, h);            
-            m_haveSize = true;
-            CFRelease(properties);
-        }
+        m_size = m_decoder.size();
+        m_haveSize = true;
     }
     return m_size;
 }
@@ -512,37 +465,20 @@ bool ImageData::setCFData(CFDataRef data, bool allDataReceived)
             m_PDFDoc = new PDFDocumentImage((NSData*)data);
         return true;
     }
-
-    // Feed all the data we've seen so far to the image source.
-    if (!m_imageSource)
-        m_imageSource = CGImageSourceCreateIncremental(imageSourceOptions());
         
     invalidateData();
-    CGImageSourceUpdateData(m_imageSource, data, allDataReceived);
+    
+    // Feed all the data we've seen so far to the image decoder.
+    m_decoder.setData(data, allDataReceived);
     
     // Image properties will not be available until the first frame of the file
     // reaches kCGImageStatusIncomplete.
     return isSizeAvailable();
 }
 
-const CFStringRef kCGImageSourceShouldPreferRGB32 = CFSTR("kCGImageSourceShouldPreferRGB32");
-
-CFDictionaryRef ImageData::imageSourceOptions()
-{
-    static CFDictionaryRef options;
-    
-    if (!options) {
-        const void *keys[2] = { kCGImageSourceShouldCache, kCGImageSourceShouldPreferRGB32 };
-        const void *values[2] = { kCFBooleanTrue, kCFBooleanTrue };
-        options = CFDictionaryCreate(NULL, keys, values, 2, 
-            &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-    }
-    return options;
-}
-
 size_t ImageData::frameCount() const
 {
-    return m_imageSource ? CGImageSourceGetCount(m_imageSource) : 0;
+    return m_decoder.frameCount();
 }
 
 bool ImageData::isSizeAvailable()
@@ -550,19 +486,8 @@ bool ImageData::isSizeAvailable()
     if (m_sizeAvailable)
         return true;
 
-    CGImageSourceStatus imageSourceStatus = CGImageSourceGetStatus(m_imageSource);
+    m_sizeAvailable = m_decoder.isSizeAvailable();
 
-    // Ragnaros yells: TOO SOON! You have awakened me TOO SOON, Executus!
-    if (imageSourceStatus >= kCGImageStatusIncomplete) {
-        CFDictionaryRef image0Properties = CGImageSourceCopyPropertiesAtIndex(m_imageSource, 0, imageSourceOptions());
-        if (image0Properties) {
-            CFNumberRef widthNumber = (CFNumberRef)CFDictionaryGetValue(image0Properties, kCGImagePropertyPixelWidth);
-            CFNumberRef heightNumber = (CFNumberRef)CFDictionaryGetValue(image0Properties, kCGImagePropertyPixelHeight);
-            m_sizeAvailable = widthNumber && heightNumber;
-            CFRelease(image0Properties);
-        }
-    }
-    
     return m_sizeAvailable;
 
 }
@@ -710,7 +635,7 @@ void ImageData::drawInRect(const FloatRect& dstRect, const FloatRect& srcRect,
         return;
     } 
     
-    if (!m_imageSource)
+    if (!m_decoder.initialized())
         return;
     
     CGRect fr = srcRect;
