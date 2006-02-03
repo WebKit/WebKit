@@ -1,3 +1,12 @@
+2006-02-02  David Hyatt  <hyatt@apple.com>
+
+        Avoid extra copies of all the decoded image bytes.
+
+        Reviewed by mjs
+
+        * platform/mac/Image.mm:
+        (WebCore::ImageData::setData):
+
 2006-02-02  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin, harrison

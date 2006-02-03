@@ -289,6 +289,7 @@ private:
 
     void setCompositingOperation(CGContextRef context, Image::CompositeOperator compositeOp);
     
+    ByteArray m_data; // The encoded raw data for the image.
     Image* m_image;
     CGImageSourceRef m_imageSource;
     mutable IntSize m_size; // The size to use for the overall image (will just be the size of the first image).
@@ -492,12 +493,14 @@ bool ImageData::setData(const ByteArray& bytes, bool allDataReceived)
     }
 #endif
     
-    // FIXME: We are actually copying the bytes.  We could use CFDataCreateWithBytesNoCopy if we 
-    // could ensure that the buffer would stay alive.  Alternatively we could switch to using a data
-    // provider instead.
-    CFDataRef data = CFDataCreate(0, (const UInt8*)bytes.data(), length);
+    // Avoid the extra copy of bytes by just handing the byte array directly to a CFDataRef.
+    // We will keep these bytes alive in our m_data variable.
+    CFDataRef data = CFDataCreateWithBytesNoCopy(0, (const UInt8*)bytes.data(), length, kCFAllocatorNull);
     bool result = setCFData(data, allDataReceived);
     CFRelease(data);
+    
+    m_data = bytes;
+    
     return result;
 }
 
