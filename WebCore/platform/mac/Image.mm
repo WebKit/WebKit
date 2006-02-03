@@ -29,6 +29,7 @@
 #import "IntRect.h"
 #import "Image.h"
 #import "Timer.h"
+#import <kxmlcore/Vector.h>
 
 #import "WebCoreImageRendererFactory.h"
 
@@ -214,6 +215,32 @@ void PDFDocumentImage::draw(NSRect srcRect, NSRect dstRect, Image::CompositeOper
 }
 
 // ================================================
+// FrameData Class
+// ================================================
+
+struct FrameData {
+    FrameData()
+      :m_frame(0), m_duration(0) 
+    {}
+    
+    ~FrameData()
+    { 
+        clear();
+    }
+
+    void clear()
+    { 
+        if (m_frame)
+            CFRelease(m_frame);
+        m_frame = 0;
+        m_duration = 0.;
+    }
+
+    CGImageRef m_frame;
+    float m_duration;
+};
+
+// ================================================
 // ImageData Class
 // ================================================
 
@@ -267,11 +294,10 @@ private:
     mutable IntSize m_size; // The size to use for the overall image (will just be the size of the first image).
     
     size_t m_currentFrame; // The index of the current frame of animation.
-    CGImageRef* m_frames; // An array of the cached frames of the animation. We have to ref frames to pin them in the cache.
+    Vector<FrameData> m_frames; // An array of the cached frames of the animation. We have to ref frames to pin them in the cache.
     NSImage* m_nsImage; // A cached NSImage of frame 0. Only built lazily if someone actually queries for one.
     CFDataRef m_tiffRep; // Cached TIFF rep for frame 0.  Only built lazily if someone queries for one.
 
-    float* m_frameDurations;
     Timer<ImageData>* m_frameTimer;
     int m_repetitionCount; // How many total animation loops we should do.
     int m_repetitionsComplete;  // How many repetitions we've finished.
@@ -291,7 +317,7 @@ private:
 
 ImageData::ImageData(Image* image) 
      :m_image(image), m_imageSource(0), m_currentFrame(0), m_frames(0), m_nsImage(0), m_tiffRep(0),
-      m_frameDurations(0), m_frameTimer(0), m_repetitionCount(0), m_repetitionsComplete(0),
+      m_frameTimer(0), m_repetitionCount(0), m_repetitionsComplete(0),
       m_solidColor(0), m_isSolidColor(0), m_animatingImageType(true), m_animationFinished(0),
       m_haveSize(false), m_sizeAvailable(false), 
       m_isPDF(false), m_PDFDoc(0)
@@ -310,69 +336,59 @@ void ImageData::invalidateData()
 {
     // Destroy the cached images and release them.
     if (m_frames) {
-        size_t count = frameCount();
-        for (size_t i = 0; i < count; i++) {
-            if (m_frames[i])
-                CFRelease(m_frames[i]);
+        int count = m_frames.size();
+        if (count) {
+            m_frames.last().clear();
+            if (count == 1) {
+                if (m_nsImage) {
+                    [m_nsImage release];
+                    m_nsImage = 0;
+                }
+            
+                if (m_tiffRep) {
+                    CFRelease(m_tiffRep);
+                    m_tiffRep = 0;
+                }
+            
+                m_isSolidColor = false;
+                if (m_solidColor) {
+                    CFRelease(m_solidColor);
+                    m_solidColor = 0;
+                }
+            }
         }
-        free(m_frames);
-        m_frames = 0;
-    
-        free(m_frameDurations);
-        m_frameDurations = 0;
-
-        if (m_nsImage) {
-            [m_nsImage autorelease];
-            m_nsImage = 0;
-        }
-        
-        if (m_tiffRep) {
-            CFRelease(m_tiffRep);
-            m_tiffRep = 0;
-        }
-        
-        m_isSolidColor = false;
-        if (m_solidColor) {
-            CFRelease(m_solidColor);
-            m_solidColor = 0;
-        }
-        
-        m_animatingImageType = true;
     }
 }
 
 void ImageData::cacheFrame(size_t index)
 {
-    if (!m_frames) {
-        m_frames = (CGImageRef *)calloc(frameCount(), sizeof(CGImageRef));
-        if (shouldAnimate()) {            
-            // Snag the repetition count.
-            m_repetitionCount = -1; // No property means loop once.
-            
-            // A property with value 0 means loop forever.
-            CFDictionaryRef properties = CGImageSourceCopyProperties(m_imageSource, imageSourceOptions());
-            if (properties) {
-                CFDictionaryRef gifProperties = (CFDictionaryRef)CFDictionaryGetValue(properties, kCGImagePropertyGIFDictionary);
-                if (gifProperties) {
-                    CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(gifProperties, kCGImagePropertyGIFLoopCount);
-                    if (num) {
-                        int value = 0;
-                        CFNumberGetValue(num, kCFNumberIntType, &value);
-                        m_repetitionCount = value;
-                    }
-                } else
-                    m_animatingImageType = false; // Turns out we're not a GIF after all, so we don't animate.
-                
-                CFRelease(properties);
-            }
-        }
+    size_t numFrames = frameCount();
+    if (!m_frames.size() && shouldAnimate()) {            
+        // Snag the repetition count.
+        m_repetitionCount = -1; // No property means loop once.
         
-        // Init the frame durations.
-        if (shouldAnimate())
-            m_frameDurations = (float*)calloc(frameCount(), sizeof(float));
+        // A property with value 0 means loop forever.
+        CFDictionaryRef properties = CGImageSourceCopyProperties(m_imageSource, imageSourceOptions());
+        if (properties) {
+            CFDictionaryRef gifProperties = (CFDictionaryRef)CFDictionaryGetValue(properties, kCGImagePropertyGIFDictionary);
+            if (gifProperties) {
+                CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(gifProperties, kCGImagePropertyGIFLoopCount);
+                if (num) {
+                    int value = 0;
+                    CFNumberGetValue(num, kCFNumberIntType, &value);
+                    m_repetitionCount = value;
+                }
+            } else
+                m_animatingImageType = false; // Turns out we're not a GIF after all, so we don't animate.
+            
+            CFRelease(properties);
+        }
     }
+    
+    if (m_frames.size() < numFrames)
+        m_frames.resize(numFrames);
 
-    m_frames[index] = CGImageSourceCreateImageAtIndex(m_imageSource, index, imageSourceOptions());
+    m_frames[index].m_frame = CGImageSourceCreateImageAtIndex(m_imageSource, index, imageSourceOptions());
 
     if (shouldAnimate()) {
         CFDictionaryRef properties = CGImageSourceCopyPropertiesAtIndex(m_imageSource, index, imageSourceOptions());
@@ -388,7 +404,7 @@ void ImageData::cacheFrame(size_t index)
                     // 100 ms.  See 4051389 for more details.
                     if (duration < 0.1)
                         duration = 0.1;
-                    m_frameDurations[index] = duration;
+                    m_frames[index].m_duration = duration;
                 }
             }
             CFRelease(properties);
@@ -552,10 +568,10 @@ CGImageRef ImageData::frameAtIndex(size_t index)
     if (index >= frameCount())
         return 0;
 
-    if (!m_frames || !m_frames[index])
+    if (index >= m_frames.size() || !m_frames[index].m_frame)
         cacheFrame(index);
 
-    return m_frames[index];
+    return m_frames[index].m_frame;
 }
 
 CFDataRef ImageData::getTIFFRepresentation()
@@ -598,10 +614,10 @@ float ImageData::frameDurationAtIndex(size_t index)
     if (index >= frameCount())
         return 0;
 
-    if (!m_frames || !m_frames[index])
+    if (index >= m_frames.size() || !m_frames[index].m_frame)
         cacheFrame(index);
 
-    return m_frameDurations[index];
+    return m_frames[index].m_duration;
 }
 
 bool ImageData::shouldAnimate() const
