@@ -1294,232 +1294,89 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		149C275908902AFE008A9EFC /* Development */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				DEBUG_DEFINES = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				MACOSX_DEPLOYMENT_TARGET = 10.3;
-				PREBINDING = NO;
-				PRODUCT_NAME = dftables;
-				SECTORDER_FLAGS = "";
-				STYLE_LDFLAGS = "";
-			};
-			name = Development;
-		};
-		149C275A08902AFE008A9EFC /* Deployment */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				MACOSX_DEPLOYMENT_TARGET = 10.3;
-				PREBINDING = NO;
-				PRODUCT_NAME = dftables;
-				SECTORDER_FLAGS = "";
-				STYLE_LDFLAGS = "";
-			};
-			name = Deployment;
-		};
-		149C275B08902AFE008A9EFC /* OptimizedWithSymbols */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.3;
-				PREBINDING = NO;
-				PRODUCT_NAME = dftables;
-				SECTORDER_FLAGS = "";
-				STYLE_LDFLAGS = "";
-			};
-			name = OptimizedWithSymbols;
-		};
-		149C275C08902AFE008A9EFC /* Default */ = {
+		149C275908902AFE008A9EFC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = dftables;
 			};
-			name = Default;
+			name = Debug;
 		};
-		149C275E08902AFE008A9EFC /* Development */ = {
+		149C275A08902AFE008A9EFC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = dftables;
+			};
+			name = Release;
+		};
+		149C275C08902AFE008A9EFC /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = dftables;
+			};
+			name = Production;
+		};
+		149C275E08902AFE008A9EFC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_DEFINES = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_CPP_RTTI = NO;
-				GCC_ENABLE_OBJC_GC = YES;
-				GCC_FAST_OBJC_DISPATCH = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = JavaScriptCorePrefix.h;
 				GCC_PREPROCESSOR_DEFINITIONS = "$(DEBUG_DEFINES)";
-				GCC_STRICT_ALIASING = YES;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				HEADER_SEARCH_PATHS = (
-					icu,
 					.,
-				);
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks;
-				MACOSX_DEPLOYMENT_TARGET = 10.3;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"$(STYLE_LDFLAGS)",
-					"-sub_library",
-					libobjc,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = JavaScriptCore;
-				SECTORDER_FLAGS = "";
-				STYLE_LDFLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wcast-align",
-					"-Wchar-subscripts",
-					"-Wformat-security",
-					"-Wmissing-format-attribute",
-					"-Wpointer-arith",
-					"-Wwrite-strings",
-					"-Wno-format-y2k",
-					"-Wno-unused-parameter",
-					"-Wno-long-double",
-				);
-			};
-			name = Development;
-		};
-		149C275F08902AFE008A9EFC /* Deployment */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				DEBUG_DEFINES = NDEBUG;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_CPP_RTTI = NO;
-				GCC_ENABLE_OBJC_GC = YES;
-				GCC_FAST_OBJC_DISPATCH = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = JavaScriptCorePrefix.h;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(DEBUG_DEFINES)";
-				GCC_STRICT_ALIASING = YES;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				HEADER_SEARCH_PATHS = (
 					icu,
-					.,
-				);
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks;
-				MACOSX_DEPLOYMENT_TARGET = 10.3;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"$(STYLE_LDFLAGS)",
-					"-sub_library",
-					libobjc,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = JavaScriptCore;
-				SECTORDER_FLAGS = "";
-				STYLE_LDFLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wcast-align",
-					"-Wchar-subscripts",
-					"-Wformat-security",
-					"-Wmissing-format-attribute",
-					"-Wpointer-arith",
-					"-Wwrite-strings",
-					"-Wno-format-y2k",
-					"-Wno-unused-parameter",
-					"-Wno-long-double",
-				);
-			};
-			name = Deployment;
-		};
-		149C276008902AFE008A9EFC /* OptimizedWithSymbols */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				DEBUG_DEFINES = NDEBUG;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_CPP_RTTI = NO;
-				GCC_ENABLE_OBJC_GC = YES;
-				GCC_FAST_OBJC_DISPATCH = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = JavaScriptCorePrefix.h;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(DEBUG_DEFINES)";
-				GCC_STRICT_ALIASING = YES;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				HEADER_SEARCH_PATHS = (
-					icu,
-					.,
-				);
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks;
-				MACOSX_DEPLOYMENT_TARGET = 10.3;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"$(STYLE_LDFLAGS)",
-					"-sub_library",
-					libobjc,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = JavaScriptCore;
-				SECTORDER_FLAGS = "";
-				STYLE_LDFLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wcast-align",
-					"-Wchar-subscripts",
-					"-Wformat-security",
-					"-Wmissing-format-attribute",
-					"-Wpointer-arith",
-					"-Wwrite-strings",
-					"-Wno-format-y2k",
-					"-Wno-unused-parameter",
-					"-Wno-long-double",
-				);
-			};
-			name = OptimizedWithSymbols;
-		};
-		149C276108902AFE008A9EFC /* Default */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				DEBUG_DEFINES = NDEBUG;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_CPP_RTTI = NO;
-				GCC_ENABLE_OBJC_GC = YES;
-				GCC_FAST_OBJC_DISPATCH = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = JavaScriptCorePrefix.h;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(DEBUG_DEFINES)";
-				GCC_STRICT_ALIASING = YES;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				HEADER_SEARCH_PATHS = (
-					icu,
-					.,
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
-				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = (
+					"$(STYLE_LDFLAGS)",
+					"-sub_library",
+					libobjc,
+				);
+				PRODUCT_NAME = JavaScriptCore;
+				STYLE_LDFLAGS = "";
+			};
+			name = Debug;
+		};
+		149C275F08902AFE008A9EFC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_DEFINES = NDEBUG;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_PREFIX_HEADER = JavaScriptCorePrefix.h;
+				GCC_PREPROCESSOR_DEFINITIONS = "$(DEBUG_DEFINES)";
+				HEADER_SEARCH_PATHS = (
+					.,
+					icu,
+				);
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(STYLE_LDFLAGS)",
+					"-sub_library",
+					libobjc,
+				);
+				PRODUCT_NAME = JavaScriptCore;
+				STYLE_LDFLAGS = "";
+			};
+			name = Release;
+		};
+		149C276108902AFE008A9EFC /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_DEFINES = NDEBUG;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_PREFIX_HEADER = JavaScriptCorePrefix.h;
+				GCC_PREPROCESSOR_DEFINITIONS = "$(DEBUG_DEFINES)";
+				HEADER_SEARCH_PATHS = (
+					.,
+					icu,
+				);
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
 					"-sub_library",
@@ -1530,150 +1387,37 @@
 					"-sectorder",
 					__TEXT,
 					__text,
-					/AppleInternal/OrderFiles/JavaScriptCore.order,
+					"$(APPLE_INTERNAL_DIR)/OrderFiles/JavaScriptCore.order",
 				);
 				STYLE_LDFLAGS = "-umbrella WebKit -allowable_client JavaScriptGlue";
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wcast-align",
-					"-Wchar-subscripts",
-					"-Wformat-security",
-					"-Wmissing-format-attribute",
-					"-Wpointer-arith",
-					"-Wwrite-strings",
-					"-Wno-format-y2k",
-					"-Wno-unused-parameter",
-					"-Wno-long-double",
-				);
 			};
-			name = Default;
+			name = Production;
 		};
-		149C276808902AFE008A9EFC /* Development */ = {
+		149C276808902AFE008A9EFC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				DEBUG_DEFINES = "";
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_CPP_RTTI = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				HEADER_SEARCH_PATHS = (
-					"-I",
-					.,
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.3;
-				PREBINDING = NO;
+				HEADER_SEARCH_PATHS = .;
 				PRODUCT_NAME = testkjs;
-				SECTORDER_FLAGS = "";
-				STYLE_LDFLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wcast-align",
-					"-Wchar-subscripts",
-					"-Wformat-security",
-					"-Wmissing-format-attribute",
-					"-Wpointer-arith",
-					"-Wwrite-strings",
-					"-Wno-format-y2k",
-					"-Wno-unused-parameter",
-					"-Wno-long-double",
-				);
 			};
-			name = Development;
+			name = Debug;
 		};
-		149C276908902AFE008A9EFC /* Deployment */ = {
+		149C276908902AFE008A9EFC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_CPP_RTTI = NO;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				HEADER_SEARCH_PATHS = (
-					"-I",
-					.,
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.3;
-				PREBINDING = NO;
+				HEADER_SEARCH_PATHS = .;
 				PRODUCT_NAME = testkjs;
-				SECTORDER_FLAGS = "";
-				STYLE_LDFLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wcast-align",
-					"-Wchar-subscripts",
-					"-Wformat-security",
-					"-Wmissing-format-attribute",
-					"-Wpointer-arith",
-					"-Wwrite-strings",
-					"-Wno-format-y2k",
-					"-Wno-unused-parameter",
-					"-Wno-long-double",
-				);
 			};
-			name = Deployment;
+			name = Release;
 		};
-		149C276A08902AFE008A9EFC /* OptimizedWithSymbols */ = {
+		149C276B08902AFE008A9EFC /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_CPP_RTTI = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				HEADER_SEARCH_PATHS = (
-					"-I",
-					.,
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.3;
-				PREBINDING = NO;
+				HEADER_SEARCH_PATHS = .;
 				PRODUCT_NAME = testkjs;
-				SECTORDER_FLAGS = "";
-				STYLE_LDFLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wcast-align",
-					"-Wchar-subscripts",
-					"-Wformat-security",
-					"-Wmissing-format-attribute",
-					"-Wpointer-arith",
-					"-Wwrite-strings",
-					"-Wno-format-y2k",
-					"-Wno-unused-parameter",
-					"-Wno-long-double",
-				);
 			};
-			name = OptimizedWithSymbols;
+			name = Production;
 		};
-		149C276B08902AFE008A9EFC /* Default */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_CPP_RTTI = NO;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				HEADER_SEARCH_PATHS = (
-					"-I",
-					.,
-				);
-				PRODUCT_NAME = testkjs;
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wcast-align",
-					"-Wchar-subscripts",
-					"-Wformat-security",
-					"-Wmissing-format-attribute",
-					"-Wpointer-arith",
-					"-Wwrite-strings",
-					"-Wno-format-y2k",
-					"-Wno-unused-parameter",
-					"-Wno-long-double",
-				);
-			};
-			name = Default;
-		};
-		149C276D08902AFE008A9EFC /* Development */ = {
+		149C276D08902AFE008A9EFC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_DEFINES = "";
@@ -1685,9 +1429,9 @@
 				SECTORDER_FLAGS = "";
 				STYLE_LDFLAGS = "";
 			};
-			name = Development;
+			name = Debug;
 		};
-		149C276E08902AFE008A9EFC /* Deployment */ = {
+		149C276E08902AFE008A9EFC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				MACOSX_DEPLOYMENT_TARGET = 10.3;
@@ -1696,71 +1440,122 @@
 				SECTORDER_FLAGS = "";
 				STYLE_LDFLAGS = "";
 			};
-			name = Deployment;
+			name = Release;
 		};
-		149C276F08902AFE008A9EFC /* OptimizedWithSymbols */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.3;
-				PREBINDING = NO;
-				PRODUCT_NAME = All;
-				SECTORDER_FLAGS = "";
-				STYLE_LDFLAGS = "";
-			};
-			name = OptimizedWithSymbols;
-		};
-		149C277008902AFE008A9EFC /* Default */ = {
+		149C277008902AFE008A9EFC /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = All;
 			};
-			name = Default;
+			name = Production;
 		};
-		149C277208902AFE008A9EFC /* Development */ = {
+		149C277208902AFE008A9EFC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_ENABLE_OBJC_GC = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_STRICT_ALIASING = YES;
 				GCC_THREADSAFE_STATICS = NO;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				PREBINDING = NO;
+				STRIP_INSTALLED_PRODUCT = NO;
+				WARNING_CFLAGS = (
+					"-Wall",
+					"-W",
+					"-Wcast-align",
+					"-Wchar-subscripts",
+					"-Wformat-security",
+					"-Wmissing-format-attribute",
+					"-Wpointer-arith",
+					"-Wwrite-strings",
+					"-Wno-format-y2k",
+					"-Wno-unused-parameter",
+					"-Wno-long-double",
+				);
 			};
-			name = Development;
+			name = Debug;
 		};
-		149C277308902AFE008A9EFC /* Deployment */ = {
+		149C277308902AFE008A9EFC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_ENABLE_OBJC_GC = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
+				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_STRICT_ALIASING = YES;
 				GCC_THREADSAFE_STATICS = NO;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				PREBINDING = NO;
+				STRIP_INSTALLED_PRODUCT = NO;
+				WARNING_CFLAGS = (
+					"-Wall",
+					"-W",
+					"-Wcast-align",
+					"-Wchar-subscripts",
+					"-Wformat-security",
+					"-Wmissing-format-attribute",
+					"-Wpointer-arith",
+					"-Wwrite-strings",
+					"-Wno-format-y2k",
+					"-Wno-unused-parameter",
+					"-Wno-long-double",
+				);
 			};
-			name = Deployment;
+			name = Release;
 		};
-		149C277408902AFE008A9EFC /* OptimizedWithSymbols */ = {
+		149C277508902AFE008A9EFC /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_ENABLE_OBJC_GC = YES;
 				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_STRICT_ALIASING = YES;
 				GCC_THREADSAFE_STATICS = NO;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				WARNING_CFLAGS = (
+					"-Wall",
+					"-W",
+					"-Wcast-align",
+					"-Wchar-subscripts",
+					"-Wformat-security",
+					"-Wmissing-format-attribute",
+					"-Wpointer-arith",
+					"-Wwrite-strings",
+					"-Wno-format-y2k",
+					"-Wno-unused-parameter",
+					"-Wno-long-double",
+				);
 			};
-			name = OptimizedWithSymbols;
-		};
-		149C277508902AFE008A9EFC /* Default */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_ENABLE_OBJC_GC = YES;
-				GCC_FAST_OBJC_DISPATCH = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
-				GCC_STRICT_ALIASING = YES;
-				GCC_THREADSAFE_STATICS = NO;
-			};
-			name = Default;
+			name = Production;
 		};
 /* End XCBuildConfiguration section */
 
@@ -1768,57 +1563,52 @@
 		149C275808902AFE008A9EFC /* Build configuration list for PBXNativeTarget "dftables" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				149C275908902AFE008A9EFC /* Development */,
-				149C275A08902AFE008A9EFC /* Deployment */,
-				149C275B08902AFE008A9EFC /* OptimizedWithSymbols */,
-				149C275C08902AFE008A9EFC /* Default */,
+				149C275908902AFE008A9EFC /* Debug */,
+				149C275A08902AFE008A9EFC /* Release */,
+				149C275C08902AFE008A9EFC /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = Production;
 		};
 		149C275D08902AFE008A9EFC /* Build configuration list for PBXNativeTarget "JavaScriptCore" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				149C275E08902AFE008A9EFC /* Development */,
-				149C275F08902AFE008A9EFC /* Deployment */,
-				149C276008902AFE008A9EFC /* OptimizedWithSymbols */,
-				149C276108902AFE008A9EFC /* Default */,
+				149C275E08902AFE008A9EFC /* Debug */,
+				149C275F08902AFE008A9EFC /* Release */,
+				149C276108902AFE008A9EFC /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = Production;
 		};
 		149C276708902AFE008A9EFC /* Build configuration list for PBXNativeTarget "testkjs" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				149C276808902AFE008A9EFC /* Development */,
-				149C276908902AFE008A9EFC /* Deployment */,
-				149C276A08902AFE008A9EFC /* OptimizedWithSymbols */,
-				149C276B08902AFE008A9EFC /* Default */,
+				149C276808902AFE008A9EFC /* Debug */,
+				149C276908902AFE008A9EFC /* Release */,
+				149C276B08902AFE008A9EFC /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = Production;
 		};
 		149C276C08902AFE008A9EFC /* Build configuration list for PBXAggregateTarget "All" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				149C276D08902AFE008A9EFC /* Development */,
-				149C276E08902AFE008A9EFC /* Deployment */,
-				149C276F08902AFE008A9EFC /* OptimizedWithSymbols */,
-				149C277008902AFE008A9EFC /* Default */,
+				149C276D08902AFE008A9EFC /* Debug */,
+				149C276E08902AFE008A9EFC /* Release */,
+				149C277008902AFE008A9EFC /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = Production;
 		};
 		149C277108902AFE008A9EFC /* Build configuration list for PBXProject "JavaScriptCore" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				149C277208902AFE008A9EFC /* Development */,
-				149C277308902AFE008A9EFC /* Deployment */,
-				149C277408902AFE008A9EFC /* OptimizedWithSymbols */,
-				149C277508902AFE008A9EFC /* Default */,
+				149C277208902AFE008A9EFC /* Debug */,
+				149C277308902AFE008A9EFC /* Release */,
+				149C277508902AFE008A9EFC /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = Production;
 		};
 /* End XCConfigurationList section */
 	};

@@ -1884,7 +1884,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		149C282E08902B0F008A9EFC /* Development */ = {
+		149C282E08902B0F008A9EFC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_DEFINES = "";
@@ -1892,27 +1892,17 @@
 				DYLIB_CURRENT_VERSION = 1;
 				EXPORTED_SYMBOLS_FILE = WebKit.exp;
 				FRAMEWORK_SEARCH_PATHS = (
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
 				);
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_OBJC_GC = YES;
-				GCC_FAST_OBJC_DISPATCH = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = WebKitPrefix.h;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(DEBUG_DEFINES)",
 					"FRAMEWORK_NAME=WebKit",
 					"$(PER_CONFIGURATION_PREPROCESSOR_DEFINES)",
 				);
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(BUILT_PRODUCTS_DIR)/usr/local/include",
 					icu,
@@ -1920,36 +1910,50 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks";
 				JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders";
-				MACOSX_DEPLOYMENT_TARGET = 10.3;
-				OTHER_CFLAGS = (
-					"-Wbad-function-cast",
-					"-Wmissing-declarations",
-					"-Wnested-externs",
+				OTHER_LDFLAGS = "$(STYLE_LDFLAGS)";
+				PRODUCT_NAME = WebKit;
+				STYLE_LDFLAGS = "";
+				UMBRELLA_FRAMEWORKS_DIR = "$(BUILT_PRODUCTS_DIR)";
+				WEBCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/WebCore.framework/PrivateHeaders";
+			};
+			name = Debug;
+		};
+		149C282F08902B0F008A9EFC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_DEFINES = NDEBUG;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXPORTED_SYMBOLS_FILE = WebKit.exp;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks",
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks",
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks",
+					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
 				);
-				OTHER_CPLUSPLUSFLAGS = "";
+				GCC_PREFIX_HEADER = WebKitPrefix.h;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(DEBUG_DEFINES)",
+					"FRAMEWORK_NAME=WebKit",
+					"$(PER_CONFIGURATION_PREPROCESSOR_DEFINES)",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(BUILT_PRODUCTS_DIR)/usr/local/include",
+					icu,
+				);
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks";
+				JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders";
 				OTHER_LDFLAGS = "$(STYLE_LDFLAGS)";
 				PREBINDING = NO;
 				PRODUCT_NAME = WebKit;
-				SECTORDER_FLAGS = "";
 				STYLE_LDFLAGS = "";
 				UMBRELLA_FRAMEWORKS_DIR = "$(BUILT_PRODUCTS_DIR)";
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wcast-align",
-					"-Wchar-subscripts",
-					"-Wformat-security",
-					"-Wmissing-format-attribute",
-					"-Wpointer-arith",
-					"-Wwrite-strings",
-					"-Wno-format-y2k",
-					"-Wno-unused-parameter",
-				);
 				WEBCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/WebCore.framework/PrivateHeaders";
 			};
-			name = Development;
+			name = Release;
 		};
-		149C282F08902B0F008A9EFC /* Deployment */ = {
+		149C283108902B0F008A9EFC /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_DEFINES = NDEBUG;
@@ -1963,20 +1967,12 @@
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
 				);
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_OBJC_GC = YES;
-				GCC_FAST_OBJC_DISPATCH = YES;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = WebKitPrefix.h;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(DEBUG_DEFINES)",
 					"FRAMEWORK_NAME=WebKit",
 					"$(PER_CONFIGURATION_PREPROCESSOR_DEFINES)",
 				);
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(BUILT_PRODUCTS_DIR)/usr/local/include",
 					icu,
@@ -1984,141 +1980,6 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks";
 				JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders";
-				MACOSX_DEPLOYMENT_TARGET = 10.3;
-				OTHER_CFLAGS = (
-					"-Wbad-function-cast",
-					"-Wmissing-declarations",
-					"-Wnested-externs",
-				);
-				OTHER_CPLUSPLUSFLAGS = "";
-				OTHER_LDFLAGS = "$(STYLE_LDFLAGS)";
-				PREBINDING = NO;
-				PRODUCT_NAME = WebKit;
-				SECTORDER_FLAGS = "";
-				STYLE_LDFLAGS = "";
-				UMBRELLA_FRAMEWORKS_DIR = "$(BUILT_PRODUCTS_DIR)";
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wcast-align",
-					"-Wchar-subscripts",
-					"-Wformat-security",
-					"-Wmissing-format-attribute",
-					"-Wpointer-arith",
-					"-Wwrite-strings",
-					"-Wno-format-y2k",
-					"-Wno-unused-parameter",
-				);
-				WEBCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/WebCore.framework/PrivateHeaders";
-			};
-			name = Deployment;
-		};
-		149C283008902B0F008A9EFC /* OptimizedWithSymbols */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				DEBUG_DEFINES = NDEBUG;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				EXPORTED_SYMBOLS_FILE = WebKit.exp;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks",
-					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
-				);
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_OBJC_GC = YES;
-				GCC_FAST_OBJC_DISPATCH = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = WebKitPrefix.h;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(DEBUG_DEFINES)",
-					"FRAMEWORK_NAME=WebKit",
-					"$(PER_CONFIGURATION_PREPROCESSOR_DEFINES)",
-				);
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)/usr/local/include",
-					icu,
-				);
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks";
-				JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders";
-				MACOSX_DEPLOYMENT_TARGET = 10.3;
-				OTHER_CFLAGS = (
-					"-Wbad-function-cast",
-					"-Wmissing-declarations",
-					"-Wnested-externs",
-				);
-				OTHER_CPLUSPLUSFLAGS = "";
-				OTHER_LDFLAGS = "$(STYLE_LDFLAGS)";
-				PREBINDING = NO;
-				PRODUCT_NAME = WebKit;
-				SECTORDER_FLAGS = "";
-				STYLE_LDFLAGS = "";
-				UMBRELLA_FRAMEWORKS_DIR = "$(BUILT_PRODUCTS_DIR)";
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wcast-align",
-					"-Wchar-subscripts",
-					"-Wformat-security",
-					"-Wmissing-format-attribute",
-					"-Wpointer-arith",
-					"-Wwrite-strings",
-					"-Wno-format-y2k",
-					"-Wno-unused-parameter",
-				);
-				WEBCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/WebCore.framework/PrivateHeaders";
-			};
-			name = OptimizedWithSymbols;
-		};
-		149C283108902B0F008A9EFC /* Default */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				DEBUG_DEFINES = NDEBUG;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				EXPORTED_SYMBOLS_FILE = WebKit.exp;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Frameworks",
-					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
-				);
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_OBJC_GC = YES;
-				GCC_FAST_OBJC_DISPATCH = YES;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = WebKitPrefix.h;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(DEBUG_DEFINES)",
-					"FRAMEWORK_NAME=WebKit",
-					"$(PER_CONFIGURATION_PREPROCESSOR_DEFINES)",
-				);
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)/usr/local/include",
-					icu,
-				);
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks";
-				JAVASCRIPTCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/JavaScriptCore.framework/PrivateHeaders";
-				OTHER_CFLAGS = (
-					"-Wbad-function-cast",
-					"-Wmissing-declarations",
-					"-Wnested-externs",
-				);
-				OTHER_CPLUSPLUSFLAGS = "";
 				OTHER_LDFLAGS = "$(STYLE_LDFLAGS)";
 				PRODUCT_NAME = WebKit;
 				SECTORDER_FLAGS = (
@@ -2129,6 +1990,31 @@
 				);
 				STYLE_LDFLAGS = "-sub_umbrella WebCore -sub_umbrella JavaScriptCore";
 				UMBRELLA_FRAMEWORKS_DIR = "$(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
+				WEBCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/WebCore.framework/PrivateHeaders";
+			};
+			name = Production;
+		};
+		149C283308902B0F008A9EFC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_ENABLE_OBJC_GC = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_THREADSAFE_STATICS = NO;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				PER_CONFIGURATION_PREPROCESSOR_DEFINES = "ENABLE_WEBKIT_UNSET_DYLD_FRAMEWORK_PATH REMOVE_SAFARI_DOM_TREE_DEBUG_ITEM";
+				PREBINDING = NO;
+				STRIP_INSTALLED_PRODUCT = NO;
 				WARNING_CFLAGS = (
 					"-Wall",
 					"-W",
@@ -2140,43 +2026,86 @@
 					"-Wwrite-strings",
 					"-Wno-format-y2k",
 					"-Wno-unused-parameter",
+					"-Wbad-function-cast",
+					"-Wmissing-declarations",
+					"-Wnested-externs",
 				);
-				WEBCORE_PRIVATE_HEADERS_DIR = "$(UMBRELLA_FRAMEWORKS_DIR)/WebCore.framework/PrivateHeaders";
 			};
-			name = Default;
+			name = Debug;
 		};
-		149C283308902B0F008A9EFC /* Development */ = {
+		149C283408902B0F008A9EFC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_ENABLE_OBJC_GC = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_THREADSAFE_STATICS = NO;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				PER_CONFIGURATION_PREPROCESSOR_DEFINES = "ENABLE_WEBKIT_UNSET_DYLD_FRAMEWORK_PATH REMOVE_SAFARI_DOM_TREE_DEBUG_ITEM";
+				PREBINDING = NO;
+				STRIP_INSTALLED_PRODUCT = NO;
+				WARNING_CFLAGS = (
+					"-Wall",
+					"-W",
+					"-Wcast-align",
+					"-Wchar-subscripts",
+					"-Wformat-security",
+					"-Wmissing-format-attribute",
+					"-Wpointer-arith",
+					"-Wwrite-strings",
+					"-Wno-format-y2k",
+					"-Wno-unused-parameter",
+					"-Wbad-function-cast",
+					"-Wmissing-declarations",
+					"-Wnested-externs",
+				);
 			};
-			name = Development;
+			name = Release;
 		};
-		149C283408902B0F008A9EFC /* Deployment */ = {
+		149C283608902B0F008A9EFC /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_ENABLE_OBJC_GC = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_THREADSAFE_STATICS = NO;
-				PER_CONFIGURATION_PREPROCESSOR_DEFINES = "ENABLE_WEBKIT_UNSET_DYLD_FRAMEWORK_PATH REMOVE_SAFARI_DOM_TREE_DEBUG_ITEM";
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				WARNING_CFLAGS = (
+					"-Wall",
+					"-W",
+					"-Wcast-align",
+					"-Wchar-subscripts",
+					"-Wformat-security",
+					"-Wmissing-format-attribute",
+					"-Wpointer-arith",
+					"-Wwrite-strings",
+					"-Wno-format-y2k",
+					"-Wno-unused-parameter",
+					"-Wbad-function-cast",
+					"-Wmissing-declarations",
+					"-Wnested-externs",
+				);
 			};
-			name = Deployment;
-		};
-		149C283508902B0F008A9EFC /* OptimizedWithSymbols */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_THREADSAFE_STATICS = NO;
-				PER_CONFIGURATION_PREPROCESSOR_DEFINES = "ENABLE_WEBKIT_UNSET_DYLD_FRAMEWORK_PATH REMOVE_SAFARI_DOM_TREE_DEBUG_ITEM";
-			};
-			name = OptimizedWithSymbols;
-		};
-		149C283608902B0F008A9EFC /* Default */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_THREADSAFE_STATICS = NO;
-				PER_CONFIGURATION_PREPROCESSOR_DEFINES = "";
-			};
-			name = Default;
+			name = Production;
 		};
 /* End XCBuildConfiguration section */
 
@@ -2184,24 +2113,22 @@
 		149C282D08902B0F008A9EFC /* Build configuration list for PBXNativeTarget "WebKit" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				149C282E08902B0F008A9EFC /* Development */,
-				149C282F08902B0F008A9EFC /* Deployment */,
-				149C283008902B0F008A9EFC /* OptimizedWithSymbols */,
-				149C283108902B0F008A9EFC /* Default */,
+				149C282E08902B0F008A9EFC /* Debug */,
+				149C282F08902B0F008A9EFC /* Release */,
+				149C283108902B0F008A9EFC /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = Production;
 		};
 		149C283208902B0F008A9EFC /* Build configuration list for PBXProject "WebKit" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				149C283308902B0F008A9EFC /* Development */,
-				149C283408902B0F008A9EFC /* Deployment */,
-				149C283508902B0F008A9EFC /* OptimizedWithSymbols */,
-				149C283608902B0F008A9EFC /* Default */,
+				149C283308902B0F008A9EFC /* Debug */,
+				149C283408902B0F008A9EFC /* Release */,
+				149C283608902B0F008A9EFC /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = Production;
 		};
 /* End XCConfigurationList section */
 	};

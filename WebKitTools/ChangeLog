@@ -1,3 +1,14 @@
+2006-02-03  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Justin.
+
+        Renamed configuration names to Debug, Release and Production.
+
+        * DrawTest/DrawTest.xcodeproj/project.pbxproj:
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * Scripts/set-webkit-configuration:
+        * Scripts/webkitdirs.pm:
+
 2006-02-02  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by thatcher

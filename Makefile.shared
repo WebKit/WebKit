@@ -5,12 +5,12 @@ all:
 	xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS)
 
 debug d development dev develop:
-	../WebKitTools/Scripts/set-webkit-configuration --development
-	xcodebuild $(OTHER_OPTIONS) -configuration Development $(XCODE_OPTIONS_NO_CONFIG)
+	../WebKitTools/Scripts/set-webkit-configuration --debug
+	xcodebuild $(OTHER_OPTIONS) -configuration Debug $(XCODE_OPTIONS_NO_CONFIG)
 
 release r deployment dep deploy:
-	../WebKitTools/Scripts/set-webkit-configuration --deployment
-	xcodebuild $(OTHER_OPTIONS) -configuration Deployment $(XCODE_OPTIONS_NO_CONFIG)
+	../WebKitTools/Scripts/set-webkit-configuration --release
+	xcodebuild $(OTHER_OPTIONS) -configuration Release $(XCODE_OPTIONS_NO_CONFIG)
 
 clean:
 	xcodebuild -alltargets clean $(XCODE_OPTIONS)

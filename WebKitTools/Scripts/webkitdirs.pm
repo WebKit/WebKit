@@ -89,7 +89,7 @@ sub determineConfiguration
     if ($configuration) {
         chomp $configuration;
     } else {
-        $configuration = "Deployment";
+        $configuration = "Release";
     }
 }
 
@@ -146,12 +146,12 @@ sub determinePassedConfiguration
         my $opt = $ARGV[$i];
         if ($opt =~ /^--debug$/i || $opt =~ /^--devel/i) {
             splice(@ARGV, $i, 1);
-            $passedConfiguration = "Development";
+            $passedConfiguration = "Debug";
             return;
         }
         if ($opt =~ /^--release$/i || $opt =~ /^--deploy/i) {
             splice(@ARGV, $i, 1);
-            $passedConfiguration = "Deployment";
+            $passedConfiguration = "Release";
             return;
         }
     }

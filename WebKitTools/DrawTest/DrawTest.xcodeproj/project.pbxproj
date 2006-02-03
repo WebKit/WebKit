@@ -344,7 +344,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		A8C006750898624E00BA5114 /* Development */ = {
+		A8C006750898624E00BA5114 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -364,9 +364,9 @@
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
 			};
-			name = Development;
+			name = Debug;
 		};
-		A8C006760898624E00BA5114 /* Deployment */ = {
+		A8C006760898624E00BA5114 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
@@ -384,44 +384,21 @@
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
 			};
-			name = Deployment;
+			name = Release;
 		};
-		A8C006770898624E00BA5114 /* Default */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = DrawTest_Prefix.pch;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Applications";
-				PRODUCT_NAME = DrawTest;
-				WRAPPER_EXTENSION = app;
-			};
-			name = Default;
-		};
-		A8C006790898624E00BA5114 /* Development */ = {
+		A8C006790898624E00BA5114 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 			};
-			name = Development;
+			name = Debug;
 		};
-		A8C0067A0898624E00BA5114 /* Deployment */ = {
+		A8C0067A0898624E00BA5114 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 			};
-			name = Deployment;
-		};
-		A8C0067B0898624E00BA5114 /* Default */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-			};
-			name = Default;
+			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
@@ -429,22 +406,20 @@
 		A8C006740898624E00BA5114 /* Build configuration list for PBXNativeTarget "DrawTest" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A8C006750898624E00BA5114 /* Development */,
-				A8C006760898624E00BA5114 /* Deployment */,
-				A8C006770898624E00BA5114 /* Default */,
+				A8C006750898624E00BA5114 /* Debug */,
+				A8C006760898624E00BA5114 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = Release;
 		};
 		A8C006780898624E00BA5114 /* Build configuration list for PBXProject "DrawTest" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A8C006790898624E00BA5114 /* Development */,
-				A8C0067A0898624E00BA5114 /* Deployment */,
-				A8C0067B0898624E00BA5114 /* Default */,
+				A8C006790898624E00BA5114 /* Debug */,
+				A8C0067A0898624E00BA5114 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

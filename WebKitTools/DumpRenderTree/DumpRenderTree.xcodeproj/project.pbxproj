@@ -446,7 +446,7 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		141BF222096A441E00E0753C /* Development */ = {
+		141BF222096A441E00E0753C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -474,9 +474,9 @@
 				);
 				WRAPPER_EXTENSION = plugin;
 			};
-			name = Development;
+			name = Debug;
 		};
-		141BF223096A441E00E0753C /* Deployment */ = {
+		141BF223096A441E00E0753C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
@@ -504,25 +504,25 @@
 				);
 				WRAPPER_EXTENSION = plugin;
 			};
-			name = Deployment;
+			name = Release;
 		};
-		149C29C008902C6D008A9EFC /* Development */ = {
+		149C29C008902C6D008A9EFC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_PREFIX_HEADER = DumpRenderTreePrefix.h;
 				PRODUCT_NAME = DumpRenderTree;
 			};
-			name = Development;
+			name = Debug;
 		};
-		149C29C108902C6D008A9EFC /* Deployment */ = {
+		149C29C108902C6D008A9EFC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_PREFIX_HEADER = DumpRenderTreePrefix.h;
 				PRODUCT_NAME = DumpRenderTree;
 			};
-			name = Deployment;
+			name = Release;
 		};
-		149C29C408902C6D008A9EFC /* Development */ = {
+		149C29C408902C6D008A9EFC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -538,9 +538,9 @@
 					"-Wno-unused-parameter",
 				);
 			};
-			name = Development;
+			name = Debug;
 		};
-		149C29C508902C6D008A9EFC /* Deployment */ = {
+		149C29C508902C6D008A9EFC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -555,9 +555,9 @@
 					"-Wno-unused-parameter",
 				);
 			};
-			name = Deployment;
+			name = Release;
 		};
-		A84F609308B1371400E9745F /* Development */ = {
+		A84F609308B1371400E9745F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -574,9 +574,9 @@
 					"-Wno-unknown-pragmas",
 				);
 			};
-			name = Development;
+			name = Debug;
 		};
-		A84F609408B1371400E9745F /* Deployment */ = {
+		A84F609408B1371400E9745F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
@@ -593,25 +593,25 @@
 					"-Wno-unknown-pragmas",
 				);
 			};
-			name = Deployment;
+			name = Release;
 		};
-		B5A7526508AF4A4A00138E45 /* Development */ = {
+		B5A7526508AF4A4A00138E45 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PREFIX_HEADER = "";
 				PRODUCT_NAME = ImageDiff;
 			};
-			name = Development;
+			name = Debug;
 		};
-		B5A7526608AF4A4A00138E45 /* Deployment */ = {
+		B5A7526608AF4A4A00138E45 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PREFIX_HEADER = "";
 				PRODUCT_NAME = ImageDiff;
 			};
-			name = Deployment;
+			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
@@ -619,47 +619,47 @@
 		141BF221096A441E00E0753C /* Build configuration list for PBXNativeTarget "TestNetscapePlugIn" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				141BF222096A441E00E0753C /* Development */,
-				141BF223096A441E00E0753C /* Deployment */,
+				141BF222096A441E00E0753C /* Debug */,
+				141BF223096A441E00E0753C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Deployment;
+			defaultConfigurationName = Release;
 		};
 		149C29BF08902C6D008A9EFC /* Build configuration list for PBXNativeTarget "DumpRenderTree" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				149C29C008902C6D008A9EFC /* Development */,
-				149C29C108902C6D008A9EFC /* Deployment */,
+				149C29C008902C6D008A9EFC /* Debug */,
+				149C29C108902C6D008A9EFC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Deployment;
+			defaultConfigurationName = Release;
 		};
 		149C29C308902C6D008A9EFC /* Build configuration list for PBXProject "DumpRenderTree" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				149C29C408902C6D008A9EFC /* Development */,
-				149C29C508902C6D008A9EFC /* Deployment */,
+				149C29C408902C6D008A9EFC /* Debug */,
+				149C29C508902C6D008A9EFC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Deployment;
+			defaultConfigurationName = Release;
 		};
 		A84F609208B1371400E9745F /* Build configuration list for PBXAggregateTarget "All" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A84F609308B1371400E9745F /* Development */,
-				A84F609408B1371400E9745F /* Deployment */,
+				A84F609308B1371400E9745F /* Debug */,
+				A84F609408B1371400E9745F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Deployment;
+			defaultConfigurationName = Release;
 		};
 		B5A7526408AF4A4A00138E45 /* Build configuration list for PBXNativeTarget "ImageDiff" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B5A7526508AF4A4A00138E45 /* Development */,
-				B5A7526608AF4A4A00138E45 /* Deployment */,
+				B5A7526508AF4A4A00138E45 /* Debug */,
+				B5A7526608AF4A4A00138E45 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Deployment;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -32,7 +32,7 @@ use lib $FindBin::Bin;
 use webkitdirs;
 
 my $configuration = passedConfiguration();
-die "Please specify either --development or --deployment.\n" if !$configuration;
+die "Please specify either --debug or --release.\n" if !$configuration;
 
 my $baseProductDir = baseProductDir();
 system "mkdir", "-p", "$baseProductDir";

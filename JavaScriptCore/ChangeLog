@@ -1,3 +1,11 @@
+2006-02-03  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Justin.
+
+        Renamed configuration names to Debug, Release and Production.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2006-02-02  George Staikos <staikos@opensource.apple.com>
 
         Reviewed by Maciej.

@@ -1015,6 +1015,7 @@
 		BCFB2F42097A24B500BA703D /* SegmentedString.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFB2F40097A24B500BA703D /* SegmentedString.h */; };
 		BCFB2F76097A2E1A00BA703D /* Arena.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCFB2F74097A2E1A00BA703D /* Arena.cpp */; };
 		BCFB2F77097A2E1A00BA703D /* Arena.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFB2F75097A2E1A00BA703D /* Arena.h */; };
+		DD763BB20992C2C900740B8E /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DD763BB10992C2C900740B8E /* libxml2.dylib */; };
 		E1EE773708F1086C00166870 /* WebCoreTextDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE773508F1086C00166870 /* WebCoreTextDecoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1EE773808F1086C00166870 /* WebCoreTextDecoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1EE773608F1086C00166870 /* WebCoreTextDecoder.mm */; };
 		E1F0424609839389006694EA /* xmlhttprequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1F0424409839389006694EA /* xmlhttprequest.cpp */; };
@@ -2023,6 +2024,7 @@
 		BECE67BD07087B250007C14B /* text_affinity.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = text_affinity.h; path = editing/text_affinity.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BEF7EEA005FF8F0D009717EE /* KWQEditCommand.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQEditCommand.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BEF7EEA105FF8F0D009717EE /* KWQEditCommand.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQEditCommand.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		DD763BB10992C2C900740B8E /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = /usr/lib/libxml2.dylib; sourceTree = "<absolute>"; };
 		E1EE773508F1086C00166870 /* WebCoreTextDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreTextDecoder.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		E1EE773608F1086C00166870 /* WebCoreTextDecoder.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreTextDecoder.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		E1F0424409839389006694EA /* xmlhttprequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xmlhttprequest.cpp; sourceTree = "<group>"; };
@@ -2259,6 +2261,7 @@
 				93F19B1708245E59001E9ABC /* libicucore.dylib in Frameworks */,
 				93F19B1808245E59001E9ABC /* libxslt.dylib in Frameworks */,
 				A88AD52F09524B92001DD196 /* QuartzCore.framework in Frameworks */,
+				DD763BB20992C2C900740B8E /* libxml2.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2307,6 +2310,7 @@
 				A85D7A2F0879EBA9006A9172 /* QuartzCore.framework */,
 				F8216299029F4FB501000131 /* JavaScriptCore.framework */,
 				93F1D31A0558CC5C00821BC0 /* libicucore.dylib */,
+				DD763BB10992C2C900740B8E /* libxml2.dylib */,
 				840633070731A77200DB1FD1 /* libxslt.dylib */,
 			);
 			name = Frameworks;
@@ -4376,7 +4380,6 @@
 				932FC16F0824A90D005B3C75 /* kjs_window.lut.h */,
 				932FC0D20824A2C4005B3C75 /* KWQCharsetData.c */,
 				932FC0DA0824A337005B3C75 /* ColorData.c */,
-				93EA68440824979000687F56 /* libxml2-WebCore */,
 				932FC38F0824BA30005B3C75 /* tokenizer.cpp */,
 				932FC1710824A913005B3C75 /* JSXMLHttpRequest.lut.h */,
 				932FC1730824A919005B3C75 /* xmlserializer.lut.h */,
@@ -4865,22 +4868,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "css/make-css-file-arrays.pl \"$DERIVED_FILE_DIR/UserAgentStyleSheets.h\" \"$DERIVED_FILE_DIR/UserAgentStyleSheetsData.cpp\" css/html4.css css/quirks.css css/svg.css\ntouch css/UserAgentStyleSheets.cpp\ntouch css/cssstyleselector.cpp\n";
-		};
-		93EA68440824979000687F56 /* libxml2-WebCore */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				/usr/lib/libxml2.dylib,
-			);
-			name = "libxml2-WebCore";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/libxml2-WebCore.stamp",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "rm -f \"$DERIVED_FILE_DIR/libxml2-WebCore.dylib\"\nif [ -f /usr/lib/libxml2.2.6.14.dylib ]\n    then ln -s /usr/lib/libxml2.2.6.14.dylib \"$DERIVED_FILE_DIR/libxml2-WebCore.dylib\"\n    else ln -s /usr/lib/libxml2.dylib \"$DERIVED_FILE_DIR/libxml2-WebCore.dylib\"\nfi\ntouch \"$DERIVED_FILE_DIR/libxml2-WebCore.stamp\"";
 		};
 		93EA686C08249AF400687F56 /* kentities.c */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5478,29 +5465,18 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		149C283A08902B11008A9EFC /* Development */ = {
+		149C283A08902B11008A9EFC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CREATE_HASH_TABLE = "$(BUILT_PRODUCTS_DIR)/JavaScriptCore.framework/PrivateHeaders/create_hash_table";
 				DEBUG_DEFINES = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = /System/Library/Frameworks/WebKit.framework/Frameworks;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_CPP_RTTI = NO;
-				GCC_ENABLE_OBJC_GC = YES;
-				GCC_FAST_OBJC_DISPATCH = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = WebCorePrefix.h;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(DEBUG_DEFINES)",
 					SVG_SUPPORT,
 				);
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				HEADER_SEARCH_PATHS = (
 					ForwardingHeaders,
 					.,
@@ -5511,56 +5487,28 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
-				LIBRARY_SEARCH_PATHS = "'$(DERIVED_FILE_DIR)'";
-				MACOSX_DEPLOYMENT_TARGET = 10.3;
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
-					"-lxml2-WebCore",
 					"-Wl,-exported_symbols_list,WebCore.exp",
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = WebCore;
 				SECTORDER_FLAGS = "";
 				STYLE_LDFLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wcast-align",
-					"-Wchar-subscripts",
-					"-Wformat-security",
-					"-Wmissing-format-attribute",
-					"-Wpointer-arith",
-					"-Wwrite-strings",
-					"-Wno-format-y2k",
-					"-Wno-unused-parameter",
-					"-Wno-long-double",
-				);
 			};
-			name = Development;
+			name = Debug;
 		};
-		149C283B08902B11008A9EFC /* Deployment */ = {
+		149C283B08902B11008A9EFC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CREATE_HASH_TABLE = "$(BUILT_PRODUCTS_DIR)/JavaScriptCore.framework/PrivateHeaders/create_hash_table";
 				DEBUG_DEFINES = NDEBUG;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = /System/Library/Frameworks/WebKit.framework/Frameworks;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_CPP_RTTI = NO;
-				GCC_ENABLE_OBJC_GC = YES;
-				GCC_FAST_OBJC_DISPATCH = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = WebCorePrefix.h;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(DEBUG_DEFINES)",
 					SVG_SUPPORT,
 				);
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				HEADER_SEARCH_PATHS = (
 					ForwardingHeaders,
 					.,
@@ -5571,116 +5519,29 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
-				LIBRARY_SEARCH_PATHS = "'$(DERIVED_FILE_DIR)'";
-				MACOSX_DEPLOYMENT_TARGET = 10.3;
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
-					"-lxml2-WebCore",
 					"-Wl,-exported_symbols_list,WebCore.exp",
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = WebCore;
 				SECTORDER_FLAGS = "";
 				STYLE_LDFLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wcast-align",
-					"-Wchar-subscripts",
-					"-Wformat-security",
-					"-Wmissing-format-attribute",
-					"-Wpointer-arith",
-					"-Wwrite-strings",
-					"-Wno-format-y2k",
-					"-Wno-unused-parameter",
-					"-Wno-long-double",
-				);
 			};
-			name = Deployment;
+			name = Release;
 		};
-		149C283C08902B11008A9EFC /* OptimizedWithSymbols */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CREATE_HASH_TABLE = "$(BUILT_PRODUCTS_DIR)/JavaScriptCore.framework/PrivateHeaders/create_hash_table";
-				DEBUG_DEFINES = NDEBUG;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = /System/Library/Frameworks/WebKit.framework/Frameworks;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_CPP_RTTI = NO;
-				GCC_ENABLE_OBJC_GC = YES;
-				GCC_FAST_OBJC_DISPATCH = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = WebCorePrefix.h;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"$(DEBUG_DEFINES)",
-					SVG_SUPPORT,
-				);
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				HEADER_SEARCH_PATHS = (
-					ForwardingHeaders,
-					.,
-					khtml,
-					icu,
-					/usr/include/libxslt,
-					/usr/include/libxml2,
-				);
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
-				LIBRARY_SEARCH_PATHS = "'$(DERIVED_FILE_DIR)'";
-				MACOSX_DEPLOYMENT_TARGET = 10.3;
-				OTHER_LDFLAGS = (
-					"$(STYLE_LDFLAGS)",
-					"-lxml2-WebCore",
-					"-Wl,-exported_symbols_list,WebCore.exp",
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = WebCore;
-				SECTORDER_FLAGS = "";
-				STYLE_LDFLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-W",
-					"-Wcast-align",
-					"-Wchar-subscripts",
-					"-Wformat-security",
-					"-Wmissing-format-attribute",
-					"-Wpointer-arith",
-					"-Wwrite-strings",
-					"-Wno-format-y2k",
-					"-Wno-unused-parameter",
-					"-Wno-long-double",
-				);
-			};
-			name = OptimizedWithSymbols;
-		};
-		149C283D08902B11008A9EFC /* Default */ = {
+		149C283D08902B11008A9EFC /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CREATE_HASH_TABLE = "$(NEXT_ROOT)$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks/JavaScriptCore.framework/PrivateHeaders/create_hash_table";
 				DEBUG_DEFINES = NDEBUG;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = /System/Library/Frameworks/WebKit.framework/Frameworks;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_CPP_RTTI = NO;
-				GCC_ENABLE_OBJC_GC = YES;
-				GCC_FAST_OBJC_DISPATCH = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks";
 				GCC_PREFIX_HEADER = WebCorePrefix.h;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(DEBUG_DEFINES)",
 					SVG_SUPPORT,
 				);
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				HEADER_SEARCH_PATHS = (
 					ForwardingHeaders,
 					.,
@@ -5691,10 +5552,8 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
-				LIBRARY_SEARCH_PATHS = "'$(DERIVED_FILE_DIR)'";
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
-					"-lxml2-WebCore",
 					"-Wl,-exported_symbols_list,WebCore.exp",
 				);
 				PRODUCT_NAME = WebCore;
@@ -5705,6 +5564,28 @@
 					/AppleInternal/OrderFiles/WebCore.order,
 				);
 				STYLE_LDFLAGS = "-umbrella WebKit";
+			};
+			name = Production;
+		};
+		149C284408902B11008A9EFC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_ENABLE_OBJC_GC = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_THREADSAFE_STATICS = NO;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				PREBINDING = NO;
+				STRIP_INSTALLED_PRODUCT = NO;
 				WARNING_CFLAGS = (
 					"-Wall",
 					"-W",
@@ -5719,40 +5600,74 @@
 					"-Wno-long-double",
 				);
 			};
-			name = Default;
+			name = Debug;
 		};
-		149C284408902B11008A9EFC /* Development */ = {
+		149C284508902B11008A9EFC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_THREADSAFE_STATICS = NO;
-			};
-			name = Development;
-		};
-		149C284508902B11008A9EFC /* Deployment */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_ENABLE_OBJC_GC = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_THREADSAFE_STATICS = NO;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				PREBINDING = NO;
+				STRIP_INSTALLED_PRODUCT = NO;
+				WARNING_CFLAGS = (
+					"-Wall",
+					"-W",
+					"-Wcast-align",
+					"-Wchar-subscripts",
+					"-Wformat-security",
+					"-Wmissing-format-attribute",
+					"-Wpointer-arith",
+					"-Wwrite-strings",
+					"-Wno-format-y2k",
+					"-Wno-unused-parameter",
+					"-Wno-long-double",
+				);
 			};
-			name = Deployment;
+			name = Release;
 		};
-		149C284608902B11008A9EFC /* OptimizedWithSymbols */ = {
+		149C284708902B11008A9EFC /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_ENABLE_OBJC_GC = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_THREADSAFE_STATICS = NO;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				WARNING_CFLAGS = (
+					"-Wall",
+					"-W",
+					"-Wcast-align",
+					"-Wchar-subscripts",
+					"-Wformat-security",
+					"-Wmissing-format-attribute",
+					"-Wpointer-arith",
+					"-Wwrite-strings",
+					"-Wno-format-y2k",
+					"-Wno-unused-parameter",
+					"-Wno-long-double",
+				);
 			};
-			name = OptimizedWithSymbols;
-		};
-		149C284708902B11008A9EFC /* Default */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_THREADSAFE_STATICS = NO;
-			};
-			name = Default;
+			name = Production;
 		};
 /* End XCBuildConfiguration section */
 
@@ -5760,24 +5675,22 @@
 		149C283908902B11008A9EFC /* Build configuration list for PBXNativeTarget "WebCore" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				149C283A08902B11008A9EFC /* Development */,
-				149C283B08902B11008A9EFC /* Deployment */,
-				149C283C08902B11008A9EFC /* OptimizedWithSymbols */,
-				149C283D08902B11008A9EFC /* Default */,
+				149C283A08902B11008A9EFC /* Debug */,
+				149C283B08902B11008A9EFC /* Release */,
+				149C283D08902B11008A9EFC /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = Production;
 		};
 		149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				149C284408902B11008A9EFC /* Development */,
-				149C284508902B11008A9EFC /* Deployment */,
-				149C284608902B11008A9EFC /* OptimizedWithSymbols */,
-				149C284708902B11008A9EFC /* Default */,
+				149C284408902B11008A9EFC /* Debug */,
+				149C284508902B11008A9EFC /* Release */,
+				149C284708902B11008A9EFC /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = Production;
 		};
 /* End XCConfigurationList section */
 	};

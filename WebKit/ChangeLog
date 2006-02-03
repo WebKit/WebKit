@@ -1,3 +1,11 @@
+2006-02-03  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Justin.
+
+        Renamed configuration names to Debug, Release and Production.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2006-02-02  David Hyatt  <hyatt@apple.com>
 
 	Fix for bug 6957, rewrite image rendering in C++ and move it to
