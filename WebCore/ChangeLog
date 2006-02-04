@@ -17,7 +17,7 @@
         (KJS::parseWindowFeatures):
         (KJS::WindowFunc::callAsFunction):
 
-2006-02-03  Timothy Hatcher  <timothy@apple.com>
+2006-02-03  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
 
         Reviewed by Dave Hyatt and Tim H.
 
