@@ -904,7 +904,6 @@ void RenderPartObject::updateWidget()
       if (!success && m_hasFallbackContent)
           o->renderFallbackContent();
   } else if (element()->hasTagName(embedTag)) {
-
       HTMLEmbedElementImpl *o = static_cast<HTMLEmbedElementImpl *>(element());
       url = o->url;
       serviceType = o->serviceType;
@@ -923,7 +922,7 @@ void RenderPartObject::updateWidget()
               paramValues.append(it->value().qstring());
           }
       }
-      frame->requestObject( this, url, serviceType, paramNames, paramValues );
+      frame->requestObject(this, url, serviceType, paramNames, paramValues);
   } else {
       assert(element()->hasTagName(iframeTag));
       HTMLIFrameElementImpl *o = static_cast<HTMLIFrameElementImpl *>(element());
@@ -933,13 +932,7 @@ void RenderPartObject::updateWidget()
       if (url.isEmpty())
           url = "about:blank";
       FrameView *v = static_cast<FrameView *>(m_view);
-      bool requestSucceeded = v->frame()->requestFrame( this, url, o->m_name.qstring(), QStringList(), QStringList(), true );
-      if (requestSucceeded && url == "about:blank") {
-          Frame *newPart = v->frame()->findFrame( o->m_name.qstring() );
-          if (newPart && newPart->document()) {
-              newPart->document()->setBaseURL( v->frame()->baseURL().url() );
-          }
-      }
+      v->frame()->requestFrame(this, url, o->m_name.qstring());
   }
 }
 

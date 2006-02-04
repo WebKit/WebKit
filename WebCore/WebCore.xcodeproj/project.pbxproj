@@ -2349,7 +2349,6 @@
 			isa = PBXGroup;
 			children = (
 				65BF022A0974816300C43196 /* Frame.h */,
-				65D1C1C909932B22000CB324 /* Plugin.h */,
 				65BF02290974816300C43196 /* Frame.cpp */,
 				65BF022B0974816300C43196 /* FramePrivate.h */,
 				65A21483097A3F5300B9050A /* FrameTreeNode.h */,
@@ -2359,6 +2358,7 @@
 				1A3D8556097647B4002C85D1 /* ObjectContents.h */,
 				65A21467097A329100B9050A /* Page.h */,
 				65FEA86809833ADE00BED4AB /* Page.cpp */,
+				65D1C1C909932B22000CB324 /* Plugin.h */,
 			);
 			path = page;
 			sourceTree = "<group>";

@@ -615,14 +615,14 @@ Plugin* MacFrame::createPlugin(const KURL& url, const QStringList& paramNames, c
 }
 
 
-Frame* MacFrame::createFrame(const KURL& url, const QString& name, RenderPart* renderer, const DOMString& referrer, bool isObject)
+Frame* MacFrame::createFrame(const KURL& url, const QString& name, RenderPart* renderer, const DOMString& referrer)
 {
     KWQ_BLOCK_EXCEPTIONS;
     
     BOOL allowsScrolling = YES;
     int marginWidth = -1;
     int marginHeight = -1;
-    if (!isObject) {
+    if (renderer->element()->hasTagName(frameTag) || renderer->element()->hasTagName(iframeTag)) {
         HTMLFrameElementImpl *o = static_cast<HTMLFrameElementImpl *>(renderer->element());
         allowsScrolling = o->scrollingMode() != QScrollView::AlwaysOff;
         marginWidth = o->getMarginWidth();

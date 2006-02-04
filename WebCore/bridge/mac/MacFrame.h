@@ -144,7 +144,7 @@ public:
 
     virtual ObjectContentType objectContentType(const KURL& url, const QString& mimeType);
     virtual Plugin* createPlugin(const KURL& url, const QStringList& paramNames, const QStringList& paramValues, const QString& mimeType);
-    virtual Frame* createFrame(const KURL& url, const QString& name, RenderPart* renderer, const DOMString& referrer, bool isObject);
+    virtual Frame* createFrame(const KURL& url, const QString& name, RenderPart* renderer, const DOMString& referrer);
 
     virtual void scheduleClose();
 

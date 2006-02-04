@@ -1,3 +1,44 @@
+2006-02-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - refactor and simplify code using ChildFrame in preparation for removing it
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7065
+
+        * WebCore.xcodeproj/project.pbxproj: reordered slightly.
+        * bridge/mac/MacFrame.h:
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::createFrame): Don't take isObject parameter, just check tag name
+        * khtml/html/HTMLFormElementImpl.cpp:
+        (WebCore::HTMLFormElementImpl::prepareSubmit): remove obsolete hasOnlyLocalReferences check
+        * khtml/html/html_baseimpl.cpp:
+        (WebCore::HTMLFrameElementImpl::isURLAllowed): remove obsolete hasOnlyLocalReferences check
+        * loader/DocLoader.cpp:
+        (khtml::DocLoader::requestImage): remove obsolete hasOnlyLocalReferences check
+        (khtml::DocLoader::requestStyleSheet): remove obsolete hasOnlyLocalReferences check
+        (khtml::DocLoader::requestScript): remove obsolete hasOnlyLocalReferences check
+        (khtml::DocLoader::requestXSLStyleSheet): remove obsolete hasOnlyLocalReferences check
+        * page/Frame.cpp:
+        (WebCore::Frame::requestFrame): refactored and simplified
+        (WebCore::Frame::requestObject): ditto
+        (WebCore::Frame::shouldUsePlugin): ditto
+        (WebCore::Frame::loadPlugin): ditto
+        (WebCore::Frame::loadSubframe): ditto
+        (WebCore::Frame::frameNames): remove obsolete m_bPreloaded check
+        (WebCore::Frame::frames): ditto
+        (WebCore::Frame::connectChild): check isFrame, not child type
+        (WebCore::Frame::disconnectChild): ditto
+        (WebCore::Frame::handleFallbackContent): greatly simplify using onwerElement
+        (WebCore::Frame::updateBaseURLForEmptyDocument): use ownerElement, notChildFrame
+        (WebCore::Frame::onlyLocalReferences): removed
+        (WebCore::Frame::setOnlyLocalReferences): removed
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        (WebCore::ChildFrame::ChildFrame): remove most fields.
+        * rendering/render_frames.cpp:
+        (WebCore::RenderPartObject::updateWidget): Remove redundant setting of base URL for child document
+        of iframe, Frame itself takes care of this already
+
 2006-02-03  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed and tweaked by Darin.

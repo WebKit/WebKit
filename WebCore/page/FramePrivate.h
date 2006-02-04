@@ -44,35 +44,23 @@ namespace WebCore
 {
     class Decoder;
 
-  struct ChildFrame
-  {
-      enum Type { Frame, IFrame, Object };
+    struct ChildFrame
+    {
+        ChildFrame() 
+             : m_bCompleted(false)
+        {
+        }
 
-      ChildFrame() { m_bCompleted = false; m_bPreloaded = false; m_type = Frame; m_bNotify = false; m_hasFallbackContent = false; }
-
-
-    QGuardedPtr<RenderPart> m_renderer;
-    RefPtr<ObjectContents> m_frame;
-    QGuardedPtr<BrowserExtension> m_extension;
-    QString m_serviceName;
-    QString m_serviceType;
-    QStringList m_services;
-    bool m_bCompleted;
-    QString m_name;
-    URLArgs m_args;
-    bool m_bPreloaded;
-    KURL m_workingURL;
-    Type m_type;
-    QStringList m_paramNames;
-    QStringList m_paramValues;
-    bool m_bNotify;
-    bool m_hasFallbackContent;
-  };
+        QGuardedPtr<RenderPart> m_renderer;
+        RefPtr<ObjectContents> m_frame;
+        bool m_bCompleted;
+        QString m_name;
+    };
 
 class FrameList : public QValueList<ChildFrame>
 {
 public:
-    Iterator find( const QString &name );
+    Iterator find(const QString &name);
 };
 
 typedef FrameList::ConstIterator ConstFrameIt;

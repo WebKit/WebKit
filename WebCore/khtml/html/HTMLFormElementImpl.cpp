@@ -316,7 +316,7 @@ void HTMLFormElementImpl::setBoundary( const DOMString& bound )
 bool HTMLFormElementImpl::prepareSubmit()
 {
     Frame *frame = getDocument()->frame();
-    if(m_insubmit || !frame || frame->onlyLocalReferences())
+    if (m_insubmit || !frame)
         return m_insubmit;
 
     m_insubmit = true;

@@ -304,11 +304,6 @@ bool HTMLFrameElementImpl::isURLAllowed(const AtomicString &URLString) const
         return false;
     }
 
-    // Prohibit non-file URLs if we are asked to.
-    if (w->frame()->onlyLocalReferences() && newURL.protocol().lower() != "file") {
-        return false;
-    }
-
     // We allow one level of self-reference because some sites depend on that.
     // But we don't allow more than one.
     bool foundSelfReference = false;

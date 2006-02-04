@@ -134,7 +134,6 @@ enum ObjectContentType
 
 class Frame : public ObjectContents {
   friend class FrameView;
-  friend class KHTMLRun;
   friend class KJS::DOMDocument;
   friend class KJS::Selection;
   friend class KJS::SelectionFunc;
@@ -236,20 +235,6 @@ public:
    * was called.
    */
   bool autoloadImages() const;
-
-  /**
-   * Security option.
-   *
-   * Specify whether only local references ( stylesheets, images, scripts, subdocuments )
-   * should be loaded. ( default false - everything is loaded, if the more specific
-   * options allow )
-   */
-  void setOnlyLocalReferences(bool enable);
-
-  /**
-   * Returns whether references should be loaded ( default false )
-   **/
-  bool onlyLocalReferences() const;
 
   void autoloadImages(bool e) { setAutoloadImages(e); }
   void enableMetaRefresh(bool e) { setMetaRefreshEnabled(e); }
@@ -722,11 +707,6 @@ signals:
   void onURL( const QString &url );
 
   /**
-   * Emitted when the user clicks the right mouse button on the document.
-   */
-  void popupMenu(const QString &url, const IntPoint &point);
-
-  /**
    * This signal is emitted when the selection changes.
    */
   void selectionChanged();
@@ -817,7 +797,7 @@ public:
 protected:
   virtual DOMString generateFrameName() = 0;
   virtual Plugin* createPlugin(const KURL& url, const QStringList& paramNames, const QStringList& paramValues, const QString& mimeType) = 0;
-  virtual Frame* createFrame(const KURL& url, const QString& name, RenderPart* renderer, const DOMString& referrer, bool isObject) = 0;
+  virtual Frame* createFrame(const KURL& url, const QString& name, RenderPart* renderer, const DOMString& referrer) = 0;
   virtual ObjectContentType objectContentType(const KURL& url, const QString& mimeType) = 0;
 
 public slots:
@@ -882,13 +862,9 @@ private:
 
   void overURL( const QString &url, const QString &target, bool shiftPressed = false );
 
-  bool processObjectRequest( ChildFrame *child, const KURL &url, const QString &mimetype );
-  
   void submitForm( const char *action, const QString &url, const FormData &formData,
                    const QString &target, const QString& contentType = QString::null,
                    const QString& boundary = QString::null );
-
-  void popupMenu( const QString &url );
 
   void init(FrameView*);
 
@@ -896,12 +872,15 @@ private:
 
   KJS::JSValue* executeScheduledScript();
 
-  bool requestFrame(RenderPart *frame, const QString &url, const QString &frameName,
-                    const QStringList &paramNames = QStringList(), const QStringList &paramValues = QStringList(), bool isIFrame = false);
+  bool requestFrame(RenderPart *frame, const QString &url, const QString &frameName);
   bool requestObject(RenderPart *frame, const QString &url, const QString &serviceType,
-                      const QStringList &paramNames = QStringList(), const QStringList &paramValues = QStringList());
-  bool requestObject(ChildFrame *child, const KURL &url, const URLArgs &args = URLArgs());
-  virtual ObjectContents *createPart(const ChildFrame &child, const KURL &url, const QString &mimeType);
+                     const QStringList &paramNames, const QStringList &paramValues);
+
+  
+  bool shouldUsePlugin(NodeImpl* element, const KURL& url, const QString& mimeType, bool hasFallback, bool& useFallback);
+  bool loadPlugin(ChildFrame *child, const KURL &url, const QString &mimeType, 
+                  const QStringList& paramNames, const QStringList& paramValues, bool useFallback);
+  bool loadSubframe(ChildFrame* child, const KURL& url, const DOMString& referrer);
 
 public:
   DOMString requestFrameName();
