@@ -1,0 +1,19 @@
+layer at (0,0) size 785x608
+  RenderCanvas at (0,0) size 785x600
+layer at (0,0) size 785x600
+  RenderBlock {HTML} at (0,0) size 785x600
+    RenderBody {BODY} at (8,8) size 769x584
+      RenderInline {SPAN} at (0,0) size 315x18 [color=#008000]
+        RenderText {TEXT} at (239,0) size 315x18
+          text run at (239,0) width 315: "This text should be green if height is atleast 30ex ."
+      RenderText {TEXT} at (0,0) size 0x0
+      RenderBlock (floating) {DIV} at (0,0) size 115x229 [bgcolor=#ADD8E6]
+        RenderText {TEXT} at (0,0) size 115x18
+          text run at (0,0) width 115: "div of height 30ex"
+      RenderText {TEXT} at (0,0) size 0x0
+      RenderBlock (floating) {DIV} at (115,0) size 124x600 [bgcolor=#ADD8E6]
+        RenderText {TEXT} at (0,0) size 124x18
+          text run at (0,0) width 124: "div of height 600px"
+      RenderText {TEXT} at (0,0) size 0x0
+      RenderText {TEXT} at (0,0) size 0x0
+      RenderText {TEXT} at (0,0) size 0x0

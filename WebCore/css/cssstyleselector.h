@@ -40,6 +40,7 @@ class CSSRuleSet;
 class CSSSelector;
 class CSSStyleSheetImpl;
 class CSSValueImpl;
+class MediaQueryEvaluator;
 class DocumentImpl;
 class ElementImpl;
 class Frame;
@@ -174,6 +175,7 @@ public:
  
     private:
         void init();
+        RenderStyle *defaultStyleForRoot(DOM::ElementImpl* e);
         
         void mapBackgroundAttachment(BackgroundLayer* layer, CSSValueImpl* value);
         void mapBackgroundClip(BackgroundLayer* layer, CSSValueImpl* value);
@@ -199,8 +201,10 @@ public:
         CSSRuleListImpl* m_ruleList;
         bool m_collectRulesOnly;
 
-        QString m_medium;
-
+        DOM::MediaQueryEvaluator* m_medium;
+        RenderStyle* m_rootDefaultStyle;
+        bool m_resolvingForRootDefaultStyle;
+        
         RenderStyle::PseudoId dynamicPseudo;
         
         RenderStyle *style;

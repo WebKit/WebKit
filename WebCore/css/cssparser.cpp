@@ -33,6 +33,7 @@
 #include "css_valueimpl.h"
 #include "css_ruleimpl.h"
 #include "css_stylesheetimpl.h"
+#include "css_mediaqueryimpl.h"
 #include "cssproperties.h"
 #include "cssvalues.h"
 #include "helper.h"
@@ -298,6 +299,30 @@ bool CSSParser::parseDeclaration( CSSMutableStyleDeclarationImpl *declaration, c
     return ok;
 }
 
+bool CSSParser::parseMediaQuery( DOM::MediaListImpl *queries, const DOM::DOMString &string )
+{    
+    if (string.isEmpty() || string.isNull()) {
+        return true;
+    }
+    mediaQuery = 0;
+    // can't use { because tokenizer state switches from mediaquery to initial state when it sees { token.
+    // instead insert one " " (which is WHITESPACE in parser.y)
+    setupParser ("@-khtml-mediaquery ", string, "} ");
+    
+    CSSParser *old = currentParser;
+    currentParser = this;
+    cssyyparse( this );
+    currentParser = old;
+    
+    bool ok = false;
+    if (mediaQuery) {
+        ok = true;
+        queries->appendMediaQuery(mediaQuery);
+        mediaQuery = 0;
+    }
+    
+    return ok;
+}
 
 void CSSParser::addProperty(int propId, CSSValueImpl *value, bool important)
 {
@@ -2837,6 +2862,7 @@ typedef unsigned int YY_CHAR;
 #define YY_STATE_EOF(state) (YY_END_OF_BUFFER + state + 1)
 #define yyterminate() yyTok = END_TOKEN; return yyTok
 #define YY_FATAL_ERROR(a)
+#define BEGIN yy_start = 1 + 2 *
 
 #include "tokenizer.cpp"
 

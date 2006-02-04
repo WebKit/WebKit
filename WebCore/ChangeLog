@@ -1,5 +1,81 @@
 2006-02-03  Timothy Hatcher  <timothy@apple.com>
 
+        Reviewed by Dave Hyatt and Tim H.
+
+        Bug 4127: WebCore doesn't support Media Queries (CSS3 module)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=4127
+
+        http://www.w3.org/TR/css3-mediaqueries/
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/css_grammar.y:
+        * css/css_mediaqueryeval.cpp: Added.
+        (MediaQueryEvaluator):
+        (MediaQueryEvaluator::~MediaQueryEvaluator):
+        (MediaQueryEvaluator::mediaTypeMatch):
+        (applyRestrictor):
+        (MediaQueryEvaluator::eval):
+        (parseAspectRatio):
+        * css/css_mediaqueryeval.h: Added.
+        * css/css_mediaqueryimpl.cpp: Added.
+        (MediaQueryExpImpl::MediaQueryExpImpl):
+        (MediaQueryExpImpl::~MediaQueryExpImpl):
+        (MediaQueryExpImpl::mediaFeature):
+        (MediaQueryExpImpl::value):
+        (MediaQueryImpl::MediaQueryImpl):
+        (MediaQueryImpl::~MediaQueryImpl):
+        (MediaQueryImpl::restrictor):
+        (MediaQueryImpl::expressions):
+        (MediaQueryImpl::mediaType):
+        (MediaQueryImpl::operator==):
+        * css/css_mediaqueryimpl.h: Added.
+        (DOM::MediaQueryExpImpl::operator==):
+        (DOM::MediaQueryExpListImpl::MediaQueryExpListImpl):
+        (DOM::MediaQueryExpListImpl::append):
+        (DOM::MediaQueryExpListImpl::list):
+        (DOM::MediaQueryImpl::):
+        * css/css_stylesheetimpl.cpp:
+        (MediaListImpl::MediaListImpl):
+        (MediaListImpl::deleteMedium):
+        (mediaQueryAsDOMString):
+        (MediaListImpl::mediaText):
+        (MediaListImpl::setMediaText):
+        (MediaListImpl::item):
+        (MediaListImpl::appendMedium):
+        (MediaListImpl::appendMediaQuery):
+        * css/css_stylesheetimpl.h:
+        (DOM::MediaListImpl::length):
+        (DOM::MediaListImpl::mediaQueries):
+        * css/css_valueimpl.h:
+        * css/csshelper.h:
+        * css/cssmediafeatures.in: Added.
+        * css/cssparser.cpp:
+        (CSSParser::parseMediaQuery):
+        * css/cssparser.h:
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::CSSStyleSelector::init):
+        (WebCore::CSSStyleSelector::~CSSStyleSelector):
+        (WebCore::CSSStyleSelector::loadDefaultStyle):
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::styleRulesForElement):
+        (WebCore::CSSRuleSet::addRulesFromSheet):
+        (WebCore::CSSStyleSelector::defaultStyleForRoot):
+        * css/cssstyleselector.h:
+        * css/makemediafeatures: Added.
+        * css/maketokenizer:
+        * css/tokenizer.flex:
+        * khtml/html/html_headimpl.cpp:
+        (WebCore::HTMLLinkElementImpl::process):
+        (WebCore::HTMLLinkElementImpl::setStyleSheet):
+        (WebCore::HTMLStyleElementImpl::childrenChanged):
+        * platform/Screen.h:
+        * platform/mac/Screen.mm:
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenIsMonochrome):
+
+2006-02-03  Timothy Hatcher  <timothy@apple.com>
+
         Reviewed by Justin.
 
         Renamed configuration names to Debug, Release and Production.

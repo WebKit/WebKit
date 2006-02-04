@@ -27,6 +27,7 @@
 #include "css_ruleimpl.h"
 #include "css_stylesheetimpl.h"
 #include "css_valueimpl.h"
+#include "css_mediaqueryimpl.h"
 #include "cssparser.h"
 #include "dom_string.h"
 #include "htmlnames.h"
@@ -54,6 +55,7 @@ using namespace HTMLNames;
 #define __inline
 #include "cssproperties.c"
 #include "cssvalues.c"
+#include "cssmediafeatures.c"
 #undef __inline
 
 namespace WebCore {
@@ -112,6 +114,14 @@ static inline int getValueID(const char *tagStr, int len)
     return val->id;
 }
 
+static inline int getMediaFeatureID(const char *tagStr, int len)
+{
+    const struct css_media_feature_pair *feat = findMediaFeature(tagStr, len);
+    if (!feat)
+        return 0;
+
+    return feat->id;
+}
 
 #define YYDEBUG 0
 #define YYPARSE_PARAM parser
@@ -136,6 +146,12 @@ static inline int getValueID(const char *tagStr, int len)
     char tok;
     Value value;
     ValueList *valueList;
+
+    int mediaFeatureId;
+    MediaQueryImpl *mediaQuery;
+    MediaQueryExpImpl *mediaQueryExp;
+    MediaQueryExpListImpl *mediaQueryExpList;
+    MediaQueryImpl::Restrictor mediaQueryRestrictor;
 }
 
 %{
@@ -175,8 +191,13 @@ static int cssyylex(YYSTYPE *yylval) { return CSSParser::current()->lex(yylval);
 %token KHTML_RULE_SYM
 %token KHTML_DECLS_SYM
 %token KHTML_VALUE_SYM
+%token KHTML_MEDIAQUERY_SYM
 
 %token IMPORTANT_SYM
+
+%token MEDIA_ONLY
+%token MEDIA_NOT
+%token MEDIA_AND
 
 %token <val> QEMS
 %token <val> EMS
@@ -224,9 +245,15 @@ static int cssyylex(YYSTYPE *yylval) { return CSSParser::current()->lex(yylval);
 %type <string> medium
 %type <string> hexcolor
 
+%type <mediaFeatureId> media_feature
 %type <mediaList> media_list
 %type <mediaList> maybe_media_list
-
+%type <mediaQuery> media_query
+%type <mediaQueryRestrictor> maybe_media_restrictor
+%type <valueList> maybe_media_value
+%type <mediaQueryExp> media_query_exp
+%type <mediaQueryExpList> media_query_exp_list
+%type <mediaQueryExpList> maybe_media_query_exp_list
 %type <ruleList> ruleset_list
 
 %type <prop_id> property
@@ -265,6 +292,7 @@ stylesheet:
   | khtml_rule maybe_space
   | khtml_decls maybe_space
   | khtml_value maybe_space
+  | khtml_mediaquery maybe_space
   ;
 
 khtml_rule:
@@ -290,6 +318,18 @@ khtml_value:
         delete p->valueList;
         p->valueList = 0;
     }
+;
+
+khtml_mediaquery:
+    KHTML_MEDIAQUERY_SYM WHITESPACE maybe_space media_query '}' {
+        CSSParser *p = static_cast<CSSParser *>(parser);
+        p->mediaQuery = $4;
+    }
+    | KHTML_MEDIAQUERY_SYM WHITESPACE maybe_space media_query error '}'{
+        CSSParser *p = static_cast<CSSParser *>(parser);
+        p->mediaQuery = $4;
+    }
+
 ;
 
 maybe_space:
@@ -387,6 +427,86 @@ STRING
 | URI
 ;
 
+media_feature:
+    IDENT maybe_space {
+        QString str = qString($1);
+        $$ = getMediaFeatureID( str.lower().latin1(), str.length() );
+    }
+;
+
+maybe_media_value:
+    /*empty*/ {
+        $$ = 0;
+    }
+    | ':' maybe_space expr maybe_space {
+        $$ = $3;
+    }
+;
+
+media_query_exp:
+    '(' maybe_space media_feature maybe_space maybe_media_value ')' maybe_space {
+        $$ = new MediaQueryExpImpl($3, $5);
+    }
+;
+
+media_query_exp_list:
+    media_query_exp {
+        $$ = new MediaQueryExpListImpl;
+        $$->append($1);
+    }
+    | media_query_exp_list MEDIA_AND maybe_space media_query_exp {
+        $$ = $1;
+        if ($$)
+            $$->append($4);
+        else
+            delete ($4);
+    }
+    | media_query_exp_list error {
+        // Error while parsing media feature list. Delete the list and return 0, which means
+        // that we should handle the media query as css 2.1 media type (or HTML4 media description)
+        delete ($1);
+        $$=0;
+    }
+   ;
+
+maybe_media_query_exp_list:
+    /*empty*/ {
+        $$ = new MediaQueryExpListImpl;
+    }
+    | MEDIA_AND maybe_space media_query_exp_list {
+        $$ = $3;
+    }
+    | MEDIA_AND error {
+        $$ = 0;
+    }
+;
+
+maybe_media_restrictor:
+    /*empty*/{
+        $$ = MediaQueryImpl::None;
+    }
+    | MEDIA_ONLY {
+        $$ = MediaQueryImpl::Only;
+    }
+    | MEDIA_NOT {
+        $$ = MediaQueryImpl::Not;
+    }
+;
+
+media_query:
+    maybe_media_restrictor maybe_space medium maybe_media_query_exp_list {
+        if ($4) {
+            $$ = new MediaQueryImpl($1, domString($3), $4);
+        } else if ($1 == MediaQueryImpl::Only) {
+            $$ = new MediaQueryImpl(MediaQueryImpl::None, "only", new MediaQueryExpListImpl);
+        } else  if ($1 == MediaQueryImpl::Not) {
+            $$ = new MediaQueryImpl(MediaQueryImpl::None, "not", new MediaQueryExpListImpl);
+        } else {
+            $$ = new MediaQueryImpl(MediaQueryImpl::None, domString($3), new MediaQueryExpListImpl);
+        }
+    }
+;
+
 maybe_media_list:
      /* empty */ {
         $$ = new MediaListImpl();
@@ -399,23 +519,25 @@ media_list:
     /* empty */ {
         $$ = 0;
     }
-    | medium {
+    | media_query {
         $$ = new MediaListImpl();
-        $$->appendMedium( domString($1).lower() );
+        $$->appendMediaQuery($1);
     }
-    | media_list ',' maybe_space medium {
+    | media_list ',' maybe_space media_query {
         $$ = $1;
         if ($$)
-            $$->appendMedium( domString($4) );
+            $$->appendMediaQuery($4);
+        else
+            delete $4
     }
     | media_list error {
         delete $1;
         $$ = 0;
     }
-    ;
+;
 
 media:
-    MEDIA_SYM maybe_space media_list '{' maybe_space ruleset_list '}' {
+    MEDIA_SYM maybe_space maybe_media_list '{' maybe_space ruleset_list '}' {
         CSSParser *p = static_cast<CSSParser *>(parser);
         if ( $3 && $6 &&
              p->styleElement && p->styleElement->isCSSStyleSheet() ) {

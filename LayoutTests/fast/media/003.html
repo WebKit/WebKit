@@ -1,0 +1,15 @@
+<html>
+<head>
+<title> HTML4 media descriptions parsing style element media= content</title> 
+<link rel="help" href="http://www.w3.org/TR/REC-html40/types.html#h-6.13" />
+
+<!-- actual testcase from http://www.hixie.ch/tests/evil/css/import/extra/styleexoticmedia.html -->
+<style type="text/css" media="braille, all with print">
+p{color: green;}
+</style>
+
+</head>
+<body>
+<p> This text should be green.</p> 
+</body>
+</html>

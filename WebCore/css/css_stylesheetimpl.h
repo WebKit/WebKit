@@ -29,6 +29,7 @@
 
 #include "dom/dom_string.h"
 #include "css/css_base.h"
+#include "css/css_mediaqueryimpl.h"
 
 namespace khtml {
     class CachedCSSStyleSheet;
@@ -161,26 +162,23 @@ public:
 
     CSSStyleSheetImpl *parentStyleSheet() const;
     CSSRuleImpl *parentRule() const;
-    unsigned length() const { return m_lstMedia.count(); }
-    DOM::DOMString item ( unsigned index ) const { return m_lstMedia[index]; }
+    unsigned long length() const { return m_lstQueries.count(); }
+    DOM::DOMString item ( unsigned long index ) const;
     void deleteMedium ( const DOM::DOMString &oldMedium );
-    void appendMedium ( const DOM::DOMString &newMedium ) { m_lstMedia.append(newMedium); }
+    void appendMedium ( const DOM::DOMString &newMedium );
 
     DOM::DOMString mediaText() const;
     void setMediaText(const DOM::DOMString &value);
 
     /**
-     * Check if the list contains either the requested medium, or the
-     * catch-all "all" media type. Returns true when found, false otherwise.
-     * Since not specifying media types should be treated as "all" according
-     * to DOM specs, an empty list always returns true.
-     *
      * _NOT_ part of the DOM!
      */
-    bool contains( const DOM::DOMString &medium ) const;
+    void appendMediaQuery(MediaQueryImpl* mediaQuery);
+    const QPtrList<MediaQueryImpl>* mediaQueries() const { return &m_lstQueries; }
 
 protected:
-    QValueList<DOM::DOMString> m_lstMedia;
+    QPtrList<MediaQueryImpl> m_lstQueries;
+    DOM::DOMString m_mediaText;    
 };
 
 
