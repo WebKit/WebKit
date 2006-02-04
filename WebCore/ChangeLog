@@ -1,6 +1,6 @@
 2006-02-03  Geoffrey Garen  <ggaren@apple.com>
 
-        Reviewed beth.
+        Reviewed by beth.
 
         - Fixed <rdar://problem/4394868> window.open fails to parse 
         "width=200px"
