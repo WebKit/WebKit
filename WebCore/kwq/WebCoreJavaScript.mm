@@ -46,20 +46,24 @@ using KJS::JSLock;
     return Collector::numInterpreters();
 }
 
-+ (size_t)noGCAllowedObjectCount
++ (size_t)protectedObjectCount
 {
-    return Collector::numGCNotAllowedObjects();
+    return Collector::numProtectedObjects();
 }
 
-+ (size_t)referencedObjectCount
-{
-    return Collector::numReferencedObjects();
-}
-
-+ (NSSet *)rootObjectClasses
++ (NSCountedSet *)rootObjectTypeCounts
 {
     JSLock lock;
-    return [(NSSet *)Collector::rootObjectClasses() autorelease];
+    NSCountedSet* result = [NSCountedSet set];
+
+    HashCountedSet<const char*>* counts = Collector::rootObjectTypeCounts();
+    HashCountedSet<const char*>::iterator end = counts->end();
+    for (HashCountedSet<const char*>::iterator it = counts->begin(); it != end; ++it)
+        for (unsigned i = 0; i < it->second; ++i)
+            [result addObject:[NSString stringWithUTF8String:it->first]];
+
+    delete counts;
+    return result;
 }
 
 + (void)garbageCollect

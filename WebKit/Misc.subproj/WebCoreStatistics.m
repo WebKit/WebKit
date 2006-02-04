@@ -63,17 +63,27 @@
 
 + (size_t)javaScriptNoGCAllowedObjectsCount
 {
-    return [WebCoreJavaScript noGCAllowedObjectCount];
+    return 0;
 }
 
 + (size_t)javaScriptReferencedObjectsCount
 {
-    return [WebCoreJavaScript referencedObjectCount];
+    return [WebCoreJavaScript protectedObjectCount];
+}
+
++ (size_t)javaScriptProtectedObjectsCount
+{
+    return [WebCoreJavaScript protectedObjectCount];
 }
 
 + (NSSet *)javaScriptRootObjectClasses
 {
-    return [WebCoreJavaScript rootObjectClasses];
+    return [WebCoreJavaScript rootObjectTypeCounts];
+}
+
++ (NSCountedSet *)javaScriptRootObjecTypeCounts
+{
+    return [WebCoreJavaScript rootObjectTypeCounts];
 }
 
 + (void)garbageCollectJavaScriptObjects

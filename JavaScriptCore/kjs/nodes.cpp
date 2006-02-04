@@ -64,7 +64,7 @@ using namespace KJS;
     exec->clearException(); \
     return Completion(Throw, ex); \
   } \
-  if (Collector::outOfMemory()) \
+  if (Collector::isOutOfMemory()) \
     return Completion(Throw, Error::create(exec, GeneralError, "Out of memory"));
 
 #define KJS_CHECKEXCEPTIONVALUE \
@@ -72,7 +72,7 @@ using namespace KJS;
     setExceptionDetailsIfNeeded(exec); \
     return jsUndefined(); \
   } \
-  if (Collector::outOfMemory()) \
+  if (Collector::isOutOfMemory()) \
     return jsUndefined(); // will be picked up by KJS_CHECKEXCEPTION
 
 #define KJS_CHECKEXCEPTIONLIST \
@@ -80,7 +80,7 @@ using namespace KJS;
     setExceptionDetailsIfNeeded(exec); \
     return List(); \
   } \
-  if (Collector::outOfMemory()) \
+  if (Collector::isOutOfMemory()) \
     return List(); // will be picked up by KJS_CHECKEXCEPTION
 
 // ------------------------------ Node -----------------------------------------

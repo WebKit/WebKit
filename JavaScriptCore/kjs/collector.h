@@ -25,6 +25,7 @@
 #define _KJSCOLLECTOR_H_
 
 #include "value.h"
+#include <kxmlcore/HashCountedSet.h>
 
 #define KJS_MEM_LIMIT 500000
 
@@ -37,24 +38,11 @@ namespace KJS {
     // disallow direct construction/destruction
     Collector();
   public:
-    /**
-     * Register an object with the collector. The following assumptions are
-     * made:
-     * @li the operator new() of the object class is overloaded.
-     * @li operator delete() has been overloaded as well and does not free
-     * the memory on its own.
-     *
-     * @param s Size of the memory to be registered.
-     * @return A pointer to the allocated memory.
-     */
     static void* allocate(size_t s);
-    /**
-     * Run the garbage collection. This involves calling the delete operator
-     * on each object and freeing the used memory.
-     */
     static bool collect();
+
     static size_t size();
-    static bool outOfMemory() { return memoryFull; }
+    static bool isOutOfMemory() { return memoryFull; }
 
 #ifdef KJS_DEBUG_MEM
     /**
@@ -67,9 +55,8 @@ namespace KJS {
     static void unprotect(JSValue *);
 
     static size_t numInterpreters();
-    static size_t numGCNotAllowedObjects();
-    static size_t numReferencedObjects();
-    static const void *rootObjectClasses(); // actually returns CFSetRef
+    static size_t numProtectedObjects();
+    static HashCountedSet<const char*>* rootObjectTypeCounts();
 
     class Thread;
     static void registerThread();

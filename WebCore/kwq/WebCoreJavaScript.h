@@ -30,11 +30,9 @@
 }
 
 + (size_t)interpreterCount;
-
 + (size_t)objectCount;
-+ (size_t)noGCAllowedObjectCount;
-+ (size_t)referencedObjectCount;
-+ (NSSet *)rootObjectClasses;
++ (size_t)protectedObjectCount;
++ (NSCountedSet *)rootObjectTypeCounts;
 
 + (void)garbageCollect;
 

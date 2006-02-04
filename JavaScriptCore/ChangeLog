@@ -1,3 +1,20 @@
+2006-02-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Hyatt.
+        
+        - change JavaScript collector statistics calls to use HashCountedSet instead
+        of CFSet; other misc cleanup
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7072
+        
+        * kjs/collector.cpp:
+        (KJS::Collector::numProtectedObjects): renamed from numReferencedObjects
+        (KJS::typeName):
+        (KJS::Collector::rootObjectTypeCounts): renamed from rootObjectClasses,
+        use HashSet
+        * kjs/collector.h:
+        (KJS::Collector::isOutOfMemory): Renamed from outOfMemory.
+        * kjs/nodes.cpp:
+
 2006-02-03  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Justin.

@@ -1,5 +1,19 @@
 2006-02-04  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Hyatt.
+
+        - change JavaScript collector statistics calls to use HashCountedSet instead
+        of CFSet; other misc cleanup
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7072
+
+        * kwq/WebCoreJavaScript.h:
+        * kwq/WebCoreJavaScript.mm:
+        (+[WebCoreJavaScript protectedObjectCount]): Renamed from referencedObjectCounts
+        (+[WebCoreJavaScript rootObjectTypeCounts]): Renamed from rootObjectClasses,
+        changed from NSSet to NSCountedSet.
+
+2006-02-04  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
 
         - refactor and simplify code using ChildFrame in preparation for removing it
