@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+# Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -82,12 +82,13 @@ sub patch
     my ($patch) = @_;
     return if !$patch;
 
-    my $previousRevision = 0;
-        if($patch =~ /\n--- .+\(revision (\d+)\)\n/) { 
-            $previousRevision = $1;
-        }
+    my $deletion = 0;
+    my $addition = 0;
 
-    if ($previousRevision != 0 || $patch !~ /\ndiff -N/) {
+    $addition = 1 if $patch =~ /\n--- .+\(revision 0\)\n/;
+    $deletion = 1 if $patch =~ /\n@@ .* \+0,0 @@/;
+
+    if (!$addition && !$deletion) {
         # Standard patch, patch tool can handle this.
         open PATCH, "| patch -p0 -R" or die;
         print PATCH $patch;
@@ -103,7 +104,7 @@ sub patch
             chdir $prefix or die "Failed to chdir to $prefix";
         }
 
-        if ($patch =~ /\n@@ .* \+0,0 @@/) {
+        if ($deletion) {
             # Reverse a deletion.
             system "svn", "add", "$base";
             my $file = $patch;

@@ -115,12 +115,13 @@ sub patch
     $patch =~ m|^Index: ((([^/\n]*/)*)([^/\n]+))| or die "Failed to find Index: in \"$patch\"\n";
     my ($fullpath, $prefix, $base) = ($1, $2, $4);
 
-    my $previousRevision = 0;
-        if($patch =~ /\n--- .+\(revision (\d+)\)\n/) { 
-            $previousRevision = $1;
-        }
+    my $deletion = 0;
+    my $addition = 0;
 
-    if ($previousRevision != 0 || $patch !~ /\ndiff -N/) {
+    $addition = 1 if $patch =~ /\n--- .+\(revision 0\)\n/;
+    $deletion = 1 if $patch =~ /\n@@ .* \+0,0 @@/;
+
+    if (!$addition && !$deletion) {
         # Standard patch, patch tool can handle this.
         open PATCH, "| patch -p0" or die "Failed to patch $fullpath\n";
         print PATCH $patch;
@@ -131,7 +132,7 @@ sub patch
         # Change directory down into the directory in question.
         chdirAddingDirectoriesIfNeeded($prefix);
 
-        if ($patch =~ /\n@@ .* \+0,0 @@/) {
+        if ($deletion) {
             # Deletion.
             system "svn", "rm", $base;
         } else {

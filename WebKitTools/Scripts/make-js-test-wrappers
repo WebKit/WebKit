@@ -69,9 +69,11 @@ for my $tfile (@templates) {
 
     for my $file (@files) {
         chomp $file;
-        if ($file =~ /js-test-.*\.js/) {
-            next;
-        }
+        next if $file =~ /js-test-.*\.js/;
+
+        my $html = $file;
+        $html =~ s:resources/(.*)\.js:$1.html:;
+        next if -f "$html-disabled";
 
         system("grep -q 'successfullyParsed =' $file");
         if ($? != 0) {
@@ -79,8 +81,6 @@ for my $tfile (@templates) {
             `echo "var successfullyParsed = true;" >> "${file}"`;
         }
         
-        my $html = $file;
-        $html =~ s:resources/(.*)\.js:$1.html:;
         print "    ${html}\n";
         open HTML, ">$html";
         my $output = ($file =~ /-n\.js/) ? $templateNegative : $template;
