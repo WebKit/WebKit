@@ -3,7 +3,8 @@
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,6 +31,7 @@
 #include "CachedImage.h"
 
 #include "htmlnames.h"
+#include "html_listimpl.h"
 
 #include <qpainter.h>
 #include "Pen.h"
@@ -142,8 +144,7 @@ void RenderListItem::setStyle(RenderStyle *_style)
 {
     RenderBlock::setStyle(_style);
 
-    if (style()->listStyleType() != LNONE ||
-        (style()->listStyleImage() && !style()->listStyleImage()->isErrorImage())) {
+    if (!(style()->listStyleImage() && style()->listStyleImage()->isErrorImage())) {
         RenderStyle *newStyle = new (renderArena()) RenderStyle();
         newStyle->ref();
         // The marker always inherits from the list item, regardless of where it might end
@@ -175,25 +176,55 @@ void RenderListItem::destroy()
     RenderBlock::destroy();
 }
 
+static NodeImpl* enclosingList(NodeImpl* node)
+{
+    for (NodeImpl* n = node->parentNode(); n; n = n->parentNode())
+        if (n->hasTagName(ulTag) || n->hasTagName(olTag))
+            return n;
+    return 0;
+}
+
+static RenderListItem* previousListItem(NodeImpl* list, RenderListItem* item)
+{
+    if (!list)
+        return 0;
+    for (NodeImpl* n = item->node()->traversePreviousNode(); n != list; n = n->traversePreviousNode()) {
+        RenderObject* o = n->renderer();
+        if (o && o->isListItem()) {
+            NodeImpl* otherList = enclosingList(n);
+            // This item is part of our current list, so it's what we're looking for.
+            if (list == otherList)
+                return static_cast<RenderListItem*>(o);
+            // We found ourself inside another list; lets skip the rest of it.
+            if (otherList)
+                n = otherList;
+        }
+    }
+    return 0;
+}
+
 void RenderListItem::calcListValue()
 {
-    // only called from the marker so..
-    KHTMLAssert(m_marker);
+    // Called by the marker, so we know there is a marker.
+    ASSERT(m_marker);
 
+    // Only called when the value is known.
+    ASSERT(m_marker->m_value == -1);
+
+    int value;
     if (predefVal != -1)
-        m_marker->m_value = predefVal;
-    else if (!previousSibling())
-        m_marker->m_value = 1;
+        value = predefVal;
     else {
-	RenderObject *o = previousSibling();
-	while (o && (!o->isListItem() || o->style()->listStyleType() == LNONE))
-	    o = o->previousSibling();
-        if (o && o->isListItem() && o->style()->listStyleType() != LNONE) {
-            RenderListItem *item = static_cast<RenderListItem *>(o);
-            m_marker->m_value = item->value() + 1;
-        } else
-            m_marker->m_value = 1;
+        NodeImpl* list = enclosingList(node());
+        RenderListItem* item = previousListItem(list, this);
+        if (item)
+            value = item->value() + 1;
+        else if (list && list->hasTagName(olTag))
+            value = static_cast<HTMLOListElementImpl*>(list)->start();
+        else
+            value = 1;
     }
+    m_marker->m_value = value;
 }
 
 bool RenderListItem::isEmpty() const

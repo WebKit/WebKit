@@ -1,3 +1,25 @@
+2006-02-03  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed and tweaked by Darin.
+        
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5776
+          Generated numbers of ordered lists (OL) are not calculated right
+  
+        Uses the DOM tree to calculate previous nodes and nest correctly
+
+        Tests:
+        * fast/lists/olstart.html
+        * fast/lists/ol-display-types.html
+
+        * khtml/html/html_listimpl.cpp:
+        (DOM::HTMLLIElementImpl::attach): remove calculation of start node value
+        * rendering/render_list.cpp:
+        (RenderListItem::setStyle): set up an m_marker even if the style is to
+        not display the marker, to get the numbering right
+        (enclosingList): gets the list enclosing the given node
+        (previousListItemElement): gets the previous element in the list
+        (RenderListItem::calcListValue): calculate the value correctly
+
 2006-02-03  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by beth.
@@ -547,7 +569,7 @@
 
 2006-02-02  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
-        Test: LayoutTests/fast/block/positioning/height-change.html
+        Test: fast/block/positioning/height-change.html
 
         Reviewed by Hyatt.
 
