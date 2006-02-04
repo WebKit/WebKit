@@ -1,6 +1,6 @@
 2006-02-03  Andrew Wellington  <proton@wiretapped.net>
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by Darin.
         
         Layout tests for bug 5776: Generated numbers of ordered lists (OL) are
         not calculated right
