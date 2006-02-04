@@ -299,7 +299,7 @@ macro(yankAndSelect) \
 - (WebFrameView *)_frameViewAtWindowPoint:(NSPoint)point;
 - (WebFrameBridge *)_bridgeAtPoint:(NSPoint)point;
 - (WebFrame *)_focusedFrame;
-- (void)_preflightSpellChecker;
++ (void)_preflightSpellChecker;
 - (BOOL)_continuousCheckingAllowed;
 - (NSResponder *)_responderForResponderOperations;
 - (BOOL)_performTextSizingSelector:(SEL)sel withObject:(id)arg onTrackingDocs:(BOOL)doTrackingViews selForNonTrackingDocs:(SEL)testSel newScaleFactor:(float)newScaleFactor;
@@ -2900,7 +2900,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 {
     _private->continuousSpellCheckingEnabled = flag;
     if ([self isContinuousSpellCheckingEnabled]) {
-        [self _preflightSpellChecker];
+        [[self class] _preflightSpellChecker];
     } else {
         [[self mainFrame] _unmarkAllMisspellings];
     }
@@ -3120,12 +3120,12 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
     return [[[self _frameViewAtWindowPoint:[self convertPoint:point toView:nil]] webFrame] _bridge];
 }
 
-- (void)_preflightSpellCheckerNow:(id)sender
++ (void)_preflightSpellCheckerNow:(id)sender
 {
     [[NSSpellChecker sharedSpellChecker] _preflightChosenSpellServer];
 }
 
-- (void)_preflightSpellChecker
++ (void)_preflightSpellChecker
 {
     // As AppKit does, we wish to delay tickling the shared spellchecker into existence on application launch.
     if ([NSSpellChecker sharedSpellCheckerExists]) {

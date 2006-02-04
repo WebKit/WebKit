@@ -1,3 +1,15 @@
+2006-02-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - change spellchecker preflighting to happen via class methods instead of
+        object methods.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView setContinuousSpellCheckingEnabled:]):
+        (+[WebView _preflightSpellCheckerNow:]):
+        (+[WebView _preflightSpellChecker]):
+
 2006-02-03  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Justin.
