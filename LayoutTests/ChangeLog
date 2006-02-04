@@ -1,3 +1,19 @@
+2006-02-03  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed by NOBODY (OOPS!).
+        
+        Layout tests for bug 5776: Generated numbers of ordered lists (OL) are
+        not calculated right
+
+        * fast/lists/ol-display-types-expected.checksum: Added.
+        * fast/lists/ol-display-types-expected.png: Added.
+        * fast/lists/ol-display-types-expected.txt: Added.
+        * fast/lists/ol-display-types.html: Added.
+        * fast/lists/olstart-expected.checksum: Added.
+        * fast/lists/olstart-expected.png: Added.
+        * fast/lists/olstart-expected.txt: Added.
+        * fast/lists/olstart.html: Added.
+
 2006-02-03  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Dave Hyatt, Tim H.
