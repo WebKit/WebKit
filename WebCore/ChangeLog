@@ -1,3 +1,22 @@
+2006-02-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed beth.
+
+        - Fixed <rdar://problem/4394868> window.open fails to parse 
+        "width=200px"
+
+        Cause: QString::toInt() is too aggressive; it parses letters as numbers.
+        The fix is to switch to DOMString. It's all the rage these days,
+        and its toInt() behavior matches what we want.
+
+        * manual-tests/window-open-features-parsing.html: Added "px" case to
+        giant evil string.
+
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::setWindowFeature):
+        (KJS::parseWindowFeatures):
+        (KJS::WindowFunc::callAsFunction):
+
 2006-02-03  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Dave Hyatt and Tim H.

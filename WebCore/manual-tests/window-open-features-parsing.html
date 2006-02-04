@@ -9,7 +9,7 @@ function test() {
         - resizable: reads as yess, which is invalid, which means no
         - status: reads as "", which means yes
     */    
-    var sFeatures = " 	,=width ==	= = 	0200|0=height  400,1width=400,left=nO toolBAR=yeS,resizable=yess,  \t\v\f\r\nstatus= ,"; 
+    var sFeatures = " 	,=width ==	= = 	0200px|0=height  400,1width=400,left=nO toolBAR=yeS,resizable=yess,  \t\v\f\r\nstatus= ,"; 
     var w = window.open("resources/popup200x100.html", undefined, sFeatures); 
     w.focus();
 }
