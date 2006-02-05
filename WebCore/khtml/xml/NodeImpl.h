@@ -83,10 +83,15 @@ public:
     virtual bool hasAttributes() const;
     virtual NamedAttrMapImpl* attributes() const;
     virtual DocumentImpl* ownerDocument() const;
-    virtual PassRefPtr<NodeImpl> insertBefore(PassRefPtr<NodeImpl> newChild, NodeImpl* refChild, ExceptionCode&);
-    virtual PassRefPtr<NodeImpl> replaceChild(PassRefPtr<NodeImpl> newChild, NodeImpl* oldChild, ExceptionCode&);
-    virtual PassRefPtr<NodeImpl> removeChild(NodeImpl* child, ExceptionCode&);
-    virtual PassRefPtr<NodeImpl> appendChild(PassRefPtr<NodeImpl> newChild, ExceptionCode&);
+
+    // These should all actually return a node, but this is only important for language bindings,
+    // which will already know and hold a ref on the right node to return. Returning bool allows
+    // these methods to be more efficient since they don't need to return a ref
+    virtual bool insertBefore(PassRefPtr<NodeImpl> newChild, NodeImpl* refChild, ExceptionCode&);
+    virtual bool replaceChild(PassRefPtr<NodeImpl> newChild, NodeImpl* oldChild, ExceptionCode&);
+    virtual bool removeChild(NodeImpl* child, ExceptionCode&);
+    virtual bool appendChild(PassRefPtr<NodeImpl> newChild, ExceptionCode&);
+
     virtual void remove(ExceptionCode&);
     virtual bool hasChildNodes() const;
     virtual PassRefPtr<NodeImpl> cloneNode(bool deep) = 0;

@@ -217,33 +217,33 @@ void HTMLSelectElementImpl::restoreState(QStringList &_states)
     setChanged(true);
 }
 
-PassRefPtr<NodeImpl> HTMLSelectElementImpl::insertBefore(PassRefPtr<NodeImpl> newChild, NodeImpl* refChild, ExceptionCode& ec)
+bool HTMLSelectElementImpl::insertBefore(PassRefPtr<NodeImpl> newChild, NodeImpl* refChild, ExceptionCode& ec)
 {
-    PassRefPtr<NodeImpl> result = HTMLGenericFormElementImpl::insertBefore(newChild, refChild, ec);
+    bool result = HTMLGenericFormElementImpl::insertBefore(newChild, refChild, ec);
     if (result)
         setRecalcListItems();
     return result;
 }
 
-PassRefPtr<NodeImpl> HTMLSelectElementImpl::replaceChild(PassRefPtr<NodeImpl> newChild, NodeImpl *oldChild, ExceptionCode& ec)
+bool HTMLSelectElementImpl::replaceChild(PassRefPtr<NodeImpl> newChild, NodeImpl *oldChild, ExceptionCode& ec)
 {
-    PassRefPtr<NodeImpl> result = HTMLGenericFormElementImpl::replaceChild(newChild, oldChild, ec);
+    bool result = HTMLGenericFormElementImpl::replaceChild(newChild, oldChild, ec);
     if (result)
         setRecalcListItems();
     return result;
 }
 
-PassRefPtr<NodeImpl> HTMLSelectElementImpl::removeChild(NodeImpl* oldChild, ExceptionCode& ec)
+bool HTMLSelectElementImpl::removeChild(NodeImpl* oldChild, ExceptionCode& ec)
 {
-    PassRefPtr<NodeImpl> result = HTMLGenericFormElementImpl::removeChild(oldChild, ec);
+    bool result = HTMLGenericFormElementImpl::removeChild(oldChild, ec);
     if (result)
         setRecalcListItems();
     return result;
 }
 
-PassRefPtr<NodeImpl> HTMLSelectElementImpl::appendChild(PassRefPtr<NodeImpl> newChild, ExceptionCode& ec)
+bool HTMLSelectElementImpl::appendChild(PassRefPtr<NodeImpl> newChild, ExceptionCode& ec)
 {
-    PassRefPtr<NodeImpl> result = HTMLGenericFormElementImpl::appendChild(newChild, ec);
+    bool result = HTMLGenericFormElementImpl::appendChild(newChild, ec);
     if (result)
         setRecalcListItems();
     return result;

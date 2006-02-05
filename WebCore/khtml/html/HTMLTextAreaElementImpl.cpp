@@ -236,7 +236,7 @@ void HTMLTextAreaElementImpl::setDefaultValue(const DOMString &defaultValue)
         RefPtr<NodeImpl> n = it.current();
         removeChild(n.get(), exceptioncode);
     }
-    insertBefore(getDocument()->createTextNode(defaultValue),firstChild(), exceptioncode);
+    insertBefore(getDocument()->createTextNode(defaultValue), firstChild(), exceptioncode);
     setValue(defaultValue);
 }
 

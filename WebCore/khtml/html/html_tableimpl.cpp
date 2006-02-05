@@ -158,11 +158,11 @@ void HTMLTableElementImpl::deleteTHead(  )
 
 HTMLElementImpl *HTMLTableElementImpl::createTFoot(  )
 {
-    if(!foot)
+    if (!foot)
     {
         int exceptioncode = 0;
         foot = new HTMLTableSectionElementImpl(tfootTag, getDocument(), true /*implicit */);
-        if(firstBody)
+        if (firstBody)
             insertBefore( foot, firstBody, exceptioncode );
         else
             appendChild(foot, exceptioncode);

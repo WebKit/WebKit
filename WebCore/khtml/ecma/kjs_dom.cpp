@@ -656,13 +656,21 @@ JSValue *DOMNodeProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, co
     case DOMNode::DispatchEvent:
       return jsBoolean(node.dispatchEvent(toEvent(args[0]), exception));
     case DOMNode::AppendChild:
-      return getDOMNode(exec,node.appendChild(toNode(args[0]), exception));
+      if (node.appendChild(toNode(args[0]), exception))
+        return args[0];
+      return jsNull();
     case DOMNode::RemoveChild:
-      return getDOMNode(exec,node.removeChild(toNode(args[0]), exception));
+      if (node.removeChild(toNode(args[0]), exception))
+        return args[0];
+      return jsNull();
     case DOMNode::InsertBefore:
-      return getDOMNode(exec,node.insertBefore(toNode(args[0]), toNode(args[1]), exception));
+      if (node.insertBefore(toNode(args[0]), toNode(args[1]), exception))
+        return args[0];
+      return jsNull();
     case DOMNode::ReplaceChild:
-      return getDOMNode(exec,node.replaceChild(toNode(args[0]), toNode(args[1]), exception));
+     if (node.replaceChild(toNode(args[0]), toNode(args[1]), exception))
+        return args[0];
+      return jsNull();
     case DOMNode::Contains:
       if (node.isElementNode())
         if (NodeImpl *node0 = toNode(args[0]))

@@ -38,10 +38,12 @@ public:
 
     virtual NodeImpl* firstChild() const;
     virtual NodeImpl* lastChild() const;
-    virtual PassRefPtr<NodeImpl> insertBefore(PassRefPtr<NodeImpl> newChild, NodeImpl* refChild, ExceptionCode&);
-    virtual PassRefPtr<NodeImpl> replaceChild(PassRefPtr<NodeImpl> newChild, NodeImpl* oldChild, ExceptionCode&);
-    virtual PassRefPtr<NodeImpl> removeChild(NodeImpl* child, ExceptionCode&);
-    virtual PassRefPtr<NodeImpl> appendChild(PassRefPtr<NodeImpl> newChild, ExceptionCode&);
+
+    virtual bool insertBefore(PassRefPtr<NodeImpl> newChild, NodeImpl* refChild, ExceptionCode&);
+    virtual bool replaceChild(PassRefPtr<NodeImpl> newChild, NodeImpl* oldChild, ExceptionCode&);
+    virtual bool removeChild(NodeImpl* child, ExceptionCode&);
+    virtual bool appendChild(PassRefPtr<NodeImpl> newChild, ExceptionCode&);
+
     virtual ContainerNodeImpl* addChild(PassRefPtr<NodeImpl>);
     virtual bool hasChildNodes() const;
     virtual void attach();

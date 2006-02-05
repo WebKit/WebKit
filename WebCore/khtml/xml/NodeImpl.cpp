@@ -207,28 +207,28 @@ NodeImpl *NodeImpl::lastDescendant() const
     return n;
 }
 
-PassRefPtr<NodeImpl> NodeImpl::insertBefore(PassRefPtr<NodeImpl>, NodeImpl*, ExceptionCode& ec)
+bool NodeImpl::insertBefore(PassRefPtr<NodeImpl>, NodeImpl*, ExceptionCode& ec)
 {
     ec = DOMException::HIERARCHY_REQUEST_ERR;
-    return 0;
+    return false;
 }
 
-PassRefPtr<NodeImpl> NodeImpl::replaceChild(PassRefPtr<NodeImpl>, NodeImpl*, ExceptionCode& ec)
+bool NodeImpl::replaceChild(PassRefPtr<NodeImpl>, NodeImpl*, ExceptionCode& ec)
 {
     ec = DOMException::HIERARCHY_REQUEST_ERR;
-    return 0;
+    return false;
 }
 
-PassRefPtr<NodeImpl> NodeImpl::removeChild(NodeImpl*, ExceptionCode& ec)
+bool NodeImpl::removeChild(NodeImpl*, ExceptionCode& ec)
 {
     ec = DOMException::NOT_FOUND_ERR;
-    return 0;
+    return false;
 }
 
-PassRefPtr<NodeImpl> NodeImpl::appendChild(PassRefPtr<NodeImpl>, ExceptionCode& ec)
+bool NodeImpl::appendChild(PassRefPtr<NodeImpl>, ExceptionCode& ec)
 {
     ec = DOMException::HIERARCHY_REQUEST_ERR;
-    return 0;
+    return false;
 }
 
 void NodeImpl::remove(int &exceptioncode)

@@ -1,5 +1,50 @@
 2006-02-04  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Darin.
+
+        - Just return bool from DOM child mutation methods instead of the node
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7076
+
+        * bindings/objc/DOM.mm:
+        (-[DOMNode insertBefore::]):
+        (-[DOMNode replaceChild::]):
+        (-[DOMNode removeChild:]):
+        (-[DOMNode appendChild:]):
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNodeProtoFunc::callAsFunction):
+        * khtml/html/HTMLOptGroupElementImpl.cpp:
+        (WebCore::HTMLOptGroupElementImpl::insertBefore):
+        (WebCore::HTMLOptGroupElementImpl::replaceChild):
+        (WebCore::HTMLOptGroupElementImpl::removeChild):
+        (WebCore::HTMLOptGroupElementImpl::appendChild):
+        * khtml/html/HTMLOptGroupElementImpl.h:
+        * khtml/html/HTMLSelectElementImpl.cpp:
+        (WebCore::HTMLSelectElementImpl::insertBefore):
+        (WebCore::HTMLSelectElementImpl::replaceChild):
+        (WebCore::HTMLSelectElementImpl::removeChild):
+        (WebCore::HTMLSelectElementImpl::appendChild):
+        * khtml/html/HTMLSelectElementImpl.h:
+        * khtml/html/HTMLTextAreaElementImpl.cpp:
+        (WebCore::HTMLTextAreaElementImpl::setDefaultValue):
+        * khtml/html/html_tableimpl.cpp:
+        (WebCore::HTMLTableElementImpl::createTFoot):
+        * khtml/xml/ContainerNodeImpl.cpp:
+        (WebCore::ContainerNodeImpl::insertBefore):
+        (WebCore::ContainerNodeImpl::replaceChild):
+        (WebCore::ContainerNodeImpl::removeChild):
+        (WebCore::ContainerNodeImpl::appendChild):
+        * khtml/xml/ContainerNodeImpl.h:
+        * khtml/xml/NodeImpl.cpp:
+        (WebCore::NodeImpl::insertBefore):
+        (WebCore::NodeImpl::replaceChild):
+        (WebCore::NodeImpl::removeChild):
+        (WebCore::NodeImpl::appendChild):
+        * khtml/xml/NodeImpl.h:
+        * khtml/xml/xml_tokenizer.cpp:
+        (WebCore::XMLTokenizer::insertErrorMessageBlock):
+
+2006-02-04  Maciej Stachowiak  <mjs@apple.com>
+
         - reverted CSS media queries patch, as it causes random crashes on the
         layout tests with a debug build.
         

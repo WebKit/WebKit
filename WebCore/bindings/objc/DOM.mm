@@ -253,9 +253,10 @@ static ListenerMap *listenerMap;
     ASSERT(refChild);
 
     int exceptionCode = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _nodeImpl]->insertBefore([newChild _nodeImpl], [refChild _nodeImpl], exceptionCode).get()];
+    if ([self _nodeImpl]->insertBefore([newChild _nodeImpl], [refChild _nodeImpl], exceptionCode))
+        return newChild;
     raiseOnDOMError(exceptionCode);
-    return result;
+    return nil;
 }
 
 - (DOMNode *)replaceChild:(DOMNode *)newChild :(DOMNode *)oldChild
@@ -264,9 +265,10 @@ static ListenerMap *listenerMap;
     ASSERT(oldChild);
 
     int exceptionCode = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _nodeImpl]->replaceChild([newChild _nodeImpl], [oldChild _nodeImpl], exceptionCode).get()];
+    if ([self _nodeImpl]->replaceChild([newChild _nodeImpl], [oldChild _nodeImpl], exceptionCode))
+        return newChild;
     raiseOnDOMError(exceptionCode);
-    return result;
+    return nil;
 }
 
 - (DOMNode *)removeChild:(DOMNode *)oldChild
@@ -274,9 +276,10 @@ static ListenerMap *listenerMap;
     ASSERT(oldChild);
 
     int exceptionCode = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _nodeImpl]->removeChild([oldChild _nodeImpl], exceptionCode).get()];
+    if ([self _nodeImpl]->removeChild([oldChild _nodeImpl], exceptionCode))
+        return oldChild;
     raiseOnDOMError(exceptionCode);
-    return result;
+    return nil;
 }
 
 - (DOMNode *)appendChild:(DOMNode *)newChild
@@ -284,9 +287,10 @@ static ListenerMap *listenerMap;
     ASSERT(newChild);
 
     int exceptionCode = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _nodeImpl]->appendChild([newChild _nodeImpl], exceptionCode).get()];
+    if ([self _nodeImpl]->appendChild([newChild _nodeImpl], exceptionCode))
+        return newChild;
     raiseOnDOMError(exceptionCode);
-    return result;
+    return nil;
 }
 
 - (BOOL)hasChildNodes
