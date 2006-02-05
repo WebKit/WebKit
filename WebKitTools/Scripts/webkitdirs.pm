@@ -88,6 +88,9 @@ sub determineConfiguration
     }
     if ($configuration) {
         chomp $configuration;
+        # compatibility for people who have old Configuration files
+        $configuration = "Release" if $configuration eq "Deployment";
+        $configuration = "Debug" if $configuration eq "Development";
     } else {
         $configuration = "Release";
     }

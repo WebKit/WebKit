@@ -1,5 +1,10 @@
 2006-02-04  Darin Adler  <darin@apple.com>
 
+        * Scripts/webkitdirs.pm: Add a compatibilty hack for people with old
+        Configuration files that say Development or Deployment in them.
+
+2006-02-04  Darin Adler  <darin@apple.com>
+
         * Scripts/make-js-test-wrappers: Don't create a wrapper if there's a disabled
         wrapper already in the directory.
         * Scripts/svn-apply: Handle additions and deletions properly -- I've been noticing
