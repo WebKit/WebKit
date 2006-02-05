@@ -1,0 +1,25 @@
+Fired load event on body inside iframe
+Fired event on iframe
+Outer event same as inner: false
+------
+Fired load event on body inside iframe
+Fired event on iframe even though default was prevented
+Outer event same as inner: false
+------
+Fired load event on body inside object
+Fired event on object even though propagation was stopped
+Outer event same as inner: false
+------
+Fired load event on body inside object
+Fired event on object
+Outer event same as inner: false
+------
+Fired load event on body inside object
+Fired event on object even though default was prevented
+Outer event same as inner: false
+------
+Fired load event on body inside object
+Fired event on object even though propagation was stopped
+Outer event same as inner: false
+------
+        

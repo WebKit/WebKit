@@ -1,3 +1,14 @@
+2006-02-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        Test case for:
+        - various event cleanup, including fixing of the load event for iframes
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7079
+
+        * fast/events/iframe-object-onload-expected.txt: Added.
+        * fast/events/iframe-object-onload.html: Added.
+
 2006-02-04  Maciej Stachowiak  <mjs@apple.com>
 
         - reverted CSS media queries patch, as it causes random crashes on the
