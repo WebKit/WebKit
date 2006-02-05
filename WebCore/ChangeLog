@@ -1,6 +1,6 @@
 2006-02-05  Darin Adler  <darin@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by Maciej.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6908
           REGRESSION: Replacing existing <option> shuffles it to the end of the list
