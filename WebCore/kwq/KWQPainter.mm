@@ -34,6 +34,7 @@
 #import "KWQFoundationExtras.h"
 #import "Pen.h"
 #import "Image.h"
+#import "FloatRect.h"
 #import "KWQPrinter.h"
 #import "KWQRegion.h"
 #import "KWQFontMetrics.h"
