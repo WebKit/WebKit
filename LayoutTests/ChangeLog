@@ -1,3 +1,13 @@
+2006-02-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7048
+          Reproducible crash when onscroll handler deletes the layer or its object
+
+        * fast/overflow/onscroll-layer-self-destruct.html: Added.
+        * fast/overflow/onscroll-layer-self-destruct-expected.txt: Added.
+
 2006-02-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
