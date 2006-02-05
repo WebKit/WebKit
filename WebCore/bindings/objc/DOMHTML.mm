@@ -225,7 +225,9 @@ using namespace DOM::HTMLNames;
 
 - (void)setLength:(unsigned)length
 {
-    [self _optionsCollectionImpl]->setLength(length);
+    ExceptionCode ec;
+    [self _optionsCollectionImpl]->setLength(length, ec);
+    raiseOnDOMError(ec);
 }
 
 - (DOMNode *)item:(unsigned)index
@@ -1030,7 +1032,7 @@ using namespace DOM::HTMLNames;
 
 - (DOMHTMLOptionsCollection *)options
 {
-    return [DOMHTMLOptionsCollection _optionsCollectionWithImpl:[self _selectElementImpl]->options()];
+    return [DOMHTMLOptionsCollection _optionsCollectionWithImpl:[self _selectElementImpl]->options().get()];
 }
 
 - (BOOL)disabled

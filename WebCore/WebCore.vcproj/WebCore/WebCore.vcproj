@@ -1006,6 +1006,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\khtml\html\HTMLOptionsCollectionImpl.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\khtml\html\HTMLOptionsCollectionImpl.h"
 					>
 				</File>

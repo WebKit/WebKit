@@ -96,6 +96,7 @@
 		7E6FEED90898582300C44C3F /* WebCoreScriptDebugger.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7E6FEED70898582300C44C3F /* WebCoreScriptDebugger.mm */; };
 		9305B24D098F1B6B00C28855 /* Timer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9305B24C098F1B6B00C28855 /* Timer.h */; };
 		9305B250098F1B8B00C28855 /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9305B24F098F1B8B00C28855 /* Timer.cpp */; };
+		9327A94209968D1A0068A546 /* HTMLOptionsCollectionImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9327A94109968D1A0068A546 /* HTMLOptionsCollectionImpl.cpp */; };
 		937A36A7097E2E3200E4EE2F /* UserAgentStyleSheets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 937A36A6097E2E3200E4EE2F /* UserAgentStyleSheets.cpp */; };
 		9385F762098D9C3100D90D24 /* Screen.h in Headers */ = {isa = PBXBuildFile; fileRef = 9385F761098D9C3100D90D24 /* Screen.h */; };
 		9385F774098D9CB900D90D24 /* Screen.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9385F773098D9CB900D90D24 /* Screen.mm */; };
@@ -1206,6 +1207,7 @@
 		9305B24F098F1B8B00C28855 /* Timer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Timer.cpp; path = platform/mac/Timer.cpp; sourceTree = "<group>"; };
 		9325AAB7041D0E9A00A9CAC5 /* WebCoreScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreScrollView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9325AAB8041D0E9A00A9CAC5 /* WebCoreScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebCoreScrollView.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		9327A94109968D1A0068A546 /* HTMLOptionsCollectionImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLOptionsCollectionImpl.cpp; sourceTree = "<group>"; };
 		932B9834070297DC0032804F /* text_granularity.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = text_granularity.h; path = editing/text_granularity.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93386B90037045B3008635CE /* KWQResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQResourceLoader.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93386B91037045B3008635CE /* KWQResourceLoader.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQResourceLoader.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3470,6 +3472,7 @@
 				A81369BC097374F500D74463 /* HTMLSelectElementImpl.h */,
 				A81369BD097374F500D74463 /* HTMLSelectElementImpl.cpp */,
 				A81369BE097374F500D74463 /* HTMLOptionsCollectionImpl.h */,
+				9327A94109968D1A0068A546 /* HTMLOptionsCollectionImpl.cpp */,
 				A81369C0097374F500D74463 /* HTMLOptionElementImpl.h */,
 				A81369C1097374F500D74463 /* HTMLOptionElementImpl.cpp */,
 				A81369C2097374F500D74463 /* HTMLOptGroupElementImpl.h */,
@@ -5455,6 +5458,7 @@
 				93CD4FDE0995F9EA007ECC97 /* AtomicString.cpp in Sources */,
 				93CD4FE10995F9EA007ECC97 /* String.cpp in Sources */,
 				93CD4FE30995F9EA007ECC97 /* StringImpl.cpp in Sources */,
+				9327A94209968D1A0068A546 /* HTMLOptionsCollectionImpl.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

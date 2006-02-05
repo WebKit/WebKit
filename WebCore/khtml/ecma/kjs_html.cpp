@@ -1225,7 +1225,7 @@ JSValue *HTMLElement::selectIndexGetter(ExecState *exec, JSObject *originalObjec
     HTMLElement *thisObj = static_cast<HTMLElement *>(slot.slotBase());
     HTMLSelectElementImpl *select = static_cast<HTMLSelectElementImpl *>(thisObj->impl());
 
-    return getDOMNode(exec, select->optionsHTMLCollection()->item(slot.index()));
+    return getDOMNode(exec, select->options()->item(slot.index()));
 }
 
 JSValue *HTMLElement::framesetNameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
@@ -1514,7 +1514,7 @@ JSValue *HTMLElement::selectGetter(ExecState* exec, int token) const
         case SelectValue:           return jsString(select.value());
         case SelectLength:          return jsNumber(select.length());
         case SelectForm:            return getDOMNode(exec, select.form()); // type HTMLFormElement
-        case SelectOptions:         return getSelectHTMLCollection(exec, select.optionsHTMLCollection().get(), &select); // type HTMLCollection
+        case SelectOptions:         return getSelectHTMLCollection(exec, select.options().get(), &select); // type HTMLCollection
         case SelectDisabled:        return jsBoolean(select.disabled());
         case SelectMultiple:        return jsBoolean(select.multiple());
         case SelectName:            return jsString(select.name());
@@ -2451,7 +2451,7 @@ void KJS::HTMLElement::put(ExecState *exec, const Identifier &propertyName, JSVa
         bool ok;
         /*uint u =*/ propertyName.toUInt32(&ok);
         if (ok) {
-            JSObject *coll = static_cast<JSObject *>(getSelectHTMLCollection(exec, select.optionsHTMLCollection().get(), &select));
+            JSObject *coll = static_cast<JSObject *>(getSelectHTMLCollection(exec, select.options().get(), &select));
             coll->put(exec,propertyName,value);
             return;
         }
@@ -2604,7 +2604,7 @@ void HTMLElement::selectSetter(ExecState *exec, int token, JSValue *value, const
         case SelectSelectedIndex:   { select.setSelectedIndex(value->toInt32(exec)); return; }
         case SelectValue:           { select.setValue(str); return; }
         case SelectLength:          { // read-only according to the NS spec, but webpages need it writeable
-                                        JSObject *coll = static_cast<JSObject *>(getSelectHTMLCollection(exec, select.optionsHTMLCollection().get(), &select));
+                                        JSObject *coll = static_cast<JSObject *>(getSelectHTMLCollection(exec, select.options().get(), &select));
                                         coll->put(exec,lengthPropertyName,value);
                                         return;
                                     }
@@ -3443,7 +3443,7 @@ void KJS::HTMLSelectCollection::put(ExecState *exec, const Identifier &propertyN
     }
     // replace an existing entry ?
   } else if (diff < 0) {
-    before = static_cast<HTMLElementImpl *>(m_element->optionsHTMLCollection()->item(u+1));
+    before = static_cast<HTMLElementImpl *>(m_element->options()->item(u+1));
     m_element->remove(u);
   }
   // finally add the new element

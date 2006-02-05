@@ -1,5 +1,40 @@
 2006-02-05  Darin Adler  <darin@apple.com>
 
+        Reviewed by Geoff.
+
+        - fix <rdar://problem/4197997> -[DOMHTMLSelectElement options] always returns an empty list
+
+        * khtml/html/HTMLOptionsCollectionImpl.h: Changed to be a subclass of HTMLCollectionImpl.
+        * khtml/html/HTMLOptionsCollectionImpl.cpp: Added.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Added new source file.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLOptionsCollection setLength:]): Handle possible exception. 
+        (-[DOMHTMLSelectElement options]): Add get() since this is now a PassRefPtr.
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElement::selectIndexGetter): Call options() instead of optionsHTMLCollection().
+        (KJS::HTMLElement::selectGetter): Ditto.
+        (KJS::KJS::HTMLElement::put): Ditto.
+        (KJS::HTMLElement::selectSetter): Ditto.
+        (KJS::KJS::HTMLSelectCollection::put): Ditto.
+
+        * khtml/html/HTMLSelectElementImpl.h: Tweaked formatting. Eliminated m_options.
+        Changed m_minwidth and m_size to int instead of short. Removed optionsHTMLCollection().
+        Changed options() to return a PassRefPtr.
+        * khtml/html/HTMLSelectElementImpl.cpp:
+        (WebCore::HTMLSelectElementImpl::~HTMLSelectElementImpl): Get rid of code to drop m_options.
+        (WebCore::HTMLSelectElementImpl::remove): Remove unnecesssary RefPtr use, since that's
+        handled fine by removeChild.
+        (WebCore::HTMLSelectElementImpl::options): Change to create a new HTMLOptionsCollectionImpl
+        each time, like other collection calls. Maybe we should change this eventually to use a
+        HashMap so we can pass out the same collection over and over again, or could have a pointer
+        stored in the select element that's managed by the collection itself.
+
+2006-02-05  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6908

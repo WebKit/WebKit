@@ -1,10 +1,7 @@
 /*
  * This file is part of the DOM implementation for KDE.
  *
- * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,24 +20,22 @@
  *
  */
 
-#ifndef HTML_HTMLOptionsCollectionImpl_H
-#define HTML_HTMLOptionsCollectionImpl_H
+#include "config.h"
+#include "HTMLOptionsCollectionImpl.h"
 
-#include "HTMLCollectionImpl.h"
+#include "HTMLSelectElementImpl.h"
+#include "dom_exception.h"
 
 namespace WebCore {
 
-typedef int ExceptionCode;
+HTMLOptionsCollectionImpl::HTMLOptionsCollectionImpl(HTMLSelectElementImpl* select)
+    : HTMLCollectionImpl(select, SELECT_OPTIONS)
+{
+}
 
-class HTMLSelectElementImpl;
-
-class HTMLOptionsCollectionImpl : public HTMLCollectionImpl {
-public:
-    HTMLOptionsCollectionImpl(HTMLSelectElementImpl*);
-
-    void setLength(unsigned, ExceptionCode&);
-};
+void HTMLOptionsCollectionImpl::setLength(unsigned, ExceptionCode& ec)
+{
+    ec = DOMException::NOT_SUPPORTED_ERR;
+}
 
 } //namespace
-
-#endif

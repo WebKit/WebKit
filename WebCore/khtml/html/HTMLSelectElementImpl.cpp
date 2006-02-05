@@ -58,8 +58,6 @@ HTMLSelectElementImpl::~HTMLSelectElementImpl()
 {
     if (getDocument())
         getDocument()->deregisterMaintainsState(this);
-    if (m_options)
-        m_options->detach();
 }
 
 bool HTMLSelectElementImpl::checkDTD(const NodeImpl* newChild)
@@ -137,18 +135,17 @@ void HTMLSelectElementImpl::add( HTMLElementImpl *element, HTMLElementImpl *befo
         setRecalcListItems();
 }
 
-void HTMLSelectElementImpl::remove( int index )
+void HTMLSelectElementImpl::remove(int index)
 {
     int exceptioncode = 0;
     int listIndex = optionToListIndex(index);
 
     Array<HTMLElementImpl*> items = listItems();
-    if(listIndex < 0 || index >= int(items.size()))
+    if (listIndex < 0 || index >= int(items.size()))
         return; // ### what should we do ? remove the last item?
 
-    RefPtr<NodeImpl> item = items[listIndex];
-    removeChild(item.get(), exceptioncode);
-    if( !exceptioncode )
+    removeChild(items[listIndex], exceptioncode);
+    if (!exceptioncode)
         setRecalcListItems();
 }
 
@@ -262,7 +259,7 @@ void HTMLSelectElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     if (attr->name() == sizeAttr) {
         m_size = kMax(attr->value().toInt(), 1);
     } else if (attr->name() == widthAttr) {
-        m_minwidth = kMax( attr->value().toInt(), 0 );
+        m_minwidth = kMax(attr->value().toInt(), 0);
     } else if (attr->name() == multipleAttr) {
         m_multiple = (!attr->isNull());
     } else if (attr->name() == accesskeyAttr) {
@@ -347,19 +344,9 @@ int HTMLSelectElementImpl::listToOptionIndex(int listIndex) const
     return optionIndex;
 }
 
-// FIXME 4197997: This method is used by the public Objective-C DOM API -[DOMHTMLSelectElement options],
-// but always returns an empty list.
-HTMLOptionsCollectionImpl* HTMLSelectElementImpl::options()
+PassRefPtr<HTMLOptionsCollectionImpl> HTMLSelectElementImpl::options()
 {
-    if (!m_options)
-        m_options = new HTMLOptionsCollectionImpl(this);
-    return m_options.get();
-}
-
-// FIXME: Delete this once the above function is working well enough to use for real.
-RefPtr<HTMLCollectionImpl> HTMLSelectElementImpl::optionsHTMLCollection()
-{
-    return RefPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::SELECT_OPTIONS));
+    return new HTMLOptionsCollectionImpl(this);
 }
 
 void HTMLSelectElementImpl::recalcListItems()
