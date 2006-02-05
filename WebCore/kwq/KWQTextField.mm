@@ -428,7 +428,8 @@ using namespace WebCore;
             QFocusEvent event(QEvent::FocusOut);
             if (widget->eventFilterObject()) {
                 const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
-                [MacFrame::bridgeForWidget(widget) formControlIsResigningFirstResponder:field];
+                if (widget)
+                    [MacFrame::bridgeForWidget(widget) formControlIsResigningFirstResponder:field];
             }
         }
     }

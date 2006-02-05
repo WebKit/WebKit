@@ -2,6 +2,17 @@
 
         Reviewed by Maciej.
 
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6941
+          Assertion failure in MacFrame::bridgeForWidget() on manual-tests/textfield-onblur.html
+
+        * kwq/KWQTextField.mm: (-[KWQTextFieldController setHasFocus:]):
+        Add check for nil in case the blur event causes the KWQLineEdit to be
+        destroyed.
+
+2006-02-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6962
           REGRESSION: www.usa.phillips.com crashes due to <param> with no name
 
