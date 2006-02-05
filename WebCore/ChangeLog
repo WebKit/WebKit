@@ -1,3 +1,21 @@
+2006-02-04  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed and tweaked by Darin.
+
+        - fixed regressions caused by fix for bug 5776 earlier today
+
+        * rendering/render_list.h: Remove m_value from RenderListMarker, add it to RenderListItem.
+        A few other tweaks, including getting rid of "friend" relationship.
+        * rendering/render_list.cpp:
+        (RenderListItem::RenderListItem): Initialize m_value.
+        (RenderListItem::setStyle): Restore old behavior of making no marker for LNONE case.
+        (RenderListItem::calcValue): Work on m_value, not m_marker->m_value.
+        (RenderListItem::resetValue): Reset m_value, even if there's no marker.
+        (RenderListMarker::RenderListMarker): Remove code to set up m_value.
+        (RenderListMarker::calcMinMaxWidth): Get marker value from list item.
+
+        * rendering/RenderContainer.cpp: (updateListMarkerNumbers): Call resetValue by its new name.
+
 2006-02-04  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Hyatt.

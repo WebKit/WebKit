@@ -131,20 +131,18 @@ static QString toHebrew( int number ) {
 // -------------------------------------------------------------------------
 
 RenderListItem::RenderListItem(DOM::NodeImpl* node)
-    : RenderBlock(node), _notInList(false)
+    : RenderBlock(node), predefVal(-1), m_marker(0), _notInList(false), m_value(-1)
 {
     // init RenderObject attributes
     setInline(false);   // our object is not Inline
-
-    predefVal = -1;
-    m_marker = 0;
 }
 
 void RenderListItem::setStyle(RenderStyle *_style)
 {
     RenderBlock::setStyle(_style);
 
-    if (!(style()->listStyleImage() && style()->listStyleImage()->isErrorImage())) {
+    if (style()->listStyleType() != LNONE ||
+        (style()->listStyleImage() && !style()->listStyleImage()->isErrorImage())) {
         RenderStyle *newStyle = new (renderArena()) RenderStyle();
         newStyle->ref();
         // The marker always inherits from the list item, regardless of where it might end
@@ -161,10 +159,6 @@ void RenderListItem::setStyle(RenderStyle *_style)
         m_marker->destroy();
         m_marker = 0;
     }
-}
-
-RenderListItem::~RenderListItem()
-{
 }
 
 void RenderListItem::destroy()
@@ -203,28 +197,24 @@ static RenderListItem* previousListItem(NodeImpl* list, RenderListItem* item)
     return 0;
 }
 
-void RenderListItem::calcListValue()
+void RenderListItem::calcValue()
 {
-    // Called by the marker, so we know there is a marker.
-    ASSERT(m_marker);
-
-    // Only called when the value is known.
-    ASSERT(m_marker->m_value == -1);
-
-    int value;
     if (predefVal != -1)
-        value = predefVal;
+        m_value = predefVal;
     else {
         NodeImpl* list = enclosingList(node());
         RenderListItem* item = previousListItem(list, this);
-        if (item)
-            value = item->value() + 1;
-        else if (list && list->hasTagName(olTag))
-            value = static_cast<HTMLOListElementImpl*>(list)->start();
+        if (item) {
+            // FIXME: This recurses to a possible depth of the length of the list.
+            // That's not good -- we need to change this to an iterative algorithm.
+            if (item->value() == -1)
+                item->calcValue();
+            m_value = item->value() + 1;
+        } else if (list && list->hasTagName(olTag))
+            m_value = static_cast<HTMLOListElementImpl*>(list)->start();
         else
-            value = 1;
+            m_value = 1;
     }
-    m_marker->m_value = value;
 }
 
 bool RenderListItem::isEmpty() const
@@ -263,13 +253,11 @@ static RenderObject* getParentOfFirstLineBox(RenderObject* curr, RenderObject* m
     return 0;
 }
 
-void RenderListItem::resetMarkerValue()
+void RenderListItem::resetValue()
 {
-    if (!m_marker)
-        return;
-
-    m_marker->m_value = -1;
-    m_marker->setNeedsLayoutAndMinMaxRecalc();
+    m_value = -1;
+    if (m_marker)
+        m_marker->setNeedsLayoutAndMinMaxRecalc();
 }
 
 void RenderListItem::updateMarkerLocation()
@@ -314,7 +302,7 @@ void RenderListItem::layout( )
 {
     KHTMLAssert( needsLayout() );
     KHTMLAssert( minMaxKnown() );
-
+    
     updateMarkerLocation();    
     RenderBlock::layout();
 }
@@ -358,13 +346,11 @@ IntRect RenderListItem::getAbsoluteRepaintRect()
 // -----------------------------------------------------------
 
 RenderListMarker::RenderListMarker(DocumentImpl* document)
-    : RenderBox(document), m_listImage(0), m_value(-1)
+    : RenderBox(document), m_listImage(0)
 {
     // init RenderObject attributes
     setInline(true);   // our object is Inline
     setReplaced(true); // pretend to be replaced
-    // val = -1;
-    // m_listImage = 0;
 }
 
 RenderListMarker::~RenderListMarker()
@@ -573,8 +559,8 @@ void RenderListMarker::calcMinMaxWidth()
         return;
     }
 
-    if (m_value < 0) // not yet calculated
-        m_listItem->calcListValue();
+    if (m_listItem->value() < 0) // not yet calculated
+        m_listItem->calcValue();
 
     const QFontMetrics &fm = style()->fontMetrics();
     m_height = fm.ascent();
@@ -597,17 +583,17 @@ void RenderListMarker::calcMinMaxWidth()
     case DECIMAL_LEADING_ZERO:
         // ### unsupported, we use decimal instead
     case LDECIMAL:
-        m_item.sprintf( "%d", m_value );
+        m_item.sprintf( "%d", m_listItem->value() );
         break;
     case LOWER_ROMAN:
-        m_item = toRoman( m_value, false );
+        m_item = toRoman( m_listItem->value(), false );
         break;
     case UPPER_ROMAN:
-        m_item = toRoman( m_value, true );
+        m_item = toRoman( m_listItem->value(), true );
         break;
     case LOWER_GREEK:
      {
-    	int number = m_value - 1;
+    	int number = m_listItem->value() - 1;
       	int l = (number % 24);
 
 	if (l>16) {l++;} // Skip GREEK SMALL LETTER FINAL SIGMA
@@ -619,15 +605,15 @@ void RenderListMarker::calcMinMaxWidth()
 	break;
      }
     case HEBREW:
-     	m_item = toHebrew( m_value );
+     	m_item = toHebrew( m_listItem->value() );
 	break;
     case LOWER_ALPHA:
     case LOWER_LATIN:
-        m_item = toLetter( m_value, 'a' );
+        m_item = toLetter( m_listItem->value(), 'a' );
         break;
     case UPPER_ALPHA:
     case UPPER_LATIN:
-        m_item = toLetter( m_value, 'A' );
+        m_item = toLetter( m_listItem->value(), 'A' );
         break;
     case LNONE:
         break;

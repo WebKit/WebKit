@@ -82,16 +82,11 @@ bool RenderContainer::canHaveChildren() const
 static void updateListMarkerNumbers(RenderObject *child)
 {
     for (RenderObject *r = child; r && r->isListItem(); r = r->nextSibling())
-        static_cast<RenderListItem *>(r)->resetMarkerValue();
+        static_cast<RenderListItem *>(r)->resetValue();
 }
 
 void RenderContainer::addChild(RenderObject *newChild, RenderObject *beforeChild)
 {
-#ifdef DEBUG_LAYOUT
-    kdDebug( 6040 ) << this << ": " <<  renderName() << "(RenderObject)::addChild( " << newChild << ": " <<
-        newChild->renderName() << ", " << (beforeChild ? beforeChild->renderName() : "0") << " )" << endl;
-#endif
-
     bool needsTable = false;
 
     if(!newChild->isText() && !newChild->isReplaced()) {
@@ -115,18 +110,14 @@ void RenderContainer::addChild(RenderObject *newChild, RenderObject *beforeChild
         case TABLE_ROW_GROUP:
         case TABLE_HEADER_GROUP:
         case TABLE_FOOTER_GROUP:
-
-            //kdDebug( 6040 ) << "adding section" << endl;
             if ( !isTable() )
                 needsTable = true;
             break;
         case TABLE_ROW:
-            //kdDebug( 6040 ) << "adding row" << endl;
             if ( !isTableSection() )
                 needsTable = true;
             break;
         case TABLE_CELL:
-            //kdDebug( 6040 ) << "adding cell" << endl;
             if ( !isTableRow() )
                 needsTable = true;
             // I'm not 100% sure this is the best way to fix this, but without this
@@ -148,7 +139,6 @@ void RenderContainer::addChild(RenderObject *newChild, RenderObject *beforeChild
         if( beforeChild && beforeChild->isAnonymous() && beforeChild->isTable() )
             table = static_cast<RenderTable *>(beforeChild);
         else {
-            //kdDebug( 6040 ) << "creating anonymous table" << endl;
             table = new (renderArena()) RenderTable(document() /* is anonymous */);
             RenderStyle *newStyle = new (renderArena()) RenderStyle();
             newStyle->inheritFrom(style());

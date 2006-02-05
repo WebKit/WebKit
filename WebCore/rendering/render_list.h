@@ -3,7 +3,7 @@
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,8 +28,7 @@
 
 // ### list-style-position, list-style-image is still missing
 
-namespace khtml
-{
+namespace WebCore {
 
 class RenderListItem;
 
@@ -70,14 +69,11 @@ public:
     
     const QString& text() const { return m_item; }
 
-protected:
-    friend class RenderListItem;
-    
     bool isInside() const;
 
+private:
     QString m_item;
     CachedImage *m_listImage;
-    int m_value;
     RenderListItem* m_listItem;
 };
 
@@ -92,7 +88,6 @@ class RenderListItem : public RenderBlock
 {
 public:
     RenderListItem(DOM::NodeImpl*);
-    virtual ~RenderListItem();
     
     virtual void destroy();
 
@@ -102,10 +97,11 @@ public:
 
     virtual bool isListItem() const { return true; }
     
-    int value() const { return m_marker->m_value; }
-    void setValue( int v ) { predefVal = v; }
-    void calcListValue();
-    
+    int value() const { return m_value; }
+    void setValue(int v) { predefVal = v; }
+    void calcValue();
+    void resetValue();
+
     virtual bool isEmpty() const;
     virtual void paint(PaintInfo& i, int xoff, int yoff);
 
@@ -119,15 +115,15 @@ public:
     void setNotInList(bool notInList) { _notInList = notInList; }
     bool notInList() const { return _notInList; }
 
-    void resetMarkerValue();
-    QString markerStringValue() { if (m_marker) return m_marker->m_item; return ""; }
+    QString markerStringValue() { return m_marker ? m_marker->text() : ""; }
 
-protected:
+private:
     int predefVal;
     RenderListMarker *m_marker;
     bool _notInList;
+    int m_value;
 };
 
-}; //namespace
+} //namespace
 
 #endif
