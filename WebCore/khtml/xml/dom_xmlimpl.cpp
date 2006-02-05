@@ -30,7 +30,7 @@
 #include "css/css_stylesheetimpl.h"
 #include "dom/dom_exception.h"
 #include "dom_node.h"
-#include "xml/dom_stringimpl.h"
+#include "StringImpl.h"
 #include "xml/xml_tokenizer.h"
 
 #ifdef KHTML_XSLT

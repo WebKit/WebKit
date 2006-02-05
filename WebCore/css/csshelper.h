@@ -25,7 +25,7 @@
 #include "Color.h"
 #include <qfont.h>
 
-#include "dom/dom_string.h"
+#include "PlatformString.h"
 
 class QPaintDeviceMetrics;
 class KHTMLSettings;

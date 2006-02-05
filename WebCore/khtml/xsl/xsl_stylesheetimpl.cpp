@@ -23,7 +23,7 @@
 
 #ifdef KHTML_XSLT
 
-#include "dom/dom_string.h"
+#include "PlatformString.h"
 #include "dom/dom_exception.h"
 
 #include "html/html_documentimpl.h"

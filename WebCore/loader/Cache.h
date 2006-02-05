@@ -27,7 +27,7 @@
 #ifndef KHTML_Cache_h
 #define KHTML_Cache_h
 
-#include "dom/dom_string.h"
+#include "PlatformString.h"
 #include <kio/global.h>
 #include <qptrlist.h>
 #include <qstring.h>

@@ -21,11 +21,13 @@
 #define KHTML_NO_XBL 1
 #define KHTML_XSLT 1
 
-// Temporary defines to help the namespace merging project.
+// Temporary defines to help the namespace merging and platform projects.
 #define DOM WebCore
 #define KDOM WebCore
 #define KSVG WebCore
 #define khtml WebCore
+#define DOMString String
+#define DOMStringImpl StringImpl
 
 #if __APPLE__
 #define HAVE_FUNC_USLEEP 1

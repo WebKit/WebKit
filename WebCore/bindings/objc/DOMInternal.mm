@@ -30,7 +30,7 @@
 #import "dom2_range.h"
 #import "dom2_events.h"
 #import "dom_exception.h"
-#import "dom_string.h"
+#import "PlatformString.h"
 #import "DocumentImpl.h"
 
 #import "kjs_dom.h"

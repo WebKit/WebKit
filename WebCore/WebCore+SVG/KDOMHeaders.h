@@ -15,5 +15,5 @@ namespace KDOM {
 }
 
 #include "Shared.h"
-#include "khtml/xml/dom_atomicstring.h"
+#include "AtomicString.h"
 #include "khtml/xml/dom_qname.h"

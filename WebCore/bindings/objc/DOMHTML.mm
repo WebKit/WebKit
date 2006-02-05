@@ -26,7 +26,7 @@
 #include "config.h"
 #import "DOMHTML.h"
 
-#import "dom_string.h"
+#import "PlatformString.h"
 #import "html_baseimpl.h"
 #import "html_blockimpl.h"
 #import "html_documentimpl.h"

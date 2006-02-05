@@ -27,7 +27,7 @@
 #include <qvaluelist.h>
 #include <qptrlist.h>
 
-#include "dom/dom_string.h"
+#include "PlatformString.h"
 #include "css/css_base.h"
 
 namespace khtml {

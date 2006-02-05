@@ -22,7 +22,7 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-#include <kdom/DOMString.h>
+#include "PlatformString.h"
 
 #include "SVGHelper.h"
 #include "SVGSymbolElementImpl.h"

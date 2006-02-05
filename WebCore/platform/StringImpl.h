@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef DOM_DOMStringImpl_h
-#define DOM_DOMStringImpl_h
+#ifndef StringImpl_h
+#define StringImpl_h
 
 #include "Shared.h"
 #include <kxmlcore/RefPtr.h>
@@ -41,20 +41,20 @@ namespace WebCore {
 
 struct Length;
 
-class DOMStringImpl : public Shared<DOMStringImpl>
+class StringImpl : public Shared<StringImpl>
 {
 private:
     struct WithOneRef { };
-    DOMStringImpl(WithOneRef) : l(0), s(0), _hash(0), _inTable(false) { ref(); }
+    StringImpl(WithOneRef) : l(0), s(0), _hash(0), _inTable(false) { ref(); }
 
 protected:
-    DOMStringImpl() : l(0), s(0), _hash(0), _inTable(false) { }
+    StringImpl() : l(0), s(0), _hash(0), _inTable(false) { }
 public:
-    DOMStringImpl(const QChar*, unsigned len);
-    DOMStringImpl(const char*);
-    DOMStringImpl(const char*, unsigned len);
-    DOMStringImpl(const QString&);
-    ~DOMStringImpl();
+    StringImpl(const QChar*, unsigned len);
+    StringImpl(const char*);
+    StringImpl(const char*, unsigned len);
+    StringImpl(const QString&);
+    ~StringImpl();
 
     unsigned length() const { return l; }
     
@@ -62,14 +62,14 @@ public:
     static unsigned computeHash(const QChar*, unsigned len);
     static unsigned computeHash(const char*);
     
-    void append(const DOMStringImpl*);
-    void insert(const DOMStringImpl*, unsigned pos);
+    void append(const StringImpl*);
+    void insert(const StringImpl*, unsigned pos);
     void truncate(int len);
     void remove(unsigned pos, int len = 1);
-    DOMStringImpl* split(unsigned pos);
-    DOMStringImpl* copy() const { return new DOMStringImpl(s, l); }
+    StringImpl* split(unsigned pos);
+    StringImpl* copy() const { return new StringImpl(s, l); }
 
-    DOMStringImpl *substring(unsigned pos, unsigned len = UINT_MAX);
+    StringImpl* substring(unsigned pos, unsigned len = UINT_MAX);
 
     const QChar& operator[] (int pos) const { return s[pos]; }
 
@@ -84,21 +84,21 @@ public:
     khtml::Length* toCoordsArray(int& len) const;
     khtml::Length* toLengthArray(int& len) const;
     bool isLower() const;
-    DOMStringImpl* lower() const;
-    DOMStringImpl* upper() const;
-    DOMStringImpl* capitalize() const;
+    StringImpl* lower() const;
+    StringImpl* upper() const;
+    StringImpl* capitalize() const;
 
-    int find(const char *, int index = 0, bool caseSensitive = true) const;
+    int find(const char*, int index = 0, bool caseSensitive = true) const;
     int find(QChar, int index = 0) const;
-    int find(const DOMStringImpl*, int index, bool caseSensitive = true) const;
+    int find(const StringImpl*, int index, bool caseSensitive = true) const;
 
-    bool startsWith(const DOMStringImpl* s, bool caseSensitive = true) const { return find(s, 0, caseSensitive) == 0; }
-    bool endsWith(const DOMStringImpl*, bool caseSensitive = true) const;
+    bool startsWith(const StringImpl* s, bool caseSensitive = true) const { return find(s, 0, caseSensitive) == 0; }
+    bool endsWith(const StringImpl*, bool caseSensitive = true) const;
 
     // This modifies the string in place if there is only one ref, makes a new string otherwise.
-    DOMStringImpl *replace(QChar, QChar);
+    StringImpl* replace(QChar, QChar);
 
-    static DOMStringImpl* empty();
+    static StringImpl* empty();
 
     // For debugging only, leaks memory.
     const char* ascii() const;
@@ -109,22 +109,22 @@ public:
     bool _inTable;
 
 #if __APPLE__
-    DOMStringImpl(CFStringRef);
+    StringImpl(CFStringRef);
     CFStringRef createCFString() const;
 #endif
 #if __OBJC__
-    DOMStringImpl(NSString*);
+    StringImpl(NSString*);
     operator NSString*() const;
 #endif
 };
 
-bool equal(const DOMStringImpl*, const DOMStringImpl*);
-bool equal(const DOMStringImpl*, const char*);
-bool equal(const char*, const DOMStringImpl*);
+bool equal(const StringImpl*, const StringImpl*);
+bool equal(const StringImpl*, const char*);
+bool equal(const char*, const StringImpl*);
 
-bool equalIgnoringCase(const DOMStringImpl*, const DOMStringImpl*);
-bool equalIgnoringCase(const DOMStringImpl*, const char*);
-bool equalIgnoringCase(const char*, const DOMStringImpl*);
+bool equalIgnoringCase(const StringImpl*, const StringImpl*);
+bool equalIgnoringCase(const StringImpl*, const char*);
+bool equalIgnoringCase(const char*, const StringImpl*);
 
 }
 
@@ -133,9 +133,9 @@ namespace KXMLCore {
     template<typename T> class DefaultHash;
     template<typename T> class StrHash;
 
-    template<> struct StrHash<DOM::DOMStringImpl *> {
-        static unsigned hash(const DOM::DOMStringImpl *key) { return key->hash(); }
-        static bool equal(const DOM::DOMStringImpl *a, const DOM::DOMStringImpl *b)
+    template<> struct StrHash<WebCore::StringImpl*> {
+        static unsigned hash(const WebCore::StringImpl* key) { return key->hash(); }
+        static bool equal(const WebCore::StringImpl* a, const WebCore::StringImpl* b)
         {
             if (a == b) return true;
             if (!a || !b) return false;
@@ -145,8 +145,8 @@ namespace KXMLCore {
             if (aLength != bLength)
                 return false;
             
-            const uint32_t *aChars = reinterpret_cast<const uint32_t *>(a->s);
-            const uint32_t *bChars = reinterpret_cast<const uint32_t *>(b->s);
+            const uint32_t* aChars = reinterpret_cast<const uint32_t*>(a->s);
+            const uint32_t* bChars = reinterpret_cast<const uint32_t*>(b->s);
             
             unsigned halfLength = aLength >> 1;
             for (unsigned i = 0; i != halfLength; ++i) {
@@ -154,7 +154,7 @@ namespace KXMLCore {
                     return false;
             }
             
-            if (aLength & 1 && *reinterpret_cast<const uint16_t *>(aChars) != *reinterpret_cast<const uint16_t *>(bChars))
+            if (aLength & 1 && *reinterpret_cast<const uint16_t*>(aChars) != *reinterpret_cast<const uint16_t*>(bChars))
                 return false;
             
             return true;
@@ -168,10 +168,10 @@ namespace KXMLCore {
     public:
         // Paul Hsieh's SuperFastHash
         // http://www.azillionmonkeys.com/qed/hash.html
-        static unsigned hash(const DOM::DOMStringImpl *str)
+        static unsigned hash(const WebCore::StringImpl* str)
         {
             unsigned l = str->l;
-            QChar *s = str->s;
+            QChar* s = str->s;
             uint32_t hash = PHI;
             uint32_t tmp;
             
@@ -256,15 +256,15 @@ namespace KXMLCore {
             return hash;
         }
         
-        static bool equal(const DOM::DOMStringImpl *a, const DOM::DOMStringImpl *b)
+        static bool equal(const WebCore::StringImpl* a, const WebCore::StringImpl* b)
         {
             if (a == b) return true;
             if (!a || !b) return false;
             unsigned length = a->l;
             if (length != b->l)
                 return false;
-            const QChar *as = a->s;
-            const QChar *bs = b->s;
+            const QChar* as = a->s;
+            const QChar* bs = b->s;
             for (unsigned i = 0; i != length; ++i)
                 if (as[i].lower() != bs[i].lower())
                     return false;
@@ -272,30 +272,30 @@ namespace KXMLCore {
         }
     };
 
-    template<> struct StrHash<RefPtr<DOM::DOMStringImpl> > {
-        static unsigned hash(const RefPtr<DOM::DOMStringImpl>& key) 
+    template<> struct StrHash<RefPtr<WebCore::StringImpl> > {
+        static unsigned hash(const RefPtr<WebCore::StringImpl>& key) 
         { 
-            return StrHash<DOM::DOMStringImpl *>::hash(key.get());
+            return StrHash<WebCore::StringImpl*>::hash(key.get());
         }
 
-        static bool equal(const RefPtr<DOM::DOMStringImpl>& a, const RefPtr<DOM::DOMStringImpl>& b)
+        static bool equal(const RefPtr<WebCore::StringImpl>& a, const RefPtr<WebCore::StringImpl>& b)
         {
-            return StrHash<DOM::DOMStringImpl *>::equal(a.get(), b.get());
+            return StrHash<WebCore::StringImpl*>::equal(a.get(), b.get());
         }
     };
 
-    template<> struct DefaultHash<DOM::DOMStringImpl*> {
-        typedef StrHash<DOM::DOMStringImpl*> Hash;
+    template<> struct DefaultHash<WebCore::StringImpl*> {
+        typedef StrHash<WebCore::StringImpl*> Hash;
     };
 
-    template<> struct DefaultHash<RefPtr<DOM::DOMStringImpl> > {
-        typedef StrHash<RefPtr<DOM::DOMStringImpl> > Hash;
+    template<> struct DefaultHash<RefPtr<WebCore::StringImpl> > {
+        typedef StrHash<RefPtr<WebCore::StringImpl> > Hash;
     };
     
     template <typename T> class HashTraits;
 
-    template<> struct HashTraits<RefPtr<DOM::DOMStringImpl> > {
-        typedef RefPtr<DOM::DOMStringImpl> TraitType;
+    template<> struct HashTraits<RefPtr<WebCore::StringImpl> > {
+        typedef RefPtr<WebCore::StringImpl> TraitType;
 
         static const bool emptyValueIsZero = true;
         static const bool needsDestruction = true;

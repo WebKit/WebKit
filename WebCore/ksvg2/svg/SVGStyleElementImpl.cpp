@@ -23,7 +23,7 @@
 #include "config.h"
 #if SVG_SUPPORT
 #include <kdom/kdom.h>
-#include <kdom/DOMString.h>
+#include "PlatformString.h"
 #include "DocumentImpl.h"
 #include "css_stylesheetimpl.h"
 

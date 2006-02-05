@@ -24,7 +24,7 @@
 #define KSVG_SVGStylableImpl_H
 #if SVG_SUPPORT
 
-#include <kdom/DOMString.h>
+#include "PlatformString.h"
 
 namespace KDOM
 {

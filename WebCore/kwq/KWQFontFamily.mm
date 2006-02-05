@@ -25,7 +25,7 @@
 
 #include "config.h"
 #include "KWQFontFamily.h"
-#include "xml/dom_stringimpl.h"
+#include "StringImpl.h"
 
 using DOM::AtomicString;
 using DOM::DOMStringImpl;

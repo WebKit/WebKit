@@ -44,7 +44,7 @@
 #import "HTMLCollectionImpl.h"
 #import "html_inlineimpl.h"
 #import "html_imageimpl.h"
-#import "dom_string.h"
+#import "PlatformString.h"
 #import "dom2_eventsimpl.h"
 #import "dom2_range.h"
 #import "FrameView.h"

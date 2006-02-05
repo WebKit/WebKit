@@ -25,10 +25,10 @@
 
 #include "cssproperties.h"
 #include "cssvalues.h"
-#include "dom_atomicstring.h"
+#include "AtomicString.h"
 #include "DocumentImpl.h"
 #include "dom_exception.h"
-#include "dom_string.h"
+#include "PlatformString.h"
 #include "font.h"
 #include "khtmllayout.h"
 #include "CachedImage.h"

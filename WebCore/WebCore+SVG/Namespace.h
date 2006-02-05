@@ -37,7 +37,7 @@
  *  it is actually used, or it with confidence will be.
  */
 
-#include <kdom/DOMString.h>
+#include "PlatformString.h"
 
 namespace KDOM
 {

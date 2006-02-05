@@ -28,7 +28,7 @@
 #include "css_valueimpl.h"
 #include "dom/css_value.h"
 #include "helper.h"
-#include "xml/dom_stringimpl.h"
+#include "StringImpl.h"
 #include "khtml_settings.h"
 
 using namespace DOM;

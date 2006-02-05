@@ -26,7 +26,7 @@
 #define DOM_NameNodeListImpl_h
 
 #include "NodeListImpl.h"
-#include "dom_string.h"
+#include "PlatformString.h"
 
 namespace DOM {
 

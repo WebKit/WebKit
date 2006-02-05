@@ -25,7 +25,7 @@
 #define _DOM_Events_h_
 
 #include "Shared.h"
-#include "dom_string.h"
+#include "PlatformString.h"
 
 namespace DOM {
 

@@ -23,7 +23,7 @@
 #ifndef DOM_EVENT_NAMES_H
 #define DOM_EVENT_NAMES_H
 
-#include "dom_atomicstring.h"
+#include "AtomicString.h"
 
 namespace DOM { namespace EventNames {
 

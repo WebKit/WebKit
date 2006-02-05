@@ -1,5 +1,5 @@
 #include "CachedObjectClient.h"
-#include "dom/dom_string.h"
+#include "PlatformString.h"
 
 namespace khtml
 {

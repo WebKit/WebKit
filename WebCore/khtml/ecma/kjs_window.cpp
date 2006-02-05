@@ -40,7 +40,7 @@
 #include "dom_elementimpl.h"
 #include "dom_node.h"
 #include "dom_position.h"
-#include "dom_string.h"
+#include "PlatformString.h"
 #include "domparser.h"
 #include "html_documentimpl.h"
 #include "htmlediting.h"

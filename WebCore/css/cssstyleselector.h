@@ -25,7 +25,7 @@
 #define CSS_cssstyleselector_h_
 
 #include "css_ruleimpl.h"
-#include "dom_string.h"
+#include "PlatformString.h"
 #include "render_style.h"
 
 class KHTMLSettings;

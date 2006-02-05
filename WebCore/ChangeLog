@@ -1,3 +1,129 @@
+2006-02-05  Darin Adler  <darin@apple.com>
+
+        Rubber stamped by Maciej.
+
+        - renamed DOMString and DOMStringImpl to String and StringImpl, and moved into platform
+
+        * config.h: Put in transitional defines so old code can still refer to the classes
+        as DOMString and DOMStringImpl.
+
+        * platform/AtomicString.cpp: Added.
+        * platform/AtomicString.h: Added.
+        * platform/AtomicStringImpl.h: Added.
+        * platform/PlatformString.h: Added.
+        * platform/String.cpp: Added.
+        * platform/StringImpl.cpp: Added.
+        * platform/StringImpl.h: Added.
+        Moved files here and renamed them. PlatformString.h would be named String.h except
+        that conflicts with <string.h> on non-case-sensitive file systems.
+
+        * khtml/xml/dom_atomicstring.cpp: Removed.
+        * khtml/xml/dom_atomicstring.h: Removed.
+        * khtml/xml/dom_stringimpl.cpp: Removed.
+        * khtml/xml/dom_stringimpl.h: Removed.
+        * khtml/dom/dom_string.cpp: Removed.
+        * khtml/dom/dom_string.h: Removed.
+
+        * WebCore.xcodeproj/project.pbxproj: Updated for file adds and removes.
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Ditto.
+
+        * WebCore+SVG/KDOMHeaders.h:
+        * WebCore+SVG/Namespace.h:
+        * WebCore+SVG/kdom.h:
+        * bindings/objc/DOM.mm:
+        * bindings/objc/DOMCSS.mm:
+        * bindings/objc/DOMHTML.mm:
+        * bindings/objc/DOMInternal.mm:
+        * bridge/BrowserExtension.h:
+        * css/css_base.h:
+        * css/css_computedstyle.cpp:
+        * css/css_grammar.y:
+        * css/css_ruleimpl.h:
+        * css/css_stylesheetimpl.cpp:
+        * css/css_stylesheetimpl.h:
+        * css/css_valueimpl.cpp:
+        * css/csshelper.cpp:
+        * css/csshelper.h:
+        * css/cssparser.h:
+        * css/cssstyleselector.h:
+        * kcanvas/KCanvasTreeDebug.cpp:
+        * khtml/dom/dom2_events.h:
+        * khtml/ecma/JSXMLHttpRequest.cpp:
+        * khtml/ecma/kjs_html.cpp:
+        * khtml/ecma/kjs_window.cpp:
+        * khtml/editing/SelectionController.cpp:
+        * khtml/editing/apply_style_command.cpp:
+        * khtml/editing/delete_from_text_node_command.h:
+        * khtml/editing/insert_into_text_node_command.h:
+        * khtml/editing/jsediting.h:
+        * khtml/editing/rebalance_whitespace_command.h:
+        * khtml/editing/remove_css_property_command.h:
+        * khtml/editing/typing_command.h:
+        * khtml/html/FormDataList.h:
+        * khtml/html/HTMLNameCollectionImpl.h:
+        * khtml/html/html_baseimpl.cpp:
+        * khtml/html/html_objectimpl.cpp:
+        * khtml/khtml_events.h:
+        * khtml/xbl/xbl_binding.h:
+        * khtml/xbl/xbl_protobinding.h:
+        * khtml/xbl/xbl_protohandler.h:
+        * khtml/xbl/xbl_protoimplementation.h:
+        * khtml/xml/DOMImplementationImpl.cpp:
+        * khtml/xml/EventNames.h:
+        * khtml/xml/NameNodeListImpl.h:
+        * khtml/xml/NamedNodeMapImpl.h:
+        * khtml/xml/NodeImpl.cpp:
+        * khtml/xml/NodeImpl.h:
+        * khtml/xml/dom2_eventsimpl.h:
+        * khtml/xml/dom_atomicstringlist.h:
+        * khtml/xml/dom_elementimpl.h:
+        * khtml/xml/dom_qname.h:
+        * khtml/xml/dom_xmlimpl.cpp:
+        * khtml/xml/xml_tokenizer.h:
+        * khtml/xsl/xsl_stylesheetimpl.cpp:
+        * khtml/xsl/xslt_processorimpl.h:
+        * ksvg2/misc/KCanvasRenderingStyle.cpp:
+        * ksvg2/svg/SVGAngleImpl.h:
+        * ksvg2/svg/SVGAnimateColorElementImpl.cpp:
+        * ksvg2/svg/SVGAnimatedStringImpl.h:
+        * ksvg2/svg/SVGAnimationElementImpl.cpp:
+        * ksvg2/svg/SVGColorImpl.h:
+        * ksvg2/svg/SVGDOMImplementationImpl.cpp:
+        * ksvg2/svg/SVGElementImpl.cpp:
+        * ksvg2/svg/SVGFitToViewBoxImpl.cpp:
+        * ksvg2/svg/SVGLangSpaceImpl.cpp:
+        * ksvg2/svg/SVGLangSpaceImpl.h:
+        * ksvg2/svg/SVGLengthImpl.h:
+        * ksvg2/svg/SVGMarkerElementImpl.cpp:
+        * ksvg2/svg/SVGPaintImpl.h:
+        * ksvg2/svg/SVGPathSegImpl.h:
+        * ksvg2/svg/SVGPreserveAspectRatioImpl.cpp:
+        * ksvg2/svg/SVGSVGElementImpl.cpp:
+        * ksvg2/svg/SVGScriptElementImpl.cpp:
+        * ksvg2/svg/SVGStringListImpl.h:
+        * ksvg2/svg/SVGStylableImpl.h:
+        * ksvg2/svg/SVGStyleElementImpl.cpp:
+        * ksvg2/svg/SVGStyledElementImpl.cpp:
+        * ksvg2/svg/SVGSymbolElementImpl.cpp:
+        * ksvg2/svg/SVGViewElementImpl.cpp:
+        * kwq/KWQAccObject.mm:
+        * kwq/KWQFontFamily.h:
+        * kwq/KWQFontFamily.mm:
+        * kwq/KWQKJobClasses.h:
+        * kwq/KWQKJobClasses.mm:
+        * loader/Cache.h:
+        * loader/CachedObject.h:
+        * loader/CachedXBLDocument.h:
+        * loader/CachedXSLStyleSheet.h:
+        * loader/DocLoader.h:
+        * page/Frame.cpp:
+        * page/FrameTreeNode.h:
+        * platform/SegmentedString.h:
+        * rendering/render_image.h:
+        * rendering/render_style.cpp:
+        * xml/xmlhttprequest.cpp:
+        Updated all includes to use new filenames.
+
 2006-02-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

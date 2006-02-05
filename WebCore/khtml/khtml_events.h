@@ -19,7 +19,7 @@
 #ifndef __khtml_events_h__
 #define __khtml_events_h__
 
-#include "dom/dom_string.h"
+#include "PlatformString.h"
 
 class QMouseEvent;
 

@@ -32,7 +32,7 @@
 #include "InlineTextBox.h"
 #include "IntRect.h"
 #include "dom/dom_node.h"
-#include "dom/dom_string.h"
+#include "PlatformString.h"
 #include "htmlediting.h"
 #include "rendering/render_canvas.h"
 #include "rendering/render_object.h"

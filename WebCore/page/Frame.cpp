@@ -52,7 +52,7 @@
 #include "cssstyleselector.h"
 #include "dom2_eventsimpl.h"
 #include "dom2_rangeimpl.h"
-#include "dom_string.h"
+#include "PlatformString.h"
 #include "html_baseimpl.h"
 #include "html_documentimpl.h"
 #include "html_imageimpl.h"

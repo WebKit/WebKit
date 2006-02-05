@@ -36,12 +36,12 @@
 #include "dom/css_stylesheet.h"
 #include "dom/css_value.h"
 #include "dom/dom_exception.h"
-#include "dom/dom_string.h"
+#include "PlatformString.h"
 #include "HTMLElementImpl.h"
 #include "misc/helper.h"
 #include "rendering/font.h"
 #include "rendering/render_style.h"
-#include "xml/dom_stringimpl.h"
+#include "StringImpl.h"
 #include <kdebug.h>
 #include <qregexp.h>
 

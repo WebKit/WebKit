@@ -26,7 +26,7 @@
 #ifndef BROWSEREXTENSION_H_
 #define BROWSEREXTENSION_H_
 
-#include "dom_string.h"
+#include "PlatformString.h"
 #include "formdata.h"
 #include <kxmlcore/HashMap.h>
 #include <qobject.h>

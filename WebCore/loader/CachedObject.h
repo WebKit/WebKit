@@ -27,7 +27,7 @@
 #ifndef KHTML_CachedObject_h
 #define KHTML_CachedObject_h
 
-#include "dom_string.h"
+#include "PlatformString.h"
 #include <kio/global.h>
 #include <kxmlcore/HashSet.h>
 #include <qobject.h>

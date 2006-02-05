@@ -25,7 +25,7 @@
 #ifndef _CSS_css_ruleimpl_h_
 #define _CSS_css_ruleimpl_h_
 
-#include "dom/dom_string.h"
+#include "PlatformString.h"
 #include "dom/css_rule.h"
 #include "css/css_base.h"
 #include "CachedObjectClient.h"

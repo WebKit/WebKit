@@ -25,7 +25,7 @@
 
 #include <kdom/kdom.h>
 #include <kdom/Helper.h>
-#include <kdom/DOMString.h>
+#include "PlatformString.h"
 #include <kdom/Namespace.h>
 #include <kdom/core/ElementImpl.h>
 #include "DocumentImpl.h"

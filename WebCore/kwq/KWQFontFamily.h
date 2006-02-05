@@ -24,7 +24,7 @@
  */
 
 #include "KWQString.h"
-#include "dom_atomicstring.h"
+#include "AtomicString.h"
 
 #ifdef __OBJC__
 @class NSString;

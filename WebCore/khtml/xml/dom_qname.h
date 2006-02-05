@@ -22,7 +22,7 @@
 #ifndef _DOM_QNAME_h_
 #define _DOM_QNAME_h_
 
-#include "dom_atomicstring.h"
+#include "AtomicString.h"
 
 namespace DOM {
 

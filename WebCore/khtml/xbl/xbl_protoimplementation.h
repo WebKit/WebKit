@@ -2,7 +2,7 @@ namespace DOM {
     class DOMString;
 }
 
-#include "dom/dom_string.h"
+#include "PlatformString.h"
 
 namespace XBL
 {

@@ -22,7 +22,7 @@
 #include "JSXMLHttpRequest.h"
 
 #include "Frame.h"
-#include "dom_string.h"
+#include "PlatformString.h"
 #include "html_documentimpl.h"
 #include "kjs_events.h"
 #include "kjs_window.h"

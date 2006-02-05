@@ -33,7 +33,7 @@
 #include "dom2_events.h"
 #include "htmlnames.h"
 #include "ksvg.h"
-#include <kdom/DOMString.h>
+#include "PlatformString.h"
 #include <kdom/Namespace.h>
 #include <kdom/core/AttrImpl.h>
 #include <kdom/core/domattrs.h>

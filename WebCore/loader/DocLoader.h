@@ -27,7 +27,7 @@
 #ifndef KHTML_DocLoader_h
 #define KHTML_DocLoader_h
 
-#include <dom/dom_string.h>
+#include "String.h"
 #include <khtml_settings.h>
 #include <kio/global.h>
 #include <qbuffer.h>

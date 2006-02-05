@@ -26,7 +26,7 @@
 #ifdef KHTML_XSLT
 
 #include "Shared.h"
-#include "dom_stringimpl.h"
+#include "StringImpl.h"
 #include "xsl_stylesheetimpl.h"
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>

@@ -36,7 +36,7 @@
 #include <kcanvas/device/KRenderingPaintServer.h>
 
 #include "DocumentImpl.h"
-#include <kdom/DOMString.h>
+#include "PlatformString.h"
 #include "render_style.h"
 #include "css_valueimpl.h"
 

@@ -2,7 +2,7 @@
  * This file is part of the DOM implementation for KDE.
  *
  * (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,47 +21,45 @@
  */
 
 #include "config.h"
-#include "dom_string.h"
-#include "xml/dom_stringimpl.h"
+#include "PlatformString.h"
 
+namespace WebCore {
 
-namespace DOM {
-
-DOMString::DOMString(const QChar *str, uint len)
+String::String(const QChar* str, unsigned len)
 {
     if (!str)
         return;
     
     if (len == 0)
-        m_impl = DOMStringImpl::empty();
+        m_impl = StringImpl::empty();
     else
-        m_impl = new DOMStringImpl(str, len);
+        m_impl = new StringImpl(str, len);
 }
 
-DOMString::DOMString(const QString &str)
+String::String(const QString& str)
 {
     if (str.isNull())
         return;
     
     if (str.isEmpty())
-        m_impl = DOMStringImpl::empty();
+        m_impl = StringImpl::empty();
     else 
-        m_impl = new DOMStringImpl(str.unicode(), str.length());
+        m_impl = new StringImpl(str.unicode(), str.length());
 }
 
-DOMString::DOMString(const char *str)
+String::String(const char* str)
 {
     if (!str)
         return;
 
     int l = strlen(str);
     if (l == 0)
-        m_impl = DOMStringImpl::empty();
+        m_impl = StringImpl::empty();
     else
-        m_impl = new DOMStringImpl(str, l);
+        m_impl = new StringImpl(str, l);
 }
 
-DOMString &DOMString::operator += (const DOMString &str)
+String& String::operator+=(const String &str)
 {
     if (str.m_impl) {
         if (!m_impl) {
@@ -75,18 +73,18 @@ DOMString &DOMString::operator += (const DOMString &str)
     return *this;
 }
 
-DOMString operator + (const DOMString &a, const DOMString &b)
+String operator+(const String& a, const String& b)
 {
     if (a.isEmpty())
         return b.copy();
     if (b.isEmpty())
         return a.copy();
-    DOMString c = a.copy();
+    String c = a.copy();
     c += b;
     return c;
 }
 
-void DOMString::insert(DOMString str, uint pos)
+void String::insert(const String& str, unsigned pos)
 {
     if (!m_impl)
         m_impl = str.m_impl->copy();
@@ -94,159 +92,122 @@ void DOMString::insert(DOMString str, uint pos)
         m_impl->insert(str.m_impl.get(), pos);
 }
 
-
-const QChar &DOMString::operator [](unsigned int i) const
+const QChar& String::operator[](unsigned i) const
 {
     static const QChar nullChar = 0;
-
     if (!m_impl || i >= m_impl->l )
         return nullChar;
-
     return *(m_impl->s+i);
 }
 
-uint DOMString::length() const
+unsigned String::length() const
 {
     if (!m_impl)
         return 0;
     return m_impl->l;
 }
 
-void DOMString::truncate( unsigned int len )
+void String::truncate(unsigned len)
 {
     if (m_impl)
         m_impl->truncate(len);
 }
 
-void DOMString::remove(unsigned int pos, int len)
+void String::remove(unsigned pos, int len)
 {
-  if (m_impl)
-    m_impl->remove(pos, len);
+    if (m_impl)
+        m_impl->remove(pos, len);
 }
 
-DOMString DOMString::substring(unsigned int pos, unsigned int len) const
+String String::substring(unsigned pos, unsigned len) const
 {
     if (!m_impl) 
-        return DOMString();
+        return String();
     return m_impl->substring(pos, len);
 }
 
-DOMString DOMString::split(unsigned int pos)
+String String::split(unsigned pos)
 {
     if (!m_impl)
-        return DOMString();
+        return String();
     return m_impl->split(pos);
 }
 
-DOMString DOMString::lower() const
+String String::lower() const
 {
     if (!m_impl)
-        return DOMString();
+        return String();
     return m_impl->lower();
 }
 
-DOMString DOMString::upper() const
+String String::upper() const
 {
     if (!m_impl)
-        return DOMString();
+        return String();
     return m_impl->upper();
 }
 
-bool DOMString::percentage(int &_percentage) const
+bool String::percentage(int& result) const
 {
     if (!m_impl || !m_impl->l)
         return false;
 
-    if ( *(m_impl->s+m_impl->l-1) != QChar('%'))
+    if (*(m_impl->s+m_impl->l-1) != '%')
        return false;
 
-    _percentage = QConstString(m_impl->s, m_impl->l-1).string().toInt();
+    result = QConstString(m_impl->s, m_impl->l-1).string().toInt();
     return true;
 }
 
-QChar *DOMString::unicode() const
+QChar* String::unicode() const
 {
     if (!m_impl)
         return 0;
     return m_impl->s;
 }
 
-QString DOMString::qstring() const
+QString String::qstring() const
 {
     if (!m_impl)
         return QString::null;
     if (!m_impl->s)
         return QString("", 0);
-
     return QString(m_impl->s, m_impl->l);
 }
 
-int DOMString::toInt() const
+int String::toInt() const
 {
     if (!m_impl)
         return 0;
-
     return m_impl->toInt();
 }
 
-DOMString DOMString::copy() const
+String String::copy() const
 {
     if (!m_impl)
-        return DOMString();
+        return String();
     return m_impl->copy();
 }
 
 // ------------------------------------------------------------------------
 
-bool strcasecmp( const DOMString &as, const DOMString &bs )
-{
-    if ( as.length() != bs.length() ) return true;
-
-    const QChar *a = as.unicode();
-    const QChar *b = bs.unicode();
-    if ( a == b )  return false;
-    if ( !( a && b ) )  return true;
-    int l = as.length();
-    while ( l-- ) {
-        if ( *a != *b && a->lower() != b->lower() )
-            return true;
-        a++,b++;
-    }
-    return false;
-}
-
-bool strcasecmp( const DOMString &as, const char* bs )
-{
-    const QChar *a = as.unicode();
-    int l = as.length();
-    if ( !bs ) return ( l != 0 );
-    while ( l-- ) {
-        if ( a->latin1() != *bs ) {
-            char cc = ( ( *bs >= 'A' ) && ( *bs <= 'Z' ) ) ? ( ( *bs ) + 'a' - 'A' ) : ( *bs );
-            if ( a->lower().latin1() != cc ) return true;
-        }
-        a++, bs++;
-    }
-    return ( *bs != '\0' );
-}
-
-bool DOMString::isEmpty() const
+bool String::isEmpty() const
 {
     return (!m_impl || m_impl->l == 0);
 }
 
-khtml::Length* DOMString::toCoordsArray(int& len) const 
+Length* String::toCoordsArray(int& len) const 
 {
     return m_impl ? m_impl->toCoordsArray(len) : 0;
 }
 
-khtml::Length* DOMString::toLengthArray(int& len) const 
+Length* String::toLengthArray(int& len) const 
 {
     return m_impl ? m_impl->toLengthArray(len) : 0;
 }
 
 #ifndef NDEBUG
-const char *DOMString::ascii() const
+const char *String::ascii() const
 {
     return m_impl ? m_impl->ascii() : "(null impl)";
 }
@@ -254,13 +215,12 @@ const char *DOMString::ascii() const
 
 //-----------------------------------------------------------------------------
 
-bool operator==( const DOMString &a, const QString &b )
+bool operator==(const String& a, const QString& b)
 {
-    unsigned int l = a.length();
-
-    if ( l != b.length() ) return false;
-
-    if (!memcmp(a.unicode(), b.unicode(), l*sizeof(QChar)))
+    unsigned l = a.length();
+    if (l != b.length())
+        return false;
+    if (!memcmp(a.unicode(), b.unicode(), l * sizeof(QChar)))
         return true;
     return false;
 }

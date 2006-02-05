@@ -23,7 +23,7 @@
 
 #include <kxmlcore/RefPtr.h>
 #include <kxmlcore/PassRefPtr.h>
-#include "dom_string.h"
+#include "PlatformString.h"
 
 namespace WebCore {
 

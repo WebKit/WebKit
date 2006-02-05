@@ -25,7 +25,7 @@
 #include <qstringlist.h>
 
 #include <kdom/core/AttrImpl.h>
-#include <kdom/core/DOMStringImpl.h>
+#include "StringImpl.h"
 
 #include "SVGNames.h"
 #include "SVGRectImpl.h"

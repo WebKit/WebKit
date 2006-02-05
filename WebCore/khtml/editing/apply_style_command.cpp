@@ -33,7 +33,7 @@
 #include "cssparser.h"
 #include "cssproperties.h"
 #include "dom2_rangeimpl.h"
-#include "dom_string.h"
+#include "PlatformString.h"
 #include "dom_textimpl.h"
 #include "HTMLElementImpl.h"
 #include "html_interchange.h"

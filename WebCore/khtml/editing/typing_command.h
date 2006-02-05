@@ -27,7 +27,7 @@
 #define __typing_command_h__
 
 #include "composite_edit_command.h"
-#include "dom/dom_string.h"
+#include "PlatformString.h"
 
 namespace khtml {
 

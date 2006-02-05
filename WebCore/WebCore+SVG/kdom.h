@@ -29,7 +29,7 @@
 
 #include <qstring.h>
 
-#include <kdom/DOMString.h>
+#include "PlatformString.h"
 
 /**
  * @short General namespace specific definitions.

@@ -24,7 +24,7 @@
 #define KSVG_SVGLangSpaceImpl_H
 #if SVG_SUPPORT
 
-#include "dom_atomicstring.h"
+#include "AtomicString.h"
 
 namespace KDOM
 {

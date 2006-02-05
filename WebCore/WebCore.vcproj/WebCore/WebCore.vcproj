@@ -593,14 +593,6 @@
 					RelativePath="..\..\khtml\dom\dom_node.h"
 					>
 				</File>
-				<File
-					RelativePath="..\..\khtml\dom\dom_string.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\khtml\dom\dom_string.h"
-					>
-				</File>
 			</Filter>
 			<Filter
 				Name="xml"
@@ -682,14 +674,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\xml\dom_atomicstring.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\khtml\xml\dom_atomicstring.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\khtml\xml\dom_atomicstringlist.h"
 					>
 				</File>
@@ -715,14 +699,6 @@
 				</File>
 				<File
 					RelativePath="..\..\khtml\xml\dom_qname.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\khtml\xml\dom_stringimpl.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\khtml\xml\dom_stringimpl.h"
 					>
 				</File>
 				<File
@@ -1830,6 +1806,34 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\SystemTime.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\AtomicString.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\AtomicString.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\AtomicStringImpl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\PlatformString.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\String.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\StringImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\StringImpl.h"
 				>
 			</File>
 		</Filter>

@@ -28,7 +28,7 @@
 
 #include "DocPtr.h"
 #include "Shared.h"
-#include "dom_string.h"
+#include "PlatformString.h"
 #include <kxmlcore/HashSet.h>
 #include <kxmlcore/PassRefPtr.h>
 

@@ -28,7 +28,7 @@
 #include "css_stylesheetimpl.h"
 #include "css_valueimpl.h"
 #include "cssparser.h"
-#include "dom_string.h"
+#include "PlatformString.h"
 #include "htmlnames.h"
 #include <assert.h>
 #include <stdlib.h>

@@ -1,9 +1,7 @@
 /*
  * This file is part of the DOM implementation for KDE.
  *
- * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,26 +19,18 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef HTMLNameCollectionImpl_H
-#define HTMLNameCollectionImpl_H
 
-#include "HTMLCollectionImpl.h"
-#include "PlatformString.h"
+#ifndef AtomicStringImpl_h
+#define AtomicStringImpl_h
+
+#include "StringImpl.h"
 
 namespace WebCore {
 
-class DocumentImpl;
-
-class HTMLNameCollectionImpl : public HTMLCollectionImpl
+class AtomicStringImpl : public StringImpl
 {
-public:
-    HTMLNameCollectionImpl(DocumentImpl* _base, int _type, DOMString &name);
-    
-    virtual NodeImpl *traverseNextItem(NodeImpl *start) const;
- private:
-    DOMString m_name;
 };
 
-}; //namespace
+}
 
 #endif

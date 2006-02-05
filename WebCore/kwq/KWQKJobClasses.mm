@@ -32,7 +32,7 @@
 #import "KWQLogging.h"
 #import "KWQResourceLoader.h"
 #import "KWQString.h"
-#import "dom_string.h"
+#import "PlatformString.h"
 #import "formdata.h"
 
 using namespace WebCore;

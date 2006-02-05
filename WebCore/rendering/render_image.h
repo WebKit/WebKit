@@ -27,7 +27,7 @@
 
 #include "CachedImage.h"
 #include "HTMLElementImpl.h"
-#include "dom_string.h"
+#include "PlatformString.h"
 #include "render_replaced.h"
 
 namespace WebCore {

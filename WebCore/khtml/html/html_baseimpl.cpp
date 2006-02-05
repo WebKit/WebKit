@@ -40,7 +40,7 @@
 #include "cssvalues.h"
 #include "css/csshelper.h"
 #include "loader.h"
-#include "dom_string.h"
+#include "PlatformString.h"
 #include "dom2_eventsimpl.h"
 #include "EventNames.h"
 #include "htmlnames.h"

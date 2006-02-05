@@ -25,7 +25,7 @@
 #ifndef KHTMLSTRING_H
 #define KHTMLSTRING_H
 
-#include "dom/dom_string.h"
+#include "PlatformString.h"
 
 #include <qstring.h>
 #include <qvaluelist.h>

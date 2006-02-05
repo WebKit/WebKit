@@ -22,7 +22,7 @@
  */
 
 #include "config.h"
-#include "xml/dom_stringimpl.h"
+#include "StringImpl.h"
 
 #include "render_style.h"
 #include "css/cssstyleselector.h"

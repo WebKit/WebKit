@@ -24,8 +24,8 @@
 
 #include <qstring.h>
 #include "Color.h"
-#include <dom/dom_string.h>
-#include "xml/dom_atomicstring.h"
+#include "String.h"
+#include "AtomicString.h"
 
 namespace DOM {
     class StyleListImpl;

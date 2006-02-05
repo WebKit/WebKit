@@ -29,7 +29,7 @@
 #include "DocumentImpl.h"
 #include "DOMImplementationImpl.h"
 #include "css_valueimpl.h"
-#include <kdom/DOMString.h>
+#include "PlatformString.h"
 
 #include "SVGHelper.h"
 #include "SVGURIReferenceImpl.h"

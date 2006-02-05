@@ -24,7 +24,7 @@
 
 #include "DocLoader.h"
 #include "dom/dom_exception.h"
-#include "xml/dom_atomicstring.h"
+#include "AtomicString.h"
 #include "xml/dom2_eventsimpl.h"
 
 #include "NameNodeListImpl.h"

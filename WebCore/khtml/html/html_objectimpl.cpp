@@ -33,7 +33,7 @@
 #include "cssstyleselector.h"
 #include "cssvalues.h"
 #include "dom2_eventsimpl.h"
-#include "dom_string.h"
+#include "PlatformString.h"
 #include "dom_textimpl.h"
 #include "html_documentimpl.h"
 #include "html_imageimpl.h"

@@ -24,7 +24,7 @@
 #define KSVG_SVGStringListImpl_H
 #if SVG_SUPPORT
 
-#include <kdom/core/DOMStringImpl.h>
+#include "StringImpl.h"
 
 #include "SVGList.h"
 

@@ -27,7 +27,7 @@
 
 #include "dom_node.h"
 #include "NodeImpl.h"
-#include "dom_atomicstring.h"
+#include "AtomicString.h"
 #include "dom2_viewsimpl.h"
 #include "Shared.h"
 

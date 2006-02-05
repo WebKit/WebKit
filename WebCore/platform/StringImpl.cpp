@@ -4,7 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller ( mueller@kde.org )
- * Copyright (C) 2003, 2005 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,20 +24,17 @@
  */
 
 #include "config.h"
-#include "dom_stringimpl.h"
+#include "StringImpl.h"
 
-#include "dom_atomicstring.h"
+#include "AtomicString.h"
 #include "khtmllayout.h"
 #include <kdebug.h>
 #include <kxmlcore/Assertions.h>
 #include <string.h>
 
-using namespace khtml;
 using namespace KXMLCore;
 
-namespace DOM {
-
-using khtml::Fixed;
+namespace WebCore {
 
 static inline QChar* newQCharVector(unsigned n)
 {
@@ -49,21 +46,21 @@ static inline void deleteQCharVector(QChar* p)
     fastFree(p);
 }
 
-DOMStringImpl* DOMStringImpl::empty()
+StringImpl* StringImpl::empty()
 {
     static WithOneRef w;
-    static DOMStringImpl e(w);
+    static StringImpl e(w);
     return &e;
 }
 
-DOMStringImpl::DOMStringImpl(const QChar *str, unsigned len)
+StringImpl::StringImpl(const QChar* str, unsigned len)
 {
     _hash = 0;
     _inTable = false;
     bool havestr = str && len;
     s = newQCharVector(havestr ? len : 1);
     if (havestr) {
-        memcpy( s, str, len * sizeof(QChar) );
+        memcpy(s, str, len * sizeof(QChar));
         l = len;
     } else {
         // crash protection
@@ -72,9 +69,9 @@ DOMStringImpl::DOMStringImpl(const QChar *str, unsigned len)
     }
 }
 
-DOMStringImpl::DOMStringImpl(const QString &string)
+StringImpl::StringImpl(const QString& string)
 {
-    const QChar *str = string.unicode();
+    const QChar* str = string.unicode();
     unsigned len = string.length();
     _hash = 0;
     _inTable = false;
@@ -90,28 +87,25 @@ DOMStringImpl::DOMStringImpl(const QString &string)
     }
 }
 
-DOMStringImpl::DOMStringImpl(const char *str)
+StringImpl::StringImpl(const char* str)
 {
     _hash = 0;
     _inTable = false;
-    if(str && *str)
-    {
+    if (str && *str) {
         l = strlen(str);
         s = newQCharVector( l );
         int i = l;
         QChar* ptr = s;
         while( i-- )
             *ptr++ = *str++;
-    }
-    else
-    {
+    } else {
         s = newQCharVector( 1 );  // crash protection
         s[0] = 0x0; // == QChar::null;
         l = 0;
     }
 }
 
-DOMStringImpl::DOMStringImpl(const char *str, unsigned int len)
+StringImpl::StringImpl(const char* str, unsigned int len)
 {
     _hash = 0;
     _inTable = false;
@@ -126,20 +120,20 @@ DOMStringImpl::DOMStringImpl(const char *str, unsigned int len)
         *ptr++ = *str++;
 }
 
-DOMStringImpl::~DOMStringImpl()
+StringImpl::~StringImpl()
 {
     if (_inTable)
         AtomicString::remove(this);
     deleteQCharVector(s);
 }
 
-void DOMStringImpl::append(const DOMStringImpl *str)
+void StringImpl::append(const StringImpl* str)
 {
     assert(!_inTable);
     if(str && str->l != 0)
     {
         int newlen = l+str->l;
-        QChar *c = newQCharVector(newlen);
+        QChar* c = newQCharVector(newlen);
         memcpy(c, s, l*sizeof(QChar));
         memcpy(c+l, str->s, str->l*sizeof(QChar));
         deleteQCharVector(s);
@@ -148,17 +142,16 @@ void DOMStringImpl::append(const DOMStringImpl *str)
     }
 }
 
-void DOMStringImpl::insert(const DOMStringImpl *str, uint pos)
+void StringImpl::insert(const StringImpl* str, unsigned pos)
 {
     assert(!_inTable);
     if (pos >= l) {
         append(str);
         return;
     }
-    if(str && str->l != 0)
-    {
-        int newlen = l+str->l;
-        QChar *c = newQCharVector(newlen);
+    if (str && str->l != 0) {
+        int newlen = l + str->l;
+        QChar* c = newQCharVector(newlen);
         memcpy(c, s, pos*sizeof(QChar));
         memcpy(c+pos, str->s, str->l*sizeof(QChar));
         memcpy(c+pos+str->l, s+pos, (l-pos)*sizeof(QChar));
@@ -168,20 +161,20 @@ void DOMStringImpl::insert(const DOMStringImpl *str, uint pos)
     }
 }
 
-void DOMStringImpl::truncate(int len)
+void StringImpl::truncate(int len)
 {
     assert(!_inTable);
-    if(len > (int)l) return;
-
+    if (len > (int)l)
+        return;
     int nl = len < 1 ? 1 : len;
-    QChar *c = newQCharVector(nl);
+    QChar* c = newQCharVector(nl);
     memcpy(c, s, nl*sizeof(QChar));
     deleteQCharVector(s);
     s = c;
     l = len;
 }
 
-void DOMStringImpl::remove(uint pos, int len)
+void StringImpl::remove(unsigned pos, int len)
 {
     assert(!_inTable);
     if(len <= 0) return;
@@ -189,8 +182,8 @@ void DOMStringImpl::remove(uint pos, int len)
     if((unsigned)len > l - pos)
     len = l - pos;
 
-    uint newLen = l-len;
-    QChar *c = newQCharVector(newLen);
+    unsigned newLen = l-len;
+    QChar* c = newQCharVector(newLen);
     memcpy(c, s, pos*sizeof(QChar));
     memcpy(c+pos, s+pos+len, (l-len-pos)*sizeof(QChar));
     deleteQCharVector(s);
@@ -198,31 +191,31 @@ void DOMStringImpl::remove(uint pos, int len)
     l = newLen;
 }
 
-DOMStringImpl *DOMStringImpl::split(uint pos)
+StringImpl* StringImpl::split(unsigned pos)
 {
     assert(!_inTable);
-    if( pos >=l ) return new DOMStringImpl();
+    if( pos >=l ) return new StringImpl();
 
-    uint newLen = l-pos;
-    QChar *c = newQCharVector(newLen);
+    unsigned newLen = l-pos;
+    QChar* c = newQCharVector(newLen);
     memcpy(c, s+pos, newLen*sizeof(QChar));
 
-    DOMStringImpl *str = new DOMStringImpl(s + pos, newLen);
+    StringImpl* str = new StringImpl(s + pos, newLen);
     truncate(pos);
     return str;
 }
 
-bool DOMStringImpl::containsOnlyWhitespace() const
+bool StringImpl::containsOnlyWhitespace() const
 {
     return containsOnlyWhitespace(0, l);
 }
 
-bool DOMStringImpl::containsOnlyWhitespace(unsigned int from, unsigned int len) const
+bool StringImpl::containsOnlyWhitespace(unsigned int from, unsigned int len) const
 {
     if (!s)
         return true;
     
-    for (uint i = from; i < len; i++) {
+    for (unsigned i = from; i < len; i++) {
         QChar c = s[i];
         if (c.unicode() <= 0x7F) {
             if (!isspace(c.unicode()))
@@ -234,19 +227,19 @@ bool DOMStringImpl::containsOnlyWhitespace(unsigned int from, unsigned int len) 
     return true;
 }
     
-DOMStringImpl *DOMStringImpl::substring(uint pos, uint len)
+StringImpl* StringImpl::substring(unsigned pos, unsigned len)
 {
-    if (pos >=l) return new DOMStringImpl();
+    if (pos >= l) return
+        new StringImpl;
     if (len > l - pos)
-    len = l - pos;
-    return new DOMStringImpl(s + pos, len);
+        len = l - pos;
+    return new StringImpl(s + pos, len);
 }
 
-static Length parseLength(QChar *s, unsigned int l)
+static Length parseLength(const QChar* s, unsigned int l)
 {
-    if (l == 0) {
+    if (l == 0)
         return Length(1, Relative);
-    }
 
     unsigned i = 0;
     while (i < l && s[i].isSpace())
@@ -282,7 +275,7 @@ static Length parseLength(QChar *s, unsigned int l)
         return Length(r, Fixed);
     } else {
         if (i < l) {
-            const QChar* next = s+i;
+            const QChar* next = s + i;
 
             if (*next == '*')
                 return Length(1, Relative);
@@ -294,12 +287,12 @@ static Length parseLength(QChar *s, unsigned int l)
     return Length(0, Relative);
 }
 
-Length DOMStringImpl::toLength() const
+Length StringImpl::toLength() const
 {
-    return parseLength(s,l);
+    return parseLength(s, l);
 }
 
-khtml::Length* DOMStringImpl::toCoordsArray(int& len) const
+Length* StringImpl::toCoordsArray(int& len) const
 {
     QChar* spacified = newQCharVector(l);
     QChar space(' ');
@@ -316,48 +309,48 @@ khtml::Length* DOMStringImpl::toCoordsArray(int& len) const
     str = str.simplifyWhiteSpace();
 
     len = str.contains(' ') + 1;
-    khtml::Length* r = new khtml::Length[len];
+    Length* r = new Length[len];
 
     int i = 0;
     int pos = 0;
     int pos2;
 
     while((pos2 = str.find(' ', pos)) != -1) {
-        r[i++] = parseLength((QChar *) str.unicode()+pos, pos2-pos);
+        r[i++] = parseLength(str.unicode() + pos, pos2-pos);
         pos = pos2+1;
     }
-    r[i] = parseLength((QChar *) str.unicode()+pos, str.length()-pos);
+    r[i] = parseLength(str.unicode() + pos, str.length()-pos);
 
     return r;
 }
 
-khtml::Length* DOMStringImpl::toLengthArray(int& len) const
+Length* StringImpl::toLengthArray(int& len) const
 {
     QString str(s, l);
     str = str.simplifyWhiteSpace();
 
     len = str.contains(',') + 1;
-    khtml::Length* r = new khtml::Length[len];
+    Length* r = new Length[len];
 
     int i = 0;
     int pos = 0;
     int pos2;
 
     while((pos2 = str.find(',', pos)) != -1) {
-        r[i++] = parseLength((QChar *) str.unicode()+pos, pos2-pos);
+        r[i++] = parseLength(str.unicode() + pos, pos2 - pos);
         pos = pos2+1;
     }
 
     /* IE Quirk: If the last comma is the last char skip it and reduce len by one */
     if (str.length()-pos > 0)
-        r[i] = parseLength((QChar *) str.unicode()+pos, str.length()-pos);
+        r[i] = parseLength(str.unicode() + pos, str.length() - pos);
     else
         len--;
 
     return r;
 }
 
-bool DOMStringImpl::isLower() const
+bool StringImpl::isLower() const
 {
     unsigned int i;
     for (i = 0; i < l; i++)
@@ -366,9 +359,9 @@ bool DOMStringImpl::isLower() const
     return true;
 }
 
-DOMStringImpl *DOMStringImpl::lower() const
+StringImpl* StringImpl::lower() const
 {
-    DOMStringImpl *c = new DOMStringImpl;
+    StringImpl* c = new StringImpl;
     if (!l)
         return c;
 
@@ -381,10 +374,11 @@ DOMStringImpl *DOMStringImpl::lower() const
     return c;
 }
 
-DOMStringImpl *DOMStringImpl::upper() const
+StringImpl* StringImpl::upper() const
 {
-    DOMStringImpl *c = new DOMStringImpl;
-    if(!l) return c;
+    StringImpl* c = new StringImpl;
+    if (!l)
+        return c;
 
     c->s = newQCharVector(l);
     c->l = l;
@@ -395,9 +389,9 @@ DOMStringImpl *DOMStringImpl::upper() const
     return c;
 }
 
-DOMStringImpl *DOMStringImpl::capitalize() const
+StringImpl* StringImpl::capitalize() const
 {
-    DOMStringImpl *c = new DOMStringImpl;
+    StringImpl* c = new StringImpl;
     bool haveCapped = false;
     if(!l) return c;
 
@@ -424,7 +418,7 @@ DOMStringImpl *DOMStringImpl::capitalize() const
     return c;
 }
 
-int DOMStringImpl::toInt(bool *ok) const
+int StringImpl::toInt(bool* ok) const
 {
     unsigned i = 0;
 
@@ -452,7 +446,7 @@ int DOMStringImpl::toInt(bool *ok) const
     return QConstString(s, i).string().toInt(ok);
 }
 
-static bool equal(const QChar *a, const char *b, int l)
+static bool equal(const QChar* a, const char* b, int l)
 {
     ASSERT(l >= 0);
     while (l--) {
@@ -463,7 +457,7 @@ static bool equal(const QChar *a, const char *b, int l)
     return true;
 }
 
-static bool equalCaseInsensitive(const QChar *a, const char *b, int l)
+static bool equalCaseInsensitive(const QChar* a, const char* b, int l)
 {
     ASSERT(l >= 0);
     while (l--) {
@@ -474,7 +468,7 @@ static bool equalCaseInsensitive(const QChar *a, const char *b, int l)
     return true;
 }
 
-static bool equalCaseInsensitive(const QChar *a, const QChar *b, int l)
+static bool equalCaseInsensitive(const QChar* a, const QChar* b, int l)
 {
     ASSERT(l >= 0);
     while (l--) {
@@ -489,9 +483,9 @@ static bool equalCaseInsensitive(const QChar *a, const QChar *b, int l)
 // Our usage patterns are typically small strings.  In time trials
 // this simplistic algorithm is much faster than Boyer-Moore or hash
 // based algorithms.
-// NOTE: Those time trials were done when this function was part of QString
+// NOTE: Those time trials were done when this function was part of KWQ's QString
 // It was copied here and changed slightly since.
-int DOMStringImpl::find(const char *chs, int index, bool caseSensitive) const
+int StringImpl::find(const char* chs, int index, bool caseSensitive) const
 {
     if (!chs || index < 0)
         return -1;
@@ -504,10 +498,10 @@ int DOMStringImpl::find(const char *chs, int index, bool caseSensitive) const
     if (n <= 0)
         return -1;
 
-    const char *chsPlusOne = chs + 1;
+    const char* chsPlusOne = chs + 1;
     int chsLengthMinusOne = chsLength - 1;
     
-    const QChar *ptr = s + index - 1;
+    const QChar* ptr = s + index - 1;
     if (caseSensitive) {
         QChar c = *chs;
         do {
@@ -525,7 +519,7 @@ int DOMStringImpl::find(const char *chs, int index, bool caseSensitive) const
     return -1;
 }
 
-int DOMStringImpl::find(const QChar c, int start) const
+int StringImpl::find(const QChar c, int start) const
 {
     unsigned int index = start;
     if (index >= l )
@@ -538,9 +532,9 @@ int DOMStringImpl::find(const QChar c, int start) const
     return -1;
 }
 
-// This was copied from QString and made to work here w/ small modifications.
+// This was copied from KWQ's QString and made to work here w/ small modifications.
 // FIXME comments were from the QString version.
-int DOMStringImpl::find(const DOMStringImpl *str, int index, bool caseSensitive) const
+int StringImpl::find(const StringImpl* str, int index, bool caseSensitive) const
 {
     // FIXME, use the first character algorithm
     /*
@@ -557,16 +551,16 @@ int DOMStringImpl::find(const DOMStringImpl *str, int index, bool caseSensitive)
 	index += l;
     int lstr = str->l;
     int lthis = l - index;
-    if ((uint)lthis > l)
+    if ((unsigned)lthis > l)
 	return -1;
     int delta = lthis - lstr;
     if (delta < 0)
 	return -1;
 
-    const QChar *uthis = s + index;
-    const QChar *ustr = str->s;
-    uint hthis = 0;
-    uint hstr = 0;
+    const QChar* uthis = s + index;
+    const QChar* ustr = str->s;
+    unsigned hthis = 0;
+    unsigned hstr = 0;
     if (caseSensitive) {
 	for (int i = 0; i < lstr; i++) {
 	    hthis += uthis[i].unicode();
@@ -600,7 +594,7 @@ int DOMStringImpl::find(const DOMStringImpl *str, int index, bool caseSensitive)
     }
 }
 
-bool DOMStringImpl::endsWith(const DOMStringImpl *s, bool caseSensitive) const
+bool StringImpl::endsWith(const StringImpl* s, bool caseSensitive) const
 {
     ASSERT(s);
     int start = l - s->l;
@@ -609,7 +603,7 @@ bool DOMStringImpl::endsWith(const DOMStringImpl *s, bool caseSensitive) const
     return false;
 }
 
-DOMStringImpl *DOMStringImpl::replace(QChar oldC, QChar newC)
+StringImpl* StringImpl::replace(QChar oldC, QChar newC)
 {
     if (oldC == newC)
         return this;
@@ -620,7 +614,7 @@ DOMStringImpl *DOMStringImpl::replace(QChar oldC, QChar newC)
     if (i == l)
         return this;
 
-    DOMStringImpl *c = new DOMStringImpl;
+    StringImpl* c = new StringImpl;
 
     c->s = newQCharVector(l);
     c->l = l;
@@ -635,21 +629,21 @@ DOMStringImpl *DOMStringImpl::replace(QChar oldC, QChar newC)
     return c;
 }
 
-bool equal(const DOMStringImpl* a, const DOMStringImpl* b)
+bool equal(const StringImpl* a, const StringImpl* b)
 {
-    return StrHash<DOMStringImpl*>::equal(a, b);
+    return StrHash<StringImpl*>::equal(a, b);
 }
 
-bool equal(const DOMStringImpl* a, const char* b)
+bool equal(const StringImpl* a, const char* b)
 {
     if (!a)
         return !b;
     if (!b)
         return !a;
 
-    uint length = a->l;
+    unsigned length = a->l;
     const QChar* as = a->s;
-    for (uint i = 0; i != length; ++i) {
+    for (unsigned i = 0; i != length; ++i) {
         char c = b[i];
         if (!c)
             return false;
@@ -660,16 +654,16 @@ bool equal(const DOMStringImpl* a, const char* b)
     return !b[length];
 }
 
-bool equal(const char* a, const DOMStringImpl* b)
+bool equal(const char* a, const StringImpl* b)
 {
     if (!a)
         return !b;
     if (!b)
         return !a;
 
-    uint length = b->l;
+    unsigned length = b->l;
     const QChar* bs = b->s;
-    for (uint i = 0; i != length; ++i) {
+    for (unsigned i = 0; i != length; ++i) {
         char c = a[i];
         if (!c)
             return false;
@@ -680,21 +674,21 @@ bool equal(const char* a, const DOMStringImpl* b)
     return !a[length];
 }
 
-bool equalIgnoringCase(const DOMStringImpl* a, const DOMStringImpl* b)
+bool equalIgnoringCase(const StringImpl* a, const StringImpl* b)
 {
     return CaseInsensitiveHash::equal(a, b);
 }
 
-bool equalIgnoringCase(const DOMStringImpl* a, const char* b)
+bool equalIgnoringCase(const StringImpl* a, const char* b)
 {
     if (!a)
         return !b;
     if (!b)
         return !a;
 
-    uint length = a->l;
+    unsigned length = a->l;
     const QChar* as = a->s;
-    for (uint i = 0; i != length; ++i) {
+    for (unsigned i = 0; i != length; ++i) {
         char c = b[i];
         if (!c)
             return false;
@@ -705,16 +699,16 @@ bool equalIgnoringCase(const DOMStringImpl* a, const char* b)
     return !b[length];
 }
 
-bool equalIgnoringCase(const char* a, const DOMStringImpl* b)
+bool equalIgnoringCase(const char* a, const StringImpl* b)
 {
     if (!a)
         return !b;
     if (!b)
         return !a;
 
-    uint length = b->l;
+    unsigned length = b->l;
     const QChar* bs = b->s;
-    for (uint i = 0; i != length; ++i) {
+    for (unsigned i = 0; i != length; ++i) {
         char c = a[i];
         if (!c)
             return false;
@@ -731,7 +725,7 @@ const unsigned PHI = 0x9e3779b9U;
 
 // Paul Hsieh's SuperFastHash
 // http://www.azillionmonkeys.com/qed/hash.html
-unsigned DOMStringImpl::computeHash(const QChar *s, unsigned len)
+unsigned StringImpl::computeHash(const QChar* s, unsigned len)
 {
     unsigned l = len;
     uint32_t hash = PHI;
@@ -774,7 +768,7 @@ unsigned DOMStringImpl::computeHash(const QChar *s, unsigned len)
 
 // Paul Hsieh's SuperFastHash
 // http://www.azillionmonkeys.com/qed/hash.html
-unsigned DOMStringImpl::computeHash(const char *s)
+unsigned StringImpl::computeHash(const char* s)
 {
     // This hash is designed to work on 16-bit chunks at a time. But since the normal case
     // (above) is to hash UTF-16 characters, we just treat the 8-bit chars as if they
@@ -819,10 +813,10 @@ unsigned DOMStringImpl::computeHash(const char *s)
     return hash;
 }
 
-const char *DOMStringImpl::ascii() const
+const char* StringImpl::ascii() const
 {
-    char *buffer = new char[l + 1];
-    char *p = buffer;
+    char* buffer = new char[l + 1];
+    char* p = buffer;
     for (unsigned i = 0; i != l; ++i) {
         unsigned short c = s[i].unicode();
         if (c >= 0x20 && c < 0x7F)
@@ -834,10 +828,10 @@ const char *DOMStringImpl::ascii() const
     return buffer;
 }
 
-} // namespace DOM
+} // namespace WebCore
 
 namespace KXMLCore {
 
-const RefPtr<DOM::DOMStringImpl> HashTraits<RefPtr<DOM::DOMStringImpl> >::_deleted = new DOM::DOMStringImpl(reinterpret_cast<char *>(0), 0);
+const RefPtr<WebCore::StringImpl> HashTraits<RefPtr<WebCore::StringImpl> >::_deleted = new WebCore::StringImpl(static_cast<char*>(0), 0);
 
 }

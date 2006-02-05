@@ -26,7 +26,7 @@
 
 #include "Color.h"
 
-#include <kdom/core/DOMStringImpl.h>
+#include "StringImpl.h"
 #include "css_valueimpl.h"
 
 namespace KDOM

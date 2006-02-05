@@ -51,8 +51,8 @@
 #include "SVGRenderStyle.h"
 #include <ksvg2/svg/SVGStyledElementImpl.h>
 
-#include <kdom/DOMString.h>
-#include "dom_atomicstring.h"
+#include "PlatformString.h"
+#include "AtomicString.h"
 #include "htmlnames.h"
 
 #include <qtextstream.h>

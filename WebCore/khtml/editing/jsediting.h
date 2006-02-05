@@ -26,7 +26,7 @@
 #ifndef jsediting_h__
 #define jsediting_h__
 
-#include "dom_string.h"
+#include "PlatformString.h"
 
 class QString;
 

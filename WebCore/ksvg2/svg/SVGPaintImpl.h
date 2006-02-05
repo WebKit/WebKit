@@ -24,7 +24,7 @@
 #define KSVG_SVGPaintImpl_H
 #if SVG_SUPPORT
 
-#include <kdom/DOMString.h>
+#include "PlatformString.h"
 
 #include <SVGColorImpl.h>
 

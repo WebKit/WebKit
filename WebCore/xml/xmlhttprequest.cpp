@@ -28,7 +28,7 @@
 #include "dom2_events.h"
 #include "dom2_eventsimpl.h"
 #include "dom_exception.h"
-#include "dom_string.h"
+#include "PlatformString.h"
 #include "formdata.h"
 #include "html_documentimpl.h"
 #include "kjs_binding.h"

@@ -30,7 +30,7 @@
 #include "KWQObject.h"
 #include "KWQString.h"
 #include "KWQKURL.h"
-#include "dom_string.h"
+#include "PlatformString.h"
 
 #ifdef __OBJC__
 @class KWQResourceLoader;

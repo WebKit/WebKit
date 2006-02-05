@@ -24,7 +24,7 @@
 #if SVG_SUPPORT
 #include <kdom/core/domattrs.h>
 #include <kdom/core/AttrImpl.h>
-#include <kdom/core/DOMStringImpl.h>
+#include "StringImpl.h"
 
 #include "ksvg.h"
 #include "SVGNames.h"

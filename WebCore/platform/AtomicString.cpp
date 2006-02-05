@@ -1,7 +1,7 @@
 /*
  * This file is part of the DOM implementation for KDE.
  *
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,44 +29,43 @@
 #define KHTML_ATOMICSTRING_HIDE_GLOBALS 1
 
 #include "config.h"
-#include "dom_atomicstring.h"
-#include "xml/dom_stringimpl.h"
+#include "AtomicString.h"
+
 #include <kxmlcore/HashSet.h>
 
 namespace DOM {
    
-static HashSet<DOMStringImpl *> stringTable;
+static HashSet<StringImpl*>* stringTable;
 
 struct CStringTranslator 
 {
     static unsigned hash(const char* c)
     {
-        return DOMStringImpl::computeHash(c);
+        return StringImpl::computeHash(c);
     }
 
-    static bool equal(DOMStringImpl *r, const char *s)
+    static bool equal(StringImpl* r, const char* s)
     {
         int length = r->l;
-        const QChar *d = r->s;
+        const QChar* d = r->s;
         for (int i = 0; i != length; ++i)
             if (d[i] != s[i])
                 return false;
         return s[length] == 0;
     }
 
-    static void translate(DOMStringImpl *& location, const char* const& c, unsigned hash)
+    static void translate(StringImpl*& location, const char* const& c, unsigned hash)
     {
-        DOMStringImpl *r = new DOMStringImpl(c);
+        StringImpl* r = new StringImpl(c);
         r->_hash = hash;
         r->_inTable = true;
-        
         location = r; 
     }
 };
 
-bool operator==(const AtomicString &a, const char *b)
+bool operator==(const AtomicString& a, const char* b)
 { 
-    DOMStringImpl *impl = a.impl();
+    StringImpl* impl = a.impl();
     if ((!impl || !impl->s) && !b)
         return true;
     if ((!impl || !impl->s) || !b)
@@ -74,38 +73,37 @@ bool operator==(const AtomicString &a, const char *b)
     return CStringTranslator::equal(impl, b); 
 }
 
-DOMStringImpl *AtomicString::add(const char *c)
+StringImpl* AtomicString::add(const char* c)
 {
     if (!c)
         return 0;
     int length = strlen(c);
     if (length == 0)
-        return DOMStringImpl::empty();
+        return StringImpl::empty();
     
-    return *stringTable.add<const char *, CStringTranslator>(c).first;
+    return *stringTable->add<const char*, CStringTranslator>(c).first;
 }
 
 struct QCharBuffer {
-    const QChar *s;
+    const QChar* s;
     uint length;
 };
 
-struct QCharBufferTranslator
-{
+struct QCharBufferTranslator {
     static unsigned hash(const QCharBuffer& buf)
     {
-        return DOMStringImpl::computeHash(buf.s, buf.length);
+        return StringImpl::computeHash(buf.s, buf.length);
     }
 
-    static bool equal(DOMStringImpl* const& str, const QCharBuffer &buf)
+    static bool equal(StringImpl* const& str, const QCharBuffer& buf)
     {
         uint strLength = str->l;
         uint bufLength = buf.length;
         if (strLength != bufLength)
             return false;
         
-        const uint32_t *strChars = reinterpret_cast<const uint32_t *>(str->s);
-        const uint32_t *bufChars = reinterpret_cast<const uint32_t *>(buf.s);
+        const uint32_t* strChars = reinterpret_cast<const uint32_t*>(str->s);
+        const uint32_t* bufChars = reinterpret_cast<const uint32_t*>(buf.s);
         
         uint halfLength = strLength >> 1;
         for (uint i = 0; i != halfLength; ++i) {
@@ -120,9 +118,9 @@ struct QCharBufferTranslator
         return true;
     }
 
-    static void translate(DOMStringImpl*& location, const QCharBuffer& buf, unsigned hash)
+    static void translate(StringImpl*& location, const QCharBuffer& buf, unsigned hash)
     {
-        DOMStringImpl *r = new DOMStringImpl(buf.s, buf.length);
+        StringImpl *r = new StringImpl(buf.s, buf.length);
         r->_hash = hash;
         r->_inTable = true;
         
@@ -130,35 +128,35 @@ struct QCharBufferTranslator
     }
 };
 
-DOMStringImpl *AtomicString::add(const QChar *s, int length)
+StringImpl* AtomicString::add(const QChar* s, int length)
 {
     if (!s)
         return 0;
 
     if (length == 0)
-        return DOMStringImpl::empty();
+        return StringImpl::empty();
     
     QCharBuffer buf = {s, length}; 
-    return *stringTable.add<QCharBuffer, QCharBufferTranslator>(buf).first;
+    return *stringTable->add<QCharBuffer, QCharBufferTranslator>(buf).first;
 }
 
-DOMStringImpl *AtomicString::add(DOMStringImpl *r)
+StringImpl* AtomicString::add(StringImpl* r)
 {
     if (!r || r->_inTable)
         return r;
 
     if (r->l == 0)
-        return DOMStringImpl::empty();
+        return StringImpl::empty();
     
-    DOMStringImpl *result = *stringTable.add(r).first;
+    StringImpl* result = *stringTable->add(r).first;
     if (result == r)
         r->_inTable = true;
     return result;
 }
 
-void AtomicString::remove(DOMStringImpl *r)
+void AtomicString::remove(StringImpl* r)
 {
-    stringTable.remove(r);
+    stringTable->remove(r);
 }
 
 // Define an AtomicString-sized array of pointers to avoid static initialization.
@@ -176,6 +174,8 @@ void AtomicString::init()
 {
     static bool initialized;
     if (!initialized) {
+        stringTable = new HashSet<StringImpl*>;
+
         // Use placement new to initialize the globals.
         new (&nullAtom) AtomicString;
         new (&emptyAtom) AtomicString("");

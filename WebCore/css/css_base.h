@@ -24,7 +24,7 @@
 #ifndef CSS_BASE_H
 #define CSS_BASE_H
 
-#include "dom/dom_string.h"
+#include "PlatformString.h"
 #include "dom_qname.h"
 #include "Shared.h"
 #include <qptrlist.h>

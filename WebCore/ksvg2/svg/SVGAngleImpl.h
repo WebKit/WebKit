@@ -25,7 +25,7 @@
 #if SVG_SUPPORT
 
 #include "Shared.h"
-#include <kdom/DOMString.h>
+#include "PlatformString.h"
 
 namespace KSVG
 {

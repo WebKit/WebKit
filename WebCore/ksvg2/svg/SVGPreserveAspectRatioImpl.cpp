@@ -25,7 +25,7 @@
 #include <qstring.h>
 #include <qstringlist.h>
 
-#include <kdom/core/DOMStringImpl.h>
+#include "StringImpl.h"
 
 #include "ksvg.h"
 #include "SVGMatrixImpl.h"

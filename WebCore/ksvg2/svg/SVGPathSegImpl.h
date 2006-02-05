@@ -25,7 +25,7 @@
 #if SVG_SUPPORT
 
 #include "Shared.h"
-#include <kdom/core/DOMStringImpl.h>
+#include "StringImpl.h"
 
 #include "ksvg.h"
 

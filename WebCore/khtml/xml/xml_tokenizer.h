@@ -26,7 +26,7 @@
 
 #include <kxmlcore/HashMap.h>
 #include <qobject.h>
-#include "dom_string.h"
+#include "PlatformString.h"
 
 namespace WebCore {
 

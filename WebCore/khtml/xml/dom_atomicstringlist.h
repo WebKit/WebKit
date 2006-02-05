@@ -22,8 +22,8 @@
 #ifndef _DOM_AtomicStringList_h_
 #define _DOM_AtomicStringList_h_
 
-#include "dom/dom_string.h"
-#include "dom_atomicstring.h"
+#include "PlatformString.h"
+#include "AtomicString.h"
 
 namespace DOM {
 

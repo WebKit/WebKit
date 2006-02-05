@@ -29,7 +29,7 @@
 
 #include <qstring.h>
 #include <qvaluelist.h>
-#include <dom_string.h>
+#include "PlatformString.h"
 
 class QTextCodec;
 

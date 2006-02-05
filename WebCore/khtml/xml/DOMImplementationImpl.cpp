@@ -27,7 +27,7 @@
 #include "DocumentTypeImpl.h"
 #include "html_documentimpl.h"
 
-#include "dom_string.h"
+#include "PlatformString.h"
 #include "dom_exception.h"
 #include "css_stylesheetimpl.h"
 
