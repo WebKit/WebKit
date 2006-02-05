@@ -1749,10 +1749,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\IntPoint.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\platform\IntPoint.h"
 				>
 			</File>
@@ -1770,10 +1766,6 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\IntRect.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\platform\IntSize.cpp"
 				>
 			</File>
 			<File

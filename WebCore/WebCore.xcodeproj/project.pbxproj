@@ -875,7 +875,6 @@
 		BC73E25D0978682700EDFF8A /* FloatSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC73E25B0978682700EDFF8A /* FloatSize.cpp */; };
 		BC73E25E0978682700EDFF8A /* FloatSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BC73E25C0978682700EDFF8A /* FloatSize.h */; };
 		BC73E27409786D3B00EDFF8A /* FloatSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC73E27309786D3B00EDFF8A /* FloatSize.mm */; };
-		BC73E2FE0978AF9C00EDFF8A /* IntPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC73E2FB0978AF9C00EDFF8A /* IntPoint.cpp */; };
 		BC73E2FF0978AF9C00EDFF8A /* IntPointArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC73E2FC0978AF9C00EDFF8A /* IntPointArray.cpp */; };
 		BC73E3000978AF9C00EDFF8A /* IntPointArray.h in Headers */ = {isa = PBXBuildFile; fileRef = BC73E2FD0978AF9C00EDFF8A /* IntPointArray.h */; };
 		BC73E3050978AFB200EDFF8A /* IntPoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC73E3040978AFB200EDFF8A /* IntPoint.mm */; };
@@ -1009,7 +1008,6 @@
 		BCEF3434087B563E00BBF833 /* htmlfactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEF3432087B563E00BBF833 /* htmlfactory.cpp */; };
 		BCEF3435087B563E00BBF833 /* htmlfactory.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEF3433087B563E00BBF833 /* htmlfactory.h */; };
 		BCF1A5F1097839600061A123 /* IntSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF1A5EF097839600061A123 /* IntSize.h */; };
-		BCF1A61C09783BDD0061A123 /* IntSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF1A5EE097839600061A123 /* IntSize.cpp */; };
 		BCFB2E5E0979E46400BA703D /* CachedObjectClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFB2E5D0979E46400BA703D /* CachedObjectClient.h */; };
 		BCFB2E840979FD4F00BA703D /* Shared.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFB2E830979FD4F00BA703D /* Shared.h */; };
 		BCFB2F41097A24B500BA703D /* SegmentedString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCFB2F3F097A24B500BA703D /* SegmentedString.cpp */; };
@@ -1855,7 +1853,6 @@
 		BC73E25B0978682700EDFF8A /* FloatSize.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FloatSize.cpp; path = platform/FloatSize.cpp; sourceTree = "<group>"; };
 		BC73E25C0978682700EDFF8A /* FloatSize.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FloatSize.h; path = platform/FloatSize.h; sourceTree = "<group>"; };
 		BC73E27309786D3B00EDFF8A /* FloatSize.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = FloatSize.mm; path = platform/mac/FloatSize.mm; sourceTree = "<group>"; };
-		BC73E2FB0978AF9C00EDFF8A /* IntPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = IntPoint.cpp; path = platform/IntPoint.cpp; sourceTree = "<group>"; };
 		BC73E2FC0978AF9C00EDFF8A /* IntPointArray.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = IntPointArray.cpp; path = platform/IntPointArray.cpp; sourceTree = "<group>"; };
 		BC73E2FD0978AF9C00EDFF8A /* IntPointArray.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = IntPointArray.h; path = platform/IntPointArray.h; sourceTree = "<group>"; };
 		BC73E3040978AFB200EDFF8A /* IntPoint.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = IntPoint.mm; path = platform/mac/IntPoint.mm; sourceTree = "<group>"; };
@@ -2004,7 +2001,6 @@
 		BCEACC8F0592E0AD009D6AEF /* xbl_docimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = xbl_docimpl.h; path = xbl/xbl_docimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BCEF3432087B563E00BBF833 /* htmlfactory.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = htmlfactory.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BCEF3433087B563E00BBF833 /* htmlfactory.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = htmlfactory.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BCF1A5EE097839600061A123 /* IntSize.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = IntSize.cpp; path = platform/IntSize.cpp; sourceTree = "<group>"; };
 		BCF1A5EF097839600061A123 /* IntSize.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = IntSize.h; path = platform/IntSize.h; sourceTree = "<group>"; };
 		BCFB2E5D0979E46400BA703D /* CachedObjectClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CachedObjectClient.h; path = loader/CachedObjectClient.h; sourceTree = "<group>"; };
 		BCFB2E830979FD4F00BA703D /* Shared.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Shared.h; path = platform/Shared.h; sourceTree = "<group>"; };
@@ -3166,14 +3162,12 @@
 				BC73E3910978CED700EDFF8A /* FloatPoint.h */,
 				BC73E3180978AFFB00EDFF8A /* IntPoint.h */,
 				BC73E3040978AFB200EDFF8A /* IntPoint.mm */,
-				BC73E2FB0978AF9C00EDFF8A /* IntPoint.cpp */,
 				BC73E2FC0978AF9C00EDFF8A /* IntPointArray.cpp */,
 				BC73E2FD0978AF9C00EDFF8A /* IntPointArray.h */,
 				BC73E27309786D3B00EDFF8A /* FloatSize.mm */,
 				BC73E25B0978682700EDFF8A /* FloatSize.cpp */,
 				BC73E25C0978682700EDFF8A /* FloatSize.h */,
 				BC73E2120978546300EDFF8A /* IntSize.mm */,
-				BCF1A5EE097839600061A123 /* IntSize.cpp */,
 				BCF1A5EF097839600061A123 /* IntSize.h */,
 				BCFB2E830979FD4F00BA703D /* Shared.h */,
 				93E62D980985F41600E1B5E3 /* SystemTime.cpp */,
@@ -5352,11 +5346,9 @@
 				A81872240977D3C0005826D9 /* NameNodeListImpl.cpp in Sources */,
 				A81872250977D3C0005826D9 /* ChildNodeListImpl.cpp in Sources */,
 				654EC612097778F500DAB52C /* WebCoreFrameBridge.mm in Sources */,
-				BCF1A61C09783BDD0061A123 /* IntSize.cpp in Sources */,
 				BC73E2130978546300EDFF8A /* IntSize.mm in Sources */,
 				BC73E25D0978682700EDFF8A /* FloatSize.cpp in Sources */,
 				BC73E27409786D3B00EDFF8A /* FloatSize.mm in Sources */,
-				BC73E2FE0978AF9C00EDFF8A /* IntPoint.cpp in Sources */,
 				BC73E2FF0978AF9C00EDFF8A /* IntPointArray.cpp in Sources */,
 				BC73E3050978AFB200EDFF8A /* IntPoint.mm in Sources */,
 				BC73E38E0978CEB300EDFF8A /* FloatPoint.mm in Sources */,

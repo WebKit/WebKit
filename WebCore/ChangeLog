@@ -1,5 +1,23 @@
 2006-02-05  Darin Adler  <darin@apple.com>
 
+        Discussed with Anders (didn't get real review).
+
+        - fix build
+
+        * WebCore+SVG/SVGNamesWrapper.cpp: Touch file, not getting rebuilt even though
+        it includes config.h which changed.
+        * WebCore+SVG/XLinkNamesWrapper.cpp: Ditto.
+
+        * ksvg2/css/KSVGCSSParser.cpp: Added include of config.h.
+        * platform/mac/ImageDecoder.cpp: Ditto.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Removed IntPoint.cpp and IntSize.cpp.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * platform/IntPoint.cpp: Removed. Was empty.
+        * platform/IntSize.cpp: Removed. Was empty.
+
+2006-02-05  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7048
