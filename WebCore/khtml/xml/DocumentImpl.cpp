@@ -1189,20 +1189,14 @@ void DocumentImpl::implicitClose()
         }
     }
     
-    NodeImpl *onloadTarget = body;
-    if (!isHTMLDocument())
-        onloadTarget = documentElement();
-
-    if (onloadTarget) {
-        dispatchImageLoadEventsNow();
-        onloadTarget->dispatchWindowEvent(loadEvent, false, false);
-        if (Frame *p = frame())
-            p->handledOnloadEvents();
+    dispatchImageLoadEventsNow();
+    this->dispatchWindowEvent(loadEvent, false, false);
+    if (Frame *p = frame())
+        p->handledOnloadEvents();
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
-        if (!ownerElement())
-            printf("onload fired at %d\n", elapsedTime());
+    if (!ownerElement())
+        printf("onload fired at %d\n", elapsedTime());
 #endif
-    }
 
     m_processingLoadEvent = false;
 

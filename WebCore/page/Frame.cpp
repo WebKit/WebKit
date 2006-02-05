@@ -325,12 +325,10 @@ void Frame::stopLoading(bool sendUnload)
   }
 
   if (sendUnload) {
-    if ( d->m_doc && d->m_doc->isHTMLDocument() ) {
-      HTMLDocumentImpl* hdoc = static_cast<HTMLDocumentImpl*>( d->m_doc );
-      
-      if ( hdoc->body() && d->m_bLoadEventEmitted && !d->m_bUnloadEventEmitted ) {
-        hdoc->body()->dispatchWindowEvent( unloadEvent, false, false );
-        if ( d->m_doc )
+    if (d->m_doc) {
+      if (d->m_bLoadEventEmitted && !d->m_bUnloadEventEmitted ) {
+        d->m_doc->dispatchWindowEvent(unloadEvent, false, false);
+        if (d->m_doc)
           d->m_doc->updateRendering();
         d->m_bUnloadEventEmitted = true;
       }
@@ -3591,8 +3589,7 @@ void Frame::setWindowHasFocus(bool flag)
     m_windowHasFocus = flag;
     
     if (DocumentImpl *doc = document())
-        if (NodeImpl *body = doc->body())
-            body->dispatchWindowEvent(flag ? focusEvent : blurEvent, false, false);
+        doc->dispatchWindowEvent(flag ? focusEvent : blurEvent, false, false);
 }
 
 QChar Frame::backslashAsCurrencySymbol() const

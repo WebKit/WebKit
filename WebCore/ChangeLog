@@ -1,3 +1,44 @@
+2006-02-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        Re-landed the following with more fixes so it does not break tests:
+
+        - various event cleanup, including fixing of the load event for iframes
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7079
+        
+        Specific changes:
+        
+        - don't bother to nil-check the document, a node can never have a null document now
+        - move temp event forgetting from dispatchEvent to dispatchGenericEvent
+        - pass event down using RefPtr::release() to avoid ref thrashing
+        - support default handlers even for non-bubbling events (only on
+          target node) and skip calling default event handler explicitly in
+          callers
+        - dispatch a whole separate load event to a frame document's containing frame
+        - don't let propagationStopped prevent this new event
+        - remove bogus security check for iframe onload
+        - dispatch window events on the document, not the body, and also for non-html
+        - set onload, onunload, onbeforeunload from frameset tags on the window object
+        - don't restrict load/unload events to HTML
+        - send default handler to the dispatch object as previously
+
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::shouldClose):
+        * khtml/html/html_baseimpl.cpp:
+        (WebCore::HTMLFrameElementImpl::parseMappedAttribute):
+        (WebCore::HTMLFrameSetElementImpl::parseMappedAttribute):
+        * khtml/xml/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::implicitClose):
+        * khtml/xml/NodeImpl.cpp:
+        (WebCore::NodeImpl::dispatchEvent):
+        (WebCore::NodeImpl::dispatchGenericEvent):
+        (WebCore::NodeImpl::dispatchWindowEvent):
+        * khtml/xml/NodeImpl.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::stopLoading):
+        (WebCore::Frame::setWindowHasFocus):
+
 2006-02-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

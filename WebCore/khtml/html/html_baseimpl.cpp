@@ -402,6 +402,7 @@ void HTMLFrameElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     } else if (attr->name() == onloadAttr) {
         setHTMLEventListener(loadEvent, attr);
     } else if (attr->name() == onbeforeunloadAttr) {
+        // FIXME: should <frame> elements have beforeunload handlers?
         setHTMLEventListener(beforeunloadEvent, attr);
     } else if (attr->name() == onunloadAttr) {
         setHTMLEventListener(unloadEvent, attr);
@@ -704,11 +705,11 @@ void HTMLFrameSetElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         if(!m_border)
             frameborder = false;
     } else if (attr->name() == onloadAttr) {
-        setHTMLEventListener(loadEvent, attr);
+        getDocument()->setHTMLWindowEventListener(loadEvent, attr);
     } else if (attr->name() == onbeforeunloadAttr) {
-        setHTMLEventListener(beforeunloadEvent, attr);
+        getDocument()->setHTMLWindowEventListener(beforeunloadEvent, attr);
     } else if (attr->name() == onunloadAttr) {
-        setHTMLEventListener(unloadEvent, attr);
+        getDocument()->setHTMLWindowEventListener(unloadEvent, attr);
     } else
         HTMLElementImpl::parseMappedAttribute(attr);
 }

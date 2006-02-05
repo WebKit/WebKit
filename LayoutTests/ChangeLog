@@ -1,3 +1,24 @@
+2006-02-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        Re-landing test case for:
+        - various event cleanup, including fixing of the load event for iframes
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7079
+
+        * fast/events/iframe-object-onload-expected.txt: Added.
+        * fast/events/iframe-object-onload.html: Added.
+        
+        - changed expected results and description for this test, unload should
+        not fire in this case:
+        
+        * fast/events/onunload-body-property-expected.txt: 
+        * fast/events/onunload-body-property.html:
+        
+        - changed from UTF-16 to ASCII, there was no reason for this to be UTF-16.
+
+        * fast/dom/attr_dead_doc.html:
+
 2006-02-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
