@@ -1,5 +1,10 @@
 2006-02-05  Darin Adler  <darin@apple.com>
 
+        * ksvg2/css/KSVGCSSParser.cpp: Remove config.h, since this is included by another
+        .cpp file -- oops!
+
+2006-02-05  Darin Adler  <darin@apple.com>
+
         Discussed with Anders (didn't get real review).
 
         - fix build
