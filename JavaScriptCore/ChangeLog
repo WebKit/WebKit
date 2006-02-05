@@ -1,3 +1,12 @@
+2006-02-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Hyatt.
+        
+        - fix default traits for classes to make sure default constructors get called
+
+        * kxmlcore/VectorTraits.h:
+        (KXMLCore::):
+
 2006-02-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

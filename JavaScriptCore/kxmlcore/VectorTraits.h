@@ -56,7 +56,7 @@ namespace KXMLCore {
     {
         static const bool needsDestruction = true;
         static const bool needsInitialization = true;
-        static const bool canInitializeWithMemset = true;
+        static const bool canInitializeWithMemset = false;
         static const bool canMoveWithMemcpy = false;
         static const bool canCopyWithMemcpy = false;
         static const bool canFillWithMemset = false;
