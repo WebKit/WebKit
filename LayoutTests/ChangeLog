@@ -1,5 +1,14 @@
 2006-02-05  Darin Adler  <darin@apple.com>
 
+        - rolled out Maciej's event cleanup patch, which is causing problems
+
+        I believe he has a fix, and he'll re-land the patch with the fix later.
+
+        Original fix was <http://bugzilla.opendarwin.org/show_bug.cgi?id=7079>.
+        Problems described in <http://bugzilla.opendarwin.org/show_bug.cgi?id=7084>.
+
+2006-02-05  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7048
