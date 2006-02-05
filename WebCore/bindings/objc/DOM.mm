@@ -266,7 +266,7 @@ static ListenerMap *listenerMap;
 
     int exceptionCode = 0;
     if ([self _nodeImpl]->replaceChild([newChild _nodeImpl], [oldChild _nodeImpl], exceptionCode))
-        return newChild;
+        return oldChild;
     raiseOnDOMError(exceptionCode);
     return nil;
 }

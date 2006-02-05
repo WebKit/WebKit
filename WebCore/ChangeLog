@@ -1,3 +1,13 @@
+2006-02-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed and landed by Anders.
+
+        * bindings/objc/DOM.mm:
+        (-[DOMNode replaceChild::]):
+        (KJS::DOMNodeProtoFunc::callAsFunction):
+        Return correct child. Fixes test case failures introduced by the fix to
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7076
+        
 2006-02-05  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Darin, landed by ap (with a tweak suggested by Darin).
