@@ -4,15 +4,6 @@
 
         * fast/lists/olstart-expected.txt: Updated.
 
-2006-02-03  Darin Adler  <darin@apple.com>
-
-        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5210
-          REGRESSION: for/in loop with var changes global variable instead of making local
-
-        * fast/js/for-in-var-scope.html: Added.
-        * fast/js/resources/for-in-var-scope.js: Added.
-        * fast/js/for-in-var-scope-expected.txt: Added.
-
 2006-02-03  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Darin.
