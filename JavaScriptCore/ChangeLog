@@ -1,3 +1,24 @@
+2006-02-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5210
+          REGRESSION: for/in loop with var changes global variable instead of making local
+
+        Test: fast/js/for-in-var-scope.html
+
+        * kjs/nodes.cpp:
+        (valueForReadModifyAssignment): Use ALWAYS_INLINE macro.
+        (ForInNode::execute): Break out of the scope chain loop once we find and set the
+        loop variable. We don't want to set multiple loop variables.
+        (ForInNode::processVarDecls): Process the declaration of the loop variable.
+
+        - other cleanup
+
+        * kjs/object.cpp: (KJS::tryGetAndCallProperty): Use ALWAYS_INLINE macro.
+        * kxmlcore/FastMalloc.cpp: Change to use ALWAYS_INLINE macro from AlwaysInline.h
+        instead of defining it here a second time.
+
 2006-02-04  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Hyatt.

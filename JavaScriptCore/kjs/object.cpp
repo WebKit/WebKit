@@ -327,11 +327,7 @@ bool JSObject::deleteProperty(ExecState *exec, unsigned propertyName)
   return deleteProperty(exec, Identifier::from(propertyName));
 }
 
-static inline
-#ifdef __GNUC__
-__attribute__((always_inline))
-#endif
-JSValue *tryGetAndCallProperty(ExecState *exec, const JSObject *object, const Identifier &propertyName) {
+static ALWAYS_INLINE JSValue *tryGetAndCallProperty(ExecState *exec, const JSObject *object, const Identifier &propertyName) {
   JSValue *v = object->get(exec, propertyName);
   if (v->isObject()) {
     JSObject *o = static_cast<JSObject*>(v);

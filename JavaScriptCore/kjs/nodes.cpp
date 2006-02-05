@@ -1237,12 +1237,7 @@ JSValue *ConditionalNode::evaluate(ExecState *exec)
 
 // ECMA 11.13
 
-#if __GNUC__
-// gcc refuses to inline this without the always_inline, but inlining it does help
-static inline JSValue *valueForReadModifyAssignment(ExecState * exec, JSValue *v1, JSValue *v2, Operator oper) __attribute__((always_inline));
-#endif
-
-static inline JSValue *valueForReadModifyAssignment(ExecState * exec, JSValue *v1, JSValue *v2, Operator oper)
+static ALWAYS_INLINE JSValue *valueForReadModifyAssignment(ExecState * exec, JSValue *v1, JSValue *v2, Operator oper)
 {
   JSValue *v;
   int i1;
@@ -1859,9 +1854,10 @@ Completion ForInNode::execute(ExecState *exec)
         JSObject *o;
         do { 
             o = *iter;
-            if (o->getPropertySlot(exec, ident, slot))
+            if (o->getPropertySlot(exec, ident, slot)) {
                 o->put(exec, ident, str);
-            
+                break;
+            }
             ++iter;
         } while (iter != end);
         
@@ -1915,6 +1911,8 @@ Completion ForInNode::execute(ExecState *exec)
 
 void ForInNode::processVarDecls(ExecState *exec)
 {
+  if (varDecl)
+    varDecl->processVarDecls(exec);
   statement->processVarDecls(exec);
 }
 

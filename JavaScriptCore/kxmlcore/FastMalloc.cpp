@@ -95,7 +95,7 @@ void *fastRealloc(void* p, size_t n)
     return realloc(p, n);
 }
 
-#ifndef WIN32
+#if !WIN32
 void fastMallocRegisterThread(pthread_t thread) 
 {
 }
@@ -105,32 +105,27 @@ void fastMallocRegisterThread(pthread_t thread)
 
 #else
 
-#include <new>
-#include <stdio.h>
-#include <stddef.h>
-#if defined HAVE_STDINT_H
+#if HAVE_STDINT_H
 #include <stdint.h>
-#elif defined HAVE_INTTYPES_H
+#elif HAVE_INTTYPES_H
 #include <inttypes.h>
 #else
 #include <sys/types.h>
 #endif
-#include <string.h>
-#include <pthread.h>
-#include <unistd.h>
-#include <errno.h>
-#include <stdarg.h>
-#include "TCSpinLock.h"
-#include "TCPageMap.h"
-#include "TCSystemAlloc.h"
 
+#include "AlwaysInline.h"
 #include "Assertions.h"
-
-#ifdef __GNUC__
-#define ALWAYS_INLINE inline __attribute__((always_inline))
-#else
-#define ALWAYS_INLINE inline
-#endif
+#include "TCPageMap.h"
+#include "TCSpinLock.h"
+#include "TCSystemAlloc.h"
+#include <errno.h>
+#include <new>
+#include <pthread.h>
+#include <stdarg.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
 
 #if KXC_CHANGES
 namespace KXMLCore {
