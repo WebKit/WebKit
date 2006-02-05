@@ -2,6 +2,16 @@
 
         Reviewed by Maciej.
 
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6908
+          REGRESSION: Replacing existing <option> shuffles it to the end of the list
+
+        * fast/forms/select-replace-option.html: Added.
+        * fast/forms/select-replace-option-expected.txt: Added.
+
+2006-02-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6962
           REGRESSION: www.usa.phillips.com crashes due to <param> with no name
 
