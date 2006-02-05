@@ -850,7 +850,7 @@ void RenderPartObject::updateWidget()
                       serviceType = serviceType.left(pos);
                   }
               }
-              if (!embed) {
+              if (!embed && !name.isEmpty()) {
                   uniqueParamNames.add(p->name().impl());
                   paramNames.append(p->name().qstring());
                   paramValues.append(p->value().qstring());
