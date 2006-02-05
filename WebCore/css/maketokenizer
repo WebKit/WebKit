@@ -53,15 +53,6 @@ while (<>) {
     print;
 }
 
-# media query, tokenizer state support
-while (<>) {
-  last if /yytext/;
-}
-while (<>) {
-  last if not (/define/ || /line/) ;
-  print;
-}
-
 while (<>) {
     last if /^YY_DECL/;
 }

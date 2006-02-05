@@ -1,3 +1,49 @@
+2006-02-04  Maciej Stachowiak  <mjs@apple.com>
+
+        - reverted CSS media queries patch, as it causes random crashes on the
+        layout tests with a debug build.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/css_grammar.y:
+        * css/css_mediaqueryeval.cpp: Removed.
+        * css/css_mediaqueryeval.h: Removed.
+        * css/css_mediaqueryimpl.cpp: Removed.
+        * css/css_mediaqueryimpl.h: Removed.
+        * css/css_stylesheetimpl.cpp:
+        (MediaListImpl::MediaListImpl):
+        (MediaListImpl::contains):
+        (MediaListImpl::deleteMedium):
+        (MediaListImpl::mediaText):
+        (MediaListImpl::setMediaText):
+        * css/css_stylesheetimpl.h:
+        (DOM::MediaListImpl::length):
+        (DOM::MediaListImpl::item):
+        (DOM::MediaListImpl::appendMedium):
+        * css/css_valueimpl.h:
+        * css/csshelper.h:
+        * css/cssmediafeatures.in: Removed.
+        * css/cssparser.cpp:
+        * css/cssparser.h:
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::CSSStyleSelector::init):
+        (WebCore::CSSStyleSelector::~CSSStyleSelector):
+        (WebCore::CSSStyleSelector::loadDefaultStyle):
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::styleRulesForElement):
+        (WebCore::CSSRuleSet::addRulesFromSheet):
+        (WebCore::CSSStyleSelector::getColorFromPrimitiveValue):
+        * css/cssstyleselector.h:
+        * css/makemediafeatures: Removed.
+        * css/maketokenizer:
+        * css/tokenizer.flex:
+        * khtml/html/html_headimpl.cpp:
+        (WebCore::HTMLLinkElementImpl::process):
+        (WebCore::HTMLLinkElementImpl::setStyleSheet):
+        (WebCore::HTMLStyleElementImpl::childrenChanged):
+        * platform/Screen.h:
+        * platform/mac/Screen.mm:
+
 2006-02-04  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed and tweaked by Darin.

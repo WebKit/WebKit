@@ -40,8 +40,6 @@ namespace DOM {
     class CSSMutableStyleDeclarationImpl;
     class CSSProperty;
     class CSSRuleListImpl;
-    class MediaListImpl;
-    class MediaQueryImpl;
 
 
     struct ParseString {
@@ -115,7 +113,6 @@ namespace DOM {
         static RGBA32 CSSParser::parseColor( const DOM::DOMString &string );
 	bool parseColor( DOM::CSSMutableStyleDeclarationImpl *declaration, const DOM::DOMString &string );
 	bool parseDeclaration( DOM::CSSMutableStyleDeclarationImpl *decls, const DOM::DOMString &string );
-    bool parseMediaQuery( DOM::MediaListImpl *queries, const DOM::DOMString &string );
 
 	static CSSParser *current() { return currentParser; }
 
@@ -172,7 +169,6 @@ namespace DOM {
 	int id;
 	DOM::StyleListImpl *styleElement;
 	DOM::CSSRuleImpl *rule;
-    DOM::MediaQueryImpl *mediaQuery;
 	ValueList *valueList;
 	CSSProperty **parsedProperties;
 	int numParsedProperties;

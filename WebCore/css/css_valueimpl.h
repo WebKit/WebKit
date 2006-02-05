@@ -28,6 +28,8 @@
 #include "CachedObjectClient.h"
 #include <qvaluelist.h>
 
+class QPaintDeviceMetrics;
+
 namespace khtml {
     class RenderStyle;
     class CachedImage;

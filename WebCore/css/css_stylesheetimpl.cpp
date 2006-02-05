@@ -34,8 +34,6 @@
 #include "css/css_valueimpl.h"
 #include "css/cssparser.h"
 #include "css/css_stylesheetimpl.h"
-#include "css/css_mediaqueryeval.h"
-#include "cssmediafeatures.h"
 
 #include "html/html_documentimpl.h"
 #include "loader.h"
@@ -334,15 +332,19 @@ MediaListImpl::MediaListImpl( CSSStyleSheetImpl *parentSheet,
                               const DOMString &media )
     : StyleBaseImpl( parentSheet )
 {
-    m_lstQueries.setAutoDelete(true);
     setMediaText( media );
 }
 
 MediaListImpl::MediaListImpl( CSSRuleImpl *parentRule, const DOMString &media )
     : StyleBaseImpl(parentRule)
 {
-    m_lstQueries.setAutoDelete(true);
     setMediaText( media );
+}
+
+bool MediaListImpl::contains( const DOMString &medium ) const
+{
+    return m_lstMedia.count() == 0 || m_lstMedia.contains( medium ) ||
+            m_lstMedia.contains( "all" );
 }
 
 CSSStyleSheetImpl *MediaListImpl::parentStyleSheet() const
@@ -357,103 +359,33 @@ CSSRuleImpl *MediaListImpl::parentRule() const
 
 void MediaListImpl::deleteMedium( const DOMString &oldMedium )
 {
-    MediaListImpl tempMediaList;
-    CSSParser p(true);
-
-    if (p.parseMediaQuery(&tempMediaList, oldMedium)) {
-        const MediaQueryImpl* oldQuery = QPtrListIterator<MediaQueryImpl>(*tempMediaList.mediaQueries()).current();
-
-        QPtrListIterator<MediaQueryImpl> q_it(m_lstQueries);
-        for(MediaQueryImpl* query = q_it.current(); query; query = ++q_it) {
-            if (*query == *oldQuery) {
-                m_lstQueries.remove(query);
-                break;
-            }
+    for ( QValueList<DOMString>::Iterator it = m_lstMedia.begin(); it != m_lstMedia.end(); ++it ) {
+        if ((*it) == oldMedium) {
+            m_lstMedia.remove( it );
+            return;
         }
-    } else {
-        // XXX: throw DOM exception
     }
-}
-
-static DOM::DOMString mediaQueryAsDOMString(const MediaQueryImpl* query)
-{
-    DOM::DOMString text;
-    switch (query->restrictor()) {
-        case MediaQueryImpl::Only:
-            text += "only ";
-            break;
-        case MediaQueryImpl::Not:
-            text += "not ";
-            break;
-        default:
-            break;
-    }
-    text += query->mediaType();
-    QPtrListIterator<MediaQueryExpImpl> exp_it(*query->expressions()->list());
-    for (MediaQueryExpImpl* exp = exp_it.current(); exp; exp = ++exp_it) {
-        text += " and (";
-        text += getMediaFeatureName(exp->mediaFeature());
-        if (exp->value()) {
-            text += ": ";
-            text += exp->value()->cssText();
-        }
-        text += ")";
-    }
-    return text;
 }
 
 DOM::DOMString MediaListImpl::mediaText() const
 {
-    DOMString text;
-    QPtrListIterator<MediaQueryImpl> q_it(m_lstQueries);
-    bool first = true;
-    for (MediaQueryImpl* query = q_it.current(); query; query = ++q_it) {
-        if (!first)
+    DOMString text = "";
+    for (QValueList<DOMString>::ConstIterator it = m_lstMedia.begin(); it != m_lstMedia.end(); ++it) {
+        if (text.length() > 0)
             text += ", ";
-        else
-            first = false;
-        text += mediaQueryAsDOMString(query);
+        text += *it;
     }
     return text;
 }
 
 void MediaListImpl::setMediaText(const DOM::DOMString &value)
 {
-    CSSParser p(true);
-    m_lstQueries.clear();
-
-    QStringList list = QStringList::split(',', value.qstring());
-    for (QStringList::Iterator it = list.begin(); it != list.end(); ++it) {
+    m_lstMedia.clear();
+    QStringList list = QStringList::split( ',', value.qstring() );
+    for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
+    {
         DOMString medium = (*it).stripWhiteSpace();
-        if (medium != "") {
-            if (!p.parseMediaQuery( this, medium )) {
-                // FAIL
-                // XXX: throw DOM exception
-            }
-        }
+        if (!medium.isEmpty())
+            m_lstMedia.append( medium );
     }
-}
-
-DOM::DOMString MediaListImpl::item(unsigned long index) const
-{
-    // XXX: inefficient and ugly! QPtrList doesn't have at() const
-    QPtrListIterator<MediaQueryImpl> q_it(m_lstQueries);
-    MediaQueryImpl* query = q_it.current();
-    for (; query && index; query = ++q_it) --index;
-    if (query)
-        return mediaQueryAsDOMString(query);
-    return DOM::DOMString();
-}
-
-void MediaListImpl::appendMedium(const DOM::DOMString &newMedium)
-{
-    CSSParser p(true);
-    if (!p.parseMediaQuery(this, newMedium)) {
-        // XXX: throw dom exception
-    }
-}
-
-void MediaListImpl::appendMediaQuery(MediaQueryImpl* mediaQuery)
-{
-    m_lstQueries.append(mediaQuery);
 }

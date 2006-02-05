@@ -33,8 +33,6 @@ namespace WebCore {
     class IntRect;
 
     int screenDepth(QWidget*);
-    int screenDepthPerComponent(QWidget*);
-    bool screenIsMonochrome(QWidget*);
     IntRect screenRect(QWidget*);
     IntRect usableScreenRect(QWidget*);
 

@@ -43,7 +43,6 @@
 #include "css/cssstyleselector.h"
 #include "css/css_stylesheetimpl.h"
 #include "css/csshelper.h"
-#include "css/css_mediaqueryeval.h"
 #include "htmlnames.h"
 
 #include <kurl.h>
@@ -237,10 +236,7 @@ void HTMLLinkElementImpl::process()
         // no need to load style sheets which aren't for the screen output
         // ### there may be in some situations e.g. for an editor or script to manipulate
 	// also, don't load style sheets for standalone documents
-        MediaQueryEvaluator allEval(true), screenEval("screen", true), printEval("print", true);
-        MediaListImpl* media = new MediaListImpl();
-        media->setMediaText( m_media );
-        if (allEval.eval(media) || screenEval.eval(media) || printEval.eval(media)) {
+        if (m_media.isNull() || m_media.contains("screen") || m_media.contains("all") || m_media.contains("print")) {
             m_loading = true;
 
             // Add ourselves as a pending sheet, but only if we aren't an alternate 
@@ -254,8 +250,6 @@ void HTMLLinkElementImpl::process()
             m_cachedSheet = getDocument()->docLoader()->requestStyleSheet(m_url, chset);
             if (m_cachedSheet)
                 m_cachedSheet->ref(this);
-        } else {
-            delete media;
         }
     }
     else if (m_sheet) {
@@ -282,9 +276,9 @@ void HTMLLinkElementImpl::setStyleSheet(const DOM::DOMString &url, const DOM::DO
     m_sheet = new CSSStyleSheetImpl(this, url);
     m_sheet->parseString(sheetStr, !getDocument()->inCompatMode());
 
-    MediaListImpl* media = new MediaListImpl(m_sheet.get(), m_media);
+    MediaListImpl *media = new MediaListImpl(m_sheet.get(), m_media);
     m_sheet->setMedia( media );
-    
+
     m_loading = false;
 
     // Tell the doc about the sheet.
@@ -756,23 +750,16 @@ void HTMLStyleElementImpl::childrenChanged()
         m_sheet = 0;
     }
 
-    m_loading = false;    
-    if ((m_type.isEmpty() || m_type == "text/css")) {// Type must be empty or CSS
-        MediaListImpl* media = new MediaListImpl();
-        media->setMediaText(m_media);
-        MediaQueryEvaluator allEval(true), screenEval("screen", true),  printEval("print", true);
-        if (allEval.eval(media) || screenEval.eval(media) || printEval.eval(media)) {
-            getDocument()->addPendingSheet();
-            m_loading = true;
-            m_sheet = new CSSStyleSheetImpl(this);
-            m_sheet->ref();
-            m_sheet->parseString(text, !getDocument()->inCompatMode());
-            media->setParent(m_sheet.get());
-            m_sheet->setMedia(media);
-            m_loading = false;
-        } else {
-            delete media;
-        }
+    m_loading = false;
+    if ((m_type.isEmpty() || m_type == "text/css") // Type must be empty or CSS
+         && (m_media.isNull() || m_media.contains("screen") || m_media.contains("all") || m_media.contains("print"))) {
+        getDocument()->addPendingSheet();
+        m_loading = true;
+        m_sheet = new CSSStyleSheetImpl(this);
+        m_sheet->parseString(text, !getDocument()->inCompatMode());
+        MediaListImpl *media = new MediaListImpl(m_sheet.get(), m_media);
+        m_sheet->setMedia(media);
+        m_loading = false;
     }
 
     if (!isLoading() && m_sheet)

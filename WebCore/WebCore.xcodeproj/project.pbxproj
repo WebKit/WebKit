@@ -12,10 +12,6 @@
 		1A69D381085627410009880D /* domparser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A69D37F085627410009880D /* domparser.h */; };
 		1A69D382085627410009880D /* domparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A69D380085627410009880D /* domparser.cpp */; };
 		1ADB5699098827AD0032EEE2 /* JSEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ADB5698098827AD0032EEE2 /* JSEvents.cpp */; };
-		47E4D99E09937047006A96C7 /* css_mediaqueryeval.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47E4D99A09937047006A96C7 /* css_mediaqueryeval.cpp */; };
-		47E4D99F09937047006A96C7 /* css_mediaqueryeval.h in Headers */ = {isa = PBXBuildFile; fileRef = 47E4D99B09937047006A96C7 /* css_mediaqueryeval.h */; };
-		47E4D9A009937047006A96C7 /* css_mediaqueryimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47E4D99C09937047006A96C7 /* css_mediaqueryimpl.cpp */; };
-		47E4D9A109937047006A96C7 /* css_mediaqueryimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 47E4D99D09937047006A96C7 /* css_mediaqueryimpl.h */; };
 		550A0BC9085F6039007353D6 /* dom_qname.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* dom_qname.cpp */; };
 		550A0BCA085F6039007353D6 /* dom_qname.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* dom_qname.h */; };
 		550A0BCD085F604D007353D6 /* htmlnames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BCB085F604D007353D6 /* htmlnames.cpp */; };
@@ -1098,10 +1094,6 @@
 		2D90660B0665D937006B6F1A /* KWQClipboard.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQClipboard.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D90660C0665D937006B6F1A /* KWQClipboard.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQClipboard.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		4758C44308C5F217009BAF05 /* KCanvasPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasPath.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		47E4D99A09937047006A96C7 /* css_mediaqueryeval.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = css_mediaqueryeval.cpp; sourceTree = "<group>"; };
-		47E4D99B09937047006A96C7 /* css_mediaqueryeval.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = css_mediaqueryeval.h; sourceTree = "<group>"; };
-		47E4D99C09937047006A96C7 /* css_mediaqueryimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = css_mediaqueryimpl.cpp; sourceTree = "<group>"; };
-		47E4D99D09937047006A96C7 /* css_mediaqueryimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = css_mediaqueryimpl.h; sourceTree = "<group>"; };
 		5150C2A10702629000AF642C /* WebDashboardRegion.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDashboardRegion.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5150C2A50702629800AF642C /* WebDashboardRegion.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebDashboardRegion.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51F6A3D50663BF04004D2919 /* html_canvasimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = html_canvasimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3347,10 +3339,6 @@
 		F523D18402DE42E8018635CA /* css */ = {
 			isa = PBXGroup;
 			children = (
-				47E4D99A09937047006A96C7 /* css_mediaqueryeval.cpp */,
-				47E4D99B09937047006A96C7 /* css_mediaqueryeval.h */,
-				47E4D99C09937047006A96C7 /* css_mediaqueryimpl.cpp */,
-				47E4D99D09937047006A96C7 /* css_mediaqueryimpl.h */,
 				BCEA477A097CAAC80094C9E4 /* css_base.cpp */,
 				BCEA477B097CAAC80094C9E4 /* css_base.h */,
 				BCEA477C097CAAC80094C9E4 /* css_computedstyle.cpp */,
@@ -4367,8 +4355,6 @@
 				BC6B7A9809933F2E0052867B /* ImageDecoder.h in Headers */,
 				BC6B7B3C099355460052867B /* ImageData.h in Headers */,
 				BC6B7BBC0993611A0052867B /* PDFDocumentImage.h in Headers */,
-				47E4D99F09937047006A96C7 /* css_mediaqueryeval.h in Headers */,
-				47E4D9A109937047006A96C7 /* css_mediaqueryimpl.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4380,7 +4366,6 @@
 			buildConfigurationList = 149C283908902B11008A9EFC /* Build configuration list for PBXNativeTarget "WebCore" */;
 			buildPhases = (
 				932FC2C70824B485005B3C75 /* cssproperties.c/h */,
-				47E4D99809936F1B006A96C7 /* cssmediafeatures.c/h */,
 				932FC2BC0824B422005B3C75 /* cssvalues.c/h */,
 				932FC0B70824A175005B3C75 /* doctypes.cpp */,
 				93EA686C08249AF400687F56 /* kentities.c */,
@@ -4571,24 +4556,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "/usr/bin/perl -I\"$SRCROOT/bindings/scripts\" \"$SRCROOT/bindings/scripts/generate-bindings.pl\" --generator JS --idldir \"$SRCROOT/khtml/xml\" --outputdir \"$DERIVED_FILE_DIR\"\n";
-		};
-		47E4D99809936F1B006A96C7 /* cssmediafeatures.c/h */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				css/cssmediafeatures.in,
-				css/makemediafeatures,
-			);
-			name = cssmediafeatures.c/h;
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/cssmediafeatures.h",
-				"$(DERIVED_FILE_DIR)/cssmediafeatures.c",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "cat css/cssmediafeatures.in > \"$DERIVED_FILE_DIR/cssmediafeatures.in\"\ncd \"$DERIVED_FILE_DIR\"\nsh \"$SRCROOT/css/makemediafeatures\"";
 		};
 		932FC0B70824A175005B3C75 /* doctypes.cpp */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5492,8 +5459,6 @@
 				BC6B7B4E0993578B0052867B /* ImageData.mm in Sources */,
 				BC6B7BAF0993603C0052867B /* Image.cpp in Sources */,
 				BC6B7BC3099361560052867B /* PDFDocumentImage.mm in Sources */,
-				47E4D99E09937047006A96C7 /* css_mediaqueryeval.cpp in Sources */,
-				47E4D9A009937047006A96C7 /* css_mediaqueryimpl.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

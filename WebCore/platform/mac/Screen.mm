@@ -50,22 +50,6 @@ int screenDepth(QWidget* widget)
     return [screen(widget) depth];
 }
 
-int screenDepthPerComponent(QWidget* widget)
-{
-   return NSBitsPerSampleFromDepth([screen(widget) depth]);
-}
-
-bool screenIsMonochrome(QWidget* widget)
-{
-    NSScreen* s = screen(widget);
-    NSDictionary* dd = [s deviceDescription];
-    NSString* colorSpaceName = [dd objectForKey:NSDeviceColorSpaceName];
-    // XXX: can named colorspace or custom colorspace be monochrome?
-    // XXX: will NS*BlackColorSpace or NS*WhiteColorSpace be always monochrome?
-    return colorSpaceName == NSCalibratedWhiteColorSpace || colorSpaceName == NSCalibratedBlackColorSpace || 
-        colorSpaceName == NSDeviceWhiteColorSpace || colorSpaceName == NSDeviceBlackColorSpace;
-}
-
 IntRect screenRect(QWidget* widget)
 {
     return enclosingIntRect(flipGlobalRect([screen(widget) frame]));
