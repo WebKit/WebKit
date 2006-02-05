@@ -1,5 +1,17 @@
 2006-02-05  Darin Adler  <darin@apple.com>
 
+        Reviewed by NOBODY (OOPS!).
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6908
+          REGRESSION: Replacing existing <option> shuffles it to the end of the list
+
+        Test: fast/forms/select-replace-option.html
+
+        * khtml/ecma/kjs_html.cpp: (KJS::KJS::HTMLSelectCollection::put):
+        Use optionsHTMLCollection, because options isn't really implemented yet.
+
+2006-02-05  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6941
