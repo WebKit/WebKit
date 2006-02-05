@@ -1,5 +1,18 @@
 2006-02-05  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7048
+          Reproducible crash when onscroll handler deletes the layer or its object
+
+        Test: onscroll-layer-self-destruct.html
+
+        * rendering/render_layer.cpp: (WebCore::RenderLayer::scrollToOffset):
+        Don't send the scroll event until after we've done everything else we
+        need to do.
+
+2006-02-05  Darin Adler  <darin@apple.com>
+
         Rubber stamped by Maciej.
 
         - renamed DOMString and DOMStringImpl to String and StringImpl, and moved into platform
