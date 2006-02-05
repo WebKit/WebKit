@@ -495,12 +495,31 @@ bool NodeImpl::dispatchEvent(PassRefPtr<EventImpl> e, int &exceptioncode, bool t
     }
     evt->setTarget(this);
 
-    RefPtr<FrameView> view = getDocument()->view();
+    // We've had at least one report of a crash on a page where document is null here.
+    // Unfortunately that page no longer exists, but we'll make this code robust against
+    // that anyway.
+    // FIXME: Much code in this class assumes document is non-null; it would be better to
+    // ensure that document can never be null.
+    Frame *frame = 0;
+    RefPtr<FrameView> view;
 
-    return dispatchGenericEvent(evt.release(), exceptioncode, tempEvent);
+    if (DocumentImpl *doc = getDocument()) {
+        frame = doc->frame();
+        view = doc->view();
+    }
+
+    bool ret = dispatchGenericEvent(evt, exceptioncode);
+
+    // If tempEvent is true, this means that the DOM implementation will not be storing a reference to the event, i.e.
+    // there is no way to retrieve it from javascript if a script does not already have a reference to it in a variable.
+    // So there is no need for the interpreter to keep the event in it's cache
+    if (tempEvent && frame && frame->jScript())
+        frame->jScript()->finishedWithEvent(evt.get());
+
+    return ret;
 }
 
-bool NodeImpl::dispatchGenericEvent(PassRefPtr<EventImpl> e, int &/*exceptioncode */, bool tempEvent)
+bool NodeImpl::dispatchGenericEvent(PassRefPtr<EventImpl> e, int &/*exceptioncode */)
 {
     RefPtr<EventImpl> evt(e);
     assert(!eventDispatchForbidden());
@@ -516,6 +535,7 @@ bool NodeImpl::dispatchGenericEvent(PassRefPtr<EventImpl> e, int &/*exceptioncod
         nodeChain.prepend(n);
     }
 
+    
     QPtrListIterator<NodeImpl> it(nodeChain);
     
     // Before we begin dispatching events, give the target node a chance to do some work prior
@@ -569,15 +589,11 @@ bool NodeImpl::dispatchGenericEvent(PassRefPtr<EventImpl> e, int &/*exceptioncod
     // Now call the post dispatch.
     postDispatchEventHandler(evt.get(), data);
     
-    // now we call all default event handlers (this is not part of DOM - it is internal to khtml)
-
     if (evt->bubbles()) {
+        // now we call all default event handlers (this is not part of DOM - it is internal to khtml)
+
         it.toLast();
         for (; it.current() && !evt->defaultPrevented() && !evt->defaultHandled(); --it)
-            it.current()->defaultEventHandler(evt.get());
-    } else {
-        it.toFirst();
-        if (!evt->defaultPrevented() && !evt->defaultHandled())
             it.current()->defaultEventHandler(evt.get());
     }
     
@@ -587,15 +603,6 @@ bool NodeImpl::dispatchGenericEvent(PassRefPtr<EventImpl> e, int &/*exceptioncod
         it.current()->deref(); // this may delete us
 
     DocumentImpl::updateDocumentsRendering();
-
-    // If tempEvent is true, this means that the DOM implementation
-    // will not be storing a reference to the event, i.e.  there is no
-    // way to retrieve it from javascript if a script does not already
-    // have a reference to it in a variable.  So there is no need for
-    // the interpreter to keep the event in its cache
-    Frame *frame = getDocument()->frame();
-    if (tempEvent && frame && frame->jScript())
-        frame->jScript()->finishedWithEvent(evt.get());
 
     return !evt->defaultPrevented(); // ### what if defaultPrevented was called before dispatchEvent?
 }
@@ -614,17 +621,29 @@ bool NodeImpl::dispatchWindowEvent(const AtomicString &eventType, bool canBubble
     RefPtr<EventImpl> evt = new EventImpl(eventType, canBubbleArg, cancelableArg);
     RefPtr<DocumentImpl> doc = getDocument();
     evt->setTarget(doc.get());
-    bool r = dispatchGenericEvent(evt.release(), exceptioncode, true);
+    bool r = dispatchGenericEvent(evt, exceptioncode);
+    if (!evt->defaultPrevented() && doc)
+        doc->defaultEventHandler(evt.get());
 
-    if (eventType == loadEvent) {
-        // For onload events, send a separate load event to the enclosing frame only.
+    if (eventType == loadEvent && !evt->propagationStopped() && doc) {
+        // For onload events, send them to the enclosing frame only.
         // This is a DOM extension and is independent of bubbling/capturing rules of
-        // the DOM.
-        ElementImpl* ownerElement = doc->ownerElement();
-        if (ownerElement) {
-            RefPtr<EventImpl> ownerEvent = new EventImpl(eventType, false, cancelableArg);
-            ownerEvent->setTarget(ownerElement);
-            ownerElement->dispatchGenericEvent(ownerEvent.release(), exceptioncode, true);
+        // the DOM.  You send the event only to the enclosing frame.  It does not
+        // bubble through the parent document.
+        ElementImpl* elt = doc->ownerElement();
+        if (elt && (elt->getDocument()->domain().isNull() ||
+                    elt->getDocument()->domain() == doc->domain())) {
+            // We also do a security check, since we don't want to allow the enclosing
+            // iframe to see loads of child documents in other domains.
+            evt->setCurrentTarget(elt);
+
+            // Capturing first.
+            elt->handleLocalEvents(evt.get(), true);
+
+            // Bubbling second.
+            if (!evt->propagationStopped())
+                elt->handleLocalEvents(evt.get(), false);
+            r = !evt->defaultPrevented();
         }
     }
 

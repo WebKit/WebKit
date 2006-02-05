@@ -272,7 +272,7 @@ public:
     void removeAllEventListeners();
 
     bool dispatchEvent(PassRefPtr<EventImpl>, ExceptionCode&, bool tempEvent = false);
-    bool dispatchGenericEvent(PassRefPtr<EventImpl>, ExceptionCode&, bool tempEvent = false);
+    bool dispatchGenericEvent(PassRefPtr<EventImpl>, ExceptionCode&);
     bool dispatchHTMLEvent(const AtomicString& eventType, bool canBubble, bool cancelable);
     bool dispatchWindowEvent(const AtomicString& eventType, bool canBubble, bool cancelable);
     bool dispatchMouseEvent(QMouseEvent*, const AtomicString& overrideType,
