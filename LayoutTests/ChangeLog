@@ -1,3 +1,12 @@
+2006-02-05  Darin Adler  <darin@apple.com>
+
+        - converted three more files from UTF-16 to ASCII that had no reason to be UTF-16
+
+        * fast/dom/resources/top.html: Just straight conversion to ASCII.
+        * fast/events/updateLayoutForHitTest.html: Converted one character to an entity,
+        and reformatted the file a bit.
+        * fast/text/line-breaks.html: Just straight conversion to ASCII.
+
 2006-02-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
