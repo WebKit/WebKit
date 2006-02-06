@@ -335,6 +335,11 @@ JSValue *ElementNode::evaluate(ExecState *exec)
   return array;
 }
 
+void ElementNode::breakCycle() 
+{ 
+    next = 0;
+}
+
 // ------------------------------ ArrayNode ------------------------------------
 
 // ECMA 11.1.4
@@ -400,6 +405,11 @@ JSValue *PropertyListNode::evaluate(ExecState *exec)
   }
 
   return obj;
+}
+
+void PropertyListNode::breakCycle() 
+{ 
+    next = 0;
 }
 
 // ------------------------------ PropertyNode -----------------------------
@@ -473,6 +483,11 @@ List ArgumentListNode::evaluateList(ExecState *exec)
   }
 
   return l;
+}
+
+void ArgumentListNode::breakCycle() 
+{ 
+    next = 0;
 }
 
 // ------------------------------ ArgumentsNode --------------------------------
@@ -1435,7 +1450,8 @@ JSValue *CommaNode::evaluate(ExecState *exec)
 StatListNode::StatListNode(StatementNode *s)
   : statement(s), next(this)
 {
-  setLoc(s->firstLine(), s->lastLine(), s->sourceId());
+    Parser::noteNodeCycle(this);
+    setLoc(s->firstLine(), s->lastLine(), s->sourceId());
 }
  
 StatListNode::StatListNode(StatListNode *l, StatementNode *s)
@@ -1473,6 +1489,11 @@ void StatListNode::processVarDecls(ExecState *exec)
 {
   for (StatListNode *n = this; n; n = n->next.get())
     n->statement->processVarDecls(exec);
+}
+
+void StatListNode::breakCycle() 
+{ 
+    next = 0;
 }
 
 // ------------------------------ AssignExprNode -------------------------------
@@ -1557,6 +1578,11 @@ void VarDeclListNode::processVarDecls(ExecState *exec)
     n->var->processVarDecls(exec);
 }
 
+void VarDeclListNode::breakCycle() 
+{ 
+    next = 0;
+}
+
 // ------------------------------ VarStatementNode -----------------------------
 
 // ECMA 12.2
@@ -1581,6 +1607,7 @@ BlockNode::BlockNode(SourceElementsNode *s)
 {
   if (s) {
     source = s->next;
+    Parser::removeNodeCycle(source.get());
     s->next = 0;
     setLoc(s->firstLine(), s->lastLine(), s->sourceId());
   } else {
@@ -2034,6 +2061,11 @@ void ClauseListNode::processVarDecls(ExecState *exec)
       n->clause->processVarDecls(exec);
 }
 
+void ClauseListNode::breakCycle() 
+{ 
+    next = 0;
+}
+
 // ------------------------------ CaseBlockNode --------------------------------
 
 CaseBlockNode::CaseBlockNode(ClauseListNode *l1, CaseClauseNode *d,
@@ -2041,6 +2073,7 @@ CaseBlockNode::CaseBlockNode(ClauseListNode *l1, CaseClauseNode *d,
 {
   if (l1) {
     list1 = l1->next;
+    Parser::removeNodeCycle(list1.get());
     l1->next = 0;
   } else {
     list1 = 0;
@@ -2050,6 +2083,7 @@ CaseBlockNode::CaseBlockNode(ClauseListNode *l1, CaseClauseNode *d,
 
   if (l2) {
     list2 = l2->next;
+    Parser::removeNodeCycle(list2.get());
     l2->next = 0;
   } else {
     list2 = 0;
@@ -2236,6 +2270,11 @@ JSValue *ParameterNode::evaluate(ExecState *)
   return jsUndefined();
 }
 
+void ParameterNode::breakCycle() 
+{ 
+    next = 0;
+}
+
 // ------------------------------ FunctionBodyNode -----------------------------
 
 FunctionBodyNode::FunctionBodyNode(SourceElementsNode *s)
@@ -2331,7 +2370,8 @@ int SourceElementsNode::count = 0;
 SourceElementsNode::SourceElementsNode(StatementNode *s1)
   : node(s1), next(this)
 {
-  setLoc(s1->firstLine(), s1->lastLine(), s1->sourceId());
+    Parser::noteNodeCycle(this);
+    setLoc(s1->firstLine(), s1->lastLine(), s1->sourceId());
 }
 
 SourceElementsNode::SourceElementsNode(SourceElementsNode *s1, StatementNode *s2)
@@ -2375,6 +2415,11 @@ void SourceElementsNode::processVarDecls(ExecState *exec)
 {
   for (SourceElementsNode *n = this; n; n = n->next.get())
     n->node->processVarDecls(exec);
+}
+
+void SourceElementsNode::breakCycle() 
+{ 
+    next = 0;
 }
 
 ProgramNode::ProgramNode(SourceElementsNode *s) : FunctionBodyNode(s)

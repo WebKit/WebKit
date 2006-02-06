@@ -95,6 +95,8 @@ namespace KJS {
     virtual bool isDotAccessorNode() const { return false; }
     virtual bool isGroupNode() const { return false; }
 
+    virtual void breakCycle() { }
+
   protected:
     Completion createErrorCompletion(ExecState *, ErrorType, const char *msg);
     Completion createErrorCompletion(ExecState *, ErrorType, const char *msg, const Identifier &);
@@ -220,12 +222,13 @@ namespace KJS {
   class ElementNode : public Node {
   public:
     // list pointer is tail of a circular list, cracked in the ArrayNode ctor
-    ElementNode(int e, Node *n) : next(this), elision(e), node(n) { }
+    ElementNode(int e, Node *n) : next(this), elision(e), node(n) { Parser::noteNodeCycle(this); }
     ElementNode(ElementNode *l, int e, Node *n)
       : next(l->next), elision(e), node(n) { l->next = this; }
     JSValue *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
     PassRefPtr<ElementNode> releaseNext() { return next.release(); }
+    virtual void breakCycle();
   private:
     friend class ArrayNode;
     ListRefPtr<ElementNode> next;
@@ -237,9 +240,9 @@ namespace KJS {
   public:
     ArrayNode(int e) : element(0), elision(e), opt(true) { }
     ArrayNode(ElementNode *ele)
-      : element(ele->next), elision(0), opt(false) { ele->next = 0; }
+      : element(ele->next), elision(0), opt(false) { Parser::removeNodeCycle(element.get()); ele->next = 0; }
     ArrayNode(int eli, ElementNode *ele)
-      : element(ele->next), elision(eli), opt(true) { ele->next = 0; }
+      : element(ele->next), elision(eli), opt(true) { Parser::removeNodeCycle(element.get()); ele->next = 0; }
     JSValue *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
@@ -277,12 +280,13 @@ namespace KJS {
   public:
     // list pointer is tail of a circular list, cracked in the ObjectLiteralNode ctor
     PropertyListNode(PropertyNode *n)
-      : node(n), next(this) { }
+      : node(n), next(this) { Parser::noteNodeCycle(this); }
     PropertyListNode(PropertyNode *n, PropertyListNode *l)
       : node(n), next(l->next) { l->next = this; }
     JSValue *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
     PassRefPtr<PropertyListNode> releaseNext() { return next.release(); }
+    virtual void breakCycle();
   private:
     friend class ObjectLiteralNode;
     RefPtr<PropertyNode> node;
@@ -292,7 +296,7 @@ namespace KJS {
   class ObjectLiteralNode : public Node {
   public:
     ObjectLiteralNode() : list(0) { }
-    ObjectLiteralNode(PropertyListNode *l) : list(l->next) { l->next = 0; }
+    ObjectLiteralNode(PropertyListNode *l) : list(l->next) { Parser::removeNodeCycle(list.get()); l->next = 0; }
     JSValue *evaluate(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
@@ -334,13 +338,14 @@ namespace KJS {
   class ArgumentListNode : public Node {
   public:
     // list pointer is tail of a circular list, cracked in the ArgumentsNode ctor
-    ArgumentListNode(Node *e) : next(this), expr(e) { }
+    ArgumentListNode(Node *e) : next(this), expr(e) { Parser::noteNodeCycle(this); }
     ArgumentListNode(ArgumentListNode *l, Node *e)
       : next(l->next), expr(e) { l->next = this; }
     JSValue *evaluate(ExecState *exec);
     List evaluateList(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
     PassRefPtr<ArgumentListNode> releaseNext() { return next.release(); }
+    virtual void breakCycle();
   private:
     friend class ArgumentsNode;
     ListRefPtr<ArgumentListNode> next;
@@ -351,7 +356,7 @@ namespace KJS {
   public:
     ArgumentsNode() : list(0) { }
     ArgumentsNode(ArgumentListNode *l)
-      : list(l->next) { l->next = 0; }
+      : list(l->next) { Parser::removeNodeCycle(list.get()); l->next = 0; }
     JSValue *evaluate(ExecState *exec);
     List evaluateList(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
@@ -746,6 +751,7 @@ namespace KJS {
     virtual void processVarDecls(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
     PassRefPtr<StatListNode> releaseNext() { return next.release(); }
+    virtual void breakCycle();
   private:
     friend class CaseClauseNode;
     RefPtr<StatementNode> statement;
@@ -777,13 +783,14 @@ namespace KJS {
   class VarDeclListNode : public Node {
   public:
     // list pointer is tail of a circular list, cracked in the ForNode/VarStatementNode ctor
-    VarDeclListNode(VarDeclNode *v) : next(this), var(v) {}
+    VarDeclListNode(VarDeclNode *v) : next(this), var(v) { Parser::noteNodeCycle(this); }
     VarDeclListNode(VarDeclListNode *l, VarDeclNode *v)
       : next(l->next), var(v) { l->next = this; }
     JSValue *evaluate(ExecState *exec);
     virtual void processVarDecls(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
     PassRefPtr<VarDeclListNode> releaseNext() { return next.release(); }
+    virtual void breakCycle();
   private:
     friend class ForNode;
     friend class VarStatementNode;
@@ -793,7 +800,7 @@ namespace KJS {
 
   class VarStatementNode : public StatementNode {
   public:
-    VarStatementNode(VarDeclListNode *l) : next(l->next) { l->next = 0; }
+    VarStatementNode(VarDeclListNode *l) : next(l->next) { Parser::removeNodeCycle(next.get()); l->next = 0; }
     virtual Completion execute(ExecState *exec);
     virtual void processVarDecls(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
@@ -867,7 +874,7 @@ namespace KJS {
     ForNode(Node *e1, Node *e2, Node *e3, StatementNode *s) :
       expr1(e1), expr2(e2), expr3(e3), statement(s) {}
     ForNode(VarDeclListNode *e1, Node *e2, Node *e3, StatementNode *s) :
-      expr1(e1->next), expr2(e2), expr3(e3), statement(s) { e1->next = 0; }
+      expr1(e1->next), expr2(e2), expr3(e3), statement(s) { Parser::removeNodeCycle(expr1.get()); e1->next = 0; }
     virtual Completion execute(ExecState *exec);
     virtual void processVarDecls(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
@@ -938,7 +945,7 @@ namespace KJS {
   public:
     CaseClauseNode(Node *e) : expr(e), next(0) { }
     CaseClauseNode(Node *e, StatListNode *l)
-      : expr(e), next(l->next) { l->next = 0; }
+      : expr(e), next(l->next) { Parser::removeNodeCycle(next.get()); l->next = 0; }
     JSValue *evaluate(ExecState *exec);
     Completion evalStatements(ExecState *exec);
     virtual void processVarDecls(ExecState *exec);
@@ -951,7 +958,7 @@ namespace KJS {
   class ClauseListNode : public Node {
   public:
     // list pointer is tail of a circular list, cracked in the CaseBlockNode ctor
-    ClauseListNode(CaseClauseNode *c) : clause(c), next(this) { }
+    ClauseListNode(CaseClauseNode *c) : clause(c), next(this) { Parser::noteNodeCycle(this); }
     ClauseListNode(ClauseListNode *n, CaseClauseNode *c)
       : clause(c), next(n->next) { n->next = this; }
     JSValue *evaluate(ExecState *exec);
@@ -960,6 +967,7 @@ namespace KJS {
     virtual void processVarDecls(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
     PassRefPtr<ClauseListNode> releaseNext() { return next.release(); }
+    virtual void breakCycle();
   private:
     friend class CaseBlockNode;
     RefPtr<CaseClauseNode> clause;
@@ -1027,7 +1035,7 @@ namespace KJS {
   class ParameterNode : public Node {
   public:
     // list pointer is tail of a circular list, cracked in the FuncDeclNode/FuncExprNode ctor
-    ParameterNode(const Identifier &i) : id(i), next(this) { }
+    ParameterNode(const Identifier &i) : id(i), next(this) { Parser::noteNodeCycle(this); }
     ParameterNode(ParameterNode *next, const Identifier &i)
       : id(i), next(next->next) { next->next = this; }
     JSValue *evaluate(ExecState *exec);
@@ -1035,6 +1043,7 @@ namespace KJS {
     ParameterNode *nextParam() { return next.get(); }
     virtual void streamTo(SourceStream &s) const;
     PassRefPtr<ParameterNode> releaseNext() { return next.release(); }
+    virtual void breakCycle();
   private:
     friend class FuncDeclNode;
     friend class FuncExprNode;
@@ -1052,7 +1061,7 @@ namespace KJS {
   class FuncExprNode : public Node {
   public:
     FuncExprNode(const Identifier &i, FunctionBodyNode *b, ParameterNode *p = 0)
-      : ident(i), param(p ? p->next : 0), body(b) { if (p) p->next = 0; }
+      : ident(i), param(p ? p->next : 0), body(b) { if (p) { Parser::removeNodeCycle(param.get()); p->next = 0; } }
     virtual JSValue *evaluate(ExecState *);
     virtual void streamTo(SourceStream &) const;
   private:
@@ -1068,7 +1077,7 @@ namespace KJS {
     FuncDeclNode(const Identifier &i, FunctionBodyNode *b)
       : ident(i), param(0), body(b) { }
     FuncDeclNode(const Identifier &i, ParameterNode *p, FunctionBodyNode *b)
-      : ident(i), param(p->next), body(b) { p->next = 0; }
+      : ident(i), param(p->next), body(b) { Parser::removeNodeCycle(param.get()); p->next = 0; }
     virtual Completion execute(ExecState *);
     virtual void processFuncDecl(ExecState *);
     virtual void streamTo(SourceStream &) const;
@@ -1091,6 +1100,7 @@ namespace KJS {
     virtual void processVarDecls(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
     PassRefPtr<SourceElementsNode> releaseNext() { return next.release(); }
+    virtual void breakCycle();
   private:
     friend class BlockNode;
     RefPtr<StatementNode> node;

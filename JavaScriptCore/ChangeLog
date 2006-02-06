@@ -1,5 +1,47 @@
 2006-02-05  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Anders.
+        
+        - fixed ~1100 KJS::Node leaked on layout tests
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7097
+
+        * kjs/internal.cpp:
+        (KJS::Parser::noteNodeCycle):
+        (KJS::Parser::removeNodeCycle):
+        (KJS::clearNewNodes):
+        * kjs/internal.h:
+        * kjs/nodes.cpp:
+        (ElementNode::breakCycle):
+        (PropertyListNode::breakCycle):
+        (ArgumentListNode::breakCycle):
+        (StatListNode::StatListNode):
+        (StatListNode::breakCycle):
+        (VarDeclListNode::breakCycle):
+        (BlockNode::BlockNode):
+        (ClauseListNode::breakCycle):
+        (CaseBlockNode::CaseBlockNode):
+        (ParameterNode::breakCycle):
+        (SourceElementsNode::SourceElementsNode):
+        (SourceElementsNode::breakCycle):
+        * kjs/nodes.h:
+        (KJS::Node::breakCycle):
+        (KJS::ElementNode::ElementNode):
+        (KJS::ArrayNode::ArrayNode):
+        (KJS::PropertyListNode::PropertyListNode):
+        (KJS::ObjectLiteralNode::ObjectLiteralNode):
+        (KJS::ArgumentListNode::ArgumentListNode):
+        (KJS::ArgumentsNode::ArgumentsNode):
+        (KJS::VarDeclListNode::VarDeclListNode):
+        (KJS::VarStatementNode::VarStatementNode):
+        (KJS::ForNode::ForNode):
+        (KJS::CaseClauseNode::CaseClauseNode):
+        (KJS::ClauseListNode::ClauseListNode):
+        (KJS::ParameterNode::ParameterNode):
+        (KJS::FuncExprNode::FuncExprNode):
+        (KJS::FuncDeclNode::FuncDeclNode):
+
+2006-02-05  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Hyatt.
         
         - fix default traits for classes to make sure default constructors get called

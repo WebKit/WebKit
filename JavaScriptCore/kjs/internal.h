@@ -195,6 +195,8 @@ namespace KJS {
     static void accept(ProgramNode *prog);
 
     static void saveNewNode(Node *node);
+    static void noteNodeCycle(Node *node);
+    static void removeNodeCycle(Node *node);
 
     static int sid;
   };

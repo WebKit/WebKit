@@ -43,6 +43,7 @@
 #include "string_object.h"
 #include <assert.h>
 #include <kxmlcore/HashMap.h>
+#include <kxmlcore/HashSet.h>
 #include <kxmlcore/Vector.h>
 #include <math.h>
 #include <stdio.h>
@@ -354,6 +355,7 @@ static RefPtr<ProgramNode> *progNode;
 int Parser::sid = 0;
 
 static Vector<RefPtr<Node> >* newNodes;
+static HashSet<Node*>* nodeCycles;
 
 void Parser::saveNewNode(Node *node)
 {
@@ -363,8 +365,28 @@ void Parser::saveNewNode(Node *node)
     newNodes->append(node);
 }
 
+void Parser::noteNodeCycle(Node *node)
+{
+    if (!nodeCycles)
+        nodeCycles = new HashSet<Node*>;
+    nodeCycles->add(node);
+}
+
+void Parser::removeNodeCycle(Node *node)
+{
+    ASSERT(nodeCycles);
+    nodeCycles->remove(node);
+}
+
 static void clearNewNodes()
 {
+    if (nodeCycles) {
+        for (HashSet<Node*>::iterator it = nodeCycles->begin(); it != nodeCycles->end(); ++it)
+            (*it)->breakCycle();
+        delete nodeCycles;
+        nodeCycles = 0;
+    }
+
     delete newNodes;
     newNodes = 0;
 }
