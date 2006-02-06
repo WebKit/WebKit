@@ -1,5 +1,13 @@
 2006-02-05  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by darin.
+
+        General update to SVG project page, also link to status page.
+
+        * projects/svg/index.html:
+
+2006-02-05  Eric Seidel  <eseidel@apple.com>
+
         Rubber stamped by darin.
 
         * projects/svg/status.xml: Added.
