@@ -1,5 +1,21 @@
 2006-02-06  Maciej Stachowiak  <mjs@apple.com>
 
+        Rubber stamped by Hyatt.
+        
+        - renamed subproject directories to not end with .subproj
+
+        * Carbon: renamed from Carbon.subproj
+        * DOM: renamed from DOM.subproj
+        * History: renamed from History.subproj
+        * Misc: renamed from Misc.subproj
+        * Panels: renamed from Panels.subproj
+        * Plugins: renamed from Plugins.subproj
+        * WebCoreSupport: renamed from WebCoreSupport.subproj
+        * WebInspector: renamed from WebInspector.subproj
+        * WebView: renamed from WebView.subproj
+        
+2006-02-06  Maciej Stachowiak  <mjs@apple.com>
+
         Ooops, I made a last-minute change to my last patch that broke the build - fixed.
 
         * WebView.subproj/WebFrame.m:
