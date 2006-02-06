@@ -1,0 +1,650 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="svg-status.xsl"?>
+<status>
+    <description>
+    <p>
+    This page describes the current status of the SVG implementation in WebKit.
+    </p>
+    <p>
+    Last update: Jan 27th, 2006.
+    </p>
+    <p>
+    For a list of general WebKit+SVG issues not covered in this document , please see the <a href="http://tinyurl.com/athb7">full SVG bug list</a>.
+    </p>
+    <p class="legend">
+    <span class="implemented">green</span>: complete implementation,
+    <span class="element">yellow</span>: partial implementation,
+    and <span class="unimplemented">red</span>: no implementation.
+    </p>
+    </description>
+    <module>
+        <name>Structure</name>
+        <url>http://www.w3.org/TR/SVG11/struct.html#basic-structure-mod</url>
+        <elements>
+            <element>
+                <name>svg</name>
+                <url>http://www.w3.org/TR/SVG11/struct.html#SVGElement</url>
+                <issues>
+                    <issue>overflow: hidden; is not respected <bug>5977</bug></issue>
+                    <issue>image/svg+xml should use SVGDocumentImpl <bug>5978</bug></issue>
+                    <issue>bounding box relative percentages fail <bug>6011</bug></issue>
+                </issues>
+            </element>
+            <element>
+                <name>g</name>
+                <url>http://www.w3.org/TR/SVG11/struct.html#GElement</url>
+                <status>Implemented</status>
+                <issues>
+                    <issue>color-interpolation not supported for opacity <bug>6034</bug></issue>
+                </issues>
+            </element>
+            <element>
+                <name>defs</name>
+                <url>http://www.w3.org/TR/SVG11/struct.html#DefsElement</url>
+                <status>Implemented</status>
+            </element>
+            <element>
+                <name>desc</name>
+                <url>http://www.w3.org/TR/SVG11/struct.html#DescElement</url>
+                <status>Implemented</status>
+            </element>
+            <element>
+                <name>title</name>
+                <url>http://www.w3.org/TR/SVG11/struct.html#TitleElement</url>
+                <issues>
+                    <issue>Parsed, but otherwise ignored <bug>5351</bug></issue>
+                </issues>
+            </element>
+            <element>
+                <name>metadata</name>
+                <url>http://www.w3.org/TR/SVG11/metadata.html#MetadataElement</url>
+                <status>Unimplemented</status>
+            </element>
+            <element>
+                <name>symbol</name>
+                <url>http://www.w3.org/TR/SVG11/struct.html#SymbolElement</url>
+                <issues>
+                    <issue>SVGs are not supported as real image types <bug>5971</bug></issue>
+                </issues>
+            </element>
+            <element>
+                <name>use</name>
+                <url>http://www.w3.org/TR/SVG11/struct.html#UseElement</url>
+                <issues>
+                    <issue>&lt;use&gt; does not handle recursion correctly <bug>6000</bug></issue>
+                    <issue>SVGs are not supported as real image types <bug>5971</bug></issue>
+                </issues>
+            </element>
+        </elements>
+    </module>
+    <module>
+        <name>Conditional Processing</name>
+        <url>http://www.w3.org/TR/SVG11/struct.html#conditional-mod</url>    
+        <elements>
+            <element>
+                <name>switch</name>
+                <url>http://www.w3.org/TR/SVG11/struct.html#SwitchElement</url>
+                <status>Implemented</status>
+            </element>
+        </elements>
+    </module>
+    <module>
+        <name>Image</name>
+        <url>http://www.w3.org/TR/SVG11/struct.html#image-mod</url>
+        <elements>
+            <element>
+                <name>image</name>
+                <url>http://www.w3.org/TR/SVG11/struct.html#ImageElement</url>
+                 <issues>
+                    <issue>&lt;image&gt; does not viewBox or preserveAspectRatio <bug>5966</bug></issue>
+                    <issue>&lt;image&gt; does not support color-profile property <bug>6036</bug></issue>
+                </issues>
+            </element>
+        </elements>
+    </module>
+    <module>
+        <name>Style</name>
+        <url>http://www.w3.org/TR/SVG11/styling.html#style-mod</url>
+        <elements>
+            <element>
+                <name>style</name>
+                <url>http://www.w3.org/TR/SVG11/styling.html#StyleElement</url>
+                <status>Implemented</status>
+            </element>
+        </elements>
+    </module>
+    <module>
+        <name>Shape</name>
+        <url>http://www.w3.org/TR/SVG11/shapes.html#shape-mod</url>
+        <elements>
+            <element>
+                <name>path</name>
+                <url>http://www.w3.org/TR/SVG11/paths.html#PathElement</url>
+                <status>Implemented</status>
+            </element>
+            <element>
+                <name>rect</name>
+                <url>http://www.w3.org/TR/SVG11/shapes.html#RectElement</url>
+                <status>Implemented</status>
+            </element>
+            <element>
+                <name>circle</name>
+                <url>http://www.w3.org/TR/SVG11/shapes.html#CircleElement</url>
+                <status>Implemented</status>
+            </element>
+            <element>
+                <name>line</name>
+                <url>http://www.w3.org/TR/SVG11/shapes.html#LineElement</url>
+                <status>Implemented</status>
+            </element>
+            <element>
+                <name>elipse</name>
+                <url>http://www.w3.org/TR/SVG11/shapes.html#EllipseElement</url>
+                <status>Implemented</status>
+            </element>
+            <element>
+                <name>polyline</name>
+                <url>http://www.w3.org/TR/SVG11/shapes.html#PolylineElement</url>
+                <status>Implemented</status>
+            </element>
+            <element>
+                <name>polygon</name>
+                <url>http://www.w3.org/TR/SVG11/shapes.html#PolygonElement</url>
+                <status>Implemented</status>
+            </element>
+        </elements>
+    </module>
+    
+    <module>
+        <name>Text</name>
+        <url>http://www.w3.org/TR/SVG11/text.html#text-mod</url>
+        <elements>
+            <element>
+                <name>text</name>
+                <url>http://www.w3.org/TR/SVG11/text.html#TextElement</url>
+                <status>Partial</status>
+                <issues>
+                    <issue>does not respect x, y, dx, dy offset lists <bug>6420</bug></issue>
+                    <issue>textLength attribute is not respected <bug>6421</bug></issue>
+                    <issue>lengthAdjust attribute is not respected <bug>6422</bug></issue>
+                    <issue>textAnchor attribute is not respected <bug>6423</bug></issue>
+                    <issue>dominant-baseline attribute is not respected <bug>6424</bug></issue>
+                </issues>
+            </element>
+            <element>
+                <name>tspan</name>
+                <url>http://www.w3.org/TR/SVG11/text.html#TSpanElement</url>
+                <status>Partial</status>
+                <issues>
+                    <issue>ignores positioning attributes <bug>6559</bug></issue>
+                </issues>
+            </element>
+            <element>
+                <name>tref</name>
+                <url>http://www.w3.org/TR/SVG11/text.html#TRefElement</url>
+                <status>Unimplemented</status>
+            </element>
+            <element>
+                <name>textPath</name>
+                <url>http://www.w3.org/TR/SVG11/text.html#TextPathElement</url>
+                <status>Unimplemented</status>
+                <issues>
+                    <issue>&lt;textPath&gt; element not implemented <bug>6425</bug></issue>
+                </issues>
+            </element>
+            <element>
+                <name>altGlyph</name>
+                <url>http://www.w3.org/TR/SVG11/text.html#AltGlyphElement</url>
+                <status>Unimplemented</status>
+                <issues>
+                    <issue>&lt;altGlyph&gt; element not implemented <bug>6426</bug></issue>
+                </issues>
+            </element>
+            <element>
+                <name>altGlpyhDef</name>
+                <url>http://www.w3.org/TR/SVG11/text.html#AltGlyphDefElement</url>
+                <status>Unimplemented</status>
+            </element>
+            <element>
+                <name>altGlpyhItem</name>
+                <url>http://www.w3.org/TR/SVG11/text.html#AltGlyphItemElement</url>
+                <status>Unimplemented</status>
+            </element>
+            <element>
+                <name>glyphRef</name>
+                <url>http://www.w3.org/TR/SVG11/text.html#GlyphRefElement</url>
+                <status>Unimplemented</status>
+            </element>
+        </elements>
+    </module>
+    <module>
+        <name>Marker</name>
+        <url></url>
+        <elements>
+            <element>
+                <name>marker</name>
+                <url>http://www.w3.org/TR/SVG11/painting.html#MarkerElement</url>
+                <issues>
+                    <issue>Clip path issues <bug>5967</bug></issue>
+                </issues>
+            </element>
+        </elements>
+    </module>
+    <module>
+        <name>Color Profile</name>
+        <url></url>
+        <elements>
+            <element>
+                <name>color-profile</name>
+                <url>http://www.w3.org/TR/SVG11/color.html#ColorProfileElement</url>
+                <status>Unimplemented</status>
+                <issues>
+                    <issue>SVGs are not drawn colormatched <bug>5972</bug></issue>
+                </issues>
+            </element>
+        </elements>
+    </module>
+    <module>
+        <name>Gradient</name>
+        <url></url>
+        <elements>
+            <element>
+                <name>linearGradient</name>
+                <url>http://www.w3.org/TR/SVG11/pservers.html#LinearGradientElement</url>
+                <status>Partial</status>
+                <issues>
+                    <issue>Reflect and repeat not supported <bug>5968</bug></issue>
+                    <issue>color-interpolation not supported for gradients <bug>6034</bug></issue>
+                    <issue>Gradient appears and disappears in SVG <bug>6716</bug></issue>
+                </issues>
+            </element>
+            <element>
+                <name>radialGradient</name>
+                <url>http://www.w3.org/TR/SVG11/pservers.html#RadialGradientElement</url>
+                <status>Implemented</status>
+                <issues>
+                    <issue>color-interpolation not supported for gradients <bug>6034</bug></issue>
+                </issues>
+            </element>
+            <element>
+                <name>stop</name>
+                <url>http://www.w3.org/TR/SVG11/pservers.html#StopElement</url>
+                <status>Implemented</status>
+            </element>
+        </elements>
+    </module>
+    <module>
+        <name>Pattern</name>
+        <url>http://www.w3.org/TR/SVG11/pservers.html#pattern-mod</url>
+        <elements>
+            <element>
+                <name>pattern</name>
+                <url>http://www.w3.org/TR/SVG11/pservers.html#PatternElement</url>
+                <issues>
+                    <issue>Patterns seem to have minor coordinate space issues <bug>6003</bug></issue>
+                </issues>
+            </element>
+        </elements>
+    </module>
+    <module>
+        <name>Clip</name>
+        <url>http://www.w3.org/TR/SVG11/masking.html#clip-mod</url>
+        <elements>
+            <element>
+                <name>clipPath</name>
+                <url>http://www.w3.org/TR/SVG11/masking.html#ClipPathElement</url>
+                <status>Implemented</status>
+                <issues>
+                    <issue>clip data does not respect transforms <bug>6546</bug></issue>
+                </issues>
+            </element>
+        </elements>
+    </module>
+    <module>
+        <name>Mask</name>
+        <url>http://www.w3.org/TR/SVG11/masking.html#mask-mod</url>
+        <elements>
+            <element>
+                <name>mask</name>
+                <url>http://www.w3.org/TR/SVG11/masking.html#MaskElement</url>
+                <status>Partial</status>
+                <issues>
+                    <issue>does not support maskUnits or maskContentUnits <bug>6409</bug></issue>
+                    <issue>simple &lt;mask&gt; crashes Safari+SVG <bug>6548</bug></issue>
+                </issues>
+            </element>
+        </elements>
+    </module>
+    <module>
+        <name>Filter</name>
+        <url>http://www.w3.org/TR/SVG11/pservers.html#pattern-mod</url>
+        <elements>
+            <element>
+                <name>filter</name>
+                <url>http://www.w3.org/TR/SVG11/filters.html#FilterElement</url>
+                <issues>
+                    <issue>Subregion attributes are ignored <bug>5527</bug></issue>
+                    <issue>Filters look grainy when scaled <bug>5526</bug></issue>
+                    <issue>Filters don't support filterRes <bug>6021</bug></issue>
+                    <issue>Need support sources other than SourceGraphic <bug>6022</bug></issue>
+                    <issue>Support 'color-interpolation-filters' and draw in correct colorspace <bug>6033</bug></issue>
+                </issues>
+            </element>
+            <element>
+                <name>feBlend</name>
+                <url>http://www.w3.org/TR/SVG11/filters.html#feBlendElement</url>
+                <status>Implemented</status>
+                <issues>
+                    <issue>Doesn't look right with all modes <bug>5970</bug></issue>
+                </issues>
+            </element>
+            <element>
+                <name>feColorMatrix</name>
+                <url>http://www.w3.org/TR/SVG11/filters.html#feColorMatrixElement</url>
+                <status>Implemented</status>
+            </element>
+            <element>
+                <name>feComponentTransfer</name>
+                <url>http://www.w3.org/TR/SVG11/filters.html#feComponentTransferElement</url>
+                <status>Unimplemented</status>
+                <issues>
+                    <issue>Not implemented <bug>5860</bug></issue>
+                </issues>
+            </element>
+            <element>
+                <name>feComposite</name>
+                <url>http://www.w3.org/TR/SVG11/filters.html#feCompositeElement</url>
+                <status>Implemented</status>
+            </element>
+            <element>
+                <name>feConvolveMatrix</name>
+                <url>http://www.w3.org/TR/SVG11/filters.html#feConvolveMatrixElement</url>
+                <status>Unimplemented</status>
+                <issues>
+                    <issue>Not implemented <bug>5861</bug></issue>
+                </issues>
+            </element>
+            <element>
+                <name>feDiffuseLighting</name>
+                <url>http://www.w3.org/TR/SVG11/filters.html#feDiffuseLightingElement</url>
+                <status>Implemented</status>
+            </element>
+            <element>
+                <name>feDisplacementMap</name>
+                <url>http://www.w3.org/TR/SVG11/filters.html#feDisplacementMapElement</url>
+                <status>Unimplemented</status>
+                <issues>
+                    <issue>Not implemented <bug>5862</bug></issue>
+                    <issue>filters-displace-01-f displays incorrectly <bug>6719</bug></issue>
+                </issues>
+            </element>
+            <element>
+                <name>feFlood</name>
+                <url>http://www.w3.org/TR/SVG11/filters.html#feFloodElement</url>
+                <status>Implemented</status>
+            </element>
+            <element>
+                <name>feGaussianBlur</name>
+                <url>http://www.w3.org/TR/SVG11/filters.html#feGaussianBlurElement</url>
+                <issues>
+                    <issue>Fails for large x,y ratios <bug>5973</bug></issue>
+                </issues>
+            </element>
+            <element>
+                <name>feImage</name>
+                <url>http://www.w3.org/TR/SVG11/filters.html#feImageElement</url>
+                <issues>
+                    <issue>SVGs are not supported as a real image type <bug>5971</bug></issue>
+                </issues>
+            </element>
+            <element>
+                <name>feMerge</name>
+                <url>http://www.w3.org/TR/SVG11/filters.html#feMergeElement</url>
+                <status>Implemented</status>
+            </element>
+            <element>
+                <name>feMergeNode</name>
+                <url>http://www.w3.org/TR/SVG11/filters.html#feMergeNodeElement</url>
+                <status>Implemented</status>
+            </element>
+            <element>
+                <name>feMorphology</name>
+                <url>http://www.w3.org/TR/SVG11/filters.html#feMorphologyElement</url>
+                <status>Unimplemented</status>
+                <issues>
+                    <issue>Not implemented <bug>5863</bug></issue>
+                </issues>
+            </element>
+            <element>
+                <name>feOffset</name>
+                <url>http://www.w3.org/TR/SVG11/filters.html#feOffsetElement</url>
+                <status>Implemented</status>
+            </element>
+            <element>
+                <name>feSpecularLighting</name>
+                <url>http://www.w3.org/TR/SVG11/filters.html#feSpecularLightingElement</url>
+                <status>Implemented</status>
+            </element>
+            <element>
+                <name>feTile</name>
+                <url>http://www.w3.org/TR/SVG11/filters.html#feTileElement</url>
+                <issues>
+                    <issue>Broken in TOT <bug>5976</bug></issue>
+                </issues>
+            </element>
+            <element>
+                <name>feTurbulance</name>
+                <url>http://www.w3.org/TR/SVG11/filters.html#feTurbulenceElement</url>
+                <status>Unimplemented</status>
+                <issues>
+                    <issue>Not implemented <bug>5864</bug></issue>
+                </issues>
+            </element>
+             <element>
+                <name>feDistantLight</name>
+                <url>http://www.w3.org/TR/SVG11/filters.html#feDistantLightElement</url>
+                <status>Implemented</status>
+            </element>
+            <element>
+                <name>fePointLight</name>
+                <url>http://www.w3.org/TR/SVG11/filters.html#fePointLightElement</url>
+                <status>Implemented</status>
+            </element>
+            <element>
+                <name>feSpotLight</name>
+                <url>http://www.w3.org/TR/SVG11/filters.html#feSpotLightElement</url>
+                <issues>
+                    <issue>Default values are not correctly assigned to lighting filters <bug>5859</bug></issue>
+                </issues>
+            </element>
+            <element>
+                <name>feFuncR</name>
+                <url>http://www.w3.org/TR/SVG11/filters.html#feFuncRElement</url>
+                <status>Implemented</status>
+            </element>
+            <element>
+                <name>feFuncG</name>
+                <url>http://www.w3.org/TR/SVG11/filters.html#feFuncGElement</url>
+                <status>Implemented</status>
+            </element>
+            <element>
+                <name>feFuncB</name>
+                <url>http://www.w3.org/TR/SVG11/filters.html#feFuncBElement</url>
+                <status>Implemented</status>
+            </element>
+            <element>
+                <name>feFuncA</name>
+                <url>http://www.w3.org/TR/SVG11/filters.html#feFuncAElement</url>
+                <status>Implemented</status>
+            </element>
+        </elements>
+    </module>
+    <module>
+        <name>Cursor</name>
+        <url>http://www.w3.org/TR/SVG11/interact.html#cursor-mod</url>
+        <elements>
+            <element>
+                <name>cursor</name>
+                <url>http://www.w3.org/TR/SVG11/interact.html#CursorElement</url>
+                <status>Broken</status>
+                <issues>
+                    <issue>SVG &lt;cursor&gt; needs to be wired into WebKit custom CSS cursor code <bug>6002</bug></issue>
+                    <issue>WebKit does not handle CSS custom cursor URI fallback <bug>6001</bug></issue>
+                </issues>
+            </element>
+        </elements>
+    </module>
+    <module>
+        <name>Hyperlinking</name>
+        <url>http://www.w3.org/TR/SVG11/linking.html#hyperlinking-mod</url>
+        <elements>
+            <element>
+                <name>a</name>
+                <url>http://www.w3.org/TR/SVG11/linking.html#AElement</url>
+                <status>Implemented</status>
+            </element>
+        </elements>
+    </module>
+    <module>
+        <name>View</name>
+        <url>http://www.w3.org/TR/SVG11/linking.html#view-mod</url>
+        <elements>
+            <element>
+                <name>view</name>
+                <url>http://www.w3.org/TR/SVG11/linking.html#ViewElement</url>
+                <status>Unimplemented</status>
+                <issues>
+                    <issue>SVG &lt;view&gt; is unimplemented <bug>5996</bug></issue>
+                </issues>
+            </element>
+        </elements>
+    </module>
+    <module>
+        <name>Script</name>
+        <url>http://www.w3.org/TR/SVG11/script.html#scripting-mod</url>
+        <elements>
+            <element>
+                <name>script</name>
+                <url>http://www.w3.org/TR/SVG11/script.html#ScriptElement</url>
+                <status>Implemented</status>
+                <issues>
+                    <issue>SVG JavaScript bindings are busted <bug>4249</bug></issue>
+                </issues>
+            </element>
+        </elements>
+    </module>
+    <module>
+        <name>Animation</name>
+        <url>http://www.w3.org/TR/SVG11/animate.html#animation-mod</url>
+        <elements>
+            <element>
+                <name>animate</name>
+                <url>http://www.w3.org/TR/SVG11/animate.html#AnimateElement</url>
+                <status>Unimplemented</status>
+            </element>
+            <element>
+                <name>set</name>
+                <url>http://www.w3.org/TR/SVG11/animate.html#SetElement</url>
+                <status>Implemented</status>
+            </element>
+            <element>
+                <name>animateMotion</name>
+                <url>http://www.w3.org/TR/SVG11/animate.html#AnimateMotionElement</url>
+                <status>Unimplemented</status>
+            </element>
+            <element>
+                <name>animateTransform</name>
+                <url>http://www.w3.org/TR/SVG11/animate.html#AnimateTransformElement</url>
+                <status>Implemented</status>
+            </element>
+            <element>
+                <name>animateColor</name>
+                <url>http://www.w3.org/TR/SVG11/animate.html#AnimateColorElement</url>
+                <status>Implemented</status>
+                <issues>
+                    <issue>color-interpolation not supported for animateColor <bug>6034</bug></issue>
+                </issues>
+            </element>
+            <element>
+                <name>mpath</name>
+                <url>http://www.w3.org/TR/SVG11/animate.html#mpathElement</url>
+                <status>Unimplemented</status>
+            </element>
+        </elements>
+    </module>
+    <module>
+        <name>Font</name>
+        <url>http://www.w3.org/TR/SVG11/fonts.html#font-mod</url>
+        <elements>
+            <element>
+                <name>font</name>
+                <url>http://www.w3.org/TR/SVG11/fonts.html#FontFaceElement</url>
+                <status>Unimplemented</status>
+            </element>
+            <element>
+                <name>font-face</name>
+                <url>http://www.w3.org/TR/SVG11/fonts.html#FontFaceNameElement</url>
+                <status>Unimplemented</status>
+            </element>
+            <element>
+                <name>glyph</name>
+                <url>http://www.w3.org/TR/SVG11/fonts.html#GlyphElement</url>
+                <status>Unimplemented</status>
+            </element>
+            <element>
+                <name>missing-glyph</name>
+                <url>http://www.w3.org/TR/SVG11/fonts.html#MissingGlyphElement</url>
+                <status>Unimplemented</status>
+            </element>
+            <element>
+                <name>hkern</name>
+                <url>http://www.w3.org/TR/SVG11/fonts.html#HKernElement</url>
+                <status>Unimplemented</status>
+            </element>
+            <element>
+                <name>vkern</name>
+                <url>http://www.w3.org/TR/SVG11/fonts.html#VKernElement</url>
+                <status>Unimplemented</status>
+            </element>
+            <element>
+                <name>font-face-src</name>
+                <url>http://www.w3.org/TR/SVG11/fonts.html#FontFaceSrcElement</url>
+                <status>Unimplemented</status>
+            </element>
+            <element>
+                <name>font-face-uri</name>
+                <url>http://www.w3.org/TR/SVG11/fonts.html#FontFaceNameElement</url>
+                <status>Unimplemented</status>
+            </element>
+            <element>
+                <name>font-face-format</name>
+                <url>http://www.w3.org/TR/SVG11/fonts.html#FontFaceNameElement</url>
+                <status>Unimplemented</status>
+            </element>
+            <element>
+                <name>font-face-name</name>
+                <url>http://www.w3.org/TR/SVG11/fonts.html#FontFaceNameElement</url>
+                <status>Unimplemented</status>
+            </element>
+            <element>
+                <name>definition-src</name>
+                <url>http://www.w3.org/TR/SVG11/fonts.html#DefinitionSrcElement</url>
+                <status>Unimplemented</status>
+            </element>
+         </elements>
+    </module>
+    <module>
+        <name>Extensibility</name>
+        <url>http://www.w3.org/TR/SVG11/extend.html#extensibility-mod</url>
+        <elements>
+            <element>
+                <name>foreignObject</name>
+                <url>http://www.w3.org/TR/SVG11/extend.html#ForeignObjectElement</url>
+                <status>Implemented</status>
+                <issues>
+                    <issue>&lt;input type="search"&gt; renders twice within &lt;foreignObject&gt; <bug>6582</bug></issue>
+                </issues>
+            </element>
+        </elements>
+    </module>
+</status>

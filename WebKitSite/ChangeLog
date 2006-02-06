@@ -1,0 +1,13 @@
+2006-02-05  Eric Seidel  <eseidel@apple.com>
+
+        Rubber stamped by darin.
+
+        * projects/svg/status.xml: Added.
+        * projects/svg/svg-status.css: Added.
+        * projects/svg/svg-status.xsl: Added.
+
+2006-02-05  Eric Seidel  <eseidel@apple.com>
+
+        Adding ChangeLog :)
+        
+        * ChangeLog: Added.
