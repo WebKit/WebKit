@@ -1,0 +1,6 @@
+module core {
+    interface [LegacyParent=KJS::DOMNode] Notation : Node {
+        readonly attribute [ConvertNullStringTo=Null] DOMString publicId;
+        readonly attribute [ConvertNullStringTo=Null] DOMString systemId;
+    };
+}

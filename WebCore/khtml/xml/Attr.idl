@@ -1,0 +1,12 @@
+module core {
+    interface [LegacyParent=KJS::DOMNode] Attr : Node {
+        readonly attribute [ConvertNullStringTo=Null] DOMString name;
+        readonly attribute boolean specified;
+                 attribute [ConvertNullStringTo=Null] DOMString value 
+                     raises (DOMException);
+        readonly attribute Element ownerElement;
+        
+        // Web inspector extension
+        readonly attribute CSSStyleDeclaration style;
+    };
+}

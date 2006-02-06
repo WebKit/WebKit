@@ -1,0 +1,8 @@
+module core {
+    interface [LegacyParent=KJS::DOMNode] ProcessingInstruction : Node {
+        readonly attribute [ConvertNullStringTo=Null] DOMString target;
+                 attribute [ConvertNullStringTo=Null] DOMString data
+                     raises (DOMException);
+        readonly attribute StyleSheet sheet;
+    };
+}

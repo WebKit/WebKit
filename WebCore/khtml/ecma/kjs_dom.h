@@ -43,6 +43,8 @@ namespace DOM {
 
 namespace KJS {
 
+  KJS_DEFINE_PROTOTYPE(DOMNodeProto)
+
   class DOMNode : public DOMObject {
   public:
     DOMNode(ExecState *exec, DOM::NodeImpl *n);
@@ -141,18 +143,6 @@ namespace KJS {
     DOMDocument(DOM::DocumentImpl *d);
   };
 
-  class DOMAttr : public DOMNode {
-  public:
-    DOMAttr(ExecState *exec, DOM::AttrImpl *a);
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
-    JSValue *getValueProperty(ExecState *exec, int token) const;
-    void putValueProperty(ExecState *exec, int token, JSValue *value, int attr);
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-    enum { Name, Specified, ValueProperty, OwnerElement, Style };
-  };
-
   DOM::AttrImpl *toAttr(JSValue *); // returns 0 if passed-in value is not a DOMAttr object
 
   class DOMElement : public DOMNode {
@@ -200,39 +190,6 @@ namespace KJS {
     RefPtr<DOM::NamedNodeMapImpl> m_impl;
   };
 
-  class DOMProcessingInstruction : public DOMNode {
-  public:
-    DOMProcessingInstruction(ExecState *exec, DOM::ProcessingInstructionImpl *pi);
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *exec, int token) const;
-    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-    enum { Target, Data, Sheet };
-  };
-
-  class DOMNotation : public DOMNode {
-  public:
-    DOMNotation(ExecState *exec, DOM::NotationImpl *n);
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *exec, int token) const;
-    // no put - all read-only
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-    enum { PublicId, SystemId };
-  };
-
-  class DOMEntity : public DOMNode {
-  public:
-    DOMEntity(ExecState *exec, DOM::EntityImpl *e);
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *exec, int token) const;
-    // no put - all read-only
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-    enum { PublicId, SystemId, NotationName };
-  };
-
   // Constructor for Node - constructor stuff not implemented yet
   class NodeConstructor : public DOMObject {
   public:
@@ -276,31 +233,6 @@ namespace KJS {
     static JSValue *indexGetter(ExecState* exec, JSObject *, const Identifier&, const PropertySlot& slot);
 
     QValueList< RefPtr<DOM::NodeImpl> > m_nodes;
-  };
-
-  class DOMCharacterData : public DOMNode {
-  public:
-    DOMCharacterData(ExecState *exec, DOM::CharacterDataImpl *d);
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *, int token) const;
-    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-    DOM::CharacterDataImpl *toData() const;
-    enum { Data, Length,
-           SubstringData, AppendData, InsertData, DeleteData, ReplaceData };
-  protected:
-    // Constructor for inherited classes; doesn't set up a prototype.
-    DOMCharacterData(DOM::CharacterDataImpl *d);
-  };
-
-  class DOMText : public DOMCharacterData {
-  public:
-    DOMText(ExecState *exec, DOM::TextImpl *t);
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-    DOM::TextImpl *toText() const;
-    enum { SplitText };
   };
 
 } // namespace

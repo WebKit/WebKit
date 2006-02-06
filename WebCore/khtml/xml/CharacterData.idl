@@ -1,0 +1,29 @@
+module core {
+    interface [LegacyParent=KJS::DOMNode] CharacterData : Node {
+        attribute DOMString data
+            raises (DOMException);
+            
+        readonly attribute unsigned long length;
+        
+        [ConvertNullStringTo=Null] DOMString substringData(in [IsIndex] unsigned long offset, 
+                                                           in [IsIndex] unsigned long count)
+            raises(DOMException);
+            
+        void appendData(in DOMString arg)
+            raises(DOMException);
+            
+        void insertData(in [IsIndex] unsigned long offset, 
+                        in DOMString arg)
+            raises(DOMException);
+
+        void deleteData(in [IsIndex] unsigned long offset, 
+                        in [IsIndex] unsigned long count)
+            raises(DOMException);
+
+        void replaceData(in [IsIndex] unsigned long offset, 
+                         in [IsIndex] unsigned long count,
+                         in DOMString arg)
+            raises(DOMException);
+    
+    };
+}

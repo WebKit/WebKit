@@ -1,3 +1,35 @@
+2006-02-05  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Maciej.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7091
+        Autogenerate even more.
+
+        * JSCore.cpp:
+        Add new generated files.
+        
+        * bindings/scripts/CodeGeneratorJS.pm:
+        Add "IsIndex" extended attribute for parameters. Any parameter that is "unsigned long" 
+        and has this attribute will be checked to make sure that it's not < 0. If it is, an index size error
+        exception will be thrown.
+        
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::toAttr):
+        Use JSAttr::info.
+        
+        (KJS::getDOMNode):
+        Use new constructors.
+        
+        * khtml/ecma/kjs_dom.h:
+        Remove classes that are generated now.
+        
+        * khtml/xml/Attr.idl: Added.
+        * khtml/xml/CharacterData.idl: Added.
+        * khtml/xml/Entity.idl: Added.
+        * khtml/xml/Notation.idl: Added.
+        * khtml/xml/ProcessingInstruction.idl: Added.
+        * khtml/xml/Text.idl: Added.
+
 2006-02-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

@@ -1,0 +1,7 @@
+module core {
+    interface Text : CharacterData {
+    
+        Text splitText(in [IsIndex] unsigned long offset)
+            raises (DOMException);
+    };
+}

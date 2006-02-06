@@ -187,6 +187,8 @@ sub AddIncludesForType
       $type eq "Document" or
       $type eq "DOMImplementation") {
     $implIncludes{"${type}Impl.h"} = 1;
+  } elsif ($type eq "Attr") {
+    $implIncludes{"dom_elementimpl.h"} = 1;
   } elsif ($type eq "CSSStyleSheet") {
     $implIncludes{"css_stylesheetimpl.h"} = 1;
   } elsif ($type eq "HTMLDocument") {
@@ -194,7 +196,15 @@ sub AddIncludesForType
   } elsif ($type eq "MutationEvent" or
            $type eq "WheelEvent") {
     $implIncludes{"dom2_eventsimpl.h"} = 1;
-  } elsif ($codeGenerator->IsPrimitiveType($type)) {
+  } elsif ($type eq "ProcessingInstruction" or
+           $type eq "Entity" or
+           $type eq "Notation") {
+    $implIncludes{"dom_xmlimpl.h"} = 1;
+  } elsif ($type eq "Text" or 
+           $type eq "CharacterData") {
+    $implIncludes{"dom_textimpl.h"} = 1;
+  } elsif ($codeGenerator->IsPrimitiveType($type) or
+           $type eq "DOMString") {
     # Do nothing
   } else {
     die "Don't know what to include for interface $type";
@@ -651,6 +661,15 @@ sub GenerateImplementation
       foreach my $parameter (@{$function->parameters}) {
         my $name = $parameter->name;
         push(@implContent, "        " . GetNativeType($parameter) . " $name = " . JSValueToNative($parameter, "args[$paramIndex]") . ";\n");        
+        
+        # If a parameter is "an index", it should throw an INDEX_SIZE_ERR
+        # exception        
+        if ($parameter->extendedAttributes->{"IsIndex"}) {
+          $implIncludes{"dom_exception.h"} = 1;
+          push(@implContent, "        if ($name < 0) {\n");
+          push(@implContent, "            setDOMException(exec, DOMException::INDEX_SIZE_ERR);\n");
+          push(@implContent, "            break;\n        }\n");          
+        }
         $paramIndex++;
         
         if ($paramIndex < $numParameters) {
@@ -691,7 +710,13 @@ sub GetNativeType
   if ($type eq "boolean") {
     return "bool";
   } elsif ($type eq "unsigned long") {
-    return "unsigned";
+    if ($signature->extendedAttributes->{"IsIndex"}) {
+      # Special-case index arguments because we need to check that
+      # they aren't < 0.        
+      return "int";
+    } else {
+      return "unsigned";
+    } 
   } elsif ($type eq "long") {
     return "int";
   } elsif ($type eq "unsigned short") {
@@ -771,7 +796,7 @@ sub NativeToJSValue
     }
   } elsif ($type eq "Node" or $type eq "Text" or
            $type eq "DocumentType" or $type eq "Document" or
-           $type eq "HTMLDocument") {
+           $type eq "HTMLDocument" or $type eq "Element") {
     # Add necessary includes
     $implIncludes{"kjs_dom.h"} = 1;   
     $implIncludes{"NodeImpl.h"} = 1;     
@@ -780,11 +805,17 @@ sub NativeToJSValue
     # Add necessary includes
     $implIncludes{"kjs_dom.h"} = 1;    
     return "getDOMNamedNodeMap(exec, $value)";
-  } elsif ($type eq "CSSStyleSheet") {
+  } elsif ($type eq "CSSStyleSheet" or 
+           $type eq "StyleSheet") {
     # Add necessary includes
     $implIncludes{"css_ruleimpl.h"} = 1;    
     $implIncludes{"kjs_css.h"} = 1;        
     return "getDOMStyleSheet(exec, $value)";    
+  } elsif ($type eq "CSSStyleDeclaration") {
+    # Add necessary includes
+    $implIncludes{"css_valueimpl.h"} = 1; 
+    $implIncludes{"kjs_css.h"} = 1;            
+    return "getDOMCSSStyleDeclaration(exec, $value)";
   } else {
     die "Don't know how to convert a value of type $type to a JS Value";
   }

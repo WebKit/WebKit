@@ -25,8 +25,14 @@
 #include "DocumentFragmentImpl.h"
 #include "DocumentTypeImpl.h"
 #include "Frame.h"
-#include "JSDOMImplementation.h"
+#include "JSAttr.h"
+#include "JSCharacterData.h"
 #include "JSDocumentType.h"
+#include "JSDOMImplementation.h"
+#include "JSEntity.h"
+#include "JSNotation.h"
+#include "JSProcessingInstruction.h"
+#include "JSText.h"
 #include "css/css_ruleimpl.h"
 #include "css/css_stylesheetimpl.h"
 #include "dom/dom_exception.h"
@@ -89,7 +95,6 @@ namespace KJS {
   item          DOMNode::Item           DontDelete|Function 1
 @end
 */
-KJS_DEFINE_PROTOTYPE(DOMNodeProto)
 KJS_IMPLEMENT_PROTOFUNC(DOMNodeProtoFunc)
 KJS_IMPLEMENT_PROTOTYPE("DOMNode",DOMNodeProto,DOMNodeProtoFunc)
 
@@ -790,68 +795,9 @@ JSValue *DOMNodeListFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
   return jsUndefined();
 }
 
-// -------------------------------------------------------------------------
-
-const ClassInfo DOMAttr::info = { "Attr", &DOMNode::info, &DOMAttrTable, 0 };
-
-/* Source for DOMAttrTable. Use "make hashtables" to regenerate.
-@begin DOMAttrTable 5
-  name          DOMAttr::Name           DontDelete|ReadOnly
-  specified     DOMAttr::Specified      DontDelete|ReadOnly
-  value         DOMAttr::ValueProperty  DontDelete
-  ownerElement  DOMAttr::OwnerElement   DontDelete|ReadOnly
-  style         DOMAttr::Style          DontDelete|ReadOnly
-@end
-*/
-
-DOMAttr::DOMAttr(ExecState *exec, AttrImpl *a)
-  : DOMNode(exec, a)
-{
-}
-
-bool DOMAttr::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  return getStaticValueSlot<DOMAttr, DOMNode>(exec, &DOMAttrTable, this, propertyName, slot);
-}
-
-JSValue *DOMAttr::getValueProperty(ExecState *exec, int token) const
-{
-  AttrImpl *attr = static_cast<AttrImpl *>(impl());
-  switch (token) {
-  case Name:
-    return jsStringOrNull(attr->name());
-  case Specified:
-    return jsBoolean(attr->specified());
-  case ValueProperty:
-    return jsStringOrNull(attr->value());
-  case OwnerElement: // DOM2
-    return getDOMNode(exec, attr->ownerElement());
-  case Style: // Web Inspector Extension
-    return getDOMCSSStyleDeclaration(exec, attr->style());
-  }
-  return NULL; // not reached
-}
-
-void DOMAttr::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
-{
-    lookupPut<DOMAttr,DOMNode>(exec, propertyName, value, attr, &DOMAttrTable, this);
-}
-
-void DOMAttr::putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/)
-{
-  DOMExceptionTranslator exception(exec);
-  switch (token) {
-  case ValueProperty:
-    static_cast<AttrImpl *>(impl())->setValue(value->toString(exec).domString(), exception);
-    return;
-  default:
-    kdWarning() << "DOMAttr::putValueProperty unhandled token " << token << endl;
-  }
-}
-
 AttrImpl *toAttr(JSValue *val)
 {
-    if (!val || !val->isObject(&DOMAttr::info))
+    if (!val || !val->isObject(&JSAttr::info))
         return 0;
     return static_cast<AttrImpl *>(static_cast<DOMNode *>(val)->impl());
 }
@@ -1409,126 +1355,6 @@ JSValue *DOMNamedNodeMapProtoFunc::callAsFunction(ExecState *exec, JSObject *thi
 
 // -------------------------------------------------------------------------
 
-const ClassInfo DOMProcessingInstruction::info = { "ProcessingInstruction", &DOMNode::info, &DOMProcessingInstructionTable, 0 };
-
-/* Source for DOMProcessingInstructionTable. Use "make hashtables" to regenerate.
-@begin DOMProcessingInstructionTable 3
-  target        DOMProcessingInstruction::Target        DontDelete|ReadOnly
-  data          DOMProcessingInstruction::Data          DontDelete
-  sheet         DOMProcessingInstruction::Sheet         DontDelete|ReadOnly
-@end
-*/
-
-DOMProcessingInstruction::DOMProcessingInstruction(ExecState *exec, ProcessingInstructionImpl *i)
-  : DOMNode(exec, i)
-{
-}
-
-bool DOMProcessingInstruction::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  return getStaticValueSlot<DOMProcessingInstruction, DOMNode>(exec, &DOMProcessingInstructionTable, this, propertyName, slot);
-}
-
-JSValue *DOMProcessingInstruction::getValueProperty(ExecState *exec, int token) const
-{
-  ProcessingInstructionImpl *pi = static_cast<ProcessingInstructionImpl *>(impl());
-  switch (token) {
-  case Target:
-    return jsStringOrNull(pi->target());
-  case Data:
-    return jsStringOrNull(pi->data());
-  case Sheet:
-    return getDOMStyleSheet(exec,pi->sheet());
-  default:
-    kdWarning() << "DOMProcessingInstruction::getValueProperty unhandled token " << token << endl;
-    return NULL;
-  }
-}
-
-void DOMProcessingInstruction::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
-{
-  ProcessingInstructionImpl *pi = static_cast<ProcessingInstructionImpl *>(impl());
-  DOMExceptionTranslator exception(exec);
-  // Not worth using the hashtable for this one ;)
-  if (propertyName == "data")
-    pi->setData(value->toString(exec).domString(), exception);
-  else
-    DOMNode::put(exec, propertyName, value, attr);
-}
-
-// -------------------------------------------------------------------------
-
-const ClassInfo DOMNotation::info = { "Notation", &DOMNode::info, &DOMNotationTable, 0 };
-
-/* Source for DOMNotationTable. Use "make hashtables" to regenerate.
-@begin DOMNotationTable 2
-  publicId              DOMNotation::PublicId   DontDelete|ReadOnly
-  systemId              DOMNotation::SystemId   DontDelete|ReadOnly
-@end
-*/
-
-DOMNotation::DOMNotation(ExecState *exec, NotationImpl *n)
-  : DOMNode(exec, n)
-{
-}
-
-bool DOMNotation::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  return getStaticValueSlot<DOMNotation, DOMNode>(exec, &DOMNotationTable, this, propertyName, slot);
-}
-
-JSValue *DOMNotation::getValueProperty(ExecState *, int token) const
-{
-  switch (token) {
-  case PublicId:
-    return jsStringOrNull(static_cast<NotationImpl *>(impl())->publicId());
-  case SystemId:
-    return jsStringOrNull(static_cast<NotationImpl *>(impl())->systemId());
-  default:
-    kdWarning() << "DOMNotation::getValueProperty unhandled token " << token << endl;
-    return NULL;
-  }
-}
-
-// -------------------------------------------------------------------------
-
-const ClassInfo DOMEntity::info = { "Entity", &DOMNode::info, 0, 0 };
-
-/* Source for DOMEntityTable. Use "make hashtables" to regenerate.
-@begin DOMEntityTable 2
-  publicId              DOMEntity::PublicId             DontDelete|ReadOnly
-  systemId              DOMEntity::SystemId             DontDelete|ReadOnly
-  notationName          DOMEntity::NotationName DontDelete|ReadOnly
-@end
-*/
-
-DOMEntity::DOMEntity(ExecState *exec, EntityImpl *e)
-  : DOMNode(exec, e)
-{
-}
-
-bool DOMEntity::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  return getStaticValueSlot<DOMEntity, DOMNode>(exec, &DOMEntityTable, this, propertyName, slot);
-}
-
-JSValue *DOMEntity::getValueProperty(ExecState *, int token) const
-{
-  switch (token) {
-  case PublicId:
-    return jsStringOrNull(static_cast<EntityImpl *>(impl())->publicId());
-  case SystemId:
-    return jsStringOrNull(static_cast<EntityImpl *>(impl())->systemId());
-  case NotationName:
-    return jsStringOrNull(static_cast<EntityImpl *>(impl())->notationName());
-  default:
-    kdWarning() << "DOMEntity::getValueProperty unhandled token " << token << endl;
-    return NULL;
-  }
-}
-
-// -------------------------------------------------------------------------
-
 JSValue *getDOMDocumentNode(ExecState *exec, DocumentImpl *n)
 {
   DOMDocument *ret = 0;
@@ -1585,20 +1411,20 @@ JSValue *getDOMNode(ExecState *exec, PassRefPtr<NodeImpl> node)
         ret = new DOMElement(exec, static_cast<ElementImpl *>(n));
       break;
     case DOM::Node::ATTRIBUTE_NODE:
-      ret = new DOMAttr(exec, static_cast<AttrImpl *>(n));
+      ret = new JSAttr(exec, static_cast<AttrImpl *>(n));
       break;
     case DOM::Node::TEXT_NODE:
     case DOM::Node::CDATA_SECTION_NODE:
-      ret = new DOMText(exec, static_cast<TextImpl *>(n));
+      ret = new JSText(exec, static_cast<TextImpl *>(n));
       break;
     case DOM::Node::ENTITY_NODE:
-      ret = new DOMEntity(exec, static_cast<EntityImpl *>(n));
+      ret = new JSEntity(exec, static_cast<EntityImpl *>(n));
       break;
     case DOM::Node::PROCESSING_INSTRUCTION_NODE:
-      ret = new DOMProcessingInstruction(exec, static_cast<ProcessingInstructionImpl *>(n));
+      ret = new JSProcessingInstruction(exec, static_cast<ProcessingInstructionImpl *>(n));
       break;
     case DOM::Node::COMMENT_NODE:
-      ret = new DOMCharacterData(exec, static_cast<CharacterDataImpl *>(n));
+      ret = new JSCharacterData(exec, static_cast<CharacterDataImpl *>(n));
       break;
     case DOM::Node::DOCUMENT_NODE:
       // we don't want to cache the document itself in the per-document dictionary
@@ -1607,7 +1433,7 @@ JSValue *getDOMNode(ExecState *exec, PassRefPtr<NodeImpl> node)
       ret = new JSDocumentType(exec, static_cast<DocumentTypeImpl *>(n));
       break;
     case DOM::Node::NOTATION_NODE:
-      ret = new DOMNotation(exec, static_cast<NotationImpl *>(n));
+      ret = new JSNotation(exec, static_cast<NotationImpl *>(n));
       break;
     case DOM::Node::DOCUMENT_FRAGMENT_NODE:
     case DOM::Node::ENTITY_REFERENCE_NODE:
@@ -1794,135 +1620,5 @@ bool DOMNamedNodesCollection::getOwnPropertySlot(ExecState *exec, const Identifi
 
 // -------------------------------------------------------------------------
 
-const ClassInfo DOMCharacterData::info = { "CharacterImp",
-                                          &DOMNode::info, &DOMCharacterDataTable, 0 };
-/*
-@begin DOMCharacterDataTable 2
-  data          DOMCharacterData::Data          DontDelete
-  length        DOMCharacterData::Length        DontDelete|ReadOnly
-@end
-@begin DOMCharacterDataProtoTable 7
-  substringData DOMCharacterData::SubstringData DontDelete|Function 2
-  appendData    DOMCharacterData::AppendData    DontDelete|Function 1
-  insertData    DOMCharacterData::InsertData    DontDelete|Function 2
-  deleteData    DOMCharacterData::DeleteData    DontDelete|Function 2
-  replaceData   DOMCharacterData::ReplaceData   DontDelete|Function 2
-@end
-*/
-KJS_DEFINE_PROTOTYPE(DOMCharacterDataProto)
-KJS_IMPLEMENT_PROTOFUNC(DOMCharacterDataProtoFunc)
-KJS_IMPLEMENT_PROTOTYPE_WITH_PARENT("DOMCharacterData",DOMCharacterDataProto,DOMCharacterDataProtoFunc, DOMNodeProto)
-
-DOMCharacterData::DOMCharacterData(ExecState *exec, CharacterDataImpl *d)
- : DOMNode(d) 
-{
-  setPrototype(DOMCharacterDataProto::self(exec));
-}
-
-DOMCharacterData::DOMCharacterData(CharacterDataImpl *d)
- : DOMNode(d) 
-{
-}
-
-bool DOMCharacterData::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-  return getStaticValueSlot<DOMCharacterData, DOMNode>(exec, &DOMCharacterDataTable, this, propertyName, slot);
-}
-
-JSValue *DOMCharacterData::getValueProperty(ExecState *, int token) const
-{
-  CharacterDataImpl &data = *static_cast<CharacterDataImpl *>(impl());
-  switch (token) {
-  case Data:
-    return jsString(data.data());
-  case Length:
-    return jsNumber(data.length());
-  default:
-    kdWarning() << "Unhandled token in DOMCharacterData::getValueProperty : " << token << endl;
-    return NULL;
-  }
-}
-
-void DOMCharacterData::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
-{
-  DOMExceptionTranslator exception(exec);
-  if (propertyName == "data")
-    static_cast<CharacterDataImpl *>(impl())->setData(value->toString(exec).domString(), exception);
-  else
-    DOMNode::put(exec, propertyName,value,attr);
-}
-
-JSValue *DOMCharacterDataProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
-{
-  if (!thisObj->inherits(&KJS::DOMCharacterData::info))
-    return throwError(exec, TypeError);
-  DOMExceptionTranslator exception(exec);
-  CharacterDataImpl &data = *static_cast<CharacterDataImpl *>(static_cast<DOMCharacterData *>(thisObj)->impl());
-  switch(id) {
-    case DOMCharacterData::SubstringData: {
-      const int count = args[1]->toInt32(exec);
-      if (count < 0)
-        setDOMException(exec, DOMException::INDEX_SIZE_ERR);
-      else
-        return jsStringOrNull(data.substringData(args[0]->toInt32(exec), count, exception));
-    }
-    case DOMCharacterData::AppendData:
-      data.appendData(args[0]->toString(exec).domString(), exception);
-      return jsUndefined();
-    case DOMCharacterData::InsertData:
-      data.insertData(args[0]->toInt32(exec), args[1]->toString(exec).domString(), exception);
-      return jsUndefined();
-    case DOMCharacterData::DeleteData: {
-      const int count = args[1]->toInt32(exec);
-      if (count < 0)
-        setDOMException(exec, DOMException::INDEX_SIZE_ERR);
-      else
-        data.deleteData(args[0]->toInt32(exec), count, exception);
-      return jsUndefined();
-    }
-    case DOMCharacterData::ReplaceData: {
-      const int count = args[1]->toInt32(exec);
-      if (count < 0)
-        setDOMException(exec, DOMException::INDEX_SIZE_ERR);
-      else
-        data.replaceData(args[0]->toInt32(exec), count, args[2]->toString(exec).domString(), exception);
-      return jsUndefined();
-    }
-    default:
-      return jsUndefined();
-  }
-}
-
-// -------------------------------------------------------------------------
-
-const ClassInfo DOMText::info = { "Text",
-                                 &DOMCharacterData::info, 0, 0 };
-/*
-@begin DOMTextProtoTable 1
-  splitText     DOMText::SplitText      DontDelete|Function 1
-@end
-*/
-KJS_DEFINE_PROTOTYPE(DOMTextProto)
-KJS_IMPLEMENT_PROTOFUNC(DOMTextProtoFunc)
-KJS_IMPLEMENT_PROTOTYPE_WITH_PARENT("DOMText",DOMTextProto,DOMTextProtoFunc,DOMCharacterDataProto)
-
-DOMText::DOMText(ExecState *exec, TextImpl *t)
-  : DOMCharacterData(t) 
-{ 
-  setPrototype(DOMTextProto::self(exec));
-}
-
-JSValue *DOMTextProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
-{
-  if (!thisObj->inherits(&KJS::DOMText::info))
-    return throwError(exec, TypeError);
-  DOMExceptionTranslator exception(exec);
-  TextImpl &text = *static_cast<TextImpl *>(static_cast<DOMText *>(thisObj)->impl());
-  switch(id) {
-    case DOMText::SplitText:
-      return getDOMNode(exec, text.splitText(args[0]->toInt32(exec), exception));
-  }
-  return jsUndefined();
-}
 
 } // namespace
