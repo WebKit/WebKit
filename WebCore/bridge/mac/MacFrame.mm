@@ -313,7 +313,7 @@ NSString *MacFrame::searchForLabelsAboveCell(QRegExp *regExp, HTMLTableCellEleme
 {
     RenderTableCell *cellRenderer = static_cast<RenderTableCell *>(cell->renderer());
 
-    if (cellRenderer) {
+    if (cellRenderer && cellRenderer->isTableCell()) {
         RenderTableCell *cellAboveRenderer = cellRenderer->table()->cellAbove(cellRenderer);
 
         if (cellAboveRenderer) {

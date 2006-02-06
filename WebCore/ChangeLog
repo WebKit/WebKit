@@ -1,3 +1,19 @@
+2006-02-06  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by John and Adele
+
+        Fix for <rdar://problem/4323167> REGRESSION (TOT): Crash in 
+        RenderTable::colToEffCol entering text into text input field
+
+        Some of the autofill code assumes that the form's label is in a 
+        table cell, but this is not necessarily the case. This fix checks 
+        that the renderer is actually a table cell before treating it as 
+        such. 
+
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::searchForLabelsAboveCell): Check if the 
+        renderer is a table cell.
+
 2006-02-06  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
