@@ -1,5 +1,11 @@
 2006-02-06  Maciej Stachowiak  <mjs@apple.com>
 
+        Remove remaining .subproj references to fix release build.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+2006-02-06  Maciej Stachowiak  <mjs@apple.com>
+
         Rubber stamped by Hyatt.
         
         - renamed subproject directories to not end with .subproj

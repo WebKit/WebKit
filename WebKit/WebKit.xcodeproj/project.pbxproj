@@ -339,7 +339,7 @@
 /* End PBXBuildStyle section */
 
 /* Begin PBXFileReference section */
-		1C68F640095B5FC100C2984E /* webInspector */ = {isa = PBXFileReference; lastKnownFileType = folder; name = webInspector; path = WebInspector.subproj/webInspector; sourceTree = SOURCE_ROOT; };
+		1C68F640095B5FC100C2984E /* webInspector */ = {isa = PBXFileReference; lastKnownFileType = folder; name = webInspector; path = WebInspector/webInspector; sourceTree = SOURCE_ROOT; };
 		1C68F65C095B5FC100C2984E /* WebInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebInspector.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1C68F65D095B5FC100C2984E /* WebInspector.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebInspector.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1C68F65E095B5FC100C2984E /* WebInspectorInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorInternal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -502,7 +502,7 @@
 		9325FBDC07D829AE00159862 /* IDNScriptWhiteList.txt */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; name = IDNScriptWhiteList.txt; path = Resources/IDNScriptWhiteList.txt; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		933D659903413FF2008635CE /* WebClipView.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebClipView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		933D659A03413FF2008635CE /* WebClipView.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebClipView.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		9345D17C0365BF35008635CE /* English */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = wrapper.nib; name = English; path = Panels.subproj/English.lproj/WebAuthenticationPanel.nib; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		9345D17C0365BF35008635CE /* English */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = wrapper.nib; name = English; path = Panels/English.lproj/WebAuthenticationPanel.nib; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9345D4E80365C58D008635CE /* English */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/WebJavaScriptTextInputPanel.nib; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9345D4EA0365C5B2008635CE /* WebJavaScriptTextInputPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebJavaScriptTextInputPanel.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9345D4EB0365C5B2008635CE /* WebJavaScriptTextInputPanel.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebJavaScriptTextInputPanel.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
