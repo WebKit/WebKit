@@ -1,3 +1,18 @@
+2006-02-06  David Harrison  <harrison@apple.com>
+
+        Reviewed by John.
+        
+        Fix TOT regression where Mail.app replies were getting truncated.
+        Was caused by 1/26/2006 checkin for http://bugzilla.opendarwin.org/show_bug.cgi?id=6754
+
+        No layout test because this code cannot be reached via JS operations.
+        
+        * khtml/html/HTMLElementImpl.cpp:
+        (WebCore::HTMLElementImpl::createContextualFragment):
+        - restore code that sampled nextSibling() before node is removed
+        - also, add asserts that the DOM mutation methods yield a 0 exception code, so problems
+          can be caught closer to the cause.
+
 2006-02-05  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Maciej.

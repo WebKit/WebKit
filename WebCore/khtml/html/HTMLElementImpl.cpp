@@ -274,13 +274,20 @@ DocumentFragmentImpl *HTMLElementImpl::createContextualFragment(const DOMString 
             NodeImpl *firstChild = node->firstChild();
             if (firstChild)
                 nextNode = firstChild;
-            for (RefPtr<NodeImpl> child = firstChild; child; child = child->nextSibling()) {
+            NodeImpl *nextChild;
+            for (RefPtr<NodeImpl> child = firstChild; child; child = nextChild) {
+                nextChild = child->nextSibling();
                 node->removeChild(child.get(), ignoredExceptionCode);
+                assert(!ignoredExceptionCode);
                 fragment->insertBefore(child, node.get(), ignoredExceptionCode);
+                assert(!ignoredExceptionCode);
             }
             fragment->removeChild(node.get(), ignoredExceptionCode);
-        } else if (node->hasTagName(headTag))
+            assert(!ignoredExceptionCode);
+        } else if (node->hasTagName(headTag)) {
             fragment->removeChild(node.get(), ignoredExceptionCode);
+            assert(!ignoredExceptionCode);
+        }
     }
 
     // Trick to get the fragment back to the floating state, with 0
