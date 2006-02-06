@@ -28,12 +28,21 @@
 
 #import <WebKit/WebPageBridge.h>
 #import <WebKit/WebFrameBridge.h>
+#import <WebKit/WebView.h>
 
 @implementation WebPageBridge
 
-- (id)initWithMainFrameName:(NSString *)frameName view:(WebFrameView *)frameView
+- (id)initWithMainFrameName:(NSString *)frameName webView:(WebView *)webView frameView:(WebFrameView *)frameView
 {
-    return [super initWithMainFrame:[[[WebFrameBridge alloc] initWithFrameName:frameName view:frameView] autorelease]];
+    self = [super initWithMainFrame:[[[WebFrameBridge alloc] initWithPage:self webView:webView frameName:frameName view:frameView] autorelease]];
+    if (self)
+        _webView = webView;
+    return self;
+}
+
+- (WebView *)webView
+{
+    return _webView;
 }
 
 @end

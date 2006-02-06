@@ -79,7 +79,6 @@ enum {
 @interface WebFrameViewPrivate : NSObject
 {
 @public
-    WebView *webView;
     WebFrame *webFrame;
     WebDynamicScrollBarsView *frameScrollView;
     
@@ -161,7 +160,7 @@ enum {
 // Note that the WebVew is not retained.
 - (WebView *)_webView
 {
-    return _private->webView;
+    return [_private->webFrame webView];
 }
 
 - (void)_setMarginWidth: (int)w
@@ -219,12 +218,6 @@ enum {
     [documentView release];
     
     return documentView;
-}
-
-- (void)_setWebView:(WebView *)webView
-{
-    // Not retained because the WebView owns the WebFrame, which owns the WebFrameView.
-    _private->webView = webView;    
 }
 
 - (void)_setWebFrame:(WebFrame *)webFrame
@@ -541,12 +534,12 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (void)_goBack
 {
-    [_private->webView goBack];
+    [[self _webView] goBack];
 }
 
 - (void)_goForward
 {
-    [_private->webView goForward];
+    [[self _webView] goForward];
 }
 
 - (BOOL)_scrollVerticallyBy: (float)delta

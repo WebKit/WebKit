@@ -173,7 +173,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     WebDataSource *dataSource;
     WebDataSource *provisionalDataSource;
     WebFrameBridge *bridge;
-    WebView *webView;
     WebFrameState state;
     WebFrameLoadType loadType;
     WebHistoryItem *currentItem;        // BF item for our current content
@@ -203,8 +202,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     NSString *frameNamespace;
 }
 
-- (void)setWebView:(WebView *)wv;
-- (WebView *)webView;
 - (void)setWebFrameView:(WebFrameView *)v;
 - (WebFrameView *)webFrameView;
 - (void)setDataSource:(WebDataSource *)d;
@@ -275,12 +272,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     [d retain];
     [dataSource release];
     dataSource = d;
-}
-
-- (WebView *)webView { return webView; }
-- (void)setWebView: (WebView *)wv
-{
-    webView = wv; // not retained (yet)
 }
 
 - (WebDataSource *)provisionalDataSource { return provisionalDataSource; }
@@ -435,13 +426,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     [newDataSource release];
 }
 
-- (void)_setWebView:(WebView *)v
-{
-    // To set to nil, we have to use _detachFromParent, not this.
-    ASSERT(v);
-    [_private setWebView:v];
-}
-
 // helper method used in various nav cases below
 - (void)_addBackForwardItemClippedAtTarget:(BOOL)doClip
 {
@@ -573,10 +557,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     [self _detachChildren];
 
     [_private setWebView:nil];
-    [_private->webFrameView _setWebView:nil];
     [_private->webFrameView _setWebFrame:nil]; // needed for now to be compatible w/ old behavior
-    [_private->dataSource _setWebView:nil];
-    [_private->provisionalDataSource _setWebView:nil];
 
     [self _setDataSource:nil];
     [_private setWebFrameView:nil];
@@ -629,7 +610,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     }
 
     [_private setDataSource:ds];
-    [ds _setWebView:[self webView]];
     [ds _setWebFrame:self];
 }
 
@@ -2331,8 +2311,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     WebFrame *parentFrame = [self parentFrame];
     if (parentFrame)
         [newDataSource _setOverrideEncoding:[[parentFrame dataSource] _overrideEncoding]];
-    [newDataSource _setWebView:[self webView]];
-    // FIXME: shouldn't this set the WebFrame too? who sets it?
+    [newDataSource _setWebFrame:self];
 
     [self _invalidatePendingPolicyDecisionCallingDefaultAction:YES];
 
@@ -2482,12 +2461,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
     _private = [[WebFramePrivate alloc] init];
 
-    [self _setWebView:v];
     _private->bridge = bridge;
 
     if (fv) {
         [_private setWebFrameView:fv];
-        [fv _setWebView:v];
         [fv _setWebFrame:self];
     }
     
@@ -2817,10 +2794,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)dealloc
 {
     [self _detachFromParent];
-    [_private->webFrameView _setWebView:nil];
-    [_private->dataSource _setWebView:nil];
-    [_private->provisionalDataSource _setWebView:nil];
-
     [_private release];
 
     --WebFrameCount;
@@ -2832,10 +2805,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     // FIXME: Should not do this work at finalize time. Need to do it at a predictable time instead.
     [self _detachFromParent];
-    [_private->webFrameView _setWebView:nil];
-    [_private->dataSource _setWebView:nil];
-    [_private->provisionalDataSource _setWebView:nil];
-
     --WebFrameCount;
 
     [super finalize];
@@ -2853,7 +2822,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (WebView *)webView
 {
-    return [_private webView];
+    return [[self _bridge] webView];
 }
 
 - (DOMDocument *)DOMDocument

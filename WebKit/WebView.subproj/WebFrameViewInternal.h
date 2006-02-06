@@ -35,7 +35,6 @@
 - (WebView *)_webView;
 - (void)_setDocumentView:(NSView <WebDocumentView> *)view;
 - (NSView <WebDocumentView> *)_makeDocumentViewForDataSource:(WebDataSource *)dataSource;
-- (void)_setWebView:(WebView *)webView;
 - (void)_setWebFrame:(WebFrame *)webFrame;
 - (int)_marginWidth;
 - (int)_marginHeight;

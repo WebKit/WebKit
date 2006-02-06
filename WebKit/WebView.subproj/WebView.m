@@ -563,10 +563,9 @@ static bool debugWidget = true;
 {
     WebFrameView *childView = [[WebFrameView alloc] initWithFrame:NSMakeRect(0,0,0,0)];
 
-    [childView _setWebView:self];
     [childView setAllowsScrolling:allowsScrolling];
     
-    WebFrameBridge *newBridge = [[WebFrameBridge alloc] initWithFrameName:fname view:childView];
+    WebFrameBridge *newBridge = [[WebFrameBridge alloc] initWithPage:_private->_pageBridge webView:self frameName:fname view:childView];
 
     [parent _addChild:[newBridge webFrame]];
     
@@ -1606,13 +1605,12 @@ NSMutableDictionary *countInvocations;
     _private->smartInsertDeleteEnabled = YES;
 
     NSRect f = [self frame];
-    WebFrameView *wv = [[WebFrameView alloc] initWithFrame: NSMakeRect(0,0,f.size.width,f.size.height)];
-    [wv _setWebView:self];
-    [wv setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-    [self addSubview: wv];
-    [wv release];
+    WebFrameView *frameView = [[WebFrameView alloc] initWithFrame: NSMakeRect(0,0,f.size.width,f.size.height)];
+    [frameView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    [self addSubview:frameView];
+    [frameView release];
 
-    _private->_pageBridge = [[WebPageBridge alloc] initWithMainFrameName:frameName view:wv];
+    _private->_pageBridge = [[WebPageBridge alloc] initWithMainFrameName:frameName webView:self frameView:frameView];
 
     [self _addToAllWebViewsSet];
     [self setGroupName:groupName];
@@ -1622,10 +1620,10 @@ NSMutableDictionary *countInvocations;
     // contained frame view. This works together with our becomeFirstResponder 
     // and setNextKeyView overrides.
     NSView *nextKeyView = [self nextKeyView];
-    if (nextKeyView != nil && nextKeyView != wv) {
-        [wv setNextKeyView:nextKeyView];
+    if (nextKeyView != nil && nextKeyView != frameView) {
+        [frameView setNextKeyView:nextKeyView];
     }
-    [super setNextKeyView:wv];
+    [super setNextKeyView:frameView];
 
     ++WebViewCount;
 

@@ -121,7 +121,7 @@
         return [resource _fileWrapperRepresentation];
     }
         
-    NSCachedURLResponse *cachedResponse = [_private->webView _cachedResponseForURL:URL];
+    NSCachedURLResponse *cachedResponse = [[self _webView] _cachedResponseForURL:URL];
     if (cachedResponse) {
         NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:[cachedResponse data]] autorelease];
         [wrapper setPreferredFilename:[[cachedResponse response] suggestedFilename]];
@@ -278,7 +278,7 @@
 
 - (WebView *)_webView
 {
-    return _private->webView;
+    return [_private->webFrame webView];
 }
 
 - (void)_setRepresentation: (id<WebDocumentRepresentation>)representation
@@ -299,9 +299,9 @@
     
     if (loading) {
         [self retain];
-        [_private->webView retain];
+        [[self _webView] retain];
     } else {
-        [_private->webView release];
+        [[self _webView] release];
         // FIXME: It would be cleanest to set webView to nil here. Keeping a non-retained reference
         // to the WebView is dangerous. But WebSubresourceLoader actually depends on this non-retained
         // reference when starting loads after the data source has stoppped loading.
@@ -312,19 +312,6 @@
 - (void)_updateLoading
 {
     [self _setLoading:_private->mainResourceLoader || [_private->subresourceLoaders count]];
-}
-
-- (void)_setWebView:(WebView *)webView
-{
-    if (_private->loading) {
-        [webView retain];
-        [_private->webView release];
-    }
-    _private->webView = webView;
-    
-    [self _defersCallbacksChanged];
-    // no need to do _defersCallbacksChanged for subframes since they too
-    // will be or have been told of their WebView
 }
 
 - (void)_setData:(NSData *)data
@@ -426,10 +413,10 @@
     
     [self _setLoading:YES];
 
-    [_private->webView _progressStarted:[self webFrame]];
+    [[self _webView] _progressStarted:[self webFrame]];
     
-    [_private->webView _didStartProvisionalLoadForFrame:[self webFrame]];
-    [[_private->webView _frameLoadDelegateForwarder] webView:_private->webView
+    [[self _webView] _didStartProvisionalLoadForFrame:[self webFrame]];
+    [[[self _webView] _frameLoadDelegateForwarder] webView:[self _webView]
                                      didStartProvisionalLoadForFrame:[self webFrame]];
 
     if (pageCache){
@@ -439,11 +426,11 @@
         _private->loadingFromPageCache = NO;
         
         id identifier;
-        id resourceLoadDelegate = [_private->webView resourceLoadDelegate];
+        id resourceLoadDelegate = [[self _webView] resourceLoadDelegate];
         if ([resourceLoadDelegate respondsToSelector:@selector(webView:identifierForInitialRequest:fromDataSource:)])
-            identifier = [resourceLoadDelegate webView:_private->webView identifierForInitialRequest:_private->originalRequest fromDataSource:self];
+            identifier = [resourceLoadDelegate webView:[self _webView] identifierForInitialRequest:_private->originalRequest fromDataSource:self];
         else
-            identifier = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:_private->webView identifierForInitialRequest:_private->originalRequest fromDataSource:self];
+            identifier = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:[self _webView] identifierForInitialRequest:_private->originalRequest fromDataSource:self];
             
         _private->mainResourceLoader = [[WebMainResourceLoader alloc] initWithDataSource:self];
         [_private->mainResourceLoader setSupportsMultipartContent:_private->supportsMultipartContent];
@@ -534,10 +521,10 @@
     if (!trimmed || [trimmed length] == 0)
         return;
         
-    [_private->webView _willChangeValueForKey:_WebMainFrameTitleKey];
+    [[self _webView] _willChangeValueForKey:_WebMainFrameTitleKey];
     [_private->pageTitle release];
     _private->pageTitle = [trimmed copy];
-    [_private->webView _didChangeValueForKey:_WebMainFrameTitleKey];
+    [[self _webView] _didChangeValueForKey:_WebMainFrameTitleKey];
     
     // The title doesn't get communicated to the WebView until we are committed.
     if (_private->committed) {
@@ -550,7 +537,7 @@
             // it has the right notion of the current b/f item.
             [[self webFrame] _setTitle:_private->pageTitle];
             
-            [[_private->webView _frameLoadDelegateForwarder] webView:_private->webView
+            [[[self _webView] _frameLoadDelegateForwarder] webView:[self _webView]
                                                      didReceiveTitle:_private->pageTitle
                                                             forFrame:[self webFrame]];
         }
@@ -607,7 +594,7 @@
     // Also, don't send it when replacing unreachable URLs with alternate content.
     if (!handlingUnreachableURL && ![[oldRequest URL] isEqual: [request URL]]) {
         LOG(Redirect, "Server redirect to: %@", [request URL]);
-        [[_private->webView _frameLoadDelegateForwarder] webView:_private->webView
+        [[[self _webView] _frameLoadDelegateForwarder] webView:[self _webView]
                       didReceiveServerRedirectForProvisionalLoadForFrame:[self webFrame]];
     }
         
@@ -824,16 +811,16 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     [iconDB _setIconURL:[iconURL _web_originalDataAsString] forURL:[[[self _originalRequest] URL] _web_originalDataAsString]];
 
     
-    if ([self webFrame] == [_private->webView mainFrame])
-        [_private->webView _willChangeValueForKey:_WebMainFrameIconKey];
+    if ([self webFrame] == [[self _webView] mainFrame])
+        [[self _webView] _willChangeValueForKey:_WebMainFrameIconKey];
     
     NSImage *icon = [iconDB iconForURL:[[self _URL] _web_originalDataAsString] withSize:WebIconSmallSize];
-    [[_private->webView _frameLoadDelegateForwarder] webView:_private->webView
+    [[[self _webView] _frameLoadDelegateForwarder] webView:[self _webView]
                                                       didReceiveIcon:icon
                                                             forFrame:[self webFrame]];
     
-    if ([self webFrame] == [_private->webView mainFrame])
-        [_private->webView _didChangeValueForKey:_WebMainFrameIconKey];
+    if ([self webFrame] == [[self _webView] mainFrame])
+        [[self _webView] _didChangeValueForKey:_WebMainFrameIconKey];
 }
 
 - (void)_iconLoaderReceivedPageIcon:(WebIconLoader *)iconLoader
@@ -893,7 +880,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
 
 - (void)_defersCallbacksChanged
 {
-    BOOL defers = [_private->webView defersCallbacks];
+    BOOL defers = [[self _webView] defersCallbacks];
     
     if (defers == _private->defersCallbacks) {
         return;
@@ -988,6 +975,10 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     [frame retain];
     [_private->webFrame release];
     _private->webFrame = frame;
+
+    [self _defersCallbacksChanged];
+    // no need to do _defersCallbacksChanged for subframes since they too
+    // will be or have been told of their WebFrame
 }
 
 // May return nil if not initialized with a URL.

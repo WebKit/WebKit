@@ -1,3 +1,112 @@
+2006-02-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - shuffle things around so that WebFrame no longer has a WebView backpointer, the backpointer is
+        at the bridge level.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7093
+
+        * WebCoreSupport.subproj/WebFrameBridge.h:
+        * WebCoreSupport.subproj/WebFrameBridge.m:
+        (-[WebFrameBridge initWithPage:webView:frameName:view:]):
+        (-[WebFrameBridge page]):
+        (-[WebFrameBridge mainFrame]):
+        (-[WebFrameBridge webView]):
+        (-[WebFrameBridge createWindowWithURL:frameName:]):
+        (-[WebFrameBridge showWindow]):
+        (-[WebFrameBridge areToolbarsVisible]):
+        (-[WebFrameBridge setToolbarsVisible:]):
+        (-[WebFrameBridge isStatusbarVisible]):
+        (-[WebFrameBridge setStatusbarVisible:]):
+        (-[WebFrameBridge setWindowFrame:]):
+        (-[WebFrameBridge windowFrame]):
+        (-[WebFrameBridge setWindowContentRect:]):
+        (-[WebFrameBridge windowContentRect]):
+        (-[WebFrameBridge setWindowIsResizable:]):
+        (-[WebFrameBridge windowIsResizable]):
+        (-[WebFrameBridge firstResponder]):
+        (-[WebFrameBridge makeFirstResponder:]):
+        (-[WebFrameBridge closeWindowSoon]):
+        (-[WebFrameBridge runJavaScriptAlertPanelWithMessage:]):
+        (-[WebFrameBridge runJavaScriptConfirmPanelWithMessage:]):
+        (-[WebFrameBridge canRunBeforeUnloadConfirmPanel]):
+        (-[WebFrameBridge runBeforeUnloadConfirmPanelWithMessage:]):
+        (-[WebFrameBridge runJavaScriptTextInputPanelWithPrompt:defaultText:returningText:]):
+        (-[WebFrameBridge addMessageToConsole:]):
+        (-[WebFrameBridge runOpenPanelForFileButtonWithResultListener:]):
+        (-[WebFrameBridge setStatusText:]):
+        (-[WebFrameBridge startLoadingResource:withURL:customHeaders:]):
+        (-[WebFrameBridge startLoadingResource:withURL:customHeaders:postData:]):
+        (-[WebFrameBridge syncLoadResourceWithURL:customHeaders:postData:finalURL:responseHeaders:statusCode:]):
+        (-[WebFrameBridge focusWindow]):
+        (-[WebFrameBridge createChildFrameNamed:withURL:referrer:renderPart:allowsScrolling:marginWidth:marginHeight:]):
+        (-[WebFrameBridge userAgentForURL:]):
+        (-[WebFrameBridge _nextKeyViewOutsideWebFrameViewsWithValidityCheck:]):
+        (-[WebFrameBridge previousKeyViewOutsideWebFrameViews]):
+        (-[WebFrameBridge defersLoading]):
+        (-[WebFrameBridge setDefersLoading:]):
+        (-[WebFrameBridge viewForPluginWithURL:attributeNames:attributeValues:MIMEType:]):
+        (-[WebFrameBridge _preferences]):
+        (-[WebFrameBridge selectWordBeforeMenuEvent]):
+        (-[WebFrameBridge historyLength]):
+        (-[WebFrameBridge canGoBackOrForward:]):
+        (-[WebFrameBridge goBackOrForward:]):
+        (-[WebFrameBridge print]):
+        (-[WebFrameBridge pollForAppletInView:]):
+        (-[WebFrameBridge respondToChangedContents]):
+        (-[WebFrameBridge respondToChangedSelection]):
+        (-[WebFrameBridge undoManager]):
+        (-[WebFrameBridge issueCutCommand]):
+        (-[WebFrameBridge issueCopyCommand]):
+        (-[WebFrameBridge issuePasteCommand]):
+        (-[WebFrameBridge issuePasteAndMatchStyleCommand]):
+        (-[WebFrameBridge canPaste]):
+        (-[WebFrameBridge overrideMediaType]):
+        (-[WebFrameBridge isEditable]):
+        (-[WebFrameBridge shouldChangeSelectedDOMRange:toDOMRange:affinity:stillSelecting:]):
+        (-[WebFrameBridge shouldBeginEditing:]):
+        (-[WebFrameBridge shouldEndEditing:]):
+        (-[WebFrameBridge windowObjectCleared]):
+        (-[WebFrameBridge spellCheckerDocumentTag]):
+        (-[WebFrameBridge isContinuousSpellCheckingEnabled]):
+        (-[WebFrameBridge didFirstLayout]):
+        (-[WebFrameBridge dashboardRegionsChanged:]):
+        (-[WebFrameBridge createModalDialogWithURL:]):
+        (-[WebFrameBridge canRunModal]):
+        (-[WebFrameBridge runModal]):
+        * WebCoreSupport.subproj/WebPageBridge.h:
+        * WebCoreSupport.subproj/WebPageBridge.m:
+        (-[WebPageBridge initWithMainFrameName:webView:frameView:]):
+        (-[WebPageBridge webView]):
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _fileWrapperForURL:]):
+        (-[WebDataSource _webView]):
+        (-[WebDataSource _setLoading:]):
+        (-[WebDataSource _startLoading:]):
+        (-[WebDataSource _setTitle:]):
+        (-[WebDataSource _setRequest:]):
+        (-[WebDataSource _updateIconDatabaseWithURL:]):
+        (-[WebDataSource _defersCallbacksChanged]):
+        (-[WebDataSource _setWebFrame:]):
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _traverseNextFrameStayWithin::]):
+        (-[WebFrame _detachFromParent]):
+        (-[WebFrame _setDataSource:]):
+        (-[WebFrame _loadDataSource:withLoadType:formState:]):
+        (-[WebFrame _initWithWebFrameView:webView:bridge:]):
+        (-[WebFrame dealloc]):
+        (-[WebFrame finalize]):
+        (-[WebFrame webView]):
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView _webView]):
+        (-[WebFrameView _goBack]):
+        (-[WebFrameView _goForward]):
+        * WebView.subproj/WebFrameViewInternal.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView _createFrameNamed:inParent:allowsScrolling:]):
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+
 2006-02-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

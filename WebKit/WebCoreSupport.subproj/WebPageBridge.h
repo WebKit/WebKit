@@ -30,11 +30,17 @@
 
 #import <WebCore/WebCorePageBridge.h>
 
+@class WebPageBridge;
 @class WebFrameBridge;
 @class WebFrameView;
+@class WebView;
 
 @interface WebPageBridge : WebCorePageBridge <WebCorePageBridge>
+{
+    WebView *_webView;
+}
 
-- (id)initWithMainFrameName:(NSString *)frameName view:(WebFrameView *)frameView;
+- (id)initWithMainFrameName:(NSString *)frameName webView:(WebView *)webView frameView:(WebFrameView *)frameView;
+- (WebView *)webView;
 
 @end
