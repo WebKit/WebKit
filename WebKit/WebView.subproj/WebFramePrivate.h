@@ -84,7 +84,6 @@ extern NSString *WebPageCacheDocumentViewKey;
 - (NSURLRequest *)_webDataRequestForData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL;
 - (void)_loadRequest:(NSURLRequest *)request subresources:(NSArray *)subresources subframeArchives:(NSArray *)subframeArchives;
 
-- (void)_setWebView:(WebView *)webView;
 - (void)_detachFromParent;
 - (void)_detachChildren;
 - (void)_closeOldDataSources;

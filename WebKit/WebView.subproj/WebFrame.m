@@ -543,7 +543,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
         [child _closeOldDataSources];
 
     if (_private->dataSource)
-        [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView willCloseFrame:self];
+        [[[self webView] _frameLoadDelegateForwarder] webView:[self webView] willCloseFrame:self];
 }
 
 - (void)_detachFromParent
@@ -556,7 +556,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     [self _saveScrollPositionAndViewStateToItem:[_private currentItem]];
     [self _detachChildren];
 
-    [_private setWebView:nil];
     [_private->webFrameView _setWebFrame:nil]; // needed for now to be compatible w/ old behavior
 
     [self _setDataSource:nil];
@@ -839,11 +838,11 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
             // Tell the client we've committed this URL.
             ASSERT([[self frameView] documentView] != nil);
             [[self webView] _didCommitLoadForFrame: self];
-            [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView didCommitLoadForFrame:self];
+            [[[self webView] _frameLoadDelegateForwarder] webView:[self webView] didCommitLoadForFrame:self];
             
             // If we have a title let the WebView know about it.
             if (ptitle) {
-                [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
+                [[[self webView] _frameLoadDelegateForwarder] webView:[self webView]
                                                            didReceiveTitle:ptitle
                                                                   forFrame:self];
             }
@@ -1064,7 +1063,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                     LOG(Loading, "%@:  checking complete in WebFrameStateProvisional, load done", [self name]);
                     [[self webView] _didFailProvisionalLoadWithError:error forFrame:self];
                     _private->delegateIsHandlingProvisionalLoadError = YES;
-                    [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
+                    [[[self webView] _frameLoadDelegateForwarder] webView:[self webView]
                                           didFailProvisionalLoadWithError:error
                                                                  forFrame:self];
                     _private->delegateIsHandlingProvisionalLoadError = NO;
@@ -1158,13 +1157,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                 NSError *error = [ds _mainDocumentError];
                 if (error != nil) {
                     [[self webView] _didFailLoadWithError:error forFrame:self];
-                    [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
+                    [[[self webView] _frameLoadDelegateForwarder] webView:[self webView]
                                                      didFailLoadWithError:error
                                                                  forFrame:self];
                     [_private->internalLoadDelegate webFrame:self didFinishLoadWithError:error];
                 } else {
                     [[self webView] _didFinishLoadForFrame:self];
-                    [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
+                    [[[self webView] _frameLoadDelegateForwarder] webView:[self webView]
                                                     didFinishLoadForFrame:self];
                     [_private->internalLoadDelegate webFrame:self didFinishLoadWithError:nil];
                 }
@@ -1192,7 +1191,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_handledOnloadEvents
 {
-    [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView didHandleOnloadEventsForFrame:self];
+    [[[self webView] _frameLoadDelegateForwarder] webView:[self webView] didHandleOnloadEventsForFrame:self];
 }
 
 // Called every time a resource is completely loaded, or an error is received.
@@ -1317,7 +1316,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [[self dataSource] __adoptRequest:hackedRequest];
         [hackedRequest release];
         
-        [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
+        [[[self webView] _frameLoadDelegateForwarder] webView:[self webView]
                                didChangeLocationWithinPageForFrame:self];
         [_private->internalLoadDelegate webFrame:self didFinishLoadWithError:nil];
     } else {
@@ -1469,7 +1468,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // <rdar://problem/3951283> can view pages from the back/forward cache that should be disallowed by Parental Controls
     // Ultimately, history item navigations should go through the policy delegate. That's covered in:
     // <rdar://problem/3979539> back/forward cache navigations should consult policy delegate
-    if ([[_private->webView _policyDelegateForwarder] webView:_private->webView shouldGoToHistoryItem:item]) {    
+    if ([[[self webView] _policyDelegateForwarder] webView:[self webView] shouldGoToHistoryItem:item]) {    
         WebBackForwardList *backForwardList = [[self webView] backForwardList];
         WebHistoryItem *currItem = [backForwardList currentItem];
         // Set the BF cursor before commit, which lets the user quickly click back/forward again.
@@ -1774,7 +1773,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [self _checkLoadComplete];
     }
 
-    [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
+    [[[self webView] _frameLoadDelegateForwarder] webView:[self webView]
                       didChangeLocationWithinPageForFrame:self];
     [_private->internalLoadDelegate webFrame:self didFinishLoadWithError:nil];
 }
@@ -2002,7 +2001,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     LOG(Redirect, "%@(%p) Client redirect to: %@, [self dataSource] = %p, lockHistory = %d, isJavaScriptFormAction = %d", [self name], self, URL, [self dataSource], (int)lockHistory, (int)isJavaScriptFormAction);
 
-    [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
+    [[[self webView] _frameLoadDelegateForwarder] webView:[self webView]
                                 willPerformClientRedirectToURL:URL
                                                          delay:seconds
                                                       fireDate:date
@@ -2023,7 +2022,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_clientRedirectCancelled:(BOOL)cancelWithLoadInProgress
 {
-    [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
+    [[[self webView] _frameLoadDelegateForwarder] webView:[self webView]
                                didCancelClientRedirectForFrame:self];
     if (!cancelWithLoadInProgress)
         _private->quickRedirectComing = NO;

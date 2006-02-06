@@ -1,3 +1,20 @@
+2006-02-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Ooops, I made a last-minute change to my last patch that broke the build - fixed.
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _closeOldDataSources]):
+        (-[WebFrame _detachFromParent]):
+        (-[WebFrame _transitionToCommitted:]):
+        (-[WebFrame _checkLoadCompleteForThisFrame]):
+        (-[WebFrame _handledOnloadEvents]):
+        (-[WebFrame _loadItem:withLoadType:]):
+        (-[WebFrame _goToItem:withLoadType:]):
+        (-[WebFrame _continueFragmentScrollAfterNavigationPolicy:formState:]):
+        (-[WebFrame _clientRedirectedTo:delay:fireDate:lockHistory:isJavaScriptFormAction:]):
+        (-[WebFrame _clientRedirectCancelled:]):
+        * WebView.subproj/WebFramePrivate.h:
+
 2006-02-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
