@@ -914,6 +914,19 @@ void MacFrame::stopRedirectionTimer()
         [_bridge reportClientRedirectCancelled:d->m_cancelWithLoadInProgress];
 }
 
+void MacFrame::redirectionTimerFired(Timer<Frame>* timer)
+{
+    // Note, despite its name, we must call "redirect cancelled" even when the
+    // redirect has completed successfully. Although that may not have been our
+    // original intent, Safari depends on this behavior at the time of this writing.
+    // See Radar 4432562 and Bugzilla 7058.
+
+    // Don't report history navigations, just actual redirection.
+    if (d->m_scheduledRedirection != historyNavigationScheduled)
+        [_bridge reportClientRedirectCancelled:d->m_cancelWithLoadInProgress];
+
+    Frame::redirectionTimerFired(timer);
+}
 
 QString MacFrame::userAgent() const
 {

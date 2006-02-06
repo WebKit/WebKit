@@ -800,6 +800,8 @@ protected:
   virtual Frame* createFrame(const KURL& url, const QString& name, RenderPart* renderer, const DOMString& referrer) = 0;
   virtual ObjectContentType objectContentType(const KURL& url, const QString& mimeType) = 0;
 
+    virtual void redirectionTimerFired(Timer<Frame>*);
+
 public slots:
   /**
    * Stops all animated images on the current and child pages
@@ -813,7 +815,6 @@ private slots:
   void slotRestoreData( const ByteArray &data );
   void slotFinished( KIO::Job* );
   void slotFinishedParsing();
-    void redirectionTimerFired(Timer<Frame>*);
   void slotRedirection(KIO::Job*, const KURL&);
 
   void slotIncZoom();

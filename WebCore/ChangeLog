@@ -1,3 +1,20 @@
+2006-02-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fix <rdar://problem/4432562> REGRESSION (TOT):
+          Safari's "stop loading" active, "view source" inactive after page load [7058]
+          http://bugzilla.opendarwin.org/show_bug.cgi?id=7058
+
+        * page/Frame.h: Make redirectionTimerFired virtual.
+        * bridge/mac/MacFrame.h: Override redirectionTimerFired.
+        * bridge/mac/MacFrame.mm: (WebCore::MacFrame::redirectionTimerFired):
+        Send the redirectionTimerCancelled callback here, even though it has
+        fired rather than being cancelled.
+
+        * manual-tests/redirect.html: Added.
+        * manual-tests/redirection-target.html: Added.
+
 2006-02-06  David Harrison  <harrison@apple.com>
 
         Reviewed by John.
