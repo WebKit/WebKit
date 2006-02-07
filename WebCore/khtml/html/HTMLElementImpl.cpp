@@ -168,9 +168,9 @@ void HTMLElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     } else if (attr->name() == onmousewheelAttr) {
         setHTMLEventListener(mousewheelEvent, attr);
     } else if (attr->name() == onfocusAttr) {
-        setHTMLEventListener(DOMFocusInEvent, attr);
+        setHTMLEventListener(focusEvent, attr);
     } else if (attr->name() == onblurAttr) {
-        setHTMLEventListener(DOMFocusOutEvent, attr);
+        setHTMLEventListener(blurEvent, attr);
     } else if (attr->name() == onkeydownAttr) {
         setHTMLEventListener(keydownEvent, attr);
     } else if (attr->name() == onkeypressAttr) {
