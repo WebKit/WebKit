@@ -128,6 +128,12 @@ sub productDir
     return $configurationProductDir;
 }
 
+sub configuration()
+{
+    determineConfiguration();
+    return $configuration;
+}
+
 sub XcodeOptions
 {
     determineBaseProductDir();
@@ -251,24 +257,38 @@ sub checkWebCoreSVGSupport
     return $hasSVG;
 }
 
+
+sub isCygwin()
+{
+    return ($^O eq "cygwin");
+}
+
+sub isOSX()
+{
+    return ($^O eq "darwin");
+}
+
 sub checkRequiredSystemConfig
 {
-    chomp(my $productVersion = `sw_vers -productVersion`);
-    if ($productVersion lt "10.4") {
-        print "*************************************************************\n";
-        print "Mac OS X Version 10.4.0 or later is required to build WebKit.\n";
-        print "You have " . $productVersion . ", thus the build will most likely fail.\n";
-        print "*************************************************************\n";
+    if (isOSX()) {
+        chomp(my $productVersion = `sw_vers -productVersion`);
+        if ($productVersion lt "10.4") {
+            print "*************************************************************\n";
+            print "Mac OS X Version 10.4.0 or later is required to build WebKit.\n";
+            print "You have " . $productVersion . ", thus the build will most likely fail.\n";
+            print "*************************************************************\n";
+        }
+        my $xcodeVersion = `xcodebuild -version`;
+        if ($xcodeVersion !~ /DevToolsCore-(\d+)/ || $1 < 620) {
+            print "*************************************************************\n";
+            print "Xcode Version 2.1 or later is required to build WebKit.\n";
+            print "You have an earlier version of Xcode, thus the build will\n";
+            print "most likely fail.  The latest Xcode is available from the web:\n";
+            print "http://developer.apple.com/tools/xcode\n";
+            print "*************************************************************\n";
+        }
     }
-    my $xcodeVersion = `xcodebuild -version`;
-    if ($xcodeVersion !~ /DevToolsCore-(\d+)/ || $1 < 620) {
-        print "*************************************************************\n";
-        print "Xcode Version 2.1 or later is required to build WebKit.\n";
-        print "You have an earlier version of Xcode, thus the build will\n";
-        print "most likely fail.  The latest Xcode is available from the web:\n";
-        print "http://developer.apple.com/tools/xcode\n";
-        print "*************************************************************\n";
-    }
+    # Win32 and other platforms may want to check for minimum config
 }
 
 1;

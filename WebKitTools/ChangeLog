@@ -1,5 +1,15 @@
 2006-02-06  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by hyatt.
+
+        Fix build-webkit for use on win32 (unblocks buildbot usage).
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7122
+
+        * Scripts/build-webkit: use ifCygwin() to conditionalize builds
+        * Scripts/webkitdirs.pm: add ifOSX() and ifCygwin()
+
+2006-02-06  Eric Seidel  <eseidel@apple.com>
+
         Rubber-stamped by darin & mjs.
 
         Added new support directory for build slave scripts.

@@ -55,21 +55,30 @@ for my $dir (@projects, @otherDirs) {
     }
 }
 
-# Copy library and header from WebKitLibraries to a findable place in the product directory.
-my $srcLib = "WebKitLibraries/libWebKitSystemInterface.a";
-my $lib = "$productDir/libWebKitSystemInterface.a";
-if (!-e $lib || -M $lib > -M $srcLib) {
-    print "Updating $lib\n";
-    system "ditto", $srcLib, $lib;
-    system "ranlib", $lib;
+if (isOSX()) {
+    # Copy library and header from WebKitLibraries to a findable place in the product directory.
+    my $srcLib = "WebKitLibraries/libWebKitSystemInterface.a";
+    my $lib = "$productDir/libWebKitSystemInterface.a";
+    if (!-e $lib || -M $lib > -M $srcLib) {
+        print "Updating $lib\n";
+        system "ditto", $srcLib, $lib;
+        system "ranlib", $lib;
+    }
+    
+    my $srcHeader = "WebKitLibraries/WebKitSystemInterface.h";
+    my $header = "$productDir/usr/local/include/WebKitSystemInterface.h";
+    if (!-e $header || -M $header > -M $srcHeader) {
+        print "Updating $header\n";
+        system "mkdir", "-p", "$productDir/usr/local/include";
+        system "ditto", $srcHeader, $header;
+    }
 }
 
-my $srcHeader = "WebKitLibraries/WebKitSystemInterface.h";
-my $header = "$productDir/usr/local/include/WebKitSystemInterface.h";
-if (!-e $header || -M $header > -M $srcHeader) {
-    print "Updating $header\n";
-    system "mkdir", "-p", "$productDir/usr/local/include";
-    system "ditto", $srcHeader, $header;
+my $devenvPath;
+if (isCygwin()) {
+    my $programFilesPath = `cygpath "$ENV{'PROGRAMFILES'}"`;
+    chomp $programFilesPath;
+    $devenvPath = "$programFilesPath/Microsoft Visual Studio 8/Common7/IDE/devenv.exe";
 }
 
 # Force re-link of existing libraries if different than expected
@@ -79,12 +88,23 @@ removeLibraryDependingOnSVG("WebCore", $svgSupport);
 for my $dir (@projects) {
     chdir $dir or die;
     my $result = 0;
-    if ($dir eq "JavaScriptCore") {
-        $result = system "xcodebuild", "-project", "$dir.xcodeproj", "-target", "All", @options, @ARGV;
-    } elsif ($dir eq "WebCore") {
-        $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, @ARGV, @svgOptions;
-    } else {
-        $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, @ARGV;
+    if (isOSX()) {
+        # FIXME: Shouldn't we use "make" here nowadays?
+        if ($dir eq "JavaScriptCore") {
+            $result = system "xcodebuild", "-project", "$dir.xcodeproj", "-target", "All", @options, @ARGV;
+        } elsif ($dir eq "WebCore") {
+            $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, @ARGV, @svgOptions;
+        } else {
+            $result = system "xcodebuild", "-project", "$dir.xcodeproj", @options, @ARGV;
+        }
+    } elsif (isCygwin()) {
+        if (($dir eq "JavaScriptCore") || ($dir eq "WebCore")) {
+            chdir "$dir.vcproj" or die "Failed to cd into $dir.vcproj\n";
+            my $config = configuration();
+            print "$devenvPath $dir.sln /build $config\n";
+            $result = system $devenvPath, "$dir.sln", "/build", $config;
+            chdir ".." or die;
+        }
     }
     exit WEXITSTATUS($result) if WEXITSTATUS($result);
     chdir ".." or die;
