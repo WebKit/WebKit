@@ -124,8 +124,6 @@ NSEvent *WKCreateNSEventWithCarbonEvent(EventRef eventRef);
 NSEvent *WKCreateNSEventWithCarbonMouseMoveEvent(EventRef inEvent, NSWindow *window);
 NSEvent *WKCreateNSEventWithCarbonClickEvent(EventRef inEvent, WindowRef windowRef);
 
-BOOL WKExecutableLinkedInTigerOrEarlier(void);
-
 CGContextRef WKNSWindowOverrideCGContext(NSWindow *, CGContextRef);
 void WKNSWindowRestoreCGContext(NSWindow *, CGContextRef);
 

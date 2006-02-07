@@ -1,3 +1,9 @@
+2006-02-06  John Sullivan  <sullivan@apple.com>
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterface.a:
+        removed WKExecutableLinkedInTigerOrEarlier
+
 2005-11-01  Darin Adler  <darin@apple.com>
 
         * libWebKitSystemInterface.a: Updated.
