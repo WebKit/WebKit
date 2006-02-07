@@ -2224,7 +2224,7 @@
 				Name="win"
 				>
 				<File
-					RelativePath="..\..\platform\win\SystemTime.cpp"
+					RelativePath="..\..\platform\win\SystemTimeWin.cpp"
 					>
 				</File>
 				<File
