@@ -46,7 +46,8 @@ Image::Image(ImageAnimationObserver* observer, bool isPDF)
 {
     m_data = new ImageData(this);
 #if __APPLE__
-    m_data->setIsPDF();
+    if (isPDF)
+        m_data->setIsPDF();
 #endif
     m_animationObserver = observer;
 }
