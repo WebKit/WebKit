@@ -17,8 +17,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(WebKitOutputDir)\$(ConfigurationName)"
-			IntermediateDirectory="$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)"
+			OutputDirectory="$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate"
+			IntermediateDirectory="$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate"
 			ConfigurationType="4"
 			CharacterSet="1"
 			>
@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\iconv\include&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\libxml\include&quot;;&quot;$(SolutionDir)\..\..\libxslt\include&quot;;&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\css&quot;;&quot;$(SolutionDir)\..\khtml\dom&quot;;&quot;$(SolutionDir)\..\khtml\ecma&quot;;&quot;$(SolutionDir)\..\khtml\editing&quot;;&quot;$(SolutionDir)\..\khtml\html&quot;;&quot;$(SolutionDir)\..\khtml\misc&quot;;&quot;$(SolutionDir)\..\rendering&quot;;&quot;$(SolutionDir)\..\khtml\xml&quot;;&quot;$(SolutionDir)\..\khtml\xsl&quot;;&quot;$(SolutionDir)\..\khtml&quot;;&quot;$(SolutionDir)\..\kwq&quot;;&quot;$(SolutionDir)\..\bridge&quot;;&quot;$(SolutionDir)\..\loader&quot;;&quot;$(SolutionDir)\..\page&quot;;&quot;$(SolutionDir)\..\platform&quot;;&quot;$(SolutionDir)\..\xml&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\kjs&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\iconv\include&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\libxml\include&quot;;&quot;$(SolutionDir)\..\..\libxslt\include&quot;;&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\css&quot;;&quot;$(SolutionDir)\..\khtml\dom&quot;;&quot;$(SolutionDir)\..\khtml\ecma&quot;;&quot;$(SolutionDir)\..\khtml\editing&quot;;&quot;$(SolutionDir)\..\khtml\html&quot;;&quot;$(SolutionDir)\..\khtml\misc&quot;;&quot;$(SolutionDir)\..\rendering&quot;;&quot;$(SolutionDir)\..\khtml\xml&quot;;&quot;$(SolutionDir)\..\khtml\xsl&quot;;&quot;$(SolutionDir)\..\khtml&quot;;&quot;$(SolutionDir)\..\kwq&quot;;&quot;$(SolutionDir)\..\bridge&quot;;&quot;$(SolutionDir)\..\loader&quot;;&quot;$(SolutionDir)\..\page&quot;;&quot;$(SolutionDir)\..\platform&quot;;&quot;$(SolutionDir)\..\platform\cairo&quot;;&quot;$(SolutionDir)\..\platform\image-decoders&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\gif&quot;;&quot;$(SolutionDir)\..\xml&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\kjs&quot;;&quot;$(SolutionDir)..\platform\cairo\pixman\src&quot;;&quot;$(SolutionDir)\..\platform\cairo\cairo\src&quot;"
 				PreprocessorDefinitions="WIN32; KHTML_NO_XBL; KHTML_XSLT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -82,8 +82,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(WebKitOutputDir)\$(ConfigurationName)"
-			IntermediateDirectory="$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)"
+			OutputDirectory="$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate"
+			IntermediateDirectory="$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate"
 			ConfigurationType="4"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
@@ -106,7 +106,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\iconv\include&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\libxml\include&quot;;&quot;$(SolutionDir)\..\..\libxslt\include&quot;;&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\css&quot;;&quot;$(SolutionDir)\..\khtml\dom&quot;;&quot;$(SolutionDir)\..\khtml\ecma&quot;;&quot;$(SolutionDir)\..\khtml\editing&quot;;&quot;$(SolutionDir)\..\khtml\html&quot;;&quot;$(SolutionDir)\..\khtml\misc&quot;;&quot;$(SolutionDir)\..\rendering&quot;;&quot;$(SolutionDir)\..\khtml\xml&quot;;&quot;$(SolutionDir)\..\khtml\xsl&quot;;&quot;$(SolutionDir)\..\khtml&quot;;&quot;$(SolutionDir)\..\kwq&quot;;&quot;$(SolutionDir)\..\bridge&quot;;&quot;$(SolutionDir)\..\loader&quot;;&quot;$(SolutionDir)\..\page&quot;;&quot;$(SolutionDir)\..\platform&quot;;&quot;$(SolutionDir)\..\xml&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\kjs&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\iconv\include&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\libxml\include&quot;;&quot;$(SolutionDir)\..\..\libxslt\include&quot;;&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\css&quot;;&quot;$(SolutionDir)\..\khtml\dom&quot;;&quot;$(SolutionDir)\..\khtml\ecma&quot;;&quot;$(SolutionDir)\..\khtml\editing&quot;;&quot;$(SolutionDir)\..\khtml\html&quot;;&quot;$(SolutionDir)\..\khtml\misc&quot;;&quot;$(SolutionDir)\..\rendering&quot;;&quot;$(SolutionDir)\..\khtml\xml&quot;;&quot;$(SolutionDir)\..\khtml\xsl&quot;;&quot;$(SolutionDir)\..\khtml&quot;;&quot;$(SolutionDir)\..\kwq&quot;;&quot;$(SolutionDir)\..\bridge&quot;;&quot;$(SolutionDir)\..\loader&quot;;&quot;$(SolutionDir)\..\page&quot;;&quot;$(SolutionDir)\..\platform&quot;;&quot;$(SolutionDir)\..\platform\cairo&quot;;&quot;$(SolutionDir)\..\platform\image-decoders&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\gif&quot;;&quot;$(SolutionDir)\..\xml&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\kjs&quot;;&quot;$(SolutionDir)..\platform\cairo\pixman\src&quot;;&quot;$(SolutionDir)\..\platform\cairo\cairo\src&quot;"
 				PreprocessorDefinitions="WIN32; KHTML_NO_XBL; KHTML_XSLT"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -1717,6 +1717,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\platform\AtomicString.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\AtomicString.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\AtomicStringImpl.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\platform\Brush.h"
 				>
 			</File>
@@ -1753,6 +1765,34 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\platform\Image.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\Image.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\ImageAnimationObserver.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\ImageData.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\ImageData.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\ImageDecoder.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\IntPoint.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\platform\IntPoint.h"
 				>
 			</File>
@@ -1785,6 +1825,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\platform\PlatformString.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\platform\SegmentedString.cpp"
 				>
 			</File>
@@ -1794,30 +1838,6 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\Shared.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\platform\win\SystemTime.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\platform\SystemTime.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\platform\AtomicString.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\platform\AtomicString.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\platform\AtomicStringImpl.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\platform\PlatformString.h"
 				>
 			</File>
 			<File
@@ -1832,6 +1852,414 @@
 				RelativePath="..\..\platform\StringImpl.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\platform\SystemTime.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\Timer.h"
+				>
+			</File>
+			<Filter
+				Name="cairo"
+				>
+				<File
+					RelativePath="..\..\platform\cairo\ImageCairo.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\platform\cairo\ImageDecoderCairo.cpp"
+					>
+				</File>
+				<Filter
+					Name="pixman"
+					>
+					<File
+						RelativePath="..\..\platform\cairo\pixman\src\fbcompose.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\pixman\src\fbedge.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\pixman\src\fbedgeimp.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\pixman\src\fbpict.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\pixman\src\fbpict.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\pixman\src\fbtrap.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\pixman\src\icblt.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\pixman\src\icbltone.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\pixman\src\iccolor.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\pixman\src\icformat.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\pixman\src\icimage.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\pixman\src\icimage.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\pixman\src\icint.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\pixman\src\icpixels.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\pixman\src\icrect.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\pixman\src\icrop.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\pixman\src\icstipple.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\pixman\src\ictransform.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\pixman\src\ictrap.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\pixman\src\ictri.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\pixman\src\icutil.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\pixman\src\pixman-remap.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\pixman\src\pixman.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\pixman\src\pixregion.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\pixman\src\pixregionint.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\pixman\src\renderedge.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\pixman\src\renderedge.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\pixman\src\slim_internal.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="cairo"
+					>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-arc-private.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-arc.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-array.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-cache-private.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-cache.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-clip-private.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-clip.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-color.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-debug.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-debug.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-features.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-fixed.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-font-options.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-font.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-gstate-private.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-gstate.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-hash-private.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-hash.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-hull.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-image-surface.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-matrix.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-meta-surface-private.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-meta-surface.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-output-stream.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-paginated-surface-private.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-paginated-surface.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-path-bounds.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-path-data-private.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-path-data.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-path-fill.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-path-fixed-private.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-path-stroke.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-path.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-pattern.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-pen.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-platform.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-polygon.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-private.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-region.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-scaled-font.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-slope.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-spline.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-stroke-style.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-surface-fallback-private.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-surface-fallback.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-surface.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-traps.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-unicode.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-wideint.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-wideint.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-win32-font.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-win32-private.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-win32-surface.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo-win32.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairo.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\cairo\cairo\src\cairoint.h"
+						>
+					</File>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="win"
+				>
+				<File
+					RelativePath="..\..\platform\win\SystemTime.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\platform\win\TimerWin.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="image-decoders"
+				>
+				<File
+					RelativePath="..\..\platform\image-decoders\ImageDecoderPlugin.h"
+					>
+				</File>
+				<Filter
+					Name="gif"
+					>
+					<File
+						RelativePath="..\..\platform\image-decoders\gif\GIFDecoderPlugin.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\gif\GIFDecoderPlugin.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\gif\GIFReader.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\gif\GIFReader.h"
+						>
+					</File>
+				</Filter>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="css"

@@ -1,5 +1,36 @@
 2006-02-06  Dave Hyatt <hyatt@apple.com>
 
+        Commit the image viewer test app, and all the Win32 project
+        changes to build both it and Cairo.
+
+        Reviewed by eric
+
+        * Viewer: Added.
+        * Viewer.aps: Added.
+        * Viewer.cpp: Added.
+        * Viewer.h: Added.
+        * Viewer.ico: Added.
+        * Viewer.rc: Added.
+        * Viewer.reg: Added.
+        * Viewer.vcproj: Added.
+        * Viewer/ImageDocument.cpp: Added.
+        * Viewer/ImageDocument.h: Added.
+        * Viewer/ImageMainFrame.cpp: Added.
+        * Viewer/ImageMainFrame.h: Added.
+        * Viewer/ImageView.cpp: Added.
+        * Viewer/ImageView.h: Added.
+        * Viewer/Resource.h: Added.
+        * Viewer/res: Added.
+        * Viewer/res/ImageViewer.rc2: Added.
+        * Viewer/res/Toolbar.bmp: Added.
+        * Viewer/stdafx.cpp: Added.
+        * Viewer/stdafx.h: Added.
+        * ViewerDoc.ico: Added.
+        * WebCore.vcproj/WebCore.sln:
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+
+2006-02-06  Dave Hyatt <hyatt@apple.com>
+
         Reviewed by darin
 
         * khtml/html/html_imageimpl.h:

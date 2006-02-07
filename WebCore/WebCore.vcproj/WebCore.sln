@@ -3,6 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebCore", "WebCore\WebCore.vcproj", "{1C16337B-ACF3-4D03-AA90-851C5B5EADA6}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Image Viewer", "Image Viewer\Image Viewer.vcproj", "{B5787C4C-FA77-4517-80A0-62C396A6C6C3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9D8CF83D-CE44-4B4E-BD22-3651B7D0DB36} = {9D8CF83D-CE44-4B4E-BD22-3651B7D0DB36}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImageSubset", "ImageSubset\ImageSubset.vcproj", "{9D8CF83D-CE44-4B4E-BD22-3651B7D0DB36}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -13,6 +20,14 @@ Global
 		{1C16337B-ACF3-4D03-AA90-851C5B5EADA6}.Debug|Win32.Build.0 = Debug|Win32
 		{1C16337B-ACF3-4D03-AA90-851C5B5EADA6}.Release|Win32.ActiveCfg = Release|Win32
 		{1C16337B-ACF3-4D03-AA90-851C5B5EADA6}.Release|Win32.Build.0 = Release|Win32
+		{B5787C4C-FA77-4517-80A0-62C396A6C6C3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B5787C4C-FA77-4517-80A0-62C396A6C6C3}.Debug|Win32.Build.0 = Debug|Win32
+		{B5787C4C-FA77-4517-80A0-62C396A6C6C3}.Release|Win32.ActiveCfg = Release|Win32
+		{B5787C4C-FA77-4517-80A0-62C396A6C6C3}.Release|Win32.Build.0 = Release|Win32
+		{9D8CF83D-CE44-4B4E-BD22-3651B7D0DB36}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9D8CF83D-CE44-4B4E-BD22-3651B7D0DB36}.Debug|Win32.Build.0 = Debug|Win32
+		{9D8CF83D-CE44-4B4E-BD22-3651B7D0DB36}.Release|Win32.ActiveCfg = Release|Win32
+		{9D8CF83D-CE44-4B4E-BD22-3651B7D0DB36}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
