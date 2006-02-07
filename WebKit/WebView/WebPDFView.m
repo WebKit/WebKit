@@ -333,19 +333,20 @@ static void applicationInfoForMIMEType(NSString *type, NSString **name, NSImage 
     // the standard WebKit delegate path, and so the standard PDF-related items always appeared. For
     // clients that create their own context menu by hand-picking specific items from the default list, such as
     // Safari, none of the PDF-related items will appear until the client is rewritten to explicitly
-    // include these items. So for backwards compatibility we're going to include the entire set of PDF-related
-    // items if the executable was linked in 10.4 or earlier and the menu returned from the delegate mechanism
-    // contains none of the PDF-related items.
-    if (WKExecutableLinkedInTigerOrEarlier()) {
-        if (![self _anyPDFTagsFoundInMenu:menu]) {
-            [menu addItem:[NSMenuItem separatorItem]];
-            NSEnumerator *e = [items objectEnumerator];
-            NSMenuItem *menuItem;
-            while ((menuItem = [e nextObject]) != nil) {
-                // copy menuItem since a given menuItem can be in only one menu at a time, and we don't
-                // want to mess with the menu returned from PDFKit.
-                [menu addItem:[menuItem copy]];
-            }
+    // include these items. For backwards compatibility of tip-of-tree WebKit with the 10.4 version of Safari
+    // (the configuration that people building open source WebKit use), we'll use the entire set of PDFKit-supplied
+    // menu items. This backward-compatibility hack won't work with any non-Safari clients, but this seems OK since
+    // (1) the symptom is fairly minor, and (2) we suspect that non-Safari clients are probably using the entire
+    // set of default items, rather than manually choosing from them. We can remove this code entirely when we
+    // ship a version of Safari that includes the fix for radar 3796579.
+    if (![self _anyPDFTagsFoundInMenu:menu] && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Safari"]) {
+        [menu addItem:[NSMenuItem separatorItem]];
+        NSEnumerator *e = [items objectEnumerator];
+        NSMenuItem *menuItem;
+        while ((menuItem = [e nextObject]) != nil) {
+            // copy menuItem since a given menuItem can be in only one menu at a time, and we don't
+            // want to mess with the menu returned from PDFKit.
+            [menu addItem:[menuItem copy]];
         }
     }
     

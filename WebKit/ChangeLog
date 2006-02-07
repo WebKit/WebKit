@@ -1,3 +1,15 @@
+2006-02-06  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        * WebView/WebPDFView.m:
+        (-[WebPDFView menuForEvent:]):
+        Removed use of WKExecutableLinkedInTigerOrEarlier() by modifying backward-compatibility
+        hack involving PDF view context menus. Now we only bother to make sure that the PDFKit-
+        supplied context menu items are present in Safari, for the benefit of the open source
+        folks using tip of tree WebKit but older released Safari; it's possible that some other
+        existing WebKit apps won't show all the PDF view context menu items.
+
 2006-02-06  Maciej Stachowiak  <mjs@apple.com>
 
         Remove remaining .subproj references to fix release build.
