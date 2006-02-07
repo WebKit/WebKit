@@ -106,6 +106,8 @@ using KJS::Window;
 
 using KJS::Bindings::RootObject;
 
+using WebCore::RenderObject;
+
 NSString *WebCoreElementDOMNodeKey =            @"WebElementDOMNode";
 NSString *WebCoreElementFrameKey =              @"WebElementFrame";
 NSString *WebCoreElementImageAltStringKey =     @"WebElementImageAltString";
@@ -123,6 +125,7 @@ NSString *WebCorePageCacheStateKey =            @"WebCorePageCacheState";
 
 @interface WebCoreFrameBridge (WebCoreBridgeInternal)
 - (RootObject *)executionContextForView:(NSView *)aView;
+- (RenderObject::NodeInfo)nodeInfoAtPoint:(NSPoint)point;
 @end
 
 static RootObject *rootForView(void *v)
@@ -1243,33 +1246,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!renderer) 
         return nil;
     
-    RenderObject::NodeInfo nodeInfo(true, true);
-    renderer->layer()->hitTest(nodeInfo, (int)point.x, (int)point.y);
-
-    NodeImpl *n;
-    QWidget *widget = 0;
-    IntPoint widgetPoint(point);
-    
-    while (true) {
-        n = nodeInfo.innerNode();
-        if (!n || !n->renderer() || !n->renderer()->isWidget())
-            break;
-        widget = static_cast<RenderWidget *>(n->renderer())->widget();
-        if (!widget || !widget->inherits("FrameView"))
-            break;
-        Frame *kpart = static_cast<HTMLFrameElementImpl *>(n)->contentPart();
-        if (!kpart || !static_cast<MacFrame *>(kpart)->renderer())
-            break;
-        int absX, absY;
-        n->renderer()->absolutePosition(absX, absY, true);
-        FrameView *view = static_cast<FrameView *>(widget);
-        widgetPoint.setX(widgetPoint.x() - absX + view->contentsX());
-        widgetPoint.setY(widgetPoint.y() - absY + view->contentsY());
-
-        RenderObject::NodeInfo widgetNodeInfo(true, true);
-        static_cast<MacFrame *>(kpart)->renderer()->layer()->hitTest(widgetNodeInfo, widgetPoint.x(), widgetPoint.y());
-        nodeInfo = widgetNodeInfo;
-    }
+    RenderObject::NodeInfo nodeInfo = [self nodeInfoAtPoint:point];
     
     NSMutableDictionary *element = [NSMutableDictionary dictionary];
     [element setObject:[NSNumber numberWithBool:m_frame->isPointInsideSelection((int)point.x, (int)point.y)]
@@ -2225,8 +2202,8 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         return VisiblePosition();
     }
     
-    RenderObject::NodeInfo nodeInfo(true, true);
-    renderer->layer()->hitTest(nodeInfo, (int)point.x, (int)point.y);
+    RenderObject::NodeInfo nodeInfo = [self nodeInfoAtPoint:point];
+    
     NodeImpl *node = nodeInfo.innerNode();
     if (!node || !node->renderer())
         return VisiblePosition();
@@ -2610,6 +2587,41 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     root->setInterpreter(frame->jScript()->interpreter());
     frame->addPluginRootObject(root);
     return root;
+}
+
+- (RenderObject::NodeInfo)nodeInfoAtPoint:(NSPoint)point
+{
+    RenderObject *renderer = m_frame->renderer();
+
+    RenderObject::NodeInfo nodeInfo(true, true);
+    renderer->layer()->hitTest(nodeInfo, (int)point.x, (int)point.y);
+
+    NodeImpl *n;
+    QWidget *widget = 0;
+    IntPoint widgetPoint(point);
+    
+    while (true) {
+        n = nodeInfo.innerNode();
+        if (!n || !n->renderer() || !n->renderer()->isWidget())
+            break;
+        widget = static_cast<RenderWidget *>(n->renderer())->widget();
+        if (!widget || !widget->inherits("FrameView"))
+            break;
+        Frame *kpart = static_cast<HTMLFrameElementImpl *>(n)->contentPart();
+        if (!kpart || !static_cast<MacFrame *>(kpart)->renderer())
+            break;
+        int absX, absY;
+        n->renderer()->absolutePosition(absX, absY, true);
+        FrameView *view = static_cast<FrameView *>(widget);
+        widgetPoint.setX(widgetPoint.x() - absX + view->contentsX());
+        widgetPoint.setY(widgetPoint.y() - absY + view->contentsY());
+
+        RenderObject::NodeInfo widgetNodeInfo(true, true);
+        static_cast<MacFrame *>(kpart)->renderer()->layer()->hitTest(widgetNodeInfo, widgetPoint.x(), widgetPoint.y());
+        nodeInfo = widgetNodeInfo;
+    }
+    
+    return nodeInfo;
 }
 
 @end

@@ -1,3 +1,17 @@
+2006-02-06  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by Darin and Eric.
+
+        - fix <rdar://problem/4414918> REGRESSION: images dragged into contenteditable area
+        end up outside of editable area (6525)
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge RenderObject::nodeInfoAtPoint:]): Moved code from
+        elementAtPoint to this new method.  This method takes a point and returns a NodeInfo
+        for the deepest node at that point.
+        (-[WebCoreFrameBridge elementAtPoint:]): Use new nodeInfoAtPoint method.
+        (-[WebCoreFrameBridge _visiblePositionForPoint:]): Ditto.
+
 2006-02-04  Darin Adler  <darin@apple.com>
 
         Reviewed by NOBODY (OOPS!).
