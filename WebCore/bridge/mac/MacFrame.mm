@@ -2293,7 +2293,7 @@ NSFileWrapper *MacFrame::fileWrapperForElement(ElementImpl *e)
     if (!wrapper) {
         RenderImage *renderer = static_cast<RenderImage *>(e->renderer());
         if (renderer->cachedImage() && !renderer->cachedImage()->isErrorImage()) {
-            wrapper = [[NSFileWrapper alloc] initRegularFileWithContents:(NSData*)(renderer->cachedImage()->image().getTIFFRepresentation())];
+            wrapper = [[NSFileWrapper alloc] initRegularFileWithContents:(NSData*)(renderer->cachedImage()->image()->getTIFFRepresentation())];
             [wrapper setPreferredFilename:@"image.tiff"];
             [wrapper autorelease];
         }

@@ -72,15 +72,15 @@ void CachedImage::deref(CachedObjectClient *c)
         delete this;
 }
 
-const Image &CachedImage::image() const
+Image* CachedImage::image() const
 {
     if (m_errorOccurred)
-        return *Cache::brokenImage;
+        return Cache::brokenImage;
 
     if (m_image)
-        return *m_image;
+        return m_image;
 
-    return *Cache::nullImage;
+    return Cache::nullImage;
 }
 
 IntSize CachedImage::imageSize() const

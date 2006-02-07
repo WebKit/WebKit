@@ -1025,13 +1025,13 @@ bool RenderObject::paintBorderImage(QPainter *p, int _tx, int _ty, int w, int h,
         clipped = true;
     }
 
-    int imageWidth = borderImage->image().width();
-    int imageHeight = borderImage->image().height();
+    int imageWidth = borderImage->image()->width();
+    int imageHeight = borderImage->image()->height();
 
-    int topSlice = kMin(imageHeight, style->borderImage().m_slices.top.width(borderImage->image().height()));
-    int bottomSlice = kMin(imageHeight, style->borderImage().m_slices.bottom.width(borderImage->image().height()));
-    int leftSlice = kMin(imageWidth, style->borderImage().m_slices.left.width(borderImage->image().width()));    
-    int rightSlice = kMin(imageWidth, style->borderImage().m_slices.right.width(borderImage->image().width()));
+    int topSlice = kMin(imageHeight, style->borderImage().m_slices.top.width(borderImage->image()->height()));
+    int bottomSlice = kMin(imageHeight, style->borderImage().m_slices.bottom.width(borderImage->image()->height()));
+    int leftSlice = kMin(imageWidth, style->borderImage().m_slices.left.width(borderImage->image()->width()));    
+    int rightSlice = kMin(imageWidth, style->borderImage().m_slices.right.width(borderImage->image()->width()));
 
     EBorderImageRule hRule = style->borderImage().m_horizontalRule;
     EBorderImageRule vRule = style->borderImage().m_verticalRule;

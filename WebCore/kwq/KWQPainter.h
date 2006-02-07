@@ -86,23 +86,23 @@ public:
     void fillRect(int, int, int, int, const Brush&);
     void fillRect(const IntRect&, const Brush&);
 
-    void drawImageAtPoint(const Image&, const IntPoint&, Image::CompositeOperator = Image::CompositeSourceOver);
-    void drawImageInRect(const Image&, const IntRect&, Image::CompositeOperator = Image::CompositeSourceOver);
+    void drawImageAtPoint(Image*, const IntPoint&, Image::CompositeOperator = Image::CompositeSourceOver);
+    void drawImageInRect(Image*, const IntRect&, Image::CompositeOperator = Image::CompositeSourceOver);
 
-    void drawImage(const Image&, int x, int y, 
+    void drawImage(Image*, int x, int y, 
         int sx = 0, int sy = 0, int sw = -1, int sh = -1,
         Image::CompositeOperator = Image::CompositeSourceOver, 
         void* nativeData = 0);
-    void drawImage(const Image&, int x, int y, int w, int h,
+    void drawImage(Image*, int x, int y, int w, int h,
         int sx = 0, int sy = 0, int sw = -1, int sh = -1,
         Image::CompositeOperator = Image::CompositeSourceOver, 
         void* nativeData = 0);
-    void drawFloatImage(const Image&, float x, float y, float w, float h,
+    void drawFloatImage(Image*, float x, float y, float w, float h,
         float sx = 0, float sy = 0, float sw = -1, float sh = -1,
         Image::CompositeOperator = Image::CompositeSourceOver, 
         void* nativeData = 0);
-    void drawTiledImage(const Image&, int, int, int, int, int sx = 0, int sy = 0, void* nativeData = 0);
-    void drawScaledAndTiledImage(const Image &, int, int, int, int, int, int, int, int, 
+    void drawTiledImage(Image*, int, int, int, int, int sx = 0, int sy = 0, void* nativeData = 0);
+    void drawScaledAndTiledImage(Image*, int, int, int, int, int, int, int, int, 
                                  Image::TileRule hRule = Image::StretchTile, Image::TileRule vRule = Image::StretchTile,
                                  void* nativeData = 0);
 

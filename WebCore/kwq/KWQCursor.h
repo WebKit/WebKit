@@ -40,7 +40,7 @@ namespace WebCore {
 class QCursor {
 public:
     QCursor();
-    QCursor(const Image &);
+    QCursor(Image*);
     QCursor(const QCursor &);
     ~QCursor();
     

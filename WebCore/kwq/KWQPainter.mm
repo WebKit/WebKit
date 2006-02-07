@@ -448,12 +448,12 @@ void QPainter::drawConvexPolygon(const IntPointArray &points)
     CGContextRestoreGState(context);
 }
 
-void QPainter::drawImageAtPoint(const Image& image, const IntPoint &p, Image::CompositeOperator compositeOperator)
+void QPainter::drawImageAtPoint(Image* image, const IntPoint &p, Image::CompositeOperator compositeOperator)
 {        
     drawImage(image, p.x(), p.y(), 0, 0, -1, -1, compositeOperator);
 }
 
-void QPainter::drawImageInRect(const Image& image, const IntRect &r, Image::CompositeOperator compositeOperator)
+void QPainter::drawImageInRect(Image* image, const IntRect &r, Image::CompositeOperator compositeOperator)
 {
     drawImage(image, r.x(), r.y(), r.width(), r.height(), 0, 0, -1, -1, compositeOperator);
 }
@@ -473,19 +473,19 @@ void QPainter::setCompositeOperation (CGContextRef context, int op)
     [[WebCoreImageRendererFactory sharedFactory] setCGCompositeOperation:op inContext:context];
 }
 
-void QPainter::drawImage(const Image& image, int x, int y,
+void QPainter::drawImage(Image* image, int x, int y,
                          int sx, int sy, int sw, int sh, Image::CompositeOperator compositeOperator, void* context)
 {
     drawImage(image, x, y, sw, sh, sx, sy, sw, sh, compositeOperator, context);
 }
 
-void QPainter::drawImage(const Image& image, int x, int y, int w, int h,
+void QPainter::drawImage(Image* image, int x, int y, int w, int h,
                          int sx, int sy, int sw, int sh, Image::CompositeOperator compositeOperator, void* context)
 {
     drawFloatImage(image, (float)x, (float)y, (float)w, (float)h, (float)sx, (float)sy, (float)sw, (float)sh, compositeOperator, context);
 }
 
-void QPainter::drawFloatImage(const Image &image, float x, float y, float w, float h, 
+void QPainter::drawFloatImage(Image* image, float x, float y, float w, float h, 
                               float sx, float sy, float sw, float sh, Image::CompositeOperator compositeOperator, void* context)
 {
     if (data->state.paintingDisabled)
@@ -497,28 +497,28 @@ void QPainter::drawFloatImage(const Image &image, float x, float y, float w, flo
     float th = h;
         
     if (tsw == -1)
-        tsw = image.width();
+        tsw = image->width();
     if (tsh == -1)
-        tsh = image.height();
+        tsh = image->height();
 
     if (tw == -1)
-        tw = image.width();
+        tw = image->width();
     if (th == -1)
-        th = image.height();
+        th = image->height();
 
-    image.drawInRect(FloatRect(x, y, tw, th), FloatRect(sx, sy, tsw, tsh), compositeOperator, context);
+    image->drawInRect(FloatRect(x, y, tw, th), FloatRect(sx, sy, tsw, tsh), compositeOperator, context);
 }
 
-void QPainter::drawTiledImage(const Image& image, int x, int y, int w, int h,
+void QPainter::drawTiledImage(Image* image, int x, int y, int w, int h,
                               int sx, int sy, void* context)
 {
     if (data->state.paintingDisabled)
         return;
     
-    image.tileInRect(FloatRect(x, y, w, h), FloatPoint(sx, sy), context);
+    image->tileInRect(FloatRect(x, y, w, h), FloatPoint(sx, sy), context);
 }
 
-void QPainter::drawScaledAndTiledImage(const Image &image, int x, int y, int w, int h, int sx, int sy, int sw, int sh, 
+void QPainter::drawScaledAndTiledImage(Image* image, int x, int y, int w, int h, int sx, int sy, int sw, int sh, 
                                        Image::TileRule hRule, Image::TileRule vRule, void* context)
 {
     if (data->state.paintingDisabled)
@@ -528,7 +528,7 @@ void QPainter::drawScaledAndTiledImage(const Image &image, int x, int y, int w, 
         // Just do a scale.
         return drawImage(image, x, y, w, h, sx, sy, sw, sh, Image::CompositeSourceOver, context);
 
-    image.scaleAndTileInRect(FloatRect(x, y, w, h), FloatRect(sx, sy, sw, sh),
+    image->scaleAndTileInRect(FloatRect(x, y, w, h), FloatRect(sx, sy, sw, sh),
                              hRule, vRule, context);
 }
 

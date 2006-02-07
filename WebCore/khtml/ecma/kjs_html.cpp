@@ -4067,8 +4067,8 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
                 NodeImpl *n = static_cast<HTMLElement *>(args[0])->impl();
                 imgElt = static_cast<HTMLImageElementImpl*>(n);
                 if (imgElt->cachedImage()) {
-                    w = imgElt->cachedImage()->image().width();
-                    h = imgElt->cachedImage()->image().height();
+                    w = imgElt->cachedImage()->image()->width();
+                    h = imgElt->cachedImage()->image()->height();
                 }
             }
             else if (o->inherits(&KJS::HTMLElement::canvas_info)){
@@ -5027,11 +5027,11 @@ static void drawPattern (void * info, CGContextRef context)
         return;
 
     QPainter p;
-    float w = pattern->cachedImage()->image().width();
-    float h = pattern->cachedImage()->image().height();
+    float w = pattern->cachedImage()->image()->width();
+    float h = pattern->cachedImage()->image()->height();
     
     // Try and draw bitmap directly
-    CGImageRef ref = pattern->cachedImage()->image().getCGImageRef();
+    CGImageRef ref = pattern->cachedImage()->image()->getCGImageRef();
     if (ref)
         CGContextDrawImage (context, CGRectMake(0, 0, w, h), ref);    
     else
@@ -5050,8 +5050,8 @@ ImagePattern::ImagePattern(CachedImage* cachedImage, int repetitionType)
 
     m_cachedImage->ref(this);
     
-    float w = m_cachedImage->image().width();
-    float h = m_cachedImage->image().height();
+    float w = m_cachedImage->image()->width();
+    float h = m_cachedImage->image()->height();
 #if __APPLE__
     _bounds = CGRectMake (0, 0, w, h);
 #endif
@@ -5078,12 +5078,12 @@ ImagePattern::~ImagePattern()
 #if __APPLE__
 CGPatternRef ImagePattern::createPattern(CGAffineTransform transform)
 {
-    if (!m_cachedImage || m_cachedImage->image().isNull())
+    if (!m_cachedImage || m_cachedImage->image()->isNull())
         return 0;
           
     CGAffineTransform patternTransform = transform;
     patternTransform = CGAffineTransformScale(patternTransform, 1, -1);
-    patternTransform = CGAffineTransformTranslate(patternTransform, 0, -m_cachedImage->image().height());
+    patternTransform = CGAffineTransformTranslate(patternTransform, 0, -m_cachedImage->image()->height());
 
     return CGPatternCreate(this, _bounds, patternTransform, _rw, _rh, kCGPatternTilingConstantSpacing, true, &patternCallbacks);
 }

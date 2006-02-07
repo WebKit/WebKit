@@ -39,9 +39,30 @@ class QString {};
 
 namespace WebCore {
 
+void FrameData::clear()
+{
+    if (m_frame) {
+        cairo_surface_destroy(m_frame);
+        m_frame = 0;
+        m_duration = 0.;
+    }
+}
+
 // ================================================
 // Image Class
 // ================================================
+
+void Image::initNativeData()
+{
+}
+
+void Image::destroyNativeData()
+{
+}
+
+void Image::invalidateNativeData()
+{
+}
 
 Image* Image::loadResource(const char *name)
 {
@@ -71,17 +92,14 @@ static void setCompositingOperation(cairo_t* context, Image::CompositeOperator o
 }
 
 void Image::drawInRect(const FloatRect& dst, const FloatRect& src,
-                       CompositeOperator compositeOp, void* ctxt) const
+                       CompositeOperator compositeOp, void* ctxt)
 {
-    if (!m_data)
-        return;
-
     cairo_t* context = graphicsContext(ctxt);
 
-    if (!m_data->m_decoder.initialized())
+    if (!m_decoder.initialized())
         return;
     
-    cairo_surface_t* image = m_data->frameAtIndex(m_data->m_currentFrame);
+    cairo_surface_t* image = frameAtIndex(m_currentFrame);
     if (!image) // If it's too early we won't have an image yet.
         return;
 
@@ -111,7 +129,7 @@ void Image::drawInRect(const FloatRect& dst, const FloatRect& src,
 
     cairo_restore(context);
 
-    m_data->startAnimation();
+    startAnimation();
 
 }
 
@@ -128,20 +146,20 @@ static void drawPattern(void* info, CGContextRef context)
 static const CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
 */
 
-void Image::tileInRect(const FloatRect& dstRect, const FloatPoint& srcPoint, void* ctxt) const
+void Image::tileInRect(const FloatRect& dstRect, const FloatPoint& srcPoint, void* ctxt)
 {
     /* FIXME: IMPLEMENT
     if (!m_data)
         return;
     
-    CGImageRef image = m_data->frameAtIndex(m_data->m_currentFrame);
+    CGImageRef image = frameAtIndex(m_currentFrame);
     if (!image)
         return;
 
     CGContextRef context = graphicsContext(ctxt);
 
-    if (m_data->m_currentFrame == 0 && m_data->m_isSolidColor)
-        return fillSolidColorInRect(m_data->m_solidColor, dstRect, Image::CompositeSourceOver, context);
+    if (m_currentFrame == 0 && m_isSolidColor)
+        return fillSolidColorInRect(m_solidColor, dstRect, Image::CompositeSourceOver, context);
 
     CGSize tileSize = size();
     CGRect rect = dstRect;
@@ -191,25 +209,25 @@ void Image::tileInRect(const FloatRect& dstRect, const FloatPoint& srcPoint, voi
         CGPatternRelease(pattern);
     }
 
-    m_data->startAnimation();
+    startAnimation();
     */
 }
 
 void Image::scaleAndTileInRect(const FloatRect& dstRect, const FloatRect& srcRect,
-                               TileRule hRule, TileRule vRule, void* ctxt) const
+                               TileRule hRule, TileRule vRule, void* ctxt)
 {
     /* FIXME: IMPLEMENT
     if (!m_data)
         return;
     
-    CGImageRef image = m_data->frameAtIndex(m_data->m_currentFrame);
+    CGImageRef image = frameAtIndex(m_currentFrame);
     if (!image)
         return;
 
     CGContextRef context = graphicsContext(ctxt);
     
-    if (m_data->m_currentFrame == 0 && m_data->m_isSolidColor)
-        return fillSolidColorInRect(m_data->m_solidColor, dstRect, Image::CompositeSourceOver, context);
+    if (m_currentFrame == 0 && m_isSolidColor)
+        return fillSolidColorInRect(m_solidColor, dstRect, Image::CompositeSourceOver, context);
 
     CGContextSaveGState(context);
     CGSize tileSize = srcRect.size();
@@ -279,7 +297,7 @@ void Image::scaleAndTileInRect(const FloatRect& dstRect, const FloatRect& srcRec
 
     CGContextRestoreGState(context);
 
-    m_data->startAnimation();
+    startAnimation();
     */
 }
 

@@ -547,14 +547,14 @@ CIFilter *KCanvasFEImageQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) c
     CIFilter *filter;
     KWQ_BLOCK_EXCEPTIONS;
     // FIXME: This is only partially implemented (only supports images)
-    CIImage *ciImage = [CIImage imageWithCGImage:cachedImage()->image().getCGImageRef()];
+    CIImage *ciImage = [CIImage imageWithCGImage:cachedImage()->image()->getCGImageRef()];
     
     // FIXME: There is probably a nicer way to perform both of these transforms.
     filter = [CIFilter filterWithName:@"CIAffineTransform"];
     [filter setDefaults];
     [filter setValue:ciImage forKey:@"inputImage"];
     
-    CGAffineTransform cgTransform = CGAffineTransformMake(1,0,0,-1,0,cachedImage()->image().rect().bottom());
+    CGAffineTransform cgTransform = CGAffineTransformMake(1,0,0,-1,0,cachedImage()->image()->rect().bottom());
     NSAffineTransform *nsTransform = [NSAffineTransform transform];
     [nsTransform setTransformStruct:*((NSAffineTransformStruct *)&cgTransform)];
     [filter setValue:nsTransform forKey:@"inputTransform"];
@@ -564,7 +564,7 @@ CIFilter *KCanvasFEImageQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) c
         [scaleImage setDefaults];
         [scaleImage setValue:[filter valueForKey:@"outputImage"] forKey:@"inputImage"];
         
-        cgTransform = CGAffineTransformMakeMapBetweenRects(CGRect(cachedImage()->image().rect()), subRegion());
+        cgTransform = CGAffineTransformMakeMapBetweenRects(CGRect(cachedImage()->image()->rect()), subRegion());
         [nsTransform setTransformStruct:*((NSAffineTransformStruct *)&cgTransform)];
         [scaleImage setValue:nsTransform forKey:@"inputTransform"];
         filter = scaleImage;

@@ -24,12 +24,20 @@
  */
 
 #include "config.h"
+#include "Image.h"
 #include <kxmlcore/Vector.h>
 #include "Array.h"
 #include "Image.h"
 #include "ImageDecoder.h"
 #include "IntRect.h"
-#include "ImageData.h"
+#include "FloatRect.h"
+#include "ImageAnimationObserver.h"
+#include "Timer.h"
+
+#if __APPLE__
+// FIXME: Will go away when we make PDF a subclass.
+#include "PDFDocumentImage.h"
+#endif
 
 namespace WebCore {
 
@@ -38,53 +46,239 @@ namespace WebCore {
 // ================================================
 
 Image::Image()
-:m_data(0), m_animationObserver(0)
+: m_currentFrame(0), m_frames(0), m_animationObserver(0),
+  m_frameTimer(0), m_repetitionCount(0), m_repetitionsComplete(0),
+  m_animatingImageType(true), m_animationFinished(0),
+  m_haveSize(false), m_sizeAvailable(false)
 {
+    initNativeData();
 }
 
 Image::Image(ImageAnimationObserver* observer, bool isPDF)
+ : m_currentFrame(0), m_frames(0), m_animationObserver(0),
+  m_frameTimer(0), m_repetitionCount(0), m_repetitionsComplete(0),
+  m_animatingImageType(true), m_animationFinished(0),
+  m_haveSize(false), m_sizeAvailable(false)
 {
-    m_data = new ImageData(this);
+    initNativeData();
 #if __APPLE__
     if (isPDF)
-        m_data->setIsPDF();
+        setIsPDF(); // FIXME: Will go away when we make PDF a subclass.
 #endif
     m_animationObserver = observer;
 }
 
 Image::~Image()
 {
-    delete m_data;
+    invalidateData();
+    stopAnimation();
+    destroyNativeData();
 }
 
-void Image::resetAnimation() const
+void Image::invalidateData()
 {
-    if (m_data)
-        m_data->resetAnimation();
+    // Destroy the cached images and release them.
+    if (m_frames.size()) {
+        m_frames.last().clear();
+        invalidateNativeData();
+    }
 }
 
-bool Image::setData(const ByteArray& bytes, bool allDataReceived)
+void Image::cacheFrame(size_t index)
 {
-    // Make sure we have some data.
-    if (!m_data)
-        return true;
+    size_t numFrames = frameCount();
+    if (!m_frames.size() && shouldAnimate()) {            
+        // Snag the repetition count.
+        m_repetitionCount = m_decoder.repetitionCount();
+        if (m_repetitionCount == cAnimationNone)
+            m_animatingImageType = false;
+    }
     
-    return m_data->setData(bytes, allDataReceived);
+    if (m_frames.size() < numFrames)
+        m_frames.resize(numFrames);
+
+    m_frames[index].m_frame = m_decoder.createFrameAtIndex(index);
+    if (shouldAnimate())
+        m_frames[index].m_duration = m_decoder.frameDurationAtIndex(index);
 }
 
 bool Image::isNull() const
 {
-    return m_data ? m_data->isNull() : true;
+    return size().isEmpty();
 }
 
 IntSize Image::size() const
 {
-    return m_data ? m_data->size() : IntSize();
+#if __APPLE__
+    // FIXME: Will go away when we make PDF a subclass.
+    if (m_isPDF) {
+        if (m_PDFDoc) {
+            CGRect mediaBox = m_PDFDoc->mediaBox();
+            return IntSize((int)mediaBox.size.width, (int)mediaBox.size.height);
+        }
+    } 
+    else
+#endif
+    
+    if (m_sizeAvailable && !m_haveSize) {
+        m_size = m_decoder.size();
+        m_haveSize = true;
+    }
+    return m_size;
+}
+
+bool Image::setData(const ByteArray& bytes, bool allDataReceived)
+{
+    int length = bytes.count();
+    if (length == 0)
+        return true;
+
+#ifdef kImageBytesCutoff
+    // This is a hack to help with testing display of partially-loaded images.
+    // To enable it, define kImageBytesCutoff to be a size smaller than that of the image files
+    // being loaded. They'll never finish loading.
+    if (length > kImageBytesCutoff) {
+        length = kImageBytesCutoff;
+        allDataReceived = false;
+    }
+#endif
+    
+#if __APPLE__
+    // Avoid the extra copy of bytes by just handing the byte array directly to a CFDataRef.
+    // We will keep these bytes alive in our m_data variable.
+    CFDataRef data = CFDataCreateWithBytesNoCopy(0, (const UInt8*)bytes.data(), length, kCFAllocatorNull);
+    bool result = setNativeData(data, allDataReceived);
+    CFRelease(data);
+#else
+    bool result = setNativeData(&bytes, allDataReceived);
+#endif
+
+    m_data = bytes;
+    return result;
+}
+
+bool Image::setNativeData(NativeBytePtr data, bool allDataReceived)
+{
+#if __APPLE__
+    // FIXME: Will go away when we make PDF a subclass.
+    if (m_isPDF) {
+        if (allDataReceived && !m_PDFDoc)
+            m_PDFDoc = new PDFDocumentImage((NSData*)data);
+        return true;
+    }
+#endif
+
+    invalidateData();
+    
+    // Feed all the data we've seen so far to the image decoder.
+    m_decoder.setData(data, allDataReceived);
+    
+    // Image properties will not be available until the first frame of the file
+    // reaches kCGImageStatusIncomplete.
+    return isSizeAvailable();
+}
+
+size_t Image::frameCount()
+{
+    return m_decoder.frameCount();
+}
+
+bool Image::isSizeAvailable()
+{
+    if (m_sizeAvailable)
+        return true;
+
+    m_sizeAvailable = m_decoder.isSizeAvailable();
+
+    return m_sizeAvailable;
+
+}
+
+NativeImagePtr Image::frameAtIndex(size_t index)
+{
+    if (index >= frameCount())
+        return 0;
+
+    if (index >= m_frames.size() || !m_frames[index].m_frame)
+        cacheFrame(index);
+
+    return m_frames[index].m_frame;
+}
+
+float Image::frameDurationAtIndex(size_t index)
+{
+    if (index >= frameCount())
+        return 0;
+
+    if (index >= m_frames.size() || !m_frames[index].m_frame)
+        cacheFrame(index);
+
+    return m_frames[index].m_duration;
+}
+
+bool Image::shouldAnimate()
+{
+    return (m_animatingImageType && frameCount() > 1 && !m_animationFinished && m_animationObserver);
+}
+
+void Image::startAnimation()
+{
+    if (m_frameTimer || !shouldAnimate())
+        return;
+
+    m_frameTimer = new Timer<Image>(this, &Image::advanceAnimation);
+    m_frameTimer->startOneShot(frameDurationAtIndex(m_currentFrame));
+}
+
+void Image::stopAnimation()
+{
+    // This timer is used to animate all occurrences of this image.  Don't invalidate
+    // the timer unless all renderers have stopped drawing.
+    delete m_frameTimer;
+    m_frameTimer = 0;
+}
+
+void Image::resetAnimation()
+{
+    stopAnimation();
+    m_currentFrame = 0;
+    m_repetitionsComplete = 0;
+    m_animationFinished = false;
+}
+
+
+void Image::advanceAnimation(Timer<Image>* timer)
+{
+    // Stop the animation.
+    stopAnimation();
+    
+    // See if anyone is still paying attention to this animation.  If not, we don't
+    // advance and will simply pause the animation.
+    if (animationObserver()->shouldStopAnimation(this))
+        return;
+
+    m_currentFrame++;
+    if (m_currentFrame >= frameCount()) {
+        m_repetitionsComplete += 1;
+        if (m_repetitionCount && m_repetitionsComplete >= m_repetitionCount) {
+            m_animationFinished = false;
+            m_currentFrame--;
+            return;
+        }
+        m_currentFrame = 0;
+    }
+
+    // Notify our observer that the animation has advanced.
+    animationObserver()->animationAdvanced(this);
+        
+    // Kick off a timer to move to the next frame.
+    m_frameTimer = new Timer<Image>(this, &Image::advanceAnimation);
+    m_frameTimer->startOneShot(frameDurationAtIndex(m_currentFrame));
 }
 
 IntRect Image::rect() const
 {
-    return m_data ? IntRect(IntPoint(), m_data->size()) : IntRect();
+    return IntRect(IntPoint(), size());
 }
 
 int Image::width() const

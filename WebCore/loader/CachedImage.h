@@ -43,7 +43,7 @@ public:
     CachedImage(DocLoader*, const DOMString &url, KIO::CacheControl cachePolicy, time_t expireDate);
     virtual ~CachedImage();
 
-    const Image& image() const;
+    Image* image() const;
 
     bool canRender() const { return !isErrorImage() && imageSize().width() > 0 && imageSize().height() > 0; }
 

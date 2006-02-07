@@ -1502,7 +1502,7 @@ static ListenerMap *listenerMap;
     if (renderer && renderer->isImage()) {
         RenderImage* img = static_cast<RenderImage*>(renderer);
         if (img->cachedImage() && !img->cachedImage()->isErrorImage())
-            return img->cachedImage()->image().getNSImage();
+            return img->cachedImage()->image()->getNSImage();
     }
     return nil;
 }
@@ -1513,7 +1513,7 @@ static ListenerMap *listenerMap;
     if (renderer && renderer->isImage()) {
         RenderImage* img = static_cast<RenderImage*>(renderer);
         if (img->cachedImage() && !img->cachedImage()->isErrorImage())
-            return (NSData*)(img->cachedImage()->image().getTIFFRepresentation());
+            return (NSData*)(img->cachedImage()->image()->getTIFFRepresentation());
     }
     return nil;
 }

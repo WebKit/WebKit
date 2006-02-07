@@ -63,7 +63,7 @@ public:
     void setCachedImage(CachedImage*);
     CachedImage* cachedImage() const { return m_cachedImage; }
     
-    const Image& image() { return m_cachedImage ? m_cachedImage->image() : nullImage(); }
+    Image* image() { return m_cachedImage ? m_cachedImage->image() : nullImage(); }
 
     virtual bool nodeAtPoint(NodeInfo&, int x, int y, int tx, int ty, HitTestAction);
     
@@ -89,7 +89,7 @@ private:
     // Text to display as long as the image isn't available.
     DOMString m_altText;
 
-    static const Image& nullImage();
+    static Image* nullImage();
 };
 
 } //namespace

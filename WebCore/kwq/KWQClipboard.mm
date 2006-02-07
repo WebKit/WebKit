@@ -353,7 +353,7 @@ NSImage *KWQClipboard::dragNSImage(NSPoint *loc)
             }
         }
     } else if (m_dragImage) {
-        result = m_dragImage->image().getNSImage();
+        result = m_dragImage->image()->getNSImage();
         
         if (loc) {
             *loc = m_dragLoc;

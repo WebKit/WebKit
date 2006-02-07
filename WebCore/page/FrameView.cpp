@@ -592,7 +592,7 @@ static QCursor selectCursor(const NodeImpl::MouseEvent &event, Frame *frame, boo
     RenderObject *renderer = node ? node->renderer() : 0;
     RenderStyle *style = renderer ? renderer->style() : 0;
 
-    if (style && style->cursorImage() && !style->cursorImage()->image().isNull())
+    if (style && style->cursorImage() && !style->cursorImage()->image()->isNull())
         return QCursor(style->cursorImage()->image());
 
     switch (style ? style->cursor() : CURSOR_AUTO) {

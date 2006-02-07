@@ -30,7 +30,6 @@
 #import "FloatRect.h"
 #import "ImageDecoder.h"
 #import "Image.h"
-#import "ImageData.h"
 #import "PDFDocumentImage.h"
 #import <qstring.h>
 
@@ -38,17 +37,62 @@
 
 namespace WebCore {
 
+void FrameData::clear()
+{
+    if (m_frame) {
+        CFRelease(m_frame);
+        m_frame = 0;
+        m_duration = 0.;
+    }
+}
+
 // ================================================
 // Image Class
 // ================================================
+
+void Image::initNativeData()
+{
+    m_nsImage = 0;
+    m_tiffRep = 0;
+    m_solidColor = 0;
+    m_isSolidColor = 0;
+    m_isPDF = false;
+    m_PDFDoc = 0;
+}
+
+void Image::destroyNativeData()
+{
+    delete m_PDFDoc;
+}
+
+void Image::invalidateNativeData()
+{
+    if (m_frames.size() != 1)
+        return;
+
+    if (m_nsImage) {
+        [m_nsImage release];
+        m_nsImage = 0;
+    }
+
+    if (m_tiffRep) {
+        CFRelease(m_tiffRep);
+        m_tiffRep = 0;
+    }
+
+    m_isSolidColor = false;
+    if (m_solidColor) {
+        CFRelease(m_solidColor);
+        m_solidColor = 0;
+    }
+}
 
 Image* Image::loadResource(const char *name)
 {
     NSData* namedImageData = [[WebCoreImageRendererFactory sharedFactory] imageDataForName:[NSString stringWithCString:name]];
     if (namedImageData) {
         Image* image = new Image;
-        image->m_data = new ImageData(image);
-        image->m_data->setNativeData((CFDataRef)namedImageData, true);
+        image->setNativeData((CFDataRef)namedImageData, true);
         return image;
     }
     return 0;
@@ -58,28 +102,6 @@ bool Image::supportsType(const QString& type)
 {
     return [[[WebCoreImageRendererFactory sharedFactory] supportedMIMETypes] containsObject:type.getNSString()];
 }
-
-CGImageRef Image::getCGImageRef() const
-{
-    if (m_data)
-        return m_data->frameAtIndex(0);
-    return 0;
-}
-
-NSImage* Image::getNSImage() const
-{
-    if (m_data)
-        return m_data->getNSImage();
-    return 0;
-}
-
-CFDataRef Image::getTIFFRepresentation() const
-{
-    if (m_data)
-        return m_data->getTIFFRepresentation();
-    return 0;
-}
-
 
 // Drawing Routines
 static CGContextRef graphicsContext(void* context)
@@ -107,31 +129,102 @@ static void fillSolidColorInRect(CGColorRef color, CGRect rect, Image::Composite
     }
 }
 
-void Image::drawInRect(const FloatRect& dstRect, const FloatRect& srcRect,
-                       CompositeOperator compositeOp, void* ctxt) const
+void Image::checkForSolidColor(CGImageRef image)
 {
-    if (!m_data)
-        return;
+    m_isSolidColor = false;
+    if (m_solidColor) {
+        CFRelease(m_solidColor);
+        m_solidColor = 0;
+    }
+    
+    // Currently we only check for solid color in the important special case of a 1x1 image.
+    if (image && CGImageGetWidth(image) == 1 && CGImageGetHeight(image) == 1) {
+        float pixel[4]; // RGBA
+        CGColorSpaceRef space = CGColorSpaceCreateDeviceRGB();
+// This #if won't be needed once the CG header that includes kCGBitmapByteOrder32Host is included in the OS.
+#if __ppc__
+        CGContextRef bmap = CGBitmapContextCreate(&pixel, 1, 1, 8*sizeof(float), sizeof(pixel), space,
+            kCGImageAlphaPremultipliedLast | kCGBitmapFloatComponents);
+#else
+        CGContextRef bmap = CGBitmapContextCreate(&pixel, 1, 1, 8*sizeof(float), sizeof(pixel), space,
+            kCGImageAlphaPremultipliedLast | kCGBitmapFloatComponents | kCGBitmapByteOrder32Host);
+#endif
+        if (bmap) {
+            setCompositingOperation(bmap, Image::CompositeCopy);
+            
+            CGRect dst = { {0, 0}, {1, 1} };
+            CGContextDrawImage(bmap, dst, image);
+            if (pixel[3] > 0)
+                m_solidColor = CGColorCreate(space,pixel);
+            m_isSolidColor = true;
+            CFRelease(bmap);
+        } 
+        CFRelease(space);
+    }
+}
 
+CFDataRef Image::getTIFFRepresentation()
+{
+    if (m_tiffRep)
+        return m_tiffRep;
+
+    CGImageRef cgImage = frameAtIndex(0);
+    if (!cgImage)
+        return 0;
+   
+    CFMutableDataRef data = CFDataCreateMutable(0, 0);
+    // FIXME:  Use type kCGImageTypeIdentifierTIFF constant once is becomes available in the API
+    CGImageDestinationRef destination = CGImageDestinationCreateWithData(data, CFSTR("public.tiff"), 1, 0);
+    if (destination) {
+        CGImageDestinationAddImage(destination, cgImage, 0);
+        CGImageDestinationFinalize(destination);
+        CFRelease(destination);
+    }
+
+    m_tiffRep = data;
+    return m_tiffRep;
+}
+
+NSImage* Image::getNSImage()
+{
+    if (m_nsImage)
+        return m_nsImage;
+
+    CFDataRef data = getTIFFRepresentation();
+    if (!data)
+        return 0;
+    
+    m_nsImage = [[NSImage alloc] initWithData:(NSData*)data];
+    return m_nsImage;
+}
+
+CGImageRef Image::getCGImageRef()
+{
+    return frameAtIndex(0);
+}
+
+void Image::drawInRect(const FloatRect& dstRect, const FloatRect& srcRect,
+                       CompositeOperator compositeOp, void* ctxt)
+{
     CGContextRef context = graphicsContext(ctxt);
-    if (m_data->m_isPDF) {
-        if (m_data->m_PDFDoc)
-            m_data->m_PDFDoc->draw(srcRect, dstRect, compositeOp, 1.0, true, context);
+    if (m_isPDF) {
+        if (m_PDFDoc)
+            m_PDFDoc->draw(srcRect, dstRect, compositeOp, 1.0, true, context);
         return;
     } 
     
-    if (!m_data->m_decoder.initialized())
+    if (!m_decoder.initialized())
         return;
     
     CGRect fr = srcRect;
     CGRect ir = dstRect;
 
-    CGImageRef image = m_data->frameAtIndex(m_data->m_currentFrame);
+    CGImageRef image = frameAtIndex(m_currentFrame);
     if (!image) // If it's too early we won't have an image yet.
         return;
 
-    if (m_data->m_isSolidColor && m_data->m_currentFrame == 0)
-        return fillSolidColorInRect(m_data->m_solidColor, ir, compositeOp, context);
+    if (m_isSolidColor && m_currentFrame == 0)
+        return fillSolidColorInRect(m_solidColor, ir, compositeOp, context);
 
     CGContextSaveGState(context);
         
@@ -186,13 +279,13 @@ void Image::drawInRect(const FloatRect& dstRect, const FloatRect& srcRect,
 
     CGContextRestoreGState(context);
     
-    m_data->startAnimation();
+    startAnimation();
 
 }
 
 static void drawPattern(void* info, CGContextRef context)
 {
-    ImageData* data = (ImageData*)info;
+    Image* data = (Image*)info;
     CGImageRef image = data->frameAtIndex(data->currentFrame());
     float w = CGImageGetWidth(image);
     float h = CGImageGetHeight(image);
@@ -201,19 +294,16 @@ static void drawPattern(void* info, CGContextRef context)
 
 static const CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
 
-void Image::tileInRect(const FloatRect& dstRect, const FloatPoint& srcPoint, void* ctxt) const
-{
-    if (!m_data)
-        return;
-    
-    CGImageRef image = m_data->frameAtIndex(m_data->m_currentFrame);
+void Image::tileInRect(const FloatRect& dstRect, const FloatPoint& srcPoint, void* ctxt)
+{    
+    CGImageRef image = frameAtIndex(m_currentFrame);
     if (!image)
         return;
 
     CGContextRef context = graphicsContext(ctxt);
 
-    if (m_data->m_currentFrame == 0 && m_data->m_isSolidColor)
-        return fillSolidColorInRect(m_data->m_solidColor, dstRect, Image::CompositeSourceOver, context);
+    if (m_currentFrame == 0 && m_isSolidColor)
+        return fillSolidColorInRect(m_solidColor, dstRect, Image::CompositeSourceOver, context);
 
     CGSize tileSize = size();
     CGRect rect = dstRect;
@@ -237,7 +327,7 @@ void Image::tileInRect(const FloatRect& dstRect, const FloatPoint& srcPoint, voi
         return;
     }
 
-    CGPatternRef pattern = CGPatternCreate(m_data, CGRectMake(0, 0, tileSize.width, tileSize.height),
+    CGPatternRef pattern = CGPatternCreate(this, CGRectMake(0, 0, tileSize.width, tileSize.height),
                                            CGAffineTransformIdentity, tileSize.width, tileSize.height, 
                                            kCGPatternTilingConstantSpacing, true, &patternCallbacks);
     
@@ -263,23 +353,20 @@ void Image::tileInRect(const FloatRect& dstRect, const FloatPoint& srcPoint, voi
         CGPatternRelease(pattern);
     }
     
-    m_data->startAnimation();
+    startAnimation();
 }
 
 void Image::scaleAndTileInRect(const FloatRect& dstRect, const FloatRect& srcRect,
-                               TileRule hRule, TileRule vRule, void* ctxt) const
-{
-    if (!m_data)
-        return;
-    
-    CGImageRef image = m_data->frameAtIndex(m_data->m_currentFrame);
+                               TileRule hRule, TileRule vRule, void* ctxt)
+{    
+    CGImageRef image = frameAtIndex(m_currentFrame);
     if (!image)
         return;
 
     CGContextRef context = graphicsContext(ctxt);
     
-    if (m_data->m_currentFrame == 0 && m_data->m_isSolidColor)
-        return fillSolidColorInRect(m_data->m_solidColor, dstRect, Image::CompositeSourceOver, context);
+    if (m_currentFrame == 0 && m_isSolidColor)
+        return fillSolidColorInRect(m_solidColor, dstRect, Image::CompositeSourceOver, context);
 
     CGContextSaveGState(context);
     CGSize tileSize = srcRect.size();
@@ -317,7 +404,7 @@ void Image::scaleAndTileInRect(const FloatRect& dstRect, const FloatRect& srcRec
     CGAffineTransform patternTransform = CGAffineTransformMakeScale(scaleX, scaleY);
 
     // Possible optimization:  We may want to cache the CGPatternRef    
-    CGPatternRef pattern = CGPatternCreate(m_data, CGRectMake(fr.origin.x, fr.origin.y, tileSize.width, tileSize.height),
+    CGPatternRef pattern = CGPatternCreate(this, CGRectMake(fr.origin.x, fr.origin.y, tileSize.width, tileSize.height),
                                            patternTransform, tileSize.width, tileSize.height, 
                                            kCGPatternTilingConstantSpacing, true, &patternCallbacks);
     if (pattern) {
@@ -349,7 +436,7 @@ void Image::scaleAndTileInRect(const FloatRect& dstRect, const FloatRect& srcRec
 
     CGContextRestoreGState(context);
 
-    m_data->startAnimation();
+    startAnimation();
 }
 
 }

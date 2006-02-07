@@ -1,3 +1,106 @@
+2006-02-07  David Hyatt  <hyatt@apple.com>
+
+        Combine ImageData and Image (the result ends up in Image).
+
+        Reviewed by mjs
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.mm:
+        (-[DOMElement _image]):
+        (-[DOMElement _imageTIFFRepresentation]):
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::fileWrapperForElement):
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (KCanvasFEImageQuartz::getCIFilter):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::KJS::Context2DFunction::callAsFunction):
+        (KJS::drawPattern):
+        (KJS::_rh):
+        (KJS::ImagePattern::createPattern):
+        * kwq/KWQClipboard.mm:
+        (WebCore::KWQClipboard::dragNSImage):
+        * kwq/KWQCursor.h:
+        * kwq/KWQCursor.mm:
+        (WebCore::createCustomCursor):
+        (WebCore::QCursor::QCursor):
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (WebCore::QPainter::drawImageAtPoint):
+        (WebCore::QPainter::drawImageInRect):
+        (WebCore::QPainter::drawImage):
+        (WebCore::QPainter::drawFloatImage):
+        (WebCore::QPainter::drawTiledImage):
+        (WebCore::QPainter::drawScaledAndTiledImage):
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::image):
+        * loader/CachedImage.h:
+        * page/FrameView.cpp:
+        (WebCore::selectCursor):
+        * platform/Image.cpp:
+        (WebCore::Image::Image):
+        (WebCore::Image::~Image):
+        (WebCore::Image::invalidateData):
+        (WebCore::Image::cacheFrame):
+        (WebCore::Image::isNull):
+        (WebCore::Image::size):
+        (WebCore::Image::setData):
+        (WebCore::Image::setNativeData):
+        (WebCore::Image::frameCount):
+        (WebCore::Image::isSizeAvailable):
+        (WebCore::Image::frameAtIndex):
+        (WebCore::Image::frameDurationAtIndex):
+        (WebCore::Image::shouldAnimate):
+        (WebCore::Image::startAnimation):
+        (WebCore::Image::stopAnimation):
+        (WebCore::Image::resetAnimation):
+        (WebCore::Image::advanceAnimation):
+        (WebCore::Image::rect):
+        * platform/Image.h:
+        (KXMLCore::):
+        (WebCore::FrameData::m_duration):
+        (WebCore::FrameData::~FrameData):
+        (WebCore::Image::currentFrame):
+        (WebCore::Image::animationObserver):
+        (WebCore::Image::setIsPDF):
+        * platform/ImageData.cpp: Removed.
+        * platform/ImageData.h: Removed.
+        * platform/cairo/ImageCairo.cpp:
+        (WebCore::FrameData::clear):
+        (WebCore::Image::initNativeData):
+        (WebCore::Image::destroyNativeData):
+        (WebCore::Image::invalidateNativeData):
+        (WebCore::Image::drawInRect):
+        (WebCore::Image::tileInRect):
+        (WebCore::Image::scaleAndTileInRect):
+        * platform/mac/Image.mm:
+        (WebCore::FrameData::clear):
+        (WebCore::Image::initNativeData):
+        (WebCore::Image::destroyNativeData):
+        (WebCore::Image::invalidateNativeData):
+        (WebCore::Image::loadResource):
+        (WebCore::Image::supportsType):
+        (WebCore::Image::checkForSolidColor):
+        (WebCore::Image::getTIFFRepresentation):
+        (WebCore::Image::getNSImage):
+        (WebCore::Image::getCGImageRef):
+        (WebCore::Image::drawInRect):
+        (WebCore::drawPattern):
+        (WebCore::Image::tileInRect):
+        (WebCore::Image::scaleAndTileInRect):
+        * rendering/render_image.cpp:
+        (WebCore::RenderImage::imageChanged):
+        (WebCore::RenderImage::resetAnimation):
+        (WebCore::RenderImage::paint):
+        (WebCore::RenderImage::nullImage):
+        * rendering/render_image.h:
+        (WebCore::RenderImage::image):
+        * rendering/render_list.cpp:
+        (RenderListItem::getAbsoluteRepaintRect):
+        (RenderListMarker::paint):
+        (RenderListMarker::calcMinMaxWidth):
+        * rendering/render_object.cpp:
+        (WebCore::RenderObject::paintBorderImage):
+
 2006-02-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
