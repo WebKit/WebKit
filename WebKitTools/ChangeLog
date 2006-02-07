@@ -1,5 +1,16 @@
 2006-02-06  Eric Seidel  <eseidel@apple.com>
 
+        Rubber-stamped by darin & mjs.
+
+        Added new support directory for build slave scripts.
+        Committing the first script, for use by the PLT's build slave.
+        This script is used to kick of the PLT (Page Load Test) slave.
+
+        * BuildSlaveSupport: Added.
+        * BuildSlaveSupport/run-performance-tests: Added.
+
+2006-02-06  Eric Seidel  <eseidel@apple.com>
+
         Rubber-stamped by darin.
 
         Adding setSourceDir for scripts stored in non-standard locations.
