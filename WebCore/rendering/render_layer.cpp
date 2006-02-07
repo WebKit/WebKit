@@ -618,7 +618,6 @@ void RenderLayer::scrollRectToVisible(const IntRect &rect, const ScrollAlignment
             // Adjust offsets if they're outside of the allowable range.
             xOffset = kMax(0, kMin(view->contentsWidth(), xOffset));
             yOffset = kMax(0, kMin(view->contentsHeight(), yOffset));
-            
 
             if (m_object->document() && m_object->document()->ownerElement() && m_object->document()->ownerElement()->renderer()) {
                 view->setContentsPos(xOffset, yOffset);
@@ -637,72 +636,77 @@ void RenderLayer::scrollRectToVisible(const IntRect &rect, const ScrollAlignment
         parentLayer->scrollRectToVisible(newRect, alignX, alignY);
 }
 
-IntRect RenderLayer::getRectToExpose(const IntRect &visibleRect, const IntRect &exposeRect, const ScrollAlignment& alignX, const ScrollAlignment& alignY) {
-
-    int x, y, w, h;
-    x = exposeRect.x();
-    y = exposeRect.y();
-    w = exposeRect.width();
-    h = exposeRect.height();
-    
-    // Find the appropriate X coordinate to scroll to.
-    ScrollBehavior scrollX = getHiddenBehavior(alignX);
-    int intersectWidth = intersection(visibleRect, exposeRect).width();
-    // If the rectangle is fully visible, use the specified visible behavior.
-    // If the rectangle is partially visible, but over a certain threshold, then treat it as fully visible to avoid unnecessary horizontal scrolling
-    if (intersectWidth == w || intersectWidth >= MIN_INTERSECT_FOR_REVEAL)
+IntRect RenderLayer::getRectToExpose(const IntRect &visibleRect, const IntRect &exposeRect, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
+{
+    // Determine the appropriate X behavior.
+    ScrollBehavior scrollX;
+    IntRect exposeRectX(exposeRect.x(), visibleRect.y(), exposeRect.width(), visibleRect.height());
+    int intersectWidth = intersection(visibleRect, exposeRectX).width();
+    if (intersectWidth == exposeRect.width() || intersectWidth >= MIN_INTERSECT_FOR_REVEAL)
+        // If the rectangle is fully visible, use the specified visible behavior.
+        // If the rectangle is partially visible, but over a certain threshold,
+        // then treat it as fully visible to avoid unnecessary horizontal scrolling
         scrollX = getVisibleBehavior(alignX);
     else if (intersectWidth == visibleRect.width()) {
-        // If the rect is bigger than the visible area, don't bother trying to center.  Other alignments will work.
-        if (getVisibleBehavior(alignX) == alignCenter)
+        // If the rect is bigger than the visible area, don't bother trying to center. Other alignments will work.
+        scrollX = getVisibleBehavior(alignX);
+        if (scrollX == alignCenter)
             scrollX = noScroll;
-        else
-            scrollX = getVisibleBehavior(alignX);
-    }
-    // If the rectangle is partially visible, but not above the minimum threshold, use the specified partial behavior
-    else if (intersectWidth > 0)
+    } else if (intersectWidth > 0)
+        // If the rectangle is partially visible, but not above the minimum threshold, use the specified partial behavior
         scrollX = getPartialBehavior(alignX);
-        
+    else
+        scrollX = getHiddenBehavior(alignX);
+    // If we're trying to align to the closest edge, and the exposeRect is further right
+    // than the visibleRect, and not bigger than the visible area, then align with the right.
+    if (scrollX == alignToClosestEdge && exposeRect.right() > visibleRect.right() && exposeRect.width() < visibleRect.width())
+        scrollX = alignRight;
+
+    // Given the X behavior, compute the X coordinate.
+    int x;
     if (scrollX == noScroll) 
         x = visibleRect.x();
-    // If we're trying to align to the closest edge, and the exposeRect is further right than the visibleRect, and not bigger than the visible area, then alignRight.
-    else if ((scrollX == alignRight) || ((scrollX == alignToClosestEdge) && exposeRect.right() > visibleRect.right() && w < visibleRect.width()))
-        x = (exposeRect.right() - 1) - visibleRect.width();
+    else if (scrollX == alignRight)
+        x = exposeRect.right() - visibleRect.width();
     else if (scrollX == alignCenter)
-        x -= (visibleRect.width() - w) / 2;
-    // By default, x is set to the left of the exposeRect, so for the alignLeft case, 
-    // or the alignToClosestEdge case where the closest edge is the left edge, then x does not need to be changed.
-    w = visibleRect.width();
-    
-    // Find the appropriate Y coordinate to scroll to.
-    ScrollBehavior scrollY = getHiddenBehavior(alignY);
-    int intersectHeight = intersection(visibleRect, exposeRect).height();
-    // If the rectangle is fully visible, use the specified visible behavior.
-    if (intersectHeight == h)
+        x = exposeRect.x() + (exposeRect.width() - visibleRect.width()) / 2;
+    else
+        x = exposeRect.x();
+
+    // Determine the appropriate Y behavior.
+    ScrollBehavior scrollY;
+    IntRect exposeRectY(visibleRect.x(), exposeRect.y(), visibleRect.width(), exposeRect.height());
+    int intersectHeight = intersection(visibleRect, exposeRectY).height();
+    if (intersectHeight == exposeRect.height())
+        // If the rectangle is fully visible, use the specified visible behavior.
         scrollY = getVisibleBehavior(alignY);
     else if (intersectHeight == visibleRect.height()) {
-        // If the rect is bigger than the visible area, don't bother trying to center.  Other alignments will work.
-        if (getVisibleBehavior(alignY) == alignCenter)
+        // If the rect is bigger than the visible area, don't bother trying to center. Other alignments will work.
+        scrollY = getVisibleBehavior(alignY);
+        if (scrollY == alignCenter)
             scrollY = noScroll;
-        else
-            scrollY = getVisibleBehavior(alignY);
-    }
-    // If the rectangle is partially visible, use the specified partial behavior
-    else if (intersectHeight > 0)
+    } else if (intersectHeight > 0)
+        // If the rectangle is partially visible, use the specified partial behavior
         scrollY = getPartialBehavior(alignY);
-        
+    else
+        scrollY = getHiddenBehavior(alignY);
+    // If we're trying to align to the closest edge, and the exposeRect is further down
+    // than the visibleRect, and not bigger than the visible area, then align with the bottom.
+    if (scrollY == alignToClosestEdge && exposeRect.bottom() > visibleRect.bottom() && exposeRect.height() < visibleRect.height())
+        scrollY = alignBottom;
+
+    // Given the Y behavior, compute the Y coordinate.
+    int y;
     if (scrollY == noScroll) 
         y = visibleRect.y();
-    // If we're trying to align to the closest edge, and the exposeRect is further down than the visibleRect, and not bigger than the visible area, then alignBottom.
-    else if ((scrollY == alignBottom) || ((scrollY == alignToClosestEdge) && exposeRect.bottom() > visibleRect.bottom() && h < visibleRect.height()))
-        y = (exposeRect.bottom() - 1) - visibleRect.height();
+    else if (scrollY == alignBottom)
+        y = exposeRect.bottom() - visibleRect.height();
     else if (scrollY == alignCenter)
-        y -= (visibleRect.height() - h) / 2;
-    // By default, y is set to the top of the exposeRect, so for the alignTop case, 
-    // or the alignToEdgeY case where the closest edge is the top edge, then y does not need to be changed.
-    h = visibleRect.height();
-    
-    return IntRect(x, y, w, h);
+        y = exposeRect.y() + (exposeRect.height() - visibleRect.height()) / 2;
+    else
+        y = exposeRect.y();
+
+    return IntRect(IntPoint(x, y), visibleRect.size());
 }
 
 void RenderLayer::updateScrollPositionFromScrollbars()
