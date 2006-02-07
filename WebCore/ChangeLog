@@ -1,5 +1,52 @@
 2006-02-07  David Hyatt  <hyatt@apple.com>
 
+        Rename ImageDecoder to ImageSource.
+
+        Reviewed by mjs
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/Image.cpp:
+        (WebCore::Image::cacheFrame):
+        (WebCore::Image::size):
+        (WebCore::Image::setNativeData):
+        (WebCore::Image::frameCount):
+        (WebCore::Image::isSizeAvailable):
+        * platform/Image.h:
+        * platform/ImageDecoder.h: Removed.
+        * platform/ImageSource.h: Added.
+        * platform/cairo/ImageCairo.cpp:
+        (WebCore::Image::drawInRect):
+        * platform/cairo/ImageDecoderCairo.cpp: Removed.
+        * platform/cairo/ImageSourceCairo.cpp: Added.
+        (WebCore::createDecoderPlugin):
+        (WebCore::ImageSource::ImageSource):
+        (WebCore::ImageSource::~ImageSource):
+        (WebCore::ImageSource::initialized):
+        (WebCore::ImageSource::setData):
+        (WebCore::ImageSource::isSizeAvailable):
+        (WebCore::ImageSource::size):
+        (WebCore::ImageSource::repetitionCount):
+        (WebCore::ImageSource::frameCount):
+        (WebCore::ImageSource::createFrameAtIndex):
+        (WebCore::ImageSource::frameDurationAtIndex):
+        * platform/mac/Image.mm:
+        (WebCore::Image::drawInRect):
+        * platform/mac/ImageData.mm: Removed.
+        * platform/mac/ImageDecoder.cpp: Removed.
+        * platform/mac/ImageSource.cpp: Added.
+        (WebCore::ImageSource::ImageSource):
+        (WebCore::ImageSource::~ImageSource):
+        (WebCore::ImageSource::initialized):
+        (WebCore::ImageSource::setData):
+        (WebCore::ImageSource::isSizeAvailable):
+        (WebCore::ImageSource::size):
+        (WebCore::ImageSource::repetitionCount):
+        (WebCore::ImageSource::frameCount):
+        (WebCore::ImageSource::createFrameAtIndex):
+        (WebCore::ImageSource::frameDurationAtIndex):
+
+2006-02-07  David Hyatt  <hyatt@apple.com>
+
         Combine ImageData and Image (the result ends up in Image).
 
         Reviewed by mjs

@@ -28,7 +28,7 @@
 #include <kxmlcore/Vector.h>
 #include "Array.h"
 #include "Image.h"
-#include "ImageDecoder.h"
+#include "ImageSource.h"
 #include "IntRect.h"
 #include "FloatRect.h"
 #include "ImageAnimationObserver.h"
@@ -89,7 +89,7 @@ void Image::cacheFrame(size_t index)
     size_t numFrames = frameCount();
     if (!m_frames.size() && shouldAnimate()) {            
         // Snag the repetition count.
-        m_repetitionCount = m_decoder.repetitionCount();
+        m_repetitionCount = m_source.repetitionCount();
         if (m_repetitionCount == cAnimationNone)
             m_animatingImageType = false;
     }
@@ -97,9 +97,9 @@ void Image::cacheFrame(size_t index)
     if (m_frames.size() < numFrames)
         m_frames.resize(numFrames);
 
-    m_frames[index].m_frame = m_decoder.createFrameAtIndex(index);
+    m_frames[index].m_frame = m_source.createFrameAtIndex(index);
     if (shouldAnimate())
-        m_frames[index].m_duration = m_decoder.frameDurationAtIndex(index);
+        m_frames[index].m_duration = m_source.frameDurationAtIndex(index);
 }
 
 bool Image::isNull() const
@@ -121,7 +121,7 @@ IntSize Image::size() const
 #endif
     
     if (m_sizeAvailable && !m_haveSize) {
-        m_size = m_decoder.size();
+        m_size = m_source.size();
         m_haveSize = true;
     }
     return m_size;
@@ -171,7 +171,7 @@ bool Image::setNativeData(NativeBytePtr data, bool allDataReceived)
     invalidateData();
     
     // Feed all the data we've seen so far to the image decoder.
-    m_decoder.setData(data, allDataReceived);
+    m_source.setData(data, allDataReceived);
     
     // Image properties will not be available until the first frame of the file
     // reaches kCGImageStatusIncomplete.
@@ -180,7 +180,7 @@ bool Image::setNativeData(NativeBytePtr data, bool allDataReceived)
 
 size_t Image::frameCount()
 {
-    return m_decoder.frameCount();
+    return m_source.frameCount();
 }
 
 bool Image::isSizeAvailable()
@@ -188,7 +188,7 @@ bool Image::isSizeAvailable()
     if (m_sizeAvailable)
         return true;
 
-    m_sizeAvailable = m_decoder.isSizeAvailable();
+    m_sizeAvailable = m_source.isSizeAvailable();
 
     return m_sizeAvailable;
 

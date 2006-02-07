@@ -26,12 +26,12 @@
 #include "config.h"
 #include <cairo.h>
 #include "GIFDecoderPlugin.h"
-#include "ImageDecoder.h"
+#include "ImageSource.h"
 #include "IntSize.h"
 
 namespace WebCore {
 
-ImageDecoderPlugin* createDecoderPlugin(const ByteArray& data)
+ImageDecoder* createDecoderPlugin(const ByteArray& data)
 {
     // We need at least 4 bytes to figure out what kind of image we're dealing with.
     int length = data.size();
@@ -76,21 +76,21 @@ ImageDecoderPlugin* createDecoderPlugin(const ByteArray& data)
     return 0;
 }
 
-ImageDecoder::ImageDecoder()
+ImageSource::ImageSource()
   : m_decoder(0)
 {}
 
-ImageDecoder::~ImageDecoder()
+ImageSource::~ImageSource()
 {
     delete m_decoder;
 }
 
-bool ImageDecoder::initialized() const
+bool ImageSource::initialized() const
 {
     return m_decoder;
 }
 
-void ImageDecoder::setData(const ByteArray* data, bool allDataReceived)
+void ImageSource::setData(const ByteArray* data, bool allDataReceived)
 {
     // Make the decoder by sniffing the bytes.
     // This method will examine the data and instantiate an instance of the appropriate decoder plugin.
@@ -102,7 +102,7 @@ void ImageDecoder::setData(const ByteArray* data, bool allDataReceived)
     m_decoder->setData(*data, allDataReceived);
 }
 
-bool ImageDecoder::isSizeAvailable()
+bool ImageSource::isSizeAvailable()
 {
     if (!m_decoder)
         return false;
@@ -110,7 +110,7 @@ bool ImageDecoder::isSizeAvailable()
     return m_decoder->isSizeAvailable();
 }
 
-IntSize ImageDecoder::size() const
+IntSize ImageSource::size() const
 {
     if (!m_decoder)
         return IntSize();
@@ -118,7 +118,7 @@ IntSize ImageDecoder::size() const
     return m_decoder->size();
 }
 
-int ImageDecoder::repetitionCount()
+int ImageSource::repetitionCount()
 {
     if (!m_decoder)
         return cAnimationNone;
@@ -126,12 +126,12 @@ int ImageDecoder::repetitionCount()
     return m_decoder->repetitionCount();
 }
 
-size_t ImageDecoder::frameCount() const
+size_t ImageSource::frameCount() const
 {
     return m_decoder ? m_decoder->frameCount() : 0;
 }
 
-NativeImagePtr ImageDecoder::createFrameAtIndex(size_t index)
+NativeImagePtr ImageSource::createFrameAtIndex(size_t index)
 {
     if (!m_decoder)
         return 0;
@@ -147,7 +147,7 @@ NativeImagePtr ImageDecoder::createFrameAtIndex(size_t index)
                                                size().width()*4);
 }
 
-float ImageDecoder::frameDurationAtIndex(size_t index)
+float ImageSource::frameDurationAtIndex(size_t index)
 {
     if (!m_decoder)
         return 0;

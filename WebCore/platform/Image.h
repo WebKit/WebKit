@@ -27,7 +27,7 @@
 #define IMAGE_H_
 
 #include <kxmlcore/Vector.h>
-#include "ImageDecoder.h"
+#include "ImageSource.h"
 #include "Array.h"
 #include "IntSize.h"
 
@@ -209,7 +209,7 @@ private:
 
     // Members
     ByteArray m_data; // The encoded raw data for the image.
-    ImageDecoder m_decoder;
+    ImageSource m_source;
     mutable IntSize m_size; // The size to use for the overall image (will just be the size of the first image).
     
     size_t m_currentFrame; // The index of the current frame of animation.

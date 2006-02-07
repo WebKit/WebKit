@@ -28,7 +28,6 @@
 #import "Array.h"
 #import "IntSize.h"
 #import "FloatRect.h"
-#import "ImageDecoder.h"
 #import "Image.h"
 #import "PDFDocumentImage.h"
 #import <qstring.h>
@@ -213,7 +212,7 @@ void Image::drawInRect(const FloatRect& dstRect, const FloatRect& srcRect,
         return;
     } 
     
-    if (!m_decoder.initialized())
+    if (!m_source.initialized())
         return;
     
     CGRect fr = srcRect;

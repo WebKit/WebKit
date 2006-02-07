@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef IMAGE_DECODER_H_
-#define IMAGE_DECODER_H_
+#ifndef IMAGE_SOURCE_H_
+#define IMAGE_SOURCE_H_
 
 #if __APPLE__
 #include <ApplicationServices/ApplicationServices.h>
@@ -41,12 +41,12 @@ template <typename T> class Array;
 typedef Array<char> ByteArray;
 
 #if __APPLE__
-typedef CGImageSourceRef NativeImageDecoderPtr;
+typedef CGImageSourceRef NativeImageSourcePtr;
 typedef CGImageRef NativeImagePtr;
 typedef CFDataRef NativeBytePtr;
 #else
-class ImageDecoderPlugin;
-typedef ImageDecoderPlugin* NativeImageDecoderPtr;
+class ImageDecoder;
+typedef ImageDecoder* NativeImageSourcePtr;
 typedef const ByteArray* NativeBytePtr;
 typedef cairo_surface_t* NativeImagePtr;
 #endif
@@ -54,10 +54,10 @@ typedef cairo_surface_t* NativeImagePtr;
 const int cAnimationLoopOnce = -1;
 const int cAnimationNone = -2;
 
-class ImageDecoder {
+class ImageSource {
 public:
-    ImageDecoder();
-    ~ImageDecoder();
+    ImageSource();
+    ~ImageSource();
 
     bool initialized() const;
     
@@ -73,7 +73,7 @@ public:
     float frameDurationAtIndex(size_t index);
     
 private:
-    NativeImageDecoderPtr m_decoder;
+    NativeImageSourcePtr m_decoder;
 };
 
 }
