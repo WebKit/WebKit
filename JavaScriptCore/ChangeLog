@@ -1,3 +1,7 @@
+2006-02-06  Eric Seidel  <eseidel@apple.com>
+
+        Add svn:ignore properties for visual studio internals.
+
 2006-02-06  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
