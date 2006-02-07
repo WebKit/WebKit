@@ -1,0 +1,159 @@
+# ***** BEGIN LICENSE BLOCK *****
+# Version: MPL 1.1/GPL 2.0/LGPL 2.1
+#
+# The contents of this file are subject to the Mozilla Public License Version
+# 1.1 (the "License"); you may not use this file except in compliance with
+# the License. You may obtain a copy of the License at
+# http://www.mozilla.org/MPL/
+#
+# Software distributed under the License is distributed on an "AS IS" basis,
+# WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+# for the specific language governing rights and limitations under the
+# License.
+#
+# The Original Code is mozilla.org code.
+#
+# The Initial Developer of the Original Code is
+# Google Inc.
+# Portions created by the Initial Developer are Copyright (C) 2005
+# the Initial Developer. All Rights Reserved.
+#
+# Contributor(s):
+#  Brian Ryner <bryner@brianryner.com>
+#  Stuart Parmenter <pavlov@pavlov.net>
+#
+# Alternatively, the contents of this file may be used under the terms of
+# either of the GNU General Public License Version 2 or later (the "GPL"),
+# or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+# in which case the provisions of the GPL or the LGPL are applicable instead
+# of those above. If you wish to allow use of your version of this file only
+# under the terms of either the GPL or the LGPL, and not to allow others to
+# use your version of this file under the terms of the MPL, indicate your
+# decision by deleting the provisions above and replace them with the notice
+# and other provisions required by the GPL or the LGPL. If you do not delete
+# the provisions above, a recipient may use your version of this file under
+# the terms of any one of the MPL, the GPL or the LGPL.
+#
+# ***** END LICENSE BLOCK *****
+
+DEPTH           = ../../../..
+topsrcdir       = @top_srcdir@
+srcdir          = @srcdir@
+VPATH           = @srcdir@
+
+include $(DEPTH)/config/autoconf.mk
+
+VISIBILITY_FLAGS =
+
+MODULE          = cairo
+LIBRARY_NAME    = mozcairo
+LIBXUL_LIBRARY = 1
+
+REQUIRES        = $(PNG_REQUIRES) \
+                  $(ZLIB_REQUIRES) \
+                  libpixman \
+                  $(NULL)
+
+CSRCS   = \
+        cairo.c \
+        cairo-arc.c \
+        cairo-array.c \
+        cairo-cache.c \
+        cairo-clip.c \
+        cairo-color.c \
+        cairo-debug.c \
+        cairo-fixed.c \
+        cairo-font.c \
+	cairo-font-options.c \
+        cairo-gstate.c \
+	cairo-hash.c \
+        cairo-hull.c \
+        cairo-image-surface.c \
+        cairo-matrix.c \
+	cairo-meta-surface.c \
+        cairo-output-stream.c \
+	cairo-paginated-surface.c \
+        cairo-path.c \
+        cairo-path-bounds.c \
+        cairo-path-data.c \
+        cairo-path-fill.c \
+        cairo-path-stroke.c \
+        cairo-pattern.c \
+        cairo-pen.c \
+        cairo-polygon.c \
+	cairo-region.c \
+	cairo-scaled-font.c \
+        cairo-slope.c \
+        cairo-spline.c \
+	cairo-stroke-style.c \
+        cairo-surface.c \
+	cairo-surface-fallback.c \
+        cairo-traps.c \
+        cairo-unicode.c \
+        cairo-wideint.c \
+        $(NULL)
+
+EXPORTS = cairo.h cairo-features.h cairo-platform.h
+
+
+ifeq ($(MOZ_WIDGET_TOOLKIT),windows)
+CSRCS   += cairo-win32-font.c \
+           cairo-win32-surface.c
+EXPORTS += cairo-win32.h
+endif
+
+ifeq ($(MOZ_WIDGET_TOOLKIT),os2)
+CSRCS   += cairo-os2-surface.c
+EXPORTS += cairo-os2.h cairo-os2-private.h
+endif
+
+ifneq (,$(filter mac cocoa,$(MOZ_WIDGET_TOOLKIT)))
+CSRCS   += cairo-quartz-surface.c \
+           cairo-atsui-font.c
+EXPORTS += cairo-quartz.h cairo-atsui.h
+endif
+
+ifeq ($(MOZ_WIDGET_TOOLKIT),beos)
+CPPSRCS += cairo-beos-surface.cpp
+EXPORTS += cairo-beos.h
+endif
+
+ifeq ($(MOZ_WIDGET_TOOLKIT),gtk2)
+CSRCS   += cairo-font-subset.c \
+           cairo-pdf-surface.c \
+           cairo-ps-surface.c
+EXPORTS += cairo-ps.h cairo-pdf.h
+endif
+
+ifdef BUILD_CAIRO_SVG
+CSRCS	+= cairo-svg-surface.c
+EXPORTS += cairo-svg.h
+endif
+
+ifdef MOZ_X11
+CSRCS   += cairo-xlib-surface.c \
+	   cairo-xlib-screen.c
+EXPORTS += cairo-xlib.h cairo-xlib-xrender.h
+endif
+
+ifdef MOZ_ENABLE_CAIRO_FT
+CSRCS   += cairo-ft-font.c
+EXPORTS += cairo-ft.h
+LOCAL_INCLUDES += $(CAIRO_FT_CFLAGS)
+endif
+
+
+ifdef MOZ_ENABLE_GLITZ
+REQUIRES += glitz
+CSRCS    += cairo-glitz-surface.c
+EXPORTS  += cairo-glitz.h
+endif
+
+
+LOCAL_INCLUDES  += -I$(srcdir)
+
+FORCE_STATIC_LIB = 1
+# This library is used by other shared libs in a static build
+FORCE_USE_PIC = 1
+
+include $(topsrcdir)/config/rules.mk
