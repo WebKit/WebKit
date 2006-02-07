@@ -1,0 +1,15 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 3 of DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of INPUT > DIV > DIV > BODY > HTML > #document to 2 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 3 of DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 3 of DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > DIV > DIV > BODY > HTML > #document to 2 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 3 of DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+This test checks that non-form-control elements connect onfocus and onblur to the focus and blur events, which do not bubble, not DOMFocusIn and DOMFocusOut, which do bubble. focus and blur should show up once each below.
+focus
+blur
+Text 
+

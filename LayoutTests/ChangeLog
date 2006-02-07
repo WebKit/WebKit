@@ -1,3 +1,13 @@
+2006-02-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - test for 7094: onfocus/onblur on non-form-controls bubble
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7094
+
+        * fast/events/div-focus-expected.txt: Added.
+        * fast/events/div-focus.html: Added.
+
 2006-02-04  Darin Adler  <darin@apple.com>
 
         Reviewed by NOBODY (OOPS!).
