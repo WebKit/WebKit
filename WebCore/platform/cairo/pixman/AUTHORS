@@ -1,0 +1,19 @@
+David R Bacon <dbacon@cis.ksu.edu> Fixes to compile on x86_64.
+Billy Biggs <vektor@dumbterm.net> Fix to use stdint datatypes.
+Dave Beckett <Dave.Beckett@bristol.ac.uk> Combined libpixregion, libic, and slim.
+Jakub Bogusz <qboosh@pld-linux.org> Fixes for 64-bit machines.
+Anders Carlsson <andersca@gnome.org> Build fixes. New accessor functions.
+Richard Henderson <rth@twiddle.net> "slim" macros for better shared libraries 
+Owen Taylor <otaylor@redhat.com> Support for both transform and repeat
+Keith Packard <keithp@keithp.com> The original implementation of the compositing code.
+David Reveman <c99drn@cs.umu.se> Byte-order, clipping and format fixes.
+Vladimir Vukicevic <vladimir@pobox.com> Bug fix.
+Bryan Worth <bryan@theworths.org> Cleanups to not depend on X header files.
+Carl Worth <carl@theworths.org> General maintenance. Original port from X server code.
+Richard Worth <richard@theworths.org> Build fixes for cygwin.
+
+and the "X Window System authors" (pixregion code)
+
+(Please let us know if we have missed anyone. I would be interested in
+having more precise attribution for the pixregion code if anyone knows
+who wrote that.)

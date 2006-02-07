@@ -1,0 +1,47 @@
+libpixman - Pixel manipulation library
+
+libpixman is a merge of libpixregion and libic.
+It also includes the slim headers.
+
+----------------------------------------------------------------------
+libpixregion - Pixel region Library
+
+libpixregion is a generic library for manipulating pixel regions. A
+PixRegion is a set of Y-X banded rectangles that cover the desired
+region.
+
+The original code for libxregion was part of the reference X server
+implementation of the X Window System. A modified copy of the code
+also exists in the Xlib client library. libpixregion was formed so
+that both the X server and client libraries could share common code
+for region manipulation.
+
+libpixregion is also intended to be applicable outside of the X Window
+System. The public interface of libpixregion does not depend on any
+part of the X Window System.
+
+----------------------------------------------------------------------
+libic - Image compositing library
+
+libic is a generic image compositing library. libic provides
+Porter/Duff compositing of images and implicit mask generation for
+geometric primitives including trapezoids, triangles, and rectangles.
+
+The semantics of libic are designed to precisely match the
+specification of the X Render extension. In fact, the initial
+implementation of libic was lifted from the reference implementation
+of RENDER from the X server.
+
+However, libic is intended to be useful independent of the X Window
+System. The public interface exported by libic does not contain any
+X-specific data structures.
+
+Carl Worth
+cworth@isi.edu
+
+Keith Packard (keithp@keithp.com) originally wrote all the original
+RENDER code that was yanked out to become libic. Keith also provided
+impetus and guidance in the development of libic.
+
+----------------------------------------------------------------------
+slim - Shared Library Interface Macros
