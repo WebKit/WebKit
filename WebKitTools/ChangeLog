@@ -1,3 +1,11 @@
+2006-02-06  Eric Seidel  <eseidel@apple.com>
+
+        Rubber-stamped by darin.
+
+        Adding setSourceDir for scripts stored in non-standard locations.
+
+        * Scripts/webkitdirs.pm:
+
 2006-02-04  Darin Adler  <darin@apple.com>
 
         * Scripts/webkitdirs.pm: Add a compatibilty hack for people with old

@@ -57,6 +57,12 @@ sub determineSourceDir
     }
 }
 
+# used for scripts which are stored in a non-standard location
+sub setSourceDir($)
+{
+    $sourceDir = $_;
+}
+
 sub determineBaseProductDir
 {
     return if defined $baseProductDir;
