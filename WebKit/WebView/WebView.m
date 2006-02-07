@@ -559,22 +559,6 @@ static bool debugWidget = true;
     }
 }
 
-- (WebFrame *)_createFrameNamed:(NSString *)fname inParent:(WebFrame *)parent allowsScrolling:(BOOL)allowsScrolling
-{
-    WebFrameView *childView = [[WebFrameView alloc] initWithFrame:NSMakeRect(0,0,0,0)];
-
-    [childView setAllowsScrolling:allowsScrolling];
-    
-    WebFrameBridge *newBridge = [[WebFrameBridge alloc] initWithPage:_private->_pageBridge webView:self frameName:fname view:childView];
-
-    [parent _addChild:[newBridge webFrame]];
-    
-    [childView release];
-    [newBridge release];
-        
-    return [newBridge webFrame];
-}
-
 - (void)_finishedLoadingResourceFromDataSource:(WebDataSource *)dataSource
 {
     WebFrame *frame = [dataSource webFrame];

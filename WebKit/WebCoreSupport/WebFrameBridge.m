@@ -116,9 +116,9 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 @implementation WebFrameBridge
 
-- (id)initWithPage:(WebPageBridge *)page webView:(WebView *)webView frameName:(NSString *)name view:(WebFrameView *)view
+- (id)initWithPage:(WebPageBridge *)page webView:(WebView *)webView renderer:(WebCoreRenderPart *)renderer frameName:(NSString *)name view:(WebFrameView *)view
 {
-    self = [super init];
+    self = [super initWithRenderer:renderer];
 
     ++WebBridgeCount;
     
@@ -764,19 +764,25 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     if (![self canLoadURL:URL fromReferrer:referrer hideReferrer:&hideReferrer])
         return nil;
 
-    ASSERT(_frame != nil);
-    WebFrame *newFrame = [[_page webView] _createFrameNamed:frameName inParent:_frame allowsScrolling:allowsScrolling];
-    if (newFrame == nil)
-        return nil;
+    ASSERT(_frame);
     
-    [[newFrame _bridge] setRenderPart:childRenderPart];
+    WebFrameView *childView = [[WebFrameView alloc] initWithFrame:NSMakeRect(0,0,0,0)];
+    [childView setAllowsScrolling:allowsScrolling];
+    WebFrameBridge *newBridge = [[WebFrameBridge alloc] initWithPage:_page webView:[_page webView] renderer:childRenderPart frameName:frameName view:childView];
+    [_frame _addChild:[newBridge webFrame]];
+    [childView release];
 
-    [[newFrame frameView] _setMarginWidth:width];
-    [[newFrame frameView] _setMarginHeight:height];
+    [childView _setMarginWidth:width];
+    [childView _setMarginHeight:height];
 
-    [_frame _loadURL:URL referrer:(hideReferrer ? nil : referrer) intoChild:newFrame];
+    [newBridge release];
 
-    return [newFrame _bridge];
+    if (!newBridge)
+        return nil;
+
+    [_frame _loadURL:URL referrer:(hideReferrer ? nil : referrer) intoChild:[newBridge webFrame]];
+
+    return newBridge;
 }
 
 - (void)saveDocumentState:(NSArray *)documentState

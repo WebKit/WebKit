@@ -130,7 +130,7 @@ bool FrameView::isFrameView() const
     return true;
 }
 
-MacFrame::MacFrame()
+MacFrame::MacFrame(RenderPart* ownerRenderer)
     : _bridge(nil)
     , _started(this, SIGNAL(started(KIO::Job *)))
     , _completed(this, SIGNAL(completed()))
@@ -152,7 +152,7 @@ MacFrame::MacFrame()
     Cache::init();
 
     // The widget is made outside this class in our case.
-    Frame::init(0);
+    Frame::init(0, ownerRenderer);
 
     mutableInstances().prepend(this);
 }
@@ -987,9 +987,8 @@ NSView *MacFrame::nextKeyViewInFrameHierarchy(NodeImpl *node, KWQSelectionDirect
     NSView *next = nextKeyViewInFrame(node, direction);
     if (!next) {
         MacFrame *parent = Mac(treeNode()->parent());
-        if (parent) {
-            next = parent->nextKeyViewInFrameHierarchy(parent->childFrame(this)->m_renderer->element(), direction);
-        }
+        if (parent)
+            next = parent->nextKeyViewInFrameHierarchy(ownerElement(), direction);
     }
     
     // remove focus from currently focused node if we're giving focus to another view

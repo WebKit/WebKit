@@ -1,3 +1,22 @@
+2006-02-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - fixed "remove frame, renderer and completed flag from ChildFrame, make Frame track these"
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7125
+        
+        - fixed "onload event never called for iframe element with emtpy or about:blank src"
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3609
+
+        * WebCoreSupport/WebFrameBridge.h:
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge initWithPage:webView:renderer:frameName:view:]): Pass along renderer.
+        (-[WebFrameBridge createChildFrameNamed:withURL:referrer:renderPart:allowsScrolling:marginWidth:marginHeight:]): Pass along renderer.
+        * WebCoreSupport/WebPageBridge.m:
+        (-[WebPageBridge initWithMainFrameName:webView:frameView:]): Pass null for renderer.
+        * WebView/WebView.m:
+        * WebView/WebViewPrivate.h:
+
 2006-02-06  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Maciej Stachowiak.

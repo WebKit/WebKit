@@ -35,6 +35,7 @@
 #include "kjs_proxy.h"
 #include <kio/global.h>
 #include "FrameTreeNode.h"
+#include "kxmlcore/Vector.h"
 
 namespace KIO {
     class TransferJob;
@@ -46,15 +47,7 @@ namespace WebCore
 
     struct ChildFrame
     {
-        ChildFrame() 
-             : m_bCompleted(false)
-        {
-        }
-
-        QGuardedPtr<RenderPart> m_renderer;
-        RefPtr<ObjectContents> m_frame;
-        bool m_bCompleted;
-        QString m_name;
+        RefPtr<Frame> m_frame;
     };
 
 class FrameList : public QValueList<ChildFrame>
@@ -77,8 +70,9 @@ enum RedirectionScheduled {
 class FramePrivate
 {
 public:
-  FramePrivate(Frame *parent, Frame *thisFrame)
+  FramePrivate(Frame *parent, Frame *thisFrame, RenderPart* ownerRenderer)
       : m_treeNode(thisFrame, parent)
+      , m_ownerRenderer(ownerRenderer)
       , m_redirectionTimer(thisFrame, &Frame::redirectionTimerFired)
       , m_caretBlinkTimer(thisFrame, &Frame::caretBlinkTimerFired)
       , m_lifeSupportTimer(thisFrame, &Frame::lifeSupportTimerFired)
@@ -157,8 +151,9 @@ public:
 
   // old style frame info
   FrameList m_frames;
-  QValueList<ChildFrame> m_objects;
+  Vector<RefPtr<Plugin> > m_plugins;
 
+  QGuardedPtr<RenderPart> m_ownerRenderer;
   QGuardedPtr<FrameView> m_view;
   BrowserExtension *m_extension;
   DocumentImpl *m_doc;

@@ -867,21 +867,21 @@ private:
                    const QString &target, const QString& contentType = QString::null,
                    const QString& boundary = QString::null );
 
-  void init(FrameView*);
+  void init(FrameView*, RenderPart*);
 
   bool scheduleScript(NodeImpl*, const QString& script);
 
   KJS::JSValue* executeScheduledScript();
 
   bool requestFrame(RenderPart *frame, const QString &url, const QString &frameName);
-  bool requestObject(RenderPart *frame, const QString &url, const QString &serviceType,
-                     const QStringList &paramNames, const QStringList &paramValues);
+  bool requestObject(RenderPart *frame, const QString &url, const QString &frameName,
+                     const QString &serviceType, const QStringList &paramNames, const QStringList &paramValues);
 
   
   bool shouldUsePlugin(NodeImpl* element, const KURL& url, const QString& mimeType, bool hasFallback, bool& useFallback);
-  bool loadPlugin(ChildFrame *child, const KURL &url, const QString &mimeType, 
+  bool loadPlugin(RenderPart* renderer, const KURL &url, const QString &mimeType, 
                   const QStringList& paramNames, const QStringList& paramValues, bool useFallback);
-  bool loadSubframe(ChildFrame* child, const KURL& url, const DOMString& referrer);
+  bool loadSubframe(ChildFrame* child, RenderPart* renderer, const KURL& url, const QString& name, const DOMString& referrer);
 
 public:
   DOMString requestFrameName();
@@ -925,8 +925,12 @@ private:
   void addMetaData(const QString &key, const QString &value);
   void setMediaType(const QString &);
 
-  RenderObject *renderer() const;
-  ElementImpl *ownerElement();
+  // root renderer for the document contained in this frame
+  RenderObject* renderer() const;
+  
+  ElementImpl* ownerElement();
+  // renderer for the element that contains this frame
+  RenderPart* ownerRenderer();
 
   IntRect selectionRect() const;
   bool isFrameSet() const;

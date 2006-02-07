@@ -4,6 +4,9 @@
 <HEAD>
 <TITLE>Test onunload and onload events for body-type document</TITLE>
 <SCRIPT>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
 function removeElementById(victimID)
 {
 	vic = document.getElementById(victimID);
@@ -23,21 +26,21 @@ function boldCaption(captionID)
 	}
 	
 	cap.setAttribute('style','font-weight:bold;');
+	cap.innerText += " - fired";
 }
 
 </SCRIPT>
 </HEAD>
 <BODY id="myBody" onload="removeElementById('myImage'); removeElementById('myObject'); removeElementById('myIFrame');"">
-<P><U>Any lines that are bold correspond to event handlers that fired.</U></P>
+<P><U>Any lines that are bold and say "- fired" correspond to event handlers that fired. Only the iframe onload event should fire in this test case.</U></P>
 <P id="loadIMAGE">IMG onloadEvent</P>
 <P id="loadOBJECT">OBJECT onloadEvent</P>
 <P id="loadIFRAME">IFRAME onloadEvent</P>
 <P id="unloadIMAGE">IMG onunloadEvent</P>
 <P id="unloadOBJECT">OBJECT onunloadEvent</P>
 <P id="unloadIFRAME">IFRAME onunloadEvent</P>
-<P> NOTE: If IFRAME events start firing, make sure to check out the security issue &lt;rdar://problem/4317593&gt;</P>
 <IMG id="myImage" onload="boldCaption('loadIMAGE')" onunload="boldCaption('unloadIMAGE')" width="40" height="40"></IMG>
 <OBJECT id="myObject" onload="boldCaption('loadOBJECT')" onunload="boldCaption('unloadOBJECT')">Apple</OBJECT>
-<IFRAME id="myIFrame" src="about:blank" onload="boldCaption('loadIMAGE')" onunload="boldCaption('loadIMAGE')" style="border-style:solid; border-color:red;"></IFRAME>
+<IFRAME id="myIFrame" src="about:blank" onload="boldCaption('loadIFRAME')" onunload="boldCaption('loadIFRAME')" style="border-style:solid; border-color:red;"></IFRAME>
 </BODY>
 </HTML>

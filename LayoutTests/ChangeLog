@@ -1,3 +1,23 @@
+2006-02-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+        
+        - test case that verifies that <object> containing html is treated
+          like <iframe> in various respects
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7125
+
+        * fast/dom/HTMLObjectElement/object-as-frame-expected.txt: Added.
+        * fast/dom/HTMLObjectElement/object-as-frame.html: Added.
+        
+        - updated this test to reflect that the onload event now fires for iframes,
+          including ones with empty src
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3609
+
+        * fast/events/event-targets-expected.checksum: Removed.
+        * fast/events/event-targets-expected.png: Removed.
+        * fast/events/event-targets-expected.txt:
+        * fast/events/event-targets.html:
+
 2006-02-06  Adele Peterson  <adele@apple.com?
 
         Reviewed by Maciej.

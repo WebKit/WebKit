@@ -183,8 +183,6 @@ typedef enum
 @interface WebCoreFrameBridge : NSObject
 {
     WebCoreMacFrame *m_frame;
-    WebCoreRenderPart *_renderPart;
-    RenderArena *_renderPartArena;
     BOOL _shouldCreateRenderers;
 
     NSString *_frameNamespace;
@@ -192,12 +190,11 @@ typedef enum
 
 + (WebCoreFrameBridge *)bridgeForDOMDocument:(DOMDocument *)document;
 
+- (id)initWithRenderer:(WebCoreRenderPart *)renderer;
+
 + (NSArray *)supportedMIMETypes;
 
 - (void)initializeSettings:(WebCoreSettings *)settings;
-
-- (void)setRenderPart:(WebCoreRenderPart *)renderPart;
-- (WebCoreRenderPart *)renderPart;
 
 - (void)setName:(NSString *)name;
 - (NSString *)name;

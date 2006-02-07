@@ -900,7 +900,7 @@ void RenderPartObject::updateWidget()
               (child->isTextNode() && !static_cast<TextImpl*>(child)->containsOnlyWhitespace()))
               m_hasFallbackContent = true;
       }
-      bool success = frame->requestObject( this, url, serviceType, paramNames, paramValues );
+      bool success = frame->requestObject(this, url, o->name().qstring(), serviceType, paramNames, paramValues);
       if (!success && m_hasFallbackContent)
           o->renderFallbackContent();
   } else if (element()->hasTagName(embedTag)) {
@@ -922,7 +922,7 @@ void RenderPartObject::updateWidget()
               paramValues.append(it->value().qstring());
           }
       }
-      frame->requestObject(this, url, serviceType, paramNames, paramValues);
+      frame->requestObject(this, url, o->getAttribute(nameAttr).qstring(), serviceType, paramNames, paramValues);
   } else {
       assert(element()->hasTagName(iframeTag));
       HTMLIFrameElementImpl *o = static_cast<HTMLIFrameElementImpl *>(element());

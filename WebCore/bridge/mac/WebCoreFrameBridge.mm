@@ -270,16 +270,8 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     m_frame->treeNode()->appendChild(adoptRef([child part]));
 }
 
-- (void)_clearRenderPart
-{
-    if (_renderPart)
-        _renderPart->deref(_renderPartArena);
-    _renderPart = 0;
-}
-
 - (void)removeChild:(WebCoreFrameBridge *)child
 {
-    [child _clearRenderPart];
     m_frame->treeNode()->removeChild([child part]);
 }
 
@@ -478,10 +470,15 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (id)init
 {
+    return [self initWithRenderer:0];
+}
+
+- (id)initWithRenderer:(WebCoreRenderPart *)renderer
+{
     if (!(self = [super init]))
         return nil;
     
-    m_frame = new MacFrame;
+    m_frame = new MacFrame(renderer);
     m_frame->setBridge(self);
 
     if (!initializedObjectCacheSize){
@@ -512,10 +509,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 - (void)dealloc
 {
     [self removeFromFrame];
-    
-    if (_renderPart)
-        _renderPart->deref(_renderPartArena);
-        
     [super dealloc];
 }
 
@@ -525,10 +518,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     // We need to do it at some well-defined time instead.
 
     [self removeFromFrame];
-    
-    if (_renderPart) {
-        _renderPart->deref(_renderPartArena);
-    }
     m_frame->setBridge(nil);
         
     [super finalize];
@@ -537,21 +526,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 - (MacFrame *)part
 {
     return m_frame;
-}
-
-- (void)setRenderPart:(RenderPart *)newPart;
-{
-    RenderArena *arena = newPart->ref();
-    if (_renderPart) {
-        _renderPart->deref(_renderPartArena);
-    }
-    _renderPart = newPart;
-    _renderPartArena = arena;
-}
-
-- (RenderPart *)renderPart
-{
-    return _renderPart;
 }
 
 - (void)setParent:(WebCoreFrameBridge *)parent
@@ -1084,11 +1058,12 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
 {
     // If this isn't the main frame, it must have a render m_frame set, or it
     // won't ever get installed in the view hierarchy.
-    ASSERT(self == [self mainFrame] || _renderPart != nil);
+    ASSERT(self == [self mainFrame] || m_frame->ownerRenderer());
 
     m_frame->view()->setView(view);
-    if (_renderPart) {
-        _renderPart->setWidget(m_frame->view());
+    // FIXME: frame tries to do this too, is it needed?
+    if (m_frame->ownerRenderer()) {
+        m_frame->ownerRenderer()->setWidget(m_frame->view());
         // Now the render part owns the view, so we don't any more.
     }
 

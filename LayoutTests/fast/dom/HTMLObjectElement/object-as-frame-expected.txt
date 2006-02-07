@@ -1,0 +1,8 @@
+PASS window.frames.length is 2
+PASS window.frames[0].frameElement.name is "frame"
+PASS window.frames[1].frameElement.name is "obj"
+Loading 'data:text/html,Updated contents of iframe' in iframe...
+Loading 'data:text/html,Updated contents of object' in object...
+PASS window.frames[0].location.toString() is "data:text/html,Updated contents of iframe"
+PASS window.frames[1].location.toString() is "data:text/html,Updated contents of object"
+ 

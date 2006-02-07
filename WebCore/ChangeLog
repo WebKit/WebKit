@@ -1,3 +1,56 @@
+2006-02-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - fixed "remove frame, renderer and completed flag from ChildFrame, make Frame track these"
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7125
+        
+        - fixed "onload event never called for iframe element with emtpy or about:blank src"
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=3609
+        
+        * bridge/mac/MacFrame.h:
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::MacFrame): pass along renderer
+        (WebCore::MacFrame::nextKeyViewInFrameHierarchy): get owner element in newfangled way
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge removeChild:]): don't mess with renderer
+        (-[WebCoreFrameBridge init]): call new designated initializer
+        (-[WebCoreFrameBridge initWithRenderer:]): new designated initializer
+        (-[WebCoreFrameBridge dealloc]): don't mess with renderer
+        (-[WebCoreFrameBridge finalize]): ditto
+        (-[WebCoreFrameBridge installInFrame:]): ditto
+        * page/Frame.cpp:
+        (WebCore::FrameList::find): get name from frame not ChildFrame
+        (WebCore::Frame::init): take renderer parameter
+        (WebCore::Frame::clear): clear m_plugins, not m_objects
+        (WebCore::Frame::childBegin): updated comment
+        (WebCore::Frame::stop): add check-completed for documentless case here
+        (WebCore::Frame::checkCompleted): don't track separate completed flag
+        in ChildFrame, use the sub Frame object's own
+        (WebCore::Frame::checkEmitLoadEvent): ditto
+        (WebCore::Frame::requestFrame): don't store renderer and name in ChildFrame,
+        instead pass them along
+        (WebCore::Frame::requestObject): ditto above
+        (WebCore::Frame::loadPlugin): expect renderer parameter
+        (WebCore::Frame::loadSubframe): expect renderer and name parameters
+        (WebCore::Frame::slotChildStarted): don't mess with ChildFrame
+        (WebCore::Frame::slotChildCompleted): ditto
+        (WebCore::Frame::childFrame): don't check m_objects
+        (WebCore::Frame::frameExists): fix spacing, remove obsolete check and comment
+        (WebCore::Frame::frameNames): get name from frame
+        (WebCore::Frame::ownerElement): simplify a lot since the Frame knows its owner
+        renderer now
+        (WebCore::Frame::ownerRenderer): added
+        (WebCore::Frame::canCachePage): check m_plugins not m_objects
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        (WebCore::ChildFrame): Remove constructor, most fields.
+        (WebCore::FramePrivate::FramePrivate): Pass ownerRenderer
+        * rendering/render_frames.cpp:
+        (WebCore::RenderPartObject::updateWidget): Make sure to pass name attr
+        to requestObject.
+
 2006-02-06  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.

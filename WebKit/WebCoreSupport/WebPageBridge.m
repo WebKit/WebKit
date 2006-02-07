@@ -34,7 +34,7 @@
 
 - (id)initWithMainFrameName:(NSString *)frameName webView:(WebView *)webView frameView:(WebFrameView *)frameView
 {
-    self = [super initWithMainFrame:[[[WebFrameBridge alloc] initWithPage:self webView:webView frameName:frameName view:frameView] autorelease]];
+    self = [super initWithMainFrame:[[[WebFrameBridge alloc] initWithPage:self webView:webView renderer:nil frameName:frameName view:frameView] autorelease]];
     if (self)
         _webView = webView;
     return self;

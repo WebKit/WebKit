@@ -32,6 +32,7 @@
 @class WebDataSource;
 @class WebFrame;
 @class WebFrameView;
+@class WebCoreRenderPart;
 @protocol WebOpenPanelResultListener;
 
 @interface WebFrameBridge : WebCoreFrameBridge <WebCoreFrameBridge>
@@ -48,7 +49,7 @@
     NSDictionary *lastDashboardRegions;
 }
 
-- (id)initWithPage:(WebPageBridge *)page webView:(WebView *)webView frameName:(NSString *)name view:(WebFrameView *)view;
+- (id)initWithPage:(WebPageBridge *)page webView:(WebView *)webView renderer:(WebCoreRenderPart *)renderer frameName:(NSString *)name view:(WebFrameView *)view;
 - (void)close;
 
 - (void)receivedData:(NSData *)data textEncodingName:(NSString *)textEncodingName;

@@ -1,35 +1,15 @@
-layer at (0,0) size 800x600
-  RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x288
-  RenderBlock {HTML} at (0,0) size 800x288
-    RenderBody {BODY} at (8,16) size 784x256
-      RenderBlock {P} at (0,0) size 784x18
-        RenderInline {U} at (0,0) size 392x18
-          RenderText {TEXT} at (0,0) size 392x18
-            text run at (0,0) width 392: "Any lines that are bold correspond to event handlers that fired."
-      RenderBlock {P} at (0,34) size 784x18
-        RenderText {TEXT} at (0,0) size 115x18
-          text run at (0,0) width 115: "IMG onloadEvent"
-      RenderBlock {P} at (0,68) size 784x18
-        RenderText {TEXT} at (0,0) size 144x18
-          text run at (0,0) width 144: "OBJECT onloadEvent"
-      RenderBlock {P} at (0,102) size 784x18
-        RenderText {TEXT} at (0,0) size 145x18
-          text run at (0,0) width 145: "IFRAME onloadEvent"
-      RenderBlock {P} at (0,136) size 784x18
-        RenderText {TEXT} at (0,0) size 131x18
-          text run at (0,0) width 131: "IMG onunloadEvent"
-      RenderBlock {P} at (0,170) size 784x18
-        RenderText {TEXT} at (0,0) size 160x18
-          text run at (0,0) width 160: "OBJECT onunloadEvent"
-      RenderBlock {P} at (0,204) size 784x18
-        RenderText {TEXT} at (0,0) size 161x18
-          text run at (0,0) width 161: "IFRAME onunloadEvent"
-      RenderBlock {P} at (0,238) size 784x18
-        RenderText {TEXT} at (0,0) size 674x18
-          text run at (0,0) width 674: "NOTE: If IFRAME events start firing, make sure to check out the security issue <rdar://problem/4317593>"
-      RenderBlock (anonymous) at (0,272) size 784x0
-        RenderText {TEXT} at (0,0) size 0x0
-        RenderText {TEXT} at (0,0) size 0x0
-        RenderText {TEXT} at (0,0) size 0x0
-        RenderText {TEXT} at (0,0) size 0x0
+Any lines that are bold and say "- fired" correspond to event handlers that fired. Only the iframe onload event should fire in this test case.
+
+IMG onloadEvent
+
+OBJECT onloadEvent
+
+IFRAME onloadEvent - fired
+
+IMG onunloadEvent
+
+OBJECT onunloadEvent
+
+IFRAME onunloadEvent
+
+
