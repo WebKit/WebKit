@@ -16,10 +16,12 @@ Test Case Reduction
 </div>
 
 <div id="content">
-<p>The basic idea behind bug reduction is to take a page that demonstrates a problem and
+<h2>A general guide to test case reduction</h2>
+<p>
+The basic idea behind bug reduction is to take a page that demonstrates a problem and
 remove as much content as possible while still reproducing the original problem.
 </p>
-<p>Why is this needed?</p>
+<h4>Why is this needed?</h4>
 <p>
 A reduced test case can help identify the central problem on the
 page by eliminating irrelevant information, i.e., portions of the HTML
@@ -30,9 +32,7 @@ solution. Also, since a site can change its content or design, the
 problem may no longer occur on the real-world site. 
 By constructing a test case you can capture the initial problem.
 </p>
-<p>
-A general guide to test case reduction:
-</p>
+<h4>The first steps</h4>
 <p>
 Really the first step in reducing a page is to identify that main
 problem of the page. For example:
@@ -45,35 +45,38 @@ problem of the page. For example:
 <p>
 After you have made this determination, you need to create a local copy
 of the page created from the page source window. After saving this
-source, it's a good idea to put a&nbsp; &lt;BASE &gt; element in the
-HEAD so that any images/external style sheet or scripts that use a
-relative path will get loaded. After the BASE element has been added,
+source, it's a good idea to put a <code>&lt;BASE&gt;</code> element in the
+<code>HEAD</code> so that any images/external style sheet or scripts that use a
+relative path will get loaded. After the <code>BASE</code> element has been added,
 load the local copy into the browser and verify that problem is still
 occurring. In this case, let's assume the problem is still present.
 </p>
+<h4>Work from top to bottom</h4>
 <p>
-In general, it's best to start from the top of the &lt;DOCTYPE&gt; and
-work down through the HEAD to the BODY element. Take a look at the HTML
+In general, it's best to start from the top of the <code>&lt;DOCTYPE&gt;</code> and
+work down through the <code>HEAD</code> to the <code>BODY</code> element. Take a look at the HTML
 file in a text editor and view what types of elements are present in the
-&lt;head&gt;. Typically, the HEAD will include the &lt;title&gt;
-element, which is required, and elements such as &lt;link&gt;,
-&lt;style&gt; and &lt;script&gt;.
+<code>&lt;head&gt;</code>. Typically, the <code>HEAD</code> will include the <code>&lt;title&gt;</code>
+element, which is required, and elements such as <code>&lt;link&gt;</code>,
+<code>&lt;style&gt;</code> and <code>&lt;script&gt;</code>.
 </p>
 <p>
 The reduction process is to remove one element at a time, save, and reload the
 test case. If you have removed the element and the page is still
 displaying the problem, continue with the next element. If removing an
-element in the head causes the problem to not occur, you may have found
-one piece in of the problem. Re-add this element back into the head,
+element in the <code>HEAD</code> causes the problem to not occur, you may have found
+one piece in of the problem. Re-add this element back into the <code>HEAD</code>,
 reload the page and confirm the problem is still occurring and move
-on to the next element in the head.
+on to the next element in the <code>HEAD</code>.
 </p>
+
+<h4>Finished the <code>HEAD</code>? Continue with the <code>BODY</code>!</h4>
 <p>
-Once the HEAD element has been reduced, you need to start reducing
-the number of required elements in the BODY. This will tend to be the
+Once the <code>HEAD</code> element has been reduced, you need to start reducing
+the number of required elements in the <code>BODY</code>. This will tend to be the
 most time consuming since hundreds (thousands) of elements will be
 present. The general practice is start removing elements by both their
-&lt;start&gt; and &lt;/end&gt; elements. This is especially true for
+<code>&lt;start&gt;</code> and <code>&lt;/end&gt;</code> elements. This is especially true for
 tables, which are frequently nested. You can speed up this process by
 selecting groups of elements and removing them but ideally you need to
 save and reload the test case each time to verify the problem is
@@ -85,11 +88,11 @@ uncheck 'Enable Javascript' in the Preferences. If you turn this option
 off and loading your test case still reproduces the problem, then any
 script elements that are present can be removed since they are not a
 factor in this issue. Let's say that you have reduced the page down to
-a nested table with an ordered list with an &lt;link&gt; element that need
+a nested table with an ordered list with an <code>&lt;link&gt;</code> element that need
 to be present. It's good practice to identify that CSS rule that is
 being in the external file and add it directly to the test case. Create
-a &lt;style&gt; &lt;/style&gt; in the head and copy/paste the contents
-of the .css file into this style element. Remove the &lt;link&gt; and
+a <code>&lt;style&gt;</code> <code>&lt;/style&gt;</code> in the head and copy/paste the contents
+of the .css file into this style element. Remove the <code>&lt;link&gt;</code> and
 save the changes. Load the test case and verify the problem is still
 occurring. Now manually delete or comment out each CSS rule until you
 have just the required set of rules to reproduce.

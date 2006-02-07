@@ -5,8 +5,23 @@
  http-equiv="content-type">
   <title>Bug Writing</title>
   <link rel=stylesheet href="../webkitdev.css">
+  <script type="text/javascript">
+	function version_set() {
+    	var regex;
+        var matches;
+
+		regex = new RegExp("Mozilla/5.0 \\(.*\\) AppleWebKit/(.*) \\(KHTML, like Gecko\\) Safari/(.*)");
+		matches = regex.exec(navigator.userAgent);
+		if (matches)
+        {
+        	document.getElementById('webkit_version').innerHTML = "<strong>You are currently using: <tt>" + matches[1] + ".</tt></strong><br><br>";
+			document.getElementById('webkit_version').style.display = "block";
+			webKitVersion = parseInt(matches[1]);
+        }
+	}
+</script>
 </head>
-<body>
+<body onload="version_set();">
 <!--begin sidebar -->
 <iframe id="sidebar" src="../sidebar.html"></iframe>
 <!--end sidebar -->
@@ -21,12 +36,19 @@ Bug Writing
 an appropriate priority and severity for a bug, and increase the chance that a bug will be fixed quickly. The more specific information
 you can provide, the better.</p>
 
-<ul>
+<ol>
 	<li><b>Version</b>
-	<p>Please select the WebKit version you were using when the bug occurred, or the closest match. <tt>312</tt> is the WebKit version
-	that shipped with Mac OS X 10.3.9. <tt>412</tt> is the WebKit version that shipped with Mac OS X 10.4 (Tiger). Locally-built versions
-	of WebKit have a <tt>+</tt> after the most recent official build number. So, for example, <tt>412+</tt> is a locally-built version of WebKit
-	that's newer than the <tt>412</tt> version shipped with Tiger.</p>
+	<p>
+	Please select the WebKit version you were using when the bug occurred, or the closest match. <tt>312</tt> is the WebKit version
+	that shipped with Mac OS X 10.3.9. <tt>412</tt> up to <tt>417.9</tt> are the WebKit versions that shipped with Mac OS X 10.4 (Tiger) 
+	and it's updates. 
+	</p>
+	<p>
+	Locally-built versions of WebKit have a <tt>+</tt> after the build number, and their build number is generally higher
+	then the latest release version. So, for example, <tt>420+</tt> is a 
+	locally-built version of WebKit that's newer than the <tt>417.9</tt> version that shipped with the latest update of Tiger.
+	</p>
+	<div style="display: none; text-align: center;" id="webkit_version"></div>
 
 	<li><b>Component</b> 
 		<p>If you know the precise cause of a bug (i.e., you've reduced it to a failing test case and know the reason), then you can 
@@ -39,13 +61,14 @@ you can provide, the better.</p>
 	<li>
 		<b>Platform and OS</b>
 		<p>Please select the platform and the OS version that your bug occurred on. Typically this would be platform <tt>Macintosh</tt>
-		and OS <tt>Mac OS X 10.3</tt> (Panther) or <tt>Mac OS X 10.4</tt> (Tiger).</p>
+		and OS <tt>Mac OS X 10.3</tt> (Panther) or <tt>Mac OS X 10.4</tt> (Tiger). </p>
 	</li>	
 
 	<li>
 		<b>Priority</b>
 		<p>Normally a QA person or developer will set this, so the bug submitter can leave this at the default value. A number of
-		<a href="bugpriorities.html">guidelines</a> and some individual judgment are involved in setting the priority.</p>
+		<a href="bugpriorities.html">guidelines</a> and some individual judgment are involved in setting the priority. If you know the
+		bug is a regression, ie. something is wrong which wasn't wrong in previous versions of WebKit, you can set this to P1.</p>
 	</li>
 
 	<li>
@@ -65,7 +88,7 @@ you can provide, the better.</p>
 	<p>A good summary explains the problem in clear and specific terms, but is often concise enough to fit within the default summary space in Bugzilla.  
         One should be able to tell exactly what a bug is about just by reading the summary.</p>
 	
-	Tips for a good suummary:
+	Tips for a good summary:
 	<ul>
 		<li>include the domain of the page that shows the bug (especially if it's an important site)
 		<li>if the bug is a crash, note this and note whether or not the crash is reproducible
@@ -97,7 +120,7 @@ you can provide, the better.</p>
 		<b>Blocks</b>
 		<p>If this bug blocks another bug from being fixed, put the other bug's number here. Otherwise, leave it empty.</p>
 	</li>
-</ul>
+</ol>
 
 </body>
 </html>

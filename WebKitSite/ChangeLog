@@ -1,3 +1,16 @@
+2006-02-07  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Reviewed by Darin. Landed by Maciej.
+        
+        - Several fixes to the site
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7105
+
+        * blog/wp-content/themes/webkit/style.css:
+        * index.html:
+        * quality/bugwriting.html:
+        * quality/reduction.html:
+        * webkitdev.css:
+
 2006-02-05  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

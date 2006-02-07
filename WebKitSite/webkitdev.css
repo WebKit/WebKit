@@ -3,6 +3,7 @@ body {
 	margin: 0;
         font-size: 90%;
         background-color: white;
+	text-align: justify;
 }
 
 a:link {
@@ -64,6 +65,7 @@ body > #sidebar {
         margin-right: 201px;
         margin-top: 1em;
         margin-left: 1em;
+        line-height: 140%;
 }
 
 .articleheader {
@@ -82,4 +84,9 @@ body > #sidebar {
 
 h3 {
 	margin-top: 12px;
+}
+
+h4 {
+	font-size: 105%;
+	margin-bottom: 3px;
 }
