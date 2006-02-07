@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\iconv\include&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\libxml\include&quot;;&quot;$(SolutionDir)\..\..\libxslt\include&quot;;&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\css&quot;;&quot;$(SolutionDir)\..\khtml\dom&quot;;&quot;$(SolutionDir)\..\khtml\ecma&quot;;&quot;$(SolutionDir)\..\khtml\editing&quot;;&quot;$(SolutionDir)\..\khtml\html&quot;;&quot;$(SolutionDir)\..\khtml\misc&quot;;&quot;$(SolutionDir)\..\rendering&quot;;&quot;$(SolutionDir)\..\khtml\xml&quot;;&quot;$(SolutionDir)\..\khtml\xsl&quot;;&quot;$(SolutionDir)\..\khtml&quot;;&quot;$(SolutionDir)\..\kwq&quot;;&quot;$(SolutionDir)\..\bridge&quot;;&quot;$(SolutionDir)\..\loader&quot;;&quot;$(SolutionDir)\..\page&quot;;&quot;$(SolutionDir)\..\platform&quot;;&quot;$(SolutionDir)\..\platform\cairo&quot;;&quot;$(SolutionDir)\..\platform\image-decoders&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\gif&quot;;&quot;$(SolutionDir)\..\xml&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\kjs&quot;;&quot;$(SolutionDir)..\platform\cairo\pixman\src&quot;;&quot;$(SolutionDir)\..\platform\cairo\cairo\src&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\iconv\include&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\libxml\include&quot;;&quot;$(SolutionDir)\..\..\libxslt\include&quot;;&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\css&quot;;&quot;$(SolutionDir)\..\khtml\dom&quot;;&quot;$(SolutionDir)\..\khtml\ecma&quot;;&quot;$(SolutionDir)\..\khtml\editing&quot;;&quot;$(SolutionDir)\..\khtml\html&quot;;&quot;$(SolutionDir)\..\khtml\misc&quot;;&quot;$(SolutionDir)\..\rendering&quot;;&quot;$(SolutionDir)\..\khtml\xml&quot;;&quot;$(SolutionDir)\..\khtml\xsl&quot;;&quot;$(SolutionDir)\..\khtml&quot;;&quot;$(SolutionDir)\..\kwq&quot;;&quot;$(SolutionDir)\..\bridge&quot;;&quot;$(SolutionDir)\..\loader&quot;;&quot;$(SolutionDir)\..\page&quot;;&quot;$(SolutionDir)\..\platform&quot;;&quot;$(SolutionDir)\..\platform\cairo&quot;;&quot;$(SolutionDir)\..\platform\image-decoders&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\gif&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\png&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\zlib&quot;;&quot;$(SolutionDir)\..\xml&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\kjs&quot;;&quot;$(SolutionDir)..\platform\cairo\pixman\src&quot;;&quot;$(SolutionDir)\..\platform\cairo\cairo\src&quot;"
 				PreprocessorDefinitions="WIN32; KHTML_NO_XBL; KHTML_XSLT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -106,7 +106,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\iconv\include&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\libxml\include&quot;;&quot;$(SolutionDir)\..\..\libxslt\include&quot;;&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\css&quot;;&quot;$(SolutionDir)\..\khtml\dom&quot;;&quot;$(SolutionDir)\..\khtml\ecma&quot;;&quot;$(SolutionDir)\..\khtml\editing&quot;;&quot;$(SolutionDir)\..\khtml\html&quot;;&quot;$(SolutionDir)\..\khtml\misc&quot;;&quot;$(SolutionDir)\..\rendering&quot;;&quot;$(SolutionDir)\..\khtml\xml&quot;;&quot;$(SolutionDir)\..\khtml\xsl&quot;;&quot;$(SolutionDir)\..\khtml&quot;;&quot;$(SolutionDir)\..\kwq&quot;;&quot;$(SolutionDir)\..\bridge&quot;;&quot;$(SolutionDir)\..\loader&quot;;&quot;$(SolutionDir)\..\page&quot;;&quot;$(SolutionDir)\..\platform&quot;;&quot;$(SolutionDir)\..\platform\cairo&quot;;&quot;$(SolutionDir)\..\platform\image-decoders&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\gif&quot;;&quot;$(SolutionDir)\..\xml&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\kjs&quot;;&quot;$(SolutionDir)..\platform\cairo\pixman\src&quot;;&quot;$(SolutionDir)\..\platform\cairo\cairo\src&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\iconv\include&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\libxml\include&quot;;&quot;$(SolutionDir)\..\..\libxslt\include&quot;;&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\css&quot;;&quot;$(SolutionDir)\..\khtml\dom&quot;;&quot;$(SolutionDir)\..\khtml\ecma&quot;;&quot;$(SolutionDir)\..\khtml\editing&quot;;&quot;$(SolutionDir)\..\khtml\html&quot;;&quot;$(SolutionDir)\..\khtml\misc&quot;;&quot;$(SolutionDir)\..\rendering&quot;;&quot;$(SolutionDir)\..\khtml\xml&quot;;&quot;$(SolutionDir)\..\khtml\xsl&quot;;&quot;$(SolutionDir)\..\khtml&quot;;&quot;$(SolutionDir)\..\kwq&quot;;&quot;$(SolutionDir)\..\bridge&quot;;&quot;$(SolutionDir)\..\loader&quot;;&quot;$(SolutionDir)\..\page&quot;;&quot;$(SolutionDir)\..\platform&quot;;&quot;$(SolutionDir)\..\platform\cairo&quot;;&quot;$(SolutionDir)\..\platform\image-decoders&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\gif&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\png&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\zlib&quot;;&quot;$(SolutionDir)\..\xml&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\kjs&quot;;&quot;$(SolutionDir)..\platform\cairo\pixman\src&quot;;&quot;$(SolutionDir)\..\platform\cairo\cairo\src&quot;"
 				PreprocessorDefinitions="WIN32; KHTML_NO_XBL; KHTML_XSLT"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -1821,6 +1821,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\platform\Screen.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\platform\SegmentedString.cpp"
 				>
 			</File>
@@ -1852,6 +1856,230 @@
 				RelativePath="..\..\platform\Timer.h"
 				>
 			</File>
+			<Filter
+				Name="win"
+				>
+				<File
+					RelativePath="..\..\platform\win\SystemTimeWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\platform\win\TimerWin.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="image-decoders"
+				>
+				<File
+					RelativePath="..\..\platform\image-decoders\ImageDecoder.h"
+					>
+				</File>
+				<Filter
+					Name="gif"
+					>
+					<File
+						RelativePath="..\..\platform\image-decoders\gif\GIFImageDecoder.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\gif\GIFImageDecoder.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\gif\GIFImageReader.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\gif\GIFImageReader.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="png"
+					>
+					<File
+						RelativePath="..\..\platform\image-decoders\png\mozpngconf.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\png\png.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\png\png.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\png\pngasmrd.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\png\pngconf.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\png\pngerror.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\png\pnggccrd.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\png\pngget.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\png\pngmem.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\png\pngpread.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\png\pngread.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\png\pngrio.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\png\pngrtran.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\png\pngrutil.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\png\pngset.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\png\pngtrans.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\png\pngvcrd.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\png\pngwio.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\png\pngwrite.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\png\pngwtran.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\png\pngwutil.c"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="zlib"
+					>
+					<File
+						RelativePath="..\..\platform\image-decoders\zlib\adler32.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\zlib\compress.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\zlib\crc32.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\zlib\crc32.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\zlib\deflate.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\zlib\deflate.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\zlib\gzio.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\zlib\infback.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\zlib\inffast.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\zlib\inffast.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\zlib\inffixed.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\zlib\inflate.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\zlib\inflate.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\zlib\inftrees.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\zlib\inftrees.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\zlib\mozzconf.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\zlib\trees.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\zlib\trees.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\zlib\uncompr.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\zlib\zconf.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\zlib\zlib.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\zlib\zutil.c"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\zlib\zutil.h"
+						>
+					</File>
+				</Filter>
+			</Filter>
 			<Filter
 				Name="cairo"
 				>
@@ -2208,46 +2436,6 @@
 					</File>
 					<File
 						RelativePath="..\..\platform\cairo\cairo\src\cairoint.h"
-						>
-					</File>
-				</Filter>
-			</Filter>
-			<Filter
-				Name="win"
-				>
-				<File
-					RelativePath="..\..\platform\win\SystemTimeWin.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\platform\win\TimerWin.cpp"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="image-decoders"
-				>
-				<File
-					RelativePath="..\..\platform\image-decoders\ImageDecoder.h"
-					>
-				</File>
-				<Filter
-					Name="gif"
-					>
-					<File
-						RelativePath="..\..\platform\image-decoders\gif\GIFImageDecoder.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\platform\image-decoders\gif\GIFImageDecoder.h"
-						>
-					</File>
-					<File
-						RelativePath="..\..\platform\image-decoders\gif\GIFImageReader.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\platform\image-decoders\gif\GIFImageReader.h"
 						>
 					</File>
 				</Filter>
