@@ -4179,7 +4179,7 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
             QPainter p;
 
             if (e->cachedImage())
-                p.drawFloatImage(e->cachedImage()->image(), dx, dy, dw, dh, sx, sy, sw, sh, Image::compositeOperatorFromString(compositeOperator), drawingContext);
+                p.drawFloatImage(e->cachedImage()->image(), dx, dy, dw, dh, sx, sy, sw, sh, Image::compositeOperatorFromString(compositeOperator.ascii()), drawingContext);
           
             renderer->setNeedsImageUpdate();
             break;
