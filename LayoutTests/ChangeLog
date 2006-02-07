@@ -1,3 +1,15 @@
+2006-02-06  Adele Peterson  <adele@apple.com?
+
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6944
+          REGRESSION: crash when loading page w/ <link> that has a DOMSubtreeModified event listener
+
+        * fast/events/event-listener-on-link.html: Added.
+        * fast/events/event-listener-on-link-expected.txt: Added.
+        * fast/events/event-listener-on-link-expected.png: Added.
+        * fast/events/event-listener-on-link-expected.checksum: Added.
+
 2006-02-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

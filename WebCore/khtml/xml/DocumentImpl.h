@@ -151,8 +151,8 @@ public:
     CommentImpl *createComment ( const DOMString &data );
     CDATASectionImpl *createCDATASection(const DOMString &data, int &exception);
     ProcessingInstructionImpl *createProcessingInstruction(const DOMString &target, const DOMString &data, int &exception);
-    AttrImpl *createAttribute(const DOMString &name, int &exception) { return createAttributeNS(DOMString(), name, exception); }
-    AttrImpl *createAttributeNS(const DOMString &namespaceURI, const DOMString &qualifiedName, int &exception);
+    PassRefPtr<AttrImpl> createAttribute(const DOMString &name, int &exception) { return createAttributeNS(DOMString(), name, exception); }
+    PassRefPtr<AttrImpl> createAttributeNS(const DOMString &namespaceURI, const DOMString &qualifiedName, int &exception);
     EntityReferenceImpl *createEntityReference(const DOMString &name, int &exceptionCode);
     NodeImpl *importNode( NodeImpl *importedNode, bool deep, int &exceptioncode );
     virtual ElementImpl *createElementNS(const DOMString &_namespaceURI, const DOMString &_qualifiedName, int &exceptioncode);

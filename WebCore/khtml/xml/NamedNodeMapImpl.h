@@ -43,19 +43,19 @@ public:
     NamedNodeMapImpl() { }
     virtual ~NamedNodeMapImpl() { }
 
-    NodeImpl* getNamedItem(const DOMString& name) const { return getNamedItemNS(DOMString(), name); }
+    PassRefPtr<NodeImpl> getNamedItem(const DOMString& name) const { return getNamedItemNS(DOMString(), name); }
     PassRefPtr<NodeImpl> removeNamedItem(const DOMString& name, int &exception) { return removeNamedItemNS(DOMString(), name, exception); }
 
-    virtual NodeImpl* getNamedItemNS(const DOMString &namespaceURI, const DOMString &localName) const = 0;
+    virtual PassRefPtr<NodeImpl> getNamedItemNS(const DOMString &namespaceURI, const DOMString &localName) const = 0;
     PassRefPtr<NodeImpl> setNamedItemNS(NodeImpl *arg, int &exception) { return setNamedItem(arg, exception); }
     virtual PassRefPtr<NodeImpl> removeNamedItemNS(const DOMString &namespaceURI, const DOMString &localName, int &exception) = 0;
 
     // DOM methods & attributes for NamedNodeMap
-    virtual NodeImpl* getNamedItem(const QualifiedName& attrName) const = 0;
+    virtual PassRefPtr<NodeImpl> getNamedItem(const QualifiedName& attrName) const = 0;
     virtual PassRefPtr<NodeImpl> removeNamedItem (const QualifiedName& attrName, int &exceptioncode) = 0;
     virtual PassRefPtr<NodeImpl> setNamedItem (NodeImpl* arg, int &exceptioncode) = 0;
 
-    virtual NodeImpl* item(unsigned index) const = 0;
+    virtual PassRefPtr<NodeImpl> item(unsigned index) const = 0;
     virtual unsigned length() const = 0;
 
     // Other methods (not part of DOM)

@@ -2917,7 +2917,7 @@ DocumentImpl *DocumentImpl::topDocument() const
     return doc;
 }
 
-AttrImpl *DocumentImpl::createAttributeNS(const DOMString &namespaceURI, const DOMString &qualifiedName, int &exception)
+PassRefPtr<AttrImpl> DocumentImpl::createAttributeNS(const DOMString &namespaceURI, const DOMString &qualifiedName, int &exception)
 {
     if (qualifiedName.isNull()) {
         exception = DOMException::NAMESPACE_ERR;
@@ -2943,7 +2943,7 @@ AttrImpl *DocumentImpl::createAttributeNS(const DOMString &namespaceURI, const D
     // documents if we're wrong.
     return new AttrImpl(0, this, new MappedAttributeImpl(QualifiedName(prefix.impl(), 
                                                                        localName.impl(),
-                                                                       namespaceURI.impl()), DOMString("").impl()), false);
+                                                                       namespaceURI.impl()), DOMString("").impl()));
 }
 
 #if SVG_SUPPORT

@@ -677,7 +677,7 @@ static ListenerMap *listenerMap;
 {
     ASSERT(name);
 
-    return [DOMNode _nodeWithImpl:[self _namedNodeMapImpl]->getNamedItem(name)];
+    return [DOMNode _nodeWithImpl:[self _namedNodeMapImpl]->getNamedItem(name).get()];
 }
 
 - (DOMNode *)setNamedItem:(DOMNode *)arg
@@ -702,7 +702,7 @@ static ListenerMap *listenerMap;
 
 - (DOMNode *)item:(unsigned)index
 {
-    return [DOMNode _nodeWithImpl:[self _namedNodeMapImpl]->item(index)];
+    return [DOMNode _nodeWithImpl:[self _namedNodeMapImpl]->item(index).get()];
 }
 
 - (unsigned)length
@@ -716,7 +716,7 @@ static ListenerMap *listenerMap;
         return nil;
     }
 
-    return [DOMNode _nodeWithImpl:[self _namedNodeMapImpl]->getNamedItemNS(namespaceURI, localName)];
+    return [DOMNode _nodeWithImpl:[self _namedNodeMapImpl]->getNamedItemNS(namespaceURI, localName).get()];
 }
 
 - (DOMNode *)setNamedItemNS:(DOMNode *)arg
@@ -1037,7 +1037,7 @@ static ListenerMap *listenerMap;
 {
     ASSERT(name);
     int exception = 0;
-    DOMAttr *result = [DOMAttr _attrWithImpl:[self _documentImpl]->createAttribute(name, exception)];
+    DOMAttr *result = [DOMAttr _attrWithImpl:[self _documentImpl]->createAttribute(name, exception).get()];
     raiseOnDOMError(exception);
     return result;
 }
@@ -1082,7 +1082,7 @@ static ListenerMap *listenerMap;
     ASSERT(qualifiedName);
 
     int exception = 0;
-    DOMAttr *result = [DOMAttr _attrWithImpl:[self _documentImpl]->createAttributeNS(namespaceURI, qualifiedName, exception)];
+    DOMAttr *result = [DOMAttr _attrWithImpl:[self _documentImpl]->createAttributeNS(namespaceURI, qualifiedName, exception).get()];
     raiseOnDOMError(exception);
     return result;
 }
@@ -1336,7 +1336,7 @@ static ListenerMap *listenerMap;
 {
     ASSERT(name);
 
-    return [DOMAttr _attrWithImpl:[self _elementImpl]->getAttributeNode(name)];
+    return [DOMAttr _attrWithImpl:[self _elementImpl]->getAttributeNode(name).get()];
 }
 
 - (DOMAttr *)setAttributeNode:(DOMAttr *)newAttr
@@ -1400,7 +1400,7 @@ static ListenerMap *listenerMap;
     ASSERT(namespaceURI);
     ASSERT(localName);
 
-    return [DOMAttr _attrWithImpl:[self _elementImpl]->getAttributeNodeNS(namespaceURI, localName)];
+    return [DOMAttr _attrWithImpl:[self _elementImpl]->getAttributeNodeNS(namespaceURI, localName).get()];
 }
 
 - (DOMAttr *)setAttributeNodeNS:(DOMAttr *)newAttr

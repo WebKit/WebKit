@@ -1,3 +1,48 @@
+2006-02-06  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6944
+          REGRESSION: crash when loading page w/ <link> that has a DOMSubtreeModified event listener
+
+        Test: fast/events/event-listener-on-link.html
+
+        * khtml/xml/dom_elementimpl.h: Added createAttrImplIfNeeded, removed allocateImpl, 
+         changed AttrImpl contructor to remove createTextChild bool, added createTextChild method, 
+         changed getAttributeNode, getAttributeNodeNS, getNamedItem, getNamedItemNS, and item to return PassRefPtrs.
+        (DOM::ElementImpl::getAttributeNode):
+        * khtml/xml/dom_elementimpl.cpp:
+        (WebCore::AttributeImpl::createAttrImplIfNeeded): New method to replace allocateImpl.  
+         This will use a RefPtr for the AttrImpl, check for an existing AttrImpl, create one if there isn't one,
+         and will call the new createTextChild.
+        (WebCore::AttrImpl::AttrImpl):  Moved creation of text child to new createTextChild method.  
+         If done in the constructor, the ref count is still 0, and the act of appending the text node 
+         could cause the AttrImpl to be destroyed.
+        (WebCore::AttrImpl::createTextChild): Moved code from AttrImpl contructor.  
+         Also, I've added an assert to make sure that any callers of this have ref'd the AttrImpl.
+        (WebCore::AttrImpl::cloneNode): Used RefPtr instead of PassRefPtr, and then called release() on it before returning.
+        (WebCore::ElementImpl::cloneNode): ditto.
+        (WebCore::ElementImpl::getAttributeNodeNS): Changed return type to PassRefPtr.
+        (WebCore::NamedAttrMapImpl::getNamedItemNS): ditto.
+        (WebCore::NamedAttrMapImpl::getNamedItem): ditto. Changed use of allocateImpl to createAttrImplIfNeeded
+        (WebCore::NamedAttrMapImpl::setNamedItem): ditto.
+        (WebCore::NamedAttrMapImpl::removeNamedItem): ditto.
+        (WebCore::NamedAttrMapImpl::item): ditto.
+        * khtml/xml/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::createAttributeNS): Changed return type to PassRefPtr and removed bool from AttrImpl contructor call.
+        * khtml/xml/DocumentImpl.h: Now returns a PassRefPtr for createAttribute and createAttributeNS. 
+        (WebCore::DocumentImpl::createAttribute):
+        * khtml/xml/NamedNodeMapImpl.h: Now returns a PassRefPtr for getNamedItem, getNamedItemNS, and item.
+        (WebCore::NamedNodeMapImpl::getNamedItem):
+        * bindings/objc/DOM.mm:
+        (-[DOMNamedNodeMap getNamedItem:]): Call get() since the methods discussed above now return PassRefPtrs.
+        (-[DOMNamedNodeMap item:]): ditto.
+        (-[DOMNamedNodeMap getNamedItemNS::]): ditto.
+        (-[DOMDocument createAttribute:]): ditto.
+        (-[DOMDocument createAttributeNS::]): ditto.
+        (-[DOMElement getAttributeNode:]): ditto.
+        (-[DOMElement getAttributeNodeNS::]): ditto.
+
 2006-02-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
