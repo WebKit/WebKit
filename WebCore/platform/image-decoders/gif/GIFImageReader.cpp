@@ -75,10 +75,10 @@ mailing address.
 #include <stddef.h>
 #include <string.h>
 #include "config.h"
-#include "GIFDecoderPlugin.h"
-#include "GIFReader.h"
+#include "GIFImageDecoder.h"
+#include "GIFImageReader.h"
 
-using WebCore::GIFDecoderPlugin;
+using WebCore::GIFImageDecoder;
 
 // Define the Mozilla macro setup so that we can leave the macros alone.
 #define PR_BEGIN_MACRO  do {
@@ -90,7 +90,7 @@ using WebCore::GIFDecoderPlugin;
  * Note, the hold will never need to be bigger than 256 bytes to gather up in the hold,
  * as each GIF block (except colormaps) can never be bigger than 256 bytes.
  * Colormaps are directly copied in the resp. global_colormap or dynamically allocated local_colormap.
- * So a fixed buffer in GIFReader is good enough.
+ * So a fixed buffer in GIFImageReader is good enough.
  * This buffer is only needed to copy left-over data from one GifWrite call to the next
  */
 #define GETN(n,s)                    \
@@ -104,7 +104,7 @@ using WebCore::GIFDecoderPlugin;
 
 //******************************************************************************
 // Send the data to the display front-end.
-void GIFReader::output_row()
+void GIFImageReader::output_row()
 {
   GIFFrameReader* gs = frame_reader;
 
@@ -219,7 +219,7 @@ void GIFReader::output_row()
 
 //******************************************************************************
 /* Perform Lempel-Ziv-Welch decoding */
-int GIFReader::do_lzw(const unsigned char *q)
+int GIFImageReader::do_lzw(const unsigned char *q)
 {
   GIFFrameReader* gs = frame_reader;
   if (!gs)
@@ -380,8 +380,8 @@ int GIFReader::do_lzw(const unsigned char *q)
  * process data arriving from the stream for the gif decoder
  */
 
-bool GIFReader::read(const unsigned char *buf, unsigned len, 
-                     GIFDecoderPlugin::GIFQuery query, unsigned haltAtFrame)
+bool GIFImageReader::read(const unsigned char *buf, unsigned len, 
+                     GIFImageDecoder::GIFQuery query, unsigned haltAtFrame)
 {
   if (!len)
     return false;
@@ -521,7 +521,7 @@ bool GIFReader::read(const unsigned char *buf, unsigned len,
         const unsigned size = 3*global_colormap_size;
         
         // Malloc the color map, but only if we're not just counting frames.
-        if (query != GIFDecoderPlugin::GIFFrameCountQuery)
+        if (query != GIFImageDecoder::GIFFrameCountQuery)
           global_colormap = new unsigned char[size];
 
         if (len < size) {
@@ -629,7 +629,7 @@ bool GIFReader::read(const unsigned char *buf, unsigned len,
 
     case gif_control_extension:
     {
-      if (query != GIFDecoderPlugin::GIFFrameCountQuery) {
+      if (query != GIFImageDecoder::GIFFrameCountQuery) {
           if (!frame_reader)
             frame_reader = new GIFFrameReader();
       }
@@ -751,7 +751,7 @@ bool GIFReader::read(const unsigned char *buf, unsigned len,
         }
       }
 
-      if (query == GIFDecoderPlugin::GIFSizeQuery || haltAtFrame == images_decoded) {
+      if (query == GIFImageDecoder::GIFSizeQuery || haltAtFrame == images_decoded) {
         // The decoder needs to stop.  Hand back the number of bytes we consumed from
         // buffer minus 9 (the amount we consumed to read the header).
         clientptr->decodingHalted(len + 9);
@@ -761,7 +761,7 @@ bool GIFReader::read(const unsigned char *buf, unsigned len,
       
       images_count = images_decoded + 1;
 
-      if (query == GIFDecoderPlugin::GIFFullQuery && !frame_reader)
+      if (query == GIFImageDecoder::GIFFullQuery && !frame_reader)
         frame_reader = new GIFFrameReader();
 
       if (frame_reader) {

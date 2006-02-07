@@ -1777,15 +1777,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\ImageData.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\platform\ImageData.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\platform\ImageDecoder.h"
+				RelativePath="..\..\platform\ImageSource.h"
 				>
 			</File>
 			<File
@@ -1868,7 +1860,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\platform\cairo\ImageDecoderCairo.cpp"
+					RelativePath="..\..\platform\cairo\ImageSourceCairo.cpp"
 					>
 				</File>
 				<Filter
@@ -2236,26 +2228,26 @@
 				Name="image-decoders"
 				>
 				<File
-					RelativePath="..\..\platform\image-decoders\ImageDecoderPlugin.h"
+					RelativePath="..\..\platform\image-decoders\ImageDecoder.h"
 					>
 				</File>
 				<Filter
 					Name="gif"
 					>
 					<File
-						RelativePath="..\..\platform\image-decoders\gif\GIFDecoderPlugin.cpp"
+						RelativePath="..\..\platform\image-decoders\gif\GIFImageDecoder.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\platform\image-decoders\gif\GIFDecoderPlugin.h"
+						RelativePath="..\..\platform\image-decoders\gif\GIFImageDecoder.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\platform\image-decoders\gif\GIFReader.cpp"
+						RelativePath="..\..\platform\image-decoders\gif\GIFImageReader.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\platform\image-decoders\gif\GIFReader.h"
+						RelativePath="..\..\platform\image-decoders\gif\GIFImageReader.h"
 						>
 					</File>
 				</Filter>

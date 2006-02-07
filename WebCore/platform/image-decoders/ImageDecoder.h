@@ -23,12 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef IMAGE_DECODER_PLUGIN_H_
-#define IMAGE_DECODER_PLUGIN_H_
+#ifndef IMAGE_DECODER_H_
+#define IMAGE_DECODER_H_
 
 #include "config.h"
 #include "IntSize.h"
-#include "ImageDecoder.h"
+#include "ImageSource.h"
 #include <kxmlcore/Vector.h>
 #include "Array.h"
 
@@ -69,13 +69,13 @@ private:
     bool m_includeInNextFrame; // Whether or not the next buffer should be initially populated with our data.
 };
 
-// The ImageDecoderPlugin class represents a base class for specific image format decoders
+// The ImageDecoder class represents a base class for specific image format decoders
 // (e.g., GIF, JPG, PNG, ICO) to derive from.  All decoders decode into RGBA32 format
 // and the base class manages the RGBA32 frame cache.
-class ImageDecoderPlugin
+class ImageDecoder
 {
 public:
-    virtual ~ImageDecoderPlugin() {}
+    virtual ~ImageDecoder() {}
 
     // All specific decoder plugins must do something with the data they are given.
     virtual void setData(const ByteArray& data, bool allDataReceived) { m_data = data; }

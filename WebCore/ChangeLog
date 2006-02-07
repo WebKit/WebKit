@@ -1,3 +1,49 @@
+2006-02-07  Dave Hyatt <hyatt@apple.com>
+
+        Rename ImageDecoderPlugin to ImageDecoder.  Rename
+        GIFReader to GIFImageReder.  Rename GIFDecoderPlugin to
+        GIFImageDecoder.
+
+        Reviewed by mjs
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * platform/cairo/ImageSourceCairo.cpp:
+        (WebCore::createDecoder):
+        (WebCore::ImageSource::setData):
+        * platform/image-decoders/ImageDecoder.h: Added.
+        (WebCore::ImageDecoder::~ImageDecoder):
+        * platform/image-decoders/ImageDecoderPlugin.h: Removed.
+        * platform/image-decoders/gif/GIFDecoderPlugin.cpp: Removed.
+        * platform/image-decoders/gif/GIFDecoderPlugin.h: Removed.
+        * platform/image-decoders/gif/GIFImageDecoder.cpp: Added.
+        (WebCore::GIFImageDecoderPrivate::GIFImageDecoderPrivate):
+        (WebCore::GIFImageDecoderPrivate::~GIFImageDecoderPrivate):
+        (WebCore::GIFImageDecoderPrivate::decode):
+        (WebCore::GIFImageDecoder::GIFImageDecoder):
+        (WebCore::GIFImageDecoder::~GIFImageDecoder):
+        (WebCore::GIFImageDecoder::setData):
+        (WebCore::GIFImageDecoder::isSizeAvailable):
+        (WebCore::GIFImageDecoder::size):
+        (WebCore::GIFImageDecoder::frameCount):
+        (WebCore::GIFImageDecoder::repetitionCount):
+        (WebCore::GIFImageDecoder::frameBufferAtIndex):
+        (WebCore::GIFImageDecoder::decode):
+        (WebCore::GIFImageDecoder::sizeNowAvailable):
+        (WebCore::GIFImageDecoder::decodingHalted):
+        (WebCore::GIFImageDecoder::haveDecodedRow):
+        (WebCore::GIFImageDecoder::frameComplete):
+        (WebCore::GIFImageDecoder::gifComplete):
+        * platform/image-decoders/gif/GIFImageDecoder.h: Added.
+        * platform/image-decoders/gif/GIFImageReader.cpp: Added.
+        (GIFImageReader::output_row):
+        (GIFImageReader::do_lzw):
+        (GIFImageReader::read):
+        * platform/image-decoders/gif/GIFImageReader.h: Added.
+        (GIFImageReader::GIFImageReader):
+        (GIFImageReader::~GIFImageReader):
+        * platform/image-decoders/gif/GIFReader.cpp: Removed.
+        * platform/image-decoders/gif/GIFReader.h: Removed.
+
 2006-02-07  David Hyatt  <hyatt@apple.com>
 
         Rename ImageDecoder to ImageSource.

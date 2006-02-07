@@ -23,21 +23,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef GIF_DECODER_PLUGIN_H_
-#define GIF_DECODER_PLUGIN_H_
+#ifndef GIF_DECODER_H_
+#define GIF_DECODER_H_
 
-#include "ImageDecoderPlugin.h"
+#include "ImageDecoder.h"
 
 namespace WebCore {
 
-class GIFDecoderPluginPrivate;
+class GIFImageDecoderPrivate;
 
 // This class decodes the GIF image format.
-class GIFDecoderPlugin : public ImageDecoderPlugin
+class GIFImageDecoder : public ImageDecoder
 {
 public:
-    GIFDecoderPlugin();
-    ~GIFDecoderPlugin();
+    GIFImageDecoder();
+    ~GIFImageDecoder();
 
     // Take the data and store it.
     virtual void setData(const ByteArray& data, bool allDataReceived);
@@ -76,7 +76,7 @@ private:
     bool m_sizeAvailable : 1;
     mutable bool m_failed : 1;
     IntSize m_size;
-    mutable GIFDecoderPluginPrivate* m_impl;
+    mutable GIFImageDecoderPrivate* m_impl;
 };
 
 }

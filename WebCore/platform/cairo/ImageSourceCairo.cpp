@@ -25,13 +25,13 @@
 
 #include "config.h"
 #include <cairo.h>
-#include "GIFDecoderPlugin.h"
+#include "GIFImageDecoder.h"
 #include "ImageSource.h"
 #include "IntSize.h"
 
 namespace WebCore {
 
-ImageDecoder* createDecoderPlugin(const ByteArray& data)
+ImageDecoder* createDecoder(const ByteArray& data)
 {
     // We need at least 4 bytes to figure out what kind of image we're dealing with.
     int length = data.size();
@@ -43,7 +43,7 @@ ImageDecoder* createDecoderPlugin(const ByteArray& data)
 
     // GIFs begin with GIF8(7 or 9).
     if (strncmp(contents, "GIF8", 4) == 0)
-        return new GIFDecoderPlugin();
+        return new GIFImageDecoder();
 
     // Test for PNG.
     if (uContents[0]==0x89 &&
@@ -96,7 +96,7 @@ void ImageSource::setData(const ByteArray* data, bool allDataReceived)
     // This method will examine the data and instantiate an instance of the appropriate decoder plugin.
     // If insufficient bytes are available to determine the image type, no decoder plugin will be
     // made.
-    m_decoder = createDecoderPlugin(*data);
+    m_decoder = createDecoder(*data);
     if (!m_decoder)
         return;
     m_decoder->setData(*data, allDataReceived);

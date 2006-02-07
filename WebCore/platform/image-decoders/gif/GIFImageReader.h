@@ -46,7 +46,7 @@
 // Define ourselves as the clientPtr.  Mozilla just hacked their C++ callback class into this old C decoder,
 // so we will too.
 namespace WebCore {
-    class GIFDecoderPlugin;
+    class GIFImageDecoder;
 }
 
 /* gif2.h  
@@ -163,8 +163,8 @@ struct GIFFrameReader {
     }
 };
 
-struct GIFReader {
-    WebCore::GIFDecoderPlugin* clientptr;
+struct GIFImageReader {
+    WebCore::GIFImageDecoder* clientptr;
     /* Parsing state machine */
     gstate state;                      /* Current decoder master state */
     unsigned bytes_to_consume;         /* Number of bytes to accumulate */
@@ -188,7 +188,7 @@ struct GIFReader {
     
     GIFFrameReader* frame_reader;
 
-    GIFReader(WebCore::GIFDecoderPlugin* client = 0) {
+    GIFImageReader(WebCore::GIFImageDecoder* client = 0) {
         clientptr = client;
         state = gif_type;
         bytes_to_consume = 6;
@@ -203,7 +203,7 @@ struct GIFReader {
         count = 0;
     }
 
-    ~GIFReader() {
+    ~GIFImageReader() {
         close();
     }
 
@@ -215,7 +215,7 @@ struct GIFReader {
     }
 
     bool read(const unsigned char * buf, unsigned int numbytes, 
-              WebCore::GIFDecoderPlugin::GIFQuery query = WebCore::GIFDecoderPlugin::GIFFullQuery, unsigned haltAtFrame = -1);
+              WebCore::GIFImageDecoder::GIFQuery query = WebCore::GIFImageDecoder::GIFFullQuery, unsigned haltAtFrame = -1);
 
 private:
     void output_row();

@@ -23,27 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "GIFDecoderPlugin.h"
-#include "GIFReader.h"
+#include "GIFImageDecoder.h"
+#include "GIFImageReader.h"
 
 namespace WebCore {
 
-class GIFDecoderPluginPrivate
+class GIFImageDecoderPrivate
 {
 public:
-    GIFDecoderPluginPrivate(GIFDecoderPlugin* plugin = 0)
-        : m_reader(plugin)
+    GIFImageDecoderPrivate(GIFImageDecoder* decoder = 0)
+        : m_reader(decoder)
     {
         m_readOffset = 0;
     }
 
-    ~GIFDecoderPluginPrivate()
+    ~GIFImageDecoderPrivate()
     {
         m_reader.close();
     }
 
     bool decode(const ByteArray& data, 
-                GIFDecoderPlugin::GIFQuery query = GIFDecoderPlugin::GIFFullQuery,
+                GIFImageDecoder::GIFQuery query = GIFImageDecoder::GIFFullQuery,
                 unsigned int haltFrame = -1)
     {
         return m_reader.read((const unsigned char*)data.data() + m_readOffset, data.size() - m_readOffset, 
@@ -76,38 +76,38 @@ public:
     unsigned duration() const { return m_reader.frame_reader->delay_time; }
 
 private:
-    GIFReader m_reader;
+    GIFImageReader m_reader;
     unsigned m_readOffset;
 };
 
-GIFDecoderPlugin::GIFDecoderPlugin()
+GIFImageDecoder::GIFImageDecoder()
 : m_frameCountValid(true), m_sizeAvailable(false), m_failed(false), m_impl(0)
 {}
 
-GIFDecoderPlugin::~GIFDecoderPlugin()
+GIFImageDecoder::~GIFImageDecoder()
 {
     delete m_impl;
 }
 
 // Take the data and store it.
-void GIFDecoderPlugin::setData(const ByteArray& data, bool allDataReceived)
+void GIFImageDecoder::setData(const ByteArray& data, bool allDataReceived)
 {
     if (m_failed)
         return;
 
     // Cache our new data.
-    ImageDecoderPlugin::setData(data, allDataReceived);
+    ImageDecoder::setData(data, allDataReceived);
 
     // Our frame count is now unknown.
     m_frameCountValid = false;
 
     // Create the GIF reader.
     if (!m_impl && !m_failed)
-        m_impl = new GIFDecoderPluginPrivate(this);
+        m_impl = new GIFImageDecoderPrivate(this);
 }
 
 // Whether or not the size information has been decoded yet.
-bool GIFDecoderPlugin::isSizeAvailable() const
+bool GIFImageDecoder::isSizeAvailable() const
 {
     // If we have pending data to decode, send it to the GIF reader now.
     if (!m_sizeAvailable && m_impl) {
@@ -123,14 +123,14 @@ bool GIFDecoderPlugin::isSizeAvailable() const
 }
 
 // Requests the size.
-IntSize GIFDecoderPlugin::size() const
+IntSize GIFImageDecoder::size() const
 {
     return m_size;
 }
 
 // The total number of frames for the image.  Will scan the image data for the answer
 // (without necessarily decoding all of the individual frames).
-int GIFDecoderPlugin::frameCount()
+int GIFImageDecoder::frameCount()
 {
     // If the decoder had an earlier error, we will just return what we had decoded
     // so far.
@@ -139,7 +139,7 @@ int GIFDecoderPlugin::frameCount()
         // slowly.  Might be interesting to try to clone our existing read session to preserve
         // state, but for now we just crawl all the data.  Note that this is no worse than what
         // ImageIO does on Mac right now (it also crawls all the data again).
-        GIFDecoderPluginPrivate reader;
+        GIFImageDecoderPrivate reader;
         reader.decode(m_data, GIFFrameCountQuery);
         m_frameCountValid = true;
         m_frameBufferCache.resize(reader.frameCount());
@@ -149,7 +149,7 @@ int GIFDecoderPlugin::frameCount()
 }
 
 // The number of repetitions to perform for an animation loop.
-int GIFDecoderPlugin::repetitionCount() const
+int GIFImageDecoder::repetitionCount() const
 {
     // We don't have to do any decoding to determine this, since the loop count was determined after
     // the initial query for size.
@@ -158,7 +158,7 @@ int GIFDecoderPlugin::repetitionCount() const
     return cAnimationNone;
 }
 
-RGBA32Buffer GIFDecoderPlugin::frameBufferAtIndex(size_t index)
+RGBA32Buffer GIFImageDecoder::frameBufferAtIndex(size_t index)
 {
     if (index >= m_frameBufferCache.size())
         return RGBA32Buffer();
@@ -172,7 +172,7 @@ RGBA32Buffer GIFDecoderPlugin::frameBufferAtIndex(size_t index)
 }
 
 // Feed data to the GIF reader.
-void GIFDecoderPlugin::decode(GIFQuery query, unsigned haltAtFrame) const
+void GIFImageDecoder::decode(GIFQuery query, unsigned haltAtFrame) const
 {
     if (m_failed)
         return;
@@ -186,18 +186,18 @@ void GIFDecoderPlugin::decode(GIFQuery query, unsigned haltAtFrame) const
 }
 
 // Callbacks from the GIF reader.
-void GIFDecoderPlugin::sizeNowAvailable(unsigned width, unsigned height)
+void GIFImageDecoder::sizeNowAvailable(unsigned width, unsigned height)
 {
     m_size = IntSize(width, height);
     m_sizeAvailable = true;
 }
 
-void GIFDecoderPlugin::decodingHalted(unsigned bytesLeft)
+void GIFImageDecoder::decodingHalted(unsigned bytesLeft)
 {
     m_impl->setReadOffset(m_data.size() - bytesLeft);
 }
 
-void GIFDecoderPlugin::haveDecodedRow(unsigned frameIndex,
+void GIFImageDecoder::haveDecodedRow(unsigned frameIndex,
                                       unsigned char* rowBuffer,   // Pointer to single scanline temporary buffer
                                       unsigned char* rowEnd,
                                       unsigned rowNumber,  // The row index
@@ -257,7 +257,7 @@ void GIFDecoderPlugin::haveDecodedRow(unsigned frameIndex,
     }
 }   
 
-void GIFDecoderPlugin::frameComplete(unsigned frameIndex, unsigned frameDuration, bool includeInNextFrame)
+void GIFImageDecoder::frameComplete(unsigned frameIndex, unsigned frameDuration, bool includeInNextFrame)
 {
     RGBA32Buffer& buffer = m_frameBufferCache[frameIndex];
     
@@ -271,7 +271,7 @@ void GIFDecoderPlugin::frameComplete(unsigned frameIndex, unsigned frameDuration
     buffer.setIncludeInNextFrame(includeInNextFrame);
 }
 
-void GIFDecoderPlugin::gifComplete()
+void GIFImageDecoder::gifComplete()
 {
     delete m_impl;
     m_impl = 0;
