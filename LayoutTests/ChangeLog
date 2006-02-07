@@ -1,3 +1,13 @@
+2006-02-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7071
+          REGRESSION: Jumping to an anchor identifier makes page scroll horizontally
+
+        * fast/overflow/scroll-vertical-not-horizontal.html: Added.
+        * fast/overflow/scroll-vectical-not-horizontal-expected.txt: Added.
+
 2006-02-05  Darin Adler  <darin@apple.com>
 
         - converted three more files from UTF-16 to ASCII that had no reason to be UTF-16
