@@ -27,8 +27,6 @@
 #ifndef QSIZEF_H_
 #define QSIZEF_H_
 
-#include "KWQDef.h"
-
 #if __APPLE__
 
 typedef struct CGSize CGSize;

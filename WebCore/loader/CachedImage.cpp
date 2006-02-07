@@ -120,7 +120,7 @@ void CachedImage::data(QBuffer& _buffer, bool eof)
 
     // Create the image if it doesn't yet exist.
     if (!m_image)
-        m_image = new Image(KWQResponseMIMEType(m_response), this);
+        m_image = new Image(this, KWQResponseMIMEType(m_response) == "application/pdf");
         
     // Give the data to the image object for processing.  It will
     // not do anything now, but will delay decoding until queried for info (like size or specific image frames).

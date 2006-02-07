@@ -36,6 +36,8 @@
 
 #if __APPLE__
 #include "PDFDocumentImage.h"
+#else
+#include <cairo.h>
 #endif
 
 namespace WebCore {
@@ -46,7 +48,7 @@ void FrameData::clear()
 #if __APPLE__
         CFRelease(m_frame);
 #else
-        delete m_frame;
+        cairo_surface_destroy(m_frame);
 #endif
         m_frame = 0;
         m_duration = 0.;
@@ -63,9 +65,9 @@ ImageData::ImageData(Image* image)
        m_solidColor(0), m_isSolidColor(0),
 #endif
        m_animatingImageType(true), m_animationFinished(0),
-       m_haveSize(false), m_sizeAvailable(false),
+       m_haveSize(false), m_sizeAvailable(false)
 #if __APPLE__
-       m_isPDF(false), m_PDFDoc(0)
+       , m_isPDF(false), m_PDFDoc(0)
 #endif
 {}
 
@@ -196,7 +198,7 @@ bool ImageData::isSizeAvailable()
 
 }
 
-CGImageRef ImageData::frameAtIndex(size_t index)
+NativeImagePtr ImageData::frameAtIndex(size_t index)
 {
     if (index >= frameCount())
         return 0;

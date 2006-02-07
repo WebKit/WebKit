@@ -56,6 +56,9 @@ namespace WebCore {
 
 #if __APPLE__
         CFRunLoopTimerRef m_runLoopTimer;
+#else #if WIN32
+        int m_timerID;
+        bool m_active;
 #endif
     };
 

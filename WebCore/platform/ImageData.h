@@ -36,7 +36,7 @@ class NSImage;
 #endif
 
 namespace WebCore {
-    class FrameData;
+    struct FrameData;
 }
 
 // This complicated-looking declaration tells the framedata Vector that it can copy without
@@ -60,8 +60,8 @@ typedef CGImageRef NativeImagePtr;
 class PDFDocumentImage;
 typedef CFDataRef NativeBytePtr;
 #else
-typedef void* NativeImagePtr;
-typedef ByteArray* NativeBytePtr;
+typedef cairo_surface_t* NativeImagePtr;
+typedef const ByteArray* NativeBytePtr;
 #endif
 
 // ================================================

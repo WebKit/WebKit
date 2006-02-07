@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include <kxmlcore/Vector.h>
-#include <qstring.h>
 #include "Array.h"
 #include "Image.h"
 #include "ImageDecoder.h"
@@ -43,12 +42,11 @@ Image::Image()
 {
 }
 
-Image::Image(const QString& type, ImageAnimationObserver* observer)
+Image::Image(ImageAnimationObserver* observer, bool isPDF)
 {
     m_data = new ImageData(this);
 #if __APPLE__
-    if (type == "application/pdf")
-        m_data->setIsPDF();
+    m_data->setIsPDF(isPDF);
 #endif
     m_animationObserver = observer;
 }
@@ -123,14 +121,18 @@ struct CompositeOperatorEntry compositeOperators[NUM_COMPOSITE_OPERATORS] = {
     { "lighter", Image::CompositePlusLighter }
 };
 
-Image::CompositeOperator Image::compositeOperatorFromString(const QString &aString)
+Image::CompositeOperator Image::compositeOperatorFromString(const char* aString)
 {
     CompositeOperator op = CompositeSourceOver;
     
-    if (aString.length()) {
-        const char *operatorString = aString.ascii();
+    if (strlen(aString)) {
         for (int i = 0; i < NUM_COMPOSITE_OPERATORS; i++) {
-            if (strcasecmp (operatorString, compositeOperators[i].name) == 0) {
+#if WIN32
+            // FIXME: Use the new String class 
+            if (strcmp(aString, compositeOperators[i].name) == 0) {
+#else
+            if (strcasecmp(aString, compositeOperators[i].name) == 0) {
+#endif
                 return compositeOperators[i].value;
             }
         }

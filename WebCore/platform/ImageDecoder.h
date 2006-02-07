@@ -28,6 +28,9 @@
 
 #if __APPLE__
 #include <ApplicationServices/ApplicationServices.h>
+#else
+struct _cairo_surface;
+typedef struct _cairo_surface cairo_surface_t;
 #endif
 
 namespace WebCore {
@@ -44,8 +47,8 @@ typedef CFDataRef NativeBytePtr;
 #else
 class ImageDecoderPlugin;
 typedef ImageDecoderPlugin* NativeImageDecoderPtr;
-typedef ByteArray* NativeBytePtr;
-typedef void* NativeImagePtr;
+typedef const ByteArray* NativeBytePtr;
+typedef cairo_surface_t* NativeImagePtr;
 #endif
 
 const int cAnimationLoopOnce = -1;

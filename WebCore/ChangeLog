@@ -1,3 +1,130 @@
+2006-02-06  Dave Hyatt <hyatt@apple.com>
+
+        Reviewed by darin
+
+        * khtml/html/html_imageimpl.h:
+        (WebCore::HTMLImageElementImpl::compositeOperator):
+        * loader/CachedImage.cpp:
+        * platform/Array.h:
+        * platform/FloatSize.h:
+        * platform/Image.cpp:
+        (WebCore::Image::Image):
+        (WebCore::Image::compositeOperatorFromString):
+        * platform/Image.h:
+        * platform/ImageData.cpp:
+        (WebCore::FrameData::clear):
+        (WebCore::ImageData::ImageData):
+        (WebCore::ImageData::frameAtIndex):
+        * platform/ImageData.h:
+        * platform/ImageDecoder.h:
+        * platform/Timer.h:
+        * platform/cairo/.cvsignore: Added.
+        * platform/cairo/ImageCairo.cpp: Added.
+        (WebCore::Image::loadResource):
+        (WebCore::Image::supportsType):
+        (WebCore::graphicsContext):
+        (WebCore::setCompositingOperation):
+        (WebCore::Image::drawInRect):
+        (WebCore::Image::tileInRect):
+        (WebCore::Image::scaleAndTileInRect):
+        * platform/cairo/ImageDecoderCairo.cpp: Added.
+        (WebCore::createDecoderPlugin):
+        (WebCore::ImageDecoder::ImageDecoder):
+        (WebCore::ImageDecoder::~ImageDecoder):
+        (WebCore::ImageDecoder::initialized):
+        (WebCore::ImageDecoder::setData):
+        (WebCore::ImageDecoder::isSizeAvailable):
+        (WebCore::ImageDecoder::size):
+        (WebCore::ImageDecoder::repetitionCount):
+        (WebCore::ImageDecoder::frameCount):
+        (WebCore::ImageDecoder::createFrameAtIndex):
+        (WebCore::ImageDecoder::frameDurationAtIndex):
+        (WebCore::RGBA32Buffer::setDuration):
+        (WebCore::RGBA32Buffer::setIncludeInNextFrame):
+        (WebCore::RGBA32Buffer::bytes):
+        (WebCore::RGBA32Buffer::status):
+        (WebCore::RGBA32Buffer::duration):
+        (WebCore::RGBA32Buffer::includeInNextFrame):
+        (WebCore::RGBA32Buffer::setRGBA):
+        (WebCore::ImageDecoderPlugin::~ImageDecoderPlugin):
+        (WebCore::ImageDecoderPlugin::setData):
+        (WebCore::ImageDecoderPlugin::frameCount):
+        (WebCore::ImageDecoderPlugin::repetitionCount):
+        * platform/image-decoders/gif: Added.
+        * platform/image-decoders/gif/GIFDecoderPlugin.cpp: Added.
+        (WebCore::GIFDecoderPluginPrivate::GIFDecoderPluginPrivate):
+        (WebCore::GIFDecoderPluginPrivate::~GIFDecoderPluginPrivate):
+        (WebCore::GIFDecoderPluginPrivate::decode):
+        (WebCore::GIFDecoderPluginPrivate::frameCount):
+        (WebCore::GIFDecoderPluginPrivate::repetitionCount):
+        (WebCore::GIFDecoderPluginPrivate::setReadOffset):
+        (WebCore::GIFDecoderPluginPrivate::isTransparent):
+        (WebCore::GIFDecoderPluginPrivate::getColorMap):
+        (WebCore::GIFDecoderPluginPrivate::frameXOffset):
+        (WebCore::GIFDecoderPluginPrivate::frameYOffset):
+        (WebCore::GIFDecoderPluginPrivate::transparentPixel):
+        (WebCore::GIFDecoderPluginPrivate::duration):
+        (WebCore::GIFDecoderPlugin::GIFDecoderPlugin):
+        (WebCore::GIFDecoderPlugin::~GIFDecoderPlugin):
+        (WebCore::GIFDecoderPlugin::setData):
+        (WebCore::GIFDecoderPlugin::isSizeAvailable):
+        (WebCore::GIFDecoderPlugin::size):
+        (WebCore::GIFDecoderPlugin::frameCount):
+        (WebCore::GIFDecoderPlugin::repetitionCount):
+        (WebCore::GIFDecoderPlugin::frameBufferAtIndex):
+        (WebCore::GIFDecoderPlugin::decode):
+        (WebCore::GIFDecoderPlugin::sizeNowAvailable):
+        (WebCore::GIFDecoderPlugin::decodingHalted):
+        (WebCore::GIFDecoderPlugin::haveDecodedRow):
+        (WebCore::GIFDecoderPlugin::frameComplete):
+        (WebCore::GIFDecoderPlugin::gifComplete):
+        * platform/image-decoders/gif/GIFDecoderPlugin.h: Added.
+        (WebCore::GIFDecoderPlugin::frameDurationAtIndex):
+        (WebCore::GIFDecoderPlugin::):
+        * platform/image-decoders/gif/GIFReader.cpp: Added.
+        (GIFReader::output_row):
+        (GIFReader::do_lzw):
+        (GIFReader::read):
+        * platform/image-decoders/gif/GIFReader.h: Added.
+        (GIFFrameReader::GIFFrameReader):
+        (GIFFrameReader::~GIFFrameReader):
+        (GIFReader::GIFReader):
+        (GIFReader::~GIFReader):
+        (GIFReader::close):
+        * platform/win/ImageDecoderPlugin.h: Added.
+        (WebCore::RGBA32Buffer::):
+        (WebCore::RGBA32Buffer::RGBA32Buffer):
+        (WebCore::RGBA32Buffer::setStatus):
+        (WebCore::RGBA32Buffer::setDuration):
+        (WebCore::RGBA32Buffer::setIncludeInNextFrame):
+        (WebCore::RGBA32Buffer::bytes):
+        (WebCore::RGBA32Buffer::status):
+        (WebCore::RGBA32Buffer::duration):
+        (WebCore::RGBA32Buffer::includeInNextFrame):
+        (WebCore::RGBA32Buffer::setRGBA):
+        (WebCore::ImageDecoderPlugin::ImageDecoderPlugin):
+        (WebCore::ImageDecoderPlugin::~ImageDecoderPlugin):
+        (WebCore::ImageDecoderPlugin::setData):
+        (WebCore::ImageDecoderPlugin::isSizeAvailable):
+        (WebCore::ImageDecoderPlugin::size):
+        (WebCore::ImageDecoderPlugin::frameCount):
+        (WebCore::ImageDecoderPlugin::repetitionCount):
+        (WebCore::ImageDecoderPlugin::frameBufferAtIndex):
+        * platform/win/TimerWin.cpp: Added.
+        (WebCore::timerFired):
+        (WebCore::TimerBase::TimerBase):
+        (WebCore::TimerBase::~TimerBase):
+        (WebCore::TimerBase::start):
+        (WebCore::TimerBase::startRepeating):
+        (WebCore::TimerBase::startOneShot):
+        (WebCore::TimerBase::stop):
+        (WebCore::TimerBase::isActive):
+        (WebCore::TimerBase::nextFireInterval):
+        (WebCore::TimerBase::repeatInterval):
+        (WebCore::TimerBase::fire):
+        (WebCore::isDeferringTimers):
+        (WebCore::setDeferringTimers):
+
 2006-02-06  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Darin and Eric.

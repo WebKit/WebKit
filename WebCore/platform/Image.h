@@ -59,7 +59,7 @@ class ImageAnimationObserver;
 class Image {
 public:
     Image();
-    Image(const QString& type, ImageAnimationObserver* observer);
+    Image(ImageAnimationObserver* observer, bool isPDF = false);
     ~Image();
     
     static Image* loadResource(const char *name);
@@ -110,7 +110,7 @@ public:
 
     enum TileRule { StretchTile, RoundTile, RepeatTile };
 
-    static CompositeOperator compositeOperatorFromString(const QString& compositeOperator);
+    static CompositeOperator compositeOperatorFromString(const char* compositeOperator);
 
     // Drawing routines.
     void drawInRect(const FloatRect& dstRect, const FloatRect& srcRect,

@@ -95,7 +95,7 @@ public:
     
     virtual bool isURLAttribute(AttributeImpl *attr) const;
 
-    Image::CompositeOperator compositeOperator() const { return Image::compositeOperatorFromString(_compositeOperator); }
+    Image::CompositeOperator compositeOperator() const { return Image::compositeOperatorFromString(_compositeOperator.ascii()); }
 
     CachedImage* cachedImage() { return m_imageLoader.image(); }
     
