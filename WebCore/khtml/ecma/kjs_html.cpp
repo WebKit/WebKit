@@ -4116,7 +4116,7 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
             if (!sourceContext && imgElt && imgElt->cachedImage()) {
                 QPainter p;
                 p.drawFloatImage(imgElt->cachedImage()->image(), dx, dy, dw, dh, sx, sy, sw, sh, 
-                                 Image::compositeOperatorFromString(contextObject->_globalComposite->toString(exec).qstring().lower()), drawingContext);
+                                 Image::compositeOperatorFromString(contextObject->_globalComposite->toString(exec).qstring().lower().ascii()), drawingContext);
             }
             else {
                 // Cheap, because the image is backed by copy-on-write memory, and we're
