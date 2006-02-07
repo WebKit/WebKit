@@ -1,3 +1,30 @@
+2006-02-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by darin.
+
+        - Fixed <rdar://problem/4425269> REGRESSION: wrong size pop-up when 
+        downloading attachment at webmail.mac.com (6882)
+
+        The bug was that the feature string parser didn't always initialize the
+        *Set variables, so WebCore assumed a height was set when it wasn't,
+        and used a garbage height variable.
+
+        While there, I fixed two other bugs: (1) The parser wasn't chewing up 
+        as many characters as I thought it was. (Chewing up extra characters 
+        is necessary to match Win IE.) (2) We considered \t and \f to be 
+        whitespace, but Win IE doesn't.
+
+        * manual-tests/window-open-features-parsing.html: Added these cases,
+        fixed up comments.
+
+        * bridge/BrowserExtension.h: Cleaned up declaration order a bit.
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::isSeparator): New function, tells you if a character is a
+        separator
+        (KJS::parseWindowFeatures): Always initialize *Set to false. Drive
+        parsing based on invalid characters ('separators') rather than valid 
+        ones, to match Win IE.
+
 2006-02-07  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Timothy.

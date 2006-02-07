@@ -1,15 +1,16 @@
 <html><head><script>
 function test() {
     /* The lowdown on this feature string:
-        - width: reads as 0200|0, which, after strtol, gives you 200
-        - height: reads as "", which means yes, which means 1, but the minimum size is 100
-        - width1: reads as width1, an invalid key, so it doesn't override width
-        - left: reads as no, which means 0, which means aligned to the left side of the screen
-        - toolBAR: reads as yes
-        - resizable: reads as yess, which is invalid, which means no
-        - status: reads as "", which means yes
+        - ,=\twidth: reads as key:width value:0200px|0, which, after strtol/toInt, gives you 200
+        - =height: reads as key:height value:"", which means yes, which means 1, but the minimum size is 100, so 100
+        - 1width: reads as key:1width, an invalid key, so it doesn't override the previous width
+        - left: reads as key:left value:no, which means 0, which means aligned to the left side of the screen
+        - \ntoolBAR: reads as key:toolbar value:yes
+        - resizable: reads as key:resizable value:yess, which is invalid, which means no
+        - \rstatus: reads as key:status value:"", which means yes
+        - the trailing comma catches a previous mistake i made reading past the end of the string
     */    
-    var sFeatures = " 	,=width ==	= = 	0200px|0=height  400,1width=400,left=nO toolBAR=yeS,resizable=yess,  \t\v\f\r\nstatus= ,"; 
+    var sFeatures = " 	,=\twidth ==	= = 	0200px|0=height  400,1width=400,left=nO \ntoolBAR=yeS,resizable=yess, \rstatus= ,"; 
     var w = window.open("resources/popup200x100.html", undefined, sFeatures); 
     w.focus();
 }
@@ -18,12 +19,15 @@ function test() {
 <p>This test checks whether parsing of the 'features' argument to window.open matches Win IE's behavior.</p>
 <p>The link below should open a window with the following attributes:</p>
 <ul>
-<li> A WebView exactly 200x100, such that you can see a red 1 pixel border around the edge of the whole WebView.
+<li> A WebView exactly 200x100, such that you can see a red 1 pixel border along each edge of the WebView.
 <li> A window aligned to the left hand side of the screen.
 <li> Toolbar visible.
 <li> Statusbar visible.
 <li> Not resizable.
 </ul>
+<a href="" onclick="test(); return false;">Click to test</a>
 <hr>
-<a href="" onclick="test(); return false;">Click to test.</a>
+<p>The link below should open a window whose dimensions and positioning match
+what you would get from file->New Window.</p>
+<a href="" onclick='window.open("", "", "status,resizable");'>Click to test</a>
 </body></html>

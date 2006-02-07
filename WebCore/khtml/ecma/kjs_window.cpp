@@ -1445,6 +1445,12 @@ static void setWindowFeature(const DOMString& keyString, const DOMString& valueS
         windowArgs.scrollBarsVisible = value;
 }
 
+// Though isspace() considers \t and \v to be whitespace, Win IE doesn't.
+static bool isSeparator(QChar c)
+{
+    return c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '=' || c == ',' || c == '\0';
+}
+
 static void parseWindowFeatures(const DOMString& features, WindowArgs& windowArgs)
 {
     /*
@@ -1458,6 +1464,11 @@ static void parseWindowFeatures(const DOMString& features, WindowArgs& windowArg
     windowArgs.dialog = false;
     windowArgs.fullscreen = false;
     
+    windowArgs.xSet = false;
+    windowArgs.ySet = false;
+    windowArgs.widthSet = false;
+    windowArgs.heightSet = false;
+    
     if (features.length() == 0) {
         windowArgs.menuBarVisible = true;
         windowArgs.statusBarVisible = true;
@@ -1465,11 +1476,6 @@ static void parseWindowFeatures(const DOMString& features, WindowArgs& windowArg
         windowArgs.locationBarVisible = true;
         windowArgs.scrollBarsVisible = true;
         windowArgs.resizable = true;
-        
-        windowArgs.xSet = false;
-        windowArgs.ySet = false;
-        windowArgs.widthSet = false;
-        windowArgs.heightSet = false;
         
         return;
     }
@@ -1489,16 +1495,16 @@ static void parseWindowFeatures(const DOMString& features, WindowArgs& windowArg
     int length = features.length();
     DOMString buffer = features.lower();
     while (i < length) {
-        // skip to first letter or number, but don't skip past the end of the string
-        while (!buffer[i].isLetterOrNumber()) {
+        // skip to first non-separator, but don't skip past the end of the string
+        while (isSeparator(buffer[i])) {
             if (i >= length)
                 break;
             i++;
         }
         keyBegin = i;
         
-        // skip to first non-letter, non-number
-        while (buffer[i].isLetterOrNumber())
+        // skip to first separator
+        while (!isSeparator(buffer[i]))
             i++;
         keyEnd = i;
         
@@ -1509,18 +1515,20 @@ static void parseWindowFeatures(const DOMString& features, WindowArgs& windowArg
             i++;
         }
         
-        // skip to first letter or number, but don't skip past a ',' or the end of the string
-        while (!buffer[i].isLetterOrNumber()) {
+        // skip to first non-separator, but don't skip past a ',' or the end of the string
+        while (isSeparator(buffer[i])) {
             if (buffer[i] == ',' || i >= length)
                 break;
             i++;
         }
         valueBegin = i;
         
-        // skip to first non-letter, non-number
-        while (buffer[i].isLetterOrNumber())
+        // skip to first separator
+        while (!isSeparator(buffer[i]))
             i++;
         valueEnd = i;
+        
+        assert(i <= length);
 
         DOMString keyString(buffer.substring(keyBegin, keyEnd - keyBegin));
         DOMString valueString(buffer.substring(valueBegin, valueEnd - valueBegin));
