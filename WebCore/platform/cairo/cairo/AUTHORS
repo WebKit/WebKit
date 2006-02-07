@@ -1,0 +1,26 @@
+Shawn T. Amundson <amundson@gtk.org> Build fix
+Olivier Andrieu <oliv__a@users.sourceforge.net> PNG backend
+Peter Dennis Bartok <peter@novonyx.com> Bug fix for clipping
+Dave Beckett <dajobe@debian.org> Build fixes, Debian packaging
+Andrew Chant <andrew.chant@utoronto.ca> Adding const where needed
+John Ellson <ellson@research.att.com> First font/glyph extents functions
+Richard Henderson <rth@twiddle.net> "slim" macros for better shared libraries 
+James Henstridge <james@daa.com.au> Build fixes related to freetype
+Graydon Hoare <graydon@redhat.com> Support for non-render X server, first real text support
+Thomas Hunger <info@teh-web.de> Initial version of cairo_in_stroke/fill
+Kristian Høgsberg <krh@redhat.com> PDF backend
+Alexander Larsson <alexl@redhat.com> Profiling and performance fixes.
+Jordi Mas <jordi@ximian.com> Bug fix for cairo_show_text
+Keith Packard <keithp@keithp.com> Original concept, polygon tessellation, dashing, font metrics rewrite
+Christof Petig <christof@petig-baender.de> Build fixes related to freetype
+David Reveman <davidr@novell.com> New pattern API, glitz backend
+Calum Robinson <calumr@mac.com> Quartz backend
+Jamey Sharp <jamey@minilop.net> Surface/font backend virtualization, XCB backend
+Bill Spitzak <spitzak@d2.com> Build fix to find Xrender.h without xrender.pc
+Owen Taylor <otaylor@redhat.com> Font support rewrite
+Sasha Vasko <sasha@aftercode.net> Build fix to compile without xlib backend
+Vladimir Vukicevic <vladimir@pobox.com> Bug fix for clipping
+Carl Worth <cworth@isi.edu> Original library, support for paths, images
+Richard D. Worth <richard@theworths.org> Build fixes for cygwin
+
+(please let us know if we have missed anyone)

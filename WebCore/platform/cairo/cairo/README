@@ -1,0 +1,60 @@
+Cairo - Multi-platform 2D graphics library
+http://cairographics.org
+
+Compiling
+---------
+See the INSTALL document for build instructions.
+
+Description
+-----------
+Cairo is a vector graphics library with cross-device output
+support. Currently supported output targets include the X Window
+System and in-memory image buffers. PostScript and PDF file output is
+planned. Cairo is designed to produce identical output on all output
+media while taking advantage of display hardware acceleration when
+available (eg. through the X Render Extension).
+
+Cairo provides a stateful user-level API with capabilities similar to
+the PDF 1.4 imaging model. Cairo provides operations including
+stroking and filling Bezier cubic splines, transforming and
+compositing translucent images, and antialiased text rendering.
+
+Cairo was once named Xr, (or Xr/Xc), so if you came looking for that
+software, you've found it.
+
+Dependencies
+------------
+Cairo currently requires the following supporting libraries:
+
+	libpixman
+	Xft2
+	fontconfig
+	freetype2
+
+Documentation
+-------------
+There's not much documentation yet apart from the cairo.h header
+file. We'll be correcting that shortly.
+
+In the meantime, the cairo-demo module in CVS provides a few example
+programs using cairo. These may be helpful to a programmer just
+beginning with cairo. Also, familiarity with the PostScript imaging
+model will help in understanding cairo.
+
+History
+-------
+Cairo was originally developed by Carl Worth <cworth@cworth.org> and
+Keith Packard <keithp@keithp.com>. Many thanks are due to Lyle Ramshaw
+without whose patient help our ignorance would be much more apparent.
+
+Mailing List
+------------
+If you have trouble with cairo or you have some ideas for how it could be
+improved, please feel free to send a message to cairo@cairographics.org
+
+Cairo is still under active development and all discussion happens on
+that list. So if you want to lurk or, (even better), take part in the
+development, take a look. Subscription information and archives are
+available:
+
+	http://cairographics.org/cgi-bin/mailman/listinfo/cairo

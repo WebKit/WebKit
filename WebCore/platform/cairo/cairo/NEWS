@@ -1,0 +1,1300 @@
+Release 0.9.0 (2005-08-08 Carl Worth <cworth@cworth.org>)
+=========================================================
+API additions
+-------------
+
+ * Add a new function call to set the current antialiasing mode in the
+   graphics state:
+
+	cairo_set_antialias
+
+   This call accepts the same modes recently added for font options
+   (NONE or GRAY) but affects the rendering of geometry other than
+   text. The intent of this call is to enable more precise control of
+   which pixels are affected by each operation, for example to allow
+   for full-scene antialiasing for seam-free rendering. It is not
+   expected that non-antialiased rendering will perform better than
+   anti-aliased rendering.
+
+ * Three new functions were added to provide support for mixed cairo-
+   and non-cairo drawing to the same surface:
+
+	cairo_surface_mark_dirty
+	cairo_surface_mark_dirty_rectangle
+	cairo_flush
+
+ * The return type of the several "reference" functions was change,
+   (API compatibly), from void to the same type as the argument. The
+   affected functions are:
+
+	cairo_font_face_reference
+	cairo_scaled_font_reference
+	cairo_pattern_reference
+	cairo_surface_reference
+	cairo_reference
+
+   This allows a convenient way to assign and reference in a single
+   statement.
+
+cairo-win32
+-----------
+ * Some portability improvements, (eg. workaround for missing stdint.h).
+
+cairo-ft
+--------
+ * Updated to allow compilation with older versions of freetype.
+
+Bug fixes
+---------
+ * Fix the unbounded operators to actually produce a correct result,
+   (previously the results were artificially restricited to the
+   bounding box of whatever shape was being drawn rather than
+   extending out infinitely). The fixed operators are:
+
+	CAIRO_OPERATOR_CLEAR
+	CAIRO_OPERATOR_SOURCE
+	CAIRO_OPERATOR_OUT
+	CAIRO_OPERATOR_IN
+	CAIRO_OPERATOR_DEST_IN
+	CAIRO_OPERATOR_DEST_ATOP
+
+ * Fix cairo_mask and cairo_mask_surface to transform the mask by the
+   current transformation matrix (CTM).
+
+ * Fix cairo_set_source to lock the CTM used to transform the pattern.
+
+ * Workaround for X server Render bug involving repeating patterns
+   with a general transformation matrix.
+
+ * cairo_get_font_face fixed to return a "nil" font face object rather
+   than NULL on error.
+
+ * cairo_set_font_face fixed to not crash if given a NULL font face,
+   (which is the documented interface for restoring the defauly font
+   face).
+
+ * Fix xlib glyphset caching to not try to free a NULL glyph.
+
+Snapshot 0.6.0 (2005-07-28 Carl Worth <cworth@cworth.org>)
+==========================================================
+API changes
+-----------
+* The prototypes of the following functions have changed:
+
+	cairo_xlib_surface_create_with_xrender_format
+	cairo_xlib_surface_create_for_bitmap
+
+  A Screen* parameter has been added to each. This allows the cairo
+  xlib backend to work correctly with multi-head X servers.
+
+* The following function has been modified:
+
+	cairo_scaled_font_create
+
+  to accept a cairo_font_options_t*. See below fore more details.
+
+* All opaque, reference-counted cairo objects have now been moved to a
+  standard error-handling scheme. The new objects to receive this
+  treatment are cairo_font_face_t, cairo_scaled_font_t, and
+  cairo_surface_t. (Previous snapshots already provided this scheme
+  for cairo_t, cairo_path_t, and cairo_pattern_t.)
+
+  This changes two functions to have a return type of void rather than
+  cairo_status_t:
+
+	cairo_scaled_font_extent
+	cairo_surface_finish
+
+  And significantly, none of the create functions for any of the
+  objects listed above will return NULL. The pointer returned from any
+  function will now always be a valid pointer and should always be
+  passed to the corresponding destroy function when finished
+
+  The simplest strategy for porting code is to switch from:
+
+	object = cairo_<object>_create ();
+	if (object == NULL)
+	    goto BAILOUT;
+
+	/* act on object */
+
+	cairo_<object>_destroy (object);
+
+  to:
+
+	object = cairo_<object>_create ();
+	if (cairo_<object>_status (object))
+	    goto BAILOUT;
+
+	/* act on object */
+
+	cairo_<object>_destroy (object);
+
+   But significantly, it is not required to check for an error status
+   before the "act on object" portions of the code above. All
+   operations on an object with an error status are, by definition,
+   no-ops without side effect. So new code might be written in an
+   easier-to-read style of:
+
+	object = cairo_<object>_create ();
+
+	/* act on object */
+
+	cairo_<object>_destroy (object);
+
+   with cairo_<object>_status checks placed only at strategic
+   locations. For example, passing an error object to another object,
+   (eg. cairo_set_source with an in-error pattern), will propagate the
+   error to the subsequent object (eg. the cairo_t). This means that
+   error checking can often be deferred even beyond the destruction of
+   a temporary object.
+
+API additions
+-------------
+* New functions for checking the status of objects that have been
+  switched to the common error-handling scheme:
+
+	cairo_font_face_status
+	cairo_scaled_font_status
+	cairo_surface_status
+
+* The _cairo_error function which was added in 0.5.1 has now been made
+  much more useful. In 0.5.1 only errors on cairo_t objects passed
+  through _cairo_error. Now, an error on any object should pass
+  through _cairo_error making it much more reliable as a debugging
+  mechanism for finding when an error first occurs.
+
+* Added new font options support with a myriad of functions:
+
+	cairo_font_options_create
+	cairo_font_options_copy
+	cairo_font_options_destroy
+
+	cairo_font_options_status
+
+	cairo_font_options_merge
+	cairo_font_options_equal
+	cairo_font_options_hash
+
+	cairo_font_options_set_antialias
+	cairo_font_options_get_antialias
+	cairo_font_options_set_subpixel_order
+	cairo_font_options_get_subpixel_order
+	cairo_font_options_set_hint_style
+	cairo_font_options_get_hint_style
+	cairo_font_options_set_hint_metrics
+	cairo_font_options_get_hint_metrics
+
+	cairo_surface_get_font_options
+
+	cairo_ft_font_options_substitute
+
+	cairo_set_font_options
+	cairo_get_font_options
+
+   This new font options support allows the application to have much
+   more fine-grained control over how fonts are rendered.
+   Significantly, it also allows surface backends to have some
+   influence over the process. For example, the xlib backend now
+   queries existing Xft properties to set font option defaults.
+
+* New function:
+
+	cairo_xlib_surface_set_drawable
+
+  which allos the target drawable for an xlib cairo_surface_t to be
+  changed to another with the same format, screen, and display. This
+  is necessary in certain double-buffering techniques.
+
+New features
+------------
+* Sub-pixel text antialiasing is now supported.
+
+Bug fixes
+---------
+* Fixed assertion failure in cairo_surface_create_similar when
+  application commits an error by passing a cairo_format_t rather than
+  a cairo_content_t.
+
+* Avoid division by zero in various places (cairo-ft).
+
+* Fix infinite loop when using non-default visuals (cairo-xlib).
+
+* Eliminate segfault in cairo_image_surface_create_from_png_stream.
+
+* Prevent errant sign-extension of masks on 64-bit architectures
+  (cairo-xlib and cairo-xcb).
+
+* Other miscellaneous fixes.
+
+Snapshot 0.5.2 (2005-07-18 Carl Worth <cworth@cworth.org>)
+==========================================================
+API changes
+-----------
+* New functions for creating patterns of a single color:
+
+	cairo_pattern_create_rgb
+	cairo_pattern_create_rgba
+
+* Change cairo_surface_create_similar to accept a new type of
+  cairo_content_t rather than cairo_format_t:
+
+	typedef enum _cairo_content {
+	    CAIRO_CONTENT_COLOR		= 0x1000,
+	    CAIRO_CONTENT_ALPHA		= 0x2000,
+	    CAIRO_CONTENT_COLOR_ALPHA	= 0x3000
+	} cairo_content_t;
+
+* Add new CAIRO_FORMAT_VALID and CAIRO_CONTENT_VALID macros.
+
+* Remove unused status value:
+
+	CAIRO_STATUS_NO_TARGET_SURFACE
+
+* Add new status values:
+
+	CAIRO_STATUS_INVALID_STATUS
+
+* Require libpixman >= 0.1.5 (for necessary bug fixes)
+
+Bug fixes
+---------
+* Fix cairo_surface_write_to_png for RGB24 images.
+
+* Fix broken metrics and rendering for bitmap fonts. Add mostly
+  useless bitmap glyph transformation.
+
+* Fix glyph caches to not eject entries that might be immediately
+  needed, (fixing intermittent crashes when rendering text).
+
+* Fix all memory leaks found by running "make check-valigrind".
+
+ATSUI backend changes
+---------------------
+* Allow building against < 10.3 SDK.
+
+* Prevent crash on empty strings.
+
+Glitz backend changes
+---------------------
+* Require glitz >= 0.4.4.
+
+* Use frame buffer objects instead of pbuffers for accelerated
+  offscreen drawing.
+
+* Minor improvement to gradient pattern creation.
+
+PostScript backend fixes
+------------------------
+* Rewrite of the PS backend to generate more interesting output that
+  the old big-image implementation.
+
+Win32 backend fixes
+-------------------
+* Implement glyph path support.
+
+* Fix swap of blue and green values in the fill_rectangles path.
+
+Xlib backend fixes
+------------------
+* Add optimization to use XCopyArea rather than XRenderComposite when
+  transforming only with an integer translation, and using SOURCE
+  operator or OVER with a source pattern without alpha.
+
+Snapshot 0.5.1 (2005-06-20 Carl Worth <cworth@cworth.org>)
+==========================================================
+API changes
+-----------
+* Removed cairo_status_string(cairo_t*) and add
+  cairo_status_to_string(cairo_status_t) in its place. Code using
+  cairo_status_string can be ported forward as follows:
+
+	cairo_status (cr);
+	->
+	cairo_status_to_string (cairo_status (cr));
+
+* Removed the BAD_NESTING restriction which means that two different
+  cairo_t objects can now interleave drawing to the same
+  cairo_surface_t without causing an error.
+
+* The following functions which previously had a return type of
+  cairo_status_t now have a return type of void:
+
+	cairo_pattern_add_color_stop_rgba
+	cairo_pattern_set_matrix
+	cairo_pattern_get_matrix
+	cairo_pattern_set_extend
+	cairo_pattern_set_filter
+
+  See discussion of cairo_pattern_status below for more details.
+
+API additions
+-------------
+* Improved error handling:
+
+	cairo_status_t
+	cairo_pattern_status (cairo_pattern_t *pattern);
+
+  This snapshot expands the status-based error handling scheme from
+  cairo_t to cairo_path_t and cairo_pattern_t. It also expands the
+  scheme so that object-creating functions, (cairo_create,
+  cairo_pattern_create_*, cairo_copy_path_*), are now guaranteed to
+  not return NULL. Instead, in the case of out-of-memory these
+  functions will return a static object with
+  status==CAIRO_STATUS_NO_MEMORY. The status can be checked with the
+  functions cairo_status and cairo_pattern_status, or by direct
+  inspection of the new status field in cairo_path_t.
+
+  Please note that some objects, including cairo_surface_t and all of
+  the font-related objects have not been converted to this
+  error-handling scheme.
+
+* In addition to the above changes, a new private function has been added:
+
+	_cairo_error
+
+  This function can be used to set a breakpoint in a debugger to make
+  it easier to find programming error in cairo-using code. (Currently,
+  _cairo_error is called when any error is detected within a cairo_t
+  context, but is not called for non-cairo_t errors such as for
+  cairo_path_t and cairo_pattern_t).
+
+* Fixed cairo_path_data_t so that its enum is visible to C++ code, (as
+  cairo_path_data_type_t).
+
+Performance improvements
+------------------------
+* Made a minor performance improvement for clipping, (restrict clip
+  surface to the new intersected bounds).
+
+* Optimize rendering of a solid source pattern with a pixel-aligned
+  rectangular path to use backend clipping rather than rasterization
+  and backend compositing.
+
+* Optimize cairo_paint_with_alpha to defer to cairo_paint when alpha
+  is 1.0.
+
+Bug fixes
+---------
+* Fixed memory leak in cairo_copy_path.
+
+* A build fix for non-srcdir builds.
+
+PDF backend fixes
+-----------------
+* New support for path-based clipping.
+
+* Fix for text rotated to angles other than multiples of π/2.
+
+Win32 backend fixes
+-------------------
+* Fix for text extents.
+
+Xlib backend
+------------
+* Implemented a complex workaround for X server bug[*] related to
+  Render-based compositing with untransformed, repeating source
+  pictures. The workaround uses core Xlib when possible for
+  performance, (ie. with CAIRO_OPERATOR_SOURCE or CAIRO_OPERATOR_OVER
+  with an opaque source surface), and falls back to the pixman
+  image-based compositing otherwise.
+
+  [*] https://bugs.freedesktop.org/show_bug.cgi?id=3566
+
+* Various bug fixes, particularly in the fallback paths.
+
+Snapshot 0.5.0 (2005-05-17 Carl Worth <cworth@cworth.org>)
+==========================================================
+This is a pretty big, and fairly significant snapshot.  It represents
+between 2 and 3 months of solid work from a lot of people on improving
+the API as much as possible. I'd like to express my appreciation and
+congratulations to everyone who has worked on the big API Shakeup,
+(whether in email battles over names, or fixing my silly bugs).
+
+This snapshot will require some effort on the part of users, since
+there are a _lot_ of API changes (ie. no cairo program ever written is
+safe --- they're all broken now in at least one way). But, in spite of
+that, we do encourage everyone to move their code to this snapshot as
+soon as possible. And we're doing everything we can think of to make
+the transition as smooth as possible.
+
+The idea behind 0.5 is that we've tried to make every good API change
+we could want now, and get them all done with. That is, between now
+and the 1.0 release of cairo, we expect very few new API changes,
+(though some will certainly sneak in). We will have some significant
+additions, but the pain of moving code from cairo 0.4 to cairo 0.5
+should be a one time experience, and things should be much smoother as
+we continue to move toward cairo 1.0.
+
+And with so many changes coming out for the first time in this 0.5
+release, we really do need a lot of people trying this out to make
+sure the ideas are solid before we freeze the API in preparation for
+the 1.0 release.
+
+OK, enough introduction. Here is a (not-quite-complete) description of
+the API removals, changes and additions in this snapshot, (compared to
+0.4.0)
+
+API removals
+============
+The following public functions have been removed:
+
+- cairo_set_target_*
+
+	This is a big change. See the description of cairo_create in
+	the API changes section for how to deal with this.
+
+- cairo_set_alpha
+
+	Alpha blending hasn't gone away; there's just a much more
+	unified rendering model now. Almost all uses of
+	cairo_set_alpha will be trivially replaced with
+	cairo_set_source_rgba and a few others will be replaced just
+	as easily with cairo_paint_with_alpha.
+
+- cairo_show_surface
+
+	Another useful function that we realized was muddling up the
+	rendering model. The replacement is quite easy:
+	cairo_set_source_surface and cairo_paint.
+
+- cairo_matrix_create
+- cairo_matrix_destroy
+- cairo_matrix_copy
+- cairo_matrix_get_affine
+
+	These functions supported an opaque cairo_matrix_t. We now
+	have an exposed cairo_matrix_t structure, so these can be
+	dropped.
+
+- cairo_surface_set_repeat
+- cairo_surface_set_matrix
+- cairo_surface_set_filter
+
+	These properties don't belong on surfaces. If you were using
+	them, you'll just want to instead use
+	cairo_pattern_create_for_surface and then set these properties
+	on the pattern.
+
+- cairo_copy
+
+	This was a confusing function and hopefully nobody will miss
+	it. But if you really don't find cairo_save/restore adequate,
+	let us know and we have another idea for a potential
+	replacement.
+
+And while we're on the subject of removals, we carefully tightened up
+the cairo header files so they no longer gratuitously include header
+files that are not strictly necessary, (stdio.h, stdint.h, pixman.h,
+Xrender.h, etc. and their dependencies). This may lead to some
+surprising errors, so keep your eyes open for that.
+
+API changes
+===========
+Here are some of the API changes that have occurred:
+
+~ cairo_create(void) -> cairo_create(cairo_surface_t *)
+
+	This is the big change that breaks every program. The ability
+	to re-target a cairo_t was not particularly useful, but it did
+	introduce a lot of muddy semantic questions. To eliminate
+	that, cairo_create now requires its target surface to be
+	passed in at creation time. This isn't too hard to cope with
+	as the typical first operation after cairo_create was often
+	cairo_set_target_foo. So the order of those two swap and the
+	application instead has cairo_foo_surface_create, then
+	cairo_create.
+
+~ cairo_current_* -> cairo_get_*
+
+	We had a strange mixture of cairo_get and cairo_current
+	functions. They've all been standardized on cairo_get, (though
+	note one is cairo_get_current_point).
+
+~ CAIRO_OPERATOR_SRC -> CAIRO_OPERATOR_SOURCE
+~ CAIRO_OPERATOR_OVER_REVERSE -> CAIRO_OPERATOR_DEST_OVER
+
+	Many of the cairo_operator_t symbolic values were renamed to
+	reduce the amount of abbreviation. The confusing "OP_REVERSE"
+	naming was also changed to use "DEST_OP" instead which is
+	easier to read and has wider acceptance in other
+	libraries/languages.
+
+~ cairo_set_pattern -> cairo_set_source
+~ cairo_set_rgb_color -> cairo_set_source_rgb
+
+	All of the various functions that changed the source
+	color/pattern were unified to use cairo_set_source names to
+	make the relation more clear.
+
+~ cairo_transform_point		   -> cairo_user_to_device
+~ cairo_transform_distance	   -> cairo_user_to_device_distance
+~ cairo_inverse_transform_point	   -> cairo_device_to_user
+~ cairo_inverse_transform_distance -> cairo_device_to_user_distance
+
+	These names just seemed a lot more clear.
+
+~ cairo_init_clip	-> cairo_reset_clip
+~ cairo_concat_matrix	-> cairo_transform
+
+	More abbreviation elimination
+
+~ cairo_current_path	  -> cairo_copy_path
+~ cairo_current_path_flat -> cairo_copy_path_flat
+
+	The former mechanism for examining the current path was a
+	function that required 3 or 4 callbacks. This was more
+	complexity than warranted in most situations. The new
+	cairo_copy_path function copies the current path into an
+	exposed data structure, and the documentation provides a
+	convenient idiom for navigating the path data.
+
+API additions
+-------------
++ cairo_paint
+
+	A generalized version of the painting operators cairo_stroke
+	and cairo_fill. The cairo_paint call applies the source paint
+	everywhere within the current clip region. Very useful for
+	clearing a surface to a solid color, or painting an image,
+	(see cairo_set_source_surface).
+
++ cairo_paint_with_alpha
+
+	Like cairo_paint but applying some alpha to the source,
+	(making the source paint translucent, eg. to blend an image on
+	top of another).
+
++ cairo_mask
+
+	A more generalized version of cairo_paint_with_alpha which
+	allows a pattern to specify the amount of translucence at each
+	point rather than using a constant value everywhere.
+
++ cairo_mask_surface
+
+	A convenience function on cairo_mask for when the mask pattern
+	is already contained within a surface.
+
++ cairo_surface_set_user_data
++ cairo_surface_get_user_data
++ cairo_font_face_set_user_data
++ cairo_font_face_get_user_data
+
+	Associate arbitrary data with a surface or font face for later
+	retrieval. Get notified when a surface or font face object is
+	destroyed.
+
++ cairo_surface_finish
+
+	Allows the user to instruct cairo to finish all of its
+	operations for a given surface. This provides a safe point for
+	doing things such as flushing and closing files that the
+	surface may have had open for writing.
+
++ cairo_fill_preserve
++ cairo_stroke_preserve
++ cairo_clip_preserve
+
+	One interesting change in cairo is that the path is no longer
+	part of the graphics state managed by
+	cairo_save/restore. This allows functions to construct paths
+	without interfering with the graphics state. But it prevents
+	the traditional idiom for fill-and-stroke:
+
+		cairo_save; cairo_fill; cairo_restore; cairo_stroke
+
+	Instead we know have alternate versions cairo cairo_fill,
+	cairo_stroke, and cairo_clip that preserve the current path
+	rather than consuming it. So the idiom now becomes simply:
+
+		cairo_fill_preserve; cairo_stroke
+
++ cairo_surface_write_to_png
++ cairo_surface_write_to_png_stream
+
+	In place of a single PNG backend, now a surface created
+	through any backend (except PDF currently) can be written out
+	to a PNG image.
+
++ cairo_image_surface_create_from_png
++ cairo_image_surface_create_from_png_stream
+
+	And its just as easy to load a PNG image into a surface as well.
+
++ cairo_append_path
+
+	With the new, exposed path data structure, it's now possible
+	to append bulk path data to the current path, (rather than
+	issuing a long sequence of cairo_move_to/line_to/curve_to
+	function calls).
+
+Xlib and XCB backends
+---------------------
+
+Any cairo_format_t and Colormap arguments have been dropped from
+cairo_xlib_surface_create. There are also two new
+cairo_xlib|xcb_surface_create functions:
+
+	cairo_xlib|xcb_surface_create_for_bitmap
+		(Particular for creating A1 surfaces)
+	cairo_xlib|xcb_surface_create_with_xrender_format
+		(For any other surface types, not described by a Visual*)
+
+All of these surface create functions now accept width and height. In
+addition, there are new cairo_xlib|xcb_surface_set_size functions
+which must be called each time a window that is underlying a surface
+changes size.
+
+Print backends (PS and PDF)
+---------------------------
+The old FILE* based interfaces have been eliminated. In their place we
+have two different functions. One accepts a simple const char
+*filename. The other is a more general function which accepts a
+callback write function and a void* closure. This should allow the
+flexibility needed to hook up with various stream object in many
+languages.
+
+In addition, when specifying the surface size during construction, the
+units are now device-space units (ie. points) rather than inches. This
+provides consistency with all the other surface types and also makes
+it much easier to reason about the size of the surface when drawing to
+it with the default identity matrix.
+
+Finally, the DPI parameters, which are only needed to control the
+quality of fallbacks, have been made optional. Nothing is required
+during surface_create (300 DPI is assumed) and
+cairo_ps|pdf_surface_set_dpi can be used to set alternate values if
+needed.
+
+Font system
+-----------
+Owen very graciously listened to feedback after the big font rework he
+had done for 0.4, and came up with way to improve it even more. In 0.4
+there was a cairo_font_t that was always pre-scaled. Now, there is an
+unscaled cairo_font_face_t which is easier to construct, (eg. no
+scaling matrix required) and work with, (it can be scaled and
+transformed after being set on the graphics state). And the font size
+manipulation functions are much easier. You can set an explicit size
+and read/modify/write the font matrix with:
+
+	cairo_set_font_size
+	cairo_get_font_matrix
+	cairo_set_font_matrix
+
+(Previously you could only multiply in a scale factor or a matrix.) A
+pleasant side effect is that we can (and do) now have a default font
+size that is reasonable, as opposed to the old default height of one
+device-space unit which was useless until scaled.
+
+Of course, the old pre-scaled font had allowed some performance
+benefits when getting many metrics for a font. Those benefits are
+still made available through the new cairo_scaled_font_t. And a
+cairo_font_face_t can be "promoted" to a cairo_scaled_font_t by
+suppling a font_matrix and the desired CTM.
+
+Quartz backend
+--------------
+Tim Rowley put in the work to bring the Quartz backend back after it
+had been disabled in the 0.4.0 snapshot. He was not able to bring back
+the function that allows one to create a cairo_font_t from an ATSUI
+style:
+
+	cairo_font_t *
+	cairo_atsui_font_create (ATSUStyle style);
+
+because he didn't have a test case for it. If you care about this
+function, please provide a fairly minimal test and we'll try to bring
+it back in an upcoming snapshot.
+
+Snapshot 0.4.0 (2005-03-08 Carl Worth <cworth@cworth.org>)
+==========================================================
+New documentation
+-----------------
+Owen Taylor has converted cairo's documentation system to gtk-doc and
+has begun some long-needed work on the documentation, which can now be
+viewed online here:
+
+	http://cairographics.org/manual/
+
+New backend: win32
+------------------
+This is the first snapshot to include a functional win32 backend,
+(thanks to Owen Taylor). The interface is as follows:
+
+	#include <cairo-win32.h>
+
+	void 
+	cairo_set_target_win32 (cairo_t *cr,
+				HDC      hdc);
+
+	cairo_surface_t *
+	cairo_win32_surface_create (HDC hdc);
+
+	cairo_font_t *
+	cairo_win32_font_create_for_logfontw (LOGFONTW       *logfont,
+					      cairo_matrix_t *scale);
+
+	cairo_status_t
+	cairo_win32_font_select_font (cairo_font_t *font,
+				      HDC           hdc);
+
+	void
+	cairo_win32_font_done_font (cairo_font_t *font);
+
+	double
+	cairo_win32_font_get_scale_factor (cairo_font_t *font);
+
+And see also the documentation at:
+
+http://cairographics.org/manual/cairo-Microsoft-Windows-Backend.html
+
+Disabled backend: quartz
+------------------------
+Unfortunately, the quartz backend code is currently out of date with
+respect to some recent backend interface changes. So, the quartz
+backend is disabled in this snapshot.
+
+If the quartz backend is brought up-to-date before the next snapshot,
+we would be glad to make a 0.4.1 snapshot that re-enables it, (we do
+not expect many more big backend interface changes).
+
+API Changes
+-----------
+The font system has been revamped, (as Owen Taylor's work with
+integrating pango and cairo gave us the first serious usage of the
+non-toy font API).
+
+One fundamental, user-visible change is that the cairo_font_t object
+now represents a font that is scaled to a particular device
+resolution. Further changes are described below.
+
+ cairo.h
+ -------
+ Removed cairo_font_set_transform and cairo_font_current_transform.
+
+ Added cairo_font_extents and cairo_font_glyph_extents. See
+ documentation for details:
+
+ http://cairographics.org/manual/cairo-cairo-t.html#cairo-font-extents
+
+ cairo-ft.h
+ ----------
+ The cairo_ft_font API changed considerably. Please see the
+ documentation for details:
+
+ http://cairographics.org/manual/cairo-FreeType-Fonts.html
+
+Performance
+-----------
+Make the fast-path clipping (pixel-aligned rectangles) faster.
+
+Add optimization for applying a constant alpha to a pattern.
+
+Optimize gradients that are horizontal or vertical in device space.
+
+Xlib: When RENDER is not available, use image surfaces for
+intermediate surfaces rather than xlib surfaces.
+
+Backend-specific changes
+------------------------
+ Glitz
+ -----
+ Major update to glitz backend. The output quality should now be just
+ as good as the image and xlib backends.
+
+ Track changes to glitz 0.4.0.
+
+ PDF
+ ---
+ Various improvements to produce more conformant output.
+
+Internals
+---------
+David Reveman contributed a large re-work of the cairo_pattern_t
+implementation, providing cleaner code and more optimization
+opportunities.
+
+ Backend interface changes
+ -------------------------
+ Rework backend interface to accept patterns, not surfaces for source
+ and mask.
+
+ Remove set_matrix, set_filter, and set_repeat functions.
+
+ More sophisticated backend interface for image fallbacks,
+ ({acquire,release}_{source,dest}_image() and clone_similar).
+
+Bug fixes
+---------
+Only install header files for backends that have been compiled.
+
+Fixed some rounding errors leading to incorrectly placed glyphs.
+
+Many other minor fixes.
+
+Snapshot 0.3.0 (2005-01-21 Carl Worth <cworth@cworth.org>)
+==========================================================
+Major API changes
+-----------------
+1) The public header files will no longer be directly installed into
+   the system include directory. They will now be installed in a
+   subdirectory named "cairo", (eg. in /usr/include/cairo rather than
+   in /usr/include).
+
+   As always, the easiest way for applications to discover the
+   location of the header file is to let pkg-config generate the
+   necessary -I CFLAGS and -L/-l LDFLAGS. For example:
+
+	cc `pkg-config --cflags --libs cairo` -o foo foo.c
+
+   IMPORTANT: Users with old versions of cairo installed will need to
+              manually remove cairo.h and cairo-features.h from the
+              system include directories in order to prevent the old
+              headers from being used in preference to the new ones.
+
+2) The backend-specific portions of the old monolithic cairo.h have
+   been split out into individual public header files. The new files
+   are:
+
+	cairo-atsui.h
+        cairo-ft.h
+        cairo-glitz.h
+        cairo-pdf.h
+        cairo-png.h
+        cairo-ps.h
+	cairo-quartz.h
+        cairo-xcb.h
+        cairo-xlib.h
+
+   Applications will need to be modified to explicitly include the new
+   header files where appropriate.
+
+3) There are two new graphics backends in this snapshot, a PDF
+   backend, and a Quartz backend. There is also one new font backend,
+   ATSUI.
+
+PDF backend
+-----------
+Kristian Høgsberg has contributed a new backend to allow cairo-based
+applications to generate PDF output. The interface for creating a PDF
+surface is similar to that of the PS backend, as can be seen in
+cairo-pdf.h:
+
+	void
+	cairo_set_target_pdf (cairo_t	*cr,
+			      FILE	*file,
+			      double	width_inches,
+			      double	height_inches,
+			      double	x_pixels_per_inch,
+			      double	y_pixels_per_inch);
+
+	cairo_surface_t *
+	cairo_pdf_surface_create (FILE		*file,
+				  double	width_inches,
+				  double	height_inches,
+				  double	x_pixels_per_inch,
+				  double	y_pixels_per_inch);
+
+Once a PDF surface has been created, applications can draw to it as
+any other cairo surface.
+
+This code is still a bit rough around the edges, and does not yet
+support clipping, surface patterns, or transparent gradients.  Text
+only works with TrueType fonts at this point and only black text is
+supported.  Also, the size of the generated PDF files is currently
+quite big.
+
+Kristian is still actively developing this backend, so watch this
+space for future progress.
+
+Quartz backend
+--------------
+Calum Robinson has contributed a new backend to allow cairo
+applications to target native Mac OS X windows through the Quartz
+API. Geoff Norton integrated this backend into the current
+configure-based build system, while Calum also provided Xcode build
+support in the separate "macosx" module available in CVS.
+
+The new interface, available in cairo-quartz.h, is as follows:
+
+	void
+	cairo_set_target_quartz_context (cairo_t	*cr,
+					 CGContextRef	context,
+					 int		width,
+					 int		height);
+
+	cairo_surface_t *
+	cairo_quartz_surface_create (CGContextRef context,
+				     int	  width,
+				     int	  height);
+
+There is an example program available in CVS in cairo-demo/quartz. It
+is a port of Keith Packard's fdclock program originally written for
+the xlib backend. A screenshot of this program running on Mac OS X is
+available here:
+
+	http://cairographics.org/~cworth/images/fdclock-quartz.png
+
+ATSUI font backend
+------------------
+This new font backend complements the Quartz backend by allowing
+applications to use native font selection on Mac OS X. The interface
+is a single new function:
+
+	cairo_font_t *
+	cairo_atsui_font_create (ATSUStyle style);
+
+Minor API changes
+-----------------
+Prototype for non-existent function "cairo_ft_font_destroy" removed.
+
+Now depends on libpixman 0.1.2 or newer, (0.1.3 is being released
+concurrently and has some useful performance improvements).
+
+Default paint color is now opaque black, (was opaque white). Default
+background color is transparent (as before).
+
+Renamed "struct cairo" to "struct _cairo" to free up the word "cairo"
+from the C++ identifier name space.
+
+Functions returning multiple return values through provided pointers,
+(cairo_matrix_get_affine, cairo_current_point, and
+cairo_current_color_rgb), will now accept NULL for values the user
+wants to ignore.
+
+CAIRO_HAS_FREETYPE_FONT has now been renamed to CAIRO_HAS_FT_FONT.
+
+Performance improvements
+------------------------
+Alexander Larsson provided some fantastic performance improvements
+yielding a 10000% performance improvement in his application, (when
+also including his performance work in libpixman-0.1.3). These include
+
+ * Fixed handling of cache misses.
+
+ * Creating intermediate clip surfaces at the minimal size required.
+
+ * Eliminating roundtrips when creating intermediate Xlib surfaces.
+
+Implementation
+--------------
+Major re-work of font metrics system by Keith Packard. Font metrics
+should now be much more reliable.
+
+Glitz backend
+-------------
+Updated for glitz-0.3.0.
+Bug fixes in reference counting.
+
+Test suite
+----------
+New tests for cache crashing, rotating text, improper filling of
+complex polygons, and leaky rasterization.
+
+Bug fixes
+---------
+Fixed assertion failure when selecting the same font multiple times in
+sequence.
+
+Fixed reference counting so cache_destroy functions work.
+
+Remove unintended copyright statement from files generated with
+PostScript backend.
+
+Fixed to eliminate new warnings from gcc 3.4 and gcc 4.
+
+Snapshot 0.2.0 (2004-10-27 Carl Worth <cworth@cworth.org>)
+===========================================================
+New license: LGPL/MPL
+---------------------
+The most significant news with this release is that the license of
+cairo has changed. It is now dual-licensed under the LGPL and the
+MPL. For details see the COPYING file as well as COPYING-LGPL-2.1 and
+COPYING-MPL-1.1.
+
+I express my thanks to everyone involved in the license change process
+for their patience and support!
+
+New font and glyph internals
+----------------------------
+Graydon Hoare has put a tremendous amount of work into new internals
+for handling fonts and glyphs, including caches where appropriate.
+This work has no impact on the user-level API, but should result in
+great performance improvements for applications using text.
+
+New test suite
+--------------
+This snapshot of cairo includes a (small) test suite in
+cairo/test. The tests can be run with "make check". The test suite was
+designed to make it very easy to add new tests, and we hope to see
+many contributions here. As you find bugs, please try adding a minimal
+test case to the suite, and submit it with the bug report to the
+cairo@cairographics.org mailing list. This will make it much easier
+for us to track progress in fixing bugs.
+
+New name for glitz backend
+--------------------------
+The gl backend has now been renamed to the glitz backend. This means
+that the following names have changed:
+
+	CAIRO_HAS_GL_SURFACE    -> CAIRO_HAS_GLITZ_SURFACE
+	cairo_set_target_gl     -> cairo_set_target_glitz
+	cairo_gl_surface_create -> cairo_glitz_surface_create
+
+This change obviously breaks backwards compatibility for applications
+using the old gl backend.
+
+Up-to-date with latest glitz snapshots
+--------------------------------------
+This snapshot of cairo is now up to date with the latest glitz
+snapshot, (currently 0.2.3). We know that the latest cairo and glitz
+snapshots have been incompatible for a very long time. We've finally
+fixed that now and we're determined to not let that happen again.
+
+Revert some tessellation regression bugs
+----------------------------------------
+People that have been seeing some tessellation bugs, (eg. leaked
+fills), in the CVS version of cairo may have better luck with this
+release. A change since the last snapshot was identified to trigger
+some of these bugs and was reverted before making the snapshot. The
+behavior should be the same as the previous (0.1.23) snapshot.
+
+Miscellaneous changes
+---------------------
+Changed CAIRO_FILTER_DEFAULT to CAIRO_FILTER_BEST to make gradients
+easier.
+
+Track XCB API change regarding iterators.
+
+Various bug fixes
+-----------------
+Fix calculation of required number of vertices for pen.
+
+Fix to avoid zero-dimensioned pixmaps.
+
+Fix broken sort of pen vertices.
+
+Fix bug when cairo_show_text called with a NULL string.
+
+Fix clipping bugs.
+
+Fix bug in computing image length with XCB.
+
+Fix infinite loop bug in cairo_arc.
+
+Fix memory management interactions with libpixman.
+
+Snapshot 0.1.23 (2004-05-11 Carl Worth <cworth@isi.edu>)
+========================================================
+Fixes for gcc 3.4
+-----------------
+Fix prototype mismatches so that cairo can be built by gcc 3.4.
+
+Updates to track glitz
+----------------------
+Various fixes to support the latest glitz snapshot (0.1.2).
+
+Gradient updates
+----------------
+Radial gradients now support both inner and outer circles.
+Transformed linear gradients are now properly handled.
+Fixes for extend type reflect.
+
+Glitz updates
+-------------
+Converted shading routines to use fixed point values and introduced a
+shading operator structure for more efficient shading calculations.
+Support compositing with mask surface when mask is solid or
+multi-texturing is available.
+
+PNG backend cleanups
+--------------------
+Fix output to properly compensate for pre-multiplied alpha format in cairo.
+Add support for A8 and A1 image formats.
+
+Bug fixes
+---------
+Avoid crash or infinite loop on null strings and degeneratively short
+splines.
+
+New? bugs in cairo_clip
+-----------------------
+There are some fairly serious bugs in cairo_clip. It is sometimes
+causing an incorrect result. And even when it does work, it is
+sometimes so slow as to be unusable. Some of these bugs may not be
+new, (indeed cairo_clip has only ever had a braindead-slow
+implementation), but I think they're worth mentioning here.
+
+Snapshot 0.1.22 (2004-04-16 Carl Worth <cworth@isi.edu>)
+========================================================
+Cairo was updated to track the changes in libpixman, and now depends
+on libpixman version 0.1.1.
+
+Snapshot 0.1.21 (2004-04-09 David Reveman <c99drn@cs.umu.se>)
+=============================================================
+New OpenGL backend
+------------------
+The OpenGL backend provides hardware accelerated output for
+X11 and OS X. The significant new functions are:
+
+	cairo_set_target_gl
+	cairo_gl_surface_create
+
+Automatic detection of available backends
+-----------------------------------------
+The configure script now automatically detect what backends are
+available, (use ./configure --disable-`backend' to prevent
+compilation of specific backends).
+
+Snapshot 0.1.20 (2004-04-06 Carl Worth <cworth@isi.edu>)
+========================================================
+New pattern API
+---------------
+David Reveman has contributed a new pattern API which enable linear
+and radial gradient patterns in addition to the original surface-based
+patterns. The significant new top-level functions are:
+
+	cairo_pattern_create_linear
+	cairo_pattern_create_radial
+	cairo_pattern_create_for_surface
+	cairo_pattern_add_color_stop
+	cairo_set_pattern
+
+Any code using the old cairo_set_pattern, (which accepted a
+cairo_surface_t rather than a cairo_pattern_t), will need to be
+updated.
+
+Update to XCB backend
+---------------------
+The XCB backend is now enabled by default, (use ./configure
+--disable-xcb to turn it off).
+
+Faster clipping
+---------------
+Graydon Hoare has added optimizations that make cairo_clip much faster
+when the path is a pixel-aligned, rectangular region.
+
+Bug fixes.
+
+Snapshot 0.1.19 (2004-02-24 Carl Worth <cworth@isi.edu>)
+========================================================
+New PNG backend
+---------------
+Olivier Andrieu contributed a new PNG backend. It builds on the
+existing image backend to make it easy to render "directly" to a
+.png file. The user never needs to deal with the actual image
+buffer. The significant new functions are:
+
+	cairo_set_target_png
+	cairo_png_surface_create
+
+The PNG backend is not enabled by default so that by default there is
+not a new dependency on libpng. Use ./configure --enable-png to enable
+this backend.
+
+Snapshot 0.1.18 (2004-02-17 Carl Worth <cworth@isi.edu>)
+========================================================
+Path query functionality
+------------------------
+It's now possible to query the current path. The two new functions
+are:
+
+	cairo_current_path
+	cairo_current_path_flat
+
+Each function accepts a number of callback functions that will be
+called for each element in the path (move_to, line_to, curve_to,
+close_path). The cairo_current_path_flat function does not accept a
+curve_to callback. Instead, all curved portions of the path will be
+converted to line segments, (within the current tolerance value). This
+can be handy for doing things like text-on-path without having to
+manually interpolate bezier splines.
+
+New XCB backend
+---------------
+Jamey Sharp has contributed a second X backend that uses the new, lean
+XCB library rather than Xlib. It cannot currently be compiled at the
+same time as the Xlib backend. See ./configure --enable-xcb.
+
+Build fixes for cygwin.
+
+Bug fixes.
+
+Snapshot 0.1.17 (2003-12-16 Carl Worth <cworth@isi.edu>)
+========================================================
+
+Better text support
+-------------------
+This snapshot provides much better text support by implementing the
+following four functions:
+
+        cairo_text_extents
+        cairo_glyph_extents
+        cairo_text_path
+        cairo_glyph_path
+
+The text/glyph_extents functions can be used to determine the bounding
+box (and advance) for text as if drawn by show_text/glyphs.
+
+The text/glyph_path objects functions place text shapes on the current
+path, where they can be subsequently manipulated. For example,
+following these functions with cairo_stroke allows outline text to be
+drawn. Calling cairo_clip allows clipping to a text-shaped region.
+
+Combined dependencies
+---------------------
+The cairo core now depends only on the libpixman library. This single
+library replaces the three previous libraries libic, libpixregion, and
+slim. Thanks to Dave Beckett <dave.beckett@bristol.ac.uk> for all of
+the heavy lifting with this renaming effort.
+
+Conditional compilation of backends
+-----------------------------------
+Cairo now allows optional backends to be disabled at compile time. The
+following options may now be passed to the configure script:
+
+	--disable-xlib
+	--disable-ps
+
+Note that the first option is a change from the old --without-x option
+which will no longer have any effect.
+
+OS X supported - several byte-order issues resolved
+---------------------------------------------------
+Cairo has now been successfully compiled under OS X. Testing revealed
+that there were some byte-order problems in the PostScript backend and
+the PNG generation in the demos. These have now been resolved.
+
+2003-10
+=======
+Graydon Hoare <graydon@redhat.com> implemented the first real text
+support using Freetype/fontconfig, (previous versions of cairo used
+Xft and could only draw text when using an X backend).
+
+2003-09
+=======
+Graydon Hoare <graydon@redhat.com> added the first real support for
+running cairo with a non-render-aware X server.
+
+Jamey Sharp <jamey@minilop.net> virtualized the backend font and
+surface interfaces in September, 2003.
+
+2003-06
+=======
+Xr is renamed cairo to avoid confusion since it no longer had a strict
+dependence on X.
+
+2003-05
+=======
+A new image surface backend is added to Xr. Keith Packard
+<keithp@keithp.com> wrote the image compositing code in libic that is
+used for the image_surface backend. This code was originally written
+as the software fallback for the render extension within the X
+server.
+
+2002-06
+=======
+Carl Worth <cworth@isi.edu> wrote the first lines of Xr, after Keith
+Packard <keithp@keithp.com> proposed the plan for a stateful drawing
+library in C providing a PostScript-like rendering model.

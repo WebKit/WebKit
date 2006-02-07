@@ -1,0 +1,9 @@
+This package uses automake, in order to generate the Makefiles use:
+
+	$ autogen.sh
+
+After that, standard build procedures apply:
+
+	$ make
+	# make install
+

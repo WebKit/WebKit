@@ -1,0 +1,86 @@
+Changes that are expected to impact the public API
+==================================================
+
+ Patch submitted to mailing list?
+/ Documentation included in patch?
+|/ Review of patch completed?
+||/ Test case included?
+|||/ Committed.
+||||/
+Backwards compatible (API additions only)
+-----------------------------------------
+	cairo_begin_group, cairo_end_group, cairo_get_group
+PDR C	cairo_surface_mark_dirty (see below for details)
+PDRTC	Add support for non-antialiased rendering + API
+	Add CAIRO_FILL_RULE_INVERSE_WINDING and CAIRO_FILL_RULE_INVERSE_EVEN_ODD
+	Add cairo_text_glyphs (see below for details)
+	Add support for programmatic patterns, (ie. arbitrary gradients)
+P	Add cairo_arc_to.
+	Add support for custom caps (see below for details)
+	Add support for getting at image data from image surface
+	Add CAIRO_STATUS_DESTROYED
+	Add cairo_finish
+
+Backwards incompatible (API deletions or changes)
+-------------------------------------------------
+PDR C	cairo_surface_finish, cairo_surface_flush
+PDR C	A hidden offset for the xlib backend
+PDR C	Consistent error handling for all objects
+PDRTC	Split cairo_format_t (see below for details)
+P---C	Remove cairo_status_string in favor of cairo_status_to_string
+
+Details on some of the above changes
+------------------------------------
+* cairo_text_glyphs:
+
+	It would function as a sort of bridge between the toy and the
+	real text APIs:
+
+	>       void
+	>       cairo_text_glyphs (cairo_t *cr, const unsigned char *utf8,
+	>                          cairo_glyph_t *glyphs, int *num_glyphs);
+	>
+	> with num_glyphs as an input-output parameter. The behavior of this
+	> function would be such that calling:
+	>
+	>       cairo_text_glyphs (cr, string, glyphs, &num_glyphs);
+	>       cairo_show_glyphs (cr, glyphs, num_glyphs);
+	>
+	> would be equivalent too:
+	>
+	>       cairo_show_text (cr, string);
+	>
+	> as long as the original size of glyphs/num_glyphs was large
+	> enough.
+
+* support for custom caps:
+
+  It would be nice if the user had a mechanism to reliably draw custom
+  caps. One approach here would be to provide the coordinates of the
+  butt cap faces so that the user can append seamless caps to the
+  current path. We may also need to provide the coordinates of the
+  faces of every dash as well.
+
+Changes that do not affect the public API
+=========================================
+* Fix clipping to work for all operators. The equation we have come up
+  with is:
+
+	((src Op dest) In clip) Add (dest Out clip)
+
+* Change stroke code to go through one giant polygon. This will fix
+  problems with stroking self-intersecting paths.
+
+* Fix the intersection problem, (see reference to Hobby's paper
+  mentioned in cairo_traps.c).
+
+* Implement dashing for cairo_curve_to.
+
+* Stroking closed, degenerate paths should still draw caps.  Round
+  caps are easy; square should probably draw an axis-aligned square.
+
+* Should add geometry pruning as appropriate.
+
+* Verification, profiling, optimization.
+
+	centi_unfinished.svg may provide a good test case.

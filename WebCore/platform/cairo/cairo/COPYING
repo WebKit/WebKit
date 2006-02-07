@@ -1,0 +1,17 @@
+Cairo is free software.
+
+Every source file in the implementation of cairo is available to be
+redistributed and/or modified under the terms of either the GNU Lesser
+General Public License (LGPL) version 2.1 or the Mozilla Public
+License (MPL) version 1.1.  Some files are available under more
+liberal terms, but we believe that in all cases, each file may be used
+under either the LGPL or the MPL.
+
+See the following files in this directory for the precise terms and
+conditions of either license:
+
+	COPYING-LGPL-2.1
+	COPYING-MPL-1.1
+
+Please see each file in the implementation for Copyright and licensing
+information.
