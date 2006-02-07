@@ -86,6 +86,7 @@
 #import <JavaScriptCore/jni_jsobject.h>
 #import <JavaScriptCore/npruntime.h>
 #import <JavaScriptCore/object.h>
+#import <JavaScriptCore/date_object.h>
 #import <JavaScriptCore/property_map.h>
 #import <JavaScriptCore/runtime_root.h>
 #import <kxmlcore/Assertions.h>
@@ -103,6 +104,19 @@ using KJS::JSValue;
 using KJS::SavedProperties;
 using KJS::SavedBuiltins;
 using KJS::Window;
+using KJS::BooleanType;
+using KJS::StringType;
+using KJS::NumberType;
+using KJS::ObjectType;
+using KJS::UnspecifiedType;
+using KJS::UndefinedType;
+using KJS::NullType;
+using KJS::GetterSetterType;
+using KJS::UString;
+using KJS::Identifier;
+using KJS::List;
+using KJS::Type;
+using KJS::DateInstance;
 
 using KJS::Bindings::RootObject;
 
@@ -186,6 +200,68 @@ static BOOL hasCaseInsensitivePrefix(NSString *string, NSString *prefix)
 static BOOL isCaseSensitiveEqual(NSString *a, NSString *b)
 {
     return [a caseInsensitiveCompare:b] == NSOrderedSame;
+}
+
+static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsValue)
+{
+    NSAppleEventDescriptor* aeDesc = 0;
+    switch (jsValue->type()) {
+        case BooleanType: {
+            bool value;
+            jsValue->getBoolean(value);
+            aeDesc = [NSAppleEventDescriptor descriptorWithBoolean:value];
+            break;
+        }
+        case StringType: {
+            UString value = jsValue->getString();
+            NSString* str = [NSString stringWithCharacters:reinterpret_cast<const unichar *>(value.data()) length:value.size()];
+            aeDesc = [NSAppleEventDescriptor descriptorWithString:str];
+            break;
+        }
+        case NumberType: {
+            double value = jsValue->getNumber();
+            aeDesc = [NSAppleEventDescriptor descriptorWithDescriptorType:typeIEEE64BitFloatingPoint bytes:&value length:sizeof(value)];
+            break;
+        }
+        case ObjectType: {
+            JSObject* object = jsValue->getObject();
+            if (object->inherits(&DateInstance::info)) {
+                DateInstance* date = static_cast<DateInstance*>(object);
+                double ms = 0;
+                int tzOffset = 0;
+
+                if (date->getTime(ms, tzOffset)) {
+                    CFAbsoluteTime utcSeconds = ms/1000 - kCFAbsoluteTimeIntervalSince1970;
+
+                    LongDateTime ldt;
+                    if (noErr == UCConvertCFAbsoluteTimeToLongDateTime(utcSeconds, &ldt))
+                        aeDesc = [NSAppleEventDescriptor descriptorWithDescriptorType:typeLongDateTime bytes:&ldt length:sizeof(ldt)];
+                }
+            }
+            
+            if (!aeDesc) {
+                JSValue* primitive = object->toPrimitive(exec);
+                if (exec->hadException()) {
+                    exec->clearException();
+                    return [NSAppleEventDescriptor nullDescriptor];
+                }
+                return aeDescFromJSValue(exec, primitive);
+            }
+
+            break;
+        }
+        default:
+            ERROR("Unknown JavaScript type: %d", jsValue->type());
+            // no break;
+        case UnspecifiedType:
+        case UndefinedType:
+        case NullType:
+        case GetterSetterType:
+            aeDesc = [NSAppleEventDescriptor nullDescriptor];
+            break;
+    }
+    
+    return aeDesc;
 }
 
 @implementation WebCoreFrameBridge
@@ -1417,6 +1493,16 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         return 0;
     JSLock lock;
     return result->getString().domString();
+}
+
+- (NSAppleEventDescriptor *)aeDescByEvaluatingJavaScriptFromString:(NSString *)string
+{
+    m_frame->createEmptyDocument();
+    JSValue* result = m_frame->executeScript(0, QString::fromNSString(string), true);
+    if (!result) // FIXME: pass errors
+        return 0;
+    JSLock lock;
+    return aeDescFromJSValue(m_frame->jScript()->interpreter()->globalExec(), result);
 }
 
 - (WebScriptObject *)windowScriptObject

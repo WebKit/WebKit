@@ -46,6 +46,7 @@
 
 #import "TextInputController.h"
 #import "NavigationController.h"
+#import "AppleScriptController.h"
 
 @interface DumpRenderTreePasteboard : NSPasteboard
 @end
@@ -356,6 +357,9 @@ static void dump(void)
     TextInputController *tic = [[TextInputController alloc] initWithWebView:sender];
     [obj setValue:tic forKey:@"textInputController"];
     [tic release];
+    AppleScriptController *asc = [[AppleScriptController alloc] initWithWebView:sender];
+    [obj setValue:asc forKey:@"appleScriptController"];
+    [asc release];
     [obj setValue:navigationController forKey:@"navigationController"];
 }
 

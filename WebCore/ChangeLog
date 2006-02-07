@@ -1,3 +1,17 @@
+2006-02-07  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Timothy.
+
+        Convert JavaScript objects to appropriate AppleScript types, instead of only strings
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7012
+
+        Tests: fast/AppleScript/*
+
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (aeDescFromJSValue):
+        (-[WebCoreFrameBridge aeDescByEvaluatingJavaScriptFromString:]):
+
 2006-02-07  Dave Hyatt <hyatt@apple.com>
 
         Rename ImageDecoderPlugin to ImageDecoder.  Rename

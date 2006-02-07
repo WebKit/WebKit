@@ -1,0 +1,59 @@
+<html>
+<head>
+<title>do JavaScript - converting to AppleScript date type</title>
+</head>
+<body>
+<script type="text/javascript">
+
+    var console_messages = document.createElement("ol");
+    
+    function log(message)
+    {
+        var item = document.createElement("li");
+        item.appendChild(document.createTextNode(message));
+        console_messages.appendChild(item);
+    }
+    if (window.layoutTestController) {
+        
+        try {
+        
+            layoutTestController.dumpAsText();
+
+            // 0xc00d6be5 == Mon Feb 06 2006 21:11:01
+            log(appleScriptController.doJavaScript("new Date(2006,1,6,21,11,1)"));
+
+            // 0x7c4e8f00 == Sun Feb 01 1970 00:00:00
+            log(appleScriptController.doJavaScript("new Date(1970,1,1)"));
+             
+            // 0x7c25dab0 == Thu Jan 01 1970 03:00:00
+            log(appleScriptController.doJavaScript("new Date(1970,0,1,3)"));
+
+            // 0x1383ec400 == Wed Jan 01 2070 00:00:00
+            log(appleScriptController.doJavaScript("new Date(2070,0,1)"));
+            
+            // 0x56871300 == Sun Jan 01 1950 00:00:00
+            log(appleScriptController.doJavaScript("new Date(1950,0,1)"));
+            
+            // 0x00000000 == Fri Jan 01 1904 00:00:00
+            log(appleScriptController.doJavaScript("new Date(1904,0,1)"));
+            
+            // 0xffffffff3c637000 == Wed Jan 01 1800 00:00:00
+            log(appleScriptController.doJavaScript("new Date(1800,0,1)"));
+
+            // invalid date 
+            log(appleScriptController.doJavaScript("new Date(1e40)"));
+
+        } catch (ex) {
+            log("Exception: " + ex.description);
+        }
+
+        var console = document.createElement("p");
+        console.appendChild(console_messages);
+        document.body.appendChild(console);
+        
+    } else {
+        document.write("(cannot run interactively)");
+    }
+</script>
+</body>
+</html>

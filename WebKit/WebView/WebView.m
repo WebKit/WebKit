@@ -2654,6 +2654,11 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return [bridge shouldClose];
 }
 
+- (NSAppleEventDescriptor *)aeDescByEvaluatingJavaScriptFromString:(NSString *)script
+{
+    return [[[self mainFrame] _bridge] aeDescByEvaluatingJavaScriptFromString:script];
+}
+
 @end
 
 @implementation WebView (WebViewPrintingPrivate)

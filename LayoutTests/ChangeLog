@@ -1,3 +1,18 @@
+2006-02-07  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Timothy.
+
+        - tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=7012
+        Convert JavaScript objects to appropriate AppleScript types, instead of only strings
+
+        * fast/AppleScript: Added.
+        * fast/AppleScript/001-expected.txt: Added.
+        * fast/AppleScript/001.html: Added.
+        * fast/AppleScript/array-expected.txt: Added.
+        * fast/AppleScript/array.html: Added.
+        * fast/AppleScript/date-expected.txt: Added.
+        * fast/AppleScript/date.html: Added.
+
 2006-02-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

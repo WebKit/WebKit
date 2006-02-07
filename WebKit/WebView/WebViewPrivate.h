@@ -117,6 +117,13 @@ typedef enum {
 
 - (BOOL)shouldClose;
 
+/*!
+    @method aeDescByEvaluatingJavaScriptFromString:
+    @param script The text of the JavaScript.
+    @result The result of the script, converted to an NSAppleEventDescriptor, or nil for failure.
+*/
+- (NSAppleEventDescriptor *)aeDescByEvaluatingJavaScriptFromString:(NSString *)script;
+
 @end
 
 @interface WebView (WebPrivate)

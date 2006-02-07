@@ -1,3 +1,16 @@
+2006-02-07  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Timothy.
+
+        Convert JavaScript objects to appropriate AppleScript types, instead of only strings
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7012
+
+        Tests: fast/AppleScript/*
+
+        * WebView/WebView.m:
+        (-[WebView aeDescByEvaluatingJavaScriptFromString:]): Added.
+        * WebView/WebViewPrivate.h:
+
 2006-02-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

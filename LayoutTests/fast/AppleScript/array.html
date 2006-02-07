@@ -1,0 +1,39 @@
+<html>
+<head>
+<title>do JavaScript - converting JavaScript arrays to AppleScript</title>
+</head>
+<body>
+At the moment, toString() is just used. Perhaps, some arrays should be converted to AppleScript lists.
+<script type="text/javascript">
+
+    var console_messages = document.createElement("ol");
+    
+    function log(message)
+    {
+        var item = document.createElement("li");
+        item.appendChild(document.createTextNode(message));
+        console_messages.appendChild(item);
+    }
+    if (window.layoutTestController) {
+        
+        try {
+        
+            layoutTestController.dumpAsText();
+            
+            log(appleScriptController.doJavaScript("new Array(1, 2, 'three');"));
+            log(appleScriptController.doJavaScript("arr = new Array; arr['a'] = 'a'; arr[2] = 2; arr;"));
+            
+        } catch (ex) {
+            log("Exception: " + ex.description);
+        }
+
+        var console = document.createElement("p");
+        console.appendChild(console_messages);
+        document.body.appendChild(console);
+        
+    } else {
+        document.write("(cannot run interactively)");
+    }
+</script>
+</body>
+</html>

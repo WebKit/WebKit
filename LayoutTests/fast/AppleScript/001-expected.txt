@@ -1,0 +1,22 @@
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > BODY > HTML > #document to 65 of #text > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+An automated test for basic AppleScript "do JavaScript" support.
+4 ('doub')
+4 ('doub')
+0.6666666666666666 ('doub')
+0.6666666666666666 ('doub')
+INF ('doub')
+-INF ('doub')
+false ('bool')
+false ('bool')
+a string ('utxt')
+a string ('utxt')
+An automated test for basic AppleScript "do JavaScript" support. ('utxt')
+An automated test for basic AppleScript "do JavaScript" support. ('utxt')
+[object HTMLDocument] ('utxt')
+do JavaScript - converting to AppleScript types ('utxt')
+<> ('null')
+(null)
+[object Object] ('utxt')
+
+

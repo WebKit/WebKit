@@ -60,6 +60,8 @@
 		AE8259F408D22463000507AB /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE8257EF08D22389000507AB /* Carbon.framework */; };
 		B5A752A008AF5CD400138E45 /* ImageDiff.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A7525808AF4A3600138E45 /* ImageDiff.m */; };
 		B5A752A208AF5D1F00138E45 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5A752A108AF5D1F00138E45 /* QuartzCore.framework */; };
+		E1330800099624DA00AC0A91 /* AppleScriptController.h in Headers */ = {isa = PBXBuildFile; fileRef = E13307FE099624DA00AC0A91 /* AppleScriptController.h */; };
+		E1330801099624DA00AC0A91 /* AppleScriptController.m in Sources */ = {isa = PBXBuildFile; fileRef = E13307FF099624DA00AC0A91 /* AppleScriptController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -124,6 +126,8 @@
 		B5A7525808AF4A3600138E45 /* ImageDiff.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = ImageDiff.m; sourceTree = "<group>"; };
 		B5A7526708AF4A4A00138E45 /* ImageDiff */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ImageDiff; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5A752A108AF5D1F00138E45 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
+		E13307FE099624DA00AC0A91 /* AppleScriptController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppleScriptController.h; sourceTree = "<group>"; };
+		E13307FF099624DA00AC0A91 /* AppleScriptController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppleScriptController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -172,6 +176,8 @@
 				32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */,
 				93442CF408F8BA4900BFE8CA /* TextInputController.h */,
 				93442CF508F8BA4900BFE8CA /* TextInputController.m */,
+				E13307FE099624DA00AC0A91 /* AppleScriptController.h */,
+				E13307FF099624DA00AC0A91 /* AppleScriptController.m */,
 				B5A7525808AF4A3600138E45 /* ImageDiff.m */,
 				9335435F03D75502008635CE /* WebKit.framework */,
 				A817090308B164D300CCB9FB /* JavaScriptCore.framework */,
@@ -225,6 +231,7 @@
 				9340994C08540CAE007F3BC8 /* DumpRenderTreePrefix.h in Headers */,
 				93442CF608F8BA4900BFE8CA /* TextInputController.h in Headers */,
 				14A6FB8A0971CAE5008B014F /* NavigationController.h in Headers */,
+				E1330800099624DA00AC0A91 /* AppleScriptController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -414,6 +421,7 @@
 				9340994E08540CAE007F3BC8 /* DumpRenderTree.m in Sources */,
 				93442CF708F8BA4900BFE8CA /* TextInputController.m in Sources */,
 				14A6FB8B0971CAE5008B014F /* NavigationController.m in Sources */,
+				E1330801099624DA00AC0A91 /* AppleScriptController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
