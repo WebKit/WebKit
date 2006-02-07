@@ -1,3 +1,11 @@
+2006-02-06  David Harrison  <harrison@apple.com>
+
+        Suggested by Darin.
+        
+        * khtml/html/HTMLElementImpl.cpp:
+        (WebCore::HTMLElementImpl::createContextualFragment):
+        - make nextChild a RefPtr to survive possible DOM changes
+
 2006-02-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by John and Adele

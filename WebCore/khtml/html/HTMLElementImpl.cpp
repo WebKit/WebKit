@@ -274,7 +274,7 @@ DocumentFragmentImpl *HTMLElementImpl::createContextualFragment(const DOMString 
             NodeImpl *firstChild = node->firstChild();
             if (firstChild)
                 nextNode = firstChild;
-            NodeImpl *nextChild;
+            RefPtr<NodeImpl> nextChild;
             for (RefPtr<NodeImpl> child = firstChild; child; child = nextChild) {
                 nextChild = child->nextSibling();
                 node->removeChild(child.get(), ignoredExceptionCode);
