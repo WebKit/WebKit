@@ -1,3 +1,29 @@
+2006-02-06  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - Refactor DateInstance to provide direct access to data. Several WIN32 modifications.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7107
+
+        - No tests added - only changed functionality on WIN32, which should be covered by 
+        existing tests.
+
+        * kjs/date_object.cpp:
+        (gmtoffset): On WIN32, use the recommended global (_timezone rather than timezone).
+        Updated comments. 
+        (KJS::timeZoneOffset): Removed, was basically the same as the above.
+        (KJS::formatTime): Pass an UTC flag - UTC/local cannot be correctly selected on
+        Windows based on struct tm itself.
+        (KJS::DateInstance::getTime): Added.
+        (KJS::DateInstance::getUTCTime): Added.
+        (KJS::millisecondsToTM): Factored out from DateProtoFunc::callAsFunction().
+        (KJS::DateObjectImp::callAsFunction): Use the new parameter to formatTime().
+        (KJS::DateProtoFunc::callAsFunction): Updated for the other changes. The code for
+        GetTimezoneOffset was incorrect on WIN32 - _daylight global has nothing to do
+        with daylight savings time being in effect.
+
+        * kjs/date_object.h: Added prototypes for new functions.
+
 2006-02-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.

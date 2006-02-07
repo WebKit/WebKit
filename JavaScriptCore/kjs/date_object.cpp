@@ -65,8 +65,9 @@
 inline int gmtoffset(const tm& t)
 {
 #if WIN32
-    // FIXME: This might not be completely correct if the time is not the current timezone.
-    return -(timezone / 60 - (t.tm_isdst > 0 ? 60 : 0 )) * 60;
+    // Time is supposed to be in the current timezone.
+    // FIXME: Use undocumented _dstbias?
+    return -(_timezone / 60 - (t.tm_isdst > 0 ? 60 : 0 )) * 60;
 #else
     return t.tm_gmtoff;
 #endif
@@ -140,6 +141,7 @@ static const char * const monthName[12] = { "Jan", "Feb", "Mar", "Apr", "May", "
 static double makeTime(tm *, double ms, bool utc);
 static double parseDate(const UString &);
 static double timeClip(double);
+static void millisecondsToTM(double milli, bool utc, tm *t);
 
 #if __APPLE__
 
@@ -226,10 +228,13 @@ static UString formatDateUTCVariant(const tm &t)
     return buffer;
 }
 
-static UString formatTime(const tm &t)
+static UString formatTime(const tm &t, bool utc)
 {
     char buffer[100];
-    if (gmtoffset(t) == 0) {
+    if (utc) {
+#if !WIN32
+        ASSERT(t.tm_gmtoff == 0);
+#endif
         snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT", t.tm_hour, t.tm_min, t.tm_sec);
     } else {
         int offset = abs(gmtoffset(t));
@@ -299,24 +304,6 @@ static int weekDay(double t)
     if (wd < 0)
         wd += 7;
     return wd;
-}
-
-static long timeZoneOffset(const tm &t)
-{
-#if !WIN32
-    return -(t.tm_gmtoff / 60);
-#else
-#  if __BORLANDC__ || __CYGWIN__
-// FIXME: Can't be right because time zone is supposed to be from the parameter, not the computer.
-// FIXME: consider non one-hour DST change.
-#    if !__CYGWIN__
-#      error please add daylight savings offset here!
-#    endif
-    return _timezone / 60 - (t.tm_isdst > 0 ? 60 : 0);
-#  else
-    return timezone / 60 - (t.tm_isdst > 0 ? 60 : 0 );
-#  endif
-#endif
 }
 
 // Converts a list of arguments sent to a Date member function into milliseconds, updating
@@ -397,6 +384,91 @@ DateInstance::DateInstance(JSObject *proto)
   : JSObject(proto)
 {
 }
+
+bool DateInstance::getTime(tm &t, int &offset) const
+{
+    double milli = internalValue()->getNumber();
+    if (isNaN(milli))
+        return false;
+    
+    millisecondsToTM(milli, false, &t);
+    offset = gmtoffset(t);
+    return true;
+}
+
+bool DateInstance::getUTCTime(tm &t) const
+{
+    double milli = internalValue()->getNumber();
+    if (isNaN(milli))
+        return false;
+    
+    millisecondsToTM(milli, true, &t);
+    return true;
+}
+
+bool DateInstance::getTime(double &milli, int &offset) const
+{
+    milli = internalValue()->getNumber();
+    if (isNaN(milli))
+        return false;
+    
+    tm t;
+    millisecondsToTM(milli, false, &t);
+    offset = gmtoffset(t);
+    return true;
+}
+
+bool DateInstance::getUTCTime(double &milli) const
+{
+    milli = internalValue()->getNumber();
+    if (isNaN(milli))
+        return false;
+    
+    return true;
+}
+
+static inline bool isTime_tSigned()
+{
+    time_t minusOne = (time_t)(-1);
+    return minusOne < 0;
+}
+
+static void millisecondsToTM(double milli, bool utc, tm *t)
+{
+  // check whether time value is outside time_t's usual range
+  // make the necessary transformations if necessary
+  static bool time_tIsSigned = isTime_tSigned();
+  static double time_tMin = (time_tIsSigned ? - (double)(1ULL << (8 * sizeof(time_t) - 1)) : 0);
+  static double time_tMax = (time_tIsSigned ? (1ULL << 8 * sizeof(time_t) - 1) - 1 : 2 * (double)(1ULL << 8 * sizeof(time_t) - 1) - 1);
+  int realYearOffset = 0;
+  double milliOffset = 0.0;
+  double secs = floor(milli / msPerSecond);
+
+  if (secs < time_tMin || secs > time_tMax) {
+    // ### ugly and probably not very precise
+    int realYear = yearFromTime(milli);
+    int base = daysInYear(realYear) == 365 ? 2001 : 2000;
+    milliOffset = timeFromYear(base) - timeFromYear(realYear);
+    milli += milliOffset;
+    realYearOffset = realYear - base;
+  }
+
+  time_t tv = (time_t) floor(milli / msPerSecond);
+
+  *t = *(utc ? gmtime(&tv) : localtime(&tv));
+  // We had an out of range year. Restore the year (plus/minus offset
+  // found by calculating tm_year) and fix the week day calculation.
+  if (realYearOffset != 0) {
+    t->tm_year += realYearOffset;
+    milli -= milliOffset;
+    // Do our own weekday calculation. Use time zone offset to handle local time.
+    double m = milli;
+    if (!utc)
+      m += gmtoffset(*t) * msPerSecond;
+    t->tm_wday = weekDay(m);
+  }
+}    
+
 
 // ------------------------------ DatePrototype -----------------------------
 
@@ -480,12 +552,6 @@ bool DateProtoFunc::implementsCall() const
     return true;
 }
 
-static bool isTime_tSigned()
-{
-    time_t minusOne = (time_t)(-1);
-    return minusOne < 0;
-}
-
 JSValue *DateProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
   if (!thisObj->inherits(&DateInstance::info))
@@ -530,52 +596,24 @@ JSValue *DateProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
     }
   }
   
-  // check whether time value is outside time_t's usual range
-  // make the necessary transformations if necessary
-  static bool time_tIsSigned = isTime_tSigned();
-  static double time_tMin = (time_tIsSigned ? - (double)(1ULL << (8 * sizeof(time_t) - 1)) : 0);
-  static double time_tMax = (time_tIsSigned ? (1ULL << 8 * sizeof(time_t) - 1) - 1 : 2 * (double)(1ULL << 8 * sizeof(time_t) - 1) - 1);
-  int realYearOffset = 0;
-  double milliOffset = 0.0;
   double secs = floor(milli / msPerSecond);
+  double ms = milli - secs * msPerSecond;
 
-  if (secs < time_tMin || secs > time_tMax) {
-    // ### ugly and probably not very precise
-    int realYear = yearFromTime(milli);
-    int base = daysInYear(realYear) == 365 ? 2001 : 2000;
-    milliOffset = timeFromYear(base) - timeFromYear(realYear);
-    milli += milliOffset;
-    realYearOffset = realYear - base;
-  }
-
-  time_t tv = (time_t) floor(milli / msPerSecond);
-  double ms = milli - tv * msPerSecond;
-
-  tm t = *(utc ? gmtime(&tv) : localtime(&tv));
-  // We had an out of range year. Restore the year (plus/minus offset
-  // found by calculating tm_year) and fix the week day calculation.
-  if (realYearOffset != 0) {
-    t.tm_year += realYearOffset;
-    milli -= milliOffset;
-    // Do our own weekday calculation. Use time zone offset to handle local time.
-    double m = milli;
-    if (!utc)
-      m -= timeZoneOffset(t) * msPerMinute;
-    t.tm_wday = weekDay(m);
-  }
+  tm t;
+  millisecondsToTM(milli, utc, &t);
 
   switch (id) {
   case ToString:
-    return jsString(formatDate(t) + " " + formatTime(t));
+    return jsString(formatDate(t) + " " + formatTime(t, utc));
   case ToDateString:
     return jsString(formatDate(t));
     break;
   case ToTimeString:
-    return jsString(formatTime(t));
+    return jsString(formatTime(t, utc));
     break;
   case ToGMTString:
   case ToUTCString:
-    return jsString(formatDateUTCVariant(t) + " " + formatTime(t));
+    return jsString(formatDateUTCVariant(t) + " " + formatTime(t, utc));
     break;
 #if __APPLE__
   case ToLocaleString:
@@ -626,18 +664,7 @@ JSValue *DateProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
   case GetMilliSeconds:
     return jsNumber(ms);
   case GetTimezoneOffset:
-#if !WIN32
-    return jsNumber(-t.tm_gmtoff / 60);
-#else
-#  if __BORLANDC__
-#error please add daylight savings offset here!
-    // FIXME: Using the daylight value was wrong for BSD, maybe wrong here too.
-    return jsNumber(_timezone / 60 - (_daylight ? 60 : 0));
-#  else
-    // FIXME: Using the daylight value was wrong for BSD, maybe wrong here too.
-    return jsNumber(( timezone / 60 - (daylight ? 60 : 0 )));
-#  endif
-#endif
+    return jsNumber(-gmtoffset(t) / 60);
   case SetTime:
     milli = roundValue(exec, args[0]);
     result = jsNumber(milli);
@@ -778,7 +805,7 @@ JSValue *DateObjectImp::callAsFunction(ExecState * /*exec*/, JSObject * /*thisOb
 {
     time_t t = time(0);
     tm ts = *localtime(&t);
-    return jsString(formatDate(ts) + " " + formatTime(ts));
+    return jsString(formatDate(ts) + " " + formatTime(ts, false));
 }
 
 // ------------------------------ DateObjectFuncImp ----------------------------
