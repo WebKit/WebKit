@@ -1781,10 +1781,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\IntPoint.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\platform\IntPoint.h"
 				>
 			</File>

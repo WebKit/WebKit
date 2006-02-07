@@ -1,3 +1,15 @@
+2006-02-07  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Removed ImageSubset, making ImageViewer link directly to WebCore.
+
+        * Viewer.vcproj:
+        * WebCore.vcproj/ImageSubset: Removed.
+        * WebCore.vcproj/ImageSubset/ImageSubset.vcproj: Removed.
+        * WebCore.vcproj/WebCore.sln:
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+
 2006-02-07  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by darin.

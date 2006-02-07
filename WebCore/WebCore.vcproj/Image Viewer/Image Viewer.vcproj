@@ -68,7 +68,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\ImageSubset.intermediate\ImageSubset.lib&quot;&#x0D;&#x0A;"
+				AdditionalOptions="&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\WebCore.lib&quot;&#x0D;&#x0A;&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\JavaScriptCore.lib&quot;"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -151,7 +151,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\ImageSubset.intermediate\ImageSubset.lib&quot;&#x0D;&#x0A;"
+				AdditionalOptions="&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\WebCore.lib&quot;&#x0D;&#x0A;&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\JavaScriptCore.lib&quot;"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
