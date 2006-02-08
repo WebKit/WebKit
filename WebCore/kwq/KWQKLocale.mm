@@ -28,7 +28,7 @@
 
 #import "KWQExceptions.h"
 #import "KWQLogging.h"
-#import "KWQString.h"
+#import "QString.h"
 #import "WebCoreViewFactory.h"
 
 QString inputElementAltText()

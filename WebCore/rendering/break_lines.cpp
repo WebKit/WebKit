@@ -23,7 +23,7 @@
 #include "config.h"
 #include "break_lines.h"
 
-#include <qstring.h>
+#include <QString.h>
 
 #if __APPLE__
 #include <CoreServices/CoreServices.h>

@@ -25,7 +25,7 @@
 
 #ifdef __cplusplus
 
-#include "KWQString.h"
+#include "QString.h"
 #include "KWQTextStream.h"
 #include "render_object.h"
 

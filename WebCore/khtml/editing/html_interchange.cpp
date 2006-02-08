@@ -26,7 +26,7 @@
 #include "config.h"
 #include "html_interchange.h"
 
-#include <qstring.h>
+#include <QString.h>
 #include "visible_text.h"
 
 using khtml::isCollapsibleWhitespace;

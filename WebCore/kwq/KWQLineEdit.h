@@ -26,7 +26,7 @@
 #ifndef QLINEEDIT_H_
 #define QLINEEDIT_H_
 
-#include "KWQString.h"
+#include "QString.h"
 #include "KWQWidget.h"
 #include "KWQPainter.h"
 

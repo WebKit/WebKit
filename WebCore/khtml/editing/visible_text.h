@@ -30,7 +30,7 @@
 #include "InlineTextBox.h"
 #include <kxmlcore/Vector.h>
 
-#include <qstring.h>
+#include <QString.h>
 
 namespace khtml {
 

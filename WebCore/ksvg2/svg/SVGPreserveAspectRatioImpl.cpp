@@ -22,7 +22,7 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-#include <qstring.h>
+#include <QString.h>
 #include <qstringlist.h>
 
 #include "StringImpl.h"

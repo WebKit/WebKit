@@ -35,7 +35,7 @@
 #include "dom_qname.h"
 #include "xml_tokenizer.h"
 #include <qptrqueue.h>
-#include <qstring.h>
+#include <QString.h>
 
 class HTMLParser;
 

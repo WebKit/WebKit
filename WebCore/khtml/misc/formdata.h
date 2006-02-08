@@ -21,7 +21,7 @@
 #ifndef KHTML_FORM_DATA_H
 #define KHTML_FORM_DATA_H
 
-#include <qstring.h>
+#include <QString.h>
 #include <qvaluelist.h>
 
 class QCString;

@@ -26,7 +26,7 @@
 #ifndef QSTRINGLIST_H_
 #define QSTRINGLIST_H_
 
-#include "KWQString.h"
+#include "QString.h"
 #include "KWQValueList.h"
 
 #ifdef __OBJC__

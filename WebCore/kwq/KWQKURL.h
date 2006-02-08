@@ -26,7 +26,7 @@
 #ifndef KURL_H_
 #define KURL_H_
 
-#include "KWQString.h"
+#include "QString.h"
 
 class QTextCodec;
 

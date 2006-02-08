@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "KWQString.h"
+#include "QString.h"
 #include "AtomicString.h"
 
 #ifdef __OBJC__

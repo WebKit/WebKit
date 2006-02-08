@@ -26,7 +26,7 @@
 #include <kxmlcore/HashMap.h>
 #include <qguardedptr.h>
 #include <qobject.h>
-#include <qstring.h>
+#include <QString.h>
 
 namespace WebCore {
     class AtomicString;

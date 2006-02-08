@@ -26,7 +26,7 @@
 #include "config.h"
 #include "Color.h"
 
-#include "KWQString.h"
+#include "QString.h"
 #include <kxmlcore/Assertions.h>
 
 // Turn off inlining to avoid warning with newer gcc.

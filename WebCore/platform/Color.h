@@ -26,7 +26,7 @@
 #ifndef COLOR_H_
 #define COLOR_H_
 
-#include "KWQString.h"
+#include "QString.h"
 
 #if __APPLE__
 #ifdef __OBJC__

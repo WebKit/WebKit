@@ -41,7 +41,7 @@
 #include "render_frames.h"
 #include "render_image.h"
 #include <java/kjavaappletwidget.h>
-#include <qstring.h>
+#include <QString.h>
 #include "htmlnames.h"
 
 namespace WebCore {

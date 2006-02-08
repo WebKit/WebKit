@@ -20,7 +20,7 @@
 #include "config.h"
 #if SVG_SUPPORT
 #include "svgpathparser.h"
-#include <qstring.h>
+#include <QString.h>
 #include <math.h>
 
 using namespace KSVG;

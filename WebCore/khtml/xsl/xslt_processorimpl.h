@@ -32,7 +32,7 @@
 #include <libxml/parserInternals.h>
 #include <libxslt/documents.h>
 #include <libxslt/transform.h>
-#include <qstring.h>
+#include <QString.h>
 
 #include <kxmlcore/HashMap.h>
 

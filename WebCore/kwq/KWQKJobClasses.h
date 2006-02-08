@@ -28,7 +28,7 @@
 
 #include <kxmlcore/HashMap.h>
 #include "KWQObject.h"
-#include "KWQString.h"
+#include "QString.h"
 #include "KWQKURL.h"
 #include "PlatformString.h"
 

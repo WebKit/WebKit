@@ -27,7 +27,7 @@
 
 #include "PlatformString.h"
 
-#include <qstring.h>
+#include <QString.h>
 #include <qvaluelist.h>
 
 #include <assert.h>

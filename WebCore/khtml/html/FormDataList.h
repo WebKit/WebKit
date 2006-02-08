@@ -27,7 +27,7 @@
 #ifndef HTML_FormDataList_h
 #define HTML_FormDataList_h
 
-#include <qstring.h>
+#include <QString.h>
 #include <qvaluelist.h>
 #include "PlatformString.h"
 

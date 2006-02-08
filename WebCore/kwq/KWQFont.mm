@@ -27,7 +27,7 @@
 #import "KWQFont.h"
 
 #import "KWQExceptions.h"
-#import "KWQString.h"
+#import "QString.h"
 #import "KWQFoundationExtras.h"
 #import "WebCoreTextRendererFactory.h"
 

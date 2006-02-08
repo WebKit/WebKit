@@ -30,7 +30,7 @@
 #include "PlatformString.h"
 #include <kio/global.h>
 #include <qptrlist.h>
-#include <qstring.h>
+#include <QString.h>
 
 class KURL;
 

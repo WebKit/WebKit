@@ -27,7 +27,7 @@
 #define QTEXTCODEC_H_
 
 #include "KWQCharsets.h"
-#include "KWQString.h"
+#include "QString.h"
 #include "KWQCString.h"
 
 class QTextDecoder;

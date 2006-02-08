@@ -33,7 +33,7 @@
 #import <JavaScriptCore/debugger.h>
 #import <JavaScriptCore/context.h>
 
-#import "KWQString.h"
+#import "QString.h"
 
 using namespace KJS;
 

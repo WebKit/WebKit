@@ -22,7 +22,7 @@
 #ifndef _CSS_cssparser_h_
 #define _CSS_cssparser_h_
 
-#include <qstring.h>
+#include <QString.h>
 #include "Color.h"
 #include "String.h"
 #include "AtomicString.h"

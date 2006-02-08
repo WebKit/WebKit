@@ -25,7 +25,7 @@
 #if SVG_SUPPORT
 
 #include "Color.h"
-#include <qstring.h>
+#include <QString.h>
 
 class KConfig;
 struct KPerDomainSettings;

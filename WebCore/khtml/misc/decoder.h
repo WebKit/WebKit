@@ -22,7 +22,7 @@
 #ifndef KHTMLDECODER_H
 #define KHTMLDECODER_H
 
-#include <qstring.h>
+#include <QString.h>
 class QTextCodec;
 class QTextDecoder;
 

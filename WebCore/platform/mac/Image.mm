@@ -30,7 +30,7 @@
 #import "FloatRect.h"
 #import "Image.h"
 #import "PDFDocumentImage.h"
-#import <qstring.h>
+#import <QString.h>
 
 #import "WebCoreImageRendererFactory.h"
 

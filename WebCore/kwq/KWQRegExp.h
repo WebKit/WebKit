@@ -26,7 +26,7 @@
 #ifndef QREGEXP_H_
 #define QREGEXP_H_
 
-#include "KWQString.h"
+#include "QString.h"
 
 #include <kxmlcore/RefPtr.h>
 

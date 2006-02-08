@@ -26,7 +26,7 @@
 #ifndef KHTML_EDITING_VISIBLE_POSITION_H
 #define KHTML_EDITING_VISIBLE_POSITION_H
 
-#include <qstring.h> // for QChar
+#include <QString.h> // for QChar
 #include <kxmlcore/PassRefPtr.h>
 
 #include "xml/dom_position.h"

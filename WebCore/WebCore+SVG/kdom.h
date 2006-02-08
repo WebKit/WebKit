@@ -27,7 +27,7 @@
 
 #include <kdebug.h>
 
-#include <qstring.h>
+#include <QString.h>
 
 #include "PlatformString.h"
 

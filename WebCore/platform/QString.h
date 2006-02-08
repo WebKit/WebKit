@@ -428,7 +428,7 @@ public:
     static QString fromUtf8(const char *, int len);
 #if __APPLE__
     static QString fromCFString(CFStringRef);
-    static QString fromNSString(NSString *);
+    static QString fromNSString(NSString*);
 #endif
     QString &operator=(char);
     QString &operator=(QChar);

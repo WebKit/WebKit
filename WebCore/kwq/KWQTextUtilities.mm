@@ -26,7 +26,7 @@
 #include "config.h"
 #import "KWQTextUtilities.h"
 
-#import "KWQString.h"
+#import "QString.h"
 #import <AppKit/NSAttributedString.h>
 #import <unicode/ubrk.h>
 #import <unicode/ustring.h>

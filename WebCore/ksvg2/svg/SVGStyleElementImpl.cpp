@@ -29,7 +29,7 @@
 
 #include "SVGStyleElementImpl.h"
 
-#include <qstring.h>
+#include <QString.h>
 
 using namespace KSVG;
 

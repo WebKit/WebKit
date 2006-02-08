@@ -29,7 +29,7 @@
 #include "KWQNamespace.h"
 #include "KWQRegion.h"
 #include "IntPointArray.h"
-#include "KWQString.h"
+#include "QString.h"
 
 #ifdef __OBJC__
 @class NSEvent;

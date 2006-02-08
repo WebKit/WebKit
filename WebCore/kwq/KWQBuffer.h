@@ -29,7 +29,7 @@
 #include "KWQDef.h"
 
 #include "Array.h"
-#include "KWQString.h"
+#include "QString.h"
 #include "KWQIODevice.h"
 
 class QBuffer {

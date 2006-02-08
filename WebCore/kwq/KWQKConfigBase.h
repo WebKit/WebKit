@@ -26,7 +26,7 @@
 #ifndef KCONFIG_H_
 #define KCONFIG_H_
 
-#include "KWQString.h"
+#include "QString.h"
 #include "KWQKHTMLSettings.h"
 
 class QStringList;

@@ -31,7 +31,7 @@
 #import "KWQLoader.h"
 #import "KWQLogging.h"
 #import "KWQResourceLoader.h"
-#import "KWQString.h"
+#import "QString.h"
 #import "PlatformString.h"
 #import "formdata.h"
 

@@ -26,7 +26,7 @@
 #ifndef KDEBUG_H_
 #define KDEBUG_H_
 
-#include "KWQString.h"
+#include "QString.h"
 #include "KWQTextStream.h"
 
 #define                k_funcinfo      "[" << __FILE__ << ":" << __LINE__ << "] "

@@ -27,7 +27,7 @@
 #include "Shared.h"
 #include <kxmlcore/RefPtr.h>
 #include <limits.h>
-#include <qstring.h>
+#include <QString.h>
 
 #if __APPLE__
 #include <CoreFoundation/CoreFoundation.h>

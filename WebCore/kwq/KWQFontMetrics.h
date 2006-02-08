@@ -28,7 +28,7 @@
 
 #include "IntRect.h"
 #include "IntSize.h"
-#include "KWQString.h"
+#include "QString.h"
 
 class QFont;
 class QFontMetricsPrivate;

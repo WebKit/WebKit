@@ -26,7 +26,7 @@
 #include "config.h"
 #include "dom_position.h"
 
-#include <qstring.h>
+#include <QString.h>
 
 #include "css_computedstyle.h"
 #include "css_valueimpl.h"

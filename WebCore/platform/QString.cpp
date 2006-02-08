@@ -24,182 +24,18 @@
  */
 
 #include "config.h"
-#import "KWQString.h"
+#include "QString.h"
 
-#import "KWQLogging.h"
-#import "KWQRegExp.h"
-#import "KWQTextCodec.h"
-#import <Foundation/Foundation.h>
-#import <JavaScriptCore/dtoa.h>
-#import <stdio.h>
+#include "KWQLogging.h"
+#include "KWQRegExp.h"
+#include "KWQTextCodec.h"
+#include <JavaScriptCore/dtoa.h>
+#include <stdio.h>
 
 #define CHECK_FOR_HANDLE_LEAKS 0
 
 #define ALLOC_QCHAR_GOOD_SIZE(X) (X)
 #define ALLOC_CHAR_GOOD_SIZE(X) (X)
-
-#ifdef QSTRING_DEBUG_ALLOCATIONS
-
-#import <pthread.h>
-#import <mach/mach_types.h>
-
-static CFMutableDictionaryRef allocatedBuffers = 0;
-#define ALLOCATION_HISTOGRAM_SIZE 128
-static uint allocationHistogram[ALLOCATION_HISTOGRAM_SIZE];
-
-static uint stackInstances = 0;
-static uint heapInstances = 0;
-static uint stringDataInstances = 0;
-static uint stringDataHeapInstances = 0;
-static uint stringDataDetachments = 0;
-static uint handleInstances = 0;
-
-static bool isOnStack(void *ptr)
-{
-    void *address;
-    size_t size;
-    pthread_t thisThread = pthread_self();
-    
-    size = pthread_get_stacksize_np(thisThread);
-    address = pthread_get_stackaddr_np(thisThread);
-    if (ptr >= (void *)(((char *)address) - size) &&
-        ptr <= address)
-        return true;
-    return false;
-}
-
-static void countInstance(void *ptr)
-{
-    if (isOnStack(ptr))
-        stackInstances++;
-    else
-        heapInstances++;
-}
-
-static CFMutableDictionaryRef allocatedBuffers()
-{
-    if (allocatedBuffers == 0){
-        for (int i = 0; i < ALLOCATION_HISTOGRAM_SIZE; i++)
-            allocationHistogram[i] = 0;
-        allocatedBuffers = CFDictionaryCreateMutable (kCFAllocatorDefault, 1024*8, 0, 0);
-    }
-    return allocatedBuffers;
-}
-
-static char *ALLOC_CHAR(int n)
-{
-    char *ptr = (char *)fastMalloc(n);
-
-    CFDictionarySetValue (allocatedBuffers(), ptr, (void *)n);
-    
-    if (n >= ALLOCATION_HISTOGRAM_SIZE)
-        allocationHistogram[ALLOCATION_HISTOGRAM_SIZE-1]++;
-    else
-        allocationHistogram[n]++;
-    return ptr;
-}
-
-static char *REALLOC_CHAR(void *p, int n)
-{
-    char *ptr = (char *)fastRealloc(p, n);
-
-    CFDictionaryRemoveValue (allocatedBuffers(), p);
-    CFDictionarySetValue (allocatedBuffers(), ptr, (const void *)(n));
-    if (n >= ALLOCATION_HISTOGRAM_SIZE)
-        allocationHistogram[ALLOCATION_HISTOGRAM_SIZE-1]++;
-    else
-        allocationHistogram[n]++;
-    return ptr;
-}
-
-static void DELETE_CHAR(void *p)
-{
-    CFDictionaryRemoveValue (allocatedBuffers(), p);
-    fastFree(p);
-}
-
-static QChar *ALLOC_QCHAR(int n)
-{
-    size_t size = (sizeof(QChar)*( n ));
-    QChar *ptr = (QChar *)fastMalloc(size);
-
-    CFDictionarySetValue (allocatedBuffers(), ptr, (const void *)size);
-    if (size >= ALLOCATION_HISTOGRAM_SIZE)
-        allocationHistogram[ALLOCATION_HISTOGRAM_SIZE-1]++;
-    else
-        allocationHistogram[size]++;
-    return ptr;
-}
-
-static QChar *REALLOC_QCHAR(void *p, int n)
-{
-    size_t size = (sizeof(QChar)*( n ));
-    QChar *ptr = (QChar *)fastRealloc(p, size);
-
-    CFDictionaryRemoveValue (allocatedBuffers(), p);
-    CFDictionarySetValue (allocatedBuffers(), ptr, (const void *)size);
-    if (size >= ALLOCATION_HISTOGRAM_SIZE)
-        allocationHistogram[ALLOCATION_HISTOGRAM_SIZE-1]++;
-    else
-        allocationHistogram[size]++;
-        
-    return ptr;
-}
-
-static void DELETE_QCHAR(void *p)
-{
-    CFDictionaryRemoveValue (allocatedBuffers(), p);
-    fatFree(p);
-}
-
-void _printQStringAllocationStatistics()
-{
-    const void **values;
-    const void **keys;
-    int j, i, count;
-    int totalSize = 0;
-    int totalAllocations = 0;
-    
-    count = (int)CFDictionaryGetCount(allocatedBuffers());
-    values = (const void **)fastMalloc(count*sizeof(void *));
-    keys = (const void **)fastMalloc(count*sizeof(void *));
-
-    CFDictionaryGetKeysAndValues (allocatedBuffers(), keys, values);
-    printf ("Leaked strings:\n");
-    for (i = 0; i < count; i++){
-        char *cp = (char *)keys[i];
-        printf ("%04d:  0x%08x size %d \"", i, (unsigned int)keys[i], (unsigned int)values[i]);
-        for (j = 0; j < MIN ((int)values[i], 64); j++){
-            if (isprint(*cp))
-                putchar (*cp);
-            cp++;
-        }
-        printf ("\"\n");
-        totalSize += (int)values[i];
-    }
-    printf ("Total leak %d\n", totalSize);
-    
-    printf ("\nString size histogram:\n");
-    for (i = 0; i < ALLOCATION_HISTOGRAM_SIZE; i++){
-        if (allocationHistogram[i])
-            printf ("[%d] = %d\n", i, allocationHistogram[i]);
-        totalAllocations += allocationHistogram[i];
-    }
-    printf ("Total allocations %d\n", totalAllocations);
-    
-    printf ("\nQString instance counts:\n");
-    printf ("QString stack allocated instances %d\n", stackInstances);
-    printf ("QString heap allocated instances %d\n", heapInstances);
-    printf ("KWQStringData instances %d\n", stringDataInstances);
-    printf ("KWQStringData heap allocated instances %d\n", stringDataHeapInstances);
-    printf ("KWQStringData detachments (copies) %d\n", stringDataDetachments);
-    printf ("KWQStringData handles %d\n", handleInstances);
-    
-    fastFree(keys);
-    fastFree(values);
-}
-
-#else
 
 #define ALLOC_CHAR(N) (char*)fastMalloc(N)
 #define REALLOC_CHAR(P, N) (char *)fastRealloc(P, N)
@@ -208,11 +44,6 @@ void _printQStringAllocationStatistics()
 #define ALLOC_QCHAR(N) (QChar*)fastMalloc(sizeof(QChar)*(N))
 #define REALLOC_QCHAR(P, N) (QChar *)fastRealloc(P, sizeof(QChar)*(N))
 #define DELETE_QCHAR(P) fastFree(P)
-
-#endif // QSTRING_DEBUG_ALLOCATIONS
-
-#import <mach/vm_map.h>
-#import <mach/mach_init.h>
 
 struct HandleNode;
 struct HandlePageNode;
@@ -237,10 +68,6 @@ static inline KWQStringData **allocateHandle()
 
     initializeHandleNodes();
     
-#ifdef QSTRING_DEBUG_ALLOCATIONS
-    handleInstances++;
-#endif
-
     return reinterpret_cast<KWQStringData **>(allocateNode(freeNodeAllocationPages));
 }
 
@@ -359,9 +186,6 @@ static bool ok_in_base(QChar c, int base)
 KWQStringData::KWQStringData() :
         refCount(1), _length(0), _unicode(0), _ascii(0), _maxUnicode(QS_INTERNAL_BUFFER_UCHARS), _isUnicodeValid(0), _isHeapAllocated(0), _maxAscii(QS_INTERNAL_BUFFER_CHARS), _isAsciiValid(1) 
 { 
-#ifdef QSTRING_DEBUG_ALLOCATIONS
-    stringDataInstances++;
-#endif
     _ascii = _internalBuffer;
     _internalBuffer[0] = 0;
 }
@@ -385,9 +209,6 @@ KWQStringData::KWQStringData(QChar *u, uint l, uint m) :
         refCount(1), _length(l), _unicode(u), _ascii(0), _maxUnicode(m), _isUnicodeValid(1), _isHeapAllocated(0), _maxAscii(QS_INTERNAL_BUFFER_CHARS), _isAsciiValid(0)
 {
     ASSERT(m >= l);
-#ifdef QSTRING_DEBUG_ALLOCATIONS
-    stringDataInstances++;
-#endif
 }
 
 // Don't copy data.
@@ -408,23 +229,8 @@ void KWQStringData::initialize(QChar *u, uint l, uint m)
 // Copy data
 KWQStringData::KWQStringData(const QChar *u, uint l)
 {
-#ifdef QSTRING_DEBUG_ALLOCATIONS
-    stringDataInstances++;
-#endif
     initialize (u, l);
 }
-
-#ifdef QSTRING_DEBUG_ALLOCATIONS
-void* KWQStringData::operator new(size_t s)
-{
-    stringDataHeapInstances++;
-    return fastMalloc(s);
-}
-void KWQStringData::operator delete(void*p)
-{
-    return fastFree(p);
-}
-#endif
 
 // Copy data
 void KWQStringData::initialize(const QChar *u, uint l)
@@ -453,9 +259,6 @@ void KWQStringData::initialize(const QChar *u, uint l)
 // Copy data
 KWQStringData::KWQStringData(const char *a, uint l)
 {
-#ifdef QSTRING_DEBUG_ALLOCATIONS
-    stringDataInstances++;
-#endif
     initialize(a, l);
 }
 
@@ -743,68 +546,6 @@ QString QString::number(double n)
     return qs;
 }
 
-void QString::setBufferFromCFString(CFStringRef cfs)
-{
-    if (!cfs) {
-        return;
-    }
-    CFIndex size = CFStringGetLength(cfs);
-    UniChar fixedSizeBuffer[1024];
-    UniChar *buffer;
-    if (size > (CFIndex)(sizeof(fixedSizeBuffer) / sizeof(UniChar))) {
-        buffer = (UniChar *)fastMalloc(size * sizeof(UniChar));
-    } else {
-        buffer = fixedSizeBuffer;
-    }
-    CFStringGetCharacters(cfs, CFRangeMake (0, size), buffer);
-    setUnicode((const QChar *)buffer, (uint)size);
-    if (buffer != fixedSizeBuffer) {
-        fastFree(buffer);
-    }
-}
-
-QString QString::fromUtf8(const char *chs)
-{
-    return QTextCodec(kCFStringEncodingUTF8).toUnicode(chs, strlen(chs));
-}
-
-QString QString::fromUtf8(const char *chs, int len)
-{
-    return QTextCodec(kCFStringEncodingUTF8).toUnicode(chs, len);
-}
-
-QString QString::fromCFString(CFStringRef cfs)
-{
-    QString qs;
-    qs.setBufferFromCFString(cfs);
-    return qs;
-}
-
-QString QString::fromNSString(NSString *nss)
-{
-    QString qs;
-    qs.setBufferFromCFString((CFStringRef)nss);
-    return qs;
-}
-
-NSString *QString::getNSString() const
-{
-    // The Cocoa calls in this method don't need exceptions blocked
-    // because they are simple NSString calls that can't throw.
-
-    int length = dataHandle[0]->_length;
-    if (dataHandle[0]->_isUnicodeValid) {
-        return [NSString stringWithCharacters:(const unichar *)unicode() length:length];
-    }
-    
-    if (dataHandle[0]->_isAsciiValid) {
-        return [[[NSString alloc] initWithBytes:ascii() length:length encoding:NSISOLatin1StringEncoding] autorelease];
-    }
-    
-    FATAL("invalid character cache");
-    return nil;
-}
-
 inline void QString::detachIfInternal()
 {
     KWQStringData *oldData = *dataHandle;
@@ -859,9 +600,6 @@ QString::~QString()
 
 QString::QString()
 {
-#ifdef QSTRING_DEBUG_ALLOCATIONS
-    countInstance(&dataHandle);
-#endif
     internalData.deref();
     dataHandle = makeSharedNullHandle();
     dataHandle[0]->ref();
@@ -882,9 +620,6 @@ QString::QString(KWQStringData *constData, bool /*dummy*/)
 
 QString::QString(QChar qc)
 {
-#ifdef QSTRING_DEBUG_ALLOCATIONS
-    countInstance (&dataHandle);
-#endif
     dataHandle = allocateHandle();
 
     // Copy the QChar.
@@ -901,9 +636,6 @@ QString::QString(QChar qc)
 
 QString::QString(const ByteArray &qba)
 {
-#ifdef QSTRING_DEBUG_ALLOCATIONS
-    countInstance (&dataHandle);
-#endif
     dataHandle = allocateHandle();
 
     // Copy data
@@ -913,9 +645,6 @@ QString::QString(const ByteArray &qba)
 
 QString::QString(const QChar *unicode, uint length)
 {
-#ifdef QSTRING_DEBUG_ALLOCATIONS
-    countInstance (&dataHandle);
-#endif
     if (!unicode && !length) {
         internalData.deref();
         dataHandle = makeSharedNullHandle();
@@ -931,10 +660,6 @@ QString::QString(const QChar *unicode, uint length)
 
 QString::QString(const char *chs)
 {
-#ifdef QSTRING_DEBUG_ALLOCATIONS
-    countInstance (&dataHandle);
-#endif
-
     if (chs) {
         internalData.initialize(chs,strlen(chs));
         dataHandle = allocateHandle();
@@ -948,9 +673,6 @@ QString::QString(const char *chs)
 
 QString::QString(const char *chs, int len)
 {
-#ifdef QSTRING_DEBUG_ALLOCATIONS
-    countInstance (&dataHandle);
-#endif
     dataHandle = allocateHandle();
     *dataHandle = &internalData;
     internalData.initialize(chs,len);
@@ -958,9 +680,6 @@ QString::QString(const char *chs, int len)
 
 QString::QString(const QString &qs) : dataHandle(qs.dataHandle)
 {
-#ifdef QSTRING_DEBUG_ALLOCATIONS
-    countInstance (&dataHandle);
-#endif
     internalData.deref();
     dataHandle[0]->ref();
 }
@@ -1135,21 +854,6 @@ bool QString::endsWith(const QString& s) const
     }
 
     return true;
-}
-
-QCString QString::utf8(int &length) const
-{
-    uint len = dataHandle[0]->_length;
-    if (len == 0) {
-        return QCString();
-    }
-    CFStringRef s = getCFString();
-    CFIndex utf8Size;
-    CFStringGetBytes(s, CFRangeMake(0, len), kCFStringEncodingUTF8, '?', false, 0, 0, &utf8Size);
-    length = utf8Size;
-    QCString qcs(utf8Size + 1);
-    CFStringGetCString(s, qcs.data(), utf8Size + 1, kCFStringEncodingUTF8);
-    return qcs;
 }
 
 bool QString::isNull() const
@@ -1407,10 +1111,6 @@ int QString::findRev( const QString& str, int index, bool cs ) const
     return -1;
 }
 
-
-#ifdef DEBUG_CONTAINS_COUNTER
-static int containsCount = 0;
-#endif
 
 int QString::contains(QChar c, bool cs) const
 {
@@ -2254,9 +1954,6 @@ QString &QString::insert(uint index, const QString &qs)
     if (qs.dataHandle[0]->_length == 0)
         return *this;
         
-#ifdef QSTRING_DEBUG_UNICODE
-    forceUnicode();
-#endif
     if (dataHandle[0]->_isAsciiValid && qs.isAllLatin1()) {
         insert(index, qs.latin1(), qs.length());
     }
@@ -2401,10 +2098,6 @@ void QString::detach()
     if (oldData->refCount == 1 && oldData != shared_null)
         return;
 
-#ifdef QSTRING_DEBUG_ALLOCATIONS
-    stringDataDetachments++;
-#endif
-
     // Copy data for this string so we can safely mutate it.
     KWQStringData *newData;
     if (oldData->_isAsciiValid)
@@ -2450,10 +2143,6 @@ QString &QString::remove(uint index, uint len)
 
         detach();
         
-#ifdef QSTRING_DEBUG_UNICODE
-        forceUnicode();
-#endif
-
         if (dataHandle[0]->_isAsciiValid){
             memmove( dataHandle[0]->ascii()+index, dataHandle[0]->ascii()+index+len,
                     sizeof(char)*(olen-index-len) );
@@ -2592,9 +2281,6 @@ void QString::setLength(uint newLen)
 
     ASSERT(dataHandle != shared_null_handle);
     
-#ifdef QSTRING_DEBUG_UNICODE
-    forceUnicode();
-#endif
     if (dataHandle[0]->_isAsciiValid){
         if (newLen+1 > dataHandle[0]->_maxAscii) {
             dataHandle[0]->increaseAsciiSize(newLen+1);
@@ -2625,10 +2311,6 @@ void QString::fill(QChar qc, int len)
 {
     detachAndDiscardCharacters();
     
-#ifdef QSTRING_DEBUG_UNICODE
-    forceUnicode();
-#endif
-
     // len == -1 means fill to string length.
     if (len < 0) {
         len = dataHandle[0]->_length;
@@ -2802,11 +2484,6 @@ QConstString::~QConstString()
     }
 }
 
-#define NODE_BLOCK_SIZE ((vm_page_size)/sizeof(HandleNode))
-
-#define TO_NODE_OFFSET(ptr)   ((uint)(((uint)ptr - (uint)base)/sizeof(HandleNode)))
-#define TO_NODE_ADDRESS(offset,base) ((HandleNode *)(offset*sizeof(HandleNode) + (uint)base))
-
 struct HandlePageNode
 {
     HandlePageNode *next;
@@ -2829,65 +2506,36 @@ struct HandleNode {
     } type;
 };
 
-#if 1 // change to 0 to do the page lists checks
+static const size_t pageSize = 4096;
+static const size_t nodeBlockSize = pageSize / sizeof(HandleNode);
 
-#define CHECK_PAGE_LISTS() ((void)0)
-
-#else
-
-static void CHECK_PAGE_LISTS()
-{
-    {
-        int loopCount = 0;
-        HandlePageNode *next = 0;
-        for (HandlePageNode *page = freeNodeAllocationPages; page; page = page->previous) {
-            ASSERT(page->next == next);
-            ASSERT(((HandleNode *)page->nodes)[0].type.freeNodes);
-            if (++loopCount > 100) {
-                FATAL("free node page loop");
-            }
-            next = page;
-        }
-    }
-    
-    {
-        int loopCount = 0;
-        HandlePageNode *next = 0;
-        for (HandlePageNode *page = usedNodeAllocationPages; page; page = page->previous) {
-            ASSERT(page->next == next);
-            ASSERT(((HandleNode *)page->nodes)[0].type.freeNodes == 0);
-            if (++loopCount > 100) {
-                FATAL("used node page loop");
-            }
-            next = page;
-        }
-    }
-}
-
-#endif
+#define TO_NODE_OFFSET(ptr)   ((uint)(((uint)ptr - (uint)base)/sizeof(HandleNode)))
+#define TO_NODE_ADDRESS(offset,base) ((HandleNode *)(offset*sizeof(HandleNode) + (uint)base))
 
 static HandleNode *initializeHandleNodeBlock(HandlePageNode *pageNode)
 {
     uint i;
-    HandleNode *block, *aNode;
-    
-    vm_allocate(mach_task_self(), (vm_address_t *)&block, vm_page_size, 1);
-    //printf ("allocated block at 0%08x, page boundary 0x%08x\n", (unsigned int)block, (unsigned int)trunc_page((uint)block));
-    
-    for (i = 2; i < NODE_BLOCK_SIZE; i++){
+    HandleNode* block;
+    HandleNode* aNode;
+
+#ifdef WIN32
+    block = (HandleNode*)VirtualAlloc(0, pageSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+#else
+    block = (HandleNode*)valloc(pageSize);
+#endif
+
+    for (i = 2; i < nodeBlockSize; i++) {
         aNode = &block[i];
-        if (i > 2) {
+        if (i > 2)
             aNode->type.internalNode.previous = i-1;
-        }
-        else {
+        else
             aNode->type.internalNode.previous = 0;
-        }
-        if (i != NODE_BLOCK_SIZE-1)
+        if (i != nodeBlockSize - 1)
             aNode->type.internalNode.next = i+1;
         else
             aNode->type.internalNode.next = 0;
     }
-    block[0].type.freeNodes = &block[NODE_BLOCK_SIZE-1];
+    block[0].type.freeNodes = &block[nodeBlockSize - 1];
     block[1].type.pageNode = pageNode;
 
     return block;
@@ -2903,8 +2551,6 @@ static HandlePageNode *allocatePageNode()
 
 static HandleNode *allocateNode(HandlePageNode *pageNode)
 {
-    CHECK_PAGE_LISTS();
-
     HandleNode *block = (HandleNode *)pageNode->nodes;
     HandleNode *freeNodes = block[0].type.freeNodes;
     HandleNode *allocated;
@@ -2920,8 +2566,6 @@ static HandleNode *allocateNode(HandlePageNode *pageNode)
     if (allocated->type.internalNode.previous >= 2) {
         block[0].type.freeNodes = TO_NODE_ADDRESS(allocated->type.internalNode.previous, block);
         block[0].type.freeNodes->type.internalNode.next = 0;
-
-        CHECK_PAGE_LISTS();
     }
     else {
         // Used last node on this page.
@@ -2936,8 +2580,6 @@ static HandleNode *allocateNode(HandlePageNode *pageNode)
         if (usedNodeAllocationPages)
             usedNodeAllocationPages->next = pageNode;
         usedNodeAllocationPages = pageNode;        
-    
-        CHECK_PAGE_LISTS();
     }
 
     return allocated;
@@ -2949,8 +2591,6 @@ void freeHandle(KWQStringData **_free)
     fastFree(_free);
     return;
 #endif
-
-    CHECK_PAGE_LISTS();
 
     HandleNode *free = (HandleNode *)_free;
     HandleNode *base = (HandleNode *)trunc_page((uint)free);
@@ -2983,10 +2623,4 @@ void freeHandle(KWQStringData **_free)
             freeNodeAllocationPages->next = pageNode;
         freeNodeAllocationPages = pageNode;
     }
-    
-    CHECK_PAGE_LISTS();
-
-#ifdef QSTRING_DEBUG_ALLOCATIONS
-    handleInstances--;
-#endif
 }

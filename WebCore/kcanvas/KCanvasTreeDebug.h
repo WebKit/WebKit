@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qstring.h>
+#include <QString.h>
 #include <qtextstream.h>
 #include <q3valuelist.h>
 

@@ -24,7 +24,7 @@
 #define KCanvasResources_H
 #if SVG_SUPPORT
 
-#include <qstring.h>
+#include <QString.h>
 #include <q3valuelist.h>
 
 #include <kcanvas/RenderPath.h>

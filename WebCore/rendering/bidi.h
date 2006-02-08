@@ -23,7 +23,7 @@
 #ifndef BIDI_H
 #define BIDI_H
 
-#include <qstring.h>
+#include <QString.h>
 
 class RenderArena;
 

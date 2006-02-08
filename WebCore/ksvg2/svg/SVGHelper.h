@@ -24,7 +24,7 @@
 #define KSVG_SVGHelper_H
 #if SVG_SUPPORT
 
-#include <qstring.h>
+#include <QString.h>
 #include <kxmlcore/RefPtr.h>
 
 namespace KSVG

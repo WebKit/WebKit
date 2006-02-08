@@ -24,7 +24,7 @@
 #define KSVG_SVGURIReferenceImpl_H
 #if SVG_SUPPORT
 
-#include <qstring.h>
+#include <QString.h>
 
 namespace KDOM
 {

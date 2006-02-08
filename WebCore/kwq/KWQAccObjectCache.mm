@@ -29,7 +29,7 @@
 #import "KWQAccObject.h"
 #import <kxmlcore/Assertions.h>
 #import "KWQFoundationExtras.h"
-#import "KWQString.h"
+#import "QString.h"
 #import "render_object.h"
 #import "WebCoreViewFactory.h"
 #import "DocumentImpl.h"

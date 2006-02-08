@@ -2,7 +2,7 @@
 
 #include "config.h"
 #include "qstringlist.h"
-#include "qstring.h"
+#include "QString.h"
 #include "xbl_protohandler.h"
 
 using DOM::DOMString;

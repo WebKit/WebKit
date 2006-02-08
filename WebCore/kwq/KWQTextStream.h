@@ -27,7 +27,7 @@
 #define QTEXTSTREAM_H_
 
 #include "KWQIODevice.h"
-#include "KWQString.h"
+#include "QString.h"
 
 class QTextStream;
 

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "visible_units.h"
 
-#include <qstring.h>
+#include <QString.h>
 
 #include "htmlnames.h"
 #include "htmlediting.h"

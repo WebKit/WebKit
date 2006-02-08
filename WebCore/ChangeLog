@@ -1,5 +1,91 @@
 2006-02-07  Maciej Stachowiak  <mjs@apple.com>
 
+        Rubber stamped by Hyatt.
+
+        - move kwq/KWQString.mm to platform/QString.cpp, split out nonportable parts, speculative
+        port of one remaining nonportable bit to windows.
+
+        * ForwardingHeaders/qstring.h:
+        * WebCore+SVG/KDOMSettings.h:
+        * WebCore+SVG/kdom.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/cssparser.h:
+        * css/cssstyleselector.cpp:
+        * kcanvas/KCanvasResources.h:
+        * kcanvas/KCanvasTreeDebug.h:
+        * khtml/ecma/kjs_window.h:
+        * khtml/editing/html_interchange.cpp:
+        * khtml/editing/visible_position.h:
+        * khtml/editing/visible_text.h:
+        * khtml/editing/visible_units.cpp:
+        * khtml/html/FormDataList.h:
+        * khtml/html/html_objectimpl.cpp:
+        * khtml/html/htmltokenizer.h:
+        * khtml/misc/decoder.h:
+        * khtml/misc/formdata.h:
+        * khtml/xbl/xbl_protohandler.cpp:
+        * khtml/xml/dom_position.cpp:
+        * khtml/xsl/xslt_processorimpl.h:
+        * ksvg2/svg/SVGHelper.h:
+        * ksvg2/svg/SVGPreserveAspectRatioImpl.cpp:
+        * ksvg2/svg/SVGStyleElementImpl.cpp:
+        * ksvg2/svg/SVGURIReferenceImpl.h:
+        * ksvg2/svg/svgpathparser.cpp:
+        * kwq/KWQAccObjectCache.mm:
+        * kwq/KWQBuffer.h:
+        * kwq/KWQEvent.h:
+        * kwq/KWQFont.mm:
+        * kwq/KWQFontFamily.h:
+        * kwq/KWQFontMetrics.h:
+        * kwq/KWQKConfigBase.h:
+        * kwq/KWQKDebug.h:
+        * kwq/KWQKHTMLSettings.h:
+        * kwq/KWQKJobClasses.h:
+        * kwq/KWQKJobClasses.mm:
+        * kwq/KWQKLocale.mm:
+        * kwq/KWQKSSLKeyGen.mm:
+        * kwq/KWQKURL.h:
+        * kwq/KWQLineEdit.h:
+        * kwq/KWQRegExp.h:
+        * kwq/KWQRenderTreeDebug.h:
+        * kwq/KWQString.h: Removed.
+        * kwq/KWQString.mm: Removed.
+        * kwq/KWQStringList.h:
+        * kwq/KWQTextCodec.h:
+        * kwq/KWQTextStream.h:
+        * kwq/KWQTextUtilities.mm:
+        * kwq/WebCoreScriptDebugger.mm:
+        * loader/Cache.h:
+        * platform/Color.cpp:
+        * platform/Color.h:
+        * platform/QString.cpp: Added.
+        (allocateHandle):
+        (KWQStringData::KWQStringData):
+        (QString::QString):
+        (QString::insert):
+        (QString::detach):
+        (QString::remove):
+        (QString::setLength):
+        (QString::fill):
+        (initializeHandleNodeBlock):
+        (allocateNode):
+        (freeHandle):
+        * platform/QString.h: Added.
+        * platform/SegmentedString.h:
+        * platform/StringImpl.h:
+        * platform/mac/Image.mm:
+        * platform/mac/QString.mm: Added.
+        (QString::setBufferFromCFString):
+        (QString::fromCFString):
+        (QString::fromNSString):
+        (QString::getNSString):
+        (QString::utf8):
+        (QString::fromUtf8):
+        * rendering/bidi.h:
+        * rendering/break_lines.cpp:
+
+2006-02-07  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Adele.
 
         - remove all remains of old-style frame tree, ChildFrame, ObjectContents and FrameList are all gone

@@ -51,7 +51,7 @@
 #include <assert.h>
 #include <kurl.h>
 #include <kxmlcore/HashMap.h>
-#include <qstring.h>
+#include <QString.h>
 #include <qvaluelist.h>
 #include <stdlib.h>
 
