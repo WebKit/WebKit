@@ -451,7 +451,7 @@ void KJS::HTMLDocument::putValueProperty(ExecState *exec, int token, JSValue *va
 
 // -------------------------------------------------------------------------
 
-const ClassInfo KJS::HTMLElement::info = { "HTMLElement", &DOMElement::info, &HTMLElementTable, 0 };
+const ClassInfo KJS::HTMLElement::info = { "HTMLElement", &JSElement::info, &HTMLElementTable, 0 };
 const ClassInfo KJS::HTMLElement::html_info = { "HTMLHtmlElement", &KJS::HTMLElement::info, &HTMLHtmlElementTable, 0 };
 const ClassInfo KJS::HTMLElement::head_info = { "HTMLHeadElement", &KJS::HTMLElement::info, &HTMLHeadElementTable, 0 };
 const ClassInfo KJS::HTMLElement::link_info = { "HTMLLinkElement", &KJS::HTMLElement::info, &HTMLLinkElementTable, 0 };
@@ -1200,7 +1200,7 @@ const HTMLElement::Accessors* HTMLElement::accessors() const
 */
 
 HTMLElement::HTMLElement(ExecState *exec, HTMLElementImpl *e)
-    : DOMElement(exec, e)
+    : JSElement(exec, e)
 {
 }
 
@@ -1336,7 +1336,7 @@ bool HTMLElement::getOwnPropertySlot(ExecState *exec, const Identifier& property
     }
 
     // Base HTMLElement stuff or parent class forward, as usual
-    return getStaticPropertySlot<HTMLElementFunction, HTMLElement, DOMElement>(exec, &HTMLElementTable, this, propertyName, slot);
+    return getStaticPropertySlot<HTMLElementFunction, HTMLElement, JSElement>(exec, &HTMLElementTable, this, propertyName, slot);
 }
 
 bool KJS::HTMLElement::implementsCall() const
@@ -2202,7 +2202,7 @@ UString KJS::HTMLElement::toString(ExecState *exec) const
     if (impl()->hasTagName(aTag))
         return UString(static_cast<const HTMLAnchorElementImpl *>(impl())->href());
     else
-        return DOMElement::toString(exec);
+        return JSElement::toString(exec);
 }
 
 static HTMLFormElementImpl *getForm(HTMLElementImpl *element)
@@ -2477,7 +2477,7 @@ void KJS::HTMLElement::put(ExecState *exec, const Identifier &propertyName, JSVa
         }
     }
 
-    lookupPut<KJS::HTMLElement, DOMElement>(exec, propertyName, value, attr, &HTMLElementTable, this);
+    lookupPut<KJS::HTMLElement, JSElement>(exec, propertyName, value, attr, &HTMLElementTable, this);
 }
 
 void HTMLElement::htmlSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)

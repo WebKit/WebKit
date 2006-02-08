@@ -24,6 +24,7 @@
 
 #include "CachedObjectClient.h"
 #include "kjs_dom.h"
+#include "JSElement.h"
 #include "Color.h"
 #include <qguardedptr.h>
 #include "Image.h"
@@ -62,7 +63,7 @@ namespace KJS {
     static JSValue *namedItemGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
   };
 
-  class HTMLElement : public DOMElement {
+  class HTMLElement : public WebCore::JSElement {
   public:
     HTMLElement(ExecState *exec, DOM::HTMLElementImpl *e);
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);

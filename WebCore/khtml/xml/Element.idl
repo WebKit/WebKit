@@ -1,0 +1,61 @@
+module core {
+    interface [LegacyParent=KJS::DOMElement] Element : Node {
+    
+        NodeList getElementsByTagName(in DOMString name);
+    
+        // ConvertNullStringTo=Null should be used here, since if the attribute isn't present at all, you should
+        // return null and not "".    
+        [ConvertNullStringTo=Null] DOMString getAttribute(in DOMString name);
+        
+        void setAttribute(in DOMString name, 
+                          in DOMString value)
+            raises(DOMException);
+            
+        void removeAttribute(in DOMString name)
+            raises(DOMException);        
+        
+        Attr getAttributeNode(in DOMString name);
+
+        Attr setAttributeNode(in Attr newAttr)
+            raises(DOMException);
+            
+        Attr removeAttributeNode(in Attr oldAttr)
+            raises(DOMException);                    
+            
+        // DOM2
+        NodeList getElementsByTagNameNS(in DOMString namespaceURI, 
+                                        in DOMString localName);
+                                                  
+        boolean hasAttribute(in DOMString name);
+        
+        boolean hasAttributeNS(in DOMString namespaceURI, 
+                               in DOMString localName)
+               
+               
+        DOMString getAttributeNS(in DOMString namespaceURI, 
+                                 in DOMString localName);
+
+        void setAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI, 
+                            in DOMString qualifiedName, 
+                            in DOMString value)
+            raises(DOMException);
+            
+        void removeAttributeNS(in DOMString namespaceURI, 
+                               in DOMString localName)
+            raises(DOMException);
+
+        Attr getAttributeNodeNS(in DOMString namespaceURI, 
+                                in DOMString localName);
+
+        Attr setAttributeNodeNS(in Attr newAttr)
+            raises(DOMException);
+            
+            
+        // Extensions
+        void focus();
+        void blur();
+        
+        readonly attribute CSSStyleDeclaration style;
+            
+    };
+}

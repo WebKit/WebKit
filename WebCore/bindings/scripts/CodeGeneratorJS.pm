@@ -185,9 +185,11 @@ sub AddIncludesForType
   
   if ($type eq "DocumentType" or 
       $type eq "Document" or
-      $type eq "DOMImplementation") {
+      $type eq "DOMImplementation" or
+      $type eq "NodeList") {
     $implIncludes{"${type}Impl.h"} = 1;
-  } elsif ($type eq "Attr") {
+  } elsif ($type eq "Attr" or
+           $type eq "Element") {
     $implIncludes{"dom_elementimpl.h"} = 1;
   } elsif ($type eq "CSSStyleSheet") {
     $implIncludes{"css_stylesheetimpl.h"} = 1;
@@ -727,10 +729,9 @@ sub GetNativeType
     return "DOMString";
   } elsif ($type eq "views::AbstractView") {
     return "AbstractViewImpl*";
-  } elsif ($type eq "Node") {
-    return "NodeImpl*";
-  } elsif ($type eq "DocumentType") {
-    return "DocumentTypeImpl*";
+  } elsif ($type eq "Node" or $type eq "Attr" or
+           $type eq "DocumentType") {
+    return "${type}Impl*";
   } else {
     die "Don't know how the native type of $type";
   }
@@ -763,6 +764,9 @@ sub JSValueToNative
   } elsif ($type eq "Node") {
     $implIncludes{"kjs_dom.h"} = 1;
     return "toNode($value)";
+  } elsif ($type eq "Attr") {
+    $implIncludes{"kjs_dom.h"} = 1;
+    return "toAttr($value)";
   } elsif ($type eq "DocumentType") {
       $implIncludes{"kjs_dom.h"} = 1;
       return "toDocumentType($value)";
@@ -796,11 +800,16 @@ sub NativeToJSValue
     }
   } elsif ($type eq "Node" or $type eq "Text" or
            $type eq "DocumentType" or $type eq "Document" or
-           $type eq "HTMLDocument" or $type eq "Element") {
+           $type eq "HTMLDocument" or $type eq "Element" or
+           $type eq "Attr") {
     # Add necessary includes
     $implIncludes{"kjs_dom.h"} = 1;   
     $implIncludes{"NodeImpl.h"} = 1;     
     return "getDOMNode(exec, $value)";
+  } elsif ($type eq "NodeList") {
+    # Add necessary includes
+    $implIncludes{"kjs_dom.h"} = 1;    
+    return "getDOMNodeList(exec, $value)";    
   } elsif ($type eq "NamedNodeMap") {
     # Add necessary includes
     $implIncludes{"kjs_dom.h"} = 1;    
