@@ -292,5 +292,9 @@
 		</File>
 	</Files>
 	<Globals>
+		<Global
+			Name="RESOURCE_FILE"
+			Value="Image Viewer.rc"
+		/>
 	</Globals>
 </VisualStudioProject>

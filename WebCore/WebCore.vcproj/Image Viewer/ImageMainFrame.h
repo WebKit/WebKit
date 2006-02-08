@@ -57,6 +57,7 @@ public:
 
 protected:  // control bar embedded members
 	CToolBar    m_wndToolBar;
+        CReBar      m_wndReBar;
 
 // Generated message map functions
 protected:
