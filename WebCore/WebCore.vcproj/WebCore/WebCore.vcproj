@@ -1539,6 +1539,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\page\FrameTreeNode.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\page\FrameTreeNode.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\page\FrameView.cpp"
 				>
 			</File>
@@ -1547,7 +1555,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\page\ObjectContents.h"
+				RelativePath="..\..\page\Page.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\page\Page.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\page\Plugin.h"
 				>
 			</File>
 		</Filter>
