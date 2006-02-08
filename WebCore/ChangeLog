@@ -1,4 +1,18 @@
-2006-02-06  Anders Carlsson  <andersca@mac.com>
+2006-02-08  Anders Carlsson  <andersca@mac.com>
+
+        Rubber stamped by Maciej.
+
+        Move JSCore.cpp to bindings/js/JSDOMCore.cpp and
+        rename JSEvents.cpp to JSDOMEvents.cpp
+        
+        * JSCore.cpp: Removed.
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMCore.cpp: Added.
+        * bindings/js/JSDOMEvents.cpp: Added.
+        * bindings/js/JSEvents.cpp: Removed.
+
+2006-02-08  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Maciej.
 

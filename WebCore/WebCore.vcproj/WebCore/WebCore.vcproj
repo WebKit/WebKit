@@ -2898,7 +2898,7 @@
 				Name="js"
 				>
 				<File
-					RelativePath="..\..\bindings\js\JSEvents.cpp"
+					RelativePath="..\..\bindings\js\JSDOMEvents.cpp"
 					>
 				</File>
 			</Filter>

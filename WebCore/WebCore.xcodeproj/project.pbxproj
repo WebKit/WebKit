@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1A37F63A0988EE3300D05E90 /* JSCore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A37F6390988EE3300D05E90 /* JSCore.cpp */; };
+		1A2154EE099A11A800343DF8 /* JSDOMCore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2154EC099A11A800343DF8 /* JSDOMCore.cpp */; };
+		1A2154EF099A11A800343DF8 /* JSDOMEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2154ED099A11A800343DF8 /* JSDOMEvents.cpp */; };
 		1A69D381085627410009880D /* domparser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A69D37F085627410009880D /* domparser.h */; };
 		1A69D382085627410009880D /* domparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A69D380085627410009880D /* domparser.cpp */; };
-		1ADB5699098827AD0032EEE2 /* JSEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ADB5698098827AD0032EEE2 /* JSEvents.cpp */; };
 		550A0BC9085F6039007353D6 /* dom_qname.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* dom_qname.cpp */; };
 		550A0BCA085F6039007353D6 /* dom_qname.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* dom_qname.h */; };
 		550A0BCD085F604D007353D6 /* htmlnames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BCB085F604D007353D6 /* htmlnames.cpp */; };
@@ -1084,10 +1084,10 @@
 /* End PBXBuildStyle section */
 
 /* Begin PBXFileReference section */
-		1A37F6390988EE3300D05E90 /* JSCore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCore.cpp; sourceTree = "<group>"; };
+		1A2154EC099A11A800343DF8 /* JSDOMCore.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSDOMCore.cpp; path = bindings/js/JSDOMCore.cpp; sourceTree = "<group>"; };
+		1A2154ED099A11A800343DF8 /* JSDOMEvents.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSDOMEvents.cpp; path = bindings/js/JSDOMEvents.cpp; sourceTree = "<group>"; };
 		1A69D37F085627410009880D /* domparser.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = domparser.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1A69D380085627410009880D /* domparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = domparser.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		1ADB5698098827AD0032EEE2 /* JSEvents.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSEvents.cpp; path = bindings/js/JSEvents.cpp; sourceTree = "<group>"; };
 		2D90660B0665D937006B6F1A /* KWQClipboard.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQClipboard.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D90660C0665D937006B6F1A /* KWQClipboard.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQClipboard.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		4758C44308C5F217009BAF05 /* KCanvasPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasPath.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3050,8 +3050,8 @@
 		BC1A3793097C6FB10019F3D8 /* JavaScript */ = {
 			isa = PBXGroup;
 			children = (
-				1A37F6390988EE3300D05E90 /* JSCore.cpp */,
-				1ADB5698098827AD0032EEE2 /* JSEvents.cpp */,
+				1A2154EC099A11A800343DF8 /* JSDOMCore.cpp */,
+				1A2154ED099A11A800343DF8 /* JSDOMEvents.cpp */,
 			);
 			name = JavaScript;
 			sourceTree = "<group>";
@@ -5442,8 +5442,6 @@
 				A8DF5FA4098460AA0052981B /* SVGDocumentExtensions.cpp in Sources */,
 				BCC8CFCB0986CD2400140BF2 /* Color.cpp in Sources */,
 				BCC8D1730988301200140BF2 /* Pen.cpp in Sources */,
-				1ADB5699098827AD0032EEE2 /* JSEvents.cpp in Sources */,
-				1A37F63A0988EE3300D05E90 /* JSCore.cpp in Sources */,
 				BC6B7BAF0993603C0052867B /* Image.cpp in Sources */,
 				93CD4FDE0995F9EA007ECC97 /* AtomicString.cpp in Sources */,
 				93CD4FE10995F9EA007ECC97 /* String.cpp in Sources */,
@@ -5464,6 +5462,8 @@
 				6582A16309999D6D00BEEB6D /* SystemTime.cpp in Sources */,
 				6582A16409999D6D00BEEB6D /* Timer.cpp in Sources */,
 				6582A17809999EA000BEEB6D /* QString.mm in Sources */,
+				1A2154EE099A11A800343DF8 /* JSDOMCore.cpp in Sources */,
+				1A2154EF099A11A800343DF8 /* JSDOMEvents.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
