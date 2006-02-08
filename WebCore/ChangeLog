@@ -1,3 +1,25 @@
+2006-02-07  David Hyatt <hyatt@apple.com>
+
+        Land the skeleton of a PNG decoder for Win32.
+
+        Reviewed by Eric
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * platform/cairo/ImageSourceCairo.cpp:
+        (WebCore::createDecoder):
+        * platform/image-decoders/png/PNGImageDecoder.cpp: Added.
+        (WebCore::PNGImageDecoderPrivate::PNGImageDecoderPrivate):
+        (WebCore::PNGImageDecoderPrivate::~PNGImageDecoderPrivate):
+        (WebCore::PNGImageDecoderPrivate::decode):
+        (WebCore::PNGImageDecoder::PNGImageDecoder):
+        (WebCore::PNGImageDecoder::~PNGImageDecoder):
+        (WebCore::PNGImageDecoder::setData):
+        (WebCore::PNGImageDecoder::isSizeAvailable):
+        (WebCore::PNGImageDecoder::size):
+        (WebCore::PNGImageDecoder::frameBufferAtIndex):
+        (WebCore::PNGImageDecoder::decode):
+        * platform/image-decoders/png/PNGImageDecoder.h: Added.
+
 2006-02-07  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.

@@ -1927,6 +1927,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\platform\image-decoders\png\PNGImageDecoder.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\png\PNGImageDecoder.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\platform\image-decoders\png\pngmem.c"
 						>
 					</File>
