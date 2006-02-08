@@ -1,3 +1,51 @@
+2006-02-08  Dave Hyatt <hyatt@apple.com>
+
+        Implement support for PNGs on Win32.  Includes support for
+        interlacing and transparency.
+
+        Also optimized the GIF loop that sets the RGBA values to
+        increment the pointer through the loop instead of doing multiplies
+        and adds from the base every time.
+
+        Reviewed by mjs
+
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::RGBA32Buffer::setRGBA):
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::haveDecodedRow):
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageReader::PNGImageReader):
+        (WebCore::PNGImageReader::~PNGImageReader):
+        (WebCore::PNGImageReader::close):
+        (WebCore::PNGImageReader::decode):
+        (WebCore::PNGImageReader::decodingSizeOnly):
+        (WebCore::PNGImageReader::pngPtr):
+        (WebCore::PNGImageReader::infoPtr):
+        (WebCore::PNGImageReader::interlaceBuffer):
+        (WebCore::PNGImageReader::hasAlpha):
+        (WebCore::PNGImageReader::setReadOffset):
+        (WebCore::PNGImageReader::setHasAlpha):
+        (WebCore::PNGImageReader::createInterlaceBuffer):
+        (WebCore::PNGImageDecoder::PNGImageDecoder):
+        (WebCore::PNGImageDecoder::~PNGImageDecoder):
+        (WebCore::PNGImageDecoder::setData):
+        (WebCore::PNGImageDecoder::isSizeAvailable):
+        (WebCore::PNGImageDecoder::frameBufferAtIndex):
+        (WebCore::PNGImageDecoder::decode):
+        (WebCore::decodingFailed):
+        (WebCore::decodingWarning):
+        (WebCore::headerAvailable):
+        (WebCore::PNGImageDecoder::headerAvailable):
+        (WebCore::rowAvailable):
+        (WebCore::PNGImageDecoder::rowAvailable):
+        (WebCore::pngComplete):
+        (WebCore::PNGImageDecoder::pngComplete):
+        * platform/image-decoders/png/PNGImageDecoder.h:
+        (WebCore::PNGImageDecoder::setFailed):
+        (WebCore::PNGImageDecoder::reader):
+        (WebCore::PNGImageDecoder::decodingFailed):
+        * platform/image-decoders/png/mozpngconf.h:
+
 2006-02-07  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Hyatt.

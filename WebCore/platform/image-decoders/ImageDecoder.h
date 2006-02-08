@@ -56,10 +56,20 @@ public:
     unsigned duration() const { return m_duration; }
     bool includeInNextFrame() const { return m_includeInNextFrame; }
 
-    void setRGBA(unsigned pos, unsigned r, unsigned b, unsigned g, unsigned a)
+    static void setRGBA(unsigned& pos, unsigned r, unsigned b, unsigned g, unsigned a)
     {
-        unsigned rgba = (a << 24 | r << 16 | g << 8 | b);
-        m_bytes[pos] = rgba;
+        // We store this data pre-multiplied.
+        if (a == 0)
+            pos = 0;
+        else {
+            if (a < 255) {
+                float alphaPercent = a / 255.0f;
+                r *= alphaPercent;
+                g *= alphaPercent;
+                b *= alphaPercent;
+            }
+            pos = (a << 24 | r << 16 | g << 8 | b);
+        }
     }
 
 private:
