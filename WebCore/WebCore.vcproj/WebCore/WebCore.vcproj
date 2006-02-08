@@ -1833,6 +1833,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\platform\QString.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\QString.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\platform\Screen.h"
 				>
 			</File>
