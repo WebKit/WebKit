@@ -53,6 +53,34 @@
 
 2006-02-08  Dave Hyatt <hyatt@apple.com>
 
+        Make the Cairo image surface only reflect the portion of
+        the image that has been decoded so far.   That way we don't
+        have to zero fill our RGBA32 buffers, and we avoid painting
+        the empty portion.
+
+        Reviewed by timo
+
+        * Viewer/ImageView.cpp:
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * platform/cairo/ImageSourceCairo.cpp:
+        (WebCore::createDecoder):
+        (WebCore::ImageSource::createFrameAtIndex):
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::RGBA32Buffer::RGBA32Buffer):
+        (WebCore::RGBA32Buffer::height):
+        (WebCore::RGBA32Buffer::ensureHeight):
+        (WebCore::RGBA32Buffer::setStatus):
+        (WebCore::RGBA32Buffer::setDuration):
+        (WebCore::RGBA32Buffer::setIncludeInNextFrame):
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::haveDecodedRow):
+        (WebCore::GIFImageDecoder::frameComplete):
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::rowAvailable):
+        (WebCore::PNGImageDecoder::pngComplete):
+
+2006-02-08  Dave Hyatt <hyatt@apple.com>
+
         Implement support for PNGs on Win32.  Includes support for
         interlacing and transparency.
 

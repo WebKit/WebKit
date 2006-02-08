@@ -57,9 +57,8 @@ ImageDecoder* createDecoder(const ByteArray& data)
     // JPEG
     if (uContents[0]==0xFF &&
         uContents[1]==0xD8 &&
-        uContents[2]==0xFF) {
+        uContents[2]==0xFF)
         return 0;
-    }
 
     // BMP
     if (strncmp(contents, "BM", 2) == 0) {
@@ -144,7 +143,7 @@ NativeImagePtr ImageSource::createFrameAtIndex(size_t index)
     return cairo_image_surface_create_for_data((unsigned char*)buffer.bytes().data(),
                                                CAIRO_FORMAT_ARGB32,
                                                size().width(),
-                                               size().height(),
+                                               buffer.height(),
                                                size().width()*4);
 }
 

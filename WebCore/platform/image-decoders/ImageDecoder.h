@@ -44,17 +44,20 @@ class RGBA32Buffer
 public:
     enum FrameStatus { FrameEmpty, FramePartial, FrameComplete };
 
-    RGBA32Buffer() : m_status(FrameEmpty), m_duration(0), m_includeInNextFrame(false)
+    RGBA32Buffer() : m_height(0), m_status(FrameEmpty), m_duration(0), m_includeInNextFrame(false)
     {} 
+
+    RGBA32Array& bytes() { return m_bytes; }
+    unsigned height() { return m_height; }
+    FrameStatus status() const { return m_status; }
+    unsigned duration() const { return m_duration; }
+    bool includeInNextFrame() const { return m_includeInNextFrame; }
+  
+    void ensureHeight(unsigned rowIndex) { if (rowIndex > m_height) m_height = rowIndex; }
 
     void setStatus(FrameStatus s) { m_status = s; }
     void setDuration(unsigned duration) { m_duration = duration; }
     void setIncludeInNextFrame(bool n) { m_includeInNextFrame = n; }
-
-    RGBA32Array& bytes() { return m_bytes; }
-    FrameStatus status() const { return m_status; }
-    unsigned duration() const { return m_duration; }
-    bool includeInNextFrame() const { return m_includeInNextFrame; }
 
     static void setRGBA(unsigned& pos, unsigned r, unsigned b, unsigned g, unsigned a)
     {
@@ -74,6 +77,7 @@ public:
 
 private:
     RGBA32Array m_bytes;
+    unsigned m_height; // The height (the number of rows we've fully decoded).
     FrameStatus m_status; // Whether or not this frame is completely finished decoding.
     unsigned m_duration; // The animation delay.
     bool m_includeInNextFrame; // Whether or not the next buffer should be initially populated with our data.

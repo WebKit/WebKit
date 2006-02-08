@@ -211,12 +211,12 @@ void GIFImageDecoder::haveDecodedRow(unsigned frameIndex,
         
         // If the disposal method of the previous frame said to stick around, then we need
         // to copy that frame into our frame.
-        if (frameIndex > 0 && m_frameBufferCache[frameIndex-1].includeInNextFrame())
+        if (frameIndex > 0 && m_frameBufferCache[frameIndex-1].includeInNextFrame()) {
             bytes.duplicate(m_frameBufferCache[frameIndex-1].bytes());
-        else {
-            bytes.resize(m_size.width() * m_size.height());
-            bytes.fill(0);
+            buffer.ensureHeight(m_size.height());
         }
+        else
+            bytes.resize(m_size.width() * m_size.height());
 
         // Update our status to be partially complete.
         buffer.setStatus(RGBA32Buffer::FramePartial);
@@ -269,17 +269,15 @@ void GIFImageDecoder::haveDecodedRow(unsigned frameIndex,
             currDst += width;
         }
     }
-}   
+
+    // Our partial height is rowNumber + 1, e.g., row 2 is the 3rd row, so that's a height of 3.
+    // Adding in repeatCount - 1 to rowNumber + 1 works out to just be rowNumber + repeatCount.
+    buffer.ensureHeight(rowNumber + repeatCount);
+}
 
 void GIFImageDecoder::frameComplete(unsigned frameIndex, unsigned frameDuration, bool includeInNextFrame)
 {
     RGBA32Buffer& buffer = m_frameBufferCache[frameIndex];
-    
-    // Degenerate GIFS can sometimes result in empty frames.  Ensure we at least have a filled
-    // frame with the correct width/height.
-    if (buffer.status() == RGBA32Buffer::FrameEmpty)
-        haveDecodedRow(frameIndex, 0, 0, 0, 0);
-
     buffer.setStatus(RGBA32Buffer::FrameComplete);
     buffer.setDuration(frameDuration);
     buffer.setIncludeInNextFrame(includeInNextFrame);

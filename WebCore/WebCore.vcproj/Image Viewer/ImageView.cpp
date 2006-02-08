@@ -84,10 +84,10 @@ void ImageView::OnDraw(CDC* pDC)
     // Fill with white.
     cairo_t* context = cairo_create(surface);
     cairo_rectangle(context, 0, 0, rect.right, rect.bottom);
-    cairo_set_source_rgb(context, 1.0, 1.0, 1.0);
+    cairo_set_source_rgb(context, 1.0, 0.0, 0.0);
     cairo_fill(context);
 
-    // Let's test scaling to double the size.
+    // Comment in to test scaling (doubles the size).
     float width = image->size().width(); // * 2;
     float height = image->size().height(); // * 2;
 

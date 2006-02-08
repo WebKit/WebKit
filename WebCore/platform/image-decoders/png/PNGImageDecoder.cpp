@@ -307,7 +307,7 @@ void rowAvailable(png_structp png, png_bytep rowBuffer,
     static_cast<PNGImageDecoder*>(png_get_progressive_ptr(png))->rowAvailable(rowBuffer, rowIndex, interlacePass);
 }
 
-void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned int rowIndex, int interlacePass)
+void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, int interlacePass)
 {
     if (m_frameBufferCache.isEmpty())
         return;
@@ -318,7 +318,6 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned int rowInd
         // Let's resize our buffer now to the correct width/height.
         RGBA32Array& bytes = buffer.bytes();
         bytes.resize(m_size.width() * m_size.height());
-        bytes.fill(0);
 
         // Update our status to be partially complete.
         buffer.setStatus(RGBA32Buffer::FramePartial);
@@ -380,6 +379,8 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned int rowInd
         unsigned alpha = (hasAlpha ? *row++ : 255);
         RGBA32Buffer::setRGBA(*dst++, red, blue, green, alpha);
     }
+
+    buffer.ensureHeight(rowIndex + 1);
 }
 
 void pngComplete(png_structp png, png_infop info)
@@ -394,8 +395,6 @@ void PNGImageDecoder::pngComplete()
 
     // Hand back an appropriately sized buffer, even if the image ended up being empty.
     RGBA32Buffer& buffer = m_frameBufferCache[0];
-    if (buffer.status() == RGBA32Buffer::FrameEmpty)
-        rowAvailable(0, 0, 0);
     buffer.setStatus(RGBA32Buffer::FrameComplete);
 }
 
