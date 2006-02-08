@@ -2863,6 +2863,18 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="bindings"
+			>
+			<Filter
+				Name="js"
+				>
+				<File
+					RelativePath="..\..\bindings\js\JSEvents.cpp"
+					>
+				</File>
+			</Filter>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>
