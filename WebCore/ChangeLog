@@ -1,3 +1,15 @@
+2006-02-07  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        - Fixed <rdar://problem/3727939> Safari strips \0 characters from HTML tags making them valid 
+
+        Test: fast/encoding/decoder-allow-null-chars.html
+
+        * kwq/KWQTextCodec.cpp:
+        (KWQTextDecoder::convertLatin1): Removed stripping of null characters
+        (unwanted): ditto.
+
 2006-02-07  David Hyatt <hyatt@apple.com>
 
         Land the skeleton of a PNG decoder for Win32.

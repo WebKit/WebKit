@@ -284,35 +284,7 @@ QString KWQTextDecoder::convertLatin1(const unsigned char *s, int length)
 {
     ASSERT(_numBufferedBytes == 0);
 
-    int i;
-    for (i = 0; i != length; ++i) {
-        if (s[i] == 0) {
-            break;
-        }
-    }
-    if (i == length) {
-        return QString(reinterpret_cast<const char *>(s), length);
-    }
-
-    QString result("");
-    
-    result.reserve(length);
-    
-    result.append(reinterpret_cast<const char *>(s), i);
-    int start = ++i;
-    for (; i != length; ++i) {
-        if (s[i] == 0) {
-            if (start != i) {
-                result.append(reinterpret_cast<const char *>(&s[start]), i - start);
-            }
-            start = i + 1;
-        }
-    }
-    if (start != length) {
-        result.append(reinterpret_cast<const char *>(&s[start]), length - start);
-    }
-
-    return result;
+    return QString(reinterpret_cast<const char *>(s), length);
 }
 
 QString KWQTextDecoder::convertUTF16(const unsigned char *s, int length)
@@ -405,7 +377,6 @@ UErrorCode KWQTextDecoder::createICUConverter()
     return U_ZERO_ERROR;
 }
 
-// We strip NUL characters because other browsers (at least WinIE) do.
 // We strip replacement characters because the ICU converter for UTF-8 converts
 // invalid sequences into replacement characters, but other browsers discard them.
 // We strip BOM characters because they can show up both at the start of content
@@ -413,7 +384,6 @@ UErrorCode KWQTextDecoder::createICUConverter()
 static inline bool unwanted(UniChar c)
 {
     switch (c) {
-        case 0:
         case replacementCharacter:
         case BOM:
             return true;

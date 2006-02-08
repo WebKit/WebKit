@@ -1,3 +1,11 @@
+2006-02-07  Adele Peterson  <adele@apple.com>
+
+       - test for 
+        <rdar://problem/3727939> Safari strips \0 characters from HTML tags making them valid
+
+        * fast/encoding/decoder-allow-null-chars.html
+        * fast/encoding/decoder-allow-null-chars-expected.txt
+
 2006-02-07  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Timothy.
