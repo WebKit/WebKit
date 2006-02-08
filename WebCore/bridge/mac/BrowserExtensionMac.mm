@@ -61,7 +61,7 @@ void BrowserExtensionMac::createNewWindow(const KURL &url, const URLArgs &urlArg
 void BrowserExtensionMac::createNewWindow(const KURL &url, 
 						const URLArgs &urlArgs, 
 						const WindowArgs &winArgs, 
-						ObjectContents *&part)
+						Frame*& part)
 {
     createNewWindow(url, urlArgs, winArgs, &part);
 }
@@ -69,7 +69,7 @@ void BrowserExtensionMac::createNewWindow(const KURL &url,
 void BrowserExtensionMac::createNewWindow(const KURL &url, 
 						const URLArgs &urlArgs, 
 						const WindowArgs &winArgs, 
-						ObjectContents **partResult)
+						Frame** partResult)
 { 
     KWQ_BLOCK_EXCEPTIONS;
 

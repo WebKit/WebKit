@@ -32,7 +32,7 @@
 #include "Color.h"
 #include "FrameView.h"
 #include "NodeImpl.h"
-#include "ObjectContents.h"
+#include "Shared.h"
 #include "edit_actions.h"
 #include "text_affinity.h"
 #include "text_granularity.h"
@@ -111,8 +111,6 @@ class VisiblePosition;
 class XMLTokenizer;
 class Plugin;
 
-struct ChildFrame;
-
 template <typename T> class Timer;
 
 struct MarkedTextUnderline {
@@ -132,7 +130,7 @@ enum ObjectContentType
     ObjectContentPlugin,
 };
 
-class Frame : public ObjectContents {
+class Frame : public Shared<Frame>, public QObject {
   friend class FrameView;
   friend class KJS::DOMDocument;
   friend class KJS::Selection;
@@ -161,12 +159,7 @@ public:
   Frame();
   virtual ~Frame();
 
-  /**
-   * Opens the specified URL @p url.
-   *
-   * Reimplemented from @ref ObjectContents::openURL .
-   */
-  virtual bool openURL( const KURL &url );
+  virtual bool openURL(const KURL&);
 
   void didExplicitOpen();
 
@@ -589,7 +582,7 @@ public:
    */
   QStringList frameNames() const;
 
-  QPtrList<ObjectContents> frames() const;
+  QPtrList<Frame> frames() const;
 
   Frame *childFrameNamed(const QString &name) const;
 
@@ -603,7 +596,7 @@ public:
    * Not necessarily a direct child of ours, framesets can be nested.
    * Returns "this" if this part isn't a frameset.
    */
-  ObjectContents *currentFrame() const;
+  Frame* currentFrame() const;
 
   /**
    * Returns whether a frame with the specified name is exists or not.
@@ -734,9 +727,6 @@ public:
   
   void selectClosestWordFromMouseEvent(QMouseEvent *mouse, NodeImpl *innerNode, int x, int y);
 
-  /**
-   * Internal empty reimplementation of @ref ObjectContents::openFile .
-   */
   virtual bool openFile();
 
   virtual void urlSelected( const QString &url, int button, int state,
@@ -828,11 +818,11 @@ private slots:
 
   void updateActions();
 
-  void slotPartRemoved( ObjectContents *part );
+  void slotPartRemoved(Frame*);
 
-  void slotActiveFrameChanged( ObjectContents *part );
+  void slotActiveFrameChanged(Frame*);
 
-  void slotChildStarted( KIO::Job *job );
+  void slotChildStarted(KIO::Job*);
 
   void slotChildCompleted();
   void slotChildCompleted( bool );
@@ -881,7 +871,7 @@ private:
   bool shouldUsePlugin(NodeImpl* element, const KURL& url, const QString& mimeType, bool hasFallback, bool& useFallback);
   bool loadPlugin(RenderPart* renderer, const KURL &url, const QString &mimeType, 
                   const QStringList& paramNames, const QStringList& paramValues, bool useFallback);
-  bool loadSubframe(ChildFrame* child, RenderPart* renderer, const KURL& url, const QString& name, const DOMString& referrer);
+  Frame* loadSubframe(RenderPart* renderer, const KURL& url, const QString& name, const DOMString& referrer);
 
 public:
   DOMString requestFrameName();
@@ -898,11 +888,8 @@ public:
   void handleFallbackContent();
 
 private:
-  ChildFrame* childFrame(const QObject*);
-  ChildFrame* recursiveFrameRequest(const KURL&, const URLArgs&, bool callParent = true);
-
-  void connectChild(const ChildFrame *) const;
-  void disconnectChild(const ChildFrame *) const;
+  void connectChild(Frame*) const;
+  void disconnectChild(Frame*) const;
 
   bool checkLinkSecurity(const KURL &linkURL,const QString &message = QString::null, const QString &button = QString::null);
   KJS::JSValue* executeScript(const QString& filename, int baseLine, NodeImpl*, const QString& script);
@@ -1062,7 +1049,7 @@ public:
   KURL url() const;
 
   // split out controller objects
-  FrameTreeNode* treeNode();
+  FrameTreeNode* treeNode() const;
   SelectionController& selection() const;
 };
 

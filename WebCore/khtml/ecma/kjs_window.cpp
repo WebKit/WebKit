@@ -537,8 +537,8 @@ static int intFeature(const HashMap<DOMString, DOMString> &features, const char 
 static Frame *createNewWindow(ExecState *exec, Window *openerWindow, const QString &URL,
     const QString &frameName, const WindowArgs &windowArgs, JSValue *dialogArgs)
 {
-    Frame *openerPart = openerWindow->frame();
-    Frame *activePart = Window::retrieveActive(exec)->frame();
+    Frame* openerPart = openerWindow->frame();
+    Frame* activePart = Window::retrieveActive(exec)->frame();
 
     URLArgs uargs;
 
@@ -554,14 +554,13 @@ static Frame *createNewWindow(ExecState *exec, Window *openerWindow, const QStri
     // do an isSafeScript call using the window we create, which can't be done before creating it.
     // We'd have to resolve all those issues to pass the URL instead of "".
 
-    ObjectContents *newPart = 0;
-    openerPart->browserExtension()->createNewWindow("", uargs, windowArgs, newPart);
+    Frame* newFrame = 0;
+    openerPart->browserExtension()->createNewWindow("", uargs, windowArgs, newFrame);
 
-    if (!newPart || !newPart->inherits("Frame"))
+    if (!newFrame)
         return 0;
 
-    Frame *newFrame = static_cast<Frame *>(newPart);
-    Window *newWindow = Window::retrieveWindow(newFrame);
+    Window* newWindow = Window::retrieveWindow(newFrame);
 
     newFrame->setOpener(openerPart);
     newFrame->setOpenedByJS(true);
@@ -908,15 +907,15 @@ JSValue *Window::namedFrameGetter(ExecState *exec, JSObject *originalObject, con
   return retrieve(thisObj->m_frame->findFrame(propertyName.qstring()));
 }
 
-JSValue *Window::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* Window::indexGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
-  Window *thisObj = static_cast<Window *>(slot.slotBase());
+  Window* thisObj = static_cast<Window*>(slot.slotBase());
   
-  QPtrList<ObjectContents> frames = thisObj->m_frame->frames();
-  ObjectContents* frame = frames.at(slot.index());
-  ASSERT(frame && frame->inherits("Frame"));
+  QPtrList<Frame> frames = thisObj->m_frame->frames();
+  Frame* frame = frames.at(slot.index());
+  ASSERT(frame);
 
-  return retrieve(static_cast<Frame*>(frame));
+  return retrieve(frame);
 }
 
 JSValue *Window::namedItemGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
@@ -1006,11 +1005,11 @@ bool Window::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName,
   bool ok;
   unsigned int i = propertyName.toArrayIndex(&ok);
   if (ok) {
-    QPtrList<ObjectContents> frames = m_frame->frames();
+    QPtrList<Frame> frames = m_frame->frames();
     unsigned int len = frames.count();
     if (i < len) {
-      ObjectContents* frame = frames.at(i);
-      if (frame && frame->inherits("Frame")) {
+      Frame* frame = frames.at(i);
+      if (frame) {
         slot.setCustomIndex(this, i, indexGetter);
         return true;
       }
@@ -1638,12 +1637,11 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
       uargs.serviceType = "text/html";
       
       // request window (new or existing if framename is set)
-      ObjectContents* newPart = 0;
+      Frame* newFrame = 0;
       uargs.metaData().set("referrer", activePart->referrer());
-      frame->browserExtension()->createNewWindow("", uargs, windowArgs, newPart);
-      if (!newPart || !newPart->inherits("Frame"))
+      frame->browserExtension()->createNewWindow("", uargs, windowArgs, newFrame);
+      if (!newFrame)
           return jsUndefined();
-      Frame *newFrame = static_cast<Frame*>(newPart);
       newFrame->setOpener(frame);
       newFrame->setOpenedByJS(true);
       
@@ -2017,7 +2015,7 @@ JSValue *FrameArray::getValueProperty(ExecState *exec, int token)
 {
   switch (token) {
   case Length: {
-    QPtrList<ObjectContents> frames = m_frame->frames();
+    QPtrList<Frame> frames = m_frame->frames();
     unsigned int len = frames.count();
     return jsNumber(len);
   }
@@ -2035,7 +2033,7 @@ JSValue *FrameArray::getValueProperty(ExecState *exec, int token)
 JSValue *FrameArray::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   FrameArray *thisObj = static_cast<FrameArray *>(slot.slotBase());
-  ObjectContents *frame = thisObj->m_frame->frames().at(slot.index());
+  Frame* frame = thisObj->m_frame->frames().at(slot.index());
 
   if (frame && frame->inherits("Frame")) {
     Frame *khtml = static_cast<Frame*>(frame);
@@ -2048,7 +2046,7 @@ JSValue *FrameArray::indexGetter(ExecState *exec, JSObject *originalObject, cons
 JSValue *FrameArray::nameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   FrameArray *thisObj = static_cast<FrameArray *>(slot.slotBase());
-  ObjectContents *frame = thisObj->m_frame->findFrame(propertyName.qstring());
+  Frame* frame = thisObj->m_frame->findFrame(propertyName.qstring());
 
   if (frame && frame->inherits("Frame")) {
     Frame *khtml = static_cast<Frame*>(frame);
@@ -2072,7 +2070,7 @@ bool FrameArray::getOwnPropertySlot(ExecState *exec, const Identifier& propertyN
   }
 
   // check for the name or number
-  ObjectContents *frame = m_frame->findFrame(propertyName.qstring());
+  Frame* frame = m_frame->findFrame(propertyName.qstring());
   if (frame) {
     slot.setCustom(this, nameGetter);
     return true;

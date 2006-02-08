@@ -40,10 +40,10 @@ public:
      
     virtual void createNewWindow(const KURL &url, 
                                  const URLArgs &urlArgs = URLArgs());
-    virtual void createNewWindow(const KURL &url,
-                                 const URLArgs &urlArgs, 
-                                 const WindowArgs &winArgs, 
-                                 ObjectContents *&part);
+    virtual void createNewWindow(const KURL& url,
+                                 const URLArgs& urlArgs, 
+                                 const WindowArgs& winArgs, 
+                                 Frame*& part);
 
     virtual void setIconURL(const KURL &url);
     virtual void setTypedIconURL(const KURL &url, const QString &type);
@@ -59,7 +59,7 @@ private:
      void createNewWindow(const KURL &url, 
                           const URLArgs &urlArgs, 
                           const WindowArgs &winArgs, 
-                          ObjectContents **part);
+                          Frame** part);
 
      MacFrame *m_frame;
 };

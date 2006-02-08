@@ -39,7 +39,7 @@ void QFrame::setFrameStyle(int s)
 
     // Tell the other side of the bridge about the frame style change.
     if (isFrameView()) {
-        if (Frame *frame = static_cast<FrameView *>(this)->frame()) {
+        if (Frame* frame = static_cast<FrameView *>(this)->frame()) {
             KWQ_BLOCK_EXCEPTIONS;
             [Mac(frame)->bridge() setHasBorder:(s != NoFrame)];
             KWQ_UNBLOCK_EXCEPTIONS;

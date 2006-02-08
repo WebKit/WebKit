@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		1A37F63A0988EE3300D05E90 /* JSCore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A37F6390988EE3300D05E90 /* JSCore.cpp */; };
-		1A3D8557097647B5002C85D1 /* ObjectContents.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3D8556097647B4002C85D1 /* ObjectContents.h */; };
 		1A69D381085627410009880D /* domparser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A69D37F085627410009880D /* domparser.h */; };
 		1A69D382085627410009880D /* domparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A69D380085627410009880D /* domparser.cpp */; };
 		1ADB5699098827AD0032EEE2 /* JSEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ADB5698098827AD0032EEE2 /* JSEvents.cpp */; };
@@ -1084,7 +1083,6 @@
 
 /* Begin PBXFileReference section */
 		1A37F6390988EE3300D05E90 /* JSCore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCore.cpp; sourceTree = "<group>"; };
-		1A3D8556097647B4002C85D1 /* ObjectContents.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ObjectContents.h; sourceTree = "<group>"; };
 		1A69D37F085627410009880D /* domparser.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = domparser.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1A69D380085627410009880D /* domparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = domparser.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		1ADB5698098827AD0032EEE2 /* JSEvents.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSEvents.cpp; path = bindings/js/JSEvents.cpp; sourceTree = "<group>"; };
@@ -2341,7 +2339,6 @@
 				65A21482097A3F5300B9050A /* FrameTreeNode.cpp */,
 				65CBFEF80974F607001DAC25 /* FrameView.h */,
 				65CBFEF70974F607001DAC25 /* FrameView.cpp */,
-				1A3D8556097647B4002C85D1 /* ObjectContents.h */,
 				65A21467097A329100B9050A /* Page.h */,
 				65FEA86809833ADE00BED4AB /* Page.cpp */,
 				65D1C1C909932B22000CB324 /* Plugin.h */,
@@ -4220,7 +4217,6 @@
 				FAE0418B09759694000540BE /* RenderSVGImage.h in Headers */,
 				FAE04190097596C9000540BE /* SVGImageLoader.h in Headers */,
 				65CBFEFA0974F607001DAC25 /* FrameView.h in Headers */,
-				1A3D8557097647B5002C85D1 /* ObjectContents.h in Headers */,
 				A8185F3909765766005826D9 /* DocumentTypeImpl.h in Headers */,
 				A8185F3B09765766005826D9 /* DOMImplementationImpl.h in Headers */,
 				A8185F3D09765766005826D9 /* DocumentFragmentImpl.h in Headers */,

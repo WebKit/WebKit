@@ -45,12 +45,7 @@ namespace WebCore
 {
     class Decoder;
 
-    struct ChildFrame
-    {
-        RefPtr<Frame> m_frame;
-    };
-
-class FrameList : public QValueList<ChildFrame>
+class FrameList : public QValueList<RefPtr<Frame> >
 {
 public:
     Iterator find(const QString &name);
@@ -249,7 +244,7 @@ public:
 
   IntPoint m_dragStartPos;
 
-  ObjectContents * m_activeFrame;
+  Frame* m_activeFrame;
   QGuardedPtr<Frame> m_opener;
   bool m_openedByJS;
   bool m_newJSInterpreterExists; // set to 1 by setOpenedByJS, for window.open

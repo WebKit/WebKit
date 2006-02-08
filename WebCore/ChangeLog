@@ -1,3 +1,62 @@
+2006-02-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adele.
+
+        - remove all remains of old-style frame tree, ChildFrame, ObjectContents and FrameList are all gone
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/BrowserExtension.h:
+        * bridge/mac/BrowserExtensionMac.h:
+        * bridge/mac/BrowserExtensionMac.mm:
+        (WebCore::BrowserExtensionMac::createNewWindow):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::createNewWindow):
+        (KJS::Window::indexGetter):
+        (KJS::Window::getOwnPropertySlot):
+        (KJS::WindowFunc::callAsFunction):
+        (KJS::FrameArray::getValueProperty):
+        (KJS::FrameArray::indexGetter):
+        (KJS::FrameArray::nameGetter):
+        (KJS::FrameArray::getOwnPropertySlot):
+        * kwq/KWQFrame.mm:
+        (QFrame::setFrameStyle):
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        (WebCore::Frame::stopLoading):
+        (WebCore::Frame::clear):
+        (WebCore::Frame::stopAnimations):
+        (WebCore::Frame::checkCompleted):
+        (WebCore::Frame::checkEmitLoadEvent):
+        (WebCore::Frame::requestFrame):
+        (WebCore::Frame::requestObject):
+        (WebCore::Frame::loadSubframe):
+        (WebCore::Frame::findFrame):
+        (WebCore::Frame::frameExists):
+        (WebCore::Frame::setZoomFactor):
+        (WebCore::Frame::frameNames):
+        (WebCore::Frame::frames):
+        (WebCore::Frame::childFrameNamed):
+        (WebCore::Frame::slotPartRemoved):
+        (WebCore::Frame::connectChild):
+        (WebCore::Frame::disconnectChild):
+        (WebCore::Frame::canCachePage):
+        (WebCore::Frame::setPolicyBaseURL):
+        (WebCore::Frame::treeNode):
+        (WebCore::Frame::frameDetached):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        * page/FrameTreeNode.h:
+        (WebCore::FrameTreeNode::name):
+        (WebCore::FrameTreeNode::parent):
+        (WebCore::FrameTreeNode::nextSibling):
+        (WebCore::FrameTreeNode::previousSibling):
+        (WebCore::FrameTreeNode::firstChild):
+        (WebCore::FrameTreeNode::lastChild):
+        (WebCore::FrameTreeNode::childCount):
+        * page/ObjectContents.h: Removed.
+        * page/Plugin.h:
+        (WebCore::Plugin::view):
+
 2006-02-07  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.

@@ -42,16 +42,16 @@ public:
     }
     ~FrameTreeNode();
 
-    DOMString& name() { return m_name; }
+    const DOMString& name() const { return m_name; }
     void setName(const DOMString& name);
-    Frame* parent() { return m_parent; }
+    Frame* parent() const { return m_parent; }
     void setParent(Frame* parent) { m_parent = parent; }
     
-    Frame* nextSibling() { return m_nextSibling.get(); }
-    Frame* previousSibling() { return m_previousSibling; }
-    Frame* firstChild() { return m_firstChild.get(); }
-    Frame* lastChild() { return m_lastChild; }
-    int childCount() { return m_childCount; }
+    Frame* nextSibling() const { return m_nextSibling.get(); }
+    Frame* previousSibling() const { return m_previousSibling; }
+    Frame* firstChild() const { return m_firstChild.get(); }
+    Frame* lastChild() const { return m_lastChild; }
+    int childCount() const { return m_childCount; }
 
     void appendChild(PassRefPtr<Frame> child);
     void removeChild(Frame *child);

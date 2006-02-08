@@ -21,17 +21,17 @@
 #ifndef PLUGIN_H
 #define PLUGIN_H
 
-#include <ObjectContents.h>
+#include "Shared.h"
 
 class QWidget;
 
 namespace WebCore {
 
-class Plugin : public ObjectContents
+class Plugin : public Shared<Plugin>
 {
 public:
     Plugin(QWidget *view) : m_view(view) { }
-    virtual QWidget *view() const { return m_view; }
+    QWidget *view() const { return m_view; }
 
 private:
     QWidget *m_view;
