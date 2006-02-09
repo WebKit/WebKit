@@ -1,3 +1,19 @@
+2006-02-08  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Test: fast/block/positioning/window-height-change.html
+
+        Reviewed by Hyatt.
+        
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5813
+          positioned blocks don't update when resizing the window vertically
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock): Always relayout positioned children of
+        the root, since their positions may depend on the viewport's height which
+        may have changed.
+        * rendering/render_flexbox.cpp:
+        (khtml::RenderFlexibleBox::layoutBlock): Ditto.
+
 2006-02-08  Dave Hyatt <hyatt@apple.com>
 
         Add support for tiling of backgrounds using Cairo.

@@ -246,7 +246,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren)
 
     if (!relayoutChildren && posChildNeedsLayout() && !normalChildNeedsLayout() && !selfNeedsLayout()) {
         // All we have to is lay out our positioned objects.
-        layoutPositionedObjects(relayoutChildren);
+        layoutPositionedObjects(relayoutChildren || isRoot());
         if (hasOverflowClip())
             m_layer->updateScrollInfoAfterLayout();
         setNeedsLayout(false);
@@ -305,7 +305,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren)
     if (previousHeight != m_height)
         relayoutChildren = true;
 
-    layoutPositionedObjects( relayoutChildren );
+    layoutPositionedObjects(relayoutChildren || isRoot());
 
     //kdDebug() << renderName() << " layout width=" << m_width << " height=" << m_height << endl;
 
