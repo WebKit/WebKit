@@ -1,5 +1,12 @@
 2006-02-08  Adele Peterson  <adele@apple.com>
 
+        Fix broken layout tests.
+
+        * khtml/xml/NodeImpl.cpp:
+        (WebCore::NodeImpl::dispatchGenericEvent): iterator is null, so we have to reset it to the first node in the chain.
+
+2006-02-08  Adele Peterson  <adele@apple.com>
+
         Reviewed by Maciej.
 
         - Fixed <rdar://problem/4325160> 
