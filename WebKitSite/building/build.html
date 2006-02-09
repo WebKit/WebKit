@@ -17,7 +17,8 @@ Building WebKit
 
 <div id="content">
 
-<p>Before you build WebKit, you'll need to <a href="checkout.html">check out</a> sources.<p>
+<p>Before you build WebKit, you'll need to <a href="checkout.html">check out</a> sources. Next make sure that you have Xcode, preferably
+the latest version, which is 2.2 at this point. You will need at least Xcode 2.1 to be able to build WebKit.<p>
 
 <ol>
 
@@ -40,10 +41,8 @@ If you haven't, the build products will be put in a directory named WebKitBuild 
 <p>By default, the scripts will do a Deployment build, which is optimized and doesn't have development-only code, like assertions, compiled in.
 If you're prefer to do a Development build, then do execute this command:</p>
 <p class="code">WebKitTools/Scripts/set-webkit-configuration --development</p>
-<p>You can also pass the configuration on the command line to any of the build commands.
-If you're using Xcode 2.0 you'll need to blow away your build products directory each time you switch configurations.</p>
+<p>You can also pass the configuration on the command line to any of the build commands.</p>
 <p>More information about building WebKit can be found on its <a href="http://www.opendarwin.org/wiki/index.php/WebKit">wiki</a>.</p>
-<p>[TODO: Talk about how to replace your system WebKit.framework, and why you probably don't want to, once we have scripts that help you do that.]</p>
 
 </div>
 </body>
