@@ -1,3 +1,14 @@
+2006-02-08  Boris Daljevic  <boris@backbase.com>
+
+        Reviewed and tweaked by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6648
+          Safari strips namespace prefix when using setAttribute(), but should treat it as part of name
+
+        * fast/dom/Element: Added.
+        * fast/dom/Element/setAttribute-with-colon.html: Added.
+        * fast/dom/Element/setAttribute-with-colon-expected.txt: Added.
+
 2006-02-08  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Hyatt.
