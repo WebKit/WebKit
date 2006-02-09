@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameView.h>
+#import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebPDFRepresentation.h>
 #import <WebKit/WebPDFView.h>
 
@@ -38,12 +39,20 @@
 
 @implementation WebPDFRepresentation
 
-+ (NSArray *)supportedMIMETypes
++ (NSArray *)postScriptMIMETypes
 {
     return [NSArray arrayWithObjects:
+        @"application/postscript",
+        nil];
+}
+
++ (NSArray *)supportedMIMETypes
+{
+    return [[[self class] postScriptMIMETypes] arrayByAddingObjectsFromArray:
+        [NSArray arrayWithObjects:
             @"text/pdf",
             @"application/pdf",
-            nil];
+            nil]];
 }
 
 + (Class)PDFDocumentClass
@@ -70,10 +79,48 @@
 {
 }
 
+- (NSData *)convertPostScriptDataSourceToPDF:(NSData *)data
+{
+    // Convert PostScript to PDF using Quartz 2D API
+    // http://developer.apple.com/documentation/GraphicsImaging/Conceptual/drawingwithquartz2d/dq_ps_convert/chapter_16_section_1.html
+
+    CGPSConverterCallbacks callbacks = { 0, 0, 0, 0, 0, 0, 0, 0 };    
+    CGPSConverterRef converter = CGPSConverterCreate(0, &callbacks, 0);
+    ASSERT(converter);
+
+    CGDataProviderRef provider = CGDataProviderCreateWithCFData((CFDataRef)data);
+    ASSERT(provider);
+
+    CFMutableDataRef result = CFDataCreateMutable(kCFAllocatorDefault, 0);
+    ASSERT(result);
+
+    CGDataConsumerRef consumer = CGDataConsumerCreateWithCFData(result);
+    ASSERT(consumer);
+
+    // Error handled by detecting zero-length 'result' in caller
+    CGPSConverterConvert(converter, provider, consumer, 0);
+
+    CFRelease(converter);
+    CFRelease(provider);
+    CFRelease(consumer);
+
+    return WebCFAutorelease(result);
+}
+
 - (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource
 {
+    NSData *data = [dataSource data];
+
+    NSArray *postScriptMIMETypes = [[self class] postScriptMIMETypes];
+    NSString *mimeType = [[dataSource response] MIMEType];
+    if ([postScriptMIMETypes containsObject:mimeType]) {
+        data = [self convertPostScriptDataSourceToPDF:data];
+        if ([data length] == 0)
+            return;
+    }
+
     WebPDFView *view = (WebPDFView *)[[[dataSource webFrame] frameView] documentView];
-    PDFDocument *doc = [[[[self class] PDFDocumentClass] alloc] initWithData:[dataSource data]];
+    PDFDocument *doc = [[[[self class] PDFDocumentClass] alloc] initWithData:data];
     [[view PDFSubview] setDocument:doc];
     [doc release];
 }

@@ -1,3 +1,17 @@
+2006-02-08  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
+        - Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3527
+        Allow Safari to open postscript files in browser windows as well
+
+        * WebView/WebPDFRepresentation.m:
+        (+[WebPDFRepresentation postScriptMIMETypes]): Added.
+        (+[WebPDFRepresentation supportedMIMETypes]): Include PostScript MIME types.
+        (-[WebPDFRepresentation convertPostScriptDataSourceToPDF:]): Added.
+        (-[WebPDFRepresentation finishedLoadingWithDataSource:]):
+        Handle PostScript conversion using new convertPostScriptDataSourceToPDF method.
+
 2006-02-07  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Timothy.
