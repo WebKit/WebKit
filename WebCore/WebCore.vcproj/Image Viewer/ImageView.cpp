@@ -87,18 +87,25 @@ void ImageView::OnDraw(CDC* pDC)
     cairo_set_source_rgb(context, 1.0, 1.0, 1.0);
     cairo_fill(context);
 
-    // Comment in to test scaling (doubles the size).
-    float width = image->size().width(); // * 2;
-    float height = image->size().height(); // * 2;
+    // Comment in to test tiling.
+    bool tile = false; // true;
+    FloatPoint srcPoint; // The src point to use when tiling.  Change value to test offset tiling.
 
-    float left = (rect.right - width) / 2;
-    float top = (rect.bottom - height) / 2;
+    // Comment the multiplicative factor in to test scaling (doubles the size).
+    float width = tile ? rect.right : image->size().width(); // * 2;
+    float height = tile ? rect.bottom : image->size().height(); // * 2;
+
+    float left = tile ? 0 : (rect.right - width) / 2;
+    float top = tile ? 0 : (rect.bottom - height) / 2;
     if (left < 0) left = 0;
     if (top < 0) top = 0;
 
     FloatRect dstRect(FloatPoint(left, top), FloatSize(width, height));
-    FloatRect imageRect(FloatPoint(), image->size());
-    image->drawInRect(dstRect, imageRect, Image::CompositeSourceOver, (void*)context);
+    FloatRect imageRect(srcPoint, image->size());
+    if (tile)
+        image->tileInRect(dstRect, srcPoint, context);
+    else
+        image->drawInRect(dstRect, imageRect, Image::CompositeSourceOver, (void*)context);
     cairo_destroy(context);
     
     context = cairo_create(finalSurface);

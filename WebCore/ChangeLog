@@ -1,3 +1,13 @@
+2006-02-08  Dave Hyatt <hyatt@apple.com>
+
+        Add support for tiling of backgrounds using Cairo.
+
+        Reviewed by darin
+
+        * Image Viewer/ImageView.cpp:
+        * platform/cairo/ImageCairo.cpp:
+        (WebCore::Image::tileInRect):
+
 2006-02-08  Boris Daljevic  <boris@backbase.com>
 
         Reviewed and tweaked by Darin.

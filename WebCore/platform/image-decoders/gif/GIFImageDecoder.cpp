@@ -251,7 +251,8 @@ void GIFImageDecoder::haveDecodedRow(unsigned frameIndex,
             unsigned green = colorMap[colorIndex + 1];
             unsigned blue = colorMap[colorIndex + 2];
             RGBA32Buffer::setRGBA(*currDst, red, blue, green, 255);
-        }
+        } else
+            RGBA32Buffer::setRGBA(*currDst, 0, 0, 0, 0);
         currDst++;
         currentRowByte++;
     }

@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#include <math.h>
 #include <cairo.h>
 #include <kxmlcore/Vector.h>
 #include "Array.h"
@@ -131,84 +132,56 @@ void Image::drawInRect(const FloatRect& dst, const FloatRect& src,
 
 }
 
-/*
-static void drawPattern(void* info, CGContextRef context)
-{
-    ImageData* data = (ImageData*)info;
-    CGImageRef image = data->frameAtIndex(data->currentFrame());
-    float w = CGImageGetWidth(image);
-    float h = CGImageGetHeight(image);
-    CGContextDrawImage(context, CGRectMake(0, data->size().height() - h, w, h), image);    
-}
-
-static const CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
-*/
-
 void Image::tileInRect(const FloatRect& dstRect, const FloatPoint& srcPoint, void* ctxt)
 {
-    /* FIXME: IMPLEMENT
-    if (!m_data)
-        return;
-    
-    CGImageRef image = frameAtIndex(m_currentFrame);
-    if (!image)
+    if (!m_source.initialized())
         return;
 
-    CGContextRef context = graphicsContext(ctxt);
+    cairo_surface_t* image = frameAtIndex(m_currentFrame);
+    if (!image) // If it's too early we won't have an image yet.
+        return;
 
-    if (m_currentFrame == 0 && m_isSolidColor)
-        return fillSolidColorInRect(m_solidColor, dstRect, Image::CompositeSourceOver, context);
-
-    CGSize tileSize = size();
-    CGRect rect = dstRect;
-    CGPoint point = srcPoint;
+    IntSize selfSize = size();                       
+    FloatRect srcRect(srcPoint, selfSize);
 
     // Check and see if a single draw of the image can cover the entire area we are supposed to tile.
-    NSRect oneTileRect;
-    oneTileRect.origin.x = rect.origin.x + fmodf(fmodf(-point.x, tileSize.width) - tileSize.width, tileSize.width);
-    oneTileRect.origin.y = rect.origin.y + fmodf(fmodf(-point.y, tileSize.height) - tileSize.height, tileSize.height);
-    oneTileRect.size.height = tileSize.height;
-    oneTileRect.size.width = tileSize.width;
+    float tileWidth = size().width();
+    float tileHeight = size().height();
+   
+    // We could get interesting source offsets (negative ones or positive ones.  Deal with both
+    // out of bounds cases.
+    float dstTileX = dstRect.x() + fmodf(fmodf(-srcPoint.x(), tileWidth) - tileWidth, tileWidth);
+    float dstTileY = dstRect.y() + fmodf(fmodf(-srcPoint.y(), tileHeight) - tileHeight, tileHeight);
+    FloatRect dstTileRect(dstTileX, dstTileY, tileWidth, tileHeight);
+    
+    float srcX = dstRect.x() - dstTileRect.x();
+    float srcY = dstRect.y() - dstTileRect.y();
 
     // If the single image draw covers the whole area, then just draw once.
-    if (NSContainsRect(oneTileRect, NSMakeRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height))) {
-        CGRect fromRect;
-        fromRect.origin.x = rect.origin.x - oneTileRect.origin.x;
-        fromRect.origin.y = rect.origin.y - oneTileRect.origin.y;
-        fromRect.size = rect.size;
-
-        drawInRect(dstRect, FloatRect(fromRect), Image::CompositeSourceOver, context);
+    if (dstTileRect.contains(dstRect)) {
+        drawInRect(dstRect,
+                   FloatRect(srcX, srcY, dstRect.width(), dstRect.height()),
+                   Image::CompositeSourceOver,
+                   ctxt);
         return;
     }
 
-    CGPatternRef pattern = CGPatternCreate(m_data, CGRectMake(0, 0, tileSize.width, tileSize.height),
-                                           CGAffineTransformIdentity, tileSize.width, tileSize.height, 
-                                           kCGPatternTilingConstantSpacing, true, &patternCallbacks);
-    
-    if (pattern) {
-        CGContextSaveGState(context);
+    // We have to tile.
+    cairo_t* context = graphicsContext(ctxt);
 
-        CGPoint tileOrigin = CGPointMake(oneTileRect.origin.x, oneTileRect.origin.y);
-        [[WebCoreImageRendererFactory sharedFactory] setPatternPhaseForContext:context inUserSpace:tileOrigin];
+    cairo_save(context);
 
-        CGColorSpaceRef patternSpace = CGColorSpaceCreatePattern(NULL);
-        CGContextSetFillColorSpace(context, patternSpace);
-        CGColorSpaceRelease(patternSpace);
+    cairo_translate(context, dstTileRect.x(), dstTileRect.y());
+    cairo_pattern_t* pattern = cairo_pattern_create_for_surface(image);
+    cairo_pattern_set_extend(pattern, CAIRO_EXTEND_REPEAT);
 
-        float patternAlpha = 1;
-        CGContextSetFillPattern(context, pattern, &patternAlpha);
-
-        setCompositingOperation(context, Image::CompositeSourceOver);
-
-        CGContextFillRect(context, rect);
-
-        CGContextRestoreGState(context);
-
-        CGPatternRelease(pattern);
-    }
+    // Draw the image.
+    cairo_set_source(context, pattern);
+    cairo_rectangle(context, srcX, srcY, dstRect.width(), dstRect.height());
+    cairo_fill(context);
+    cairo_restore(context);
 
     startAnimation();
-    */
 }
 
 void Image::scaleAndTileInRect(const FloatRect& dstRect, const FloatRect& srcRect,
