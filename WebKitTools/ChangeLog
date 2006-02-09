@@ -1,3 +1,18 @@
+2006-02-08  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by thatcher
+        
+        Changes to test fix for:
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=3982>
+        webViewDidBeginEditing, webViewDidEndEditing notification methods not called on delegate
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (-[WaitUntilDoneDelegate webView:didCommitLoadForFrame:]):
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]):
+        (+[LayoutTestController webScriptNameForSelector:]):
+        (-[LayoutTestController setWindowHasFocus:]):
+        (-[LayoutTestController setDisplaysWithFocusAttributes:]):
+
 2006-02-07  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Timothy.

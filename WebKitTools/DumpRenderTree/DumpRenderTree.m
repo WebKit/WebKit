@@ -34,6 +34,7 @@
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebView.h>
+#import <WebKit/WebHTMLViewPrivate.h>
 
 #import <Carbon/Carbon.h>                           // for GetCurrentEventTime()
 #import <ApplicationServices/ApplicationServices.h> // for CMSetDefaultProfileBySpace
@@ -328,6 +329,11 @@ static void dump(void)
 {
     if (frame == f)
         readyToDump = NO;
+        
+    if ([[[frame frameView] documentView] isKindOfClass:[WebHTMLView class]]) {
+        [(WebHTMLView *)[[frame frameView] documentView] _setWindowHasFocus:YES];
+        [(WebHTMLView *)[[frame frameView] documentView] _setDisplaysWithFocusAttributes:YES];
+    }
 }
 
 - (void)webView:(WebView *)sender didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
@@ -511,9 +517,20 @@ static void dump(void)
     if (aSelector == @selector(waitUntilDone)
             || aSelector == @selector(notifyDone)
             || aSelector == @selector(dumpAsText)
-            || aSelector == @selector(dumpTitleChanges))
+            || aSelector == @selector(dumpTitleChanges)
+            || aSelector == @selector(setWindowHasFocus:)
+            || aSelector == @selector(setDisplaysWithFocusAttributes:))
         return NO;
     return YES;
+}
+
++ (NSString *)webScriptNameForSelector:(SEL)aSelector
+{
+    if (aSelector == @selector(setWindowHasFocus:))
+        return @"setWindowHasFocus";
+    if (aSelector == @selector(setDisplaysWithFocusAttributes:))
+        return @"setDisplaysWithFocusAttributes";
+    return nil;
 }
 
 - (void)waitUntilDone 
@@ -536,6 +553,18 @@ static void dump(void)
 - (void)dumpTitleChanges
 {
     dumpTitleChanges = YES;
+}
+
+- (void)setWindowHasFocus:(BOOL)flag
+{
+    if ([[[frame frameView] documentView] isKindOfClass:[WebHTMLView class]])
+        [(WebHTMLView *)[[frame frameView] documentView] _setWindowHasFocus:flag];
+}
+
+- (void)setDisplaysWithFocusAttributes:(BOOL)flag
+{
+    if ([[[frame frameView] documentView] isKindOfClass:[WebHTMLView class]])
+        [(WebHTMLView *)[[frame frameView] documentView] _setDisplaysWithFocusAttributes:flag];
 }
 
 @end
