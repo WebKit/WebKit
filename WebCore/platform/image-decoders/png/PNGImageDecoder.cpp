@@ -130,9 +130,7 @@ private:
 };
 
 PNGImageDecoder::PNGImageDecoder()
-: m_sizeAvailable(false)
-, m_failed(false)
-, m_reader(0)
+: m_reader(0)
 {}
 
 PNGImageDecoder::~PNGImageDecoder()
@@ -169,13 +167,6 @@ bool PNGImageDecoder::isSizeAvailable() const
 
     return m_sizeAvailable;
 }
-
-// Requests the size.
-IntSize PNGImageDecoder::size() const
-{
-    return m_size;
-}
-
 
 RGBA32Buffer PNGImageDecoder::frameBufferAtIndex(size_t index)
 {

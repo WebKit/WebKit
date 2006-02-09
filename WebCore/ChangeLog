@@ -1,3 +1,47 @@
+2006-02-09  Dave Hyatt <hyatt@apple.com
+
+        Minor image cleanup.  Move some variables that all the
+        image decoders have in common up into the base class.
+
+        Stub out the boring parts of the JPEG decoder also, so that
+        the patch that does the decoding will be all meat. :)
+
+        Reviewed by mjs
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageDecoder::m_failed):
+        (WebCore::ImageDecoder::size):
+        (WebCore::ImageDecoder::failed):
+        (WebCore::ImageDecoder::setFailed):
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::GIFImageDecoder):
+        (WebCore::GIFImageDecoder::~GIFImageDecoder):
+        (WebCore::GIFImageDecoder::setData):
+        (WebCore::GIFImageDecoder::isSizeAvailable):
+        (WebCore::GIFImageDecoder::repetitionCount):
+        (WebCore::GIFImageDecoder::frameBufferAtIndex):
+        (WebCore::GIFImageDecoder::decode):
+        (WebCore::GIFImageDecoder::decodingHalted):
+        (WebCore::GIFImageDecoder::haveDecodedRow):
+        (WebCore::GIFImageDecoder::gifComplete):
+        * platform/image-decoders/gif/GIFImageDecoder.h:
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp: Added.
+        (WebCore::JPEGImageReader::JPEGImageReader):
+        (WebCore::JPEGImageReader::~JPEGImageReader):
+        (WebCore::JPEGImageReader::close):
+        (WebCore::JPEGImageReader::decode):
+        (WebCore::JPEGImageDecoder::JPEGImageDecoder):
+        (WebCore::JPEGImageDecoder::~JPEGImageDecoder):
+        (WebCore::JPEGImageDecoder::setData):
+        (WebCore::JPEGImageDecoder::isSizeAvailable):
+        (WebCore::JPEGImageDecoder::frameBufferAtIndex):
+        (WebCore::JPEGImageDecoder::decode):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h:
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::PNGImageDecoder):
+        * platform/image-decoders/png/PNGImageDecoder.h:
+
 2006-02-09  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber-stamped by Hyatt.

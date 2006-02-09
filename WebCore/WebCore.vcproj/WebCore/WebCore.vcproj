@@ -2063,6 +2063,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\platform\image-decoders\jpeg\JPEGImageDecoder.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\platform\image-decoders\jpeg\JPEGImageDecoder.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\platform\image-decoders\jpeg\jpegint.h"
 						>
 					</File>

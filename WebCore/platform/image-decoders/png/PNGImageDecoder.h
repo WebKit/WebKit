@@ -45,14 +45,9 @@ public:
     // Whether or not the size information has been decoded yet.
     virtual bool isSizeAvailable() const;
 
-    // Requests the size.
-    virtual IntSize size() const;
-
     virtual RGBA32Buffer frameBufferAtIndex(size_t index);
 
     void decode(bool sizeOnly = false) const;
-
-    void setFailed() { m_failed = true; }
 
     PNGImageReader* reader() { return m_reader; }
 
@@ -63,9 +58,6 @@ public:
     void pngComplete();
 
 private:
-    bool m_sizeAvailable;
-    mutable bool m_failed;
-    IntSize m_size;
     mutable PNGImageReader* m_reader;
 };
 

@@ -45,9 +45,6 @@ public:
     // Whether or not the size information has been decoded yet.
     virtual bool isSizeAvailable() const;
 
-    // Requests the size.
-    virtual IntSize size() const;
-
     // The total number of frames for the image.  Will scan the image data for the answer
     // (without necessarily decoding all of the individual frames).
     virtual int frameCount();
@@ -72,11 +69,8 @@ public:
     void gifComplete();
 
 private:
-    bool m_frameCountValid : 1;
-    bool m_sizeAvailable : 1;
-    mutable bool m_failed : 1;
-    IntSize m_size;
-    mutable GIFImageDecoderPrivate* m_impl;
+    bool m_frameCountValid;
+    mutable GIFImageDecoderPrivate* m_reader;
 };
 
 }

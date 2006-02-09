@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PNG_DECODER_H_
-#define PNG_DECODER_H_
+#ifndef JPEG_DECODER_H_
+#define JPEG_DECODER_H_
 
 #include "ImageDecoder.h"
 
@@ -32,7 +32,7 @@ namespace WebCore {
 
 class JPEGImageReader;
 
-// This class decodes the PNG image format.
+// This class decodes the JPEG image format.
 class JPEGImageDecoder : public ImageDecoder
 {
 public:
@@ -52,20 +52,9 @@ public:
 
     void decode(bool sizeOnly = false) const;
 
-    void setFailed() { m_failed = true; }
-
     JPEGImageReader* reader() { return m_reader; }
 
-    // Callbacks from libpng
-    void decodingFailed() { m_failed = true; }
-    void headerAvailable();
-    void rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, int interlacePass);
-    void pngComplete();
-
 private:
-    bool m_sizeAvailable;
-    mutable bool m_failed;
-    IntSize m_size;
     mutable JPEGImageReader* m_reader;
 };
 
