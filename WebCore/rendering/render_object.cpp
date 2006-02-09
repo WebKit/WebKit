@@ -1791,7 +1791,7 @@ void RenderObject::setStyle(RenderStyle *style)
         // When a layout hint happens and an object's position style changes, we have to do a layout
         // to dirty the render tree using the old position value now.
         if (d == RenderStyle::Layout && m_parent && m_style->position() != style->position())
-            setNeedsLayoutAndMinMaxRecalc();
+            markContainingBlocksForLayout();
         
         if (isFloating() && (m_style->floating() != style->floating()))
             // For changes in float styles, we need to conceivably remove ourselves

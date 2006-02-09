@@ -1,3 +1,19 @@
+2006-02-08  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Test: fast/block/positioning/relayout-on-position-change.html
+
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7095
+          Removing positioning from an element does not relayout properly
+
+        * rendering/render_object.cpp:
+        (WebCore::RenderObject::setStyle): The second call to setNeedsLayoutAndMinMaxRecalc
+        did not mark containing blocks for relayout based on the new position value since
+        the object itself was already marked as needing layout. Changed the first call to
+        only mark the containing blocks (based on the old position value) and not the
+        object itself.
+
 2006-02-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
