@@ -1,3 +1,18 @@
+2006-02-09  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/4198378> Crash on a CFRelease when visiting http://www.akella.com/
+
+        * Plugins/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView requestWithURLCString:]):
+	The true source of this crash is that the URL string is sometimes not NULL-terminated, which is the
+	Real Player plugin's fault.  That has been filed as 4439591.
+	However, we can be more bulletproof here by switching the URL string encoding from Windows Latin 1
+	to ISO Latin 1, so that any NULL-terminated string can be represented.  (As Darin and I found out
+	last night, Windows Latin 1 has "holes" in certain character ranges and	thus cannot encode arbitrary
+	C strings).
+
 2006-02-09  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Anders. 

@@ -1415,17 +1415,18 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
 - (NSMutableURLRequest *)requestWithURLCString:(const char *)URLCString
 {
-    if (!URLCString) {
+    if (!URLCString)
         return nil;
-    }
     
-    CFStringRef string = CFStringCreateWithCString(kCFAllocatorDefault, URLCString, kCFStringEncodingWindowsLatin1);
+    CFStringRef string = CFStringCreateWithCString(kCFAllocatorDefault, URLCString, kCFStringEncodingISOLatin1);
+    ASSERT(string); // All strings should be representable in ISO Latin 1
+    
     NSString *URLString = [(NSString *)string _web_stringByStrippingReturnCharacters];
     NSURL *URL = [NSURL _web_URLWithDataAsString:URLString relativeToURL:baseURL];
     CFRelease(string);
-    if (!URL) {
+    if (!URL)
         return nil;
-    }
+
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
     [request _web_setHTTPReferrer:[[[self webFrame] _bridge] referrer]];
     return request;
