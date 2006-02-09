@@ -3390,6 +3390,16 @@ bool MacFrame::shouldEndEditing(const RangeImpl *range) const
     return [_bridge shouldEndEditing:[DOMRange _rangeWithImpl:const_cast<RangeImpl *>(range)]];
 }
 
+void MacFrame::didBeginEditing() const
+{
+    [_bridge didBeginEditing];
+}
+
+void MacFrame::didEndEditing() const
+{
+    [_bridge didEndEditing];
+}
+
 static QValueList<MarkedTextUnderline> convertAttributesToUnderlines(const RangeImpl *markedTextRange, NSArray *attributes, NSArray *ranges)
 {
     QValueList<MarkedTextUnderline> result;

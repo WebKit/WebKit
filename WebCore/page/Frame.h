@@ -532,6 +532,16 @@ public:
   virtual bool shouldEndEditing(const RangeImpl *) const;
 
   /**
+   * Called when editing has begun.
+   */
+  virtual void didBeginEditing() const {};
+   
+  /**
+   * Called when editing has ended.
+   */
+  virtual void didEndEditing() const {};
+    
+  /**
    * Returns the contentEditable "override" value for the part
    */
   virtual bool isContentEditable() const;

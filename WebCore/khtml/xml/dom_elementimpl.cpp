@@ -838,7 +838,7 @@ void ElementImpl::focus()
         doc->updateLayout();
         if (isFocusable()) {
             doc->setFocusNode(this);
-            if (isContentEditable()) {
+            if (rootEditableElement() == this) {
                 // FIXME: we should restore the previous selection if there is one, instead of always selecting all.
                 if (doc->frame()->selectContentsOfNode(this))
                     doc->frame()->revealSelection();

@@ -735,6 +735,8 @@ private:
     JSEditor *m_jsEditor;
     bool relinquishesEditingFocus(NodeImpl *node);
     bool acceptsEditingFocus(NodeImpl *node);
+    void didBeginEditing();
+    void didEndEditing();
 
     mutable DOMString m_domain;
     RenderObject *m_savedRenderer;

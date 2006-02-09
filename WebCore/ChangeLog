@@ -1,3 +1,27 @@
+2006-02-08  Justin Garcia  <justin.garcia@apple.com>
+
+        Original patch by Graham Dennis, reviewed by me
+        Changes made by me, reviewed by thatcher
+
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=3982>
+        webViewDidBeginEditing, webViewDidEndEditing notification methods not called on delegate
+
+        * bridge/mac/MacFrame.h:
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::didBeginEditing):
+        (WebCore::MacFrame::didEndEditing):
+        * bridge/mac/WebCoreFrameBridge.h:
+        * khtml/xml/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::didBeginEditing):
+        (WebCore::DocumentImpl::didEndEditing):
+        (WebCore::DocumentImpl::setFocusNode):
+        * khtml/xml/DocumentImpl.h:
+        * khtml/xml/dom_elementimpl.cpp:
+        (WebCore::ElementImpl::focus):
+        * page/Frame.h:
+        (WebCore::Frame::didBeginEditing):
+        (WebCore::Frame::didEndEditing):
+
 2006-02-08  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Test: fast/block/positioning/relayout-on-position-change.html
