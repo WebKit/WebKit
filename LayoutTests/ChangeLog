@@ -1,3 +1,15 @@
+2006-02-08  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Hyatt.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7095
+          Removing positioning from an element does not relayout properly
+
+        * fast/block/positioning/relayout-on-position-change-expected.checksum: Added.
+        * fast/block/positioning/relayout-on-position-change-expected.png: Added.
+        * fast/block/positioning/relayout-on-position-change-expected.txt: Added.
+        * fast/block/positioning/relayout-on-position-change.html: Added.
+
 2006-02-08  Maciej Stachowiak  <mjs@apple.com>
 
         - added SVG path hit testing test
