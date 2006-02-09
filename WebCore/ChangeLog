@@ -988,7 +988,7 @@
 
 2006-02-04  Darin Adler  <darin@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by Adele.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7071
           REGRESSION: Jumping to an anchor identifier makes page scroll horizontally
