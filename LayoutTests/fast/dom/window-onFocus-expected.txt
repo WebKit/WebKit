@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock (anonymous) at (0,0) size 784x36
+        RenderText {TEXT} at (0,0) size 754x36
+          text run at (0,0) width 369: "This tests window.onFocus and window.onBlur handlers. "
+          text run at (369,0) width 385: "It uses the layoutTestControllers ability to mimic bringing the"
+          text run at (0,18) width 295: "window to the front and pushing it to the back."
+      RenderBlock {P} at (0,52) size 784x36
+        RenderInline {B} at (0,0) size 272x18
+          RenderText {TEXT} at (0,0) size 272x18
+            text run at (0,0) width 272: "It is not intended to be run interactively:"
+        RenderText {TEXT} at (272,0) size 729x36
+          text run at (272,0) width 457: " when you run it interactively, you should see 'Window was blurred' and"
+          text run at (0,18) width 673: "'Window was focused' messages as you push the window to the back and bring it to the front, respectively."
+      RenderBlock {UL} at (0,104) size 784x54
+        RenderListItem {LI} at (40,0) size 744x18
+          RenderListMarker at (0,0) size 0x14
+          RenderText {TEXT} at (0,0) size 133x18
+            text run at (0,0) width 133: "Window was blurred"
+        RenderListItem {LI} at (40,18) size 744x18
+          RenderListMarker at (0,0) size 0x14
+          RenderText {TEXT} at (0,0) size 137x18
+            text run at (0,0) width 137: "Window was focused"
+        RenderListItem {LI} at (40,36) size 744x18
+          RenderListMarker at (0,0) size 0x14
+          RenderText {TEXT} at (0,0) size 133x18
+            text run at (0,0) width 133: "Window was blurred"
