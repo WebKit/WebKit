@@ -21,59 +21,56 @@
 #ifndef FRAME_TREE_NODE_H
 #define FRAME_TREE_NODE_H
 
-#include <kxmlcore/RefPtr.h>
+#include <kxmlcore/Noncopyable.h>
 #include <kxmlcore/PassRefPtr.h>
+#include <kxmlcore/RefPtr.h>
 #include "PlatformString.h"
 
 namespace WebCore {
 
-class Frame;
+    class Frame;
 
-class FrameTreeNode
-{
-public:
-    FrameTreeNode(Frame* thisFrame, Frame* parentFrame) 
-        : m_thisFrame(thisFrame)
-        , m_parent(parentFrame)
-        , m_previousSibling(0)
-        , m_lastChild(0)
-        , m_childCount(0)
+    class FrameTreeNode : Noncopyable
     {
-    }
-    ~FrameTreeNode();
+    public:
+        FrameTreeNode(Frame* thisFrame, Frame* parentFrame) 
+            : m_thisFrame(thisFrame)
+            , m_parent(parentFrame)
+            , m_previousSibling(0)
+            , m_lastChild(0)
+            , m_childCount(0)
+        {
+        }
+        ~FrameTreeNode();
+        
+        const DOMString& name() const { return m_name; }
+        void setName(const DOMString& name);
+        Frame* parent() const { return m_parent; }
+        void setParent(Frame* parent) { m_parent = parent; }
+        
+        Frame* nextSibling() const { return m_nextSibling.get(); }
+        Frame* previousSibling() const { return m_previousSibling; }
+        Frame* firstChild() const { return m_firstChild.get(); }
+        Frame* lastChild() const { return m_lastChild; }
+        int childCount() const { return m_childCount; }
+        
+        void appendChild(PassRefPtr<Frame> child);
+        void removeChild(Frame *child);
+        
+    private:
+        Frame* m_thisFrame;
+        
+        Frame *m_parent;
+        DOMString m_name;
+        
+        // FIXME: use ListRefPtr?
+        RefPtr<Frame> m_nextSibling;
+        Frame* m_previousSibling;
+        RefPtr<Frame> m_firstChild;
+        Frame* m_lastChild;
+        int m_childCount;
+    };
 
-    const DOMString& name() const { return m_name; }
-    void setName(const DOMString& name);
-    Frame* parent() const { return m_parent; }
-    void setParent(Frame* parent) { m_parent = parent; }
-    
-    Frame* nextSibling() const { return m_nextSibling.get(); }
-    Frame* previousSibling() const { return m_previousSibling; }
-    Frame* firstChild() const { return m_firstChild.get(); }
-    Frame* lastChild() const { return m_lastChild; }
-    int childCount() const { return m_childCount; }
-
-    void appendChild(PassRefPtr<Frame> child);
-    void removeChild(Frame *child);
-
- private:
-    Frame* m_thisFrame;
-
-    Frame *m_parent;
-    DOMString m_name;
-
-    // FIXME: use ListRefPtr?
-    RefPtr<Frame> m_nextSibling;
-    Frame* m_previousSibling;
-    RefPtr<Frame> m_firstChild;
-    Frame* m_lastChild;
-    int m_childCount;
-
-    // uncopyable
-    FrameTreeNode(const FrameTreeNode&);
-    FrameTreeNode& operator=(const FrameTreeNode&);
-};
-
-}
+} // namespace WebCore
 
 #endif // FRAME_TREE_NODE_H

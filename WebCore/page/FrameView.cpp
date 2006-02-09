@@ -662,9 +662,6 @@ void FrameView::viewportMouseMoveEvent( QMouseEvent * _mouse )
     bool swallowEvent = dispatchMouseEvent(mousemoveEvent,mev.innerNode.get(),false,
                                            0,_mouse,true,NodeImpl::MouseMove);
 
-    // execute the scheduled script. This is to make sure the mouseover events come after the mouseout events
-    m_frame->executeScheduledScript();
-
     if (!swallowEvent) {
         MouseMoveEvent event(_mouse, xm, ym, mev.url, mev.target, mev.innerNode.get());
         m_frame->khtmlMouseMoveEvent(&event);
