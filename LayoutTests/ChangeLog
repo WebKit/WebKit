@@ -1,3 +1,9 @@
+2006-02-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Add missing file from earlier added svg test.
+
+        * svg/custom/resources/link-target.html: Added.
+
 2006-02-08  Boris Daljevic  <boris@backbase.com>
 
         Reviewed and tweaked by Darin.
@@ -110,8 +116,6 @@
         * fast/events/div-focus.html: Added.
 
 2006-02-04  Darin Adler  <darin@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
 
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7071
           REGRESSION: Jumping to an anchor identifier makes page scroll horizontally
@@ -9141,8 +9145,6 @@
         * fast/forms/textAreaLineHeight-expected.png: Added.
 
 2005-10-05  Maciej Stachowiak  <mjs@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
 
         Test case for:
         <rdar://problem/3798746> hang in JavaScript getting at URL from frame; isc.fraunhofer.de (works in IE and Firefox)
