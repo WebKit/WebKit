@@ -35,7 +35,7 @@
 #include "editing/visible_position.h"
 #include "editing/visible_units.h"
 #include "editing/visible_text.h"
-#include "xml/dom_position.h"
+#include "dom_position.h"
 
 #include "RenderBlock.h"
 

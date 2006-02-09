@@ -31,7 +31,7 @@
 #include "dom/dom_exception.h"
 #include "dom_node.h"
 #include "StringImpl.h"
-#include "xml/xml_tokenizer.h"
+#include "xml_tokenizer.h"
 
 #ifdef KHTML_XSLT
 #include "xsl_stylesheetimpl.h"

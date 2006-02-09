@@ -29,7 +29,7 @@
 #include <QString.h> // for QChar
 #include <kxmlcore/PassRefPtr.h>
 
-#include "xml/dom_position.h"
+#include "dom_position.h"
 #include "text_affinity.h"
 #include "Shared.h"
 

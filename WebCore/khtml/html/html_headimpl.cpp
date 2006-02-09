@@ -27,8 +27,8 @@
 #include "html/html_headimpl.h"
 
 #include "html/html_documentimpl.h"
-#include "xml/dom_textimpl.h"
-#include "xml/EventNames.h"
+#include "dom_textimpl.h"
+#include "EventNames.h"
 #include "dom_node.h"
 
 #include "Frame.h"

@@ -29,7 +29,7 @@
 #include "Frame.h"
 #include "htmlediting.h"
 
-#include "xml/dom_position.h"
+#include "dom_position.h"
 #include "DocumentImpl.h"
 #include "visible_position.h"
 #include "css/css_valueimpl.h"

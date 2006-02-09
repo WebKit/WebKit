@@ -24,7 +24,7 @@
 #ifndef HTMLElementImpl_H
 #define HTMLElementImpl_H
 
-#include "xml/dom_elementimpl.h"
+#include "dom_elementimpl.h"
 
 namespace WebCore {
 

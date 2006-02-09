@@ -24,10 +24,10 @@
 #include "config.h"
 #include "dom/dom_exception.h"
 #include "css/cssstyleselector.h"
-#include "xml/dom2_eventsimpl.h"
-#include "xml/dom_textimpl.h"
+#include "dom2_eventsimpl.h"
+#include "dom_textimpl.h"
 #include "DocumentImpl.h"
-#include "xml/EventNames.h"
+#include "EventNames.h"
 
 #include "RenderText.h"
 

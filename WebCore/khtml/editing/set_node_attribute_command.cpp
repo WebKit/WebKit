@@ -26,7 +26,7 @@
 #include "config.h"
 #include "set_node_attribute_command.h"
 
-#include "xml/dom_elementimpl.h"
+#include "dom_elementimpl.h"
 
 #include <kxmlcore/Assertions.h>
 

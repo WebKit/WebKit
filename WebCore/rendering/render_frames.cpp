@@ -35,9 +35,9 @@
 #include "html/htmltokenizer.h"
 #include "render_arena.h"
 #include "render_canvas.h"
-#include "xml/EventNames.h"
-#include "xml/dom2_eventsimpl.h"
-#include "xml/dom_textimpl.h"
+#include "EventNames.h"
+#include "dom2_eventsimpl.h"
+#include "dom_textimpl.h"
 #include <kcursor.h>
 #include <kdebug.h>
 #include <klocale.h>

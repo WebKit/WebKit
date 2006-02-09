@@ -23,7 +23,7 @@
  */
 
 #include "config.h"
-#include "xml/dom2_traversalimpl.h"
+#include "dom2_traversalimpl.h"
 #include "dom/dom_exception.h"
 #include "DocumentImpl.h"
 

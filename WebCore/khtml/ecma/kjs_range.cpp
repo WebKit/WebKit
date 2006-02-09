@@ -25,7 +25,7 @@
 #include <kdebug.h>
 #include "dom/dom2_range.h"
 #include "DocumentFragmentImpl.h"
-#include "xml/dom2_rangeimpl.h"
+#include "dom2_rangeimpl.h"
 
 using DOM::DOMString;
 using DOM::Range;

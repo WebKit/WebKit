@@ -48,11 +48,11 @@
 #include "kjs_views.h"
 #include "kjs_window.h"
 #include "rendering/render_canvas.h"
-#include "xml/EventNames.h"
-#include "xml/dom2_eventsimpl.h"
-#include "xml/dom2_viewsimpl.h"
-#include "xml/dom_textimpl.h"
-#include "xml/dom_xmlimpl.h"
+#include "EventNames.h"
+#include "dom2_eventsimpl.h"
+#include "dom2_viewsimpl.h"
+#include "dom_textimpl.h"
+#include "dom_xmlimpl.h"
 #include <kdebug.h>
 
 #if __APPLE__

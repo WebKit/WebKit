@@ -71,8 +71,8 @@
 #include "htmlnames.h"
 #include "khtml_settings.h"
 #include "rendering/render_object.h"
-#include "xml/dom2_eventsimpl.h"
-#include "xml/xml_tokenizer.h"
+#include "dom2_eventsimpl.h"
+#include "xml_tokenizer.h"
 #include <kurl.h>
 #include <stdlib.h>
 

@@ -28,7 +28,7 @@
 
 #include "htmlediting.h"
 #include "visible_text.h"
-#include "xml/dom_textimpl.h"
+#include "dom_textimpl.h"
 
 #include <kxmlcore/Assertions.h>
 

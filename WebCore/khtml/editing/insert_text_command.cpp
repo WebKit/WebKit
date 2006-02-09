@@ -33,8 +33,8 @@
 #include "visible_text.h"
 #include "visible_units.h"
 #include "DocumentImpl.h"
-#include "xml/dom_position.h"
-#include "xml/dom_textimpl.h"
+#include "dom_position.h"
+#include "dom_textimpl.h"
 
 #include <kxmlcore/Assertions.h>
 #include "KWQLogging.h"

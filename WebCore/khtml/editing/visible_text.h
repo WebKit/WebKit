@@ -26,7 +26,7 @@
 #ifndef KHTML_EDITING_VISIBLE_TEXT_H
 #define KHTML_EDITING_VISIBLE_TEXT_H
 
-#include "xml/dom2_rangeimpl.h"
+#include "dom2_rangeimpl.h"
 #include "InlineTextBox.h"
 #include <kxmlcore/Vector.h>
 

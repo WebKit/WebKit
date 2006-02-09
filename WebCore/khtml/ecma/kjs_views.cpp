@@ -23,7 +23,7 @@
 
 #include "kjs_css.h"
 
-#include "xml/dom2_viewsimpl.h"
+#include "dom2_viewsimpl.h"
 #include "DocumentImpl.h"
 #include "css/css_stylesheetimpl.h"
 #include "css/css_ruleimpl.h"

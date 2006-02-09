@@ -40,11 +40,11 @@
 #include "visible_position.h"
 #include "visible_text.h"
 #include "visible_units.h"
-#include "xml/dom2_rangeimpl.h"
-#include "xml/dom2_eventsimpl.h"
-#include "xml/dom_elementimpl.h"
-#include "xml/dom_textimpl.h"
-#include "xml/EventNames.h"
+#include "dom2_rangeimpl.h"
+#include "dom2_eventsimpl.h"
+#include "dom_elementimpl.h"
+#include "dom_textimpl.h"
+#include "EventNames.h"
 #include <kxmlcore/Assertions.h>
 #include <qevent.h>
 #include <qpainter.h>

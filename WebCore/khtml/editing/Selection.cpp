@@ -30,7 +30,7 @@
 #include "htmlediting.h"
 #include "visible_position.h"
 #include "visible_units.h"
-#include "xml/dom2_rangeimpl.h"
+#include "dom2_rangeimpl.h"
 #include <kxmlcore/Assertions.h>
 
 namespace WebCore {

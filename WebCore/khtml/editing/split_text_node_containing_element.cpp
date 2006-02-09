@@ -26,8 +26,8 @@
 #include "config.h"
 #include "split_text_node_containing_element_command.h"
 
-#include "xml/dom_textimpl.h"
-#include "xml/dom_elementimpl.h"
+#include "dom_textimpl.h"
+#include "dom_elementimpl.h"
 #include "rendering/render_object.h"
 
 #include <kxmlcore/Assertions.h>

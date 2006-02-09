@@ -51,8 +51,8 @@
 #include "render_arena.h"
 #include "render_theme.h"
 #include "DocumentImpl.h"
-#include "xml/dom2_eventsimpl.h"
-#include "xml/EventNames.h"
+#include "dom2_eventsimpl.h"
+#include "EventNames.h"
 #include "html/html_blockimpl.h"
 #include "htmlnames.h"
 

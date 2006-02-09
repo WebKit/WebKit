@@ -26,9 +26,9 @@
 #include "RenderText.h"
 #include "htmlnames.h"
 #include "HTMLInputElementImpl.h"
-#include "xml/dom_elementimpl.h"
-#include "xml/EventNames.h"
-#include "xml/dom2_eventsimpl.h"
+#include "dom_elementimpl.h"
+#include "EventNames.h"
+#include "dom2_eventsimpl.h"
 
 namespace WebCore {
 

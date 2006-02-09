@@ -1,3 +1,60 @@
+2006-02-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber-stamped by Hyatt.
+        
+        - moved khtml/xml to dom
+
+        * dom: moved from khtml/xml
+        * WebCore.xcodeproj/project.pbxproj: Updated for new file locations.
+        * WebCore+SVG/KDOMHeaders.h: Updated for new header locations.
+        * dom/dom2_rangeimpl.cpp: ditto
+        * dom/dom2_traversalimpl.cpp: ditto
+        * dom/dom_textimpl.cpp: ditto
+        * dom/dom_xmlimpl.cpp: ditto
+        * khtml/dom/dom2_events.cpp: ditto
+        * khtml/ecma/kjs_binding.cpp: ditto
+        * khtml/ecma/kjs_dom.cpp: ditto
+        * khtml/ecma/kjs_events.cpp: ditto
+        * khtml/ecma/kjs_html.cpp: ditto
+        * khtml/ecma/kjs_range.cpp: ditto
+        * khtml/ecma/kjs_views.cpp: ditto
+        * khtml/editing/Selection.cpp: ditto
+        * khtml/editing/SelectionController.cpp: ditto
+        * khtml/editing/delete_from_text_node_command.cpp: ditto
+        * khtml/editing/edit_command.cpp: ditto
+        * khtml/editing/insert_into_text_node_command.cpp: ditto
+        * khtml/editing/insert_line_break_command.cpp: ditto
+        * khtml/editing/insert_paragraph_separator_command.cpp: ditto
+        * khtml/editing/insert_text_command.cpp: ditto
+        * khtml/editing/join_text_nodes_command.cpp: ditto
+        * khtml/editing/markup.cpp: ditto
+        * khtml/editing/merge_identical_elements_command.cpp: ditto
+        * khtml/editing/rebalance_whitespace_command.cpp: ditto
+        * khtml/editing/remove_node_attribute_command.cpp: ditto
+        * khtml/editing/set_node_attribute_command.cpp: ditto
+        * khtml/editing/split_element_command.cpp: ditto
+        * khtml/editing/split_text_node_command.cpp: ditto
+        * khtml/editing/split_text_node_containing_element.cpp: ditto
+        * khtml/editing/visible_position.cpp: ditto
+        * khtml/editing/visible_position.h: ditto
+        * khtml/editing/visible_text.cpp: ditto
+        * khtml/editing/visible_text.h: ditto
+        * khtml/editing/visible_units.cpp: ditto
+        * khtml/editing/wrap_contents_in_dummy_span_command.cpp: ditto
+        * khtml/html/HTMLElementImpl.h: ditto
+        * khtml/html/html_documentimpl.cpp: ditto
+        * khtml/html/html_headimpl.cpp: ditto
+        * khtml/xbl/xbl_binding_manager.cpp: ditto
+        * khtml/xbl/xbl_tokenizer.cpp: ditto
+        * khtml/xbl/xbl_tokenizer.h: ditto
+        * ksvg2/svg/SVGAElementImpl.cpp: ditto
+        * rendering/InlineTextBox.cpp: ditto
+        * rendering/RenderContainer.cpp: ditto
+        * rendering/RenderText.h: ditto
+        * rendering/RenderTextField.cpp: ditto
+        * rendering/render_frames.cpp: ditto
+        * rendering/render_layer.cpp: ditto
+
 2006-02-08  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Test: fast/block/positioning/window-height-change.html

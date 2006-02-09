@@ -1,4 +1,4 @@
-#include "xml/xml_tokenizer.h"
+#include "xml_tokenizer.h"
 
 namespace XBL {
 

@@ -32,9 +32,9 @@
 
 #include "htmlnames.h"
 #include "DocumentImpl.h"
-#include "xml/dom_elementimpl.h"
-#include "xml/dom2_rangeimpl.h"
-#include "xml/dom_textimpl.h"
+#include "dom_elementimpl.h"
+#include "dom2_rangeimpl.h"
+#include "dom_textimpl.h"
 #include "Frame.h"
 
 #include <kxmlcore/Assertions.h>

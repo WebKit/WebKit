@@ -27,7 +27,7 @@
 #include "wrap_contents_in_dummy_span_command.h"
 
 #include "apply_style_command.h"
-#include "xml/dom_elementimpl.h"
+#include "dom_elementimpl.h"
 
 #include <kxmlcore/Assertions.h>
 

@@ -29,8 +29,8 @@
 
 #include "htmlnames.h"
 #include "InlineTextBox.h"
-#include "xml/dom_position.h"
-#include "xml/dom2_rangeimpl.h"
+#include "dom_position.h"
+#include "dom2_rangeimpl.h"
 #include "DocumentImpl.h"
 
 using namespace DOM::HTMLNames;

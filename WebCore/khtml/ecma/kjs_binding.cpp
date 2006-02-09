@@ -35,8 +35,8 @@
 #include "dom/dom_exception.h"
 #include "dom/dom2_events.h"
 #include "dom/dom2_range.h"
-#include "xml/dom2_eventsimpl.h"
-#include "xml/EventNames.h"
+#include "dom2_eventsimpl.h"
+#include "EventNames.h"
 #include "dom/css_stylesheet.h"
 #include "Frame.h"
 

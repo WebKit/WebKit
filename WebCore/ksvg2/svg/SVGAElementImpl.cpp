@@ -26,7 +26,7 @@
 #include <kdom/events/MouseEventImpl.h>
 #include <kdom/events/kdomevents.h>
 #include <kdom/Helper.h>
-#include "xml/dom2_eventsimpl.h"
+#include "dom2_eventsimpl.h"
 #include "csshelper.h"
 #include "DocumentImpl.h"
 

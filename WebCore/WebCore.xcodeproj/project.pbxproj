@@ -2281,6 +2281,7 @@
 				BC1A3790097C6F970019F3D8 /* bindings */,
 				65BF021F097480EF00C43196 /* bridge */,
 				F523D18402DE42E8018635CA /* css */,
+				F523D32402DE4478018635CA /* dom */,
 				BCB16BFB0979C38700467741 /* loader */,
 				65BF02180974806300C43196 /* page */,
 				BCF1A5BA097832090061A123 /* platform */,
@@ -3340,7 +3341,6 @@
 				F523D27702DE4398018635CA /* html */,
 				F523D29C02DE43D9018635CA /* misc */,
 				BC41978B059293BE0016347F /* xbl */,
-				F523D32402DE4478018635CA /* xml */,
 				BC06F24406D18A35004A6FA3 /* xsl */,
 				F523D15202DE42AD018635CA /* khtml_events.h */,
 				F523D15102DE42AD018635CA /* khtml_events.cpp */,
@@ -3598,7 +3598,7 @@
 			path = rendering;
 			sourceTree = "<group>";
 		};
-		F523D32402DE4478018635CA /* xml */ = {
+		F523D32402DE4478018635CA /* dom */ = {
 			isa = PBXGroup;
 			children = (
 				939885C108B7E3D100E707C4 /* EventNames.cpp */,
@@ -3644,7 +3644,7 @@
 				A81872190977D3C0005826D9 /* NameNodeListImpl.cpp */,
 				A81872180977D3C0005826D9 /* NamedNodeMapImpl.h */,
 			);
-			path = xml;
+			path = dom;
 			sourceTree = "<group>";
 		};
 		F58785E802DE377601EA4122 /* kwq */ = {
@@ -4562,7 +4562,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/bin/perl -I\"$SRCROOT/bindings/scripts\" \"$SRCROOT/bindings/scripts/generate-bindings.pl\" --generator JS --idldir \"$SRCROOT/khtml/xml\" --outputdir \"$DERIVED_FILE_DIR\"\n";
+			shellScript = "/usr/bin/perl -I\"$SRCROOT/bindings/scripts\" \"$SRCROOT/bindings/scripts/generate-bindings.pl\" --generator JS --idldir \"$SRCROOT/dom\" --outputdir \"$DERIVED_FILE_DIR\"\n";
 		};
 		932FC0B70824A175005B3C75 /* doctypes.cpp */ = {
 			isa = PBXShellScriptBuildPhase;

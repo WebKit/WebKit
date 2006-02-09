@@ -29,7 +29,7 @@
 #include "kxmlcore/AlwaysInline.h"
 #include "render_arena.h"
 #include "RenderBlock.h"
-#include "xml/dom2_rangeimpl.h"
+#include "dom2_rangeimpl.h"
 #include "DocumentImpl.h"
 #include "Pen.h"
 

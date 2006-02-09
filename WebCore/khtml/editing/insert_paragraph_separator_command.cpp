@@ -34,8 +34,8 @@
 #include "css/css_valueimpl.h"
 #include "htmlnames.h"
 #include "DocumentImpl.h"
-#include "xml/dom_elementimpl.h"
-#include "xml/dom_textimpl.h"
+#include "dom_elementimpl.h"
+#include "dom_textimpl.h"
 
 #include <kxmlcore/Assertions.h>
 #include "KWQLogging.h"

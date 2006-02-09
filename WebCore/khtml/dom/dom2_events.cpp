@@ -24,7 +24,7 @@
 #include "config.h"
 #include "dom2_events.h"
 
-#include "xml/dom2_eventsimpl.h"
+#include "dom2_eventsimpl.h"
 
 namespace DOM {
 

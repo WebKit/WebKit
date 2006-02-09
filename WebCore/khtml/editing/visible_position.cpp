@@ -32,8 +32,8 @@
 #include "rendering/render_object.h"
 #include "InlineTextBox.h"
 #include "DocumentImpl.h"
-#include "xml/dom2_rangeimpl.h"
-#include "xml/dom_textimpl.h"
+#include "dom2_rangeimpl.h"
+#include "dom_textimpl.h"
 
 #include <kxmlcore/Assertions.h>
 #include "KWQLogging.h"
