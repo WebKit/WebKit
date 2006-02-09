@@ -1,4 +1,6 @@
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > B > FONT > P > BODY > HTML > #document to 5 of #text > B > FONT > P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 6 of BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > B > FONT > P > BODY > HTML > #document to 5 of #text > B > FONT > P > BODY > HTML > #document toDOMRange:range from 0 of P > BODY > HTML > #document to 0 of P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
