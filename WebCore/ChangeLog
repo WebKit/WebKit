@@ -1,3 +1,14 @@
+2006-02-08  Boris Daljevic  <boris@backbase.com>
+
+        Reviewed and tweaked by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6648
+          Safari strips namespace prefix when using setAttribute(), but should treat it as part of name
+
+        * khtml/xml/dom_elementimpl.h: (ElementImpl::setAttribute): Removed body
+        * khtml/xml/dom_elementimpl.cpp: (ElementImpl::setAttribute): Changed code so that
+        attribute is not parsed into prefix and local name.
+
 2006-02-08  Justin Garcia  <justin.garcia@apple.com>
 
         Original patch by Graham Dennis, reviewed by me

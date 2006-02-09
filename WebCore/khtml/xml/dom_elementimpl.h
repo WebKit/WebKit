@@ -188,7 +188,7 @@ public:
     const AtomicString& getAttribute(const DOMString& name) const { return getAttributeNS(DOMString(), name); }
     const AtomicString& getAttributeNS(const DOMString &namespaceURI, const DOMString &localName) const;
 
-    void setAttribute(const DOMString &name, const DOMString &value, int &exception) { setAttributeNS(DOMString(), name, value, exception); }
+    void setAttribute(const DOMString &name, const DOMString &value, int &exception);
     void setAttributeNS(const DOMString &namespaceURI, const DOMString &qualifiedName, const DOMString &value, int &exception);
 
     void scrollIntoView (bool alignToTop);
