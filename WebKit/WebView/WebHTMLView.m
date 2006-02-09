@@ -641,14 +641,12 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     //
     // Also, this is responsible for letting the bridge know if the window has gained or lost focus
     // so we can send focus and blur events.
-    
-    WebFrameBridge *bridge = [self _bridge];
+
     BOOL windowIsKey = [[self window] isKeyWindow];
-    
     BOOL flag = !_private->resigningFirstResponder && windowIsKey && [self _web_firstResponderCausesFocusDisplay];
-    [bridge setDisplaysWithFocusAttributes:flag];
     
-    [bridge setWindowHasFocus:windowIsKey];
+    [self _setDisplaysWithFocusAttributes:flag];
+    [self _setWindowHasFocus:windowIsKey];
 }
 
 @end
@@ -1652,6 +1650,16 @@ static WebHTMLView *lastHitView = nil;
         return [[self _bridge] visibleSelectionRect];
     }
     return NSZeroRect;
+}
+
+- (void)_setWindowHasFocus:(BOOL)flag
+{
+    [[self _bridge] setWindowHasFocus:flag];
+}
+
+- (void)_setDisplaysWithFocusAttributes:(BOOL)flag
+{
+    [[self _bridge] setDisplaysWithFocusAttributes:flag];
 }
 
 @end

@@ -1,3 +1,26 @@
+2006-02-08  Justin Garcia  <justin.garcia@apple.com>
+
+        Original patch by Graham Dennis, reviewed by me:
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=3982>
+        webViewDidBeginEditing, webViewDidEndEditing notification methods not called on delegate
+        
+        Changes made by me, reviewed by thatcher:
+        
+        Made _setWindowHasFocus: and _setDisplaysWithFocusAttributes: into private SPI to allow
+        for the testing of window.onFocus, window.onBlur, caret and focus halo painting, and 
+        the focusing of content editable regions that happens as side effect of setting a selection,
+        but only if the window has focus (7128).
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge didBeginEditing]):
+        (-[WebFrameBridge didEndEditing]):
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView updateFocusState]):
+        (-[WebHTMLView _setWindowHasFocus:]):
+        (-[WebHTMLView _setDisplaysWithFocusAttributes:]):
+        * WebView/WebHTMLViewPrivate.h:
+
 2006-02-08  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Darin.

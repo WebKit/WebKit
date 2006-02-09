@@ -1508,6 +1508,16 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
     return [[_page webView] _shouldEndEditingInDOMRange:range];
 }
 
+- (void)didBeginEditing
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidBeginEditingNotification object:[_frame webView]];
+}
+
+- (void)didEndEditing
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidEndEditingNotification object:[_frame webView]];
+}
+
 - (void)windowObjectCleared
 {
     WebView *wv = [_page webView];
