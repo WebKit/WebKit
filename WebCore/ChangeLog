@@ -1,3 +1,23 @@
+2006-02-08  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        - Fixed <rdar://problem/4325160> 
+          REGRESSION(416.12-420+): window events not stopped by stopPropagation (affects macnn forums)
+
+        Tests:
+        * fast/events/window-events-bubble.html
+        * fast/events/window-events-bubble2.html
+        * fast/events/window-events-capture.html
+
+        * khtml/xml/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::handleWindowEvent): Added to send events directly to the window.  This code used to be in defaultEventHandler, but that wasn't sending them at the right time.
+        (WebCore::DocumentImpl::defaultEventHandler): Moved code to send window events to handleWindowEvent.
+        * khtml/xml/DocumentImpl.h: Added handleWindowEvent.
+        * khtml/xml/NodeImpl.cpp:
+        (WebCore::NodeImpl::dispatchGenericEvent): fire window events in capture and bubble phases.
+        (WebCore::NodeImpl::dispatchWindowEvent): call handleWindowEvent.
+
 2006-02-08  Anders Carlsson  <andersca@mac.com>
 
         Rubber stamped by Maciej.

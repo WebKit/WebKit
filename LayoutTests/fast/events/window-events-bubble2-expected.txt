@@ -1,0 +1,6 @@
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+Tests that preventDefault() will still allow window events to bubble.
+Clicking here should fire window.onclick. This will match Firefox behavior.
+Window.onClick fired. Test Passed.
+

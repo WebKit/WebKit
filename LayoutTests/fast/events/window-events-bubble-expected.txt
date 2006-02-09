@@ -1,0 +1,6 @@
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV > BODY > HTML > #document to 0 of DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+Test that stopPropagation() will not allow window events to bubble.
+Clicking on this should not fire window.onclick. This matches our old behavior and Firefox behavior.
+stopPropagation called. Test Passed.
+

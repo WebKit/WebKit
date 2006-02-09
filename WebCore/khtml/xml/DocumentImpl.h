@@ -412,6 +412,7 @@ public:
     CSSStyleDeclarationImpl *getOverrideStyle(ElementImpl *elt, const DOMString &pseudoElt);
 
     virtual void defaultEventHandler(EventImpl *evt);
+    void handleWindowEvent(EventImpl *evt, bool useCapture);
     void setHTMLWindowEventListener(const AtomicString &eventType, EventListener *listener);
     EventListener *getHTMLWindowEventListener(const AtomicString &eventType);
     void removeHTMLWindowEventListener(const AtomicString &eventType);

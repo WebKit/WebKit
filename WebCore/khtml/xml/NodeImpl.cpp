@@ -524,7 +524,13 @@ bool NodeImpl::dispatchGenericEvent(PassRefPtr<EventImpl> e, int &/*exceptioncod
 
     // trigger any capturing event handlers on our way down
     evt->setEventPhase(Event::CAPTURING_PHASE);
+
     it.toFirst();
+    // Handle window events for capture phase
+    if (it.current()->isDocumentNode() && !evt->propagationStopped()) {
+        static_cast<DocumentImpl*>(it.current())->handleWindowEvent(evt.get(), true);
+    }  
+    
     for (; it.current() && it.current() != this && !evt->propagationStopped(); ++it) {
         evt->setCurrentTarget(it.current());
         it.current()->handleLocalEvents(evt.get(), true);
@@ -559,7 +565,12 @@ bool NodeImpl::dispatchGenericEvent(PassRefPtr<EventImpl> e, int &/*exceptioncod
             evt->setCurrentTarget(it.current());
             it.current()->handleLocalEvents(evt.get(), false);
         }
-    }
+        // Handle window events for bubbling phase
+        if (it.current()->isDocumentNode() && !evt->propagationStopped() && !evt->getCancelBubble()) {
+            evt->setCurrentTarget(it.current());
+            static_cast<DocumentImpl*>(it.current())->handleWindowEvent(evt.get(), false);
+        } 
+    } 
 
     evt->setCurrentTarget(0);
     evt->setEventPhase(0); // I guess this is correct, the spec does not seem to say
@@ -575,8 +586,7 @@ bool NodeImpl::dispatchGenericEvent(PassRefPtr<EventImpl> e, int &/*exceptioncod
     if (evt->bubbles())
         for (; it.current() && !evt->defaultPrevented() && !evt->defaultHandled(); --it)
             it.current()->defaultEventHandler(evt.get());
-    else
-        if (!evt->defaultPrevented() && !evt->defaultHandled())
+    else if (!evt->defaultPrevented() && !evt->defaultHandled())
             it.current()->defaultEventHandler(evt.get());
     
     // deref all nodes in chain
@@ -605,28 +615,26 @@ bool NodeImpl::dispatchHTMLEvent(const AtomicString &eventType, bool canBubbleAr
     return dispatchEvent(new EventImpl(eventType, canBubbleArg, cancelableArg), exceptioncode, true);
 }
 
-bool NodeImpl::dispatchWindowEvent(const AtomicString &eventType, bool canBubbleArg, bool cancelableArg)
+void NodeImpl::dispatchWindowEvent(const AtomicString &eventType, bool canBubbleArg, bool cancelableArg)
 {
     assert(!eventDispatchForbidden());
     int exceptioncode = 0;
     RefPtr<EventImpl> evt = new EventImpl(eventType, canBubbleArg, cancelableArg);
     RefPtr<DocumentImpl> doc = getDocument();
     evt->setTarget(doc.get());
-    bool r = dispatchGenericEvent(evt.release(), exceptioncode, true);
+    doc->handleWindowEvent(evt.get(), false);
 
-    if (eventType == loadEvent) {
-        // For onload events, send a separate load event to the enclosing frame only.
-        // This is a DOM extension and is independent of bubbling/capturing rules of
-        // the DOM.
+     if (eventType == loadEvent) {
+         // For onload events, send a separate load event to the enclosing frame only.
+         // This is a DOM extension and is independent of bubbling/capturing rules of
+         // the DOM.
         ElementImpl* ownerElement = doc->ownerElement();
         if (ownerElement) {
             RefPtr<EventImpl> ownerEvent = new EventImpl(eventType, false, cancelableArg);
             ownerEvent->setTarget(ownerElement);
             ownerElement->dispatchGenericEvent(ownerEvent.release(), exceptioncode, true);
         }
-    }
-
-    return r;
+     }
 }
 
 bool NodeImpl::dispatchMouseEvent(QMouseEvent *_mouse, const AtomicString &overrideType,

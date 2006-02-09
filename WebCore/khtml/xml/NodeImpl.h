@@ -274,7 +274,7 @@ public:
     bool dispatchEvent(PassRefPtr<EventImpl>, ExceptionCode&, bool tempEvent = false);
     bool dispatchGenericEvent(PassRefPtr<EventImpl>, ExceptionCode&, bool tempEvent = false);
     bool dispatchHTMLEvent(const AtomicString& eventType, bool canBubble, bool cancelable);
-    bool dispatchWindowEvent(const AtomicString& eventType, bool canBubble, bool cancelable);
+    void dispatchWindowEvent(const AtomicString& eventType, bool canBubble, bool cancelable);
     bool dispatchMouseEvent(QMouseEvent*, const AtomicString& overrideType,
         int overrideDetail = 0, NodeImpl* relatedTarget = 0);
     bool dispatchSimulatedMouseEvent(const AtomicString& eventType);

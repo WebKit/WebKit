@@ -1,3 +1,17 @@
+2006-02-08  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        - test for
+        <rdar://problem/4325160> REGRESSION(416.12-420+): window events not stopped by stopPropagation (affects macnn forums)
+
+        * fast/events/window-events-bubble-expected.txt: Added.
+        * fast/events/window-events-bubble.html: Added.
+        * fast/events/window-events-bubble2-expected.txt: Added.
+        * fast/events/window-events-bubble2.html: Added.
+        * fast/events/window-events-capture-expected.txt: Added.
+        * fast/events/window-events-capture.html: Added.
+
 2006-02-07  Adele Peterson  <adele@apple.com>
 
        - test for 
