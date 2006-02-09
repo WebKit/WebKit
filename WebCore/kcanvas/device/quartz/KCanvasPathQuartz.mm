@@ -26,6 +26,7 @@
 #include "config.h"
 #if SVG_SUPPORT
 #include "KCanvasPathQuartz.h"
+#include "QuartzSupport.h"
 
 KCanvasPathQuartz::KCanvasPathQuartz()
 {
@@ -61,5 +62,77 @@ void KCanvasPathQuartz::closeSubpath()
 {
     CGPathCloseSubpath(m_cgPath);
 }
+
+FloatRect KCanvasPathQuartz::boundingBox()
+{
+    return CGPathGetBoundingBox(m_cgPath);
+}
+
+CGContextRef scratchContext()
+{
+    static CGContextRef scratch = 0;
+    if (!scratch) {
+        CFMutableDataRef empty = CFDataCreateMutable(NULL, 0);
+        CGDataConsumerRef consumer = CGDataConsumerCreateWithCFData(empty);
+        scratch = CGPDFContextCreate(consumer, NULL, NULL);
+        CGDataConsumerRelease(consumer);
+        CFRelease(empty);
+
+        float black[4] = {0,0,0,1};
+        CGContextSetFillColor(scratch, black);
+        CGContextSetStrokeColor(scratch, black);
+    }
+    return scratch;
+}
+
+FloatRect KCanvasPathQuartz::strokeBoundingBox(const KRenderingStrokePainter& strokePainter)
+{
+    // the bbox might grow if the path is stroked.
+    // and CGPathGetBoundingBox doesn't support that, so we'll have
+    // to make an alternative call...
+
+    // FIXME: since this is mainly used to decide what to repaint,
+    // perhaps it would be sufficien to just outset the fill bbox by
+    // the stroke width - that should be way cheaper and simpler than
+    // what we do here.
+
+    CGContextRef context = scratchContext();
+    CGContextSaveGState(context);
+
+    CGContextBeginPath(context);
+    CGContextAddPath(context, m_cgPath);
+    applyStrokeStyleToContext(context, strokePainter);
+    CGContextReplacePathWithStrokedPath(context);
+    CGRect box = CGContextGetPathBoundingBox(context);
+        
+    CGContextRestoreGState(context);
+
+    return FloatRect(box);
+}
+
+static bool pathContainsPoint(CGMutablePathRef cgPath, const FloatPoint& point, CGPathDrawingMode drawMode)
+{
+   CGContextRef context = scratchContext();
+   CGContextSaveGState(context);
+   
+   CGContextBeginPath(context);
+   CGContextAddPath(context, cgPath);
+   bool hitSuccess = CGContextPathContainsPoint(context, point, drawMode);
+
+   CGContextRestoreGState(context);
+
+   return hitSuccess;
+}
+
+bool KCanvasPathQuartz::containsPoint(const FloatPoint& point, KCWindRule fillRule)
+{
+    return pathContainsPoint(m_cgPath, point, fillRule == RULE_EVENODD ? kCGPathEOFill : kCGPathFill);
+}
+
+bool KCanvasPathQuartz::strokeContainsPoint(const FloatPoint& point)
+{
+    return pathContainsPoint(m_cgPath, point, kCGPathStroke);
+}
+
 #endif // SVG_SUPPORT
 

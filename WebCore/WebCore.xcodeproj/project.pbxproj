@@ -536,8 +536,8 @@
 		A88AD3BE0952486E001DD196 /* KCanvasFilters.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB7F089701F800BA5114 /* KCanvasFilters.h */; };
 		A88AD3BF0952486E001DD196 /* KCanvasImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB80089701F800BA5114 /* KCanvasImage.cpp */; };
 		A88AD3C00952486E001DD196 /* KCanvasImage.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB81089701F800BA5114 /* KCanvasImage.h */; };
-		A88AD3C10952486E001DD196 /* KCanvasItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB82089701F800BA5114 /* KCanvasItem.cpp */; };
-		A88AD3C20952486E001DD196 /* KCanvasItem.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB83089701F800BA5114 /* KCanvasItem.h */; };
+		A88AD3C10952486E001DD196 /* RenderPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB82089701F800BA5114 /* RenderPath.cpp */; };
+		A88AD3C20952486E001DD196 /* RenderPath.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB83089701F800BA5114 /* RenderPath.h */; };
 		A88AD3C30952486E001DD196 /* KCanvasMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB84089701F800BA5114 /* KCanvasMatrix.cpp */; };
 		A88AD3C40952486E001DD196 /* KCanvasMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB85089701F800BA5114 /* KCanvasMatrix.h */; };
 		A88AD3C50952486E001DD196 /* KCanvasPath.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0FB86089701F800BA5114 /* KCanvasPath.h */; };
@@ -1749,8 +1749,8 @@
 		A8C0FB7F089701F800BA5114 /* KCanvasFilters.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasFilters.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB80089701F800BA5114 /* KCanvasImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasImage.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB81089701F800BA5114 /* KCanvasImage.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasImage.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0FB82089701F800BA5114 /* KCanvasItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasItem.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0FB83089701F800BA5114 /* KCanvasItem.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasItem.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		A8C0FB82089701F800BA5114 /* RenderPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderPath.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		A8C0FB83089701F800BA5114 /* RenderPath.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = RenderPath.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB84089701F800BA5114 /* KCanvasMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasMatrix.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB85089701F800BA5114 /* KCanvasMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasMatrix.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB86089701F800BA5114 /* KCanvasPath.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasPath.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2937,8 +2937,8 @@
 				A8C0FB7F089701F800BA5114 /* KCanvasFilters.h */,
 				A8C0FB80089701F800BA5114 /* KCanvasImage.cpp */,
 				A8C0FB81089701F800BA5114 /* KCanvasImage.h */,
-				A8C0FB82089701F800BA5114 /* KCanvasItem.cpp */,
-				A8C0FB83089701F800BA5114 /* KCanvasItem.h */,
+				A8C0FB82089701F800BA5114 /* RenderPath.cpp */,
+				A8C0FB83089701F800BA5114 /* RenderPath.h */,
 				A8C0FB84089701F800BA5114 /* KCanvasMatrix.cpp */,
 				A8C0FB85089701F800BA5114 /* KCanvasMatrix.h */,
 				A8C0FB86089701F800BA5114 /* KCanvasPath.h */,
@@ -4064,7 +4064,7 @@
 				A88AD3BC0952486E001DD196 /* KCanvasCreator.h in Headers */,
 				A88AD3BE0952486E001DD196 /* KCanvasFilters.h in Headers */,
 				A88AD3C00952486E001DD196 /* KCanvasImage.h in Headers */,
-				A88AD3C20952486E001DD196 /* KCanvasItem.h in Headers */,
+				A88AD3C20952486E001DD196 /* RenderPath.h in Headers */,
 				A88AD3C40952486E001DD196 /* KCanvasMatrix.h in Headers */,
 				A88AD3C50952486E001DD196 /* KCanvasPath.h in Headers */,
 				A88AD3C70952486E001DD196 /* KCanvasResourceListener.h in Headers */,
@@ -5182,7 +5182,7 @@
 				A88AD3BB0952486E001DD196 /* KCanvasCreator.cpp in Sources */,
 				A88AD3BD0952486E001DD196 /* KCanvasFilters.cpp in Sources */,
 				A88AD3BF0952486E001DD196 /* KCanvasImage.cpp in Sources */,
-				A88AD3C10952486E001DD196 /* KCanvasItem.cpp in Sources */,
+				A88AD3C10952486E001DD196 /* RenderPath.cpp in Sources */,
 				A88AD3C30952486E001DD196 /* KCanvasMatrix.cpp in Sources */,
 				A88AD3C60952486E001DD196 /* KCanvasPath.cpp in Sources */,
 				A88AD3C80952486E001DD196 /* KCanvasResources.cpp in Sources */,

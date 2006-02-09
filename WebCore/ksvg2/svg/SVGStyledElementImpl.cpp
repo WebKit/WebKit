@@ -134,7 +134,7 @@ void SVGStyledElementImpl::updateCanvasItem()
         && parentElement->childShouldCreateRenderer(this))
         renderSection = true;
 
-    renderPath->changePath(toPathData());
+    renderPath->setPath(toPathData());
 
     if(renderSection)
         renderPath->setNeedsLayout(true);
@@ -145,7 +145,7 @@ void SVGStyledElementImpl::updateCanvasItem()
 const SVGStyledElementImpl *SVGStyledElementImpl::pushAttributeContext(const SVGStyledElementImpl *)
 {
     if(canvas())
-        static_cast<RenderPath *>(renderer())->changePath(toPathData());
+        static_cast<RenderPath *>(renderer())->setPath(toPathData());
 
     return 0;
 }

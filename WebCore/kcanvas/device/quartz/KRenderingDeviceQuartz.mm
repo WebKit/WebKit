@@ -218,7 +218,7 @@ KCanvasContainer *KRenderingDeviceQuartz::createContainer(RenderArena *arena, kh
 RenderPath *KRenderingDeviceQuartz::createItem(RenderArena *arena, khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node, KCanvasPath* path) const
 {
     RenderPath *item = new (arena) KCanvasItemQuartz(style, node);
-    item->changePath(path);
+    item->setPath(path);
     return item;
 }
 

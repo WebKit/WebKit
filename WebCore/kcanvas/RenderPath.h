@@ -2,6 +2,7 @@
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2005 Eric Seidel <eric.seidel@kdemail.net>
+                  2006 Apple Computer, Inc
 
     This file is part of the KDE project
 
@@ -44,6 +45,7 @@ namespace KSVG {
 class KCanvasPath;
 class KCanvasContainer;
 class KCanvasMatrix;
+
 class RenderPath : public khtml::RenderObject
 {
 public:
@@ -57,7 +59,7 @@ public:
     // Returns an unscaled bounding box (not even including localTransform()) for this vector path
     virtual FloatRect relativeBBox(bool includeStroke = true) const;
 
-    void changePath(KCanvasPath* newPath);
+    void setPath(KCanvasPath* newPath);
     KCanvasPath* path() const;
 
     virtual bool isRenderPath() const { return true; }
@@ -66,12 +68,22 @@ public:
     virtual QMatrix localTransform() const;
     virtual void setLocalTransform(const QMatrix &matrix);
     
+    virtual void layout();
+    virtual IntRect getAbsoluteRepaintRect();
+    virtual bool requiresLayer();
+    virtual short lineHeight(bool b, bool isRootLineBox = false) const;
+    virtual short baselinePosition(bool b, bool isRootLineBox = false) const;
+    virtual void paint(PaintInfo&, int parentX, int parentY);
+    
+    virtual bool nodeAtPoint(NodeInfo&, int x, int y, int tx, int ty, WebCore::HitTestAction);
+
 protected:
-    // restricted set of args for passing to paint servers, etc.
-    virtual bool hitsPath(const WebCore::FloatPoint &hitPoint, bool fill) const = 0;
-    virtual FloatRect bboxForPath(bool includeStroke) const = 0;
+    virtual void drawMarkersIfNeeded(const FloatRect&, const KCanvasPath*) const = 0;
 
 private:
+    FloatRect strokeBBox() const;
+    FloatPoint mapAbsolutePointToLocal(const FloatPoint& point) const;
+
     class Private;
     Private *d;
 };

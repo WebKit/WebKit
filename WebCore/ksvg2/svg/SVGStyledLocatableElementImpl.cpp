@@ -29,7 +29,7 @@
 #include "SVGStyledLocatableElementImpl.h"
 #include "SVGSVGElementImpl.h"
 
-#include <kcanvas/KCanvasItem.h>
+#include <kcanvas/RenderPath.h>
 
 using namespace KSVG;
 

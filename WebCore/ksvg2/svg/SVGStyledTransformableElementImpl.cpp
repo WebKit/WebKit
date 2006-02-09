@@ -29,7 +29,7 @@
 #include <kdom/core/AttrImpl.h>
 
 #include <kcanvas/KCanvas.h>
-#include <kcanvas/KCanvasItem.h>
+#include <kcanvas/RenderPath.h>
 
 #include "SVGHelper.h"
 #include "SVGMatrixImpl.h"

@@ -1,3 +1,59 @@
+2006-02-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        RenderPath refactoring:
+        
+        - Rename the files to RenderPath
+        - Push the portable code from KCanvasItemQuartz down to RenderPath
+        - Move most of the unportable code from KCanvasItemQuartz to KCanvasPathQuartz
+        
+        The only thing left in KCanvasItemQuartz is marker support. That should be factored to separate
+        iterating the path elements (KCanvasPathQuartz needs to provide that) and drawing the markers
+        (which should be done in portable code).
+
+        * ForwardingHeaders/kcanvas/RenderPath.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * kcanvas/KCanvasItem.cpp: Removed.
+        * kcanvas/KCanvasItem.h: Removed.
+        * kcanvas/KCanvasPath.h:
+        * kcanvas/RenderPath.cpp: Added.
+        (RenderPath::mapAbsolutePointToLocal):
+        (RenderPath::fillContains):
+        (RenderPath::strokeContains):
+        (RenderPath::strokeBBox):
+        (RenderPath::relativeBBox):
+        (RenderPath::setPath):
+        (RenderPath::layout):
+        (RenderPath::getAbsoluteRepaintRect):
+        (RenderPath::requiresLayer):
+        (RenderPath::lineHeight):
+        (RenderPath::baselinePosition):
+        (RenderPath::paint):
+        (RenderPath::nodeAtPoint):
+        * kcanvas/RenderPath.h: Added.
+        * kcanvas/device/quartz/KCanvasItemQuartz.h:
+        * kcanvas/device/quartz/KCanvasItemQuartz.mm:
+        * kcanvas/device/quartz/KCanvasPathQuartz.h:
+        * kcanvas/device/quartz/KCanvasPathQuartz.mm:
+        (KCanvasPathQuartz::boundingBox):
+        (scratchContext):
+        (KCanvasPathQuartz::strokeBoundingBox):
+        (pathContainsPoint):
+        (KCanvasPathQuartz::containsPoint):
+        (KCanvasPathQuartz::strokeContainsPoint):
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        (KRenderingDeviceQuartz::createItem):
+        * kcanvas/device/quartz/QuartzSupport.h:
+        * kcanvas/device/quartz/QuartzSupport.mm:
+        (applyStrokeStyleToContext):
+        * ksvg2/svg/SVGStyledElementImpl.cpp:
+        (SVGStyledElementImpl::updateCanvasItem):
+        (SVGStyledElementImpl::pushAttributeContext):
+        * ksvg2/svg/SVGStyledLocatableElementImpl.cpp:
+        * ksvg2/svg/SVGStyledTransformableElementImpl.cpp:
+        * kwq/KWQRenderTreeDebug.cpp:
+
 2006-02-08  Adele Peterson  <adele@apple.com>
 
         Fix broken layout tests.

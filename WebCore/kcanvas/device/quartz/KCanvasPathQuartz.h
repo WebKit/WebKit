@@ -39,6 +39,11 @@ public:
     virtual void lineTo(float x, float y);
     virtual void curveTo(float x1, float y1, float x2, float y2, float x3, float y3);
     virtual void closeSubpath();
+
+    virtual FloatRect boundingBox();
+    virtual FloatRect strokeBoundingBox(const KRenderingStrokePainter&);
+    virtual bool containsPoint(const FloatPoint&, KCWindRule);
+    virtual bool strokeContainsPoint(const FloatPoint&);
     
     CGPathRef cgPath() const { return m_cgPath; }
     

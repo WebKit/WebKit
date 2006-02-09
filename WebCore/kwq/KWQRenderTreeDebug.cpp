@@ -39,7 +39,7 @@
 
 #if SVG_SUPPORT
 #include "KCanvasTreeDebug.h"
-#include "KCanvasItem.h"
+#include "RenderPath.h"
 #include "KCanvasContainer.h"
 #endif
 

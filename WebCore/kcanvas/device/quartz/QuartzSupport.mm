@@ -90,9 +90,8 @@ CGAffineTransform CGAffineTransformMakeMapBetweenRects(CGRect source, CGRect des
     return transform;
 }
 
-void applyStrokeStyleToContext(CGContextRef context, khtml::RenderStyle* renderStyle, const khtml::RenderObject* renderObject)
+void applyStrokeStyleToContext(CGContextRef context, const KRenderingStrokePainter& strokePainter)
 {
-    KRenderingStrokePainter strokePainter = KSVG::KSVGPainterFactory::strokePainter(renderStyle, renderObject);
 
     /* Shouldn't all these be in the stroke painter? */
     CGContextSetLineWidth(context, strokePainter.strokeWidth());
@@ -114,6 +113,12 @@ void applyStrokeStyleToContext(CGContextRef context, khtml::RenderStyle* renderS
         CGContextSetLineDash(context, strokePainter.dashOffset(), lengths, dashes.count());
         free(lengths);
     }
+}
+
+void applyStrokeStyleToContext(CGContextRef context, khtml::RenderStyle* renderStyle, const khtml::RenderObject* renderObject)
+{
+    KRenderingStrokePainter strokePainter = KSVG::KSVGPainterFactory::strokePainter(renderStyle, renderObject);
+    applyStrokeStyleToContext(context, strokePainter);
 }
 
 void CGPathToCFStringApplierFunction(void *info, const CGPathElement *element)

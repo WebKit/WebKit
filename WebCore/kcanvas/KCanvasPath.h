@@ -29,6 +29,13 @@
 #include <kxmlcore/RefPtr.h>
 #include <kxmlcore/Assertions.h>
 #include "Shared.h"
+#include "FloatRect.h"
+
+class KRenderingStrokePainter;
+
+namespace WebCore {
+    class RenderStyle;
+}
 
 class QTextStream;
 
@@ -60,6 +67,11 @@ public:
     virtual void lineTo(float x, float y) = 0;
     virtual void curveTo(float x1, float y1, float x2, float y2, float x3, float y3) = 0;
     virtual void closeSubpath() = 0;
+
+    virtual FloatRect boundingBox() = 0;
+    virtual FloatRect strokeBoundingBox(const KRenderingStrokePainter&) = 0;
+    virtual bool strokeContainsPoint(const FloatPoint&) = 0;
+    virtual bool containsPoint(const FloatPoint&, KCWindRule) = 0;
 };
 
 // Clipping paths

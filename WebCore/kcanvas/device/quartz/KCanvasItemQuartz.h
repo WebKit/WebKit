@@ -32,18 +32,5 @@ public:
     KCanvasItemQuartz(WebCore::RenderStyle*, WebCore::SVGStyledElementImpl*);
     virtual ~KCanvasItemQuartz() { }
     
-    virtual FloatRect bboxForPath(bool includeStroke) const;
-    virtual bool hitsPath(const FloatPoint&, bool fill /* false means stroke */) const;
-    
-    virtual IntRect getAbsoluteRepaintRect();
-    
-    virtual bool requiresLayer();
-    virtual short lineHeight(bool b, bool isRootLineBox = false) const;
-    virtual short baselinePosition(bool b, bool isRootLineBox = false) const;
-    
-    virtual void layout();
-    virtual void paint(PaintInfo&, int parentX, int parentY);
-    virtual bool nodeAtPoint(NodeInfo&, int x, int y, int tx, int ty, WebCore::HitTestAction);
-private:
-    void drawMarkersIfNeeded(const FloatRect&, const KCanvasPath*) const;
+    virtual void drawMarkersIfNeeded(const FloatRect&, const KCanvasPath*) const;
 };
