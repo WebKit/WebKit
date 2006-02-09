@@ -47,107 +47,6 @@
 #import <kxmlcore/Assertions.h>
 
 
-// Maybe this should be in a base class instead...
-static KCanvasImage* setupShadingWithStyle(const KRenderingPaintServerGradient *server, CGShadingRef shading, const khtml::RenderObject* renderObject, KCPaintTargetType type, bool paintingText)
-{
-    KRenderingDeviceQuartz *quartzDevice = static_cast<KRenderingDeviceQuartz *>(QPainter::renderingDevice());
-    CGContextRef context = quartzDevice->currentCGContext();
-    khtml::RenderStyle *renderStyle = renderObject->style();
-    ASSERT(context != NULL);
-    
-    CGContextSaveGState(context);
-    // make the gradient fit in the bbox if necessary.
-    if (server->boundingBoxMode() && renderObject->isRenderPath()) { // no support for bounding boxes around text yet!
-        // get the object bbox
-        CGRect objectBBox = CGContextGetPathBoundingBox(context);
-        CGRect gradientBBox = CGRectMake(0,0,100,100);
-        // generate a transform to map between the two.
-        CGAffineTransform gradientIntoObjectBBox = CGAffineTransformMakeMapBetweenRects(gradientBBox, objectBBox);
-        CGContextConcatCTM(context, gradientIntoObjectBBox);
-    }
-    
-    // apply the gradient's own transform
-    CGAffineTransform gradientTransform = CGAffineTransform(server->gradientTransform().qmatrix());
-    CGContextConcatCTM(context, gradientTransform);
-    
-    CGContextSetAlpha(context, renderStyle->opacity());
-    
-    if ((type & APPLY_TO_FILL) && KSVG::KSVGPainterFactory::isFilled(renderStyle)) {
-        CGContextSaveGState(context);
-        if (paintingText)
-            CGContextSetTextDrawingMode(context, kCGTextClip);
-    }
-
-    KCanvasImage *maskImage = 0;
-    
-    if ((type & APPLY_TO_STROKE) && KSVG::KSVGPainterFactory::isStroked(renderStyle)) {
-        CGContextSaveGState(context);
-        applyStrokeStyleToContext(context, renderStyle, renderObject); // FIXME: this seems like the wrong place for this.
-        if (paintingText) {
-            maskImage = static_cast<KCanvasImage *>(quartzDevice->createResource(RS_IMAGE));
-            int width  = 2048;
-            int height = 2048; // FIXME???
-            IntSize size = IntSize(width, height);
-            maskImage->init(size);
-            KRenderingDeviceContext* maskImageContext = quartzDevice->contextForImage(maskImage);
-            quartzDevice->pushContext(maskImageContext);
-            CGContextRef maskContext = static_cast<KRenderingDeviceContextQuartz*>(maskImageContext)->cgContext();
-            const_cast<khtml::RenderObject *>(renderObject)->style()->setColor(Color(255, 255, 255));
-            CGContextSetTextDrawingMode(maskContext, kCGTextStroke);
-        }
-    }
-    return maskImage;
-}
-
-static void renderShadingWithStyle(const KRenderingPaintServerGradient *server, CGShadingRef shading, const RenderPath* path, KCPaintTargetType type)
-{
-    KRenderingDeviceQuartz *quartzDevice = static_cast<KRenderingDeviceQuartz *>(QPainter::renderingDevice());
-    CGContextRef context = quartzDevice->currentCGContext();
-    khtml::RenderStyle *renderStyle = path->style();
-    ASSERT(context != NULL);
-    
-    if ((type & APPLY_TO_FILL) && KSVG::KSVGPainterFactory::isFilled(renderStyle))
-        KRenderingPaintServerQuartzHelper::clipToFillPath(context, path);
-    if ((type & APPLY_TO_STROKE) && KSVG::KSVGPainterFactory::isStroked(renderStyle))
-        KRenderingPaintServerQuartzHelper::clipToStrokePath(context, path);
-}
-
-static void teardownShadingWithStyle(const KRenderingPaintServerGradient *server, CGShadingRef shading, const khtml::RenderObject *renderObject, KCPaintTargetType type, bool paintingText, KCanvasImage *maskImage)
-{
-    KRenderingDeviceQuartz *quartzDevice = static_cast<KRenderingDeviceQuartz *>(QPainter::renderingDevice());
-    CGContextRef context = quartzDevice->currentCGContext();
-    khtml::RenderStyle *renderStyle = renderObject->style();
-    ASSERT(context != NULL);
-    
-    if ((type & APPLY_TO_FILL) && KSVG::KSVGPainterFactory::isFilled(renderStyle)) {
-        CGContextDrawShading(context, shading);
-        CGContextRestoreGState(context);
-    }
-    
-    if ((type & APPLY_TO_STROKE) && KSVG::KSVGPainterFactory::isStroked(renderStyle)) {
-        if (paintingText) {
-            int width  = 2048;
-            int height = 2048; // FIXME??? SEE ABOVE
-            delete quartzDevice->popContext();
-            context = quartzDevice->currentCGContext();
-            void *imageBuffer = fastMalloc(width * height);
-            CGColorSpaceRef grayColorSpace = CGColorSpaceCreateDeviceGray();
-            CGContextRef grayscaleContext = CGBitmapContextCreate(imageBuffer, width, height, 8, width, grayColorSpace, kCGImageAlphaNone);
-            CGColorSpaceRelease(grayColorSpace);
-            KCanvasImageQuartz *qMaskImage = static_cast<KCanvasImageQuartz *>(maskImage);
-            CGContextDrawLayerAtPoint(grayscaleContext, CGPointMake(0, 0), qMaskImage->cgLayer());
-            CGImageRef grayscaleImage = CGBitmapContextCreateImage(grayscaleContext);
-            CGContextClipToMask(context, CGRectMake(0, 0, width, height), grayscaleImage);
-            CGContextRelease(grayscaleContext);
-            CGImageRelease(grayscaleImage);
-        }
-        CGContextDrawShading(context, shading);
-        CGContextRestoreGState(context);
-    }
-    
-    CGContextRestoreGState(context);
-}
-
 //typedef vector unsigned char vUInt8;
 //vector float vec_loadAndSplatScalar( float *scalarPtr )
 //{
@@ -284,20 +183,13 @@ void KRenderingPaintServerGradientQuartz::updateQuartzGradientCache(const KRende
     if (!m_stopsCount)
         NSLog(@"Warning, no gradient stops, gradient (%p) will be all black!", this);
     
-    if (server->type() == PS_RADIAL_GRADIENT)
-    {
+    if (m_shadingCache)
+        CGShadingRelease(m_shadingCache);
+    if (server->type() == PS_RADIAL_GRADIENT) {
         const KRenderingPaintServerRadialGradientQuartz *radial = static_cast<const KRenderingPaintServerRadialGradientQuartz *>(server);
-        if (m_shadingCache)
-            CGShadingRelease(m_shadingCache);
-        // actually make the gradient
         m_shadingCache = CGShadingRefForRadialGradient(radial);
-    }
-    else if (server->type() == PS_LINEAR_GRADIENT)
-    {
+    } else if (server->type() == PS_LINEAR_GRADIENT) {
         const KRenderingPaintServerLinearGradientQuartz *linear = static_cast<const KRenderingPaintServerLinearGradientQuartz *>(server);
-        if (m_shadingCache)
-            CGShadingRelease(m_shadingCache);
-        // actually make the gradient
         m_shadingCache = CGShadingRefForLinearGradient(linear);
     }
 }
@@ -340,72 +232,123 @@ void KRenderingPaintServerRadialGradientQuartz::invalidate()
     KRenderingPaintServerRadialGradient::invalidate();
 }
 
-void KRenderingPaintServerLinearGradientQuartz::draw(KRenderingDeviceContext* renderingContext, const RenderPath* path, KCPaintTargetType type) const
+void KRenderingPaintServerGradientQuartz::draw(const KRenderingPaintServerGradient* server, KRenderingDeviceContext* renderingContext, const RenderPath* path, KCPaintTargetType type) const
 {
-    if (!setup(renderingContext, path, type))
+    if (!setup(server, renderingContext, path, type))
         return;
-    renderPath(renderingContext, path, type);
-    teardown(renderingContext, path, type);
+    renderPath(server, renderingContext, path, type);
+    teardown(server, renderingContext, path, type);
 }
 
-bool KRenderingPaintServerLinearGradientQuartz::setup(KRenderingDeviceContext* renderingContext, const khtml::RenderObject* renderObject, KCPaintTargetType type) const
+bool KRenderingPaintServerGradientQuartz::setup(const KRenderingPaintServerGradient* server, KRenderingDeviceContext* renderingContext, const khtml::RenderObject* renderObject, KCPaintTargetType type) const
 {
-    if(listener()) // this seems like bad design to me, should be in a common baseclass. -- ecs 8/6/05
-        listener()->resourceNotification();
+    if (server->listener()) // this seems like bad design to me, should be in a common baseclass. -- ecs 8/6/05
+        server->listener()->resourceNotification();
+    
+    delete m_maskImage;
+    m_maskImage = 0;
 
     // FIXME: total const HACK!
     // We need a hook to call this when the gradient gets updated, before drawn.
     if (!m_shadingCache)
-        const_cast<KRenderingPaintServerLinearGradientQuartz *>(this)->updateQuartzGradientCache(this);
+        const_cast<KRenderingPaintServerGradientQuartz*>(this)->updateQuartzGradientCache(server);
+    
+    KRenderingDeviceQuartz* quartzDevice = static_cast<KRenderingDeviceQuartz*>(QPainter::renderingDevice());
+    CGContextRef context = quartzDevice->currentCGContext();
+    khtml::RenderStyle* renderStyle = renderObject->style();
+    ASSERT(context != NULL);
+    
+    CGContextSaveGState(context);
+    // make the gradient fit in the bbox if necessary.
+    if (server->boundingBoxMode() && renderObject->isRenderPath()) { // no support for bounding boxes around text yet!
+        // get the object bbox
+        CGRect objectBBox = CGContextGetPathBoundingBox(context);
+        CGRect gradientBBox = CGRectMake(0,0,100,100); // FIXME - this is arbitrary no?
+        // generate a transform to map between the two.
+        CGAffineTransform gradientIntoObjectBBox = CGAffineTransformMakeMapBetweenRects(gradientBBox, objectBBox);
+        CGContextConcatCTM(context, gradientIntoObjectBBox);
+    }
+    
+    // apply the gradient's own transform
+    CGAffineTransform gradientTransform = CGAffineTransform(server->gradientTransform().qmatrix());
+    CGContextConcatCTM(context, gradientTransform);
+    
+    CGContextSetAlpha(context, renderStyle->opacity());
+    
+    if ((type & APPLY_TO_FILL) && KSVG::KSVGPainterFactory::isFilled(renderStyle)) {
+        CGContextSaveGState(context);
+        if (server->isPaintingText())
+            CGContextSetTextDrawingMode(context, kCGTextClip);
+    }
 
-    delete m_maskImage;
-    m_maskImage = setupShadingWithStyle(this, m_shadingCache, renderObject, type, isPaintingText());
-
+    if ((type & APPLY_TO_STROKE) && KSVG::KSVGPainterFactory::isStroked(renderStyle)) {
+        CGContextSaveGState(context);
+        applyStrokeStyleToContext(context, renderStyle, renderObject); // FIXME: this seems like the wrong place for this.
+        if (server->isPaintingText()) {
+            m_maskImage = static_cast<KCanvasImage *>(quartzDevice->createResource(RS_IMAGE));
+            int width  = 2048;
+            int height = 2048; // FIXME???
+            IntSize size = IntSize(width, height);
+            m_maskImage->init(size);
+            KRenderingDeviceContext* maskImageContext = quartzDevice->contextForImage(m_maskImage);
+            quartzDevice->pushContext(maskImageContext);
+            CGContextRef maskContext = static_cast<KRenderingDeviceContextQuartz*>(maskImageContext)->cgContext();
+            const_cast<khtml::RenderObject*>(renderObject)->style()->setColor(Color(255, 255, 255));
+            CGContextSetTextDrawingMode(maskContext, kCGTextStroke);
+        }
+    }
     return true;
 }
 
-void KRenderingPaintServerLinearGradientQuartz::renderPath(KRenderingDeviceContext* renderingContext, const RenderPath* path, KCPaintTargetType type) const
+void KRenderingPaintServerGradientQuartz::renderPath(const KRenderingPaintServerGradient* server, KRenderingDeviceContext* renderingContext, const RenderPath* path, KCPaintTargetType type) const
 {    
-    renderShadingWithStyle(this, m_shadingCache, path, type);
+    KRenderingDeviceQuartz* quartzDevice = static_cast<KRenderingDeviceQuartz*>(QPainter::renderingDevice());
+    CGContextRef context = quartzDevice->currentCGContext();
+    khtml::RenderStyle* renderStyle = path->style();
+    ASSERT(context != NULL);
+    
+    if ((type & APPLY_TO_FILL) && KSVG::KSVGPainterFactory::isFilled(renderStyle))
+        KRenderingPaintServerQuartzHelper::clipToFillPath(context, path);
+    if ((type & APPLY_TO_STROKE) && KSVG::KSVGPainterFactory::isStroked(renderStyle))
+        KRenderingPaintServerQuartzHelper::clipToStrokePath(context, path);
 }
 
-void KRenderingPaintServerLinearGradientQuartz::teardown(KRenderingDeviceContext* renderingContext, const khtml::RenderObject* renderObject, KCPaintTargetType type) const
+void KRenderingPaintServerGradientQuartz::teardown(const KRenderingPaintServerGradient *server, KRenderingDeviceContext* renderingContext, const khtml::RenderObject* renderObject, KCPaintTargetType type) const
 { 
-    teardownShadingWithStyle(this, m_shadingCache, renderObject, type, isPaintingText(), m_maskImage);
+    CGShadingRef shading = m_shadingCache;
+    KCanvasImage* maskImage = m_maskImage;
+    KRenderingDeviceQuartz* quartzDevice = static_cast<KRenderingDeviceQuartz*>(QPainter::renderingDevice());
+    CGContextRef context = quartzDevice->currentCGContext();
+    khtml::RenderStyle* renderStyle = renderObject->style();
+    ASSERT(context != NULL);
+    
+    if ((type & APPLY_TO_FILL) && KSVG::KSVGPainterFactory::isFilled(renderStyle)) {
+        CGContextDrawShading(context, shading);
+        CGContextRestoreGState(context);
+    }
+    
+    if ((type & APPLY_TO_STROKE) && KSVG::KSVGPainterFactory::isStroked(renderStyle)) {
+        if (server->isPaintingText()) {
+            int width  = 2048;
+            int height = 2048; // FIXME??? SEE ABOVE
+            delete quartzDevice->popContext();
+            context = quartzDevice->currentCGContext();
+            void* imageBuffer = fastMalloc(width * height);
+            CGColorSpaceRef grayColorSpace = CGColorSpaceCreateDeviceGray();
+            CGContextRef grayscaleContext = CGBitmapContextCreate(imageBuffer, width, height, 8, width, grayColorSpace, kCGImageAlphaNone);
+            CGColorSpaceRelease(grayColorSpace);
+            KCanvasImageQuartz* qMaskImage = static_cast<KCanvasImageQuartz *>(maskImage);
+            CGContextDrawLayerAtPoint(grayscaleContext, CGPointMake(0, 0), qMaskImage->cgLayer());
+            CGImageRef grayscaleImage = CGBitmapContextCreateImage(grayscaleContext);
+            CGContextClipToMask(context, CGRectMake(0, 0, width, height), grayscaleImage);
+            CGContextRelease(grayscaleContext);
+            CGImageRelease(grayscaleImage);
+        }
+        CGContextDrawShading(context, shading);
+        CGContextRestoreGState(context);
+    }
+    
+    CGContextRestoreGState(context);
 }
 
-void KRenderingPaintServerRadialGradientQuartz::draw(KRenderingDeviceContext* renderingContext, const RenderPath* path, KCPaintTargetType type) const
-{
-    if (!setup(renderingContext, path, type))
-        return;
-    renderPath(renderingContext, path, type);
-    teardown(renderingContext, path, type);
-}
-
-bool KRenderingPaintServerRadialGradientQuartz::setup(KRenderingDeviceContext* renderingContext, const khtml::RenderObject* renderObject, KCPaintTargetType type) const
-{
-    if(listener()) // this seems like bad design to me, should be in a common baseclass. -- ecs 8/6/05
-        listener()->resourceNotification();
-        
-    // FIXME: total const HACK!
-    // We need a hook to call this when the gradient gets updated, before drawn.
-    if (!m_shadingCache)
-        const_cast<KRenderingPaintServerRadialGradientQuartz *>(this)->updateQuartzGradientCache(this);
-
-    delete m_maskImage;
-    m_maskImage = setupShadingWithStyle(this, m_shadingCache, renderObject, type, isPaintingText());
-        
-    return true;
-}
-
-void KRenderingPaintServerRadialGradientQuartz::renderPath(KRenderingDeviceContext* renderingContext, const RenderPath* path, KCPaintTargetType type) const
-{
-    renderShadingWithStyle(this, m_shadingCache, path, type);
-}
-
-void KRenderingPaintServerRadialGradientQuartz::teardown(KRenderingDeviceContext* renderingContext, const khtml::RenderObject* renderObject, KCPaintTargetType type) const
-{
-    teardownShadingWithStyle(this, m_shadingCache, renderObject, type, isPaintingText(), m_maskImage);
-}
 #endif // SVG_SUPPORT
-

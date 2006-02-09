@@ -1,3 +1,29 @@
+2006-02-09  Alexander Kellett  <lypanov@kde.org>
+
+        Reviewed and landed by Maciej. 
+        
+        Factor out common parts of Linear/Radial GradientQuartz 
+        up into KRenderingPaintServerGradientQuartz.
+
+        Cleanup only, no layout tests needed or affected.
+
+        * kcanvas/device/KRenderingPaintServer.h:
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.mm:
+        (KRenderingPaintServerGradientQuartz::updateQuartzGradientCache):
+        (KRenderingPaintServerGradientQuartz::draw):
+        (KRenderingPaintServerGradientQuartz::setup):
+        (KRenderingPaintServerGradientQuartz::renderPath):
+        (KRenderingPaintServerGradientQuartz::teardown):
+        * kcanvas/device/quartz/KRenderingPaintServerQuartz.h:
+        (KRenderingPaintServerLinearGradientQuartz::draw):
+        (KRenderingPaintServerLinearGradientQuartz::setup):
+        (KRenderingPaintServerLinearGradientQuartz::teardown):
+        (KRenderingPaintServerLinearGradientQuartz::renderPath):
+        (KRenderingPaintServerRadialGradientQuartz::draw):
+        (KRenderingPaintServerRadialGradientQuartz::setup):
+        (KRenderingPaintServerRadialGradientQuartz::teardown):
+        (KRenderingPaintServerRadialGradientQuartz::renderPath):
+
 2006-02-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Hyatt.

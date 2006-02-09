@@ -77,7 +77,7 @@ public:
     void setPaintingText(bool paintingText) { m_paintingText = paintingText; }
 
     virtual QTextStream &externalRepresentation(QTextStream &) const = 0;
-protected:
+
     virtual void renderPath(KRenderingDeviceContext*, const RenderPath*, KCPaintTargetType) const = 0;
 private:
     const RenderPath *m_activeClient;
