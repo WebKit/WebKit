@@ -1,4 +1,5 @@
 EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of HTML > #document to 1 of HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > BODY > HTML > #document to 42 of #text > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 layer at (0,0) size 2008x2070
