@@ -1,3 +1,40 @@
+2006-02-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Anders. 
+        
+        - Moved all the default delegate classes to their own directory.
+
+        * DefaultDelegates: Added.
+        * DefaultDelegates/WebDefaultContextMenuDelegate.h: Added.
+        * DefaultDelegates/WebDefaultContextMenuDelegate.m: Added.
+        * DefaultDelegates/WebDefaultEditingDelegate.h: Added.
+        * DefaultDelegates/WebDefaultEditingDelegate.m: Added.
+        * DefaultDelegates/WebDefaultFrameLoadDelegate.h: Added.
+        * DefaultDelegates/WebDefaultFrameLoadDelegate.m: Added.
+        * DefaultDelegates/WebDefaultPolicyDelegate.h: Added.
+        * DefaultDelegates/WebDefaultPolicyDelegate.m: Added.
+        * DefaultDelegates/WebDefaultResourceLoadDelegate.h: Added.
+        * DefaultDelegates/WebDefaultResourceLoadDelegate.m: Added.
+        * DefaultDelegates/WebDefaultScriptDebugDelegate.h: Added.
+        * DefaultDelegates/WebDefaultScriptDebugDelegate.m: Added.
+        * DefaultDelegates/WebDefaultUIDelegate.h: Added.
+        * DefaultDelegates/WebDefaultUIDelegate.m: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebDefaultContextMenuDelegate.h: Removed.
+        * WebView/WebDefaultContextMenuDelegate.m: Removed.
+        * WebView/WebDefaultEditingDelegate.h: Removed.
+        * WebView/WebDefaultEditingDelegate.m: Removed.
+        * WebView/WebDefaultFrameLoadDelegate.h: Removed.
+        * WebView/WebDefaultFrameLoadDelegate.m: Removed.
+        * WebView/WebDefaultPolicyDelegate.h: Removed.
+        * WebView/WebDefaultPolicyDelegate.m: Removed.
+        * WebView/WebDefaultResourceLoadDelegate.h: Removed.
+        * WebView/WebDefaultResourceLoadDelegate.m: Removed.
+        * WebView/WebDefaultScriptDebugDelegate.h: Removed.
+        * WebView/WebDefaultScriptDebugDelegate.m: Removed.
+        * WebView/WebDefaultUIDelegate.h: Removed.
+        * WebView/WebDefaultUIDelegate.m: Removed.
+
 2006-02-08  Justin Garcia  <justin.garcia@apple.com>
 
         Original patch by Graham Dennis, reviewed by me:

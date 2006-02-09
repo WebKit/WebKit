@@ -664,6 +664,7 @@
 		0867D691FE84028FC02AAC07 /* WebKit */ = {
 			isa = PBXGroup;
 			children = (
+				6508A4A7099B375F00BCBF45 /* Default Delegates */,
 				F52CA6C002DF9D78018635CA /* Download */,
 				F57D194A034E732C01A80180 /* DOM */,
 				25A8176801B5474B0ECA149E /* History */,
@@ -829,6 +830,28 @@
 			name = PDF;
 			sourceTree = "<group>";
 		};
+		6508A4A7099B375F00BCBF45 /* Default Delegates */ = {
+			isa = PBXGroup;
+			children = (
+				5152FADD033FC50400CA2ACD /* WebDefaultContextMenuDelegate.h */,
+				5152FADE033FC50400CA2ACD /* WebDefaultContextMenuDelegate.m */,
+				BE95BEE605FD0805006E1513 /* WebDefaultEditingDelegate.h */,
+				BE95BEE505FD0805006E1513 /* WebDefaultEditingDelegate.m */,
+				70BC9ED804144FC500A80182 /* WebDefaultFrameLoadDelegate.h */,
+				70BC9ED604144F3200A80182 /* WebDefaultFrameLoadDelegate.m */,
+				5152FADF033FC50400CA2ACD /* WebDefaultPolicyDelegate.h */,
+				5152FAE0033FC50400CA2ACD /* WebDefaultPolicyDelegate.m */,
+				700BC50B04144DA100A80182 /* WebDefaultResourceLoadDelegate.h */,
+				700BC50C04144DA100A80182 /* WebDefaultResourceLoadDelegate.m */,
+				7E6FEEFF08985A3E00C44C3F /* WebDefaultScriptDebugDelegate.h */,
+				7E6FEF0008985A3E00C44C3F /* WebDefaultScriptDebugDelegate.m */,
+				515E27CF0458CA4B00CA2D3A /* WebDefaultUIDelegate.h */,
+				515E27D00458CA4B00CA2D3A /* WebDefaultUIDelegate.m */,
+			);
+			name = "Default Delegates";
+			path = DefaultDelegates;
+			sourceTree = "<group>";
+		};
 		848DFF410365F6FB00CA2ACA /* Netscape Plug-ins */ = {
 			isa = PBXGroup;
 			children = (
@@ -893,20 +916,6 @@
 				39446070020F50ED0ECA1767 /* WebDataSource.h */,
 				39446071020F50ED0ECA1767 /* WebDataSource.m */,
 				39446072020F50ED0ECA1767 /* WebDataSourcePrivate.h */,
-				5152FADD033FC50400CA2ACD /* WebDefaultContextMenuDelegate.h */,
-				5152FADE033FC50400CA2ACD /* WebDefaultContextMenuDelegate.m */,
-				BE95BEE605FD0805006E1513 /* WebDefaultEditingDelegate.h */,
-				BE95BEE505FD0805006E1513 /* WebDefaultEditingDelegate.m */,
-				70BC9ED804144FC500A80182 /* WebDefaultFrameLoadDelegate.h */,
-				70BC9ED604144F3200A80182 /* WebDefaultFrameLoadDelegate.m */,
-				5152FADF033FC50400CA2ACD /* WebDefaultPolicyDelegate.h */,
-				5152FAE0033FC50400CA2ACD /* WebDefaultPolicyDelegate.m */,
-				700BC50B04144DA100A80182 /* WebDefaultResourceLoadDelegate.h */,
-				700BC50C04144DA100A80182 /* WebDefaultResourceLoadDelegate.m */,
-				7E6FEEFF08985A3E00C44C3F /* WebDefaultScriptDebugDelegate.h */,
-				7E6FEF0008985A3E00C44C3F /* WebDefaultScriptDebugDelegate.m */,
-				515E27CF0458CA4B00CA2D3A /* WebDefaultUIDelegate.h */,
-				515E27D00458CA4B00CA2D3A /* WebDefaultUIDelegate.m */,
 				35081DAE02B6D4F50ACA2ACA /* WebDocument.h */,
 				ED21B9810528F7AA003299AC /* WebDocumentInternal.h */,
 				833987810543012D00EE146E /* WebDocumentPrivate.h */,
