@@ -1,3 +1,12 @@
+2006-02-08  Maciej Stachowiak  <mjs@apple.com>
+
+        - added SVG path hit testing test
+
+        * svg/custom/hit-test-path-expected.checksum: Added.
+        * svg/custom/hit-test-path-expected.png: Added.
+        * svg/custom/hit-test-path-expected.txt: Added.
+        * svg/custom/hit-test-path.svg: Added.
+
 2006-02-08  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.
