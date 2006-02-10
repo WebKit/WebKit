@@ -72,7 +72,7 @@ namespace KXMLCore {
     {
     }
 
-    template <typename T> RefPtr<T>& RefPtr<T>::operator=(const RefPtr<T>& o)
+    template <typename T> inline RefPtr<T>& RefPtr<T>::operator=(const RefPtr<T>& o)
     {
         T* optr = o.get();
         if (optr)
@@ -84,7 +84,7 @@ namespace KXMLCore {
         return *this;
     }
     
-    template <typename T> template <typename U> RefPtr<T>& RefPtr<T>::operator=(const RefPtr<U>& o)
+    template <typename T> template <typename U> inline RefPtr<T>& RefPtr<T>::operator=(const RefPtr<U>& o)
     {
         T* optr = o.get();
         if (optr)

@@ -1,5 +1,15 @@
 2006-02-10  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Darin.
+
+        - Inlined RefPtr assignment operators. .7% performance win on 
+        super-accurate JS iBench.
+
+        * kxmlcore/RefPtr.h:
+        (KXMLCore::::operator):
+
+2006-02-10  Geoffrey Garen  <ggaren@apple.com>
+
         No review needed, just a build fix. This time for sure.
 
         * kjs/JSType.h:
