@@ -25,12 +25,14 @@
 #ifndef INTERNAL_H
 #define INTERNAL_H
 
-#include "ustring.h"
+#include "JSType.h"
+#include "interpreter.h"
 #include "object.h"
 #include "protect.h"
-#include "types.h"
-#include "interpreter.h"
 #include "scope_chain.h"
+#include "types.h"
+#include "ustring.h"
+
 #include <kxmlcore/Noncopyable.h>
 #include <kxmlcore/RefPtr.h>
 
@@ -49,53 +51,14 @@ namespace KJS {
   //                            Primitive impls
   // ---------------------------------------------------------------------------
 
-  class UndefinedImp : public JSCell {
-  public:
-    Type type() const { return UndefinedType; }
-
-    JSValue *toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
-    bool toBoolean(ExecState *exec) const;
-    double toNumber(ExecState *exec) const;
-    UString toString(ExecState *exec) const;
-    JSObject *toObject(ExecState *exec) const;
-  };
-
-  class NullImp : public JSCell {
-  public:
-    Type type() const { return NullType; }
-
-    JSValue *toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
-    bool toBoolean(ExecState *exec) const;
-    double toNumber(ExecState *exec) const;
-    UString toString(ExecState *exec) const;
-    JSObject *toObject(ExecState *exec) const;
-  };
-
-  class BooleanImp : public JSCell {
-  public:
-    BooleanImp(bool v = false) : val(v) { }
-    bool value() const { return val; }
-
-    Type type() const { return BooleanType; }
-
-    JSValue *toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
-    bool toBoolean(ExecState *exec) const;
-    double toNumber(ExecState *exec) const;
-    UString toString(ExecState *exec) const;
-    JSObject *toObject(ExecState *exec) const;
-
-  private:
-    bool val;
-  };
-  
   class StringImp : public JSCell {
   public:
     StringImp(const UString& v) : val(v) { }
     UString value() const { return val; }
 
-    Type type() const { return StringType; }
+    JSType type() const { return StringType; }
 
-    JSValue *toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
+    JSValue *toPrimitive(ExecState *exec, JSType preferred = UnspecifiedType) const;
     bool toBoolean(ExecState *exec) const;
     double toNumber(ExecState *exec) const;
     UString toString(ExecState *exec) const;
@@ -108,13 +71,13 @@ namespace KJS {
   class NumberImp : public JSCell {
     friend class ConstantValues;
     friend class InterpreterImp;
-    friend JSValue *jsNumber(double);
+    friend JSValue *jsNumberCell(double);
   public:
     double value() const { return val; }
 
-    Type type() const { return NumberType; }
+    JSType type() const { return NumberType; }
 
-    JSValue *toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
+    JSValue *toPrimitive(ExecState *exec, JSType preferred = UnspecifiedType) const;
     bool toBoolean(ExecState *exec) const;
     double toNumber(ExecState *exec) const;
     UString toString(ExecState *exec) const;

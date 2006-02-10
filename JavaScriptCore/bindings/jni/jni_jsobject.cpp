@@ -23,19 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 #include "config.h"
+
+#include "identifier.h"
+#include "internal.h"
+#include "interpreter.h"
+#include "list.h"
+#include "jni_jsobject.h"
+#include "jni_runtime.h"
+#include "jni_utility.h"
+#include "runtime_object.h"
+#include "runtime_root.h"
+
 #include <CoreFoundation/CoreFoundation.h>
-
 #include <assert.h>
-
-#include <identifier.h>
-#include <internal.h>
-#include <interpreter.h>
-#include <list.h>
-#include <jni_jsobject.h>
-#include <jni_runtime.h>
-#include <jni_utility.h>
-#include <runtime_object.h>
-#include <runtime_root.h>
 
 using namespace KJS::Bindings;
 using namespace KJS;
@@ -327,7 +327,7 @@ jobject JavaJSObject::convertValueToJObject (JSValue *value) const
     // Java instance -> Java instance
     // Everything else -> JavaJSObject
     
-    Type type = value->type();
+    JSType type = value->type();
     if (type == NumberType) {
         jclass JSObjectClass = env->FindClass ("java/lang/Double");
         jmethodID constructorID = env->GetMethodID (JSObjectClass, "<init>", "(D)V");

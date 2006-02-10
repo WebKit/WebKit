@@ -33,30 +33,18 @@
 
 #endif
 
-#include <assert.h>
-#include <stdlib.h> // for size_t
-#include "simple_number.h"
+#include "JSImmediate.h"
+#include "JSType.h"
+#include "kxmlcore/Assertions.h"
 #include "ustring.h"
+
+#include <stdlib.h> // for size_t
 
 namespace KJS {
 
 class ClassInfo;
 class ExecState;
 class JSObject;
-
-/**
- * Primitive types
- */
-enum Type {
-    UnspecifiedType   = 0,
-    UndefinedType     = 1,
-    NullType          = 2,
-    BooleanType       = 3,
-    StringType        = 4,
-    NumberType        = 5,
-    ObjectType        = 6,
-    GetterSetterType  = 7
-};
 
 /**
  * JSValue is the base type for all primitives (Undefined, Null, Boolean,
@@ -76,7 +64,7 @@ private:
 
 public:
     // Querying the type.
-    Type type() const;
+    JSType type() const;
     bool isUndefined() const;
     bool isNull() const;
     bool isUndefinedOrNull() const;
@@ -88,6 +76,7 @@ public:
 
     // Extracting the value.
     bool getBoolean(bool&) const;
+    bool getBoolean() const; // false if not a boolean
     bool getNumber(double&) const;
     double getNumber() const; // NaN if not a number
     bool getString(UString&) const;
@@ -99,7 +88,7 @@ public:
     bool getUInt32(uint32_t&) const;
 
     // Basic conversions.
-    JSValue *toPrimitive(ExecState *exec, Type preferredType = UnspecifiedType) const;
+    JSValue *toPrimitive(ExecState *exec, JSType preferredType = UnspecifiedType) const;
     bool toBoolean(ExecState *exec) const;
     double toNumber(ExecState *exec) const;
     UString toString(ExecState *exec) const;
@@ -127,9 +116,6 @@ private:
 
 class JSCell : public JSValue {
     friend class Collector;
-    friend class UndefinedImp;
-    friend class NullImp;
-    friend class BooleanImp;
     friend class NumberImp;
     friend class StringImp;
     friend class JSObject;
@@ -139,15 +125,13 @@ private:
     virtual ~JSCell();
 public:
     // Querying the type.
-    virtual Type type() const = 0;
-    bool isBoolean() const;
+    virtual JSType type() const = 0;
     bool isNumber() const;
     bool isString() const;
     bool isObject() const;
     bool isObject(const ClassInfo *) const;
 
     // Extracting the value.
-    bool getBoolean(bool&) const;
     bool getNumber(double&) const;
     double getNumber() const; // NaN if not a number
     bool getString(UString&) const;
@@ -159,7 +143,7 @@ public:
     virtual bool getUInt32(uint32_t&) const;
 
     // Basic conversions.
-    virtual JSValue *toPrimitive(ExecState *exec, Type preferredType = UnspecifiedType) const = 0;
+    virtual JSValue *toPrimitive(ExecState *exec, JSType preferredType = UnspecifiedType) const = 0;
     virtual bool toBoolean(ExecState *exec) const = 0;
     virtual double toNumber(ExecState *exec) const = 0;
     virtual UString toString(ExecState *exec) const = 0;
@@ -174,49 +158,46 @@ private:
     bool m_marked;
 };
 
-JSCell *jsUndefined();
-JSCell *jsNull();
+JSValue *jsUndefined();
+JSValue *jsNull();
 
-JSCell *jsBoolean(bool);
+JSValue *jsBoolean(bool);
 
+JSValue *jsNumberCell(double);
 JSValue *jsNumber(double);
 JSValue *jsNaN();
 
 JSCell *jsString(const UString &); // returns empty string if passed null string
 JSCell *jsString(const char * = ""); // returns empty string if passed 0
 
-extern const double NaN;
-extern const double Inf;
+extern double NaN;
+extern double Inf;
 
-class ConstantValues {
-public:
-    static JSCell *undefined;
-    static JSCell *null;
-    static JSCell *jsFalse;
-    static JSCell *jsTrue;
 
-    static void initIfNeeded();
-    static void mark();
-};
-
-inline JSCell *jsUndefined()
+inline JSValue *jsUndefined()
 {
-    return ConstantValues::undefined;
+    return JSImmediate::undefinedImmediate();
 }
 
-inline JSCell *jsNull()
+inline JSValue *jsNull()
 {
-    return ConstantValues::null;
-}
-
-inline JSCell *jsBoolean(bool b)
-{
-    return b ? ConstantValues::jsTrue : ConstantValues::jsFalse;
+    return JSImmediate::nullImmediate();
 }
 
 inline JSValue *jsNaN()
 {
-    return SimpleNumber::make(NaN);
+    return JSImmediate::NaNImmediate();
+}
+
+inline JSValue *jsBoolean(bool b)
+{
+    return b ? JSImmediate::trueImmediate() : JSImmediate::falseImmediate();
+}
+
+inline JSValue *jsNumber(double d)
+{
+    JSValue *v = JSImmediate::fromDouble(d);
+    return v ? v : jsNumberCell(d);
 }
 
 inline JSValue::JSValue()
@@ -234,11 +215,6 @@ inline JSCell::JSCell()
 
 inline JSCell::~JSCell()
 {
-}
-
-inline bool JSCell::isBoolean() const
-{
-    return type() == BooleanType;
 }
 
 inline bool JSCell::isNumber() const
@@ -268,13 +244,13 @@ inline void JSCell::mark()
 
 inline JSCell *JSValue::downcast()
 {
-    assert(!SimpleNumber::is(this));
+    ASSERT(!JSImmediate::isImmediate(this));
     return static_cast<JSCell *>(this);
 }
 
 inline const JSCell *JSValue::downcast() const
 {
-    assert(!SimpleNumber::is(this));
+    ASSERT(!JSImmediate::isImmediate(this));
     return static_cast<const JSCell *>(this);
 }
 
@@ -290,38 +266,48 @@ inline bool JSValue::isNull() const
 
 inline bool JSValue::isUndefinedOrNull() const
 {
-    return this == jsUndefined() || this == jsNull();
+    return JSImmediate::isUndefinedOrNull(this);
 }
 
 inline bool JSValue::isBoolean() const
 {
-    return !SimpleNumber::is(this) && downcast()->isBoolean();
+    return JSImmediate::isBoolean(this);
 }
 
 inline bool JSValue::isNumber() const
 {
-    return SimpleNumber::is(this) || downcast()->isNumber();
+    return JSImmediate::isNumber(this) || !JSImmediate::isImmediate(this) && downcast()->isNumber();
 }
 
 inline bool JSValue::isString() const
 {
-    return !SimpleNumber::is(this) && downcast()->isString();
+    return !JSImmediate::isImmediate(this) && downcast()->isString();
 }
 
 inline bool JSValue::isObject() const
 {
-    return !SimpleNumber::is(this) && downcast()->isObject();
+    return !JSImmediate::isImmediate(this) && downcast()->isObject();
 }
 
 inline bool JSValue::getBoolean(bool& v) const
 {
-    return !SimpleNumber::is(this) && downcast()->getBoolean(v);
+    if (JSImmediate::isBoolean(this)) {
+        v = JSImmediate::toBoolean(this);
+        return true;
+    }
+    
+    return false;
+}
+
+inline bool JSValue::getBoolean() const
+{
+    return JSImmediate::isBoolean(this) ? JSImmediate::toBoolean(this) : false;
 }
 
 inline bool JSValue::getNumber(double& v) const
 {
-    if (SimpleNumber::is(this)) {
-        v = SimpleNumber::value(this);
+    if (JSImmediate::isImmediate(this)) {
+        v = JSImmediate::toDouble(this);
         return true;
     }
     return downcast()->getNumber(v);
@@ -329,33 +315,33 @@ inline bool JSValue::getNumber(double& v) const
 
 inline double JSValue::getNumber() const
 {
-    return SimpleNumber::is(this) ? SimpleNumber::value(this) : downcast()->getNumber();
+    return JSImmediate::isImmediate(this) ? JSImmediate::toDouble(this) : downcast()->getNumber();
 }
 
 inline bool JSValue::getString(UString& s) const
 {
-    return !SimpleNumber::is(this) && downcast()->getString(s);
+    return !JSImmediate::isImmediate(this) && downcast()->getString(s);
 }
 
 inline UString JSValue::getString() const
 {
-    return SimpleNumber::is(this) ? UString() : downcast()->getString();
+    return JSImmediate::isImmediate(this) ? UString() : downcast()->getString();
 }
 
 inline JSObject *JSValue::getObject()
 {
-    return SimpleNumber::is(this) ? 0 : downcast()->getObject();
+    return JSImmediate::isImmediate(this) ? 0 : downcast()->getObject();
 }
 
 inline const JSObject *JSValue::getObject() const
 {
-    return SimpleNumber::is(this) ? 0 : downcast()->getObject();
+    return JSImmediate::isImmediate(this) ? 0 : downcast()->getObject();
 }
 
 inline bool JSValue::getUInt32(uint32_t& v) const
 {
-    if (SimpleNumber::is(this)) {
-        double d = SimpleNumber::value(this);
+    if (JSImmediate::isImmediate(this)) {
+        double d = JSImmediate::toDouble(this);
         if (!(d >= 0) || d > 0xFFFFFFFFUL) // true for NaN
             return false;
         v = static_cast<uint32_t>(d);
@@ -366,50 +352,38 @@ inline bool JSValue::getUInt32(uint32_t& v) const
 
 inline void JSValue::mark()
 {
-    if (!SimpleNumber::is(this))
-        downcast()->mark();
+    ASSERT(!JSImmediate::isImmediate(this)); // callers should check !marked() before calling mark()
+    downcast()->mark();
 }
 
 inline bool JSValue::marked() const
 {
-    return SimpleNumber::is(this) || downcast()->marked();
+    return JSImmediate::isImmediate(this) || downcast()->marked();
 }
 
-inline Type JSValue::type() const
+inline JSType JSValue::type() const
 {
-    return SimpleNumber::is(this) ? NumberType : downcast()->type();
+    return JSImmediate::isImmediate(this) ? JSImmediate::type(this) : downcast()->type();
 }
 
-inline JSValue *JSValue::toPrimitive(ExecState *exec, Type preferredType) const
+inline JSValue *JSValue::toPrimitive(ExecState *exec, JSType preferredType) const
 {
-    return SimpleNumber::is(this) ? const_cast<JSValue *>(this) : downcast()->toPrimitive(exec, preferredType);
+    return JSImmediate::isImmediate(this) ? const_cast<JSValue *>(this) : downcast()->toPrimitive(exec, preferredType);
 }
 
 inline bool JSValue::toBoolean(ExecState *exec) const
 {
-    if (SimpleNumber::is(this)) {
-        double d = SimpleNumber::value(this);
-        return d < 0 || d > 0; // false for NaN
-    }
-
-    return downcast()->toBoolean(exec);
+    return JSImmediate::isImmediate(this) ? JSImmediate::toBoolean(this) : downcast()->toBoolean(exec);
 }
 
 inline double JSValue::toNumber(ExecState *exec) const
 {
-    return SimpleNumber::is(this) ? SimpleNumber::value(this) : downcast()->toNumber(exec);
+    return JSImmediate::isImmediate(this) ? JSImmediate::toDouble(this) : downcast()->toNumber(exec);
 }
 
 inline UString JSValue::toString(ExecState *exec) const
 {
-    if (SimpleNumber::is(this)) {
-        double d = SimpleNumber::value(this);
-        if (d == 0.0) // +0.0 or -0.0
-            d = 0.0;
-        return UString::from(d);
-    }
-
-    return downcast()->toString(exec);
+    return JSImmediate::isImmediate(this) ? JSImmediate::toString(this) : downcast()->toString(exec);
 }
 
 } // namespace

@@ -23,12 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 #include "config.h"
-#include <jni_class.h>
-#include <jni_instance.h>
-#include <jni_runtime.h>
-#include <jni_utility.h>
-#include <runtime_object.h>
-#include <runtime_root.h>
+
+#include "jni_class.h"
+#include "jni_instance.h"
+#include "jni_runtime.h"
+#include "jni_utility.h"
+#include "runtime_object.h"
+#include "runtime_root.h"
 
 #ifdef NDEBUG
 #define JS_LOG(formatAndArgs...) ((void)0)
@@ -300,7 +301,7 @@ JSValue *JavaInstance::invokeDefaultMethod (ExecState *exec, const List &args)
 }
 
 
-JSValue *JavaInstance::defaultValue (Type hint) const
+JSValue *JavaInstance::defaultValue (JSType hint) const
 {
     if (hint == StringType) {
         return stringValue();

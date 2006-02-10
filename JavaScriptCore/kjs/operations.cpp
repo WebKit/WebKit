@@ -20,13 +20,14 @@
  *
  */
 
+
+#include "JSType.h"
 #include "config.h"
 #include "operations.h"
 
-
-#include <stdio.h>
 #include <assert.h>
 #include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #ifndef HAVE_FUNC_ISINF
@@ -107,8 +108,8 @@ bool isNegInf(double d)
 // ECMA 11.9.3
 bool equal(ExecState *exec, JSValue *v1, JSValue *v2)
 {
-    Type t1 = v1->type();
-    Type t2 = v2->type();
+    JSType t1 = v1->type();
+    JSType t2 = v2->type();
 
     if (t1 != t2) {
         if (t1 == UndefinedType)
@@ -161,8 +162,8 @@ bool equal(ExecState *exec, JSValue *v1, JSValue *v2)
 
 bool strictEqual(ExecState *exec, JSValue *v1, JSValue *v2)
 {
-  Type t1 = v1->type();
-  Type t2 = v2->type();
+  JSType t1 = v1->type();
+  JSType t2 = v2->type();
 
   if (t1 != t2)
     return false;
@@ -217,7 +218,7 @@ int minInt(int d1, int d2)
 JSValue *add(ExecState *exec, JSValue *v1, JSValue *v2, char oper)
 {
   // exception for the Date exception in defaultValue()
-  Type preferred = oper == '+' ? UnspecifiedType : NumberType;
+  JSType preferred = oper == '+' ? UnspecifiedType : NumberType;
   JSValue *p1 = v1->toPrimitive(exec, preferred);
   JSValue *p2 = v2->toPrimitive(exec, preferred);
 

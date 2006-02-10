@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+
 #include "error_object.h"
 #include "function.h"
 #include "interpreter.h"
@@ -188,7 +189,7 @@ bool RuntimeObjectImp::deleteProperty(ExecState *exec,
     return false;
 }
 
-JSValue *RuntimeObjectImp::defaultValue(ExecState *exec, Type hint) const
+JSValue *RuntimeObjectImp::defaultValue(ExecState *exec, JSType hint) const
 {
     JSValue *result;
     

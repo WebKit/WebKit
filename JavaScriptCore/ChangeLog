@@ -1,3 +1,149 @@
+2006-02-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by mjs.
+
+        - Fixed <rdar://problem/4343730> Should switch ConstantValues (null, 
+        undefined, true, false) from JS objects to immediate values similar to
+        SimpleNumber
+
+        2.0% performance gain on my new super-accurate version of JS iBench.
+        (I promise to land a version of it soon.)
+
+        The gist of the change:
+        (1) The SimpleNumber class (simple_number.h) is now the JSImmediate
+        class (JSImmediate.h/.cpp), and it handles not only numbers but also 
+        null, undefined, true, and false. 
+        (2) JSImmediate provides convenience methods for the bit masking
+        necessary to encode and decode immediate values.
+        (3) ConstantValues, BooleanImp, NullImp, and UndefinedImp are gone.
+        (4) JSCell no longer implements functions like getBoolean, because
+        only a JSImmediate can be a boolean.
+        (5) JSImmediate no longer uses ALWAYS_INLINE because there's no need,
+        and ALWAYS_INLINE is a non-portable option of last resort.
+        (6) Type is now JSType, and it resides in its own file, JSType.h.
+        Since I was there, I did some header include sorting as part of this
+        change.
+
+        The rest pretty much explains itself.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Removed simple_number.h,
+        added JSImmediate.h/.cpp.
+        * bindings/c/c_instance.cpp:
+        (KJS::Bindings::CInstance::defaultValue):
+        * bindings/c/c_instance.h:
+        * bindings/c/c_utility.cpp:
+        (KJS::Bindings::convertValueToNPVariant):
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::defaultValue):
+        * bindings/jni/jni_instance.h:
+        * bindings/jni/jni_jsobject.cpp:
+        (JavaJSObject::convertValueToJObject):
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject _convertValueToObjcValue:originExecutionContext:executionContext:]):
+        Standardized calls to use getXXX instead of hand-rolling JSValue 
+        functionality.
+        * bindings/objc/objc_instance.h:
+        * bindings/objc/objc_instance.mm:
+        (ObjcInstance::getValueOfUndefinedField):
+        (ObjcInstance::defaultValue):
+        * bindings/objc/objc_runtime.h:
+        * bindings/objc/objc_runtime.mm:
+        (ObjcFallbackObjectImp::type):
+        (ObjcFallbackObjectImp::defaultValue):
+        * bindings/runtime.h:
+        (KJS::Bindings::Instance::getValueOfUndefinedField):
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::defaultValue):
+        * bindings/runtime_object.h:
+        * kjs/JSImmediate.h: Added.
+        (KJS::JSImmediate::isImmediate):
+        (KJS::JSImmediate::isNumber):
+        (KJS::JSImmediate::isBoolean):
+        (KJS::JSImmediate::isUndefinedOrNull):
+        (KJS::JSImmediate::fromDouble):
+        (KJS::JSImmediate::toDouble):
+        (KJS::JSImmediate::toBoolean):
+        (KJS::JSImmediate::trueImmediate):
+        (KJS::JSImmediate::falseImmediate):
+        (KJS::JSImmediate::NaNImmediate):
+        (KJS::JSImmediate::undefinedImmediate):
+        (KJS::JSImmediate::nullImmediate):
+        (KJS::JSImmediate::tag):
+        (KJS::JSImmediate::unTag):
+        (KJS::JSImmediate::getTag):
+        (KJS::JSImmediate::):
+        (KJS::JSImmediate::isIEEE):
+        (KJS::JSImmediate::is32bit):
+        (KJS::JSImmediate::is64bit):
+        (KJS::JSImmediate::NanAsBits):
+        (KJS::JSImmediate::zeroAsBits):
+        (KJS::JSImmediate::oneAsBits):
+        * kjs/JSLock.cpp:
+        (KJS::JSLock::lock): Removed hack-o-rama to initialize ConstantValues.
+        * kjs/JSType.h: Added.
+        * kjs/collector.cpp:
+        (KJS::Collector::protect):
+        (KJS::Collector::unprotect):
+        (KJS::Collector::collect):
+        * kjs/internal.cpp:
+        (KJS::StringImp::toPrimitive):
+        (KJS::NumberImp::toPrimitive):
+        (KJS::NumberImp::toBoolean):
+        (KJS::GetterSetterImp::toPrimitive):
+        * kjs/internal.h:
+        (KJS::StringImp::type):
+        (KJS::NumberImp::type):
+        * kjs/object.cpp:
+        (KJS::JSObject::type):
+        (KJS::tryGetAndCallProperty): Replaced "Are you one of the six things
+        I'm looking for?" test with "Are you not the one thing I'm not looking
+        for" test.
+        (KJS::JSObject::defaultValue):
+        (KJS::JSObject::toPrimitive):
+        * kjs/object.h:
+        (KJS::GetterSetterImp::type):
+        (KJS::JSValue::isObject):
+        * kjs/operations.cpp:
+        (KJS::equal):
+        (KJS::strictEqual):
+        (KJS::add):
+        * kjs/reference.cpp:
+        (KJS::Reference::deleteValue):
+        * kjs/simple_number.h: Removed.
+        * kjs/string_object.cpp:
+        (StringInstance::getOwnPropertySlot): fixed indentation
+        * kjs/value.cpp:
+        (KJS::JSValue::toObject):
+        (KJS::jsNumberCell): New function to quarantine a PIC branch -- allows
+        us to inline jsNumber without adding PIC branches to callers.
+        * kjs/value.h:
+        (KJS::jsUndefined):
+        (KJS::jsNull):
+        (KJS::jsNaN):
+        (KJS::jsBoolean):
+        (KJS::jsNumber):
+        (KJS::JSValue::downcast):
+        (KJS::JSValue::isUndefinedOrNull):
+        (KJS::JSValue::isBoolean):
+        (KJS::JSValue::isNumber):
+        (KJS::JSValue::isString):
+        (KJS::JSValue::isObject):
+        (KJS::JSValue::getBoolean):
+        (KJS::JSValue::getNumber):
+        (KJS::JSValue::getString):
+        (KJS::JSValue::getObject):
+        (KJS::JSValue::getUInt32):
+        (KJS::JSValue::mark): Replaced !JSImmediate::is() test with assertion,
+        resulting in a slight performance gain. Callers should always check
+        !marked() before calling mark(), so it's impossible to call mark on
+        a JSImmediate.
+        (KJS::JSValue::marked):
+        (KJS::JSValue::type):
+        (KJS::JSValue::toPrimitive):
+        (KJS::JSValue::toBoolean):
+        (KJS::JSValue::toNumber):
+        (KJS::JSValue::toString):
+
 2006-02-06  Eric Seidel  <eseidel@apple.com>
 
         Add svn:ignore properties for visual studio internals.

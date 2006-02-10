@@ -79,7 +79,7 @@ bool StringInstance::getOwnPropertySlot(ExecState *exec, const Identifier& prope
     if (index < length) {
     slot.setCustomIndex(this, index, indexGetter);
     return true;
-  }
+    }
   }
 
   return JSObject::getOwnPropertySlot(exec, propertyName, slot);

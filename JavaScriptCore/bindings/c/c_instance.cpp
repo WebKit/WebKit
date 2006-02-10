@@ -22,14 +22,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include "config.h"
-#include <c_class.h>
-#include <c_instance.h>
-#include <c_runtime.h>
-#include <c_utility.h>
 
-#include <JavaScriptCore/npruntime_impl.h>
-#include <JavaScriptCore/npruntime_priv.h>
+#include "c_class.h"
+#include "c_instance.h"
+#include "c_runtime.h"
+#include "c_utility.h"
+#include "config.h"
+#include "npruntime_impl.h"
+#include "npruntime_priv.h"
 
 #ifdef NDEBUG
 #define C_LOG(formatAndArgs...) ((void)0)
@@ -189,7 +189,7 @@ JSValue *CInstance::invokeDefaultMethod (ExecState *exec, const List &args)
 }
 
 
-JSValue *CInstance::defaultValue (Type hint) const
+JSValue *CInstance::defaultValue (JSType hint) const
 {
     if (hint == StringType) {
         return stringValue();

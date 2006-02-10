@@ -25,11 +25,13 @@
 #ifndef _JNI_INSTANCE_H_
 #define _JNI_INSTANCE_H_
 
-#include <CoreFoundation/CoreFoundation.h>
+#include "config.h"
 
+#include "runtime.h"
+
+#include <CoreFoundation/CoreFoundation.h>
 #include <JavaVM/jni.h>
 
-#include <JavaScriptCore/runtime.h>
 
 namespace KJS {
 
@@ -74,7 +76,7 @@ public:
     virtual void end();
     
     virtual JSValue *valueOf() const;
-    virtual JSValue *defaultValue (Type hint) const;
+    virtual JSValue *defaultValue (JSType hint) const;
 
     virtual JSValue *invokeMethod (ExecState *exec, const MethodList &method, const List &args);
     virtual JSValue *invokeDefaultMethod (ExecState *exec, const List &args);

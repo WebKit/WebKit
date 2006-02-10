@@ -49,12 +49,6 @@ void JSLock::lock()
   pthread_mutex_lock(&interpreterLock);
   interpreterLockCount++;
   Collector::registerThread();
-
-  // FIXME: Hack-o-rama. To prevent construction of a global object with a null prototype (4342216),
-  // we need to intialize our constants before the first object is constructed. InterpreterImp::lock()
-  // is a good place to do this because you have to call it before doing any allocations. Once we change our 
-  // implementation to use immediate values, we should remove this code.
-  ConstantValues::initIfNeeded();
 }
 
 void JSLock::unlock()
@@ -71,11 +65,6 @@ const int interpreterLockCount = 1;
 
 void JSLock::lock()
 {
-  // FIXME: Hack-o-rama. To prevent construction of a global object with a null prototype (4342216),
-  // we need to intialize our constants before the first object is constructed. InterpreterImp::lock()
-  // is a good place to do this because you have to call it before doing any allocations. Once we change our 
-  // implementation to use immediate values, we should remove this code.
-  ConstantValues::initIfNeeded();
 }
 
 void JSLock::unlock()

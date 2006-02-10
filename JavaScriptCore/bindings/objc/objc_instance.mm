@@ -332,7 +332,7 @@ JSValue *ObjcInstance::getValueOfField (ExecState *exec, const Field *aField) co
     return aField->valueFromInstance (exec, this);
 }
 
-JSValue *ObjcInstance::getValueOfUndefinedField (ExecState *exec, const Identifier &property, Type hint) const
+JSValue *ObjcInstance::getValueOfUndefinedField (ExecState *exec, const Identifier &property, JSType hint) const
 {
     JSValue *volatile result = jsUndefined();
     
@@ -360,7 +360,7 @@ JSValue *ObjcInstance::getValueOfUndefinedField (ExecState *exec, const Identifi
     return result;
 }
 
-JSValue *ObjcInstance::defaultValue (Type hint) const
+JSValue *ObjcInstance::defaultValue (JSType hint) const
 {
     if (hint == StringType) {
         return stringValue();

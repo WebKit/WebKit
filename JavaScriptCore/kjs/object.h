@@ -37,7 +37,9 @@
 #define KJS_MAX_STACK 1000
 #endif
 
+#include "JSType.h"
 #include "interpreter.h"
+#include "kxmlcore/AlwaysInline.h"
 #include "property_map.h"
 #include "property_slot.h"
 #include "scope_chain.h"
@@ -85,11 +87,11 @@ namespace KJS {
   // for a property.
   class GetterSetterImp : public JSCell {
   public:
-    Type type() const { return GetterSetterType; }
+    JSType type() const { return GetterSetterType; }
       
     GetterSetterImp() : getter(0), setter(0) { }
       
-    virtual JSValue *toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
+    virtual JSValue *toPrimitive(ExecState *exec, JSType preferred = UnspecifiedType) const;
     virtual bool toBoolean(ExecState *exec) const;
     virtual double toNumber(ExecState *exec) const;
     virtual UString toString(ExecState *exec) const;
@@ -123,7 +125,7 @@ namespace KJS {
     JSObject();
 
     virtual void mark();
-    virtual Type type() const;
+    virtual JSType type() const;
 
     /**
      * A pointer to a ClassInfo struct for this class. This provides a basic
@@ -326,7 +328,7 @@ namespace KJS {
      * Implementation of the [[DefaultValue]] internal property (implemented by
      * all Objects)
      */
-    virtual JSValue *defaultValue(ExecState *exec, Type hint) const;
+    virtual JSValue *defaultValue(ExecState *exec, JSType hint) const;
 
     /**
      * Whether or not the object implements the construct() method. If this
@@ -486,7 +488,7 @@ namespace KJS {
      */
     void setInternalValue(JSValue *v);
 
-    JSValue *toPrimitive(ExecState *exec, Type preferredType = UnspecifiedType) const;
+    JSValue *toPrimitive(ExecState *exec, JSType preferredType = UnspecifiedType) const;
     bool toBoolean(ExecState *exec) const;
     double toNumber(ExecState *exec) const;
     UString toString(ExecState *exec) const;
@@ -622,7 +624,7 @@ inline bool JSCell::isObject(const ClassInfo *info) const
 // this method is here to be after the inline declaration of JSCell::isObject
 inline bool JSValue::isObject(const ClassInfo *c) const
 {
-    return !SimpleNumber::is(this) && downcast()->isObject(c);
+    return !JSImmediate::isImmediate(this) && downcast()->isObject(c);
 }
 
 // It may seem crazy to inline a function this large but it makes a big difference

@@ -25,8 +25,9 @@
  */
 
 #include "config.h"
-#include "c_utility.h"
 
+#include "JSType.h"
+#include "c_utility.h"
 #include "c_instance.h" 
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
@@ -77,7 +78,7 @@ void coerceValueToNPVariantStringType(ExecState *exec, JSValue *value, NPVariant
 // Variant value must be released with NPReleaseVariantValue()
 void convertValueToNPVariant(ExecState *exec, JSValue *value, NPVariant *result)
 {
-    Type type = value->type();
+    JSType type = value->type();
     
     if (type == StringType) {
         UString ustring = value->toString(exec);

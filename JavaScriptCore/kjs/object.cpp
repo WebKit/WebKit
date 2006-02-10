@@ -130,7 +130,7 @@ void JSObject::mark()
   _scope.mark();
 }
 
-Type JSObject::type() const
+JSType JSObject::type() const
 {
   return ObjectType;
 }
@@ -334,19 +334,17 @@ static ALWAYS_INLINE JSValue *tryGetAndCallProperty(ExecState *exec, const JSObj
     if (o->implementsCall()) { // spec says "not primitive type" but ...
       JSObject *thisObj = const_cast<JSObject*>(object);
       JSValue *def = o->call(exec, thisObj, List::empty());
-      Type defType = def->type();
-      if (defType == UnspecifiedType || defType == UndefinedType ||
-          defType == NullType || defType == BooleanType ||
-          defType == StringType || defType == NumberType) {
+      JSType defType = def->type();
+      ASSERT(defType != GetterSetterType);
+      if (defType != ObjectType)
         return def;
-      }
     }
   }
   return NULL;
 }
 
 // ECMA 8.6.2.6
-JSValue *JSObject::defaultValue(ExecState *exec, Type hint) const
+JSValue *JSObject::defaultValue(ExecState *exec, JSType hint) const
 {
   Identifier firstPropertyName;
   Identifier secondPropertyName;
@@ -502,7 +500,7 @@ ReferenceList JSObject::propList(ExecState *exec, bool recursive)
   return list;
 }
 
-JSValue *JSObject::toPrimitive(ExecState *exec, Type preferredType) const
+JSValue *JSObject::toPrimitive(ExecState *exec, JSType preferredType) const
 {
   return defaultValue(exec,preferredType);
 }

@@ -418,9 +418,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 	    return (id)intepreter->createLanguageInstanceForValue (exec, Instance::ObjectiveCLanguage, value->toObject(exec), originExecutionContext, executionContext);
     } else if (value->isString()) {
         // JS String --> NSString
-        StringImp *s = static_cast<StringImp*>(value);
-        UString u = s->value();
-        
+        UString u = value->getString();
         NSString *string = [NSString stringWithCharacters:(const unichar*)u.data() length:u.size()];
         return string;
     } else if (value->isNumber())
@@ -428,7 +426,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
         return [NSNumber numberWithDouble:value->getNumber()];
     else if (value->isBoolean())
         // JS Boolean --> NSNumber
-        return [NSNumber numberWithBool:static_cast<BooleanImp*>(value)->value()];
+        return [NSNumber numberWithBool:value->getBoolean()];
     else if (value->isUndefined())
         // JS Undefined --> WebUndefined
         return [WebUndefined undefined];

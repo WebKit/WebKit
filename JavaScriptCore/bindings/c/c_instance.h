@@ -25,9 +25,9 @@
 #ifndef _BINDINGS_C_INSTANCE_H_
 #define _BINDINGS_C_INSTANCE_H_
 
-#include <npruntime.h>
-
-#include <runtime.h>
+#include "JSType.h"
+#include "npruntime.h"
+#include "runtime.h"
 
 namespace KJS {
 
@@ -52,7 +52,7 @@ public:
     virtual void end();
     
     virtual JSValue *valueOf() const;
-    virtual JSValue *defaultValue (KJS::Type hint) const;
+    virtual JSValue *defaultValue (JSType hint) const;
 
     virtual JSValue *invokeMethod (ExecState *exec, const MethodList &method, const List &args);
     virtual JSValue *invokeDefaultMethod (ExecState *exec, const List &args);

@@ -40,11 +40,6 @@
 
 namespace KJS {
 
-JSCell *ConstantValues::undefined = NULL;
-JSCell *ConstantValues::null = NULL;
-JSCell *ConstantValues::jsTrue = NULL;
-JSCell *ConstantValues::jsFalse = NULL;
-
 static const double D16 = 65536.0;
 static const double D32 = 4294967296.0;
 
@@ -122,17 +117,7 @@ uint16_t JSValue::toUInt16(ExecState *exec) const
 
 JSObject *JSValue::toObject(ExecState *exec) const
 {
-    if (SimpleNumber::is(this))
-        return static_cast<const NumberImp *>(this)->NumberImp::toObject(exec);
-    return downcast()->toObject(exec);
-}
-
-bool JSCell::getBoolean(bool &booleanValue) const
-{
-    if (!isBoolean())
-        return false;
-    booleanValue = static_cast<const BooleanImp *>(this)->value();
-    return true;
+    return JSImmediate::isImmediate(this) ? JSImmediate::toObject(this, exec) : downcast()->toObject(exec);
 }
 
 bool JSCell::getNumber(double &numericValue) const
@@ -181,37 +166,11 @@ JSCell *jsString(const UString &s)
     return s.isNull() ? new StringImp("") : new StringImp(s);
 }
 
-JSValue *jsNumber(double d)
+// This method includes a PIC branch to set up the NumberImp's vtable, so we quarantine
+// it in a separate function to keep the normal case speedy.
+JSValue *jsNumberCell(double d)
 {
-  JSValue *v = SimpleNumber::make(d);
-  return v ? v : new NumberImp(d);
+    return new NumberImp(d);
 }
 
-void ConstantValues::initIfNeeded()
-{
-    if (undefined)
-        return;
-    
-    undefined = new UndefinedImp();
-    null = new NullImp();
-    jsTrue = new BooleanImp(true);
-    jsFalse = new BooleanImp(false);
-}
-
-void ConstantValues::mark()
-{
-    if (JSCell *v = undefined)
-        if (!v->marked())
-            v->mark();
-    if (JSCell *v = null)
-        if (!v->marked())
-            v->mark();
-    if (JSCell *v = jsTrue)
-        if (!v->marked())
-            v->mark();
-    if (JSCell *v = jsFalse)
-        if (!v->marked())
-            v->mark();
-}
-
-}
+} // namespace KJS

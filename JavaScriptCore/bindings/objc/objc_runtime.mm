@@ -277,7 +277,7 @@ bool ObjcFallbackObjectImp::canPut(ExecState *exec, const Identifier &propertyNa
 }
 
 
-Type ObjcFallbackObjectImp::type() const
+JSType ObjcFallbackObjectImp::type() const
 {
     id targetObject = _instance->getObject();
     
@@ -332,7 +332,7 @@ bool ObjcFallbackObjectImp::deleteProperty(ExecState *exec,
     return false;
 }
 
-JSValue *ObjcFallbackObjectImp::defaultValue(ExecState *exec, Type hint) const
+JSValue *ObjcFallbackObjectImp::defaultValue(ExecState *exec, JSType hint) const
 {
     return _instance->getValueOfUndefinedField(exec, _item, hint);
 }

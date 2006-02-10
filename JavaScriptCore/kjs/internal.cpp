@@ -74,92 +74,9 @@ namespace KJS {
 #define copysign _copysign
 #endif
 
-// ------------------------------ UndefinedImp ---------------------------------
-
-JSValue *UndefinedImp::toPrimitive(ExecState *, Type) const
-{
-  return const_cast<UndefinedImp *>(this);
-}
-
-bool UndefinedImp::toBoolean(ExecState *) const
-{
-  return false;
-}
-
-double UndefinedImp::toNumber(ExecState *) const
-{
-  return NaN;
-}
-
-UString UndefinedImp::toString(ExecState *) const
-{
-  return "undefined";
-}
-
-JSObject *UndefinedImp::toObject(ExecState *exec) const
-{
-  return throwError(exec, TypeError, "Undefined value");
-}
-
-// ------------------------------ NullImp --------------------------------------
-
-JSValue *NullImp::toPrimitive(ExecState *, Type) const
-{
-  return const_cast<NullImp *>(this);
-}
-
-bool NullImp::toBoolean(ExecState *) const
-{
-  return false;
-}
-
-double NullImp::toNumber(ExecState *) const
-{
-  return 0.0;
-}
-
-UString NullImp::toString(ExecState *) const
-{
-  return "null";
-}
-
-JSObject *NullImp::toObject(ExecState *exec) const
-{
-  return throwError(exec, TypeError, "Null value");
-}
-
-// ------------------------------ BooleanImp -----------------------------------
-
-JSValue *BooleanImp::toPrimitive(ExecState *, Type) const
-{
-  return const_cast<BooleanImp *>(this);
-}
-
-bool BooleanImp::toBoolean(ExecState *) const
-{
-  return val;
-}
-
-double BooleanImp::toNumber(ExecState *) const
-{
-  return val ? 1.0 : 0.0;
-}
-
-UString BooleanImp::toString(ExecState *) const
-{
-  return val ? "true" : "false";
-}
-
-JSObject *BooleanImp::toObject(ExecState *exec) const
-{
-  List args;
-  args.append(const_cast<BooleanImp*>(this));
-  return static_cast<JSObject *>(exec->lexicalInterpreter()->builtinBoolean()->construct(exec,args));
-}
-
 // ------------------------------ StringImp ------------------------------------
 
-JSValue *StringImp::toPrimitive(ExecState *, Type) const
+JSValue *StringImp::toPrimitive(ExecState *, JSType) const
 {
   return const_cast<StringImp *>(this);
 }
@@ -186,14 +103,14 @@ JSObject *StringImp::toObject(ExecState *exec) const
 
 // ------------------------------ NumberImp ------------------------------------
 
-JSValue *NumberImp::toPrimitive(ExecState *, Type) const
+JSValue *NumberImp::toPrimitive(ExecState *, JSType) const
 {
   return const_cast<NumberImp *>(this);
 }
 
 bool NumberImp::toBoolean(ExecState *) const
 {
-  return !((val == 0) /* || (iVal() == N0) */ || isNaN(val));
+  return val < 0.0 || val > 0.0; // false for NaN
 }
 
 double NumberImp::toNumber(ExecState *) const
@@ -215,6 +132,8 @@ JSObject *NumberImp::toObject(ExecState *exec) const
   return static_cast<JSObject *>(exec->lexicalInterpreter()->builtinNumber()->construct(exec,args));
 }
 
+// FIXME: We can optimize this to work like JSValue::getUInt32. I'm ignoring it for now
+// because it never shows up on profiles.
 bool NumberImp::getUInt32(uint32_t& uint32) const
 {
   uint32 = (uint32_t)val;
@@ -230,7 +149,7 @@ void GetterSetterImp::mark()
         setter->mark();
 }
 
-JSValue *GetterSetterImp::toPrimitive(ExecState *exec, Type type) const
+JSValue *GetterSetterImp::toPrimitive(ExecState *exec, JSType) const
 {
     assert(false);
     return jsNull();

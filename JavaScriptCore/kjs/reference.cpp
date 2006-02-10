@@ -20,10 +20,10 @@
  *
  */
 
+#include "JSType.h"
 #include "config.h"
-#include "reference.h"
-
 #include "internal.h"
+#include "reference.h"
 
 namespace KJS {
 
@@ -67,7 +67,7 @@ JSValue *Reference::getValue(ExecState *exec) const
 bool Reference::deleteValue(ExecState *exec)
 {
   JSValue *o = base;
-  Type t = o ? o->type() : NullType;
+  JSType t = o ? o->type() : NullType;
 
   // The spec doesn't mention what to do if the base is null... just return true
   if (t != ObjectType) {

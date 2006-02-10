@@ -54,7 +54,7 @@ public:
     virtual void end();
     
     virtual JSValue *valueOf() const;
-    virtual JSValue *defaultValue (Type hint) const;
+    virtual JSValue *defaultValue (JSType hint) const;
 
     virtual JSValue *invokeMethod (ExecState *exec, const MethodList &method, const List &args);
     virtual JSValue *invokeDefaultMethod (ExecState *exec, const List &args);
@@ -64,7 +64,7 @@ public:
     virtual void setValueOfUndefinedField (ExecState *exec, const Identifier &property, JSValue *aValue);
     
     virtual JSValue *ObjcInstance::getValueOfField (ExecState *exec, const Field *aField) const;
-    virtual JSValue *getValueOfUndefinedField (ExecState *exec, const Identifier &property, Type hint) const;
+    virtual JSValue *getValueOfUndefinedField (ExecState *exec, const Identifier &property, JSType hint) const;
 
     ObjectStructPtr getObject() const { return _instance; }
     
