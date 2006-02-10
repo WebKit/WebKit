@@ -1,3 +1,49 @@
+2006-02-10  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Reviewed and landed by Anders.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7164
+        Code cleanup
+
+        Changed <div id="banner" to <h1 id="banner"
+        global cleanup of CSS and code
+
+        * building/build.html:
+        * building/checkout.html:
+        * coding/coding-style.html:
+        * coding/contributing.html:
+        * contact.html:
+        * index.html:
+        * projects/accessibility/index.html:
+        * projects/cleanup/index.html:
+        * projects/compat/index.html:
+        * projects/css/index.html:
+        * projects/documentation/index.html:
+        * projects/dom/index.html:
+        * projects/editing/index.html:
+        * projects/forms/index.html:
+        * projects/html/index.html:
+        * projects/index.html:
+        * projects/javascript/index.html:
+        * projects/layout/index.html:
+        * projects/mathml/index.html:
+        * projects/performance/index.html:
+        * projects/plugins/index.html:
+        * projects/portability/index.html:
+        * projects/printing/index.html:
+        * projects/svg/index.html:
+        * projects/webkit/index.html:
+        * projects/xml/index.html:
+        * projects/xslt/index.html:
+        * quality/bugpriorities.html:
+        * quality/bugwriting.html:
+        * quality/lifecycle.html:
+        * quality/reduction.html:
+        * quality/reporting.html:
+        * quality/testing.html:
+        * quality/testwriting.html:
+        * webkitdev.css:
+
 2006-02-09  Joost de Valk  <jdevalk@opendarwin.org>
 
         Reviewed by Darin. Landed by ap.
