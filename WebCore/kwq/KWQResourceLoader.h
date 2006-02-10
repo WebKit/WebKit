@@ -25,10 +25,6 @@
 
 #import "WebCoreResourceLoader.h"
 
-namespace khtml {
-    class Loader;
-}
-
 namespace KIO {
     class TransferJob;
 }

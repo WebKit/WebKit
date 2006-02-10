@@ -1,5 +1,21 @@
 2006-02-09  Darin Adler  <darin@apple.com>
 
+        Reviewed by Hyatt.
+
+        - <rdar://problem/4430614> RenderThemeMac crashes under GC
+
+        * rendering/render_theme_mac.mm:
+        (WebCore::RenderThemeMac::RenderThemeMac): Initialize all the pointers.
+        (WebCore::RenderThemeMac::setCheckboxCellState): Use KWQRetainNSRelease so
+        we can retain a pointer to an ObjC object in a C++ class.
+        (WebCore::RenderThemeMac::setRadioCellState): Ditto.
+        (WebCore::RenderThemeMac::setButtonCellState): Ditto.
+        (WebCore::RenderThemeMac::setTextFieldCellState): Ditto.
+
+        * kwq/KWQResourceLoader.h: Remove unneeded forward declaration.
+
+2006-02-09  Darin Adler  <darin@apple.com>
+
         Reviewed by Eric and Geoff.
 
         - changed basic DOM mutation calls to assert that "this"

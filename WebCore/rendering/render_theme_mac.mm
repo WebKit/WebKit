@@ -1,7 +1,7 @@
-/**
+/*
  * This file is part of the theme implementation for form controls in WebCore.
  *
- * Copyright (C) 2005 Apple Computer, Inc.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,20 +19,21 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "config.h"
+#import "config.h"
 #import "render_theme_mac.h"
 
-#import "cssstyleselector.h"
-#import "font.h"
-#import "render_style.h"
-#import "render_canvas.h"
-#include "DocumentImpl.h"
-#import "dom_elementimpl.h"
+#import "DocumentImpl.h"
 #import "FrameView.h"
+#import "KWQFoundationExtras.h"
+#import "cssstyleselector.h"
+#import "dom_elementimpl.h"
+#import "font.h"
+#import "render_canvas.h"
+#import "render_style.h"
 
 // The methods in this file are specific to the Mac OS X platform.
 
-using DOM::ElementImpl;
+namespace WebCore {
 
 enum {
     topMargin,
@@ -40,8 +41,6 @@ enum {
     bottomMargin,
     leftMargin
 };
-    
-namespace khtml {
 
 static const int textFieldMargins[4] = { 3, 4, 3, 4 };
 
@@ -52,8 +51,11 @@ RenderTheme* theme()
 }
 
 RenderThemeMac::RenderThemeMac()
+    : checkbox(nil)
+    , radio(nil)
+    , button(nil)
+    , textField(nil)
 {
-    checkbox = nil;
 }
 
 void RenderThemeMac::adjustRepaintRect(const RenderObject* o, IntRect& r)
@@ -294,11 +296,10 @@ const int* RenderThemeMac::checkboxMargins() const
 void RenderThemeMac::setCheckboxCellState(const RenderObject* o, const IntRect& r)
 {
     if (!checkbox) {
-        checkbox = [[NSButtonCell alloc] init];
+        checkbox = KWQRetainNSRelease([[NSButtonCell alloc] init]);
         [checkbox setButtonType:NSSwitchButton];
         [checkbox setTitle:nil];
         [checkbox setAllowsMixedState:YES];
-        
     }
     
     // Set the control size based off the rectangle we're painting into.
@@ -355,7 +356,7 @@ const int* RenderThemeMac::radioMargins() const
 void RenderThemeMac::setRadioCellState(const RenderObject* o, const IntRect& r)
 {
     if (!radio) {
-        radio = [[NSButtonCell alloc] init];
+        radio = KWQRetainNSRelease([[NSButtonCell alloc] init]);
         [radio setButtonType:NSRadioButton];
         [radio setTitle:nil];
     }
@@ -472,7 +473,7 @@ void RenderThemeMac::setButtonSize(RenderStyle* style) const
 void RenderThemeMac::setButtonCellState(const RenderObject* o, const IntRect& r)
 {
     if (!button) {
-        button = [[NSButtonCell alloc] init];
+        button = KWQRetainNSRelease([[NSButtonCell alloc] init]);
         [button setTitle:nil];
         [button setButtonType:NSMomentaryPushInButton];
     }
@@ -538,7 +539,7 @@ bool RenderThemeMac::paintTextField(RenderObject* o, const RenderObject::PaintIn
 void RenderThemeMac::setTextFieldCellState(const RenderObject* o, const IntRect& r)
 {
     if (!textField) {
-        textField = [[NSTextFieldCell alloc] initTextCell:@""];
+        textField = KWQRetainNSRelease([[NSTextFieldCell alloc] initTextCell:@""]);
         [textField setBezeled:YES];
         [textField setBezelStyle:NSTextFieldSquareBezel];
         [textField setDrawsBackground:NO];
