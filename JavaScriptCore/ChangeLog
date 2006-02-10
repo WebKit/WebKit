@@ -1,5 +1,11 @@
 2006-02-10  Geoffrey Garen  <ggaren@apple.com>
 
+        No review needed, just a build fix. This time for sure.
+
+        * kjs/JSType.h:
+
+2006-02-10  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by eric.
         
         - Fixed build. As it goes without saying, I will not mention that I
