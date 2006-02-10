@@ -115,7 +115,7 @@ using KJS::GetterSetterType;
 using KJS::UString;
 using KJS::Identifier;
 using KJS::List;
-using KJS::Type;
+using KJS::JSType;
 using KJS::DateInstance;
 
 using KJS::Bindings::RootObject;

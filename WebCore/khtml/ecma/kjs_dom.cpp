@@ -583,7 +583,7 @@ void DOMNode::putValueProperty(ExecState *exec, int token, JSValue *value, int /
   }
 }
 
-JSValue *DOMNode::toPrimitive(ExecState *exec, Type /*preferred*/) const
+JSValue *DOMNode::toPrimitive(ExecState *exec, JSType) const
 {
   if (!m_impl)
     return jsNull();
@@ -715,7 +715,7 @@ DOMNodeList::~DOMNodeList()
   ScriptInterpreter::forgetDOMObject(m_impl.get());
 }
 
-JSValue *DOMNodeList::toPrimitive(ExecState *exec, Type /*preferred*/) const
+JSValue *DOMNodeList::toPrimitive(ExecState *exec, JSType) const
 {
   if (!m_impl)
     return jsNull();

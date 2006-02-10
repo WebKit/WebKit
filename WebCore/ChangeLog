@@ -1,3 +1,21 @@
+2006-02-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by eric.
+
+        - Fixed build.
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        * khtml/ecma/kjs_binding.h:
+        (KJS::DOMFunction::toPrimitive):
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNode::toPrimitive):
+        (KJS::DOMNodeList::toPrimitive):
+        * khtml/ecma/kjs_dom.h:
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Location::toPrimitive):
+        (KJS::Selection::toPrimitive):
+        * khtml/ecma/kjs_window.h:
+
 2006-02-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

@@ -59,7 +59,7 @@ namespace KJS {
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
 
-    virtual JSValue *toPrimitive(ExecState *exec, Type preferred = UndefinedType) const;
+    virtual JSValue *toPrimitive(ExecState *exec, JSType preferred = UndefinedType) const;
     virtual UString toString(ExecState *exec) const;
     void setListener(ExecState *exec, const DOM::AtomicString &eventType, JSValue *func) const;
     JSValue *getListener(const DOM::AtomicString &eventType) const;
@@ -105,7 +105,7 @@ namespace KJS {
     enum { Length, Item };
     DOM::NodeListImpl *impl() const { return m_impl.get(); }
 
-    virtual JSValue *toPrimitive(ExecState *exec, Type preferred = UndefinedType) const;
+    virtual JSValue *toPrimitive(ExecState *exec, JSType preferred = UndefinedType) const;
 
   private:
     static JSValue *indexGetter(ExecState *exec, JSObject *, const Identifier&, const PropertySlot& slot);

@@ -26,10 +26,10 @@
 
 /* Begin PBXBuildFile section */
 		14760864099C633800437128 /* JSImmediate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14760863099C633800437128 /* JSImmediate.cpp */; };
-		1483B58A099BC1950016E4F0 /* JSImmediate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1483B589099BC1950016E4F0 /* JSImmediate.h */; };
+		1483B58A099BC1950016E4F0 /* JSImmediate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1483B589099BC1950016E4F0 /* JSImmediate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		148A1627095D16BB00666D0D /* ListRefPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 148A1626095D16BB00666D0D /* ListRefPtr.h */; };
-		14ABB36F099C076400E2A24F /* value.h in Headers */ = {isa = PBXBuildFile; fileRef = 14ABB36E099C076400E2A24F /* value.h */; };
-		14ABB455099C2A0F00E2A24F /* JSType.h in Headers */ = {isa = PBXBuildFile; fileRef = 14ABB454099C2A0F00E2A24F /* JSType.h */; };
+		14ABB36F099C076400E2A24F /* value.h in Headers */ = {isa = PBXBuildFile; fileRef = 14ABB36E099C076400E2A24F /* value.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14ABB455099C2A0F00E2A24F /* JSType.h in Headers */ = {isa = PBXBuildFile; fileRef = 14ABB454099C2A0F00E2A24F /* JSType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		652C107F08DA7B1E0020887D /* protected_reference.h in Headers */ = {isa = PBXBuildFile; fileRef = 652C107E08DA7B1E0020887D /* protected_reference.h */; };
 		6541BD7208E80A17002CBEE7 /* TCPageMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 6541BD6E08E80A17002CBEE7 /* TCPageMap.h */; };
 		6541BD7308E80A17002CBEE7 /* TCSpinLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 6541BD6F08E80A17002CBEE7 /* TCSpinLock.h */; };

@@ -2224,7 +2224,7 @@ void Location::put(ExecState *exec, const Identifier &p, JSValue *v, int attr)
   }
 }
 
-JSValue *Location::toPrimitive(ExecState *exec, Type) const
+JSValue *Location::toPrimitive(ExecState *exec, JSType) const
 {
   return jsString(toString(exec));
 }
@@ -2369,7 +2369,7 @@ bool Selection::getOwnPropertySlot(ExecState *exec, const Identifier& propertyNa
   return getStaticPropertySlot<SelectionFunc, Selection, JSObject>(exec, &SelectionTable, this, propertyName, slot);
 }
 
-JSValue *Selection::toPrimitive(ExecState *exec, Type) const
+JSValue *Selection::toPrimitive(ExecState *exec, JSType) const
 {
   return jsString(toString(exec));
 }

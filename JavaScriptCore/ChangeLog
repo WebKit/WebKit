@@ -1,3 +1,14 @@
+2006-02-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by eric.
+        
+        - Fixed build. As it goes without saying, I will not mention that I
+        blame Kevin.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/JSImmediate.cpp:
+        (KJS::JSImmediate::toObject):
+
 2006-02-09  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by mjs.

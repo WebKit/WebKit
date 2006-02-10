@@ -28,7 +28,7 @@ namespace KJS {
 
 JSObject *JSImmediate::toObject(const JSValue *v, ExecState *exec)
 {
-    assert(is(v));
+    assert(isImmediate(v));
     if (v == jsNull())
         return throwError(exec, TypeError, "Null value");
     else if (v == jsUndefined())

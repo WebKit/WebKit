@@ -57,7 +57,7 @@ namespace KJS {
   public:
     virtual bool implementsCall() const { return true; }
     virtual bool toBoolean(ExecState *) const { return true; }
-    virtual JSValue *toPrimitive(ExecState *exec, Type) const { return jsString(toString(exec)); }
+    virtual JSValue *toPrimitive(ExecState *exec, JSType) const { return jsString(toString(exec)); }
     virtual UString toString(ExecState *) const { return UString("[function]"); }
   };
 
