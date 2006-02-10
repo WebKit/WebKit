@@ -347,10 +347,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQMemArray.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQNamespace.h"
 				>
 			</File>
@@ -360,14 +356,6 @@
 			</File>
 			<File
 				RelativePath="..\..\kwq\KWQPageState.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQPaintDevice.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQPaintDeviceMetrics.h"
 				>
 			</File>
 			<File

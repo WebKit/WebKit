@@ -88,8 +88,8 @@ void ImageView::OnDraw(CDC* pDC)
     cairo_fill(context);
 
     // Comment in to test tiling.
-    bool tile = false; // true;
-    FloatPoint srcPoint; // The src point to use when tiling.  Change value to test offset tiling.
+    bool tile = true; // true;
+    FloatPoint srcPoint(30,30); // The src point to use when tiling.  Change value to test offset tiling.
 
     // Comment the multiplicative factor in to test scaling (doubles the size).
     float width = tile ? rect.right : image->size().width(); // * 2;
@@ -109,6 +109,7 @@ void ImageView::OnDraw(CDC* pDC)
     cairo_destroy(context);
     
     context = cairo_create(finalSurface);
+    cairo_set_operator(context, CAIRO_OPERATOR_SOURCE);
     cairo_set_source_surface(context, surface, 0, 0);
     cairo_rectangle(context, 0, 0, rect.right, rect.bottom);
     cairo_fill(context);
