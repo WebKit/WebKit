@@ -597,6 +597,25 @@ cairo_surface_set_device_offset (cairo_surface_t *surface,
 }
 
 /**
+ * cairo_surface_get_device_offset:
+ * @surface: a #cairo_surface_t
+ * @x_offset: the offset in the X direction, in device units
+ * @y_offset: the offset in the Y direction, in device units
+ * 
+ * Returns a previous device offset set by
+ * cairo_surface_set_device_offset().
+ *
+ **/
+void
+cairo_surface_get_device_offset (cairo_surface_t *surface,
+				 double          *x_offset,
+				 double          *y_offset)
+{
+    *x_offset = surface->device_x_offset;
+    *y_offset = surface->device_y_offset;
+}
+
+/**
  * _cairo_surface_acquire_source_image:
  * @surface: a #cairo_surface_t
  * @image_out: location to store a pointer to an image surface that
@@ -873,13 +892,13 @@ _cairo_surface_composite (cairo_operator_t	op,
         if (src->type == CAIRO_PATTERN_SURFACE) {
             cairo_surface_t *src_surface = ((cairo_surface_pattern_t*)src)->surface;
             backend_src_x = BACKEND_X(src_surface, src_x);
-            backend_src_y = BACKEND_X(src_surface, src_y);
+            backend_src_y = BACKEND_Y(src_surface, src_y);
         }
 
         if (mask && mask->type == CAIRO_PATTERN_SURFACE) {
             cairo_surface_t *mask_surface = ((cairo_surface_pattern_t*)mask)->surface;
             backend_mask_x = BACKEND_X(mask_surface, mask_x);
-            backend_mask_y = BACKEND_X(mask_surface, mask_y);
+            backend_mask_y = BACKEND_Y(mask_surface, mask_y);
         }
 
 	status = dst->backend->composite (op,

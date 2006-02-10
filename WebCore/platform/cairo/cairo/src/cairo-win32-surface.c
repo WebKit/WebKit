@@ -132,8 +132,13 @@ _create_dc_and_bitmap (cairo_win32_surface_t *surface,
     bitmap_info->bmiHeader.biPlanes = 1;
     
     switch (format) {
-    case CAIRO_FORMAT_ARGB32:
+    /* We can't create real RGB24 bitmaps because something seems to
+     * break if we do, especially if we don't set up an image
+     * fallback.  It could be a bug with using a 24bpp pixman image
+     * (and creating one with masks).
+     */
     case CAIRO_FORMAT_RGB24:
+    case CAIRO_FORMAT_ARGB32:
 	bitmap_info->bmiHeader.biBitCount = 32;
 	bitmap_info->bmiHeader.biCompression = BI_RGB;
 	bitmap_info->bmiHeader.biClrUsed = 0;	/* unused */
@@ -181,6 +186,8 @@ _create_dc_and_bitmap (cairo_win32_surface_t *surface,
 			                NULL, 0);
     if (!surface->bitmap)
 	goto FAIL;
+
+    GdiFlush();
 
     surface->saved_dc_bitmap = SelectObject (surface->dc,
 					     surface->bitmap);
@@ -386,6 +393,8 @@ _cairo_win32_surface_get_subimage (cairo_win32_surface_t  *surface,
 		 SRCCOPY))
 	goto FAIL;
 
+    GdiFlush();
+
     *local_out = local;
     
     return CAIRO_STATUS_SUCCESS;
@@ -409,6 +418,8 @@ _cairo_win32_surface_acquire_source_image (void                    *abstract_sur
     cairo_status_t status;
 
     if (surface->image) {
+	GdiFlush();
+
 	*image_out = (cairo_image_surface_t *)surface->image;
 	*image_extra = NULL;
 
@@ -452,6 +463,8 @@ _cairo_win32_surface_acquire_dest_image (void                    *abstract_surfa
     int x1, y1, x2, y2;
 
     if (surface->image) {
+	GdiFlush();
+
 	image_rect->x = 0;
 	image_rect->y = 0;
 	image_rect->width = surface->clip_rect.width;
@@ -612,7 +625,7 @@ _composite_alpha_blend (cairo_win32_surface_t *dst,
 		      src_x, src_y,
 		      width, height,
 		      blend_function))
-	return _cairo_win32_print_gdi_error ("_cairo_win32_surface_composite");
+	return _cairo_win32_print_gdi_error ("_cairo_win32_surface_composite(AlphaBlend)");
     
     return CAIRO_STATUS_SUCCESS;
 }
@@ -665,7 +678,6 @@ _cairo_win32_surface_composite (cairo_operator_t	op,
 	return CAIRO_INT_STATUS_UNSUPPORTED;
 
     if (alpha == 255 &&
-	src->format == dst->format &&
 	(op == CAIRO_OPERATOR_SOURCE ||
 	 (src->format == CAIRO_FORMAT_RGB24 && op == CAIRO_OPERATOR_OVER))) {
 	
@@ -675,13 +687,13 @@ _cairo_win32_surface_composite (cairo_operator_t	op,
 		     src->dc,
 		     src_x + itx, src_y + ity,
 		     SRCCOPY))
-	    return _cairo_win32_print_gdi_error ("_cairo_win32_surface_composite");
+	    return _cairo_win32_print_gdi_error ("_cairo_win32_surface_composite(BitBlt)");
 
 	return CAIRO_STATUS_SUCCESS;
 	
     } else if (integer_transform &&
 	       (src->format == CAIRO_FORMAT_RGB24 || src->format == CAIRO_FORMAT_ARGB32) &&
-	       dst->format == CAIRO_FORMAT_RGB24 &&
+	       (dst->format == CAIRO_FORMAT_RGB24 || dst->format == CAIRO_FORMAT_ARGB32) &&
 	       op == CAIRO_OPERATOR_OVER) {
 
 	return _composite_alpha_blend (dst, src, alpha,
@@ -783,10 +795,11 @@ _cairo_win32_surface_fill_rectangles (void			*abstract_surface,
     HBRUSH new_brush;
     int i;
 
-    /* If we have a local image, use the fallback code; it will be as fast
-     * as calling out to GDI.
-     */
-    if (surface->image)
+    /* XXXperf If it's not RGB24, we need to do a little more checking
+     * to figure out when we can use GDI.  We don't have that checking
+     * anywhere at the moment, so just bail and use the fallback
+     * paths. */
+    if (surface->format != CAIRO_FORMAT_RGB24)
 	return CAIRO_INT_STATUS_UNSUPPORTED;
 
     /* Optimize for no destination alpha (surface->pixman_image is non-NULL for all
@@ -1007,6 +1020,31 @@ _cairo_surface_is_win32 (cairo_surface_t *surface)
     return surface->backend == &cairo_win32_surface_backend;
 }
 
+/**
+ * cairo_win32_surface_get_dc
+ * @surface: a #cairo_surface_t
+ *
+ * Returns the HDC associated with this surface, or NULL if none.
+ * Also returns NULL if the surface is not a win32 surface.
+ *
+ * Return value: HDC or NULL if no HDC available.
+ **/
+HDC
+cairo_win32_surface_get_dc (cairo_surface_t *surface)
+{
+    cairo_win32_surface_t *winsurf;
+
+    if (surface == NULL)
+	return NULL;
+
+    if (!_cairo_surface_is_win32(surface))
+	return NULL;
+
+    winsurf = (cairo_win32_surface_t *) surface;
+
+    return winsurf->dc;
+}
+
 static const cairo_surface_backend_t cairo_win32_surface_backend = {
     _cairo_win32_surface_create_similar,
     _cairo_win32_surface_finish,
@@ -1026,7 +1064,17 @@ static const cairo_surface_backend_t cairo_win32_surface_backend = {
     NULL, /* old_show_glyphs */
     NULL, /* get_font_options */
     _cairo_win32_surface_flush,
-    NULL  /* mark_dirty_rectangle */
+    NULL, /* mark_dirty_rectangle */
+    NULL, /* scaled_font_fini */
+    NULL, /* scaled_glyph_fini */
+
+    NULL, /* paint */
+    NULL, /* mask */
+    NULL, /* stroke */
+    NULL, /* fill */
+    NULL, /* show_glyphs */
+
+    NULL, /* snapshot */
 };
 
 /*

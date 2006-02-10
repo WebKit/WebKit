@@ -60,6 +60,9 @@ cairo_win32_scaled_font_done_font (cairo_scaled_font_t *scaled_font);
 cairo_public double
 cairo_win32_scaled_font_get_metrics_factor (cairo_scaled_font_t *scaled_font);
 
+cairo_public HDC
+cairo_win32_surface_get_dc (cairo_surface_t *surface);
+
 CAIRO_END_DECLS
 
 #else  /* CAIRO_HAS_WIN32_SURFACE */

@@ -28,6 +28,7 @@
 #endif
 #include "pixman-xserver-compat.h"
 #include "fbpict.h"
+#include "fbmmx.h"
 
 #ifdef RENDER
 
@@ -3760,6 +3761,24 @@ fbCompositeRect (const FbComposeData *data, CARD32 *scanline_buffer)
 	CombineFuncC compose = composeFunctions.combineC[data->op];
 	if (!compose)
 	    return;
+
+	/* XXX: The non-MMX version of some of the fbCompose functions
+	 * overwrite the source or mask data (ones that use
+	 * fbCombineMaskC, fbCombineMaskAlphaC, or fbCombineMaskValueC
+	 * as helpers).  This causes problems with the optimization in
+	 * this function that only fetches the source or mask once if
+	 * possible.  If we're on a non-MMX machine, disable this
+	 * optimization as a bandaid fix.
+	 *
+	 * https://bugs.freedesktop.org/show_bug.cgi?id=5777
+	 */
+#ifdef USE_MMX
+	if (!fbHaveMMX())
+#endif
+	{
+	    srcClass = SourcePictClassUnknown;
+	    maskClass = SourcePictClassUnknown;
+	}
 
 	for (i = 0; i < data->height; ++i) {
 	    /* fill first half of scanline with source */

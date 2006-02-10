@@ -903,7 +903,8 @@ _cairo_surface_old_show_glyphs_draw_func (void                    *closure,
 					     op, 
 					     src, dst,
 					     extents->x,         extents->y,
-					     extents->x - dst_x, extents->y - dst_y,
+					     extents->x - dst_x + dst->device_x_offset,
+					     extents->y - dst_y + dst->device_y_offset,
 					     extents->width,     extents->height,
 					     glyph_info->glyphs,
 					     glyph_info->num_glyphs);
@@ -1031,12 +1032,17 @@ _cairo_surface_fallback_composite (cairo_operator_t	op,
 	return status;
     }
 
-    status = state.image->base.backend->composite (op, src, mask,
-						   &state.image->base,
-						   src_x, src_y, mask_x, mask_y,
-						   dst_x - state.image_rect.x,
-						   dst_y - state.image_rect.y,
-						   width, height);
+    /* We know this will never fail with the image backend; but
+     * instead of calling into it directly, we call
+     * _cairo_surface_composite so that we get the correct device
+     * offset handling.
+     */
+    status = _cairo_surface_composite (op, src, mask,
+				       &state.image->base,
+				       src_x, src_y, mask_x, mask_y,
+				       dst_x - state.image_rect.x,
+				       dst_y - state.image_rect.y,
+				       width, height);
     _fallback_fini (&state);
 
     return status;
@@ -1106,9 +1112,9 @@ _cairo_surface_fallback_fill_rectangles (cairo_surface_t	*surface,
 	rects = offset_rects;
     }
 
-    status = state.image->base.backend->fill_rectangles (&state.image->base,
-							 op, color,
-							 rects, num_rects);
+    status = _cairo_surface_fill_rectangles (&state.image->base,
+					     op, color,
+					     rects, num_rects);
 
     free (offset_rects);
 
@@ -1159,13 +1165,13 @@ _cairo_surface_fallback_composite_trapezoids (cairo_operator_t		op,
 	traps = offset_traps;
     }
 
-    state.image->base.backend->composite_trapezoids (op, pattern,
-						     &state.image->base,
-						     antialias,
-						     src_x, src_y,
-						     dst_x - state.image_rect.x,
-						     dst_y - state.image_rect.y,
-						     width, height, traps, num_traps);
+    _cairo_surface_composite_trapezoids (op, pattern,
+					 &state.image->base,
+					 antialias,
+					 src_x, src_y,
+					 dst_x - state.image_rect.x,
+					 dst_y - state.image_rect.y,
+					 width, height, traps, num_traps);
     if (offset_traps)
 	free (offset_traps);
 
