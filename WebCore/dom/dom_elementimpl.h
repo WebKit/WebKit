@@ -5,7 +5,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,15 +30,13 @@
 #include "NamedNodeMapImpl.h"
 #include "ContainerNodeImpl.h"
 #include "StringImpl.h"
-#include "Shared.h"
-#include "css/css_valueimpl.h"
+#include "css_valueimpl.h"
 #include "dom_qname.h"
+#include "dom_atomicstringlist.h"
 
-#ifdef __OBJC__
+#if __OBJC__
 #define id id_AVOID_KEYWORD
 #endif
-
-#include "dom_atomicstringlist.h"
 
 namespace khtml {
     class CSSStyleSelector;
@@ -46,8 +44,6 @@ namespace khtml {
 
 namespace DOM {
 
-class AtomicStringList;
-class DocumentImpl;
 class CSSStyleDeclarationImpl;
 class ElementImpl;
 class NamedAttrMapImpl;
@@ -58,8 +54,7 @@ class AttrImpl;
 // the actual Attr (AttrImpl) with its value as textchild
 // is only allocated on demand by the DOM bindings.
 // Any use of AttrImpl inside khtml should be avoided.
- class AttributeImpl : public Shared<AttributeImpl>
-{
+class AttributeImpl : public Shared<AttributeImpl> {
     friend class NamedAttrMapImpl;
     friend class ElementImpl;
     friend class AttrImpl;
@@ -74,7 +69,7 @@ public:
         : m_name(nullAtom, name, nullAtom), m_value(value), m_impl(0)
     {}
 
-    virtual ~AttributeImpl() {}
+    virtual ~AttributeImpl() { }
     
     const AtomicString& value() const { return m_value; }
     const AtomicString& prefix() const { return m_name.prefix(); }
@@ -98,7 +93,6 @@ private:
     void setValue(const AtomicString& value) { m_value = value; }
     void setPrefix(const AtomicString& prefix) { m_name.setPrefix(prefix); }
 
-protected:
     QualifiedName m_name;
     AtomicString m_value;
     AttrImpl* m_impl;
@@ -109,65 +103,62 @@ protected:
 // is to dynamically allocate a textchild and store the
 // resulting nodevalue in the AttributeImpl upon
 // destruction. however, this is not yet implemented.
-class AttrImpl : public ContainerNodeImpl
-{
-    friend class ElementImpl;
+class AttrImpl : public ContainerNodeImpl {
     friend class NamedAttrMapImpl;
 
 public:
-    AttrImpl(ElementImpl* element, DocumentImpl* doc, AttributeImpl* a);
+    AttrImpl(ElementImpl*, DocumentImpl*, AttributeImpl*);
     ~AttrImpl();
 
-    // Call this after calling the constructor so the 
-    // AttrImpl node isn't floating when we append the text node
+    // Call this after calling the constructor so the
+    // AttrImpl node isn't floating when we append the text node.
     void createTextChild();
     
     // DOM methods & attributes for Attr
-    DOMString name() const;
+    DOMString name() const { return qualifiedName().toString(); }
     bool specified() const { return m_specified; }
     ElementImpl* ownerElement() const { return m_element; }
-    AttributeImpl* attrImpl() const { return m_attribute; }
 
-    DOMString value() const;
-    void setValue( const DOMString &v, int &exceptioncode );
+    DOMString value() const { return m_attribute->value(); }
+    void setValue(const DOMString&, ExceptionCode&);
 
-    // DOM methods overridden from  parent classes
+    // DOM methods overridden from parent classes
     virtual DOMString nodeName() const;
     virtual unsigned short nodeType() const;
     virtual const AtomicString& localName() const;
     virtual const AtomicString& namespaceURI() const;
     virtual const AtomicString& prefix() const;
-    virtual void setPrefix(const AtomicString &_prefix, int &exceptioncode);
+    virtual void setPrefix(const AtomicString&, ExceptionCode&);
 
     virtual DOMString nodeValue() const;
-    virtual void setNodeValue( const DOMString &, int &exceptioncode );
+    virtual void setNodeValue(const DOMString&, ExceptionCode&);
     virtual PassRefPtr<NodeImpl> cloneNode(bool deep);
 
     // Other methods (not part of DOM)
     virtual bool isAttributeNode() const { return true; }
-    virtual bool childAllowed( NodeImpl *newChild );
-    virtual bool childTypeAllowed( unsigned short type );
+    virtual bool childTypeAllowed(unsigned short type);
 
     virtual void childrenChanged();
     virtual DOMString toString() const;
 
+    AttributeImpl* attrImpl() const { return m_attribute.get(); }
+    const QualifiedName& qualifiedName() const { return m_attribute->name(); }
+
     // An extension to get presentational information for attributes.
     CSSStyleDeclarationImpl* style() { return m_attribute->style(); }
-    
-protected:
+
+private:
     ElementImpl* m_element;
-    AttributeImpl* m_attribute;
+    RefPtr<AttributeImpl> m_attribute;
     int m_ignoreChildrenChanged;
 };
 
-
-class ElementImpl : public ContainerNodeImpl
-{
+class ElementImpl : public ContainerNodeImpl {
     friend class DocumentImpl;
     friend class NamedAttrMapImpl;
     friend class AttrImpl;
     friend class NodeImpl;
-    friend class khtml::CSSStyleSelector;
+    friend class CSSStyleSelector;
 public:
     ElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
     ~ElementImpl();
@@ -243,8 +234,8 @@ public:
     virtual QString state() { return QString::null; }
 
     virtual void attach();
-    virtual khtml::RenderStyle *styleForRenderer(khtml::RenderObject *parent);
-    virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
+    virtual RenderStyle *styleForRenderer(RenderObject *parent);
+    virtual RenderObject *createRenderer(RenderArena *, RenderStyle *);
     virtual void recalcStyle( StyleChange = NoChange );
 
     virtual void mouseEventHandler( MouseEvent * /*ev*/, bool /*inside*/ ) {};
@@ -255,7 +246,7 @@ public:
     void dispatchAttrRemovalEvent(AttributeImpl *attr);
     void dispatchAttrAdditionEvent(AttributeImpl *attr);
 
-    virtual void accessKeyAction(bool sendToAnyEvent) { };
+    virtual void accessKeyAction(bool sendToAnyEvent) { }
 
     virtual DOMString toString() const;
 
@@ -264,11 +255,8 @@ public:
     virtual void focus();
     void blur();
     
-#ifndef NDEBUG
+#if !NDEBUG
     virtual void dump(QTextStream *stream, QString ind = "") const;
-#endif
-
-#ifndef NDEBUG
     virtual void formatForDebugger(char *buffer, unsigned length) const;
 #endif
 
@@ -287,8 +275,7 @@ protected: // member variables
 };
 
 // the map of attributes of an element
-class NamedAttrMapImpl : public NamedNodeMapImpl
-{
+class NamedAttrMapImpl : public NamedNodeMapImpl {
     friend class ElementImpl;
 public:
     NamedAttrMapImpl(ElementImpl *e);
@@ -338,7 +325,6 @@ protected:
     virtual void clearAttributes();
     void detachFromElement();
 
-protected:
     ElementImpl *element;
     AttributeImpl **attrs;
     uint len;
@@ -349,8 +335,7 @@ protected:
 enum MappedAttributeEntry { eNone, eUniversal, ePersistent, eReplaced, eBlock, eHR, eUnorderedList, eListItem,
     eTable, eCell, eCaption, eBDO, ePre, eLastEntry };
 
-class CSSMappedAttributeDeclarationImpl : public CSSMutableStyleDeclarationImpl
-{
+class CSSMappedAttributeDeclarationImpl : public CSSMutableStyleDeclarationImpl {
 public:
     CSSMappedAttributeDeclarationImpl(CSSRuleImpl *parentRule)
     : CSSMutableStyleDeclarationImpl(parentRule), m_entryType(eNone), m_attrName(anyQName())
@@ -438,7 +423,7 @@ public:
     void addCSSLength(MappedAttributeImpl* attr, int id, const DOMString &value);
     void addCSSProperty(MappedAttributeImpl* attr, int id, const DOMString &value);
     void addCSSProperty(MappedAttributeImpl* attr, int id, int value);
-    void addCSSStringProperty(MappedAttributeImpl* attr, int id, const DOMString &value, DOM::CSSPrimitiveValue::UnitTypes = DOM::CSSPrimitiveValue::CSS_STRING);
+    void addCSSStringProperty(MappedAttributeImpl* attr, int id, const DOMString &value, CSSPrimitiveValue::UnitTypes = CSSPrimitiveValue::CSS_STRING);
     void addCSSImageProperty(MappedAttributeImpl* attr, int id, const DOMString &URL);
     void addCSSColor(MappedAttributeImpl* attr, int id, const DOMString &c);
     void createMappedDecl(MappedAttributeImpl* attr);
@@ -469,7 +454,7 @@ protected:
     mutable bool m_synchronizingStyleAttribute : 1;
 };
 
-}; //namespace
+} //namespace
 
 #undef id
 

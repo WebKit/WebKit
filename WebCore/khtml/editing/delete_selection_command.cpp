@@ -249,10 +249,10 @@ void DeleteSelectionCommand::insertPlaceholderForAncestorBlockContent()
         
         if ((!afterEnd.isNull() && !inSameBlock(afterEnd, visibleEnd) && !inSameBlock(afterEnd, visibleStart)) ||
             (m_downstreamEnd == m_selectionToDelete.end() && isEndOfParagraph(visibleEnd) && !m_downstreamEnd.node()->hasTagName(brTag))) {
-            NodeImpl *block = createDefaultParagraphElement(document());
-            insertNodeBefore(block, m_upstreamStart.node());
-            addBlockPlaceholderIfNeeded(block);
-            m_endingPosition = Position(block, 0);
+            RefPtr<NodeImpl> block = createDefaultParagraphElement(document());
+            insertNodeBefore(block.get(), m_upstreamStart.node());
+            addBlockPlaceholderIfNeeded(block.get());
+            m_endingPosition = Position(block.get(), 0);
         }
     }
 }
@@ -569,7 +569,7 @@ void DeleteSelectionCommand::moveNodesAfterNode()
         removeNode(startBlock);
         updateLayout();
         if (refNode->renderer() && refNode->renderer()->inlineBox() && refNode->renderer()->inlineBox()->nextOnLineExists()) {
-            insertNodeAfter(createBreakElement(document()), refNode);
+            insertNodeAfter(createBreakElement(document()).get(), refNode);
         }
     }
 }

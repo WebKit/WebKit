@@ -2154,8 +2154,8 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!m_frame || !m_frame->document())
         return 0;
 
-    PassRefPtr<DocumentFragmentImpl> fragment = createFragmentFromMarkup(m_frame->document(), QString::fromNSString(markupString), QString::fromNSString(baseURLString));
-    return [DOMDocumentFragment _documentFragmentWithImpl:fragment.get()];
+    return [DOMDocumentFragment _documentFragmentWithImpl:createFragmentFromMarkup(m_frame->document(),
+        QString::fromNSString(markupString), QString::fromNSString(baseURLString)).get()];
 }
 
 - (DOMDocumentFragment *)documentFragmentWithText:(NSString *)text

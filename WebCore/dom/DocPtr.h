@@ -1,7 +1,7 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
  * This file is part of the DOM implementation for KDE.
- * Copyright (C) 2005 Apple Computer, Inc.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,6 +19,7 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef DOM_DocPtr_h
 #define DOM_DocPtr_h
 
@@ -27,21 +28,13 @@ namespace DOM {
 template <class T> class DocPtr
 {
  public:
-    DocPtr() : m_ptr(NULL) {}
+    DocPtr() : m_ptr(0) {}
     DocPtr(T *ptr) : m_ptr(ptr) { if (ptr) ptr->selfOnlyRef(); }
     DocPtr(const DocPtr &o) : m_ptr(o.m_ptr) { if (T *ptr = m_ptr) ptr->selfOnlyRefRef(); }
     ~DocPtr() { if (T *ptr = m_ptr) ptr->selfOnlyDeref(); }
     
     template <class U> DocPtr(const DocPtr<U> &o) : m_ptr(o.get()) { if (T *ptr = m_ptr) ptr->selfOnlyRef(); }
     
-    // FIXME: Deprecate in favor of operators below, then remove?
-    bool isNull() const { return m_ptr == NULL; }
-    bool notNull() const { return m_ptr != NULL; }
-    
-    // FIXME: Deprecate in favor of operator=, then remove?
-    void reset() { if (T *ptr = m_ptr) ptr->selfOnlyDeref(); m_ptr = NULL; }
-    void reset(T *o) { if (o) o->selfOnlyRef(); if (T *ptr = m_ptr) ptr->selfOnlyDeref(); m_ptr = o; }
-
     void resetSkippingRef(T *o) { m_ptr = o; }
     
     T *get() const { return m_ptr; }
@@ -49,7 +42,7 @@ template <class T> class DocPtr
     T &operator*() const { return *m_ptr; }
     T *operator->() const { return m_ptr; }
     
-    bool operator!() const { return m_ptr == NULL; }
+    bool operator!() const { return !m_ptr; }
 
     // this type conversion operator allows implicit conversion to
     // bool but not to other integer types

@@ -26,30 +26,30 @@
 #ifndef htmlediting_h
 #define htmlediting_h
 
-#include <qptrlist.h>
-
-class QString;
+namespace KXMLCore {
+    template <typename T> class PassRefPtr;
+}
+using KXMLCore::PassRefPtr;
 
 namespace WebCore {
 
-class DOMString;
 class DocumentImpl;
 class ElementImpl;
 class NodeImpl;
 class Position;
+class String;
 class VisiblePosition;
 
 const unsigned short NON_BREAKING_SPACE = 0xa0;
 
-Position rangeCompliantEquivalent(const Position& pos);
-Position rangeCompliantEquivalent(const VisiblePosition& vpos);
-int maxDeepOffset(const NodeImpl* node);
-bool isAtomicNode(const NodeImpl* node);
-bool editingIgnoresContent(const NodeImpl* node);
+Position rangeCompliantEquivalent(const Position&);
+Position rangeCompliantEquivalent(const VisiblePosition&);
+int maxDeepOffset(const NodeImpl*);
+bool isAtomicNode(const NodeImpl*);
+bool editingIgnoresContent(const NodeImpl*);
 
 void rebalanceWhitespaceInTextNode(NodeImpl*, unsigned start, unsigned length);
-DOMString& nonBreakingSpaceString();
-void derefNodesInList(const QPtrList<NodeImpl>&);
+const String& nonBreakingSpaceString();
 
 //------------------------------------------------------------------------------------------
 
@@ -58,15 +58,16 @@ Position positionAfterNode(const NodeImpl*);
 
 bool isSpecialElement(const NodeImpl*);
 
-ElementImpl* createDefaultParagraphElement(DocumentImpl*);
-ElementImpl* createBreakElement(DocumentImpl*);
+PassRefPtr<ElementImpl> createDefaultParagraphElement(DocumentImpl*);
+PassRefPtr<ElementImpl> createBreakElement(DocumentImpl*);
 
 bool isTabSpanNode(const NodeImpl*);
 bool isTabSpanTextNode(const NodeImpl*);
 NodeImpl* tabSpanNode(const NodeImpl*);
 Position positionBeforeTabSpan(const Position&);
-ElementImpl* createTabSpanElement(DocumentImpl*, NodeImpl* tabTextNode = 0);
-ElementImpl* createTabSpanElement(DocumentImpl*, QString* tabText);
+PassRefPtr<ElementImpl> createTabSpanElement(DocumentImpl*);
+PassRefPtr<ElementImpl> createTabSpanElement(DocumentImpl*, PassRefPtr<NodeImpl> tabTextNode);
+PassRefPtr<ElementImpl> createTabSpanElement(DocumentImpl*, const String& tabText);
 
 bool isNodeRendered(const NodeImpl*);
 bool isMailBlockquote(const NodeImpl*);
@@ -75,19 +76,19 @@ NodeImpl* nearestMailBlockquote(const NodeImpl*);
 //------------------------------------------------------------------------------------------
 
 bool isTableStructureNode(const NodeImpl*);
-ElementImpl *createBlockPlaceholderElement(DocumentImpl*);
+PassRefPtr<ElementImpl> createBlockPlaceholderElement(DocumentImpl*);
 
-bool isFirstVisiblePositionInSpecialElement(const Position& pos);
-Position positionBeforeContainingSpecialElement(const Position& pos, NodeImpl** containingSpecialElement=0);
-bool isLastVisiblePositionInSpecialElement(const Position& pos);
-Position positionAfterContainingSpecialElement(const Position& pos, NodeImpl** containingSpecialElement=0);
-Position positionOutsideContainingSpecialElement(const Position &pos, NodeImpl** containingSpecialElement=0);
+bool isFirstVisiblePositionInSpecialElement(const Position&);
+Position positionBeforeContainingSpecialElement(const Position&, NodeImpl** containingSpecialElement=0);
+bool isLastVisiblePositionInSpecialElement(const Position&);
+Position positionAfterContainingSpecialElement(const Position&, NodeImpl** containingSpecialElement=0);
+Position positionOutsideContainingSpecialElement(const Position&, NodeImpl** containingSpecialElement=0);
 
 bool isListElement(NodeImpl* n);
 bool isTableElement(NodeImpl* n);
-bool isFirstVisiblePositionAfterTableElement(const Position &pos);
-Position positionBeforePrecedingTableElement(const Position &pos);
-Position positionAvoidingSpecialElementBoundary(const Position &pos);
+bool isFirstVisiblePositionAfterTableElement(const Position&);
+Position positionBeforePrecedingTableElement(const Position&);
+Position positionAvoidingSpecialElementBoundary(const Position&);
 
 }
 

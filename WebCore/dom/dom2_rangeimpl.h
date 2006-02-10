@@ -5,7 +5,7 @@
  * (C) 2000 Gunnstein Lye (gunnstein@netcom.no)
  * (C) 2000 Frederik Holljen (frederik.holljen@hig.no)
  * (C) 2001 Peter Kelly (pmk@post.com)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,109 +24,108 @@
  *
  */
 
-#ifndef _DOM2_RangeImpl_h_
-#define _DOM2_RangeImpl_h_
+#ifndef DOM2_RangeImpl_h_
+#define DOM2_RangeImpl_h_
 
-#include "dom/dom2_range.h"
+#include "dom2_range.h"
 #include "Shared.h"
-#include "DocPtr.h"
+#include <kxmlcore/RefPtr.h>
 
-namespace DOM {
+namespace KXMLCore {
+    template <typename T> class PassRefPtr;
+}
+using KXMLCore::PassRefPtr;
+
+namespace WebCore {
+
+typedef int ExceptionCode;
 
 class DocumentFragmentImpl;
-class DOMString;
+class DocumentImpl;
 class NodeImpl;
 class Position;
+class String;
 
 class RangeImpl : public Shared<RangeImpl>
 {
-    friend class DocumentImpl;
 public:
-    RangeImpl(DocumentImpl *_ownerDocument);
-    RangeImpl(DocumentImpl *_ownerDocument,
-              NodeImpl *_startContainer, int _startOffset,
-              NodeImpl *_endContainer, int _endOffset);
+    RangeImpl(DocumentImpl*);
+    RangeImpl(DocumentImpl*, NodeImpl* startContainer, int startOffset, NodeImpl* endContainer, int endOffset);
 
-    ~RangeImpl();
+    NodeImpl* startContainer(ExceptionCode&) const;
+    int startOffset(ExceptionCode&) const;
+    NodeImpl* endContainer(ExceptionCode&) const;
+    int endOffset(ExceptionCode&) const;
+    bool collapsed(ExceptionCode&) const;
 
-    NodeImpl *startContainer(int &exceptioncode) const;
-    int startOffset(int &exceptioncode) const;
-    NodeImpl *endContainer(int &exceptioncode) const;
-    int endOffset(int &exceptioncode) const;
-    bool collapsed(int &exceptioncode) const;
+    NodeImpl* commonAncestorContainer(ExceptionCode&) const;
+    static NodeImpl* commonAncestorContainer(NodeImpl* containerA, NodeImpl* containerB);
+    void setStart(NodeImpl* container, int offset, ExceptionCode&);
+    void setEnd(NodeImpl* container, int offset, ExceptionCode&);
+    void collapse(bool toStart, ExceptionCode&);
+    short compareBoundaryPoints(Range::CompareHow how, const RangeImpl* sourceRange, ExceptionCode&) const;
+    static short compareBoundaryPoints(NodeImpl* containerA, int offsetA, NodeImpl* containerB, int offsetB );
+    static short compareBoundaryPoints(const Position&, const Position&);
+    bool boundaryPointsValid() const;
+    void deleteContents(ExceptionCode&);
+    PassRefPtr<DocumentFragmentImpl> extractContents(ExceptionCode&);
+    PassRefPtr<DocumentFragmentImpl> cloneContents(ExceptionCode&);
+    void insertNode(PassRefPtr<NodeImpl>, ExceptionCode&);
+    String toString(ExceptionCode&) const;
+    String toHTML() const;
+    String text() const;
 
-    NodeImpl *commonAncestorContainer(int &exceptioncode) const;
-    static NodeImpl *commonAncestorContainer(NodeImpl *containerA, NodeImpl *containerB);
-    void setStart ( NodeImpl *refNode, int offset, int &exceptioncode );
-    void setEnd ( NodeImpl *refNode, int offset, int &exceptioncode );
-    void collapse ( bool toStart, int &exceptioncode );
-    short compareBoundaryPoints ( Range::CompareHow how, const RangeImpl *sourceRange, int &exceptioncode ) const;
-    static short compareBoundaryPoints ( NodeImpl *containerA, int offsetA, NodeImpl *containerB, int offsetB );
-    static short compareBoundaryPoints ( const Position &a, const Position &b );
-    bool boundaryPointsValid (  ) const;
-    void deleteContents ( int &exceptioncode );
-    DocumentFragmentImpl *extractContents ( int &exceptioncode );
-    DocumentFragmentImpl *cloneContents ( int &exceptioncode );
-    void insertNode( NodeImpl *newNode, int &exceptioncode );
-    DOMString toString ( int &exceptioncode ) const;
-    DOMString toHTML() const;
-    DOMString text() const;
+    PassRefPtr<DocumentFragmentImpl> createContextualFragment(const String& html, ExceptionCode&) const;
 
-    DocumentFragmentImpl *createContextualFragment(const DOMString &html, int &exceptioncode) const;
-    
-    void detach ( int &exceptioncode );
+    void detach(ExceptionCode&);
     bool isDetached() const;
-    RangeImpl *cloneRange(int &exceptioncode) const;
+    PassRefPtr<RangeImpl> cloneRange(ExceptionCode&) const;
 
-    void setStartAfter( NodeImpl *refNode, int &exceptioncode );
-    void setEndBefore( NodeImpl *refNode, int &exceptioncode );
-    void setEndAfter( NodeImpl *refNode, int &exceptioncode );
-    void selectNode( NodeImpl *refNode, int &exceptioncode );
-    void selectNodeContents( NodeImpl *refNode, int &exceptioncode );
-    void surroundContents( NodeImpl *newParent, int &exceptioncode );
-    void setStartBefore( NodeImpl *refNode, int &exceptioncode );
+    void setStartAfter(NodeImpl*, ExceptionCode&);
+    void setEndBefore(NodeImpl*, ExceptionCode&);
+    void setEndAfter(NodeImpl*, ExceptionCode&);
+    void selectNode(NodeImpl*, ExceptionCode&);
+    void selectNodeContents(NodeImpl*, ExceptionCode&);
+    void surroundContents(PassRefPtr<NodeImpl>, ExceptionCode&);
+    void setStartBefore(NodeImpl*, ExceptionCode&);
 
     enum ActionType {
         DELETE_CONTENTS,
         EXTRACT_CONTENTS,
         CLONE_CONTENTS
     };
-    DocumentFragmentImpl *processContents ( ActionType action, int &exceptioncode );
+    PassRefPtr<DocumentFragmentImpl> processContents(ActionType, ExceptionCode&);
 
     Position startPosition() const;
     Position endPosition() const;
 
-    NodeImpl *startNode() const;
-    NodeImpl *pastEndNode() const;
+    NodeImpl* startNode() const;
+    NodeImpl* pastEndNode() const;
 
     Position editingStartPosition() const;
 
-#ifndef NDEBUG
+#if !NDEBUG
     void formatForDebugger(char *buffer, unsigned length) const;
 #endif
 
-protected:
-    // FIXME - this could be a full-on RefPtr in principle...
-    DocPtr<DocumentImpl> m_ownerDocument;
-    NodeImpl *m_startContainer;
+private:
+    RefPtr<DocumentImpl> m_ownerDocument;
+    RefPtr<NodeImpl> m_startContainer;
     unsigned m_startOffset;
-    NodeImpl *m_endContainer;
+    RefPtr<NodeImpl> m_endContainer;
     unsigned m_endOffset;
     bool m_detached;
 
-private:
-    void checkNodeWOffset( NodeImpl *n, int offset, int &exceptioncode) const;
-    void checkNodeBA( NodeImpl *n, int &exceptioncode ) const;
-    void setStartContainer(NodeImpl *_startContainer);
-    void setEndContainer(NodeImpl *_endContainer);
-    void checkDeleteExtract(int &exceptioncode);
+    void checkNodeWOffset(NodeImpl*, int offset, ExceptionCode&) const;
+    void checkNodeBA(NodeImpl*, ExceptionCode&) const;
+    void checkDeleteExtract(ExceptionCode&);
     bool containedByReadOnly() const;
 };
 
-RefPtr<RangeImpl> rangeOfContents(NodeImpl *node);
+PassRefPtr<RangeImpl> rangeOfContents(NodeImpl*);
 
-bool operator==(const RangeImpl &, const RangeImpl &);
-inline bool operator!=(const RangeImpl &a, const RangeImpl &b) { return !(a == b); }
+bool operator==(const RangeImpl&, const RangeImpl&);
+inline bool operator!=(const RangeImpl& a, const RangeImpl& b) { return !(a == b); }
 
 } // namespace
 

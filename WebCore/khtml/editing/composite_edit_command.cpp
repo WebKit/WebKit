@@ -462,9 +462,9 @@ NodeImpl *CompositeEditCommand::appendBlockPlaceholder(NodeImpl *node)
     // Should assert isBlockFlow || isInlineFlow when deletion improves.  See 4244964.
     ASSERT(node->renderer());
 
-    NodeImpl *placeholder = createBlockPlaceholderElement(document());
-    appendNode(placeholder, node);
-    return placeholder;
+    RefPtr<NodeImpl> placeholder = createBlockPlaceholderElement(document());
+    appendNode(placeholder.get(), node);
+    return placeholder.get();
 }
 
 NodeImpl *CompositeEditCommand::insertBlockPlaceholder(const Position &pos)
@@ -475,9 +475,9 @@ NodeImpl *CompositeEditCommand::insertBlockPlaceholder(const Position &pos)
     // Should assert isBlockFlow || isInlineFlow when deletion improves.  See 4244964.
     ASSERT(pos.node()->renderer());
 
-    NodeImpl *placeholder = createBlockPlaceholderElement(document());
-    insertNodeAt(placeholder, pos.node(), pos.offset());
-    return placeholder;
+    RefPtr<NodeImpl> placeholder = createBlockPlaceholderElement(document());
+    insertNodeAt(placeholder.get(), pos.node(), pos.offset());
+    return placeholder.get();
 }
 
 NodeImpl *CompositeEditCommand::addBlockPlaceholderIfNeeded(NodeImpl *node)
@@ -570,32 +570,32 @@ void CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(const Posi
         }
     }
 
-    NodeImpl *newBlock = createDefaultParagraphElement(document());
+    RefPtr<NodeImpl> newBlock = createDefaultParagraphElement(document());
 
     NodeImpl *moveNode = paragraphStart.node();
     if (paragraphStart.offset() >= paragraphStart.node()->caretMaxOffset())
         moveNode = moveNode->traverseNextNode();
     NodeImpl *endNode = end.node();
     
-    insertNodeAt(newBlock, paragraphStart.node(), paragraphStart.offset());
+    insertNodeAt(newBlock.get(), paragraphStart.node(), paragraphStart.offset());
 
     while (moveNode && !moveNode->isBlockFlow()) {
         NodeImpl *next = moveNode->traverseNextSibling();
         removeNode(moveNode);
-        appendNode(moveNode, newBlock);
+        appendNode(moveNode, newBlock.get());
         if (moveNode == endNode)
             break;
         moveNode = next;
     }
 }
 
-ElementImpl *createBlockPlaceholderElement(DocumentImpl *document)
+PassRefPtr<ElementImpl> createBlockPlaceholderElement(DocumentImpl* document)
 {
     int exceptionCode = 0;
-    ElementImpl *breakNode = document->createElementNS(xhtmlNamespaceURI, "br", exceptionCode);
+    RefPtr<ElementImpl> breakNode = document->createElementNS(xhtmlNamespaceURI, "br", exceptionCode);
     ASSERT(exceptionCode == 0);
     breakNode->setAttribute(classAttr, blockPlaceholderClassString());
-    return breakNode;
+    return breakNode.release();
 }
 
 static const DOMString &blockPlaceholderClassString()

@@ -92,8 +92,8 @@ void InsertLineBreakCommand::doApply()
     deleteSelection();
     Selection selection = endingSelection();
 
-    ElementImpl *breakNode = createBreakElement(document());
-    NodeImpl *nodeToInsert = breakNode;
+    RefPtr<ElementImpl> breakNode = createBreakElement(document());
+    NodeImpl* nodeToInsert = breakNode.get();
     
     Position pos(selection.start().upstream());
 
@@ -119,9 +119,9 @@ void InsertLineBreakCommand::doApply()
                 setEndingSelection(Selection(Position(next, 0), DOWNSTREAM));
             else if (!document()->inStrictMode()) {
                 // Insert an "extra" BR at the end of the block. 
-                ElementImpl *extraBreakNode = createBreakElement(document());
-                insertNodeAfter(extraBreakNode, nodeToInsert);
-                setEndingSelection(Position(extraBreakNode, 0), DOWNSTREAM);
+                RefPtr<ElementImpl> extraBreakNode = createBreakElement(document());
+                insertNodeAfter(extraBreakNode.get(), nodeToInsert);
+                setEndingSelection(Position(extraBreakNode.get(), 0), DOWNSTREAM);
             }
         }
     }

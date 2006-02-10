@@ -1,3 +1,124 @@
+2006-02-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric and Geoff.
+
+        - changed basic DOM mutation calls to assert that "this"
+          is not floating, then added more uses of RefPtr to prevent the
+          assertion from firing (at least during my testing and layout tests)
+
+        - removed use of PassRefPtr as the type of a local variable; after talking
+          with Maciej and Eric, this type of use is now "deprecated"
+
+        * bindings/js/JSDOMCore.cpp: Touched this file to get things to build.
+
+        * bindings/objc/DOM.mm:
+        (-[DOMRange extractContents]):
+        (-[DOMRange cloneContents]):
+        (-[DOMRange cloneRange]):
+        * khtml/ecma/kjs_range.cpp:
+        (KJS::DOMRange::getValueProperty):
+        (KJS::DOMRangeProtoFunc::callAsFunction):
+        * khtml/editing/Selection.cpp:
+        (WebCore::Selection::toRange):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge documentFragmentWithMarkupString:baseURLString:]):
+        * dom/ContainerNodeImpl.cpp:
+        (WebCore::ContainerNodeImpl::insertBefore):
+        (WebCore::ContainerNodeImpl::replaceChild):
+        (WebCore::ContainerNodeImpl::removeChild):
+        (WebCore::ContainerNodeImpl::appendChild):
+        * dom/DocPtr.h: Removed uses of NULL and unused deprecated functions.
+        * dom/dom2_rangeimpl.h:
+        * dom/dom2_rangeimpl.cpp:
+        (WebCore::RangeImpl::RangeImpl):
+        (WebCore::RangeImpl::startContainer):
+        (WebCore::RangeImpl::endContainer):
+        (WebCore::RangeImpl::commonAncestorContainer):
+        (WebCore::RangeImpl::setStart):
+        (WebCore::RangeImpl::setEnd):
+        (WebCore::RangeImpl::collapse):
+        (WebCore::RangeImpl::compareBoundaryPoints):
+        (WebCore::RangeImpl::boundaryPointsValid):
+        (WebCore::RangeImpl::processContents):
+        (WebCore::RangeImpl::extractContents):
+        (WebCore::RangeImpl::cloneContents):
+        (WebCore::RangeImpl::insertNode):
+        (WebCore::RangeImpl::createContextualFragment):
+        (WebCore::RangeImpl::detach):
+        (WebCore::RangeImpl::cloneRange):
+        (WebCore::RangeImpl::selectNodeContents):
+        (WebCore::RangeImpl::surroundContents):
+        (WebCore::RangeImpl::containedByReadOnly):
+        (WebCore::RangeImpl::startPosition):
+        (WebCore::RangeImpl::endPosition):
+        (WebCore::RangeImpl::startNode):
+        (WebCore::RangeImpl::editingStartPosition):
+        (WebCore::rangeOfContents):
+        * dom/dom_elementimpl.h:
+        * dom/dom_elementimpl.cpp:
+        (WebCore::AttrImpl::AttrImpl):
+        (WebCore::AttrImpl::~AttrImpl):
+        (WebCore::AttrImpl::setValue):
+        (WebCore::AttrImpl::childTypeAllowed):
+        (WebCore::AttrImpl::childrenChanged):
+        (WebCore::ElementImpl::removeAttributeNode):
+        (WebCore::NamedAttrMapImpl::clearAttributes):
+        (WebCore::CSSMappedAttributeDeclarationImpl::~CSSMappedAttributeDeclarationImpl):
+        (WebCore::MappedAttributeImpl::clone):
+        * dom/DocumentFragmentImpl.cpp:
+        (DOM::DocumentFragmentImpl::cloneNode):
+        * dom/dom_xmlimpl.cpp:
+        (WebCore::EntityReferenceImpl::cloneNode):
+        (WebCore::ProcessingInstructionImpl::ProcessingInstructionImpl):
+        (WebCore::ProcessingInstructionImpl::checkStyleSheet):
+        (WebCore::ProcessingInstructionImpl::setStyleSheet):
+        * dom/dom_position.cpp:
+        * khtml/editing/break_blockquote_command.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply):
+        * khtml/editing/composite_edit_command.cpp:
+        (WebCore::CompositeEditCommand::appendBlockPlaceholder):
+        (WebCore::CompositeEditCommand::insertBlockPlaceholder):
+        (WebCore::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary):
+        (WebCore::createBlockPlaceholderElement):
+        * khtml/editing/delete_selection_command.cpp:
+        (WebCore::DeleteSelectionCommand::insertPlaceholderForAncestorBlockContent):
+        (WebCore::DeleteSelectionCommand::moveNodesAfterNode):
+        * khtml/editing/html_interchange.cpp:
+        * khtml/editing/htmlediting.cpp:
+        (WebCore::rebalanceWhitespaceInTextNode):
+        (WebCore::nonBreakingSpaceString):
+        (WebCore::createDefaultParagraphElement):
+        (WebCore::createBreakElement):
+        (WebCore::createTabSpanElement):
+        * khtml/editing/insert_line_break_command.cpp:
+        (khtml::InsertLineBreakCommand::doApply):
+        * khtml/editing/insert_paragraph_separator_command.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * khtml/editing/insert_paragraph_separator_command.h:
+        * khtml/editing/insert_text_command.cpp:
+        (khtml::InsertTextCommand::insertTab):
+        * khtml/editing/markup.cpp:
+        (khtml::createFragmentFromMarkup):
+        (khtml::createParagraphContentsFromString):
+        (khtml::createFragmentFromText):
+        (khtml::createFragmentFromNodeList):
+        * khtml/editing/rebalance_whitespace_command.cpp:
+        * khtml/editing/replace_selection_command.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment):
+        (WebCore::ReplacementFragment::insertFragmentForTestRendering):
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * khtml/editing/visible_text.cpp:
+        (khtml::CharacterIterator::range):
+        (khtml::findPlainText):
+        * khtml/html/HTMLElementImpl.cpp:
+        (WebCore::HTMLElementImpl::cloneNode):
+        * khtml/html/htmlparser.cpp:
+        (HTMLParser::handleResidualStyleCloseTagAcrossBlocks):
+        * ksvg2/svg/SVGTransformableImpl.cpp:
+        (SVGTransformableImpl::parseTransformAttribute):
+        * ksvg2/svg/SVGUseElementImpl.cpp:
+        (SVGUseElementImpl::closeRenderer):
+
 2006-02-09  Alexander Kellett  <lypanov@kde.org>
 
         Reviewed and landed by Maciej. 

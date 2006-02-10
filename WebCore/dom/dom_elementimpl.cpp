@@ -96,7 +96,6 @@ AttrImpl::AttrImpl(ElementImpl* element, DocumentImpl* docPtr, AttributeImpl* a)
 {
     assert(!m_attribute->m_impl);
     m_attribute->m_impl = this;
-    m_attribute->ref();
     m_specified = true;
 }
 
@@ -104,7 +103,6 @@ AttrImpl::~AttrImpl()
 {
     assert(m_attribute->m_impl == this);
     m_attribute->m_impl = 0;
-    m_attribute->deref();
 }
 
 void AttrImpl::createTextChild()
@@ -183,7 +181,7 @@ void AttrImpl::setValue( const DOMString &v, int &exceptioncode )
     
     m_attribute->setValue(v.impl());
     if (m_element)
-        m_element->attributeChanged(m_attribute);
+        m_element->attributeChanged(m_attribute.get());
 }
 
 void AttrImpl::setNodeValue( const DOMString &v, int &exceptioncode )
@@ -201,21 +199,12 @@ PassRefPtr<NodeImpl> AttrImpl::cloneNode(bool /*deep*/)
 }
 
 // DOM Section 1.1.1
-bool AttrImpl::childAllowed( NodeImpl *newChild )
-{
-    if(!newChild)
-        return false;
-
-    return childTypeAllowed(newChild->nodeType());
-}
-
-bool AttrImpl::childTypeAllowed( unsigned short type )
+bool AttrImpl::childTypeAllowed(unsigned short type)
 {
     switch (type) {
         case Node::TEXT_NODE:
         case Node::ENTITY_REFERENCE_NODE:
             return true;
-            break;
         default:
             return false;
     }
@@ -238,7 +227,7 @@ void AttrImpl::childrenChanged()
     
     m_attribute->setValue(val.impl());
     if (m_element)
-        m_element->attributeChanged(m_attribute);
+        m_element->attributeChanged(m_attribute.get());
 }
 
 DOMString AttrImpl::toString() const
@@ -262,16 +251,6 @@ DOMString AttrImpl::toString() const
     }
 
     return result;
-}
-
-DOMString AttrImpl::name() const
-{
-    return m_attribute->name().toString();
-}
-
-DOMString AttrImpl::value() const
-{
-    return m_attribute->value();
 }
 
 // -------------------------------------------------------------------------
@@ -792,7 +771,7 @@ PassRefPtr<AttrImpl> ElementImpl::removeAttributeNode(AttrImpl *attr, int &excep
     if (!attrs)
         return 0;
 
-    return static_pointer_cast<AttrImpl>(attrs->removeNamedItem(attr->m_attribute->name(), exception));
+    return static_pointer_cast<AttrImpl>(attrs->removeNamedItem(attr->qualifiedName(), exception));
 }
 
 void ElementImpl::setAttributeNS(const DOMString &namespaceURI, const DOMString &qualifiedName, const DOMString &value, int &exception)
@@ -1011,8 +990,7 @@ AttributeImpl* NamedAttrMapImpl::getAttributeItem(const QualifiedName& name) con
 void NamedAttrMapImpl::clearAttributes()
 {
     if (attrs) {
-        uint i;
-        for (i = 0; i < len; i++) {
+        for (unsigned i = 0; i < len; i++) {
             if (attrs[i]->m_impl)
                 attrs[i]->m_impl->m_element = 0;
             attrs[i]->deref();
@@ -1162,7 +1140,8 @@ bool NamedAttrMapImpl::mapsEquivalent(const NamedAttrMapImpl* otherMap) const
 
 // ------------------------------- Styled Element and Mapped Attribute Implementation
 
-CSSMappedAttributeDeclarationImpl::~CSSMappedAttributeDeclarationImpl() {
+CSSMappedAttributeDeclarationImpl::~CSSMappedAttributeDeclarationImpl()
+{
     if (m_entryType != ePersistent)
         StyledElementImpl::removeMappedAttributeDecl(m_entryType, m_attrName, m_attrValue);
 }
@@ -1207,7 +1186,7 @@ void StyledElementImpl::updateStyleAttributeIfNeeded() const
 
 AttributeImpl* MappedAttributeImpl::clone(bool preserveDecl) const
 {
-    return new MappedAttributeImpl(m_name, m_value, preserveDecl ? m_styleDecl.get() : 0);
+    return new MappedAttributeImpl(name(), value(), preserveDecl ? m_styleDecl.get() : 0);
 }
 
 NamedMappedAttrMapImpl::NamedMappedAttrMapImpl(ElementImpl *e)

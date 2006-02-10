@@ -471,13 +471,13 @@ PassRefPtr<DocumentFragmentImpl> createFragmentFromMarkup(DocumentImpl *document
     // FIXME: What if the document element is not an HTML element?
     HTMLElementImpl *element = static_cast<HTMLElementImpl *>(document->documentElement());
 
-    PassRefPtr<DocumentFragmentImpl> fragment = element->createContextualFragment(markup);
+    RefPtr<DocumentFragmentImpl> fragment = element->createContextualFragment(markup);
     ASSERT(fragment);
 
     if (!baseURL.isEmpty() && baseURL != document->baseURL())
         completeURLs(fragment.get(), baseURL);
 
-    return fragment;
+    return fragment.release();
 }
 
 QString createMarkup(const DOM::NodeImpl *node, EChildrenOnly includeChildren,
@@ -492,8 +492,7 @@ static void createParagraphContentsFromString(DOM::DocumentImpl *document, Eleme
 {
     int exceptionCode = 0;
     if (string.isEmpty()) {
-        NodeImpl *placeHolder = createBlockPlaceholderElement(document);
-        paragraph->appendChild(placeHolder, exceptionCode);
+        paragraph->appendChild(createBlockPlaceholderElement(document), exceptionCode);
         ASSERT(exceptionCode == 0);
         return;
     }
@@ -509,7 +508,7 @@ static void createParagraphContentsFromString(DOM::DocumentImpl *document, Eleme
         // append the non-tab textual part
         if (!s.isEmpty()) {
             if (tabText != "") {
-                paragraph->appendChild(createTabSpanElement(document, &tabText), exceptionCode);
+                paragraph->appendChild(createTabSpanElement(document, tabText), exceptionCode);
                 ASSERT(exceptionCode == 0);
                 tabText = "";
             }
@@ -524,7 +523,7 @@ static void createParagraphContentsFromString(DOM::DocumentImpl *document, Eleme
         if (!tabList.isEmpty()) {
             tabText += '\t';
         } else if (tabText != "") {
-            paragraph->appendChild(createTabSpanElement(document, &tabText), exceptionCode);
+            paragraph->appendChild(createTabSpanElement(document, tabText), exceptionCode);
             ASSERT(exceptionCode == 0);
         }
     }
@@ -535,7 +534,7 @@ PassRefPtr<DocumentFragmentImpl> createFragmentFromText(DocumentImpl *document, 
     if (!document)
         return 0;
 
-    PassRefPtr<DocumentFragmentImpl> fragment = document->createDocumentFragment();
+    RefPtr<DocumentFragmentImpl> fragment = document->createDocumentFragment();
     
     if (!text.isEmpty()) {
         QString string = text;
@@ -563,7 +562,7 @@ PassRefPtr<DocumentFragmentImpl> createFragmentFromText(DocumentImpl *document, 
             ASSERT(exceptionCode == 0);
         }
     }
-    return fragment;
+    return fragment.release();
 }
 
 PassRefPtr<DocumentFragmentImpl> createFragmentFromNodeList(DocumentImpl *document, const QPtrList<NodeImpl> &nodeList)
@@ -571,18 +570,18 @@ PassRefPtr<DocumentFragmentImpl> createFragmentFromNodeList(DocumentImpl *docume
     if (!document)
         return 0;
     
-    PassRefPtr<DocumentFragmentImpl> fragment = document->createDocumentFragment();
-    
-    RefPtr<ElementImpl> element;
+    RefPtr<DocumentFragmentImpl> fragment = document->createDocumentFragment();
+
     int exceptionCode = 0;
     for (QPtrListIterator<NodeImpl> i(nodeList); i.current(); ++i) {
-        element = createDefaultParagraphElement(document);
+        RefPtr<ElementImpl> element = createDefaultParagraphElement(document);
         element->appendChild(i.current(), exceptionCode);
         ASSERT(exceptionCode == 0);
-        fragment->appendChild(element.get(), exceptionCode);
+        fragment->appendChild(element.release(), exceptionCode);
         ASSERT(exceptionCode == 0);
     }
-    return fragment;
+
+    return fragment.release();
 }
 
 }

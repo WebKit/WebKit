@@ -69,10 +69,10 @@ DOMString DocumentFragmentImpl::toString() const
 
 PassRefPtr<NodeImpl> DocumentFragmentImpl::cloneNode(bool deep)
 {
-    PassRefPtr<DocumentFragmentImpl> clone = new DocumentFragmentImpl(getDocument());
+    RefPtr<DocumentFragmentImpl> clone = new DocumentFragmentImpl(getDocument());
     if (deep)
         cloneChildNodes(clone.get());
-    return clone;
+    return clone.release();
 }
 
 }

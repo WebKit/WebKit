@@ -171,15 +171,15 @@ DOM::Position InsertTextCommand::insertTab(Position pos)
     }
     
     // create new tab span
-    DOM::ElementImpl * spanNode = createTabSpanElement(document());
+    RefPtr<ElementImpl> spanNode = createTabSpanElement(document());
     
     // place it
     if (!node->isTextNode()) {
-        insertNodeAt(spanNode, node, offset);
+        insertNodeAt(spanNode.get(), node, offset);
     } else {
         TextImpl *textNode = static_cast<TextImpl *>(node);
         if (offset >= textNode->length()) {
-            insertNodeAfter(spanNode, textNode);
+            insertNodeAfter(spanNode.get(), textNode);
         } else {
             // split node to make room for the span
             // NOTE: splitTextNode uses textNode for the
@@ -187,7 +187,7 @@ DOM::Position InsertTextCommand::insertTab(Position pos)
             // insert the span before it.
             if (offset > 0)
                 splitTextNode(textNode, offset);
-            insertNodeBefore(spanNode, textNode);
+            insertNodeBefore(spanNode.get(), textNode);
         }
     }
     

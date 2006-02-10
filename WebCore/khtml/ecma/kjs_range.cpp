@@ -2,7 +2,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2006 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -22,14 +22,14 @@
 #include "config.h"
 #include "kjs_range.h"
 
-#include <kdebug.h>
-#include "dom/dom2_range.h"
 #include "DocumentFragmentImpl.h"
+#include "DocumentImpl.h"
+#include "dom2_range.h"
 #include "dom2_rangeimpl.h"
 
-using DOM::DOMString;
-using DOM::Range;
-using DOM::RangeImpl;
+using WebCore::String;
+using WebCore::Range;
+using WebCore::RangeImpl;
 
 #include "kjs_range.lut.h"
 
@@ -107,8 +107,7 @@ JSValue *DOMRange::getValueProperty(ExecState *exec, int token) const
   case CommonAncestorContainer:
     return getDOMNode(exec, range.commonAncestorContainer(exception));
   default:
-    kdWarning() << "Unhandled token in DOMRange::getValueProperty : " << token << endl;
-    return NULL;
+    return 0;
   }
 }
 
@@ -167,7 +166,7 @@ JSValue *DOMRangeProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, c
       range.surroundContents(toNode(args[0]), exception);
       break;
     case DOMRange::CloneRange:
-      result = getDOMRange(exec, range.cloneRange(exception));
+      result = getDOMRange(exec, range.cloneRange(exception).get());
       break;
     case DOMRange::ToString:
       result = jsStringOrNull(range.toString(exception));

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,52 +26,29 @@
 #include "config.h"
 #include "insert_paragraph_separator_command.h"
 
-#include "htmlediting.h"
-#include "visible_position.h"
-#include "visible_units.h"
-
-#include "css/css_computedstyle.h"
-#include "css/css_valueimpl.h"
-#include "htmlnames.h"
 #include "DocumentImpl.h"
+#include "KWQLogging.h"
+#include "css_computedstyle.h"
 #include "dom_elementimpl.h"
 #include "dom_textimpl.h"
-
+#include "htmlediting.h"
+#include "htmlnames.h"
+#include "visible_position.h"
+#include "visible_units.h"
 #include <kxmlcore/Assertions.h>
-#include "KWQLogging.h"
 
-using namespace DOM::HTMLNames;
+namespace WebCore {
 
-using DOM::CSSComputedStyleDeclarationImpl;
-using DOM::DocumentImpl;
-using DOM::ElementImpl;
-using DOM::NodeImpl;
-using DOM::Position;
-using DOM::TextImpl;
-
-namespace khtml {
+using namespace HTMLNames;
 
 InsertParagraphSeparatorCommand::InsertParagraphSeparatorCommand(DocumentImpl *document) 
     : CompositeEditCommand(document)
 {
 }
 
-InsertParagraphSeparatorCommand::~InsertParagraphSeparatorCommand() 
-{
-    derefNodesInList(clonedNodes);
-}
-
 bool InsertParagraphSeparatorCommand::preservesTypingStyle() const
 {
     return true;
-}
-
-ElementImpl *InsertParagraphSeparatorCommand::createParagraphElement()
-{
-    ElementImpl *element = createDefaultParagraphElement(document());
-    element->ref();
-    clonedNodes.append(element);
-    return element;
 }
 
 void InsertParagraphSeparatorCommand::calculateStyleBeforeInsertion(const Position &pos)
@@ -133,16 +110,18 @@ void InsertParagraphSeparatorCommand::doApply()
     bool startBlockIsRoot = startBlock == startBlock->rootEditableElement();
 
     // This is the block that is going to be inserted.
-    RefPtr<NodeImpl> blockToInsert = startBlockIsRoot ? createParagraphElement() : startBlock->cloneNode(false);
+    RefPtr<NodeImpl> blockToInsert = startBlockIsRoot
+        ? static_pointer_cast<NodeImpl>(createDefaultParagraphElement(document()))
+        : startBlock->cloneNode(false);
 
     //---------------------------------------------------------------------
     // Handle empty block case.
     if (isFirstInBlock && isLastInBlock) {
         LOG(Editing, "insert paragraph separator: empty block case");
         if (startBlockIsRoot) {
-            NodeImpl *extraBlock = createParagraphElement();
-            appendNode(extraBlock, startBlock);
-            appendBlockPlaceholder(extraBlock);
+            RefPtr<NodeImpl> extraBlock = createDefaultParagraphElement(document());
+            appendNode(extraBlock.get(), startBlock);
+            appendBlockPlaceholder(extraBlock.get());
             appendNode(blockToInsert.get(), startBlock);
         }
         else {
@@ -206,7 +185,7 @@ void InsertParagraphSeparatorCommand::doApply()
     if (!document()->inStrictMode()) {
         Position upstreamPos = pos.upstream();
         if (upstreamPos.node()->hasTagName(brTag))
-            insertNodeAfter(createBreakElement(document()), upstreamPos.node());
+            insertNodeAfter(createBreakElement(document()).get(), upstreamPos.node());
     }
     
     // Move downstream. Typing style code will take care of carrying along the 
@@ -215,6 +194,7 @@ void InsertParagraphSeparatorCommand::doApply()
     startNode = pos.node();
 
     // Build up list of ancestors in between the start node and the start block.
+    QPtrList<NodeImpl> ancestors;
     if (startNode != startBlock) {
         for (NodeImpl *n = startNode->parentNode(); n && n != startBlock; n = n->parentNode())
             ancestors.prepend(n);
@@ -247,13 +227,11 @@ void InsertParagraphSeparatorCommand::doApply()
     }
 
     // Make clones of ancestors in between the start node and the start block.
-    NodeImpl *parent = blockToInsert.get();
+    RefPtr<NodeImpl> parent = blockToInsert;
     for (QPtrListIterator<NodeImpl> it(ancestors); it.current(); ++it) {
         RefPtr<NodeImpl> child = it.current()->cloneNode(false); // shallow clone
-        child->ref();
-        clonedNodes.append(child.get());
-        appendNode(child.get(), parent);
-        parent = child.get();
+        appendNode(child.get(), parent.get());
+        parent = child.release();
     }
 
     // Insert a block placeholder if the next visible position is in a different paragraph,
@@ -272,7 +250,7 @@ void InsertParagraphSeparatorCommand::doApply()
         while (n && n != blockToInsert) {
             NodeImpl *next = n->nextSibling();
             removeNode(n);
-            appendNode(n, parent);
+            appendNode(n, parent.get());
             n = next;
         }
     }            
@@ -285,7 +263,7 @@ void InsertParagraphSeparatorCommand::doApply()
         while (n && n != blockToInsert) {
             NodeImpl *next = n->nextSibling();
             removeNode(n);
-            appendNode(n, parent);
+            appendNode(n, parent.get());
             n = next;
         }
         leftParent = leftParent->parentNode();
@@ -308,4 +286,4 @@ void InsertParagraphSeparatorCommand::doApply()
     applyStyleAfterInsertion();
 }
 
-} // namespace khtml
+} // namespace WebCore

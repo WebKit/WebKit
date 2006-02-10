@@ -151,7 +151,7 @@ void rebalanceWhitespaceInTextNode(NodeImpl *node, unsigned int start, unsigned 
      
     ASSERT(node->isTextNode());
     TextImpl *textNode = static_cast<TextImpl *>(node);
-    DOMString text = textNode->data();
+    String text = textNode->data();
     ASSERT(length <= text.length() && start + length <= text.length());
     
     QString substring = text.substring(start, length).qstring();
@@ -177,7 +177,7 @@ void rebalanceWhitespaceInTextNode(NodeImpl *node, unsigned int start, unsigned 
         substring.replace(end, 1, nbsp);
     
     text.remove(start, length);
-    text.insert(DOMString(substring), start);
+    text.insert(String(substring), start);
 }
 
 bool isTableStructureNode(const NodeImpl *node)
@@ -186,16 +186,10 @@ bool isTableStructureNode(const NodeImpl *node)
     return (r && (r->isTableCell() || r->isTableRow() || r->isTableSection() || r->isTableCol()));
 }
 
-DOMString &nonBreakingSpaceString()
+const String& nonBreakingSpaceString()
 {
-    static DOMString nonBreakingSpaceString = QString(QChar(NON_BREAKING_SPACE));
+    static String nonBreakingSpaceString = QString(QChar(NON_BREAKING_SPACE));
     return nonBreakingSpaceString;
-}
-
-void derefNodesInList(const QPtrList<NodeImpl>& list)
-{
-    for (QPtrListIterator<NodeImpl> it(list); it.current(); ++it)
-        it.current()->deref();
 }
 
 // FIXME: Why use this instead of maxDeepOffset???
@@ -475,17 +469,15 @@ Position positionAvoidingSpecialElementBoundary(const Position &pos)
     return result;
 }
 
-ElementImpl *createDefaultParagraphElement(DocumentImpl *document)
+PassRefPtr<ElementImpl> createDefaultParagraphElement(DocumentImpl *document)
 {
-    // We would need this margin-zeroing code back if we ever return to using <p> elements for default paragraphs.
-    // static const DOMString defaultParagraphStyle("margin-top: 0; margin-bottom: 0");    
     int exceptionCode = 0;
     ElementImpl *element = document->createElementNS(xhtmlNamespaceURI, "div", exceptionCode);
     ASSERT(exceptionCode == 0);
     return element;
 }
 
-ElementImpl *createBreakElement(DocumentImpl *document)
+PassRefPtr<ElementImpl> createBreakElement(DocumentImpl *document)
 {
     int exceptionCode = 0;
     ElementImpl *breakNode = document->createElementNS(xhtmlNamespaceURI, "br", exceptionCode);
@@ -519,11 +511,11 @@ Position positionBeforeTabSpan(const Position& pos)
     return Position(node->parentNode(), node->nodeIndex());
 }
 
-ElementImpl *createTabSpanElement(DocumentImpl *document, NodeImpl *tabTextNode)
+PassRefPtr<ElementImpl> createTabSpanElement(DocumentImpl* document, PassRefPtr<NodeImpl> tabTextNode)
 {
     // make the span to hold the tab
     int exceptionCode = 0;
-    ElementImpl *spanElement = document->createElementNS(xhtmlNamespaceURI, "span", exceptionCode);
+    RefPtr<ElementImpl> spanElement = document->createElementNS(xhtmlNamespaceURI, "span", exceptionCode);
     assert(exceptionCode == 0);
     spanElement->setAttribute(classAttr, AppleTabSpanClass);
     spanElement->setAttribute(styleAttr, "white-space:pre");
@@ -534,12 +526,17 @@ ElementImpl *createTabSpanElement(DocumentImpl *document, NodeImpl *tabTextNode)
     spanElement->appendChild(tabTextNode, exceptionCode);
     assert(exceptionCode == 0);
 
-    return spanElement;
+    return spanElement.release();
 }
 
-ElementImpl *createTabSpanElement(DocumentImpl *document, QString *tabText)
+PassRefPtr<ElementImpl> createTabSpanElement(DocumentImpl* document, const String& tabText)
 {
-    return createTabSpanElement(document, document->createTextNode(*tabText));
+    return createTabSpanElement(document, document->createTextNode(tabText));
+}
+
+PassRefPtr<ElementImpl> createTabSpanElement(DocumentImpl* document)
+{
+    return createTabSpanElement(document, PassRefPtr<NodeImpl>());
 }
 
 bool isNodeRendered(const NodeImpl *node)

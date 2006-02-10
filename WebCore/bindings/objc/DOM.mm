@@ -1854,7 +1854,7 @@ static ListenerMap *listenerMap;
 - (DOMDocumentFragment *)extractContents
 {
     int exceptionCode = 0;
-    DOMDocumentFragment *result = [DOMDocumentFragment _documentFragmentWithImpl:[self _rangeImpl]->extractContents(exceptionCode)];
+    DOMDocumentFragment *result = [DOMDocumentFragment _documentFragmentWithImpl:[self _rangeImpl]->extractContents(exceptionCode).get()];
     raiseOnDOMError(exceptionCode);
     return result;
 }
@@ -1862,7 +1862,7 @@ static ListenerMap *listenerMap;
 - (DOMDocumentFragment *)cloneContents
 {
     int exceptionCode = 0;
-    DOMDocumentFragment *result = [DOMDocumentFragment _documentFragmentWithImpl:[self _rangeImpl]->cloneContents(exceptionCode)];
+    DOMDocumentFragment *result = [DOMDocumentFragment _documentFragmentWithImpl:[self _rangeImpl]->cloneContents(exceptionCode).get()];
     raiseOnDOMError(exceptionCode);
     return result;
 }
@@ -1884,7 +1884,7 @@ static ListenerMap *listenerMap;
 - (DOMRange *)cloneRange
 {
     int exceptionCode = 0;
-    DOMRange *result = [DOMRange _rangeWithImpl:[self _rangeImpl]->cloneRange(exceptionCode)];
+    DOMRange *result = [DOMRange _rangeWithImpl:[self _rangeImpl]->cloneRange(exceptionCode).get()];
     raiseOnDOMError(exceptionCode);
     return result;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,18 +26,13 @@
 #include "config.h"
 #include "rebalance_whitespace_command.h"
 
+#include "DocumentImpl.h"
+#include "dom_textimpl.h"
 #include "htmlediting.h"
 #include "visible_text.h"
-#include "dom_textimpl.h"
-
 #include <kxmlcore/Assertions.h>
 
-using DOM::DOMString;
-using DOM::DocumentImpl;
-using DOM::Position;
-using DOM::TextImpl;
-
-namespace khtml {
+namespace WebCore {
 
 RebalanceWhitespaceCommand::RebalanceWhitespaceCommand(DocumentImpl *document, const Position &pos)
     : EditCommand(document), m_position(pos), m_upstreamOffset(InvalidOffset)

@@ -92,7 +92,7 @@ int HTMLElementImpl::tagPriority() const
 
 PassRefPtr<NodeImpl> HTMLElementImpl::cloneNode(bool deep)
 {
-    PassRefPtr<HTMLElementImpl> clone = HTMLElementFactory::createHTMLElement(m_tagName.localName(), getDocument(), 0, false);
+    RefPtr<HTMLElementImpl> clone = HTMLElementFactory::createHTMLElement(m_tagName.localName(), getDocument(), 0, false);
     if (!clone)
         return 0;
 
@@ -107,7 +107,7 @@ PassRefPtr<NodeImpl> HTMLElementImpl::cloneNode(bool deep)
     if (deep)
         cloneChildNodes(clone.get());
 
-    return clone;
+    return clone.release();
 }
 
 bool HTMLElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const

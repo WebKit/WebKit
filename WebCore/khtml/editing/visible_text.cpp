@@ -738,7 +738,7 @@ CharacterIterator::CharacterIterator(const RangeImpl *r)
 
 PassRefPtr<RangeImpl> CharacterIterator::range() const
 {
-    PassRefPtr<RangeImpl> r = m_textIterator.range();
+    RefPtr<RangeImpl> r = m_textIterator.range();
     if (!m_textIterator.atEnd()) {
         if (m_textIterator.length() <= 1) {
             assert(m_runOffset == 0);
@@ -751,7 +751,7 @@ PassRefPtr<RangeImpl> CharacterIterator::range() const
             r->setEnd(n, offset + 1, exception);
         }
     }
-    return r;
+    return r.release();
 }
 
 void CharacterIterator::advance(int count)
@@ -1081,9 +1081,9 @@ PassRefPtr<RangeImpl> findPlainText(const RangeImpl *r, const QString &s, bool f
     // Once we fix those, we can remove this check.
     if (s.isEmpty() || s.find('\n') != -1) {
         int exception = 0;
-        RangeImpl *result = r->cloneRange(exception);
+        RefPtr<RangeImpl> result = r->cloneRange(exception);
         result->collapse(forward, exception);
-        return result;
+        return result.release();
     }
 
     CircularSearchBuffer buffer(s, caseSensitive);
@@ -1131,7 +1131,7 @@ PassRefPtr<RangeImpl> findPlainText(const RangeImpl *r, const QString &s, bool f
 
 done:
     int exception = 0;
-    RangeImpl *result = r->cloneRange(exception);
+    RefPtr<RangeImpl> result = r->cloneRange(exception);
     if (!found) {
         result->collapse(!forward, exception);
     } else {
@@ -1141,7 +1141,7 @@ done:
         it.advance(buffer.length() - 1);
         result->setEnd(it.range()->endContainer(exception), it.range()->endOffset(exception), exception);
     }
-    return result;
+    return result.release();
 }
 
 }

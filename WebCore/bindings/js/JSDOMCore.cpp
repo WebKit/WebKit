@@ -1,6 +1,6 @@
 #include "config.h"
 
-// These are generated files
+// These are generated files.
 
 #include "JSAttr.cpp"
 #include "JSCharacterData.cpp"

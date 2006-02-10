@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,45 +26,30 @@
 #include "config.h"
 #include "dom_position.h"
 
-#include <QString.h>
-
+#include "DocumentImpl.h"
+#include "InlineTextBox.h"
+#include "KWQLogging.h"
+#include "QString.h"
+#include "RenderBlock.h"
 #include "css_computedstyle.h"
 #include "css_valueimpl.h"
-#include "dom_elementimpl.h"
 #include "dom2_range.h"
 #include "dom2_rangeimpl.h"
 #include "dom2_viewsimpl.h"
+#include "dom_elementimpl.h"
 #include "helper.h"
 #include "htmlediting.h"
-#include "text_affinity.h"
-#include "visible_position.h"
-#include "visible_units.h"
-#include "RenderBlock.h"
+#include "htmlnames.h"
 #include "render_flow.h"
 #include "render_line.h"
 #include "render_style.h"
-#include "InlineTextBox.h"
+#include "text_affinity.h"
+#include "visible_position.h"
 #include "visible_text.h"
-#include "htmlnames.h"
-
+#include "visible_units.h"
 #include <kxmlcore/Assertions.h>
-#include "KWQLogging.h"
-
-using khtml::EAffinity;
-using khtml::InlineBox;
-using khtml::InlineTextBox;
-using khtml::isAtomicNode;
-using khtml::isCollapsibleWhitespace;
-using khtml::maxDeepOffset;
-using khtml::RenderBlock;
-using khtml::RenderFlow;
-using khtml::RenderObject;
-using khtml::RenderText;
-using khtml::RootInlineBox;
-using khtml::VISIBLE;
-using khtml::VisiblePosition;
-
-namespace DOM {
+  
+namespace WebCore {
 
 using namespace HTMLNames;
 
@@ -723,28 +708,25 @@ void Position::debugPosition(const char *msg) const
         fprintf(stderr, "Position [%s]: %s [%p] at %d\n", msg, node()->nodeName().qstring().latin1(), node(), offset());
 }
 
-#ifndef NDEBUG
-#define FormatBufferSize 1024
+#if !NDEBUG
+
 void Position::formatForDebugger(char *buffer, unsigned length) const
 {
-    DOMString result;
-    DOMString s;
+    String result;
     
     if (isNull()) {
         result = "<null>";
-    }
-    else {
-        char s[FormatBufferSize];
+    } else {
+        char s[1024];
         result += "offset ";
         result += QString::number(m_offset);
         result += " of ";
-        m_node->formatForDebugger(s, FormatBufferSize);
+        m_node->formatForDebugger(s, sizeof(s));
         result += s;
     }
           
     strncpy(buffer, result.qstring().latin1(), length - 1);
 }
-#undef FormatBufferSize
 
 void Position::showTree() const
 {
@@ -762,8 +744,8 @@ void showTree(const Position *pos)
     if (pos)
         pos->showTree();
 }
-#endif
 
+#endif
 
 Position startPosition(const RangeImpl *r)
 {
@@ -781,4 +763,4 @@ Position endPosition(const RangeImpl *r)
     return Position(r->endContainer(exceptionCode), r->endOffset(exceptionCode));
 }
 
-} // namespace DOM
+} // namespace WebCore

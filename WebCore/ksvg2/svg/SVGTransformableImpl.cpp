@@ -24,7 +24,7 @@
 #if SVG_SUPPORT
 #include <qregexp.h>
 #include <qstringlist.h>
-#include <kxmlcore/PassRefPtr.h>
+#include <kxmlcore/RefPtr.h>
 
 #include <kdom/core/AttrImpl.h>
 
@@ -83,7 +83,7 @@ void SVGTransformableImpl::parseTransformAttribute(SVGTransformListImpl *list, c
         if (subtransform[0].startsWith(";") || subtransform[0].startsWith(","))
             subtransform[0] = subtransform[0].right(subtransform[0].length() - 1);
 
-        PassRefPtr<SVGTransformImpl> t(new SVGTransformImpl());
+        RefPtr<SVGTransformImpl> t(new SVGTransformImpl());
 
         if (subtransform[0] == "rotate") {
             if (params.count() == 3)
@@ -119,7 +119,7 @@ void SVGTransformableImpl::parseTransformAttribute(SVGTransformListImpl *list, c
         if (t->type() == SVG_TRANSFORM_UNKNOWN)
             break; // failed to parse a valid transform, abort.
         
-        list->appendItem(t.release());
+        list->appendItem(t.release().release());
     }
 }
 
