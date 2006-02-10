@@ -30,7 +30,7 @@
 
 #import <WebKit/npfunctions.h>
 
-@class WebNetscapePluginPackage;
+@class WebBaseNetscapePluginView;
 @class NSURLResponse;
 
 @interface WebBaseNetscapePluginStream : NSObject
@@ -47,7 +47,7 @@
     char *path;
     BOOL sendNotification;
     void *notifyData;
-    WebNetscapePluginPackage *plugin;
+    WebBaseNetscapePluginView *pluginView;
     NPReason reason;
     BOOL isTerminated;
         

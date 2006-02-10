@@ -1,2 +1,37 @@
+2006-02-09  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        <rdar://problem/4153419> CrashTracer: 576 crashes in Safari at com.apple.WebKit: NPN_DestroyStream + 56
+
+        I never could reproduce this crasher, which seems to be caused by the Speed Download plugin.  However,
+        I did find a way to make the affected code more bulletproof for those who are experiencing the crash.
+        
+        * Plugins/WebBaseNetscapePluginStream.h:
+        Keep a WebBaseNetscapePluginView instead of the WebNetscapePluginPackage, since the plugin view could
+        potentially be deallocated before the stream finishes loading.
+        * Plugins/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream _pluginCancelledConnectionError]):
+        Use pluginView instead of plugin.
+        (-[WebBaseNetscapePluginStream dealloc]):
+        Assert that the plugin instance has been nulled out, since that's now part of the stream's teardown
+        phase.
+        Release pluginView instead of plugin.
+        (-[WebBaseNetscapePluginStream setPluginPointer:]):
+        Retain the plugin view instead of the plugin package, since the plugin view could be deallocated while
+        the stream is running.
+        This method now accepts a NULL argument so that we can easily clear out the pluginView backpointer
+        (and other ivars derived from it).
+        (-[WebBaseNetscapePluginStream startStreamResponseURL:expectedContentLength:lastModifiedDate:MIMEType:]):
+        Use pluginView instead of plugin.
+        (-[WebBaseNetscapePluginStream _destroyStream]):
+        ditto
+        (-[WebBaseNetscapePluginStream finishedLoadingWithData:]):
+        ditto
+        (-[WebBaseNetscapePluginStream cancelLoadAndDestroyStreamWithError]):
+        Set the plugin instance to NULL, so that the pluginView backpointer is released.  This method is called
+        for every plugin view's stream when the plugin view is stopped/destroyed.
+        (-[WebBaseNetscapePluginStream _deliverData]):
+        Use pluginView instead of plugin.
 
 == Rolled over to ChangeLog-2006-02-09 ==

@@ -60,7 +60,7 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
     return [[[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInCancelledConnection
                                            contentURL:responseURL != nil ? responseURL : requestURL
                                         pluginPageURL:nil
-                                           pluginName:[plugin name]
+                                           pluginName:[[pluginView plugin] name]
                                              MIMEType:MIMEType] autorelease];
 }
 
@@ -104,6 +104,7 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
 
 - (void)dealloc
 {
+    ASSERT(!instance);
     ASSERT(isTerminated);
     ASSERT(stream.ndata == nil);
 
@@ -117,7 +118,7 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
     [requestURL release];
     [responseURL release];
     [MIMEType release];
-    [plugin release];
+    [pluginView release];
     [deliveryData release];
     
     free((void *)stream.url);
@@ -163,16 +164,27 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
 
 - (void)setPluginPointer:(NPP)pluginPointer
 {
-    instance = pluginPointer;
-    
-    plugin = [[(WebBaseNetscapePluginView *)instance->ndata plugin] retain];
-
-    NPP_NewStream =     [plugin NPP_NewStream];
-    NPP_WriteReady =    [plugin NPP_WriteReady];
-    NPP_Write =         [plugin NPP_Write];
-    NPP_StreamAsFile =  [plugin NPP_StreamAsFile];
-    NPP_DestroyStream = [plugin NPP_DestroyStream];
-    NPP_URLNotify =     [plugin NPP_URLNotify];
+    if (pluginPointer) {
+        instance = pluginPointer;
+        pluginView = [(WebBaseNetscapePluginView *)instance->ndata retain];
+        WebNetscapePluginPackage *plugin = [pluginView plugin];
+        NPP_NewStream = [plugin NPP_NewStream];
+        NPP_WriteReady = [plugin NPP_WriteReady];
+        NPP_Write = [plugin NPP_Write];
+        NPP_StreamAsFile = [plugin NPP_StreamAsFile];
+        NPP_DestroyStream = [plugin NPP_DestroyStream];
+        NPP_URLNotify = [plugin NPP_URLNotify];
+    } else {
+        instance = NULL;
+        [pluginView release];
+        pluginView = nil;
+        NPP_NewStream = NULL;
+        NPP_WriteReady = NULL;
+        NPP_Write = NULL;
+        NPP_StreamAsFile = NULL;
+        NPP_DestroyStream = NULL;
+        NPP_URLNotify = NULL;
+    }
 }
 
 - (void)setMIMEType:(NSString *)theMIMEType
@@ -189,7 +201,7 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
 {
     ASSERT(!isTerminated);
     
-    if (![plugin isLoaded]) {
+    if (![[pluginView plugin] isLoaded]) {
         return;
     }
     
@@ -249,7 +261,7 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
 
 - (void)_destroyStream
 {
-    if (isTerminated || ![plugin isLoaded]) {
+    if (isTerminated || ![[pluginView plugin] isLoaded]) {
         return;
     }
     
@@ -279,6 +291,8 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
     }
     
     isTerminated = YES;
+
+    [self setPluginPointer:NULL];
 }
 
 - (void)_destroyStreamWithReason:(NPReason)theReason
@@ -310,11 +324,12 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
 {
     [self cancelLoadWithError:error];
     [self destroyStreamWithError:error];
+    [self setPluginPointer:NULL];
 }
 
 - (void)finishedLoadingWithData:(NSData *)data
 {
-    if (![plugin isLoaded] || !stream.ndata) {
+    if (![[pluginView plugin] isLoaded] || !stream.ndata) {
         return;
     }
     
@@ -352,7 +367,7 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
 
 - (void)_deliverData
 {
-    if (![plugin isLoaded] || !stream.ndata || [deliveryData length] == 0) {
+    if (![[pluginView plugin] isLoaded] || !stream.ndata || [deliveryData length] == 0) {
         return;
     }
     
