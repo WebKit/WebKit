@@ -206,20 +206,14 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsVal
 {
     NSAppleEventDescriptor* aeDesc = 0;
     switch (jsValue->type()) {
-        case BooleanType: {
-            bool value;
-            jsValue->getBoolean(value);
-            aeDesc = [NSAppleEventDescriptor descriptorWithBoolean:value];
+        case BooleanType:
+            aeDesc = [NSAppleEventDescriptor descriptorWithBoolean:jsValue->getBoolean()];
             break;
-        }
-        case StringType: {
-            UString value = jsValue->getString();
-            NSString* str = [NSString stringWithCharacters:reinterpret_cast<const unichar *>(value.data()) length:value.size()];
-            aeDesc = [NSAppleEventDescriptor descriptorWithString:str];
+        case StringType:
+            aeDesc = [NSAppleEventDescriptor descriptorWithString:jsValue->getString().domString()];
             break;
-        }
         case NumberType: {
-            double value = jsValue->getNumber();
+            Float64 value = jsValue->getNumber();
             aeDesc = [NSAppleEventDescriptor descriptorWithDescriptorType:typeIEEE64BitFloatingPoint bytes:&value length:sizeof(value)];
             break;
         }
@@ -229,16 +223,13 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsVal
                 DateInstance* date = static_cast<DateInstance*>(object);
                 double ms = 0;
                 int tzOffset = 0;
-
                 if (date->getTime(ms, tzOffset)) {
-                    CFAbsoluteTime utcSeconds = ms/1000 - kCFAbsoluteTimeIntervalSince1970;
-
+                    CFAbsoluteTime utcSeconds = ms / 1000 - kCFAbsoluteTimeIntervalSince1970;
                     LongDateTime ldt;
                     if (noErr == UCConvertCFAbsoluteTimeToLongDateTime(utcSeconds, &ldt))
                         aeDesc = [NSAppleEventDescriptor descriptorWithDescriptorType:typeLongDateTime bytes:&ldt length:sizeof(ldt)];
                 }
             }
-            
             if (!aeDesc) {
                 JSValue* primitive = object->toPrimitive(exec);
                 if (exec->hadException()) {
@@ -247,7 +238,6 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsVal
                 }
                 return aeDescFromJSValue(exec, primitive);
             }
-
             break;
         }
         default:

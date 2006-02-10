@@ -1,3 +1,15 @@
+2006-02-10  Darin Adler  <darin@apple.com>
+
+        - fixed the build, this time for sure
+
+        * bindings/js/JSDOMCore.cpp: Touch this file, since the project doesn't get
+        the dependencies right.
+        * bindings/js/JSDOMEvents.cpp: Ditto.
+
+        * bridge/mac/WebCoreFrameBridge.mm: (aeDescFromJSValue): Fix an uninitialized
+        variable warning and also tightened the code for Boolean, String, and Number
+        up a bit.
+
 2006-02-10  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by eric.
