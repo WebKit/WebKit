@@ -22,16 +22,15 @@ One you have checked out and built the code, you can make changes to it and then
 that contains only the differences between the current version of WebKit and your version of WebKit with your code changes.</p>
 
 <p>The <tt>svn-create-patch</tt> script, found in WebKitTools/Scripts along with the other WebKit scripts, should be used to produce patches.
-It does a <tt>svn diff</tt> operation, handling files added and removed from the repository,
-and working around path problems that normally prevent some patches created with <tt>svn diff</tt> from being applied by <tt>patch</tt>.
-Use it to create a patch as follows:</p>
+It does a <tt>svn</tt> <tt>diff</tt> operation, passing appropriate options to diff:</p>
 <p class="code">WebKitTools/Scripts/svn-create-patch > MyExcellentPatch.txt</p>
-<p>It's handy to put the <tt>WebKitTools/Scripts</tt> directory in your shell path so you can type commands like <tt>svn-create-patch</tt> without specifying the path to the script.</p>
+<p>It's handy to put the <tt>WebKitTools/Scripts</tt> directory in your shell path so you can type commands like <tt>svn-create-patch</tt>
+without specifying the path to the script.</p>
 <p>The <tt>svn-apply</tt> and <tt>svn-unapply</tt> scripts are handy for applying patches to a tree, and rolling patches out of a tree.
 They go beyond the capabilities of the <tt>patch</tt> tool by handling files added and removed from the repository.</p>
 
 <p>Once you have a patch file, it must be reviewed by one of the approved WebKit reviewers.
-To request a review, attach the patch to the bug report, and mark the patch with the flag <tt>review: ?</tt>. This will automatically
+To request a review, attach the patch to the bug report, and mark the patch with the flag <tt>review:?</tt>. This will automatically
 send mail to <a href="mailto:webkit-reviews@opendarwin.org">webkit-reviews@opendarwin.org</a> on your behalf. The 
 <a href="../quality/lifecycle.html">WebKit Bug Life Cycle</a> page
 has more information about the stages of a WebKit Bugzilla bug.</p>
@@ -40,8 +39,9 @@ has more information about the stages of a WebKit Bugzilla bug.</p>
 <a href="http://webkit.opendarwin.org/coding/coding-style.html">coding style guidelines</a>, and has received sufficient testing.
 Bug fixes should include a <a href="../quality/testing.html">new WebKit or JavaScriptCore test</a>.</p>
 
-<p>The reviewer will typically either approve the patch (by responding with an <tt>r=me</tt> in the bug report or in e-mail and marking the patch <tt>review: +</tt>)
-or request revisions to the patch (and mark the patch <tt>review: -</tt>).
+<p>The reviewer will typically either approve the patch (by responding with an <tt>r=me</tt> in the bug report or in e-mail
+and marking the patch <tt>review:+</tt>)
+or request revisions to the patch (and mark the patch <tt>review:-</tt>).
 In rare cases a patch may be permanently rejected, meaning that the reviewer believes the feature should never be committed to the tree.
 The review process can consist of multiple iterations between you and the reviewer as revisions are made to your patch.</p>
 
@@ -54,13 +54,14 @@ If no layout test can be (or needs to be) constructed for the fix, you must expl
 
 <p>In addition you must run the regression tests. The command to do that is:</p>
 <p class="code">WebKitTools/Scripts/run-webkit-tests</p>
-<p>It's handy to put the <tt>WebKitTools/Scripts</tt> directory in your shell path so you can type commands like <tt>run-webkit-tests</tt> without specifying the path to the script.</p>
+<p>It's handy to put the <tt>WebKitTools/Scripts</tt> directory in your shell path so you can type commands like
+<tt>run-webkit-tests</tt> without specifying the path to the script.</p>
 <p>Only if all layout tests pass
 (or if justification can be made for changing the expected results of the tests) will the patch be allowed in the tree.  It is the reviewer's
 responsibility to double-check that you have run the regression tests before signing off on the patch.</p>
 
 <p>If you are modifying JavaScriptCore there is an additional test suite that you need to run.  For more details on the required testing you must
-do before landing a patch, <a href="http://webkit.opendarwin.org/quality/testing.html">see this document</a>.
+do before landing a patch, see our <a href="http://webkit.opendarwin.org/quality/testing.html">testing page</a>.
 
 <p>Once a patch has been reviewed, there are two options for getting it into the tree.
 If you have check-in privileges, you can land the patch immediately once it has been reviewed.
@@ -73,11 +74,11 @@ It is your responsibility to be available should regressions arise and to respon
 <h3>Obtaining Check-In Privileges</h3>
 
 <p>Contributors with a proven track record of good patch submissions and that have demonstrated an ability to work well with the community can
-obtain check-in privileges to the WebKit source tree.  In order to obtain this check-in access, the contributor must find a reviewer who
+obtain check-in privileges to the WebKit source tree. In order to obtain this check-in access, the contributor must find a reviewer who
 will act as a sponsor.</p>
 
-<p>The contributor must then sign and submit the contributor agreement (link forthcoming) to Apple in order to be granted check-in
-access.</p>
+<p>The sponsor arranges a copy of the committer agreement to be sent to the contributor.
+Once the contributor sends a copy of the signed agreement to Apple, he receives check-in access.</p>
 
 <h3>Becoming a Reviewer</h3>
 
@@ -85,8 +86,8 @@ access.</p>
 contributor is effectively functioning as an expert in a particular area of the code and is qualified to review patches submitted in
 that area.</p>
 
-<p>Reviewers are always responsible only for areas of code in which they are knowledgeable.  If the reviewer does not feel qualified to handle
-a particular patch, then he will defer to another reviewer.</p>
+<p>Reviewers are always responsible only for areas of code in which they are knowledgeable.
+If the reviewer does not feel qualified to handle a particular patch, then he will defer to another reviewer.</p>
 
 </div>
 </body>
