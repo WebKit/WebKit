@@ -225,7 +225,6 @@ RefPtr<DocumentImpl> XSLTProcessorImpl::createDocumentFromSource(const QString &
     
     result->write(documentSource);
     result->finishParsing();
-    result->setParsing(false);
     if (view)
         view->frame()->checkCompleted();
     else

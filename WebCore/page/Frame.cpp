@@ -477,6 +477,7 @@ void Frame::clear(bool clearWindowProperties)
   d->m_mousePressNode = 0;
 
   if (d->m_doc) {
+    disconnect(d->m_doc, SIGNAL(finishedParsing()), this, SLOT(slotFinishedParsing()));
     d->m_doc->cancelParsing();
     d->m_doc->detach();
   }
@@ -532,6 +533,7 @@ void Frame::setDocument(DocumentImpl* newDoc)
 {
     if (d) {
         if (d->m_doc) {
+            disconnect(d->m_doc, SIGNAL(finishedParsing()), this, SLOT(slotFinishedParsing()));
             d->m_doc->detach();
             d->m_doc->deref();
         }
@@ -539,6 +541,7 @@ void Frame::setDocument(DocumentImpl* newDoc)
         if (newDoc) {
             newDoc->ref();
             newDoc->attach();
+            connect(d->m_doc, SIGNAL(finishedParsing()), this, SLOT(slotFinishedParsing()));
         }
     }
 }

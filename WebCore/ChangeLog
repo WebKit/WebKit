@@ -1,5 +1,22 @@
 2006-02-11  Mitz Pettel  <opendarwin.org@mitzpettel.com>
  
+        No test until we figure out how to make one.
+
+         Reviewed by Darin.
+ 
+         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7189
+           XSLT result parsing stops prematurely
+ 
+         * khtml/xsl/xslt_processorimpl.cpp:
+         (DOM::XSLTProcessorImpl::createDocumentFromSource): Removed the call to setParsing(false) from here
+         since it stopped parsing prematurely. Now the frame will call it when the tokenizer is finished.
+         * page/Frame.cpp:
+         (WebCore::Frame::clear): Disconnect the finishedParsing signal handler from the document.
+         (WebCore::Frame::setDocument): Disconnect the signal handler from the old document and
+         connect it to the new document.
+
+2006-02-11  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+ 
          Reviewed by Hyatt.
  
          - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6821
