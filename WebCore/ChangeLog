@@ -1,3 +1,33 @@
+2006-02-11  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+ 
+         Reviewed by Hyatt.
+ 
+         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6821
+           Fix for 5983 will not always update hover correctly.
+ 
+         * khtml/xml/DocumentImpl.cpp:
+         (WebCore::DocumentImpl::hoveredNodeDetached): Added this method. Moved the hover logic from
+         NodeImpl::detach here, modified to use the DOM tree instead of hoverAncestor,
+         to handle the case that the hover node is a text node, and to schedule an update
+         of hover state.
+         (WebCore::DocumentImpl::activeChainNodeDetached): Added this method to trim the
+         active chain above the node being detached.
+         * khtml/xml/DocumentImpl.h:
+         * khtml/xml/NodeImpl.cpp:
+         (WebCore::NodeImpl::detach): Moved most of the hover logic out of here into
+         DocumentImpl. Reset m_active and m_inActiveChain and call activeChainNodeDetached
+         when detaching an active node. 
+         * manual-tests/bugzilla-6821.html: Added.
+         * page/FrameView.cpp:
+         (WebCore::FrameViewPrivate::FrameViewPrivate): Added hover-state update timer.
+         (WebCore::FrameViewPrivate::reset):
+         (WebCore::FrameView::~FrameView):
+         (WebCore::FrameView::viewportMouseMoveEvent):
+         (WebCore::FrameView::hoverTimerFired): Call DocumentImpl::prepareMouseEvent
+         when the timer fires to cause hover state to update.
+         (WebCore::FrameView::scheduleHoverStateUpdate): Added.
+         * page/FrameView.h:
+ 
 2006-02-11  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

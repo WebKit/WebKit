@@ -61,7 +61,7 @@ using namespace HTMLNames;
 class FrameViewPrivate {
 public:
     FrameViewPrivate(FrameView* view)
-        : layoutTimer(view, &FrameView::layoutTimerFired)
+        : layoutTimer(view, &FrameView::layoutTimerFired), hoverTimer(view, &FrameView::hoverTimerFired)
     {
         repaintRects = 0;
         underMouse = 0;
@@ -111,6 +111,7 @@ public:
         layoutSuppressed = false;
         layoutCount = 0;
         firstLayout = true;
+        hoverTimer.stop();
         if (repaintRects)
             repaintRects->clear();
     }
@@ -146,6 +147,8 @@ public:
     bool mousePressed;
     bool isTransparent;
     
+    Timer<FrameView> hoverTimer;
+    
     // Used by objects during layout to communicate repaints that need to take place only
     // after all layout has been completed.
     QPtrList<RenderObject::RepaintInfo>* repaintRects;
@@ -173,6 +176,8 @@ FrameView::~FrameView()
 
     ASSERT(_refCount == 0);
 
+    if (d->hoverTimer.isActive())
+        d->hoverTimer.stop();
     if (m_frame) {
         // FIXME: Is this really the right place to call detach on the document?
         DocumentImpl* doc = m_frame->document();
@@ -645,6 +650,9 @@ void FrameView::viewportMouseMoveEvent( QMouseEvent * _mouse )
     ASSERT(m_frame);
     if (!m_frame || !m_frame->document())
         return;
+
+    if (d->hoverTimer.isActive())
+        d->hoverTimer.stop();
 
     int xm, ym;
     viewportToContents(_mouse->x(), _mouse->y(), xm, ym);
@@ -1145,6 +1153,13 @@ void FrameView::layoutTimerFired(Timer<FrameView>*)
     layout();
 }
 
+void FrameView::hoverTimerFired(Timer<FrameView>*)
+{
+    d->hoverTimer.stop();
+    NodeImpl::MouseEvent mev(false, NodeImpl::MouseMove);
+    m_frame->document()->prepareMouseEvent(false, false, d->prevMouseX, d->prevMouseY, &mev );
+}
+
 void FrameView::scheduleRelayout()
 {
     if (!d->layoutSchedulingEnabled)
@@ -1201,6 +1216,12 @@ bool FrameView::isTransparent() const
 void FrameView::setTransparent(bool isTransparent)
 {
     d->isTransparent = isTransparent;
+}
+
+void FrameView::scheduleHoverStateUpdate()
+{
+    if (!d->hoverTimer.isActive())
+        d->hoverTimer.startOneShot(0);
 }
 
 }

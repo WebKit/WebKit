@@ -1968,6 +1968,27 @@ void DocumentImpl::setActiveNode(NodeImpl* newActiveNode)
         m_activeNode = newActiveNode;
 }
 
+void DocumentImpl::hoveredNodeDetached(NodeImpl* node)
+{
+    if (!m_hoverNode || (node != m_hoverNode && (!m_hoverNode->isTextNode() || node != m_hoverNode->parent())))
+        return;
+
+    m_hoverNode = node->parent();
+    while (m_hoverNode && !m_hoverNode->renderer())
+        m_hoverNode = m_hoverNode->parent();
+    if (view())
+        view()->scheduleHoverStateUpdate();
+}
+
+void DocumentImpl::activeChainNodeDetached(NodeImpl* node)
+{
+    if (!m_activeNode || (node != m_activeNode && (!m_activeNode->isTextNode() || node != m_activeNode->parent())))
+        return;
+
+    m_activeNode = node->parent();
+    while (m_activeNode && !m_activeNode->renderer())
+        m_activeNode = m_activeNode->parent();
+}
 
 bool DocumentImpl::relinquishesEditingFocus(NodeImpl *node)
 {

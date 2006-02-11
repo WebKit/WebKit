@@ -193,6 +193,7 @@ public:
     bool performDragAndDrop(const IntPoint &, DOM::ClipboardImpl *clipboard);
 
     void layoutTimerFired(Timer<FrameView>*);
+    void hoverTimerFired(Timer<FrameView>*);
 
     void repaintRectangle(const IntRect& r, bool immediate);
 
@@ -203,6 +204,8 @@ public:
     void unscheduleRelayout();
     bool haveDelayedLayoutScheduled();
     bool layoutPending();
+
+    void scheduleHoverStateUpdate();
 
     QWidget *topLevelWidget() const;
     IntPoint mapToGlobal(const IntPoint &) const;
