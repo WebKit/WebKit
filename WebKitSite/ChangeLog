@@ -1,3 +1,12 @@
+2006-02-12  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Reviewed by eseidel.
+
+        - Changed 10.2 paragraph to say Mac OS X instead of just OS X
+        - Detabified the file.
+
+        * quality/reporting.html:
+
 2006-02-10  Darin Adler  <darin@apple.com>
 
         * index.html: Fixed a typo in a link.
