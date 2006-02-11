@@ -28,27 +28,27 @@
 #include "SVGURIReferenceImpl.h"
 #include "SVGExternalResourcesRequiredImpl.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGScriptElementImpl : public SVGElementImpl,
                                  public SVGURIReferenceImpl,
                                  public SVGExternalResourcesRequiredImpl
     {
     public:
-        SVGScriptElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGScriptElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGScriptElementImpl();
 
         // 'SVGScriptElement' functions
-        KDOM::DOMStringImpl *type() const;
-        void setType(KDOM::DOMStringImpl *type);
+        DOMStringImpl *type() const;
+        void setType(DOMStringImpl *type);
 
         // Internal
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
-        static void executeScript(KDOM::DocumentImpl *document, KDOM::DOMStringImpl *jsCode);
+        static void executeScript(DocumentImpl *document, DOMStringImpl *jsCode);
 
     private:
-        KDOM::DOMString m_type;
+        DOMString m_type;
     };
 };
 

@@ -27,7 +27,7 @@
 /**
  * @short General namespace specific definitions.
  */
-namespace KSVG
+namespace WebCore
 {
     /**
      * All SVG constants

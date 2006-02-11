@@ -26,7 +26,7 @@
 #include "SVGColorImpl.h"
 #include "SVGAnimatedTemplate.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGAnimatedColorImpl : public SVGAnimatedTemplate<SVGColorImpl>
     {

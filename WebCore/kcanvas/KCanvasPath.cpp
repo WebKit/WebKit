@@ -33,6 +33,8 @@
 #include "KCanvasTreeDebug.h"
 #include "KRenderingDevice.h"
 
+namespace WebCore {
+
 //KCWindRule
 QTextStream &operator<<(QTextStream &ts, KCWindRule rule)
 {
@@ -55,5 +57,7 @@ QTextStream &operator<<(QTextStream &ts, const KCClipData &d)
     ts << " [path=" << QPainter::renderingDevice()->stringForPath(d.path.get()) << "]";
     return ts;
 }
-#endif // SVG_SUPPORT
 
+}
+
+#endif // SVG_SUPPORT

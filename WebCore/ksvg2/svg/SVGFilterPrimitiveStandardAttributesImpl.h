@@ -26,17 +26,15 @@
 
 #include "SVGStyledElementImpl.h"
 
-class KCanvasFilterEffect;
-
-namespace KSVG
-{
+namespace WebCore {
+    class KCanvasFilterEffect;
     class SVGAnimatedLengthImpl;
     class SVGAnimatedStringImpl;
 
     class SVGFilterPrimitiveStandardAttributesImpl : public SVGStyledElementImpl
     {
     public:
-        SVGFilterPrimitiveStandardAttributesImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGFilterPrimitiveStandardAttributesImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGFilterPrimitiveStandardAttributesImpl();
         
         virtual bool isFilterEffect() const { return true; }
@@ -48,7 +46,7 @@ namespace KSVG
         SVGAnimatedLengthImpl *height() const;
         SVGAnimatedStringImpl *result() const;
 
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
         virtual KCanvasFilterEffect *filterEffect() const = 0;
 

@@ -28,18 +28,18 @@
 #include <kdom/core/DOMList.h>
 #include <ksvg2/svg/SVGStyledElementImpl.h>
 
-namespace KSVG
+namespace WebCore
 {
     template<class T>
-    class SVGList : public KDOM::DOMList<T>
+    class SVGList : public DOMList<T>
     {
     public:
         SVGList(const SVGStyledElementImpl *context = 0)
-        : KDOM::DOMList<T>(), m_context(context) {}
+        : DOMList<T>(), m_context(context) {}
 
         void clear()
         {
-            KDOM::DOMList<T>::clear();
+            DOMList<T>::clear();
 
             if(m_context)
                 m_context->notifyAttributeChange();
@@ -47,7 +47,7 @@ namespace KSVG
 
         T *insertItemBefore(T *newItem, unsigned int index)
         {
-            T *ret = KDOM::DOMList<T>::insertItemBefore(newItem, index);
+            T *ret = DOMList<T>::insertItemBefore(newItem, index);
 
             if(m_context)
                 m_context->notifyAttributeChange();
@@ -57,7 +57,7 @@ namespace KSVG
 
         T *replaceItem(T *newItem, unsigned int index)
         {
-            T *ret = KDOM::DOMList<T>::replaceItem(newItem, index);
+            T *ret = DOMList<T>::replaceItem(newItem, index);
 
             if(m_context)
                 m_context->notifyAttributeChange();
@@ -67,7 +67,7 @@ namespace KSVG
 
         T *removeItem(unsigned int index)
         {
-            T *ret = KDOM::DOMList<T>::removeItem(index);
+            T *ret = DOMList<T>::removeItem(index);
 
             if(m_context)
                 m_context->notifyAttributeChange();
@@ -77,7 +77,7 @@ namespace KSVG
 
         T *appendItem(T *newItem)
         {
-            T *ret = KDOM::DOMList<T>::appendItem(newItem);
+            T *ret = DOMList<T>::appendItem(newItem);
 
             if(m_context)
                 m_context->notifyAttributeChange();

@@ -23,10 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#ifndef KCanvasPathQuartz_h
+#define KCanvasPathQuartz_h
+
 #include <kcanvas/KCanvasPath.h>
 
 typedef struct CGPath *CGMutablePathRef;
 typedef const struct CGPath *CGPathRef;
+
+namespace WebCore {
 
 class KCanvasPathQuartz : public KCanvasPath {
 public:
@@ -50,3 +55,7 @@ public:
 private:
     CGMutablePathRef m_cgPath;
 };
+
+}
+
+#endif

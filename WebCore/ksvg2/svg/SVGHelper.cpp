@@ -34,7 +34,7 @@
 
 #include <cmath>
 
-using namespace KSVG;
+using namespace WebCore;
 using namespace std;
 
 float SVGHelper::PercentageOfViewport(float value, const SVGElementImpl *viewportElement, LengthMode mode)
@@ -56,11 +56,11 @@ float SVGHelper::PercentageOfViewport(float value, const SVGElementImpl *viewpor
         {
             // TODO: Shouldn't w/h be multiplied with the percentage values?!
             // AFAIK, this assumes width & height == 100%, Rob??
-            KDOM::DocumentImpl *doc = svg->getDocument();
+            DocumentImpl *doc = svg->getDocument();
             if(doc->documentElement() == svg)
             {
                 // We have to ask the canvas for the full "canvas size"...
-                khtml::RenderCanvas *canvas = static_cast<khtml::RenderCanvas *>(doc->renderer());
+                RenderCanvas *canvas = static_cast<RenderCanvas *>(doc->renderer());
                 if(canvas)
                 {
                     width = canvas->viewportWidth(); // TODO: recheck!
@@ -96,7 +96,7 @@ void SVGHelper::ParseSeperatedList(SVGStringListImpl *list, const QString &data,
     QStringList::ConstIterator end = substrings.end();
     for(; it != end; ++it)
     {
-        KDOM::DOMStringImpl *string = new KDOM::DOMStringImpl(*it);
+        DOMStringImpl *string = new DOMStringImpl(*it);
         string->ref();
 
         list->appendItem(string);

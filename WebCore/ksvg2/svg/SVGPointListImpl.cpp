@@ -24,7 +24,7 @@
 #if SVG_SUPPORT
 #include "SVGPointListImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGPointListImpl::SVGPointListImpl(const SVGStyledElementImpl *context)
 : SVGList<SVGPointImpl>(context)

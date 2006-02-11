@@ -31,6 +31,8 @@
 #include "KCanvasTreeDebug.h"
 #include <kxmlcore/Assertions.h>
 
+namespace WebCore {
+
 void KCanvasPoint3F::normalize()
 {
     float length = sqrt(m_x * m_x + m_y * m_y + m_z * m_z);
@@ -77,7 +79,7 @@ QTextStream &KCanvasFilter::externalRepresentation(QTextStream &ts) const
     return ts;
 }
 
-KCanvasFilter *getFilterById(KDOM::DocumentImpl *document, const KDOM::AtomicString &id)
+KCanvasFilter *getFilterById(DocumentImpl *document, const AtomicString &id)
 {
     KCanvasResource *resource = getResourceById(document, id);
     if (resource && resource->isFilter())
@@ -478,13 +480,15 @@ KCanvasFEImage::~KCanvasFEImage()
         m_cachedImage->deref(this);
 }
 
-void KCanvasFEImage::setCachedImage(WebCore::CachedImage* image)
+void KCanvasFEImage::setCachedImage(CachedImage* image)
 {
     if (m_cachedImage)
         m_cachedImage->deref(this);
     m_cachedImage = image;
     if (m_cachedImage)
         m_cachedImage->ref(this);
+}
+
 }
 
 #endif // SVG_SUPPORT

@@ -35,26 +35,23 @@
 #include "render_object.h"
 
 namespace WebCore {
-    class FloatPoint;
-}
 
-namespace KSVG {
-    class SVGStyledElementImpl;
-};
+class FloatPoint;
+class SVGStyledElementImpl;
 
 class KCanvasPath;
 class KCanvasContainer;
 class KCanvasMatrix;
 
-class RenderPath : public khtml::RenderObject
+class RenderPath : public RenderObject
 {
 public:
-    RenderPath(khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node);
+    RenderPath(RenderStyle *style, SVGStyledElementImpl *node);
     virtual ~RenderPath();
 
     // Hit-detection seperated for the fill and the stroke
-    virtual bool fillContains(const WebCore::FloatPoint &p) const;
-    virtual bool strokeContains(const WebCore::FloatPoint &p) const;
+    virtual bool fillContains(const FloatPoint &p) const;
+    virtual bool strokeContains(const FloatPoint &p) const;
 
     // Returns an unscaled bounding box (not even including localTransform()) for this vector path
     virtual FloatRect relativeBBox(bool includeStroke = true) const;
@@ -75,7 +72,7 @@ public:
     virtual short baselinePosition(bool b, bool isRootLineBox = false) const;
     virtual void paint(PaintInfo&, int parentX, int parentY);
     
-    virtual bool nodeAtPoint(NodeInfo&, int x, int y, int tx, int ty, WebCore::HitTestAction);
+    virtual bool nodeAtPoint(NodeInfo&, int x, int y, int tx, int ty, HitTestAction);
 
 protected:
     virtual void drawMarkersIfNeeded(const FloatRect&, const KCanvasPath*) const = 0;
@@ -90,6 +87,8 @@ private:
 
 // Helper data structure
 typedef Q3ValueList<const RenderPath *> KCanvasItemList;
+
+}
 
 #endif // SVG_SUPPORT
 #endif

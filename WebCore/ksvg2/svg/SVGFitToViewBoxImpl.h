@@ -24,13 +24,13 @@
 #define KSVG_SVGFitToViewBoxImpl_H
 #if SVG_SUPPORT
 
-namespace KDOM
+namespace WebCore
 {
     class AttributeImpl;
     class DOMStringImpl;
 };
 
-namespace KSVG
+namespace WebCore
 {
     class SVGAnimatedRectImpl;
     class SVGAnimatedPreserveAspectRatioImpl;
@@ -45,10 +45,10 @@ namespace KSVG
         SVGAnimatedRectImpl *viewBox() const;
         SVGAnimatedPreserveAspectRatioImpl *preserveAspectRatio() const;
 
-        void parseViewBox(KDOM::DOMStringImpl *str);
+        void parseViewBox(DOMStringImpl *str);
         SVGMatrixImpl *viewBoxToViewTransform(float viewWidth, float viewHeight) const;
 
-        bool parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        bool parseMappedAttribute(MappedAttributeImpl *attr);
 
     private:
         mutable RefPtr<SVGAnimatedRectImpl> m_viewBox;

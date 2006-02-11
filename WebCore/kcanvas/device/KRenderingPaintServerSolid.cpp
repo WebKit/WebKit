@@ -27,10 +27,12 @@
 #include "KCanvasTreeDebug.h"
 
 // this is related to KRenderingPaintServer, but currently it doesn't have its own .cpp file
-QTextStream &operator<<(QTextStream &ts, const KRenderingPaintServer &ps)
+QTextStream &operator<<(QTextStream &ts, const WebCore::KRenderingPaintServer &ps)
 {
     return ps.externalRepresentation(ts);
 }
+
+namespace WebCore {
 
 class KRenderingPaintServerSolid::Private
 {
@@ -70,6 +72,8 @@ QTextStream &KRenderingPaintServerSolid::externalRepresentation(QTextStream &ts)
     ts << "[type=SOLID]"
         << " [color="<< color() << "]";
     return ts;
+}
+
 }
 
 // vim:ts=4:noet

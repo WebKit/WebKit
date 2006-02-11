@@ -98,9 +98,9 @@
 #include "SVGPathSegCurvetoCubicSmooth.h"
 #include "SVGPathSegCurvetoQuadraticSmooth.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
-Ecma::Ecma(KDOM::DocumentImpl *doc) : KDOM::Ecma(doc)
+Ecma::Ecma(DocumentImpl *doc) : Ecma(doc)
 {
 }
 
@@ -108,9 +108,9 @@ Ecma::~Ecma()
 {
 }
 
-void Ecma::setupDocument(KDOM::DocumentImpl *document)
+void Ecma::setupDocument(DocumentImpl *document)
 {
-    ASSERT(KDOM::DOMString(document->namespaceURI()) == NS_SVG)
+    ASSERT(DOMString(document->namespaceURI()) == NS_SVG)
     SVGDocumentImpl *svgDocument = static_cast<SVGDocumentImpl *>(document);
     
     // Create base bridge for document
@@ -122,20 +122,20 @@ void Ecma::setupDocument(KDOM::DocumentImpl *document)
     svgDocument->deref();
 }
 
-KJS::JSObject *Ecma::inheritedGetDOMNode(KJS::ExecState *exec, KDOM::Node n)
+KJS::JSObject *Ecma::inheritedGetDOMNode(KJS::ExecState *exec, Node n)
 {
     // Use svg element ids to distinguish between svg elements.
     KJS::JSObject *ret = 0;
 
-    KDOM::NodeImpl *nodeImpl = static_cast<KDOM::NodeImpl *>(n.handle());
+    NodeImpl *nodeImpl = static_cast<NodeImpl *>(n.handle());
     if(!nodeImpl)
         return ret;
 
-    if(nodeImpl->namespaceURI() != KDOM::NS_SVG)
+    if(nodeImpl->namespaceURI() != NS_SVG)
         return ret;
 
     // Special case for our document
-    if(n.nodeType() == KDOM::DOCUMENT_NODE)
+    if(n.nodeType() == DOCUMENT_NODE)
         return SVGDocument(n).bridge(exec);
 
     switch(nodeImpl->getIDAttribute())
@@ -365,14 +365,14 @@ KJS::JSObject *Ecma::inheritedGetDOMNode(KJS::ExecState *exec, KDOM::Node n)
     return ret;
 }
 
-KJS::JSObject *Ecma::inheritedGetDOMEvent(KJS::ExecState *exec, KDOM::Event e)
+KJS::JSObject *Ecma::inheritedGetDOMEvent(KJS::ExecState *exec, Event e)
 {
-    KDOM::EventImpl *eventImpl = e.handle();
+    EventImpl *eventImpl = e.handle();
     if(!eventImpl)
         return 0;
 
-    KDOM::EventImplType identifier = eventImpl->identifier();
-    if(identifier != KDOM::TypeLastEvent)
+    EventImplType identifier = eventImpl->identifier();
+    if(identifier != TypeLastEvent)
         return 0;
 
     SVGEventImpl *test1 = dynamic_cast<SVGEventImpl *>(eventImpl);
@@ -386,9 +386,9 @@ KJS::JSObject *Ecma::inheritedGetDOMEvent(KJS::ExecState *exec, KDOM::Event e)
     return 0;
 }
 
-KJS::JSObject *Ecma::inheritedGetDOMCSSValue(KJS::ExecState *exec, KDOM::CSSValue c)
+KJS::JSObject *Ecma::inheritedGetDOMCSSValue(KJS::ExecState *exec, CSSValue c)
 {
-    KDOM::CSSValueImpl *impl = c.handle();
+    CSSValueImpl *impl = c.handle();
 
     // Keep the order, as SVGPaintImpl inherits from SVGColorImpl...
     SVGPaintImpl *test1 = dynamic_cast<SVGPaintImpl *>(impl);
@@ -407,7 +407,7 @@ KJS::JSValue *KSVG::getSVGPathSeg(KJS::ExecState *exec, SVGPathSeg s)
     if(s == SVGPathSeg::null)
         return KJS::jsNull();
 
-    KDOM::ScriptInterpreter *interpreter = static_cast<KDOM::ScriptInterpreter *>(exec->interpreter());
+    ScriptInterpreter *interpreter = static_cast<ScriptInterpreter *>(exec->interpreter());
     if(!interpreter)
         return KJS::jsNull();
     

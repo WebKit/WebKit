@@ -23,7 +23,7 @@
 
 class QString;
 
-namespace KSVG
+namespace WebCore
 {
     const char *parseCoord(const char *ptr, double &number);
 

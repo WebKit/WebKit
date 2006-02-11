@@ -820,12 +820,12 @@ CGContextRef QPainter::currentContext()
 }
 
 #if SVG_SUPPORT
-KRenderingDeviceContext *QPainter::createRenderingDeviceContext()
+WebCore::KRenderingDeviceContext *QPainter::createRenderingDeviceContext()
 {
     return new KRenderingDeviceContextQuartz(currentContext());
 }
 
-KRenderingDevice *QPainter::renderingDevice()
+WebCore::KRenderingDevice *QPainter::renderingDevice()
 {
     static KRenderingDevice *sharedRenderingDevice = new KRenderingDeviceQuartz();
     return sharedRenderingDevice;

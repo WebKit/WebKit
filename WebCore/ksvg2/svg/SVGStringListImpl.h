@@ -28,9 +28,9 @@
 
 #include "SVGList.h"
 
-namespace KSVG
+namespace WebCore
 {
-    class SVGStringListImpl : public SVGList<KDOM::DOMStringImpl>
+    class SVGStringListImpl : public SVGList<DOMStringImpl>
     {
     public:
         SVGStringListImpl(const SVGStyledElementImpl *context = 0);

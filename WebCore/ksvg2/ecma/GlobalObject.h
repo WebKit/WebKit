@@ -25,17 +25,17 @@
 
 #include <kdom/ecma/GlobalObject.h>
 
-namespace KDOM
+namespace WebCore
 {
     class DocumentImpl;
 }
 
-namespace KSVG
+namespace WebCore
 {
-    class GlobalObject : public KDOM::GlobalObject
+    class GlobalObject : public GlobalObject
     {
     public:
-        GlobalObject(KDOM::DocumentImpl *doc);
+        GlobalObject(DocumentImpl *doc);
         virtual ~GlobalObject();
 
         virtual void afterTimeout() const;

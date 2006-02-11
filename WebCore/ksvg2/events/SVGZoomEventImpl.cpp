@@ -26,7 +26,7 @@
 #include "SVGPointImpl.h"
 #include "SVGZoomEventImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGZoomEventImpl::SVGZoomEventImpl()
 {

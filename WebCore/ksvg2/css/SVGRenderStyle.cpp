@@ -30,7 +30,7 @@
 #if SVG_SUPPORT
 #include "SVGRenderStyle.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGRenderStyle *SVGRenderStyle::s_defaultStyle = 0;
 

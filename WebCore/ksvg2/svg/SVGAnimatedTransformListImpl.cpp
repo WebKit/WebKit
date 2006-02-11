@@ -25,7 +25,7 @@
 #include "SVGTransformListImpl.h"
 #include "SVGAnimatedTransformListImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGAnimatedTransformListImpl::SVGAnimatedTransformListImpl(const SVGStyledElementImpl *context) : SVGAnimatedTemplate<SVGTransformListImpl>(context)
 {

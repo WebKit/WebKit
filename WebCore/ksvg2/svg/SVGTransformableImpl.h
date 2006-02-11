@@ -28,13 +28,13 @@
 
 class QMatrix;
 
-namespace KDOM {
+namespace WebCore {
     class NodeImpl;
     class AtomicString;
     class AttributeImpl;
 };
 
-namespace KSVG
+namespace WebCore
 {
     class SVGMatrixImpl;
     class SVGTransformListImpl;
@@ -51,7 +51,7 @@ namespace KSVG
         
         virtual void updateLocalTransform(SVGTransformListImpl *localTransforms) = 0;
         
-        static void parseTransformAttribute(SVGTransformListImpl *list, const KDOM::AtomicString& transform);
+        static void parseTransformAttribute(SVGTransformListImpl *list, const AtomicString& transform);
     };
 };
 

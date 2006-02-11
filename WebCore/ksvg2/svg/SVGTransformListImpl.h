@@ -27,7 +27,7 @@
 #include "SVGList.h"
 #include "SVGTransformImpl.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGTransformListImpl : public SVGList<SVGTransformImpl>
     {

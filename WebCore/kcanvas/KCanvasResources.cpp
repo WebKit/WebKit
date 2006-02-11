@@ -39,7 +39,9 @@
 #include "KCanvasTreeDebug.h"
 #include "DocumentImpl.h"
 
-QTextStream &operator<<(QTextStream &ts, const KCanvasResource &r) 
+namespace WebCore {
+
+QTextStream &operator<<(QTextStream &ts, const WebCore::KCanvasResource &r) 
 { 
     return r.externalRepresentation(ts); 
 }
@@ -146,7 +148,7 @@ QTextStream& KCanvasMasker::externalRepresentation(QTextStream &ts) const
 }
 
 // KCanvasMarker
-KCanvasMarker::KCanvasMarker(khtml::RenderObject *marker) : KCanvasResource()
+KCanvasMarker::KCanvasMarker(RenderObject *marker) : KCanvasResource()
 {
     m_refX = 0;
     m_refY = 0;
@@ -159,7 +161,7 @@ KCanvasMarker::~KCanvasMarker()
 {
 }
 
-void KCanvasMarker::setMarker(khtml::RenderObject *marker)
+void KCanvasMarker::setMarker(RenderObject *marker)
 {
     m_marker = marker;
 }
@@ -241,7 +243,7 @@ void KCanvasMarker::draw(const FloatRect &rect, double x, double y, double strok
         // FIXME: PaintInfo should be passed into this method instead.
         // FIXME: bounding box fractions lost
         QPainter p;
-        khtml::RenderObject::PaintInfo info(&p, enclosingIntRect(rect), WebCore::PaintActionForeground, 0);
+        RenderObject::PaintInfo info(&p, enclosingIntRect(rect), PaintActionForeground, 0);
         m_marker->setLocalTransform(rotation.multiply(translation).qmatrix());
         static_cast<KCanvasContainer *>(m_marker)->setDrawsContents(true);
         m_marker->paint(info, 0, 0);
@@ -261,20 +263,20 @@ QTextStream& KCanvasMarker::externalRepresentation(QTextStream &ts) const
     return ts;
 }
 
-KCanvasResource *getResourceById(KDOM::DocumentImpl *document, const KDOM::AtomicString &id)
+KCanvasResource *getResourceById(DocumentImpl *document, const AtomicString &id)
 {
     if (id.isEmpty())
         return 0;
-    KDOM::ElementImpl *element = document->getElementById(id);
-    KSVG::SVGElementImpl *svgElement = KSVG::svg_dynamic_cast(element);
+    ElementImpl *element = document->getElementById(id);
+    SVGElementImpl *svgElement = svg_dynamic_cast(element);
     if (svgElement && svgElement->isStyled())
-        return static_cast<KSVG::SVGStyledElementImpl *>(svgElement)->canvasResource();
+        return static_cast<SVGStyledElementImpl *>(svgElement)->canvasResource();
     else
         fprintf(stderr, "Failed to find resource with id: %s\n", id.qstring().ascii());
     return 0;
 }
 
-KCanvasMarker *getMarkerById(KDOM::DocumentImpl *document, const KDOM::AtomicString &id)
+KCanvasMarker *getMarkerById(DocumentImpl *document, const AtomicString &id)
 {
     KCanvasResource *resource = getResourceById(document, id);
     if (resource && resource->isMarker())
@@ -282,7 +284,7 @@ KCanvasMarker *getMarkerById(KDOM::DocumentImpl *document, const KDOM::AtomicStr
     return 0;
 }
 
-KCanvasClipper *getClipperById(KDOM::DocumentImpl *document, const KDOM::AtomicString &id)
+KCanvasClipper *getClipperById(DocumentImpl *document, const AtomicString &id)
 {
     KCanvasResource *resource = getResourceById(document, id);
     if (resource && resource->isClipper())
@@ -290,7 +292,7 @@ KCanvasClipper *getClipperById(KDOM::DocumentImpl *document, const KDOM::AtomicS
     return 0;
 }
 
-KCanvasMasker *getMaskerById(KDOM::DocumentImpl *document, const KDOM::AtomicString &id)
+KCanvasMasker *getMaskerById(DocumentImpl *document, const AtomicString &id)
 {
     KCanvasResource *resource = getResourceById(document, id);
     if (resource && resource->isMasker())
@@ -298,12 +300,14 @@ KCanvasMasker *getMaskerById(KDOM::DocumentImpl *document, const KDOM::AtomicStr
     return 0;
 }
 
-KRenderingPaintServer *getPaintServerById(KDOM::DocumentImpl *document, const KDOM::AtomicString &id)
+KRenderingPaintServer *getPaintServerById(DocumentImpl *document, const AtomicString &id)
 {
     KCanvasResource *resource = getResourceById(document, id);
     if (resource && resource->isPaintServer())
         return static_cast<KRenderingPaintServer *>(resource);
     return 0;
+}
+
 }
 
 // vim:ts=4:noet

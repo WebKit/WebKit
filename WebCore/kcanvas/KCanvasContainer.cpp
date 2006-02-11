@@ -27,6 +27,8 @@
 #include "KCanvasContainer.h"
 #include "SVGStyledElementImpl.h"
 
+namespace WebCore {
+
 class KCanvasContainer::Private
 {
 public:
@@ -38,8 +40,8 @@ public:
     QMatrix matrix;
 };
 
-KCanvasContainer::KCanvasContainer(KSVG::SVGStyledElementImpl *node)
-: khtml::RenderContainer(node), d(new Private())
+KCanvasContainer::KCanvasContainer(SVGStyledElementImpl *node)
+: RenderContainer(node), d(new Private())
 {
     setReplaced(true);
 }
@@ -71,10 +73,10 @@ void KCanvasContainer::setLocalTransform(const QMatrix &matrix)
 
 bool KCanvasContainer::fillContains(const FloatPoint &p) const
 {
-    khtml::RenderObject *current = firstChild();
-    for(; current != 0; current = current->nextSibling())
+    RenderObject *current = firstChild();
+    for (; current != 0; current = current->nextSibling())
     {
-        if(current->isRenderPath() && static_cast<RenderPath *>(current)->fillContains(p))
+        if (current->isRenderPath() && static_cast<RenderPath *>(current)->fillContains(p))
             return true;
     }
 
@@ -83,10 +85,10 @@ bool KCanvasContainer::fillContains(const FloatPoint &p) const
 
 bool KCanvasContainer::strokeContains(const FloatPoint &p) const
 {
-    khtml::RenderObject *current = firstChild();
-    for(; current != 0; current = current->nextSibling())
+    RenderObject *current = firstChild();
+    for (; current != 0; current = current->nextSibling())
     {
-        if(current->isRenderPath() && static_cast<RenderPath *>(current)->strokeContains(p))
+        if (current->isRenderPath() && static_cast<RenderPath *>(current)->strokeContains(p))
             return true;
     }
 
@@ -97,8 +99,8 @@ FloatRect KCanvasContainer::relativeBBox(bool includeStroke) const
 {
     FloatRect rect;
     
-    khtml::RenderObject *current = firstChild();
-    for(; current != 0; current = current->nextSibling()) {
+    RenderObject *current = firstChild();
+    for (; current != 0; current = current->nextSibling()) {
         FloatRect childBBox = current->relativeBBox(includeStroke);
         FloatRect mappedBBox = current->localTransform().mapRect(childBBox);
         rect.unite(mappedBBox);
@@ -131,35 +133,32 @@ KCanvasMatrix KCanvasContainer::getAspectRatio(const FloatRect logical, const Fl
     float vpar = logicWidth / logicHeight;
     float svgar = physWidth / physHeight;
 
-    if(align() == ALIGN_NONE)
-    {
+    if (align() == ALIGN_NONE) {
         temp.scale(physWidth / logicWidth, physHeight / logicHeight);
         temp.translate(-logicX, -logicY);
-    }
-    else if((vpar < svgar && !slice()) || (vpar >= svgar && slice()))
-    {
+    } else if ((vpar < svgar && !slice()) || (vpar >= svgar && slice())) {
         temp.scale(physHeight / logicHeight, physHeight / logicHeight);
 
-        if(align() == ALIGN_XMINYMIN || align() == ALIGN_XMINYMID || align() == ALIGN_XMINYMAX)
+        if (align() == ALIGN_XMINYMIN || align() == ALIGN_XMINYMID || align() == ALIGN_XMINYMAX)
             temp.translate(-logicX, -logicY);
-        else if(align() == ALIGN_XMIDYMIN || align() == ALIGN_XMIDYMID || align() == ALIGN_XMIDYMAX)
+        else if (align() == ALIGN_XMIDYMIN || align() == ALIGN_XMIDYMID || align() == ALIGN_XMIDYMAX)
             temp.translate(-logicX - (logicWidth - physWidth * logicHeight / physHeight) / 2, -logicY);
         else
             temp.translate(-logicX - (logicWidth - physWidth * logicHeight / physHeight), -logicY);
-    }
-    else
-    {
+    } else {
         temp.scale(physWidth / logicWidth, physWidth / logicWidth);
 
-        if(align() == ALIGN_XMINYMIN || align() == ALIGN_XMIDYMIN || align() == ALIGN_XMAXYMIN)
+        if (align() == ALIGN_XMINYMIN || align() == ALIGN_XMIDYMIN || align() == ALIGN_XMAXYMIN)
             temp.translate(-logicX, -logicY);
-        else if(align() == ALIGN_XMINYMID || align() == ALIGN_XMIDYMID || align() == ALIGN_XMAXYMID)
+        else if (align() == ALIGN_XMINYMID || align() == ALIGN_XMIDYMID || align() == ALIGN_XMAXYMID)
             temp.translate(-logicX, -logicY - (logicHeight - physHeight * logicWidth / physWidth) / 2);
         else
             temp.translate(-logicX, -logicY - (logicHeight - physHeight * logicWidth / physWidth));
     }
 
     return temp;
+}
+
 }
 
 // vim:ts=4:noet

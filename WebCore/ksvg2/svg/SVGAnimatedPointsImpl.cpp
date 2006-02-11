@@ -24,7 +24,7 @@
 #if SVG_SUPPORT
 #include "SVGAnimatedPointsImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGAnimatedPointsImpl::SVGAnimatedPointsImpl()
 {

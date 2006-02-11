@@ -42,9 +42,9 @@
 #include "SVGAnimatedNumberListImpl.h"
 #include "SVGDOMImplementationImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGFEColorMatrixElementImpl::SVGFEColorMatrixElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : 
+SVGFEColorMatrixElementImpl::SVGFEColorMatrixElementImpl(const QualifiedName& tagName, DocumentImpl *doc) : 
 SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 {
     m_filterEffect = 0;
@@ -73,9 +73,9 @@ SVGAnimatedNumberListImpl *SVGFEColorMatrixElementImpl::values() const
     return lazy_create<SVGAnimatedNumberListImpl>(m_values, dummy);
 }
 
-void SVGFEColorMatrixElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
+void SVGFEColorMatrixElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    KDOM::DOMString value(attr->value());
+    DOMString value(attr->value());
     if (attr->name() == SVGNames::typeAttr)
     {
         if(value == "matrix")
@@ -102,7 +102,7 @@ KCanvasFEColorMatrix *SVGFEColorMatrixElementImpl::filterEffect() const
     if (!m_filterEffect)
         return 0;
         
-    m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).qstring());
+    m_filterEffect->setIn(DOMString(in1()->baseVal()).qstring());
     setStandardAttributes(m_filterEffect);
     Q3ValueList<float> _values;
     SVGNumberListImpl *numbers = values()->baseVal();

@@ -23,7 +23,7 @@
 #include <QString.h>
 #include <math.h>
 
-using namespace KSVG;
+using namespace WebCore;
 
 const char *KSVG::parseCoord(const char *ptr, double &number)
 {

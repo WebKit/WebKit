@@ -29,7 +29,7 @@
 #include "SVGSVGElementImpl.h"
 #include "SVGNumberListImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGNumberListImpl::SVGNumberListImpl(const SVGStyledElementImpl *context)
 : SVGList<SVGNumberImpl>(context)

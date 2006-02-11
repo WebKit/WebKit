@@ -24,7 +24,7 @@
 #if SVG_SUPPORT
 #include "SVGAnimatedLengthImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGAnimatedLengthImpl::SVGAnimatedLengthImpl(const SVGStyledElementImpl *context, LengthMode mode, const SVGElementImpl *viewport) : SVGAnimatedTemplate<SVGLengthImpl>(context)
 {

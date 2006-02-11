@@ -23,7 +23,7 @@
 #if SVG_SUPPORT
 #include "SVGAnimatedColorImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGAnimatedColorImpl::SVGAnimatedColorImpl(const SVGStyledElementImpl *context)
 : SVGAnimatedTemplate<SVGColorImpl>(context)

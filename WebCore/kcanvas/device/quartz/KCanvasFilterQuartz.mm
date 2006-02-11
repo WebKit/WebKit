@@ -47,6 +47,8 @@
 
 #import <kxmlcore/Assertions.h>
 
+namespace WebCore {
+
 static QString KCPreviousFilterOutputName = "__previousOutput__";
 
 static inline CIColor *ciColor(const Color &c)
@@ -656,5 +658,7 @@ CIFilter *KCanvasFETileQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) co
     FE_QUARTZ_SETUP_INPUT(@"CIAffineTile");
     FE_QUARTZ_OUTPUT_RETURN;
 }
-#endif // SVG_SUPPORT
 
+}
+
+#endif // SVG_SUPPORT

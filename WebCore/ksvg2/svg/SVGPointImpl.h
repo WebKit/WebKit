@@ -30,7 +30,7 @@ namespace WebCore {
 class IntPoint;
 }
 
-namespace KSVG
+namespace WebCore
 {
     class SVGMatrixImpl;
     class SVGStyledElementImpl;

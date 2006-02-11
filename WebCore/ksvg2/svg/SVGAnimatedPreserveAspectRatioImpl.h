@@ -29,7 +29,7 @@
 #include "SVGAnimatedTemplate.h"
 #include "SVGPreserveAspectRatioImpl.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGAnimatedPreserveAspectRatioImpl : public SVGAnimatedTemplate<SVGPreserveAspectRatioImpl>
     {

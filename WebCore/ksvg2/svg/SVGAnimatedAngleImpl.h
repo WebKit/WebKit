@@ -27,7 +27,7 @@
 #include "SVGAngleImpl.h"
 #include "SVGAnimatedTemplate.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGAnimatedAngleImpl : public SVGAnimatedTemplate<SVGAngleImpl>
     {

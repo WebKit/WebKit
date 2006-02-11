@@ -27,7 +27,7 @@
 #include "SVGList.h"
 #include "SVGElementInstanceImpl.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGElementInstanceListImpl : public SVGList<SVGElementInstanceImpl>
     {

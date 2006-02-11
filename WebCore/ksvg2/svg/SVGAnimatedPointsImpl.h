@@ -24,7 +24,7 @@
 #define KSVG_SVGAnimatedPointsImpl_H
 #if SVG_SUPPORT
 
-namespace KSVG
+namespace WebCore
 {
     class SVGPointListImpl;
     class SVGAnimatedPointsImpl

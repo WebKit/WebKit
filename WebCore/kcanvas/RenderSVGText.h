@@ -27,14 +27,14 @@
 #include "RenderBlock.h"
 #include <qmatrix.h>
 
-namespace KSVG {
-    class SVGTextElementImpl;
-}
+namespace WebCore {
 
-class RenderSVGText : public khtml::RenderBlock
+class SVGTextElementImpl;
+
+class RenderSVGText : public RenderBlock
 {
 public:
-    RenderSVGText(KSVG::SVGTextElementImpl *node);
+    RenderSVGText(SVGTextElementImpl *node);
 
     const char *renderName() const { return "RenderSVGText"; }
     void paint(PaintInfo&, int parentX, int parentY);
@@ -49,6 +49,8 @@ public:
     QMatrix translationForAttributes();
     QMatrix m_transform;
 };
+
+}
 
 #endif // SVG_SUPPORT
 #endif

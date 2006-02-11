@@ -29,31 +29,31 @@
 #include "StringImpl.h"
 #include "css_valueimpl.h"
 
-namespace KDOM
+namespace WebCore
 {
     class RGBColorImpl;
 };
 
-namespace KSVG
+namespace WebCore
 {
-    class SVGColorImpl : public KDOM::CSSValueImpl
+    class SVGColorImpl : public CSSValueImpl
     {
     public:
         SVGColorImpl();
-        SVGColorImpl(KDOM::DOMStringImpl *rgbColor);
+        SVGColorImpl(DOMStringImpl *rgbColor);
         SVGColorImpl(unsigned short colorType);
         virtual ~SVGColorImpl();
 
         // 'SVGColor' functions
         unsigned short colorType() const;
 
-        KDOM::RGBColorImpl *rgbColor() const;
+        RGBColorImpl *rgbColor() const;
 
-        void setRGBColor(KDOM::DOMStringImpl *rgbColor);
-        void setRGBColorICCColor(KDOM::DOMStringImpl *rgbColor, KDOM::DOMStringImpl *iccColor);
-        void setColor(unsigned short colorType, KDOM::DOMStringImpl *rgbColor, KDOM::DOMStringImpl *iccColor);
+        void setRGBColor(DOMStringImpl *rgbColor);
+        void setRGBColorICCColor(DOMStringImpl *rgbColor, DOMStringImpl *iccColor);
+        void setColor(unsigned short colorType, DOMStringImpl *rgbColor, DOMStringImpl *iccColor);
 
-        virtual KDOM::DOMString cssText() const;
+        virtual DOMString cssText() const;
 
         // Helpers
         const Color &color() const;
@@ -61,7 +61,7 @@ namespace KSVG
     private:    
         Color m_qColor;
         unsigned short m_colorType;
-        KDOM::DOMString m_rgbColor;
+        DOMString m_rgbColor;
     };
 };
 

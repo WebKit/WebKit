@@ -31,9 +31,9 @@
 
 #include <QString.h>
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGStyleElementImpl::SVGStyleElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : SVGElementImpl(tagName, doc)
+SVGStyleElementImpl::SVGStyleElementImpl(const QualifiedName& tagName, DocumentImpl *doc) : SVGElementImpl(tagName, doc)
 {
     m_loading = false;
 }
@@ -42,47 +42,47 @@ SVGStyleElementImpl::~SVGStyleElementImpl()
 {
 }
 
-KDOM::AtomicString SVGStyleElementImpl::xmlspace() const
+AtomicString SVGStyleElementImpl::xmlspace() const
 {
     return tryGetAttribute("xml:space");
 }
 
-void SVGStyleElementImpl::setXmlspace(const KDOM::AtomicString&, int &exceptioncode)
+void SVGStyleElementImpl::setXmlspace(const AtomicString&, int &exceptioncode)
 {
-    exceptioncode = KDOM::NO_MODIFICATION_ALLOWED_ERR;
+    exceptioncode = NO_MODIFICATION_ALLOWED_ERR;
 }
 
-KDOM::AtomicString SVGStyleElementImpl::type() const
+AtomicString SVGStyleElementImpl::type() const
 {
     return tryGetAttribute("type", "text/css");
 }
 
-void SVGStyleElementImpl::setType(const KDOM::AtomicString&, int &exceptioncode)
+void SVGStyleElementImpl::setType(const AtomicString&, int &exceptioncode)
 {
-    exceptioncode = KDOM::NO_MODIFICATION_ALLOWED_ERR;
+    exceptioncode = NO_MODIFICATION_ALLOWED_ERR;
 }
 
-KDOM::AtomicString SVGStyleElementImpl::media() const
+AtomicString SVGStyleElementImpl::media() const
 {
     return tryGetAttribute("media", "all");
 }
 
-void SVGStyleElementImpl::setMedia(const KDOM::AtomicString&, int& exceptioncode)
+void SVGStyleElementImpl::setMedia(const AtomicString&, int& exceptioncode)
 {
-    exceptioncode = KDOM::NO_MODIFICATION_ALLOWED_ERR;
+    exceptioncode = NO_MODIFICATION_ALLOWED_ERR;
 }
 
-KDOM::AtomicString SVGStyleElementImpl::title() const
+AtomicString SVGStyleElementImpl::title() const
 {
     return tryGetAttribute("title");
 }
 
-void SVGStyleElementImpl::setTitle(const KDOM::AtomicString&, int& exceptioncode)
+void SVGStyleElementImpl::setTitle(const AtomicString&, int& exceptioncode)
 {
-    exceptioncode = KDOM::NO_MODIFICATION_ALLOWED_ERR;
+    exceptioncode = NO_MODIFICATION_ALLOWED_ERR;
 }
 
-KDOM::CSSStyleSheetImpl *SVGStyleElementImpl::sheet()
+CSSStyleSheetImpl *SVGStyleElementImpl::sheet()
 {
     return m_sheet.get();
 }
@@ -95,7 +95,7 @@ void SVGStyleElementImpl::childrenChanged()
         m_sheet = 0;
 
     m_loading = false;
-    const KDOM::AtomicString &mediaDomString = media();
+    const AtomicString &mediaDomString = media();
     QString _media = mediaDomString.qstring();
     if((type().isEmpty() || type() == "text/css") && (_media.isNull() ||
         _media.contains(QString::fromLatin1("screen")) ||
@@ -106,10 +106,10 @@ void SVGStyleElementImpl::childrenChanged()
 
         m_loading = true;
  
-        m_sheet = new KDOM::CSSStyleSheetImpl(this);
+        m_sheet = new CSSStyleSheetImpl(this);
         m_sheet->parseString(textContent(), false);//!getDocument()->inCompatMode());
 
-        KDOM::MediaListImpl *mediaList = new KDOM::MediaListImpl(m_sheet.get(), mediaDomString);
+        MediaListImpl *mediaList = new MediaListImpl(m_sheet.get(), mediaDomString);
         m_sheet->setMedia(mediaList);
         m_loading = false;
     }

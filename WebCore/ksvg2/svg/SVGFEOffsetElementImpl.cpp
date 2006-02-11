@@ -39,9 +39,9 @@
 #include "SVGAnimatedStringImpl.h"
 #include "SVGDOMImplementationImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGFEOffsetElementImpl::SVGFEOffsetElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : 
+SVGFEOffsetElementImpl::SVGFEOffsetElementImpl(const QualifiedName& tagName, DocumentImpl *doc) : 
 SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 {
     m_filterEffect = 0;
@@ -70,9 +70,9 @@ SVGAnimatedNumberImpl *SVGFEOffsetElementImpl::dy() const
     return lazy_create<SVGAnimatedNumberImpl>(m_dy, dummy);
 }
 
-void SVGFEOffsetElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
+void SVGFEOffsetElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    KDOM::DOMString value(attr->value());
+    DOMString value(attr->value());
     if (attr->name() == SVGNames::dxAttr)
         dx()->setBaseVal(value.qstring().toDouble());
     else if (attr->name() == SVGNames::dyAttr)
@@ -89,7 +89,7 @@ KCanvasFEOffset *SVGFEOffsetElementImpl::filterEffect() const
         m_filterEffect = static_cast<KCanvasFEOffset *>(QPainter::renderingDevice()->createFilterEffect(FE_OFFSET));
     if (!m_filterEffect)
         return 0;
-    m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).qstring());
+    m_filterEffect->setIn(DOMString(in1()->baseVal()).qstring());
     setStandardAttributes(m_filterEffect);
     m_filterEffect->setDx(dx()->baseVal());
     m_filterEffect->setDy(dy()->baseVal());

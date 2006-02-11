@@ -29,7 +29,7 @@
 
 #include "ksvg.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGPathElementImpl;
     class SVGStyledElementImpl;
@@ -40,7 +40,7 @@ namespace KSVG
         virtual ~SVGPathSegImpl();
 
         virtual unsigned short pathSegType() const { return PATHSEG_UNKNOWN; }
-        virtual KDOM::DOMStringImpl *pathSegTypeAsLetter() const { return new KDOM::DOMStringImpl(""); }
+        virtual DOMStringImpl *pathSegTypeAsLetter() const { return new DOMStringImpl(""); }
         virtual QString toString() const { return QString::fromLatin1(""); }
 
     protected:

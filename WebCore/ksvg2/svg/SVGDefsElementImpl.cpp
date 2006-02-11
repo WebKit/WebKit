@@ -24,9 +24,9 @@
 #if SVG_SUPPORT
 #include "SVGDefsElementImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGDefsElementImpl::SVGDefsElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : SVGStyledTransformableElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
+SVGDefsElementImpl::SVGDefsElementImpl(const QualifiedName& tagName, DocumentImpl *doc) : SVGStyledTransformableElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
 {
 }
 

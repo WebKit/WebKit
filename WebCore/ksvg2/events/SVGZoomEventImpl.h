@@ -26,11 +26,11 @@
 
 #include <kdom/events/UIEventImpl.h>
 
-namespace KSVG
+namespace WebCore
 {
     class SVGRectImpl;
     class SVGPointImpl;
-    class SVGZoomEventImpl : public KDOM::UIEventImpl
+    class SVGZoomEventImpl : public UIEventImpl
     {
     public:
         SVGZoomEventImpl();

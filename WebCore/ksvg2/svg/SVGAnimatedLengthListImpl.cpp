@@ -25,7 +25,7 @@
 #include "SVGLengthListImpl.h"
 #include "SVGAnimatedLengthListImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGAnimatedLengthListImpl::SVGAnimatedLengthListImpl(const SVGStyledElementImpl *context) : SVGAnimatedTemplate<SVGLengthListImpl>(context)
 {

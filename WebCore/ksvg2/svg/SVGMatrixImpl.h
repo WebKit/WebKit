@@ -28,7 +28,7 @@
 
 #include "Shared.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGMatrixImpl : public Shared<SVGMatrixImpl>
     { 

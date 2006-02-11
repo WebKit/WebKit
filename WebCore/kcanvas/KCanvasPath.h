@@ -31,21 +31,17 @@
 #include "Shared.h"
 #include "FloatRect.h"
 
-class KRenderingStrokePainter;
-
-namespace WebCore {
-    class RenderStyle;
-}
-
 class QTextStream;
 
-typedef enum
-{
+namespace WebCore {
+
+class KRenderingStrokePainter;
+class RenderStyle;
+
+enum KCWindRule {
     RULE_NONZERO = 0,
     RULE_EVENODD = 1
-} KCWindRule;
-
-QTextStream &operator<<(QTextStream &ts, KCWindRule rule);
+};
 
 // Path related data structures
 typedef enum
@@ -82,8 +78,6 @@ struct KCClipData
     RefPtr<KCanvasPath> path;
 };
 
-QTextStream &operator<<(QTextStream &ts, const KCClipData &d);
-
 class KCClipDataList : public Q3ValueList<KCClipData>
 {
 public:
@@ -99,6 +93,11 @@ public:
         append(clipData);
     }
 };
+
+QTextStream &operator<<(QTextStream &ts, KCWindRule rule);
+QTextStream &operator<<(QTextStream &ts, const KCClipData &d);
+
+}
 
 #endif // SVG_SUPPORT
 #endif

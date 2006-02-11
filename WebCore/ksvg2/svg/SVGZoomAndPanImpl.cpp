@@ -29,7 +29,7 @@
 #include "SVGHelper.h"
 #include "SVGZoomAndPanImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGZoomAndPanImpl::SVGZoomAndPanImpl()
 {
@@ -50,9 +50,9 @@ void SVGZoomAndPanImpl::setZoomAndPan(unsigned short zoomAndPan)
     m_zoomAndPan = zoomAndPan;
 }
 
-bool SVGZoomAndPanImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
+bool SVGZoomAndPanImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    KDOM::DOMString value(attr->value());
+    DOMString value(attr->value());
     if (attr->name() == SVGNames::zoomAndPanAttr) {
         if(value == "disable")
             setZoomAndPan(SVG_ZOOMANDPAN_DISABLE);

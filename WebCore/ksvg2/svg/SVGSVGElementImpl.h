@@ -33,12 +33,12 @@
 #include "SVGStyledLocatableElementImpl.h"
 #include "SVGExternalResourcesRequiredImpl.h"
 
-namespace KDOM
+namespace WebCore
 {
     class DocumentPtr;
 };
 
-namespace KSVG
+namespace WebCore
 {
     class SVGRectImpl;
     class SVGAngleImpl;
@@ -57,7 +57,7 @@ namespace KSVG
                               public SVGZoomAndPanImpl
     {
     public:
-        SVGSVGElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGSVGElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGSVGElementImpl();
 
         virtual bool isSVG() const { return true; }
@@ -70,11 +70,11 @@ namespace KSVG
         SVGAnimatedLengthImpl *width() const;
         SVGAnimatedLengthImpl *height() const;
 
-        KDOM::AtomicString contentScriptType() const;
-        void setContentScriptType(const KDOM::AtomicString& type);
+        AtomicString contentScriptType() const;
+        void setContentScriptType(const AtomicString& type);
 
-        KDOM::AtomicString contentStyleType() const;
-        void setContentStyleType(const KDOM::AtomicString& type);
+        AtomicString contentStyleType() const;
+        void setContentStyleType(const AtomicString& type);
 
         SVGRectImpl *viewport() const;
 
@@ -98,8 +98,8 @@ namespace KSVG
         void unsuspendRedrawAll();
         void forceRedraw();
 
-        KDOM::NodeListImpl *getIntersectionList(SVGRectImpl *rect, SVGElementImpl *referenceElement);
-        KDOM::NodeListImpl *getEnclosureList(SVGRectImpl *rect, SVGElementImpl *referenceElement);
+        NodeListImpl *getIntersectionList(SVGRectImpl *rect, SVGElementImpl *referenceElement);
+        NodeListImpl *getEnclosureList(SVGRectImpl *rect, SVGElementImpl *referenceElement);
         bool checkIntersection(SVGElementImpl *element, SVGRectImpl *rect);
         bool checkEnclosure(SVGElementImpl *element, SVGRectImpl *rect);
         void deselectAll();
@@ -113,14 +113,14 @@ namespace KSVG
         static SVGTransformImpl *createSVGTransform();
         static SVGTransformImpl *createSVGTransformFromMatrix(SVGMatrixImpl *matrix);
 
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
         // 'virtual SVGLocatable' functions
         virtual SVGMatrixImpl *getCTM() const;
         virtual SVGMatrixImpl *getScreenCTM() const;
 
-        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
-        virtual khtml::RenderObject *createRenderer(RenderArena *arena, khtml::RenderStyle *style);
+        virtual bool rendererIsNeeded(RenderStyle *) { return true; }
+        virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
 
         // 'virtual SVGZoomAndPan functions
         virtual void setZoomAndPan(unsigned short zoomAndPan);

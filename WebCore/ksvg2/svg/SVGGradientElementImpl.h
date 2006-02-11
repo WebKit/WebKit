@@ -30,8 +30,7 @@
 
 #include "KRenderingPaintServerGradient.h"
 
-namespace KSVG
-{
+namespace WebCore {
     class SVGGradientElementImpl;
     class SVGAnimatedEnumerationImpl;
     class SVGAnimatedTransformListImpl;
@@ -41,7 +40,7 @@ namespace KSVG
                                    public KCanvasResourceListener
     {
     public:
-        SVGGradientElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGGradientElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGGradientElementImpl();
 
         // 'SVGGradientElement' functions
@@ -49,7 +48,7 @@ namespace KSVG
         SVGAnimatedTransformListImpl *gradientTransform() const;
         SVGAnimatedEnumerationImpl *spreadMethod() const;
 
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
         virtual void notifyAttributeChange() const;
         
         virtual KRenderingPaintServerGradient *canvasResource();

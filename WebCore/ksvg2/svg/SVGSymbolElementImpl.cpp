@@ -28,9 +28,9 @@
 #include "SVGSymbolElementImpl.h"
 #include "SVGFitToViewBoxImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGSymbolElementImpl::SVGSymbolElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+SVGSymbolElementImpl::SVGSymbolElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
 : SVGStyledElementImpl(tagName, doc), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl(), SVGFitToViewBoxImpl()
 {
 }
@@ -39,7 +39,7 @@ SVGSymbolElementImpl::~SVGSymbolElementImpl()
 {
 }
 
-void SVGSymbolElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
+void SVGSymbolElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     if(SVGLangSpaceImpl::parseMappedAttribute(attr)) return;
     if(SVGExternalResourcesRequiredImpl::parseMappedAttribute(attr)) return;

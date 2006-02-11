@@ -28,10 +28,10 @@
 #import "KCanvasRenderingStyle.h" // for all the CAP_BUTT contstants, etc.
 
 namespace WebCore {
-    class IntRect;
-    class RenderStyle;
-    class RenderObject;
-}
+
+class IntRect;
+class RenderStyle;
+class RenderObject;
 
 #ifndef NDEBUG
 void debugDumpCGImageToFile(NSString *filename, CGImageRef image, int width, int height);
@@ -44,7 +44,7 @@ CFStringRef CFStringFromCGAffineTransform(CGAffineTransform t);
 CGAffineTransform CGAffineTransformMakeMapBetweenRects(CGRect source, CGRect dest);
 
 void applyStrokeStyleToContext(CGContextRef, const KRenderingStrokePainter&);
-void applyStrokeStyleToContext(CGContextRef, WebCore::RenderStyle*, const WebCore::RenderObject*);
+void applyStrokeStyleToContext(CGContextRef, RenderStyle*, const RenderObject*);
 
 static inline CGLineCap CGLineCapFromKC(KCCapStyle cap)
 {
@@ -73,6 +73,8 @@ static inline CGLineJoin CGLineJoinFromKC(KCJoinStyle join)
 static inline CGPoint CGPointSubtractPoints(CGPoint a, CGPoint b)
 {
     return CGPointMake(a.x - b.x, a.y - b.y);
+}
+
 }
 
 #endif // SVG_SUPPORT

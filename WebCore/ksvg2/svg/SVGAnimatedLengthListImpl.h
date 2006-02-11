@@ -29,7 +29,7 @@
 #include "SVGAnimatedTemplate.h"
 #include "SVGLengthListImpl.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGAnimatedLengthListImpl : public SVGAnimatedTemplate<SVGLengthListImpl>
     {

@@ -36,9 +36,9 @@
 #include "SVGAnimatedNumberListImpl.h"
 #include "SVGDOMImplementationImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGComponentTransferFunctionElementImpl::SVGComponentTransferFunctionElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : 
+SVGComponentTransferFunctionElementImpl::SVGComponentTransferFunctionElementImpl(const QualifiedName& tagName, DocumentImpl *doc) : 
 SVGElementImpl(tagName, doc)
 {
 }
@@ -89,9 +89,9 @@ SVGAnimatedNumberImpl *SVGComponentTransferFunctionElementImpl::offset() const
     return lazy_create<SVGAnimatedNumberImpl>(m_offset, dummy);
 }
 
-void SVGComponentTransferFunctionElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
+void SVGComponentTransferFunctionElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    KDOM::DOMString value(attr->value());
+    DOMString value(attr->value());
     if (attr->name() == SVGNames::typeAttr)
     {
         if(value == "identity")

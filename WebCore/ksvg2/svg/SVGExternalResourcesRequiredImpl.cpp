@@ -30,7 +30,7 @@
 #include "SVGAnimatedBooleanImpl.h"
 #include "SVGExternalResourcesRequiredImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGExternalResourcesRequiredImpl::SVGExternalResourcesRequiredImpl()
 {
@@ -45,9 +45,9 @@ SVGAnimatedBooleanImpl *SVGExternalResourcesRequiredImpl::externalResourcesRequi
     return lazy_create<SVGAnimatedBooleanImpl>(m_external, static_cast<const SVGStyledElementImpl *>(0));
 }
 
-bool SVGExternalResourcesRequiredImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
+bool SVGExternalResourcesRequiredImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    KDOM::DOMString value(attr->value());
+    DOMString value(attr->value());
     if (attr->name() == SVGNames::externalResourcesRequiredAttr) {
         externalResourcesRequired()->setBaseVal(value == "true");
         return true;

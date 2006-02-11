@@ -24,7 +24,7 @@
 #if SVG_SUPPORT
 #include "SVGAnimatedRectImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGAnimatedRectImpl::SVGAnimatedRectImpl(const SVGStyledElementImpl *context) : SVGAnimatedTemplate<SVGRectImpl>(context)
 {

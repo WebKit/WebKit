@@ -31,7 +31,7 @@
 #include "SVGAnimatedPointsImpl.h"
 #include "SVGExternalResourcesRequiredImpl.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGPolyElementImpl :  public SVGStyledTransformableElementImpl,
                                 public SVGTestsImpl,
@@ -41,7 +41,7 @@ namespace KSVG
                                 public SVGPolyParser
     {
     public:
-        SVGPolyElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGPolyElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGPolyElementImpl();
         
         virtual bool isValid() const { return SVGTestsImpl::isValid(); }
@@ -50,9 +50,9 @@ namespace KSVG
         virtual SVGPointListImpl *points() const;
         virtual SVGPointListImpl *animatedPoints() const;
 
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
  
-        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
+        virtual bool rendererIsNeeded(RenderStyle *) { return true; }
 
         virtual void notifyAttributeChange() const;
 

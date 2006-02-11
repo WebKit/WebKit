@@ -24,7 +24,7 @@
 #define KSVG_SVGAnimatedPathDataImpl_H
 #if SVG_SUPPORT
 
-namespace KSVG
+namespace WebCore
 {
     class SVGPathSegListImpl;
     class SVGAnimatedPathDataImpl

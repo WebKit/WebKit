@@ -25,14 +25,14 @@
 #include "ksvg.h"
 #include "SVGPaintImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGPaintImpl::SVGPaintImpl() : SVGColorImpl()
 {
     m_paintType = SVG_PAINTTYPE_UNKNOWN;
 }
 
-SVGPaintImpl::SVGPaintImpl(KDOM::DOMStringImpl *uri) : SVGColorImpl()
+SVGPaintImpl::SVGPaintImpl(DOMStringImpl *uri) : SVGColorImpl()
 {
     m_paintType = SVG_PAINTTYPE_URI;
     setUri(uri);
@@ -43,7 +43,7 @@ SVGPaintImpl::SVGPaintImpl(unsigned short paintType) : SVGColorImpl()
     m_paintType = paintType;
 }
 
-SVGPaintImpl::SVGPaintImpl(unsigned short paintType, KDOM::DOMStringImpl *uri, KDOM::DOMStringImpl *rgbPaint, KDOM::DOMStringImpl *) : SVGColorImpl(rgbPaint)
+SVGPaintImpl::SVGPaintImpl(unsigned short paintType, DOMStringImpl *uri, DOMStringImpl *rgbPaint, DOMStringImpl *) : SVGColorImpl(rgbPaint)
 {
     m_paintType = paintType;
     setUri(uri);
@@ -58,17 +58,17 @@ unsigned short SVGPaintImpl::paintType() const
     return m_paintType;
 }
 
-KDOM::DOMStringImpl *SVGPaintImpl::uri() const
+DOMStringImpl *SVGPaintImpl::uri() const
 {
     return m_uri.impl();
 }
 
-void SVGPaintImpl::setUri(KDOM::DOMStringImpl *uri)
+void SVGPaintImpl::setUri(DOMStringImpl *uri)
 {
     m_uri = uri;
 }
 
-void SVGPaintImpl::setPaint(unsigned short paintType, KDOM::DOMStringImpl *uri, KDOM::DOMStringImpl *rgbPaint, KDOM::DOMStringImpl *)
+void SVGPaintImpl::setPaint(unsigned short paintType, DOMStringImpl *uri, DOMStringImpl *rgbPaint, DOMStringImpl *)
 {
     m_paintType = paintType;
 
@@ -78,14 +78,14 @@ void SVGPaintImpl::setPaint(unsigned short paintType, KDOM::DOMStringImpl *uri, 
         setRGBColor(rgbPaint);
 }
 
-KDOM::DOMString SVGPaintImpl::cssText() const
+DOMString SVGPaintImpl::cssText() const
 {
     if(m_paintType == SVG_PAINTTYPE_NONE)
         return "none";
     else if(m_paintType == SVG_PAINTTYPE_CURRENTCOLOR)
         return "currentColor";
     else if(m_paintType == SVG_PAINTTYPE_URI)
-        return KDOM::DOMString(QString::fromLatin1("url(") + m_uri.qstring() + QString::fromLatin1(")"));
+        return DOMString(QString::fromLatin1("url(") + m_uri.qstring() + QString::fromLatin1(")"));
 
     return SVGColorImpl::cssText();
 }

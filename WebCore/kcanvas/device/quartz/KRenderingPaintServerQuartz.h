@@ -30,6 +30,8 @@
 #import <kcanvas/device/KRenderingPaintServerPattern.h>
 #import <kcanvas/device/KRenderingPaintServerGradient.h>
 
+namespace WebCore {
+
 class KCanvasImage;
 
 class KRenderingPaintServerQuartzHelper {
@@ -44,8 +46,8 @@ class KRenderingPaintServerSolidQuartz : public KRenderingPaintServerSolid {
 public:
     KRenderingPaintServerSolidQuartz() {};
     virtual void draw(KRenderingDeviceContext*, const RenderPath*, KCPaintTargetType) const;
-    virtual bool setup(KRenderingDeviceContext*, const WebCore::RenderObject*, KCPaintTargetType) const;
-    virtual void teardown(KRenderingDeviceContext*, const WebCore::RenderObject*, KCPaintTargetType) const;
+    virtual bool setup(KRenderingDeviceContext*, const RenderObject*, KCPaintTargetType) const;
+    virtual void teardown(KRenderingDeviceContext*, const RenderObject*, KCPaintTargetType) const;
 protected:
     virtual void renderPath(KRenderingDeviceContext*, const RenderPath*, KCPaintTargetType) const;
 };
@@ -54,8 +56,8 @@ class KRenderingPaintServerPatternQuartz : public KRenderingPaintServerPattern {
 public:
     KRenderingPaintServerPatternQuartz() {}
     virtual void draw(KRenderingDeviceContext*, const RenderPath*, KCPaintTargetType) const;
-    virtual bool setup(KRenderingDeviceContext*, const WebCore::RenderObject*, KCPaintTargetType) const;
-    virtual void teardown(KRenderingDeviceContext*, const WebCore::RenderObject*, KCPaintTargetType) const;
+    virtual bool setup(KRenderingDeviceContext*, const RenderObject*, KCPaintTargetType) const;
+    virtual void teardown(KRenderingDeviceContext*, const RenderObject*, KCPaintTargetType) const;
 protected:
     virtual void renderPath(KRenderingDeviceContext*, const RenderPath*, KCPaintTargetType) const;
 private:
@@ -80,8 +82,8 @@ public:
     void updateQuartzGradientCache(const KRenderingPaintServerGradient* server);
 
     void draw(const KRenderingPaintServerGradient* server, KRenderingDeviceContext*, const RenderPath*, KCPaintTargetType) const;
-    bool setup(const KRenderingPaintServerGradient* server, KRenderingDeviceContext*, const WebCore::RenderObject*, KCPaintTargetType) const;
-    void teardown(const KRenderingPaintServerGradient* server, KRenderingDeviceContext*, const WebCore::RenderObject*, KCPaintTargetType) const;
+    bool setup(const KRenderingPaintServerGradient* server, KRenderingDeviceContext*, const RenderObject*, KCPaintTargetType) const;
+    void teardown(const KRenderingPaintServerGradient* server, KRenderingDeviceContext*, const RenderObject*, KCPaintTargetType) const;
     void renderPath(const KRenderingPaintServerGradient* server, KRenderingDeviceContext*, const RenderPath*, KCPaintTargetType) const;
 
 public:
@@ -102,9 +104,9 @@ public:
     virtual void invalidate();
     virtual void draw(KRenderingDeviceContext* context, const RenderPath* renderPath, KCPaintTargetType type) const
         { KRenderingPaintServerGradientQuartz::draw(this, context, renderPath, type); }
-    virtual bool setup(KRenderingDeviceContext* context, const WebCore::RenderObject* renderObject, KCPaintTargetType type) const
+    virtual bool setup(KRenderingDeviceContext* context, const RenderObject* renderObject, KCPaintTargetType type) const
         { return KRenderingPaintServerGradientQuartz::setup(this, context, renderObject, type); }
-    virtual void teardown(KRenderingDeviceContext* context, const WebCore::RenderObject* renderObject, KCPaintTargetType type) const
+    virtual void teardown(KRenderingDeviceContext* context, const RenderObject* renderObject, KCPaintTargetType type) const
         { KRenderingPaintServerGradientQuartz::teardown(this, context, renderObject, type); }
     virtual void renderPath(KRenderingDeviceContext* context, const RenderPath* renderPath, KCPaintTargetType type) const
         { KRenderingPaintServerGradientQuartz::renderPath(this, context, renderPath, type); }
@@ -117,10 +119,12 @@ public:
     virtual void invalidate();
     virtual void draw(KRenderingDeviceContext* context, const RenderPath* renderPath, KCPaintTargetType type) const
         { KRenderingPaintServerGradientQuartz::draw(this, context, renderPath, type); }
-    virtual bool setup(KRenderingDeviceContext* context, const WebCore::RenderObject* renderObject, KCPaintTargetType type) const
+    virtual bool setup(KRenderingDeviceContext* context, const RenderObject* renderObject, KCPaintTargetType type) const
         { return KRenderingPaintServerGradientQuartz::setup(this, context, renderObject, type); }
-    virtual void teardown(KRenderingDeviceContext* context, const WebCore::RenderObject* renderObject, KCPaintTargetType type) const
+    virtual void teardown(KRenderingDeviceContext* context, const RenderObject* renderObject, KCPaintTargetType type) const
         { KRenderingPaintServerGradientQuartz::teardown(this, context, renderObject, type); }
     virtual void renderPath(KRenderingDeviceContext* context, const RenderPath* renderPath, KCPaintTargetType type) const
         { KRenderingPaintServerGradientQuartz::renderPath(this, context, renderPath, type); }
 };
+
+}

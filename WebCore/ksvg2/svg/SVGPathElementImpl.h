@@ -31,7 +31,7 @@
 #include "SVGAnimatedPathDataImpl.h"
 #include "SVGExternalResourcesRequiredImpl.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGPointImpl;
     class SVGPathSegImpl;
@@ -63,7 +63,7 @@ namespace KSVG
                                public SVGPathParser
     {
     public:
-        SVGPathElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGPathElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGPathElementImpl();
         
         virtual bool isValid() const { return SVGTestsImpl::isValid(); }
@@ -99,9 +99,9 @@ namespace KSVG
         virtual SVGPathSegListImpl *animatedPathSegList() const;
         virtual SVGPathSegListImpl *animatedNormalizedPathSegList() const;
 
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
-        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
+        virtual bool rendererIsNeeded(RenderStyle *) { return true; }
         virtual KCanvasPath* toPathData() const;
 
     private:

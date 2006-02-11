@@ -26,12 +26,12 @@
 
 #include "SVGPolyElementImpl.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGPolygonElementImpl :    public SVGPolyElementImpl
     {
     public:
-        SVGPolygonElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGPolygonElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGPolygonElementImpl();
 
         virtual KCanvasPath* toPathData() const;

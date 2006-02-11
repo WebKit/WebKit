@@ -40,9 +40,9 @@
 #include "SVGFESpecularLightingElementImpl.h"
 
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGFESpecularLightingElementImpl::SVGFESpecularLightingElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : 
+SVGFESpecularLightingElementImpl::SVGFESpecularLightingElementImpl(const QualifiedName& tagName, DocumentImpl *doc) : 
 SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 {
     m_filterEffect = 0;
@@ -95,9 +95,9 @@ SVGAnimatedColorImpl  *SVGFESpecularLightingElementImpl::lightingColor() const
     return lazy_create<SVGAnimatedColorImpl>(m_lightingColor, dummy);
 }
 
-void SVGFESpecularLightingElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
+void SVGFESpecularLightingElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {    
-    KDOM::DOMString value(attr->value());
+    DOMString value(attr->value());
     if (attr->name() == SVGNames::inAttr)
         in1()->setBaseVal(value.impl());
     else if (attr->name() == SVGNames::surfaceScaleAttr)
@@ -123,7 +123,7 @@ KCanvasFESpecularLighting *SVGFESpecularLightingElementImpl::filterEffect() cons
 {
     if (!m_filterEffect) 
         m_filterEffect = static_cast<KCanvasFESpecularLighting *>(QPainter::renderingDevice()->createFilterEffect(FE_SPECULAR_LIGHTING));
-    m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).qstring());
+    m_filterEffect->setIn(DOMString(in1()->baseVal()).qstring());
     setStandardAttributes(m_filterEffect);
     m_filterEffect->setSpecularConstant((specularConstant()->baseVal()));
     m_filterEffect->setSpecularExponent((specularExponent()->baseVal()));
@@ -141,7 +141,7 @@ void SVGFESpecularLightingElementImpl::updateLights() const
         return;
 
     KCLightSource *light = 0;    
-    for (KDOM::NodeImpl *n = firstChild(); n; n = n->nextSibling()) {
+    for (NodeImpl *n = firstChild(); n; n = n->nextSibling()) {
         if (n->hasTagName(SVGNames::feDistantLightTag)||n->hasTagName(SVGNames::fePointLightTag)||n->hasTagName(SVGNames::feSpotLightTag)) {
             SVGFELightElementImpl *lightNode = static_cast<SVGFELightElementImpl *>(n); 
             light = lightNode->lightSource();

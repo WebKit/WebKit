@@ -26,11 +26,12 @@
 
 #include <qmatrix.h>
 
-typedef enum
-{
+namespace WebCore {
+
+enum KCMatrixOperationMode {
     OPS_PREMUL = 1, // Default mode (svg compatible)
     OPS_POSTMUL = 2
-} KCMatrixOperationMode;
+};
 
 class KCanvasPath;
 class KCanvasMatrix
@@ -99,6 +100,8 @@ private:
     QMatrix m_matrix;
     KCMatrixOperationMode m_mode;
 };
+
+}
 
 #endif // SVG_SUPPORT
 #endif

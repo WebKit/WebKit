@@ -26,13 +26,13 @@
 
 #include <SVGGradientElementImpl.h>
 
-namespace KSVG
+namespace WebCore
 {
     class SVGAnimatedLengthImpl;
     class SVGRadialGradientElementImpl : public SVGGradientElementImpl
     {
     public:
-        SVGRadialGradientElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGRadialGradientElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGRadialGradientElementImpl();
 
         // 'SVGRadialGradientElement' functions
@@ -42,7 +42,7 @@ namespace KSVG
         SVGAnimatedLengthImpl *fy() const;
         SVGAnimatedLengthImpl *r() const;
 
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
     protected:
         virtual void buildGradient(KRenderingPaintServerGradient *grad) const;

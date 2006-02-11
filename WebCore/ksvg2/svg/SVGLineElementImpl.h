@@ -29,7 +29,7 @@
 #include "SVGStyledTransformableElementImpl.h"
 #include "SVGExternalResourcesRequiredImpl.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGAnimatedLengthImpl;
     class SVGLineElementImpl : public SVGStyledTransformableElementImpl,
@@ -38,7 +38,7 @@ namespace KSVG
                                public SVGExternalResourcesRequiredImpl
     {
     public:
-        SVGLineElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGLineElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGLineElementImpl();
         
         virtual bool isValid() const { return SVGTestsImpl::isValid(); }
@@ -49,9 +49,9 @@ namespace KSVG
         SVGAnimatedLengthImpl *x2() const;
         SVGAnimatedLengthImpl *y2() const;
 
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
-        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
+        virtual bool rendererIsNeeded(RenderStyle *) { return true; }
         virtual KCanvasPath* toPathData() const;
 
         virtual const SVGStyledElementImpl *pushAttributeContext(const SVGStyledElementImpl *context);

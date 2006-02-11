@@ -26,7 +26,7 @@
 #include "SVGRectImpl.h"
 #include "SVGStyledElementImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGRectImpl::SVGRectImpl(const SVGStyledElementImpl *context) : Shared<SVGRectImpl>()
 {

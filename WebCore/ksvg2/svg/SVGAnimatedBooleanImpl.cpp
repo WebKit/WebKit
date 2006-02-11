@@ -25,7 +25,7 @@
 #include "SVGStyledElementImpl.h"
 #include "SVGAnimatedBooleanImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGAnimatedBooleanImpl::SVGAnimatedBooleanImpl(const SVGStyledElementImpl *context) : Shared<SVGAnimatedBooleanImpl>()
 {

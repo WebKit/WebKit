@@ -44,9 +44,9 @@
 #include <kcanvas/device/KRenderingDevice.h>
 #include <kcanvas/device/KRenderingFillPainter.h>
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGFEImageElementImpl::SVGFEImageElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+SVGFEImageElementImpl::SVGFEImageElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
 : SVGFilterPrimitiveStandardAttributesImpl(tagName, doc), SVGURIReferenceImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
 {
     m_filterEffect = 0;
@@ -65,9 +65,9 @@ SVGAnimatedPreserveAspectRatioImpl *SVGFEImageElementImpl::preserveAspectRatio()
     return lazy_create<SVGAnimatedPreserveAspectRatioImpl>(m_preserveAspectRatio, this);
 }
 
-void SVGFEImageElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
+void SVGFEImageElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    KDOM::DOMString value(attr->value());
+    DOMString value(attr->value());
     if (attr->name() == SVGNames::preserveAspectRatioAttr)
         preserveAspectRatio()->baseVal()->parsePreserveAspectRatio(value.impl());
     else
@@ -87,7 +87,7 @@ void SVGFEImageElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr
     }
 }
 
-void SVGFEImageElementImpl::notifyFinished(KDOM::CachedObject *finishedObj)
+void SVGFEImageElementImpl::notifyFinished(CachedObject *finishedObj)
 {
     if (finishedObj == m_cachedImage && filterEffect())
         filterEffect()->setCachedImage(m_cachedImage);

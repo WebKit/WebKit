@@ -27,7 +27,7 @@
 #include <QString.h>
 #include <kxmlcore/RefPtr.h>
 
-namespace KSVG
+namespace WebCore
 {
     class SVGElementImpl;
     class SVGStringListImpl;

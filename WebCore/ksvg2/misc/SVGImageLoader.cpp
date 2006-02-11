@@ -36,7 +36,7 @@
 
 #include "render_image.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGImageLoader::SVGImageLoader(SVGImageElementImpl *node) : DOM::HTMLImageLoader(node)
 {
@@ -52,11 +52,11 @@ void SVGImageLoader::updateFromElement()
     SVGImageElementImpl *imageElement = static_cast<SVGImageElementImpl *>(element());
     DOM::DocumentImpl* doc = imageElement->ownerDocument();
     
-    khtml::CachedImage *newImage = 0;
+    CachedImage *newImage = 0;
     if (imageElement->href()->baseVal())
         newImage = doc->docLoader()->requestImage(imageElement->href()->baseVal());
 
-    khtml::CachedImage *oldImage = image();
+    CachedImage *oldImage = image();
     if (newImage != oldImage) {
         setLoadingImage(newImage);
         if (newImage)
@@ -65,7 +65,7 @@ void SVGImageLoader::updateFromElement()
             oldImage->deref(this);
     }
 
-    if (khtml::RenderImage* renderer = static_cast<khtml::RenderImage*>(imageElement->renderer()))
+    if (RenderImage* renderer = static_cast<RenderImage*>(imageElement->renderer()))
         renderer->resetAnimation();
 }
 #endif // SVG_SUPPORT

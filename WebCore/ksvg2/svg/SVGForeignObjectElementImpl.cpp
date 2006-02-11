@@ -33,9 +33,9 @@
 
 #include "cssproperties.h"
 
-namespace KSVG {
+namespace WebCore {
 
-SVGForeignObjectElementImpl::SVGForeignObjectElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+SVGForeignObjectElementImpl::SVGForeignObjectElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
 : SVGStyledTransformableElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
 {
 }
@@ -64,9 +64,9 @@ SVGAnimatedLengthImpl *SVGForeignObjectElementImpl::height() const
     return lazy_create<SVGAnimatedLengthImpl>(m_height, this, LM_HEIGHT, viewportElement());
 }
 
-void SVGForeignObjectElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
+void SVGForeignObjectElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    const KDOM::AtomicString& value = attr->value();
+    const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::xAttr)
         x()->baseVal()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::yAttr)
@@ -88,7 +88,7 @@ void SVGForeignObjectElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl
     }
 }
 
-khtml::RenderObject *SVGForeignObjectElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
+RenderObject *SVGForeignObjectElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
 {
     return new (arena) RenderForeignObject(this);
 }

@@ -62,7 +62,7 @@
 
 namespace WebCore {
 
-SVGDocumentImpl::SVGDocumentImpl(SVGDOMImplementationImpl *i, KDOM::KDOMView *view) : KDOM::DocumentImpl(i, view), KDOM::CachedObjectClient()
+SVGDocumentImpl::SVGDocumentImpl(SVGDOMImplementationImpl *i, KDOMView *view) : DocumentImpl(i, view), CachedObjectClient()
 {
     m_scriptsIt = 0;
     m_cachedScript = 0;
@@ -71,11 +71,11 @@ SVGDocumentImpl::SVGDocumentImpl(SVGDOMImplementationImpl *i, KDOM::KDOMView *vi
 SVGDocumentImpl::~SVGDocumentImpl()
 {
     // Fire UNLOAD_EVENT upon destruction...
-    //if(KDOM::DocumentImpl::hasListenerType(KDOM::UNLOAD_EVENT))
+    //if(DocumentImpl::hasListenerType(UNLOAD_EVENT))
     {
         int exceptioncode;
-        RefPtr<KDOM::EventImpl> event = createEvent("SVGEvents", exceptioncode);
-        event->initEvent(KDOM::EventNames::unloadEvent, false, false);
+        RefPtr<EventImpl> event = createEvent("SVGEvents", exceptioncode);
+        event->initEvent(EventNames::unloadEvent, false, false);
         dispatchRecursiveEvent(event.get(), lastChild());
     }
 
@@ -83,7 +83,7 @@ SVGDocumentImpl::~SVGDocumentImpl()
     delete m_cachedScript;
 }
 
-KDOM::DOMString SVGDocumentImpl::title() const
+DOMString SVGDocumentImpl::title() const
 {
     if(rootElement())
     {
@@ -92,41 +92,41 @@ KDOM::DOMString SVGDocumentImpl::title() const
                 return static_cast<SVGTitleElementImpl *>(child)->title();
     }
 
-    return KDOM::DOMString();
+    return DOMString();
 }
 
-KDOM::ElementImpl *SVGDocumentImpl::createElement(const KDOM::DOMString& tagName, int& exceptionCode)
+ElementImpl *SVGDocumentImpl::createElement(const DOMString& tagName, int& exceptionCode)
 {
-    KDOM::QualifiedName qname(KDOM::nullAtom, tagName.impl(), SVGNames::svgNamespaceURI);
+    QualifiedName qname(nullAtom, tagName.impl(), SVGNames::svgNamespaceURI);
     SVGElementImpl *elem = SVGElementFactory::createSVGElement(qname, this, false);
     if(!elem)
-        return KDOM::DocumentImpl::createElement(tagName, exceptionCode);
+        return DocumentImpl::createElement(tagName, exceptionCode);
 
     return elem;
 }
 
 SVGSVGElementImpl *SVGDocumentImpl::rootElement() const
 {
-    KDOM::ElementImpl *elem = documentElement();
+    ElementImpl *elem = documentElement();
     if(elem && elem->hasTagName(SVGNames::svgTag))
         return static_cast<SVGSVGElementImpl *>(elem);
 
     return 0;
 }
 
-void SVGDocumentImpl::notifyFinished(KDOM::CachedObject *finishedObj)
+void SVGDocumentImpl::notifyFinished(CachedObject *finishedObj)
 {
     // This is called when a script has finished loading that was requested from
     // executeScripts().  We execute the script, and then call executeScripts()
     // again to continue iterating through the list of scripts in the document
     if(finishedObj == m_cachedScript)
     {
-        KDOM::DOMString scriptSource = m_cachedScript->script();
+        DOMString scriptSource = m_cachedScript->script();
         
         m_cachedScript->deref(this);
         m_cachedScript = 0;
         
-        SVGScriptElementImpl::executeScript(this, KDOM::DOMString(scriptSource.qstring()).impl());
+        SVGScriptElementImpl::executeScript(this, DOMString(scriptSource.qstring()).impl());
         executeScripts(true);
     }
 }
@@ -144,10 +144,10 @@ void SVGDocumentImpl::finishedParsing()
     executeScripts(false);
 }
 
-void SVGDocumentImpl::dispatchRecursiveEvent(KDOM::EventImpl *event, KDOM::NodeImpl *obj)
+void SVGDocumentImpl::dispatchRecursiveEvent(EventImpl *event, NodeImpl *obj)
 {
     // Iterate the tree, backwards, and dispatch the event to every child
-    for(KDOM::NodeImpl *n = obj; n != 0; n = n->previousSibling())
+    for(NodeImpl *n = obj; n != 0; n = n->previousSibling())
     {
         int exceptioncode;
         if(n->hasChildNodes())
@@ -168,7 +168,7 @@ void SVGDocumentImpl::dispatchZoomEvent(float prevScale, float newScale)
     // dispatch zoom event
     int exceptioncode;
     RefPtr<SVGZoomEventImpl> event = static_cast<SVGZoomEventImpl *>(createEvent("SVGZoomEvents", exceptioncode));
-    event->initEvent(KDOM::EventNames::zoomEvent, true, false);
+    event->initEvent(EventNames::zoomEvent, true, false);
     event->setPreviousScale(prevScale);
     event->setNewScale(newScale);
     rootElement()->dispatchEvent(event.get(), exceptioncode);
@@ -178,28 +178,28 @@ void SVGDocumentImpl::dispatchScrollEvent()
 {
     // dispatch zoom event
     int exceptioncode;
-    RefPtr<KDOM::EventImpl> event = createEvent("SVGEvents", exceptioncode);
-    event->initEvent(KDOM::EventNames::scrollEvent, true, false);
+    RefPtr<EventImpl> event = createEvent("SVGEvents", exceptioncode);
+    event->initEvent(EventNames::scrollEvent, true, false);
     rootElement()->dispatchEvent(event.get(), exceptioncode);
 }
 
-bool SVGDocumentImpl::dispatchKeyEvent(KDOM::EventTargetImpl *target, QKeyEvent *key, bool keypress)
+bool SVGDocumentImpl::dispatchKeyEvent(EventTargetImpl *target, QKeyEvent *key, bool keypress)
 {
     // dispatch key event
     int exceptioncode;
-    RefPtr<KDOM::KeyboardEventImpl> keyEventImpl = static_cast<KDOM::KeyboardEventImpl *>(createEvent("KeyboardEvents", exceptioncode));
+    RefPtr<KeyboardEventImpl> keyEventImpl = static_cast<KeyboardEventImpl *>(createEvent("KeyboardEvents", exceptioncode));
     //keyEventImpl->initKeyboardEvent(key);
     target->dispatchEvent(keyEventImpl.get(), exceptioncode);
 
     return /*keyEventImpl->defaultHandled() ||*/ keyEventImpl->defaultPrevented();
 }
 
-KDOM::CSSStyleSelector *SVGDocumentImpl::createStyleSelector(const QString &usersheet)
+CSSStyleSelector *SVGDocumentImpl::createStyleSelector(const QString &usersheet)
 {
-    return new KDOM::CSSStyleSelector(this, usersheet, m_styleSheets.get(), false);
+    return new CSSStyleSelector(this, usersheet, m_styleSheets.get(), false);
 }
 
-void SVGDocumentImpl::addScripts(KDOM::NodeImpl *n)
+void SVGDocumentImpl::addScripts(NodeImpl *n)
 {
     if(!n)
         return;
@@ -222,7 +222,7 @@ void SVGDocumentImpl::executeScripts(bool needsStyleSelectorUpdate)
     SVGScriptElementImpl *script = 0;
     while((script = m_scriptsIt->current()))
     {
-        KDOM::DOMString hrefAttr(script->href()->baseVal());
+        DOMString hrefAttr(script->href()->baseVal());
         QString charset; // TODO m_scriptsIt->current()->getAttribute(SVGNames::charsetAttr).qstring();
 
         if(!hrefAttr.isEmpty())
@@ -247,8 +247,8 @@ void SVGDocumentImpl::executeScripts(bool needsStyleSelectorUpdate)
     if(!m_scriptsIt->current())
     {
         int exceptioncode;
-        RefPtr<KDOM::EventImpl> event = createEvent("SVGEvents", exceptioncode);
-        event->initEvent(KDOM::EventNames::loadEvent, false, false);
+        RefPtr<EventImpl> event = createEvent("SVGEvents", exceptioncode);
+        event->initEvent(EventNames::loadEvent, false, false);
         dispatchRecursiveEvent(event.get(), lastChild());
     }
 
@@ -276,20 +276,20 @@ void SVGDocumentImpl::recalcStyle(StyleChange change)
     }
 }
 
-void SVGDocumentImpl::dispatchUIEvent(KDOM::EventTargetImpl *target, const KDOM::AtomicString &type)
+void SVGDocumentImpl::dispatchUIEvent(EventTargetImpl *target, const AtomicString &type)
 {
     // Setup kdom 'UIEvent'...
     int exceptioncode;
-    RefPtr<KDOM::UIEventImpl> event = static_cast<KDOM::UIEventImpl *>(createEvent("UIEvents", exceptioncode));
+    RefPtr<UIEventImpl> event = static_cast<UIEventImpl *>(createEvent("UIEvents", exceptioncode));
     event->initUIEvent(type, true, true, 0, 0);
     target->dispatchEvent(event.get(), exceptioncode);
 }
 
-void SVGDocumentImpl::dispatchMouseEvent(KDOM::EventTargetImpl *target, const KDOM::AtomicString &type)
+void SVGDocumentImpl::dispatchMouseEvent(EventTargetImpl *target, const AtomicString &type)
 {
     // Setup kdom 'MouseEvent'...
     int exceptioncode;
-    RefPtr<KDOM::MouseEventImpl> event = static_cast<KDOM::MouseEventImpl *>(createEvent("MouseEvents", exceptioncode));
+    RefPtr<MouseEventImpl> event = static_cast<MouseEventImpl *>(createEvent("MouseEvents", exceptioncode));
     event->initEvent(type, true, true);
     target->dispatchEvent(event.get(), exceptioncode);
 }

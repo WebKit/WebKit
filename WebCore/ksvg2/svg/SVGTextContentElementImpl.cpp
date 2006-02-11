@@ -31,9 +31,9 @@
 #include "SVGAnimatedLengthImpl.h"
 #include "SVGAnimatedEnumerationImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGTextContentElementImpl::SVGTextContentElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+SVGTextContentElementImpl::SVGTextContentElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
 : SVGStyledElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
 {
 }
@@ -96,9 +96,9 @@ void SVGTextContentElementImpl::selectSubString(unsigned long charnum, unsigned 
 {
 }
 
-void SVGTextContentElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
+void SVGTextContentElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    KDOM::DOMString value(attr->value());
+    DOMString value(attr->value());
     
     //if (attr->name() == SVGNames::lengthAdjustAttr)
     //    x()->baseVal()->setValueAsString(value.impl());

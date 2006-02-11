@@ -24,7 +24,7 @@
 #if SVG_SUPPORT
 #include "SVGAnimatedPathDataImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGAnimatedPathDataImpl::SVGAnimatedPathDataImpl()
 {

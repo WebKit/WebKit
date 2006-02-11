@@ -24,9 +24,9 @@
 #if SVG_SUPPORT
 #include "SVGDescElementImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGDescElementImpl::SVGDescElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : SVGStyledElementImpl(tagName, doc), SVGLangSpaceImpl()
+SVGDescElementImpl::SVGDescElementImpl(const QualifiedName& tagName, DocumentImpl *doc) : SVGStyledElementImpl(tagName, doc), SVGLangSpaceImpl()
 {
 }
 
@@ -34,9 +34,9 @@ SVGDescElementImpl::~SVGDescElementImpl()
 {
 }
 
-KDOM::DOMStringImpl *SVGDescElementImpl::description() const
+DOMStringImpl *SVGDescElementImpl::description() const
 {
-    return new KDOM::DOMStringImpl(KDOM::DOMString(textContent()).qstring().simplifyWhiteSpace());
+    return new DOMStringImpl(DOMString(textContent()).qstring().simplifyWhiteSpace());
 }
 
 // vim:ts=4:noet

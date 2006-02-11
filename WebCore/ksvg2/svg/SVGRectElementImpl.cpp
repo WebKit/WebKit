@@ -36,9 +36,9 @@
 #include <kcanvas/KCanvas.h>
 #include <kcanvas/KCanvasCreator.h>
 
-using namespace KSVG;
+namespace WebCore {
 
-SVGRectElementImpl::SVGRectElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+SVGRectElementImpl::SVGRectElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
 : SVGStyledTransformableElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
 {
 }
@@ -77,9 +77,9 @@ SVGAnimatedLengthImpl *SVGRectElementImpl::ry() const
     return lazy_create<SVGAnimatedLengthImpl>(m_ry, this, LM_HEIGHT, viewportElement());
 }
 
-void SVGRectElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
+void SVGRectElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    const KDOM::AtomicString& value = attr->value();
+    const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::xAttr)
         x()->baseVal()->setValueAsString(value.impl());
     else if (attr->name() == SVGNames::yAttr)
@@ -106,8 +106,8 @@ KCanvasPath* SVGRectElementImpl::toPathData() const
     float _x = x()->baseVal()->value(), _y = y()->baseVal()->value();
     float _width = width()->baseVal()->value(), _height = height()->baseVal()->value();
 
-    bool hasRx = hasAttribute(KDOM::DOMString("rx").impl());
-    bool hasRy = hasAttribute(KDOM::DOMString("ry").impl());
+    bool hasRx = hasAttribute(DOMString("rx").impl());
+    bool hasRy = hasAttribute(DOMString("ry").impl());
     if(hasRx || hasRy)
     {
         float _rx = hasRx ? rx()->baseVal()->value() : ry()->baseVal()->value();
@@ -130,6 +130,8 @@ const SVGStyledElementImpl *SVGRectElementImpl::pushAttributeContext(const SVGSt
     
     SVGStyledElementImpl::pushAttributeContext(context);
     return restore;
+}
+
 }
 
 // vim:ts=4:noet

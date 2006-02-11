@@ -30,9 +30,9 @@
 
 #include <kdebug.h>
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGAnimateColorElementImpl::SVGAnimateColorElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+SVGAnimateColorElementImpl::SVGAnimateColorElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
 : SVGAnimationElementImpl(tagName, doc)
 {
     m_toColor = new SVGColorImpl();
@@ -66,10 +66,10 @@ void SVGAnimateColorElementImpl::handleTimerEvent(double timePercentage)
             case TO_ANIMATION:
             case FROM_TO_ANIMATION:
             {
-                KDOM::DOMString toColorString(m_to);
+                DOMString toColorString(m_to);
                 m_toColor->setRGBColor(toColorString.impl());
     
-                KDOM::DOMString fromColorString;
+                DOMString fromColorString;
                 if(!m_from.isEmpty()) // from-to animation
                     fromColorString = m_from;
                 else // to animation
@@ -90,10 +90,10 @@ void SVGAnimateColorElementImpl::handleTimerEvent(double timePercentage)
             case BY_ANIMATION:
             case FROM_BY_ANIMATION:
             {
-                KDOM::DOMString byColorString(m_by);
+                DOMString byColorString(m_by);
                 m_toColor->setRGBColor(byColorString.impl());
 
-                KDOM::DOMString fromColorString;
+                DOMString fromColorString;
             
                 if(!m_from.isEmpty()) // from-by animation
                     fromColorString = m_from;
@@ -112,7 +112,7 @@ void SVGAnimateColorElementImpl::handleTimerEvent(double timePercentage)
 
                 Color qTo = clampColor(r, g, b);
             
-                KDOM::DOMString toColorString(qTo.name());
+                DOMString toColorString(qTo.name());
                 m_toColor->setRGBColor(toColorString.impl());
             
                 m_redDiff = qTo.red() - qFrom.red();
@@ -155,8 +155,8 @@ void SVGAnimateColorElementImpl::handleTimerEvent(double timePercentage)
         if(m_currentItem != itemByPercentage) // Item changed...
         {
             // Extract current 'from' / 'to' values
-            KDOM::DOMString value1 = KDOM::DOMString(m_values->getItem(itemByPercentage));
-            KDOM::DOMString value2 = KDOM::DOMString(m_values->getItem(itemByPercentage + 1));
+            DOMString value1 = DOMString(m_values->getItem(itemByPercentage));
+            DOMString value2 = DOMString(m_values->getItem(itemByPercentage + 1));
 
             // Calculate r/g/b shifting values...
             if(!value1.isEmpty() && !value2.isEmpty())
@@ -171,10 +171,10 @@ void SVGAnimateColorElementImpl::handleTimerEvent(double timePercentage)
                     apply = true;
                 }
 
-                KDOM::DOMString toColorString(value2);
+                DOMString toColorString(value2);
                 m_toColor->setRGBColor(toColorString.impl());
     
-                KDOM::DOMString fromColorString(value1);
+                DOMString fromColorString(value1);
                 m_fromColor->setRGBColor(fromColorString.impl());    
 
                 Color qTo = m_toColor->color();

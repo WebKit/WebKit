@@ -26,27 +26,27 @@
 
 #include <kdom/ecma/Ecma.h>
 
-namespace KDOM
+namespace WebCore
 {
     class Node;
     class DocumentImpl;
 };
 
-namespace KSVG
+namespace WebCore
 {
-    class Ecma : public KDOM::Ecma
+    class Ecma : public Ecma
     {
     public:
-        Ecma(KDOM::DocumentImpl *doc);
+        Ecma(DocumentImpl *doc);
         virtual ~Ecma();
 
         // We are a KDOM user, so implement the hook to convert svg elements to kjs objects
-        virtual KJS::JSObject *inheritedGetDOMNode(KJS::ExecState *exec, KDOM::Node n);
-        virtual KJS::JSObject *inheritedGetDOMEvent(KJS::ExecState *exec, KDOM::Event e);
-        virtual KJS::JSObject *inheritedGetDOMCSSValue(KJS::ExecState *exec, KDOM::CSSValue c);
+        virtual KJS::JSObject *inheritedGetDOMNode(KJS::ExecState *exec, Node n);
+        virtual KJS::JSObject *inheritedGetDOMEvent(KJS::ExecState *exec, Event e);
+        virtual KJS::JSObject *inheritedGetDOMCSSValue(KJS::ExecState *exec, CSSValue c);
 
     protected:
-        virtual void setupDocument(KDOM::DocumentImpl *document);
+        virtual void setupDocument(DocumentImpl *document);
     };
 
     // Helpers

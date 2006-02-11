@@ -25,7 +25,7 @@
 #include "SVGPathSegCurvetoCubicSmoothImpl.h"
 #include "SVGStyledElementImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGPathSegCurvetoCubicSmoothAbsImpl::SVGPathSegCurvetoCubicSmoothAbsImpl(const SVGStyledElementImpl *context)
 : SVGPathSegImpl(context)

@@ -1,3 +1,13 @@
+2006-02-11  Eric Seidel  <eseidel@apple.com>
+
+        Rubber-stamped by darin.
+
+        Push kcanvas into WebCore namespace.
+        Fix KSVG2 to use WebCore namespace.
+        Remove all uses of khtml:: and KDOM:: from SVG code.
+        
+        Too many files changed to bother showing here.
+
 2006-02-11  Mitz Pettel  <opendarwin.org@mitzpettel.com>
  
          Test: fast/table/edge-offsets.html

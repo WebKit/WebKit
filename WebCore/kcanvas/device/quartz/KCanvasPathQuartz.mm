@@ -28,6 +28,8 @@
 #include "KCanvasPathQuartz.h"
 #include "QuartzSupport.h"
 
+namespace WebCore {
+
 KCanvasPathQuartz::KCanvasPathQuartz()
 {
     m_cgPath = CGPathCreateMutable();
@@ -132,6 +134,8 @@ bool KCanvasPathQuartz::containsPoint(const FloatPoint& point, KCWindRule fillRu
 bool KCanvasPathQuartz::strokeContainsPoint(const FloatPoint& point)
 {
     return pathContainsPoint(m_cgPath, point, kCGPathStroke);
+}
+
 }
 
 #endif // SVG_SUPPORT

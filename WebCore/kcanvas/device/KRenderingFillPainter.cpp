@@ -26,6 +26,8 @@
 #include "KRenderingFillPainter.h"
 #include "KRenderingPaintServer.h"
 
+namespace WebCore {
+
 class KRenderingFillPainter::Private
 {
 public:
@@ -66,6 +68,8 @@ float KRenderingFillPainter::opacity() const
 void KRenderingFillPainter::setOpacity(float opacity)
 {
     d->opacity = opacity;
+}
+
 }
 
 // vim:ts=4:noet

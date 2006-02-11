@@ -31,7 +31,7 @@
 
 class RenderPath;
 
-namespace KSVG
+namespace WebCore
 {
     class SVGElementImpl;
     class SVGStyledElementImpl;
@@ -50,8 +50,8 @@ namespace KSVG
         float valueInSpecifiedUnits() const;
         void setValueInSpecifiedUnits(float valueInSpecifiedUnits);
 
-        KDOM::DOMStringImpl *valueAsString() const;
-        void setValueAsString(KDOM::DOMStringImpl *valueAsString);
+        DOMStringImpl *valueAsString() const;
+        void setValueAsString(DOMStringImpl *valueAsString);
 
         void newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits);
         void convertToSpecifiedUnits(unsigned short unitType);

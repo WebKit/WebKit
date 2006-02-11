@@ -31,19 +31,18 @@
 #include <kcanvas/KCanvasPath.h>
 #include "render_style.h"
 
-class RenderPath;
-class KRenderingDevice;
-class KCanvasResource;
-
 namespace WebCore
 {
+    class RenderPath;
+    class KRenderingDevice;
+    class KCanvasResource;
     class KCanvasRenderingStyle;
     class CSSStyleDeclarationImpl;
     class RenderCanvas;
     class SVGStyledElementImpl : public SVGElementImpl
     {
     public:
-        SVGStyledElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGStyledElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGStyledElementImpl();
         
         virtual bool isStyled() const { return true; }
@@ -52,16 +51,16 @@ namespace WebCore
         virtual SVGAnimatedStringImpl *className() const;
 
         // These need to be implemented.
-        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return false; }
+        virtual bool rendererIsNeeded(RenderStyle *) { return false; }
         virtual KCanvasPath* toPathData() const { return 0; }
-        virtual khtml::RenderObject *createRenderer(RenderArena *arena, khtml::RenderStyle *style);
+        virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
         virtual KCanvasResource *canvasResource() { return 0; }
         
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
         RenderCanvas *canvas() const;
         virtual void notifyAttributeChange() const;
-        virtual void attributeChanged(KDOM::AttributeImpl *attr, bool preserveDecls = false);
+        virtual void attributeChanged(AttributeImpl *attr, bool preserveDecls = false);
 
         // Imagine we're a <rect> inside of a <pattern> section with patternContentUnits="objectBoundingBox"
         // and our 'width' attribute is set to 50%. When the pattern gets referenced it knows the "bbox"
@@ -73,7 +72,7 @@ namespace WebCore
         void updateCanvasItem(); // Handles "path data" object changes... (not for style/transform!)
 
     private:
-        mutable RefPtr<KDOM::CSSStyleDeclarationImpl> m_pa;
+        mutable RefPtr<CSSStyleDeclarationImpl> m_pa;
         mutable RefPtr<SVGAnimatedStringImpl> m_className;
 
         // Optimized updating logic

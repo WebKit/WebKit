@@ -49,7 +49,9 @@
 #import "KCanvasRenderingStyle.h"
 
 
-KCanvasItemQuartz::KCanvasItemQuartz(khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node) : RenderPath(style, node)
+namespace WebCore {
+
+KCanvasItemQuartz::KCanvasItemQuartz(RenderStyle *style, SVGStyledElementImpl *node) : RenderPath(style, node)
 {
 }
 
@@ -163,8 +165,8 @@ void DrawStartAndMidMarkers(void *info, const CGPathElement *element)
 
 void KCanvasItemQuartz::drawMarkersIfNeeded(const FloatRect& rect, const KCanvasPath *path) const
 {
-    KDOM::DocumentImpl *doc = document();
-    const KSVG::SVGRenderStyle *svgStyle = style()->svgStyle();
+    DocumentImpl *doc = document();
+    const SVGRenderStyle *svgStyle = style()->svgStyle();
 
     KCanvasMarker *startMarker = getMarkerById(doc, svgStyle->startMarker().mid(1));
     KCanvasMarker *midMarker = getMarkerById(doc, svgStyle->midMarker().mid(1));
@@ -173,7 +175,7 @@ void KCanvasItemQuartz::drawMarkersIfNeeded(const FloatRect& rect, const KCanvas
     if (!startMarker && !midMarker && !endMarker)
         return;
 
-    double strokeWidth = KSVG::KSVGPainterFactory::cssPrimitiveToLength(this, style()->svgStyle()->strokeWidth(), 1.0);
+    double strokeWidth = KSVGPainterFactory::cssPrimitiveToLength(this, style()->svgStyle()->strokeWidth(), 1.0);
 
     DrawMarkersData data(startMarker, midMarker, strokeWidth);
 
@@ -183,6 +185,8 @@ void KCanvasItemQuartz::drawMarkersIfNeeded(const FloatRect& rect, const KCanvas
     data.previousMarkerData.marker = endMarker;
     data.previousMarkerData.type = End;
     drawMarkerWithData(data.previousMarkerData);
+}
+
 }
 
 #endif // SVG_SUPPORT

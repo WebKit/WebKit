@@ -31,7 +31,7 @@
 #include "SVGAngleImpl.h"
 #include "SVGHelper.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 const double deg2rad = 0.017453292519943295769; // pi/180
 const double deg2grad = 400.0 / 360.0;
@@ -86,9 +86,9 @@ float SVGAngleImpl::valueInSpecifiedUnits() const
     return m_valueInSpecifiedUnits;
 }
 
-void SVGAngleImpl::setValueAsString(KDOM::DOMStringImpl *valueAsString)
+void SVGAngleImpl::setValueAsString(DOMStringImpl *valueAsString)
 {
-    m_valueAsString = KDOM::DOMString(valueAsString);
+    m_valueAsString = DOMString(valueAsString);
 
     QString s = m_valueAsString.qstring();
 
@@ -109,7 +109,7 @@ void SVGAngleImpl::setValueAsString(KDOM::DOMStringImpl *valueAsString)
     calculate();
 }
 
-KDOM::DOMStringImpl *SVGAngleImpl::valueAsString() const
+DOMStringImpl *SVGAngleImpl::valueAsString() const
 {
     m_valueAsString.qstring().setNum(m_valueInSpecifiedUnits);
 

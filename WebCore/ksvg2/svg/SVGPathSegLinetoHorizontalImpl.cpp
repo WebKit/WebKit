@@ -25,7 +25,7 @@
 #include "SVGPathSegLinetoHorizontalImpl.h"
 #include "SVGStyledElementImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGPathSegLinetoHorizontalAbsImpl::SVGPathSegLinetoHorizontalAbsImpl(const SVGStyledElementImpl *context)
 : SVGPathSegImpl(context)

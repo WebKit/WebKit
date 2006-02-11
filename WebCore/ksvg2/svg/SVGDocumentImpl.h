@@ -39,8 +39,8 @@ namespace WebCore {
     class SVGScriptElementImpl;
     class SVGDOMImplementationImpl;
 
-    class SVGDocumentImpl : public KDOM::DocumentImpl,
-                            public KDOM::CachedObjectClient
+    class SVGDocumentImpl : public DocumentImpl,
+                            public CachedObjectClient
     {
     public:
         SVGDocumentImpl(SVGDOMImplementationImpl *i, FrameView *view);
@@ -48,18 +48,18 @@ namespace WebCore {
 
         SVGSVGElementImpl *rootElement() const;
         
-        KDOM::DOMString title() const;
+        DOMString title() const;
         
-        virtual KDOM::ElementImpl *createElement(const KDOM::DOMString& tagName, int& exceptionCode);
+        virtual ElementImpl *createElement(const DOMString& tagName, int& exceptionCode);
 
         // Derived from: 'CachedObjectClient'
-        virtual void notifyFinished(KDOM::CachedObject *finishedObj);
+        virtual void notifyFinished(CachedObject *finishedObj);
 
         FrameView *svgView() const;
 
         // Internal
         void finishedParsing();
-        void dispatchRecursiveEvent(KDOM::EventImpl *event, KDOM::NodeImpl *obj);
+        void dispatchRecursiveEvent(EventImpl *event, NodeImpl *obj);
         void dispatchZoomEvent(float prevScale, float newScale);
         void dispatchScrollEvent();
         bool dispatchKeyEvent(NodeImpl *target, QKeyEvent *key, bool keypress);
@@ -69,17 +69,17 @@ namespace WebCore {
         void addForwardReference(const SVGElementImpl *element);
 
     protected:
-        virtual KDOM::CSSStyleSelector *createStyleSelector(const QString &);
+        virtual CSSStyleSelector *createStyleSelector(const QString &);
 
     private:
-        void dispatchUIEvent(NodeImpl *target, const KDOM::AtomicString &type);
-        void dispatchMouseEvent(NodeImpl *target, const KDOM::AtomicString &type);
+        void dispatchUIEvent(NodeImpl *target, const AtomicString &type);
+        void dispatchMouseEvent(NodeImpl *target, const AtomicString &type);
 
         // <script> related
         void executeScripts(bool needsStyleSelectorUpdate);
-        void addScripts(KDOM::NodeImpl *obj);
+        void addScripts(NodeImpl *obj);
 
-        KDOM::CachedScript *m_cachedScript;
+        CachedScript *m_cachedScript;
         Q3PtrList<SVGScriptElementImpl> m_scripts;
         Q3PtrListIterator<SVGScriptElementImpl> *m_scriptsIt;
         Q3PtrList<SVGElementImpl> m_forwardReferences;

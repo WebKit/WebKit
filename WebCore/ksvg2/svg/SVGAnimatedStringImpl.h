@@ -27,17 +27,17 @@
 #include "StringImpl.h"
 #include "SVGAnimatedTemplate.h"
 
-namespace KSVG
+namespace WebCore
 {
-    class SVGAnimatedStringImpl : public SVGAnimatedTemplate<KDOM::DOMStringImpl>
+    class SVGAnimatedStringImpl : public SVGAnimatedTemplate<DOMStringImpl>
     {
     public:
         SVGAnimatedStringImpl(const SVGStyledElementImpl *context);
         virtual ~SVGAnimatedStringImpl();
 
     protected:
-        virtual KDOM::DOMStringImpl *create() const;
-        virtual void assign(KDOM::DOMStringImpl *src, KDOM::DOMStringImpl *dst) const;
+        virtual DOMStringImpl *create() const;
+        virtual void assign(DOMStringImpl *src, DOMStringImpl *dst) const;
     };
 };
 

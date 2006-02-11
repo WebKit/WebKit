@@ -40,7 +40,7 @@
 
 #include <cmath>
 
-using namespace KSVG;
+using namespace WebCore;
 using namespace std;
 
 // keep track of textual description of the unit type
@@ -106,9 +106,9 @@ float SVGLengthImpl::valueInSpecifiedUnits() const
     return m_valueInSpecifiedUnits;
 }                                                
 
-void SVGLengthImpl::setValueAsString(KDOM::DOMStringImpl *valueAsStringImpl)
+void SVGLengthImpl::setValueAsString(DOMStringImpl *valueAsStringImpl)
 {
-    KDOM::DOMString valueAsString(valueAsStringImpl);
+    DOMString valueAsString(valueAsStringImpl);
     if(valueAsString.isEmpty())
         return;
 
@@ -151,9 +151,9 @@ void SVGLengthImpl::setValueAsString(KDOM::DOMStringImpl *valueAsStringImpl)
     updateValue();
 }
 
-KDOM::DOMStringImpl *SVGLengthImpl::valueAsString() const
+DOMStringImpl *SVGLengthImpl::valueAsString() const
 {
-    return new KDOM::DOMStringImpl(QString::number(m_valueInSpecifiedUnits) + UnitText[m_unitType]);
+    return new DOMStringImpl(QString::number(m_valueInSpecifiedUnits) + UnitText[m_unitType]);
 }
 
 void SVGLengthImpl::newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits)

@@ -31,7 +31,7 @@
 #include "SVGElementImpl.h"
 #include "SVGLangSpaceImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGLangSpaceImpl::SVGLangSpaceImpl()
 {
@@ -41,27 +41,27 @@ SVGLangSpaceImpl::~SVGLangSpaceImpl()
 {
 }
 
-const KDOM::AtomicString& SVGLangSpaceImpl::xmllang() const
+const AtomicString& SVGLangSpaceImpl::xmllang() const
 {
     return m_lang;
 }
 
-void SVGLangSpaceImpl::setXmllang(const KDOM::AtomicString& xmlLang)
+void SVGLangSpaceImpl::setXmllang(const AtomicString& xmlLang)
 {
     m_lang = xmlLang;
 }
 
-const KDOM::AtomicString& SVGLangSpaceImpl::xmlspace() const
+const AtomicString& SVGLangSpaceImpl::xmlspace() const
 {
     return m_space;
 }
 
-void SVGLangSpaceImpl::setXmlspace(const KDOM::AtomicString& xmlSpace)
+void SVGLangSpaceImpl::setXmlspace(const AtomicString& xmlSpace)
 {
     m_space = xmlSpace;
 }
 
-bool SVGLangSpaceImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
+bool SVGLangSpaceImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     if (attr->name() == SVGNames::langAttr)
     {

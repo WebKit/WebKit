@@ -23,9 +23,9 @@
 
 #include "SVGAnimatedNumberImpl.h"
 
-namespace KSVG {
+namespace WebCore {
 
-SVGFEDistantLightElementImpl::SVGFEDistantLightElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : 
+SVGFEDistantLightElementImpl::SVGFEDistantLightElementImpl(const QualifiedName& tagName, DocumentImpl *doc) : 
 SVGFELightElementImpl(tagName, doc)
 {
 }

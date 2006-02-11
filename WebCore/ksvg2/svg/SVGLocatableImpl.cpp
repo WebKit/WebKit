@@ -31,7 +31,7 @@
 
 #include <kcanvas/RenderPath.h>
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGLocatableImpl::SVGLocatableImpl()
 {
@@ -43,7 +43,7 @@ SVGLocatableImpl::~SVGLocatableImpl()
 
 SVGElementImpl *SVGLocatableImpl::nearestViewportElement(const SVGStyledElementImpl *e)
 {
-    KDOM::NodeImpl *n = e->parentNode();
+    NodeImpl *n = e->parentNode();
     while (n && !n->isDocumentNode()) {
         if (n->hasTagName(SVGNames::svgTag) || n->hasTagName(SVGNames::symbolTag) ||
             n->hasTagName(SVGNames::imageTag) || n->hasTagName(SVGNames::foreignObjectTag))
@@ -62,7 +62,7 @@ SVGElementImpl *SVGLocatableImpl::farthestViewportElement(const SVGStyledElement
     // that give the documentElement() of the svg fragment, it could be
     // used instead. This depends on cdf demands though(Rob.)
     SVGElementImpl *farthest = 0;
-    KDOM::NodeImpl *n = e->parentNode();
+    NodeImpl *n = e->parentNode();
     while (n && !n->isDocumentNode()) {
         if (n->hasTagName(SVGNames::svgTag) || n->hasTagName(SVGNames::symbolTag) ||
             n->hasTagName(SVGNames::imageTag) || n->hasTagName(SVGNames::foreignObjectTag))
@@ -100,8 +100,8 @@ SVGMatrixImpl *SVGLocatableImpl::getCTM(const SVGElementImpl *element)
 
     SVGMatrixImpl *ctm = SVGSVGElementImpl::createSVGMatrix();
 
-    KDOM::NodeImpl *parent = element->parentNode();
-    if(parent && parent->nodeType() == KDOM::ELEMENT_NODE)
+    NodeImpl *parent = element->parentNode();
+    if(parent && parent->nodeType() == ELEMENT_NODE)
     {
         SVGElementImpl *parentElement = svg_dynamic_cast(parent);
         if(parentElement && parentElement->isStyledLocatable())
@@ -121,7 +121,7 @@ SVGMatrixImpl *SVGLocatableImpl::getScreenCTM(const SVGElementImpl *element)
 
     SVGMatrixImpl *ctm = SVGSVGElementImpl::createSVGMatrix();
 
-    KDOM::NodeImpl *parent = element->parentNode();
+    NodeImpl *parent = element->parentNode();
     if(parent && parent->isElementNode())
     {
         SVGElementImpl *parentElement = static_cast<SVGElementImpl *>(parent);

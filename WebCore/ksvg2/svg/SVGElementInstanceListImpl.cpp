@@ -24,7 +24,7 @@
 #if SVG_SUPPORT
 #include "SVGElementInstanceListImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGElementInstanceListImpl::SVGElementInstanceListImpl(const SVGStyledElementImpl *context)
 : SVGList<SVGElementInstanceImpl>(context)

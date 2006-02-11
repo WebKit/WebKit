@@ -26,42 +26,42 @@
 
 #include <SVGElementImpl.h>
 
-namespace KDOM
+namespace WebCore
 {
     class CSSStyleSheetImpl;
 };
 
-namespace KSVG
+namespace WebCore
 {
     class SVGStyleElementImpl : public SVGElementImpl
     {
     public:
-        SVGStyleElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGStyleElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGStyleElementImpl();
 
         // Derived from: 'ElementImpl'
         virtual void childrenChanged();
 
         // 'SVGStyleElement' functions
-        KDOM::AtomicString xmlspace() const;
-        void setXmlspace(const KDOM::AtomicString&, int &exceptioncode);
+        AtomicString xmlspace() const;
+        void setXmlspace(const AtomicString&, int &exceptioncode);
 
-        KDOM::AtomicString type() const;
-        void setType(const KDOM::AtomicString&, int &exceptioncode);
+        AtomicString type() const;
+        void setType(const AtomicString&, int &exceptioncode);
 
-        KDOM::AtomicString media() const;
-        void setMedia(const KDOM::AtomicString&, int &exceptioncode);
+        AtomicString media() const;
+        void setMedia(const AtomicString&, int &exceptioncode);
 
-        KDOM::AtomicString title() const;
-        void setTitle(const KDOM::AtomicString&, int &exceptioncode);
+        AtomicString title() const;
+        void setTitle(const AtomicString&, int &exceptioncode);
 
-        KDOM::CSSStyleSheetImpl *sheet();
+        CSSStyleSheetImpl *sheet();
 
         // Internal
         bool isLoading() const;
 
     protected:
-        RefPtr<KDOM::CSSStyleSheetImpl> m_sheet;
+        RefPtr<CSSStyleSheetImpl> m_sheet;
         bool m_loading;
     };
 };

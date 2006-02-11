@@ -35,6 +35,8 @@ class CIFilter;
 class CIImage;
 #endif
 
+namespace WebCore {
+
 class KRenderingDevice;
 
 class KCanvasFilterQuartz : public KCanvasFilter {
@@ -123,5 +125,7 @@ class KCanvasFETileQuartz : public KCanvasFETile {
 public:
     virtual CIFilter *getCIFilter(KCanvasFilterQuartz *quartzFilter) const;
 };
+
+}
 
 #endif // SVG_SUPPORT

@@ -58,7 +58,7 @@
 #include <qtextstream.h>
 #include "FloatSize.h"
 
-using namespace KSVG;
+namespace WebCore {
 
 /** class + iomanip to help streaming list separators, i.e. ", " in string "a, b, c, d"
  * Can be used in cases where you don't know which item in the list is the first
@@ -230,20 +230,20 @@ static QTextStream &operator<<(QTextStream &ts, KCJoinStyle style)
 // for the parent object
 #define DIFFERS_FROM_PARENT_AVOID_TEST_IF_FALSE(pred, path) (!parentStyle || ((!parentStyle->pred) || (parentStyle->path != childStyle->path)))
 
-static void writeStyle(QTextStream &ts, const khtml::RenderObject &object)
+static void writeStyle(QTextStream &ts, const RenderObject &object)
 {
-    const khtml::RenderStyle *style = object.style();
+    const RenderStyle *style = object.style();
     const SVGRenderStyle *svgStyle = style->svgStyle();
     
     if (!object.localTransform().isIdentity())
         ts << " [transform=" << object.localTransform() << "]";
     if (svgStyle->imageRendering() != SVGRenderStyle::initialImageRendering())
         ts << " [image rendering=" << svgStyle->imageRendering() << "]";
-    if (style->opacity() != khtml::RenderStyle::initialOpacity())
+    if (style->opacity() != RenderStyle::initialOpacity())
         ts << " [opacity=" << style->opacity() << "]";
     if (object.isRenderPath()) {
         const RenderPath &path = static_cast<const RenderPath &>(object);
-        KRenderingPaintServer *strokePaintServer = KSVG::KSVGPainterFactory::strokePaintServer(style, &path);
+        KRenderingPaintServer *strokePaintServer = KSVGPainterFactory::strokePaintServer(style, &path);
         if (strokePaintServer) {
             QTextStreamSeparator s(" ");
             ts << " [stroke={";
@@ -253,7 +253,7 @@ static void writeStyle(QTextStream &ts, const khtml::RenderObject &object)
                 else
                     ts << s << *strokePaintServer;
             } 
-            KRenderingStrokePainter p = KSVG::KSVGPainterFactory::strokePainter(style, &path);
+            KRenderingStrokePainter p = KSVGPainterFactory::strokePainter(style, &path);
             if (p.opacity() != 1.0f)
                 ts << s << "[opacity=" << p.opacity() << "]";
             if (p.strokeWidth() != 1.0f)
@@ -270,7 +270,7 @@ static void writeStyle(QTextStream &ts, const khtml::RenderObject &object)
                 ts << s << "[dash array=" << p.dashArray() << "]";        
             ts << "}]";
         }
-        KRenderingPaintServer *fillPaintServer = KSVG::KSVGPainterFactory::fillPaintServer(style, &path);
+        KRenderingPaintServer *fillPaintServer = KSVGPainterFactory::fillPaintServer(style, &path);
         if (fillPaintServer) {
             QTextStreamSeparator s(" ");
             ts << " [fill={";
@@ -280,7 +280,7 @@ static void writeStyle(QTextStream &ts, const khtml::RenderObject &object)
                 else
                     ts << s << *fillPaintServer;
             }
-            KRenderingFillPainter p = KSVG::KSVGPainterFactory::fillPainter(style, &path);
+            KRenderingFillPainter p = KSVGPainterFactory::fillPainter(style, &path);
             if (p.opacity() != 1.0f)
                 ts << s << "[opacity=" << p.opacity() << "]";
             if (p.fillRule() != RULE_NONZERO)
@@ -326,7 +326,7 @@ static QString getTagName(void *node)
 {
     SVGStyledElementImpl *elem = static_cast<SVGStyledElementImpl *>(node);
     if (elem)
-        return KDOM::DOMString(elem->nodeName()).qstring();
+        return DOMString(elem->nodeName()).qstring();
     return QString();
 }
 
@@ -343,7 +343,7 @@ void write(QTextStream &ts, const KCanvasContainer &container, int indent)
     
     ts << container << endl;
     
-    for (khtml::RenderObject *child = container.firstChild(); child != NULL; child = child->nextSibling())
+    for (RenderObject *child = container.firstChild(); child != NULL; child = child->nextSibling())
         write(ts, *child, indent + 1);
 }
 
@@ -361,10 +361,10 @@ void write(QTextStream &ts, const RenderPath &path, int indent)
     ts << path << endl;
 }
 
-void writeRenderResources(QTextStream &ts, KDOM::NodeImpl *parent)
+void writeRenderResources(QTextStream &ts, NodeImpl *parent)
 {
     ASSERT(parent);
-    KDOM::NodeImpl *node = parent;
+    NodeImpl *node = parent;
     do {
         if (!node->isSVGElement())
             continue;
@@ -400,5 +400,7 @@ QTextStream &operator<<(QTextStream &ts, const QStringList &l)
     
     return ts;
 }
-#endif // SVG_SUPPORT
 
+}
+
+#endif // SVG_SUPPORT

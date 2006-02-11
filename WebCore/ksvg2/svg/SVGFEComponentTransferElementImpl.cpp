@@ -44,9 +44,9 @@
 #include "SVGAnimatedEnumerationImpl.h"
 #include "SVGDOMImplementationImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGFEComponentTransferElementImpl::SVGFEComponentTransferElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : 
+SVGFEComponentTransferElementImpl::SVGFEComponentTransferElementImpl(const QualifiedName& tagName, DocumentImpl *doc) : 
 SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 {
     m_filterEffect = 0;
@@ -63,9 +63,9 @@ SVGAnimatedStringImpl *SVGFEComponentTransferElementImpl::in1() const
     return lazy_create<SVGAnimatedStringImpl>(m_in1, dummy);
 }
 
-void SVGFEComponentTransferElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
+void SVGFEComponentTransferElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    KDOM::DOMString value(attr->value());
+    DOMString value(attr->value());
     if (attr->name() == SVGNames::inAttr)
         in1()->setBaseVal(value.impl());
     else
@@ -79,10 +79,10 @@ KCanvasFEComponentTransfer *SVGFEComponentTransferElementImpl::filterEffect() co
     if (!m_filterEffect)
         return 0;
     
-    m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).qstring());
+    m_filterEffect->setIn(DOMString(in1()->baseVal()).qstring());
     setStandardAttributes(m_filterEffect);
     
-    for (KDOM::NodeImpl *n = firstChild(); n != 0; n = n->nextSibling()) {
+    for (NodeImpl *n = firstChild(); n != 0; n = n->nextSibling()) {
         if (n->hasTagName(SVGNames::feFuncRTag))
             m_filterEffect->setRedFunction(static_cast<SVGFEFuncRElementImpl *>(n)->transferFunction());
         else if (n->hasTagName(SVGNames::feFuncGTag))

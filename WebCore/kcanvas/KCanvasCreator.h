@@ -26,6 +26,8 @@
 
 #include <kcanvas/KCanvasPath.h>
 
+namespace WebCore {
+
 class KCanvasCreator
 {
 public:
@@ -44,6 +46,8 @@ public:
 private:
     static KCanvasCreator *s_creator;
 };
+
+}
 
 #endif // SVG_SUPPORT
 #endif

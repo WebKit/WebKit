@@ -38,9 +38,9 @@
 #include "SVGAnimatedStringImpl.h"
 #include "SVGDOMImplementationImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGFEBlendElementImpl::SVGFEBlendElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : 
+SVGFEBlendElementImpl::SVGFEBlendElementImpl(const QualifiedName& tagName, DocumentImpl *doc) : 
 SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 {
     m_filterEffect = 0;
@@ -69,9 +69,9 @@ SVGAnimatedEnumerationImpl *SVGFEBlendElementImpl::mode() const
     return lazy_create<SVGAnimatedEnumerationImpl>(m_mode, dummy);
 }
 
-void SVGFEBlendElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
+void SVGFEBlendElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    KDOM::DOMString value(attr->value());
+    DOMString value(attr->value());
     if (attr->name() == SVGNames::modeAttr)
     {
         if(value == "normal")
@@ -100,8 +100,8 @@ KCanvasFEBlend *SVGFEBlendElementImpl::filterEffect() const
     if (!m_filterEffect)
         return 0;
     m_filterEffect->setBlendMode((KCBlendModeType)(mode()->baseVal()-1));
-    m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).qstring());
-    m_filterEffect->setIn2(KDOM::DOMString(in2()->baseVal()).qstring());
+    m_filterEffect->setIn(DOMString(in1()->baseVal()).qstring());
+    m_filterEffect->setIn2(DOMString(in2()->baseVal()).qstring());
     setStandardAttributes(m_filterEffect);
     return m_filterEffect;
 }

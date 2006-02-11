@@ -36,9 +36,9 @@
 #include "SVGAnimatedStringImpl.h"
 #include "SVGDOMImplementationImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGFETileElementImpl::SVGFETileElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : 
+SVGFETileElementImpl::SVGFETileElementImpl(const QualifiedName& tagName, DocumentImpl *doc) : 
 SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 {
     m_filterEffect = 0;
@@ -55,9 +55,9 @@ SVGAnimatedStringImpl *SVGFETileElementImpl::in1() const
     return lazy_create<SVGAnimatedStringImpl>(m_in1, dummy);
 }
 
-void SVGFETileElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
+void SVGFETileElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    KDOM::DOMString value(attr->value());
+    DOMString value(attr->value());
     if (attr->name() == SVGNames::inAttr)
         in1()->setBaseVal(value.impl());
     else
@@ -70,7 +70,7 @@ KCanvasFETile *SVGFETileElementImpl::filterEffect() const
         m_filterEffect = static_cast<KCanvasFETile *>(QPainter::renderingDevice()->createFilterEffect(FE_TILE));
     if (!m_filterEffect)
         return 0;
-    m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).qstring());
+    m_filterEffect->setIn(DOMString(in1()->baseVal()).qstring());
     setStandardAttributes(m_filterEffect);
     return m_filterEffect;
 }

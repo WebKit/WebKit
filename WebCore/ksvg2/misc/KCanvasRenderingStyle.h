@@ -29,31 +29,28 @@
 #include <kcanvas/KCanvasMatrix.h>
 #include <qvaluelist.h>
 
+namespace WebCore {
+
 // FIXME: these should be removed, use KSVG ones instead
-typedef enum
-{
+enum KCCapStyle {
     CAP_BUTT = 1,
     CAP_ROUND = 2,
     CAP_SQUARE = 3
-} KCCapStyle;
+};
 
-typedef enum
-{
+enum KCJoinStyle {
     JOIN_MITER = 1,
     JOIN_ROUND = 2,
     JOIN_BEVEL = 3
-} KCJoinStyle;
+};
 
 
 // Special types
 typedef Q3ValueList<float> KCDashArray;
 
-class KRenderingFillPainter;
-class KRenderingStrokePainter;
-class KRenderingPaintServer;
-
-namespace WebCore
-{
+    class KRenderingFillPainter;
+    class KRenderingStrokePainter;
+    class KRenderingPaintServer;
     class RenderStyle;
     class RenderObject;
     class KSVGPainterFactory

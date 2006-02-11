@@ -39,12 +39,12 @@ class QFontMetrics;
 class QString;
 class QWidget;
 
+namespace WebCore {
+
 #if SVG_SUPPORT
 class KRenderingDevice;
 class KRenderingDeviceContext;
 #endif
-
-namespace WebCore {
 
 class IntPoint;
 class IntPointArray;

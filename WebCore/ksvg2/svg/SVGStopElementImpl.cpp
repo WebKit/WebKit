@@ -35,9 +35,9 @@
 #include "SVGAnimatedNumberImpl.h"
 #include "SVGDOMImplementationImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGStopElementImpl::SVGStopElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : SVGStyledElementImpl(tagName, doc)
+SVGStopElementImpl::SVGStopElementImpl(const QualifiedName& tagName, DocumentImpl *doc) : SVGStyledElementImpl(tagName, doc)
 {
 }
 
@@ -50,9 +50,9 @@ SVGAnimatedNumberImpl *SVGStopElementImpl::offset() const
     return lazy_create<SVGAnimatedNumberImpl>(m_offset, this);
 }
 
-void SVGStopElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
+void SVGStopElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    KDOM::DOMString value(attr->value());
+    DOMString value(attr->value());
     if (attr->name() == SVGNames::offsetAttr) {
         if(value.qstring().endsWith(QString::fromLatin1("%")))
             offset()->setBaseVal(value.qstring().left(value.length() - 1).toDouble() / 100.);

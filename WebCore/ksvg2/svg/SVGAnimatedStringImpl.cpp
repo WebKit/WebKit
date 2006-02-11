@@ -24,9 +24,9 @@
 #if SVG_SUPPORT
 #include "SVGAnimatedStringImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGAnimatedStringImpl::SVGAnimatedStringImpl(const SVGStyledElementImpl *context) : SVGAnimatedTemplate<KDOM::DOMStringImpl>(context)
+SVGAnimatedStringImpl::SVGAnimatedStringImpl(const SVGStyledElementImpl *context) : SVGAnimatedTemplate<DOMStringImpl>(context)
 {
 }
 
@@ -34,13 +34,13 @@ SVGAnimatedStringImpl::~SVGAnimatedStringImpl()
 {
 }
 
-KDOM::DOMStringImpl *SVGAnimatedStringImpl::create() const
+DOMStringImpl *SVGAnimatedStringImpl::create() const
 {
     // TODO: Do we need notifications on string manipulations? ie. appendData()?
-    return new KDOM::DOMStringImpl("");
+    return new DOMStringImpl("");
 }
 
-void SVGAnimatedStringImpl::assign(KDOM::DOMStringImpl *src, KDOM::DOMStringImpl *dst) const
+void SVGAnimatedStringImpl::assign(DOMStringImpl *src, DOMStringImpl *dst) const
 {
     if(!src || !dst)
         return;

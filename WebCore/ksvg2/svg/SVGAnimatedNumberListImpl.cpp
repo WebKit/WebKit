@@ -25,7 +25,7 @@
 #include "SVGNumberListImpl.h"
 #include "SVGAnimatedNumberListImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGAnimatedNumberListImpl::SVGAnimatedNumberListImpl(const SVGStyledElementImpl *context) : SVGAnimatedTemplate<SVGNumberListImpl>(context)
 {

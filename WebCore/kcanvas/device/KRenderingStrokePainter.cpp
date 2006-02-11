@@ -25,6 +25,8 @@
 #include "KRenderingPaintServer.h"
 #include "KRenderingStrokePainter.h"
 
+namespace WebCore {
+
 class KRenderingStrokePainter::Private
 {
 public:
@@ -146,6 +148,8 @@ bool KRenderingStrokePainter::dirty() const
 void KRenderingStrokePainter::setDirty(bool dirty)
 {
     d->dirty = dirty;
+}
+
 }
 
 // vim:ts=4:noet

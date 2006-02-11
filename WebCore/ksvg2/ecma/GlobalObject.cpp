@@ -30,7 +30,7 @@
 
 #include <ksvg2/data/EcmaConstants.h>
 #include <ksvg2/data/GlobalObject.lut.h>
-using namespace KSVG;
+using namespace WebCore;
 
 /*
 @begin GlobalObject::s_hashTable 13
@@ -49,7 +49,7 @@ using namespace KSVG;
 @end
 */
 
-GlobalObject::GlobalObject(KDOM::DocumentImpl *doc) : KDOM::GlobalObject(doc)
+GlobalObject::GlobalObject(DocumentImpl *doc) : GlobalObject(doc)
 {
 }
 
@@ -67,7 +67,7 @@ KJS::JSValue *GlobalObject::get(KJS::ExecState *exec, const KJS::Identifier &p) 
 {
     kdDebug(26004) << "KSVG::GlobalObject (" << this << ")::get " << p.qstring() << endl;
 
-    KJS::JSValue *ret = KDOM::GlobalObject::get(exec, p);
+    KJS::JSValue *ret = GlobalObject::get(exec, p);
     if(ret->type() != KJS::UndefinedType)
         return ret;
 

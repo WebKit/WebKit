@@ -25,7 +25,7 @@
 
 #include "khtml/html/html_imageimpl.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGImageElementImpl;
     class SVGImageLoader : public DOM::HTMLImageLoader {

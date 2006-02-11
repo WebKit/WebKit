@@ -26,9 +26,8 @@
 
 #include "KCanvasRenderingStyle.h"
 
-namespace KSVG {
-    class KCanvasRenderingStyle;
-}
+namespace WebCore {
+class KCanvasRenderingStyle;
 class KRenderingPaintServer;
 class KRenderingDeviceContext;
 class KRenderingStrokePainter
@@ -67,6 +66,8 @@ private:
     class Private;
     Private *d;
 };
+
+}
 
 #endif // SVG_SUPPORT
 #endif

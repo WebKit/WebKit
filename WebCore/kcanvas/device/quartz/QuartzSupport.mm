@@ -39,6 +39,8 @@
 
 #import "SVGRenderStyle.h"
 
+namespace WebCore {
+
 #ifndef NDEBUG
 void debugDumpCGImageToFile(NSString *filename, CGImageRef image, int width, int height)
 {
@@ -115,9 +117,9 @@ void applyStrokeStyleToContext(CGContextRef context, const KRenderingStrokePaint
     }
 }
 
-void applyStrokeStyleToContext(CGContextRef context, khtml::RenderStyle* renderStyle, const khtml::RenderObject* renderObject)
+void applyStrokeStyleToContext(CGContextRef context, RenderStyle* renderStyle, const RenderObject* renderObject)
 {
-    KRenderingStrokePainter strokePainter = KSVG::KSVGPainterFactory::strokePainter(renderStyle, renderObject);
+    KRenderingStrokePainter strokePainter = KSVGPainterFactory::strokePainter(renderStyle, renderObject);
     applyStrokeStyleToContext(context, strokePainter);
 }
 
@@ -156,6 +158,8 @@ CFStringRef CFStringFromCGPath(CGPathRef path)
     CGPathApply(path, string, CGPathToCFStringApplierFunction);
 
     return string;
+}
+
 }
 
 #endif // SVG_SUPPORT

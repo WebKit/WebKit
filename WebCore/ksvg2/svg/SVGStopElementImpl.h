@@ -26,13 +26,13 @@
 
 #include "SVGStyledElementImpl.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGAnimatedNumberImpl;
     class SVGStopElementImpl : public SVGStyledElementImpl
     {
     public:
-        SVGStopElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGStopElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGStopElementImpl();
         
         virtual bool isGradientStop() const { return true; }
@@ -40,7 +40,7 @@ namespace KSVG
         // 'SVGStoplement' functions
         SVGAnimatedNumberImpl *offset() const;
 
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
     private:
         mutable RefPtr<SVGAnimatedNumberImpl> m_offset;
     };

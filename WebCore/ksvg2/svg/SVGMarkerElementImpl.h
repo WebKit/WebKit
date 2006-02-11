@@ -31,12 +31,12 @@
 
 class KCanvasMarker;
 
-namespace KDOM
+namespace WebCore
 {
     class DocumentImpl;
 };
 
-namespace KSVG
+namespace WebCore
 {
     class SVGAngleImpl;
     class SVGAnimatedAngleImpl;
@@ -48,7 +48,7 @@ namespace KSVG
                                  public SVGFitToViewBoxImpl
     {
     public:
-        SVGMarkerElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGMarkerElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGMarkerElementImpl();
 
         // 'SVGMarkerElement' functions
@@ -63,10 +63,10 @@ namespace KSVG
         void setOrientToAuto();
         void setOrientToAngle(SVGAngleImpl *angle);
 
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
     
-        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
-        virtual khtml::RenderObject *createRenderer(RenderArena *arena, khtml::RenderStyle *style);
+        virtual bool rendererIsNeeded(RenderStyle *) { return true; }
+        virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
         virtual KCanvasMarker *canvasResource();
 
     private:

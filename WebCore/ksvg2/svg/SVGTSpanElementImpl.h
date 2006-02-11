@@ -26,16 +26,16 @@
 
 #include "SVGTextPositioningElementImpl.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGTSpanElementImpl : public SVGTextPositioningElementImpl
     {
     public:
-        SVGTSpanElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGTSpanElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGTSpanElementImpl();
                 
-        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
-        virtual khtml::RenderObject *createRenderer(RenderArena *arena, khtml::RenderStyle *style);
+        virtual bool rendererIsNeeded(RenderStyle *) { return true; }
+        virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
         bool childShouldCreateRenderer(DOM::NodeImpl *child) const;
     };
 };

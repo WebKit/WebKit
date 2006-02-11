@@ -26,9 +26,9 @@
 #include "SVGNames.h"
 #include "render_inline.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGTSpanElementImpl::SVGTSpanElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+SVGTSpanElementImpl::SVGTSpanElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
 : SVGTextPositioningElementImpl(tagName, doc)
 {
 }
@@ -44,9 +44,9 @@ bool SVGTSpanElementImpl::childShouldCreateRenderer(DOM::NodeImpl *child) const
     return false;
 }
 
-khtml::RenderObject *SVGTSpanElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *)
+RenderObject *SVGTSpanElementImpl::createRenderer(RenderArena *arena, RenderStyle *)
 {
-    return new (arena) khtml::RenderInline(this);
+    return new (arena) RenderInline(this);
 }
 
 // vim:ts=4:noet

@@ -25,7 +25,7 @@
 #include "SVGNumberImpl.h"
 #include "SVGStyledElementImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGNumberImpl::SVGNumberImpl(const SVGStyledElementImpl *context) : Shared<SVGNumberImpl>()
 {

@@ -25,7 +25,7 @@
 #include "SVGStyledElementImpl.h"
 #include "SVGAnimatedIntegerImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGAnimatedIntegerImpl::SVGAnimatedIntegerImpl(const SVGStyledElementImpl *context) : Shared<SVGAnimatedIntegerImpl>()
 {

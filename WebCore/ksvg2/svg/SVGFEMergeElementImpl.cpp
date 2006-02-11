@@ -39,9 +39,9 @@
 #include "SVGAnimatedStringImpl.h"
 #include "SVGDOMImplementationImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGFEMergeElementImpl::SVGFEMergeElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : 
+SVGFEMergeElementImpl::SVGFEMergeElementImpl(const QualifiedName& tagName, DocumentImpl *doc) : 
 SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 {
     m_filterEffect = 0;
@@ -61,11 +61,11 @@ KCanvasFEMerge *SVGFEMergeElementImpl::filterEffect() const
     setStandardAttributes(m_filterEffect);
 
     QStringList mergeInputs;
-    for(KDOM::NodeImpl *n = firstChild(); n != 0; n = n->nextSibling())
+    for(NodeImpl *n = firstChild(); n != 0; n = n->nextSibling())
     {
         if(n->hasTagName(SVGNames::feMergeNodeTag))
         {
-            KDOM::DOMString mergeInput = static_cast<SVGFEMergeNodeElementImpl *>(n)->in1()->baseVal();
+            DOMString mergeInput = static_cast<SVGFEMergeNodeElementImpl *>(n)->in1()->baseVal();
             mergeInputs.append(mergeInput.qstring());
         }
     }

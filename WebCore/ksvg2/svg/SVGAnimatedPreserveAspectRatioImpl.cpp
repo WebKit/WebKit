@@ -24,7 +24,7 @@
 #if SVG_SUPPORT
 #include "SVGAnimatedPreserveAspectRatioImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGAnimatedPreserveAspectRatioImpl::SVGAnimatedPreserveAspectRatioImpl(const SVGStyledElementImpl *context) : SVGAnimatedTemplate<SVGPreserveAspectRatioImpl>(context)
 {

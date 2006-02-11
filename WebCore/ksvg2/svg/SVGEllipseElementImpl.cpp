@@ -32,9 +32,9 @@
 #include <kcanvas/KCanvas.h>
 #include <kcanvas/KCanvasCreator.h>
 
-namespace KSVG {
+namespace WebCore {
 
-SVGEllipseElementImpl::SVGEllipseElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+SVGEllipseElementImpl::SVGEllipseElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
 : SVGStyledTransformableElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
 {
 }
@@ -63,9 +63,9 @@ SVGAnimatedLengthImpl *SVGEllipseElementImpl::ry() const
     return lazy_create<SVGAnimatedLengthImpl>(m_ry, this, LM_HEIGHT, viewportElement());
 }
 
-void SVGEllipseElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
+void SVGEllipseElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    const KDOM::AtomicString& value = attr->value();
+    const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::cxAttr)
         cx()->baseVal()->setValueAsString(value.impl());
     if (attr->name() == SVGNames::cyAttr)

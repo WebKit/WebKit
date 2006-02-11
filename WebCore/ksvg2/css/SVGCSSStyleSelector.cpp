@@ -48,7 +48,7 @@
 
 #include <stdlib.h>
 
-using namespace KSVG;
+using namespace WebCore;
 
 #define HANDLE_INHERIT(prop, Prop) \
 if(isInherit) \
@@ -88,19 +88,19 @@ if(id == propID) \
     return;\
 }
 
-void KDOM::CSSStyleSelector::applySVGProperty(int id, KDOM::CSSValueImpl *value)
+void CSSStyleSelector::applySVGProperty(int id, CSSValueImpl *value)
 {
-    KDOM::CSSPrimitiveValueImpl *primitiveValue = 0;
+    CSSPrimitiveValueImpl *primitiveValue = 0;
     if(value->isPrimitiveValue())
-        primitiveValue = static_cast<KDOM::CSSPrimitiveValueImpl *>(value);
+        primitiveValue = static_cast<CSSPrimitiveValueImpl *>(value);
 
-    KDOM::Length l;
+    Length l;
     SVGRenderStyle *svgstyle = style->accessSVGStyle();
     
     unsigned short valueType = value->cssValueType();
     
-    bool isInherit = parentNode && valueType == KDOM::CSSPrimitiveValue::CSS_INHERIT;
-    bool isInitial = valueType == KDOM::CSSPrimitiveValue::CSS_INITIAL || (!parentNode && valueType == KDOM::CSSPrimitiveValue::CSS_INHERIT);
+    bool isInherit = parentNode && valueType == CSSPrimitiveValue::CSS_INHERIT;
+    bool isInitial = valueType == CSSPrimitiveValue::CSS_INITIAL || (!parentNode && valueType == CSSPrimitiveValue::CSS_INHERIT);
 
     // What follows is a list that maps the CSS properties into their
     // corresponding front-end RenderStyle values. Shorthands(e.g. border,
@@ -410,7 +410,7 @@ void KDOM::CSSStyleSelector::applySVGProperty(int id, KDOM::CSSValueImpl *value)
             HANDLE_INHERIT_AND_INITIAL(strokeDashArray, StrokeDashArray)
             if(!primitiveValue && value)
             {
-                KDOM::CSSValueListImpl *dashes = static_cast<KDOM::CSSValueListImpl *>(value);
+                CSSValueListImpl *dashes = static_cast<CSSValueListImpl *>(value);
                 if(dashes)
                     svgstyle->setStrokeDashArray(dashes);
             }
@@ -434,10 +434,10 @@ void KDOM::CSSStyleSelector::applySVGProperty(int id, KDOM::CSSValueImpl *value)
         
             float f = 0.0;    
             int type = primitiveValue->primitiveType();
-            if(type == KDOM::CSSPrimitiveValue::CSS_PERCENTAGE)
-                f = primitiveValue->getFloatValue(KDOM::CSSPrimitiveValue::CSS_PERCENTAGE) / 100.;
-            else if(type == KDOM::CSSPrimitiveValue::CSS_NUMBER)
-                f = primitiveValue->getFloatValue(KDOM::CSSPrimitiveValue::CSS_NUMBER);
+            if(type == CSSPrimitiveValue::CSS_PERCENTAGE)
+                f = primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE) / 100.;
+            else if(type == CSSPrimitiveValue::CSS_NUMBER)
+                f = primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_NUMBER);
             else
                 return;
 
@@ -452,10 +452,10 @@ void KDOM::CSSStyleSelector::applySVGProperty(int id, KDOM::CSSValueImpl *value)
         
             float f = 0.0;    
             int type = primitiveValue->primitiveType();
-            if(type == KDOM::CSSPrimitiveValue::CSS_PERCENTAGE)
-                f = primitiveValue->getFloatValue(KDOM::CSSPrimitiveValue::CSS_PERCENTAGE) / 100.;
-            else if(type == KDOM::CSSPrimitiveValue::CSS_NUMBER)
-                f = primitiveValue->getFloatValue(KDOM::CSSPrimitiveValue::CSS_NUMBER);
+            if(type == CSSPrimitiveValue::CSS_PERCENTAGE)
+                f = primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE) / 100.;
+            else if(type == CSSPrimitiveValue::CSS_NUMBER)
+                f = primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_NUMBER);
             else
                 return;
 
@@ -470,10 +470,10 @@ void KDOM::CSSStyleSelector::applySVGProperty(int id, KDOM::CSSValueImpl *value)
         
             float f = 0.0;    
             int type = primitiveValue->primitiveType();
-            if(type == KDOM::CSSPrimitiveValue::CSS_PERCENTAGE)
-                f = primitiveValue->getFloatValue(KDOM::CSSPrimitiveValue::CSS_PERCENTAGE) / 100.;
-            else if(type == KDOM::CSSPrimitiveValue::CSS_NUMBER)
-                f = primitiveValue->getFloatValue(KDOM::CSSPrimitiveValue::CSS_NUMBER);
+            if(type == CSSPrimitiveValue::CSS_PERCENTAGE)
+                f = primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE) / 100.;
+            else if(type == CSSPrimitiveValue::CSS_NUMBER)
+                f = primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_NUMBER);
             else
                 return;
 
@@ -488,7 +488,7 @@ void KDOM::CSSStyleSelector::applySVGProperty(int id, KDOM::CSSValueImpl *value)
 
             QString s;
             int type = primitiveValue->primitiveType();
-            if(type == KDOM::CSSPrimitiveValue::CSS_URI)
+            if(type == CSSPrimitiveValue::CSS_URI)
                 s = primitiveValue->getStringValue().qstring();
             else
                 return;
@@ -504,7 +504,7 @@ void KDOM::CSSStyleSelector::applySVGProperty(int id, KDOM::CSSValueImpl *value)
 
             QString s;
             int type = primitiveValue->primitiveType();
-            if(type == KDOM::CSSPrimitiveValue::CSS_URI)
+            if(type == CSSPrimitiveValue::CSS_URI)
                 s = primitiveValue->getStringValue().qstring();
             else
                 return;
@@ -520,7 +520,7 @@ void KDOM::CSSStyleSelector::applySVGProperty(int id, KDOM::CSSValueImpl *value)
 
             QString s;
             int type = primitiveValue->primitiveType();
-            if(type == KDOM::CSSPrimitiveValue::CSS_URI)
+            if(type == CSSPrimitiveValue::CSS_URI)
                 s = primitiveValue->getStringValue().qstring();
             else
                 return;
@@ -558,8 +558,8 @@ void KDOM::CSSStyleSelector::applySVGProperty(int id, KDOM::CSSValueImpl *value)
 
             float f = 0.0;
             int type = primitiveValue->primitiveType();
-            if(type == KDOM::CSSPrimitiveValue::CSS_NUMBER)
-                f = primitiveValue->getFloatValue(KDOM::CSSPrimitiveValue::CSS_NUMBER);
+            if(type == CSSPrimitiveValue::CSS_NUMBER)
+                f = primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_NUMBER);
             else
                 return;
 
@@ -574,7 +574,7 @@ void KDOM::CSSStyleSelector::applySVGProperty(int id, KDOM::CSSValueImpl *value)
 
             QString s;
             int type = primitiveValue->primitiveType();
-            if(type == KDOM::CSSPrimitiveValue::CSS_URI)
+            if(type == CSSPrimitiveValue::CSS_URI)
                 s = primitiveValue->getStringValue().qstring();
             else
                 return;
@@ -589,7 +589,7 @@ void KDOM::CSSStyleSelector::applySVGProperty(int id, KDOM::CSSValueImpl *value)
 
             QString s;
             int type = primitiveValue->primitiveType();
-            if (type == KDOM::CSSPrimitiveValue::CSS_URI)
+            if (type == CSSPrimitiveValue::CSS_URI)
                 s = primitiveValue->getStringValue().qstring();
             else
                 return;
@@ -605,7 +605,7 @@ void KDOM::CSSStyleSelector::applySVGProperty(int id, KDOM::CSSValueImpl *value)
 
             QString s;
             int type = primitiveValue->primitiveType();
-            if(type == KDOM::CSSPrimitiveValue::CSS_URI)
+            if(type == CSSPrimitiveValue::CSS_URI)
                 s = primitiveValue->getStringValue().qstring();
             else
                 return;
@@ -652,12 +652,12 @@ void KDOM::CSSStyleSelector::applySVGProperty(int id, KDOM::CSSValueImpl *value)
                 return;
             }
             else if(isInitial)
-                col = KDOM::RenderStyle::initialColor();
+                col = RenderStyle::initialColor();
             else
             {
                 SVGColorImpl *c = static_cast<SVGColorImpl *>(value);
                 if(!c)
-                    return KDOM::CSSStyleSelector::applyProperty(id, value);
+                    return CSSStyleSelector::applyProperty(id, value);
                 
                 col = c->color();
             }
@@ -680,7 +680,7 @@ void KDOM::CSSStyleSelector::applySVGProperty(int id, KDOM::CSSValueImpl *value)
             {
                 SVGColorImpl *c = static_cast<SVGColorImpl *>(value);
                 if(!c)
-                    return KDOM::CSSStyleSelector::applyProperty(id, value);
+                    return CSSStyleSelector::applyProperty(id, value);
 
                 if(c->colorType() == SVG_COLORTYPE_CURRENTCOLOR)
                     col = style->color();
@@ -699,10 +699,10 @@ void KDOM::CSSStyleSelector::applySVGProperty(int id, KDOM::CSSValueImpl *value)
 
             float f = 0.0;    
             int type = primitiveValue->primitiveType();
-            if(type == KDOM::CSSPrimitiveValue::CSS_PERCENTAGE)
-                f = primitiveValue->getFloatValue(KDOM::CSSPrimitiveValue::CSS_PERCENTAGE) / 100.;
-            else if(type == KDOM::CSSPrimitiveValue::CSS_NUMBER)
-                f = primitiveValue->getFloatValue(KDOM::CSSPrimitiveValue::CSS_NUMBER);
+            if(type == CSSPrimitiveValue::CSS_PERCENTAGE)
+                f = primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE) / 100.;
+            else if(type == CSSPrimitiveValue::CSS_NUMBER)
+                f = primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_NUMBER);
             else
                 return;
 
@@ -718,7 +718,7 @@ void KDOM::CSSStyleSelector::applySVGProperty(int id, KDOM::CSSValueImpl *value)
             {
                 SVGColorImpl *c = static_cast<SVGColorImpl *>(value);
                 if(!c)
-                    return KDOM::CSSStyleSelector::applyProperty(id, value);
+                    return CSSStyleSelector::applyProperty(id, value);
 
                 if(c->colorType() == SVG_COLORTYPE_CURRENTCOLOR)
                     col = style->color();

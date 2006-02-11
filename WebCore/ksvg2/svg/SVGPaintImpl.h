@@ -28,29 +28,29 @@
 
 #include <SVGColorImpl.h>
 
-namespace KSVG
+namespace WebCore
 {
     class SVGPaintImpl : public SVGColorImpl
     {
     public:
         SVGPaintImpl();
-        SVGPaintImpl(KDOM::DOMStringImpl *uri);
+        SVGPaintImpl(DOMStringImpl *uri);
         SVGPaintImpl(unsigned short paintType);
-        SVGPaintImpl(unsigned short paintType, KDOM::DOMStringImpl *uri, KDOM::DOMStringImpl *rgbPaint = 0, KDOM::DOMStringImpl *iccPaint = 0);
+        SVGPaintImpl(unsigned short paintType, DOMStringImpl *uri, DOMStringImpl *rgbPaint = 0, DOMStringImpl *iccPaint = 0);
         virtual ~SVGPaintImpl();
 
         // 'SVGPaint' functions
         unsigned short paintType() const;
-        KDOM::DOMStringImpl *uri() const;
+        DOMStringImpl *uri() const;
 
-        void setUri(KDOM::DOMStringImpl *uri);
-        void setPaint(unsigned short paintType, KDOM::DOMStringImpl *uri, KDOM::DOMStringImpl *rgbPaint, KDOM::DOMStringImpl *iccPaint);
+        void setUri(DOMStringImpl *uri);
+        void setPaint(unsigned short paintType, DOMStringImpl *uri, DOMStringImpl *rgbPaint, DOMStringImpl *iccPaint);
 
-        virtual KDOM::DOMString cssText() const;
+        virtual DOMString cssText() const;
 
     private:
         unsigned short m_paintType;
-        KDOM::DOMString m_uri;
+        DOMString m_uri;
     };
 };
 

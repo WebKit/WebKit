@@ -44,9 +44,9 @@
 #include <kcanvas/device/KRenderingDevice.h>
 #include "DocumentImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGUseElementImpl::SVGUseElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+SVGUseElementImpl::SVGUseElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
 : SVGStyledTransformableElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl(), SVGURIReferenceImpl()
 {
 }
@@ -75,9 +75,9 @@ SVGAnimatedLengthImpl *SVGUseElementImpl::height() const
     return lazy_create<SVGAnimatedLengthImpl>(m_height, this, LM_HEIGHT, viewportElement());
 }
 
-void SVGUseElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
+void SVGUseElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    const KDOM::AtomicString& value = attr->value();
+    const AtomicString& value = attr->value();
     
     if (attr->name() == SVGNames::xAttr)
         x()->baseVal()->setValueAsString(value.impl());
@@ -98,9 +98,9 @@ void SVGUseElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
 
 void SVGUseElementImpl::closeRenderer()
 {
-    QString ref = KDOM::DOMString(href()->baseVal()).qstring();
-    KDOM::DOMString targetId = SVGURIReferenceImpl::getTarget(ref);
-    KDOM::ElementImpl *targetElement = ownerDocument()->getElementById(targetId.impl());
+    QString ref = DOMString(href()->baseVal()).qstring();
+    DOMString targetId = SVGURIReferenceImpl::getTarget(ref);
+    ElementImpl *targetElement = ownerDocument()->getElementById(targetId.impl());
     SVGElementImpl *target = svg_dynamic_cast(targetElement);
     if (!target)
     {
@@ -111,8 +111,8 @@ void SVGUseElementImpl::closeRenderer()
     float _x = x()->baseVal()->value(), _y = y()->baseVal()->value();
     float _w = width()->baseVal()->value(), _h = height()->baseVal()->value();
     
-    KDOM::DOMString wString = QString::number(_w);
-    KDOM::DOMString hString = QString::number(_h);
+    DOMString wString = QString::number(_w);
+    DOMString hString = QString::number(_h);
     
     int exceptioncode;
     QString trans = QString::fromLatin1("translate(%1, %2)").arg(_x).arg(_y);
@@ -126,13 +126,13 @@ void SVGUseElementImpl::closeRenderer()
         
         SVGSymbolElementImpl *symbol = static_cast<SVGSymbolElementImpl *>(target);
         if (symbol->hasAttribute(SVGNames::viewBoxAttr)) {
-            const KDOM::AtomicString& symbolViewBox = symbol->getAttribute(SVGNames::viewBoxAttr);
+            const AtomicString& symbolViewBox = symbol->getAttribute(SVGNames::viewBoxAttr);
             dummy->setAttribute(SVGNames::viewBoxAttr, symbolViewBox);
         }
         target->cloneChildNodes(dummy.get());
 
         RefPtr<SVGElementImpl> dummy2 = new SVGDummyElementImpl(SVGNames::gTag, getDocument());
-        dummy2->setAttribute(SVGNames::transformAttr, KDOM::DOMString(trans));
+        dummy2->setAttribute(SVGNames::transformAttr, DOMString(trans));
         
         appendChild(dummy2, exceptioncode);
         dummy2->appendChild(dummy, exceptioncode);
@@ -140,7 +140,7 @@ void SVGUseElementImpl::closeRenderer()
     else if(target->hasTagName(SVGNames::svgTag))
     {
         RefPtr<SVGDummyElementImpl> dummy = new SVGDummyElementImpl(SVGNames::gTag, getDocument());
-        dummy->setAttribute(SVGNames::transformAttr, KDOM::DOMString(trans));
+        dummy->setAttribute(SVGNames::transformAttr, DOMString(trans));
         
         RefPtr<SVGElementImpl> root = static_pointer_cast<SVGElementImpl>(target->cloneNode(true));
         if(hasAttribute(SVGNames::widthAttr))
@@ -157,7 +157,7 @@ void SVGUseElementImpl::closeRenderer()
         RefPtr<SVGDummyElementImpl> dummy = new SVGDummyElementImpl(SVGNames::gTag, getDocument());
         dummy->setAttribute(SVGNames::transformAttr, trans);
         
-        RefPtr<KDOM::NodeImpl> root = target->cloneNode(true);
+        RefPtr<NodeImpl> root = target->cloneNode(true);
         
         appendChild(dummy, exceptioncode);
         dummy->appendChild(root.release(), exceptioncode);
@@ -171,7 +171,7 @@ bool SVGUseElementImpl::hasChildNodes() const
     return false;
 }
 
-khtml::RenderObject *SVGUseElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
+RenderObject *SVGUseElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
 {
     return QPainter::renderingDevice()->createContainer(arena, style, this);
 }

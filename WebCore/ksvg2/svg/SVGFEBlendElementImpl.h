@@ -27,7 +27,7 @@
 #include "SVGFilterPrimitiveStandardAttributesImpl.h"
 #include "KCanvasFilters.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGAnimatedStringImpl;
     class SVGAnimatedEnumerationImpl;
@@ -35,7 +35,7 @@ namespace KSVG
     class SVGFEBlendElementImpl : public SVGFilterPrimitiveStandardAttributesImpl
     {
     public:
-        SVGFEBlendElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGFEBlendElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGFEBlendElementImpl();
 
         // 'SVGFEBlendElement' functions
@@ -44,7 +44,7 @@ namespace KSVG
         SVGAnimatedEnumerationImpl *mode() const;
 
         // Derived from: 'ElementImpl'
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
         virtual KCanvasFEBlend *filterEffect() const;
 

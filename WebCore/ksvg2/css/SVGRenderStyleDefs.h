@@ -41,7 +41,7 @@
     Data Name() const { return (Data) svg_inherited_flags.f._##Name; } \
     static Data initial##Type() { return Initial; }
 
-namespace KSVG
+namespace WebCore
 {
     enum EWindRule
     {
@@ -148,11 +148,11 @@ namespace KSVG
         float opacity;
         unsigned int miterLimit;
 
-        KDOM::CSSValueImpl *width;
-        KDOM::CSSValueImpl *dashOffset;
+        CSSValueImpl *width;
+        CSSValueImpl *dashOffset;
 
         SVGPaintImpl *paint;
-        KDOM::CSSValueListImpl *dashArray;
+        CSSValueListImpl *dashArray;
 
     private:
         StyleStrokeData &operator=(const StyleStrokeData &);

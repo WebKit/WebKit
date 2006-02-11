@@ -35,24 +35,24 @@ namespace WebCore {
     class DocumentPtr;
     typedef StyledElementImpl XMLElementImpl;
 
-    class SVGElementImpl : public KDOM::XMLElementImpl
+    class SVGElementImpl : public XMLElementImpl
     {
     public:
-        SVGElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGElementImpl();
         virtual bool isSVGElement() const { return true; }
-        virtual bool isSupported(KDOM::DOMStringImpl *feature, KDOM::DOMStringImpl *version) const;
+        virtual bool isSupported(DOMStringImpl *feature, DOMStringImpl *version) const;
 
         SVGSVGElementImpl *ownerSVGElement() const;
         SVGElementImpl *viewportElement() const;
 
         // Helper methods that returns the attr value if attr is set, otherwise the default value.
         // It throws NO_MODIFICATION_ALLOWED_ERR if the element is read-only.
-        KDOM::AtomicString tryGetAttribute(const KDOM::DOMString& name, KDOM::AtomicString defaultValue = KDOM::AtomicString()) const;
-        KDOM::AtomicString tryGetAttributeNS(const KDOM::DOMString& namespaceURI, const KDOM::DOMString& localName, KDOM::AtomicString defaultValue = KDOM::AtomicString()) const;
+        AtomicString tryGetAttribute(const DOMString& name, AtomicString defaultValue = AtomicString()) const;
+        AtomicString tryGetAttributeNS(const DOMString& namespaceURI, const DOMString& localName, AtomicString defaultValue = AtomicString()) const;
 
         // Internal
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
         // To be implemented by any element which can establish new viewports...
         virtual QString adjustViewportClipping() const { return QString::null; }
@@ -68,7 +68,7 @@ namespace WebCore {
         virtual bool isValid() const { return true; }
         
         virtual void closeRenderer() { m_closed = true; }
-        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return false; }
+        virtual bool rendererIsNeeded(RenderStyle *) { return false; }
         virtual bool childShouldCreateRenderer(DOM::NodeImpl *) const;
         
         // helper:
@@ -81,7 +81,7 @@ namespace WebCore {
 };
 
 namespace WebCore {
-    static inline SVGElementImpl *svg_dynamic_cast(KDOM::NodeImpl *node) {
+    static inline SVGElementImpl *svg_dynamic_cast(NodeImpl *node) {
         SVGElementImpl *svgElement = NULL;
         if (node && node->isSVGElement())
             svgElement = static_cast<SVGElementImpl *>(node);

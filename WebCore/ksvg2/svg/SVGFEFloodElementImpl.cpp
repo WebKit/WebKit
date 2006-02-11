@@ -37,9 +37,9 @@
 #include "SVGAnimatedStringImpl.h"
 #include "SVGDOMImplementationImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGFEFloodElementImpl::SVGFEFloodElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : 
+SVGFEFloodElementImpl::SVGFEFloodElementImpl(const QualifiedName& tagName, DocumentImpl *doc) : 
 SVGFilterPrimitiveStandardAttributesImpl(tagName, doc)
 {
     m_filterEffect = 0;
@@ -56,9 +56,9 @@ SVGAnimatedStringImpl *SVGFEFloodElementImpl::in1() const
     return lazy_create<SVGAnimatedStringImpl>(m_in1, dummy);
 }
 
-void SVGFEFloodElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
+void SVGFEFloodElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    KDOM::DOMString value(attr->value());
+    DOMString value(attr->value());
     if (attr->name() == SVGNames::inAttr)
         in1()->setBaseVal(value.impl());
     else
@@ -71,9 +71,9 @@ KCanvasFEFlood *SVGFEFloodElementImpl::filterEffect() const
         m_filterEffect = static_cast<KCanvasFEFlood *>(QPainter::renderingDevice()->createFilterEffect(FE_FLOOD));
     if (!m_filterEffect)
         return 0;
-    m_filterEffect->setIn(KDOM::DOMString(in1()->baseVal()).qstring());
+    m_filterEffect->setIn(DOMString(in1()->baseVal()).qstring());
     setStandardAttributes(m_filterEffect);
-    khtml::RenderStyle *filterStyle = const_cast<SVGFEFloodElementImpl *>(this)->styleForRenderer(parentNode()->renderer());
+    RenderStyle *filterStyle = const_cast<SVGFEFloodElementImpl *>(this)->styleForRenderer(parentNode()->renderer());
     const SVGRenderStyle *svgStyle = filterStyle->svgStyle();
     m_filterEffect->setFloodColor(svgStyle->floodColor());
     m_filterEffect->setFloodOpacity(svgStyle->floodOpacity());

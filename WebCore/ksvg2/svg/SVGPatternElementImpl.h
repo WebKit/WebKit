@@ -37,7 +37,7 @@
 
 class KCanvasImage;
 
-namespace KSVG
+namespace WebCore
 {
     class SVGAnimatedLengthImpl;
     class SVGPatternElementImpl;
@@ -52,7 +52,7 @@ namespace KSVG
                                   public KCanvasResourceListener
     {
     public:
-        SVGPatternElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGPatternElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGPatternElementImpl();
         
         virtual bool isValid() const { return SVGTestsImpl::isValid(); }
@@ -68,15 +68,15 @@ namespace KSVG
         SVGAnimatedLengthImpl *width() const;
         SVGAnimatedLengthImpl *height() const;
 
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
         const SVGStyledElementImpl *pushAttributeContext(const SVGStyledElementImpl *context);
 
         virtual void resourceNotification() const;
         virtual void notifyAttributeChange() const;
 
-        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
-        virtual khtml::RenderObject *createRenderer(RenderArena *arena, khtml::RenderStyle *style);
+        virtual bool rendererIsNeeded(RenderStyle *) { return true; }
+        virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
         virtual KRenderingPaintServerPattern *canvasResource();
 
         // 'virtual SVGLocatable' functions

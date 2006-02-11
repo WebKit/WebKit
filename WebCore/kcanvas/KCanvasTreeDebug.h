@@ -29,29 +29,24 @@
 
 class QMatrix;
 class QStringList;
-class KCClipData;
-class KCPathData;
-
-class RenderPath;
-class KCanvasContainer;
 
 namespace WebCore {
+    class KCClipData;
+    class KCPathData;
     class Color;
     class FloatSize;
     class FloatPoint;
     class FloatRect;
     class IntPoint;
     class IntRect;
-}
-
-namespace KDOM {
     class NodeImpl;
-}
+    class RenderPath;
+    class KCanvasContainer;
 
 // functions used by the main KWQRenderTreeDebug code
-void write(QTextStream &ts, const KCanvasContainer &container, int indent = 0);
-void write(QTextStream &ts, const RenderPath &path, int indent = 0);
-void writeRenderResources(QTextStream &ts, KDOM::NodeImpl *parent);
+void write(QTextStream &ts, const WebCore::KCanvasContainer &container, int indent = 0);
+void write(QTextStream &ts, const WebCore::RenderPath &path, int indent = 0);
+void writeRenderResources(QTextStream &ts, WebCore::NodeImpl *parent);
 
 // helper operators defined used in various classes to dump the render tree. 
 QTextStream &operator<<(QTextStream &ts, const QMatrix &);
@@ -99,4 +94,6 @@ QTextStream &operator<<(QTextStream &ts, const Q3ValueList<Item> &l)
     ts << "]";
     
     return ts;
+}
+
 }

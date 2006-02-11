@@ -27,7 +27,7 @@
 #include "SVGLengthImpl.h"
 #include "SVGAnimatedTemplate.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGAnimatedLengthImpl : public SVGAnimatedTemplate<SVGLengthImpl>
     {

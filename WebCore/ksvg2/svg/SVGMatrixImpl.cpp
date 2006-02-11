@@ -29,7 +29,7 @@
 #include "SVGAngleImpl.h"
 #include "SVGMatrixImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGMatrixImpl::SVGMatrixImpl() : Shared<SVGMatrixImpl>()
 {

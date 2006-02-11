@@ -24,9 +24,9 @@
 #if SVG_SUPPORT
 #include "SVGFEFuncGElementImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGFEFuncGElementImpl::SVGFEFuncGElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : 
+SVGFEFuncGElementImpl::SVGFEFuncGElementImpl(const QualifiedName& tagName, DocumentImpl *doc) : 
 SVGComponentTransferFunctionElementImpl(tagName, doc)
 {
 }

@@ -40,6 +40,8 @@ class NSGraphicsContext;
 #endif // SVG_SUPPORT
 #endif
 
+namespace WebCore {
+
 class KRenderingDeviceContextQuartz : public KRenderingDeviceContext
 {
 public:
@@ -88,8 +90,8 @@ public:
     virtual KCanvasPath* createPath() const;
     
     // item creation
-    virtual RenderPath *createItem(RenderArena *arena, khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node, KCanvasPath* path) const;
-    virtual KCanvasContainer *createContainer(RenderArena *arena, khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node) const;
+    virtual RenderPath *createItem(RenderArena *arena, RenderStyle *style, SVGStyledElementImpl *node, KCanvasPath* path) const;
+    virtual KCanvasContainer *createContainer(RenderArena *arena, RenderStyle *style, SVGStyledElementImpl *node) const;
 
     // filters (mostly debugging)
     static bool filtersEnabled();
@@ -97,5 +99,7 @@ public:
     static bool KRenderingDeviceQuartz::hardwareRenderingEnabled();
     static void KRenderingDeviceQuartz::setHardwareRenderingEnabled(bool enabled);
 };
+
+}
 
 #endif

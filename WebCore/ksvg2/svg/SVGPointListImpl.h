@@ -27,7 +27,7 @@
 #include "SVGList.h"
 #include "SVGPointImpl.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGPointListImpl : public SVGList<SVGPointImpl>
     {

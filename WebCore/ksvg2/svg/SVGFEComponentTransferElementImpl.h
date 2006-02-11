@@ -27,21 +27,21 @@
 #include "SVGFilterPrimitiveStandardAttributesImpl.h"
 #include "KCanvasFilters.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGAnimatedStringImpl;
 
     class SVGFEComponentTransferElementImpl : public SVGFilterPrimitiveStandardAttributesImpl
     {
     public:
-        SVGFEComponentTransferElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGFEComponentTransferElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGFEComponentTransferElementImpl();
 
         // 'SVGFEComponentTransferElement' functions
         SVGAnimatedStringImpl *in1() const;
 
         // Derived from: 'ElementImpl'
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
         virtual KCanvasFEComponentTransfer *filterEffect() const;
 

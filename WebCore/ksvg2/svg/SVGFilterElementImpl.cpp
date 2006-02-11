@@ -38,9 +38,9 @@
 #include "SVGAnimatedIntegerImpl.h"
 #include "KCanvasRenderingStyle.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGFilterElementImpl::SVGFilterElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+SVGFilterElementImpl::SVGFilterElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
 : SVGStyledElementImpl(tagName, doc), SVGURIReferenceImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl()
 {
     m_filter = 0;
@@ -76,7 +76,7 @@ SVGAnimatedLengthImpl *SVGFilterElementImpl::x() const
     // Spec : If the attribute is not specified, the effect is as if a value of "-10%" were specified.
     if (!m_x) {
         lazy_create<SVGAnimatedLengthImpl>(m_x, this, LM_WIDTH, viewportElement());
-        m_x->baseVal()->setValueAsString(KDOM::DOMString("-10%").impl());
+        m_x->baseVal()->setValueAsString(DOMString("-10%").impl());
     }
 
     return m_x.get();
@@ -87,7 +87,7 @@ SVGAnimatedLengthImpl *SVGFilterElementImpl::y() const
     // Spec : If the attribute is not specified, the effect is as if a value of "-10%" were specified.
     if (!m_y) {
         lazy_create<SVGAnimatedLengthImpl>(m_y, this, LM_HEIGHT, viewportElement());
-        m_y->baseVal()->setValueAsString(KDOM::DOMString("-10%").impl());
+        m_y->baseVal()->setValueAsString(DOMString("-10%").impl());
     }
 
     return m_y.get();
@@ -98,7 +98,7 @@ SVGAnimatedLengthImpl *SVGFilterElementImpl::width() const
     // Spec : If the attribute is not specified, the effect is as if a value of "120%" were specified.
     if (!m_width) {
         lazy_create<SVGAnimatedLengthImpl>(m_width, this, LM_WIDTH, viewportElement());
-        m_width->baseVal()->setValueAsString(KDOM::DOMString("120%").impl());
+        m_width->baseVal()->setValueAsString(DOMString("120%").impl());
     }
 
     return m_width.get();
@@ -109,7 +109,7 @@ SVGAnimatedLengthImpl *SVGFilterElementImpl::height() const
     // Spec : If the attribute is not specified, the effect is as if a value of "120%" were specified.
     if (!m_height) {
         lazy_create<SVGAnimatedLengthImpl>(m_height, this, LM_HEIGHT, viewportElement());
-        m_height->baseVal()->setValueAsString(KDOM::DOMString("120%").impl());
+        m_height->baseVal()->setValueAsString(DOMString("120%").impl());
     }
 
     return m_height.get();
@@ -129,9 +129,9 @@ void SVGFilterElementImpl::setFilterRes(unsigned long, unsigned long) const
 {
 }
 
-void SVGFilterElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
+void SVGFilterElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    KDOM::DOMString value(attr->value());
+    DOMString value(attr->value());
     if (attr->name() == SVGNames::filterUnitsAttr)
     {
         if(value == "userSpaceOnUse")
@@ -189,7 +189,7 @@ KCanvasFilter *SVGFilterElementImpl::canvasResource()
 
     // TODO : use switch/case instead?
     m_filter->clearEffects();
-    for (KDOM::NodeImpl *n = firstChild(); n != 0; n = n->nextSibling()) {
+    for (NodeImpl *n = firstChild(); n != 0; n = n->nextSibling()) {
         SVGElementImpl *element = svg_dynamic_cast(n);
         if(element && element->isFilterEffect()) {
             SVGFilterPrimitiveStandardAttributesImpl *fe = static_cast<SVGFilterPrimitiveStandardAttributesImpl *>(element);

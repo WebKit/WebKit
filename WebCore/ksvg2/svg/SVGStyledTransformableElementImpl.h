@@ -29,14 +29,14 @@
 
 class QMatrix;
 
-namespace KDOM
+namespace WebCore
 {
     class NodeImpl;
     class DOMStringImpl;
     class AttributeImpl;
 };
 
-namespace KSVG
+namespace WebCore
 {
     class SVGMatrixImpl;
     class SVGTransformListImpl;
@@ -44,7 +44,7 @@ namespace KSVG
     class SVGStyledTransformableElementImpl : public SVGStyledLocatableElementImpl, public SVGTransformableImpl
     {
     public:
-        SVGStyledTransformableElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGStyledTransformableElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGStyledTransformableElementImpl();
         
         virtual bool isStyledTransformable() const { return true; }
@@ -62,7 +62,7 @@ namespace KSVG
         virtual SVGRectImpl *getBBox() const;
         virtual SVGMatrixImpl *getTransformToElement(SVGElementImpl *element) const;
 
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
         void updateLocalTransform(SVGTransformListImpl *localTransforms);
         

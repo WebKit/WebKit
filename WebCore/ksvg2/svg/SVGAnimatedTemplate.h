@@ -26,7 +26,7 @@
 
 #include "SVGStyledElementImpl.h"
 
-namespace KSVG
+namespace WebCore
 {
     // SVGAnimatedTemplate
     // - lazy creation of baseVal/animVal

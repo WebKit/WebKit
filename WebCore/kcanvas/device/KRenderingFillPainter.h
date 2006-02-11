@@ -26,6 +26,8 @@
 
 #include <kcanvas/KCanvasPath.h>
 
+namespace WebCore {
+
 class KRenderingPaintServer;
 class KRenderingDeviceContext;
 class KRenderingFillPainter
@@ -44,6 +46,8 @@ private:
     class Private;
     Private *d;
 };
+
+}
 
 #endif // SVG_SUPPORT
 #endif

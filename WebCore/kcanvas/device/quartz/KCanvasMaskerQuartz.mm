@@ -37,6 +37,8 @@
 
 #import <QuartzCore/CoreImage.h>
 
+namespace WebCore {
+
 static CIImage *applyLuminanceToAlphaFilter(CIImage *inputImage)
 {
     CIFilter *luminanceToAlpha = [CIFilter filterWithName:@"CIColorMatrix"];
@@ -110,5 +112,7 @@ void KCanvasMaskerQuartz::applyMask(const FloatRect& boundingBox) const
     CGContextRelease(grayscaleContext);
     fastFree(imageBuffer);
 }
-#endif // SVG_SUPPORT
 
+}
+
+#endif // SVG_SUPPORT

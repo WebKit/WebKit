@@ -29,7 +29,7 @@
 #include "SVGLangSpaceImpl.h"
 #include "SVGExternalResourcesRequiredImpl.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGDefsElementImpl : public SVGStyledTransformableElementImpl,
                                public SVGTestsImpl,
@@ -37,7 +37,7 @@ namespace KSVG
                                public SVGExternalResourcesRequiredImpl
     {
     public:
-        SVGDefsElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGDefsElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGDefsElementImpl();
         
         virtual bool isValid() const { return SVGTestsImpl::isValid(); }

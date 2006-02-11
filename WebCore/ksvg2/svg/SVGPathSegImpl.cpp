@@ -24,7 +24,7 @@
 #if SVG_SUPPORT
 #include "SVGPathSegImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGPathSegImpl::SVGPathSegImpl(const SVGStyledElementImpl *context)
 : Shared<SVGPathSegImpl>(), m_context(context)

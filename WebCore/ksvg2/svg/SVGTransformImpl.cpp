@@ -29,7 +29,7 @@
 #include "SVGSVGElementImpl.h"
 #include "ksvg.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGTransformImpl::SVGTransformImpl() : Shared<SVGTransformImpl>()
 {

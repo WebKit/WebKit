@@ -27,7 +27,7 @@
 #include "SVGStyledElementImpl.h"
 #include "SVGLocatableImpl.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGRectImpl;
     class SVGMatrixImpl;
@@ -35,7 +35,7 @@ namespace KSVG
     class SVGStyledLocatableElementImpl : public SVGStyledElementImpl, public SVGLocatableImpl
     {
     public:
-        SVGStyledLocatableElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGStyledLocatableElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGStyledLocatableElementImpl();
         
         virtual bool isStyledLocatable() const { return true; }

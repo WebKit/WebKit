@@ -27,7 +27,7 @@
 #include "SVGFilterPrimitiveStandardAttributesImpl.h"
 #include "KCanvasFilters.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGAnimatedStringImpl;
     class SVGAnimatedNumberImpl;
@@ -35,7 +35,7 @@ namespace KSVG
     class SVGFEGaussianBlurElementImpl : public SVGFilterPrimitiveStandardAttributesImpl
     {
     public:
-        SVGFEGaussianBlurElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGFEGaussianBlurElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGFEGaussianBlurElementImpl();
 
         // 'SVGFEGaussianBlurElement' functions
@@ -46,7 +46,7 @@ namespace KSVG
         void setStdDeviation(float stdDeviationX, float stdDeviationY);
 
         // Derived from: 'ElementImpl'
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
         virtual KCanvasFEGaussianBlur *filterEffect() const;
 

@@ -26,13 +26,13 @@
 
 #include "AtomicString.h"
 
-namespace KDOM
+namespace WebCore
 {
     class DOMStringImpl;
     class MappedAttributeImpl;
 };
 
-namespace KSVG
+namespace WebCore
 {
     class SVGAnimatedLengthImpl;
     class SVGAnimatedStringImpl;
@@ -44,17 +44,17 @@ namespace KSVG
         virtual ~SVGLangSpaceImpl();
 
         // 'SVGLangSpace' functions
-        const KDOM::AtomicString& xmllang() const;
-        void setXmllang(const KDOM::AtomicString& xmlLang);
+        const AtomicString& xmllang() const;
+        void setXmllang(const AtomicString& xmlLang);
 
-        const KDOM::AtomicString& xmlspace() const;
-        void setXmlspace(const KDOM::AtomicString& xmlSpace);
+        const AtomicString& xmlspace() const;
+        void setXmlspace(const AtomicString& xmlSpace);
 
-        bool parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        bool parseMappedAttribute(MappedAttributeImpl *attr);
 
     private:
-        KDOM::AtomicString m_lang;
-        KDOM::AtomicString m_space;
+        AtomicString m_lang;
+        AtomicString m_space;
     };
 };
 

@@ -28,6 +28,8 @@
 #include "KCanvasPath.h"
 #include "KCanvasMatrix.h"
 
+namespace WebCore {
+
 static const double deg2rad = 0.017453292519943295769; // pi/180
 
 // KCanvasMatrix
@@ -284,6 +286,8 @@ void KCanvasMatrix::removeScale(double *xScale, double *yScale)
 QMatrix KCanvasMatrix::qmatrix() const
 {
     return m_matrix;
+}
+
 }
 
 // vim:ts=4:noet

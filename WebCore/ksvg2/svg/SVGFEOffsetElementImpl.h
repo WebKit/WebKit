@@ -27,7 +27,7 @@
 #include "SVGFilterPrimitiveStandardAttributesImpl.h"
 #include "KCanvasFilters.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGAnimatedStringImpl;
     class SVGAnimatedNumberImpl;
@@ -35,7 +35,7 @@ namespace KSVG
     class SVGFEOffsetElementImpl : public SVGFilterPrimitiveStandardAttributesImpl
     {
     public:
-        SVGFEOffsetElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGFEOffsetElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGFEOffsetElementImpl();
 
         // 'SVGFEOffsetElement' functions
@@ -44,7 +44,7 @@ namespace KSVG
         SVGAnimatedNumberImpl *dy() const;
 
         // Derived from: 'ElementImpl'
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
         virtual KCanvasFEOffset *filterEffect() const;
 

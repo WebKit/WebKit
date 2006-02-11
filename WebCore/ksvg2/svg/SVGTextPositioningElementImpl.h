@@ -26,7 +26,7 @@
 
 #include "SVGTextContentElementImpl.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGAnimatedLengthListImpl;
     class SVGAnimatedNumberListImpl;
@@ -34,7 +34,7 @@ namespace KSVG
     class SVGTextPositioningElementImpl : public SVGTextContentElementImpl
     {
     public:
-        SVGTextPositioningElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGTextPositioningElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGTextPositioningElementImpl();
 
         // 'SVGTextPositioningElement' functions
@@ -44,7 +44,7 @@ namespace KSVG
         SVGAnimatedLengthListImpl *dy() const;
         SVGAnimatedNumberListImpl *rotate() const;
 
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
     private:
         mutable RefPtr<SVGAnimatedLengthListImpl> m_x;

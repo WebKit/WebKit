@@ -24,7 +24,7 @@
 #define KSVG_SVGLocatableImpl_H
 #if SVG_SUPPORT
 
-namespace KSVG
+namespace WebCore
 {
     class SVGRectImpl;
     class SVGMatrixImpl;

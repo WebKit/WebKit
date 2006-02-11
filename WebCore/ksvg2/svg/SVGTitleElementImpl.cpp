@@ -24,9 +24,9 @@
 #if SVG_SUPPORT
 #include "SVGTitleElementImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGTitleElementImpl::SVGTitleElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : SVGStyledElementImpl(tagName, doc), SVGLangSpaceImpl()
+SVGTitleElementImpl::SVGTitleElementImpl(const QualifiedName& tagName, DocumentImpl *doc) : SVGStyledElementImpl(tagName, doc), SVGLangSpaceImpl()
 {
 }
 
@@ -34,7 +34,7 @@ SVGTitleElementImpl::~SVGTitleElementImpl()
 {
 }
 
-KDOM::DOMString SVGTitleElementImpl::title() const
+DOMString SVGTitleElementImpl::title() const
 {
     return textContent();
 }

@@ -39,9 +39,9 @@
 #include "SVGDOMImplementationImpl.h"
 #include "SVGAnimatedTransformListImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGStyledTransformableElementImpl::SVGStyledTransformableElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+SVGStyledTransformableElementImpl::SVGStyledTransformableElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
 : SVGStyledLocatableElementImpl(tagName, doc), SVGTransformableImpl()
 {
 }
@@ -93,7 +93,7 @@ void SVGStyledTransformableElementImpl::updateLocalTransform(SVGTransformListImp
     }
 }
 
-void SVGStyledTransformableElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
+void SVGStyledTransformableElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     if (attr->name() == SVGNames::transformAttr) {
         SVGTransformListImpl *localTransforms = transform()->baseVal();

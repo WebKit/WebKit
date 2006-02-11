@@ -39,12 +39,12 @@
 #include "SVGSVGElementImpl.h"
 #include "SVGDOMImplementationImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGDOMImplementationImpl *SVGDOMImplementationImpl::s_instance = 0;
 QStringList SVGDOMImplementationImpl::s_features;
 
-SVGDOMImplementationImpl::SVGDOMImplementationImpl() : KDOM::DOMImplementationImpl()
+SVGDOMImplementationImpl::SVGDOMImplementationImpl() : DOMImplementationImpl()
 {
     m_animationContext = false;
 }
@@ -109,10 +109,10 @@ SVGDOMImplementationImpl *SVGDOMImplementationImpl::self()
     return s_instance;
 }
 
-bool SVGDOMImplementationImpl::hasFeature(KDOM::DOMStringImpl *featureImpl, KDOM::DOMStringImpl *versionImpl) const
+bool SVGDOMImplementationImpl::hasFeature(DOMStringImpl *featureImpl, DOMStringImpl *versionImpl) const
 {
-    QString feature = (featureImpl ? KDOM::DOMString(featureImpl).upper().qstring() : QString::null);
-    KDOM::DOMString version(versionImpl);
+    QString feature = (featureImpl ? DOMString(featureImpl).upper().qstring() : QString::null);
+    DOMString version(versionImpl);
 
     if((version.isEmpty() || version == "1.1") &&
        feature.startsWith(QString::fromLatin1("HTTP://WWW.W3.ORG/TR/SVG11/FEATURE#")))
@@ -128,53 +128,53 @@ bool SVGDOMImplementationImpl::hasFeature(KDOM::DOMStringImpl *featureImpl, KDOM
             return true;
     }
 
-    return KDOM::DOMImplementationImpl::hasFeature(featureImpl, versionImpl);
+    return DOMImplementationImpl::hasFeature(featureImpl, versionImpl);
 }
 
-KDOM::DocumentTypeImpl *SVGDOMImplementationImpl::createDocumentType(KDOM::DOMStringImpl *qualifiedNameImpl, KDOM::DOMStringImpl *publicId, KDOM::DOMStringImpl *systemId, int& exceptioncode) const
+DocumentTypeImpl *SVGDOMImplementationImpl::createDocumentType(DOMStringImpl *qualifiedNameImpl, DOMStringImpl *publicId, DOMStringImpl *systemId, int& exceptioncode) const
 {
-    KDOM::DOMString qualifiedName(qualifiedNameImpl);
+    DOMString qualifiedName(qualifiedNameImpl);
 #if 0
     // INVALID_CHARACTER_ERR: Raised if the specified qualified name contains an illegal character.
-    if(!qualifiedName.isEmpty() && !KDOM::Helper::ValidateAttributeName(qualifiedNameImpl)) {
-        exceptioncode = KDOM::INVALID_CHARACTER_ERR;
+    if(!qualifiedName.isEmpty() && !Helper::ValidateAttributeName(qualifiedNameImpl)) {
+        exceptioncode = INVALID_CHARACTER_ERR;
         return 0;
     }
 
     // NAMESPACE_ERR: Raised if no qualifiedName supplied (not mentioned in the spec!)
     if(qualifiedName.isEmpty()) {
-        exceptioncode = KDOM::NAMESPACE_ERR;
+        exceptioncode = NAMESPACE_ERR;
         return 0;
     }
 
     // NAMESPACE_ERR: Raised if the qualifiedName is malformed.
-    KDOM::Helper::CheckMalformedQualifiedName(qualifiedNameImpl);
+    Helper::CheckMalformedQualifiedName(qualifiedNameImpl);
 #endif
 
-    return new KDOM::DocumentTypeImpl(0, qualifiedName, publicId, systemId);
+    return new DocumentTypeImpl(0, qualifiedName, publicId, systemId);
 }
 
-KDOM::DocumentImpl *SVGDOMImplementationImpl::createDocument(KDOM::DOMStringImpl *namespaceURI, KDOM::DOMStringImpl *qualifiedNameImpl, KDOM::DocumentTypeImpl *doctype, int& exceptioncode) const
+DocumentImpl *SVGDOMImplementationImpl::createDocument(DOMStringImpl *namespaceURI, DOMStringImpl *qualifiedNameImpl, DocumentTypeImpl *doctype, int& exceptioncode) const
 {
     return createDocument(namespaceURI, qualifiedNameImpl, doctype, true, 0, exceptioncode);
 }
 
-KDOM::DocumentImpl *SVGDOMImplementationImpl::createDocument(KDOM::DOMStringImpl *namespaceURIImpl, KDOM::DOMStringImpl *qualifiedNameImpl, KDOM::DocumentTypeImpl *doctype, bool createDocElement, KDOM::KDOMView *view, int& exceptioncode) const
+DocumentImpl *SVGDOMImplementationImpl::createDocument(DOMStringImpl *namespaceURIImpl, DOMStringImpl *qualifiedNameImpl, DocumentTypeImpl *doctype, bool createDocElement, KDOMView *view, int& exceptioncode) const
 {
-    KDOM::DOMString namespaceURI(namespaceURIImpl);
-    KDOM::DOMString qualifiedName(qualifiedNameImpl);
+    DOMString namespaceURI(namespaceURIImpl);
+    DOMString qualifiedName(qualifiedNameImpl);
     if((namespaceURI != SVGNames::svgNamespaceURI) || (qualifiedName != "svg" && qualifiedName != "svg:svg"))
-        return KDOM::DOMImplementationImpl::instance()->createDocument(namespaceURIImpl, qualifiedNameImpl, doctype, exceptioncode);
+        return DOMImplementationImpl::instance()->createDocument(namespaceURIImpl, qualifiedNameImpl, doctype, exceptioncode);
 
 #if 0
     int dummy;
-    KDOM::Helper::CheckQualifiedName(qualifiedNameImpl, namespaceURIImpl, dummy, true /*nameCanBeNull*/, true /*nameCanBeEmpty, see #61650*/);
+    Helper::CheckQualifiedName(qualifiedNameImpl, namespaceURIImpl, dummy, true /*nameCanBeNull*/, true /*nameCanBeEmpty, see #61650*/);
 #endif
 
     // WRONG_DOCUMENT_ERR: Raised if docType has already been used with a different
     //                     document or was created from a different implementation.
     if(doctype != 0 && doctype->ownerDocument() != 0) {
-        exceptioncode = KDOM::WRONG_DOCUMENT_ERR;
+        exceptioncode = WRONG_DOCUMENT_ERR;
         return 0;
     }
 
@@ -187,24 +187,24 @@ KDOM::DocumentImpl *SVGDOMImplementationImpl::createDocument(KDOM::DOMStringImpl
     // Add root element...
     if(createDocElement)
     {
-        KDOM::ElementImpl *svg = doc->createElementNS(namespaceURI, qualifiedName, exceptioncode);
+        ElementImpl *svg = doc->createElementNS(namespaceURI, qualifiedName, exceptioncode);
         doc->appendChild(svg, exceptioncode);
     }
 
     return doc;
 }
 
-KDOM::CSSStyleSheetImpl *SVGDOMImplementationImpl::createCSSStyleSheet(KDOM::DOMStringImpl *title, KDOM::DOMStringImpl *media) const
+CSSStyleSheetImpl *SVGDOMImplementationImpl::createCSSStyleSheet(DOMStringImpl *title, DOMStringImpl *media) const
 {
     // TODO : check whether media is valid
-    KDOM::CSSStyleSheetImpl *parent = 0;
-    KDOM::CSSStyleSheetImpl *sheet = new KDOM::CSSStyleSheetImpl(parent);
+    CSSStyleSheetImpl *parent = 0;
+    CSSStyleSheetImpl *sheet = new CSSStyleSheetImpl(parent);
     //sheet->setTitle(title);
-    sheet->setMedia(new KDOM::MediaListImpl(sheet, media));
+    sheet->setMedia(new MediaListImpl(sheet, media));
     return sheet;
 }
 
-KDOM::DocumentTypeImpl *SVGDOMImplementationImpl::defaultDocumentType() const
+DocumentTypeImpl *SVGDOMImplementationImpl::defaultDocumentType() const
 {
     return 0;
     /*

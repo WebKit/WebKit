@@ -29,16 +29,16 @@
 #include "ksvg.h"
 #include "SVGAnimationElementImpl.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGTransformImpl;
     class SVGAnimateTransformElementImpl : public SVGAnimationElementImpl
     {
     public:
-        SVGAnimateTransformElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGAnimateTransformElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGAnimateTransformElementImpl();
 
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
         virtual void handleTimerEvent(double timePercentage);
 

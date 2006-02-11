@@ -31,9 +31,9 @@
 
 #include <kcanvas/RenderPath.h>
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGStyledLocatableElementImpl::SVGStyledLocatableElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+SVGStyledLocatableElementImpl::SVGStyledLocatableElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
 : SVGStyledElementImpl(tagName, doc), SVGLocatableImpl()
 {
 }

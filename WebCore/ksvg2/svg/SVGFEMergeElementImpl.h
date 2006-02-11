@@ -27,12 +27,12 @@
 #include "SVGFilterPrimitiveStandardAttributesImpl.h"
 #include "KCanvasFilters.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGFEMergeElementImpl : public SVGFilterPrimitiveStandardAttributesImpl
     {
     public:
-        SVGFEMergeElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGFEMergeElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGFEMergeElementImpl();
 
         virtual KCanvasFEMerge *filterEffect() const;

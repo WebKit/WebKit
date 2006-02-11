@@ -26,7 +26,7 @@
 
 #include "Shared.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGStyledElementImpl;
     class SVGRectImpl : public Shared<SVGRectImpl>

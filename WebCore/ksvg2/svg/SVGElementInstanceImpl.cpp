@@ -27,9 +27,9 @@
 #include "SVGElementInstanceImpl.h"
 #include "SVGElementInstanceListImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGElementInstanceImpl::SVGElementInstanceImpl() : KDOM::EventTargetImpl()
+SVGElementInstanceImpl::SVGElementInstanceImpl() : EventTargetImpl()
 {
 }
 

@@ -27,7 +27,7 @@
 #include "SVGList.h"
 #include "SVGPathSegImpl.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGPathSegListImpl : public SVGList<SVGPathSegImpl>
     {

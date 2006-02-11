@@ -27,16 +27,16 @@
 #include "SVGLangSpaceImpl.h"
 #include "SVGStyledElementImpl.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGTitleElementImpl : public SVGStyledElementImpl,
                                 public SVGLangSpaceImpl
     {
     public:
-        SVGTitleElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGTitleElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGTitleElementImpl();
 
-        KDOM::DOMString title() const;
+        DOMString title() const;
     };
 };
 

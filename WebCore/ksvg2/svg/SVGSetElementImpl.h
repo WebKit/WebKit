@@ -26,12 +26,12 @@
 
 #include "SVGAnimationElementImpl.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGSetElementImpl : public SVGAnimationElementImpl
     {
     public:
-        SVGSetElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGSetElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGSetElementImpl();
 
         virtual void handleTimerEvent(double timePercentage);

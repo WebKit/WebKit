@@ -38,7 +38,7 @@
 #include "KCanvasResourcesQuartz.h"
 #include "KCanvasMaskerQuartz.h"
 
-using namespace KSVG;
+namespace WebCore {
 
 RenderSVGImage::RenderSVGImage(SVGImageElementImpl *impl)
 : RenderImage(impl)
@@ -51,7 +51,7 @@ RenderSVGImage::~RenderSVGImage()
 
 void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
 {
-    if (paintInfo.p->paintingDisabled() || (paintInfo.phase != PaintActionForeground) || style()->visibility() == khtml::HIDDEN)
+    if (paintInfo.p->paintingDisabled() || (paintInfo.phase != PaintActionForeground) || style()->visibility() == HIDDEN)
         return;
     
     KRenderingDevice *renderingDevice = QPainter::renderingDevice();
@@ -82,7 +82,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
     if (filter)
         filter->prepareFilter(boundingBox);
     
-    khtml::RenderImage::paint(paintInfo, 0, 0);
+    RenderImage::paint(paintInfo, 0, 0);
     
     if (filter)
         filter->applyFilter(boundingBox);
@@ -126,6 +126,8 @@ void RenderSVGImage::translateForAttributes()
     float xOffset = image->x()->baseVal() ? image->x()->baseVal()->value() : 0;
     float yOffset = image->y()->baseVal() ? image->y()->baseVal()->value() : 0;
     context->concatCTM(QMatrix().translate(xOffset, yOffset));
+}
+
 }
 
 #endif // SVG_SUPPORT

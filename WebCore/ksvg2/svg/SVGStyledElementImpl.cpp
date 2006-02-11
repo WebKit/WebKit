@@ -52,10 +52,11 @@
 
 #include "SVGNames.h"
 
-using namespace KSVG;
-using namespace KSVG::SVGNames;
+namespace WebCore {
 
-SVGStyledElementImpl::SVGStyledElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+using namespace SVGNames;
+
+SVGStyledElementImpl::SVGStyledElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
 : SVGElementImpl(tagName, doc)
 {
     m_updateVectorial = false;
@@ -70,7 +71,7 @@ SVGAnimatedStringImpl *SVGStyledElementImpl::className() const
     return lazy_create(m_className, (SVGStyledElementImpl *)0); // TODO: use notification context?
 }
 
-khtml::RenderObject *SVGStyledElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
+RenderObject *SVGStyledElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
 {
     RefPtr<KCanvasPath> pathData = toPathData();
     if (!pathData)
@@ -78,9 +79,9 @@ khtml::RenderObject *SVGStyledElementImpl::createRenderer(RenderArena *arena, kh
     return QPainter::renderingDevice()->createItem(arena, style, this, pathData.get());
 }
 
-void SVGStyledElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
+void SVGStyledElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    KDOM::DOMString value(attr->value());
+    DOMString value(attr->value());
     // id and class are handled by StyledElementImpl
     QString qProp = attr->name().localName().qstring();
     int propId = DOM::getPropertyID(qProp.ascii(), qProp.length());
@@ -106,7 +107,7 @@ void SVGStyledElementImpl::notifyAttributeChange() const
     }
 }
 
-void SVGStyledElementImpl::attributeChanged(KDOM::AttributeImpl *attr, bool preserveDecls)
+void SVGStyledElementImpl::attributeChanged(AttributeImpl *attr, bool preserveDecls)
 {
     // FIXME: Eventually subclasses from SVGElementImpl should implement
     // attributeChanged() instead of notifyAttributeChange()
@@ -116,9 +117,9 @@ void SVGStyledElementImpl::attributeChanged(KDOM::AttributeImpl *attr, bool pres
     notifyAttributeChange();
 }
 
-khtml::RenderCanvas *SVGStyledElementImpl::canvas() const
+RenderCanvas *SVGStyledElementImpl::canvas() const
 {
-    return static_cast<khtml::RenderCanvas *>(getDocument()->renderer());
+    return static_cast<RenderCanvas *>(getDocument()->renderer());
 }
 
 void SVGStyledElementImpl::updateCanvasItem()
@@ -148,6 +149,8 @@ const SVGStyledElementImpl *SVGStyledElementImpl::pushAttributeContext(const SVG
         static_cast<RenderPath *>(renderer())->setPath(toPathData());
 
     return 0;
+}
+
 }
 
 // vim:ts=4:noet

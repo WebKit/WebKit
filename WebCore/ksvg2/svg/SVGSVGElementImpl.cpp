@@ -69,7 +69,7 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace EventNames;
 
-SVGSVGElementImpl::SVGSVGElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+SVGSVGElementImpl::SVGSVGElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
 : SVGStyledLocatableElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(),
   SVGExternalResourcesRequiredImpl(), SVGFitToViewBoxImpl(),
   SVGZoomAndPanImpl()
@@ -96,7 +96,7 @@ SVGAnimatedLengthImpl *SVGSVGElementImpl::y() const
 SVGAnimatedLengthImpl *SVGSVGElementImpl::width() const
 {
     if (!m_width) {
-        KDOM::DOMString temp("100%");
+        DOMString temp("100%");
         const SVGElementImpl *viewport = ownerDocument()->documentElement() == this ? this : viewportElement();
         lazy_create<SVGAnimatedLengthImpl>(m_width, (SVGStyledElementImpl *)0, LM_WIDTH, viewport);
         m_width->baseVal()->setValueAsString(temp.impl());
@@ -108,7 +108,7 @@ SVGAnimatedLengthImpl *SVGSVGElementImpl::width() const
 SVGAnimatedLengthImpl *SVGSVGElementImpl::height() const
 {
     if (!m_height) {
-        KDOM::DOMString temp("100%");
+        DOMString temp("100%");
         const SVGElementImpl *viewport = ownerDocument()->documentElement() == this ? this : viewportElement();
         lazy_create<SVGAnimatedLengthImpl>(m_height, (SVGStyledElementImpl *)0, LM_HEIGHT, viewport);
         m_height->baseVal()->setValueAsString(temp.impl());
@@ -117,22 +117,22 @@ SVGAnimatedLengthImpl *SVGSVGElementImpl::height() const
     return m_height.get();
 }
 
-KDOM::AtomicString SVGSVGElementImpl::contentScriptType() const
+AtomicString SVGSVGElementImpl::contentScriptType() const
 {
     return tryGetAttribute("contentScriptType", "text/ecmascript");
 }
 
-void SVGSVGElementImpl::setContentScriptType(const KDOM::AtomicString& type)
+void SVGSVGElementImpl::setContentScriptType(const AtomicString& type)
 {
     setAttribute(SVGNames::contentScriptTypeAttr, type);
 }
 
-KDOM::AtomicString SVGSVGElementImpl::contentStyleType() const
+AtomicString SVGSVGElementImpl::contentStyleType() const
 {
     return tryGetAttribute("contentStyleType", "text/css");
 }
 
-void SVGSVGElementImpl::setContentStyleType(const KDOM::AtomicString& type)
+void SVGSVGElementImpl::setContentStyleType(const AtomicString& type)
 {
     setAttribute(SVGNames::contentStyleTypeAttr, type);
 }
@@ -234,9 +234,9 @@ void SVGSVGElementImpl::addSVGWindowEventListner(const AtomicString& eventType, 
     getDocument()->setHTMLWindowEventListener(eventType, listener);
 }
 
-void SVGSVGElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
+void SVGSVGElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    const KDOM::AtomicString& value = attr->value();
+    const AtomicString& value = attr->value();
     if (!nearestViewportElement()) {
         // Only handle events if we're the outermost <svg> element
         if (attr->name() == onloadAttr)
@@ -300,14 +300,14 @@ void SVGSVGElementImpl::forceRedraw()
     // TODO
 }
 
-KDOM::NodeListImpl *SVGSVGElementImpl::getIntersectionList(SVGRectImpl *rect, SVGElementImpl *)
+NodeListImpl *SVGSVGElementImpl::getIntersectionList(SVGRectImpl *rect, SVGElementImpl *)
 {
-    //KDOM::NodeListImpl *list;
+    //NodeListImpl *list;
     // TODO
     return 0;
 }
 
-KDOM::NodeListImpl *SVGSVGElementImpl::getEnclosureList(SVGRectImpl *rect, SVGElementImpl *)
+NodeListImpl *SVGSVGElementImpl::getEnclosureList(SVGRectImpl *rect, SVGElementImpl *)
 {
     // TODO
     return 0;
@@ -416,7 +416,7 @@ SVGMatrixImpl *SVGSVGElementImpl::getScreenCTM() const
     return mat;
 }
 
-khtml::RenderObject *SVGSVGElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
+RenderObject *SVGSVGElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
 {
     KCanvasContainer *rootContainer = QPainter::renderingDevice()->createContainer(arena, style, this);
 

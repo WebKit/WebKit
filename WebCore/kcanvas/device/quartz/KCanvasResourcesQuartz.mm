@@ -41,6 +41,8 @@
 
 #import <kxmlcore/Assertions.h>
 
+namespace WebCore {
+
 bool KCanvasContainerQuartz::canHaveChildren() const
 {
     return true;
@@ -96,13 +98,13 @@ void KCanvasContainerQuartz::paint(PaintInfo &paintInfo, int parentX, int parent
     //ASSERT(m_x == 0);
     //ASSERT(m_y == 0);
         
-    if (shouldPaintBackgroundOrBorder() && paintInfo.phase != WebCore::PaintActionOutline) 
+    if (shouldPaintBackgroundOrBorder() && paintInfo.phase != PaintActionOutline) 
         paintBoxDecorations(paintInfo, parentX, parentY);
     
-    if (paintInfo.phase == WebCore::PaintActionOutline && style()->outlineWidth() && style()->visibility() == khtml::VISIBLE)
+    if (paintInfo.phase == PaintActionOutline && style()->outlineWidth() && style()->visibility() == VISIBLE)
         paintOutline(paintInfo.p, parentX, parentY, width(), height(), style());
     
-    if (paintInfo.phase != WebCore::PaintActionForeground || !drawsContents() || style()->visibility() == khtml::HIDDEN)
+    if (paintInfo.phase != WebCore::PaintActionForeground || !drawsContents() || style()->visibility() == HIDDEN)
         return;
     
     KCanvasFilter *filter = getFilterById(document(), style()->svgStyle()->filter().mid(1));
@@ -209,7 +211,7 @@ IntRect KCanvasContainerQuartz::getAbsoluteRepaintRect()
 {
     IntRect repaintRect;
     
-    for (WebCore::RenderObject *current = firstChild(); current != 0; current = current->nextSibling())
+    for (RenderObject *current = firstChild(); current != 0; current = current->nextSibling())
         repaintRect.unite(current->getAbsoluteRepaintRect());
     
     // Filters can expand the bounding box
@@ -287,5 +289,6 @@ void KCanvasImageQuartz::setCGLayer(CGLayerRef layer)
         m_cgLayer = CGLayerRetain(layer);
     }
 }
-#endif // SVG_SUPPORT
 
+}
+#endif // SVG_SUPPORT

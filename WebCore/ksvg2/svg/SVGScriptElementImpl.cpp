@@ -31,9 +31,9 @@
 #include "SVGNames.h"
 #include "SVGScriptElementImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGScriptElementImpl::SVGScriptElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : SVGElementImpl(tagName, doc), SVGURIReferenceImpl(), SVGExternalResourcesRequiredImpl()
+SVGScriptElementImpl::SVGScriptElementImpl(const QualifiedName& tagName, DocumentImpl *doc) : SVGElementImpl(tagName, doc), SVGURIReferenceImpl(), SVGExternalResourcesRequiredImpl()
 {
 }
 
@@ -41,17 +41,17 @@ SVGScriptElementImpl::~SVGScriptElementImpl()
 {
 }
 
-KDOM::DOMStringImpl *SVGScriptElementImpl::type() const
+DOMStringImpl *SVGScriptElementImpl::type() const
 {
     return m_type.impl();
 }
 
-void SVGScriptElementImpl::setType(KDOM::DOMStringImpl *type)
+void SVGScriptElementImpl::setType(DOMStringImpl *type)
 {
     m_type = type;
 }
 
-void SVGScriptElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
+void SVGScriptElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     if (attr->name() == SVGNames::typeAttr)
             setType(attr->value().impl());
@@ -64,12 +64,12 @@ void SVGScriptElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
     }
 }
 
-void SVGScriptElementImpl::executeScript(KDOM::DocumentImpl *document, KDOM::DOMStringImpl *jsCode)
+void SVGScriptElementImpl::executeScript(DocumentImpl *document, DOMStringImpl *jsCode)
 {
     if(!document || !jsCode)
         return;
 #if 0
-    KDOM::Ecma *ecmaEngine = document->ecmaEngine();
+    Ecma *ecmaEngine = document->ecmaEngine();
     if(!ecmaEngine)
         return;
                 
@@ -92,10 +92,10 @@ void SVGScriptElementImpl::executeScript(KDOM::DocumentImpl *document, KDOM::DOM
 
         // Fire ERROR_EVENT upon errors...
         SVGDocumentImpl *svgDocument = static_cast<SVGDocumentImpl *>(document);
-        if(svgDocument && document->hasListenerType(KDOM::ERROR_EVENT))
+        if(svgDocument && document->hasListenerType(ERROR_EVENT))
         {
-            RefPtr<KDOM::EventImpl> event = svgDocument->createEvent("SVGEvents");
-            event->initEvent(KDOM::EventNames::errorEvent, false, false);
+            RefPtr<EventImpl> event = svgDocument->createEvent("SVGEvents");
+            event->initEvent(EventNames::errorEvent, false, false);
             svgDocument->dispatchRecursiveEvent(event.get(), svgDocument->lastChild());
         }
 
@@ -110,7 +110,7 @@ void SVGScriptElementImpl::executeScript(KDOM::DocumentImpl *document, KDOM::DOM
 #else
     if (jsCode)
         // Hack to close memory leak due to #if 0
-        KDOM::DOMString(jsCode);
+        DOMString(jsCode);
 #endif
 }
 

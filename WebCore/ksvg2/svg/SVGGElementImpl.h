@@ -29,7 +29,7 @@
 #include "SVGLangSpaceImpl.h"
 #include "SVGExternalResourcesRequiredImpl.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGGElementImpl : public SVGStyledTransformableElementImpl,
                             public SVGTestsImpl,
@@ -37,27 +37,27 @@ namespace KSVG
                             public SVGExternalResourcesRequiredImpl
     {
     public:
-        SVGGElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGGElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGGElementImpl();
         
         virtual bool isValid() const { return SVGTestsImpl::isValid(); }
 
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
-        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
-        virtual khtml::RenderObject *createRenderer(RenderArena *arena, khtml::RenderStyle *style);
+        virtual bool rendererIsNeeded(RenderStyle *) { return true; }
+        virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
     };
 
     class SVGDummyElementImpl : public SVGGElementImpl
     {
     public:
-        SVGDummyElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGDummyElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGDummyElementImpl();
 
         // Derived from: 'ElementImpl'
-        virtual const KDOM::AtomicString& localName() const;
+        virtual const AtomicString& localName() const;
     private:
-        KDOM::AtomicString m_localName;
+        AtomicString m_localName;
     };
 };
 

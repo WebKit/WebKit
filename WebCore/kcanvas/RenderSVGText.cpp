@@ -32,7 +32,9 @@
 #include "KCanvasMatrix.h"
 #include "KCanvasRenderingStyle.h"
 
-RenderSVGText::RenderSVGText(KSVG::SVGTextElementImpl *node) 
+namespace WebCore {
+
+RenderSVGText::RenderSVGText(SVGTextElementImpl *node) 
     : RenderBlock(node)
 {
 }
@@ -45,7 +47,7 @@ QMatrix RenderSVGText::translationTopToBaseline()
 
 QMatrix RenderSVGText::translationForAttributes()
 {
-    KSVG::SVGTextElementImpl *text = static_cast<KSVG::SVGTextElementImpl *>(element());
+    SVGTextElementImpl *text = static_cast<SVGTextElementImpl *>(element());
 
     float xOffset = text->x()->baseVal()->getFirst() ? text->x()->baseVal()->getFirst()->value() : 0;
     float yOffset = text->y()->baseVal()->getFirst() ? text->y()->baseVal()->getFirst()->value() : 0;
@@ -75,7 +77,7 @@ void RenderSVGText::paint(PaintInfo& paintInfo, int parentX, int parentY)
     context->concatCTM(translationTopToBaseline());
     
     FloatRect boundingBox(0, 0, width(), height());
-    const KSVG::SVGRenderStyle *svgStyle = style()->svgStyle();
+    const SVGRenderStyle *svgStyle = style()->svgStyle();
             
     if (KCanvasClipper *clipper = getClipperById(document(), svgStyle->clipPath().mid(1)))
         clipper->applyClip(boundingBox);
@@ -87,7 +89,7 @@ void RenderSVGText::paint(PaintInfo& paintInfo, int parentX, int parentY)
     if (filter)
         filter->prepareFilter(boundingBox);
         
-    KRenderingPaintServer *fillPaintServer = KSVG::KSVGPainterFactory::fillPaintServer(style(), this);
+    KRenderingPaintServer *fillPaintServer = KSVGPainterFactory::fillPaintServer(style(), this);
     if (fillPaintServer) {
         fillPaintServer->setPaintingText(true);
         // fillPaintServer->setActiveClient(this);
@@ -98,7 +100,7 @@ void RenderSVGText::paint(PaintInfo& paintInfo, int parentX, int parentY)
         fillPaintServer->setPaintingText(false);
     }
     
-    KRenderingPaintServer *strokePaintServer = KSVG::KSVGPainterFactory::strokePaintServer(style(), this);
+    KRenderingPaintServer *strokePaintServer = KSVGPainterFactory::strokePaintServer(style(), this);
     if (strokePaintServer) {
         strokePaintServer->setPaintingText(true);
         // strokePaintServer->setActiveClient(this);
@@ -120,7 +122,7 @@ void RenderSVGText::paint(PaintInfo& paintInfo, int parentX, int parentY)
         paintInfo.p->restore();
 }
 
-bool RenderSVGText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, WebCore::HitTestAction hitTestAction)
+bool RenderSVGText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
 {
     QMatrix totalTransform = translationForAttributes();
     totalTransform *= translationTopToBaseline();
@@ -129,5 +131,7 @@ bool RenderSVGText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty
     totalTransform.invert().map(_x, _y, &localX, &localY);
     return RenderBlock::nodeAtPoint(info, (int)localX, (int)localY, _tx, _ty, hitTestAction);
 }
-#endif // SVG_SUPPORT
 
+}
+
+#endif // SVG_SUPPORT

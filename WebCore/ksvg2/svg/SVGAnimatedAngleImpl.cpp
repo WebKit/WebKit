@@ -24,7 +24,7 @@
 #if SVG_SUPPORT
 #include "SVGAnimatedAngleImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGAnimatedAngleImpl::SVGAnimatedAngleImpl(const SVGStyledElementImpl *context)
 : SVGAnimatedTemplate<SVGAngleImpl>(context)

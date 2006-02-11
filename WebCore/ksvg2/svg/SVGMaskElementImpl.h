@@ -33,7 +33,7 @@
 
 class KCanvasImage;
 
-namespace KSVG
+namespace WebCore
 {
     class AttributeImpl;
     class SVGAnimatedLengthImpl;
@@ -44,7 +44,7 @@ namespace KSVG
                                   public SVGExternalResourcesRequiredImpl
     {
     public:
-        SVGMaskElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGMaskElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGMaskElementImpl();
         virtual bool isValid() const { return SVGTestsImpl::isValid(); }
 
@@ -56,11 +56,11 @@ namespace KSVG
         SVGAnimatedLengthImpl *height() const;
 
         virtual void childrenChanged();
-        virtual void attributeChanged(KDOM::AttributeImpl* attr, bool preserveDecls);
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual void attributeChanged(AttributeImpl* attr, bool preserveDecls);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
-        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
-        virtual khtml::RenderObject *createRenderer(RenderArena *arena, khtml::RenderStyle *style);
+        virtual bool rendererIsNeeded(RenderStyle *) { return true; }
+        virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
         virtual KCanvasMasker *canvasResource();
 
     protected:

@@ -44,9 +44,9 @@
 #include "SVGAnimatedLengthImpl.h"
 #include "SVGAnimatedEnumerationImpl.h"
 
-using namespace KSVG;
+namespace WebCore {
 
-SVGMarkerElementImpl::SVGMarkerElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+SVGMarkerElementImpl::SVGMarkerElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
 : SVGStyledElementImpl(tagName, doc), SVGLangSpaceImpl(),
   SVGExternalResourcesRequiredImpl(), SVGFitToViewBoxImpl()
 {
@@ -58,9 +58,9 @@ SVGMarkerElementImpl::~SVGMarkerElementImpl()
     delete m_marker;
 }
 
-void SVGMarkerElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
+void SVGMarkerElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    const KDOM::AtomicString& value = attr->value();
+    const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::markerUnitsAttr) {
         if (value == "userSpaceOnUse")
             markerUnits()->setBaseVal(SVG_MARKERUNITS_USERSPACEONUSE);
@@ -156,7 +156,7 @@ KCanvasMarker *SVGMarkerElementImpl::canvasResource()
     if(!m_orientType)
     {
         SVGAngleImpl *angle = SVGSVGElementImpl::createSVGAngle();
-        angle->setValueAsString(KDOM::DOMString("0").impl());
+        angle->setValueAsString(DOMString("0").impl());
         setOrientToAngle(angle);
     }
     
@@ -176,11 +176,13 @@ KCanvasMarker *SVGMarkerElementImpl::canvasResource()
     return m_marker;
 }
 
-khtml::RenderObject *SVGMarkerElementImpl::createRenderer(RenderArena *arena, khtml::RenderStyle *style)
+RenderObject *SVGMarkerElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
 {
     KCanvasContainer *markerContainer = QPainter::renderingDevice()->createContainer(arena, style, this);
     markerContainer->setDrawsContents(false); // Marker contents will be explicitly drawn.
     return markerContainer;
+}
+
 }
 
 // vim:ts=4:noet

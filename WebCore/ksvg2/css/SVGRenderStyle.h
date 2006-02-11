@@ -58,7 +58,7 @@ typedef unsigned long long uint64_t;
     if(!(Group->Variable == Value)) \
         Group.access()->Variable = Value;
 
-namespace KSVG
+namespace WebCore
 {
     class SVGRenderStyle : public Shared<SVGRenderStyle>
     {    
@@ -99,11 +99,11 @@ namespace KSVG
 
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, stroke, opacity, StrokeOpacity, strokeOpacity, 1.0)
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(SVGPaintImpl *, stroke, paint, StrokePaint, strokePaint, 0)
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(KDOM::CSSValueListImpl *, stroke, dashArray, StrokeDashArray, strokeDashArray, 0)
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(CSSValueListImpl *, stroke, dashArray, StrokeDashArray, strokeDashArray, 0)
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(unsigned int, stroke, miterLimit, StrokeMiterLimit, strokeMiterLimit, 4)
         
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(KDOM::CSSValueImpl *, stroke, width, StrokeWidth, strokeWidth, 0)
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(KDOM::CSSValueImpl *, stroke, dashOffset, StrokeDashOffset, strokeDashOffset, 0);
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(CSSValueImpl *, stroke, width, StrokeWidth, strokeWidth, 0)
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(CSSValueImpl *, stroke, dashOffset, StrokeDashOffset, strokeDashOffset, 0);
     
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, stops, opacity, StopOpacity, stopOpacity, 1.0)
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(Color, stops, color, StopColor, stopColor, Color(0, 0, 0))    
@@ -173,15 +173,15 @@ namespace KSVG
         } svg_noninherited_flags;
 
         // inherited attributes
-        KDOM::DataRef<StyleFillData> fill;
-        KDOM::DataRef<StyleStrokeData> stroke;
-        KDOM::DataRef<StyleStopData> stops;
-        KDOM::DataRef<StyleMiscData> misc;
-        KDOM::DataRef<StyleMarkerData> markers;
+        DataRef<StyleFillData> fill;
+        DataRef<StyleStrokeData> stroke;
+        DataRef<StyleStopData> stops;
+        DataRef<StyleMiscData> misc;
+        DataRef<StyleMarkerData> markers;
 
         // non-inherited attributes
-        KDOM::DataRef<StyleClipData> clip;
-        KDOM::DataRef<StyleMaskData> mask;
+        DataRef<StyleClipData> clip;
+        DataRef<StyleMaskData> mask;
 
         // static default style
         static SVGRenderStyle *s_defaultStyle;

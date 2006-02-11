@@ -27,7 +27,7 @@
 #include "DOMImplementationImpl.h"
 #include <qstringlist.h>
 
-namespace KDOM
+namespace WebCore
 {
     class DOMString;
     class DocumentImpl;
@@ -37,7 +37,7 @@ namespace KDOM
     typedef FrameView KDOMView;
 }
 
-namespace KSVG
+namespace WebCore
 {
     class SVGDOMImplementationImpl : public DOM::DOMImplementationImpl
     {
@@ -48,14 +48,14 @@ namespace KSVG
         static SVGDOMImplementationImpl *self();
 
         // 'SVGDOMImplementationImpl' functions
-        bool hasFeature(KDOM::DOMStringImpl *feature, KDOM::DOMStringImpl *version) const;
-        KDOM::DocumentTypeImpl *createDocumentType(KDOM::DOMStringImpl *qualifiedName, KDOM::DOMStringImpl *publicId, KDOM::DOMStringImpl *systemId, int& exceptioncode) const;
-        KDOM::DocumentImpl *createDocument(KDOM::DOMStringImpl *namespaceURI, KDOM::DOMStringImpl *qualifiedName, KDOM::DocumentTypeImpl *doctype, int& exceptioncode) const;
-        KDOM::DocumentImpl *createDocument(KDOM::DOMStringImpl *namespaceURI, KDOM::DOMStringImpl *qualifiedName, KDOM::DocumentTypeImpl *doctype, bool createDocElement, KDOM::KDOMView *view, int& exceptioncode) const;
+        bool hasFeature(DOMStringImpl *feature, DOMStringImpl *version) const;
+        DocumentTypeImpl *createDocumentType(DOMStringImpl *qualifiedName, DOMStringImpl *publicId, DOMStringImpl *systemId, int& exceptioncode) const;
+        DocumentImpl *createDocument(DOMStringImpl *namespaceURI, DOMStringImpl *qualifiedName, DocumentTypeImpl *doctype, int& exceptioncode) const;
+        DocumentImpl *createDocument(DOMStringImpl *namespaceURI, DOMStringImpl *qualifiedName, DocumentTypeImpl *doctype, bool createDocElement, KDOMView *view, int& exceptioncode) const;
 
-        virtual KDOM::CSSStyleSheetImpl *createCSSStyleSheet(KDOM::DOMStringImpl *title, KDOM::DOMStringImpl *media) const;
+        virtual CSSStyleSheetImpl *createCSSStyleSheet(DOMStringImpl *title, DOMStringImpl *media) const;
 
-        virtual KDOM::DocumentTypeImpl *defaultDocumentType() const;
+        virtual DocumentTypeImpl *defaultDocumentType() const;
 
         bool inAnimationContext() const;
         void setAnimationContext(bool value);

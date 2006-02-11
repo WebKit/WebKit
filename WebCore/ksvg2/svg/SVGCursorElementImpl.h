@@ -33,7 +33,7 @@
 #include <kdom/cache/KDOMCachedImage.h>
 #include <kdom/cache/KDOMCachedObjectClient.h>
 
-namespace KSVG
+namespace WebCore
 {
     class SVGAnimatedLengthImpl;
 
@@ -41,10 +41,10 @@ namespace KSVG
                                  public SVGTestsImpl,
                                  public SVGExternalResourcesRequiredImpl,
                                  public SVGURIReferenceImpl,
-                                 public KDOM::CachedObjectClient
+                                 public CachedObjectClient
     {
     public:
-        SVGCursorElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGCursorElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGCursorElementImpl();
         
         virtual bool isValid() const { return SVGTestsImpl::isValid(); }
@@ -53,14 +53,14 @@ namespace KSVG
         SVGAnimatedLengthImpl *x() const;
         SVGAnimatedLengthImpl *y() const;
 
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
         CachedImage* cachedImage() const { return m_cachedImage; }
 
     private:
         mutable RefPtr<SVGAnimatedLengthImpl> m_x;
         mutable RefPtr<SVGAnimatedLengthImpl> m_y;
-        KDOM::CachedImage *m_cachedImage;
+        CachedImage *m_cachedImage;
     };
 };
 

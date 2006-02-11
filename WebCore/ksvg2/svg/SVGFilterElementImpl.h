@@ -31,8 +31,7 @@
 
 #include "KCanvasFilters.h"
 
-namespace KSVG
-{
+namespace WebCore {
     class SVGAnimatedEnumerationImpl;
     class SVGAnimatedIntegerImpl;
     class SVGAnimatedLengthImpl;
@@ -43,7 +42,7 @@ namespace KSVG
                                  public SVGExternalResourcesRequiredImpl
     {
     public:
-        SVGFilterElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGFilterElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGFilterElementImpl();
 
         virtual KCanvasFilter *canvasResource();
@@ -63,7 +62,7 @@ namespace KSVG
 
         void setFilterRes(unsigned long filterResX, unsigned long filterResY) const;
 
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
     private:
         mutable RefPtr<SVGAnimatedEnumerationImpl> m_filterUnits;

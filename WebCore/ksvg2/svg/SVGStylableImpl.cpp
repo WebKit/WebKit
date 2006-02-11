@@ -24,7 +24,7 @@
 #if SVG_SUPPORT
 #include "SVGStylableImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGStylableImpl::SVGStylableImpl()
 {

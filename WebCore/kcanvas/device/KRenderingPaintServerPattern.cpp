@@ -29,6 +29,8 @@
 #include <qtextstream.h>
 #include "KCanvasTreeDebug.h"
 
+namespace WebCore {
+
 class KRenderingPaintServerPattern::Private
 {
 public:
@@ -120,6 +122,8 @@ QTextStream &KRenderingPaintServerPattern::externalRepresentation(QTextStream &t
     if (!patternTransform().qmatrix().isIdentity())
         ts << " [pattern transform=" << patternTransform().qmatrix() << "]";
     return ts;
+}
+
 }
 
 // vim:ts=4:noet

@@ -23,14 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#ifndef KCanvasItemQuartz_h
+#define KCanvasItemQuartz_h
+
 #import "kcanvas/RenderPath.h"
 
 #include <qmatrix.h>
 
+namespace WebCore {
+
 class KCanvasItemQuartz : public RenderPath {
 public:
-    KCanvasItemQuartz(WebCore::RenderStyle*, WebCore::SVGStyledElementImpl*);
+    KCanvasItemQuartz(RenderStyle*, SVGStyledElementImpl*);
     virtual ~KCanvasItemQuartz() { }
     
     virtual void drawMarkersIfNeeded(const FloatRect&, const KCanvasPath*) const;
 };
+
+}
+
+#endif

@@ -33,6 +33,8 @@
 
 class QTextStream;
 
+namespace WebCore {
+
 // Enumerations
 typedef enum
 {
@@ -115,12 +117,12 @@ protected:
 class KCanvasMarker : public KCanvasResource
 {
 public:
-    KCanvasMarker(khtml::RenderObject *marker = 0);
+    KCanvasMarker(RenderObject *marker = 0);
     virtual ~KCanvasMarker();
     
     virtual bool isMarker() const { return true; }
 
-    void setMarker(khtml::RenderObject *marker);
+    void setMarker(RenderObject *marker);
     
     void setRef(double refX, double refY);
     double refX() const;    
@@ -144,17 +146,19 @@ public:
 private:
     double m_refX, m_refY;
     float m_angle, m_scaleX, m_scaleY;
-    khtml::RenderObject *m_marker;
+    RenderObject *m_marker;
     bool m_useStrokeWidth;
 };
 
+KCanvasResource *getResourceById(DocumentImpl *document, const AtomicString &id);
+KCanvasMarker *getMarkerById(DocumentImpl *document, const AtomicString &id);
+KCanvasClipper *getClipperById(DocumentImpl *document, const AtomicString &id);
+KCanvasMasker *getMaskerById(DocumentImpl *document, const AtomicString &id);
+KRenderingPaintServer *getPaintServerById(DocumentImpl *document, const AtomicString &id);
+
 QTextStream &operator<<(QTextStream &ts, const KCanvasResource &r);
 
-KCanvasResource *getResourceById(KDOM::DocumentImpl *document, const KDOM::AtomicString &id);
-KCanvasMarker *getMarkerById(KDOM::DocumentImpl *document, const KDOM::AtomicString &id);
-KCanvasClipper *getClipperById(KDOM::DocumentImpl *document, const KDOM::AtomicString &id);
-KCanvasMasker *getMaskerById(KDOM::DocumentImpl *document, const KDOM::AtomicString &id);
-KRenderingPaintServer *getPaintServerById(KDOM::DocumentImpl *document, const KDOM::AtomicString &id);
+}
 
 #endif // SVG_SUPPORT
 #endif

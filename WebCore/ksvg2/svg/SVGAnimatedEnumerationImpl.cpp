@@ -25,7 +25,7 @@
 #include "SVGStyledElementImpl.h"
 #include "SVGAnimatedEnumerationImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGAnimatedEnumerationImpl::SVGAnimatedEnumerationImpl(const SVGStyledElementImpl *context) : Shared<SVGAnimatedEnumerationImpl>()
 {

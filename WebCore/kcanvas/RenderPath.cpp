@@ -39,6 +39,8 @@
 #include "SVGRenderStyle.h"
 #include "SVGStyledElementImpl.h"
 
+namespace WebCore {
+
 class RenderPath::Private
 {
 public:
@@ -49,7 +51,7 @@ public:
 };        
 
 // RenderPath
-RenderPath::RenderPath(khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node) : RenderObject((DOM::NodeImpl *)node), d(new Private())
+RenderPath::RenderPath(RenderStyle *style, SVGStyledElementImpl *node) : RenderObject((DOM::NodeImpl *)node), d(new Private())
 {
     ASSERT(style != 0);
 }
@@ -85,11 +87,11 @@ bool RenderPath::fillContains(const FloatPoint& point) const
     if (!d->path)
         return false;
 
-    if (!KSVG::KSVGPainterFactory::fillPaintServer(style(), this))
+    if (!KSVGPainterFactory::fillPaintServer(style(), this))
         return false;
 
     return path()->containsPoint(mapAbsolutePointToLocal(point),
-                                 KSVG::KSVGPainterFactory::fillPainter(style(), this).fillRule());
+                                 KSVGPainterFactory::fillPainter(style(), this).fillRule());
 }
 
 bool RenderPath::strokeContains(const FloatPoint& point) const
@@ -97,7 +99,7 @@ bool RenderPath::strokeContains(const FloatPoint& point) const
     if (!d->path)
         return false;
 
-    if (!KSVG::KSVGPainterFactory::strokePaintServer(style(), this))
+    if (!KSVGPainterFactory::strokePaintServer(style(), this))
         return false;
 
     return path()->strokeContainsPoint(mapAbsolutePointToLocal(point));
@@ -105,8 +107,8 @@ bool RenderPath::strokeContains(const FloatPoint& point) const
 
 FloatRect RenderPath::strokeBBox() const
 {
-    if (KSVG::KSVGPainterFactory::isStroked(style())) {
-        KRenderingStrokePainter strokePainter = KSVG::KSVGPainterFactory::strokePainter(style(), this);
+    if (KSVGPainterFactory::isStroked(style())) {
+        KRenderingStrokePainter strokePainter = KSVGPainterFactory::strokePainter(style(), this);
         return path()->strokeBoundingBox(strokePainter);
     }
 
@@ -145,7 +147,7 @@ void RenderPath::layout()
     // pretend that one of the attributes of the element has changed on the DOM
     // to force the DOM object to update this render object with new aboslute position values.
 
-    static_cast<KSVG::SVGStyledElementImpl*>(element())->notifyAttributeChange();
+    static_cast<SVGStyledElementImpl*>(element())->notifyAttributeChange();
     IntRect layoutRect = getAbsoluteRepaintRect();
     setWidth(layoutRect.width());
     setHeight(layoutRect.height());
@@ -187,7 +189,7 @@ void RenderPath::paint(PaintInfo &paintInfo, int parentX, int parentY)
     //ASSERT(parentX == 0);
     //ASSERT(parentY == 0);
 
-    if (paintInfo.p->paintingDisabled() || (paintInfo.phase != WebCore::PaintActionForeground) || style()->visibility() == khtml::HIDDEN)
+    if (paintInfo.p->paintingDisabled() || (paintInfo.phase != PaintActionForeground) || style()->visibility() == HIDDEN)
         return;
     
     KRenderingDevice *renderingDevice = QPainter::renderingDevice();
@@ -218,13 +220,13 @@ void RenderPath::paint(PaintInfo &paintInfo, int parentX, int parentY)
 
     deviceContext->clearPath();
     
-    KRenderingPaintServer *fillPaintServer = KSVG::KSVGPainterFactory::fillPaintServer(style(), this);
+    KRenderingPaintServer *fillPaintServer = KSVGPainterFactory::fillPaintServer(style(), this);
     if (fillPaintServer) {
         deviceContext->addPath(path());
         fillPaintServer->setActiveClient(this);
         fillPaintServer->draw(deviceContext, this, APPLY_TO_FILL);
     }
-    KRenderingPaintServer *strokePaintServer = KSVG::KSVGPainterFactory::strokePaintServer(style(), this);
+    KRenderingPaintServer *strokePaintServer = KSVGPainterFactory::strokePaintServer(style(), this);
     if (strokePaintServer) {
         deviceContext->addPath(path()); // path is cleared when filled.
         strokePaintServer->setActiveClient(this);
@@ -245,10 +247,10 @@ void RenderPath::paint(PaintInfo &paintInfo, int parentX, int parentY)
         paintInfo.p->restore();
 }
 
-bool RenderPath::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, WebCore::HitTestAction hitTestAction)
+bool RenderPath::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
 {
     // We only draw in the forground phase, so we only hit-test then.
-    if (hitTestAction != WebCore::HitTestForeground)
+    if (hitTestAction != HitTestForeground)
         return false;
 
     if (strokeContains(FloatPoint(_x, _y)) || fillContains(FloatPoint(_x, _y))) {
@@ -256,6 +258,8 @@ bool RenderPath::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, W
         return true;
     }
     return false;
+}
+
 }
 
 // vim:ts=4:noet

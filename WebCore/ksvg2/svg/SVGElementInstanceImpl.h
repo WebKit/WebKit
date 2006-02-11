@@ -26,12 +26,12 @@
 
 #include <kdom/events/EventTargetImpl.h>
 
-namespace KSVG
+namespace WebCore
 {
     class SVGElementImpl;
     class SVGUseElementImpl;
     class SVGElementInstanceListImpl;
-    class SVGElementInstanceImpl : public KDOM::EventTargetImpl
+    class SVGElementInstanceImpl : public EventTargetImpl
     {
     public:
         SVGElementInstanceImpl();

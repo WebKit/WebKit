@@ -29,7 +29,7 @@
 #include "SVGStyledElementImpl.h"
 #include "SVGExternalResourcesRequiredImpl.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGSymbolElementImpl : public SVGStyledElementImpl,
                                  public SVGLangSpaceImpl,
@@ -37,11 +37,11 @@ namespace KSVG
                                  public SVGFitToViewBoxImpl
     {
     public:
-        SVGSymbolElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGSymbolElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGSymbolElementImpl();
 
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
-        virtual bool shouldAttachChild(KDOM::ElementImpl *) const { return false; }
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
+        virtual bool shouldAttachChild(ElementImpl *) const { return false; }
     };
 };
 

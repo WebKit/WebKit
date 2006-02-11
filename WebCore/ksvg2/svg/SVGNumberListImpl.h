@@ -27,7 +27,7 @@
 #include "SVGList.h"
 #include "SVGNumberImpl.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGNumberListImpl : public SVGList<SVGNumberImpl>
     {

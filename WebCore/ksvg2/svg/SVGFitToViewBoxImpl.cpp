@@ -35,7 +35,7 @@
 #include "SVGPreserveAspectRatioImpl.h"
 #include "SVGAnimatedPreserveAspectRatioImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGFitToViewBoxImpl::SVGFitToViewBoxImpl()
 {
@@ -67,10 +67,10 @@ SVGAnimatedPreserveAspectRatioImpl *SVGFitToViewBoxImpl::preserveAspectRatio() c
     return m_preserveAspectRatio.get();
 }
 
-void SVGFitToViewBoxImpl::parseViewBox(KDOM::DOMStringImpl *str)
+void SVGFitToViewBoxImpl::parseViewBox(DOMStringImpl *str)
 {
     // allow for viewbox def with ',' or whitespace
-    QString viewbox = KDOM::DOMString(str).qstring();
+    QString viewbox = DOMString(str).qstring();
     QStringList points = QStringList::split(' ', viewbox.replace(',', ' ').simplifyWhiteSpace());
 
     if (points.count() == 4) {
@@ -93,7 +93,7 @@ SVGMatrixImpl *SVGFitToViewBoxImpl::viewBoxToViewTransform(float viewWidth, floa
             0, 0, viewWidth, viewHeight);
 }
 
-bool SVGFitToViewBoxImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
+bool SVGFitToViewBoxImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     if (attr->name() == SVGNames::viewBoxAttr)
     {

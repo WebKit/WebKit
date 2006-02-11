@@ -29,9 +29,9 @@
 #include <kcanvas/KCanvasCreator.h>
 #include <kcanvas/device/KRenderingDevice.h>
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGPolygonElementImpl::SVGPolygonElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+SVGPolygonElementImpl::SVGPolygonElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
 : SVGPolyElementImpl(tagName, doc)
 {
 }

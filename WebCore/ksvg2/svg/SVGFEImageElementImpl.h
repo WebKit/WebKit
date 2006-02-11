@@ -32,32 +32,31 @@
 #include <kdom/cache/KDOMCachedObjectClient.h>
 #include "KCanvasFilters.h"
 
-namespace KSVG
-{
+namespace WebCore {
     class SVGAnimatedPreserveAspectRatioImpl;
 
     class SVGFEImageElementImpl : public SVGFilterPrimitiveStandardAttributesImpl,
                                   public SVGURIReferenceImpl,
                                   public SVGLangSpaceImpl,
                                   public SVGExternalResourcesRequiredImpl,
-                                  public KDOM::CachedObjectClient
+                                  public CachedObjectClient
     {
     public:
-        SVGFEImageElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGFEImageElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGFEImageElementImpl();
 
         // 'SVGFEImageElement' functions
         SVGAnimatedPreserveAspectRatioImpl *preserveAspectRatio() const;
 
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
-        virtual void notifyFinished(KDOM::CachedObject *finishedObj);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
+        virtual void notifyFinished(CachedObject *finishedObj);
 
     protected:
         virtual KCanvasFEImage *filterEffect() const;
 
     private:
         mutable RefPtr<SVGAnimatedPreserveAspectRatioImpl> m_preserveAspectRatio;
-        KDOM::CachedImage *m_cachedImage;
+        CachedImage *m_cachedImage;
         mutable KCanvasFEImage *m_filterEffect;
     };
 };

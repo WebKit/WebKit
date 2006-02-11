@@ -31,6 +31,8 @@
 #include <kcanvas/KCanvasFilters.h>
 #include <kcanvas/device/KRenderingPaintServer.h>
 
+namespace WebCore {
+
 // aka where to draw
 class KCanvasMatrix;
 class KRenderingDeviceContext
@@ -78,13 +80,15 @@ public:
     virtual KCanvasFilterEffect *createFilterEffect(const KCFilterEffectType &type) const = 0;
     virtual KRenderingPaintServer *createPaintServer(const KCPaintServerType &type) const = 0;
 
-    virtual RenderPath *createItem(RenderArena *arena, khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node, KCanvasPath* path) const = 0;
-    virtual KCanvasContainer *createContainer(RenderArena *arena, khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node) const = 0;
+    virtual RenderPath *createItem(RenderArena *arena, RenderStyle *style, SVGStyledElementImpl *node, KCanvasPath* path) const = 0;
+    virtual KCanvasContainer *createContainer(RenderArena *arena, RenderStyle *style, SVGStyledElementImpl *node) const = 0;
     virtual KCanvasPath* createPath() const = 0;
 
 private:
     Vector<KRenderingDeviceContext*> m_contextStack;
 };
+
+}
 
 #endif // SVG_SUPPORT
 #endif

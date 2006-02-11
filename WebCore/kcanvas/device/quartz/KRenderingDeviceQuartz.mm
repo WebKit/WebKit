@@ -43,6 +43,8 @@
 
 #import "KWQLogging.h"
 
+namespace WebCore {
+
 KRenderingDeviceContextQuartz::KRenderingDeviceContextQuartz(CGContextRef context) : m_cgContext(CGContextRetain(context)), m_nsGraphicsContext(0)
 {
     ASSERT(m_cgContext);
@@ -210,12 +212,12 @@ KRenderingPaintServer *KRenderingDeviceQuartz::createPaintServer(const KCPaintSe
     return newServer;
 }
  
-KCanvasContainer *KRenderingDeviceQuartz::createContainer(RenderArena *arena, khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node) const
+KCanvasContainer *KRenderingDeviceQuartz::createContainer(RenderArena *arena, RenderStyle *style, SVGStyledElementImpl *node) const
 {
     return new (arena) KCanvasContainerQuartz(node);
 }
 
-RenderPath *KRenderingDeviceQuartz::createItem(RenderArena *arena, khtml::RenderStyle *style, KSVG::SVGStyledElementImpl *node, KCanvasPath* path) const
+RenderPath *KRenderingDeviceQuartz::createItem(RenderArena *arena, RenderStyle *style, SVGStyledElementImpl *node, KCanvasPath* path) const
 {
     RenderPath *item = new (arena) KCanvasItemQuartz(style, node);
     item->setPath(path);
@@ -269,5 +271,7 @@ KCanvasFilterEffect *KRenderingDeviceQuartz::createFilterEffect(const KCFilterEf
         return 0;
     }
 }
-#endif // SVG_SUPPORT
 
+}
+
+#endif // SVG_SUPPORT

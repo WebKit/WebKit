@@ -25,10 +25,8 @@
 
 #include "SVGFilterPrimitiveStandardAttributesImpl.h"
 
-class KCanvasFEDiffuseLighting;
-
-namespace KSVG
-{
+namespace WebCore {
+    class KCanvasFEDiffuseLighting;
     class SVGAnimatedNumberImpl;
     class SVGAnimatedStringImpl;
     class SVGAnimatedColorImpl;
@@ -36,7 +34,7 @@ namespace KSVG
     class SVGFEDiffuseLightingElementImpl : public SVGFilterPrimitiveStandardAttributesImpl
     {
     public:
-        SVGFEDiffuseLightingElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGFEDiffuseLightingElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGFEDiffuseLightingElementImpl();
 
         // 'SVGFEDiffuseLightingElement' functions
@@ -48,7 +46,7 @@ namespace KSVG
         SVGAnimatedColorImpl  *lightingColor() const;
 
         // Derived from: 'ElementImpl'
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
         virtual KCanvasFEDiffuseLighting *filterEffect() const;
 

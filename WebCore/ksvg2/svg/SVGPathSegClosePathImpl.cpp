@@ -24,7 +24,7 @@
 #if SVG_SUPPORT
 #include "SVGPathSegClosePathImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGPathSegClosePathImpl::SVGPathSegClosePathImpl()
 : SVGPathSegImpl()

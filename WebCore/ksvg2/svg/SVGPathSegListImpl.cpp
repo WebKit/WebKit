@@ -25,7 +25,7 @@
 #if SVG_SUPPORT
 #include "SVGPathSegListImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGPathSegListImpl::SVGPathSegListImpl(const SVGStyledElementImpl *context)
 : SVGList<SVGPathSegImpl>(context)

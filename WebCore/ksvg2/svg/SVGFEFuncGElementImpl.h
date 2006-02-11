@@ -26,12 +26,12 @@
 
 #include "SVGComponentTransferFunctionElementImpl.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGFEFuncGElementImpl : public SVGComponentTransferFunctionElementImpl
     {
     public:
-        SVGFEFuncGElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGFEFuncGElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGFEFuncGElementImpl();
     };
 };

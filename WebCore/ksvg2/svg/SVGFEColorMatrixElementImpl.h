@@ -27,7 +27,7 @@
 #include "SVGFilterPrimitiveStandardAttributesImpl.h"
 #include "KCanvasFilters.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGAnimatedStringImpl;
     class SVGAnimatedNumberListImpl;
@@ -36,7 +36,7 @@ namespace KSVG
     class SVGFEColorMatrixElementImpl : public SVGFilterPrimitiveStandardAttributesImpl
     {
     public:
-        SVGFEColorMatrixElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGFEColorMatrixElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGFEColorMatrixElementImpl();
 
         // 'SVGFEColorMatrixElement' functions
@@ -45,7 +45,7 @@ namespace KSVG
         SVGAnimatedNumberListImpl *values() const;
 
         // Derived from: 'ElementImpl'
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
         
         virtual KCanvasFEColorMatrix *filterEffect() const;
 

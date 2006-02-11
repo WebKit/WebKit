@@ -27,9 +27,9 @@
 #include "DocumentImpl.h"
 #include "SVGDocumentExtensions.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGSetElementImpl::SVGSetElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+SVGSetElementImpl::SVGSetElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
 : SVGAnimationElementImpl(tagName, doc)
 {
 }
@@ -56,9 +56,9 @@ void SVGSetElementImpl::handleTimerEvent(double timePercentage)
     // Commit change now...
     if(m_savedTo.isEmpty())
     {
-        KDOM::DOMString attr(targetAttribute());
+        DOMString attr(targetAttribute());
         m_savedTo = attr.qstring();
-        setTargetAttribute(KDOM::DOMString(m_to).impl());
+        setTargetAttribute(DOMString(m_to).impl());
     }
 
     // End condition.
@@ -69,7 +69,7 @@ void SVGSetElementImpl::handleTimerEvent(double timePercentage)
         }
 
         if (!isFrozen())
-            setTargetAttribute(KDOM::DOMString(m_savedTo).impl());
+            setTargetAttribute(DOMString(m_savedTo).impl());
 
         m_savedTo = QString();
     }

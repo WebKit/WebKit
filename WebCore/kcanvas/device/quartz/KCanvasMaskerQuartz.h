@@ -28,9 +28,13 @@
 #import "KCanvasImage.h"
 #import "KCanvasResources.h"
 
+namespace WebCore {
+
 class KCanvasMaskerQuartz : public KCanvasMasker {
 public:
     KCanvasMaskerQuartz() { }
     
     virtual void applyMask(const FloatRect& boundingBox) const;
 };
+
+}

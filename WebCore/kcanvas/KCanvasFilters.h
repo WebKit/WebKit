@@ -34,8 +34,10 @@
 @class CIFilter;
 #else
 class CIFilter;
-#endif // SVG_SUPPORT
 #endif
+
+namespace WebCore {
+
 class KCanvasFilterQuartz;
 
 // Enumerations
@@ -121,7 +123,7 @@ protected:
     bool m_effectBBoxMode;
 };
 
-KCanvasFilter *getFilterById(KDOM::DocumentImpl *document, const KDOM::AtomicString &id);
+KCanvasFilter *getFilterById(DocumentImpl *document, const AtomicString &id);
 
 class KCanvasFilterEffect
 {
@@ -491,7 +493,7 @@ private:
     float m_y;
 };
 
-class KCanvasFEImage : public KCanvasFilterEffect, public WebCore::CachedObjectClient
+class KCanvasFEImage : public KCanvasFilterEffect, public CachedObjectClient
 {
 public:
     KCanvasFEImage(): m_cachedImage(0) { }
@@ -499,13 +501,13 @@ public:
     
     // FIXME: Eventually we need to support <svg> (RenderObject *) as well as image data.
     
-    WebCore::CachedImage* cachedImage() const { return m_cachedImage; }
-    void setCachedImage(WebCore::CachedImage* image);
+    CachedImage* cachedImage() const { return m_cachedImage; }
+    void setCachedImage(CachedImage* image);
 
     QTextStream &externalRepresentation(QTextStream &) const;
     
 private:
-    WebCore::CachedImage* m_cachedImage;
+    CachedImage* m_cachedImage;
 };
 
 class KCanvasFEMerge : public KCanvasFilterEffect
@@ -638,5 +640,9 @@ private:
     bool m_stitchTiles;
     KCTurbulanceType m_type;
 };
+
+}
+
+#endif // SVG_SUPPORT
 
 #endif

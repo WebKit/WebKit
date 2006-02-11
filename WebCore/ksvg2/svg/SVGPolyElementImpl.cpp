@@ -32,9 +32,9 @@
 #include "SVGPolyElementImpl.h"
 #include "SVGDOMImplementationImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
-SVGPolyElementImpl::SVGPolyElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+SVGPolyElementImpl::SVGPolyElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
 : SVGStyledTransformableElementImpl(tagName, doc), SVGTestsImpl(), SVGLangSpaceImpl(), SVGExternalResourcesRequiredImpl(), SVGAnimatedPointsImpl(), SVGPolyParser()
 {
 }
@@ -53,10 +53,10 @@ SVGPointListImpl *SVGPolyElementImpl::animatedPoints() const
     return 0;
 }
 
-void SVGPolyElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
+void SVGPolyElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     if (attr->name() == SVGNames::pointsAttr)
-        parsePoints(KDOM::DOMString(attr->value()).qstring());
+        parsePoints(DOMString(attr->value()).qstring());
     else
     {
         if(SVGTestsImpl::parseMappedAttribute(attr)) return;
@@ -89,7 +89,7 @@ void SVGPolyElementImpl::notifyAttributeChange() const
         _points += QString("%1 %2 ").arg(p->x()).arg(p->y());
     }
 
-    KDOM::DOMString p("points");
+    DOMString p("points");
     RefPtr<AttrImpl> attr = const_cast<SVGPolyElementImpl *>(this)->getAttributeNode(p.impl());
     if (attr) {
         int exceptionCode;

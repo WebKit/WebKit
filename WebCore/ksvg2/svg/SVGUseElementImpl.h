@@ -30,9 +30,8 @@
 #include "SVGStyledTransformableElementImpl.h"
 #include "SVGExternalResourcesRequiredImpl.h"
 
-namespace KSVG
+namespace WebCore
 {
-    //class SVGElementInstanceImpl;
     class SVGAnimatedLengthImpl;
     class SVGUseElementImpl : public SVGStyledTransformableElementImpl,
                               public SVGTestsImpl,
@@ -41,7 +40,7 @@ namespace KSVG
                               public SVGURIReferenceImpl
     {
     public:
-        SVGUseElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGUseElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGUseElementImpl();
         
         virtual bool isValid() const { return SVGTestsImpl::isValid(); }
@@ -58,13 +57,10 @@ namespace KSVG
         SVGAnimatedLengthImpl *width() const;
         SVGAnimatedLengthImpl *height() const;
 
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
-        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
-        virtual khtml::RenderObject *createRenderer(RenderArena *arena, khtml::RenderStyle *style);
-
-        // TODO: not sure about this API yet
-        // SVGElementInstanceImpl *instanceRoot() const;
+        virtual bool rendererIsNeeded(RenderStyle *) { return true; }
+        virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
 
     private:
         mutable RefPtr<SVGAnimatedLengthImpl> m_x;

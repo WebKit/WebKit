@@ -45,10 +45,10 @@
 
 #include <cmath>
 
-using namespace KSVG;
+using namespace WebCore;
 using namespace std;
 
-SVGAnimationElementImpl::SVGAnimationElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc)
+SVGAnimationElementImpl::SVGAnimationElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
 : SVGElementImpl(tagName, doc), SVGTestsImpl(), SVGExternalResourcesRequiredImpl()
 {
     m_connected = false;
@@ -85,16 +85,16 @@ SVGElementImpl *SVGAnimationElementImpl::targetElement() const
     {
         if(!m_href.isEmpty())
         {
-            KDOM::DOMString targetId = SVGURIReferenceImpl::getTarget(m_href);
-            KDOM::ElementImpl *element = ownerDocument()->getElementById(targetId.impl());
+            DOMString targetId = SVGURIReferenceImpl::getTarget(m_href);
+            ElementImpl *element = ownerDocument()->getElementById(targetId.impl());
             m_targetElement = svg_dynamic_cast(element);
         }
         else if(parentNode())
         {
-            KDOM::NodeImpl *target = parentNode();
+            NodeImpl *target = parentNode();
             while(target != 0)
             {
-                if(target->nodeType() != KDOM::ELEMENT_NODE)
+                if(target->nodeType() != ELEMENT_NODE)
                     target = target->parentNode();
                 else
                     break;
@@ -126,10 +126,10 @@ double SVGAnimationElementImpl::getSimpleDuration() const
     return m_simpleDuration;
 }
 
-void SVGAnimationElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *attr)
+void SVGAnimationElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
-    KDOM::DOMString value(attr->value());
-    if (attr->name().matches(KDOM::XLinkNames::hrefAttr))
+    DOMString value(attr->value());
+    if (attr->name().matches(XLinkNames::hrefAttr))
             m_href = value.qstring();
     else if (attr->name() == SVGNames::attributeNameAttr)
             m_attributeName = value.qstring();
@@ -153,7 +153,7 @@ void SVGAnimationElementImpl::parseMappedAttribute(KDOM::MappedAttributeImpl *at
         // Parse data
         for(unsigned int i = 0; i < temp->numberOfItems(); i++)
         {
-            QString current = KDOM::DOMString(temp->getItem(i)).qstring();
+            QString current = DOMString(temp->getItem(i)).qstring();
 
             if(current.startsWith(QString::fromLatin1("accessKey")))
             {
@@ -420,17 +420,17 @@ void SVGAnimationElementImpl::closeRenderer()
         doc->accessSVGExtensions()->timeScheduler()->addTimer(this, lround(getStartTime()));
 }
 
-KDOM::DOMString SVGAnimationElementImpl::targetAttribute() const
+DOMString SVGAnimationElementImpl::targetAttribute() const
 {
     if(!targetElement())
-        return KDOM::DOMString();
+        return DOMString();
     
     SVGElementImpl *target = targetElement();
     SVGStyledElementImpl *styled = NULL;
     if (target && target->isStyled())
         styled = static_cast<SVGStyledElementImpl *>(target);
     
-    KDOM::DOMString ret;
+    DOMString ret;
 
     EAttributeType attributeType = m_attributeType;
     if(attributeType == ATTRIBUTETYPE_AUTO)
@@ -453,21 +453,21 @@ KDOM::DOMString SVGAnimationElementImpl::targetAttribute() const
     }
 
     if(attributeType == ATTRIBUTETYPE_XML || ret.isEmpty())
-        ret = targetElement()->getAttribute(KDOM::DOMString(m_attributeName).impl());
+        ret = targetElement()->getAttribute(DOMString(m_attributeName).impl());
 
     return ret;
 }
 
-void SVGAnimationElementImpl::setTargetAttribute(KDOM::DOMStringImpl *value)
+void SVGAnimationElementImpl::setTargetAttribute(DOMStringImpl *value)
 {
-    SVGAnimationElementImpl::setTargetAttribute(targetElement(), KDOM::DOMString(m_attributeName).impl(), value, m_attributeType);
+    SVGAnimationElementImpl::setTargetAttribute(targetElement(), DOMString(m_attributeName).impl(), value, m_attributeType);
 }
 
-void SVGAnimationElementImpl::setTargetAttribute(SVGElementImpl *target, KDOM::DOMStringImpl *nameImpl, KDOM::DOMStringImpl *value, EAttributeType type)
+void SVGAnimationElementImpl::setTargetAttribute(SVGElementImpl *target, DOMStringImpl *nameImpl, DOMStringImpl *value, EAttributeType type)
 {
     if(!target || !nameImpl || !value)
         return;
-    KDOM::DOMString name(nameImpl);
+    DOMString name(nameImpl);
     
     SVGStyledElementImpl *styled = NULL;
     if (target && target->isStyled())

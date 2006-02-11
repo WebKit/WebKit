@@ -30,17 +30,18 @@
 #include <kcanvas/device/KRenderingPaintServer.h>
 #include <kcanvas/KCanvasResourceListener.h>
 
-typedef enum
-{
+namespace WebCore {
+
+enum KCGradientSpreadMethod {
     SPREADMETHOD_PAD = 1,
     SPREADMETHOD_REPEAT = 2,
     SPREADMETHOD_REFLECT = 4
-} KCGradientSpreadMethod;
-
-QTextStream &operator<<(QTextStream &ts, KCGradientSpreadMethod m);
+};
 
 typedef std::pair<float, Color> KCGradientStop;
 inline KCGradientStop makeGradientStop(float offset, const Color& color) { return std::make_pair(offset, color); }
+
+QTextStream &operator<<(QTextStream &ts, WebCore::KCGradientSpreadMethod m);
 
 class KCanvasMatrix;
 class KRenderingPaintServerGradient : public KRenderingPaintServer
@@ -120,6 +121,8 @@ private:
     class Private;
     Private *d;
 };
+
+}
 
 #endif // SVG_SUPPORT
 #endif

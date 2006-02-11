@@ -26,17 +26,17 @@
 
 #include <SVGElementImpl.h>
 
-namespace KSVG
+namespace WebCore
 {
     class SVGAnimatedStringImpl;
     class SVGFEMergeNodeElementImpl : public SVGElementImpl
     {
     public:
-        SVGFEMergeNodeElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGFEMergeNodeElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGFEMergeNodeElementImpl();
 
         // Derived from: 'ElementImpl'
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
         // 'SVGFEMergeNodeElement' functions
         SVGAnimatedStringImpl *in1() const;

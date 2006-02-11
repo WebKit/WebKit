@@ -26,10 +26,10 @@
 
 #include "SVGStringListImpl.h"
 
-using namespace KSVG;
+using namespace WebCore;
 
 SVGStringListImpl::SVGStringListImpl(const SVGStyledElementImpl *context)
-: SVGList<KDOM::DOMStringImpl>(context)
+: SVGList<DOMStringImpl>(context)
 {
 }
 
@@ -42,13 +42,13 @@ void SVGStringListImpl::reset(const QString &str)
     QStringList list = QStringList::split(' ', str);
     if(list.count() == 0)
     {
-        KDOM::DOMStringImpl *item = new KDOM::DOMStringImpl(str);
+        DOMStringImpl *item = new DOMStringImpl(str);
         item->ref();
         appendItem(item);
     }
     else for(QStringList::Iterator it = list.begin(); it != list.end(); ++it)
     {
-        KDOM::DOMStringImpl *item = new KDOM::DOMStringImpl((*it));
+        DOMStringImpl *item = new DOMStringImpl((*it));
         item->ref();
         appendItem(item);
     }

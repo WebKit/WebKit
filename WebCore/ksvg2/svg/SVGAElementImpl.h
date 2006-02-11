@@ -30,7 +30,7 @@
 #include "SVGStyledTransformableElementImpl.h"
 #include "SVGExternalResourcesRequiredImpl.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGAnimatedStringImpl;
     class SVGAElementImpl : public SVGStyledTransformableElementImpl,
@@ -40,7 +40,7 @@ namespace KSVG
                             public SVGExternalResourcesRequiredImpl
     {
     public:
-        SVGAElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGAElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGAElementImpl();
 
         // 'SVGAElement' functions
@@ -48,13 +48,13 @@ namespace KSVG
         
         virtual bool isValid() const { return SVGTestsImpl::isValid(); }
 
-        virtual void parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
         // Derived from: 'SVGStyledElementImpl'
-        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
-        virtual khtml::RenderObject *createRenderer(RenderArena *arena, khtml::RenderStyle *style);
+        virtual bool rendererIsNeeded(RenderStyle *) { return true; }
+        virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
 
-        virtual void defaultEventHandler(KDOM::EventImpl *evt);
+        virtual void defaultEventHandler(EventImpl *evt);
 
     private:
         mutable RefPtr<SVGAnimatedStringImpl> m_target;

@@ -29,7 +29,7 @@
 #include "SVGStyledTransformableElementImpl.h"
 #include "SVGExternalResourcesRequiredImpl.h"
 
-namespace KSVG
+namespace WebCore
 {
     class SVGSwitchElementImpl : public SVGStyledTransformableElementImpl,
                                  public SVGTestsImpl,
@@ -37,15 +37,15 @@ namespace KSVG
                                  public SVGExternalResourcesRequiredImpl
     {
     public:
-        SVGSwitchElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc);
+        SVGSwitchElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
         virtual ~SVGSwitchElementImpl();
         
         virtual bool isValid() const { return SVGTestsImpl::isValid(); }
 
-        virtual bool rendererIsNeeded(khtml::RenderStyle *) { return true; }
-        virtual bool childShouldCreateRenderer(KDOM::NodeImpl *) const;
+        virtual bool rendererIsNeeded(RenderStyle *) { return true; }
+        virtual bool childShouldCreateRenderer(NodeImpl *) const;
 
-        virtual khtml::RenderObject *createRenderer(RenderArena *arena, khtml::RenderStyle *style);
+        virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
 
     private:
         mutable bool m_insideRenderSection;

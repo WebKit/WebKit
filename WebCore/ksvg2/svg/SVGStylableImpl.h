@@ -26,14 +26,14 @@
 
 #include "PlatformString.h"
 
-namespace KDOM
+namespace WebCore
 {
     class DOMString;
     class CSSValueImpl;
     class CSSStyleDeclarationImpl;
 };
 
-namespace KSVG
+namespace WebCore
 {
     class SVGAnimatedStringImpl;
 
@@ -47,7 +47,7 @@ namespace KSVG
         virtual SVGAnimatedStringImpl *className() const = 0;
 
         virtual DOM::CSSStyleDeclarationImpl *style() = 0;
-        virtual KDOM::CSSValueImpl *getPresentationAttribute(KDOM::DOMStringImpl *name) = 0;
+        virtual CSSValueImpl *getPresentationAttribute(DOMStringImpl *name) = 0;
     };
 };
 

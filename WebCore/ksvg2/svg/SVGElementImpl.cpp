@@ -46,7 +46,7 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace EventNames;
 
-SVGElementImpl::SVGElementImpl(const KDOM::QualifiedName& tagName, KDOM::DocumentImpl *doc) : KDOM::XMLElementImpl(tagName, doc), m_closed(false)
+SVGElementImpl::SVGElementImpl(const QualifiedName& tagName, DocumentImpl *doc) : XMLElementImpl(tagName, doc), m_closed(false)
 {
 }
 
@@ -54,12 +54,12 @@ SVGElementImpl::~SVGElementImpl()
 {
 }
 
-bool SVGElementImpl::isSupported(KDOM::DOMStringImpl *feature, KDOM::DOMStringImpl *version) const
+bool SVGElementImpl::isSupported(DOMStringImpl *feature, DOMStringImpl *version) const
 {
     if(SVGDOMImplementationImpl::instance()->hasFeature(feature, version))
         return true;
 
-    return KDOM::DOMImplementationImpl::instance()->hasFeature(feature, version);
+    return DOMImplementationImpl::instance()->hasFeature(feature, version);
 }
 
 SVGSVGElementImpl *SVGElementImpl::ownerSVGElement() const
@@ -67,7 +67,7 @@ SVGSVGElementImpl *SVGElementImpl::ownerSVGElement() const
     NodeImpl *n = parentNode();
     while(n)
     {
-        if(n->nodeType() == KDOM::ELEMENT_NODE && n->hasTagName(SVGNames::svgTag))
+        if(n->nodeType() == ELEMENT_NODE && n->hasTagName(SVGNames::svgTag))
             return static_cast<SVGSVGElementImpl *>(n);
 
         n = n->parentNode();
@@ -90,7 +90,7 @@ SVGElementImpl *SVGElementImpl::viewportElement() const
     return 0;
 }
 
-KDOM::AtomicString SVGElementImpl::tryGetAttribute(const KDOM::DOMString& name, KDOM::AtomicString defaultVal) const
+AtomicString SVGElementImpl::tryGetAttribute(const DOMString& name, AtomicString defaultVal) const
 {
     if(hasAttribute(name))
         return getAttribute(name);
@@ -98,7 +98,7 @@ KDOM::AtomicString SVGElementImpl::tryGetAttribute(const KDOM::DOMString& name, 
     return defaultVal;
 }
 
-KDOM::AtomicString SVGElementImpl::tryGetAttributeNS(const KDOM::DOMString& namespaceURI, const KDOM::DOMString& localName, KDOM::AtomicString defaultVal) const
+AtomicString SVGElementImpl::tryGetAttributeNS(const DOMString& namespaceURI, const DOMString& localName, AtomicString defaultVal) const
 {
     if(hasAttributeNS(namespaceURI, localName))
         return getAttributeNS(namespaceURI, localName);
@@ -132,7 +132,7 @@ void SVGElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     else if (attr->name() == onblurAttr)
         addSVGEventListener(DOMFocusOutEvent, attr);
     else
-        KDOM::StyledElementImpl::parseMappedAttribute(attr);
+        StyledElementImpl::parseMappedAttribute(attr);
 }
 
 bool SVGElementImpl::childShouldCreateRenderer(DOM::NodeImpl *child) const

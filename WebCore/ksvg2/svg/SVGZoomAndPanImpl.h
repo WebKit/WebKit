@@ -24,12 +24,12 @@
 #define KSVG_SVGZoomAndPanImpl_H
 #if SVG_SUPPORT
 
-namespace KDOM
+namespace WebCore
 {
     class MappedAttributeImpl;
 };
 
-namespace KSVG
+namespace WebCore
 {
     class SVGZoomAndPanImpl
     {
@@ -41,7 +41,7 @@ namespace KSVG
         unsigned short zoomAndPan() const;
         virtual void setZoomAndPan(unsigned short zoomAndPan);
 
-        bool parseMappedAttribute(KDOM::MappedAttributeImpl *attr);
+        bool parseMappedAttribute(MappedAttributeImpl *attr);
 
     private:
         unsigned short m_zoomAndPan;
