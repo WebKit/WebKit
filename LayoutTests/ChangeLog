@@ -1,3 +1,19 @@
+2006-02-11  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+ 
+         Reviewed by Hyatt.
+ 
+         - new test and updated results for
+           http://bugzilla.opendarwin.org/show_bug.cgi?id=7054
+           Vertical scroll bars do not appear or do not scroll completely
+ 
+         * fast/replaced/width100percent-expected.checksum: Updated.
+         * fast/replaced/width100percent-expected.png: Updated.
+         * fast/replaced/width100percent-expected.txt: Updated.
+         * fast/table/edge-offsets-expected.checksum: Added.
+         * fast/table/edge-offsets-expected.png: Added.
+         * fast/table/edge-offsets-expected.txt: Added.
+         * fast/table/edge-offsets.html: Added.
+
 2006-02-11  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

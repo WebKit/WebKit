@@ -81,6 +81,9 @@ public:
         return (*grid[row].row)[col];
     }
 
+    virtual int lowestPosition(bool includeOverflowInterior, bool includeSelf) const;
+    virtual int rightmostPosition(bool includeOverflowInterior, bool includeSelf) const;
+    virtual int leftmostPosition(bool includeOverflowInterior, bool includeSelf) const;
     virtual void paint(PaintInfo& i, int tx, int ty);
 
     int numRows() const { return gridRows; }
