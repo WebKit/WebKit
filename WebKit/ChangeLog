@@ -1,3 +1,7 @@
+2006-02-11  Darin Adler  <darin@apple.com>
+
+        * English.lproj/StringsNotToBeLocalized.txt: Updated paths for recent changes in directory structure.
+
 2006-02-11  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by John Sullivan.
