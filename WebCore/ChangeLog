@@ -1,3 +1,31 @@
+2006-02-10  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for <rdar://problem/4149655> Frequently reported crash, repro 
+        at lastminute.se in khtml::RenderBlock::createLineBoxes
+
+        Some crazy combination of an anonymous table, an inline form, and 
+        generated content caused table objects to be added to a flow and 
+        then split. This is very bad. Once the crash was fixed, there were 
+        still some rendering issues that this patch also fixes. We needed 
+        to make sure we only special case forms for non-CSS tables so that 
+        the form and generated content render as expected.
+
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::appendChildNode): Assert that if we are 
+        a block flow, our child cannot be a table object.
+        (WebCore::RenderContainer::insertChildNode): Same.
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addChild): Only special-case forms if we are 
+        not a CSS table.
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::addChild): Same.
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addChild): Same.
+        * rendering/render_inline.cpp:
+        (WebCore::RenderInline::addChildToFlow): Here is the crash fix. Check to make sure our containing block is a block flow.
+
 2006-02-10  Darin Adler  <darin@apple.com>
 
         - fixed the build, this time for sure

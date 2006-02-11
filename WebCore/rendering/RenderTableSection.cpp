@@ -76,8 +76,10 @@ void RenderTableSection::setStyle(RenderStyle* _style)
 
 void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild)
 {
+    bool isTableSection = element() && (element()->hasTagName(theadTag) || element()->hasTagName(tbodyTag) || element()->hasTagName(tfootTag));
+
     if (!child->isTableRow()) {
-        if (child->element() && child->element()->hasTagName(formTag) && child->style()->display() != TABLE_CELL) {
+        if (isTableSection && child->element() && child->element()->hasTagName(formTag)) {
             RenderContainer::addChild(child, beforeChild);
             return;
         }
