@@ -69,6 +69,13 @@ public:
     void gifComplete();
 
 private:
+    // Called to initialize a new frame buffer (potentially compositing it
+    // with the previous frame and/or clearing bits in our image based off
+    // the previous frame as well).
+    void initFrameBuffer(RGBA32Buffer& buffer,
+                         RGBA32Buffer* previousBuffer,
+                         bool compositeWithPreviousFrame);
+
     bool m_frameCountValid;
     mutable GIFImageDecoderPrivate* m_reader;
 };

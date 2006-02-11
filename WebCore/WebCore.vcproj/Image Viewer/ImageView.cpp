@@ -87,9 +87,12 @@ void ImageView::OnDraw(CDC* pDC)
     cairo_set_source_rgb(context, 1.0, 1.0, 1.0);
     cairo_fill(context);
 
+    // Comment in to test overlapping.
+    bool overlapping = false; // true;
+
     // Comment in to test tiling.
-    bool tile = true; // true;
-    FloatPoint srcPoint(30,30); // The src point to use when tiling.  Change value to test offset tiling.
+    bool tile = false; // true;
+    FloatPoint srcPoint; // The src point to use when tiling.  Change value to test offset tiling.
 
     // Comment the multiplicative factor in to test scaling (doubles the size).
     float width = tile ? rect.right : image->size().width(); // * 2;
@@ -104,8 +107,12 @@ void ImageView::OnDraw(CDC* pDC)
     FloatRect imageRect(srcPoint, image->size());
     if (tile)
         image->tileInRect(dstRect, srcPoint, context);
-    else
+    else {
         image->drawInRect(dstRect, imageRect, Image::CompositeSourceOver, (void*)context);
+    //    if (overlapping)
+     //       image->drawInRect(FloatRect(dstRect.x() + dstRect.width()/2, dstRect.y(), dstRect.width(), dstRect.height()),
+     //                        imageRect, Image::CompositeSourceOver, context);
+    }
     cairo_destroy(context);
     
     context = cairo_create(finalSurface);

@@ -159,5 +159,16 @@ float ImageSource::frameDurationAtIndex(size_t index)
     return buffer.duration() / 1000.0f;
 }
 
+bool ImageSource::frameHasAlphaAtIndex(size_t index)
+{
+    if (!m_decoder)
+        return false;
+
+    RGBA32Buffer& buffer = m_decoder->frameBufferAtIndex(index);
+    if (buffer.status() == RGBA32Buffer::FrameEmpty)
+        return false;
+
+    return buffer.hasAlpha();
+}
 
 }

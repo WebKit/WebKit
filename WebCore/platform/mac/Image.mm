@@ -42,6 +42,7 @@ void FrameData::clear()
         CFRelease(m_frame);
         m_frame = 0;
         m_duration = 0.;
+        m_hasAlpha = true;
     }
 }
 

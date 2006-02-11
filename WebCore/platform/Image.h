@@ -85,7 +85,7 @@ class ImageAnimationObserver;
 
 struct FrameData {
     FrameData()
-      :m_frame(0), m_duration(0) 
+      :m_frame(0), m_duration(0), m_hasAlpha(true) 
     {}
 
     ~FrameData()
@@ -97,6 +97,7 @@ struct FrameData {
 
     NativeImagePtr m_frame;
     float m_duration;
+    bool m_hasAlpha;
 };
 
 // =================================================
@@ -133,6 +134,7 @@ public:
     size_t frameCount();
     NativeImagePtr frameAtIndex(size_t index);
     float frameDurationAtIndex(size_t index);
+    bool frameHasAlphaAtIndex(size_t index);
 
     // Typically the CachedImage that owns us.
     ImageAnimationObserver* animationObserver() const { return m_animationObserver; }

@@ -100,6 +100,7 @@ void Image::cacheFrame(size_t index)
     m_frames[index].m_frame = m_source.createFrameAtIndex(index);
     if (shouldAnimate())
         m_frames[index].m_duration = m_source.frameDurationAtIndex(index);
+    m_frames[index].m_hasAlpha = m_source.frameHasAlphaAtIndex(index);
 }
 
 bool Image::isNull() const
@@ -214,6 +215,17 @@ float Image::frameDurationAtIndex(size_t index)
         cacheFrame(index);
 
     return m_frames[index].m_duration;
+}
+
+bool Image::frameHasAlphaAtIndex(size_t index)
+{
+    if (index >= frameCount())
+        return 0;
+
+    if (index >= m_frames.size() || !m_frames[index].m_frame)
+        cacheFrame(index);
+
+    return m_frames[index].m_hasAlpha;
 }
 
 bool Image::shouldAnimate()

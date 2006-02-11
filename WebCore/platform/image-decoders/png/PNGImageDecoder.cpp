@@ -363,12 +363,17 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     // Copy the data into our buffer.
     int width = m_size.width();
     unsigned* dst = buffer.bytes().data() + rowIndex * width;
+    bool sawAlpha = false;
     for (unsigned i = 0; i < width; i++) {
         unsigned red = *row++;
         unsigned green = *row++;
         unsigned blue = *row++;
         unsigned alpha = (hasAlpha ? *row++ : 255);
         RGBA32Buffer::setRGBA(*dst++, red, blue, green, alpha);
+        if (!sawAlpha && alpha < 255) {
+            sawAlpha = true;
+            buffer.setHasAlpha(true);
+        }
     }
 
     buffer.ensureHeight(rowIndex + 1);

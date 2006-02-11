@@ -71,7 +71,8 @@ public:
     size_t frameCount() const;
     NativeImagePtr createFrameAtIndex(size_t index);
     float frameDurationAtIndex(size_t index);
-    
+    bool frameHasAlphaAtIndex(size_t index);  // Whether or not the frame actually used any alpha.
+
 private:
     NativeImageSourcePtr m_decoder;
 };

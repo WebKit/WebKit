@@ -35,9 +35,45 @@
  * version of this file under any of the LGPL, the MPL or the GPL.
  */
 
+#include "config.h"
 #include "JPEGImageDecoder.h"
 
+extern "C" {
+#include "jpeglib.h"
+#include "jerror.h"
+}
+
+#include <setjmp.h>
+
 namespace WebCore {
+
+struct decoder_error_mgr {
+    struct jpeg_error_mgr pub;  /* "public" fields for IJG library*/
+    jmp_buf setjmp_buffer;      /* For handling catastropic errors */
+};
+
+enum jstate {
+    JPEG_HEADER,                          /* Reading JFIF headers */
+    JPEG_START_DECOMPRESS,
+    JPEG_DECOMPRESS_PROGRESSIVE,          /* Output progressive pixels */
+    JPEG_DECOMPRESS_SEQUENTIAL,           /* Output sequential pixels */
+    JPEG_DONE,
+    JPEG_SINK_NON_JPEG_TRAILER,          /* Some image files have a */
+                                         /* non-JPEG trailer */
+    JPEG_ERROR    
+};
+
+/*
+ *  Implementation of a JPEG src object that understands our state machine
+ */
+struct decoder_source_mgr {
+  /* public fields; must be first in this struct! */
+  struct jpeg_source_mgr pub;
+
+  JPEGImageReader *decoder;
+
+};
+
 
 class JPEGImageReader
 {

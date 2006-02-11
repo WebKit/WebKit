@@ -158,5 +158,15 @@ float ImageSource::frameDurationAtIndex(size_t index)
     return duration;
 }
 
+bool ImageSource::frameHasAlphaAtIndex(size_t index)
+{
+    // Might be interesting to do this optimization on Mac some day, but for now we're just using this
+    // for the Cairo source, since it uses our decoders, and our decoders can answer this question.
+    // FIXME: Could return false for JPEG and other non-transparent image formats.
+    // FIXME: Could maybe return false for a GIF Frame if we have enough info in the GIF properties dictionary
+    // to determine whether or not a transparent color was defined.
+    return true;
+}
+
 
 }
