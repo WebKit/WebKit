@@ -215,22 +215,29 @@ void GIFImageDecoder::initFrameBuffer(RGBA32Buffer& buffer,
     else
         bytes.resize(m_size.width() * m_size.height());
 
-    if (isSubRect && previousBuffer && !compositeWithPreviousFrame) {
-        // Now this is an interesting case.  In the case where we fill 
-        // the entire image, we effectively do a full clear of the image (and thus
-        // don't have to initialize anything in our buffer).
-        // 
-        // However in the case where we only fill a piece of the image, two problems occur:
-        // (1) We need to wipe out the area occupied by the previous frame, which
-        // could also have been a subrect.
-        // (2) Anything outside the previous frame's rect *and* outside our current
-        // frame's rect should be left alone.
-        // We have handled (2) by just initializing our buffer from the previous frame.
-        // Our subrect will correctly overwrite the previous frame's contents as we
-        // decode rows.  However that still leaves the problem of having to wipe out
-        // the area occupied by the previous frame that does not overlap with
-        // the new frame.
-        // FIXME: Implement this and really make it work!
+    if (isSubRect) {
+        // We need to go ahead and initialize the first frame to make sure
+        // that areas outside the subrect start off transparent.
+        if (!previousBuffer) {
+            bytes.fill(0);
+            buffer.setHasAlpha(true);
+        } else if (!compositeWithPreviousFrame) {
+            // Now this is an interesting case.  In the case where we fill 
+            // the entire image, we effectively do a full clear of the image (and thus
+            // don't have to initialize anything in our buffer).
+            // 
+            // However in the case where we only fill a piece of the image, two problems occur:
+            // (1) We need to wipe out the area occupied by the previous frame, which
+            // could also have been a subrect.
+            // (2) Anything outside the previous frame's rect *and* outside our current
+            // frame's rect should be left alone.
+            // We have handled (2) by just initializing our buffer from the previous frame.
+            // Our subrect will correctly overwrite the previous frame's contents as we
+            // decode rows.  However that still leaves the problem of having to wipe out
+            // the area occupied by the previous frame that does not overlap with
+            // the new frame.
+            // FIXME: Implement this and really make it work!
+        }
     }
 
     // Update our status to be partially complete.
@@ -319,6 +326,7 @@ void GIFImageDecoder::frameComplete(unsigned frameIndex, unsigned frameDuration,
     buffer.setStatus(RGBA32Buffer::FrameComplete);
     buffer.setDuration(frameDuration);
     buffer.setIncludeInNextFrame(includeInNextFrame);
+    buffer.ensureHeight(m_size.height());
 }
 
 void GIFImageDecoder::gifComplete()
