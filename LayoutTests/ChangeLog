@@ -1,3 +1,21 @@
+2006-02-11  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Adding support for external entity declarations in XSLT.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7184
+        <rdar://problem/4271696> support external DTD references in XSLT
+
+        * fast/parser/external-entities-expected.checksum: Added.
+        * fast/parser/external-entities-expected.png: Added.
+        * fast/parser/external-entities-expected.txt: Added.
+        * fast/parser/external-entities-in-xslt-expected.txt: Added.
+        * fast/parser/external-entities-in-xslt.xml: Added.
+        * fast/parser/external-entities.xml: Added.
+        * fast/parser/resources: Added.
+        * fast/parser/resources/external-entities.dtd: Added.
+        * fast/parser/resources/external-entities.xsl: Added.
+
 2006-02-10  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt

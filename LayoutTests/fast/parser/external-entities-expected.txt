@@ -1,0 +1,25 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x164
+  RenderBlock {HTML} at (0,0) size 800x164
+    RenderBlock (anonymous) at (0,0) size 800x0
+      RenderInline {PARSERERROR} at (0,0) size 0x0 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+    RenderBlock (anonymous) at (0,18) size 800x94
+      RenderBlock {H3} at (0,0) size 800x22
+        RenderText {TEXT} at (0,0) size 324x22
+          text run at (0,0) width 324: "This page contains the following errors:"
+      RenderBlock {DIV} at (0,40) size 800x14
+        RenderText {TEXT} at (0,0) size 406x14
+          text run at (0,0) width 406: "error on line 9 at column 47: Entity 'message' not defined"
+      RenderBlock {H3} at (0,72) size 800x22
+        RenderText {TEXT} at (0,0) size 429x22
+          text run at (0,0) width 429: "Below is a rendering of the page up to the first error."
+    RenderBlock (anonymous) at (0,130) size 800x0
+      RenderInline {PARSERERROR} at (0,0) size 0x0 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+    RenderBody {BODY} at (8,130) size 784x18
+      RenderBlock {P} at (0,0) size 784x0
+      RenderBlock {P} at (0,0) size 784x18
+        RenderInline {FONT} at (0,0) size 489x18 [color=#FF0000]
+          RenderText {TEXT} at (0,0) size 489x18
+            text run at (0,0) width 263: "This should be the only line on this page. "
+            text run at (263,0) width 226: "You should see a parse error above."
