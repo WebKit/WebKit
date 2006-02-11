@@ -1,3 +1,23 @@
+2006-02-11  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+       - tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=3400
+         setting the .src of an iframe to the same value does not reload page
+
+        * fast/frames/frame-set-same-location-expected.checksum: Added.
+        * fast/frames/frame-set-same-location-expected.png: Added.
+        * fast/frames/frame-set-same-location-expected.txt: Added.
+        * fast/frames/frame-set-same-location.html: Added.
+        * fast/frames/frame-set-same-src-expected.checksum: Added.
+        * fast/frames/frame-set-same-src-expected.png: Added.
+        * fast/frames/frame-set-same-src-expected.txt: Added.
+        * fast/frames/frame-set-same-src.html: Added.
+        * fast/frames/iframe-set-same-location-expected.txt: Added.
+        * fast/frames/iframe-set-same-location.html: Added.
+        * fast/frames/iframe-set-same-src-expected.txt: Added.
+        * fast/frames/iframe-set-same-src.html: Added.
+
 2006-02-11  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.

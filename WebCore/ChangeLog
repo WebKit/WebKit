@@ -1,3 +1,22 @@
+2006-02-11  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+       - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3400
+         setting the .src of an iframe to the same value does not reload page
+
+        Test cases: 
+        * fast/frames/frame-set-same-location.html
+        * fast/frames/frame-set-same-src.html
+        * fast/frames/iframe-set-same-location.html
+        * fast/frames/iframe-set-same-src.html
+
+        * khtml/html/html_baseimpl.cpp:
+        (WebCore::HTMLFrameElementImpl::setLocation):
+        Remove the check for the new URL being different from the current one.
+        Moved updateForNewURL() code into setLocation().
+        * khtml/html/html_baseimpl.h:
+
 2006-02-10  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.

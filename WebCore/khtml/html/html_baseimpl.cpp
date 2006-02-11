@@ -321,27 +321,6 @@ bool HTMLFrameElementImpl::isURLAllowed(const AtomicString &URLString) const
     return true;
 }
 
-void HTMLFrameElementImpl::updateForNewURL()
-{
-    if (!attached()) {
-        return;
-    }
-    
-    // Handle the common case where we decided not to make a frame the first time.
-    // Detach and the let attach() decide again whether to make the frame for this URL.
-    if (!renderer()) {
-        detach();
-        attach();
-        return;
-    }
-    
-    if (!isURLAllowed(m_URL)) {
-        return;
-    }
-
-    openURL();
-}
-
 void HTMLFrameElementImpl::openURL()
 {
     DocumentImpl *d = getDocument();
@@ -495,12 +474,27 @@ void HTMLFrameElementImpl::detach()
     HTMLElementImpl::detach();
 }
 
-void HTMLFrameElementImpl::setLocation( const DOMString& str )
+void HTMLFrameElementImpl::setLocation(const DOMString& str)
 {
-    if (m_URL == str)
-        return;
     m_URL = AtomicString(str);
-    updateForNewURL();
+
+    if (!attached()) {
+        return;
+    }
+    
+    // Handle the common case where we decided not to make a frame the first time.
+    // Detach and the let attach() decide again whether to make the frame for this URL.
+    if (!renderer()) {
+        detach();
+        attach();
+        return;
+    }
+    
+    if (!isURLAllowed(m_URL)) {
+        return;
+    }
+
+    openURL();
 }
 
 bool HTMLFrameElementImpl::isFocusable() const
