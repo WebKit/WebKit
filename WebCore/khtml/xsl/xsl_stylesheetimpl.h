@@ -31,13 +31,10 @@
 
 #include <libxslt/transform.h>
 
-namespace khtml {
-    class CachedXSLStyleSheet;
-};
-
-namespace DOM {
+namespace WebCore {
 
 class XSLImportRuleImpl;
+class CachedXSLStyleSheet;
     
 class XSLStyleSheetImpl : public StyleSheetImpl
 {
@@ -60,7 +57,7 @@ public:
 
     xsltStylesheetPtr compileStyleSheet();
 
-    khtml::DocLoader *docLoader();
+    DocLoader *docLoader();
 
     DocumentImpl* ownerDocument() { return m_ownerDocument; }
     void setOwnerDocument(DocumentImpl* doc) { m_ownerDocument = doc; }
@@ -82,7 +79,7 @@ protected:
     bool m_processed;
 };
 
-class XSLImportRuleImpl : public khtml::CachedObjectClient, public StyleBaseImpl
+class XSLImportRuleImpl : public CachedObjectClient, public StyleBaseImpl
 {
 public:
     XSLImportRuleImpl( StyleBaseImpl *parent, const DOM::DOMString &href);
@@ -103,7 +100,7 @@ public:
 protected:
     DOMString m_strHref;
     RefPtr<XSLStyleSheetImpl> m_styleSheet;
-    khtml::CachedXSLStyleSheet* m_cachedSheet;
+    CachedXSLStyleSheet* m_cachedSheet;
     bool m_loading;
 };
 

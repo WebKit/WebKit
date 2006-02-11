@@ -24,7 +24,9 @@
 #include "config.h"
 #include "xml_tokenizer.h"
 
+#include "Cache.h"
 #include "CachedScript.h"
+#include "KWQLoader.h"
 #include "DocLoader.h"
 #include "DocumentFragmentImpl.h"
 #include "DocumentImpl.h"
@@ -42,6 +44,8 @@
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
 #include <kxmlcore/Vector.h>
+
+#include <kio/job.h>
 
 #if SVG_SUPPORT
 #include "SVGNames.h"
@@ -152,14 +156,58 @@ static int matchFunc(const char* uri)
     return 1; // Match everything.
 }
 
-static void* openFunc(const char * uri) {
-    return &globalDescriptor;
+static khtml::DocLoader *globalDocLoader = 0;
+
+class OffsetBuffer {
+public:
+    OffsetBuffer(const ByteArray &b) : m_buffer(b), m_currentOffset(0) { }
+    
+    int readOutBytes(char *outputBuffer, unsigned askedToRead) {
+        unsigned bytesLeft = m_buffer.size() - m_currentOffset;
+        unsigned lenToCopy = kMin(askedToRead, bytesLeft);
+        if (lenToCopy) {
+            memcpy(outputBuffer, m_buffer.data() + m_currentOffset, lenToCopy);
+            m_currentOffset += lenToCopy;
+        }
+        return lenToCopy;
+    }
+
+private:
+    ByteArray m_buffer;
+    unsigned m_currentOffset;
+};
+
+static bool shouldAllowExternalLoad(const char* inURI)
+{
+    QString url(inURI);
+    if (url.contains("/etc/catalog")
+        || url.startsWith("http://www.w3.org/Graphics/SVG")
+        || url.startsWith("http://www.w3.org/TR/xhtml"))
+        return false;
+    return true;
+}
+
+static void* openFunc(const char* uri)
+{
+    if (!globalDocLoader || !shouldAllowExternalLoad(uri))
+        return &globalDescriptor;
+
+    KURL finalURL;
+    KIO::TransferJob *job = KIO::get(uri, true, false);
+    QString headers;
+    ByteArray data = KWQServeSynchronousRequest(Cache::loader(), globalDocLoader, job, finalURL, headers);
+    
+    return new OffsetBuffer(data);
 }
 
 static int readFunc(void* context, char* buffer, int len)
 {
-    // Always just do 0-byte reads
-    return 0;
+    // Do 0-byte reads in case of a null descriptor
+    if (context == &globalDescriptor)
+        return 0;
+        
+    OffsetBuffer *data = static_cast<OffsetBuffer *>(context);
+    return data->readOutBytes(buffer, len);
 }
 
 static int writeFunc(void* context, const char* buffer, int len)
@@ -168,13 +216,27 @@ static int writeFunc(void* context, const char* buffer, int len)
     return 0;
 }
 
+static int closeFunc(void * context)
+{
+    if (context != &globalDescriptor) {
+        OffsetBuffer *data = static_cast<OffsetBuffer *>(context);
+        delete data;
+    }
+    return 0;
+}
+
+void setLoaderForLibXMLCallbacks(DocLoader *docLoader)
+{
+    globalDocLoader = docLoader;
+}
+
 static xmlParserCtxtPtr createQStringParser(xmlSAXHandlerPtr handlers, void *userData)
 {
     static bool didInit = false;
     if (!didInit) {
         xmlInitParser();
-        xmlRegisterInputCallbacks(matchFunc, openFunc, readFunc, 0);
-        xmlRegisterOutputCallbacks(matchFunc, openFunc, writeFunc, 0);
+        xmlRegisterInputCallbacks(matchFunc, openFunc, readFunc, closeFunc);
+        xmlRegisterOutputCallbacks(matchFunc, openFunc, writeFunc, closeFunc);
         didInit = true;
     }
 
@@ -749,9 +811,9 @@ void XMLTokenizer::finish()
     xmlFreeParserCtxt(m_context);
     m_context = 0;
 
-    if (m_sawError) {
+    if (m_sawError)
         insertErrorMessageBlock();
-    } else {
+    else {
         // Parsing was successful. Now locate all html <script> tags in the document and execute them
         // one by one.
         exitText();

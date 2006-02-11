@@ -31,6 +31,7 @@
 #include "CachedXSLStyleSheet.h"
 #include "DocLoader.h"
 #include "xsl_stylesheetimpl.h"
+#include "xml_tokenizer.h"
 
 #include <kdebug.h>
 
@@ -40,10 +41,7 @@
 #define IS_BLANK_NODE(n)                                                \
     (((n)->type == XML_TEXT_NODE) && (xsltIsBlank((n)->content)))
 
-using namespace khtml;
-using namespace DOM;
-
-namespace DOM {
+namespace WebCore {
     
 XSLStyleSheetImpl::XSLStyleSheetImpl(XSLImportRuleImpl *parentRule, DOMString href)
     : StyleSheetImpl(parentRule, href)
@@ -114,12 +112,14 @@ bool XSLStyleSheetImpl::parseString(const DOMString &string, bool strict)
     // Parse in a single chunk into an xmlDocPtr
     const QChar BOM(0xFEFF);
     const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char *>(&BOM);
+    setLoaderForLibXMLCallbacks(docLoader());
     m_stylesheetDoc = xmlReadMemory(reinterpret_cast<const char *>(string.unicode()),
                                     string.length() * sizeof(QChar),
                                     m_ownerDocument->URL().ascii(),
                                     BOMHighByte == 0xFF ? "UTF-16LE" : "UTF-16BE", 
                                     XML_PARSE_NOCDATA|XML_PARSE_DTDATTR|XML_PARSE_NOENT);
     loadChildSheets();
+    setLoaderForLibXMLCallbacks(0);
     return m_stylesheetDoc;
 }
 

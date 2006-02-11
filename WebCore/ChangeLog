@@ -1,3 +1,26 @@
+2006-02-10  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Adding support for external entity declarations in XSLT.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7184
+        <rdar://problem/4271696> support external DTD references in XSLT
+
+        * dom/xml_tokenizer.cpp:
+        (WebCore::OffsetBuffer::OffsetBuffer): new support class
+        (WebCore::OffsetBuffer::readOutBytes): read method
+        (WebCore::shouldAllowExternalLoad): for preventing common urls
+        (WebCore::openFunc): now does a synchronous data load
+        (WebCore::readFunc): returns data from the offset buffer
+        (WebCore::closeFunc): deletes offset buffer
+        (WebCore::setLoaderForLibXMLCallbacks): helper function
+        (WebCore::createQStringParser): cleanup
+        (WebCore::XMLTokenizer::finish): 
+        * dom/xml_tokenizer.h:
+        * khtml/xsl/xsl_stylesheetimpl.cpp:
+        (WebCore::XSLStyleSheetImpl::parseString):
+        * khtml/xsl/xsl_stylesheetimpl.h:
+
 2006-02-10  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt
