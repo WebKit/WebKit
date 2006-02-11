@@ -50,6 +50,7 @@ NSString * const WebKitErrorPlugInPageURLStringKey = 	@"WebKitErrorPlugInPageURL
 #define WebKitErrorDescriptionCannotLoadPlugin UI_STRING("Cannot load plug-in", "WebKitErrorCannotLoadPlugin description")
 #define WebKitErrorDescriptionJavaUnavailable UI_STRING("Java is unavailable", "WebKitErrorJavaUnavailable description")
 #define WebKitErrorDescriptionPlugInCancelledConnection UI_STRING("Plug-in cancelled", "WebKitErrorPlugInCancelledConnection description")
+#define WebKitErrorDescriptionPlugInWillHandleLoad UI_STRING("Plug-in handled load", "WebKitErrorPlugInWillHandleLoad description")
 
 static pthread_once_t registerErrorsControl = PTHREAD_ONCE_INIT;
 static void registerErrors(void);
@@ -151,6 +152,7 @@ static void registerErrors()
         WebKitErrorDescriptionCannotLoadPlugin,		[NSNumber numberWithInt: WebKitErrorCannotLoadPlugIn],
         WebKitErrorDescriptionJavaUnavailable,		[NSNumber numberWithInt: WebKitErrorJavaUnavailable],
         WebKitErrorDescriptionPlugInCancelledConnection,[NSNumber numberWithInt: WebKitErrorPlugInCancelledConnection],
+        WebKitErrorDescriptionPlugInWillHandleLoad,     [NSNumber numberWithInt: WebKitErrorPlugInWillHandleLoad],
         nil];
 
     [NSError _webkit_addErrorsWithCodesAndDescriptions:dict inDomain:WebKitErrorDomain];
