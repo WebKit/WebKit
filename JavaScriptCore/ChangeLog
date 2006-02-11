@@ -1,3 +1,14 @@
+2006-02-11  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - improve fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5163
+        RealPlayer.GetTitle() Crashes Safari/Dashboard
+
+        * bindings/c/c_utility.cpp: (KJS::Bindings::convertUTF8ToUTF16):
+        Use kCFStringEncodingISOLatin1 rather than kCFStringEncodingWindowsLatin1, 
+        because the latter encoding has holes, and conversion can still fail.
+
 2006-02-10  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin.

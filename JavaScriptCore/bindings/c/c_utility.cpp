@@ -53,9 +53,11 @@ void convertUTF8ToUTF16(const NPUTF8 *UTF8Chars, int UTF8Length, NPUTF16 **UTF16
     
     // Some plugins return invalid UTF-8 in NPVariantType_String, see <http://bugzilla.opendarwin.org/show_bug.cgi?id=5163>
     if (!stringRef)
-        stringRef = CFStringCreateWithBytes(NULL, (const UInt8*)UTF8Chars, (CFIndex)UTF8Length, kCFStringEncodingWindowsLatin1, false);
+        stringRef = CFStringCreateWithBytes(NULL, (const UInt8*)UTF8Chars, (CFIndex)UTF8Length, kCFStringEncodingISOLatin1, false);
 
-    assert(stringRef); // there is no "bad data" for kCFStringEncodingWindowsLatin1
+    // There is no "bad data" for kCFStringEncodingISOLatin1. It is unlikely that the plugin was really sending text in this encoding,
+    // but it should have used UTF-8, and now we are simply avoiding a crash.
+    assert(stringRef);
 
     *UTF16Length = (unsigned int)CFStringGetLength(stringRef);
     *UTF16Chars = (NPUTF16 *)malloc(sizeof(NPUTF16) * (*UTF16Length));
