@@ -1,3 +1,10 @@
+2006-02-11  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        * fast/events/event-targets.html: Fixed a small mistake in this test, noticed while
+        checking that bug 3609 is fixed in tip of tree.
+
 2006-02-11  Mitz Pettel  <opendarwin.org@mitzpettel.com>
  
          Reviewed by Hyatt.
@@ -182,6 +189,8 @@
         * fast/events/div-focus.html: Added.
 
 2006-02-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
 
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7071
           REGRESSION: Jumping to an anchor identifier makes page scroll horizontally
