@@ -1,3 +1,12 @@
+2006-02-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Unreviewed build fix.
+
+        - fix build
+
+        * bindings/scripts/CodeGeneratorJS.pm: Update for splitting of the
+        dom_textimpl.h header.
+
 2006-02-11  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

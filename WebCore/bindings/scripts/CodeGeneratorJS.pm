@@ -186,7 +186,9 @@ sub AddIncludesForType
   if ($type eq "DocumentType" or 
       $type eq "Document" or
       $type eq "DOMImplementation" or
-      $type eq "NodeList") {
+      $type eq "NodeList" or 
+      $type eq "Text" or 
+      $type eq "CharacterData") {
     $implIncludes{"${type}Impl.h"} = 1;
   } elsif ($type eq "Attr" or
            $type eq "Element") {
@@ -202,9 +204,6 @@ sub AddIncludesForType
            $type eq "Entity" or
            $type eq "Notation") {
     $implIncludes{"dom_xmlimpl.h"} = 1;
-  } elsif ($type eq "Text" or 
-           $type eq "CharacterData") {
-    $implIncludes{"dom_textimpl.h"} = 1;
   } elsif ($codeGenerator->IsPrimitiveType($type) or
            $type eq "DOMString") {
     # Do nothing
@@ -220,11 +219,7 @@ sub GetLegacyImplementationIncludes
   if ($module eq "events") {
     return "#include \"dom2_eventsimpl.h\"\n";
   } elsif ($module eq "core") {
-    if ($interfaceName eq "DocumentType") {
-      return "#include \"${interfaceName}Impl.h\"\n";
-    } else {
-      return "#include \"dom_textimpl.h\"\n";
-    }
+    return "#include \"${interfaceName}Impl.h\"\n";
   } else {
     die ("Don't know what headers to include for module $module");
   }  
