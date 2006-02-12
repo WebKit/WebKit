@@ -30,7 +30,7 @@
 #include "KWQLogging.h"
 #include "css_computedstyle.h"
 #include "dom_elementimpl.h"
-#include "dom_textimpl.h"
+#include "TextImpl.h"
 #include "htmlediting.h"
 #include "htmlnames.h"
 #include "visible_position.h"

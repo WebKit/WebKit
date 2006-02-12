@@ -35,7 +35,7 @@
 #include "cssproperties.h"
 #include "dom2_rangeimpl.h"
 #include "dom_position.h"
-#include "dom_textimpl.h"
+#include "EditingTextImpl.h"
 #include "HTMLElementImpl.h"
 #include "html_interchange.h"
 #include "htmlediting.h"

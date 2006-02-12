@@ -28,7 +28,7 @@
 #include "dom2_eventsimpl.h"
 
 #include "NameNodeListImpl.h"
-#include "dom_textimpl.h"
+#include "TextImpl.h"
 #include "EventNames.h"
 #include "html/html_baseimpl.h"
 #include "html/html_blockimpl.h"

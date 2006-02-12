@@ -27,7 +27,7 @@
 #include "config.h"
 #include "HTMLKeygenElementImpl.h"
 #include "HTMLOptionElementImpl.h"
-#include "dom_textimpl.h"
+#include "TextImpl.h"
 #include "DocumentImpl.h"
 #include "FormDataList.h"
 

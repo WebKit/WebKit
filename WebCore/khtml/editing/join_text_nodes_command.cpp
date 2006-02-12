@@ -26,7 +26,7 @@
 #include "config.h"
 #include "join_text_nodes_command.h"
 
-#include "dom_textimpl.h"
+#include "TextImpl.h"
 
 #include <kxmlcore/Assertions.h>
 

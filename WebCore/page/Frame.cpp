@@ -83,6 +83,7 @@
 #include <qtextcodec.h>
 #include <sys/types.h>
 #include "Plugin.h"
+#include "EditingTextImpl.h"
 
 #if !WIN32
 #include <unistd.h>

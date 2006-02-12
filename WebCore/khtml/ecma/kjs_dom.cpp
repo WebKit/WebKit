@@ -51,7 +51,8 @@
 #include "EventNames.h"
 #include "dom2_eventsimpl.h"
 #include "dom2_viewsimpl.h"
-#include "dom_textimpl.h"
+#include "CDATASectionImpl.h"
+#include "CommentImpl.h"
 #include "dom_xmlimpl.h"
 #include <kdebug.h>
 

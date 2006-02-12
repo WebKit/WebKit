@@ -27,7 +27,6 @@
 #include "rebalance_whitespace_command.h"
 
 #include "DocumentImpl.h"
-#include "dom_textimpl.h"
 #include "htmlediting.h"
 #include "visible_text.h"
 #include <kxmlcore/Assertions.h>

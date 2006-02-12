@@ -34,7 +34,7 @@
 #include "DocumentImpl.h"
 #include "dom_elementimpl.h"
 #include "dom2_rangeimpl.h"
-#include "dom_textimpl.h"
+#include "TextImpl.h"
 #include "Frame.h"
 
 #include <kxmlcore/Assertions.h>

@@ -26,7 +26,7 @@
 #include "xslt_processorimpl.h"
 #include "xsl_stylesheetimpl.h"
 #include "xml_tokenizer.h"
-#include "dom_textimpl.h"
+#include "TextImpl.h"
 #include "htmltokenizer.h"
 #include "html_documentimpl.h"
 #include "DOMImplementationImpl.h"

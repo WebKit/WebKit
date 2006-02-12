@@ -34,7 +34,7 @@
 #include "visible_units.h"
 #include "DocumentImpl.h"
 #include "dom_position.h"
-#include "dom_textimpl.h"
+#include "EditingTextImpl.h"
 
 #include <kxmlcore/Assertions.h>
 #include "KWQLogging.h"

@@ -34,7 +34,7 @@
 #include "dom2_eventsimpl.h"
 #include "dom_exception.h"
 #include "dom_node.h"
-#include "dom_textimpl.h"
+#include "TextImpl.h"
 #include "dom_xmlimpl.h"
 #include "htmlparser.h"
 #include "render_canvas.h"

@@ -25,7 +25,7 @@
 #ifndef KHTML_RenderText_H
 #define KHTML_RenderText_H
 
-#include "dom_textimpl.h"
+#include "TextImpl.h"
 #include "render_object.h"
 #include <assert.h>
 #include <kxmlcore/PassRefPtr.h>

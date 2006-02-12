@@ -28,7 +28,6 @@
 
 #include "DocumentImpl.h"
 #include "dom_exception.h"
-#include "dom_textimpl.h"
 #include "dom_xmlimpl.h"
 #include "HTMLElementImpl.h"
 #include "markup.h"

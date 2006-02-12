@@ -27,7 +27,7 @@
 #include "config.h"
 #include "HTMLTextAreaElementImpl.h"
 #include "rendering/render_form.h"
-#include "dom_textimpl.h"
+#include "TextImpl.h"
 #include "FormDataList.h"
 #include "DocumentImpl.h"
 

@@ -33,7 +33,6 @@
 #include "delete_from_text_node_command.h"
 #include "delete_selection_command.h"
 #include "dom2_rangeimpl.h"
-#include "dom_textimpl.h"
 #include "htmlediting.h"
 #include "htmlnames.h"
 #include "insert_into_text_node_command.h"

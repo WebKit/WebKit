@@ -28,7 +28,8 @@
 
 #include "DocumentImpl.h"
 #include "dom2_range.h"
-#include "dom_textimpl.h"
+#include "EditingTextImpl.h"
+#include "TextImpl.h"
 #include "HTMLElementImpl.h"
 #include "html_interchange.h"
 #include "htmlnames.h"

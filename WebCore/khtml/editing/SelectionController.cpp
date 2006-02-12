@@ -43,7 +43,6 @@
 #include "dom2_rangeimpl.h"
 #include "dom2_eventsimpl.h"
 #include "dom_elementimpl.h"
-#include "dom_textimpl.h"
 #include "EventNames.h"
 #include <kxmlcore/Assertions.h>
 #include <qevent.h>

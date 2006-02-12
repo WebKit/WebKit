@@ -33,7 +33,6 @@
 #include "InlineTextBox.h"
 #include "DocumentImpl.h"
 #include "dom2_rangeimpl.h"
-#include "dom_textimpl.h"
 
 #include <kxmlcore/Assertions.h>
 #include "KWQLogging.h"

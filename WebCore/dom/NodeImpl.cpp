@@ -37,7 +37,7 @@
 #include "AtomicString.h"
 #include "dom_exception.h"
 #include "dom_node.h"
-#include "dom_textimpl.h"
+#include "TextImpl.h"
 #include "htmlediting.h"
 #include "htmlnames.h"
 #include "kjs_binding.h"

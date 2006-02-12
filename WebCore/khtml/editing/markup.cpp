@@ -39,6 +39,7 @@
 #include "InlineTextBox.h"
 #include "htmlnames.h"
 #include "DocumentImpl.h"
+#include "CommentImpl.h"
 
 using namespace DOM::HTMLNames;
 using namespace DOM;

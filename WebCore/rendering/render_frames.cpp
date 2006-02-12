@@ -37,7 +37,7 @@
 #include "render_canvas.h"
 #include "EventNames.h"
 #include "dom2_eventsimpl.h"
-#include "dom_textimpl.h"
+#include "TextImpl.h"
 #include <kcursor.h>
 #include <kdebug.h>
 #include <klocale.h>

@@ -35,7 +35,6 @@
 #include "dom2_events.h"
 #include "dom2_eventsimpl.h"
 #include "dom_exception.h"
-#include "dom_textimpl.h"
 #include "html_documentimpl.h"
 #include "htmlfactory.h"
 #include "htmlnames.h"

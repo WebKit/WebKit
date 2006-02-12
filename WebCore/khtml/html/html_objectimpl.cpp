@@ -34,7 +34,7 @@
 #include "cssvalues.h"
 #include "dom2_eventsimpl.h"
 #include "PlatformString.h"
-#include "dom_textimpl.h"
+#include "TextImpl.h"
 #include "html_documentimpl.h"
 #include "html_imageimpl.h"
 #include "render_applet.h"

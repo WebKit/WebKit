@@ -29,7 +29,7 @@
 #include "rendering/render_form.h"
 
 #include "DocumentImpl.h"
-#include "dom_textimpl.h"
+#include "TextImpl.h"
 #include "dom_exception.h"
 #include "dom_node.h"
 

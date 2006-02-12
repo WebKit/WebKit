@@ -60,7 +60,6 @@
 #import "dom2_eventsimpl.h"
 #import "dom2_rangeimpl.h"
 #import "dom_position.h"
-#import "dom_textimpl.h"
 #import "html_documentimpl.h"
 #import "html_tableimpl.h"
 #import "khtml_events.h"

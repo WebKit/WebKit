@@ -1,3 +1,61 @@
+2006-02-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Eric.
+
+        - split dom_textimpl.{h,cpp} by class.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.mm:
+        * bridge/mac/MacFrame.mm:
+        * dom/CDATASectionImpl.cpp: Added.
+        * dom/CDATASectionImpl.h: Added.
+        * dom/CharacterDataImpl.cpp: Added.
+        * dom/CharacterDataImpl.h: Added.
+        * dom/CommentImpl.cpp: Added.
+        * dom/CommentImpl.h: Added.
+        * dom/DocumentImpl.cpp:
+        * dom/EditingTextImpl.cpp: Added.
+        * dom/EditingTextImpl.h: Added.
+        * dom/NodeImpl.cpp:
+        * dom/TextImpl.cpp: Added.
+        * dom/TextImpl.h: Added.
+        * dom/dom2_rangeimpl.cpp:
+        * dom/dom_elementimpl.cpp:
+        * dom/dom_textimpl.cpp: Removed.
+        * dom/dom_textimpl.h: Removed.
+        * dom/xml_tokenizer.cpp:
+        * khtml/ecma/kjs_dom.cpp:
+        * khtml/ecma/kjs_html.cpp:
+        * khtml/editing/SelectionController.cpp:
+        * khtml/editing/apply_style_command.cpp:
+        * khtml/editing/break_blockquote_command.cpp:
+        * khtml/editing/composite_edit_command.cpp:
+        * khtml/editing/delete_from_text_node_command.cpp:
+        * khtml/editing/delete_selection_command.cpp:
+        * khtml/editing/htmlediting.cpp:
+        * khtml/editing/insert_into_text_node_command.cpp:
+        * khtml/editing/insert_line_break_command.cpp:
+        * khtml/editing/insert_paragraph_separator_command.cpp:
+        * khtml/editing/insert_text_command.cpp:
+        * khtml/editing/join_text_nodes_command.cpp:
+        * khtml/editing/markup.cpp:
+        * khtml/editing/rebalance_whitespace_command.cpp:
+        * khtml/editing/replace_selection_command.cpp:
+        * khtml/editing/split_text_node_command.cpp:
+        * khtml/editing/split_text_node_containing_element.cpp:
+        * khtml/editing/visible_position.cpp:
+        * khtml/html/HTMLElementImpl.cpp:
+        * khtml/html/HTMLKeygenElementImpl.cpp:
+        * khtml/html/HTMLOptionElementImpl.cpp:
+        * khtml/html/HTMLTextAreaElementImpl.cpp:
+        * khtml/html/html_headimpl.cpp:
+        * khtml/html/html_objectimpl.cpp:
+        * khtml/html/htmlparser.cpp:
+        * khtml/xsl/xslt_processorimpl.cpp:
+        * page/Frame.cpp:
+        * rendering/RenderText.h:
+        * rendering/render_frames.cpp:
+
 2006-02-11  Alexander Kellett  <lypanov@kde.org>
 
         Reviewed by eseidel.

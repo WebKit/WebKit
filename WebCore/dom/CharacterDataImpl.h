@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef DOM_TextImpl_h
-#define DOM_TextImpl_h
+#ifndef DOM_CharacterDataImpl_h
+#define DOM_CharacterDataImpl_h
 
 #include "NodeImpl.h"
 
@@ -79,98 +79,7 @@ protected:
     void dispatchModifiedEvent(DOMStringImpl *prevValue);
 };
 
-// ----------------------------------------------------------------------------
+} // namespace WebCore
 
-class CommentImpl : public CharacterDataImpl
-{
-public:
-    CommentImpl(DocumentImpl*, const DOMString &_text);
-    CommentImpl(DocumentImpl*);
-    virtual ~CommentImpl();
+#endif // DOM_CharacterDataImpl_h
 
-    // DOM methods overridden from  parent classes
-    const AtomicString& localName() const;
-    virtual DOMString nodeName() const;
-    virtual unsigned short nodeType() const;
-    virtual PassRefPtr<NodeImpl> cloneNode(bool deep);
-
-    // Other methods (not part of DOM)
-    virtual bool isCommentNode() const { return true; }
-    virtual bool childTypeAllowed( unsigned short type );
-
-    virtual DOMString toString() const;
-};
-
-// ----------------------------------------------------------------------------
-
-class TextImpl : public CharacterDataImpl
-{
-public:
-    TextImpl(DocumentImpl *impl, const DOMString &_text);
-    TextImpl(DocumentImpl *impl);
-    virtual ~TextImpl();
-
-    // DOM methods & attributes for CharacterData
-
-    TextImpl *splitText ( const unsigned offset, int &exceptioncode );
-
-    // DOM methods overridden from  parent classes
-    const AtomicString& localName() const;
-    virtual DOMString nodeName() const;
-    virtual unsigned short nodeType() const;
-    virtual PassRefPtr<NodeImpl> cloneNode(bool deep);
-
-    // Other methods (not part of DOM)
-
-    virtual bool isTextNode() const { return true; }
-    virtual void attach();
-    virtual bool rendererIsNeeded(RenderStyle *);
-    virtual RenderObject *createRenderer(RenderArena *, RenderStyle *);
-    virtual void recalcStyle( StyleChange = NoChange );
-    virtual bool childTypeAllowed( unsigned short type );
-
-    virtual DOMString toString() const;
-
-#ifndef NDEBUG
-    virtual void formatForDebugger(char *buffer, unsigned length) const;
-#endif
-
-protected:
-    virtual TextImpl* createNew(DOMStringImpl*);
-};
-
-// ----------------------------------------------------------------------------
-
-class CDATASectionImpl : public TextImpl
-{
-// ### should these have id==ID_TEXT
-public:
-    CDATASectionImpl(DocumentImpl *impl, const DOMString &_text);
-    CDATASectionImpl(DocumentImpl *impl);
-    virtual ~CDATASectionImpl();
-
-    virtual DOMString nodeName() const;
-    virtual unsigned short nodeType() const;
-    virtual PassRefPtr<NodeImpl> cloneNode(bool deep);
-    virtual bool childTypeAllowed( unsigned short type );
-    virtual DOMString toString() const;
-
-protected:
-    virtual TextImpl* createNew(DOMStringImpl*);
-};
-
-// ----------------------------------------------------------------------------
-
-class EditingTextImpl : public TextImpl
-{
-public:
-    EditingTextImpl(DocumentImpl *impl, const DOMString &text);
-    EditingTextImpl(DocumentImpl *impl);
-    virtual ~EditingTextImpl();
-
-    virtual bool rendererIsNeeded(RenderStyle *);
-};
-
-} //namespace
-
-#endif
