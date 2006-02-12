@@ -46,14 +46,16 @@ class StringImpl : public Shared<StringImpl>
 private:
     struct WithOneRef { };
     StringImpl(WithOneRef) : l(0), s(0), _hash(0), _inTable(false) { ref(); }
+    void initWithChar(const char*, unsigned len);
+    void initWithQChar(const QChar*, unsigned len);
 
 protected:
     StringImpl() : l(0), s(0), _hash(0), _inTable(false) { }
 public:
+    StringImpl(const QString&);
     StringImpl(const QChar*, unsigned len);
     StringImpl(const char*);
     StringImpl(const char*, unsigned len);
-    StringImpl(const QString&);
     ~StringImpl();
 
     unsigned length() const { return l; }

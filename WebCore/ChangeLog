@@ -1,3 +1,21 @@
+2006-02-11  Geoffrey Garen  <ggaren@apple.com>
+
+        - Fixed bad free resulting from 0 legnth StringImpl
+
+        No test case because currently this bug only has the effect of a bad
+        free on exit().
+
+        * platform/StringImpl.cpp:
+        (WebCore::StringImpl::StringImpl): Factored varied approaches to
+        initialization into two common routines: initWithChar and
+        initWithQChar. The common rule is: if we're not going to allocate
+        a string, make sure to set s to 0 so fastFree doesn't try to free it
+        later. For speed, initWithQChar uses memcpy() -- that's the only
+        difference between the two.
+        (WebCore::StringImpl::initWithChar):
+        (WebCore::StringImpl::initWithQChar):
+        * platform/StringImpl.h:
+
 2006-02-11  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Eric.
