@@ -27,7 +27,7 @@
 #define IMAGE_DECODER_H_
 
 #include "config.h"
-#include "IntSize.h"
+#include "IntRect.h"
 #include "ImageSource.h"
 #include <kxmlcore/Vector.h>
 #include "Array.h"
@@ -49,14 +49,15 @@ public:
     {} 
 
     RGBA32Array& bytes() { return m_bytes; }
+    const IntRect& rect() const { return m_rect; }
     unsigned height() { return m_height; }
     FrameStatus status() const { return m_status; }
     unsigned duration() const { return m_duration; }
     bool includeInNextFrame() const { return m_includeInNextFrame; }
     bool hasAlpha() const { return m_hasAlpha; }
 
+    void setRect(const IntRect& r) { m_rect = r; }
     void ensureHeight(unsigned rowIndex) { if (rowIndex > m_height) m_height = rowIndex; }
-
     void setStatus(FrameStatus s) { m_status = s; }
     void setDuration(unsigned duration) { m_duration = duration; }
     void setIncludeInNextFrame(bool n) { m_includeInNextFrame = n; }
@@ -80,6 +81,9 @@ public:
 
 private:
     RGBA32Array m_bytes;
+    IntRect m_rect;    // The rect of the original specified frame within the overall buffer.
+                       // This will always just be the entire buffer except for GIF frames
+                       // whose original rect was smaller than the overall image size.
     unsigned m_height; // The height (the number of rows we've fully decoded).
     FrameStatus m_status; // Whether or not this frame is completely finished decoding.
     unsigned m_duration; // The animation delay.

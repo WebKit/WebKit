@@ -197,14 +197,21 @@ void GIFImageDecoder::initFrameBuffer(RGBA32Buffer& buffer,
                                       RGBA32Buffer* previousBuffer,
                                       bool compositeWithPreviousFrame)
 {
-    // Resize to the width and height of the image.
-    bool isSubRect = (m_reader->frameXOffset() > 0 || m_reader->frameYOffset() > 0 ||
-                      m_reader->frameWidth() < m_size.width() || m_reader->frameHeight() < m_size.height());
+    // Initialize the frame rect in our buffer.
+    IntRect frameRect(m_reader->frameXOffset(), m_reader->frameYOffset(),
+                      m_reader->frameWidth(), m_reader->frameHeight());
+    buffer.setRect(frameRect);
+
+    bool isSubRect = (frameRect.x() > 0 || frameRect.y() > 0 ||
+                      frameRect.width() < m_size.width() ||
+                      frameRect.height() < m_size.height());
     
-    // Let's resize our buffer now to the correct width/height.
+    // Let's resize our buffer now to the correct width/height and then
+    // initialize portions of it if needed.
     RGBA32Array& bytes = buffer.bytes();
         
-    // If the disposal method of the previous frame said to stick around, then we need     // to copy that frame into our frame.  We also dont want to have any impact on
+    // If the disposal method of the previous frame said to stick around, then we need     
+    // to copy that frame into our frame.  We also dont want to have any impact on
     // anything outside our frame's rect, so if we don't overlay the entire image,
     // then also composite with the previous frame.
     if (previousBuffer && (compositeWithPreviousFrame || isSubRect)) {
@@ -212,7 +219,7 @@ void GIFImageDecoder::initFrameBuffer(RGBA32Buffer& buffer,
         buffer.ensureHeight(m_size.height());
         buffer.setHasAlpha(previousBuffer->hasAlpha());
     }
-    else
+    else // Resize to the width and height of the image.
         bytes.resize(m_size.width() * m_size.height());
 
     if (isSubRect) {
@@ -236,7 +243,24 @@ void GIFImageDecoder::initFrameBuffer(RGBA32Buffer& buffer,
             // decode rows.  However that still leaves the problem of having to wipe out
             // the area occupied by the previous frame that does not overlap with
             // the new frame.
-            // FIXME: Implement this and really make it work!
+            if (previousBuffer->rect() != frameRect) {
+                // We have to clear out the entire previous subframe.
+                bool sawAlpha = buffer.hasAlpha();
+                IntRect prevRect = previousBuffer->rect();
+                unsigned end = prevRect.y() + prevRect.height();
+                unsigned* src;
+                for (unsigned i = prevRect.y(); i < end; i++) {
+                    unsigned* curr = buffer.bytes().data() + (i * m_size.width() + prevRect.x());
+                    unsigned* end = curr + prevRect.width();
+                    while (curr != end) {
+                        if (!sawAlpha) {
+                            sawAlpha = true;
+                            buffer.setHasAlpha(true);
+                        }
+                        RGBA32Buffer::setRGBA(*curr++, 0, 0, 0, 0);
+                    }
+                }
+            }
         }
     }
 

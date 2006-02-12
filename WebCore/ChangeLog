@@ -1,3 +1,22 @@
+2006-02-12  Dave Hyatt <hyatt@apple.com>
+
+        Fix for bug 7182, animated GIFs don't clear previous animation
+        frames.  This checkin fixes the decoders in our tree (used on
+        Win32 only).  It does not address the problem with ImageIO
+        on Mac (which has the same bug).  This has been filed separately
+        as Radar bug #4442031.
+
+        Reviewed by mjs
+
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::RGBA32Buffer::rect):
+        (WebCore::RGBA32Buffer::setRect):
+        (WebCore::RGBA32Buffer::ensureHeight):
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::initFrameBuffer):
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::rowAvailable):
+
 2006-02-11  Geoffrey Garen  <ggaren@apple.com>
 
         - Fixed bad free resulting from 0 legnth StringImpl
