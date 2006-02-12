@@ -1,12 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html>
 <head>
-  <meta content="text/html; charset=ISO-8859-1"
- http-equiv="content-type">
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
   <title>Test Case Reduction</title>
-  <link rel=stylesheet href="../webkitdev.css">
+  <link rel="stylesheet" type="text/css" href="../webkitdev.css">
 </head>
 <body>
+
 <!--begin sidebar -->
 <iframe id="sidebar" src="../sidebar.html"></iframe>
 <!--end sidebar -->
@@ -14,87 +14,102 @@
 <h1 id="banner">Test Case Reduction</h1>
 
 <div id="content">
-<h2>A general guide to test case reduction</h2>
-<p>
-The basic idea behind bug reduction is to take a page that demonstrates a problem and
-remove as much content as possible while still reproducing the original problem.
-</p>
-<h4>Why is this needed?</h4>
-<p>
-A reduced test case can help identify the central problem on the
-page by eliminating irrelevant information, i.e., portions of the HTML
-page's structure that have nothing to do with the problem.
-With a reduced test case, the development team will spend
-less time identifying the problem and more time determining the
-solution. Also, since a site can change its content or design, the
-problem may no longer occur on the real-world site. 
-By constructing a test case you can capture the initial problem.
-</p>
-<h4>The first steps</h4>
-<p>
-Really the first step in reducing a page is to identify that main
-problem of the page. For example:
-<ul>
-  <li>Does the page have text overlapping an image? </li>
-  <li>Is there a form button that fails to work?</li>
-  <li>Is there a portion of the page missing or misaligned?</li>
-</ul>
-</p>
-<p>
-After you have made this determination, you need to create a local copy
-of the page created from the page source window. After saving this
-source, it's a good idea to put a <code>&lt;BASE&gt;</code> element in the
-<code>HEAD</code> so that any images/external style sheet or scripts that use a
-relative path will get loaded. After the <code>BASE</code> element has been added,
-load the local copy into the browser and verify that problem is still
-occurring. In this case, let's assume the problem is still present.
-</p>
-<h4>Work from top to bottom</h4>
-<p>
-In general, it's best to start from the top of the <code>&lt;DOCTYPE&gt;</code> and
-work down through the <code>HEAD</code> to the <code>BODY</code> element. Take a look at the HTML
-file in a text editor and view what types of elements are present in the
-<code>&lt;head&gt;</code>. Typically, the <code>HEAD</code> will include the <code>&lt;title&gt;</code>
-element, which is required, and elements such as <code>&lt;link&gt;</code>,
-<code>&lt;style&gt;</code> and <code>&lt;script&gt;</code>.
-</p>
-<p>
-The reduction process is to remove one element at a time, save, and reload the
-test case. If you have removed the element and the page is still
-displaying the problem, continue with the next element. If removing an
-element in the <code>HEAD</code> causes the problem to not occur, you may have found
-one piece in of the problem. Re-add this element back into the <code>HEAD</code>,
-reload the page and confirm the problem is still occurring and move
-on to the next element in the <code>HEAD</code>.
-</p>
+    <h2>A general guide to test case reduction</h2>
+    <p>
+        The basic idea behind bug reduction is to take a page that demonstrates a problem and
+        remove as much content as possible while still reproducing the original problem.
+    </p>
 
-<h4>Finished the <code>HEAD</code>? Continue with the <code>BODY</code>!</h4>
-<p>
-Once the <code>HEAD</code> element has been reduced, you need to start reducing
-the number of required elements in the <code>BODY</code>. This will tend to be the
-most time consuming since hundreds (thousands) of elements will be
-present. The general practice is start removing elements by both their
-<code>&lt;start&gt;</code> and <code>&lt;/end&gt;</code> elements. This is especially true for
-tables, which are frequently nested. You can speed up this process by
-selecting groups of elements and removing them but ideally you need to
-save and reload the test case each time to verify the problem is
-happening.
-</p>
-<p>
-Another way to help you identify unnecessary elements is to temporary
-uncheck 'Enable Javascript' in the Preferences. If you turn this option
-off and loading your test case still reproduces the problem, then any
-script elements that are present can be removed since they are not a
-factor in this issue. Let's say that you have reduced the page down to
-a nested table with an ordered list with an <code>&lt;link&gt;</code> element that need
-to be present. It's good practice to identify that CSS rule that is
-being in the external file and add it directly to the test case. Create
-a <code>&lt;style&gt;</code> <code>&lt;/style&gt;</code> in the head and copy/paste the contents
-of the .css file into this style element. Remove the <code>&lt;link&gt;</code> and
-save the changes. Load the test case and verify the problem is still
-occurring. Now manually delete or comment out each CSS rule until you
-have just the required set of rules to reproduce.
-</p>
+    <h4>Why is this needed?</h4>
+    <p>
+        A reduced test case can help identify the central problem on the
+        page by eliminating irrelevant information, i.e., portions of the HTML
+        page's structure that have nothing to do with the problem.
+        With a reduced test case, the development team will spend
+        less time identifying the problem and more time determining the
+        solution. Also, since a site can change its content or design, the
+        problem may no longer occur on the real-world site. 
+        By constructing a test case you can capture the initial problem.
+    </p>
+
+    <h4>The first steps</h4>
+    <p>
+        Really the first step in reducing a page is to identify that main
+        problem of the page. For example:
+        <ul>
+            <li>Does the page have text overlapping an image? </li>
+            <li>Is there a form button that fails to work?</li>
+            <li>Is there a portion of the page missing or misaligned?</li>
+        </ul>
+    </p>
+    <p>
+        After you have made this determination, you need to create a local copy
+        of the page created from the page source window. After saving this
+        source, it's a good idea to put a <code>&lt;BASE&gt;</code> element in the
+        <code>HEAD</code> so that any images/external style sheet or scripts that use a
+        relative path will get loaded. After the <code>BASE</code> element has been added,
+        load the local copy into the browser and verify that problem is still
+        occurring. In this case, let's assume the problem is still present.
+    </p>
+
+    <h4>Work from top to bottom</h4>
+    <p>
+        In general, it's best to start from the top of the <code>&lt;DOCTYPE&gt;</code> and
+        work down through the <code>HEAD</code> to the <code>BODY</code> element. Take a look at the HTML
+        file in a text editor and view what types of elements are present in the
+        <code>&lt;head&gt;</code>. Typically, the <code>HEAD</code> will include the <code>&lt;title&gt;</code>
+        element, which is required, and elements such as <code>&lt;link&gt;</code>,
+        <code>&lt;style&gt;</code> and <code>&lt;script&gt;</code>.
+    </p>
+    <p>
+        The reduction process is to remove one element at a time, save, and reload the
+        test case. If you have removed the element and the page is still
+        displaying the problem, continue with the next element. If removing an
+        element in the <code>HEAD</code> causes the problem to not occur, you may have found
+        one piece in of the problem. Re-add this element back into the <code>HEAD</code>,
+        reload the page and confirm the problem is still occurring and move
+        on to the next element in the <code>HEAD</code>.
+    </p>
+    
+    <h4>Finished the <code>HEAD</code>? Continue with the <code>BODY</code>!</h4>
+    <p>
+        Once the <code>HEAD</code> element has been reduced, you need to start reducing
+        the number of required elements in the <code>BODY</code>. This will tend to be the
+        most time consuming since hundreds (thousands) of elements will be
+        present. The general practice is start removing elements by both their
+        <code>&lt;start&gt;</code> and <code>&lt;/end&gt;</code> elements. This is especially true for
+        tables, which are frequently nested. You can speed up this process by
+        selecting groups of elements and removing them but ideally you need to
+        save and reload the test case each time to verify the problem is
+        happening.
+    </p>
+    
+    <h4>Another method</h4>
+    <p>
+        Another way to help you identify unnecessary elements is to temporary
+        uncheck 'Enable Javascript' in the Preferences. If you turn this option
+        off and loading your test case still reproduces the problem, then any
+        script elements that are present can be removed since they are not a
+        factor in this issue. Let's say that you have reduced the page down to
+        a nested table with an ordered list with an <code>&lt;link&gt;</code> element that need
+        to be present. It's good practice to identify that CSS rule that is
+        being in the external file and add it directly to the test case. Create
+        a <code>&lt;style&gt;</code> <code>&lt;/style&gt;</code> in the head and copy/paste the contents
+        of the .css file into this style element. Remove the <code>&lt;link&gt;</code> and
+        save the changes. Load the test case and verify the problem is still
+        occurring. Now manually delete or comment out each CSS rule until you
+        have just the required set of rules to reproduce.
+    </p>
+    
+    <h4>Adding to the bug</h4>
+    <p>
+        When you've finished your reduction, you should add it to the bug. It's quite likely
+        that in the process of reducing, you have found the root cause of the problem, so
+        you are able to set the right component. If you do not have the rights to change
+        the component, read about how to get them in this <a href="bugzilla.html">document
+        about Bugzilla</a>.
+    </p>
+    
 </div>
 </body>
 </html>
