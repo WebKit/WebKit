@@ -1,3 +1,11 @@
+2006-02-11  Alexander Kellett  <lypanov@kde.org>
+
+        Adding test case for
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5360
+
+        * svg/custom/coords-relative-units-transforms.svg: Added.
+
 2006-02-11  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

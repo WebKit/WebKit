@@ -64,8 +64,8 @@ namespace WebCore
         void setContext(const SVGStyledElementImpl *context);
 
     private:
-        bool updateValueInSpecifiedUnits();
-        void updateValue();
+        bool updateValueInSpecifiedUnits(bool notify = true);
+        void updateValue(bool notify = true);
 
         double dpi() const;
 
@@ -75,6 +75,7 @@ namespace WebCore
         LengthMode m_mode : 2;
         bool m_bboxRelative : 1;
         unsigned short m_unitType : 4;
+        bool m_requiresLayout : 1;
 
         const SVGStyledElementImpl *m_context;
         const SVGElementImpl *m_viewportElement;

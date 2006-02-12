@@ -1,3 +1,21 @@
+2006-02-11  Alexander Kellett  <lypanov@kde.org>
+
+        Reviewed by eseidel.
+
+        - Fixing http://bugzilla.opendarwin.org/show_bug.cgi?id=6942
+          Implement support for "em" and "ex" relative lengths.
+
+        - Layout tests changes:
+            Fixed: svg/W3C-SVG-1.1/coords-units-03-b.svg
+            New:   svg/custom/coords-relative-units-transforms.svg
+
+        * ksvg2/svg/SVGLengthImpl.cpp:
+        (SVGLengthImpl::SVGLengthImpl):
+        (SVGLengthImpl::value):
+        (SVGLengthImpl::updateValue):
+        (SVGLengthImpl::updateValueInSpecifiedUnits):
+        * ksvg2/svg/SVGLengthImpl.h:
+
 2006-02-11  Darin Adler  <darin@apple.com>
 
         Rubber-stamped by Eric.

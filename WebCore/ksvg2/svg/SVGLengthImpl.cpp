@@ -65,6 +65,8 @@ SVGLengthImpl::SVGLengthImpl(const SVGStyledElementImpl *context, LengthMode mod
 
     m_bboxRelative = false;
     m_unitType = SVG_LENGTHTYPE_UNKNOWN;
+    
+    m_requiresLayout = false;
 }
 
 SVGLengthImpl::~SVGLengthImpl()
@@ -84,6 +86,9 @@ void SVGLengthImpl::setValue(float value)
 
 float SVGLengthImpl::value() const
 {
+    if (m_requiresLayout)
+        const_cast<SVGLengthImpl*>(this)->updateValue(false);
+
     if(m_unitType != SVG_LENGTHTYPE_PERCENTAGE)
         return m_value;
 
@@ -186,7 +191,7 @@ double SVGLengthImpl::dpi() const
     return 90.0;
 }
 
-void SVGLengthImpl::updateValue()
+void SVGLengthImpl::updateValue(bool notify)
 {
     switch(m_unitType)
     {
@@ -208,59 +213,31 @@ void SVGLengthImpl::updateValue()
         case SVG_LENGTHTYPE_PC:
             m_value = (m_valueInSpecifiedUnits / 6.0) * dpi();
             break;
-        case SVG_LENGTHTYPE_EMS: // Be careful here, always recheck coords-units-BE-01.svg after touching (Niko)
+        case SVG_LENGTHTYPE_EMS:
         case SVG_LENGTHTYPE_EXS:
-            if(m_context)
-            {
-                /* FIXME: EMS/EXS handling
-                KCanvasRenderingStyle *style = context->style();
-                KCFontProperties *fontProperites = style->fontProperties();
-
-                bool sizeLocal = (style->getFontSize() != -1);
-                bool familyLocal = (style->getFontFamily() && style->getFontFamily()->getFirst());
-                
-                SVGStylableImpl *parentStyle = 0;
-                if((!sizeLocal || !familyLocal) && context) {
-                    parentStyle = dynamic_cast<SVGStylableImpl *>(context->ownerDoc()->getElementFromHandle(context->parentNode().handle()));
-                
-                // Look up font-size in a SAFE way, because at this place
-                // processStyle() has NOT yet been called, so we need
-                // a different solution (Niko)
-                QString useFont = "Arial";
-                double useSize = 12;
-                
-                if(sizeLocal)
-                    useSize = style->getFontSize();
-                else if(parentStyle && parentStyle->getFontSize() != -1)
-                    useSize = parentStyle->getFontSize();
-            
-                if(familyLocal)
-                    useFont = style->getFontFamily()->getFirst()->qstring();
-                else if(parentStyle && parentStyle->getFontFamily() && parentStyle->getFontFamily()->getFirst())
-                    useFont = parentStyle->getFontFamily()->getFirst()->qstring();
-
-                if(unitType == SVG_LENGTHTYPE_EMS)
-                    value = valueInSpecifiedUnits * useSize;
-                else
-                {
-                    // Easiest way, use qfont (Niko)
-                    QFont font(useFont);
-                    font.setPixelSize(static_cast<int>(useSize));
-
-                    QFontMetrics fm(font);
-                    value = valueInSpecifiedUnits * fm.boundingRect('x').height();
+            if (m_context && m_context->renderer()) {
+                khtml::RenderStyle *style = m_context->renderer()->style();
+                float useSize = style->font().pixelSize();
+                ASSERT(useSize > 0);
+                if (m_unitType == SVG_LENGTHTYPE_EMS)
+                    m_value = m_valueInSpecifiedUnits * useSize;
+                else {
+                    float xHeight = style->fontMetrics().xHeight();
+                    // Use of ceil allows a pixel match to the W3Cs expected output of coords-units-03-b.svg
+                    // if this causes problems in real world cases maybe it would be best to remove this
+                    m_value = m_valueInSpecifiedUnits * ceil(xHeight);
                 }
+                m_requiresLayout = false;
+            } else {
+                m_requiresLayout = true;
             }
-
-            break;*/
-        }
+            break;
     }
-
-    if(m_context)
+    if (notify && m_context)
         m_context->notifyAttributeChange();
 }
 
-bool SVGLengthImpl::updateValueInSpecifiedUnits()
+bool SVGLengthImpl::updateValueInSpecifiedUnits(bool notify)
 {
     if(m_unitType == SVG_LENGTHTYPE_UNKNOWN)
         return false;
@@ -296,7 +273,7 @@ bool SVGLengthImpl::updateValueInSpecifiedUnits()
             break;
     };
     
-    if(m_context)
+    if (notify && m_context)
         m_context->notifyAttributeChange();
 
     return true;

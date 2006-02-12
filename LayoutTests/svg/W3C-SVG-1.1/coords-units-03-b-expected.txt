@@ -29,16 +29,16 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (0,0) size 465x15
             RenderText {TEXT} at (0,0) size 136x15
               text run at (0,0) width 136: "Relative to font size (em)"
-          KCanvasContainer {g} at (0,60) size 0x0
-            KCanvasItem {rect} at (inf,inf) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data=""]
+          KCanvasContainer {g} at (20,120) size 200x1
+            KCanvasItem {rect} at (20,120) size 200x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,60.00L220.00,60.00L220.00,61.00L20.00,61.00"]
           RenderSVGText {text} at (0,0) size 465x15
             RenderText {TEXT} at (0,0) size 30x15
               text run at (0,0) width 30: "40 ex"
           RenderSVGText {text} at (0,0) size 465x15
             RenderText {TEXT} at (0,0) size 158x15
               text run at (0,0) width 158: "Relative to font x-height (ex)"
-          KCanvasContainer {g} at (0,60) size 0x0
-            KCanvasItem {rect} at (inf,inf) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data=""]
+          KCanvasContainer {g} at (20,140) size 200x1
+            KCanvasItem {rect} at (20,140) size 200x1 [fill={[type=SOLID] [color=#000000]}] [data="M20.00,80.00L220.00,80.00L220.00,81.00L20.00,81.00"]
           RenderSVGText {text} at (0,0) size 465x15
             RenderText {TEXT} at (0,0) size 93x15
               text run at (0,0) width 93: "41.67% = 200 px"
