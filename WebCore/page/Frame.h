@@ -71,7 +71,7 @@ namespace WebCore {
   class MouseMoveEvent;
   class CSSComputedStyleDeclarationImpl;
   class FramePrivate;
-  class FrameTreeNode;
+  class FrameTree;
   class Plugin;
   class KJSProxyImpl;
   
@@ -985,7 +985,7 @@ public:
   KURL url() const;
 
   // split out controller objects
-  FrameTreeNode* treeNode() const;
+  FrameTree* tree() const;
   SelectionController& selection() const;
 
  private:

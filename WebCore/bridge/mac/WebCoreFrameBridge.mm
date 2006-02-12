@@ -47,7 +47,7 @@
 #import "KWQTextCodec.h"
 #import "KWQView.h"
 #import "MacFrame.h"
-#import "FrameTreeNode.h"
+#import "FrameTree.h"
 #import "NodeImpl.h"
 #import "SelectionController.h"
 #import "WebCoreFrameNamespaces.h"
@@ -268,27 +268,27 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (WebCoreFrameBridge *)firstChild
 {
-    return bridge(m_frame->treeNode()->firstChild());
+    return bridge(m_frame->tree()->firstChild());
 }
 
 - (WebCoreFrameBridge *)lastChild
 {
-    return bridge(m_frame->treeNode()->lastChild());
+    return bridge(m_frame->tree()->lastChild());
 }
 
 - (unsigned)childCount
 {
-    return m_frame->treeNode()->childCount();
+    return m_frame->tree()->childCount();
 }
 
 - (WebCoreFrameBridge *)previousSibling;
 {
-    return bridge(m_frame->treeNode()->previousSibling());
+    return bridge(m_frame->tree()->previousSibling());
 }
 
 - (WebCoreFrameBridge *)nextSibling;
 {
-    return bridge(m_frame->treeNode()->nextSibling());
+    return bridge(m_frame->tree()->nextSibling());
 }
 
 - (BOOL)isDescendantOfFrame:(WebCoreFrameBridge *)ancestor
@@ -333,12 +333,12 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (void)appendChild:(WebCoreFrameBridge *)child
 {
-    m_frame->treeNode()->appendChild(adoptRef([child part]));
+    m_frame->tree()->appendChild(adoptRef([child part]));
 }
 
 - (void)removeChild:(WebCoreFrameBridge *)child
 {
-    m_frame->treeNode()->removeChild([child part]);
+    m_frame->tree()->removeChild([child part]);
 }
 
 - (WebCoreFrameBridge *)childFrameNamed:(NSString *)name
@@ -597,12 +597,12 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 - (void)setParent:(WebCoreFrameBridge *)parent
 {
     // FIXME: frames should be created with the right parent in the first place
-    m_frame->treeNode()->setParent([parent part]);
+    m_frame->tree()->setParent([parent part]);
 }
 
 - (WebCoreFrameBridge *)parent
 {
-    MacFrame *parentFrame = Mac(m_frame->treeNode()->parent());
+    MacFrame *parentFrame = Mac(m_frame->tree()->parent());
     if (!parentFrame)
         return nil;
     return parentFrame->bridge();
@@ -1573,12 +1573,12 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)setName:(NSString *)name
 {
-    m_frame->treeNode()->setName(name);
+    m_frame->tree()->setName(name);
 }
 
 - (NSString *)name
 {
-    return m_frame->treeNode()->name();
+    return m_frame->tree()->name();
 }
 
 - (void)_addFramePathToString:(NSMutableString *)path

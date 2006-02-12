@@ -31,7 +31,7 @@
 #include "DocumentTypeImpl.h"
 #include "EventNames.h"
 #include "Frame.h"
-#include "FrameTreeNode.h"
+#include "FrameTree.h"
 #include "FrameView.h"
 #include "SelectionController.h"
 #include "KWQAccObjectCache.h"
@@ -2952,7 +2952,7 @@ DocumentImpl *DocumentImpl::parentDocument() const
     Frame *childPart = frame();
     if (!childPart)
         return 0;
-    Frame *parent = childPart->treeNode()->parent();
+    Frame *parent = childPart->tree()->parent();
     if (!parent)
         return 0;
     return parent->document();

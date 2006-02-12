@@ -97,8 +97,8 @@
 		6582A16409999D6D00BEEB6D /* TimerMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6582A15609999D6D00BEEB6D /* TimerMac.cpp */; };
 		6582A17809999EA000BEEB6D /* QStringMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A17709999EA000BEEB6D /* QStringMac.mm */; };
 		65A21468097A329100B9050A /* Page.h in Headers */ = {isa = PBXBuildFile; fileRef = 65A21467097A329100B9050A /* Page.h */; };
-		65A21484097A3F5300B9050A /* FrameTreeNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65A21482097A3F5300B9050A /* FrameTreeNode.cpp */; };
-		65A21485097A3F5300B9050A /* FrameTreeNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 65A21483097A3F5300B9050A /* FrameTreeNode.h */; };
+		65A21484097A3F5300B9050A /* FrameTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65A21482097A3F5300B9050A /* FrameTree.cpp */; };
+		65A21485097A3F5300B9050A /* FrameTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 65A21483097A3F5300B9050A /* FrameTree.h */; };
 		65AC79A10831ED6D009385CE /* append_node_command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65AC799F0831ED6D009385CE /* append_node_command.cpp */; };
 		65AC79A20831ED6D009385CE /* append_node_command.h in Headers */ = {isa = PBXBuildFile; fileRef = 65AC79A00831ED6D009385CE /* append_node_command.h */; };
 		65AC79A90831F006009385CE /* apply_style_command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65AC79A70831F006009385CE /* apply_style_command.cpp */; };
@@ -1195,8 +1195,8 @@
 		65912B0D0586921000123A69 /* xmlserializer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xmlserializer.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65912B0E0586921000123A69 /* xmlserializer.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = xmlserializer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65A21467097A329100B9050A /* Page.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Page.h; sourceTree = "<group>"; };
-		65A21482097A3F5300B9050A /* FrameTreeNode.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FrameTreeNode.cpp; sourceTree = "<group>"; };
-		65A21483097A3F5300B9050A /* FrameTreeNode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FrameTreeNode.h; sourceTree = "<group>"; };
+		65A21482097A3F5300B9050A /* FrameTree.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FrameTree.cpp; sourceTree = "<group>"; };
+		65A21483097A3F5300B9050A /* FrameTree.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FrameTree.h; sourceTree = "<group>"; };
 		65A640F00533BB1F0085E777 /* KWQExceptions.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQExceptions.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65AC799F0831ED6D009385CE /* append_node_command.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = append_node_command.cpp; path = editing/append_node_command.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65AC79A00831ED6D009385CE /* append_node_command.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = append_node_command.h; path = editing/append_node_command.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2381,8 +2381,8 @@
 				65BF022A0974816300C43196 /* Frame.h */,
 				65BF02290974816300C43196 /* Frame.cpp */,
 				65BF022B0974816300C43196 /* FramePrivate.h */,
-				65A21483097A3F5300B9050A /* FrameTreeNode.h */,
-				65A21482097A3F5300B9050A /* FrameTreeNode.cpp */,
+				65A21483097A3F5300B9050A /* FrameTree.h */,
+				65A21482097A3F5300B9050A /* FrameTree.cpp */,
 				65CBFEF80974F607001DAC25 /* FrameView.h */,
 				65CBFEF70974F607001DAC25 /* FrameView.cpp */,
 				65A21467097A329100B9050A /* Page.h */,
@@ -4295,7 +4295,7 @@
 				A8FEFB320979F4F6005839FD /* SVGForeignObjectElementImpl.h in Headers */,
 				BCFB2E840979FD4F00BA703D /* Shared.h in Headers */,
 				65A21468097A329100B9050A /* Page.h in Headers */,
-				65A21485097A3F5300B9050A /* FrameTreeNode.h in Headers */,
+				65A21485097A3F5300B9050A /* FrameTree.h in Headers */,
 				BCFB2F42097A24B500BA703D /* SegmentedString.h in Headers */,
 				BCFB2F77097A2E1A00BA703D /* Arena.h in Headers */,
 				BC1A37AD097C715F0019F3D8 /* DOM.h in Headers */,
@@ -5402,7 +5402,7 @@
 				BCFB2F41097A24B500BA703D /* SegmentedString.cpp in Sources */,
 				A8FEFB0B0979F472005839FD /* RenderForeignObject.cpp in Sources */,
 				A8FEFB310979F4F6005839FD /* SVGForeignObjectElementImpl.cpp in Sources */,
-				65A21484097A3F5300B9050A /* FrameTreeNode.cpp in Sources */,
+				65A21484097A3F5300B9050A /* FrameTree.cpp in Sources */,
 				BCFB2F76097A2E1A00BA703D /* Arena.cpp in Sources */,
 				BC1A37AE097C715F0019F3D8 /* DOM.mm in Sources */,
 				BC1A37B1097C715F0019F3D8 /* DOMCSS.mm in Sources */,

@@ -34,7 +34,7 @@
 #include "edit_command.h"
 #include "kjs_proxy.h"
 #include <kio/global.h>
-#include "FrameTreeNode.h"
+#include "FrameTree.h"
 #include "kxmlcore/Vector.h"
 
 namespace KIO {
@@ -142,7 +142,7 @@ public:
         m_typingStyle->deref();
   }
 
-  FrameTreeNode m_treeNode;
+  FrameTree m_treeNode;
 
   // old style frame info
   FrameList m_frames;

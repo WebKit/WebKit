@@ -524,7 +524,7 @@ void MacFrame::submitForm(const KURL &url, const URLArgs &args)
     WebCoreFrameBridge *target = args.frameName.isEmpty() ? _bridge : [_bridge findFrameNamed:args.frameName.getNSString()];
     Frame *targetPart = [target part];
     bool willReplaceThisFrame = false;
-    for (Frame *p = this; p; p = p->treeNode()->parent()) {
+    for (Frame *p = this; p; p = p->tree()->parent()) {
         if (p == targetPart) {
             willReplaceThisFrame = true;
             break;
@@ -985,7 +985,7 @@ NSView *MacFrame::nextKeyViewInFrameHierarchy(NodeImpl *node, KWQSelectionDirect
 {
     NSView *next = nextKeyViewInFrame(node, direction);
     if (!next) {
-        MacFrame *parent = Mac(treeNode()->parent());
+        MacFrame *parent = Mac(tree()->parent());
         if (parent)
             next = parent->nextKeyViewInFrameHierarchy(ownerElement(), direction);
     }

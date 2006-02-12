@@ -349,7 +349,7 @@ void Frame::stopLoading(bool sendUnload)
   }
 
   // tell all subframes to stop as well
-  for (Frame* child = treeNode()->firstChild(); child; child = child->treeNode()->nextSibling())
+  for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
       child->stopLoading(sendUnload);
 
   d->m_bPendingChildRedirection = false;
@@ -497,7 +497,7 @@ void Frame::clear(bool clearWindowProperties)
   d->m_doc = 0;
   d->m_decoder = 0;
 
-  for (Frame* child = treeNode()->firstChild(); child; child = child->treeNode()->nextSibling())
+  for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
       disconnectChild(child);
   d->m_plugins.clear();
 
@@ -788,7 +788,7 @@ void Frame::stopAnimations()
   if (d->m_doc)
       d->m_doc->docLoader()->setShowAnimations(KHTMLSettings::KAnimationDisabled);
 
-  for (Frame* child = treeNode()->firstChild(); child; child = child->treeNode()->nextSibling())
+  for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
       child->stopAnimations();
 }
 
@@ -843,7 +843,7 @@ void Frame::slotLoaderRequestDone( DocLoader* dl, CachedObject *obj )
 void Frame::checkCompleted()
 {
   // Any frame that hasn't completed yet ?
-  for (Frame* child = treeNode()->firstChild(); child; child = child->treeNode()->nextSibling())
+  for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
       if (!child->d->m_bComplete)
           return;
 
@@ -872,7 +872,7 @@ void Frame::checkCompleted()
   if (d->m_scheduledRedirection != noRedirectionScheduled) {
       // Do not start redirection for frames here! That action is
       // deferred until the parent emits a completed signal.
-      if (!treeNode()->parent())
+      if (!tree()->parent())
           startRedirectionTimer();
 
       emit completed(true);
@@ -889,7 +889,7 @@ void Frame::checkEmitLoadEvent()
     if (d->m_bLoadEventEmitted || !d->m_doc || d->m_doc->parsing())
         return;
 
-    for (Frame* child = treeNode()->firstChild(); child; child = child->treeNode()->nextSibling())
+    for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
         if (!child->d->m_bComplete) // still got a frame running -> too early
             return;
 
@@ -898,7 +898,7 @@ void Frame::checkEmitLoadEvent()
     // not when following a link in a frame (#44162).
     if (d->m_doc) {
         DOMString domain = d->m_doc->domain();
-        for (Frame* child = treeNode()->firstChild(); child; child = child->treeNode()->nextSibling())
+        for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
             if (child->d->m_doc)
                 child->d->m_doc->setDomain(domain);
     }
@@ -1659,7 +1659,7 @@ void Frame::slotChildCompleted()
 
 void Frame::slotChildCompleted( bool complete )
 {
-  if (complete && treeNode()->parent() == 0)
+  if (complete && tree()->parent() == 0)
     d->m_bPendingChildRedirection = true;
 
   checkCompleted();
@@ -1670,8 +1670,8 @@ Frame* Frame::findFrame(const QString& f)
 {
     // FIXME: this only finds child frames, is it ever appropriate to use this?
     // ### http://www.w3.org/TR/html4/appendix/notes.html#notes-frames
-    for (Frame* child = treeNode()->firstChild(); child; child = child->treeNode()->nextSibling())
-        if (child->treeNode()->name() == f)
+    for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
+        if (child->tree()->name() == f)
             return child;
     return 0;
 }
@@ -1733,7 +1733,7 @@ void Frame::setZoomFactor(int percent)
   if(d->m_doc)
       d->m_doc->recalcStyle(NodeImpl::Force);
 
-  for (Frame* child = treeNode()->firstChild(); child; child = child->treeNode()->nextSibling())
+  for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
       child->setZoomFactor(d->m_zoomFactor);
 
   if (d->m_doc && d->m_doc->renderer() && d->m_doc->renderer()->needsLayout())
@@ -1796,8 +1796,8 @@ QStringList Frame::frameNames() const
 {
   QStringList res;
 
-  for (Frame* child = treeNode()->firstChild(); child; child = child->treeNode()->nextSibling())
-      res += child->treeNode()->name().qstring();
+  for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
+      res += child->tree()->name().qstring();
 
   return res;
 }
@@ -1806,7 +1806,7 @@ QPtrList<Frame> Frame::frames() const
 {
   QPtrList<Frame> res;
 
-  for (Frame* child = treeNode()->firstChild(); child; child = child->treeNode()->nextSibling())
+  for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
       res.append(child);
 
   return res;
@@ -1814,8 +1814,8 @@ QPtrList<Frame> Frame::frames() const
 
 Frame* Frame::childFrameNamed(const QString& name) const
 {
-    for (Frame* child = treeNode()->firstChild(); child; child = child->treeNode()->nextSibling())
-        if (child->treeNode()->name() == name)
+    for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
+        if (child->tree()->name() == name)
             return child;
     return 0;
 }
@@ -2256,23 +2256,23 @@ void Frame::incrementFrameCount()
 {
     // FIXME: this should be in Page
     frameCount++;
-    if (treeNode()->parent())
-        treeNode()->parent()->incrementFrameCount();
+    if (tree()->parent())
+        tree()->parent()->incrementFrameCount();
 }
 
 void Frame::decrementFrameCount()
 {
     // FIXME: this should be in Page
     frameCount--;
-    if (treeNode()->parent())
-        treeNode()->parent()->decrementFrameCount();
+    if (tree()->parent())
+        tree()->parent()->decrementFrameCount();
 }
 
 int Frame::topLevelFrameCount()
 {
     // FIXME: this should be in Page
-    if (treeNode()->parent())
-        return treeNode()->parent()->topLevelFrameCount();
+    if (tree()->parent())
+        return tree()->parent()->topLevelFrameCount();
     return frameCount;
 }
 
@@ -2724,7 +2724,7 @@ void Frame::lifeSupportTimerFired(Timer<Frame>*)
 void Frame::selectFrameElementInParentIfFullySelected()
 {
     // Find the parent frame; if there is none, then we have nothing to do.
-    Frame *parent = treeNode()->parent();
+    Frame *parent = tree()->parent();
     if (!parent)
         return;
     FrameView *parentView = parent->view();
@@ -2786,8 +2786,8 @@ void Frame::provisionalLoadStarted()
 bool Frame::userGestureHint()
 {
     Frame *rootFrame = this;
-    while (rootFrame->treeNode()->parent())
-        rootFrame = rootFrame->treeNode()->parent();
+    while (rootFrame->tree()->parent())
+        rootFrame = rootFrame->tree()->parent();
 
     if (rootFrame->jScript())
         return rootFrame->jScript()->interpreter()->wasRunByUserGesture();
@@ -3048,8 +3048,8 @@ bool Frame::canCachePage()
     // 3.  The page has no password fields.
     // 4.  The URL for the page is not https.
     // 5.  The page has no applets.
-    if (treeNode()->childCount() || d->m_plugins.size() ||
-        treeNode()->parent() ||
+    if (tree()->childCount() || d->m_plugins.size() ||
+        tree()->parent() ||
         d->m_url.protocol().startsWith("https") || 
         (d->m_doc && (d->m_doc->applets()->length() != 0 ||
                       d->m_doc->hasWindowEventListener(unloadEvent) ||
@@ -3153,8 +3153,8 @@ QPtrList<Frame> &Frame::mutableInstances()
 
 void Frame::updatePolicyBaseURL()
 {
-    if (treeNode()->parent() && treeNode()->parent()->document())
-        setPolicyBaseURL(treeNode()->parent()->document()->policyBaseURL());
+    if (tree()->parent() && tree()->parent()->document())
+        setPolicyBaseURL(tree()->parent()->document()->policyBaseURL());
     else
         setPolicyBaseURL(d->m_url.url());
 }
@@ -3163,7 +3163,7 @@ void Frame::setPolicyBaseURL(const DOMString &s)
 {
     if (document())
         document()->setPolicyBaseURL(s);
-    for (Frame* child = treeNode()->firstChild(); child; child = child->treeNode()->nextSibling())
+    for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
         child->setPolicyBaseURL(s);
 }
 
@@ -3493,7 +3493,7 @@ bool Frame::isComplete()
     return d->m_bComplete;
 }
 
-FrameTreeNode *Frame::treeNode() const
+FrameTree *Frame::tree() const
 {
     return &d->m_treeNode;
 }
@@ -3519,7 +3519,7 @@ void Frame::stopRedirectionTimer()
 
 void Frame::frameDetached()
 {
-    Frame *parent = treeNode()->parent();
+    Frame *parent = tree()->parent();
     if (parent)
         parent->disconnectChild(this);
 }
@@ -3529,7 +3529,7 @@ void Frame::updateBaseURLForEmptyDocument()
     ElementImpl* owner = ownerElement();
     // FIXME: should embed be included
     if (owner && (owner->hasTagName(iframeTag) || owner->hasTagName(objectTag) || owner->hasTagName(embedTag)))
-        d->m_doc->setBaseURL(treeNode()->parent()->d->m_doc->baseURL());
+        d->m_doc->setBaseURL(tree()->parent()->d->m_doc->baseURL());
 }
 
 } // namespace WebCore

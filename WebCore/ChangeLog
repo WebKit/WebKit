@@ -1,3 +1,78 @@
+2006-02-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - rename FrameTreeNode to FameTree and treeNode() to tree()
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7210
+        
+        This may be slightly less accurate, but reads better.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/BrowserExtensionMac.mm:
+        (WebCore::BrowserExtensionMac::createNewWindow):
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::submitForm):
+        (WebCore::MacFrame::nextKeyViewInFrameHierarchy):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge firstChild]):
+        (-[WebCoreFrameBridge lastChild]):
+        (-[WebCoreFrameBridge childCount]):
+        (-[WebCoreFrameBridge previousSibling]):
+        (-[WebCoreFrameBridge nextSibling]):
+        (-[WebCoreFrameBridge appendChild:]):
+        (-[WebCoreFrameBridge removeChild:]):
+        (-[WebCoreFrameBridge setParent:]):
+        (-[WebCoreFrameBridge parent]):
+        (-[WebCoreFrameBridge setName:]):
+        (-[WebCoreFrameBridge name]):
+        * dom/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::parentDocument):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::getValueProperty):
+        (KJS::Window::put):
+        (KJS::Window::isSafeScript):
+        (KJS::WindowFunc::callAsFunction):
+        * khtml/html/html_baseimpl.cpp:
+        (WebCore::HTMLFrameElementImpl::isURLAllowed):
+        * khtml/html/html_headimpl.cpp:
+        (WebCore::HTMLLinkElementImpl::process):
+        * page/Frame.cpp:
+        (WebCore::Frame::stopLoading):
+        (WebCore::Frame::clear):
+        (WebCore::Frame::stopAnimations):
+        (WebCore::Frame::checkCompleted):
+        (WebCore::Frame::checkEmitLoadEvent):
+        (WebCore::Frame::slotChildCompleted):
+        (WebCore::Frame::findFrame):
+        (WebCore::Frame::setZoomFactor):
+        (WebCore::Frame::frameNames):
+        (WebCore::Frame::frames):
+        (WebCore::Frame::childFrameNamed):
+        (WebCore::Frame::incrementFrameCount):
+        (WebCore::Frame::decrementFrameCount):
+        (WebCore::Frame::topLevelFrameCount):
+        (WebCore::Frame::selectFrameElementInParentIfFullySelected):
+        (WebCore::Frame::userGestureHint):
+        (WebCore::Frame::canCachePage):
+        (WebCore::Frame::updatePolicyBaseURL):
+        (WebCore::Frame::setPolicyBaseURL):
+        (WebCore::Frame::tree):
+        (WebCore::Frame::frameDetached):
+        (WebCore::Frame::updateBaseURLForEmptyDocument):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        * page/FrameTree.cpp: Added.
+        (WebCore::FrameTree::~FrameTree):
+        (WebCore::FrameTree::setName):
+        (WebCore::FrameTree::appendChild):
+        (WebCore::FrameTree::removeChild):
+        * page/FrameTree.h: Added.
+        (WebCore::FrameTree::FrameTree):
+        * page/FrameTreeNode.cpp: Removed.
+        * page/FrameTreeNode.h: Removed.
+        * rendering/render_frames.cpp:
+        (WebCore::isURLAllowed):
+
 2006-02-12  Dave Hyatt <hyatt@apple.com>
 
         Fix for bug 7182, animated GIFs don't clear previous animation
@@ -17,7 +92,7 @@
         * platform/image-decoders/png/PNGImageDecoder.cpp:
         (WebCore::PNGImageDecoder::rowAvailable):
 
-2006-02-11  Geoffrey Garen  <ggaren@apple.com>
+>>06-02-11  Geoffrey Garen  <ggaren@apple.com>
 
         - Fixed bad free resulting from 0 legnth StringImpl
 
