@@ -2,7 +2,7 @@
 
         Reviewed by Darin.
 
-        - rename FrameTreeNode to FameTree and treeNode() to tree()
+        - rename FrameTreeNode to FrameTree and treeNode() to tree()
         http://bugzilla.opendarwin.org/show_bug.cgi?id=7210
         
         This may be slightly less accurate, but reads better.
