@@ -32,6 +32,7 @@
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKit/WebArchive.h>
+#import <WebKit/WebArchiver.h>
 #import <WebKit/WebBaseNetscapePluginViewInternal.h>
 #import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebClipView.h>
@@ -586,7 +587,7 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
 {
     // Put HTML on the pasteboard.
     if ([types containsObject:WebArchivePboardType]) {
-        WebArchive *archive = [self _selectedArchive];
+        WebArchive *archive = [WebArchiver archiveSelectionInFrame:[self _frame]];
         [pasteboard setData:[archive data] forType:WebArchivePboardType];
     }
     
@@ -1099,59 +1100,6 @@ static WebHTMLView *lastHitView = nil;
     return [NSArray arrayWithObjects:WebArchivePboardType, NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, nil];
 }
 
-- (WebArchive *)_selectedArchive
-{
-    NSArray *nodes;
-#if !LOG_DISABLED        
-    double start = CFAbsoluteTimeGetCurrent();
-#endif
-    NSString *markupString = [[self _bridge] markupStringFromRange:[self _selectedRange] nodes:&nodes];
-#if !LOG_DISABLED
-    double duration = CFAbsoluteTimeGetCurrent() - start;
-    LOG(Timing, "copying markup took %f seconds.", duration);
-#endif
-    
-    WebArchive *archive = [[self _dataSource] _archiveWithMarkupString:markupString nodes:nodes];
-
-    if ([[self _bridge] isFrameSet]) {
-        // Wrap the frameset document in an iframe so it can be pasted into
-        // another document (which will have a body or frameset of its own). 
-        NSString *iframeMarkup = [[NSString alloc] initWithFormat:@"<iframe frameborder=\"no\" marginwidth=\"0\" marginheight=\"0\" width=\"98%%\" height=\"98%%\" src=\"%@\"></iframe>", [[[self _dataSource] response] URL]];
-        WebResource *iframeResource = [[WebResource alloc] initWithData:[iframeMarkup dataUsingEncoding:NSUTF8StringEncoding]
-                                                                  URL:[NSURL URLWithString:@"about:blank"]
-                                                             MIMEType:@"text/html"
-                                                     textEncodingName:@"UTF-8"
-                                                            frameName:nil];
-        
-        NSArray *subframeArchives = [NSArray arrayWithObject:archive];
-        archive = [[[WebArchive alloc] initWithMainResource:iframeResource subresources:nil subframeArchives:subframeArchives] autorelease];
-        
-        [iframeResource release];
-        [iframeMarkup release];
-    }
-
-    return archive;
-}
-
-- (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard
-{
-    ASSERT([self _hasSelection]);
-    NSArray *types = [self pasteboardTypesForSelection];
-    
-    // Don't write RTFD to the pasteboard when the copied attributed string has no attachments.
-    NSAttributedString *attributedString = [self selectedAttributedString];
-    NSMutableArray *mutableTypes = nil;
-    if (![attributedString containsAttachments]) {
-        mutableTypes = [types mutableCopy];
-        [mutableTypes removeObject:NSRTFDPboardType];
-        types = mutableTypes;
-    }
-    
-    [pasteboard declareTypes:types owner:nil];
-    [self _writeSelectionWithPasteboardTypes:types toPasteboard:pasteboard cachedAttributedString:attributedString];
-    [mutableTypes release];
-}
-
 - (NSImage *)_dragImageForLinkElement:(NSDictionary *)element
 {
     NSURL *linkURL = [element objectForKey: WebElementLinkURLKey];
@@ -1660,6 +1608,25 @@ static WebHTMLView *lastHitView = nil;
 - (void)_setDisplaysWithFocusAttributes:(BOOL)flag
 {
     [[self _bridge] setDisplaysWithFocusAttributes:flag];
+}
+
+- (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard
+{
+    ASSERT([self _hasSelection]);
+    NSArray *types = [self pasteboardTypesForSelection];
+
+    // Don't write RTFD to the pasteboard when the copied attributed string has no attachments.
+    NSAttributedString *attributedString = [self selectedAttributedString];
+    NSMutableArray *mutableTypes = nil;
+    if (![attributedString containsAttachments]) {
+        mutableTypes = [types mutableCopy];
+        [mutableTypes removeObject:NSRTFDPboardType];
+        types = mutableTypes;
+    }
+
+    [pasteboard declareTypes:types owner:nil];
+    [self _writeSelectionWithPasteboardTypes:types toPasteboard:pasteboard cachedAttributedString:attributedString];
+    [mutableTypes release];
 }
 
 @end

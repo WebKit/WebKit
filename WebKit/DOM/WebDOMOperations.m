@@ -35,6 +35,7 @@
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebKitNSStringExtras.h>
+#import <WebKit/WebArchiver.h>
 
 
 @implementation DOMNode (WebDOMNodeOperations)
@@ -46,10 +47,7 @@
 
 - (WebArchive *)webArchive
 {
-    WebFrameBridge *bridge = [self _bridge];
-    NSArray *nodes;
-    NSString *markupString = [bridge markupStringFromNode:self nodes:&nodes];
-    return [[[bridge webFrame] dataSource] _archiveWithMarkupString:markupString nodes:nodes];
+    return [WebArchiver archiveNode:self];
 }
 
 - (NSString *)markupString
@@ -123,10 +121,7 @@
 
 - (WebArchive *)webArchive
 {
-    WebFrameBridge *bridge = [self _bridge];
-    NSArray *nodes;
-    NSString *markupString = [bridge markupStringFromRange:self nodes:&nodes];
-    return [[[bridge webFrame] dataSource] _archiveWithMarkupString:markupString nodes:nodes];
+    return [WebArchiver archiveRange:self];
 }
 
 - (NSString *)markupString

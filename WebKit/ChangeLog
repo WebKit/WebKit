@@ -1,3 +1,31 @@
+2006-02-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Hyatt.
+        
+        - factor WebArchive creation code out of other classes into new WebArchiver
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7208
+
+        * DOM/WebDOMOperations.m:
+        (-[DOMNode webArchive]):
+        (-[DOMRange webArchive]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebArchiver.h: Added.
+        * WebView/WebArchiver.m: Added.
+        (+[WebArchiver _subframeArchivesForFrame:]):
+        (+[WebArchiver archiveFrame:]):
+        (+[WebArchiver _archiveCurrentStateForFrame:]):
+        (+[WebArchiver _archiveWithMarkupString:fromFrame:nodes:]):
+        (+[WebArchiver archiveRange:]):
+        (+[WebArchiver archiveNode:]):
+        (+[WebArchiver archiveSelectionInFrame:]):
+        * WebView/WebDataSource.m:
+        (-[WebDataSource webArchive]):
+        * WebView/WebDataSourcePrivate.h:
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _writeSelectionWithPasteboardTypes:toPasteboard:cachedAttributedString:]):
+        (-[WebHTMLView _writeSelectionToPasteboard:]):
+        * WebView/WebHTMLViewPrivate.h:
+
 2006-02-11  Darin Adler  <darin@apple.com>
 
         * English.lproj/StringsNotToBeLocalized.txt: Updated paths for recent changes in directory structure.

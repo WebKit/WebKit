@@ -31,6 +31,7 @@
 #import <WebKit/DOMHTML.h>
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebArchive.h>
+#import <WebKit/WebArchiver.h>
 #import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
@@ -129,74 +130,6 @@
     }
     
     return nil;
-}
-
-- (WebArchive *)_archiveWithMarkupString:(NSString *)markupString nodes:(NSArray *)nodes
-{ 
-    ASSERT(_private->committed);
-
-    WebFrame *frame = [self webFrame];
-    NSURLResponse *response = [self response];
-    WebResource *mainResource = [[WebResource alloc] initWithData:[markupString dataUsingEncoding:NSUTF8StringEncoding]
-                                                              URL:[response URL] 
-                                                         MIMEType:[response MIMEType]
-                                                 textEncodingName:@"UTF-8"
-                                                        frameName:[frame name]];
-    
-    NSMutableArray *subframeArchives = [[NSMutableArray alloc] init];
-    NSMutableArray *subresources = [[NSMutableArray alloc] init];
-    NSEnumerator *enumerator = [nodes objectEnumerator];
-    DOMNode *node;
-    while ((node = [enumerator nextObject]) != nil) {
-        WebFrame *childFrame;
-        if (([node isKindOfClass:[DOMHTMLFrameElement class]] || 
-             [node isKindOfClass:[DOMHTMLIFrameElement class]] || 
-             [node isKindOfClass:[DOMHTMLObjectElement class]]) &&
-            ((childFrame = [(DOMHTMLFrameElement *)node contentFrame]) != nil)) {
-            [subframeArchives addObject:[[childFrame dataSource] _archiveWithCurrentState:YES]];
-        } else {
-            NSEnumerator *enumerator = [[node _subresourceURLs] objectEnumerator];
-            NSURL *URL;
-            while ((URL = [enumerator nextObject]) != nil) {
-                WebResource *subresource = [self subresourceForURL:URL];
-                if (subresource) {
-                    [subresources addObject:subresource];
-                } else {
-                    ERROR("Failed to archive subresource for %@", URL);
-                }
-            }
-        }
-    }
-    
-    WebArchive *archive = [[[WebArchive alloc] initWithMainResource:mainResource subresources:subresources subframeArchives:subframeArchives] autorelease];
-    [mainResource release];
-    [subresources release];
-    [subframeArchives release];
-    
-    return archive;
-}
-
-- (NSArray *)_subframeArchivesWithCurrentState:(BOOL)currentState
-{
-    NSEnumerator *enumerator = [[[self webFrame] childFrames] objectEnumerator];
-    NSMutableArray *subframeArchives = [NSMutableArray array];
-    WebFrame *childFrame;
-    while ((childFrame = [enumerator nextObject])) {
-        [subframeArchives addObject:[[childFrame dataSource] _archiveWithCurrentState:currentState]];
-    }
-    return subframeArchives;
-}
-
-- (WebArchive *)_archiveWithCurrentState:(BOOL)currentState
-{
-    ASSERT(_private->committed);
-
-    if (currentState && [[self representation] conformsToProtocol:@protocol(WebDocumentDOM)])
-        return [[(id <WebDocumentDOM>)[self representation] DOMDocument] webArchive];
-    else
-        return [[[WebArchive alloc] initWithMainResource:[self mainResource] 
-                                            subresources:[_private->subresources allValues]
-                                        subframeArchives:[self _subframeArchivesWithCurrentState:currentState]] autorelease];
 }
 
 - (void)_addSubframeArchives:(NSArray *)subframeArchives
@@ -1190,7 +1123,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     if (!_private->committed)
         return nil;
 
-    return [self _archiveWithCurrentState:NO];
+    return [WebArchiver archiveFrame:[self webFrame]];
 }
 
 - (WebResource *)mainResource

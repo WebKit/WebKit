@@ -55,7 +55,6 @@
 + (NSArray *)_insertablePasteboardTypes;
 + (NSArray *)_selectionPasteboardTypes;
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard;
-- (WebArchive *)_selectedArchive;
 
 - (void)_frameOrBoundsChanged;
 

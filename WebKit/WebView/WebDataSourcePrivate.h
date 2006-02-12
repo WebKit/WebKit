@@ -140,8 +140,6 @@
 - (void)_addSubresources:(NSArray *)subresources;
 - (NSFileWrapper *)_fileWrapperForURL:(NSURL *)URL;
 
-- (WebArchive *)_archiveWithCurrentState:(BOOL)currentState;
-- (WebArchive *)_archiveWithMarkupString:(NSString *)markupString nodes:(NSArray *)nodes;
 - (void)_addSubframeArchives:(NSArray *)subframeArchives;
 - (WebArchive *)_popSubframeArchiveWithName:(NSString *)frameName;
 
