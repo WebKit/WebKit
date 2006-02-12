@@ -1,3 +1,38 @@
+2006-02-11  Darin Adler  <darin@apple.com>
+
+        Rubber-stamped by Eric.
+
+        - renamed all the platform/mac files to have a Mac suffix
+          (Hyatt and I discussed this change recently)
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mac/Color.mm: Removed.
+        * platform/mac/ColorMac.mm: Added.
+        * platform/mac/FloatPoint.mm: Removed.
+        * platform/mac/FloatPointMac.mm: Added.
+        * platform/mac/FloatRect.mm: Removed.
+        * platform/mac/FloatRectMac.mm: Added.
+        * platform/mac/FloatSize.mm: Removed.
+        * platform/mac/FloatSizeMac.mm: Added.
+        * platform/mac/Image.mm: Removed.
+        * platform/mac/ImageMac.mm: Added.
+        * platform/mac/ImageSource.cpp: Removed.
+        * platform/mac/ImageSourceMac.cpp: Added.
+        * platform/mac/IntPoint.mm: Removed.
+        * platform/mac/IntPointMac.mm: Added.
+        * platform/mac/IntRect.mm: Removed.
+        * platform/mac/IntRectMac.mm: Added.
+        * platform/mac/IntSize.mm: Removed.
+        * platform/mac/IntSizeMac.mm: Added.
+        * platform/mac/QString.mm: Removed.
+        * platform/mac/QStringMac.mm: Added.
+        * platform/mac/Screen.mm: Removed.
+        * platform/mac/ScreenMac.mm: Added.
+        * platform/mac/SystemTime.cpp: Removed.
+        * platform/mac/SystemTimeMac.cpp: Added.
+        * platform/mac/Timer.cpp: Removed.
+        * platform/mac/TimerMac.cpp: Added.
+
 2006-02-11  Eric Seidel  <eseidel@apple.com>
 
         Rubber-stamped by darin.

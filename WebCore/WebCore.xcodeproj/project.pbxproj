@@ -71,21 +71,21 @@
 		65743B53097076F8001E7CEF /* RenderSVGText.h in Headers */ = {isa = PBXBuildFile; fileRef = 65743B51097076F8001E7CEF /* RenderSVGText.h */; };
 		6582A13F09999CD600BEEB6D /* QString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6582A13D09999CD600BEEB6D /* QString.cpp */; };
 		6582A14009999CD600BEEB6D /* QString.h in Headers */ = {isa = PBXBuildFile; fileRef = 6582A13E09999CD600BEEB6D /* QString.h */; };
-		6582A15709999D6D00BEEB6D /* Color.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A14909999D6C00BEEB6D /* Color.mm */; };
-		6582A15809999D6D00BEEB6D /* FloatPoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A14A09999D6C00BEEB6D /* FloatPoint.mm */; };
-		6582A15909999D6D00BEEB6D /* FloatRect.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A14B09999D6C00BEEB6D /* FloatRect.mm */; };
-		6582A15A09999D6D00BEEB6D /* FloatSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A14C09999D6C00BEEB6D /* FloatSize.mm */; };
-		6582A15B09999D6D00BEEB6D /* Image.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A14D09999D6C00BEEB6D /* Image.mm */; };
-		6582A15C09999D6D00BEEB6D /* ImageSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6582A14E09999D6D00BEEB6D /* ImageSource.cpp */; };
-		6582A15D09999D6D00BEEB6D /* IntPoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A14F09999D6D00BEEB6D /* IntPoint.mm */; };
-		6582A15E09999D6D00BEEB6D /* IntRect.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A15009999D6D00BEEB6D /* IntRect.mm */; };
-		6582A15F09999D6D00BEEB6D /* IntSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A15109999D6D00BEEB6D /* IntSize.mm */; };
+		6582A15709999D6D00BEEB6D /* ColorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A14909999D6C00BEEB6D /* ColorMac.mm */; };
+		6582A15809999D6D00BEEB6D /* FloatPointMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A14A09999D6C00BEEB6D /* FloatPointMac.mm */; };
+		6582A15909999D6D00BEEB6D /* FloatRectMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A14B09999D6C00BEEB6D /* FloatRectMac.mm */; };
+		6582A15A09999D6D00BEEB6D /* FloatSizeMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A14C09999D6C00BEEB6D /* FloatSizeMac.mm */; };
+		6582A15B09999D6D00BEEB6D /* ImageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A14D09999D6C00BEEB6D /* ImageMac.mm */; };
+		6582A15C09999D6D00BEEB6D /* ImageSourceMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6582A14E09999D6D00BEEB6D /* ImageSourceMac.cpp */; };
+		6582A15D09999D6D00BEEB6D /* IntPointMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A14F09999D6D00BEEB6D /* IntPointMac.mm */; };
+		6582A15E09999D6D00BEEB6D /* IntRectMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A15009999D6D00BEEB6D /* IntRectMac.mm */; };
+		6582A15F09999D6D00BEEB6D /* IntSizeMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A15109999D6D00BEEB6D /* IntSizeMac.mm */; };
 		6582A16009999D6D00BEEB6D /* PDFDocumentImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 6582A15209999D6D00BEEB6D /* PDFDocumentImage.h */; };
 		6582A16109999D6D00BEEB6D /* PDFDocumentImage.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A15309999D6D00BEEB6D /* PDFDocumentImage.mm */; };
-		6582A16209999D6D00BEEB6D /* Screen.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A15409999D6D00BEEB6D /* Screen.mm */; };
-		6582A16309999D6D00BEEB6D /* SystemTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6582A15509999D6D00BEEB6D /* SystemTime.cpp */; };
-		6582A16409999D6D00BEEB6D /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6582A15609999D6D00BEEB6D /* Timer.cpp */; };
-		6582A17809999EA000BEEB6D /* QString.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A17709999EA000BEEB6D /* QString.mm */; };
+		6582A16209999D6D00BEEB6D /* ScreenMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A15409999D6D00BEEB6D /* ScreenMac.mm */; };
+		6582A16309999D6D00BEEB6D /* SystemTimeMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6582A15509999D6D00BEEB6D /* SystemTimeMac.cpp */; };
+		6582A16409999D6D00BEEB6D /* TimerMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6582A15609999D6D00BEEB6D /* TimerMac.cpp */; };
+		6582A17809999EA000BEEB6D /* QStringMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6582A17709999EA000BEEB6D /* QStringMac.mm */; };
 		65A21468097A329100B9050A /* Page.h in Headers */ = {isa = PBXBuildFile; fileRef = 65A21467097A329100B9050A /* Page.h */; };
 		65A21484097A3F5300B9050A /* FrameTreeNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65A21482097A3F5300B9050A /* FrameTreeNode.cpp */; };
 		65A21485097A3F5300B9050A /* FrameTreeNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 65A21483097A3F5300B9050A /* FrameTreeNode.h */; };
@@ -1159,21 +1159,21 @@
 		65743B51097076F8001E7CEF /* RenderSVGText.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSVGText.h; sourceTree = "<group>"; };
 		6582A13D09999CD600BEEB6D /* QString.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = QString.cpp; path = platform/QString.cpp; sourceTree = "<group>"; };
 		6582A13E09999CD600BEEB6D /* QString.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = QString.h; path = platform/QString.h; sourceTree = "<group>"; };
-		6582A14909999D6C00BEEB6D /* Color.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = Color.mm; sourceTree = "<group>"; };
-		6582A14A09999D6C00BEEB6D /* FloatPoint.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FloatPoint.mm; sourceTree = "<group>"; };
-		6582A14B09999D6C00BEEB6D /* FloatRect.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FloatRect.mm; sourceTree = "<group>"; };
-		6582A14C09999D6C00BEEB6D /* FloatSize.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FloatSize.mm; sourceTree = "<group>"; };
-		6582A14D09999D6C00BEEB6D /* Image.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = Image.mm; sourceTree = "<group>"; };
-		6582A14E09999D6D00BEEB6D /* ImageSource.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ImageSource.cpp; sourceTree = "<group>"; };
-		6582A14F09999D6D00BEEB6D /* IntPoint.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = IntPoint.mm; sourceTree = "<group>"; };
-		6582A15009999D6D00BEEB6D /* IntRect.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = IntRect.mm; sourceTree = "<group>"; };
-		6582A15109999D6D00BEEB6D /* IntSize.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = IntSize.mm; sourceTree = "<group>"; };
+		6582A14909999D6C00BEEB6D /* ColorMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ColorMac.mm; sourceTree = "<group>"; };
+		6582A14A09999D6C00BEEB6D /* FloatPointMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FloatPointMac.mm; sourceTree = "<group>"; };
+		6582A14B09999D6C00BEEB6D /* FloatRectMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FloatRectMac.mm; sourceTree = "<group>"; };
+		6582A14C09999D6C00BEEB6D /* FloatSizeMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FloatSizeMac.mm; sourceTree = "<group>"; };
+		6582A14D09999D6C00BEEB6D /* ImageMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageMac.mm; sourceTree = "<group>"; };
+		6582A14E09999D6D00BEEB6D /* ImageSourceMac.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ImageSourceMac.cpp; sourceTree = "<group>"; };
+		6582A14F09999D6D00BEEB6D /* IntPointMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = IntPointMac.mm; sourceTree = "<group>"; };
+		6582A15009999D6D00BEEB6D /* IntRectMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = IntRectMac.mm; sourceTree = "<group>"; };
+		6582A15109999D6D00BEEB6D /* IntSizeMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = IntSizeMac.mm; sourceTree = "<group>"; };
 		6582A15209999D6D00BEEB6D /* PDFDocumentImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PDFDocumentImage.h; sourceTree = "<group>"; };
 		6582A15309999D6D00BEEB6D /* PDFDocumentImage.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = PDFDocumentImage.mm; sourceTree = "<group>"; };
-		6582A15409999D6D00BEEB6D /* Screen.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = Screen.mm; sourceTree = "<group>"; };
-		6582A15509999D6D00BEEB6D /* SystemTime.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SystemTime.cpp; sourceTree = "<group>"; };
-		6582A15609999D6D00BEEB6D /* Timer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Timer.cpp; sourceTree = "<group>"; };
-		6582A17709999EA000BEEB6D /* QString.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = QString.mm; sourceTree = "<group>"; };
+		6582A15409999D6D00BEEB6D /* ScreenMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ScreenMac.mm; sourceTree = "<group>"; };
+		6582A15509999D6D00BEEB6D /* SystemTimeMac.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SystemTimeMac.cpp; sourceTree = "<group>"; };
+		6582A15609999D6D00BEEB6D /* TimerMac.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TimerMac.cpp; sourceTree = "<group>"; };
+		6582A17709999EA000BEEB6D /* QStringMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = QStringMac.mm; sourceTree = "<group>"; };
 		65912B0D0586921000123A69 /* xmlserializer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xmlserializer.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65912B0E0586921000123A69 /* xmlserializer.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = xmlserializer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65A21467097A329100B9050A /* Page.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Page.h; sourceTree = "<group>"; };
@@ -2339,21 +2339,21 @@
 		6582A14809999D6C00BEEB6D /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				6582A17709999EA000BEEB6D /* QString.mm */,
-				6582A14909999D6C00BEEB6D /* Color.mm */,
-				6582A14A09999D6C00BEEB6D /* FloatPoint.mm */,
-				6582A14B09999D6C00BEEB6D /* FloatRect.mm */,
-				6582A14C09999D6C00BEEB6D /* FloatSize.mm */,
-				6582A14D09999D6C00BEEB6D /* Image.mm */,
-				6582A14E09999D6D00BEEB6D /* ImageSource.cpp */,
-				6582A14F09999D6D00BEEB6D /* IntPoint.mm */,
-				6582A15009999D6D00BEEB6D /* IntRect.mm */,
-				6582A15109999D6D00BEEB6D /* IntSize.mm */,
+				6582A17709999EA000BEEB6D /* QStringMac.mm */,
+				6582A14909999D6C00BEEB6D /* ColorMac.mm */,
+				6582A14A09999D6C00BEEB6D /* FloatPointMac.mm */,
+				6582A14B09999D6C00BEEB6D /* FloatRectMac.mm */,
+				6582A14C09999D6C00BEEB6D /* FloatSizeMac.mm */,
+				6582A14D09999D6C00BEEB6D /* ImageMac.mm */,
+				6582A14E09999D6D00BEEB6D /* ImageSourceMac.cpp */,
+				6582A14F09999D6D00BEEB6D /* IntPointMac.mm */,
+				6582A15009999D6D00BEEB6D /* IntRectMac.mm */,
+				6582A15109999D6D00BEEB6D /* IntSizeMac.mm */,
 				6582A15209999D6D00BEEB6D /* PDFDocumentImage.h */,
 				6582A15309999D6D00BEEB6D /* PDFDocumentImage.mm */,
-				6582A15409999D6D00BEEB6D /* Screen.mm */,
-				6582A15509999D6D00BEEB6D /* SystemTime.cpp */,
-				6582A15609999D6D00BEEB6D /* Timer.cpp */,
+				6582A15409999D6D00BEEB6D /* ScreenMac.mm */,
+				6582A15509999D6D00BEEB6D /* SystemTimeMac.cpp */,
+				6582A15609999D6D00BEEB6D /* TimerMac.cpp */,
 			);
 			name = mac;
 			path = platform/mac;
@@ -5448,20 +5448,20 @@
 				93CD4FE30995F9EA007ECC97 /* StringImpl.cpp in Sources */,
 				9327A94209968D1A0068A546 /* HTMLOptionsCollectionImpl.cpp in Sources */,
 				6582A13F09999CD600BEEB6D /* QString.cpp in Sources */,
-				6582A15709999D6D00BEEB6D /* Color.mm in Sources */,
-				6582A15809999D6D00BEEB6D /* FloatPoint.mm in Sources */,
-				6582A15909999D6D00BEEB6D /* FloatRect.mm in Sources */,
-				6582A15A09999D6D00BEEB6D /* FloatSize.mm in Sources */,
-				6582A15B09999D6D00BEEB6D /* Image.mm in Sources */,
-				6582A15C09999D6D00BEEB6D /* ImageSource.cpp in Sources */,
-				6582A15D09999D6D00BEEB6D /* IntPoint.mm in Sources */,
-				6582A15E09999D6D00BEEB6D /* IntRect.mm in Sources */,
-				6582A15F09999D6D00BEEB6D /* IntSize.mm in Sources */,
+				6582A15709999D6D00BEEB6D /* ColorMac.mm in Sources */,
+				6582A15809999D6D00BEEB6D /* FloatPointMac.mm in Sources */,
+				6582A15909999D6D00BEEB6D /* FloatRectMac.mm in Sources */,
+				6582A15A09999D6D00BEEB6D /* FloatSizeMac.mm in Sources */,
+				6582A15B09999D6D00BEEB6D /* ImageMac.mm in Sources */,
+				6582A15C09999D6D00BEEB6D /* ImageSourceMac.cpp in Sources */,
+				6582A15D09999D6D00BEEB6D /* IntPointMac.mm in Sources */,
+				6582A15E09999D6D00BEEB6D /* IntRectMac.mm in Sources */,
+				6582A15F09999D6D00BEEB6D /* IntSizeMac.mm in Sources */,
 				6582A16109999D6D00BEEB6D /* PDFDocumentImage.mm in Sources */,
-				6582A16209999D6D00BEEB6D /* Screen.mm in Sources */,
-				6582A16309999D6D00BEEB6D /* SystemTime.cpp in Sources */,
-				6582A16409999D6D00BEEB6D /* Timer.cpp in Sources */,
-				6582A17809999EA000BEEB6D /* QString.mm in Sources */,
+				6582A16209999D6D00BEEB6D /* ScreenMac.mm in Sources */,
+				6582A16309999D6D00BEEB6D /* SystemTimeMac.cpp in Sources */,
+				6582A16409999D6D00BEEB6D /* TimerMac.cpp in Sources */,
+				6582A17809999EA000BEEB6D /* QStringMac.mm in Sources */,
 				1A2154EE099A11A800343DF8 /* JSDOMCore.cpp in Sources */,
 				1A2154EF099A11A800343DF8 /* JSDOMEvents.cpp in Sources */,
 			);
