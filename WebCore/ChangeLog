@@ -1,3 +1,9 @@
+2006-02-12  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        * loader/CachedXSLStyleSheet.cpp: removed duplicate copy of xbl code.
+
 2006-02-12  Maciej Stachowiak  <mjs@apple.com>
 
         Unreviewed build fix.
