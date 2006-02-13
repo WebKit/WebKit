@@ -1,3 +1,40 @@
+2006-02-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Geoff.
+        
+        - comment out remote <base> URLs, these were making the tests hang for a long time
+
+        This also made the affected tests start passing.
+        
+        * dom/xhtml/level2/html/HTMLBodyElement01-expected.checksum: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement01-expected.png: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement01-expected.txt:
+        * dom/xhtml/level2/html/HTMLBodyElement01.xhtml:
+        * dom/xhtml/level2/html/HTMLBodyElement02-expected.checksum: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement02-expected.png: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement02-expected.txt:
+        * dom/xhtml/level2/html/HTMLBodyElement02.xhtml:
+        * dom/xhtml/level2/html/HTMLBodyElement03-expected.checksum: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement03-expected.png: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement03-expected.txt:
+        * dom/xhtml/level2/html/HTMLBodyElement03.xhtml:
+        * dom/xhtml/level2/html/HTMLBodyElement04-expected.checksum: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement04-expected.png: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement04-expected.txt:
+        * dom/xhtml/level2/html/HTMLBodyElement04.xhtml:
+        * dom/xhtml/level2/html/HTMLBodyElement05-expected.checksum: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement05-expected.png: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement05-expected.txt:
+        * dom/xhtml/level2/html/HTMLBodyElement05.xhtml:
+        * dom/xhtml/level2/html/HTMLBodyElement06-expected.checksum: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement06-expected.png: Removed.
+        * dom/xhtml/level2/html/HTMLBodyElement06-expected.txt:
+        * dom/xhtml/level2/html/HTMLBodyElement06.xhtml:
+        * dom/xhtml/level2/html/body01-expected.checksum: Removed.
+        * dom/xhtml/level2/html/body01-expected.png: Removed.
+        * dom/xhtml/level2/html/body01-expected.txt:
+        * dom/xhtml/level2/html/body01.xhtml:
+
 2006-02-11  Alexander Kellett  <lypanov@kde.org>
 
         Adding test case for
