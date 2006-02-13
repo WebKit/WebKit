@@ -1,5 +1,17 @@
 2006-02-12  Darin Adler  <darin@apple.com>
 
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7206
+          REGRESSION: PDF "images" no longer render within HTML pages
+
+        Test: fast/replaced/page-as-image.html
+
+        * platform/Image.cpp: (WebCore::Image::setNativeData):
+        Return false in the case where the PDF document has not been created yet.
+
+2006-02-12  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - http://bugzilla.opendarwin.org/show_bug.cgi?id=7209

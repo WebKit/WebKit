@@ -165,7 +165,7 @@ bool Image::setNativeData(NativeBytePtr data, bool allDataReceived)
     if (m_isPDF) {
         if (allDataReceived && !m_PDFDoc)
             m_PDFDoc = new PDFDocumentImage((NSData*)data);
-        return true;
+        return m_PDFDoc;
     }
 #endif
 
