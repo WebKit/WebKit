@@ -696,9 +696,9 @@ public:
   virtual QString mimeTypeForFileName(const QString &) const = 0;
   virtual void clearRecordedFormValues() = 0;
   virtual void recordFormValue(const QString &name, const QString &value, HTMLFormElementImpl *element) = 0;
-  virtual KJS::Bindings::Instance *getEmbedInstanceForWidget(QWidget*) = 0;
-  virtual KJS::Bindings::Instance *getObjectInstanceForWidget(QWidget*) = 0;
-  virtual KJS::Bindings::Instance *getAppletInstanceForWidget(QWidget*) = 0;
+  virtual KJS::Bindings::Instance *getEmbedInstanceForWidget(Widget*) = 0;
+  virtual KJS::Bindings::Instance *getObjectInstanceForWidget(Widget*) = 0;
+  virtual KJS::Bindings::Instance *getAppletInstanceForWidget(Widget*) = 0;
   virtual void markMisspellingsInAdjacentWords(const VisiblePosition &) = 0;
   virtual void markMisspellings(const SelectionController &) = 0;
   virtual void addMessageToConsole(const DOMString& message,  unsigned int lineNumber, const DOMString& sourceID) = 0;
@@ -894,12 +894,12 @@ private:
   void saveInterpreterBuiltins(KJS::SavedBuiltins &interpreterBuiltins);
   void restoreInterpreterBuiltins(const KJS::SavedBuiltins &interpreterBuiltins);
 
-  static Frame *frameForWidget(const QWidget *);
-  static NodeImpl *nodeForWidget(const QWidget *);
+  static Frame *frameForWidget(const Widget *);
+  static NodeImpl *nodeForWidget(const Widget *);
   static Frame *frameForNode(NodeImpl *);
 
-  static void setDocumentFocus(QWidget *);
-  static void clearDocumentFocus(QWidget *);
+  static void setDocumentFocus(Widget *);
+  static void clearDocumentFocus(Widget *);
 
   static const QPtrList<Frame> &instances() { return mutableInstances(); }    
   static QPtrList<Frame> &mutableInstances();
@@ -917,7 +917,7 @@ private:
   bool canMouseDownStartSelect(NodeImpl* node);
   bool passWidgetMouseDownEventToWidget(MouseEvent *, bool isDoubleClick);
   bool passWidgetMouseDownEventToWidget(RenderWidget *);
-  virtual bool passMouseDownEventToWidget(QWidget *) = 0;
+  virtual bool passMouseDownEventToWidget(Widget *) = 0;
 
   void clearTimers();
   static void clearTimers(FrameView *);

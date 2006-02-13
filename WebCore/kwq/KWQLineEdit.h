@@ -26,8 +26,9 @@
 #ifndef QLINEEDIT_H_
 #define QLINEEDIT_H_
 
+#include "PlatformString.h"
 #include "QString.h"
-#include "KWQWidget.h"
+#include "Widget.h"
 #include "KWQPainter.h"
 
 #ifdef __OBJC__
@@ -37,7 +38,7 @@ NSControlSize KWQNSControlSizeForFont(const QFont&);
 class KWQTextFieldController;
 #endif
 
-class QLineEdit : public QWidget {
+class QLineEdit : public Widget {
 public:
     enum Type { Normal, Password, Search };
 

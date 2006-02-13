@@ -32,6 +32,7 @@
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "IntPointArray.h"
 #include "KWQAccObjectCache.h" 
 #include "Pen.h"
 #include "RenderBlock.h"

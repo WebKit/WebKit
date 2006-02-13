@@ -27,11 +27,11 @@
 #import "Screen.h"
 
 #import "IntRect.h"
-#import "KWQWidget.h"
+#import "Widget.h"
 
 namespace WebCore {
 
-static NSScreen* screen(QWidget* widget)
+static NSScreen* screen(Widget* widget)
 {
     if (widget)
         if (NSScreen* screen = [[widget->getView() window] screen])
@@ -45,17 +45,17 @@ static NSRect flipGlobalRect(NSRect rect)
     return rect;
 }
 
-int screenDepth(QWidget* widget)
+int screenDepth(Widget* widget)
 {
     return [screen(widget) depth];
 }
 
-IntRect screenRect(QWidget* widget)
+IntRect screenRect(Widget* widget)
 {
     return enclosingIntRect(flipGlobalRect([screen(widget) frame]));
 }
 
-IntRect usableScreenRect(QWidget* widget)
+IntRect usableScreenRect(Widget* widget)
 {
     return enclosingIntRect(flipGlobalRect([screen(widget) visibleFrame]));
 }

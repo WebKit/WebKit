@@ -36,6 +36,7 @@
 #import "InlineTextBox.h"
 #import "KWQAccObjectCache.h"
 #import "KWQClipboard.h"
+#import "KWQCursor.h"
 #import "KWQEditCommand.h"
 #import "KWQEvent.h"
 #import "KWQExceptions.h"
@@ -50,6 +51,7 @@
 #import "KWQTextCodec.h"
 #import "KWQWindowWidget.h"
 #import "Plugin.h"
+#import "RenderTableCell.h"
 #import "SelectionController.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreGraphicsBridge.h"
@@ -71,11 +73,9 @@
 #import "render_list.h"
 #import "render_style.h"
 #import "render_theme.h"
-#import "RenderTableCell.h"
 #import "visible_position.h"
 #import "visible_text.h"
 #import "visible_units.h"
-
 #import <JavaScriptCore/NP_jsobject.h>
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
 #import <JavaScriptCore/identifier.h>
@@ -604,7 +604,7 @@ Plugin* MacFrame::createPlugin(const KURL& url, const QStringList& paramNames, c
 {
     KWQ_BLOCK_EXCEPTIONS;
 
-    return new Plugin(new QWidget([_bridge viewForPluginWithURL:url.getNSURL()
+    return new Plugin(new Widget([_bridge viewForPluginWithURL:url.getNSURL()
                                   attributeNames:paramNames.getNSArray()
                                   attributeValues:paramValues.getNSArray()
                                   MIMEType:mimeType.getNSString()]));
@@ -962,7 +962,7 @@ NSView *MacFrame::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirection direc
         RenderObject *renderer = node->renderer();
         if (renderer->isWidget()) {
             RenderWidget *renderWidget = static_cast<RenderWidget *>(renderer);
-            QWidget *widget = renderWidget->widget();
+            Widget *widget = renderWidget->widget();
             FrameView *childFrameWidget = widget->isFrameView() ? static_cast<FrameView *>(widget) : 0;
             NSView *view = nil;
             if (childFrameWidget) {
@@ -1027,16 +1027,16 @@ NSView *MacFrame::nextKeyView(NodeImpl *node, KWQSelectionDirection direction)
     return nextKeyViewInFrameHierarchy(0, direction);
 }
 
-NSView *MacFrame::nextKeyViewForWidget(QWidget *startingWidget, KWQSelectionDirection direction)
+NSView *MacFrame::nextKeyViewForWidget(Widget *startingWidget, KWQSelectionDirection direction)
 {
-    // Use the event filter object to figure out which RenderWidget owns this QWidget and get to the DOM.
+    // Use the event filter object to figure out which RenderWidget owns this Widget and get to the DOM.
     // Then get the next key view in the order determined by the DOM.
     NodeImpl *node = nodeForWidget(startingWidget);
     ASSERT(node);
     return Mac(frameForNode(node))->nextKeyView(node, direction);
 }
 
-bool MacFrame::currentEventIsMouseDownInWidget(QWidget *candidate)
+bool MacFrame::currentEventIsMouseDownInWidget(Widget *candidate)
 {
     KWQ_BLOCK_EXCEPTIONS;
     switch ([[NSApp currentEvent] type]) {
@@ -1270,7 +1270,7 @@ void MacFrame::openURLFromPageCache(KWQPageState *state)
     checkCompleted();
 }
 
-WebCoreFrameBridge *MacFrame::bridgeForWidget(const QWidget *widget)
+WebCoreFrameBridge *MacFrame::bridgeForWidget(const Widget *widget)
 {
     ASSERT_ARG(widget, widget);
     
@@ -1502,12 +1502,12 @@ void MacFrame::khtmlMousePressEvent(MousePressEvent *event)
     }
 }
 
-bool MacFrame::passMouseDownEventToWidget(QWidget* widget)
+bool MacFrame::passMouseDownEventToWidget(Widget* widget)
 {
     // FIXME: this method always returns true
 
     if (!widget) {
-        ERROR("hit a RenderWidget without a corresponding QWidget, means a frame is half-constructed");
+        ERROR("hit a RenderWidget without a corresponding Widget, means a frame is half-constructed");
         return true;
     }
 
@@ -1944,7 +1944,7 @@ bool MacFrame::passSubframeEventToSubframe(NodeImpl::MouseEvent &event)
             RenderObject *renderer = node->renderer();
             if (!renderer || !renderer->isWidget())
                 return false;
-            QWidget *widget = static_cast<RenderWidget *>(renderer)->widget();
+            Widget *widget = static_cast<RenderWidget *>(renderer)->widget();
             if (!widget || !widget->isFrameView())
                 return false;
             Frame *subframePart = static_cast<FrameView *>(widget)->frame();
@@ -1963,7 +1963,7 @@ bool MacFrame::passSubframeEventToSubframe(NodeImpl::MouseEvent &event)
             if (!renderer || !renderer->isWidget()) {
                 return false;
             }
-            QWidget *widget = static_cast<RenderWidget *>(renderer)->widget();
+            Widget *widget = static_cast<RenderWidget *>(renderer)->widget();
             if (!widget || !widget->isFrameView())
                 return false;
             if (!passWidgetMouseDownEventToWidget(static_cast<RenderWidget *>(renderer))) {
@@ -2018,7 +2018,7 @@ bool MacFrame::passWheelEventToChildWidget(NodeImpl *node)
         RenderObject *renderer = node->renderer();
         if (!renderer || !renderer->isWidget())
             return false;
-        QWidget *widget = static_cast<RenderWidget *>(renderer)->widget();
+        Widget *widget = static_cast<RenderWidget *>(renderer)->widget();
         if (!widget)
             return false;
             
@@ -3098,7 +3098,7 @@ void Frame::print()
     [Mac(this)->_bridge print];
 }
 
-KJS::Bindings::Instance *MacFrame::getAppletInstanceForWidget(QWidget *widget)
+KJS::Bindings::Instance *MacFrame::getAppletInstanceForWidget(Widget *widget)
 {
     NSView *aView = widget->getView();
     if (!aView)
@@ -3141,12 +3141,12 @@ static KJS::Bindings::Instance *getInstanceForView(NSView *aView)
     return 0;
 }
 
-KJS::Bindings::Instance *MacFrame::getEmbedInstanceForWidget(QWidget *widget)
+KJS::Bindings::Instance *MacFrame::getEmbedInstanceForWidget(Widget *widget)
 {
     return getInstanceForView(widget->getView());
 }
 
-KJS::Bindings::Instance *MacFrame::getObjectInstanceForWidget(QWidget *widget)
+KJS::Bindings::Instance *MacFrame::getObjectInstanceForWidget(Widget *widget)
 {
     return getInstanceForView(widget->getView());
 }

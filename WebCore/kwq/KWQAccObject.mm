@@ -34,7 +34,7 @@
 #import "KWQAccObjectCache.h"
 #import <kxmlcore/Assertions.h>
 #import "KWQFoundationExtras.h"
-#import "KWQWidget.h"
+#import "Widget.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreFrameView.h"
 #import "WebCoreViewFactory.h"
@@ -252,7 +252,7 @@ using namespace HTMLNames;
     // try to add RenderWidget's children, but fall thru if there are none
     if (m_renderer->isWidget()) {
         RenderWidget* renderWidget = static_cast<RenderWidget*>(m_renderer);
-        QWidget* widget = renderWidget->widget();
+        Widget* widget = renderWidget->widget();
         if (widget) {
             NSArray* childArr = [(widget->getOuterView()) accessibilityAttributeValue: NSAccessibilityChildrenAttribute];
             [array addObjectsFromArray: childArr];
@@ -302,7 +302,7 @@ using namespace HTMLNames;
     ASSERT(m_renderer->isReplaced() && m_renderer->isWidget() && !m_renderer->isImage());
 
     RenderWidget* renderWidget = static_cast<RenderWidget*>(m_renderer);
-    QWidget* widget = renderWidget->widget();
+    Widget* widget = renderWidget->widget();
     if (widget)
          return widget->getView();
     
@@ -1072,7 +1072,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
             break;
 
         // descend into widget (FRAME, IFRAME, OBJECT...)
-        QWidget *widget = static_cast<RenderWidget *>(renderer)->widget();
+        Widget *widget = static_cast<RenderWidget *>(renderer)->widget();
         if (!widget || !widget->inherits("FrameView"))
             break;
         Frame *frame = static_cast<FrameView *>(widget)->frame();

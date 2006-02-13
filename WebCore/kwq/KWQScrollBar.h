@@ -26,7 +26,7 @@
 #ifndef KWQSCROLLBAR_H_
 #define KWQSCROLLBAR_H_
 
-#include <qwidget.h>
+#include "Widget.h"
 #include "KWQNamespace.h"
 
 #ifdef __OBJC__
@@ -50,9 +50,9 @@ typedef enum {
     KWQScrollWheel
 } KWQScrollGranularity;
 
-class QScrollBar : public QWidget {
+class QScrollBar : public Widget {
 public:
-    QScrollBar(Orientation orientation, QWidget* parent);
+    QScrollBar(Orientation orientation, Widget* parent);
     ~QScrollBar();
 
     Orientation orientation() { return m_orientation; }

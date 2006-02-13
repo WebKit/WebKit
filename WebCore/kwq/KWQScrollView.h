@@ -38,9 +38,9 @@ class QScrollView : public QFrame {
 public:
     enum ScrollBarMode { Auto, AlwaysOff, AlwaysOn };
 
-    QScrollView(QWidget *parent = 0, const char *name = 0, int flags = 0) { }
+    QScrollView() { }
 
-    QWidget *viewport() const;
+    Widget *viewport() const;
     int visibleWidth() const;
     int visibleHeight() const;
     int contentsWidth() const;
@@ -71,10 +71,10 @@ public:
     bool hasVerticalScrollBar() const;
     bool hasHorizontalScrollBar() const;
     
-    void addChild(QWidget *child, int x = 0, int y = 0);
-    void removeChild(QWidget *child);
-    int childX(QWidget *child);
-    int childY(QWidget *child);
+    void addChild(Widget *child, int x = 0, int y = 0);
+    void removeChild(Widget *child);
+    int childX(Widget *child);
+    int childY(Widget *child);
 
     virtual void resizeContents(int w, int h);
     void updateContents(int x, int y, int w, int h, bool now=false);

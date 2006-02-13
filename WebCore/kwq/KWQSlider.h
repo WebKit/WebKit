@@ -26,10 +26,10 @@
 #ifndef KWQSLIDER_H_
 #define KWQSLIDER_H_
 
-#include <qwidget.h>
+#include "Widget.h"
 #include "KWQNamespace.h"
 
-class QSlider : public QWidget {
+class QSlider : public Widget {
 public:
     QSlider();
     ~QSlider();

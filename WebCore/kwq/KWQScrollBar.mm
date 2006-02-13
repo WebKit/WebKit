@@ -79,21 +79,21 @@
     }
 }
 
-- (QWidget *)widget
+- (Widget *)widget
 {
     return scrollBar;
 }
 
 - (void)mouseDown:(NSEvent *)event
 {
-    QWidget::beforeMouseDown(self);
+    Widget::beforeMouseDown(self);
     [super mouseDown:event];
-    QWidget::afterMouseDown(self);
+    Widget::afterMouseDown(self);
 }
 
 @end
 
-QScrollBar::QScrollBar(Orientation orientation, QWidget* parent)
+QScrollBar::QScrollBar(Orientation orientation, Widget* parent)
     : m_orientation(orientation)
     , m_visibleSize(0)
     , m_totalSize(0)
@@ -116,7 +116,7 @@ QScrollBar::~QScrollBar()
     KWQScrollBar *bar = (KWQScrollBar *)getView();
     [bar detachQScrollBar];
 
-    // QWidget should probably do this for all widgets.
+    // Widget should probably do this for all widgets.
     // But we don't need it for form elements, and for frames it doesn't work
     // well because of the way the NSViews are created in WebKit. So for now,
     // we'll just do it explictly for QScrollBar.

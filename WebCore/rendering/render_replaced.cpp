@@ -37,7 +37,7 @@
 #include <kdebug.h>
 #include <qevent.h>
 #include <qpainter.h>
-#include <qwidget.h>
+#include "Widget.h"
 
 namespace WebCore {
 
@@ -297,7 +297,7 @@ RenderWidget::~RenderWidget()
         delete m_widget;
 }
 
-void  RenderWidget::resizeWidget( QWidget *widget, int w, int h )
+void  RenderWidget::resizeWidget( Widget *widget, int w, int h )
 {
 
     if (element() && (widget->width() != w || widget->height() != h)) {
@@ -309,7 +309,7 @@ void  RenderWidget::resizeWidget( QWidget *widget, int w, int h )
     }
 }
 
-void RenderWidget::setQWidget(QWidget *widget, bool deleteWidget)
+void RenderWidget::setQWidget(Widget *widget, bool deleteWidget)
 {
     if (widget != m_widget)
     {

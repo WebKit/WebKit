@@ -43,7 +43,7 @@ class QTextEdit : public QScrollView
         PlainText,
     } TextFormat;
 
-    QTextEdit(QWidget *parent);
+    QTextEdit(Widget *parent);
     ~QTextEdit();
 
     virtual void setPalette(const QPalette &);

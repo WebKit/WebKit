@@ -98,7 +98,7 @@ void RenderApplet::layout()
     calcHeight();
 
     KJavaAppletWidget *tmp = static_cast<KJavaAppletWidget*>(m_widget);
-    // The applet's QWidget gets created lazily upon first layout.
+    // The applet's Widget gets created lazily upon first layout.
     if (!tmp)
         createWidgetIfNecessary();
     setNeedsLayout(false);

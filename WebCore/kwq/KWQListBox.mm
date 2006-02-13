@@ -68,7 +68,7 @@ const float rightMargin = 2;
 - (id)initWithListBox:(QListBox *)b;
 - (void)detach;
 - (void)_KWQ_setKeyboardFocusRingNeedsDisplay;
-- (QWidget *)widget;
+- (Widget *)widget;
 - (void)setBaseWritingDirection:(NSWritingDirection)direction;
 - (NSWritingDirection)baseWritingDirection;
 - (void)fontChanged;
@@ -129,9 +129,8 @@ static id <WebCoreTextRenderer> groupLabelTextRenderer()
     }
 }
 
-QListBox::QListBox(QWidget *parent)
-    : QScrollView(parent)
-    , _changingSelection(false)
+QListBox::QListBox()
+    : _changingSelection(false)
     , _enabled(true)
     , _widthGood(false)
     , _clicked(this, SIGNAL(clicked(QListBoxItem *)))
@@ -330,9 +329,9 @@ IntSize QListBox::sizeForNumberOfLines(int lines) const
     return IntSize(0, 0);
 }
 
-QWidget::FocusPolicy QListBox::focusPolicy() const
+Widget::FocusPolicy QListBox::focusPolicy() const
 {
-    FocusPolicy policy = QWidget::focusPolicy();
+    FocusPolicy policy = Widget::focusPolicy();
     return policy == TabFocus ? StrongFocus : policy;
 }
 
@@ -373,7 +372,7 @@ void QListBox::clearCachedTextRenderers()
 
 void QListBox::setFont(const QFont &font)
 {
-    QWidget::setFont(font);
+    Widget::setFont(font);
 
     NSScrollView *scrollView = static_cast<NSScrollView *>(getView());
     KWQTableView *tableView = [scrollView documentView];
@@ -382,7 +381,7 @@ void QListBox::setFont(const QFont &font)
 
 @implementation KWQListBoxScrollView
 
-- (QWidget *)widget
+- (Widget *)widget
 {
     KWQTableView *tableView = [self documentView];
     
@@ -403,7 +402,7 @@ void QListBox::setFont(const QFont &font)
 - (BOOL)becomeFirstResponder
 {
     KWQTableView *documentView = [self documentView];
-    QWidget *widget = [documentView widget];
+    Widget *widget = [documentView widget];
     [MacFrame::bridgeForWidget(widget) makeFirstResponder:documentView];
     return YES;
 }
@@ -488,9 +487,9 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
 
     processingMouseEvent = YES;
     NSView *outerView = [_box->getOuterView() retain];
-    QWidget::beforeMouseDown(outerView);
+    Widget::beforeMouseDown(outerView);
     [super mouseDown:event];
-    QWidget::afterMouseDown(outerView);
+    Widget::afterMouseDown(outerView);
     [outerView release];
     processingMouseEvent = NO;
 
@@ -745,7 +744,7 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
     [self setKeyboardFocusRingNeedsDisplayInRect:[self bounds]];
 }
 
-- (QWidget *)widget
+- (Widget *)widget
 {
     return _box;
 }

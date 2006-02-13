@@ -25,9 +25,11 @@
  
 #import <Cocoa/Cocoa.h>
 
-class QWidget;
+namespace WebCore {
+    class Widget;
+}
 
 // all AK View subclasses in KWQ should implement this protocol
 @protocol KWQWidgetHolder
-- (QWidget *)widget;
+- (WebCore::Widget *)widget;
 @end

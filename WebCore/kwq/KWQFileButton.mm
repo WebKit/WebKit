@@ -132,7 +132,7 @@ int KWQFileButton::baselinePosition(int height) const
     return 0;
 }
 
-QWidget::FocusPolicy KWQFileButton::focusPolicy() const
+Widget::FocusPolicy KWQFileButton::focusPolicy() const
 {
     KWQ_BLOCK_EXCEPTIONS;
     
@@ -143,7 +143,7 @@ QWidget::FocusPolicy KWQFileButton::focusPolicy() const
     
     KWQ_UNBLOCK_EXCEPTIONS;
     
-    return QWidget::focusPolicy();
+    return Widget::focusPolicy();
 }
 
 void KWQFileButton::filenameChanged(const QString &filename)

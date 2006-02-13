@@ -23,16 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "KWQWidget.h"
+#include "PlatformString.h"
+#include "Widget.h"
 #include <kxmlcore/HashMap.h>
 
 namespace WebCore {
-    class DOMString;
     class Frame;
 }
 
-class KJavaAppletWidget : public QWidget
+class KJavaAppletWidget : public Widget
 {
 public:
-    KJavaAppletWidget(const IntSize&, WebCore::Frame *, const HashMap<WebCore::DOMString, WebCore::DOMString>& args);
+    KJavaAppletWidget(const IntSize&, WebCore::Frame *, const HashMap<WebCore::String, WebCore::String>& args);
 };

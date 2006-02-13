@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,18 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "KWQTextEdit.h"
 
 #import <kxmlcore/Assertions.h>
 #import "KWQExceptions.h"
+#import "KWQFont.h"
 #import "KWQLineEdit.h"
 #import "KWQPalette.h"
 #import "KWQTextArea.h"
 
 using DOM::DOMString;
 
-QTextEdit::QTextEdit(QWidget *parent)
+QTextEdit::QTextEdit(Widget *parent)
     : _clicked(this, SIGNAL(clicked()))
     , _textChanged(this, SIGNAL(textChanged()))
     , _selectionChanged(this, SIGNAL(selectionChanged()))
@@ -324,7 +325,7 @@ void QTextEdit::setSelectionRange(int start, int length)
 
 void QTextEdit::setFont(const QFont &font)
 {
-    QWidget::setFont(font);
+    Widget::setFont(font);
     KWQTextArea *textView = (KWQTextArea *)getView();
 
     KWQ_BLOCK_EXCEPTIONS;
@@ -379,7 +380,7 @@ IntSize QTextEdit::sizeWithColumnsAndRows(int numColumns, int numRows) const
     return IntSize((int)ceil(size.width), (int)ceil(size.height));
 }
 
-QWidget::FocusPolicy QTextEdit::focusPolicy() const
+Widget::FocusPolicy QTextEdit::focusPolicy() const
 {
     FocusPolicy policy = QScrollView::focusPolicy();
     return policy == TabFocus ? StrongFocus : policy;
@@ -392,7 +393,7 @@ bool QTextEdit::checksDescendantsForFocus() const
 
 void QTextEdit::setPalette(const QPalette &palette)
 {
-    QWidget::setPalette(palette);
+    Widget::setPalette(palette);
 
     KWQTextArea *textArea = static_cast<KWQTextArea *>(getView());
 

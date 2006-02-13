@@ -515,10 +515,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQWidget.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQWindowWidget.h"
 				>
 			</File>
@@ -1690,6 +1686,14 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\SharedTimer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\Widget.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\Widget.cpp"
 				>
 			</File>
 			<Filter

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,26 +24,80 @@
  */
 
 #include "config.h"
-#include "FrameView.h"
+#include "Widget.h"
 
-#include "MacFrame.h"
-#include "KWQWindowWidget.h"
+#include "IntRect.h"
 
 namespace WebCore {
 
-/*
-    Currently this file just extends the KDE implementation.
-    See khtml/khtmlview.cpp for the rest of the implementation.
-*/
-
-Widget *FrameView::topLevelWidget() const 
+IntSize Widget::sizeHint() const 
 {
-    return Mac(frame())->topLevelWidget();
+    return IntSize();
 }
 
-IntPoint FrameView::viewportToGlobal(const IntPoint &p) const
+void Widget::resize(int w, int h) 
 {
-    return static_cast<KWQWindowWidget *>(topLevelWidget())->viewportToGlobal(p);
+    setFrameGeometry(IntRect(x(), y(), w, h));
+}
+
+int Widget::x() const
+{
+    return frameGeometry().x();
+}
+
+int Widget::y() const 
+{
+    return frameGeometry().y();
+}
+
+int Widget::width() const 
+{ 
+    return frameGeometry().width();
+}
+
+int Widget::height() const 
+{
+    return frameGeometry().height();
+}
+
+IntSize Widget::size() const 
+{
+    return frameGeometry().size();
+}
+
+void Widget::resize(const IntSize &s) 
+{
+    resize(s.width(), s.height());
+}
+
+IntPoint Widget::pos() const 
+{
+    return frameGeometry().location();
+}
+
+void Widget::move(int x, int y) 
+{
+    setFrameGeometry(IntRect(x, y, width(), height()));
+}
+
+void Widget::move(const IntPoint &p) 
+{
+    move(p.x(), p.y());
+}
+
+int Widget::baselinePosition(int height) const
+{
+    return height;
+}
+
+bool Widget::checksDescendantsForFocus() const
+{
+    return false;
+}
+
+bool Widget::event(QEvent *)
+{
+    return false;
 }
 
 }

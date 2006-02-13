@@ -26,7 +26,7 @@
 #ifndef KWQFILEBUTTON_H
 #define KWQFILEBUTTON_H
 
-#include "KWQWidget.h"
+#include "Widget.h"
 
 #ifdef __OBJC__
 @class KWQFileButtonAdapter;
@@ -38,7 +38,7 @@ namespace WebCore {
     class Frame;
 }
 
-class KWQFileButton : public QWidget {
+class KWQFileButton : public Widget {
 public:
     KWQFileButton(WebCore::Frame*);
     ~KWQFileButton();

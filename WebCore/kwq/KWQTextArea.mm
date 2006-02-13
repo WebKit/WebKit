@@ -793,7 +793,7 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     [self setKeyboardFocusRingNeedsDisplayInRect:[self bounds]];
 }
 
-- (QWidget *)widget
+- (Widget *)widget
 {
     return widget;
 }
@@ -1037,7 +1037,7 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
     }
 }
 
-- (QWidget *)widget
+- (Widget *)widget
 {
     return widget;
 }

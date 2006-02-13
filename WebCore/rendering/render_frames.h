@@ -96,7 +96,7 @@ public:
     
     virtual const char *renderName() const { return "RenderPart"; }
 
-    virtual void setWidget( QWidget *widget );
+    virtual void setWidget( Widget *widget );
 
     // FIXME: This should not be necessary.  Remove this once WebKit knows to properly schedule
     // layouts using WebCore when objects resize.

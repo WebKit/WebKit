@@ -29,6 +29,8 @@
 // qt includes and classes
 #include <qscrollview.h>
 
+#include "QString.h"
+
 class QFocusEvent;
 class QKeyEvent;
 class QMouseEvent;
@@ -38,6 +40,7 @@ class QWheelEvent;
 
 namespace WebCore {
 
+class AtomicString;
 class CSSProperty;
 class CSSStyleSelector;
 class ClipboardImpl;
@@ -94,13 +97,13 @@ class FrameView : public QScrollView
     friend class RenderPart;
     friend class RenderPartObject;
     friend class RenderWidget;
-    friend void applyRule(DOM::CSSProperty *prop);
+    friend void applyRule(CSSProperty *prop);
 
 public:
     /**
      * Constructs a FrameView.
      */
-    FrameView(Frame *frame, QWidget *parent, const char *name=0 );
+    FrameView(Frame *frame);
     virtual ~FrameView();
 
     /**
@@ -163,7 +166,7 @@ public:
 
     bool needsFullRepaint() const;
     
-    void addRepaintInfo(khtml::RenderObject* o, const IntRect& r);
+    void addRepaintInfo(RenderObject* o, const IntRect& r);
 
     void resetScrollBars();
 
@@ -188,9 +191,9 @@ public:
     void keyPressEvent( QKeyEvent *_ke );
     void doAutoScroll();
 
-    bool updateDragAndDrop(const IntPoint &, DOM::ClipboardImpl *clipboard);
-    void cancelDragAndDrop(const IntPoint &, DOM::ClipboardImpl *clipboard);
-    bool performDragAndDrop(const IntPoint &, DOM::ClipboardImpl *clipboard);
+    bool updateDragAndDrop(const IntPoint &, ClipboardImpl *clipboard);
+    void cancelDragAndDrop(const IntPoint &, ClipboardImpl *clipboard);
+    bool performDragAndDrop(const IntPoint &, ClipboardImpl *clipboard);
 
     void layoutTimerFired(Timer<FrameView>*);
     void hoverTimerFired(Timer<FrameView>*);
@@ -207,7 +210,7 @@ public:
 
     void scheduleHoverStateUpdate();
 
-    QWidget *topLevelWidget() const;
+    Widget *topLevelWidget() const;
     IntPoint mapToGlobal(const IntPoint &) const;
     // maps "viewport" (actually Cocoa window coords) to screen coords
     IntPoint viewportToGlobal(const IntPoint &) const;
@@ -263,19 +266,18 @@ private:
 
     void init();
 
-    DOM::NodeImpl *nodeUnderMouse() const;
+    NodeImpl *nodeUnderMouse() const;
 
     void restoreScrollBar();
 
     QStringList formCompletionItems(const QString &name) const;
     void addFormCompletionItem(const QString &name, const QString &value);
 
-    bool dispatchMouseEvent(const DOM::AtomicString &eventType, DOM::NodeImpl *targetNode, bool cancelable,
-                            int detail,QMouseEvent *_mouse, bool setUnder,
-                            int mouseEventType);
-    bool dispatchDragEvent(const DOM::AtomicString &eventType, DOM::NodeImpl *dragTarget, const IntPoint &loc, DOM::ClipboardImpl *clipboard);
+    bool dispatchMouseEvent(const AtomicString& eventType, NodeImpl* targetNode, bool cancelable,
+        int detail, QMouseEvent*, bool setUnder, int mouseEventType);
+    bool dispatchDragEvent(const AtomicString& eventType, NodeImpl* dragTarget, const IntPoint& loc, ClipboardImpl*);
 
-    void applyOverflowToViewport(khtml::RenderObject* o, ScrollBarMode& hMode, ScrollBarMode& vMode);
+    void applyOverflowToViewport(RenderObject* o, ScrollBarMode& hMode, ScrollBarMode& vMode);
 
     virtual bool isFrameView() const;
 

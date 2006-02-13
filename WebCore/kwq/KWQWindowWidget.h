@@ -26,7 +26,7 @@
 #ifndef KWQKWINDOW_WIDGET_H
 #define KWQKWINDOW_WIDGET_H
 
-#include "KWQWidget.h"
+#include "Widget.h"
 
 #ifdef __OBJC__
 @class WebCoreFrameBridge;
@@ -36,7 +36,7 @@ class WebCoreFrameBridge;
 
 class KWQWindowWidgetPrivate;
 
-class KWQWindowWidget : public QWidget
+class KWQWindowWidget : public Widget
 {
  public:
     virtual ~KWQWindowWidget();
@@ -47,7 +47,7 @@ class KWQWindowWidget : public QWidget
     virtual IntRect frameGeometry() const;
     virtual void setFrameGeometry(const IntRect &);
 
-    virtual QWidget *topLevelWidget() const;
+    virtual Widget *topLevelWidget() const;
     virtual IntPoint mapFromGlobal(const IntPoint &) const;
     virtual IntPoint viewportToGlobal(const IntPoint &) const;
 

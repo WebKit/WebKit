@@ -820,7 +820,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     // If we own the view, delete the old one - otherwise the render m_frame will take care of deleting the view.
     [self removeFromFrame];
 
-    FrameView *kview = new FrameView(m_frame, 0);
+    FrameView* kview = new FrameView(m_frame);
     m_frame->setView(kview);
     kview->deref();
 
@@ -1088,7 +1088,7 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
     NSString *name = [[NSString alloc] initWithUTF8String:node->renderName()];
     
     RenderWidget *renderWidget = node->isWidget() ? static_cast<RenderWidget *>(node) : 0;
-    QWidget *widget = renderWidget ? renderWidget->widget() : 0;
+    Widget *widget = renderWidget ? renderWidget->widget() : 0;
     NSView *view = widget ? widget->getView() : nil;
     
     int nx, ny;
@@ -1171,7 +1171,7 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
     // FIXME: implemented currently for only a subset of the KWQ widgets
     if ([view conformsToProtocol:@protocol(KWQWidgetHolder)]) {
         NSView <KWQWidgetHolder> *widgetHolder = view;
-        QWidget *widget = [widgetHolder widget];
+        Widget *widget = [widgetHolder widget];
         if (widget != nil && widget->eventFilterObject() != nil) {
             NodeImpl *node = static_cast<const RenderWidget *>(widget->eventFilterObject())->element();
             return [DOMElement _elementWithImpl:static_cast<ElementImpl *>(node)];
@@ -2648,7 +2648,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     renderer->layer()->hitTest(nodeInfo, (int)point.x, (int)point.y);
 
     NodeImpl *n;
-    QWidget *widget = 0;
+    Widget *widget = 0;
     IntPoint widgetPoint(point);
     
     while (true) {

@@ -25,12 +25,11 @@
 #include "render_box.h"
 #include <qobject.h>
 
-class QWidget;
-
 namespace WebCore {
 
 class FrameView;
 class Position;
+class Widget;
 
 class RenderReplaced : public RenderBox
 {
@@ -89,7 +88,7 @@ public:
     virtual void destroy();
     virtual void layout( );
 
-    QWidget *widget() const { return m_widget; }
+    Widget *widget() const { return m_widget; }
     FrameView* view() const { return m_view; }
 
     RenderArena *ref() { ++m_refCount; return renderArena(); }
@@ -105,12 +104,12 @@ public slots:
 
 protected:
     bool eventFilter(QObject* /*o*/, QEvent* e);
-    void setQWidget(QWidget *widget, bool deleteWidget = true);
-    void resizeWidget( QWidget *widget, int w, int h );
+    void setQWidget(Widget *widget, bool deleteWidget = true);
+    void resizeWidget( Widget *widget, int w, int h );
     virtual void handleFocusOut();
 
     bool m_deleteWidget;
-    QWidget *m_widget;
+    Widget *m_widget;
     FrameView* m_view;
     int m_refCount;
 };

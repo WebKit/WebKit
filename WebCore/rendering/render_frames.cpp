@@ -654,7 +654,7 @@ RenderPart::~RenderPart()
     }
 }
 
-void RenderPart::setWidget( QWidget *widget )
+void RenderPart::setWidget( Widget *widget )
 {
 #ifdef DEBUG_LAYOUT
     kdDebug(6031) << "RenderPart::setWidget()" << endl;

@@ -218,7 +218,7 @@ IntSize QComboBox::sizeHint() const
 
 IntRect QComboBox::frameGeometry() const
 {
-    IntRect r = QWidget::frameGeometry();
+    IntRect r = Widget::frameGeometry();
     return IntRect(r.x() + dimensions()[leftMargin], r.y() + dimensions()[topMargin],
         r.width() - (dimensions()[leftMargin] + dimensions()[rightMargin]),
         r.height() - (dimensions()[topMargin] + dimensions()[bottomMargin]));
@@ -226,7 +226,7 @@ IntRect QComboBox::frameGeometry() const
 
 void QComboBox::setFrameGeometry(const IntRect& r)
 {
-    QWidget::setFrameGeometry(IntRect(-dimensions()[leftMargin] + r.x(), -dimensions()[topMargin] + r.y(),
+    Widget::setFrameGeometry(IntRect(-dimensions()[leftMargin] + r.x(), -dimensions()[topMargin] + r.y(),
         dimensions()[leftMargin] + r.width() + dimensions()[rightMargin],
         dimensions()[topMargin] + r.height() + dimensions()[bottomMargin]));
 }
@@ -289,7 +289,7 @@ void QComboBox::itemSelected()
 
 void QComboBox::setFont(const QFont &f)
 {
-    QWidget::setFont(f);
+    Widget::setFont(f);
 
     const NSControlSize size = KWQNSControlSizeForFont(f);
     NSControl * const button = static_cast<NSControl *>(getView());
@@ -334,9 +334,9 @@ const int *QComboBox::dimensions() const
     return w[NSSmallControlSize];
 }
 
-QWidget::FocusPolicy QComboBox::focusPolicy() const
+Widget::FocusPolicy QComboBox::focusPolicy() const
 {
-    FocusPolicy policy = QWidget::focusPolicy();
+    FocusPolicy policy = Widget::focusPolicy();
     return policy == TabFocus ? StrongFocus : policy;
 }
 
@@ -423,7 +423,7 @@ void QComboBox::populate()
     return result;
 }
 
-- (QWidget *)widget
+- (Widget *)widget
 {
     return box;
 }
@@ -472,23 +472,23 @@ void QComboBox::populate()
     }
 }
 
-- (QWidget *)widget
+- (Widget *)widget
 {
     return [[self cell] widget];
 }
 
 - (void)mouseDown:(NSEvent *)event
 {
-    QWidget::beforeMouseDown(self);
+    Widget::beforeMouseDown(self);
     [super mouseDown:event];
-    QWidget::afterMouseDown(self);
+    Widget::afterMouseDown(self);
 }
 
 - (BOOL)becomeFirstResponder
 {
     BOOL become = [super becomeFirstResponder];
     if (become) {
-        QWidget *widget = [self widget];
+        Widget *widget = [self widget];
         if (widget) {
             if (!MacFrame::currentEventIsMouseDownInWidget(widget)) {
                 RenderWidget *w = const_cast<RenderWidget *> (static_cast<const RenderWidget *>(widget->eventFilterObject()));
@@ -508,7 +508,7 @@ void QComboBox::populate()
 {
     BOOL resign = [super resignFirstResponder];
     if (resign) {
-        QWidget *widget = [self widget];
+        Widget *widget = [self widget];
         if (widget) {
             QFocusEvent event(QEvent::FocusOut);
             if (widget->eventFilterObject()) {
@@ -535,7 +535,7 @@ void QComboBox::populate()
 
 - (NSView *)nextKeyView
 {
-    QWidget *widget = [self widget];
+    Widget *widget = [self widget];
     return widget && inNextValidKeyView
         ? MacFrame::nextKeyViewForWidget(widget, KWQSelectingNext)
         : [super nextKeyView];
@@ -543,7 +543,7 @@ void QComboBox::populate()
 
 - (NSView *)previousKeyView
 {
-    QWidget *widget = [self widget];
+    Widget *widget = [self widget];
     return widget && inNextValidKeyView
         ? MacFrame::nextKeyViewForWidget(widget, KWQSelectingPrevious)
         : [super previousKeyView];

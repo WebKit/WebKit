@@ -1,3 +1,181 @@
+2006-02-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - moved QWidget to platform directory, renamed to Widget,
+          split into cross-platform and platform-specific parts,
+          removed some of the unused bits
+
+        * ForwardingHeaders/qwidget.h: Removed.
+        * kwq/KWQWidget.h: Removed.
+        * kwq/KWQWidget.mm: Removed.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Update for file removals and adds.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * platform/Widget.h: Moved code here, fixed it up.
+        * platform/Widget.cpp: Ditto.
+        * platform/mac/WidgetMac.mm: Added.
+
+        * bindings/objc/DOMHTML.mm:
+        (viewForElement):
+        * bridge/mac/KWQKHTMLView.cpp:
+        (WebCore::FrameView::topLevelWidget):
+        * bridge/mac/MacFrame.h:
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::createPlugin):
+        (WebCore::MacFrame::nextKeyViewInFrame):
+        (WebCore::MacFrame::nextKeyViewForWidget):
+        (WebCore::MacFrame::currentEventIsMouseDownInWidget):
+        (WebCore::MacFrame::bridgeForWidget):
+        (WebCore::MacFrame::passMouseDownEventToWidget):
+        (WebCore::MacFrame::passSubframeEventToSubframe):
+        (WebCore::MacFrame::passWheelEventToChildWidget):
+        (WebCore::MacFrame::getAppletInstanceForWidget):
+        (WebCore::MacFrame::getEmbedInstanceForWidget):
+        (WebCore::MacFrame::getObjectInstanceForWidget):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge createFrameViewWithNSView:marginWidth:marginHeight:]):
+        (-[WebCoreFrameBridge copyRenderNode:copier:]):
+        (-[WebCoreFrameBridge elementForView:]):
+        (-[WebCoreFrameBridge RenderObject::nodeInfoAtPoint:]):
+        * dom/DocumentImpl.cpp:
+        (WebCore::widgetForNode):
+        (WebCore::DocumentImpl::setFocusNode):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Screen::getValueProperty):
+        (KJS::WindowFunc::callAsFunction):
+        * khtml/html/HTMLGenericFormElementImpl.cpp:
+        (WebCore::HTMLGenericFormElementImpl::isKeyboardFocusable):
+        (WebCore::HTMLGenericFormElementImpl::isMouseFocusable):
+        * khtml/html/html_objectimpl.cpp:
+        (WebCore::HTMLEmbedElementImpl::getEmbedInstance):
+        (WebCore::HTMLObjectElementImpl::getObjectInstance):
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject addChildrenToArray:]):
+        (-[KWQAccObject attachmentView]):
+        (-[KWQAccObject doAXTextMarkerForPosition:]):
+        * kwq/KWQComboBox.h:
+        * kwq/KWQComboBox.mm:
+        (QComboBox::frameGeometry):
+        (QComboBox::setFrameGeometry):
+        (QComboBox::setFont):
+        (QComboBox::focusPolicy):
+        (-[KWQPopUpButtonCell widget]):
+        (-[KWQPopUpButton widget]):
+        (-[KWQPopUpButton mouseDown:]):
+        (-[KWQPopUpButton becomeFirstResponder]):
+        (-[KWQPopUpButton resignFirstResponder]):
+        (-[KWQPopUpButton nextKeyView]):
+        (-[KWQPopUpButton previousKeyView]):
+        * kwq/KWQFileButton.h:
+        * kwq/KWQFileButton.mm:
+        (KWQFileButton::focusPolicy):
+        * kwq/KWQFrame.h:
+        * kwq/KWQKCursor.h:
+        * kwq/KWQKJavaAppletWidget.h:
+        * kwq/KWQKJavaAppletWidget.mm:
+        (KJavaAppletWidget::KJavaAppletWidget):
+        * kwq/KWQLineEdit.h:
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::setFont):
+        (QLineEdit::setPalette):
+        (QLineEdit::focusPolicy):
+        * kwq/KWQListBox.h:
+        * kwq/KWQListBox.mm:
+        (QListBox::QListBox):
+        (QListBox::focusPolicy):
+        (QListBox::setFont):
+        (-[KWQListBoxScrollView widget]):
+        (-[KWQListBoxScrollView becomeFirstResponder]):
+        (-[KWQTableView mouseDown:]):
+        (-[KWQTableView widget]):
+        * kwq/KWQPainter.h:
+        * kwq/KWQRenderTreeDebug.cpp:
+        (write):
+        * kwq/KWQScrollBar.h:
+        * kwq/KWQScrollBar.mm:
+        (-[KWQScrollBar widget]):
+        (-[KWQScrollBar mouseDown:]):
+        (QScrollBar::QScrollBar):
+        (QScrollBar::~QScrollBar):
+        * kwq/KWQScrollView.h:
+        (QScrollView::QScrollView):
+        * kwq/KWQScrollView.mm:
+        (QScrollView::viewport):
+        (QScrollView::childX):
+        (QScrollView::childY):
+        (QScrollView::addChild):
+        (QScrollView::removeChild):
+        * kwq/KWQSlider.h:
+        * kwq/KWQSlider.mm:
+        (-[KWQSlider mouseDown:]):
+        (-[KWQSlider widget]):
+        (QSlider::setFont):
+        (QSlider::focusPolicy):
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextAreaTextView widget]):
+        * kwq/KWQTextEdit.h:
+        * kwq/KWQTextEdit.mm:
+        (QTextEdit::QTextEdit):
+        (QTextEdit::setFont):
+        (QTextEdit::focusPolicy):
+        (QTextEdit::setPalette):
+        * kwq/KWQTextField.mm:
+        (-[KWQTextFieldController widget]):
+        (-[KWQTextFieldController textView:shouldHandleEvent:]):
+        (-[KWQTextFieldController textView:didHandleEvent:]):
+        (-[KWQTextField widget]):
+        (-[KWQTextField nextKeyView]):
+        (-[KWQTextField previousKeyView]):
+        (-[KWQSecureTextField widget]):
+        (-[KWQSecureTextField nextKeyView]):
+        (-[KWQSecureTextField previousKeyView]):
+        (-[KWQSearchField widget]):
+        (-[KWQSearchField nextKeyView]):
+        (-[KWQSearchField previousKeyView]):
+        * kwq/KWQView.h:
+        * kwq/KWQWindowWidget.h:
+        * kwq/KWQWindowWidget.mm:
+        (KWQWindowWidget::topLevelWidget):
+        * page/Frame.cpp:
+        (WebCore::isFrameElement):
+        (WebCore::Frame::frameForWidget):
+        (WebCore::Frame::nodeForWidget):
+        (WebCore::Frame::setDocumentFocus):
+        (WebCore::Frame::clearDocumentFocus):
+        (WebCore::Frame::passWidgetMouseDownEventToWidget):
+        * page/Frame.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::init):
+        * page/FrameView.h:
+        * page/Plugin.h:
+        (WebCore::Plugin::Plugin):
+        (WebCore::Plugin::view):
+        * platform/Screen.h:
+        * platform/mac/ScreenMac.mm:
+        (WebCore::screen):
+        (WebCore::screenDepth):
+        (WebCore::screenRect):
+        (WebCore::usableScreenRect):
+        * rendering/render_applet.cpp:
+        (WebCore::RenderApplet::layout):
+        * rendering/render_form.cpp:
+        (WebCore::ComboBoxWidget::ComboBoxWidget):
+        (WebCore::RenderSelect::createListBox):
+        * rendering/render_form.h:
+        * rendering/render_frames.cpp:
+        (WebCore::RenderPart::setWidget):
+        * rendering/render_frames.h:
+        * rendering/render_object.cpp:
+        * rendering/render_replaced.cpp:
+        (WebCore::RenderWidget::resizeWidget):
+        (WebCore::RenderWidget::setQWidget):
+        * rendering/render_replaced.h:
+        (WebCore::RenderWidget::widget):
+        Change name from QWidget to Widget, a few other changes to get compiling.
+
 === WebCore-521.7 ===
 
 2006-02-12  Darin Adler  <darin@apple.com>

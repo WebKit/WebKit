@@ -64,9 +64,9 @@ IntRect KWQWindowWidget::frameGeometry() const
                  (int)frame.size.width, (int)frame.size.height);
 }
 
-QWidget *KWQWindowWidget::topLevelWidget() const
+Widget *KWQWindowWidget::topLevelWidget() const
 {
-    return (QWidget *)this;
+    return (Widget *)this;
 }
 
 // Note these routines work on QT window coords - origin upper left

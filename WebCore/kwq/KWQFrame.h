@@ -26,9 +26,9 @@
 #ifndef QFRAME_H_
 #define QFRAME_H_
 
-#include "KWQWidget.h"
+#include "Widget.h"
 
-class QFrame : public QWidget {
+class QFrame : public Widget {
 public:
     enum Shape { NoFrame = 1, Box = 2, StyledPanel = 4 };
     enum Shadow { Sunken = 8, Plain = 16 };

@@ -600,7 +600,7 @@ RenderLegend::RenderLegend(HTMLGenericFormElementImpl *element)
 
 // -------------------------------------------------------------------------------
 
-ComboBoxWidget::ComboBoxWidget(QWidget *parent)
+ComboBoxWidget::ComboBoxWidget(Widget *parent)
     : QComboBox()
 {
 }
@@ -907,7 +907,7 @@ void RenderSelect::setOptionsChanged(bool _optionsChanged)
 
 QListBox* RenderSelect::createListBox()
 {
-    QListBox *lb = new QListBox(view()->viewport());
+    QListBox *lb = new QListBox();
     lb->setSelectionMode(m_multiple ? QListBox::Extended : QListBox::Single);
     connect( lb, SIGNAL( selectionChanged() ), this, SLOT( slotSelectionChanged() ) );
     connect( lb, SIGNAL( clicked( QListBoxItem * ) ), this, SLOT( slotClicked() ) );

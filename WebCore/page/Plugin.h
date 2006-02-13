@@ -24,18 +24,18 @@
 #include <kxmlcore/Noncopyable.h>
 #include "Shared.h"
 
-class QWidget;
-
 namespace WebCore {
+
+    class Widget;
 
     class Plugin : public Shared<Plugin>, Noncopyable
     {
     public:
-        Plugin(QWidget *view) : m_view(view) { }
-        QWidget *view() const { return m_view; }
+        Plugin(Widget *view) : m_view(view) { }
+        Widget *view() const { return m_view; }
         
     private:
-        QWidget *m_view;
+        Widget *m_view;
     };
     
 } // namespace WebCore

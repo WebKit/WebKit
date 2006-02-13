@@ -35,7 +35,7 @@ class KWQComboBoxAdapter;
 class NSMenuItem;
 #endif
 
-class QComboBox : public QWidget {
+class QComboBox : public Widget {
 public:  
     QComboBox();
     ~QComboBox();

@@ -73,9 +73,9 @@ using namespace WebCore;
 
 - (void)mouseDown:(NSEvent *)event
 {
-    QWidget::beforeMouseDown(self);
+    Widget::beforeMouseDown(self);
     [super mouseDown:event];
-    QWidget::afterMouseDown(self);
+    Widget::afterMouseDown(self);
     if (slider) {
         slider->sendConsumedMouseUp();
     }
@@ -91,7 +91,7 @@ using namespace WebCore;
     }
 }
 
-- (QWidget *)widget
+- (Widget *)widget
 {
     return slider;
 }
@@ -227,7 +227,7 @@ void QSlider::setFont(const QFont &f)
 {
     KWQ_BLOCK_EXCEPTIONS;
     
-    QWidget::setFont(f);
+    Widget::setFont(f);
     
     const NSControlSize size = KWQNSControlSizeForFont(f);    
     NSControl * const slider = static_cast<NSControl *>(getView());
@@ -237,7 +237,7 @@ void QSlider::setFont(const QFont &f)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-QWidget::FocusPolicy QSlider::focusPolicy() const
+Widget::FocusPolicy QSlider::focusPolicy() const
 {
     KWQ_BLOCK_EXCEPTIONS;
     
@@ -248,7 +248,7 @@ QWidget::FocusPolicy QSlider::focusPolicy() const
     
     KWQ_UNBLOCK_EXCEPTIONS;
     
-    return QWidget::focusPolicy();
+    return Widget::focusPolicy();
 }
 
 IntSize QSlider::sizeHint() const 

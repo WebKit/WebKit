@@ -206,7 +206,7 @@ bool HTMLGenericFormElementImpl::isKeyboardFocusable() const
     if (isFocusable()) {
         if (renderer()->isWidget()) {
             return static_cast<RenderWidget*>(renderer())->widget() &&
-                (static_cast<RenderWidget*>(renderer())->widget()->focusPolicy() & QWidget::TabFocus);
+                (static_cast<RenderWidget*>(renderer())->widget()->focusPolicy() & Widget::TabFocus);
         }
         if (getDocument()->frame())
             return getDocument()->frame()->tabsToAllControls();
@@ -221,7 +221,7 @@ bool HTMLGenericFormElementImpl::isMouseFocusable() const
             return true;
         else if (renderer()->isWidget()) {
             return static_cast<RenderWidget*>(renderer())->widget() &&
-                (static_cast<RenderWidget*>(renderer())->widget()->focusPolicy() & QWidget::ClickFocus);
+                (static_cast<RenderWidget*>(renderer())->widget()->focusPolicy() & Widget::ClickFocus);
         } 
         // For <input type=image> and <button>, we will assume no mouse focusability.  This is
         // consistent with OS X behavior for buttons.

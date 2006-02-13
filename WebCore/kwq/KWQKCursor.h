@@ -28,8 +28,6 @@
 
 #include "KWQCursor.h"
 
-class QWidget;
-
 class KCursor {
 public:
 

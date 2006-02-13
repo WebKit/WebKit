@@ -29,7 +29,6 @@
 #include "render_image.h"
 #include "RenderBlock.h"
 
-class QWidget;
 class QListboxItem;
 class QListBox;
 
@@ -43,9 +42,9 @@ class QListBox;
 
 namespace WebCore {
 
+class DocLoader;
 class HTMLFormElementImpl;
 class HTMLGenericFormElementImpl;
-class DocLoader;
 
 // -------------------------------------------------------------------------
 
@@ -161,7 +160,7 @@ private:
 class LineEditWidget : public QLineEdit
 {
 public:
-    LineEditWidget(QWidget *parent);
+    LineEditWidget(Widget *parent);
 
 protected:
     virtual bool event( QEvent *e );
@@ -242,7 +241,7 @@ public:
 class ComboBoxWidget : public QComboBox
 {
 public:
-    ComboBoxWidget(QWidget *parent);
+    ComboBoxWidget(Widget *parent);
 
 protected:
     virtual bool event(QEvent *);
@@ -299,7 +298,7 @@ protected slots:
 class TextAreaWidget : public QTextEdit
 {
 public:
-    TextAreaWidget(QWidget* parent);
+    TextAreaWidget(Widget* parent);
 
 protected:
     virtual bool event (QEvent *e );

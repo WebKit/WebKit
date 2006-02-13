@@ -26,15 +26,14 @@
 #ifndef SCREEN_H
 #define SCREEN_H
 
-class QWidget;
-
 namespace WebCore {
 
     class IntRect;
+    class Widget;
 
-    int screenDepth(QWidget*);
-    IntRect screenRect(QWidget*);
-    IntRect usableScreenRect(QWidget*);
+    int screenDepth(Widget*);
+    IntRect screenRect(Widget*);
+    IntRect usableScreenRect(Widget*);
 
 }
 

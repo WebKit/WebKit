@@ -43,7 +43,7 @@
     
     The WebCoreFrameView's size is the frame size.  The WebCoreFrameView's documentView
     corresponds to the frame content size.  The scrollview itself is autosized to the
-    WebCoreFrameView's size (see QWidget::resize).
+    WebCoreFrameView's size (see Widget::resize).
 */
 
 @interface NSView (KWQExtensions)
@@ -59,7 +59,7 @@
 
 @end
 
-QWidget* QScrollView::viewport() const
+Widget* QScrollView::viewport() const
 {
     return const_cast<QScrollView *>(this);
 }
@@ -180,12 +180,12 @@ int QScrollView::scrollYOffset() const
     return 0;
 }
 
-int QScrollView::childX(QWidget* w)
+int QScrollView::childX(Widget* w)
 {
     return w->x();
 }
 
-int QScrollView::childY(QWidget* w)
+int QScrollView::childY(Widget* w)
 {
     return w->y();
 }
@@ -338,7 +338,7 @@ void QScrollView::suppressScrollBars(bool suppressed,  bool repaintOnUnsuppress)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QScrollView::addChild(QWidget* child, int x, int y)
+void QScrollView::addChild(Widget* child, int x, int y)
 {
     ASSERT(child != this);
     
@@ -360,7 +360,7 @@ void QScrollView::addChild(QWidget* child, int x, int y)
     child->addToSuperview(thisView);
 }
 
-void QScrollView::removeChild(QWidget* child)
+void QScrollView::removeChild(Widget* child)
 {
     child->removeFromSuperview();
 }

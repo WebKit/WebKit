@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,12 +29,12 @@
 #import "DocumentImpl.h"
 #import "FrameView.h"
 #import "KWQExceptions.h"
-#import "WebCoreFrameBridge.h"
 #import "MacFrame.h"
+#import "WebCoreFrameBridge.h"
 
 using namespace WebCore;
 
-typedef HashMap<DOMString, DOMString> StringMap;
+typedef HashMap<String, String> StringMap;
 
 KJavaAppletWidget::KJavaAppletWidget(const IntSize& size, Frame* frame, const StringMap& args)
 {
@@ -42,7 +42,7 @@ KJavaAppletWidget::KJavaAppletWidget(const IntSize& size, Frame* frame, const St
     
     NSMutableArray *attributeNames = [[NSMutableArray alloc] init];
     NSMutableArray *attributeValues = [[NSMutableArray alloc] init];
-    ;
+
     QString baseURLString;
     StringMap::const_iterator end = args.end();
     for (StringMap::const_iterator it = args.begin(); it != end; ++it) {

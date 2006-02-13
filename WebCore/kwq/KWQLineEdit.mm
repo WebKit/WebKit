@@ -23,10 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "KWQLineEdit.h"
 
 #import "KWQExceptions.h"
+#import "KWQFont.h"
 #import "KWQLogging.h"
 #import "KWQPalette.h"
 #import "KWQTextField.h"
@@ -106,7 +107,7 @@ int QLineEdit::cursorPosition() const
 
 void QLineEdit::setFont(const QFont &font)
 {
-    QWidget::setFont(font);
+    Widget::setFont(font);
     if (m_type == Search) {
         const NSControlSize size = KWQNSControlSizeForFont(font);    
         NSControl * const searchField = static_cast<NSControl *>(getView());
@@ -123,7 +124,7 @@ void QLineEdit::setFont(const QFont &font)
 
 void QLineEdit::setPalette(const QPalette &palette)
 {
-    QWidget::setPalette(palette);
+    Widget::setPalette(palette);
 
     NSTextField *textField = (NSTextField *)getView();
 
@@ -330,9 +331,9 @@ void QLineEdit::setWritingDirection(QPainter::TextDirection direction)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-QWidget::FocusPolicy QLineEdit::focusPolicy() const
+Widget::FocusPolicy QLineEdit::focusPolicy() const
 {
-    FocusPolicy policy = QWidget::focusPolicy();
+    FocusPolicy policy = Widget::focusPolicy();
     return policy == TabFocus ? StrongFocus : policy;
 }
 

@@ -37,7 +37,6 @@
 class QFont;
 class QFontMetrics;
 class QString;
-class QWidget;
 
 namespace WebCore {
 

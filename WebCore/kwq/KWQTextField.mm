@@ -73,7 +73,7 @@ using namespace WebCore;
 
 @interface KWQTextFieldController (KWQInternal)
 - (id)initWithTextField:(NSTextField *)f QLineEdit:(QLineEdit *)w;
-- (QWidget *)widget;
+- (Widget *)widget;
 - (void)textChanged;
 - (void)setInDrawingMachinery:(BOOL)inDrawing;
 - (BOOL)textView:(NSTextView *)view shouldDrawInsertionPointInRect:(NSRect)rect color:(NSColor *)color turnedOn:(BOOL)drawInsteadOfErase;
@@ -132,7 +132,7 @@ using namespace WebCore;
     [super dealloc];
 }
 
-- (QWidget*)widget
+- (Widget*)widget
 {
     return widget;
 }
@@ -284,7 +284,7 @@ using namespace WebCore;
     if ((type == NSKeyDown || type == NSKeyUp) && ![[NSInputManager currentInputManager] hasMarkedText]) {
         WebCoreFrameBridge *bridge = MacFrame::bridgeForWidget(widget);
 
-        QWidget::setDeferFirstResponderChanges(true);
+        Widget::setDeferFirstResponderChanges(true);
 
         BOOL intercepted = [bridge textField:(DOMHTMLInputElement *)[bridge elementForView:field] shouldHandleEvent:event];
         if (!intercepted) {
@@ -299,7 +299,7 @@ using namespace WebCore;
         }
 
         if (intercepted || !widget) {
-            QWidget::setDeferFirstResponderChanges(false);
+            Widget::setDeferFirstResponderChanges(false);
             return NO;
         }
     }
@@ -309,7 +309,7 @@ using namespace WebCore;
 
 - (void)textView:(NSTextView *)view didHandleEvent:(NSEvent *)event
 {
-    QWidget::setDeferFirstResponderChanges(false);
+    Widget::setDeferFirstResponderChanges(false);
 
     if (!widget)
         return;
@@ -518,7 +518,7 @@ using namespace WebCore;
     return controller;
 }
 
-- (QWidget *)widget
+- (Widget *)widget
 {
     return [controller widget];
 }
@@ -547,7 +547,7 @@ using namespace WebCore;
 {
     if (!inNextValidKeyView)
         return [super nextKeyView];
-    QWidget* widget = [controller widget];
+    Widget* widget = [controller widget];
     if (!widget)
         return [super nextKeyView];
     return MacFrame::nextKeyViewForWidget(widget, KWQSelectingNext);
@@ -557,7 +557,7 @@ using namespace WebCore;
 {
     if (!inNextValidKeyView)
         return [super previousKeyView];
-    QWidget* widget = [controller widget];
+    Widget* widget = [controller widget];
     if (!widget)
         return [super previousKeyView];
     return MacFrame::nextKeyViewForWidget(widget, KWQSelectingPrevious);
@@ -698,7 +698,7 @@ using namespace WebCore;
     return controller;
 }
 
-- (QWidget *)widget
+- (Widget *)widget
 {
     return [controller widget];
 }
@@ -713,7 +713,7 @@ using namespace WebCore;
 {
     if (!inNextValidKeyView)
         return [super nextKeyView];
-    QWidget* widget = [controller widget];
+    Widget* widget = [controller widget];
     if (!widget)
         return [super nextKeyView];
     return MacFrame::nextKeyViewForWidget(widget, KWQSelectingNext);
@@ -723,7 +723,7 @@ using namespace WebCore;
 {
     if (!inNextValidKeyView)
         return [super previousKeyView];
-    QWidget* widget = [controller widget];
+    Widget* widget = [controller widget];
     if (!widget)
         return [super previousKeyView];
     return MacFrame::nextKeyViewForWidget(widget, KWQSelectingPrevious);
@@ -912,7 +912,7 @@ using namespace WebCore;
     return controller;
 }
 
-- (QWidget *)widget
+- (Widget *)widget
 {
     return [controller widget];
 }
@@ -941,7 +941,7 @@ using namespace WebCore;
 {
     if (!inNextValidKeyView)
         return [super nextKeyView];
-    QWidget* widget = [controller widget];
+    Widget* widget = [controller widget];
     if (!widget)
         return [super nextKeyView];
     return MacFrame::nextKeyViewForWidget(widget, KWQSelectingNext);
@@ -951,7 +951,7 @@ using namespace WebCore;
 {
     if (!inNextValidKeyView)
         return [super previousKeyView];
-    QWidget* widget = [controller widget];
+    Widget* widget = [controller widget];
     if (!widget)
         return [super previousKeyView];
     return MacFrame::nextKeyViewForWidget(widget, KWQSelectingPrevious);

@@ -48,7 +48,7 @@ class QListBox : public QScrollView {
 public:
     enum SelectionMode { Single, Extended };
 
-    QListBox(QWidget *parent);
+    QListBox();
     ~QListBox();
 
     IntSize sizeForNumberOfLines(int numLines) const;
