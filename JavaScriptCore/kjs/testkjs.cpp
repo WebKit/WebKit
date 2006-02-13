@@ -22,19 +22,28 @@
  */
 
 #include "config.h"
+
+#include "JSLock.h"
+#include "interpreter.h"
+#include "object.h"
+#include "types.h"
+#include "value.h"
+
+#include <kxmlcore/HashTraits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include <kxmlcore/HashTraits.h>
-#include "value.h"
-#include "object.h"
-#include "types.h"
-#include "interpreter.h"
-#include "JSLock.h"
 
 using namespace KJS;
 using namespace KXMLCore;
+
+bool run(const char* fileName, Interpreter *interp);
+
+class GlobalImp : public JSObject {
+public:
+  virtual UString className() const { return "global"; }
+};
 
 class TestFunctionImp : public JSObject {
 public:
@@ -42,7 +51,7 @@ public:
   virtual bool implementsCall() const { return true; }
   virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
 
-  enum { Print, Debug, Quit, GC };
+  enum { Print, Debug, Quit, GC, Version, Run };
 
 private:
   int id;
@@ -58,7 +67,7 @@ JSValue *TestFunctionImp::callAsFunction(ExecState *exec, JSObject * /*thisObj*/
   switch (id) {
   case Print:
   case Debug:
-    fprintf(stderr,"--> %s\n",args[0]->toString(exec).ascii());
+    fprintf(stderr,"--> %s\n",args[0]->toString(exec).UTF8String().c_str());
     return jsUndefined();
   case Quit:
     exit(0);
@@ -68,42 +77,28 @@ JSValue *TestFunctionImp::callAsFunction(ExecState *exec, JSObject * /*thisObj*/
     JSLock lock;
     Interpreter::collect();
   }
-    break;
+  case Version:
+    // We need this function for compatibility with the Mozilla JS tests but for now
+    // we don't actually do any version-specific handling
+    return jsUndefined();
+  case Run:
+    run(args[0]->toString(exec).UTF8String().c_str(), exec->dynamicInterpreter());
+    return jsUndefined();
   default:
-    break;
+    assert(0);
   }
 
   return jsUndefined();
 }
-
-class VersionFunctionImp : public JSObject {
-public:
-  VersionFunctionImp() : JSObject() {}
-  virtual bool implementsCall() const { return true; }
-  virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
-};
-
-JSValue *VersionFunctionImp::callAsFunction(ExecState * /*exec*/, JSObject * /*thisObj*/, const List &/*args*/)
-{
-  // We need this function for compatibility with the Mozilla JS tests but for now
-  // we don't actually do any version-specific handling
-  return jsUndefined();
-}
-
-class GlobalImp : public JSObject {
-public:
-  virtual UString className() const { return "global"; }
-};
 
 int main(int argc, char **argv)
 {
-  // expecting a filename
   if (argc < 2) {
-    fprintf(stderr, "You have to specify at least one filename\n");
+    fprintf(stderr, "Usage: testkjs file1 [file2...]\n");
     return -1;
   }
 
-  bool ret = true;
+  bool success = true;
   {
     JSLock lock;
     
@@ -129,7 +124,7 @@ int main(int argc, char **argv)
     assert(!IsInteger<float>::value);
     assert(!IsInteger<GlobalImp>::value);
     
-    JSObject *global(new GlobalImp());
+    GlobalImp *global = new GlobalImp();
 
     // create interpreter
     Interpreter interp(global);
@@ -142,68 +137,73 @@ int main(int argc, char **argv)
     // add "gc" for compatibility with the mozilla js shell
     global->put(interp.globalExec(), "gc", new TestFunctionImp(TestFunctionImp::GC, 0));
     // add "version" for compatibility with the mozilla js shell 
-    global->put(interp.globalExec(), "version", new VersionFunctionImp());
+    global->put(interp.globalExec(), "version", new TestFunctionImp(TestFunctionImp::Version, 1));
+    global->put(interp.globalExec(), "run", new TestFunctionImp(TestFunctionImp::Run, 1));
 
     for (int i = 1; i < argc; i++) {
-      int code_len = 0;
-      int code_alloc = 1024;
-      char *code = (char*)malloc(code_alloc);
-
-      const char *file = argv[i];
-      if (strcmp(file, "-f") == 0)
+      const char *fileName = argv[i];
+      if (strcmp(fileName, "-f") == 0) // mozilla test driver script uses "-f" prefix for files
         continue;
-      FILE *f = fopen(file, "r");
-      if (!f) {
-        fprintf(stderr, "Error opening %s.\n", file);
-        return 2;
-      }
 
-      while (!feof(f) && !ferror(f)) {
-        size_t len = fread(code+code_len,1,code_alloc-code_len,f);
-        code_len += len;
-        if (code_len >= code_alloc) {
-          code_alloc *= 2;
-          code = (char*)realloc(code,code_alloc);
-        }
-      }
-      code = (char*)realloc(code,code_len+1);
-      code[code_len] = '\0';
-
-      // run
-      Completion comp(interp.evaluate(file, 1, code));
-
-      fclose(f);
-
-      if (comp.complType() == Throw) {
-        ExecState *exec = interp.globalExec();
-        JSValue *exVal = comp.value();
-        char *msg = exVal->toString(exec).ascii();
-        int lineno = -1;
-        if (exVal->isObject()) {
-          JSValue *lineVal = static_cast<JSObject *>(exVal)->get(exec,"line");
-          if (lineVal->isNumber())
-            lineno = int(lineVal->toNumber(exec));
-        }
-        if (lineno != -1)
-          fprintf(stderr,"Exception, line %d: %s\n",lineno,msg);
-        else
-          fprintf(stderr,"Exception: %s\n",msg);
-        ret = false;
-      }
-      else if (comp.complType() == ReturnValue) {
-        char *msg = comp.value()->toString(interp.globalExec()).ascii();
-        fprintf(stderr,"Return value: %s\n",msg);
-      }
-
-      free(code);
+      success = success && run(fileName, &interp);
     }
   } // end block, so that interpreter gets deleted
 
-  if (ret)
+  if (success)
     fprintf(stderr, "OK.\n");
-
+  
 #ifdef KJS_DEBUG_MEM
   Interpreter::finalCheck();
 #endif
-  return ret ? 0 : 3;
+  return success ? 0 : 3;
+}
+
+bool run(const char* fileName, Interpreter *interp)
+{
+  int code_size = 0;
+  int code_capacity = 1024;
+  char *code = (char*)malloc(code_capacity);
+  
+  FILE *f = fopen(fileName, "r");
+  if (!f) {
+    fprintf(stderr, "Error opening %s.\n", fileName);
+    return 2;
+  }
+  
+  while (!feof(f) && !ferror(f)) {
+    code_size += fread(code + code_size, 1, code_capacity - code_size, f);
+    if (code_size == code_capacity) { // guarantees space for trailing '\0'
+      code_capacity *= 2;
+      code = (char*)realloc(code, code_capacity);
+      assert(code);
+    }
+  
+    assert(code_size < code_capacity);
+  }
+  fclose(f);
+  code[code_size] = '\0';
+
+  // run
+  Completion comp(interp->evaluate(fileName, 1, code));
+  free(code);
+
+  JSValue *exVal = comp.value();
+  if (comp.complType() == Throw) {
+    ExecState *exec = interp->globalExec();
+    const char *msg = exVal->toString(exec).UTF8String().c_str();
+    if (exVal->isObject()) {
+      JSValue *lineVal = static_cast<JSObject *>(exVal)->get(exec, "line");
+      if (lineVal->isNumber())
+        fprintf(stderr, "Exception, line %d: %s\n", (int)lineVal->toNumber(exec), msg);
+      else
+        fprintf(stderr,"Exception: %s\n",msg);
+    }
+    
+    return false;
+  } else if (comp.complType() == ReturnValue) {
+    const char *msg = exVal->toString(interp->globalExec()).UTF8String().c_str();
+    fprintf(stderr,"Return value: %s\n",msg);
+  }
+  
+  return true;
 }

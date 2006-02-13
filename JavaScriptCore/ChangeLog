@@ -1,3 +1,20 @@
+2006-02-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by darin.
+
+        Cleaned up testkjs, added new "run" functionality to allow scripting 
+        tests from within JS. ("run" is a part of my new super-accurate
+        JS iBench.)
+
+        No regressions in run-javascriptcore-tests.
+
+        * kjs/testkjs.cpp:
+        (GlobalImp::className):
+        (TestFunctionImp::):
+        (TestFunctionImp::callAsFunction):
+        (main):
+        (run):
+
 2006-02-11  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
