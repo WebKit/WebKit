@@ -25,6 +25,7 @@
 
 #include "identifier.h"
 #include "value.h"
+#include <assert.h>
 
 namespace KJS {
 

@@ -23,14 +23,15 @@
 #define KJS_JS_IMMEDIATE_H
 
 #include "JSType.h"
-#include "kxmlcore/Assertions.h"
-#include <stdlib.h> // for abort()
+#include <kxmlcore/Assertions.h>
+#include <stdint.h>
+#include <stdlib.h>
 
 namespace KJS {
 
-class JSValue;
 class ExecState;
 class JSObject;
+class JSValue;
 class UString;
 
 /*
@@ -171,38 +172,31 @@ private:
     // NOTE: With f-strict-aliasing enabled, unions are the only safe way to do type masquerading.
 
     union FloatUnion {
-        u_int32_t asBits;
-        float     asFloat;
+        uint32_t asBits;
+        float    asFloat;
     };
 
     union DoubleUnion {
-        u_int64_t asBits;
-        double    asDouble;
+        uint64_t asBits;
+        double   asDouble;
     };
 
-    // IEEE compliant floating point
-    static bool isIEEE()
-    {
-        return sizeof(float) == sizeof(u_int32_t) &&
-               sizeof(double) == sizeof(u_int64_t);
-    }
-        
-    // 32 bit systems
+    // we support 32-bit platforms with sizes like this
     static bool is32bit() 
     {
-        return isIEEE() && sizeof(uintptr_t) == sizeof(u_int32_t);
+        return sizeof(float) == sizeof(uint32_t) && sizeof(double) == sizeof(uint64_t) && sizeof(uintptr_t) == sizeof(uint32_t);
     }
 
-    // 64 bit systems
+    // we support 64-bit platforms with sizes like this
     static bool is64bit()
     {
-        return isIEEE() && sizeof(uintptr_t) == sizeof(u_int64_t);
+        return sizeof(float) == sizeof(uint32_t) && sizeof(double) == sizeof(uint64_t) && sizeof(uintptr_t) == sizeof(uint64_t);
     }
 
     static uintptr_t NanAsBits()
     {
-        const u_int32_t NaN32AsBits = 0x7fc00000;
-        const u_int64_t NaN64AsBits = 0x7ff80000ULL << 32;
+        const uint32_t NaN32AsBits = 0x7fc00000;
+        const uint64_t NaN64AsBits = 0x7ff80000ULL << 32;
 
         if (JSImmediate::is32bit())
             return NaN32AsBits;
@@ -219,8 +213,8 @@ private:
 
     static uintptr_t oneAsBits()
     {
-        const u_int32_t One32AsBits = 0x3f800000;
-        const u_int64_t One64AsBits = 0x3ff00000ULL << 32;
+        const uint32_t One32AsBits = 0x3f800000;
+        const uint64_t One64AsBits = 0x3ff00000ULL << 32;
 
         if (JSImmediate::is32bit())
             return One32AsBits;

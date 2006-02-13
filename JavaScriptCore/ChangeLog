@@ -1,3 +1,16 @@
+2006-02-13  Darin Adler  <darin@apple.com>
+
+        - fix a couple problems building on Windows, based on requests
+          from Krzysztof Kowalczyk <kkowalczyk@gmail.com>
+
+        * kjs/JSImmediate.h: Change code using non-standard u_int32/64_t types
+        to the standard uint32/64_t. Also removed curious "isIEEE()" function
+        that checked the sizes of some types (and type sizes alone don't tell you if
+        the floating point conforms to the IEEE-standard). Added missing include
+        of <stdint.h>.
+
+        * kjs/property_slot.h: Added missing include of <assert.h>.
+
 2006-02-12  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by darin.
