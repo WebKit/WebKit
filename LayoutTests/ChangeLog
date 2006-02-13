@@ -1,3 +1,16 @@
+2006-02-12  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed and tweaked by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7206
+          REGRESSION: PDF "images" no longer render within HTML pages
+
+        * fast/replaced/page-as-image.html: Added.
+        * fast/replaced/page-as-image-expected.txt: Added.
+        * fast/replaced/page-as-image-expected.png: Added.
+        * fast/replaced/page-as-image-expected.checksum: Added.
+        * fast/replaced/resources/image.pdf: Added.
+
 2006-02-12  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Geoff.
