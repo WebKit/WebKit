@@ -1,3 +1,33 @@
+2006-02-13  Dave Hyatt <hyatt@apple.com>
+
+        Fix Win32 bustage in WebCore.
+
+        Reviewed by darin
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * platform/Timer.cpp:
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        (WebCore::TimerBase::heapPop):
+
+        HUGE_VAL can be used on both Windows and Mac, so replace 1e500 with
+        that.
+
+        Add == and != operators for the TimerHeapIterator.
+
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::rowAvailable):
+
+        Fix my bustage in the PNG decoder where I left off a stray
+        parenthesis.
+
+        * platform/win/SharedTimerWin.cpp:
+        (WebCore::timerFired):
+        (WebCore::setSharedTimerFireTime):
+        (WebCore::stopSharedTimer):
+
+        KillTimer should take 2 arguments.  Add some missing includes.
+
 2006-02-12  Alexander Kellett  <lypanov@kde.org>
 
         Reviewed by eseidel.

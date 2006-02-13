@@ -1347,11 +1347,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\page\FrameTreeNode.cpp"
+				RelativePath="..\..\page\FrameTree.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\page\FrameTreeNode.h"
+				RelativePath="..\..\page\FrameTree.h"
 				>
 			</File>
 			<File
@@ -1661,6 +1661,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\platform\SharedTimer.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\platform\String.cpp"
 				>
 			</File>
@@ -1677,15 +1681,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\Timer.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\platform\Timer.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\SharedTimer.h"
+				RelativePath="..\..\platform\Timer.h"
 				>
 			</File>
 			<File
@@ -1700,11 +1700,11 @@
 				Name="win"
 				>
 				<File
-					RelativePath="..\..\platform\win\SystemTimeWin.cpp"
+					RelativePath="..\..\platform\win\SharedTimerWin.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\platform\win\SharedTimerWin.cpp"
+					RelativePath="..\..\platform\win\SystemTimeWin.cpp"
 					>
 				</File>
 			</Filter>
@@ -2903,11 +2903,35 @@
 			Name="dom"
 			>
 			<File
+				RelativePath="..\..\dom\CDATASectionImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\CDATASectionImpl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\CharacterDataImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\CharacterDataImpl.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\dom\ChildNodeListImpl.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\dom\ChildNodeListImpl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\CommentImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\CommentImpl.h"
 				>
 			</File>
 			<File
@@ -3007,14 +3031,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\dom_textimpl.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\dom\dom_textimpl.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\dom\dom_xmlimpl.cpp"
 				>
 			</File>
@@ -3028,6 +3044,14 @@
 			</File>
 			<File
 				RelativePath="..\..\dom\DOMImplementationImpl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\EditingTextImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\EditingTextImpl.h"
 				>
 			</File>
 			<File
@@ -3064,6 +3088,14 @@
 			</File>
 			<File
 				RelativePath="..\..\dom\NodeListImpl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\TextImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\TextImpl.h"
 				>
 			</File>
 			<File

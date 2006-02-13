@@ -314,7 +314,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
         buffer.setStatus(RGBA32Buffer::FramePartial);
 
         // For PNGs, the frame always fills the entire image.
-        buffer.setRect(IntRect(0, 0, m_size.width(), m_size.height());
+        buffer.setRect(IntRect(0, 0, m_size.width(), m_size.height()));
 
         if (reader()->pngPtr()->interlaced)
             reader()->createInterlaceBuffer((reader()->hasAlpha() ? 4 : 3) * m_size.width() * m_size.height());

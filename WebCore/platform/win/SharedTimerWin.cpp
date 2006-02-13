@@ -26,6 +26,8 @@
 #include "config.h"
 #include "SharedTimer.h"
 
+#include "SystemTime.h"
+#include <kxmlcore/Assertions.h>
 #include <windows.h>
 
 namespace WebCore {
@@ -38,7 +40,7 @@ void setSharedTimerFiredFunction(void (*f)())
     sharedTimerFiredFunction = f;
 }
 
-static CALLBACK timerFired(HWND, UINT, UINT_PTR, DWORD)
+static void CALLBACK timerFired(HWND, UINT, UINT_PTR, DWORD)
 {
     sharedTimerFiredFunction();
 }
@@ -60,14 +62,14 @@ void setSharedTimerFireTime(double fireTime)
     }
 
     if (timerID)
-        KillTimer(timerID);
+        KillTimer(0, timerID);
     timerID = SetTimer(0, 0, intervalInMS, timerFired);
 }
 
 void stopSharedTimer()
 {
     if (timerID) {
-        KillTimer(timerID);
+        KillTimer(0, timerID);
         timerID = 0;
     }
 }
