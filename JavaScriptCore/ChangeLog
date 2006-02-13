@@ -1,3 +1,21 @@
+2006-02-13  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        Replaced the old NS_DURING exception blocking with @try/@catch.
+
+        * JavaScriptCorePrefix.h: undef try and catch to workaround a C++ conflict
+        * bindings/objc/objc_instance.mm:
+        (ObjcInstance::invokeMethod):
+        (ObjcInstance::invokeDefaultMethod):
+        (ObjcInstance::setValueOfUndefinedField):
+        (ObjcInstance::getValueOfUndefinedField):
+        * bindings/objc/objc_runtime.mm:
+        (ObjcField::valueFromInstance):
+        (ObjcField::setValueToInstance):
+        (ObjcArray::setValueAt):
+        (ObjcArray::valueAt):
+
 2006-02-13  Darin Adler  <darin@apple.com>
 
         - fix a couple problems building on Windows, based on requests

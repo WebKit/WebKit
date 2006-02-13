@@ -105,27 +105,22 @@ RuntimeType ObjcField::type() const
 
 JSValue *ObjcField::valueFromInstance(ExecState *exec, const Instance *instance) const
 {
-    JSValue *aValue;
     id targetObject = (static_cast<const ObjcInstance*>(instance))->getObject();
-    id objcValue = nil;
 
-    NS_DURING
+    @try {
     
         NSString *key = [NSString stringWithCString:name()];
-        objcValue = [targetObject valueForKey:key];
-        
-    NS_HANDLER
+        id objcValue = [targetObject valueForKey:key];
+        if (objcValue)
+            return convertObjcValueToValue (exec, &objcValue, ObjcObjectType);
+
+    } @catch(NSException *localException) {
         
         throwError(exec, GeneralError, [localException reason]);
         
-    NS_ENDHANDLER
+    }
 
-    if (objcValue)
-        aValue = convertObjcValueToValue (exec, &objcValue, ObjcObjectType);
-    else
-        aValue = jsUndefined();
-
-    return aValue;
+    return jsUndefined();
 }
 
 static id convertValueToObjcObject (ExecState *exec, JSValue *value)
@@ -145,16 +140,16 @@ void ObjcField::setValueToInstance(ExecState *exec, const Instance *instance, JS
     id targetObject = (static_cast<const ObjcInstance*>(instance))->getObject();
     id value = convertValueToObjcObject(exec, aValue);
     
-    NS_DURING
+    @try {
     
         NSString *key = [NSString stringWithCString:name()];
         [targetObject setValue:value forKey:key];
 
-    NS_HANDLER
+    } @catch(NSException *localException) {
         
         throwError(exec, GeneralError, [localException reason]);
         
-    NS_ENDHANDLER
+    }
 }
 
 // ---------------------- ObjcArray ----------------------
@@ -201,15 +196,15 @@ void ObjcArray::setValueAt(ExecState *exec, unsigned int index, JSValue *aValue)
     // array.
     ObjcValue oValue = convertValueToObjcValue (exec, aValue, ObjcObjectType);
 
-NS_DURING
+    @try {
 
-    [_array insertObject:oValue.objectValue atIndex:index];
+        [_array insertObject:oValue.objectValue atIndex:index];
 
-NS_HANDLER
-    
-    throwError(exec, GeneralError, "Objective-C exception.");
-    
-NS_ENDHANDLER
+    } @catch(NSException *localException) {
+
+        throwError(exec, GeneralError, "Objective-C exception.");
+
+    }
 }
 
 
@@ -217,26 +212,20 @@ JSValue *ObjcArray::valueAt(ExecState *exec, unsigned int index) const
 {
     if (index > [_array count])
         return throwError(exec, RangeError, "Index exceeds array size.");
-    
-    ObjectStructPtr obj = 0;
-    JSObject * volatile error;
-    volatile bool haveError = false;
 
-NS_DURING
+    @try {
 
-    obj = [_array objectAtIndex:index];
-    
-NS_HANDLER
-    
-    error = throwError(exec, GeneralError, "Objective-C exception.");
-    haveError = true;
-    
-NS_ENDHANDLER
+        id obj = [_array objectAtIndex:index];
+        if (obj)
+            return convertObjcValueToValue (exec, &obj, ObjcObjectType);
 
-    if (haveError)
-        return error;
-        
-    return convertObjcValueToValue (exec, &obj, ObjcObjectType);
+    } @catch(NSException *localException) {
+
+        return throwError(exec, GeneralError, "Objective-C exception.");
+
+    }
+
+    return jsUndefined();
 }
 
 unsigned int ObjcArray::getLength() const

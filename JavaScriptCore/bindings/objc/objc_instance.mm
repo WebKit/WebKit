@@ -131,7 +131,7 @@ JSValue *ObjcInstance::invokeMethod (ExecState *exec, const MethodList &methodLi
     // name match for a particular method.
     assert (methodList.length() == 1);
 
-NS_DURING
+@try {
     
     ObjcMethod *method = 0;
     method = static_cast<ObjcMethod*>(methodList.methodAt(0));
@@ -143,7 +143,7 @@ NS_DURING
     if (method->isFallbackMethod()) {
         if (objcValueTypeForType([signature methodReturnType]) != ObjcObjectType) {
             NSLog(@"Incorrect signature for invokeUndefinedMethodFromWebScript:withArguments: -- return type must be object.");
-            NS_VALUERETURN(jsUndefined(), JSValue *);
+            return jsUndefined();
         }
         
         // Invoke invokeUndefinedMethodFromWebScript:withArguments:, pass JavaScript function
@@ -230,11 +230,11 @@ NS_DURING
         resultValue = convertObjcValueToValue (exec, buffer, objcValueType);
     }
 
-NS_HANDLER
+} @catch(NSException *localException) {
     
     resultValue = jsUndefined();
 
-NS_ENDHANDLER
+}
 
     return resultValue;
 }
@@ -243,10 +243,10 @@ JSValue *ObjcInstance::invokeDefaultMethod (ExecState *exec, const List &args)
 {
     JSValue *resultValue;
     
-NS_DURING
+@try {
 
     if (![_instance respondsToSelector:@selector(invokeDefaultMethodWithArguments:)])
-        NS_VALUERETURN(jsUndefined(), JSValue *);
+        return jsUndefined();
     
     NSMethodSignature *signature = [_instance methodSignatureForSelector:@selector(invokeDefaultMethodWithArguments:)];
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
@@ -256,7 +256,7 @@ NS_DURING
     
     if (objcValueTypeForType([signature methodReturnType]) != ObjcObjectType) {
         NSLog(@"Incorrect signature for invokeDefaultMethodWithArguments: -- return type must be object.");
-        NS_VALUERETURN(jsUndefined(), JSValue *);
+        return jsUndefined();
     }
     
     NSMutableArray *objcArgs = [NSMutableArray array];
@@ -281,11 +281,11 @@ NS_DURING
     [invocation getReturnValue:buffer];
     resultValue = convertObjcValueToValue (exec, buffer, objcValueType);
 
-NS_HANDLER
+} @catch(NSException *localException) {
 
     resultValue = jsUndefined();
 
-NS_ENDHANDLER
+}
 
     return resultValue;
 }
@@ -314,16 +314,16 @@ void ObjcInstance::setValueOfUndefinedField (ExecState *exec, const Identifier &
     // throws an exception.
     if ([targetObject respondsToSelector:@selector(setValue:forUndefinedKey:)]){
         
-        NS_DURING
+        @try {
         
             ObjcValue objcValue = convertValueToObjcValue (exec, aValue, ObjcObjectType);
             [targetObject setValue:objcValue.objectValue forUndefinedKey:[NSString stringWithCString:property.ascii()]];
         
-        NS_HANDLER
+        } @catch(NSException *localException) {
             
             // Do nothing.  Class did not override valueForUndefinedKey:.
             
-        NS_ENDHANDLER
+        }
         
     }
 }
@@ -334,8 +334,6 @@ JSValue *ObjcInstance::getValueOfField (ExecState *exec, const Field *aField) co
 
 JSValue *ObjcInstance::getValueOfUndefinedField (ExecState *exec, const Identifier &property, JSType hint) const
 {
-    JSValue *volatile result = jsUndefined();
-    
     id targetObject = getObject();
     
     // This check is not really necessary because NSObject implements
@@ -344,20 +342,20 @@ JSValue *ObjcInstance::getValueOfUndefinedField (ExecState *exec, const Identifi
     if ([targetObject respondsToSelector:@selector(valueForUndefinedKey:)]){
         id objcValue;
         
-        NS_DURING
+        @try {
         
             objcValue = [targetObject valueForUndefinedKey:[NSString stringWithCString:property.ascii()]];
-            result = convertObjcValueToValue (exec, &objcValue, ObjcObjectType);
+            return convertObjcValueToValue (exec, &objcValue, ObjcObjectType);
         
-        NS_HANDLER
+        } @catch(NSException *localException) {
             
             // Do nothing.  Class did not override valueForUndefinedKey:.
             
-        NS_ENDHANDLER
+        }
         
     }
-    
-    return result;
+
+    return jsUndefined();
 }
 
 JSValue *ObjcInstance::defaultValue (JSType hint) const
