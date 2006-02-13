@@ -167,7 +167,7 @@ bool run(const char* fileName, Interpreter *interp)
   FILE *f = fopen(fileName, "r");
   if (!f) {
     fprintf(stderr, "Error opening %s.\n", fileName);
-    return 2;
+    return false;
   }
   
   while (!feof(f) && !ferror(f)) {

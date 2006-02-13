@@ -1,3 +1,27 @@
+2006-02-13   Dave Hyatt <hyatt@apple.com>
+
+        Fix Win32 bustage in JavaScriptCore.
+
+        Reviewed by darin
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        Add JSImmediate to the Win32 project.
+
+	* kjs/JSImmediate.h:
+        (KJS::JSImmediate::fromDouble):
+        (KJS::JSImmediate::toDouble):
+        (KJS::JSImmediate::NanAsBits):
+        (KJS::JSImmediate::oneAsBits):
+        Win32 needs explicit returns after abort() for non-void functions.
+
+        * kjs/testkjs.cpp:
+        (run):
+        Win32 catches a bug in testkjs!  The "return 2" should actually
+        have been a return false.
+
+        * kjs/value.h:
+        The extern decls of NaN and Inf need to be const.
+
 === JavaScriptCore-521.7 ===
 
 2006-02-13  Timothy Hatcher  <timothy@apple.com>

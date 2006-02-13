@@ -287,6 +287,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\JSImmediate.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\JSImmediate.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\JSLock.cpp"
 				>
 			</File>

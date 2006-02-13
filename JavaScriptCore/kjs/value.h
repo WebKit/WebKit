@@ -170,8 +170,8 @@ JSValue *jsNaN();
 JSCell *jsString(const UString &); // returns empty string if passed null string
 JSCell *jsString(const char * = ""); // returns empty string if passed 0
 
-extern double NaN;
-extern double Inf;
+extern const double NaN;
+extern const double Inf;
 
 
 inline JSValue *jsUndefined()
