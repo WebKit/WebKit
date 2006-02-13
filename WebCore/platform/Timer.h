@@ -26,40 +26,59 @@
 #ifndef TIMER_H
 #define TIMER_H
 
+#include <kxmlcore/Noncopyable.h>
+#include <kxmlcore/Vector.h>
+
 namespace WebCore {
 
     // Time intervals are all in seconds.
 
-    class TimerBase {
+    class TimerHeapElement;
+
+    class TimerBase : Noncopyable {
     public:
         TimerBase();
         virtual ~TimerBase();
 
         void start(double nextFireInterval, double repeatInterval);
 
-        void startRepeating(double repeatInterval);
-        void startOneShot(double interval);
+        void startRepeating(double repeatInterval) { start(repeatInterval, repeatInterval); }
+        void startOneShot(double interval) { start(interval, 0); }
 
         void stop();
-        bool isActive() const;
+        bool isActive() const { return m_nextFireTime; }
 
         double nextFireInterval() const;
-        double repeatInterval() const;
-
-        void fire();
+        double repeatInterval() const { return m_repeatInterval; }
 
     private:
         virtual void fired() = 0;
 
-        TimerBase(const TimerBase&);
-        TimerBase& operator=(const TimerBase&);
+        void checkConsistency() const;
+        void checkHeapIndex() const;
 
-#if __APPLE__
-        CFRunLoopTimerRef m_runLoopTimer;
-#else #if WIN32
-        int m_timerID;
-        bool m_active;
-#endif
+        void setNextFireTime(double);
+
+        void heapDecreaseKey();
+        void heapDelete();
+        void heapDeleteMin();
+        void heapIncreaseKey();
+        void heapInsert();
+        void heapPop();
+        void heapPopMin();
+
+        static void collectFiringTimers(double fireTime, Vector<TimerBase*>&);
+        static void fireTimers(double fireTime, const Vector<TimerBase*>&);
+        static void sharedTimerFired();
+
+        double m_nextFireTime; // 0 if inactive
+        double m_repeatInterval; // 0 if not repeating
+        int m_heapIndex; // -1 if not in heap
+
+        friend void updateSharedTimer();
+        friend void setDeferringTimers(bool);
+        friend class TimerHeapElement;
+        friend bool operator<(const TimerHeapElement&, const TimerHeapElement&);
     };
 
     template <typename TimerFiredClass> class Timer : public TimerBase {

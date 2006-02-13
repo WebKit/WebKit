@@ -1684,6 +1684,14 @@
 				RelativePath="..\..\platform\Timer.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\platform\Timer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\SharedTimer.h"
+				>
+			</File>
 			<Filter
 				Name="win"
 				>
@@ -1692,7 +1700,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\platform\win\TimerWin.cpp"
+					RelativePath="..\..\platform\win\SharedTimerWin.cpp"
 					>
 				</File>
 			</Filter>

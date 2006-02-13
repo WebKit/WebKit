@@ -1,3 +1,25 @@
+2006-02-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7209
+          reimplement Timer so it uses only a single timer from the underlying OS
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Removed old files, added new.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * platform/Timer.h: Updated for new timer implementation.
+        * platform/Timer.cpp: Added. Platform-independent implementation of timers
+        in terms of a single shared timer. Uses a heap to implement a priority queue
+        so we know which timer to fire first.
+
+        * platform/SharedTimer.h: Added.
+        * platform/mac/SharedTimerMac.cpp: Added.
+        * platform/win/SharedTimerWin.cpp: Added.
+
+        * platform/mac/TimerMac.cpp: Removed.
+        * platform/win/TimerWin.cpp: Removed.
+
 2006-02-12  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
