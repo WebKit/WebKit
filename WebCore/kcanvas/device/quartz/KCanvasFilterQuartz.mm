@@ -149,7 +149,6 @@ NSArray *KCanvasFilterQuartz::getCIFilterStack(CIImage *inputImage)
         if (filter)
             [filterEffects addObject:filter];
     }
-    if ([filterEffects count] != m_effects.count())
     [m_imagesByName removeAllObjects]; // clean up before next time.
 
     return filterEffects;

@@ -1,3 +1,15 @@
+2006-02-12  Alexander Kellett  <lypanov@kde.org>
+
+        Reviewed by eseidel.
+
+        Fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7207.
+
+        No testcases as this is not possible to reproduce via anything
+        other than manual interaction.
+
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (WebCore::KCanvasFilterQuartz::getCIFilterStack):
+
 2006-02-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.
