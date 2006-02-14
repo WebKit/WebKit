@@ -277,19 +277,19 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
 
     // 1. Paint backgrounds behind text if needed.  Examples of such backgrounds include selection
     // and marked text.
-    if ((haveSelection || haveMarkedText) && !markedTextUsesUnderlines && i.phase != PaintActionSelection && !isPrinting) {
-        if (haveMarkedText)
+    if (i.phase != PaintActionSelection && !isPrinting) {
+        if (haveMarkedText  && !markedTextUsesUnderlines)
             paintMarkedTextBackground(i.p, tx, ty, styleToUse, font, markedTextRange->startOffset(exception), markedTextRange->endOffset(exception));
+
+        paintAllMarkersOfType(i.p, tx, ty, DocumentMarker::TextMatch, styleToUse, font);
 
         if (haveSelection)
             paintSelection(i.p, tx, ty, styleToUse, font);
     }
-
+    
     // 2. Now paint the foreground, including text and decorations like underline/overline (in quirks mode only).
     if (m_len <= 0) return;
-    QValueList<DocumentMarker> markers = object()->document()->markersForNode(object()->node());
-    QValueListIterator <DocumentMarker> markerIt = markers.begin();
-
+    
     QValueList<MarkedTextUnderline> underlines;
     if (haveMarkedText && markedTextUsesUnderlines) {
         underlines = object()->document()->frame()->markedTextUnderlines();
@@ -391,34 +391,14 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
         paintDecoration(i.p, tx, ty, d);
     }
 
-    // Draw any doc markers that touch this run
-    // Note end() points at the last char, not one past it like endOffset and ranges do
     if (i.phase != PaintActionSelection) {
-        for ( ; markerIt != markers.end(); markerIt++) {
-            DocumentMarker marker = *markerIt;
-
-            if (marker.endOffset <= start())
-                // marker is completely before this run.  This might be a marker that sits before the
-                // first run we draw, or markers that were within runs we skipped due to truncation.
-                continue;
-            
-            if (marker.startOffset <= end()) {
-                // marker intersects this run.  Paint it.
-                paintMarker(i.p, tx, ty, marker);
-                if (marker.endOffset > end() + 1)
-                    // marker also runs into the next run. Bail now, no more marker advancement.
-                    break;
-            } else
-                // marker is completely after this run, bail.  A later run will paint it.
-                break;
-        }
-
+        paintAllMarkersOfType(i.p, tx, ty, DocumentMarker::Spelling, styleToUse, font);
 
         for ( ; underlineIt != underlines.end(); underlineIt++) {
             MarkedTextUnderline underline = *underlineIt;
 
             if (underline.endOffset <= start())
-                // underline is completely before this run.  This might be an underlinethat sits
+                // underline is completely before this run.  This might be an underline that sits
                 // before the first run we draw, or underlines that were within runs we skipped 
                 // due to truncation.
                 continue;
@@ -433,9 +413,6 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
                 // underline is completely after this run, bail.  A later run will paint it.
                 break;
         }
-
-
-
     }
 
     if (setShadow)
@@ -544,11 +521,11 @@ void InlineTextBox::paintDecoration( QPainter *pt, int _tx, int _ty, int deco)
     }
 }
 
-void InlineTextBox::paintMarker(QPainter *pt, int _tx, int _ty, DocumentMarker marker)
+void InlineTextBox::paintSpellingMarker(QPainter *pt, int _tx, int _ty, DocumentMarker marker)
 {
     _tx += m_x;
     _ty += m_y;
-
+    
     if (m_truncation == cFullTruncation)
         return;
     
@@ -573,7 +550,7 @@ void InlineTextBox::paintMarker(QPainter *pt, int _tx, int _ty, DocumentMarker m
     if (!useWholeWidth) {
         width = static_cast<RenderText*>(m_object)->width(paintStart, paintEnd - paintStart, textPos() + start, m_firstLine);
     }
-
+    
     // IMPORTANT: The misspelling underline is not considered when calculating the text bounds, so we have to
     // make sure to fit within those bounds.  This means the top pixel(s) of the underline will overlap the
     // bottom pixel(s) of the glyphs in smaller font sizes.  The alternatives are to increase the line spacing (bad!!)
@@ -592,6 +569,67 @@ void InlineTextBox::paintMarker(QPainter *pt, int _tx, int _ty, DocumentMarker m
     }
     pt->drawLineForMisspelling(_tx + start, _ty + underlineOffset, width);
 }
+
+void InlineTextBox::paintTextMatchMarker(QPainter *pt, int _tx, int _ty, DocumentMarker marker, RenderStyle* style, const Font* f)
+{
+    Color c = Color(255, 255, 0);
+    pt->save();
+    pt->setPen(c); // Don't draw text at all!
+                   // Use same y positioning and height as for selection, so that when the selection and this highlight are on
+                   // the same word there are no pieces sticking out.
+    RootInlineBox* r = root();
+    int y = r->selectionTop();
+    int h = r->selectionHeight();
+    pt->addClip(IntRect(_tx + m_x, _ty + y, m_width, h));
+    int sPos = kMax(marker.startOffset - m_start, (unsigned)0);
+    int ePos = kMin(marker.endOffset - m_start, (unsigned)m_len);
+    
+    f->drawHighlightForText(pt, m_x + _tx, y + _ty, h, textObject()->tabWidth(), textPos(), 
+                            textObject()->str->s, textObject()->str->l, m_start, m_len,
+                            m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, m_dirOverride || style->visuallyOrdered(), sPos, ePos, c);
+    pt->restore();
+}
+
+void InlineTextBox::paintAllMarkersOfType(QPainter *pt, int _tx, int _ty, int markerType, RenderStyle* style, const Font* f)
+{
+    QValueList<DocumentMarker> markers = object()->document()->markersForNode(object()->node());
+    QValueListIterator <DocumentMarker> markerIt = markers.begin();
+
+    // Give any document markers that touch this run a chance to draw before the text has been drawn.
+    // Note end() points at the last char, not one past it like endOffset and ranges do.
+    for ( ; markerIt != markers.end(); markerIt++) {
+        DocumentMarker marker = *markerIt;
+        
+        if (marker.type != markerType)
+            continue;
+        
+        if (marker.endOffset <= start())
+            // marker is completely before this run.  This might be a marker that sits before the
+            // first run we draw, or markers that were within runs we skipped due to truncation.
+            continue;
+        
+        if (marker.startOffset <= end()) {
+            // marker intersects this run.  Paint it.
+            switch (markerType) {
+                case DocumentMarker::Spelling:
+                    paintSpellingMarker(pt, _tx, _ty, marker);
+                    break;
+                case DocumentMarker::TextMatch:
+                    paintTextMatchMarker(pt, _tx, _ty, marker, style, f);
+                    break;
+                default:
+                    assert(false);
+            }
+
+            if (marker.endOffset > end() + 1)
+                // marker also runs into the next run. Bail now, no more marker advancement.
+                break;
+        } else
+            // marker is completely after this run, bail.  A later run will paint it.
+            break;
+    }
+}
+
 
 void InlineTextBox::paintMarkedTextUnderline(QPainter *pt, int _tx, int _ty, MarkedTextUnderline& underline)
 {

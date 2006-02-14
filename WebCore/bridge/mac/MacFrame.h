@@ -244,6 +244,7 @@ public:
     NSString *matchLabelsAgainstElement(NSArray *labels, ElementImpl *element);
 
     bool findString(NSString *str, bool forward, bool caseFlag, bool wrapFlag);
+    unsigned MacFrame::highlightAllMatchesForString(NSString *string, bool caseFlag);
 
     KWQWindowWidget *topLevelWidget();
     

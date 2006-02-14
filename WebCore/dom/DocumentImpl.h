@@ -101,7 +101,8 @@ namespace WebCore {
     {
         enum MarkerType {
             AllMarkers = -1,
-            Spelling = 0
+            Spelling = 0,
+            TextMatch,
             // Not doing grammar yet, but this is a placeholder for it
             // Grammar
         };

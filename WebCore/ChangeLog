@@ -1,3 +1,39 @@
+2006-02-13  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick.
+
+        Support for highlighting multiple text matches.
+
+        * dom/DocumentImpl.h:
+        (WebCore::DocumentMarker::):
+        Added new marker type TextMatch
+
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge highlightAllMatchesForString:caseSensitive:]):
+        new method, calls through to MacFrame implementation
+        (-[WebCoreFrameBridge clearHighlightedMatches]):
+        new method, removes all markers of type TextMatch
+
+        * bridge/mac/MacFrame.h:
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::highlightAllMatchesForString):
+        new method, adds a document marker for each range that matches the given string
+
+        * rendering/InlineTextBox.h:
+        * rendering/InlineTextBox.cpp:
+        (khtml::InlineTextBox::paint):
+        Moved DocumentMarker loop into separate method paintAllMarkersOfType. We now call
+        that method twice, once for spelling markers (after drawing text) and once for
+        text match markers (before drawing text)
+        (khtml::InlineTextBox::paintTextMatchMarker):
+        new method, paints a color behind a text match marker
+        (khtml::InlineTextBox::paintSpellingMarker):
+        renamed from paintMarker
+        (khtml::InlineTextBox::paintAllMarkersOfType):
+        new method, loops through all DocumentMarkers of a particular type and calls the
+        appropriate painting method for each one
+
 2006-02-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

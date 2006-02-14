@@ -1404,6 +1404,20 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return m_frame->findString(string, forward, caseFlag, wrapFlag);
 }
 
+- (unsigned)highlightAllMatchesForString:(NSString *)string caseSensitive:(BOOL)caseFlag
+{
+    return m_frame->highlightAllMatchesForString(string, caseFlag);
+}
+
+- (void)clearHighlightedMatches
+{
+    DocumentImpl *doc = m_frame->document();
+    if (!doc) {
+        return;
+    }
+    doc->removeMarkers(DocumentMarker::TextMatch);
+}
+
 - (NSString *)advanceToNextMisspelling
 {
     return m_frame->advanceToNextMisspelling().getNSString();
