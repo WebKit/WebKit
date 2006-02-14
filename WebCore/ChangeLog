@@ -1,3 +1,31 @@
+2006-02-14  Vicki Murley <vicki@apple.com>
+
+        Reviewed by Maciej.
+
+        Change formatting in this file to match the style guidelines.  No spaces after
+        opening parentheses or before closing parentheses. 
+
+        * dom/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::createDocumentFragment):
+        (WebCore::DocumentImpl::recalcStyle):
+        (WebCore::DocumentImpl::attach):
+        (WebCore::DocumentImpl::detach):
+        (WebCore::DocumentImpl::open):
+        (WebCore::DocumentImpl::write):
+        (WebCore::DocumentImpl::writeln):
+        (WebCore::DocumentImpl::setUserStyleSheet):
+        (WebCore::DocumentImpl::determineParseMode):
+        (WebCore::DocumentImpl::processHttpEquiv):
+        (WebCore::DocumentImpl::childAllowed):
+        (WebCore::DocumentImpl::childTypeAllowed):
+        (WebCore::DocumentImpl::recalcStyleSelector):
+        (WebCore::DocumentImpl::dispatchImageLoadEventsNow):
+        (WebCore::DocumentImpl::domain):
+        (WebCore::DocumentImpl::setDomain):
+        (WebCore::DocumentImpl::parseQualifiedName):
+        (WebCore::DocumentImpl::addMarker):
+        (WebCore::DocumentImpl::removeMarkers):
+
 2006-02-14  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Hatcher.

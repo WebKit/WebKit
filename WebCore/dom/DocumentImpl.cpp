@@ -404,7 +404,7 @@ ElementImpl *DocumentImpl::createElement(const DOMString &name, int &exceptionCo
     return createElementNS(nullAtom, name, exceptionCode);
 }
 
-DocumentFragmentImpl *DocumentImpl::createDocumentFragment(  )
+DocumentFragmentImpl *DocumentImpl::createDocumentFragment()
 {
     return new DocumentFragmentImpl(getDocument());
 }
@@ -797,7 +797,7 @@ void DocumentImpl::setDocumentChanged(bool b)
     m_docChanged = b;
 }
 
-void DocumentImpl::recalcStyle( StyleChange change )
+void DocumentImpl::recalcStyle(StyleChange change)
 {
     if (m_inStyleRecalc)
         return; // Guard against re-entrancy. -dwh
@@ -807,13 +807,13 @@ void DocumentImpl::recalcStyle( StyleChange change )
     if (!renderer())
         goto bail_out;
 
-    if ( change == Force ) {
+    if (change == Force) {
         RenderStyle* oldStyle = renderer()->style();
-        if ( oldStyle ) oldStyle->ref();
+        if (oldStyle) oldStyle->ref();
         RenderStyle* _style = new (m_renderArena) RenderStyle();
         _style->ref();
         _style->setDisplay(BLOCK);
-        _style->setVisuallyOrdered( visuallyOrdered );
+        _style->setVisuallyOrdered(visuallyOrdered);
         // ### make the font stuff _really_ work!!!!
 
         FontDef fontDef;
@@ -827,7 +827,7 @@ void DocumentImpl::recalcStyle( StyleChange change )
             if (printing() && !settings->shouldPrintBackgrounds())
                 _style->setForceBackgroundsToWhite(true);
             QString stdfont = settings->stdFontName();
-            if ( !stdfont.isEmpty() ) {
+            if (!stdfont.isEmpty()) {
                 fontDef.family.setFamily(stdfont);
                 fontDef.family.appendFamily(0);
             }
@@ -836,13 +836,13 @@ void DocumentImpl::recalcStyle( StyleChange change )
 
         _style->setFontDef(fontDef);
         _style->htmlFont().update();
-        if ( inCompatMode() )
+        if (inCompatMode())
             _style->setHtmlHacks(true); // enable html specific rendering tricks
 
-        StyleChange ch = diff( _style, oldStyle );
+        StyleChange ch = diff(_style, oldStyle);
         if (renderer() && ch != NoChange)
             renderer()->setStyle(_style);
-        if ( change != Force )
+        if (change != Force)
             change = ch;
 
         _style->deref(m_renderArena);
@@ -858,9 +858,9 @@ void DocumentImpl::recalcStyle( StyleChange change )
         m_view->layout();
 
 bail_out:
-    setChanged( false );
-    setHasChangedChild( false );
-    setDocumentChanged( false );
+    setChanged(false);
+    setHasChangedChild(false);
+    setDocumentChanged(false);
     
     m_inStyleRecalc = false;
     
@@ -928,7 +928,7 @@ void DocumentImpl::attach()
     
     // Create the rendering tree
     setRenderer(new (m_renderArena) RenderCanvas(this, m_view));
-    recalcStyle( Force );
+    recalcStyle(Force);
 
     RenderObject* render = renderer();
     setRenderer(0);
@@ -970,7 +970,7 @@ void DocumentImpl::detach()
 
     ContainerNodeImpl::detach();
 
-    if ( render )
+    if (render)
         render->destroy();
 
     m_view = 0;
@@ -1088,7 +1088,7 @@ Tokenizer *DocumentImpl::createTokenizer()
     return newXMLTokenizer(this, m_view);
 }
 
-void DocumentImpl::open(  )
+void DocumentImpl::open()
 {
     if (parsing()) return;
 
@@ -1280,12 +1280,12 @@ int DocumentImpl::elapsedTime() const
     return static_cast<int>((currentTime() - m_startTime) * 1000);
 }
 
-void DocumentImpl::write( const DOMString &text )
+void DocumentImpl::write(const DOMString &text)
 {
     write(text.qstring());
 }
 
-void DocumentImpl::write( const QString &text )
+void DocumentImpl::write(const QString &text)
 {
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!ownerElement())
@@ -1305,7 +1305,7 @@ void DocumentImpl::write( const QString &text )
 #endif    
 }
 
-void DocumentImpl::writeln( const DOMString &text )
+void DocumentImpl::writeln(const DOMString &text)
 {
     write(text);
     write(DOMString("\n"));
@@ -1355,9 +1355,9 @@ void DocumentImpl::setStyleSheet(const DOMString &url, const DOMString &sheet)
     updateStyleSelector();
 }
 
-void DocumentImpl::setUserStyleSheet( const QString& sheet )
+void DocumentImpl::setUserStyleSheet(const QString& sheet)
 {
-    if ( m_usersheet != sheet ) {
+    if (m_usersheet != sheet) {
         m_usersheet = sheet;
         updateStyleSelector();
     }
@@ -1370,7 +1370,7 @@ CSSStyleSheetImpl* DocumentImpl::elementSheet()
     return m_elemSheet.get();
 }
 
-void DocumentImpl::determineParseMode( const QString &/*str*/ )
+void DocumentImpl::determineParseMode(const QString &/*str*/)
 {
     // For XML documents use strict parse mode.  HTML docs will override this method to
     // determine their parse mode.
@@ -1613,7 +1613,7 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
         // get delay and url
         QString str = content.qstring().stripWhiteSpace();
         int pos = str.find(QRegExp("[;,]"));
-        if ( pos == -1 )
+        if (pos == -1)
             pos = str.find(QRegExp("[ \t]"));
 
         if (pos == -1) // There can be no url (David)
@@ -1631,7 +1631,7 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
             pos++;
             while(pos < (int)str.length() && str[pos].isSpace()) pos++;
             str = str.mid(pos);
-            if (str.find("url", 0,  false ) == 0)
+            if (str.find("url", 0,  false) == 0)
                 str = str.mid(3);
             str = str.stripWhiteSpace();
             if (str.length() && str[0] == '=')
@@ -1639,7 +1639,7 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
             str = parseURL(DOMString(str)).qstring();
             if (ok && frame)
                 // We want a new history item if the refresh timeout > 1 second
-                frame->scheduleRedirection(delay, completeURL( str ), delay <= 1);
+                frame->scheduleRedirection(delay, completeURL(str), delay <= 1);
         }
     }
     else if (equalIgnoringCase(equiv, "expires"))
@@ -1700,7 +1700,7 @@ bool DocumentImpl::prepareMouseEvent(bool readonly, bool active, int _x, int _y,
 }
 
 // DOM Section 1.1.1
-bool DocumentImpl::childAllowed( NodeImpl *newChild )
+bool DocumentImpl::childAllowed(NodeImpl *newChild)
 {
     // Documents may contain a maximum of one Element child
     if (newChild->nodeType() == Node::ELEMENT_NODE) {
@@ -1723,7 +1723,7 @@ bool DocumentImpl::childAllowed( NodeImpl *newChild )
     return childTypeAllowed(newChild->nodeType());
 }
 
-bool DocumentImpl::childTypeAllowed( unsigned short type )
+bool DocumentImpl::childTypeAllowed(unsigned short type)
 {
     switch (type) {
         case Node::ELEMENT_NODE:
@@ -1899,8 +1899,8 @@ void DocumentImpl::recalcStyleSelector()
                         m_preferredStylesheetSet = m_selectedStylesheetSet = title;
                 }
                       
-                if (!m_availableSheets.contains( title ) )
-                    m_availableSheets.append( title );
+                if (!m_availableSheets.contains(title))
+                    m_availableSheets.append(title);
                 
                 if (title != m_preferredStylesheetSet)
                     sheet = 0;
@@ -1951,7 +1951,7 @@ void DocumentImpl::recalcStyleSelector()
     // Create a new style selector
     delete m_styleSelector;
     QString usersheet = m_usersheet;
-    if ( m_view && m_view->mediaType() == "print" )
+    if (m_view && m_view->mediaType() == "print")
         usersheet += m_printSheet;
     m_styleSelector = new CSSStyleSelector(this, usersheet, m_styleSheets.get(), !inCompatMode());
     m_styleSelector->setEncodedURL(m_url);
@@ -2372,7 +2372,7 @@ void DocumentImpl::dispatchImageLoadEventsNow()
     
     m_imageLoadEventDispatchingList = m_imageLoadEventDispatchSoonList;
     m_imageLoadEventDispatchSoonList.clear();
-    for (QPtrListIterator<HTMLImageLoader> it(m_imageLoadEventDispatchingList); it.current(); ) {
+    for (QPtrListIterator<HTMLImageLoader> it(m_imageLoadEventDispatchingList); it.current();) {
         HTMLImageLoader* image = it.current();
         // Must advance iterator *before* dispatching call.
         // Otherwise, it might be advanced automatically if dispatching the call had a side effect
@@ -2406,31 +2406,31 @@ DOMString DocumentImpl::referrer() const
 
 DOMString DocumentImpl::domain() const
 {
-    if ( m_domain.isEmpty() ) // not set yet (we set it on demand to save time and space)
+    if (m_domain.isEmpty()) // not set yet (we set it on demand to save time and space)
         m_domain = KURL(URL()).host(); // Initially set to the host
     return m_domain;
 }
 
 void DocumentImpl::setDomain(const DOMString &newDomain, bool force /*=false*/)
 {
-    if ( force ) {
+    if (force) {
         m_domain = newDomain;
         return;
     }
-    if ( m_domain.isEmpty() ) // not set yet (we set it on demand to save time and space)
+    if (m_domain.isEmpty()) // not set yet (we set it on demand to save time and space)
         m_domain = KURL(URL()).host(); // Initially set to the host
 
     // Both NS and IE specify that changing the domain is only allowed when
     // the new domain is a suffix of the old domain.
     int oldLength = m_domain.length();
     int newLength = newDomain.length();
-    if ( newLength < oldLength ) // e.g. newDomain=kde.org (7) and m_domain=www.kde.org (11)
+    if (newLength < oldLength) // e.g. newDomain=kde.org (7) and m_domain=www.kde.org (11)
     {
         DOMString test = m_domain.copy();
-        if ( test[oldLength - newLength - 1] == '.' ) // Check that it's a subdomain, not e.g. "de.org"
+        if (test[oldLength - newLength - 1] == '.') // Check that it's a subdomain, not e.g. "de.org"
         {
-            test.remove( 0, oldLength - newLength ); // now test is "kde.org" from m_domain
-            if ( test == newDomain )                 // and we check that it's the same thing as newDomain
+            test.remove(0, oldLength - newLength); // now test is "kde.org" from m_domain
+            if (test == newDomain)                 // and we check that it's the same thing as newDomain
                 m_domain = newDomain;
         }
     }
@@ -2472,7 +2472,7 @@ bool DocumentImpl::parseQualifiedName(const DOMString &qualifiedName, DOMString 
     int colonPos = 0;
 
     const QChar *s = qualifiedName.unicode();
-    for (unsigned i = 0; i < length; ) {
+    for (unsigned i = 0; i < length;) {
         UChar32 c;
         U16_NEXT(s, i, length, c)
         if (c == ':') {
@@ -2703,7 +2703,7 @@ void DocumentImpl::addMarker(NodeImpl *node, DocumentMarker newMarker)
         m_markers.set(node, markers);
     } else {
         QValueListIterator<DocumentMarker> it;
-        for (it = markers->begin(); it != markers->end(); ) {
+        for (it = markers->begin(); it != markers->end();) {
             DocumentMarker marker = *it;
             
             if (newMarker.endOffset < marker.startOffset+1) {
@@ -2788,7 +2788,7 @@ void DocumentImpl::removeMarkers(NodeImpl *node, unsigned startOffset, int lengt
     bool docDirty = false;
     unsigned endOffset = startOffset + length - 1;
     QValueListIterator<DocumentMarker> it;
-    for (it = markers->begin(); it != markers->end(); ) {
+    for (it = markers->begin(); it != markers->end();) {
         DocumentMarker marker = *it;
 
         // markers are returned in order, so stop if we are now past the specified range
@@ -2863,7 +2863,7 @@ void DocumentImpl::removeMarkers(DocumentMarker::MarkerType markerType)
         // inner loop: process each marker in the current node
         QValueList<DocumentMarker> *markers = i->second;
         QValueListIterator<DocumentMarker> markerIterator;
-        for (markerIterator = markers->begin(); markerIterator != markers->end(); ) {
+        for (markerIterator = markers->begin(); markerIterator != markers->end();) {
             DocumentMarker marker = *markerIterator;
 
             // skip nodes that are not of the specified type
