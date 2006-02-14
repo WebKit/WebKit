@@ -383,51 +383,27 @@ bool isTableElement(NodeImpl *n)
 
 bool isFirstVisiblePositionAfterTableElement(const Position& pos)
 {
-    VisiblePosition vPos = VisiblePosition(pos, DOWNSTREAM).previous();
-    // FIXME: rangePos isn't being used to create DOM Ranges, so why does it need to be range compliant?
-    Position rangePos = rangeCompliantEquivalent(vPos.deepEquivalent().downstream());
-    for (NodeImpl *n = rangePos.node(); n; n = n->parentNode()) {
-        // FIXME: can we not create a VP every time thru this loop?
-        VisiblePosition checkVP = VisiblePosition(n, maxRangeOffset(n), DOWNSTREAM);
-        if (checkVP != vPos) {
-            if (isTableElement(n) && checkVP.previous() == vPos)
-                return true;
-            return false;
-        }
-        if (n->rootEditableElement() == NULL)
-            return false;
-        if (isTableElement(n))
-            return true;
-    }
-
-    return false;
+    return isTableElement(pos.upstream().node());
 }
 
 Position positionBeforePrecedingTableElement(const Position& pos)
 {
     ASSERT(isFirstVisiblePositionAfterTableElement(pos));
-    VisiblePosition vPos = VisiblePosition(pos, DOWNSTREAM).previous();
-    // FIXME: rangePos isn't being used to create DOM Ranges, so why does it need to be range compliant?
-    Position rangePos = rangeCompliantEquivalent(vPos);
-    NodeImpl *outermostTableElement = NULL;
+    Position result = positionBeforeNode(pos.upstream().node());
+    if (result.isNull() || !result.node()->rootEditableElement())
+        return pos;
+    return result;
+}
 
-    for (NodeImpl *n = rangePos.node(); n; n = n->parentNode()) {
-        // FIXME: can we not create a VP every time thru this loop?
-        VisiblePosition checkVP = VisiblePosition(n, maxRangeOffset(n), DOWNSTREAM);
-        if (checkVP != vPos) {
-            if (isTableElement(n) && checkVP.previous() == vPos)
-                outermostTableElement = n;
-            break;
-        }
-        if (n->rootEditableElement() == NULL)
-            break;
-        if (isTableElement(n))
-            outermostTableElement = n;
-    }
-    
-    ASSERT(outermostTableElement);        
-    Position result = positionBeforeNode(outermostTableElement);
-    
+bool isLastVisiblePositionBeforeTableElement(const Position &pos)
+{
+    return isTableElement(pos.downstream().node());
+}
+
+Position positionAfterFollowingTableElement(const Position &pos)
+{
+    ASSERT(isLastVisiblePositionBeforeTableElement(pos));
+    Position result = positionAfterNode(pos.downstream().node());
     if (result.isNull() || !result.node()->rootEditableElement())
         return pos;
     return result;
@@ -509,7 +485,7 @@ Position positionBeforeTabSpan(const Position& pos)
     else if (!isTabSpanNode(node))
         return pos;
     
-    return Position(node->parentNode(), node->nodeIndex());
+    return positionBeforeNode(node);
 }
 
 PassRefPtr<ElementImpl> createTabSpanElement(DocumentImpl* document, PassRefPtr<NodeImpl> tabTextNode)

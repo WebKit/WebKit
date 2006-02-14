@@ -77,7 +77,7 @@ void VisiblePosition::init(const Position &pos, EAffinity affinity)
     
     pos.node()->getDocument()->updateLayoutIgnorePendingStylesheets();
     Position deepPos = deepEquivalent(pos);
-    if (isCandidate(deepPos)) {
+    if (deepPos.inRenderedContent()) {
         m_deepPosition = deepPos;
         Position previous = previousVisiblePosition(deepPos);
         if (previous.isNotNull()) {
@@ -149,12 +149,12 @@ Position VisiblePosition::previousVisiblePosition(const Position &pos)
 
     Position test = deepEquivalent(pos);
     Position downstreamTest = test.downstream();
-    bool acceptAnyVisiblePosition = !isCandidate(test);
+    bool acceptAnyVisiblePosition = !test.inRenderedContent();
 
     Position current = test;
     while (!current.atStart()) {
         current = current.previous(UsingComposedCharacters);
-        if (isCandidate(current) && (acceptAnyVisiblePosition || (downstreamTest != current.downstream()))) {
+        if (current.inRenderedContent() && (acceptAnyVisiblePosition || (downstreamTest != current.downstream()))) {
             return current;
         }
     }
@@ -168,65 +168,18 @@ Position VisiblePosition::nextVisiblePosition(const Position &pos)
         return Position();
 
     Position test = deepEquivalent(pos);
-    bool acceptAnyVisiblePosition = !isCandidate(test);
+    bool acceptAnyVisiblePosition = !test.inRenderedContent();
 
     Position current = test;
     Position downstreamTest = test.downstream();
     while (!current.atEnd()) {
         current = current.next(UsingComposedCharacters);
-        if (isCandidate(current) && (acceptAnyVisiblePosition || (downstreamTest != current.downstream()))) {
+        if (current.inRenderedContent() && (acceptAnyVisiblePosition || (downstreamTest != current.downstream()))) {
             return current;
         }
     }
     
     return Position();
-}
-
-bool hasRenderedChildrenWithHeight(RenderObject *renderer)
-{
-    if (!renderer->firstChild())
-        return false;
-
-    for (RenderObject *child = renderer->firstChild(); child; child = child->nextSibling())
-        if (child->height())
-            return true;
-    
-    return false;
-}
-
-bool VisiblePosition::isCandidate(const Position &pos)
-{
-    if (pos.isNull())
-        return false;
-        
-    RenderObject *renderer = pos.node()->renderer();
-    if (!renderer)
-        return false;
-    
-    if (renderer->style()->visibility() != VISIBLE)
-        return false;
-
-    if (isTableElement(pos.node()) || editingIgnoresContent(pos.node()))
-        return pos.offset() == 0 || pos.offset() == maxDeepOffset(pos.node());
-
-    if (renderer->isBR())
-        return pos.offset() == 0;
-    
-    // True if at a rendered offset inside a text node
-    if (renderer->isText()) {
-        RenderText *textRenderer = static_cast<RenderText *>(renderer);
-        for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
-            if (pos.offset() >= box->m_start && pos.offset() <= box->m_start + box->m_len) {
-                return true;
-            }
-        }
-    }
-    
-    if (renderer->isBlockFlow() && !hasRenderedChildrenWithHeight(renderer) &&
-       (renderer->height() || pos.node()->hasTagName(bodyTag)))
-       return pos.offset() == 0;
-    
-    return false;
 }
 
 Position VisiblePosition::deepEquivalent(const Position &pos)
@@ -237,7 +190,7 @@ Position VisiblePosition::deepEquivalent(const Position &pos)
     if (!node)
         return Position();
     
-    if (isCandidate(pos) || isAtomicNode(node))
+    if (pos.inRenderedContent() || isAtomicNode(node))
         return pos;
 
     if (offset >= (int)node->childNodeCount()) {
@@ -246,13 +199,13 @@ Position VisiblePosition::deepEquivalent(const Position &pos)
             if (!child)
                 break;
             node = child;
-        } while (!isCandidate(Position(node, maxDeepOffset(node))) && !isAtomicNode(node));
+        } while (!(Position(node, maxDeepOffset(node)).inRenderedContent()) && !isAtomicNode(node));
         return Position(node, maxDeepOffset(node));
     }
     
     node = node->childNode(offset);
     ASSERT(node);
-    while (!isCandidate(Position(node, 0)) && !isAtomicNode(node)) {
+    while (!(Position(node, 0).inRenderedContent()) && !isAtomicNode(node)) {
         NodeImpl *child = node->firstChild();
         if (!child)
             break;

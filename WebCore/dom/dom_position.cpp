@@ -481,6 +481,18 @@ Position Position::downstream() const
     return lastVisible;
 }
 
+bool hasRenderedChildrenWithHeight(RenderObject *renderer)
+{
+    if (!renderer->firstChild())
+        return false;
+
+    for (RenderObject *child = renderer->firstChild(); child; child = child->nextSibling())
+        if (child->height())
+            return true;
+    
+    return false;
+}
+
 bool Position::inRenderedContent() const
 {
     if (isNull())
@@ -496,26 +508,15 @@ bool Position::inRenderedContent() const
     if (renderer->isBR())
         return offset() == 0;
 
-    if (renderer->isText()) {
-        RenderText *textRenderer = static_cast<RenderText *>(renderer);
-        for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
-            if (offset() >= box->m_start && offset() <= box->m_start + box->m_len)
-                return true;
-            if (offset() < box->m_start) {
-                // The offset we're looking for is before this node
-                // this means the offset must be in content that is
-                // not rendered. Return false.
-                return false;
-            }
-        }
-    } else if (offset() >= renderer->caretMinOffset() && offset() <= renderer->caretMaxOffset()) {
-        // return true for replaced elements, for inline flows if they have a line box
-        // and for blocks if they are empty
-        if (renderer->isReplaced() ||
-            (renderer->isInlineFlow() && static_cast<RenderFlow *>(renderer)->firstLineBox()) ||
-            (renderer->isBlockFlow() && !renderer->firstChild() && renderer->height()))
-            return true;
-    }
+    if (renderer->isText())
+        return inRenderedText();
+
+    if (isTableElement(node()) || editingIgnoresContent(node()))
+        return offset() == 0 || offset() == maxDeepOffset(node());
+
+    if (renderer->isBlockFlow() && !hasRenderedChildrenWithHeight(renderer) &&
+       (renderer->height() || node()->hasTagName(bodyTag)))
+        return offset() == 0;
     
     return false;
 }

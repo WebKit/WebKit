@@ -105,8 +105,6 @@ private:
     
     static Position previousVisiblePosition(const Position &);
     static Position nextVisiblePosition(const Position &);
-
-    static bool isCandidate(const Position &);
         
     Position m_deepPosition;
     EAffinity m_affinity;

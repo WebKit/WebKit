@@ -1,3 +1,64 @@
+2006-02-07  David Harrison  <harrison@apple.com>
+
+        Reviewed by Justin.
+
+        - merge VisiblePosition:isCandidate() into Position::inRenderedContent()
+          These functions were answering the same question in different ways!  We
+          only need one implementation.
+
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::init):
+        (khtml::VisiblePosition::previousVisiblePosition):
+        (khtml::VisiblePosition::nextVisiblePosition):
+        (khtml::VisiblePosition::deepEquivalent):
+        * khtml/editing/visible_position.h:
+        * dom/dom_position.cpp:
+        (DOM::hasRenderedChildrenWithHeight):
+        (DOM::Position::inRenderedContent):
+
+
+        - improved table deletion.
+          Fixes: delete back by word from just after table did not delete the table
+                 delete forward by char or word did not delete the table
+                 deleting back to a table and again did not delete the table
+
+        * khtml/editing/htmlediting.cpp:
+        (WebCore::isFirstVisiblePositionAfterTableElement):
+        simpler implementation
+        (WebCore::positionBeforePrecedingTableElement):
+        simpler implementation
+        (WebCore::isFirstVisiblePositionBeforeTableElement):
+        new
+        (WebCore::positionAfterFollowingTableElement):
+        new
+        * khtml/editing/htmlediting.h:
+        * khtml/editing/SelectionController.cpp:
+        (WebCore::SelectionController::modifyExtendingRightForward):
+        select following table if granularity is char or word
+        (WebCore::SelectionController::modifyExtendingLeftBackward):
+        select preceding table if granularity is char or word
+        * khtml/editing/typing_command.cpp:
+        (khtml::TypingCommand::deleteKeyPressed):
+        simpler implementation, and let other deleteKeyPressed do boundary checking
+        (khtml::TypingCommand::forwardDeleteKeyPressed):
+        simpler implementation, and let other forwardDeleteKeyPressed do boundary checking
+        (khtml::TypingCommand::insertText):
+        standard formatting
+        (khtml::TypingCommand::insertLineBreak):
+        standard formatting
+        (khtml::TypingCommand::insertParagraphSeparatorInQuotedContent):
+        standard formatting
+        (khtml::TypingCommand::insertParagraphSeparator):
+        standard formatting
+        (khtml::TypingCommand::insertTextRunWithoutNewlines):
+        standard formatting
+        (khtml::TypingCommand::deleteKeyPressed):
+        use SelectionController to extend selection, to get all the selection
+        logic incl. table selection and editable/noneditable boundary checks
+        (khtml::TypingCommand::forwardDeleteKeyPressed):
+        use SelectionController to extend selection, to get all the selection
+        logic incl. table selection and editable/noneditable boundary checks
+
 2006-02-13  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 5605, XSLT fails to import to arbitrary depth.  Make sure m_embedded is initialized to false

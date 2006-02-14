@@ -283,10 +283,16 @@ VisiblePosition SelectionController::modifyExtendingRightForward(ETextGranularit
     VisiblePosition pos(m_sel.extent(), m_sel.affinity());
     switch (granularity) {
         case CHARACTER:
-            pos = pos.next();
+            if (isLastVisiblePositionBeforeTableElement(pos.deepEquivalent()))
+                pos = VisiblePosition(positionAfterFollowingTableElement(pos.deepEquivalent()), VP_DEFAULT_AFFINITY);
+            else
+                pos = pos.next();
             break;
         case WORD:
-            pos = nextWordPosition(pos);
+            if (isLastVisiblePositionBeforeTableElement(pos.deepEquivalent()))
+                pos = VisiblePosition(positionAfterFollowingTableElement(pos.deepEquivalent()), VP_DEFAULT_AFFINITY);
+            else
+                pos = nextWordPosition(pos);
             break;
         case PARAGRAPH:
             pos = nextParagraphPosition(pos, xPosForVerticalArrowNavigation(EXTENT));
@@ -349,19 +355,22 @@ VisiblePosition SelectionController::modifyExtendingLeftBackward(ETextGranularit
 {
     VisiblePosition pos(m_sel.extent(), m_sel.affinity());
         
+    // Extending a selection backward by word or character from just after a table selects
+    // the table.  This "makes sense" from the user perspective, esp. when deleting.
+    // It was done here instead of in VisiblePosition because we want VPs to iterate
+    // over everything.
     switch (granularity) {
         case CHARACTER:
-            // Extending a selection backward by character from just after a table selects
-            // the table.  This "makes sense" from the user perspective, esp. when deleting.
-            // It was done here instead of in VisiblePosition because we want VPs to iterate
-            // over everything.
             if (isFirstVisiblePositionAfterTableElement(pos.deepEquivalent()))
                 pos = VisiblePosition(positionBeforePrecedingTableElement(pos.deepEquivalent()), VP_DEFAULT_AFFINITY);
             else
                 pos = pos.previous();
             break;
         case WORD:
-            pos = previousWordPosition(pos);
+            if (isFirstVisiblePositionAfterTableElement(pos.deepEquivalent()))
+                pos = VisiblePosition(positionBeforePrecedingTableElement(pos.deepEquivalent()), VP_DEFAULT_AFFINITY);
+            else
+                pos = previousWordPosition(pos);
             break;
         case PARAGRAPH:
             pos = previousParagraphPosition(pos, xPosForVerticalArrowNavigation(EXTENT));
