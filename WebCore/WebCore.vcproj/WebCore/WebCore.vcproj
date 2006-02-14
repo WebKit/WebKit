@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\iconv\include&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\libxml\include&quot;;&quot;$(SolutionDir)\..\..\libxslt\include&quot;;&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\css&quot;;&quot;$(SolutionDir)\..\khtml\dom&quot;;&quot;$(SolutionDir)\..\khtml\ecma&quot;;&quot;$(SolutionDir)\..\khtml\editing&quot;;&quot;$(SolutionDir)\..\khtml\html&quot;;&quot;$(SolutionDir)\..\khtml\misc&quot;;&quot;$(SolutionDir)\..\rendering&quot;;&quot;$(SolutionDir)\..\dom&quot;;&quot;$(SolutionDir)\..\khtml\xsl&quot;;&quot;$(SolutionDir)\..\khtml&quot;;&quot;$(SolutionDir)\..\kwq&quot;;&quot;$(SolutionDir)\..\bridge&quot;;&quot;$(SolutionDir)\..\loader&quot;;&quot;$(SolutionDir)\..\page&quot;;&quot;$(SolutionDir)\..\platform&quot;;&quot;$(SolutionDir)\..\platform\cairo&quot;;&quot;$(SolutionDir)\..\platform\image-decoders&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\gif&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\png&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\zlib&quot;;&quot;$(SolutionDir)\..\xml&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\kjs&quot;;&quot;$(SolutionDir)..\platform\cairo\pixman\src&quot;;&quot;$(SolutionDir)\..\platform\cairo\cairo\src&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\iconv\include&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\libxml\include&quot;;&quot;$(SolutionDir)\..\..\libxslt\include&quot;;&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\css&quot;;&quot;$(SolutionDir)\..\khtml\dom&quot;;&quot;$(SolutionDir)\..\khtml\ecma&quot;;&quot;$(SolutionDir)\..\editing&quot;;&quot;$(SolutionDir)\..\khtml\html&quot;;&quot;$(SolutionDir)\..\khtml\misc&quot;;&quot;$(SolutionDir)\..\rendering&quot;;&quot;$(SolutionDir)\..\dom&quot;;&quot;$(SolutionDir)\..\khtml\xsl&quot;;&quot;$(SolutionDir)\..\khtml&quot;;&quot;$(SolutionDir)\..\kwq&quot;;&quot;$(SolutionDir)\..\bridge&quot;;&quot;$(SolutionDir)\..\loader&quot;;&quot;$(SolutionDir)\..\page&quot;;&quot;$(SolutionDir)\..\platform&quot;;&quot;$(SolutionDir)\..\platform\cairo&quot;;&quot;$(SolutionDir)\..\platform\image-decoders&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\gif&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\png&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\zlib&quot;;&quot;$(SolutionDir)\..\xml&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\kjs&quot;;&quot;$(SolutionDir)..\platform\cairo\pixman\src&quot;;&quot;$(SolutionDir)\..\platform\cairo\cairo\src&quot;"
 				PreprocessorDefinitions="WIN32; KHTML_NO_XBL; KHTML_XSLT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -106,7 +106,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\iconv\include&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\libxml\include&quot;;&quot;$(SolutionDir)\..\..\libxslt\include&quot;;&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\css&quot;;&quot;$(SolutionDir)\..\khtml\dom&quot;;&quot;$(SolutionDir)\..\khtml\ecma&quot;;&quot;$(SolutionDir)\..\khtml\editing&quot;;&quot;$(SolutionDir)\..\khtml\html&quot;;&quot;$(SolutionDir)\..\khtml\misc&quot;;&quot;$(SolutionDir)\..\rendering&quot;;&quot;$(SolutionDir)\..\dom&quot;;&quot;$(SolutionDir)\..\khtml\xsl&quot;;&quot;$(SolutionDir)\..\khtml&quot;;&quot;$(SolutionDir)\..\kwq&quot;;&quot;$(SolutionDir)\..\bridge&quot;;&quot;$(SolutionDir)\..\loader&quot;;&quot;$(SolutionDir)\..\page&quot;;&quot;$(SolutionDir)\..\platform&quot;;&quot;$(SolutionDir)\..\platform\cairo&quot;;&quot;$(SolutionDir)\..\platform\image-decoders&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\gif&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\png&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\zlib&quot;;&quot;$(SolutionDir)\..\xml&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\kjs&quot;;&quot;$(SolutionDir)..\platform\cairo\pixman\src&quot;;&quot;$(SolutionDir)\..\platform\cairo\cairo\src&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\iconv\include&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\libxml\include&quot;;&quot;$(SolutionDir)\..\..\libxslt\include&quot;;&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\css&quot;;&quot;$(SolutionDir)\..\khtml\dom&quot;;&quot;$(SolutionDir)\..\khtml\ecma&quot;;&quot;$(SolutionDir)\..\editing&quot;;&quot;$(SolutionDir)\..\khtml\html&quot;;&quot;$(SolutionDir)\..\khtml\misc&quot;;&quot;$(SolutionDir)\..\rendering&quot;;&quot;$(SolutionDir)\..\dom&quot;;&quot;$(SolutionDir)\..\khtml\xsl&quot;;&quot;$(SolutionDir)\..\khtml&quot;;&quot;$(SolutionDir)\..\kwq&quot;;&quot;$(SolutionDir)\..\bridge&quot;;&quot;$(SolutionDir)\..\loader&quot;;&quot;$(SolutionDir)\..\page&quot;;&quot;$(SolutionDir)\..\platform&quot;;&quot;$(SolutionDir)\..\platform\cairo&quot;;&quot;$(SolutionDir)\..\platform\image-decoders&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\gif&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\png&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\zlib&quot;;&quot;$(SolutionDir)\..\xml&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\kjs&quot;;&quot;$(SolutionDir)..\platform\cairo\pixman\src&quot;;&quot;$(SolutionDir)\..\platform\cairo\cairo\src&quot;"
 				PreprocessorDefinitions="WIN32; KHTML_NO_XBL; KHTML_XSLT"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -862,303 +862,303 @@
 				Name="editing"
 				>
 				<File
-					RelativePath="..\..\khtml\editing\append_node_command.cpp"
+					RelativePath="..\..\editing\AppendNodeCommand.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\append_node_command.h"
+					RelativePath="..\..\editing\AppendNodeCommand.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\apply_style_command.cpp"
+					RelativePath="..\..\editing\ApplyStyleCommand.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\apply_style_command.h"
+					RelativePath="..\..\editing\ApplyStyleCommand.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\break_blockquote_command.cpp"
+					RelativePath="..\..\editing\BreakBlockquoteCommand.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\break_blockquote_command.h"
+					RelativePath="..\..\editing\BreakBlockquoteCommand.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\composite_edit_command.cpp"
+					RelativePath="..\..\editing\CompositeEditCommand.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\composite_edit_command.h"
+					RelativePath="..\..\editing\CompositeEditCommand.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\delete_from_text_node_command.cpp"
+					RelativePath="..\..\editing\DeleteFromTextNodeCommand.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\delete_from_text_node_command.h"
+					RelativePath="..\..\editing\DeleteFromTextNodeCommand.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\delete_selection_command.cpp"
+					RelativePath="..\..\editing\DeleteSelectionCommand.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\delete_selection_command.h"
+					RelativePath="..\..\editing\DeleteSelectionCommand.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\edit_actions.h"
+					RelativePath="..\..\editing\edit_actions.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\edit_command.cpp"
+					RelativePath="..\..\editing\EditCommand.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\edit_command.h"
+					RelativePath="..\..\editing\EditCommand.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\html_interchange.cpp"
+					RelativePath="..\..\editing\html_interchange.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\html_interchange.h"
+					RelativePath="..\..\editing\html_interchange.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\htmlediting.cpp"
+					RelativePath="..\..\editing\htmlediting.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\htmlediting.h"
+					RelativePath="..\..\editing\htmlediting.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\insert_into_text_node_command.cpp"
+					RelativePath="..\..\editing\InsertIntoTextNodeCommand.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\insert_into_text_node_command.h"
+					RelativePath="..\..\editing\InsertIntoTextNodeCommand.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\insert_line_break_command.cpp"
+					RelativePath="..\..\editing\InsertLineBreakCommand.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\insert_line_break_command.h"
+					RelativePath="..\..\editing\InsertLineBreakCommand.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\insert_node_before_command.cpp"
+					RelativePath="..\..\editing\InsertNodeBeforeCommand.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\insert_node_before_command.h"
+					RelativePath="..\..\editing\InsertNodeBeforeCommand.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\insert_paragraph_separator_command.cpp"
+					RelativePath="..\..\editing\InsertParagraphSeparatorCommand.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\insert_paragraph_separator_command.h"
+					RelativePath="..\..\editing\InsertParagraphSeparatorCommand.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\insert_text_command.cpp"
+					RelativePath="..\..\editing\InsertTextCommand.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\insert_text_command.h"
+					RelativePath="..\..\editing\InsertTextCommand.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\join_text_nodes_command.cpp"
+					RelativePath="..\..\editing\JoinTextNodesCommand.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\join_text_nodes_command.h"
+					RelativePath="..\..\editing\JoinTextNodesCommand.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\jsediting.cpp"
+					RelativePath="..\..\editing\jsediting.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\jsediting.h"
+					RelativePath="..\..\editing\jsediting.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\markup.cpp"
+					RelativePath="..\..\editing\markup.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\markup.h"
+					RelativePath="..\..\editing\markup.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\merge_identical_elements_command.cpp"
+					RelativePath="..\..\editing\MergeIdenticalElementsCommand.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\merge_identical_elements_command.h"
+					RelativePath="..\..\editing\MergeIdenticalElementsCommand.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\move_selection_command.cpp"
+					RelativePath="..\..\editing\MoveSelectionCommand.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\move_selection_command.h"
+					RelativePath="..\..\editing\MoveSelectionCommand.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\rebalance_whitespace_command.cpp"
+					RelativePath="..\..\editing\RebalanceWhitespaceCommand.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\rebalance_whitespace_command.h"
+					RelativePath="..\..\editing\RebalanceWhitespaceCommand.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\remove_css_property_command.cpp"
+					RelativePath="..\..\editing\RemoveCSSPropertyCommand.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\remove_css_property_command.h"
+					RelativePath="..\..\editing\RemoveCSSPropertyCommand.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\remove_node_attribute_command.cpp"
+					RelativePath="..\..\editing\RemoveNodeAttributeCommand.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\remove_node_attribute_command.h"
+					RelativePath="..\..\editing\RemoveNodeAttributeCommand.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\remove_node_command.cpp"
+					RelativePath="..\..\editing\RemoveNodeCommand.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\remove_node_command.h"
+					RelativePath="..\..\editing\RemoveNodeCommand.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\remove_node_preserving_children_command.cpp"
+					RelativePath="..\..\editing\RemoveNodePreservingChildrenCommand.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\remove_node_preserving_children_command.h"
+					RelativePath="..\..\editing\RemoveNodePreservingChildrenCommand.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\replace_selection_command.cpp"
+					RelativePath="..\..\editing\ReplaceSelectionCommand.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\replace_selection_command.h"
+					RelativePath="..\..\editing\ReplaceSelectionCommand.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\SelectionController.cpp"
+					RelativePath="..\..\editing\SelectionController.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\SelectionController.h"
+					RelativePath="..\..\editing\SelectionController.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\set_node_attribute_command.cpp"
+					RelativePath="..\..\editing\SetNodeAttributeCommand.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\set_node_attribute_command.h"
+					RelativePath="..\..\editing\SetNodeAttributeCommand.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\split_element_command.cpp"
+					RelativePath="..\..\editing\SplitElementCommand.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\split_element_command.h"
+					RelativePath="..\..\editing\SplitElementCommand.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\split_text_node_command.cpp"
+					RelativePath="..\..\editing\SplitTextNodeCommand.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\split_text_node_command.h"
+					RelativePath="..\..\editing\SplitTextNodeCommand.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\split_text_node_containing_element.cpp"
+					RelativePath="..\..\editing\SplitTextNodeContainingElementCommand.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\split_text_node_containing_element_command.h"
+					RelativePath="..\..\editing\SplitTextNodeContainingElementCommand.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\text_affinity.h"
+					RelativePath="..\..\editing\text_affinity.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\text_granularity.h"
+					RelativePath="..\..\editing\text_granularity.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\typing_command.cpp"
+					RelativePath="..\..\editing\TypingCommand.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\typing_command.h"
+					RelativePath="..\..\editing\TypingCommand.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\visible_position.cpp"
+					RelativePath="..\..\editing\VisiblePosition.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\visible_position.h"
+					RelativePath="..\..\editing\VisiblePosition.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\visible_range.cpp"
+					RelativePath="..\..\editing\VisibleRange.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\visible_range.h"
+					RelativePath="..\..\editing\VisibleRange.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\visible_text.cpp"
+					RelativePath="..\..\editing\visible_text.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\visible_text.h"
+					RelativePath="..\..\editing\visible_text.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\visible_units.cpp"
+					RelativePath="..\..\editing\visible_units.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\visible_units.h"
+					RelativePath="..\..\editing\visible_units.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\wrap_contents_in_dummy_span_command.cpp"
+					RelativePath="..\..\editing\WrapContentsInDummySpanCommand.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\editing\wrap_contents_in_dummy_span_command.h"
+					RelativePath="..\..\editing\WrapContentsInDummySpanCommand.h"
 					>
 				</File>
 			</Filter>

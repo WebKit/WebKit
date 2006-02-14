@@ -62,7 +62,7 @@
 #include "render_arena.h"
 #include "render_canvas.h"
 #include "render_frames.h"
-#include "visible_position.h"
+#include "VisiblePosition.h"
 #include "visible_text.h"
 #include "xml_tokenizer.h"
 #include <kdebug.h>

@@ -59,7 +59,7 @@
 #import "SelectionController.h"
 #import "kjs_html.h"
 #import "text_granularity.h"
-#import "visible_position.h"
+#import "VisiblePosition.h"
 #import "visible_text.h"
 #import "visible_units.h"
 #import "DOMInternal.h"

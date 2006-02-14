@@ -30,7 +30,7 @@
 #include "dom2_rangeimpl.h"
 #include "render_arena.h"
 #include "RenderBlock.h"
-#include "visible_position.h"
+#include "VisiblePosition.h"
 #include <kxmlcore/AlwaysInline.h>
 #include "Pen.h"
 #include <unicode/ubrk.h>

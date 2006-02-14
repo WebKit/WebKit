@@ -28,7 +28,7 @@
 #include "DocumentImpl.h"
 #include "render_arena.h"
 #include "RenderBlock.h"
-#include "visible_position.h"
+#include "VisiblePosition.h"
 
 namespace WebCore {
 

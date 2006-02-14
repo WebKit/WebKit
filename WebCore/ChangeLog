@@ -1,3 +1,235 @@
+2006-02-14  Darin Adler  <darin@apple.com>
+
+        Rubber-stamped by Eric.
+
+        - moved editing sources from khtml/editing to editing, and renamed files with single classes
+
+        * WebCore.xcodeproj/project.pbxproj: Added new, removed old.
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Ditto.
+
+        * bridge/mac/MacFrame.mm:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        * dom/DocumentImpl.cpp:
+        * dom/dom2_rangeimpl.cpp:
+        * dom/dom_position.cpp:
+        * khtml/khtml_events.cpp:
+        * kwq/KWQAccObject.mm:
+        * kwq/KWQAccObjectCache.h:
+        * kwq/KWQEditCommand.mm:
+        * page/Frame.cpp:
+        * page/FramePrivate.h:
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderContainer.cpp:
+        * rendering/RenderText.cpp:
+        * rendering/render_br.cpp:
+        * rendering/render_inline.cpp:
+        * rendering/render_object.cpp:
+        * rendering/render_replaced.cpp:
+        Fixed up includes.
+
+        * editing: Added.
+        * editing/AppendNodeCommand.cpp: Added.
+        * editing/AppendNodeCommand.h: Added.
+        * editing/ApplyStyleCommand.cpp: Added.
+        * editing/ApplyStyleCommand.h: Added.
+        * editing/BreakBlockquoteCommand.cpp: Added.
+        * editing/BreakBlockquoteCommand.h: Added.
+        * editing/CompositeEditCommand.cpp: Added.
+        * editing/CompositeEditCommand.h: Added.
+        * editing/DeleteFromTextNodeCommand.cpp: Added.
+        * editing/DeleteFromTextNodeCommand.h: Added.
+        * editing/DeleteSelectionCommand.cpp: Added.
+        * editing/DeleteSelectionCommand.h: Added.
+        * editing/EditCommand.cpp: Added.
+        * editing/EditCommand.h: Added.
+        * editing/InsertIntoTextNodeCommand.cpp: Added.
+        * editing/InsertIntoTextNodeCommand.h: Added.
+        * editing/InsertLineBreakCommand.cpp: Added.
+        * editing/InsertLineBreakCommand.h: Added.
+        * editing/InsertNodeBeforeCommand.cpp: Added.
+        * editing/InsertNodeBeforeCommand.h: Added.
+        * editing/InsertParagraphSeparatorCommand.cpp: Added.
+        * editing/InsertParagraphSeparatorCommand.h: Added.
+        * editing/InsertTextCommand.cpp: Added.
+        * editing/InsertTextCommand.h: Added.
+        * editing/JoinTextNodesCommand.cpp: Added.
+        * editing/JoinTextNodesCommand.h: Added.
+        * editing/MergeIdenticalElementsCommand.cpp: Added.
+        * editing/MergeIdenticalElementsCommand.h: Added.
+        * editing/MoveSelectionCommand.cpp: Added.
+        * editing/MoveSelectionCommand.h: Added.
+        * editing/RebalanceWhitespaceCommand.cpp: Added.
+        * editing/RebalanceWhitespaceCommand.h: Added.
+        * editing/RemoveCSSPropertyCommand.cpp: Added.
+        * editing/RemoveCSSPropertyCommand.h: Added.
+        * editing/RemoveNodeAttributeCommand.cpp: Added.
+        * editing/RemoveNodeAttributeCommand.h: Added.
+        * editing/RemoveNodeCommand.cpp: Added.
+        * editing/RemoveNodeCommand.h: Added.
+        * editing/RemoveNodePreservingChildrenCommand.cpp: Added.
+        * editing/RemoveNodePreservingChildrenCommand.h: Added.
+        * editing/ReplaceSelectionCommand.cpp: Added.
+        * editing/ReplaceSelectionCommand.h: Added.
+        * editing/Selection.cpp:
+        * editing/SelectionController.cpp:
+        * editing/SetNodeAttributeCommand.cpp: Added.
+        * editing/SetNodeAttributeCommand.h: Added.
+        * editing/SplitElementCommand.cpp: Added.
+        * editing/SplitElementCommand.h: Added.
+        * editing/SplitTextNodeCommand.cpp: Added.
+        * editing/SplitTextNodeCommand.h: Added.
+        * editing/SplitTextNodeContainingElementCommand.cpp: Added.
+        * editing/SplitTextNodeContainingElementCommand.h: Added.
+        * editing/TypingCommand.cpp: Added.
+        * editing/TypingCommand.h: Added.
+        * editing/VisiblePosition.cpp: Added.
+        * editing/VisiblePosition.h: Added.
+        * editing/VisibleRange.cpp: Added.
+        * editing/VisibleRange.h: Added.
+        * editing/WrapContentsInDummySpanCommand.cpp: Added.
+        * editing/WrapContentsInDummySpanCommand.h: Added.
+        * editing/append_node_command.cpp: Removed.
+        * editing/append_node_command.h: Removed.
+        * editing/apply_style_command.cpp: Removed.
+        * editing/apply_style_command.h: Removed.
+        * editing/break_blockquote_command.cpp: Removed.
+        * editing/break_blockquote_command.h: Removed.
+        * editing/composite_edit_command.cpp: Removed.
+        * editing/composite_edit_command.h: Removed.
+        * editing/delete_from_text_node_command.cpp: Removed.
+        * editing/delete_from_text_node_command.h: Removed.
+        * editing/delete_selection_command.cpp: Removed.
+        * editing/delete_selection_command.h: Removed.
+        * editing/edit_command.cpp: Removed.
+        * editing/edit_command.h: Removed.
+        * editing/htmlediting.cpp:
+        * editing/insert_into_text_node_command.cpp: Removed.
+        * editing/insert_into_text_node_command.h: Removed.
+        * editing/insert_line_break_command.cpp: Removed.
+        * editing/insert_line_break_command.h: Removed.
+        * editing/insert_node_before_command.cpp: Removed.
+        * editing/insert_node_before_command.h: Removed.
+        * editing/insert_paragraph_separator_command.cpp: Removed.
+        * editing/insert_paragraph_separator_command.h: Removed.
+        * editing/insert_text_command.cpp: Removed.
+        * editing/insert_text_command.h: Removed.
+        * editing/join_text_nodes_command.cpp: Removed.
+        * editing/join_text_nodes_command.h: Removed.
+        * editing/jsediting.cpp:
+        * editing/markup.cpp:
+        * editing/merge_identical_elements_command.cpp: Removed.
+        * editing/merge_identical_elements_command.h: Removed.
+        * editing/move_selection_command.cpp: Removed.
+        * editing/move_selection_command.h: Removed.
+        * editing/rebalance_whitespace_command.cpp: Removed.
+        * editing/rebalance_whitespace_command.h: Removed.
+        * editing/remove_css_property_command.cpp: Removed.
+        * editing/remove_css_property_command.h: Removed.
+        * editing/remove_node_attribute_command.cpp: Removed.
+        * editing/remove_node_attribute_command.h: Removed.
+        * editing/remove_node_command.cpp: Removed.
+        * editing/remove_node_command.h: Removed.
+        * editing/remove_node_preserving_children_command.cpp: Removed.
+        * editing/remove_node_preserving_children_command.h: Removed.
+        * editing/replace_selection_command.cpp: Removed.
+        * editing/replace_selection_command.h: Removed.
+        * editing/set_node_attribute_command.cpp: Removed.
+        * editing/set_node_attribute_command.h: Removed.
+        * editing/split_element_command.cpp: Removed.
+        * editing/split_element_command.h: Removed.
+        * editing/split_text_node_command.cpp: Removed.
+        * editing/split_text_node_command.h: Removed.
+        * editing/split_text_node_containing_element.cpp: Removed.
+        * editing/split_text_node_containing_element_command.h: Removed.
+        * editing/typing_command.cpp: Removed.
+        * editing/typing_command.h: Removed.
+        * editing/visible_position.cpp: Removed.
+        * editing/visible_position.h: Removed.
+        * editing/visible_range.cpp: Removed.
+        * editing/visible_range.h: Removed.
+        * editing/visible_units.cpp:
+        * editing/wrap_contents_in_dummy_span_command.cpp: Removed.
+        * editing/wrap_contents_in_dummy_span_command.h: Removed.
+
+        * khtml/editing: Removed.
+        * khtml/editing/Selection.cpp: Removed.
+        * khtml/editing/Selection.h: Removed.
+        * khtml/editing/SelectionController.cpp: Removed.
+        * khtml/editing/SelectionController.h: Removed.
+        * khtml/editing/append_node_command.cpp: Removed.
+        * khtml/editing/append_node_command.h: Removed.
+        * khtml/editing/apply_style_command.cpp: Removed.
+        * khtml/editing/apply_style_command.h: Removed.
+        * khtml/editing/break_blockquote_command.cpp: Removed.
+        * khtml/editing/break_blockquote_command.h: Removed.
+        * khtml/editing/composite_edit_command.cpp: Removed.
+        * khtml/editing/composite_edit_command.h: Removed.
+        * khtml/editing/delete_from_text_node_command.cpp: Removed.
+        * khtml/editing/delete_from_text_node_command.h: Removed.
+        * khtml/editing/delete_selection_command.cpp: Removed.
+        * khtml/editing/delete_selection_command.h: Removed.
+        * khtml/editing/edit_actions.h: Removed.
+        * khtml/editing/edit_command.cpp: Removed.
+        * khtml/editing/edit_command.h: Removed.
+        * khtml/editing/html_interchange.cpp: Removed.
+        * khtml/editing/html_interchange.h: Removed.
+        * khtml/editing/htmlediting.cpp: Removed.
+        * khtml/editing/htmlediting.h: Removed.
+        * khtml/editing/insert_into_text_node_command.cpp: Removed.
+        * khtml/editing/insert_into_text_node_command.h: Removed.
+        * khtml/editing/insert_line_break_command.cpp: Removed.
+        * khtml/editing/insert_line_break_command.h: Removed.
+        * khtml/editing/insert_node_before_command.cpp: Removed.
+        * khtml/editing/insert_node_before_command.h: Removed.
+        * khtml/editing/insert_paragraph_separator_command.cpp: Removed.
+        * khtml/editing/insert_paragraph_separator_command.h: Removed.
+        * khtml/editing/insert_text_command.cpp: Removed.
+        * khtml/editing/insert_text_command.h: Removed.
+        * khtml/editing/join_text_nodes_command.cpp: Removed.
+        * khtml/editing/join_text_nodes_command.h: Removed.
+        * khtml/editing/jsediting.cpp: Removed.
+        * khtml/editing/jsediting.h: Removed.
+        * khtml/editing/markup.cpp: Removed.
+        * khtml/editing/markup.h: Removed.
+        * khtml/editing/merge_identical_elements_command.cpp: Removed.
+        * khtml/editing/merge_identical_elements_command.h: Removed.
+        * khtml/editing/move_selection_command.cpp: Removed.
+        * khtml/editing/move_selection_command.h: Removed.
+        * khtml/editing/rebalance_whitespace_command.cpp: Removed.
+        * khtml/editing/rebalance_whitespace_command.h: Removed.
+        * khtml/editing/remove_css_property_command.cpp: Removed.
+        * khtml/editing/remove_css_property_command.h: Removed.
+        * khtml/editing/remove_node_attribute_command.cpp: Removed.
+        * khtml/editing/remove_node_attribute_command.h: Removed.
+        * khtml/editing/remove_node_command.cpp: Removed.
+        * khtml/editing/remove_node_command.h: Removed.
+        * khtml/editing/remove_node_preserving_children_command.cpp: Removed.
+        * khtml/editing/remove_node_preserving_children_command.h: Removed.
+        * khtml/editing/replace_selection_command.cpp: Removed.
+        * khtml/editing/replace_selection_command.h: Removed.
+        * khtml/editing/set_node_attribute_command.cpp: Removed.
+        * khtml/editing/set_node_attribute_command.h: Removed.
+        * khtml/editing/split_element_command.cpp: Removed.
+        * khtml/editing/split_element_command.h: Removed.
+        * khtml/editing/split_text_node_command.cpp: Removed.
+        * khtml/editing/split_text_node_command.h: Removed.
+        * khtml/editing/split_text_node_containing_element.cpp: Removed.
+        * khtml/editing/split_text_node_containing_element_command.h: Removed.
+        * khtml/editing/text_affinity.h: Removed.
+        * khtml/editing/text_granularity.h: Removed.
+        * khtml/editing/typing_command.cpp: Removed.
+        * khtml/editing/typing_command.h: Removed.
+        * khtml/editing/visible_position.cpp: Removed.
+        * khtml/editing/visible_position.h: Removed.
+        * khtml/editing/visible_range.cpp: Removed.
+        * khtml/editing/visible_range.h: Removed.
+        * khtml/editing/visible_text.cpp: Removed.
+        * khtml/editing/visible_text.h: Removed.
+        * khtml/editing/visible_units.cpp: Removed.
+        * khtml/editing/visible_units.h: Removed.
+        * khtml/editing/wrap_contents_in_dummy_span_command.cpp: Removed.
+        * khtml/editing/wrap_contents_in_dummy_span_command.h: Removed.
+
 2006-02-14  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Adele Peterson.

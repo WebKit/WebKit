@@ -31,7 +31,7 @@
 #include "dom_xmlimpl.h"
 #include "HTMLElementImpl.h"
 #include "markup.h"
-#include "visible_position.h"
+#include "VisiblePosition.h"
 #include "visible_units.h"
 #include "visible_text.h"
 #include "dom_position.h"

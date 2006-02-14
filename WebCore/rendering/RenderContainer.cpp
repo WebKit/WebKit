@@ -32,7 +32,7 @@
 #include "render_list.h"
 #include "DocumentImpl.h"
 #include "dom_position.h"
-#include "visible_position.h"
+#include "VisiblePosition.h"
 
 #include <assert.h>
 

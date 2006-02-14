@@ -44,7 +44,7 @@
 #include "render_line.h"
 #include "render_style.h"
 #include "text_affinity.h"
-#include "visible_position.h"
+#include "VisiblePosition.h"
 #include "visible_text.h"
 #include "visible_units.h"
 #include <kxmlcore/Assertions.h>

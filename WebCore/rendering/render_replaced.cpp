@@ -33,7 +33,7 @@
 #include "render_arena.h"
 #include "render_canvas.h"
 #include "render_line.h"
-#include "visible_position.h"
+#include "VisiblePosition.h"
 #include <kdebug.h>
 #include <qevent.h>
 #include <qpainter.h>

@@ -21,7 +21,7 @@
 #include "khtml_events.h"
 
 #include "render_object.h"
-#include "visible_position.h"
+#include "VisiblePosition.h"
 
 namespace WebCore {
 

@@ -32,7 +32,7 @@
 #include "SelectionController.h"
 #include "Timer.h"
 #include "css_valueimpl.h"
-#include "edit_command.h"
+#include "EditCommand.h"
 #include "kjs_proxy.h"
 #include <kio/global.h>
 #include <kxmlcore/Vector.h>

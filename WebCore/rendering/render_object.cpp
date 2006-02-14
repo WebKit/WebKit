@@ -52,7 +52,7 @@
 #include "render_inline.h"
 #include "render_line.h"
 #include "render_list.h"
-#include "visible_position.h"
+#include "VisiblePosition.h"
 #include <qmatrix.h>
 #include <qpainter.h>
 #include <qtextcodec.h>

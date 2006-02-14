@@ -27,7 +27,7 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 
-#include "visible_position.h"
+#include "VisiblePosition.h"
 
 #ifdef __OBJC__
 @class KWQAccObject;

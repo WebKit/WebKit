@@ -54,6 +54,7 @@
 #import "Plugin.h"
 #import "RenderTableCell.h"
 #import "SelectionController.h"
+#import "VisiblePosition.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreGraphicsBridge.h"
 #import "WebCoreViewFactory.h"
@@ -74,7 +75,6 @@
 #import "render_list.h"
 #import "render_style.h"
 #import "render_theme.h"
-#import "visible_position.h"
 #import "visible_text.h"
 #import "visible_units.h"
 #import <JavaScriptCore/NP_jsobject.h>

@@ -34,7 +34,7 @@
 #include "render_canvas.h"
 #include "RenderTableCell.h"
 #include "render_theme.h"
-#include "visible_position.h"
+#include "VisiblePosition.h"
 #include <kdebug.h>
 
 namespace WebCore {

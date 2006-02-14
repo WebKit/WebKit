@@ -26,7 +26,7 @@
 
 #include "DocumentImpl.h"
 #include "InlineTextBox.h"
-#include "visible_position.h"
+#include "VisiblePosition.h"
 
 namespace WebCore {
 
