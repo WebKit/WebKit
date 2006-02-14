@@ -1,3 +1,15 @@
+2006-02-13  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 5605, XSLT fails to import to arbitrary depth.  Make sure m_embedded is initialized to false
+        in the XSLTStyleSheetImpl constructor.
+
+        Reviewed by timo
+
+        Adding xslt-import-depth.xml to fast/xsl
+
+        * khtml/xsl/xsl_stylesheetimpl.cpp:
+        (DOM::XSLStyleSheetImpl::XSLStyleSheetImpl):
+
 2006-02-13  Dave Hyatt <hyatt@apple.com>
 
         Fix Win32 bustage in WebCore.

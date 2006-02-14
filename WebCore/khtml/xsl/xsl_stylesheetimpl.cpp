@@ -48,6 +48,7 @@ XSLStyleSheetImpl::XSLStyleSheetImpl(XSLImportRuleImpl *parentRule, DOMString hr
 {
     m_lstChildren = new QPtrList<StyleBaseImpl>;
     m_ownerDocument = 0;
+    m_embedded = false;
     m_processed = false; // Child sheets get marked as processed when the libxslt engine has finally seen them.
 }
 
