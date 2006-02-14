@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,64 +26,61 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebFrameBridge.h>
+#import "WebFrameBridge.h"
 
-#import <WebKit/WebAssertions.h>
-#import <WebKit/WebBackForwardList.h>
-#import <WebKit/WebBaseNetscapePluginView.h>
-#import <WebKit/WebBasePluginPackage.h>
-#import <WebKit/WebLoader.h>
-#import <WebKit/WebDataSourcePrivate.h>
-#import <WebKit/WebDefaultUIDelegate.h>
-#import <WebKit/WebEditingDelegate.h>
-#import <WebKit/WebFileButton.h>
-#import <WebKit/WebFormDataStream.h>
-#import <WebKit/WebFormDelegate.h>
-#import <WebKit/WebFrameInternal.h>
-#import <WebKit/WebFrameLoadDelegate.h>
-#import <WebKit/WebFrameViewInternal.h>
-#import <WebKit/WebHistoryItemPrivate.h>
-#import <WebKit/WebHTMLRepresentationPrivate.h>
-#import <WebKit/WebHTMLViewInternal.h>
-#import <WebKit/WebImageView.h>
-#import <WebKit/WebJavaPlugIn.h>
-#import <WebKit/WebJavaScriptTextInputPanel.h>
-#import <WebKit/WebKitErrorsPrivate.h>
-#import <WebKit/WebKitLogging.h>
-#import <WebKit/WebKitNSStringExtras.h>
-#import <WebKit/WebKitStatisticsPrivate.h>
-#import <WebKit/WebKitSystemBits.h>
-#import <WebKit/WebNetscapePluginEmbeddedView.h>
-#import <WebKit/WebNetscapePluginPackage.h>
-#import <WebKit/WebNSObjectExtras.h>
-#import <WebKit/WebNSURLExtras.h>
-#import <WebKit/WebNSURLRequestExtras.h>
-#import <WebKit/WebNSViewExtras.h>
-#import <WebKit/WebNullPluginView.h>
-#import <WebKit/WebPlugin.h>
-#import <WebKit/WebPluginController.h>
-#import <WebKit/WebPluginDatabase.h>
-#import <WebKit/WebPluginDocumentView.h>
-#import <WebKit/WebPluginPackage.h>
-#import <WebKit/WebPluginViewFactoryPrivate.h>
-#import <WebKit/WebNetscapePluginDocumentView.h>
-#import <WebKit/WebPreferencesPrivate.h>
-#import <WebKit/WebResourcePrivate.h>
-#import <WebKit/WebSubresourceLoader.h>
-#import <WebKit/WebViewInternal.h>
-#import <WebKit/WebViewPrivate.h>
-#import <WebKit/WebUIDelegatePrivate.h>
-#import <WebKitSystemInterface.h>
-
-#import <WebCore/WebCoreFrameNamespaces.h>
-
-#import <Foundation/NSURLRequest.h>
+#import "WebAssertions.h"
+#import "WebBackForwardList.h"
+#import "WebBaseNetscapePluginView.h"
+#import "WebBasePluginPackage.h"
+#import "WebDataSourcePrivate.h"
+#import "WebDefaultUIDelegate.h"
+#import "WebEditingDelegate.h"
+#import "WebFileButton.h"
+#import "WebFormDataStream.h"
+#import "WebFormDelegate.h"
+#import "WebFrameInternal.h"
+#import "WebFrameLoadDelegate.h"
+#import "WebFrameViewInternal.h"
+#import "WebHTMLRepresentationPrivate.h"
+#import "WebHTMLViewInternal.h"
+#import "WebHistoryItemPrivate.h"
+#import "WebImageView.h"
+#import "WebJavaPlugIn.h"
+#import "WebJavaScriptTextInputPanel.h"
+#import "WebKitErrorsPrivate.h"
+#import "WebKitLogging.h"
+#import "WebKitNSStringExtras.h"
+#import "WebKitStatisticsPrivate.h"
+#import "WebKitSystemBits.h"
+#import "WebLoader.h"
+#import "WebLocalizableStrings.h"
+#import "WebNSObjectExtras.h"
+#import "WebNSURLExtras.h"
+#import "WebNSURLRequestExtras.h"
+#import "WebNSViewExtras.h"
+#import "WebNetscapePluginDocumentView.h"
+#import "WebNetscapePluginEmbeddedView.h"
+#import "WebNetscapePluginPackage.h"
+#import "WebNullPluginView.h"
+#import "WebPageBridge.h"
+#import "WebPlugin.h"
+#import "WebPluginController.h"
+#import "WebPluginDatabase.h"
+#import "WebPluginDocumentView.h"
+#import "WebPluginPackage.h"
+#import "WebPluginViewFactoryPrivate.h"
+#import "WebPreferencesPrivate.h"
+#import "WebResourcePrivate.h"
+#import "WebSubresourceLoader.h"
+#import "WebUIDelegatePrivate.h"
+#import "WebViewInternal.h"
+#import "WebViewPrivate.h"
 #import <Foundation/NSURLConnection.h>
+#import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLResponse.h>
-
-#import <WebKit/WebLocalizableStrings.h>
-
 #import <JavaVM/jni.h>
+#import <WebCore/WebCoreFrameNamespaces.h>
+#import <WebKitSystemInterface.h>
 
 #define KeyboardUIModeDidChangeNotification @"com.apple.KeyboardUIModeDidChange"
 #define AppleKeyboardUIMode CFSTR("AppleKeyboardUIMode")
@@ -116,18 +113,32 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 @implementation WebFrameBridge
 
-- (id)initWithPage:(WebPageBridge *)page webView:(WebView *)webView renderer:(WebCoreRenderPart *)renderer frameName:(NSString *)name view:(WebFrameView *)view
+- (id)initMainFrameWithPage:(WebPageBridge *)page frameName:(NSString *)name view:(WebFrameView *)view
 {
-    self = [super initWithRenderer:renderer];
+    self = [super initMainFrameWithPage:page];
 
     ++WebBridgeCount;
     
-    _page = page;
-    _frame = [[WebFrame alloc] _initWithWebFrameView:view webView:webView bridge:self];
+    _frame = [[WebFrame alloc] _initWithWebFrameView:view webView:[self webView] bridge:self];
 
     [self setName:name];
-    [self initializeSettings:[webView _settings]];
-    [self setTextSizeMultiplier:[webView textSizeMultiplier]];
+    [self initializeSettings:[[self webView] _settings]];
+    [self setTextSizeMultiplier:[[self webView] textSizeMultiplier]];
+
+    return self;
+}
+
+- (id)initSubframeWithRenderer:(WebCoreRenderPart *)renderer frameName:(NSString *)name view:(WebFrameView *)view
+{
+    self = [super initSubframeWithRenderer:renderer];
+
+    ++WebBridgeCount;
+    
+    _frame = [[WebFrame alloc] _initWithWebFrameView:view webView:[self webView] bridge:self];
+
+    [self setName:name];
+    [self initializeSettings:[[self webView] _settings]];
+    [self setTextSizeMultiplier:[[self webView] textSizeMultiplier]];
 
     return self;
 }
@@ -166,21 +177,16 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return _frame;
 }
 
-- (WebPageBridge *)page;
-{
-    return _page;
-}
-
 - (WebCoreFrameBridge *)mainFrame
 {
     ASSERT(_frame != nil);
-    return [[[_page webView] mainFrame] _bridge];
+    return [[[self webView] mainFrame] _bridge];
 }
 
 - (WebView *)webView
 {
-    ASSERT(_page);
-    return [_page webView];
+    ASSERT([[self page] isKindOfClass:[WebPageBridge class]]);
+    return [(WebPageBridge *)[self page] webView];
 }
 
 - (NSView *)documentView
@@ -200,7 +206,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         [request _web_setHTTPReferrer:[self referrer]];
     }
 
-    WebView *currentWebView = [_page webView];
+    WebView *currentWebView = [self webView];
     id wd = [currentWebView UIDelegate];
     WebView *newWebView = nil;
     
@@ -215,14 +221,14 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (void)showWindow
 {
-    WebView *wv = [_page webView];
+    WebView *wv = [self webView];
     [[wv _UIDelegateForwarder] webViewShow: wv];
 }
 
 - (BOOL)areToolbarsVisible
 {
     ASSERT(_frame != nil);
-    WebView *wv = [_page webView];
+    WebView *wv = [self webView];
     id wd = [wv UIDelegate];
     if ([wd respondsToSelector: @selector(webViewAreToolbarsVisible:)])
         return [wd webViewAreToolbarsVisible: wv];
@@ -232,7 +238,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 - (void)setToolbarsVisible:(BOOL)visible
 {
     ASSERT(_frame != nil);
-    WebView *wv = [_page webView];
+    WebView *wv = [self webView];
     [[wv _UIDelegateForwarder] webView:wv setToolbarsVisible:visible];
 }
 
@@ -251,7 +257,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 - (BOOL)isStatusbarVisible
 {
     ASSERT(_frame != nil);
-    WebView *wv = [_page webView];
+    WebView *wv = [self webView];
     id wd = [wv UIDelegate];
     if ([wd respondsToSelector: @selector(webViewIsStatusBarVisible:)])
         return [wd webViewIsStatusBarVisible:wv];
@@ -261,63 +267,63 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 - (void)setStatusbarVisible:(BOOL)visible
 {
     ASSERT(_frame != nil);
-    WebView *wv = [_page webView];
+    WebView *wv = [self webView];
     [[wv _UIDelegateForwarder] webView:wv setStatusBarVisible:visible];
 }
 
 - (void)setWindowFrame:(NSRect)frameRect
 {
     ASSERT(_frame != nil);
-    WebView *webView = [_page webView];
+    WebView *webView = [self webView];
     [[webView _UIDelegateForwarder] webView:webView setFrame:frameRect];
 }
 
 - (NSRect)windowFrame
 {
     ASSERT(_frame != nil);
-    WebView *webView = [_page webView];
+    WebView *webView = [self webView];
     return [[webView _UIDelegateForwarder] webViewFrame:webView];
 }
 
 - (void)setWindowContentRect:(NSRect)contentRect
 {
     ASSERT(_frame != nil);
-    WebView *webView = [_page webView];
+    WebView *webView = [self webView];
     [[webView _UIDelegateForwarder] webView:webView setFrame:contentRect];
 }
 
 - (NSRect)windowContentRect
 {
     ASSERT(_frame != nil);
-    WebView *webView = [_page webView];
+    WebView *webView = [self webView];
     return [[webView _UIDelegateForwarder] webViewContentRect:webView];
 }
 
 - (void)setWindowIsResizable:(BOOL)resizable
 {
     ASSERT(_frame != nil);
-    WebView *webView = [_page webView];
+    WebView *webView = [self webView];
     [[webView _UIDelegateForwarder] webView:webView setResizable:resizable];
 }
 
 - (BOOL)windowIsResizable
 {
     ASSERT(_frame != nil);
-    WebView *webView = [_page webView];
+    WebView *webView = [self webView];
     return [[webView _UIDelegateForwarder] webViewIsResizable:webView];
 }
 
 - (NSResponder *)firstResponder
 {
     ASSERT(_frame != nil);
-    WebView *webView = [_page webView];
+    WebView *webView = [self webView];
     return [[webView _UIDelegateForwarder] webViewFirstResponder:webView];
 }
 
 - (void)makeFirstResponder:(NSResponder *)view
 {
     ASSERT(_frame != nil);
-    WebView *webView = [_page webView];
+    WebView *webView = [self webView];
     [webView _pushPerformingProgrammaticFocus];
     [[webView _UIDelegateForwarder] webView:webView makeFirstResponder:view];
     [webView _popPerformingProgrammaticFocus];
@@ -336,7 +342,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (void)closeWindowSoon
 {
-    WebView *parentWebView = [_page webView];
+    WebView *parentWebView = [self webView];
 
     // We need to remove the parent WebView from WebViewSets here, before it actually
     // closes, to make sure that JavaScript code that executes before it closes
@@ -364,7 +370,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (void)runJavaScriptAlertPanelWithMessage:(NSString *)message
 {
-    WebView *wv = [_page webView];
+    WebView *wv = [self webView];
     id wd = [wv UIDelegate];
     // Check whether delegate implements new version, then whether delegate implements old version. If neither,
     // fall back to shared delegate's implementation of new version.
@@ -378,7 +384,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (BOOL)runJavaScriptConfirmPanelWithMessage:(NSString *)message
 {
-    WebView *wv = [_page webView];
+    WebView *wv = [self webView];
     id wd = [wv UIDelegate];
     // Check whether delegate implements new version, then whether delegate implements old version. If neither,
     // fall back to shared delegate's implementation of new version.
@@ -391,14 +397,14 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (BOOL)canRunBeforeUnloadConfirmPanel
 {
-    WebView *wv = [_page webView];
+    WebView *wv = [self webView];
     id wd = [wv UIDelegate];
     return [wd respondsToSelector:@selector(webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:)];
 }
 
 - (BOOL)runBeforeUnloadConfirmPanelWithMessage:(NSString *)message
 {
-    WebView *wv = [_page webView];
+    WebView *wv = [self webView];
     id wd = [wv UIDelegate];
     if ([wd respondsToSelector:@selector(webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:)])
         return [wd webView:wv runBeforeUnloadConfirmPanelWithMessage:message initiatedByFrame:_frame];
@@ -407,7 +413,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (BOOL)runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText returningText:(NSString **)result
 {
-    WebView *wv = [_page webView];
+    WebView *wv = [self webView];
     id wd = [wv UIDelegate];
     // Check whether delegate implements new version, then whether delegate implements old version. If neither,
     // fall back to shared delegate's implementation of new version.
@@ -422,7 +428,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (void)addMessageToConsole:(NSDictionary *)message
 {
-    WebView *wv = [_page webView];
+    WebView *wv = [self webView];
     id wd = [wv UIDelegate];
     if ([wd respondsToSelector: @selector(webView:addMessageToConsole:)])
         [wd webView:wv addMessageToConsole:message];
@@ -435,7 +441,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (void)runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener
 {
-    WebView *wv = [_page webView];
+    WebView *wv = [self webView];
     [[wv _UIDelegateForwarder] webView:wv runOpenPanelForFileButtonWithResultListener:resultListener];
 }
 
@@ -459,7 +465,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 - (void)setStatusText:(NSString *)status
 {
     ASSERT(_frame != nil);
-    WebView *wv = [_page webView];
+    WebView *wv = [self webView];
     [[wv _UIDelegateForwarder] webView:wv setStatusText:status];
 }
 
@@ -552,7 +558,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     if (!hideReferrer)
         [request _web_setHTTPReferrer:[self referrer]];
     
-    WebView *webView = [_page webView];
+    WebView *webView = [self webView];
     [request setMainDocumentURL:[[[[webView mainFrame] dataSource] request] URL]];
     [request _web_setHTTPUserAgent:[webView userAgentForURL:[request URL]]];
     
@@ -643,7 +649,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (void)focusWindow
 {
-    [[[_page webView] _UIDelegateForwarder] webViewFocus:[_page webView]];
+    [[[self webView] _UIDelegateForwarder] webViewFocus:[self webView]];
 }
 
 - (void)unfocusWindow
@@ -768,7 +774,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     
     WebFrameView *childView = [[WebFrameView alloc] initWithFrame:NSMakeRect(0,0,0,0)];
     [childView setAllowsScrolling:allowsScrolling];
-    WebFrameBridge *newBridge = [[WebFrameBridge alloc] initWithPage:_page webView:[_page webView] renderer:childRenderPart frameName:frameName view:childView];
+    WebFrameBridge *newBridge = [[WebFrameBridge alloc] initSubframeWithRenderer:childRenderPart frameName:frameName view:childView];
     [_frame _addChild:[newBridge webFrame]];
     [childView release];
 
@@ -815,7 +821,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (NSString *)userAgentForURL:(NSURL *)URL
 {
-    return [[_page webView] userAgentForURL:URL];
+    return [[self webView] userAgentForURL:URL];
 }
 
 - (BOOL)inNextKeyViewOutsideWebFrameViews
@@ -834,7 +840,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     }
     
     _inNextKeyViewOutsideWebFrameViews = YES;
-    WebView *webView = [_page webView];
+    WebView *webView = [self webView];
     // Do not ask webView for its next key view, but rather, ask it for 
     // the next key view of the last view in its key view loop.
     // Doing so gives us the correct answer as calculated by AppKit, 
@@ -857,19 +863,19 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (NSView *)previousKeyViewOutsideWebFrameViews
 {
-    WebView *webView = [_page webView];
+    WebView *webView = [self webView];
     NSView *previousKeyView = [webView previousKeyView];
     return previousKeyView;
 }
 
 - (BOOL)defersLoading
 {
-    return [[_page webView] defersCallbacks];
+    return [[self webView] defersCallbacks];
 }
 
 - (void)setDefersLoading:(BOOL)defers
 {
-    [[_page webView] setDefersCallbacks:defers];
+    [[self webView] setDefersCallbacks:defers];
 }
 
 - (void)setNeedsReapplyStyles
@@ -968,7 +974,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     NSView *view = nil;
     int errorCode = 0;
 
-    WebView *wv = [_page webView];
+    WebView *wv = [self webView];
     id wd = [wv UIDelegate];
 
     if ([wd respondsToSelector:@selector(webView:plugInViewWithArguments:)]) {
@@ -1107,7 +1113,7 @@ static BOOL loggedObjectCacheSize = NO;
 
 - (WebPreferences *)_preferences
 {
-    WebPreferences *prefs = [[_page webView] preferences];
+    WebPreferences *prefs = [[self webView] preferences];
     if (prefs == nil) {
         prefs = [WebPreferences standardPreferences];
     }
@@ -1225,12 +1231,12 @@ static BOOL loggedObjectCacheSize = NO;
 
 - (BOOL)selectWordBeforeMenuEvent
 {
-    return [[_page webView] _selectWordBeforeMenuEvent];
+    return [[self webView] _selectWordBeforeMenuEvent];
 }
 
 - (int)historyLength
 {
-    return [[[_page webView] backForwardList] backListCount] + 1;
+    return [[[self webView] backForwardList] backListCount] + 1;
 }
 
 - (BOOL)canGoBackOrForward:(int)distance
@@ -1238,10 +1244,10 @@ static BOOL loggedObjectCacheSize = NO;
     if (distance == 0)
         return TRUE;
 
-    if (distance > 0 && distance <= [[[_page webView] backForwardList] forwardListCount])
+    if (distance > 0 && distance <= [[[self webView] backForwardList] forwardListCount])
         return TRUE;
 
-    if (distance < 0 && -distance <= [[[_page webView] backForwardList] backListCount])
+    if (distance < 0 && -distance <= [[[self webView] backForwardList] backListCount])
         return TRUE;
     
     return FALSE;
@@ -1252,7 +1258,7 @@ static BOOL loggedObjectCacheSize = NO;
     if (distance == 0) {
         return;
     }
-    WebView *webView = [_page webView];
+    WebView *webView = [self webView];
     WebBackForwardList *list = [webView backForwardList];
     WebHistoryItem *item = [list itemAtIndex:distance];
     if (!item) {
@@ -1374,15 +1380,15 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 
 - (void)print
 {
-    id wd = [[_page webView] UIDelegate];
+    id wd = [[self webView] UIDelegate];
     
     if ([wd respondsToSelector:@selector(webView:printFrameView:)]) {
-        [wd webView:[_page webView] printFrameView:[_frame frameView]];
+        [wd webView:[self webView] printFrameView:[_frame frameView]];
     } else if ([wd respondsToSelector:@selector(webViewPrint:)]) {
         // Backward-compatible, but webViewPrint: was never public, so probably not needed.
-        [wd webViewPrint:[_page webView]];
+        [wd webViewPrint:[self webView]];
     } else {
-        [[WebDefaultUIDelegate sharedUIDelegate] webView:[_page webView] printFrameView:[_frame frameView]];
+        [[WebDefaultUIDelegate sharedUIDelegate] webView:[self webView] printFrameView:[_frame frameView]];
     }
 }
 
@@ -1411,7 +1417,7 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
         // initialize.  The view may not yet be in the window's view 
         // hierarchy, so we have to pass the window when requesting
         // the applet.
-        applet = [view pollForAppletInWindow:[[_page webView] window]];
+        applet = [view pollForAppletInWindow:[[self webView] window]];
     }
     
     return applet;
@@ -1423,7 +1429,7 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
     if ([view isKindOfClass:[WebHTMLView class]]) {
         [(WebHTMLView *)view _updateFontPanel];
     }
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeNotification object:[_page webView]];
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeNotification object:[self webView]];
 }
 
 - (void)respondToChangedSelection
@@ -1432,32 +1438,32 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
     if ([view isKindOfClass:[WebHTMLView class]]) {
         [(WebHTMLView *)view _selectionChanged];
     }
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeSelectionNotification object:[_page webView]];
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeSelectionNotification object:[self webView]];
 }
 
 - (NSUndoManager *)undoManager
 {
-    return [[_page webView] undoManager];
+    return [[self webView] undoManager];
 }
 
 - (void)issueCutCommand
 {
-    [[_page webView] cut:nil];
+    [[self webView] cut:nil];
 }
 
 - (void)issueCopyCommand
 {
-    [[_page webView] copy:nil];
+    [[self webView] copy:nil];
 }
 
 - (void)issuePasteCommand
 {
-    [[_page webView] paste:nil];
+    [[self webView] paste:nil];
 }
 
 - (void)issuePasteAndMatchStyleCommand
 {
-    [[_page webView] pasteAsPlainText:nil];
+    [[self webView] pasteAsPlainText:nil];
 }
 
 - (void)issueTransposeCommand
@@ -1470,7 +1476,7 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 
 - (BOOL)canPaste
 {
-    return [[_page webView] _canPaste];
+    return [[self webView] _canPaste];
 }
 
 - (void)setIsSelected:(BOOL)isSelected forView:(NSView *)view
@@ -1485,27 +1491,27 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 
 - (NSString *)overrideMediaType
 {
-    return [[_page webView] mediaStyle];
+    return [[self webView] mediaStyle];
 }
 
 - (BOOL)isEditable
 {
-    return [[_page webView] isEditable];
+    return [[self webView] isEditable];
 }
 
 - (BOOL)shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange affinity:(NSSelectionAffinity)selectionAffinity stillSelecting:(BOOL)flag
 {
-    return [[_page webView] _shouldChangeSelectedDOMRange:currentRange toDOMRange:proposedRange affinity:selectionAffinity stillSelecting:flag];
+    return [[self webView] _shouldChangeSelectedDOMRange:currentRange toDOMRange:proposedRange affinity:selectionAffinity stillSelecting:flag];
 }
 
 - (BOOL)shouldBeginEditing:(DOMRange *)range
 {
-    return [[_page webView] _shouldBeginEditingInDOMRange:range];
+    return [[self webView] _shouldBeginEditingInDOMRange:range];
 }
 
 - (BOOL)shouldEndEditing:(DOMRange *)range
 {
-    return [[_page webView] _shouldEndEditingInDOMRange:range];
+    return [[self webView] _shouldEndEditingInDOMRange:range];
 }
 
 - (void)didBeginEditing
@@ -1520,7 +1526,7 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 
 - (void)windowObjectCleared
 {
-    WebView *wv = [_page webView];
+    WebView *wv = [self webView];
     [[wv _frameLoadDelegateForwarder] webView:wv windowScriptObjectAvailable:[self windowScriptObject]];
     if ([wv scriptDebugDelegate]) {
         [_frame _attachScriptDebugger];
@@ -1529,18 +1535,18 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 
 - (int)spellCheckerDocumentTag
 {
-    return [[_page webView] spellCheckerDocumentTag];
+    return [[self webView] spellCheckerDocumentTag];
 }
 
 - (BOOL)isContinuousSpellCheckingEnabled
 {
-    return [[_page webView] isContinuousSpellCheckingEnabled];
+    return [[self webView] isContinuousSpellCheckingEnabled];
 }
 
 - (void)didFirstLayout
 {
     [_frame _didFirstLayout];
-    WebView *wv = [_page webView];
+    WebView *wv = [self webView];
     [[wv _frameLoadDelegateForwarder] webView:wv didFirstLayoutInFrame:_frame];
 }
 
@@ -1551,7 +1557,7 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 
 - (void)dashboardRegionsChanged:(NSMutableDictionary *)regions
 {
-    WebView *wv = [_page webView];
+    WebView *wv = [self webView];
     id wd = [wv UIDelegate];
     
     [wv _addScrollerDashboardRegions:regions];
@@ -1670,7 +1676,7 @@ static NSCharacterSet *_getPostSmartSet(void)
         [request _web_setHTTPReferrer:[self referrer]];
     }
 
-    WebView *currentWebView = [_page webView];
+    WebView *currentWebView = [self webView];
     id UIDelegate = [currentWebView UIDelegate];
 
     WebView *newWebView = nil;
@@ -1686,7 +1692,7 @@ static NSCharacterSet *_getPostSmartSet(void)
 
 - (BOOL)canRunModal
 {
-    WebView *webView = [_page webView];
+    WebView *webView = [self webView];
     id UIDelegate = [webView UIDelegate];
     return [UIDelegate respondsToSelector:@selector(webViewRunModal:)];
 }
@@ -1701,7 +1707,7 @@ static NSCharacterSet *_getPostSmartSet(void)
     if (![self canRunModal])
         return;
 
-    WebView *webView = [_page webView];
+    WebView *webView = [self webView];
     if ([webView defersCallbacks]) {
         ERROR("tried to run modal in a view when it was deferring callbacks -- should never happen");
         return;

@@ -26,17 +26,22 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebPageBridge.h>
-#import <WebKit/WebFrameBridge.h>
-#import <WebKit/WebView.h>
+#import "WebPageBridge.h"
+
+#import "WebFrameBridge.h"
+#import "WebView.h"
 
 @implementation WebPageBridge
 
 - (id)initWithMainFrameName:(NSString *)frameName webView:(WebView *)webView frameView:(WebFrameView *)frameView
 {
-    self = [super initWithMainFrame:[[[WebFrameBridge alloc] initWithPage:self webView:webView renderer:nil frameName:frameName view:frameView] autorelease]];
-    if (self)
+    self = [super init];
+    if (self) {
         _webView = webView;
+        WebFrameBridge *mainFrame = [[WebFrameBridge alloc] initMainFrameWithPage:self frameName:frameName view:frameView];
+        [self setMainFrame:mainFrame];
+        [mainFrame release];
+    }
     return self;
 }
 

@@ -50,8 +50,10 @@ class WebCoreFrameBridge;
     WebCorePage* _page;
 }
 
-- (id)initWithMainFrame:(WebCoreFrameBridge*)mainFrame;
+- (void)setMainFrame:(WebCoreFrameBridge*)mainFrame;
+
 - (WebCoreFrameBridge*)mainFrame;
+
 @end
 
 // The WebCorePageBridge protocol contains methods for use by the WebCore side of the bridge.
@@ -64,4 +66,11 @@ class WebCoreFrameBridge;
 // This idiom is appropriate because WebCorePageBridge is an abstract class.
 
 @interface WebCorePageBridge (SubclassResponsibility) <WebCorePageBridge>
+@end
+
+// One method for internal use within WebCore itself.
+// Could move this to another header, but would be a pity to create an entire header just for that.
+
+@interface WebCorePageBridge (WebCoreInternalUse)
+- (WebCorePage*)impl;
 @end

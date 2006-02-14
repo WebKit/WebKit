@@ -1,3 +1,82 @@
+2006-02-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - move pointer from frame to page over to WebCore
+
+        * WebCoreSupport/WebPageBridge.m: (-[WebPageBridge initWithMainFrameName:webView:frameView:]):
+        Call super init to create the page before creating the main frame and calling setMainFrame: with it.
+
+        * WebCoreSupport/WebFrameBridge.h: Remove page pointer, and change init function parameters.
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge initMainFrameWithPage:frameName:view:]): New function that is used only for
+        the main frame. Passes the page over to the other side of the bridge.
+        (-[WebFrameBridge initSubframeWithRenderer:frameName:view:]): New function that is used only for
+        subframes. Passes the renderer over to the other side of the bridge.
+        (-[WebFrameBridge mainFrame]):
+        (-[WebFrameBridge webView]):
+        (-[WebFrameBridge createWindowWithURL:frameName:]):
+        (-[WebFrameBridge showWindow]):
+        (-[WebFrameBridge areToolbarsVisible]):
+        (-[WebFrameBridge setToolbarsVisible:]):
+        (-[WebFrameBridge isStatusbarVisible]):
+        (-[WebFrameBridge setStatusbarVisible:]):
+        (-[WebFrameBridge setWindowFrame:]):
+        (-[WebFrameBridge windowFrame]):
+        (-[WebFrameBridge setWindowContentRect:]):
+        (-[WebFrameBridge windowContentRect]):
+        (-[WebFrameBridge setWindowIsResizable:]):
+        (-[WebFrameBridge windowIsResizable]):
+        (-[WebFrameBridge firstResponder]):
+        (-[WebFrameBridge makeFirstResponder:]):
+        (-[WebFrameBridge closeWindowSoon]):
+        (-[WebFrameBridge runJavaScriptAlertPanelWithMessage:]):
+        (-[WebFrameBridge runJavaScriptConfirmPanelWithMessage:]):
+        (-[WebFrameBridge canRunBeforeUnloadConfirmPanel]):
+        (-[WebFrameBridge runBeforeUnloadConfirmPanelWithMessage:]):
+        (-[WebFrameBridge runJavaScriptTextInputPanelWithPrompt:defaultText:returningText:]):
+        (-[WebFrameBridge addMessageToConsole:]):
+        (-[WebFrameBridge runOpenPanelForFileButtonWithResultListener:]):
+        (-[WebFrameBridge setStatusText:]):
+        (-[WebFrameBridge syncLoadResourceWithURL:customHeaders:postData:finalURL:responseHeaders:statusCode:]):
+        (-[WebFrameBridge focusWindow]):
+        (-[WebFrameBridge createChildFrameNamed:withURL:referrer:renderPart:allowsScrolling:marginWidth:marginHeight:]):
+        (-[WebFrameBridge userAgentForURL:]):
+        (-[WebFrameBridge _nextKeyViewOutsideWebFrameViewsWithValidityCheck:]):
+        (-[WebFrameBridge previousKeyViewOutsideWebFrameViews]):
+        (-[WebFrameBridge defersLoading]):
+        (-[WebFrameBridge setDefersLoading:]):
+        (-[WebFrameBridge viewForPluginWithURL:attributeNames:attributeValues:MIMEType:]):
+        (-[WebFrameBridge _preferences]):
+        (-[WebFrameBridge selectWordBeforeMenuEvent]):
+        (-[WebFrameBridge historyLength]):
+        (-[WebFrameBridge canGoBackOrForward:]):
+        (-[WebFrameBridge goBackOrForward:]):
+        (-[WebFrameBridge print]):
+        (-[WebFrameBridge pollForAppletInView:]):
+        (-[WebFrameBridge respondToChangedContents]):
+        (-[WebFrameBridge respondToChangedSelection]):
+        (-[WebFrameBridge undoManager]):
+        (-[WebFrameBridge issueCutCommand]):
+        (-[WebFrameBridge issueCopyCommand]):
+        (-[WebFrameBridge issuePasteCommand]):
+        (-[WebFrameBridge issuePasteAndMatchStyleCommand]):
+        (-[WebFrameBridge canPaste]):
+        (-[WebFrameBridge overrideMediaType]):
+        (-[WebFrameBridge isEditable]):
+        (-[WebFrameBridge shouldChangeSelectedDOMRange:toDOMRange:affinity:stillSelecting:]):
+        (-[WebFrameBridge shouldBeginEditing:]):
+        (-[WebFrameBridge shouldEndEditing:]):
+        (-[WebFrameBridge windowObjectCleared]):
+        (-[WebFrameBridge spellCheckerDocumentTag]):
+        (-[WebFrameBridge isContinuousSpellCheckingEnabled]):
+        (-[WebFrameBridge didFirstLayout]):
+        (-[WebFrameBridge dashboardRegionsChanged:]):
+        (-[WebFrameBridge createModalDialogWithURL:]):
+        (-[WebFrameBridge canRunModal]):
+        (-[WebFrameBridge runModal]):
+        Change all calls to [_page webView] to use [self webView] instead.
+
 === WebKit-521.7
 
 2006-02-11  Maciej Stachowiak  <mjs@apple.com>

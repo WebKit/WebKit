@@ -30,6 +30,7 @@
 #import "Cache.h"
 #import "DOMInternal.h"
 #import "DocumentTypeImpl.h"
+#import "FrameTree.h"
 #import "FrameView.h"
 #import "HTMLFormElementImpl.h"
 #import "HTMLInputElementImpl.h"
@@ -47,10 +48,11 @@
 #import "KWQTextCodec.h"
 #import "KWQView.h"
 #import "MacFrame.h"
-#import "FrameTree.h"
 #import "NodeImpl.h"
+#import "PageMac.h"
 #import "SelectionController.h"
 #import "WebCoreFrameNamespaces.h"
+#import "WebCorePageBridge.h"
 #import "WebCoreSettings.h"
 #import "WebCoreTextRendererFactory.h"
 #import "WebCoreViewFactory.h"
@@ -65,6 +67,7 @@
 #import "html_documentimpl.h"
 #import "html_imageimpl.h"
 #import "htmlediting.h"
+#import "htmlnames.h"
 #import "kjs_proxy.h"
 #import "kjs_window.h"
 #import "loader.h"
@@ -81,12 +84,11 @@
 #import "visible_text.h"
 #import "visible_units.h"
 #import "xml_tokenizer.h"
-#import "htmlnames.h"
+#import <JavaScriptCore/date_object.h>
 #import <JavaScriptCore/interpreter.h>
 #import <JavaScriptCore/jni_jsobject.h>
 #import <JavaScriptCore/npruntime.h>
 #import <JavaScriptCore/object.h>
-#import <JavaScriptCore/date_object.h>
 #import <JavaScriptCore/property_map.h>
 #import <JavaScriptCore/runtime_root.h>
 #import <kxmlcore/Assertions.h>
@@ -178,7 +180,7 @@ static BOOL frameHasSelection(WebCoreFrameBridge *bridge)
     if (!bridge)
         return NO;
     
-    Frame *frame = [bridge part];
+    Frame *frame = [bridge impl];
     if (!frame)
         return NO;
         
@@ -333,12 +335,12 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (void)appendChild:(WebCoreFrameBridge *)child
 {
-    m_frame->tree()->appendChild(adoptRef([child part]));
+    m_frame->tree()->appendChild(adoptRef(child->m_frame));
 }
 
 - (void)removeChild:(WebCoreFrameBridge *)child
 {
-    m_frame->tree()->removeChild([child part]);
+    m_frame->tree()->removeChild(child->m_frame);
 }
 
 - (WebCoreFrameBridge *)childFrameNamed:(NSString *)name
@@ -534,37 +536,46 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     return frame ? Mac(frame)->bridge() : nil;
 }
 
-- (id)init
+- (id)initMainFrameWithPage:(WebCorePageBridge *)page
 {
-    return [self initWithRenderer:0];
-}
-
-- (id)initWithRenderer:(WebCoreRenderPart *)renderer
-{
+    if (!initializedKJS) {
+        mainThread = pthread_self();
+        RootObject::setFindRootObjectForNativeHandleFunction(rootForView);
+        KJS::Bindings::Instance::setDidExecuteFunction(updateRenderingForBindings);
+        initializedKJS = true;
+    }
+    
     if (!(self = [super init]))
         return nil;
-    
-    m_frame = new MacFrame(renderer);
-    m_frame->setBridge(self);
 
-    if (!initializedObjectCacheSize){
+    m_frame = new MacFrame([page impl], 0);
+    m_frame->setBridge(self);
+    _shouldCreateRenderers = YES;
+
+    // FIXME: This is one-time initialization, but it gets the value of the setting from the
+    // current WebView. That's a mismatch and not good!
+    if (!initializedObjectCacheSize) {
         Cache::setSize([self getObjectCacheSize]);
         initializedObjectCacheSize = true;
     }
     
-    if (!initializedKJS) {
-        mainThread = pthread_self();
-        
-        RootObject::setFindRootObjectForNativeHandleFunction (rootForView);
-
-        KJS::Bindings::Instance::setDidExecuteFunction(updateRenderingForBindings);
-        
-        initializedKJS = true;
-    }
-    
-    _shouldCreateRenderers = YES;
-    
     return self;
+}
+
+- (id)initSubframeWithRenderer:(RenderPart *)renderer
+{
+    if (!(self = [super init]))
+        return nil;
+    
+    m_frame = new MacFrame(renderer->node()->getDocument()->frame()->page(), renderer);
+    m_frame->setBridge(self);
+    _shouldCreateRenderers = YES;
+    return self;
+}
+
+- (WebCorePageBridge *)page
+{
+    return Mac(m_frame->page())->bridge();
 }
 
 - (void)initializeSettings: (WebCoreSettings *)settings
@@ -592,12 +603,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 - (MacFrame *)part
 {
     return m_frame;
-}
-
-- (void)setParent:(WebCoreFrameBridge *)parent
-{
-    // FIXME: frames should be created with the right parent in the first place
-    m_frame->tree()->setParent([parent part]);
 }
 
 - (WebCoreFrameBridge *)parent
@@ -1649,7 +1654,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)setOpener:(WebCoreFrameBridge *)bridge;
 {
-    Frame *p = [bridge part];
+    Frame *p = [bridge impl];
     
     if (p)
         p->setOpener(m_frame);
@@ -2632,7 +2637,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (RootObject *)executionContextForView:(NSView *)aView
 {
-    MacFrame *frame = [self part];
+    MacFrame *frame = [self impl];
     RootObject *root = new RootObject(aView);    // The root gets deleted by JavaScriptCore.
     root->setRootObjectImp(Window::retrieveWindow(frame));
     root->setInterpreter(frame->jScript()->interpreter());
@@ -2673,6 +2678,15 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     }
     
     return nodeInfo;
+}
+
+@end
+
+@implementation WebCoreFrameBridge (WebCoreInternalUse)
+
+- (MacFrame*)impl
+{
+    return m_frame;
 }
 
 @end

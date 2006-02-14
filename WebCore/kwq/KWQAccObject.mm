@@ -1801,7 +1801,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
         bridge = [bridgeHolder webCoreBridge];
     }
 
-    MacFrame *frame = [bridge part];
+    MacFrame *frame = [bridge impl];
     if (!frame)
         return NULL;
         

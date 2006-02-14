@@ -1,4 +1,89 @@
-2006-02-07  David Harrison  <harrison@apple.com>
+2006-02-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - move pointer from frame to page here from WebKit
+
+        * WebCore.xcodeproj/project.pbxproj: Added PageMac.h.
+
+        * bridge/mac/PageMac.h: Added.
+
+        * bridge/mac/MacFrame.h: Added a page parameter to the constructor.
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::MacFrame): Pass the page and renderer to the Frame constructor.
+        Moved the call to Cache::init up into Frame, and got rid of the call to Frame::init
+        since that's now handled by the constructor. Also put the code to create the
+        browser extension object here.
+        (WebCore::MacFrame::submitForm): Update for new method name.
+        (WebCore::MacFrame::createFrame): Ditto.
+        (WebCore::MacFrame::sendContextMenuEvent): Update since m_doc is a RefPtr.
+
+        * bridge/mac/WebCoreFrameBridge.h: Changed parameters on init methods. Renamed
+        the part method to impl. Added a page method.
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (frameHasSelection): Change use of part method to impl.
+        (-[WebCoreFrameBridge appendChild:]): Use m_frame directly instead of calling part method.
+        (-[WebCoreFrameBridge removeChild:]): Ditto.
+        (-[WebCoreFrameBridge initMainFrameWithPage:]): Added. Now does the first-time initialization
+        only here and create a frame for a main frame.
+        (-[WebCoreFrameBridge initSubframeWithRenderer:]): Added. Doesn't do the first-time initialization
+        and creates a frame for a subframe.
+        (-[WebCoreFrameBridge page]): Added.
+        (-[WebCoreFrameBridge setOpener:]): Change to use impl method instead of part.
+        (-[WebCoreFrameBridge executionContextForView:]): Ditto.
+        (-[WebCoreFrameBridge impl]): Added.
+
+        * bridge/mac/WebCorePageBridge.h: Removed init method and added setMainFrame: method and impl method.
+        * bridge/mac/WebCorePageBridge.mm:
+        (-[WebCorePageBridge init]): Changed to create a PageMac.
+        (-[WebCorePageBridge setMainFrame:]): Added.
+        (-[WebCorePageBridge impl]): Added.
+
+        * bridge/mac/BrowserExtensionMac.mm:
+        (WebCore::BrowserExtensionMac::createNewWindow):
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject rendererForView:]):
+        * kwq/KWQComboBox.mm:
+        (-[KWQPopUpButtonCell trackMouse:inRect:ofView:untilMouseUp:]):
+        * kwq/KWQFileButton.mm:
+        (KWQFileButton::focusPolicy):
+        * kwq/KWQSlider.mm:
+        (QSlider::focusPolicy):
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextAreaTextView _isResizableByUser]):
+        (-[KWQTextAreaTextView _trackResizeFromMouseDown:]):
+        Change methods to get from bridge back to objects to be named "impl".
+        The old one was named "part".
+
+        * page/Frame.h: Added Page and RenderPart parameter to constructor.
+        Added a page function. Removed the createBrowserExtension function.
+        * page/Frame.cpp:
+        (WebCore::parentFromOwnerRenderer): Added. Helper for constructor.
+        (WebCore::Frame::Frame): Moved all the code from init into here. Also change
+        to set the parent right from the start.
+        (WebCore::Frame::stopLoading): Change since m_doc is now a RefPtr.
+        (WebCore::Frame::clear): Ditto.
+        (WebCore::Frame::document): Ditto.
+        (WebCore::Frame::setDocument): Ditto.
+        (WebCore::Frame::begin): Ditto.
+        (WebCore::Frame::gotoAnchor): Ditto.
+        (WebCore::Frame::typingStyle): Change since m_typingStyle is now a RefPtr.
+        (WebCore::Frame::setTypingStyle): Ditto.
+        (WebCore::Frame::clearTypingStyle): Ditto.
+        (WebCore::Frame::isFrameSet): Change since m_doc is now a RefPtr.
+        (WebCore::Frame::page): Added.
+
+        * page/FramePrivate.h: Changed initialization to use member-initialization
+        syntax. Removed unused m_frames. Changed m_doc and m_typingStyle to use
+        RefPtr. Added an m_frame.
+
+        * page/Page.h: Made destructor virtual so we could have a Mac derived class.
+        Added a setMainFrame function and removed the mainFrame parameter from the constructor.
+        * page/Page.cpp:
+        (WebCore::Page::Page): Removed the mainFrame parameter.
+        (WebCore::Page::setMainFrame): Added.
+
+2006-02-13  David Harrison  <harrison@apple.com>
 
         Reviewed by Justin.
 

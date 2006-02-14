@@ -27,21 +27,24 @@
 #import "WebCorePageBridge.h"
 
 #import "MacFrame.h"
-#import "Page.h"
+#import "PageMac.h"
 #import "WebCoreFrameBridge.h"
 
 using namespace WebCore;
 
 @implementation WebCorePageBridge
 
-- (id)initWithMainFrame:(WebCoreFrameBridge *)mainFrame
+- (id)init
 {
-    if (!(self = [super init]))
-        return nil;
-
-    _page = new Page(adoptRef([mainFrame part]));
-    
+    self = [super init];
+    if (self)
+        _page = new PageMac(self);
     return self;
+}
+
+- (void)setMainFrame:(WebCoreFrameBridge *)mainFrame
+{
+    _page->setMainFrame(adoptRef([mainFrame impl]));
 }
 
 - (void)dealloc
@@ -53,6 +56,15 @@ using namespace WebCore;
 - (WebCoreFrameBridge *)mainFrame
 {
     return Mac(_page->mainFrame())->bridge();
+}
+
+@end
+
+@implementation WebCorePageBridge (WebCoreInternalUse)
+
+- (Page*)impl
+{
+    return _page;
 }
 
 @end

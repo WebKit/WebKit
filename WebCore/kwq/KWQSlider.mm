@@ -242,7 +242,7 @@ Widget::FocusPolicy QSlider::focusPolicy() const
     KWQ_BLOCK_EXCEPTIONS;
     
     WebCoreFrameBridge *bridge = MacFrame::bridgeForWidget(this);
-    if (!bridge || ![bridge part] || ![bridge part]->tabsToAllControls()) {
+    if (!bridge || ![bridge impl] || ![bridge impl]->tabsToAllControls()) {
         return NoFocus;
     }
     

@@ -28,14 +28,14 @@
 #define khtmlpart_p_h
 
 #include "Frame.h"
+#include "FrameTree.h"
 #include "SelectionController.h"
 #include "Timer.h"
 #include "css_valueimpl.h"
 #include "edit_command.h"
 #include "kjs_proxy.h"
 #include <kio/global.h>
-#include "FrameTree.h"
-#include "kxmlcore/Vector.h"
+#include <kxmlcore/Vector.h>
 
 namespace KIO {
     class TransferJob;
@@ -45,215 +45,190 @@ namespace WebCore
 {
     class Decoder;
 
-class FrameList : public QValueList<RefPtr<Frame> >
-{
-public:
-    Iterator find(const QString &name);
-};
+    enum RedirectionScheduled {
+        noRedirectionScheduled,
+        redirectionScheduled,
+        locationChangeScheduled,
+        historyNavigationScheduled,
+        locationChangeScheduledDuringLoad
+    };
 
-typedef FrameList::ConstIterator ConstFrameIt;
-typedef FrameList::Iterator FrameIt;
-
-enum RedirectionScheduled {
-    noRedirectionScheduled,
-    redirectionScheduled,
-    locationChangeScheduled,
-    historyNavigationScheduled,
-    locationChangeScheduledDuringLoad
-};
-
-class FramePrivate
-{
-public:
-  FramePrivate(Frame *parent, Frame *thisFrame, RenderPart* ownerRenderer)
-      : m_treeNode(thisFrame, parent)
-      , m_ownerRenderer(ownerRenderer)
-      , m_redirectionTimer(thisFrame, &Frame::redirectionTimerFired)
-      , m_caretBlinkTimer(thisFrame, &Frame::caretBlinkTimerFired)
-      , m_lifeSupportTimer(thisFrame, &Frame::lifeSupportTimerFired)
-  {
-    m_doc = 0;
-    m_jscript = 0;
-    m_runningScripts = 0;
-    m_job = 0;
-    m_bComplete = true;
-    m_bLoadingMainResource = false;
-    m_bLoadEventEmitted = true;
-    m_bUnloadEventEmitted = true;
-    m_cachePolicy = KIO::CC_Verify;
-    m_bClearing = false;
-    m_bCleared = true;
-    m_zoomFactor = 100;
-    m_bDnd = true;
-    m_haveEncoding = false;
-    m_activeFrame = 0;
-    m_frameNameId = 1;
-
-    m_restored = false;
-
-    m_focusNodeNumber = -1;
-    m_focusNodeRestored = false;
-
-    m_onlyLocalReferences = false;
-
-    m_caretVisible = false;
-    m_caretBlinks = true;
-    m_caretPaint = true;
-    
-    m_typingStyle = 0;
-
-    m_metaRefreshEnabled = true;
-    m_bHTTPRefresh = false;
-
-    m_bFirstData = true;
-    m_submitForm = 0;
-    m_scheduledRedirection = noRedirectionScheduled;
-    m_delayRedirect = 0;
-
-    m_bPendingChildRedirection = false;
-    m_executingJavaScriptFormAction = false;
-
-    m_cancelWithLoadInProgress = false;
-    
-    // inherit settings from parent
-    if (parent && parent->inherits("Frame"))
+    class FramePrivate
     {
-        Frame *frame = static_cast<Frame*>(parent);
-        if (frame->d)
+    public:
+        FramePrivate(Page* page, Frame* parent, Frame* thisFrame, RenderPart* ownerRenderer)
+            : m_page(page)
+            , m_treeNode(thisFrame, parent)
+            , m_ownerRenderer(ownerRenderer)
+            , m_extension(0)
+            , m_jscript(0)
+            , m_runningScripts(0)
+            , m_bJScriptEnabled(true)
+            , m_bJavaEnabled(true)
+            , m_bPluginsEnabled(true)
+            , m_metaRefreshEnabled(true)
+            , m_restored(false)
+            , m_frameNameId(1)
+            , m_settings(0)
+            , m_job(0)
+            , m_bComplete(true)
+            , m_bLoadingMainResource(false)
+            , m_bLoadEventEmitted(true)
+            , m_bUnloadEventEmitted(true)
+            , m_haveEncoding(false)
+            , m_bHTTPRefresh(false)
+            , m_redirectLockHistory(false)
+            , m_redirectUserGesture(false)
+            , m_cachePolicy(KIO::CC_Verify)
+            , m_redirectionTimer(thisFrame, &Frame::redirectionTimerFired)
+            , m_scheduledRedirection(noRedirectionScheduled)
+            , m_delayRedirect(0)
+            , m_zoomFactor(100)
+            , m_submitForm(0)
+            , m_bMousePressed(false)
+            , m_caretBlinkTimer(thisFrame, &Frame::caretBlinkTimerFired)
+            , m_caretVisible(false)
+            , m_caretBlinks(true)
+            , m_caretPaint(true)
+            , m_bDnd(true)
+            , m_bFirstData(true)
+            , m_bClearing(false)
+            , m_bCleared(true)
+            , m_bSecurityInQuestion(false)
+            , m_focusNodeRestored(false)
+            , m_isFocused(false)
+            , m_focusNodeNumber(-1)
+            , m_activeFrame(0)
+            , m_opener(0)
+            , m_openedByJS(false)
+            , m_newJSInterpreterExists(false)
+            , m_bPendingChildRedirection(false)
+            , m_executingJavaScriptFormAction(false)
+            , m_cancelWithLoadInProgress(false)
+            , m_lifeSupportTimer(thisFrame, &Frame::lifeSupportTimerFired)
         {
-            // Same for SSL settings
-            m_onlyLocalReferences = frame->d->m_onlyLocalReferences;
-            m_zoomFactor = frame->d->m_zoomFactor;
+            // inherit settings from parent
+            if (parent && parent->inherits("Frame")) {
+                Frame *frame = static_cast<Frame*>(parent);
+                if (frame->d)
+                    m_zoomFactor = frame->d->m_zoomFactor;
+            }
         }
-    }
 
-    m_isFocused = false;
-    m_focusNodeNumber = -1;
-    m_focusNodeRestored = false;
-    m_opener = 0;
-    m_openedByJS = false;
-    m_newJSInterpreterExists = false;
-  }
-  ~FramePrivate()
-  {
-    delete m_extension;
-    delete m_jscript;
-    if (m_typingStyle)
-        m_typingStyle->deref();
-  }
+        ~FramePrivate()
+        {
+            delete m_extension;
+            delete m_jscript;
+        }
 
-  FrameTree m_treeNode;
+        Page* m_page;
+        FrameTree m_treeNode;
 
-  // old style frame info
-  FrameList m_frames;
-  Vector<RefPtr<Plugin> > m_plugins;
+        Vector<RefPtr<Plugin> > m_plugins;
 
-  QGuardedPtr<RenderPart> m_ownerRenderer;
-  QGuardedPtr<FrameView> m_view;
-  BrowserExtension *m_extension;
-  DocumentImpl *m_doc;
-  RefPtr<Decoder> m_decoder;
-  QString m_encoding;
-  QString scheduledScript;
-  RefPtr<NodeImpl> scheduledScriptNode;
+        QGuardedPtr<RenderPart> m_ownerRenderer;
+        QGuardedPtr<FrameView> m_view;
+        BrowserExtension* m_extension;
+        RefPtr<DocumentImpl> m_doc;
+        RefPtr<Decoder> m_decoder;
+        QString m_encoding;
+        QString scheduledScript;
+        RefPtr<NodeImpl> scheduledScriptNode;
 
-  KJSProxyImpl *m_jscript;
-  int m_runningScripts;
-  bool m_bJScriptEnabled :1;
-  bool m_bJavaEnabled :1;
-  bool m_bPluginsEnabled :1;
-  bool m_metaRefreshEnabled :1;
-  bool m_restored :1;
-  int m_frameNameId;
+        KJSProxyImpl* m_jscript;
+        int m_runningScripts;
+        bool m_bJScriptEnabled : 1;
+        bool m_bJavaEnabled : 1;
+        bool m_bPluginsEnabled : 1;
+        bool m_metaRefreshEnabled : 1;
+        bool m_restored : 1;
+        int m_frameNameId;
 
-  KHTMLSettings *m_settings;
+        KHTMLSettings* m_settings;
 
-  KIO::TransferJob * m_job;
+        KIO::TransferJob* m_job;
 
-  QString m_kjsStatusBarText;
-  QString m_kjsDefaultStatusBarText;
-  QString m_lastModified;
+        QString m_kjsStatusBarText;
+        QString m_kjsDefaultStatusBarText;
+        QString m_lastModified;
 
+        bool m_bComplete : 1;
+        bool m_bLoadingMainResource : 1;
+        bool m_bLoadEventEmitted : 1;
+        bool m_bUnloadEventEmitted : 1;
+        bool m_haveEncoding : 1;
+        bool m_bHTTPRefresh : 1;
+        bool m_redirectLockHistory : 1;
+        bool m_redirectUserGesture : 1;
 
-  bool m_bComplete:1;
-  bool m_bLoadingMainResource:1;
-  bool m_bLoadEventEmitted:1;
-  bool m_bUnloadEventEmitted:1;
-  bool m_haveEncoding:1;
-  bool m_bHTTPRefresh:1;
-  bool m_onlyLocalReferences :1;
-  bool m_redirectLockHistory:1;
-  bool m_redirectUserGesture:1;
-  
-  KURL m_url;
-  KURL m_workingURL;
+        KURL m_url;
+        KURL m_workingURL;
 
-  KIO::CacheControl m_cachePolicy;
-  Timer<Frame> m_redirectionTimer;
+        KIO::CacheControl m_cachePolicy;
+        Timer<Frame> m_redirectionTimer;
 
-  RedirectionScheduled m_scheduledRedirection;
-  double m_delayRedirect;
-  QString m_redirectURL;
-  QString m_redirectReferrer;
-  int m_scheduledHistoryNavigationSteps;
+        RedirectionScheduled m_scheduledRedirection;
+        double m_delayRedirect;
+        QString m_redirectURL;
+        QString m_redirectReferrer;
+        int m_scheduledHistoryNavigationSteps;
 
-  int m_zoomFactor;
+        int m_zoomFactor;
 
-  QString m_strSelectedURL;
-  QString m_strSelectedURLTarget;
-  QString m_referrer;
+        QString m_strSelectedURL;
+        QString m_strSelectedURLTarget;
+        QString m_referrer;
 
-  struct SubmitForm {
-    const char *submitAction;
-    QString submitUrl;
-    FormData submitFormData;
-    QString target;
-    QString submitContentType;
-    QString submitBoundary;
-  };
+        struct SubmitForm {
+            const char* submitAction;
+            QString submitUrl;
+            FormData submitFormData;
+            QString target;
+            QString submitContentType;
+            QString submitBoundary;
+        };
+        SubmitForm* m_submitForm;
 
-  SubmitForm *m_submitForm;
+        bool m_bMousePressed;
+        RefPtr<NodeImpl> m_mousePressNode; // node under the mouse when the mouse was pressed (set in the mouse handler)
 
-  bool m_bMousePressed;
-  RefPtr<NodeImpl> m_mousePressNode; //node under the mouse when the mouse was pressed (set in the mouse handler)
+        ETextGranularity m_selectionGranularity;
+        bool m_beganSelectingText;
 
-  ETextGranularity m_selectionGranularity;
-  bool m_beganSelectingText;
+        SelectionController m_selection;
+        SelectionController m_dragCaret;
+        Selection m_mark;
+        Timer<Frame> m_caretBlinkTimer;
 
-  SelectionController m_selection;
-  SelectionController m_dragCaret;
-  Selection m_mark;
-  Timer<Frame> m_caretBlinkTimer;
+        bool m_caretVisible : 1;
+        bool m_caretBlinks : 1;
+        bool m_caretPaint : 1;
+        bool m_bDnd : 1;
+        bool m_bFirstData : 1;
+        bool m_bClearing : 1;
+        bool m_bCleared : 1;
+        bool m_bSecurityInQuestion : 1;
+        bool m_focusNodeRestored : 1;
+        bool m_isFocused : 1;
 
-  bool m_caretVisible:1;
-  bool m_caretBlinks:1;
-  bool m_caretPaint:1;
-  bool m_bDnd:1;
-  bool m_bFirstData:1;
-  bool m_bClearing:1;
-  bool m_bCleared:1;
-  bool m_bSecurityInQuestion:1;
-  bool m_focusNodeRestored:1;
-  bool m_isFocused:1;
+        EditCommandPtr m_lastEditCommand;
+        int m_xPosForVerticalArrowNavigation;
+        RefPtr<CSSMutableStyleDeclarationImpl> m_typingStyle;
 
-  EditCommandPtr m_lastEditCommand;
-  int m_xPosForVerticalArrowNavigation;
-  CSSMutableStyleDeclarationImpl *m_typingStyle;
+        int m_focusNodeNumber;
 
-  int m_focusNodeNumber;
+        IntPoint m_dragStartPos;
 
-  IntPoint m_dragStartPos;
+        Frame* m_activeFrame;
+        QGuardedPtr<Frame> m_opener;
+        bool m_openedByJS;
+        bool m_newJSInterpreterExists; // set to 1 by setOpenedByJS, for window.open
+        bool m_bPendingChildRedirection;
+        bool m_executingJavaScriptFormAction;
+        bool m_cancelWithLoadInProgress;
 
-  Frame* m_activeFrame;
-  QGuardedPtr<Frame> m_opener;
-  bool m_openedByJS;
-  bool m_newJSInterpreterExists; // set to 1 by setOpenedByJS, for window.open
-  bool m_bPendingChildRedirection;
-  bool m_executingJavaScriptFormAction;
-  bool m_cancelWithLoadInProgress;
-
-  Timer<Frame> m_lifeSupportTimer;
-};
+        Timer<Frame> m_lifeSupportTimer;
+    };
 
 }
 

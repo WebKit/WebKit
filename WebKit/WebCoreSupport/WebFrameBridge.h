@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,16 +29,15 @@
 #import <WebCore/WebCoreFrameBridge.h>
 
 @class WebPageBridge;
-@class WebDataSource;
+@class WebCoreRenderPart;
 @class WebFrame;
 @class WebFrameView;
-@class WebCoreRenderPart;
+
 @protocol WebOpenPanelResultListener;
 
 @interface WebFrameBridge : WebCoreFrameBridge <WebCoreFrameBridge>
 {
     WebFrame *_frame;
-    WebPageBridge *_page;
 
     WebCoreKeyboardUIMode _keyboardUIMode;
     BOOL _keyboardUIModeAccessed;
@@ -49,7 +48,8 @@
     NSDictionary *lastDashboardRegions;
 }
 
-- (id)initWithPage:(WebPageBridge *)page webView:(WebView *)webView renderer:(WebCoreRenderPart *)renderer frameName:(NSString *)name view:(WebFrameView *)view;
+- (id)initMainFrameWithPage:(WebPageBridge *)page frameName:(NSString *)name view:(WebFrameView *)view;
+
 - (void)close;
 
 - (void)receivedData:(NSData *)data textEncodingName:(NSString *)textEncodingName;
@@ -57,6 +57,5 @@
 - (BOOL)inNextKeyViewOutsideWebFrameViews;
 
 - (WebFrame *)webFrame;
-- (WebPageBridge *)page;
 
 @end

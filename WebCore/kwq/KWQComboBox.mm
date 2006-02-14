@@ -416,7 +416,7 @@ void QComboBox::populate()
         // Give KHTML a chance to fix up its event state, since the popup eats all the
         // events during tracking.  [NSApp currentEvent] is still the original mouseDown
         // at this point!
-        [bridge part]->sendFakeEventsAfterWidgetTracking(event);
+        [bridge impl]->sendFakeEventsAfterWidgetTracking(event);
     }
     [event release];
     [bridge release];

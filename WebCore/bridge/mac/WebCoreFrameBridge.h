@@ -55,9 +55,10 @@ typedef WebCore::RenderPart WebCoreRenderPart;
 @class DOMElement;
 @class DOMHTMLElement;
 @class DOMHTMLInputElement;
+@class DOMHTMLTextAreaElement;
 @class DOMNode;
 @class DOMRange;
-@class DOMHTMLTextAreaElement;
+@class WebCorePageBridge;
 @class WebCoreSettings;
 @class WebScriptObject;
 @class WebView;
@@ -190,7 +191,8 @@ typedef enum
 
 + (WebCoreFrameBridge *)bridgeForDOMDocument:(DOMDocument *)document;
 
-- (id)initWithRenderer:(WebCoreRenderPart *)renderer;
+- (id)initMainFrameWithPage:(WebCorePageBridge *)page;
+- (id)initSubframeWithRenderer:(WebCoreRenderPart *)renderer;
 
 + (NSArray *)supportedMIMETypes;
 
@@ -201,9 +203,8 @@ typedef enum
 /* Creates a name for an frame unnamed in the HTML.  It should produce repeatable results for loads of the same frameset. */
 - (NSString *)generateFrameName;
 
-- (WebCoreMacFrame *)part;
+- (WebCorePageBridge *)page;
 
-- (void)setParent:(WebCoreFrameBridge *)parent;
 - (WebCoreFrameBridge *)parent;
 
 - (WebCoreFrameBridge *)firstChild;
@@ -673,6 +674,15 @@ typedef enum
 
 @interface WebCoreFrameBridge (SubclassResponsibility) <WebCoreFrameBridge>
 @end
+
+// One method for internal use within WebCore itself.
+// Could move this to another header, but would be a pity to create an entire header just for that.
+
+@interface WebCoreFrameBridge (WebCoreInternalUse)
+- (WebCoreMacFrame*)impl;
+@end
+
+// Protocols that make up part of the interaces above.
 
 @protocol WebCoreRenderTreeCopier <NSObject>
 - (NSObject *)nodeWithName:(NSString *)name position:(NSPoint)p rect:(NSRect)rect view:(NSView *)view children:(NSArray *)children;

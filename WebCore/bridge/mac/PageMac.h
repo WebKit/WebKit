@@ -1,4 +1,4 @@
-// -*- c-basic-offset: 4 -*-
+// -*- mode: c++; c-basic-offset: 4 -*-
 /*
  * Copyright (C) 2006 Apple Computer, Inc.
  *
@@ -18,41 +18,24 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "config.h"
+#ifndef PAGE_MAC_H
+#define PAGE_MAC_H
+
 #include "Page.h"
-
-#include "Frame.h"
-#include <kjs/collector.h>
-#include <kjs/JSLock.h>
-
-using namespace KJS;
 
 namespace WebCore {
 
-static int pageCount;
+    class PageMac : public Page {
+    public:
+        PageMac(WebCorePageBridge* b) : m_bridge(b) { }
+        WebCorePageBridge* bridge() const { return m_bridge; }
+    private:
+        WebCorePageBridge* m_bridge;
+    };
 
-Page::Page() 
-{
-    ++pageCount;
-}
+    inline PageMac* Mac(Page* page) { return static_cast<PageMac*>(page); }
+    inline const PageMac* Mac(const Page* page) { return static_cast<const PageMac*>(page); }
 
-Page::~Page() 
-{ 
-    m_mainFrame->detachFromView(); 
-    if (!--pageCount) {
-        Frame::endAllLifeSupport();
-#ifndef NDEBUG
-        m_mainFrame = 0;
-        JSLock lock;
-        Collector::collect();
-#endif
-    }
-}
-
-void Page::setMainFrame(PassRefPtr<Frame> mainFrame)
-{
-    ASSERT(!m_mainFrame);
-    m_mainFrame = mainFrame;
-}
-
-}
+} // namespace WebCore
+    
+#endif // PAGE_H

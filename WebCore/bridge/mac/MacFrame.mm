@@ -26,6 +26,7 @@
 #import "config.h"
 #import "MacFrame.h"
 
+#import "BrowserExtensionMac.h"
 #import "Cache.h"
 #import "DOMInternal.h"
 #import "EventNames.h"
@@ -129,8 +130,9 @@ bool FrameView::isFrameView() const
     return true;
 }
 
-MacFrame::MacFrame(RenderPart* ownerRenderer)
-    : _bridge(nil)
+MacFrame::MacFrame(Page* page, RenderPart* ownerRenderer)
+    : Frame(page, ownerRenderer)
+    , _bridge(nil)
     , _started(this, SIGNAL(started(KIO::Job *)))
     , _completed(this, SIGNAL(completed()))
     , _completedWithBool(this, SIGNAL(completed(bool)))
@@ -147,13 +149,9 @@ MacFrame::MacFrame(RenderPart* ownerRenderer)
     , _windowScriptNPObject(0)
     , _dragClipboard(0)
 {
-    // Must init the cache before connecting to any signals
-    Cache::init();
-
-    // The widget is made outside this class in our case.
-    Frame::init(0, ownerRenderer);
-
     mutableInstances().prepend(this);
+
+    d->m_extension = new BrowserExtensionMac(this);
 }
 
 MacFrame::~MacFrame()
@@ -522,7 +520,7 @@ void MacFrame::submitForm(const KURL &url, const URLArgs &args)
     // than replacing this frame's content, so this check is flawed. On the other hand, the check is hardly
     // needed any more now that we reset _submittedFormURL on each mouse or key down event.
     WebCoreFrameBridge *target = args.frameName.isEmpty() ? _bridge : [_bridge findFrameNamed:args.frameName.getNSString()];
-    Frame *targetPart = [target part];
+    Frame *targetPart = [target impl];
     bool willReplaceThisFrame = false;
     for (Frame *p = this; p; p = p->tree()->parent()) {
         if (p == targetPart) {
@@ -635,7 +633,7 @@ Frame* MacFrame::createFrame(const KURL& url, const QString& name, RenderPart* r
                                                      allowsScrolling:allowsScrolling
                                                          marginWidth:marginWidth
                                                         marginHeight:marginHeight];
-    return [childBridge part];
+    return [childBridge impl];
 
     KWQ_UNBLOCK_EXCEPTIONS;
     return 0;
@@ -2236,8 +2234,8 @@ bool MacFrame::shouldDragAutoNode(NodeImpl* node, int x, int y) const
 
 bool MacFrame::sendContextMenuEvent(NSEvent *event)
 {
-    DocumentImpl *doc = d->m_doc;
-    FrameView *v = d->m_view;
+    DocumentImpl* doc = d->m_doc.get();
+    FrameView* v = d->m_view;
     if (!doc || !v) {
         return false;
     }

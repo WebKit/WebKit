@@ -391,7 +391,7 @@ const float LargeNumberForText = 1.0e7;
     // the part isn't reachable, hence the settings aren't reachable, until the event filter has
     // been installed.
     if (!resizableByUserComputed) {
-        resizableByUser = [MacFrame::bridgeForWidget(widget) part]->settings()->textAreasAreResizable();
+        resizableByUser = [MacFrame::bridgeForWidget(widget) impl]->settings()->textAreasAreResizable();
         resizableByUserComputed = YES;
     }
     return resizableByUser;
@@ -732,7 +732,7 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
                 handledIntrinsicMargins = YES;
             }
             
-            [bridge part]->forceLayout();
+            [bridge impl]->forceLayout();
         }
         
         // Go get the next event.

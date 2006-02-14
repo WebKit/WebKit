@@ -103,7 +103,7 @@ void BrowserExtensionMac::createNewWindow(const KURL &url,
             [bridge focusWindow];
 
             if (partResult)
-                *partResult = [bridge part];
+                *partResult = [bridge impl];
 
             return;
         }
@@ -118,11 +118,11 @@ void BrowserExtensionMac::createNewWindow(const KURL &url,
     if (!bridge)
         return;
     
-    if ([bridge part])
-	[bridge part]->tree()->setName(urlArgs.frameName);
+    if ([bridge impl])
+	[bridge impl]->tree()->setName(urlArgs.frameName);
     
     if (partResult)
-	*partResult = [bridge part];
+	*partResult = [bridge impl];
     
     [bridge setToolbarsVisible:winArgs.toolBarVisible || winArgs.locationBarVisible];
     [bridge setStatusbarVisible:winArgs.statusBarVisible];
