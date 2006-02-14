@@ -1,3 +1,9 @@
+2006-01-31  David Harrison  <harrison@apple.com>
+
+        Updated test case after improving table deletion.
+        
+        * selection/move-between-blocks-no-001-expected.txt: Updated.
+
 2006-02-12  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed and tweaked by Darin.
