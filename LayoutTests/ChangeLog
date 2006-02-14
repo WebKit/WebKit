@@ -1,5 +1,14 @@
 2006-02-14  John Sullivan  <sullivan@apple.com>
 
+        One more of the same (this one tests list boxes instead of pop-up menus)
+
+        * fast/forms/HTMLOptionElement_label05-expected.checksum: Added.
+        * fast/forms/HTMLOptionElement_label05-expected.png: Added.
+        * fast/forms/HTMLOptionElement_label05-expected.txt: Added.
+        * fast/forms/HTMLOptionElement_label05.html: Added.
+
+2006-02-14  John Sullivan  <sullivan@apple.com>
+
         Added another option element label test at Dave Hyatt's suggestion
 
         * fast/forms/HTMLOptionElement_label04-expected.checksum: Added.
