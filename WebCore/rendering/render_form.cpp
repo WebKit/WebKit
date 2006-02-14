@@ -716,7 +716,12 @@ void RenderSelect::updateFromElement()
             }
             else if (listItems[listIndex]->hasTagName(optionTag)) {
                 HTMLOptionElementImpl *optionElement = static_cast<HTMLOptionElementImpl*>(listItems[listIndex]);
-                QString itemText = optionElement->text().qstring();
+                QString itemText;
+                if (optionElement->hasAttribute(labelAttr))
+                    itemText = optionElement->getAttribute(labelAttr).qstring();
+                else
+                    itemText = optionElement->text().qstring();
+                
                 itemText.replace(QChar('\\'), backslashAsCurrencySymbol());
 
                 // In WinIE, leading and trailing whitespace is ignored in options. We match this behavior.

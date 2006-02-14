@@ -1,3 +1,19 @@
+2006-02-14  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adele Peterson.
+        
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=7255
+        label attribute in option elements is ignored
+        
+        Test cases: 
+        * dom/html/level2/html/HTMLOptionElement_label01.html
+        * dom/html/level2/html/HTMLOptionElement_label02.html
+        * dom/html/level2/html/HTMLOptionElement_label03.html
+
+        * rendering/render_form.cpp:
+        (WebCore::RenderSelect::updateFromElement):
+        use label attribute, if present, when setting text on the widget.
+
 2006-02-14  Vicki Murley <vicki@apple.com>
 
         Reviewed by Maciej.
