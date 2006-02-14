@@ -1,3 +1,24 @@
+2006-02-13  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick.
+
+        Support for highlighting multiple text matches.
+
+        * WebView/WebHTMLViewPrivate.h:
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView highlightAllMatchesForString:caseSensitive:]):
+        new method, calls through to bridge
+        (-[WebHTMLView clearHighlightedMatches]):
+        ditto
+
+        * WebView/WebViewPrivate.h:
+        * WebView/WebView.m:
+        (-[WebView highlightAllMatchesForString:caseSensitive:]):
+        new method, calls through to documentView. For now this is hardwired to only work
+        with WebHTMLViews.
+        (-[WebView clearHighlightedMatches]):
+        ditto
+
 2006-02-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

@@ -1610,6 +1610,16 @@ static WebHTMLView *lastHitView = nil;
     [[self _bridge] setDisplaysWithFocusAttributes:flag];
 }
 
+- (unsigned)highlightAllMatchesForString:(NSString *)string caseSensitive:(BOOL)caseFlag
+{
+    return [[self _bridge] highlightAllMatchesForString:string caseSensitive:caseFlag];
+}
+
+- (void)clearHighlightedMatches
+{
+    return [[self _bridge] clearHighlightedMatches];
+}
+
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard
 {
     ASSERT([self _hasSelection]);

@@ -2659,6 +2659,35 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return [[[self mainFrame] _bridge] aeDescByEvaluatingJavaScriptFromString:script];
 }
 
+- (unsigned)highlightAllMatchesForString:(NSString *)string caseSensitive:(BOOL)caseFlag
+{
+    WebFrame *frame = [self mainFrame];
+    unsigned matchCount = 0;
+    do {
+        id <WebDocumentView> view = [[frame frameView] documentView];
+        // FIXME: introduce a protocol, or otherwise make this work with other types
+        if ([view isKindOfClass:[WebHTMLView class]])
+            matchCount += [(WebHTMLView *)view highlightAllMatchesForString:string caseSensitive:caseFlag];
+
+        frame = incrementFrame(frame, YES, NO);
+    } while (frame);
+    
+    return matchCount;
+}
+
+- (void)clearHighlightedMatches
+{
+    WebFrame *frame = [self mainFrame];
+    do {
+        id <WebDocumentView> view = [[frame frameView] documentView];
+        // FIXME: introduce a protocol, or otherwise make this work with other types
+        if ([view isKindOfClass:[WebHTMLView class]])
+            [(WebHTMLView *)view clearHighlightedMatches];
+
+        frame = incrementFrame(frame, YES, NO);
+    } while (frame);
+}
+
 @end
 
 @implementation WebView (WebViewPrintingPrivate)

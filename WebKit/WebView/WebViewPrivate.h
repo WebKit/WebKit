@@ -124,6 +124,11 @@ typedef enum {
 */
 - (NSAppleEventDescriptor *)aeDescByEvaluatingJavaScriptFromString:(NSString *)script;
 
+// These methods might end up moving into a protocol, so different document types can specify
+// whether or not they implement the protocol. For now we'll just deal with HTML.
+- (unsigned)highlightAllMatchesForString:(NSString *)string caseSensitive:(BOOL)caseFlag;
+- (void)clearHighlightedMatches;
+
 @end
 
 @interface WebView (WebPrivate)

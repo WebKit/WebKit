@@ -96,4 +96,9 @@
 - (void)_setWindowHasFocus:(BOOL)flag;
 - (void)_setDisplaysWithFocusAttributes:(BOOL)flag;
 
+// These methods might end up moving into a protocol, so different document types can specify
+// whether or not they implement the protocol.
+- (unsigned)highlightAllMatchesForString:(NSString *)string caseSensitive:(BOOL)caseFlag;
+- (void)clearHighlightedMatches;
+
 @end
