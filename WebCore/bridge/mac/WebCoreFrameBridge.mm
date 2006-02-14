@@ -1406,7 +1406,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (unsigned)highlightAllMatchesForString:(NSString *)string caseSensitive:(BOOL)caseFlag
 {
-    return m_frame->highlightAllMatchesForString(string, caseFlag);
+    return m_frame->highlightAllMatchesForString(QString::fromNSString(string), caseFlag);
 }
 
 - (void)clearHighlightedMatches

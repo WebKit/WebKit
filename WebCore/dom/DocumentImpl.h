@@ -27,6 +27,7 @@
 #define DOM_DocumentImpl_h
 
 #include "Color.h"
+#include "DocumentMarker.h"
 #include "KWQSignal.h"
 #include "Shared.h"
 #include "Timer.h"
@@ -95,28 +96,6 @@ namespace WebCore {
 #if SVG_SUPPORT
     class SVGDocumentExtensions;
 #endif
-
-    // A range of a node within a document that is "marked", such as being misspelled
-    struct DocumentMarker
-    {
-        enum MarkerType {
-            AllMarkers = -1,
-            Spelling = 0,
-            TextMatch,
-            // Not doing grammar yet, but this is a placeholder for it
-            // Grammar
-        };
-        
-        enum MarkerType type;
-        unsigned startOffset, endOffset;
-        
-        bool operator == (const DocumentMarker &o) const {
-            return type == o.type && startOffset == o.startOffset && endOffset == o.endOffset;
-        }
-        bool operator != (const DocumentMarker &o) const {
-            return !(*this == o);
-        }
-    };
     
 class DocumentImpl : public QObject, public ContainerNodeImpl
 {

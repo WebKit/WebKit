@@ -1033,6 +1033,7 @@
 		E1F7F5600981AF570073BE6A /* JSXMLHttpRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1F7F55E0981AF570073BE6A /* JSXMLHttpRequest.cpp */; };
 		E1F7F5610981AF570073BE6A /* JSXMLHttpRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F7F55F0981AF570073BE6A /* JSXMLHttpRequest.h */; };
 		ED048ABC0833F132006E1E67 /* textAreaResizeCorner.tiff in Resources */ = {isa = PBXBuildFile; fileRef = ED048ABB0833F132006E1E67 /* textAreaResizeCorner.tiff */; };
+		ED2BA83C09A24B91006C0AC4 /* DocumentMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = ED2BA83B09A24B91006C0AC4 /* DocumentMarker.h */; };
 		FAE0418B09759694000540BE /* RenderSVGImage.h in Headers */ = {isa = PBXBuildFile; fileRef = FAE0418909759694000540BE /* RenderSVGImage.h */; };
 		FAE0418C09759694000540BE /* RenderSVGImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAE0418A09759694000540BE /* RenderSVGImage.cpp */; };
 		FAE0418F097596C9000540BE /* SVGImageLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FAE0418D097596C9000540BE /* SVGImageLoader.cpp */; };
@@ -2062,6 +2063,7 @@
 		E1F7F55E0981AF570073BE6A /* JSXMLHttpRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXMLHttpRequest.cpp; sourceTree = "<group>"; };
 		E1F7F55F0981AF570073BE6A /* JSXMLHttpRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSXMLHttpRequest.h; sourceTree = "<group>"; };
 		ED048ABB0833F132006E1E67 /* textAreaResizeCorner.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = textAreaResizeCorner.tiff; path = Resources/textAreaResizeCorner.tiff; sourceTree = "<group>"; };
+		ED2BA83B09A24B91006C0AC4 /* DocumentMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentMarker.h; sourceTree = "<group>"; };
 		EDA4AC97076FB89100DD23EC /* edit_actions.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = edit_actions.h; path = editing/edit_actions.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5117BC902F9FFEF018635CE /* KWQSignal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = KWQSignal.h; path = kwq/KWQSignal.h; sourceTree = SOURCE_ROOT; };
 		F5117BCA02F9FFEF018635CE /* KWQSignal.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = KWQSignal.cpp; path = kwq/KWQSignal.cpp; sourceTree = SOURCE_ROOT; };
@@ -3629,6 +3631,7 @@
 		F523D32402DE4478018635CA /* dom */ = {
 			isa = PBXGroup;
 			children = (
+				ED2BA83B09A24B91006C0AC4 /* DocumentMarker.h */,
 				939885C108B7E3D100E707C4 /* EventNames.cpp */,
 				939885C208B7E3D100E707C4 /* EventNames.h */,
 				550A0BC7085F6039007353D6 /* dom_qname.cpp */,
@@ -4400,6 +4403,7 @@
 				6550B6A6099DF0270090D781 /* TextImpl.h in Headers */,
 				937D809A09A063330092A01E /* PageMac.h in Headers */,
 				9380F47409A11AB4001FDB34 /* Widget.h in Headers */,
+				ED2BA83C09A24B91006C0AC4 /* DocumentMarker.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

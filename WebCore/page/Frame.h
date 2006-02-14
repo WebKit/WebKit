@@ -928,6 +928,8 @@ private:
 
   QValueList<MarkedTextUnderline> markedTextUnderlines() const;  
   bool markedTextUsesUnderlines() const;
+  unsigned highlightAllMatchesForString(const QString &, bool caseFlag);
+
   // Call this method before handling a new user action, like on a mouse down or key down.
   // Currently, all this does is clear the "don't submit form twice" data member.
   void prepareForUserAction();

@@ -479,31 +479,6 @@ bool MacFrame::findString(NSString *string, bool forward, bool caseFlag, bool wr
     return true;
 }
 
-unsigned MacFrame::highlightAllMatchesForString(NSString *string, bool caseFlag)
-{
-    QString target = QString::fromNSString(string);
-    if (target.isEmpty()) {
-        return 0;
-    }
-    
-    RefPtr<RangeImpl> searchRange(rangeOfContents(document()));
-
-    int exception = 0;
-    unsigned matchCount = 0;
-    do {
-        RefPtr<RangeImpl> resultRange(findPlainText(searchRange.get(), target, YES, caseFlag));
-        if (resultRange->collapsed(exception))
-            break;
-
-        ++matchCount;
-        document()->addMarker(resultRange.get(), DocumentMarker::TextMatch);
-        
-        setStart(searchRange.get(), endVisiblePosition(resultRange.get(), DOWNSTREAM));
-    } while (true);
-    
-    return matchCount;
-}
-
 void MacFrame::clearRecordedFormValues()
 {
     // It's safe to assume that our own classes and Foundation data

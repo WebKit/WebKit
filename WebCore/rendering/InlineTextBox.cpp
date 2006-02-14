@@ -572,11 +572,11 @@ void InlineTextBox::paintSpellingMarker(QPainter *pt, int _tx, int _ty, Document
 
 void InlineTextBox::paintTextMatchMarker(QPainter *pt, int _tx, int _ty, DocumentMarker marker, RenderStyle* style, const Font* f)
 {
-    Color c = Color(255, 255, 0);
+    Color yellow = Color(255, 255, 0);
     pt->save();
-    pt->setPen(c); // Don't draw text at all!
-                   // Use same y positioning and height as for selection, so that when the selection and this highlight are on
-                   // the same word there are no pieces sticking out.
+    pt->setPen(yellow); // Don't draw text at all!
+   // Use same y positioning and height as for selection, so that when the selection and this highlight are on
+   // the same word there are no pieces sticking out.
     RootInlineBox* r = root();
     int y = r->selectionTop();
     int h = r->selectionHeight();
@@ -586,11 +586,11 @@ void InlineTextBox::paintTextMatchMarker(QPainter *pt, int _tx, int _ty, Documen
     
     f->drawHighlightForText(pt, m_x + _tx, y + _ty, h, textObject()->tabWidth(), textPos(), 
                             textObject()->str->s, textObject()->str->l, m_start, m_len,
-                            m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, m_dirOverride || style->visuallyOrdered(), sPos, ePos, c);
+                            m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, m_dirOverride || style->visuallyOrdered(), sPos, ePos, yellow);
     pt->restore();
 }
 
-void InlineTextBox::paintAllMarkersOfType(QPainter *pt, int _tx, int _ty, int markerType, RenderStyle* style, const Font* f)
+void InlineTextBox::paintAllMarkersOfType(QPainter *pt, int _tx, int _ty, DocumentMarker::MarkerType markerType, RenderStyle* style, const Font* f)
 {
     QValueList<DocumentMarker> markers = object()->document()->markersForNode(object()->node());
     QValueListIterator <DocumentMarker> markerIt = markers.begin();
@@ -608,24 +608,24 @@ void InlineTextBox::paintAllMarkersOfType(QPainter *pt, int _tx, int _ty, int ma
             // first run we draw, or markers that were within runs we skipped due to truncation.
             continue;
         
-        if (marker.startOffset <= end()) {
-            // marker intersects this run.  Paint it.
-            switch (markerType) {
-                case DocumentMarker::Spelling:
-                    paintSpellingMarker(pt, _tx, _ty, marker);
-                    break;
-                case DocumentMarker::TextMatch:
-                    paintTextMatchMarker(pt, _tx, _ty, marker, style, f);
-                    break;
-                default:
-                    assert(false);
-            }
-
-            if (marker.endOffset > end() + 1)
-                // marker also runs into the next run. Bail now, no more marker advancement.
-                break;
-        } else
+        if (marker.startOffset > end())
             // marker is completely after this run, bail.  A later run will paint it.
+            break;
+        
+        // marker intersects this run.  Paint it.
+        switch (markerType) {
+            case DocumentMarker::Spelling:
+                paintSpellingMarker(pt, _tx, _ty, marker);
+                break;
+            case DocumentMarker::TextMatch:
+                paintTextMatchMarker(pt, _tx, _ty, marker, style, f);
+                break;
+            default:
+                assert(false);
+        }
+
+        if (marker.endOffset > end() + 1)
+            // marker also runs into the next run. Bail now, no more marker advancement.
             break;
     }
 }

@@ -1,3 +1,45 @@
+2006-02-14  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Some cleanup from the previous checkin, inspired by Darin's comments
+        
+        * bridge/mac/MacFrame.h:
+        * bridge/mac/MacFrame.mm:
+        moved highlightAllMatchesForString out of here
+        
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge highlightAllMatchesForString:caseSensitive:]):
+        now converts NSString to QString here, rather than in Frame/MacFrame
+        
+        * dom/DocumentMarker.h: Added.
+        (WebCore::DocumentMarker::):
+        (WebCore::DocumentMarker::operator == ):
+        (WebCore::DocumentMarker::operator != ):
+        moved this struct to its own header file
+        
+        * dom/DocumentImpl.h:
+        moved DocumentMarker out; now includes DocumentMarker.h        
+        
+        * page/Frame.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::highlightAllMatchesForString):
+        moved here from MacFrame.[h,mm]. I thought this used other code from
+        MacFrame.mm but it doesn't.
+        
+        * rendering/InlineTextBox.h:
+        removed unnecesssary variable names; use DocumentMarker::MarkerType in signature
+        of paintAllMarkersOfType
+        * rendering/InlineTextBox.cpp:
+        (khtml::InlineTextBox::paintTextMatchMarker):
+        better name for a variable, fixed bad indent
+        (khtml::InlineTextBox::paintAllMarkersOfType):
+        rewrote loop to bail out early if past end, for clarity;
+        use DocumentMarker::MarkerType in signature
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        updated for new file        
+
 2006-02-13  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Omernick.

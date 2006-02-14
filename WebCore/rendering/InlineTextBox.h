@@ -25,6 +25,7 @@
 #ifndef KHTML_InlineTextBox_H
 #define KHTML_InlineTextBox_H
 
+#include "DocumentMarker.h"
 #include "RenderText.h"
 #include "render_line.h"
 
@@ -37,7 +38,6 @@ const int cFullTruncation = -2;
 
 class DOMString;
 class DOMStringImpl;
-class DocumentMarker;
 class MarkedTextUnderline;
 class Position;
 class QPainter;
@@ -107,13 +107,13 @@ public:
     virtual bool isText() const { return m_treatAsText; }
     void setIsText(bool b) { m_treatAsText = b; }
     
-    void paintDecoration(QPainter* p, int _tx, int _ty, int decoration);
-    void paintSelection(QPainter* p, int tx, int ty, RenderStyle* style, const Font* font);
-    void paintMarkedTextBackground(QPainter* p, int tx, int ty, RenderStyle* style, const Font* font, int startPos, int endPos);
-    void paintAllMarkersOfType(QPainter* p, int _tx, int _ty, int markerType, RenderStyle* style, const Font* font);
-    void paintSpellingMarker(QPainter* p, int _tx, int _ty, DOM::DocumentMarker marker);
-    void paintTextMatchMarker(QPainter* p, int _tx, int _ty, DOM::DocumentMarker marker, RenderStyle* style, const Font* font);
-    void paintMarkedTextUnderline(QPainter *pt, int _tx, int _ty, MarkedTextUnderline& underline);
+    void paintDecoration(QPainter* p, int tx, int ty, int decoration);
+    void paintSelection(QPainter* p, int tx, int ty, RenderStyle*, const Font*);
+    void paintMarkedTextBackground(QPainter* p, int tx, int ty, RenderStyle*, const Font*, int startPos, int endPos);
+    void paintAllMarkersOfType(QPainter* p, int tx, int ty, DocumentMarker::MarkerType, RenderStyle*, const Font*);
+    void paintSpellingMarker(QPainter* p, int tx, int ty, DocumentMarker);
+    void paintTextMatchMarker(QPainter* p, int tx, int ty, DocumentMarker, RenderStyle*, const Font*);
+    void paintMarkedTextUnderline(QPainter *pt, int tx, int ty, MarkedTextUnderline& underline);
     virtual int caretMinOffset() const;
     virtual int caretMaxOffset() const;
     virtual unsigned caretMaxRenderedOffset() const;

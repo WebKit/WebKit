@@ -3446,6 +3446,30 @@ QValueList<MarkedTextUnderline> Frame::markedTextUnderlines() const
     return m_markedTextUnderlines;
 }
 
+unsigned Frame::highlightAllMatchesForString(const QString &target, bool caseFlag)
+{
+    if (target.isEmpty()) {
+        return 0;
+    }
+    
+    RefPtr<RangeImpl> searchRange(rangeOfContents(document()));
+    
+    int exception = 0;
+    unsigned matchCount = 0;
+    do {
+        RefPtr<RangeImpl> resultRange(findPlainText(searchRange.get(), target, true, caseFlag));
+        if (resultRange->collapsed(exception))
+            break;
+        
+        ++matchCount;
+        document()->addMarker(resultRange.get(), DocumentMarker::TextMatch);
+        
+        setStart(searchRange.get(), endVisiblePosition(resultRange.get(), DOWNSTREAM));
+    } while (true);
+    
+    return matchCount;
+}
+
 void Frame::prepareForUserAction()
 {
     // Reset the multiple form submission protection code.
