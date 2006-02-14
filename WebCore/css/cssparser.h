@@ -24,7 +24,6 @@
 
 #include <QString.h>
 #include "Color.h"
-#include "String.h"
 #include "AtomicString.h"
 
 namespace DOM {

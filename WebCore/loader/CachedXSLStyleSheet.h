@@ -30,7 +30,6 @@
 #include "CachedObject.h"
 
 #include <kio/global.h>
-#include "String.h"
 
 class QString;
 class QBuffer;
