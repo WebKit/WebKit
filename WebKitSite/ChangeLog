@@ -1,3 +1,12 @@
+2006-02-15  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Reviewed by Tim H.
+
+        Updated page to show 10.4.4 or 10.4.5
+        Added support for recognizing Shiira.
+
+        * quality/reporting.html:
+
 2006-02-12  Joost de Valk  <jdevalk@opendarwin.org>
 
         Reviewed by eseidel.

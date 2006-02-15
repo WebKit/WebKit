@@ -32,8 +32,9 @@
     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     
-    Script used for recognizing Safari / WebKit. A matrix of these versions can
-    be found at: http://developer.apple.com/internet/safari/uamatrix.html .
+    Script used for recognizing Safari / Shiira / WebKit. 
+    A matrix of WebKit versions and OS X versions can be found at:
+    http://developer.apple.com/internet/safari/uamatrix.html .
     */
     function parse_version(version)
     {
@@ -49,39 +50,55 @@
     
     function get_version()
     {
+        // Check for Safari
         var regex = new RegExp("Mozilla/5.0 \\(.*\\) AppleWebKit/(.*) \\(KHTML, like Gecko\\) Safari/(.*)");
         var matches = regex.exec(navigator.userAgent);
-        if (! matches)
-            return;
 
-        // We have detected a safari version, hide the unknown version text
+        var is_safari = false;
+        var is_shiira = false;
+        
+        if (matches) {
+            is_safari = true;
+            display('safari_bug', 'block');
+        } else {
+            // Check for Shiira
+            var regex = new RegExp("Mozilla/5.0 \\(.*\\) AppleWebKit/(.*) \\(KHTML, like Gecko\\) Shiira/(.*) Safari/(.*)");
+            var matches = regex.exec(navigator.userAgent);
+            if (matches) {
+                is_shiira = true;
+                display('shiira_bug', 'block');
+            } else {
+                return;
+            }
+        }
+
+        // We have detected a valid WebKit version, hide the unknown version text
         display('unknown_version', 'none');
+
         var webkit_version = parse_version(matches[1]);
-        var safari_version = parse_version(matches[2]);
 
-
-        if (safari_version.major < 100)
+        if (webkit_version.major < 100) {
             // Mac OS X 10.2
             display('10point2', 'block');
-
-
-        else if (safari_version.major >= 100 && safari_version.major < 400)
-        {
+        } else if (webkit_version.major >= 100 && webkit_version.major < 400) {
             // Mac OS X 10.3
             display('10point3', 'block');
 
-            if (safari_version.major < 312)
+            if (webkit_version.major < 312)
                 // Mac OS X 10.3.8 or lower
                 display('updateto10_3_9', 'block');
 
-            else if (safari_version.minor < 5)
+            else if (webkit_version.minor < 9)
                 // Mac OS X 10.3.9 but not the latest Safari update
                 display('update10_3_9_safari', 'block');
 
-            else
+            else if (is_safari)
                 // Mac OS X 10.3.9 with the latest Safari update
                 display('best10_3_9_safari', 'block');
 
+            else if (is_shiira)
+                // Mac OS X 10.3.9 with Shiira
+                display('best10_3_9_shiira', 'block');
 
         } else {
             // Mac OS X 10.4
@@ -95,13 +112,18 @@
                 // Using a recent nightly, not sure which
                 display('mightneednewnightly', 'block');
 
-            else if (safari_version.major < 417)
+            else if (webkit_version.major < 417)
                 // 10.4.3 or lower
-                display('updateto10_4_4', 'block');
+                display('updateto10_4_5', 'block');
 
-            else
-                // 10.4.4
-                display('10_4_4', 'block');
+            else if (is_safari)
+                // 10.4.4 or 10.4.5
+                display('10_4_5_safari', 'block');
+
+            else if (is_shiira)
+                // 10.4.4 or 10.4.5
+                display('10_4_5_shiira', 'block');
+
         } 
     }
 </script>
@@ -134,10 +156,14 @@
         You are using Mac OS X 10.3.8 or lower, please before filing any bugs, upgrade to Mac OS X 10.3.9.
     </div>
     <div id="update10_3_9_safari" style="display: none;">
-        You are using Mac OS X 10.3.9, but your Safari isn't the latest version. Please, before filing any bugs, upgrade your Safari.
+        You are using Mac OS X 10.3.9, but your WebKit isn't the latest version. Please, before filing any bugs, download the 
+        latest Webkit update.
     </div>
     <div id="best10_3_9_safari">
         You are using Mac OS X 10.3.9, and the latest version of Safari, go ahead and file your bug!
+    </div>
+    <div id="best10_3_9_safari">
+        You are using Shiira on Mac OS X 10.3.9, go ahead and file your bug!
     </div>
 </div>
 <div id="10point4" style="display: none;">
@@ -149,19 +175,21 @@
         You are already using a nightly build, which is very good! Unfortunately, we can't detect when you downloaded it, but
         if that was more then a few days ago, please <a href="http://nightly.webkit.org/">get the latest nightly</a>.
     </div>
-    <div id="updateto10_4_4" style="display: none;">
+    <div id="updateto10_4_5" style="display: none;">
         You are using Mac OS X 10.4.3 or lower, please before filing any bugs, do either of the following:
         <ul>
-            <li>Upgrade to Mac OS X 10.4.4, or:</li>
+            <li>Upgrade to Mac OS X 10.4.5, or:</li>
             <li><a href="http://nightly.webkit.org">Download the latest nightly</a>.</li>
         </ul>
     </div>
-    <div id="10_4_4" style="display: none;">
-        You are using Mac OS X 10.4.4, go ahead and file your bug, or if you want to <a href="http://nightly.webkit.org">
+    <div id="10_4_5_safari" style="display: none;">
+        You are using Safari on Mac OS X 10.4.4 or 10.4.5, go ahead and file your bug, or if you want to <a href="http://nightly.webkit.org">
         download the latest nightly</a> and see if your bug is already fixed.
     </div>
+    <div id="10_4_5_shiira" style="display: none;">
+        You are using Shiira on Mac OS X 10.4.4 or 10.4.5, go ahead and file your bug.
+    </div>
 </div>
-<script type="text/javascript">get_version();</script>
 </li>
 <li>
     <strong>Search Bugzilla</strong><br>
@@ -193,12 +221,19 @@
     and confirm that the fix works for you.
 </li>
 </ol>
-<p>
+<div id="safari_bug" style="display: none;">
     <strong>Note:</strong> <br>
     To report bugs in Safari, or WebKit bugs that may contain confidential information, please use
     <a href="http://bugreporter.apple.com">http://bugreporter.apple.com/</a>.
-</p>
+</div>
+<div id="shiira_bug" style="display: none;">
+    <strong>Note:</strong> <br>
+    To report bugs in Shiira, please go to <a href="http://hmdt-web.net/forum/">http://hmdt-web.net/forum/</a>.
+    For WebKit bugs that contain confidential information, please use 
+    <a href="http://bugreporter.apple.com">http://bugreporter.apple.com/</a>.
+</div>
 </div>
 
+<script type="text/javascript">get_version();</script>
 </body>
 </html>
