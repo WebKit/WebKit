@@ -1,3 +1,9 @@
+2006-02-15  Eric Seidel  <eseidel@apple.com>
+
+        Update missing result from last commit.
+
+        * fast/xsl/xslt-recursion-expected.txt:
+
 2006-02-15  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Maciej.
