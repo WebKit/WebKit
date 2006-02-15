@@ -1,3 +1,30 @@
+2006-02-15  Dave Hyatt <hyatt@apple.com>
+
+        Make FontFamily compile on Win32 (just needed a few more
+        __APPLE__ ifdefs).
+
+        Clean up the frameBufferAtIndex method of the image decoders
+        on Win32.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * kwq/KWQFont.h:
+        * platform/FontFamily.cpp:
+        (WebCore::FontFamily::FontFamily):
+        * platform/cairo/ImageSourceCairo.cpp:
+        (WebCore::ImageSource::createFrameAtIndex):
+        (WebCore::ImageSource::frameDurationAtIndex):
+        (WebCore::ImageSource::frameHasAlphaAtIndex):
+        * platform/image-decoders/ImageDecoder.h:
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::frameBufferAtIndex):
+        * platform/image-decoders/gif/GIFImageDecoder.h:
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageDecoder::frameBufferAtIndex):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h:
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::frameBufferAtIndex):
+        * platform/image-decoders/png/PNGImageDecoder.h:
+
 2006-02-15  David Hyatt  <hyatt@apple.com>
 
         Make KWQFontFamily portable.  Split it out into a cross-platform core and the Mac-specific version.

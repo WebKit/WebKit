@@ -120,7 +120,7 @@ public:
     // Called to obtain the RGBA32Buffer full of decoded data for rendering.  The
     // decoder plugin will decode as much of the frame as it can before handing
     // back the buffer.
-    virtual RGBA32Buffer frameBufferAtIndex(size_t index) = 0;
+    virtual RGBA32Buffer* frameBufferAtIndex(size_t index) = 0;
 
     bool failed() const { return m_failed; }
     void setFailed() { m_failed = true; }

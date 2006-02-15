@@ -154,17 +154,16 @@ int GIFImageDecoder::repetitionCount() const
     return cAnimationNone;
 }
 
-RGBA32Buffer GIFImageDecoder::frameBufferAtIndex(size_t index)
+RGBA32Buffer* GIFImageDecoder::frameBufferAtIndex(size_t index)
 {
-    if (index >= m_frameBufferCache.size())
-        return RGBA32Buffer();
+    if (index < 0 || index >= m_frameBufferCache.size())
+        return 0;
 
-    const RGBA32Buffer& frame = m_frameBufferCache[index];
+    RGBA32Buffer& frame = m_frameBufferCache[index];
     if (frame.status() != RGBA32Buffer::FrameComplete && m_reader)
         // Decode this frame.
         decode(GIFFullQuery, index+1);
-
-    return frame;
+    return &frame;
 }
 
 // Feed data to the GIF reader.

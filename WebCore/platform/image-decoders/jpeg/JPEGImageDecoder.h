@@ -48,7 +48,7 @@ public:
     // Requests the size.
     virtual IntSize size() const;
 
-    virtual RGBA32Buffer frameBufferAtIndex(size_t index);
+    virtual RGBA32Buffer* frameBufferAtIndex(size_t index);
 
     void decode(bool sizeOnly = false) const;
 

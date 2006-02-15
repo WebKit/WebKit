@@ -143,20 +143,19 @@ bool JPEGImageDecoder::isSizeAvailable() const
     return m_sizeAvailable;
 }
 
-RGBA32Buffer JPEGImageDecoder::frameBufferAtIndex(size_t index)
+RGBA32Buffer* JPEGImageDecoder::frameBufferAtIndex(size_t index)
 {
-    if (index != 0)
-        return RGBA32Buffer();
+    if (!index)
+        return 0;
 
     if (m_frameBufferCache.isEmpty())
         m_frameBufferCache.resize(1);
 
-    const RGBA32Buffer& frame = m_frameBufferCache[0];
+    RGBA32Buffer& frame = m_frameBufferCache[0];
     if (frame.status() != RGBA32Buffer::FrameComplete && m_reader)
         // Decode this frame.
         decode();
-
-    return frame;
+    return &frame;
 }
 
 // Feed data to the JPEG reader.

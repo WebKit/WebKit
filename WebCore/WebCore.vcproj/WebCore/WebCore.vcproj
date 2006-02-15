@@ -215,10 +215,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQFontFamily.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQFontMetrics.h"
 				>
 			</File>
@@ -1122,22 +1118,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\editing\VisiblePosition.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\editing\VisiblePosition.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\editing\VisibleRange.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\editing\VisibleRange.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\editing\visible_text.cpp"
 					>
 				</File>
@@ -1151,6 +1131,22 @@
 				</File>
 				<File
 					RelativePath="..\..\editing\visible_units.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\editing\VisiblePosition.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\editing\VisiblePosition.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\editing\VisibleRange.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\editing\VisibleRange.h"
 					>
 				</File>
 				<File
@@ -1589,6 +1585,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\platform\FontFamily.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\FontFamily.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\platform\Image.cpp"
 				>
 			</File>
@@ -1689,11 +1693,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\Widget.h"
+				RelativePath="..\..\platform\Widget.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\Widget.cpp"
+				RelativePath="..\..\platform\Widget.h"
 				>
 			</File>
 			<Filter

@@ -136,14 +136,14 @@ NativeImagePtr ImageSource::createFrameAtIndex(size_t index)
     if (!m_decoder)
         return 0;
 
-    RGBA32Buffer& buffer = m_decoder->frameBufferAtIndex(index);
-    if (buffer.status() == RGBA32Buffer::FrameEmpty)
+    RGBA32Buffer* buffer = m_decoder->frameBufferAtIndex(index);
+    if (!buffer || buffer->status() == RGBA32Buffer::FrameEmpty)
         return 0;
 
-    return cairo_image_surface_create_for_data((unsigned char*)buffer.bytes().data(),
+    return cairo_image_surface_create_for_data((unsigned char*)buffer->bytes().data(),
                                                CAIRO_FORMAT_ARGB32,
                                                size().width(),
-                                               buffer.height(),
+                                               buffer->height(),
                                                size().width()*4);
 }
 
@@ -152,11 +152,11 @@ float ImageSource::frameDurationAtIndex(size_t index)
     if (!m_decoder)
         return 0;
 
-    RGBA32Buffer& buffer = m_decoder->frameBufferAtIndex(index);
-    if (buffer.status() == RGBA32Buffer::FrameEmpty)
+    RGBA32Buffer* buffer = m_decoder->frameBufferAtIndex(index);
+    if (!buffer || buffer->status() == RGBA32Buffer::FrameEmpty)
         return 0;
 
-    return buffer.duration() / 1000.0f;
+    return buffer->duration() / 1000.0f;
 }
 
 bool ImageSource::frameHasAlphaAtIndex(size_t index)
@@ -164,11 +164,11 @@ bool ImageSource::frameHasAlphaAtIndex(size_t index)
     if (!m_decoder)
         return false;
 
-    RGBA32Buffer& buffer = m_decoder->frameBufferAtIndex(index);
-    if (buffer.status() == RGBA32Buffer::FrameEmpty)
+    RGBA32Buffer* buffer = m_decoder->frameBufferAtIndex(index);
+    if (!buffer || buffer->status() == RGBA32Buffer::FrameEmpty)
         return false;
 
-    return buffer.hasAlpha();
+    return buffer->hasAlpha();
 }
 
 }
