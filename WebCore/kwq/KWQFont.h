@@ -26,7 +26,7 @@
 #ifndef QFONT_H_
 #define QFONT_H_
 
-#include "KWQFontFamily.h"
+#include "FontFamily.h"
 #include "WebCoreTextRendererFactory.h"
 
 class QFont {
@@ -43,9 +43,9 @@ public:
     void setFamily(const QString &);
     QString family() const;
 
-    const KWQFontFamily *firstFamily() const { return &_family; }
-    KWQFontFamily *firstFamily() { return &_family; }
-    void setFirstFamily(const KWQFontFamily &family);
+    const FontFamily *firstFamily() const { return &_family; }
+    FontFamily *firstFamily() { return &_family; }
+    void setFirstFamily(const FontFamily &family);
     
     void setWeight(int);
     int weight() const;
@@ -74,7 +74,7 @@ public:
     const WebCoreFont &getWebCoreFont() const;
 
 private:
-    KWQFontFamily _family;
+    FontFamily _family;
     int _trait;
     float _size;
     bool _isPrinterFont : 1;

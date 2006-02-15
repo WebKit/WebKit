@@ -23,57 +23,66 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#ifndef FONT_FAMILY_H
+#define FONT_FAMILY_H
+
 #include "QString.h"
 #include "AtomicString.h"
 
+#if __APPLE__
 #ifdef __OBJC__
 @class NSString;
 #else
 class NSString;
 #endif
+#endif
 
-class KWQFontFamily {
+namespace WebCore {
+
+class FontFamily {
 public:
-    KWQFontFamily();
-    ~KWQFontFamily() { if (_next) _next->deref();  }
+    FontFamily();
+    ~FontFamily();
     
-    KWQFontFamily(const KWQFontFamily &);    
-    KWQFontFamily &operator=(const KWQFontFamily &);
+    FontFamily(const FontFamily &);    
+    FontFamily &operator=(const FontFamily &);
         
-    void setFamily(const DOM::AtomicString &);
-    const DOM::AtomicString& family() const { return _family; }
-    bool familyIsEmpty() const { return _family.isEmpty(); }
+    void setFamily(const AtomicString &);
+    const AtomicString& family() const { return m_family; }
+    bool familyIsEmpty() const { return m_family.isEmpty(); }
     
-    NSString *getNSFamily() const;
+#if __APPLE__
+    NSString* getNSFamily() const;
+#endif
 
-    KWQFontFamily *next() { return _next; }
-    const KWQFontFamily *next() const { return _next; }
+    FontFamily *next() { return m_next; }
+    const FontFamily *next() const { return m_next; }
 
-    void appendFamily(KWQFontFamily *family) 
+    void appendFamily(FontFamily *family) 
     {
         if (family)
             family->ref();
-        if (_next) 
-            _next->deref(); 
-        _next = family; 
+        if (m_next) 
+            m_next->deref(); 
+        m_next = family; 
     }
     
-    bool operator==(const KWQFontFamily &) const;
-    bool operator!=(const KWQFontFamily &x) const { return !(*this == x); }
+    bool operator==(const FontFamily &) const;
+    bool operator!=(const FontFamily &x) const { return !(*this == x); }
     
-    void ref() { _refCnt++; }
-    void deref() { _refCnt--; if (_refCnt == 0) delete this; }
+    void ref() { m_refCnt++; }
+    void deref() { m_refCnt--; if (m_refCnt == 0) delete this; }
     
 private:
-    DOM::AtomicString _family;
-    KWQFontFamily *_next;
-    int _refCnt;
+    AtomicString m_family;
+    FontFamily* m_next;
+    int m_refCnt;
 #if __APPLE__
-    mutable CFStringRef _CFFamily;
+    mutable CFStringRef m_CFFamily;
 #endif
 };
 
-
+#if __APPLE__
 // Macro to create a stack array containing non-retained NSString names
 // of CSS font families.  This can be used to avoid allocations in
 // performance critical code.  Create a NSSString ** name families
@@ -82,7 +91,7 @@ private:
 #define CREATE_FAMILY_ARRAY(font,families)\
 int __numFamilies = 0;\
 {\
-    const KWQFontFamily *__ff = (font).firstFamily();\
+    const FontFamily *__ff = (font).firstFamily();\
     while (__ff)\
     {\
         __numFamilies++;\
@@ -92,7 +101,7 @@ int __numFamilies = 0;\
 NSString *families[__numFamilies+1];\
 {\
     int __i = 0;\
-    const KWQFontFamily *__ff = (font).firstFamily();\
+    const FontFamily *__ff = (font).firstFamily();\
     while (__ff)\
     {\
         families[__i++] = __ff->getNSFamily();\
@@ -100,3 +109,11 @@ NSString *families[__numFamilies+1];\
     }\
     families[__i] = 0;\
 }
+#endif
+
+}
+
+// FIXME: Remove eventually
+using WebCore::FontFamily;
+
+#endif

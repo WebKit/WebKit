@@ -52,10 +52,10 @@ public:
     
     void setGenericFamily(GenericFamilyType aGenericFamily) { genericFamily = aGenericFamily; }
     
-    KWQFontFamily &firstFamily() { return family; }
+    FontFamily &firstFamily() { return family; }
     int computedPixelSize() const { return int(computedSize + 0.5f); }
 
-    KWQFontFamily family;
+    FontFamily family;
 
     float specifiedSize; // Specified CSS value. Independent of rendering issues such as integer
                          // rounding, minimum font sizes, and zooming.

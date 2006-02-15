@@ -1,3 +1,41 @@
+2006-02-15  David Hyatt  <hyatt@apple.com>
+
+        Make KWQFontFamily portable.  Split it out into a cross-platform core and the Mac-specific version.
+        Move it to platform and rename it to FontFamily (and FontFamilyMac).
+
+        Reviewed by eric
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * kwq/KWQFont.h:
+        (QFont::firstFamily):
+        * kwq/KWQFont.mm:
+        (QFont::setFirstFamily):
+        * kwq/KWQFontFamily.h: Removed.
+        * kwq/KWQFontFamily.mm: Removed.
+        * platform/FontFamily.cpp: Added.
+        (WebCore::FontFamily::FontFamily):
+        (WebCore::FontFamily::~FontFamily):
+        (WebCore::FontFamily::operator=):
+        (WebCore::FontFamily::setFamily):
+        (WebCore::FontFamily::operator==):
+        * platform/FontFamily.h: Added.
+        (WebCore::FontFamily::family):
+        (WebCore::FontFamily::familyIsEmpty):
+        (WebCore::FontFamily::next):
+        (WebCore::FontFamily::appendFamily):
+        (WebCore::FontFamily::operator!=):
+        (WebCore::FontFamily::ref):
+        (WebCore::FontFamily::deref):
+        * platform/mac/FontFamilyMac.mm: Added.
+        (WebCore::retainDOMStringImpl):
+        (WebCore::releaseDOMStringImpl):
+        (WebCore::):
+        (WebCore::FontFamily::getNSFamily):
+        * rendering/font.h:
+        (khtml::FontDef::firstFamily):
+
 2006-02-15  Oliver Hunt  <ojh16@student.canterbury.ac.nz>
 
         Reviewed by eseidel.  Landed by eseidel.

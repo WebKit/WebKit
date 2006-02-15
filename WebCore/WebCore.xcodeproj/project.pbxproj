@@ -212,7 +212,6 @@
 		93F1993708245E59001E9ABC /* KWQEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868802DE3B8601EA4122 /* KWQEvent.h */; };
 		93F1993908245E59001E9ABC /* KWQFileButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 93CCF7D4033BD43C008635CE /* KWQFileButton.h */; };
 		93F1993A08245E59001E9ABC /* KWQFont.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868A02DE3B8601EA4122 /* KWQFont.h */; };
-		93F1993B08245E59001E9ABC /* KWQFontFamily.h in Headers */ = {isa = PBXBuildFile; fileRef = 9394E0A903AA60FB008635CE /* KWQFontFamily.h */; };
 		93F1993C08245E59001E9ABC /* KWQFontMetrics.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868D02DE3B8601EA4122 /* KWQFontMetrics.h */; };
 		93F1993D08245E59001E9ABC /* KWQFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = F58784E302DE375901EA4122 /* KWQFrame.h */; };
 		93F1993E08245E59001E9ABC /* KWQGuardedPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = F587869002DE3B8601EA4122 /* KWQGuardedPtr.h */; };
@@ -403,7 +402,6 @@
 		93F19ACC08245E59001E9ABC /* KWQFileButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93CCF7D5033BD43C008635CE /* KWQFileButton.mm */; };
 		93F19ACD08245E59001E9ABC /* KWQResourceLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93386B91037045B3008635CE /* KWQResourceLoader.mm */; };
 		93F19AD208245E59001E9ABC /* KWQPageState.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9394E0A503AA5BBE008635CE /* KWQPageState.mm */; };
-		93F19AD308245E59001E9ABC /* KWQFontFamily.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9394E0AA03AA60FB008635CE /* KWQFontFamily.mm */; };
 		93F19AD508245E59001E9ABC /* KWQRenderTreeDebug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93955A4203D72932008635CE /* KWQRenderTreeDebug.cpp */; };
 		93F19ADB08245E59001E9ABC /* WebCoreScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9325AAB8041D0E9A00A9CAC5 /* WebCoreScrollView.m */; };
 		93F19ADC08245E59001E9ABC /* KWQScrollBar.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC7B2AF90450824100A8000F /* KWQScrollBar.mm */; };
@@ -932,6 +930,9 @@
 		BCB16C2D0979C3BD00467741 /* loader.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C140979C3BD00467741 /* loader.h */; };
 		BCB16C2E0979C3BD00467741 /* Request.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16C150979C3BD00467741 /* Request.cpp */; };
 		BCB16C2F0979C3BD00467741 /* Request.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16C160979C3BD00467741 /* Request.h */; };
+		BCC47E2309A3D6B300ADB771 /* FontFamilyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCC47E2209A3D6B300ADB771 /* FontFamilyMac.mm */; };
+		BCC47E2609A3D6F100ADB771 /* FontFamily.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC47E2409A3D6F100ADB771 /* FontFamily.cpp */; };
+		BCC47E2709A3D6F100ADB771 /* FontFamily.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC47E2509A3D6F100ADB771 /* FontFamily.h */; };
 		BCC8CFCB0986CD2400140BF2 /* Color.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC8CFC80986CD2400140BF2 /* Color.cpp */; };
 		BCC8CFCC0986CD2400140BF2 /* Color.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC8CFC90986CD2400140BF2 /* Color.h */; };
 		BCC8CFCD0986CD2400140BF2 /* ColorData.gperf in Resources */ = {isa = PBXBuildFile; fileRef = BCC8CFCA0986CD2400140BF2 /* ColorData.gperf */; };
@@ -1286,8 +1287,6 @@
 		93861DE0032C2E52008635CE /* KWQLogging.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = KWQLogging.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9394E0A403AA5BBE008635CE /* KWQPageState.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQPageState.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9394E0A503AA5BBE008635CE /* KWQPageState.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQPageState.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		9394E0A903AA60FB008635CE /* KWQFontFamily.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQFontFamily.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		9394E0AA03AA60FB008635CE /* KWQFontFamily.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQFontFamily.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93955A4103D72932008635CE /* KWQRenderTreeDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQRenderTreeDebug.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93955A4203D72932008635CE /* KWQRenderTreeDebug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KWQRenderTreeDebug.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		939885C108B7E3D100E707C4 /* EventNames.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventNames.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1953,6 +1952,9 @@
 		BCBDB0380597B36E00B83B92 /* xbl_protoimplementation.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = xbl_protoimplementation.h; path = xbl/xbl_protoimplementation.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BCBDB093059A28B100B83B92 /* xbl_binding.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = xbl_binding.cpp; path = xbl/xbl_binding.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BCBDB094059A28B100B83B92 /* xbl_binding.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = xbl_binding.h; path = xbl/xbl_binding.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		BCC47E2209A3D6B300ADB771 /* FontFamilyMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FontFamilyMac.mm; sourceTree = "<group>"; };
+		BCC47E2409A3D6F100ADB771 /* FontFamily.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FontFamily.cpp; path = platform/FontFamily.cpp; sourceTree = "<group>"; };
+		BCC47E2509A3D6F100ADB771 /* FontFamily.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FontFamily.h; path = platform/FontFamily.h; sourceTree = "<group>"; };
 		BCC8CFC80986CD2400140BF2 /* Color.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Color.cpp; path = platform/Color.cpp; sourceTree = "<group>"; };
 		BCC8CFC90986CD2400140BF2 /* Color.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Color.h; path = platform/Color.h; sourceTree = "<group>"; };
 		BCC8CFCA0986CD2400140BF2 /* ColorData.gperf */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = ColorData.gperf; path = platform/ColorData.gperf; sourceTree = "<group>"; };
@@ -2374,6 +2376,7 @@
 		6582A14809999D6C00BEEB6D /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				BCC47E2209A3D6B300ADB771 /* FontFamilyMac.mm */,
 				9380F47709A11ACC001FDB34 /* WidgetMac.mm */,
 				6582A17709999EA000BEEB6D /* QStringMac.mm */,
 				6582A14909999D6C00BEEB6D /* ColorMac.mm */,
@@ -3267,6 +3270,8 @@
 		BCF1A5BA097832090061A123 /* platform */ = {
 			isa = PBXGroup;
 			children = (
+				BCC47E2409A3D6F100ADB771 /* FontFamily.cpp */,
+				BCC47E2509A3D6F100ADB771 /* FontFamily.h */,
 				9380F47109A11AB4001FDB34 /* Widget.cpp */,
 				9380F47209A11AB4001FDB34 /* Widget.h */,
 				6582A14809999D6C00BEEB6D /* mac */,
@@ -3344,8 +3349,6 @@
 				65A640F00533BB1F0085E777 /* KWQExceptions.h */,
 				93CCF7D4033BD43C008635CE /* KWQFileButton.h */,
 				93CCF7D5033BD43C008635CE /* KWQFileButton.mm */,
-				9394E0A903AA60FB008635CE /* KWQFontFamily.h */,
-				9394E0AA03AA60FB008635CE /* KWQFontFamily.mm */,
 				93B641F206E28C5C0055F610 /* KWQFormData.h */,
 				93B641F106E28C5C0055F610 /* KWQFormData.mm */,
 				93D1FEF6067EBF89009CE68A /* KWQFoundationExtras.h */,
@@ -3944,7 +3947,6 @@
 				93F1993708245E59001E9ABC /* KWQEvent.h in Headers */,
 				93F1993908245E59001E9ABC /* KWQFileButton.h in Headers */,
 				93F1993A08245E59001E9ABC /* KWQFont.h in Headers */,
-				93F1993B08245E59001E9ABC /* KWQFontFamily.h in Headers */,
 				93F1993C08245E59001E9ABC /* KWQFontMetrics.h in Headers */,
 				93F1993D08245E59001E9ABC /* KWQFrame.h in Headers */,
 				93F1993E08245E59001E9ABC /* KWQGuardedPtr.h in Headers */,
@@ -4421,6 +4423,7 @@
 				937D809A09A063330092A01E /* PageMac.h in Headers */,
 				9380F47409A11AB4001FDB34 /* Widget.h in Headers */,
 				ED2BA83C09A24B91006C0AC4 /* DocumentMarker.h in Headers */,
+				BCC47E2709A3D6F100ADB771 /* FontFamily.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5140,7 +5143,6 @@
 				93F19ACC08245E59001E9ABC /* KWQFileButton.mm in Sources */,
 				93F19ACD08245E59001E9ABC /* KWQResourceLoader.mm in Sources */,
 				93F19AD208245E59001E9ABC /* KWQPageState.mm in Sources */,
-				93F19AD308245E59001E9ABC /* KWQFontFamily.mm in Sources */,
 				93F19AD508245E59001E9ABC /* KWQRenderTreeDebug.cpp in Sources */,
 				93F19ADB08245E59001E9ABC /* WebCoreScrollView.m in Sources */,
 				93F19ADC08245E59001E9ABC /* KWQScrollBar.mm in Sources */,
@@ -5532,6 +5534,8 @@
 				6550B6A5099DF0270090D781 /* TextImpl.cpp in Sources */,
 				9380F47309A11AB4001FDB34 /* Widget.cpp in Sources */,
 				9380F47809A11ACC001FDB34 /* WidgetMac.mm in Sources */,
+				BCC47E2309A3D6B300ADB771 /* FontFamilyMac.mm in Sources */,
+				BCC47E2609A3D6F100ADB771 /* FontFamily.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -82,7 +82,7 @@ void QFont::setFamily(const QString &qfamilyName)
     _pitch = Unknown;
 }
 
-void QFont::setFirstFamily(const KWQFontFamily& family) 
+void QFont::setFirstFamily(const FontFamily& family) 
 {
     _family = family;
     KWQRelease(m_webCoreFont.font);
@@ -190,3 +190,4 @@ const WebCoreFont &QFont::getWebCoreFont() const
     }
     return m_webCoreFont;
 }
+

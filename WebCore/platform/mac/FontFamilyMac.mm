@@ -24,40 +24,10 @@
  */
 
 #include "config.h"
-#include "KWQFontFamily.h"
+#include "FontFamily.h"
 #include "StringImpl.h"
 
-using DOM::AtomicString;
-using DOM::DOMStringImpl;
-
-KWQFontFamily::KWQFontFamily()
-    : _next(0)
-    , _refCnt(0)
-    , _CFFamily(0)
-{
-}
-
-KWQFontFamily::KWQFontFamily(const KWQFontFamily& other)
-    : _family(other._family)
-    , _next(other._next)
-    , _refCnt(0)
-    , _CFFamily(other._CFFamily)
-{
-    if (_next)
-        _next->ref();
-}
-
-KWQFontFamily& KWQFontFamily::operator=(const KWQFontFamily& other)
-{
-    if (other._next)
-        other._next->ref();
-    if (_next)
-        _next->deref();
-    _family = other._family;
-    _next = other._next;
-    _CFFamily = other._CFFamily;
-    return *this;
-}
+namespace WebCore {
 
 const void *retainDOMStringImpl(CFAllocatorRef allocator, const void *value)
 {
@@ -72,40 +42,26 @@ void releaseDOMStringImpl(CFAllocatorRef allocator, const void *value)
 
 const CFDictionaryKeyCallBacks CFDictionaryFamilyKeyCallBacks = { 0, retainDOMStringImpl, releaseDOMStringImpl, 0, 0, 0 };
 
-NSString *KWQFontFamily::getNSFamily() const
+NSString *FontFamily::getNSFamily() const
 {
-    if (!_CFFamily) {
-        if (_family.isEmpty())
-            _CFFamily = CFSTR("");
+    if (!m_CFFamily) {
+        if (m_family.isEmpty())
+            m_CFFamily = CFSTR("");
         else {
             // Use an immutable copy of the name, but keep a set of
             // all family names so we don't end up with too many objects.
             static CFMutableDictionaryRef families;
             if (families == NULL)
                 families = CFDictionaryCreateMutable(NULL, 0, &CFDictionaryFamilyKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-            _CFFamily = (CFStringRef)CFDictionaryGetValue(families, _family.impl());
-            if (!_CFFamily) {
-                _CFFamily = CFStringCreateWithCharacters(0, (const UniChar *)_family.unicode(), _family.length());
-                CFDictionarySetValue(families, _family.impl(), _CFFamily);
-                CFRelease(_CFFamily);
+            m_CFFamily = (CFStringRef)CFDictionaryGetValue(families, m_family.impl());
+            if (!m_CFFamily) {
+                m_CFFamily = CFStringCreateWithCharacters(0, (const UniChar *)m_family.unicode(), m_family.length());
+                CFDictionarySetValue(families, m_family.impl(), m_CFFamily);
+                CFRelease(m_CFFamily);
             }
         }
     }
-    return (NSString *)_CFFamily;
+    return (NSString *)m_CFFamily;
 }
 
-void KWQFontFamily::setFamily(const AtomicString &family)
-{
-    _family = family;
-    _CFFamily = 0;
-}
-
-bool KWQFontFamily::operator==(const KWQFontFamily &compareFontFamily) const
-{
-    if ((!_next && compareFontFamily._next) || 
-        (_next && !compareFontFamily._next) ||
-        ((_next && compareFontFamily._next) && (*_next != *(compareFontFamily._next))))
-        return false;
-    
-    return _family == compareFontFamily._family;
 }

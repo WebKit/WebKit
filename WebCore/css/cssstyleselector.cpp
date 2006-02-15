@@ -3076,8 +3076,8 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
         FontDef fontDef = style->htmlFont().fontDef;
         CSSValueListImpl *list = static_cast<CSSValueListImpl *>(value);
         int len = list->length();
-        KWQFontFamily &firstFamily = fontDef.firstFamily();
-        KWQFontFamily *currFamily = 0;
+        FontFamily &firstFamily = fontDef.firstFamily();
+        FontFamily *currFamily = 0;
         
         for(int i = 0; i < len; i++) {
             CSSValueImpl *item = list->item(i);
@@ -3121,7 +3121,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
                     currFamily = &firstFamily;
                 }
                 else {
-                    KWQFontFamily *newFamily = new KWQFontFamily;
+                    FontFamily *newFamily = new FontFamily;
                     newFamily->setFamily(face);
                     currFamily->appendFamily(newFamily);
                     currFamily = newFamily;
