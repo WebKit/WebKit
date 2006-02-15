@@ -83,16 +83,11 @@ public:
     // from Tokenizer
     virtual bool write(const SegmentedString &str, bool);
     virtual void finish();
-    virtual void setOnHold(bool onHold);
     virtual bool isWaitingForScripts() const;
     virtual void stopParsing();
 
     void setIsXHTMLDocument(bool isXHTML) { m_isXHTMLDocument = isXHTML; }
     bool isXHTMLDocument() const { return m_isXHTMLDocument; }
-
-#ifdef KHTML_XSLT
-    void setTransformSource(DocumentImpl* doc);
-#endif
 
     // from CachedObjectClient
     virtual void notifyFinished(CachedObject *finishedObj);
@@ -108,6 +103,7 @@ public:
     void internalSubset(const xmlChar *name, const xmlChar *externalID, const xmlChar *systemID);
 
 private:
+    void initializeParserContext();
     void setCurrentNode(NodeImpl*);
 
     int lineNumber() const;
@@ -123,8 +119,8 @@ private:
 
     DocumentImpl *m_doc;
     FrameView *m_view;
-
-    QString m_xmlCode;
+    
+    QString m_originalSourceForTransform;
 
     xmlParserCtxtPtr m_context;
     NodeImpl *m_currentNode;
@@ -132,6 +128,7 @@ private:
 
     bool m_sawError;
     bool m_sawXSLTransform;
+    bool m_sawFirstElement;
     bool m_isXHTMLDocument;
     
     int m_errorCount;
@@ -250,13 +247,6 @@ static xmlParserCtxtPtr createQStringParser(xmlSAXHandlerPtr handlers, void *use
     return parser;
 }
 
-static int parseQString(xmlParserCtxtPtr parser, const QString &string)
-{
-    return xmlParseChunk(parser,
-        reinterpret_cast<const char *>(string.unicode()),
-        string.length() * sizeof(QChar), 1);
-}
-
 // --------------------------------
 
 XMLTokenizer::XMLTokenizer(DocumentImpl *_doc, FrameView *_view)
@@ -267,6 +257,7 @@ XMLTokenizer::XMLTokenizer(DocumentImpl *_doc, FrameView *_view)
     , m_currentNodeIsReferenced(false)
     , m_sawError(false)
     , m_sawXSLTransform(false)
+    , m_sawFirstElement(false)
     , m_isXHTMLDocument(false)
     , m_errorCount(0)
     , m_lastErrorLine(0)
@@ -285,6 +276,7 @@ XMLTokenizer::XMLTokenizer(DocumentFragmentImpl *fragment, ElementImpl *parentEl
     , m_currentNodeIsReferenced(fragment)
     , m_sawError(false)
     , m_sawXSLTransform(false)
+    , m_sawFirstElement(false)
     , m_isXHTMLDocument(false)
     , m_errorCount(0)
     , m_lastErrorLine(0)
@@ -344,13 +336,26 @@ void XMLTokenizer::setCurrentNode(NodeImpl* n)
 
 bool XMLTokenizer::write(const SegmentedString &s, bool /*appendData*/ )
 {
-    m_xmlCode += s.toString();
-    return false;
-}
+    QString parseString = s.toString();
+    if (m_sawXSLTransform || !m_sawFirstElement)
+        m_originalSourceForTransform += parseString;
 
-void XMLTokenizer::setOnHold(bool onHold)
-{
-    // Will we need to implement this when we do incremental XML parsing?
+    if (m_parserStopped || m_sawXSLTransform)
+        return false;
+    if (!m_context)
+        initializeParserContext();
+    
+    // Hack around libxml2's lack of encoding overide support by manually
+    // resetting the encoding to UTF-16 before every chunk.  Otherwise libxml
+    // will detect <?xml version="1.0" encoding="<encoding name>"?> blocks 
+    // and switch encodings, causing the parse to fail.
+    const QChar BOM(0xFEFF);
+    const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char *>(&BOM);
+    xmlSwitchEncoding(m_context, BOMHighByte == 0xFF ? XML_CHAR_ENCODING_UTF16LE : XML_CHAR_ENCODING_UTF16BE);
+    
+    xmlParseChunk(m_context, reinterpret_cast<const char *>(parseString.unicode()), sizeof(QChar) * parseString.length(), 0);
+    
+    return false;
 }
 
 inline QString toQString(const xmlChar *str, unsigned int len)
@@ -423,6 +428,8 @@ void XMLTokenizer::startElementNs(const xmlChar *xmlLocalName, const xmlChar *xm
 {
     if (m_parserStopped)
         return;
+    
+    m_sawFirstElement = true;
 
     exitText();
 
@@ -547,7 +554,7 @@ void XMLTokenizer::error(ErrorType type, const char *message, va_list args)
                 break;
             case fatal:
                 // fall through
-            default:
+            case nonFatal:
                 format = QString("error on line %2 at column %3: %1");
         }
 
@@ -778,11 +785,8 @@ static void ignorableWhitespaceHandler(void *ctx, const xmlChar *ch, int len)
     // http://bugzilla.opendarwin.org/show_bug.cgi?id=5792
 }
 
-void XMLTokenizer::finish()
+void XMLTokenizer::initializeParserContext()
 {
-    if (m_xmlCode.isEmpty())
-        return;
-
     xmlSAXHandler sax;
     memset(&sax, 0, sizeof(sax));
     sax.error = normalErrorHandler;
@@ -805,13 +809,31 @@ void XMLTokenizer::finish()
     m_parserStopped = false;
     m_sawError = false;
     m_sawXSLTransform = false;
+    m_sawFirstElement = false;
     m_context = createQStringParser(&sax, this);
-    parseQString(m_context, m_xmlCode);
-    if (m_context->myDoc)
-        xmlFreeDoc(m_context->myDoc);
-    xmlFreeParserCtxt(m_context);
-    m_context = 0;
+}
 
+void XMLTokenizer::finish()
+{
+    if (m_sawXSLTransform) {
+        m_doc->setTransformSource(xmlDocPtrForString(m_originalSourceForTransform, m_doc->URL()));
+        
+        m_doc->setParsing(false); // Make the doc think it's done, so it will apply xsl sheets.
+        m_doc->updateStyleSelector();
+        m_doc->setParsing(true);
+        m_parserStopped = true;
+    }
+    
+    if (m_context) {
+        // Tell libxml we're done.
+        xmlParseChunk(m_context, 0, 0, 1);
+        
+        if (m_context->myDoc)
+            xmlFreeDoc(m_context->myDoc);
+        xmlFreeParserCtxt(m_context);
+        m_context = 0;
+    }
+    
     if (m_sawError)
         insertErrorMessageBlock();
     else {
@@ -986,12 +1008,6 @@ void *xmlDocPtrForString(const QString &source, const QString &url)
                                         XML_PARSE_NOCDATA|XML_PARSE_DTDATTR|XML_PARSE_NOENT);
     return sourceDoc;
 }
-
-void XMLTokenizer::setTransformSource(DocumentImpl *doc)
-{
-    // Time to spin up a new parse and save the xmlDocPtr.
-    doc->setTransformSource(xmlDocPtrForString(m_xmlCode, doc->URL()));
-}
 #endif
 
 Tokenizer *newXMLTokenizer(DocumentImpl *d, FrameView *v)
@@ -1115,7 +1131,8 @@ HashMap<DOMString, DOMString> parseAttributes(const DOMString& string, bool& att
     sax.startElementNs = attributesStartElementNsHandler;
     sax.initialized = XML_SAX2_MAGIC;
     xmlParserCtxtPtr parser = createQStringParser(&sax, &state);
-    parseQString(parser, "<?xml version=\"1.0\"?><attrs " + string.qstring() + " />");
+    QString parseString = "<?xml version=\"1.0\"?><attrs " + string.qstring() + " />";
+    xmlParseChunk(parser, reinterpret_cast<const char *>(parseString.unicode()), parseString.length() * sizeof(QChar), 1);
     if (parser->myDoc)
         xmlFreeDoc(parser->myDoc);
     xmlFreeParserCtxt(parser);

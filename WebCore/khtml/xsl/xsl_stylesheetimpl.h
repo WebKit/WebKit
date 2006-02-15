@@ -62,8 +62,7 @@ public:
     DocumentImpl* ownerDocument() { return m_ownerDocument; }
     void setOwnerDocument(DocumentImpl* doc) { m_ownerDocument = doc; }
 
-    xmlDocPtr document() { return m_stylesheetDoc; }
-    void setDocument(xmlDocPtr doc) { m_stylesheetDoc = doc; }
+    xmlDocPtr document();
 
     void clearDocuments();
 

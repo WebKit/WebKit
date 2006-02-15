@@ -10,7 +10,7 @@ responseText
   <d id="id3">Three</d>
 </doc>
 responseXML serialized
-<doc>
+<!DOCTYPE doc><doc>
   <foo xmlns="foobar">One</foo> <x:bar xmlns:x="barfoo">Two</x:bar>
   <d id="id3">Three</d>
 </doc>

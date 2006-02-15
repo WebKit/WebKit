@@ -48,7 +48,6 @@ public:
     // document.write() always uses false, while the loader uses true.
     virtual bool write(const SegmentedString&, bool appendData) = 0;
     virtual void finish() = 0;
-    virtual void setOnHold(bool onHold) = 0;
     virtual bool isWaitingForScripts() const = 0;
     virtual void stopParsing() { m_parserStopped = true; }
     virtual bool processingData() const { return false; }
@@ -58,11 +57,6 @@ protected:
     // it stops receiving data. We use m_parserStopped to stop the tokenizer
     // even when it has buffered data.
     bool m_parserStopped;
-    
-#if KHTML_XSLT
-public:
-    virtual void setTransformSource(DocumentImpl*) {}
-#endif
 
 signals:
     void finishedParsing();

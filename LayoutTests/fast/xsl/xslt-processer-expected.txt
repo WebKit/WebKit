@@ -40,7 +40,7 @@
               CHARACTERS IN XSLT: ééééééééééé <BR><BR>SOURCE XML: &lt;&lt;&lt;&amp;тест&amp;&gt;&gt;&gt;
 </BODY></HTML>
 1.2 Import same stylesheet twice:
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml">
 <head><title></title></head>
 <body>
 <pre>CHARACTERS IN XSLT: <<<&тест&>>>

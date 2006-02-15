@@ -1,3 +1,22 @@
+2006-02-14  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+        
+        Add incremental parsing support to XMLTokenizer.
+        Also adds serialization of DOCTYPEs for xml documents
+        Also fixes css styling for pages where xsl recursion is blocked.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6057
+
+        * fast/dom/dom-parse-serialize-display-expected.checksum:
+        * fast/dom/dom-parse-serialize-display-expected.png:
+        * fast/dom/dom-parse-serialize-display-expected.txt:
+        * fast/dom/dom-parse-serialize-expected.checksum:
+        * fast/dom/dom-parse-serialize-expected.png:
+        * fast/dom/dom-parse-serialize-expected.txt:
+        * fast/dom/xmlhttprequest-get-expected.txt:
+        * fast/xsl/resources/xslt-recursion-chain1.xsl:
+        * fast/xsl/xslt-processer-expected.txt:
+
 2006-02-14  Adele Peterson  <adele@apple.com>
 
         Tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=6815

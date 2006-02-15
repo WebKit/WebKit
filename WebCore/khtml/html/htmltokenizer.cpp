@@ -143,7 +143,6 @@ HTMLTokenizer::HTMLTokenizer(DocumentImpl* _doc, FrameView* _view, bool includes
     scriptCodeSize = scriptCodeMaxSize = scriptCodeResync = 0;
     parser = new HTMLParser(_view, _doc, includesComments);
     m_executingScript = 0;
-    onHold = false;
     includesCommentsInDOM = includesComments;
     
     begin();
@@ -158,7 +157,6 @@ HTMLTokenizer::HTMLTokenizer(DocumentImpl *_doc, DocumentFragmentImpl *i, bool i
     scriptCodeSize = scriptCodeMaxSize = scriptCodeResync = 0;
     parser = new HTMLParser(i, _doc, includesComments);
     m_executingScript = 0;
-    onHold = false;
     includesCommentsInDOM = includesComments;
 
     begin();
@@ -167,7 +165,6 @@ HTMLTokenizer::HTMLTokenizer(DocumentImpl *_doc, DocumentFragmentImpl *i, bool i
 void HTMLTokenizer::reset()
 {
     ASSERT(m_executingScript == 0);
-    ASSERT(onHold == false);
 
     while (!pendingScripts.isEmpty()) {
       CachedScript *cs = pendingScripts.dequeue();
@@ -196,7 +193,6 @@ void HTMLTokenizer::begin()
 {
     m_executingScript = 0;
     m_state.setLoadingExtScript(false);
-    onHold = false;
     reset();
     size = 254;
     buffer = KHTML_ALLOC_QCHAR_VEC( 255 );
@@ -1349,11 +1345,6 @@ bool HTMLTokenizer::write(const SegmentedString &str, bool appendData)
         }
         return false;
     }
-
-    if (onHold) {
-        src.append(str);
-        return false;
-    }
     
     if (!src.isEmpty())
         src.append(str);
@@ -1611,7 +1602,7 @@ void HTMLTokenizer::finish()
     // this indicates we will not receive any more data... but if we are waiting on
     // an external script to load, we can't finish parsing until that is done
     noMoreData = true;
-    if (!inWrite && !m_state.loadingExtScript() && !m_executingScript && !onHold && !m_timer.isActive())
+    if (!inWrite && !m_state.loadingExtScript() && !m_executingScript && !m_timer.isActive())
         end(); // this actually causes us to be deleted
 }
 
@@ -1778,11 +1769,6 @@ void HTMLTokenizer::setSrc(const SegmentedString &source)
     lineno += src.lineCount();
     src = source;
     src.resetLineCount();
-}
-
-void HTMLTokenizer::setOnHold(bool _onHold)
-{
-    onHold = _onHold;
 }
 
 void parseHTMLDocumentFragment(const DOMString &source, DocumentFragmentImpl *fragment)

@@ -302,11 +302,6 @@ bool ProcessingInstructionImpl::checkStyleSheet()
 #endif
             return true;
 
-#if KHTML_XSLT
-        if (m_isXSL)
-            getDocument()->tokenizer()->setTransformSource(getDocument());
-#endif
-
         DOMString href = attrs.get("href");
 
         if (href.length() > 1) {
@@ -316,10 +311,7 @@ bool ProcessingInstructionImpl::checkStyleSheet()
                 // We need to make a synthetic XSLStyleSheetImpl that is embedded.  It needs to be able
                 // to kick off import/include loads that can hang off some parent sheet.
                 if (m_isXSL) {
-                    RefPtr<XSLStyleSheetImpl> localSheet = new XSLStyleSheetImpl(this, m_localHref.get(), true);
-                    localSheet->setDocument((xmlDocPtr)getDocument()->transformSource());
-                    localSheet->loadChildSheets();
-                    m_sheet = localSheet.release();
+                    m_sheet = new XSLStyleSheetImpl(this, m_localHref.get(), true);
                     m_loading = false;
                 }                    
                 return !m_isXSL;
@@ -332,7 +324,8 @@ bool ProcessingInstructionImpl::checkStyleSheet()
                 if (getDocument()->frame()) {
                     m_loading = true;
                     getDocument()->addPendingSheet();
-                    if (m_cachedSheet) m_cachedSheet->deref(this);
+                    if (m_cachedSheet)
+                        m_cachedSheet->deref(this);
 #if KHTML_XSLT
                     if (m_isXSL)
                         m_cachedSheet = getDocument()->docLoader()->requestXSLStyleSheet(getDocument()->completeURL(href));

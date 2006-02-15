@@ -1,3 +1,52 @@
+2006-02-14  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Add incremental parsing support to XMLTokenizer.
+        This patch also does a few other little things:
+        - removes (unused) onHold support from Tokenizer
+        - adds serialization of DOCTYPEs for xml documents
+        - fixes xslt support to no longer depend on synchronous parsing
+        - fixes css styling for pages where xsl recursion is blocked
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6057
+
+        * dom/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::DocumentImpl):
+        (WebCore::DocumentImpl::createProcessingInstruction):
+        (WebCore::DocumentImpl::open):
+        (WebCore::DocumentImpl::recalcStyleSelector):
+        * dom/dom_xmlimpl.cpp:
+        (WebCore::ProcessingInstructionImpl::checkStyleSheet):
+        * dom/xml_tokenizer.cpp:
+        (WebCore::XMLTokenizer::XMLTokenizer):
+        (WebCore::XMLTokenizer::write):
+        (WebCore::XMLTokenizer::startElementNs):
+        (WebCore::XMLTokenizer::error):
+        (WebCore::XMLTokenizer::initializeParserContext):
+        (WebCore::XMLTokenizer::finish):
+        (WebCore::xmlDocPtrForString):
+        (WebCore::parseAttributes):
+        * dom/xml_tokenizer.h:
+        * khtml/editing/markup.cpp:
+        (khtml::startMarkup): DOCTYPE serialization
+        * khtml/html/htmltokenizer.cpp:
+        (WebCore::HTMLTokenizer::HTMLTokenizer): removed onHold
+        (WebCore::HTMLTokenizer::reset): removed onHold
+        (WebCore::HTMLTokenizer::begin): removed onHold
+        (WebCore::HTMLTokenizer::write): removed onHold
+        (WebCore::HTMLTokenizer::finish): removed onHold
+        * khtml/html/htmltokenizer.h: removed onHold support
+        * khtml/xsl/xsl_stylesheetimpl.cpp:
+        (WebCore::XSLStyleSheetImpl::XSLStyleSheetImpl):
+        (WebCore::XSLStyleSheetImpl::~XSLStyleSheetImpl):
+        (WebCore::XSLStyleSheetImpl::document):
+        (WebCore::XSLStyleSheetImpl::setDocument):
+        (WebCore::XSLStyleSheetImpl::parseString):
+        (WebCore::XSLStyleSheetImpl::loadChildSheets):
+        (WebCore::XSLStyleSheetImpl::compileStyleSheet):
+        (WebCore::XSLStyleSheetImpl::locateStylesheetSubResource):
+        * khtml/xsl/xsl_stylesheetimpl.h: moved functions to .cpp file
+
 2006-02-14  Adele Peterson  <adele@apple.com>
 
         Reviewed by Maciej.
