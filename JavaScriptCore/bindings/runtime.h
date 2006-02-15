@@ -29,6 +29,8 @@
 #include "JSType.h"
 #include "value.h"
 
+#include <CoreFoundation/CFDictionary.h>
+
 namespace KJS  {
 
 class Identifier;
@@ -185,6 +187,14 @@ public:
 };
 
 const char *signatureForParameters(const List&);
+
+void deleteMethodList(CFAllocatorRef, const void* value);
+void deleteMethod(CFAllocatorRef, const void* value);
+void deleteField(CFAllocatorRef, const void* value);
+
+const CFDictionaryValueCallBacks MethodListDictionaryValueCallBacks = { 0, 0, &deleteMethodList, 0 , 0 };
+const CFDictionaryValueCallBacks MethodDictionaryValueCallBacks = { 0, 0, &deleteMethod, 0 , 0 };
+const CFDictionaryValueCallBacks FieldDictionaryValueCallBacks = { 0, 0, &deleteField, 0 , 0 };
 
 } // namespace Bindings
 

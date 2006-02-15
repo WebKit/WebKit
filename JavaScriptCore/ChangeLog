@@ -1,3 +1,31 @@
+2006-02-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by John.
+
+        - Fixed <rdar://problem/4330457> CrashTracer: [REGRESSION] 3763 crashes
+        in Safari at com.apple.JavaScriptCore: KJS::Bindings::JavaInstance::
+        getClass const + 56
+
+        This was a memory leak in the bindings code. The leak was so extreme
+        that it would cause Safari or the JVM to abort from lack of memory.
+        Upon construction, Class objects create field and method objects, 
+        storing them in CFDictionaries. The bug was that upon destruction, the 
+        class objects released the dictionaries but didn't destroy the stored 
+        objects.
+
+        The fix is to supply CFDictionary callbacks for destroying the values
+        added to the dictionary. This also requires prohibiting copying,
+        because we don't do any intelligent ref-counting -- when a Class is
+        destroyed, it destroys its methods and fields unconditionally.
+
+        * bindings/jni/jni_class.cpp: 
+        (JavaClass::JavaClass): Added delete callbacks
+        * bindings/runtime.cpp: Added definitions for delete callbacks
+        (KJS::Bindings::deleteMethodList):
+        (KJS::Bindings::deleteMethod):
+        (KJS::Bindings::deleteField):
+        * bindings/runtime.h: Added declarations for delete callbacks
+
 2006-02-14  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Justin.

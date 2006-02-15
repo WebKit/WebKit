@@ -34,7 +34,28 @@
 #include "runtime_object.h"
 
 namespace KJS { namespace Bindings {
-    
+
+void deleteMethodList(CFAllocatorRef, const void* value)
+{
+        const MethodList* methodList = static_cast<const MethodList*>(value);
+        int end = methodList->length();
+        for (int i = 0; i < end; i++) {
+            delete methodList->methodAt(i);
+        }
+        
+        delete methodList;
+}
+
+void deleteMethod(CFAllocatorRef, const void* value)
+{
+    delete static_cast<const Method*>(value);
+}
+
+void deleteField(CFAllocatorRef, const void* value)
+{
+    delete static_cast<const Field*>(value);
+}
+
 void MethodList::addMethod(Method *aMethod)
 {
     Method **_newMethods = new Method *[_length + 1];
