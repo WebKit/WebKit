@@ -1,3 +1,40 @@
+2006-02-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+        
+        Improvements to frame loading:
+        
+        - remove LayoutAcceptable state entirely
+        - fix WebImageView to work right without LayoutAcceptable state
+        - move guts of commitIfReady: to WebFrame
+        - try to separate page cache loading from normal loading a bit more
+
+        * English.lproj/StringsNotToBeLocalized.txt:
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _prepareForLoadStart]):
+        (-[WebDataSource _loadFromPageCache:]):
+        (-[WebDataSource _startLoading]):
+        (-[WebDataSource _commitIfReady]):
+        (-[WebDataSource _setupForReplaceByMIMEType:]):
+        * WebView/WebDataSourcePrivate.h:
+        * WebView/WebFrame.m:
+        (-[WebFrame _transitionToCommitted:]):
+        (-[WebFrame _commitProvisionalLoad:]):
+        (-[WebFrame _checkLoadCompleteForThisFrame]):
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formState:]):
+        * WebView/WebFramePrivate.h:
+        * WebView/WebImageRepresentation.h:
+        * WebView/WebImageRepresentation.m:
+        * WebView/WebImageView.m:
+        (-[WebImageView dataSourceUpdated:]):
+        (-[WebImageView setNeedsLayout:]):
+        (-[WebImageView writeImageToPasteboard:types:]):
+        (-[WebImageView copy:]):
+        (-[WebImageView mouseDragged:]):
+        * WebView/WebView.m:
+        (-[WebView _finishedLoadingResourceFromDataSource:]):
+        (-[WebView _mainReceivedBytesSoFar:fromDataSource:complete:]):
+
 2006-02-13  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Omernick.

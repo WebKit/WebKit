@@ -156,7 +156,7 @@
 - (NSURL *)_URLForHistory;
 - (WebView *)_webView;
 - (void)_setRepresentation:(id<WebDocumentRepresentation>)representation;
-- (void)_startLoading:(NSDictionary *)pageCache;
+- (void)_loadFromPageCache:(NSDictionary *)pageCache;
 - (BOOL)_isStopping;
 - (void)_addSubresourceLoader:(WebLoader *)loader;
 - (void)_removeSubresourceLoader:(WebLoader *)loader;
@@ -186,7 +186,7 @@
 - (WebFrameBridge *)_bridge;
 
 - (BOOL)_isCommitted;
-- (void)_commitIfReady:(NSDictionary *)pageCache;
+- (void)_commitIfReady;
 - (void)_makeRepresentation;
 - (void)_receivedData:(NSData *)data;
 - (void)_finishedLoading;

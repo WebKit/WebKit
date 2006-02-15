@@ -274,11 +274,6 @@
     }
 }
 
-- (void)_startLoading
-{
-    [self _startLoading:nil];
-}
-
 - (NSError *)_cancelledError
 {
     return [NSError _webKitErrorWithDomain:NSURLErrorDomain
@@ -331,52 +326,59 @@
     [self release];
 }
 
-- (void)_startLoading:(NSDictionary *)pageCache
+- (void)_prepareForLoadStart
 {
     ASSERT(![self _isStopping]);
-
     [self _setPrimaryLoadComplete:NO];
-    
     ASSERT([self webFrame] != nil);
-    
     [self _clearErrors];
     
     // Mark the start loading time.
     _private->loadingStartedTime = CFAbsoluteTimeGetCurrent();
     
     [self _setLoading:YES];
-
     [[self _webView] _progressStarted:[self webFrame]];
-    
     [[self _webView] _didStartProvisionalLoadForFrame:[self webFrame]];
     [[[self _webView] _frameLoadDelegateForwarder] webView:[self _webView]
                                      didStartProvisionalLoadForFrame:[self webFrame]];
+}
 
-    if (pageCache){
-        _private->loadingFromPageCache = YES;
-        [self _commitIfReady: pageCache];
-    } else if (!_private->mainResourceLoader) {
-        _private->loadingFromPageCache = NO;
+- (void)_loadFromPageCache:(NSDictionary *)pageCache
+{
+    [self _prepareForLoadStart];
+    _private->loadingFromPageCache = YES;
+    _private->committed = TRUE;
+    [[self webFrame] _commitProvisionalLoad:pageCache];
+}
+
+- (void)_startLoading
+{
+    [self _prepareForLoadStart];
+
+    if (_private->mainResourceLoader)
+        return;
+
+    _private->loadingFromPageCache = NO;
         
-        id identifier;
-        id resourceLoadDelegate = [[self _webView] resourceLoadDelegate];
-        if ([resourceLoadDelegate respondsToSelector:@selector(webView:identifierForInitialRequest:fromDataSource:)])
-            identifier = [resourceLoadDelegate webView:[self _webView] identifierForInitialRequest:_private->originalRequest fromDataSource:self];
-        else
-            identifier = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:[self _webView] identifierForInitialRequest:_private->originalRequest fromDataSource:self];
-            
-        _private->mainResourceLoader = [[WebMainResourceLoader alloc] initWithDataSource:self];
-        [_private->mainResourceLoader setSupportsMultipartContent:_private->supportsMultipartContent];
-        
-        [_private->mainResourceLoader setIdentifier: identifier];
-        [[self webFrame] _addExtraFieldsToRequest:_private->request alwaysFromRequest: NO];
-        if (![_private->mainResourceLoader loadWithRequest:_private->request]) {
-            ERROR("could not create WebResourceHandle for URL %@ -- should be caught by policy handler level",
-                [_private->request URL]);
-            [_private->mainResourceLoader release];
-            _private->mainResourceLoader = nil;
-            [self _updateLoading];
-        }
+    id identifier;
+    id resourceLoadDelegate = [[self _webView] resourceLoadDelegate];
+    if ([resourceLoadDelegate respondsToSelector:@selector(webView:identifierForInitialRequest:fromDataSource:)])
+        identifier = [resourceLoadDelegate webView:[self _webView] identifierForInitialRequest:_private->originalRequest fromDataSource:self];
+    else
+        identifier = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:[self _webView] identifierForInitialRequest:_private->originalRequest fromDataSource:self];
+    
+    _private->mainResourceLoader = [[WebMainResourceLoader alloc] initWithDataSource:self];
+    [_private->mainResourceLoader setSupportsMultipartContent:_private->supportsMultipartContent];
+    
+    [_private->mainResourceLoader setIdentifier: identifier];
+    [[self webFrame] _addExtraFieldsToRequest:_private->request alwaysFromRequest: NO];
+    if (![_private->mainResourceLoader loadWithRequest:_private->request]) {
+        // FIXME: if this should really be caught, we should just ASSERT this doesn't happen;
+        // should it be caught by other parts of WebKit or other parts of the app?
+        ERROR("could not create WebResourceHandle for URL %@ -- should be caught by policy handler level", [_private->request URL]);
+        [_private->mainResourceLoader release];
+        _private->mainResourceLoader = nil;
+        [self _updateLoading];
     }
 }
 
@@ -630,49 +632,12 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     return _private->committed;
 }
 
-- (void)_commitIfReady: (NSDictionary *)pageCache
-{
-    if (_private->loadingFromPageCache || (_private->gotFirstByte && !_private->committed)) {
-        WebFrame *frame = [self webFrame];
-        WebFrameLoadType loadType = [frame _loadType];
-        bool reload = loadType == WebFrameLoadTypeReload
-            || loadType == WebFrameLoadTypeReloadAllowingStaleData;
-        
-        NSDictionary *headers = [_private->response isKindOfClass:[NSHTTPURLResponse class]]
-            ? [(NSHTTPURLResponse *)_private->response allHeaderFields] : nil;
-
-        if (loadType != WebFrameLoadTypeReplace)
-            [frame _closeOldDataSources];
-
-        LOG(Loading, "committed resource = %@", [[self request] URL]);
-        _private->committed = TRUE;
-        if (!pageCache)
-            [self _makeRepresentation];
-            
-        [frame _transitionToCommitted: pageCache];
-
-        NSURL *baseURL = [[self request] _webDataRequestBaseURL];        
-        NSURL *URL = baseURL ? baseURL : [_private->response URL];
-            
-        // WebCore will crash if given an empty URL here.
-        // FIXME: could use CFURL, when available, range API to save an allocation here
-        if (!URL || [URL _web_isEmpty])
-            URL = [NSURL URLWithString:@"about:blank"];
-
-        [[self _bridge] openURL:URL
-                         reload:reload 
-                    contentType:[_private->response MIMEType]
-                        refresh:[headers objectForKey:@"Refresh"]
-                   lastModified:(pageCache ? nil : WKGetNSURLResponseLastModifiedDate(_private->response))
-                      pageCache:pageCache];
-
-        [frame _opened];
-    }
-}
-
 - (void)_commitIfReady
 {
-    [self _commitIfReady: nil];
+    if (_private->gotFirstByte && !_private->committed) {
+        _private->committed = TRUE;
+        [[self webFrame] _commitProvisionalLoad:nil];
+    }
 }
 
 -(void)_makeRepresentation
@@ -976,7 +941,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     if (![self _doesProgressiveLoadWithMIMEType:oldMIMEType]) {
         [self _revertToProvisionalState];
         [self _commitLoadWithData:[self data]];
-        [frame _transitionToLayoutAcceptable];
     }
     
     [[self representation] finishedLoadingWithDataSource:self];

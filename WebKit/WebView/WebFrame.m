@@ -64,6 +64,7 @@
 #import <WebKit/WebViewInternal.h>
 #import <WebKit/WebUIDelegate.h>
 #import <WebKit/WebScriptDebugDelegatePrivate.h>
+#import <WebKitSystemInterface.h>
 
 #import <objc/objc-runtime.h>
 
@@ -71,7 +72,6 @@
 static const char * const stateNames[] = {
     "WebFrameStateProvisional",
     "WebFrameStateCommittedPage",
-    "WebFrameStateLayoutAcceptable",
     "WebFrameStateComplete"
 };
 #endif
@@ -622,33 +622,6 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     return [_private loadType];
 }
 
-- (void)_transitionToLayoutAcceptable
-{
-    switch ([self _state]) {
-        case WebFrameStateCommittedPage:
-        {
-            [self _setState: WebFrameStateLayoutAcceptable];
-            if (!([[self dataSource] _isDocumentHTML])) {
-                // Go ahead and lay out/display non-HTML the minute we have some data.  This makes
-                // more sense for text files (which can always be immediately displayed).
-                WebFrameView *thisView = [self frameView];
-                NSView <WebDocumentView> *thisDocumentView = [thisView documentView];
-                ASSERT(thisDocumentView != nil);
-                [thisDocumentView setNeedsLayout:YES];
-                [thisDocumentView layout];
-                [thisDocumentView setNeedsDisplay:YES];
-            }
-            return;
-        }
-
-        case WebFrameStateProvisional:
-        case WebFrameStateComplete:
-        case WebFrameStateLayoutAcceptable:
-            return;
-    }
-    ASSERT_NOT_REACHED();
-}
-
 - (void)_makeDocumentView
 {
     NSView <WebDocumentView> *documentView = [_private->webFrameView _makeDocumentViewForDataSource:_private->dataSource];
@@ -679,7 +652,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     }
 }
 
-- (void)_transitionToCommitted: (NSDictionary *)pageCache
+- (void)_transitionToCommitted:(NSDictionary *)pageCache
 {
     ASSERT([self webView] != nil);
 
@@ -850,13 +823,44 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
         }
         
         case WebFrameStateCommittedPage:
-        case WebFrameStateLayoutAcceptable:
         case WebFrameStateComplete:
         default:
         {
             ASSERT_NOT_REACHED();
         }
     }
+}
+
+- (void)_commitProvisionalLoad:(NSDictionary *)pageCache
+{
+    WebFrameLoadType loadType = [self _loadType];
+    bool reload = loadType == WebFrameLoadTypeReload || loadType == WebFrameLoadTypeReloadAllowingStaleData;
+    
+    WebDataSource *provisionalDataSource = [self provisionalDataSource];
+    NSURLResponse *response = [provisionalDataSource response];
+
+    NSDictionary *headers = [response isKindOfClass:[NSHTTPURLResponse class]]
+        ? [(NSHTTPURLResponse *)response allHeaderFields] : nil;
+    
+    if (loadType != WebFrameLoadTypeReplace)
+        [self _closeOldDataSources];
+    
+    if (!pageCache)
+        [provisionalDataSource _makeRepresentation];
+    
+    [self _transitionToCommitted:pageCache];
+    
+    NSURL *baseURL = [[provisionalDataSource request] _webDataRequestBaseURL];        
+    NSURL *URL = baseURL ? baseURL : [response URL];
+    
+    [[self _bridge] openURL:URL
+                    reload:reload 
+                    contentType:[response MIMEType]
+                    refresh:[headers objectForKey:@"Refresh"]
+                    lastModified:(pageCache ? nil : WKGetNSURLResponseLastModifiedDate(response))
+                    pageCache:pageCache];
+    
+    [self _opened];
 }
 
 - (BOOL)_canCachePage
@@ -1100,7 +1104,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         }
         
         case WebFrameStateCommittedPage:
-        case WebFrameStateLayoutAcceptable:
         {
             WebDataSource *ds = [self dataSource];
             
@@ -2279,7 +2282,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         NSDictionary *pageCache = [[_private provisionalItem] pageCache];
         if ([pageCache objectForKey:WebCorePageCacheStateKey]){
             LOG (PageCache, "Restoring page from back/forward cache, %@\n", [[_private provisionalItem] URL]);
-            [_private->provisionalDataSource _startLoading: pageCache];
+            [_private->provisionalDataSource _loadFromPageCache:pageCache];
             return;
         }
     }

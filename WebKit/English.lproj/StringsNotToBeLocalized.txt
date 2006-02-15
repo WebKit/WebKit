@@ -190,7 +190,6 @@
 "WebElementTargetFrame"
 "WebFrameStateCommittedPage"
 "WebFrameStateComplete"
-"WebFrameStateLayoutAcceptable"
 "WebFrameStateProvisional"
 "WebHistoryAllItemsRemovedNotification"
 "WebHistoryDates"

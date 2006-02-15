@@ -131,9 +131,4 @@
     return [[dataSource response] suggestedFilename];
 }
 
-- (WebArchive *)archive
-{
-    return [dataSource webArchive];
-}
-
 @end

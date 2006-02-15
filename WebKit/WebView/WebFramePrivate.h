@@ -55,9 +55,6 @@ typedef enum {
     // which means the view will transition to use the new data source.
     WebFrameStateCommittedPage,
 
-    // This state indicates that it is reasonable to perform a layout.
-    WebFrameStateLayoutAcceptable,
-
     WebFrameStateComplete
 } WebFrameState;
 
@@ -88,8 +85,7 @@ extern NSString *WebPageCacheDocumentViewKey;
 - (void)_detachChildren;
 - (void)_closeOldDataSources;
 - (void)_setDataSource:(WebDataSource *)d;
-- (void)_transitionToCommitted:(NSDictionary *)pageCache;
-- (void)_transitionToLayoutAcceptable;
+- (void)_commitProvisionalLoad:(NSDictionary *)pageCache;
 - (WebFrameState)_state;
 - (void)_setState:(WebFrameState)newState;
 - (void)_checkLoadCompleteForThisFrame;

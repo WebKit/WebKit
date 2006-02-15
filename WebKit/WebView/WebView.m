@@ -566,10 +566,8 @@ static bool debugWidget = true;
     ASSERT(dataSource != nil);
     
     // This resource has completed, so check if the load is complete for all frames.
-    if (frame != nil) {
-        [frame _transitionToLayoutAcceptable];
+    if (frame != nil)
         [frame _checkLoadComplete];
-    }
 }
 
 - (void)_mainReceivedBytesSoFar:(unsigned)bytesSoFar fromDataSource:(WebDataSource *)dataSource complete: (BOOL)isComplete
@@ -588,13 +586,6 @@ static bool debugWidget = true;
         // of the main document.  Other resources may still be arriving.
         [dataSource _setPrimaryLoadComplete:YES];
         [frame _checkLoadComplete];
-    }
-    else {
-        // If the frame isn't complete it might be ready for a layout.  Perform that check here.
-        // Note that transitioning a frame to this state doesn't guarantee a layout, rather it
-        // just indicates that an early layout can be performed.
-        if ((int)bytesSoFar > timedLayoutSize)
-            [frame _transitionToLayoutAcceptable];
     }
 }
 

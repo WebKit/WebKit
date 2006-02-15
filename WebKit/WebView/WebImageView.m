@@ -28,6 +28,7 @@
 
 #import <WebKit/WebImageView.h>
 
+#import <WebKit/WebArchiver.h>
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDocument.h>
@@ -158,11 +159,12 @@
     NSSize imageSize = [[rep image] size];
     if (imageSize.width > 0 && imageSize.height > 0) {
         [self setNeedsLayout:YES];
+        [self layout];
         [self setNeedsDisplay:YES];
     }
 }
 
-- (void)setNeedsLayout: (BOOL)flag
+- (void)setNeedsLayout:(BOOL)flag
 {
     needsLayout = flag;
 }
@@ -208,9 +210,10 @@
 }
 
 - (BOOL)writeImageToPasteboard:(NSPasteboard *)pasteboard types:(NSArray *)types
-{    
+{
+    WebFrame *frame = [[self _web_parentWebFrameView] webFrame];
     if ([self haveCompleteImage]) {
-        [pasteboard _web_writeImage:[rep image] element:nil URL:[rep URL] title:nil archive:[rep archive] types:types];
+        [pasteboard _web_writeImage:[rep image] element:nil URL:[rep URL] title:nil archive:[WebArchiver archiveFrame:frame] types:types];
         return YES;
     }
     
@@ -219,7 +222,8 @@
 
 - (void)copy:(id)sender
 {
-    NSArray *types = [NSPasteboard _web_writableTypesForImageIncludingArchive:([rep archive] != nil)];
+    WebFrame *frame = [[self _web_parentWebFrameView] webFrame];
+    NSArray *types = [NSPasteboard _web_writableTypesForImageIncludingArchive:([WebArchiver archiveFrame:frame] != nil)];
     NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
     [pasteboard declareTypes:types owner:nil];
     [self writeImageToPasteboard:pasteboard types:types];
@@ -270,12 +274,13 @@
         return;
     }
     
+    WebFrame *frame = [[self _web_parentWebFrameView] webFrame];
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
     id source = [pasteboard _web_declareAndWriteDragImage:[rep image]
                                                   element:nil
                                                       URL:[rep URL]
                                                     title:nil
-                                                  archive:[rep archive]
+                                                  archive:[WebArchiver archiveFrame:frame]
                                                    source:self];
     
     WebView *webView = [self webView];
