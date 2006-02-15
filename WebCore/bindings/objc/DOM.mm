@@ -107,7 +107,7 @@ static ListenerMap *listenerMap;
 // Prevent creation of DOM objects by clients who just "[[xxx alloc] init]".
 - (id)init
 {
-    [NSException raise:NSGenericException format:@"+[%s init]: should never be used", [self class]->name];
+    [NSException raise:NSGenericException format:@"+[%@ init]: should never be used", NSStringFromClass([self class])];
     [self release];
     return nil;
 }
