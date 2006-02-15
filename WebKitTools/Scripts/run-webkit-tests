@@ -58,7 +58,7 @@ my $productDir = productDir();
 chdirWebKit();
 
 # Argument handling
-my $testSVGs = '';
+my $testOnlySVGs = '';
 my $pixelTests = '';
 my $checkLeaks = '';
 my $guardMalloc = '';
@@ -67,8 +67,9 @@ my $quiet = '';
 my $singly = 0;
 my $report10Slowest = 0;
 my $launchSafari = 1;
+my $testResultsDirectory = "/tmp/layout-test-results";
 
-GetOptions('svg' => \$testSVGs, 
+GetOptions('svg' => \$testOnlySVGs, 
     'pixel-tests|p' => \$pixelTests,
     'leaks|l' => \$checkLeaks,
     'guard-malloc|g' => \$guardMalloc,
@@ -76,12 +77,13 @@ GetOptions('svg' => \$testSVGs,
     'quiet|q' => \$quiet,
     'singly|1' => \$singly,
     'slowest' => \$report10Slowest,
-    'launch-safari!' => \$launchSafari);
+    'launch-safari!' => \$launchSafari,
+    'results-directory|o=s' => \$testResultsDirectory);
 
 my $dumpToolName = "DumpRenderTree";
 my $result = system "WebKitTools/Scripts/build-dumprendertree", @ARGV;
 exit $result if $result;
-if ($testSVGs) {
+if ($testOnlySVGs) {
     $pixelTests = 1; # Pixel tests are always on for SVG.
 }
 
@@ -91,23 +93,23 @@ die "can't find executable $dumpToolName (looked in $productDir)\n" if !-x $tool
 die "can't find executable $imageDiffTool (looked in $productDir)\n" if $pixelTests && !-x $imageDiffTool;
 
 checkFrameworks();
-my $haveSVGSupport = checkWebCoreSVGSupport($testSVGs);
+my $haveSVGSupport = checkWebCoreSVGSupport($testOnlySVGs);
 
 my $layoutTestsName = "LayoutTests";
-if ($testSVGs) {
+if ($testOnlySVGs) {
     $layoutTestsName = "LayoutTests/svg";
 }
 
 my $workingDir = getcwd();
 my $testDirectory = "$workingDir/$layoutTestsName";
-my $testResultsDirectory = "/tmp/layout-test-results";
 my $testResults = "$testResultsDirectory/results.html";
+print "Running tests from $testDirectory\n";
 
 my @tests = ();
 
 my $prunePart = "\\( -name resources \\! -prune \\)";
 my $extensionPart = "-name '*.html' -or -name '*.xml' -or -name '*.xhtml'";
-if ($testSVGs) {
+if ($testOnlySVGs) {
     $extensionPart = "-name '*.svg' -or -name '*.xml'";
 } elsif ($haveSVGSupport) { 
     $extensionPart .= " -or -name '*.svg'";

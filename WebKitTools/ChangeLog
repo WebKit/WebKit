@@ -1,3 +1,9 @@
+2006-02-14  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by adele.
+
+        * Scripts/run-webkit-tests: added --results-directory (-o) option
+
 2006-02-09  Eric Seidel  <eseidel@apple.com>
 
         Rubber-stamped by mjs.
