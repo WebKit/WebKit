@@ -1,3 +1,7 @@
+2006-02-15  Darin Adler  <darin@apple.com>
+
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.
+
 2006-02-15  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Anders.

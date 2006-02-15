@@ -465,7 +465,7 @@ WebCoreSupport/WebTextRendererFactory.m:"Urdu"
 WebInspector/WebInspector.m
 WebInspector/WebInspectorPanel.m:"control"
 WebInspector/WebInspectorPanel.m:"resize"
-WebView/WebDataSource.m:"Refresh"
+WebView/WebFrame.m:"Refresh"
 WebView/WebHTMLView.m:"%0.fpx"
 WebView/WebHTMLView.m:"'%@'"
 WebView/WebHTMLView.m:"Version:"
