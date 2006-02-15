@@ -170,7 +170,7 @@ bool PNGImageDecoder::isSizeAvailable() const
 
 RGBA32Buffer* PNGImageDecoder::frameBufferAtIndex(size_t index)
 {
-    if (!index)
+    if (index)
         return 0;
 
     if (m_frameBufferCache.isEmpty())

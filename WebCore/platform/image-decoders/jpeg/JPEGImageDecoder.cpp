@@ -145,7 +145,7 @@ bool JPEGImageDecoder::isSizeAvailable() const
 
 RGBA32Buffer* JPEGImageDecoder::frameBufferAtIndex(size_t index)
 {
-    if (!index)
+    if (index)
         return 0;
 
     if (m_frameBufferCache.isEmpty())
