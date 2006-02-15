@@ -130,7 +130,7 @@ bool XSLStyleSheetImpl::parseString(const DOMString &string, bool strict)
                                     XML_PARSE_NOCDATA|XML_PARSE_DTDATTR|XML_PARSE_NOENT);
     loadChildSheets();
     setLoaderForLibXMLCallbacks(0);
-    return newDoc;
+    return m_stylesheetDoc;
 }
 
 void XSLStyleSheetImpl::loadChildSheets()

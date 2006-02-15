@@ -1,5 +1,12 @@
 2006-02-14  Eric Seidel  <eseidel@apple.com>
 
+        Fix build failure from last minute edit.
+
+        * khtml/xsl/xsl_stylesheetimpl.cpp:
+        (WebCore::XSLStyleSheetImpl::parseString):
+
+2006-02-14  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by darin.
 
         Add incremental parsing support to XMLTokenizer.
