@@ -4054,24 +4054,4 @@ static NSView *viewForElement(DOMElement *element)
     [NSApp sendAction:[popUp action] to:[popUp target] from:popUp];
 }
 
-- (NSArray *)_optionLabels
-{    
-    // FIXME 4197997: This code should work, and when it does we can eliminate this method entirely
-    // and just have the only current caller (in Safari autofill code) embed this code directly.
-    // But at the moment -[DOMHTMLSelectElement options] always returns an empty collection.
-#if 0
-    DOMHTMLOptionsCollection *options = [self options];
-    NSMutableArray *optionLabels = [NSMutableArray array];
-    int itemCount = [options length];
-    int itemIndex;
-    for (itemIndex = 0; itemIndex < itemCount; ++itemIndex) {
-        [optionLabels addObject:[(DOMHTMLOptionElement *)[options item:itemIndex] label]];
-    }
-    return optionLabels;
-#endif
-    
-    // Due to the DOM API brokenness, for now we have to get the titles from the view
-    return [(NSPopUpButton *)viewForElement(self) itemTitles];
-}
-
 @end

@@ -74,7 +74,6 @@
 // and these will be deleted.
 @interface DOMHTMLSelectElement(FormsAutoFillTransition)
 - (void)_activateItemAtIndex:(int)index;
-- (NSArray *)_optionLabels;
 @end
 
 // BEGIN PENDING PUBLIC WEB INSPECTOR APIS

@@ -1,3 +1,12 @@
+2006-02-14  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        removed -[DOMHTMLSelectElement _optionLabels], formerly used only by Safari, now unused.
+
+        * bindings/objc/DOMHTML.mm:
+        * bindings/objc/DOMPrivate.h:
+
 2006-02-14  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Justin.
