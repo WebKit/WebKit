@@ -219,7 +219,7 @@
 				"$(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE).h",
 				"$(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE).cpp",
 			);
-			script = "bison -d -p kjsyy \"$INPUT_FILE_PATH\" -o \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.cpp\"\ncat \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.cpp.h\" \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.hpp\" > \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.h\" 2> /dev/null || echo -n";
+			script = "bison -d -p kjsyy \"$INPUT_FILE_PATH\" -o \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.cpp\"\ncat \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.cpp.h\" \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.hpp\" > \"$DERIVED_FILE_DIR/$INPUT_FILE_BASE.h\" 2> /dev/null || printf \"\"";
 		};
 /* End PBXBuildRule section */
 

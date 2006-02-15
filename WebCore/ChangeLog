@@ -1,3 +1,12 @@
+2006-02-14  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Justin.
+
+        Fixed <rdar://problem/4415050> STD: WebCore build steps use echo -n, which will change
+        behavior due to POSIX version of sh
+
+        * WebCore.xcodeproj/project.pbxproj: removed the use of echo -n, replaced with printf ""
+
 2006-02-14  Darin Adler  <darin@apple.com>
 
         Rubber-stamped by Eric.
