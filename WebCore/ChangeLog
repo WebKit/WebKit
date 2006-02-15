@@ -1,3 +1,12 @@
+2006-02-15  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Commit change forgotten after editing directory move.
+
+        * editing/markup.cpp:
+        (khtml::startMarkup): add support for serializing DOCTYPEs in xml
+
 2006-02-15  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Maciej.
