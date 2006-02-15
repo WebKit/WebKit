@@ -222,24 +222,7 @@
 
 - (void)_setLoading:(BOOL)loading
 {
-    ASSERT_ARG(loading, loading == NO || loading == YES);
-
-    if (_private->loading == loading) {
-        return;
-    }
-    
     _private->loading = loading;
-    
-    if (loading) {
-        [self retain];
-        [[self _webView] retain];
-    } else {
-        [[self _webView] release];
-        // FIXME: It would be cleanest to set webView to nil here. Keeping a non-retained reference
-        // to the WebView is dangerous. But WebSubresourceLoader actually depends on this non-retained
-        // reference when starting loads after the data source has stoppped loading.
-        [self release];
-    }
 }
 
 - (void)_updateLoading

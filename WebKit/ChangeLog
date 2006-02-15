@@ -1,3 +1,14 @@
+2006-02-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+        
+        - remove some voodoo code
+
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _setLoading:]): Removed useless ref/deref of self and WebView.
+        A WebDataSource cannot be loading unless it is still connected to the WebView that
+        owns it and retained by it, because getting disconnected stops loading.
+
 2006-02-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.
