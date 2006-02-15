@@ -449,16 +449,27 @@ typedef enum {
 class KCanvasFEDisplacementMap : public KCanvasFilterEffect
 {
 public:
+    KCanvasFEDisplacementMap() : m_xChannelSelector(CS_RED), m_yChannelSelector(CS_RED), m_scale(0) {}
+    
     QString in2() const { return m_in2; }
     void setIn2(const QString &in2) { m_in2 = in2; }
+    
+    KCChannelSelectorType xChannelSelector() const { return m_xChannelSelector; }
+    void setXChannelSelector(const KCChannelSelectorType xChannelSelector) { m_xChannelSelector = xChannelSelector; }
+    
+    KCChannelSelectorType yChannelSelector() const { return m_yChannelSelector; }
+    void setYChannelSelector(const KCChannelSelectorType yChannelSelector) { m_yChannelSelector = yChannelSelector; }
 
+    float scale() const { return m_scale; }
+    void setScale(float scale) { m_scale = scale; }
+    
     QTextStream &externalRepresentation(QTextStream &) const;
     
 private:
-    float m_scale;
-    KCChannelSelectorType m_XChannelSelector;
-    KCChannelSelectorType m_YChannelSelector;
     QString m_in2;
+    KCChannelSelectorType m_xChannelSelector;
+    KCChannelSelectorType m_yChannelSelector;
+    float m_scale;
 };
 
 class KCanvasFEFlood : public KCanvasFilterEffect

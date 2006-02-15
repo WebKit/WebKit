@@ -1,3 +1,20 @@
+2006-02-15  Oliver Hunt  <ojh16@student.canterbury.ac.nz>
+
+        Reviewed by eseidel.  Landed by eseidel.
+        
+        Implemented feDisplacementMap.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5862
+        
+        * svg/W3C-SVG-1.1/filters-displace-01-f-expected.checksum:
+        * svg/W3C-SVG-1.1/filters-displace-01-f-expected.png:
+        * svg/W3C-SVG-1.1/filters-displace-01-f-expected.txt:
+        * svg/custom/feDisplacementMap-01.svg: Added.
+        * svg/custom/feDisplacementMap-01-expected.checksum: Added.
+        * svg/custom/feDisplacementMap-01-expected.png: Added.
+        * svg/custom/feDisplacementMap-01-expected.txt: Added.
+        * svg/custom/resources/feDisplacementMap-01-displace.png: Added.
+        * svg/custom/resources/feDisplacementMap-01-source.png: Added.
+
 2006-02-15  Eric Seidel  <eseidel@apple.com>
 
         Update missing result from last commit.

@@ -439,6 +439,11 @@
 		93F19B1608245E59001E9ABC /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8216299029F4FB501000131 /* JavaScriptCore.framework */; };
 		93F19B1708245E59001E9ABC /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F1D31A0558CC5C00821BC0 /* libicucore.dylib */; };
 		93F19B1808245E59001E9ABC /* libxslt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 840633070731A77200DB1FD1 /* libxslt.dylib */; };
+		A7638A8B09958EA50007E14F /* WKDisplacementMapFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = A7638A8909958EA50007E14F /* WKDisplacementMapFilter.h */; };
+		A7638A8C09958EA50007E14F /* WKDisplacementMapFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = A7638A8A09958EA50007E14F /* WKDisplacementMapFilter.m */; };
+		A7638A92099592C30007E14F /* WKDisplacementMapFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = A7638A91099592C30007E14F /* WKDisplacementMapFilter.cikernel */; };
+		A7638A970995965D0007E14F /* SVGFEDisplacementMapElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A7638A950995965D0007E14F /* SVGFEDisplacementMapElementImpl.h */; };
+		A7638A980995965D0007E14F /* SVGFEDisplacementMapElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7638A960995965D0007E14F /* SVGFEDisplacementMapElementImpl.cpp */; };
 		A81369CA097374F600D74463 /* HTMLIsIndexElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369AE097374F500D74463 /* HTMLIsIndexElementImpl.h */; };
 		A81369CB097374F600D74463 /* HTMLIsIndexElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369AF097374F500D74463 /* HTMLIsIndexElementImpl.cpp */; };
 		A81369CC097374F600D74463 /* HTMLInputElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369B0097374F500D74463 /* HTMLInputElementImpl.h */; };
@@ -1305,6 +1310,11 @@
 		93F19B1908245E59001E9ABC /* Info.plist */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93F19B1A08245E5A001E9ABC /* WebCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		93F1D31A0558CC5C00821BC0 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = /usr/lib/libicucore.dylib; sourceTree = "<absolute>"; };
+		A7638A8909958EA50007E14F /* WKDisplacementMapFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKDisplacementMapFilter.h; sourceTree = "<group>"; };
+		A7638A8A09958EA50007E14F /* WKDisplacementMapFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKDisplacementMapFilter.m; sourceTree = "<group>"; };
+		A7638A91099592C30007E14F /* WKDisplacementMapFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WKDisplacementMapFilter.cikernel; sourceTree = "<group>"; };
+		A7638A950995965D0007E14F /* SVGFEDisplacementMapElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGFEDisplacementMapElementImpl.h; sourceTree = "<group>"; };
+		A7638A960995965D0007E14F /* SVGFEDisplacementMapElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEDisplacementMapElementImpl.cpp; sourceTree = "<group>"; };
 		A810E39308A4160F00333D98 /* KCanvasTreeDebug.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KCanvasTreeDebug.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A810E39408A4160F00333D98 /* KCanvasTreeDebug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasTreeDebug.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8122C7E08D564B000844FA3 /* GetSVGDocument.idl */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = GetSVGDocument.idl; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2843,6 +2853,8 @@
 				A8C0F842089701F300BA5114 /* SVGEllipseElementImpl.h */,
 				A8C0F845089701F300BA5114 /* SVGExternalResourcesRequiredImpl.cpp */,
 				A8C0F846089701F300BA5114 /* SVGExternalResourcesRequiredImpl.h */,
+				A7638A950995965D0007E14F /* SVGFEDisplacementMapElementImpl.h */,
+				A7638A960995965D0007E14F /* SVGFEDisplacementMapElementImpl.cpp */,
 				A8C0F847089701F300BA5114 /* SVGFEBlendElementImpl.cpp */,
 				A8C0F848089701F300BA5114 /* SVGFEBlendElementImpl.h */,
 				A8C0F849089701F300BA5114 /* SVGFEColorMatrixElementImpl.cpp */,
@@ -3113,6 +3125,9 @@
 		A8C3291F093BB732000B9CAC /* filters */ = {
 			isa = PBXGroup;
 			children = (
+				A7638A8909958EA50007E14F /* WKDisplacementMapFilter.h */,
+				A7638A8A09958EA50007E14F /* WKDisplacementMapFilter.m */,
+				A7638A91099592C30007E14F /* WKDisplacementMapFilter.cikernel */,
 				A8C32920093BB732000B9CAC /* WKArithmeticFilter.cikernel */,
 				A8C32921093BB732000B9CAC /* WKArithmeticFilter.h */,
 				A8C32922093BB732000B9CAC /* WKArithmeticFilter.m */,
@@ -4355,6 +4370,8 @@
 				BC6B7ECF0998AC7F0052867B /* ImageSource.h in Headers */,
 				6582A14009999CD600BEEB6D /* QString.h in Headers */,
 				6582A16009999D6D00BEEB6D /* PDFDocumentImage.h in Headers */,
+				A7638A8B09958EA50007E14F /* WKDisplacementMapFilter.h in Headers */,
+				A7638A970995965D0007E14F /* SVGFEDisplacementMapElementImpl.h in Headers */,
 				93309DD7099E64920056E581 /* AppendNodeCommand.h in Headers */,
 				93309DD9099E64920056E581 /* ApplyStyleCommand.h in Headers */,
 				93309DDB099E64920056E581 /* BreakBlockquoteCommand.h in Headers */,
@@ -4569,6 +4586,7 @@
 				BCEA479C097CAAC80094C9E4 /* cssproperties.in in Resources */,
 				BCEA479F097CAAC80094C9E4 /* cssvalues.in in Resources */,
 				BCC8CFCD0986CD2400140BF2 /* ColorData.gperf in Resources */,
+				A7638A92099592C30007E14F /* WKDisplacementMapFilter.cikernel in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5466,6 +5484,8 @@
 				6582A17809999EA000BEEB6D /* QStringMac.mm in Sources */,
 				1A2154EE099A11A800343DF8 /* JSDOMCore.cpp in Sources */,
 				1A2154EF099A11A800343DF8 /* JSDOMEvents.cpp in Sources */,
+				A7638A8C09958EA50007E14F /* WKDisplacementMapFilter.m in Sources */,
+				A7638A980995965D0007E14F /* SVGFEDisplacementMapElementImpl.cpp in Sources */,
 				93309DD6099E64920056E581 /* AppendNodeCommand.cpp in Sources */,
 				93309DD8099E64920056E581 /* ApplyStyleCommand.cpp in Sources */,
 				93309DDA099E64920056E581 /* BreakBlockquoteCommand.cpp in Sources */,

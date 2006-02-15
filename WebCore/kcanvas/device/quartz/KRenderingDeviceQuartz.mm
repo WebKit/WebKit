@@ -257,7 +257,7 @@ KCanvasFilterEffect *KRenderingDeviceQuartz::createFilterEffect(const KCFilterEf
     case FE_COMPOSITE: return new KCanvasFECompositeQuartz();
 //  case FE_CONVOLVE_MATRIX: 
     case FE_DIFFUSE_LIGHTING: return new KCanvasFEDiffuseLightingQuartz();
-//  case FE_DISPLACEMENT_MAP: 
+    case FE_DISPLACEMENT_MAP: return new KCanvasFEDisplacementMapQuartz();
     case FE_FLOOD: return new KCanvasFEFloodQuartz();
     case FE_GAUSSIAN_BLUR: return new KCanvasFEGaussianBlurQuartz();
     case FE_IMAGE: return new KCanvasFEImageQuartz();

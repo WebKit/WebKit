@@ -32,6 +32,7 @@
 #import "KRenderingDeviceQuartz.h"
 #import "QuartzSupport.h"
 #import "KWQExceptions.h"
+#import "WKDisplacementMapFilter.h"
 #import "WKDiffuseLightingFilter.h"
 #import "WKSpecularLightingFilter.h"
 #import "WKSpotLightFilter.h"
@@ -390,6 +391,40 @@ CIFilter *KCanvasFECompositeQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilte
         [filter setValue:[NSNumber numberWithFloat:k3()] forKey:@"inputK3"];
         [filter setValue:[NSNumber numberWithFloat:k4()] forKey:@"inputK4"];
     }
+    FE_QUARTZ_OUTPUT_RETURN;
+}
+
+static inline CIVector *getVectorForChannel(int idx){
+    switch(idx){
+    case 0:
+        return [CIVector vectorWithX:1.0 Y:0.0 Z:0.0 W:0.0];
+    case 1:
+        return [CIVector vectorWithX:0.0 Y:1.0 Z:0.0 W:0.0];            
+    case 2:
+        return [CIVector vectorWithX:0.0 Y:0.0 Z:1.0 W:0.0];
+    case 3:
+        return [CIVector vectorWithX:0.0 Y:0.0 Z:0.0 W:1.0];
+    default:
+        return [CIVector vectorWithX:0.0 Y:0.0 Z:0.0 W:0.0];
+    }
+}
+
+CIFilter *KCanvasFEDisplacementMapQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) const
+{
+    CIFilter *filter = nil;
+    KWQ_BLOCK_EXCEPTIONS;
+    [WKDisplacementMapFilter class];
+    filter = [CIFilter filterWithName:@"WKDisplacementMapFilter"];    
+    [filter setDefaults];
+    CIImage *inputImage = quartzFilter->inputImage(this);
+    CIImage *displacementMap = quartzFilter->imageForName(in2());
+    FE_QUARTZ_CHECK_INPUT(inputImage);
+    FE_QUARTZ_CHECK_INPUT(displacementMap);
+    [filter setValue:inputImage forKey:@"inputImage"];
+    [filter setValue:displacementMap forKey:@"inputDisplacementMap"];
+    [filter setValue:getVectorForChannel(xChannelSelector()) forKey:@"inputXChannelSelector"];
+    [filter setValue:getVectorForChannel(yChannelSelector()) forKey:@"inputYChannelSelector"];
+    [filter setValue:[NSNumber numberWithFloat:scale()] forKey:@"inputScale"];
     FE_QUARTZ_OUTPUT_RETURN;
 }
 

@@ -20,7 +20,7 @@ feComponentTransfer
 feComposite
 #feConvolveMatrix
 feDiffuseLighting
-#feDisplacementMap
+feDisplacementMap
 feDistantLight
 feFlood
 feFuncA

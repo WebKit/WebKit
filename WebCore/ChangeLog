@@ -1,3 +1,50 @@
+2006-02-15  Oliver Hunt  <ojh16@student.canterbury.ac.nz>
+
+        Reviewed by eseidel.  Landed by eseidel.
+        
+        Implemented feDisplacementMap.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=5862
+
+        Test: svg/custom/feDisplacementMap-01.svg
+
+        * WebCore.xcodeproj/project.pbxproj: added files.
+        * kcanvas/KCanvasFilters.cpp:
+        (WebCore::KCanvasFEDisplacementMap::externalRepresentation):
+        * kcanvas/KCanvasFilters.h:
+        (WebCore::KCanvasFEDisplacementMap::KCanvasFEDisplacementMap):
+        (WebCore::KCanvasFEDisplacementMap::xChannelSelector):
+        (WebCore::KCanvasFEDisplacementMap::setXChannelSelector):
+        (WebCore::KCanvasFEDisplacementMap::yChannelSelector):
+        (WebCore::KCanvasFEDisplacementMap::setYChannelSelector):
+        (WebCore::KCanvasFEDisplacementMap::scale):
+        (WebCore::KCanvasFEDisplacementMap::setScale):
+        * kcanvas/device/quartz/KCanvasFilterQuartz.h:
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (WebCore::getVectorForChannel):
+        (WebCore::KCanvasFEDisplacementMapQuartz::getCIFilter):
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        (WebCore::KRenderingDeviceQuartz::createFilterEffect):
+        * kcanvas/device/quartz/filters/WKDisplacementMapFilter.cikernel: Added.
+        * kcanvas/device/quartz/filters/WKDisplacementMapFilter.h: Added.
+        * kcanvas/device/quartz/filters/WKDisplacementMapFilter.m: Added.
+        (+[WKDisplacementMapFilter initialize]):
+        (+[WKDisplacementMapFilter filterWithName:]):
+        (-[WKDisplacementMapFilter init]):
+        (-[WKDisplacementMapFilter outputImage]):
+        * ksvg2/svg/SVGFEDisplacementMapElementImpl.cpp: Added.
+        (SVGFEDisplacementMapElementImpl::SVGFEDisplacementMapElementImpl):
+        (SVGFEDisplacementMapElementImpl::~SVGFEDisplacementMapElementImpl):
+        (SVGFEDisplacementMapElementImpl::in1):
+        (SVGFEDisplacementMapElementImpl::in2):
+        (SVGFEDisplacementMapElementImpl::xChannelSelector):
+        (SVGFEDisplacementMapElementImpl::yChannelSelector):
+        (SVGFEDisplacementMapElementImpl::scale):
+        (SVGFEDisplacementMapElementImpl::stringToChannel):
+        (SVGFEDisplacementMapElementImpl::parseMappedAttribute):
+        (SVGFEDisplacementMapElementImpl::filterEffect):
+        * ksvg2/svg/SVGFEDisplacementMapElementImpl.h: Added.
+        * ksvg2/svg/svgtags.in:
+
 2006-02-15  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
