@@ -1,3 +1,17 @@
+2006-02-14  Adele Peterson  <adele@apple.com>
+
+        Tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=6815
+        Calculate correct width for new text fields
+
+        * fast/forms/input-appearance-width.html: Added.
+        * fast/forms/input-appearance-width-expected.txt: Added.
+        * fast/forms/input-appearance-width-expected.png: Added.
+        * fast/forms/input-appearance-width-expected.checksum: Added.
+        * fast/forms/input-appearance-minWidth.html: Added.
+        * fast/forms/input-appearance-minWidth-expected.txt: Added.
+        * fast/forms/input-appearance-minWidth-expected.png: Added.
+        * fast/forms/input-appearance-minWidth-expected.checksum: Added.
+
 2006-02-14  John Sullivan  <sullivan@apple.com>
 
         One more of the same (this one tests list boxes instead of pop-up menus)

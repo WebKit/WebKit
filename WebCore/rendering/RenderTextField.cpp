@@ -78,9 +78,6 @@ RenderStyle* RenderTextField::createDivStyle(RenderStyle* startStyle)
     divStyle->setWhiteSpace(NOWRAP);
     divStyle->setUserModify(READ_WRITE);
     
-    // FIXME: Remove this once we calculate size correctly.
-    divStyle->setWidth(Length(140, Fixed));
-    
     return divStyle;
 }
 
@@ -171,6 +168,21 @@ void RenderTextField::subtreeHasChanged()
     HTMLInputElementImpl* input = static_cast<HTMLInputElementImpl*>(element());
     if (input && m_div)
         input->setValueFromRenderer(m_div->textContent());
+}
+
+void RenderTextField::calcMinMaxWidth()
+{
+    RenderBlock::calcMinMaxWidth();
+
+    // Figure out how big a text field needs to be for a given number of characters
+    // (using "w" as the nominal character).
+    int size = static_cast<HTMLInputElementImpl*>(element())->size();
+    if (size <= 0)
+        size = 20;
+    const QFontMetrics &fm = style()->fontMetrics();
+    m_maxWidth = fm.width("w", 0, 0, 1) * size + paddingLeft() + paddingRight() + borderLeft() + borderRight();
+    
+    setMinMaxKnown();
 }
 
 }

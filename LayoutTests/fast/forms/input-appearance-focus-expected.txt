@@ -11,13 +11,13 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x18
         RenderText {TEXT} at (0,0) size 755x18
           text run at (0,0) width 755: "This test uses the new text field to test focus() and blur() and to make sure that onFocus and onBlur events fire correctly."
-      RenderBlock {P} at (0,34) size 784x18
-        RenderTextField {INPUT} at (0,3) size 140x13
-        RenderText {TEXT} at (140,0) size 4x18
-          text run at (140,0) width 4: " "
-        RenderTextField {INPUT} at (144,3) size 140x13
+      RenderBlock {P} at (0,34) size 784x23
+        RenderTextField {INPUT} at (2,2) size 186x19
+        RenderText {TEXT} at (190,2) size 4x18
+          text run at (190,2) width 4: " "
+        RenderTextField {INPUT} at (196,2) size 186x19
         RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,68) size 784x72
+      RenderBlock {DIV} at (0,73) size 784x72
         RenderBR {BR} at (0,0) size 0x18
         RenderText {TEXT} at (0,18) size 322x18
           text run at (0,18) width 322: "Test Passed. Text field 1's onFocus event has fired."
@@ -27,13 +27,13 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,0) size 0x0
         RenderText {TEXT} at (0,54) size 322x18
           text run at (0,54) width 322: "Test Passed. Text field 2's onFocus event has fired."
-      RenderBlock {P} at (0,156) size 784x0
-layer at (8,45) size 140x13
-  RenderBlock {DIV} at (0,0) size 140x13
+      RenderBlock {P} at (0,161) size 784x0
+layer at (13,47) size 180x13
+  RenderBlock {DIV} at (3,3) size 180x13
     RenderText {TEXT} at (0,0) size 82x13
       text run at (0,0) width 82: "My Text Field 1"
-layer at (152,45) size 140x13
-  RenderBlock {DIV} at (0,0) size 140x13
+layer at (207,47) size 180x13
+  RenderBlock {DIV} at (3,3) size 180x13
     RenderText {TEXT} at (0,0) size 82x13
       text run at (0,0) width 82: "My Text Field 2"
 selection start: position 0 of child 0 {TEXT} of document

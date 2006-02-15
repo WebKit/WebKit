@@ -1,3 +1,27 @@
+2006-02-14  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6815
+        Calculate correct width for new text fields
+
+        Tests:
+        fast/forms/input-appearance-width.html
+        fast/forms/input-appearance-minWidth.html
+
+        * rendering/RenderTextField.cpp:
+        (WebCore::RenderTextField::createDivStyle): Remove fixed width for text field.
+        (WebCore::RenderTextField::calcMinMaxWidth): Added.  This calls RenderBlock::calcMinMaxWidth and 
+         then uses the size attribute to determine what the maxWidth should be.
+        * rendering/RenderTextField.h: Added calcMinMaxWidth.
+        * rendering/render_theme_mac.h: Added adjustTextFieldStyle.
+        * rendering/render_theme_mac.mm: 
+        (WebCore::RenderThemeMac::adjustRepaintRect): Remove inflation of rect.  This is no longer necessary.
+        (WebCore::RenderThemeMac::paintTextField): ditto.
+        (WebCore::RenderThemeMac::setTextFieldCellState): change true to YES.
+        (WebCore::RenderThemeMac::adjustTextFieldStyle): Added. This is the temporary home of the code to set the 
+         right padding and margins.  When we flip the switch, this will go in html4.css.
+
 2006-02-14  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Hatcher.

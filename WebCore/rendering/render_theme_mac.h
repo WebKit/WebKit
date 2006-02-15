@@ -60,6 +60,7 @@ protected:
     virtual void setButtonSize(RenderStyle* style) const;
     
     virtual bool paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
+    virtual void adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyle* style, ElementImpl* e) const;
 
 private:
     IntRect inflateRect(const IntRect& r, const IntSize& size, const int* margins) const;

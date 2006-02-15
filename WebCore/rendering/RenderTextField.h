@@ -49,6 +49,7 @@ public:
     RenderTextField(NodeImpl* node);
     virtual ~RenderTextField();
 
+    virtual void calcMinMaxWidth();
     virtual const char *renderName() const { return "RenderTextField"; }
     virtual void removeLeftoverAnonymousBoxes() {};
     virtual void setStyle(RenderStyle* style);

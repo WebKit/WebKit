@@ -41,9 +41,7 @@ enum {
     bottomMargin,
     leftMargin
 };
-
-static const int textFieldMargins[4] = { 3, 4, 3, 4 };
-
+    
 RenderTheme* theme()
 {
     static RenderThemeMac macTheme;
@@ -93,10 +91,6 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject* o, IntRect& r)
         case TextFieldAppearance:
             // Since we query the prototype cell, we need to update its state to match.
             setTextFieldCellState(o, r);
-            
-            // We inflate the rect as needed to account for padding.
-            // We don't consider this part of the bounds of the control in WebKit.
-            r = inflateRect(r, r.size(), textFieldMargins);
             break;
         default:
             break;
@@ -527,10 +521,8 @@ bool RenderThemeMac::paintTextField(RenderObject* o, const RenderObject::PaintIn
 {
     // Initialize text field and update state.
     setTextFieldCellState(o, r);
-    
-    IntRect inflatedRect = inflateRect(r, r.size(), textFieldMargins);
-    
-    [textField drawWithFrame:NSRect(inflatedRect) inView:o->canvas()->view()->getDocumentView()];
+        
+    [textField drawWithFrame:NSRect(r) inView:o->canvas()->view()->getDocumentView()];
     [textField setControlView: nil];
     
     return false;
@@ -543,9 +535,25 @@ void RenderThemeMac::setTextFieldCellState(const RenderObject* o, const IntRect&
         [textField setBezeled:YES];
         [textField setBezelStyle:NSTextFieldSquareBezel];
         [textField setDrawsBackground:NO];
-        [textField setEditable:true];
+        [textField setEditable:YES];
     }
     updateEnabledState(textField, o);
+}
+
+void RenderThemeMac::adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyle* style, ElementImpl* e) const
+{
+    // FIXME: If the style has a border, then turn off the aqua appearance.
+    
+    // FIXME: This should be in html4.css when we flip the switch
+    style->setPaddingTop(Length(3, Fixed));
+    style->setPaddingBottom(Length(3, Fixed));
+    style->setPaddingRight(Length(3, Fixed));
+    style->setPaddingLeft(Length(3, Fixed));
+    
+    style->setMarginTop(Length(2, Fixed));
+    style->setMarginBottom(Length(2, Fixed));
+    style->setMarginLeft(Length(2, Fixed));
+    style->setMarginRight(Length(2, Fixed));
 }
 
 }
