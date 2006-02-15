@@ -1,5 +1,11 @@
 2006-02-15  Maciej Stachowiak  <mjs@apple.com>
 
+        Rubber stamped by Anders.
+
+        * WebView/WebControllerPolicyHandlerDelegate.h: Removed.
+
+2006-02-15  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Anders.
         
         - remove some voodoo code
