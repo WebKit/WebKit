@@ -1,0 +1,5 @@
+Test for bug 6452 - KURL::appendEscapingBadChars() should never escape percent characters.
+
+SUCCESS
+
+

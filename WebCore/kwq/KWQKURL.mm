@@ -818,11 +818,7 @@ static void appendEscapingBadChars(char*& buffer, const char *strStart, size_t l
     while (str < strEnd) {
         unsigned char c = *str++;
         if (isBadChar(c)) {
-            if (c == '%' && strEnd - str >= 2 && isHexDigit(str[0]) && isHexDigit(str[1])) {
-                *p++ = c;
-                *p++ = *str++;
-                *p++ = *str++;
-            } else if (c == '?') {
+            if (c == '%' || c == '?') {
                 *p++ = c;
             } else {
                 *p++ = '%';

@@ -1,3 +1,14 @@
+2006-02-15  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Maciej.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6452
+         KURL::appendEscapingBadChars() doesn't know about %u-escaping.
+
+        * fast/encoding/resources/%25%u0435 0 %xx%%%ulike.html: Added.
+        * fast/encoding/percent-escaping-expected.txt: Added.
+        * fast/encoding/percent-escaping.html: Added.
+
 2006-02-14  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

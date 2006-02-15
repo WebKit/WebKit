@@ -1,3 +1,17 @@
+2006-02-15  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6452
+         KURL::appendEscapingBadChars() doesn't know about %u-escaping.
+
+        Test case: fast/encoding/percent-escaping.html
+
+        * kwq/KWQKURL.mm: (appendEscapingBadChars):
+        Rather than adding support for %u, remove the existing
+        "do what I mean" escaping of percent characters that do not
+        look like a result of prior escaping.
+
 2006-02-14  Eric Seidel  <eseidel@apple.com>
 
         Fix build failure from last minute edit.
