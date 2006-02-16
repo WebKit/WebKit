@@ -180,8 +180,8 @@
 		932F5BC90822A1C700736975 /* c_utility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5182A4FB06010F8200CBD2F2 /* c_utility.cpp */; };
 		932F5BCA0822A1C700736975 /* c_class.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5182A53A06012C3000CBD2F2 /* c_class.cpp */; };
 		932F5BCB0822A1C700736975 /* npruntime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5199B1BD061B65BC0070C006 /* npruntime.cpp */; };
-		932F5BCE0822A1C700736975 /* WebScriptObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51863FC406542D3100E9E8DD /* WebScriptObject.mm */; };
-		932F5BCF0822A1C700736975 /* jni_objc.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517EF37306D695930007C1BA /* jni_objc.mm */; };
+		932F5BCE0822A1C700736975 /* WebScriptObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51863FC406542D3100E9E8DD /* WebScriptObject.mm */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
+		932F5BCF0822A1C700736975 /* jni_objc.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517EF37306D695930007C1BA /* jni_objc.mm */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
 		932F5BD00822A1C700736975 /* softlinking.c in Sources */ = {isa = PBXBuildFile; fileRef = 8442A376074175C2000AE2ED /* softlinking.c */; };
 		932F5BD30822A1C700736975 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6560A4CF04B3B3E7008AE952 /* CoreFoundation.framework */; };
 		932F5BD40822A1C700736975 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6560A63D04B3B69F008AE952 /* CoreServices.framework */; };
