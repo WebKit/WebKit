@@ -1,3 +1,14 @@
+2006-02-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin, landed by ap.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7274
+          Assertion failure in TimerBase::checkHeapIndex() (Timer.cpp:199) !timerHeap->isEmpty()
+
+        * platform/Timer.cpp:
+        (WebCore::TimerBase::stop): Call setNextFireTime(0) unconditionally to make sure the timer
+        is removed from timersReadyToFire so that fireTimers doesn't try to fire a deleted timer.
+
 2006-02-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej, Eric.

@@ -176,8 +176,7 @@ void TimerBase::start(double nextFireInterval, double repeatInterval)
 void TimerBase::stop()
 {
     m_repeatInterval = 0;
-    if (m_nextFireTime)
-        setNextFireTime(0);
+    setNextFireTime(0);
 
     ASSERT(m_nextFireTime == 0);
     ASSERT(m_repeatInterval == 0);
