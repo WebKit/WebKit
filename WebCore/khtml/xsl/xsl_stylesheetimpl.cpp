@@ -161,9 +161,9 @@ void XSLStyleSheetImpl::loadChildSheets()
                 continue;
             }
             if (curr->type == XML_ELEMENT_NODE && IS_XSLT_ELEM(curr) && IS_XSLT_NAME(curr, "import")) {
-                xmlChar* uriRef = xsltGetNsProp(curr, (const xmlChar *)"href", XSLT_NAMESPACE);
-                QString buff = QString::fromUtf8((const char*)uriRef);
-                loadChildSheet(buff);
+                xmlChar* uriRef = xsltGetNsProp(curr, (const xmlChar*)"href", XSLT_NAMESPACE);                
+                loadChildSheet(QString::fromUtf8((const char*)uriRef));
+                xmlFree(uriRef);
             } else
                 break;
             curr = curr->next;
@@ -172,9 +172,9 @@ void XSLStyleSheetImpl::loadChildSheets()
         // Now handle includes.
         while (curr) {
             if (curr->type == XML_ELEMENT_NODE && IS_XSLT_ELEM(curr) && IS_XSLT_NAME(curr, "include")) {
-                xmlChar* uriRef = xsltGetNsProp(curr, (const xmlChar *)"href", XSLT_NAMESPACE);
-                QString buff = QString::fromUtf8((const char*)uriRef);
-                loadChildSheet(buff);
+                xmlChar* uriRef = xsltGetNsProp(curr, (const xmlChar*)"href", XSLT_NAMESPACE);
+                loadChildSheet(QString::fromUtf8((const char*)uriRef));
+                xmlFree(uriRef);
             }
             curr = curr->next;
         }
@@ -209,7 +209,8 @@ xmlDocPtr XSLStyleSheetImpl::locateStylesheetSubResource(xmlDocPtr parentDoc, co
         if (rule->isImportRule()) {
             XSLImportRuleImpl* import = static_cast<XSLImportRuleImpl*>(rule);
             XSLStyleSheetImpl* child = import->styleSheet();
-            if (!child) continue;
+            if (!child)
+                continue;
             if (matchedParent) {
                 if (child->processed())
                     continue; // libxslt has been given this sheet already.
@@ -221,7 +222,10 @@ xmlDocPtr XSLStyleSheetImpl::locateStylesheetSubResource(xmlDocPtr parentDoc, co
                 QCString importHref = import->href().qstring().utf8();
                 xmlChar* base = xmlNodeGetBase(parentDoc, (xmlNodePtr)parentDoc);
                 xmlChar* childURI = xmlBuildURI((const xmlChar*)(const char*)importHref, base);
-                if (xmlStrEqual(uri, childURI)) {
+                bool equalURIs = xmlStrEqual(uri, childURI);
+                xmlFree(base);
+                xmlFree(childURI);
+                if (equalURIs) {
                     child->markAsProcessed();
                     return child->document();
                 }

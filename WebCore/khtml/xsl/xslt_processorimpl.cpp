@@ -84,22 +84,21 @@ static xmlDocPtr docLoaderFunc(const xmlChar *uri,
     switch (type) {
         case XSLT_LOAD_DOCUMENT: {
             xsltTransformContextPtr context = (xsltTransformContextPtr)ctxt;
-            KURL url((const char *)xmlNodeGetBase(context->document->doc, context->node), (const char *)uri);
+            xmlChar *base = xmlNodeGetBase(context->document->doc, context->node);
+            KURL url((const char*)base, (const char*)uri);
+            xmlFree(base);
             KURL finalURL;
             KIO::TransferJob *job = KIO::get(url, true, false);
-            ByteArray data;
             QString headers;
-            xmlDocPtr doc;
             xmlGenericErrorFunc oldErrorFunc = xmlGenericError;
             void *oldErrorContext = xmlGenericErrorContext;
             
-            data = KWQServeSynchronousRequest(khtml::Cache::loader(), 
-                                              globalDocLoader, job, finalURL, headers);
+            ByteArray data = KWQServeSynchronousRequest(Cache::loader(), globalDocLoader, job, finalURL, headers);
         
             xmlSetGenericErrorFunc(0, parseErrorFunc);
             // We don't specify an encoding here. Neither Gecko nor WinIE respects
             // the encoding specified in the HTTP headers.
-            doc = xmlReadMemory(data.data(), data.size(), (const char *)uri, 0, options);
+            xmlDocPtr doc = xmlReadMemory(data.data(), data.size(), (const char*)uri, 0, options);
             xmlSetGenericErrorFunc(oldErrorContext, oldErrorFunc);
             return doc;
         }

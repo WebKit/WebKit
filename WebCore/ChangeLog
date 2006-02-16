@@ -1,3 +1,14 @@
+2006-02-17  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by justing.
+
+        Close several age-old leaks in xslt code.
+        Tests already were catching these.
+
+        * khtml/xsl/xsl_stylesheetimpl.cpp:
+        (WebCore::XSLStyleSheetImpl::loadChildSheets):
+        (WebCore::XSLStyleSheetImpl::locateStylesheetSubResource):
+
 2006-02-16  Tim Omernick  <timo@apple.com>
 
         Reviewed by Geoff.
