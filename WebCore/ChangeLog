@@ -84,6 +84,8 @@
         * khtml/xsl/xsl_stylesheetimpl.cpp:
         (WebCore::XSLStyleSheetImpl::loadChildSheets):
         (WebCore::XSLStyleSheetImpl::locateStylesheetSubResource):
+        * khtml/xsl/xslt_processorimpl.cpp:
+        (WebCore::docLoaderFunc):
 
 2006-02-16  Tim Omernick  <timo@apple.com>
 
