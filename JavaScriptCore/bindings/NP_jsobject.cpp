@@ -72,7 +72,22 @@ static NPClass _javascriptClass = {
     0
 };
 
+static NPClass _noScriptClass = { 
+    1,
+    0, 
+    0, 
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+};
+
 NPClass *NPScriptObjectClass = &_javascriptClass;
+NPClass *NPNoScriptObjectClass = &_noScriptClass;
 
 static Identifier identifierFromNPIdentifier(const NPUTF8 *name)
 {
@@ -110,6 +125,11 @@ NPObject *_NPN_CreateScriptObject (NPP npp, KJS::JSObject *imp, const KJS::Bindi
     return (NPObject *)obj;
 }
 
+NPObject *_NPN_CreateNoScriptObject(void)
+{
+    return _NPN_CreateObject(0, NPNoScriptObjectClass);
+}
+
 bool _NPN_InvokeDefault (NPP npp, NPObject *o, const NPVariant *args, uint32_t argCount, NPVariant *result)
 {
     if (o->_class == NPScriptObjectClass) {
@@ -122,6 +142,7 @@ bool _NPN_InvokeDefault (NPP npp, NPObject *o, const NPVariant *args, uint32_t a
         }
     }
     
+    NPN_InitializeVariantAsUndefined(result);
     return true;
 }
 
@@ -173,6 +194,7 @@ bool _NPN_Invoke (NPP npp, NPObject *o, NPIdentifier methodName, const NPVariant
     } else if (o->_class->invoke)
         return o->_class->invoke (o, methodName, args, argCount, result);
     
+    NPN_InitializeVariantAsUndefined(result);
     return true;
 }
 
@@ -209,6 +231,8 @@ bool _NPN_Evaluate (NPP npp, NPObject *o, NPString *s, NPVariant *variant)
     
         return true;
     }
+
+    NPN_InitializeVariantAsUndefined(variant);
     return false;
 }
 
@@ -254,6 +278,8 @@ bool _NPN_GetProperty (NPP npp, NPObject *o, NPIdentifier propertyName, NPVarian
             return false;
         }
     }
+
+    NPN_InitializeVariantAsUndefined(variant);
     return false;
 }
 

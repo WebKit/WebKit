@@ -45,6 +45,7 @@ struct JavaScriptObject
     const KJS::Bindings::RootObject *executionContext;
 };
 
-NPObject *_NPN_CreateScriptObject (NPP npp, KJS::JSObject *imp, const KJS::Bindings::RootObject *originExecutionContext, const KJS::Bindings::RootObject *executionContext);
+NPObject *_NPN_CreateScriptObject(NPP npp, KJS::JSObject *imp, const KJS::Bindings::RootObject *originExecutionContext, const KJS::Bindings::RootObject *executionContext);
+NPObject *_NPN_CreateNoScriptObject(void);
 
 #endif

@@ -1,3 +1,31 @@
+2006-02-16  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/4428609> Flash Player 8.0.22 can crash Safari (and WebKit apps) with
+        javascript disabled (7015)
+
+        * bindings/NP_jsobject.cpp:
+        (_NPN_CreateNoScriptObject):
+        Returns an NPObject which is not bound to a JavaScript object.  This kind of NPObject
+        can be given to a plugin as the "window script object" when JavaScript is disabled.
+        The object has a custom NPClass, NPNoScriptObjectClass, which has no defined methods.
+        Because of this, none of the NPN_* functions called by the plugin on this "no script
+        object" will cause entry into JavaScript code.
+        (_NPN_InvokeDefault):
+        Make sure the NPVariant is filled before returning from this function.  This never
+        mattered before because we never reached this case, having only created NPObjects of
+        the class NPScriptObjectClass.
+        (_NPN_Invoke):
+        ditto
+        (_NPN_Evaluate):
+        ditto
+        (_NPN_GetProperty):
+        ditto
+
+        * bindings/NP_jsobject.h:
+        Declared _NPN_CreateNoScriptObject().
+
 2006-02-16  Darin Adler  <darin@apple.com>
 
         Reviewed by me, change by Peter Kuemmel.
