@@ -1,3 +1,33 @@
+2006-02-16  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/4428609> Flash Player 8.0.22 can crash Safari (and WebKit apps)
+        with javascript disabled (7015)
+
+        Added a test case, manual-tests/NPN_Invoke.  This is a skeleton of a Netscape
+        plugin which uses NPN_Invoke() to call the window.alert() JavaScript function.
+        
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::windowScriptNPObject):
+        Removed the check Darin added to return 0 when JavaScript is disabled.
+        This method cannot return 0, because plugins are not guaranteed to check
+        for that.
+        Removed my old fix for Radar 4428609 (7015) in favor of a better solution.
+        Instead of creating a "dummy" JSObject to represent the window script object
+        when JavaScript is disabled, we use the new JavaScriptCore bindings API to 
+        create a "no script" NPObject.  This solution is better because it does not
+        cause entry into any JavaScript interpreter code.
+
+        * manual-tests/NPN_Invoke: Added.
+        * manual-tests/NPN_Invoke/English.lproj: Added.
+        * manual-tests/NPN_Invoke/English.lproj/Localized.r: Added.
+        * manual-tests/NPN_Invoke/Info.plist: Added.
+        * manual-tests/NPN_Invoke/NPN_Invoke.xcodeproj: Added.
+        * manual-tests/NPN_Invoke/NPN_Invoke.xcodeproj/project.pbxproj: Added.
+        * manual-tests/NPN_Invoke/main.c: Added.
+        * manual-tests/NPN_Invoke/test.html: Added.
+
 2006-02-16  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin, landed by ap.

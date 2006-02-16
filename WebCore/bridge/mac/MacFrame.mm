@@ -1158,22 +1158,18 @@ WebScriptObject *MacFrame::windowScriptObject()
 
 NPObject *MacFrame::windowScriptNPObject()
 {
-    if (!d->m_bJScriptEnabled)
-        return 0;
-
     if (!_windowScriptNPObject) {
-        KJS::JSObject *win = KJS::Window::retrieveWindow(this);
-        
-        // The window script object can be 0 if JavaScript is disabled.  However, callers (like plugins) expect us to
-        // always return a window script object here.  By substituting a plain JSObject for the window's JSObject,
-        // we can satisfy callers' assumptions and let them try to manipulate the dummy object when JavaScript is
-        // disabled.
-        if (!win) {
-            JSLock lock;
-            win = new KJS::JSObject();
+        if (d->m_bJScriptEnabled) {
+            // JavaScript is enabled, so there is a JavaScript window object.  Return an NPObject bound to the window
+            // object.
+            KJS::JSObject *win = KJS::Window::retrieveWindow(this);
+            assert(win);
+            _windowScriptNPObject = _NPN_CreateScriptObject(0, win, bindingRootObject(), bindingRootObject());
+        } else {
+            // JavaScript is not enabled, so we cannot bind the NPObject to the JavaScript window object.
+            // Instead, we create an NPObject of a different class, one which is not bound to a JavaScript object.
+            _windowScriptNPObject = _NPN_CreateNoScriptObject();
         }
-        
-        _windowScriptNPObject = _NPN_CreateScriptObject (0, win, bindingRootObject(), bindingRootObject());
     }
 
     return _windowScriptNPObject;
