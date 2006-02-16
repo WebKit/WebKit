@@ -1,3 +1,19 @@
+2006-02-16  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=6812
+        Missing focus ring on new text fields
+
+        Tests:
+        * fast/forms/input-appearance-focus.html: Updated.
+
+        * rendering/render_object.cpp: (WebCore::RenderObject::paintOutline): 
+         call supportsFocusRing instead of checking the appearance.
+        * rendering/render_theme.cpp: (khtml::RenderTheme::supportsFocusRing): Added. 
+         Checks appearance.  Theme will draw focus ring if there's an appearance, but not for the new text fields.
+        * rendering/render_theme.h:
+
 2006-02-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

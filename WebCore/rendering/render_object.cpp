@@ -52,6 +52,7 @@
 #include "render_inline.h"
 #include "render_line.h"
 #include "render_list.h"
+#include "render_theme.h"
 #include "VisiblePosition.h"
 #include <qmatrix.h>
 #include <qpainter.h>
@@ -1350,10 +1351,8 @@ void RenderObject::paintOutline(QPainter *p, int _tx, int _ty, int w, int h, con
     int offset = style->outlineOffset();
     
     if (style->outlineStyleIsAuto()) {
-        if (!style->hasAppearance()) {
-            // Only paint the focus ring by hand if there is no custom appearance
-            // specified.  Otherwise we let the theme paint the focus ring, since the ring
-            // might not be rectangular (or match the dimensions of the control exactly).
+        if (!theme()->supportsFocusRing(style)) {
+            // Only paint the focus ring by hand if the theme isn't able to draw the focus ring.
             p->initFocusRing(ow, offset, oc);
             addFocusRingRects(p, _tx, _ty);
             p->drawFocusRing();
