@@ -1,3 +1,48 @@
+2006-02-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by John.
+
+        - Applied the 4330457 change to CClass and ObjcClass as well.
+
+        Once plugins work in DumpRenderTree, running run-webkit-tests --leaks
+        will catch this. 
+
+        This change isn't as critical because CClass and ObjcClass objects get 
+        cached globally and never deleted, but it's good practice, in case we 
+        ever do decide to delete CClass and ObjcClass objects.
+
+        This change requires prohibiting copying, because we don't do any 
+        intelligent ref-counting -- when a Class is destroyed, it destroys its 
+        methods and fields unconditionally. (Java classes already prohibited
+        copying.)
+
+        * bindings/c/c_class.cpp:
+        - Merged _commonInit and _commonDelete into constructor and destructor.
+        (CClass::CClass):
+        (CClass::~CClass):
+        (CClass::methodsNamed): Added delete callbacks
+        (CClass::fieldNamed): Added delete callbacks
+        * bindings/c/c_class.h: Prohibited copying
+        * bindings/c/c_instance.cpp: 
+        (KJS::Bindings::CInstance::getClass): Changed to use the preferred 
+        class factory method, to take advantage of the global cache.
+
+        [ Repeated changes applied to CClass for ObjcClass: ]
+
+        * bindings/objc/objc_class.h: 
+        * bindings/objc/objc_class.mm:
+        (KJS::Bindings::ObjcClass::ObjcClass):
+        (KJS::Bindings::ObjcClass::~ObjcClass):
+        (KJS::Bindings::ObjcClass::methodsNamed):
+        (KJS::Bindings::ObjcClass::fieldNamed):
+        * bindings/objc/objc_runtime.h:
+        (KJS::Bindings::ObjcMethod::ObjcMethod): Initialized uninitialized
+        variable to prevent bad CFRelease.
+        (KJS::Bindings::ObjcMethod::~ObjcMethod): Removed erroneous ';' from
+        if statement to prevent bad CFRelease.
+        * bindings/objc/objc_runtime.cpp: Changed to use the preferred
+        ObjectStructPtr, for clarity.
+
 2006-02-14  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by John.
@@ -5,6 +50,9 @@
         - Fixed <rdar://problem/4330457> CrashTracer: [REGRESSION] 3763 crashes
         in Safari at com.apple.JavaScriptCore: KJS::Bindings::JavaInstance::
         getClass const + 56
+
+        Once plugins work in DumpRenderTree, running run-webkit-tests --leaks
+        will catch this. 
 
         This was a memory leak in the bindings code. The leak was so extreme
         that it would cause Safari or the JVM to abort from lack of memory.
@@ -14,10 +62,8 @@
         objects.
 
         The fix is to supply CFDictionary callbacks for destroying the values
-        added to the dictionary. This also requires prohibiting copying,
-        because we don't do any intelligent ref-counting -- when a Class is
-        destroyed, it destroys its methods and fields unconditionally.
-
+        added to the dictionary. 
+        
         * bindings/jni/jni_class.cpp: 
         (JavaClass::JavaClass): Added delete callbacks
         * bindings/runtime.cpp: Added definitions for delete callbacks

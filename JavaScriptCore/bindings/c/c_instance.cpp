@@ -79,7 +79,7 @@ CInstance &CInstance::operator=(const CInstance &other){
 Class *CInstance::getClass() const
 {
     if (!_class) {
-        _class = new CClass (_object->_class);
+        _class = CClass::classForIsA(_object->_class);
     }
     return _class;
 }

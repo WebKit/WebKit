@@ -35,34 +35,15 @@ namespace Bindings {
 
 class ObjcClass : public Class
 {
-    // Use the public static factory methods to get instances of JavaClass.
-    
 protected:
-    void _commonInit(ClassStructPtr aClass);
-    void _commonCopy(const ObjcClass &other);
-    void _commonDelete();
-    
-    ObjcClass (ClassStructPtr aClass);
+    ObjcClass (ClassStructPtr aClass); // Use classForIsA to create an ObjcClass.
     
 public:
+    ~ObjcClass();
+
     // Return the cached ObjC of the specified name.
     static ObjcClass *classForIsA(ClassStructPtr);
-            
-    ~ObjcClass() { _commonDelete(); }
     
-    ObjcClass(const ObjcClass &other) : Class() { _commonCopy(other); }
-
-    ObjcClass &operator=(const ObjcClass &other)
-    {
-        if (this == &other)
-            return *this;
-            
-        _commonDelete();
-        _commonCopy(other);
-        
-        return *this;
-    }
-
     virtual const char *name() const;
     
     virtual MethodList methodsNamed(const char *name, Instance *instance) const;
@@ -76,6 +57,9 @@ public:
     ClassStructPtr isa() { return _isa; }
     
 private:
+    ObjcClass(const ObjcClass &other); // prohibit copying
+    ObjcClass &operator=(const ObjcClass &other); // ditto
+    
     ClassStructPtr _isa;
     CFDictionaryRef _methods;
     CFDictionaryRef _fields;

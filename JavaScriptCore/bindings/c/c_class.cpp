@@ -31,27 +31,19 @@ using namespace KJS::Bindings;
 
 bool NPN_IsValidIdentifier (const NPUTF8 *name);
 
-void CClass::_commonDelete() {
+CClass::CClass(NPClass *aClass)
+{
+    _isa = aClass;
+    _methods = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, &MethodDictionaryValueCallBacks);
+    _fields = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, &FieldDictionaryValueCallBacks);
+}
+
+CClass::~CClass() 
+{
     CFRelease (_fields);
     CFRelease (_methods);
 }
     
-
-void CClass::_commonCopy(const CClass &other) {
-    _isa = other._isa;
-    _methods = CFDictionaryCreateCopy (NULL, other._methods);
-    _fields = CFDictionaryCreateCopy (NULL, other._fields);
-}
-    
-
-void CClass::_commonInit (NPClass *aClass)
-{
-    _isa = aClass;
-    _methods = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
-    _fields = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
-}
-
-
 static CFMutableDictionaryRef classesByIsA = 0;
 
 static void _createClassesByIsAIfNecessary()
@@ -71,12 +63,6 @@ CClass *CClass::classForIsA (NPClass *isa)
     }
     
     return aClass;
-}
-
-
-CClass::CClass (NPClass *isa)
-{
-    _commonInit (isa);
 }
 
 const char *CClass::name() const
@@ -100,7 +86,7 @@ MethodList CClass::methodsNamed(const char *_name, Instance *instance) const
     const CInstance *inst = static_cast<const CInstance*>(instance);
     NPObject *obj = inst->getObject();
     if (_isa->hasMethod && _isa->hasMethod (obj, ident)){
-        Method *aMethod = new CMethod (ident);
+        Method *aMethod = new CMethod (ident); // deleted when the dictionary is destroyed
         CFDictionaryAddValue ((CFMutableDictionaryRef)_methods, methodName, aMethod);
         methodList.addMethod (aMethod);
     }
@@ -124,7 +110,7 @@ Field *CClass::fieldNamed(const char *name, Instance *instance) const
     const CInstance *inst = static_cast<const CInstance*>(instance);
     NPObject *obj = inst->getObject();
     if (_isa->hasProperty && _isa->hasProperty (obj, ident)){
-        aField = new CField (ident);
+        aField = new CField (ident); // deleted when the dictionary is destroyed
         CFDictionaryAddValue ((CFMutableDictionaryRef)_fields, fieldName, aField);
     }
     

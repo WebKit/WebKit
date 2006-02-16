@@ -33,27 +33,18 @@
 
 namespace KJS {
 namespace Bindings {
+    
+ObjcClass::ObjcClass(ClassStructPtr aClass)
+{
+    _isa = aClass;
+    _methods = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, &MethodDictionaryValueCallBacks);
+    _fields = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, &FieldDictionaryValueCallBacks);
+}
 
-void ObjcClass::_commonDelete() {
+ObjcClass::~ObjcClass() {
     CFRelease (_fields);
     CFRelease (_methods);
 }
-    
-
-void ObjcClass::_commonCopy(const ObjcClass &other) {
-    _isa = other._isa;
-    _methods = CFDictionaryCreateCopy (NULL, other._methods);
-    _fields = CFDictionaryCreateCopy (NULL, other._fields);
-}
-    
-
-void ObjcClass::_commonInit (ClassStructPtr aClass)
-{
-    _isa = aClass;
-    _methods = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
-    _fields = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
-}
-
 
 static CFMutableDictionaryRef classesByIsA = 0;
 
@@ -74,12 +65,6 @@ ObjcClass *ObjcClass::classForIsA (ClassStructPtr isa)
     }
     
     return aClass;
-}
-
-
-ObjcClass::ObjcClass (ClassStructPtr isa)
-{
-    _commonInit (isa);
 }
 
 const char *ObjcClass::name() const
@@ -134,7 +119,7 @@ MethodList ObjcClass::methodsNamed(const char *JSName, Instance *instance) const
 
                 if ((mappedName && [mappedName isEqual:(NSString *)methodName]) ||
                     strcmp ((const char *)objcMethod->method_name, buffer) == 0) {
-                    Method *aMethod = new ObjcMethod (thisClass, (const char *)objcMethod->method_name);
+                    Method *aMethod = new ObjcMethod (thisClass, (const char *)objcMethod->method_name); // deleted when the dictionary is destroyed
                     CFDictionaryAddValue ((CFMutableDictionaryRef)_methods, methodName, aMethod);
                     methodList.addMethod (aMethod);
                     break;
@@ -189,7 +174,7 @@ Field *ObjcClass::fieldNamed(const char *name, Instance *instance) const
 
             if ((mappedName && [mappedName isEqual:(NSString *)fieldName]) ||
                 [keyName isEqual:(NSString *)fieldName]) {
-                aField = new ObjcField ((CFStringRef)keyName);
+                aField = new ObjcField ((CFStringRef)keyName); // deleted when the dictionary is destroyed
                 CFDictionaryAddValue ((CFMutableDictionaryRef)_fields, fieldName, aField);
                 break;
             }
@@ -223,7 +208,7 @@ Field *ObjcClass::fieldNamed(const char *name, Instance *instance) const
 
                     if ((mappedName && [mappedName isEqual:(NSString *)fieldName]) ||
                         strcmp(objcIVar->ivar_name,name) == 0) {
-                        aField = new ObjcField (objcIVar);
+                        aField = new ObjcField (objcIVar); // deleted when the dictionary is destroyed
                         CFDictionaryAddValue ((CFMutableDictionaryRef)_fields, fieldName, aField);
                         break;
                     }

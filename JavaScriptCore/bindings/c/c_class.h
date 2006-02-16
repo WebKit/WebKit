@@ -38,39 +38,15 @@ namespace Bindings {
 
 class CClass : public KJS::Bindings::Class
 {
-    // Use the public static factory methods to get instances of JavaClass.
-    
 protected:
-    void _commonInit (NPClass *aClass);
-    void _commonCopy(const CClass &other);
-    void _commonDelete();
-        
+    CClass(NPClass *aClass); // Use classForIsA to create a CClass.
+    
 public:
-    CClass (NPClass *aClass);
+    ~CClass();
 
     // Return the cached ObjC of the specified name.
-    //static CClass *classForName (const char *name);
-    static CClass *classForIsA (NPClass *aClass);
-            
-    ~CClass () {
-        _commonDelete();
-    }
+    static CClass *classForIsA(NPClass *aClass);
     
-    CClass (const CClass &other) : Class() {
-        _commonCopy (other);
-    };
-
-    CClass &operator=(const CClass &other)
-    {
-        if (this == &other)
-            return *this;
-            
-        _commonDelete();
-        _commonCopy (other);
-        
-        return *this;
-    }
-
     virtual const char *name() const;
     
     virtual MethodList methodsNamed(const char *name, Instance *instance) const;
@@ -84,6 +60,10 @@ public:
     virtual int numConstructors() const { return 0; };
         
 private:
+    CClass(); // prohibit default construction
+    CClass(const CClass &other); // prohibit copying
+    CClass &operator=(const CClass &other); // ditto
+    
     NPClass *_isa;
     CFDictionaryRef _methods;
     CFDictionaryRef _fields;
