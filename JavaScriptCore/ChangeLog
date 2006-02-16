@@ -1,3 +1,12 @@
+2006-02-16  Timothy Hatcher  <timothy@apple.com>
+
+        Added -Wno-deprecated-declarations to all the ObjC binding files to prevent deprecation
+        warnings. Using <rdar://problem/4448350> to track this.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bindings/objc/objc_jsobject.h: Removed empty file.
+        * bindings/objc/objc_jsobject.mm: Removed empty file.
+
 2006-02-16  Tim Omernick  <timo@apple.com>
 
         Reviewed by Geoff.

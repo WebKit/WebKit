@@ -115,7 +115,6 @@
 		932F5B7B0822A1C700736975 /* objc_instance.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F0EB0005C85A6300E6DF1B /* objc_instance.h */; };
 		932F5B7C0822A1C700736975 /* objc_header.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F0EC1005C86F3500E6DF1B /* objc_header.h */; };
 		932F5B7D0822A1C700736975 /* objc_utility.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F0EC9605C88DC700E6DF1B /* objc_utility.h */; };
-		932F5B7E0822A1C700736975 /* objc_jsobject.h in Headers */ = {isa = PBXBuildFile; fileRef = 7084D99405DD6211007E4C0E /* objc_jsobject.h */; };
 		932F5B7F0822A1C700736975 /* runtime_root.h in Headers */ = {isa = PBXBuildFile; fileRef = 5114F47C05E4426200D1BBBD /* runtime_root.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B800822A1C700736975 /* c_instance.h in Headers */ = {isa = PBXBuildFile; fileRef = 5182A45705FFCF4B00CBD2F2 /* c_instance.h */; };
 		932F5B810822A1C700736975 /* c_utility.h in Headers */ = {isa = PBXBuildFile; fileRef = 5182A47005FFD45000CBD2F2 /* c_utility.h */; };
@@ -170,11 +169,10 @@
 		932F5BBD0822A1C700736975 /* runtime_method.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A58A8D057D3A6A00A3E942 /* runtime_method.cpp */; };
 		932F5BBE0822A1C700736975 /* runtime_array.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7073BE3C0581291E005EE2C9 /* runtime_array.cpp */; };
 		932F5BBF0822A1C700736975 /* jni_jsobject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 513DF74005C0861F00F89391 /* jni_jsobject.cpp */; };
-		932F5BC00822A1C700736975 /* objc_class.mm in Sources */ = {isa = PBXBuildFile; fileRef = 518CF93705C72271003CF905 /* objc_class.mm */; };
-		932F5BC10822A1C700736975 /* objc_runtime.mm in Sources */ = {isa = PBXBuildFile; fileRef = 518CF93805C72271003CF905 /* objc_runtime.mm */; };
-		932F5BC20822A1C700736975 /* objc_instance.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51F0EB0505C85A9000E6DF1B /* objc_instance.mm */; };
-		932F5BC30822A1C700736975 /* objc_utility.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51F0EC9705C88DC700E6DF1B /* objc_utility.mm */; };
-		932F5BC40822A1C700736975 /* objc_jsobject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7084D9B905DD6CF8007E4C0E /* objc_jsobject.mm */; };
+		932F5BC00822A1C700736975 /* objc_class.mm in Sources */ = {isa = PBXBuildFile; fileRef = 518CF93705C72271003CF905 /* objc_class.mm */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
+		932F5BC10822A1C700736975 /* objc_runtime.mm in Sources */ = {isa = PBXBuildFile; fileRef = 518CF93805C72271003CF905 /* objc_runtime.mm */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
+		932F5BC20822A1C700736975 /* objc_instance.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51F0EB0505C85A9000E6DF1B /* objc_instance.mm */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
+		932F5BC30822A1C700736975 /* objc_utility.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51F0EC9705C88DC700E6DF1B /* objc_utility.mm */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
 		932F5BC50822A1C700736975 /* runtime_root.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5114F47B05E4426200D1BBBD /* runtime_root.cpp */; };
 		932F5BC60822A1C700736975 /* NP_jsobject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51532CC705F7FD2C00EC779C /* NP_jsobject.cpp */; };
 		932F5BC70822A1C700736975 /* c_instance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5182A45605FFCF4B00CBD2F2 /* c_instance.cpp */; };
@@ -373,8 +371,6 @@
 		704FD44505698F17003DBED9 /* runtime.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = runtime.cpp; path = bindings/runtime.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		7073BE3C0581291E005EE2C9 /* runtime_array.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = runtime_array.cpp; path = bindings/runtime_array.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		7073BE3D0581291E005EE2C9 /* runtime_array.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = runtime_array.h; path = bindings/runtime_array.h; sourceTree = "<group>"; tabWidth = 8; };
-		7084D99405DD6211007E4C0E /* objc_jsobject.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = objc_jsobject.h; path = bindings/objc/objc_jsobject.h; sourceTree = "<group>"; tabWidth = 8; };
-		7084D9B905DD6CF8007E4C0E /* objc_jsobject.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = objc_jsobject.mm; path = bindings/objc/objc_jsobject.mm; sourceTree = "<group>"; tabWidth = 8; };
 		70B16A260569A10900DB756D /* runtime_object.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = runtime_object.cpp; path = bindings/runtime_object.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		70B16A270569A10900DB756D /* runtime_object.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = runtime_object.h; path = bindings/runtime_object.h; sourceTree = "<group>"; tabWidth = 8; };
 		8442A376074175C2000AE2ED /* softlinking.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.c; name = softlinking.c; path = bindings/softlinking.c; sourceTree = "<group>"; tabWidth = 8; };
@@ -665,8 +661,6 @@
 				51F0EC1005C86F3500E6DF1B /* objc_header.h */,
 				51F0EB0005C85A6300E6DF1B /* objc_instance.h */,
 				51F0EB0505C85A9000E6DF1B /* objc_instance.mm */,
-				7084D99405DD6211007E4C0E /* objc_jsobject.h */,
-				7084D9B905DD6CF8007E4C0E /* objc_jsobject.mm */,
 				51C4974105C0A5D4006FBFF5 /* objc_runtime.h */,
 				518CF93805C72271003CF905 /* objc_runtime.mm */,
 				51F0EC9605C88DC700E6DF1B /* objc_utility.h */,
@@ -835,7 +829,6 @@
 				932F5B7B0822A1C700736975 /* objc_instance.h in Headers */,
 				932F5B7C0822A1C700736975 /* objc_header.h in Headers */,
 				932F5B7D0822A1C700736975 /* objc_utility.h in Headers */,
-				932F5B7E0822A1C700736975 /* objc_jsobject.h in Headers */,
 				932F5B7F0822A1C700736975 /* runtime_root.h in Headers */,
 				932F5B800822A1C700736975 /* c_instance.h in Headers */,
 				932F5B810822A1C700736975 /* c_utility.h in Headers */,
@@ -1233,7 +1226,6 @@
 				932F5BC10822A1C700736975 /* objc_runtime.mm in Sources */,
 				932F5BC20822A1C700736975 /* objc_instance.mm in Sources */,
 				932F5BC30822A1C700736975 /* objc_utility.mm in Sources */,
-				932F5BC40822A1C700736975 /* objc_jsobject.mm in Sources */,
 				932F5BC50822A1C700736975 /* runtime_root.cpp in Sources */,
 				932F5BC60822A1C700736975 /* NP_jsobject.cpp in Sources */,
 				932F5BC70822A1C700736975 /* c_instance.cpp in Sources */,
