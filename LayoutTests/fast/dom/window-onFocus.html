@@ -6,11 +6,11 @@ function runTest() {
     window.onblur = windowBlurred;
     
     if (window.layoutTestController) {
-        window.layoutTestController.setDisplaysWithFocusAttributes(false);
+        window.layoutTestController.setMainFrameIsFirstResponder(false);
         
-        window.layoutTestController.setWindowHasFocus(false);
-        window.layoutTestController.setWindowHasFocus(true);
-        window.layoutTestController.setWindowHasFocus(false);
+        window.layoutTestController.setWindowIsKey(false);
+        window.layoutTestController.setWindowIsKey(true);
+        window.layoutTestController.setWindowIsKey(false);
     }
 }
 

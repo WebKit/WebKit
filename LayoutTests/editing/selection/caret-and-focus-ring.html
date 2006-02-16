@@ -5,8 +5,8 @@
 
 function runTest() {
     if (window.layoutTestController) {
-        window.layoutTestController.setWindowHasFocus(false);
-        window.layoutTestController.setDisplaysWithFocusAttributes(false);
+        window.layoutTestController.setWindowIsKey(false);
+        window.layoutTestController.setMainFrameIsFirstResponder(false);
     }
     var s = window.getSelection();
     var e = document.getElementById("test");
