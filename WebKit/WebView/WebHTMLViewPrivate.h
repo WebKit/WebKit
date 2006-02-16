@@ -92,9 +92,8 @@
 - (NSImage *)_selectionDraggingImage;
 - (NSRect)_selectionDraggingRect;
 
-// Made into SPI so that DumpRenderTree could test the behavior and appearance of a WebHTMLView that is focused.
-- (void)_setWindowHasFocus:(BOOL)flag;
-- (void)_setDisplaysWithFocusAttributes:(BOOL)flag;
+// SPI for DumpRenderTree
+- (void)_updateFocusState;
 
 // These methods might end up moving into a protocol, so different document types can specify
 // whether or not they implement the protocol.

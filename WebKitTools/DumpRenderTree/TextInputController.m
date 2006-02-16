@@ -286,6 +286,10 @@
 
     if (textInput) {
         NSRect rect = [textInput firstRectForCharacterRange:NSMakeRange(from, length)];
+        if (rect.origin.x || rect.origin.y || rect.size.width || rect.size.height) {
+            rect.origin = [[webView window] convertScreenToBase:rect.origin];
+            rect = [webView convertRect:rect fromView:nil];
+        }
         return [NSArray arrayWithObjects:
                     [NSNumber numberWithFloat:rect.origin.x],
                     [NSNumber numberWithFloat:rect.origin.y],
@@ -301,8 +305,12 @@
 {
     NSObject <NSTextInput> *textInput = [self textInput];
 
-    if (textInput)
-        return [textInput characterIndexForPoint:NSMakePoint(x, y)];
+    if (textInput) {
+        NSPoint point = NSMakePoint(x, y);
+        point = [webView convertPoint:point toView:nil];
+        point = [[webView window] convertBaseToScreen:point];
+        return [textInput characterIndexForPoint:point];
+    }
 
     return 0;
 }

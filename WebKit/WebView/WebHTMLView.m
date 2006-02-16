@@ -38,6 +38,7 @@
 #import <WebKit/WebClipView.h>
 #import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebDefaultUIDelegate.h>
 #import <WebKit/WebDocumentInternal.h>
 #import <WebKit/WebDOMOperationsPrivate.h>
 #import <WebKit/WebEditingDelegate.h>
@@ -194,7 +195,6 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
 - (void)_deleteSelection;
 - (BOOL)_canSmartReplaceWithPasteboard:(NSPasteboard *)pasteboard;
 - (NSView *)_hitViewForEvent:(NSEvent *)event;
-- (void)updateFocusState;
 - (void)_writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard cachedAttributedString:(NSAttributedString *)attributedString;
 @end
 
@@ -625,29 +625,6 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     if ([self _canSmartCopyOrDelete] && [types containsObject:WebSmartPastePboardType]) {
         [pasteboard setData:nil forType:WebSmartPastePboardType];
     }
-}
-
-- (void)updateFocusState
-{
-    // This method does the job of updating the view based on the view's firstResponder-ness and
-    // the window key-ness of the window containing this view. This involves four kinds of 
-    // drawing updates right now, all handled in WebCore in response to the call over the bridge. 
-    // 
-    // The four display attributes are as follows:
-    // 
-    // 1. The background color used to draw behind selected content (active | inactive color)
-    // 2. Caret blinking (blinks | does not blink)
-    // 3. The drawing of a focus ring around links in web pages.
-    // 4. Changing the tint of controls from clear to aqua/graphite and vice versa
-    //
-    // Also, this is responsible for letting the bridge know if the window has gained or lost focus
-    // so we can send focus and blur events.
-
-    BOOL windowIsKey = [[self window] isKeyWindow];
-    BOOL flag = !_private->resigningFirstResponder && windowIsKey && [self _web_firstResponderCausesFocusDisplay];
-    
-    [self _setDisplaysWithFocusAttributes:flag];
-    [self _setWindowHasFocus:windowIsKey];
 }
 
 @end
@@ -1600,14 +1577,27 @@ static WebHTMLView *lastHitView = nil;
     return NSZeroRect;
 }
 
-- (void)_setWindowHasFocus:(BOOL)flag
+- (void)_updateFocusState
 {
-    [[self _bridge] setWindowHasFocus:flag];
-}
+    // This method does the job of updating the view based on the view's firstResponder-ness and
+    // the window key-ness of the window containing this view. This involves four kinds of 
+    // drawing updates right now, all handled in WebCore in response to the call over the bridge. 
+    // 
+    // The four display attributes are as follows:
+    // 
+    // 1. The background color used to draw behind selected content (active | inactive color)
+    // 2. Caret blinking (blinks | does not blink)
+    // 3. The drawing of a focus ring around links in web pages.
+    // 4. Changing the tint of controls from clear to aqua/graphite and vice versa
+    //
+    // Also, this is responsible for letting the bridge know if the window has gained or lost focus
+    // so we can send focus and blur events.
 
-- (void)_setDisplaysWithFocusAttributes:(BOOL)flag
-{
-    [[self _bridge] setDisplaysWithFocusAttributes:flag];
+    BOOL windowIsKey = [[self window] isKeyWindow];
+    BOOL displaysWithFocusAttributes = !_private->resigningFirstResponder && windowIsKey && [self _web_firstResponderCausesFocusDisplay];
+    
+    [[self _bridge] setWindowHasFocus:windowIsKey];
+    [[self _bridge] setDisplaysWithFocusAttributes:displaysWithFocusAttributes];
 }
 
 - (unsigned)highlightAllMatchesForString:(NSString *)string caseSensitive:(BOOL)caseFlag
@@ -2192,7 +2182,7 @@ static WebHTMLView *lastHitView = nil;
             // at the time this code is running. However, it will be there on the next
             // crank of the run loop. Doing this helps to make a blinking caret appear 
             // in a new, empty window "automatic".
-            [self performSelector:@selector(updateFocusState) withObject:nil afterDelay:0];
+            [self performSelector:@selector(_updateFocusState) withObject:nil afterDelay:0];
 
             [[self _pluginController] startAllPlugins];
     
@@ -2535,7 +2525,7 @@ static WebHTMLView *lastHitView = nil;
 {
     ASSERT([notification object] == [self window]);
     [self addMouseMovedObserver];
-    [self updateFocusState];
+    [self _updateFocusState];
 }
 
 - (void)windowDidResignKey: (NSNotification *)notification
@@ -2543,7 +2533,7 @@ static WebHTMLView *lastHitView = nil;
     ASSERT([notification object] == [self window]);
     [_private->compController endRevertingChange:NO moveLeft:NO];
     [self removeMouseMovedObserver];
-    [self updateFocusState];
+    [self _updateFocusState];
 }
 
 - (void)windowWillClose:(NSNotification *)notification
@@ -2658,16 +2648,22 @@ done:
        pasteboard:(NSPasteboard *)pasteboard
            source:(id)source
         slideBack:(BOOL)slideBack
-{   
+{
+    WebView *webView = [self _webView];
     [self _stopAutoscrollTimer];
-    
+
     _private->initiatedDrag = YES;
-    [[self _webView] _setInitiatedDrag:YES];
-    
+    [webView _setInitiatedDrag:YES];
+
     // Retain this view during the drag because it may be released before the drag ends.
     [self retain];
 
-    [super dragImage:dragImage at:at offset:offset event:event pasteboard:pasteboard source:source slideBack:slideBack];
+    id UIDelegate = [webView UIDelegate];
+    // If a delegate takes over the drag but never calls draggedImage: endedAt:, we'll leak the WebHTMLView.
+    if ([UIDelegate respondsToSelector:@selector(webView:dragImage:at:offset:event:pasteboard:source:slideBack:forView:)])
+        [UIDelegate webView:webView dragImage:dragImage at:at offset:offset event:event pasteboard:pasteboard source:source slideBack:slideBack forView:self];
+    else
+        [super dragImage:dragImage at:at offset:offset event:event pasteboard:pasteboard source:source slideBack:slideBack];
 }
 
 - (void)mouseDragged:(NSEvent *)event
@@ -2989,7 +2985,7 @@ done:
     if (view)
         [[self window] makeFirstResponder:view];
     [[[self _web_parentWebFrameView] webFrame] _clearSelectionInOtherFrames];
-    [self updateFocusState];
+    [self _updateFocusState];
     [self _updateFontPanel];
     _private->startNewKillRingSequence = YES;
     return YES;
@@ -3009,7 +3005,7 @@ done:
                 [self deselectAll];
             }
         }
-        [self updateFocusState];
+        [self _updateFocusState];
         _private->resigningFirstResponder = NO;
     }
     return resign;
@@ -4841,12 +4837,12 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)_formControlIsResigningFirstResponder:(NSView *)formControl
 {
-    // set resigningFirstResponder so updateFocusState behaves the same way it does when
+    // set resigningFirstResponder so _updateFocusState behaves the same way it does when
     // the WebHTMLView itself is resigningFirstResponder; don't use the primary selection feedback.
     // If the first responder is in the process of being set on the WebHTMLView itself, it will
-    // get another chance at updateFocusState in its own becomeFirstResponder method.
+    // get another chance at _updateFocusState in its own becomeFirstResponder method.
     _private->resigningFirstResponder = YES;
-    [self updateFocusState];
+    [self _updateFocusState];
     _private->resigningFirstResponder = NO;
 }
 

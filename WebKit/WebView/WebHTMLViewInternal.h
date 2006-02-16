@@ -56,7 +56,7 @@
     NSEvent *keyDownEvent; // Kept only during handling of the event.
 
     NSURL *draggingImageURL;
-    unsigned int dragSourceActionMask;
+    unsigned dragSourceActionMask;
     
     NSSize lastLayoutSize;
     NSSize lastLayoutFrameSize;

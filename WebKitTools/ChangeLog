@@ -1,3 +1,44 @@
+2006-02-15  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7148>
+        Add drag and drop support to DumpRenderTree
+        
+        Intercept the drag start using the new UI delegate method, package an NSDraggingInfo,
+        and send dragging updates.  Put DumpRenderTree's WebView into an offscreen window.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (main):
+        (-[WaitUntilDoneDelegate webView:didCommitLoadForFrame:]):
+        (-[WaitUntilDoneDelegate webView:dragImage:at:offset:event:pasteboard:source:slideBack:forView:]):
+        (-[WaitUntilDoneDelegate webViewFocus:]):
+        (+[LayoutTestController isSelectorExcludedFromWebScript:]):
+        (+[LayoutTestController webScriptNameForSelector:]):
+        (-[LayoutTestController setWindowIsKey:]):
+        (-[LayoutTestController setMainFrameIsFirstResponder:]):
+        (-[EventSendingController init]):
+        (-[EventSendingController mouseDown]):
+        (-[EventSendingController mouseUp]):
+        (-[EventSendingController mouseMoveToX:Y:]):
+        (dumpRenderTree):
+        (-[DumpRenderTreeWindow isKeyWindow]):
+        (-[DumpRenderTreeDraggingInfo initWithImage:offset:pasteboard:source:]):
+        (-[DumpRenderTreeDraggingInfo dealloc]):
+        (-[DumpRenderTreeDraggingInfo draggingDestinationWindow]):
+        (-[DumpRenderTreeDraggingInfo draggingSourceOperationMask]):
+        (-[DumpRenderTreeDraggingInfo draggingLocation]):
+        (-[DumpRenderTreeDraggingInfo draggedImageLocation]):
+        (-[DumpRenderTreeDraggingInfo draggedImage]):
+        (-[DumpRenderTreeDraggingInfo draggingPasteboard]):
+        (-[DumpRenderTreeDraggingInfo draggingSource]):
+        (-[DumpRenderTreeDraggingInfo draggingSequenceNumber]):
+        (-[DumpRenderTreeDraggingInfo slideDraggedImageTo:]):
+        (-[DumpRenderTreeDraggingInfo namesOfPromisedFilesDroppedAtDestination:]):
+        * DumpRenderTree/TextInputController.m:
+        (-[TextInputController firstRectForCharactersFrom:length:]):
+        (-[TextInputController characterIndexForPointX:Y:]):
+        
 2006-02-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Eric.

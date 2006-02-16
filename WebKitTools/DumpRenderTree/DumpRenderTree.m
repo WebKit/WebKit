@@ -28,6 +28,7 @@
 
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMRange.h>
+#import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebCoreStatistics.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebEditingDelegate.h>
@@ -49,6 +50,30 @@
 #import "NavigationController.h"
 #import "AppleScriptController.h"
 
+@interface DumpRenderTreeWindow : NSWindow
+@end
+
+@interface DumpRenderTreeDraggingInfo : NSObject <NSDraggingInfo>
+{
+@private
+    NSSize offset;
+    NSImage *draggedImage;
+    NSPasteboard *draggingPasteboard;
+    id draggingSource;
+}
+- (id)initWithImage:(NSImage *)image offset:(NSSize)offset pasteboard:(NSPasteboard *)pasteboard source:(id)source; 
+- (NSWindow *)draggingDestinationWindow;
+- (NSDragOperation)draggingSourceOperationMask;
+- (NSPoint)draggingLocation;
+- (NSPoint)draggedImageLocation;
+- (NSImage *)draggedImage;
+- (NSPasteboard *)draggingPasteboard;
+- (id)draggingSource;
+- (int)draggingSequenceNumber;
+- (void)slideDraggedImageTo:(NSPoint)screenPoint;
+- (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination;
+@end
+
 @interface DumpRenderTreePasteboard : NSPasteboard
 @end
 
@@ -63,12 +88,10 @@
 
 @interface EventSendingController : NSObject
 {
-    NSPoint last;
     BOOL down;
     int clickCount;
     NSTimeInterval lastClick;
 }
-
 @end
 
 static void dumpRenderTree(const char *filename);
@@ -86,6 +109,9 @@ static int dumpTree = YES;
 static BOOL printSeparators;
 static NSString *currentTest = nil;
 static NSPasteboard *localPasteboard;
+static BOOL windowIsKey = YES;
+static NSPoint lastMousePosition;
+static DumpRenderTreeDraggingInfo *draggingInfo;
 
 static CMProfileRef currentColorProfile = 0;
 static void restoreColorSpace(int ignored)
@@ -140,6 +166,7 @@ int main(int argc, const char *argv[])
     [NSApplication sharedApplication];
 
     class_poseAs(objc_getClass("DumpRenderTreePasteboard"), objc_getClass("NSPasteboard"));
+    class_poseAs(objc_getClass("DumpRenderTreeWindow"), objc_getClass("NSWindow"));
     
     struct option options[] = {
         {"pixel-tests", no_argument, &dumpPixels, YES},
@@ -193,14 +220,26 @@ int main(int argc, const char *argv[])
     localPasteboard = [NSPasteboard pasteboardWithUniqueName];
     navigationController = [[NavigationController alloc] init];
 
-    WebView *webView = [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)];
+    NSRect rect = NSMakeRect(0, 0, 800, 600);
+    
+    WebView *webView = [[WebView alloc] initWithFrame:rect];
     WaitUntilDoneDelegate *delegate = [[WaitUntilDoneDelegate alloc] init];
     EditingDelegate *editingDelegate = [[EditingDelegate alloc] init];
     [webView setFrameLoadDelegate:delegate];
     [webView setEditingDelegate:editingDelegate];
     [webView setUIDelegate:delegate];
     frame = [webView mainFrame];
-    
+
+    // The back/forward cache is causing problems due to layouts during transition from one page to another.
+    // So, turn it off for now, but we might want to turn it back on some day.
+    [[webView backForwardList] setPageCacheSize:0];
+
+    // To make things like certain NSViews, dragging, and plug-ins work, put the WebView a window, but put it off-screen so you don't see it.
+    NSRect windowRect = NSOffsetRect(rect, -10000, -10000);
+    NSWindow *window = [[NSWindow alloc] initWithContentRect:windowRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];
+    [[window contentView] addSubview:webView];
+    [window orderBack:nil];
+
     [webView setContinuousSpellCheckingEnabled:YES];
     
     // For reasons that are not entirely clear, the following pair of calls makes WebView handle its
@@ -234,6 +273,13 @@ int main(int argc, const char *argv[])
     [webView setUIDelegate:nil];
     frame = nil;
 
+    // Work around problem where registering drag types leaves an outstanding
+    // "perform selector" on the window, which retains the window. It's a bit
+    // inelegant and perhaps dangerous to just blow them all away, but in practice
+    // it probably won't cause any trouble (and this is just a test tool, after all).
+    [NSObject cancelPreviousPerformRequestsWithTarget:window];
+    
+    [window release];
     [webView release];
     [delegate release];
     [editingDelegate release];
@@ -329,11 +375,12 @@ static void dump(void)
 {
     if (frame == f)
         readyToDump = NO;
-        
-    if ([[[frame frameView] documentView] isKindOfClass:[WebHTMLView class]]) {
-        [(WebHTMLView *)[[frame frameView] documentView] _setWindowHasFocus:YES];
-        [(WebHTMLView *)[[frame frameView] documentView] _setDisplaysWithFocusAttributes:YES];
-    }
+
+    windowIsKey = YES;
+    NSView *documentView = [[frame frameView] documentView];
+    [[[frame webView] window] makeFirstResponder:documentView];
+    if ([documentView isKindOfClass:[WebHTMLView class]])
+        [(WebHTMLView *)documentView _updateFocusState];
 }
 
 - (void)webView:(WebView *)sender didFailProvisionalLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
@@ -378,6 +425,24 @@ static void dump(void)
 {
     if (dumpTitleChanges)
         printf("TITLE CHANGED: %s\n", [title UTF8String]);
+}
+
+- (void)webView:(WebView *)sender dragImage:(NSImage *)anImage at:(NSPoint)viewLocation offset:(NSSize)initialOffset event:(NSEvent *)event pasteboard:(NSPasteboard *)pboard source:(id)sourceObj slideBack:(BOOL)slideFlag forView:(NSView *)view
+{
+    // A new drag was started before the old one ended.  Probably shouldn't happen.
+    if (draggingInfo) {
+        [[draggingInfo draggingSource] draggedImage:[draggingInfo draggedImage] endedAt:lastMousePosition operation:NSDragOperationNone];
+        [draggingInfo release];
+    }
+    draggingInfo = [[DumpRenderTreeDraggingInfo alloc] initWithImage:anImage offset:initialOffset pasteboard:pboard source:sourceObj];
+}
+
+- (void)webViewFocus:(WebView *)webView
+{
+    windowIsKey = YES;
+    NSView *documentView = [[frame frameView] documentView];
+    if ([documentView isKindOfClass:[WebHTMLView class]])
+        [(WebHTMLView *)documentView _updateFocusState];
 }
 
 @end
@@ -518,18 +583,18 @@ static void dump(void)
             || aSelector == @selector(notifyDone)
             || aSelector == @selector(dumpAsText)
             || aSelector == @selector(dumpTitleChanges)
-            || aSelector == @selector(setWindowHasFocus:)
-            || aSelector == @selector(setDisplaysWithFocusAttributes:))
+            || aSelector == @selector(setWindowIsKey:)
+            || aSelector == @selector(setMainFrameIsFirstResponder:))
         return NO;
     return YES;
 }
 
 + (NSString *)webScriptNameForSelector:(SEL)aSelector
 {
-    if (aSelector == @selector(setWindowHasFocus:))
-        return @"setWindowHasFocus";
-    if (aSelector == @selector(setDisplaysWithFocusAttributes:))
-        return @"setDisplaysWithFocusAttributes";
+    if (aSelector == @selector(setWindowIsKey:))
+        return @"setWindowIsKey";
+    if (aSelector == @selector(setMainFrameIsFirstResponder:))
+        return @"setMainFrameIsFirstResponder";
     return nil;
 }
 
@@ -555,16 +620,23 @@ static void dump(void)
     dumpTitleChanges = YES;
 }
 
-- (void)setWindowHasFocus:(BOOL)flag
+- (void)setWindowIsKey:(BOOL)flag
 {
-    if ([[[frame frameView] documentView] isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView *)[[frame frameView] documentView] _setWindowHasFocus:flag];
+    windowIsKey = flag;
+    NSView *documentView = [[frame frameView] documentView];
+    if ([documentView isKindOfClass:[WebHTMLView class]])
+        [(WebHTMLView *)documentView _updateFocusState];
 }
 
-- (void)setDisplaysWithFocusAttributes:(BOOL)flag
+- (void)setMainFrameIsFirstResponder:(BOOL)flag
 {
-    if ([[[frame frameView] documentView] isKindOfClass:[WebHTMLView class]])
-        [(WebHTMLView *)[[frame frameView] documentView] _setDisplaysWithFocusAttributes:flag];
+    NSView *documentView = [[frame frameView] documentView];
+    
+    NSResponder *firstResponder = flag ? documentView : nil;
+    [[[frame webView] window] makeFirstResponder:firstResponder];
+        
+    if ([documentView isKindOfClass:[WebHTMLView class]])
+        [(WebHTMLView *)documentView _updateFocusState];
 }
 
 - (id)invokeUndefinedMethodFromWebScript:(NSString *)name withArguments:(NSArray *)args
@@ -594,7 +666,7 @@ static void dump(void)
 
 - (id)init
 {
-    last = NSMakePoint(0, 0);
+    lastMousePosition = NSMakePoint(0, 0);
     down = NO;
     clickCount = 0;
     lastClick = 0;
@@ -608,7 +680,7 @@ static void dump(void)
         clickCount = 1;
     else
         clickCount++;
-    NSEvent *event = [NSEvent mouseEventWithType:NSLeftMouseDown location:last modifierFlags:nil timestamp:GetCurrentEventTime() windowNumber:0 context:[NSGraphicsContext currentContext] eventNumber:nil clickCount:clickCount pressure:nil];
+    NSEvent *event = [NSEvent mouseEventWithType:NSLeftMouseDown location:lastMousePosition modifierFlags:nil timestamp:GetCurrentEventTime() windowNumber:0 context:[NSGraphicsContext currentContext] eventNumber:nil clickCount:clickCount pressure:nil];
 
     NSView *subView = [[frame webView] hitTest:[event locationInWindow]];
     if (subView) {
@@ -620,25 +692,39 @@ static void dump(void)
 - (void)mouseUp
 {
     [[[frame frameView] documentView] layout];
-    NSEvent *event = [NSEvent mouseEventWithType:NSLeftMouseUp location:last modifierFlags:nil timestamp:GetCurrentEventTime() windowNumber:0 context:[NSGraphicsContext currentContext] eventNumber:nil clickCount:clickCount pressure:nil];
+    NSEvent *event = [NSEvent mouseEventWithType:NSLeftMouseUp location:lastMousePosition modifierFlags:nil timestamp:GetCurrentEventTime() windowNumber:0 context:[NSGraphicsContext currentContext] eventNumber:nil clickCount:clickCount pressure:nil];
 
     NSView *subView = [[frame webView] hitTest:[event locationInWindow]];
     if (subView) {
         [subView mouseUp:event];
         down = NO;
         lastClick = [event timestamp];
+        if (draggingInfo) {
+            WebView *webView = [frame webView];
+            
+            NSDragOperation dragOperation = [webView draggingUpdated:draggingInfo];
+            
+            [[draggingInfo draggingSource] draggedImage:[draggingInfo draggedImage] endedAt:lastMousePosition operation:dragOperation];
+            if (dragOperation != NSDragOperationNone)
+                [webView performDragOperation:draggingInfo];
+            [draggingInfo release];
+            draggingInfo = nil;
+        }
     }
 }
 
 - (void)mouseMoveToX:(int)x Y:(int)y
 {
-    last = NSMakePoint(x, [[frame webView] frame].size.height - y);
-    NSEvent *event = [NSEvent mouseEventWithType:(down ? NSLeftMouseDragged : NSMouseMoved) location:last modifierFlags:nil timestamp:GetCurrentEventTime() windowNumber:0 context:[NSGraphicsContext currentContext] eventNumber:nil clickCount:(down ? clickCount : 0) pressure:nil];
+    lastMousePosition = NSMakePoint(x, [[frame webView] frame].size.height - y);
+    NSEvent *event = [NSEvent mouseEventWithType:(down ? NSLeftMouseDragged : NSMouseMoved) location:lastMousePosition modifierFlags:nil timestamp:GetCurrentEventTime() windowNumber:0 context:[NSGraphicsContext currentContext] eventNumber:nil clickCount:(down ? clickCount : 0) pressure:nil];
 
     NSView *subView = [[frame webView] hitTest:[event locationInWindow]];
     if (subView) {
-        if (down)
+        if (down) {
             [subView mouseDragged:event];
+            [[draggingInfo draggingSource] draggedImage:[draggingInfo draggedImage] movedTo:lastMousePosition];
+            [[frame webView] draggingUpdated:draggingInfo];
+        }
         else
             [subView mouseMoved:event];
     }
@@ -681,6 +767,9 @@ static void dumpRenderTree(const char *filename)
     }
     pool = [[NSAutoreleasePool alloc] init];
     [[frame webView] setSelectedDOMRange:nil affinity:NSSelectionAffinityDownstream];
+    if (draggingInfo)
+        [draggingInfo release];
+    draggingInfo = nil;
     [pool release];
 }
 
@@ -711,3 +800,87 @@ static NSString *md5HashStringForBitmap(NSBitmapImageRep *bitmap)
 }
 
 @end
+
+@implementation DumpRenderTreeWindow
+
+- (BOOL)isKeyWindow
+{
+    return windowIsKey;
+}
+
+@end
+
+@implementation DumpRenderTreeDraggingInfo
+
+- (id)initWithImage:(NSImage *)anImage offset:(NSSize)o pasteboard:(NSPasteboard *)pboard source:(id)source
+{
+    draggedImage = [anImage retain];
+    draggingPasteboard = [pboard retain];
+    draggingSource = [source retain];
+    offset = o;
+    
+    return [super init];
+}
+
+- (void)dealloc
+{
+    [draggedImage release];
+    [draggingPasteboard release];
+    [draggingSource release];
+    [super dealloc];
+}
+
+- (NSWindow *)draggingDestinationWindow 
+{
+    return [[frame webView] window];
+}
+
+- (NSDragOperation)draggingSourceOperationMask 
+{
+    return [draggingSource draggingSourceOperationMaskForLocal:YES];
+}
+
+- (NSPoint)draggingLocation
+{ 
+    return lastMousePosition; 
+}
+
+- (NSPoint)draggedImageLocation 
+{
+    return NSMakePoint(lastMousePosition.x + offset.width, lastMousePosition.y + offset.height);
+}
+
+- (NSImage *)draggedImage
+{
+    return draggedImage;
+}
+
+- (NSPasteboard *)draggingPasteboard
+{
+    return draggingPasteboard;
+}
+
+- (id)draggingSource
+{
+    return draggingSource;
+}
+
+- (int)draggingSequenceNumber
+{
+    NSLog(@"DumpRenderTree doesn't support draggingSequenceNumber");
+    return 0;
+}
+
+- (void)slideDraggedImageTo:(NSPoint)screenPoint
+{
+    NSLog(@"DumpRenderTree doesn't support slideDraggedImageTo:");
+}
+
+- (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination
+{
+    NSLog(@"DumpRenderTree doesn't support namesOfPromisedFilesDroppedAtDestination:");
+    return nil;
+}
+
+@end
+

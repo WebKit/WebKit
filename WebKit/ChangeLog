@@ -1,3 +1,28 @@
+2006-02-15  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7148>
+        Add drag and drop support to DumpRenderTree
+        
+        Added a UI delegate method so that DumpRenderTree can perform dragging on its own.
+        Made _updateFocusState SPI, to allow us to test the behavior and appearance of
+        windows that have or don't have focus.
+
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _updateFocusState]):
+        (-[NSArray viewDidMoveToWindow]):
+        (-[NSArray windowDidBecomeKey:]):
+        (-[NSArray windowDidResignKey:]):
+        (-[NSArray dragImage:at:offset:event:pasteboard:source:slideBack:]):
+        (-[NSArray becomeFirstResponder]):
+        (-[NSArray resignFirstResponder]):
+        (-[WebHTMLView _formControlIsResigningFirstResponder:]):
+        * WebView/WebHTMLViewInternal.h:
+        * WebView/WebHTMLViewPrivate.h:
+        * WebView/WebUIDelegatePrivate.h:
+        * WebView/WebView.m:
+
 2006-02-15  Darin Adler  <darin@apple.com>
 
         * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.
