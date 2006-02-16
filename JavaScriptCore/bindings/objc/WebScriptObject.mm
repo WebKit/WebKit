@@ -30,7 +30,6 @@
 #import "list.h"
 #import "value.h"
 
-#import "objc_jsobject.h"
 #import "objc_instance.h"
 #import "objc_utility.h"
 
