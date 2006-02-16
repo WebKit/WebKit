@@ -1,3 +1,11 @@
+2006-02-15  Eric Seidel  <eseidel@apple.com>
+        
+        Add files missing from previous commit.
+        
+        * svg/custom/feDisplacementMap-01-expected.checksum: Added.
+        * svg/custom/feDisplacementMap-01-expected.png: Added.
+        * svg/custom/feDisplacementMap-01-expected.txt: Added.
+
 2006-02-15  Oliver Hunt  <ojh16@student.canterbury.ac.nz>
 
         Reviewed by eseidel.  Landed by eseidel.
