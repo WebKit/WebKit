@@ -1,6 +1,6 @@
 2006-02-16  Darin Adler  <darin@apple.com>
 
-        Reviewed by me, change by Peter Kummel.
+        Reviewed by me, change by Peter Kuemmel.
 
         * kjs/operations.cpp: (KJS::isNegInf): Fix Windows code, which was
         checking for positive infinity (rolling in fix from KDE side).
