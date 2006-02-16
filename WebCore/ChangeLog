@@ -2,6 +2,22 @@
 
         Reviewed by Darin.
 
+        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=7113
+        Typing in editable overflow:hidden div doesn't scroll
+
+        * bridge/mac/WebCoreFrameBridge.mm: (-[WebCoreFrameBridge ensureSelectionVisible]):
+          Changed scrollRectToVisible call so that it will align to the edge instead of trying to center the selection.  
+          Centering looks funny when it happens after typing, deleting, moving the cursor, etc.
+        * rendering/render_layer.cpp: (WebCore::RenderLayer::scrollRectToVisible):
+          Use scrollWidth() and scrollHeight() functions instead of m_scrollWidth and m_scrollHeight.  
+          These functions will cause the correct scroll dimensions to be calculated for overflow:hidden layers.
+          Also subtracted scrollbar width and height when calculating the layer bounds. This was causing scroll problems in overflow:scroll.
+          I also did some cleanup to use xPos() and yPos() instead of m_x and m_y, and to use scrollYOffset() instead of m_scrollY.
+
+2006-02-16  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
         - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=6812
         Missing focus ring on new text fields
 

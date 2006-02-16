@@ -583,24 +583,25 @@ void RenderLayer::scrollRectToVisible(const IntRect &rect, const ScrollAlignment
     int xOffset = 0, yOffset = 0;
     
     if (m_object->hasOverflowClip()) {
-        IntRect layerBounds = IntRect(m_x + scrollXOffset(), m_y + m_scrollY, m_width, m_height);
-        IntRect exposeRect = IntRect(rect.x() + scrollXOffset(), rect.y() + m_scrollY, rect.width(), rect.height());
+        IntRect layerBounds = IntRect(xPos() + scrollXOffset(), yPos() + scrollYOffset(), 
+                                      width() - verticalScrollbarWidth(), height() - horizontalScrollbarHeight());
+        IntRect exposeRect = IntRect(rect.x() + scrollXOffset(), rect.y() + scrollYOffset(), rect.width(), rect.height());
         IntRect r = getRectToExpose(layerBounds, exposeRect, alignX, alignY);
         
-        xOffset = r.x() - m_x;
-        yOffset = r.y() - m_y;
+        xOffset = r.x() - xPos();
+        yOffset = r.y() - yPos();
         // Adjust offsets if they're outside of the allowable range.
-        xOffset = kMax(0, kMin(m_scrollWidth - m_width, xOffset));
-        yOffset = kMax(0, kMin(m_scrollHeight - m_height, yOffset));
+        xOffset = kMax(0, kMin(scrollWidth() - width(), xOffset));
+        yOffset = kMax(0, kMin(scrollHeight() - height(), yOffset));
         
-        if (xOffset != scrollXOffset() || yOffset != m_scrollY) {
+        if (xOffset != scrollXOffset() || yOffset != scrollYOffset()) {
             int diffX = scrollXOffset();
-            int diffY = m_scrollY;
+            int diffY = scrollYOffset();
             scrollToOffset(xOffset, yOffset);
             // FIXME: At this point a scroll event fired, which could have deleted this layer.
             // Need to handle this case.
             diffX = scrollXOffset() - diffX;
-            diffY = m_scrollY - diffY;
+            diffY = scrollYOffset() - diffY;
             newRect.setX(rect.x() - diffX);
             newRect.setY(rect.y() - diffY);
         }
