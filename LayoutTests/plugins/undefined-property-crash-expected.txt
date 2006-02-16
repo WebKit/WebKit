@@ -1,0 +1,7 @@
+This test checks for a regression against: rdar://problem/4176077 CrashTracer: 6569 crashes in DashboardClient at com.apple.JavaScriptCore: KJS::Bindings::ObjcFallbackObjectImp::type()
+
+This test only works in DumpRenderTree, because it depends on having a plugin object that it can 'delete.'
+
+PASS: You didn't crash.
+
+

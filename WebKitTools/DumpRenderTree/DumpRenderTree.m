@@ -567,6 +567,11 @@ static void dump(void)
         [(WebHTMLView *)[[frame frameView] documentView] _setDisplaysWithFocusAttributes:flag];
 }
 
+- (id)invokeUndefinedMethodFromWebScript:(NSString *)name withArguments:(NSArray *)args
+{
+    return nil;
+}
+
 @end
 
 @implementation EventSendingController

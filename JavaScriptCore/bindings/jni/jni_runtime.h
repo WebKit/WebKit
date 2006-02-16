@@ -281,11 +281,7 @@ public:
         free ((void *)_type);
         _type = strdup(other._type);
         _root = other._root;
-
-        JObjectWrapper *_oldArray = _array;
         _array = other._array;
-        _array->ref();
-        _oldArray->deref();
         
         return *this;
     };
@@ -303,7 +299,7 @@ public:
     const RootObject *executionContext() const { return _root; }
     
 private:
-    JObjectWrapper *_array;
+    RefPtr<JObjectWrapper> _array;
     unsigned int _length;
     const char *_type;
     const RootObject *_root;

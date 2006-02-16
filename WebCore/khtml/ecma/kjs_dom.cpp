@@ -1399,17 +1399,17 @@ JSValue *getRuntimeObject(ExecState *exec, NodeImpl *n)
         HTMLAppletElementImpl *appletElement = static_cast<HTMLAppletElementImpl *>(n);
         if (appletElement->getAppletInstance())
             // The instance is owned by the applet element.
-            return new RuntimeObjectImp(appletElement->getAppletInstance(), false);
+            return new RuntimeObjectImp(appletElement->getAppletInstance());
     }
     else if (n->hasTagName(embedTag)) {
         HTMLEmbedElementImpl *embedElement = static_cast<HTMLEmbedElementImpl *>(n);
         if (embedElement->getEmbedInstance())
-            return new RuntimeObjectImp(embedElement->getEmbedInstance(), false);
+            return new RuntimeObjectImp(embedElement->getEmbedInstance());
     }
     else if (n->hasTagName(objectTag)) {
         HTMLObjectElementImpl *objectElement = static_cast<HTMLObjectElementImpl *>(n);
         if (objectElement->getObjectInstance())
-            return new RuntimeObjectImp(objectElement->getObjectInstance(), false);
+            return new RuntimeObjectImp(objectElement->getObjectInstance());
     }
 #endif
 

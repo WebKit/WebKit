@@ -1,3 +1,15 @@
+2006-02-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Eric.
+
+        - Layout test for <rdar://problem/4176077> CrashTracer: 6569
+        crashes in DashboardClient at com.apple.JavaScriptCore:
+        KJS::Bindings::ObjcFallbackObjectImp::type()
+
+        * plugins: Added.
+        * plugins/undefined-property-crash-expected.txt: Added.
+        * plugins/undefined-property-crash.html: Added.
+
 2006-02-15  Eric Seidel  <eseidel@apple.com>
         
         Add files missing from previous commit.

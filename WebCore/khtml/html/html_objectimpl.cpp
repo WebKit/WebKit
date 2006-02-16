@@ -52,16 +52,15 @@ using namespace HTMLNames;
 // -------------------------------------------------------------------------
 
 HTMLAppletElementImpl::HTMLAppletElementImpl(DocumentImpl *doc)
-  : HTMLElementImpl(appletTag, doc)
+: HTMLElementImpl(appletTag, doc)
+, m_allParamsAvailable(false)
 {
-    appletInstance = 0;
-    m_allParamsAvailable = false;
 }
 
 HTMLAppletElementImpl::~HTMLAppletElementImpl()
 {
-    // appletInstance should have been cleaned up in detach().
-    assert(!appletInstance);
+    // m_appletInstance should have been cleaned up in detach().
+    assert(!m_appletInstance);
 }
 
 bool HTMLAppletElementImpl::checkDTD(const NodeImpl* newChild)
@@ -202,8 +201,8 @@ KJS::Bindings::Instance *HTMLAppletElementImpl::getAppletInstance() const
     if (!frame || !frame->javaEnabled())
         return 0;
 
-    if (appletInstance)
-        return appletInstance;
+    if (m_appletInstance)
+        return m_appletInstance.get();
     
     RenderApplet *r = static_cast<RenderApplet*>(renderer());
     if (r) {
@@ -211,9 +210,9 @@ KJS::Bindings::Instance *HTMLAppletElementImpl::getAppletInstance() const
         if (r->widget())
             // Call into the frame (and over the bridge) to pull the Bindings::Instance
             // from the guts of the plugin.
-            appletInstance = frame->getAppletInstanceForWidget(r->widget());
+            m_appletInstance = frame->getAppletInstanceForWidget(r->widget());
     }
-    return appletInstance;
+    return m_appletInstance.get();
 }
 
 void HTMLAppletElementImpl::closeRenderer()
@@ -227,12 +226,7 @@ void HTMLAppletElementImpl::closeRenderer()
 
 void HTMLAppletElementImpl::detach()
 {
-    // Delete appletInstance, because it references the widget owned by the renderer we're about to destroy.
-    if (appletInstance) {
-        delete appletInstance;
-        appletInstance = 0;
-    }
-
+    m_appletInstance = 0;
     HTMLElementImpl::detach();
 }
 
@@ -354,13 +348,14 @@ void HTMLAppletElementImpl::setWidth(const DOMString &value)
 // -------------------------------------------------------------------------
 
 HTMLEmbedElementImpl::HTMLEmbedElementImpl(DocumentImpl *doc)
-    : HTMLElementImpl(embedTag, doc), embedInstance(0)
-{}
+: HTMLElementImpl(embedTag, doc)
+{
+}
 
 HTMLEmbedElementImpl::~HTMLEmbedElementImpl()
 {
-    // embedInstance should have been cleaned up in detach().
-    assert(!embedInstance);
+    // m_embedInstance should have been cleaned up in detach().
+    assert(!m_embedInstance);
 }
 
 bool HTMLEmbedElementImpl::checkDTD(const NodeImpl* newChild)
@@ -374,8 +369,8 @@ KJS::Bindings::Instance *HTMLEmbedElementImpl::getEmbedInstance() const
     if (!frame)
         return 0;
 
-    if (embedInstance)
-        return embedInstance;
+    if (m_embedInstance)
+        return m_embedInstance.get();
     
     RenderObject *r = renderer();
     if (!r) {
@@ -388,13 +383,13 @@ KJS::Bindings::Instance *HTMLEmbedElementImpl::getEmbedInstance() const
         if (Widget *widget = static_cast<RenderWidget *>(r)->widget()) {
             // Call into the frame (and over the bridge) to pull the Bindings::Instance
             // from the guts of the Java VM.
-            embedInstance = frame->getEmbedInstanceForWidget(widget);
+            m_embedInstance = frame->getEmbedInstanceForWidget(widget);
             // Applet may specified with <embed> tag.
-            if (!embedInstance)
-                embedInstance = frame->getAppletInstanceForWidget(widget);
+            if (!m_embedInstance)
+                m_embedInstance = frame->getAppletInstanceForWidget(widget);
         }
     }
-    return embedInstance;
+    return m_embedInstance.get();
 }
 
 bool HTMLEmbedElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
@@ -503,12 +498,7 @@ void HTMLEmbedElementImpl::attach()
 
 void HTMLEmbedElementImpl::detach()
 {
-    // Delete embedInstance, because it references the widget owned by the renderer we're about to destroy.
-    if (embedInstance) {
-        delete embedInstance;
-        embedInstance = 0;
-    }
-
+    m_embedInstance = 0;
     HTMLElementImpl::detach();
 }
 
@@ -540,7 +530,8 @@ bool HTMLEmbedElementImpl::isURLAttribute(AttributeImpl *attr) const
 // -------------------------------------------------------------------------
 
 HTMLObjectElementImpl::HTMLObjectElementImpl(DocumentImpl *doc) 
-: HTMLElementImpl(objectTag, doc), m_imageLoader(0), objectInstance(0)
+: HTMLElementImpl(objectTag, doc)
+, m_imageLoader(0)
 {
     needWidgetUpdate = false;
     m_useFallbackContent = false;
@@ -550,8 +541,8 @@ HTMLObjectElementImpl::HTMLObjectElementImpl(DocumentImpl *doc)
 
 HTMLObjectElementImpl::~HTMLObjectElementImpl()
 {
-    // objectInstance should have been cleaned up in detach().
-    assert(!objectInstance);
+    // m_objectInstance should have been cleaned up in detach().
+    assert(!m_objectInstance);
     
     delete m_imageLoader;
 }
@@ -567,23 +558,23 @@ KJS::Bindings::Instance *HTMLObjectElementImpl::getObjectInstance() const
     if (!frame)
         return 0;
 
-    if (objectInstance)
-        return objectInstance;
+    if (m_objectInstance)
+        return m_objectInstance.get();
 
     if (RenderObject *r = renderer()) {
         if (r->isWidget()) {
             if (Widget *widget = static_cast<RenderWidget *>(r)->widget()) {
                 // Call into the frame (and over the bridge) to pull the Bindings::Instance
                 // from the guts of the plugin.
-                objectInstance = frame->getObjectInstanceForWidget(widget);
+                m_objectInstance = frame->getObjectInstanceForWidget(widget);
                 // Applet may specified with <object> tag.
-                if (!objectInstance)
-                    objectInstance = frame->getAppletInstanceForWidget(widget);
+                if (!m_objectInstance)
+                    m_objectInstance = frame->getAppletInstanceForWidget(widget);
             }
         }
     }
 
-    return objectInstance;
+    return m_objectInstance.get();
 }
 
 HTMLFormElementImpl *HTMLObjectElementImpl::form() const
@@ -760,12 +751,7 @@ void HTMLObjectElementImpl::detach()
         needWidgetUpdate = true;
     }
 
-    // Delete objectInstance, because it references the widget owned by the renderer we're about to destroy.
-    if (objectInstance) {
-        delete objectInstance;
-        objectInstance = 0;
-    }
-    
+    m_objectInstance = 0;
     HTMLElementImpl::detach();
 }
 

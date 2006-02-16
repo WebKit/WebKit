@@ -43,29 +43,15 @@ using namespace Bindings;
 
 const ClassInfo RuntimeObjectImp::info = {"RuntimeObject", 0, 0, 0};
 
-RuntimeObjectImp::RuntimeObjectImp(JSObject *proto)
-  : JSObject(proto)
+RuntimeObjectImp::RuntimeObjectImp(Bindings::Instance *i)
+: instance(i)
 {
-    instance = 0;
-}
-
-RuntimeObjectImp::~RuntimeObjectImp()
-{
-    if (ownsInstance) {
-        delete instance;
-    }
-}
-
-RuntimeObjectImp::RuntimeObjectImp(Bindings::Instance *i, bool oi)
-{
-    ownsInstance = oi;
-    instance = i;
 }
 
 JSValue *RuntimeObjectImp::fallbackObjectGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     RuntimeObjectImp *thisObj = static_cast<RuntimeObjectImp *>(slot.slotBase());
-    Bindings::Instance *instance = thisObj->instance;
+    Bindings::Instance *instance = thisObj->instance.get();
 
     instance->begin();
 
@@ -80,7 +66,7 @@ JSValue *RuntimeObjectImp::fallbackObjectGetter(ExecState *exec, JSObject *origi
 JSValue *RuntimeObjectImp::fieldGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     RuntimeObjectImp *thisObj = static_cast<RuntimeObjectImp *>(slot.slotBase());
-    Bindings::Instance *instance = thisObj->instance;
+    Bindings::Instance *instance = thisObj->instance.get();
 
     instance->begin();
 
@@ -96,7 +82,7 @@ JSValue *RuntimeObjectImp::fieldGetter(ExecState *exec, JSObject *originalObject
 JSValue *RuntimeObjectImp::methodGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     RuntimeObjectImp *thisObj = static_cast<RuntimeObjectImp *>(slot.slotBase());
-    Bindings::Instance *instance = thisObj->instance;
+    Bindings::Instance *instance = thisObj->instance.get();
 
     instance->begin();
 
@@ -117,7 +103,7 @@ bool RuntimeObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& pro
     
     if (aClass) {
         // See if the instance has a field with the specified name.
-        Field *aField = aClass->fieldNamed(propertyName.ascii(), instance);
+        Field *aField = aClass->fieldNamed(propertyName.ascii(), instance.get());
         if (aField) {
             slot.setCustom(this, fieldGetter);
             instance->end();
@@ -125,7 +111,7 @@ bool RuntimeObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& pro
         } else {
             // Now check if a method with specified name exists, if so return a function object for
             // that method.
-            MethodList methodList = aClass->methodsNamed(propertyName.ascii(), instance);
+            MethodList methodList = aClass->methodsNamed(propertyName.ascii(), instance.get());
             if (methodList.length() > 0) {
                 slot.setCustom(this, methodGetter);
                 instance->end();
@@ -134,7 +120,7 @@ bool RuntimeObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& pro
         }
 
         // Try a fallback object.
-        if (!aClass->fallbackObject(exec, instance, propertyName)->isUndefined()) {
+        if (!aClass->fallbackObject(exec, instance.get(), propertyName)->isUndefined()) {
             slot.setCustom(this, fallbackObjectGetter);
             instance->end();
             return true;
@@ -153,7 +139,7 @@ void RuntimeObjectImp::put(ExecState *exec, const Identifier &propertyName,
     instance->begin();
 
     // Set the value of the property.
-    Field *aField = instance->getClass()->fieldNamed(propertyName.ascii(), instance);
+    Field *aField = instance->getClass()->fieldNamed(propertyName.ascii(), instance.get());
     if (aField) {
         getInternalInstance()->setValueOfField(exec, aField, value);
     }
@@ -172,7 +158,7 @@ bool RuntimeObjectImp::canPut(ExecState *exec, const Identifier &propertyName) c
 
     instance->begin();
 
-    Field *aField = instance->getClass()->fieldNamed(propertyName.ascii(), instance);
+    Field *aField = instance->getClass()->fieldNamed(propertyName.ascii(), instance.get());
 
     instance->end();
 

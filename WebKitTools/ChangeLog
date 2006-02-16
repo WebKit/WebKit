@@ -1,3 +1,14 @@
+2006-02-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Eric.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (-[LayoutTestController invokeUndefinedMethodFromWebScript:withArguments:]): 
+        Added a dummy method for the sake of LayoutTests/plugins/
+        undefined-property-crash.html. (It tests a crash due to fallback 
+        object use. WebCore won't create a fallback object if the method is 
+        not defined.)
+
 2006-02-14  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by adele.

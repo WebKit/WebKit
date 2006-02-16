@@ -134,6 +134,8 @@ public:
         CLanguage
     } BindingLanguage;
 
+    Instance();
+
     static void setDidExecuteFunction(KJSDidExecuteFunctionPtr func);
     static KJSDidExecuteFunctionPtr didExecuteFunction();
     
@@ -141,11 +143,12 @@ public:
     static void* createLanguageInstanceForValue(ExecState*, BindingLanguage, JSObject* value, const RootObject* origin, const RootObject* current);
     static JSObject* createRuntimeObject(BindingLanguage, void* nativeInstance, const RootObject* = 0);
 
-    Instance() : _executionContext(0) {}
-    
-    Instance(const Instance &other);
-
-    Instance &operator=(const Instance &other);
+    void ref() { _refCount++; }
+    void deref() 
+    { 
+        if (--_refCount == 0) 
+            delete this; 
+    }
 
     // These functions are called before and after the main entry points into
     // the native implementations.  They can be used to establish and cleanup
@@ -175,6 +178,11 @@ public:
 
 protected:
     const RootObject* _executionContext;
+    unsigned _refCount;
+
+private:
+    Instance(const Instance &other); // prevent copying
+    Instance &operator=(const Instance &other); // ditto
 };
 
 class Array

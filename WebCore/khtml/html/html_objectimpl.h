@@ -101,7 +101,7 @@ private:
     DOMString oldNameAttr;
     DOMString oldIdAttr;
 
-    mutable KJS::Bindings::Instance* appletInstance;
+    mutable RefPtr<KJS::Bindings::Instance> m_appletInstance;
 
     bool m_allParamsAvailable;
 };
@@ -139,7 +139,7 @@ public:
 private:
     DOMString oldNameAttr;
 
-    mutable KJS::Bindings::Instance* embedInstance;
+    mutable RefPtr<KJS::Bindings::Instance> m_embedInstance;
 };
 
 // -------------------------------------------------------------------------
@@ -248,7 +248,7 @@ private:
     DOMString oldIdAttr;
     DOMString oldNameAttr;
 
-    mutable KJS::Bindings::Instance* objectInstance;
+    mutable RefPtr<KJS::Bindings::Instance> m_objectInstance;
 
     bool m_complete;
     bool m_docNamedItem;

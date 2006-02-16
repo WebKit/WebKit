@@ -33,10 +33,7 @@ namespace KJS {
 
 class RuntimeObjectImp : public JSObject {
 public:
-    RuntimeObjectImp(JSObject *proto);
-    ~RuntimeObjectImp();
-    
-    RuntimeObjectImp(Bindings::Instance *i, bool ownsInstance = true);
+    RuntimeObjectImp(Bindings::Instance *i);
 
     const ClassInfo *classInfo() const { return &info; }
 
@@ -48,18 +45,20 @@ public:
     virtual bool implementsCall() const;
     virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
     
-    void setInternalInstance(Bindings::Instance *i) { instance = i; }
-    Bindings::Instance *getInternalInstance() const { return instance; }
+    Bindings::Instance *getInternalInstance() const { return instance.get(); }
 
     static const ClassInfo info;
 
 private:
+    RuntimeObjectImp(); // prevent default construction
+    RuntimeObjectImp(const RuntimeObjectImp& other); // prevent copying
+    RuntimeObjectImp& operator=(const RuntimeObjectImp& other); // ditto
+    
     static JSValue *fallbackObjectGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
     static JSValue *fieldGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
     static JSValue *methodGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
 
-    Bindings::Instance *instance;
-    bool ownsInstance;
+    RefPtr<Bindings::Instance> instance;
 };
     
 } // namespace

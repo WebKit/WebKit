@@ -236,16 +236,10 @@ unsigned int ObjcArray::getLength() const
 
 const ClassInfo ObjcFallbackObjectImp::info = {"ObjcFallbackObject", 0, 0, 0};
 
-ObjcFallbackObjectImp::ObjcFallbackObjectImp(JSObject *proto)
-  : JSObject(proto)
-{
-    _instance = 0;
-}
-
 ObjcFallbackObjectImp::ObjcFallbackObjectImp(ObjcInstance *i, const KJS::Identifier propertyName)
+: _instance(i)
+, _item(propertyName)
 {
-    _instance = i;
-    _item = propertyName;
 }
 
 bool ObjcFallbackObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)

@@ -1,5 +1,56 @@
 2006-02-15  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Maciej, Eric.
+
+        - WebCore half of fix for <rdar://problem/4176077> CrashTracer: 6569
+        crashes in DashboardClient at com.apple.JavaScriptCore:
+        KJS::Bindings::ObjcFallbackObjectImp::type()
+
+        WebCore and JavaScriptCore weren't sharing Instance objects very
+        nicely. I made them use RefPtrs, and sent them to bed without dessert.
+
+        * bindings/jni/jni_instance.cpp: Made _instance a RefPtr
+        (JavaInstance::~JavaInstance):
+        (JObjectWrapper::JObjectWrapper):
+        * bindings/jni/jni_instance.h:
+        (KJS::Bindings::JObjectWrapper::ref):
+        (KJS::Bindings::JObjectWrapper::deref):
+        * bindings/jni/jni_runtime.cpp: Made _array a RefPtr
+        (JavaArray::~JavaArray):
+        (JavaArray::JavaArray):
+        * bindings/jni/jni_runtime.h:
+        (KJS::Bindings::JavaArray::operator=):
+        * bindings/objc/objc_runtime.h:
+        - Prohibited copying because that would muss the ref count.
+        - Prohibited construction without instance because an instance wrapper
+        without an instance is almost certainly a bug.
+        * bindings/objc/objc_runtime.mm:
+        (ObjcFallbackObjectImp::ObjcFallbackObjectImp):
+        * bindings/runtime.cpp:
+        (KJS::Bindings::Instance::Instance):
+        (KJS::Bindings::Instance::createBindingForLanguageInstance):
+        (KJS::Bindings::Instance::createRuntimeObject):
+        * bindings/runtime.h:
+        (KJS::Bindings::Instance::ref):
+        (KJS::Bindings::Instance::deref):
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::RuntimeObjectImp):
+        (RuntimeObjectImp::fallbackObjectGetter):
+        (RuntimeObjectImp::fieldGetter):
+        (RuntimeObjectImp::methodGetter):
+        (RuntimeObjectImp::getOwnPropertySlot):
+        (RuntimeObjectImp::put):
+        (RuntimeObjectImp::canPut):
+        * bindings/runtime_object.h: 
+        - Removed ownsInstance data member because RefPtr takes care of 
+        instance lifetime now. 
+        - Prohibited copying because that would muss the ref count.
+        - Prohibited construction without instance because an instance wrapper
+        without an instance is almost certainly a bug.
+        (KJS::RuntimeObjectImp::getInternalInstance):
+
+2006-02-15  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by John.
 
         - Applied the 4330457 change to CClass and ObjcClass as well.

@@ -107,6 +107,12 @@ MethodList &MethodList::operator=(const MethodList &other)
 }
 
 
+Instance::Instance()
+: _executionContext(0)
+, _refCount(0)
+{
+}
+
 static KJSDidExecuteFunctionPtr _DidExecuteFunction;
 
 void Instance::setDidExecuteFunction(KJSDidExecuteFunctionPtr func) { _DidExecuteFunction = func; }
@@ -151,10 +157,10 @@ Instance *Instance::createBindingForLanguageInstance(BindingLanguage language, v
 
 JSObject *Instance::createRuntimeObject(BindingLanguage language, void *nativeInstance, const RootObject *executionContext)
 {
-    Instance *interfaceObject = Instance::createBindingForLanguageInstance(language, (void *)nativeInstance, executionContext);
+    Instance *interfaceObject = Instance::createBindingForLanguageInstance(language, nativeInstance, executionContext);
     
     JSLock lock;
-    return new RuntimeObjectImp(interfaceObject, true);
+    return new RuntimeObjectImp(interfaceObject);
 }
 
 void *Instance::createLanguageInstanceForValue(ExecState *exec, BindingLanguage language, JSObject *value, const RootObject *origin, const RootObject *current)
@@ -187,19 +193,4 @@ void *Instance::createLanguageInstanceForValue(ExecState *exec, BindingLanguage 
     return result;
 }
 
-Instance::Instance(const Instance &other) 
-{
-    setExecutionContext(other.executionContext());
-}
-
-Instance &Instance::operator=(const Instance &other)
-{
-    if (this == &other)
-        return *this;
-
-    setExecutionContext(other.executionContext());
-    
-    return *this;
-}
-
-} }
+} } // namespace KJS::Bindings
