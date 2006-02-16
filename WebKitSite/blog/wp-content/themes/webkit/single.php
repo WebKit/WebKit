@@ -10,6 +10,7 @@
 
 		<div class="post" id="post-<?php the_ID(); ?>">
 			<h2><a href="<?php echo get_permalink() ?>" rel="bookmark" title="Permanent Link: <?php the_title(); ?>"><?php the_title(); ?></a></h2>
+                        <small>Posted by <strong><?php the_author() ?></strong> on <?php the_time('l, F jS, Y') ?> at <?php the_time('g:i a') ?></small>
 
 			<div class="entrytext">
 				<?php the_content('<p class="serif">Read the rest of this entry &gt;&gt;</p>'); ?>
@@ -17,7 +18,6 @@
 				<?php link_pages('<p><strong>Pages:</strong> ', '</p>', 'number'); ?>
 
 				<p class="postmetadata alt">
-					This entry was posted by <?php the_author() ?> on <?php the_time(' l, F jS, Y') ?> at <?php the_time('g:i a') ?>.
 					You can follow any responses to this entry through the <?php comments_rss_link('RSS 2.0'); ?> feed. 
 
 					<?php if (('open' == $post-> comment_status) && ('open' == $post->ping_status)) {

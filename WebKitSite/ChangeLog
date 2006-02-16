@@ -1,3 +1,14 @@
+2006-02-16  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Reviewed and landed by Maciej.
+
+        Made the author name bold on the frontpage.
+        Moved the "Posted by" line up under the title and made the author name
+bold in single view.
+
+        * blog/wp-content/themes/webkit/index.php:
+        * blog/wp-content/themes/webkit/single.php:
+
 2006-02-15  Joost de Valk  <jdevalk@opendarwin.org>
 
         Reviewed by Tim H.
