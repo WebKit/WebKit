@@ -877,7 +877,7 @@ void NodeImpl::dispatchWheelEvent(QWheelEvent *e)
 
     int state = e->state();
 
-    WheelEventImpl *we = new WheelEventImpl(e->orientation() == Qt::Horizontal, e->delta(),
+    RefPtr<WheelEventImpl> we = new WheelEventImpl(e->orientation() == Qt::Horizontal, e->delta(),
         getDocument()->defaultView(), e->globalX(), e->globalY(), x, y,
         state & Qt::ControlButton, state & Qt::AltButton, state & Qt::ShiftButton, state & Qt::MetaButton);
 

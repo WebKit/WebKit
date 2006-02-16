@@ -1,3 +1,16 @@
+2006-02-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Eric.
+
+        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=4674
+        LEAK: WheelEventImpl leaked when mousewheel used
+
+        No test case because it requires manual mouse wheeling.
+
+        * dom/NodeImpl.cpp:
+        (WebCore::NodeImpl::dispatchWheelEvent): Use a RefPtr instead of just
+        leaking the WheelEventImpl.
+
 2006-02-15  Dave Hyatt <hyatt@apple.com>
 
         Make FontFamily compile on Win32 (just needed a few more
