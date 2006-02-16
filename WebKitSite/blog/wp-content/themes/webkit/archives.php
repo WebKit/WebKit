@@ -1,12 +1,4 @@
-<?php
-/*
-Template Name: Archives
-*/
-?>
-
 <?php get_header(); ?>
-
-<div id="content" class="widecolumn">
 
 <?php include (TEMPLATEPATH . '/searchform.php'); ?>
 
@@ -19,7 +11,5 @@ Template Name: Archives
   <ul>
      <?php wp_list_cats(); ?>
   </ul>
-
-</div>	
 
 <?php get_footer(); ?>

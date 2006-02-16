@@ -1,23 +1,8 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html>
-<head>
-  <meta content="text/html; charset=ISO-8859-1"
- http-equiv="content-type">
-  <title>JavaScript</title>
-  <link rel=stylesheet href="../../webkitdev.css">
-  <style>
-    dt { font-weight: bold; margin-top: 1em; }
-  </style>
-
-</head>
-<body>
-<!--begin sidebar -->
-<iframe id="sidebar" src="../../sidebar.html"></iframe>
-<!--end sidebar -->
-
-<h1 id="banner">JavaScript</h1>
-
-<div id="content">
+<?php
+	$title = "JavaScript";
+	include("../../header.inc");
+?>
+<h2>JavaScript</h2>
 
 <h3>Overview</h3>
 
@@ -30,7 +15,7 @@ on Mac OS X for applications other than web page JavaScript.</p>
 
 <h3>Get Involved!</h3>
 
-<a href="http://bugzilla.opendarwin.org/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=&product=Web+Kit&component=CSS&long_desc_type=substring&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&emailassigned_to1=1&emailtype1=substring&email1=&emailassigned_to2=1&emailreporter2=1&emailcc2=1&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=&chfieldto=Now&chfieldvalue=&cmdtype=doit&order=Reuse+same+sort+as+last+time&field0-0-0=noop&type0-0-0=noop&value0-0-0=">
+<a href="http://bugzilla.opendarwin.org/buglist.cgi?component=JavaScript&resolution=---">
 View bugs in the JavaScript component on OpenDarwin.
 </a>
 
@@ -73,6 +58,6 @@ demand in contexts like Dashboard widgets.</dd>
 as WebScriptObject, and a browser plug-in oriented C binding. We'd like to create a generic C language binding suitable for use by
 any project that wants to take advantage of the JavaScript engine, but which is easier to maintain compatibly than a C++ binding.</dd>
 
-</div>
-</body>
-</html>
+<?php
+	include("../../footer.inc");
+?>

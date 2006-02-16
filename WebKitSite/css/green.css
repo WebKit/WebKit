@@ -1,0 +1,15 @@
+body {
+    background-image: url( /images/green-background.png ) !important;
+}
+
+#content li {
+    list-style-image: url( /images/green-bullet.png ) !important;
+}
+
+#title h1, h2, h3, h4, #navlist .subtitle {
+	color: #030 !important;
+}
+
+a, #navlist a {
+    color: #281 !important;
+}

@@ -1,23 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html>
-<head>
-  <meta content="text/html; charset=ISO-8859-1"
- http-equiv="content-type">
-  <title>WebKit Projects</title>
-  <link rel=stylesheet href="../webkitdev.css">
-  <style>
-    dt { font-weight: bold; margin-top: 1em; }
-  </style>
+<?php
+	$title = "WebKit Projects";
+	include("../header.inc");
+?>
 
-</head>
-<body>
-<!--begin sidebar -->
-<iframe id="sidebar" src="../sidebar.html"></iframe>
-<!--end sidebar -->
+<h2>WebKit Projects</h2>
 
-<h1 id="banner">WebKit Projects</h1>
-
-<div id="content">
 <p>There are many exciting projects that we are actively working on in the WebKit source tree.   To find out more about
 each project you can visit that project's home page.  If you are interested in starting a new project in the WebKit
 tree, <a href="../contact.html">contact us!</a></p>
@@ -112,7 +99,7 @@ like XPath.
 <dd><a href="http://www.w3.org/TR/xslt">XSL Transformations</a> provide the ability to take source XML and transform it into text, HTML or XML.  This capability
 is a recent inclusion in WebKit, and there is still lots of interesting work to do in this area.
 
- </P>
-</div>
-</body>
-</html>
+</p>
+<?php
+	include("../footer.inc");
+?>

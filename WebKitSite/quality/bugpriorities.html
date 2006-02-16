@@ -1,23 +1,13 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html>
-<head>
-	<title>Prioritizing Web Kit Bugs in Bugzilla</title>
-	<link type="text/css" rel="stylesheet" href="../webkitdev.css"/>
-</head>
-<body>
-<!--begin sidebar -->
-<iframe id="sidebar" src="../sidebar.html"></iframe>
-<!--end sidebar -->
-
-<!--main body-->
-<h1 id="banner">Prioritizing Web Kit Bugs in Bugzilla</h1>
-
-<div id="content">
+<?php
+	$title = "Prioritizing Web Kit Bugs in Bugzilla";
+	include("../header.inc");
+?>
+<h2>Prioritizing Web Kit Bugs in Bugzilla</h2>
 
 	<p>This document describes the current guidelines for assigning priorities to Web Kit bugs in <a href="http://bugzilla.opendarwin.org/">Bugzilla</a>.
 The relevant bugs are all of those whose product is "WebKit".</p>
 
-	<a name="standardrules"></a><h2>Standard priority rules</h2>
+	<a name="standardrules"></a><h3>Standard priority rules</h3>
 	<p>Each bug is assigned the first appropriate priority listed below 
 		from top to bottom.</p>
 
@@ -56,7 +46,7 @@ The relevant bugs are all of those whose product is "WebKit".</p>
 		projects who might use it, that's why it's still there.</li>
 	</ul>
 
-	<a name="commonadjustments"></a><h2>Common adjustments to priority</h2>
+	<a name="commonadjustments"></a><h3>Common adjustments to priority</h3>
 	<ul>
 		<li>If there is a workaround, the priority may be moved down.</li>
 		<li>If a bug gets a lot of duplicates, the priority may be moved up.</li>
@@ -64,7 +54,6 @@ The relevant bugs are all of those whose product is "WebKit".</p>
 		<li>If a bug is on a very important site, the priority may be moved up.</li>
 	</ul>
 
-</div>
-<!-- end main body -->
-</body>
-</html>
+<?php
+	include("../footer.inc");
+?>

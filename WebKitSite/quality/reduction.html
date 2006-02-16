@@ -1,20 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html>
-<head>
-  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
-  <title>Test Case Reduction</title>
-  <link rel="stylesheet" type="text/css" href="../webkitdev.css">
-</head>
-<body>
+<?php
+	$title = "Test Case Reduction";
+	include("../header.inc");
+?>
+    <h2>Test Case Reduction</h2>
 
-<!--begin sidebar -->
-<iframe id="sidebar" src="../sidebar.html"></iframe>
-<!--end sidebar -->
-
-<h1 id="banner">Test Case Reduction</h1>
-
-<div id="content">
-    <h2>A general guide to test case reduction</h2>
+    <h3>A general guide to test case reduction</h3>
     <p>
         The basic idea behind bug reduction is to take a page that demonstrates a problem and
         remove as much content as possible while still reproducing the original problem.
@@ -109,7 +99,6 @@
         the component, read about how to get them in this <a href="bugzilla.html">document
         about Bugzilla</a>.
     </p>
-    
-</div>
-</body>
-</html>
+<?php
+	include("../footer.inc");
+?>

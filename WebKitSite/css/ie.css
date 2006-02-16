@@ -1,0 +1,33 @@
+#title {
+	background-image: none !important;
+    right: 0px !important;
+}
+
+#title h1 {
+	background-image: none !important;
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=scale, src='/images/middle.png');
+    margin-right: 0px !important;
+    padding-right: 15px !important;
+}
+
+#icon {
+	background-image: none !important;
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=crop, src='/images/icon-gold.png');
+}
+
+#nav {
+    background-image: url( /images/ie-nav.png ) !important;
+}
+
+#content ul {
+	margin-left: 2em !important;
+}
+
+#content li {
+    list-style-type: square !important;
+    list-style-image: none !important;
+}
+
+#navlist .subtitle {
+    font-weight: normal !important;
+}

@@ -1,23 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html>
-<head>
-  <meta content="text/html; charset=ISO-8859-1"
- http-equiv="content-type">
-  <title>Printing</title>
-  <link rel=stylesheet href="../../webkitdev.css">
-  <style>
-    dt { font-weight: bold; margin-top: 1em; }
-  </style>
+<?php
+	$title = "Printing";
+	include("../../header.inc");
+?>
 
-</head>
-<body>
-<!--begin sidebar -->
-<iframe id="sidebar" src="../../sidebar.html"></iframe>
-<!--end sidebar -->
+<h2>Printing</h2>
 
-<h1 id="banner">Printing</h1>
-
-<div id="content">
 <h3>Overview</h3>
 
 <p>Welcome to the printing project page.  Printing in WebKit is closely tied to the <a href="../layout/index.html">layout and rendering code</a>.  When you print
@@ -33,6 +20,6 @@ all you can hope to do is try to find an optimal position for a break without al
 cells) to still have their contents both break cleanly across a page.  This work is also important for future technology like CSS3 multi-column support.  The code
 that splits render objects across pages could obviously be leveraged to also split render objects across column breaks as well.
 
-</div>
-</body>
-</html>
+<?php
+	include("../../footer.inc");
+?>

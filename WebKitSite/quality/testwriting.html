@@ -1,19 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html>
-<head>
-  <meta content="text/html; charset=ISO-8859-1"
- http-equiv="content-type">
-  <title>Writing New Tests</title>
-  <link rel=stylesheet href="../webkitdev.css">
-</head>
-<body>
-<!--begin sidebar -->
-<iframe id="sidebar" src="../sidebar.html"></iframe>
-<!--end sidebar -->
+<?php
+	$title = "Writing New Tests";
+	include("../header.inc");
+?>
 
-<h1 id="banner">Writing New Tests</h1>
+<h2>Writing New Tests</h2>
 
-<div id="content">
 <p>A layout test is simply a web page. The layout test machinery renders the web page, and then dumps the
 internal representation, the render tree, with details of the layout. This lets engineers working on the project know 
 if they do anything that changes the layout. Once we get a test rendering properly, we check it in as part of the layout test suite.
@@ -42,7 +33,6 @@ how to do this and when it makes sense.</p>
 <p>The CSS working group has an excellent document on <a href="http://www.w3.org/Style/CSS/Test/guidelines.html">test writing guidelines</a> for CSS tests.
 </p>
 
-</div>
-
-</body>
-</html>
+<?php
+	include("../footer.inc");
+?>

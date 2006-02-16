@@ -1,11 +1,14 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html>
-<head>
-  <meta content="text/html; charset=ISO-8859-1"
- http-equiv="content-type">
-  <title>Reporting Bugs</title>
-  <link rel=stylesheet href="../webkitdev.css">
-  <script type="text/javascript">
+<?php
+	$title = "Reporting Bugs";
+	include("../header.inc");
+?>
+<h2>Reporting Bugs</h2>
+
+<h3>You have found a bug? Here are 5 steps to getting it fixed!</h3>
+<ol>
+<li>
+<strong>Check your WebKit version</strong><br>
+<script type="text/javascript">
     /* 
     Copyright (C) 2006 Joost de Valk, http://www.joostdevalk.nl/.  All rights reserved.
     Copyright (C) 2006 Mark Rowe, http://bdash.net.nz/.  All rights reserved.
@@ -127,19 +130,6 @@
         } 
     }
 </script>
-</head>
-<body>
-<!--begin sidebar -->
-<iframe id="sidebar" src="../sidebar.html"></iframe>
-<!--end sidebar -->
-
-<h1 id="banner">Reporting Bugs</h1>
-
-<div id="content">
-<h3>You have found a bug? Here are 5 steps to getting it fixed!</h3>
-<ol>
-<li>
-<strong>Check your WebKit version</strong><br>
 <div id="unknown_version">
     To make sure you're not wasting your (and our) time, you should be using the latest version of WebKit before you file your bug.
     You should run at least Mac OS X 10.3.9 before filing bugs. Your WebKit version should be 312 or higher if you are on 
@@ -235,5 +225,5 @@
 </div>
 
 <script type="text/javascript">get_version();</script>
-</body>
-</html>
+
+<?php include("../footer.inc"); ?>

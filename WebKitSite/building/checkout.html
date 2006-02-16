@@ -1,20 +1,8 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html>
-<head>
-  <base href="http://webkit.opendarwin.org/building/">
-  <meta content="text/html; charset=ISO-8859-1"
- http-equiv="content-type">
-  <title>Getting the Code</title>
-  <link rel=stylesheet href="../webkitdev.css">
-</head>
-<body>
-<!--begin sidebar -->
-<iframe id="sidebar" src="../sidebar.html"></iframe>
-<!--end sidebar -->
-
-<h1 id="banner">Getting the Code</h1>
-
-<div id="content">
+<?php
+$title = "Getting the Code";
+include("../header.inc");
+?>
+<h2>Getting the Code</h2>
 
 <p>Below are step by step instructions for how to check out the WebKit source code.
 One of our contributors, Mark Rowe, has also made available <a href="http://nightly.webkit.org/">WebKit nightly builds</a> for those just interested in testing.
@@ -23,7 +11,7 @@ Follow the instructions below to obtain the code via subversion (svn).</p>
 <ol>
 <li><p>Install a Subversion Client.</p>
 <p>The Subversion (svn) tool is required to access the WebKit source code.  Download the 
-Mac OS X <a href="http://metissian.com/downloads/macosx/subversion/subversion-client-1.2.3.dmg">Subversion installer</a> and double-click to install.</p>
+Mac OS X <a href="http://metissian.com/downloads/macosx/subversion/subversion-client-1.3.0.dmg">Subversion installer</a> and double-click to install.</p>
 <li><p>Open the Terminal application.</p>
 <p>Terminal can be found in the Utilities folder; a quick way to open the folder is the Finder Go menu.</p>
 <li><p>Type this command to check out the entire WebKit source tree:</p>
@@ -35,6 +23,6 @@ Mac OS X <a href="http://metissian.com/downloads/macosx/subversion/subversion-cl
 <p>Once you have checked out the code, you can update it at any time using the following command:</p>
 <p class="code">WebKitTools/Scripts/update-webkit</p>
 <p>It's handy to put the <tt>WebKitTools/Scripts</tt> directory in your shell path so you can type commands like <tt>update-webkit</tt> without specifying the path to the script.</p>
-</div>
-</body>
-</html>
+<?php
+include("../footer.inc");
+?>

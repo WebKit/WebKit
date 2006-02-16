@@ -1,23 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html>
-<head>
-  <meta content="text/html; charset=ISO-8859-1"
- http-equiv="content-type">
-  <title>HTML Editing</title>
-  <link rel=stylesheet href="../../webkitdev.css">
-  <style>
-    dt { font-weight: bold; margin-top: 1em; }
-  </style>
+<?php
+	$title = "HTML Editing";
+	include("../../header.inc");
+?>
+<h2>HTML Editing</h2>
 
-</head>
-<body>
-<!--begin sidebar -->
-<iframe id="sidebar" src="../../sidebar.html"></iframe>
-<!--end sidebar -->
-
-<h1 id="banner">HTML Editing</h1>
-
-<div id="content">
 <h3>Overview</h3>
 Welcome to the HTML editing home page.  HTML editing is a new feature that shipped with Safari 1.3 on Panther and
 Safari 2.0 on Tiger.  Most importantly the WebKit editing engine is used to compose mail messages in Mail.app on Tiger.  HTML
@@ -54,6 +40,6 @@ available to mail and to other WebKit applications.
 <dd>We want to support more of WinIE's editing APIs, including more commands and text ranges.  We welcome any WinIE-compatible patches that
 improve editing support to match WinIE.
  
-</div>
-</body>
-</html>
+<?php
+	include("../../footer.inc");
+?>

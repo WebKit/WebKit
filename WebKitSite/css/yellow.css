@@ -1,0 +1,19 @@
+body {
+    background-image: url( /images/yellow-background.png ) !important;
+}
+
+#content li {
+    list-style-image: url( /images/yellow-bullet.png ) !important;
+}
+
+h2, h3, h4 {
+    color: #c63;
+}
+
+#navlist a {
+    color: #333;
+}
+
+a, #title h1, ul#navlist .subtitle {
+    color: #c60;
+}

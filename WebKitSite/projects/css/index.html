@@ -1,23 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html>
-<head>
-  <meta content="text/html; charset=ISO-8859-1"
- http-equiv="content-type">
-  <title>CSS (Cascading Style Sheets)</title>
-  <link rel=stylesheet href="../../webkitdev.css">
-  <style>
-    dt { font-weight: bold; margin-top: 1em; }
-  </style>
+<?php
+	$title = "CSS (Cascading Style Sheets)";
+	include("../../header.inc");
+?>
+<h2>CSS (Cascading Style Sheets)</h2>
 
-</head>
-<body>
-<!--begin sidebar -->
-<iframe id="sidebar" src="../../sidebar.html"></iframe>
-<!--end sidebar -->
-
-<h1 id="banner">CSS (Cascading Style Sheets)</h1>
-
-<div id="content">
 <h3>Overview</h3>
 <p>This is the project page for WebKit's Cascading Style Sheets (CSS) implementation.  CSS is a <a href="http://www.w3.org/Style/CSS/">W3C specification</a>, and
 WebKit has implemented virtually all of CSS1, most of CSS2.1 and even some CSS3.  At this time we are focusing are efforts on completing CSS1 and CSS2.1 support.
@@ -25,7 +11,7 @@ Some features of CSS3 are far enough along (like selectors) that they can be imp
 
 <h3>Get Involved!</h3>
 
-<a href="http://bugzilla.opendarwin.org/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=&product=Web+Kit&component=CSS&long_desc_type=substring&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&emailassigned_to1=1&emailtype1=substring&email1=&emailassigned_to2=1&emailreporter2=1&emailcc2=1&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=&chfieldto=Now&chfieldvalue=&cmdtype=doit&order=Reuse+same+sort+as+last+time&field0-0-0=noop&type0-0-0=noop&value0-0-0=">
+<a href="http://bugzilla.opendarwin.org/buglist.cgi?component=CSS&amp;resolution=---">
 View bugs in the CSS component on OpenDarwin.
 </a>
 
@@ -48,6 +34,6 @@ compliance.
 <dd>Check out the <a href="http://www.w3.org/Style/CSS/Test/CSS2.1/current/">CSS2.1 test suite</a>
  and file compliance bugs so that we can track open issues with our CSS2.1 compliance.
 
-</div>
-</body>
-</html>
+<?php
+	include("../../footer.inc");
+?>

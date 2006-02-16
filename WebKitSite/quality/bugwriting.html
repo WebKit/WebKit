@@ -1,34 +1,8 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html>
-<head>
-  <meta content="text/html; charset=ISO-8859-1"
- http-equiv="content-type">
-  <title>Bug Writing</title>
-  <link rel=stylesheet href="../webkitdev.css">
-  <script type="text/javascript">
-	function version_set() {
-    	var regex;
-        var matches;
-
-		regex = new RegExp("Mozilla/5.0 \\(.*\\) AppleWebKit/(.*) \\(KHTML, like Gecko\\) Safari/(.*)");
-		matches = regex.exec(navigator.userAgent);
-		if (matches)
-        {
-        	document.getElementById('webkit_version').innerHTML = "<strong>You are currently using: <tt>" + matches[1] + ".</tt></strong><br><br>";
-			document.getElementById('webkit_version').style.display = "block";
-			webKitVersion = parseInt(matches[1]);
-        }
-	}
-</script>
-</head>
-<body onload="version_set();">
-<!--begin sidebar -->
-<iframe id="sidebar" src="../sidebar.html"></iframe>
-<!--end sidebar -->
-
-<h1 id="banner">Bug Writing</h1>
-
-<div id="content">
+<?php
+	$title = "Bug Report Guidelines";
+	include("../header.inc");
+?>
+<h2>Bug Report Guidelines</h2>
 
 <p>This document describes how to write a good WebKit bug report. Good bug reports help developers and quality assurance (QA) people decide
 an appropriate priority and severity for a bug, and increase the chance that a bug will be fixed quickly. The more specific information
@@ -47,6 +21,19 @@ you can provide, the better.</p>
 	locally-built version of WebKit that's newer than the <tt>417.9</tt> version that shipped with the latest update of Tiger.
 	</p>
 	<div style="display: none; text-align: center;" id="webkit_version"></div>
+	<script type="text/javascript">
+		var regex;
+		var matches;
+
+		regex = new RegExp("Mozilla/5.0 \\(.*\\) AppleWebKit/(.*) \\(KHTML, like Gecko\\) Safari/(.*)");
+		matches = regex.exec(navigator.userAgent);
+		if (matches)
+		{
+			document.getElementById('webkit_version').innerHTML = "<strong>You are currently using: <tt>" + matches[1] + ".</tt></strong><br><br>";
+			document.getElementById('webkit_version').style.display = "block";
+			webKitVersion = parseInt(matches[1]);
+		}
+	</script>
 
 	<li><b>Component</b> 
 		<p>If you know the precise cause of a bug (i.e., you've reduced it to a failing test case and know the reason), then you can 
@@ -119,6 +106,6 @@ you can provide, the better.</p>
 		<p>If this bug blocks another bug from being fixed, put the other bug's number here. Otherwise, leave it empty.</p>
 	</li>
 </ol>
-
-</body>
-</html>
+<?php
+	include("../footer.inc");
+?>

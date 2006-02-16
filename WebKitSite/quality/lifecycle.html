@@ -1,19 +1,8 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html>
-<head>
-  <meta content="text/html; charset=ISO-8859-1"
- http-equiv="content-type">
-  <title>WebKit Bug Life Cycle</title>
-  <link rel=stylesheet href="../webkitdev.css">
-</head>
-<body>
-<!--begin sidebar -->
-<iframe id="sidebar" src="../sidebar.html"></iframe>
-<!--end sidebar -->
-
-<h1 id="banner">WebKit Bug Life Cycle</h1>
-
-<div id="content">
+<?php
+	$title = "WebKit Bug Life Cycle";
+	include("../header.inc");
+?>
+<h2>WebKit Bug Life Cycle</h2>
 
 <h3>Introduction</h3>
 
@@ -31,7 +20,7 @@ about the WebKit bug life cycle. You can reach him on IRC or via email at webkit
 some bugs will be given an initial component in the initial <a href="reporting.html">bug-reporting step</a>.</p>
 
 
-<h3><a name="confirming">Confirming Bugs</a></h3>
+<h3><a name="confirming"></a>Confirming Bugs</h3>
 
 <p>The next step is for someone with Bugzilla <tt>canConfirm</tt> privileges to review the unconfirmed bug and
 decide whether it has enough useful information to move forward. The possible changes to the bug at this step include the following:</p>
@@ -102,7 +91,7 @@ reviewer directly. Due to everyone's busy schedules, some delays in getting patc
 <p>If the bug report mentions that the same bug is represented in Apple's internal Radar system, and the person who commits the bug has acces to Radar, then the 
 person who commits the bug should also set the state of the Radar bug to Software Changed/Integrate.</p>
 
-<h3><a name="verifying">Verifying Fixes</a></h3>
+<h3><a name="verifying"></a>Verifying Fixes</h3>
 
 <p>After the patch for a bug has been committed, the fix still needs to be verified. Typically this step is done by the person who originally submitted the 
 bug report. If the submitter is not available or does not feel that they can verify the fix, the verification step can be done by anyone with bug editing 
@@ -120,8 +109,6 @@ change the resolution to <tt>REOPENED</tt> and assign it to the person who submi
 <p>Fixed bugs have the <tt>VERIFIED</tt> resolution until a version of WebKit that includes the fix has been publicly released. At this point,
 the resolution is changed to <tt>CLOSED</tt>.
 
-
-</div>
-
-</body>
-</html>
+<?php
+	include("../footer.inc");
+?>

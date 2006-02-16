@@ -1,0 +1,182 @@
+body {
+    position: absolute;
+    background-repeat: repeat-x;
+    background-color: #fff;
+    color: #333;
+    font-size: 12px;
+    font-family: Lucida Grande, Verdana, Arial;
+    margin: 0px;
+    padding: 0px;
+    max-width: 850px;
+}
+
+p {
+    line-height: 1.7em;
+	min-width: 400px;    
+}
+
+#download {
+    float: right;
+    padding: 5px 0px 5px 5px;
+    border: 0px;
+}
+
+#content {
+    margin: 157px 20px 20px 215px;
+}
+
+#copy {
+    height: 20px;
+    bottom: 0px;
+    left: 147px;
+    padding: 10px 0px 0px 0px;
+    margin: 10px 0px 0px 0px;
+    text-align: center;
+    font-size: 10px;
+}
+
+#title {
+    position: absolute;
+	background-image: url( /images/end.png );
+	background-repeat: no-repeat;
+	background-position: right;
+	height: 76px;
+    top: 50px;
+    left: 40px;
+    right: 20px;
+	margin: 0px;
+	padding: 0px;
+}
+
+#title h1 {
+	background-image: url( /images/middle.png );
+	background-repeat: repeat-x;
+	height: 53px;
+	top: 0px;
+	left: 0px;
+	margin: 0px 24px 0px 0px;
+	padding: 23px 0px 0px 175px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	text-shadow: #bbb 3px 3px 2px;
+	font-size: 24px;
+}
+
+h2, h3, h4 {
+    margin-bottom: 0px;
+	text-shadow: #bbb 2px 2px 1px;
+}
+
+h2 {
+    font-size: 16px;
+}
+
+h3 {
+    font-size: 14px;
+}
+
+h4 {
+    font-size: 12px;
+}
+
+h1 + p, h2 + p, h3 + p, h4 + p, b + p {
+    margin-top: 2px;
+}
+
+#icon {
+    position: absolute;
+    top: 10px;
+    left: -10px;
+	background-image: url( /images/icon-gold.png );
+	background-repeat: no-repeat;
+	height: 174px;
+	width: 215px;
+	z-index: 3;
+	margin: 0px;
+}
+
+/* Content */
+#content ul {
+	margin: 4px 0px 4px 0px;
+}
+
+#content li {
+	margin: 4px 0px;
+}
+
+/* Links */
+a {
+    text-decoration: none;
+}
+
+a:hover{
+    text-decoration: underline;
+}
+
+/* Navigation */
+#nav {
+    position: absolute;
+    background-image: url( /images/nav.png );
+    background-repeat: no-repeat;
+    height: 350px;
+    width: 145px;
+    top: 162px;
+    left: 20px;
+    padding: 20px 0px 0px 20px;
+    font-size: 11px;
+    line-height: 17px;
+}
+
+#navlist {
+    margin: 0px 0px 0px -5px;
+    padding: 0px;
+    list-style-type: none;
+}
+
+#navlist a {
+    color: #333;
+}
+
+#navlist .subtitle {
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+#navlist li a:hover, #navlist li a:active {
+    text-decoration: underline;
+}
+
+#notice {
+	min-width: 0px;
+	padding: 0px;
+    margin: 30px 10px 10px -5px;
+	font-size: 9px;
+	line-height: 11px;
+	color: #aaa !important;
+}
+
+#notice a {
+	color: inherit !important;
+	text-decoration: none;
+}
+
+#notice a:hover {
+	color: #555 !important;
+	text-decoration: none;
+}
+
+dt { 
+	font-weight: bold;
+	margin-top: 1em;
+}
+
+.code, pre, tt, code {
+    font-family: Courier, Fixed;
+    font-size: 110%;
+}
+
+.code {
+    margin-left: 2em;
+    font-size: 90%;
+}

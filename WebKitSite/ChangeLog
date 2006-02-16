@@ -2,6 +2,137 @@
 
         Reviewed by Tim H.
 
+        Updated the site to use the new layout.
+
+        * .htaccess: Added.
+        * ChangeLog:
+        * blog/wp-content/themes/classic: Removed.
+        * blog/wp-content/themes/classic/comments-popup.php: Removed.
+        * blog/wp-content/themes/classic/comments.php: Removed.
+        * blog/wp-content/themes/classic/footer.php: Removed.
+        * blog/wp-content/themes/classic/header.php: Removed.
+        * blog/wp-content/themes/classic/index.php: Removed.
+        * blog/wp-content/themes/classic/sidebar.php: Removed.
+        * blog/wp-content/themes/classic/style.css: Removed.
+        * blog/wp-content/themes/default: Removed.
+        * blog/wp-content/themes/default/404.php: Removed.
+        * blog/wp-content/themes/default/archive.php: Removed.
+        * blog/wp-content/themes/default/archives.php: Removed.
+        * blog/wp-content/themes/default/comments-popup.php: Removed.
+        * blog/wp-content/themes/default/comments.php: Removed.
+        * blog/wp-content/themes/default/footer.php: Removed.
+        * blog/wp-content/themes/default/header.php: Removed.
+        * blog/wp-content/themes/default/images: Removed.
+        * blog/wp-content/themes/default/images/kubrickbg.jpg: Removed.
+        * blog/wp-content/themes/default/images/kubrickbgcolor.jpg: Removed.
+        * blog/wp-content/themes/default/images/kubrickbgwide.jpg: Removed.
+        * blog/wp-content/themes/default/images/kubrickfooter.jpg: Removed.
+        * blog/wp-content/themes/default/images/kubrickheader.jpg: Removed.
+        * blog/wp-content/themes/default/index.php: Removed.
+        * blog/wp-content/themes/default/links.php: Removed.
+        * blog/wp-content/themes/default/page.php: Removed.
+        * blog/wp-content/themes/default/search.php: Removed.
+        * blog/wp-content/themes/default/searchform.php: Removed.
+        * blog/wp-content/themes/default/sidebar.php: Removed.
+        * blog/wp-content/themes/default/single.php: Removed.
+        * blog/wp-content/themes/default/style.css: Removed.
+        * blog/wp-content/themes/webkit/404.php:
+        * blog/wp-content/themes/webkit/archive.php:
+        * blog/wp-content/themes/webkit/archives.php:
+        * blog/wp-content/themes/webkit/footer.php:
+        * blog/wp-content/themes/webkit/header.php:
+        * blog/wp-content/themes/webkit/images: Removed.
+        * blog/wp-content/themes/webkit/images/bluebanner.png: Removed.
+        * blog/wp-content/themes/webkit/images/kubrickbg.jpg: Removed.
+        * blog/wp-content/themes/webkit/images/kubrickbgcolor.jpg: Removed.
+        * blog/wp-content/themes/webkit/images/kubrickbgwide.jpg: Removed.
+        * blog/wp-content/themes/webkit/images/kubrickfooter.jpg: Removed.
+        * blog/wp-content/themes/webkit/images/kubrickheader.jpg: Removed.
+        * blog/wp-content/themes/webkit/images/separator.png: Removed.
+        * blog/wp-content/themes/webkit/images/webkit-background.png: Removed.
+        * blog/wp-content/themes/webkit/index.php:
+        * blog/wp-content/themes/webkit/page.php:
+        * blog/wp-content/themes/webkit/search.php:
+        * blog/wp-content/themes/webkit/sidebar.php:
+        * blog/wp-content/themes/webkit/single.php:
+        * blog/wp-content/themes/webkit/style.css:
+        * building/build.html:
+        * building/checkout.html:
+        * coding/coding-style.html:
+        * coding/contributing.html:
+        * contact.html:
+        * css: Added.
+        * css/blue.css: Added.
+        * css/gray.css: Added.
+        * css/green.css: Added.
+        * css/ie.css: Added.
+        * css/main.css: Added.
+        * css/pink.css: Added.
+        * css/purple.css: Added.
+        * css/yellow.css: Added.
+        * footer.inc: Added.
+        * header.inc: Added.
+        * images/blue-background.png: Added.
+        * images/blue-bullet.png: Added.
+        * images/bluebanner.png: Removed.
+        * images/download.png: Added.
+        * images/end.png: Added.
+        * images/gray-background.png: Added.
+        * images/green-background.png: Added.
+        * images/green-bullet.png: Added.
+        * images/icon-gold.png: Added.
+        * images/icon.png: Added.
+        * images/ie-nav.png: Added.
+        * images/middle.png: Added.
+        * images/nav.png: Added.
+        * images/pink-background.png: Added.
+        * images/pink-bullet.png: Added.
+        * images/purple-background.png: Added.
+        * images/purple-bullet.png: Added.
+        * images/separator.png: Removed.
+        * images/webkit-background.png: Removed.
+        * images/welcomeopen.gif: Removed.
+        * images/yellow-background.png: Added.
+        * images/yellow-bullet.png: Added.
+        * index.html:
+        * nav.inc: Added.
+        * projects/accessibility/index.html:
+        * projects/cleanup/index.html:
+        * projects/compat/index.html:
+        * projects/css/index.html:
+        * projects/documentation/index.html:
+        * projects/dom/index.html:
+        * projects/editing/index.html:
+        * projects/forms/index.html:
+        * projects/html/index.html:
+        * projects/index.html:
+        * projects/javascript/index.html:
+        * projects/layout/index.html:
+        * projects/mathml/index.html:
+        * projects/performance/index.html:
+        * projects/plugins/index.html:
+        * projects/portability/index.html:
+        * projects/printing/index.html:
+        * projects/svg/index.html:
+        * projects/webkit/index.html:
+        * projects/xml/index.html:
+        * projects/xslt/index.html:
+        * quality/bugpriorities.html:
+        * quality/bugwriting.html:
+        * quality/bugzilla.html:
+        * quality/lifecycle.html:
+        * quality/reduction.html:
+        * quality/reporting.html:
+        * quality/testing.html:
+        * quality/testwriting.html:
+        * sidebar.css: Removed.
+        * sidebar.html: Removed.
+        * webkitdev.css: Removed.
+
+2006-02-15  Joost de Valk  <jdevalk@opendarwin.org>
+
+        Reviewed by Tim H.
+
         Updated page to show 10.4.4 or 10.4.5
         Added support for recognizing Shiira.
 

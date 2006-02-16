@@ -1,19 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html>
-<head>
-  <meta content="text/html; charset=ISO-8859-1"
- http-equiv="content-type">
-  <title>Building WebKit</title>
-  <link rel=stylesheet href="../webkitdev.css">
-</head>
-<body>
-<!--begin sidebar -->
-<iframe id="sidebar" src="../sidebar.html"></iframe>
-<!--end sidebar -->
+<?php
+	$title = "Building WebKit";
+	include("../header.inc");
+?>
 
-<h1 id="banner">Building WebKit</h1>
-
-<div id="content">
+<h2>Building WebKit</h2>
 
 <p>Before you build WebKit, you'll need to <a href="checkout.html">check out</a> sources. Next make sure that you have Xcode, preferably
 the latest version, which is 2.2 at this point. You will need at least Xcode 2.1 to be able to build WebKit.<p>
@@ -42,6 +32,6 @@ If you're prefer to do a Development build, then do execute this command:</p>
 <p>You can also pass the configuration on the command line to any of the build commands.</p>
 <p>More information about building WebKit can be found on its <a href="http://www.opendarwin.org/wiki/index.php/WebKit">wiki</a>.</p>
 
-</div>
-</body>
-</html>
+<?php
+	include("../footer.inc");
+?>

@@ -1,19 +1,8 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html>
-<head>
-  <meta content="text/html; charset=ISO-8859-1"
- http-equiv="content-type">
-  <title>Keeping in Touch</title>
-  <link rel=stylesheet href="webkitdev.css">
-</head>
-<body>
-<!--begin sidebar -->
-<iframe id="sidebar" src="sidebar.html"></iframe>
-<!--end sidebar -->
-
-<h1 id="banner">Keeping in Touch</h1>
-
-<div id="content">
+<?php 
+$title = "Keeping in Touch";
+include("header.inc"); 
+?>
+<h2>Keeping in Touch</h2>
 
 <h3>Mailing Lists</h3>
 
@@ -23,7 +12,7 @@ href="mailto:webkit-dev@opendarwin.org">webkit-dev@opendarwin.org</a>.  You can 
 the list <a href="http://www.opendarwin.org/mailman/listinfo/webkit-dev">here</a>.
 
 <p>If you would like help with development of an application using WebKit (as opposed to
-development *of* WebKit), the right list is at <a
+development <em>of</em> WebKit), the right list is at <a
 href="mailto:webkitsdk-dev@lists.apple.com">webkitsdk-dev@lists.apple.com</a> 
 with <a href="http://lists.apple.com/archives/Webkitsdk-dev">archives here</a>.
 
@@ -39,3 +28,7 @@ parties in channel <a href="irc://irc.freenode.net/#webkit">#webkit</a> on the F
 the <a href="http://bugzilla.opendarwin.org/">OpenDarwin Bugzilla</a>,
 in the WebKit product.
 </p>
+
+<?php
+include("footer.inc");
+?>

@@ -1,23 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html>
-<head>
-  <meta content="text/html; charset=ISO-8859-1"
- http-equiv="content-type">
-  <title>Web Site Compatibility</title>
-  <link rel=stylesheet href="../../webkitdev.css">
-  <style>
-    dt { font-weight: bold; margin-top: 1em; }
-  </style>
+<?php
+	$title = "Web Site Compatibility";
+	include("../../header.inc");
+?>
+<h2>Web Site Compatibility</h2>
 
-</head>
-<body>
-<!--begin sidebar -->
-<iframe id="sidebar" src="../../sidebar.html"></iframe>
-<!--end sidebar -->
-
-<h1 id="banner">Web Site Compatibility</h1>
-
-<div id="content">
 <h3>Overview</h3>
 <p>The most important task that we are working on in WebKit is improving web site compatibility.  Web site compatibility is actually
 a generic term that covers bugs that may occur in many different functional areas of the code, from CSS to rendering to plug-ins.
@@ -57,6 +43,6 @@ screened properly will a developer be able to determine the root cause of the pr
 <dd>To help avoid regressions you can make new tests, even for features that WebKit already handles correctly.  The more regression tests
 we have covering a specific feature, the less likely it is that the feature will break when we make changes.
 
-</div>
-</body>
-</html>
+<?php
+	include("../../footer.inc");
+?>

@@ -1,25 +1,16 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html>
-<head>
-  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
-  <title>Bugzilla</title>
-  <link rel=stylesheet href="../webkitdev.css">
+<?php
+	$title = "Bugzilla";
+	include("../header.inc");
+?>
+<h2>Bugzilla</h2>
 
-<body>
-<!--begin sidebar -->
-<iframe id="sidebar" src="../sidebar.html"></iframe>
-<!--end sidebar -->
-
-<h1 id="banner">Bugzilla</h1>
-
-<div id="content">
-<h2>Creating a Bugzilla account</h2>
+<h3>Creating a Bugzilla account</h3>
 <p>
     All you have to do to create a Bugzilla account is enter your email-address and optionally your real name. You will then receive 
     an email with your password, with which you can login and do anything you want. Just follow this link: 
     <a href="http://bugzilla.opendarwin.org/createaccount.cgi">get a Bugzilla account</a>.
 </p>
-<h2>Bugzilla "bits"</h2>
+<h3>Bugzilla "bits"</h3>
 <p>
     A "bit" in Bugzilla terms is a setting that allows you to do something. The ones most people doing a lot with Bugzilla should
     have are the "canconfirm"-bit and the "editbugs"-bit. You probably figured out what they do yourself just by their names but 
@@ -46,8 +37,6 @@
 </p>
 
 <!-- TODO: add info about keywords and their usage, and information about other "bits" -->
-
-</div>
-
-</body>
-</html>
+<?php
+	include("../footer.inc");
+?>
