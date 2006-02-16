@@ -2,6 +2,7 @@
  * This file is part of the HTML widget for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+ * Copyright (C) 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,6 +20,7 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef render_canvas_h
 #define render_canvas_h
 
@@ -77,12 +79,6 @@ private:
 public:
     int truncatedAt() const { return m_truncatedAt; }
 
-    virtual void setWidth( int width ) { m_rootWidth = m_width = width; }
-    virtual void setHeight( int height ) { m_rootHeight = m_height = height; }
-
-    int viewportWidth() const { return m_viewportWidth; }
-    int viewportHeight() const { return m_viewportHeight; }
-
     virtual void absoluteRects(QValueList<IntRect>& rects, int _tx, int _ty);
     
     IntRect selectionRect() const;
@@ -110,12 +106,6 @@ protected:
     int m_selectionStartPos;
     int m_selectionEndPos;
 
-    int m_rootWidth;
-    int m_rootHeight;
-
-    int m_viewportWidth;
-    int m_viewportHeight;
-    
     // used to ignore viewport width when printing to the printer
     bool m_printingMode;
     bool m_printImages;
@@ -129,5 +119,6 @@ protected:
     RenderObjectSet m_widgets;
 };
 
-};
+}
+
 #endif

@@ -227,10 +227,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQFrame.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQGuardedPtr.cpp"
 				>
 			</File>

@@ -97,27 +97,6 @@ bool QObject::event(QEvent *)
     return false;
 }
 
-bool QObject::inherits(const char *className) const
-{
-    if (strcmp(className, "Frame") == 0) {
-        return isFrame();
-    }
-    if (strcmp(className, "FrameView") == 0) {
-        return isFrameView();
-    }
-    if (strcmp(className, "KParts::Factory") == 0) {
-        return false;
-    }
-    if (strcmp(className, "QFrame") == 0) {
-        return isQFrame();
-    }
-    if (strcmp(className, "QScrollView") == 0) {
-        return isQScrollView();
-    }
-    ERROR("class name %s not recognized", className);
-    return false;
-}
-
 bool QObject::isKHTMLLoader() const
 {
     return false;
@@ -129,16 +108,6 @@ bool QObject::isFrame() const
 }
 
 bool QObject::isFrameView() const
-{
-    return false;
-}
-
-bool QObject::isQFrame() const
-{
-    return false;
-}
-
-bool QObject::isQScrollView() const
 {
     return false;
 }

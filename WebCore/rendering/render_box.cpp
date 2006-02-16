@@ -1275,7 +1275,7 @@ int RenderBox::availableHeightUsing(const Length& h) const
         return calcContentBoxHeight(h.value);
 
     if (isCanvas())
-        return static_cast<const RenderCanvas*>(this)->viewportHeight();
+        return static_cast<const RenderCanvas*>(this)->view()->visibleHeight();
 
     // We need to stop here, since we don't want to increase the height of the table
     // artificially.  We're going to rely on this cell getting expanded to some new

@@ -40,7 +40,6 @@
 #import "KWQEditCommand.h"
 #import "KWQFont.h"
 #import "KWQFoundationExtras.h"
-#import "KWQFrame.h"
 #import "KWQLoader.h"
 #import "KWQPageState.h"
 #import "KWQPrinter.h"
@@ -2675,7 +2674,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         if (!n || !n->renderer() || !n->renderer()->isWidget())
             break;
         widget = static_cast<RenderWidget *>(n->renderer())->widget();
-        if (!widget || !widget->inherits("FrameView"))
+        if (!widget || !widget->isFrameView())
             break;
         Frame *kpart = static_cast<HTMLFrameElementImpl *>(n)->contentPart();
         if (!kpart || !static_cast<MacFrame *>(kpart)->renderer())

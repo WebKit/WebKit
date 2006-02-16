@@ -51,8 +51,6 @@ public:
     void connect(const QObject *sender, const char *signal, const char *member) const
         { connect(sender, signal, this, member); }
 
-    bool inherits(const char *className) const;
-
     void installEventFilter(const QObject *o) { _eventFilterObject = o; }
     void removeEventFilter(const QObject *) { _eventFilterObject = 0; }
     const QObject *eventFilterObject() const { return _eventFilterObject; }
@@ -68,8 +66,6 @@ public:
     virtual bool isKHTMLLoader() const;
     virtual bool isFrame() const;
     virtual bool isFrameView() const;
-    virtual bool isQFrame() const;
-    virtual bool isQScrollView() const;
 
 private:
     // no copying or assignment

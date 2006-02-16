@@ -26,7 +26,7 @@
 #ifndef QSCROLLVIEW_H_
 #define QSCROLLVIEW_H_
 
-#include "KWQFrame.h"
+#include "Widget.h"
 
 #ifdef __OBJC__
 @class NSView;
@@ -34,7 +34,7 @@
 class NSView;
 #endif
 
-class QScrollView : public QFrame {
+class QScrollView : public Widget {
 public:
     enum ScrollBarMode { Auto, AlwaysOff, AlwaysOn };
 
@@ -89,9 +89,6 @@ public:
     NSView *getDocumentView() const;
 
     bool inWindow() const;
-
-private:
-    virtual bool isQScrollView() const;
 };
 
 #endif

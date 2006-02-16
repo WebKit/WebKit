@@ -22,17 +22,17 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-#include "ksvg.h"
 #include "SVGHelper.h"
-#include "SVGStringListImpl.h"
-#include "SVGSVGElementImpl.h"
-#include "SVGAnimatedRectImpl.h"
-#include "SVGAnimatedLengthImpl.h"
+
 #include "DocumentImpl.h"
-
-#include <kcanvas/KCanvas.h>
-
+#include "FrameView.h"
+#include "SVGAnimatedLengthImpl.h"
+#include "SVGAnimatedRectImpl.h"
+#include "SVGSVGElementImpl.h"
+#include "SVGStringListImpl.h"
+#include "ksvg.h"
 #include <cmath>
+#include <kcanvas/KCanvas.h>
 
 using namespace WebCore;
 using namespace std;
@@ -63,8 +63,8 @@ float SVGHelper::PercentageOfViewport(float value, const SVGElementImpl *viewpor
                 RenderCanvas *canvas = static_cast<RenderCanvas *>(doc->renderer());
                 if(canvas)
                 {
-                    width = canvas->viewportWidth(); // TODO: recheck!
-                    height = canvas->viewportHeight(); // TODO: recheck!
+                    width = canvas->view()->visibleWidth(); // TODO: recheck!
+                    height = canvas->view()->visibleHeight(); // TODO: recheck!
                 }
             }
         }

@@ -1073,7 +1073,7 @@ static IntRect boundingBoxRect(RenderObject* obj)
 
         // descend into widget (FRAME, IFRAME, OBJECT...)
         Widget *widget = static_cast<RenderWidget *>(renderer)->widget();
-        if (!widget || !widget->inherits("FrameView"))
+        if (!widget || !widget->isFrameView())
             break;
         Frame *frame = static_cast<FrameView *>(widget)->frame();
         if (!frame)

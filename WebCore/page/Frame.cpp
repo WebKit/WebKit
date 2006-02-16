@@ -1269,7 +1269,7 @@ static bool isFrameElement(const NodeImpl *n)
     if (!renderer || !renderer->isWidget())
         return false;
     Widget *widget = static_cast<RenderWidget *>(renderer)->widget();
-    return widget && widget->inherits("FrameView");
+    return widget && widget->isFrameView();
 }
 
 void Frame::setFocusNodeIfNeeded()

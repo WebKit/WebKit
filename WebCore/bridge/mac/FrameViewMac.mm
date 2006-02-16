@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#import "KWQFrame.h"
+#import "config.h"
+#import "FrameView.h"
 
+#import "DocumentImpl.h"
 #import "KWQExceptions.h"
 #import "MacFrame.h"
 #import "WebCoreFrameBridge.h"
-#import "FrameView.h"
+#import "render_object.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-void QFrame::setFrameStyle(int s)
+void FrameView::updateBorder()
 {
-    _frameStyle = s;
+    KWQ_BLOCK_EXCEPTIONS;
+    [Mac(m_frame.get())->bridge() setHasBorder:hasBorder()];
+    KWQ_UNBLOCK_EXCEPTIONS;
+}
 
-    // Tell the other side of the bridge about the frame style change.
-    if (isFrameView()) {
-        if (Frame* frame = static_cast<FrameView *>(this)->frame()) {
-            KWQ_BLOCK_EXCEPTIONS;
-            [Mac(frame)->bridge() setHasBorder:(s != NoFrame)];
-            KWQ_UNBLOCK_EXCEPTIONS;
-        }
+void FrameView::updateDashboardRegions()
+{
+    DocumentImpl* document = m_frame->document();
+    if (document->hasDashboardRegions()) {
+        QValueList<DashboardRegionValue> newRegions = document->renderer()->computeDashboardRegions();
+        QValueList<DashboardRegionValue> currentRegions = document->dashboardRegions();
+        document->setDashboardRegions(newRegions);
+        Mac(m_frame.get())->dashboardRegionsChanged();
     }
 }
 
-int QFrame::frameStyle()
-{
-    return _frameStyle;
-}
-
-int QFrame::frameWidth() const
-{
-    if (_frameStyle == (StyledPanel | Sunken))
-        return 3;
-    return 0;
-}
-
-bool QFrame::isQFrame() const
-{
-    return true;
 }

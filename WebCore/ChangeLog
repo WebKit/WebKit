@@ -1,3 +1,79 @@
+2006-02-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - eliminate QFrame and QObject::inherits, fix some strange stuff
+          in RenderCanvas that showed up when I tested that change
+
+        * kwq/KWQFrame.h: Removed.
+        * kwq/KWQFrame.mm: Removed.
+
+        * bridge/mac/FrameViewMac.mm: Added.
+
+        * WebCore.xcodeproj/project.pbxproj: Updated for adds and removes.
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Updated for removes.
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge RenderObject::nodeInfoAtPoint:]):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::FrameArray::indexGetter):
+        (KJS::FrameArray::nameGetter):
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject doAXTextMarkerForPosition:]):
+        * kwq/KWQRenderTreeDebug.cpp:
+        (write):
+        * page/Frame.cpp:
+        (WebCore::isFrameElement):
+        * page/FramePrivate.h:
+        (WebCore::FramePrivate::FramePrivate):
+        Change QObject::inherits callers to call the "is" functions directly.
+
+        * kwq/KWQObject.h:
+        * kwq/KWQObject.cpp: Removed QObject::inherits, QObject::isQFrame,
+        and QObject::isQScrollView.
+
+        * kwq/KWQScrollView.h: Inherit from Widget instead of QFrame.
+        Remove isQScrollView.
+        * kwq/KWQScrollView.mm: Remove isQScrollView.
+
+        * page/FrameView.h:
+        * page/FrameView.cpp: Changed underMouse and clickNode to be RefPtr.
+        Added m_hasBorder.
+        (WebCore::FrameViewPrivate::FrameViewPrivate):
+        (WebCore::FrameViewPrivate::~FrameViewPrivate):
+        (WebCore::FrameViewPrivate::reset):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::viewportMousePressEvent):
+        (WebCore::FrameView::invalidateClick):
+        (WebCore::FrameView::viewportMouseReleaseEvent):
+        (WebCore::FrameView::keyPressEvent):
+        (WebCore::FrameView::dispatchDragEvent): Use RefPtr for MouseEventImpl.
+        (WebCore::FrameView::nodeUnderMouse):
+        (WebCore::FrameView::dispatchMouseEvent):
+        (WebCore::FrameView::setHasBorder): Added.
+        (WebCore::FrameView::hasBorder): Added.
+        (WebCore::FrameView::borderWidth): Added.
+
+        * rendering/render_canvas.h: Eliminated unneeded setWidth/Height overrides.
+        Eliminated viewportWidth(), viewportHeight(), m_rootWidth, m_rootHeight,
+        m_viewportWidth, and m_viewportHeight.
+        * rendering/render_canvas.cpp:
+        (RenderCanvas::calcHeight): Remove unneeded code to set height when there's
+        no view.
+        (RenderCanvas::calcWidth): Fix code to set width to visibleWidth(). Removed
+        incorrect old width setting, and removed unneeded code to set width when
+        there's no view. Also removed incorrect margin-setting code.
+        (RenderCanvas::layout): Removed incorrect code to set width and height.
+        Instead letting calcWidth and calcHeight do the job.
+        (RenderCanvas::repaintViewRectangle): Use new FrameView::hasBorder instead
+        of QFrame::frameStyle.
+        (RenderCanvas::viewRect): Removed unneeded "root width" feature for a canvas
+        without a view.
+
+        * rendering/render_frames.cpp:
+        (WebCore::RenderFrame::slotViewCleared): Use new setHasBorder.
+        (WebCore::RenderPartObject::slotViewCleared): Ditto.
+
 2006-02-17  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by justing.

@@ -292,7 +292,7 @@ void write(QTextStream &ts, const RenderObject &o, int indent)
     
     if (o.isWidget()) {
         Widget *widget = static_cast<const RenderWidget &>(o).widget();
-        if (widget && widget->inherits("FrameView")) {
+        if (widget && widget->isFrameView()) {
             FrameView *view = static_cast<FrameView *>(widget);
             RenderObject *root = view->frame()->renderer();
             if (root) {
