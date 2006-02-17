@@ -595,7 +595,8 @@ sub countAndPrintLeaks
         "_CFPreferencesDomainDeepCopyDictionary", # leak apparently in CFPreferences, Radar 4220786
         "+[NSLanguage initialize]", # leak apparently in NSLanguage, Radar 3986177
         "FOGetCoveredUnicodeChars", # leak apparently in ATS, Radar 3943604
-        "PCFragPrepareClosureFromFile" # leak in Code Fragment Manager, Radar 3426998
+        "PCFragPrepareClosureFromFile", # leak in Code Fragment Manager, Radar 3426998
+        "Flash_EnforceLocalSecurity" # leaks in flash plugin code, Radar 4449747
     );
 
     # Note that this exclusion doesn't quite work right; sometimes a leak of 'THRD' with no stack trace will
