@@ -53,7 +53,6 @@ CInstance::CInstance (NPObject *o)
 CInstance::~CInstance () 
 {
     _NPN_ReleaseObject (_object);
-    delete _class;
 }
 
 

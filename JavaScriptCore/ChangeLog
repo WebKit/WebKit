@@ -1,3 +1,14 @@
+2006-02-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by John.
+
+        - Fixed <rdar://problem/4448534> TOT REGRESSION: crash in KJS::
+        Bindings::Instance::deref when leaving page @ gigaom.com
+
+        * bindings/c/c_instance.cpp:
+        (KJS::Bindings::CInstance::~CInstance): Since we cache the class object
+        globally, we shouldn't delete it, so don't.
+
 2006-02-16  Timothy Hatcher  <timothy@apple.com>
 
         Added -Wno-deprecated-declarations to all the ObjC binding files to prevent deprecation
