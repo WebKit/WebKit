@@ -1,5 +1,18 @@
 2006-02-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Test: fast/css/universal-hover-quirk.html
+
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7218
+          Text underlined on mouse over
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::checkOneSelector): Prevent *:hover and *:active
+        from matching anything in quirks mode.
+
+2006-02-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Test: fast/text/whitespace/pre-wrap-spaces-after-newline.html
 
         Reviewed by Dave Hyatt.

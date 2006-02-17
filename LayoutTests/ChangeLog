@@ -1,5 +1,17 @@
 2006-02-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Reviewed by Maciej.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7218
+          Text underlined on mouse over
+
+        * fast/css/universal-hover-quirk-expected.checksum: Added.
+        * fast/css/universal-hover-quirk-expected.png: Added.
+        * fast/css/universal-hover-quirk-expected.txt: Added.
+        * fast/css/universal-hover-quirk.html: Added.
+
+2006-02-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed by Dave Hyatt.
 
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7216
