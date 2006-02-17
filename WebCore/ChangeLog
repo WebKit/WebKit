@@ -1,3 +1,40 @@
+2006-02-17  Vicki Murley <vicki@apple.com>
+
+        Reviewed by Justin.
+ 
+        Get rid of handleFocusOut on text fields and textareas - move this functionality to the place
+        where we resign focus on the previous node in setFocusNode.  Add isTextField on RenderObject
+        as one way to distinguish from contenteditable elements - Win IE does not fire onChange for 
+        contenteditable elements, so we won't either. Also, expose the dirty bit variables previously 
+        checked in handleFocusOut methods in isEdited() and setEdited().
+
+        Fixes the following bugs:
+        <rdar://problem/4315673> REGRESSION (1.2.2 - 1.3): onChange and onFocus events firing order differs for mouse click and tab (7227)
+        <rdar://problem/4447009> for text fields, onChange should fire before onBlur to match Win IE
+
+        Test case is on the way.
+
+        * dom/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::setFocusNode): For textareas and text fields, fire a change event
+        on the node that is resigning focus.  Make sure the blur event fires after the change event - 4447009.
+        * rendering/render_form.cpp:
+        (WebCore::RenderLineEdit::slotReturnPressed): Replace call to handleFocusOut with equivalent code.
+        (WebCore::RenderLineEdit::isEdited): Added.
+        (WebCore::RenderLineEdit::setEdited): Added.
+        (WebCore::RenderTextArea::setEdited): Added.
+        * rendering/render_form.h:
+        (WebCore::RenderLineEdit::isTextField): Added.
+        (WebCore::RenderTextArea::isTextArea): Make this non-virtual.
+        (WebCore::RenderTextArea::isEdited): Added.
+        * rendering/render_object.h:
+        (WebCore::RenderObject::isEdited): Added.
+        (WebCore::RenderObject::setEdited): Added.
+        (WebCore::RenderObject::isTextField): Added.
+        * rendering/render_replaced.h: Remove handleFocusOut().
+        * rendering/render_replaced.cpp: Ditto.
+        (WebCore::RenderWidget::eventFilter): Remove call to handleFocusOut().  Safe to do here,
+        since we call setFocusNode immediately beforehand.
+
 2006-02-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Test: fast/parser/nofoo-tags-inside-paragraph.html

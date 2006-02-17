@@ -2052,7 +2052,16 @@ bool DocumentImpl::setFocusNode(PassRefPtr<NodeImpl> newFocusNode)
             oldFocusNode->setActive(false);
 
         oldFocusNode->setFocus(false);
+                
+        // Dispatch a change event for text fields or textareas that have been edited
+        RenderObject *r = static_cast<RenderObject*>(oldFocusNode.get()->renderer());
+        if ((r->isTextArea() || r->isTextField()) && r->isEdited()) {
+            oldFocusNode->dispatchHTMLEvent(changeEvent, true, false);
+            r->setEdited(false);
+        }
+
         oldFocusNode->dispatchHTMLEvent(blurEvent, false, false);
+
         if (m_focusNode) {
             // handler shifted focus
             focusChangeBlocked = true;

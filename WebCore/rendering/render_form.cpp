@@ -224,7 +224,10 @@ void RenderLineEdit::slotReturnPressed()
     // Emit onChange if necessary
     // Works but might not be enough, dirk said he had another solution at
     // hand (can't remember which) - David
-    handleFocusOut();
+    if (isTextField() && isEdited()) {
+        element()->onChange();
+        setEdited(false);
+    }
 
     HTMLFormElementImpl* fe = element()->form();
     if ( fe )
@@ -241,14 +244,6 @@ void RenderLineEdit::addSearchResult()
 {
     if (widget())
         widget()->addSearchResult();
-}
-
-void RenderLineEdit::handleFocusOut()
-{
-    if ( widget() && widget()->edited() && element()) {
-        element()->onChange();
-        widget()->setEdited( false );
-    }
 }
 
 void RenderLineEdit::calcMinMaxWidth()
@@ -373,6 +368,15 @@ void RenderLineEdit::setSelectionEnd(int end)
 void RenderLineEdit::select()
 {
     static_cast<QLineEdit*>(m_widget)->selectAll();
+}
+
+bool RenderLineEdit::isEdited() const
+{
+    return static_cast<QLineEdit*>(m_widget)->edited();
+}
+void RenderLineEdit::setEdited(bool x)
+{
+    static_cast<QLineEdit*>(m_widget)->setEdited(x);
 }
 
 void RenderLineEdit::setSelectionRange(int start, int end)
@@ -520,8 +524,8 @@ void RenderFieldset::setStyle(RenderStyle* _style)
     // so that we're treated like an inline-block.
     if (isInline())
         setReplaced(true);
-}
-
+}    
+    
 // -------------------------------------------------------------------------
 
 RenderFileButton::RenderFileButton(HTMLInputElementImpl *element)
@@ -995,15 +999,6 @@ void RenderTextArea::destroy()
     RenderFormElement::destroy();
 }
 
-void RenderTextArea::handleFocusOut()
-{
-    if ( m_dirty && element() ) {
-        element()->updateValue();
-        element()->onChange();
-    }
-    m_dirty = false;
-}
-
 void RenderTextArea::calcMinMaxWidth()
 {
     KHTMLAssert( !minMaxKnown() );
@@ -1046,6 +1041,10 @@ void RenderTextArea::setStyle(RenderStyle *s)
         horizontalScrollMode = QScrollView::AlwaysOff;
 
     w->setScrollBarModes(horizontalScrollMode, scrollMode);
+}
+
+void RenderTextArea::setEdited(bool x) {
+    m_dirty = x;
 }
 
 void RenderTextArea::updateFromElement()

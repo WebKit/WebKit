@@ -131,6 +131,9 @@ public:
     void setSelectionStart(int);
     void setSelectionEnd(int);
     
+    bool isEdited() const;
+    void setEdited(bool);
+    bool isTextField() const { return true; }
     void select();
     void setSelectionRange(int, int);
 
@@ -145,9 +148,6 @@ public slots:
     void slotPerformSearch();
 public:
     void addSearchResult();
-
-protected:
-    virtual void handleFocusOut();
 
 private:
     virtual bool isEditable() const { return true; }
@@ -320,7 +320,9 @@ public:
     virtual void updateFromElement();
     virtual void setStyle(RenderStyle *);
 
-    virtual bool isTextArea() const { return true; }
+    bool isTextArea() const { return true; }
+    bool isEdited() const { return m_dirty; }
+    void setEdited (bool);
     
     // don't even think about making this method virtual!
     DOM::HTMLTextAreaElementImpl* element() const
@@ -343,8 +345,6 @@ protected slots:
     void slotSelectionChanged();
     
 protected:
-    virtual void handleFocusOut();
-
     virtual bool isEditable() const { return true; }
 
     bool m_dirty;

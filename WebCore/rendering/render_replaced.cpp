@@ -411,10 +411,6 @@ void RenderWidget::paint(PaintInfo& i, int _tx, int _ty)
         i.p->fillRect(selectionRect(), selectionColor(i.p));
 }
 
-void RenderWidget::handleFocusOut()
-{
-}
-
 bool RenderWidget::eventFilter(QObject* /*o*/, QEvent* e)
 {
     if ( !element() ) return true;
@@ -437,7 +433,6 @@ bool RenderWidget::eventFilter(QObject* /*o*/, QEvent* e)
            //kdDebug(6000) << "RenderWidget::eventFilter captures FocusOut" << endl;
             if (elem->getDocument()->focusNode() == elem)
                 elem->getDocument()->setFocusNode(0);
-            handleFocusOut();
         }
         break;
     case QEvent::FocusIn:
