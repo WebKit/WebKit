@@ -529,8 +529,14 @@ JSValue *MimeType::getValueProperty(ExecState *exec, int token) const
         return jsString(m_info->suffixes);
     case Description:
         return jsString(m_info->desc);
-    case EnabledPlugin:
-        return new Plugin(exec, m_info->plugin);
+    case EnabledPlugin: {
+        ScriptInterpreter *interpreter = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter());
+        Frame *frame = interpreter->frame();
+        if (frame && frame->pluginsEnabled())
+            return new Plugin(exec, m_info->plugin);
+        else
+            return jsUndefined();
+    }
     default:
         return jsUndefined();
     }

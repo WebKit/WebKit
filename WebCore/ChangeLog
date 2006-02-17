@@ -1,3 +1,15 @@
+2006-02-16  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Adele.
+
+        <rdar://problem/4193286> enabledPlugin returns a non-NULL object even when plugins are
+        disabled (4140)
+
+        * khtml/ecma/kjs_navigator.cpp:
+        (KJS::MimeType::getValueProperty):
+        Only return a Plugin object for the "enabledPlugin" property if plugins are enabled.  This
+        matches what other browsers do.
+        
 2006-02-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric and Justin.
