@@ -1,3 +1,18 @@
+2006-02-17  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Beth.
+
+        Adding isEdited/setEdited hooks so onChange will fire for the new text fields.
+
+        * rendering/RenderTextField.cpp:
+        (WebCore::m_dirty):
+        (WebCore::RenderTextField::updateFromElement): setEdited to false when value attribute has changed.
+        (WebCore::RenderTextField::subtreeHasChanged): setEdited to true when anonymous editable div has changed.
+        * rendering/RenderTextField.h:
+        (WebCore::RenderTextField::isEdited):
+        (WebCore::RenderTextField::setEdited):
+        (WebCore::RenderTextField::isTextField):
+
 2006-02-17  Vicki Murley <vicki@apple.com>
 
         Reviewed by Justin.

@@ -45,7 +45,7 @@ void InputMutationListener::handleEvent(EventImpl *event, bool isWindowEvent)
 }
 
 RenderTextField::RenderTextField(NodeImpl* node)
-:RenderBlock(node), m_mutationListener(new InputMutationListener(this))
+:RenderBlock(node), m_mutationListener(new InputMutationListener(this)), m_dirty(false)
 {
 }
 
@@ -121,6 +121,7 @@ void RenderTextField::updateFromElement()
             if (value != oldText) {
                 int exception = 0;
                 text->setData(value, exception);
+                setEdited(false);
                 //FIXME: Update cursor as necessary
             }
             input->setValueMatchesRenderer();
@@ -166,8 +167,10 @@ void RenderTextField::setSelectionRange(int start, int end)
 void RenderTextField::subtreeHasChanged()
 {
     HTMLInputElementImpl* input = static_cast<HTMLInputElementImpl*>(element());
-    if (input && m_div)
+    if (input && m_div) {
         input->setValueFromRenderer(m_div->textContent());
+        setEdited(true);
+    }
 }
 
 void RenderTextField::calcMinMaxWidth()
