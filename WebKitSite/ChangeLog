@@ -1,3 +1,14 @@
+2006-02-16  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Maciej.
+        
+        Fixes PNGs with 8bit alpha on IE.
+
+        * css/ie.css: attach the pngbehavior.htc to img tags
+        * images/blank.png: Added.
+        * index.html: add the width and height to the download img
+        * pngbehavior.htc: Added.
+
 2006-02-16  Justin Garcia  <justin.garcia@apple.com>
 
         Changed by Darin on my machine.

@@ -1,0 +1,86 @@
+<public:component>
+<public:attach event="onpropertychange" onevent="propertyChanged()" />
+<public:attach event="onbeforeprint" for="window" onevent="beforePrint()" />
+<public:attach event="onafterprint" for="window" onevent="afterPrint()" />
+<script>
+
+/*
+ * PNG Behavior
+ *
+ * This script was created by Erik Arvidsson (erik(at)eae.net)
+ * for WebFX (http://webfx.eae.net)
+ * Copyright 2002
+ * 
+ * For usage see license at http://webfx.eae.net/license.html	
+ *
+ * Version: 1.01a
+ * Created: 2001-??-??	First working version
+ * Updated: 2002-03-28	Fixed issue when starting with a non png image and
+ *                      switching between non png images
+ *          2003-01-06	Fixed RegExp to correctly work with IE 5.0x
+ *          2004-04-25  Fixed PNG image printing, eliminated need for external
+ *                      GIF file, fixed intermittent uninitialised variable
+ *                      error [by AG, <http://www.scss.com.au/family/andrew/> ]
+ *          2004-09-30  Reverted inline javascript image to transparent GIF. The
+ *                      new XP SP2 'security' measures prevented the JS image
+ *                      from working. [by AG]
+ *          2004-10-22  Rewrote fixImage() to try and work around some reported
+ *                      problems with PNGs vanishing! [by AG]
+ *          2004-12-12  Fixed problem with PNGs not being restored after
+ *                      printing. I have no idea how I missed this one! [by AG]
+ *          2005-03-26  Fixed supported RE mis-identifying IE 5.0/Win98 as
+ *                      'supported'.
+ *
+ */
+ 
+var IS_PNG = /\.png$/i;
+var supported = /MSIE (5\.[5-9]|[6]\.[0-9]*)/.test(navigator.userAgent) && navigator.platform == 'Win32';
+var realSrc;
+var blankSrc = '/images/blank.png';
+if (supported) fixImage();
+function propertyChanged() {
+  if (supported && event.propertyName == 'src') {
+    var i = element.src.lastIndexOf(blankSrc);
+    if (i == -1 || i != element.src.length - blankSrc.length) {
+      fixImage();
+    }
+  }
+}
+function fixImage() {
+  if (realSrc && element.src == realSrc) {
+    // this is an attempt to set the image to itself!
+    // pointless - leave the filter as-is, restore the blank image
+    element.src = blankSrc;
+  } else {
+    // set the image to something different
+    if (IS_PNG.test(element.src)) {
+      // fixable PNG
+      realSrc = element.src;
+      element.src = blankSrc;
+      element.runtimeStyle.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + realSrc + "',sizingMethod='scale')";
+    } else {
+      // ordinary image - make sure the fix is removed
+      if (realSrc) {
+        realSrc = null;
+        element.runtimeStyle.filter = '';
+      }
+    }
+  }
+}
+function beforePrint() {
+  if (realSrc) {
+    supported = false;
+    element.src = realSrc;
+    element.runtimeStyle.filter = '';
+    supported = true;
+  }
+}
+function afterPrint() {
+  if (realSrc) {
+    var rs = realSrc;
+    realSrc = null;
+    element.src = rs;
+  }
+}
+</script>
+</public:component>
