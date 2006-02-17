@@ -1,3 +1,19 @@
+2006-02-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Test: fast/text/whitespace/pre-wrap-spaces-after-newline.html
+
+        Reviewed by Dave Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7216
+          white-space: pre-wrap collapses leading whitespace following a newline
+
+        * rendering/bidi.cpp:
+        (khtml::RenderBlock::bidiReorderLine): Use previousLineBrokeCleanly instead of
+        resetBidiAtEnd now that the former is always correct.
+        (khtml::RenderBlock::layoutInlineChildren): Use new skipTrailingNewline flag.
+        (khtml::RenderBlock::findNextLineBreak): Set previousLineBrokeCleanly for line breaks
+        caused by newlines as well. Added skipTrailingNewline flag.
+
 2006-02-16  Tim Omernick  <timo@apple.com>
 
         Reviewed by Adele.

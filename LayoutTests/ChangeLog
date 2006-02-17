@@ -1,3 +1,15 @@
+2006-02-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Dave Hyatt.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7216
+          white-space: pre-wrap collapses leading whitespace following a newline
+
+        * fast/text/whitespace/pre-wrap-spaces-after-newline-expected.checksum: Added.
+        * fast/text/whitespace/pre-wrap-spaces-after-newline-expected.png: Added.
+        * fast/text/whitespace/pre-wrap-spaces-after-newline-expected.txt: Added.
+        * fast/text/whitespace/pre-wrap-spaces-after-newline.html: Added.
+
 2006-02-16  Adele Peterson  <adele@apple.com>
 
         Updating results for fix:
