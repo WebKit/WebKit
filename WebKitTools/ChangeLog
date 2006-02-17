@@ -2,6 +2,12 @@
 
         Reviewed by adele.
 
+        * Scripts/run-webkit-tests: Ignore quicktime plugin leaks
+
+2006-02-17  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by adele.
+
         * Scripts/run-webkit-tests: Ignore flash leaks
 
 2006-02-15  Justin Garcia  <justin.garcia@apple.com>
