@@ -1,3 +1,13 @@
+2006-02-17  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by eric
+        
+        This test appears to be occasionally hanging.  Disabling it while
+        I figure out why.
+
+        * editing/selection/drag-to-contenteditable-iframe.html: Removed.
+        * editing/selection/drag-to-contenteditable-iframe.html-disabled: Added.
+
 2006-02-17  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Anders Carlsson.
