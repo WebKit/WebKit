@@ -1,5 +1,11 @@
 2006-02-17  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by Beth.
+
+        * Scripts/build-webkit: make win32 actually report errors
+
+2006-02-17  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by adele.
 
         * Scripts/run-webkit-tests: Ignore quicktime plugin leaks

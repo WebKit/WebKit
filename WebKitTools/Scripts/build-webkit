@@ -75,10 +75,13 @@ if (isOSX()) {
 }
 
 my $devenvPath;
+my $cygwinTmpPath;
 if (isCygwin()) {
     my $programFilesPath = `cygpath "$ENV{'PROGRAMFILES'}"`;
     chomp $programFilesPath;
     $devenvPath = "$programFilesPath/Microsoft Visual Studio 8/Common7/IDE/devenv.exe";
+    $cygwinTmpPath = `cygpath -w /tmp`;
+    chomp $cygwinTmpPath;
 }
 
 # Force re-link of existing libraries if different than expected
@@ -101,8 +104,11 @@ for my $dir (@projects) {
         if (($dir eq "JavaScriptCore") || ($dir eq "WebCore")) {
             chdir "$dir.vcproj" or die "Failed to cd into $dir.vcproj\n";
             my $config = configuration();
-            print "$devenvPath $dir.sln /build $config\n";
-            $result = system $devenvPath, "$dir.sln", "/build", $config;
+
+            my $resultsFile = "$cygwinTmpPath\\buildresults.txt";
+            print "$devenvPath $dir.sln /build $config /Out $resultsFile";
+            $result = system $devenvPath, "$dir.sln", "/build", $config, "/Out", $resultsFile;
+            system "cat", $resultsFile;
             chdir ".." or die;
         }
     }
