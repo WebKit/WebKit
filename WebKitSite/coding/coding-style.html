@@ -8,14 +8,17 @@
 <h3>Indenting</h3>
 
 <ol>
-<li> Use spaces to indent. Tabs should not appear in code files (with the exception of files that require them e.g. Makefiles).</li>
+<li> Use spaces to indent. Tabs should not appear in code files (with the exception of files that require tabs, e.g. Makefiles).
+     We have a Subversion pre-commit script that enforces this rule for most
+     source files, preventing commits of files that don't follow this rule.
+</li>
 <li> The indent size is 4 spaces.</li>
 <li> Code editors should be configured to expand tabs that you type to 4 spaces.</li>
 </ol>
 
 <h3>Braces</h3>
 <ol>
-<li> Function definitions - open and close braces should be on lines by themselves. Do not put the open brace on the same line as the function signature. For example:<br />
+<li> Function definitions &mdash; open and close braces should be on lines by themselves. Do not put the open brace on the same line as the function signature. For example:<br />
 
 <h4 style="color: #008000 !important !important">Right:</h4>
 <pre style="background-color: #F2F2F2">
@@ -32,7 +35,7 @@ void foo() {
 }
 </pre>
 </li>
-<li> Loop control structures, including for, while and do statements - the open brace should go on the same line as the as the control structure.<br />
+<li> Loop control structures, including for, while and do statements &mdash; the open brace should go on the same line as the as the control structure.<br />
 
 <h4 style="color: #008000 !important">Right:</h4>
 <pre style="background-color: #F2F2F2">
@@ -49,8 +52,8 @@ for (int i = 0; i < 10; i++)
     // do stuff
 }
 </pre>
-<li> If/else statements - as above, but if there is an else clause, the close brace should go on the same line as the else. Also, one-line  if or else clauses should not get braces.<br />
-
+<li> If/else statements &mdash; as above, but if there is an else clause, the close brace should go on the same line as the else.
+     Also, one-line if or else clauses should not get braces.<br />
 <h4 style="color: #008000 !important">Right:</h4>
 <pre style="background-color: #F2F2F2">
 if (timeToGetCoffee) {
@@ -89,28 +92,29 @@ if (timeToGoHome)
 
 <h3>Parentheses</h3>
 <ol>
-<li>Function declarations and calls - do not use any spaces between the name and the open paren, inside the parentheses, or before commas that separate arguments. Do use a single space after commas that separate arguments.<br />
+<li>Function declarations and calls &mdash; do not use any spaces between the name and the open paren, inside the parentheses, or before commas that separate arguments.
+    Do use a single space after commas that separate arguments.<br />
 
 <h4 style="color: #008000 !important">Right:</h4>
 <pre style="background-color: #F2F2F2">
 int myFunction(int arg1, float arg2);
-	
+
 void noArgFunction(); // for C++ or Objective-C++
-	
+
 void noArgFunction(void); // for C or Objective-C
 </pre>
 
 <h4 style="color: #ff0000 !important">Wrong:</h4>
 <pre style="background-color: #F2F2F2">
 int myFunction (int arg1, float arg2);
-	
+
 int myFunction( int arg1 , float arg2 );
-	
+
 void noArgFunction ();
 </pre>
 </li>
 
-<li>Control structures, such as if, while, do and switch - use a single space before the open paren, but no spaces inside the parentheses.
+<li>Control structures, such as if, while, do and switch &mdash; use a single space before the open paren, but no spaces inside the parentheses.
 
 </li>
 </ol>
@@ -183,7 +187,7 @@ if (count == 0) {
 <h3>Names</h3>
 <ol>
 <li>General Rule: With very few exceptions, prefer embedded capitals instead of underscores for class, function and variable names.</p></li>
-<li>C++ and Objective-C classes, interfaces and protocols, and other type names - these names should start with a capital letter and use InterCaps.<br />
+<li>C++ and Objective-C classes, interfaces and protocols, and other type names &emdash; these names should start with a capital letter and use InterCaps.<br />
 
 <h4 style="color: #008000 !important">Right:</h4>
 <pre style="background-color: #F2F2F2">
@@ -217,9 +221,9 @@ int my_int;
 
 <li>C++ data members should be named like local variables, but with a prefix of m_.</li>
 <li>C++ member functions should follow the same naming convention as free functions.</li>
-<li>Objective-C methods should follow the usual Cocoa naming style - they should read like a phrase or sentence and each piece of the selector should start with a lowercase letter and use intercaps.</li>
+<li>Objective-C methods should follow the usual Cocoa naming style &mdash;
+they should read like a phrase or sentence and each piece of the selector should start with a lowercase letter and use intercaps.</li>
 <li>Objective-C instance variables should be named like local variables but starting with an underscore.</li>
-<li>Pointer and reference types - pointer types should be written with a space between the type name and the * (so the * is adjacent to the following identifier if any). For reference types, the &amp; goes next to the type name.</li>
 <li>Enum members should user InterCaps with an initial capital letter.</li>
 <li>#defined constants should use all uppercase names with words separated by underscores.</li>
 <li> Macros that expand to function calls or other non-constant computation: these should be named like functions, and should have parentheses at the end, even if they take no arguments (with the exception of some special macros like ASSERT). Note that usually it is preferrable to use an inline function in such cases instead of a macro.<br />
@@ -240,7 +244,8 @@ int my_int;
 </pre>
 </li>
 
-<li> Acronyms in names: If an identifier includes an acronym, make the acronym all-uppercase or all-lowercase, depending on whether a word in that position would be capitalized or not.<br />
+<li> Acronyms in names: If an identifier includes an acronym, make the acronym all-uppercase
+     or all-lowercase, depending on whether a word in that position would be capitalized or not.<br />
 
 <h4 style="color: #008000 !important">Right:</h4>
 <pre style="background-color: #F2F2F2">
@@ -255,6 +260,36 @@ myUrlAccessor:
 </pre>
 </li>
 </ol>
+
+<h3>Other Punctuation</h3>
+
+<ol>
+
+<li>Pointer and reference types in C++ code &mdash; Both pointer types and reference types
+should be written with no space between the type name and the * or &amp;.
+
+<li>Pointer types in non-C++ code &mdash; Pointer types should be written with a space between the
+type and the * (so the * is adjacent to the following identifier if any).
+
+</ol>
+
+<h3>Include Statements</h3>
+
+<ol>
+
+<li>All files must #include "config.h" first.
+
+<li>All files must #include the primary header second, just after "config.h".
+So for example, Node.cpp should include Node.h first, before other files.
+This guarantees that each header's completeness is tested, to make sure it
+can be compiled without requiring any other header files be included first.
+
+<li>Other #include statements should be in sorted order (case sensitive, as
+done by the command-line sort tool or the Xcode sort selection command).
+Don't bother to organize them in a logical order.
+
+</ol>
+
 <?php
 	include("../footer.inc");
 ?>
