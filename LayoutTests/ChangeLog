@@ -1,3 +1,15 @@
+2006-02-17  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Anders Carlsson.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7265
+          REGRESSION: noscript, noframes, nolayer, noembed tags insert break inside paragraph tag
+
+        * fast/parser/nofoo-tags-inside-paragraph-expected.checksum: Added.
+        * fast/parser/nofoo-tags-inside-paragraph-expected.png: Added.
+        * fast/parser/nofoo-tags-inside-paragraph-expected.txt: Added.
+        * fast/parser/nofoo-tags-inside-paragraph.html: Added.
+
 2006-02-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Maciej.

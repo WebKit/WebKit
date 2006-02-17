@@ -879,7 +879,8 @@ bool HTMLParser::isInline(DOM::NodeImpl* node) const
             e->hasLocalName(kbdTag) || e->hasLocalName(varTag) || e->hasLocalName(citeTag) ||
             e->hasLocalName(abbrTag) || e->hasLocalName(acronymTag) || e->hasLocalName(subTag) ||
             e->hasLocalName(supTag) || e->hasLocalName(spanTag) || e->hasLocalName(nobrTag) ||
-            e->hasLocalName(wbrTag))
+            e->hasLocalName(wbrTag) || e->hasLocalName(noframesTag) || e->hasLocalName(nolayerTag) ||
+            e->hasLocalName(noembedTag) || (e->hasLocalName(noscriptTag) && HTMLWidget && HTMLWidget->frame()->jScriptEnabled()))
             return true;
     }
     

@@ -1,5 +1,18 @@
 2006-02-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Test: fast/parser/nofoo-tags-inside-paragraph.html
+
+        Reviewed by Anders Carlsson.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7265
+          REGRESSION: noscript, noframes, nolayer, noembed tags insert break inside paragraph tag
+
+        * khtml/html/htmlparser.cpp:
+        (HTMLParser::isInline): Treat noframes, nolayer, noembed and skipped noscript
+        as inline elements.
+
+2006-02-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed by Hyatt.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7235
