@@ -1,5 +1,18 @@
 2006-02-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7235
+          Pure CSS Tooltips method renders wrong and creates artifacts
+
+        * manual-tests/bugzilla-7235.html: Added.
+        * rendering/render_box.cpp:
+        (WebCore::RenderBox::absolutePosition): Copied in here the logic for positioning
+        relative to a relpositioned inline from RenderLayer::updateLayerPosition.
+        (WebCore::RenderBox::computeAbsoluteRepaintRect): Ditto.
+
+2006-02-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Test: fast/css/universal-hover-quirk.html
 
         Reviewed by Maciej.

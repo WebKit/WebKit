@@ -665,6 +665,36 @@ bool RenderBox::absolutePosition(int &xPos, int &yPos, bool f)
         f = true;
     RenderObject *o = container();
     if (o && o->absolutePosition(xPos, yPos, f)) {
+        if (style()->position() == ABSOLUTE && o->isRelPositioned() && o->isInlineFlow()) {
+            // When we have an enclosing relpositioned inline, we need to add in the offset of the first line
+            // box from the rest of the content, but only in the cases where we know we're positioned
+            // relative to the inline itself.
+            RenderFlow* flow = static_cast<RenderFlow*>(o);
+            int sx = 0;
+            int sy = 0;
+            if (flow->firstLineBox()) {
+                sx = flow->firstLineBox()->xPos();
+                sy = flow->firstLineBox()->yPos();
+            } else {
+                sx = flow->staticX();
+                sy = flow->staticY();
+            }
+            
+            bool isInlineType = style()->isOriginalDisplayInlineType();
+            
+            if (!hasStaticX())
+                xPos += sx;
+            // This is not terribly intuitive, but we have to match other browsers.  Despite being a block display type inside
+            // an inline, we still keep our x locked to the left of the relative positioned inline.  Arguably the correct
+            // behavior would be to go flush left to the block that contains the inline, but that isn't what other browsers
+            // do.
+            if (hasStaticX() && !isInlineType)
+                // Avoid adding in the left border/padding of the containing block twice.  Subtract it out.
+                xPos += sx - (containingBlock()->borderLeft() + containingBlock()->paddingLeft());
+            
+            if (!hasStaticY())
+                yPos += sy;
+        }
         if (o->hasOverflowClip())
             o->layer()->subtractScrollOffset(xPos, yPos); 
             
@@ -776,6 +806,36 @@ void RenderBox::computeAbsoluteRepaintRect(IntRect& r, bool f)
 
     RenderObject* o = container();
     if (o) {
+        if (style()->position() == ABSOLUTE && o->isRelPositioned() && o->isInlineFlow()) {
+            // When we have an enclosing relpositioned inline, we need to add in the offset of the first line
+            // box from the rest of the content, but only in the cases where we know we're positioned
+            // relative to the inline itself.
+            RenderFlow* flow = static_cast<RenderFlow*>(o);
+            int sx = 0;
+            int sy = 0;
+            if (flow->firstLineBox()) {
+                sx = flow->firstLineBox()->xPos();
+                sy = flow->firstLineBox()->yPos();
+            } else {
+                sx = flow->staticX();
+                sy = flow->staticY();
+            }
+            
+            bool isInlineType = style()->isOriginalDisplayInlineType();
+            
+            if (!hasStaticX())
+                x += sx;
+            // This is not terribly intuitive, but we have to match other browsers.  Despite being a block display type inside
+            // an inline, we still keep our x locked to the left of the relative positioned inline.  Arguably the correct
+            // behavior would be to go flush left to the block that contains the inline, but that isn't what other browsers
+            // do.
+            if (hasStaticX() && !isInlineType)
+                // Avoid adding in the left border/padding of the containing block twice.  Subtract it out.
+                x += sx - (containingBlock()->borderLeft() + containingBlock()->paddingLeft());
+            
+            if (!hasStaticY())
+                y += sy;
+        }
         // <body> may not have overflow, since it might be applying its overflow value to the
         // scrollbars.
         if (o->hasOverflowClip()) {
