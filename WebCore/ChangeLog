@@ -1,3 +1,16 @@
+2006-02-16  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        Test:
+        * manual-tests/mail-attachments.html: Added.
+        Automated test not currently possible because widgets do not actually draw when not in a window.
+        Geoff and Justin are fixing that and will add this test.
+
+        * rendering/render_frames.cpp:
+        (WebCore::RenderPartObject::updateWidget):
+        Fix unique param check when processing object tag attributes.
+
 2006-02-16  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.

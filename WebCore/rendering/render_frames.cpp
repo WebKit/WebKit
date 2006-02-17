@@ -812,7 +812,7 @@ void RenderPartObject::updateWidget()
           for (unsigned i = 0; i < attributes->length(); ++i) {
               AttributeImpl* it = attributes->attributeItem(i);
               const AtomicString& name = it->name().localName();
-              if (embed || uniqueParamNames.contains(name.impl())) {
+              if (embed || !uniqueParamNames.contains(name.impl())) {
                   paramNames.append(name.qstring());
                   paramValues.append(it->value().qstring());
               }
