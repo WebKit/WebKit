@@ -35,6 +35,12 @@ p {
     font-size: 10px;
 }
 
+#footer {
+	position: relative;
+	left: 215px;
+	margin-bottom: 20px;
+}
+
 #title {
     position: absolute;
 	background-image: url( /images/end.png );
