@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,7 @@ class Position
 {
 public:
     Position() : m_node(0), m_offset(0) { }
-    Position(NodeImpl *node, int offset);
+    Position(NodeImpl*, int offset);
 
     void clear();
 
@@ -51,8 +51,8 @@ public:
     bool isNull() const { return m_node == 0; }
     bool isNotNull() const { return m_node != 0; }
 
-    ElementImpl *element() const;
-    CSSComputedStyleDeclarationImpl *computedStyle() const;
+    ElementImpl* element() const;
+    PassRefPtr<CSSComputedStyleDeclarationImpl> computedStyle() const;
 
     // Move up or down the DOM by one position
     Position previous(EUsingComposedCharacters usingComposedCharacters=NotUsingComposedCharacters) const;
@@ -83,10 +83,10 @@ public:
     bool isRenderedCharacter() const;
     bool rendersInDifferentPosition(const Position &pos) const;
     
-    void debugPosition(const char *msg="") const;
+    void debugPosition(const char* msg = "") const;
 
 #ifndef NDEBUG
-    void formatForDebugger(char *buffer, unsigned length) const;
+    void formatForDebugger(char* buffer, unsigned length) const;
     void showTree() const;
 #endif
     
@@ -112,12 +112,12 @@ inline bool operator!=(const Position &a, const Position &b)
     return !(a == b);
 }
 
-Position startPosition(const RangeImpl *);
-Position endPosition(const RangeImpl *);
+Position startPosition(const RangeImpl*);
+Position endPosition(const RangeImpl*);
 
 #ifndef NDEBUG
-void showTree(const Position &pos);
-void showTree(const Position *pos);
+void showTree(const Position& pos);
+void showTree(const Position* pos);
 #endif
 
 } // namespace DOM

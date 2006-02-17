@@ -27,14 +27,14 @@
 #include "htmlediting.h"
 
 #include "DocumentImpl.h"
-#include "dom2_range.h"
 #include "EditingTextImpl.h"
-#include "TextImpl.h"
 #include "HTMLElementImpl.h"
+#include "TextImpl.h"
+#include "VisiblePosition.h"
+#include "dom2_range.h"
 #include "html_interchange.h"
 #include "htmlnames.h"
 #include "render_object.h"
-#include "VisiblePosition.h"
 #include <qregexp.h>
 
 namespace WebCore {
@@ -449,17 +449,17 @@ Position positionAvoidingSpecialElementBoundary(const Position &pos)
 PassRefPtr<ElementImpl> createDefaultParagraphElement(DocumentImpl *document)
 {
     int exceptionCode = 0;
-    ElementImpl *element = document->createElementNS(xhtmlNamespaceURI, "div", exceptionCode);
+    RefPtr<ElementImpl> element = document->createElementNS(xhtmlNamespaceURI, "div", exceptionCode);
     ASSERT(exceptionCode == 0);
-    return element;
+    return element.release();
 }
 
 PassRefPtr<ElementImpl> createBreakElement(DocumentImpl *document)
 {
     int exceptionCode = 0;
-    ElementImpl *breakNode = document->createElementNS(xhtmlNamespaceURI, "br", exceptionCode);
+    RefPtr<ElementImpl> breakNode = document->createElementNS(xhtmlNamespaceURI, "br", exceptionCode);
     ASSERT(exceptionCode == 0);
-    return breakNode;
+    return breakNode.release();
 }
 
 bool isTabSpanNode(const NodeImpl *node)

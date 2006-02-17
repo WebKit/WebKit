@@ -59,7 +59,7 @@ public:
     /**
      * parses one token delivered by the tokenizer
      */
-    DOM::NodeImpl *parseToken(khtml::Token *_t);
+    PassRefPtr<WebCore::NodeImpl> parseToken(WebCore::Token*);
     
     /**
      * tokenizer says it's not going to be sending us any more tokens
@@ -87,27 +87,27 @@ protected:
     /*
      * generate a node from the token
      */
-    DOM::NodeImpl *getNode(khtml::Token *);
-    bool textCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
-    bool commentCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
-    bool headCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
-    bool bodyCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
-    bool framesetCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
-    bool iframeCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
-    bool formCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
-    bool isindexCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
-    bool selectCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
-    bool ddCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
-    bool dtCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
-    bool nestedCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
-    bool nestedStyleCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
-    bool tableCellCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
-    bool tableSectionCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
-    bool noembedCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
-    bool noscriptCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
-    bool noframesCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
-    bool nolayerCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
-    bool mapCreateErrorCheck(khtml::Token*, DOM::NodeImpl*&);
+    PassRefPtr<WebCore::NodeImpl> getNode(WebCore::Token*);
+    bool textCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
+    bool commentCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
+    bool headCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
+    bool bodyCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
+    bool framesetCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
+    bool iframeCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
+    bool formCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
+    bool isindexCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
+    bool selectCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
+    bool ddCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
+    bool dtCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
+    bool nestedCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
+    bool nestedStyleCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
+    bool tableCellCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
+    bool tableSectionCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
+    bool noembedCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
+    bool noscriptCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
+    bool noframesCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
+    bool nolayerCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
+    bool mapCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
 
     void processCloseTag(khtml::Token *);
 

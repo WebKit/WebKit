@@ -173,7 +173,7 @@ void HTMLParser::setCurrent(DOM::NodeImpl *newCurrent)
     currentIsReferenced = newCurrentIsReferenced;
 }
 
-NodeImpl *HTMLParser::parseToken(Token *t)
+PassRefPtr<NodeImpl> HTMLParser::parseToken(Token *t)
 {
     if (!discard_until.isNull()) {
         if (t->tagName == discard_until && !t->beginTag)
@@ -200,16 +200,14 @@ NodeImpl *HTMLParser::parseToken(Token *t)
             haveContent = true;
     }
 
-    NodeImpl *n = getNode(t);
+    RefPtr<NodeImpl> n = getNode(t);
     // just to be sure, and to catch currently unimplemented stuff
     if (!n)
         return 0;
 
-    RefPtr<NodeImpl> protectNode(n);
-
     // set attributes
     if (n->isHTMLElement()) {
-        HTMLElementImpl *e = static_cast<HTMLElementImpl*>(n);
+        HTMLElementImpl* e = static_cast<HTMLElementImpl*>(n.get());
         e->setAttributeMap(t->attrs.get());
 
         // take care of optional close tags
@@ -221,10 +219,11 @@ NodeImpl *HTMLParser::parseToken(Token *t)
             popNestedHeaderTag();
     }
 
-    if (!insertNode(n, t->flat)) {
-        // we couldn't insert the node...
+    if (!insertNode(n.get(), t->flat)) {
+        // we couldn't insert the node
+
         if (n->isElementNode()) {
-            ElementImpl* e = static_cast<ElementImpl*>(n);
+            ElementImpl* e = static_cast<ElementImpl*>(n.get());
             e->setAttributeMap(0);
         }
 
@@ -591,28 +590,28 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
     return insertNode(n);
 }
 
-typedef bool (HTMLParser::*CreateErrorCheckFunc)(Token* t, NodeImpl*&);
+typedef bool (HTMLParser::*CreateErrorCheckFunc)(Token* t, RefPtr<NodeImpl>&);
 typedef HashMap<AtomicStringImpl*, CreateErrorCheckFunc> FunctionMap;
 
-bool HTMLParser::textCreateErrorCheck(Token* t, NodeImpl*& result)
+bool HTMLParser::textCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
 {
     result = new TextImpl(document, t->text.get());
     return false;
 }
 
-bool HTMLParser::commentCreateErrorCheck(Token* t, NodeImpl*& result)
+bool HTMLParser::commentCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
 {
     if (includesCommentsInDOM)
         result = new CommentImpl(document, t->text.get());
     return false;
 }
 
-bool HTMLParser::headCreateErrorCheck(Token* t, NodeImpl*& result)
+bool HTMLParser::headCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
 {
     return (!head || current->localName() == htmlTag);
 }
 
-bool HTMLParser::bodyCreateErrorCheck(Token* t, NodeImpl*& result)
+bool HTMLParser::bodyCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
 {
     // body no longer allowed if we have a frameset
     if (haveFrameSet)
@@ -622,7 +621,7 @@ bool HTMLParser::bodyCreateErrorCheck(Token* t, NodeImpl*& result)
     return true;
 }
 
-bool HTMLParser::framesetCreateErrorCheck(Token* t, NodeImpl*& result)
+bool HTMLParser::framesetCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
 {
     popBlock(headTag);
     if (inBody && !haveFrameSet && !haveContent) {
@@ -642,14 +641,14 @@ bool HTMLParser::framesetCreateErrorCheck(Token* t, NodeImpl*& result)
     return true;
 }
 
-bool HTMLParser::iframeCreateErrorCheck(Token* t, NodeImpl*& result)
+bool HTMLParser::iframeCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
 {
     // a bit of a special case, since the frame is inlined
     setSkipMode(iframeTag);
     return true;
 }
 
-bool HTMLParser::formCreateErrorCheck(Token* t, NodeImpl*& result)
+bool HTMLParser::formCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
 {
     // Only create a new form if we're not already inside one.
     // This is consistent with other browsers' behavior.
@@ -660,7 +659,7 @@ bool HTMLParser::formCreateErrorCheck(Token* t, NodeImpl*& result)
     return false;
 }
 
-bool HTMLParser::isindexCreateErrorCheck(Token* t, NodeImpl*& result)
+bool HTMLParser::isindexCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
 {
     NodeImpl *n = handleIsindex(t);
     if (!inBody) {
@@ -672,45 +671,45 @@ bool HTMLParser::isindexCreateErrorCheck(Token* t, NodeImpl*& result)
     return false;
 }
 
-bool HTMLParser::selectCreateErrorCheck(Token* t, NodeImpl*& result)
+bool HTMLParser::selectCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
 {
     inSelect = true;
     return true;
 }
 
-bool HTMLParser::ddCreateErrorCheck(Token* t, NodeImpl*& result)
+bool HTMLParser::ddCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
 {
     popBlock(dtTag);
     popBlock(ddTag);
     return true;
 }
 
-bool HTMLParser::dtCreateErrorCheck(Token* t, NodeImpl*& result)
+bool HTMLParser::dtCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
 {
     popBlock(ddTag);
     popBlock(dtTag);
     return true;
 }
 
-bool HTMLParser::nestedCreateErrorCheck(Token* t, NodeImpl*& result)
+bool HTMLParser::nestedCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
 {
     popBlock(t->tagName);
     return true;
 }
 
-bool HTMLParser::nestedStyleCreateErrorCheck(Token* t, NodeImpl*& result)
+bool HTMLParser::nestedStyleCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
 {
     return allowNestedRedundantTag(t->tagName);
 }
 
-bool HTMLParser::tableCellCreateErrorCheck(Token* t, NodeImpl*& result)
+bool HTMLParser::tableCellCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
 {
     popBlock(tdTag);
     popBlock(thTag);
     return true;
 }
 
-bool HTMLParser::tableSectionCreateErrorCheck(Token* t, NodeImpl*& result)
+bool HTMLParser::tableSectionCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
 {
     popBlock(theadTag);
     popBlock(tbodyTag);
@@ -718,33 +717,33 @@ bool HTMLParser::tableSectionCreateErrorCheck(Token* t, NodeImpl*& result)
     return true;
 }
 
-bool HTMLParser::noembedCreateErrorCheck(Token* t, NodeImpl*& result)
+bool HTMLParser::noembedCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
 {
     setSkipMode(noembedTag);
     return true;
 }
 
-bool HTMLParser::noframesCreateErrorCheck(Token* t, NodeImpl*& result)
+bool HTMLParser::noframesCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
 {
     setSkipMode(noframesTag);
     return true;
 }
 
-bool HTMLParser::noscriptCreateErrorCheck(Token* t, NodeImpl*& result)
+bool HTMLParser::noscriptCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
 {
     if (HTMLWidget && HTMLWidget->frame()->jScriptEnabled())
         setSkipMode(noscriptTag);
     return true;
 }
 
-bool HTMLParser::mapCreateErrorCheck(Token* t, NodeImpl*& result)
+bool HTMLParser::mapCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
 {
     map = new HTMLMapElementImpl(document);
     result = map;
     return false;
 }
 
-NodeImpl *HTMLParser::getNode(Token* t)
+PassRefPtr<NodeImpl> HTMLParser::getNode(Token* t)
 {
     // Init our error handling table.
     static FunctionMap gFunctionMap;
@@ -786,12 +785,12 @@ NodeImpl *HTMLParser::getNode(Token* t)
     }
 
     bool proceed = true;
-    NodeImpl *result = 0;
+    RefPtr<NodeImpl> result;
     if (CreateErrorCheckFunc errorCheckFunc = gFunctionMap.get(t->tagName.impl()))
-        proceed = (this->*(errorCheckFunc))(t, result);
+        proceed = (this->*errorCheckFunc)(t, result);
     if (proceed)
         result = HTMLElementFactory::createHTMLElement(t->tagName, doc(), form);
-    return result;
+    return result.release();
 }
 
 #define MAX_REDUNDANT 20

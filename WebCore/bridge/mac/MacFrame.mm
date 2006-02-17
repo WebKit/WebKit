@@ -147,7 +147,6 @@ MacFrame::MacFrame(Page* page, RenderPart* ownerRenderer)
     , _bindingRoot(0)
     , _windowScriptObject(0)
     , _windowScriptNPObject(0)
-    , _dragClipboard(0)
 {
     mutableInstances().prepend(this);
 
@@ -170,11 +169,8 @@ MacFrame::~MacFrame()
 
 void MacFrame::freeClipboard()
 {
-    if (_dragClipboard) {
+    if (_dragClipboard)
         _dragClipboard->setAccessPolicy(KWQClipboard::Numb);
-        _dragClipboard->deref();
-        _dragClipboard = 0;
-    }
 }
 
 DOMString MacFrame::generateFrameName()
@@ -647,10 +643,6 @@ void MacFrame::setView(FrameView *view)
     if (d->m_doc && view == 0)
         d->m_doc->detach();
     
-    if (view)
-        view->ref();
-    if (d->m_view)
-        d->m_view->deref();
     d->m_view = view;
     
     // Delete old PlugIn data structures
@@ -819,7 +811,7 @@ QString MacFrame::advanceToNextMisspelling(bool startBeforeSelection)
 
 bool MacFrame::wheelEvent(NSEvent *event)
 {
-    FrameView *v = d->m_view;
+    FrameView *v = d->m_view.get();
 
     if (v) {
         NSEvent *oldCurrentEvent = _currentEvent;
@@ -1239,16 +1231,8 @@ void MacFrame::openURLFromPageCache(KWQPageState *state)
     setView(doc->view());
     
     d->m_doc = doc;
-    d->m_doc->ref();
-    
     d->m_mousePressNode = mousePressNode;
-    
-    Decoder *decoder = doc->decoder();
-    if (decoder)
-        decoder->ref();
-    if (d->m_decoder)
-        d->m_decoder->deref();
-    d->m_decoder = decoder;
+    d->m_decoder = doc->decoder();
 
     updatePolicyBaseURL();
 
@@ -1617,7 +1601,7 @@ NSView *MacFrame::mouseDownViewIfStillGood()
     if (!mouseDownView) {
         return nil;
     }
-    FrameView *topFrameView = d->m_view;
+    FrameView *topFrameView = d->m_view.get();
     NSView *topView = topFrameView ? topFrameView->getView() : nil;
     if (!topView || !findViewInSubviews(topView, mouseDownView)) {
         _mouseDownView = nil;
@@ -1757,7 +1741,6 @@ void MacFrame::khtmlMouseMoveEvent(MouseMoveEvent *event)
                     freeClipboard();    // would only happen if we missed a dragEnd.  Do it anyway, just
                                         // to make sure it gets numbified
                     _dragClipboard = new KWQClipboard(true, pasteboard, KWQClipboard::Writable, this);
-                    _dragClipboard->ref();
                     
                     // If this is drag of an element, get set up to generate a default image.  Otherwise
                     // WebKit will generate the default, the element doesn't override.
@@ -1836,27 +1819,21 @@ void MacFrame::khtmlMouseMoveEvent(MouseMoveEvent *event)
 // the event handler NOT setting the return value to false
 bool MacFrame::dispatchCPPEvent(const AtomicString &eventType, KWQClipboard::AccessPolicy policy)
 {
-    NodeImpl *target = d->m_selection.start().element();
-    if (!target && document()) {
+    NodeImpl* target = d->m_selection.start().element();
+    if (!target && document())
         target = document()->body();
-    }
-    if (!target) {
+    if (!target)
         return true;
-    }
 
-    KWQClipboard *clipboard = new KWQClipboard(false, [NSPasteboard generalPasteboard], (KWQClipboard::AccessPolicy)policy);
-    clipboard->ref();
+    RefPtr<KWQClipboard> clipboard = new KWQClipboard(false, [NSPasteboard generalPasteboard], (KWQClipboard::AccessPolicy)policy);
 
     int exceptioncode = 0;
-    EventImpl *evt = new ClipboardEventImpl(eventType, true, true, clipboard);
-    evt->ref();
+    RefPtr<EventImpl> evt = new ClipboardEventImpl(eventType, true, true, clipboard.get());
     target->dispatchEvent(evt, exceptioncode, true);
     bool noDefaultProcessing = evt->defaultPrevented();
-    evt->deref();
 
     // invalidate clipboard here for security
     clipboard->setAccessPolicy(KWQClipboard::Numb);
-    clipboard->deref();
 
     return !noDefaultProcessing;
 }
@@ -2034,7 +2011,7 @@ bool MacFrame::passWheelEventToChildWidget(NodeImpl *node)
 
 void MacFrame::mouseDown(NSEvent *event)
 {
-    FrameView *v = d->m_view;
+    FrameView *v = d->m_view.get();
     if (!v || _sendingEventToSubview) {
         return;
     }
@@ -2069,7 +2046,7 @@ void MacFrame::mouseDown(NSEvent *event)
 
 void MacFrame::mouseDragged(NSEvent *event)
 {
-    FrameView *v = d->m_view;
+    FrameView *v = d->m_view.get();
     if (!v || _sendingEventToSubview) {
         return;
     }
@@ -2091,7 +2068,7 @@ void MacFrame::mouseDragged(NSEvent *event)
 
 void MacFrame::mouseUp(NSEvent *event)
 {
-    FrameView *v = d->m_view;
+    FrameView *v = d->m_view.get();
     if (!v || _sendingEventToSubview) {
         return;
     }
@@ -2189,7 +2166,7 @@ void MacFrame::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
 
 void MacFrame::mouseMoved(NSEvent *event)
 {
-    FrameView *v = d->m_view;
+    FrameView *v = d->m_view.get();
     // Reject a mouse moved if the button is down - screws up tracking during autoscroll
     // These happen because WebKit sometimes has to fake up moved events.
     if (!v || d->m_bMousePressed || _sendingEventToSubview) {
@@ -2231,7 +2208,7 @@ bool MacFrame::shouldDragAutoNode(NodeImpl* node, int x, int y) const
 bool MacFrame::sendContextMenuEvent(NSEvent *event)
 {
     DocumentImpl* doc = d->m_doc.get();
-    FrameView* v = d->m_view;
+    FrameView* v = d->m_view.get();
     if (!doc || !v) {
         return false;
     }
@@ -3584,7 +3561,7 @@ void MacFrame::dragSourceEndedAt(const IntPoint &loc, NSDragOperation operation)
 // returns if we should continue "default processing", i.e., whether eventhandler canceled
 bool MacFrame::dispatchDragSrcEvent(const AtomicString &eventType, const IntPoint &loc) const
 {
-    bool noDefaultProc = d->m_view->dispatchDragEvent(eventType, _dragSrc.get(), loc, _dragClipboard);
+    bool noDefaultProc = d->m_view->dispatchDragEvent(eventType, _dragSrc.get(), loc, _dragClipboard.get());
     return !noDefaultProc;
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,29 +26,26 @@
 #include "config.h"
 #include "markup.h"
 
-#include "htmlediting.h"
-
-#include "css_computedstyle.h"
-#include "css_valueimpl.h"
-#include "VisiblePosition.h"
-#include "visible_units.h"
-#include "HTMLElementImpl.h"
-#include "dom_position.h"
-#include "dom_xmlimpl.h"
-#include "dom2_rangeimpl.h"
-#include "InlineTextBox.h"
-#include "htmlnames.h"
+#include "CommentImpl.h"
 #include "DocumentImpl.h"
 #include "DocumentTypeImpl.h"
-#include "CommentImpl.h"
-
-using namespace DOM::HTMLNames;
-using namespace DOM;
-
-#include <kxmlcore/Assertions.h>
+#include "HTMLElementImpl.h"
+#include "InlineTextBox.h"
 #include "KWQLogging.h"
+#include "VisiblePosition.h"
+#include "css_computedstyle.h"
+#include "css_valueimpl.h"
+#include "dom2_rangeimpl.h"
+#include "dom_position.h"
+#include "dom_xmlimpl.h"
+#include "htmlediting.h"
+#include "htmlnames.h"
+#include "visible_units.h"
+#include <kxmlcore/Assertions.h>
 
-namespace khtml {
+namespace WebCore {
+
+using namespace HTMLNames;
 
 static inline bool doesHTMLForbidEndTag(const NodeImpl *node);
 static inline bool shouldSelfClose(const NodeImpl *node);
@@ -476,7 +473,7 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
     return markups.join("");
 }
 
-PassRefPtr<DocumentFragmentImpl> createFragmentFromMarkup(DocumentImpl *document, const QString &markup, const QString &baseURL)
+PassRefPtr<DocumentFragmentImpl> createFragmentFromMarkup(DocumentImpl* document, const QString& markup, const QString& baseURL)
 {
     ASSERT(document->documentElement()->isHTMLElement());
     // FIXME: What if the document element is not an HTML element?
@@ -523,9 +520,9 @@ static void createParagraphContentsFromString(DOM::DocumentImpl *document, Eleme
                 ASSERT(exceptionCode == 0);
                 tabText = "";
             }
-            NodeImpl *textNode = document->createTextNode(s);
-            rebalanceWhitespaceInTextNode(textNode, 0, s.length());
-            paragraph->appendChild(textNode, exceptionCode);
+            RefPtr<NodeImpl> textNode = document->createTextNode(s);
+            rebalanceWhitespaceInTextNode(textNode.get(), 0, s.length());
+            paragraph->appendChild(textNode.release(), exceptionCode);
             ASSERT(exceptionCode == 0);
         }
 

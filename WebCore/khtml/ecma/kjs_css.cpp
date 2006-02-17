@@ -155,16 +155,15 @@ JSValue *DOMCSSStyleDeclaration::cssPropertyGetter(ExecState *exec, JSObject *or
   // from MSIE documentation ### IMPLEMENT THAT (Dirk)
   bool pixelOrPos;
   DOMString prop = cssPropertyName(propertyName, &pixelOrPos);
-  CSSValueImpl *v = thisObj->m_impl->getPropertyCSSValue(prop);
+  RefPtr<CSSValueImpl> v = thisObj->m_impl->getPropertyCSSValue(prop);
   if (v) {
     if (pixelOrPos && v->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE)
-      return jsNumber(static_cast<CSSPrimitiveValueImpl *>(v)->getFloatValue(CSSPrimitiveValue::CSS_PX));
-    else
-      return jsStringOrNull(v->cssText());
-  } else
-      // If the property is a shorthand property (such as "padding"), 
-      // it can only be accessed using getPropertyValue
-      return jsString(thisObj->m_impl->getPropertyValue(prop));
+      return jsNumber(static_pointer_cast<CSSPrimitiveValueImpl>(v)->getFloatValue(CSSPrimitiveValue::CSS_PX));
+    return jsStringOrNull(v->cssText());
+  }
+  // If the property is a shorthand property (such as "padding"), 
+  // it can only be accessed using getPropertyValue.
+  return jsString(thisObj->m_impl->getPropertyValue(prop));
 }
 
 bool DOMCSSStyleDeclaration::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -256,7 +255,7 @@ JSValue *DOMCSSStyleDeclarationProtoFunc::callAsFunction(ExecState *exec, JSObje
     case DOMCSSStyleDeclaration::GetPropertyValue:
       return jsStringOrNull(styleDecl.getPropertyValue(s));
     case DOMCSSStyleDeclaration::GetPropertyCSSValue:
-      return getDOMCSSValue(exec,styleDecl.getPropertyCSSValue(s));
+      return getDOMCSSValue(exec, styleDecl.getPropertyCSSValue(s).get());
     case DOMCSSStyleDeclaration::RemoveProperty:
       return jsStringOrNull(styleDecl.removeProperty(s, exception));
     case DOMCSSStyleDeclaration::GetPropertyPriority:

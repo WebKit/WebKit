@@ -494,11 +494,10 @@ unary_operator:
 ruleset:
     selector_list '{' maybe_space declaration_list '}' {
         CSSParser *p = static_cast<CSSParser *>(parser);
-        if ( $1 ) {
-            CSSStyleRuleImpl *rule = new CSSStyleRuleImpl( p->styleElement );
-            CSSMutableStyleDeclarationImpl *decl = p->createStyleDeclaration( rule );
-            rule->setSelector( $1 );
-            rule->setDeclaration(decl);
+        if ($1) {
+            CSSStyleRuleImpl* rule = new CSSStyleRuleImpl( p->styleElement );
+            rule->setSelector($1);
+            rule->setDeclaration(p->createStyleDeclaration(rule));
             $$ = rule;
         } else {
             $$ = 0;

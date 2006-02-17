@@ -131,7 +131,7 @@ bool SVGDOMImplementationImpl::hasFeature(DOMStringImpl *featureImpl, DOMStringI
     return DOMImplementationImpl::hasFeature(featureImpl, versionImpl);
 }
 
-DocumentTypeImpl *SVGDOMImplementationImpl::createDocumentType(DOMStringImpl *qualifiedNameImpl, DOMStringImpl *publicId, DOMStringImpl *systemId, int& exceptioncode) const
+PassRefPtr<DocumentTypeImpl> SVGDOMImplementationImpl::createDocumentType(DOMStringImpl *qualifiedNameImpl, DOMStringImpl *publicId, DOMStringImpl *systemId, int& exceptioncode) const
 {
     DOMString qualifiedName(qualifiedNameImpl);
 #if 0
@@ -154,12 +154,12 @@ DocumentTypeImpl *SVGDOMImplementationImpl::createDocumentType(DOMStringImpl *qu
     return new DocumentTypeImpl(0, qualifiedName, publicId, systemId);
 }
 
-DocumentImpl *SVGDOMImplementationImpl::createDocument(DOMStringImpl *namespaceURI, DOMStringImpl *qualifiedNameImpl, DocumentTypeImpl *doctype, int& exceptioncode) const
+PassRefPtr<DocumentImpl> SVGDOMImplementationImpl::createDocument(DOMStringImpl *namespaceURI, DOMStringImpl *qualifiedNameImpl, DocumentTypeImpl *doctype, int& exceptioncode) const
 {
     return createDocument(namespaceURI, qualifiedNameImpl, doctype, true, 0, exceptioncode);
 }
 
-DocumentImpl *SVGDOMImplementationImpl::createDocument(DOMStringImpl *namespaceURIImpl, DOMStringImpl *qualifiedNameImpl, DocumentTypeImpl *doctype, bool createDocElement, KDOMView *view, int& exceptioncode) const
+PassRefPtr<DocumentImpl> SVGDOMImplementationImpl::createDocument(DOMStringImpl *namespaceURIImpl, DOMStringImpl *qualifiedNameImpl, DocumentTypeImpl *doctype, bool createDocElement, KDOMView *view, int& exceptioncode) const
 {
     DOMString namespaceURI(namespaceURIImpl);
     DOMString qualifiedName(qualifiedNameImpl);
@@ -178,30 +178,27 @@ DocumentImpl *SVGDOMImplementationImpl::createDocument(DOMStringImpl *namespaceU
         return 0;
     }
 
-    SVGDocumentImpl *doc = new SVGDocumentImpl(const_cast<SVGDOMImplementationImpl *>(this), view);
+    RefPtr<SVGDocumentImpl> doc = new SVGDocumentImpl(const_cast<SVGDOMImplementationImpl *>(this), view);
 
     // TODO : what to do when doctype is null?
-    if(doctype)
+    if (doctype)
         doc->setDocType(doctype);
 
     // Add root element...
-    if(createDocElement)
-    {
-        ElementImpl *svg = doc->createElementNS(namespaceURI, qualifiedName, exceptioncode);
-        doc->appendChild(svg, exceptioncode);
-    }
+    if (createDocElement)
+        doc->appendChild(doc->createElementNS(namespaceURI, qualifiedName, exceptioncode), exceptioncode);
 
-    return doc;
+    return doc.release();
 }
 
-CSSStyleSheetImpl *SVGDOMImplementationImpl::createCSSStyleSheet(DOMStringImpl *title, DOMStringImpl *media) const
+PassRefPtr<CSSStyleSheetImpl> SVGDOMImplementationImpl::createCSSStyleSheet(DOMStringImpl *title, DOMStringImpl *media) const
 {
     // TODO : check whether media is valid
     CSSStyleSheetImpl *parent = 0;
-    CSSStyleSheetImpl *sheet = new CSSStyleSheetImpl(parent);
+    RefPtr<CSSStyleSheetImpl> sheet = new CSSStyleSheetImpl(parent);
     //sheet->setTitle(title);
-    sheet->setMedia(new MediaListImpl(sheet, media));
-    return sheet;
+    sheet->setMedia(new MediaListImpl(sheet.get(), media));
+    return sheet.release();
 }
 
 DocumentTypeImpl *SVGDOMImplementationImpl::defaultDocumentType() const

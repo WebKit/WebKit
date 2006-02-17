@@ -65,9 +65,6 @@ public:
     static DOMImplementationImpl *instance();
     
     static bool isXMLMIMEType(const DOMString& mimeType);
-
-protected:
-    static DOMImplementationImpl *m_instance;
 };
 
 } //namespace

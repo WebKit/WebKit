@@ -1965,7 +1965,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return NSMakeRange(startPosition, endPosition - startPosition);
 }
 
-- (RangeImpl *)convertToDOMRange:(NSRange)nsrange
+- (PassRefPtr<RangeImpl>)convertToDOMRange:(NSRange)nsrange
 {
     if (nsrange.location > INT_MAX)
         return 0;
@@ -1977,7 +1977,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (DOMRange *)convertNSRangeToDOMRange:(NSRange)nsrange
 {
-    return [DOMRange _rangeWithImpl:[self convertToDOMRange:nsrange]];
+    return [DOMRange _rangeWithImpl:[self convertToDOMRange:nsrange].get()];
 }
 
 - (NSRange)convertDOMRangeToNSRange:(DOMRange *)range
@@ -1987,7 +1987,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)selectNSRange:(NSRange)range
 {
-    m_frame->setSelection(SelectionController([self convertToDOMRange:range], SEL_DEFAULT_AFFINITY));
+    m_frame->setSelection(SelectionController([self convertToDOMRange:range].get(), SEL_DEFAULT_AFFINITY));
 }
 
 - (NSRange)selectedNSRange
@@ -2086,11 +2086,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (newEnd.isNull())
         newEnd = end;
 
-    RangeImpl *range = m_frame->document()->createRange();
+    RefPtr<RangeImpl> range = m_frame->document()->createRange();
     int exception = 0;
     range->setStart(newStart.node(), newStart.offset(), exception);
     range->setEnd(newStart.node(), newStart.offset(), exception);
-    return [DOMRange _rangeWithImpl:range];
+    return [DOMRange _rangeWithImpl:range.get()];
 }
 
 // Determines whether whitespace needs to be added around aString to preserve proper spacing and
@@ -2357,7 +2357,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 {
     if (!m_frame || !m_frame->typingStyle())
         return nil;
-    return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:m_frame->typingStyle()->copy()];
+    return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:m_frame->typingStyle()->copy().get()];
 }
 
 - (void)setTypingStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(WebUndoAction)undoAction
@@ -2490,18 +2490,14 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 {
     NSDragOperation op = NSDragOperationNone;
     if (m_frame) {
-        FrameView *v = m_frame->view();
+        RefPtr<FrameView> v = m_frame->view();
         if (v) {
-            // Sending an event can result in the destruction of the view and part.
-            v->ref();
-            
             KWQClipboard::AccessPolicy policy = m_frame->baseURL().isLocalFile() ? KWQClipboard::Readable : KWQClipboard::TypesReadable;
-            KWQClipboard *clipboard = new KWQClipboard(true, [info draggingPasteboard], policy);
-            clipboard->ref();
+            RefPtr<KWQClipboard> clipboard = new KWQClipboard(true, [info draggingPasteboard], policy);
             NSDragOperation srcOp = [info draggingSourceOperationMask];
             clipboard->setSourceOperation(srcOp);
 
-            if (v->updateDragAndDrop(IntPoint([info draggingLocation]), clipboard)) {
+            if (v->updateDragAndDrop(IntPoint([info draggingLocation]), clipboard.get())) {
                 // *op unchanged if no source op was set
                 if (!clipboard->destinationOperation(&op)) {
                     // The element accepted but they didn't pick an operation, so we pick one for them
@@ -2522,9 +2518,6 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
                 }
             }
             clipboard->setAccessPolicy(KWQClipboard::Numb);    // invalidate clipboard here for security
-
-            clipboard->deref();
-            v->deref();
             return op;
         }
     }
@@ -2534,21 +2527,14 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 - (void)dragExitedWithDraggingInfo:(id <NSDraggingInfo>)info
 {
     if (m_frame) {
-        FrameView *v = m_frame->view();
+        RefPtr<FrameView> v = m_frame->view();
         if (v) {
             // Sending an event can result in the destruction of the view and part.
-            v->ref();
-
             KWQClipboard::AccessPolicy policy = m_frame->baseURL().isLocalFile() ? KWQClipboard::Readable : KWQClipboard::TypesReadable;
-            KWQClipboard *clipboard = new KWQClipboard(true, [info draggingPasteboard], policy);
-            clipboard->ref();
-            clipboard->setSourceOperation([info draggingSourceOperationMask]);
-            
-            v->cancelDragAndDrop(IntPoint([info draggingLocation]), clipboard);
+            RefPtr<KWQClipboard> clipboard = new KWQClipboard(true, [info draggingPasteboard], policy);
+            clipboard->setSourceOperation([info draggingSourceOperationMask]);            
+            v->cancelDragAndDrop(IntPoint([info draggingLocation]), clipboard.get());
             clipboard->setAccessPolicy(KWQClipboard::Numb);    // invalidate clipboard here for security
-
-            clipboard->deref();
-            v->deref();
         }
     }
 }
@@ -2556,21 +2542,13 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 - (BOOL)concludeDragForDraggingInfo:(id <NSDraggingInfo>)info
 {
     if (m_frame) {
-        FrameView *v = m_frame->view();
+        RefPtr<FrameView> v = m_frame->view();
         if (v) {
             // Sending an event can result in the destruction of the view and part.
-            v->ref();
-
-            KWQClipboard *clipboard = new KWQClipboard(true, [info draggingPasteboard], KWQClipboard::Readable);
-            clipboard->ref();
+            RefPtr<KWQClipboard> clipboard = new KWQClipboard(true, [info draggingPasteboard], KWQClipboard::Readable);
             clipboard->setSourceOperation([info draggingSourceOperationMask]);
-
-            BOOL result = v->performDragAndDrop(IntPoint([info draggingLocation]), clipboard);
+            BOOL result = v->performDragAndDrop(IntPoint([info draggingLocation]), clipboard.get());
             clipboard->setAccessPolicy(KWQClipboard::Numb);    // invalidate clipboard here for security
-
-            clipboard->deref();
-            v->deref();
-
             return result;
         }
     }

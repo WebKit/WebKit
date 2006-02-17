@@ -3,7 +3,7 @@
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,6 +21,7 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef HTMLElementImpl_H
 #define HTMLElementImpl_H
 
@@ -29,79 +30,79 @@
 namespace WebCore {
 
 class DocumentFragmentImpl;
-class DOMString;
 class HTMLCollectionImpl;
+class String;
 
 enum HTMLTagStatus { TagStatusOptional, TagStatusRequired, TagStatusForbidden };
                        
 class HTMLElementImpl : public StyledElementImpl
 {
 public:
-    HTMLElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
+    HTMLElementImpl(const QualifiedName& tagName, DocumentImpl*);
     virtual ~HTMLElementImpl();
 
     virtual bool isHTMLElement() const { return true; }
 
-    virtual DOMString nodeName() const;
+    virtual String nodeName() const;
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttributeImpl* attr);
+    virtual void parseMappedAttribute(MappedAttributeImpl*);
 
     virtual PassRefPtr<NodeImpl> cloneNode(bool deep);
 
     PassRefPtr<HTMLCollectionImpl> children();
     
-    DOMString id() const;
-    void setId(const DOMString &value);
-    DOMString title() const;
-    void setTitle(const DOMString &value);
-    DOMString lang() const;
-    void setLang(const DOMString &value);
-    DOMString dir() const;
-    void setDir(const DOMString &value);
-    DOMString className() const;
-    void setClassName(const DOMString &value);
+    String id() const;
+    void setId(const String&);
+    String title() const;
+    void setTitle(const String&);
+    String lang() const;
+    void setLang(const String&);
+    String dir() const;
+    void setDir(const String&);
+    String className() const;
+    void setClassName(const String&);
 
-    DOMString innerHTML() const;
-    DOMString outerHTML() const;
-    DOMString innerText() const;
-    DOMString outerText() const;
-    DocumentFragmentImpl *createContextualFragment(const DOMString &html);
-    void setInnerHTML(const DOMString &html, int &exception);
-    void setOuterHTML(const DOMString &html, int &exception);
-    void setInnerText(const DOMString &text, int &exception);
-    void setOuterText(const DOMString &text, int &exception);
+    String innerHTML() const;
+    String outerHTML() const;
+    String innerText() const;
+    String outerText() const;
+    PassRefPtr<DocumentFragmentImpl> createContextualFragment(const String&);
+    void setInnerHTML(const String&, ExceptionCode&);
+    void setOuterHTML(const String&, ExceptionCode&);
+    void setInnerText(const String&, ExceptionCode&);
+    void setOuterText(const String&, ExceptionCode&);
     
     virtual bool isFocusable() const;
     virtual bool isContentEditable() const;
-    virtual DOMString contentEditable() const;
-    virtual void setContentEditable(MappedAttributeImpl* attr);
-    virtual void setContentEditable(const DOMString &enabled);
+    virtual String contentEditable() const;
+    virtual void setContentEditable(MappedAttributeImpl*);
+    virtual void setContentEditable(const String&);
 
     virtual void click(bool sendMouseEvents = false, bool showPressedLook = true);
     virtual void accessKeyAction(bool sendToAnyElement);
 
     virtual bool isGenericFormElement() const { return false; }
 
-    virtual DOMString toString() const;
+    virtual String toString() const;
 
     virtual HTMLTagStatus endTagRequirement() const;
     virtual int tagPriority() const;
     virtual bool childAllowed(NodeImpl* newChild); // Error-checking during parsing that checks the DTD
 
     // Helper function to check the DTD for a given child node.
-    virtual bool checkDTD(const NodeImpl* newChild);
-    static bool inEitherTagList(const NodeImpl* newChild);
-    static bool inInlineTagList(const NodeImpl* newChild);
-    static bool inBlockTagList(const NodeImpl* newChild);
-    static bool isRecognizedTagName(const QualifiedName& tagName);
+    virtual bool checkDTD(const NodeImpl*);
+    static bool inEitherTagList(const NodeImpl*);
+    static bool inInlineTagList(const NodeImpl*);
+    static bool inBlockTagList(const NodeImpl*);
+    static bool isRecognizedTagName(const QualifiedName&);
 
     void setHTMLEventListener(const AtomicString& eventType, AttributeImpl*);
 
 protected:
 
     // for IMG, OBJECT and APPLET
-    void addHTMLAlignment(MappedAttributeImpl* htmlAttr);
+    void addHTMLAlignment(MappedAttributeImpl*);
 };
 
 } //namespace

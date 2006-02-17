@@ -987,9 +987,9 @@ int TextIterator::rangeLength(const RangeImpl *r)
     return length;
 }
 
-RangeImpl *TextIterator::rangeFromLocationAndLength(DocumentImpl *doc, int rangeLocation, int rangeLength)
+PassRefPtr<RangeImpl> TextIterator::rangeFromLocationAndLength(DocumentImpl *doc, int rangeLocation, int rangeLength)
 {
-    RangeImpl *resultRange = doc->createRange();
+    RefPtr<RangeImpl> resultRange = doc->createRange();
 
     int docTextPosition = 0;
     int rangeEnd = rangeLocation + rangeLength;
@@ -1009,7 +1009,7 @@ RangeImpl *TextIterator::rangeFromLocationAndLength(DocumentImpl *doc, int range
         resultRange->setEnd(textRunRange->startContainer(exception), 0, exception);
         assert(exception == 0);
         
-        return resultRange;
+        return resultRange.release();
     }
 
     for (; !it.atEnd(); it.advance()) {
@@ -1051,17 +1051,15 @@ RangeImpl *TextIterator::rangeFromLocationAndLength(DocumentImpl *doc, int range
         docTextPosition += len;
     }
     
-    if (!startRangeFound) {
-        delete resultRange;
+    if (!startRangeFound)
         return 0;
-    }
     
     if (rangeLength != 0 && rangeEnd > docTextPosition) { // rangeEnd is out of bounds
         int exception = 0;
         resultRange->setEnd(textRunRange->endContainer(exception), textRunRange->endOffset(exception), exception);
     }
     
-    return resultRange;
+    return resultRange.release();
 }
 
 QString plainText(const RangeImpl *r)

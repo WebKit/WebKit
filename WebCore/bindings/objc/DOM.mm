@@ -968,7 +968,7 @@ static ListenerMap *listenerMap;
 - (DOMNode *)adoptNode:(DOMNode *)source
 {
     int exceptionCode = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _documentImpl]->adoptNode([source _nodeImpl], exceptionCode)];
+    DOMNode *result = [DOMNode _nodeWithImpl:[self _documentImpl]->adoptNode([source _nodeImpl], exceptionCode).get()];
     raiseOnDOMError(exceptionCode);
     return result;
 }
@@ -993,33 +993,33 @@ static ListenerMap *listenerMap;
     ASSERT(tagName);
 
     int exceptionCode = 0;
-    DOMElement *result = static_cast<DOMElement *>([DOMNode _nodeWithImpl:[self _documentImpl]->createElement(tagName, exceptionCode)]);
+    DOMElement *result = static_cast<DOMElement *>([DOMNode _nodeWithImpl:[self _documentImpl]->createElement(tagName, exceptionCode).get()]);
     raiseOnDOMError(exceptionCode);
     return result;
 }
 
 - (DOMDocumentFragment *)createDocumentFragment
 {
-    return static_cast<DOMDocumentFragment *>([DOMNode _nodeWithImpl:[self _documentImpl]->createDocumentFragment()]);
+    return static_cast<DOMDocumentFragment *>([DOMNode _nodeWithImpl:[self _documentImpl]->createDocumentFragment().get()]);
 }
 
 - (DOMText *)createTextNode:(NSString *)data
 {
     ASSERT(data);
-    return static_cast<DOMText *>([DOMNode _nodeWithImpl:[self _documentImpl]->createTextNode(data)]);
+    return static_cast<DOMText *>([DOMNode _nodeWithImpl:[self _documentImpl]->createTextNode(data).get()]);
 }
 
 - (DOMComment *)createComment:(NSString *)data
 {
     ASSERT(data);
-    return static_cast<DOMComment *>([DOMNode _nodeWithImpl:[self _documentImpl]->createComment(data)]);
+    return static_cast<DOMComment *>([DOMNode _nodeWithImpl:[self _documentImpl]->createComment(data).get()]);
 }
 
 - (DOMCDATASection *)createCDATASection:(NSString *)data
 {
     ASSERT(data);
     int exception = 0;
-    DOMCDATASection *result = static_cast<DOMCDATASection *>([DOMNode _nodeWithImpl:[self _documentImpl]->createCDATASection(data, exception)]);
+    DOMCDATASection *result = static_cast<DOMCDATASection *>([DOMNode _nodeWithImpl:[self _documentImpl]->createCDATASection(data, exception).get()]);
     raiseOnDOMError(exception);
     return result;
 }
@@ -1029,7 +1029,7 @@ static ListenerMap *listenerMap;
     ASSERT(target);
     ASSERT(data);
     int exception = 0;
-    DOMProcessingInstruction *result = static_cast<DOMProcessingInstruction *>([DOMNode _nodeWithImpl:[self _documentImpl]->createProcessingInstruction(target, data, exception)]);
+    DOMProcessingInstruction *result = static_cast<DOMProcessingInstruction *>([DOMNode _nodeWithImpl:[self _documentImpl]->createProcessingInstruction(target, data, exception).get()]);
     raiseOnDOMError(exception);
     return result;
 }
@@ -1047,7 +1047,7 @@ static ListenerMap *listenerMap;
 {
     ASSERT(name);
     int exception = 0;
-    DOMEntityReference *result = static_cast<DOMEntityReference *>([DOMNode _nodeWithImpl:[self _documentImpl]->createEntityReference(name, exception)]);
+    DOMEntityReference *result = static_cast<DOMEntityReference *>([DOMNode _nodeWithImpl:[self _documentImpl]->createEntityReference(name, exception).get()]);
     raiseOnDOMError(exception);
     return result;
 }
@@ -1061,7 +1061,7 @@ static ListenerMap *listenerMap;
 - (DOMNode *)importNode:(DOMNode *)importedNode :(BOOL)deep
 {
     int exceptionCode = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _documentImpl]->importNode([importedNode _nodeImpl], deep, exceptionCode)];
+    DOMNode *result = [DOMNode _nodeWithImpl:[self _documentImpl]->importNode([importedNode _nodeImpl], deep, exceptionCode).get()];
     raiseOnDOMError(exceptionCode);
     return result;
 }
@@ -1072,7 +1072,7 @@ static ListenerMap *listenerMap;
     ASSERT(qualifiedName);
 
     int exceptionCode = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _documentImpl]->createElementNS(namespaceURI, qualifiedName, exceptionCode)];
+    DOMNode *result = [DOMNode _nodeWithImpl:[self _documentImpl]->createElementNS(namespaceURI, qualifiedName, exceptionCode).get()];
     raiseOnDOMError(exceptionCode);
     return static_cast<DOMElement *>(result);
 }
@@ -1109,7 +1109,7 @@ static ListenerMap *listenerMap;
 
 - (DOMRange *)createRange
 {
-    return [DOMRange _rangeWithImpl:[self _documentImpl]->createRange()];
+    return [DOMRange _rangeWithImpl:[self _documentImpl]->createRange().get()];
 }
 
 @end
@@ -1138,7 +1138,7 @@ static ListenerMap *listenerMap;
 
 - (DOMCSSStyleDeclaration *)createCSSStyleDeclaration
 {
-    return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:[self _documentImpl]->createCSSStyleDeclaration()];
+    return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:[self _documentImpl]->createCSSStyleDeclaration().get()];
 }
 
 @end
@@ -2276,34 +2276,24 @@ short ObjCNodeFilterCondition::acceptNode(NodeImpl* node) const
 
 - (DOMNodeIterator *)createNodeIterator:(DOMNode *)root :(unsigned)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences
 {
-    NodeFilterImpl *cppFilter = 0;
-    if (filter) {
+    RefPtr<NodeFilterImpl> cppFilter;
+    if (filter)
         cppFilter = new NodeFilterImpl(new ObjCNodeFilterCondition(filter));
-        cppFilter->ref();
-    }
     int exceptionCode = 0;
-    NodeIteratorImpl *impl = [self _documentImpl]->createNodeIterator([root _nodeImpl], whatToShow, cppFilter, expandEntityReferences, exceptionCode);
-    if (cppFilter) {
-        cppFilter->deref();
-    }
+    RefPtr<NodeIteratorImpl> impl = [self _documentImpl]->createNodeIterator([root _nodeImpl], whatToShow, cppFilter, expandEntityReferences, exceptionCode);
     raiseOnDOMError(exceptionCode);
-    return [DOMNodeIterator _nodeIteratorWithImpl:impl filter:filter];
+    return [DOMNodeIterator _nodeIteratorWithImpl:impl.get() filter:filter];
 }
 
 - (DOMTreeWalker *)createTreeWalker:(DOMNode *)root :(unsigned)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences
 {
-    NodeFilterImpl *cppFilter = 0;
-    if (filter) {
+    RefPtr<NodeFilterImpl> cppFilter;
+    if (filter)
         cppFilter = new NodeFilterImpl(new ObjCNodeFilterCondition(filter));
-        cppFilter->ref();
-    }
     int exceptionCode = 0;
-    TreeWalkerImpl *impl = [self _documentImpl]->createTreeWalker([root _nodeImpl], whatToShow, cppFilter, expandEntityReferences, exceptionCode);
-    if (cppFilter) {
-        cppFilter->deref();
-    }
+    RefPtr<TreeWalkerImpl> impl = [self _documentImpl]->createTreeWalker([root _nodeImpl], whatToShow, cppFilter, expandEntityReferences, exceptionCode);
     raiseOnDOMError(exceptionCode);
-    return [DOMTreeWalker _treeWalkerWithImpl:impl filter:filter];
+    return [DOMTreeWalker _treeWalkerWithImpl:impl.get() filter:filter];
 }
 
 @end

@@ -26,18 +26,17 @@
 #ifndef KHTML_EDITING_VISIBLE_TEXT_H
 #define KHTML_EDITING_VISIBLE_TEXT_H
 
-#include "dom2_rangeimpl.h"
 #include "InlineTextBox.h"
+#include "QString.h"
+#include "dom2_rangeimpl.h"
 #include <kxmlcore/Vector.h>
 
-#include <QString.h>
+namespace WebCore {
 
-namespace khtml {
-
-// FIXME: Can't really answer this question without knowing the white-space mode.
+// FIXME: Can't really answer this question correctly without knowing the white-space mode.
 // FIXME: Move this along with the white-space position functions above
-// somewhere in the editing directory. It doesn't belong here.
-inline bool isCollapsibleWhitespace(const QChar &c)
+// somewhere else in the editing directory. It doesn't belong here.
+inline bool isCollapsibleWhitespace(const QChar& c)
 {
     switch (c.unicode()) {
         case ' ':
@@ -48,8 +47,8 @@ inline bool isCollapsibleWhitespace(const QChar &c)
     }
 }
 
-QString plainText(const DOM::RangeImpl *);
-PassRefPtr<DOM::RangeImpl> findPlainText(const DOM::RangeImpl *, const QString &, bool forward, bool caseSensitive);
+QString plainText(const RangeImpl *);
+PassRefPtr<RangeImpl> findPlainText(const RangeImpl *, const QString &, bool forward, bool caseSensitive);
 
 // Iterates through the DOM range, returning all the text, and 0-length boundaries
 // at points where replaced elements break up the text flow.  The text comes back in
@@ -61,7 +60,7 @@ class TextIterator
 {
 public:
     TextIterator();
-    explicit TextIterator(const DOM::RangeImpl *, IteratorKind kind = CONTENT );
+    explicit TextIterator(const RangeImpl *, IteratorKind kind = CONTENT );
     
     bool atEnd() const { return !m_positionNode; }
     void advance();
@@ -69,10 +68,10 @@ public:
     int length() const { return m_textLength; }
     const QChar *characters() const { return m_textCharacters; }
     
-    PassRefPtr<DOM::RangeImpl> range() const;
+    PassRefPtr<RangeImpl> range() const;
      
-    static int TextIterator::rangeLength(const DOM::RangeImpl *r);
-    static DOM::RangeImpl *TextIterator::rangeFromLocationAndLength(DOM::DocumentImpl *doc, int rangeLocation, int rangeLength);
+    static int rangeLength(const RangeImpl *r);
+    static PassRefPtr<RangeImpl> rangeFromLocationAndLength(DocumentImpl *doc, int rangeLocation, int rangeLength);
     
 private:
     void exitNode();
@@ -80,23 +79,23 @@ private:
     bool handleReplacedElement();
     bool handleNonTextNode();
     void handleTextBox();
-    void emitCharacter(QChar, DOM::NodeImpl *textNode, DOM::NodeImpl *offsetBaseNode, int textStartOffset, int textEndOffset);
+    void emitCharacter(QChar, NodeImpl *textNode, NodeImpl *offsetBaseNode, int textStartOffset, int textEndOffset);
     
     // Current position, not necessarily of the text being returned, but position
     // as we walk through the DOM tree.
-    DOM::NodeImpl *m_node;
+    NodeImpl *m_node;
     int m_offset;
     bool m_handledNode;
     bool m_handledChildren;
     
     // End of the range.
-    DOM::NodeImpl *m_endContainer;
+    NodeImpl *m_endContainer;
     int m_endOffset;
-    DOM::NodeImpl *m_pastEndNode;
+    NodeImpl *m_pastEndNode;
     
     // The current text and its position, in the form to be returned from the iterator.
-    DOM::NodeImpl *m_positionNode;
-    mutable DOM::NodeImpl *m_positionOffsetBaseNode;
+    NodeImpl *m_positionNode;
+    mutable NodeImpl *m_positionOffsetBaseNode;
     mutable int m_positionStartOffset;
     mutable int m_positionEndOffset;
     const QChar *m_textCharacters;
@@ -108,7 +107,7 @@ private:
     InlineTextBox *m_textBox;
     
     // Used to do the whitespace collapsing logic.
-    DOM::NodeImpl *m_lastTextNode;    
+    NodeImpl *m_lastTextNode;    
     bool m_lastTextNodeEndedWithCollapsedSpace;
     QChar m_lastCharacter;
     
@@ -127,7 +126,7 @@ class SimplifiedBackwardsTextIterator
 {
 public:
     SimplifiedBackwardsTextIterator();
-    explicit SimplifiedBackwardsTextIterator(const DOM::RangeImpl *);
+    explicit SimplifiedBackwardsTextIterator(const RangeImpl *);
     
     bool atEnd() const { return !m_positionNode; }
     void advance();
@@ -135,36 +134,36 @@ public:
     int length() const { return m_textLength; }
     const QChar *characters() const { return m_textCharacters; }
     
-    PassRefPtr<DOM::RangeImpl> range() const;
+    PassRefPtr<RangeImpl> range() const;
         
 private:
     void exitNode();
     bool handleTextNode();
     bool handleReplacedElement();
     bool handleNonTextNode();
-    void emitCharacter(QChar, DOM::NodeImpl *Node, int startOffset, int endOffset);
+    void emitCharacter(QChar, NodeImpl *Node, int startOffset, int endOffset);
     void emitNewlineForBROrText();
     
     // Current position, not necessarily of the text being returned, but position
     // as we walk through the DOM tree.
-    DOM::NodeImpl *m_node;
+    NodeImpl *m_node;
     int m_offset;
     bool m_handledNode;
     bool m_handledChildren;
     
     // End of the range.
-    DOM::NodeImpl *m_startNode;
+    NodeImpl *m_startNode;
     int m_startOffset;
     
     // The current text and its position, in the form to be returned from the iterator.
-    DOM::NodeImpl *m_positionNode;
+    NodeImpl *m_positionNode;
     int m_positionStartOffset;
     int m_positionEndOffset;
     const QChar *m_textCharacters;
     int m_textLength;
 
     // Used to do the whitespace logic.
-    DOM::NodeImpl *m_lastTextNode;    
+    NodeImpl *m_lastTextNode;    
     QChar m_lastCharacter;
     
     // Used for whitespace characters that aren't in the DOM, so we can point at them.
@@ -176,7 +175,7 @@ private:
 class CharacterIterator {
 public:
     CharacterIterator();
-    explicit CharacterIterator(const DOM::RangeImpl *r);
+    explicit CharacterIterator(const RangeImpl *r);
     
     void advance(int numCharacters);
     
@@ -188,7 +187,7 @@ public:
     QString string(int numChars);
     
     int characterOffset() const { return m_offset; }
-    PassRefPtr<DOM::RangeImpl> range() const;
+    PassRefPtr<RangeImpl> range() const;
         
 private:
     int m_offset;
@@ -203,7 +202,7 @@ private:
 class WordAwareIterator {
 public:
     WordAwareIterator();
-    explicit WordAwareIterator(const DOM::RangeImpl *r);
+    explicit WordAwareIterator(const RangeImpl *r);
 
     bool atEnd() const { return !m_didLookAhead && m_textIterator.atEnd(); }
     void advance();
@@ -212,7 +211,7 @@ public:
     const QChar *characters() const;
     
     // Range of the text we're currently returning
-    PassRefPtr<DOM::RangeImpl> range() const { return m_range; }
+    PassRefPtr<RangeImpl> range() const { return m_range; }
 
 private:
     // text from the previous chunk from the textIterator
@@ -225,7 +224,7 @@ private:
     // Did we have to look ahead in the textIterator to confirm the current chunk?
     bool m_didLookAhead;
 
-    RefPtr<DOM::RangeImpl> m_range;
+    RefPtr<RangeImpl> m_range;
 
     TextIterator m_textIterator;
 };

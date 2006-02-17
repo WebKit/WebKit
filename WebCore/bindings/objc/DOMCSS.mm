@@ -741,7 +741,7 @@ using namespace DOM;
 
 - (DOMCSSValue *)getPropertyCSSValue:(NSString *)propertyName
 {
-    return [DOMCSSValue _valueWithImpl:[self _styleDeclarationImpl]->getPropertyCSSValue(propertyName)];
+    return [DOMCSSValue _valueWithImpl:[self _styleDeclarationImpl]->getPropertyCSSValue(propertyName).get()];
 }
 
 - (NSString *)removeProperty:(NSString *)propertyName

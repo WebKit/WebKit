@@ -310,11 +310,11 @@ void CSSParser::addProperty(int propId, CSSValueImpl *value, bool important)
     parsedProperties[numParsedProperties++] = prop;
 }
 
-CSSMutableStyleDeclarationImpl *CSSParser::createStyleDeclaration( CSSStyleRuleImpl *rule )
+PassRefPtr<CSSMutableStyleDeclarationImpl> CSSParser::createStyleDeclaration(CSSStyleRuleImpl* rule)
 {
-    CSSMutableStyleDeclarationImpl *result = new CSSMutableStyleDeclarationImpl(rule, parsedProperties, numParsedProperties);
+    RefPtr<CSSMutableStyleDeclarationImpl> result = new CSSMutableStyleDeclarationImpl(rule, parsedProperties, numParsedProperties);
     clearProperties();
-    return result;
+    return result.release();
 }
 
 void CSSParser::clearProperties()
@@ -1796,16 +1796,16 @@ bool CSSParser::parseDashboardRegions( int propId, bool important )
         return valid;
     }
         
-    DashboardRegionImpl *firstRegion = new DashboardRegionImpl(), *region = 0;
+    RefPtr<DashboardRegionImpl> firstRegion = new DashboardRegionImpl;
+    DashboardRegionImpl* region = 0;
 
     while (value) {
         if (region == 0) {
-            region = firstRegion;
-        }
-        else {
-            DashboardRegionImpl *nextRegion = new DashboardRegionImpl();
-            region->setNext (nextRegion);
-            region = nextRegion;
+            region = firstRegion.get();
+        } else {
+            RefPtr<DashboardRegionImpl> nextRegion = new DashboardRegionImpl();
+            region->m_next = nextRegion;
+            region = nextRegion.get();
         }
         
         if ( value->unit != Value::Function) {
@@ -1819,7 +1819,7 @@ bool CSSParser::parseDashboardRegions( int propId, bool important )
         // also allow
         // dashboard-region(label, type) or dashboard-region(label type)
         // dashboard-region(label, type) or dashboard-region(label type)
-        ValueList *args = value->function->args;
+        ValueList* args = value->function->args;
         int numArgs = value->function->args->numValues;
         if ((numArgs != DASHBOARD_REGION_NUM_PARAMETERS && numArgs != (DASHBOARD_REGION_NUM_PARAMETERS*2-1)) &&
             (numArgs != DASHBOARD_REGION_SHORT_NUM_PARAMETERS && numArgs != (DASHBOARD_REGION_SHORT_NUM_PARAMETERS*2-1))){
@@ -1834,7 +1834,7 @@ bool CSSParser::parseDashboardRegions( int propId, bool important )
         }
             
         // First arg is a label.
-        Value *arg = args->current();
+        Value* arg = args->current();
         if (arg->unit != CSSPrimitiveValue::CSS_IDENT) {
             valid = false;
             break;
@@ -1902,9 +1902,7 @@ bool CSSParser::parseDashboardRegions( int propId, bool important )
     }
 
     if (valid)
-        addProperty( propId, new CSSPrimitiveValueImpl( firstRegion ), important );
-    else
-        delete firstRegion;
+        addProperty(propId, new CSSPrimitiveValueImpl(firstRegion.release()), important);
         
     return valid;
 }

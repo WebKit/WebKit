@@ -882,11 +882,11 @@ void XMLTokenizer::insertErrorMessageBlock()
     DocumentImpl *doc = m_doc;
     NodeImpl* documentElement = doc->documentElement();
     if (!documentElement) {
-        NodeImpl *rootElement = doc->createElementNS(xhtmlNamespaceURI, "html", exceptioncode);
+        RefPtr<NodeImpl> rootElement = doc->createElementNS(xhtmlNamespaceURI, "html", exceptioncode);
         doc->appendChild(rootElement, exceptioncode);
-        NodeImpl* body = doc->createElementNS(xhtmlNamespaceURI, "body", exceptioncode);
+        RefPtr<NodeImpl> body = doc->createElementNS(xhtmlNamespaceURI, "body", exceptioncode);
         rootElement->appendChild(body, exceptioncode);
-        documentElement = body;
+        documentElement = body.get();
     }
 #if SVG_SUPPORT
     else if (documentElement->namespaceURI() == KSVG::SVGNames::svgNamespaceURI) {
@@ -894,11 +894,11 @@ void XMLTokenizer::insertErrorMessageBlock()
         // wrap the erroneous SVG document in an xhtml document and render
         // the combined document with error messages.
         RefPtr<NodeImpl> rootElement = doc->createElementNS(xhtmlNamespaceURI, "html", exceptioncode);
-        NodeImpl* body = doc->createElementNS(xhtmlNamespaceURI, "body", exceptioncode);
+        RefPtr<NodeImpl> body = doc->createElementNS(xhtmlNamespaceURI, "body", exceptioncode);
         rootElement->appendChild(body, exceptioncode);
         body->appendChild(documentElement, exceptioncode);
         doc->appendChild(rootElement.get(), exceptioncode);
-        documentElement = body;
+        documentElement = body.get();
     }
 #endif
 
@@ -906,7 +906,7 @@ void XMLTokenizer::insertErrorMessageBlock()
     documentElement->insertBefore(reportElement, documentElement->firstChild(), exceptioncode);
 #ifdef KHTML_XSLT
     if (doc->transformSourceDocument()) {
-        ElementImpl* par = doc->createElementNS(xhtmlNamespaceURI, "p", exceptioncode);
+        RefPtr<ElementImpl> par = doc->createElementNS(xhtmlNamespaceURI, "p", exceptioncode);
         reportElement->appendChild(par, exceptioncode);
         par->setAttribute(styleAttr, "white-space: normal");
         par->appendChild(doc->createTextNode("This document was created as the result of an XSL transformation. The line and column numbers given are from the transformed result."), exceptioncode);

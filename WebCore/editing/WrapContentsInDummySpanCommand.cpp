@@ -27,14 +27,10 @@
 #include "WrapContentsInDummySpanCommand.h"
 
 #include "ApplyStyleCommand.h"
-#include "dom_elementimpl.h"
-
+#include "HTMLElementImpl.h"
 #include <kxmlcore/Assertions.h>
 
-using DOM::DocumentImpl;
-using DOM::ElementImpl;
-
-namespace khtml {
+namespace WebCore {
 
 WrapContentsInDummySpanCommand::WrapContentsInDummySpanCommand(DOM::DocumentImpl *document, DOM::ElementImpl *element)
     : EditCommand(document), m_element(element)
@@ -49,7 +45,7 @@ void WrapContentsInDummySpanCommand::doApply()
     int exceptionCode = 0;
 
     if (!m_dummySpan)
-        m_dummySpan = createStyleSpanElement(document());
+        m_dummySpan = static_pointer_cast<HTMLElementImpl>(createStyleSpanElement(document()));
  
     while (m_element->firstChild()) {
         m_dummySpan->appendChild(m_element->firstChild(), exceptionCode);

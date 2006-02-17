@@ -276,9 +276,9 @@ ALLOW_DOM_CAST(EventImpl)
 - (DOMEvent *)createEvent:(NSString *)eventType
 {
     int exceptionCode = 0;
-    EventImpl *event = [self _documentImpl]->createEvent(eventType, exceptionCode);
+    RefPtr<EventImpl> event = [self _documentImpl]->createEvent(eventType, exceptionCode);
     raiseOnDOMError(exceptionCode);
-    return [DOMEvent _eventWithImpl:event];
+    return [DOMEvent _eventWithImpl:event.get()];
 }
 
 @end

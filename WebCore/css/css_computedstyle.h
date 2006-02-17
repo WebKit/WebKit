@@ -2,7 +2,7 @@
  * css_computedstyle.h
  *
  * Copyright (C)  2004  Zack Rusin <zack@kde.org>
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,23 +23,19 @@
 #ifndef CSS_COMPUTEDSTYLE_H
 #define CSS_COMPUTEDSTYLE_H
 
-#include "css/css_valueimpl.h"
+#include "css_valueimpl.h"
 
-namespace khtml {
-    class RenderObject;
-    class RenderStyle;
-}
-
-namespace DOM {
+namespace WebCore {
 
 class CSSProperty;
+class RenderObject;
+class RenderStyle;
 
 enum EUpdateLayout { DoNotUpdateLayout = false, UpdateLayout = true };
 
-class CSSComputedStyleDeclarationImpl : public CSSStyleDeclarationImpl
-{
+class CSSComputedStyleDeclarationImpl : public CSSStyleDeclarationImpl {
 public:
-    CSSComputedStyleDeclarationImpl(NodeImpl *node);
+    CSSComputedStyleDeclarationImpl(PassRefPtr<NodeImpl>);
     virtual ~CSSComputedStyleDeclarationImpl();
 
     virtual DOMString cssText() const;
@@ -47,23 +43,23 @@ public:
     virtual unsigned length() const;
     virtual DOMString item(unsigned index) const;
 
-    virtual CSSValueImpl *getPropertyCSSValue(int propertyID) const;
-    virtual DOMString getPropertyValue(int propertyID) const;
+    virtual PassRefPtr<CSSValueImpl> getPropertyCSSValue(int propertyID) const;
+    virtual String getPropertyValue(int propertyID) const;
     virtual bool getPropertyPriority(int propertyID) const;
     virtual int getPropertyShorthand(int propertyID) const { return -1; }
     virtual bool isPropertyImplicit(int propertyID) const { return true; }
 
-    virtual CSSMutableStyleDeclarationImpl *copy() const;
-    virtual CSSMutableStyleDeclarationImpl *makeMutable();
+    virtual PassRefPtr<CSSMutableStyleDeclarationImpl> copy() const;
+    virtual PassRefPtr<CSSMutableStyleDeclarationImpl> makeMutable();
 
-    CSSValueImpl *getPropertyCSSValue(int propertyID, EUpdateLayout updateLayout) const;
+    PassRefPtr<CSSValueImpl> getPropertyCSSValue(int propertyID, EUpdateLayout) const;
 
-    CSSMutableStyleDeclarationImpl *copyInheritableProperties() const;
+    PassRefPtr<CSSMutableStyleDeclarationImpl> copyInheritableProperties() const;
 
 private:
-    virtual void setCssText(const DOMString &, int &exceptionCode);
-    virtual DOMString removeProperty(int propertyID, int &exceptionCode);
-    virtual void setProperty(int propertyId, const DOMString &value, bool important, int &exceptionCode);
+    virtual void setCssText(const String&, int& exceptionCode);
+    virtual String removeProperty(int propertyID, int& exceptionCode);
+    virtual void setProperty(int propertyId, const String& value, bool important, int& exceptionCode);
 
     RefPtr<NodeImpl> m_node;
 };

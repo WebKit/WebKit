@@ -23,25 +23,22 @@
 #include "config.h"
 #include "css_computedstyle.h"
 
+#include "AtomicString.h"
+#include "CachedImage.h"
+#include "DocumentImpl.h"
+#include "PlatformString.h"
 #include "cssproperties.h"
 #include "cssvalues.h"
-#include "AtomicString.h"
-#include "DocumentImpl.h"
 #include "dom_exception.h"
-#include "PlatformString.h"
 #include "font.h"
 #include "khtmllayout.h"
-#include "CachedImage.h"
-#include "rendering/render_style.h"
-#include "rendering/render_object.h"
-
+#include "render_object.h"
+#include "render_style.h"
 #include <kxmlcore/Assertions.h>
 
-using namespace khtml;
+extern WebCore::String getPropertyName(unsigned short id);
 
-extern DOM::DOMString getPropertyName(unsigned short id);
-
-namespace DOM {
+namespace WebCore {
 
 // List of all properties we know how to compute, omitting shorthands.
 static const int computedProperties[] = {
@@ -270,7 +267,7 @@ static CSSValueImpl *getPositionOffsetValue(RenderObject *renderer, int property
     return new CSSPrimitiveValueImpl(CSS_VAL_AUTO);
 }
 
-CSSComputedStyleDeclarationImpl::CSSComputedStyleDeclarationImpl(NodeImpl *n)
+CSSComputedStyleDeclarationImpl::CSSComputedStyleDeclarationImpl(PassRefPtr<NodeImpl> n)
     : m_node(n)
 {
 }
@@ -279,9 +276,9 @@ CSSComputedStyleDeclarationImpl::~CSSComputedStyleDeclarationImpl()
 {
 }
 
-DOMString CSSComputedStyleDeclarationImpl::cssText() const
+String CSSComputedStyleDeclarationImpl::cssText() const
 {
-    DOMString result;
+    String result("");
     
     for (unsigned i = 0; i < numComputedProperties; i++) {
         if (i != 0)
@@ -295,7 +292,7 @@ DOMString CSSComputedStyleDeclarationImpl::cssText() const
     return result;
 }
 
-void CSSComputedStyleDeclarationImpl::setCssText(const DOMString &, int &exceptionCode)
+void CSSComputedStyleDeclarationImpl::setCssText(const String&, int &exceptionCode)
 {
     exceptionCode = DOMException::NO_MODIFICATION_ALLOWED_ERR;
 }
@@ -307,14 +304,14 @@ static QString numberAsString(double n)
     return i == n ? QString::number(i) : QString::number(n);
 }
 
-CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyID) const
+PassRefPtr<CSSValueImpl> CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyID) const
 {
     return getPropertyCSSValue(propertyID, UpdateLayout);
 }
 
-CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyID, EUpdateLayout updateLayout) const
+PassRefPtr<CSSValueImpl> CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyID, EUpdateLayout updateLayout) const
 {
-    NodeImpl *node = m_node.get();
+    NodeImpl* node = m_node.get();
     if (!node)
         return 0;
 
@@ -323,10 +320,10 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
     if (docimpl && updateLayout)
         docimpl->updateLayout();
 
-    RenderObject *renderer = node->renderer();
+    RenderObject* renderer = node->renderer();
     if (!renderer)
         return 0;
-    RenderStyle *style = renderer->style();
+    RenderStyle* style = renderer->style();
     if (!style)
         return 0;
 
@@ -366,7 +363,7 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
     }
     case CSS_PROP_BACKGROUND_POSITION:
     {
-        DOMString string;
+        String string;
         Length length(style->backgroundXPosition());
         if (length.isPercent())
             string = numberAsString(length.length()) + "%";
@@ -1183,29 +1180,32 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
 #if __APPLE__
         case CSS_PROP__KHTML_DASHBOARD_REGION: {
             QValueList<StyleDashboardRegion> regions = style->dashboardRegions();
-            uint i, count = regions.count();
+            unsigned count = regions.count();
             if (count == 1 && regions[0].type == StyleDashboardRegion::None)
-                return new CSSPrimitiveValueImpl (CSS_VAL_NONE);
-                
-            DashboardRegionImpl *firstRegion = new DashboardRegionImpl(), *region;
-            region = firstRegion;
-            for (i = 0; i < count; i++) {
+                return new CSSPrimitiveValueImpl(CSS_VAL_NONE);
+            
+            RefPtr<DashboardRegionImpl> firstRegion;
+            DashboardRegionImpl* previousRegion = 0;
+            for (unsigned i = 0; i < count; i++) {
+                RefPtr<DashboardRegionImpl> region = new DashboardRegionImpl;
                 StyleDashboardRegion styleRegion = regions[i];
+
                 region->m_label = styleRegion.label;
                 LengthBox offset = styleRegion.offset;
-                region->setTop (new CSSPrimitiveValueImpl(offset.top.value, CSSPrimitiveValue::CSS_PX));
-                region->setRight (new CSSPrimitiveValueImpl(offset.right.value, CSSPrimitiveValue::CSS_PX));
-                region->setBottom (new CSSPrimitiveValueImpl(offset.bottom.value, CSSPrimitiveValue::CSS_PX));
-                region->setLeft (new CSSPrimitiveValueImpl(offset.left.value, CSSPrimitiveValue::CSS_PX));
+                region->setTop(new CSSPrimitiveValueImpl(offset.top.value, CSSPrimitiveValue::CSS_PX));
+                region->setRight(new CSSPrimitiveValueImpl(offset.right.value, CSSPrimitiveValue::CSS_PX));
+                region->setBottom(new CSSPrimitiveValueImpl(offset.bottom.value, CSSPrimitiveValue::CSS_PX));
+                region->setLeft(new CSSPrimitiveValueImpl(offset.left.value, CSSPrimitiveValue::CSS_PX));
                 region->m_isRectangle = (styleRegion.type == StyleDashboardRegion::Rectangle); 
                 region->m_isCircle = (styleRegion.type == StyleDashboardRegion::Circle);
-                if (i != count-1) {
-                    DashboardRegionImpl *newRegion = new DashboardRegionImpl();
-                    region->setNext (newRegion);
-                    region = newRegion;
-                }
+
+                if (previousRegion)
+                    previousRegion->m_next = region;
+                else
+                    firstRegion = region;
+                previousRegion = region.get();
             }
-            return new CSSPrimitiveValueImpl(firstRegion);
+            return new CSSPrimitiveValueImpl(firstRegion.release());
         }
 #endif
     }
@@ -1214,7 +1214,7 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
     return 0;
 }
 
-DOMString CSSComputedStyleDeclarationImpl::getPropertyValue(int propertyID) const
+String CSSComputedStyleDeclarationImpl::getPropertyValue(int propertyID) const
 {
     RefPtr<CSSValueImpl> value = getPropertyCSSValue(propertyID);
     if (value)
@@ -1228,13 +1228,13 @@ bool CSSComputedStyleDeclarationImpl::getPropertyPriority(int) const
     return false;
 }
 
-DOMString CSSComputedStyleDeclarationImpl::removeProperty(int, int &exceptionCode)
+String CSSComputedStyleDeclarationImpl::removeProperty(int, int &exceptionCode)
 {
     exceptionCode = DOMException::NO_MODIFICATION_ALLOWED_ERR;
-    return DOMString();
+    return String();
 }
 
-void CSSComputedStyleDeclarationImpl::setProperty(int, const DOMString &, bool, int &exceptionCode)
+void CSSComputedStyleDeclarationImpl::setProperty(int, const String&, bool, int &exceptionCode)
 {
     exceptionCode = DOMException::NO_MODIFICATION_ALLOWED_ERR;
 }
@@ -1244,25 +1244,25 @@ unsigned CSSComputedStyleDeclarationImpl::length() const
     return numComputedProperties;
 }
 
-DOMString CSSComputedStyleDeclarationImpl::item(unsigned i) const
+String CSSComputedStyleDeclarationImpl::item(unsigned i) const
 {
     if (i >= numComputedProperties)
-        return DOMString();
+        return String();
     
     return getPropertyName(computedProperties[i]);
 }
 
-CSSMutableStyleDeclarationImpl *CSSComputedStyleDeclarationImpl::copyInheritableProperties() const
+PassRefPtr<CSSMutableStyleDeclarationImpl> CSSComputedStyleDeclarationImpl::copyInheritableProperties() const
 {
     return copyPropertiesInSet(inheritableProperties, numInheritableProperties);
 }
 
-CSSMutableStyleDeclarationImpl *CSSComputedStyleDeclarationImpl::copy() const
+PassRefPtr<CSSMutableStyleDeclarationImpl> CSSComputedStyleDeclarationImpl::copy() const
 {
     return copyPropertiesInSet(computedProperties, numComputedProperties);
 }
 
-CSSMutableStyleDeclarationImpl *CSSComputedStyleDeclarationImpl::makeMutable()
+PassRefPtr<CSSMutableStyleDeclarationImpl> CSSComputedStyleDeclarationImpl::makeMutable()
 {
     return copy();
 }

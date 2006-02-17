@@ -21,6 +21,7 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef HTMLNameCollectionImpl_H
 #define HTMLNameCollectionImpl_H
 
@@ -34,13 +35,14 @@ class DocumentImpl;
 class HTMLNameCollectionImpl : public HTMLCollectionImpl
 {
 public:
-    HTMLNameCollectionImpl(DocumentImpl* _base, int _type, DOMString &name);
+    HTMLNameCollectionImpl(DocumentImpl*, int type, const String &name);
     
-    virtual NodeImpl *traverseNextItem(NodeImpl *start) const;
- private:
-    DOMString m_name;
+    virtual NodeImpl* traverseNextItem(NodeImpl*) const;
+
+private:
+    String m_name;
 };
 
-}; //namespace
+}
 
 #endif

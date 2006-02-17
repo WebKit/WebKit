@@ -43,8 +43,8 @@ namespace WebCore {
         }
         ~FrameTree();
         
-        const DOMString& name() const { return m_name; }
-        void setName(const DOMString& name);
+        const String& name() const { return m_name; }
+        void setName(const String&);
         Frame* parent() const { return m_parent; }
         void setParent(Frame* parent) { m_parent = parent; }
         
@@ -54,14 +54,14 @@ namespace WebCore {
         Frame* lastChild() const { return m_lastChild; }
         int childCount() const { return m_childCount; }
         
-        void appendChild(PassRefPtr<Frame> child);
-        void removeChild(Frame *child);
+        void appendChild(PassRefPtr<Frame>);
+        void removeChild(Frame*);
         
     private:
         Frame* m_thisFrame;
         
-        Frame *m_parent;
-        DOMString m_name;
+        Frame* m_parent;
+        String m_name;
         
         // FIXME: use ListRefPtr?
         RefPtr<Frame> m_nextSibling;

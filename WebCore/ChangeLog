@@ -1,3 +1,450 @@
+2006-02-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric and Justin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7310
+          fix leaks by using RefPtr more
+
+        * bindings/objc/DOM.mm:
+        (-[DOMDocument adoptNode:]):
+        (-[DOMDocument createElement:]):
+        (-[DOMDocument createDocumentFragment]):
+        (-[DOMDocument createTextNode:]):
+        (-[DOMDocument createComment:]):
+        (-[DOMDocument createCDATASection:]):
+        (-[DOMDocument createProcessingInstruction::]):
+        (-[DOMDocument createEntityReference:]):
+        (-[DOMDocument importNode::]):
+        (-[DOMDocument createElementNS::]):
+        (-[DOMDocument createRange]):
+        (-[DOMDocument createCSSStyleDeclaration]):
+        (-[DOMDocument createNodeIterator::::]):
+        (-[DOMDocument createTreeWalker::::]):
+        * bindings/objc/DOMCSS.mm:
+        (-[DOMCSSStyleDeclaration getPropertyCSSValue:]):
+        * bindings/objc/DOMEvents.mm:
+        (-[DOMDocument createEvent:]):
+        * bridge/mac/MacFrame.h:
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::MacFrame):
+        (WebCore::MacFrame::freeClipboard):
+        (WebCore::MacFrame::setView):
+        (WebCore::MacFrame::wheelEvent):
+        (WebCore::MacFrame::openURLFromPageCache):
+        (WebCore::MacFrame::mouseDownViewIfStillGood):
+        (WebCore::MacFrame::khtmlMouseMoveEvent):
+        (WebCore::MacFrame::dispatchCPPEvent):
+        (WebCore::MacFrame::mouseDown):
+        (WebCore::MacFrame::mouseDragged):
+        (WebCore::MacFrame::mouseUp):
+        (WebCore::MacFrame::mouseMoved):
+        (WebCore::MacFrame::sendContextMenuEvent):
+        (WebCore::MacFrame::dispatchDragSrcEvent):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge convertToDOMRange:]):
+        (-[WebCoreFrameBridge convertNSRangeToDOMRange:]):
+        (-[WebCoreFrameBridge selectNSRange:]):
+        (-[WebCoreFrameBridge smartDeleteRangeForProposedRange:]):
+        (-[WebCoreFrameBridge typingStyle]):
+        (-[WebCoreFrameBridge dragOperationForDraggingInfo:]):
+        (-[WebCoreFrameBridge dragExitedWithDraggingInfo:]):
+        (-[WebCoreFrameBridge concludeDragForDraggingInfo:]):
+        * css/css_computedstyle.cpp:
+        (WebCore::CSSComputedStyleDeclarationImpl::CSSComputedStyleDeclarationImpl):
+        (WebCore::CSSComputedStyleDeclarationImpl::cssText):
+        (WebCore::CSSComputedStyleDeclarationImpl::setCssText):
+        (WebCore::CSSComputedStyleDeclarationImpl::getPropertyCSSValue):
+        (WebCore::CSSComputedStyleDeclarationImpl::getPropertyValue):
+        (WebCore::CSSComputedStyleDeclarationImpl::removeProperty):
+        (WebCore::CSSComputedStyleDeclarationImpl::setProperty):
+        (WebCore::CSSComputedStyleDeclarationImpl::item):
+        (WebCore::CSSComputedStyleDeclarationImpl::copyInheritableProperties):
+        (WebCore::CSSComputedStyleDeclarationImpl::copy):
+        (WebCore::CSSComputedStyleDeclarationImpl::makeMutable):
+        * css/css_computedstyle.h:
+        * css/css_grammar.y:
+        * css/css_ruleimpl.cpp:
+        (WebCore::CSSStyleRuleImpl::~CSSStyleRuleImpl):
+        (WebCore::CSSStyleRuleImpl::setDeclaration):
+        * css/css_ruleimpl.h:
+        (DOM::CSSStyleRuleImpl::style):
+        (DOM::CSSStyleRuleImpl::declaration):
+        * css/css_valueimpl.cpp:
+        (WebCore::propertyID):
+        (WebCore::quoteStringIfNeeded):
+        (WebCore::CSSStyleDeclarationImpl::getPropertyCSSValue):
+        (WebCore::CSSStyleDeclarationImpl::getPropertyValue):
+        (WebCore::CSSStyleDeclarationImpl::getPropertyPriority):
+        (WebCore::CSSStyleDeclarationImpl::getPropertyShorthand):
+        (WebCore::CSSStyleDeclarationImpl::isPropertyImplicit):
+        (WebCore::CSSStyleDeclarationImpl::setProperty):
+        (WebCore::CSSStyleDeclarationImpl::removeProperty):
+        (WebCore::CSSStyleDeclarationImpl::isPropertyName):
+        (WebCore::CSSMutableStyleDeclarationImpl::getPropertyValue):
+        (WebCore::CSSMutableStyleDeclarationImpl::get4Values):
+        (WebCore::CSSMutableStyleDeclarationImpl::getShortHandValue):
+        (WebCore::CSSMutableStyleDeclarationImpl::getPropertyCSSValue):
+        (WebCore::CSSMutableStyleDeclarationImpl::removeProperty):
+        (WebCore::CSSMutableStyleDeclarationImpl::setProperty):
+        (WebCore::CSSMutableStyleDeclarationImpl::setStringProperty):
+        (WebCore::CSSMutableStyleDeclarationImpl::setImageProperty):
+        (WebCore::CSSMutableStyleDeclarationImpl::parseDeclaration):
+        (WebCore::CSSMutableStyleDeclarationImpl::setLengthProperty):
+        (WebCore::CSSMutableStyleDeclarationImpl::item):
+        (WebCore::CSSMutableStyleDeclarationImpl::cssText):
+        (WebCore::CSSMutableStyleDeclarationImpl::setCssText):
+        (WebCore::CSSMutableStyleDeclarationImpl::copyBlockProperties):
+        (WebCore::CSSStyleDeclarationImpl::copyPropertiesInSet):
+        (WebCore::CSSMutableStyleDeclarationImpl::removePropertiesInSet):
+        (WebCore::CSSMutableStyleDeclarationImpl::makeMutable):
+        (WebCore::CSSMutableStyleDeclarationImpl::copy):
+        (WebCore::CSSInheritedValueImpl::cssText):
+        (WebCore::CSSInitialValueImpl::cssText):
+        (WebCore::CSSValueListImpl::append):
+        (WebCore::CSSValueListImpl::cssText):
+        (WebCore::CSSPrimitiveValueImpl::CSSPrimitiveValueImpl):
+        (WebCore::CSSPrimitiveValueImpl::cleanup):
+        (WebCore::CSSPrimitiveValueImpl::setStringValue):
+        (WebCore::CSSPrimitiveValueImpl::getStringValue):
+        (WebCore::CSSPrimitiveValueImpl::parseString):
+        (WebCore::CSSPrimitiveValueImpl::cssText):
+        (WebCore::CSSImageValueImpl::CSSImageValueImpl):
+        (WebCore::CSSBorderImageValueImpl::CSSBorderImageValueImpl):
+        (WebCore::CSSBorderImageValueImpl::cssText):
+        (WebCore::FontFamilyValueImpl::FontFamilyValueImpl):
+        (WebCore::FontFamilyValueImpl::cssText):
+        (WebCore::FontValueImpl::cssText):
+        (WebCore::ShadowValueImpl::ShadowValueImpl):
+        (WebCore::ShadowValueImpl::cssText):
+        (WebCore::CSSProperty::cssText):
+        * css/css_valueimpl.h:
+        (WebCore::CSSValueImpl::setCssText):
+        (WebCore::CSSValueListImpl::item):
+        (WebCore::CSSPrimitiveValueImpl::getFloatValue):
+        (WebCore::CSSPrimitiveValueImpl::getCounterValue):
+        (WebCore::CSSPrimitiveValueImpl::getRectValue):
+        (WebCore::CSSPrimitiveValueImpl::getRGBColorValue):
+        (WebCore::CSSPrimitiveValueImpl::getPairValue):
+        (WebCore::CSSPrimitiveValueImpl::getDashboardRegionValue):
+        (WebCore::CSSPrimitiveValueImpl::):
+        (WebCore::CSSQuirkPrimitiveValueImpl::CSSQuirkPrimitiveValueImpl):
+        (WebCore::CounterImpl::identifier):
+        (WebCore::CounterImpl::listStyle):
+        (WebCore::CounterImpl::separator):
+        (WebCore::RectImpl::top):
+        (WebCore::RectImpl::right):
+        (WebCore::RectImpl::bottom):
+        (WebCore::RectImpl::left):
+        (WebCore::RectImpl::setTop):
+        (WebCore::RectImpl::setRight):
+        (WebCore::RectImpl::setBottom):
+        (WebCore::RectImpl::setLeft):
+        (WebCore::PairImpl::first):
+        (WebCore::PairImpl::second):
+        (WebCore::PairImpl::setFirst):
+        (WebCore::PairImpl::setSecond):
+        (WebCore::DashboardRegionImpl::DashboardRegionImpl):
+        (WebCore::FontFamilyValueImpl::fontName):
+        (WebCore::CSSProperty::CSSProperty):
+        (WebCore::CSSProperty::value):
+        (WebCore::CSSMutableStyleDeclarationImpl::setNode):
+        (WebCore::CSSMutableStyleDeclarationImpl::setProperty):
+        (WebCore::CSSMutableStyleDeclarationImpl::removeProperty):
+        * css/cssparser.cpp:
+        (CSSParser::createStyleDeclaration):
+        (CSSParser::parseDashboardRegions):
+        * css/cssparser.h:
+        (WebCore::Value::):
+        (WebCore::qString):
+        (WebCore::domString):
+        (WebCore::atomicString):
+        (WebCore::ValueList::current):
+        (WebCore::ValueList::next):
+        (WebCore::CSSParser::current):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * dom/DOMImplementationImpl.cpp:
+        (DOM::DOMImplementationImpl::createDocument):
+        (DOM::DOMImplementationImpl::instance):
+        * dom/DOMImplementationImpl.h:
+        * dom/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::DocumentImpl):
+        (WebCore::DocumentImpl::~DocumentImpl):
+        (WebCore::DocumentImpl::setDocType):
+        (WebCore::DocumentImpl::createElement):
+        (WebCore::DocumentImpl::createDocumentFragment):
+        (WebCore::DocumentImpl::createTextNode):
+        (WebCore::DocumentImpl::createComment):
+        (WebCore::DocumentImpl::createCDATASection):
+        (WebCore::DocumentImpl::createProcessingInstruction):
+        (WebCore::DocumentImpl::createEntityReference):
+        (WebCore::DocumentImpl::createEditingTextNode):
+        (WebCore::DocumentImpl::createCSSStyleDeclaration):
+        (WebCore::DocumentImpl::importNode):
+        (WebCore::DocumentImpl::adoptNode):
+        (WebCore::DocumentImpl::createElementNS):
+        (WebCore::DocumentImpl::setTitle):
+        (WebCore::DocumentImpl::createRange):
+        (WebCore::DocumentImpl::createNodeIterator):
+        (WebCore::DocumentImpl::createTreeWalker):
+        (WebCore::DocumentImpl::setStyleSheet):
+        (WebCore::DocumentImpl::setHoverNode):
+        (WebCore::DocumentImpl::setActiveNode):
+        (WebCore::DocumentImpl::setFocusNode):
+        (WebCore::DocumentImpl::defaultView):
+        (WebCore::DocumentImpl::createEvent):
+        (WebCore::DocumentImpl::setHTMLWindowEventListener):
+        (WebCore::DocumentImpl::addWindowEventListener):
+        (WebCore::DocumentImpl::createHTMLEventListener):
+        (WebCore::DocumentImpl::images):
+        (WebCore::DocumentImpl::applets):
+        (WebCore::DocumentImpl::embeds):
+        (WebCore::DocumentImpl::objects):
+        (WebCore::DocumentImpl::links):
+        (WebCore::DocumentImpl::forms):
+        (WebCore::DocumentImpl::anchors):
+        (WebCore::DocumentImpl::all):
+        (WebCore::DocumentImpl::windowNamedItems):
+        (WebCore::DocumentImpl::documentNamedItems):
+        (WebCore::DocumentImpl::getElementsByName):
+        * dom/DocumentImpl.h:
+        (WebCore::DocumentImpl::realDocType):
+        (WebCore::DocumentImpl::createAttribute):
+        (WebCore::DocumentImpl::title):
+        (WebCore::DocumentImpl::styleSelector):
+        (WebCore::DocumentImpl::setRestoreState):
+        (WebCore::DocumentImpl::restoreState):
+        (WebCore::DocumentImpl::view):
+        (WebCore::DocumentImpl::docLoader):
+        (WebCore::DocumentImpl::tokenizer):
+        (WebCore::DocumentImpl::focusNode):
+        (WebCore::DocumentImpl::hoverNode):
+        (WebCore::DocumentImpl::activeNode):
+        (WebCore::DocumentImpl::policyBaseURL):
+        (WebCore::DocumentImpl::setPolicyBaseURL):
+        (WebCore::DocumentImpl::):
+        (WebCore::DocumentImpl::transformSourceDocument):
+        (WebCore::DocumentImpl::domTreeVersion):
+        (WebCore::DocumentImpl::decoder):
+        * dom/NodeListImpl.cpp:
+        (DOM::NodeListImpl::NodeListImpl):
+        (DOM::NodeListImpl::~NodeListImpl):
+        (DOM::NodeListImpl::recursiveLength):
+        (DOM::NodeListImpl::recursiveItem):
+        (DOM::NodeListImpl::itemById):
+        * dom/NodeListImpl.h:
+        * dom/dom2_eventsimpl.cpp:
+        (WebCore::RegisteredEventListener::RegisteredEventListener):
+        * dom/dom2_eventsimpl.h:
+        (WebCore::operator!=):
+        * dom/dom2_traversalimpl.cpp:
+        (DOM::TraversalImpl::TraversalImpl):
+        (DOM::NodeIteratorImpl::NodeIteratorImpl):
+        (DOM::TreeWalkerImpl::TreeWalkerImpl):
+        * dom/dom2_traversalimpl.h:
+        (WebCore::TraversalImpl::root):
+        (WebCore::TraversalImpl::filter):
+        (WebCore::NodeIteratorImpl::referenceNode):
+        (WebCore::NodeIteratorImpl::setPointerBeforeReferenceNode):
+        (WebCore::NodeIteratorImpl::setDetached):
+        (WebCore::NodeIteratorImpl::document):
+        (WebCore::TreeWalkerImpl::currentNode):
+        * dom/dom_position.cpp:
+        (WebCore::Position::computedStyle):
+        * dom/dom_position.h:
+        * dom/xml_tokenizer.cpp:
+        (WebCore::XMLTokenizer::insertErrorMessageBlock):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::createFontElement):
+        (WebCore::createStyleSpanElement):
+        (WebCore::ApplyStyleCommand::ApplyStyleCommand):
+        (WebCore::ApplyStyleCommand::updateStartEnd):
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange):
+        (WebCore::ApplyStyleCommand::extractTextDecorationStyle):
+        (WebCore::ApplyStyleCommand::extractAndNegateTextDecorationStyle):
+        (WebCore::ApplyStyleCommand::applyTextDecorationStyle):
+        (WebCore::ApplyStyleCommand::removeInlineStyle):
+        (WebCore::ApplyStyleCommand::addInlineStyleIfNeeded):
+        (WebCore::ApplyStyleCommand::computedFontSize):
+        * editing/ApplyStyleCommand.h:
+        (WebCore::ApplyStyleCommand::style):
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommandPtr::setTypingStyle):
+        (WebCore::EditCommand::setTypingStyle):
+        (WebCore::EditCommand::styleAtPosition):
+        * editing/EditCommand.h:
+        (WebCore::EditCommand::document):
+        (WebCore::EditCommand::typingStyle):
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::InsertLineBreakCommand):
+        (WebCore::InsertLineBreakCommand::doApply):
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::prepareForTextInsertion):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::computeAndStoreNodeDesiredStyle):
+        (WebCore::NodeDesiredStyle::NodeDesiredStyle):
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/ReplaceSelectionCommand.h:
+        (WebCore::NodeDesiredStyle::node):
+        (WebCore::NodeDesiredStyle::style):
+        (WebCore::ReplacementFragment::root):
+        * editing/WrapContentsInDummySpanCommand.cpp:
+        (WebCore::WrapContentsInDummySpanCommand::doApply):
+        * editing/htmlediting.cpp:
+        (WebCore::createDefaultParagraphElement):
+        (WebCore::createBreakElement):
+        * editing/markup.cpp:
+        (WebCore::createFragmentFromMarkup):
+        (WebCore::createParagraphContentsFromString):
+        * editing/visible_text.cpp:
+        (khtml::TextIterator::rangeFromLocationAndLength):
+        * editing/visible_text.h:
+        (WebCore::isCollapsibleWhitespace):
+        (WebCore::WordAwareIterator::range):
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::DOMCSSStyleDeclaration::cssPropertyGetter):
+        (KJS::DOMCSSStyleDeclarationProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMDocumentProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::KJS::HTMLSelectCollection::put):
+        (KJS::OptionConstructorImp::construct):
+        * khtml/html/HTMLElementImpl.cpp:
+        (WebCore::HTMLElementImpl::createContextualFragment):
+        (WebCore::HTMLElementImpl::setInnerHTML):
+        (WebCore::HTMLElementImpl::setOuterHTML):
+        (WebCore::HTMLElementImpl::setOuterText):
+        * khtml/html/HTMLElementImpl.h:
+        * khtml/html/HTMLNameCollectionImpl.cpp:
+        (WebCore::HTMLNameCollectionImpl::HTMLNameCollectionImpl):
+        (WebCore::HTMLNameCollectionImpl::traverseNextItem):
+        * khtml/html/HTMLNameCollectionImpl.h:
+        * khtml/html/html_documentimpl.cpp:
+        (WebCore::HTMLDocumentImpl::createElement):
+        * khtml/html/html_documentimpl.h:
+        (WebCore::HTMLDocumentImpl::collectionInfo):
+        * khtml/html/htmlfactory.cpp:
+        (DOM::htmlConstructor):
+        (DOM::headConstructor):
+        (DOM::bodyConstructor):
+        (DOM::baseConstructor):
+        (DOM::linkConstructor):
+        (DOM::metaConstructor):
+        (DOM::styleConstructor):
+        (DOM::titleConstructor):
+        (DOM::frameConstructor):
+        (DOM::framesetConstructor):
+        (DOM::iframeConstructor):
+        (DOM::formConstructor):
+        (DOM::buttonConstructor):
+        (DOM::inputConstructor):
+        (DOM::isindexConstructor):
+        (DOM::fieldsetConstructor):
+        (DOM::labelConstructor):
+        (DOM::legendConstructor):
+        (DOM::optgroupConstructor):
+        (DOM::optionConstructor):
+        (DOM::selectConstructor):
+        (DOM::textareaConstructor):
+        (DOM::dlConstructor):
+        (DOM::ulConstructor):
+        (DOM::olConstructor):
+        (DOM::dirConstructor):
+        (DOM::menuConstructor):
+        (DOM::liConstructor):
+        (DOM::blockquoteConstructor):
+        (DOM::divConstructor):
+        (DOM::headingConstructor):
+        (DOM::hrConstructor):
+        (DOM::paragraphConstructor):
+        (DOM::preConstructor):
+        (DOM::basefontConstructor):
+        (DOM::fontConstructor):
+        (DOM::modConstructor):
+        (DOM::anchorConstructor):
+        (DOM::imageConstructor):
+        (DOM::mapConstructor):
+        (DOM::areaConstructor):
+        (DOM::canvasConstructor):
+        (DOM::appletConstructor):
+        (DOM::embedConstructor):
+        (DOM::objectConstructor):
+        (DOM::paramConstructor):
+        (DOM::scriptConstructor):
+        (DOM::tableConstructor):
+        (DOM::tableCaptionConstructor):
+        (DOM::tableColConstructor):
+        (DOM::tableRowConstructor):
+        (DOM::tableCellConstructor):
+        (DOM::tableSectionConstructor):
+        (DOM::brConstructor):
+        (DOM::quoteConstructor):
+        (DOM::marqueeConstructor):
+        (DOM::HTMLElementFactory::createHTMLElement):
+        * khtml/html/htmlfactory.h:
+        * khtml/html/htmlparser.cpp:
+        (HTMLParser::parseToken):
+        (HTMLParser::textCreateErrorCheck):
+        (HTMLParser::commentCreateErrorCheck):
+        (HTMLParser::headCreateErrorCheck):
+        (HTMLParser::bodyCreateErrorCheck):
+        (HTMLParser::framesetCreateErrorCheck):
+        (HTMLParser::iframeCreateErrorCheck):
+        (HTMLParser::formCreateErrorCheck):
+        (HTMLParser::isindexCreateErrorCheck):
+        (HTMLParser::selectCreateErrorCheck):
+        (HTMLParser::ddCreateErrorCheck):
+        (HTMLParser::dtCreateErrorCheck):
+        (HTMLParser::nestedCreateErrorCheck):
+        (HTMLParser::nestedStyleCreateErrorCheck):
+        (HTMLParser::tableCellCreateErrorCheck):
+        (HTMLParser::tableSectionCreateErrorCheck):
+        (HTMLParser::noembedCreateErrorCheck):
+        (HTMLParser::noframesCreateErrorCheck):
+        (HTMLParser::noscriptCreateErrorCheck):
+        (HTMLParser::mapCreateErrorCheck):
+        (HTMLParser::getNode):
+        * khtml/html/htmlparser.h:
+        * khtml/html/htmltokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseTag):
+        (WebCore::HTMLTokenizer::processToken):
+        * khtml/html/htmltokenizer.h:
+        * ksvg2/misc/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::createSVGEventListener):
+        * ksvg2/misc/SVGDocumentExtensions.h:
+        * ksvg2/svg/SVGDOMImplementationImpl.cpp:
+        (SVGDOMImplementationImpl::createDocumentType):
+        (SVGDOMImplementationImpl::createDocument):
+        (SVGDOMImplementationImpl::createCSSStyleSheet):
+        * ksvg2/svg/SVGDOMImplementationImpl.h:
+        * ksvg2/svg/SVGDocumentImpl.cpp:
+        (WebCore::SVGDocumentImpl::createElement):
+        (WebCore::SVGDocumentImpl::dispatchZoomEvent):
+        (WebCore::SVGDocumentImpl::dispatchKeyEvent):
+        (WebCore::SVGDocumentImpl::dispatchUIEvent):
+        (WebCore::SVGDocumentImpl::dispatchMouseEvent):
+        * ksvg2/svg/SVGDocumentImpl.h:
+        * ksvg2/svg/SVGElementImpl.cpp:
+        (WebCore::SVGElementImpl::addSVGEventListener):
+        * ksvg2/svg/SVGSVGElementImpl.cpp:
+        (WebCore::SVGSVGElementImpl::addSVGWindowEventListner):
+        * page/Frame.cpp:
+        (WebCore::Frame::view):
+        (WebCore::Frame::begin):
+        (WebCore::Frame::computeAndSetTypingStyle):
+        (WebCore::Frame::selectionHasStyle):
+        (WebCore::Frame::selectionStartHasStyle):
+        (WebCore::Frame::selectionStartStylePropertyValue):
+        (WebCore::Frame::selectionComputedStyle):
+        (WebCore::Frame::forceLayout):
+        (WebCore::Frame::sendResizeEvent):
+        (WebCore::Frame::sendScrollEvent):
+        (WebCore::Frame::clearTimers):
+        (WebCore::Frame::styleForSelectionStart):
+        * page/FramePrivate.h:
+        * page/FrameTree.h:
+        (WebCore::FrameTree::name):
+
 2006-02-16  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.

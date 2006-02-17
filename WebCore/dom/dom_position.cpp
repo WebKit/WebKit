@@ -100,7 +100,7 @@ ElementImpl *Position::element() const
     return static_cast<ElementImpl *>(n);
 }
 
-CSSComputedStyleDeclarationImpl *Position::computedStyle() const
+PassRefPtr<CSSComputedStyleDeclarationImpl> Position::computedStyle() const
 {
     ElementImpl *elem = element();
     if (!elem)

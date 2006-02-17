@@ -3312,10 +3312,10 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
             if ( !font->style || !font->variant || !font->weight ||
                  !font->size || !font->lineHeight || !font->family )
                 return;
-            applyProperty( CSS_PROP_FONT_STYLE, font->style );
-            applyProperty( CSS_PROP_FONT_VARIANT, font->variant );
-            applyProperty( CSS_PROP_FONT_WEIGHT, font->weight );
-            applyProperty( CSS_PROP_FONT_SIZE, font->size );
+            applyProperty(CSS_PROP_FONT_STYLE, font->style.get());
+            applyProperty(CSS_PROP_FONT_VARIANT, font->variant.get());
+            applyProperty(CSS_PROP_FONT_WEIGHT, font->weight.get());
+            applyProperty(CSS_PROP_FONT_SIZE, font->size.get());
 
             // Line-height can depend on font().pixelSize(), so we have to update the font
             // before we evaluate line-height, e.g., font: 1em/1em.  FIXME: Still not
@@ -3323,8 +3323,8 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
             if (fontDirty)
                 CSSStyleSelector::style->htmlFont().update();
             
-            applyProperty( CSS_PROP_LINE_HEIGHT, font->lineHeight );
-            applyProperty( CSS_PROP_FONT_FAMILY, font->family );
+            applyProperty(CSS_PROP_LINE_HEIGHT, font->lineHeight.get());
+            applyProperty(CSS_PROP_FONT_FAMILY, font->family.get());
         }
         return;
         

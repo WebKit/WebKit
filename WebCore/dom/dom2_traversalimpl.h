@@ -29,7 +29,12 @@
 #include "dom/dom2_traversal.h"
 #include "Shared.h"
 
-namespace DOM {
+namespace KXMLCore {
+    template <class T> class PassRefPtr;
+}
+using KXMLCore::PassRefPtr;
+
+namespace WebCore {
 
 class NodeImpl;
 class DocumentImpl;
@@ -53,15 +58,15 @@ private:
 class TraversalImpl : public Shared<TraversalImpl>
 {
 public:
-    TraversalImpl(NodeImpl *, int whatToShow, NodeFilterImpl *, bool expandEntityReferences);
+    TraversalImpl(NodeImpl*, int whatToShow, PassRefPtr<NodeFilterImpl>, bool expandEntityReferences);
     virtual ~TraversalImpl();
 
-    NodeImpl *root() const { return m_root.get(); }
+    NodeImpl* root() const { return m_root.get(); }
     unsigned whatToShow() const { return m_whatToShow; }
-    NodeFilterImpl *filter() const { return m_filter.get(); }
+    NodeFilterImpl* filter() const { return m_filter.get(); }
     bool expandEntityReferences() const { return m_expandEntityReferences; }
 
-    short acceptNode(NodeImpl *) const;
+    short acceptNode(NodeImpl*) const;
 
 private:
     TraversalImpl(const TraversalImpl &);
@@ -76,14 +81,14 @@ private:
 class NodeIteratorImpl : public TraversalImpl
 {
 public:
-    NodeIteratorImpl(NodeImpl *, int whatToShow, NodeFilterImpl *, bool expandEntityReferences);
+    NodeIteratorImpl(NodeImpl*, int whatToShow, PassRefPtr<NodeFilterImpl>, bool expandEntityReferences);
     ~NodeIteratorImpl();
 
-    NodeImpl *nextNode(int &exceptioncode);
-    NodeImpl *previousNode(int &exceptioncode);
+    NodeImpl* nextNode(int &exceptioncode);
+    NodeImpl* previousNode(int &exceptioncode);
     void detach(int &exceptioncode);
 
-    NodeImpl *referenceNode() const { return m_referenceNode.get(); }
+    NodeImpl* referenceNode() const { return m_referenceNode.get(); }
     bool pointerBeforeReferenceNode() const { return m_beforeReferenceNode; }
 
     /**
@@ -94,16 +99,13 @@ public:
     void notifyBeforeNodeRemoval(NodeImpl *removed);
 
 private:
-    NodeIteratorImpl(const NodeIteratorImpl &);
-    NodeIteratorImpl &operator=(const NodeIteratorImpl &);
-    
-    void setReferenceNode(NodeImpl *);
-    void setPointerBeforeReferenceNode(bool flag=true) { m_beforeReferenceNode = flag; }
+    void setReferenceNode(NodeImpl*);
+    void setPointerBeforeReferenceNode(bool flag = true) { m_beforeReferenceNode = flag; }
     bool detached() const { return m_detached; }
-    void setDetached(bool flag=true) { m_detached = flag; }
-    DocumentImpl * document() const { return m_doc.get(); }
-    NodeImpl *findNextNode(NodeImpl *) const;
-    NodeImpl *findPreviousNode(NodeImpl *) const;
+    void setDetached(bool flag = true) { m_detached = flag; }
+    DocumentImpl* document() const { return m_doc.get(); }
+    NodeImpl* findNextNode(NodeImpl*) const;
+    NodeImpl* findPreviousNode(NodeImpl*) const;
 
     RefPtr<NodeImpl> m_referenceNode;
     bool m_beforeReferenceNode;
@@ -114,27 +116,24 @@ private:
 class TreeWalkerImpl : public TraversalImpl
 {
 public:
-    TreeWalkerImpl(NodeImpl *, int whatToShow, NodeFilterImpl *, bool expandEntityReferences);
+    TreeWalkerImpl(NodeImpl*, int whatToShow, PassRefPtr<NodeFilterImpl>, bool expandEntityReferences);
 
-    NodeImpl *currentNode() const { return m_current.get(); }
-    void setCurrentNode(NodeImpl *, int &exceptioncode);
+    NodeImpl* currentNode() const { return m_current.get(); }
+    void setCurrentNode(NodeImpl*, int &exceptioncode);
 
-    NodeImpl *parentNode();
-    NodeImpl *firstChild();
-    NodeImpl *lastChild();
-    NodeImpl *previousSibling();
-    NodeImpl *nextSibling();
-    NodeImpl *previousNode();
-    NodeImpl *nextNode();
+    NodeImpl* parentNode();
+    NodeImpl* firstChild();
+    NodeImpl* lastChild();
+    NodeImpl* previousSibling();
+    NodeImpl* nextSibling();
+    NodeImpl* previousNode();
+    NodeImpl* nextNode();
 
 private:
-    TreeWalkerImpl(const TreeWalkerImpl &);
-    TreeWalkerImpl &operator=(const TreeWalkerImpl &);
-
     // convenience for when it is known there will be no exception
-    void setCurrentNode(NodeImpl *);
+    void setCurrentNode(NodeImpl*);
     
-    bool ancestorRejected(const NodeImpl *) const;
+    bool ancestorRejected(const NodeImpl*) const;
     
     RefPtr<NodeImpl> m_current;
 };

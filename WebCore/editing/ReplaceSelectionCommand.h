@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,29 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef __replace_selection_command_h__
-#define __replace_selection_command_h__
+#ifndef replace_selection_command_h__
+#define replace_selection_command_h__
 
 #include "CompositeEditCommand.h"
 #include <kxmlcore/PassRefPtr.h>
 
-namespace DOM {
-    class DocumentFragmentImpl;
-}
+namespace WebCore {
 
-namespace khtml {
+class DocumentFragmentImpl;
 
-class NodeDesiredStyle
-{
+class NodeDesiredStyle {
 public:
-    NodeDesiredStyle(DOM::NodeImpl *, DOM::CSSMutableStyleDeclarationImpl *);
+    NodeDesiredStyle(PassRefPtr<NodeImpl>, PassRefPtr<CSSMutableStyleDeclarationImpl>);
     
-    DOM::NodeImpl *node() const { return m_node.get(); }
-    DOM::CSSMutableStyleDeclarationImpl *style() const { return m_style.get(); }
+    NodeImpl* node() const { return m_node.get(); }
+    CSSMutableStyleDeclarationImpl* style() const { return m_style.get(); }
 
 private:
-    RefPtr<DOM::NodeImpl> m_node;
-    RefPtr<DOM::CSSMutableStyleDeclarationImpl> m_style;
+    RefPtr<NodeImpl> m_node;
+    RefPtr<CSSMutableStyleDeclarationImpl> m_style;
 };
 
 // --- ReplacementFragment helper class
@@ -53,16 +50,16 @@ private:
 class ReplacementFragment
 {
 public:
-    ReplacementFragment(DOM::DocumentImpl *, DOM::DocumentFragmentImpl *, bool matchStyle);
+    ReplacementFragment(DocumentImpl *, DocumentFragmentImpl *, bool matchStyle);
     ~ReplacementFragment();
 
     enum EFragmentType { EmptyFragment, SingleTextNodeFragment, TreeFragment };
 
-    DOM::DocumentFragmentImpl *root() const { return m_fragment.get(); }
-    DOM::NodeImpl *firstChild() const;
-    DOM::NodeImpl *lastChild() const;
+    DocumentFragmentImpl *root() const { return m_fragment.get(); }
+    NodeImpl *firstChild() const;
+    NodeImpl *lastChild() const;
 
-    DOM::NodeImpl *mergeStartNode() const;
+    NodeImpl *mergeStartNode() const;
 
     const QValueList<NodeDesiredStyle> &desiredStyles() { return m_styles; }
 
@@ -80,25 +77,25 @@ private:
     ReplacementFragment(const ReplacementFragment &);
     ReplacementFragment &operator=(const ReplacementFragment &);
     
-    static bool isInterchangeNewlineNode(const DOM::NodeImpl *);
-    static bool isInterchangeConvertedSpaceSpan(const DOM::NodeImpl *);
+    static bool isInterchangeNewlineNode(const NodeImpl *);
+    static bool isInterchangeConvertedSpaceSpan(const NodeImpl *);
 
-    PassRefPtr<DOM::NodeImpl> insertFragmentForTestRendering();
-    void restoreTestRenderingNodesToFragment(DOM::NodeImpl *);
-    void computeStylesUsingTestRendering(DOM::NodeImpl *);
-    void removeUnrenderedNodesUsingTestRendering(DOM::NodeImpl *);
-    int countRenderedBlocks(DOM::NodeImpl *holder);
+    PassRefPtr<NodeImpl> insertFragmentForTestRendering();
+    void restoreTestRenderingNodesToFragment(NodeImpl *);
+    void computeStylesUsingTestRendering(NodeImpl *);
+    void removeUnrenderedNodesUsingTestRendering(NodeImpl *);
+    int countRenderedBlocks(NodeImpl *holder);
     void removeStyleNodes();
 
     // A couple simple DOM helpers
-    DOM::NodeImpl *enclosingBlock(DOM::NodeImpl *) const;
-    void removeNode(PassRefPtr<DOM::NodeImpl>);
-    void removeNodePreservingChildren(DOM::NodeImpl *);
-    void insertNodeBefore(DOM::NodeImpl *node, DOM::NodeImpl *refNode);
+    NodeImpl *enclosingBlock(NodeImpl *) const;
+    void removeNode(PassRefPtr<NodeImpl>);
+    void removeNodePreservingChildren(NodeImpl *);
+    void insertNodeBefore(NodeImpl *node, NodeImpl *refNode);
 
     EFragmentType m_type;
-    RefPtr<DOM::DocumentImpl> m_document;
-    RefPtr<DOM::DocumentFragmentImpl> m_fragment;
+    RefPtr<DocumentImpl> m_document;
+    RefPtr<DocumentFragmentImpl> m_fragment;
     QValueList<NodeDesiredStyle> m_styles;
     bool m_matchStyle;
     bool m_hasInterchangeNewlineAtStart;
@@ -109,28 +106,28 @@ private:
 class ReplaceSelectionCommand : public CompositeEditCommand
 {
 public:
-    ReplaceSelectionCommand(DOM::DocumentImpl *document, DOM::DocumentFragmentImpl *fragment, bool selectReplacement=true, bool smartReplace=false, bool matchStyle=false);
+    ReplaceSelectionCommand(DocumentImpl *document, DocumentFragmentImpl *fragment, bool selectReplacement=true, bool smartReplace=false, bool matchStyle=false);
     virtual ~ReplaceSelectionCommand();
     
     virtual void doApply();
     virtual EditAction editingAction() const;
 
 private:
-    void completeHTMLReplacement(const DOM::Position &lastPositionToSelect);
+    void completeHTMLReplacement(const Position &lastPositionToSelect);
 
-    void insertNodeAfterAndUpdateNodesInserted(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);
-    void insertNodeAtAndUpdateNodesInserted(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild, int offset);
-    void insertNodeBeforeAndUpdateNodesInserted(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);
+    void insertNodeAfterAndUpdateNodesInserted(NodeImpl *insertChild, NodeImpl *refChild);
+    void insertNodeAtAndUpdateNodesInserted(NodeImpl *insertChild, NodeImpl *refChild, int offset);
+    void insertNodeBeforeAndUpdateNodesInserted(NodeImpl *insertChild, NodeImpl *refChild);
 
-    void updateNodesInserted(DOM::NodeImpl *);
+    void updateNodesInserted(NodeImpl *);
     void fixupNodeStyles(const QValueList<NodeDesiredStyle> &);
-    void removeLinePlaceholderIfNeeded(DOM::NodeImpl *);
+    void removeLinePlaceholderIfNeeded(NodeImpl *);
 
     ReplacementFragment m_fragment;
-    RefPtr<DOM::NodeImpl> m_firstNodeInserted;
-    RefPtr<DOM::NodeImpl> m_lastNodeInserted;
-    RefPtr<DOM::NodeImpl> m_lastTopNodeInserted;
-    RefPtr<DOM::CSSMutableStyleDeclarationImpl> m_insertionStyle;
+    RefPtr<NodeImpl> m_firstNodeInserted;
+    RefPtr<NodeImpl> m_lastNodeInserted;
+    RefPtr<NodeImpl> m_lastTopNodeInserted;
+    RefPtr<CSSMutableStyleDeclarationImpl> m_insertionStyle;
     bool m_selectReplacement;
     bool m_smartReplace;
     bool m_matchStyle;

@@ -26,27 +26,19 @@
 #include "config.h"
 #include "InsertTextCommand.h"
 
+#include "DocumentImpl.h"
+#include "EditingTextImpl.h"
 #include "Frame.h"
-#include "htmlediting.h"
-#include "html_interchange.h"
+#include "KWQLogging.h"
 #include "VisiblePosition.h"
+#include "dom_position.h"
+#include "html_interchange.h"
+#include "htmlediting.h"
 #include "visible_text.h"
 #include "visible_units.h"
-#include "DocumentImpl.h"
-#include "dom_position.h"
-#include "EditingTextImpl.h"
-
 #include <kxmlcore/Assertions.h>
-#include "KWQLogging.h"
 
-using DOM::DocumentImpl;
-using DOM::NodeImpl;
-using DOM::Position;
-using DOM::TextImpl;
-using DOM::DOMString;
-using DOM::CSSMutableStyleDeclarationImpl;
-
-namespace khtml {
+namespace WebCore {
 
 InsertTextCommand::InsertTextCommand(DocumentImpl *document) 
     : CompositeEditCommand(document), m_charactersAdded(0)
@@ -66,26 +58,25 @@ Position InsertTextCommand::prepareForTextInsertion(const Position& pos)
     // (i.e. pos is at an editable/non-editable boundary).  That seems
     // like a bad assumption.
     if (!pos.node()->isTextNode()) {
-        NodeImpl *textNode = document()->createEditingTextNode("");
-        NodeImpl *nodeToInsert = textNode;
+        RefPtr<NodeImpl> textNode = document()->createEditingTextNode("");
 
         // Now insert the node in the right place
         if (pos.node()->rootEditableElement() != NULL) {
-            insertNodeAt(nodeToInsert, pos.node(), pos.offset());
+            insertNodeAt(textNode.get(), pos.node(), pos.offset());
         } else if (pos.node()->caretMinOffset() == pos.offset()) {
-            insertNodeBefore(nodeToInsert, pos.node());
+            insertNodeBefore(textNode.get(), pos.node());
         } else if (pos.node()->caretMaxOffset() == pos.offset()) {
-            insertNodeAfter(nodeToInsert, pos.node());
+            insertNodeAfter(textNode.get(), pos.node());
         } else
             ASSERT_NOT_REACHED();
         
-        return Position(textNode, 0);
+        return Position(textNode.get(), 0);
     }
 
     if (isTabSpanTextNode(pos.node())) {
-        NodeImpl *textNode = document()->createEditingTextNode("");
-        insertNodeAtTabSpanPosition(textNode, pos);
-        return Position(textNode, 0);
+        RefPtr<NodeImpl> textNode = document()->createEditingTextNode("");
+        insertNodeAtTabSpanPosition(textNode.get(), pos);
+        return Position(textNode.get(), 0);
     }
 
     return pos;
@@ -200,4 +191,4 @@ bool InsertTextCommand::isInsertTextCommand() const
     return true;
 }
 
-} // namespace khtml
+}

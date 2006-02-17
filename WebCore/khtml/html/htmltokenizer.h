@@ -5,7 +5,7 @@
               (C) 1997 Torben Weis (weis@kde.org)
               (C) 1998 Waldo Bastian (bastian@kde.org)
               (C) 2001 Dirk Mueller (mueller@kde.org)
-    Copyright (C) 2003 Apple Computer, Inc.
+    Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -38,6 +38,11 @@
 #include <QString.h>
 
 class HTMLParser;
+
+namespace KXMLCore {
+    template <class T> class PassRefPtr;
+}
+using KXMLCore::PassRefPtr;
 
 namespace WebCore {
 
@@ -103,7 +108,7 @@ private:
     void end();
 
     void reset();
-    NodeImpl *processToken();
+    PassRefPtr<NodeImpl> processToken();
 
     State processListing(SegmentedString, State);
     State parseComment(SegmentedString&, State);

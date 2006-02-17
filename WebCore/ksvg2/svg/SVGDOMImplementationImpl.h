@@ -49,11 +49,11 @@ namespace WebCore
 
         // 'SVGDOMImplementationImpl' functions
         bool hasFeature(DOMStringImpl *feature, DOMStringImpl *version) const;
-        DocumentTypeImpl *createDocumentType(DOMStringImpl *qualifiedName, DOMStringImpl *publicId, DOMStringImpl *systemId, int& exceptioncode) const;
-        DocumentImpl *createDocument(DOMStringImpl *namespaceURI, DOMStringImpl *qualifiedName, DocumentTypeImpl *doctype, int& exceptioncode) const;
-        DocumentImpl *createDocument(DOMStringImpl *namespaceURI, DOMStringImpl *qualifiedName, DocumentTypeImpl *doctype, bool createDocElement, KDOMView *view, int& exceptioncode) const;
+        PassRefPtr<DocumentTypeImpl> createDocumentType(DOMStringImpl *qualifiedName, DOMStringImpl *publicId, DOMStringImpl *systemId, int& exceptioncode) const;
+        PassRefPtr<DocumentImpl> createDocument(DOMStringImpl *namespaceURI, DOMStringImpl *qualifiedName, DocumentTypeImpl *doctype, int& exceptioncode) const;
+        PassRefPtr<DocumentImpl> createDocument(DOMStringImpl *namespaceURI, DOMStringImpl *qualifiedName, DocumentTypeImpl *doctype, bool createDocElement, KDOMView *view, int& exceptioncode) const;
 
-        virtual CSSStyleSheetImpl *createCSSStyleSheet(DOMStringImpl *title, DOMStringImpl *media) const;
+        virtual PassRefPtr<CSSStyleSheetImpl> createCSSStyleSheet(DOMStringImpl *title, DOMStringImpl *media) const;
 
         virtual DocumentTypeImpl *defaultDocumentType() const;
 

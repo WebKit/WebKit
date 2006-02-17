@@ -352,7 +352,7 @@ BrowserExtension *Frame::browserExtension() const
 
 FrameView *Frame::view() const
 {
-  return d->m_view;
+  return d->m_view.get();
 }
 
 bool Frame::jScriptEnabled() const
@@ -645,9 +645,9 @@ void Frame::begin( const KURL &url, int xOffset, int yOffset )
     baseurl = d->m_url;
 
   if (DOMImplementationImpl::isXMLMIMEType(args.serviceType))
-    d->m_doc = DOMImplementationImpl::instance()->createDocument( d->m_view );
+    d->m_doc = DOMImplementationImpl::instance()->createDocument(d->m_view.get());
   else
-    d->m_doc = DOMImplementationImpl::instance()->createHTMLDocument( d->m_view );
+    d->m_doc = DOMImplementationImpl::instance()->createHTMLDocument(d->m_view.get());
 
   if (!d->m_doc->attached())
     d->m_doc->attach( );
@@ -2305,32 +2305,26 @@ void Frame::computeAndSetTypingStyle(CSSStyleDeclarationImpl *style, EditAction 
     }
 
     // Calculate the current typing style.
-    CSSMutableStyleDeclarationImpl *mutableStyle = style->makeMutable();
-    mutableStyle->ref();
+    RefPtr<CSSMutableStyleDeclarationImpl> mutableStyle = style->makeMutable();
     if (typingStyle()) {
-        typingStyle()->merge(mutableStyle);
-        mutableStyle->deref();
+        typingStyle()->merge(mutableStyle.get());
         mutableStyle = typingStyle();
-        mutableStyle->ref();
     }
 
     NodeImpl *node = VisiblePosition(selection().start(), selection().affinity()).deepEquivalent().node();
     CSSComputedStyleDeclarationImpl computedStyle(node);
-    computedStyle.diff(mutableStyle);
+    computedStyle.diff(mutableStyle.get());
     
     // Handle block styles, substracting these from the typing style.
-    CSSMutableStyleDeclarationImpl *blockStyle = mutableStyle->copyBlockProperties();
-    blockStyle->ref();
-    blockStyle->diff(mutableStyle);
+    RefPtr<CSSMutableStyleDeclarationImpl> blockStyle = mutableStyle->copyBlockProperties();
+    blockStyle->diff(mutableStyle.get());
     if (document() && blockStyle->length() > 0) {
-        EditCommandPtr cmd(new ApplyStyleCommand(document(), blockStyle, editingAction));
+        EditCommandPtr cmd(new ApplyStyleCommand(document(), blockStyle.get(), editingAction));
         cmd.apply();
     }
-    blockStyle->deref();
     
     // Set the remaining style as the typing style.
-    setTypingStyle(mutableStyle);
-    mutableStyle->deref();
+    d->m_typingStyle = mutableStyle.release();
 }
 
 void Frame::applyStyle(CSSStyleDeclarationImpl *style, EditAction editingAction)
@@ -2392,30 +2386,24 @@ Frame::TriState Frame::selectionHasStyle(CSSStyleDeclarationImpl *style) const
     bool atStart = true;
     TriState state = falseTriState;
 
-    CSSMutableStyleDeclarationImpl *mutableStyle = style->makeMutable();
-    RefPtr<CSSStyleDeclarationImpl> protectQueryStyle(mutableStyle);
+    RefPtr<CSSMutableStyleDeclarationImpl> mutableStyle = style->makeMutable();
 
     if (!d->m_selection.isRange()) {
-        NodeImpl *nodeToRemove;
-        CSSComputedStyleDeclarationImpl *selectionStyle = selectionComputedStyle(nodeToRemove);
+        NodeImpl* nodeToRemove;
+        RefPtr<CSSComputedStyleDeclarationImpl> selectionStyle = selectionComputedStyle(nodeToRemove);
         if (!selectionStyle)
             return falseTriState;
-        selectionStyle->ref();
-        updateState(mutableStyle, selectionStyle, atStart, state);
-        selectionStyle->deref();
+        updateState(mutableStyle.get(), selectionStyle.get(), atStart, state);
         if (nodeToRemove) {
             int exceptionCode = 0;
             nodeToRemove->remove(exceptionCode);
             assert(exceptionCode == 0);
         }
     } else {
-        for (NodeImpl *node = d->m_selection.start().node(); node; node = node->traverseNextNode()) {
-            CSSComputedStyleDeclarationImpl *computedStyle = new CSSComputedStyleDeclarationImpl(node);
-            if (computedStyle) {
-                computedStyle->ref();
-                updateState(mutableStyle, computedStyle, atStart, state);
-                computedStyle->deref();
-            }
+        for (NodeImpl* node = d->m_selection.start().node(); node; node = node->traverseNextNode()) {
+            RefPtr<CSSComputedStyleDeclarationImpl> computedStyle = new CSSComputedStyleDeclarationImpl(node);
+            if (computedStyle)
+                updateState(mutableStyle.get(), computedStyle.get(), atStart, state);
             if (state == mixedTriState)
                 break;
             if (node == d->m_selection.end().node())
@@ -2428,15 +2416,12 @@ Frame::TriState Frame::selectionHasStyle(CSSStyleDeclarationImpl *style) const
 
 bool Frame::selectionStartHasStyle(CSSStyleDeclarationImpl *style) const
 {
-    NodeImpl *nodeToRemove;
-    CSSStyleDeclarationImpl *selectionStyle = selectionComputedStyle(nodeToRemove);
+    NodeImpl* nodeToRemove;
+    RefPtr<CSSStyleDeclarationImpl> selectionStyle = selectionComputedStyle(nodeToRemove);
     if (!selectionStyle)
         return false;
 
-    CSSMutableStyleDeclarationImpl *mutableStyle = style->makeMutable();
-
-    RefPtr<CSSStyleDeclarationImpl> protectSelectionStyle(selectionStyle);
-    RefPtr<CSSStyleDeclarationImpl> protectQueryStyle(mutableStyle);
+    RefPtr<CSSMutableStyleDeclarationImpl> mutableStyle = style->makeMutable();
 
     bool match = true;
     QValueListConstIterator<CSSProperty> end;
@@ -2460,13 +2445,11 @@ bool Frame::selectionStartHasStyle(CSSStyleDeclarationImpl *style) const
 DOMString Frame::selectionStartStylePropertyValue(int stylePropertyID) const
 {
     NodeImpl *nodeToRemove;
-    CSSStyleDeclarationImpl *selectionStyle = selectionComputedStyle(nodeToRemove);
+    RefPtr<CSSStyleDeclarationImpl> selectionStyle = selectionComputedStyle(nodeToRemove);
     if (!selectionStyle)
         return DOMString();
 
-    selectionStyle->ref();
     DOMString value = selectionStyle->getPropertyValue(stylePropertyID);
-    selectionStyle->deref();
 
     if (nodeToRemove) {
         int exceptionCode = 0;
@@ -2494,20 +2477,17 @@ CSSComputedStyleDeclarationImpl *Frame::selectionComputedStyle(NodeImpl *&nodeTo
     if (!elem)
         return 0;
     
-    ElementImpl *styleElement = elem;
+    RefPtr<ElementImpl> styleElement = elem;
     int exceptionCode = 0;
 
     if (d->m_typingStyle) {
         styleElement = document()->createElementNS(xhtmlNamespaceURI, "span", exceptionCode);
         assert(exceptionCode == 0);
 
-        styleElement->ref();
-        
         styleElement->setAttribute(styleAttr, d->m_typingStyle->cssText().impl(), exceptionCode);
         assert(exceptionCode == 0);
         
-        TextImpl *text = document()->createEditingTextNode("");
-        styleElement->appendChild(text, exceptionCode);
+        styleElement->appendChild(document()->createEditingTextNode(""), exceptionCode);
         assert(exceptionCode == 0);
 
         if (elem->renderer() && elem->renderer()->canHaveChildren()) {
@@ -2524,9 +2504,7 @@ CSSComputedStyleDeclarationImpl *Frame::selectionComputedStyle(NodeImpl *&nodeTo
         }
         assert(exceptionCode == 0);
 
-        styleElement->deref();
-
-        nodeToRemove = styleElement;
+        nodeToRemove = styleElement.get();
     }
 
     return new CSSComputedStyleDeclarationImpl(styleElement);
@@ -3144,7 +3122,7 @@ void Frame::setPolicyBaseURL(const DOMString &s)
 
 void Frame::forceLayout()
 {
-    FrameView *v = d->m_view;
+    FrameView *v = d->m_view.get();
     if (v) {
         v->layout();
         // We cannot unschedule a pending relayout, since the force can be called with
@@ -3184,7 +3162,7 @@ void Frame::forceLayoutWithPageWidthRange(float minPageWidth, float maxPageWidth
 
 void Frame::sendResizeEvent()
 {
-    FrameView *v = d->m_view;
+    FrameView *v = d->m_view.get();
     if (v) {
         QResizeEvent e;
         v->resizeEvent(&e);
@@ -3193,7 +3171,7 @@ void Frame::sendResizeEvent()
 
 void Frame::sendScrollEvent()
 {
-    FrameView *v = d->m_view;
+    FrameView *v = d->m_view.get();
     if (v) {
         DocumentImpl *doc = document();
         if (!doc)
@@ -3305,7 +3283,7 @@ void Frame::clearTimers(FrameView *view)
 
 void Frame::clearTimers()
 {
-    clearTimers(d->m_view);
+    clearTimers(d->m_view.get());
 }
 
 // FIXME: selection controller?
@@ -3359,24 +3337,19 @@ RenderStyle *Frame::styleForSelectionStart(NodeImpl *&nodeToRemove) const
         return node->renderer()->style();
     
     int exceptionCode = 0;
-    ElementImpl *styleElement = document()->createElementNS(xhtmlNamespaceURI, "span", exceptionCode);
+    RefPtr<ElementImpl> styleElement = document()->createElementNS(xhtmlNamespaceURI, "span", exceptionCode);
     ASSERT(exceptionCode == 0);
-    
-    styleElement->ref();
     
     styleElement->setAttribute(styleAttr, d->m_typingStyle->cssText().impl(), exceptionCode);
     ASSERT(exceptionCode == 0);
     
-    TextImpl *text = document()->createEditingTextNode("");
-    styleElement->appendChild(text, exceptionCode);
+    styleElement->appendChild(document()->createEditingTextNode(""), exceptionCode);
     ASSERT(exceptionCode == 0);
     
     node->parentNode()->appendChild(styleElement, exceptionCode);
     ASSERT(exceptionCode == 0);
     
-    styleElement->deref();
-    
-    nodeToRemove = styleElement;    
+    nodeToRemove = styleElement.get();    
     return styleElement->renderer()->style();
 }
 

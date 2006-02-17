@@ -377,7 +377,7 @@ private:
 
 class RegisteredEventListener {
 public:
-    RegisteredEventListener(const AtomicString &eventType, EventListener *listener, bool useCapture);
+    RegisteredEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
 
     const AtomicString &eventType() const { return m_eventType; }
     EventListener *listener() const { return m_listener.get(); }
@@ -389,13 +389,12 @@ private:
     bool m_useCapture;
 };
 
-bool operator==(const RegisteredEventListener &, const RegisteredEventListener &);
-inline bool operator!=(const RegisteredEventListener &a, const RegisteredEventListener &b) { return !(a == b); }
+bool operator==(const RegisteredEventListener&, const RegisteredEventListener&);
+inline bool operator!=(const RegisteredEventListener& a, const RegisteredEventListener& b) { return !(a == b); }
 
 // State available during IE's events for drag and drop and copy/paste
 class ClipboardImpl : public Shared<ClipboardImpl> {
 public:
-    ClipboardImpl() { }
     virtual ~ClipboardImpl();
 
     // Is this operation a drag-drop or a copy-paste?

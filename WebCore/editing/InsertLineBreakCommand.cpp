@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,32 +26,23 @@
 #include "config.h"
 #include "InsertLineBreakCommand.h"
 
-#include "htmlediting.h"
-#include "VisiblePosition.h"
-#include "visible_units.h"
-
-#include "htmlnames.h"
 #include "DocumentImpl.h"
-#include "dom_elementimpl.h"
-#include "dom2_rangeimpl.h"
-#include "TextImpl.h"
 #include "Frame.h"
-
-#include <kxmlcore/Assertions.h>
 #include "KWQLogging.h"
+#include "TextImpl.h"
+#include "VisiblePosition.h"
+#include "dom2_rangeimpl.h"
+#include "dom_elementimpl.h"
+#include "htmlediting.h"
+#include "htmlnames.h"
+#include "visible_units.h"
+#include <kxmlcore/Assertions.h>
 
-using namespace DOM::HTMLNames;
+namespace WebCore {
 
-using DOM::DocumentImpl;
-using DOM::ElementImpl;
-using DOM::NodeImpl;
-using DOM::Position;
-using DOM::TextImpl;
-using DOM::CSSMutableStyleDeclarationImpl;
+using namespace HTMLNames;
 
-namespace khtml {
-
-InsertLineBreakCommand::InsertLineBreakCommand(DocumentImpl *document) 
+InsertLineBreakCommand::InsertLineBreakCommand(DocumentImpl* document) 
     : CompositeEditCommand(document)
 {
 }
@@ -146,9 +137,9 @@ void InsertLineBreakCommand::doApply()
         // Do the split
         int exceptionCode = 0;
         TextImpl *textNode = static_cast<TextImpl *>(pos.node());
-        TextImpl *textBeforeNode = document()->createTextNode(textNode->substringData(0, selection.start().offset(), exceptionCode));
+        RefPtr<TextImpl> textBeforeNode = document()->createTextNode(textNode->substringData(0, selection.start().offset(), exceptionCode));
         deleteTextFromNode(textNode, 0, pos.offset());
-        insertNodeBefore(textBeforeNode, textNode);
+        insertNodeBefore(textBeforeNode.get(), textNode);
         insertNodeBefore(nodeToInsert, textNode);
         Position endingPosition = Position(textNode, 0);
         
@@ -178,4 +169,4 @@ void InsertLineBreakCommand::doApply()
     rebalanceWhitespace();
 }
 
-} // namespace khtml
+}

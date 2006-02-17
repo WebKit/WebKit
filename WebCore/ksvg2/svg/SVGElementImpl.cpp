@@ -108,8 +108,7 @@ AtomicString SVGElementImpl::tryGetAttributeNS(const DOMString& namespaceURI, co
 
 void SVGElementImpl::addSVGEventListener(const AtomicString& eventType, const AttributeImpl* attr)
 {
-    EventListener *listener = getDocument()->accessSVGExtensions()->createSVGEventListener(attr->value(), this);
-    ElementImpl::setHTMLEventListener(eventType, listener);
+    ElementImpl::setHTMLEventListener(eventType, getDocument()->accessSVGExtensions()->createSVGEventListener(attr->value(), this));
 }
 
 void SVGElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)

@@ -42,7 +42,7 @@ class VisiblePosition;
 class EditCommand : public Shared<EditCommand>
 {
 public:
-    EditCommand(DOM::DocumentImpl *);
+    EditCommand(DocumentImpl *);
     virtual ~EditCommand();
 
     bool isCompositeStep() const { return m_parent != 0; }
@@ -61,7 +61,7 @@ public:
 
     virtual EditAction editingAction() const;
 
-    virtual DOM::DocumentImpl * const document() const { return m_document.get(); }
+    virtual DocumentImpl * const document() const { return m_document.get(); }
 
     Selection startingSelection() const { return m_startingSelection; }
     Selection endingSelection() const { return m_endingSelection; }
@@ -71,15 +71,15 @@ public:
 
     void setStartingSelection(const Selection &s);
     void setStartingSelection(const VisiblePosition &p);
-    void setStartingSelection(const DOM::Position &p, EAffinity affinity);
+    void setStartingSelection(const Position &p, EAffinity affinity);
     void setEndingSelection(const Selection &s);
     void setEndingSelection(const VisiblePosition &p);
-    void setEndingSelection(const DOM::Position &p, EAffinity affinity);
+    void setEndingSelection(const Position &p, EAffinity affinity);
 
-    DOM::CSSMutableStyleDeclarationImpl *typingStyle() const { return m_typingStyle.get(); };
-    void setTypingStyle(DOM::CSSMutableStyleDeclarationImpl *);
+    CSSMutableStyleDeclarationImpl* typingStyle() const { return m_typingStyle.get(); };
+    void setTypingStyle(PassRefPtr<CSSMutableStyleDeclarationImpl>);
     
-    DOM::CSSMutableStyleDeclarationImpl *styleAtPosition(const DOM::Position &pos);
+    PassRefPtr<CSSMutableStyleDeclarationImpl> styleAtPosition(const Position&);
     
     virtual bool isInsertTextCommand() const;
     virtual bool isTypingCommand() const;
@@ -89,11 +89,11 @@ public:
 private:
     virtual bool preservesTypingStyle() const;
 
-    RefPtr<DOM::DocumentImpl> m_document;
+    RefPtr<DocumentImpl> m_document;
     ECommandState m_state;
     Selection m_startingSelection;
     Selection m_endingSelection;
-    RefPtr<DOM::CSSMutableStyleDeclarationImpl> m_typingStyle;
+    RefPtr<CSSMutableStyleDeclarationImpl> m_typingStyle;
     EditCommand *m_parent;
 };
 
@@ -111,20 +111,20 @@ public:
 
     EditAction editingAction() const;
 
-    DOM::DocumentImpl * const document() const;
+    DocumentImpl * const document() const;
 
     Selection startingSelection() const;
     Selection endingSelection() const;
 
     void setStartingSelection(const Selection &s) const;
     void setStartingSelection(const VisiblePosition &p) const;
-    void setStartingSelection(const DOM::Position &p, EAffinity affinity) const;
+    void setStartingSelection(const Position &p, EAffinity affinity) const;
     void setEndingSelection(const Selection &s) const;
     void setEndingSelection(const VisiblePosition &p) const;
-    void setEndingSelection(const DOM::Position &p, EAffinity affinity) const;
+    void setEndingSelection(const Position &p, EAffinity affinity) const;
 
-    DOM::CSSMutableStyleDeclarationImpl *typingStyle() const;
-    void setTypingStyle(DOM::CSSMutableStyleDeclarationImpl *) const;
+    CSSMutableStyleDeclarationImpl* typingStyle() const;
+    void setTypingStyle(PassRefPtr<CSSMutableStyleDeclarationImpl>) const;
 
     EditCommandPtr parent() const;
     void setParent(const EditCommandPtr &) const;

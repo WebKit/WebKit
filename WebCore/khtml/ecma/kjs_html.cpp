@@ -3388,18 +3388,17 @@ void KJS::HTMLSelectCollection::put(ExecState *exec, const Identifier &propertyN
     unsigned newLen;
     bool converted = value->getUInt32(newLen);
 
-    if (!converted) {
+    if (!converted)
       return;
-    }
 
     int diff = m_element->length() - newLen;
 
     if (diff < 0) { // add dummy elements
       do {
-        ElementImpl *option = m_element->ownerDocument()->createElement("option", exception);
+        RefPtr<ElementImpl> option = m_element->ownerDocument()->createElement("option", exception);
         if (exception)
           break;         
-        m_element->add(static_cast<HTMLElementImpl *>(option), 0, exception);
+        m_element->add(static_cast<HTMLElementImpl *>(option.get()), 0, exception);
         if (exception)
           break;
       } while (++diff);
@@ -3434,10 +3433,10 @@ void KJS::HTMLSelectCollection::put(ExecState *exec, const Identifier &propertyN
   // out of array bounds ? first insert empty dummies
   if (diff > 0) {
     while (diff--) {
-      ElementImpl *dummyOption = m_element->ownerDocument()->createElement("option", exception);
+      RefPtr<ElementImpl> dummyOption = m_element->ownerDocument()->createElement("option", exception);
       if (!dummyOption)
         break;      
-      m_element->add(static_cast<HTMLElementImpl *>(dummyOption), 0, exception);
+      m_element->add(static_cast<HTMLElementImpl *>(dummyOption.get()), 0, exception);
       if (exception) 
           break;
     }
@@ -3479,8 +3478,7 @@ JSObject *OptionConstructorImp::construct(ExecState *exec, const List &args)
   if (el) {
     opt = static_cast<HTMLOptionElementImpl *>(el.get());
     int sz = args.size();
-    TextImpl *t = m_doc->createTextNode("");
-    t->ref();
+    RefPtr<TextImpl> t = m_doc->createTextNode("");
     opt->appendChild(t, exception);
     if (exception == 0 && sz > 0)
       t->setData(args[0]->toString(exec).domString(), exception); // set the text
@@ -3490,7 +3488,6 @@ JSObject *OptionConstructorImp::construct(ExecState *exec, const List &args)
       opt->setDefaultSelected(args[2]->toBoolean(exec));
     if (exception == 0 && sz > 3)
       opt->setSelected(args[3]->toBoolean(exec));
-    t->deref();
   }
 
   setDOMException(exec, exception);

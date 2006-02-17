@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,81 +23,78 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef __apply_style_command_h__
-#define __apply_style_command_h__
+#ifndef apply_style_command_h__
+#define apply_style_command_h__
 
 #include "CompositeEditCommand.h"
 #include <kxmlcore/PassRefPtr.h>
 
-namespace DOM {
-    class HTMLElementImpl;
-}
+namespace WebCore {
 
-namespace khtml {
+class HTMLElementImpl;
 
 class ApplyStyleCommand : public CompositeEditCommand
 {
 public:
     enum EPropertyLevel { PropertyDefault, ForceBlockProperties };
 
-    ApplyStyleCommand(DOM::DocumentImpl *, DOM::CSSStyleDeclarationImpl *style, EditAction editingAction=EditActionChangeAttributes, EPropertyLevel=PropertyDefault);
-    ApplyStyleCommand(DOM::DocumentImpl *, DOM::CSSStyleDeclarationImpl *style, const DOM::Position start, const DOM::Position end, EditAction editingAction=EditActionChangeAttributes, EPropertyLevel=PropertyDefault);
-    virtual ~ApplyStyleCommand();
+    ApplyStyleCommand(DocumentImpl*, CSSStyleDeclarationImpl*, EditAction = EditActionChangeAttributes, EPropertyLevel = PropertyDefault);
+    ApplyStyleCommand(DocumentImpl*, CSSStyleDeclarationImpl*, const Position& start, const Position& end, EditAction = EditActionChangeAttributes, EPropertyLevel = PropertyDefault);
 
     virtual void doApply();
     virtual EditAction editingAction() const;
 
-    DOM::CSSMutableStyleDeclarationImpl *style() const { return m_style.get(); }
+    CSSMutableStyleDeclarationImpl* style() const { return m_style.get(); }
 
 private:
     // style-removal helpers
-    bool isHTMLStyleNode(DOM::CSSMutableStyleDeclarationImpl *, DOM::HTMLElementImpl *);
-    void removeHTMLStyleNode(DOM::HTMLElementImpl *);
-    void removeHTMLFontStyle(DOM::CSSMutableStyleDeclarationImpl *, DOM::HTMLElementImpl *);
-    void removeCSSStyle(DOM::CSSMutableStyleDeclarationImpl *, DOM::HTMLElementImpl *);
-    void removeBlockStyle(DOM::CSSMutableStyleDeclarationImpl *, const DOM::Position &start, const DOM::Position &end);
-    void removeInlineStyle(PassRefPtr<DOM::CSSMutableStyleDeclarationImpl>, const DOM::Position &start, const DOM::Position &end);
-    bool nodeFullySelected(DOM::NodeImpl *, const DOM::Position &start, const DOM::Position &end) const;
-    bool nodeFullyUnselected(DOM::NodeImpl *node, const DOM::Position &start, const DOM::Position &end) const;
-    DOM::CSSMutableStyleDeclarationImpl *extractTextDecorationStyle(DOM::NodeImpl *node);
-    DOM::CSSMutableStyleDeclarationImpl *extractAndNegateTextDecorationStyle(DOM::NodeImpl *node);
-    void applyTextDecorationStyle(DOM::NodeImpl *node, DOM::CSSMutableStyleDeclarationImpl *style);
-    void pushDownTextDecorationStyleAroundNode(DOM::NodeImpl *node, const DOM::Position &start, const DOM::Position &end, bool force);
-    void pushDownTextDecorationStyleAtBoundaries(const DOM::Position &start, const DOM::Position &end);
+    bool isHTMLStyleNode(CSSMutableStyleDeclarationImpl*, HTMLElementImpl*);
+    void removeHTMLStyleNode(HTMLElementImpl *);
+    void removeHTMLFontStyle(CSSMutableStyleDeclarationImpl*, HTMLElementImpl*);
+    void removeCSSStyle(CSSMutableStyleDeclarationImpl*, HTMLElementImpl*);
+    void removeBlockStyle(CSSMutableStyleDeclarationImpl*, const Position& start, const Position& end);
+    void removeInlineStyle(PassRefPtr<CSSMutableStyleDeclarationImpl>, const Position& start, const Position& end);
+    bool nodeFullySelected(NodeImpl*, const Position& start, const Position& end) const;
+    bool nodeFullyUnselected(NodeImpl*, const Position& start, const Position& end) const;
+    PassRefPtr<CSSMutableStyleDeclarationImpl> extractTextDecorationStyle(NodeImpl*);
+    PassRefPtr<CSSMutableStyleDeclarationImpl> extractAndNegateTextDecorationStyle(NodeImpl*);
+    void applyTextDecorationStyle(NodeImpl*, CSSMutableStyleDeclarationImpl *style);
+    void pushDownTextDecorationStyleAroundNode(NodeImpl*, const Position& start, const Position& end, bool force);
+    void pushDownTextDecorationStyleAtBoundaries(const Position& start, const Position& end);
     
     // style-application helpers
-    void applyBlockStyle(DOM::CSSMutableStyleDeclarationImpl *);
-    void applyRelativeFontStyleChange(DOM::CSSMutableStyleDeclarationImpl *);
-    void applyInlineStyle(DOM::CSSMutableStyleDeclarationImpl *);
-    void addBlockStyleIfNeeded(DOM::CSSMutableStyleDeclarationImpl *, DOM::NodeImpl *);
-    void addInlineStyleIfNeeded(DOM::CSSMutableStyleDeclarationImpl *, DOM::NodeImpl *start, DOM::NodeImpl *end);
-    bool splitTextAtStartIfNeeded(const DOM::Position &start, const DOM::Position &end);
-    bool splitTextAtEndIfNeeded(const DOM::Position &start, const DOM::Position &end);
-    bool splitTextElementAtStartIfNeeded(const DOM::Position &start, const DOM::Position &end);
-    bool splitTextElementAtEndIfNeeded(const DOM::Position &start, const DOM::Position &end);
-    bool mergeStartWithPreviousIfIdentical(const DOM::Position &start, const DOM::Position &end);
-    bool mergeEndWithNextIfIdentical(const DOM::Position &start, const DOM::Position &end);
-    void cleanUpEmptyStyleSpans(const DOM::Position &start, const DOM::Position &end);
+    void applyBlockStyle(CSSMutableStyleDeclarationImpl*);
+    void applyRelativeFontStyleChange(CSSMutableStyleDeclarationImpl*);
+    void applyInlineStyle(CSSMutableStyleDeclarationImpl*);
+    void addBlockStyleIfNeeded(CSSMutableStyleDeclarationImpl*, NodeImpl*);
+    void addInlineStyleIfNeeded(CSSMutableStyleDeclarationImpl*, NodeImpl* start, NodeImpl* end);
+    bool splitTextAtStartIfNeeded(const Position& start, const Position& end);
+    bool splitTextAtEndIfNeeded(const Position& start, const Position& end);
+    bool splitTextElementAtStartIfNeeded(const Position& start, const Position& end);
+    bool splitTextElementAtEndIfNeeded(const Position& start, const Position& end);
+    bool mergeStartWithPreviousIfIdentical(const Position& start, const Position& end);
+    bool mergeEndWithNextIfIdentical(const Position& start, const Position& end);
+    void cleanUpEmptyStyleSpans(const Position& start, const Position& end);
 
-    void surroundNodeRangeWithElement(DOM::NodeImpl *start, DOM::NodeImpl *end, DOM::ElementImpl *element);
-    float computedFontSize(const DOM::NodeImpl *);
-    void joinChildTextNodes(DOM::NodeImpl *, const DOM::Position &start, const DOM::Position &end);
+    void surroundNodeRangeWithElement(NodeImpl* start, NodeImpl* end, ElementImpl* element);
+    float computedFontSize(const NodeImpl*);
+    void joinChildTextNodes(NodeImpl*, const Position& start, const Position& end);
 
-    void ApplyStyleCommand::updateStartEnd(DOM::Position newStart, DOM::Position newEnd);
-    DOM::Position ApplyStyleCommand::startPosition();
-    DOM::Position ApplyStyleCommand::endPosition();
-    
-    DOM::Position m_start;
-    DOM::Position m_end;
-    RefPtr<DOM::CSSMutableStyleDeclarationImpl> m_style;
+    void updateStartEnd(const Position& newStart, const Position& newEnd);
+    Position startPosition();
+    Position endPosition();
+
+    Position m_start;
+    Position m_end;
+    RefPtr<CSSMutableStyleDeclarationImpl> m_style;
     EditAction m_editingAction;
     EPropertyLevel m_propertyLevel;
     bool m_useEndingSelection;
 };
 
-bool isStyleSpan(const DOM::NodeImpl *node);
-DOM::ElementImpl *createStyleSpanElement(DOM::DocumentImpl *document);
+bool isStyleSpan(const NodeImpl*);
+PassRefPtr<HTMLElementImpl> createStyleSpanElement(DocumentImpl*);
 
-} // namespace khtml
+} // namespace WebCore
 
-#endif // __apply_style_command_h__
+#endif

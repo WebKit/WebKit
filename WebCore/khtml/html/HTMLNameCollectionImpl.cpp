@@ -21,23 +21,24 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #include "config.h"
 #include "HTMLNameCollectionImpl.h"
-#include "htmlnames.h"
-#include "html_objectimpl.h"
+
 #include "DocumentImpl.h"
+#include "html_objectimpl.h"
+#include "htmlnames.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLNameCollectionImpl::HTMLNameCollectionImpl(DocumentImpl* _base, int _type, DOMString &name)
-    : HTMLCollectionImpl(_base, _type),
-      m_name(name)
+HTMLNameCollectionImpl::HTMLNameCollectionImpl(DocumentImpl* base, int type, const String& name)
+    : HTMLCollectionImpl(base, type), m_name(name)
 {
 }
 
-NodeImpl *HTMLNameCollectionImpl::traverseNextItem(NodeImpl *current) const
+NodeImpl* HTMLNameCollectionImpl::traverseNextItem(NodeImpl* current) const
 {
     assert(current);
 

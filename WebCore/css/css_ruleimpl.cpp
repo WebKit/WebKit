@@ -318,8 +318,8 @@ CSSStyleRuleImpl::CSSStyleRuleImpl(StyleBaseImpl *parent)
 
 CSSStyleRuleImpl::~CSSStyleRuleImpl()
 {
-    if(m_style)
-        m_style->setParent( 0 );
+    if (m_style)
+        m_style->setParent(0);
     delete m_selector;
 }
 
@@ -359,10 +359,9 @@ bool CSSStyleRuleImpl::parseString( const DOMString &/*string*/, bool )
     return false;
 }
 
-void CSSStyleRuleImpl::setDeclaration( CSSMutableStyleDeclarationImpl *style)
+void CSSStyleRuleImpl::setDeclaration(PassRefPtr<CSSMutableStyleDeclarationImpl> style)
 {
-    if (m_style != style)
-        m_style = style;
+    m_style = style;
 }
 
 void CSSRuleListImpl::deleteRule ( unsigned index )

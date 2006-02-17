@@ -22,47 +22,44 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-#include <kdom/core/AttrImpl.h>
-#include "StringImpl.h"
-#include <kdom/core/NamedAttrMapImpl.h>
-#include "DocumentImpl.h"
-
-#include <kcanvas/KCanvas.h>
-#include <kcanvas/RenderPath.h>
-#include <kcanvas/KCanvasMatrix.h>
-#include <kcanvas/KCanvasCreator.h>
-#include <kcanvas/KCanvasContainer.h>
-#include <kcanvas/device/KRenderingDevice.h>
-
-#include "ksvg.h"
-#include "SVGNames.h"
-#include "SVGHelper.h"
-#include "SVGRectImpl.h"
-#include "SVGAngleImpl.h"
-#include "SVGPointImpl.h"
-#include "SVGMatrixImpl.h"
-#include "SVGNumberImpl.h"
-#include "SVGLengthImpl.h"
-#include "SVGRenderStyle.h"
-#include "SVGZoomEventImpl.h"
-#include "SVGTransformImpl.h"
 #include "SVGSVGElementImpl.h"
-#include "KSVGTimeScheduler.h"
-#include "SVGZoomAndPanImpl.h"
-#include "SVGFitToViewBoxImpl.h"
-#include "SVGAnimatedRectImpl.h"
-#include "SVGAnimatedLengthImpl.h"
-#include "KCanvasRenderingStyle.h"
-#include "SVGPreserveAspectRatioImpl.h"
-#include "SVGAnimatedPreserveAspectRatioImpl.h"
-#include "SVGDocumentExtensions.h"
 
-#include "cssproperties.h"
-
-#include <qtextstream.h>
-
-#include "htmlnames.h"
+#include "DocumentImpl.h"
 #include "EventNames.h"
+#include "KCanvasRenderingStyle.h"
+#include "KSVGTimeScheduler.h"
+#include "SVGAngleImpl.h"
+#include "SVGAnimatedLengthImpl.h"
+#include "SVGAnimatedPreserveAspectRatioImpl.h"
+#include "SVGAnimatedRectImpl.h"
+#include "SVGDocumentExtensions.h"
+#include "SVGFitToViewBoxImpl.h"
+#include "SVGHelper.h"
+#include "SVGLengthImpl.h"
+#include "SVGMatrixImpl.h"
+#include "SVGNames.h"
+#include "SVGNumberImpl.h"
+#include "SVGPointImpl.h"
+#include "SVGPreserveAspectRatioImpl.h"
+#include "SVGRectImpl.h"
+#include "SVGRenderStyle.h"
+#include "SVGTransformImpl.h"
+#include "SVGZoomAndPanImpl.h"
+#include "SVGZoomEventImpl.h"
+#include "StringImpl.h"
+#include "cssproperties.h"
+#include "dom2_events.h"
+#include "htmlnames.h"
+#include "ksvg.h"
+#include <kcanvas/KCanvas.h>
+#include <kcanvas/KCanvasContainer.h>
+#include <kcanvas/KCanvasCreator.h>
+#include <kcanvas/KCanvasMatrix.h>
+#include <kcanvas/RenderPath.h>
+#include <kcanvas/device/KRenderingDevice.h>
+#include <kdom/core/AttrImpl.h>
+#include <kdom/core/NamedAttrMapImpl.h>
+#include <qtextstream.h>
 
 namespace WebCore {
 
@@ -230,8 +227,8 @@ void SVGSVGElementImpl::addSVGWindowEventListner(const AtomicString& eventType, 
 {
     // FIXME: None of these should be window events long term.
     // Once we propertly support SVGLoad, etc.
-    EventListener *listener = getDocument()->accessSVGExtensions()->createSVGEventListener(attr->value(), this);
-    getDocument()->setHTMLWindowEventListener(eventType, listener);
+    RefPtr<EventListener> listener = getDocument()->accessSVGExtensions()->createSVGEventListener(attr->value(), this);
+    getDocument()->setHTMLWindowEventListener(eventType, listener.release());
 }
 
 void SVGSVGElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)

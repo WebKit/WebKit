@@ -3,7 +3,7 @@
  *
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002 Apple Computer, Inc.
+ * Copyright (C) 2002, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,8 +22,9 @@
  *
  * $Id: css_ruleimpl.h 11645 2005-12-17 20:12:35Z andersca $
  */
-#ifndef _CSS_css_ruleimpl_h_
-#define _CSS_css_ruleimpl_h_
+
+#ifndef CSS_css_ruleimpl_h_
+#define CSS_css_ruleimpl_h_
 
 #include "PlatformString.h"
 #include "dom/css_rule.h"
@@ -195,10 +196,10 @@ class CSSImportantRuleImpl;
 class CSSStyleRuleImpl : public CSSRuleImpl
 {
 public:
-    CSSStyleRuleImpl(StyleBaseImpl *parent);
+    CSSStyleRuleImpl(StyleBaseImpl* parent);
     virtual ~CSSStyleRuleImpl();
 
-    CSSMutableStyleDeclarationImpl *style() const { return m_style.get(); }
+    CSSMutableStyleDeclarationImpl* style() const { return m_style.get(); }
 
     virtual bool isStyleRule() { return true; }
     virtual DOMString cssText() const;
@@ -209,10 +210,10 @@ public:
     virtual bool parseString( const DOMString &string, bool = false );
 
     void setSelector(CSSSelector* selector) { m_selector = selector; }
-    void setDeclaration( CSSMutableStyleDeclarationImpl *style);
+    void setDeclaration(PassRefPtr<CSSMutableStyleDeclarationImpl>);
 
     CSSSelector* selector() { return m_selector; }
-    CSSMutableStyleDeclarationImpl *declaration() { return m_style.get(); }
+    CSSMutableStyleDeclarationImpl* declaration() { return m_style.get(); }
  
 protected:
     RefPtr<CSSMutableStyleDeclarationImpl> m_style;
