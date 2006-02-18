@@ -1,3 +1,15 @@
+2006-02-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=4227
+          The ex unit doesn't work for font-variant: small-caps
+
+        * fast/css/ex-after-font-variant-expected.checksum: Added.
+        * fast/css/ex-after-font-variant-expected.png: Added.
+        * fast/css/ex-after-font-variant-expected.txt: Added.
+        * fast/css/ex-after-font-variant.html: Added.
+
 2006-02-17  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by eric
