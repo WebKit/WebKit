@@ -86,13 +86,27 @@ namespace KXMLCore {
     template<typename T>
     struct VectorMover<false, T>
     {
-        static void move(const T* src, const T* srcEnd, T* dst) 
+        static void move(const T* src, const T* srcEnd, T* dst)
         {
             while (src != srcEnd) {
                 new (dst) T(*src);
                 src->~T();
                 ++dst;
                 ++src;
+            }
+        }
+        static void moveOverlapping(const T* src, const T* srcEnd, T* dst)
+        {
+            if (src > dst)
+                move(src, srcEnd, dst);
+            else {
+                T* dstEnd = dst + (srcEnd - src);
+                while (src != srcEnd) {
+                    --srcEnd;
+                    --dstEnd;
+                    new (dstEnd) T(*srcEnd);
+                    srcEnd->~T();
+                }
             }
         }
     };
@@ -103,6 +117,10 @@ namespace KXMLCore {
         static void move(const T* src, const T* srcEnd, T* dst) 
         {
             memcpy(dst, src, reinterpret_cast<const char *>(srcEnd) - reinterpret_cast<const char *>(src));
+        }
+        static void moveOverlapping(const T* src, const T* srcEnd, T* dst) 
+        {
+            memmove(dst, src, reinterpret_cast<const char *>(srcEnd) - reinterpret_cast<const char *>(src));
         }
     };
 
@@ -172,6 +190,11 @@ namespace KXMLCore {
         static void move(const T* src, const T* srcEnd, T* dst)
         {
             VectorMover<VectorTraits<T>::canMoveWithMemcpy, T>::move(src, srcEnd, dst);
+        }
+
+        static void moveOverlapping(const T* src, const T* srcEnd, T* dst)
+        {
+            VectorMover<VectorTraits<T>::canMoveWithMemcpy, T>::moveOverlapping(src, srcEnd, dst);
         }
 
         static void uninitializedCopy(const T* src, const T* srcEnd, T* dst)
@@ -347,8 +370,9 @@ namespace KXMLCore {
 
         void clear() { resize(0); }
 
-        template<typename U>
-        void append(const U& u);
+        template<typename U> void append(const U&);
+        template<typename U> void insert(size_t position, const U&);
+        void remove(size_t position);
 
         void removeLast() 
         {
@@ -478,20 +502,41 @@ namespace KXMLCore {
         m_impl.deallocateBuffer(oldBuffer);
     }
 
-    // templatizing this is better than just letting the conversion happen implicitly,
+    // templatizing these is better than just letting the conversion happen implicitly,
     // because for instance it allows a PassRefPtr to be appended to a RefPtr vector
     // without refcount thrash.
-    template<typename T, size_t inlineCapacity>
-    template<typename U>
+
+    template<typename T, size_t inlineCapacity> template<typename U>
     inline void Vector<T, inlineCapacity>::append(const U& val)
     {
         if (size() == capacity())
             expandCapacity(size() + 1);
-        
         new (end()) T(val);
         ++m_size;
     }
-    
+
+    template<typename T, size_t inlineCapacity> template<typename U>
+    inline void Vector<T, inlineCapacity>::insert(size_t position, const U& val)
+    {
+        ASSERT(position <= size());
+        if (size() == capacity())
+            expandCapacity(size() + 1);
+        T* spot = begin() + position;
+        TypeOperations::moveOverlapping(spot, end(), spot + 1);
+        new (spot) T(val);
+        ++m_size;
+    }
+
+    template<typename T, size_t inlineCapacity>
+    inline void Vector<T, inlineCapacity>::remove(size_t position)
+    {
+        ASSERT(position < size());
+        T* spot = begin() + position;
+        spot->~T();
+        TypeOperations::moveOverlapping(spot + 1, end(), spot);
+        --m_size;
+    }
+
     template<typename T, size_t inlineCapacity>
     void deleteAllValues(Vector<T, inlineCapacity>& collection)
     {
