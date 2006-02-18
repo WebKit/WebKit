@@ -40,10 +40,6 @@
 
 using namespace WebCore;
 
-@interface NSTableView (KWQListBoxKnowsAppKitSecrets)
-- (NSCell *)_accessibilityTableCell:(int)row tableColumn:(NSTableColumn *)tableColumn;
-@end
-
 const int minLines = 4; /* ensures we have a scroll bar */
 const float bottomMargin = 1;
 const float leftMargin = 2;
@@ -757,15 +753,6 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
 - (NSWritingDirection)baseWritingDirection
 {
     return _direction;
-}
-
-- (NSCell *)_accessibilityTableCell:(int)row tableColumn:(NSTableColumn *)tableColumn
-{
-    NSCell *cell = [super _accessibilityTableCell:row tableColumn:tableColumn];
-    if (_box) {
-        [cell setStringValue:_box->itemAtIndex(row).string.getNSString()];
-    }
-    return cell;
 }
 
 - (void)fontChanged

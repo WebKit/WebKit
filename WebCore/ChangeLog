@@ -1,3 +1,14 @@
+2006-02-18  David Harrison  <harrison@apple.com>
+
+        Reviewed by John.
+
+        <rdar://problem/4448212> _accessibilityTableCell please remove this.
+
+        Remove override of a defamed AX method.
+
+        * kwq/KWQListBox.mm:
+        Dump _accessibilityTableCell.
+
 2006-02-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Test: fast/css/ex-after-font-variant.html
