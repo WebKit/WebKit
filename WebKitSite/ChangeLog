@@ -1,3 +1,7 @@
+2006-02-17  Darin Adler  <darin@apple.com>
+
+        * coding/coding-style.html: Mention other non-function brace cases.
+
 2006-02-17  Joost de Valk  <jdevalk@opendarwin.org>
 
         Reviewed by Tim H.
