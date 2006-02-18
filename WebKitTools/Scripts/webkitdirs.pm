@@ -67,20 +67,37 @@ sub determineBaseProductDir
 {
     return if defined $baseProductDir;
     determineSourceDir();
-    open PRODUCT, "defaults read com.apple.Xcode PBXProductDirectory 2> /dev/null |" or die;
-    $baseProductDir = <PRODUCT>;
-    close PRODUCT;
-    if ($baseProductDir) {
+    if (isOSX()) {
+        open PRODUCT, "defaults read com.apple.Xcode PBXProductDirectory 2> /dev/null |" or die;
+        $baseProductDir = <PRODUCT>;
+        close PRODUCT;
         chomp $baseProductDir;
+    } else {
+        $baseProductDir = $ENV{"WebKitOutputDir"};
+        if (isCygwin() && $baseProductDir) {
+            my $unixBuildPath = `cygpath --unix \"$baseProductDir\"`;
+            chomp $unixBuildPath;
+            $baseProductDir = $unixBuildPath;
+        }
+    }
+
+    if ($baseProductDir && isOSX()) {
         $baseProductDir =~ s|^\Q$(SRCROOT)/..\E$|$sourceDir|;
         $baseProductDir =~ s|^\Q$(SRCROOT)/../|$sourceDir/|;
         $baseProductDir =~ s|^~/|$ENV{HOME}/|;
         die "Can't handle Xcode product directory with a ~ in it.\n" if $baseProductDir =~ /~/;
         die "Can't handle Xcode product directory with a variable in it.\n" if $baseProductDir =~ /\$/;
         @baseProductDirOption = ();
-    } else {
+    }
+
+    if (!defined($baseProductDir)) {
         $baseProductDir = "$sourceDir/WebKitBuild";
-        @baseProductDirOption = ("SYMROOT=$baseProductDir");
+        @baseProductDirOption = ("SYMROOT=$baseProductDir") if (isOSX());
+        if (isCygwin()) {
+            my $dosBuildPath = `cygpath --windows \"$baseProductDir\"`;
+            chomp $dosBuildPath;
+            $ENV{"WebKitOutputDir"} = $dosBuildPath;
+        }
     }
 }
 

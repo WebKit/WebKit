@@ -82,6 +82,7 @@ if (isCygwin()) {
     $devenvPath = "$programFilesPath/Microsoft Visual Studio 8/Common7/IDE/devenv.exe";
     $cygwinTmpPath = `cygpath -w /tmp`;
     chomp $cygwinTmpPath;
+    print "Building results into: ", baseProductDir(), "\n";
 }
 
 # Force re-link of existing libraries if different than expected

@@ -1,5 +1,14 @@
 2006-02-17  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by hyatt.
+
+        Make Win32 have the same default "WebKitBuild" directory behavior.
+
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+
+2006-02-17  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by Beth.
 
         * Scripts/build-webkit: make win32 actually report errors
