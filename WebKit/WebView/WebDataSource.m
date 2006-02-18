@@ -812,11 +812,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     [oldRequest release];
 }
 
-- (void)_setStoredInPageCache:(BOOL)f
-{
-    _private->storedInPageCache = f;
-}
-
 - (BOOL)_loadingFromPageCache
 {
     return _private->loadingFromPageCache;

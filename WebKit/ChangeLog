@@ -1,3 +1,14 @@
+2006-02-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed.
+        
+        - fix build broken by my last checkin, the remaining code was not doing anything.
+
+        * WebView/WebDataSource.m:
+        * WebView/WebDataSourcePrivate.h:
+        * WebView/WebFrame.m:
+        (-[WebFrame _createPageCacheForItem:]):
+
 2006-02-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

@@ -917,10 +917,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
     else {
         pageCache = [item pageCache];
-        [[self dataSource] _setStoredInPageCache: YES];
-        [pageCache setObject: [NSDate date]  forKey: WebPageCacheEntryDateKey];
-        [pageCache setObject: [self dataSource] forKey: WebPageCacheDataSourceKey];
-        [pageCache setObject: [[self frameView] documentView] forKey: WebPageCacheDocumentViewKey];
+        [pageCache setObject:[NSDate date]  forKey: WebPageCacheEntryDateKey];
+        [pageCache setObject:[self dataSource] forKey: WebPageCacheDataSourceKey];
+        [pageCache setObject:[[self frameView] documentView] forKey: WebPageCacheDocumentViewKey];
     }
     return YES;
 }
