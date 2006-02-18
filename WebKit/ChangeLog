@@ -1,3 +1,15 @@
+2006-02-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - removed a few unused fields and methods of WebDataSource
+
+        * WebView/WebDataSource.m:
+        * WebView/WebDataSourcePrivate.h:
+        * WebView/WebView.m:
+        (+[WebView _MIMETypeForFile:]):
+        (-[WebView _updateWebCoreSettingsFromPreferences:]):
+
 2006-02-15  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

@@ -614,12 +614,6 @@ static bool debugWidget = true;
     NSString *extension = [path pathExtension];
     NSString *MIMEType = nil;
 
-    // FIXME: This is a workaround to make web archive files work with Foundations that
-    // are too old to know about web archive files. We should remove this before we ship.
-    if ([extension  _webkit_isCaseInsensitiveEqualToString:@"webarchive"]) {
-        return @"application/x-webarchive";
-    }
-    
     // Get the MIME type from the extension.
     if ([extension length] != 0) {
         MIMEType = WKGetMIMETypeForExtension(extension);
@@ -820,7 +814,7 @@ static bool debugWidget = true;
     return _private->settings;
 }
 
-- (void)_updateWebCoreSettingsFromPreferences: (WebPreferences *)preferences
+- (void)_updateWebCoreSettingsFromPreferences:(WebPreferences *)preferences
 {
     [_private->settings setCursiveFontFamily:[preferences cursiveFontFamily]];
     [_private->settings setDefaultFixedFontSize:[preferences defaultFixedFontSize]];

@@ -90,9 +90,6 @@
     NSString *encoding;
     NSString *overrideEncoding;
 
-    // Errors associated with resources.
-    NSMutableDictionary *errors;
-
     // Error associated with main document.
     NSError *mainDocumentError;
 
@@ -121,7 +118,6 @@
     NSMutableArray *responses;
     BOOL stopRecordingResponses;
 
-    BOOL storedInPageCache;
     BOOL loadingFromPageCache;
 
     WebFrame *webFrame;
@@ -198,7 +194,6 @@
 - (NSURLRequest *)_lastCheckedRequest;
 - (void)_setLastCheckedRequest:(NSURLRequest *)request;
 - (void)_setStoredInPageCache:(BOOL)f;
-- (BOOL)_storedInPageCache;
 - (BOOL)_loadingFromPageCache;
 
 - (void)_addResponse:(NSURLResponse *)r;
