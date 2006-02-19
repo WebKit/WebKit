@@ -104,7 +104,7 @@
 @end
 
 @interface NSView (JavaPluginSecrets)
-- (jobject)pollForAppletInWindow: (NSWindow *)window;
+- (jobject)pollForAppletInWindow:(NSWindow *)window;
 @end
 
 NSString *WebPluginBaseURLKey =     @"WebPluginBaseURL";
@@ -112,6 +112,12 @@ NSString *WebPluginAttributesKey =  @"WebPluginAttributes";
 NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 @implementation WebFrameBridge
+
+- (WebView *)webView
+{
+    ASSERT([[self page] isKindOfClass:[WebPageBridge class]]);
+    return [(WebPageBridge *)[self page] webView];
+}
 
 - (id)initMainFrameWithPage:(WebPageBridge *)page frameName:(NSString *)name view:(WebFrameView *)view
 {
@@ -183,24 +189,17 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return [[[self webView] mainFrame] _bridge];
 }
 
-- (WebView *)webView
-{
-    ASSERT([[self page] isKindOfClass:[WebPageBridge class]]);
-    return [(WebPageBridge *)[self page] webView];
-}
-
 - (NSView *)documentView
 {
     ASSERT(_frame != nil);
     return [[_frame frameView] documentView];
 }
 
-- (WebCoreFrameBridge *)createWindowWithURL:(NSURL *)URL frameName:(NSString *)name
+- (WebCorePageBridge *)createWindowWithURL:(NSURL *)URL
 {
     ASSERT(_frame != nil);
 
     NSMutableURLRequest *request = nil;
-
     if (URL != nil && ![URL _web_isEmpty]) {
         request = [NSMutableURLRequest requestWithURL:URL];
         [request _web_setHTTPReferrer:[self referrer]];
@@ -208,21 +207,18 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
     WebView *currentWebView = [self webView];
     id wd = [currentWebView UIDelegate];
-    WebView *newWebView = nil;
-    
+    WebView *newWebView;
     if ([wd respondsToSelector:@selector(webView:createWebViewWithRequest:)])
         newWebView = [wd webView:currentWebView createWebViewWithRequest:request];
     else
         newWebView = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentWebView createWebViewWithRequest:request];
-    WebFrameBridge *resultBridge = [[newWebView mainFrame] _bridge];
-    [resultBridge setName:name];
-    return resultBridge;
+    return [newWebView _pageBridge];
 }
 
 - (void)showWindow
 {
     WebView *wv = [self webView];
-    [[wv _UIDelegateForwarder] webViewShow: wv];
+    [[wv _UIDelegateForwarder] webViewShow:wv];
 }
 
 - (BOOL)areToolbarsVisible
@@ -230,8 +226,8 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     ASSERT(_frame != nil);
     WebView *wv = [self webView];
     id wd = [wv UIDelegate];
-    if ([wd respondsToSelector: @selector(webViewAreToolbarsVisible:)])
-        return [wd webViewAreToolbarsVisible: wv];
+    if ([wd respondsToSelector:@selector(webViewAreToolbarsVisible:)])
+        return [wd webViewAreToolbarsVisible:wv];
     return [[WebDefaultUIDelegate sharedUIDelegate] webViewAreToolbarsVisible:wv];
 }
 
@@ -259,7 +255,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     ASSERT(_frame != nil);
     WebView *wv = [self webView];
     id wd = [wv UIDelegate];
-    if ([wd respondsToSelector: @selector(webViewIsStatusBarVisible:)])
+    if ([wd respondsToSelector:@selector(webViewIsStatusBarVisible:)])
         return [wd webViewIsStatusBarVisible:wv];
     return [[WebDefaultUIDelegate sharedUIDelegate] webViewIsStatusBarVisible:wv];
 }
@@ -388,9 +384,9 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     id wd = [wv UIDelegate];
     // Check whether delegate implements new version, then whether delegate implements old version. If neither,
     // fall back to shared delegate's implementation of new version.
-    if ([wd respondsToSelector: @selector(webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:)])
+    if ([wd respondsToSelector:@selector(webView:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:)])
         return [wd webView:wv runJavaScriptConfirmPanelWithMessage:message initiatedByFrame:_frame];
-    if ([wd respondsToSelector: @selector(webView:runJavaScriptConfirmPanelWithMessage:)])
+    if ([wd respondsToSelector:@selector(webView:runJavaScriptConfirmPanelWithMessage:)])
         return [wd webView:wv runJavaScriptConfirmPanelWithMessage:message];    
     return [[WebDefaultUIDelegate sharedUIDelegate] webView:wv runJavaScriptConfirmPanelWithMessage:message initiatedByFrame:_frame];
 }
@@ -417,9 +413,9 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     id wd = [wv UIDelegate];
     // Check whether delegate implements new version, then whether delegate implements old version. If neither,
     // fall back to shared delegate's implementation of new version.
-    if ([wd respondsToSelector: @selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:)])
+    if ([wd respondsToSelector:@selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:)])
         *result = [wd webView:wv runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultText initiatedByFrame:_frame];
-    else if ([wd respondsToSelector: @selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:)])
+    else if ([wd respondsToSelector:@selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:)])
         *result = [wd webView:wv runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultText];
     else
         *result = [[WebDefaultUIDelegate sharedUIDelegate] webView:wv runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultText initiatedByFrame:_frame];
@@ -430,7 +426,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 {
     WebView *wv = [self webView];
     id wd = [wv UIDelegate];
-    if ([wd respondsToSelector: @selector(webView:addMessageToConsole:)])
+    if ([wd respondsToSelector:@selector(webView:addMessageToConsole:)])
         [wd webView:wv addMessageToConsole:message];
 }
 
@@ -759,12 +755,12 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 }
 
 - (WebCoreFrameBridge *)createChildFrameNamed:(NSString *)frameName 
-                                 withURL:(NSURL *)URL
-                                referrer:(NSString *)referrer
-                              renderPart:(WebCoreRenderPart *)childRenderPart
-                         allowsScrolling:(BOOL)allowsScrolling 
-                             marginWidth:(int)width
-                            marginHeight:(int)height
+                                      withURL:(NSURL *)URL
+                                     referrer:(NSString *)referrer
+                                   renderPart:(WebCoreRenderPart *)childRenderPart
+                              allowsScrolling:(BOOL)allowsScrolling 
+                                  marginWidth:(int)width
+                                 marginHeight:(int)height
 {
     BOOL hideReferrer;
     if (![self canLoadURL:URL fromReferrer:referrer hideReferrer:&hideReferrer])
@@ -796,7 +792,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     WebHistoryItem *item = [_frame _itemForSavingDocState];
     LOG(Loading, "%@: saving form state from to 0x%x", [_frame name], item);
     if (item) {
-        [item setDocumentState: documentState];
+        [item setDocumentState:documentState];
         // You might think we could save the scroll state here too, but unfortunately this
         // often gets called after WebFrame::_transitionToCommitted has restored the scroll
         // position of the next document.
@@ -809,13 +805,13 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return [[_frame _itemForRestoringDocState] documentState];
 }
 
-- (BOOL)saveDocumentToPageCache: documentInfo
+- (BOOL)saveDocumentToPageCache:(id)documentInfo
 {
     WebHistoryItem *item = [_frame _itemForSavingDocState];
     if (![item hasPageCache]) {
         return false;
     }
-    [[item pageCache] setObject: documentInfo forKey: WebCorePageCacheStateKey];
+    [[item pageCache] setObject:documentInfo forKey:WebCorePageCacheStateKey];
     return true;
 }
 
@@ -1394,9 +1390,9 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 
 - (jobject)getAppletInView:(NSView *)view
 {
-    jobject applet = 0;
+    jobject applet;
 
-    if ([view respondsToSelector: @selector(webPlugInGetApplet)])
+    if ([view respondsToSelector:@selector(webPlugInGetApplet)])
         applet = [view webPlugInGetApplet];
     else
         applet = [self pollForAppletInView:view];
@@ -1408,11 +1404,11 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
 // until a timeout is exceeded.  It will return nil if the timeour is
 // exceeded.
 // Deprecated, use getAppletInView:.
-- (jobject)pollForAppletInView: (NSView *)view
+- (jobject)pollForAppletInView:(NSView *)view
 {
     jobject applet = 0;
     
-    if ([view respondsToSelector: @selector(pollForAppletInWindow:)]) {
+    if ([view respondsToSelector:@selector(pollForAppletInWindow:)]) {
         // The Java VM needs the containing window of the view to
         // initialize.  The view may not yet be in the window's view 
         // hierarchy, so we have to pass the window when requesting
@@ -1563,7 +1559,7 @@ static id <WebFormDelegate> formDelegate(WebFrameBridge *self)
     [wv _addScrollerDashboardRegions:regions];
     
     if (![self _compareDashboardRegions:regions]) {
-        if ([wd respondsToSelector: @selector(webView:dashboardRegionsChanged:)]) {
+        if ([wd respondsToSelector:@selector(webView:dashboardRegionsChanged:)]) {
             [wd webView:wv dashboardRegionsChanged:regions];
             [lastDashboardRegions release];
             lastDashboardRegions = [regions retain];
@@ -1665,7 +1661,7 @@ static NSCharacterSet *_getPostSmartSet(void)
     return [isPreviousCharacter ? _getPreSmartSet() : _getPostSmartSet() characterIsMember:c];
 }
 
-- (WebCoreFrameBridge *)createModalDialogWithURL:(NSURL *)URL
+- (WebCorePageBridge *)createModalDialogWithURL:(NSURL *)URL
 {
     ASSERT(_frame != nil);
 
@@ -1687,7 +1683,7 @@ static NSCharacterSet *_getPostSmartSet(void)
     else
         newWebView = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentWebView createWebViewWithRequest:request];
 
-    return [[newWebView mainFrame] _bridge];
+    return [newWebView _pageBridge];
 }
 
 - (BOOL)canRunModal

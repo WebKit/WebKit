@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,74 +26,71 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebViewInternal.h>
+#import "WebViewInternal.h"
 
-#import <WebKit/DOM.h>
-#import <WebKit/DOMExtensions.h>
-#import <WebKit/WebAssertions.h>
-#import <WebKit/WebBackForwardList.h>
-#import <WebKit/WebBaseNetscapePluginView.h>
-#import <WebKit/WebFrameBridge.h>
-#import <WebKit/WebPageBridge.h>
-#import <WebKit/WebDashboardRegion.h>
-#import <WebKit/WebDataProtocol.h>
-#import <WebKit/WebDataSourcePrivate.h>
-#import <WebKit/WebDefaultEditingDelegate.h>
-#import <WebKit/WebDefaultFrameLoadDelegate.h>
-#import <WebKit/WebDefaultPolicyDelegate.h>
-#import <WebKit/WebDefaultResourceLoadDelegate.h>
-#import <WebKit/WebDefaultScriptDebugDelegate.h>
-#import <WebKit/WebDefaultUIDelegate.h>
-#import <WebKit/WebDOMOperationsPrivate.h>
-#import <WebKit/WebDocument.h>
-#import <WebKit/WebDocumentInternal.h>
-#import <WebKit/WebDynamicScrollBarsView.h>
-#import <WebKit/WebDownload.h>
-#import <WebKit/WebDownloadInternal.h>
-#import <WebKit/WebEditingDelegate.h>
-#import <WebKit/WebFormDelegatePrivate.h>
-#import <WebKit/WebFrameInternal.h>
-#import <WebKit/WebFrameViewInternal.h>
-#import <WebKit/WebHistoryItemPrivate.h>
-#import <WebKit/WebHTMLRepresentation.h>
-#import <WebKit/WebHTMLViewInternal.h>
-#import <WebKit/WebIconDatabase.h>
-#import <WebKit/WebKitErrors.h>
-#import <WebKit/WebKitLogging.h>
-#import <WebKit/WebLocalizableStrings.h>
-#import <WebKit/WebKitNSStringExtras.h>
-#import <WebKit/WebKitStatisticsPrivate.h>
-#import <WebKit/WebNSDataExtras.h>
-#import <WebKit/WebNSDataExtrasPrivate.h>
-#import <WebKit/WebNSDictionaryExtras.h>
-#import <WebKit/WebNSObjectExtras.h>
-#import <WebKit/WebNSPasteboardExtras.h>
-#import <WebKit/WebNSPrintOperationExtras.h>
-#import <WebKit/WebNSEventExtras.h>
-#import <WebKit/WebNSURLExtras.h>
-#import <WebKit/WebNSURLRequestExtras.h>
-#import <WebKit/WebNSUserDefaultsExtras.h>
-#import <WebKit/WebNSViewExtras.h>
-#import <WebKit/WebPluginDatabase.h>
-#import <WebKit/WebPolicyDelegate.h>
-#import <WebKit/WebPreferencesPrivate.h>
-#import <WebKit/WebResourceLoadDelegate.h>
-#import <WebKit/WebScriptDebugDelegatePrivate.h>
-#import <WebKit/WebTextView.h>
-#import <WebKit/WebTextRepresentation.h>
-#import <WebKit/WebTextRenderer.h>
-#import <WebKit/WebUIDelegate.h>
-#import <WebKit/WebUIDelegatePrivate.h>
-#import <WebKit/WebInspector.h>
-#import <WebKitSystemInterface.h>
-
+#import "WebAssertions.h"
+#import "WebBackForwardList.h"
+#import "WebBaseNetscapePluginView.h"
+#import "WebDOMOperationsPrivate.h"
+#import "WebDashboardRegion.h"
+#import "WebDataProtocol.h"
+#import "WebDataSourcePrivate.h"
+#import "WebDefaultEditingDelegate.h"
+#import "WebDefaultFrameLoadDelegate.h"
+#import "WebDefaultPolicyDelegate.h"
+#import "WebDefaultResourceLoadDelegate.h"
+#import "WebDefaultScriptDebugDelegate.h"
+#import "WebDefaultUIDelegate.h"
+#import "WebDocument.h"
+#import "WebDocumentInternal.h"
+#import "WebDownload.h"
+#import "WebDownloadInternal.h"
+#import "WebDynamicScrollBarsView.h"
+#import "WebEditingDelegate.h"
+#import "WebFormDelegatePrivate.h"
+#import "WebFrameBridge.h"
+#import "WebFrameInternal.h"
+#import "WebFrameViewInternal.h"
+#import "WebHTMLRepresentation.h"
+#import "WebHTMLViewInternal.h"
+#import "WebHistoryItemPrivate.h"
+#import "WebIconDatabase.h"
+#import "WebInspector.h"
+#import "WebKitErrors.h"
+#import "WebKitLogging.h"
+#import "WebKitNSStringExtras.h"
+#import "WebKitStatisticsPrivate.h"
+#import "WebLocalizableStrings.h"
+#import "WebNSDataExtras.h"
+#import "WebNSDataExtrasPrivate.h"
+#import "WebNSDictionaryExtras.h"
+#import "WebNSEventExtras.h"
+#import "WebNSObjectExtras.h"
+#import "WebNSPasteboardExtras.h"
+#import "WebNSPrintOperationExtras.h"
+#import "WebNSURLExtras.h"
+#import "WebNSURLRequestExtras.h"
+#import "WebNSUserDefaultsExtras.h"
+#import "WebNSViewExtras.h"
+#import "WebPageBridge.h"
+#import "WebPluginDatabase.h"
+#import "WebPolicyDelegate.h"
+#import "WebPreferencesPrivate.h"
+#import "WebResourceLoadDelegate.h"
+#import "WebScriptDebugDelegatePrivate.h"
+#import "WebTextRenderer.h"
+#import "WebTextRepresentation.h"
+#import "WebTextView.h"
+#import "WebUIDelegate.h"
+#import "WebUIDelegatePrivate.h"
+#import <CoreFoundation/CFSet.h>
+#import <Foundation/NSURLConnection.h>
 #import <WebCore/WebCoreEncodings.h>
 #import <WebCore/WebCoreSettings.h>
 #import <WebCore/WebCoreView.h>
-
-#import <CoreFoundation/CFSet.h>
-
-#import <Foundation/NSURLConnection.h>
+#import <WebKit/DOM.h>
+#import <WebKit/DOMExtensions.h>
+#import <WebKitSystemInterface.h>
 #import <objc/objc-runtime.h>
 
 #if __ppc__
@@ -1608,17 +1605,12 @@ NSMutableDictionary *countInvocations;
                                                  name:WebPreferencesChangedNotification object:[self preferences]];
 }
 
-- init
+- initWithFrame:(NSRect)f
 {
-    return [self initWithFrame: NSZeroRect frameName: nil groupName: nil];
+    return [self initWithFrame:f frameName:nil groupName:nil];
 }
 
-- initWithFrame: (NSRect)f
-{
-    return [self initWithFrame: f frameName:nil groupName:nil];
-}
-
-- initWithFrame: (NSRect)f frameName: (NSString *)frameName groupName: (NSString *)groupName;
+- initWithFrame:(NSRect)f frameName:(NSString *)frameName groupName:(NSString *)groupName;
 {
     self = [super initWithFrame:f];
     if (!self)
@@ -1650,35 +1642,45 @@ NS_DURING
 
     NSString *frameName;
     NSString *groupName;
-    
+    WebPreferences *preferences;
+    BOOL useBackForwardList;
+
     result = [super initWithCoder:decoder];
     result->_private = [[WebViewPrivate alloc] init];
-    
-    // We don't want any of the archived subviews.  The subviews will always
+
+    // We don't want any of the archived subviews. The subviews will always
     // be created in _commonInitializationFrameName:groupName:.
     [[result subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
-    
-    if ([decoder allowsKeyedCoding]){
+
+    if ([decoder allowsKeyedCoding]) {
         frameName = [decoder decodeObjectForKey:@"FrameName"];
         groupName = [decoder decodeObjectForKey:@"GroupName"];
-                
-        [result setPreferences: [decoder decodeObjectForKey:@"Preferences"]];
+        preferences = [decoder decodeObjectForKey:@"Preferences"];
 	result->_private->useBackForwardList = [decoder decodeBoolForKey:@"UseBackForwardList"];
-
-        LOG (Encoding, "FrameName = %@, GroupName = %@, useBackForwardList = %d\n", frameName, groupName, (int)_private->useBackForwardList);
-    }
-    else {
+    } else {
         int version;
-    
         [decoder decodeValueOfObjCType:@encode(int) at:&version];
         frameName = [decoder decodeObject];
         groupName = [decoder decodeObject];
-        [result setPreferences: [decoder decodeObject]];
+        preferences = [decoder decodeObject];
         if (version > 1)
-            [decoder decodeValuesOfObjCTypes:"c",&result->_private->useBackForwardList];
+            [decoder decodeValuesOfObjCTypes:"c", &useBackForwardList];
     }
+
+    if (![frameName isKindOfClass:[NSString class]])
+        frameName = nil;
+    if (![groupName isKindOfClass:[NSString class]])
+        groupName = nil;
+    if (![preferences isKindOfClass:[WebPreferences class]])
+        preferences = nil;
+
+    LOG(Encoding, "FrameName = %@, GroupName = %@, useBackForwardList = %d\n", frameName, groupName, (int)useBackForwardList);
+
+    if (preferences)
+        [result setPreferences:preferences];
+    result->_private->useBackForwardList = useBackForwardList;
     [result _commonInitializationWithFrameName:frameName groupName:groupName];
-    
+
 NS_HANDLER
 
     result = nil;
@@ -1693,22 +1695,21 @@ NS_ENDHANDLER
 {
     [super encodeWithCoder:encoder];
 
-    if ([encoder allowsKeyedCoding]){
+    if ([encoder allowsKeyedCoding]) {
         [encoder encodeObject:[[self mainFrame] name] forKey:@"FrameName"];
         [encoder encodeObject:[self groupName] forKey:@"GroupName"];
         [encoder encodeObject:[self preferences] forKey:@"Preferences"];
 	[encoder encodeBool:_private->useBackForwardList forKey:@"UseBackForwardList"];
-
-        LOG (Encoding, "FrameName = %@, GroupName = %@, useBackForwardList = %d\n", [[self mainFrame] name], [self groupName], (int)_private->useBackForwardList);
-    }
-    else {
+    } else {
         int version = WebViewVersion;
         [encoder encodeValueOfObjCType:@encode(int) at:&version];
         [encoder encodeObject:[[self mainFrame] name]];
         [encoder encodeObject:[self groupName]];
         [encoder encodeObject:[self preferences]];
-        [encoder encodeValuesOfObjCTypes:"c",&_private->useBackForwardList];
+        [encoder encodeValuesOfObjCTypes:"c", &_private->useBackForwardList];
     }
+
+    LOG(Encoding, "FrameName = %@, GroupName = %@, useBackForwardList = %d\n", [[self mainFrame] name], [self groupName], (int)_private->useBackForwardList);
 }
 
 - (void)dealloc
@@ -1741,18 +1742,17 @@ NS_ENDHANDLER
     [super finalize];
 }
 
-- (void)setPreferences: (WebPreferences *)prefs
+- (void)setPreferences:(WebPreferences *)prefs
 {
-    if (_private->preferences != prefs){
-        [[NSNotificationCenter defaultCenter] removeObserver: self name: WebPreferencesChangedNotification object: [self preferences]];
-        [WebPreferences _removeReferenceForIdentifier: [_private->preferences identifier]];
+    if (_private->preferences != prefs) {
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:WebPreferencesChangedNotification object:[self preferences]];
+        [WebPreferences _removeReferenceForIdentifier:[_private->preferences identifier]];
         [_private->preferences release];
         _private->preferences = [prefs retain];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:)
-                                                    name:WebPreferencesChangedNotification object:[self preferences]];
-
+            name:WebPreferencesChangedNotification object:[self preferences]];
         [[NSNotificationCenter defaultCenter]
-           postNotificationName:WebPreferencesChangedNotification object:prefs userInfo:nil];
+            postNotificationName:WebPreferencesChangedNotification object:prefs userInfo:nil];
     }
 }
 
@@ -1763,8 +1763,10 @@ NS_ENDHANDLER
 
 - (void)setPreferencesIdentifier:(NSString *)anIdentifier
 {
-    if (![anIdentifier isEqual: [[self preferences] identifier]]){
-        [self setPreferences: [[WebPreferences alloc] initWithIdentifier:anIdentifier]];
+    if (![anIdentifier isEqual:[[self preferences] identifier]]) {
+        WebPreferences *prefs = [[WebPreferences alloc] initWithIdentifier:anIdentifier];
+        [self setPreferences:prefs];
+        [prefs release];
     }
 }
 
@@ -1843,8 +1845,6 @@ NS_ENDHANDLER
         return nil;
 
     return [(WebFrameBridge *)[_private->_pageBridge mainFrame] webFrame];
-
-    return nil;
 }
 
 - (WebBackForwardList *)backForwardList
@@ -3245,6 +3245,15 @@ FOR_EACH_RESPONDER_SELECTOR(FORWARD)
     }
     
     return foundSome;
+}
+
+@end
+
+@implementation WebView (WebViewBridge)
+
+- (WebPageBridge *)_pageBridge
+{
+    return _private->_pageBridge;
 }
 
 @end

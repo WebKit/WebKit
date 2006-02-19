@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +26,12 @@
 #import "config.h"
 #import "BrowserExtensionMac.h"
 
+#import "FrameTree.h"
 #import "KWQExceptions.h"
 #import "MacFrame.h"
 #import "WebCoreFrameBridge.h"
+#import "WebCorePageBridge.h"
 #import <kxmlcore/Assertions.h>
-#import "FrameTree.h"
 
 namespace WebCore {
 
@@ -109,15 +110,15 @@ void BrowserExtensionMac::createNewWindow(const KURL &url,
         }
     }
     
-    WebCoreFrameBridge *bridge;
+    WebCorePageBridge *page;
     if (winArgs.dialog)
-        bridge = [m_frame->bridge() createModalDialogWithURL:url.getNSURL()];
+        page = [m_frame->bridge() createModalDialogWithURL:url.getNSURL()];
     else
-        bridge = [m_frame->bridge() createWindowWithURL:url.getNSURL() frameName:frameName];
-
-    if (!bridge)
+        page = [m_frame->bridge() createWindowWithURL:url.getNSURL()];
+    if (!page)
         return;
     
+    WebCoreFrameBridge *bridge = [page mainFrame];
     if ([bridge impl])
 	[bridge impl]->tree()->setName(urlArgs.frameName);
     
@@ -132,7 +133,7 @@ void BrowserExtensionMac::createNewWindow(const KURL &url,
     NSRect windowFrame = [bridge windowFrame];
 
     NSSize size = { 1, 1 }; // workaround for 4213314
-    NSSize scaleRect = [[bridge webView] convertSize:size toView:nil];
+    NSSize scaleRect = [[page outerView] convertSize:size toView:nil];
     float scaleX = scaleRect.width;
     float scaleY = scaleRect.height;
 
@@ -150,7 +151,7 @@ void BrowserExtensionMac::createNewWindow(const KURL &url,
     // 'width' and 'height' specify the dimensions of the WebView, but we can only resize the window, 
     // so we compute a delta, translate it to window coordinates, and use the translated delta 
     // to resize the window.
-    NSRect webViewFrame = [[bridge webView] frame];
+    NSRect webViewFrame = [[page outerView] frame];
     if (winArgs.widthSet) {
 	float widthDelta = (winArgs.width - webViewFrame.size.width) * scaleX;
 	windowFrame.size.width += widthDelta;

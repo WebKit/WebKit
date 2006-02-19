@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,12 +28,9 @@
 
 // This header contains WebView declarations that can be used anywhere in the Web Kit, but are neither SPI nor API.
 
-#import <WebKit/WebViewPrivate.h>
+#import "WebViewPrivate.h"
 
-@class DOMCSSStyleDeclaration;
-@class WebBackForwardList;
-
-@protocol WebDocumentDragging;
+@class WebPageBridge;
 
 @interface WebView (WebViewEditingExtras)
 - (BOOL)_interceptEditingKeyEvent:(NSEvent *)event;
@@ -47,4 +44,8 @@
 + (void)_makeAllWebViewsPerformSelector:(SEL)selector;
 - (void)_removeFromAllWebViewsSet;
 - (void)_addToAllWebViewsSet;
+@end
+
+@interface WebView (WebViewBridge)
+- (WebPageBridge *)_pageBridge;
 @end

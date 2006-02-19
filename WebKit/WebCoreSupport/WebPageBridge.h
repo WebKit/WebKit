@@ -26,12 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <Foundation/Foundation.h>
-
 #import <WebCore/WebCorePageBridge.h>
 
-@class WebPageBridge;
-@class WebFrameBridge;
 @class WebFrameView;
 @class WebView;
 

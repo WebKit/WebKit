@@ -2823,7 +2823,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (WebView *)webView
 {
-    return [[self _bridge] webView];
+    return [[[self _bridge] page] webView];
 }
 
 - (DOMDocument *)DOMDocument

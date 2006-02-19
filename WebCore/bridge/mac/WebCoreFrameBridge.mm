@@ -367,10 +367,8 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 - (WebCoreFrameBridge *)nextFrameWithWrap:(BOOL)wrapFlag
 {
     WebCoreFrameBridge *result = [self traverseNextFrameStayWithin:nil];
-
     if (!result && wrapFlag)
-        return [self mainFrame];
-
+        return [[self page] mainFrame];
     return result;
 }
 
@@ -395,7 +393,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (void)setFrameNamespace:(NSString *)ns
 {
-    ASSERT(self == [self mainFrame]);
+    ASSERT(self == [[self page] mainFrame]);
 
     if (ns != _frameNamespace){
         [WebCoreFrameNamespaces removeFrame:self fromNamespace:_frameNamespace];
@@ -408,7 +406,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (NSString *)frameNamespace
 {
-    ASSERT(self == [self mainFrame]);
+    ASSERT(self == [[self page] mainFrame]);
     return _frameNamespace;
 }
 
@@ -419,7 +417,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         return YES;
 
     //   - allow access if the two frames are in the same window
-    if ([self mainFrame] == [source mainFrame])
+    if ([self page] == [source page])
         return YES;
 
     //   - allow if the request is made from a local file.
@@ -464,7 +462,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (WebCoreFrameBridge *)_frameInAnyWindowNamed:(NSString *)name sourceFrame:(WebCoreFrameBridge *)source
 {
-    ASSERT(self == [self mainFrame]);
+    ASSERT(self == [[self page] mainFrame]);
 
     // Try this WebView first.
     WebCoreFrameBridge *frame = [self _descendantFrameNamed:name sourceFrame:source];
@@ -491,7 +489,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
         return self;
     
     if ([name isEqualToString:@"_top"])
-        return [self mainFrame];
+        return [[self page] mainFrame];
     
     if ([name isEqualToString:@"_parent"]) {
         WebCoreFrameBridge *parent = [self parent];
@@ -506,7 +504,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
     // Search in the main frame for this window then in others.
     if (!frame)
-        frame = [[self mainFrame] _frameInAnyWindowNamed:name sourceFrame:self];
+        frame = [[[self page] mainFrame] _frameInAnyWindowNamed:name sourceFrame:self];
 
     return frame;
 }
@@ -719,8 +717,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 - (void)restoreDocumentState
 {
     DocumentImpl *doc = m_frame->document();
-    
-    if (doc != 0){
+    if (doc) {
         NSArray *documentState = [self documentState];
         
         QStringList s;
@@ -740,9 +737,8 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (BOOL)scrollOverflowInDirection:(WebScrollDirection)direction granularity:(WebScrollGranularity)granularity
 {
-    if (m_frame == NULL) {
+    if (!m_frame)
         return NO;
-    }
     return m_frame->scrollOverflow((KWQScrollDirection)direction, (KWQScrollGranularity)granularity);
 }
 
@@ -824,15 +820,15 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     // If we own the view, delete the old one - otherwise the render m_frame will take care of deleting the view.
     [self removeFromFrame];
 
-    FrameView* kview = new FrameView(m_frame);
-    m_frame->setView(kview);
-    kview->deref();
+    FrameView* frameView = new FrameView(m_frame);
+    m_frame->setView(frameView);
+    frameView->deref();
 
-    kview->setView(view);
+    frameView->setView(view);
     if (mw >= 0)
-        kview->setMarginWidth(mw);
+        frameView->setMarginWidth(mw);
     if (mh >= 0)
-        kview->setMarginHeight(mh);
+        frameView->setMarginHeight(mh);
 }
 
 - (void)scrollToAnchor:(NSString *)a
@@ -1128,7 +1124,7 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
 {
     // If this isn't the main frame, it must have a render m_frame set, or it
     // won't ever get installed in the view hierarchy.
-    ASSERT(self == [self mainFrame] || m_frame->ownerRenderer());
+    ASSERT(self == [[self page] mainFrame] || m_frame->ownerRenderer());
 
     m_frame->view()->setView(view);
     // FIXME: frame tries to do this too, is it needed?

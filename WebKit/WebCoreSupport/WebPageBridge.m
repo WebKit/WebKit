@@ -50,4 +50,9 @@
     return _webView;
 }
 
+- (NSView *)outerView
+{
+    return _webView;
+}
+
 @end

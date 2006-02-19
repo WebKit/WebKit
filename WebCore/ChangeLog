@@ -1,3 +1,27 @@
+2006-02-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - cut out a little unneeded bridge code
+
+        * bridge/mac/WebCoreFrameBridge.h: Removed frame name from createWindowWithURL: method
+        and changed it to return a page bridge. Also made createModalDialogWithURL: method
+        return a page bridge. Removed the mainFrame and webView methods.
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge nextFrameWithWrap:]): Use page to get to main frame.
+        (-[WebCoreFrameBridge setFrameNamespace:]): Ditto.
+        (-[WebCoreFrameBridge frameNamespace]): Ditto.
+        (-[WebCoreFrameBridge _shouldAllowAccessFrom:]): Ditto.
+        (-[WebCoreFrameBridge _frameInAnyWindowNamed:sourceFrame:]): Ditto.
+        (-[WebCoreFrameBridge findFrameNamed:]): Ditto.
+        (-[WebCoreFrameBridge installInFrame:]): Ditto.
+
+        * bridge/mac/WebCorePageBridge.h: Added outerView method to replace webView method
+        on the frame bridge.
+
+        * bridge/mac/BrowserExtensionMac.mm: (WebCore::BrowserExtensionMac::createNewWindow):
+        Update to use a page bridge instead of frame bridge.
+
 2006-02-19  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber-stamped by Anders.

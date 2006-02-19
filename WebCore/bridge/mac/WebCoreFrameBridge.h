@@ -164,8 +164,7 @@ typedef enum {
     WebUndoActionTyping,
 } WebUndoAction;
 
-typedef enum
-{
+typedef enum {
     ObjectElementNone,
     ObjectElementImage,
     ObjectElementFrame,
@@ -224,6 +223,7 @@ typedef enum
 
 - (WebCoreFrameBridge *)childFrameNamed:(NSString *)name;
 - (WebCoreFrameBridge *)findFrameNamed:(NSString *)name;
+
 - (void)setFrameNamespace:(NSString *)ns;
 - (NSString *)frameNamespace;
 
@@ -489,20 +489,18 @@ typedef enum
 
 @protocol WebCoreFrameBridge
 
-- (WebCoreFrameBridge *)mainFrame;
 - (void)frameDetached;
 - (NSView *)documentView;
-- (WebView *)webView;
 
 - (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer reload:(BOOL)reload userGesture:(BOOL)forUser target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
 - (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSArray *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
 
-- (WebCoreFrameBridge *)createWindowWithURL:(NSURL *)URL frameName:(NSString *)name;
+- (WebCorePageBridge *)createWindowWithURL:(NSURL *)URL;
 - (void)showWindow;
 
 - (BOOL)canRunModal;
 - (BOOL)canRunModalNow;
-- (WebCoreFrameBridge *)createModalDialogWithURL:(NSURL *)URL;
+- (WebCorePageBridge *)createModalDialogWithURL:(NSURL *)URL;
 - (void)runModal;
 
 - (NSString *)userAgentForURL:(NSURL *)URL;

@@ -1,3 +1,41 @@
+2006-02-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - cut out a little unneeded bridge code
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge webView]): Added. Helper, since the WebCore side of the bridge no longer
+        has this method.
+        (-[WebFrameBridge createWindowWithURL:]): Removed the frameName parameter -- this is now
+        handled on the WebCore side. Also return a page bridge instead of a frame bridge.
+        (-[WebFrameBridge createModalDialogWithURL:]): Changed to return a page bridge instead of
+        a frame bridge.
+
+        * WebView/WebFrame.m: (-[WebFrame webView]): Change to get the webView from the page bridge
+        instead of the frame bridge, since it's a per-page thing.
+
+        * WebView/WebView.m: Removed init method since it just does what the default does (calls
+        initWithFrame: with a zero rect).
+        (-[WebView initWithCoder:]): Added checking so that if the obejcts have the wrong type
+        we will fail gracefully instead of hitting "method not found" and the like.
+        (-[WebView setPreferencesIdentifier:]): Fix storage leak. The WebPreferences object was
+        not released.
+        (-[WebView mainFrame]): Removed excess "return nil".
+        (-[WebView _pageBridge]): Added. Helper to let you go from the WebView to the bridge
+        from outside the WebView class.
+        * WebView/WebViewInternal.h: Put _pageBridge into an internal header.
+
+        * WebCoreSupport/WebPageBridge.m: (-[WebPageBridge outerView]): Added. Replaces "webView"
+        as public method to tell the WebCore side about the view everything's embedded in.
+
+        - other cleanup
+
+        * WebCoreSupport/WebPageBridge.h: Removed some unneeded declarations.
+
+        * Plugins/WebBaseNetscapePluginView.m: (-[WebBaseNetscapePluginView loadPluginRequest:]):
+        Rearrange code so it doesn't have to get the main frame twice.
+
 2006-02-18  Maciej Stachowiak  <mjs@apple.com>
 
         Not reviewed.
