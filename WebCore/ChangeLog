@@ -1943,7 +1943,7 @@
         * platform/image-decoders/png/PNGImageDecoder.cpp:
         (WebCore::PNGImageDecoder::rowAvailable):
 
-06-02-11  Geoffrey Garen  <ggaren@apple.com>
+2006-02-11  Geoffrey Garen  <ggaren@apple.com>
 
         - Fixed bad free resulting from 0 legnth StringImpl
 
