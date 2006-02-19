@@ -1,7 +1,7 @@
 /*      
     WebKitSystemInterface.h
-    Copyright (C) 2005 Apple Computer, Inc. All rights reserved.    
-    
+    Copyright (C) 2005, 2006 Apple Computer, Inc. All rights reserved.    
+
     Public header file.
 */
 
@@ -87,7 +87,16 @@ CFReadStreamRef WKCreateCustomCFReadStream(void *(*formCreate)(CFReadStreamRef, 
     void (*formUnschedule)(CFReadStreamRef, CFRunLoopRef, CFStringRef, void *),
     void *context);
 
+void WKDrawFocusRing(CGContextRef context, CGRect clipRect, CGColorRef color, int radius);
+    // Ignore the context's clipping.
+    // The CG context's current path is the focus ring's path.
+    // A color of 0 means "use system focus ring color".
+    // A radius of 0 means "use default focus ring radius".
+
 void WKSetFocusRingStyle(NSFocusRingPlacement placement, int radius, NSColor *color);
+    // Deprecated (even more than the rest of this file).
+    // Keeping this here until WebKit switches entirely to WKDrawFocusRing.
+
 void WKSetDragImage(NSImage *image, NSPoint offset);
 
 void WKSendUserChangeNotifications(void);
