@@ -5,7 +5,7 @@
 <h2>HTML Editing</h2>
 
 <h3>Overview</h3>
-Welcome to the HTML editing home page.  HTML editing is a new feature that shipped with Safari 1.3 on Panther and
+<p>Welcome to the HTML editing home page.  HTML editing is a new feature that shipped with Safari 1.3 on Panther and
 Safari 2.0 on Tiger.  Most importantly the WebKit editing engine is used to compose mail messages in Mail.app on Tiger.  HTML
 editing can also be used in Web pages using WinIE-compatible APIs like <i>contentEditable</i> and <i>designMode</i>.</p>
 
@@ -19,16 +19,12 @@ in-page editing support via <i>contentEditable</i>.
 
 <h3>Get Involved!</h3>
 
-<a href="http://bugzilla.opendarwin.org/buglist.cgi?query_format=advanced&short_desc_type=allwordssubstr&short_desc=&product=Web+Kit&component=HTML+Editing&long_desc_type=substring&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&emailassigned_to1=1&emailtype1=substring&email1=&emailassigned_to2=1&emailreporter2=1&emailcc2=1&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&chfieldfrom=&chfieldto=Now&chfieldvalue=&cmdtype=doit&order=Reuse+same+sort+as+last+time&field0-0-0=noop&type0-0-0=noop&value0-0-0=">
+<a href="http://bugzilla.opendarwin.org/buglist.cgi?product=WebKit&component=HTML+Editing&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&resolution=---">
 View bugs in the HTML editing component on OpenDarwin.</a>
 </p>
 
 Below are some of the tasks that need work in HTML editing.
 
-<dt>Implement tab stop support</dt>
-<dd>Right now WebCore's HTML parser just inserts a sequence of spaces when a tab character is encountered in the source.
-This means that tab stops in Mail.app no longer work in Tiger.  We are working to leave tabs in the DOM and to make sure that
-the rendering code does the right thing when white-space is set to pre.
 <dt>Improve contentEditable divs</dt>
 <dd>Right now there are a number of issues with editable divs in a Web page.  The selection highlighting is not confined to the div,
 and extending the selection across editable and non-editable content should not be possible.  In addition WebKit always clears
