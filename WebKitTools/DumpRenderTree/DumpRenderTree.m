@@ -94,7 +94,7 @@
 }
 @end
 
-static void dumpRenderTree(const char *filename);
+static void dumpRenderTree(const char *pathOrURL);
 static NSString *md5HashStringForBitmap(NSBitmapImageRep *bitmap);
 
 static volatile BOOL done;
@@ -732,18 +732,23 @@ static void dump(void)
 
 @end
 
-static void dumpRenderTree(const char *filename)
+static void dumpRenderTree(const char *pathOrURL)
 {
-    CFStringRef filenameString = CFStringCreateWithCString(NULL, filename, kCFStringEncodingUTF8);
-    if (!filenameString) {
+    CFStringRef pathOrURLString = CFStringCreateWithCString(NULL, pathOrURL, kCFStringEncodingUTF8);
+    if (!pathOrURLString) {
         fprintf(stderr, "can't parse filename as UTF-8\n");
         return;
     }
 
-    CFURLRef URL = CFURLCreateWithFileSystemPath(NULL, filenameString, kCFURLPOSIXPathStyle, FALSE);
+    CFURLRef URL;
+    if (CFStringHasPrefix(pathOrURLString, CFSTR("http://")))
+        URL = CFURLCreateWithString(NULL, pathOrURLString, NULL);
+    else
+        URL = CFURLCreateWithFileSystemPath(NULL, pathOrURLString, kCFURLPOSIXPathStyle, FALSE);
+    
     if (!URL) {
-        CFRelease(filenameString);
-        fprintf(stderr, "can't turn %s into a CFURL\n", filename);
+        CFRelease(pathOrURLString);
+        fprintf(stderr, "can't turn %s into a CFURL\n", pathOrURL);
         return;
     }
 
@@ -754,7 +759,7 @@ static void dumpRenderTree(const char *filename)
     dumpTitleChanges = NO;
     if (currentTest != nil)
         CFRelease(currentTest);
-    currentTest = (NSString *)filenameString;
+    currentTest = (NSString *)pathOrURLString;
 
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     [frame loadRequest:[NSURLRequest requestWithURL:(NSURL *)URL]];

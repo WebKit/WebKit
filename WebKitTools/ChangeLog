@@ -1,5 +1,15 @@
 2006-02-19  Alexey Proskuryakov  <ap@nypop.com>
 
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7308
+          DumpRenderTree should be able to load files via HTTP
+
+        * DumpRenderTree/DumpRenderTree.m: (dumpRenderTree):
+        Handle tests starting with "http://" as real URLs, not file system paths.
+
+2006-02-19  Alexey Proskuryakov  <ap@nypop.com>
+
         Reviewed by Maciej.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7357
