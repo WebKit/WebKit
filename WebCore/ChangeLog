@@ -1,3 +1,19 @@
+2006-02-17  Maciej Stachowiak <mjs@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix win32 build
+
+        * css/css_grammar.y: 
+        * khtml/html/html_objectimpl.cpp: #ifdef out all bindings code
+        (WebCore::HTMLAppletElementImpl::~HTMLAppletElementImpl):
+        (WebCore::HTMLAppletElementImpl::detach):
+        (WebCore::HTMLEmbedElementImpl::~HTMLEmbedElementImpl):
+        (WebCore::HTMLEmbedElementImpl::detach):
+        (WebCore::HTMLObjectElementImpl::~HTMLObjectElementImpl):
+        (WebCore::HTMLObjectElementImpl::detach):
+        * khtml/html/html_objectimpl.h:
+
 2006-02-18  Alexander Kellett  <lypanov@kde.org>
 
         Reviewed by Maciej.
@@ -1927,7 +1943,7 @@
         * platform/image-decoders/png/PNGImageDecoder.cpp:
         (WebCore::PNGImageDecoder::rowAvailable):
 
->>06-02-11  Geoffrey Garen  <ggaren@apple.com>
+06-02-11  Geoffrey Garen  <ggaren@apple.com>
 
         - Fixed bad free resulting from 0 legnth StringImpl
 
