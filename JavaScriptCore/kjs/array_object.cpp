@@ -506,6 +506,7 @@ JSValue *ArrayProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, cons
           if (conversionFunction->isObject() && static_cast<JSObject *>(conversionFunction)->implementsCall()) {
             str += static_cast<JSObject *>(conversionFunction)->call(exec, o, List())->toString(exec);
           } else {
+            visitedElems.remove(thisObj);
             return throwError(exec, RangeError, "Can't convert " + o->className() + " object to string");
           }
         } else {

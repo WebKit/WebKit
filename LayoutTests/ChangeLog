@@ -1,3 +1,14 @@
+2006-02-18  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Maciej.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7343
+          REGRESSION: fast/js/toString-overrides.html fails when run multiple times
+
+        * fast/js/resources/toString-exception.js: Added.
+        * fast/js/toString-exception-expected.txt: Added.
+        * fast/js/toString-exception.html: Added.
+
 2006-02-18  Alexander Kellett  <lypanov@kde.org>
 
         Reviewed by Maciej.
