@@ -238,7 +238,7 @@ KCanvasResource *KRenderingDeviceQuartz::createResource(const KCResourceType &ty
     case RS_MASKER:
         return new KCanvasMaskerQuartz();
     }
-    ERROR("Failed to create resource of type: %i", type);
+    LOG_ERROR("Failed to create resource of type: %i", type);
     return 0;
 }
 

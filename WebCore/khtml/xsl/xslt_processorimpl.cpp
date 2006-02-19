@@ -61,7 +61,7 @@ static void parseErrorFunc(void *ctxt, const char *msg, ...)
     va_list args;
     va_start(args, msg);
     vasprintf(&errorMessage, msg, args);
-    ERROR("%s", errorMessage);
+    LOG_ERROR("%s", errorMessage);
     if (errorMessage)
         free(errorMessage);
     va_end(args);

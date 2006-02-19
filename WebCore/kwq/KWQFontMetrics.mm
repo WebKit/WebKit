@@ -113,7 +113,7 @@ void QFontMetrics::setFont(const QFont &font)
 int QFontMetrics::ascent() const
 {
     if (!data) {
-        ERROR("called ascent on an empty QFontMetrics");
+        LOG_ERROR("called ascent on an empty QFontMetrics");
         return 0;
     }
     
@@ -123,7 +123,7 @@ int QFontMetrics::ascent() const
 int QFontMetrics::descent() const
 {
     if (!data) {
-        ERROR("called descent on an empty QFontMetrics");
+        LOG_ERROR("called descent on an empty QFontMetrics");
         return 0;
     }
     
@@ -141,7 +141,7 @@ int QFontMetrics::height() const
 int QFontMetrics::lineSpacing() const
 {
     if (!data) {
-        ERROR("called lineSpacing on an empty QFontMetrics");
+        LOG_ERROR("called lineSpacing on an empty QFontMetrics");
         return 0;
     }
     return [data->getRenderer() lineSpacing];
@@ -150,7 +150,7 @@ int QFontMetrics::lineSpacing() const
 float QFontMetrics::xHeight() const
 {
     if (!data) {
-        ERROR("called xHeight on an empty QFontMetrics");
+        LOG_ERROR("called xHeight on an empty QFontMetrics");
         return 0;
     }
     return [data->getRenderer() xHeight];
@@ -159,7 +159,7 @@ float QFontMetrics::xHeight() const
 int QFontMetrics::width(const QString &qstring, int tabWidth, int xpos, int len) const
 {
     if (!data) {
-        ERROR("called width on an empty QFontMetrics");
+        LOG_ERROR("called width on an empty QFontMetrics");
         return 0;
     }
     
@@ -182,7 +182,7 @@ int QFontMetrics::width(const QString &qstring, int tabWidth, int xpos, int len)
 int QFontMetrics::width(const QChar *uchars, int len, int tabWidth, int xpos) const
 {
     if (!data) {
-        ERROR("called width on an empty QFontMetrics");
+        LOG_ERROR("called width on an empty QFontMetrics");
         return 0;
     }
     
@@ -203,7 +203,7 @@ int QFontMetrics::width(const QChar *uchars, int len, int tabWidth, int xpos) co
 float QFontMetrics::floatWidth(const QChar *uchars, int slen, int pos, int len, int tabWidth, int xpos, int letterSpacing, int wordSpacing, bool smallCaps) const
 {
     if (!data) {
-        ERROR("called floatWidth on an empty QFontMetrics");
+        LOG_ERROR("called floatWidth on an empty QFontMetrics");
         return 0;
     }
 
@@ -260,7 +260,7 @@ IntRect QFontMetrics::selectionRectForText(int x, int y, int h, int tabWidth, in
 int QFontMetrics::checkSelectionPoint(QChar *s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int letterSpacing, int wordSpacing, bool smallCaps, int x, bool reversed, bool dirOverride, bool includePartialGlyphs) const
 {
     if (!data) {
-        ERROR("called checkSelectionPoint on an empty QFontMetrics");
+        LOG_ERROR("called checkSelectionPoint on an empty QFontMetrics");
         return 0;
     }
     

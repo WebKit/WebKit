@@ -128,7 +128,7 @@ KWQSlot::KWQSlot(QObject *object, const char *member)
     } else if (KWQNamesMatch(member, SLOT(slotReceivedResponse(KIO::Job *, NSURLResponse *)))) {
         m_function = slotReceivedResponse;
     } else {
-        ERROR("trying to create a slot for unknown member %s", member);
+        LOG_ERROR("trying to create a slot for unknown member %s", member);
         return;
     }
     

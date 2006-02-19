@@ -107,7 +107,7 @@ QString KConfig::readEntry(const char *pKey, const QString& aDefault) const
 	return QString();
     }
     
-    ERROR("config %s not implemented", pKey);
+    LOG_ERROR("config %s not implemented", pKey);
     return QString();
 }
 
@@ -120,7 +120,7 @@ int KConfig::readNumEntry(const char *pKey, int nDefault) const
 	
 	return 0;
     }
-    ERROR("config %s not implemented", pKey);
+    LOG_ERROR("config %s not implemented", pKey);
     return nDefault;
 }
 
@@ -133,7 +133,7 @@ unsigned KConfig::readUnsignedNumEntry(const KHTMLSettings *settings, const char
 	    return 3;
 	}
     }
-    ERROR("config %s not implemented", pKey);
+    LOG_ERROR("config %s not implemented", pKey);
     return nDefault;
 }
 

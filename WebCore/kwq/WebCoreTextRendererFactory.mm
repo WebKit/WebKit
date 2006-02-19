@@ -94,7 +94,7 @@ static WebCoreTextRendererFactory *sharedFactory;
 
 - (WebCoreFont)fontWithFamilies:(NSString **)families traits:(NSFontTraitMask)traits size:(float)size
 {
-    ERROR("fontWithFamilies needs to be implemented in text renderer factory subclass");
+    LOG_ERROR("fontWithFamilies needs to be implemented in text renderer factory subclass");
     WebCoreFont font;
     WebCoreInitializeFont(&font);
     return font;
@@ -102,13 +102,13 @@ static WebCoreTextRendererFactory *sharedFactory;
 
 - (BOOL)isFontFixedPitch:(WebCoreFont)font
 {
-    ERROR("isFontFixedPitch needs to be implemented in text renderer factory subclass");
+    LOG_ERROR("isFontFixedPitch needs to be implemented in text renderer factory subclass");
     return NO;
 }
 
 - (id <WebCoreTextRenderer>)rendererWithFont:(WebCoreFont)font
 {
-    ERROR("rendererForFont needs to be implemented in text renderer factory subclass");
+    LOG_ERROR("rendererForFont needs to be implemented in text renderer factory subclass");
     return nil;
 }
 

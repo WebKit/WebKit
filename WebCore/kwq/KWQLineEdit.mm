@@ -346,7 +346,7 @@ NSTextAlignment KWQNSTextAlignmentForAlignmentFlags(Qt::AlignmentFlags a)
 {
     switch (a) {
         default:
-            ERROR("unsupported alignment");
+            LOG_ERROR("unsupported alignment");
         case Qt::AlignLeft:
             return NSLeftTextAlignment;
         case Qt::AlignRight:

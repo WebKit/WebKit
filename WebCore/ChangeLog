@@ -1,3 +1,62 @@
+2006-02-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber-stamped by Anders.
+        
+        - renamed ERROR to LOG_ERROR because some operating systems define ERROR in a system header
+
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::passMouseDownEventToWidget):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (aeDescFromJSValue):
+        (-[WebCoreFrameBridge computePageRectsWithPrintWidthScaleFactor:printHeight:]):
+        * css/css_computedstyle.cpp:
+        (WebCore::CSSComputedStyleDeclarationImpl::getPropertyCSSValue):
+        * editing/Selection.cpp:
+        (WebCore::Selection::toRange):
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (WebCore::KCanvasFEBlendQuartz::getCIFilter):
+        (WebCore::KCanvasFEColorMatrixQuartz::getCIFilter):
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        (WebCore::KRenderingDeviceQuartz::createResource):
+        * khtml/xsl/xslt_processorimpl.cpp:
+        (DOM::parseErrorFunc):
+        * kwq/KWQFontMetrics.mm:
+        (QFontMetrics::ascent):
+        (QFontMetrics::descent):
+        (QFontMetrics::lineSpacing):
+        (QFontMetrics::xHeight):
+        (QFontMetrics::width):
+        (QFontMetrics::floatWidth):
+        (QFontMetrics::checkSelectionPoint):
+        * kwq/KWQKConfigBase.mm:
+        (KConfig::readEntry):
+        (KConfig::readNumEntry):
+        (KConfig::readUnsignedNumEntry):
+        * kwq/KWQLineEdit.mm:
+        (KWQNSTextAlignmentForAlignmentFlags):
+        * kwq/KWQObject.cpp:
+        (QObject::connect):
+        * kwq/KWQPainter.mm:
+        (WebCore::QPainter::restore):
+        (WebCore::QPainter::drawFocusRing):
+        * kwq/KWQRegExp.cpp:
+        (QRegExp::KWQRegExpPrivate::compile):
+        (QRegExp::match):
+        * kwq/KWQSignal.cpp:
+        (KWQSignal::connect):
+        (KWQSignal::disconnect):
+        * kwq/KWQSlot.cpp:
+        (KWQSlot::KWQSlot):
+        * kwq/KWQTextCodec.cpp:
+        (KWQTextDecoder::createICUConverter):
+        (KWQTextDecoder::convertUsingICU):
+        * kwq/WebCoreTextRendererFactory.mm:
+        (-[WebCoreTextRendererFactory fontWithFamilies:traits:size:]):
+        (-[WebCoreTextRendererFactory isFontFixedPitch:]):
+        (-[WebCoreTextRendererFactory rendererWithFont:]):
+        * page/Frame.cpp:
+        (WebCore::Frame::paint):
+
 2006-02-17  Maciej Stachowiak <mjs@apple.com>
 
         Reviewed by Dave Hyatt.

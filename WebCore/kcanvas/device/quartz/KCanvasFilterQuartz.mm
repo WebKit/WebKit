@@ -260,7 +260,7 @@ CIFilter *KCanvasFEBlendQuartz::getCIFilter(KCanvasFilterQuartz *quartzFilter) c
         filter = [CIFilter filterWithName:@"CILightenBlendMode"];
         break;
     default:
-        ERROR("Unhandled blend mode: %i", blendMode());
+        LOG_ERROR("Unhandled blend mode: %i", blendMode());
         return nil;
     }
 
@@ -339,7 +339,7 @@ CIFilter *KCanvasFEColorMatrixQuartz::getCIFilter(KCanvasFilterQuartz *quartzFil
         break;
     }
     default:
-        ERROR("Unhandled ColorMatrix type: %i", type());
+        LOG_ERROR("Unhandled ColorMatrix type: %i", type());
         return nil;
     }
     CIImage *inputImage = quartzFilter->inputImage(this);

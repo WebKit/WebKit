@@ -2944,7 +2944,7 @@ void Frame::paint(QPainter *p, const IntRect& rect)
             renderer()->canvas()->view()->updateDashboardRegions();
 #endif
     } else
-        ERROR("called Frame::paint with nil renderer");
+        LOG_ERROR("called Frame::paint with nil renderer");
 }
 
 void Frame::adjustPageHeight(float *newBottom, float oldTop, float oldBottom, float bottomLimit)

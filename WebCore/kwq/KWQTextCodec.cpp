@@ -366,10 +366,10 @@ UErrorCode KWQTextDecoder::createICUConverter()
         LOG(TextConversion, "creating ICU converter for encoding: %s", encodingName);
         _converterICU = ucnv_open(encodingName, &err);
         if (err == U_AMBIGUOUS_ALIAS_WARNING) {
-            ERROR("ICU ambiguous alias warning for encoding: %s", encodingName);
+            LOG_ERROR("ICU ambiguous alias warning for encoding: %s", encodingName);
         }
         if (!_converterICU) {
-            ERROR("the ICU Converter won't convert from text encoding 0x%X, error %d", encoding, err);
+            LOG_ERROR("the ICU Converter won't convert from text encoding 0x%X, error %d", encoding, err);
             return err;
         }
     }
@@ -444,7 +444,7 @@ QString KWQTextDecoder::convertUsingICU(const unsigned char *chs, int len, bool 
             err = U_ZERO_ERROR;
             ucnv_toUnicode(_converterICU, &target, targetLimit, &source, sourceLimit, offsets, true, &err);
         } while (source < sourceLimit);
-        ERROR("ICU conversion error");
+        LOG_ERROR("ICU conversion error");
         return QString();
     }
     

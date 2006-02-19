@@ -1485,7 +1485,7 @@ bool MacFrame::passMouseDownEventToWidget(Widget* widget)
     // FIXME: this method always returns true
 
     if (!widget) {
-        ERROR("hit a RenderWidget without a corresponding Widget, means a frame is half-constructed");
+        LOG_ERROR("hit a RenderWidget without a corresponding Widget, means a frame is half-constructed");
         return true;
     }
 
@@ -1496,7 +1496,7 @@ bool MacFrame::passMouseDownEventToWidget(Widget* widget)
     ASSERT([nodeView superview]);
     NSView *view = [nodeView hitTest:[[nodeView superview] convertPoint:[_currentEvent locationInWindow] fromView:nil]];
     if (view == nil) {
-        ERROR("KHTML says we hit a RenderWidget, but AppKit doesn't agree we hit the corresponding NSView");
+        LOG_ERROR("KHTML says we hit a RenderWidget, but AppKit doesn't agree we hit the corresponding NSView");
         return true;
     }
     

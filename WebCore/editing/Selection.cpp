@@ -111,12 +111,12 @@ PassRefPtr<RangeImpl> Selection::toRange() const
     RefPtr<RangeImpl> result(new RangeImpl(s.node()->getDocument()));
     result->setStart(s.node(), s.offset(), exceptionCode);
     if (exceptionCode) {
-        ERROR("Exception setting Range start from Selection: %d", exceptionCode);
+        LOG_ERROR("Exception setting Range start from Selection: %d", exceptionCode);
         return 0;
     }
     result->setEnd(e.node(), e.offset(), exceptionCode);
     if (exceptionCode) {
-        ERROR("Exception setting Range end from Selection: %d", exceptionCode);
+        LOG_ERROR("Exception setting Range end from Selection: %d", exceptionCode);
         return 0;
     }
     return result.release();

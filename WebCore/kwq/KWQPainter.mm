@@ -191,7 +191,7 @@ void QPainter::restore()
         return;
 
     if (data->stack.isEmpty()) {
-        ERROR("ERROR void QPainter::restore() stack is empty");
+        LOG_ERROR("ERROR void QPainter::restore() stack is empty");
         return;
     }
     data->state = data->stack.last();
@@ -918,7 +918,7 @@ void QPainter::drawFocusRing()
     ASSERT(data->focusRingPath);
 
     if ([data->focusRingPath elementCount] == 0) {
-        ERROR("Request to draw focus ring with no control points");
+        LOG_ERROR("Request to draw focus ring with no control points");
         return;
     }
     

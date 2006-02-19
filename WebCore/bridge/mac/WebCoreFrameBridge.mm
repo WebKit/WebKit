@@ -242,7 +242,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsVal
             break;
         }
         default:
-            ERROR("Unknown JavaScript type: %d", jsValue->type());
+            LOG_ERROR("Unknown JavaScript type: %d", jsValue->type());
             // no break;
         case UnspecifiedType:
         case UndefinedType:
@@ -1036,12 +1036,12 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
     [self _setupRootForPrinting:YES];
     NSMutableArray* pages = [NSMutableArray arrayWithCapacity:5];
     if (printWidthScaleFactor <= 0) {
-        ERROR("printWidthScaleFactor has bad value %.2f", printWidthScaleFactor);
+        LOG_ERROR("printWidthScaleFactor has bad value %.2f", printWidthScaleFactor);
         return pages;
     }
     
     if (printHeight <= 0) {
-        ERROR("printHeight has bad value %.2f", printHeight);
+        LOG_ERROR("printHeight has bad value %.2f", printHeight);
         return pages;
     }
 
