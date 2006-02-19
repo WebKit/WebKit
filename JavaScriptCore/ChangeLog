@@ -1,3 +1,12 @@
+2006-02-19  Darin Adler  <darin@apple.com>
+
+        - renamed ERROR to LOG_ERROR to fix build
+          presumably Maciej had this change and forgot to land it
+
+        * kjs/collector.cpp: Removed now-unneeded #undef ERROR.
+        * kxmlcore/Assertions.h: Renamed ERROR to LOG_ERROR.
+        * kxmlcore/FastMalloc.cpp: Changed MESSAGE macro to use LOG_ERROR.
+
 2006-02-18  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Test: fast/js/toString-exception.html

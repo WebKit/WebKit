@@ -1,6 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -157,12 +157,12 @@ while (0)
 } while (0)
 #endif
 
-// ERROR
+// LOG_ERROR
 
 #if ERROR_DISABLED
-#define ERROR(...) ((void)0)
+#define LOG_ERROR(...) ((void)0)
 #else
-#define ERROR(...) KXCReportError(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, __VA_ARGS__)
+#define LOG_ERROR(...) KXCReportError(__FILE__, __LINE__, KXMLCORE_PRETTY_FUNCTION, __VA_ARGS__)
 #endif
 
 // LOG

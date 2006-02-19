@@ -1,7 +1,7 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
  *  This file is part of the KDE libraries
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -41,7 +41,6 @@
 
 #elif WIN32
 
-#undef ERROR
 #include <windows.h>
 
 #else

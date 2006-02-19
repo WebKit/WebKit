@@ -135,7 +135,7 @@ namespace KXMLCore {
 #define free fastFree
 #define realloc fastRealloc
 
-#define MESSAGE ERROR
+#define MESSAGE LOG_ERROR
 #define CHECK_CONDITION ASSERT
 
 #endif
