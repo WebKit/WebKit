@@ -71,7 +71,9 @@ sub determineBaseProductDir
         open PRODUCT, "defaults read com.apple.Xcode PBXProductDirectory 2> /dev/null |" or die;
         $baseProductDir = <PRODUCT>;
         close PRODUCT;
-        chomp $baseProductDir;
+        if ($baseProductDir) {
+            chomp $baseProductDir;
+        }
     } else {
         $baseProductDir = $ENV{"WebKitOutputDir"};
         if (isCygwin() && $baseProductDir) {

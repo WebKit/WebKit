@@ -1,3 +1,12 @@
+2006-02-19  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7357
+          REGRESSION: Warnings from WebKit scripts if PBXProductDirectory is undefined
+
+        * Scripts/webkitdirs.pm: only call chomp if PBXProductDirectory is configured.
+
 2006-02-18  Darin Adler  <darin@apple.com>
 
         * Scripts/commit-log-editor: Added.
