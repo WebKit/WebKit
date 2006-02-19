@@ -1,3 +1,7 @@
+2006-02-18  Darin Adler  <darin@apple.com>
+
+        * Scripts/commit-log-editor: Added.
+
 2006-02-17  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.
