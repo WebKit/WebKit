@@ -1,3 +1,13 @@
+2006-02-18  Alexander Kellett  <lypanov@kde.org>
+
+        Reviewed by Maciej.
+
+        - new test for
+          http://bugzilla.opendarwin.org/show_bug.cgi?id=7199
+          Text gradient fills entire screen if text empty
+
+        * svg/custom/text-gradient-no-content.svg: Added.
+
 2006-02-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

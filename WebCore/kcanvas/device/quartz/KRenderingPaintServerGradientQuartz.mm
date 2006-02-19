@@ -313,7 +313,9 @@ void KRenderingPaintServerGradientQuartz::teardown(const KRenderingPaintServerGr
     ASSERT(context != NULL);
     
     if ((type & APPLY_TO_FILL) && KSVGPainterFactory::isFilled(renderStyle)) {
-        CGContextDrawShading(context, shading);
+        // workaround for filling the entire screen with the shading in the case that no text was intersected with the clip
+        if (!server->isPaintingText() || (renderObject->width() > 0 && renderObject->height() > 0))
+            CGContextDrawShading(context, shading);
         CGContextRestoreGState(context);
     }
     
