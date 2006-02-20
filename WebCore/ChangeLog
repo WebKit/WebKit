@@ -1,3 +1,23 @@
+2006-02-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7318
+          REGRESSION: Timer bug causes gif animation and (html and JS) page forwarding to fail
+
+        Timers were stopping firing after a while.
+
+        My testing makes this look like a CFRunLoopTimer bug, and it would be nice to reproduce
+        this with a standalone test and report it to the CF team, but in the mean time, change
+        to create a new timer each time instead of reusing the existing timer.
+
+        * platform/mac/SharedTimerMac.cpp:
+        (WebCore::setSharedTimerFiredFunction): Added an assertion.
+        (WebCore::setSharedTimerFireTime): Destroy the existing timer and create a new one every time.
+        Also create a non-repeating timer rather than a repeating timer.
+        (WebCore::stopSharedTimer): Destroy the existing timer rather than setting its fire date
+        far into the future.
+
 2006-02-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

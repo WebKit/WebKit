@@ -36,6 +36,8 @@ static void (*sharedTimerFiredFunction)();
 
 void setSharedTimerFiredFunction(void (*f)())
 {
+    ASSERT(!sharedTimerFiredFunction || sharedTimerFiredFunction == f);
+
     sharedTimerFiredFunction = f;
 }
 
@@ -47,19 +49,24 @@ static void timerFired(CFRunLoopTimerRef, void*)
 void setSharedTimerFireTime(double fireTime)
 {
     ASSERT(sharedTimerFiredFunction);
-    CFAbsoluteTime fireDate = fireTime - kCFAbsoluteTimeIntervalSince1970;
-    if (sharedTimer)
-        CFRunLoopTimerSetNextFireDate(sharedTimer, fireDate);
-    else {
-        sharedTimer = CFRunLoopTimerCreate(0, fireDate, HUGE_VAL, 0, 0, timerFired, 0);
-        CFRunLoopAddTimer(CFRunLoopGetCurrent(), sharedTimer, kCFRunLoopDefaultMode);
+
+    if (sharedTimer) {
+        CFRunLoopTimerInvalidate(sharedTimer);
+        CFRelease(sharedTimer);
     }
+
+    CFAbsoluteTime fireDate = fireTime - kCFAbsoluteTimeIntervalSince1970;
+    sharedTimer = CFRunLoopTimerCreate(0, fireDate, 0, 0, 0, timerFired, 0);
+    CFRunLoopAddTimer(CFRunLoopGetCurrent(), sharedTimer, kCFRunLoopDefaultMode);
 }
 
 void stopSharedTimer()
 {
-    if (sharedTimer)
-        CFRunLoopTimerSetNextFireDate(sharedTimer, HUGE_VAL);
+    if (sharedTimer) {
+        CFRunLoopTimerInvalidate(sharedTimer);
+        CFRelease(sharedTimer);
+        sharedTimer = 0;
+    }
 }
 
 }
