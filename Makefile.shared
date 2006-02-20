@@ -1,16 +1,15 @@
 XCODE_OPTIONS = `perl -I../WebKitTools/Scripts -Mwebkitdirs -e 'print XcodeOptionString()'`
-XCODE_OPTIONS_NO_CONFIG = `perl -I../WebKitTools/Scripts -Mwebkitdirs -e 'print XcodeOptionStringNoConfig()'`
 
 all:
 	xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS)
 
 debug d development dev develop:
 	../WebKitTools/Scripts/set-webkit-configuration --debug
-	xcodebuild $(OTHER_OPTIONS) -configuration Debug $(XCODE_OPTIONS_NO_CONFIG)
+	xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS)
 
 release r deployment dep deploy:
 	../WebKitTools/Scripts/set-webkit-configuration --release
-	xcodebuild $(OTHER_OPTIONS) -configuration Release $(XCODE_OPTIONS_NO_CONFIG)
+	xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS)
 
 clean:
 	xcodebuild -alltargets clean $(XCODE_OPTIONS)
