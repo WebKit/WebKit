@@ -154,9 +154,14 @@ XMLHttpRequest::~XMLHttpRequest()
 
 void XMLHttpRequest::changeState(XMLHttpRequestState newState)
 {
-  if (state != newState) {
-    state = newState;
-    
+    if (state != newState) {
+        state = newState;
+        callReadyStateChangeListener();
+    }
+}
+
+void XMLHttpRequest::callReadyStateChangeListener()
+{
     if (doc && doc->frame() && m_onReadyStateChangeListener) {
       int ignoreException;
       RefPtr<EventImpl> ev = doc->createEvent("HTMLEvents", ignoreException);
@@ -170,7 +175,6 @@ void XMLHttpRequest::changeState(XMLHttpRequestState newState)
       ev->initEvent(loadEvent, true, true);
       m_onLoadListener->handleEventImpl(ev.get(), true);
     }
-  }
 }
 
 bool XMLHttpRequest::urlMatchesDocumentDomain(const KURL& _url) const
@@ -330,9 +334,8 @@ void XMLHttpRequest::overrideMIMEType(const DOMString& override)
 
 void XMLHttpRequest::setRequestHeader(const DOMString& name, const DOMString &value)
 {
-  if (requestHeaders.length() > 0) {
+  if (requestHeaders.length() > 0)
     requestHeaders += "\r\n";
-  }
   requestHeaders += name.qstring();
   requestHeaders += ": ";
   requestHeaders += value.qstring();
@@ -345,15 +348,13 @@ QString XMLHttpRequest::getRequestHeader(const QString& name) const
 
 DOMString XMLHttpRequest::getAllResponseHeaders() const
 {
-  if (responseHeaders.isEmpty()) {
+  if (responseHeaders.isEmpty())
     return DOMString();
-  }
 
   int endOfLine = responseHeaders.find("\n");
 
-  if (endOfLine == -1) {
+  if (endOfLine == -1)
     return DOMString();
-  }
 
   return responseHeaders.mid(endOfLine + 1) + "\n";
 }
@@ -373,9 +374,8 @@ QString XMLHttpRequest::getSpecificHeader(const QString& headers, const QString&
   int matchLength;
   int headerLinePos = headerLinePattern.match(headers, 0, &matchLength);
   while (headerLinePos != -1) {
-    if (headerLinePos == 0 || headers[headerLinePos-1] == '\n') {
+    if (headerLinePos == 0 || headers[headerLinePos-1] == '\n')
       break;
-    }
     
     headerLinePos = headerLinePattern.match(headers, headerLinePos + 1, &matchLength);
   }
@@ -424,18 +424,16 @@ int XMLHttpRequest::getStatus() const
 
 DOMString XMLHttpRequest::getStatusText() const
 {
-  if (responseHeaders.isEmpty()) {
+  if (responseHeaders.isEmpty())
     return DOMString();
-  }
   
   int endOfLine = responseHeaders.find("\n");
   QString firstLine = endOfLine == -1 ? responseHeaders : responseHeaders.left(endOfLine);
   int codeStart = firstLine.find(" ");
   int codeEnd = firstLine.find(" ", codeStart + 1);
 
-  if (codeStart == -1 || codeEnd == -1) {
+  if (codeStart == -1 || codeEnd == -1)
     return DOMString();
-  }
   
   QString statusText = firstLine.mid(codeEnd + 1, endOfLine - (codeEnd + 1)).stripWhiteSpace();
   
@@ -451,9 +449,8 @@ void XMLHttpRequest::processSyncLoadResults(const ByteArray &data, const KURL &f
   
   responseHeaders = headers;
   changeState(Loaded);
-  if (aborted) {
+  if (aborted)
     return;
-  }
   
   const char *bytes = (const char *)data.data();
   int len = (int)data.size();
@@ -496,9 +493,8 @@ void XMLHttpRequest::slotFinished(Job*)
 
 void XMLHttpRequest::slotRedirection(Job*, const KURL& url)
 {
-  if (!urlMatchesDocumentDomain(url)) {
+  if (!urlMatchesDocumentDomain(url))
     abort();
-  }
 }
 
 void XMLHttpRequest::slotData(Job*, const char *data, int len)
@@ -519,10 +515,9 @@ void XMLHttpRequest::slotData(Job*, const char *data, int len)
     decoder = new Decoder;
     if (!encoding.isEmpty())
       decoder->setEncoding(encoding.latin1(), Decoder::EncodingFromHTTPHeader);
-    else {
+    else
       // only allow Decoder to look inside the response if it's XML
       decoder->setEncoding("UTF-8", responseIsXML() ? Decoder::DefaultEncoding : Decoder::EncodingFromHTTPHeader);
-    }
   }
   if (len == 0)
     return;
@@ -535,7 +530,11 @@ void XMLHttpRequest::slotData(Job*, const char *data, int len)
   response += decoded;
 
   if (!aborted) {
-    changeState(Interactive);
+    if (state != Interactive)
+        changeState(Interactive);
+    else
+        // Firefox calls readyStateChanged every time it receives data, 4449442
+        callReadyStateChangeListener();
   }
 }
 

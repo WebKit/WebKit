@@ -93,6 +93,7 @@ namespace WebCore {
     static QString getSpecificHeader(const QString& headers, const QString& name);
 
     void changeState(XMLHttpRequestState newState);
+    void callReadyStateChangeListener();
 
     typedef HashSet<XMLHttpRequest*> RequestsSet;
     typedef HashMap<DocumentImpl*, RequestsSet*> RequestsMap;

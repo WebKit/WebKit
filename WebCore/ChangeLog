@@ -1,3 +1,16 @@
+2006-02-20  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        <rdar://problem/4449442> GMAIL: XMLHttpRequest does not correctly report "Interactive" state on receipt of load data
+        Also cleaned up spacing a little.
+
+        No layout test possible (local loads are non incremental).
+
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::changeState):
+        (WebCore::XMLHttpRequest::slotData):
+
 2006-02-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
