@@ -1,0 +1,113 @@
+#!/usr/bin/perl -w
+
+# Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+# 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Simplified build script for Web Kit Open Source Project.
+
+use strict;
+use FindBin;
+use lib $FindBin::Bin;
+use webkitdirs;
+
+checkRequiredSystemConfig();
+chdirWebKit();
+my $webkitDir = `pwd`;
+chomp $webkitDir;
+
+chdir "WebKitLibraries";
+
+if (! -e "icu-3.4-win32-msvc7.1.zip") {
+    print "Downloading icu-3.4-win32-msvc7.1.zip...\n\n";
+    `rm -rf icu*`;
+    `curl -O ftp://ftp.software.ibm.com/software/globalization/icu/3.4/icu-3.4-Win32-msvc7.1.zip`;
+    print "\nInstalling icu-3.4-win32-msvc7.1.zip...\n";
+    `unzip icu-3.4-win32-msvc7.1.zip`;
+    `rm -rf ../icu`;
+    `cp -rp icu ..`;
+}
+
+if (! -e "iconv-1.9.1.win32.zip") {
+    print "Downloading iconv-1.9.1.win32.zip...\n\n";
+    `rm -rf iconv*`;
+    `curl -O http://xmlsoft.org/sources/win32/iconv-1.9.1.win32.zip`;
+    print "\nInstalling iconv-1.9.1.win32.zip...\n";
+    `unzip iconv-1.9.1.win32.zip`;
+    `rm -rf ../iconv`;
+    `cp -rp iconv-1.9.1.win32 ../iconv`;
+}
+
+if (! -e "libxml2-2.6.23.win32.zip") {
+    print "Downloading libxml2-2.6.23.win32.zip...\n\n";
+    `rm -rf libxml*`;
+    `curl -O http://xmlsoft.org/sources/win32/libxml2-2.6.23.win32.zip`;
+    print "\nInstalling libxml2-2.6.23.win32.zip...\n";
+    `unzip libxml2-2.6.23.win32.zip`;
+    `rm -rf ../libxml`;
+    `cp -rp libxml2-2.6.23.win32 ../libxml`;
+}
+
+if (! -e "libxslt-1.1.15.win32.zip") {
+    print "Downloading libxmslt-1.1.15.win32.zip...\n";
+    `rm -rf libslt*`;
+    `curl -O http://xmlsoft.org/sources/win32/libxslt-1.1.15.win32.zip`;
+    print "Installing libxmslt-1.1.15.win32.zip...\n";
+    `unzip libxslt-1.1.15.win32.zip`;
+    `rm -rf ../libxslt`;
+    `cp -rp libxslt-1.1.15.win32 ../libxslt`;
+}
+
+if (! -e "setx_setup.exe") {
+    print "Downloading setx_setup.exe...\n\n";
+    `curl -O http://download.microsoft.com/download/win2000platform/setx/1.00.0.1/nt5/en-us/setx_setup.exe`;
+    print "Instaling setx_setup.exe, please install in the default location...\n";
+    `chmod +x ./setx_setup.exe`;
+    `./setx_setup.exe`;
+    `chmod +x "/cygdrive/c/Program\ Files/Resource\ Kit/setx.exe"`;
+
+    print "/cygdrive/c/Program Files/Resource Kit/setx.exe WebKitOutputDir 'c:\\WebKitBuild'\n";
+    system '/cygdrive/c/Program Files/Resource Kit/setx.exe', "WebKitOutputDir", 'c:\\WebKitBuild';
+
+    my $PATH = $ENV{"PATH"};
+    my $WINPATH = `cygpath -p -w "$PATH"`;
+    chomp $WINPATH;
+    my $winScripts = `cygpath -w "$webkitDir/WebKitTools/Scripts"`;
+    chomp $winScripts;
+    
+    if (! ($WINPATH =~ /WebKitTools/)) {
+	$WINPATH = "$winScripts;$WINPATH";
+    }
+    if (! ($WINPATH =~ /Resource Kit/)) {
+	$WINPATH = "c:\\Program Files\\Resource Kit;$WINPATH";
+    }
+    if (! ($WINPATH =~ /cygwin\\bin/)) {
+	$WINPATH = "c:\\cygwin\\bin;$WINPATH";
+    }
+
+    print "/cygdrive/c/Program Files/Resource Kit/setx.exe Path \"$WINPATH\" -m\n";
+    system '/cygdrive/c/Program Files/Resource Kit/setx.exe', "Path", "$WINPATH", "-m";
+}
+

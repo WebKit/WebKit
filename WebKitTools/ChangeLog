@@ -1,3 +1,13 @@
+2006-02-18  Maciej Stachowiak <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - Added install-win-extras script which installs some extra 
+        programs and libraries, and does Windows first-time setup.
+
+        * Scripts/build-webkit: Add a newline between build results.
+        * Scripts/install-win-extras: Added.
+
 2006-02-19  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

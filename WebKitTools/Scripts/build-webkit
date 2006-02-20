@@ -107,7 +107,7 @@ for my $dir (@projects) {
             my $config = configuration();
 
             my $resultsFile = "$cygwinTmpPath\\buildresults.txt";
-            print "$devenvPath $dir.sln /build $config /Out $resultsFile";
+            print "$devenvPath $dir.sln /build $config /Out $resultsFile\n";
             $result = system $devenvPath, "$dir.sln", "/build", $config, "/Out", $resultsFile;
             system "cat", $resultsFile;
             chdir ".." or die;
