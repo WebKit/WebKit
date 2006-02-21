@@ -145,7 +145,7 @@ static int cssyylex(YYSTYPE *yylval) { return CSSParser::current()->lex(yylval);
 
 %}
 
-%expect 37
+//%expect 37
 
 %token WHITESPACE SGML_CD
 

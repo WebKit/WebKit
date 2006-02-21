@@ -1,3 +1,15 @@
+2006-02-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - port QString to win32
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * platform/QString.cpp:
+        (strncasecmp):
+        (QString::mid):
+        (freeHandle):
+
 2006-02-20  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

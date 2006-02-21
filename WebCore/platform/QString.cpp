@@ -29,8 +29,12 @@
 #include "KWQLogging.h"
 #include "KWQRegExp.h"
 #include "KWQTextCodec.h"
-#include <JavaScriptCore/dtoa.h>
+#include <kjs/dtoa.h>
 #include <stdio.h>
+#include <stdarg.h>
+#ifdef WIN32
+#include "Windows.h"
+#endif
 
 #define CHECK_FOR_HANDLE_LEAKS 0
 
@@ -813,6 +817,13 @@ bool QString::startsWith(const char *prefix) const
     }
 }
 
+#ifdef WIN32
+inline int strncasecmp(const char *first, const char *second, size_t maxLength)
+{
+    return _strnicmp(first, second, maxLength);
+}
+#endif
+
 bool QString::startsWith(const char *prefix, bool caseSensitive) const
 {
     if (caseSensitive) {
@@ -1565,7 +1576,7 @@ QString QString::mid(uint start, uint len) const
         if (len == 0)
             return QString();
         
-        if ( index == 0 && len == data._length )
+        if (start == 0 && len == data._length)
             return *this;
 
         ASSERT(start + len >= start &&       // unsigned overflow
@@ -2507,6 +2518,7 @@ struct HandleNode {
 };
 
 static const size_t pageSize = 4096;
+static const uintptr_t pageMask = ~(pageSize - 1);
 static const size_t nodeBlockSize = pageSize / sizeof(HandleNode);
 
 #define TO_NODE_OFFSET(ptr)   ((uint)(((uint)ptr - (uint)base)/sizeof(HandleNode)))
@@ -2593,7 +2605,7 @@ void freeHandle(KWQStringData **_free)
 #endif
 
     HandleNode *free = (HandleNode *)_free;
-    HandleNode *base = (HandleNode *)trunc_page((uint)free);
+    HandleNode *base = (HandleNode *)((uintptr_t)free & pageMask);
     HandleNode *freeNodes = base[0].type.freeNodes;
     HandlePageNode *pageNode = base[1].type.pageNode;
     
