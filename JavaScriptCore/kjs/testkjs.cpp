@@ -34,7 +34,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#if HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif
 
 using namespace KJS;
 using namespace KXMLCore;
@@ -50,8 +52,11 @@ public:
     long getElapsedMS(); // call stop() first
     
 private:
+#if !WIN32
+    // Windows does not have timeval, disabling this class for now (bug 7399)
     timeval m_startTime;
     timeval m_stopTime;
+#endif
 };
 
 void StopWatch::start()

@@ -1,3 +1,9 @@
+2006-02-21  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by ggaren.
+
+        * kjs/testkjs.cpp: #if out timeval code on win32
+
 2006-02-21  Michael Emmel  <mike.emmel@gmail.com>
 
         Reviewed by Darin.
