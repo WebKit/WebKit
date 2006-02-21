@@ -610,7 +610,10 @@ sub countAndPrintLeaks
     my ($count, $bytes) = $leaksOutput =~ /Process $toolPID: (\d+) leaks? for (\d+) total/;
     my ($excluded) = $leaksOutput =~ /(\d+) leaks? excluded/;
 
-    if ($count == 0 || ($excluded && $count <= $excluded)) {
+    my $adjustedCount = $count;
+    $adjustedCount -= $excluded if $excluded;
+
+    if ($adjustedCount == 0) {
         print " - no leaks found\n";
         unlink $leaksFilePath;
         return 0;
@@ -619,12 +622,18 @@ sub countAndPrintLeaks
         $dir =~ s|/[^/]+$|| or die;
         mkpath $dir;
 
-        print " + $count leaks ($bytes bytes) were found, details in $leaksFilePath\n";
+        if ($excluded) {
+            print " + $adjustedCount leaks ($bytes bytes including $excluded excluded leaks) were found, details in $leaksFilePath\n";
+        } else {
+            print " + $count leaks ($bytes bytes) were found, details in $leaksFilePath\n";
+        }
+
         open LEAKS, ">", $leaksFilePath or die;
         print LEAKS $leaksOutput;
         close LEAKS;
     }
-    return $count;
+
+    return $adjustedCount;
 }
 
 # Break up a path into the directory (with slash) and base name.

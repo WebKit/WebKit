@@ -1,3 +1,10 @@
+2006-02-21  Darin Adler  <darin@apple.com>
+
+        Suggested by Mark Rowe.
+
+        * Scripts/run-webkit-tests: Don't include the number of excluded leaks when
+        reporting leak counts.
+
 2006-02-18  Maciej Stachowiak <mjs@apple.com>
 
         Reviewed by Darin.
