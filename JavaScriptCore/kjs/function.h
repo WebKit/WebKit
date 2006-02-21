@@ -45,7 +45,6 @@ namespace KJS {
     virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
     virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
 
-    virtual bool implementsCall() const;
     virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
 
     void addParameter(const Identifier &n);
@@ -146,7 +145,6 @@ namespace KJS {
   class GlobalFuncImp : public InternalFunctionImp {
   public:
     GlobalFuncImp(ExecState*, FunctionPrototype*, int i, int len, const Identifier&);
-    virtual bool implementsCall() const;
     virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
     virtual CodeType codeType() const;
     enum { Eval, ParseInt, ParseFloat, IsNaN, IsFinite, Escape, UnEscape,

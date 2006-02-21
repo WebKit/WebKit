@@ -85,7 +85,6 @@ class DateProtoFunc : public InternalFunctionImp {
 public:
     DateProtoFunc(ExecState *, int i, int len, const Identifier& date);
 
-    virtual bool implementsCall() const;
     virtual JSValue *callAsFunction(ExecState *, JSObject *thisObj, const List &args);
 
     Completion execute(const List &);
@@ -112,7 +111,6 @@ class DateObjectFuncImp : public InternalFunctionImp {
 public:
     DateObjectFuncImp(ExecState *, FunctionPrototype *, int i, int len, const Identifier& );
 
-    virtual bool implementsCall() const;
     virtual JSValue *callAsFunction(ExecState *, JSObject *thisObj, const List &args);
 
     enum { Parse, UTC };
@@ -548,11 +546,6 @@ DateProtoFunc::DateProtoFunc(ExecState *exec, int i, int len, const Identifier& 
     putDirect(lengthPropertyName, len, DontDelete|ReadOnly|DontEnum);
 }
 
-bool DateProtoFunc::implementsCall() const
-{
-    return true;
-}
-
 JSValue *DateProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
   if (!thisObj->inherits(&DateInstance::info))
@@ -796,11 +789,6 @@ JSObject *DateObjectImp::construct(ExecState *exec, const List &args)
   return ret;
 }
 
-bool DateObjectImp::implementsCall() const
-{
-    return true;
-}
-
 // ECMA 15.9.2
 JSValue *DateObjectImp::callAsFunction(ExecState * /*exec*/, JSObject * /*thisObj*/, const List &/*args*/)
 {
@@ -815,11 +803,6 @@ DateObjectFuncImp::DateObjectFuncImp(ExecState *exec, FunctionPrototype *funcPro
     : InternalFunctionImp(funcProto, name), id(i)
 {
     putDirect(lengthPropertyName, len, DontDelete|ReadOnly|DontEnum);
-}
-
-bool DateObjectFuncImp::implementsCall() const
-{
-    return true;
 }
 
 // ECMA 15.9.4.2 - 3

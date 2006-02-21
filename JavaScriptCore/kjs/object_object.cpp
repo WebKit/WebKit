@@ -69,11 +69,6 @@ ObjectProtoFunc::ObjectProtoFunc(ExecState*, FunctionPrototype* funcProto, int i
 }
 
 
-bool ObjectProtoFunc::implementsCall() const
-{
-  return true;
-}
-
 // ECMA 15.2.4.2, 15.2.4.4, 15.2.4.5, 15.2.4.7
 
 JSValue *ObjectProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
@@ -203,11 +198,6 @@ JSObject *ObjectObjectImp::construct(ExecState *exec, const List &args)
   case UndefinedType:
     return new JSObject(exec->lexicalInterpreter()->builtinObjectPrototype());
   }
-}
-
-bool ObjectObjectImp::implementsCall() const
-{
-  return true;
 }
 
 JSValue *ObjectObjectImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, const List &args)

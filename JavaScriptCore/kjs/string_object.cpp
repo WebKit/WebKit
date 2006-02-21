@@ -174,11 +174,6 @@ StringProtoFunc::StringProtoFunc(ExecState *exec, int i, int len, const Identifi
   putDirect(lengthPropertyName, len, DontDelete|ReadOnly|DontEnum);
 }
 
-bool StringProtoFunc::implementsCall() const
-{
-  return true;
-}
-
 static inline void expandSourceRanges(UString::Range * & array, int& count, int& capacity)
 {
   int newCapacity;
@@ -719,11 +714,6 @@ JSObject *StringObjectImp::construct(ExecState *exec, const List &args)
   return new StringInstance(proto, args.begin()->toString(exec));
 }
 
-bool StringObjectImp::implementsCall() const
-{
-  return true;
-}
-
 // ECMA 15.5.1
 JSValue *StringObjectImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, const List &args)
 {
@@ -742,11 +732,6 @@ StringObjectFuncImp::StringObjectFuncImp(ExecState*, FunctionPrototype* funcProt
   : InternalFunctionImp(funcProto, name)
 {
   putDirect(lengthPropertyName, jsNumber(1), DontDelete|ReadOnly|DontEnum);
-}
-
-bool StringObjectFuncImp::implementsCall() const
-{
-  return true;
 }
 
 JSValue *StringObjectFuncImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, const List &args)

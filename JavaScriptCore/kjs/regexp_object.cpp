@@ -68,11 +68,6 @@ RegExpProtoFunc::RegExpProtoFunc(ExecState*, FunctionPrototype* funcProto, int i
   putDirect(lengthPropertyName, len, DontDelete|ReadOnly|DontEnum);
 }
 
-bool RegExpProtoFunc::implementsCall() const
-{
-  return true;
-}
-
 JSValue *RegExpProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
   if (!thisObj->inherits(&RegExpImp::info)) {
@@ -411,11 +406,6 @@ JSObject *RegExpObjectImp::construct(ExecState *exec, const List &args)
   dat->setRegExp(new RegExp(p, reflags));
 
   return dat;
-}
-
-bool RegExpObjectImp::implementsCall() const
-{
-  return true;
 }
 
 // ECMA 15.10.3

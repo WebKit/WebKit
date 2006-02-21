@@ -69,7 +69,6 @@ namespace KJS {
   public:
     StringProtoFunc(ExecState *exec, int i, int len, const Identifier&);
 
-    virtual bool implementsCall() const;
     virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
 
     enum { ToString, ValueOf, CharAt, CharCodeAt, Concat, IndexOf, LastIndexOf,
@@ -98,7 +97,6 @@ namespace KJS {
 
     virtual bool implementsConstruct() const;
     virtual JSObject *construct(ExecState *exec, const List &args);
-    virtual bool implementsCall() const;
     virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
   };
 
@@ -111,7 +109,6 @@ namespace KJS {
   class StringObjectFuncImp : public InternalFunctionImp {
   public:
     StringObjectFuncImp(ExecState*, FunctionPrototype*, const Identifier&);
-    virtual bool implementsCall() const;
     virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
   };
 

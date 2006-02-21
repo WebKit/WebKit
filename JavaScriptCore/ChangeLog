@@ -1,5 +1,47 @@
 2006-02-21  Darin Adler  <darin@apple.com>
 
+        Reviewed by John Sullivan.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7404
+          remove a bunch of extra implementsCall overrides
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Sorted files.
+
+        * kjs/internal.h: Made InternalFunctionImp::callAsFunction pure virtual so that
+        we'll get a compile error if some derived class neglects to implement it.
+
+        * kjs/function.cpp: (KJS::FunctionImp::FunctionImp): Remove unneeded initialization
+        of param, which is an OwnPtr so it gets initialized by default.
+
+        * bindings/runtime_method.cpp:
+        * bindings/runtime_method.h:
+        * kjs/array_object.cpp:
+        * kjs/array_object.h:
+        * kjs/bool_object.cpp:
+        * kjs/bool_object.h:
+        * kjs/date_object.cpp:
+        * kjs/date_object.h:
+        * kjs/error_object.cpp:
+        * kjs/error_object.h:
+        * kjs/function.cpp:
+        * kjs/function.h:
+        * kjs/function_object.cpp:
+        * kjs/function_object.h:
+        * kjs/math_object.cpp:
+        * kjs/math_object.h:
+        * kjs/number_object.cpp:
+        * kjs/number_object.h:
+        * kjs/object_object.cpp:
+        * kjs/object_object.h:
+        * kjs/regexp_object.cpp:
+        * kjs/regexp_object.h:
+        * kjs/string_object.cpp:
+        * kjs/string_object.h:
+        Removed many rendundant implementations of implementsCall from subclasses of
+        InternalFunctionImp.
+
+2006-02-21  Darin Adler  <darin@apple.com>
+
         - fixed build
 
         * kjs/internal.cpp: (KJS::InternalFunctionImp::implementsCall):

@@ -66,7 +66,6 @@ namespace KJS {
 
         virtual bool implementsConstruct() const;
         virtual JSObject *construct(ExecState *, const List &args);
-        virtual bool implementsCall() const;
         virtual JSValue *callAsFunction(ExecState *, JSObject *thisObj, const List &args);
 
         Completion execute(const List &);

@@ -49,7 +49,6 @@ namespace KJS {
   public:
     ObjectProtoFunc(ExecState* exec, FunctionPrototype* funcProto, int i, int len, const Identifier&);
 
-    virtual bool implementsCall() const;
     virtual JSValue *callAsFunction(ExecState *, JSObject *, const List &args);
 
     enum { ToString, ToLocaleString, ValueOf, HasOwnProperty, IsPrototypeOf, PropertyIsEnumerable,
@@ -72,7 +71,6 @@ namespace KJS {
 
     virtual bool implementsConstruct() const;
     virtual JSObject *construct(ExecState *, const List &args);
-    virtual bool implementsCall() const;
     virtual JSValue *callAsFunction(ExecState *, JSObject *, const List &args);
   };
 

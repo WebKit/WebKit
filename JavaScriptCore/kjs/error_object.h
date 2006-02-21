@@ -45,7 +45,6 @@ namespace KJS {
   class ErrorProtoFunc : public InternalFunctionImp {
   public:
     ErrorProtoFunc(ExecState*, FunctionPrototype*, const Identifier&);
-    virtual bool implementsCall() const;
     virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
   };
 
@@ -57,7 +56,6 @@ namespace KJS {
     virtual bool implementsConstruct() const;
     virtual JSObject *construct(ExecState *exec, const List &args);
 
-    virtual bool implementsCall() const;
     virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
   };
 
@@ -76,7 +74,6 @@ namespace KJS {
 
     virtual bool implementsConstruct() const;
     virtual JSObject *construct(ExecState *exec, const List &args);
-    virtual bool implementsCall() const;
     virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
 
     virtual void mark();

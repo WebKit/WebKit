@@ -441,11 +441,6 @@ ArrayProtoFunc::ArrayProtoFunc(ExecState *exec, int i, int len, const Identifier
   put(exec,lengthPropertyName,jsNumber(len),DontDelete|ReadOnly|DontEnum);
 }
 
-bool ArrayProtoFunc::implementsCall() const
-{
-  return true;
-}
-
 static JSValue *getProperty(ExecState *exec, JSObject *obj, unsigned index)
 {
     PropertySlot slot;
@@ -949,11 +944,6 @@ JSObject *ArrayObjectImp::construct(ExecState *exec, const List &args)
 
   // otherwise the array is constructed with the arguments in it
   return new ArrayInstance(exec->lexicalInterpreter()->builtinArrayPrototype(), args);
-}
-
-bool ArrayObjectImp::implementsCall() const
-{
-  return true;
 }
 
 // ECMA 15.6.1

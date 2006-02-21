@@ -40,7 +40,6 @@ public:
 
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
 
-    virtual bool implementsCall() const;
     virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
 
     virtual CodeType codeType() const;

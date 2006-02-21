@@ -58,17 +58,11 @@ const ClassInfo FunctionImp::info = {"Function", &InternalFunctionImp::info, 0, 
 FunctionImp::FunctionImp(ExecState *exec, const Identifier &n)
   : InternalFunctionImp(static_cast<FunctionPrototype*>
                         (exec->lexicalInterpreter()->builtinFunctionPrototype()), n)
-  , param(0L)
 {
 }
 
 FunctionImp::~FunctionImp()
 {
-}
-
-bool FunctionImp::implementsCall() const
-{
-  return true;
 }
 
 JSValue *FunctionImp::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
@@ -567,11 +561,6 @@ GlobalFuncImp::GlobalFuncImp(ExecState*, FunctionPrototype* funcProto, int i, in
 CodeType GlobalFuncImp::codeType() const
 {
   return id == Eval ? EvalCode : codeType();
-}
-
-bool GlobalFuncImp::implementsCall() const
-{
-  return true;
 }
 
 static JSValue *encode(ExecState *exec, const List &args, const char *do_not_escape)

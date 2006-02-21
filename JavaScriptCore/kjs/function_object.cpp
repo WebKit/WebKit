@@ -52,11 +52,6 @@ FunctionPrototype::~FunctionPrototype()
 {
 }
 
-bool FunctionPrototype::implementsCall() const
-{
-  return true;
-}
-
 // ECMA 15.3.4
 JSValue *FunctionPrototype::callAsFunction(ExecState */*exec*/, JSObject */*thisObj*/, const List &/*args*/)
 {
@@ -70,12 +65,6 @@ FunctionProtoFunc::FunctionProtoFunc(ExecState*, FunctionPrototype* funcProto, i
   , id(i)
 {
   putDirect(lengthPropertyName, len, DontDelete|ReadOnly|DontEnum);
-}
-
-
-bool FunctionProtoFunc::implementsCall() const
-{
-  return true;
 }
 
 JSValue *FunctionProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
@@ -266,15 +255,8 @@ JSObject *FunctionObjectImp::construct(ExecState *exec, const List &args)
   return FunctionObjectImp::construct(exec, args, UString(), 0);
 }
 
-
-bool FunctionObjectImp::implementsCall() const
-{
-  return true;
-}
-
 // ECMA 15.3.1 The Function Constructor Called as a Function
 JSValue *FunctionObjectImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, const List &args)
 {
   return construct(exec,args);
 }
-

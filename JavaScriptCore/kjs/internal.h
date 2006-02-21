@@ -343,8 +343,6 @@ namespace KJS {
     bool isAborted;
   };
 
-
-
   class InternalFunctionImp : public JSObject {
   public:
     InternalFunctionImp();
@@ -352,13 +350,14 @@ namespace KJS {
     InternalFunctionImp(FunctionPrototype*, const Identifier&);
 
     virtual bool implementsCall() const;
-
+    virtual JSValue* callAsFunction(ExecState*, JSObject* thisObjec, const List& args) = 0;
     virtual bool implementsHasInstance() const;
-    virtual bool hasInstance(ExecState *exec, JSValue *value);
+    virtual bool hasInstance(ExecState*, JSValue*);
 
-    virtual const ClassInfo *classInfo() const { return &info; }
+    virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     const Identifier& functionName() const { return m_name; }
+
   private:
     Identifier m_name;
   };

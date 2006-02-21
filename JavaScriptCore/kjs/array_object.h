@@ -41,7 +41,6 @@ namespace KJS {
   public:
     ArrayProtoFunc(ExecState *exec, int i, int len, const Identifier& name);
 
-    virtual bool implementsCall() const;
     virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
 
     enum { ToString, ToLocaleString, Concat, Join, Pop, Push,
@@ -61,7 +60,6 @@ namespace KJS {
 
     virtual bool implementsConstruct() const;
     virtual JSObject *construct(ExecState *exec, const List &args);
-    virtual bool implementsCall() const;
     virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
 
   };

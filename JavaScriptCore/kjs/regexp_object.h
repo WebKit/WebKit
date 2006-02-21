@@ -42,7 +42,6 @@ namespace KJS {
   public:
     RegExpProtoFunc(ExecState*, FunctionPrototype*, int i, int len, const Identifier&);
 
-    virtual bool implementsCall() const;
     virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
 
     enum { Exec, Test, ToString };
@@ -73,7 +72,6 @@ namespace KJS {
                     RegExpPrototype *regProto);
     virtual bool implementsConstruct() const;
     virtual JSObject *construct(ExecState *exec, const List &args);
-    virtual bool implementsCall() const;
     virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
 
     virtual void put(ExecState *, const Identifier &, JSValue *, int attr = None);
