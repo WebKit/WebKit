@@ -35,6 +35,10 @@
 #include <qfontmetrics.h>
 #include <qpainter.h>
 
+#undef min
+#undef max
+#include <algorithm>
+
 namespace khtml {
 
 class RenderStyle;

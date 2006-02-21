@@ -1,3 +1,11 @@
+2006-02-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Platform build fix, not reviewed.
+
+        - undef min and max, and include <algorithm> so std::min works
+
+        * rendering/font.h:
+
 2006-02-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff and Darin.
