@@ -1,5 +1,12 @@
 2006-02-21  Darin Adler  <darin@apple.com>
 
+        - fixed build
+
+        * kjs/internal.cpp: (KJS::InternalFunctionImp::implementsCall):
+        Oops, fixed name.
+
+2006-02-21  Darin Adler  <darin@apple.com>
+
         Change suggested by Mitz.
 
         - http://bugzilla.opendarwin.org/show_bug.cgi?id=7402

@@ -721,7 +721,7 @@ InternalFunctionImp::InternalFunctionImp(FunctionPrototype* funcProto, const Ide
 {
 }
 
-bool InternalFunctionImp::implementsHasCall() const
+bool InternalFunctionImp::implementsCall() const
 {
   return true;
 }
