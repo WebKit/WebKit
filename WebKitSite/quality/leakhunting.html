@@ -1,0 +1,91 @@
+<?php
+    $title = "Leak Hunting";
+    include("../header.inc");
+?>
+<h2>Leak Hunting</h2>
+
+<h3>Finding Leaks</h3>
+
+<p>
+    Memory leaks are one of our main area's of interest. Since the average user will only notice them by a growing memory
+    usage, we don't see as much bugreports on them as we'd like. This is some information about how hunt down those leaks.
+    The Mac OS X Developer Tools include a very useful program for leak detection. Here's how you can use it:
+</p>    
+<ol>
+    <li>
+        Get a <a href="/building/build.html">fresh WebKit build</a>, ideally a Development build as this turns 
+        off the various custom allocators in WebKit.
+    </li>
+    <li>
+        Set the MallocStackLogging environment variable to YES (in bash, <code>export MallocStackLogging=YES</code>, 
+        in tcsh, <code>setenv MallocStackLogging YES</code>).
+    </li>
+    <li>
+        Run Safari using <code>run-safari</code>.
+    </li>
+    <li>
+        Browse around a little.
+    </li>
+    <li>
+        From the command line, run <code>leaks Safari</code>.
+    </li>
+</ol>
+    
+<p>
+    At this point, if you found memory leaks, the leaks program will tell you how many, and give stack traces for 
+    each. You can file this report, along with a description of what steps you took to get the leak, in 
+    <a href="http://bugzilla.opendarwin.org/">Bugzilla</a>. Put &#8220;LEAK:&#8221; at the start of the title so 
+    these bugs are easy to find.
+</p>
+<p>
+    If you want to make an even better bug report, see if you can reproduce the leak by following some specific set 
+    of steps, and include that in the bug. You can also look at the backtraces in the leak report and see if you can 
+    match up ones that look the same. It&#8217;s useful to file a separate bug report for each one that looks different, 
+    and to consolidate leaks on different sites that look like they have the same stack trace. Also, check out our 
+    <a href="/quality/reporting.html">general document about filing bugs</a>.
+</p>
+
+<h3>Leaks in Standard Tests</h3>
+<p>
+    We have two ways to automatically record stack traces for leaks encountered in our <a href="/quality/testing.html">
+    standard webkit tests</a>. This is extremely useful since the webkit tests cover many unusual cases that one might 
+    not run into during a short browsing session. As we continue to <a href="/quality/testwriting.html">add webkit tests</a> 
+    this will continue to test for leaks in more and more corners of the code.
+</p>
+<ol>
+    <li>
+        (Fast) To get a single leaks report covering all webkit tests, use run-webkit-tests --leaks. You can also pass a 
+        specific directory or a specific test to get a leaks report covering just part of the test hierarchy. For example 
+        run-webkit-tests --leaks dom/html/level1.
+    </li>
+    <li>
+        (Slow) To get a separate leaks report for each test, use run-webkit-tests --leaks --singly. Again, you can pass a 
+        specific directory to run this on only part of the test hierarchy. This option is much slower, but can be very 
+        helpful in pinning down a leak.
+    </li>
+</ol>
+
+<h3>Fixing Leaks</h3>
+<p>
+    Fixing memory leaks is a bit of a black art. The leak checker will tell you where the leaked memory was allocated, 
+    but not why it was never freed. Sometimes it will be obvious from code inspection that there is no free call to 
+    match a particular allocation. Other times, things get trickier - especially when refcounting is involved. In that 
+    case, you often know that some code is holding an extra ref without releasing it, but it can be very hard to tell 
+    what code.
+</p>
+<p>
+    Here&#8217;s a trick often found useful for these situations. Fire up the application in <code>gdb</code>. Set 
+    breakpoints on the appropriate ref and deref methods. Then, use the gdb &#8220;commands&#8221; feature to set 
+    commands of &#8220;bt 10; cont&#8221; for these breakpoints. You&#8217;ll get a 10-frame backtrace for every ref and 
+    deref, and that&#8217;s often enough to find the one that doesn&#8217;t pair up.
+</p>
+
+<h3>Destroy All Leaks</h3>
+<p>
+    If you want to help with finding and fixing leaks, and you need more advice, <a href="/contact.html">contact us</a>. 
+    Happy hunting.
+</p>
+<?php
+    include("../footer.inc");
+?>
+\ No newline at end of file
