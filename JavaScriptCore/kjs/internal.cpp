@@ -721,6 +721,11 @@ InternalFunctionImp::InternalFunctionImp(FunctionPrototype* funcProto, const Ide
 {
 }
 
+bool InternalFunctionImp::implementsHasCall() const
+{
+  return true;
+}
+
 bool InternalFunctionImp::implementsHasInstance() const
 {
   return true;

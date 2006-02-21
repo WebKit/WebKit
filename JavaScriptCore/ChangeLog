@@ -1,3 +1,16 @@
+2006-02-21  Darin Adler  <darin@apple.com>
+
+        Change suggested by Mitz.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7402
+          REGRESSION: Methods do not execute
+
+        * kjs/internal.h: Add implementsHasCall to InternalFunctionImp.
+        * kjs/internal.cpp: (KJS::InternalFunctionImp::implementsHasCall):
+        Return true. All the classes derived from InternalFunctionImp need
+        to return true from this -- later we can remove all the extra
+        implementations too.
+
 2006-02-21  Maciej Stachowiak  <mjs@apple.com>
 
         - fix build breakage caused by last-minute change to my patch
