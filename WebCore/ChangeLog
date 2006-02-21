@@ -2,6 +2,44 @@
 
         Rubber Stamped by Hyatt.
 
+        - renamed STATIC, FIXED, RELATIVE, ABSOLUTE to StaticPosition, FixedPosition, etc
+        
+        This avoids conflicting with win32 headers.
+
+        * css/css_computedstyle.cpp:
+        (WebCore::CSSComputedStyleDeclarationImpl::getPropertyCSSValue):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        (WebCore::CSSStyleSelector::applyProperty):
+        * editing/htmlediting.cpp:
+        (WebCore::isSpecialElement):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetter):
+        * rendering/render_box.cpp:
+        (WebCore::RenderBox::setStyle):
+        (WebCore::RenderBox::absolutePosition):
+        (WebCore::RenderBox::computeAbsoluteRepaintRect):
+        * rendering/render_flow.cpp:
+        (WebCore::RenderFlow::getAbsoluteRepaintRect):
+        * rendering/render_layer.cpp:
+        (WebCore::RenderLayer::convertToLayerCoords):
+        (WebCore::RenderLayer::calculateClipRects):
+        (WebCore::RenderLayer::calculateRects):
+        * rendering/render_object.cpp:
+        (WebCore::RenderObject::markContainingBlocksForLayout):
+        (WebCore::RenderObject::containingBlock):
+        (WebCore::RenderObject::setStyle):
+        (WebCore::RenderObject::container):
+        * rendering/render_style.cpp:
+        (WebCore::RenderStyle::diff):
+        * rendering/render_style.h:
+        (khtml::):
+        (khtml::RenderStyle::initialPosition):
+
+2006-02-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber Stamped by Hyatt.
+
         - remove KWQSignalStubs.cpp from project.
 
         * WebCore.vcproj/WebCore/WebCore.vcproj:

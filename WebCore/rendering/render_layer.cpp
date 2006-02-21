@@ -484,7 +484,7 @@ RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, int& x, int&
     if (ancestorLayer == this)
         return;
         
-    if (m_object->style()->position() == FIXED) {
+    if (m_object->style()->position() == FixedPosition) {
         // Add in the offset of the view.  We can obtain this by calling
         // absolutePosition() on the RenderCanvas.
         int xOff, yOff;
@@ -495,7 +495,7 @@ RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, int& x, int&
     }
  
     RenderLayer* parentLayer;
-    if (m_object->style()->position() == ABSOLUTE)
+    if (m_object->style()->position() == AbsolutePosition)
         parentLayer = enclosingPositionedAncestor();
     else
         parentLayer = parent();
@@ -1232,13 +1232,13 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer)
 
     // A fixed object is essentially the root of its containing block hierarchy, so when
     // we encounter such an object, we reset our clip rects to the fixedClipRect.
-    if (m_object->style()->position() == FIXED) {
+    if (m_object->style()->position() == FixedPosition) {
         posClipRect = fixedClipRect;
         overflowClipRect = fixedClipRect;
     }
-    else if (m_object->style()->position() == RELATIVE)
+    else if (m_object->style()->position() == RelativePosition)
         posClipRect = overflowClipRect;
-    else if (m_object->style()->position() == ABSOLUTE)
+    else if (m_object->style()->position() == AbsolutePosition)
         overflowClipRect = posClipRect;
     
     // Update the clip rects that will be passed to child layers.
@@ -1278,7 +1278,7 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& pa
 {
     if (parent()) {
         parent()->calculateClipRects(rootLayer);
-        backgroundRect = m_object->style()->position() == FIXED ? parent()->clipRects()->fixedClipRect() :
+        backgroundRect = m_object->style()->position() == FixedPosition ? parent()->clipRects()->fixedClipRect() :
                          (m_object->isPositioned() ? parent()->clipRects()->posClipRect() : 
                                                      parent()->clipRects()->overflowClipRect());
         backgroundRect.intersect(paintDirtyRect);

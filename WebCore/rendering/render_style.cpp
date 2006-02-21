@@ -826,12 +826,12 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
 
     // Make sure these left/top/right/bottom checks stay below all layout checks and above
     // all visible checks.
-    if (other->position() != STATIC) {
+    if (other->position() != StaticPosition) {
         if (!(surround->offset == other->surround->offset)) {
             // FIXME: We will need to do a bit of work in RenderObject/Box::setStyle before we
             // can stop doing a layout when relative positioned objects move.  In particular, we'll need
             // to update scrolling positions and figure out how to do a repaint properly of the updated layer.
-            //if (other->position() == RELATIVE)
+            //if (other->position() == RelativePosition)
             //    return RepaintLayer;
             //else
                 return Layout;

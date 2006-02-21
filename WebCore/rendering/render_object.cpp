@@ -688,7 +688,7 @@ void RenderObject::markContainingBlocksForLayout()
     RenderObject *last = this;
 
     while (o) {
-        if (!last->isText() && (last->style()->position() == FIXED || last->style()->position() == ABSOLUTE)) {
+        if (!last->isText() && (last->style()->position() == FixedPosition || last->style()->position() == AbsolutePosition)) {
             if (o->m_posChildNeedsLayout)
                 return;
             o->m_posChildNeedsLayout = true;
@@ -714,19 +714,19 @@ RenderBlock* RenderObject::containingBlock() const
         return (RenderBlock*)this;
 
     RenderObject *o = parent();
-    if (!isText() && m_style->position() == FIXED) {
+    if (!isText() && m_style->position() == FixedPosition) {
         while ( o && !o->isCanvas() )
             o = o->parent();
     }
-    else if (!isText() && m_style->position() == ABSOLUTE) {
-        while (o && (o->style()->position() == STATIC || (o->isInline() && !o->isReplaced()))
+    else if (!isText() && m_style->position() == AbsolutePosition) {
+        while (o && (o->style()->position() == StaticPosition || (o->isInline() && !o->isReplaced()))
                && !o->isRoot() && !o->isCanvas()) {
             // For relpositioned inlines, we return the nearest enclosing block.  We don't try
             // to return the inline itself.  This allows us to avoid having a positioned objects
             // list in all RenderInlines and lets us return a strongly-typed RenderBlock* result
             // from this method.  The container() method can actually be used to obtain the
             // inline directly.
-            if (o->style()->position() == RELATIVE && o->isInline() && !o->isReplaced())
+            if (o->style()->position() == RelativePosition && o->isInline() && !o->isReplaced())
                 return o->containingBlock();
             o = o->parent();
         }
@@ -1790,13 +1790,13 @@ void RenderObject::setStyle(RenderStyle *style)
             // For changes in float styles, we need to conceivably remove ourselves
             // from the floating objects list.
             removeFromObjectLists();
-        else if (isPositioned() && (style->position() != ABSOLUTE && style->position() != FIXED))
+        else if (isPositioned() && (style->position() != AbsolutePosition && style->position() != FixedPosition))
             // For changes in positioning styles, we need to conceivably remove ourselves
             // from the positioned objects list.
             removeFromObjectLists();
         
         affectsParentBlock = m_style && isFloatingOrPositioned() &&
-            (!style->isFloating() && style->position() != ABSOLUTE && style->position() != FIXED)
+            (!style->isFloating() && style->position() != AbsolutePosition && style->position() != FixedPosition)
             && parent() && (parent()->isBlockFlow() || parent()->isInlineFlow());
         
         // reset style flags
@@ -1971,7 +1971,7 @@ RenderObject *RenderObject::container() const
     // calcAbsoluteVertical have to use container().
     EPosition pos = m_style->position();
     RenderObject *o = 0;
-    if (!isText() && pos == FIXED) {
+    if (!isText() && pos == FixedPosition) {
         // container() can be called on an object that is not in the
         // tree yet.  We don't call canvas() since it will assert if it
         // can't get back to the canvas.  Instead we just walk as high up
@@ -1981,12 +1981,12 @@ RenderObject *RenderObject::container() const
         o = parent();
         while (o && o->parent()) o = o->parent();
     }
-    else if (!isText() && pos == ABSOLUTE) {
+    else if (!isText() && pos == AbsolutePosition) {
         // Same goes here.  We technically just want our containing block, but
         // we may not have one if we're part of an uninstalled subtree.  We'll
         // climb as high as we can though.
         o = parent();
-        while (o && o->style()->position() == STATIC && !o->isRoot() && !o->isCanvas())
+        while (o && o->style()->position() == StaticPosition && !o->isRoot() && !o->isCanvas())
             o = o->parent();
     }
     else

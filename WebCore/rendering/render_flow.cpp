@@ -473,7 +473,7 @@ IntRect RenderFlow::getAbsoluteRepaintRect()
         RenderBlock* cb = containingBlock();
         for (RenderObject* inlineFlow = this; inlineFlow && inlineFlow->isInlineFlow() && inlineFlow != cb; 
              inlineFlow = inlineFlow->parent()) {
-             if (inlineFlow->style()->position() == RELATIVE && inlineFlow->layer())
+             if (inlineFlow->style()->position() == RelativePosition && inlineFlow->layer())
                 inlineFlow->layer()->relativePositionOffset(left, top);
         }
 

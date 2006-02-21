@@ -3329,7 +3329,7 @@ void RenderBlock::updateFirstLetter()
         
         // Force inline display (except for floating first-letters)
         pseudoStyle->setDisplay( pseudoStyle->isFloating() ? BLOCK : INLINE);
-        pseudoStyle->setPosition( STATIC ); // CSS2 says first-letter can't be positioned.
+        pseudoStyle->setPosition( StaticPosition ); // CSS2 says first-letter can't be positioned.
         
         RenderObject* firstLetter = RenderFlow::createAnonymousFlow(document(), pseudoStyle); // anonymous box
         // FIXME: This adds in the wrong place if list markers were skipped above.  Should be
