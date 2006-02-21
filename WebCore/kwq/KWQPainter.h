@@ -137,9 +137,8 @@ public:
     void clearShadow();
 
     void initFocusRing(int width, int offset);
-    void initFocusRing(int width, int offset, const Color&);
     void addFocusRingRect(int x, int y, int width, int height);
-    void drawFocusRing();
+    void drawFocusRing(const Color&);
     void clearFocusRing();
     
 #if __APPLE__

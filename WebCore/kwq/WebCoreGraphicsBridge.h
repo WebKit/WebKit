@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@
 @interface WebCoreGraphicsBridge : NSObject
 
 + (WebCoreGraphicsBridge *)sharedBridge;
-- (void)setFocusRingStyle:(NSFocusRingPlacement)placement radius:(int)radius color:(NSColor *)color;
+- (void)drawFocusRingWithPath:(CGPathRef)path radius:(float)radius color:(CGColorRef)color;
 - (void)setDraggingImage:(NSImage *)dragImage at:(NSPoint)dragLoc;
 
 @end

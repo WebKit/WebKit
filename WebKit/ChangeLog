@@ -1,3 +1,14 @@
+2006-02-20  Darin Adler  <darin@apple.com>
+
+        Collaborated with Graham Dennis <Graham.Dennis@gmail.com> on this.
+
+        - WebKit part of fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6831
+          contentEditable outline darkens as caret moves
+
+        * WebCoreSupport/WebGraphicsBridge.m:
+        (-[WebGraphicsBridge drawFocusRingWithPath:radius:color:]):
+        Replaced the old bridge function that set up style with this one that renders a path.
+
 2006-02-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

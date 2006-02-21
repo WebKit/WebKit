@@ -1,5 +1,43 @@
 2006-02-20  Darin Adler  <darin@apple.com>
 
+        Collaborated with Graham Dennis <Graham.Dennis@gmail.com> on this.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6831
+          contentEditable outline darkens as caret moves
+
+        Test: editing/selection/move-by-character-6.html
+
+        The trick was to draw the focus ring clipped to a list of rectangles instead
+        of clipped to exactly one.
+
+        * kwq/KWQPainter.h: Move Color parameter from initFocusRing to drawFocusRing.
+        * kwq/KWQPainter.mm:
+        (WebCore::QPainterPrivate::QPainterPrivate): Change focusRingPath from
+        an NSBezierPath to a CGMutablePathRef.
+        (WebCore::QPainterPrivate::~QPainterPrivate): Ditto.
+        (WebCore::QPainter::initFocusRing): Removed color parameter, and made a
+        CGPath instead of an NSBezierPath.
+        (WebCore::QPainter::addFocusRingRect): CGPath instead of NSBezierPath.
+        (WebCore::QPainter::drawFocusRing): Added color parameter, and changed to
+        use new bridge method to draw the focus ring.
+        (WebCore::QPainter::clearFocusRing): CGPath instead of NSBezierPath.
+
+        * kwq/WebCoreGraphicsBridge.h:
+        * kwq/WebCoreGraphicsBridge.m:
+        (-[WebCoreGraphicsBridge drawFocusRingWithPath:radius:color:]):
+        Replaced setFocusRingStyle: method with this one.
+
+        * rendering/render_flow.cpp: (WebCore::RenderFlow::paintFocusRing):
+        * rendering/render_object.cpp: (WebCore::RenderObject::paintOutline):
+        Pass color to drawFocusRing instead of initFocusRing.
+
+        - fixed message on exit from the other patch I just landed
+
+        * platform/mac/CursorMac.mm:
+        (WebCore::leakNamedCursor): Renamed and made this leak intentionally.
+
+2006-02-20  Darin Adler  <darin@apple.com>
+
         Reviewed by Hyatt.
 
         - moved Cursor into the platform directory from KWQ

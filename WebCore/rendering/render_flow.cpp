@@ -3,7 +3,7 @@
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,10 +23,10 @@
 // -------------------------------------------------------------------------
 
 #include "config.h"
+#include "render_flow.h"
+
 #include <assert.h>
 #include <qpainter.h>
-
-#include "rendering/render_flow.h"
 #include "InlineTextBox.h"
 #include "rendering/render_canvas.h"
 #include "DocumentImpl.h"
@@ -36,9 +36,9 @@
 #include "render_line.h"
 #include "htmlnames.h"
 
-using namespace DOM;
-using namespace DOM::HTMLNames;
-using namespace khtml;
+namespace WebCore {
+
+using namespace HTMLNames;
 
 RenderFlow* RenderFlow::createAnonymousFlow(DOM::DocumentImpl* doc, RenderStyle* style)
 {
@@ -681,9 +681,9 @@ void RenderFlow::paintFocusRing(QPainter *p, int tx, int ty)
     if (!oc.isValid())
         oc = style()->color();
     
-    p->initFocusRing(ow,  style()->outlineOffset(), oc);
+    p->initFocusRing(ow, style()->outlineOffset());
     addFocusRingRects(p, tx, ty);
-    p->drawFocusRing();
+    p->drawFocusRing(oc);
     p->clearFocusRing();
 }
 
@@ -788,4 +788,6 @@ void RenderFlow::paintOutlineForLine(QPainter *p, int tx, int ty, const IntRect 
                    (!nextline.isEmpty() && l - ow < tx + nextline.right()) ? -ow : ow,
                    ow,
                    true);
+}
+
 }

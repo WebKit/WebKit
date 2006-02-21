@@ -53,7 +53,9 @@ static NSCursor* createCustomCursor(Image* image)
     return 0;
 }
 
-static NSCursor* namedCursor(const char* name, int x, int y)
+// Leak these cursors intentionally, that way we won't waste time trying to clean them
+// up at process exit time.
+static NSCursor* leakNamedCursor(const char* name, int x, int y)
 {
     KWQ_BLOCK_EXCEPTIONS;
     NSString* resourceName = [[NSString alloc] initWithUTF8String:name];
@@ -63,7 +65,7 @@ static NSCursor* namedCursor(const char* name, int x, int y)
     [resourceName release];
     NSCursor* cursor = 0;
     if (cursorImage) {
-        cursor = [[[NSCursor alloc] initWithImage:cursorImage hotSpot:NSMakePoint(x, y)] autorelease];
+        cursor = [[NSCursor alloc] initWithImage:cursorImage hotSpot:NSMakePoint(x, y)];
         [cursorImage release];
     }
     return cursor;
@@ -108,13 +110,13 @@ const Cursor& crossCursor()
 const Cursor& handCursor()
 {
     // FIXME: Use [NSCursor pointingHandCursor]?
-    static Cursor c = namedCursor("linkCursor", 6, 1);
+    static Cursor c = leakNamedCursor("linkCursor", 6, 1);
     return c;
 }
 
 const Cursor& moveCursor()
 {
-    static Cursor c = namedCursor("moveCursor", 7, 7);
+    static Cursor c = leakNamedCursor("moveCursor", 7, 7);
     return c;
 }
 
@@ -126,61 +128,61 @@ const Cursor& iBeamCursor()
 
 const Cursor& waitCursor()
 {
-    static Cursor c = namedCursor("waitCursor", 7, 7);
+    static Cursor c = leakNamedCursor("waitCursor", 7, 7);
     return c;
 }
 
 const Cursor& helpCursor()
 {
-    static Cursor c = namedCursor("helpCursor", 8, 8);
+    static Cursor c = leakNamedCursor("helpCursor", 8, 8);
     return c;
 }
 
 const Cursor& eastResizeCursor()
 {
-    static Cursor c = namedCursor("eastResizeCursor", 14, 7);
+    static Cursor c = leakNamedCursor("eastResizeCursor", 14, 7);
     return c;
 }
 
 const Cursor& northResizeCursor()
 {
-    static Cursor c = namedCursor("northResizeCursor", 7, 1);
+    static Cursor c = leakNamedCursor("northResizeCursor", 7, 1);
     return c;
 }
 
 const Cursor& northEastResizeCursor()
 {
-    static Cursor c = namedCursor("northEastResizeCursor", 14, 1);
+    static Cursor c = leakNamedCursor("northEastResizeCursor", 14, 1);
     return c;
 }
 
 const Cursor& northWestResizeCursor()
 {
-    static Cursor c = namedCursor("northWestResizeCursor", 0, 0);
+    static Cursor c = leakNamedCursor("northWestResizeCursor", 0, 0);
     return c;
 }
 
 const Cursor& southResizeCursor()
 {
-    static Cursor c = namedCursor("southResizeCursor", 7, 14);
+    static Cursor c = leakNamedCursor("southResizeCursor", 7, 14);
     return c;
 }
 
 const Cursor& southEastResizeCursor()
 {
-    static Cursor c = namedCursor("southEastResizeCursor", 14, 14);
+    static Cursor c = leakNamedCursor("southEastResizeCursor", 14, 14);
     return c;
 }
 
 const Cursor& southWestResizeCursor()
 {
-    static Cursor c = namedCursor("southWestResizeCursor", 1, 14);
+    static Cursor c = leakNamedCursor("southWestResizeCursor", 1, 14);
     return c;
 }
 
 const Cursor& westResizeCursor()
 {
-    static Cursor c = namedCursor("westResizeCursor", 1, 7);
+    static Cursor c = leakNamedCursor("westResizeCursor", 1, 7);
     return c;
 }
 

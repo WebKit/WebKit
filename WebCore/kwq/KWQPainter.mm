@@ -71,26 +71,23 @@ struct QPainterPrivate {
     Vector<QPState> stack;
     id <WebCoreTextRenderer> textRenderer;
     QFont textRendererFont;
-    NSBezierPath *focusRingPath;
+    CGMutablePathRef focusRingPath;
     int focusRingWidth;
     int focusRingOffset;
-    bool hasFocusRingColor;
-    Color focusRingColor;
 #if SVG_SUPPORT
     KRenderingDevice *renderingDevice;
 #endif
 };
 
-QPainterPrivate::QPainterPrivate() : textRenderer(0), focusRingPath(0), focusRingWidth(0), focusRingOffset(0),
-                        hasFocusRingColor(false)
+QPainterPrivate::QPainterPrivate()
+    : textRenderer(0), focusRingPath(0), focusRingWidth(0), focusRingOffset(0)
 {
-
 }
 
 QPainterPrivate::~QPainterPrivate()
 {
     KWQRelease(textRenderer);
-    KWQRelease(focusRingPath);
+    CGPathRelease(focusRingPath);
 }
 
 static inline void _fillRectXX(float x, float y, float w, float h, const Color& col);
@@ -874,62 +871,35 @@ void QPainter::initFocusRing(int width, int offset)
     if (data->state.paintingDisabled)
         return;
     clearFocusRing();
+    data->focusRingPath = CGPathCreateMutable();
     data->focusRingWidth = width;
-    data->hasFocusRingColor = false;
     data->focusRingOffset = offset;
-    data->focusRingPath = KWQRetainNSRelease([[NSBezierPath alloc] init]);
-    [data->focusRingPath setWindingRule:NSNonZeroWindingRule];
-}
-
-void QPainter::initFocusRing(int width, int offset, const Color &color)
-{
-    if (data->state.paintingDisabled)
-        return;
-    initFocusRing(width, offset);
-    data->hasFocusRingColor = true;
-    data->focusRingColor = color;
 }
 
 void QPainter::addFocusRingRect(int x, int y, int width, int height)
 {
     if (data->state.paintingDisabled)
         return;
-    ASSERT(data->focusRingPath);
-    NSRect rect = NSMakeRect(x, y, width, height);
-    int offset = (data->focusRingWidth-1)/2 + data->focusRingOffset;
-    rect = NSInsetRect(rect, -offset, -offset);
-    [data->focusRingPath appendBezierPathWithRect:rect];
+    int radius = (data->focusRingWidth - 1) / 2;
+    int offset = radius + data->focusRingOffset;
+    CGPathAddRect(data->focusRingPath, 0, CGRectInset(CGRectMake(x, y, width, height), -offset, -offset));
 }
 
-void QPainter::drawFocusRing()
+void QPainter::drawFocusRing(const Color& color)
 {
     if (data->state.paintingDisabled)
         return;
-
     ASSERT(data->focusRingPath);
-
-    if ([data->focusRingPath elementCount] == 0) {
-        LOG_ERROR("Request to draw focus ring with no control points");
-        return;
-    }
-    
-    NSRect bounds = [data->focusRingPath bounds];
-    if (!NSIsEmptyRect(bounds)) {
-        int radius = (data->focusRingWidth-1)/2;
-        NSColor *color = data->hasFocusRingColor ? nsColor(data->focusRingColor) : nil;
-        [NSGraphicsContext saveGraphicsState];
-        [[WebCoreGraphicsBridge sharedBridge] setFocusRingStyle:NSFocusRingOnly radius:radius color:color];
-        [data->focusRingPath fill];
-        [NSGraphicsContext restoreGraphicsState];   
-    }
+    int radius = (data->focusRingWidth - 1) / 2;
+    CGColorRef colorRef = color.isValid() ? cgColor(color) : 0;
+    [[WebCoreGraphicsBridge sharedBridge] drawFocusRingWithPath:data->focusRingPath radius:radius color:colorRef];
+    CGColorRelease(colorRef);
 }
 
 void QPainter::clearFocusRing()
 {
-    if (data->focusRingPath) {
-        KWQRelease(data->focusRingPath);
-        data->focusRingPath = nil;
-    }
+    CGPathRelease(data->focusRingPath);
+    data->focusRingPath = 0;
 }
 
 }

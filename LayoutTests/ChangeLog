@@ -1,3 +1,13 @@
+2006-02-20  Darin Adler  <darin@apple.com>
+
+        - test http://bugzilla.opendarwin.org/show_bug.cgi?id=6831
+          contentEditable outline darkens as caret moves
+
+        * editing/selection/move-by-character-6.html: Added.
+        * editing/selection/move-by-character-6-expected.txt: Added.
+        * editing/selection/move-by-character-6-expected.checksum: Added.
+        * editing/selection/move-by-character-6-expected.png: Added.
+
 2006-02-18  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Maciej.

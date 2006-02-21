@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,9 +46,22 @@
     return (WebGraphicsBridge *)[super sharedBridge];
 }
 
-- (void)setFocusRingStyle:(NSFocusRingPlacement)placement radius:(int)radius color:(NSColor *)color
+- (void)drawFocusRingWithPath:(CGPathRef)path radius:(float)radius color:(CGColorRef)color
 {
-    WKSetFocusRingStyle(placement, radius, color);
+    CGContextRef context = [[NSGraphicsContext currentContext] graphicsPort];
+
+    NSView *view = [NSView focusView];
+    const NSRect *rects;
+    int count;
+    [view getRectsBeingDrawn:&rects count:&count];
+
+    int i;
+    for (i = 0; i < count; ++i) {
+        NSRect transformedRect = [view convertRect:rects[i] toView:nil];
+        CGContextBeginPath(context);
+        CGContextAddPath(context, path);
+        WKDrawFocusRing(context, *(CGRect *)&transformedRect, color, radius);
+    }
 }
 
 // Dashboard wants to set the drag image during dragging, but Cocoa does not allow this.
