@@ -1,3 +1,19 @@
+2006-02-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff and Darin.
+        
+        Patch from Maks Orlovich, based on work by David Faure, hand-applied and 
+        significantly reworked by me.
+        
+        - Patch: give internal function names (KJS merge)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6279
+
+        * khtml/ecma/kjs_binding.h:
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElementFunction::HTMLElementFunction):
+        * kwq/WebCoreScriptDebugger.mm:
+        (-[WebCoreScriptCallFrame functionName]):
+
 2006-02-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

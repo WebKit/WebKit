@@ -32,11 +32,23 @@ clipboardData : 'undefined'
 currentTarget : 'null'
 dataTransfer : 'undefined'
 eventPhase : '0'
-initEvent : '[function]'
-preventDefault : '[function]'
+initEvent : '
+function initEvent() {
+    [native code]
+}
+'
+preventDefault : '
+function preventDefault() {
+    [native code]
+}
+'
 returnValue : 'true'
 srcElement : 'null'
-stopPropagation : '[function]'
+stopPropagation : '
+function stopPropagation() {
+    [native code]
+}
+'
 target : 'null'
 type : 'load'
 

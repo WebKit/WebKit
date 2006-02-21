@@ -32,11 +32,7 @@ PASS arr[0] is 99
 PASS typeof orgFuncClone is 'function'
 PASS orgFuncClone('world') is 'Hello world'
 PASS groupClone(1, 2) is 9
-FAIL String(Math.sin) should be 
-function sin() {
-    [native code]
-}
-. Was (Internal Function)
+PASS String(Math.sin) is sinStr
 PASS shadow() is 2
 PASS nestedret is 'outer nest'
 PASS not_nestedret is 'global nest'

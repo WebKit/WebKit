@@ -87,9 +87,9 @@ using namespace DOM::EventNames;
 
 namespace KJS {
 
-class HTMLElementFunction : public DOMFunction {
+class HTMLElementFunction : public InternalFunctionImp {
 public:
-  HTMLElementFunction(ExecState *exec, int i, int len);
+  HTMLElementFunction(ExecState *exec, int i, int len, const Identifier& name);
   virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List&args);
 private:
   int id;
@@ -2238,8 +2238,9 @@ void KJS::HTMLElement::pushEventHandlerScope(ExecState *exec, ScopeChain &scope)
   scope.push(static_cast<JSObject *>(getDOMNode(exec, element)));
 }
 
-HTMLElementFunction::HTMLElementFunction(ExecState *exec, int i, int len)
-  : DOMFunction(), id(i)
+HTMLElementFunction::HTMLElementFunction(ExecState *exec, int i, int len, const Identifier& name)
+  : InternalFunctionImp(static_cast<FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype()), name)
+  , id(i)
 {
   put(exec,lengthPropertyName,jsNumber(len),DontDelete|ReadOnly|DontEnum);
 }

@@ -48,19 +48,6 @@ namespace KJS {
     virtual UString toString(ExecState *exec) const;
   };
 
-  /**
-   * Base class for all functions in this binding.
-   */
-  class DOMFunction : public JSObject {
-  protected:
-    DOMFunction() : JSObject() {}
-  public:
-    virtual bool implementsCall() const { return true; }
-    virtual bool toBoolean(ExecState *) const { return true; }
-    virtual JSValue *toPrimitive(ExecState *exec, JSType) const { return jsString(toString(exec)); }
-    virtual UString toString(ExecState *) const { return UString("[function]"); }
-  };
-
   class DOMNode;
 
   /**

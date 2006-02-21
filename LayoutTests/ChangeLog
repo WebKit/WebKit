@@ -1,3 +1,19 @@
+2006-02-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff and Darin.
+        
+        Patch from Maks Orlovich, based on work by David Faure, hand-applied and 
+        significantly reworked by me.
+        
+        - Patch: give internal function names (KJS merge)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6279
+        
+        Updated test results, now showing correct function string.
+
+        * fast/dom/xmlhttprequest-get-expected.txt:
+        * fast/js/kde/function-expected.txt:
+        * fast/js/kde/inbuilt_function_tostring-expected.txt:
+
 2006-02-20  Darin Adler  <darin@apple.com>
 
         - test http://bugzilla.opendarwin.org/show_bug.cgi?id=6831

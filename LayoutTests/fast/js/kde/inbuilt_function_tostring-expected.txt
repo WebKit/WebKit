@@ -3,138 +3,138 @@ KDE JS Test
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-FAIL StripSpaces(eval.toString()) should be functioneval(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(parseInt.toString()) should be functionparseInt(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(parseFloat.toString()) should be functionparseFloat(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(isNaN.toString()) should be functionisNaN(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(isFinite.toString()) should be functionisFinite(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(escape.toString()) should be functionescape(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(unescape.toString()) should be functionunescape(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Object.prototype.toString.toString()) should be functiontoString(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Object.prototype.toLocaleString.toString()) should be functiontoLocaleString(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Object.prototype.valueOf.toString()) should be functionvalueOf(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Object.prototype.hasOwnProperty.toString()) should be functionhasOwnProperty(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Object.prototype.isPrototypeOf.toString()) should be functionisPrototypeOf(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Object.prototype.propertyIsEnumerable.toString()) should be functionpropertyIsEnumerable(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Function.prototype.toString.toString()) should be functiontoString(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Function.prototype.apply.toString()) should be functionapply(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Function.prototype.call.toString()) should be functioncall(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Array.prototype.toString.toString()) should be functiontoString(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Array.prototype.toLocaleString.toString()) should be functiontoLocaleString(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Array.prototype.concat.toString()) should be functionconcat(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Array.prototype.join.toString()) should be functionjoin(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Array.prototype.pop.toString()) should be functionpop(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Array.prototype.push.toString()) should be functionpush(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Array.prototype.reverse.toString()) should be functionreverse(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Array.prototype.shift.toString()) should be functionshift(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Array.prototype.slice.toString()) should be functionslice(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Array.prototype.sort.toString()) should be functionsort(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Array.prototype.splice.toString()) should be functionsplice(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Array.prototype.unshift.toString()) should be functionunshift(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(String.prototype.toString.toString()) should be functiontoString(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(String.prototype.valueOf.toString()) should be functionvalueOf(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(String.prototype.charAt.toString()) should be functioncharAt(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(String.prototype.charCodeAt.toString()) should be functioncharCodeAt(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(String.prototype.concat.toString()) should be functionconcat(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(String.prototype.indexOf.toString()) should be functionindexOf(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(String.prototype.lastIndexOf.toString()) should be functionlastIndexOf(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(String.prototype.match.toString()) should be functionmatch(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(String.prototype.replace.toString()) should be functionreplace(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(String.prototype.search.toString()) should be functionsearch(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(String.prototype.slice.toString()) should be functionslice(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(String.prototype.split.toString()) should be functionsplit(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(String.prototype.substr.toString()) should be functionsubstr(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(String.prototype.substring.toString()) should be functionsubstring(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(String.prototype.toLowerCase.toString()) should be functiontoLowerCase(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(String.prototype.toUpperCase.toString()) should be functiontoUpperCase(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(String.prototype.big.toString()) should be functionbig(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(String.prototype.small.toString()) should be functionsmall(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(String.prototype.blink.toString()) should be functionblink(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(String.prototype.bold.toString()) should be functionbold(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(String.prototype.fixed.toString()) should be functionfixed(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(String.prototype.italics.toString()) should be functionitalics(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(String.prototype.strike.toString()) should be functionstrike(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(String.prototype.sub.toString()) should be functionsub(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(String.prototype.sup.toString()) should be functionsup(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(String.prototype.fontcolor.toString()) should be functionfontcolor(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(String.prototype.fontsize.toString()) should be functionfontsize(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(String.prototype.anchor.toString()) should be functionanchor(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(String.prototype.link.toString()) should be functionlink(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Boolean.prototype.toString.toString()) should be functiontoString(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Boolean.prototype.valueOf.toString()) should be functionvalueOf(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Number.prototype.toString.toString()) should be functiontoString(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Number.prototype.toLocaleString.toString()) should be functiontoLocaleString(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Number.prototype.valueOf.toString()) should be functionvalueOf(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Number.prototype.toFixed.toString()) should be functiontoFixed(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Number.prototype.toExponential.toString()) should be functiontoExponential(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Number.prototype.toPrecision.toString()) should be functiontoPrecision(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Math.abs.toString()) should be functionabs(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Math.acos.toString()) should be functionacos(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Math.asin.toString()) should be functionasin(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Math.atan.toString()) should be functionatan(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Math.atan2.toString()) should be functionatan2(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Math.ceil.toString()) should be functionceil(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Math.cos.toString()) should be functioncos(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Math.exp.toString()) should be functionexp(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Math.floor.toString()) should be functionfloor(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Math.log.toString()) should be functionlog(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Math.max.toString()) should be functionmax(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Math.min.toString()) should be functionmin(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Math.pow.toString()) should be functionpow(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Math.random.toString()) should be functionrandom(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Math.round.toString()) should be functionround(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Math.sin.toString()) should be functionsin(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Math.sqrt.toString()) should be functionsqrt(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Math.tan.toString()) should be functiontan(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.toString.toString()) should be functiontoString(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.toUTCString.toString()) should be functiontoUTCString(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.toDateString.toString()) should be functiontoDateString(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.toTimeString.toString()) should be functiontoTimeString(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.toLocaleString.toString()) should be functiontoLocaleString(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.toLocaleDateString.toString()) should be functiontoLocaleDateString(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.toLocaleTimeString.toString()) should be functiontoLocaleTimeString(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.valueOf.toString()) should be functionvalueOf(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.getTime.toString()) should be functiongetTime(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.getFullYear.toString()) should be functiongetFullYear(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.getUTCFullYear.toString()) should be functiongetUTCFullYear(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.toGMTString.toString()) should be functiontoGMTString(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.getMonth.toString()) should be functiongetMonth(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.getUTCMonth.toString()) should be functiongetUTCMonth(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.getDate.toString()) should be functiongetDate(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.getUTCDate.toString()) should be functiongetUTCDate(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.getDay.toString()) should be functiongetDay(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.getUTCDay.toString()) should be functiongetUTCDay(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.getHours.toString()) should be functiongetHours(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.getUTCHours.toString()) should be functiongetUTCHours(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.getMinutes.toString()) should be functiongetMinutes(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.getUTCMinutes.toString()) should be functiongetUTCMinutes(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.getSeconds.toString()) should be functiongetSeconds(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.getUTCSeconds.toString()) should be functiongetUTCSeconds(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.getMilliseconds.toString()) should be functiongetMilliseconds(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.getUTCMilliseconds.toString()) should be functiongetUTCMilliseconds(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.getTimezoneOffset.toString()) should be functiongetTimezoneOffset(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.setTime.toString()) should be functionsetTime(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.setMilliseconds.toString()) should be functionsetMilliseconds(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.setUTCMilliseconds.toString()) should be functionsetUTCMilliseconds(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.setSeconds.toString()) should be functionsetSeconds(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.setUTCSeconds.toString()) should be functionsetUTCSeconds(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.setMinutes.toString()) should be functionsetMinutes(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.setUTCMinutes.toString()) should be functionsetUTCMinutes(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.setHours.toString()) should be functionsetHours(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.setUTCHours.toString()) should be functionsetUTCHours(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.setDate.toString()) should be functionsetDate(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.setUTCDate.toString()) should be functionsetUTCDate(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.setMonth.toString()) should be functionsetMonth(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.setUTCMonth.toString()) should be functionsetUTCMonth(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.setFullYear.toString()) should be functionsetFullYear(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.setUTCFullYear.toString()) should be functionsetUTCFullYear(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.setYear.toString()) should be functionsetYear(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.getYear.toString()) should be functiongetYear(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Date.prototype.toGMTString.toString()) should be functiontoGMTString(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(RegExp.prototype.exec.toString()) should be functionexec(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(RegExp.prototype.test.toString()) should be functiontest(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(RegExp.prototype.toString.toString()) should be functiontoString(){[nativecode]}. Was (InternalFunction)
-FAIL StripSpaces(Error.prototype.toString.toString()) should be functiontoString(){[nativecode]}. Was (InternalFunction)
+PASS StripSpaces(eval.toString()) is "functioneval(){[nativecode]}"
+PASS StripSpaces(parseInt.toString()) is "functionparseInt(){[nativecode]}"
+PASS StripSpaces(parseFloat.toString()) is "functionparseFloat(){[nativecode]}"
+PASS StripSpaces(isNaN.toString()) is "functionisNaN(){[nativecode]}"
+PASS StripSpaces(isFinite.toString()) is "functionisFinite(){[nativecode]}"
+PASS StripSpaces(escape.toString()) is "functionescape(){[nativecode]}"
+PASS StripSpaces(unescape.toString()) is "functionunescape(){[nativecode]}"
+PASS StripSpaces(Object.prototype.toString.toString()) is "functiontoString(){[nativecode]}"
+PASS StripSpaces(Object.prototype.toLocaleString.toString()) is "functiontoLocaleString(){[nativecode]}"
+PASS StripSpaces(Object.prototype.valueOf.toString()) is "functionvalueOf(){[nativecode]}"
+PASS StripSpaces(Object.prototype.hasOwnProperty.toString()) is "functionhasOwnProperty(){[nativecode]}"
+PASS StripSpaces(Object.prototype.isPrototypeOf.toString()) is "functionisPrototypeOf(){[nativecode]}"
+PASS StripSpaces(Object.prototype.propertyIsEnumerable.toString()) is "functionpropertyIsEnumerable(){[nativecode]}"
+PASS StripSpaces(Function.prototype.toString.toString()) is "functiontoString(){[nativecode]}"
+PASS StripSpaces(Function.prototype.apply.toString()) is "functionapply(){[nativecode]}"
+PASS StripSpaces(Function.prototype.call.toString()) is "functioncall(){[nativecode]}"
+PASS StripSpaces(Array.prototype.toString.toString()) is "functiontoString(){[nativecode]}"
+PASS StripSpaces(Array.prototype.toLocaleString.toString()) is "functiontoLocaleString(){[nativecode]}"
+PASS StripSpaces(Array.prototype.concat.toString()) is "functionconcat(){[nativecode]}"
+PASS StripSpaces(Array.prototype.join.toString()) is "functionjoin(){[nativecode]}"
+PASS StripSpaces(Array.prototype.pop.toString()) is "functionpop(){[nativecode]}"
+PASS StripSpaces(Array.prototype.push.toString()) is "functionpush(){[nativecode]}"
+PASS StripSpaces(Array.prototype.reverse.toString()) is "functionreverse(){[nativecode]}"
+PASS StripSpaces(Array.prototype.shift.toString()) is "functionshift(){[nativecode]}"
+PASS StripSpaces(Array.prototype.slice.toString()) is "functionslice(){[nativecode]}"
+PASS StripSpaces(Array.prototype.sort.toString()) is "functionsort(){[nativecode]}"
+PASS StripSpaces(Array.prototype.splice.toString()) is "functionsplice(){[nativecode]}"
+PASS StripSpaces(Array.prototype.unshift.toString()) is "functionunshift(){[nativecode]}"
+PASS StripSpaces(String.prototype.toString.toString()) is "functiontoString(){[nativecode]}"
+PASS StripSpaces(String.prototype.valueOf.toString()) is "functionvalueOf(){[nativecode]}"
+PASS StripSpaces(String.prototype.charAt.toString()) is "functioncharAt(){[nativecode]}"
+PASS StripSpaces(String.prototype.charCodeAt.toString()) is "functioncharCodeAt(){[nativecode]}"
+PASS StripSpaces(String.prototype.concat.toString()) is "functionconcat(){[nativecode]}"
+PASS StripSpaces(String.prototype.indexOf.toString()) is "functionindexOf(){[nativecode]}"
+PASS StripSpaces(String.prototype.lastIndexOf.toString()) is "functionlastIndexOf(){[nativecode]}"
+PASS StripSpaces(String.prototype.match.toString()) is "functionmatch(){[nativecode]}"
+PASS StripSpaces(String.prototype.replace.toString()) is "functionreplace(){[nativecode]}"
+PASS StripSpaces(String.prototype.search.toString()) is "functionsearch(){[nativecode]}"
+PASS StripSpaces(String.prototype.slice.toString()) is "functionslice(){[nativecode]}"
+PASS StripSpaces(String.prototype.split.toString()) is "functionsplit(){[nativecode]}"
+PASS StripSpaces(String.prototype.substr.toString()) is "functionsubstr(){[nativecode]}"
+PASS StripSpaces(String.prototype.substring.toString()) is "functionsubstring(){[nativecode]}"
+PASS StripSpaces(String.prototype.toLowerCase.toString()) is "functiontoLowerCase(){[nativecode]}"
+PASS StripSpaces(String.prototype.toUpperCase.toString()) is "functiontoUpperCase(){[nativecode]}"
+PASS StripSpaces(String.prototype.big.toString()) is "functionbig(){[nativecode]}"
+PASS StripSpaces(String.prototype.small.toString()) is "functionsmall(){[nativecode]}"
+PASS StripSpaces(String.prototype.blink.toString()) is "functionblink(){[nativecode]}"
+PASS StripSpaces(String.prototype.bold.toString()) is "functionbold(){[nativecode]}"
+PASS StripSpaces(String.prototype.fixed.toString()) is "functionfixed(){[nativecode]}"
+PASS StripSpaces(String.prototype.italics.toString()) is "functionitalics(){[nativecode]}"
+PASS StripSpaces(String.prototype.strike.toString()) is "functionstrike(){[nativecode]}"
+PASS StripSpaces(String.prototype.sub.toString()) is "functionsub(){[nativecode]}"
+PASS StripSpaces(String.prototype.sup.toString()) is "functionsup(){[nativecode]}"
+PASS StripSpaces(String.prototype.fontcolor.toString()) is "functionfontcolor(){[nativecode]}"
+PASS StripSpaces(String.prototype.fontsize.toString()) is "functionfontsize(){[nativecode]}"
+PASS StripSpaces(String.prototype.anchor.toString()) is "functionanchor(){[nativecode]}"
+PASS StripSpaces(String.prototype.link.toString()) is "functionlink(){[nativecode]}"
+PASS StripSpaces(Boolean.prototype.toString.toString()) is "functiontoString(){[nativecode]}"
+PASS StripSpaces(Boolean.prototype.valueOf.toString()) is "functionvalueOf(){[nativecode]}"
+PASS StripSpaces(Number.prototype.toString.toString()) is "functiontoString(){[nativecode]}"
+PASS StripSpaces(Number.prototype.toLocaleString.toString()) is "functiontoLocaleString(){[nativecode]}"
+PASS StripSpaces(Number.prototype.valueOf.toString()) is "functionvalueOf(){[nativecode]}"
+PASS StripSpaces(Number.prototype.toFixed.toString()) is "functiontoFixed(){[nativecode]}"
+PASS StripSpaces(Number.prototype.toExponential.toString()) is "functiontoExponential(){[nativecode]}"
+PASS StripSpaces(Number.prototype.toPrecision.toString()) is "functiontoPrecision(){[nativecode]}"
+PASS StripSpaces(Math.abs.toString()) is "functionabs(){[nativecode]}"
+PASS StripSpaces(Math.acos.toString()) is "functionacos(){[nativecode]}"
+PASS StripSpaces(Math.asin.toString()) is "functionasin(){[nativecode]}"
+PASS StripSpaces(Math.atan.toString()) is "functionatan(){[nativecode]}"
+PASS StripSpaces(Math.atan2.toString()) is "functionatan2(){[nativecode]}"
+PASS StripSpaces(Math.ceil.toString()) is "functionceil(){[nativecode]}"
+PASS StripSpaces(Math.cos.toString()) is "functioncos(){[nativecode]}"
+PASS StripSpaces(Math.exp.toString()) is "functionexp(){[nativecode]}"
+PASS StripSpaces(Math.floor.toString()) is "functionfloor(){[nativecode]}"
+PASS StripSpaces(Math.log.toString()) is "functionlog(){[nativecode]}"
+PASS StripSpaces(Math.max.toString()) is "functionmax(){[nativecode]}"
+PASS StripSpaces(Math.min.toString()) is "functionmin(){[nativecode]}"
+PASS StripSpaces(Math.pow.toString()) is "functionpow(){[nativecode]}"
+PASS StripSpaces(Math.random.toString()) is "functionrandom(){[nativecode]}"
+PASS StripSpaces(Math.round.toString()) is "functionround(){[nativecode]}"
+PASS StripSpaces(Math.sin.toString()) is "functionsin(){[nativecode]}"
+PASS StripSpaces(Math.sqrt.toString()) is "functionsqrt(){[nativecode]}"
+PASS StripSpaces(Math.tan.toString()) is "functiontan(){[nativecode]}"
+PASS StripSpaces(Date.prototype.toString.toString()) is "functiontoString(){[nativecode]}"
+PASS StripSpaces(Date.prototype.toUTCString.toString()) is "functiontoUTCString(){[nativecode]}"
+PASS StripSpaces(Date.prototype.toDateString.toString()) is "functiontoDateString(){[nativecode]}"
+PASS StripSpaces(Date.prototype.toTimeString.toString()) is "functiontoTimeString(){[nativecode]}"
+PASS StripSpaces(Date.prototype.toLocaleString.toString()) is "functiontoLocaleString(){[nativecode]}"
+PASS StripSpaces(Date.prototype.toLocaleDateString.toString()) is "functiontoLocaleDateString(){[nativecode]}"
+PASS StripSpaces(Date.prototype.toLocaleTimeString.toString()) is "functiontoLocaleTimeString(){[nativecode]}"
+PASS StripSpaces(Date.prototype.valueOf.toString()) is "functionvalueOf(){[nativecode]}"
+PASS StripSpaces(Date.prototype.getTime.toString()) is "functiongetTime(){[nativecode]}"
+PASS StripSpaces(Date.prototype.getFullYear.toString()) is "functiongetFullYear(){[nativecode]}"
+PASS StripSpaces(Date.prototype.getUTCFullYear.toString()) is "functiongetUTCFullYear(){[nativecode]}"
+PASS StripSpaces(Date.prototype.toGMTString.toString()) is "functiontoGMTString(){[nativecode]}"
+PASS StripSpaces(Date.prototype.getMonth.toString()) is "functiongetMonth(){[nativecode]}"
+PASS StripSpaces(Date.prototype.getUTCMonth.toString()) is "functiongetUTCMonth(){[nativecode]}"
+PASS StripSpaces(Date.prototype.getDate.toString()) is "functiongetDate(){[nativecode]}"
+PASS StripSpaces(Date.prototype.getUTCDate.toString()) is "functiongetUTCDate(){[nativecode]}"
+PASS StripSpaces(Date.prototype.getDay.toString()) is "functiongetDay(){[nativecode]}"
+PASS StripSpaces(Date.prototype.getUTCDay.toString()) is "functiongetUTCDay(){[nativecode]}"
+PASS StripSpaces(Date.prototype.getHours.toString()) is "functiongetHours(){[nativecode]}"
+PASS StripSpaces(Date.prototype.getUTCHours.toString()) is "functiongetUTCHours(){[nativecode]}"
+PASS StripSpaces(Date.prototype.getMinutes.toString()) is "functiongetMinutes(){[nativecode]}"
+PASS StripSpaces(Date.prototype.getUTCMinutes.toString()) is "functiongetUTCMinutes(){[nativecode]}"
+PASS StripSpaces(Date.prototype.getSeconds.toString()) is "functiongetSeconds(){[nativecode]}"
+PASS StripSpaces(Date.prototype.getUTCSeconds.toString()) is "functiongetUTCSeconds(){[nativecode]}"
+PASS StripSpaces(Date.prototype.getMilliseconds.toString()) is "functiongetMilliseconds(){[nativecode]}"
+PASS StripSpaces(Date.prototype.getUTCMilliseconds.toString()) is "functiongetUTCMilliseconds(){[nativecode]}"
+PASS StripSpaces(Date.prototype.getTimezoneOffset.toString()) is "functiongetTimezoneOffset(){[nativecode]}"
+PASS StripSpaces(Date.prototype.setTime.toString()) is "functionsetTime(){[nativecode]}"
+PASS StripSpaces(Date.prototype.setMilliseconds.toString()) is "functionsetMilliseconds(){[nativecode]}"
+PASS StripSpaces(Date.prototype.setUTCMilliseconds.toString()) is "functionsetUTCMilliseconds(){[nativecode]}"
+PASS StripSpaces(Date.prototype.setSeconds.toString()) is "functionsetSeconds(){[nativecode]}"
+PASS StripSpaces(Date.prototype.setUTCSeconds.toString()) is "functionsetUTCSeconds(){[nativecode]}"
+PASS StripSpaces(Date.prototype.setMinutes.toString()) is "functionsetMinutes(){[nativecode]}"
+PASS StripSpaces(Date.prototype.setUTCMinutes.toString()) is "functionsetUTCMinutes(){[nativecode]}"
+PASS StripSpaces(Date.prototype.setHours.toString()) is "functionsetHours(){[nativecode]}"
+PASS StripSpaces(Date.prototype.setUTCHours.toString()) is "functionsetUTCHours(){[nativecode]}"
+PASS StripSpaces(Date.prototype.setDate.toString()) is "functionsetDate(){[nativecode]}"
+PASS StripSpaces(Date.prototype.setUTCDate.toString()) is "functionsetUTCDate(){[nativecode]}"
+PASS StripSpaces(Date.prototype.setMonth.toString()) is "functionsetMonth(){[nativecode]}"
+PASS StripSpaces(Date.prototype.setUTCMonth.toString()) is "functionsetUTCMonth(){[nativecode]}"
+PASS StripSpaces(Date.prototype.setFullYear.toString()) is "functionsetFullYear(){[nativecode]}"
+PASS StripSpaces(Date.prototype.setUTCFullYear.toString()) is "functionsetUTCFullYear(){[nativecode]}"
+PASS StripSpaces(Date.prototype.setYear.toString()) is "functionsetYear(){[nativecode]}"
+PASS StripSpaces(Date.prototype.getYear.toString()) is "functiongetYear(){[nativecode]}"
+PASS StripSpaces(Date.prototype.toGMTString.toString()) is "functiontoGMTString(){[nativecode]}"
+PASS StripSpaces(RegExp.prototype.exec.toString()) is "functionexec(){[nativecode]}"
+PASS StripSpaces(RegExp.prototype.test.toString()) is "functiontest(){[nativecode]}"
+PASS StripSpaces(RegExp.prototype.toString.toString()) is "functiontoString(){[nativecode]}"
+PASS StripSpaces(Error.prototype.toString.toString()) is "functiontoString(){[nativecode]}"
 PASS successfullyParsed is true
 
 TEST COMPLETE

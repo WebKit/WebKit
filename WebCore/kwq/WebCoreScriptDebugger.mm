@@ -287,7 +287,7 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
     if (context) {
         FunctionImp *func = context->function();
         if (func) {
-            Identifier fn = func->name();
+            Identifier fn = func->functionName();
             return toNSString(fn.ustring());
         }
     }
