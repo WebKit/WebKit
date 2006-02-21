@@ -1,3 +1,9 @@
+2006-02-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Accidentally wrote "Release" instead of "Debug" in my last patch.
+
+        * quality/leakhunting.html:
+
 2006-02-20  Geoffrey Garen  <ggaren@apple.com>
 
         Some quick proof-reading of the patch I just landed -- no review
