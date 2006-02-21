@@ -1,3 +1,9 @@
+2006-02-21  Maciej Stachowiak  <mjs@apple.com>
+
+        - fix build breakage caused by last-minute change to my patch
+
+        * kjs/lookup.h:
+
 2006-02-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff and Darin.
