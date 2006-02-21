@@ -32,8 +32,6 @@
 #include "kjs_dom.h"
 #include "htmlnames.h"
 
-#include <kdebug.h>
-
 #include "kjs_css.lut.h"
 
 using namespace DOM::HTMLNames;
@@ -335,20 +333,20 @@ void DOMStyleSheet::put(ExecState *exec, const Identifier &propertyName, JSValue
     DOMObject::put(exec, propertyName, value, attr);
 }
 
-JSValue *getDOMStyleSheet(ExecState *exec, StyleSheetImpl *ss)
+JSValue* getDOMStyleSheet(ExecState *exec, PassRefPtr<StyleSheetImpl> ss)
 {
   DOMObject *ret;
   if (!ss)
     return jsNull();
   ScriptInterpreter *interp = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter());
-  if ((ret = interp->getDOMObject(ss)))
+  if ((ret = interp->getDOMObject(ss.get())))
     return ret;
   else {
     if (ss->isCSSStyleSheet())
-      ret = new DOMCSSStyleSheet(exec, static_cast<CSSStyleSheetImpl *>(ss));
+      ret = new DOMCSSStyleSheet(exec, static_cast<CSSStyleSheetImpl *>(ss.get()));
     else
-      ret = new DOMStyleSheet(exec,ss);
-    interp->putDOMObject(ss, ret);
+      ret = new DOMStyleSheet(exec, ss.get());
+    interp->putDOMObject(ss.get(), ret);
     return ret;
   }
 }
@@ -886,9 +884,6 @@ void DOMCSSRule::putValueProperty(ExecState *exec, int token, JSValue *value, in
   case Charset_Encoding:
     static_cast<CSSCharsetRuleImpl *>(m_impl.get())->setEncoding(value->toString(exec).domString());
     return;
-
-  default:
-    kdWarning() << "DOMCSSRule::putValueProperty unhandled token " << token << endl;
   }
 }
 

@@ -24,9 +24,10 @@
  */
 
 #include "config.h"
-#include "KWQLogging.h"
-
 #include "KWQTextStream.h"
+
+#include "QString.h"
+#include "KWQLogging.h"
 
 const size_t integerOrPointerAsStringBufferSize = 100; // large enough for any integer or pointer in string format, including trailing null character
 const char *precisionFormats[] = { "%.0f", "%.1f", "%.2f", "%.3f", "%.4f", "%.5f" "%.6f"}; 
@@ -38,10 +39,9 @@ QTextStream::QTextStream(const ByteArray &ba)
 {
 }
 
-QTextStream::QTextStream(QString *s, int mode)
+QTextStream::QTextStream(QString *s)
     : _hasByteArray(false), _string(s), _precision(defaultPrecision)
 {
-    ASSERT(mode == IO_WriteOnly);
 }
 
 QTextStream &QTextStream::operator<<(char c)

@@ -53,7 +53,7 @@ public:
     virtual void ref(CachedObjectClient*);
     virtual void deref(CachedObjectClient*);
 
-    virtual void data(QBuffer&, bool atEnd);
+    virtual void data(ByteArray&, bool atEnd);
     virtual void error(int code, const char* message);
 
     bool isErrorImage() const { return m_errorOccurred; }

@@ -112,20 +112,20 @@ void CachedImage::clear()
     setSize(0);
 }
 
-void CachedImage::data(QBuffer& _buffer, bool eof)
+void CachedImage::data(ByteArray& data, bool eof)
 {
     bool sizeAvailable = false;
     
-    m_dataSize = _buffer.size();
+    m_dataSize = data.size();
 
     // Create the image if it doesn't yet exist.
     if (!m_image)
         m_image = new Image(this, KWQResponseMIMEType(m_response) == "application/pdf");
         
-    // Give the data to the image object for processing.  It will
-    // not do anything now, but will delay decoding until queried for info (like size or specific image frames).
-    sizeAvailable = m_image->setData(_buffer.buffer(), eof);
-    
+    // Give all the data so far to the image object for processing.
+    // It will not do anything now, but will delay decoding until queried for info (like size or specific image frames).
+    sizeAvailable = m_image->setData(data, eof);
+
     // Go ahead and tell our observers to try to draw if we have either
     // received all the data or the size is known.  Each chunk from the
     // network causes observers to repaint, which will force that chunk

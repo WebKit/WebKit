@@ -531,7 +531,6 @@ public:
 
     void setDocType(PassRefPtr<DocumentTypeImpl>);
 
-signals:
     void finishedParsing();
 
 protected:
@@ -658,8 +657,6 @@ protected:
     int m_docID; // A unique document identifier used for things like document-specific mapped attributes.
 
 public:
-    KWQSignal m_finishedParsing;
-
     bool inPageCache();
     void setInPageCache(bool flag);
     void restoreRenderer(RenderObject*);

@@ -26,6 +26,7 @@
 #include "FrameView.h"
 
 #include "CachedImage.h"
+#include "Cursor.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "HTMLInputElementImpl.h"
@@ -43,10 +44,10 @@
 #include "khtml_settings.h"
 #include "render_arena.h"
 #include "render_canvas.h"
+#include "render_frames.h"
 #include "render_line.h"
 #include "render_replaced.h"
 #include "render_style.h"
-#include <kcursor.h>
 #include <qpainter.h>
 
 namespace WebCore {
@@ -148,8 +149,6 @@ FrameView::FrameView(Frame *frame)
     , d(new FrameViewPrivate(this))
     , m_medium("screen")
 {
-    connect(this, SIGNAL(contentsMoving(int, int)), this, SLOT(slotScrollBarMoved()));
-
     init();
 
     viewport()->show();
@@ -165,9 +164,10 @@ FrameView::~FrameView()
         d->hoverTimer.stop();
     if (m_frame) {
         // FIXME: Is this really the right place to call detach on the document?
-        DocumentImpl* doc = m_frame->document();
-        if (doc)
+        if (DocumentImpl* doc = m_frame->document())
             doc->detach();
+        if (RenderPart* renderer = m_frame->ownerRenderer())
+            renderer->setQWidget(0);
     }
 
     delete d;
@@ -212,15 +212,9 @@ void FrameView::clear()
 #endif    
     d->layoutTimer.stop();
 
-    emit cleared();
+    cleared();
 
     suppressScrollBars(true);
-}
-
-void FrameView::resizeEvent(QResizeEvent* e)
-{
-    if (m_frame && m_frame->document())
-        m_frame->document()->dispatchWindowEvent(EventNames::resizeEvent, false, false);
 }
 
 void FrameView::initScrollBars()
@@ -550,58 +544,58 @@ static bool isSubmitImage(NodeImpl *node)
     return node && node->hasTagName(inputTag) && static_cast<HTMLInputElementImpl*>(node)->inputType() == HTMLInputElementImpl::IMAGE;
 }
 
-static QCursor selectCursor(const NodeImpl::MouseEvent &event, Frame *frame, bool mousePressed)
+static Cursor selectCursor(const NodeImpl::MouseEvent& event, Frame* frame, bool mousePressed)
 {
-    // During selection, use an I-beam no matter what we're over
+    // During selection, use an I-beam no matter what we're over.
     if (mousePressed && frame->hasSelection())
-        return KCursor::ibeamCursor();
+        return iBeamCursor();
 
-    NodeImpl *node = event.innerNode.get();
-    RenderObject *renderer = node ? node->renderer() : 0;
-    RenderStyle *style = renderer ? renderer->style() : 0;
+    NodeImpl* node = event.innerNode.get();
+    RenderObject* renderer = node ? node->renderer() : 0;
+    RenderStyle* style = renderer ? renderer->style() : 0;
 
     if (style && style->cursorImage() && !style->cursorImage()->image()->isNull())
-        return QCursor(style->cursorImage()->image());
+        return style->cursorImage()->image();
 
     switch (style ? style->cursor() : CURSOR_AUTO) {
         case CURSOR_AUTO:
             if (!event.url.isNull() || isSubmitImage(node))
-                return frame->urlCursor();
+                return handCursor();
             if ((node && node->isContentEditable()) || (renderer && renderer->isText() && renderer->canSelect()))
-                return KCursor::ibeamCursor();
-            break;
+                return iBeamCursor();
+            return pointerCursor();
         case CURSOR_CROSS:
-            return KCursor::crossCursor();
+            return crossCursor();
         case CURSOR_POINTER:
-            return frame->urlCursor();
+            return handCursor();
         case CURSOR_MOVE:
-            return KCursor::sizeAllCursor();
+            return moveCursor();
         case CURSOR_E_RESIZE:
-            return KCursor::eastResizeCursor();
+            return eastResizeCursor();
         case CURSOR_W_RESIZE:
-            return KCursor::westResizeCursor();
+            return westResizeCursor();
         case CURSOR_N_RESIZE:
-            return KCursor::northResizeCursor();
+            return northResizeCursor();
         case CURSOR_S_RESIZE:
-            return KCursor::southResizeCursor();
+            return southResizeCursor();
         case CURSOR_NE_RESIZE:
-            return KCursor::northEastResizeCursor();
+            return northEastResizeCursor();
         case CURSOR_SW_RESIZE:
-            return KCursor::southWestResizeCursor();
+            return southWestResizeCursor();
         case CURSOR_NW_RESIZE:
-            return KCursor::northWestResizeCursor();
+            return northWestResizeCursor();
         case CURSOR_SE_RESIZE:
-            return KCursor::southEastResizeCursor();
+            return southEastResizeCursor();
         case CURSOR_TEXT:
-            return KCursor::ibeamCursor();
+            return iBeamCursor();
         case CURSOR_WAIT:
-            return KCursor::waitCursor();
+            return waitCursor();
         case CURSOR_HELP:
-            return KCursor::whatsThisCursor();
+            return helpCursor();
         case CURSOR_DEFAULT:
-            break;
+            return pointerCursor();
     }
-    return QCursor();
+    return pointerCursor();
 }
 
 void FrameView::viewportMouseMoveEvent( QMouseEvent * _mouse )
@@ -1074,18 +1068,9 @@ void FrameView::viewportWheelEvent(QWheelEvent* e)
     }
 }
 
-void FrameView::focusInEvent( QFocusEvent *e )
+void FrameView::scrollBarMoved()
 {
-    m_frame->setCaretVisible();
-}
-
-void FrameView::focusOutEvent( QFocusEvent *e )
-{
-    m_frame->setCaretVisible(false);
-}
-
-void FrameView::slotScrollBarMoved()
-{
+    // FIXME: Need to arrange for this to be called when the view is scrolled!
     if (!d->scrollingSelf)
         d->scrollBarMoved = true;
 }
@@ -1184,6 +1169,13 @@ void FrameView::setHasBorder(bool b)
 bool FrameView::hasBorder() const
 {
     return d->m_hasBorder;
+}
+
+void FrameView::cleared()
+{
+    if (m_frame)
+        if (RenderPart* renderer = m_frame->ownerRenderer())
+            renderer->viewCleared();
 }
 
 }

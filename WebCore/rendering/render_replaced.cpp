@@ -34,7 +34,6 @@
 #include "render_canvas.h"
 #include "render_line.h"
 #include "VisiblePosition.h"
-#include <kdebug.h>
 #include <qevent.h>
 #include <qpainter.h>
 #include "Widget.h"
@@ -297,52 +296,45 @@ RenderWidget::~RenderWidget()
         delete m_widget;
 }
 
-void  RenderWidget::resizeWidget( Widget *widget, int w, int h )
+void RenderWidget::resizeWidget(Widget* widget, int w, int h)
 {
-
     if (element() && (widget->width() != w || widget->height() != h)) {
         RenderArena *arena = ref();
         element()->ref();
-        widget->resize( w, h );
+        widget->resize(w, h);
         element()->deref();
         deref(arena);
     }
 }
 
-void RenderWidget::setQWidget(Widget *widget, bool deleteWidget)
+void RenderWidget::setQWidget(Widget* widget, bool deleteWidget)
 {
-    if (widget != m_widget)
-    {
+    if (widget != m_widget) {
         if (m_widget) {
             m_widget->removeEventFilter(this);
-            disconnect( m_widget, SIGNAL( destroyed()), this, SLOT( slotWidgetDestructed()));
             if (m_deleteWidget)
                 delete m_widget;
-            m_widget = 0;
         }
         m_widget = widget;
         if (m_widget) {
-            connect( m_widget, SIGNAL( destroyed()), this, SLOT( slotWidgetDestructed()));
             m_widget->installEventFilter(this);
             // if we've already received a layout, apply the calculated space to the
             // widget immediately, but we have to have really been full constructed (with a non-null
             // style pointer).
-            if (!needsLayout() && style()) {
-                resizeWidget( m_widget,
-                              m_width-borderLeft()-borderRight()-paddingLeft()-paddingRight(),
-                              m_height-borderLeft()-borderRight()-paddingLeft()-paddingRight() );
-            }
+            if (!needsLayout() && style())
+                resizeWidget(m_widget,
+                    m_width - borderLeft() - borderRight() - paddingLeft() - paddingRight(),
+                    m_height - borderTop() - borderBottom() - paddingTop() - paddingBottom());
             else
                 setPos(xPos(), -500000);
-
             if (style()) {
                 if (style()->visibility() != VISIBLE)
                     m_widget->hide();
                 else
                     m_widget->show();
             }
+            m_view->addChild(m_widget, -500000, 0);
         }
-        m_view->addChild( m_widget, -500000, 0 );
     }
     m_deleteWidget = deleteWidget;
 }
@@ -362,16 +354,10 @@ void RenderWidget::sendConsumedMouseUp()
     deref(arena);
 }
 
-void RenderWidget::slotWidgetDestructed()
-{
-    m_widget = 0;
-}
-
 void RenderWidget::setStyle(RenderStyle *_style)
 {
     RenderReplaced::setStyle(_style);
-    if (m_widget)
-    {
+    if (m_widget) {
         m_widget->setFont(style()->font());
         if (style()->visibility() != VISIBLE)
             m_widget->hide();
@@ -411,54 +397,32 @@ void RenderWidget::paint(PaintInfo& i, int _tx, int _ty)
         i.p->fillRect(selectionRect(), selectionColor(i.p));
 }
 
-bool RenderWidget::eventFilter(QObject* /*o*/, QEvent* e)
+bool RenderWidget::eventFilter(QObject*, QEvent* e)
 {
-    if ( !element() ) return true;
+    if (!element())
+        return true;
 
-    RenderArena *arena = ref();
-    DOM::NodeImpl *elem = element();
-    elem->ref();
+    RenderArena* arena = ref();
+    RefPtr<NodeImpl> elem = element();
 
     bool filtered = false;
 
-    //kdDebug() << "RenderWidget::eventFilter type=" << e->type() << endl;
-    switch(e->type()) {
+    switch (e->type()) {
     case QEvent::FocusOut:
-       //static const char* const r[] = {"Mouse", "Tab", "Backtab", "ActiveWindow", "Popup", "Shortcut", "Other" };
-        //kdDebug() << "RenderFormElement::eventFilter FocusOut widget=" << m_widget << " reason:" << r[QFocusEvent::reason()] << endl;
-        // Don't count popup as a valid reason for losing the focus
-        // (example: opening the options of a select combobox shouldn't emit onblur)
-        if ( QFocusEvent::reason() != QFocusEvent::Popup )
-       {
-           //kdDebug(6000) << "RenderWidget::eventFilter captures FocusOut" << endl;
-            if (elem->getDocument()->focusNode() == elem)
-                elem->getDocument()->setFocusNode(0);
-        }
+        if (elem->getDocument()->focusNode() == elem)
+            elem->getDocument()->setFocusNode(0);
         break;
     case QEvent::FocusIn:
-        //kdDebug(6000) << "RenderWidget::eventFilter captures FocusIn" << endl;
         elem->getDocument()->setFocusNode(elem);
-        break;
-    case QEvent::MouseButtonPress:
-//       handleMousePressed(static_cast<QMouseEvent*>(e));
-        break;
-    case QEvent::MouseButtonRelease:
-        break;
-    case QEvent::MouseButtonDblClick:
-        break;
-    case QEvent::MouseMove:
         break;
     case QEvent::KeyPress:
     case QEvent::KeyRelease:
-    {
         if (!elem->dispatchKeyEvent(static_cast<QKeyEvent*>(e)))
             filtered = true;
         break;
+    default:
+        break;
     }
-    default: break;
-    };
-
-    elem->deref();
 
     // stop processing if the widget gets deleted, but continue in all other cases
     if (m_refCount == 1)

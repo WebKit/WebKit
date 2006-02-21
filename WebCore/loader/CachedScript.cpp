@@ -32,7 +32,6 @@
 #include "CachedObjectClient.h"
 #include "CachedObjectClientWalker.h"
 #include "loader.h"
-#include <qbuffer.h>
 #include <qtextcodec.h>
 
 namespace WebCore {
@@ -92,13 +91,12 @@ void CachedScript::setCharset( const QString &chs )
     }
 }
 
-void CachedScript::data( QBuffer &buffer, bool eof )
+void CachedScript::data(ByteArray& data, bool eof )
 {
-    if(!eof) return;
-    buffer.close();
-    setSize(buffer.buffer().size());
-    QString data = m_codec->toUnicode( buffer.buffer().data(), size() );
-    m_script = DOMString(data);
+    if (!eof)
+        return;
+    setSize(data.size());
+    m_script = String(m_codec->toUnicode(data.data(), size()));
     m_loading = false;
     checkNotify();
 }

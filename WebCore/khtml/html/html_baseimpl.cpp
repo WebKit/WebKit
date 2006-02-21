@@ -46,7 +46,6 @@
 #include "htmlnames.h"
 
 #include <kurl.h>
-#include <kdebug.h>
 
 namespace WebCore {
 using namespace EventNames;

@@ -26,8 +26,6 @@
 #include "dom/dom_exception.h"
 #include "markup.h"
 
-#include <kdebug.h>
-
 using DOM::NodeImpl;
 
 namespace KJS {

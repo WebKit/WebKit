@@ -42,7 +42,6 @@
 #include "rendering/font.h"
 #include "rendering/render_style.h"
 #include "StringImpl.h"
-#include <kdebug.h>
 #include <qregexp.h>
 
 #if SVG_SUPPORT

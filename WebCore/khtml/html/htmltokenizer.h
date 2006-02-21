@@ -22,22 +22,17 @@
     the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.
 */
-//----------------------------------------------------------------------------
-//
-// KDE HTML Widget -- Tokenizers
 
 #ifndef HTMLTOKENIZER_H
 #define HTMLTOKENIZER_H
 
 #include "CachedObjectClient.h"
+#include "KWQGuardedPtr.h"
 #include "SegmentedString.h"
 #include "Timer.h"
 #include "dom_qname.h"
 #include "xml_tokenizer.h"
 #include <qptrqueue.h>
-#include <QString.h>
-
-class HTMLParser;
 
 namespace KXMLCore {
     template <class T> class PassRefPtr;
@@ -50,7 +45,9 @@ class CachedScript;
 class DocumentFragmentImpl;
 class DocumentImpl;
 class FrameView;
+class HTMLParser;
 class NamedMappedAttrMapImpl;
+class NodeImpl;
 
 /**
  * @internal
@@ -343,13 +340,15 @@ private:
     unsigned int m_cBufferPos;
     
     SegmentedString src;
-    HTMLParser *parser;
+    HTMLParser* parser;
     QGuardedPtr<FrameView> view;    
     bool inWrite;
 };
 
-void parseHTMLDocumentFragment(const DOMString &, DocumentFragmentImpl *);
+void parseHTMLDocumentFragment(const String&, DocumentFragmentImpl*);
+
+unsigned short decodeNamedEntity(const char*);
 
 }
 
-#endif // HTMLTOKENIZER
+#endif

@@ -22,15 +22,15 @@
 
 #include "config.h"
 #if SVG_SUPPORT
+#include "KCanvasResources.h"
+
 #include "IntRect.h"
-#include <kdebug.h>
 
 #include "kcanvas/KCanvas.h"
 #include "kcanvas/RenderPath.h"
 #include "kcanvas/KCanvasImage.h"
 #include "KCanvasMatrix.h"
 #include "KCanvasContainer.h"
-#include "KCanvasResources.h"
 #include "KRenderingDevice.h"
 
 #include "SVGStyledElementImpl.h"

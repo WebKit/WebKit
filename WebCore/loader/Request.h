@@ -23,27 +23,30 @@
     This class provides all functionality needed for loading images, style sheets and html
     pages from the web. It has a memory cache for these objects.
 */
+
 #ifndef KHTML_Request_h
 #define KHTML_Request_h
 
-#include <qbuffer.h>
+#include "Array.h"
 
-namespace khtml
-{
+namespace WebCore {
     class CachedObject;
     class DocLoader;
 
-    class Request
-    {
+    template <class T> class Array;
+    typedef Array<char> ByteArray;
+
+    class Request {
     public:
-        Request(DocLoader* dl, CachedObject *_object, bool _incremental);
+        Request(DocLoader*, CachedObject*, bool incremental);
         ~Request();
+
         bool incremental;
-        QBuffer m_buffer;
-        CachedObject *object;
+        ByteArray m_buffer;
+        CachedObject* object;
         DocLoader* m_docLoader;
         bool multipart;
-     };
+    };
 }
 
 #endif

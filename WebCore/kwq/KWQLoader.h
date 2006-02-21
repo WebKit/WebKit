@@ -65,12 +65,3 @@ bool KWQResponseIsMultipart(NSURLResponse *response);
 int KWQNumberOfPendingOrLoadingRequests(khtml::DocLoader *dl);
 time_t KWQCacheObjectExpiresTime(khtml::DocLoader *docLoader, NSURLResponse *response);
 NSString *KWQHeaderStringFromDictionary(NSDictionary *headers, int statusCode);
-
-class KWQLoader
-{
-public:
-    KWQLoader(khtml::Loader *);
-    KWQSignal _requestStarted;
-    KWQSignal _requestDone;
-    KWQSignal _requestFailed;
-};

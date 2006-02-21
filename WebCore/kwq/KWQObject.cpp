@@ -30,10 +30,8 @@
 #include <kxmlcore/Assertions.h>
 #include <kxmlcore/HashMap.h>
 
-const QObject *QObject::_sender;
-
 QObject::QObject()
-    : _signalListHead(0), _signalsBlocked(false)
+    : _signalListHead(0)
     , _destroyed(this, SIGNAL(destroyed()))
     , _eventFilterObject(0)
 {
@@ -62,17 +60,7 @@ void QObject::connect(const QObject *sender, const char *signalName, const QObje
     
     KWQSignal *signal = sender->findSignal(signalName);
     if (!signal) {
-#if !ERROR_DISABLED
-        if (1
-            && !KWQNamesMatch(member, SIGNAL(setStatusBarText(const QString &)))
-            && !KWQNamesMatch(member, SLOT(slotJobPercent(KIO::Job *, unsigned long)))
-            && !KWQNamesMatch(member, SLOT(slotJobSpeed(KIO::Job *, unsigned long)))
-            && !KWQNamesMatch(member, SLOT(slotScrollBarMoved()))
-            && !KWQNamesMatch(member, SLOT(slotShowDocument(const QString &, const QString &)))
-            && !KWQNamesMatch(member, SLOT(slotViewCleared())) // FIXME: Should implement this one!
-            )
         LOG_ERROR("connecting member %s to signal %s, but that signal was not found", member, signalName);
-#endif
         return;
     }
     signal->connect(KWQSlot(const_cast<QObject *>(receiver), member));

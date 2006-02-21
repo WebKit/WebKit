@@ -28,6 +28,7 @@
 
 #import "BrowserExtensionMac.h"
 #import "Cache.h"
+#import "Cursor.h"
 #import "DOMInternal.h"
 #import "EventNames.h"
 #import "FramePrivate.h"
@@ -37,7 +38,6 @@
 #import "InlineTextBox.h"
 #import "KWQAccObjectCache.h"
 #import "KWQClipboard.h"
-#import "KWQCursor.h"
 #import "KWQEditCommand.h"
 #import "KWQEvent.h"
 #import "KWQExceptions.h"
@@ -105,26 +105,6 @@ using namespace HTMLNames;
 
 NSEvent *MacFrame::_currentEvent = nil;
 
-void Frame::completed()
-{
-    Mac(this)->_completed.call();
-}
-
-void Frame::completed(bool arg)
-{
-    Mac(this)->_completed.call(arg);
-}
-
-void Frame::setStatusBarText(const QString &status)
-{
-    Mac(this)->setStatusBarText(status);
-}
-
-void Frame::started(Job *j)
-{
-    Mac(this)->_started.call(j);
-}
-
 bool FrameView::isFrameView() const
 {
     return true;
@@ -133,9 +113,6 @@ bool FrameView::isFrameView() const
 MacFrame::MacFrame(Page* page, RenderPart* ownerRenderer)
     : Frame(page, ownerRenderer)
     , _bridge(nil)
-    , _started(this, SIGNAL(started(KIO::Job *)))
-    , _completed(this, SIGNAL(completed()))
-    , _completedWithBool(this, SIGNAL(completed(bool)))
     , _mouseDownView(nil)
     , _sendingEventToSubview(false)
     , _mouseDownMayStartDrag(false)
@@ -675,9 +652,9 @@ void MacFrame::setTitle(const DOMString &title)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void MacFrame::setStatusBarText(const QString &status)
+void MacFrame::setStatusBarText(const String& status)
 {
-    QString text = status;
+    QString text = status.qstring();
     text.replace(QChar('\\'), backslashAsCurrencySymbol());
 
     KWQ_BLOCK_EXCEPTIONS;
@@ -1216,7 +1193,7 @@ void MacFrame::openURLFromPageCache(KWQPageState *state)
     // copy to m_workingURL after fixing url() above
     d->m_workingURL = url();
         
-    emit started(NULL);
+    started();
     
     // -----------begin-----------
     clear();
@@ -1720,7 +1697,7 @@ void MacFrame::khtmlMouseMoveEvent(MouseMoveEvent *event)
 
         if (_mouseDownMayStartDrag) {
             // We are starting a text/image/url drag, so the cursor should be an arrow
-            d->m_view->viewport()->setCursor(QCursor());
+            d->m_view->viewport()->setCursor(pointerCursor());
             
             NSPoint dragLocation = [_currentEvent locationInWindow];
             if (dragHysteresisExceeded(dragLocation.x, dragLocation.y)) {

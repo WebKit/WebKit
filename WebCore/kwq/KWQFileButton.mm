@@ -161,11 +161,11 @@ void KWQFileButton::focusChanged(bool nowHasFocus)
             if (layer)
                 layer->scrollRectToVisible(widget->absoluteBoundingBoxRect());
         }        
-        QFocusEvent event(QEvent::FocusIn);
+        QEvent event(QEvent::FocusIn);
         const_cast<QObject *>(eventFilterObject())->eventFilter(this, &event);
     }
     else {
-        QFocusEvent event(QEvent::FocusOut);
+        QEvent event(QEvent::FocusOut);
         const_cast<QObject *>(eventFilterObject())->eventFilter(this, &event);
     }
 }

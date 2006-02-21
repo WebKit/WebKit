@@ -22,7 +22,6 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-#include <kdebug.h>
 
 #include "SVGMatrixImpl.h"
 #include "SVGTransformImpl.h"

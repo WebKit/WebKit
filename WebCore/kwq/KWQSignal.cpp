@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,9 +31,6 @@
 
 using KIO::Job;
 
-using khtml::CachedObject;
-using khtml::DocLoader;
-
 KWQSignal::KWQSignal(QObject *object, const char *name)
     : _object(object), _next(object->_signalListHead), _name(name)
 {
@@ -56,9 +53,8 @@ KWQSignal::~KWQSignal()
 void KWQSignal::connect(const KWQSlot &slot)
 {
 #if !ERROR_DISABLED
-    if (_slots.contains(slot)) {
+    if (_slots.contains(slot))
         LOG_ERROR("connecting the same slot to a signal twice, %s", _name);
-    }
 #endif
     _slots.append(slot);
 }
@@ -66,134 +62,72 @@ void KWQSignal::connect(const KWQSlot &slot)
 void KWQSignal::disconnect(const KWQSlot &slot)
 {
 #if !ERROR_DISABLED
-    if (!_slots.contains(slot)
-            && !KWQNamesMatch(_name, SIGNAL(finishedParsing()))
-            && !KWQNamesMatch(_name, SIGNAL(requestDone(khtml::DocLoader *, khtml::CachedObject *)))
-            && !KWQNamesMatch(_name, SIGNAL(requestFailed(khtml::DocLoader *, khtml::CachedObject *)))
-            && !KWQNamesMatch(_name, SIGNAL(requestStarted(khtml::DocLoader *, khtml::CachedObject *)))
-            ) {
+    if (!_slots.contains(slot))
         LOG_ERROR("disconnecting a signal that wasn't connected, %s", _name);
-    }
 #endif
     _slots.remove(slot);
 }
 
 void KWQSignal::call() const
 {
-    if (!_object->_signalsBlocked) {
-        KWQObjectSenderScope senderScope(_object);
-        QValueList<KWQSlot> copiedSlots(_slots);
-        QValueListConstIterator<KWQSlot> end = copiedSlots.end();
-        for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it) {
-            (*it).call();
-        }
-    }
-}
-
-void KWQSignal::call(bool b) const
-{
-    if (!_object->_signalsBlocked) {
-        KWQObjectSenderScope senderScope(_object);
-        QValueList<KWQSlot> copiedSlots(_slots);
-        QValueListConstIterator<KWQSlot> end = copiedSlots.end();
-        for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it) {
-            (*it).call(b);
-        }
-    }
+    QValueList<KWQSlot> copiedSlots(_slots);
+    QValueListConstIterator<KWQSlot> end = copiedSlots.end();
+    for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it)
+        (*it).call();
 }
 
 void KWQSignal::call(int i) const
 {
-    if (!_object->_signalsBlocked) {
-        KWQObjectSenderScope senderScope(_object);
-        QValueList<KWQSlot> copiedSlots(_slots);
-        QValueListConstIterator<KWQSlot> end = copiedSlots.end();
-        for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it) {
-            (*it).call(i);
-        }
-    }
+    QValueList<KWQSlot> copiedSlots(_slots);
+    QValueListConstIterator<KWQSlot> end = copiedSlots.end();
+    for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it)
+        (*it).call(i);
 }
 
 void KWQSignal::call(const DOM::DOMString &s) const
 {
-    if (!_object->_signalsBlocked) {
-        KWQObjectSenderScope senderScope(_object);
-        QValueList<KWQSlot> copiedSlots(_slots);
-        QValueListConstIterator<KWQSlot> end = copiedSlots.end();
-        for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it) {
-            (*it).call(s);
-        }
-    }
+    QValueList<KWQSlot> copiedSlots(_slots);
+    QValueListConstIterator<KWQSlot> end = copiedSlots.end();
+    for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it)
+        (*it).call(s);
 }
 
 void KWQSignal::call(Job *j) const
 {
-    if (!_object->_signalsBlocked) {
-        KWQObjectSenderScope senderScope(_object);
-        QValueList<KWQSlot> copiedSlots(_slots);
-        QValueListConstIterator<KWQSlot> end = copiedSlots.end();
-        for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it) {
-            (*it).call(j);
-        }
-    }
-}
-
-void KWQSignal::call(DocLoader *l, CachedObject *o) const
-{
-    if (!_object->_signalsBlocked) {
-        KWQObjectSenderScope senderScope(_object);
-        QValueList<KWQSlot> copiedSlots(_slots);
-        QValueListConstIterator<KWQSlot> end = copiedSlots.end();
-        for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it) {
-            (*it).call(l, o);
-        }
-    }
+    QValueList<KWQSlot> copiedSlots(_slots);
+    QValueListConstIterator<KWQSlot> end = copiedSlots.end();
+    for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it)
+        (*it).call(j);
 }
 
 void KWQSignal::call(Job *j, const char *d, int s) const
 {
-    if (!_object->_signalsBlocked) {
-        KWQObjectSenderScope senderScope(_object);
-        QValueList<KWQSlot> copiedSlots(_slots);
-        QValueListConstIterator<KWQSlot> end = copiedSlots.end();
-        for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it) {
-            (*it).call(j, d, s);
-        }
-    }
+    QValueList<KWQSlot> copiedSlots(_slots);
+    QValueListConstIterator<KWQSlot> end = copiedSlots.end();
+    for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it)
+        (*it).call(j, d, s);
 }
 
 void KWQSignal::call(Job *j, const KURL &u) const
 {
-    if (!_object->_signalsBlocked) {
-        KWQObjectSenderScope senderScope(_object);
-        QValueList<KWQSlot> copiedSlots(_slots);
-        QValueListConstIterator<KWQSlot> end = copiedSlots.end();
-        for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it) {
-            (*it).call(j, u);
-        }
-    }
+    QValueList<KWQSlot> copiedSlots(_slots);
+    QValueListConstIterator<KWQSlot> end = copiedSlots.end();
+    for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it)
+        (*it).call(j, u);
 }
 
 void KWQSignal::callWithData(Job *j, NSData *d) const
 {
-    if (!_object->_signalsBlocked) {
-        KWQObjectSenderScope senderScope(_object);
-        QValueList<KWQSlot> copiedSlots(_slots);
-        QValueListConstIterator<KWQSlot> end = copiedSlots.end();
-        for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it) {
-            (*it).callWithData(j, d);
-        }
-    }
+    QValueList<KWQSlot> copiedSlots(_slots);
+    QValueListConstIterator<KWQSlot> end = copiedSlots.end();
+    for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it)
+        (*it).callWithData(j, d);
 }
 
 void KWQSignal::callWithResponse(Job *j, NSURLResponse *r) const
 {
-    if (!_object->_signalsBlocked) {
-        KWQObjectSenderScope senderScope(_object);
-        QValueList<KWQSlot> copiedSlots(_slots);
-        QValueListConstIterator<KWQSlot> end = copiedSlots.end();
-        for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it) {
-            (*it).callWithResponse(j, r);
-        }
-    }
+    QValueList<KWQSlot> copiedSlots(_slots);
+    QValueListConstIterator<KWQSlot> end = copiedSlots.end();
+    for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it)
+        (*it).callWithResponse(j, r);
 }

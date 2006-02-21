@@ -24,27 +24,27 @@
 #include "config.h"
 #include "xml_tokenizer.h"
 
+#include "CDATASectionImpl.h"
 #include "Cache.h"
 #include "CachedScript.h"
-#include "KWQLoader.h"
+#include "CommentImpl.h"
 #include "DocLoader.h"
 #include "DocumentFragmentImpl.h"
 #include "DocumentImpl.h"
 #include "DocumentTypeImpl.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "KWQLoader.h"
 #include "SegmentedString.h"
 #include "dom_node.h"
-#include "CDATASectionImpl.h"
-#include "CommentImpl.h"
 #include "dom_xmlimpl.h"
 #include "html_headimpl.h"
 #include "html_tableimpl.h"
 #include "htmlnames.h"
-#include "kentities.h" // for xhtml entity name lookup
+#include "htmltokenizer.h"
+#include <kxmlcore/Vector.h>
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
-#include <kxmlcore/Vector.h>
 
 #include <kio/job.h>
 
@@ -60,16 +60,6 @@ using namespace HTMLNames;
 const int maxErrors = 25;
 
 typedef HashMap<DOMStringImpl *, DOMStringImpl *> PrefixForNamespaceMap;
-
-Tokenizer::Tokenizer() : m_parserStopped(false)
-    , m_finishedParsing(this, SIGNAL(finishedParsing()))
-{
-}
-
-void Tokenizer::finishedParsing()
-{
-    m_finishedParsing.call();
-}
 
 class XMLTokenizer : public Tokenizer, public CachedObjectClient
 {
@@ -724,14 +714,13 @@ static xmlEntity sharedXHTMLEntity = {
     XML_INTERNAL_PREDEFINED_ENTITY, 0, 0, 0, 0, 0
 };
 
-static xmlEntityPtr getXHTMLEntity(const xmlChar *name)
+static xmlEntityPtr getXHTMLEntity(const xmlChar* name)
 {
-    const char *namePosition = (const char *)name;
-    const Entity *e = findEntity(namePosition, strlen(namePosition));
-    if (!e)
+    unsigned short c = decodeNamedEntity(reinterpret_cast<const char*>(name));
+    if (!c)
         return 0;
 
-    QCString value = QString(QChar(e->code)).utf8();
+    QCString value = QString(QChar(c)).utf8();
     assert(value.length() < 5);
     sharedXHTMLEntity.length = value.length();
     sharedXHTMLEntity.name = name;
@@ -846,7 +835,7 @@ void XMLTokenizer::finish()
     }
 
     setCurrentNode(0);
-    emit finishedParsing();
+    m_doc->finishedParsing();
 }
 
 static inline RefPtr<ElementImpl> createXHTMLParserErrorHeader(DocumentImpl* doc, const DOMString& errorMessages) 

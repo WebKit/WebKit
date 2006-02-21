@@ -347,13 +347,6 @@ time_t KWQCacheObjectExpiresTime(khtml::DocLoader *docLoader, NSURLResponse *res
     return 0;
 }
 
-KWQLoader::KWQLoader(Loader *loader)
-    : _requestStarted(loader, SIGNAL(requestStarted(khtml::DocLoader *, khtml::CachedObject *)))
-    , _requestDone(loader, SIGNAL(requestDone(khtml::DocLoader *, khtml::CachedObject *)))
-    , _requestFailed(loader, SIGNAL(requestFailed(khtml::DocLoader *, khtml::CachedObject *)))
-{
-}
-
 namespace khtml {
     
 void CachedObject::setResponse(NSURLResponse *response)

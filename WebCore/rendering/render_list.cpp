@@ -38,8 +38,6 @@
 
 #include "helper.h"
 
-#include <kdebug.h>
-
 //#define BOX_DEBUG
 
 using namespace DOM::HTMLNames;
@@ -492,30 +490,23 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
         return;
     default:
         if (!m_item.isEmpty()) {
-            // Text should be drawn on the baseline, so we add in the ascent of the font. 
-            // For some inexplicable reason, this works in Konqueror.  I'm not sure why.
-            // - dwh
        	    _ty += fm.ascent();
 
             if (isInside()) {
             	if( style()->direction() == LTR) {
-                    p->drawText(_tx, _ty, 0, 0, 0, 0, Qt::AlignLeft|Qt::DontClip, m_item);
-                    p->drawText(_tx + fm.width(m_item, 0, 0), _ty, 0, 0, 0, 0, Qt::AlignLeft|Qt::DontClip, 
-                            QString::fromLatin1(". "));
+                    p->drawText(_tx, _ty, 0, 0, 0, 0, Qt::AlignLeft, m_item);
+                    p->drawText(_tx + fm.width(m_item, 0, 0), _ty, 0, 0, 0, 0, Qt::AlignLeft, ". ");
                 } else {
-                    const QString& punct(QString::fromLatin1(" ."));
-                    p->drawText(_tx, _ty, 0, 0, 0, 0, Qt::AlignLeft|Qt::DontClip, punct);
-            	    p->drawText(_tx + fm.width(punct, 0, 0), _ty, 0, 0, 0, 0, Qt::AlignLeft|Qt::DontClip, m_item);
+                    p->drawText(_tx, _ty, 0, 0, 0, 0, Qt::AlignLeft, " .");
+            	    p->drawText(_tx + fm.width(" .", 0, 0), _ty, 0, 0, 0, 0, Qt::AlignLeft, m_item);
                 }
             } else {
                 if (style()->direction() == LTR) {
-                    const QString& punct(QString::fromLatin1(". "));
-                    p->drawText(_tx-offset/2, _ty, 0, 0, 0, 0, Qt::AlignRight|Qt::DontClip, punct);
-                    p->drawText(_tx-offset/2-fm.width(punct, 0, 0), _ty, 0, 0, 0, 0, Qt::AlignRight|Qt::DontClip, m_item);
+                    p->drawText(_tx - offset/2, _ty, 0, 0, 0, 0, Qt::AlignRight, ". ");
+                    p->drawText(_tx - offset/2 - fm.width(". ", 0, 0), _ty, 0, 0, 0, 0, Qt::AlignRight, m_item);
                 } else {
-                    const QString& punct(QString::fromLatin1(" ."));
-            	    p->drawText(_tx+offset/2, _ty, 0, 0, 0, 0, Qt::AlignLeft|Qt::DontClip, punct);
-                    p->drawText(_tx+offset/2+fm.width(punct, 0, 0), _ty, 0, 0, 0, 0, Qt::AlignLeft|Qt::DontClip, m_item);
+            	    p->drawText(_tx + offset / 2, _ty, 0, 0, 0, 0, Qt::AlignLeft, " .");
+                    p->drawText(_tx + offset / 2 + fm.width(" .", 0, 0), _ty, 0, 0, 0, 0, Qt::AlignLeft, m_item);
                 }
             }
         }

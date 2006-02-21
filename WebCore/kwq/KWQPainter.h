@@ -108,9 +108,6 @@ public:
     void addClip(const IntRect&);
     void addRoundedRectClip(const IntRect&, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight);
 
-    RasterOp rasterOp() const;
-    void setRasterOp(RasterOp);
-
     void drawText(int x, int y, int tabWidth, int xpos, int, int, int alignmentFlags, const QString&);
     void drawHighlightForText(int x, int y, int h, int tabWidth, int xpos,
         const QChar*, int length, int from, int to, int toAdd,

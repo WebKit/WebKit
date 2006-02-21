@@ -24,24 +24,24 @@
 #ifndef XML_Tokenizer_h_
 #define XML_Tokenizer_h_
 
-#include <kxmlcore/HashMap.h>
-#include <qobject.h>
 #include "PlatformString.h"
+#include <kxmlcore/HashMap.h>
 
 namespace WebCore {
 
-class DOMString;
+class DocLoader;
 class DocumentFragmentImpl;
 class DocumentImpl;
 class ElementImpl;
 class FrameView;
-class NodeImpl;
 class SegmentedString;
 
-class Tokenizer : public QObject
+class Tokenizer
 {
 public:
-    Tokenizer();
+    Tokenizer() : m_parserStopped(false) { }
+    virtual ~Tokenizer() { }
+
     // Script output must be prepended, while new data
     // received during executing a script must be appended, hence the
     // extra bool to be able to distinguish between both cases.
@@ -57,12 +57,6 @@ protected:
     // it stops receiving data. We use m_parserStopped to stop the tokenizer
     // even when it has buffered data.
     bool m_parserStopped;
-
-signals:
-    void finishedParsing();
-
-private:
-    KWQSignal m_finishedParsing;
 };
 
 Tokenizer* newXMLTokenizer(DocumentImpl*, FrameView* = 0);
@@ -70,8 +64,8 @@ Tokenizer* newXMLTokenizer(DocumentImpl*, FrameView* = 0);
 void* xmlDocPtrForString(const QString& source, const QString& URL = QString());
 void setLoaderForLibXMLCallbacks(DocLoader*);
 #endif
-HashMap<DOMString, DOMString> parseAttributes(const DOMString&, bool& attrsOK);
-bool parseXMLDocumentFragment(const DOMString&, DocumentFragmentImpl*, ElementImpl* parent = 0);
+HashMap<String, String> parseAttributes(const String&, bool& attrsOK);
+bool parseXMLDocumentFragment(const String&, DocumentFragmentImpl*, ElementImpl* parent = 0);
 
 }
 

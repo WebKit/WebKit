@@ -38,8 +38,6 @@
 #include "html/html_documentimpl.h"
 #include "loader.h"
 
-#include <kdebug.h>
-
 using namespace DOM;
 using namespace khtml;
 // --------------------------------------------------------------------------------

@@ -32,11 +32,7 @@
 #include "SVGRenderStyle.h"
 #endif
 
-#include "kdebug.h"
-
-using namespace DOM;
-
-namespace khtml {
+namespace WebCore {
 
 static RenderStyle *defaultStyle;
 

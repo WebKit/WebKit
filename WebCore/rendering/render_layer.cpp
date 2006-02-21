@@ -44,7 +44,6 @@
 #include "config.h"
 #include "render_layer.h"
 
-#include <kdebug.h>
 #include <assert.h>
 #include "FrameView.h"
 #include "render_canvas.h"

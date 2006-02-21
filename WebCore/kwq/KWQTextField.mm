@@ -405,7 +405,7 @@ using namespace WebCore;
         }
         
         if (widget) {
-            QFocusEvent event(QEvent::FocusIn);
+            QEvent event(QEvent::FocusIn);
             if (widget->eventFilterObject())
                 const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
         }
@@ -425,7 +425,7 @@ using namespace WebCore;
         lastSelectedRange = [self selectedRange];
         
         if (widget) {
-            QFocusEvent event(QEvent::FocusOut);
+            QEvent event(QEvent::FocusOut);
             if (widget->eventFilterObject()) {
                 const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
                 if (widget)

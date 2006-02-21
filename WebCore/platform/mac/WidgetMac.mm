@@ -26,7 +26,7 @@
 #import "config.h"
 #import "Widget.h"
 
-#import "KWQCursor.h"
+#import "Cursor.h"
 #import "KWQExceptions.h"
 #import "KWQFoundationExtras.h"
 #import "KWQView.h"
@@ -234,14 +234,14 @@ void Widget::setFont(const QFont &font)
     data->font = font;
 }
 
-void Widget::setCursor(const QCursor &cur)
+void Widget::setCursor(const Cursor& cursor)
 {
     KWQ_BLOCK_EXCEPTIONS;
     for (id view = data->view; view; view = [view superview]) {
         if ([view respondsToSelector:@selector(setDocumentCursor:)]) {
-            if ([view respondsToSelector:@selector(documentCursor)] && cur.handle() == [view documentCursor])
+            if ([view respondsToSelector:@selector(documentCursor)] && cursor.impl() == [view documentCursor])
                 break;
-            [view setDocumentCursor:cur.handle()];
+            [view setDocumentCursor:cursor.impl()];
             break;
         }
     }

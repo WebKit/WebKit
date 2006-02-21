@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,64 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "FrameView.h"
+#ifndef CURSOR_H
+#define CURSOR_H
 
-#include "MacFrame.h"
-#include "KWQWindowWidget.h"
+#ifdef WIN32
+#include <windows.h>
+#endif
+
+#ifdef __APPLE__
+#ifdef __OBJC__
+@class NSCursor;
+#else
+class NSCursor;
+#endif
+#endif
 
 namespace WebCore {
 
-/*
-    Currently this file just extends the KDE implementation.
-    See khtml/khtmlview.cpp for the rest of the implementation.
-*/
+    class Image;
 
-Widget *FrameView::topLevelWidget() const 
-{
-    return Mac(frame())->topLevelWidget();
+#ifdef WIN32
+    typedef HCURSOR PlatformCursor;
+#endif
+#ifdef __APPLE__
+    typedef NSCursor* PlatformCursor;
+#endif
+
+    class Cursor {
+    public:
+        Cursor() : m_impl(0) { }
+        Cursor(Image*);
+        Cursor(const Cursor&);
+        ~Cursor();
+        Cursor& operator=(const Cursor&);
+
+        Cursor(PlatformCursor);
+        PlatformCursor impl() const { return m_impl; }
+
+     private:
+        PlatformCursor m_impl;
+    };
+
+    inline Cursor pointerCursor() { return Cursor(); }
+    const Cursor& crossCursor();
+    const Cursor& handCursor();
+    const Cursor& moveCursor();
+    const Cursor& iBeamCursor();
+    const Cursor& waitCursor();
+    const Cursor& helpCursor();
+
+    const Cursor& eastResizeCursor();
+    const Cursor& northResizeCursor();
+    const Cursor& northEastResizeCursor();
+    const Cursor& northWestResizeCursor();
+    const Cursor& southResizeCursor();
+    const Cursor& southEastResizeCursor();
+    const Cursor& southWestResizeCursor();
+    const Cursor& westResizeCursor();
+
 }
 
-IntPoint FrameView::viewportToGlobal(const IntPoint &p) const
-{
-    return static_cast<KWQWindowWidget *>(topLevelWidget())->viewportToGlobal(p);
-}
-
-}
+#endif

@@ -43,11 +43,6 @@ namespace KIO {
     class Job;
 }
 
-namespace khtml {
-    class CachedObject;
-    class DocLoader;
-}
-
 namespace DOM {
     class DOMString;
 }
@@ -64,11 +59,9 @@ public:
     void clear() { m_object = 0; }
     
     void call() const;
-    void call(bool) const;
     void call(int) const;
     void call(const DOM::DOMString&) const;
     void call(KIO::Job *) const;
-    void call(khtml::DocLoader *, khtml::CachedObject *) const;
     void call(KIO::Job *, const char *, int) const;
     void call(KIO::Job *, const KURL &) const;
     void callWithData(KIO::Job *, NSData *) const;

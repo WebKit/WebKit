@@ -35,7 +35,7 @@
 #include "RenderTableCell.h"
 #include "render_theme.h"
 #include "VisiblePosition.h"
-#include <kdebug.h>
+#include <qtextstream.h>
 
 namespace WebCore {
 

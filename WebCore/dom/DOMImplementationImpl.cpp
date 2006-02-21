@@ -24,36 +24,28 @@
 
 #include "config.h"
 #include "DOMImplementationImpl.h"
+
 #include "DocumentTypeImpl.h"
+#include "PlatformString.h"
+#include "css_stylesheetimpl.h"
+#include "dom_exception.h"
 #include "html_documentimpl.h"
 
-#include "PlatformString.h"
-#include "dom_exception.h"
-#include "css_stylesheetimpl.h"
-
-namespace DOM {
+namespace WebCore {
 
 // FIXME: An implementation of this is still waiting for me to understand the distinction between
 // a "malformed" qualified name and one with bad characters in it. For example, is a second colon
 // an illegal character or a malformed qualified name? This will determine both what parameters
 // this function needs to take and exactly what it will do. Should also be exported so that
 // ElementImpl can use it too.
-static bool qualifiedNameIsMalformed(const DOMString &)
+static bool qualifiedNameIsMalformed(const String&)
 {
     return false;
 }
 
-DOMImplementationImpl::DOMImplementationImpl()
+bool DOMImplementationImpl::hasFeature (const String& feature, const String& version) const
 {
-}
-
-DOMImplementationImpl::~DOMImplementationImpl()
-{
-}
-
-bool DOMImplementationImpl::hasFeature (const DOMString &feature, const DOMString &version) const
-{
-    DOMString lower = feature.lower();
+    String lower = feature.lower();
     if (lower == "core" || lower == "html" || lower == "xml" || lower == "xhtml")
         return version.isEmpty() || version == "1.0" || version == "2.0";
     if (lower == "css"
@@ -71,47 +63,46 @@ bool DOMImplementationImpl::hasFeature (const DOMString &feature, const DOMStrin
     return false;
 }
 
-DocumentTypeImpl *DOMImplementationImpl::createDocumentType( const DOMString &qualifiedName, const DOMString &publicId,
-                                                             const DOMString &systemId, int &exceptioncode )
+PassRefPtr<DocumentTypeImpl> DOMImplementationImpl::createDocumentType(const String& qualifiedName,
+    const String& publicId, const String& systemId, ExceptionCode& ec)
 {
     // Not mentioned in spec: throw NAMESPACE_ERR if no qualifiedName supplied
     if (qualifiedName.isNull()) {
-        exceptioncode = DOMException::NAMESPACE_ERR;
+        ec = DOMException::NAMESPACE_ERR;
         return 0;
     }
 
     // INVALID_CHARACTER_ERR: Raised if the specified qualified name contains an illegal character.
-    DOMString prefix, localName;
+    String prefix, localName;
     if (!DocumentImpl::parseQualifiedName(qualifiedName, prefix, localName)) {
-        exceptioncode = DOMException::INVALID_CHARACTER_ERR;
+        ec = DOMException::INVALID_CHARACTER_ERR;
         return 0;
     }
 
     // NAMESPACE_ERR: Raised if the qualifiedName is malformed.
     if (qualifiedNameIsMalformed(qualifiedName)) {
-        exceptioncode = DOMException::NAMESPACE_ERR;
+        ec = DOMException::NAMESPACE_ERR;
         return 0;
     }
 
+    ec = 0;
     return new DocumentTypeImpl(this, 0, qualifiedName, publicId, systemId);
 }
 
-DOMImplementationImpl* DOMImplementationImpl::getInterface(const DOMString& /*feature*/) const
+DOMImplementationImpl* DOMImplementationImpl::getInterface(const String& /*feature*/) const
 {
     // ###
     return 0;
 }
 
-DocumentImpl *DOMImplementationImpl::createDocument( const DOMString &namespaceURI, const DOMString &qualifiedName,
-                                                     DocumentTypeImpl *doctype, int &exceptioncode )
+PassRefPtr<DocumentImpl> DOMImplementationImpl::createDocument(const String& namespaceURI,
+    const String& qualifiedName, DocumentTypeImpl* doctype, ExceptionCode& ec)
 {
-    exceptioncode = 0;
-
     if (!qualifiedName.isEmpty()) {
         // INVALID_CHARACTER_ERR: Raised if the specified qualified name contains an illegal character.
-        DOMString prefix, localName;
+        String prefix, localName;
         if (!DocumentImpl::parseQualifiedName(qualifiedName, prefix, localName)) {
-            exceptioncode = DOMException::INVALID_CHARACTER_ERR;
+            ec = DOMException::INVALID_CHARACTER_ERR;
             return 0;
         }
 
@@ -122,7 +113,7 @@ DocumentImpl *DOMImplementationImpl::createDocument( const DOMString &namespaceU
         //   from "http://www.w3.org/XML/1998/namespace" [Namespaces].
         int colonpos = -1;
         uint i;
-        DOMStringImpl *qname = qualifiedName.impl();
+        StringImpl *qname = qualifiedName.impl();
         for (i = 0; i < qname->l && colonpos < 0; i++) {
             if ((*qname)[i] == ':')
                 colonpos = i;
@@ -133,7 +124,7 @@ DocumentImpl *DOMImplementationImpl::createDocument( const DOMString &namespaceU
             (colonpos == 3 && qualifiedName[0] == 'x' && qualifiedName[1] == 'm' && qualifiedName[2] == 'l' &&
              namespaceURI != "http://www.w3.org/XML/1998/namespace")) {
 
-            exceptioncode = DOMException::NAMESPACE_ERR;
+            ec = DOMException::NAMESPACE_ERR;
             return 0;
         }
     }
@@ -141,38 +132,40 @@ DocumentImpl *DOMImplementationImpl::createDocument( const DOMString &namespaceU
     // WRONG_DOCUMENT_ERR: Raised if doctype has already been used with a different document or was
     // created from a different implementation.
     if (doctype && (doctype->getDocument() || doctype->implementation() != this)) {
-        exceptioncode = DOMException::WRONG_DOCUMENT_ERR;
+        ec = DOMException::WRONG_DOCUMENT_ERR;
         return 0;
     }
 
     // ### this is completely broken.. without a view it will not work (Dirk)
-    DocumentImpl *doc = new DocumentImpl(this, 0);
+    RefPtr<DocumentImpl> doc = new DocumentImpl(this, 0);
 
     // now get the interesting parts of the doctype
     if (doctype)
-        doc->setDocType(new DocumentTypeImpl(doc, *doctype));
+        doc->setDocType(new DocumentTypeImpl(doc.get(), *doctype));
 
     if (!qualifiedName.isEmpty())
-        doc->addChild(doc->createElementNS(namespaceURI, qualifiedName, exceptioncode));
+        doc->addChild(doc->createElementNS(namespaceURI, qualifiedName, ec));
     
-    return doc;
+    ec = 0;
+    return doc.release();
 }
 
-CSSStyleSheetImpl *DOMImplementationImpl::createCSSStyleSheet(const DOMString &/*title*/, const DOMString &media, int &/*exception*/)
+PassRefPtr<CSSStyleSheetImpl> DOMImplementationImpl::createCSSStyleSheet(const String&, const String& media, ExceptionCode& ec)
 {
     // ### TODO : title should be set, and media could have wrong syntax, in which case we should generate an exception.
-    CSSStyleSheetImpl * const nullSheet = 0;
-    CSSStyleSheetImpl *sheet = new CSSStyleSheetImpl(nullSheet);
-    sheet->setMedia(new MediaListImpl(sheet, media));
-    return sheet;
+    ec = 0;
+    CSSStyleSheetImpl* const nullSheet = 0;
+    RefPtr<CSSStyleSheetImpl> sheet = new CSSStyleSheetImpl(nullSheet);
+    sheet->setMedia(new MediaListImpl(sheet.get(), media));
+    return sheet.release();
 }
 
-DocumentImpl *DOMImplementationImpl::createDocument( FrameView *v )
+PassRefPtr<DocumentImpl> DOMImplementationImpl::createDocument(FrameView* v)
 {
     return new DocumentImpl(this, v);
 }
 
-HTMLDocumentImpl *DOMImplementationImpl::createHTMLDocument( FrameView *v )
+PassRefPtr<HTMLDocumentImpl> DOMImplementationImpl::createHTMLDocument(FrameView* v)
 {
     return new HTMLDocumentImpl(this, v);
 }
@@ -183,7 +176,7 @@ DOMImplementationImpl* DOMImplementationImpl::instance()
     return i.get();
 }
 
-bool DOMImplementationImpl::isXMLMIMEType(const DOMString& mimeType)
+bool DOMImplementationImpl::isXMLMIMEType(const String& mimeType)
 {
     if (mimeType == "text/xml" || mimeType == "application/xml" || mimeType == "application/xhtml+xml" ||
         mimeType == "text/xsl" || mimeType == "application/rss+xml" || mimeType == "application/atom+xml"
@@ -195,13 +188,13 @@ bool DOMImplementationImpl::isXMLMIMEType(const DOMString& mimeType)
     return false;
 }
 
-HTMLDocumentImpl *DOMImplementationImpl::createHTMLDocument(const DOMString &title)
+PassRefPtr<HTMLDocumentImpl> DOMImplementationImpl::createHTMLDocument(const String& title)
 {
-    HTMLDocumentImpl *d = createHTMLDocument( 0 /* ### create a view otherwise it doesn't work */);
+    RefPtr<HTMLDocumentImpl> d = createHTMLDocument(0 /* ### create a view otherwise it doesn't work */);
     d->open();
     // FIXME: Need to escape special characters in the title?
     d->write("<html><head><title>" + title.qstring() + "</title></head>");
-    return d;
+    return d.release();
 }
 
-};
+}

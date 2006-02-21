@@ -74,7 +74,6 @@
 #include "xml_tokenizer.h"
 #include "xmlhttprequest.h"
 #include <assert.h>
-#include <kcursor.h>
 #include <kio/global.h>
 #include <kio/job.h>
 #include <klocale.h>
@@ -170,11 +169,6 @@ Frame::Frame(Page* page, RenderPart* ownerRenderer)
 #if !NDEBUG
     ++FrameCounter::count;
 #endif
-
-    connect( Cache::loader(), SIGNAL( requestDone( khtml::DocLoader*, khtml::CachedObject *) ),
-             this, SLOT( slotLoaderRequestDone( khtml::DocLoader*, khtml::CachedObject *) ) );
-    connect( Cache::loader(), SIGNAL( requestFailed( khtml::DocLoader*, khtml::CachedObject *) ),
-             this, SLOT( slotLoaderRequestDone( khtml::DocLoader*, khtml::CachedObject *) ) );
 }
 
 Frame::~Frame()
@@ -189,11 +183,6 @@ Frame::~Frame()
 
   if (!d->m_bComplete)
     closeURL();
-
-  disconnect( Cache::loader(), SIGNAL( requestDone( khtml::DocLoader*, khtml::CachedObject *) ),
-           this, SLOT( slotLoaderRequestDone( khtml::DocLoader*, khtml::CachedObject *) ) );
-  disconnect( Cache::loader(), SIGNAL( requestFailed( khtml::DocLoader*, khtml::CachedObject *) ),
-           this, SLOT( slotLoaderRequestDone( khtml::DocLoader*, khtml::CachedObject *) ) );
 
   clear(false);
 
@@ -256,8 +245,8 @@ bool Frame::didOpenURL(const KURL &url)
   d->m_bLoadingMainResource = true;
   d->m_bLoadEventEmitted = false;
 
-  d->m_kjsStatusBarText = QString::null;
-  d->m_kjsDefaultStatusBarText = QString::null;
+  d->m_kjsStatusBarText = String();
+  d->m_kjsDefaultStatusBarText = String();
 
   d->m_bJScriptEnabled = d->m_settings->isJavaScriptEnabled(url.host());
   d->m_bJavaEnabled = d->m_settings->isJavaEnabled(url.host());
@@ -270,13 +259,7 @@ bool Frame::didOpenURL(const KURL &url)
     d->m_url.setPath("/");
   d->m_workingURL = d->m_url;
 
-  connect( d->m_job, SIGNAL( speed( KIO::Job*, unsigned long ) ),
-           this, SLOT( slotJobSpeed( KIO::Job*, unsigned long ) ) );
-
-  connect( d->m_job, SIGNAL( percent( KIO::Job*, unsigned long ) ),
-           this, SLOT( slotJobPercent( KIO::Job*, unsigned long ) ) );
-
-  emit started( 0L );
+  started();
 
   return true;
 }
@@ -318,13 +301,13 @@ void Frame::stopLoading(bool sendUnload)
       d->m_doc->removeAllEventListenersFromAllNodes();
   }
 
-  d->m_bComplete = true; // to avoid emitting completed() in slotFinishedParsing() (David)
+  d->m_bComplete = true; // to avoid calling completed() in finishedParsing() (David)
   d->m_bLoadingMainResource = false;
   d->m_bLoadEventEmitted = true; // don't want that one either
   d->m_cachePolicy = KIO::CC_Verify; // Why here?
 
   if (d->m_doc && d->m_doc->parsing()) {
-    slotFinishedParsing();
+    finishedParsing();
     d->m_doc->setParsing(false);
   }
   
@@ -418,7 +401,7 @@ JSValue* Frame::executeScript(NodeImpl* n, const QString& script, bool forceUser
   JSValue* ret = proxy->evaluate(forceUserGesture ? QString::null : d->m_url.url(), 0, script, n);
   d->m_runningScripts--;
 
-  if (!d->m_runningScripts && d->m_doc && !d->m_doc->parsing() && d->m_submitForm)
+  if (!d->m_runningScripts)
       submitFormAgain();
 
   DocumentImpl::updateDocumentsRendering();
@@ -466,7 +449,6 @@ void Frame::clear(bool clearWindowProperties)
   d->m_mousePressNode = 0;
 
   if (d->m_doc) {
-    disconnect(d->m_doc.get(), SIGNAL(finishedParsing()), this, SLOT(slotFinishedParsing()));
     d->m_doc->cancelParsing();
     d->m_doc->detach();
   }
@@ -483,8 +465,6 @@ void Frame::clear(bool clearWindowProperties)
   d->m_doc = 0;
   d->m_decoder = 0;
 
-  for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
-      disconnectChild(child);
   d->m_plugins.clear();
 
   d->m_scheduledRedirection = noRedirectionScheduled;
@@ -519,15 +499,11 @@ DocumentImpl *Frame::document() const
 void Frame::setDocument(DocumentImpl* newDoc)
 {
     if (d) {
-        if (d->m_doc) {
-            disconnect(d->m_doc.get(), SIGNAL(finishedParsing()), this, SLOT(slotFinishedParsing()));
+        if (d->m_doc)
             d->m_doc->detach();
-        }
         d->m_doc = newDoc;
-        if (newDoc) {
+        if (newDoc)
             newDoc->attach();
-            connect(newDoc, SIGNAL(finishedParsing()), this, SLOT(slotFinishedParsing()));
-        }
     }
 }
 
@@ -603,7 +579,7 @@ void Frame::slotFinished( KIO::Job * job )
   d->m_job = 0L;
 
   if (d->m_doc->parsing())
-      end(); //will emit completed()
+      end(); // will call completed()
 }
 
 void Frame::childBegin()
@@ -673,7 +649,6 @@ void Frame::begin( const KURL &url, int xOffset, int yOffset )
   // clear widget
   if (d->m_view)
     d->m_view->resizeContents( 0, 0 );
-  connect(d->m_doc.get(),SIGNAL(finishedParsing()),this,SLOT(slotFinishedParsing()));
 }
 
 void Frame::write( const char *str, int len )
@@ -791,13 +766,8 @@ void Frame::gotoAnchor()
     }
 }
 
-void Frame::slotFinishedParsing()
+void Frame::finishedParsing()
 {
-  d->m_doc->setParsing(false);
-
-  if (!d->m_view)
-    return; // We are probably being destructed.
-
   RefPtr<Frame> protector(this);
   checkCompleted();
 
@@ -811,16 +781,10 @@ void Frame::slotFinishedParsing()
   gotoAnchor();
 }
 
-void Frame::slotLoaderRequestDone( DocLoader* dl, CachedObject *obj )
+void Frame::loadDone()
 {
-  // We really only need to call checkCompleted when our own resources are done loading.
-  // So we should check that d->m_doc->docLoader() == dl here.
-  // That might help with performance by skipping some unnecessary work, but it's too
-  // risky to make that change right now (2005-02-07), because we might be accidentally
-  // depending on the extra checkCompleted calls.
-  if (d->m_doc) {
-    checkCompleted();
-  }
+    if (d->m_doc)
+        checkCompleted();
 }
 
 void Frame::checkCompleted()
@@ -858,12 +822,9 @@ void Frame::checkCompleted()
       if (!tree()->parent())
           startRedirectionTimer();
 
-      emit completed(true);
+      completed(true);
   } else {
-      if (d->m_bPendingChildRedirection)
-          emit completed (true);
-      else
-          emit completed();
+      completed(d->m_bPendingChildRedirection);
   }
 }
 
@@ -1144,14 +1105,6 @@ void Frame::setStandardFont( const QString &name )
 void Frame::setFixedFont( const QString &name )
 {
     d->m_settings->setFixedFontName(name);
-}
-
-QCursor Frame::urlCursor() const
-{
-  // Don't load the link cursor until it's actually used.
-  // Also, we don't need setURLCursor.
-  // This speeds up startup time.
-  return KCursor::handCursor();
 }
 
 QString Frame::selectedText() const
@@ -1496,18 +1449,16 @@ Frame* Frame::loadSubframe(RenderPart* renderer, const KURL& url, const QString&
     if (renderer && frame->view())
         renderer->setWidget(frame->view());
     
-    connectChild(frame);
-    
     checkEmitLoadEvent();
     
     // In these cases, the synchronous load would have finished
     // before we could connect the signals, so make sure to send the 
     // completed() signal for the child by hand
     // FIXME: In this case the Frame will have finished loading before 
-    // it's being added to the child list.  It would be a good idea to
-    // create the child first, then invoke the loader separately  
+    // it's being added to the child list. It would be a good idea to
+    // create the child first, then invoke the loader separately.
     if (url.isEmpty() || url == "about:blank") {
-        frame->completed();
+        frame->completed(false);
         frame->checkCompleted();
     }
 
@@ -1516,12 +1467,12 @@ Frame* Frame::loadSubframe(RenderPart* renderer, const KURL& url, const QString&
 
 void Frame::submitFormAgain()
 {
-  if( d->m_doc && !d->m_doc->parsing() && d->m_submitForm)
-    Frame::submitForm( d->m_submitForm->submitAction, d->m_submitForm->submitUrl, d->m_submitForm->submitFormData, d->m_submitForm->target, d->m_submitForm->submitContentType, d->m_submitForm->submitBoundary );
-
-  delete d->m_submitForm;
-  d->m_submitForm = 0;
-  disconnect(this, SIGNAL(completed()), this, SLOT(submitFormAgain()));
+    FramePrivate::SubmitForm* form = d->m_submitForm;
+    d->m_submitForm = 0;
+    if (d->m_doc && !d->m_doc->parsing() && form)
+        submitForm(form->submitAction, form->submitUrl, form->submitFormData,
+            form->target, form->submitContentType, form->submitBoundary);
+    delete form;
 }
 
 void Frame::submitForm( const char *action, const QString &url, const FormData &formData, const QString &_target, const QString& contentType, const QString& boundary )
@@ -1613,41 +1564,24 @@ void Frame::submitForm( const char *action, const QString &url, const FormData &
     d->m_submitForm->target = _target;
     d->m_submitForm->submitContentType = contentType;
     d->m_submitForm->submitBoundary = boundary;
-    connect(this, SIGNAL(completed()), this, SLOT(submitFormAgain()));
   }
   else
     submitForm(u, args);
 }
 
 
-void Frame::slotParentCompleted()
+void Frame::parentCompleted()
 {
     if (d->m_scheduledRedirection != noRedirectionScheduled && !d->m_redirectionTimer.isActive())
         startRedirectionTimer();
 }
 
-void Frame::slotChildStarted(KIO::Job *job)
+void Frame::childCompleted(bool complete)
 {
-  if (d->m_bComplete)
-  {
-      d->m_bComplete = false;
-      emit started(job);
-  }
+    if (complete && !tree()->parent())
+        d->m_bPendingChildRedirection = true;
+    checkCompleted();
 }
-
-void Frame::slotChildCompleted()
-{
-  slotChildCompleted( false );
-}
-
-void Frame::slotChildCompleted( bool complete )
-{
-  if (complete && tree()->parent() == 0)
-    d->m_bPendingChildRedirection = true;
-
-  checkCompleted();
-}
-
 
 Frame* Frame::findFrame(const QString& f)
 {
@@ -1659,7 +1593,6 @@ Frame* Frame::findFrame(const QString& f)
     return 0;
 }
 
-
 bool Frame::frameExists(const QString& frameName)
 {
     return findFrame(frameName);
@@ -1670,50 +1603,14 @@ int Frame::zoomFactor() const
   return d->m_zoomFactor;
 }
 
-// ### make the list configurable ?
-static const int zoomSizes[] = { 20, 40, 60, 80, 90, 95, 100, 105, 110, 120, 140, 160, 180, 200, 250, 300 };
-static const int zoomSizeCount = (sizeof(zoomSizes) / sizeof(int));
-static const int minZoom = 20;
-static const int maxZoom = 300;
-
-void Frame::slotIncZoom()
-{
-  int zoomFactor = d->m_zoomFactor;
-
-  if (zoomFactor < maxZoom) {
-    // find the entry nearest to the given zoomsizes
-    for (int i = 0; i < zoomSizeCount; ++i)
-      if (zoomSizes[i] > zoomFactor) {
-        zoomFactor = zoomSizes[i];
-        break;
-      }
-    setZoomFactor(zoomFactor);
-  }
-}
-
-void Frame::slotDecZoom()
-{
-    int zoomFactor = d->m_zoomFactor;
-    if (zoomFactor > minZoom) {
-      // find the entry nearest to the given zoomsizes
-      for (int i = zoomSizeCount-1; i >= 0; --i)
-        if (zoomSizes[i] < zoomFactor) {
-          zoomFactor = zoomSizes[i];
-          break;
-        }
-      setZoomFactor(zoomFactor);
-    }
-}
-
 void Frame::setZoomFactor(int percent)
-{
-  
+{  
   if (d->m_zoomFactor == percent)
       return;
 
   d->m_zoomFactor = percent;
 
-  if(d->m_doc)
+  if (d->m_doc)
       d->m_doc->recalcStyle(NodeImpl::Force);
 
   for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
@@ -1723,24 +1620,24 @@ void Frame::setZoomFactor(int percent)
       view()->layout();
 }
 
-void Frame::setJSStatusBarText( const QString &text )
+void Frame::setJSStatusBarText(const String& text)
 {
-   d->m_kjsStatusBarText = text;
-   emit setStatusBarText( d->m_kjsStatusBarText );
+    d->m_kjsStatusBarText = text;
+    setStatusBarText(d->m_kjsStatusBarText);
 }
 
-void Frame::setJSDefaultStatusBarText( const QString &text )
+void Frame::setJSDefaultStatusBarText(const String& text)
 {
-   d->m_kjsDefaultStatusBarText = text;
-   emit setStatusBarText( d->m_kjsDefaultStatusBarText );
+    d->m_kjsDefaultStatusBarText = text;
+    setStatusBarText(d->m_kjsDefaultStatusBarText);
 }
 
-QString Frame::jsStatusBarText() const
+String Frame::jsStatusBarText() const
 {
     return d->m_kjsStatusBarText;
 }
 
-QString Frame::jsDefaultStatusBarText() const
+String Frame::jsDefaultStatusBarText() const
 {
    return d->m_kjsDefaultStatusBarText;
 }
@@ -2186,12 +2083,6 @@ JSValue* Frame::executeScript(const QString& filename, int baseLine, NodeImpl* n
   return ret;
 }
 
-void Frame::slotPartRemoved(Frame* frame)
-{
-    if (frame == d->m_activeFrame)
-        d->m_activeFrame = 0;
-}
-
 Frame *Frame::opener()
 {
     return d->m_opener;
@@ -2589,42 +2480,6 @@ bool Frame::isCharacterSmartReplaceExempt(const QChar &, bool)
     return true;
 }
 
-void Frame::connectChild(Frame* frame) const
-{
-    if (frame) {
-        connect(frame, SIGNAL(started( KIO::Job *)),
-                this, SLOT(slotChildStarted(KIO::Job*)));
-        connect(frame, SIGNAL(completed()),
-                this, SLOT(slotChildCompleted()));
-        connect(frame, SIGNAL(completed(bool)),
-                this, SLOT( slotChildCompleted(bool) ) );
-        connect(frame, SIGNAL(setStatusBarText(const QString&)),
-                this, SIGNAL(setStatusBarText(const QString&)));
-        connect(this, SIGNAL(completed()),
-                frame, SLOT(slotParentCompleted()));
-        connect(this, SIGNAL(completed(bool)),
-                frame, SLOT(slotParentCompleted()));
-    }
-}
-
-void Frame::disconnectChild(Frame* frame) const
-{
-    if (frame) {
-        disconnect(frame, SIGNAL(started(KIO::Job*)),
-                   this, SLOT(slotChildStarted(KIO::Job*)));
-        disconnect(frame, SIGNAL(completed()),
-                   this, SLOT(slotChildCompleted()));
-        disconnect(frame, SIGNAL(completed(bool)),
-                   this, SLOT(slotChildCompleted(bool)));
-        disconnect(frame, SIGNAL(setStatusBarText(const QString&)),
-                   this, SIGNAL(setStatusBarText(const QString&)));
-        disconnect(this, SIGNAL(completed()),
-                   frame, SLOT(slotParentCompleted()));
-        disconnect(this, SIGNAL(completed(bool)),
-                   frame, SLOT(slotParentCompleted()));
-    }
-}
-
 #if !NDEBUG
 static HashSet<Frame*> lifeSupportSet;
 #endif
@@ -2766,7 +2621,6 @@ RenderPart* Frame::ownerRenderer()
 {
     return d->m_ownerRenderer;
 }
-
 
 IntRect Frame::selectionRect() const
 {
@@ -3162,11 +3016,8 @@ void Frame::forceLayoutWithPageWidthRange(float minPageWidth, float maxPageWidth
 
 void Frame::sendResizeEvent()
 {
-    FrameView *v = d->m_view.get();
-    if (v) {
-        QResizeEvent e;
-        v->resizeEvent(&e);
-    }
+    if (DocumentImpl* doc = document())
+        doc->dispatchWindowEvent(EventNames::resizeEvent, false, false);
 }
 
 void Frame::sendScrollEvent()
@@ -3201,7 +3052,7 @@ void Frame::addMetaData(const QString &key, const QString &value)
 void Frame::scrollToAnchor(const KURL &URL)
 {
     d->m_url = URL;
-    started(0);
+    started();
     
     gotoAnchor();
     
@@ -3491,15 +3342,12 @@ void Frame::stopRedirectionTimer()
 
 void Frame::frameDetached()
 {
-    Frame *parent = tree()->parent();
-    if (parent)
-        parent->disconnectChild(this);
 }
 
 void Frame::updateBaseURLForEmptyDocument()
 {
     ElementImpl* owner = ownerElement();
-    // FIXME: should embed be included
+    // FIXME: Should embed be included?
     if (owner && (owner->hasTagName(iframeTag) || owner->hasTagName(objectTag) || owner->hasTagName(embedTag)))
         d->m_doc->setBaseURL(tree()->parent()->d->m_doc->baseURL());
 }
@@ -3507,6 +3355,27 @@ void Frame::updateBaseURLForEmptyDocument()
 Page* Frame::page() const
 {
     return d->m_page;
+}
+
+void Frame::completed(bool complete)
+{
+    ref();
+    for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
+        child->parentCompleted();
+    if (Frame* parent = tree()->parent())
+        parent->childCompleted(complete);
+    submitFormAgain();
+    deref();
+}
+
+void Frame::setStatusBarText(const String&)
+{
+}
+
+void Frame::started()
+{
+    for (Frame* frame = this; frame; frame = frame->tree()->parent())
+        frame->d->m_bComplete = false;
 }
 
 } // namespace WebCore

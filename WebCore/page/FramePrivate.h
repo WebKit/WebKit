@@ -98,7 +98,6 @@ namespace WebCore
             , m_focusNodeRestored(false)
             , m_isFocused(false)
             , m_focusNodeNumber(-1)
-            , m_activeFrame(0)
             , m_opener(0)
             , m_openedByJS(false)
             , m_newJSInterpreterExists(false)
@@ -148,8 +147,8 @@ namespace WebCore
 
         KIO::TransferJob* m_job;
 
-        QString m_kjsStatusBarText;
-        QString m_kjsDefaultStatusBarText;
+        String m_kjsStatusBarText;
+        String m_kjsDefaultStatusBarText;
         QString m_lastModified;
 
         bool m_bComplete : 1;
@@ -219,7 +218,6 @@ namespace WebCore
 
         IntPoint m_dragStartPos;
 
-        Frame* m_activeFrame;
         QGuardedPtr<Frame> m_opener;
         bool m_openedByJS;
         bool m_newJSInterpreterExists; // set to 1 by setOpenedByJS, for window.open

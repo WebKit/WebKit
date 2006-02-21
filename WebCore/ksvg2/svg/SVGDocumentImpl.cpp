@@ -137,6 +137,10 @@ FrameView *SVGDocumentImpl::svgView() const
 
 void SVGDocumentImpl::finishedParsing()
 {
+    // FIXME: Two problems:
+    // 1) This is never called since it's a non-virtual function.
+    // 2) If this was called it would need to call the base class's implementation of finishedParsing.
+
     addScripts(rootElement());
 
     m_scriptsIt = new Q3PtrListIterator<SVGScriptElementImpl>(m_scripts);

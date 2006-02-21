@@ -66,8 +66,6 @@
 #include "rendering/render_object.h"
 #include "rendering/render_layer.h"
 
-#include <kdebug.h>
-
 #include "css/cssparser.h"
 #include "css/css_stylesheetimpl.h"
 #include "css/css_ruleimpl.h"
@@ -271,7 +269,6 @@ JSValue *HTMLDocument::getValueProperty(ExecState *exec, int token) const
   case Scripts: // TODO (IE-specific)
     {
       // To be implemented. Meanwhile, return an object with a length property set to 0
-      kdWarning() << "KJS::HTMLDocument document.scripts called - not implemented" << endl;
       JSObject *obj = new JSObject;
       obj->put(exec, lengthPropertyName, jsNumber(0));
       return obj;
@@ -444,8 +441,6 @@ void KJS::HTMLDocument::putValueProperty(ExecState *exec, int token, JSValue *va
     // Add "all" to the property map.
     putDirect("all", value);
     break;
-  default:
-    kdWarning() << "HTMLDocument::putValueProperty unhandled token " << token << endl;
   }
 }
 
@@ -1830,7 +1825,6 @@ JSValue *HTMLElement::anchorGetter(ExecState* exec, int token) const
         case AnchorHost:            return jsString(KURL(anchor.href().qstring()).host());
         case AnchorHostname: {
             KURL url(anchor.href().qstring());
-            kdDebug(6070) << "anchor::hostname uses:" <<url.url()<<endl;
             if (url.port()==0)
                 return jsString(url.host());
             else
@@ -1959,7 +1953,6 @@ JSValue *HTMLElement::areaGetter(ExecState* exec, int token) const
         case AreaHost:            return jsString(KURL(area.href().qstring()).host());
         case AreaHostName: {
             KURL url(area.href().qstring());
-            kdDebug(6070) << "link::hostname uses:" <<url.url()<<endl;
             if (url.port()==0)
                 return jsString(url.host());
             else
@@ -2255,7 +2248,6 @@ JSValue *KJS::HTMLElementFunction::callAsFunction(ExecState *exec, JSObject *thi
 {
     if (!thisObj->inherits(&KJS::HTMLElement::info))
         return throwError(exec, TypeError);
-    kdDebug() << "KJS::HTMLElementFunction::tryCall " << endl;
     DOMExceptionTranslator exception(exec);
     HTMLElementImpl &element = *static_cast<HTMLElementImpl *>(static_cast<HTMLElement *>(thisObj)->impl());
 

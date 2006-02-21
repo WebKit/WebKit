@@ -54,7 +54,6 @@
 #include "render_canvas.h"
 #include "xmlserializer.h"
 #include <kconfig.h>
-#include <kdebug.h>
 #include <kjs/collector.h>
 #include <klocale.h>
 #include "FrameTree.h"
@@ -187,7 +186,6 @@ JSValue* Screen::getValueProperty(ExecState*, int token) const
   case AvailWidth:
     return jsNumber(usableScreenRect(widget).width());
   default:
-    kdWarning() << "Screen::getValueProperty unhandled token " << token << endl;
     return jsUndefined();
   }
 }
@@ -1197,7 +1195,6 @@ bool Window::toBoolean(ExecState *) const
 
 void Window::scheduleClose()
 {
-  kdDebug(6070) << "Window::scheduleClose window.close() " << m_frame << endl;
   ASSERT(winq);
   m_frame->scheduleClose();
 }
@@ -1266,15 +1263,11 @@ bool Window::isSafeScript(const ScriptInterpreter *origin, const ScriptInterpret
 
 bool Window::isSafeScript(ExecState *exec) const
 {
-  if (m_frame.isNull()) { // frame deleted ? can't grant access
-    kdDebug(6070) << "Window::isSafeScript: accessing deleted frame !" << endl;
+  if (m_frame.isNull()) // frame deleted ? can't grant access
     return false;
-  }
   Frame *activePart = static_cast<ScriptInterpreter *>( exec->dynamicInterpreter() )->frame();
-  if (!activePart) {
-    kdDebug(6070) << "Window::isSafeScript: current interpreter's frame is 0L!" << endl;
+  if (!activePart)
     return false;
-  }
   if ( activePart == m_frame ) // Not calling from another frame, no problem.
     return true;
 
@@ -1388,7 +1381,6 @@ void Window::clear()
   if (m_returnValueSlot)
     if (JSValue *returnValue = getDirect("returnValue"))
       *m_returnValueSlot = returnValue;
-  kdDebug(6070) << "Window::clear " << this << endl;
   delete winq;
   winq = new WindowQObject(this);
 
@@ -2286,8 +2278,7 @@ JSValue *LocationFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const 
     case Location::ToString:
       return jsString(location->toString(exec));
     }
-  } else
-    kdDebug(6070) << "LocationFunc::tryExecute - no frame!" << endl;
+  }
   return jsUndefined();
 }
 
@@ -2492,7 +2483,6 @@ JSValue *History::getValueProperty(ExecState *, int token) const
     return jsNumber(ext->getHistoryLength());
   }
   default:
-    kdWarning() << "Unhandled token in History::getValueProperty : " << token << endl;
     return jsUndefined();
   }
 }

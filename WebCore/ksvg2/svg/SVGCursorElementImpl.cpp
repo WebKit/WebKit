@@ -25,7 +25,6 @@
 #include <kdom/core/AttrImpl.h>
 #include "DocumentImpl.h"
 #include "DocLoader.h"
-#include <kdebug.h>
 
 #include "SVGNames.h"
 #include "SVGHelper.h"

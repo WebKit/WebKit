@@ -5,7 +5,7 @@
               (C) 1997 Torben Weis (weis@kde.org)
               (C) 1998 Waldo Bastian (bastian@kde.org)
               (C) 1999 Lars Knoll (knoll@kde.org)
-    Copyright (C) 2004 Apple Computer, Inc.
+    Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -29,21 +29,18 @@
 #ifndef HTMLPARSER_H
 #define HTMLPARSER_H
 
-#include "html/html_documentimpl.h"
-
-class HTMLStackElem;
+#include "html_documentimpl.h"
 
 namespace WebCore {
-    class DocumentFragmentImpl;
-    class FrameView;
-    class HTMLDocumentImpl;
-    class HTMLElementImpl;
-    class HTMLFormElementImpl;
-    class HTMLHeadElementImpl;
-    class HTMLMapElementImpl;
-    class NodeImpl;
-    class Token;
-}
+
+class DocumentFragmentImpl;
+class FrameView;
+class HTMLElementImpl;
+class HTMLFormElementImpl;
+class HTMLHeadElementImpl;
+class HTMLMapElementImpl;
+class HTMLStackElem;
+class Token;
 
 /**
  * The parser for html. It receives a stream of tokens from the HTMLTokenizer, and
@@ -52,14 +49,14 @@ namespace WebCore {
 class HTMLParser
 {
 public:
-    HTMLParser(WebCore::FrameView *w, DOM::DocumentImpl *i, bool includesComments=false);
-    HTMLParser(DOM::DocumentFragmentImpl *frag, DOM::DocumentImpl *doc, bool includesComments=false);
+    HTMLParser(FrameView *w, DocumentImpl *i, bool includesComments=false);
+    HTMLParser(DocumentFragmentImpl *frag, DocumentImpl *doc, bool includesComments=false);
     virtual ~HTMLParser();
 
     /**
      * parses one token delivered by the tokenizer
      */
-    PassRefPtr<WebCore::NodeImpl> parseToken(WebCore::Token*);
+    PassRefPtr<NodeImpl> parseToken(Token*);
     
     /**
      * tokenizer says it's not going to be sending us any more tokens
@@ -75,55 +72,55 @@ public:
     bool noSpaces() const { return !inBody; }
     bool selectMode() const { return inSelect; }
 
-    DOM::HTMLDocumentImpl *doc() const { return static_cast<DOM::HTMLDocumentImpl *>(document); }
+    HTMLDocumentImpl *doc() const { return static_cast<HTMLDocumentImpl *>(document); }
 
 protected:
-    void setCurrent(DOM::NodeImpl* newCurrent);
-    void setSkipMode(const DOM::QualifiedName& qName) { discard_until = qName.localName(); }
+    void setCurrent(NodeImpl* newCurrent);
+    void setSkipMode(const QualifiedName& qName) { discard_until = qName.localName(); }
 
-    WebCore::FrameView *HTMLWidget;
-    DOM::DocumentImpl *document;
+    FrameView *HTMLWidget;
+    DocumentImpl *document;
 
     /*
      * generate a node from the token
      */
-    PassRefPtr<WebCore::NodeImpl> getNode(WebCore::Token*);
-    bool textCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
-    bool commentCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
-    bool headCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
-    bool bodyCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
-    bool framesetCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
-    bool iframeCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
-    bool formCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
-    bool isindexCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
-    bool selectCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
-    bool ddCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
-    bool dtCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
-    bool nestedCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
-    bool nestedStyleCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
-    bool tableCellCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
-    bool tableSectionCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
-    bool noembedCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
-    bool noscriptCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
-    bool noframesCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
-    bool nolayerCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
-    bool mapCreateErrorCheck(WebCore::Token*, RefPtr<WebCore::NodeImpl>&);
+    PassRefPtr<NodeImpl> getNode(Token*);
+    bool textCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
+    bool commentCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
+    bool headCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
+    bool bodyCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
+    bool framesetCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
+    bool iframeCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
+    bool formCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
+    bool isindexCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
+    bool selectCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
+    bool ddCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
+    bool dtCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
+    bool nestedCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
+    bool nestedStyleCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
+    bool tableCellCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
+    bool tableSectionCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
+    bool noembedCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
+    bool noscriptCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
+    bool noframesCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
+    bool nolayerCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
+    bool mapCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
 
-    void processCloseTag(khtml::Token *);
+    void processCloseTag(Token *);
 
-    bool insertNode(DOM::NodeImpl *n, bool flat = false);
-    bool handleError(DOM::NodeImpl* n, bool flat, const DOM::AtomicString& localName, int tagPriority);
+    bool insertNode(NodeImpl *n, bool flat = false);
+    bool handleError(NodeImpl* n, bool flat, const AtomicString& localName, int tagPriority);
     
     // The currently active element (the one new elements will be added to).  Can be a DocumentFragment, a Document or an Element.
-    DOM::NodeImpl* current;
+    NodeImpl* current;
 
     bool currentIsReferenced;
 
     HTMLStackElem *blockStack;
 
-    void pushBlock(const DOM::AtomicString& tagName, int _level);
-    void popBlock(const DOM::AtomicString& tagName);
-    void popBlock(const DOM::QualifiedName& qName) { return popBlock(qName.localName()); } // Convenience function for readability.
+    void pushBlock(const AtomicString& tagName, int _level);
+    void popBlock(const AtomicString& tagName);
+    void popBlock(const QualifiedName& qName) { return popBlock(qName.localName()); } // Convenience function for readability.
     void popOneBlock(bool delBlock = true);
     void popInlineBlocks();
 
@@ -131,39 +128,39 @@ protected:
 
     void createHead();
 
-    bool isResidualStyleTag(const DOM::AtomicString& tagName);
-    bool isAffectedByResidualStyle(const DOM::AtomicString& tagName);
+    bool isResidualStyleTag(const AtomicString& tagName);
+    bool isAffectedByResidualStyle(const AtomicString& tagName);
     void handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem);
-    void reopenResidualStyleTags(HTMLStackElem* elem, DOM::NodeImpl* malformedTableParent);
+    void reopenResidualStyleTags(HTMLStackElem* elem, NodeImpl* malformedTableParent);
 
-    bool allowNestedRedundantTag(const DOM::AtomicString& tagName);
+    bool allowNestedRedundantTag(const AtomicString& tagName);
     
-    static bool isHeaderTag(const DOM::AtomicString& tagName);
+    static bool isHeaderTag(const AtomicString& tagName);
     void popNestedHeaderTag();
 
-    bool isInline(DOM::NodeImpl* node) const;
+    bool isInline(NodeImpl* node) const;
     
     /*
      * currently active form
      */
-    DOM::HTMLFormElementImpl *form;
+    HTMLFormElementImpl *form;
 
     /*
      * current map
      */
-    DOM::HTMLMapElementImpl *map;
+    HTMLMapElementImpl *map;
 
     /*
      * the head element. Needed for crappy html which defines <base> after </head>
      */
-    DOM::HTMLHeadElementImpl *head;
+    HTMLHeadElementImpl *head;
 
     /*
      * a possible <isindex> element in the head. Compatibility hack for
      * html from the stone age
      */
-    RefPtr<DOM::NodeImpl> isindex;
-    DOM::NodeImpl* handleIsindex(khtml::Token*);
+    RefPtr<NodeImpl> isindex;
+    NodeImpl* handleIsindex(Token*);
 
     /*
      * inserts the stupid isIndex element.
@@ -179,12 +176,14 @@ protected:
     /*
      * tells the parser to discard all tags, until it reaches the one specified
      */
-    DOM::AtomicString discard_until;
+    AtomicString discard_until;
 
     bool headLoaded;
     int inStrayTableContent;
 
     bool includesCommentsInDOM;
 };
+
+}
     
 #endif // HTMLPARSER_H

@@ -22,7 +22,6 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-#include <kdebug.h>
 
 #include "SVGPathSegLinetoImpl.h"
 #include "SVGStyledElementImpl.h"

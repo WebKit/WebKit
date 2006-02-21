@@ -45,11 +45,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-// turn off inlining to allow proper linking on newer gcc (xmltokenizer.cpp also uses findEntity())
-#undef __inline
-#define __inline
 #include "kentities.c"
-#undef __inline
 
 // #define INSTRUMENT_LAYOUT_SCHEDULING 1
 
@@ -1545,27 +1541,21 @@ void HTMLTokenizer::end()
     ASSERT(!m_timer.isActive());
     m_timer.stop(); // Only helps if assertion above fires, but do it anyway.
 
-    if ( buffer == 0 ) {
-        parser->finished();
-        emit finishedParsing();
-        return;
+    if (buffer) {
+        // parseTag is using the buffer for different matters
+        if (!m_state.hasTagState())
+            processToken();
+
+        if (scriptCode)
+            KHTML_DELETE_QCHAR_VEC(scriptCode);
+        scriptCode = 0;
+        scriptCodeSize = scriptCodeMaxSize = scriptCodeResync = 0;
+
+        KHTML_DELETE_QCHAR_VEC(buffer);
+        buffer = 0;
     }
 
-    // parseTag is using the buffer for different matters
-    if (!m_state.hasTagState())
-        processToken();
-
-    if(buffer)
-        KHTML_DELETE_QCHAR_VEC(buffer);
-
-    if(scriptCode)
-        KHTML_DELETE_QCHAR_VEC(scriptCode);
-
-    scriptCode = 0;
-    scriptCodeSize = scriptCodeMaxSize = scriptCodeResync = 0;
-    buffer = 0;
     parser->finished();
-    emit finishedParsing();
 }
 
 void HTMLTokenizer::finish()
@@ -1779,6 +1769,12 @@ void parseHTMLDocumentFragment(const DOMString &source, DocumentFragmentImpl *fr
     tok.write(source.qstring(), true);
     tok.finish();
     ASSERT(!tok.processingData());      // make sure we're done (see 3963151)
+}
+
+unsigned short decodeNamedEntity(const char* name)
+{
+    const Entity* e = findEntity(name, strlen(name));
+    return e ? e->code : 0;
 }
 
 }

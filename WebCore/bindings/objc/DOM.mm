@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,8 @@
 #import "config.h"
 #import "DOM.h"
 
+#import "CDATASectionImpl.h"
+#import "CommentImpl.h"
 #import "ContainerNodeImpl.h"
 #import "DOMEventsInternal.h"
 #import "DOMHTML.h"
@@ -35,9 +37,13 @@
 #import "DocumentFragmentImpl.h"
 #import "DocumentImpl.h"
 #import "DocumentTypeImpl.h"
+#import "HTMLElementImpl.h"
 #import "KWQFoundationExtras.h"
 #import "MacFrame.h"
 #import "NodeListImpl.h"
+#import "PlatformString.h"
+#import "StringImpl.h"
+#import "css_stylesheetimpl.h"
 #import "csshelper.h"
 #import "dom2_events.h"
 #import "dom2_range.h"
@@ -47,18 +53,13 @@
 #import "dom_elementimpl.h"
 #import "dom_exception.h"
 #import "dom_node.h"
-#import "PlatformString.h"
-#import "StringImpl.h"
-#import "CDATASectionImpl.h"
-#import "CommentImpl.h"
 #import "dom_xmlimpl.h"
-#import "HTMLElementImpl.h"
 #import "htmlnames.h"
 #import "render_image.h"
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
 #import <kxmlcore/Assertions.h>
 #import <kxmlcore/HashMap.h>
-#include <objc/objc-class.h>
+#import <objc/objc-class.h>
 
 using namespace WebCore;
 using namespace HTMLNames;
@@ -873,9 +874,9 @@ static ListenerMap *listenerMap;
     ASSERT(systemId);
 
     int exceptionCode = 0;
-    DocumentTypeImpl *impl = [self _DOMImplementationImpl]->createDocumentType(qualifiedName, publicId, systemId, exceptionCode);
+    RefPtr<DocumentTypeImpl> impl = [self _DOMImplementationImpl]->createDocumentType(qualifiedName, publicId, systemId, exceptionCode);
     raiseOnDOMError(exceptionCode);
-    return static_cast<DOMDocumentType *>([DOMNode _nodeWithImpl:impl]);
+    return static_cast<DOMDocumentType *>([DOMNode _nodeWithImpl:impl.get()]);
 }
 
 - (DOMDocument *)createDocument:(NSString *)namespaceURI :(NSString *)qualifiedName :(DOMDocumentType *)doctype
@@ -884,9 +885,9 @@ static ListenerMap *listenerMap;
     ASSERT(qualifiedName);
 
     int exceptionCode = 0;
-    DocumentImpl *impl = [self _DOMImplementationImpl]->createDocument(namespaceURI, qualifiedName, [doctype _documentTypeImpl], exceptionCode);
+    RefPtr<DocumentImpl> impl = [self _DOMImplementationImpl]->createDocument(namespaceURI, qualifiedName, [doctype _documentTypeImpl], exceptionCode);
     raiseOnDOMError(exceptionCode);
-    return static_cast<DOMDocument *>([DOMNode _nodeWithImpl:impl]);
+    return static_cast<DOMDocument *>([DOMNode _nodeWithImpl:impl.get()]);
 }
 
 @end
@@ -899,7 +900,7 @@ static ListenerMap *listenerMap;
     ASSERT(media);
 
     int exceptionCode = 0;
-    DOMCSSStyleSheet *result = [DOMCSSStyleSheet _CSSStyleSheetWithImpl:[self _DOMImplementationImpl]->createCSSStyleSheet(title, media, exceptionCode)];
+    DOMCSSStyleSheet *result = [DOMCSSStyleSheet _CSSStyleSheetWithImpl:[self _DOMImplementationImpl]->createCSSStyleSheet(title, media, exceptionCode).get()];
     raiseOnDOMError(exceptionCode);
     return result;
 }

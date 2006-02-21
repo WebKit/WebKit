@@ -26,10 +26,10 @@
 #define YYDEBUG 0
 
 #include "config.h"
-#include <kdebug.h>
+#include "cssparser.h"
+
 #include <kurl.h>
 
-#include "cssparser.h"
 #include "css_valueimpl.h"
 #include "css_ruleimpl.h"
 #include "css_stylesheetimpl.h"

@@ -496,7 +496,7 @@ void QComboBox::populate()
                 if (layer)
                     layer->scrollRectToVisible(w->absoluteBoundingBoxRect());
             }
-            QFocusEvent event(QEvent::FocusIn);
+            QEvent event(QEvent::FocusIn);
             if (widget->eventFilterObject())
                 const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
         }
@@ -510,7 +510,7 @@ void QComboBox::populate()
     if (resign) {
         Widget *widget = [self widget];
         if (widget) {
-            QFocusEvent event(QEvent::FocusOut);
+            QEvent event(QEvent::FocusOut);
             if (widget->eventFilterObject()) {
                 const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
                 [MacFrame::bridgeForWidget(widget) formControlIsResigningFirstResponder:self];

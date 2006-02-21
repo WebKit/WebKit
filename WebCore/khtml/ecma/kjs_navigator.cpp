@@ -25,7 +25,6 @@
 #include <klocale.h>
 
 #include <kconfig.h>
-#include <kdebug.h>
 
 #include "kjs_navigator.h"
 #include "kjs/lookup.h"
@@ -223,8 +222,7 @@ JSValue *Navigator::getValueProperty(ExecState *exec, int token) const
   case CookieEnabled:
     return jsBoolean(KWQKCookieJar::cookieEnabled());
   default:
-    kdWarning() << "Unhandled token in DOMEvent::getValueProperty : " << token << endl;
-    return NULL;
+    return 0;
   }
 }
 

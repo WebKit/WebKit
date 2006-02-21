@@ -25,7 +25,6 @@
 #include "DocumentImpl.h"
 #include "dom2_traversalimpl.h"
 #include "Frame.h"
-#include <kdebug.h>
 #include <kjs/protect.h>
 
 using namespace DOM;
@@ -93,8 +92,7 @@ JSValue *DOMNodeIterator::getValueProperty(ExecState *exec, int token) const
   case PointerBeforeReferenceNode:
     return jsBoolean(ni.pointerBeforeReferenceNode());
  default:
-   kdWarning() << "Unhandled token in DOMNodeIterator::getValueProperty : " << token << endl;
-   return NULL;
+   return 0;
   }
 }
 
@@ -276,8 +274,7 @@ JSValue *DOMTreeWalker::getValueProperty(ExecState *exec, int token) const
   case CurrentNode:
     return getDOMNode(exec,tw.currentNode());
   default:
-    kdWarning() << "Unhandled token in DOMTreeWalker::getValueProperty : " << token << endl;
-    return NULL;
+    return 0;
   }
 }
 

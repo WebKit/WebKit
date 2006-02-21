@@ -137,7 +137,7 @@ public:
     QString advanceToNextMisspelling(bool startBeforeSelection = false);
     
     virtual void setTitle(const DOMString &);
-    void setStatusBarText(const QString &status);
+    virtual void setStatusBarText(const String&);
 
     virtual void urlSelected(const KURL &url, int button, int state, const URLArgs &args);
 
@@ -338,10 +338,6 @@ private:
     virtual void detachFromView();
 
     WebCoreFrameBridge *_bridge;
-    
-    KWQSignal _started;
-    KWQSignal _completed;
-    KWQSignal _completedWithBool;
     
     NSView *_mouseDownView;
     bool _mouseDownWasInSubframe;

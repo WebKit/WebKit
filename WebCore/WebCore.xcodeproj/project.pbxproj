@@ -53,7 +53,6 @@
 		65BF022E0974816300C43196 /* Frame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65BF02290974816300C43196 /* Frame.cpp */; };
 		65BF022F0974816300C43196 /* Frame.h in Headers */ = {isa = PBXBuildFile; fileRef = 65BF022A0974816300C43196 /* Frame.h */; };
 		65BF02300974816300C43196 /* FramePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 65BF022B0974816300C43196 /* FramePrivate.h */; };
-		65BF02410974819000C43196 /* KWQKHTMLView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65BF02380974819000C43196 /* KWQKHTMLView.cpp */; };
 		65BF02440974819000C43196 /* MacFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 65BF023B0974819000C43196 /* MacFrame.h */; };
 		65BF02450974819000C43196 /* MacFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65BF023C0974819000C43196 /* MacFrame.mm */; };
 		65C7F4320979E2620022E453 /* WebCorePageBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C7F4310979E2620022E453 /* WebCorePageBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -203,22 +202,19 @@
 		93F1991C08245E59001E9ABC /* dom_elementimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D2F802DE4476018635CA /* dom_elementimpl.h */; };
 		93F1992008245E59001E9ABC /* dom_xmlimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D30002DE4476018635CA /* dom_xmlimpl.h */; };
 		93F1992108245E59001E9ABC /* xml_tokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D30A02DE4476018635CA /* xml_tokenizer.h */; };
-		93F1992708245E59001E9ABC /* KWQBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = F587867C02DE3B8601EA4122 /* KWQBuffer.h */; };
 		93F1992908245E59001E9ABC /* KWQCString.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868302DE3B8601EA4122 /* KWQCString.h */; };
 		93F1992A08245E59001E9ABC /* KWQCharsets.h in Headers */ = {isa = PBXBuildFile; fileRef = F58784CC02DE375901EA4122 /* KWQCharsets.h */; };
 		93F1992C08245E59001E9ABC /* KWQCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868002DE3B8601EA4122 /* KWQCollection.h */; };
 		93F1992E08245E59001E9ABC /* KWQComboBox.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868202DE3B8601EA4122 /* KWQComboBox.h */; };
-		93F1992F08245E59001E9ABC /* KWQCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868402DE3B8601EA4122 /* KWQCursor.h */; };
+		93F1992F08245E59001E9ABC /* Cursor.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868402DE3B8601EA4122 /* Cursor.h */; };
 		93F1993308245E59001E9ABC /* KWQDef.h in Headers */ = {isa = PBXBuildFile; fileRef = F58784DA02DE375901EA4122 /* KWQDef.h */; };
 		93F1993708245E59001E9ABC /* KWQEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868802DE3B8601EA4122 /* KWQEvent.h */; };
 		93F1993908245E59001E9ABC /* KWQFileButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 93CCF7D4033BD43C008635CE /* KWQFileButton.h */; };
 		93F1993A08245E59001E9ABC /* KWQFont.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868A02DE3B8601EA4122 /* KWQFont.h */; };
 		93F1993C08245E59001E9ABC /* KWQFontMetrics.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868D02DE3B8601EA4122 /* KWQFontMetrics.h */; };
 		93F1993E08245E59001E9ABC /* KWQGuardedPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = F587869002DE3B8601EA4122 /* KWQGuardedPtr.h */; };
-		93F1993F08245E59001E9ABC /* KWQIODevice.h in Headers */ = {isa = PBXBuildFile; fileRef = F587869602DE3B8601EA4122 /* KWQIODevice.h */; };
 		93F1994408245E59001E9ABC /* KWQKConfigBase.h in Headers */ = {isa = PBXBuildFile; fileRef = F58785F302DE382001EA4122 /* KWQKConfigBase.h */; };
 		93F1994508245E59001E9ABC /* KWQKCookieJar.h in Headers */ = {isa = PBXBuildFile; fileRef = F58784EE02DE375901EA4122 /* KWQKCookieJar.h */; };
-		93F1994608245E59001E9ABC /* KWQKCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = F587862002DE398401EA4122 /* KWQKCursor.h */; };
 		93F1994708245E59001E9ABC /* KWQKDebug.h in Headers */ = {isa = PBXBuildFile; fileRef = F58785F402DE382001EA4122 /* KWQKDebug.h */; };
 		93F1994F08245E59001E9ABC /* KWQKHTMLSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = F587863A02DE3A1401EA4122 /* KWQKHTMLSettings.h */; };
 		93F1995008245E59001E9ABC /* KWQKIOGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = F587864902DE3A9A01EA4122 /* KWQKIOGlobal.h */; };
@@ -315,18 +311,16 @@
 		93F19A0908245E59001E9ABC /* southWestResizeCursor.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 84C0FA2C052B966D000440A1 /* southWestResizeCursor.tiff */; };
 		93F19A0A08245E59001E9ABC /* waitCursor.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 84C0FA2D052B966D000440A1 /* waitCursor.tiff */; };
 		93F19A0B08245E59001E9ABC /* westResizeCursor.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 84C0FA2E052B966D000440A1 /* westResizeCursor.tiff */; };
-		93F19A1008245E59001E9ABC /* KWQBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F58784C802DE375901EA4122 /* KWQBuffer.cpp */; };
 		93F19A1308245E59001E9ABC /* KWQCharsets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F58784CD02DE375901EA4122 /* KWQCharsets.cpp */; };
 		93F19A1708245E59001E9ABC /* KWQComboBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784D202DE375901EA4122 /* KWQComboBox.mm */; };
 		93F19A1808245E59001E9ABC /* KWQCString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F58784D502DE375901EA4122 /* KWQCString.cpp */; };
-		93F19A1908245E59001E9ABC /* KWQCursor.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784D602DE375901EA4122 /* KWQCursor.mm */; };
 		93F19A1C08245E59001E9ABC /* KWQEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784DE02DE375901EA4122 /* KWQEvent.mm */; };
 		93F19A1E08245E59001E9ABC /* KWQFont.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784E002DE375901EA4122 /* KWQFont.mm */; };
 		93F19A1F08245E59001E9ABC /* KWQFontMetrics.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784E202DE375901EA4122 /* KWQFontMetrics.mm */; };
 		93F19A2208245E59001E9ABC /* KWQGuardedPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F58784E602DE375901EA4122 /* KWQGuardedPtr.cpp */; };
 		93F19A2408245E59001E9ABC /* KWQKConfigBase.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784ED02DE375901EA4122 /* KWQKConfigBase.mm */; };
 		93F19A2508245E59001E9ABC /* KWQKCookieJar.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784EF02DE375901EA4122 /* KWQKCookieJar.mm */; };
-		93F19A2608245E59001E9ABC /* KWQKCursor.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784F002DE375901EA4122 /* KWQKCursor.mm */; };
+		93F19A2608245E59001E9ABC /* CursorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784F002DE375901EA4122 /* CursorMac.mm */; };
 		93F19A2908245E59001E9ABC /* KWQKHistoryProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784F602DE375901EA4122 /* KWQKHistoryProvider.mm */; };
 		93F19A2E08245E59001E9ABC /* KWQKJavaAppletWidget.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784FF02DE375901EA4122 /* KWQKJavaAppletWidget.mm */; };
 		93F19A3008245E59001E9ABC /* KWQKJobClasses.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587850102DE375901EA4122 /* KWQKJobClasses.mm */; };
@@ -342,7 +336,6 @@
 		93F19A4A08245E59001E9ABC /* KWQRegExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587852B02DE375901EA4122 /* KWQRegExp.cpp */; };
 		93F19A4B08245E59001E9ABC /* KWQRegion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587852C02DE375901EA4122 /* KWQRegion.cpp */; };
 		93F19A4C08245E59001E9ABC /* KWQScrollView.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587852E02DE375901EA4122 /* KWQScrollView.mm */; };
-		93F19A4D08245E59001E9ABC /* KWQSignalStubs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587852F02DE375901EA4122 /* KWQSignalStubs.cpp */; };
 		93F19A5008245E59001E9ABC /* KWQStringList.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587853202DE375901EA4122 /* KWQStringList.mm */; };
 		93F19A5108245E59001E9ABC /* KWQTextArea.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587853602DE375901EA4122 /* KWQTextArea.mm */; };
 		93F19A5208245E59001E9ABC /* KWQTextCodec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587853702DE375901EA4122 /* KWQTextCodec.cpp */; };
@@ -1161,7 +1154,6 @@
 		65BF02290974816300C43196 /* Frame.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Frame.cpp; sourceTree = "<group>"; };
 		65BF022A0974816300C43196 /* Frame.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Frame.h; sourceTree = "<group>"; };
 		65BF022B0974816300C43196 /* FramePrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FramePrivate.h; sourceTree = "<group>"; };
-		65BF02380974819000C43196 /* KWQKHTMLView.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = KWQKHTMLView.cpp; sourceTree = "<group>"; };
 		65BF023B0974819000C43196 /* MacFrame.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MacFrame.h; sourceTree = "<group>"; };
 		65BF023C0974819000C43196 /* MacFrame.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = MacFrame.mm; sourceTree = "<group>"; };
 		65C7F4310979E2620022E453 /* WebCorePageBridge.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCorePageBridge.h; sourceTree = "<group>"; };
@@ -2165,12 +2157,10 @@
 		F56234E003026D7301629B47 /* WebCoreEncodings.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreEncodings.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F565AE8502ECA583018635CA /* WebCoreSettings.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreSettings.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F565AE8602ECA583018635CA /* WebCoreSettings.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreSettings.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F58784C802DE375901EA4122 /* KWQBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KWQBuffer.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58784CC02DE375901EA4122 /* KWQCharsets.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQCharsets.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58784CD02DE375901EA4122 /* KWQCharsets.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KWQCharsets.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58784D202DE375901EA4122 /* KWQComboBox.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQComboBox.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58784D502DE375901EA4122 /* KWQCString.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KWQCString.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F58784D602DE375901EA4122 /* KWQCursor.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQCursor.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58784DA02DE375901EA4122 /* KWQDef.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQDef.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58784DE02DE375901EA4122 /* KWQEvent.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQEvent.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58784E002DE375901EA4122 /* KWQFont.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQFont.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2179,7 +2169,7 @@
 		F58784ED02DE375901EA4122 /* KWQKConfigBase.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKConfigBase.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58784EE02DE375901EA4122 /* KWQKCookieJar.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKCookieJar.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58784EF02DE375901EA4122 /* KWQKCookieJar.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKCookieJar.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F58784F002DE375901EA4122 /* KWQKCursor.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKCursor.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F58784F002DE375901EA4122 /* CursorMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CursorMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58784F602DE375901EA4122 /* KWQKHistoryProvider.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKHistoryProvider.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58784FF02DE375901EA4122 /* KWQKJavaAppletWidget.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKJavaAppletWidget.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587850102DE375901EA4122 /* KWQKJobClasses.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKJobClasses.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2199,7 +2189,6 @@
 		F587852B02DE375901EA4122 /* KWQRegExp.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KWQRegExp.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587852C02DE375901EA4122 /* KWQRegion.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KWQRegion.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587852E02DE375901EA4122 /* KWQScrollView.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQScrollView.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587852F02DE375901EA4122 /* KWQSignalStubs.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KWQSignalStubs.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587853202DE375901EA4122 /* KWQStringList.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQStringList.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587853502DE375901EA4122 /* KWQTextArea.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQTextArea.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587853602DE375901EA4122 /* KWQTextArea.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQTextArea.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2227,7 +2216,6 @@
 		F58785F402DE382001EA4122 /* KWQKDebug.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKDebug.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58785FA02DE382001EA4122 /* KWQKLocale.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKLocale.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587860202DE382001EA4122 /* KWQKURL.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKURL.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587862002DE398401EA4122 /* KWQKCursor.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKCursor.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587863A02DE3A1401EA4122 /* KWQKHTMLSettings.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKHTMLSettings.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587864502DE3A7701EA4122 /* KWQKJavaAppletWidget.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKJavaAppletWidget.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587864902DE3A9A01EA4122 /* KWQKIOGlobal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKIOGlobal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2235,16 +2223,14 @@
 		F587864B02DE3A9A01EA4122 /* KWQKJobClasses.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKJobClasses.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587866202DE3B1101EA4122 /* KWQKSSLKeyGen.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKSSLKeyGen.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587866B02DE3B3201EA4122 /* KWQKPartsHistoryProvider.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKPartsHistoryProvider.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587867C02DE3B8601EA4122 /* KWQBuffer.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQBuffer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587868002DE3B8601EA4122 /* KWQCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQCollection.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587868202DE3B8601EA4122 /* KWQComboBox.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQComboBox.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587868302DE3B8601EA4122 /* KWQCString.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQCString.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587868402DE3B8601EA4122 /* KWQCursor.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQCursor.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F587868402DE3B8601EA4122 /* Cursor.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = Cursor.h; path = platform/Cursor.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587868802DE3B8601EA4122 /* KWQEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQEvent.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587868A02DE3B8601EA4122 /* KWQFont.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQFont.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587868D02DE3B8601EA4122 /* KWQFontMetrics.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQFontMetrics.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587869002DE3B8601EA4122 /* KWQGuardedPtr.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQGuardedPtr.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587869602DE3B8601EA4122 /* KWQIODevice.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQIODevice.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587869802DE3B8601EA4122 /* KWQLineEdit.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQLineEdit.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587869902DE3B8601EA4122 /* KWQPtrList.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQPtrList.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587869E02DE3B8601EA4122 /* KWQNamespace.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQNamespace.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2315,17 +2301,17 @@
 				F523D18402DE42E8018635CA /* css */,
 				F523D32402DE4478018635CA /* dom */,
 				93309D86099E64910056E581 /* editing */,
+				A8C0FB51089701F700BA5114 /* kcanvas */,
+				F523D16302DE42AE018635CA /* khtml */,
+				A8C0F6E9089701F100BA5114 /* ksvg2 */,
+				F58785E802DE377601EA4122 /* kwq */,
 				BCB16BFB0979C38700467741 /* loader */,
 				65BF02180974806300C43196 /* page */,
 				BCF1A5BA097832090061A123 /* platform */,
 				F523D2F302DE443B018635CA /* rendering */,
-				F523D16302DE42AE018635CA /* khtml */,
-				E1F0424309839389006694EA /* xml */,
-				F58785E802DE377601EA4122 /* kwq */,
 				F58785E902DE378A01EA4122 /* WebCore SPI */,
-				A8C0FB51089701F700BA5114 /* kcanvas */,
-				A8C0F6E9089701F100BA5114 /* ksvg2 */,
 				A8C0F6DC089701F100BA5114 /* WebCore+SVG */,
+				E1F0424309839389006694EA /* xml */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
@@ -2353,7 +2339,6 @@
 			children = (
 				93F19B1908245E59001E9ABC /* Info.plist */,
 				84C0FA1E052B9652000440A1 /* Cursor Images */,
-				ED048ABB0833F132006E1E67 /* textAreaResizeCorner.tiff */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -2372,13 +2357,12 @@
 		6582A14809999D6C00BEEB6D /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				BCC47E2209A3D6B300ADB771 /* FontFamilyMac.mm */,
-				9380F47709A11ACC001FDB34 /* WidgetMac.mm */,
-				6582A17709999EA000BEEB6D /* QStringMac.mm */,
 				6582A14909999D6C00BEEB6D /* ColorMac.mm */,
+				F58784F002DE375901EA4122 /* CursorMac.mm */,
 				6582A14A09999D6C00BEEB6D /* FloatPointMac.mm */,
 				6582A14B09999D6C00BEEB6D /* FloatRectMac.mm */,
 				6582A14C09999D6C00BEEB6D /* FloatSizeMac.mm */,
+				BCC47E2209A3D6B300ADB771 /* FontFamilyMac.mm */,
 				6582A14D09999D6C00BEEB6D /* ImageMac.mm */,
 				6582A14E09999D6D00BEEB6D /* ImageSourceMac.cpp */,
 				6582A14F09999D6D00BEEB6D /* IntPointMac.mm */,
@@ -2386,9 +2370,11 @@
 				6582A15109999D6D00BEEB6D /* IntSizeMac.mm */,
 				6582A15209999D6D00BEEB6D /* PDFDocumentImage.h */,
 				6582A15309999D6D00BEEB6D /* PDFDocumentImage.mm */,
+				6582A17709999EA000BEEB6D /* QStringMac.mm */,
 				6582A15409999D6D00BEEB6D /* ScreenMac.mm */,
 				93309E9F099EB78C0056E581 /* SharedTimerMac.cpp */,
 				6582A15509999D6D00BEEB6D /* SystemTimeMac.cpp */,
+				9380F47709A11ACC001FDB34 /* WidgetMac.mm */,
 			);
 			name = mac;
 			path = platform/mac;
@@ -2397,15 +2383,15 @@
 		65BF02180974806300C43196 /* page */ = {
 			isa = PBXGroup;
 			children = (
-				65BF022A0974816300C43196 /* Frame.h */,
 				65BF02290974816300C43196 /* Frame.cpp */,
+				65BF022A0974816300C43196 /* Frame.h */,
 				65BF022B0974816300C43196 /* FramePrivate.h */,
-				65A21483097A3F5300B9050A /* FrameTree.h */,
 				65A21482097A3F5300B9050A /* FrameTree.cpp */,
-				65CBFEF80974F607001DAC25 /* FrameView.h */,
+				65A21483097A3F5300B9050A /* FrameTree.h */,
 				65CBFEF70974F607001DAC25 /* FrameView.cpp */,
-				65A21467097A329100B9050A /* Page.h */,
+				65CBFEF80974F607001DAC25 /* FrameView.h */,
 				65FEA86809833ADE00BED4AB /* Page.cpp */,
+				65A21467097A329100B9050A /* Page.h */,
 				65D1C1C909932B22000CB324 /* Plugin.h */,
 			);
 			path = page;
@@ -2425,15 +2411,14 @@
 			children = (
 				BCEA4945097F0F770094C9E4 /* BrowserExtensionMac.h */,
 				BCEA4946097F0F770094C9E4 /* BrowserExtensionMac.mm */,
-				654EC60F097778F500DAB52C /* WebCoreFrameBridge.h */,
-				65C7F4310979E2620022E453 /* WebCorePageBridge.h */,
-				65C7F44B0979E8C90022E453 /* WebCorePageBridge.mm */,
-				654EC610097778F500DAB52C /* WebCoreFrameBridge.mm */,
-				65BF02380974819000C43196 /* KWQKHTMLView.cpp */,
-				937D809909A063330092A01E /* PageMac.h */,
+				9380F68609A143B2001FDB34 /* FrameViewMac.mm */,
 				65BF023B0974819000C43196 /* MacFrame.h */,
 				65BF023C0974819000C43196 /* MacFrame.mm */,
-				9380F68609A143B2001FDB34 /* FrameViewMac.mm */,
+				937D809909A063330092A01E /* PageMac.h */,
+				654EC60F097778F500DAB52C /* WebCoreFrameBridge.h */,
+				654EC610097778F500DAB52C /* WebCoreFrameBridge.mm */,
+				65C7F4310979E2620022E453 /* WebCorePageBridge.h */,
+				65C7F44B0979E8C90022E453 /* WebCorePageBridge.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -2451,6 +2436,7 @@
 				84C0FA2A052B966D000440A1 /* southEastResizeCursor.tiff */,
 				84C0FA2B052B966D000440A1 /* southResizeCursor.tiff */,
 				84C0FA2C052B966D000440A1 /* southWestResizeCursor.tiff */,
+				ED048ABB0833F132006E1E67 /* textAreaResizeCorner.tiff */,
 				84C0FA2D052B966D000440A1 /* waitCursor.tiff */,
 				84C0FA2E052B966D000440A1 /* westResizeCursor.tiff */,
 			);
@@ -2686,17 +2672,17 @@
 		A88427FC093081AD00B6D461 /* KDOM Support */ = {
 			isa = PBXGroup;
 			children = (
+				A884283D09308C1C00B6D461 /* DOMList.h */,
+				A884283C09308C1C00B6D461 /* kdom.h */,
+				A884283A09308C1C00B6D461 /* kdomevents.h */,
 				A884284609308C1C00B6D461 /* KDOMHeaders.h */,
+				A884284309308C1C00B6D461 /* KDOMSettings.h */,
+				A884284009308C1C00B6D461 /* Namespace.h */,
+				A884283F09308C1C00B6D461 /* RGBColorImpl.cpp */,
+				A884283E09308C1C00B6D461 /* RGBColorImpl.h */,
+				A884283909308C1C00B6D461 /* SVGElementFactoryWrapper.cpp */,
 				A884283809308C1C00B6D461 /* SVGNamesWrapper.cpp */,
 				A8C32D96093D8EA4000B9CAC /* XLinkNamesWrapper.cpp */,
-				A884283909308C1C00B6D461 /* SVGElementFactoryWrapper.cpp */,
-				A884283E09308C1C00B6D461 /* RGBColorImpl.h */,
-				A884283F09308C1C00B6D461 /* RGBColorImpl.cpp */,
-				A884284009308C1C00B6D461 /* Namespace.h */,
-				A884283D09308C1C00B6D461 /* DOMList.h */,
-				A884284309308C1C00B6D461 /* KDOMSettings.h */,
-				A884283A09308C1C00B6D461 /* kdomevents.h */,
-				A884283C09308C1C00B6D461 /* kdom.h */,
 			);
 			name = "KDOM Support";
 			sourceTree = "<group>";
@@ -2729,12 +2715,12 @@
 			children = (
 				A8C0F6EB089701F100BA5114 /* KCanvasRenderingStyle.cpp */,
 				A8C0F6EC089701F100BA5114 /* KCanvasRenderingStyle.h */,
+				A8C0F6EF089701F100BA5114 /* KSVGTimeScheduler.cpp */,
+				A8C0F6F0089701F100BA5114 /* KSVGTimeScheduler.h */,
 				A8DF5FA2098460AA0052981B /* SVGDocumentExtensions.cpp */,
 				A8DF5FA1098460AA0052981B /* SVGDocumentExtensions.h */,
 				FAE0418D097596C9000540BE /* SVGImageLoader.cpp */,
 				FAE0418E097596C9000540BE /* SVGImageLoader.h */,
-				A8C0F6EF089701F100BA5114 /* KSVGTimeScheduler.cpp */,
-				A8C0F6F0089701F100BA5114 /* KSVGTimeScheduler.h */,
 				A8C32D89093D8BFA000B9CAC /* xlinkattrs.in */,
 			);
 			path = misc;
@@ -2770,10 +2756,10 @@
 		A8C0F7F1089701F300BA5114 /* events */ = {
 			isa = PBXGroup;
 			children = (
-				A8C0F7F5089701F300BA5114 /* SVGZoomEventImpl.cpp */,
-				A8C0F7F6089701F300BA5114 /* SVGZoomEventImpl.h */,
 				A8DF545D0983A7510052981B /* JSSVGLazyEventListener.cpp */,
 				A8DF545C0983A7510052981B /* JSSVGLazyEventListener.h */,
+				A8C0F7F5089701F300BA5114 /* SVGZoomEventImpl.cpp */,
+				A8C0F7F6089701F300BA5114 /* SVGZoomEventImpl.h */,
 			);
 			path = events;
 			sourceTree = "<group>";
@@ -2833,8 +2819,8 @@
 				A8C0F830089701F300BA5114 /* SVGColorImpl.h */,
 				A8C0F831089701F300BA5114 /* SVGComponentTransferFunctionElementImpl.cpp */,
 				A8C0F832089701F300BA5114 /* SVGComponentTransferFunctionElementImpl.h */,
-				A82FC33B08CBB07C00EFEE23 /* SVGCursorElementImpl.h */,
 				A82FC33C08CBB07C00EFEE23 /* SVGCursorElementImpl.cpp */,
+				A82FC33B08CBB07C00EFEE23 /* SVGCursorElementImpl.h */,
 				A8C0F833089701F300BA5114 /* SVGDefsElementImpl.cpp */,
 				A8C0F834089701F300BA5114 /* SVGDefsElementImpl.h */,
 				A8C0F835089701F300BA5114 /* SVGDescElementImpl.cpp */,
@@ -2853,8 +2839,6 @@
 				A8C0F842089701F300BA5114 /* SVGEllipseElementImpl.h */,
 				A8C0F845089701F300BA5114 /* SVGExternalResourcesRequiredImpl.cpp */,
 				A8C0F846089701F300BA5114 /* SVGExternalResourcesRequiredImpl.h */,
-				A7638A950995965D0007E14F /* SVGFEDisplacementMapElementImpl.h */,
-				A7638A960995965D0007E14F /* SVGFEDisplacementMapElementImpl.cpp */,
 				A8C0F847089701F300BA5114 /* SVGFEBlendElementImpl.cpp */,
 				A8C0F848089701F300BA5114 /* SVGFEBlendElementImpl.h */,
 				A8C0F849089701F300BA5114 /* SVGFEColorMatrixElementImpl.cpp */,
@@ -2865,6 +2849,8 @@
 				A8C0F84E089701F300BA5114 /* SVGFECompositeElementImpl.h */,
 				A8C32961093BB7B2000B9CAC /* SVGFEDiffuseLightingElementImpl.cpp */,
 				A8C32960093BB7B2000B9CAC /* SVGFEDiffuseLightingElementImpl.h */,
+				A7638A960995965D0007E14F /* SVGFEDisplacementMapElementImpl.cpp */,
+				A7638A950995965D0007E14F /* SVGFEDisplacementMapElementImpl.h */,
 				A8C3295F093BB7B2000B9CAC /* SVGFEDistantLightElementImpl.cpp */,
 				A8C3295E093BB7B2000B9CAC /* SVGFEDistantLightElementImpl.h */,
 				A8C0F84F089701F300BA5114 /* SVGFEFloodElementImpl.cpp */,
@@ -3046,12 +3032,6 @@
 		A8C0FB51089701F700BA5114 /* kcanvas */ = {
 			isa = PBXGroup;
 			children = (
-				65743B50097076F8001E7CEF /* RenderSVGText.cpp */,
-				65743B51097076F8001E7CEF /* RenderSVGText.h */,
-				FAE0418A09759694000540BE /* RenderSVGImage.cpp */,
-				FAE0418909759694000540BE /* RenderSVGImage.h */,
-				A8FEFB090979F472005839FD /* RenderForeignObject.cpp */,
-				A8FEFB080979F472005839FD /* RenderForeignObject.h */,
 				A8C0FB53089701F700BA5114 /* device */,
 				A8C0FB7A089701F800BA5114 /* KCanvasContainer.cpp */,
 				A8C0FB7B089701F800BA5114 /* KCanvasContainer.h */,
@@ -3061,17 +3041,23 @@
 				A8C0FB7F089701F800BA5114 /* KCanvasFilters.h */,
 				A8C0FB80089701F800BA5114 /* KCanvasImage.cpp */,
 				A8C0FB81089701F800BA5114 /* KCanvasImage.h */,
-				A8C0FB82089701F800BA5114 /* RenderPath.cpp */,
-				A8C0FB83089701F800BA5114 /* RenderPath.h */,
 				A8C0FB84089701F800BA5114 /* KCanvasMatrix.cpp */,
 				A8C0FB85089701F800BA5114 /* KCanvasMatrix.h */,
-				A8C0FB86089701F800BA5114 /* KCanvasPath.h */,
 				4758C44308C5F217009BAF05 /* KCanvasPath.cpp */,
+				A8C0FB86089701F800BA5114 /* KCanvasPath.h */,
 				A8C0FB89089701F800BA5114 /* KCanvasResourceListener.h */,
 				A8C0FB8A089701F800BA5114 /* KCanvasResources.cpp */,
 				A8C0FB8B089701F800BA5114 /* KCanvasResources.h */,
-				A810E39308A4160F00333D98 /* KCanvasTreeDebug.h */,
 				A810E39408A4160F00333D98 /* KCanvasTreeDebug.cpp */,
+				A810E39308A4160F00333D98 /* KCanvasTreeDebug.h */,
+				A8FEFB090979F472005839FD /* RenderForeignObject.cpp */,
+				A8FEFB080979F472005839FD /* RenderForeignObject.h */,
+				A8C0FB82089701F800BA5114 /* RenderPath.cpp */,
+				A8C0FB83089701F800BA5114 /* RenderPath.h */,
+				FAE0418A09759694000540BE /* RenderSVGImage.cpp */,
+				FAE0418909759694000540BE /* RenderSVGImage.h */,
+				65743B50097076F8001E7CEF /* RenderSVGText.cpp */,
+				65743B51097076F8001E7CEF /* RenderSVGText.h */,
 			);
 			path = kcanvas;
 			sourceTree = "<group>";
@@ -3105,6 +3091,10 @@
 				A8C0FB6A089701F800BA5114 /* KCanvasFilterQuartz.mm */,
 				A8C0FB6B089701F800BA5114 /* KCanvasItemQuartz.h */,
 				A8C0FB6C089701F800BA5114 /* KCanvasItemQuartz.mm */,
+				A81655D2096BBEAC00601058 /* KCanvasMaskerQuartz.h */,
+				A81655D3096BBEAC00601058 /* KCanvasMaskerQuartz.mm */,
+				A8ABC99909445EC00013945F /* KCanvasPathQuartz.h */,
+				A8ABC99A09445EC00013945F /* KCanvasPathQuartz.mm */,
 				A8C0FB6D089701F800BA5114 /* KCanvasResourcesQuartz.h */,
 				A8C0FB6E089701F800BA5114 /* KCanvasResourcesQuartz.mm */,
 				A8C0FB71089701F800BA5114 /* KRenderingDeviceQuartz.h */,
@@ -3114,10 +3104,6 @@
 				A8C0FB75089701F800BA5114 /* KRenderingPaintServerQuartz.mm */,
 				A8C0FB76089701F800BA5114 /* QuartzSupport.h */,
 				A8C0FB77089701F800BA5114 /* QuartzSupport.mm */,
-				A81655D2096BBEAC00601058 /* KCanvasMaskerQuartz.h */,
-				A81655D3096BBEAC00601058 /* KCanvasMaskerQuartz.mm */,
-				A8ABC99909445EC00013945F /* KCanvasPathQuartz.h */,
-				A8ABC99A09445EC00013945F /* KCanvasPathQuartz.mm */,
 			);
 			path = quartz;
 			sourceTree = "<group>";
@@ -3125,15 +3111,15 @@
 		A8C3291F093BB732000B9CAC /* filters */ = {
 			isa = PBXGroup;
 			children = (
-				A7638A8909958EA50007E14F /* WKDisplacementMapFilter.h */,
-				A7638A8A09958EA50007E14F /* WKDisplacementMapFilter.m */,
-				A7638A91099592C30007E14F /* WKDisplacementMapFilter.cikernel */,
 				A8C32920093BB732000B9CAC /* WKArithmeticFilter.cikernel */,
 				A8C32921093BB732000B9CAC /* WKArithmeticFilter.h */,
 				A8C32922093BB732000B9CAC /* WKArithmeticFilter.m */,
 				A8C32923093BB732000B9CAC /* WKDiffuseLightingFilter.cikernel */,
 				A8C32924093BB732000B9CAC /* WKDiffuseLightingFilter.h */,
 				A8C32925093BB732000B9CAC /* WKDiffuseLightingFilter.m */,
+				A7638A91099592C30007E14F /* WKDisplacementMapFilter.cikernel */,
+				A7638A8909958EA50007E14F /* WKDisplacementMapFilter.h */,
+				A7638A8A09958EA50007E14F /* WKDisplacementMapFilter.m */,
 				A8C32926093BB732000B9CAC /* WKDistantLightFilter.cikernel */,
 				A8C32927093BB732000B9CAC /* WKDistantLightFilter.h */,
 				A8C32928093BB732000B9CAC /* WKDistantLightFilter.m */,
@@ -3215,20 +3201,20 @@
 		BC41978B059293BE0016347F /* xbl */ = {
 			isa = PBXGroup;
 			children = (
-				BC41978E059293F30016347F /* xbl_binding_manager.h */,
-				BC419795059294CA0016347F /* xbl_binding_manager.cpp */,
-				BCBDB094059A28B100B83B92 /* xbl_binding.h */,
 				BCBDB093059A28B100B83B92 /* xbl_binding.cpp */,
-				BCEACC8F0592E0AD009D6AEF /* xbl_docimpl.h */,
+				BCBDB094059A28B100B83B92 /* xbl_binding.h */,
+				BC419795059294CA0016347F /* xbl_binding_manager.cpp */,
+				BC41978E059293F30016347F /* xbl_binding_manager.h */,
 				BCEACC8E0592E0AD009D6AEF /* xbl_docimpl.cpp */,
-				BCD990DD0594B9FC00AB848D /* xbl_tokenizer.h */,
-				BCD990D90594B9E500AB848D /* xbl_tokenizer.cpp */,
-				BC74596305954CC80058C893 /* xbl_protobinding.h */,
+				BCEACC8F0592E0AD009D6AEF /* xbl_docimpl.h */,
 				BC74596205954CC80058C893 /* xbl_protobinding.cpp */,
-				BC745A1B05955F390058C893 /* xbl_protohandler.h */,
+				BC74596305954CC80058C893 /* xbl_protobinding.h */,
 				BC745A1A05955F380058C893 /* xbl_protohandler.cpp */,
-				BCBDB0380597B36E00B83B92 /* xbl_protoimplementation.h */,
+				BC745A1B05955F390058C893 /* xbl_protohandler.h */,
 				BCBDB0370597B36E00B83B92 /* xbl_protoimplementation.cpp */,
+				BCBDB0380597B36E00B83B92 /* xbl_protoimplementation.h */,
+				BCD990D90594B9E500AB848D /* xbl_tokenizer.cpp */,
+				BCD990DD0594B9FC00AB848D /* xbl_tokenizer.h */,
 			);
 			name = xbl;
 			path = khtml;
@@ -3237,7 +3223,6 @@
 		BCB16BFB0979C38700467741 /* loader */ = {
 			isa = PBXGroup;
 			children = (
-				BCFB2E5D0979E46400BA703D /* CachedObjectClient.h */,
 				BCB16BFE0979C3BD00467741 /* Cache.cpp */,
 				BCB16BFF0979C3BD00467741 /* Cache.h */,
 				BCB16C000979C3BD00467741 /* CachedCSSStyleSheet.cpp */,
@@ -3246,6 +3231,7 @@
 				BCB16C030979C3BD00467741 /* CachedImage.h */,
 				BCB16C060979C3BD00467741 /* CachedObject.cpp */,
 				BCB16C070979C3BD00467741 /* CachedObject.h */,
+				BCFB2E5D0979E46400BA703D /* CachedObjectClient.h */,
 				BCB16C080979C3BD00467741 /* CachedObjectClientWalker.cpp */,
 				BCB16C090979C3BD00467741 /* CachedObjectClientWalker.h */,
 				BCB16C0A0979C3BD00467741 /* CachedScript.cpp */,
@@ -3267,56 +3253,57 @@
 		BCF1A5BA097832090061A123 /* platform */ = {
 			isa = PBXGroup;
 			children = (
-				BCC47E2409A3D6F100ADB771 /* FontFamily.cpp */,
-				BCC47E2509A3D6F100ADB771 /* FontFamily.h */,
-				9380F47109A11AB4001FDB34 /* Widget.cpp */,
-				9380F47209A11AB4001FDB34 /* Widget.h */,
 				6582A14809999D6C00BEEB6D /* mac */,
-				6582A13D09999CD600BEEB6D /* QString.cpp */,
-				6582A13E09999CD600BEEB6D /* QString.h */,
-				BC6B7ECE0998AC7F0052867B /* ImageSource.h */,
-				93CD4FEB0995FD2A007ECC97 /* PlatformString.h */,
-				93CD4FD70995F9EA007ECC97 /* AtomicString.cpp */,
-				93CD4FD80995F9EA007ECC97 /* AtomicString.h */,
-				93CD4FD90995F9EA007ECC97 /* AtomicStringImpl.h */,
-				93CD4FDA0995F9EA007ECC97 /* String.cpp */,
-				93CD4FDC0995F9EA007ECC97 /* StringImpl.cpp */,
-				93CD4FDD0995F9EA007ECC97 /* StringImpl.h */,
-				9305B24C098F1B6B00C28855 /* Timer.h */,
-				93309EA1099EB78C0056E581 /* Timer.cpp */,
-				93309EA0099EB78C0056E581 /* SharedTimer.h */,
-				BC9C328A09933A6D001D6924 /* ImageAnimationObserver.h */,
-				BCD75ABB0989A446003E28DF /* Image.h */,
-				BC6B7BBB0993611A0052867B /* PDFDocumentImage.h */,
-				BC6B7BAE0993603C0052867B /* Image.cpp */,
-				BC075985098861A400407B48 /* Brush.h */,
-				BCC8D1710988301200140BF2 /* Pen.cpp */,
-				BCC8D1720988301200140BF2 /* Pen.h */,
-				BCC8CFC80986CD2400140BF2 /* Color.cpp */,
-				BCC8CFC90986CD2400140BF2 /* Color.h */,
-				BCC8CFCA0986CD2400140BF2 /* ColorData.gperf */,
 				BCFB2F74097A2E1A00BA703D /* Arena.cpp */,
 				BCFB2F75097A2E1A00BA703D /* Arena.h */,
-				BCFB2F3F097A24B500BA703D /* SegmentedString.cpp */,
-				BCFB2F40097A24B500BA703D /* SegmentedString.h */,
 				BCB16B880979B01400467741 /* Array.h */,
 				BCB16B890979B01400467741 /* ArrayImpl.cpp */,
 				BCB16B8A0979B01400467741 /* ArrayImpl.h */,
-				BCB16AF50979A08500467741 /* FloatRect.cpp */,
-				BCB16AF60979A08500467741 /* FloatRect.h */,
-				BCB16AF70979A08500467741 /* IntRect.cpp */,
-				BCB16AF80979A08500467741 /* IntRect.h */,
+				93CD4FD70995F9EA007ECC97 /* AtomicString.cpp */,
+				93CD4FD80995F9EA007ECC97 /* AtomicString.h */,
+				93CD4FD90995F9EA007ECC97 /* AtomicStringImpl.h */,
+				BC075985098861A400407B48 /* Brush.h */,
+				BCC8CFC80986CD2400140BF2 /* Color.cpp */,
+				BCC8CFC90986CD2400140BF2 /* Color.h */,
+				BCC8CFCA0986CD2400140BF2 /* ColorData.gperf */,
+				F587868402DE3B8601EA4122 /* Cursor.h */,
 				BC73E3900978CED700EDFF8A /* FloatPoint.cpp */,
 				BC73E3910978CED700EDFF8A /* FloatPoint.h */,
+				BCB16AF50979A08500467741 /* FloatRect.cpp */,
+				BCB16AF60979A08500467741 /* FloatRect.h */,
+				BC73E25B0978682700EDFF8A /* FloatSize.cpp */,
+				BC73E25C0978682700EDFF8A /* FloatSize.h */,
+				BCC47E2409A3D6F100ADB771 /* FontFamily.cpp */,
+				BCC47E2509A3D6F100ADB771 /* FontFamily.h */,
+				BC6B7BAE0993603C0052867B /* Image.cpp */,
+				BCD75ABB0989A446003E28DF /* Image.h */,
+				BC9C328A09933A6D001D6924 /* ImageAnimationObserver.h */,
+				BC6B7ECE0998AC7F0052867B /* ImageSource.h */,
 				BC73E3180978AFFB00EDFF8A /* IntPoint.h */,
 				BC73E2FC0978AF9C00EDFF8A /* IntPointArray.cpp */,
 				BC73E2FD0978AF9C00EDFF8A /* IntPointArray.h */,
-				BC73E25B0978682700EDFF8A /* FloatSize.cpp */,
-				BC73E25C0978682700EDFF8A /* FloatSize.h */,
+				BCB16AF70979A08500467741 /* IntRect.cpp */,
+				BCB16AF80979A08500467741 /* IntRect.h */,
 				BCF1A5EF097839600061A123 /* IntSize.h */,
-				BCFB2E830979FD4F00BA703D /* Shared.h */,
-				93E62D990985F41600E1B5E3 /* SystemTime.h */,
+				BC6B7BBB0993611A0052867B /* PDFDocumentImage.h */,
+				BCC8D1710988301200140BF2 /* Pen.cpp */,
+				BCC8D1720988301200140BF2 /* Pen.h */,
+				93CD4FEB0995FD2A007ECC97 /* PlatformString.h */,
+				6582A13D09999CD600BEEB6D /* QString.cpp */,
+				6582A13E09999CD600BEEB6D /* QString.h */,
 				9385F761098D9C3100D90D24 /* Screen.h */,
+				BCFB2F3F097A24B500BA703D /* SegmentedString.cpp */,
+				BCFB2F40097A24B500BA703D /* SegmentedString.h */,
+				BCFB2E830979FD4F00BA703D /* Shared.h */,
+				93309EA0099EB78C0056E581 /* SharedTimer.h */,
+				93CD4FDA0995F9EA007ECC97 /* String.cpp */,
+				93CD4FDC0995F9EA007ECC97 /* StringImpl.cpp */,
+				93CD4FDD0995F9EA007ECC97 /* StringImpl.h */,
+				93E62D990985F41600E1B5E3 /* SystemTime.h */,
+				93309EA1099EB78C0056E581 /* Timer.cpp */,
+				9305B24C098F1B6B00C28855 /* Timer.h */,
+				9380F47109A11AB4001FDB34 /* Widget.cpp */,
+				9380F47209A11AB4001FDB34 /* Widget.h */,
 			);
 			name = platform;
 			sourceTree = "<group>";
@@ -3333,17 +3320,16 @@
 		F523D15002DE4271018635CA /* other */ = {
 			isa = PBXGroup;
 			children = (
-				F58784CC02DE375901EA4122 /* KWQCharsets.h */,
 				F5BFAAC10309CDF6018635CE /* character-sets.txt */,
-				F550D70B02E13281018635CA /* mac-encodings.txt */,
-				F550D70C02E13281018635CA /* make-charset-table.pl */,
+				F58784CD02DE375901EA4122 /* KWQCharsets.cpp */,
+				F58784CC02DE375901EA4122 /* KWQCharsets.h */,
 				2D90660B0665D937006B6F1A /* KWQClipboard.h */,
 				2D90660C0665D937006B6F1A /* KWQClipboard.mm */,
-				F58784CD02DE375901EA4122 /* KWQCharsets.cpp */,
 				F58784DA02DE375901EA4122 /* KWQDef.h */,
 				BEF7EEA005FF8F0D009717EE /* KWQEditCommand.h */,
 				BEF7EEA105FF8F0D009717EE /* KWQEditCommand.mm */,
 				65A640F00533BB1F0085E777 /* KWQExceptions.h */,
+				65F80697054D9F86008BF776 /* KWQExceptions.mm */,
 				93CCF7D4033BD43C008635CE /* KWQFileButton.h */,
 				93CCF7D5033BD43C008635CE /* KWQFileButton.mm */,
 				93B641F206E28C5C0055F610 /* KWQFormData.h */,
@@ -3357,23 +3343,23 @@
 				93861DE0032C2E52008635CE /* KWQLogging.m */,
 				9394E0A403AA5BBE008635CE /* KWQPageState.h */,
 				9394E0A503AA5BBE008635CE /* KWQPageState.mm */,
-				93955A4103D72932008635CE /* KWQRenderTreeDebug.h */,
 				93955A4203D72932008635CE /* KWQRenderTreeDebug.cpp */,
+				93955A4103D72932008635CE /* KWQRenderTreeDebug.h */,
 				93386B90037045B3008635CE /* KWQResourceLoader.h */,
 				93386B91037045B3008635CE /* KWQResourceLoader.mm */,
-				F587852F02DE375901EA4122 /* KWQSignalStubs.cpp */,
-				BE8BD8F306359F6000D3F20B /* KWQTextUtilities.h */,
-				BE1A407106CA8A33005B28CF /* KWQTextUtilities.mm */,
+				BC7B2AF80450824100A8000F /* KWQScrollBar.h */,
+				BC7B2AF90450824100A8000F /* KWQScrollBar.mm */,
 				F587853502DE375901EA4122 /* KWQTextArea.h */,
 				F587853602DE375901EA4122 /* KWQTextArea.mm */,
 				F587851B02DE375901EA4122 /* KWQTextField.h */,
 				F587851C02DE375901EA4122 /* KWQTextField.mm */,
+				BE8BD8F306359F6000D3F20B /* KWQTextUtilities.h */,
+				BE1A407106CA8A33005B28CF /* KWQTextUtilities.mm */,
 				F587854002DE375901EA4122 /* KWQView.h */,
 				F587854302DE375901EA4122 /* KWQWindowWidget.h */,
 				F587854402DE375901EA4122 /* KWQWindowWidget.mm */,
-				BC7B2AF80450824100A8000F /* KWQScrollBar.h */,
-				BC7B2AF90450824100A8000F /* KWQScrollBar.mm */,
-				65F80697054D9F86008BF776 /* KWQExceptions.mm */,
+				F550D70B02E13281018635CA /* mac-encodings.txt */,
+				F550D70C02E13281018635CA /* make-charset-table.pl */,
 			);
 			name = other;
 			sourceTree = "<group>";
@@ -3426,13 +3412,13 @@
 				F523D18602DE4322018635CA /* css_rule.h */,
 				F523D18802DE4322018635CA /* css_stylesheet.h */,
 				F523D18A02DE4322018635CA /* css_value.h */,
-				F523D19002DE4322018635CA /* dom_exception.h */,
-				F523D19502DE4322018635CA /* dom_node.h */,
 				F523D19C02DE4322018635CA /* dom2_events.cpp */,
 				F523D19D02DE4322018635CA /* dom2_events.h */,
 				F523D19F02DE4322018635CA /* dom2_range.h */,
 				F523D1A002DE4322018635CA /* dom2_traversal.cpp */,
 				F523D1A102DE4322018635CA /* dom2_traversal.h */,
+				F523D19002DE4322018635CA /* dom_exception.h */,
+				F523D19502DE4322018635CA /* dom_node.h */,
 			);
 			path = dom;
 			sourceTree = "<group>";
@@ -3440,6 +3426,10 @@
 		F523D23402DE436B018635CA /* ecma */ = {
 			isa = PBXGroup;
 			children = (
+				1A69D380085627410009880D /* domparser.cpp */,
+				1A69D37F085627410009880D /* domparser.h */,
+				E1F7F55E0981AF570073BE6A /* JSXMLHttpRequest.cpp */,
+				E1F7F55F0981AF570073BE6A /* JSXMLHttpRequest.h */,
 				F523D1F402DE4369018635CA /* kjs_binding.cpp */,
 				F523D1F502DE4369018635CA /* kjs_binding.h */,
 				F523D1F602DE4369018635CA /* kjs_css.cpp */,
@@ -3462,12 +3452,8 @@
 				F523D20E02DE4369018635CA /* kjs_views.h */,
 				F523D21002DE4369018635CA /* kjs_window.cpp */,
 				F523D21102DE4369018635CA /* kjs_window.h */,
-				E1F7F55E0981AF570073BE6A /* JSXMLHttpRequest.cpp */,
-				E1F7F55F0981AF570073BE6A /* JSXMLHttpRequest.h */,
 				65912B0D0586921000123A69 /* xmlserializer.cpp */,
 				65912B0E0586921000123A69 /* xmlserializer.h */,
-				1A69D380085627410009880D /* domparser.cpp */,
-				1A69D37F085627410009880D /* domparser.h */,
 				A83C81A0091189B9009BF4A7 /* XSLTProcessor.cpp */,
 				A83C819F091189B9009BF4A7 /* XSLTProcessor.h */,
 			);
@@ -3477,10 +3463,8 @@
 		F523D27702DE4398018635CA /* html */ = {
 			isa = PBXGroup;
 			children = (
-				BCEF3432087B563E00BBF833 /* htmlfactory.cpp */,
-				BCEF3433087B563E00BBF833 /* htmlfactory.h */,
-				550A0BCB085F604D007353D6 /* htmlnames.cpp */,
-				550A0BCC085F604D007353D6 /* htmlnames.h */,
+				A8136D370973A8E700D74463 /* FormDataList.cpp */,
+				A8136D360973A8E700D74463 /* FormDataList.h */,
 				F523D23702DE4396018635CA /* html_baseimpl.cpp */,
 				F523D23802DE4396018635CA /* html_baseimpl.h */,
 				F523D23902DE4396018635CA /* html_blockimpl.cpp */,
@@ -3489,8 +3473,6 @@
 				51F6A3D60663BF04004D2919 /* html_canvasimpl.h */,
 				F523D23B02DE4396018635CA /* html_documentimpl.cpp */,
 				F523D23C02DE4396018635CA /* html_documentimpl.h */,
-				F523D23E02DE4396018635CA /* HTMLElementImpl.cpp */,
-				F523D23F02DE4396018635CA /* HTMLElementImpl.h */,
 				F523D24202DE4396018635CA /* html_headimpl.cpp */,
 				F523D24302DE4396018635CA /* html_headimpl.h */,
 				F523D24402DE4396018635CA /* html_imageimpl.cpp */,
@@ -3503,48 +3485,52 @@
 				F523D24D02DE4396018635CA /* html_objectimpl.h */,
 				F523D24E02DE4396018635CA /* html_tableimpl.cpp */,
 				F523D24F02DE4396018635CA /* html_tableimpl.h */,
+				A8DF3FCB097FA0FB0052981B /* HTMLBaseFontElementImpl.cpp */,
+				A8DF3FCA097FA0FB0052981B /* HTMLBaseFontElementImpl.h */,
+				A81369B7097374F500D74463 /* HTMLButtonElementImpl.cpp */,
+				A81369B6097374F500D74463 /* HTMLButtonElementImpl.h */,
+				A8DF3FC9097FA0FB0052981B /* HTMLCollectionImpl.cpp */,
+				A8DF3FC8097FA0FB0052981B /* HTMLCollectionImpl.h */,
+				F523D23E02DE4396018635CA /* HTMLElementImpl.cpp */,
+				F523D23F02DE4396018635CA /* HTMLElementImpl.h */,
+				BCEF3432087B563E00BBF833 /* htmlfactory.cpp */,
+				BCEF3433087B563E00BBF833 /* htmlfactory.h */,
+				A81369B9097374F500D74463 /* HTMLFieldSetElementImpl.cpp */,
+				A81369B8097374F500D74463 /* HTMLFieldSetElementImpl.h */,
+				A8DF3FC7097FA0FB0052981B /* HTMLFormCollectionImpl.cpp */,
+				A8DF3FC6097FA0FB0052981B /* HTMLFormCollectionImpl.h */,
+				A81369B5097374F500D74463 /* HTMLFormElementImpl.cpp */,
+				A81369B4097374F500D74463 /* HTMLFormElementImpl.h */,
+				A81369B3097374F500D74463 /* HTMLGenericFormElementImpl.cpp */,
+				A81369B2097374F500D74463 /* HTMLGenericFormElementImpl.h */,
+				A81369B1097374F500D74463 /* HTMLInputElementImpl.cpp */,
+				A81369B0097374F500D74463 /* HTMLInputElementImpl.h */,
+				A81369AF097374F500D74463 /* HTMLIsIndexElementImpl.cpp */,
+				A81369AE097374F500D74463 /* HTMLIsIndexElementImpl.h */,
+				A81369C9097374F600D74463 /* HTMLKeygenElementImpl.cpp */,
+				A81369C8097374F500D74463 /* HTMLKeygenElementImpl.h */,
+				A81369C7097374F500D74463 /* HTMLLabelElementImpl.cpp */,
+				A81369C6097374F500D74463 /* HTMLLabelElementImpl.h */,
+				A81369C5097374F500D74463 /* HTMLLegendElementImpl.cpp */,
+				A81369C4097374F500D74463 /* HTMLLegendElementImpl.h */,
+				A8DF3FCD097FA0FB0052981B /* HTMLNameCollectionImpl.cpp */,
+				A8DF3FCC097FA0FB0052981B /* HTMLNameCollectionImpl.h */,
+				550A0BCB085F604D007353D6 /* htmlnames.cpp */,
+				550A0BCC085F604D007353D6 /* htmlnames.h */,
+				A81369C3097374F500D74463 /* HTMLOptGroupElementImpl.cpp */,
+				A81369C2097374F500D74463 /* HTMLOptGroupElementImpl.h */,
+				A81369C1097374F500D74463 /* HTMLOptionElementImpl.cpp */,
+				A81369C0097374F500D74463 /* HTMLOptionElementImpl.h */,
+				9327A94109968D1A0068A546 /* HTMLOptionsCollectionImpl.cpp */,
+				A81369BE097374F500D74463 /* HTMLOptionsCollectionImpl.h */,
 				F523D25002DE4396018635CA /* htmlparser.cpp */,
 				F523D25102DE4396018635CA /* htmlparser.h */,
+				A81369BD097374F500D74463 /* HTMLSelectElementImpl.cpp */,
+				A81369BC097374F500D74463 /* HTMLSelectElementImpl.h */,
+				A81369BB097374F500D74463 /* HTMLTextAreaElementImpl.cpp */,
+				A81369BA097374F500D74463 /* HTMLTextAreaElementImpl.h */,
 				F523D25202DE4396018635CA /* htmltokenizer.cpp */,
 				F523D25302DE4396018635CA /* htmltokenizer.h */,
-				A81369AE097374F500D74463 /* HTMLIsIndexElementImpl.h */,
-				A81369AF097374F500D74463 /* HTMLIsIndexElementImpl.cpp */,
-				A81369B0097374F500D74463 /* HTMLInputElementImpl.h */,
-				A81369B1097374F500D74463 /* HTMLInputElementImpl.cpp */,
-				A81369B2097374F500D74463 /* HTMLGenericFormElementImpl.h */,
-				A81369B3097374F500D74463 /* HTMLGenericFormElementImpl.cpp */,
-				A81369B4097374F500D74463 /* HTMLFormElementImpl.h */,
-				A81369B5097374F500D74463 /* HTMLFormElementImpl.cpp */,
-				A81369B6097374F500D74463 /* HTMLButtonElementImpl.h */,
-				A81369B7097374F500D74463 /* HTMLButtonElementImpl.cpp */,
-				A81369B8097374F500D74463 /* HTMLFieldSetElementImpl.h */,
-				A81369B9097374F500D74463 /* HTMLFieldSetElementImpl.cpp */,
-				A81369BA097374F500D74463 /* HTMLTextAreaElementImpl.h */,
-				A81369BB097374F500D74463 /* HTMLTextAreaElementImpl.cpp */,
-				A81369BC097374F500D74463 /* HTMLSelectElementImpl.h */,
-				A81369BD097374F500D74463 /* HTMLSelectElementImpl.cpp */,
-				A81369BE097374F500D74463 /* HTMLOptionsCollectionImpl.h */,
-				9327A94109968D1A0068A546 /* HTMLOptionsCollectionImpl.cpp */,
-				A81369C0097374F500D74463 /* HTMLOptionElementImpl.h */,
-				A81369C1097374F500D74463 /* HTMLOptionElementImpl.cpp */,
-				A81369C2097374F500D74463 /* HTMLOptGroupElementImpl.h */,
-				A81369C3097374F500D74463 /* HTMLOptGroupElementImpl.cpp */,
-				A81369C4097374F500D74463 /* HTMLLegendElementImpl.h */,
-				A81369C5097374F500D74463 /* HTMLLegendElementImpl.cpp */,
-				A81369C6097374F500D74463 /* HTMLLabelElementImpl.h */,
-				A81369C7097374F500D74463 /* HTMLLabelElementImpl.cpp */,
-				A81369C8097374F500D74463 /* HTMLKeygenElementImpl.h */,
-				A81369C9097374F600D74463 /* HTMLKeygenElementImpl.cpp */,
-				A8136D360973A8E700D74463 /* FormDataList.h */,
-				A8136D370973A8E700D74463 /* FormDataList.cpp */,
-				A8DF3FC6097FA0FB0052981B /* HTMLFormCollectionImpl.h */,
-				A8DF3FC7097FA0FB0052981B /* HTMLFormCollectionImpl.cpp */,
-				A8DF3FC8097FA0FB0052981B /* HTMLCollectionImpl.h */,
-				A8DF3FC9097FA0FB0052981B /* HTMLCollectionImpl.cpp */,
-				A8DF3FCA097FA0FB0052981B /* HTMLBaseFontElementImpl.h */,
-				A8DF3FCB097FA0FB0052981B /* HTMLBaseFontElementImpl.cpp */,
-				A8DF3FCC097FA0FB0052981B /* HTMLNameCollectionImpl.h */,
-				A8DF3FCD097FA0FB0052981B /* HTMLNameCollectionImpl.cpp */,
 			);
 			path = html;
 			sourceTree = "<group>";
@@ -3566,8 +3552,6 @@
 		F523D2F302DE443B018635CA /* rendering */ = {
 			isa = PBXGroup;
 			children = (
-				AB67D1A6097F3AE300F9392E /* RenderTextField.cpp */,
-				AB67D1A7097F3AE300F9392E /* RenderTextField.h */,
 				BCEA4813097D93020094C9E4 /* bidi.cpp */,
 				BCEA4814097D93020094C9E4 /* bidi.h */,
 				BCEA4815097D93020094C9E4 /* break_lines.cpp */,
@@ -3581,8 +3565,6 @@
 				BCEA481D097D93020094C9E4 /* render_applet.h */,
 				BCEA481E097D93020094C9E4 /* render_arena.cpp */,
 				BCEA481F097D93020094C9E4 /* render_arena.h */,
-				BCEA4820097D93020094C9E4 /* RenderBlock.cpp */,
-				BCEA4821097D93020094C9E4 /* RenderBlock.h */,
 				BCEA4822097D93020094C9E4 /* render_box.cpp */,
 				BCEA4823097D93020094C9E4 /* render_box.h */,
 				BCEA4824097D93020094C9E4 /* render_br.cpp */,
@@ -3593,8 +3575,6 @@
 				BCEA4829097D93020094C9E4 /* render_canvas.h */,
 				BCEA482A097D93020094C9E4 /* render_canvasimage.cpp */,
 				BCEA482B097D93020094C9E4 /* render_canvasimage.h */,
-				BCEA482C097D93020094C9E4 /* RenderContainer.cpp */,
-				BCEA482D097D93020094C9E4 /* RenderContainer.h */,
 				BCEA482E097D93020094C9E4 /* render_flexbox.cpp */,
 				BCEA482F097D93020094C9E4 /* render_flexbox.h */,
 				BCEA4830097D93020094C9E4 /* render_flow.cpp */,
@@ -3619,26 +3599,32 @@
 				BCEA4843097D93020094C9E4 /* render_replaced.h */,
 				BCEA4844097D93020094C9E4 /* render_style.cpp */,
 				BCEA4845097D93020094C9E4 /* render_style.h */,
-				BCEA4848097D93020094C9E4 /* render_theme_mac.h */,
-				BCEA4849097D93020094C9E4 /* render_theme_mac.mm */,
 				BCEA484A097D93020094C9E4 /* render_theme.cpp */,
 				BCEA484B097D93020094C9E4 /* render_theme.h */,
+				BCEA4848097D93020094C9E4 /* render_theme_mac.h */,
+				BCEA4849097D93020094C9E4 /* render_theme_mac.mm */,
+				BCEA4820097D93020094C9E4 /* RenderBlock.cpp */,
+				BCEA4821097D93020094C9E4 /* RenderBlock.h */,
+				BCEA482C097D93020094C9E4 /* RenderContainer.cpp */,
+				BCEA482D097D93020094C9E4 /* RenderContainer.h */,
+				A8DF4AE20980C42C0052981B /* RenderTable.cpp */,
+				A8DF4AE10980C42C0052981B /* RenderTable.h */,
+				A8DF4AE00980C42C0052981B /* RenderTableCell.cpp */,
+				A8DF4ADF0980C42C0052981B /* RenderTableCell.h */,
+				A8DF4ADE0980C42C0052981B /* RenderTableCol.cpp */,
+				A8DF4AE70980C42C0052981B /* RenderTableCol.h */,
+				A8DF4AE60980C42C0052981B /* RenderTableRow.cpp */,
+				A8DF4AE40980C42C0052981B /* RenderTableRow.h */,
+				A8DF4AE30980C42C0052981B /* RenderTableSection.cpp */,
+				A8DF4AE50980C42C0052981B /* RenderTableSection.h */,
 				BCEA484C097D93020094C9E4 /* RenderText.cpp */,
 				BCEA484D097D93020094C9E4 /* RenderText.h */,
+				AB67D1A6097F3AE300F9392E /* RenderTextField.cpp */,
+				AB67D1A7097F3AE300F9392E /* RenderTextField.h */,
 				BCEA484E097D93020094C9E4 /* RenderTextFragment.cpp */,
 				BCEA484F097D93020094C9E4 /* RenderTextFragment.h */,
 				BCEA4850097D93020094C9E4 /* table_layout.cpp */,
 				BCEA4851097D93020094C9E4 /* table_layout.h */,
-				A8DF4AE00980C42C0052981B /* RenderTableCell.cpp */,
-				A8DF4ADF0980C42C0052981B /* RenderTableCell.h */,
-				A8DF4AE20980C42C0052981B /* RenderTable.cpp */,
-				A8DF4AE10980C42C0052981B /* RenderTable.h */,
-				A8DF4AE30980C42C0052981B /* RenderTableSection.cpp */,
-				A8DF4AE50980C42C0052981B /* RenderTableSection.h */,
-				A8DF4AE60980C42C0052981B /* RenderTableRow.cpp */,
-				A8DF4AE40980C42C0052981B /* RenderTableRow.h */,
-				A8DF4ADE0980C42C0052981B /* RenderTableCol.cpp */,
-				A8DF4AE70980C42C0052981B /* RenderTableCol.h */,
 			);
 			path = rendering;
 			sourceTree = "<group>";
@@ -3707,7 +3693,6 @@
 				55998A57052B598F0017A6C1 /* Accessibility */,
 				F587871802DE3B8801EA4122 /* qt */,
 				F587861C02DE382201EA4122 /* kdecore */,
-				F587862F02DE398601EA4122 /* kdeui */,
 				F587865F02DE3A9C01EA4122 /* kio */,
 				F587867502DE3B3301EA4122 /* kparts */,
 				F587864302DE3A1601EA4122 /* khtml */,
@@ -3719,16 +3704,15 @@
 		F58785E902DE378A01EA4122 /* WebCore SPI */ = {
 			isa = PBXGroup;
 			children = (
-				6552E7A8096AA11B0006F248 /* WebCoreFrameNamespaces.h */,
-				6552E7A9096AA11B0006F248 /* WebCoreFrameNamespaces.m */,
+				F58EF58E02DFDFB7018635CA /* WebCore.exp */,
 				F5B2A4FC02E2220F018635CB /* WebCoreCache.h */,
 				F5B2A4FD02E2220F018635CB /* WebCoreCache.mm */,
 				F587854902DE375901EA4122 /* WebCoreCookieAdapter.h */,
 				F587854A02DE375901EA4122 /* WebCoreCookieAdapter.m */,
 				F56234DF03026D7301629B47 /* WebCoreEncodings.h */,
-				E1EE773508F1086C00166870 /* WebCoreTextDecoder.h */,
-				E1EE773608F1086C00166870 /* WebCoreTextDecoder.mm */,
 				F56234E003026D7301629B47 /* WebCoreEncodings.mm */,
+				6552E7A8096AA11B0006F248 /* WebCoreFrameNamespaces.h */,
+				6552E7A9096AA11B0006F248 /* WebCoreFrameNamespaces.m */,
 				F587854C02DE375901EA4122 /* WebCoreFrameView.h */,
 				BE26F15305517DE000BFA0C3 /* WebCoreGraphicsBridge.h */,
 				BE26F15405517DE000BFA0C3 /* WebCoreGraphicsBridge.m */,
@@ -3749,6 +3733,8 @@
 				9325AAB8041D0E9A00A9CAC5 /* WebCoreScrollView.m */,
 				F565AE8502ECA583018635CA /* WebCoreSettings.h */,
 				F565AE8602ECA583018635CA /* WebCoreSettings.mm */,
+				E1EE773508F1086C00166870 /* WebCoreTextDecoder.h */,
+				E1EE773608F1086C00166870 /* WebCoreTextDecoder.mm */,
 				F587855102DE375901EA4122 /* WebCoreTextRenderer.h */,
 				F587855202DE375901EA4122 /* WebCoreTextRendererFactory.h */,
 				F587855302DE375901EA4122 /* WebCoreTextRendererFactory.mm */,
@@ -3758,7 +3744,6 @@
 				F587855502DE375901EA4122 /* WebCoreViewFactory.m */,
 				5150C2A10702629000AF642C /* WebDashboardRegion.h */,
 				5150C2A50702629800AF642C /* WebDashboardRegion.m */,
-				F58EF58E02DFDFB7018635CA /* WebCore.exp */,
 			);
 			name = "WebCore SPI";
 			path = kwq;
@@ -3776,15 +3761,6 @@
 				F587850E02DE375901EA4122 /* KWQKURL.mm */,
 			);
 			name = kdecore;
-			sourceTree = "<group>";
-		};
-		F587862F02DE398601EA4122 /* kdeui */ = {
-			isa = PBXGroup;
-			children = (
-				F587862002DE398401EA4122 /* KWQKCursor.h */,
-				F58784F002DE375901EA4122 /* KWQKCursor.mm */,
-			);
-			name = kdeui;
 			sourceTree = "<group>";
 		};
 		F587864302DE3A1601EA4122 /* khtml */ = {
@@ -3813,8 +3789,8 @@
 		F587867502DE3B3301EA4122 /* kparts */ = {
 			isa = PBXGroup;
 			children = (
-				F587866B02DE3B3201EA4122 /* KWQKPartsHistoryProvider.h */,
 				F58784F602DE375901EA4122 /* KWQKHistoryProvider.mm */,
+				F587866B02DE3B3201EA4122 /* KWQKPartsHistoryProvider.h */,
 			);
 			name = kparts;
 			sourceTree = "<group>";
@@ -3822,65 +3798,60 @@
 		F587871802DE3B8801EA4122 /* qt */ = {
 			isa = PBXGroup;
 			children = (
-				F587867C02DE3B8601EA4122 /* KWQBuffer.h */,
-				F58784C802DE375901EA4122 /* KWQBuffer.cpp */,
 				F587868002DE3B8601EA4122 /* KWQCollection.h */,
 				F587868202DE3B8601EA4122 /* KWQComboBox.h */,
 				F58784D202DE375901EA4122 /* KWQComboBox.mm */,
-				F587868302DE3B8601EA4122 /* KWQCString.h */,
 				F58784D502DE375901EA4122 /* KWQCString.cpp */,
-				F587868402DE3B8601EA4122 /* KWQCursor.h */,
-				F58784D602DE375901EA4122 /* KWQCursor.mm */,
+				F587868302DE3B8601EA4122 /* KWQCString.h */,
 				F587868802DE3B8601EA4122 /* KWQEvent.h */,
 				F58784DE02DE375901EA4122 /* KWQEvent.mm */,
 				F587868A02DE3B8601EA4122 /* KWQFont.h */,
 				F58784E002DE375901EA4122 /* KWQFont.mm */,
 				F587868D02DE3B8601EA4122 /* KWQFontMetrics.h */,
 				F58784E202DE375901EA4122 /* KWQFontMetrics.mm */,
-				F587869002DE3B8601EA4122 /* KWQGuardedPtr.h */,
 				F58784E602DE375901EA4122 /* KWQGuardedPtr.cpp */,
-				F587869602DE3B8601EA4122 /* KWQIODevice.h */,
+				F587869002DE3B8601EA4122 /* KWQGuardedPtr.h */,
 				F587869802DE3B8601EA4122 /* KWQLineEdit.h */,
 				F587851202DE375901EA4122 /* KWQLineEdit.mm */,
 				F587851302DE375901EA4122 /* KWQListBox.h */,
 				F587851402DE375901EA4122 /* KWQListBox.mm */,
-				F587869902DE3B8601EA4122 /* KWQPtrList.h */,
-				F587851502DE375901EA4122 /* KWQListImpl.h */,
 				F587851602DE375901EA4122 /* KWQListImpl.cpp */,
+				F587851502DE375901EA4122 /* KWQListImpl.h */,
 				F587869E02DE3B8601EA4122 /* KWQNamespace.h */,
-				F587869F02DE3B8601EA4122 /* KWQObject.h */,
 				F587851D02DE375901EA4122 /* KWQObject.cpp */,
-				F5117BC902F9FFEF018635CE /* KWQSignal.h */,
-				F5117BCA02F9FFEF018635CE /* KWQSignal.cpp */,
-				F5117BCB02F9FFEF018635CE /* KWQSlot.h */,
-				F5117BCC02F9FFEF018635CE /* KWQSlot.cpp */,
+				F587869F02DE3B8601EA4122 /* KWQObject.h */,
 				F58786A302DE3B8601EA4122 /* KWQPainter.h */,
 				F587851F02DE375901EA4122 /* KWQPainter.mm */,
 				F58786A402DE3B8601EA4122 /* KWQPalette.h */,
 				F58786AA02DE3B8601EA4122 /* KWQPrinter.h */,
-				F58786AC02DE3B8601EA4122 /* KWQPtrList.h */,
+				F587869902DE3B8601EA4122 /* KWQPtrList.h */,
 				F58786AD02DE3B8601EA4122 /* KWQPtrQueue.h */,
-				F58786B302DE3B8601EA4122 /* KWQRegExp.h */,
 				F587852B02DE375901EA4122 /* KWQRegExp.cpp */,
-				F58786B402DE3B8601EA4122 /* KWQRegion.h */,
+				F58786B302DE3B8601EA4122 /* KWQRegExp.h */,
 				F587852C02DE375901EA4122 /* KWQRegion.cpp */,
+				F58786B402DE3B8601EA4122 /* KWQRegion.h */,
 				F58786B502DE3B8601EA4122 /* KWQScrollView.h */,
 				F587852E02DE375901EA4122 /* KWQScrollView.mm */,
+				F5117BCA02F9FFEF018635CE /* KWQSignal.cpp */,
+				F5117BC902F9FFEF018635CE /* KWQSignal.h */,
 				BC86FB8D061F5C23006BB822 /* KWQSlider.h */,
 				BC86FB8E061F5C23006BB822 /* KWQSlider.mm */,
+				F5117BCC02F9FFEF018635CE /* KWQSlot.cpp */,
+				F5117BCB02F9FFEF018635CE /* KWQSlot.h */,
 				F58786BA02DE3B8601EA4122 /* KWQStringList.h */,
 				F587853202DE375901EA4122 /* KWQStringList.mm */,
-				F58786BD02DE3B8601EA4122 /* KWQTextCodec.h */,
 				F587853702DE375901EA4122 /* KWQTextCodec.cpp */,
+				F58786BD02DE3B8601EA4122 /* KWQTextCodec.h */,
 				F58786BE02DE3B8601EA4122 /* KWQTextEdit.h */,
 				F587853802DE375901EA4122 /* KWQTextEdit.mm */,
-				F58786BF02DE3B8601EA4122 /* KWQTextStream.h */,
 				F587853902DE375901EA4122 /* KWQTextStream.cpp */,
+				F58786BF02DE3B8601EA4122 /* KWQTextStream.h */,
 				F58786C202DE3B8601EA4122 /* KWQValueList.h */,
-				F587853B02DE375901EA4122 /* KWQValueListImpl.h */,
 				F587853C02DE375901EA4122 /* KWQValueListImpl.cpp */,
-				A85D7A8D0879EC64006A9172 /* KWQWMatrix.h */,
+				F587853B02DE375901EA4122 /* KWQValueListImpl.h */,
 				A85D7A8C0879EC64006A9172 /* KWQWMatrix.cpp */,
+				A85D7A8D0879EC64006A9172 /* KWQWMatrix.h */,
+				F58786AC02DE3B8601EA4122 /* KWQPtrList.h */,
 			);
 			name = qt;
 			sourceTree = "<group>";
@@ -3931,22 +3902,19 @@
 				93F1991C08245E59001E9ABC /* dom_elementimpl.h in Headers */,
 				93F1992008245E59001E9ABC /* dom_xmlimpl.h in Headers */,
 				93F1992108245E59001E9ABC /* xml_tokenizer.h in Headers */,
-				93F1992708245E59001E9ABC /* KWQBuffer.h in Headers */,
 				93F1992908245E59001E9ABC /* KWQCString.h in Headers */,
 				93F1992A08245E59001E9ABC /* KWQCharsets.h in Headers */,
 				93F1992C08245E59001E9ABC /* KWQCollection.h in Headers */,
 				93F1992E08245E59001E9ABC /* KWQComboBox.h in Headers */,
-				93F1992F08245E59001E9ABC /* KWQCursor.h in Headers */,
+				93F1992F08245E59001E9ABC /* Cursor.h in Headers */,
 				93F1993308245E59001E9ABC /* KWQDef.h in Headers */,
 				93F1993708245E59001E9ABC /* KWQEvent.h in Headers */,
 				93F1993908245E59001E9ABC /* KWQFileButton.h in Headers */,
 				93F1993A08245E59001E9ABC /* KWQFont.h in Headers */,
 				93F1993C08245E59001E9ABC /* KWQFontMetrics.h in Headers */,
 				93F1993E08245E59001E9ABC /* KWQGuardedPtr.h in Headers */,
-				93F1993F08245E59001E9ABC /* KWQIODevice.h in Headers */,
 				93F1994408245E59001E9ABC /* KWQKConfigBase.h in Headers */,
 				93F1994508245E59001E9ABC /* KWQKCookieJar.h in Headers */,
-				93F1994608245E59001E9ABC /* KWQKCursor.h in Headers */,
 				93F1994708245E59001E9ABC /* KWQKDebug.h in Headers */,
 				93F1994F08245E59001E9ABC /* KWQKHTMLSettings.h in Headers */,
 				93F1995008245E59001E9ABC /* KWQKIOGlobal.h in Headers */,
@@ -5049,18 +5017,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				93F19A1008245E59001E9ABC /* KWQBuffer.cpp in Sources */,
 				93F19A1308245E59001E9ABC /* KWQCharsets.cpp in Sources */,
 				93F19A1708245E59001E9ABC /* KWQComboBox.mm in Sources */,
 				93F19A1808245E59001E9ABC /* KWQCString.cpp in Sources */,
-				93F19A1908245E59001E9ABC /* KWQCursor.mm in Sources */,
 				93F19A1C08245E59001E9ABC /* KWQEvent.mm in Sources */,
 				93F19A1E08245E59001E9ABC /* KWQFont.mm in Sources */,
 				93F19A1F08245E59001E9ABC /* KWQFontMetrics.mm in Sources */,
 				93F19A2208245E59001E9ABC /* KWQGuardedPtr.cpp in Sources */,
 				93F19A2408245E59001E9ABC /* KWQKConfigBase.mm in Sources */,
 				93F19A2508245E59001E9ABC /* KWQKCookieJar.mm in Sources */,
-				93F19A2608245E59001E9ABC /* KWQKCursor.mm in Sources */,
+				93F19A2608245E59001E9ABC /* CursorMac.mm in Sources */,
 				93F19A2908245E59001E9ABC /* KWQKHistoryProvider.mm in Sources */,
 				93F19A2E08245E59001E9ABC /* KWQKJavaAppletWidget.mm in Sources */,
 				93F19A3008245E59001E9ABC /* KWQKJobClasses.mm in Sources */,
@@ -5076,7 +5042,6 @@
 				93F19A4A08245E59001E9ABC /* KWQRegExp.cpp in Sources */,
 				93F19A4B08245E59001E9ABC /* KWQRegion.cpp in Sources */,
 				93F19A4C08245E59001E9ABC /* KWQScrollView.mm in Sources */,
-				93F19A4D08245E59001E9ABC /* KWQSignalStubs.cpp in Sources */,
 				93F19A5008245E59001E9ABC /* KWQStringList.mm in Sources */,
 				93F19A5108245E59001E9ABC /* KWQTextArea.mm in Sources */,
 				93F19A5208245E59001E9ABC /* KWQTextCodec.cpp in Sources */,
@@ -5353,7 +5318,6 @@
 				A81369E5097374F600D74463 /* HTMLKeygenElementImpl.cpp in Sources */,
 				A8136D390973A8E700D74463 /* FormDataList.cpp in Sources */,
 				65BF022E0974816300C43196 /* Frame.cpp in Sources */,
-				65BF02410974819000C43196 /* KWQKHTMLView.cpp in Sources */,
 				65BF02450974819000C43196 /* MacFrame.mm in Sources */,
 				FAE0418C09759694000540BE /* RenderSVGImage.cpp in Sources */,
 				FAE0418F097596C9000540BE /* SVGImageLoader.cpp in Sources */,

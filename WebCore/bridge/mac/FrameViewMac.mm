@@ -28,11 +28,17 @@
 
 #import "DocumentImpl.h"
 #import "KWQExceptions.h"
+#import "KWQWindowWidget.h"
 #import "MacFrame.h"
 #import "WebCoreFrameBridge.h"
 #import "render_object.h"
 
 namespace WebCore {
+
+Widget* FrameView::topLevelWidget() const 
+{
+    return Mac(frame())->topLevelWidget();
+}
 
 void FrameView::updateBorder()
 {
@@ -50,6 +56,11 @@ void FrameView::updateDashboardRegions()
         document->setDashboardRegions(newRegions);
         Mac(m_frame.get())->dashboardRegionsChanged();
     }
+}
+
+IntPoint FrameView::viewportToGlobal(const IntPoint &p) const
+{
+    return static_cast<KWQWindowWidget*>(topLevelWidget())->viewportToGlobal(p);
 }
 
 }

@@ -40,7 +40,6 @@
 #include "KWQSlider.h"
 #include "dom2_eventsimpl.h"
 #include "helper.h"
-#include <kcursor.h>
 #include <klocale.h>
 
 namespace WebCore {
@@ -287,7 +286,6 @@ void RenderLineEdit::updateFromElement()
         DOMString newText = e->value();
         newText.replace(QChar('\\'), backslashAsCurrencySymbol());
         if (widgetText != newText) {
-            w->blockSignals(true);
             int pos = w->cursorPosition();
 
             m_updating = true;
@@ -297,7 +295,6 @@ void RenderLineEdit::updateFromElement()
             w->setEdited( false );
 
             w->setCursorPosition(pos);
-            w->blockSignals(false);
         }
         e->setValueMatchesRenderer();
     }
@@ -976,7 +973,7 @@ void RenderSelect::updateSelection()
 // -------------------------------------------------------------------------
 
 RenderTextArea::RenderTextArea(HTMLTextAreaElementImpl *element)
-    : RenderFormElement(element), m_dirty(false)
+    : RenderFormElement(element), m_dirty(false), m_updating(false)
 {
     QTextEdit *edit = new QTextEdit(view());
 
@@ -1043,7 +1040,8 @@ void RenderTextArea::setStyle(RenderStyle *s)
     w->setScrollBarModes(horizontalScrollMode, scrollMode);
 }
 
-void RenderTextArea::setEdited(bool x) {
+void RenderTextArea::setEdited(bool x)
+{
     m_dirty = x;
 }
 
@@ -1061,12 +1059,12 @@ void RenderTextArea::updateFromElement()
         DOMString text = e->value();
         text.replace(QChar('\\'), backslashAsCurrencySymbol());
         if (widgetText != text) {
-            w->blockSignals(true);
             int line, col;
             w->getCursorPosition( &line, &col );
+            m_updating = true;
             w->setText(text);
+            m_updating = false;
             w->setCursorPosition( line, col );
-            w->blockSignals(false);
         }
         e->setValueMatchesRenderer();
         m_dirty = false;
@@ -1090,6 +1088,8 @@ DOMString RenderTextArea::text()
 
 void RenderTextArea::slotTextChanged()
 {
+    if (m_updating)
+        return;
     element()->invalidateValue();
     m_dirty = true;
 }

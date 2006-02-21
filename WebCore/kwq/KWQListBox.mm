@@ -576,7 +576,7 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
         [self _KWQ_setKeyboardFocusRingNeedsDisplay];
 
         if (_box) {
-            QFocusEvent event(QEvent::FocusIn);
+            QEvent event(QEvent::FocusIn);
             if (_box->eventFilterObject())
                 const_cast<QObject *>(_box->eventFilterObject())->eventFilter(_box, &event);
         }
@@ -589,7 +589,7 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
 {
     BOOL resign = [super resignFirstResponder];
     if (resign && _box) {
-        QFocusEvent event(QEvent::FocusOut);
+        QEvent event(QEvent::FocusOut);
 
         if (_box->eventFilterObject()) {
             const_cast<QObject *>(_box->eventFilterObject())->eventFilter(_box, &event);

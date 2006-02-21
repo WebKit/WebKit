@@ -328,16 +328,6 @@ public:
   bool gotoAnchor( const QString &name );
 
   /**
-   * Sets the cursor to use when the cursor is on a link.
-   */
-  void setURLCursor( const QCursor &c );
-
-  /**
-   * Returns the cursor which is used when the cursor is on a link.
-   */
-  QCursor urlCursor() const;
-
-  /**
    * Initiates a text search.
    */
   void findTextBegin(NodeImpl *startNode = 0, int startPos = -1);
@@ -561,33 +551,10 @@ public:
    */
   bool frameExists( const QString &frameName );
 
-  /**
-   * Called by KJS.
-   * Sets the StatusBarText assigned
-   * via window.status
-   */
-  void setJSStatusBarText( const QString &text );
-
-  /**
-   * Called by KJS.
-   * Sets the DefaultStatusBarText assigned
-   * via window.defaultStatus
-   */
-  void setJSDefaultStatusBarText( const QString &text );
-
-  /**
-   * Called by KJS.
-   * Returns the StatusBarText assigned
-   * via window.status
-   */
-  QString jsStatusBarText() const;
-
-  /**
-   * Called by KJS.
-   * Returns the DefaultStatusBarText assigned
-   * via window.defaultStatus
-   */
-  QString jsDefaultStatusBarText() const;
+  void setJSStatusBarText(const String&);
+  void setJSDefaultStatusBarText(const String&);
+  String jsStatusBarText() const;
+  String jsDefaultStatusBarText() const;
 
   /**
    * Referrer used for links in this page.
@@ -635,7 +602,7 @@ public:
   void applyParagraphStyle(CSSStyleDeclarationImpl *, EditAction editingAction=EditActionUnspecified);
   TriState selectionHasStyle(CSSStyleDeclarationImpl *) const;
   bool selectionStartHasStyle(CSSStyleDeclarationImpl *) const;
-  DOMString selectionStartStylePropertyValue(int stylePropertyID) const;
+  String selectionStartStylePropertyValue(int stylePropertyID) const;
   void applyEditingStyleToBodyElement() const;
   void removeEditingStyleFromBodyElement() const;
   void applyEditingStyleToElement(ElementImpl *) const;
@@ -689,7 +656,7 @@ public:
 
 
   // Methods with platform-specific overrides (and no base class implementation).
-  virtual void setTitle(const DOMString &) = 0;
+  virtual void setTitle(const String &) = 0;
   virtual void handledOnloadEvents() = 0;
   virtual QString userAgent() const = 0;
   virtual QString incomingReferrer() const = 0;
@@ -701,10 +668,10 @@ public:
   virtual KJS::Bindings::Instance *getAppletInstanceForWidget(Widget*) = 0;
   virtual void markMisspellingsInAdjacentWords(const VisiblePosition &) = 0;
   virtual void markMisspellings(const SelectionController &) = 0;
-  virtual void addMessageToConsole(const DOMString& message,  unsigned int lineNumber, const DOMString& sourceID) = 0;
-  virtual void runJavaScriptAlert(const DOMString& message) = 0;
-  virtual bool runJavaScriptConfirm(const DOMString& message) = 0;
-  virtual bool runJavaScriptPrompt(const DOMString& message, const DOMString& defaultValue, DOMString& result) = 0;  
+  virtual void addMessageToConsole(const String& message,  unsigned int lineNumber, const String& sourceID) = 0;
+  virtual void runJavaScriptAlert(const String& message) = 0;
+  virtual bool runJavaScriptConfirm(const String& message) = 0;
+  virtual bool runJavaScriptPrompt(const String& message, const String& defaultValue, String& result) = 0;  
   virtual bool locationbarVisible() = 0;
   virtual bool menubarVisible() = 0;
   virtual bool personalbarVisible() = 0;
@@ -739,66 +706,50 @@ public:
   virtual bool lastEventIsMouseUp() const = 0;
   virtual QString overrideMediaType() const = 0;
 protected:
-  virtual DOMString generateFrameName() = 0;
+  virtual String generateFrameName() = 0;
   virtual Plugin* createPlugin(const KURL& url, const QStringList& paramNames, const QStringList& paramValues, const QString& mimeType) = 0;
-  virtual Frame* createFrame(const KURL& url, const QString& name, RenderPart* renderer, const DOMString& referrer) = 0;
+  virtual Frame* createFrame(const KURL& url, const QString& name, RenderPart* renderer, const String& referrer) = 0;
   virtual ObjectContentType objectContentType(const KURL& url, const QString& mimeType) = 0;
 
     virtual void redirectionTimerFired(Timer<Frame>*);
 
-public slots:
+public:
   /**
    * Stops all animated images on the current and child pages
    */
   void stopAnimations();
 
-private slots:
+  void loadDone();
+
+  void finishedParsing();
+
+  void checkCompleted();
+
   void reparseConfiguration();
 
-  void slotData( KIO::Job*, const ByteArray &data );
-  void slotRestoreData( const ByteArray &data );
-  void slotFinished( KIO::Job* );
-  void slotFinishedParsing();
+private slots:
+  void slotData(KIO::Job*, const ByteArray&);
+  void slotFinished(KIO::Job*);
   void slotRedirection(KIO::Job*, const KURL&);
 
-  void slotIncZoom();
-  void slotDecZoom();
-
+private:
   void childBegin();
-
-  void slotLoadImages();
 
   void submitFormAgain();
 
   void updateActions();
 
-  void slotPartRemoved(Frame*);
+  void started();
 
-  void slotActiveFrameChanged(Frame*);
-
-  void slotChildStarted(KIO::Job*);
-
-  void slotChildCompleted();
-  void slotChildCompleted( bool );
-  void slotParentCompleted();
-  void slotChildURLRequest( const KURL &url, const URLArgs &args );
-  void slotLoaderRequestDone( DocLoader*, CachedObject *obj );
-  void checkCompleted();
-  
-  void slotShowDocument( const QString &url, const QString &target );
-  void slotAutoScroll();
-  void slotPrintFrame();
-  void slotSelectAll();
-  void slotProgressUpdate();
-  void slotJobPercent(KIO::Job*, unsigned long);
-  void slotJobSpeed(KIO::Job*, unsigned long);
+  void completed(bool);
+  void childCompleted(bool);
+  void parentCompleted();
 
     void lifeSupportTimerFired(Timer<Frame>*);
     void endLifeSupport();
 
   virtual void clear(bool clearWindowProperties = true);
 
-private:
   void clearCaretRectIfNeeded();
   void setFocusNodeIfNeeded();
   void selectionLayoutChanged();
@@ -810,7 +761,7 @@ private:
   bool shouldUsePlugin(NodeImpl* element, const KURL& url, const QString& mimeType, bool hasFallback, bool& useFallback);
   bool loadPlugin(RenderPart* renderer, const KURL &url, const QString &mimeType, 
                   const QStringList& paramNames, const QStringList& paramValues, bool useFallback);
-  Frame* loadSubframe(RenderPart* renderer, const KURL& url, const QString& name, const DOMString& referrer);
+  Frame* loadSubframe(RenderPart* renderer, const KURL& url, const QString& name, const String& referrer);
 
 public:
   void submitForm(const char *action, const QString &url, const FormData &formData,
@@ -820,7 +771,7 @@ public:
   bool requestObject(RenderPart *frame, const QString &url, const QString &frameName,
                      const QString &serviceType, const QStringList &paramNames, const QStringList &paramValues);
   bool requestFrame(RenderPart *frame, const QString &url, const QString &frameName);
-  DOMString requestFrameName();
+  String requestFrameName();
 
   DocumentImpl *document() const;
   void setDocument(DocumentImpl* newDoc);
@@ -834,9 +785,6 @@ public:
   void handleFallbackContent();
 
 private:
-  void connectChild(Frame*) const;
-  void disconnectChild(Frame*) const;
-
   bool checkLinkSecurity(const KURL &linkURL,const QString &message = QString::null, const QString &button = QString::null);
   
   void cancelRedirection(bool newLoadInProgress = false);
@@ -903,7 +851,7 @@ private:
   static QPtrList<Frame> &mutableInstances();
 
   void updatePolicyBaseURL();
-  void setPolicyBaseURL(const DOMString &);
+  void setPolicyBaseURL(const String&);
 
   void forceLayout();
   void forceLayoutWithPageWidthRange(float minPageWidth, float maxPageWidth);
@@ -966,15 +914,13 @@ protected:
 
   CSSComputedStyleDeclarationImpl *selectionComputedStyle(NodeImpl *&nodeToRemove) const;
 
+    virtual void setStatusBarText(const String&);
+
 public:
   friend class MacFrame;
 
   void checkEmitLoadEvent();
-  void completed();
-  void completed(bool);
   bool didOpenURL(const KURL &);
-  void setStatusBarText(const QString &);
-  void started(KIO::Job *);
   virtual void didFirstLayout() {}
 
   virtual void frameDetached();

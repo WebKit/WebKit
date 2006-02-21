@@ -33,8 +33,6 @@
 #include "xsl_stylesheetimpl.h"
 #include "xml_tokenizer.h"
 
-#include <kdebug.h>
-
 #include <libxslt/xsltutils.h>
 #include <libxml/uri.h>
 

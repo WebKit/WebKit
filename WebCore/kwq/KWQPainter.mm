@@ -794,15 +794,6 @@ void QPainter::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, c
     CGContextClip(context);
 }
 
-Qt::RasterOp QPainter::rasterOp() const
-{
-    return CopyROP;
-}
-
-void QPainter::setRasterOp(RasterOp)
-{
-}
-
 void QPainter::setPaintingDisabled(bool f)
 {
     data->state.paintingDisabled = f;

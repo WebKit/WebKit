@@ -26,9 +26,11 @@
 #ifndef QTEXTSTREAM_H_
 #define QTEXTSTREAM_H_
 
-#include "KWQIODevice.h"
-#include "QString.h"
+#include "Array.h"
 
+class QCString;
+class QChar;
+class QString;
 class QTextStream;
 
 typedef QTextStream &(*QTextStreamManipulator)(QTextStream &);
@@ -38,7 +40,7 @@ QTextStream &endl(QTextStream& stream);
 class QTextStream {
 public:
     QTextStream(const ByteArray &);
-    QTextStream(QString *, int mode = IO_WriteOnly);
+    QTextStream(QString*);
 
     QTextStream &operator<<(char);
     QTextStream &operator<<(const QChar &);
@@ -65,16 +67,6 @@ private:
     ByteArray _byteArray;
     QString *_string;
     int _precision;
-};
-
-class QTextIStream : public QTextStream {
-public:
-    QTextIStream(QString *s) : QTextStream(s, IO_ReadOnly) { }
-};
-
-class QTextOStream : public QTextStream {
-public:
-    QTextOStream(QString *s) : QTextStream(s, IO_WriteOnly) { }
 };
 
 #endif

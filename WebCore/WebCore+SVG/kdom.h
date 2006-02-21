@@ -25,16 +25,13 @@
 #define KDOM_H
 #if SVG_SUPPORT
 
-#include <kdebug.h>
-
-#include <QString.h>
-
+#include "QString.h"
 #include "PlatformString.h"
 
 /**
  * @short General namespace specific definitions.
  */
-namespace KDOM
+namespace WebCore
 {
     /**
      * All DOM constants
@@ -127,9 +124,6 @@ namespace KDOM
      * A TimeStamp represents a number of milliseconds
      */
     typedef unsigned long long DOMTimeStamp;
-
-    // Debugging helper
-    inline kdbgstream  &operator<<(kdbgstream  &stream, const DOMString &string) { return (stream << string.qstring()); }
 };
 
 #endif // SVG_SUPPORT

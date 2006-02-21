@@ -43,7 +43,6 @@
 #include "render_line.h"
 
 #include <FrameView.h>
-#include <kdebug.h>
 #include <assert.h>
 #include "htmlnames.h"
 

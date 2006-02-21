@@ -110,7 +110,7 @@ using namespace WebCore;
         }
 
         if (slider) {
-            QFocusEvent event(QEvent::FocusIn);
+            QEvent event(QEvent::FocusIn);
             if (slider->eventFilterObject())
                 const_cast<QObject *>(slider->eventFilterObject())->eventFilter(slider, &event);
         }
@@ -122,7 +122,7 @@ using namespace WebCore;
 {
     BOOL resign = [super resignFirstResponder];
     if (resign && slider) {
-        QFocusEvent event(QEvent::FocusOut);
+        QEvent event(QEvent::FocusOut);
         if (slider->eventFilterObject()) {
             const_cast<QObject *>(slider->eventFilterObject())->eventFilter(slider, &event);
             [MacFrame::bridgeForWidget(slider) formControlIsResigningFirstResponder:self];

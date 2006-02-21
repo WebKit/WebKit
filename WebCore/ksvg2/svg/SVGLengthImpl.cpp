@@ -24,8 +24,6 @@
 #if SVG_SUPPORT
 #include "IntRect.h"
 
-#include <kdebug.h>
-
 #include <kcanvas/KCanvas.h>
 #include <kcanvas/RenderPath.h>
 #include "KCanvasRenderingStyle.h"
@@ -245,13 +243,13 @@ bool SVGLengthImpl::updateValueInSpecifiedUnits(bool notify)
     switch(m_unitType)
     {
         case SVG_LENGTHTYPE_PERCENTAGE:
-            kdError() << "updateValueInSpecifiedUnits() SVG_LENGTHTYPE_PERCENTAGE - UNSUPPORTED! Please report!" << endl;
+            //kdError() << "updateValueInSpecifiedUnits() SVG_LENGTHTYPE_PERCENTAGE - UNSUPPORTED! Please report!" << endl;
             return false;
         case SVG_LENGTHTYPE_EMS:
-            kdError() << "updateValueInSpecifiedUnits() SVG_LENGTHTYPE_EMS - UNSUPPORTED! Please report!" << endl;
+            //kdError() << "updateValueInSpecifiedUnits() SVG_LENGTHTYPE_EMS - UNSUPPORTED! Please report!" << endl;
             return false;
         case SVG_LENGTHTYPE_EXS:
-            kdError() << "updateValueInSpecifiedUnits() SVG_LENGTHTYPE_EXS - UNSUPPORTED! Please report!" << endl;
+            //kdError() << "updateValueInSpecifiedUnits() SVG_LENGTHTYPE_EXS - UNSUPPORTED! Please report!" << endl;
             return false;
         case SVG_LENGTHTYPE_PX:
             m_valueInSpecifiedUnits = m_value;

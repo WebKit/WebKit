@@ -52,7 +52,7 @@ namespace khtml
         virtual void deref(CachedObjectClient *consumer);
         
         virtual void setCharset( const QString &chs );
-        virtual void data( QBuffer &buffer, bool eof );
+        virtual void data(ByteArray&, bool eof );
         virtual void error( int err, const char *text );
         
         virtual bool schedule() const { return true; }

@@ -56,10 +56,9 @@
 #include <kxmlcore/HashMap.h>
 #include <kxmlcore/HashSet.h>
 
-using namespace WebCore;
-using namespace HTMLNames;
+namespace WebCore {
 
-//----------------------------------------------------------------------------
+using namespace HTMLNames;
 
 /**
  * @internal
@@ -69,7 +68,7 @@ class HTMLStackElem
 public:
     HTMLStackElem(const AtomicString& _tagName,
                   int _level,
-                  DOM::NodeImpl *_node,
+                  NodeImpl *_node,
                   HTMLStackElem * _next
         )
         :
@@ -121,7 +120,7 @@ HTMLParser::HTMLParser(FrameView *_parent, DocumentImpl *doc, bool includesComme
     reset();
 }
 
-HTMLParser::HTMLParser(DOM::DocumentFragmentImpl *i, DocumentImpl *doc, bool includesComments)
+HTMLParser::HTMLParser(DocumentFragmentImpl *i, DocumentImpl *doc, bool includesComments)
     : current(0), currentIsReferenced(false), includesCommentsInDOM(includesComments)
 {
     HTMLWidget = 0;
@@ -162,7 +161,7 @@ void HTMLParser::reset()
     discard_until = nullAtom;
 }
 
-void HTMLParser::setCurrent(DOM::NodeImpl *newCurrent) 
+void HTMLParser::setCurrent(NodeImpl *newCurrent) 
 {
     bool newCurrentIsReferenced = newCurrent && newCurrent != doc();
     if (newCurrentIsReferenced) 
@@ -345,7 +344,7 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
             if (!head)
                 createHead();
             if (head) {
-                DOM::NodeImpl *newNode = head->addChild(n);
+                NodeImpl *newNode = head->addChild(n);
                 if (newNode) {
                     pushBlock(localName, tagPriority);
                     setCurrent(newNode);
@@ -864,7 +863,7 @@ void HTMLParser::popNestedHeaderTag()
     }
 }
 
-bool HTMLParser::isInline(DOM::NodeImpl* node) const
+bool HTMLParser::isInline(NodeImpl* node) const
 {
     if (node->isTextNode())
         return true;
@@ -1117,7 +1116,7 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
                                                     // if it becomes necessary to do so.
 }
 
-void HTMLParser::reopenResidualStyleTags(HTMLStackElem* elem, DOM::NodeImpl* malformedTableParent)
+void HTMLParser::reopenResidualStyleTags(HTMLStackElem* elem, NodeImpl* malformedTableParent)
 {
     // Loop for each tag that needs to be reopened.
     while (elem) {
@@ -1334,11 +1333,16 @@ void HTMLParser::startBody()
 void HTMLParser::finished()
 {
     // In the case of a completely empty document, here's the place to create the HTML element.
-    if (current && current->isDocumentNode() && current->firstChild() == 0) {
+    if (current && current->isDocumentNode() && !current->firstChild())
         insertNode(new HTMLHtmlElementImpl(document));
-    }
 
     // This ensures that "current" is not left pointing to a node when the document is destroyed.
     freeBlock();
     setCurrent(0);
+
+    // Warning, this may delete the tokenizer and parser, so don't try to do anything else after this.
+    if (HTMLWidget)
+        document->finishedParsing();
+}
+
 }

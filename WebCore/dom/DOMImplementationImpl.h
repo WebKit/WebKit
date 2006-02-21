@@ -22,49 +22,52 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef DOM_DOMImplementationImpl_h
 #define DOM_DOMImplementationImpl_h
 
 #include "Shared.h"
 
+namespace KXMLCore {
+    template <typename T> class PassRefPtr;
+}
+using KXMLCore::PassRefPtr;
+
 namespace WebCore {
 
 class CSSStyleSheetImpl;
-class DOMString;
 class DocumentImpl;
 class DocumentTypeImpl;
 class FrameView;
 class HTMLDocumentImpl;
+class String;
+
+typedef int ExceptionCode;
 
 class DOMImplementationImpl : public Shared<DOMImplementationImpl> {
 public:
-    DOMImplementationImpl();
-    ~DOMImplementationImpl();
-
     // DOM methods & attributes for DOMImplementation
-    bool hasFeature(const DOMString& feature, const DOMString& version) const;
-    DocumentTypeImpl *createDocumentType( const DOMString &qualifiedName, const DOMString &publicId,
-                                          const DOMString &systemId, int &exceptioncode );
-    DocumentImpl *createDocument( const DOMString &namespaceURI, const DOMString &qualifiedName,
-                                  DocumentTypeImpl *doctype, int &exceptioncode );
+    bool hasFeature(const String& feature, const String& version) const;
+    PassRefPtr<DocumentTypeImpl> createDocumentType(const String& qualifiedName, const String& publicId, const String &systemId, ExceptionCode&);
+    PassRefPtr<DocumentImpl> createDocument(const String& namespaceURI, const String& qualifiedName, DocumentTypeImpl*, ExceptionCode&);
 
-    DOMImplementationImpl* getInterface(const DOMString& feature) const;
+    DOMImplementationImpl* getInterface(const String& feature) const;
 
     // From the DOMImplementationCSS interface
-    CSSStyleSheetImpl *createCSSStyleSheet(const DOMString &title, const DOMString &media, int &exceptioncode);
+    PassRefPtr<CSSStyleSheetImpl> createCSSStyleSheet(const String& title, const String& media, ExceptionCode&);
 
     // From the HTMLDOMImplementation interface
-    HTMLDocumentImpl* createHTMLDocument( const DOMString& title);
+    PassRefPtr<HTMLDocumentImpl> createHTMLDocument(const String& title);
 
     // Other methods (not part of DOM)
-    DocumentImpl *createDocument( FrameView *v = 0 );
-    HTMLDocumentImpl *createHTMLDocument( FrameView *v = 0 );
+    PassRefPtr<DocumentImpl> createDocument(FrameView* = 0);
+    PassRefPtr<HTMLDocumentImpl> createHTMLDocument(FrameView* = 0);
 
     // Returns the static instance of this class - only one instance of this class should
     // ever be present, and is used as a factory method for creating DocumentImpl objects
-    static DOMImplementationImpl *instance();
-    
-    static bool isXMLMIMEType(const DOMString& mimeType);
+    static DOMImplementationImpl* instance();
+
+    static bool isXMLMIMEType(const String& mimeType);
 };
 
 } //namespace

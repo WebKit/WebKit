@@ -41,14 +41,7 @@ using KIO::Job;
 using KJS::WindowQObject;
 
 enum FunctionNumber {
-    signalFinishedParsing,
-    slotChildCompleted,
-    slotChildCompletedWithBool,
-    slotChildStarted,
     slotClicked,
-    slotFinishedParsing,
-    slotLoaderRequestDone,
-    slotParentCompleted,
     slotParentDestroyed,
     slotPerformSearch,
     slotReturnPressed,
@@ -56,11 +49,9 @@ enum FunctionNumber {
     slotSelectionChanged,
     slotSliderValueChanged,
     slotStateChanged,
-    slotSubmitFormAgain,
     slotTextChanged,
     slotTextChangedWithString,
     slotValueChanged,
-    slotWidgetDestructed,
     slotData_Loader,
     slotData_XMLHttpRequest,
     slotRedirection_Frame,
@@ -79,11 +70,6 @@ KWQSlot::KWQSlot(QObject *object, const char *member)
         } else
     
     CASE(slotClicked, (), RenderFormElement)
-    CASE(slotChildCompleted, (), Frame)
-    CASE(slotChildStarted, (KIO::Job *), Frame)
-    CASE(slotFinishedParsing, (), Frame)
-    CASE(slotLoaderRequestDone, (khtml::DocLoader *, khtml::CachedObject *), Frame)
-    CASE(slotParentCompleted, (), Frame)
     CASE(slotPerformSearch, (), RenderLineEdit)
     CASE(slotReturnPressed, (), RenderLineEdit)
     CASE(slotSelected, (int), RenderSelect)
@@ -91,18 +77,11 @@ KWQSlot::KWQSlot(QObject *object, const char *member)
     CASE(slotSliderValueChanged, (), RenderSlider)
     CASE(slotTextChanged, (), RenderTextArea)
     CASE(slotValueChanged, (int), RenderScrollMediator)
-    CASE(slotWidgetDestructed, (), RenderWidget)
        
     #undef CASE
 
-    if (KWQNamesMatch(member, SIGNAL(finishedParsing()))) {
-        m_function = signalFinishedParsing;
-    } else if (KWQNamesMatch(member, SLOT(slotChildCompleted(bool)))) {
-        m_function = slotChildCompletedWithBool;
-    } else if (KWQNamesMatch(member, SLOT(parentDestroyed()))) {
+    if (KWQNamesMatch(member, SLOT(parentDestroyed()))) {
         m_function = slotParentDestroyed;
-    } else if (KWQNamesMatch(member, SLOT(submitFormAgain()))) {
-        m_function = slotSubmitFormAgain;
     } else if (KWQNamesMatch(member, SLOT(slotTextChanged(const DOMString &)))) {
         m_function = slotTextChangedWithString;
     } else if (KWQNamesMatch(member, SLOT(slotData(KIO::Job *, const char *, int)))) {
@@ -147,42 +126,16 @@ void KWQSlot::call() const
             return;
     
     switch (m_function) {
-        CASE(signalFinishedParsing, DocumentImpl, m_finishedParsing.call)
-        CASE(slotChildCompleted, Frame, slotChildCompleted)
         CASE(slotClicked, RenderFormElement, slotClicked)
-        CASE(slotFinishedParsing, Frame, slotFinishedParsing)
-        CASE(slotParentCompleted, Frame, slotParentCompleted)
         CASE(slotParentDestroyed, WindowQObject, parentDestroyed)
         CASE(slotPerformSearch, RenderLineEdit, slotPerformSearch)
         CASE(slotReturnPressed, RenderLineEdit, slotReturnPressed)
         CASE(slotSelectionChanged, RenderFormElement, slotSelectionChanged)
         CASE(slotSliderValueChanged, RenderSlider, slotSliderValueChanged)
-        CASE(slotSubmitFormAgain, Frame, submitFormAgain)
         CASE(slotTextChanged, RenderTextArea, slotTextChanged)
-        CASE(slotWidgetDestructed, RenderWidget, slotWidgetDestructed)
     }
     
     #undef CASE
-}
-
-void KWQSlot::call(bool b) const
-{
-    if (m_object.isNull()) {
-        return;
-    }
-    
-    #define CASE(member, type, function) \
-        case member: \
-            static_cast<type *>(m_object.pointer())->function(b); \
-            return;
-    
-    switch (m_function) {
-        CASE(slotChildCompletedWithBool, Frame, slotChildCompleted)
-    }
-    
-    #undef CASE
-    
-    call();
 }
 
 void KWQSlot::call(int i) const
@@ -224,9 +177,6 @@ void KWQSlot::call(Job *job) const
     }
     
     switch (m_function) {
-        case slotChildStarted:
-            static_cast<Frame *>(m_object.pointer())->slotChildStarted(job);
-            return;
         case slotFinished_Frame:
             static_cast<Frame *>(m_object.pointer())->slotFinished(job);
             return;
@@ -298,21 +248,6 @@ void KWQSlot::callWithResponse(KIO::Job *job, NSURLResponse *response) const
     switch (m_function) {
         case slotReceivedResponse:
             static_cast<Loader *>(m_object.pointer())->slotReceivedResponse(job, response);
-            return;
-    }
-    
-    call();
-}
-
-void KWQSlot::call(DocLoader *loader, CachedObject *cachedObject) const
-{
-    if (m_object.isNull()) {
-        return;
-    }
-    
-    switch (m_function) {
-        case slotLoaderRequestDone:
-            static_cast<Frame *>(m_object.pointer())->slotLoaderRequestDone(loader, cachedObject);
             return;
     }
     

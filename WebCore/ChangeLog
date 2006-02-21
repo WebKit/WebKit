@@ -1,3 +1,317 @@
+2006-02-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - moved Cursor into the platform directory from KWQ
+        - removed a lot of other unneeded stuff from KWQ
+
+        * platform/Cursor.h: Added.
+        * platform/mac/CursorMac.mm: Added.
+        * platform/mac/CursorWin.cpp: Added.
+
+        * kwq/KWQBuffer.cpp: Removed.
+        * kwq/KWQBuffer.h: Removed.
+        * kwq/KWQCursor.h: Removed.
+        * kwq/KWQCursor.mm: Removed.
+        * kwq/KWQIODevice.h: Removed.
+        * kwq/KWQKCursor.h: Removed.
+        * kwq/KWQKCursor.mm: Removed.
+        * kwq/KWQKDebug.h: Removed.
+        * kwq/KWQSignalStubs.cpp: Removed.
+
+        * ForwardingHeaders/kcursor.h: Removed.
+        * ForwardingHeaders/kdebug.h: Removed.
+        * ForwardingHeaders/qbuffer.h: Removed.
+
+        * kwq/KWQEvent.h: Removed unused constants and types QCustomEvent,
+        QFocusEvent, QHideEvent, QShowEvent, QContextMenuEvent, and QResizeEvent.
+
+        * kwq/KWQLoader.h: Removed KWQLoader class since signals are no longer needed.
+        * kwq/KWQLoader.mm: Ditto.
+
+        * kwq/KWQNamespace.h: Removed DontClip, ShowPrefix, WordBreak, LayoutDirection,
+        LeftToRight, RightToLeft, RasterOp, CopyROP, OrROP, and XorROP.
+
+        * kwq/KWQObject.h: Removed blockSignals, sender, _signalsBlocked, _sender,
+        and KWQObjectSenderScope.
+        * kwq/KWQObject.cpp:
+        (QObject::QObject): Removed _signalsBlocked.
+        (QObject::connect): Removed special-case signals to not complain about.
+        All of them were either unused, converted to non-signal functions, or in one
+        case (slotScrollBarMoved) turned into a FIXME.
+
+        * kwq/KWQPainter.h: Removed rasterOp and setRasterOp.
+        * kwq/KWQPainter.mm: Ditto.
+
+        * kwq/KWQSignal.h:
+        * kwq/KWQSignal.cpp: (KWQSignal::disconnect): Removed special cases for
+        various signals; all are now using plain function calls instead.
+
+        * kwq/KWQSlot.h:
+        * kwq/KWQSlot.cpp: Removed slots that are no longer needed because they
+        are using plain function calls instead of signals.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Updated for changed files.
+
+        * bridge/mac/FrameViewMac.mm: Moved the contents of KWQKHTMLView.cpp in here.
+        * bridge/mac/KWQKHTMLView.cpp: Removed.
+
+        * bridge/mac/MacFrame.h: Removed signals, changed setStatusBarText to take
+        String instead of QString.
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::MacFrame): Removed signals.
+        (WebCore::MacFrame::setStatusBarText): Changed parameter type.
+        (WebCore::MacFrame::openURLFromPageCache): Removed parameter from started function.
+        (WebCore::MacFrame::khtmlMouseMoveEvent): Changed from QCursor() to pointerCursor().
+
+        * dom/DocumentImpl.h:
+        * dom/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::DocumentImpl): Removed signals.
+        (WebCore::DocumentImpl::implicitOpen): Ditto.
+        (WebCore::DocumentImpl::determineParseMode): Removed a use of kdDebug.
+        (WebCore::DocumentImpl::finishedParsing): Added. Does a setParsing(false) and then
+        calls finishedParsing on the frame. Replaces the old finishedParsing signal.
+
+        * dom/xml_tokenizer.h:
+        * dom/xml_tokenizer.cpp: Removed the finishedParsing signal since it's not just
+        a function on the document.
+        (WebCore::XMLTokenizer::finish): Call the function instead of emitting the signal.
+
+        * khtml/html/htmlparser.h:
+        * khtml/html/htmlparser.cpp: Moved the parser inside the WebCore namespace.
+
+        * khtml/html/htmltokenizer.h:
+        * khtml/html/htmltokenizer.cpp: (WebCore::HTMLTokenizer::end): Updated
+        to call finishedParsing function on document rather than emitting a signal.
+
+        * kwq/KWQComboBox.mm:
+        (-[KWQPopUpButton becomeFirstResponder]): Use QEvent instead of QFocusEvent.
+        (-[KWQPopUpButton resignFirstResponder]): Ditto.
+        * kwq/KWQFileButton.mm: (KWQFileButton::focusChanged): Ditto.
+        * kwq/KWQListBox.mm:
+        (-[KWQTableView becomeFirstResponder]): Ditto.
+        (-[KWQTableView resignFirstResponder]): Ditto.
+        * kwq/KWQSlider.mm:
+        (-[KWQSlider becomeFirstResponder]): Ditto.
+        (-[KWQSlider resignFirstResponder]): Ditto.
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextAreaTextView becomeFirstResponder]): Ditto.
+        (-[KWQTextAreaTextView resignFirstResponder]): Ditto.
+        * kwq/KWQTextField.mm:
+        (-[KWQTextFieldController setHasFocus:]): Ditto.
+
+        * kwq/KWQTextStream.h: Removed the mode parameter from the QTextStream constructor.
+        Removed the QTextIStream and QTextOStream classes.
+        * kwq/KWQTextStream.cpp: (QTextStream::QTextStream): Removed the mode parameter.
+
+        * loader/CachedCSSStyleSheet.h: Changed to take a ByteArray instead of a QBuffer.
+        * loader/CachedCSSStyleSheet.cpp: (WebCore::CachedCSSStyleSheet::data): Ditto.
+        * loader/CachedImage.h: Ditto.
+        * loader/CachedImage.cpp: (WebCore::CachedImage::data): Ditto.
+        * loader/CachedObject.h: Ditto.
+        * loader/CachedScript.h: Ditto.
+        * loader/CachedScript.cpp: (WebCore::CachedScript::data): Ditto.
+        * loader/CachedXBLDocument.h: Ditto.
+        * loader/CachedXBLDocument.cpp: (WebCore::CachedXBLDocument::data): Ditto.
+        * loader/CachedXSLStyleSheet.h:
+        * loader/CachedXSLStyleSheet.cpp: (WebCore::CachedXSLStyleSheet::data): Ditto.
+
+        * loader/DocLoader.cpp: (WebCore::DocLoader::setLoadInProgress): Added a call
+        to loadDone on the frame. Replaces the requestFailed and requestDone signals.
+
+        * loader/DocLoader.h: Removed include of <qbuffer.h>.
+
+        * loader/Request.h:
+        * loader/Request.cpp: Updated to use ByteArray instead of QBuffer.
+
+        * loader/loader.h: Removed unused signals.
+        * loader/loader.cpp:
+        (WebCore::Loader::Loader): Removed use of KWQLoader.
+        (WebCore::Loader::~Loader): Ditto.
+        (WebCore::Loader::load): Removed code to emit unused requestStarted signal.
+        (WebCore::Loader::slotFinished): Removed code to emit requestFailed and
+        requestDone signals, now handled by DocLoader::setLoadInProgress(false).
+        (WebCore::Loader::slotReceivedResponse): Use ByteArray instead of QBuffer.
+        (WebCore::Loader::slotData): Ditto.
+
+        * page/Frame.h: Removed setURLCursor, urlCursor, slotRestoreData, slotIncZoom,
+        slotDecZoom, slotLoadImages, slotPartRemoved, slotActiveFrameChanged,
+        slotChildURLRequest, slotShowDocument, slotAutoScroll, slotPrintFrame, slotSelectAll,
+        slotProgressUpdate, slotJobPercent, slotJobSpeed.connectChild, disconnectChild,
+        and changed a number of others from slots to plain old functions.
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame): Don't connect to loader signals.
+        (WebCore::Frame::~Frame): Don't disconnect from loader signals.
+        (WebCore::Frame::didOpenURL): Call started function instead of emitting
+        started signal. Don't connect to speed and percent signals (which never
+        existed in WebCore anyway).
+        (WebCore::Frame::stopLoading): Call finishedParsing function instead of
+        calling slotFinishedParsing.
+        (WebCore::Frame::executeScript): Removed redundant checks and let
+        submitFormAgain do the checking.
+        (WebCore::Frame::clear): Removed code to disconnect from finishedParsing
+        signal; we now use a function. Also removed loop that calls disconnectChild,
+        becase again we use functions now instead of signals.
+        (WebCore::Frame::setDocument): Remove code to disconnect and connect to the
+        finishedParsing signal.
+        (WebCore::Frame::begin): Remove code to connect to the finishedParsing signal.
+        (WebCore::Frame::finishedParsing): Moved code that does setParsing(false) into
+        the document class. Also renamed from slotFinishedParsing.
+        (WebCore::Frame::loadDone): Renamed from slotLoaderRequestDone.
+        (WebCore::Frame::checkCompleted): Changed to call the completed function instead
+        of emitting one of the two completed signals.
+        (WebCore::Frame::loadSubframe): Removed call to connectChild because we now use
+        functions instead of signals. Also change the call to completed to pass false
+        instead of true.
+        (WebCore::Frame::submitFormAgain): Change function around so we are less likely
+        to leak if something strange happens inside submitForm.
+        (WebCore::Frame::submitForm): Remove code to connect signal. We now call
+        submitFormAgain from inside the completed function.
+        (WebCore::Frame::parentCompleted): Renamed from slotParentCompleted. No longer
+        a slot, now called from completed.
+        (WebCore::Frame::childCompleted): Renamed from slotChildCompleted.
+        (WebCore::Frame::setJSStatusBarText): Removed "emit" from function call. Changed
+        to use String instead of QString.
+        (WebCore::Frame::setJSDefaultStatusBarText): Ditto.
+        (WebCore::Frame::sendResizeEvent): Changed to send DOM event directly instead of
+        creating a QResizeEvent to send along to the FrameView.
+        (WebCore::Frame::scrollToAnchor): Changed to not pass a parameter to the started
+        function, which no longer takes one.
+        (WebCore::Frame::frameDetached): Removed code that calls disconnectChild, since
+        we no longer use signals.
+        (WebCore::Frame::completed): Added. Calls childCompleted, parentCompleted, and
+        submitFormAgain.
+        (WebCore::Frame::setStatusBarText): Added.
+        (WebCore::Frame::started): Added. Sets the complete flag to false for the frame
+        and all its ancestors, which is what slotChildStarted did recursively.
+
+        * page/FramePrivate.h: Removed m_activeFrame and changed m_kjsStatusBarText and
+        m_kjsDefaultStatusBarText to String from QString.
+
+        * page/FrameView.h: Removed resizeEvent, focusInEvent, focusOutEvent, and
+        slotPaletteChanged. Changed cleared from a signal to a private function and
+        slotScrollBarMoved to a private function named scrollBarMoved.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView): Removed connect call here that was connecting
+        a signal that's nonexistent in WebCore; we'll want to rig it up later.
+        (WebCore::FrameView::~FrameView): Added a call to setQWidget(0) here to replace
+        something that was done with a signal before.
+        (WebCore::FrameView::clear): Call cleared as a function rather than a signal.
+        (WebCore::selectCursor): Changed to use Cursor instead of QCursor.
+        (WebCore::FrameView::scrollBarMoved): Renamed this function, which is never called.
+        Added a FIXME about calling it.
+        (WebCore::FrameView::cleared): Added. Calls viewCleared on the owner part, which
+        used to be done with a signal.
+
+        * platform/Widget.h: Changed to Cursor from QCursor.
+        * platform/mac/WidgetMac.mm: (WebCore::Widget::setCursor): Ditto.
+
+        * rendering/render_frames.h:
+        * rendering/render_frames.cpp:
+        (WebCore::RenderFrameSet::userResize): Removed cursor-setting code here. We might
+        want to use resize cursors for frames again, but it was mostly disabled anyway and
+        it's not clear which cursors to use.
+        (WebCore::RenderPart::setWidget): Removed code to connect to the cleared signal.
+        Instead, FrameView takes care of it directly.
+        (WebCore::RenderPart::viewCleared): Renamed from slotViewCleared.
+        (WebCore::RenderFrame::viewCleared): Ditto.
+        (WebCore::RenderPartObject::viewCleared): Ditto.
+
+        * rendering/render_image.cpp:
+        (WebCore::RenderImage::imageChanged): Removed use of WordBreak, which doesn't exist
+        in WebCore text rendering.
+        (WebCore::RenderImage::paint): Ditto.
+
+        * rendering/render_list.cpp: (RenderListMarker::paint): Removed use of DontClip, which
+        doesn't exist in WebCore text rendering. Also removed incorrect use of references to
+        temporaries for the ". " and " ." strings.
+
+        * rendering/render_object.cpp:
+        (WebCore::RenderObject::drawBorder): Removed call to setRasterOp since it is a no-op
+        in WebCore's painter. Added a FIXME.
+        (WebCore::RenderObject::information): Remove mode parameter to QTextStream.
+
+        * rendering/render_replaced.h: Removed slotWidgetDestructed, made setQWidget public,
+        * rendering/render_replaced.cpp:
+        (WebCore::RenderWidget::setQWidget): Removed code to connect slotWidgetDestructed to
+        the destroyed signal. Instead FrameView calls setQWidget(0) on us.
+        (WebCore::RenderWidget::eventFilter): Removed use of QFocusEvent::reason, which is
+        never "popup" in WebCore.
+
+        * WebCore+SVG/kdom.h:
+        * css/css_stylesheetimpl.cpp:
+        * css/css_valueimpl.cpp:
+        * css/cssparser.cpp:
+        * kcanvas/KCanvasCreator.cpp:
+        * kcanvas/KCanvasResources.cpp:
+        * kcanvas/RenderPath.cpp:
+        * khtml/ecma/xmlserializer.cpp:
+        * khtml/html/html_baseimpl.cpp:
+        * khtml/xsl/xsl_stylesheetimpl.cpp:
+        * ksvg2/svg/SVGPathSegLinetoImpl.cpp:
+        * ksvg2/svg/SVGStyledTransformableElementImpl.cpp:
+        * ksvg2/svg/SVGTransformImpl.cpp:
+        * platform/StringImpl.cpp:
+        * rendering/RenderBlock.cpp:
+        * rendering/render_box.cpp:
+        * rendering/render_canvas.cpp:
+        * rendering/render_flow.cpp:
+        * rendering/render_form.cpp:
+        * rendering/render_layer.cpp:
+        * rendering/render_style.cpp:
+        Removed includes of <kdebug.h>.
+
+        * css/css_base.cpp: (CSSSelector::selectorText):
+        * khtml/ecma/kjs_binding.cpp:
+        (KJS::ScriptInterpreter::wasRunByUserGesture):
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::DOMCSSRule::putValueProperty):
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNode::getValueProperty):
+        (KJS::DOMNode::putValueProperty):
+        (KJS::DOMDocument::getValueProperty):
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::DOMEvent::getValueProperty):
+        (KJS::DOMUIEvent::getValueProperty):
+        (KJS::DOMMouseEvent::getValueProperty):
+        (KJS::DOMKeyboardEvent::getValueProperty):
+        (KJS::Clipboard::getValueProperty):
+        (KJS::Clipboard::putValueProperty):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::getValueProperty):
+        (KJS::KJS::HTMLDocument::putValueProperty):
+        (KJS::HTMLElement::anchorGetter):
+        (KJS::HTMLElement::areaGetter):
+        (KJS::KJS::HTMLElementFunction::callAsFunction):
+        * khtml/ecma/kjs_navigator.cpp:
+        (KJS::Navigator::getValueProperty):
+        * khtml/ecma/kjs_traversal.cpp:
+        (KJS::DOMNodeIterator::getValueProperty):
+        (KJS::DOMTreeWalker::getValueProperty):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Screen::getValueProperty):
+        (KJS::Window::scheduleClose):
+        (KJS::Window::isSafeScript):
+        (KJS::Window::clear):
+        (KJS::LocationFunc::callAsFunction):
+        (KJS::History::getValueProperty):
+        * ksvg2/svg/SVGAnimateColorElementImpl.cpp:
+        (SVGAnimateColorElementImpl::handleTimerEvent):
+        * ksvg2/svg/SVGAnimateElementImpl.cpp:
+        (SVGAnimateElementImpl::handleTimerEvent):
+        * ksvg2/svg/SVGAnimateTransformElementImpl.cpp:
+        (SVGAnimateTransformElementImpl::handleTimerEvent):
+        * ksvg2/svg/SVGAnimationElementImpl.cpp:
+        (SVGAnimationElementImpl::parseMappedAttribute):
+        * ksvg2/svg/SVGCursorElementImpl.cpp:
+        * ksvg2/svg/SVGDocumentImpl.cpp:
+        (WebCore::SVGDocumentImpl::finishedParsing):
+        * ksvg2/svg/SVGLengthImpl.cpp:
+        (SVGLengthImpl::updateValueInSpecifiedUnits):
+        Removed use of kdWarning, kdDebug, etc.
+
 2006-02-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

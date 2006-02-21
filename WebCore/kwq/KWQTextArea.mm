@@ -973,7 +973,7 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
         }
         [self _KWQ_setKeyboardFocusRingNeedsDisplay];
         if (widget) {
-            QFocusEvent event(QEvent::FocusIn);
+            QEvent event(QEvent::FocusIn);
             if (widget->eventFilterObject())
                 const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
         }
@@ -994,7 +994,7 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
         [self _KWQ_setKeyboardFocusRingNeedsDisplay];
 
         if (widget) {
-            QFocusEvent event(QEvent::FocusOut);
+            QEvent event(QEvent::FocusOut);
             if (widget->eventFilterObject()) {
                 const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
                 [MacFrame::bridgeForWidget(widget) formControlIsResigningFirstResponder:self];

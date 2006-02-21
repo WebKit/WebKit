@@ -28,7 +28,6 @@
 
 #include "AtomicString.h"
 #include "khtmllayout.h"
-#include <kdebug.h>
 #include <kxmlcore/Assertions.h>
 #include <string.h>
 

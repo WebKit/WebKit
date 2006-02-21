@@ -42,10 +42,10 @@ class NSView;
 
 namespace WebCore {
 
+    class Cursor;
     class IntPoint;
     class IntRect;
     class IntSize;
-    class QCursor;
     class QPainter;
     class WidgetPrivate;
 
@@ -103,8 +103,8 @@ namespace WebCore {
         QFont font() const;
         virtual void setFont(const QFont&);
 
-        void setCursor(const QCursor&);
-        QCursor cursor();
+        void setCursor(const Cursor&);
+        Cursor cursor();
 
         bool event(QEvent*);
 

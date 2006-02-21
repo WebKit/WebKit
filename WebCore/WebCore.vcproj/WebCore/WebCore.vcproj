@@ -151,14 +151,6 @@
 			Name="kwq"
 			>
 			<File
-				RelativePath="..\..\kwq\KWQBuffer.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQBuffer.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQCharsets.h"
 				>
 			</File>
@@ -180,10 +172,6 @@
 			</File>
 			<File
 				RelativePath="..\..\kwq\KWQCString.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQCursor.h"
 				>
 			</File>
 			<File
@@ -244,10 +232,6 @@
 			</File>
 			<File
 				RelativePath="..\..\kwq\KWQKCookieJar.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQKCursor.h"
 				>
 			</File>
 			<File
@@ -843,10 +827,6 @@
 				</File>
 				<File
 					RelativePath="..\..\khtml\html\htmltokenizer.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\khtml\html\kentities.h"
 					>
 				</File>
 			</Filter>
@@ -1554,6 +1534,10 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\Color.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\Cursor.h"
 				>
 			</File>
 			<File

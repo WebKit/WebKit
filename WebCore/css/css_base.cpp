@@ -26,8 +26,6 @@
 //#define CSS_DEBUG
 
 #include "config.h"
-#include "kdebug.h"
-
 #include "css_base.h"
 
 #ifdef CSS_DEBUG
@@ -303,7 +301,7 @@ DOMString CSSSelector::selectorText() const
                 str += "*=";
                 break;
             default:
-                kdWarning(6080) << "Unhandled case in CSSStyleRuleImpl::selectorText : match=" << cs->match << endl;
+                break;
         }
         if (cs->match != CSSSelector::Set) {
             str += "\"";

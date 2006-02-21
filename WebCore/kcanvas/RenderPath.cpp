@@ -23,12 +23,12 @@
 
 #include "config.h"
 #if SVG_SUPPORT
+#include "RenderPath.h"
+
 #include "IntRect.h"
-#include <kdebug.h>
 #include <kxmlcore/Assertions.h>
 
 #include "kcanvas/KCanvas.h"
-#include "kcanvas/RenderPath.h"
 #include "KCanvasMatrix.h"
 #include "KRenderingDevice.h"
 #include "KCanvasContainer.h"
