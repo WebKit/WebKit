@@ -86,7 +86,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description=""
 				CommandLine=""
 			/>
 		</Configuration>
@@ -159,7 +158,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description=""
 				CommandLine=""
 			/>
 		</Configuration>
@@ -260,6 +258,10 @@
 			</File>
 			<File
 				RelativePath="..\..\kjs\function_object.h"
+				>
+			</File>
+			<File
+				RelativePath=".\grammarWrapper.cpp"
 				>
 			</File>
 			<File
@@ -636,14 +638,6 @@
 			</File>
 			<File
 				RelativePath="..\..\pcre\ucpinternal.h"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Generated Files"
-			>
-			<File
-				RelativePath="$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\DerivedSources\grammar.cpp"
 				>
 			</File>
 		</Filter>
