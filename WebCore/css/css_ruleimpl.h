@@ -59,7 +59,6 @@ public:
 
     virtual DOMString cssText() const;
     void setCssText(DOM::DOMString str);
-    virtual void init() {}
 
 protected:
     CSSRule::RuleType m_type;
@@ -98,33 +97,31 @@ protected:
 };
 
 
-class CSSImportRuleImpl : public khtml::CachedObjectClient, public CSSRuleImpl
+class CSSImportRuleImpl : public CachedObjectClient, public CSSRuleImpl
 {
 public:
-    CSSImportRuleImpl( StyleBaseImpl *parent, const DOM::DOMString &href,
-                       const DOM::DOMString &media );
-    CSSImportRuleImpl( StyleBaseImpl *parent, const DOM::DOMString &href,
-                       MediaListImpl *media );
+    CSSImportRuleImpl(StyleBaseImpl* parent, const String& href, MediaListImpl*);
     virtual ~CSSImportRuleImpl();
 
-    DOM::DOMString href() const { return m_strHref; }
-    MediaListImpl *media() const { return m_lstMedia.get(); }
-    CSSStyleSheetImpl *styleSheet() const { return m_styleSheet.get(); }
+    String href() const { return m_strHref; }
+    MediaListImpl* media() const { return m_lstMedia.get(); }
+    CSSStyleSheetImpl* styleSheet() const { return m_styleSheet.get(); }
 
     virtual bool isImportRule() { return true; }
-    virtual DOMString cssText() const;
+    virtual String cssText() const;
   
-    // from CachedObjectClient
-    virtual void setStyleSheet(const DOM::DOMString &url, const DOM::DOMString &sheet);
+    bool isLoading() const;
 
-    bool isLoading();
-    virtual void init();
+    // from CachedObjectClient
+    virtual void setStyleSheet(const String& url, const String& sheet);
+
+    virtual void insertedIntoParent();
 
 protected:
-    DOMString m_strHref;
+    String m_strHref;
     RefPtr<MediaListImpl> m_lstMedia;
     RefPtr<CSSStyleSheetImpl> m_styleSheet;
-    khtml::CachedCSSStyleSheet *m_cachedSheet;
+    CachedCSSStyleSheet* m_cachedSheet;
     bool m_loading;
 };
 

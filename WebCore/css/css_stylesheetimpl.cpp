@@ -52,7 +52,7 @@ StyleSheetImpl::StyleSheetImpl(StyleSheetImpl *parentSheet, DOMString href)
 
 
 StyleSheetImpl::StyleSheetImpl(DOM::NodeImpl *parentNode, DOMString href)
-    : StyleListImpl()
+    : StyleListImpl(0)
 {
     m_parentNode = parentNode;
     m_disabled = false;
@@ -89,7 +89,6 @@ void StyleSheetImpl::setMedia(MediaListImpl *media)
 CSSStyleSheetImpl::CSSStyleSheetImpl(CSSStyleSheetImpl *parentSheet, DOMString href)
     : StyleSheetImpl(parentSheet, href)
 {
-    m_lstChildren = new QPtrList<StyleBaseImpl>;
     m_doc = parentSheet ? parentSheet->doc() : 0;
     m_implicit = false;
     m_namespaces = 0;
@@ -98,7 +97,6 @@ CSSStyleSheetImpl::CSSStyleSheetImpl(CSSStyleSheetImpl *parentSheet, DOMString h
 CSSStyleSheetImpl::CSSStyleSheetImpl(NodeImpl *parentNode, DOMString href, bool _implicit)
     : StyleSheetImpl(parentNode, href)
 {
-    m_lstChildren = new QPtrList<StyleBaseImpl>;
     m_doc = parentNode->getDocument();
     m_implicit = _implicit; 
     m_namespaces = 0;
@@ -107,39 +105,7 @@ CSSStyleSheetImpl::CSSStyleSheetImpl(NodeImpl *parentNode, DOMString href, bool 
 CSSStyleSheetImpl::CSSStyleSheetImpl(CSSRuleImpl *ownerRule, DOMString href)
     : StyleSheetImpl(ownerRule, href)
 {
-    m_lstChildren = new QPtrList<StyleBaseImpl>;
     m_doc = 0;
-    m_implicit = false;
-    m_namespaces = 0;
-}
-
-CSSStyleSheetImpl::CSSStyleSheetImpl(DOM::NodeImpl *parentNode, CSSStyleSheetImpl *orig)
-    : StyleSheetImpl(parentNode, orig->m_strHref)
-{
-    m_lstChildren = new QPtrList<StyleBaseImpl>;
-    StyleBaseImpl *rule;
-    for ( rule = orig->m_lstChildren->first(); rule != 0; rule = orig->m_lstChildren->next() )
-    {
-        m_lstChildren->append(rule);
-        rule->setParent(this);
-    }
-    m_doc = parentNode->getDocument();
-    m_implicit = false;
-    m_namespaces = 0;
-}
-
-CSSStyleSheetImpl::CSSStyleSheetImpl(CSSRuleImpl *ownerRule, CSSStyleSheetImpl *orig)
-    : StyleSheetImpl(ownerRule, orig->m_strHref)
-{
-    // m_lstChildren is deleted in StyleListImpl
-    m_lstChildren = new QPtrList<StyleBaseImpl>;
-    StyleBaseImpl *rule;
-    for ( rule = orig->m_lstChildren->first(); rule != 0; rule = orig->m_lstChildren->next() )
-    {
-        m_lstChildren->append(rule);
-        rule->setParent(this);
-    }
-    m_doc  = 0;
     m_implicit = false;
     m_namespaces = 0;
 }
@@ -149,24 +115,25 @@ CSSRuleImpl *CSSStyleSheetImpl::ownerRule() const
     return (parent() && parent()->isRule()) ? static_cast<CSSRuleImpl *>(parent()) : 0;
 }
 
-unsigned CSSStyleSheetImpl::insertRule( const DOMString &rule, unsigned index, int &exceptioncode )
+unsigned CSSStyleSheetImpl::insertRule(const DOMString& rule, unsigned index, int& exceptioncode)
 {
     exceptioncode = 0;
-    if (index > m_lstChildren->count()) {
+    if (index > length()) {
         exceptioncode = DOMException::INDEX_SIZE_ERR;
         return 0;
     }
-    CSSParser p( strictParsing );
-    CSSRuleImpl *r = p.parseRule( this, rule );
+    CSSParser p(useStrictParsing());
+    RefPtr<CSSRuleImpl> r = p.parseRule(this, rule);
 
     if (!r) {
         exceptioncode = CSSException::SYNTAX_ERR + CSSException::_EXCEPTION_OFFSET;
         return 0;
     }
+
     // ###
     // HIERARCHY_REQUEST_ERR: Raised if the rule cannot be inserted at the specified index e.g. if an
     //@import rule is inserted after a standard rule set or other at-rule.
-    m_lstChildren->insert(index, r);
+    insert(index, r.release());
     
     styleSheetChanged();
     
@@ -176,7 +143,7 @@ unsigned CSSStyleSheetImpl::insertRule( const DOMString &rule, unsigned index, i
 unsigned CSSStyleSheetImpl::addRule( const DOMString &selector, const DOMString &style, int index, int &exceptioncode )
 {
     if (index == -1)
-        index = m_lstChildren->count();
+        index = length();
     return insertRule(selector + " { " + style + " }", index, exceptioncode);
 }
 
@@ -187,13 +154,13 @@ CSSRuleListImpl *CSSStyleSheetImpl::cssRules()
 
 void CSSStyleSheetImpl::deleteRule( unsigned index, int &exceptioncode )
 {
-    exceptioncode = 0;
-    StyleBaseImpl *b = m_lstChildren->take(index);
-    if (!b) {
+    if (index >= length()) {
         exceptioncode = DOMException::INDEX_SIZE_ERR;
         return;
     }
-    b->deref();
+
+    exceptioncode = 0;
+    remove(index);
     styleSheetChanged();
 }
 
@@ -226,7 +193,7 @@ const AtomicString& CSSStyleSheetImpl::determineNamespace(const AtomicString& pr
 
 bool CSSStyleSheetImpl::parseString(const DOMString &string, bool strict)
 {
-    strictParsing = strict;
+    setStrictParsing(strict);
     CSSParser p( strict );
     p.parseSheet( this, string );
     return true;
@@ -234,26 +201,23 @@ bool CSSStyleSheetImpl::parseString(const DOMString &string, bool strict)
 
 bool CSSStyleSheetImpl::isLoading()
 {
-    StyleBaseImpl *rule;
-    for ( rule = m_lstChildren->first(); rule != 0; rule = m_lstChildren->next() )
-    {
-        if (rule->isImportRule())
-        {
-            CSSImportRuleImpl *import = static_cast<CSSImportRuleImpl *>(rule);
-            if (import->isLoading())
-            {
-                return true;
-            }
-        }
+    unsigned len = length();
+    for (unsigned i = 0; i < len; ++i) {
+        StyleBaseImpl* rule = item(i);
+        if (rule->isImportRule() && static_cast<CSSImportRuleImpl*>(rule)->isLoading())
+            return true;
     }
     return false;
 }
 
 void CSSStyleSheetImpl::checkLoaded()
 {
-    if (isLoading()) return;
-    if (parent()) parent()->checkLoaded();
-    if (m_parentNode) m_parentNode->sheetLoaded();
+    if (isLoading())
+        return;
+    if (parent())
+        parent()->checkLoaded();
+    if (m_parentNode)
+        m_parentNode->sheetLoaded();
 }
 
 khtml::DocLoader *CSSStyleSheetImpl::docLoader()

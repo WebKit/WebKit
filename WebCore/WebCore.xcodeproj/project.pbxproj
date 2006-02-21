@@ -146,6 +146,7 @@
 		93309EA2099EB78C0056E581 /* SharedTimerMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309E9F099EB78C0056E581 /* SharedTimerMac.cpp */; };
 		93309EA3099EB78C0056E581 /* SharedTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309EA0099EB78C0056E581 /* SharedTimer.h */; };
 		93309EA4099EB78C0056E581 /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309EA1099EB78C0056E581 /* Timer.cpp */; };
+		936B424E09A436CD00BAA820 /* KSVGCSSParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F6F6089701F100BA5114 /* KSVGCSSParser.cpp */; };
 		937A36A7097E2E3200E4EE2F /* UserAgentStyleSheets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 937A36A6097E2E3200E4EE2F /* UserAgentStyleSheets.cpp */; };
 		937D809A09A063330092A01E /* PageMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 937D809909A063330092A01E /* PageMac.h */; };
 		9380F47309A11AB4001FDB34 /* Widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9380F47109A11AB4001FDB34 /* Widget.cpp */; };
@@ -5489,6 +5490,7 @@
 				6550B6A5099DF0270090D781 /* TextImpl.cpp in Sources */,
 				9380F47309A11AB4001FDB34 /* Widget.cpp in Sources */,
 				9380F47809A11ACC001FDB34 /* WidgetMac.mm in Sources */,
+				936B424E09A436CD00BAA820 /* KSVGCSSParser.cpp in Sources */,
 				9380F68709A143B2001FDB34 /* FrameViewMac.mm in Sources */,
 				BCC47E2309A3D6B300ADB771 /* FontFamilyMac.mm in Sources */,
 				BCC47E2609A3D6F100ADB771 /* FontFamily.cpp in Sources */,

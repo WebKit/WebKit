@@ -1,7 +1,7 @@
 /*
  * This file is part of the XSL implementation.
  *
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,16 +19,15 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef _xsl_stylesheetimpl_h_
-#define _xsl_stylesheetimpl_h_
+
+#ifndef xsl_stylesheetimpl_h_
+#define xsl_stylesheetimpl_h_
 
 #ifdef KHTML_XSLT
 
+#include "CachedObjectClient.h"
 #include "css/css_stylesheetimpl.h"
 #include <libxml/parser.h>
-#include <libxml/parserInternals.h>
-#include "CachedObjectClient.h"
-
 #include <libxslt/transform.h>
 
 namespace WebCore {
@@ -39,15 +38,15 @@ class CachedXSLStyleSheet;
 class XSLStyleSheetImpl : public StyleSheetImpl
 {
 public:
-    XSLStyleSheetImpl(DOM::NodeImpl *parentNode, DOM::DOMString href = DOMString(), bool embedded = false);
-    XSLStyleSheetImpl(XSLImportRuleImpl* parentImport, DOM::DOMString href = DOMString());
+    XSLStyleSheetImpl(NodeImpl *parentNode, const String& href = String(), bool embedded = false);
+    XSLStyleSheetImpl(XSLImportRuleImpl* parentImport, const String& href = String());
     ~XSLStyleSheetImpl();
     
     virtual bool isXSLStyleSheet() const { return true; }
 
-    virtual DOM::DOMString type() const { return "text/xml"; }
+    virtual String type() const { return "text/xml"; }
 
-    virtual bool parseString(const DOMString &string, bool strict = true);
+    virtual bool parseString(const String &string, bool strict = true);
     
     virtual bool isLoading();
     virtual void checkLoaded();
@@ -57,7 +56,7 @@ public:
 
     xsltStylesheetPtr compileStyleSheet();
 
-    DocLoader *docLoader();
+    DocLoader* docLoader();
 
     DocumentImpl* ownerDocument() { return m_ownerDocument; }
     void setOwnerDocument(DocumentImpl* doc) { m_ownerDocument = doc; }
@@ -68,7 +67,7 @@ public:
 
     xmlDocPtr locateStylesheetSubResource(xmlDocPtr parentDoc, const xmlChar* uri);
     
-    void markAsProcessed() { m_processed = true; }
+    void markAsProcessed();
     bool processed() const { return m_processed; }
 
 protected:
@@ -76,28 +75,29 @@ protected:
     xmlDocPtr m_stylesheetDoc;
     bool m_embedded;
     bool m_processed;
+    bool m_stylesheetDocTaken;
 };
 
 class XSLImportRuleImpl : public CachedObjectClient, public StyleBaseImpl
 {
 public:
-    XSLImportRuleImpl( StyleBaseImpl *parent, const DOM::DOMString &href);
+    XSLImportRuleImpl(StyleBaseImpl* parent, const String& href);
     virtual ~XSLImportRuleImpl();
     
-    DOM::DOMString href() const { return m_strHref; }
+    String href() const { return m_strHref; }
     XSLStyleSheetImpl* styleSheet() const { return m_styleSheet.get(); }
     
     virtual bool isImportRule() { return true; }
     XSLStyleSheetImpl* parentStyleSheet() const;
     
     // from CachedObjectClient
-    virtual void setStyleSheet(const DOM::DOMString &url, const DOM::DOMString &sheet);
+    virtual void setStyleSheet(const String& url, const String &sheet);
     
     bool isLoading();
     void loadSheet();
     
 protected:
-    DOMString m_strHref;
+    String m_strHref;
     RefPtr<XSLStyleSheetImpl> m_styleSheet;
     CachedXSLStyleSheet* m_cachedSheet;
     bool m_loading;

@@ -111,8 +111,10 @@ bool KWQServeRequest(Loader *loader, DocLoader *docLoader, TransferJob *job)
 {
     MacFrame *frame = static_cast<MacFrame *>(docLoader->frame());
     
-    if (!frame)
+    if (!frame) {
+        delete job;
         return false;
+    }
     
     WebCoreFrameBridge *bridge = frame->bridge();
 

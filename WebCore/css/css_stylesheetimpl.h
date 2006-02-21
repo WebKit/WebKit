@@ -89,9 +89,6 @@ public:
     CSSStyleSheetImpl(DOM::NodeImpl *parentNode, DOM::DOMString href = DOMString(), bool _implicit = false);
     CSSStyleSheetImpl(CSSStyleSheetImpl *parentSheet, DOM::DOMString href = DOMString());
     CSSStyleSheetImpl(CSSRuleImpl *ownerRule, DOM::DOMString href = DOMString());
-    // clone from a cached version of the sheet
-    CSSStyleSheetImpl(DOM::NodeImpl *parentNode, CSSStyleSheetImpl *orig);
-    CSSStyleSheetImpl(CSSRuleImpl *ownerRule, CSSStyleSheetImpl *orig);
     
     ~CSSStyleSheetImpl() { delete m_namespaces; }
     

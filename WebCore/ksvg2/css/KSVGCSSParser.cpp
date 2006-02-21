@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2005, 2006 Apple Computer, Inc.
 
     This file is part of the KDE project
 
@@ -20,19 +21,22 @@
     Boston, MA 02111-1307, USA.
 */
 
+#include "config.h"
 #if SVG_SUPPORT
 
 #include "ksvg.h"
 
-#include "ksvgcssvalues.c"
+#include "SVGPaintImpl.h"
+#include "cssparser.h"
+#include "cssproperties.h"
+#include "cssvalues.h"
 #include "ksvgcssproperties.c"
+#include "ksvgcssvalues.c"
 
-namespace DOM {
+namespace WebCore {
 
-using namespace WebCore;
-
-typedef DOM::Value KDOMCSSValue;
-typedef DOM::ValueList KDOMCSSValueList;
+typedef Value KDOMCSSValue;
+typedef ValueList KDOMCSSValueList;
 
 bool CSSParser::parseSVGValue(int propId, bool important)
 {
@@ -358,7 +362,6 @@ CSSValueImpl *CSSParser::parseSVGPaint()
         return new SVGPaintImpl(SVG_PAINTTYPE_RGBCOLOR, 0, new DOMStringImpl(str));
     }
     else if(value->unit == KDOMCSSValue::Function && value->function->args != 0 &&
-            value->function->args->numValues == 5 /* rgb + two commas */ &&
             qString(value->function->name).lower() == "rgb(")
     {
         KDOMCSSValueList *args = value->function->args;
@@ -412,7 +415,6 @@ CSSValueImpl *CSSParser::parseSVGColor()
            (!strict && value->unit == CSSPrimitiveValue::CSS_DIMENSION))
         return new SVGColorImpl(domString(value->string).impl());
     else if(value->unit == KDOMCSSValue::Function && value->function->args != 0 &&
-            value->function->args->numValues == 5 /* rgb + two commas */ &&
             qString(value->function->name).lower() == "rgb(")
     {
         KDOMCSSValueList *args = value->function->args;
@@ -447,7 +449,7 @@ CSSValueImpl *CSSParser::parseSVGColor()
     return new SVGPaintImpl();
 }
 
-} // end namespace DOM
+}
 
 #endif // SVG_SUPPORT
 

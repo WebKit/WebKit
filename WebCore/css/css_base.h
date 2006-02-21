@@ -3,7 +3,7 @@
  *
  * Copyright (C) 1999-2003 Lars Knoll (knoll@kde.org)
  *               1999 Waldo Bastian (bastian@kde.org)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,9 +27,14 @@
 #include "PlatformString.h"
 #include "dom_qname.h"
 #include "Shared.h"
-#include <qptrlist.h>
+#include <kxmlcore/Vector.h>
 
-namespace DOM {
+namespace KXMLCore {
+    template <typename T> class PassRefPtr;
+}
+using KXMLCore::PassRefPtr;
+
+namespace WebCore {
 
     class StyleSheetImpl;
     class MediaList;
@@ -70,14 +75,12 @@ namespace DOM {
     public:
         CSSSelector()
             : tagHistory(0), simpleSelector(0), nextSelector(0), attr(anyQName()), tag(anyQName()),
-              relation( Descendant ), match( None ),
-              pseudoId( 0 ), _pseudoType(PseudoNotParsed)
+              relation(Descendant), match(None), pseudoId(0), _pseudoType(PseudoNotParsed)
         {}
         
         CSSSelector(const QualifiedName& qName)
             : tagHistory(0), simpleSelector(0), nextSelector(0), attr(anyQName()), tag(qName),
-              relation( Descendant ), match( None ),
-              pseudoId( 0 ), _pseudoType(PseudoNotParsed)
+              relation(Descendant), match(None), pseudoId(0), _pseudoType(PseudoNotParsed)
         {}
 
         ~CSSSelector() {
@@ -87,7 +90,10 @@ namespace DOM {
         }
 
         void append(CSSSelector* n) {
-            if (!nextSelector) nextSelector = n; else nextSelector->append(n);
+            CSSSelector* end = this;
+            while (end->nextSelector)
+                end = end->nextSelector;
+            end->nextSelector = n;
         }
         CSSSelector* next() { return nextSelector; }
 
@@ -102,15 +108,14 @@ namespace DOM {
         DOMString selectorText() const;
 
         // checks if the 2 selectors (including sub selectors) agree.
-        bool operator == ( const CSSSelector &other );
+        bool operator ==(const CSSSelector&);
 
         // tag == -1 means apply to all elements (Selector = *)
 
-        unsigned int specificity();
+        unsigned specificity();
 
         /* how the attribute value has to match.... Default is Exact */
-        enum Match
-        {
+        enum Match {
             None = 0,
             Id,
             Class,
@@ -125,8 +130,7 @@ namespace DOM {
             End        // css3: E[foo$="bar"]
         };
 
-        enum Relation
-        {
+        enum Relation {
             Descendant = 0,
             Child,
             DirectAdjacent,
@@ -134,8 +138,7 @@ namespace DOM {
             SubSelector
         };
 
-        enum PseudoType
-        {
+        enum PseudoType {
             PseudoNotParsed = 0,
             PseudoOther,
             PseudoEmpty,
@@ -167,7 +170,7 @@ namespace DOM {
             PseudoSelection
         };
 
-        inline PseudoType pseudoType() const
+        PseudoType pseudoType() const
         {
             if (_pseudoType == PseudoNotParsed)
                 extractPseudoType();
@@ -177,7 +180,7 @@ namespace DOM {
         bool hasTag() const { return tag != anyQName(); }
         bool hasAttribute() const { return attr != anyQName(); }
 
-        mutable DOM::AtomicString value;
+        mutable AtomicString value;
         CSSSelector* tagHistory;
         CSSSelector* simpleSelector; // Used for :not.
         CSSSelector* nextSelector; // used for ,-chained selectors
@@ -195,20 +198,17 @@ namespace DOM {
     };
 
     // a style class which has a parent (almost all have)
-    class StyleBaseImpl : public TreeShared<StyleBaseImpl>
-    {
+    class StyleBaseImpl : public Shared<StyleBaseImpl> {
     public:
-        typedef TreeShared<StyleBaseImpl> TreeShared;
-        StyleBaseImpl()  { strictParsing = true; multiLength = false; }
-        StyleBaseImpl(StyleBaseImpl *p) : TreeShared(p) {
-            strictParsing = (p ? p->useStrictParsing() : true);
-            multiLength = false;
-        }
+        StyleBaseImpl(StyleBaseImpl* parent)
+            : m_parent(parent), m_strictParsing(!parent || parent->useStrictParsing()) { }
+        virtual ~StyleBaseImpl() { }
 
-        virtual ~StyleBaseImpl() {}
+        StyleBaseImpl* parent() const { return m_parent; }
+        void setParent(StyleBaseImpl* parent) { m_parent = parent; }
 
         // returns the url of the style sheet this object belongs to
-        DOMString baseURL();
+        String baseURL();
 
         virtual bool isStyleSheet() const { return false; }
         virtual bool isCSSStyleSheet() const { return false; }
@@ -230,36 +230,35 @@ namespace DOM {
         virtual bool isValueList() { return false; }
         virtual bool isValueCustom() { return false; }
 
-        virtual bool parseString(const DOMString &/*cssString*/, bool = false) { return false; }
-
+        virtual bool parseString(const String&, bool /*strict*/ = false) { return false; }
         virtual void checkLoaded();
 
-        void setStrictParsing( bool b ) { strictParsing = b; }
-        bool useStrictParsing() const { return strictParsing; }
+        void setStrictParsing(bool b) { m_strictParsing = b; }
+        bool useStrictParsing() const { return m_strictParsing; }
+
+        virtual void insertedIntoParent() { }
 
         StyleSheetImpl* stylesheet();
 
-    protected:
-        bool strictParsing : 1;
-        bool multiLength : 1;
+    private:
+        StyleBaseImpl* m_parent;
+        bool m_strictParsing;
     };
 
     // a style class which has a list of children (StyleSheets for example)
-    class StyleListImpl : public StyleBaseImpl
-    {
+    class StyleListImpl : public StyleBaseImpl {
     public:
-        StyleListImpl() : StyleBaseImpl() { m_lstChildren = 0; }
-        StyleListImpl(StyleBaseImpl *parent) : StyleBaseImpl(parent) { m_lstChildren = 0; }
+        StyleListImpl(StyleBaseImpl* parent) : StyleBaseImpl(parent) { }
 
-        virtual ~StyleListImpl();
+        unsigned length() { return m_children.size(); }
+        StyleBaseImpl* item(unsigned num) { return num < length() ? m_children[num].get() : 0; }
 
-        unsigned length() { return m_lstChildren->count(); }
-        StyleBaseImpl *item(unsigned num) { return m_lstChildren->at(num); }
-
-        void append(StyleBaseImpl *item) { m_lstChildren->append(item); }
+        void append(PassRefPtr<StyleBaseImpl>);
+        void insert(unsigned position, PassRefPtr<StyleBaseImpl>);
+        void remove(unsigned position);
 
     protected:
-        QPtrList<StyleBaseImpl> *m_lstChildren;
+        Vector<RefPtr<StyleBaseImpl> > m_children;
     };
 
     int getPropertyID(const char *tagStr, int len);

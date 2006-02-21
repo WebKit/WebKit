@@ -68,43 +68,28 @@ CSSFontFaceRuleImpl::~CSSFontFaceRuleImpl()
 
 // --------------------------------------------------------------------------
 
-CSSImportRuleImpl::CSSImportRuleImpl( StyleBaseImpl *parent,
-                                      const DOMString &href,
-                                      MediaListImpl *media )
+CSSImportRuleImpl::CSSImportRuleImpl(StyleBaseImpl* parent, const String& href, MediaListImpl* media)
     : CSSRuleImpl(parent)
+    , m_strHref(href)
+    , m_lstMedia(media)
+    , m_cachedSheet(0)
+    , m_loading(false)
 {
     m_type = CSSRule::IMPORT_RULE;
 
-    m_lstMedia = media;
-    if (!m_lstMedia)
+    if (m_lstMedia)
+        m_lstMedia->setParent(this);
+    else
         m_lstMedia = new MediaListImpl(this, DOMString());
-    m_lstMedia->setParent(this);
-
-    m_strHref = href;
-    m_cachedSheet = 0;
-
-    init();
-}
-CSSImportRuleImpl::CSSImportRuleImpl( StyleBaseImpl *parent,
-                                      const DOMString &href,
-                                      const DOMString &media )
-    : CSSRuleImpl(parent)
-{
-    m_type = CSSRule::IMPORT_RULE;
-    m_lstMedia = new MediaListImpl(this, media);
-    m_strHref = href;
-    m_cachedSheet = 0;
-
-    init();
 }
 
 CSSImportRuleImpl::~CSSImportRuleImpl()
 {
-    if(m_lstMedia)
-        m_lstMedia->setParent( 0 );
-    if(m_styleSheet)
+    if (m_lstMedia)
+        m_lstMedia->setParent(0);
+    if (m_styleSheet)
         m_styleSheet->setParent(0);
-    if(m_cachedSheet)
+    if (m_cachedSheet)
         m_cachedSheet->deref(this);
 }
 
@@ -115,55 +100,46 @@ void CSSImportRuleImpl::setStyleSheet(const DOMString &url, const DOMString &she
     m_styleSheet = new CSSStyleSheetImpl(this, url);
 
     CSSStyleSheetImpl *parent = parentStyleSheet();
-    m_styleSheet->parseString( sheet, parent ? parent->useStrictParsing() : true );
+    m_styleSheet->parseString(sheet, !parent || parent->useStrictParsing());
     m_loading = false;
 
     checkLoaded();
 }
 
-bool CSSImportRuleImpl::isLoading()
+bool CSSImportRuleImpl::isLoading() const
 {
-    return ( m_loading || (m_styleSheet && m_styleSheet->isLoading()) );
+    return m_loading || (m_styleSheet && m_styleSheet->isLoading());
 }
 
-void CSSImportRuleImpl::init()
+void CSSImportRuleImpl::insertedIntoParent()
 {
-    khtml::DocLoader *docLoader = 0;
-    StyleBaseImpl *root = this;
-    StyleBaseImpl *parent;
-    while ( ( parent = root->parent()) )
+    StyleBaseImpl* root = this;
+    StyleBaseImpl* parent;
+    while ((parent = root->parent()))
         root = parent;
-    if (root->isCSSStyleSheet())
-        docLoader = static_cast<CSSStyleSheetImpl*>(root)->docLoader();
+    if (!root->isCSSStyleSheet())
+        return;
+    DocLoader* docLoader = static_cast<CSSStyleSheetImpl*>(root)->docLoader();
+    if (!docLoader)
+        return;
 
     DOMString absHref = m_strHref;
-    CSSStyleSheetImpl *parentSheet = parentStyleSheet();
-    if (!parentSheet->href().isNull()) {
-      // use parent styleheet's URL as the base URL
-      absHref = KURL(parentSheet->href().qstring(),m_strHref.qstring()).url();
-    }
+    CSSStyleSheetImpl* parentSheet = parentStyleSheet();
+    if (!parentSheet->href().isNull())
+        // use parent styleheet's URL as the base URL
+        absHref = KURL(parentSheet->href().qstring(), m_strHref.qstring()).url();
 
     // Check for a cycle in our import chain.  If we encounter a stylesheet
     // in our parent chain with the same URL, then just bail.
-    for (parent = static_cast<StyleBaseImpl*>(this)->parent();
-         parent;
-         parent = parent->parent())
+    for (parent = static_cast<StyleBaseImpl*>(this)->parent(); parent; parent = parent->parent())
         if (absHref == parent->baseURL())
             return;
     
     // ### pass correct charset here!!
     m_cachedSheet = docLoader->requestStyleSheet(absHref, QString::null);
-
-    if (m_cachedSheet)
-    {
-      m_cachedSheet->ref(this);
-
-      // If the imported sheet is in the cache, then setStyleSheet gets called,
-      // and the sheet even gets parsed (via parseString).  In this case we have
-      // loaded (even if our subresources haven't), so if we have stylesheet after
-      // checking the cache, then we've clearly loaded. -dwh
-      if (!m_styleSheet)
-          m_loading = true;
+    if (m_cachedSheet) {
+        m_loading = true;
+        m_cachedSheet->ref(this);
     }
 }
 
@@ -227,18 +203,14 @@ unsigned CSSMediaRuleImpl::append( CSSRuleImpl *rule )
     return m_lstCSSRules->insertRule( rule, m_lstCSSRules->length() );
 }
 
-unsigned CSSMediaRuleImpl::insertRule( const DOMString &rule,
-                                            unsigned index )
+unsigned CSSMediaRuleImpl::insertRule(const String& rule, unsigned index)
 {
-    CSSParser p( strictParsing );
-    CSSRuleImpl *newRule = p.parseRule( parentStyleSheet(), rule );
-
-    if (!newRule) {
+    CSSParser p(useStrictParsing());
+    RefPtr<CSSRuleImpl> newRule = p.parseRule(parentStyleSheet(), rule);
+    if (!newRule)
         return 0;
-    }
-
     newRule->setParent(this);
-    return m_lstCSSRules->insertRule( newRule, index );
+    return m_lstCSSRules->insertRule(newRule.get(), index);
 }
 
 DOMString CSSMediaRuleImpl::cssText() const
@@ -378,8 +350,7 @@ void CSSRuleListImpl::append( CSSRuleImpl *rule )
     insertRule( rule, m_lstCSSRules.count() ) ;
 }
 
-unsigned CSSRuleListImpl::insertRule( CSSRuleImpl *rule,
-                                           unsigned index )
+unsigned CSSRuleListImpl::insertRule( CSSRuleImpl *rule, unsigned index )
 {
     if( rule && m_lstCSSRules.insert( index, rule ) )
     {

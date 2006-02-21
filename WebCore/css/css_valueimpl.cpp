@@ -441,7 +441,7 @@ bool CSSMutableStyleDeclarationImpl::setProperty(int propertyID, const String &v
 
     removeProperty(propertyID);
 
-    CSSParser parser(strictParsing);
+    CSSParser parser(useStrictParsing());
     bool success = parser.parseValue(this, propertyID, value, important);
     if (!success) {
         exceptionCode = CSSException::SYNTAX_ERR + CSSException::_EXCEPTION_OFFSET;
@@ -476,7 +476,7 @@ void CSSMutableStyleDeclarationImpl::setImageProperty(int propertyId, const Stri
 void CSSMutableStyleDeclarationImpl::parseDeclaration(const String &styleDeclaration)
 {
     m_values.clear();
-    CSSParser parser(strictParsing);
+    CSSParser parser(useStrictParsing());
     parser.parseDeclaration(this, styleDeclaration);
     setChanged();
 }
@@ -491,14 +491,12 @@ void CSSMutableStyleDeclarationImpl::addParsedProperties(const CSSProperty * con
     // a notifyChanged argument to this function to follow the model of other functions in this class.
 }
 
-void CSSMutableStyleDeclarationImpl::setLengthProperty(int id, const String &value, bool important, bool _multiLength )
+void CSSMutableStyleDeclarationImpl::setLengthProperty(int id, const String &value, bool important, bool /* multiLength*/)
 {
-    bool parseMode = strictParsing;
-    strictParsing = false;
-    multiLength = _multiLength;
-    setProperty( id, value, important);
-    strictParsing = parseMode;
-    multiLength = false;
+    bool parseMode = useStrictParsing();
+    setStrictParsing(false);
+    setProperty(id, value, important);
+    setStrictParsing(parseMode);
 }
 
 unsigned CSSMutableStyleDeclarationImpl::length() const
@@ -533,7 +531,7 @@ void CSSMutableStyleDeclarationImpl::setCssText(const String& text, int &excepti
 {
     exceptionCode = 0;
     m_values.clear();
-    CSSParser parser(strictParsing);
+    CSSParser parser(useStrictParsing());
     parser.parseDeclaration(this, text);
     // FIXME: Detect syntax errors and set exceptionCode.
     setChanged();

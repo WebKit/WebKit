@@ -49,12 +49,8 @@ using namespace HTMLNames;
 // with 'props->id' a CSS property in the range from CSS_PROP_MIN to
 // (and including) CSS_PROP_TOTAL-1
 
-// turn off inlining to void warning with newer gcc
-#undef __inline
-#define __inline
 #include "cssproperties.c"
 #include "cssvalues.c"
-#undef __inline
 
 namespace WebCore {
 
@@ -112,9 +108,9 @@ static inline int getValueID(const char *tagStr, int len)
     return val->id;
 }
 
-
 #define YYDEBUG 0
 #define YYPARSE_PARAM parser
+
 %}
 
 %pure_parser
@@ -269,8 +265,7 @@ stylesheet:
 
 khtml_rule:
     KHTML_RULE_SYM '{' maybe_space ruleset maybe_space '}' {
-        CSSParser *p = static_cast<CSSParser *>(parser);
-        p->rule = $4;
+        static_cast<CSSParser*>(parser)->rule = $4;
     }
 ;
 
@@ -284,11 +279,11 @@ khtml_value:
     KHTML_VALUE_SYM '{' maybe_space expr '}' {
         CSSParser *p = static_cast<CSSParser *>(parser);
         if ($4) {
-            p->valueList = $4;
+            p->valueList = p->sinkFloatingValueList($4);
             p->parseValue(p->id, p->important);
+            delete p->valueList;
+            p->valueList = 0;
         }
-        delete p->valueList;
-        p->valueList = 0;
     }
 ;
 
@@ -313,12 +308,9 @@ maybe_charset:
 import_list:
  /* empty */
  | import_list import maybe_sgml {
-     CSSParser *p = static_cast<CSSParser *>(parser);
-     if ( $2 && p->styleElement && p->styleElement->isCSSStyleSheet() ) {
-         p->styleElement->append( $2 );
-     } else {
-         delete $2;
-     }
+     CSSParser* p = static_cast<CSSParser*>(parser);
+     if ($2 && p->styleElement && p->styleElement->isCSSStyleSheet())
+         p->styleElement->append($2);
  }
  ;
 
@@ -330,12 +322,9 @@ namespace_list:
 rule_list:
    /* empty */
  | rule_list rule maybe_sgml {
-     CSSParser *p = static_cast<CSSParser *>(parser);
-     if ( $2 && p->styleElement && p->styleElement->isCSSStyleSheet() ) {
-         p->styleElement->append( $2 );
-     } else {
-         delete $2;
-     }
+     CSSParser* p = static_cast<CSSParser*>(parser);
+     if ($2 && p->styleElement && p->styleElement->isCSSStyleSheet())
+         p->styleElement->append($2);
  }
  ;
 
@@ -351,13 +340,7 @@ rule:
 
 import:
     IMPORT_SYM maybe_space string_or_uri maybe_space maybe_media_list ';' {
-        CSSParser *p = static_cast<CSSParser *>(parser);
-        if ( $5 && p->styleElement && p->styleElement->isCSSStyleSheet() )
-            $$ = new CSSImportRuleImpl( p->styleElement, domString($3), $5 );
-        else {
-            $$ = 0;
-            delete $5;
-        }
+        $$ = static_cast<CSSParser *>(parser)->createImportRule($3, $5);
     }
   | IMPORT_SYM error invalid_block {
         $$ = 0;
@@ -389,7 +372,7 @@ STRING
 
 maybe_media_list:
      /* empty */ {
-        $$ = new MediaListImpl();
+        $$ = static_cast<CSSParser*>(parser)->createMediaList();
      }
      | media_list
 ;
@@ -400,7 +383,7 @@ media_list:
         $$ = 0;
     }
     | medium {
-        $$ = new MediaListImpl();
+        $$ = static_cast<CSSParser*>(parser)->createMediaList();
         $$->appendMedium( domString($1).lower() );
     }
     | media_list ',' maybe_space medium {
@@ -409,34 +392,26 @@ media_list:
             $$->appendMedium( domString($4) );
     }
     | media_list error {
-        delete $1;
         $$ = 0;
     }
     ;
 
 media:
     MEDIA_SYM maybe_space media_list '{' maybe_space ruleset_list '}' {
-        CSSParser *p = static_cast<CSSParser *>(parser);
-        if ( $3 && $6 &&
-             p->styleElement && p->styleElement->isCSSStyleSheet() ) {
-            $$ = new CSSMediaRuleImpl( static_cast<CSSStyleSheetImpl*>(p->styleElement), $3, $6 );
-        } else {
-            $$ = 0;
-            delete $3;
-            delete $6;
-        }
+        $$ = static_cast<CSSParser*>(parser)->createMediaRule($3, $6);
     }
-  ;
+    ;
 
 ruleset_list:
     /* empty */ { $$ = 0; }
-  | ruleset_list ruleset maybe_space {
-      $$ = $1;
-      if ( $2 ) {
-          if ( !$$ ) $$ = new CSSRuleListImpl();
-          $$->append( $2 );
-      }
-  }
+    | ruleset_list ruleset maybe_space {
+        $$ = $1;
+        if ($2) {
+            if (!$$)
+                $$ = static_cast<CSSParser*>(parser)->createRuleList();
+            $$->append($2);
+        }
+    }
     ;
 
 medium:
@@ -493,39 +468,24 @@ unary_operator:
 
 ruleset:
     selector_list '{' maybe_space declaration_list '}' {
-        CSSParser *p = static_cast<CSSParser *>(parser);
-        if ($1) {
-            CSSStyleRuleImpl* rule = new CSSStyleRuleImpl( p->styleElement );
-            rule->setSelector($1);
-            rule->setDeclaration(p->createStyleDeclaration(rule));
-            $$ = rule;
-        } else {
-            $$ = 0;
-            p->clearProperties();
-        }
+        $$ = static_cast<CSSParser*>(parser)->createStyleRule($1);
     }
   ;
 
 selector_list:
     selector {
-        if ( $1 ) {
-            $$ = $1;
-        } else {
-            $$ = 0;
-        }
+        $$ = $1;
     }
     | selector_list ',' maybe_space selector {
-        if ( $1 && $4 ) {
+        if ($1 && $4) {
+            CSSParser* p = static_cast<CSSParser*>(parser);
             $$ = $1;
-            $$->append( $4 );
+            $$->append(p->sinkFloatingSelector($4));
         } else {
-            delete $1;
-            delete $4;
             $$ = 0;
         }
     }
   | selector_list error {
-        delete $1;
         $$ = 0;
     }
    ;
@@ -537,35 +497,25 @@ selector:
     | selector combinator simple_selector {
         $$ = $3;
         if (!$1) {
-            delete $3;
             $$ = 0;
         }
         else if ($$) {
-            CSSSelector *end = $$;
-            while( end->tagHistory )
+            CSSParser* p = static_cast<CSSParser*>(parser);
+            CSSSelector* end = $$;
+            while (end->tagHistory)
                 end = end->tagHistory;
             end->relation = $2;
-            end->tagHistory = $1;
-            if ( $2 == CSSSelector::Descendant ||
-                $2 == CSSSelector::Child ) {
-                CSSParser *p = static_cast<CSSParser *>(parser);
-                DOM::DocumentImpl *doc = p->document();
-                if ( doc )
+            end->tagHistory = p->sinkFloatingSelector($1);
+            if ($2 == CSSSelector::Descendant || $2 == CSSSelector::Child) {
+                if (WebCore::DocumentImpl* doc = p->document())
                     doc->setUsesDescendantRules(true);
-            }
-            else if ($2 == CSSSelector::DirectAdjacent ||
-                     $2 == CSSSelector::IndirectAdjacent) {
-                CSSParser *p = static_cast<CSSParser *>(parser);
-                DOM::DocumentImpl *doc = p->document();
-                if (doc)
+            } else if ($2 == CSSSelector::DirectAdjacent || $2 == CSSSelector::IndirectAdjacent) {
+                if (WebCore::DocumentImpl* doc = p->document())
                     doc->setUsesSiblingRules(true);
             }
-        } else {
-            delete $1;
         }
     }
     | selector error {
-        delete $1;
         $$ = 0;
     }
     ;
@@ -579,7 +529,8 @@ namespace_selector:
 simple_selector:
     element_name maybe_space {
         CSSParser *p = static_cast<CSSParser *>(parser);
-        $$ = new CSSSelector(QualifiedName(nullAtom, atomicString($1), p->defaultNamespace));
+        $$ = p->createFloatingSelector();
+        $$->tag = QualifiedName(nullAtom, atomicString($1), p->defaultNamespace);
     }
     | element_name specifier_list maybe_space {
         $$ = $2;
@@ -597,12 +548,13 @@ simple_selector:
     | namespace_selector '|' element_name maybe_space {
         AtomicString namespacePrefix = atomicString($1);
         CSSParser *p = static_cast<CSSParser *>(parser);
+        $$ = p->createFloatingSelector();
         if (p->styleElement && p->styleElement->isCSSStyleSheet())
-            $$ = new CSSSelector(QualifiedName(namespacePrefix,
-                                               atomicString($3),
-                                               static_cast<CSSStyleSheetImpl*>(p->styleElement)->determineNamespace(namespacePrefix)));
+            $$->tag = QualifiedName(namespacePrefix,
+                                    atomicString($3),
+                                    static_cast<CSSStyleSheetImpl*>(p->styleElement)->determineNamespace(namespacePrefix));
         else // FIXME: Shouldn't this case be an error?
-            $$ = new CSSSelector(QualifiedName(nullAtom, atomicString($3), p->defaultNamespace));
+            $$->tag = QualifiedName(nullAtom, atomicString($3), p->defaultNamespace);
     }
     | namespace_selector '|' element_name specifier_list maybe_space {
         $$ = $4;
@@ -653,24 +605,24 @@ specifier_list:
     | specifier_list specifier {
         $$ = $1;
         if ($$) {
-            CSSSelector *end = $1;
-            while( end->tagHistory )
+            CSSParser* p = static_cast<CSSParser*>(parser);
+            CSSSelector* end = $1;
+            while (end->tagHistory)
                 end = end->tagHistory;
             end->relation = CSSSelector::SubSelector;
-            end->tagHistory = $2;
+            end->tagHistory = p->sinkFloatingSelector($2);
         }
     }
     | specifier_list error {
-        delete $1;
         $$ = 0;
     }
 ;
 
 specifier:
     HASH {
-        $$ = new CSSSelector();
-        $$->match = CSSSelector::Id;
         CSSParser *p = static_cast<CSSParser *>(parser);
+        $$ = p->createFloatingSelector();
+        $$->match = CSSSelector::Id;
         if (!p->strict)
             $1.lower();
         $$->attr = idAttr;
@@ -683,9 +635,9 @@ specifier:
 
 class:
     '.' IDENT {
-        $$ = new CSSSelector();
-        $$->match = CSSSelector::Class;
         CSSParser *p = static_cast<CSSParser *>(parser);
+        $$ = p->createFloatingSelector();
+        $$->match = CSSSelector::Class;
         if (!p->strict)
             $2.lower();
         $$->attr = classAttr;
@@ -706,12 +658,12 @@ attr_name:
 
 attrib:
     '[' maybe_space attr_name ']' {
-        $$ = new CSSSelector();
+        $$ = static_cast<CSSParser*>(parser)->createFloatingSelector();
         $$->attr = QualifiedName(nullAtom, atomicString($3), nullAtom);
         $$->match = CSSSelector::Set;
     }
     | '[' maybe_space attr_name match maybe_space ident_or_string maybe_space ']' {
-        $$ = new CSSSelector();
+        $$ = static_cast<CSSParser*>(parser)->createFloatingSelector();
         $$->attr = QualifiedName(nullAtom, atomicString($3), nullAtom);
         $$->match = (CSSSelector::Match)$4;
         $$->value = atomicString($6);
@@ -719,7 +671,7 @@ attrib:
     | '[' maybe_space namespace_selector '|' attr_name ']' {
         AtomicString namespacePrefix = atomicString($3);
         CSSParser *p = static_cast<CSSParser *>(parser);
-        $$ = new CSSSelector();
+        $$ = p->createFloatingSelector();
         $$->attr = QualifiedName(namespacePrefix,
                                  atomicString($5),
                                  static_cast<CSSStyleSheetImpl*>(p->styleElement)->determineNamespace(namespacePrefix));
@@ -728,7 +680,7 @@ attrib:
     | '[' maybe_space namespace_selector '|' attr_name match maybe_space ident_or_string maybe_space ']' {
         AtomicString namespacePrefix = atomicString($3);
         CSSParser *p = static_cast<CSSParser *>(parser);
-        $$ = new CSSSelector();
+        $$ = p->createFloatingSelector();
         $$->attr = QualifiedName(namespacePrefix,
                                  atomicString($5),
                                  static_cast<CSSStyleSheetImpl*>(p->styleElement)->determineNamespace(namespacePrefix));
@@ -765,7 +717,7 @@ ident_or_string:
 
 pseudo:
     ':' IDENT {
-        $$ = new CSSSelector();
+        $$ = static_cast<CSSParser*>(parser)->createFloatingSelector();
         $$->match = CSSSelector::PseudoClass;
         $2.lower();
         $$->value = atomicString($2);
@@ -778,15 +730,16 @@ pseudo:
         }
     }
     | ':' ':' IDENT {
-        $$ = new CSSSelector();
+        $$ = static_cast<CSSParser*>(parser)->createFloatingSelector();
         $$->match = CSSSelector::PseudoElement;
         $3.lower();
         $$->value = atomicString($3);
     }
     | ':' FUNCTION maybe_space simple_selector maybe_space ')' {
-        $$ = new CSSSelector();
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        $$ = p->createFloatingSelector();
         $$->match = CSSSelector::PseudoClass;
-        $$->simpleSelector = $4;
+        $$->simpleSelector = p->sinkFloatingSelector($4);
         $2.lower();
         $$->value = atomicString($2);
     }
@@ -842,16 +795,12 @@ declaration:
     property ':' maybe_space expr prio {
         $$ = false;
         CSSParser *p = static_cast<CSSParser *>(parser);
-        if ( $1 && $4 ) {
-            p->valueList = $4;
-            bool ok = p->parseValue( $1, $5 );
-            if ( ok )
-                $$ = ok;
-        } else {
-            delete $4;
+        if ($1 && $4) {
+            p->valueList = p->sinkFloatingValueList($4);
+            $$ = p->parseValue($1, $5);
+            delete p->valueList;
+            p->valueList = 0;
         }
-        delete p->valueList;
-        p->valueList = 0;
     }
     |
     property error {
@@ -862,7 +811,6 @@ declaration:
         /* The default movable type template has letter-spacing: .none;  Handle this by looking for
         error tokens at the start of an expr, recover the expr and then treat as an error, cleaning
         up and deleting the shifted expr.  */
-        delete $5;
         $$ = false;
     }
     |
@@ -895,24 +843,25 @@ prio:
 
 expr:
     term {
-        $$ = new ValueList;
-        $$->addValue( $1 );
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        $$ = p->createFloatingValueList();
+        $$->addValue(p->sinkFloatingValue($1));
     }
     | expr operator term {
+        CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = $1;
-        if ( $$ ) {
-            if ( $2 ) {
+        if ($$) {
+            if ($2) {
                 Value v;
                 v.id = 0;
                 v.unit = Value::Operator;
                 v.iValue = $2;
-                $$->addValue( v );
+                $$->addValue(v);
             }
-            $$->addValue( $3 );
+            $$->addValue(p->sinkFloatingValue($3));
         }
     }
     | expr error {
-        delete $1;
         $$ = 0;
     }
   ;
@@ -979,21 +928,23 @@ unary_term:
 
 
 function:
-  FUNCTION maybe_space expr ')' maybe_space {
-      Function *f = new Function;
-      f->name = $1;
-      f->args = $3;
-      $$.id = 0;
-      $$.unit = Value::Function;
-      $$.function = f;
-  } |
-  FUNCTION maybe_space error {
-      Function *f = new Function;
-      f->name = $1;
-      f->args = 0;
-      $$.id = 0;
-      $$.unit = Value::Function;
-      $$.function = f;
+    FUNCTION maybe_space expr ')' maybe_space {
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        Function* f = p->createFloatingFunction();
+        f->name = $1;
+        f->args = p->sinkFloatingValueList($3);
+        $$.id = 0;
+        $$.unit = Value::Function;
+        $$.function = f;
+    } |
+    FUNCTION maybe_space error {
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        Function* f = p->createFloatingFunction();
+        f->name = $1;
+        f->args = 0;
+        $$.id = 0;
+        $$.unit = Value::Function;
+        $$.function = f;
   }
   ;
 /*
@@ -1019,7 +970,6 @@ invalid_at:
 
 invalid_import:
     import {
-        delete $1;
         $$ = 0;
     }
     ;

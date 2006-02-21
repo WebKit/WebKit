@@ -21,72 +21,42 @@
  * Boston, MA 02111-1307, USA.
  */
 
-//#define CSS_DEBUG
-// #define TOKEN_DEBUG
-#define YYDEBUG 0
-
 #include "config.h"
 #include "cssparser.h"
 
-#include <kurl.h>
-
-#include "css_valueimpl.h"
+#include "DocumentImpl.h"
 #include "css_ruleimpl.h"
 #include "css_stylesheetimpl.h"
+#include "css_valueimpl.h"
+#include "csshelper.h"
 #include "cssproperties.h"
 #include "cssvalues.h"
 #include "helper.h"
-#include "DocumentImpl.h"
-#include "csshelper.h"
-
+#include <kurl.h>
+#include <kxmlcore/Assertions.h>
 #include <stdlib.h>
 
-#if SVG_SUPPORT
-#include "SVGPaintImpl.h"
-#endif
-
-using namespace khtml;
-using namespace DOM;
-
-ValueList::ValueList()
-{
-    values = (Value *)fastMalloc(16 * sizeof(Value));
-    numValues = 0;
-    currentValue = 0;
-    maxValues = 16;
-}
-
-ValueList::~ValueList()
-{
-    for ( int i = 0; i < numValues; i++ ) {
-#ifdef CSS_DEBUG
-        kdDebug( 6080 ) << "       value: (unit=" << values[i].unit <<")"<< endl;
-#endif
-        if ( values[i].unit == Value::Function )
-            delete values[i].function;
-    }
-    fastFree(values);
-}
-
-void ValueList::addValue(const Value &val)
-{
-    if (numValues >= maxValues) {
-        maxValues += 16;
-        values = (Value *)fastRealloc(values, maxValues*sizeof(Value));
-    }
-    values[numValues++] = val;
-}
-
+#define YYDEBUG 0
 
 #if YYDEBUG > 0
 extern int cssyydebug;
 #endif
 
-extern int cssyyparse( void * parser );
+extern int cssyyparse(void* parser);
 
-CSSParser *CSSParser::currentParser = 0;
+namespace WebCore {
 
-CSSParser::CSSParser( bool strictParsing )
+ValueList::~ValueList()
+{
+     size_t numValues = m_values.size();
+     for (size_t i = 0; i < numValues; i++)
+         if (m_values[i].unit == Value::Function)
+             delete m_values[i].function;
+}
+
+CSSParser* CSSParser::currentParser = 0;
+
+CSSParser::CSSParser(bool strictParsing)
 {
 #ifdef CSS_DEBUG
     kdDebug( 6080 ) << "CSSParser::CSSParser this=" << this << endl;
@@ -99,7 +69,6 @@ CSSParser::CSSParser( bool strictParsing )
 
     data = 0;
     valueList = 0;
-    rule = 0;
     id = 0;
     important = false;
     m_inParseShorthand = 0;
@@ -113,23 +82,20 @@ CSSParser::CSSParser( bool strictParsing )
 #if YYDEBUG > 0
     cssyydebug = 1;
 #endif
-
 }
 
 CSSParser::~CSSParser()
 {
-    if ( numParsedProperties )
-        clearProperties();
+    clearProperties();
     fastFree(parsedProperties);
 
     delete valueList;
 
-#ifdef CSS_DEBUG
-    kdDebug( 6080 ) << "CSSParser::~CSSParser this=" << this << endl;
-#endif
-
     fastFree(data);
 
+    deleteAllValues(m_floatingSelectors);
+    deleteAllValues(m_floatingValueLists);
+    deleteAllValues(m_floatingFunctions);
 }
 
 void ParseString::lower()
@@ -138,23 +104,23 @@ void ParseString::lower()
         string[i] = QChar(string[i]).lower().unicode();
 }
 
-void CSSParser::setupParser(const char *prefix, const DOMString &string, const char *suffix)
+void CSSParser::setupParser(const char* prefix, const String& string, const char* suffix)
 {
     int length = string.length() + strlen(prefix) + strlen(suffix) + 2;
     
-    data = (unsigned short *)fastMalloc( length *sizeof( unsigned short ) );
-    for ( unsigned int i = 0; i < strlen(prefix); i++ )
+    data = (unsigned short*)fastMalloc(length * sizeof(unsigned short));
+    for (unsigned i = 0; i < strlen(prefix); i++)
         data[i] = prefix[i];
     
-    memcpy( data + strlen( prefix ), string.unicode(), string.length()*sizeof( unsigned short) );
+    memcpy(data + strlen(prefix), string.unicode(), string.length() * sizeof(unsigned short));
 
-    unsigned int start = strlen( prefix ) + string.length();
-    unsigned int end = start + strlen(suffix);
-    for ( unsigned int i = start; i < end; i++ )
-        data[i] = suffix[i-start];
+    unsigned start = strlen(prefix) + string.length();
+    unsigned end = start + strlen(suffix);
+    for (unsigned i = start; i < end; i++)
+        data[i] = suffix[i - start];
 
-    data[length-1] = 0;
-    data[length-2] = 0;
+    data[length - 1] = 0;
+    data[length - 2] = 0;
 
     yy_hold_char = 0;
     yyleng = 0;
@@ -162,43 +128,33 @@ void CSSParser::setupParser(const char *prefix, const DOMString &string, const c
     yy_hold_char = *yy_c_buf_p;
 }
 
-void CSSParser::parseSheet( CSSStyleSheetImpl *sheet, const DOMString &string )
+void CSSParser::parseSheet(CSSStyleSheetImpl* sheet, const String& string)
 {
     styleElement = sheet;
     defaultNamespace = starAtom; // Reset the default namespace.
     
-    setupParser ("", string, "");
+    setupParser("", string, "");
 
-#ifdef CSS_DEBUG
-    kdDebug( 6080 ) << ">>>>>>> start parsing style sheet" << endl;
-#endif
-    CSSParser *old = currentParser;
+    CSSParser* old = currentParser;
     currentParser = this;
-    cssyyparse( this );
+    cssyyparse(this);
     currentParser = old;
-#ifdef CSS_DEBUG
-    kdDebug( 6080 ) << "<<<<<<< done parsing style sheet" << endl;
-#endif
 
-    delete rule;
     rule = 0;
 }
 
-CSSRuleImpl *CSSParser::parseRule(CSSStyleSheetImpl *sheet, const DOMString &string)
+PassRefPtr<CSSRuleImpl> CSSParser::parseRule(CSSStyleSheetImpl *sheet, const DOMString &string)
 {
     styleElement = sheet;
     
-    setupParser ("@-khtml-rule{", string, "} ");
+    setupParser("@-khtml-rule{", string, "} ");
 
-    CSSParser *old = currentParser;
+    CSSParser* old = currentParser;
     currentParser = this;
-    cssyyparse( this );
+    cssyyparse(this);
     currentParser = old;
 
-    CSSRuleImpl *result = rule;
-    rule = 0;
-    
-    return result;
+    return rule.release();
 }
 
 bool CSSParser::parseValue( CSSMutableStyleDeclarationImpl *declaration, int _id, const DOMString &string,
@@ -206,21 +162,20 @@ bool CSSParser::parseValue( CSSMutableStyleDeclarationImpl *declaration, int _id
 {
     styleElement = declaration->stylesheet();
 
-    setupParser ("@-khtml-value{", string, "} ");
+    setupParser("@-khtml-value{", string, "} ");
 
     id = _id;
     important = _important;
     
-    CSSParser *old = currentParser;
+    CSSParser* old = currentParser;
     currentParser = this;
-    cssyyparse( this );
+    cssyyparse(this);
     currentParser = old;
     
-    delete rule;
     rule = 0;
 
     bool ok = false;
-    if ( numParsedProperties ) {
+    if (numParsedProperties) {
         ok = true;
         declaration->addParsedProperties(parsedProperties, numParsedProperties);
         clearProperties();
@@ -256,20 +211,18 @@ bool CSSParser::parseColor( CSSMutableStyleDeclarationImpl *declaration, const D
 {
     styleElement = declaration->stylesheet();
 
-    setupParser ( "@-khtml-decls{color:", string, "} ");
+    setupParser("@-khtml-decls{color:", string, "} ");
 
-    CSSParser *old = currentParser;
+    CSSParser* old = currentParser;
     currentParser = this;
-    cssyyparse( this );
+    cssyyparse(this);
     currentParser = old;
 
-    delete rule;
     rule = 0;
 
     bool ok = false;
-    if ( numParsedProperties && parsedProperties[0]->m_id == CSS_PROP_COLOR) {
+    if (numParsedProperties && parsedProperties[0]->m_id == CSS_PROP_COLOR)
         ok = true;
-    }
 
     return ok;
 }
@@ -278,18 +231,17 @@ bool CSSParser::parseDeclaration( CSSMutableStyleDeclarationImpl *declaration, c
 {
     styleElement = declaration->stylesheet();
 
-    setupParser ( "@-khtml-decls{", string, "} ");
+    setupParser("@-khtml-decls{", string, "} ");
 
-    CSSParser *old = currentParser;
+    CSSParser* old = currentParser;
     currentParser = this;
-    cssyyparse( this );
+    cssyyparse(this);
     currentParser = old;
 
-    delete rule;
     rule = 0;
 
     bool ok = false;
-    if ( numParsedProperties ) {
+    if (numParsedProperties) {
         ok = true;
         declaration->addParsedProperties(parsedProperties, numParsedProperties);
         clearProperties();
@@ -310,16 +262,9 @@ void CSSParser::addProperty(int propId, CSSValueImpl *value, bool important)
     parsedProperties[numParsedProperties++] = prop;
 }
 
-PassRefPtr<CSSMutableStyleDeclarationImpl> CSSParser::createStyleDeclaration(CSSStyleRuleImpl* rule)
-{
-    RefPtr<CSSMutableStyleDeclarationImpl> result = new CSSMutableStyleDeclarationImpl(rule, parsedProperties, numParsedProperties);
-    clearProperties();
-    return result.release();
-}
-
 void CSSParser::clearProperties()
 {
-    for ( int i = 0; i < numParsedProperties; i++ )
+    for (int i = 0; i < numParsedProperties; i++)
         delete parsedProperties[i];
     numParsedProperties = 0;
 }
@@ -335,23 +280,7 @@ DocumentImpl *CSSParser::document() const
     return doc;
 }
 
-
-// defines units allowed for a certain property, used in parseUnit
-enum Units
-{
-    FUnknown   = 0x0000,
-    FInteger   = 0x0001,
-    FNumber    = 0x0002,  // Real Numbers
-    FPercent   = 0x0004,
-    FLength    = 0x0008,
-    FAngle     = 0x0010,
-    FTime      = 0x0020,
-    FFrequency = 0x0040,
-    FRelative  = 0x0100,
-    FNonNeg    = 0x0200
-};
-
-static bool validUnit( Value *value, int unitflags, bool strict )
+bool CSSParser::validUnit(Value* value, Units unitflags, bool strict)
 {
     if ( unitflags & FNonNeg && value->fValue < 0 )
         return false;
@@ -612,7 +541,7 @@ bool CSSParser::parseValue( int propId, bool important )
     case CSS_PROP_BORDER_SPACING: {
         const int properties[2] = { CSS_PROP__KHTML_BORDER_HORIZONTAL_SPACING,
                                     CSS_PROP__KHTML_BORDER_VERTICAL_SPACING };
-        int num = valueList->numValues;
+        int num = valueList->size();
         if (num == 1) {
             if (!parseValue(properties[0], important)) return false;
             CSSValueImpl* value = parsedProperties[numParsedProperties-1]->value();
@@ -715,7 +644,7 @@ bool CSSParser::parseValue( int propId, bool important )
             DOMString uri = parseURL( domString( value->string ) );
             if (!uri.isEmpty()) {
                 parsedValue = new CSSImageValueImpl(
-                    DOMString(KURL( styleElement->baseURL().qstring(), uri.qstring()).url()),
+                    DOMString(KURL(styleElement->baseURL().qstring(), uri.qstring()).url()),
                     styleElement);
                 valueList->next();
             }
@@ -953,7 +882,7 @@ bool CSSParser::parseValue( int propId, bool important )
     case CSS_PROP_BORDER_BOTTOM_LEFT_RADIUS:
     case CSS_PROP_BORDER_BOTTOM_RIGHT_RADIUS:
     case CSS_PROP_BORDER_RADIUS: {
-        int num = valueList->numValues;
+        int num = valueList->size();
         if (num != 1 && num != 2)
             return false;
         valid_primitive = validUnit(value, FLength, strict);
@@ -1083,7 +1012,7 @@ bool CSSParser::parseValue( int propId, bool important )
     case CSS_PROP__KHTML_MARGIN_COLLAPSE: {
         const int properties[2] = { CSS_PROP__KHTML_MARGIN_TOP_COLLAPSE,
             CSS_PROP__KHTML_MARGIN_BOTTOM_COLLAPSE };
-        int num = valueList->numValues;
+        int num = valueList->size();
         if (num == 1) {
             if (!parseValue(properties[0], important)) return false;
             CSSValueImpl* value = parsedProperties[numParsedProperties-1]->value();
@@ -1427,7 +1356,7 @@ bool CSSParser::parse4Values(int propId, const int *properties,  bool important)
      * right, bottom, and left, respectively.
      */
     
-    int num = inShorthand() ? 1 : valueList->numValues;
+    int num = inShorthand() ? 1 : valueList->size();
     
     enterShorthand(propId);
 
@@ -1509,7 +1438,7 @@ bool CSSParser::parseContent(int propId, bool important)
             QString fname = qString(val->function->name).lower();
             if (fname != "attr(" || !args)
                 return false;
-            if (args->numValues != 1)
+            if (args->size() != 1)
                 return false;
             Value *a = args->current();
             DOMString attrName = domString(a->string);
@@ -1776,8 +1705,8 @@ failed:
 
 static Value *skipCommaInDashboardRegion (ValueList *args)
 {
-    if ( args->numValues == (DASHBOARD_REGION_NUM_PARAMETERS*2-1) ||
-         args->numValues == (DASHBOARD_REGION_SHORT_NUM_PARAMETERS*2-1)) {
+    if ( args->size() == (DASHBOARD_REGION_NUM_PARAMETERS*2-1) ||
+         args->size() == (DASHBOARD_REGION_SHORT_NUM_PARAMETERS*2-1)) {
         Value *current = args->current();
         if (current->unit == Value::Operator && current->iValue == ',' )
             return args->next();
@@ -1820,7 +1749,7 @@ bool CSSParser::parseDashboardRegions( int propId, bool important )
         // dashboard-region(label, type) or dashboard-region(label type)
         // dashboard-region(label, type) or dashboard-region(label type)
         ValueList* args = value->function->args;
-        int numArgs = value->function->args->numValues;
+        int numArgs = value->function->args->size();
         if ((numArgs != DASHBOARD_REGION_NUM_PARAMETERS && numArgs != (DASHBOARD_REGION_NUM_PARAMETERS*2-1)) &&
             (numArgs != DASHBOARD_REGION_SHORT_NUM_PARAMETERS && numArgs != (DASHBOARD_REGION_SHORT_NUM_PARAMETERS*2-1))){
             valid = false;
@@ -1917,7 +1846,7 @@ bool CSSParser::parseShape( int propId, bool important )
         return false;
 
     // rect( t, r, b, l ) || rect( t r b l )
-    if ( args->numValues != 4 && args->numValues != 7 )
+    if ( args->size() != 4 && args->size() != 7 )
         return false;
     RectImpl *rect = new RectImpl();
     bool valid = true;
@@ -1939,7 +1868,7 @@ bool CSSParser::parseShape( int propId, bool important )
         else
             rect->setLeft( length );
         a = args->next();
-        if ( a && args->numValues == 7 ) {
+        if ( a && args->size() == 7 ) {
             if ( a->unit == Value::Operator && a->iValue == ',' ) {
                 a = args->next();
             } else {
@@ -2214,7 +2143,7 @@ CSSPrimitiveValueImpl *CSSParser::parseColorFromValue(Value* value)
     }
     else if ( value->unit == Value::Function &&
                 value->function->args != 0 &&
-                value->function->args->numValues == 5 /* rgb + two commas */ &&
+                value->function->args->size() == 5 /* rgb + two commas */ &&
                 qString( value->function->name ).lower() == "rgb(" ) {
         ValueList *args = value->function->args;
         Value *v = args->current();
@@ -2242,7 +2171,7 @@ CSSPrimitiveValueImpl *CSSParser::parseColorFromValue(Value* value)
     }
     else if ( value->unit == Value::Function &&
               value->function->args != 0 &&
-              value->function->args->numValues == 7 /* rgba + three commas */ &&
+              value->function->args->size() == 7 /* rgba + three commas */ &&
               qString( value->function->name ).lower() == "rgba(" ) {
         ValueList *args = value->function->args;
         Value *v = args->current();
@@ -2525,7 +2454,6 @@ struct BorderImageParseContext
                 newList.addValue(*m_borderLeft);
             p->valueList = &newList;
             p->parseValue(CSS_PROP_BORDER_WIDTH, important);
-            newList.numValues = 0; // Trick valuelist into not destroying the values we put into it.
             p->valueList = 0;
         }
     }
@@ -2681,12 +2609,13 @@ int CSSParser::lex( void *_yylval ) {
     return token;
 }
 
-static inline int toHex( char c ) {
-    if ( '0' <= c && c <= '9' )
+static inline int toHex(char c)
+{
+    if ('0' <= c && c <= '9')
         return c - '0';
-    if ( 'a' <= c && c <= 'f' )
+    if ('a' <= c && c <= 'f')
         return c - 'a' + 10;
-    if ( 'A' <= c && c<= 'F' )
+    if ('A' <= c && c<= 'F')
         return c - 'A' + 10;
     return 0;
 }
@@ -2811,15 +2740,122 @@ unsigned short *CSSParser::text(int *length)
     return start;
 }
 
-#if SVG_SUPPORT
-#include "ksvg2/css/KSVGCSSParser.cpp"
-#endif
+CSSSelector* CSSParser::createFloatingSelector()
+{
+    CSSSelector* selector = new CSSSelector;
+    m_floatingSelectors.add(selector);
+    return selector;
+}
 
+CSSSelector* CSSParser::sinkFloatingSelector(CSSSelector* selector)
+{
+    if (selector) {
+        ASSERT(m_floatingSelectors.contains(selector));
+        m_floatingSelectors.remove(selector);
+    }
+    return selector;
+}
 
-#define YY_DECL int DOM::CSSParser::lex()
+ValueList* CSSParser::createFloatingValueList()
+{
+    ValueList* list = new ValueList;
+    m_floatingValueLists.add(list);
+    return list;
+}
+
+ValueList* CSSParser::sinkFloatingValueList(ValueList* list)
+{
+    if (list) {
+        ASSERT(m_floatingValueLists.contains(list));
+        m_floatingValueLists.remove(list);
+    }
+    return list;
+}
+
+Function* CSSParser::createFloatingFunction()
+{
+    Function* function = new Function;
+    m_floatingFunctions.add(function);
+    return function;
+}
+
+Function* CSSParser::sinkFloatingFunction(Function* function)
+{
+    if (function) {
+        ASSERT(m_floatingFunctions.contains(function));
+        m_floatingFunctions.remove(function);
+    }
+    return function;
+}
+
+Value& CSSParser::sinkFloatingValue(Value& value)
+{
+    if (value.unit == Value::Function) {
+        ASSERT(m_floatingFunctions.contains(value.function));
+        m_floatingFunctions.remove(value.function);
+    }
+    return value;
+}
+
+MediaListImpl* CSSParser::createMediaList()
+{
+    MediaListImpl* list = new MediaListImpl;
+    m_parsedStyleObjects.append(list);
+    return list;
+}
+
+CSSRuleImpl* CSSParser::createImportRule(const ParseString& URL, MediaListImpl* media)
+{
+    if (!media)
+        return 0;
+    if (!styleElement)
+        return 0;
+    if (!styleElement->isCSSStyleSheet())
+        return 0;
+    CSSImportRuleImpl* rule = new CSSImportRuleImpl(styleElement, domString(URL), media);
+    m_parsedStyleObjects.append(rule);
+    return rule;
+}
+
+CSSRuleImpl* CSSParser::createMediaRule(MediaListImpl* media, CSSRuleListImpl* rules)
+{
+    if (!media)
+        return 0;
+    if (!rules)
+        return 0;
+    if (!styleElement)
+        return 0;
+    if (!styleElement->isCSSStyleSheet())
+        return 0;
+    CSSMediaRuleImpl* rule = new CSSMediaRuleImpl(styleElement, media, rules);
+    m_parsedStyleObjects.append(rule);
+    return rule;
+}
+
+CSSRuleListImpl* CSSParser::createRuleList()
+{
+    CSSRuleListImpl* list = new CSSRuleListImpl;
+    m_parsedRuleLists.append(list);
+    return list;
+}
+
+CSSRuleImpl* CSSParser::createStyleRule(CSSSelector* selector)
+{
+    CSSStyleRuleImpl* rule = 0;
+    if (selector) {
+        rule = new CSSStyleRuleImpl(styleElement);
+        m_parsedStyleObjects.append(rule);
+        rule->setSelector(sinkFloatingSelector(selector));
+        rule->setDeclaration(new CSSMutableStyleDeclarationImpl(rule, parsedProperties, numParsedProperties));
+    }
+    clearProperties();
+    return rule;
+}
+
+#define YY_DECL int CSSParser::lex()
 #define yyconst const
 typedef int yy_state_type;
-typedef unsigned int YY_CHAR;
+typedef unsigned YY_CHAR;
 // this line makes sure we treat all Unicode chars correctly.
 #define YY_SC_TO_UI(c) (c > 0xff ? 0xff : c)
 #define YY_DO_BEFORE_ACTION \
@@ -2838,3 +2874,4 @@ typedef unsigned int YY_CHAR;
 
 #include "tokenizer.cpp"
 
+}

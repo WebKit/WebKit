@@ -5,7 +5,7 @@
  *               1999 Waldo Bastian (bastian@kde.org)
  *               2001 Andreas Schlapbach (schlpbch@iam.unibe.ch)
  *               2001-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002 Apple Computer, Inc.
+ * Copyright (C) 2002, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,19 +23,14 @@
  * Boston, MA 02111-1307, USA.
  */
 
-//#define CSS_DEBUG
-
 #include "config.h"
 #include "css_base.h"
 
-#ifdef CSS_DEBUG
-#include "cssproperties.h"
-#endif
-
-#include "css_stylesheetimpl.h"
 #include "DocumentImpl.h"
+#include "css_stylesheetimpl.h"
 #include "css_valueimpl.h"
-using namespace DOM;
+
+namespace WebCore {
 
 void StyleBaseImpl::checkLoaded()
 {
@@ -75,23 +70,33 @@ DOMString StyleBaseImpl::baseURL()
 
 // ------------------------------------------------------------------------------
 
-StyleListImpl::~StyleListImpl()
+void StyleListImpl::append(PassRefPtr<StyleBaseImpl> child)
 {
-    StyleBaseImpl *n;
+    StyleBaseImpl* c = child.get();
+    m_children.append(child);
+    c->insertedIntoParent();
+}
 
-    if(!m_lstChildren) return;
+void StyleListImpl::insert(unsigned position, PassRefPtr<StyleBaseImpl> child)
+{
+    StyleBaseImpl* c = child.get();
+    if (position >= length())
+        m_children.append(child);
+    else
+        m_children.insert(position, child);
+    c->insertedIntoParent();
+}
 
-    for( n = m_lstChildren->first(); n != 0; n = m_lstChildren->next() )
-    {
-        n->setParent(0);
-        if( !n->refCount() ) delete n;
-    }
-    delete m_lstChildren;
+void StyleListImpl::remove(unsigned position)
+{
+    if (position >= length())
+        return;
+    m_children.remove(position);
 }
 
 // --------------------------------------------------------------------------------
 
-void CSSSelector::print(void)
+void CSSSelector::print()
 {
     if (tagHistory)
         tagHistory->print();
@@ -326,3 +331,5 @@ DOMString CSSSelector::selectorText() const
 }
 
 // ----------------------------------------------------------------------------
+
+}

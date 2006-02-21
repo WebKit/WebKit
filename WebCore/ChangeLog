@@ -1,5 +1,165 @@
 2006-02-20  Darin Adler  <darin@apple.com>
 
+        Reviewed by Eric.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7331
+          CSS parser leaks when parsing incorrect CSS
+
+        * css/css_base.h:
+        (WebCore::CSSSelector::append): Replaced recursive implementation
+        with an iterative one.
+        (WebCore::StyleBaseImpl::StyleBaseImpl): Changed to be a Shared, not
+        a TreeShared; parents now ref children as needed. This change was
+        vital to fix the storage leaks. Also removed unused multiLength bool.
+        (WebCore::StyleBaseImpl::parent): Added. Needed now that there's no
+        TreeShared base class.
+        (WebCore::StyleBaseImpl::setParent): Ditto.
+        (WebCore::StyleBaseImpl::insertedIntoParent): Added. Hook for
+        notification when added to a parent -- used by import style rules.
+        (WebCore::StyleListImpl::StyleListImpl): Changed to use a Vector instead
+        of a QPtrList for children. Slower for dynamic insert and remove for the
+        DOM API, faster and more efficient for everything else.
+        * css/css_base.cpp:
+        (WebCore::StyleListImpl::append): Now calls insertedIntoParent
+        and uses Vector.
+        (WebCore::StyleListImpl::insert): Added. Calls insertedIntoParent.
+        (WebCore::StyleListImpl::remove): Added. 
+
+        * css/css_grammar.y: Removed obsolete "don't inline" stuff. Changed all
+        code that creates new objects to use new functions on CSSParser. For
+        CSSSelector, ValueList, Function, and Value, this means using new
+        functions with a "floating" concept, but for reference-counted classes
+        this just means asking the CSSParser to create the object instead of
+        calling new. Remove all explicit "delete", which is now handled by the
+        parser instead, which works when the Bison-generated parser fails too,
+        not just when it hits error rules in the grammar.
+
+        * css/css_ruleimpl.h:
+        * css/css_ruleimpl.cpp:
+        (WebCore::CSSImportRuleImpl::CSSImportRuleImpl): Remove call to init()
+        which kicks off style sheet loading. We now do that when we are added to
+        our parent instead of construction time. Also removed unused constructor.
+        (WebCore::CSSImportRuleImpl::insertedIntoParent): Replaced init() with this
+        function that does much the same thing at a different time. Changed code
+        that sets m_loading to do it in a simple way that doesn't need a big comment.
+        (WebCore::CSSMediaRuleImpl::insertRule): Use RefPtr.
+
+        * css/css_stylesheetimpl.cpp:
+        (StyleSheetImpl::StyleSheetImpl): Pass 0 for parent explicitly since the
+        empty constructor was removed in the other patch.
+        (CSSStyleSheetImpl::CSSStyleSheetImpl): Remove code to set up m_lstChildren;
+        that's now handled by the base class.
+        (CSSStyleSheetImpl::insertRule): Use length() instead of m_listChildren->count()
+        and insert instead of m_lstChildren->insert. Also use RefPtr for the result of
+        parseRule.
+        (CSSStyleSheetImpl::addRule): Use length() instead of m_lstChildren->count().
+        (CSSStyleSheetImpl::deleteRule): Use length() instead of checking the result of
+        take() for 0. Use remove() instead of m_lstChildren->take().
+        (CSSStyleSheetImpl::parseString): Use setStrictParsing instead of going at the
+        strictParsing data member directly.
+        (CSSStyleSheetImpl::isLoading): Use length() and item() instead of
+        m_lstChildren->first() and m_lstChildren->next().
+
+        * css/css_valueimpl.h: Add an include of QPtrList now that it's not used in
+        any included file. Also added a constructor for CSSValueImpl, now that StyleBaseImpl
+        has no empty constructor.
+        * css/css_valueimpl.cpp:
+        (WebCore::CSSMutableStyleDeclarationImpl::setProperty): Use useStrictParsing()
+        instead of looking at the strictParsing data member directly.
+        (WebCore::CSSMutableStyleDeclarationImpl::parseDeclaration): Ditto.
+        (WebCore::CSSMutableStyleDeclarationImpl::setLengthProperty): Ditto.
+        (WebCore::CSSMutableStyleDeclarationImpl::setCssText): Ditto.
+
+        * css/cssparser.h:
+        (WebCore::ValueList): Changed to use a Vector and an index rather
+        than using a QPtrList.
+        (WebCore::CSSParser): Changed parseRule to return a PassRefPtr, removed the
+        createStyleDeclaration function since that's now handled by createStyleRule,
+        made clearProperties be private, and added a suite of functions to create the
+        objects formerly made with "new" in the Bison grammar. Also put the Units enum
+        here in the header, and added an operator so they can be or'ed together while
+        staying with the enum type so we can use Units instead of int for a function arg.
+        * css/cssparser.cpp:
+        (WebCore::ValueList::~ValueList): Changed to use Vector.
+        (WebCore::CSSParser::CSSParser): Removed initializer for rule now that it's a RefPtr.
+        (WebCore::CSSParser::~CSSParser): Added code to delete all the items in the sets that
+        track floating objects. Also removed an unneeded check before callling clearProperties.
+        (WebCore::CSSParser::parseSheet): Removed "delete rule" since rule is now a RefPtr.
+        (WebCore::CSSParser::parseRule): Changed code to use rule.release() since rule is now
+        a RefPtr and this function now returns a PassRefPtr.
+        (WebCore::CSSParser::parseValue): Removed "delete rule" since rule is now a RefPtr.
+        (WebCore::CSSParser::parseColor): Ditto.
+        (WebCore::CSSParser::parseDeclaration): Ditto.
+        (WebCore::CSSParser::validUnit): Made this a static class member instead of a local
+        function so it can be used by the SVG parser code. Also updated to use the new ValueList
+        class that uses Vector.
+        (WebCore::CSSParser::parse4Values): Updated to new ValueList.
+        (WebCore::CSSParser::parseContent): Ditto.
+        (WebCore::skipCommaInDashboardRegion): Ditto.
+        (WebCore::CSSParser::parseDashboardRegions): Ditto.
+        (WebCore::CSSParser::parseShape): Ditto.
+        (WebCore::CSSParser::parseColorFromValue): Ditto.
+        (WebCore::BorderImageParseContext::commitBorderImage): Ditto.
+        (WebCore::CSSParser::createFloatingSelector): Added. Puts selector into floating set.
+        (WebCore::CSSParser::sinkFloatingSelector): Added. Removes from floating set.
+        (WebCore::CSSParser::createFloatingValueList): Added. Puts list into floating set.
+        (WebCore::CSSParser::sinkFloatingValueList): Added. Removes from floating set.
+        (WebCore::CSSParser::createFloatingFunction): Added. Puts function into floating set.
+        (WebCore::CSSParser::sinkFloatingFunction): Added. Removes from floating set.
+        (WebCore::CSSParser::sinkFloatingValue): Added. Removes function from floating set if
+        value contains a function pointer.
+        (WebCore::CSSParser::createMediaList): Added. Puts list in a vector of RefPtrs kept
+        by the parser, so the object won't end up floating.
+        (WebCore::CSSParser::createImportRule): Ditto.
+        (WebCore::CSSParser::createMediaRule): Ditto.
+        (WebCore::CSSParser::createRuleList): Ditto.
+        (WebCore::CSSParser::createStyleRule): Ditto. The properties come from the parser's
+        global state instead of from a parameter.
+
+        * khtml/xsl/xsl_stylesheetimpl.h:
+        * khtml/xsl/xsl_stylesheetimpl.cpp:
+        (WebCore::XSLStyleSheetImpl::XSLStyleSheetImpl): Initialize the new m_stylesheetDocTaken
+        bool to false. Also remove code to set up m_lstChildren since the base class takes care
+        of that now.
+        (WebCore::XSLStyleSheetImpl::~XSLStyleSheetImpl): Only call xmlFreeDoc if the document
+        was not taken by libxslt. We used to leak XSLStyleSheetImpl objects, which is why we
+        didn't notice this before; we'll try to double free without this change.
+        (WebCore::XSLStyleSheetImpl::isLoading): Use length() and item() instead of
+        m_lstChildren->first() and m_lstChildren->next().
+        (WebCore::XSLStyleSheetImpl::clearDocuments): Ditto.
+        (WebCore::XSLStyleSheetImpl::parseString): Only call xmlFreeDoc if the document was not
+        taken by libxslt. Also set m_stylesheetDocTaken for the new document.
+        (WebCore::XSLStyleSheetImpl::loadChildSheet): Use RefPtr and append instead of
+        m_lstChildren->append.
+        (WebCore::XSLStyleSheetImpl::compileStyleSheet): Set m_stylesheetDocTaken to true if
+        xsltParseStylesheetDoc is successful, since the stylesheet then owns the document.
+        (WebCore::XSLStyleSheetImpl::locateStylesheetSubResource): Use length() and item()
+        instead of m_lstChildren->first() and m_lstChildren->next().
+        (WebCore::XSLStyleSheetImpl::markAsProcessed): Set m_stylesheetDocTaken, since when
+        this is called, the document is returned to libxslt which then attaches it to a
+        stylesheet or parent document.
+
+        * ksvg2/css/KSVGCSSParser.cpp: Changed to compile as separate
+        file instead of being included in cssparser.cpp.
+        (WebCore::CSSParser::parseSVGPaint): Take out unnnecessary check
+        of number of args. Everything works fine without that check, and
+        otherwise I'd have to change it for the change in data structure.
+        (WebCore::CSSParser::parseSVGColor): Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Added KSVGCSSParser.cpp.
+
+        - fixed another leak found by run-webkit-leaks --leaks
+
+        * kwq/KWQLoader.mm: (KWQServeRequest): Delete the job if we can't do the I/O, because
+        the caller is passing ownership to us.
+
+        - updated other code to use new Vector insert and remove
+
+        * khtml/html/HTMLFormElementImpl.cpp:
+        (WebCore::removeFromVector): Changed to use Vector's remove.
+        (WebCore::HTMLFormElementImpl::registerFormElement): Changed to use Vector's insert.
+
+2006-02-20  Darin Adler  <darin@apple.com>
+
         Collaborated with Graham Dennis <Graham.Dennis@gmail.com> on this.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6831
