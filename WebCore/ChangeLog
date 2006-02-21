@@ -1,3 +1,16 @@
+2006-02-21  Vicki Murley <vicki@apple.com>
+
+        Reviewed by Adele.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7363
+        REGRESSION (r12872): Repro crash when clicking the Quick Reply box in Gmail
+
+        Add a nil check for the renderer, and refetch the renderer for the old focus node
+        after dispatching the event. 
+
+        * dom/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::setFocusNode):
+
 2006-02-21  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber Stamped by Hyatt.
