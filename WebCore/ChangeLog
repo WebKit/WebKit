@@ -1,5 +1,13 @@
 2006-02-21  Maciej Stachowiak  <mjs@apple.com>
 
+        Rubber Stamped by Hyatt.
+
+        - remove KWQSignalStubs.cpp from project.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+
+2006-02-21  Maciej Stachowiak  <mjs@apple.com>
+
         Platform build fix, not reviewed.
 
         - undef min and max, and include <algorithm> so std::min works

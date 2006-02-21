@@ -415,10 +415,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQSignalStubs.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQSlider.h"
 				>
 			</File>
