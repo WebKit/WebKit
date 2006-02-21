@@ -56,8 +56,7 @@ namespace KJS {
    */
   class NumberProtoFunc : public InternalFunctionImp {
   public:
-    NumberProtoFunc(ExecState *exec, FunctionPrototype *funcProto,
-                       int i, int len);
+    NumberProtoFunc(ExecState*, FunctionPrototype*, int i, int len, const Identifier&);
 
     virtual bool implementsCall() const;
     virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);

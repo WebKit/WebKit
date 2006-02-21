@@ -60,20 +60,20 @@ NumberPrototype::NumberPrototype(ExecState *exec,
 
   // The constructor will be added later, after NumberObjectImp has been constructed
 
-  putDirect(toStringPropertyName,       new NumberProtoFunc(exec,funcProto,NumberProtoFunc::ToString,       1), DontEnum);
-  putDirect(toLocaleStringPropertyName, new NumberProtoFunc(exec,funcProto,NumberProtoFunc::ToLocaleString, 0), DontEnum);
-  putDirect(valueOfPropertyName,        new NumberProtoFunc(exec,funcProto,NumberProtoFunc::ValueOf,        0), DontEnum);
-  putDirect(toFixedPropertyName,        new NumberProtoFunc(exec,funcProto,NumberProtoFunc::ToFixed,        1), DontEnum);
-  putDirect(toExponentialPropertyName,  new NumberProtoFunc(exec,funcProto,NumberProtoFunc::ToExponential,  1), DontEnum);
-  putDirect(toPrecisionPropertyName,    new NumberProtoFunc(exec,funcProto,NumberProtoFunc::ToPrecision,    1), DontEnum);
+  putDirectFunction(new NumberProtoFunc(exec, funcProto, NumberProtoFunc::ToString,       1, toStringPropertyName), DontEnum);
+  putDirectFunction(new NumberProtoFunc(exec, funcProto, NumberProtoFunc::ToLocaleString, 0, toLocaleStringPropertyName), DontEnum);
+  putDirectFunction(new NumberProtoFunc(exec, funcProto, NumberProtoFunc::ValueOf,        0, valueOfPropertyName), DontEnum);
+  putDirectFunction(new NumberProtoFunc(exec, funcProto, NumberProtoFunc::ToFixed,        1, toFixedPropertyName), DontEnum);
+  putDirectFunction(new NumberProtoFunc(exec, funcProto, NumberProtoFunc::ToExponential,  1, toExponentialPropertyName), DontEnum);
+  putDirectFunction(new NumberProtoFunc(exec, funcProto, NumberProtoFunc::ToPrecision,    1, toPrecisionPropertyName), DontEnum);
 }
 
 
 // ------------------------------ NumberProtoFunc ---------------------------
 
-NumberProtoFunc::NumberProtoFunc(ExecState *exec,
-                                       FunctionPrototype *funcProto, int i, int len)
-  : InternalFunctionImp(funcProto), id(i)
+NumberProtoFunc::NumberProtoFunc(ExecState*, FunctionPrototype* funcProto, int i, int len, const Identifier& name)
+   : InternalFunctionImp(funcProto, name)
+   , id(i)
 {
   putDirect(lengthPropertyName, len, DontDelete|ReadOnly|DontEnum);
 }

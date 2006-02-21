@@ -46,24 +46,22 @@ BooleanInstance::BooleanInstance(JSObject *proto)
 
 // ECMA 15.6.4
 
-BooleanPrototype::BooleanPrototype(ExecState *exec,
-                                         ObjectPrototype *objectProto,
-                                         FunctionPrototype *funcProto)
+BooleanPrototype::BooleanPrototype(ExecState* exec, ObjectPrototype* objectProto, FunctionPrototype* funcProto)
   : BooleanInstance(objectProto)
 {
   // The constructor will be added later by InterpreterImp::InterpreterImp()
 
-  putDirect(toStringPropertyName, new BooleanProtoFunc(exec,funcProto,BooleanProtoFunc::ToString,0), DontEnum);
-  putDirect(valueOfPropertyName,  new BooleanProtoFunc(exec,funcProto,BooleanProtoFunc::ValueOf,0),  DontEnum);
+  putDirectFunction(new BooleanProtoFunc(exec, funcProto, BooleanProtoFunc::ToString, 0, toStringPropertyName), DontEnum);
+  putDirectFunction(new BooleanProtoFunc(exec, funcProto, BooleanProtoFunc::ValueOf, 0, valueOfPropertyName),  DontEnum);
   setInternalValue(jsBoolean(false));
 }
 
 
 // ------------------------------ BooleanProtoFunc --------------------------
 
-BooleanProtoFunc::BooleanProtoFunc(ExecState *exec,
-                                         FunctionPrototype *funcProto, int i, int len)
-  : InternalFunctionImp(funcProto), id(i)
+BooleanProtoFunc::BooleanProtoFunc(ExecState*, FunctionPrototype* funcProto, int i, int len, const Identifier& name)
+  : InternalFunctionImp(funcProto, name)
+  , id(i)
 {
   putDirect(lengthPropertyName, len, DontDelete|ReadOnly|DontEnum);
 }

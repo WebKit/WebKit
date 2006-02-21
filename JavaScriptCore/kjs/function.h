@@ -24,7 +24,6 @@
 #ifndef KJS_FUNCTION_H
 #define KJS_FUNCTION_H
 
-#include "array_instance.h"
 #include "internal.h"
 #include <kxmlcore/OwnPtr.h>
 
@@ -56,13 +55,11 @@ namespace KJS {
     virtual CodeType codeType() const = 0;
 
     virtual Completion execute(ExecState *exec) = 0;
-    Identifier name() const { return ident; }
 
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
   protected:
     OwnPtr<Parameter> param;
-    Identifier ident;
 
   private:
     static JSValue *argumentsGetter(ExecState *, JSObject *, const Identifier &, const PropertySlot&);
@@ -98,7 +95,7 @@ namespace KJS {
     Identifier& operator[](int index);
     Identifier& operator[](const Identifier &indexIdentifier);
     bool isMapped(const Identifier &index) const;
-    void IndexToNameMap::unMap(const Identifier &index);
+    void unMap(const Identifier &index);
     
   private:
     IndexToNameMap(); // prevent construction w/o parameters
@@ -148,7 +145,7 @@ namespace KJS {
 
   class GlobalFuncImp : public InternalFunctionImp {
   public:
-    GlobalFuncImp(ExecState *exec, FunctionPrototype *funcProto, int i, int len);
+    GlobalFuncImp(ExecState*, FunctionPrototype*, int i, int len, const Identifier&);
     virtual bool implementsCall() const;
     virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
     virtual CodeType codeType() const;

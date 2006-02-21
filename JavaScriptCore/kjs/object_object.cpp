@@ -34,30 +34,36 @@ using namespace KJS;
 
 // ------------------------------ ObjectPrototype --------------------------------
 
-ObjectPrototype::ObjectPrototype(ExecState *exec,
-                                       FunctionPrototype *funcProto)
+ObjectPrototype::ObjectPrototype(ExecState* exec, FunctionPrototype* funcProto)
   : JSObject() // [[Prototype]] is null
 {
-    putDirect(toStringPropertyName, new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::ToString,               0), DontEnum);
-    putDirect(toLocaleStringPropertyName, new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::ToLocaleString,   0), DontEnum);
-    putDirect(valueOfPropertyName, new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::ValueOf,                 0), DontEnum);
-    putDirect("hasOwnProperty", new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::HasOwnProperty,             1), DontEnum);
-    putDirect("propertyIsEnumerable", new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::PropertyIsEnumerable, 1), DontEnum);
-    putDirect("isPrototypeOf", new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::IsPrototypeOf,               1), DontEnum);
+    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::ToString, 0, toStringPropertyName), DontEnum);
+    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::ToLocaleString, 0, toLocaleStringPropertyName), DontEnum);
+    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::ValueOf, 0, valueOfPropertyName), DontEnum);
+    static Identifier hasOwnPropertyPropertyName("hasOwnProperty");
+    static Identifier propertyIsEnumerablePropertyName("propertyIsEnumerable");
+    static Identifier isPrototypeOfPropertyName("isPrototypeOf");
+    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::HasOwnProperty, 1, hasOwnPropertyPropertyName), DontEnum);
+    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::PropertyIsEnumerable, 1, propertyIsEnumerablePropertyName), DontEnum);
+    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::IsPrototypeOf, 1, isPrototypeOfPropertyName), DontEnum);
+
     // Mozilla extensions
-    putDirect("__defineGetter__", new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::DefineGetter,             2), DontEnum);
-    putDirect("__defineSetter__", new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::DefineSetter,             2), DontEnum);
-    putDirect("__lookupGetter__", new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::LookupGetter,             1), DontEnum);
-    putDirect("__lookupSetter__", new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::LookupSetter,             1), DontEnum);
+    static const Identifier defineGetterPropertyName("__defineGetter__");
+    static const Identifier defineSetterPropertyName("__defineSetter__");
+    static const Identifier lookupGetterPropertyName("__lookupGetter__");
+    static const Identifier lookupSetterPropertyName("__lookupSetter__");
+    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::DefineGetter, 2, defineGetterPropertyName), DontEnum);
+    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::DefineSetter, 2, defineSetterPropertyName), DontEnum);
+    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::LookupGetter, 1, lookupGetterPropertyName), DontEnum);
+    putDirectFunction(new ObjectProtoFunc(exec, funcProto, ObjectProtoFunc::LookupSetter, 1, lookupSetterPropertyName), DontEnum);
 }
 
 
 // ------------------------------ ObjectProtoFunc --------------------------------
 
-ObjectProtoFunc::ObjectProtoFunc(ExecState *exec,
-                                       FunctionPrototype *funcProto,
-                                       int i, int len)
-  : InternalFunctionImp(funcProto), id(i)
+ObjectProtoFunc::ObjectProtoFunc(ExecState*, FunctionPrototype* funcProto, int i, int len, const Identifier& name)
+  : InternalFunctionImp(funcProto, name)
+  , id(i)
 {
   putDirect(lengthPropertyName, len, DontDelete|ReadOnly|DontEnum);
 }

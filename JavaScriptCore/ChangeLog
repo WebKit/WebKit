@@ -1,3 +1,76 @@
+2006-02-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff and Darin.
+        
+        Patch from Maks Orlovich, based on work by David Faure, hand-applied and 
+        significantly reworked by me.
+        
+        - Patch: give internal function names (KJS merge)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6279
+
+        * tests/mozilla/expected.html: Updated for newly fixed test.
+
+        * kjs/array_object.cpp:
+        (ArrayProtoFunc::ArrayProtoFunc):
+        * kjs/array_object.h:
+        * kjs/bool_object.cpp:
+        (BooleanPrototype::BooleanPrototype):
+        (BooleanProtoFunc::BooleanProtoFunc):
+        * kjs/bool_object.h:
+        * kjs/date_object.cpp:
+        (KJS::DateProtoFunc::DateProtoFunc):
+        (KJS::DateObjectImp::DateObjectImp):
+        (KJS::DateObjectFuncImp::DateObjectFuncImp):
+        * kjs/error_object.cpp:
+        (ErrorPrototype::ErrorPrototype):
+        (ErrorProtoFunc::ErrorProtoFunc):
+        * kjs/error_object.h:
+        * kjs/function.cpp:
+        (KJS::FunctionImp::FunctionImp):
+        (KJS::GlobalFuncImp::GlobalFuncImp):
+        * kjs/function.h:
+        * kjs/function_object.cpp:
+        (FunctionPrototype::FunctionPrototype):
+        (FunctionProtoFunc::FunctionProtoFunc):
+        (FunctionProtoFunc::callAsFunction):
+        * kjs/function_object.h:
+        * kjs/internal.cpp:
+        (KJS::InterpreterImp::initGlobalObject):
+        (KJS::InternalFunctionImp::InternalFunctionImp):
+        * kjs/internal.h:
+        (KJS::InternalFunctionImp::functionName):
+        * kjs/lookup.h:
+        (KJS::staticFunctionGetter):
+        (KJS::HashEntryFunction::HashEntryFunction):
+        (KJS::HashEntryFunction::implementsCall):
+        (KJS::HashEntryFunction::toBoolean):
+        (KJS::HashEntryFunction::implementsHasInstance):
+        (KJS::HashEntryFunction::hasInstance):
+        * kjs/math_object.cpp:
+        (MathFuncImp::MathFuncImp):
+        * kjs/math_object.h:
+        * kjs/number_object.cpp:
+        (NumberPrototype::NumberPrototype):
+        (NumberProtoFunc::NumberProtoFunc):
+        * kjs/number_object.h:
+        * kjs/object.cpp:
+        (KJS::JSObject::putDirectFunction):
+        (KJS::Error::create):
+        * kjs/object.h:
+        * kjs/object_object.cpp:
+        (ObjectPrototype::ObjectPrototype):
+        (ObjectProtoFunc::ObjectProtoFunc):
+        * kjs/object_object.h:
+        * kjs/regexp_object.cpp:
+        (RegExpPrototype::RegExpPrototype):
+        (RegExpProtoFunc::RegExpProtoFunc):
+        * kjs/regexp_object.h:
+        * kjs/string_object.cpp:
+        (StringProtoFunc::StringProtoFunc):
+        (StringObjectImp::StringObjectImp):
+        (StringObjectFuncImp::StringObjectFuncImp):
+        * kjs/string_object.h:
+        
 2006-02-20  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin, with help from Eric, Maciej.

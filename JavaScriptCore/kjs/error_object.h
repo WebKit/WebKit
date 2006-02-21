@@ -44,7 +44,7 @@ namespace KJS {
 
   class ErrorProtoFunc : public InternalFunctionImp {
   public:
-    ErrorProtoFunc(ExecState *exec, FunctionPrototype *funcProto);
+    ErrorProtoFunc(ExecState*, FunctionPrototype*, const Identifier&);
     virtual bool implementsCall() const;
     virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
   };

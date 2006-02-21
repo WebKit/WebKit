@@ -54,17 +54,16 @@ RegExpPrototype::RegExpPrototype(ExecState *exec,
   // The constructor will be added later in RegExpObject's constructor (?)
 
   static const Identifier execPropertyName("exec");
-  putDirect(execPropertyName,     new RegExpProtoFunc(exec,funcProto,RegExpProtoFunc::Exec,     0), DontEnum);
   static const Identifier testPropertyName("test");
-  putDirect(testPropertyName,     new RegExpProtoFunc(exec,funcProto,RegExpProtoFunc::Test,     0), DontEnum);
-  putDirect(toStringPropertyName, new RegExpProtoFunc(exec,funcProto,RegExpProtoFunc::ToString, 0), DontEnum);
+  putDirectFunction(new RegExpProtoFunc(exec, funcProto, RegExpProtoFunc::Exec, 0, execPropertyName), DontEnum);
+  putDirectFunction(new RegExpProtoFunc(exec, funcProto, RegExpProtoFunc::Test, 0, testPropertyName), DontEnum);
+  putDirectFunction(new RegExpProtoFunc(exec, funcProto, RegExpProtoFunc::ToString, 0, toStringPropertyName), DontEnum);
 }
 
 // ------------------------------ RegExpProtoFunc ---------------------------
 
-RegExpProtoFunc::RegExpProtoFunc(ExecState *exec,
-                                       FunctionPrototype *funcProto, int i, int len)
-  : InternalFunctionImp(funcProto), id(i)
+RegExpProtoFunc::RegExpProtoFunc(ExecState*, FunctionPrototype* funcProto, int i, int len, const Identifier& name)
+   : InternalFunctionImp(funcProto, name), id(i)
 {
   putDirect(lengthPropertyName, len, DontDelete|ReadOnly|DontEnum);
 }

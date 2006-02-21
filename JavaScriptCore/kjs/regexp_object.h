@@ -40,8 +40,7 @@ namespace KJS {
 
   class RegExpProtoFunc : public InternalFunctionImp {
   public:
-    RegExpProtoFunc(ExecState *exec,
-                       FunctionPrototype *funcProto, int i, int len);
+    RegExpProtoFunc(ExecState*, FunctionPrototype*, int i, int len, const Identifier&);
 
     virtual bool implementsCall() const;
     virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);

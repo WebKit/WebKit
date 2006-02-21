@@ -53,13 +53,13 @@ ErrorPrototype::ErrorPrototype(ExecState *exec,
 
   put(exec, namePropertyName,     jsString("Error"), DontEnum);
   put(exec, messagePropertyName,  jsString("Unknown error"), DontEnum);
-  putDirect(toStringPropertyName, new ErrorProtoFunc(exec,funcProto), DontEnum);
+  putDirectFunction(new ErrorProtoFunc(exec, funcProto, toStringPropertyName), DontEnum);
 }
 
 // ------------------------------ ErrorProtoFunc ----------------------------
 
-ErrorProtoFunc::ErrorProtoFunc(ExecState *exec, FunctionPrototype *funcProto)
-  : InternalFunctionImp(funcProto)
+ErrorProtoFunc::ErrorProtoFunc(ExecState*, FunctionPrototype* funcProto, const Identifier& name)
+  : InternalFunctionImp(funcProto, name)
 {
   putDirect(lengthPropertyName, jsNumber(0), DontDelete|ReadOnly|DontEnum);
 }

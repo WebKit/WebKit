@@ -454,7 +454,7 @@ void InterpreterImp::initGlobalObject()
   b_uriError = new NativeErrorImp(&globExec, funcProto, b_uriErrorPrototype);
 
   // ECMA 15.3.4.1
-  funcProto->put(&globExec, "constructor", b_Function, DontEnum);
+  funcProto->put(&globExec, constructorPropertyName, b_Function, DontEnum);
 
   global->put(&globExec, "Object", b_Object, DontEnum);
   global->put(&globExec, "Function", b_Function, DontEnum);
@@ -474,22 +474,22 @@ void InterpreterImp::initGlobalObject()
   global->put(&globExec, "TypeError",b_typeError, Internal);
   global->put(&globExec, "URIError",b_uriError, Internal);
 
-  // Set the "constructor" property of all builtin constructors
-  objProto->put(&globExec, "constructor", b_Object, DontEnum | DontDelete | ReadOnly);
-  funcProto->put(&globExec, "constructor", b_Function, DontEnum | DontDelete | ReadOnly);
-  arrayProto->put(&globExec, "constructor", b_Array, DontEnum | DontDelete | ReadOnly);
-  booleanProto->put(&globExec, "constructor", b_Boolean, DontEnum | DontDelete | ReadOnly);
-  stringProto->put(&globExec, "constructor", b_String, DontEnum | DontDelete | ReadOnly);
-  numberProto->put(&globExec, "constructor", b_Number, DontEnum | DontDelete | ReadOnly);
-  dateProto->put(&globExec, "constructor", b_Date, DontEnum | DontDelete | ReadOnly);
-  regexpProto->put(&globExec, "constructor", b_RegExp, DontEnum | DontDelete | ReadOnly);
-  errorProto->put(&globExec, "constructor", b_Error, DontEnum | DontDelete | ReadOnly);
-  b_evalErrorPrototype->put(&globExec, "constructor", b_evalError, DontEnum | DontDelete | ReadOnly);
-  b_rangeErrorPrototype->put(&globExec, "constructor", b_rangeError, DontEnum | DontDelete | ReadOnly);
-  b_referenceErrorPrototype->put(&globExec, "constructor", b_referenceError, DontEnum | DontDelete | ReadOnly);
-  b_syntaxErrorPrototype->put(&globExec, "constructor", b_syntaxError, DontEnum | DontDelete | ReadOnly);
-  b_typeErrorPrototype->put(&globExec, "constructor", b_typeError, DontEnum | DontDelete | ReadOnly);
-  b_uriErrorPrototype->put(&globExec, "constructor", b_uriError, DontEnum | DontDelete | ReadOnly);
+  // Set the constructorPropertyName property of all builtin constructors
+  objProto->put(&globExec, constructorPropertyName, b_Object, DontEnum | DontDelete | ReadOnly);
+  funcProto->put(&globExec, constructorPropertyName, b_Function, DontEnum | DontDelete | ReadOnly);
+  arrayProto->put(&globExec, constructorPropertyName, b_Array, DontEnum | DontDelete | ReadOnly);
+  booleanProto->put(&globExec, constructorPropertyName, b_Boolean, DontEnum | DontDelete | ReadOnly);
+  stringProto->put(&globExec, constructorPropertyName, b_String, DontEnum | DontDelete | ReadOnly);
+  numberProto->put(&globExec, constructorPropertyName, b_Number, DontEnum | DontDelete | ReadOnly);
+  dateProto->put(&globExec, constructorPropertyName, b_Date, DontEnum | DontDelete | ReadOnly);
+  regexpProto->put(&globExec, constructorPropertyName, b_RegExp, DontEnum | DontDelete | ReadOnly);
+  errorProto->put(&globExec, constructorPropertyName, b_Error, DontEnum | DontDelete | ReadOnly);
+  b_evalErrorPrototype->put(&globExec, constructorPropertyName, b_evalError, DontEnum | DontDelete | ReadOnly);
+  b_rangeErrorPrototype->put(&globExec, constructorPropertyName, b_rangeError, DontEnum | DontDelete | ReadOnly);
+  b_referenceErrorPrototype->put(&globExec, constructorPropertyName, b_referenceError, DontEnum | DontDelete | ReadOnly);
+  b_syntaxErrorPrototype->put(&globExec, constructorPropertyName, b_syntaxError, DontEnum | DontDelete | ReadOnly);
+  b_typeErrorPrototype->put(&globExec, constructorPropertyName, b_typeError, DontEnum | DontDelete | ReadOnly);
+  b_uriErrorPrototype->put(&globExec, constructorPropertyName, b_uriError, DontEnum | DontDelete | ReadOnly);
 
   // built-in values
   global->put(&globExec, "NaN",        jsNaN(), DontEnum|DontDelete);
@@ -497,19 +497,19 @@ void InterpreterImp::initGlobalObject()
   global->put(&globExec, "undefined",  jsUndefined(), DontEnum|DontDelete);
 
   // built-in functions
-  global->put(&globExec, "eval",       new GlobalFuncImp(&globExec, funcProto, GlobalFuncImp::Eval, 1), DontEnum);
-  global->put(&globExec, "parseInt",   new GlobalFuncImp(&globExec, funcProto, GlobalFuncImp::ParseInt, 2), DontEnum);
-  global->put(&globExec, "parseFloat", new GlobalFuncImp(&globExec, funcProto, GlobalFuncImp::ParseFloat, 1), DontEnum);
-  global->put(&globExec, "isNaN",      new GlobalFuncImp(&globExec, funcProto, GlobalFuncImp::IsNaN, 1), DontEnum);
-  global->put(&globExec, "isFinite",   new GlobalFuncImp(&globExec, funcProto, GlobalFuncImp::IsFinite, 1), DontEnum);
-  global->put(&globExec, "escape",     new GlobalFuncImp(&globExec, funcProto, GlobalFuncImp::Escape, 1), DontEnum);
-  global->put(&globExec, "unescape",   new GlobalFuncImp(&globExec, funcProto, GlobalFuncImp::UnEscape, 1), DontEnum);
-  global->put(&globExec, "decodeURI",  new GlobalFuncImp(&globExec, funcProto, GlobalFuncImp::DecodeURI, 1), DontEnum);
-  global->put(&globExec, "decodeURIComponent", new GlobalFuncImp(&globExec, funcProto, GlobalFuncImp::DecodeURIComponent, 1), DontEnum);
-  global->put(&globExec, "encodeURI",  new GlobalFuncImp(&globExec, funcProto, GlobalFuncImp::EncodeURI, 1), DontEnum);
-  global->put(&globExec, "encodeURIComponent", new GlobalFuncImp(&globExec, funcProto, GlobalFuncImp::EncodeURIComponent, 1), DontEnum);
+  global->putDirectFunction(new GlobalFuncImp(&globExec, funcProto, GlobalFuncImp::Eval, 1, "eval"), DontEnum);
+  global->putDirectFunction(new GlobalFuncImp(&globExec, funcProto, GlobalFuncImp::ParseInt, 2, "parseInt"), DontEnum);
+  global->putDirectFunction(new GlobalFuncImp(&globExec, funcProto, GlobalFuncImp::ParseFloat, 1, "parseFloat"), DontEnum);
+  global->putDirectFunction(new GlobalFuncImp(&globExec, funcProto, GlobalFuncImp::IsNaN, 1, "isNaN"), DontEnum);
+  global->putDirectFunction(new GlobalFuncImp(&globExec, funcProto, GlobalFuncImp::IsFinite, 1, "isFinite"), DontEnum);
+  global->putDirectFunction(new GlobalFuncImp(&globExec, funcProto, GlobalFuncImp::Escape, 1, "escape"), DontEnum);
+  global->putDirectFunction(new GlobalFuncImp(&globExec, funcProto, GlobalFuncImp::UnEscape, 1, "unescape"), DontEnum);
+  global->putDirectFunction(new GlobalFuncImp(&globExec, funcProto, GlobalFuncImp::DecodeURI, 1, "decodeURI"), DontEnum);
+  global->putDirectFunction(new GlobalFuncImp(&globExec, funcProto, GlobalFuncImp::DecodeURIComponent, 1, "decodeURIComponent"), DontEnum);
+  global->putDirectFunction(new GlobalFuncImp(&globExec, funcProto, GlobalFuncImp::EncodeURI, 1, "encodeURI"), DontEnum);
+  global->putDirectFunction(new GlobalFuncImp(&globExec, funcProto, GlobalFuncImp::EncodeURIComponent, 1, "encodeURIComponent"), DontEnum);
 #ifndef NDEBUG
-  global->put(&globExec, "kjsprint",   new GlobalFuncImp(&globExec, funcProto, GlobalFuncImp::KJSPrint, 1), DontEnum);
+  global->putDirectFunction(new GlobalFuncImp(&globExec, funcProto, GlobalFuncImp::KJSPrint, 1, "kjsprint"), DontEnum);
 #endif
 
   // built-in objects
@@ -710,8 +710,14 @@ InternalFunctionImp::InternalFunctionImp()
 {
 }
 
-InternalFunctionImp::InternalFunctionImp(FunctionPrototype *funcProto)
+InternalFunctionImp::InternalFunctionImp(FunctionPrototype* funcProto)
   : JSObject(funcProto)
+{
+}
+
+InternalFunctionImp::InternalFunctionImp(FunctionPrototype* funcProto, const Identifier& name)
+  : JSObject(funcProto)
+  , m_name(name)
 {
 }
 

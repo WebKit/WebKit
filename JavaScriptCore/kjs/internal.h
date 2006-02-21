@@ -348,12 +348,16 @@ namespace KJS {
   class InternalFunctionImp : public JSObject {
   public:
     InternalFunctionImp();
-    InternalFunctionImp(FunctionPrototype *funcProto);
+    InternalFunctionImp(FunctionPrototype*);
+    InternalFunctionImp(FunctionPrototype*, const Identifier&);
     bool implementsHasInstance() const;
     bool hasInstance(ExecState *exec, JSValue *value);
 
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
+    const Identifier& functionName() const { return m_name; }
+  private:
+    Identifier m_name;
   };
 
   // helper function for toInteger, toInt32, toUInt32 and toUInt16

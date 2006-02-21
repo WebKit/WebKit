@@ -22,6 +22,7 @@
 #ifndef _ARRAY_OBJECT_H_
 #define _ARRAY_OBJECT_H_
 
+#include "array_instance.h"
 #include "internal.h"
 #include "function_object.h"
 
@@ -38,7 +39,7 @@ namespace KJS {
 
   class ArrayProtoFunc : public InternalFunctionImp {
   public:
-    ArrayProtoFunc(ExecState *exec, int i, int len);
+    ArrayProtoFunc(ExecState *exec, int i, int len, const Identifier& name);
 
     virtual bool implementsCall() const;
     virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);

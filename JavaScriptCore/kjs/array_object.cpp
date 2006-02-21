@@ -433,10 +433,10 @@ bool ArrayPrototype::getOwnPropertySlot(ExecState *exec, const Identifier& prope
 
 // ------------------------------ ArrayProtoFunc ----------------------------
 
-ArrayProtoFunc::ArrayProtoFunc(ExecState *exec, int i, int len)
-  : InternalFunctionImp(
-    static_cast<FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype())
-    ), id(i)
+ArrayProtoFunc::ArrayProtoFunc(ExecState *exec, int i, int len, const Identifier& name)
+  : InternalFunctionImp(static_cast<FunctionPrototype*>
+                        (exec->lexicalInterpreter()->builtinFunctionPrototype()), name)
+  , id(i)
 {
   put(exec,lengthPropertyName,jsNumber(len),DontDelete|ReadOnly|DontEnum);
 }

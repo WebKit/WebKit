@@ -30,6 +30,8 @@
 
 namespace KJS {
 
+  class FunctionPrototype;
+
   /**
    * An entry in a hash table.
    */
@@ -130,7 +132,7 @@ namespace KJS {
         return cachedVal;
 
       const HashEntry *entry = slot.staticEntry();
-      JSValue *val = new FuncImp(exec, entry->value, entry->params);
+      JSValue *val = new FuncImp(exec, entry->value, entry->params, propertyName);
       thisObj->putDirect(propertyName, val, entry->attr);
       return val;
   }
@@ -247,7 +249,7 @@ namespace KJS {
     else
       thisObj->putValueProperty(exec, entry->value, value, attr);
   }
-  
+
 } // namespace
 
 /*
@@ -340,9 +342,11 @@ inline KJS::JSObject *cacheGlobalObject(KJS::ExecState *exec, const KJS::Identif
     }
 
 #define KJS_IMPLEMENT_PROTOFUNC(ClassFunc) \
-  class ClassFunc : public DOMFunction { \
+  class ClassFunc : public InternalFunctionImp { \
   public: \
-    ClassFunc(ExecState *exec, int i, int len) : id(i) \
+    ClassFunc(ExecState* exec, int i, int len, const Identifier& name) \
+      : InternalFunctionImp(static_cast<FunctionPrototype*>(exec->lexicalInterpreter()->builtinFunctionPrototype()), name) \
+      , id(i) \
     { \
        put(exec, lengthPropertyName, jsNumber(len), DontDelete|ReadOnly|DontEnum); \
     } \
