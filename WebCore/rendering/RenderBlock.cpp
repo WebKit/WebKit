@@ -3231,10 +3231,11 @@ int RenderBlock::getBaselineOfLastLineBox() const
         return RenderFlow::getBaselineOfLastLineBox();
 
     if (childrenInline()) {
+        if (!firstLineBox() && element() && element()->isContentEditable() && element()->rootEditableElement() == element())
+            return RenderFlow::baselinePosition(true) + borderTop() + paddingTop();
         if (m_lastLineBox)
             return m_lastLineBox->yPos() + m_lastLineBox->baseline();
-        else
-            return -1;
+        return -1;
     }
     else {
         for (RenderObject* curr = lastChild(); curr; curr = curr->previousSibling()) {

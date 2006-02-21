@@ -1,3 +1,19 @@
+2006-02-21  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        - Tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=7330
+        baselinePosition is wrong for new text field when empty
+
+        * fast/forms/input-baseline-expected.checksum: Added.
+        * fast/forms/input-baseline-expected.png: Added.
+        * fast/forms/input-baseline-expected.txt: Added.
+        * fast/forms/input-baseline.html: Added.
+        * fast/inline-block/contenteditable-baseline-expected.checksum: Added.
+        * fast/inline-block/contenteditable-baseline-expected.png: Added.
+        * fast/inline-block/contenteditable-baseline-expected.txt: Added.
+        * fast/inline-block/contenteditable-baseline.html: Added.
+
 2006-02-21  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

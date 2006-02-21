@@ -1,3 +1,18 @@
+2006-02-21  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Tests:
+        * fast/forms/input-baseline.html
+        * fast/inline-block/contenteditable-baseline.html
+
+        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=7330
+        baselinePosition is wrong for new text field when empty
+
+        * rendering/RenderBlock.cpp: (WebCore::RenderBlock::getBaselineOfLastLineBox):  
+         If we're dealing with an empty contenteditable block, then we've added height to the block to make room for the caret, 
+         and there are no children to give us the baseline.  Instead, compute the baseline for the block itself, and factor in the border and the padding.
+
 2006-02-21  Vicki Murley <vicki@apple.com>
 
         Reviewed by Adele.
