@@ -7,13 +7,13 @@
 <h3>Finding Leaks</h3>
 
 <p>
-    Memory leaks are one of our main area's of interest. Since the average user will only notice them by a growing memory
-    usage, we don't see as much bugreports on them as we'd like. This is some information about how hunt down those leaks.
+    Memory leaks are one of our main areas of interest. Since the average user will only notice them by growing memory
+    usage, we don't see as many bugreports on them as we'd like. This is some information about how to hunt down those leaks.
     The Mac OS X Developer Tools include a very useful program for leak detection. Here's how you can use it:
 </p>    
 <ol>
     <li>
-        Get a <a href="/building/build.html">fresh WebKit build</a>, ideally a Development build as this turns 
+        Get a <a href="/building/build.html">fresh WebKit build</a>, ideally a Release build as this turns 
         off the various custom allocators in WebKit.
     </li>
     <li>
@@ -32,16 +32,16 @@
 </ol>
     
 <p>
-    At this point, if you found memory leaks, the leaks program will tell you how many, and give stack traces for 
-    each. You can file this report, along with a description of what steps you took to get the leak, in 
+    At this point, if you've found memory leaks, the leaks program will tell you how many, and give stack traces for 
+    each. You can file a report, along with a description of what steps you took to get the leak, at
     <a href="http://bugzilla.opendarwin.org/">Bugzilla</a>. Put &#8220;LEAK:&#8221; at the start of the title so 
-    these bugs are easy to find.
+    that it's easy to find.
 </p>
 <p>
-    If you want to make an even better bug report, see if you can reproduce the leak by following some specific set 
-    of steps, and include that in the bug. You can also look at the backtraces in the leak report and see if you can 
-    match up ones that look the same. It&#8217;s useful to file a separate bug report for each one that looks different, 
-    and to consolidate leaks on different sites that look like they have the same stack trace. Also, check out our 
+    If you want to write an even better bug report, see if you can reproduce the leak by following some specific set 
+    of steps, and include them in the bug. You can also look at the backtraces in the leak report and see if you can 
+    eliminate duplicates. It&#8217;s useful to file a separate bug report for each unique leak, 
+    and to consolidate duplicate leaks on different sites. Also, check out our 
     <a href="/quality/reporting.html">general document about filing bugs</a>.
 </p>
 
@@ -70,8 +70,7 @@
     Fixing memory leaks is a bit of a black art. The leak checker will tell you where the leaked memory was allocated, 
     but not why it was never freed. Sometimes it will be obvious from code inspection that there is no free call to 
     match a particular allocation. Other times, things get trickier - especially when refcounting is involved. In that 
-    case, you often know that some code is holding an extra ref without releasing it, but it can be very hard to tell 
-    what code.
+    case, you know that some code has taken a ref without releasing it, but it can be very hard to tell what code.
 </p>
 <p>
     Here&#8217;s a trick often found useful for these situations. Fire up the application in <code>gdb</code>. Set 
@@ -88,4 +87,4 @@
 <?php
     include("../footer.inc");
 ?>
-\ No newline at end of file
+
