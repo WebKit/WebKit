@@ -59,3 +59,10 @@ if [ ../../kjs/grammar.y -nt "$DerivedSourcesDir/grammar.cpp" ]; then
   bison -d -p kjsyy ../../kjs/grammar.y -o "$DerivedSourcesDir/grammar.cpp"
   mv "$DerivedSourcesDir/grammar.hpp" "$DerivedSourcesDir/grammar.h"
 fi
+
+echo "Copying ICU DLLS..."
+WebKitOutputConfigDir="$WebKitUnixDir/$1"
+mkdir -p "$WebKitOutputConfigDir"
+
+cp ../../../icu/bin/icudt34.dll "$WebKitOutputConfigDir" || exit 1
+cp ../../../icu/bin/icuuc34.dll "$WebKitOutputConfigDir" || exit 1

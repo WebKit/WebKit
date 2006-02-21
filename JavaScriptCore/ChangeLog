@@ -1,3 +1,12 @@
+2006-02-20  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Fix "Copy ICU DLLs..." phase.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/JavaScriptCore/build-generated-files.sh:
+
 2006-02-19  Darin Adler  <darin@apple.com>
 
         - renamed ERROR to LOG_ERROR to fix build

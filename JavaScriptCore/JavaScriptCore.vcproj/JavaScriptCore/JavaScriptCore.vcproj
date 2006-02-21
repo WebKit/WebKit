@@ -86,8 +86,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Copying ICU DLLS..."
-				CommandLine="cp ..\..\..\icu\bin\icudt34.dll &quot;$(WebKitOutputDir)\$(ConfigurationName)&quot;&#x0D;&#x0A;cp ..\..\..\icu\bin\icuuc34.dll &quot;$(WebKitOutputDir)\$(ConfigurationName)&quot;&#x0D;&#x0A;"
+				Description=""
+				CommandLine=""
 			/>
 		</Configuration>
 		<Configuration
@@ -159,8 +159,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Copying ICU DLLS..."
-				CommandLine="cp ..\..\..\icu\bin\icudt34.dll &quot;$(WebKitOutputDir)\$(ConfigurationName)&quot;&#x0D;&#x0A;cp ..\..\..\icu\bin\icuuc34.dll &quot;$(WebKitOutputDir)\$(ConfigurationName)&quot;&#x0D;&#x0A;"
+				Description=""
+				CommandLine=""
 			/>
 		</Configuration>
 	</Configurations>
