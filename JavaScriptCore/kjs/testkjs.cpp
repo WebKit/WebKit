@@ -23,22 +23,62 @@
 
 #include "config.h"
 
+#include "HashTraits.h"
 #include "JSLock.h"
 #include "interpreter.h"
 #include "object.h"
 #include "types.h"
 #include "value.h"
 
-#include <kxmlcore/HashTraits.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <sys/time.h>
 
 using namespace KJS;
 using namespace KXMLCore;
 
-bool run(const char* fileName, Interpreter *interp);
+static void testIsInteger();
+static char* createStringWithContentsOfFile(const char* fileName);
+
+class StopWatch
+{
+public:
+    void start();
+    void stop();
+    long getElapsedMS(); // call stop() first
+    
+private:
+    timeval m_startTime;
+    timeval m_stopTime;
+};
+
+void StopWatch::start()
+{
+#if !WIN32
+    gettimeofday(&m_startTime, 0);
+#endif
+}
+
+void StopWatch::stop()
+{
+#if !WIN32
+    gettimeofday(&m_stopTime, 0);
+#endif
+}
+
+long StopWatch::getElapsedMS()
+{
+#if !WIN32
+    timeval elapsedTime;
+    timersub(&m_stopTime, &m_startTime, &elapsedTime);
+    
+    return elapsedTime.tv_sec * 1000 + lroundf(elapsedTime.tv_usec / 1000.0);
+#else
+    return 0;
+#endif
+}
 
 class GlobalImp : public JSObject {
 public:
@@ -49,7 +89,7 @@ class TestFunctionImp : public JSObject {
 public:
   TestFunctionImp(int i, int length);
   virtual bool implementsCall() const { return true; }
-  virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
+  virtual JSValue* callAsFunction(ExecState* exec, JSObject* thisObj, const List &args);
 
   enum { Print, Debug, Quit, GC, Version, Run };
 
@@ -62,69 +102,63 @@ TestFunctionImp::TestFunctionImp(int i, int length) : JSObject(), id(i)
   putDirect(lengthPropertyName,length,DontDelete|ReadOnly|DontEnum);
 }
 
-JSValue *TestFunctionImp::callAsFunction(ExecState *exec, JSObject * /*thisObj*/, const List &args)
+JSValue* TestFunctionImp::callAsFunction(ExecState* exec, JSObject*, const List &args)
 {
   switch (id) {
-  case Print:
-  case Debug:
-    fprintf(stderr,"--> %s\n",args[0]->toString(exec).UTF8String().c_str());
-    return jsUndefined();
-  case Quit:
-    exit(0);
-    return jsUndefined();
-  case GC:
-  {
-    JSLock lock;
-    Interpreter::collect();
-  }
-  case Version:
-    // We need this function for compatibility with the Mozilla JS tests but for now
-    // we don't actually do any version-specific handling
-    return jsUndefined();
-  case Run:
-    run(args[0]->toString(exec).UTF8String().c_str(), exec->dynamicInterpreter());
-    return jsUndefined();
-  default:
-    assert(0);
-  }
+    case Print:
+      printf("--> %s\n", args[0]->toString(exec).UTF8String().c_str());
+      return jsUndefined();
+    case Debug:
+      fprintf(stderr, "--> %s\n", args[0]->toString(exec).UTF8String().c_str());
+      return jsUndefined();
+    case GC:
+    {
+      JSLock lock;
+      Interpreter::collect();
+      return jsUndefined();
+    }
+    case Version:
+      // We need this function for compatibility with the Mozilla JS tests but for now
+      // we don't actually do any version-specific handling
+      return jsUndefined();
+    case Run:
+    {
+      StopWatch stopWatch;
+      char* fileName = strdup(args[0]->toString(exec).UTF8String().c_str());
+      char* script = createStringWithContentsOfFile(fileName);
+      if (!script)
+        return throwError(exec, GeneralError, "Could not open file.");
 
-  return jsUndefined();
+      stopWatch.start();
+      exec->dynamicInterpreter()->evaluate(fileName, 0, script);
+      stopWatch.stop();
+
+      free(script);
+      free(fileName);
+      
+      return jsNumber(stopWatch.getElapsedMS());
+    }
+    case Quit:
+      exit(0);
+    default:
+      abort();
+  }
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
   if (argc < 2) {
     fprintf(stderr, "Usage: testkjs file1 [file2...]\n");
     return -1;
   }
 
+  testIsInteger();
+
   bool success = true;
   {
     JSLock lock;
     
-    // Unit tests for KXMLCore::IsInteger. Don't have a better place for them now.
-    // FIXME: move these once we create a unit test directory for KXMLCore.
-    assert(IsInteger<bool>::value);
-    assert(IsInteger<char>::value);
-    assert(IsInteger<signed char>::value);
-    assert(IsInteger<unsigned char>::value);
-    assert(IsInteger<short>::value);
-    assert(IsInteger<unsigned short>::value);
-    assert(IsInteger<int>::value);
-    assert(IsInteger<unsigned int>::value);
-    assert(IsInteger<long>::value);
-    assert(IsInteger<unsigned long>::value);
-    assert(IsInteger<long long>::value);
-    assert(IsInteger<unsigned long long>::value);
-
-    assert(!IsInteger<char *>::value);
-    assert(!IsInteger<const char *>::value);
-    assert(!IsInteger<volatile char *>::value);
-    assert(!IsInteger<double>::value);
-    assert(!IsInteger<float>::value);
-    assert(!IsInteger<GlobalImp>::value);
-    
-    GlobalImp *global = new GlobalImp();
+    GlobalImp* global = new GlobalImp();
 
     // create interpreter
     Interpreter interp(global);
@@ -140,13 +174,25 @@ int main(int argc, char **argv)
     global->put(interp.globalExec(), "version", new TestFunctionImp(TestFunctionImp::Version, 1));
     global->put(interp.globalExec(), "run", new TestFunctionImp(TestFunctionImp::Run, 1));
 
+    Interpreter::setShouldPrintExceptions(true);
+    
     for (int i = 1; i < argc; i++) {
-      const char *fileName = argv[i];
+      const char* fileName = argv[i];
       if (strcmp(fileName, "-f") == 0) // mozilla test driver script uses "-f" prefix for files
         continue;
+      
+      char* script = createStringWithContentsOfFile(fileName);
+      if (!script) {
+        success = false;
+        break; // fail early so we can catch missing files
+      }
 
-      success = success && run(fileName, &interp);
+      Completion completion = interp.evaluate(fileName, 0, script);
+      success = success && completion.complType() != Throw;
+      free(script);
     }
+    
+    delete global;
   } // end block, so that interpreter gets deleted
 
   if (success)
@@ -158,52 +204,58 @@ int main(int argc, char **argv)
   return success ? 0 : 3;
 }
 
-bool run(const char* fileName, Interpreter *interp)
+static void testIsInteger()
 {
-  int code_size = 0;
-  int code_capacity = 1024;
-  char *code = (char*)malloc(code_capacity);
+  // Unit tests for KXMLCore::IsInteger. Don't have a better place for them now.
+  // FIXME: move these once we create a unit test directory for KXMLCore.
+
+  assert(IsInteger<bool>::value);
+  assert(IsInteger<char>::value);
+  assert(IsInteger<signed char>::value);
+  assert(IsInteger<unsigned char>::value);
+  assert(IsInteger<short>::value);
+  assert(IsInteger<unsigned short>::value);
+  assert(IsInteger<int>::value);
+  assert(IsInteger<unsigned int>::value);
+  assert(IsInteger<long>::value);
+  assert(IsInteger<unsigned long>::value);
+  assert(IsInteger<long long>::value);
+  assert(IsInteger<unsigned long long>::value);
+
+  assert(!IsInteger<char*>::value);
+  assert(!IsInteger<const char* >::value);
+  assert(!IsInteger<volatile char* >::value);
+  assert(!IsInteger<double>::value);
+  assert(!IsInteger<float>::value);
+  assert(!IsInteger<GlobalImp>::value);
+}
+
+static char* createStringWithContentsOfFile(const char* fileName)
+{
+  char* buffer;
   
-  FILE *f = fopen(fileName, "r");
+  int buffer_size = 0;
+  int buffer_capacity = 1024;
+  buffer = (char*)malloc(buffer_capacity);
+  
+  FILE* f = fopen(fileName, "r");
   if (!f) {
-    fprintf(stderr, "Error opening %s.\n", fileName);
-    return false;
+    fprintf(stderr, "Could not open file: %s\n", fileName);
+    return 0;
   }
   
   while (!feof(f) && !ferror(f)) {
-    code_size += fread(code + code_size, 1, code_capacity - code_size, f);
-    if (code_size == code_capacity) { // guarantees space for trailing '\0'
-      code_capacity *= 2;
-      code = (char*)realloc(code, code_capacity);
-      assert(code);
-    }
-  
-    assert(code_size < code_capacity);
-  }
-  fclose(f);
-  code[code_size] = '\0';
-
-  // run
-  Completion comp(interp->evaluate(fileName, 1, code));
-  free(code);
-
-  JSValue *exVal = comp.value();
-  if (comp.complType() == Throw) {
-    ExecState *exec = interp->globalExec();
-    const char *msg = exVal->toString(exec).UTF8String().c_str();
-    if (exVal->isObject()) {
-      JSValue *lineVal = static_cast<JSObject *>(exVal)->get(exec, "line");
-      if (lineVal->isNumber())
-        fprintf(stderr, "Exception, line %d: %s\n", (int)lineVal->toNumber(exec), msg);
-      else
-        fprintf(stderr,"Exception: %s\n",msg);
+    buffer_size += fread(buffer + buffer_size, 1, buffer_capacity - buffer_size, f);
+    if (buffer_size == buffer_capacity) { // guarantees space for trailing '\0'
+      buffer_capacity *= 2;
+      buffer = (char*)realloc(buffer, buffer_capacity);
+      assert(buffer);
     }
     
-    return false;
-  } else if (comp.complType() == ReturnValue) {
-    const char *msg = exVal->toString(interp->globalExec()).UTF8String().c_str();
-    fprintf(stderr,"Return value: %s\n",msg);
+    assert(buffer_size < buffer_capacity);
   }
+  fclose(f);
+  buffer[buffer_size] = '\0';
   
-  return true;
+  return buffer;
 }

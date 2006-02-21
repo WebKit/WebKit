@@ -1,3 +1,33 @@
+2006-02-20  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin, with help from Eric, Maciej.
+
+        - More changes to support super-accurate JS iBench. Doesn't work on 
+        Windows. (Doesn't break Windows, either.) I've filed [http://bugzilla.
+        opendarwin.org/show_bug.cgi?id= 7399] about that. 
+
+        * kjs/interpreter.cpp:
+        (KJS::Interpreter::evaluate): Print line numbers with exception output
+        * kjs/testkjs.cpp: Changed " *" to "* " because Eric says that's the 
+        way we roll with .cpp files.
+        (StopWatch::StopWatch): New class. Provides microsecond-accurate 
+        timings.
+        (StopWatch::~StopWatch):
+        (StopWatch::start):
+        (StopWatch::stop):
+        (StopWatch::getElapsedMS):
+        (TestFunctionImp::callAsFunction): Added missing return statement. 
+        Fixed up "run" to use refactored helper functions. Removed bogus 
+        return statement from "quit" case. Made "print" output to stdout 
+        instead of stderr because that makes more sense, and PERL handles 
+        stdout better.
+        (main): Factored out KXMLCore unit tests. Removed custom exception 
+        printing code because the interpreter prints exceptions for you. Added 
+        a "delete" call for the GlobalImp we allocate.
+        (testIsInteger): New function, result of refacotring.
+        (createStringWithContentsOfFile): New function, result of refactoring. 
+        Renamed "code" to "buffer" to match factored-out-ness.
+
 2006-02-20  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.
