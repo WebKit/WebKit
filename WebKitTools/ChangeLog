@@ -1,3 +1,25 @@
+2006-02-21  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=6197
+          Would like to use locally installed Apache for testing.
+
+        Added two run-webkit-tests options:
+          --http (--nohttp)  - whether to launch Apache (defaults to yes);
+          --port - which port to listen on (defaults to 8000).
+
+        Tests in LayoutTests/http are not run directly, and Apache is used instead.
+        For example, http/tests/xmlhttprequest/post-content-type.html is loaded as
+        http://127.0.0.1:8000/xmlhttprequest/post-content-type.html.
+
+        Also added support for .shtml and .text files. Text files give an empty 
+        *-expected.txt, but a correct image.
+
+        Apache only listens on the loopback interface. It writes logs to /tmp/WebKit.
+
+        * Scripts/run-webkit-tests:
+
 2006-02-21  Darin Adler  <darin@apple.com>
 
         Suggested by Mark Rowe.

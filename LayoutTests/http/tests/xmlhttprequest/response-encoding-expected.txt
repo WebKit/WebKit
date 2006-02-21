@@ -1,0 +1,21 @@
+Test for bug 5744 - correctly determine the encoding of XMLHttpRequest responses.
+
+Plain text, UTF-8 as default: Проверка
+Plain text, windows-1251 specified in HTTP headers: Проверка
+Plain text, windows-1251 specified in overrideMimeType: Проверка
+Plain text, koi8-r specified in HTTP headers, but overridden by windows-1251 in overrideMimeType: Проверка
+XML, UTF-8 as default: Проверка. responseText: <?xml version="1.0"?> <node>Проверка</node>
+XML, windows-1251 specified in XML declaration: Проверка. responseText: <?xml version="1.0" encoding="windows-1251"?> <node>Проверка</node>
+XML, koi8-r specified in XML declaration, but overridden by windows-1251 in HTTP headers: Проверка. responseText: <?xml version="1.0" encoding="koi8-r"?> <node>Проверка</node>
+XML, koi8-r specified in XML declaration, but overridden by windows-1251 in overrideMimeType: Проверка. responseText: <?xml version="1.0" encoding="koi8-r"?> <node>Проверка</node>
+XML transferred as text/plain, UTF-8 as default (ignore XML text declaration): <?xml version="1.0" encoding="koi8-r"?> <node>Проверка</node>
+Async: Plain text, UTF-8 as default: Проверка
+Async: Plain text, windows-1251 specified in HTTP headers: Проверка
+Async: Plain text, windows-1251 specified in overrideMimeType: Проверка
+Async: Plain text, koi8-r specified in HTTP headers, but overridden by windows-1251 in overrideMimeType: Проверка
+Async: XML, UTF-8 as default: Проверка. responseText: <?xml version="1.0"?> <node>Проверка</node>
+Async: XML, windows-1251 specified in XML declaration: Проверка. responseText: <?xml version="1.0" encoding="windows-1251"?> <node>Проверка</node>
+Async: XML, koi8-r specified in XML declaration, but overridden by windows-1251 in HTTP headers: Проверка. responseText: <?xml version="1.0" encoding="koi8-r"?> <node>Проверка</node>
+Async: XML, koi8-r specified in XML declaration, but overridden by windows-1251 in overrideMimeType: Проверка. responseText: <?xml version="1.0" encoding="koi8-r"?> <node>Проверка</node>
+Async: XML transferred as text/plain, UTF-8 as default (ignore XML text declaration): <?xml version="1.0" encoding="koi8-r"?> <node>Проверка</node>
+

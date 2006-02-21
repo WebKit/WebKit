@@ -1,0 +1,27 @@
+#!/usr/bin/perl -w
+
+# flush the buffers after each print
+$cfh = select (STDOUT);
+$| = 1;
+
+print "Content-Type: text/html\n\n";
+
+print "<body>\n";
+print "<script>\n";
+print "    if (window.layoutTestController)\n";
+print "        layoutTestController.dumpAsText();\n";
+print "</script>\n";
+print "<p>Test for <a href=\"http://bugzilla.opendarwin.org/show_bug.cgi?id=4820\">bug 4820</a>: hexadecimal HTML entities split across TCP packets are not parsed correctly.</p>";
+print "<p>Should be a blank page (except for this description).</p>";
+
+for ($count=1; $count<3000; $count++) {
+    print "&#x0020;&#x0020; &#x0020;&#x0020;&#x0020;&#x0020;&#x20;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;  ";
+    print "&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020; ";
+    print "&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020; &#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020; ";
+    print "&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020; ";
+    print "&#x0020;&#x0020;&#x0020;&#x0020;&#x020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020; ";
+    print "&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x020;&#x0020;&#x0020;&#x0020;&#x020;&#x0020;&#x0020;&#x0020;";
+    print "&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x20;&#x0020;&#x0020;&#x0020; &#x0020;&#x0020;&#x0020;&#x0020;&#x0020; ";
+    print "&#x0020;&#x0020;&#x0020; &#x20; &#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020;&#x0020; ";
+}
+print "</body>\n";

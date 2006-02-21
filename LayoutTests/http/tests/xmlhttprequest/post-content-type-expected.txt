@@ -1,0 +1,6 @@
+Test for bug 3565 - posting data via XMLHttpRequest doesn't work (wrong Content-Type).
+
+Should be application/xml:
+
+application/xml
+

@@ -1,0 +1,8 @@
+Test for bug 5924 - zero-length responses to XMLHTTPRequest mishandled.
+
+after creation: Uninitialized
+after setting onreadystatechange: Uninitialized
+after open(): Loading
+after send(): Completed
+Status: 200
+

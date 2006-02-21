@@ -1,0 +1,79 @@
+<html>
+<head>
+<title>Test XmlHttpRequest zero-length response handling (async)</title>
+<body>
+<p>Test for <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=5924">bug 5924</a>
+- zero-length responses to XMLHTTPRequest mishandled.</p>
+<script>
+
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    var console_messages = document.createElement("ol");
+    document.body.appendChild(console_messages);
+    
+    function log(message)
+    {
+        var item = document.createElement("li");
+        item.appendChild(document.createTextNode(message));
+        console_messages.appendChild(item);
+    }
+    
+    function get(url, async)
+    {
+        if (window.XMLHttpRequest) {
+            req = new XMLHttpRequest();
+        } else {
+            try {
+                req = new ActiveXObject("Msxml2.XMLHTTP");
+            } catch (ex) {
+                req = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+        }
+        
+        log("after creation: " + stateName(req.readyState));
+        
+        if (async)
+            req.onreadystatechange = processStateChange;
+        
+        log("after setting onreadystatechange: " + stateName(req.readyState));
+
+        req.open('GET', url, async);
+        log("after open(): " + stateName(req.readyState));
+        req.send(null);
+        log("after send(): " + stateName(req.readyState));
+
+        if (!async && req.status != 200)
+            throw ("HTTP request failed, status: " + req.status);
+        
+        return req;
+    }
+    
+    function stateName(val) {
+      if (req.readyState == 0)
+          return "Uninitialized";
+      else if (req.readyState == 1)
+          return "Loading";
+      else if (req.readyState == 2)
+          return "Loaded";
+      else if (req.readyState == 3)
+          return "Interactive";
+      else if (req.readyState == 4)
+          return "Completed";
+      else
+        return "???";
+    }
+    
+    function processStateChange(){
+      if (req.readyState < 2)
+        log("onreadystatechange: " + stateName(req.readyState));
+      else
+        log("onreadystatechange: " + stateName(req.readyState) + ". Status: " + req.status);
+    }
+    
+    // start async steps
+    get('resources/zero-length.txt', true);
+    
+</script>
+</body>
+</html>

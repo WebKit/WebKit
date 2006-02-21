@@ -1,0 +1,16 @@
+<html>
+<body>
+<p>Test for <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=3565">bug 3565</a>
+- posting data via XMLHttpRequest doesn't work (wrong Content-Type).</p>
+<p>Should be application/xml:</p>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    objXmlHttp = new XMLHttpRequest;
+    objXmlHttp.open("POST", "print-content-type.cgi", false);
+    objXmlHttp.send("");
+    document.write("<pre>" + objXmlHttp.responseText + "</pre>");
+</script>
+</body>
+</html>

@@ -1,3 +1,49 @@
+2006-02-21  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - Tests to go with http://bugzilla.opendarwin.org/show_bug.cgi?id=6197
+          Would like to use locally installed Apache for testing.
+
+        * http: Added.
+        * http/conf: Added.
+        * http/conf/httpd.conf: Added.
+        * http/conf/mime.types: Added.
+        * http/tests: Added.
+        * http/tests/incremental: Added.
+        * http/tests/incremental/.htaccess: Added.
+        * http/tests/incremental/slow-utf8-text-expected.checksum: Added.
+        * http/tests/incremental/slow-utf8-text-expected.png: Added.
+        * http/tests/incremental/slow-utf8-text-expected.txt: Added.
+        * http/tests/incremental/slow-utf8-text.text: Added.
+        * http/tests/incremental/split-hex-entities-expected.txt: Added.
+        * http/tests/incremental/split-hex-entities.html: Added.
+        * http/tests/xmlhttprequest: Added.
+        * http/tests/xmlhttprequest/post-content-type-expected.txt: Added.
+        * http/tests/xmlhttprequest/post-content-type.html: Added.
+        * http/tests/xmlhttprequest/print-content-type.cgi: Added.
+        * http/tests/xmlhttprequest/resources: Added.
+        * http/tests/xmlhttprequest/resources/.htaccess: Added.
+        * http/tests/xmlhttprequest/resources/reply.txt: Added.
+        * http/tests/xmlhttprequest/resources/reply.xml: Added.
+        * http/tests/xmlhttprequest/resources/reply2.txt: Added.
+        * http/tests/xmlhttprequest/resources/reply2.xml: Added.
+        * http/tests/xmlhttprequest/resources/reply3.txt: Added.
+        * http/tests/xmlhttprequest/resources/reply3.xml: Added.
+        * http/tests/xmlhttprequest/resources/reply4.txt: Added.
+        * http/tests/xmlhttprequest/resources/reply4.xml: Added.
+        * http/tests/xmlhttprequest/resources/reply5.txt: Added.
+        * http/tests/xmlhttprequest/resources/zero-length.txt: Added.
+        * http/tests/xmlhttprequest/response-encoding-expected.txt: Added.
+        * http/tests/xmlhttprequest/response-encoding.html: Added.
+        * http/tests/xmlhttprequest/zero-length-response-expected.txt: Added.
+        * http/tests/xmlhttprequest/zero-length-response-sync-expected.txt: Added.
+        * http/tests/xmlhttprequest/zero-length-response-sync.html: Added.
+        * http/tests/xmlhttprequest/zero-length-response.html: Added.
+        * http/tests/xmlhttprequest/interactive-state-expected.txt: Added.
+        * http/tests/xmlhttprequest/interactive-state.html: Added.
+        * http/tests/xmlhttprequest/interactive-state.cgi: Added.
+
 2006-02-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff and Darin.
