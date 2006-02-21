@@ -46,6 +46,7 @@
 #define TCMALLOC_PAGEMAP_H__
 
 #include "config.h"
+
 #if defined HAVE_STDINT_H
 #include <stdint.h>
 #elif defined HAVE_INTTYPES_H
@@ -53,6 +54,8 @@
 #else
 #include <sys/types.h>
 #endif
+
+#include <string.h>
 
 #include "kxmlcore/Assertions.h"
 
