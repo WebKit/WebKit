@@ -1,3 +1,19 @@
+2006-02-21  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Timo O.
+
+        Moved these (already private) methods into the private WebPreferences header.
+        Slightly better style than sprinkling the code with categories. 
+        
+        * WebView/WebPreferences.m:
+        (-[WebPreferences _integerValueForKey:]): Moved to WebPreferences (WebPrivate).
+        (-[WebPreferences _floatValueForKey:]): Ditto.
+        (-[WebPreferences _boolValueForKey:]): Ditto.
+        (-[WebPreferences _setBoolValue:forKey:]): Ditto.
+        (-[WebPreferences _setFloatValue:forKey:]): Ditto.
+        (-[WebPreferences _setIntegerValue:forKey:]): Ditto.
+        * WebView/WebPreferencesPrivate.h: Added the above methods.
+
 2006-02-20  Darin Adler  <darin@apple.com>
 
         Collaborated with Graham Dennis <Graham.Dennis@gmail.com> on this.

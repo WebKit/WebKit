@@ -68,17 +68,6 @@ enum { WebPreferencesVersion = 1 };
 + (NSString *)_IBCreatorID;
 @end
 
-@interface WebPreferences (WebForwardDeclarations)
-// This pseudo-category is needed so these methods can be used from within other category implementations
-// without being in the public header file.
-- (BOOL)_boolValueForKey:(NSString *)key;
-- (void)_setBoolValue:(BOOL)value forKey:(NSString *)key;
-- (int)_integerValueForKey:(NSString *)key;
-- (void)_setIntegerValue:(int)value forKey:(NSString *)key;
-- (float)_floatValueForKey:(NSString *)key;
-- (void)_setFloatValue:(float)value forKey:(NSString *)key;
-@end
-
 @implementation WebPreferences
 
 - init
@@ -276,56 +265,6 @@ NS_ENDHANDLER
     [_private->values setObject:value forKey:_key];
     if (_private->autosaves)
         [[NSUserDefaults standardUserDefaults] setObject:value forKey:_key];
-    [self _postPreferencesChangesNotification];
-}
-
-- (int)_integerValueForKey:(NSString *)key
-{
-    id o = [self _valueForKey:key];
-    return [o respondsToSelector:@selector(intValue)] ? [o intValue] : 0;
-}
-
-- (void)_setIntegerValue:(int)value forKey:(NSString *)key
-{
-    if ([self _integerValueForKey:key] == value)
-        return;
-    NSString *_key = KEY(key);
-    [_private->values _webkit_setInt:value forKey:_key];
-    if (_private->autosaves)
-        [[NSUserDefaults standardUserDefaults] setInteger:value forKey:_key];
-    [self _postPreferencesChangesNotification];
-}
-
-- (float)_floatValueForKey:(NSString *)key
-{
-    id o = [self _valueForKey:key];
-    return [o respondsToSelector:@selector(floatValue)] ? [o floatValue] : 0.0;
-}
-
-- (void)_setFloatValue:(float)value forKey:(NSString *)key
-{
-    if ([self _floatValueForKey:key] == value)
-        return;
-    NSString *_key = KEY(key);
-    [_private->values _webkit_setFloat:value forKey:_key];
-    if (_private->autosaves)
-        [[NSUserDefaults standardUserDefaults] setFloat:value forKey:_key];
-    [self _postPreferencesChangesNotification];
-}
-
-- (BOOL)_boolValueForKey:(NSString *)key
-{
-    return [self _integerValueForKey:key] != 0;
-}
-
-- (void)_setBoolValue:(BOOL)value forKey:(NSString *)key
-{
-    if ([self _boolValueForKey:key] == value)
-        return;
-    NSString *_key = KEY(key);
-    [_private->values _webkit_setBool:value forKey:_key];
-    if (_private->autosaves)
-        [[NSUserDefaults standardUserDefaults] setBool:value forKey:_key];
     [self _postPreferencesChangesNotification];
 }
 
@@ -587,6 +526,57 @@ NS_ENDHANDLER
 @end
 
 @implementation WebPreferences (WebPrivate)
+
+- (int)_integerValueForKey:(NSString *)key
+{
+    id o = [self _valueForKey:key];
+    return [o respondsToSelector:@selector(intValue)] ? [o intValue] : 0;
+}
+
+- (float)_floatValueForKey:(NSString *)key
+{
+    id o = [self _valueForKey:key];
+    return [o respondsToSelector:@selector(floatValue)] ? [o floatValue] : 0.0;
+}
+
+
+- (BOOL)_boolValueForKey:(NSString *)key
+{
+    return [self _integerValueForKey:key] != 0;
+}
+
+- (void)_setBoolValue:(BOOL)value forKey:(NSString *)key
+{
+    if ([self _boolValueForKey:key] == value)
+        return;
+    NSString *_key = KEY(key);
+    [_private->values _webkit_setBool:value forKey:_key];
+    if (_private->autosaves)
+        [[NSUserDefaults standardUserDefaults] setBool:value forKey:_key];
+    [self _postPreferencesChangesNotification];
+}
+
+- (void)_setFloatValue:(float)value forKey:(NSString *)key
+{
+    if ([self _floatValueForKey:key] == value)
+        return;
+    NSString *_key = KEY(key);
+    [_private->values _webkit_setFloat:value forKey:_key];
+    if (_private->autosaves)
+        [[NSUserDefaults standardUserDefaults] setFloat:value forKey:_key];
+    [self _postPreferencesChangesNotification];
+}
+
+- (void)_setIntegerValue:(int)value forKey:(NSString *)key
+{
+    if ([self _integerValueForKey:key] == value)
+        return;
+    NSString *_key = KEY(key);
+    [_private->values _webkit_setInt:value forKey:_key];
+    if (_private->autosaves)
+        [[NSUserDefaults standardUserDefaults] setInteger:value forKey:_key];
+    [self _postPreferencesChangesNotification];
+}
 
 - (BOOL)respectStandardStyleKeyEquivalents
 {
