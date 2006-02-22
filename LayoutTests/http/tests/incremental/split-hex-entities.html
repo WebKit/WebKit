@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 # flush the buffers after each print
-$cfh = select (STDOUT);
+select (STDOUT);
 $| = 1;
 
 print "Content-Type: text/html\n\n";

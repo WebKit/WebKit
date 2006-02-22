@@ -229,7 +229,9 @@ sub openHTTPDIfNeeded()
         "-f", "$httpdConfig",
         "-C", "DocumentRoot \"$documentRoot\"",
         "-C", "Listen $listen",
-        "-c", "TypesConfig \"$typesConfig\"");
+        "-c", "TypesConfig \"$typesConfig\"",
+        "-c", "CustomLog \"$testResultsDirectory/access_log.txt\" common",
+        "-c", "ErrorLog \"$testResultsDirectory/error_log.txt\"");
 
     sleep 1; # FIXME: need a better way to wait for Apache to bind to the port
     $httpdOpen = 1;

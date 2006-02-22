@@ -1,3 +1,17 @@
+2006-02-22  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7409
+          Some minor fixes to http tests.
+
+        * http/conf/httpd.conf: don't define CustomLog and ErrorLog - these are now 
+        passed from run-webkit-tests.
+        * http/tests/favicon.ico: Added.
+        * http/tests/incremental/slow-utf8-text.text: Remove an unused variable,
+        * http/tests/incremental/split-hex-entities.html: Ditto.
+        * http/tests/xmlhttprequest/interactive-state.cgi: Ditto.
+
 2006-02-21  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.

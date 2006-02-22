@@ -1,3 +1,12 @@
+2006-02-22  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7409
+          Some minor fixes to http tests.
+
+        * Scripts/run-webkit-tests: Pass CustomLog and ErrorLog directives to httpd.
+
 2006-02-21  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
