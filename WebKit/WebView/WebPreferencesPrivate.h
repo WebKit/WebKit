@@ -62,13 +62,6 @@
 - (void)setPDFScaleFactor:(float)scale;
 
 // Other private methods
-- (BOOL)_boolValueForKey:(NSString *)key;
-- (void)_setBoolValue:(BOOL)value forKey:(NSString *)key;
-- (int)_integerValueForKey:(NSString *)key;
-- (void)_setIntegerValue:(int)value forKey:(NSString *)key;
-- (float)_floatValueForKey:(NSString *)key;
-- (void)_setFloatValue:(float)value forKey:(NSString *)key;
-
 - (size_t)_pageCacheSize;
 - (size_t)_objectCacheSize;
 - (void)_postPreferencesChangesNotification;
