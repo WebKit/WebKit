@@ -498,15 +498,6 @@ JSValue *ArgumentsNode::evaluate(ExecState *)
   return 0; // dummy, see evaluateList()
 }
 
-// ECMA 11.2.4
-List ArgumentsNode::evaluateList(ExecState *exec)
-{
-  if (!list)
-    return List();
-
-  return list->evaluateList(exec);
-}
-
 // ------------------------------ NewExprNode ----------------------------------
 
 // ECMA 11.2.2

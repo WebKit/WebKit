@@ -500,11 +500,6 @@ ReferenceList JSObject::propList(ExecState *exec, bool recursive)
   return list;
 }
 
-JSValue *JSObject::toPrimitive(ExecState *exec, JSType preferredType) const
-{
-  return defaultValue(exec,preferredType);
-}
-
 bool JSObject::toBoolean(ExecState */*exec*/) const
 {
   return true;

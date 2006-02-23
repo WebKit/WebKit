@@ -837,12 +837,6 @@ UString &UString::operator=(const char *c)
   return *this;
 }
 
-UString &UString::operator=(const UString &str)
-{
-  m_rep = str.m_rep;
-  return *this;
-}
-
 bool UString::is8Bit() const
 {
   const UChar *u = data();
@@ -1022,16 +1016,6 @@ uint32_t UString::toStrictUInt32(bool *ok) const
     // Get next character.
     c = (++p)->unicode();
   }
-}
-
-// Rule from ECMA 15.2 about what an array index is.
-// Must exactly match string form of an unsigned integer, and be less than 2^32 - 1.
-unsigned UString::toArrayIndex(bool *ok) const
-{
-  unsigned i = toStrictUInt32(ok);
-  if (i >= 0xFFFFFFFFU && ok)
-    *ok = false;
-  return i;
 }
 
 int UString::find(const UString &f, int pos) const

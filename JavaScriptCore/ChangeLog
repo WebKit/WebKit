@@ -1,3 +1,30 @@
+2006-02-23  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin, Maciej.
+
+        - Inline some functions suggested by Shark. 2.9% speedup on super
+        accurate JS iBench.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7411
+        <rdar://problem/4448116>
+
+        * kjs/nodes.h:
+        (KJS::ArgumentsNode::evaluateList):
+        * kjs/object.cpp:
+        * kjs/object.h:
+        (KJS::ScopeChain::release):
+        (KJS::JSObject::toPrimitive):
+        * kjs/scope_chain.cpp:
+        * kjs/ustring.cpp:
+        * kjs/ustring.h:
+        (KJS::UString::toArrayIndex):
+        * kjs/value.cpp:
+        * kjs/value.h:
+        (KJS::JSValue::toObject):
+        * kxmlcore/FastMalloc.cpp:
+        (KXMLCore::TCMalloc_ThreadCache_FreeList::Push):
+        (KXMLCore::TCMalloc_ThreadCache_FreeList::Pop):
+
 2006-02-21  Eric Seidel  <eseidel@apple.com>
 
         Added *.user to ignore list.

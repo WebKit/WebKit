@@ -975,13 +975,13 @@ class TCMalloc_ThreadCache_FreeList {
   int lowwatermark() const { return lowater_; }
   void clear_lowwatermark() { lowater_ = length_; }
 
-  void Push(void* ptr) {
+  ALWAYS_INLINE void Push(void* ptr) {
     *(reinterpret_cast<void**>(ptr)) = list_;
     list_ = ptr;
     length_++;
   }
 
-  void* Pop() {
+  ALWAYS_INLINE void* Pop() {
     ASSERT(list_ != NULL);
     void* result = list_;
     list_ = *(reinterpret_cast<void**>(result));

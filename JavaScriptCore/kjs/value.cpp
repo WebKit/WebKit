@@ -115,11 +115,6 @@ uint16_t JSValue::toUInt16(ExecState *exec) const
     return static_cast<uint16_t>(d16);
 }
 
-JSObject *JSValue::toObject(ExecState *exec) const
-{
-    return JSImmediate::isImmediate(this) ? JSImmediate::toObject(this, exec) : downcast()->toObject(exec);
-}
-
 bool JSCell::getNumber(double &numericValue) const
 {
     if (!isNumber())
