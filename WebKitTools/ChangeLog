@@ -1,3 +1,12 @@
+2006-02-23  Darin Adler  <darin@apple.com>
+
+        Collaborating with Alexey.
+
+        - turn off http tests by default until we figure out how to get them
+          to run even when permissions on CGI files are 700 instead of 755
+
+        * Scripts/run-webkit-tests: Set $testHTTP to 0 instead of 1 for now.
+
 2006-02-23  Eric Seidel  <eseidel@apple.com>
 
         Add *.user to ignore list.

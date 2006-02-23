@@ -68,7 +68,7 @@ my $quiet = '';
 my $singly = 0;
 my $report10Slowest = 0;
 my $launchSafari = 1;
-my $testHTTP = 1;
+my $testHTTP = 0;
 my $httpdPort = 8000;
 my $testResultsDirectory = "/tmp/layout-test-results";
 
