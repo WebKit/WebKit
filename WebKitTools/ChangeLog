@@ -1,3 +1,10 @@
+2006-02-23  Eric Seidel  <eseidel@apple.com>
+
+        Remove binary file which shouldn't have been commited (and add to ignore list).
+
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree.ncb: Removed.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree.suo: Removed.
+
 2006-02-22  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Eric.
