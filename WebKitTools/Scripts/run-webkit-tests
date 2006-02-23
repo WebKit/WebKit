@@ -234,7 +234,9 @@ sub openHTTPDIfNeeded()
         "-C", "Listen $listen",
         "-c", "TypesConfig \"$typesConfig\"",
         "-c", "CustomLog \"$absTestResultsDirectory/access_log.txt\" common",
-        "-c", "ErrorLog \"$absTestResultsDirectory/error_log.txt\"");
+        "-c", "ErrorLog \"$absTestResultsDirectory/error_log.txt\"",
+        "-c", "User \"#" . `id -u` . "\"",  # Apache wouldn't run CGIs with permissions==700 otherwise
+        "-c", "Group \"#" . `id -g` . "\"");
 
     sleep 1; # FIXME: need a better way to wait for Apache to bind to the port
     $httpdOpen = 1;

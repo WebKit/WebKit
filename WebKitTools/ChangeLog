@@ -1,3 +1,10 @@
+2006-02-23  Alexey Proskuryakov  <ap@nypop.com>
+
+        Suggested by Mitz Pettel, reviewed by Darin.
+
+        * Scripts/run-webkit-tests: Pass User and Group directives, so that Apache
+        can run CGIs even if the permissions are 700 or 600.
+
 2006-02-23  Darin Adler  <darin@apple.com>
 
         Collaborating with Alexey.
