@@ -1,3 +1,9 @@
+2006-02-22  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Eric.
+
+        * Scripts/run-webkit-tests: Put Apache log files in the right directory.
+
 2006-02-22  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by Tim Hatcher.

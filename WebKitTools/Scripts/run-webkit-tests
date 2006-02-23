@@ -224,14 +224,17 @@ sub openHTTPDIfNeeded()
     my $documentRoot = "$testDirectory/http/tests";
     my $typesConfig = "$testDirectory/http/conf/mime.types";
     my $listen = "127.0.0.1:$httpdPort";
+    my $absTestResultsDirectory = File::Spec->rel2abs(glob $testResultsDirectory);
+
+    mkpath $absTestResultsDirectory;
 
     open2(\*HTTPDIN, \*HTTPDOUT, "/usr/sbin/httpd", 
         "-f", "$httpdConfig",
         "-C", "DocumentRoot \"$documentRoot\"",
         "-C", "Listen $listen",
         "-c", "TypesConfig \"$typesConfig\"",
-        "-c", "CustomLog \"$testResultsDirectory/access_log.txt\" common",
-        "-c", "ErrorLog \"$testResultsDirectory/error_log.txt\"");
+        "-c", "CustomLog \"$absTestResultsDirectory/access_log.txt\" common",
+        "-c", "ErrorLog \"$absTestResultsDirectory/error_log.txt\"");
 
     sleep 1; # FIXME: need a better way to wait for Apache to bind to the port
     $httpdOpen = 1;
