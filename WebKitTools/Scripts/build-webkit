@@ -83,6 +83,7 @@ if (isCygwin()) {
     $cygwinTmpPath = `cygpath -w /tmp`;
     chomp $cygwinTmpPath;
     print "Building results into: ", baseProductDir(), "\n";
+    print "WebKitOutputDir is set to: ", $ENV{"WebKitOutputDir"}, "\n";
 }
 
 # Force re-link of existing libraries if different than expected
@@ -107,6 +108,7 @@ for my $dir (@projects) {
             my $config = configuration();
 
             my $resultsFile = "$cygwinTmpPath\\buildresults.txt";
+            unlink($resultsFile);
             print "$devenvPath $dir.sln /build $config /Out $resultsFile\n";
             $result = system $devenvPath, "$dir.sln", "/build", $config, "/Out", $resultsFile;
             system "cat", $resultsFile;

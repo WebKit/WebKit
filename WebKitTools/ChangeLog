@@ -1,3 +1,17 @@
+2006-02-22  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        * DumpRenderTree/DumpRenderTree.vcproj: Added.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree: Added.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree.ncb: Added.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree.sln: Added.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree.suo: Added.
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.cpp: Added.
+        (_tmain):
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.vcproj: Added.
+        * Scripts/build-webkit: make build-webkit cleanup after itself
+
 2006-02-22  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
