@@ -2848,6 +2848,18 @@
 				RelativePath="..\..\bridge\BrowserExtension.h"
 				>
 			</File>
+			<Filter
+				Name="win"
+				>
+				<File
+					RelativePath="..\..\bridge\win\FrameWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\bridge\win\FrameWin.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="xml"

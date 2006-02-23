@@ -1,3 +1,14 @@
+2006-02-22  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Adding stub FrameWin class to expose link errors.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * bridge/win/FrameWin.cpp: Added.
+        * bridge/win/FrameWin.h: Added.
+        (WebCore::Win):
+
 2006-02-22  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Geoff.
