@@ -34,6 +34,7 @@ use strict;
 use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
+use POSIX;
 
 checkRequiredSystemConfig();
 setConfiguration();
@@ -42,10 +43,12 @@ my @options = XcodeOptions();
 
 # Build
 chdir "WebKitTools/DumpRenderTree" or die;
+my $result;
 if (isOSX()) {
-    exit system "xcodebuild", "-project", "DumpRenderTree.xcodeproj", @options;
+    $result = system "xcodebuild", "-project", "DumpRenderTree.xcodeproj", @options;
 } elsif (isCygwin()) {
-    exit buildVisualStudioProject("DumpRenderTree");
+    $result = buildVisualStudioProject("DumpRenderTree");
 } else {
     die "Building not defined for this platform!\n";
 }
+exit WEXITSTATUS($result);

@@ -2,6 +2,14 @@
 
         Reviewed by justing.
 
+        Fixed build-dumprendertree to exit with correct error codes.
+
+        * Scripts/build-dumprendertree:
+
+2006-02-22  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by justing.
+
         Update build scripts to generalize building on Win32, and allow
         building of DumpRenderTree on Win32 from build-dumprendertree.
 
