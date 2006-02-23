@@ -80,7 +80,8 @@ if (! -e "libxslt-1.1.15.win32.zip") {
     `cp -rp libxslt-1.1.15.win32 ../libxslt`;
 }
 
-if (! -e "setx_setup.exe") {
+if (! -x "/cygdrive/c/Program Files/Resource Kit/setx.exe") {
+    unlink("setx_setup.exe"); 
     print "Downloading setx_setup.exe...\n\n";
     `curl -O http://download.microsoft.com/download/win2000platform/setx/1.00.0.1/nt5/en-us/setx_setup.exe`;
     print "Instaling setx_setup.exe, please install in the default location...\n";

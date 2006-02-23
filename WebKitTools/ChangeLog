@@ -1,5 +1,13 @@
 2006-02-22  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by Tim Hatcher.
+
+        Fix install-win-extras to not try to re-install setx if installed.
+
+        * Scripts/install-win-extras:
+
+2006-02-22  Eric Seidel  <eseidel@apple.com>
+
         One more file possibly missing from previous commit?
 
         * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree.ncb:
