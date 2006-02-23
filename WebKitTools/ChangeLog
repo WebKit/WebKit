@@ -1,5 +1,18 @@
 2006-02-22  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by justing.
+
+        Update build scripts to generalize building on Win32, and allow
+        building of DumpRenderTree on Win32 from build-dumprendertree.
+
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.cpp:
+        (main):
+        * Scripts/build-dumprendertree:
+        * Scripts/build-webkit:
+        * Scripts/webkitdirs.pm:
+
+2006-02-22  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by hyatt.
 
         * DumpRenderTree/DumpRenderTree.vcproj: Added.

@@ -74,18 +74,6 @@ if (isOSX()) {
     }
 }
 
-my $devenvPath;
-my $cygwinTmpPath;
-if (isCygwin()) {
-    my $programFilesPath = `cygpath "$ENV{'PROGRAMFILES'}"`;
-    chomp $programFilesPath;
-    $devenvPath = "$programFilesPath/Microsoft Visual Studio 8/Common7/IDE/devenv.exe";
-    $cygwinTmpPath = `cygpath -w /tmp`;
-    chomp $cygwinTmpPath;
-    print "Building results into: ", baseProductDir(), "\n";
-    print "WebKitOutputDir is set to: ", $ENV{"WebKitOutputDir"}, "\n";
-}
-
 # Force re-link of existing libraries if different than expected
 removeLibraryDependingOnSVG("WebCore", $svgSupport);
 
@@ -104,15 +92,7 @@ for my $dir (@projects) {
         }
     } elsif (isCygwin()) {
         if (($dir eq "JavaScriptCore") || ($dir eq "WebCore")) {
-            chdir "$dir.vcproj" or die "Failed to cd into $dir.vcproj\n";
-            my $config = configuration();
-
-            my $resultsFile = "$cygwinTmpPath\\buildresults.txt";
-            unlink($resultsFile);
-            print "$devenvPath $dir.sln /build $config /Out $resultsFile\n";
-            $result = system $devenvPath, "$dir.sln", "/build", $config, "/Out", $resultsFile;
-            system "cat", $resultsFile;
-            chdir ".." or die;
+            $result = buildVisualStudioProject($dir);
         }
     }
     exit WEXITSTATUS($result) if WEXITSTATUS($result);

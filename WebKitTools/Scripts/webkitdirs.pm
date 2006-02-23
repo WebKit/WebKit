@@ -48,6 +48,10 @@ my $configuration;
 my $configurationProductDir;
 my $sourceDir;
 
+# Variables for Win32 support
+my $devenvPath;
+my $windowsTmpPath;
+
 sub determineSourceDir
 {
     return if $sourceDir;
@@ -308,6 +312,37 @@ sub checkRequiredSystemConfig
         }
     }
     # Win32 and other platforms may want to check for minimum config
+}
+
+sub setupCygwinEnv()
+{
+    return if !isCygwin();
+    return if $devenvPath;
+
+    my $programFilesPath = `cygpath "$ENV{'PROGRAMFILES'}"`;
+    chomp $programFilesPath;
+    $devenvPath = "$programFilesPath/Microsoft Visual Studio 8/Common7/IDE/devenv.exe";
+    $windowsTmpPath = `cygpath -w /tmp`;
+    chomp $windowsTmpPath;
+    print "Building results into: ", baseProductDir(), "\n";
+    print "WebKitOutputDir is set to: ", $ENV{"WebKitOutputDir"}, "\n";
+}
+
+sub buildVisualStudioProject($)
+{
+    my ($project) = @_;
+    setupCygwinEnv();
+
+    chdir "$project.vcproj" or die "Failed to cd into $project.vcproj\n";
+    my $config = configuration();
+
+    my $resultsFile = "$windowsTmpPath\\buildresults.txt";
+    unlink($resultsFile);
+    print "$devenvPath $project.sln /build $config /Out $resultsFile\n";
+    my $result = system $devenvPath, "$project.sln", "/build", $config, "/Out", $resultsFile;
+    system "cat", $resultsFile;
+    chdir ".." or die;
+    return $result;
 }
 
 1;

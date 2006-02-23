@@ -26,7 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "stdafx.h"
 #include "config.h"
 #include "FrameWin.h"
 #include "Page.h"
@@ -34,7 +33,7 @@
 
 using namespace WebCore;
 
-int _tmain(int argc, _TCHAR* argv[])
+int main(int argc, char* argv[])
 {
     Page *page = new Page();
     FrameWin *frame = new FrameWin(page, 0);

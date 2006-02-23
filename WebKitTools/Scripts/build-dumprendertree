@@ -42,4 +42,10 @@ my @options = XcodeOptions();
 
 # Build
 chdir "WebKitTools/DumpRenderTree" or die;
-exit system "xcodebuild", "-project", "DumpRenderTree.xcodeproj", @options;
+if (isOSX()) {
+    exit system "xcodebuild", "-project", "DumpRenderTree.xcodeproj", @options;
+} elsif (isCygwin()) {
+    exit buildVisualStudioProject("DumpRenderTree");
+} else {
+    die "Building not defined for this platform!\n";
+}
