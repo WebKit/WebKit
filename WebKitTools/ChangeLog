@@ -1,5 +1,14 @@
 2006-02-22  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by justing.
+
+        Files missing from previous commit.
+
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree.suo:
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.vcproj:
+
+2006-02-22  Eric Seidel  <eseidel@apple.com>
+
         Rubber-stamped by justing.
 
         Corrected path for DumpRenderTree.intermediate files
