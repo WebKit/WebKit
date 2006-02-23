@@ -1,5 +1,12 @@
 2006-02-22  Eric Seidel  <eseidel@apple.com>
 
+        One more file possibly missing from previous commit?
+
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree.ncb:
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree.suo:
+
+2006-02-22  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by justing.
 
         Files missing from previous commit.
