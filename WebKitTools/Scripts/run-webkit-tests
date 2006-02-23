@@ -68,7 +68,7 @@ my $quiet = '';
 my $singly = 0;
 my $report10Slowest = 0;
 my $launchSafari = 1;
-my $testHTTP = 0;
+my $testHTTP = 1;
 my $httpdPort = 8000;
 my $testResultsDirectory = "/tmp/layout-test-results";
 
@@ -235,10 +235,17 @@ sub openHTTPDIfNeeded()
         "-c", "TypesConfig \"$typesConfig\"",
         "-c", "CustomLog \"$absTestResultsDirectory/access_log.txt\" common",
         "-c", "ErrorLog \"$absTestResultsDirectory/error_log.txt\"",
-        "-c", "User \"#" . `id -u` . "\"",  # Apache wouldn't run CGIs with permissions==700 otherwise
-        "-c", "Group \"#" . `id -g` . "\"");
+        # Apache wouldn't run CGIs with permissions==700 otherwise
+        "-c", "User \"#$<\"");
 
-    sleep 1; # FIXME: need a better way to wait for Apache to bind to the port
+    my $retryCount = 20;
+    while (system("/usr/bin/curl -q --silent --stderr - --output /dev/null $listen") && $retryCount) {
+        sleep 1;
+        --$retryCount;
+    }
+    
+    die "Timed out waiting for httpd to start" unless $retryCount;
+    
     $httpdOpen = 1;
 }
 

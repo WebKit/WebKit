@@ -1,5 +1,16 @@
 2006-02-23  Alexey Proskuryakov  <ap@nypop.com>
 
+        Reviewed by Darin.
+
+        - Turn http tests back on by default.
+        - Wait for Apache to actually start serving requests.
+        - Get user id from a built-in variable rather than an external command; 
+        don't pass the group. 
+
+        * Scripts/run-webkit-tests: 
+
+2006-02-23  Alexey Proskuryakov  <ap@nypop.com>
+
         Suggested by Mitz Pettel, reviewed by Darin.
 
         * Scripts/run-webkit-tests: Pass User and Group directives, so that Apache
