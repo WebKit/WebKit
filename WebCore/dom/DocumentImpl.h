@@ -39,7 +39,7 @@
 #include <kxmlcore/HashMap.h>
 #include <qobject.h>
 #include <qptrlist.h>
-#include <qstringlist.h>
+#include <QStringList.h>
 
 class KWQAccObjectCache;
 class RenderArena;

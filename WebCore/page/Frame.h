@@ -38,7 +38,7 @@
 #include "text_granularity.h"
 #include <kurl.h>
 #include <qscrollbar.h>
-#include <qstringlist.h>
+#include <QStringList.h>
 #include <kxmlcore/Noncopyable.h>
 
 class KHTMLSettings;

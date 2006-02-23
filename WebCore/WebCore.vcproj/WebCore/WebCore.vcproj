@@ -1629,6 +1629,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\platform\QStringList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\QStringList.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\platform\Screen.h"
 				>
 			</File>

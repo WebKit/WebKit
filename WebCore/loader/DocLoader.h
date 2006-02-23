@@ -30,7 +30,7 @@
 #include <khtml_settings.h>
 #include <kio/global.h>
 #include <qptrlist.h>
-#include <qstringlist.h>
+#include <QStringList.h>
 
 class KURL;
 class KWQLoader;

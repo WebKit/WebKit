@@ -24,66 +24,7 @@
  */
 
 #include "config.h"
-#import "KWQStringList.h"
-
-#import <CoreFoundation/CoreFoundation.h>
-
-// No need to CFRelease return value
-static CFStringRef GetCFString(const QString &s)
-{
-    CFStringRef cfs = s.getCFString();
-    if (cfs == NULL) {
-        cfs = CFSTR("");
-    }
-    return cfs;
-}
-
-QStringList QStringList::split(const QString &separator, const QString &s, bool allowEmptyEntries)
-{
-    CFArrayRef cfresult;
-    QStringList result;
-
-    cfresult = CFStringCreateArrayBySeparatingStrings(NULL, GetCFString(s), GetCFString(separator));
-    
-    CFIndex cfResultSize = CFArrayGetCount(cfresult);
-
-    for (CFIndex i = 0; i < cfResultSize; i++) {
-        QString entry = QString::fromCFString((CFStringRef)CFArrayGetValueAtIndex(cfresult, i));
-        if (!entry.isEmpty() || allowEmptyEntries) {
-            result.append(entry);
-        }
-    }
-
-    CFRelease(cfresult);
-
-    return result;
-}
- 
-QStringList QStringList::split(const QChar &separator, const QString &s, bool allowEmptyEntries)
-{
-    return QStringList::split(QString(separator), s, allowEmptyEntries);
-}
-
-QString QStringList::join(const QString &separator) const
-{
-    QString result;
-    
-    for (ConstIterator i = begin(), j = ++begin(); i != end(); ++i, ++j) {
-        result += *i;
-        if (j != end()) {
-            result += separator;
-        }
-    }
-
-    return result;
-}
-
-QString QStringList::pop_front()
-{
-    QString front = first();
-    remove(begin());
-    return front;
-}
+#import "QStringList.h"
 
 NSArray *QStringList::getNSArray() const
 {

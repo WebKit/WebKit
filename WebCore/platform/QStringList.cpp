@@ -23,28 +23,48 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QSTRINGLIST_H_
-#define QSTRINGLIST_H_
+#include "config.h"
+#include "QStringList.h"
 
-#include "QString.h"
-#include "KWQValueList.h"
+QStringList QStringList::split(const QString &separator, const QString &s, bool allowEmptyEntries)
+{
+    QStringList result;
 
-#ifdef __OBJC__
-@class NSArray;
-#else
-class NSArray;
-#endif
+    int startPos = 0;
+    int endPos;
+    while ((endPos = s.find(separator, startPos)) != -1) {
+        if (allowEmptyEntries || startPos != endPos)
+            result.append(s.mid(startPos, endPos - startPos));
+        startPos = endPos + separator.length();
+    }
+    if (allowEmptyEntries || startPos != (int)s.length())
+        result.append(s.mid(startPos));
+            
+    return result;
+}
+ 
+QStringList QStringList::split(const QChar &separator, const QString &s, bool allowEmptyEntries)
+{
+    return QStringList::split(QString(separator), s, allowEmptyEntries);
+}
 
-class QStringList : public QValueList<QString> {
-public:
-    static QStringList split(const QString &, const QString &, bool allowEmptyEntries = false);
-    static QStringList split(const QChar &, const QString &, bool allowEmptyEntries = false);
-
-    QString join(const QString &) const;
+QString QStringList::join(const QString &separator) const
+{
+    QString result;
     
-    QString pop_front();
-    
-    NSArray *getNSArray() const;
-};
+    for (ConstIterator i = begin(), j = ++begin(); i != end(); ++i, ++j) {
+        result += *i;
+        if (j != end()) {
+            result += separator;
+        }
+    }
 
-#endif
+    return result;
+}
+
+QString QStringList::pop_front()
+{
+    QString front = first();
+    remove(begin());
+    return front;
+}

@@ -21,7 +21,7 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-#include <qstringlist.h>
+#include <QStringList.h>
 
 #include <kdom/core/AttrImpl.h>
 

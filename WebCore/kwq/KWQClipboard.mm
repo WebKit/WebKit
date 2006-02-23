@@ -28,7 +28,7 @@
 #import <kxmlcore/Assertions.h>
 #import "KWQFoundationExtras.h"
 #import "MacFrame.h"
-#import "KWQStringList.h"
+#import "QStringList.h"
 #import "WebCoreGraphicsBridge.h"
 #import "WebCoreImageRenderer.h"
 #import "CachedImage.h"

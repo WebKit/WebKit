@@ -26,7 +26,7 @@
 #ifndef KSSLKEYGEN_H_
 #define KSSLKEYGEN_H_
 
-#include "KWQStringList.h"
+#include "QStringList.h"
 
 class KURL;
 

@@ -1,3 +1,55 @@
+2006-02-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+
+        - move QStringList to platform, make it portable
+
+        * ForwardingHeaders/qstringlist.h: Removed.
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DocumentImpl.h:
+        * kcanvas/KCanvasFilters.h:
+        * khtml/xbl/xbl_protohandler.cpp:
+        * ksvg2/svg/SVGColorImpl.cpp:
+        * ksvg2/svg/SVGComponentTransferFunctionElementImpl.cpp:
+        * ksvg2/svg/SVGDOMImplementationImpl.h:
+        * ksvg2/svg/SVGFEBlendElementImpl.cpp:
+        * ksvg2/svg/SVGFEColorMatrixElementImpl.cpp:
+        * ksvg2/svg/SVGFEComponentTransferElementImpl.cpp:
+        * ksvg2/svg/SVGFECompositeElementImpl.cpp:
+        * ksvg2/svg/SVGFEDiffuseLightingElementImpl.cpp:
+        * ksvg2/svg/SVGFEDisplacementMapElementImpl.cpp:
+        * ksvg2/svg/SVGFEFloodElementImpl.cpp:
+        * ksvg2/svg/SVGFEGaussianBlurElementImpl.cpp:
+        * ksvg2/svg/SVGFELightElementImpl.cpp:
+        * ksvg2/svg/SVGFEMergeElementImpl.cpp:
+        * ksvg2/svg/SVGFEOffsetElementImpl.cpp:
+        * ksvg2/svg/SVGFESpecularLightingElementImpl.cpp:
+        * ksvg2/svg/SVGFETileElementImpl.cpp:
+        * ksvg2/svg/SVGFETurbulenceElementImpl.cpp:
+        * ksvg2/svg/SVGFitToViewBoxImpl.cpp:
+        * ksvg2/svg/SVGLengthListImpl.cpp:
+        * ksvg2/svg/SVGNumberListImpl.cpp:
+        * ksvg2/svg/SVGPreserveAspectRatioImpl.cpp:
+        * ksvg2/svg/SVGStringListImpl.cpp:
+        * ksvg2/svg/SVGStyledTransformableElementImpl.cpp:
+        * ksvg2/svg/SVGTransformableImpl.cpp:
+        * kwq/KWQClipboard.mm:
+        * kwq/KWQKConfigBase.mm:
+        * kwq/KWQKHTMLSettings.h:
+        * kwq/KWQKLocale.h:
+        * kwq/KWQKSSLKeyGen.h:
+        * kwq/KWQStringList.h: Removed.
+        * kwq/KWQStringList.mm: Removed.
+        * loader/DocLoader.h:
+        * page/Frame.h:
+        * platform/QStringList.cpp: Added.
+        (QStringList::split):
+        (QStringList::pop_front):
+        * platform/QStringList.h: Added.
+        * platform/mac/QStringListMac.mm: Added.
+        (QStringList::getNSArray):
+
 2006-02-21  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.

@@ -23,7 +23,7 @@
 #include "config.h"
 #if SVG_SUPPORT
 #include <qregexp.h>
-#include <qstringlist.h>
+#include <QStringList.h>
 #include <kxmlcore/RefPtr.h>
 
 #include <kdom/core/AttrImpl.h>

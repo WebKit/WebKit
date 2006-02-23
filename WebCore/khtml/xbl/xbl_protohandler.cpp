@@ -1,7 +1,7 @@
 #ifndef KHTML_NO_XBL
 
 #include "config.h"
-#include "qstringlist.h"
+#include "QStringList.h"
 #include "QString.h"
 #include "xbl_protohandler.h"
 

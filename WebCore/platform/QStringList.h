@@ -23,19 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KLOCALE_H_
-#define KLOCALE_H_
+#ifndef QSTRINGLIST_H_
+#define QSTRINGLIST_H_
 
-#include "QStringList.h"
+#include "QString.h"
+#include "KWQValueList.h"
 
-QString inputElementAltText();
-QString resetButtonDefaultLabel();
-QString searchableIndexIntroduction();
-QString submitButtonDefaultLabel();
+#ifdef __APPLE__
+#ifdef __OBJC__
+@class NSArray;
+#else
+class NSArray;
+#endif
+#endif
 
-class KLocale {
+class QStringList : public QValueList<QString> {
 public:
-    static QString language();
+    static QStringList split(const QString &, const QString &, bool allowEmptyEntries = false);
+    static QStringList split(const QChar &, const QString &, bool allowEmptyEntries = false);
+
+    QString join(const QString &) const;
+    
+    QString pop_front();
+    
+#ifdef __APPLE__
+    NSArray *getNSArray() const;
+#endif
 };
 
 #endif

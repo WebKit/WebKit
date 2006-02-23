@@ -25,7 +25,7 @@
 #if SVG_SUPPORT
 
 #include "DOMImplementationImpl.h"
-#include <qstringlist.h>
+#include <QStringList.h>
 
 namespace WebCore
 {

@@ -30,7 +30,7 @@
 #import "KWQExceptions.h"
 #import "KWQKHTMLSettings.h"
 #import "KWQLogging.h"
-#import "KWQStringList.h"
+#import "QStringList.h"
 #import "WebCoreSettings.h"
 #import "WebCoreViewFactory.h"
 

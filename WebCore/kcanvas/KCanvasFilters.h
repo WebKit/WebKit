@@ -28,7 +28,7 @@
 #include "KCanvasResources.h"
 #include "FloatSize.h"
 #include "Color.h"
-#include <qstringlist.h>
+#include <QStringList.h>
 
 #ifdef __OBJC__
 @class CIFilter;
