@@ -1,3 +1,19 @@
+2006-02-23  Vicki Murley <vicki@apple.com>
+
+        Reviewed by Hyatt.
+ 
+        - fix <rdar://problem/4456004> onbeforeunload should cancel, and 
+        <rdar://problem/4453579> REGRESSION (TOT): onbeforeunload is broken (7421)
+
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::shouldClose): Onbeforeunload is a non-bubbling window
+        event, so we should be using handleWindowEvent rather than dispatching a 
+        generic event on the body. It seems this only worked before because of incorrect
+        code in other parts of the tree. 
+        * dom/dom2_eventsimpl.cpp:
+        (WebCore::BeforeUnloadEventImpl::BeforeUnloadEventImpl): for this constructor,
+        pass true for the cancel parameter
+
 2006-02-22  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

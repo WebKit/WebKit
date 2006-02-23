@@ -3499,8 +3499,8 @@ bool MacFrame::shouldClose()
 
     RefPtr<BeforeUnloadEventImpl> event = new BeforeUnloadEventImpl;
     event->setTarget(doc.get());
-    int exception = 0;
-    body->dispatchGenericEvent(event, exception, true);
+    doc->handleWindowEvent(event.get(), false);
+
     if (!event->defaultPrevented() && doc)
         doc->defaultEventHandler(event.get());
     if (event->result().isNull())

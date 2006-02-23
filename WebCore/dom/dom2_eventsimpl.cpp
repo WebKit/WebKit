@@ -639,7 +639,7 @@ ClipboardImpl::~ClipboardImpl()
 // -----------------------------------------------------------------------------
 
 BeforeUnloadEventImpl::BeforeUnloadEventImpl()
-    : EventImpl(beforeunloadEvent, false, false)
+    : EventImpl(beforeunloadEvent, false, true)
 {
 }
 
