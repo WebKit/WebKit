@@ -1,5 +1,9 @@
 2006-02-23  Eric Seidel  <eseidel@apple.com>
 
+        Add *.user to ignore list.
+
+2006-02-23  Eric Seidel  <eseidel@apple.com>
+
         Remove binary file which shouldn't have been commited (and add to ignore list).
 
         * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree.ncb: Removed.

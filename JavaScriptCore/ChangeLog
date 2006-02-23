@@ -1,5 +1,9 @@
 2006-02-21  Eric Seidel  <eseidel@apple.com>
 
+        Added *.user to ignore list.
+
+2006-02-21  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by ggaren.
 
         Add grammarWrapper.cpp to work around visual studio bug plaguing buildbot.
