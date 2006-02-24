@@ -1,3 +1,83 @@
+2006-02-23  David Hyatt  <hyatt@apple.com>
+
+        Rename FontDef to FontDescription and move it into the platform directory.
+
+        Reviewed by darin
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::attributedString):
+        * css/css_computedstyle.cpp:
+        (WebCore::CSSComputedStyleDeclarationImpl::getPropertyCSSValue):
+        * css/css_valueimpl.cpp:
+        (WebCore::CSSPrimitiveValueImpl::computeLengthFloat):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::checkForTextSizeAdjust):
+        (WebCore::CSSStyleSelector::checkForGenericFamilyChange):
+        (WebCore::CSSStyleSelector::setFontSize):
+        * css/cssstyleselector.h:
+        * dom/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::recalcStyle):
+        * editing/visible_text.cpp:
+        (khtml::TextIterator::exitNode):
+        * platform/FontDescription.h: Added.
+        (WebCore::FontDescription::):
+        (WebCore::FontDescription::FontDescription):
+        (WebCore::FontDescription::operator!=):
+        (WebCore::FontDescription::family):
+        (WebCore::FontDescription::firstFamily):
+        (WebCore::FontDescription::specifiedSize):
+        (WebCore::FontDescription::computedSize):
+        (WebCore::FontDescription::italic):
+        (WebCore::FontDescription::computedPixelSize):
+        (WebCore::FontDescription::smallCaps):
+        (WebCore::FontDescription::isAbsoluteSize):
+        (WebCore::FontDescription::weight):
+        (WebCore::FontDescription::genericFamily):
+        (WebCore::FontDescription::usePrinterFont):
+        (WebCore::FontDescription::setFamily):
+        (WebCore::FontDescription::setComputedSize):
+        (WebCore::FontDescription::setSpecifiedSize):
+        (WebCore::FontDescription::setItalic):
+        (WebCore::FontDescription::setSmallCaps):
+        (WebCore::FontDescription::setIsAbsoluteSize):
+        (WebCore::FontDescription::setWeight):
+        (WebCore::FontDescription::setGenericFamily):
+        (WebCore::FontDescription::setUsePrinterFont):
+        (WebCore::FontDescription::operator==):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::widthFromCache):
+        (WebCore::RenderText::trimmedMinMaxWidth):
+        * rendering/bidi.cpp:
+        (khtml::RenderBlock::computeHorizontalPositionsForLine):
+        * rendering/font.cpp:
+        (khtml::Font::selectionRectForText):
+        (khtml::Font::drawHighlightForText):
+        (khtml::Font::drawText):
+        (khtml::Font::update):
+        * rendering/font.h:
+        (WebCore::Font::Font):
+        (WebCore::Font::operator==):
+        (WebCore::Font::fontDescription):
+        (WebCore::Font::isSmallCaps):
+        (WebCore::Font::wordSpacing):
+        (WebCore::Font::floatWidth):
+        (WebCore::Font::checkSelectionPoint):
+        (WebCore::Font::width):
+        * rendering/render_line.cpp:
+        (WebCore::InlineFlowBox::placeBoxesHorizontally):
+        * rendering/render_list.cpp:
+        (RenderListItem::getAbsoluteRepaintRect):
+        * rendering/render_style.h:
+        (khtml::RenderStyle::wordSpacing):
+        (khtml::RenderStyle::letterSpacing):
+        (khtml::RenderStyle::setFontDescription):
+        (khtml::RenderStyle::setWordSpacing):
+        (khtml::RenderStyle::setLetterSpacing):
+        * rendering/render_theme_mac.mm:
+        (WebCore::RenderThemeMac::setFontFromControlSize):
+
 2006-02-23  Maciej Stachowiak  <mjs@apple.com>
 
         - fix build by making some pointless changes to files that Xcode doesn't 

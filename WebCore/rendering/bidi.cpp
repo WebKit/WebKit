@@ -860,7 +860,7 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, Bidi
             int rtLength = rt->length();
             if (rtLength != 0) {
                 if (r->start == 0 && needsWordSpacing && rt->text()[r->start].isSpace())
-                    effectiveWidth += rt->htmlFont(m_firstLine)->getWordSpacing();
+                    effectiveWidth += rt->htmlFont(m_firstLine)->wordSpacing();
                 needsWordSpacing = !rt->text()[r->stop-1].isSpace() && r->stop == rtLength;          
             }
             if (!r->compact) {

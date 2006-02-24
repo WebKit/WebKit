@@ -421,7 +421,7 @@ void TextIterator::exitNode()
             RenderStyle *style = renderer->style();
             if (style) {
                 int bottomMargin = renderer->collapsedMarginBottom();
-                int fontSize = style->htmlFont().getFontDef().computedPixelSize();
+                int fontSize = style->htmlFont().fontDescription().computedPixelSize();
                 if (bottomMargin * 2 >= fontSize) {
                     addNewline = true;
                 }

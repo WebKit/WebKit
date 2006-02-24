@@ -318,7 +318,7 @@ IntRect RenderListItem::getAbsoluteRepaintRect()
     IntRect result = RenderBlock::getAbsoluteRepaintRect();
     if (m_marker && !m_marker->isInside()) {
         // This can be a sloppy and imprecise offset as long as it's always too big.
-        int pixHeight = style()->htmlFont().getFontDef().computedPixelSize();
+        int pixHeight = style()->htmlFont().fontDescription().computedPixelSize();
         int offset = pixHeight*2/3;
         bool haveImage = m_marker->listImage() && !m_marker->listImage()->isErrorImage();
         if (haveImage)

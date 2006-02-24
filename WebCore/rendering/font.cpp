@@ -36,7 +36,7 @@ IntRect Font::selectionRectForText(int x, int y, int h, int tabWidth, int xpos,
                       QChar *str, int slen, int pos, int len, int toAdd,
                       bool rtl, bool visuallyOrdered, int from, int to) const
 {
-    return fm.selectionRectForText(x, y, h, tabWidth, xpos, str + pos, std::min(slen - pos, len), from, to, toAdd, rtl, visuallyOrdered, letterSpacing, wordSpacing, fontDef.smallCaps);
+    return fm.selectionRectForText(x, y, h, tabWidth, xpos, str + pos, std::min(slen - pos, len), from, to, toAdd, rtl, visuallyOrdered, m_letterSpacing, m_wordSpacing, m_fontDescription.smallCaps());
 
 }
 
@@ -45,23 +45,23 @@ void Font::drawHighlightForText( QPainter *p, int x, int y, int h, int tabWidth,
                      int toAdd, QPainter::TextDirection d, bool visuallyOrdered, int from, int to, Color bg) const
 {
     p->drawHighlightForText(x, y, h, tabWidth, xpos, str + pos, std::min(slen - pos, len), from, to, toAdd, bg, d, visuallyOrdered,
-                letterSpacing, wordSpacing, fontDef.smallCaps);
+                m_letterSpacing, m_wordSpacing, m_fontDescription.smallCaps());
 }
                      
 void Font::drawText( QPainter *p, int x, int y, int tabWidth, int xpos, QChar *str, int slen, int pos, int len,
                      int toAdd, QPainter::TextDirection d, bool visuallyOrdered, int from, int to, Color bg ) const
 {
     p->drawText(x, y, tabWidth, xpos, str + pos, std::min(slen - pos, len), from, to, toAdd, bg, d, visuallyOrdered,
-                letterSpacing, wordSpacing, fontDef.smallCaps);
+                m_letterSpacing, m_wordSpacing, m_fontDescription.smallCaps());
 }
 
 void Font::update() const
 {
-    f.setFirstFamily(fontDef.family);
-    f.setItalic(fontDef.italic);
-    f.setWeight(fontDef.weight);
-    f.setPixelSize(fontDef.computedPixelSize());
-    f.setPrinterFont(fontDef.usePrinterFont);
+    f.setFirstFamily(m_fontDescription.family());
+    f.setItalic(m_fontDescription.italic());
+    f.setWeight(m_fontDescription.weight());
+    f.setPixelSize(m_fontDescription.computedPixelSize());
+    f.setPrinterFont(m_fontDescription.usePrinterFont());
 
     fm.setFont(f);
 }

@@ -793,25 +793,25 @@ void DocumentImpl::recalcStyle(StyleChange change)
         _style->setVisuallyOrdered(visuallyOrdered);
         // ### make the font stuff _really_ work!!!!
 
-        FontDef fontDef;
+        FontDescription fontDescription;
         QFont f;
-        fontDef.family = *(f.firstFamily());
-        fontDef.italic = f.italic();
-        fontDef.weight = f.weight();
-        fontDef.usePrinterFont = printing();
+        fontDescription.setFamily(*(f.firstFamily()));
+        fontDescription.setItalic(f.italic());
+        fontDescription.setWeight(f.weight());
+        fontDescription.setUsePrinterFont(printing());
         if (m_view) {
             const KHTMLSettings *settings = m_view->frame()->settings();
             if (printing() && !settings->shouldPrintBackgrounds())
                 _style->setForceBackgroundsToWhite(true);
             QString stdfont = settings->stdFontName();
             if (!stdfont.isEmpty()) {
-                fontDef.family.setFamily(stdfont);
-                fontDef.family.appendFamily(0);
+                fontDescription.firstFamily().setFamily(stdfont);
+                fontDescription.firstFamily().appendFamily(0);
             }
-            m_styleSelector->setFontSize(fontDef, m_styleSelector->fontSizeForKeyword(CSS_VAL_MEDIUM, inCompatMode()));
+            m_styleSelector->setFontSize(fontDescription, m_styleSelector->fontSizeForKeyword(CSS_VAL_MEDIUM, inCompatMode()));
         }
 
-        _style->setFontDef(fontDef);
+        _style->setFontDescription(fontDescription);
         _style->htmlFont().update();
         if (inCompatMode())
             _style->setHtmlHacks(true); // enable html specific rendering tricks

@@ -1190,8 +1190,8 @@ public:
     ETextTransform textTransform() const { return inherited_flags._text_transform; }
     int textDecorationsInEffect() const { return inherited_flags._text_decorations; }
     int textDecoration() const { return visual->textDecoration; }
-    int wordSpacing() const { return inherited->font.wordSpacing; }
-    int letterSpacing() const { return inherited->font.letterSpacing; }
+    int wordSpacing() const { return inherited->font.m_wordSpacing; }
+    int letterSpacing() const { return inherited->font.m_letterSpacing; }
 
     EDirection direction() const { return inherited_flags._direction; }
     Length lineHeight() const { return inherited->line_height; }
@@ -1417,10 +1417,9 @@ public:
     void setTableLayout(ETableLayout v) {  noninherited_flags._table_layout = v; }
     void ssetColSpan(short v) { SET_VAR(visual,colspan,v) }
 
-    bool setFontDef(const khtml::FontDef & v) {
-        // bah, this doesn't compare pointers. broken! (Dirk)
-        if (!(inherited->font.fontDef == v)) {
-            inherited.access()->font = Font( v, inherited->font.letterSpacing, inherited->font.wordSpacing );
+    bool setFontDescription(const FontDescription& v) {
+        if (inherited->font.m_fontDescription != v) {
+            inherited.access()->font = Font(v, inherited->font.m_letterSpacing, inherited->font.m_wordSpacing);
             return true;
         }
         return false;
@@ -1438,8 +1437,8 @@ public:
 
     void setWhiteSpace(EWhiteSpace v) { inherited_flags._white_space = v; }
 
-    void setWordSpacing(int v) { SET_VAR(inherited,font.wordSpacing,v) }
-    void setLetterSpacing(int v) { SET_VAR(inherited,font.letterSpacing,v) }
+    void setWordSpacing(int v) { SET_VAR(inherited,font.m_wordSpacing,v) }
+    void setLetterSpacing(int v) { SET_VAR(inherited,font.m_letterSpacing,v) }
 
     void clearBackgroundLayers() { background.access()->m_background = BackgroundLayer(); }
     void inheritBackgroundLayers(const BackgroundLayer& parent) { background.access()->m_background = parent; }

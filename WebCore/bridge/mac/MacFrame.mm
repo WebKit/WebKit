@@ -2519,7 +2519,7 @@ NSAttributedString *MacFrame::attributedString(NodeImpl *_start, int startOffset
                     
                     // In certain cases, emit a paragraph break.
                     int bottomMargin = renderer->collapsedMarginBottom();
-                    int fontSize = style->htmlFont().getFontDef().computedPixelSize();
+                    int fontSize = style->htmlFont().fontDescription().computedPixelSize();
                     if (bottomMargin * 2 >= fontSize) {
                         if (!hasParagraphBreak) {
                             text += '\n';

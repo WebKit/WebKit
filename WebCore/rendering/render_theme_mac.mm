@@ -219,15 +219,16 @@ void RenderThemeMac::setSizeFromFont(RenderStyle* style, const IntSize* sizes) c
 
 void RenderThemeMac::setFontFromControlSize(CSSStyleSelector* selector, RenderStyle* style, NSControlSize controlSize) const
 {
-    FontDef fontDef;
-    fontDef.isAbsoluteSize = true;
-    fontDef.genericFamily = FontDef::eSansSerif;
+    FontDescription fontDescription;
+    fontDescription.setIsAbsoluteSize(true);
+    fontDescription.setGenericFamily(FontDescription::SerifFamily);
     
     NSFont* font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:controlSize]];
-    fontDef.family.setFamily(QString::fromNSString([font fontName]));
-    fontDef.computedSize = fontDef.specifiedSize = [font pointSize];
+    fontDescription.firstFamily().setFamily(QString::fromNSString([font fontName]));
+    fontDescription.setComputedSize([font pointSize]);
+    fontDescription.setSpecifiedSize([font pointSize]);
 
-    if (style->setFontDef(fontDef))
+    if (style->setFontDescription(fontDescription))
         style->htmlFont().update();
 }
 

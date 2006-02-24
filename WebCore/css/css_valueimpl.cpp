@@ -839,8 +839,8 @@ double CSSPrimitiveValueImpl::computeLengthFloat(RenderStyle *style, bool applyZ
     switch(type) {
     case CSSPrimitiveValue::CSS_EMS:
         factor = applyZoomFactor ?
-          style->htmlFont().getFontDef().computedSize :
-          style->htmlFont().getFontDef().specifiedSize;
+          style->htmlFont().fontDescription().computedSize() :
+          style->htmlFont().fontDescription().specifiedSize();
         break;
     case CSSPrimitiveValue::CSS_EXS: {
         // FIXME: We have a bug right now where the zoom will be applied multiple times to EX units.
