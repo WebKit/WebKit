@@ -1,5 +1,32 @@
 2006-02-24  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Eric.
+
+        - add link stubs for symbols only referenced from the link stubs file
+
+        * platform/win/TemporaryLinkStubs.cpp:
+        (KWQFileButton::focusPolicy):
+        (QLineEdit::checksDescendantsForFocus):
+        (KWQFileButton::baselinePosition):
+        (QSlider::~QSlider):
+        (QListBox::~QListBox):
+        (KWQFileButton::frameGeometry):
+        (KWQFileButton::~KWQFileButton):
+        (QTextEdit::focusPolicy):
+        (QSlider::focusPolicy):
+        (QListBox::setEnabled):
+        (QListBox::checksDescendantsForFocus):
+        (QListBox::focusPolicy):
+        (QLineEdit::baselinePosition):
+        (QSlider::sizeHint):
+        (QLineEdit::~QLineEdit):
+        (QTextEdit::~QTextEdit):
+        (QTextEdit::checksDescendantsForFocus):
+        (QLineEdit::focusPolicy):
+        (QScrollBar::~QScrollBar):
+
+2006-02-24  Maciej Stachowiak  <mjs@apple.com>
+
         Rubber stamped by Eric.
 
         - fix up font.h inclues to be Font.h to fix build.

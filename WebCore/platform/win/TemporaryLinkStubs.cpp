@@ -227,3 +227,27 @@ void  QLineEdit::setAlignment(enum Qt::AlignmentFlags) { notImplemented(); }
 void  ScrollView::updateContents(const IntRect&,bool) { notImplemented(); }
 float  QFontMetrics::floatWidth(class QChar const *,int,int,int,int,int,int,int,bool)const  { notImplemented(); return 0; }
 void  ScrollView::setHScrollBarMode(ScrollBarMode) { notImplemented(); }
+enum WebCore::Widget::FocusPolicy  KWQFileButton::focusPolicy(void)const  { notImplemented(); return NoFocus; }
+void  QListBox::setFont(class QFont const &) { notImplemented(); }
+bool  QLineEdit::checksDescendantsForFocus(void)const  { notImplemented(); return false; }
+int  KWQFileButton::baselinePosition(int)const  { notImplemented(); return 0; }
+QSlider::~QSlider(void) { notImplemented(); }
+void  KWQFileButton::setFrameGeometry(class WebCore::IntRect const &) { notImplemented(); }
+QListBox::~QListBox(void) { notImplemented(); }
+class WebCore::IntRect  KWQFileButton::frameGeometry(void)const  { notImplemented(); return IntRect(); }
+void  QTextEdit::setFont(class QFont const &) { notImplemented(); }
+void  QLineEdit::setFont(class QFont const &) { notImplemented(); }
+KWQFileButton::~KWQFileButton(void) { notImplemented(); }
+enum WebCore::Widget::FocusPolicy  QTextEdit::focusPolicy(void)const  { notImplemented(); return NoFocus; }
+enum WebCore::Widget::FocusPolicy  QSlider::focusPolicy(void)const  { notImplemented(); return NoFocus; }
+void  QSlider::setFont(class QFont const &) { notImplemented(); }
+void  QListBox::setEnabled(bool) { notImplemented(); }
+bool  QListBox::checksDescendantsForFocus(void)const  { notImplemented(); return 0; }
+enum WebCore::Widget::FocusPolicy  QListBox::focusPolicy(void)const  { notImplemented(); return NoFocus; }
+int  QLineEdit::baselinePosition(int)const  { notImplemented(); return 0; }
+class WebCore::IntSize  QSlider::sizeHint(void)const  { notImplemented(); return IntSize(); }
+QLineEdit::~QLineEdit(void) { notImplemented(); }
+QTextEdit::~QTextEdit(void) { notImplemented(); }
+bool  QTextEdit::checksDescendantsForFocus(void)const  { notImplemented(); return false; }
+enum WebCore::Widget::FocusPolicy  QLineEdit::focusPolicy(void)const  { notImplemented(); return NoFocus; }
+QScrollBar::~QScrollBar(void) { notImplemented(); }
