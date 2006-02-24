@@ -28,12 +28,6 @@
 
 namespace DOM {
 
-const unsigned KeyboardEvent::DOM_KEY_LOCATION_STANDARD;
-const unsigned KeyboardEvent::DOM_KEY_LOCATION_LEFT;
-const unsigned KeyboardEvent::DOM_KEY_LOCATION_RIGHT;
-const unsigned KeyboardEvent::DOM_KEY_LOCATION_NUMPAD;
-const unsigned KeyboardEvent::DOM_KEY_LOCATION_UNKNOWN;
-
 EventListener::EventListener()
 {
 }
