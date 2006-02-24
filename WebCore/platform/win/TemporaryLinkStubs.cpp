@@ -58,7 +58,6 @@ class WebCore::Cursor const & WebCore::westResizeCursor(void) { notImplemented()
 bool  WebCore::Widget::isEnabled(void)const  { notImplemented(); return 0; }
 bool __cdecl KWQServeRequest(class WebCore::Loader *,class WebCore::DocLoader *,class KIO::TransferJob *) { notImplemented(); return 0; }
 void  QTextEdit::setText(class WebCore::String const &) { notImplemented(); }
-int  QScrollView::childY(class WebCore::Widget *) { notImplemented(); return 0; }
 class WebCore::Cursor const & __cdecl WebCore::northWestResizeCursor(void) { notImplemented(); return localCursor; }
 void  WebCore::Widget::paint(class WebCore::QPainter *,class WebCore::IntRect const &) { notImplemented(); }
 void  WebCore::QPainter::addRoundedRectClip(class WebCore::IntRect const &,class WebCore::IntSize const &,class WebCore::IntSize const &,class WebCore::IntSize const &,class WebCore::IntSize const &) { notImplemented(); }
@@ -220,7 +219,6 @@ void  KWQFileButton::setFilename(class QString const &) { notImplemented(); }
 QFontMetrics::QFontMetrics(class QFont const &) { notImplemented(); }
 int  QFontMetrics::lineSpacing(void)const  { notImplemented(); return 0; }
 void  QLineEdit::setEdited(bool) { notImplemented(); }
-int  QScrollView::childX(class WebCore::Widget *) { notImplemented(); return 0; }
 class WebCore::IntRect  QComboBox::frameGeometry(void)const  { notImplemented(); return WebCore::IntRect(); }
 void  QListBox::setWritingDirection(enum WebCore::QPainter::TextDirection) { notImplemented(); }
 void  QLineEdit::setAlignment(enum Qt::AlignmentFlags) { notImplemented(); }

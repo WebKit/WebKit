@@ -1,8 +1,14 @@
 2006-02-23  Darin Adler  <darin@apple.com>
 
-        - fix Windows build
+        - try to fix Windows build
 
-        * platform/win/TemporaryLinkStubs.cpp: Removed QPalette-related stubs
+        * platform/win/TemporaryLinkStubs.cpp: Removed childX/Y stubs.
+
+2006-02-23  Darin Adler  <darin@apple.com>
+
+        - try to fix Windows build
+
+        * platform/win/TemporaryLinkStubs.cpp: Removed QPalette-related stubs.
 
         - remove unused forwarding headers
 
