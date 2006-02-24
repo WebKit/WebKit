@@ -82,6 +82,7 @@
 #include <qptrlist.h>
 #include <qtextcodec.h>
 #include <sys/types.h>
+#include <math.h>
 
 #if !WIN32
 #include <unistd.h>
@@ -2814,9 +2815,9 @@ void Frame::adjustPageHeight(float *newBottom, float oldTop, float oldBottom, fl
         QPainter painter(true);
         painter.setPaintingDisabled(true);
         
-        root->setTruncatedAt((int)floor(oldBottom));
-        IntRect dirtyRect(0, (int)floor(oldTop),
-                        root->docWidth(), (int)ceil(oldBottom-oldTop));
+        root->setTruncatedAt((int)floorf(oldBottom));
+        IntRect dirtyRect(0, (int)floorf(oldTop),
+                        root->docWidth(), (int)ceilf(oldBottom-oldTop));
         root->layer()->paint(&painter, dirtyRect);
         *newBottom = root->bestTruncatedAt();
         if (*newBottom == 0)
@@ -3000,7 +3001,7 @@ void Frame::forceLayoutWithPageWidthRange(float minPageWidth, float maxPageWidth
     RenderCanvas *root = static_cast<RenderCanvas *>(document()->renderer());
     if (root) {
         // This magic is basically copied from khtmlview::print
-        int pageW = (int)ceil(minPageWidth);
+        int pageW = (int)ceilf(minPageWidth);
         root->setWidth(pageW);
         root->setNeedsLayoutAndMinMaxRecalc();
         forceLayout();
@@ -3011,7 +3012,7 @@ void Frame::forceLayoutWithPageWidthRange(float minPageWidth, float maxPageWidth
         // implementation should not do this!
         int rightmostPos = root->rightmostPosition();
         if (rightmostPos > minPageWidth) {
-            pageW = kMin(rightmostPos, (int)ceil(maxPageWidth));
+            pageW = kMin(rightmostPos, (int)ceilf(maxPageWidth));
             root->setWidth(pageW);
             root->setNeedsLayoutAndMinMaxRecalc();
             forceLayout();

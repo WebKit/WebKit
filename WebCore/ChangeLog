@@ -1,3 +1,13 @@
+2006-02-24  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by anders.
+
+        Fix the win32 build.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::adjustPageHeight):
+        (WebCore::Frame::forceLayoutWithPageWidthRange):
+
 2006-02-23  David Hyatt  <hyatt@apple.com>
 
         Rename FontDef to FontDescription and move it into the platform directory.
