@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+ <head>
+  <title>XMLHttpRequest recursion</title>
+ </head>
+ <body>
+  <pre>FAIL: Script did not run.</pre>
+  <script type="text/javascript">
+   if (window.layoutTestController)
+     layoutTestController.dumpAsText();
+
+   document.title = 'XMLHttpRequest recursion.'; // adds '.'
+   var p = document.getElementsByTagName('pre')[0];
+   p.firstChild.data = 'FAIL: Test script did not finish.';
+   window.onerror = function (error, file, line) { p.firstChild.data = 'ERROR: ' + error + ' (line ' + line + ')'; }
+   if (!window.XMLHttpRequest)
+     window.XMLHttpRequest = function () { return new ActiveXObject("Microsoft.XMLHTTP"); }
+   var r = new XMLHttpRequest();
+   r.open('GET', '001.html', false);
+   r.send(null);
+   if (r.responseXML) {
+     if (r.responseXML.title == 'XMLHttpRequest recursion.') {
+       p.firstChild.data = 'PASS';
+     } else {
+       p.firstChild.data = 'FAIL (fetched but not run) ' + r.responseXML.title;
+     }
+   } else {
+     p.firstChild.data = 'FAIL (no responseXML)';
+   }
+  </script>
+ </body>
+</html>

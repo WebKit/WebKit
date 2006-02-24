@@ -1,3 +1,73 @@
+2006-02-24  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7435
+          Add Ian Hickson's XMLHttpRequest tests
+
+        * http/conf/httpd.conf: Enable send-as-is handler, required by the tests.
+
+        * http/tests/xmlhttprequest/web-apps: Added.
+        * http/tests/xmlhttprequest/web-apps/.htaccess: Added.
+        * http/tests/xmlhttprequest/web-apps/001-expected.txt: Added.
+        * http/tests/xmlhttprequest/web-apps/001-test.cgi: Added.
+        * http/tests/xmlhttprequest/web-apps/001.html: Added.
+        * http/tests/xmlhttprequest/web-apps/002-expected.txt: Added.
+        * http/tests/xmlhttprequest/web-apps/002-simple-a.txt: Added.
+        * http/tests/xmlhttprequest/web-apps/002-simple-b.txt: Added.
+        * http/tests/xmlhttprequest/web-apps/002-simple-expected.txt: Added.
+        * http/tests/xmlhttprequest/web-apps/002-simple.html: Added.
+        * http/tests/xmlhttprequest/web-apps/002.html: Added.
+        * http/tests/xmlhttprequest/web-apps/002a.txt: Added.
+        * http/tests/xmlhttprequest/web-apps/002b.txt: Added.
+        * http/tests/xmlhttprequest/web-apps/002c.txt: Added.
+        * http/tests/xmlhttprequest/web-apps/003-expected.txt: Added.
+        * http/tests/xmlhttprequest/web-apps/003-test.cgi: Added.
+        * http/tests/xmlhttprequest/web-apps/003.html: Added.
+        * http/tests/xmlhttprequest/web-apps/004-expected.txt: Added.
+        * http/tests/xmlhttprequest/web-apps/004-test.cgi: Added.
+        * http/tests/xmlhttprequest/web-apps/004.html: Added.
+        * http/tests/xmlhttprequest/web-apps/005-expected.txt: Added.
+        * http/tests/xmlhttprequest/web-apps/005-test.cgi: Added.
+        * http/tests/xmlhttprequest/web-apps/005.html: Added.
+        * http/tests/xmlhttprequest/web-apps/006-test.cgi: Added.
+        * http/tests/xmlhttprequest/web-apps/006.html-disabled: Added.
+        * http/tests/xmlhttprequest/web-apps/007-expected.txt: Added.
+        * http/tests/xmlhttprequest/web-apps/007-test.asis: Added.
+        * http/tests/xmlhttprequest/web-apps/007.html: Added.
+        * http/tests/xmlhttprequest/web-apps/008-expected.txt: Added.
+        * http/tests/xmlhttprequest/web-apps/008-test.asis: Added.
+        * http/tests/xmlhttprequest/web-apps/008.html: Added.
+        * http/tests/xmlhttprequest/web-apps/009-test.cgi: Added.
+        * http/tests/xmlhttprequest/web-apps/009.html-disabled: Added.
+        * http/tests/xmlhttprequest/web-apps/010-expected.txt: Added.
+        * http/tests/xmlhttprequest/web-apps/010-test.cgi: Added.
+        * http/tests/xmlhttprequest/web-apps/010.html: Added.
+        * http/tests/xmlhttprequest/web-apps/011-expected.txt: Added.
+        * http/tests/xmlhttprequest/web-apps/011-test200.asis: Added.
+        * http/tests/xmlhttprequest/web-apps/011.html: Added.
+        * http/tests/xmlhttprequest/web-apps/012-expected.txt: Added.
+        * http/tests/xmlhttprequest/web-apps/012-test200.asis: Added.
+        * http/tests/xmlhttprequest/web-apps/012.html: Added.
+        * http/tests/xmlhttprequest/web-apps/013-expected.txt: Added.
+        * http/tests/xmlhttprequest/web-apps/013-test.cgi: Added.
+        * http/tests/xmlhttprequest/web-apps/013.html: Added.
+        * http/tests/xmlhttprequest/web-apps/014-expected.txt: Added.
+        * http/tests/xmlhttprequest/web-apps/014-test404.asis: Added.
+        * http/tests/xmlhttprequest/web-apps/014.html: Added.
+        * http/tests/xmlhttprequest/web-apps/015-expected.txt: Added.
+        * http/tests/xmlhttprequest/web-apps/015-test.cgi: Added.
+        * http/tests/xmlhttprequest/web-apps/015.html: Added.
+        * http/tests/xmlhttprequest/web-apps/016-test.cgi: Added.
+        * http/tests/xmlhttprequest/web-apps/016.html-disabled: Added.
+        * http/tests/xmlhttprequest/web-apps/017.html-disabled: Added.
+        * http/tests/xmlhttprequest/web-apps/README: Added.
+        * http/tests/xmlhttprequest/web-apps/TODO: Added.
+        * http/tests/xmlhttprequest/web-apps/readme.txt: Added.
+        * http/tests/xmlhttprequest/web-apps/recursion: Added.
+        * http/tests/xmlhttprequest/web-apps/recursion/001.html-disabled: Added.
+        * http/tests/xmlhttprequest/web-apps/recursion/README: Added.
+
 2006-02-22  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

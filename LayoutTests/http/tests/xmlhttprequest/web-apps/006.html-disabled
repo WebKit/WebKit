@@ -1,0 +1,25 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+ <head>
+  <title>setTimeout and sync XMLHttpRequests</title>
+ </head>
+ <body>
+  <p>FAIL: Script did not run.</p>
+  <script type="text/javascript">
+   if (window.layoutTestController)
+     layoutTestController.dumpAsText();
+
+   var p = document.getElementsByTagName('p')[0];
+   p.firstChild.data = 'FAIL: Test script did not finish.';
+   if (!window.XMLHttpRequest)
+     window.XMLHttpRequest = function () { return new ActiveXObject("Microsoft.XMLHTTP"); }
+   var r = new XMLHttpRequest();
+   r.open('GET', '006-test.cgi', false);
+   var x = 0;
+   window.setTimeout(function() { r.abort(); x += 1; }, 20);
+   p.firstChild.data = 'Please wait 10 seconds...';
+   r.send(null);
+   p.firstChild.data = x ? 'FAIL' : 'PASS (unless your browser UI locked up for 10 seconds)';
+  </script>
+ </body>
+</html>

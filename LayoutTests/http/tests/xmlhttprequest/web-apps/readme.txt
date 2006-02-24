@@ -1,0 +1,1 @@
+Tests submitted by Ian 'Hixie' Hickson, the current version is available at  <http://www.hixie.ch/tests/adhoc/dom/web-apps/XMLHttpRequest/>.

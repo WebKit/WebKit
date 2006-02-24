@@ -1,0 +1,25 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html lang="en">
+ <head>
+  <title>getResponseHeader</title>
+ </head>
+ <body>
+  <p>FAIL: Script did not run.</p>
+  <script type="text/javascript">
+   if (window.layoutTestController)
+     layoutTestController.dumpAsText();
+
+   var p = document.getElementsByTagName('p')[0];
+   p.firstChild.data = 'FAIL: Test script did not finish.';
+   if (!window.XMLHttpRequest)
+     window.XMLHttpRequest = function () { return new ActiveXObject("Microsoft.XMLHTTP"); }
+   var r = new XMLHttpRequest();
+   r.open('GET', '008-test.asis', false);
+   r.send(null);
+   var s1 = r.getResponseHeader('test1');
+   var s2 = r.getResponseHeader('test2');
+   var s3 = r.getResponseHeader('test3');
+   p.firstChild.data = (s1 == 'test1' && s2 == 'a, b' && s3 == '') ? 'PASS' : 'FAIL ("' + s1 + '", "' + s2 + '", "' + s3 + '")';
+  </script>
+ </body>
+</html>
