@@ -1,5 +1,12 @@
 2006-02-24  Vicki Murley <vicki@apple.com>
 
+        - add missing resources for manual-tests/scrolling-nestedframesets.html
+
+        * manual-tests/resources/testframe-link_text.html: Added.
+        * manual-tests/resources/testframeset.html: Added.
+
+2006-02-24  Vicki Murley <vicki@apple.com>
+
         - test case for <rdar://problem/4394910> calling Javascript window.close() does not trigger onbeforeunload event
 
         * manual-tests/onbeforeunload-close_with_javascript.html: Added.
