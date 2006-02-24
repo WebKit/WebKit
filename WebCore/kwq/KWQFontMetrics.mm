@@ -30,7 +30,7 @@
 
 #import "KWQFont.h"
 #import "KWQLogging.h"
-#import "KWQFoundationExtras.h"
+#import "FoundationExtras.h"
 
 #import "Shared.h"
 

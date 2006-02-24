@@ -62,7 +62,7 @@ namespace WebCore {
         void dispatchRecursiveEvent(EventImpl *event, NodeImpl *obj);
         void dispatchZoomEvent(float prevScale, float newScale);
         void dispatchScrollEvent();
-        bool dispatchKeyEvent(NodeImpl *target, QKeyEvent *key, bool keypress);
+        bool dispatchKeyEvent(NodeImpl* target, KeyEvent *key, bool keypress);
 
         virtual void recalcStyle(StyleChange = NoChange);
 

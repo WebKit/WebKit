@@ -29,37 +29,40 @@
 #include "Frame.h"
 #include "FramePrivate.h"
 
+#include "ApplyStyleCommand.h"
 #include "Cache.h"
 #include "CachedCSSStyleSheet.h"
 #include "DOMImplementationImpl.h"
 #include "DocLoader.h"
+#include "EditingTextImpl.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLCollectionImpl.h"
 #include "HTMLFormElementImpl.h"
 #include "HTMLGenericFormElementImpl.h"
-#include "KWQEvent.h"
+#include "MouseEvent.h"
+#include "MouseEventWithHitTestResults.h"
 #include "NodeListImpl.h"
+#include "PlatformString.h"
+#include "Plugin.h"
 #include "RenderBlock.h"
 #include "RenderText.h"
 #include "SegmentedString.h"
-#include "ApplyStyleCommand.h"
+#include "TypingCommand.h"
+#include "VisiblePosition.h"
 #include "css_computedstyle.h"
 #include "css_valueimpl.h"
-#include "csshelper.h"
 #include "cssproperties.h"
 #include "cssstyleselector.h"
 #include "dom2_eventsimpl.h"
 #include "dom2_rangeimpl.h"
-#include "PlatformString.h"
 #include "html_baseimpl.h"
 #include "html_documentimpl.h"
 #include "html_imageimpl.h"
 #include "html_objectimpl.h"
 #include "htmlediting.h"
 #include "htmlnames.h"
-#include "khtml_events.h"
 #include "khtml_settings.h"
 #include "kjs_proxy.h"
 #include "kjs_window.h"
@@ -67,8 +70,6 @@
 #include "markup.h"
 #include "render_canvas.h"
 #include "render_frames.h"
-#include "TypingCommand.h"
-#include "VisiblePosition.h"
 #include "visible_text.h"
 #include "visible_units.h"
 #include "xml_tokenizer.h"
@@ -81,8 +82,6 @@
 #include <qptrlist.h>
 #include <qtextcodec.h>
 #include <sys/types.h>
-#include "Plugin.h"
-#include "EditingTextImpl.h"
 
 #if !WIN32
 #include <unistd.h>
@@ -103,29 +102,24 @@ using namespace HTMLNames;
 
 const double caretBlinkFrequency = 0.5;
 
-class PartStyleSheetLoader : public CachedObjectClient
-{
+class UserStyleSheetLoader : public CachedObjectClient {
 public:
-    PartStyleSheetLoader(Frame* frame, DOMString url, DocLoader* dl)
+    UserStyleSheetLoader(Frame* frame, const String& url, DocLoader* dl)
+        : m_frame(frame)
+        , m_cachedSheet(Cache::requestStyleSheet(dl, url))
     {
-        m_frame = frame;
-        m_cachedSheet = Cache::requestStyleSheet(dl, url);
-        if (m_cachedSheet)
-            m_cachedSheet->ref(this);
+        m_cachedSheet->ref(this);
     }
-    virtual ~PartStyleSheetLoader()
+    ~UserStyleSheetLoader()
     {
-        if (m_cachedSheet)
-            m_cachedSheet->deref(this);
+        m_cachedSheet->deref(this);
     }
-    virtual void setStyleSheet(const DOMString&, const DOMString &sheet)
+private:
+    virtual void setStyleSheet(const String&, const String &sheet)
     {
-        if (m_frame)
-            m_frame->setUserStyleSheet( sheet.qstring() );
-        delete this;
+        m_frame->setUserStyleSheet(sheet.qstring());
     }
-
-    QGuardedPtr<Frame> m_frame;
+    Frame* m_frame;
     CachedCSSStyleSheet* m_cachedSheet;
 };
 
@@ -179,22 +173,28 @@ Frame::~Frame()
     --FrameCounter::count;
 #endif
 
-  cancelRedirection();
+    cancelRedirection();
 
-  if (!d->m_bComplete)
-    closeURL();
+    if (!d->m_bComplete)
+        closeURL();
 
-  clear(false);
+    clear(false);
 
-  if (d->m_view) {
-    d->m_view->hide();
-    d->m_view->viewport()->hide();
-    d->m_view->m_frame = 0;
-  }
+    if (d->m_jscript && d->m_jscript->haveInterpreter())
+        if (Window* w = Window::retrieveWindow(this))
+            w->disconnectFrame();
+
+    if (d->m_view) {
+        d->m_view->hide();
+        d->m_view->viewport()->hide();
+        d->m_view->m_frame = 0;
+    }
   
-  ASSERT(!d->m_lifeSupportTimer.isActive());
+    ASSERT(!d->m_lifeSupportTimer.isActive());
 
-  delete d; d = 0;
+    delete d->m_userStyleSheetLoader;
+    delete d;
+    d = 0;
 }
 
 bool Frame::didOpenURL(const KURL &url)
@@ -984,7 +984,7 @@ void Frame::changeLocation(const QString &URL, const QString &referrer, bool loc
     if (!referrer.isEmpty())
         args.metaData().set("referrer", referrer);
 
-    urlSelected(URL, 0, 0, "_self", args);
+    urlSelected(URL, "_self", args);
 }
 
 void Frame::redirectionTimerFired(Timer<Frame>*)
@@ -1035,16 +1035,20 @@ QString Frame::encoding() const
     return(settings()->encoding());
 }
 
-void Frame::setUserStyleSheet(const KURL &url)
+void Frame::setUserStyleSheet(const KURL& url)
 {
-  if ( d->m_doc && d->m_doc->docLoader() )
-    (void) new PartStyleSheetLoader(this, url.url(), d->m_doc->docLoader());
+    delete d->m_userStyleSheetLoader;
+    d->m_userStyleSheetLoader = 0;
+    if (d->m_doc && d->m_doc->docLoader())
+        d->m_userStyleSheetLoader = new UserStyleSheetLoader(this, url.url(), d->m_doc->docLoader());
 }
 
-void Frame::setUserStyleSheet(const QString &styleSheet)
+void Frame::setUserStyleSheet(const QString& styleSheet)
 {
-  if ( d->m_doc )
-    d->m_doc->setUserStyleSheet( styleSheet );
+    delete d->m_userStyleSheetLoader;
+    d->m_userStyleSheetLoader = 0;
+    if (d->m_doc)
+        d->m_doc->setUserStyleSheet(styleSheet);
 }
 
 bool Frame::gotoAnchor( const QString &name )
@@ -1311,16 +1315,11 @@ void Frame::paintDragCaret(QPainter *p, const IntRect &rect) const
     d->m_dragCaret.paintCaret(p, rect);
 }
 
-void Frame::urlSelected( const QString &url, int button, int state, const QString &_target,
-                             URLArgs args )
+void Frame::urlSelected(const QString &url, const QString& _target, const URLArgs& args )
 {
-  bool hasTarget = false;
-
   QString target = _target;
-  if ( target.isEmpty() && d->m_doc )
+  if (target.isEmpty() && d->m_doc)
     target = d->m_doc->baseTarget();
-  if ( !target.isEmpty() )
-      hasTarget = true;
 
   if (url.startsWith("javascript:", false)) {
     executeScript(0, KURL::decode_string(url.mid(11)), true);
@@ -1328,23 +1327,22 @@ void Frame::urlSelected( const QString &url, int button, int state, const QStrin
   }
 
   KURL cURL = completeURL(url);
-
-  if ( !cURL.isValid() )
+  if (!cURL.isValid())
     // ### ERROR HANDLING
     return;
 
-  args.frameName = target;
+  URLArgs argsCopy = args;
+  argsCopy.frameName = target;
 
-  if ( d->m_bHTTPRefresh )
-  {
+  if (d->m_bHTTPRefresh) {
     d->m_bHTTPRefresh = false;
-    args.metaData().set("cache", "refresh");
+    argsCopy.metaData().set("cache", "refresh");
   }
 
-
   if (!d->m_referrer.isEmpty())
-    args.metaData().set("referrer", d->m_referrer);
-  urlSelected(cURL, button, state, args);
+    argsCopy.metaData().set("referrer", d->m_referrer);
+
+  urlSelected(cURL, argsCopy);
 }
 
 DOMString Frame::requestFrameName()
@@ -1741,7 +1739,7 @@ bool Frame::isPointInsideSelection(int x, int y)
    return false;
 }
 
-void Frame::selectClosestWordFromMouseEvent(QMouseEvent *mouse, NodeImpl *innerNode, int x, int y)
+void Frame::selectClosestWordFromMouseEvent(MouseEvent *mouse, NodeImpl *innerNode, int x, int y)
 {
     SelectionController selection;
 
@@ -1762,31 +1760,35 @@ void Frame::selectClosestWordFromMouseEvent(QMouseEvent *mouse, NodeImpl *innerN
         setSelection(selection);
 }
 
-void Frame::handleMousePressEventDoubleClick(MousePressEvent *event)
+void Frame::handleMousePressEventDoubleClick(MouseEventWithHitTestResults* event)
 {
-    if (event->qmouseEvent()->button() == LeftButton) {
-        if (selection().isRange()) {
+    if (event->event()->button() == LeftButton) {
+        if (selection().isRange())
             // A double-click when range is already selected
             // should not change the selection.  So, do not call
             // selectClosestWordFromMouseEvent, but do set
             // m_beganSelectingText to prevent khtmlMouseReleaseEvent
             // from setting caret selection.
             d->m_beganSelectingText = true;
-        } else {
-            selectClosestWordFromMouseEvent(event->qmouseEvent(), event->innerNode(), event->x(), event->y());
+        else {
+            int x, y;
+            view()->viewportToContents(event->event()->x(), event->event()->y(), x, y);
+            selectClosestWordFromMouseEvent(event->event(), event->innerNode(), x, y);
         }
     }
 }
 
-void Frame::handleMousePressEventTripleClick(MousePressEvent *event)
+void Frame::handleMousePressEventTripleClick(MouseEventWithHitTestResults* event)
 {
-    QMouseEvent *mouse = event->qmouseEvent();
+    MouseEvent *mouse = event->event();
     NodeImpl *innerNode = event->innerNode();
     
     if (mouse->button() == LeftButton && innerNode && innerNode->renderer() &&
         mouseDownMayStartSelect() && innerNode->renderer()->shouldSelect()) {
         SelectionController selection;
-        VisiblePosition pos(innerNode->renderer()->positionForCoordinates(event->x(), event->y()));
+        int x, y;
+        view()->viewportToContents(event->event()->x(), event->event()->y(), x, y);
+        VisiblePosition pos(innerNode->renderer()->positionForCoordinates(x, y));
         if (pos.isNotNull()) {
             selection.moveTo(pos);
             selection.expandUsingGranularity(PARAGRAPH);
@@ -1801,9 +1803,9 @@ void Frame::handleMousePressEventTripleClick(MousePressEvent *event)
     }
 }
 
-void Frame::handleMousePressEventSingleClick(MousePressEvent *event)
+void Frame::handleMousePressEventSingleClick(MouseEventWithHitTestResults* event)
 {
-    QMouseEvent *mouse = event->qmouseEvent();
+    MouseEvent *mouse = event->event();
     NodeImpl *innerNode = event->innerNode();
     
     if (mouse->button() == LeftButton) {
@@ -1812,15 +1814,16 @@ void Frame::handleMousePressEventSingleClick(MousePressEvent *event)
             SelectionController sel;
             
             // Extend the selection if the Shift key is down, unless the click is in a link.
-            bool extendSelection = (mouse->state() & ShiftButton) && (event->url().isNull());
+            bool extendSelection = mouse->shiftKey() && event->url().isNull();
 
             // Don't restart the selection when the mouse is pressed on an
             // existing selection so we can allow for text dragging.
-            if (!extendSelection && isPointInsideSelection(event->x(), event->y())) {
+            int x, y;
+            view()->viewportToContents(event->event()->x(), event->event()->y(), x, y);
+            if (!extendSelection && isPointInsideSelection(x, y))
                 return;
-            }
 
-            VisiblePosition visiblePos(innerNode->renderer()->positionForCoordinates(event->x(), event->y()));
+            VisiblePosition visiblePos(innerNode->renderer()->positionForCoordinates(x, y));
             if (visiblePos.isNull())
                 visiblePos = VisiblePosition(innerNode, innerNode->caretMinOffset(), DOWNSTREAM);
             Position pos = visiblePos.deepEquivalent();
@@ -1854,10 +1857,10 @@ void Frame::handleMousePressEventSingleClick(MousePressEvent *event)
     }
 }
 
-void Frame::khtmlMousePressEvent(MousePressEvent *event)
+void Frame::khtmlMousePressEvent(MouseEventWithHitTestResults* event)
 {
     DOMString url = event->url();
-    QMouseEvent *mouse = event->qmouseEvent();
+    MouseEvent *mouse = event->event();
     NodeImpl *innerNode = event->innerNode();
 
     d->m_mousePressNode = innerNode;
@@ -1870,14 +1873,15 @@ void Frame::khtmlMousePressEvent(MousePressEvent *event)
         d->m_strSelectedURLTarget = event->target().qstring();
     }
 
-    if (mouse->button() == LeftButton || mouse->button() == MidButton) {
+    if (mouse->button() == LeftButton || mouse->button() == MiddleButton) {
         d->m_bMousePressed = true;
         d->m_beganSelectingText = false;
 
         if (mouse->clickCount() == 2) {
             handleMousePressEventDoubleClick(event);
             return;
-        } else if (mouse->clickCount() >= 3) {
+        }
+        if (mouse->clickCount() >= 3) {
             handleMousePressEventTripleClick(event);
             return;
         }
@@ -1885,21 +1889,22 @@ void Frame::khtmlMousePressEvent(MousePressEvent *event)
     }
 }
 
-void Frame::handleMouseMoveEventSelection(MouseMoveEvent *event)
+void Frame::handleMouseMoveEventSelection(MouseEventWithHitTestResults* event)
 {
     // Mouse not pressed. Do nothing.
     if (!d->m_bMousePressed)
         return;
 
-    QMouseEvent *mouse = event->qmouseEvent();
+    MouseEvent *mouse = event->event();
     NodeImpl *innerNode = event->innerNode();
 
-    if (mouse->state() != LeftButton || !innerNode || !innerNode->renderer() ||
-            !mouseDownMayStartSelect() || !innerNode->renderer()->shouldSelect())
+    if (mouse->button() != 0 || !innerNode || !innerNode->renderer() || !mouseDownMayStartSelect() || !innerNode->renderer()->shouldSelect())
         return;
 
     // handle making selection
-    VisiblePosition pos(innerNode->renderer()->positionForCoordinates(event->x(), event->y()));
+    int x, y;
+    view()->viewportToContents(event->event()->x(), event->event()->y(), x, y);
+    VisiblePosition pos(innerNode->renderer()->positionForCoordinates(x, y));
 
     // Don't modify the selection if we're not on a node.
     if (pos.isNull())
@@ -1923,12 +1928,12 @@ void Frame::handleMouseMoveEventSelection(MouseMoveEvent *event)
         setSelection(sel);
 }
 
-void Frame::khtmlMouseMoveEvent(MouseMoveEvent *event)
+void Frame::khtmlMouseMoveEvent(MouseEventWithHitTestResults* event)
 {
     handleMouseMoveEventSelection(event);
 }
 
-void Frame::khtmlMouseReleaseEvent( MouseReleaseEvent *event )
+void Frame::khtmlMouseReleaseEvent(MouseEventWithHitTestResults* event)
 {
     // Used to prevent mouseMoveEvent from initiating a drag before
     // the mouse is pressed again.
@@ -1938,13 +1943,14 @@ void Frame::khtmlMouseReleaseEvent( MouseReleaseEvent *event )
     // We do this so when clicking on the selection, the selection goes away.
     // However, if we are editing, place the caret.
     if (mouseDownMayStartSelect() && !d->m_beganSelectingText
-            && d->m_dragStartPos.x() == event->qmouseEvent()->x()
-            && d->m_dragStartPos.y() == event->qmouseEvent()->y()
+            && d->m_dragStartPos == event->event()->pos()
             && d->m_selection.isRange()) {
         SelectionController selection;
         NodeImpl *node = event->innerNode();
         if (node && node->isContentEditable() && node->renderer()) {
-            VisiblePosition pos = node->renderer()->positionForCoordinates(event->x(), event->y());
+            int x, y;
+            view()->viewportToContents(event->event()->x(), event->event()->y(), x, y);
+            VisiblePosition pos = node->renderer()->positionForCoordinates(x, y);
             selection.moveTo(pos);
         }
         if (shouldChangeSelection(selection))
@@ -3087,12 +3093,12 @@ bool Frame::canMouseDownStartSelect(NodeImpl* node)
     return true;
 }
 
-void Frame::khtmlMouseDoubleClickEvent(MouseDoubleClickEvent *event)
+void Frame::khtmlMouseDoubleClickEvent(MouseEventWithHitTestResults* event)
 {
     passWidgetMouseDownEventToWidget(event, true);
 }
 
-bool Frame::passWidgetMouseDownEventToWidget(MouseEvent *event, bool isDoubleClick)
+bool Frame::passWidgetMouseDownEventToWidget(MouseEventWithHitTestResults* event, bool isDoubleClick)
 {
     // Figure out which view to send the event to.
     RenderObject *target = event->innerNode() ? event->innerNode()->renderer() : 0;

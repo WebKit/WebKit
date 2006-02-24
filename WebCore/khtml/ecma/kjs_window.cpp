@@ -27,7 +27,6 @@
 #include "FrameView.h"
 #include "JSMutationEvent.h"
 #include "JSXMLHttpRequest.h"
-#include "KWQEvent.h"
 #include "KWQKConfigBase.h"
 #include "KWQLogging.h"
 #include "Screen.h"
@@ -71,7 +70,7 @@ static int lastUsedTimeoutId;
 
 class DOMWindowTimer : public TimerBase {
 public:
-    DOMWindowTimer(int timeoutId, WindowQObject* o, ScheduledAction* a)
+    DOMWindowTimer(int timeoutId, Window* o, ScheduledAction* a)
         : m_timeoutId(timeoutId), m_object(o), m_action(a) { }
     virtual ~DOMWindowTimer() { delete m_action; }
 
@@ -83,7 +82,7 @@ private:
     virtual void fired();
 
     int m_timeoutId;
-    WindowQObject* m_object;
+    Window* m_object;
     ScheduledAction* m_action;
 };
 
@@ -108,8 +107,9 @@ public:
     static const ClassInfo info;
     enum { Back, Forward, Go, Length };
     virtual UString toString(ExecState *exec) const;
+    void disconnectFrame() { m_frame = 0; }
   private:
-    QGuardedPtr<Frame> m_frame;
+    Frame* m_frame;
   };
 
   class FrameArray : public JSObject {
@@ -120,6 +120,7 @@ public:
     JSValue *getValueProperty(ExecState *exec, int token);
     virtual UString toString(ExecState *exec) const;
     enum { Length, Location };
+    void disconnectFrame() { m_frame = 0; }
   private:
     static JSValue *indexGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
     static JSValue *nameGetter(ExecState *, JSObject *, const Identifier&, const PropertySlot&);
@@ -127,7 +128,7 @@ public:
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
 
-    QGuardedPtr<Frame> m_frame;
+    Frame* m_frame;
   };
 
 }
@@ -323,11 +324,12 @@ Window::Window(Frame *p)
   , m_evt(0)
   , m_returnValueSlot(0)
 {
-  winq = new WindowQObject(this);
 }
 
 Window::~Window()
 {
+    clearAllTimeouts();
+
     // Clear any backpointers to the window
 
     UnprotectedListenersMap::iterator i1 = jsUnprotectedEventListeners.begin();
@@ -339,8 +341,6 @@ Window::~Window()
     ListenersMap::iterator e2 = jsEventListeners.end();
     for (; i2 != e2; ++i2)
         i2->second->clearWindowObj();
-    
-    delete winq;
 }
 
 ScriptInterpreter *Window::interpreter() const
@@ -375,56 +375,56 @@ JSValue *Window::retrieve(Frame *p)
 Location *Window::location() const
 {
   if (!loc)
-    const_cast<Window*>(this)->loc = new Location(m_frame);
+    loc = new Location(m_frame);
   return loc;
 }
 
 Selection *Window::selection() const
 {
   if (!m_selection)
-    const_cast<Window*>(this)->m_selection = new Selection(m_frame);
+    m_selection = new Selection(m_frame);
   return m_selection;
 }
 
 BarInfo *Window::locationbar(ExecState *exec) const
 {
   if (!m_locationbar)
-    const_cast<Window*>(this)->m_locationbar = new BarInfo(exec, m_frame, BarInfo::Locationbar);
+    m_locationbar = new BarInfo(exec, m_frame, BarInfo::Locationbar);
   return m_locationbar;
 }
 
 BarInfo *Window::menubar(ExecState *exec) const
 {
   if (!m_menubar)
-    const_cast<Window*>(this)->m_menubar = new BarInfo(exec, m_frame, BarInfo::Menubar);
+    m_menubar = new BarInfo(exec, m_frame, BarInfo::Menubar);
   return m_menubar;
 }
 
 BarInfo *Window::personalbar(ExecState *exec) const
 {
   if (!m_personalbar)
-    const_cast<Window*>(this)->m_personalbar = new BarInfo(exec, m_frame, BarInfo::Personalbar);
+    m_personalbar = new BarInfo(exec, m_frame, BarInfo::Personalbar);
   return m_personalbar;
 }
 
 BarInfo *Window::statusbar(ExecState *exec) const
 {
   if (!m_statusbar)
-    const_cast<Window*>(this)->m_statusbar = new BarInfo(exec, m_frame, BarInfo::Statusbar);
+    m_statusbar = new BarInfo(exec, m_frame, BarInfo::Statusbar);
   return m_statusbar;
 }
 
 BarInfo *Window::toolbar(ExecState *exec) const
 {
   if (!m_toolbar)
-    const_cast<Window*>(this)->m_toolbar = new BarInfo(exec, m_frame, BarInfo::Toolbar);
+    m_toolbar = new BarInfo(exec, m_frame, BarInfo::Toolbar);
   return m_toolbar;
 }
 
 BarInfo *Window::scrollbars(ExecState *exec) const
 {
   if (!m_scrollbars)
-    const_cast<Window*>(this)->m_scrollbars = new BarInfo(exec, m_frame, BarInfo::Scrollbars);
+    m_scrollbars = new BarInfo(exec, m_frame, BarInfo::Scrollbars);
   return m_scrollbars;
 }
 
@@ -438,7 +438,6 @@ void Window::mark()
     history->mark();
   if (frames && !frames->marked())
     frames->mark();
-  //kdDebug(6070) << "Window::mark " << this << " marking loc=" << loc << endl;
   if (loc && !loc->marked())
     loc->mark();
   if (m_selection && !m_selection->marked())
@@ -660,7 +659,7 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
 
    switch (token) {
    case Closed:
-      return jsBoolean(m_frame.isNull());
+      return jsBoolean(!m_frame);
    case Crypto:
       return jsUndefined(); // ###
    case DefaultStatus:
@@ -933,7 +932,7 @@ JSValue *Window::namedItemGetter(ExecState *exec, JSObject *originalObject, cons
 bool Window::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
   // we don't want any properties other than "closed" on a closed window
-  if (m_frame.isNull()) {
+  if (!m_frame) {
     if (propertyName == "closed") {
       slot.setStaticEntry(this, Lookup::findEntry(&WindowTable, "closed"), staticValueGetter<Window>);
       return true;
@@ -1190,12 +1189,11 @@ void Window::put(ExecState* exec, const Identifier &propertyName, JSValue *value
 
 bool Window::toBoolean(ExecState *) const
 {
-  return !m_frame.isNull();
+  return m_frame;
 }
 
 void Window::scheduleClose()
 {
-  ASSERT(winq);
   m_frame->scheduleClose();
 }
 
@@ -1263,7 +1261,7 @@ bool Window::isSafeScript(const ScriptInterpreter *origin, const ScriptInterpret
 
 bool Window::isSafeScript(ExecState *exec) const
 {
-  if (m_frame.isNull()) // frame deleted ? can't grant access
+  if (!m_frame) // frame deleted ? can't grant access
     return false;
   Frame *activePart = static_cast<ScriptInterpreter *>( exec->dynamicInterpreter() )->frame();
   if (!activePart)
@@ -1378,13 +1376,15 @@ JSUnprotectedEventListener *Window::getJSUnprotectedEventListener(JSValue *val, 
 void Window::clear()
 {
   JSLock lock;
+
   if (m_returnValueSlot)
-    if (JSValue *returnValue = getDirect("returnValue"))
+    if (JSValue* returnValue = getDirect("returnValue"))
       *m_returnValueSlot = returnValue;
-  delete winq;
-  winq = new WindowQObject(this);
+
+  clearAllTimeouts();
 
   clearProperties();
+
   // there's likely to be lots of garbage now
   Collector::collect();
 
@@ -1395,7 +1395,6 @@ void Window::clear()
 void Window::setCurrentEvent(EventImpl *evt)
 {
   m_evt = evt;
-  //kdDebug(6070) << "Window " << this << " (frame=" << m_frame << ")::setCurrentEvent m_evt=" << evt << endl;
 }
 
 static void setWindowFeature(const DOMString& keyString, const DOMString& valueString, WindowArgs& windowArgs)
@@ -1887,21 +1886,15 @@ void ScheduledAction::execute(Window *window)
     interpreter->setProcessingTimerCallback(false);
 }
 
-////////////////////// WindowQObject ////////////////////////
+////////////////////// timeouts ////////////////////////
 
-WindowQObject::WindowQObject(Window *w)
-    : m_parent(w)
-{
-    connect(w->m_frame, SIGNAL(destroyed()), this, SLOT(parentDestroyed()));
-}
-
-void WindowQObject::parentDestroyed()
+void Window::clearAllTimeouts()
 {
     deleteAllValues(m_timeouts);
     m_timeouts.clear();
 }
 
-int WindowQObject::installTimeout(ScheduledAction* a, int t, bool singleShot)
+int Window::installTimeout(ScheduledAction* a, int t, bool singleShot)
 {
     int timeoutId = ++lastUsedTimeoutId;
     DOMWindowTimer* timer = new DOMWindowTimer(timeoutId, this, a);
@@ -1917,17 +1910,17 @@ int WindowQObject::installTimeout(ScheduledAction* a, int t, bool singleShot)
     return timeoutId;
 }
 
-int WindowQObject::installTimeout(const UString& handler, int t, bool singleShot)
+int Window::installTimeout(const UString& handler, int t, bool singleShot)
 {
     return installTimeout(new ScheduledAction(handler.qstring()), t, singleShot);
 }
 
-int WindowQObject::installTimeout(JSValue* func, const List& args, int t, bool singleShot)
+int Window::installTimeout(JSValue* func, const List& args, int t, bool singleShot)
 {
     return installTimeout(new ScheduledAction(func, args), t, singleShot);
 }
 
-PausedTimeouts *WindowQObject::pauseTimeouts()
+PausedTimeouts* Window::pauseTimeouts()
 {
     size_t count = m_timeouts.size();
     if (count == 0)
@@ -1953,12 +1946,12 @@ PausedTimeouts *WindowQObject::pauseTimeouts()
     return result;
 }
 
-void WindowQObject::resumeTimeouts(PausedTimeouts *timeouts)
+void Window::resumeTimeouts(PausedTimeouts* timeouts)
 {
     if (!timeouts)
         return;
     size_t count = timeouts->numTimeouts();
-    PausedTimeout *array = timeouts->takeTimeouts();
+    PausedTimeout* array = timeouts->takeTimeouts();
     for (size_t i = 0; i != count; ++i) {
         int timeoutId = array[i].timeoutId;
         DOMWindowTimer* timer = new DOMWindowTimer(timeoutId, this, array[i].action);
@@ -1968,7 +1961,7 @@ void WindowQObject::resumeTimeouts(PausedTimeouts *timeouts)
     delete [] array;
 }
 
-void WindowQObject::clearTimeout(int timeoutId, bool delAction)
+void Window::clearTimeout(int timeoutId, bool delAction)
 {
     TimeoutsMap::iterator it = m_timeouts.find(timeoutId);
     if (it == m_timeouts.end())
@@ -1978,11 +1971,11 @@ void WindowQObject::clearTimeout(int timeoutId, bool delAction)
     delete timer;
 }
 
-void WindowQObject::timerFired(DOMWindowTimer* timer)
+void Window::timerFired(DOMWindowTimer* timer)
 {
     // Simple case for non-one-shot timers.
     if (timer->isActive()) {
-        timer->action()->execute(m_parent);
+        timer->action()->execute(this);
         return;
     }
 
@@ -1990,8 +1983,34 @@ void WindowQObject::timerFired(DOMWindowTimer* timer)
     ScheduledAction* action = timer->takeAction();
     m_timeouts.remove(timer->timeoutId());
     delete timer;
-    action->execute(m_parent);
+    action->execute(this);
     delete action;
+}
+
+void Window::disconnectFrame()
+{
+    clearAllTimeouts();
+    m_frame = 0;
+    if (loc)
+        loc->m_frame = 0;
+    if (m_selection)
+        m_selection->m_frame = 0;
+    if (m_locationbar)
+        m_locationbar->m_frame = 0;
+    if (m_menubar)
+        m_menubar->m_frame = 0;
+    if (m_personalbar)
+        m_personalbar->m_frame = 0;
+    if (m_statusbar)
+        m_statusbar->m_frame = 0;
+    if (m_toolbar)
+        m_toolbar->m_frame = 0;
+    if (m_scrollbars)
+        m_scrollbars->m_frame = 0;
+    if (frames)
+        frames->disconnectFrame();
+    if (history)
+        history->disconnectFrame();
 }
 
 const ClassInfo FrameArray::info = { "FrameArray", 0, &FrameArrayTable, 0 };
@@ -2046,7 +2065,7 @@ JSValue *FrameArray::nameGetter(ExecState *exec, JSObject *originalObject, const
 
 bool FrameArray::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
-  if (m_frame.isNull()) {
+  if (!m_frame) {
     slot.setUndefined(this);
     return true;
   }
@@ -2142,7 +2161,7 @@ JSValue *Location::getValueProperty(ExecState *exec, int token) const
 
 bool Location::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot) 
 {
-  if (m_frame.isNull())
+  if (!m_frame)
     return false;
   
   const Window* window = Window::retrieveWindow(m_frame);
@@ -2156,7 +2175,7 @@ bool Location::getOwnPropertySlot(ExecState *exec, const Identifier& propertyNam
 
 void Location::put(ExecState *exec, const Identifier &p, JSValue *v, int attr)
 {
-  if (m_frame.isNull())
+  if (!m_frame)
     return;
 
   QString str = v->toString(exec).qstring();
@@ -2350,7 +2369,7 @@ JSValue *Selection::getValueProperty(ExecState *exec, int token) const
 
 bool Selection::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
-  if (m_frame.isNull())
+  if (!m_frame)
       return false;
 
   return getStaticPropertySlot<SelectionFunc, Selection, JSObject>(exec, &SelectionTable, this, propertyName, slot);
@@ -2447,7 +2466,7 @@ JSValue *BarInfo::getValueProperty(ExecState *exec, int token) const
 
 bool BarInfo::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
 {
-  if (m_frame.isNull())
+  if (!m_frame)
     return false;
   
   return getStaticValueSlot<BarInfo, JSObject>(exec, &BarInfoTable, this, propertyName, slot);

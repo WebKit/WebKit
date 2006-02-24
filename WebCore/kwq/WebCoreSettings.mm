@@ -26,7 +26,7 @@
 #include "config.h"
 #import "WebCoreSettings.h"
 
-#import "KWQFoundationExtras.h"
+#import "FoundationExtras.h"
 #import "MacFrame.h"
 #import "KWQKHTMLSettings.h"
 #import "WebCoreFrameBridge.h"

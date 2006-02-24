@@ -18,16 +18,15 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * $Id: table_layout.h 4007 2003-04-03 00:48:17Z hyatt $
  */
+
 #ifndef TABLE_LAYOUT_H
 #define TABLE_LAYOUT_H
 
 #include "Array.h"
-#include <khtmllayout.h>
+#include "Length.h"
 
-namespace khtml {
+namespace WebCore {
 
 class RenderTable;
 class RenderTableCell;
@@ -109,5 +108,6 @@ protected:
     mutable unsigned short total_percent;
 };
 
-};
+}
+
 #endif

@@ -100,31 +100,11 @@ void SVGAElementImpl::defaultEventHandler(EventImpl *evt)
         if(e && e->button() == 1)
             utarget = "_blank";
 
-        if(!evt->defaultPrevented())
-        {
-            int state = 0;
-            int button = 0;
-            if(e)
-            {
-                if(e->ctrlKey())
-                    state |= Qt::ControlButton;
-                if(e->shiftKey())
-                    state |= Qt::ShiftButton;
-                if(e->altKey())
-                    state |= Qt::AltButton;
-                if(e->metaKey())
-                    state |= Qt::MetaButton;
-                if(e->button() == 0)
-                    button = Qt::LeftButton;
-                else if(e->button() == 1)
-                    button = Qt::MidButton;
-                else if(e->button() == 2)
-                    button = Qt::RightButton;
-            }
+        if (!evt->defaultPrevented()) {
             if(ownerDocument() && ownerDocument()->view() && ownerDocument()->frame())
             {
                 //getDocument()->view()->resetCursor();
-                getDocument()->frame()->urlSelected(url, button, state, utarget);
+                getDocument()->frame()->urlSelected(url, utarget);
             }
         }
 

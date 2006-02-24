@@ -23,10 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
 #import "KWQSlider.h"
 
-#import "KWQEvent.h"
 #import "KWQExceptions.h"
 #import "KWQLineEdit.h"
 #import "KWQView.h"
@@ -109,11 +108,8 @@ using namespace WebCore;
                 layer->scrollRectToVisible(widget->absoluteBoundingBoxRect());
         }
 
-        if (slider) {
-            QEvent event(QEvent::FocusIn);
-            if (slider->eventFilterObject())
-                const_cast<QObject *>(slider->eventFilterObject())->eventFilter(slider, &event);
-        }
+        if (slider && slider->eventFilterObject())
+            slider->eventFilterObject()->eventFilterFocusIn();
     }
     return become;
 }
@@ -121,12 +117,10 @@ using namespace WebCore;
 - (BOOL)resignFirstResponder
 {
     BOOL resign = [super resignFirstResponder];
-    if (resign && slider) {
-        QEvent event(QEvent::FocusOut);
-        if (slider->eventFilterObject()) {
-            const_cast<QObject *>(slider->eventFilterObject())->eventFilter(slider, &event);
+    if (resign && slider && slider->eventFilterObject()) {
+        slider->eventFilterObject()->eventFilterFocusOut();
+        if (slider)
             [MacFrame::bridgeForWidget(slider) formControlIsResigningFirstResponder:self];
-        }
     }
     return resign;
 }

@@ -31,6 +31,7 @@
 #import "Cursor.h"
 #import "DOMInternal.h"
 #import "EventNames.h"
+#import "FoundationExtras.h"
 #import "FramePrivate.h"
 #import "FrameView.h"
 #import "HTMLFormElementImpl.h"
@@ -39,10 +40,8 @@
 #import "KWQAccObjectCache.h"
 #import "KWQClipboard.h"
 #import "KWQEditCommand.h"
-#import "KWQEvent.h"
 #import "KWQExceptions.h"
 #import "KWQFormData.h"
-#import "KWQFoundationExtras.h"
 #import "KWQKJobClasses.h"
 #import "KWQLogging.h"
 #import "KWQPageState.h"
@@ -51,6 +50,9 @@
 #import "KWQScrollBar.h"
 #import "KWQTextCodec.h"
 #import "KWQWindowWidget.h"
+#import "KeyEvent.h"
+#import "MouseEvent.h"
+#import "MouseEventWithHitTestResults.h"
 #import "Plugin.h"
 #import "RenderTableCell.h"
 #import "SelectionController.h"
@@ -59,6 +61,7 @@
 #import "WebCoreGraphicsBridge.h"
 #import "WebCoreViewFactory.h"
 #import "WebDashboardRegion.h"
+#import "WheelEvent.h"
 #import "css_computedstyle.h"
 #import "csshelper.h"
 #import "dom2_eventsimpl.h"
@@ -66,7 +69,6 @@
 #import "dom_position.h"
 #import "html_documentimpl.h"
 #import "html_tableimpl.h"
-#import "khtml_events.h"
 #import "kjs_binding.h"
 #import "kjs_window.h"
 #import "render_canvas.h"
@@ -542,11 +544,11 @@ void MacFrame::frameDetached()
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void MacFrame::urlSelected(const KURL &url, int button, int state, const URLArgs &args)
+void MacFrame::urlSelected(const KURL& url, const URLArgs& args)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
-    NSString *referrer;
+    NSString* referrer;
     DOMString argsReferrer = args.metaData().get("referrer");
     if (!argsReferrer.isEmpty())
         referrer = argsReferrer;
@@ -796,7 +798,7 @@ bool MacFrame::wheelEvent(NSEvent *event)
         NSEvent *oldCurrentEvent = _currentEvent;
         _currentEvent = KWQRetain(event);
 
-        QWheelEvent qEvent(event);
+        WheelEvent qEvent(event);
         v->viewportWheelEvent(&qEvent);
 
         ASSERT(_currentEvent == event);
@@ -1404,15 +1406,15 @@ bool MacFrame::keyEvent(NSEvent *event)
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = KWQRetain(event);
 
-    QKeyEvent qEvent(event);
+    KeyEvent qEvent(event);
     result = !node->dispatchKeyEvent(&qEvent);
 
     // We want to send both a down and a press for the initial key event.
-    // To get KHTML to do this, we send a second KeyPress QKeyEvent with "is repeat" set to true,
+    // To get KHTML to do this, we send a second KeyPress with "is repeat" set to true,
     // which causes it to send a press to the DOM.
     // That's not a great hack; it would be good to do this in a better way.
     if ([event type] == NSKeyDown && ![event isARepeat]) {
-        QKeyEvent repeatEvent(event, true);
+        KeyEvent repeatEvent(event, true);
         if (!node->dispatchKeyEvent(&repeatEvent)) {
             result = true;
         }
@@ -1429,7 +1431,7 @@ bool MacFrame::keyEvent(NSEvent *event)
     return false;
 }
 
-void MacFrame::khtmlMousePressEvent(MousePressEvent *event)
+void MacFrame::khtmlMousePressEvent(MouseEventWithHitTestResults *event)
 {
     bool singleClick = [_currentEvent clickCount] <= 1;
 
@@ -1641,7 +1643,7 @@ bool MacFrame::dragHysteresisExceeded(float dragLocationX, float dragLocationY) 
     return deltaX >= threshold || deltaY >= threshold;
 }
 
-void MacFrame::khtmlMouseMoveEvent(MouseMoveEvent *event)
+void MacFrame::khtmlMouseMoveEvent(MouseEventWithHitTestResults *event)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
@@ -1860,7 +1862,7 @@ bool MacFrame::tryPaste()
     return !dispatchCPPEvent(pasteEvent, KWQClipboard::Readable);
 }
 
-void MacFrame::khtmlMouseReleaseEvent(MouseReleaseEvent *event)
+void MacFrame::khtmlMouseReleaseEvent(MouseEventWithHitTestResults *event)
 {
     NSView *view = mouseDownViewIfStillGood();
     if (!view) {
@@ -1882,13 +1884,13 @@ void MacFrame::khtmlMouseReleaseEvent(MouseReleaseEvent *event)
     _sendingEventToSubview = false;
 }
 
-bool MacFrame::passSubframeEventToSubframe(NodeImpl::MouseEvent &event)
+bool MacFrame::passSubframeEventToSubframe(MouseEventWithHitTestResults &event)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
     switch ([_currentEvent type]) {
         case NSMouseMoved: {
-            NodeImpl *node = event.innerNode.get();
+            NodeImpl *node = event.innerNode();
             if (!node)
                 return false;
             RenderObject *renderer = node->renderer();
@@ -1905,7 +1907,7 @@ bool MacFrame::passSubframeEventToSubframe(NodeImpl::MouseEvent &event)
         }
         
         case NSLeftMouseDown: {
-            NodeImpl *node = event.innerNode.get();
+            NodeImpl *node = event.innerNode();
             if (!node) {
                 return false;
             }
@@ -2013,7 +2015,7 @@ void MacFrame::mouseDown(NSEvent *event)
     _mouseDownMayStartDrag = false;
     _mouseDownMayStartSelect = false;
 
-    QMouseEvent kEvent(QEvent::MouseButtonPress, event);
+    MouseEvent kEvent(event);
     v->viewportMousePressEvent(&kEvent);
     
     ASSERT(_currentEvent == event);
@@ -2035,7 +2037,7 @@ void MacFrame::mouseDragged(NSEvent *event)
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = KWQRetain(event);
 
-    QMouseEvent kEvent(QEvent::MouseMove, event);
+    MouseEvent kEvent(event);
     v->viewportMouseMoveEvent(&kEvent);
     
     ASSERT(_currentEvent == event);
@@ -2066,10 +2068,10 @@ void MacFrame::mouseUp(NSEvent *event)
     // treated as another double click. Hence the "% 2" below.
     int clickCount = [event clickCount];
     if (clickCount > 0 && clickCount % 2 == 0) {
-        QMouseEvent doubleClickEvent(QEvent::MouseButtonDblClick, event);
+        MouseEvent doubleClickEvent(event);
         v->viewportMouseDoubleClickEvent(&doubleClickEvent);
     } else {
-        QMouseEvent releaseEvent(QEvent::MouseButtonRelease, event);
+        MouseEvent releaseEvent(event);
         v->viewportMouseReleaseEvent(&releaseEvent);
     }
     
@@ -2157,7 +2159,7 @@ void MacFrame::mouseMoved(NSEvent *event)
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = KWQRetain(event);
     
-    QMouseEvent kEvent(QEvent::MouseMove, event);
+    MouseEvent kEvent(event);
     v->viewportMouseMoveEvent(&kEvent);
     
     ASSERT(_currentEvent == event);
@@ -2198,19 +2200,17 @@ bool MacFrame::sendContextMenuEvent(NSEvent *event)
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = KWQRetain(event);
     
-    QMouseEvent qev(QEvent::MouseButtonPress, event);
+    MouseEvent qev(event);
 
     int xm, ym;
     v->viewportToContents(qev.x(), qev.y(), xm, ym);
 
-    NodeImpl::MouseEvent mev(qev.stateAfter(), NodeImpl::MousePress);
-    doc->prepareMouseEvent(false, xm, ym, &mev);
+    MouseEventWithHitTestResults mev = doc->prepareMouseEvent(false, true, false, xm, ym, &qev);
 
-    swallowEvent = v->dispatchMouseEvent(contextmenuEvent,
-        mev.innerNode.get(), true, 0, &qev, true, NodeImpl::MousePress);
+    swallowEvent = v->dispatchMouseEvent(contextmenuEvent, mev.innerNode(), true, 0, &qev, true);
     if (!swallowEvent && !isPointInsideSelection(xm, ym) &&
-        ([_bridge selectWordBeforeMenuEvent] || [_bridge isEditable] || mev.innerNode->isContentEditable())) {
-        selectClosestWordFromMouseEvent(&qev, mev.innerNode.get(), xm, ym);
+        ([_bridge selectWordBeforeMenuEvent] || [_bridge isEditable] || mev.innerNode()->isContentEditable())) {
+        selectClosestWordFromMouseEvent(&qev, mev.innerNode(), xm, ym);
     }
 
     ASSERT(_currentEvent == event);

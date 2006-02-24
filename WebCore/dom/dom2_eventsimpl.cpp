@@ -27,7 +27,8 @@
 #include "DocumentImpl.h"
 #include "EventNames.h"
 #include "FrameView.h"
-#include "KWQEvent.h"
+#include "SystemTime.h"
+#include "KeyEvent.h"
 #include "SystemTime.h"
 #include "dom2_events.h"
 #include "dom2_viewsimpl.h"
@@ -436,16 +437,12 @@ KeyboardEventImpl::KeyboardEventImpl()
 {
 }
 
-KeyboardEventImpl::KeyboardEventImpl(QKeyEvent *key, AbstractViewImpl *view)
-  : UIEventWithKeyStateImpl(key->type() == QEvent::KeyRelease ? keyupEvent : key->isAutoRepeat() ? keypressEvent : keydownEvent,
-    true, true, view, 0,
-    key->state() & Qt::ControlButton,
-    key->state() & Qt::AltButton,
-    key->state() & Qt::ShiftButton,
-    key->state() & Qt::MetaButton)
-  , m_keyEvent(new QKeyEvent(*key))
+KeyboardEventImpl::KeyboardEventImpl(KeyEvent *key, AbstractViewImpl *view)
+  : UIEventWithKeyStateImpl(key->isKeyUp() ? keyupEvent : key->isAutoRepeat() ? keypressEvent : keydownEvent,
+    true, true, view, 0, key->ctrlKey(), key->altKey(), key->shiftKey(), key->metaKey())
+  , m_keyEvent(new KeyEvent(*key))
   , m_keyIdentifier(DOMString(key->keyIdentifier()).impl())
-  , m_keyLocation((key->state() & Qt::Keypad) ? KeyboardEvent::DOM_KEY_LOCATION_NUMPAD : KeyboardEvent::DOM_KEY_LOCATION_STANDARD)
+  , m_keyLocation(key->isKeypad() ? KeyboardEvent::DOM_KEY_LOCATION_NUMPAD : KeyboardEvent::DOM_KEY_LOCATION_STANDARD)
   , m_altGraphKey(false)
 {
 }
@@ -511,13 +508,11 @@ int KeyboardEventImpl::keyCode() const
 
 int KeyboardEventImpl::charCode() const
 {
-    if (!m_keyEvent) {
+    if (!m_keyEvent)
         return 0;
-    }
-    QString text = m_keyEvent->text();
-    if (text.length() != 1) {
+    String text = m_keyEvent->text();
+    if (text.length() != 1)
         return 0;
-    }
     return text[0].unicode();
 }
 

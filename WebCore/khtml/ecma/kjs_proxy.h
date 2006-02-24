@@ -52,6 +52,8 @@ public:
 
     void initScriptIfNeeded();
 
+    bool haveInterpreter() const { return m_script; }
+
 private:
     KJS::ScriptInterpreter* m_script;
     Frame *m_frame;

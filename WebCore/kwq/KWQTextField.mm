@@ -26,13 +26,12 @@
 #import "config.h"
 #import "KWQTextField.h"
 
-#import <kxmlcore/Assertions.h>
-#import "MacFrame.h"
 #import "KWQLineEdit.h"
-#import "KWQEvent.h"
 #import "KWQView.h"
+#import "MacFrame.h"
 #import "WebCoreFrameBridge.h"
 #import "render_form.h"
+#import <kxmlcore/Assertions.h>
 
 using namespace WebCore;
 
@@ -404,11 +403,8 @@ using namespace WebCore;
                 layer->scrollRectToVisible(w->absoluteBoundingBoxRect());
         }
         
-        if (widget) {
-            QEvent event(QEvent::FocusIn);
-            if (widget->eventFilterObject())
-                const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
-        }
+        if (widget && widget->eventFilterObject())
+            widget->eventFilterObject()->eventFilterFocusIn();
         
         // Sending the onFocus event above, may have resulted in a blur() - if this
         // happens when tabbing from another text field, then endEditing: and
@@ -424,13 +420,10 @@ using namespace WebCore;
     } else {
         lastSelectedRange = [self selectedRange];
         
-        if (widget) {
-            QEvent event(QEvent::FocusOut);
-            if (widget->eventFilterObject()) {
-                const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
-                if (widget)
-                    [MacFrame::bridgeForWidget(widget) formControlIsResigningFirstResponder:field];
-            }
+        if (widget && widget->eventFilterObject()) {
+            widget->eventFilterObject()->eventFilterFocusOut();
+            if (widget)
+                [MacFrame::bridgeForWidget(widget) formControlIsResigningFirstResponder:field];
         }
     }
 }

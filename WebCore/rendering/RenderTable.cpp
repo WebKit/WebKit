@@ -193,11 +193,12 @@ void RenderTable::calcWidth()
     RenderBlock *cb = containingBlock();
     int availableWidth = cb->contentWidth();
 
-    LengthType widthType = style()->width().type;
-    if (widthType > Relative && style()->width().value > 0) {
+    LengthType widthType = style()->width().type();
+    if (widthType > Relative && style()->width().value() > 0) {
         // Percent or fixed table
-        m_width = style()->width().minWidth(availableWidth);
-        if (m_minWidth > m_width) m_width = m_minWidth;
+        m_width = style()->width().calcMinValue(availableWidth);
+        if (m_minWidth > m_width)
+            m_width = m_minWidth;
     } else {
         // An auto width table should shrink to fit within the line width if necessary in order to 
         // avoid overlapping floats.
@@ -205,10 +206,10 @@ void RenderTable::calcWidth()
         
         // Subtract out any fixed margins from our available width for auto width tables.
         int marginTotal = 0;
-        if (style()->marginLeft().type != Auto)
-            marginTotal += style()->marginLeft().width(availableWidth);
-        if (style()->marginRight().type != Auto)
-            marginTotal += style()->marginRight().width(availableWidth);
+        if (!style()->marginLeft().isAuto())
+            marginTotal += style()->marginLeft().calcValue(availableWidth);
+        if (!style()->marginRight().isAuto())
+            marginTotal += style()->marginRight().calcValue(availableWidth);
             
         // Subtract out our margins to get the available content width.
         int availContentWidth = kMax(0, availableWidth - marginTotal);
@@ -295,7 +296,7 @@ void RenderTable::layout()
     if (isPositioned())
         th = newHeight; // FIXME: Leave this alone for now but investigate later.
     else if (h.isFixed())
-        th = h.value - (bpTop + bpBottom);  // Tables size as though CSS height includes border/padding.
+        th = h.value() - (bpTop + bpBottom);  // Tables size as though CSS height includes border/padding.
     else if (h.isPercent())
         th = calcPercentageHeight(h);
     th = kMax(0, th);

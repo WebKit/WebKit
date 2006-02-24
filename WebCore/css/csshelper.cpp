@@ -2,6 +2,7 @@
  * This file is part of the CSS implementation for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+ * Copyright (C) 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,26 +20,18 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #include "config.h"
 #include "csshelper.h"
 
-#include <qfontmetrics.h>
+#include "PlatformString.h"
 
-#include "rendering/render_style.h"
-#include "css_valueimpl.h"
-#include "dom/css_value.h"
-#include "helper.h"
-#include "StringImpl.h"
-#include "khtml_settings.h"
+namespace WebCore {
 
-using namespace DOM;
-using namespace khtml;
-
-
-DOMString khtml::parseURL(const DOMString &url)
+String parseURL(const String& url)
 {
-    DOMStringImpl* i = url.impl();
-    if(!i) return DOMString();
+    StringImpl* i = url.impl();
+    if(!i) return String();
 
     int o = 0;
     int l = i->l;
@@ -67,7 +60,7 @@ DOMString khtml::parseURL(const DOMString &url)
     while(o < l && (i->s[o] <= ' ')) { o++; l--; }
     while(l > 0 && (i->s[o+l-1] <= ' ')) l--;
 
-    DOMStringImpl* j = new DOMStringImpl(i->s+o,l);
+    StringImpl* j = new StringImpl(i->s+o,l);
 
     int nl = 0;
     for(int k = o; k < o+l; k++)
@@ -77,4 +70,6 @@ DOMString khtml::parseURL(const DOMString &url)
     j->l = nl;
 
     return j;
+}
+
 }

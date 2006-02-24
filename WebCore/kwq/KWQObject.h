@@ -37,8 +37,6 @@
 #define emit
 #define Q_OBJECT
 
-class QEvent;
-
 class KWQGuardedPtrBase;
 
 class QObject : public Qt {
@@ -51,13 +49,12 @@ public:
     void connect(const QObject *sender, const char *signal, const char *member) const
         { connect(sender, signal, this, member); }
 
-    void installEventFilter(const QObject *o) { _eventFilterObject = o; }
-    void removeEventFilter(const QObject *) { _eventFilterObject = 0; }
-    const QObject *eventFilterObject() const { return _eventFilterObject; }
+    void installEventFilter(const QObject* o) { _eventFilterObject = o; }
+    void removeEventFilter() { _eventFilterObject = 0; }
+    const QObject* eventFilterObject() const { return _eventFilterObject; }
 
-    virtual bool eventFilter(QObject *object, QEvent *event) { return false; }
-
-    virtual bool event(QEvent *);
+    virtual void eventFilterFocusIn() const { }
+    virtual void eventFilterFocusOut() const { }
 
     virtual bool isKHTMLLoader() const;
     virtual bool isFrame() const;

@@ -63,7 +63,7 @@ short RenderBR::lineHeight(bool firstLine, bool isRootLineBox) const
     if (firstLine) {
         RenderStyle* s = style(firstLine);
         Length lh = s->lineHeight();
-        if (lh.value < 0) {
+        if (lh.value() < 0) {
             if (s == style()) {
                 if (m_lineHeight == -1)
                     m_lineHeight = RenderObject::lineHeight(false);
@@ -72,8 +72,8 @@ short RenderBR::lineHeight(bool firstLine, bool isRootLineBox) const
             return s->fontMetrics().lineSpacing();
         }
         if (lh.isPercent())
-            return lh.minWidth(s->font().pixelSize());
-        return lh.value;
+            return lh.calcMinValue(s->font().pixelSize());
+        return lh.value();
     }
     
     if (m_lineHeight == -1)

@@ -81,6 +81,8 @@ namespace WebCore {
     class NodeFilterImpl;
     class NodeIteratorImpl;
     class NodeListImpl;
+    class MouseEvent;
+    class MouseEventWithHitTestResults;
     class ProcessingInstructionImpl;
     class RangeImpl;
     class RegisteredEventListener;
@@ -334,8 +336,7 @@ public:
     void resetVisitedLinkColor();
     void resetActiveLinkColor();
     
-    bool prepareMouseEvent(bool readonly, int x, int y, MouseEvent* ev);
-    bool prepareMouseEvent(bool readonly, bool active, int x, int y, MouseEvent *ev);
+    MouseEventWithHitTestResults prepareMouseEvent(bool readonly, bool active, bool mouseMove, int x, int y, MouseEvent*);
 
     virtual bool childAllowed(NodeImpl*);
     virtual bool childTypeAllowed(unsigned short nodeType);

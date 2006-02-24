@@ -110,7 +110,7 @@ static void appendRun(BidiState &bidi);
 static int getBPMWidth(int childValue, Length cssUnit)
 {
     if (!cssUnit.isIntrinsicOrAuto())
-        return (cssUnit.type == Fixed ? cssUnit.value : childValue);
+        return (cssUnit.isFixed() ? cssUnit.value() : childValue);
     return 0;
 }
 

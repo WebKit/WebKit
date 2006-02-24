@@ -30,20 +30,6 @@
 
 class Qt {
 public:
-     enum ButtonState {
-        NoButton        = 0x0000,
-        LeftButton      = 0x0001,
-        RightButton     = 0x0002,
-        MidButton       = 0x0004,
-        MouseButtonMask = 0x0007,
-        ShiftButton     = 0x0008,
-        ControlButton   = 0x0010,
-        AltButton       = 0x0020,
-        MetaButton      = 0x0040,
-        KeyButtonMask   = 0x0078,
-        Keypad          = 0x4000
-    };
-
     enum AlignmentFlags {
         AlignAuto       = 0x0000,           // text alignment
         AlignLeft       = 0x0001,

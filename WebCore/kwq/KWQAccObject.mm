@@ -33,7 +33,7 @@
 
 #import "KWQAccObjectCache.h"
 #import <kxmlcore/Assertions.h>
-#import "KWQFoundationExtras.h"
+#import "FoundationExtras.h"
 #import "Widget.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreFrameView.h"

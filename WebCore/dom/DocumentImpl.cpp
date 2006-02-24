@@ -25,21 +25,27 @@
 #include "config.h"
 #include "DocumentImpl.h"
 
+#include "CDATASectionImpl.h"
+#include "CommentImpl.h"
 #include "DOMImplementationImpl.h"
 #include "DocLoader.h"
 #include "DocumentFragmentImpl.h"
 #include "DocumentTypeImpl.h"
+#include "EditingTextImpl.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameTree.h"
 #include "FrameView.h"
-#include "SelectionController.h"
+#include "HTMLNameCollectionImpl.h"
 #include "KWQAccObjectCache.h"
-#include "KWQEvent.h"
 #include "KWQLogging.h"
+#include "KeyEvent.h"
+#include "MouseEventWithHitTestResults.h"
 #include "NameNodeListImpl.h"
 #include "SegmentedString.h"
+#include "SelectionController.h"
 #include "SystemTime.h"
+#include "VisiblePosition.h"
 #include "css_stylesheetimpl.h"
 #include "css_valueimpl.h"
 #include "csshelper.h"
@@ -50,9 +56,6 @@
 #include "dom2_rangeimpl.h"
 #include "dom2_viewsimpl.h"
 #include "dom_exception.h"
-#include "CDATASectionImpl.h"
-#include "CommentImpl.h"
-#include "EditingTextImpl.h"
 #include "dom_xmlimpl.h"
 #include "ecma/kjs_binding.h"
 #include "ecma/kjs_proxy.h"
@@ -62,11 +65,9 @@
 #include "render_arena.h"
 #include "render_canvas.h"
 #include "render_frames.h"
-#include "VisiblePosition.h"
 #include "visible_text.h"
 #include "xml_tokenizer.h"
 #include <qregexp.h>
-#include "HTMLNameCollectionImpl.h"
 
 // FIXME: We want to cut the remaining HTML dependencies so that we don't need to include these files.
 #include "HTMLInputElementImpl.h"
@@ -1633,41 +1634,30 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
     }
 }
 
-bool DocumentImpl::prepareMouseEvent(bool readonly, int x, int y, MouseEvent* ev)
+MouseEventWithHitTestResults DocumentImpl::prepareMouseEvent(bool readonly, bool active, bool mouseMove,
+    int x, int y, MouseEvent* event)
 {
-    return prepareMouseEvent(readonly, ev->type == MousePress, x, y, ev);
-}
+    if (!renderer())
+        return MouseEventWithHitTestResults();
 
-bool DocumentImpl::prepareMouseEvent(bool readonly, bool active, int _x, int _y, MouseEvent *ev)
-{
-    if (renderer()) {
-        assert(renderer()->isCanvas());
-        RenderObject::NodeInfo renderInfo(readonly, active, ev->type == MouseMove);
-        bool isInside = renderer()->layer()->hitTest(renderInfo, _x, _y);
-        ev->innerNode = renderInfo.innerNode();
+    assert(renderer()->isCanvas());
+    RenderObject::NodeInfo renderInfo(readonly, active, mouseMove);
+    renderer()->layer()->hitTest(renderInfo, x, y);
 
-        if (renderInfo.URLElement()) {
-            assert(renderInfo.URLElement()->isElementNode());
-            ElementImpl* e =  static_cast<ElementImpl*>(renderInfo.URLElement());
-            DOMString href = parseURL(e->getAttribute(hrefAttr));
-            DOMString target = e->getAttribute(targetAttr);
-
-            if (!target.isNull() && !href.isNull()) {
-                ev->target = target;
-                ev->url = href;
-            }
-            else
-                ev->url = href;
-        }
-
-        if (!readonly)
-            updateRendering();
-
-        return isInside;
+    String href;
+    String target;
+    if (renderInfo.URLElement()) {
+        assert(renderInfo.URLElement()->isElementNode());
+        ElementImpl* e = static_cast<ElementImpl*>(renderInfo.URLElement());
+        href = parseURL(e->getAttribute(hrefAttr));
+        if (!href.isNull())
+            target = e->getAttribute(targetAttr);
     }
 
+    if (!readonly)
+        updateRendering();
 
-    return false;
+    return MouseEventWithHitTestResults(event, href, target, renderInfo.innerNode());
 }
 
 // DOM Section 1.1.1
@@ -2226,12 +2216,12 @@ void DocumentImpl::handleWindowEvent(EventImpl *evt, bool useCapture)
 void DocumentImpl::defaultEventHandler(EventImpl *evt)
 {
     // handle accesskey
-    if (evt->type()==keydownEvent) {
-        KeyboardEventImpl *kevt = static_cast<KeyboardEventImpl *>(evt);
+    if (evt->type() == keydownEvent) {
+        KeyboardEventImpl* kevt = static_cast<KeyboardEventImpl *>(evt);
         if (kevt->ctrlKey()) {
-            QKeyEvent *qevt = kevt->qKeyEvent();
-            DOMString key = (qevt ? qevt->unmodifiedText() : kevt->keyIdentifier()).lower();
-            ElementImpl *elem = getElementByAccessKey(key);
+            KeyEvent* ev = kevt->keyEvent();
+            String key = (ev ? ev->unmodifiedText() : kevt->keyIdentifier()).lower();
+            ElementImpl* elem = getElementByAccessKey(key);
             if (elem) {
                 elem->accessKeyAction(false);
                 evt->setDefaultHandled();

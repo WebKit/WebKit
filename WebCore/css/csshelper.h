@@ -19,33 +19,19 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef css_helper_h
 #define css_helper_h
 
-#include "Color.h"
-#include <qfont.h>
+namespace WebCore {
 
-#include "PlatformString.h"
-
-class QPaintDeviceMetrics;
-class KHTMLSettings;
-
-namespace DOM
-{
-    class CSSPrimitiveValueImpl;
-};
-
-namespace khtml
-{
-    class RenderStyle;
+    class String;
 
     /*
      * mostly just removes the url("...") brace
      */
-    DOM::DOMString parseURL(const DOM::DOMString &url);
+    String parseURL(const String &url);
 
-};
-
-
+}
 
 #endif

@@ -26,9 +26,8 @@
 #import "config.h"
 #import "KWQComboBox.h"
 
-#import "KWQEvent.h"
 #import "KWQExceptions.h"
-#import "KWQFoundationExtras.h"
+#import "FoundationExtras.h"
 #import "KWQLineEdit.h"
 #import "KWQView.h"
 #import "MacFrame.h"
@@ -496,9 +495,8 @@ void QComboBox::populate()
                 if (layer)
                     layer->scrollRectToVisible(w->absoluteBoundingBoxRect());
             }
-            QEvent event(QEvent::FocusIn);
             if (widget->eventFilterObject())
-                const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
+                widget->eventFilterObject()->eventFilterFocusIn();
         }
     }
     return become;
@@ -509,12 +507,10 @@ void QComboBox::populate()
     BOOL resign = [super resignFirstResponder];
     if (resign) {
         Widget *widget = [self widget];
-        if (widget) {
-            QEvent event(QEvent::FocusOut);
-            if (widget->eventFilterObject()) {
-                const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
+        if (widget && widget->eventFilterObject()) {
+            widget->eventFilterObject()->eventFilterFocusOut();
+            if (widget)
                 [MacFrame::bridgeForWidget(widget) formControlIsResigningFirstResponder:self];
-            }
         }
     }
     return resign;

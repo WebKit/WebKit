@@ -26,7 +26,7 @@
 #include "config.h"
 #import "KWQClipboard.h"
 #import <kxmlcore/Assertions.h>
-#import "KWQFoundationExtras.h"
+#import "FoundationExtras.h"
 #import "MacFrame.h"
 #import "QStringList.h"
 #import "WebCoreGraphicsBridge.h"

@@ -28,7 +28,6 @@
 
 #include "KWQObject.h"
 
-class QEvent;
 class QFont;
 class QPalette;
 
@@ -105,8 +104,6 @@ namespace WebCore {
 
         void setCursor(const Cursor&);
         Cursor cursor();
-
-        bool event(QEvent*);
 
         void show();
         void hide();

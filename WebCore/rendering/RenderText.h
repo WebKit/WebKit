@@ -134,8 +134,8 @@ public:
     virtual IntRect caretRect(int offset, EAffinity affinity, int *extraWidthToEndOfLine = 0);
     void posOfChar(int ch, int &x, int &y);
 
-    virtual int marginLeft() const { return style()->marginLeft().minWidth(0); }
-    virtual int marginRight() const { return style()->marginRight().minWidth(0); }
+    virtual int marginLeft() const { return style()->marginLeft().calcMinValue(0); }
+    virtual int marginRight() const { return style()->marginRight().calcMinValue(0); }
 
     virtual IntRect getAbsoluteRepaintRect();
 

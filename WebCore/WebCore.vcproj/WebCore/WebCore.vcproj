@@ -187,10 +187,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQEvent.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQExceptions.h"
 				>
 			</File>
@@ -208,10 +204,6 @@
 			</File>
 			<File
 				RelativePath="..\..\kwq\KWQFormData.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQFoundationExtras.h"
 				>
 			</File>
 			<File
@@ -276,10 +268,6 @@
 			</File>
 			<File
 				RelativePath="..\..\kwq\KWQKPartsBrowserInterface.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQKPartsHistoryProvider.h"
 				>
 			</File>
 			<File
@@ -1293,10 +1281,6 @@
 					RelativePath="..\..\khtml\misc\helper.h"
 					>
 				</File>
-				<File
-					RelativePath="..\..\khtml\misc\khtmllayout.h"
-					>
-				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -1328,6 +1312,10 @@
 			</File>
 			<File
 				RelativePath="..\..\page\FrameView.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\page\MouseEventWithHitTestResults.h"
 				>
 			</File>
 			<File
@@ -1609,6 +1597,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\platform\KeyEvent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\MouseEvent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\platform\Pen.cpp"
 				>
 			</File>
@@ -1682,6 +1678,10 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\Timer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\WheelEvent.h"
 				>
 			</File>
 			<File
@@ -2549,6 +2549,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\css\Length.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\css\UserAgentStyleSheets.cpp"
 				>
 			</File>
@@ -2582,6 +2586,10 @@
 			</File>
 			<File
 				RelativePath="..\..\rendering\font.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\GapRects.h"
 				>
 			</File>
 			<File
@@ -2850,6 +2858,10 @@
 			>
 			<File
 				RelativePath="..\..\bridge\BrowserExtension.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bridge\History.h"
 				>
 			</File>
 			<Filter

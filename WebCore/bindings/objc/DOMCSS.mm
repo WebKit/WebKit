@@ -28,7 +28,7 @@
 
 #import "DOMInternal.h"
 #import "Color.h"
-#import "KWQFoundationExtras.h"
+#import "FoundationExtras.h"
 #import "css_base.h"
 #import "css_ruleimpl.h"
 #import "css_stylesheetimpl.h"

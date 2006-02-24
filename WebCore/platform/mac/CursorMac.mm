@@ -27,7 +27,7 @@
 #import "Cursor.h"
 
 #import "KWQExceptions.h"
-#import "KWQFoundationExtras.h"
+#import "FoundationExtras.h"
 #import "Image.h"
 
 @interface WebCoreCursorBundle : NSObject { }

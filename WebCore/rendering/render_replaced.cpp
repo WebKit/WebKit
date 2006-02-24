@@ -34,7 +34,6 @@
 #include "render_canvas.h"
 #include "render_line.h"
 #include "VisiblePosition.h"
-#include <qevent.h>
 #include <qpainter.h>
 #include "Widget.h"
 
@@ -270,9 +269,9 @@ void RenderWidget::destroy()
 
     if (m_widget) {
         if (m_view)
-            m_view->removeChild( m_widget );
+            m_view->removeChild(m_widget);
 
-        m_widget->removeEventFilter( this );
+        m_widget->removeEventFilter();
     }
 
     RenderLayer* layer = m_layer;
@@ -311,7 +310,7 @@ void RenderWidget::setQWidget(Widget* widget, bool deleteWidget)
 {
     if (widget != m_widget) {
         if (m_widget) {
-            m_widget->removeEventFilter(this);
+            m_widget->removeEventFilter();
             if (m_deleteWidget)
                 delete m_widget;
         }
@@ -397,39 +396,22 @@ void RenderWidget::paint(PaintInfo& i, int _tx, int _ty)
         i.p->fillRect(selectionRect(), selectionColor(i.p));
 }
 
-bool RenderWidget::eventFilter(QObject*, QEvent* e)
+void RenderWidget::eventFilterFocusIn() const
 {
-    if (!element())
-        return true;
-
-    RenderArena* arena = ref();
+    RenderArena* arena = const_cast<RenderWidget*>(this)->ref();
     RefPtr<NodeImpl> elem = element();
-
-    bool filtered = false;
-
-    switch (e->type()) {
-    case QEvent::FocusOut:
-        if (elem->getDocument()->focusNode() == elem)
-            elem->getDocument()->setFocusNode(0);
-        break;
-    case QEvent::FocusIn:
+    if (elem)
         elem->getDocument()->setFocusNode(elem);
-        break;
-    case QEvent::KeyPress:
-    case QEvent::KeyRelease:
-        if (!elem->dispatchKeyEvent(static_cast<QKeyEvent*>(e)))
-            filtered = true;
-        break;
-    default:
-        break;
-    }
+    const_cast<RenderWidget*>(this)->deref(arena);
+}
 
-    // stop processing if the widget gets deleted, but continue in all other cases
-    if (m_refCount == 1)
-        filtered = true;
-    deref(arena);
-
-    return filtered;
+void RenderWidget::eventFilterFocusOut() const
+{
+    RenderArena* arena = const_cast<RenderWidget*>(this)->ref();
+    RefPtr<NodeImpl> elem = element();
+    if (elem && elem == elem->getDocument()->focusNode())
+        elem->getDocument()->setFocusNode(0);
+    const_cast<RenderWidget*>(this)->deref(arena);
 }
 
 void RenderWidget::deref(RenderArena *arena)

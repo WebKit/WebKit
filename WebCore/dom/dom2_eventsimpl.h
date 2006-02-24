@@ -31,7 +31,6 @@
 #include "dom2_viewsimpl.h"
 #include "Shared.h"
 
-class QKeyEvent;
 class QStringList;
 
 namespace WebCore {
@@ -40,6 +39,7 @@ class ClipboardImpl;
 class EventListener;
 class Image;
 class IntPoint;
+class KeyEvent;
 
 class EventImpl : public Shared<EventImpl>
 {
@@ -264,7 +264,7 @@ private:
 class KeyboardEventImpl : public UIEventWithKeyStateImpl {
 public:
     KeyboardEventImpl();
-    KeyboardEventImpl(QKeyEvent *key, AbstractViewImpl *view);
+    KeyboardEventImpl(KeyEvent*, AbstractViewImpl*);
     KeyboardEventImpl(const AtomicString &type,
                 bool canBubbleArg,
                 bool cancelableArg,
@@ -295,7 +295,7 @@ public:
     
     bool altGraphKey() const { return m_altGraphKey; }
     
-    QKeyEvent *qKeyEvent() const { return m_keyEvent; }
+    KeyEvent* keyEvent() const { return m_keyEvent; }
 
     int keyCode() const; // key code for keydown and keyup, character for other events
     int charCode() const;
@@ -304,7 +304,7 @@ public:
     virtual int which() const;
 
 private:
-    QKeyEvent *m_keyEvent;
+    KeyEvent* m_keyEvent;
     RefPtr<DOMStringImpl> m_keyIdentifier;
     unsigned m_keyLocation;
     bool m_altGraphKey : 1;

@@ -24,7 +24,7 @@
 
 #import "DocumentImpl.h"
 #import "FrameView.h"
-#import "KWQFoundationExtras.h"
+#import "FoundationExtras.h"
 #import "cssstyleselector.h"
 #import "dom_elementimpl.h"
 #import "font.h"
@@ -242,16 +242,16 @@ void RenderThemeMac::addIntrinsicMargins(RenderStyle* style, NSControlSize size)
     
     // FIXME: Using width/height alone and not also dealing with min-width/max-width is flawed.
     if (style->width().isIntrinsicOrAuto()) {
-        if (style->marginLeft().quirk)
+        if (style->marginLeft().quirk())
             style->setMarginLeft(Length(m, Fixed));
-        if (style->marginRight().quirk)
+        if (style->marginRight().quirk())
             style->setMarginRight(Length(m, Fixed));
     }
 
     if (style->height().isAuto()) {
-        if (style->marginTop().quirk)
+        if (style->marginTop().quirk())
             style->setMarginTop(Length(m, Fixed));
-        if (style->marginBottom().quirk)
+        if (style->marginBottom().quirk())
             style->setMarginBottom(Length(m, Fixed));
     }
 }

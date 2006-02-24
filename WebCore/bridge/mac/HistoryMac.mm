@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef HISTORYPROVIDER_H_
-#define HISTORYPROVIDER_H_
+#import "config.h"
+#import "History.h"
 
-#include "KWQObject.h"
+#import "QString.h"
+#import "WebCoreHistory.h"
 
-namespace KParts {
+namespace WebCore {
 
-class HistoryProvider : public QObject {
-public:
-    static HistoryProvider *self();
-
-    bool contains(const QString &) const;
-};
-
+bool historyContains(const QString& s)
+{
+    // the other side of the bridge is careful not to throw exceptions here
+    if (s.hasFastLatin1())
+        return [[WebCoreHistory historyProvider] containsItemForURLLatin1:s.latin1() length:s.length()];
+    return [[WebCoreHistory historyProvider] containsItemForURLUnicode:(UniChar *)s.unicode() length:s.length()];
 }
 
-#endif
+}

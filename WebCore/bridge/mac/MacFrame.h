@@ -139,7 +139,7 @@ public:
     virtual void setTitle(const DOMString &);
     virtual void setStatusBarText(const String&);
 
-    virtual void urlSelected(const KURL &url, int button, int state, const URLArgs &args);
+    virtual void urlSelected(const KURL&, const URLArgs&);
 
     virtual ObjectContentType objectContentType(const KURL& url, const QString& mimeType);
     virtual Plugin* createPlugin(const KURL& url, const QStringList& paramNames, const QStringList& paramValues, const QString& mimeType);
@@ -233,7 +233,7 @@ public:
     bool sendContextMenuEvent(NSEvent *);
 
     bool passMouseDownEventToWidget(Widget *);
-    virtual bool passSubframeEventToSubframe(NodeImpl::MouseEvent &);
+    virtual bool passSubframeEventToSubframe(MouseEventWithHitTestResults &);
     virtual bool passWheelEventToChildWidget(NodeImpl *);
     
     virtual void clearRecordedFormValues();
@@ -318,9 +318,9 @@ protected:
     virtual void redirectionTimerFired(Timer<Frame>*);
 
 private:
-    virtual void khtmlMousePressEvent(MousePressEvent *);
-    virtual void khtmlMouseMoveEvent(MouseMoveEvent *);
-    virtual void khtmlMouseReleaseEvent(MouseReleaseEvent *);
+    virtual void khtmlMousePressEvent(MouseEventWithHitTestResults *);
+    virtual void khtmlMouseMoveEvent(MouseEventWithHitTestResults *);
+    virtual void khtmlMouseReleaseEvent(MouseEventWithHitTestResults *);
     
     NSView *mouseDownViewIfStillGood();
 

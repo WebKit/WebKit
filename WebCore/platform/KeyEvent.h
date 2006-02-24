@@ -23,76 +23,56 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "Widget.h"
+#ifndef QEVENT_H_
+#define QEVENT_H_
 
-#include "IntRect.h"
+#include "PlatformString.h"
+
+#ifdef __OBJC__
+@class NSEvent;
+#else
+class NSEvent;
+#endif
 
 namespace WebCore {
 
-IntSize Widget::sizeHint() const 
-{
-    return IntSize();
-}
+    class KeyEvent {
+    public:
+#ifdef __APPLE__
+        KeyEvent(NSEvent*, bool forceAutoRepeat = false);
+#endif
 
-void Widget::resize(int w, int h) 
-{
-    setFrameGeometry(IntRect(x(), y(), w, h));
-}
+        String text() const { return m_text; }
+        String unmodifiedText() const { return m_unmodifiedText; }
+        String keyIdentifier() const { return m_keyIdentifier; }
+        bool isKeyUp() const { return m_isKeyUp; }
+        bool isAutoRepeat() const { return m_autoRepeat; }
+        bool isAccepted() const { return m_isAccepted; }
+        int WindowsKeyCode() const { return m_WindowsKeyCode; }
+        bool isKeypad() const { return m_isKeypad; }
+        bool shiftKey() const { return m_shiftKey; }
+        bool ctrlKey() const { return m_ctrlKey; }
+        bool altKey() const { return m_altKey; }
+        bool metaKey() const { return m_metaKey; }
 
-int Widget::x() const
-{
-    return frameGeometry().x();
-}
+        void accept() { m_isAccepted = true; }
+        void ignore() { m_isAccepted = false; }
 
-int Widget::y() const 
-{
-    return frameGeometry().y();
-}
-
-int Widget::width() const 
-{ 
-    return frameGeometry().width();
-}
-
-int Widget::height() const 
-{
-    return frameGeometry().height();
-}
-
-IntSize Widget::size() const 
-{
-    return frameGeometry().size();
-}
-
-void Widget::resize(const IntSize &s) 
-{
-    resize(s.width(), s.height());
-}
-
-IntPoint Widget::pos() const 
-{
-    return frameGeometry().location();
-}
-
-void Widget::move(int x, int y) 
-{
-    setFrameGeometry(IntRect(x, y, width(), height()));
-}
-
-void Widget::move(const IntPoint &p) 
-{
-    move(p.x(), p.y());
-}
-
-int Widget::baselinePosition(int height) const
-{
-    return height;
-}
-
-bool Widget::checksDescendantsForFocus() const
-{
-    return false;
-}
+    private:
+        String m_text;
+        String m_unmodifiedText;
+        String m_keyIdentifier;
+        bool m_isKeyUp;
+        bool m_autoRepeat;
+        bool m_isAccepted;
+        int m_WindowsKeyCode;
+        bool m_isKeypad;
+        bool m_shiftKey;
+        bool m_ctrlKey;
+        bool m_altKey;
+        bool m_metaKey;
+    };
 
 }
+
+#endif

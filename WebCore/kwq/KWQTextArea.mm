@@ -29,13 +29,12 @@
 #import "DOMCSS.h"
 #import "DOMHTML.h"
 #import "EventNames.h"
-#import <kxmlcore/Assertions.h>
-#import "MacFrame.h"
-#import "KWQEvent.h"
-#import "KWQTextEdit.h"
-#import "render_replaced.h"
-#import "WebCoreFrameBridge.h"
 #import "KWQKHTMLSettings.h"
+#import "KWQTextEdit.h"
+#import "MacFrame.h"
+#import "WebCoreFrameBridge.h"
+#import "render_replaced.h"
+#import <kxmlcore/Assertions.h>
 
 using namespace WebCore;
 using namespace EventNames;
@@ -972,11 +971,8 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
                 layer->scrollRectToVisible(w->absoluteBoundingBoxRect());
         }
         [self _KWQ_setKeyboardFocusRingNeedsDisplay];
-        if (widget) {
-            QEvent event(QEvent::FocusIn);
-            if (widget->eventFilterObject())
-                const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
-        }
+        if (widget && widget->eventFilterObject())
+            widget->eventFilterObject()->eventFilterFocusIn();
     }
 
     return become;
@@ -993,12 +989,10 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
     if (resign) {
         [self _KWQ_setKeyboardFocusRingNeedsDisplay];
 
-        if (widget) {
-            QEvent event(QEvent::FocusOut);
-            if (widget->eventFilterObject()) {
-                const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
+        if (widget && widget->eventFilterObject()) {
+            widget->eventFilterObject()->eventFilterFocusOut();
+            if (widget)
                 [MacFrame::bridgeForWidget(widget) formControlIsResigningFirstResponder:self];
-            }
         }        
     }
 

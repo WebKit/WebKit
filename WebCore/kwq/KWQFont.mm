@@ -28,7 +28,7 @@
 
 #import "KWQExceptions.h"
 #import "QString.h"
-#import "KWQFoundationExtras.h"
+#import "FoundationExtras.h"
 #import "WebCoreTextRendererFactory.h"
 
 QFont::QFont()

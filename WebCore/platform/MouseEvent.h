@@ -23,76 +23,55 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "Widget.h"
+#ifndef MouseEvent_h
+#define MouseEvent_h
 
-#include "IntRect.h"
+#include "IntPoint.h"
+
+#if __APPLE__
+#ifdef __OBJC__
+@class NSEvent;
+#else
+class NSEvent;
+#endif
+#endif
 
 namespace WebCore {
 
-IntSize Widget::sizeHint() const 
-{
-    return IntSize();
-}
+    // These button numbers match the one used in the DOM API.
+    enum MouseButton { LeftButton, MiddleButton, RightButton };
 
-void Widget::resize(int w, int h) 
-{
-    setFrameGeometry(IntRect(x(), y(), w, h));
-}
+    class MouseEvent {
+    public:
+        MouseEvent(); // "current event"
 
-int Widget::x() const
-{
-    return frameGeometry().x();
-}
+        const IntPoint& pos() const { return m_position; }
+        int x() const { return m_position.x(); }
+        int y() const { return m_position.y(); }
+        int globalX() const { return m_globalPosition.x(); }
+        int globalY() const { return m_globalPosition.y(); }
+        MouseButton button() const { return m_button; }
+        int clickCount() const { return m_clickCount; }
+        bool shiftKey() const { return m_shiftKey; }
+        bool ctrlKey() const { return m_ctrlKey; }
+        bool altKey() const { return m_altKey; }
+        bool metaKey() const { return m_metaKey; }
 
-int Widget::y() const 
-{
-    return frameGeometry().y();
-}
+#if __APPLE__
+        MouseEvent(NSEvent*);
+#endif
 
-int Widget::width() const 
-{ 
-    return frameGeometry().width();
-}
-
-int Widget::height() const 
-{
-    return frameGeometry().height();
-}
-
-IntSize Widget::size() const 
-{
-    return frameGeometry().size();
-}
-
-void Widget::resize(const IntSize &s) 
-{
-    resize(s.width(), s.height());
-}
-
-IntPoint Widget::pos() const 
-{
-    return frameGeometry().location();
-}
-
-void Widget::move(int x, int y) 
-{
-    setFrameGeometry(IntRect(x, y, width(), height()));
-}
-
-void Widget::move(const IntPoint &p) 
-{
-    move(p.x(), p.y());
-}
-
-int Widget::baselinePosition(int height) const
-{
-    return height;
-}
-
-bool Widget::checksDescendantsForFocus() const
-{
-    return false;
-}
+    private:
+        IntPoint m_position;
+        IntPoint m_globalPosition;
+        MouseButton m_button;
+        int m_clickCount;
+        bool m_shiftKey;
+        bool m_ctrlKey;
+        bool m_altKey;
+        bool m_metaKey;
+    };
 
 }
+
+#endif

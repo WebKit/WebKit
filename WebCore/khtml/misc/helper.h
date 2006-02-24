@@ -2,7 +2,7 @@
  * This file is part of the CSS implementation for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,26 +20,17 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef html_helper_h
 #define html_helper_h
 
 class QChar;
 
-#include "Color.h"
-#include <qfontmetrics.h>
-#include <qfont.h>
-
-namespace khtml
-{
-    class QPainter;
-
-    extern QPainter *printpainter;
-    void setPrintPainter(QPainter *printer);
-
-    void findWordBoundary(const QChar *chars, int len, int position, int *start, int *end);
-    int nextWordFromIndex(const QChar *chars, int len, int position, bool forward);
-    void findSentenceBoundary(const QChar *chars, int len, int position, int *start, int *end);
-    int nextSentenceFromIndex(const QChar *chars, int len, int position, bool forward);
-};
+namespace WebCore {
+    void findWordBoundary(const QChar*, int len, int position, int *start, int *end);
+    int nextWordFromIndex(const QChar*, int len, int position, bool forward);
+    void findSentenceBoundary(const QChar*, int len, int position, int *start, int *end);
+    int nextSentenceFromIndex(const QChar*, int len, int position, bool forward);
+}
 
 #endif

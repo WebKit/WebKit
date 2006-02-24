@@ -332,7 +332,7 @@ void RenderImage::updateAltText()
 
 bool RenderImage::isWidthSpecified() const
 {
-    switch (style()->width().type) {
+    switch (style()->width().type()) {
         case Fixed:
         case Percent:
             return true;
@@ -345,7 +345,7 @@ bool RenderImage::isWidthSpecified() const
 
 bool RenderImage::isHeightSpecified() const
 {
-    switch (style()->height().type) {
+    switch (style()->height().type()) {
         case Fixed:
         case Percent:
             return true;

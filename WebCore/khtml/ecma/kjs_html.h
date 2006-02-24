@@ -23,11 +23,11 @@
 #define KJS_HTML_H_
 
 #include "CachedObjectClient.h"
-#include "kjs_dom.h"
-#include "JSElement.h"
 #include "Color.h"
-#include <qguardedptr.h>
 #include "Image.h"
+#include "JSElement.h"
+#include "kjs_dom.h"
+#include <qptrlist.h>
 
 #if __APPLE__
 #include <ApplicationServices/ApplicationServices.h>

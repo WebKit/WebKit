@@ -601,24 +601,24 @@ QRegion HTMLAreaElementImpl::getRegion(int width, int height) const
                 int numPoints = m_coordsLen / 2;
                 IntPointArray points(numPoints);
                 for (int i = 0; i < numPoints; ++i)
-                    points.setPoint(i, m_coords[i * 2].minWidth(width), m_coords[i * 2 + 1].minWidth(height));
+                    points.setPoint(i, m_coords[i * 2].calcMinValue(width), m_coords[i * 2 + 1].calcMinValue(height));
                 return QRegion(points);
             }
             break;
         case Circle:
             if (m_coordsLen >= 3) {
                 Length radius = m_coords[2];
-                int r = kMin(radius.minWidth(width), radius.minWidth(height));
-                return QRegion(m_coords[0].minWidth(width) - r, m_coords[1].minWidth(height) - r,
+                int r = kMin(radius.calcMinValue(width), radius.calcMinValue(height));
+                return QRegion(m_coords[0].calcMinValue(width) - r, m_coords[1].calcMinValue(height) - r,
                     2 * r, 2 * r, QRegion::Ellipse);
             }
             break;
         case Rect:
             if (m_coordsLen >= 4) {
-                int x0 = m_coords[0].minWidth(width);
-                int y0 = m_coords[1].minWidth(height);
-                int x1 = m_coords[2].minWidth(width);
-                int y1 = m_coords[3].minWidth(height);
+                int x0 = m_coords[0].calcMinValue(width);
+                int y0 = m_coords[1].calcMinValue(height);
+                int x1 = m_coords[2].calcMinValue(width);
+                int y1 = m_coords[3].calcMinValue(height);
                 return QRegion(x0, y0, x1 - x0, y1 - y0);
             }
             break;

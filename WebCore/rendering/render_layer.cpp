@@ -1572,7 +1572,7 @@ EMarqueeDirection Marquee::direction() const
     // Now we have the real direction.  Next we check to see if the increment is negative.
     // If so, then we reverse the direction.
     Length increment = m_layer->renderer()->style()->marqueeIncrement();
-    if (increment.value < 0)
+    if (increment.value() < 0)
         result = static_cast<EMarqueeDirection>(-result);
     
     return result;
@@ -1637,7 +1637,7 @@ int Marquee::computePosition(EMarqueeDirection dir, bool stopAtContentEdge)
 
 void Marquee::start()
 {
-    if (m_timer.isActive() || m_layer->renderer()->style()->marqueeIncrement().value == 0)
+    if (m_timer.isActive() || m_layer->renderer()->style()->marqueeIncrement().value() == 0)
         return;
     
     if (!m_suspended && !m_stopped) {
@@ -1733,7 +1733,7 @@ void Marquee::updateMarqueeStyle()
     // if it is smaller than the font size. If it is a vertical marquee and height is not specified, we default
     // to a marquee of 200px.
     if (isHorizontal()) {
-        if (s->height().isFixed() && (s->height().value < s->fontSize())) 
+        if (s->height().isFixed() && s->height().value() < s->fontSize())
             s->setHeight(Length(s->fontSize(),Fixed));
     } else if (s->height().isAuto())  //vertical marquee with no specified height
         s->setHeight(Length(200, Fixed)); 
@@ -1790,7 +1790,7 @@ void Marquee::timerFired(Timer<Marquee>*)
         bool positive = range > 0;
         int clientSize = isUnfurlMarquee() ? abs(range) :
             (isHorizontal() ? m_layer->renderer()->clientWidth() : m_layer->renderer()->clientHeight());
-        int increment = kMax(1, abs(m_layer->renderer()->style()->marqueeIncrement().width(clientSize)));
+        int increment = kMax(1, abs(m_layer->renderer()->style()->marqueeIncrement().calcValue(clientSize)));
         int currentPos = isUnfurlMarquee() ? m_unfurlPos : 
             (isHorizontal() ? m_layer->scrollXOffset() : m_layer->scrollYOffset());
         newPos =  currentPos + (addIncrement ? increment : -increment);

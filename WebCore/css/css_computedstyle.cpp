@@ -31,7 +31,6 @@
 #include "cssvalues.h"
 #include "dom_exception.h"
 #include "font.h"
-#include "khtmllayout.h"
 #include "render_object.h"
 #include "render_style.h"
 #include <kxmlcore/Assertions.h>
@@ -151,11 +150,11 @@ const unsigned numComputedProperties = sizeof(computedProperties) / sizeof(compu
 
 static CSSValueImpl* valueForLength(const Length &length)
 {
-    switch (length.type) {
+    switch (length.type()) {
         case Percent:
-            return new CSSPrimitiveValueImpl(length.length(), CSSPrimitiveValue::CSS_PERCENTAGE);
+            return new CSSPrimitiveValueImpl(length.value(), CSSPrimitiveValue::CSS_PERCENTAGE);
         case khtml::Fixed:
-            return new CSSPrimitiveValueImpl(length.length(), CSSPrimitiveValue::CSS_PX);
+            return new CSSPrimitiveValueImpl(length.value(), CSSPrimitiveValue::CSS_PX);
         default: // FIXME: Intrinsic and MinIntrinsic should probably return keywords.
             return new CSSPrimitiveValueImpl(CSS_VAL_AUTO);
     }
@@ -366,15 +365,15 @@ PassRefPtr<CSSValueImpl> CSSComputedStyleDeclarationImpl::getPropertyCSSValue(in
         String string;
         Length length(style->backgroundXPosition());
         if (length.isPercent())
-            string = numberAsString(length.length()) + "%";
+            string = numberAsString(length.value()) + "%";
         else
-            string = numberAsString(length.minWidth(renderer->contentWidth()));
+            string = numberAsString(length.calcMinValue(renderer->contentWidth()));
         string += " ";
         length = style->backgroundYPosition();
         if (length.isPercent())
-            string += numberAsString(length.length()) + "%";
+            string += numberAsString(length.value()) + "%";
         else
-            string += numberAsString(length.minWidth(renderer->contentWidth()));
+            string += numberAsString(length.calcMinValue(renderer->contentWidth()));
         return new CSSPrimitiveValueImpl(string, CSSPrimitiveValue::CSS_STRING);
     }
     case CSS_PROP_BACKGROUND_POSITION_X:
@@ -698,7 +697,7 @@ PassRefPtr<CSSValueImpl> CSSComputedStyleDeclarationImpl::getPropertyCSSValue(in
         return new CSSPrimitiveValueImpl(style->lineClamp(), CSSPrimitiveValue::CSS_PERCENTAGE);
     case CSS_PROP_LINE_HEIGHT: {
         Length length(style->lineHeight());
-        if (length.value < 0)
+        if (length.value() < 0)
             return new CSSPrimitiveValueImpl(CSS_VAL_NORMAL);
         if (length.isPercent()) {
             // This is imperfect, because it doesn't include the zoom factor and the real computation
@@ -706,10 +705,10 @@ PassRefPtr<CSSValueImpl> CSSComputedStyleDeclarationImpl::getPropertyCSSValue(in
             // On the other hand, since font-size doesn't include the zoom factor, we really can't do
             // that here either.
             float fontSize = style->htmlFont().getFontDef().specifiedSize;
-            return new CSSPrimitiveValueImpl((int)(length.length() * fontSize) / 100, CSSPrimitiveValue::CSS_PX);
+            return new CSSPrimitiveValueImpl((int)(length.value() * fontSize) / 100, CSSPrimitiveValue::CSS_PX);
         }
         else {
-            return new CSSPrimitiveValueImpl(length.length(), CSSPrimitiveValue::CSS_PX);
+            return new CSSPrimitiveValueImpl(length.value(), CSSPrimitiveValue::CSS_PX);
         }
     }
     case CSS_PROP_LIST_STYLE_IMAGE:
@@ -1192,10 +1191,10 @@ PassRefPtr<CSSValueImpl> CSSComputedStyleDeclarationImpl::getPropertyCSSValue(in
 
                 region->m_label = styleRegion.label;
                 LengthBox offset = styleRegion.offset;
-                region->setTop(new CSSPrimitiveValueImpl(offset.top.value, CSSPrimitiveValue::CSS_PX));
-                region->setRight(new CSSPrimitiveValueImpl(offset.right.value, CSSPrimitiveValue::CSS_PX));
-                region->setBottom(new CSSPrimitiveValueImpl(offset.bottom.value, CSSPrimitiveValue::CSS_PX));
-                region->setLeft(new CSSPrimitiveValueImpl(offset.left.value, CSSPrimitiveValue::CSS_PX));
+                region->setTop(new CSSPrimitiveValueImpl(offset.top.value(), CSSPrimitiveValue::CSS_PX));
+                region->setRight(new CSSPrimitiveValueImpl(offset.right.value(), CSSPrimitiveValue::CSS_PX));
+                region->setBottom(new CSSPrimitiveValueImpl(offset.bottom.value(), CSSPrimitiveValue::CSS_PX));
+                region->setLeft(new CSSPrimitiveValueImpl(offset.left.value(), CSSPrimitiveValue::CSS_PX));
                 region->m_isRectangle = (styleRegion.type == StyleDashboardRegion::Rectangle); 
                 region->m_isCircle = (styleRegion.type == StyleDashboardRegion::Circle);
 

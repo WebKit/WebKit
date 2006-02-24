@@ -1,3 +1,392 @@
+2006-02-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - moved QMouseEvent, QKeyEvent, QWheelEvent, and "Foundation extras"
+          from kwq to platform directory
+        - moved history function from kwq to bridge directory
+        - eliminated QEvent, MousePressEvent, MouseDoubleClickEvent, MouseMoveEvent,
+          MoveReleaseEvent, and DrawContents classes
+        - merged NodeImpl::MouseEvent and the MouseEvent from khtml_events.h into
+          a single class in the page directory
+        - broke khtmllayout.h out into a file for the Length structure in the css
+          directory and a file for the GapRects structure in the rendering directory
+        - redid the Length structure to work more portably by not relying on bitfield
+          layout and improve the names to no longer explicitly mention "width"
+        - reduced use of QGuardedPtr and other uses of the QObject "destroyed" signal
+
+        * ForwardingHeaders/kparts: Removed.
+        * ForwardingHeaders/qevent.h: Removed.
+        * khtml/khtml_events.cpp: Removed.
+        * khtml/khtml_events.h: Removed.
+        * khtml/misc/khtmllayout.h: Removed.
+        * kwq/KWQEvent.h: Removed.
+        * kwq/KWQEvent.mm: Removed.
+        * kwq/KWQFoundationExtras.h: Removed.
+        * kwq/KWQKHistoryProvider.mm: Removed.
+        * kwq/KWQKPartsHistoryProvider.h: Removed.
+
+        * bridge/History.h: Added.
+        * bridge/mac/HistoryMac.mm: Added.
+        * css/Length.h: Added.
+        * page/MouseEventWithHitTestResults.h: Added.
+        * platform/KeyEvent.h: Added.
+        * platform/MouseEvent.h: Added.
+        * platform/WheelEvent.h: Added.
+        * platform/mac/FoundationExtras.h: Added.
+        * platform/mac/KeyEventMac.mm: Added.
+        * platform/mac/MouseEventMac.mm: Added.
+        * platform/mac/WheelEventMac.mm: Added.
+        * rendering/GapRects.h: Added.
+
+        * WebCore.xcodeproj/project.pbxproj: Updated for above changes.
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Updated for above changes.
+
+        * bridge/mac/MacFrame.h: Removed unused parameters from urlSelected functions.
+        Replaced MouseEvent, MousePressEvent, MouseMoveEvent, and MouseReleaseEvent
+        with MouseEventWithHitTestResults.
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::urlSelected): Removed unused parameters.
+        (WebCore::MacFrame::wheelEvent): Changed to use WheelEvent.
+        (WebCore::MacFrame::keyEvent): Changed to use KeyEvent.
+        (WebCore::MacFrame::khtmlMousePressEvent): Changed parameter type.
+        (WebCore::MacFrame::khtmlMouseMoveEvent): Ditto.
+        (WebCore::MacFrame::khtmlMouseReleaseEvent): Ditto.
+        (WebCore::MacFrame::passSubframeEventToSubframe): Ditto.
+        (WebCore::MacFrame::mouseDown): Changed to use MouseEvent.
+        (WebCore::MacFrame::mouseDragged): Ditto.
+        (WebCore::MacFrame::mouseUp): Ditto.
+        (WebCore::MacFrame::mouseMoved): Ditto.
+        (WebCore::MacFrame::sendContextMenuEvent): Ditto.
+
+        * css/csshelper.h: Removed a bunch of unused declarations.
+
+        * dom/DocumentImpl.h:
+        * dom/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::prepareMouseEvent): Changed to take a MouseEvent
+        and return a MouseEventWithHitTestResults.
+        (WebCore::DocumentImpl::defaultEventHandler): Changed to use KeyEvent.
+
+        * dom/NodeImpl.h: Removed NodeImpl::MouseEvent and NodeImpl::MouseEventType.
+        * dom/NodeImpl.cpp:
+        (WebCore::NodeImpl::dispatchMouseEvent): Changed to always get the type and
+        detail values from the caller, never from the event. Changed to use MouseEvent.
+        (WebCore::NodeImpl::dispatchKeyEvent): Changed to use KeyEvent.
+        (WebCore::NodeImpl::dispatchWheelEvent): Changed to use WheelEvent.
+
+        * dom/dom2_eventsimpl.h:
+        * dom/dom2_eventsimpl.cpp:
+        (WebCore::KeyboardEventImpl::KeyboardEventImpl): Changed to use KeyEvent.
+        (WebCore::KeyboardEventImpl::charCode): Ditto.
+
+        * dom/dom_elementimpl.h: Removed unused mouseEventHandler function.
+
+        * khtml/ecma/domparser.h: Use RefPtr instead of QGuardedPtr to hold the reference
+        to the document.
+
+        * khtml/ecma/kjs_proxy.h: (WebCore::KJSProxyImpl::haveInterpreter): Added. For
+        use in the Frame destructor so we can get an existing KJS::Window object without
+        creating a new interpreter and window object.
+
+        * khtml/ecma/kjs_window.h: Merged WindowQObject into Window. Changed all the
+        guarded pointers to Frame to use plain old pointers that are cleared by the
+        Frame explicitly (by the function disconnectFrame). Made the pointers to all
+        the sub-objects of KJS::Window be mutable so we don't have to const_cast in
+        the functions to get (and lazily create) them.
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::DOMWindowTimer::DOMWindowTimer): Use Window* instead of WindowQObject*.
+        (KJS::History::disconnectFrame): Added. Clears m_frame.
+        (KJS::FrameArray::disconnectFrame): Added. Clears m_frame.
+        (KJS::Window::Window): Removed code to create a WindowQObject.
+        (KJS::Window::~Window): Removed code to delete a WindowQObject.
+        (KJS::Window::location): Remove now-unneeded const_cast.
+        (KJS::Window::selection): Ditto.
+        (KJS::Window::locationbar): Ditto.
+        (KJS::Window::menubar): Ditto.
+        (KJS::Window::personalbar): Ditto.
+        (KJS::Window::statusbar): Ditto.
+        (KJS::Window::toolbar): Ditto.
+        (KJS::Window::scrollbars): Ditto.
+        (KJS::Window::getValueProperty): Update since m_frame is now a raw pointer.
+        (KJS::Window::getOwnPropertySlot): Ditto.
+        (KJS::Window::toBoolean): Ditto.
+        (KJS::Window::scheduleClose): Remove assert that WindowQObject* is not null.
+        (KJS::Window::isSafeScript): Update since m_frame is now a raw pointer.
+        (KJS::Window::clear): Remove code to delete a WindowQObject. Added a call
+        to clearAllTimeouts instead.
+        (KJS::Window::clearAllTimeouts): Added. Does equivalent of the WindowQObject
+        destructor.
+        (KJS::Window::installTimeout): Moved to Window from WindowQObject.
+        (KJS::Window::pauseTimeouts): Ditto.
+        (KJS::Window::resumeTimeouts): Ditto.
+        (KJS::Window::clearTimeout): Ditto.
+        (KJS::Window::timerFired): Ditto.
+        (KJS::Window::disconnectFrame): Added. Sets all the frame pointers to 0.
+        (KJS::FrameArray::getOwnPropertySlot): Update since m_frame is now a raw pointer.
+        (KJS::Location::getOwnPropertySlot): Ditto.
+        (KJS::Location::put): Ditto.
+        (KJS::Selection::getOwnPropertySlot): Ditto.
+        (KJS::BarInfo::getOwnPropertySlot): Ditto.
+
+        * khtml/html/html_baseimpl.h: Forward-declare Length instead of including khtmllayout.h.
+        * khtml/html/html_imageimpl.h: Ditto.
+
+        * khtml/html/html_inlineimpl.cpp: (WebCore::HTMLAnchorElementImpl::defaultEventHandler):
+        Changed to use KeyEvent and removed the code to extract the button and state from the
+        DOM even to pass to urlSelected.
+        * ksvg2/svg/SVGAElementImpl.cpp: (SVGAElementImpl::defaultEventHandler): Ditto.
+
+        * khtml/html/htmltokenizer.cpp: (WebCore::HTMLTokenizer::timerFired): Change to use
+        a RefPtr instead of a QGuardedPtr.
+
+        * khtml/misc/helper.h:
+        * khtml/misc/helper.cpp: Removed printpainter and setPrintPainter.
+
+        * ksvg2/svg/SVGDocumentImpl.h:
+        * ksvg2/svg/SVGDocumentImpl.cpp: (WebCore::SVGDocumentImpl::dispatchKeyEvent):
+        Change to use KeyEvent.
+
+        * kwq/KWQComboBox.mm:
+        (-[KWQPopUpButton becomeFirstResponder]):
+        (-[KWQPopUpButton resignFirstResponder]):
+        * kwq/KWQFileButton.mm:
+        (KWQFileButton::focusChanged):
+        * kwq/KWQListBox.mm:
+        (-[KWQTableView becomeFirstResponder]):
+        (-[KWQTableView resignFirstResponder]):
+        * kwq/KWQSlider.mm:
+        (-[KWQSlider becomeFirstResponder]):
+        (-[KWQSlider resignFirstResponder]):
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextAreaTextView becomeFirstResponder]):
+        (-[KWQTextAreaTextView resignFirstResponder]):
+        * kwq/KWQTextField.mm:
+        (-[KWQTextFieldController setHasFocus:]):
+        Updated to use new eventFilterFocusIn/Out instead of the general purpose
+        eventFilter function. This allows us to remove QEvent and the focus events.
+
+        * kwq/KWQNamespace.h: Removed ButtonState.
+
+        * kwq/KWQObject.h:
+        * kwq/KWQObject.cpp: Replaced eventFilter function with eventFilterFocusIn and
+        eventFilterFocusOut, allowing us to remove QEvent. Removed event function.
+
+        * kwq/KWQSlot.cpp:
+        (KWQSlot::KWQSlot): Removed the parentDestroyed slot.
+        (KWQSlot::call): Ditto.
+
+        * page/Frame.h:
+        * page/Frame.cpp:
+        (WebCore::UserStyleSheetLoader::UserStyleSheetLoader): Renamed from
+        PartStyleSheetLoader. Removed a lot of unneeded null checks. Use a
+        raw Frame pointer instead of a QGuardedPtr, and count on the Frame
+        to delete us when it's being deleted.
+        (WebCore::UserStyleSheetLoader::~UserStyleSheetLoader): No longer
+        a virtual function. This is not a polymorphic class.
+        (WebCore::UserStyleSheetLoader::setStyleSheet): Remove code to delete
+        ourselves -- that's now the frame's responsibility.
+        (WebCore::Frame::~Frame): Call disconnectFrame on the KJS::Window and
+        delete m_userStyleSheetLoader.
+        (WebCore::Frame::changeLocation): Update since urlSelected no longer takes
+        button and state parameters.
+        (WebCore::Frame::setUserStyleSheet): Delete existing loader to stop a load
+        in progress before starting a new load. Store reference to loader.
+        (WebCore::Frame::urlSelected): Remove button and state parameters and unused
+        local variable hasTarget.
+        (WebCore::Frame::selectClosestWordFromMouseEvent): Change from QMouseEvent
+        to MouseEvent.
+        (WebCore::Frame::handleMousePressEventDoubleClick): Change from MousePressEvent
+        to MouseEventWithHitTestResults.
+        (WebCore::Frame::handleMousePressEventTripleClick): Ditto.
+        (WebCore::Frame::handleMousePressEventSingleClick): Ditto.
+        (WebCore::Frame::khtmlMousePressEvent): Ditto.
+        (WebCore::Frame::handleMouseMoveEventSelection): Change from MouseMoveEvent
+        to MouseEventWithHitTestResults.
+        (WebCore::Frame::khtmlMouseMoveEvent): Ditto.
+        (WebCore::Frame::khtmlMouseReleaseEvent): Change from MouseReleaseEvent
+        to MouseEventWithHitTestResults.
+        (WebCore::Frame::khtmlMouseDoubleClickEvent): Change from
+        MouseReleaseDoubleClickEvent to MouseEventWithHitTestResults.
+        (WebCore::Frame::passWidgetMouseDownEventToWidget): Change from
+        NodeImpl::MouseEvent to MouseEventWithHitTestResults.
+
+        * page/FramePrivate.h: Added m_userStyleSheetLoader.
+
+        * page/FrameView.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::viewportMousePressEvent): Change from QMouseEvent to
+        MouseEvent and from NodeImpl::MouseEvent to MouseEventWithHitTestResults.
+        (WebCore::FrameView::viewportMouseDoubleClickEvent): Ditto.
+        (WebCore::selectCursor): Ditto.
+        (WebCore::FrameView::viewportMouseMoveEvent): Ditto.
+        (WebCore::FrameView::viewportMouseReleaseEvent): Ditto.
+        (WebCore::FrameView::keyPressEvent): Change from QKeyEvent to KeyEvent.
+        (WebCore::FrameView::dispatchMouseEvent): Change from QMouseEvent to
+        MouseEvent and from NodeImpl::MouseEvent to MouseEventWithHitTestResults.
+        (WebCore::FrameView::viewportWheelEvent): Change from QWheelEvent to
+        WheelEvent.
+        (WebCore::FrameView::hoverTimerFired): Update for change to prepareMouseEvent
+        parameters.
+
+        * platform/Widget.h:
+        * platform/Widget.cpp: Removed event function.
+
+        * rendering/render_form.h: Removed LineEditWidget, ComboBoxWidget, TextAreaWidget.
+        * rendering/render_form.cpp:
+        (WebCore::RenderFormElement::slotClicked): Changed from QMouseEvent to MouseEvent.
+        (WebCore::RenderFormElement::addIntrinsicMarginsIfAllowed): Updated for changes
+        to the Length class.
+        (WebCore::RenderSelect::setWidgetWritingDirection): Updated for removal of
+        ComboBoxWidget.
+        (WebCore::RenderSelect::slotSelected): Ditto.
+        (WebCore::RenderSelect::createComboBox): Ditto.
+
+        * rendering/render_replaced.h:
+        * rendering/render_replaced.cpp:
+        (WebCore::RenderWidget::destroy): Updated since removeEventFilter no longer takes
+        a parameter.
+        (WebCore::RenderWidget::setQWidget): Ditto.
+        (WebCore::RenderWidget::eventFilterFocusIn): Added. Replaces eventFilter.
+        (WebCore::RenderWidget::eventFilterFocusOut): Ditto.
+
+        * css/css_computedstyle.cpp:
+        (WebCore::valueForLength):
+        (WebCore::CSSComputedStyleDeclarationImpl::getPropertyCSSValue):
+        * css/cssstyleselector.cpp:
+        (WebCore::checkPseudoState):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::getComputedSizeFromSpecifiedSize):
+        * khtml/html/html_imageimpl.cpp:
+        (WebCore::HTMLAreaElementImpl::getRegion):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::MarginInfo::MarginInfo):
+        (WebCore::RenderBlock::isSelfCollapsingBlock):
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::determineHorizontalPosition):
+        (WebCore::RenderBlock::leftRelOffset):
+        (WebCore::RenderBlock::rightRelOffset):
+        (WebCore::RenderBlock::calcMinMaxWidth):
+        (WebCore::getBPMWidth):
+        (WebCore::RenderBlock::calcInlineMinMaxWidth):
+        (WebCore::RenderBlock::calcBlockMinMaxWidth):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::calcWidth):
+        (WebCore::RenderTable::layout):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::calcMinMaxWidth):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addChild):
+        (WebCore::RenderTableSection::addCell):
+        (WebCore::RenderTableSection::calcRowHeight):
+        (WebCore::RenderTableSection::layoutRows):
+        * rendering/RenderText.h:
+        (khtml::RenderText::marginLeft):
+        (khtml::RenderText::marginRight):
+        * rendering/bidi.cpp:
+        (khtml::getBPMWidth):
+        * rendering/render_applet.cpp:
+        (WebCore::RenderApplet::createWidgetIfNecessary):
+        * rendering/render_box.cpp:
+        (WebCore::RenderBox::paintBackgroundExtended):
+        (WebCore::RenderBox::getClipRect):
+        (WebCore::RenderBox::relativePositionOffset):
+        (WebCore::RenderBox::calcWidth):
+        (WebCore::RenderBox::calcWidthUsing):
+        (WebCore::RenderBox::sizesToIntrinsicWidth):
+        (WebCore::RenderBox::calcHorizontalMargins):
+        (WebCore::RenderBox::calcHeight):
+        (WebCore::RenderBox::calcHeightUsing):
+        (WebCore::RenderBox::calcPercentageHeight):
+        (WebCore::RenderBox::calcReplacedWidth):
+        (WebCore::RenderBox::calcReplacedWidthUsing):
+        (WebCore::RenderBox::calcReplacedHeight):
+        (WebCore::RenderBox::calcReplacedHeightUsing):
+        (WebCore::RenderBox::availableHeightUsing):
+        (WebCore::RenderBox::calcVerticalMargins):
+        (WebCore::RenderBox::calcAbsoluteHorizontal):
+        (WebCore::RenderBox::calcAbsoluteHorizontalValues):
+        (WebCore::RenderBox::calcAbsoluteVertical):
+        (WebCore::RenderBox::calcAbsoluteVerticalValues):
+        * rendering/render_br.cpp:
+        (WebCore::RenderBR::lineHeight):
+        * rendering/render_flexbox.cpp:
+        (khtml::RenderFlexibleBox::calcHorizontalMinMaxWidth):
+        (khtml::RenderFlexibleBox::calcVerticalMinMaxWidth):
+        (khtml::RenderFlexibleBox::calcMinMaxWidth):
+        (khtml::RenderFlexibleBox::allowedChildFlex):
+        * rendering/render_flow.cpp:
+        (WebCore::RenderFlow::lineHeight):
+        * rendering/render_frames.cpp:
+        (WebCore::RenderFrameSet::layout):
+        * rendering/render_image.cpp:
+        (WebCore::RenderImage::isWidthSpecified):
+        (WebCore::RenderImage::isHeightSpecified):
+        * rendering/render_layer.cpp:
+        (WebCore::Marquee::direction):
+        (WebCore::Marquee::start):
+        (WebCore::Marquee::updateMarqueeStyle):
+        (WebCore::Marquee::timerFired):
+        * rendering/render_line.cpp:
+        (WebCore::InlineFlowBox::marginLeft):
+        (WebCore::InlineFlowBox::marginRight):
+        * rendering/render_object.cpp:
+        (WebCore::RenderObject::mustRepaintBackgroundOrBorder):
+        (WebCore::RenderObject::paintBorderImage):
+        (WebCore::RenderObject::paddingTop):
+        (WebCore::RenderObject::paddingBottom):
+        (WebCore::RenderObject::paddingLeft):
+        (WebCore::RenderObject::paddingRight):
+        (WebCore::RenderObject::getVerticalPosition):
+        (WebCore::RenderObject::lineHeight):
+        (WebCore::RenderObject::addDashboardRegions):
+        * rendering/render_style.h:
+        * rendering/render_theme_mac.mm:
+        (WebCore::RenderThemeMac::addIntrinsicMargins):
+        * rendering/table_layout.cpp:
+        (WebCore::FixedTableLayout::calcWidthArray):
+        (WebCore::FixedTableLayout::calcMinMaxWidth):
+        (WebCore::FixedTableLayout::layout):
+        (WebCore::AutoTableLayout::recalcColumn):
+        (WebCore::AutoTableLayout::fullRecalc):
+        (WebCore::AutoTableLayout::calcMinMaxWidth):
+        (WebCore::AutoTableLayout::calcEffectiveWidth):
+        (WebCore::AutoTableLayout::layout):
+        (WebCore::AutoTableLayout::calcPercentages):
+        Updated for changes to the Length class.
+        Also removed a check of the printpainter global, never used in WebCore.
+
+        * bindings/objc/DOM.mm:
+        * bindings/objc/DOMCSS.mm:
+        * bindings/objc/DOMHTML.mm:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        * css/csshelper.cpp:
+        * editing/SelectionController.cpp:
+        * khtml/ecma/kjs_html.h:
+        * kwq/KWQAccObject.mm:
+        * kwq/KWQAccObjectCache.mm:
+        * kwq/KWQClipboard.mm:
+        * kwq/KWQFont.mm:
+        * kwq/KWQFontMetrics.mm:
+        * kwq/KWQKJobClasses.mm:
+        * kwq/KWQKURL.mm:
+        * kwq/KWQLoader.mm:
+        * kwq/KWQPageState.mm:
+        * kwq/KWQPainter.mm:
+        * kwq/WebCoreSettings.mm:
+        * platform/StringImpl.cpp:
+        * platform/mac/CursorMac.mm:
+        * platform/mac/WidgetMac.mm:
+        * rendering/RenderBlock.h:
+        * rendering/render_canvas.cpp:
+        * rendering/render_line.h:
+        * rendering/render_style.cpp:
+        * rendering/table_layout.h:
+        Updated includes.
+
+        * bindings/js/JSDOMCore.cpp: Touched, because I got strange failures if this
+        didn't rebuild.
+        * bindings/js/JSDOMEvents.cpp: Ditto.
+
 2006-02-23  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

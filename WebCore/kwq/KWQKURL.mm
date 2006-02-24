@@ -27,7 +27,7 @@
 #import "KWQKURL.h"
 
 #import <kxmlcore/Assertions.h>
-#import "KWQFoundationExtras.h"
+#import "FoundationExtras.h"
 #import "KWQRegExp.h"
 #import "KWQTextCodec.h"
 #import <kxmlcore/Vector.h>

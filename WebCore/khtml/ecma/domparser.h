@@ -2,6 +2,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2005 Anders Carlsson (andersca@mac.com)
+ *  Copyright (C) 2006 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -18,10 +19,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _DOMPARSER_H
-#define _DOMPARSER_H_
-
-#include <qguardedptr.h>
+#ifndef DOMPARSER_H
+#define DOMPARSER_H_
 
 #include "kjs_dom.h"
 
@@ -29,24 +28,23 @@ namespace KJS {
 
   class DOMParserConstructorImp : public JSObject {
   public:
-    DOMParserConstructorImp(ExecState *, DOM::DocumentImpl *d);
+    DOMParserConstructorImp(ExecState*, WebCore::DocumentImpl*);
     virtual bool implementsConstruct() const;
-    virtual JSObject *construct(ExecState *exec, const List &args);
-private:
-    RefPtr<DOM::DocumentImpl> doc;
+    virtual JSObject* construct(ExecState*, const List &args);
+  private:
+    RefPtr<WebCore::DocumentImpl> doc;
   };
 
   class DOMParser : public DOMObject {
   public:
-    DOMParser(ExecState *, DOM::DocumentImpl *d);
-    virtual bool toBoolean(ExecState *) const { return true; }
+    DOMParser(ExecState*, WebCore::DocumentImpl*);
+    virtual bool toBoolean(ExecState*) const { return true; }
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { ParseFromString };
 
   private:
-    QGuardedPtr<DOM::DocumentImpl> doc;
-
+    RefPtr<WebCore::DocumentImpl> doc;
     friend class DOMParserProtoFunc;
   };
 

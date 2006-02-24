@@ -57,7 +57,7 @@ RenderBlock::MarginInfo::MarginInfo(RenderBlock* block, int top, int bottom)
     // effects when the children overflow out of the parent block and yet still collapse
     // with it.  We also don't collapse if we have any bottom border/padding.
     m_canCollapseBottomWithChildren = m_canCollapseWithChildren && (bottom == 0) &&
-        (block->style()->height().isAuto() && block->style()->height().value == 0) && block->style()->marginBottomCollapse() != MSEPARATE;
+        (block->style()->height().isAuto() && block->style()->height().value() == 0) && block->style()->marginBottomCollapse() != MSEPARATE;
     
     m_quirkContainer = block->isTableCell() || block->isBody() || block->style()->marginTopCollapse() == MDISCARD || 
         block->style()->marginBottomCollapse() == MDISCARD;
@@ -374,7 +374,7 @@ bool RenderBlock::isSelfCollapsingBlock() const
     // (e) have specified that one of our margins can't collapse using a CSS extension
     if (m_height > 0 ||
         isTable() || (borderBottom() + paddingBottom() + borderTop() + paddingTop()) != 0 ||
-        style()->minHeight().value > 0 || 
+        style()->minHeight().value() > 0 || 
         style()->marginTopCollapse() == MSEPARATE || style()->marginBottomCollapse() == MSEPARATE)
         return false;
 
@@ -389,7 +389,7 @@ bool RenderBlock::isSelfCollapsingBlock() const
 
     // If the height is 0 or auto, then whether or not we are a self-collapsing block depends
     // on whether we have content that is all self-collapsing or not.
-    if (hasAutoHeight || ((style()->height().isFixed() || style()->height().isPercent()) && style()->height().value == 0)) {
+    if (hasAutoHeight || ((style()->height().isFixed() || style()->height().isPercent()) && style()->height().value() == 0)) {
         // If the block has inline children, see if we generated any line boxes.  If we have any
         // line boxes, then we can't be self-collapsing, since we have content.
         if (childrenInline())
@@ -465,8 +465,8 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     if (!isTableCell()) {
         initMaxMarginValues();
 
-        m_topMarginQuirk = style()->marginTop().quirk;
-        m_bottomMarginQuirk = style()->marginBottom().quirk;
+        m_topMarginQuirk = style()->marginTop().quirk();
+        m_bottomMarginQuirk = style()->marginBottom().quirk();
 
         if (element() && element()->hasTagName(formTag) && element()->isMalformed())
             // See if this form is malformed (i.e., unclosed). If so, don't give the form
@@ -913,7 +913,7 @@ void RenderBlock::determineHorizontalPosition(RenderObject* child)
         // to shift over as necessary to dodge any floats that might get in the way.
         if (child->avoidsFloats()) {
             int leftOff = leftOffset(m_height);
-            if (style()->textAlign() != KHTML_CENTER && child->style()->marginLeft().type != Auto) {
+            if (style()->textAlign() != KHTML_CENTER && child->style()->marginLeft().type() != Auto) {
                 if (child->marginLeft() < 0)
                     leftOff += child->marginLeft();
                 chPos = kMax(chPos, leftOff); // Let the float sit in the child's margin if it can fit.
@@ -934,7 +934,7 @@ void RenderBlock::determineHorizontalPosition(RenderObject* child)
         int chPos = xPos - (child->width() + child->marginRight());
         if (child->avoidsFloats()) {
             int rightOff = rightOffset(m_height);
-            if (style()->textAlign() != KHTML_CENTER && child->style()->marginRight().type != Auto) {
+            if (style()->textAlign() != KHTML_CENTER && child->style()->marginRight().type() != Auto) {
                 if (child->marginRight() < 0)
                     rightOff -= child->marginRight();
                 chPos = kMin(chPos, rightOff - child->width()); // Let the float sit in the child's margin if it can fit.
@@ -1962,7 +1962,7 @@ RenderBlock::leftRelOffset(int y, int fixedOffset, bool applyTextIndent,
         int cw=0;
         if (style()->textIndent().isPercent())
             cw = containingBlock()->contentWidth();
-        left += style()->textIndent().minWidth(cw);
+        left += style()->textIndent().calcMinValue(cw);
     }
 
     //kdDebug( 6040 ) << "leftOffset(" << y << ") = " << left << endl;
@@ -2004,7 +2004,7 @@ RenderBlock::rightRelOffset(int y, int fixedOffset, bool applyTextIndent,
         int cw=0;
         if (style()->textIndent().isPercent())
             cw = containingBlock()->contentWidth();
-        right -= style()->textIndent().minWidth(cw);
+        right -= style()->textIndent().calcMinValue(cw);
     }
     
     //kdDebug( 6040 ) << "rightOffset(" << y << ") = " << right << endl;
@@ -2671,19 +2671,19 @@ void RenderBlock::calcMinMaxWidth()
 
     if (isTableCell()) {
         Length w = static_cast<RenderTableCell*>(this)->styleOrColWidth();
-        if (w.isFixed() && w.value > 0)
-            m_maxWidth = kMax(m_minWidth, calcContentBoxWidth(w.value));
-    } else if (style()->width().isFixed() && style()->width().value > 0)
-        m_minWidth = m_maxWidth = calcContentBoxWidth(style()->width().value);
+        if (w.isFixed() && w.value() > 0)
+            m_maxWidth = kMax(m_minWidth, calcContentBoxWidth(w.value()));
+    } else if (style()->width().isFixed() && style()->width().value() > 0)
+        m_minWidth = m_maxWidth = calcContentBoxWidth(style()->width().value());
     
-    if (style()->minWidth().isFixed() && style()->minWidth().value > 0) {
-        m_maxWidth = kMax(m_maxWidth, calcContentBoxWidth(style()->minWidth().value));
-        m_minWidth = kMax(m_minWidth, calcContentBoxWidth(style()->minWidth().value));
+    if (style()->minWidth().isFixed() && style()->minWidth().value() > 0) {
+        m_maxWidth = kMax(m_maxWidth, calcContentBoxWidth(style()->minWidth().value()));
+        m_minWidth = kMax(m_minWidth, calcContentBoxWidth(style()->minWidth().value()));
     }
     
-    if (style()->maxWidth().isFixed() && style()->maxWidth().value != UNDEFINED) {
-        m_maxWidth = kMin(m_maxWidth, calcContentBoxWidth(style()->maxWidth().value));
-        m_minWidth = kMin(m_minWidth, calcContentBoxWidth(style()->maxWidth().value));
+    if (style()->maxWidth().isFixed() && style()->maxWidth().value() != undefinedLength) {
+        m_maxWidth = kMin(m_maxWidth, calcContentBoxWidth(style()->maxWidth().value()));
+        m_minWidth = kMin(m_minWidth, calcContentBoxWidth(style()->maxWidth().value()));
     }
 
     int toAdd = 0;
@@ -2767,8 +2767,8 @@ RenderObject* InlineMinMaxIterator::next()
 
 static int getBPMWidth(int childValue, Length cssUnit)
 {
-    if (cssUnit.type != Auto)
-        return (cssUnit.type == Fixed ? cssUnit.value : childValue);
+    if (cssUnit.type() != Auto)
+        return (cssUnit.isFixed() ? cssUnit.value() : childValue);
     return 0;
 }
 
@@ -2879,12 +2879,12 @@ void RenderBlock::calcInlineMinMaxWidth()
                 else {
                     // Inline replaced elts add in their margins to their min/max values.
                     int margins = 0;
-                    LengthType type = cstyle->marginLeft().type;
+                    LengthType type = cstyle->marginLeft().type();
                     if ( type != Auto )
-                        margins += (type == Fixed ? cstyle->marginLeft().value : child->marginLeft());
-                    type = cstyle->marginRight().type;
+                        margins += (type == Fixed ? cstyle->marginLeft().value() : child->marginLeft());
+                    type = cstyle->marginRight().type();
                     if ( type != Auto )
-                        margins += (type == Fixed ? cstyle->marginRight().value : child->marginRight());
+                        margins += (type == Fixed ? cstyle->marginRight().value() : child->marginRight());
                     childMin += margins;
                     childMax += margins;
                 }
@@ -2920,7 +2920,7 @@ void RenderBlock::calcInlineMinMaxWidth()
                 int ti = 0;
                 if (!addedTextIndent) {
                     addedTextIndent = true;
-                    ti = style()->textIndent().minWidth(cw);
+                    ti = style()->textIndent().calcMinValue(cw);
                     childMin+=ti;
                     childMax+=ti;
                 }
@@ -2977,7 +2977,7 @@ void RenderBlock::calcInlineMinMaxWidth()
                 int ti = 0;
                 if (!addedTextIndent) {
                     addedTextIndent = true;
-                    ti = style()->textIndent().minWidth(cw);
+                    ti = style()->textIndent().calcMinValue(cw);
                     childMin+=ti; beginMin += ti;
                     childMax+=ti; beginMax += ti;
                 }
@@ -3078,7 +3078,7 @@ void RenderBlock::calcBlockMinMaxWidth()
         // Call calcWidth on the child to ensure that our margins are
         // up to date.  This method can be called before the child has actually
         // calculated its margins (which are computed inside calcWidth).
-        if (ml.type == Percent || mr.type == Percent)
+        if (ml.isPercent() || mr.isPercent())
             calcWidth();
 
         // A margin basically has three types: fixed, percentage, and auto (variable).
@@ -3088,13 +3088,13 @@ void RenderBlock::calcBlockMinMaxWidth()
         // the calcWidth call above.  In this case we use the actual cached margin values on
         // the RenderObject itself.
         int margin = 0, marginLeft = 0, marginRight = 0;
-        if (ml.type == Fixed)
-            marginLeft += ml.value;
-        else if (ml.type == Percent)
+        if (ml.isFixed())
+            marginLeft += ml.value();
+        else if (ml.isPercent())
             marginLeft += child->marginLeft();
-        if (mr.type == Fixed)
-            marginRight += mr.value;
-        else if (mr.type == Percent)
+        if (mr.isFixed())
+            marginRight += mr.value();
+        else if (mr.isPercent())
             marginRight += child->marginRight();
         margin = marginLeft + marginRight;
 
@@ -3144,7 +3144,7 @@ void RenderBlock::calcBlockMinMaxWidth()
         // of 100px because of the table.
         // We can achieve this effect by making the maxwidth of blocks that contain tables
         // with percentage widths be infinite (as long as they are not inside a table cell).
-        if (style()->htmlHacks() && child->style()->width().type == Percent &&
+        if (style()->htmlHacks() && child->style()->width().isPercent() &&
             !isTableCell() && child->isTable() && m_maxWidth < BLOCK_MAX_WIDTH) {
             RenderBlock* cb = containingBlock();
             while (!cb->isCanvas() && !cb->isTableCell())

@@ -28,7 +28,7 @@
 
 #include "EventNames.h"
 #include "Frame.h"
-#include "KWQEvent.h"
+#include "KeyEvent.h"
 #include "csshelper.h"
 #include "cssproperties.h"
 #include "cssstyleselector.h"
@@ -134,8 +134,8 @@ void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
                 HTMLElementImpl::defaultEventHandler(evt);
                 return;
             }
-            if (k->qKeyEvent()) {
-                k->qKeyEvent()->accept();
+            if (k->keyEvent()) {
+                k->keyEvent()->accept();
                 evt->setDefaultHandled();
                 click(false);
                 return;
@@ -168,41 +168,9 @@ void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
                 }
             }
         }
-        if ( !evt->defaultPrevented() ) {
-            int state = 0;
-            int button = 0;
-
-            if ( e ) {
-                if ( e->ctrlKey() )
-                    state |= Qt::ControlButton;
-                if ( e->shiftKey() )
-                    state |= Qt::ShiftButton;
-                if ( e->altKey() )
-                    state |= Qt::AltButton;
-                if ( e->metaKey() )
-                    state |= Qt::MetaButton;
-
-                if ( e->button() == 0 )
-                    button = Qt::LeftButton;
-                else if ( e->button() == 1 )
-                    button = Qt::MidButton;
-                else if ( e->button() == 2 )
-                    button = Qt::RightButton;
-            }
-            else if ( k )
-            {
-              if ( k->shiftKey() )
-                state |= Qt::ShiftButton;
-              if ( k->altKey() )
-                state |= Qt::AltButton;
-              if ( k->ctrlKey() )
-                state |= Qt::ControlButton;
-            }
-
-            if (getDocument() && getDocument()->frame()) {
-                getDocument()->frame()->
-                    urlSelected( url, button, state, utarget );
-            }
+        if (!evt->defaultPrevented()) {
+            if (getDocument() && getDocument()->frame())
+                getDocument()->frame()->urlSelected(url, utarget);
         }
         evt->setDefaultHandled();
     }

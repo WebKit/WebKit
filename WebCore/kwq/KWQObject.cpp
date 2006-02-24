@@ -26,7 +26,6 @@
 #include "config.h"
 #include "KWQObject.h"
 
-#include "KWQEvent.h"
 #include <kxmlcore/Assertions.h>
 #include <kxmlcore/HashMap.h>
 
@@ -78,11 +77,6 @@ void QObject::disconnect(const QObject *sender, const char *signalName, const QO
         return;
     }
     signal->disconnect(KWQSlot(const_cast<QObject *>(receiver), member));
-}
-
-bool QObject::event(QEvent *)
-{
-    return false;
 }
 
 bool QObject::isKHTMLLoader() const

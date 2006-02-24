@@ -31,7 +31,7 @@
 #import "Brush.h"
 #import "KWQExceptions.h"
 #import "KWQFont.h"
-#import "KWQFoundationExtras.h"
+#import "FoundationExtras.h"
 #import "Pen.h"
 #import "Image.h"
 #import "FloatRect.h"

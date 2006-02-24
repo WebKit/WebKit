@@ -267,11 +267,12 @@ int InlineFlowBox::marginLeft()
     if (!includeLeftEdge())
         return 0;
     
-    RenderStyle* cstyle = object()->style();
-    Length margin = cstyle->marginLeft();
-    if (margin.type != Auto)
-        return (margin.type == Fixed ? margin.value : object()->marginLeft());
-    return 0;
+    Length margin = object()->style()->marginLeft();
+    if (margin.isAuto())
+        return 0;
+    if (margin.isFixed())
+        return margin.value();
+    return object()->marginLeft();
 }
 
 int InlineFlowBox::marginRight()
@@ -279,11 +280,12 @@ int InlineFlowBox::marginRight()
     if (!includeRightEdge())
         return 0;
     
-    RenderStyle* cstyle = object()->style();
-    Length margin = cstyle->marginRight();
-    if (margin.type != Auto)
-        return (margin.type == Fixed ? margin.value : object()->marginRight());
-    return 0;
+    Length margin = object()->style()->marginRight();
+    if (margin.isAuto())
+        return 0;
+    if (margin.isFixed())
+        return margin.value();
+    return object()->marginRight();
 }
 
 int InlineFlowBox::marginBorderPaddingLeft()

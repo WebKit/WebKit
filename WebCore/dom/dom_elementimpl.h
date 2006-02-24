@@ -238,8 +238,7 @@ public:
     virtual RenderObject *createRenderer(RenderArena *, RenderStyle *);
     virtual void recalcStyle( StyleChange = NoChange );
 
-    virtual void mouseEventHandler( MouseEvent * /*ev*/, bool /*inside*/ ) {};
-    virtual bool childTypeAllowed( unsigned short type );
+    virtual bool childTypeAllowed(unsigned short type);
  
     virtual AttributeImpl* createAttribute(const QualifiedName& name, DOMStringImpl* value);
     

@@ -28,7 +28,7 @@
 
 #import "KWQExceptions.h"
 #import "KWQFormData.h"
-#import "KWQFoundationExtras.h"
+#import "FoundationExtras.h"
 #import "KWQKJobClasses.h"
 #import "KWQLogging.h"
 #import "KWQResourceLoader.h"

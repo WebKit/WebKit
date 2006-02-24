@@ -4,7 +4,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2005 Apple Computer, Inc.
+ * Copyright (C) 2003, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,6 +22,7 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef RENDERSTYLE_H
 #define RENDERSTYLE_H
 
@@ -35,22 +36,15 @@
  */
 
 #include "Color.h"
-#include <qfont.h>
-#include <qfontmetrics.h>
-#include <qlist.h>
-#include <qpalette.h>
-#include <qvaluelist.h>
-
-#include "khtmllayout.h"
-#include "Shared.h"
-#include "rendering/font.h"
 #include "DataRef.h"
+#include "Length.h"
+#include "Shared.h"
+#include "font.h"
+#include <qvaluelist.h>
 
 #if SVG_SUPPORT
 #include "SVGRenderStyle.h"
 #endif
-
-#include <assert.h>
 
 #define SET_VAR(group,variable,value) \
     if (!(group->variable == value)) \
@@ -100,7 +94,7 @@ struct LengthBox {
     }
 
 
-    bool nonZero() const { return left.value || right.value || top.value || bottom.value; }
+    bool nonZero() const { return left.value() || right.value() || top.value() || bottom.value(); }
 };
 
 enum EPosition {
@@ -1618,7 +1612,7 @@ public:
     static int initialLetterWordSpacing() { return 0; }
     static Length initialSize() { return Length(); }
     static Length initialMinSize() { return Length(0, Fixed); }
-    static Length initialMaxSize() { return Length(UNDEFINED, Fixed); }
+    static Length initialMaxSize() { return Length(undefinedLength, Fixed); }
     static Length initialOffset() { return Length(); }
     static Length initialMargin() { return Length(Fixed); }
     static Length initialPadding() { return Length(Auto); }
@@ -1669,4 +1663,3 @@ public:
 } // namespace
 
 #endif
-

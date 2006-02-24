@@ -32,11 +32,8 @@
 #include <kxmlcore/HashSet.h>
 #include <kxmlcore/PassRefPtr.h>
 
-class QKeyEvent;
-class QMouseEvent;
 class QStringList;
 class QTextStream;
-class QWheelEvent;
 class RenderArena;
 
 template <typename T> class QPtrList;
@@ -50,12 +47,15 @@ class ElementImpl;
 class EventImpl;
 class EventListener;
 class IntRect;
+class KeyEvent;
+class MouseEvent;
 class NamedAttrMapImpl;
 class NodeListImpl;
 class QualifiedName;
 class RegisteredEventListener;
 class RenderObject;
 class RenderStyle;
+class WheelEvent;
 
 typedef int ExceptionCode;
 
@@ -180,29 +180,6 @@ public:
     // but making parsing a special case in this respect should be avoided if possible.
     virtual void closeRenderer() { }
 
-    // FIXME: Move this MouseEvent stuff somewhere else and reconcile with WebCore::MouseEvent.
-    // MouseEvent is not used in NodeImpl at all.
-    enum MouseEventType {
-        MousePress,
-        MouseRelease,
-        MouseClick,
-        MouseDblClick,
-        MouseMove
-    };
-    struct MouseEvent
-    {
-        MouseEvent(int b, MouseEventType t, const DOMString& u = DOMString(),
-            const DOMString& ta = DOMString(), PassRefPtr<NodeImpl> n = 0)
-            : button(b), type(t), url(u), target(ta), innerNode(n)
-        { }
-
-        int button;
-        MouseEventType type;
-        DOMString url; // url under mouse or empty
-        DOMString target;
-        RefPtr<NodeImpl> innerNode;
-    };
-
     // For <link> and <style> elements.
     virtual void sheetLoaded() { }
 
@@ -275,8 +252,8 @@ public:
     bool dispatchGenericEvent(PassRefPtr<EventImpl>, ExceptionCode&, bool tempEvent = false);
     bool dispatchHTMLEvent(const AtomicString& eventType, bool canBubble, bool cancelable);
     void dispatchWindowEvent(const AtomicString& eventType, bool canBubble, bool cancelable);
-    bool dispatchMouseEvent(QMouseEvent*, const AtomicString& overrideType,
-        int overrideDetail = 0, NodeImpl* relatedTarget = 0);
+    bool dispatchMouseEvent(MouseEvent*, const AtomicString& eventType,
+        int detail = 0, NodeImpl* relatedTarget = 0);
     bool dispatchSimulatedMouseEvent(const AtomicString& eventType);
     bool dispatchMouseEvent(const AtomicString& eventType, int button, int detail,
         int clientX, int clientY, int screenX, int screenY,
@@ -284,8 +261,8 @@ public:
         bool isSimulated = false, NodeImpl* relatedTarget = 0);
     bool dispatchUIEvent(const AtomicString& eventType, int detail = 0);
     bool dispatchSubtreeModifiedEvent(bool childrenChanged = true);
-    bool dispatchKeyEvent(QKeyEvent*);
-    void dispatchWheelEvent(QWheelEvent*);
+    bool dispatchKeyEvent(KeyEvent*);
+    void dispatchWheelEvent(WheelEvent*);
 
     void handleLocalEvents(EventImpl*, bool useCapture);
 

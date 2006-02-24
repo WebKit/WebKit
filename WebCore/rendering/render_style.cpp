@@ -22,19 +22,15 @@
  */
 
 #include "config.h"
-#include "StringImpl.h"
-
 #include "render_style.h"
-#include "css/cssstyleselector.h"
-#include "render_arena.h"
 
-#if SVG_SUPPORT
-#include "SVGRenderStyle.h"
-#endif
+#include "StringImpl.h"
+#include "cssstyleselector.h"
+#include "render_arena.h"
 
 namespace WebCore {
 
-static RenderStyle *defaultStyle;
+static RenderStyle* defaultStyle;
 
 StyleSurroundData::StyleSurroundData()
     : margin( Fixed ), padding( Auto )

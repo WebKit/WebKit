@@ -103,7 +103,9 @@ public:
     void setQWidget(Widget*, bool deleteWidget = true);
 
 protected:
-    bool eventFilter(QObject*, QEvent*);
+    virtual void eventFilterFocusIn() const;
+    virtual void eventFilterFocusOut() const;
+
     void resizeWidget(Widget*, int w, int h);
 
     bool m_deleteWidget;

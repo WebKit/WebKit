@@ -27,7 +27,7 @@
 #include "StringImpl.h"
 
 #include "AtomicString.h"
-#include "khtmllayout.h"
+#include "Length.h"
 #include <kxmlcore/Assertions.h>
 #include <string.h>
 

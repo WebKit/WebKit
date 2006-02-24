@@ -4,7 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann <hausmann@kde.org>
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,7 +27,6 @@
 #define HTML_BASEIMPL_H
 
 #include "HTMLElementImpl.h"
-#include "khtmllayout.h"
 
 #include <qscrollview.h>
 
@@ -43,6 +42,8 @@ class CSSStyleSheetImpl;
 class DOMString;
 class Frame;
 class HTMLFrameElement;
+
+struct Length;
 
 // -------------------------------------------------------------------------
 
@@ -200,8 +201,8 @@ public:
     void setRows(const DOMString &);
 
 protected:
-    khtml::Length* m_rows;
-    khtml::Length* m_cols;
+    Length* m_rows;
+    Length* m_cols;
 
     int m_totalRows;
     int m_totalCols;

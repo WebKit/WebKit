@@ -34,7 +34,7 @@
 #import "kjs_window.h"
 
 #import <kxmlcore/Assertions.h>
-#import "KWQFoundationExtras.h"
+#import "FoundationExtras.h"
 #import "MacFrame.h"
 
 using namespace WebCore;

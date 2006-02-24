@@ -122,7 +122,7 @@ void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild
 
     if (!beforeChild) {
         grid[cRow].height = child->style()->height();
-        if (grid[cRow].height.type == Relative)
+        if (grid[cRow].height.isRelative())
             grid[cRow].height = Length();
     }
 
@@ -173,17 +173,17 @@ void RenderTableSection::addCell(RenderTableCell *cell)
     if (rSpan == 1) {
         // we ignore height settings on rowspan cells
         Length height = cell->style()->height();
-        if (height.value > 0 || (height.type == Relative && height.value >= 0)) {
+        if (height.value() > 0 || (height.isRelative() && height.value() >= 0)) {
             Length cRowHeight = grid[cRow].height;
-            switch (height.type) {
+            switch (height.type()) {
                 case Percent:
-                    if (!(cRowHeight.type == Percent) ||
-                        (cRowHeight.type == Percent && cRowHeight.value < height.value))
+                    if (!(cRowHeight.isPercent()) ||
+                        (cRowHeight.isPercent() && cRowHeight.value() < height.value()))
                         grid[cRow].height = height;
                         break;
                 case Fixed:
-                    if (cRowHeight.type < Percent ||
-                        (cRowHeight.type == Fixed && cRowHeight.value < height.value))
+                    if (cRowHeight.type() < Percent ||
+                        (cRowHeight.isFixed() && cRowHeight.value() < height.value()))
                         grid[cRow].height = height;
                     break;
                 case Relative:
@@ -283,7 +283,7 @@ void RenderTableSection::calcRowHeight()
 
         int baseline = 0;
         int bdesc = 0;
-        int ch = grid[r].height.minWidth(0);
+        int ch = grid[r].height.calcMinValue(0);
         int pos = rowPos[r + 1] + ch + spacing;
 
         if (pos > rowPos[r + 1])
@@ -312,7 +312,7 @@ void RenderTableSection::calcRowHeight()
             
             // Explicit heights use the border box in quirks mode.  In strict mode do the right
             // thing and actually add in the border and padding.
-            ch = cell->style()->height().width(0) + 
+            ch = cell->style()->height().calcValue(0) + 
                 (cell->style()->htmlHacks() ? 0 : (cell->paddingTop() + cell->paddingBottom() +
                                                    cell->borderTop() + cell->borderBottom()));
             if (cell->height() > ch)
@@ -370,10 +370,10 @@ int RenderTableSection::layoutRows(int toAdd)
         int totalPercent = 0;
         int numAuto = 0;
         for (int r = 0; r < totalRows; r++) {
-            if (grid[r].height.type == Auto)
+            if (grid[r].height.isAuto())
                 numAuto++;
-            else if (grid[r].height.type == Percent)
-                totalPercent += grid[r].height.value;
+            else if (grid[r].height.isPercent())
+                totalPercent += grid[r].height.value();
         }
         if (totalPercent) {
             // try to satisfy percent
@@ -382,14 +382,14 @@ int RenderTableSection::layoutRows(int toAdd)
                 totalPercent = 100;
             int rh = rowPos[1] - rowPos[0];
             for (int r = 0; r < totalRows; r++) {
-                if (totalPercent > 0 && grid[r].height.type == Percent) {
-                    int toAdd = kMin(dh, (totalHeight * grid[r].height.value / 100) - rh);
+                if (totalPercent > 0 && grid[r].height.isPercent()) {
+                    int toAdd = kMin(dh, (totalHeight * grid[r].height.value() / 100) - rh);
                     // If toAdd is negative, then we don't want to shrink the row (this bug
                     // affected Outlook Web Access).
                     toAdd = kMax(0, toAdd);
                     add += toAdd;
                     dh -= toAdd;
-                    totalPercent -= grid[r].height.value;
+                    totalPercent -= grid[r].height.value();
                 }
                 if (r < totalRows - 1)
                     rh = rowPos[r + 2] - rowPos[r + 1];
@@ -400,7 +400,7 @@ int RenderTableSection::layoutRows(int toAdd)
             // distribute over variable cols
             int add = 0;
             for (int r = 0; r < totalRows; r++) {
-                if (numAuto > 0 && grid[r].height.type == Auto) {
+                if (numAuto > 0 && grid[r].height.isAuto()) {
                     int toAdd = dh/numAuto;
                     add += toAdd;
                     dh -= toAdd;

@@ -75,9 +75,9 @@ void RenderApplet::createWidgetIfNecessary()
             // In order to work around this problem and have a correct size from the start, we will
             // use fixed widths/heights from the style system when we can, since the widget might
             // not have an accurate m_width/m_height.
-            int width = style()->width().isFixed() ? style()->width().value : 
+            int width = style()->width().isFixed() ? style()->width().value() : 
                 m_width - borderLeft() - borderRight() - paddingLeft() - paddingRight();
-            int height = style()->height().isFixed() ? style()->height().value :
+            int height = style()->height().isFixed() ? style()->height().value() :
                 m_height - borderTop() - borderBottom() - paddingTop() - paddingBottom();
             for (NodeImpl* child = element()->firstChild(); child; child = child->nextSibling())
                 if (child->hasTagName(paramTag)) {

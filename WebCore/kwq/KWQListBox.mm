@@ -23,18 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "KWQListBox.h"
 
-#import <kxmlcore/Assertions.h>
 #import "KWQExceptions.h"
-#import "MacFrame.h"
-#import "KWQEvent.h"
 #import "KWQView.h"
+#import "MacFrame.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreScrollView.h"
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
+#import <kxmlcore/Assertions.h>
 
 #import "render_form.h"
 
@@ -575,11 +574,8 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
         }        
         [self _KWQ_setKeyboardFocusRingNeedsDisplay];
 
-        if (_box) {
-            QEvent event(QEvent::FocusIn);
-            if (_box->eventFilterObject())
-                const_cast<QObject *>(_box->eventFilterObject())->eventFilter(_box, &event);
-        }
+        if (_box && _box->eventFilterObject())
+            _box->eventFilterObject()->eventFilterFocusIn();
     }
 
     return become;
@@ -588,13 +584,10 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
 - (BOOL)resignFirstResponder
 {
     BOOL resign = [super resignFirstResponder];
-    if (resign && _box) {
-        QEvent event(QEvent::FocusOut);
-
-        if (_box->eventFilterObject()) {
-            const_cast<QObject *>(_box->eventFilterObject())->eventFilter(_box, &event);
+    if (resign && _box && _box->eventFilterObject()) {
+        _box->eventFilterObject()->eventFilterFocusOut();
+        if (_box)
             [MacFrame::bridgeForWidget(_box) formControlIsResigningFirstResponder:self];
-        }
     }
     return resign;
 }

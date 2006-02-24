@@ -35,12 +35,14 @@
 #include "HTMLOptionElementImpl.h"
 #include "HTMLSelectElementImpl.h"
 #include "HTMLTextAreaElementImpl.h"
-#include "KWQEvent.h"
 #include "KWQFileButton.h"
 #include "KWQSlider.h"
+#include "MouseEvent.h"
 #include "dom2_eventsimpl.h"
 #include "helper.h"
 #include <klocale.h>
+#include <qpalette.h>
+#include <qcombobox.h>
 
 namespace WebCore {
 
@@ -92,20 +94,16 @@ void RenderFormElement::layout()
 
     calcWidth();
     calcHeight();
-
     
     setNeedsLayout(false);
 }
 
 void RenderFormElement::slotClicked()
 {
-    // FIXME: Should share code with FrameView::dispatchMouseEvent, which does a lot of the same stuff.
-
     RenderArena *arena = ref();
-
-    QMouseEvent event(QEvent::MouseButtonRelease); // gets "current event"
-    element()->dispatchMouseEvent(&event, clickEvent, event.clickCount());
-
+    MouseEvent event; // gets "current event"
+    if (element())
+        element()->dispatchMouseEvent(&event, clickEvent, event.clickCount());
     deref(arena);
 }
 
@@ -140,16 +138,16 @@ void RenderFormElement::addIntrinsicMarginsIfAllowed(RenderStyle* _style)
     // FIXME: Using width/height alone and not also dealing with min-width/max-width is flawed.
     int m = intrinsicMargin();
     if (_style->width().isIntrinsicOrAuto()) {
-        if (_style->marginLeft().quirk)
+        if (_style->marginLeft().quirk())
             _style->setMarginLeft(Length(m, Fixed));
-        if (_style->marginRight().quirk)
+        if (_style->marginRight().quirk())
             _style->setMarginRight(Length(m, Fixed));
     }
 
     if (_style->height().isAuto()) {
-        if (_style->marginTop().quirk)
+        if (_style->marginTop().quirk())
             _style->setMarginTop(Length(m, Fixed));
-        if (_style->marginBottom().quirk)
+        if (_style->marginBottom().quirk())
             _style->setMarginBottom(Length(m, Fixed));
     }
 }
@@ -599,23 +597,6 @@ RenderLegend::RenderLegend(HTMLGenericFormElementImpl *element)
 {
 }
 
-// -------------------------------------------------------------------------------
-
-ComboBoxWidget::ComboBoxWidget(Widget *parent)
-    : QComboBox()
-{
-}
-
-bool ComboBoxWidget::event(QEvent *e)
-{
-    return QComboBox::event(e);
-}
-
-bool ComboBoxWidget::eventFilter(QObject *dest, QEvent *e)
-{
-    return QComboBox::eventFilter(dest, e);
-}
-
 // -------------------------------------------------------------------------
 
 RenderSelect::RenderSelect(HTMLSelectElementImpl *element)
@@ -641,7 +622,7 @@ void RenderSelect::setWidgetWritingDirection()
     if (m_useListBox)
         static_cast<QListBox *>(m_widget)->setWritingDirection(d);
     else
-        static_cast<ComboBoxWidget *>(m_widget)->setWritingDirection(d);
+        static_cast<QComboBox *>(m_widget)->setWritingDirection(d);
 }
 
 void RenderSelect::setStyle(RenderStyle *s)
@@ -870,8 +851,8 @@ void RenderSelect::slotSelected(int index)
         }
 
         if ( found ) {
-            if ( index != static_cast<ComboBoxWidget*>( m_widget )->currentItem() )
-                static_cast<ComboBoxWidget*>( m_widget )->setCurrentItem( index );
+            if ( index != static_cast<QComboBox*>( m_widget )->currentItem() )
+                static_cast<QComboBox*>( m_widget )->setCurrentItem( index );
 
             for ( unsigned int i = 0; i < listItems.size(); ++i )
                 if (listItems[i]->hasTagName(optionTag) && i != (unsigned int) index)
@@ -922,9 +903,9 @@ QListBox* RenderSelect::createListBox()
     return lb;
 }
 
-ComboBoxWidget *RenderSelect::createComboBox()
+QComboBox* RenderSelect::createComboBox()
 {
-    ComboBoxWidget *cb = new ComboBoxWidget(view()->viewport());
+    QComboBox* cb = new QComboBox;
     connect(cb, SIGNAL(activated(int)), this, SLOT(slotSelected(int)));
     return cb;
 }

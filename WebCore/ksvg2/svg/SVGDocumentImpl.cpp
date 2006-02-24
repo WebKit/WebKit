@@ -186,7 +186,7 @@ void SVGDocumentImpl::dispatchScrollEvent()
     rootElement()->dispatchEvent(event.get(), exceptioncode);
 }
 
-bool SVGDocumentImpl::dispatchKeyEvent(EventTargetImpl *target, QKeyEvent *key, bool keypress)
+bool SVGDocumentImpl::dispatchKeyEvent(EventTargetImpl* target, KeyEvent* key, bool keypress)
 {
     // dispatch key event
     int exceptioncode;

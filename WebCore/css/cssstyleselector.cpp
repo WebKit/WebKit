@@ -28,14 +28,13 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLElementImpl.h"
-#include "KWQKPartsHistoryProvider.h"
+#include "History.h"
 #include "UserAgentStyleSheets.h"
 #include "css_rule.h"
 #include "css_ruleimpl.h"
 #include "css_stylesheetimpl.h"
 #include "css_value.h"
 #include "css_valueimpl.h"
-#include "csshelper.h"
 #include "cssproperties.h"
 #include "cssvalues.h"
 #include "font.h"
@@ -43,7 +42,6 @@
 #include "html_documentimpl.h"
 #include "htmlnames.h"
 #include "khtml_settings.h"
-#include "khtmllayout.h"
 #include "loader.h"
 #include "render_object.h"
 #include "render_style.h"
@@ -591,7 +589,7 @@ static void checkPseudoState( ElementImpl *e, bool checkVisited = true )
             u.prepend(currentEncodedURL->path);
         cleanpath( u );
     }
-    pseudoState = KParts::HistoryProvider::self()->contains(u) ? PseudoVisited : PseudoLink;
+    pseudoState = historyContains(u) ? PseudoVisited : PseudoLink;
 }
 
 #ifdef STYLE_SHARING_STATS
@@ -2672,7 +2670,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
             if (id == CSS_PROP_PADDING_LEFT || id == CSS_PROP_PADDING_RIGHT ||
                 id == CSS_PROP_PADDING_TOP || id == CSS_PROP_PADDING_BOTTOM)
                 // Padding can't be negative
-                apply = !((l.isFixed() || l.isPercent()) && l.width(100) < 0);
+                apply = !((l.isFixed() || l.isPercent()) && l.calcValue(100) < 0);
             else
                 apply = true;
         }
@@ -4169,7 +4167,7 @@ float CSSStyleSelector::getComputedSizeFromSpecifiedSize(bool isAbsoluteSize, fl
     int minSize = settings->minFontSize();
     int minLogicalSize = settings->minLogicalFontSize();
 
-    float zoomPercent = (!printpainter && view) ? view->frame()->zoomFactor()/100.0f : 1.0f;
+    float zoomPercent = view ? view->frame()->zoomFactor()/100.0f : 1.0f;
     float zoomedSize = specifiedSize * zoomPercent;
 
     // Apply the hard minimum first.  We only apply the hard minimum if after zooming we're still too small.

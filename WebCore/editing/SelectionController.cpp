@@ -45,7 +45,6 @@
 #include "dom_elementimpl.h"
 #include "EventNames.h"
 #include <kxmlcore/Assertions.h>
-#include <qevent.h>
 #include <qpainter.h>
 
 #define EDIT_DEBUG 0

@@ -27,14 +27,15 @@
 #import "Widget.h"
 
 #import "Cursor.h"
+#import "FoundationExtras.h"
 #import "KWQExceptions.h"
-#import "KWQFoundationExtras.h"
 #import "KWQView.h"
 #import "MacFrame.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreFrameView.h"
 #import "WebCoreView.h"
 #import "render_replaced.h"
+#import <qpalette.h>
 
 namespace WebCore {
 

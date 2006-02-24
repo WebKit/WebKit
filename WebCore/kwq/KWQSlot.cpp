@@ -26,23 +26,18 @@
 #include "config.h"
 #include "KWQSlot.h"
 
-#include <kxmlcore/Assertions.h>
-
 #include "DocumentImpl.h"
 #include "Frame.h"
-#include "kjs_window.h"
 #include "render_form.h"
-#include "render_layer.h"
 #include "xmlhttprequest.h"
+#include <kxmlcore/Assertions.h>
 
 using namespace WebCore;
 
 using KIO::Job;
-using KJS::WindowQObject;
 
 enum FunctionNumber {
     slotClicked,
-    slotParentDestroyed,
     slotPerformSearch,
     slotReturnPressed,
     slotSelected,
@@ -80,9 +75,7 @@ KWQSlot::KWQSlot(QObject *object, const char *member)
        
     #undef CASE
 
-    if (KWQNamesMatch(member, SLOT(parentDestroyed()))) {
-        m_function = slotParentDestroyed;
-    } else if (KWQNamesMatch(member, SLOT(slotTextChanged(const DOMString &)))) {
+    if (KWQNamesMatch(member, SLOT(slotTextChanged(const DOMString &)))) {
         m_function = slotTextChangedWithString;
     } else if (KWQNamesMatch(member, SLOT(slotData(KIO::Job *, const char *, int)))) {
         if (object->isKHTMLLoader()) {
@@ -127,7 +120,6 @@ void KWQSlot::call() const
     
     switch (m_function) {
         CASE(slotClicked, RenderFormElement, slotClicked)
-        CASE(slotParentDestroyed, WindowQObject, parentDestroyed)
         CASE(slotPerformSearch, RenderLineEdit, slotPerformSearch)
         CASE(slotReturnPressed, RenderLineEdit, slotReturnPressed)
         CASE(slotSelectionChanged, RenderFormElement, slotSelectionChanged)

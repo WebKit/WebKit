@@ -26,8 +26,7 @@
 #define HTML_IMAGEIMPL_H
 
 #include "CachedImage.h"
-#include "html/html_inlineimpl.h"
-#include "khtmllayout.h"
+#include "html_inlineimpl.h"
 #include "render_object.h"
 #include <qregion.h>
 
@@ -37,6 +36,8 @@ class DOMString;
 class HTMLCollectionImpl;
 class HTMLFormElementImpl;
 class Image;
+
+struct Length;
 
 class HTMLImageLoader : public CachedObjectClient {
 public:
@@ -153,10 +154,9 @@ protected:
 class HTMLAreaElementImpl : public HTMLAnchorElementImpl
 {
 public:
-
     enum Shape { Default, Poly, Rect, Circle, Unknown };
 
-    HTMLAreaElementImpl(DocumentImpl *doc);
+    HTMLAreaElementImpl(DocumentImpl*);
     ~HTMLAreaElementImpl();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }

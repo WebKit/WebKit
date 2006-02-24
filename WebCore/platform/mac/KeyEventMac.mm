@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,12 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#import "KWQEvent.h"
+#import "config.h"
+#import "KeyEvent.h"
 
 #import "KWQLogging.h"
 
-static QString keyIdentifierForKeyEvent(NSEvent *event)
+namespace WebCore {
+
+static String keyIdentifierForKeyEvent(NSEvent* event)
 {
     NSString *s = [event charactersIgnoringModifiers];
     if ([s length] != 1) {
@@ -320,7 +322,7 @@ static QString keyIdentifierForKeyEvent(NSEvent *event)
     }
 }
 
-static bool isKeypadEvent(NSEvent *event)
+static bool isKeypadEvent(NSEvent* event)
 {
     // Check that this is the type of event that has a keyCode.
     switch ([event type]) {
@@ -357,7 +359,7 @@ static bool isKeypadEvent(NSEvent *event)
      return false;
 }
 
-static int WindowsKeyCodeForKeyEvent(NSEvent *event)
+static int WindowsKeyCodeForKeyEvent(NSEvent* event)
 {
     switch ([event keyCode]) {
         // VK_TAB (09) TAB key
@@ -399,10 +401,9 @@ static int WindowsKeyCodeForKeyEvent(NSEvent *event)
         case 75: return 0x6F;
      }
 
-    NSString *s = [event charactersIgnoringModifiers];
-    if ([s length] != 1) {
+    NSString* s = [event charactersIgnoringModifiers];
+    if ([s length] != 1)
         return 0;
-    }
 
     switch ([s characterAtIndex:0]) {
         // VK_LBUTTON (01) Left mouse button
@@ -699,228 +700,30 @@ static int WindowsKeyCodeForKeyEvent(NSEvent *event)
     return 0;
 }
 
-static int mouseButtonForEvent(NSEvent *event)
-{
-    switch ([event type]) {
-        case NSLeftMouseDown:
-        case NSLeftMouseUp:
-        case NSLeftMouseDragged:
-            return Qt::LeftButton;
-        case NSRightMouseDown:
-        case NSRightMouseUp:
-        case NSRightMouseDragged:
-            return Qt::RightButton;
-        case NSOtherMouseDown:
-        case NSOtherMouseUp:
-        case NSOtherMouseDragged:
-            return Qt::MidButton;
-        default:
-            return Qt::NoButton;
-    }
-}
-
-static int nonMouseButtonsForEvent(NSEvent *event)
-{
-    int buttons = 0;
-
-    unsigned modifiers = [event modifierFlags];
-
-    if (modifiers & NSControlKeyMask) {
-        buttons |= Qt::ControlButton;
-    }
-    if (modifiers & NSShiftKeyMask) {
-        buttons |= Qt::ShiftButton;
-    }
-    if (modifiers & NSAlternateKeyMask) {
-        buttons |= Qt::AltButton;
-    }
-    if (modifiers & NSCommandKeyMask) {
-        buttons |= Qt::MetaButton;
-    }
-
-    // I tried using NSNumericPadKeyMask, but it does not seem to work reliably.
-    // One possible explanation is that the documentation says "Set if any key in
-    // the numeric keypad is pressed." which may mean that it gets set if there
-    // is any key down on the numeric keypad. But it could just be some kind of bug
-    // or a mistake on my part. We could revisit this some day.
-    if (isKeypadEvent(event)) {
-        buttons |= Qt::Keypad;
-    }
-
-    return buttons;
-}
-
-static IntPoint positionForEvent(NSEvent *event)
-{
-    switch ([event type]) {
-        case NSLeftMouseDown:
-        case NSLeftMouseUp:
-        case NSLeftMouseDragged:
-        case NSRightMouseDown:
-        case NSRightMouseUp:
-        case NSRightMouseDragged:
-        case NSOtherMouseDown:
-        case NSOtherMouseUp:
-        case NSOtherMouseDragged:
-        case NSMouseMoved:
-        case NSScrollWheel:
-            // Note: This has its origin at the bottom left of the window.
-            // The Y coordinate gets flipped by QScrollView::viewportToContents.
-            // We should probably change both this and that to not use "bottom left origin" coordinates at all.
-            return IntPoint([event locationInWindow]);
-        default:
-            return IntPoint();
-    }
-}
-
-static IntPoint globalPositionForEvent(NSEvent *event)
-{
-    switch ([event type]) {
-        case NSLeftMouseDown:
-        case NSLeftMouseUp:
-        case NSLeftMouseDragged:
-        case NSRightMouseDown:
-        case NSRightMouseUp:
-        case NSRightMouseDragged:
-        case NSOtherMouseDown:
-        case NSOtherMouseUp:
-        case NSOtherMouseDragged:
-        case NSMouseMoved:
-        case NSScrollWheel: {
-            NSPoint point = [[event window] convertBaseToScreen:[event locationInWindow]];
-            point.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - point.y;
-            return IntPoint(point);
-        }
-        default:
-            return IntPoint();
-    }
-}
-
-static int clickCountForEvent(NSEvent *event)
-{
-    switch ([event type]) {
-        case NSLeftMouseDown:
-        case NSLeftMouseUp:
-        case NSLeftMouseDragged:
-        case NSRightMouseDown:
-        case NSRightMouseUp:
-        case NSRightMouseDragged:
-        case NSOtherMouseDown:
-        case NSOtherMouseUp:
-        case NSOtherMouseDragged:
-            return [event clickCount];
-        default:
-            return 0;
-    }
-}
-
-static Qt::Orientation orientationForEvent(NSEvent *event)
-{
-    switch ([event type]) {
-        case NSScrollWheel:
-            return [event deltaX] != 0 ? Qt::Horizontal : Qt::Vertical;
-        default:
-            return Qt::Vertical;
-    }
-}
-
-static int deltaForEvent(NSEvent *event)
-{
-    switch ([event type]) {
-        case NSScrollWheel:
-            return lrint((orientationForEvent(event) == Qt::Horizontal ? [event deltaX] : [event deltaY]) * 120);
-        default:
-            return 0;
-    }
-}
-
-// ======== 
-
-QEvent::~QEvent()
-{
-}
-
-// ======== 
-
-QMouseEvent::QMouseEvent(Type type, NSEvent *event)
-    : QEvent(type)
-    , _position(positionForEvent(event))
-    , _globalPosition(globalPositionForEvent(event))
-    , _button(mouseButtonForEvent(event))
-    , _state(nonMouseButtonsForEvent(event))
-    , _clickCount(clickCountForEvent(event))
-{
-    fixState();
-}
-
-QMouseEvent::QMouseEvent(Type type)
-    : QEvent(type), _button(0), _state(0), _clickCount(0)
-{
-    NSEvent *event = [NSApp currentEvent];
-    if (event) {
-        _position = positionForEvent(event);
-        _globalPosition = globalPositionForEvent(event);
-        _button = mouseButtonForEvent(event);
-        _state = nonMouseButtonsForEvent(event);
-        _clickCount = clickCountForEvent(event);
-    }
-    fixState();
-}
-
-void QMouseEvent::fixState()
-{
-    int button = _button;
-    int state = _state;
-    switch (type()) {
-        case MouseMove:
-            _clickCount = 0;
-            _state = state | button;
-            _stateAfter = state | button;
-            break;
-        case MouseButtonRelease:
-            _state = state | button;
-            _stateAfter = state & ~button;
-            break;
-        default:
-            _state = state & ~button;
-            _stateAfter = state | button;
-            break;
-    }
-}
-
-// ======== 
-
-QKeyEvent::QKeyEvent(NSEvent *event, bool forceAutoRepeat)
-    : QEvent([event type] == NSKeyDown ? KeyPress : KeyRelease),
-      _state(nonMouseButtonsForEvent(event)),
-      _text(QString::fromNSString([event characters])),
-      _unmodifiedText(QString::fromNSString([event charactersIgnoringModifiers])),
-      _keyIdentifier(keyIdentifierForKeyEvent(event)),
-      _autoRepeat(forceAutoRepeat || [event isARepeat]),
-      _isAccepted(false),
-      _WindowsKeyCode(WindowsKeyCodeForKeyEvent(event))
+KeyEvent::KeyEvent(NSEvent *event, bool forceAutoRepeat)
+    : m_text([event characters]),
+      m_unmodifiedText([event charactersIgnoringModifiers]),
+      m_keyIdentifier(keyIdentifierForKeyEvent(event)),
+      m_isKeyUp([event type] == NSKeyUp),
+      m_autoRepeat(forceAutoRepeat || [event isARepeat]),
+      m_isAccepted(false),
+      m_WindowsKeyCode(WindowsKeyCodeForKeyEvent(event)),
+      m_isKeypad(isKeypadEvent(event)),
+      m_shiftKey([event modifierFlags] & NSShiftKeyMask),
+      m_ctrlKey([event modifierFlags] & NSControlKeyMask),
+      m_altKey([event modifierFlags] & NSAlternateKeyMask),
+      m_metaKey([event modifierFlags] & NSCommandKeyMask)
 {
     // Turn 0x7F into 8, because backspace needs to always be 8.
-    if (_text == "\x7F")
-        _text = "\x8";
-    if (_unmodifiedText == "\x7F")
-        _unmodifiedText = "\x8";
+    if (m_text == "\x7F")
+        m_text = "\x8";
+    if (m_unmodifiedText == "\x7F")
+        m_unmodifiedText = "\x8";
     // Always use 9 for tab -- we don't want to use AppKit's different character for shift-tab.
-    if (_WindowsKeyCode == 9) {
-        _text = "\x9";
-        _unmodifiedText = "\x9";
+    if (m_WindowsKeyCode == 9) {
+        m_text = "\x9";
+        m_unmodifiedText = "\x9";
     }
 }
 
-// ======== 
-
-QWheelEvent::QWheelEvent(NSEvent *event)
-    : QEvent(Wheel)
-    , _position(positionForEvent(event))
-    , _globalPosition(globalPositionForEvent(event))
-    , _delta(deltaForEvent(event))
-    , _state(nonMouseButtonsForEvent(event))
-    , _orientation(orientationForEvent(event))
-    , _isAccepted(false)
-{
 }

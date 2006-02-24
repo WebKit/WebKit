@@ -39,7 +39,7 @@
 #import "KWQClipboard.h"
 #import "KWQEditCommand.h"
 #import "KWQFont.h"
-#import "KWQFoundationExtras.h"
+#import "FoundationExtras.h"
 #import "KWQLoader.h"
 #import "KWQPageState.h"
 #import "KWQPrinter.h"

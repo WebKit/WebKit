@@ -26,9 +26,8 @@
 #import "config.h"
 #import "KWQFileButton.h"
 
-#import "KWQEvent.h"
 #import "KWQExceptions.h"
-#import "KWQFoundationExtras.h"
+#import "FoundationExtras.h"
 #import "MacFrame.h"
 #import "WebCoreFrameBridge.h"
 #import "render_form.h"
@@ -161,13 +160,9 @@ void KWQFileButton::focusChanged(bool nowHasFocus)
             if (layer)
                 layer->scrollRectToVisible(widget->absoluteBoundingBoxRect());
         }        
-        QEvent event(QEvent::FocusIn);
-        const_cast<QObject *>(eventFilterObject())->eventFilter(this, &event);
-    }
-    else {
-        QEvent event(QEvent::FocusOut);
-        const_cast<QObject *>(eventFilterObject())->eventFilter(this, &event);
-    }
+        eventFilterObject()->eventFilterFocusIn();
+    } else
+        eventFilterObject()->eventFilterFocusOut();
 }
 
 void KWQFileButton::clicked()

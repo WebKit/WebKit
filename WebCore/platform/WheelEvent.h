@@ -23,76 +23,57 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "Widget.h"
+#ifndef WheelEvent_h
+#define WheelEvent_h
 
-#include "IntRect.h"
+#include "IntPoint.h"
+
+#ifdef __APPLE__
+#ifdef __OBJC__
+@class NSEvent;
+#else
+class NSEvent;
+#endif
+#endif
 
 namespace WebCore {
 
-IntSize Widget::sizeHint() const 
-{
-    return IntSize();
-}
+    class WheelEvent {
+    public:
+        const IntPoint& pos() const { return m_position; }
+        const IntPoint& globalPos() const { return m_globalPosition; }
+        int delta() const { return m_delta; }
+        bool isHorizontal() const { return m_isHorizontal; }
+        bool isAccepted() const { return m_isAccepted; }
+        bool shiftKey() const { return m_shiftKey; }
+        bool ctrlKey() const { return m_ctrlKey; }
+        bool altKey() const { return m_altKey; }
+        bool metaKey() const { return m_metaKey; }
 
-void Widget::resize(int w, int h) 
-{
-    setFrameGeometry(IntRect(x(), y(), w, h));
-}
+        int x() const { return m_position.x(); }
+        int y() const { return m_position.y(); }
+        int globalX() const { return m_globalPosition.x(); }
+        int globalY() const { return m_globalPosition.y(); }
 
-int Widget::x() const
-{
-    return frameGeometry().x();
-}
+        void accept() { m_isAccepted = true; }
+        void ignore() { m_isAccepted = false; }
 
-int Widget::y() const 
-{
-    return frameGeometry().y();
-}
+#ifdef __APPLE__
+        WheelEvent(NSEvent*);
+#endif
 
-int Widget::width() const 
-{ 
-    return frameGeometry().width();
-}
-
-int Widget::height() const 
-{
-    return frameGeometry().height();
-}
-
-IntSize Widget::size() const 
-{
-    return frameGeometry().size();
-}
-
-void Widget::resize(const IntSize &s) 
-{
-    resize(s.width(), s.height());
-}
-
-IntPoint Widget::pos() const 
-{
-    return frameGeometry().location();
-}
-
-void Widget::move(int x, int y) 
-{
-    setFrameGeometry(IntRect(x, y, width(), height()));
-}
-
-void Widget::move(const IntPoint &p) 
-{
-    move(p.x(), p.y());
-}
-
-int Widget::baselinePosition(int height) const
-{
-    return height;
-}
-
-bool Widget::checksDescendantsForFocus() const
-{
-    return false;
-}
+    private:
+        IntPoint m_position;
+        IntPoint m_globalPosition;
+        int m_delta;
+        bool m_isHorizontal;
+        bool m_isAccepted;
+        bool m_shiftKey;
+        bool m_ctrlKey;
+        bool m_altKey;
+        bool m_metaKey;
+    };
 
 }
+
+#endif
