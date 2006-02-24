@@ -24,14 +24,14 @@
  */
 
 #include "config.h"
-#import "KURL.h"
+#include "KURL.h"
 
-#import <kxmlcore/Assertions.h>
-#import "KWQRegExp.h"
-#import "KWQTextCodec.h"
-#import <kxmlcore/Vector.h>
-#import <unicode/uidna.h>
-#import <utility>
+#include <kxmlcore/Assertions.h>
+#include "KWQRegExp.h"
+#include "KWQTextCodec.h"
+#include <kxmlcore/Vector.h>
+#include <unicode/uidna.h>
+#include <utility>
 
 using std::pair;
 using std::make_pair;

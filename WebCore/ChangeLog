@@ -1,5 +1,15 @@
 2006-02-23  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Darin.
+
+        - add KURL to windows build and fix its compile issues
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7439
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * platform/KURL.cpp:
+
+2006-02-23  Maciej Stachowiak  <mjs@apple.com>
+
         - fix build (header name changed)
 
         * platform/mac/KURLMac.mm:

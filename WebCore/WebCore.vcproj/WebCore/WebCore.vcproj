@@ -1601,6 +1601,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\platform\KURL.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\KURL.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\platform\MouseEvent.h"
 				>
 			</File>
@@ -2545,15 +2553,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\css\Length.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\css\quirks.css"
 				>
 			</File>
 			<File
 				RelativePath="..\..\css\tokenizer.flex"
-				>
-			</File>
-			<File
-				RelativePath="..\..\css\Length.h"
 				>
 			</File>
 			<File
