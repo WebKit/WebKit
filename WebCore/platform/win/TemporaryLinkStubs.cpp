@@ -25,6 +25,7 @@
 #include "dom2_events.h"
 #include "KWQKJavaAppletWidget.h"
 #include "KWQScrollBar.h"
+#include "Path.h"
 
 using namespace WebCore;
 
@@ -251,3 +252,12 @@ QTextEdit::~QTextEdit(void) { notImplemented(); }
 bool  QTextEdit::checksDescendantsForFocus(void)const  { notImplemented(); return false; }
 enum WebCore::Widget::FocusPolicy  QLineEdit::focusPolicy(void)const  { notImplemented(); return NoFocus; }
 QScrollBar::~QScrollBar(void) { notImplemented(); }
+Path::Path(){ notImplemented(); }
+Path::Path(const IntRect& r, Type t){ notImplemented(); }
+Path::Path(const IntPointArray& arr){ notImplemented(); }
+Path::~Path(){ notImplemented(); }
+Path::Path(const Path& other){ notImplemented(); }
+Path& Path::operator=(const Path& other){ notImplemented(); return *this; }
+bool Path::contains(const IntPoint& point) const{ notImplemented(); return false; }
+void Path::translate(int deltaX, int deltaY){ notImplemented(); }
+IntRect Path::boundingRect() const { notImplemented(); return IntRect(); }

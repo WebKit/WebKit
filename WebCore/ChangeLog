@@ -1,3 +1,18 @@
+2006-02-24  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Add Path stubs for Win32 build.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (Path::Path):
+        (Path::~Path):
+        (Path::operator=):
+        (Path::contains):
+        (Path::translate):
+        (Path::boundingRect):
+
 2006-02-24  David Hyatt  <hyatt@apple.com>
 
         In preparation for the elimination of QFont and QFontMetrics, rename methods on RenderStyle.  htmlFont() becomes simply

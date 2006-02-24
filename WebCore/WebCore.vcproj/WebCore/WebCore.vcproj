@@ -1605,6 +1605,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\platform\Path.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\platform\Pen.cpp"
 				>
 			</File>
