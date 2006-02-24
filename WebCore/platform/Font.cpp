@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "font.h"
+#include "Font.h"
 
 #include "khtml_settings.h"
 

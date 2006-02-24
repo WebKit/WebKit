@@ -39,7 +39,7 @@
 #include "PlatformString.h"
 #include "HTMLElementImpl.h"
 #include "misc/helper.h"
-#include "rendering/font.h"
+#include "Font.h"
 #include "rendering/render_style.h"
 #include "StringImpl.h"
 #include <qregexp.h>

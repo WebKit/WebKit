@@ -1,3 +1,14 @@
+2006-02-24  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Eric.
+
+        - fix up font.h inclues to be Font.h to fix build.
+
+        * css/css_computedstyle.cpp:
+        * css/css_valueimpl.cpp:
+        * platform/Font.cpp:
+        * rendering/render_style.h:
+
 2006-02-24  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

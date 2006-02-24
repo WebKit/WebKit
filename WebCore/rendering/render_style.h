@@ -39,7 +39,7 @@
 #include "DataRef.h"
 #include "Length.h"
 #include "Shared.h"
-#include "font.h"
+#include "Font.h"
 #include <qvaluelist.h>
 
 #if SVG_SUPPORT

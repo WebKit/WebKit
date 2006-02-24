@@ -30,7 +30,7 @@
 #include "cssproperties.h"
 #include "cssvalues.h"
 #include "dom_exception.h"
-#include "font.h"
+#include "Font.h"
 #include "render_object.h"
 #include "render_style.h"
 #include <kxmlcore/Assertions.h>
