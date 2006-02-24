@@ -37,7 +37,7 @@
 #include "css_valueimpl.h"
 #include "cssproperties.h"
 #include "cssvalues.h"
-#include "font.h"
+#include "Font.h"
 #include "helper.h"
 #include "html_documentimpl.h"
 #include "htmlnames.h"

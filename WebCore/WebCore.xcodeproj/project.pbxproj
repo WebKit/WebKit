@@ -889,6 +889,8 @@
 		BC6B7BAF0993603C0052867B /* Image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6B7BAE0993603C0052867B /* Image.cpp */; };
 		BC6B7BBC0993611A0052867B /* PDFDocumentImage.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6B7BBB0993611A0052867B /* PDFDocumentImage.h */; };
 		BC6B7ECF0998AC7F0052867B /* ImageSource.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6B7ECE0998AC7F0052867B /* ImageSource.h */; };
+		BC6D6DD209AF906600F59759 /* Font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6D6DD009AF906600F59759 /* Font.cpp */; };
+		BC6D6DD309AF906600F59759 /* Font.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6D6DD109AF906600F59759 /* Font.h */; };
 		BC73E25D0978682700EDFF8A /* FloatSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC73E25B0978682700EDFF8A /* FloatSize.cpp */; };
 		BC73E25E0978682700EDFF8A /* FloatSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BC73E25C0978682700EDFF8A /* FloatSize.h */; };
 		BC73E2FF0978AF9C00EDFF8A /* IntPointArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC73E2FC0978AF9C00EDFF8A /* IntPointArray.cpp */; };
@@ -960,8 +962,6 @@
 		BCEA4854097D93020094C9E4 /* break_lines.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4815097D93020094C9E4 /* break_lines.cpp */; };
 		BCEA4855097D93020094C9E4 /* break_lines.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4816097D93020094C9E4 /* break_lines.h */; };
 		BCEA4856097D93020094C9E4 /* DataRef.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4817097D93020094C9E4 /* DataRef.h */; };
-		BCEA4857097D93020094C9E4 /* font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4818097D93020094C9E4 /* font.cpp */; };
-		BCEA4858097D93020094C9E4 /* font.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4819097D93020094C9E4 /* font.h */; };
 		BCEA4859097D93020094C9E4 /* InlineTextBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA481A097D93020094C9E4 /* InlineTextBox.cpp */; };
 		BCEA485A097D93020094C9E4 /* InlineTextBox.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA481B097D93020094C9E4 /* InlineTextBox.h */; };
 		BCEA485B097D93020094C9E4 /* render_applet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA481C097D93020094C9E4 /* render_applet.cpp */; };
@@ -1921,6 +1921,8 @@
 		BC6B7BAE0993603C0052867B /* Image.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Image.cpp; path = platform/Image.cpp; sourceTree = "<group>"; };
 		BC6B7BBB0993611A0052867B /* PDFDocumentImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PDFDocumentImage.h; path = platform/mac/PDFDocumentImage.h; sourceTree = "<group>"; };
 		BC6B7ECE0998AC7F0052867B /* ImageSource.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ImageSource.h; path = platform/ImageSource.h; sourceTree = "<group>"; };
+		BC6D6DD009AF906600F59759 /* Font.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Font.cpp; path = platform/Font.cpp; sourceTree = "<group>"; };
+		BC6D6DD109AF906600F59759 /* Font.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Font.h; path = platform/Font.h; sourceTree = "<group>"; };
 		BC73E25B0978682700EDFF8A /* FloatSize.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FloatSize.cpp; path = platform/FloatSize.cpp; sourceTree = "<group>"; };
 		BC73E25C0978682700EDFF8A /* FloatSize.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FloatSize.h; path = platform/FloatSize.h; sourceTree = "<group>"; };
 		BC73E2FC0978AF9C00EDFF8A /* IntPointArray.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = IntPointArray.cpp; path = platform/IntPointArray.cpp; sourceTree = "<group>"; };
@@ -2006,8 +2008,6 @@
 		BCEA4815097D93020094C9E4 /* break_lines.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = break_lines.cpp; path = rendering/break_lines.cpp; sourceTree = SOURCE_ROOT; };
 		BCEA4816097D93020094C9E4 /* break_lines.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = break_lines.h; path = rendering/break_lines.h; sourceTree = SOURCE_ROOT; };
 		BCEA4817097D93020094C9E4 /* DataRef.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DataRef.h; path = rendering/DataRef.h; sourceTree = SOURCE_ROOT; };
-		BCEA4818097D93020094C9E4 /* font.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = font.cpp; path = rendering/font.cpp; sourceTree = SOURCE_ROOT; };
-		BCEA4819097D93020094C9E4 /* font.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = font.h; path = rendering/font.h; sourceTree = SOURCE_ROOT; };
 		BCEA481A097D93020094C9E4 /* InlineTextBox.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = InlineTextBox.cpp; path = rendering/InlineTextBox.cpp; sourceTree = SOURCE_ROOT; };
 		BCEA481B097D93020094C9E4 /* InlineTextBox.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = InlineTextBox.h; path = rendering/InlineTextBox.h; sourceTree = SOURCE_ROOT; };
 		BCEA481C097D93020094C9E4 /* render_applet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = render_applet.cpp; path = rendering/render_applet.cpp; sourceTree = SOURCE_ROOT; };
@@ -3304,6 +3304,8 @@
 				BCB16AF60979A08500467741 /* FloatRect.h */,
 				BC73E25B0978682700EDFF8A /* FloatSize.cpp */,
 				BC73E25C0978682700EDFF8A /* FloatSize.h */,
+				BC6D6DD009AF906600F59759 /* Font.cpp */,
+				BC6D6DD109AF906600F59759 /* Font.h */,
 				BCC47E6A09A3FE4700ADB771 /* FontDescription.h */,
 				BCC47E2409A3D6F100ADB771 /* FontFamily.cpp */,
 				BCC47E2509A3D6F100ADB771 /* FontFamily.h */,
@@ -3595,8 +3597,6 @@
 				BCEA4815097D93020094C9E4 /* break_lines.cpp */,
 				BCEA4816097D93020094C9E4 /* break_lines.h */,
 				BCEA4817097D93020094C9E4 /* DataRef.h */,
-				BCEA4818097D93020094C9E4 /* font.cpp */,
-				BCEA4819097D93020094C9E4 /* font.h */,
 				935C477409AC4D8D00A6AAB4 /* GapRects.h */,
 				BCEA481A097D93020094C9E4 /* InlineTextBox.cpp */,
 				BCEA481B097D93020094C9E4 /* InlineTextBox.h */,
@@ -4277,7 +4277,6 @@
 				BCEA4853097D93020094C9E4 /* bidi.h in Headers */,
 				BCEA4855097D93020094C9E4 /* break_lines.h in Headers */,
 				BCEA4856097D93020094C9E4 /* DataRef.h in Headers */,
-				BCEA4858097D93020094C9E4 /* font.h in Headers */,
 				BCEA485A097D93020094C9E4 /* InlineTextBox.h in Headers */,
 				BCEA485C097D93020094C9E4 /* render_applet.h in Headers */,
 				BCEA485E097D93020094C9E4 /* render_arena.h in Headers */,
@@ -4402,6 +4401,7 @@
 				651B4D8609AC83370029F1EF /* QStringList.h in Headers */,
 				93032CCA09AEC34B00F82A18 /* Path.h in Headers */,
 				6593923809AE4346002C531F /* KURL.h in Headers */,
+				BC6D6DD309AF906600F59759 /* Font.h in Headers */,
 				9353673F09AED79200D35CD6 /* ScrollBarMode.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5385,7 +5385,6 @@
 				BCEA479D097CAAC80094C9E4 /* cssstyleselector.cpp in Sources */,
 				BCEA4852097D93020094C9E4 /* bidi.cpp in Sources */,
 				BCEA4854097D93020094C9E4 /* break_lines.cpp in Sources */,
-				BCEA4857097D93020094C9E4 /* font.cpp in Sources */,
 				BCEA4859097D93020094C9E4 /* InlineTextBox.cpp in Sources */,
 				BCEA485B097D93020094C9E4 /* render_applet.cpp in Sources */,
 				BCEA485D097D93020094C9E4 /* render_arena.cpp in Sources */,
@@ -5514,6 +5513,7 @@
 				93032CC809AEC34300F82A18 /* PathCG.cpp in Sources */,
 				6593923709AE4346002C531F /* KURL.cpp in Sources */,
 				6593923A09AE435C002C531F /* KURLMac.mm in Sources */,
+				BC6D6DD209AF906600F59759 /* Font.cpp in Sources */,
 				9353676B09AED88B00D35CD6 /* ScrollViewMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

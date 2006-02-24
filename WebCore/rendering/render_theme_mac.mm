@@ -27,7 +27,7 @@
 #import "FoundationExtras.h"
 #import "cssstyleselector.h"
 #import "dom_elementimpl.h"
-#import "font.h"
+#import "Font.h"
 #import "render_canvas.h"
 #import "render_style.h"
 

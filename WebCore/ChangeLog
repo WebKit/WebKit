@@ -1,3 +1,17 @@
+2006-02-24  David Hyatt  <hyatt@apple.com>
+
+        Move rendering/font to platform/Font.
+
+        Reviewed by mjs
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/cssstyleselector.cpp:
+        * platform/Font.cpp: Added.
+        * platform/Font.h: Added.
+        * rendering/font.cpp: Removed.
+        * rendering/font.h: Removed.
+        * rendering/render_theme_mac.mm:
+
 2006-02-24  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
