@@ -99,14 +99,19 @@ static QTextCodec *codecForCFStringEncoding(CFStringEncoding encoding, KWQEncodi
     return codec;
 }
 
-QTextCodec *QTextCodec::codecForName(const char *name)
+QTextCodec* QTextCodec::codecForName(const char* name)
 {
     KWQEncodingFlags flags;
     CFStringEncoding encoding = KWQCFStringEncodingFromIANACharsetName(name, &flags);
     return codecForCFStringEncoding(encoding, flags);
 }
 
-QTextCodec *QTextCodec::codecForNameEightBitOnly(const char *name)
+QTextCodec* QTextCodec::utf8Codec()
+{
+    return codecForCFStringEncoding(kCFStringEncodingUTF8, NoEncodingFlags);
+}
+
+QTextCodec* QTextCodec::codecForNameEightBitOnly(const char* name)
 {
     KWQEncodingFlags flags;
     CFStringEncoding encoding = KWQCFStringEncodingFromIANACharsetName(name, &flags);
@@ -118,17 +123,17 @@ QTextCodec *QTextCodec::codecForNameEightBitOnly(const char *name)
     return codecForCFStringEncoding(encoding, flags);
 }
 
-QTextCodec *QTextCodec::codecForLocale()
+QTextCodec* QTextCodec::codecForLocale()
 {
     return codecForCFStringEncoding(CFStringGetSystemEncoding(), NoEncodingFlags);
 }
 
-const char *QTextCodec::name() const
+const char* QTextCodec::name() const
 {
     return KWQCFStringEncodingToIANACharsetName(_encoding);
 }
 
-QTextDecoder *QTextCodec::makeDecoder() const
+QTextDecoder* QTextCodec::makeDecoder() const
 {
     return new KWQTextDecoder(_encoding, _flags);
 }

@@ -32,7 +32,7 @@
 #include "cssproperties.h"
 #include "cssvalues.h"
 #include "helper.h"
-#include <kurl.h>
+#include <KURL.h>
 #include <kxmlcore/Assertions.h>
 #include <stdlib.h>
 

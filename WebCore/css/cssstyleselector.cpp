@@ -47,7 +47,7 @@
 #include "render_style.h"
 #include "render_theme.h"
 #include <assert.h>
-#include <kurl.h>
+#include <KURL.h>
 #include <kxmlcore/HashMap.h>
 #include <QString.h>
 #include <qvaluelist.h>

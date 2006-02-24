@@ -22,7 +22,7 @@
 #ifndef XMLHTTPREQUEST_H_
 #define XMLHTTPREQUEST_H_
 
-#include <kurl.h>
+#include <KURL.h>
 #include <kxmlcore/HashMap.h>
 #include <kxmlcore/HashSet.h>
 #include <qguardedptr.h>

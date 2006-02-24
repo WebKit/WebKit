@@ -45,7 +45,7 @@
 #include "css/csshelper.h"
 #include "htmlnames.h"
 
-#include <kurl.h>
+#include <KURL.h>
 
 namespace WebCore {
 

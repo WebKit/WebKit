@@ -27,7 +27,7 @@
 
 #ifndef KHTML_NO_XBL
 
-#include <kurl.h>
+#include <KURL.h>
 #include "xbl_protobinding.h"
 #include "xbl_binding.h"
 #include "xbl_docimpl.h"

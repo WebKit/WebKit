@@ -73,7 +73,7 @@
 #include "rendering/render_object.h"
 #include "dom2_eventsimpl.h"
 #include "xml_tokenizer.h"
-#include <kurl.h>
+#include <KURL.h>
 #include <stdlib.h>
 
 #include "doctypes.cpp"

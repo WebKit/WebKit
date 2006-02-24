@@ -29,7 +29,7 @@
 #include "CachedObject.h"
 
 #include "Cache.h"
-#include <kurl.h>
+#include <KURL.h>
 
 namespace WebCore {
 

@@ -1,3 +1,39 @@
+2006-02-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+        
+        - Move KURL from kwq to platform, make portable
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7437
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/css_ruleimpl.cpp:
+        * css/cssparser.cpp:
+        * css/cssstyleselector.cpp:
+        * dom/DocumentImpl.h:
+        * khtml/html/html_baseimpl.cpp:
+        * khtml/html/html_documentimpl.cpp:
+        * khtml/html/html_headimpl.cpp:
+        * khtml/xbl/xbl_binding.cpp:
+        * ksvg2/svg/SVGDocumentImpl.cpp:
+        * kwq/KWQTextCodec.cpp:
+        (QTextCodec::codecForName):
+        (QTextCodec::utf8Codec):
+        (QTextCodec::codecForNameEightBitOnly):
+        (QTextCodec::codecForLocale):
+        (QTextCodec::name):
+        (QTextCodec::makeDecoder):
+        * kwq/KWQTextCodec.h:
+        * loader/CachedObject.cpp:
+        * loader/DocLoader.cpp:
+        * page/Frame.h:
+        * platform/KURL.cpp: Added.
+        (KURL::decode_string):
+        (encodeRelativeString):
+        * platform/KURL.h: Added.
+        * platform/mac/KURLMac.mm: Added.
+        (KURL::getNSURL):
+        * xml/xmlhttprequest.h:
+
 2006-02-23  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

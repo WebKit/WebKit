@@ -29,7 +29,7 @@
 #include "DocLoader.h"
 #include "css_stylesheetimpl.h"
 #include "cssparser.h"
-#include <kurl.h>
+#include <KURL.h>
 
 namespace WebCore {
 

@@ -36,7 +36,7 @@
 #include "edit_actions.h"
 #include "text_affinity.h"
 #include "text_granularity.h"
-#include <kurl.h>
+#include <KURL.h>
 #include <qscrollbar.h>
 #include <QStringList.h>
 #include <kxmlcore/Noncopyable.h>

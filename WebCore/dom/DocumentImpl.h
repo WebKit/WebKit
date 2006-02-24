@@ -34,7 +34,7 @@
 #include "decoder.h"
 #include "dom2_traversalimpl.h"
 #include "dom_elementimpl.h"
-#include <kurl.h>
+#include <KURL.h>
 #include <kxmlcore/HashCountedSet.h>
 #include <kxmlcore/HashMap.h>
 #include <qobject.h>
