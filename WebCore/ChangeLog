@@ -1,5 +1,23 @@
 2006-02-23  Vicki Murley <vicki@apple.com>
 
+        Reviewed by Tim Omernick.
+ 
+        - fix <rdar://problem/4394910> calling Javascript window.close() does not trigger onbeforeunload event
+
+        Check shouldClose() before actually scheduling a close.
+
+        shouldClose() checks for the onbeforeunload handler, displays the onbeforeunload dialog, and returns a 
+        result based on whether the user clicks "OK" or "Cancel".  In cases where the window is closed with cmd-w 
+        or by clicking the red globe, shouldClose() is checked in the windowShouldClose delegate method.  Since 
+        windowShouldClose isn't invoked when a window is closed with Javascript, it makes sense to add a check 
+        for shouldClose() in scheduleClose(), returning early when appropriate before the chain of events that 
+        closes a window even gets started.  
+
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::scheduleClose): add a check for shouldClose()
+
+2006-02-23  Vicki Murley <vicki@apple.com>
+
         Reviewed by Hyatt.
  
         - fix <rdar://problem/4456004> onbeforeunload should cancel, and 

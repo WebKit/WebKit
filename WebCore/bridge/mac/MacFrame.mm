@@ -664,6 +664,8 @@ void MacFrame::setStatusBarText(const String& status)
 
 void MacFrame::scheduleClose()
 {
+    if (!shouldClose())
+        return;
     KWQ_BLOCK_EXCEPTIONS;
     [_bridge closeWindowSoon];
     KWQ_UNBLOCK_EXCEPTIONS;
