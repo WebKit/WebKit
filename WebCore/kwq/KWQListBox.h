@@ -26,8 +26,8 @@
 #ifndef KWQLISTBOX_H_
 #define KWQLISTBOX_H_
 
-#include "KWQScrollView.h"
 #include "KWQPainter.h"
+#include "ScrollView.h"
 
 enum KWQListBoxItemType {
     KWQListBoxOption,
@@ -44,7 +44,7 @@ struct KWQListBoxItem
     KWQListBoxItem(const QString &s, KWQListBoxItemType t, bool e) : string(s), type(t), enabled(e) { }
 };
 
-class QListBox : public QScrollView {
+class QListBox : public WebCore::ScrollView {
 public:
     enum SelectionMode { Single, Extended };
 

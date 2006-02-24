@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#import "KWQScrollView.h"
+#import "config.h"
+#import "ScrollView.h"
 
 #import "IntRect.h"
 #import "KWQExceptions.h"
@@ -32,11 +32,11 @@
 #import "WebCoreFrameView.h"
 
 /*
-    This class implementation does NOT actually emulate the Qt QScrollView.
+    This class implementation does NOT actually emulate the Qt ScrollView.
     It does provide an implementation that khtml will use to interact with
     WebKit's WebFrameView documentView and our NSScrollView subclass.
 
-    QScrollView's view is a NSScrollView (or subclass of NSScrollView)
+    ScrollView's view is a NSScrollView (or subclass of NSScrollView)
     in most cases. That scrollview is a subview of an
     WebCoreFrameView. The WebCoreFrameView's documentView will also be
     the scroll view's documentView.
@@ -46,25 +46,14 @@
     WebCoreFrameView's size (see Widget::resize).
 */
 
-@interface NSView (KWQExtensions)
-- (BOOL)_KWQ_isScrollView;
-@end
+namespace WebCore {
 
-@implementation NSView (KWQExtensions)
-
-- (BOOL)_KWQ_isScrollView
-{
-    return [self isKindOfClass:[NSScrollView class]];
-}
-
-@end
-
-int QScrollView::visibleWidth() const
+int ScrollView::visibleWidth() const
 {
     NSScrollView *view = (NSScrollView *)getView();
 
     KWQ_BLOCK_EXCEPTIONS;
-    if ([view _KWQ_isScrollView]) {
+    if ([view isKindOfClass:[NSScrollView class]]) {
         return (int)[view documentVisibleRect].size.width;
     } else {
         return (int)[view bounds].size.width;
@@ -74,12 +63,12 @@ int QScrollView::visibleWidth() const
     return 0;
 }
 
-int QScrollView::visibleHeight() const
+int ScrollView::visibleHeight() const
 {
     NSScrollView *view = (NSScrollView *)getView();
     
     KWQ_BLOCK_EXCEPTIONS;
-    if ([view _KWQ_isScrollView]) {
+    if ([view isKindOfClass:[NSScrollView class]]) {
         return (int)[view documentVisibleRect].size.height;
     } else {
         return (int)[view bounds].size.height;
@@ -89,7 +78,7 @@ int QScrollView::visibleHeight() const
     return 0;
 }
 
-int QScrollView::contentsWidth() const
+int ScrollView::contentsWidth() const
 {
     NSView *docView, *view = getView();
     docView = getDocumentView();
@@ -105,7 +94,7 @@ int QScrollView::contentsWidth() const
     return 0;
 }
 
-int QScrollView::contentsHeight() const
+int ScrollView::contentsHeight() const
 {
     NSView *docView, *view = getView();
     docView = getDocumentView();
@@ -121,12 +110,12 @@ int QScrollView::contentsHeight() const
     return 0;
 }
 
-int QScrollView::contentsX() const
+int ScrollView::contentsX() const
 {
     NSView *view = getView();
 
     KWQ_BLOCK_EXCEPTIONS;
-    if ([view _KWQ_isScrollView]) {
+    if ([view isKindOfClass:[NSScrollView class]]) {
         return (int)[(NSScrollView *)view documentVisibleRect].origin.x;
     } else {
         return (int)[view visibleRect].origin.x;
@@ -136,12 +125,12 @@ int QScrollView::contentsX() const
     return 0;
 }
 
-int QScrollView::contentsY() const
+int ScrollView::contentsY() const
 {
     NSView *view = getView();
 
     KWQ_BLOCK_EXCEPTIONS;
-    if ([view _KWQ_isScrollView]) {
+    if ([view isKindOfClass:[NSScrollView class]]) {
         return (int)[(NSScrollView *)view documentVisibleRect].origin.y;
     } else {
         return (int)[view visibleRect].origin.y;
@@ -151,36 +140,36 @@ int QScrollView::contentsY() const
     return 0;
 }
 
-int QScrollView::scrollXOffset() const
+int ScrollView::scrollXOffset() const
 {
     NSView *view = getView();
     
     KWQ_BLOCK_EXCEPTIONS;
-    if ([view _KWQ_isScrollView]) {
+    if ([view isKindOfClass:[NSScrollView class]]) {
         return (int)[[(NSScrollView *)view contentView] visibleRect].origin.x;
     }
     KWQ_UNBLOCK_EXCEPTIONS;
     return 0;
 }
 
-int QScrollView::scrollYOffset() const
+int ScrollView::scrollYOffset() const
 {
     NSView *view = getView();
     
     KWQ_BLOCK_EXCEPTIONS;
-    if ([view _KWQ_isScrollView]) {
+    if ([view isKindOfClass:[NSScrollView class]]) {
         return (int)[[(NSScrollView *)view contentView] visibleRect].origin.y;
     }
     KWQ_UNBLOCK_EXCEPTIONS;
     return 0;
 }
 
-void QScrollView::scrollBy(int dx, int dy)
+void ScrollView::scrollBy(int dx, int dy)
 {
     setContentsPos(contentsX() + dx, contentsY() + dy);
 }
 
-void QScrollView::scrollPointRecursively(int x, int y)
+void ScrollView::scrollPointRecursively(int x, int y)
 { 
     x = (x < 0) ? 0 : x;
     y = (y < 0) ? 0 : y;
@@ -204,7 +193,7 @@ void QScrollView::scrollPointRecursively(int x, int y)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QScrollView::setContentsPos(int x, int y)
+void ScrollView::setContentsPos(int x, int y)
 {
     x = (x < 0) ? 0 : x;
     y = (y < 0) ? 0 : y;
@@ -220,7 +209,7 @@ void QScrollView::setContentsPos(int x, int y)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QScrollView::setVScrollBarMode(ScrollBarMode vMode)
+void ScrollView::setVScrollBarMode(ScrollBarMode vMode)
 {
     NSView* view = getView();
 
@@ -232,7 +221,7 @@ void QScrollView::setVScrollBarMode(ScrollBarMode vMode)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QScrollView::setHScrollBarMode(ScrollBarMode hMode)
+void ScrollView::setHScrollBarMode(ScrollBarMode hMode)
 {
     NSView* view = getView();
 
@@ -244,7 +233,7 @@ void QScrollView::setHScrollBarMode(ScrollBarMode hMode)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QScrollView::setScrollBarsMode(ScrollBarMode mode)
+void ScrollView::setScrollBarsMode(ScrollBarMode mode)
 {
     NSView* view = getView();
 
@@ -256,8 +245,7 @@ void QScrollView::setScrollBarsMode(ScrollBarMode mode)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-QScrollView::ScrollBarMode
-QScrollView::vScrollBarMode() const
+ScrollBarMode ScrollView::vScrollBarMode() const
 {
     NSView* view = getView();
 
@@ -268,11 +256,10 @@ QScrollView::vScrollBarMode() const
     }
     KWQ_UNBLOCK_EXCEPTIONS;
 
-    return Auto;
+    return ScrollBarAuto;
 }
 
-QScrollView::ScrollBarMode
-QScrollView::hScrollBarMode() const
+ScrollBarMode ScrollView::hScrollBarMode() const
 {
     NSView* view = getView();
 
@@ -283,10 +270,10 @@ QScrollView::hScrollBarMode() const
     }
     KWQ_UNBLOCK_EXCEPTIONS;
 
-    return Auto;
+    return ScrollBarAuto;
 }
 
-void QScrollView::suppressScrollBars(bool suppressed,  bool repaintOnUnsuppress)
+void ScrollView::suppressScrollBars(bool suppressed,  bool repaintOnUnsuppress)
 {
     NSView* view = getView();
 
@@ -299,7 +286,7 @@ void QScrollView::suppressScrollBars(bool suppressed,  bool repaintOnUnsuppress)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QScrollView::addChild(Widget* child, int x, int y)
+void ScrollView::addChild(Widget* child, int x, int y)
 {
     ASSERT(child != this);
     
@@ -321,12 +308,12 @@ void QScrollView::addChild(Widget* child, int x, int y)
     child->addToSuperview(thisView);
 }
 
-void QScrollView::removeChild(Widget* child)
+void ScrollView::removeChild(Widget* child)
 {
     child->removeFromSuperview();
 }
 
-void QScrollView::resizeContents(int w, int h)
+void ScrollView::resizeContents(int w, int h)
 {
     KWQ_BLOCK_EXCEPTIONS;
     int _w = w;
@@ -334,7 +321,7 @@ void QScrollView::resizeContents(int w, int h)
 
     LOG(Frames, "%p %@ at w %d h %d\n", getView(), [(id)[getView() class] className], w, h);
     NSView *view = getView();
-    if ([view _KWQ_isScrollView]){
+    if ([view isKindOfClass:[NSScrollView class]]){
         view = getDocumentView();
         
         LOG(Frames, "%p %@ at w %d h %d\n", view, [(id)[view class] className], w, h);
@@ -351,18 +338,13 @@ void QScrollView::resizeContents(int w, int h)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QScrollView::updateContents(int x, int y, int w, int h, bool now)
-{
-    updateContents(IntRect(x, y, w, h), now);
-}
-
-void QScrollView::updateContents(const IntRect &rect, bool now)
+void ScrollView::updateContents(const IntRect &rect, bool now)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
     NSView *view = getView();
 
-    if ([view _KWQ_isScrollView])
+    if ([view isKindOfClass:[NSScrollView class]])
         view = getDocumentView();
 
     // Checking for rect visibility is an important optimization for the case of
@@ -380,12 +362,7 @@ void QScrollView::updateContents(const IntRect &rect, bool now)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QScrollView::repaintContents(int x, int y, int w, int h, bool erase)
-{
-    LOG(Frames, "%p %@ at (%d,%d) w %d h %d\n", getView(), [(id)[getView() class] className], x, y, w, h);
-}
-
-IntPoint QScrollView::contentsToViewport(const IntPoint &p)
+IntPoint ScrollView::contentsToViewport(const IntPoint &p)
 {
     int vx, vy;
     contentsToViewport(p.x(), p.y(), vx, vy);
@@ -394,7 +371,7 @@ IntPoint QScrollView::contentsToViewport(const IntPoint &p)
 
 // NB, for us "viewport" means the NSWindow's coord system, which is origin lower left
 
-void QScrollView::contentsToViewport(int x, int y, int& vx, int& vy)
+void ScrollView::contentsToViewport(int x, int y, int& vx, int& vy)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
@@ -418,7 +395,7 @@ void QScrollView::contentsToViewport(int x, int y, int& vx, int& vy)
     vy = 0;
 }
 
-void QScrollView::viewportToContents(int vx, int vy, int& x, int& y)
+void ScrollView::viewportToContents(int vx, int vy, int& x, int& y)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
@@ -442,16 +419,16 @@ void QScrollView::viewportToContents(int vx, int vy, int& x, int& y)
     y = 0;
 }
 
-void QScrollView::setStaticBackground(bool b)
+void ScrollView::setStaticBackground(bool b)
 {
     NSScrollView *view = (NSScrollView *)getView();
     KWQ_BLOCK_EXCEPTIONS;
-    if ([view _KWQ_isScrollView])
+    if ([view isKindOfClass:[NSScrollView class]])
         [[view contentView] setCopiesOnScroll: !b];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-NSView *QScrollView::getDocumentView() const
+NSView *ScrollView::getDocumentView() const
 {
     id view = getView();
 
@@ -463,8 +440,10 @@ NSView *QScrollView::getDocumentView() const
     return nil;
 }
 
-bool QScrollView::inWindow() const
+bool ScrollView::inWindow() const
 {
     NSView* view = getView();
     return [view window];
+}
+
 }

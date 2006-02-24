@@ -33,7 +33,7 @@ static IntPoint positionForEvent(NSEvent *event)
     switch ([event type]) {
         case NSScrollWheel:
             // Note: This has its origin at the bottom left of the window.
-            // The Y coordinate gets flipped by QScrollView::viewportToContents.
+            // The Y coordinate gets flipped by ScrollView::viewportToContents.
             // We should probably change both this and that to not use "bottom left origin" coordinates at all.
             return IntPoint([event locationInWindow]);
         default:

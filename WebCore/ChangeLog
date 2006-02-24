@@ -1,3 +1,69 @@
+2006-02-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - moved QScrollView from kwq to platform directory
+
+        * kwq/KWQScrollView.h: Removed.
+        * kwq/KWQScrollView.mm: Removed.
+
+        * platform/ScrollBarMode.h: Added. Just the enum for scroll bar mode.
+        * platform/ScrollView.h: Added. The rest of the former QScrollView.
+        * platform/mac/ScrollViewMac.mm: Added.
+
+        * WebCore.xcodeproj/project.pbxproj: Updated.
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Ditto.
+        * platform/win/TemporaryLinkStubs.cpp: Updated.
+
+        * bridge/mac/MacFrame.mm: (WebCore::MacFrame::createFrame):
+        * khtml/html/html_baseimpl.cpp:
+        (WebCore::HTMLFrameElementImpl::init):
+        (WebCore::HTMLFrameElementImpl::parseMappedAttribute):
+        * page/Frame.cpp: (WebCore::Frame::scrollbarsVisible):
+        Changed scrolling constants to use new names.
+
+        * khtml/ecma/kjs_html.cpp: (KJS::HTMLElement::bodySetter):
+        Use FrameView instead of QScrollView for a local variable.
+
+        * khtml/html/html_baseimpl.h: Use ScrollBarMode instead of
+        QScrollView::ScrollBarMode.
+
+        * kwq/KWQListBox.h: Use WebCore::ScrollView instead of
+        QScrollView and WebCore::ScrollBarMode instead of QScrollView::ScrollBarMode.
+        * kwq/KWQTextEdit.h: Ditto.
+        * kwq/KWQTextEdit.mm:
+        (QTextEdit::setScrollBarModes): Ditto.
+        (QTextEdit::focusPolicy): Ditto.
+
+        * page/FrameView.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameViewPrivate::FrameViewPrivate): Use ScrollBarMode
+        instead of QScrollView::ScrollBarMode.
+        (WebCore::FrameView::FrameView): Remove mention of QScrollView.
+        (WebCore::FrameView::resetScrollBars): Rename QScrollView to ScrollView.
+        (WebCore::FrameView::applyOverflowToViewport): Use newly-named constants.
+        (WebCore::FrameView::layout): Ditto.
+        (WebCore::FrameView::setScrollBarsMode): Rename QScrollView to ScrollView.
+        (WebCore::FrameView::setVScrollBarMode): Ditto.
+        (WebCore::FrameView::setHScrollBarMode): Ditto.
+        (WebCore::FrameView::restoreScrollBar): Ditto.
+
+        * platform/mac/MouseEventMac.mm: (WebCore::positionForEvent): Fixed comment.
+        * platform/mac/WheelEventMac.mm: (WebCore::positionForEvent): Ditto.
+        * platform/mac/WidgetMac.mm: (WebCore::Widget::getOuterView): Ditto.
+
+        * rendering/render_form.cpp: (WebCore::RenderTextArea::setStyle):
+        Use ScrollBarMode instead of QScrollView::ScrollBarMode, and new constants.
+        * rendering/render_frames.cpp:
+        (WebCore::RenderFrameSet::userResize): Changed to use an IntRect to pass to
+        updateContents so we can remove the overload.
+        (WebCore::RenderPart::updateWidgetPosition): Remove unnecessary of QScrollView.
+
+        * rendering/render_layer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible): Use FrameView instead of QScrollView.
+        (WebCore::RenderLayer::setHasHorizontalScrollbar): Ditto.
+        (WebCore::RenderLayer::setHasVerticalScrollbar): Ditto.
+
 2006-02-24  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by anders.

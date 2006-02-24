@@ -300,12 +300,9 @@ void Widget::setView(NSView* view)
 
 NSView* Widget::getOuterView() const
 {
-    // A QScrollView is a widget normally used to represent a frame.
     // If this widget's view is a WebCoreFrameView the we resize its containing view, a WebFrameView.
-    // The scroll view contained by the WebFrameView will be autosized.
 
-    NSView *view = data->view;
-
+    NSView* view = data->view;
     if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {
         view = [view superview];
         ASSERT(view);

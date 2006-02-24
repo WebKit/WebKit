@@ -387,10 +387,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQScrollView.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQSignal.cpp"
 				>
 			</File>
@@ -1638,6 +1634,14 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\Screen.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\ScrollBarMode.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\ScrollView.h"
 				>
 			</File>
 			<File

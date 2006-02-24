@@ -26,10 +26,8 @@
 #ifndef FRAMEVIEW_H
 #define FRAMEVIEW_H
 
-// qt includes and classes
-#include <qscrollview.h>
-
 #include "QString.h"
+#include "ScrollView.h"
 
 class QStringList;
 
@@ -70,15 +68,7 @@ template <typename T> class Timer;
 
 void applyRule(CSSProperty*);
 
-/**
- * Renders and displays HTML in a @ref QScrollView.
- *
- * Suitable for use as an application's main view.
- **/
-class FrameView : public QScrollView
-{
-    Q_OBJECT
-
+class FrameView : public ScrollView {
     friend class CSSStyleSelector;
     friend class DocumentImpl;
     friend class Frame;
@@ -98,23 +88,13 @@ class FrameView : public QScrollView
     friend void applyRule(CSSProperty *prop);
 
 public:
-    /**
-     * Constructs a FrameView.
-     */
-    FrameView(Frame *frame);
+    FrameView(Frame*);
     virtual ~FrameView();
 
-    /**
-     * Returns a pointer to the Frame that is
-     * rendering the page.
-     **/
-    Frame *frame() const { return m_frame.get(); }
+    Frame* frame() const { return m_frame.get(); }
 
     int frameWidth() const { return _width; }
 
-    /**
-     * Sets a margin in x direction.
-     */
     void setMarginWidth(int x);
 
     /**
@@ -124,9 +104,6 @@ public:
      */
     int marginWidth() const { return _marginWidth; }
 
-    /*
-     * Sets a margin in y direction.
-     */
     void setMarginHeight(int y);
 
     /**
@@ -136,27 +113,12 @@ public:
      */
     int marginHeight() { return _marginHeight; }
 
-    /**
-     * Sets verticals scrollbar mode. Reimplemented for internal reasons.
-     */
-    virtual void setVScrollBarMode ( ScrollBarMode mode );
-
-    /**
-     * Sets horizontal scrollbar mode. Reimplemented for internal reasons.
-     */
-    virtual void setHScrollBarMode ( ScrollBarMode mode );
-
-    // Sets both horizontal and vertical modes.
-    virtual void setScrollBarsMode(ScrollBarMode mode);
+    virtual void setVScrollBarMode(ScrollBarMode);
+    virtual void setHScrollBarMode(ScrollBarMode);
+    virtual void setScrollBarsMode(ScrollBarMode);
     
-    /**
-     * Prints the HTML document.
-     */
     void print();
 
-    /**
-     * ensure the display is up to date
-     */
     void layout();
 
     bool inLayout() const;
@@ -276,7 +238,6 @@ private:
 
     void updateBorder();
 
-    // ------------------------------------- member variables ------------------------------------
     unsigned _refCount;
 
     int _width;
@@ -288,7 +249,7 @@ private:
     RefPtr<Frame> m_frame;
     FrameViewPrivate* d;
 
-    QString m_medium;   // media type
+    QString m_medium; // media type
 };
 
 }

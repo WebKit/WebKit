@@ -510,7 +510,7 @@ bool RenderFrameSet::userResize( MouseEventImpl *evt )
         int p = m_resizing ? (m_vSplit > -1 ? _x : _y) : -1;
         if (m_vSplit > -1) {
             if (m_oldpos >= 0)
-                v->updateContents(m_oldpos + sw/2 - rBord, r.y(), 2 * rBord, r.height(), true );
+                v->updateContents(IntRect(m_oldpos + sw/2 - rBord, r.y(), 2 * rBord, r.height()), true);
             if (p >= 0) {
                 paint.setPen(Pen::NoPen);
                 paint.setBrush(Color::gray);
@@ -520,7 +520,7 @@ bool RenderFrameSet::userResize( MouseEventImpl *evt )
             }
         } else {
             if (m_oldpos >= 0)
-                v->updateContents(r.x(), m_oldpos + sw/2 - rBord, r.width(), 2*rBord, true);
+                v->updateContents(IntRect(r.x(), m_oldpos + sw/2 - rBord, r.width(), 2*rBord), true);
             if (p >= 0) {
                 paint.setPen(Pen::NoPen);
                 paint.setBrush(Color::gray);
@@ -923,9 +923,8 @@ void RenderPart::updateWidgetPosition()
         element()->deref();
         deref(arena);
         
-        QScrollView *view = static_cast<QScrollView *>(m_widget);
-        if (view && view->isFrameView())
-            static_cast<FrameView*>(view)->layout();
+        if (m_widget && m_widget->isFrameView())
+            static_cast<FrameView*>(m_widget)->layout();
     }
 }
 

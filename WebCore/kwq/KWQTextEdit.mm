@@ -32,7 +32,7 @@
 #import "KWQLineEdit.h"
 #import "KWQTextArea.h"
 
-using DOM::DOMString;
+using namespace WebCore;
 
 QTextEdit::QTextEdit(Widget *parent)
     : _clicked(this, SIGNAL(clicked()))
@@ -130,13 +130,13 @@ void QTextEdit::setScrollBarModes(ScrollBarMode hMode, ScrollBarMode vMode)
     KWQ_BLOCK_EXCEPTIONS;
 
     // this declaration must be inside the KWQ_BLOCK_EXCEPTIONS block or the deployment build fails
-    bool autohides = hMode == Auto || vMode == Auto;
+    bool autohides = hMode == ScrollBarAuto || vMode == ScrollBarAuto;
     
-    ASSERT(!autohides || hMode != AlwaysOn);
-    ASSERT(!autohides || vMode != AlwaysOn);
+    ASSERT(!autohides || hMode != ScrollBarAlwaysOn);
+    ASSERT(!autohides || vMode != ScrollBarAlwaysOn);
 
-    [textView setHasHorizontalScroller:hMode != AlwaysOff];
-    [textView setHasVerticalScroller:vMode != AlwaysOff];
+    [textView setHasHorizontalScroller:hMode != ScrollBarAlwaysOff];
+    [textView setHasVerticalScroller:vMode != ScrollBarAlwaysOff];
     [textView setAutohidesScrollers:autohides];
 
     KWQ_UNBLOCK_EXCEPTIONS;
@@ -381,7 +381,7 @@ IntSize QTextEdit::sizeWithColumnsAndRows(int numColumns, int numRows) const
 
 Widget::FocusPolicy QTextEdit::focusPolicy() const
 {
-    FocusPolicy policy = QScrollView::focusPolicy();
+    FocusPolicy policy = ScrollView::focusPolicy();
     return policy == TabFocus ? StrongFocus : policy;
 }
 

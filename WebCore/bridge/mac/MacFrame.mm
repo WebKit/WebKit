@@ -595,7 +595,7 @@ Frame* MacFrame::createFrame(const KURL& url, const QString& name, RenderPart* r
     int marginHeight = -1;
     if (renderer->element()->hasTagName(frameTag) || renderer->element()->hasTagName(iframeTag)) {
         HTMLFrameElementImpl *o = static_cast<HTMLFrameElementImpl *>(renderer->element());
-        allowsScrolling = o->scrollingMode() != QScrollView::AlwaysOff;
+        allowsScrolling = o->scrollingMode() != ScrollBarAlwaysOff;
         marginWidth = o->getMarginWidth();
         marginHeight = o->getMarginHeight();
     }

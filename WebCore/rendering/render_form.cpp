@@ -999,7 +999,7 @@ void RenderTextArea::setStyle(RenderStyle *s)
 
     w->setWritingDirection(style()->direction() == RTL ? QPainter::RTL : QPainter::LTR);
 
-    QScrollView::ScrollBarMode scrollMode = QScrollView::Auto;
+    ScrollBarMode scrollMode = ScrollBarAuto;
     switch (style()->overflow()) {
         case OAUTO:
         case OMARQUEE: // makes no sense, map to auto
@@ -1007,15 +1007,15 @@ void RenderTextArea::setStyle(RenderStyle *s)
         case OVISIBLE:
             break;
         case OHIDDEN:
-            scrollMode = QScrollView::AlwaysOff;
+            scrollMode = ScrollBarAlwaysOff;
             break;
         case OSCROLL:
-            scrollMode = QScrollView::AlwaysOn;
+            scrollMode = ScrollBarAlwaysOn;
             break;
     }
-    QScrollView::ScrollBarMode horizontalScrollMode = scrollMode;
+    ScrollBarMode horizontalScrollMode = scrollMode;
     if (element()->wrap() != HTMLTextAreaElementImpl::ta_NoWrap)
-        horizontalScrollMode = QScrollView::AlwaysOff;
+        horizontalScrollMode = ScrollBarAlwaysOff;
 
     w->setScrollBarModes(horizontalScrollMode, scrollMode);
 }

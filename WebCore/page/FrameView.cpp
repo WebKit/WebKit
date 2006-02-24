@@ -66,7 +66,7 @@ public:
     {
         repaintRects = 0;
         isTransparent = false;
-        vmode = hmode = QScrollView::Auto;
+        vmode = hmode = ScrollBarAuto;
         needToInitScrollBars = true;
         reset();
     }
@@ -111,8 +111,8 @@ public:
     bool doFullRepaint : 1;
     bool m_hasBorder : 1;
     
-    QScrollView::ScrollBarMode vmode;
-    QScrollView::ScrollBarMode hmode;
+    ScrollBarMode vmode;
+    ScrollBarMode hmode;
     bool linkPressed;
     bool useSlowRepaints;
     bool ignoreWheelEvents;
@@ -145,8 +145,7 @@ public:
 };
 
 FrameView::FrameView(Frame *frame)
-    : QScrollView()
-    , _refCount(1)
+    : _refCount(1)
     , m_frame(frame)
     , d(new FrameViewPrivate(this))
     , m_medium("screen")
@@ -186,8 +185,8 @@ void FrameView::resetScrollBars()
     // Reset the document's scrollbars back to our defaults before we yield the floor.
     d->firstLayout = true;
     suppressScrollBars(true);
-    QScrollView::setVScrollBarMode(d->vmode);
-    QScrollView::setHScrollBarMode(d->hmode);
+    ScrollView::setVScrollBarMode(d->vmode);
+    ScrollView::setHScrollBarMode(d->hmode);
     suppressScrollBars(false);
 }
 
@@ -263,13 +262,13 @@ void FrameView::applyOverflowToViewport(RenderObject* o, ScrollBarMode& hMode, S
     // use the root element.
     switch(o->style()->overflow()) {
         case OHIDDEN:
-            hMode = vMode = AlwaysOff;
+            hMode = vMode = ScrollBarAlwaysOff;
             break;
         case OSCROLL:
-            hMode = vMode = AlwaysOn;
+            hMode = vMode = ScrollBarAlwaysOn;
             break;
         case OAUTO:
-            hMode = vMode = Auto;
+            hMode = vMode = ScrollBarAuto;
             break;
         default:
             // Don't set it at all.
@@ -347,8 +346,8 @@ void FrameView::layout()
         if (body && body->renderer()) {
             if (body->hasTagName(framesetTag)) {
                 body->renderer()->setNeedsLayout(true);
-                vMode = AlwaysOff;
-                hMode = AlwaysOff;
+                vMode = ScrollBarAlwaysOff;
+                hMode = ScrollBarAlwaysOff;
             }
             else if (body->hasTagName(bodyTag)) {
                 RenderObject* o = (rootRenderer->style()->overflow() == OVISIBLE) ? body->renderer() : rootRenderer;
@@ -380,18 +379,18 @@ void FrameView::layout()
             didFirstLayout = true;
             
             // Set the initial vMode to AlwaysOn if we're auto.
-            if (vMode == Auto)
-                QScrollView::setVScrollBarMode(AlwaysOn); // This causes a vertical scrollbar to appear.
+            if (vMode == ScrollBarAuto)
+                ScrollView::setVScrollBarMode(ScrollBarAlwaysOn); // This causes a vertical scrollbar to appear.
             // Set the initial hMode to AlwaysOff if we're auto.
-            if (hMode == Auto)
-                QScrollView::setHScrollBarMode(AlwaysOff); // This causes a horizontal scrollbar to disappear.
+            if (hMode == ScrollBarAuto)
+                ScrollView::setHScrollBarMode(ScrollBarAlwaysOff); // This causes a horizontal scrollbar to disappear.
         }
         
         if (hMode == vMode)
-            QScrollView::setScrollBarsMode(hMode);
+            ScrollView::setScrollBarsMode(hMode);
         else {
-            QScrollView::setHScrollBarMode(hMode);
-            QScrollView::setVScrollBarMode(vMode);
+            ScrollView::setHScrollBarMode(hMode);
+            ScrollView::setVScrollBarMode(vMode);
         }
 
         suppressScrollBars(false, true);
@@ -899,49 +898,30 @@ void FrameView::useSlowRepaints()
     setStaticBackground(true);
 }
 
-#if !KHTML_NO_SCROLLBARS
-
 void FrameView::setScrollBarsMode(ScrollBarMode mode)
 {
     d->vmode = mode;
     d->hmode = mode;
     
-    QScrollView::setScrollBarsMode(mode);
+    ScrollView::setScrollBarsMode(mode);
 }
 
 void FrameView::setVScrollBarMode(ScrollBarMode mode)
 {
     d->vmode = mode;
-    QScrollView::setVScrollBarMode(mode);
+    ScrollView::setVScrollBarMode(mode);
 }
 
 void FrameView::setHScrollBarMode(ScrollBarMode mode)
 {
     d->hmode = mode;
-    QScrollView::setHScrollBarMode(mode);
+    ScrollView::setHScrollBarMode(mode);
 }
 
-#else
-
-void FrameView::setScrollBarsMode(ScrollBarMode)
-{
-}
-
-void FrameView::setVScrollBarMode(ScrollBarMode)
-{
-}
-
-void FrameView::setHScrollBarMode(ScrollBarMode)
-{
-}
-
-#endif
-
-void FrameView::restoreScrollBar ( )
+void FrameView::restoreScrollBar()
 {
     suppressScrollBars(false);
 }
-
 
 bool FrameView::dispatchMouseEvent(const AtomicString& eventType, NodeImpl* targetNode, bool cancelable,
     int detail, MouseEvent* mouseEvent, bool setUnder)
