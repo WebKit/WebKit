@@ -1,3 +1,45 @@
+2006-02-24  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by beth.
+
+        Made a few methods on frame pure virtual.
+        Added a bunch of stub functions for win32 linking.
+
+        * bridge/mac/MacFrame.h:
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::print):
+        (WebCore::MacFrame::canUndo):
+        (WebCore::MacFrame::canRedo):
+        (WebCore::MacFrame::canPaste):
+        * bridge/win/FrameWin.h:
+        * page/Frame.h:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (QTextEdit::sizeWithColumnsAndRows):
+        (QLineEdit::maxLength):
+        (QPainter::drawEllipse):
+        (QTextEdit::setLineHeight):
+        (QPainter::beginTransparencyLayer):
+        (QLineEdit::selectedText):
+        (Widget::setIsSelected):
+        (QPainter::paintingDisabled):
+        (QFontMetrics::selectionRectForText):
+        (QTextEdit::getCursorPosition):
+        (QSlider::QSlider):
+        (WebCore::crossCursor):
+        (WebCore::handCursor):
+        (WebCore::moveCursor):
+        (WebCore::iBeamCursor):
+        (WebCore::waitCursor):
+        (WebCore::helpCursor):
+        (WebCore::eastResizeCursor):
+        (WebCore::northResizeCursor):
+        (WebCore::northEastResizeCursor):
+        (WebCore::northWestResizeCursor):
+        (WebCore::southResizeCursor):
+        (WebCore::southEastResizeCursor):
+        (WebCore::southWestResizeCursor):
+        (WebCore::westResizeCursor):
+
 2006-02-24  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Hyatt, tweaked and landed by ggaren.

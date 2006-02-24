@@ -3042,7 +3042,7 @@ void MacFrame::clear()
     Frame::clear();
 }
 
-void Frame::print()
+void MacFrame::print()
 {
     [Mac(this)->_bridge print];
 }
@@ -3184,17 +3184,17 @@ void MacFrame::issueTransposeCommand()
     [_bridge issueTransposeCommand];
 }
 
-bool Frame::canUndo() const
+bool MacFrame::canUndo() const
 {
     return [[Mac(this)->_bridge undoManager] canUndo];
 }
 
-bool Frame::canRedo() const
+bool MacFrame::canRedo() const
 {
     return [[Mac(this)->_bridge undoManager] canRedo];
 }
 
-bool Frame::canPaste() const
+bool MacFrame::canPaste() const
 {
     return [Mac(this)->_bridge canPaste];
 }

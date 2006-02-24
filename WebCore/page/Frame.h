@@ -588,11 +588,11 @@ public:
   void cutToPasteboard();
   void pasteFromPasteboard();
   void pasteAndMatchStyle();
-  bool canPaste() const;
+  virtual bool canPaste() const = 0;
   void redo();
   void undo();
-  bool canRedo() const;
-  bool canUndo() const;
+  virtual bool canRedo() const = 0;
+  virtual bool canUndo() const = 0;
   void computeAndSetTypingStyle(CSSStyleDeclarationImpl *, EditAction editingAction=EditActionUnspecified);
   void applyStyle(CSSStyleDeclarationImpl *, EditAction editingAction=EditActionUnspecified);
   void applyParagraphStyle(CSSStyleDeclarationImpl *, EditAction editingAction=EditActionUnspecified);
@@ -603,7 +603,7 @@ public:
   void removeEditingStyleFromBodyElement() const;
   void applyEditingStyleToElement(ElementImpl *) const;
   void removeEditingStyleFromElement(ElementImpl *) const;
-  void print();
+  virtual void print() = 0;
   virtual bool isCharacterSmartReplaceExempt(const QChar &, bool);
 
   // Used to keep the part alive when running a script that might destroy it.

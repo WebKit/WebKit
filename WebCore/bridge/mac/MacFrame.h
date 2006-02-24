@@ -310,6 +310,11 @@ public:
     
     virtual void handledOnloadEvents();
 
+    virtual bool canPaste() const;
+    virtual bool canRedo() const;
+    virtual bool canUndo() const;
+    virtual void print();
+
 protected:
     virtual DOMString generateFrameName();
 

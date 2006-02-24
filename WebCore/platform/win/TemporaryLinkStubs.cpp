@@ -51,17 +51,13 @@ void  QLineEdit::setWritingDirection(enum QPainter::TextDirection) { notImplemen
 void  QPainter::drawFocusRing(class Color const &) { notImplemented(); }
 class IntSize  KWQFileButton::sizeForCharacterWidth(int)const  { notImplemented(); return IntSize(); }
 class IntSize  QTextEdit::sizeWithColumnsAndRows(int,int)const  { notImplemented(); return IntSize(); }
-static Cursor localCursor;
-class Cursor const& iBeamCursor(void) { notImplemented(); return localCursor; }
 void  QComboBox::clear(void) { notImplemented(); }
 int  QPainter::misspellingLineThickness(void)const  { notImplemented(); return 0; }
 void  QComboBox::setFrameGeometry(class IntRect const &) { notImplemented(); }
 int  QLineEdit::maxLength(void)const  { notImplemented(); return 0; }
-class Cursor const & westResizeCursor(void) { notImplemented(); return localCursor; }
 bool  Widget::isEnabled(void)const  { notImplemented(); return 0; }
 bool __cdecl KWQServeRequest(class Loader *,class DocLoader *,class KIO::TransferJob *) { notImplemented(); return 0; }
 void  QTextEdit::setText(class String const &) { notImplemented(); }
-class Cursor const & __cdecl northWestResizeCursor(void) { notImplemented(); return localCursor; }
 void  Widget::paint(class QPainter *,class IntRect const &) { notImplemented(); }
 void  QPainter::addRoundedRectClip(class IntRect const &,class IntSize const &,class IntSize const &,class IntSize const &,class IntSize const &) { notImplemented(); }
 class IntPoint  FrameView::viewportToGlobal(class IntPoint const &)const  { notImplemented(); return IntPoint(); }
@@ -69,7 +65,6 @@ int  QTextEdit::selectionEnd(void) { notImplemented(); return 0; }
 void  QFont::determinePitch(void)const  { notImplemented(); }
 void  QTextEdit::setScrollBarModes(ScrollBarMode,ScrollBarMode) { notImplemented(); }
 void  QPainter::drawEllipse(int,int,int,int) { notImplemented(); }
-class Cursor const & __cdecl southWestResizeCursor(void) { notImplemented(); return localCursor; }
 void  QPainter::setPen(unsigned int) { notImplemented(); }
 void  QTextEdit::setReadOnly(bool) { notImplemented(); }
 void  QListBox::appendItem(class QString const &,enum KWQListBoxItemType,bool) { notImplemented(); }
@@ -79,7 +74,6 @@ enum Widget::FocusPolicy  Widget::focusPolicy(void)const  { notImplemented(); re
 void  ScrollView::removeChild(class Widget *) { notImplemented(); }
 void  QTextEdit::selectAll(void) { notImplemented(); }
 void  QPainter::fillRect(int,int,int,int,class Brush const &) { notImplemented(); }
-class Cursor const & __cdecl waitCursor(void) { notImplemented(); return localCursor; }
 void  QPainter::endTransparencyLayer(void) { notImplemented(); }
 QFont::QFont(class QFont const &) { notImplemented();  }
 void  ScrollView::addChild(class Widget *,int,int) { notImplemented(); }
@@ -115,13 +109,11 @@ void  QPainter::drawImageAtPoint(class Image *,class IntPoint const &,enum Image
 void  QPainter::clearShadow(void) { notImplemented(); }
 void  QPainter::setPen(class Pen const &) { notImplemented(); }
 void  QTextEdit::setLineHeight(int) { notImplemented(); }
-class Cursor const & __cdecl eastResizeCursor(void) { notImplemented(); return localCursor; }
 void  QScrollBar::setKnobProportion(int,int) { notImplemented(); }
 KWQFileButton::KWQFileButton(class Frame *) { notImplemented(); }
 class IntRect  QFontMetrics::boundingRect(int,int,int,int,int,class QString const &,int,int)const  { notImplemented(); return IntRect(); }
 void  QTextEdit::setSelectionStart(int) { notImplemented(); }
 void  QPainter::beginTransparencyLayer(float) { notImplemented(); }
-class Cursor const & __cdecl northEastResizeCursor(void) { notImplemented(); return localCursor; }
 void  QFontMetrics::setFont(class QFont const &) { notImplemented(); }
 void  QComboBox::setFont(class QFont const &) { notImplemented(); }
 class IntRect  Widget::frameGeometry(void)const  { notImplemented(); return IntRect(); }
@@ -146,14 +138,11 @@ int  QFontMetrics::descent(void)const  { notImplemented(); return 0; }
 QListBox::QListBox(void) { notImplemented(); }
 int  QFontMetrics::ascent(void)const  { notImplemented(); return 0; }
 class QString  QLineEdit::selectedText(void)const  { notImplemented(); return QString(); }
-class Cursor const & __cdecl crossCursor(void) { notImplemented(); return localCursor; }
 void  Widget::setIsSelected(bool) { notImplemented(); }
-class Cursor const & __cdecl handCursor(void) { notImplemented(); return localCursor; }
 class String  QLineEdit::text(void)const  { notImplemented(); return String(); }
 void  Widget::unlockDrawingFocus(void) { notImplemented(); }
 void  QLineEdit::setLiveSearch(bool) { notImplemented(); }
 bool  QPainter::paintingDisabled(void)const  { notImplemented(); return 0; }
-class Cursor const & __cdecl northResizeCursor(void) { notImplemented(); return localCursor; }
 QComboBox::QComboBox(void) { notImplemented(); }
 void  QPainter::drawConvexPolygon(class IntPointArray const &) { notImplemented(); }
 void  Widget::setFont(class QFont const &) { notImplemented(); }
@@ -167,11 +156,9 @@ void  ScrollView::scrollPointRecursively(int,int) { notImplemented(); }
 class IntSize  QLineEdit::sizeForCharacterWidth(int)const  { notImplemented(); return IntSize(); }
 Cursor::~Cursor(void) { notImplemented(); }
 class IntRect  QFontMetrics::selectionRectForText(int,int,int,int,int,class QChar const *,int,int,int,int,bool,bool,int,int,bool)const  { notImplemented(); return IntRect(); }
-class Cursor const & __cdecl southResizeCursor(void) { notImplemented(); return localCursor; }
 void  ScrollView::suppressScrollBars(bool,bool) { notImplemented(); }
 int  QFontMetrics::checkSelectionPoint(class QChar *,int,int,int,int,int,int,int,int,bool,int,bool,bool,bool)const  { notImplemented(); return 0; }
 void  QTextEdit::getCursorPosition(int *,int *)const  { notImplemented(); }
-class Cursor const & __cdecl moveCursor(void) { notImplemented(); return localCursor; }
 bool  FrameView::isFrameView(void)const  { notImplemented(); return 0; }
 void  QScrollBar::setSteps(int,int) { notImplemented(); }
 void  QLineEdit::setMaxLength(int) { notImplemented(); }
@@ -180,11 +167,9 @@ void  QLineEdit::setAutoSaveName(class String const &) { notImplemented(); }
 int  QComboBox::baselinePosition(int)const  { notImplemented(); return 0; }
 void  QComboBox::appendItem(class QString const &,enum KWQListBoxItemType,bool) { notImplemented(); }
 void  QPainter::setShadow(int,int,int,class Color const &) { notImplemented(); }
-class Cursor const & __cdecl helpCursor(void) { notImplemented(); return localCursor; }
 void  QTextEdit::setWritingDirection(enum QPainter::TextDirection) { notImplemented(); }
 void  Widget::setDrawingAlpha(float) { notImplemented(); }
 QSlider::QSlider(void) { notImplemented(); }
-class Cursor const & __cdecl southEastResizeCursor(void) { notImplemented(); return localCursor; }
 void  ScrollView::setVScrollBarMode(ScrollBarMode) { notImplemented(); }
 void  QPainter::drawScaledAndTiledImage(class Image *,int,int,int,int,int,int,int,int,enum Image::TileRule,enum Image::TileRule,void *) { notImplemented(); }
 int  ScrollView::scrollYOffset(void)const  { notImplemented(); return 0; }
@@ -261,3 +246,18 @@ Path& Path::operator=(const Path& other){ notImplemented(); return *this; }
 bool Path::contains(const IntPoint& point) const{ notImplemented(); return false; }
 void Path::translate(int deltaX, int deltaY){ notImplemented(); }
 IntRect Path::boundingRect() const { notImplemented(); return IntRect(); }
+static Cursor localCursor;
+const Cursor& WebCore::crossCursor() { notImplemented(); return localCursor; }
+const Cursor& WebCore::handCursor() { notImplemented(); return localCursor; }
+const Cursor& WebCore::moveCursor() { notImplemented(); return localCursor; }
+const Cursor& WebCore::iBeamCursor() { notImplemented(); return localCursor; }
+const Cursor& WebCore::waitCursor() { notImplemented(); return localCursor; }
+const Cursor& WebCore::helpCursor() { notImplemented(); return localCursor; }
+const Cursor& WebCore::eastResizeCursor() { notImplemented(); return localCursor; }
+const Cursor& WebCore::northResizeCursor() { notImplemented(); return localCursor; }
+const Cursor& WebCore::northEastResizeCursor() { notImplemented(); return localCursor; }
+const Cursor& WebCore::northWestResizeCursor() { notImplemented(); return localCursor; }
+const Cursor& WebCore::southResizeCursor() { notImplemented(); return localCursor; }
+const Cursor& WebCore::southEastResizeCursor() { notImplemented(); return localCursor; }
+const Cursor& WebCore::southWestResizeCursor() { notImplemented(); return localCursor; }
+const Cursor& WebCore::westResizeCursor() { notImplemented(); return localCursor; }
