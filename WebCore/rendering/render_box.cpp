@@ -1251,10 +1251,7 @@ int RenderBox::calcReplacedWidth() const
     int minW = calcReplacedWidthUsing(MinWidth);
     int maxW = style()->maxWidth().value() == undefinedLength ? width : calcReplacedWidthUsing(MaxWidth);
 
-    width = kMin(width, maxW);
-    width = kMax(width, minW);
-
-    return width;
+    return kMax(minW, kMin(width, maxW));
 }
 
 int RenderBox::calcReplacedWidthUsing(WidthType widthType) const
@@ -1287,13 +1284,7 @@ int RenderBox::calcReplacedHeight() const
     int minH = calcReplacedHeightUsing(MinHeight);
     int maxH = style()->maxHeight().value() == undefinedLength ? height : calcReplacedHeightUsing(MaxHeight);
 
-    if (height > maxH)
-        height = maxH;
-
-    if (height < minH)
-        height = minH;
-
-    return height;
+    return kMax(minH, kMin(height, maxH));
 }
 
 int RenderBox::calcReplacedHeightUsing(HeightType heightType) const
@@ -1305,11 +1296,12 @@ int RenderBox::calcReplacedHeightUsing(HeightType heightType) const
         h = style()->minHeight();
     else
         h = style()->maxHeight();
+
     switch (h.type()) {
-        case Percent:
-            return availableHeightUsing(h);
         case Fixed:
             return calcContentBoxHeight(h.value());
+        case Percent:
+            return calcContentBoxHeight(h.calcValue(containingBlock()->availableHeight()));
         default:
             return intrinsicHeight();
     }

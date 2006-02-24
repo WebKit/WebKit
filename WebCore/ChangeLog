@@ -1,3 +1,38 @@
+2006-02-24  Sam Weinig  <sam.weinig@gmail.com>
+
+        Reviewed by Hyatt, tweaked and landed by ggaren.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5146
+          max-height/max-width not resizing images with correct aspect ratio
+
+        This patch is a port and adaptation of Allan Sandfeld Jensen's (carewolf)
+        patch of http://bugs.kde.org/show_bug.cgi?id=120107 with the needed
+        modifications to suit the Webcore tree.  Makes images respect min/max 
+        sizes and their intrinsic aspect ratios at the same time according to 
+        CSS 2.1 (http://www.w3.org/TR/CSS21/visudet.html#min-max-widths).  
+
+        Test: fast/replaced/maxheight-percent.html
+        Test: fast/replaced/maxheight-pxs.html
+        Test: fast/replaced/maxwidth-percent.html
+        Test: fast/replaced/maxwidth-pxs.html
+        Test: fast/replaced/minheight-percent.html
+        Test: fast/replaced/minheight-pxs.html
+        Test: fast/replaced/minwidth-percent.html
+        Test: fast/replaced/minwidth-pxs.html
+
+        * rendering/render_box.cpp:
+        (WebCore::RenderBox::calcReplacedWidth):
+        (WebCore::RenderBox::calcReplacedWidthUsing):
+        (WebCore::RenderBox::calcReplacedHeight): 
+        (WebCore::RenderBox::calcReplacedHeightUsing): Calculate percent heights correctly
+        * rendering/render_image.cpp: Respect aspect ratios and calculate max/min
+        (WebCore::RenderImage::calcReplacedWidth):
+        (WebCore::RenderImage::calcReplacedHeight):
+        (WebCore::RenderImage::calcAspectRatioWidth): Added
+        (WebCore::RenderImage::calcAspectRatioHeight): Added
+        (WebCore::RenderImage::calcMinMaxWidth): Added
+        * rendering/render_image.h:
+
 2006-02-24  Vicki Murley <vicki@apple.com>
 
         - add missing resources for manual-tests/scrolling-nestedframesets.html

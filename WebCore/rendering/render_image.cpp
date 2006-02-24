@@ -4,6 +4,8 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
+ *           (C) 2006 Allan Sandfeld Jensen (kde@carewolf.com)
+ *           (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -358,28 +360,64 @@ bool RenderImage::isHeightSpecified() const
 
 int RenderImage::calcReplacedWidth() const
 {
-    // If height is specified and not width, preserve aspect ratio.
-    if (isHeightSpecified() && !isWidthSpecified()) {
-        if (intrinsicHeight() == 0)
-            return 0;
-        if (!m_cachedImage || m_cachedImage->isErrorImage())
-            return intrinsicWidth(); // Don't bother scaling.
-        return calcReplacedHeight() * intrinsicWidth() / intrinsicHeight();
-    }
-    return RenderReplaced::calcReplacedWidth();
+    int width;
+    if (isWidthSpecified())
+        width = calcReplacedWidthUsing(Width);
+    else
+        width = calcAspectRatioWidth();
+
+    int minW = calcReplacedWidthUsing(MinWidth);
+    int maxW = style()->maxWidth().value() == undefinedLength ? width : calcReplacedWidthUsing(MaxWidth);
+
+    return kMax(minW, kMin(width, maxW));
 }
 
 int RenderImage::calcReplacedHeight() const
 {
-    // If width is specified and not height, preserve aspect ratio.
-    if (isWidthSpecified() && !isHeightSpecified()) {
-        if (intrinsicWidth() == 0)
-            return 0;
-        if (!m_cachedImage || m_cachedImage->isErrorImage())
-            return intrinsicHeight(); // Don't bother scaling.
-        return calcReplacedWidth() * intrinsicHeight() / intrinsicWidth();
-    }
-    return RenderReplaced::calcReplacedHeight();
+    int height;
+    if (isHeightSpecified())
+        height = calcReplacedHeightUsing(Height);
+    else
+        height = calcAspectRatioHeight();
+
+    int minH = calcReplacedHeightUsing(MinHeight);
+    int maxH = style()->maxHeight().value() == undefinedLength ? height : calcReplacedHeightUsing(MaxHeight);
+
+    return kMax(minH, kMin(height, maxH));
+}
+
+int RenderImage::calcAspectRatioWidth() const
+{
+    if (!intrinsicHeight())
+        return 0;
+    if (!m_cachedImage || m_cachedImage->isErrorImage())
+        return intrinsicWidth(); // Don't bother scaling.
+    return RenderReplaced::calcReplacedHeight() * intrinsicWidth() / intrinsicHeight();
+}
+
+int RenderImage::calcAspectRatioHeight() const
+{
+    if (!intrinsicWidth())
+        return 0;
+    if (!m_cachedImage || m_cachedImage->isErrorImage())
+        return intrinsicHeight(); // Don't bother scaling.
+    return RenderReplaced::calcReplacedWidth() * intrinsicHeight() / intrinsicWidth();
+}
+
+void RenderImage::calcMinMaxWidth()
+{
+    ASSERT(!minMaxKnown());
+
+    m_maxWidth = calcReplacedWidth() + paddingLeft() + paddingRight() + borderLeft() + borderRight();
+
+    if (style()->width().isPercent() || style()->height().isPercent() || 
+        style()->maxWidth().isPercent() || style()->maxHeight().isPercent() ||
+        style()->minWidth().isPercent() || style()->minHeight().isPercent())
+        m_minWidth = 0;
+    else
+        m_minWidth = m_maxWidth;
+
+    setMinMaxKnown();
 }
 
 Image* RenderImage::nullImage()

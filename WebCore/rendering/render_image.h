@@ -3,6 +3,8 @@
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
+ *           (C) 2006 Allan Sandfeld Jensen (kde@carewolf.com) 
+ *           (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -69,6 +71,11 @@ public:
     
     virtual int calcReplacedWidth() const;
     virtual int calcReplacedHeight() const;
+
+    int calcAspectRatioWidth() const;
+    int calcAspectRatioHeight() const;
+
+    virtual void calcMinMaxWidth();
 
     // Called to set generated content images (e.g., :before/:after generated images).
     void setContentObject(CachedObject*);
