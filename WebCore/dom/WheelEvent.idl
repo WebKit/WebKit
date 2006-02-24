@@ -1,4 +1,5 @@
 module events {
+
         interface [LegacyParent=KJS::DOMUIEvent] WheelEvent : UIEvent {
                 readonly attribute boolean altKey;
                 readonly attribute long    clientX;
@@ -15,4 +16,5 @@ module events {
                 readonly attribute long    x;
                 readonly attribute long    y;
         };
+
 }

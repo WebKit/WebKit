@@ -5541,7 +5541,7 @@
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
-					"-Wl,-exported_symbols_list,WebCore.exp",
+					"-Wl,-exported_symbols_list,WebCore.exp,-Y,3",
 				);
 				PRODUCT_NAME = WebCore;
 				SECTORDER_FLAGS = "";
@@ -5573,7 +5573,7 @@
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
-					"-Wl,-exported_symbols_list,WebCore.exp",
+					"-Wl,-exported_symbols_list,WebCore.exp,-Y,3",
 				);
 				PRODUCT_NAME = WebCore;
 				SECTORDER_FLAGS = "";
@@ -5606,7 +5606,7 @@
 				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(STYLE_LDFLAGS)",
-					"-Wl,-exported_symbols_list,WebCore.exp",
+					"-Wl,-exported_symbols_list,WebCore.exp,-Y,3",
 				);
 				PRODUCT_NAME = WebCore;
 				SECTORDER_FLAGS = (

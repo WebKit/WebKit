@@ -1,4 +1,5 @@
 module core {
+
     interface [LegacyParent=KJS::DOMElement] Element : Node {
     
         NodeList getElementsByTagName(in DOMString name);
@@ -58,4 +59,5 @@ module core {
         readonly attribute CSSStyleDeclaration style;
             
     };
+
 }

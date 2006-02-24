@@ -1,3 +1,18 @@
+2006-02-23  Maciej Stachowiak  <mjs@apple.com>
+
+        - fix build by making some pointless changes to files that Xcode doesn't 
+        rebuild otherwise
+
+        * bindings/js/JSDOMCore.cpp:
+        * bindings/js/JSDOMEvents.cpp:
+        * dom/Element.idl:
+        * dom/WheelEvent.idl:
+        
+        - add -Y 3 flag to linking; this makes the linker say what files reference 
+        unresolved symbols
+        
+        * WebCore.xcodeproj/project.pbxproj:
+
 2006-02-23  Darin Adler  <darin@apple.com>
 
         - try to fix Windows build
