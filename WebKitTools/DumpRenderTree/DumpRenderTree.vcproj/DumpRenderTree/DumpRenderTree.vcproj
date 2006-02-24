@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\WebCore.lib&quot;&#x0D;&#x0A;&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\JavaScriptCore.lib&quot;"
+				AdditionalOptions="&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\WebCore.lib&quot;&#x0D;&#x0A;&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\JavaScriptCore.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\..\iconv\lib\iconv.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\..\libxml\lib\libxml2.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\..\libxslt\lib\libxslt.lib&quot;"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -136,7 +136,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\WebCore.lib&quot;&#x0D;&#x0A;&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\JavaScriptCore.lib&quot;"
+				AdditionalOptions="&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\WebCore.lib&quot;&#x0D;&#x0A;&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\JavaScriptCore.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\..\iconv\lib\iconv.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\..\libxml\lib\libxml2.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\..\libxslt\lib\libxslt.lib&quot;"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="1"

@@ -1,3 +1,11 @@
+2006-02-24  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Make DumpRenderTree link against libxml, etc.
+
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.vcproj:
+
 2006-02-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed and landed by Anders.
