@@ -1,3 +1,9 @@
+2006-02-23  Timothy Hatcher  <timothy@apple.com>
+
+        New build to fix the i386 arch. (The _cuEnc64 symbol was missing.)
+
+        * libWebKitSystemInterface.a:
+
 2006-02-19  Darin Adler  <darin@apple.com>
 
         * WebKitSystemInterface.h: Added WKDrawFocusRing.
