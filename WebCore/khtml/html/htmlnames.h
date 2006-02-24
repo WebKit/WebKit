@@ -19,12 +19,12 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef DOM_HTMLNAMES_H
-#define DOM_HTMLNAMES_H
+#ifndef HTMLNAMES_H
+#define HTMLNAMES_H
 
 #include "dom_qname.h"
 
-namespace DOM { namespace HTMLNames {
+namespace WebCore { namespace HTMLNames {
 
 #define DOM_HTMLNAMES_FOR_EACH_TAG(macro) \
     macro(a) \

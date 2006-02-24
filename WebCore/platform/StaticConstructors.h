@@ -1,7 +1,7 @@
 /*
  * This file is part of the DOM implementation for KDE.
  *
- * Copyright (C) 2005 Apple Computer, Inc.
+ * Copyright (C) 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,35 +20,19 @@
  *
  */
 
-#include "config.h"
+// For WebCore we need to avoid having static constructors.
+// Our strategy is to declare the global objects with a different type (initialized to 0)
+// and then use placement new to initialize the global objects later. This is not completely
+// portable, and it would be good to figure out a 100% clean way that still avoids code that
+// runs at init time.
 
-#if AVOID_STATIC_CONSTRUCTORS
-#define DOM_EVENT_NAMES_HIDE_GLOBALS 1
+#if !AVOID_STATIC_CONSTRUCTORS
+    // Define an global in the normal way.
+#define DEFINE_GLOBAL(type, name, ...) \
+    const type name(__VA_ARGS__);
+#else
+// Define an correctly-sized array of pointers to avoid static initialization.
+// Use an array of pointers instead of an array of char in case there is some alignment issue.
+#define DEFINE_GLOBAL(type, name, ...) \
+    void * name[(sizeof(type) + sizeof(void *) - 1) / sizeof(void *)];
 #endif
-
-#include "EventNames.h"
-#include "StaticConstructors.h"
-
-using WebCore::AtomicString;
-using WebCore::nullAtom;
-
-namespace WebCore { namespace EventNames {
-
-#define DEFINE_EVENT_GLOBAL(name) \
-    DEFINE_GLOBAL(AtomicString, name##Event, #name)
-DOM_EVENT_NAMES_FOR_EACH(DEFINE_EVENT_GLOBAL)
-
-void init()
-{
-#if AVOID_STATIC_CONSTRUCTORS
-    static bool initialized;
-    if (!initialized) {
-        // Use placement new to initialize the globals.
-        #define INITIALIZE_GLOBAL(name) new (&name##Event) AtomicString(#name);
-        DOM_EVENT_NAMES_FOR_EACH(INITIALIZE_GLOBAL)
-        initialized = true;
-    }
-#endif
-}
-
-} }

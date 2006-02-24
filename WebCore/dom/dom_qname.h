@@ -19,12 +19,12 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef _DOM_QNAME_h_
-#define _DOM_QNAME_h_
+#ifndef QualifiedName_h
+#define QualifiedName_h
 
 #include "AtomicString.h"
 
-namespace DOM {
+namespace WebCore {
 
 class QualifiedName {
 public:

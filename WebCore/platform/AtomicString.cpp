@@ -20,20 +20,18 @@
  *
  */
 
-// For KHTML we need to avoid having static constructors.
-// Our strategy is to declare the global objects with a different type (initialized to 0)
-// and then use placement new to initialize the global objects later. This is not completely
-// portable, and it would be good to figure out a 100% clean way that still avoids code that
-// runs at init time.
-
-#define KHTML_ATOMICSTRING_HIDE_GLOBALS 1
-
 #include "config.h"
+
+#if AVOID_STATIC_CONSTRUCTORS
+#define KHTML_ATOMICSTRING_HIDE_GLOBALS 1
+#endif
+
 #include "AtomicString.h"
+#include "StaticConstructors.h"
 
 #include <kxmlcore/HashSet.h>
 
-namespace DOM {
+namespace WebCore {
    
 static HashSet<StringImpl*>* stringTable;
 
@@ -159,19 +157,19 @@ void AtomicString::remove(StringImpl* r)
     stringTable->remove(r);
 }
 
-// Define an AtomicString-sized array of pointers to avoid static initialization.
-// Use an array of pointers instead of an array of char in case there is some alignment issue.
-#define DEFINE_GLOBAL(name) \
-    void* name ## Atom[(sizeof(AtomicString) + sizeof(void*) - 1) / sizeof(void*)];
-
-DEFINE_GLOBAL(null)
-DEFINE_GLOBAL(empty)
-DEFINE_GLOBAL(text)
-DEFINE_GLOBAL(comment)
-DEFINE_GLOBAL(star)
+#if AVOID_STATIC_CONSTRUCTORS
+DEFINE_GLOBAL(AtomicString, nullAtom)
+#else
+const AtomicString nullAtom;
+#endif
+DEFINE_GLOBAL(AtomicString, emptyAtom, "")
+DEFINE_GLOBAL(AtomicString, textAtom, "#text")
+DEFINE_GLOBAL(AtomicString, commentAtom, "#comment")
+DEFINE_GLOBAL(AtomicString, starAtom, "*")
 
 void AtomicString::init()
 {
+#if AVOID_STATIC_CONSTRUCTORS
     static bool initialized;
     if (!initialized) {
         stringTable = new HashSet<StringImpl*>;
@@ -185,6 +183,7 @@ void AtomicString::init()
 
         initialized = true;
     }
+#endif
 }
 
 }

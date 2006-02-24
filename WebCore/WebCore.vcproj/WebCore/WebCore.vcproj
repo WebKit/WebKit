@@ -1657,6 +1657,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\platform\StaticConstructors.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\platform\String.cpp"
 				>
 			</File>
@@ -2897,6 +2901,10 @@
 			<Filter
 				Name="js"
 				>
+				<File
+					RelativePath="..\..\bindings\js\JSDOMCore.cpp"
+					>
+				</File>
 				<File
 					RelativePath="..\..\bindings\js\JSDOMEvents.cpp"
 					>

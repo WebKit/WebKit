@@ -1,3 +1,24 @@
+2006-02-23  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Fix linking of static constructed globals on win32.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * config.h:
+        * dom/EventNames.cpp:
+        (WebCore::EventNames::init):
+        * dom/EventNames.h:
+        * dom/dom_qname.cpp:
+        (WebCore::QualifiedName::init):
+        * dom/dom_qname.h:
+        * khtml/html/htmlnames.cpp:
+        (WebCore::HTMLNames::init):
+        * khtml/html/htmlnames.h:
+        * platform/AtomicString.cpp:
+        (WebCore::AtomicString::init):
+        * platform/StaticConstructors.h: Added.
+
 2006-02-23  Vicki Murley <vicki@apple.com>
 
         Reviewed by Tim Omernick.

@@ -20,12 +20,12 @@
  *
  */
 
-#ifndef DOM_EVENT_NAMES_H
-#define DOM_EVENT_NAMES_H
+#ifndef EVENT_NAMES_H
+#define EVENT_NAMES_H
 
 #include "AtomicString.h"
 
-namespace DOM { namespace EventNames {
+namespace WebCore { namespace EventNames {
 
 #define DOM_EVENT_NAMES_FOR_EACH(macro) \
     \
@@ -94,7 +94,7 @@ namespace DOM { namespace EventNames {
 // end of DOM_EVENT_NAMES_FOR_EACH
 
 #if !DOM_EVENT_NAMES_HIDE_GLOBALS
-    #define DOM_EVENT_NAMES_DECLARE(name) extern AtomicString name##Event;
+    #define DOM_EVENT_NAMES_DECLARE(name) extern const AtomicString name##Event;
     DOM_EVENT_NAMES_FOR_EACH(DOM_EVENT_NAMES_DECLARE)
     #undef DOM_EVENT_NAMES_DECLARE
 #endif

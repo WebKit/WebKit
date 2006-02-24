@@ -19,13 +19,17 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#define KHTML_QNAME_HIDE_GLOBALS 1
-
 #include "config.h"
+
+#if AVOID_STATIC_CONSTRUCTORS
+#define KHTML_QNAME_HIDE_GLOBALS 1
+#endif
+
 #include "dom_qname.h"
+#include "StaticConstructors.h"
 #include <kxmlcore/HashSet.h>
 
-namespace DOM {
+namespace WebCore {
 
 struct QualifiedNameComponents {
     DOMStringImpl *m_prefix;
@@ -166,16 +170,18 @@ DOMString QualifiedName::toString() const
 }
 
 // Global init routines
-void* anyName[(sizeof(QualifiedName) + sizeof(void*) - 1) / sizeof(void*)];
+DEFINE_GLOBAL(QualifiedName, anyName, nullAtom, starAtom, starAtom);
 
 void QualifiedName::init()
 {
+#if AVOID_STATIC_CONSTRUCTORS
     static bool initialized;
     if (!initialized) {
         // Use placement new to initialize the globals.
         new (&anyName) QualifiedName(nullAtom, starAtom, starAtom);
         initialized = true;
     }
+#endif
 }
 
 }

@@ -20,30 +20,32 @@
  *
  */
 
-#define DOM_HTMLNAMES_HIDE_GLOBALS 1
-
 #include "config.h"
+
+#if AVOID_STATIC_CONSTRUCTORS
+#define DOM_HTMLNAMES_HIDE_GLOBALS 1
+#endif
+
 #include "htmlnames.h"
+#include "StaticConstructors.h"
 
-namespace DOM { namespace HTMLNames {
+namespace WebCore { namespace HTMLNames {
 
-// Define a properly-sized array of pointers to avoid static initialization.
-// Use an array of pointers instead of an array of char in case there is some alignment issue.
+DEFINE_GLOBAL(AtomicString, xhtmlNamespaceURI, "http://www.w3.org/1999/xhtml")
 
-#define DEFINE_UNINITIALIZED_GLOBAL(type, name) void *name[(sizeof(type) + sizeof(void *) - 1) / sizeof(void *)];
-
-DEFINE_UNINITIALIZED_GLOBAL(AtomicString, xhtmlNamespaceURI)
-
-#define DEFINE_TAG_GLOBAL(name) DEFINE_UNINITIALIZED_GLOBAL(QualifiedName, name##Tag)
+#define DEFINE_TAG_GLOBAL(name) \
+    DEFINE_GLOBAL(QualifiedName, name##Tag, nullAtom, #name, xhtmlNamespaceURI)
 DOM_HTMLNAMES_FOR_EACH_TAG(DEFINE_TAG_GLOBAL)
 
-#define DEFINE_ATTR_GLOBAL(name) DEFINE_UNINITIALIZED_GLOBAL(QualifiedName, name##Attr)
+#define DEFINE_ATTR_GLOBAL(name) \
+    DEFINE_GLOBAL(QualifiedName, name##Attr, nullAtom, #name, nullAtom)
 DOM_HTMLNAMES_FOR_EACH_ATTR(DEFINE_ATTR_GLOBAL)
 
 void init()
 {
     static bool initialized;
     if (!initialized) {
+#if AVOID_STATIC_CONSTRUCTORS
         // Use placement new to initialize the globals.
 
         AtomicString xhtmlNS("http://www.w3.org/1999/xhtml");
@@ -63,7 +65,10 @@ void init()
         http_equivAttrString = "http-equiv";
         #define INITIALIZE_ATTR_GLOBAL(name) new (&name##Attr) QualifiedName(nullAtom, name##AttrString, nullAtom);
         DOM_HTMLNAMES_FOR_EACH_ATTR(INITIALIZE_ATTR_GLOBAL)
-
+#else
+        const_cast<QualifiedName&>(accept_charsetAttr) = QualifiedName(nullAtom, "accept-charset", nullAtom);
+        const_cast<QualifiedName&>(http_equivAttr) = QualifiedName(nullAtom, "http-equiv", nullAtom);
+#endif
         initialized = true;
     }
 }
