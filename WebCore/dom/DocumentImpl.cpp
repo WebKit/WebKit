@@ -812,7 +812,7 @@ void DocumentImpl::recalcStyle(StyleChange change)
         }
 
         _style->setFontDescription(fontDescription);
-        _style->htmlFont().update();
+        _style->font().update();
         if (inCompatMode())
             _style->setHtmlHacks(true); // enable html specific rendering tricks
 

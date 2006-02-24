@@ -833,7 +833,7 @@ int RenderBlock::tabWidth(bool isWhitespacePre)
 
     if (!m_tabWidth) {
         QChar spaceChar(' ');
-        const Font& font = style()->htmlFont();
+        const Font& font = style()->font();
         int spaceWidth = font.width(&spaceChar, 1, 0, 0);
         m_tabWidth = spaceWidth * 8;
         assert(m_tabWidth != 0);
@@ -2522,8 +2522,8 @@ void RenderBlock::checkLinesForTextOverflow()
     // Determine the width of the ellipsis using the current font.
     QChar ellipsis = 0x2026; // FIXME: CSS3 says this is configurable, also need to use 0x002E (FULL STOP) if 0x2026 not renderable
     static AtomicString ellipsisStr(ellipsis);
-    const Font& firstLineFont = firstLineStyle()->htmlFont();
-    const Font& font = style()->htmlFont();
+    const Font& firstLineFont = firstLineStyle()->font();
+    const Font& font = style()->font();
     int firstLineEllipsisWidth = firstLineFont.width(&ellipsis, 1, 0, 0);
     int ellipsisWidth = (font == firstLineFont) ? firstLineEllipsisWidth : font.width(&ellipsis, 1, 0, 0);
 

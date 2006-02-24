@@ -229,7 +229,7 @@ void RenderThemeMac::setFontFromControlSize(CSSStyleSelector* selector, RenderSt
     fontDescription.setSpecifiedSize([font pointSize]);
 
     if (style->setFontDescription(fontDescription))
-        style->htmlFont().update();
+        style->font().update();
 }
 
 void RenderThemeMac::addIntrinsicMargins(RenderStyle* style, NSControlSize size) const

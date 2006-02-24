@@ -241,8 +241,8 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
             if (!m_altText.isEmpty()) {
                 QString text = m_altText.qstring();
                 text.replace(QChar('\\'), backslashAsCurrencySymbol());
-                p->setFont (style()->font());
-                p->setPen (style()->color());
+                p->setFont(style()->qfont());
+                p->setPen(style()->color());
                 int ax = _tx + leftBorder + leftPad;
                 int ay = _ty + topBorder + topPad;
                 const QFontMetrics &fm = style()->fontMetrics();

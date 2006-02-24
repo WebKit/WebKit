@@ -823,7 +823,7 @@ public:
     virtual void destroy();
 
     const QFont &font(bool firstLine) const {
-        return style( firstLine )->font();
+        return style( firstLine )->qfont();
     }
 
     const QFontMetrics &fontMetrics(bool firstLine) const {

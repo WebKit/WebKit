@@ -968,8 +968,8 @@ void InlineFlowBox::paintDecorations(RenderObject::PaintInfo& i, int _tx, int _t
         if (!parent())
             object()->getTextDecorationColors(deco, underline, overline, linethrough);
 
-        if (styleToUse->font() != p->font())
-            p->setFont(styleToUse->font());
+        if (styleToUse->qfont() != p->font())
+            p->setFont(styleToUse->qfont());
 
         if (deco & UNDERLINE && !paintedChildren) {
             p->setPen(underline);
@@ -1054,10 +1054,10 @@ void EllipsisBox::paint(RenderObject::PaintInfo& i, int _tx, int _ty)
 {
     QPainter* p = i.p;
     RenderStyle* _style = m_firstLine ? m_object->firstLineStyle() : m_object->style();
-    if (_style->font() != p->font())
-        p->setFont(_style->font());
+    if (_style->qfont() != p->font())
+        p->setFont(_style->qfont());
 
-    const Font* font = &_style->htmlFont();
+    const Font* font = &_style->font();
     Color textColor = _style->color();
     if (textColor != p->pen().color())
         p->setPen(textColor);

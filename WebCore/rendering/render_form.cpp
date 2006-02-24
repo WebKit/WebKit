@@ -73,7 +73,7 @@ void RenderFormElement::setStyle(RenderStyle* s)
     // Do not paint a background or border for Aqua form elements
     setShouldPaintBackgroundOrBorder(false);
 
-    m_widget->setFont(style()->font());
+    m_widget->setFont(style()->qfont());
 }
 
 void RenderFormElement::updateFromElement()
@@ -129,7 +129,7 @@ Qt::AlignmentFlags RenderFormElement::textAlignment() const
 void RenderFormElement::addIntrinsicMarginsIfAllowed(RenderStyle* _style)
 {
     // Cut out the intrinsic margins completely if we end up using mini controls.
-    if (_style->font().pixelSize() < 11)
+    if (_style->qfont().pixelSize() < 11)
         return;
     
     // FIXME: Using width/height alone and not also dealing with min-width/max-width is flawed.

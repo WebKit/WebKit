@@ -2326,7 +2326,7 @@ NSAttributedString *MacFrame::attributedString(NodeImpl *_start, int startOffset
         RenderObject *renderer = n->renderer();
         if (renderer) {
             RenderStyle *style = renderer->style();
-            NSFont *font = style->font().getNSFont();
+            NSFont *font = style->qfont().getNSFont();
             bool needSpace = pendingStyledSpace != nil;
             if (n->isTextNode()) {
                 if (hasNewLine) {
@@ -2519,7 +2519,7 @@ NSAttributedString *MacFrame::attributedString(NodeImpl *_start, int startOffset
                     
                     // In certain cases, emit a paragraph break.
                     int bottomMargin = renderer->collapsedMarginBottom();
-                    int fontSize = style->htmlFont().fontDescription().computedPixelSize();
+                    int fontSize = style->fontDescription().computedPixelSize();
                     if (bottomMargin * 2 >= fontSize) {
                         if (!hasParagraphBreak) {
                             text += '\n';
@@ -2667,7 +2667,7 @@ NSAttributedString *MacFrame::attributedString(NodeImpl *_start, int startOffset
             RenderStyle *style = r->style();
 
             int rx;
-            NSFont *font = style->font().getNSFont();
+            NSFont *font = style->qfont().getNSFont();
             float pointSize = [font pointSize];
 
 #ifdef POSITION_LIST
@@ -2801,7 +2801,7 @@ NSFont *MacFrame::fontForSelection(bool *hasMultipleFonts) const
 
         NSFont *result = 0;
         if (style)
-            result = style->font().getNSFont();
+            result = style->qfont().getNSFont();
         
         if (nodeToRemove) {
             int exceptionCode;
@@ -2825,7 +2825,7 @@ NSFont *MacFrame::fontForSelection(bool *hasMultipleFonts) const
             if (!renderer)
                 continue;
             // FIXME: Are there any node types that have renderers, but that we should be skipping?
-            NSFont *f = renderer->style()->font().getNSFont();
+            NSFont *f = renderer->style()->qfont().getNSFont();
             if (font == nil) {
                 font = f;
                 if (!hasMultipleFonts)
@@ -2852,8 +2852,8 @@ NSDictionary *MacFrame::fontAttributesForSelectionStart() const
     if (style->backgroundColor().isValid() && style->backgroundColor().alpha() != 0)
         [result setObject:nsColor(style->backgroundColor()) forKey:NSBackgroundColorAttributeName];
 
-    if (style->font().getNSFont())
-        [result setObject:style->font().getNSFont() forKey:NSFontAttributeName];
+    if (style->qfont().getNSFont())
+        [result setObject:style->qfont().getNSFont() forKey:NSFontAttributeName];
 
     if (style->color().isValid() && style->color() != Color::black)
         [result setObject:nsColor(style->color()) forKey:NSForegroundColorAttributeName];

@@ -648,12 +648,12 @@ PassRefPtr<CSSValueImpl> CSSComputedStyleDeclarationImpl::getPropertyCSSValue(in
     case CSS_PROP_FONT_FAMILY:
     {
         // FIXME: This only returns the first family.
-        const FontDescription& desc = style->htmlFont().fontDescription();
+        const FontDescription& desc = style->fontDescription();
         return new CSSPrimitiveValueImpl(desc.family().family().domString(), CSSPrimitiveValue::CSS_STRING);
     }
     case CSS_PROP_FONT_SIZE:
     {
-        FontDescription def = style->htmlFont().fontDescription();
+        FontDescription def = style->fontDescription();
         return new CSSPrimitiveValueImpl(def.specifiedSize(), CSSPrimitiveValue::CSS_PX);
     }
     case CSS_PROP_FONT_STRETCH:
@@ -662,7 +662,7 @@ PassRefPtr<CSSValueImpl> CSSComputedStyleDeclarationImpl::getPropertyCSSValue(in
     case CSS_PROP_FONT_STYLE:
     {
         // FIXME: handle oblique?
-        const FontDescription& desc = style->htmlFont().fontDescription();
+        const FontDescription& desc = style->fontDescription();
         if (desc.italic())
             return new CSSPrimitiveValueImpl(CSS_VAL_ITALIC);
         else
@@ -670,7 +670,7 @@ PassRefPtr<CSSValueImpl> CSSComputedStyleDeclarationImpl::getPropertyCSSValue(in
     }
     case CSS_PROP_FONT_VARIANT:
     {
-        const FontDescription& desc = style->htmlFont().fontDescription();
+        const FontDescription& desc = style->fontDescription();
         if (desc.smallCaps())
             return new CSSPrimitiveValueImpl(CSS_VAL_SMALL_CAPS);
         else
@@ -680,7 +680,7 @@ PassRefPtr<CSSValueImpl> CSSComputedStyleDeclarationImpl::getPropertyCSSValue(in
     {
         // FIXME: this does not reflect the full range of weights
         // that can be expressed with CSS
-        const FontDescription& desc = style->htmlFont().fontDescription();
+        const FontDescription& desc = style->fontDescription();
         if (desc.weight() == QFont::Bold)
             return new CSSPrimitiveValueImpl(CSS_VAL_BOLD);
         else
@@ -705,7 +705,7 @@ PassRefPtr<CSSValueImpl> CSSComputedStyleDeclarationImpl::getPropertyCSSValue(in
             // for how high to be in pixels does include things like minimum font size and the zoom factor.
             // On the other hand, since font-size doesn't include the zoom factor, we really can't do
             // that here either.
-            float fontSize = style->htmlFont().fontDescription().specifiedSize();
+            float fontSize = style->fontDescription().specifiedSize();
             return new CSSPrimitiveValueImpl((int)(length.value() * fontSize) / 100, CSSPrimitiveValue::CSS_PX);
         }
         else {

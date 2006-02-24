@@ -807,7 +807,7 @@ RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defa
     if (fontDirty) {
         checkForTextSizeAdjust();
         checkForGenericFamilyChange(style, parentStyle);
-        style->htmlFont().update();
+        style->font().update();
         fontDirty = false;
     }
     
@@ -833,7 +833,7 @@ RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defa
     if (fontDirty) {
         checkForTextSizeAdjust();
         checkForGenericFamilyChange(style, parentStyle);
-        style->htmlFont().update();
+        style->font().update();
         fontDirty = false;
     }
     
@@ -887,7 +887,7 @@ RenderStyle* CSSStyleSelector::pseudoStyleForElement(RenderStyle::PseudoId pseud
     if (fontDirty) {
         checkForTextSizeAdjust();
         checkForGenericFamilyChange(style, parentStyle);
-        style->htmlFont().update();
+        style->font().update();
         fontDirty = false;
     }
     
@@ -912,7 +912,7 @@ RenderStyle* CSSStyleSelector::pseudoStyleForElement(RenderStyle::PseudoId pseud
     if (fontDirty) {
         checkForTextSizeAdjust();
         checkForGenericFamilyChange(style, parentStyle);
-        style->htmlFont().update();
+        style->font().update();
         fontDirty = false;
     }
     
@@ -1940,9 +1940,9 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
 
     case CSS_PROP_FONT_STYLE:
     {
-        FontDescription fontDescription = style->htmlFont().fontDescription();
+        FontDescription fontDescription = style->fontDescription();
         if (isInherit)
-            fontDescription.setItalic(parentStyle->htmlFont().fontDescription().italic());
+            fontDescription.setItalic(parentStyle->fontDescription().italic());
         else if (isInitial)
             fontDescription.setItalic(false);
         else {
@@ -1967,9 +1967,9 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
 
     case CSS_PROP_FONT_VARIANT:
     {
-        FontDescription fontDescription = style->htmlFont().fontDescription();
+        FontDescription fontDescription = style->fontDescription();
         if (isInherit) 
-            fontDescription.setSmallCaps(parentStyle->htmlFont().fontDescription().smallCaps());
+            fontDescription.setSmallCaps(parentStyle->fontDescription().smallCaps());
         else if (isInitial)
             fontDescription.setSmallCaps(false);
         else {
@@ -1989,9 +1989,9 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
 
     case CSS_PROP_FONT_WEIGHT:
     {
-        FontDescription fontDescription = style->htmlFont().fontDescription();
+        FontDescription fontDescription = style->fontDescription();
         if (isInherit)
-            fontDescription.setWeight(parentStyle->htmlFont().fontDescription().weight());
+            fontDescription.setWeight(parentStyle->fontDescription().weight());
         else if (isInitial)
             fontDescription.setWeight(QFont::Normal);
         else {
@@ -2816,14 +2816,14 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
 
     case CSS_PROP_FONT_SIZE:
     {
-        FontDescription fontDescription = style->htmlFont().fontDescription();
+        FontDescription fontDescription = style->fontDescription();
         float oldSize = 0;
         float size = 0;
         
         bool parentIsAbsoluteSize = false;
         if (parentNode) {
-            oldSize = parentStyle->htmlFont().fontDescription().specifiedSize();
-            parentIsAbsoluteSize = parentStyle->htmlFont().fontDescription().isAbsoluteSize();
+            oldSize = parentStyle->fontDescription().specifiedSize();
+            parentIsAbsoluteSize = parentStyle->fontDescription().isAbsoluteSize();
         }
 
         if (isInherit)
@@ -2940,7 +2940,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
             }
             lineHeight = Length(primitiveValue->computeLength(style, multiplier), Fixed);
         } else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
-            lineHeight = Length( ( style->font().pixelSize() * int(primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE)) ) / 100, Fixed );
+            lineHeight = Length( ( style->qfont().pixelSize() * int(primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE)) ) / 100, Fixed );
         else if (type == CSSPrimitiveValue::CSS_NUMBER)
             lineHeight = Length(int(primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_NUMBER)*100), Percent);
         else
@@ -3049,8 +3049,8 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
     case CSS_PROP_FONT_FAMILY: {
         // list of strings and ids
         if (isInherit) {
-            FontDescription parentFontDescription = parentStyle->htmlFont().fontDescription();
-            FontDescription fontDescription = style->htmlFont().fontDescription();
+            FontDescription parentFontDescription = parentStyle->fontDescription();
+            FontDescription fontDescription = style->fontDescription();
             fontDescription.setGenericFamily(parentFontDescription.genericFamily());
             fontDescription.setFamily(parentFontDescription.firstFamily());
             if (style->setFontDescription(fontDescription))
@@ -3059,7 +3059,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
         }
         else if (isInitial) {
             FontDescription initialDesc = FontDescription();
-            FontDescription fontDescription = style->htmlFont().fontDescription();
+            FontDescription fontDescription = style->fontDescription();
             fontDescription.setGenericFamily(initialDesc.genericFamily());
             fontDescription.setFamily(initialDesc.firstFamily());
             if (style->setFontDescription(fontDescription))
@@ -3068,7 +3068,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
         }
         
         if (!value->isValueList()) return;
-        FontDescription fontDescription = style->htmlFont().fontDescription();
+        FontDescription fontDescription = style->fontDescription();
         CSSValueListImpl *list = static_cast<CSSValueListImpl *>(value);
         int len = list->length();
         FontFamily& firstFamily = fontDescription.firstFamily();
@@ -3292,7 +3292,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
         return;
     case CSS_PROP_FONT:
         if (isInherit) {
-            FontDescription fontDescription = parentStyle->htmlFont().fontDescription();
+            FontDescription fontDescription = parentStyle->fontDescription();
             style->setLineHeight(parentStyle->lineHeight());
             if (style->setFontDescription(fontDescription))
                 fontDirty = true;
@@ -3315,7 +3315,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
             // before we evaluate line-height, e.g., font: 1em/1em.  FIXME: Still not
             // good enough: style="font:1em/1em; font-size:36px" should have a line-height of 36px.
             if (fontDirty)
-                CSSStyleSelector::style->htmlFont().update();
+                CSSStyleSelector::style->font().update();
             
             applyProperty(CSS_PROP_LINE_HEIGHT, font->lineHeight.get());
             applyProperty(CSS_PROP_FONT_FAMILY, font->family.get());
@@ -4108,38 +4108,38 @@ void CSSStyleSelector::checkForTextSizeAdjust()
     if (style->textSizeAdjust())
         return;
  
-    FontDescription newFontDescription(style->htmlFont().fontDescription());
+    FontDescription newFontDescription(style->fontDescription());
     newFontDescription.setComputedSize(newFontDescription.specifiedSize());
     style->setFontDescription(newFontDescription);
 }
 
 void CSSStyleSelector::checkForGenericFamilyChange(RenderStyle* aStyle, RenderStyle* aParentStyle)
 {
-  const FontDescription& childFont = aStyle->htmlFont().fontDescription();
+    const FontDescription& childFont = aStyle->fontDescription();
   
-  if (childFont.isAbsoluteSize() || !aParentStyle)
-    return;
+    if (childFont.isAbsoluteSize() || !aParentStyle)
+        return;
 
-  const FontDescription& parentFont = aParentStyle->htmlFont().fontDescription();
+    const FontDescription& parentFont = aParentStyle->fontDescription();
 
-  if (childFont.genericFamily() == parentFont.genericFamily())
-    return;
+    if (childFont.genericFamily() == parentFont.genericFamily())
+        return;
 
-  // For now, lump all families but monospace together.
-  if (childFont.genericFamily() != FontDescription::MonospaceFamily &&
-      parentFont.genericFamily() != FontDescription::MonospaceFamily)
-    return;
+    // For now, lump all families but monospace together.
+    if (childFont.genericFamily() != FontDescription::MonospaceFamily &&
+        parentFont.genericFamily() != FontDescription::MonospaceFamily)
+        return;
 
-  // We know the parent is monospace or the child is monospace, and that font
-  // size was unspecified.  We want to scale our font size as appropriate.
-  float fixedScaleFactor = ((float)settings->mediumFixedFontSize())/settings->mediumFontSize();
-  float size = (parentFont.genericFamily() == FontDescription::MonospaceFamily) ? 
-      childFont.specifiedSize()/fixedScaleFactor :
-      childFont.specifiedSize()*fixedScaleFactor;
+    // We know the parent is monospace or the child is monospace, and that font
+    // size was unspecified.  We want to scale our font size as appropriate.
+    float fixedScaleFactor = ((float)settings->mediumFixedFontSize())/settings->mediumFontSize();
+    float size = (parentFont.genericFamily() == FontDescription::MonospaceFamily) ? 
+        childFont.specifiedSize()/fixedScaleFactor :
+        childFont.specifiedSize()*fixedScaleFactor;
   
-  FontDescription newFontDescription(childFont);
-  setFontSize(newFontDescription, size);
-  aStyle->setFontDescription(newFontDescription);
+    FontDescription newFontDescription(childFont);
+    setFontSize(newFontDescription, size);
+    aStyle->setFontDescription(newFontDescription);
 }
 
 void CSSStyleSelector::setFontSize(FontDescription& fontDescription, float size)

@@ -447,7 +447,7 @@ bool RenderText::allAscii() const
 
 bool RenderText::shouldUseMonospaceCache(const Font *f) const
 {
-    return (f && f->isFixedPitch() && allAscii() && !style()->htmlFont().isSmallCaps());
+    return (f && f->isFixedPitch() && allAscii() && !style()->font().isSmallCaps());
 }
 
 // We cache the width of the ' ' character for <pre> text.  We could go further
@@ -760,7 +760,7 @@ int RenderText::yPos() const
 
 const QFont &RenderText::font()
 {
-    return style()->font();
+    return style()->qfont();
 }
 
 void RenderText::setSelectionState(SelectionState s)
@@ -980,9 +980,9 @@ unsigned int RenderText::width(unsigned int from, unsigned int len, const Font *
     if ( from + len > str->l ) len = str->l - from;
 
     int w;
-    if (!style()->preserveNewline() && f == &style()->htmlFont() && from == 0 && len == str->l ) {
+    if (!style()->preserveNewline() && f == &style()->font() && from == 0 && len == str->l ) {
         w = m_maxWidth;
-    } else if (f == &style()->htmlFont()) {
+    } else if (f == &style()->font()) {
         w = widthFromCache(f, from, len, tabWidth(), xpos);
     } else {
         w = f->width(str->s, str->l, from, len, tabWidth(), xpos );
@@ -1063,7 +1063,7 @@ const QFontMetrics &RenderText::metrics(bool firstLine) const
 
 const Font *RenderText::htmlFont(bool firstLine) const
 {
-    return &style(firstLine)->htmlFont();
+    return &style(firstLine)->font();
 }
 
 int RenderText::caretMinOffset() const

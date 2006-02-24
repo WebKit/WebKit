@@ -1,3 +1,77 @@
+2006-02-24  David Hyatt  <hyatt@apple.com>
+
+        In preparation for the elimination of QFont and QFontMetrics, rename methods on RenderStyle.  htmlFont() becomes simply
+        font().  The old font() method turns into qfont().  Also added a helper for obtaining the fontDescription() directly from
+        the RenderStyle (without first obtaining the htmlFont()).
+
+        Reviewed by darin
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.mm:
+        (-[DOMElement _font]):
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::attributedString):
+        (WebCore::MacFrame::fontForSelection):
+        (WebCore::MacFrame::fontAttributesForSelectionStart):
+        * css/css_computedstyle.cpp:
+        (WebCore::CSSComputedStyleDeclarationImpl::getPropertyCSSValue):
+        * css/css_valueimpl.cpp:
+        (WebCore::CSSPrimitiveValueImpl::computeLengthFloat):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::pseudoStyleForElement):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::checkForTextSizeAdjust):
+        (WebCore::CSSStyleSelector::checkForGenericFamilyChange):
+        * dom/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::recalcStyle):
+        * editing/visible_text.cpp:
+        (khtml::TextIterator::exitNode):
+        * ksvg2/svg/SVGLengthImpl.cpp:
+        (SVGLengthImpl::updateValue):
+        * kwq/KWQAccObject.mm:
+        (AXAttributeStringSetStyle):
+        * rendering/InlineTextBox.cpp:
+        (khtml::InlineTextBox::paint):
+        (khtml::InlineTextBox::offsetForPosition):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::shouldUseMonospaceCache):
+        (WebCore::RenderText::font):
+        (WebCore::RenderText::width):
+        (WebCore::RenderText::htmlFont):
+        * rendering/bidi.cpp:
+        (khtml::RenderBlock::tabWidth):
+        (khtml::RenderBlock::checkLinesForTextOverflow):
+        * rendering/render_br.cpp:
+        (WebCore::RenderBR::lineHeight):
+        * rendering/render_flexbox.cpp:
+        (khtml::RenderFlexibleBox::layoutVerticalBox):
+        * rendering/render_flow.cpp:
+        (WebCore::RenderFlow::lineHeight):
+        * rendering/render_form.cpp:
+        (WebCore::RenderFormElement::setStyle):
+        (WebCore::RenderFormElement::addIntrinsicMarginsIfAllowed):
+        * rendering/render_image.cpp:
+        (WebCore::RenderImage::paint):
+        * rendering/render_line.cpp:
+        (WebCore::InlineFlowBox::paintDecorations):
+        (WebCore::EllipsisBox::paint):
+        * rendering/render_list.cpp:
+        (RenderListItem::getAbsoluteRepaintRect):
+        (RenderListMarker::paint):
+        * rendering/render_object.cpp:
+        (WebCore::RenderObject::lineHeight):
+        * rendering/render_object.h:
+        (WebCore::RenderObject::font):
+        * rendering/render_replaced.cpp:
+        (WebCore::RenderWidget::setStyle):
+        * rendering/render_style.h:
+        (khtml::RenderStyle::font):
+        (khtml::RenderStyle::fontDescription):
+        (khtml::RenderStyle::qfont):
+        * rendering/render_theme_mac.mm:
+        (WebCore::RenderThemeMac::setFontFromControlSize):
+
 2006-02-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

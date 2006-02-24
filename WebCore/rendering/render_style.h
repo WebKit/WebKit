@@ -1178,10 +1178,12 @@ public:
 
     short colSpan() const { return visual->colspan; }
 
-    const QFont & font() const { return inherited->font.f; }
+    const Font& font() { return inherited->font; }
+    const FontDescription& fontDescription() { return inherited->font.fontDescription(); }
     int fontSize() const { return inherited->font.f.pixelSize(); }
-    // use with care. call font->update() after modifications
-    const Font &htmlFont() { return inherited->font; }
+
+    // FIXME: Will be removed when we eliminate QFont and QFontMetrics.
+    const QFont& qfont() { return inherited->font.f; }
     const QFontMetrics & fontMetrics() const { return inherited->font.fm; }
 
     const Color & color() const { return inherited->color; }

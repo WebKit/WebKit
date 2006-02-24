@@ -318,7 +318,7 @@ IntRect RenderListItem::getAbsoluteRepaintRect()
     IntRect result = RenderBlock::getAbsoluteRepaintRect();
     if (m_marker && !m_marker->isInside()) {
         // This can be a sloppy and imprecise offset as long as it's always too big.
-        int pixHeight = style()->htmlFont().fontDescription().computedPixelSize();
+        int pixHeight = style()->fontDescription().computedPixelSize();
         int offset = pixHeight*2/3;
         bool haveImage = m_marker->listImage() && !m_marker->listImage()->isErrorImage();
         if (haveImage)
@@ -398,7 +398,7 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
         paintBoxDecorations(i, _tx, _ty);
 
     QPainter* p = i.p;
-    p->setFont(style()->font());
+    p->setFont(style()->qfont());
     const QFontMetrics fm = p->fontMetrics();
     
     // The marker needs to adjust its tx, for the case where it's an outside marker.
