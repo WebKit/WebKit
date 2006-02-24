@@ -1,5 +1,11 @@
 2006-02-23  Maciej Stachowiak  <mjs@apple.com>
 
+        - fix build (header name changed)
+
+        * platform/mac/KURLMac.mm:
+
+2006-02-23  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Eric.
 
         - add temporary stubs that call abort() for functions only called from render and editing code 
