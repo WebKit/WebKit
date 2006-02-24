@@ -1,5 +1,9 @@
 2006-02-24  Eric Seidel  <eseidel@apple.com>
 
+        * bridge/win/FrameWin.cpp: fix line endings
+
+2006-02-24  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by beth.
 
         Removed WebCore:: prefixes added using namespace WebCore, fixes win32 build.
