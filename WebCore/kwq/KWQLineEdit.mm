@@ -29,7 +29,6 @@
 #import "KWQExceptions.h"
 #import "KWQFont.h"
 #import "KWQLogging.h"
-#import "KWQPalette.h"
 #import "KWQTextField.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreTextRenderer.h"
@@ -122,10 +121,8 @@ void QLineEdit::setFont(const QFont &font)
     }
 }
 
-void QLineEdit::setPalette(const QPalette &palette)
+void QLineEdit::setColors(const Color& background, const Color& foreground)
 {
-    Widget::setPalette(palette);
-
     NSTextField *textField = (NSTextField *)getView();
 
     KWQ_BLOCK_EXCEPTIONS;
@@ -135,12 +132,12 @@ void QLineEdit::setPalette(const QPalette &palette)
     // backgrounds on some text fields as described in <rdar://problem/3854383>.  Text fields will still not be able to display
     // transparent and translucent backgrounds, which will need to be fixed in the future.  See  <rdar://problem/3865114>.
         
-    [textField setTextColor:nsColor(palette.foreground())];
+    [textField setTextColor:nsColor(foreground)];
 
-    Color background = palette.background();
-    if (!background.isValid() || background.alpha() == 0)
-        background = Color::white;
-    [textField setBackgroundColor:nsColor(background)];
+    Color bg = background;
+    if (!bg.isValid() || bg.alpha() == 0)
+        bg = Color::white;
+    [textField setBackgroundColor:nsColor(bg)];
 
     KWQ_UNBLOCK_EXCEPTIONS;
 }

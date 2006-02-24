@@ -622,8 +622,8 @@ void RenderLayer::scrollRectToVisible(const IntRect &rect, const ScrollAlignment
             if (m_object->document() && m_object->document()->ownerElement() && m_object->document()->ownerElement()->renderer()) {
                 view->setContentsPos(xOffset, yOffset);
                 parentLayer = m_object->document()->ownerElement()->renderer()->enclosingLayer();
-                newRect.setX(rect.x() - view->contentsX() + view->viewport()->x());
-                newRect.setY(rect.y() - view->contentsY() + view->viewport()->y());
+                newRect.setX(rect.x() - view->contentsX() + view->x());
+                newRect.setY(rect.y() - view->contentsY() + view->y());
             } else {
                 // If this is the outermost view that RenderLayer needs to scroll, then we should scroll the view recursively
                 // Other apps, like Mail, rely on this feature.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,17 +23,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KWQPRINTER_H_
-#define KWQPRINTER_H_
+#ifndef Path_h
+#define Path_h
 
-class QPrinter {
- public:
-    typedef enum {
-        PrinterResolution,
-        ScreenResolution
-    } PrinterMode;
+#if __APPLE__
+typedef const struct CGPath* CGPathRef;
+#endif
 
-    QPrinter() { }
-};
+namespace WebCore {
 
-#endif /* KWQPRINTER_H_ */
+    class IntPoint;
+    class IntPointArray;
+    class IntRect;
+
+    class Path {
+    public:
+        enum Type { Ellipse, Rectangle };
+
+        Path();
+        Path(const IntRect&, Type = Rectangle);
+        Path(const IntPointArray&);
+        ~Path();
+
+        Path(const Path&);
+        Path& operator=(const Path&);
+
+        bool contains(const IntPoint&) const;
+        IntRect boundingRect() const;
+
+        void translate(int deltaX, int deltaY);
+
+    private:
+#if __APPLE__
+        CGPathRef m_path;
+#endif
+    };
+
+}
+
+#endif

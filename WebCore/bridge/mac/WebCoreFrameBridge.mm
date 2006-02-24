@@ -42,7 +42,6 @@
 #import "FoundationExtras.h"
 #import "KWQLoader.h"
 #import "KWQPageState.h"
-#import "KWQPrinter.h"
 #import "KWQRenderTreeDebug.h"
 #import "KWQTextCodec.h"
 #import "KWQView.h"

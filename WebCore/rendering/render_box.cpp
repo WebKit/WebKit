@@ -42,7 +42,6 @@
 #include <FrameView.h>
 #include <assert.h>
 #include <qpainter.h>
-#include <qpalette.h>
 
 namespace WebCore {
 
@@ -432,15 +431,14 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const Color& c, const Backg
         if (isTransparent)
             canvas()->view()->useSlowRepaints(); // The parent must show behind the child.
         else
-            bgColor = canvas()->view()->palette().active().color(QColorGroup::Base);
+            bgColor = Color::white;
     }
 
     // Paint the color first underneath all images.
     if (!bgLayer->next() && bgColor.isValid() && bgColor.alpha() > 0) {
-        // If we have an alpha and we are painting the root element, go ahead and blend with our default
-        // background color (typically white).
+        // If we have an alpha and we are painting the root element, go ahead and blend with white.
         if (bgColor.alpha() < 0xFF && isRoot() && !canvas()->view()->isTransparent())
-            p->fillRect(_tx, clipy, w, cliph, canvas()->view()->palette().active().color(QColorGroup::Base));
+            p->fillRect(_tx, clipy, w, cliph, Color(Color::white));
         p->fillRect(_tx, clipy, w, cliph, bgColor);
     }
     

@@ -45,7 +45,7 @@ public:
     QLineEdit(Type);
     ~QLineEdit();
 
-    virtual void setPalette(const QPalette &);
+    void setColors(const Color& background, const Color& foreground);
 
     void setAlignment(AlignmentFlags);
 

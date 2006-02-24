@@ -574,15 +574,15 @@ IntRect HTMLAreaElementImpl::getRect(RenderObject* obj) const
 {
     int dx, dy;
     obj->absolutePosition(dx, dy);
-    QRegion region = getRegion(lastw,lasth);
-    region.translate(dx, dy);
-    return region.boundingRect();
+    Path p = getRegion(lastw,lasth);
+    p.translate(dx, dy);
+    return p.boundingRect();
 }
 
-QRegion HTMLAreaElementImpl::getRegion(int width, int height) const
+Path HTMLAreaElementImpl::getRegion(int width, int height) const
 {
     if (!m_coords)
-        return QRegion();
+        return Path();
 
     // If element omits the shape attribute, select shape based on number of coordinates.
     Shape shape = m_shape;
@@ -602,15 +602,15 @@ QRegion HTMLAreaElementImpl::getRegion(int width, int height) const
                 IntPointArray points(numPoints);
                 for (int i = 0; i < numPoints; ++i)
                     points.setPoint(i, m_coords[i * 2].calcMinValue(width), m_coords[i * 2 + 1].calcMinValue(height));
-                return QRegion(points);
+                return Path(points);
             }
             break;
         case Circle:
             if (m_coordsLen >= 3) {
                 Length radius = m_coords[2];
                 int r = kMin(radius.calcMinValue(width), radius.calcMinValue(height));
-                return QRegion(m_coords[0].calcMinValue(width) - r, m_coords[1].calcMinValue(height) - r,
-                    2 * r, 2 * r, QRegion::Ellipse);
+                return Path(IntRect(m_coords[0].calcMinValue(width) - r, m_coords[1].calcMinValue(height) - r,
+                    2 * r, 2 * r), Path::Ellipse);
             }
             break;
         case Rect:
@@ -619,16 +619,16 @@ QRegion HTMLAreaElementImpl::getRegion(int width, int height) const
                 int y0 = m_coords[1].calcMinValue(height);
                 int x1 = m_coords[2].calcMinValue(width);
                 int y1 = m_coords[3].calcMinValue(height);
-                return QRegion(x0, y0, x1 - x0, y1 - y0);
+                return Path(IntRect(x0, y0, x1 - x0, y1 - y0));
             }
             break;
         case Default:
-            return QRegion(0, 0, width, height);
+            return Path(IntRect(0, 0, width, height));
         case Unknown:
             break;
     }
 
-    return QRegion();
+    return Path();
 }
 
 DOMString HTMLAreaElementImpl::accessKey() const

@@ -26,7 +26,6 @@
 #include "DocumentImpl.h"
 #include "FrameView.h"
 #include "render_layer.h"
-#include <qpalette.h>
 
 namespace WebCore {
 
@@ -194,12 +193,12 @@ void RenderCanvas::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
         return;
 
     // This code typically only executes if the root element's visibility has been set to hidden.
-    // Only fill with a base color (e.g., white) if we're the root document, since iframes/frames with
+    // Only fill with white if we're the root document, since iframes/frames with
     // no background in the child document should show the parent's background.
     if (elt || view()->isTransparent())
         view()->useSlowRepaints(); // The parent must show behind the child.
     else
-        i.p->fillRect(i.r, view()->palette().active().color(QColorGroup::Base));
+        i.p->fillRect(i.r, Color(Color::white));
 }
 
 void RenderCanvas::repaintViewRectangle(const IntRect& ur, bool immediate)

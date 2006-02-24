@@ -29,7 +29,6 @@
 #include "KWQObject.h"
 
 class QFont;
-class QPalette;
 
 #if __APPLE__
 #ifdef __OBJC__
@@ -95,9 +94,6 @@ namespace WebCore {
         virtual bool checksDescendantsForFocus() const;
 
         virtual FocusPolicy focusPolicy() const;
-
-        const QPalette& palette() const;
-        virtual void setPalette(const QPalette&);
 
         QFont font() const;
         virtual void setFont(const QFont&);

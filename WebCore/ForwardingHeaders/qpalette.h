@@ -1,1 +1,0 @@
-#include "KWQPalette.h"

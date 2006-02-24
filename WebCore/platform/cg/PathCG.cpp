@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,69 +24,74 @@
  */
 
 #include "config.h"
-#include "KWQRegion.h"
+#include "Path.h"
 
+#include "IntPointArray.h"
+#include "IntRect.h"
 #include <ApplicationServices/ApplicationServices.h>
 
-QRegion::QRegion(const IntRect &rect)
+namespace WebCore {
+
+Path::Path()
+    : m_path(0)
 {
-    path = CGPathCreateMutable();
-    CGPathAddRect(path, 0, rect);
 }
 
-QRegion::QRegion(int x, int y, int w, int h, RegionType t)
+Path::Path(const IntRect& r, Type t)
 {
-    path = CGPathCreateMutable();
+    CGMutablePathRef path = CGPathCreateMutable();
     if (t == Rectangle)
-        CGPathAddRect(path, 0, CGRectMake(x, y, w, h));
+        CGPathAddRect(path, 0, r);
     else // Ellipse
-        CGPathAddEllipseInRect(path, 0, CGRectMake(x, y, w, h));
+        CGPathAddEllipseInRect(path, 0, r);
+    m_path = path;
 }
 
-QRegion::QRegion(const IntPointArray &arr)
+Path::Path(const IntPointArray& arr)
 {
-    path = CGPathCreateMutable();
+    CGMutablePathRef path = CGPathCreateMutable();
     CGPathMoveToPoint(path, 0, arr[0].x(), arr[0].y());
     for (uint i = 1; i < arr.count(); ++i)
         CGPathAddLineToPoint(path, 0, arr[i].x(), arr[i].y());
     CGPathCloseSubpath(path);
+    m_path = path;
 }
 
-QRegion::~QRegion()
+Path::~Path()
 {
-    CGPathRelease(path);
+    CGPathRelease(m_path);
 }
 
-QRegion::QRegion(const QRegion &other)
-    : path(CGPathCreateMutableCopy(other.path))
+Path::Path(const Path& other)
+    : m_path(CGPathCreateCopy(other.m_path))
 {
 }
 
-QRegion &QRegion::operator=(const QRegion &other)
+Path& Path::operator=(const Path& other)
 {
-    if (path == other.path) {
-        return *this;
-    }
-    CGPathRelease(path);
-    path = CGPathCreateMutableCopy(other.path);
+    CGPathRef path = CGPathCreateCopy(other.m_path);
+    CGPathRelease(m_path);
+    m_path = path;
     return *this;
 }
 
-bool QRegion::contains(const IntPoint &point) const
+bool Path::contains(const IntPoint& point) const
 {
-    return CGPathContainsPoint(path, 0, point, false);
+    return CGPathContainsPoint(m_path, 0, point, false);
 }
 
-void QRegion::translate(int deltaX, int deltaY)
+void Path::translate(int deltaX, int deltaY)
 {
     CGAffineTransform translation = CGAffineTransformMake(1, 0, 0, 1, deltaX, deltaY);
     CGMutablePathRef newPath = CGPathCreateMutable();
-    CGPathAddPath(newPath, &translation, path);
-    CGPathRelease(path);
-    path = newPath;
+    CGPathAddPath(newPath, &translation, m_path);
+    CGPathRelease(m_path);
+    m_path = newPath;
 }
 
-IntRect QRegion::boundingRect() const
+IntRect Path::boundingRect() const
 {
-    return path ? enclosingIntRect(CGPathGetBoundingBox(path)) : IntRect();
+    return m_path ? enclosingIntRect(CGPathGetBoundingBox(m_path)) : IntRect();
+}
+
 }

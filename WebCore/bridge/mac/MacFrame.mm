@@ -45,7 +45,6 @@
 #import "KWQKJobClasses.h"
 #import "KWQLogging.h"
 #import "KWQPageState.h"
-#import "KWQPrinter.h"
 #import "KWQRegExp.h"
 #import "KWQScrollBar.h"
 #import "KWQTextCodec.h"
@@ -1701,7 +1700,7 @@ void MacFrame::khtmlMouseMoveEvent(MouseEventWithHitTestResults *event)
 
         if (_mouseDownMayStartDrag) {
             // We are starting a text/image/url drag, so the cursor should be an arrow
-            d->m_view->viewport()->setCursor(pointerCursor());
+            d->m_view->setCursor(pointerCursor());
             
             NSPoint dragLocation = [_currentEvent locationInWindow];
             if (dragHysteresisExceeded(dragLocation.x, dragLocation.y)) {

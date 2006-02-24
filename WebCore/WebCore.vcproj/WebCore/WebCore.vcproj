@@ -335,10 +335,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQPrinter.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQPtrDict.h"
 				>
 			</File>

@@ -35,7 +35,6 @@
 #import "WebCoreFrameView.h"
 #import "WebCoreView.h"
 #import "render_replaced.h"
-#import <qpalette.h>
 
 namespace WebCore {
 
@@ -46,7 +45,6 @@ class WidgetPrivate
 {
 public:
     QFont font;
-    QPalette pal;
     NSView* view;
     bool visible;
     bool mustStayInWindow;
@@ -213,16 +211,6 @@ Widget::FocusPolicy Widget::focusPolicy() const
     KWQ_UNBLOCK_EXCEPTIONS;
     
     return TabFocus;
-}
-
-const QPalette& Widget::palette() const
-{
-    return data->pal;
-}
-
-void Widget::setPalette(const QPalette &palette)
-{
-    data->pal = palette;
 }
 
 QFont Widget::font() const

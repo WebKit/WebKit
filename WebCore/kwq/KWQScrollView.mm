@@ -59,11 +59,6 @@
 
 @end
 
-Widget* QScrollView::viewport() const
-{
-    return const_cast<QScrollView *>(this);
-}
-
 int QScrollView::visibleWidth() const
 {
     NSScrollView *view = (NSScrollView *)getView();
@@ -180,16 +175,6 @@ int QScrollView::scrollYOffset() const
     return 0;
 }
 
-int QScrollView::childX(Widget* w)
-{
-    return w->x();
-}
-
-int QScrollView::childY(Widget* w)
-{
-    return w->y();
-}
-
 void QScrollView::scrollBy(int dx, int dy)
 {
     setContentsPos(contentsX() + dx, contentsY() + dy);
@@ -299,30 +284,6 @@ QScrollView::hScrollBarMode() const
     KWQ_UNBLOCK_EXCEPTIONS;
 
     return Auto;
-}
-
-bool QScrollView::hasVerticalScrollBar() const
-{
-    NSScrollView *view = (NSScrollView *)getView();
-    
-    KWQ_BLOCK_EXCEPTIONS;
-    if ([view _KWQ_isScrollView])
-        return  [view hasVerticalScroller];
-    KWQ_UNBLOCK_EXCEPTIONS;
-
-    return false;
-}
-
-bool QScrollView::hasHorizontalScrollBar() const
-{
-    NSScrollView *view = (NSScrollView *)getView();
-    
-    KWQ_BLOCK_EXCEPTIONS;
-    if ([view _KWQ_isScrollView])
-        return [view hasHorizontalScroller];
-    KWQ_UNBLOCK_EXCEPTIONS;
-
-    return false;
 }
 
 void QScrollView::suppressScrollBars(bool suppressed,  bool repaintOnUnsuppress)

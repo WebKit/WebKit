@@ -382,10 +382,7 @@ void RenderWidget::paint(PaintInfo& i, int _tx, int _ty)
     // Move the widget if necessary.  We normally move and resize widgets during layout, but sometimes
     // widgets can move without layout occurring (most notably when you scroll a document that
     // contains fixed positioned elements).
-    int newX = _tx + borderLeft() + paddingLeft();
-    int newY = _ty + borderTop() + paddingTop();
-    if (m_view->childX(m_widget) != newX || m_view->childY(m_widget) != newY)
-        m_widget->move(newX, newY);
+    m_widget->move(_tx + borderLeft() + paddingLeft(), _ty + borderTop() + paddingTop());
     
     // Tell the widget to paint now.  This is the only time the widget is allowed
     // to paint itself.  That way it will composite properly with z-indexed layers.

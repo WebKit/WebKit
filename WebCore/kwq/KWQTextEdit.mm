@@ -30,7 +30,6 @@
 #import "KWQExceptions.h"
 #import "KWQFont.h"
 #import "KWQLineEdit.h"
-#import "KWQPalette.h"
 #import "KWQTextArea.h"
 
 using DOM::DOMString;
@@ -391,10 +390,8 @@ bool QTextEdit::checksDescendantsForFocus() const
     return true;
 }
 
-void QTextEdit::setPalette(const QPalette &palette)
+void QTextEdit::setColors(const Color& background, const Color& foreground)
 {
-    Widget::setPalette(palette);
-
     KWQTextArea *textArea = static_cast<KWQTextArea *>(getView());
 
     KWQ_BLOCK_EXCEPTIONS;
@@ -404,13 +401,13 @@ void QTextEdit::setPalette(const QPalette &palette)
     // as described in <rdar://problem/3854383>.  We now call setDrawsBackground:NO when the background color is completely 
     // transparent.  This does not solve the problem for translucent background colors for textareas <rdar://problem/3865161>.
 
-    [textArea setTextColor:nsColor(palette.foreground())];
+    [textArea setTextColor:nsColor(foreground)];
 
-    Color background = palette.background();
-    if (!background.isValid())
-        background = Color::white;
-    [textArea setBackgroundColor:nsColor(background)];
-    [textArea setDrawsBackground:background.alpha() != 0];
+    Color bg = background;
+    if (!bg.isValid())
+        bg = Color::white;
+    [textArea setBackgroundColor:nsColor(bg)];
+    [textArea setDrawsBackground:bg.alpha() != 0];
 
     KWQ_UNBLOCK_EXCEPTIONS;
 }

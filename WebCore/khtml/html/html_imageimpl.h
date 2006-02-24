@@ -26,9 +26,9 @@
 #define HTML_IMAGEIMPL_H
 
 #include "CachedImage.h"
+#include "Path.h"
 #include "html_inlineimpl.h"
 #include "render_object.h"
-#include <qregion.h>
 
 namespace WebCore {
 
@@ -195,8 +195,8 @@ public:
     void setTarget( const DOMString & );
 
 protected:
-    QRegion getRegion(int width_, int height) const;
-    QRegion region;
+    Path getRegion(int width, int height) const;
+    Path region;
     Length* m_coords;
     int m_coordsLen;
     int lastw, lasth;

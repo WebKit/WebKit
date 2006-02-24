@@ -26,23 +26,22 @@
 #include "config.h"
 #import "KWQPainter.h"
 
-#import <kxmlcore/Assertions.h>
-#import <kxmlcore/Vector.h>
 #import "Brush.h"
+#import "FloatRect.h"
+#import "FoundationExtras.h"
+#import "Image.h"
+#import "IntPointArray.h"
 #import "KWQExceptions.h"
 #import "KWQFont.h"
-#import "FoundationExtras.h"
-#import "Pen.h"
-#import "Image.h"
-#import "FloatRect.h"
-#import "KWQPrinter.h"
-#import "KWQRegion.h"
 #import "KWQFontMetrics.h"
+#import "Pen.h"
 #import "WebCoreGraphicsBridge.h"
 #import "WebCoreImageRenderer.h"
 #import "WebCoreImageRendererFactory.h"
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
+#import <kxmlcore/Assertions.h>
+#import <kxmlcore/Vector.h>
 
 #if SVG_SUPPORT
 #import "kcanvas/device/quartz/KRenderingDeviceQuartz.h"
@@ -59,7 +58,6 @@ struct QPState {
     QFont font;
     Pen pen;
     WebCore::Brush brush;
-    QRegion clip;
     bool paintingDisabled;
 };
 

@@ -1,3 +1,65 @@
+2006-02-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - removed QPalette, QRegion, QPrinter
+        - added Path to replace QRegion
+        - removed unused QScrollView functions
+
+        * ForwardingHeaders/qpalette.h: Removed.
+        * kwq/KWQPalette.h: Removed.
+        * kwq/KWQPalette.mm: Removed.
+        * kwq/KWQPrinter.h: Removed.
+        * kwq/KWQRegion.cpp: Removed.
+        * kwq/KWQRegion.h: Removed.
+
+        * platform/Path.h: Added. Replaces QRegion.
+        * platform/cg: Added.
+        * platform/cg/PathCG.cpp: Added.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Updated for file changes.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * bridge/mac/MacFrame.mm: Removed use of KWQPrinter.h.
+        (WebCore::MacFrame::khtmlMouseMoveEvent): Removed use of viewport().
+        * bridge/mac/WebCoreFrameBridge.mm: Removed use of KWQPrinter.h.
+        * khtml/html/html_imageimpl.cpp:
+        (WebCore::HTMLAreaElementImpl::getRect): Replaced QRegion with Path.
+        (WebCore::HTMLAreaElementImpl::getRegion): Ditto.
+        * khtml/html/html_imageimpl.h: Ditto.
+        * kwq/KWQPainter.mm: Removed use of QRegion.
+        * page/Frame.cpp: (WebCore::Frame::~Frame): Removed use of viewport().
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView): Ditto.
+        (WebCore::FrameView::viewportMouseMoveEvent): Ditto.
+        * rendering/render_frames.cpp: (WebCore::RenderFrameSet::userResize): Ditto.
+        * rendering/render_layer.cpp: (WebCore::RenderLayer::scrollRectToVisible): Ditto.
+
+        * kwq/KWQScrollView.h: Removed viewport(), hasVerticalScrollBar(),
+        hasHorizontalScrollBar(), childX(), childY().
+        * kwq/KWQScrollView.mm: Ditto.
+
+        * rendering/render_box.cpp: (WebCore::RenderBox::paintBackgroundExtended):
+        Removed use of QPalette that always yields white.
+        * rendering/render_canvas.cpp: (WebCore::RenderCanvas::paintBoxDecorations):
+        Ditto.
+
+        * platform/Widget.h:
+        * platform/mac/WidgetMac.mm: Removed palette() and setPalette().
+
+        * kwq/KWQLineEdit.h: Replaced setPalette with setColors.
+        * kwq/KWQLineEdit.mm: (QLineEdit::setColors): Replaced setPalette.
+        * kwq/KWQTextEdit.h: Ditto.
+        * kwq/KWQTextEdit.mm: (QTextEdit::setColors): Ditto.
+
+        * rendering/render_form.cpp:
+        (WebCore::RenderFormElement::updateFromElement): Removed call to setPalette.
+        (WebCore::RenderLineEdit::updateFromElement): Added call to setColors.
+        (WebCore::RenderTextArea::updateFromElement): Ditto.
+
+        * rendering/render_replaced.cpp: (WebCore::RenderWidget::paint):
+        Removed use of childX and childY functions.
+
 2006-02-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

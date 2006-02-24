@@ -41,7 +41,6 @@
 #include "dom2_eventsimpl.h"
 #include "helper.h"
 #include <klocale.h>
-#include <qpalette.h>
 #include <qcombobox.h>
 
 namespace WebCore {
@@ -80,8 +79,6 @@ void RenderFormElement::setStyle(RenderStyle* s)
 void RenderFormElement::updateFromElement()
 {
     m_widget->setEnabled(!element()->disabled());
-
-    m_widget->setPalette(QPalette(style()->backgroundColor(), style()->color()));
 }
 
 void RenderFormElement::layout()
@@ -306,6 +303,8 @@ void RenderLineEdit::updateFromElement()
         w->setAutoSaveName(e->getAttribute(autosaveAttr));
         w->setMaxResults(e->maxResults());
     }
+
+    w->setColors(style()->backgroundColor(), style()->color());
 
     RenderFormElement::updateFromElement();
 }
@@ -1050,6 +1049,8 @@ void RenderTextArea::updateFromElement()
         e->setValueMatchesRenderer();
         m_dirty = false;
     }
+
+    w->setColors(style()->backgroundColor(), style()->color());
 
     RenderFormElement::updateFromElement();
 }

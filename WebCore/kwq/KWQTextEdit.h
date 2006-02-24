@@ -31,8 +31,7 @@
 #include "KWQSignal.h"
 #include "KWQPainter.h"
 
-class QTextEdit : public QScrollView
-{
+class QTextEdit : public QScrollView {
  public:
     typedef enum { 
         NoWrap,
@@ -46,7 +45,7 @@ class QTextEdit : public QScrollView
     QTextEdit(Widget *parent);
     ~QTextEdit();
 
-    virtual void setPalette(const QPalette &);
+    void setColors(const Color& background, const Color& foreground);
 
     void setAlignment(AlignmentFlags);
     void setLineHeight(int lineHeight);
