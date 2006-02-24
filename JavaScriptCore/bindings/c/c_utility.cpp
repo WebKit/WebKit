@@ -25,13 +25,13 @@
  */
 
 #include "config.h"
+#include "c_utility.h"
 
 #include "JSType.h"
-#include "c_utility.h"
+#include "NP_jsobject.h"
 #include "c_instance.h" 
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
-#include "NP_jsobject.h"
 
 namespace KJS { namespace Bindings {
 

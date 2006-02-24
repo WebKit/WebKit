@@ -1,3 +1,10 @@
+2006-02-23  Darin Adler  <darin@apple.com>
+
+        - try to fix buildbot failure
+
+        * bindings/c/c_utility.cpp: Touch this file, which seems to not have been
+        recompiled after additional inlining was introduced (Xcode bug?).
+
 2006-02-23  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin, Maciej.
