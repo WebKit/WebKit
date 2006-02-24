@@ -1,3 +1,88 @@
+2006-02-24  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by beth.
+
+        Removed WebCore:: prefixes added using namespace WebCore, fixes win32 build.
+
+        * platform/win/TemporaryLinkStubs.cpp:
+        (QPainter::save):
+        (Widget::enableFlushDrawing):
+        (QPainter::drawHighlightForText):
+        (QTextEdit::textWithHardLineBreaks):
+        (QPainter::setPen):
+        (QPainter::selectedTextBackgroundColor):
+        (QPainter::fontMetrics):
+        (Widget::show):
+        (QLineEdit::setWritingDirection):
+        (KWQFileButton::sizeForCharacterWidth):
+        (QTextEdit::sizeWithColumnsAndRows):
+        (iBeamCursor):
+        (QPainter::misspellingLineThickness):
+        (westResizeCursor):
+        (Widget::isEnabled):
+        (northWestResizeCursor):
+        (QPainter::drawEllipse):
+        (southWestResizeCursor):
+        (Widget::focusPolicy):
+        (waitCursor):
+        (QPainter::endTransparencyLayer):
+        (ScrollView::addChild):
+        (Widget::~Widget):
+        (QListBox::sizeForNumberOfLines):
+        (FrameView::updateBorder):
+        (QPainter::drawLineForText):
+        (QPainter::QPainter):
+        (QComboBox::focusPolicy):
+        (QPainter::drawImageAtPoint):
+        (QPainter::clearShadow):
+        (eastResizeCursor):
+        (QFontMetrics::boundingRect):
+        (QPainter::beginTransparencyLayer):
+        (northEastResizeCursor):
+        (Widget::frameGeometry):
+        (QPainter::addFocusRingRect):
+        (QPainter::restore):
+        (Widget::setEnabled):
+        (QPainter::font):
+        (QPainter::pen):
+        (crossCursor):
+        (Widget::setIsSelected):
+        (handCursor):
+        (QLineEdit::text):
+        (Widget::unlockDrawingFocus):
+        (QPainter::paintingDisabled):
+        (northResizeCursor):
+        (Widget::lockDrawingFocus):
+        (QPainter::drawLine):
+        (QPainter::setBrush):
+        (QPainter::drawText):
+        (QLineEdit::sizeForCharacterWidth):
+        (Cursor::~Cursor):
+        (QFontMetrics::selectionRectForText):
+        (southResizeCursor):
+        (moveCursor):
+        (FrameView::isFrameView):
+        (helpCursor):
+        (QTextEdit::setWritingDirection):
+        (Widget::setDrawingAlpha):
+        (southEastResizeCursor):
+        (QPainter::drawScaledAndTiledImage):
+        (QPainter::drawImage):
+        (QComboBox::setWritingDirection):
+        (QComboBox::sizeHint):
+        (QPainter::drawRect):
+        (QPainter::drawTiledImage):
+        (QPainter::clearFocusRing):
+        (Widget::Widget):
+        (QTextEdit::text):
+        (QPainter::drawImageInRect):
+        (Widget::disableFlushDrawing):
+        (QPainter::initFocusRing):
+        (QPainter::drawLineForMisspelling):
+        (QComboBox::frameGeometry):
+        (QListBox::setWritingDirection):
+        (ScrollView::updateContents):
+
 2006-02-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.
