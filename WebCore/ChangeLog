@@ -1,5 +1,18 @@
 2006-02-23  Darin Adler  <darin@apple.com>
 
+        - fix Windows build
+
+        * platform/win/TemporaryLinkStubs.cpp: Removed QPalette-related stubs
+
+        - remove unused forwarding headers
+
+        * ForwardingHeaders/kurl.h: Removed.
+        * ForwardingHeaders/qlist.h: Removed.
+        * ForwardingHeaders/qregion.h: Removed.
+        * ForwardingHeaders/qsortedlist.h: Removed.
+
+2006-02-23  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - removed QPalette, QRegion, QPrinter

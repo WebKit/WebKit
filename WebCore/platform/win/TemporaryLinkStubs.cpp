@@ -25,7 +25,6 @@
 #include "dom2_events.h"
 #include "KWQKJavaAppletWidget.h"
 #include "KWQScrollBar.h"
-#include "KWQPalette.h"
 
 static void notImplemented() { puts("Not yet implemented"); abort(); }
 void  QLineEdit::selectAll(void) { notImplemented(); }
@@ -77,7 +76,6 @@ WebCore::Cursor::Cursor(class WebCore::Cursor const &) { notImplemented(); }
 enum WebCore::Widget::FocusPolicy  WebCore::Widget::focusPolicy(void)const  { notImplemented(); return NoFocus; }
 void  QScrollView::removeChild(class WebCore::Widget *) { notImplemented(); }
 void  QTextEdit::selectAll(void) { notImplemented(); }
-void  WebCore::Widget::setPalette(class QPalette const &) { notImplemented(); }
 void  WebCore::QPainter::fillRect(int,int,int,int,class WebCore::Brush const &) { notImplemented(); }
 class WebCore::Cursor const & __cdecl WebCore::waitCursor(void) { notImplemented(); return localCursor; }
 void  WebCore::QPainter::endTransparencyLayer(void) { notImplemented(); }
@@ -139,8 +137,6 @@ class QFont const &  WebCore::QPainter::font(void)const  { notImplemented(); ret
 void  QTextEdit::setAlignment(enum Qt::AlignmentFlags) { notImplemented(); }
 void  QLineEdit::setCursorPosition(int) { notImplemented(); }
 void  WebCore::QPainter::drawText(int,int,int,int,int,int,int,class QString const &) { notImplemented(); }
-static QPalette localPalette;
-class QPalette const &  WebCore::Widget::palette(void)const  { notImplemented(); return localPalette; }
 static WebCore::Pen localPen;
 class WebCore::Pen const &  WebCore::QPainter::pen(void)const  { notImplemented(); return localPen; }
 KJavaAppletWidget::KJavaAppletWidget(class WebCore::IntSize const &,class WebCore::Frame *,class KXMLCore::HashMap<class WebCore::String,class WebCore::String,struct KXMLCore::StrHash<class WebCore::String>,struct KXMLCore::HashTraits<class WebCore::String>,struct KXMLCore::HashTraits<class WebCore::String> > const &) { notImplemented(); }
