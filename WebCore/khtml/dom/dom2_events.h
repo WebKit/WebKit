@@ -185,18 +185,17 @@ public:
  * associated with Keyboard events.
  *
  */
-class KeyboardEvent
-
-{
+class KeyboardEvent {
 
 public:
-
     // KeyLocationCode
-    static const unsigned DOM_KEY_LOCATION_STANDARD      = 0x00;
-    static const unsigned DOM_KEY_LOCATION_LEFT          = 0x01;
-    static const unsigned DOM_KEY_LOCATION_RIGHT         = 0x02;
-    static const unsigned DOM_KEY_LOCATION_NUMPAD        = 0x03;
-    static const unsigned DOM_KEY_LOCATION_UNKNOWN       = 0x04;
+    enum {
+        DOM_KEY_LOCATION_STANDARD      = 0x00,
+        DOM_KEY_LOCATION_LEFT          = 0x01,
+        DOM_KEY_LOCATION_RIGHT         = 0x02,
+        DOM_KEY_LOCATION_NUMPAD        = 0x03,
+        DOM_KEY_LOCATION_UNKNOWN       = 0x04
+    };
 };
 
 }; //namespace

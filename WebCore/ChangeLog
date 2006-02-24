@@ -1,3 +1,12 @@
+2006-02-24  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Fix mac build by changing constants to an enum.
+
+        * khtml/dom/dom2_events.h:
+        (DOM::KeyboardEvent::):
+
 2006-02-24  David Hyatt  <hyatt@apple.com>
 
         Move rendering/font to platform/Font.
