@@ -1,3 +1,14 @@
+2006-02-24  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed and landed by Anders.
+        
+        Prevent rendering to the offscreen window. -[NSWindow displayIfNeeded] was
+        getting called from the run loop, making the view render each test and thus slowing
+        down the tests.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (main): Set the offscreen window to not autodisplay.
+
 2006-02-23  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

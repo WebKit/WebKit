@@ -239,6 +239,7 @@ int main(int argc, const char *argv[])
     NSWindow *window = [[NSWindow alloc] initWithContentRect:windowRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES];
     [[window contentView] addSubview:webView];
     [window orderBack:nil];
+    [window setAutodisplay:NO];
 
     [webView setContinuousSpellCheckingEnabled:YES];
     
