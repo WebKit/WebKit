@@ -1703,6 +1703,10 @@
 					RelativePath="..\..\platform\win\SystemTimeWin.cpp"
 					>
 				</File>
+				<File
+					RelativePath="..\..\platform\win\TemporaryLinkStubs.cpp"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="image-decoders"

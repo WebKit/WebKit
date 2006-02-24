@@ -42,7 +42,7 @@ public:
 
     virtual void setTitle(const String&);
 
-    virtual void urlSelected(const KURL& url, int button, int state, const URLArgs& args);
+    virtual void urlSelected(const KURL& url, const URLArgs& args);
 
     virtual ObjectContentType objectContentType(const KURL& url, const QString& mimeType);
     virtual Plugin* createPlugin(const KURL&, const QStringList& paramNames, const QStringList& paramValues, const QString& mimeType);
@@ -79,7 +79,7 @@ public:
 
     virtual bool lastEventIsMouseUp() const;
 
-    virtual bool passSubframeEventToSubframe(NodeImpl::MouseEvent&);
+    virtual bool passSubframeEventToSubframe(MouseEventWithHitTestResults &);
     virtual bool passWheelEventToChildWidget(NodeImpl*);
     
     virtual void clearRecordedFormValues();

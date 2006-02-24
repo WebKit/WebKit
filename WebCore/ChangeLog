@@ -1,6 +1,180 @@
 2006-02-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
+
+        - add temporary stubs that call abort() for functions only called from render and editing code 
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7429
+
+        This gets rid of a couple hundred link errors.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * kwq/KWQFontMetrics.h:
+        * kwq/KWQSignal.h:
+        (KWQSignal::KWQSignal):
+        * platform/win/TemporaryLinkStubs.cpp: Added.
+        (notImplemented):
+        (QLineEdit::selectAll):
+        (WebCore::QPainter::save):
+        (WebCore::Widget::enableFlushDrawing):
+        (WebCore::QPainter::drawHighlightForText):
+        (QFont::setPrinterFont):
+        (QTextEdit::textWithHardLineBreaks):
+        (QLineEdit::cursorPosition):
+        (WebCore::QPainter::setPen):
+        (WebCore::QPainter::selectedTextBackgroundColor):
+        (WebCore::QPainter::fontMetrics):
+        (WebCore::Widget::show):
+        (QFont::setItalic):
+        (QSlider::setValue):
+        (QLineEdit::addSearchResult):
+        (KWQFileButton::click):
+        (QLineEdit::setWritingDirection):
+        (KWQFileButton::sizeForCharacterWidth):
+        (QTextEdit::sizeWithColumnsAndRows):
+        (WebCore::iBeamCursor):
+        (QComboBox::clear):
+        (WebCore::QPainter::misspellingLineThickness):
+        (QLineEdit::maxLength):
+        (WebCore::westResizeCursor):
+        (WebCore::Widget::isEnabled):
+        (WebCore::northWestResizeCursor):
+        (QTextEdit::selectionEnd):
+        (QFont::determinePitch):
+        (QTextEdit::setScrollBarModes):
+        (WebCore::QPainter::drawEllipse):
+        (WebCore::southWestResizeCursor):
+        (QTextEdit::setReadOnly):
+        (QListBox::appendItem):
+        (WebCore::Widget::focusPolicy):
+        (QTextEdit::selectAll):
+        (WebCore::waitCursor):
+        (WebCore::QPainter::endTransparencyLayer):
+        (QScrollView::addChild):
+        (QTextEdit::setDisabled):
+        (QScrollBar::scroll):
+        (WebCore::Widget::~Widget):
+        (QListBox::sizeForNumberOfLines):
+        (QScrollView::resizeContents):
+        (QLineEdit::selectionStart):
+        (QLineEdit::QLineEdit):
+        (WebCore::FrameView::updateBorder):
+        (QLineEdit::hasSelectedText):
+        (QListBox::doneAppendingItems):
+        (QScrollView::inWindow):
+        (QScrollBar::setValue):
+        (QTextEdit::hasSelectedText):
+        (QTextEdit::selectionStart):
+        (QFont::setWeight):
+        (QScrollView::scrollXOffset):
+        (QListBox::isSelected):
+        (QLineEdit::setReadOnly):
+        (WebCore::QPainter::drawLineForText):
+        (QObject::disconnect):
+        (WebCore::QPainter::QPainter):
+        (QComboBox::~QComboBox):
+        (QComboBox::focusPolicy):
+        (WebCore::QPainter::drawImageAtPoint):
+        (WebCore::QPainter::clearShadow):
+        (QTextEdit::setLineHeight):
+        (QMouseEvent::QMouseEvent):
+        (WebCore::eastResizeCursor):
+        (QScrollBar::setKnobProportion):
+        (QFontMetrics::boundingRect):
+        (QTextEdit::setSelectionStart):
+        (WebCore::QPainter::beginTransparencyLayer):
+        (WebCore::northEastResizeCursor):
+        (WebCore::Widget::frameGeometry):
+        (QListBox::setSelected):
+        (WebCore::QPainter::addFocusRingRect):
+        (QTextEdit::setCursorPosition):
+        (WebCore::QPainter::restore):
+        (QFontMetrics::width):
+        (WebCore::Widget::setEnabled):
+        (QTextEdit::setSelectionEnd):
+        (QComboBox::populate):
+        (QScrollView::setStaticBackground):
+        (WebCore::QPainter::font):
+        (QTextEdit::setAlignment):
+        (QLineEdit::setCursorPosition):
+        (WebCore::Widget::palette):
+        (WebCore::QPainter::pen):
+        (QFontMetrics::descent):
+        (QListBox::QListBox):
+        (QFontMetrics::ascent):
+        (QLineEdit::selectedText):
+        (WebCore::crossCursor):
+        (WebCore::Widget::setIsSelected):
+        (WebCore::handCursor):
+        (QLineEdit::text):
+        (WebCore::Widget::unlockDrawingFocus):
+        (QLineEdit::setLiveSearch):
+        (WebCore::QPainter::paintingDisabled):
+        (WebCore::northResizeCursor):
+        (QComboBox::QComboBox):
+        (QSlider::setMaxValue):
+        (WebCore::Widget::lockDrawingFocus):
+        (WebCore::QPainter::drawLine):
+        (WebCore::QPainter::setBrush):
+        (QTextEdit::setSelectionRange):
+        (WebCore::QPainter::drawText):
+        (QScrollView::scrollPointRecursively):
+        (QLineEdit::sizeForCharacterWidth):
+        (WebCore::Cursor::~Cursor):
+        (QFontMetrics::selectionRectForText):
+        (WebCore::southResizeCursor):
+        (QScrollView::suppressScrollBars):
+        (QFontMetrics::checkSelectionPoint):
+        (QTextEdit::getCursorPosition):
+        (WebCore::moveCursor):
+        (WebCore::FrameView::isFrameView):
+        (QScrollBar::setSteps):
+        (QLineEdit::setMaxLength):
+        (QComboBox::baselinePosition):
+        (QComboBox::appendItem):
+        (WebCore::helpCursor):
+        (QTextEdit::setWritingDirection):
+        (WebCore::Widget::setDrawingAlpha):
+        (QSlider::QSlider):
+        (WebCore::southEastResizeCursor):
+        (QScrollView::setVScrollBarMode):
+        (WebCore::QPainter::drawScaledAndTiledImage):
+        (QScrollView::scrollYOffset):
+        (WebCore::QPainter::drawImage):
+        (QComboBox::setCurrentItem):
+        (QFontMetrics::height):
+        (QComboBox::setWritingDirection):
+        (QScrollView::setScrollBarsMode):
+        (QComboBox::sizeHint):
+        (WebCore::QPainter::drawRect):
+        (QFont::setPixelSize):
+        (QLineEdit::setSelection):
+        (QLineEdit::setMaxResults):
+        (QListBox::clear):
+        (QLineEdit::edited):
+        (WebCore::QPainter::drawTiledImage):
+        (WebCore::QPainter::clearFocusRing):
+        (WebCore::Widget::Widget):
+        (QTextEdit::text):
+        (WebCore::QPainter::drawImageInRect):
+        (WebCore::Widget::disableFlushDrawing):
+        (WebCore::QPainter::initFocusRing):
+        (QSlider::setMinValue):
+        (QTextEdit::setWordWrap):
+        (WebCore::QPainter::drawLineForMisspelling):
+        (QSlider::value):
+        (QListBox::setSelectionMode):
+        (QFontMetrics::lineSpacing):
+        (QLineEdit::setEdited):
+        (QComboBox::frameGeometry):
+        (QListBox::setWritingDirection):
+        (QLineEdit::setAlignment):
+        (QScrollView::updateContents):
+        (QFontMetrics::floatWidth):
+        (QScrollView::setHScrollBarMode):
+
+2006-02-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
         
         - Move KURL from kwq to platform, make portable
         http://bugzilla.opendarwin.org/show_bug.cgi?id=7437

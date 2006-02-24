@@ -32,6 +32,9 @@
 class KWQSignal {
 public:
     KWQSignal(QObject *, const char *name);
+#ifdef WIN32_COMPILE_HACK
+    KWQSignal() {}
+#endif
     ~KWQSignal();
     
     void connect(const KWQSlot &);
