@@ -25,7 +25,7 @@
 #define CSS_BASE_H
 
 #include "PlatformString.h"
-#include "dom_qname.h"
+#include "QualifiedName.h"
 #include "Shared.h"
 #include <kxmlcore/Vector.h>
 

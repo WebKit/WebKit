@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+# Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -194,7 +194,7 @@ sub printNamesHeaderFile
 	printLicenseHeader();
 	print "#ifndef DOM_${namespace}NAMES_H\n";
 	print "#define DOM_${namespace}NAMES_H\n\n";
-	print "#include \"dom_qname.h\"\n\n";
+	print "#include \"QualifiedName.h\"\n\n";
 	
 	print "namespace $cppNamespace { namespace ${namespace}Names {\n\n";
 	
@@ -212,18 +212,18 @@ sub printNamesHeaderFile
 	my $lowerNamespace = lc($namespace);
 	print "#if !DOM_${namespace}NAMES_HIDE_GLOBALS\n";
     print "// Namespace\n";
-    print "extern const DOM::AtomicString ${lowerNamespace}NamespaceURI;\n\n";
+    print "extern const WebCore::AtomicString ${lowerNamespace}NamespaceURI;\n\n";
 
 	if (scalar(@tags)) {
     	print "// Tags\n";
-		print "#define DOM_NAMES_DEFINE_TAG_GLOBAL(name) extern const DOM::QualifiedName name##Tag;\n";
+		print "#define DOM_NAMES_DEFINE_TAG_GLOBAL(name) extern const WebCore::QualifiedName name##Tag;\n";
 		print "DOM_${namespace}NAMES_FOR_EACH_TAG(DOM_NAMES_DEFINE_TAG_GLOBAL)\n";
 		print "#undef DOM_NAMES_DEFINE_TAG_GLOBAL\n\n";
     }
 	
 	if (scalar(@attrs)) {
 		print "// Attributes\n";
-		print "#define DOM_NAMES_DEFINE_ATTR_GLOBAL(name) extern const DOM::QualifiedName name##Attr;\n";
+		print "#define DOM_NAMES_DEFINE_ATTR_GLOBAL(name) extern const WebCore::QualifiedName name##Attr;\n";
 		print "DOM_${namespace}NAMES_FOR_EACH_ATTR(DOM_NAMES_DEFINE_ATTR_GLOBAL)\n";
 		print "#undef DOM_NAMES_DEFINE_ATTR_GLOBAL\n\n";
     }
@@ -251,7 +251,7 @@ print "#include \"${namespace}Names.h\"\n\n";
 
 print "namespace $cppNamespace { namespace ${namespace}Names {
 
-using namespace KDOM;
+using namespace WebCore;
 
 // Define a properly-sized array of pointers to avoid static initialization.
 // Use an array of pointers instead of an array of char in case there is some alignment issue.
@@ -363,7 +363,7 @@ printElementIncludes(@tags);
 print <<END
 #include <kxmlcore/HashMap.h>
 
-using namespace KDOM;
+using namespace WebCore;
 using namespace ${cppNamespace}::${namespace}Names;
 
 typedef ${namespace}ElementImpl *(*ConstructorFunc)(DocumentImpl *doc, bool createdByParser);
@@ -427,7 +427,7 @@ print "#ifndef ${namespace}ELEMENTFACTORY_H\n";
 print "#define ${namespace}ELEMENTFACTORY_H\n\n";
 
 print "
-namespace KDOM {
+namespace WebCore {
     class ElementImpl;
     class DocumentImpl;
     class QualifiedName;
@@ -443,8 +443,8 @@ namespace ${cppNamespace}
     class ${namespace}ElementFactory
     {
     public:
-        KDOM::ElementImpl *createElement(const KDOM::QualifiedName& qName, KDOM::DocumentImpl *doc, bool createdByParser = true);
-        static ${namespace}ElementImpl *create${namespace}Element(const KDOM::QualifiedName& qName, KDOM::DocumentImpl *doc, bool createdByParser = true);
+        WebCore::ElementImpl *createElement(const WebCore::QualifiedName& qName, WebCore::DocumentImpl *doc, bool createdByParser = true);
+        static ${namespace}ElementImpl *create${namespace}Element(const WebCore::QualifiedName& qName, WebCore::DocumentImpl *doc, bool createdByParser = true);
     };
 }
 

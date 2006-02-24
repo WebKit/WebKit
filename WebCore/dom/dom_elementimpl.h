@@ -31,8 +31,8 @@
 #include "ContainerNodeImpl.h"
 #include "StringImpl.h"
 #include "css_valueimpl.h"
-#include "dom_qname.h"
-#include "dom_atomicstringlist.h"
+#include "QualifiedName.h"
+#include "AtomicStringList.h"
 
 #if __OBJC__
 #define id id_AVOID_KEYWORD

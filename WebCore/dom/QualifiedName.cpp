@@ -25,7 +25,7 @@
 #define KHTML_QNAME_HIDE_GLOBALS 1
 #endif
 
-#include "dom_qname.h"
+#include "QualifiedName.h"
 #include "StaticConstructors.h"
 #include <kxmlcore/HashSet.h>
 

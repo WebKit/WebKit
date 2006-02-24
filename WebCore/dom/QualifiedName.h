@@ -37,11 +37,11 @@ public:
         AtomicString m_namespace;
     };
 
-    QualifiedName(const AtomicString& p, const AtomicString& l, const AtomicString& n);
+    QualifiedName(const AtomicString& prefix, const AtomicString& localName, const AtomicString& namespaceURI);
     ~QualifiedName();
 
-    QualifiedName(const QualifiedName& other);
-    const QualifiedName& operator=(const QualifiedName& other);
+    QualifiedName(const QualifiedName&);
+    const QualifiedName& operator=(const QualifiedName&);
 
     bool operator==(const QualifiedName& other) const { return m_impl == other.m_impl; }
     bool operator!=(const QualifiedName& other) const { return !(*this == other); }

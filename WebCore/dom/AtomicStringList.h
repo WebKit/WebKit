@@ -19,18 +19,18 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef _DOM_AtomicStringList_h_
-#define _DOM_AtomicStringList_h_
+#ifndef AtomicStringList_h
+#define AtomicStringList_h
 
 #include "PlatformString.h"
 #include "AtomicString.h"
 
-namespace DOM {
+namespace WebCore {
 
 class AtomicStringList {
 public:
-    AtomicStringList() :m_next(0) {}
-    AtomicStringList(const AtomicString& str, AtomicStringList* n = 0) :m_string(str), m_next(n) {}
+    AtomicStringList() : m_next(0) {}
+    AtomicStringList(const AtomicString& str, AtomicStringList* n = 0) : m_string(str), m_next(n) {}
     ~AtomicStringList() { delete m_next; }
     
     AtomicStringList* next() const { return m_next; }

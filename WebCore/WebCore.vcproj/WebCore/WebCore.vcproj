@@ -3043,7 +3043,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\dom_atomicstringlist.h"
+				RelativePath="..\..\dom\AtomicStringList.h"
 				>
 			</File>
 			<File
@@ -3063,11 +3063,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\dom_qname.cpp"
+				RelativePath="..\..\dom\QualifiedName.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\dom_qname.h"
+				RelativePath="..\..\dom\QualifiedName.h"
 				>
 			</File>
 			<File

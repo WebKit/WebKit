@@ -30,7 +30,7 @@
 #include "KWQGuardedPtr.h"
 #include "SegmentedString.h"
 #include "Timer.h"
-#include "dom_qname.h"
+#include "QualifiedName.h"
 #include "xml_tokenizer.h"
 #include <qptrqueue.h>
 

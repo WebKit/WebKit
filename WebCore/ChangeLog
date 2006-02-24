@@ -1,5 +1,29 @@
 2006-02-24  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by mjs.
+
+        Move dom_qname to QualifiedName and dom_atomicstringlist to AtomicStringList.
+
+        * WebCore+SVG/KDOMHeaders.h:
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/css_base.h:
+        * dom/AtomicStringList.h: Added.
+        (WebCore::AtomicStringList::AtomicStringList):
+        * dom/QualifiedName.cpp: Added.
+        * dom/QualifiedName.h: Added.
+        * dom/dom_atomicstringlist.h: Removed.
+        * dom/dom_elementimpl.h:
+        * dom/dom_qname.cpp: Removed.
+        * dom/dom_qname.h: Removed.
+        * editing/RemoveNodeAttributeCommand.h:
+        * editing/SetNodeAttributeCommand.h:
+        * khtml/html/htmlnames.h:
+        * khtml/html/htmltokenizer.h:
+        * ksvg2/scripts/make_names.pl: update for new headers
+
+2006-02-24  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by beth.
 
         Made a few methods on frame pure virtual.

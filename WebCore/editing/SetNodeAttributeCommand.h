@@ -28,7 +28,7 @@
 
 #include "EditCommand.h"
 
-#include "dom_qname.h"
+#include "QualifiedName.h"
 
 namespace khtml {
 

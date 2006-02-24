@@ -11,8 +11,8 @@
 		1A2154EF099A11A800343DF8 /* JSDOMEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2154ED099A11A800343DF8 /* JSDOMEvents.cpp */; };
 		1A69D381085627410009880D /* domparser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A69D37F085627410009880D /* domparser.h */; };
 		1A69D382085627410009880D /* domparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A69D380085627410009880D /* domparser.cpp */; };
-		550A0BC9085F6039007353D6 /* dom_qname.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* dom_qname.cpp */; };
-		550A0BCA085F6039007353D6 /* dom_qname.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* dom_qname.h */; };
+		550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* QualifiedName.cpp */; };
+		550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* QualifiedName.h */; };
 		550A0BCD085F604D007353D6 /* htmlnames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BCB085F604D007353D6 /* htmlnames.cpp */; };
 		550A0BCE085F604D007353D6 /* htmlnames.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BCC085F604D007353D6 /* htmlnames.h */; };
 		651B4D8509AC83370029F1EF /* QStringList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651B4D8309AC83370029F1EF /* QStringList.cpp */; };
@@ -298,7 +298,7 @@
 		93F199C908245E59001E9ABC /* xbl_protohandler.h in Headers */ = {isa = PBXBuildFile; fileRef = BC745A1B05955F390058C893 /* xbl_protohandler.h */; };
 		93F199CA08245E59001E9ABC /* xbl_protoimplementation.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBDB0380597B36E00B83B92 /* xbl_protoimplementation.h */; };
 		93F199CB08245E59001E9ABC /* xbl_binding.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBDB094059A28B100B83B92 /* xbl_binding.h */; };
-		93F199CF08245E59001E9ABC /* dom_atomicstringlist.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3B364705C9D5E200E42902 /* dom_atomicstringlist.h */; };
+		93F199CF08245E59001E9ABC /* AtomicStringList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3B364705C9D5E200E42902 /* AtomicStringList.h */; };
 		93F199D508245E59001E9ABC /* KWQEditCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = BEF7EEA005FF8F0D009717EE /* KWQEditCommand.h */; };
 		93F199DE08245E59001E9ABC /* dom_position.h in Headers */ = {isa = PBXBuildFile; fileRef = BE91FC8B06133666005E3790 /* dom_position.h */; };
 		93F199E008245E59001E9ABC /* KWQSlider.h in Headers */ = {isa = PBXBuildFile; fileRef = BC86FB8D061F5C23006BB822 /* KWQSlider.h */; };
@@ -1112,8 +1112,8 @@
 		5150C2A50702629800AF642C /* WebDashboardRegion.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebDashboardRegion.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51F6A3D50663BF04004D2919 /* html_canvasimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = html_canvasimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51F6A3D60663BF04004D2919 /* html_canvasimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = html_canvasimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		550A0BC7085F6039007353D6 /* dom_qname.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dom_qname.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		550A0BC8085F6039007353D6 /* dom_qname.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = dom_qname.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		550A0BC7085F6039007353D6 /* QualifiedName.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QualifiedName.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		550A0BC8085F6039007353D6 /* QualifiedName.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = QualifiedName.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		550A0BCB085F604D007353D6 /* htmlnames.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = htmlnames.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		550A0BCC085F604D007353D6 /* htmlnames.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = htmlnames.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		55998A5A052B59CC0017A6C1 /* KWQAccObject.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQAccObject.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1916,7 +1916,7 @@
 		BC1A37AA097C715F0019F3D8 /* DOMViews.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DOMViews.h; path = bindings/objc/DOMViews.h; sourceTree = "<group>"; };
 		BC1A37AB097C715F0019F3D8 /* DOMViews.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = DOMViews.mm; path = bindings/objc/DOMViews.mm; sourceTree = "<group>"; };
 		BC1A37AC097C715F0019F3D8 /* DOMViewsInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DOMViewsInternal.h; path = bindings/objc/DOMViewsInternal.h; sourceTree = "<group>"; };
-		BC3B364705C9D5E200E42902 /* dom_atomicstringlist.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = dom_atomicstringlist.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		BC3B364705C9D5E200E42902 /* AtomicStringList.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = AtomicStringList.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC41978E059293F30016347F /* xbl_binding_manager.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = xbl_binding_manager.h; path = xbl/xbl_binding_manager.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC419795059294CA0016347F /* xbl_binding_manager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = xbl_binding_manager.cpp; path = xbl/xbl_binding_manager.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC6B7BAE0993603C0052867B /* Image.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Image.cpp; path = platform/Image.cpp; sourceTree = "<group>"; };
@@ -3677,9 +3677,9 @@
 				ED2BA83B09A24B91006C0AC4 /* DocumentMarker.h */,
 				939885C108B7E3D100E707C4 /* EventNames.cpp */,
 				939885C208B7E3D100E707C4 /* EventNames.h */,
-				550A0BC7085F6039007353D6 /* dom_qname.cpp */,
-				550A0BC8085F6039007353D6 /* dom_qname.h */,
-				BC3B364705C9D5E200E42902 /* dom_atomicstringlist.h */,
+				550A0BC7085F6039007353D6 /* QualifiedName.cpp */,
+				550A0BC8085F6039007353D6 /* QualifiedName.h */,
+				BC3B364705C9D5E200E42902 /* AtomicStringList.h */,
 				F523D2F702DE4476018635CA /* dom_elementimpl.cpp */,
 				F523D2F802DE4476018635CA /* dom_elementimpl.h */,
 				BE91FC8B06133666005E3790 /* dom_position.h */,
@@ -3995,7 +3995,7 @@
 				93F199C908245E59001E9ABC /* xbl_protohandler.h in Headers */,
 				93F199CA08245E59001E9ABC /* xbl_protoimplementation.h in Headers */,
 				93F199CB08245E59001E9ABC /* xbl_binding.h in Headers */,
-				93F199CF08245E59001E9ABC /* dom_atomicstringlist.h in Headers */,
+				93F199CF08245E59001E9ABC /* AtomicStringList.h in Headers */,
 				93F199D508245E59001E9ABC /* KWQEditCommand.h in Headers */,
 				93F199DE08245E59001E9ABC /* dom_position.h in Headers */,
 				93F199E008245E59001E9ABC /* KWQSlider.h in Headers */,
@@ -4009,7 +4009,7 @@
 				93F199F008245E59001E9ABC /* WebCoreView.h in Headers */,
 				93F199F108245E59001E9ABC /* WebDashboardRegion.h in Headers */,
 				1A69D381085627410009880D /* domparser.h in Headers */,
-				550A0BCA085F6039007353D6 /* dom_qname.h in Headers */,
+				550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */,
 				550A0BCE085F604D007353D6 /* htmlnames.h in Headers */,
 				BCEF3435087B563E00BBF833 /* htmlfactory.h in Headers */,
 				A8FD8B87087CB45700DC3707 /* KWQWMatrix.h in Headers */,
@@ -5145,7 +5145,7 @@
 				93F19B0708245E59001E9ABC /* WebCoreView.m in Sources */,
 				93F19B0808245E59001E9ABC /* WebDashboardRegion.m in Sources */,
 				1A69D382085627410009880D /* domparser.cpp in Sources */,
-				550A0BC9085F6039007353D6 /* dom_qname.cpp in Sources */,
+				550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */,
 				550A0BCD085F604D007353D6 /* htmlnames.cpp in Sources */,
 				BCEF3434087B563E00BBF833 /* htmlfactory.cpp in Sources */,
 				A8FD8B86087CB44C00DC3707 /* KWQWMatrix.cpp in Sources */,

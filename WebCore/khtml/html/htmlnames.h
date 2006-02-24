@@ -22,7 +22,7 @@
 #ifndef HTMLNAMES_H
 #define HTMLNAMES_H
 
-#include "dom_qname.h"
+#include "QualifiedName.h"
 
 namespace WebCore { namespace HTMLNames {
 
