@@ -23,8 +23,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x84 [border: (2px solid #0000FF)]
-        RenderText {TEXT} at (14,14) size 748x56
-          text run at (14,14) width 748: "Size check should say: 30px. All text on the first line, and the first two words"
+        RenderText {TEXT} at (14,14) size 754x56
+          text run at (14,14) width 754: "Size check should say: 30px. All text on the first line, and the first two words "
           text run at (14,42) width 433: "of the second line, should appear to be 30px."
       RenderBlock {DIV} at (0,108) size 784x28
         RenderText {TEXT} at (0,0) size 118x28

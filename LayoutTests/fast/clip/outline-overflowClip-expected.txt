@@ -18,4 +18,4 @@ layer at (8,44) size 304x204 backgroundClip at (83,44) size 229x204 clip at (83,
 layer at (60,64) size 105x24 backgroundClip at (83,64) size 82x24 clip at (83,67) size 79x18 outlineClip at (83,44) size 229x204
   RenderBlock (positioned) {DIV} at (52,20) size 105x24 [bgcolor=#EEEEEE] [border: (3px solid #FF0000)]
     RenderText {TEXT} at (3,3) size 99x18
-      text run at (3,3) width 99: "text in inner div"
+      text run at (3,3) width 99: "text in inner div "

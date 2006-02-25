@@ -1,27 +1,23 @@
-﻿<html>
+<html>
 <head>
 <style>
 body { margin: 0; padding: 0 }
 </style>
 </head>
 <body>
-<p contenteditable id='test' STYLE="width: 70px; height: 50px; background-color: green; text-align: justify;">a         a         a</p>
+<p>This is a testcase for a problem where caret rects and the rects returned by firstRectForCharacterRange were incorrect for justified text.  The test sets a caret selection just before the word 'is' in the editable region below.  The pixel output should show the caret in that position.  The test also writes out the rect returned from firstRectForCharacterRange.</p> 
+<p contenteditable id='test' STYLE="width: 70px; height: 50px; background-color: green; text-align: justify;">this&nbsp;&nbsp;&nbsp;&nbsp;<span id="testspan">is</span> justified</p>
 <script type="text/javascript">
 
     if (window.layoutTestController) {
         
         try {
         
-            window.getSelection().setPosition(document.getElementById("test"), 0);
-			
-			rect = textInputController.firstRectForCharacterRange(10, 1);
+            var s = window.getSelection();
+            var e = document.getElementById("testspan");
+            s.setPosition(e, 0);
+            rect = textInputController.firstRectForCharacterRange(9, 1);
             document.write(rect);
-        
-            // the second character 'a' should be at the right border of the box
-            if (rect[0] > 60)
-            	document.write("<p>Success.</p>");
-            else
-            	document.write("<p>Failure (rect: " + rect + ")</p>");
 
 		} catch (ex) {
 			document.write("Exception: " + ex.description);

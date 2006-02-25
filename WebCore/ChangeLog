@@ -1,3 +1,16 @@
+2006-02-24  Graham Dennis  <Graham.Dennis@gmail.com>
+
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7245>
+        caret does not display at the end of some lines in contenteditable divs
+
+        Reviewed by justin
+
+        * khtml/html/HTMLElementImpl.cpp:
+        (WebCore::HTMLElementImpl::setContentEditable):
+        * page/Frame.cpp:
+        (WebCore::Frame::applyEditingStyleToElement):
+        (WebCore::Frame::removeEditingStyleFromElement):
+
 2006-02-24  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

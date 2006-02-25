@@ -1,3 +1,65 @@
+2006-02-24  Graham Dennis  <Graham.Dennis@gmail.com>
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7245>
+        caret does not display at the end of some lines in contenteditable divs
+
+        Reviewed by justin
+
+        * editing/deleting/delete-block-merge-contents-018-expected.txt:
+        * editing/deleting/delete-block-merge-contents-021-expected.txt:
+        * editing/deleting/delete-line-end-ws-001-expected.txt:
+        * editing/deleting/delete-line-end-ws-002-expected.txt:
+        * editing/deleting/forward-delete-expected.txt:
+        * editing/execCommand/boldSelection-expected.txt:
+        * editing/execCommand/italicizeByCharacter-expected.txt:
+        * editing/execCommand/modifyForeColorByCharacter-expected.txt:
+        * editing/execCommand/print-expected.txt:
+        * editing/execCommand/selectAll-expected.txt:
+        * editing/execCommand/strikethroughSelection-expected.txt:
+        * editing/inserting/insert-div-019-expected.txt:
+        * editing/inserting/insert-div-027-expected.txt:
+        * editing/inserting/typing-003-expected.txt:
+        * editing/pasteboard/paste-text-012-expected.txt:
+        * editing/pasteboard/paste-text-013-expected.txt:
+        * editing/pasteboard/paste-text-014-expected.txt:
+        * editing/selection/extend-by-character-003-expected.txt:
+        * editing/selection/extend-by-character-005-expected.txt:
+        * editing/selection/extend-by-word-002-expected.checksum:
+        * editing/selection/extend-by-word-002-expected.png:
+        * editing/selection/extend-by-word-002-expected.txt:
+        * editing/selection/move-by-character-003-expected.txt:
+        * editing/selection/move-by-character-005-expected.txt:
+        * editing/selection/select-all-001-expected.txt:
+        * editing/selection/select-all-002-expected.checksum:
+        * editing/selection/select-all-002-expected.png:
+        * editing/selection/select-all-002-expected.txt:
+        * editing/selection/select-all-003-expected.txt:
+        * editing/style/create-block-for-style-001-expected.txt:
+        * editing/style/create-block-for-style-002-expected.txt:
+        * editing/style/create-block-for-style-003-expected.txt:
+        * editing/style/create-block-for-style-004-expected.txt:
+        * editing/style/create-block-for-style-005-expected.txt:
+        * editing/style/create-block-for-style-006-expected.txt:
+        * editing/style/create-block-for-style-007-expected.txt:
+        * editing/style/create-block-for-style-008-expected.txt:
+        * editing/style/create-block-for-style-009-expected.txt:
+        * editing/style/create-block-for-style-010-expected.txt:
+        * editing/style/create-block-for-style-011-expected.txt:
+        * editing/style/create-block-for-style-012-expected.txt:
+        * editing/style/create-block-for-style-013-expected.txt:
+        * editing/style/relative-font-size-change-001-expected.txt:
+        * editing/style/relative-font-size-change-002-expected.txt:
+        * editing/style/relative-font-size-change-003-expected.txt:
+        * editing/style/relative-font-size-change-004-expected.txt:
+        * fast/clip/outline-overflowClip-expected.txt:
+        * fast/overflow/overflow-focus-ring-expected.checksum:
+        * fast/overflow/overflow-focus-ring-expected.png:
+        * fast/overflow/overflow-focus-ring-expected.txt:
+        * fast/text/justified-text-rect-expected.checksum:
+        * fast/text/justified-text-rect-expected.png:
+        * fast/text/justified-text-rect-expected.txt:
+        * fast/text/justified-text-rect.html:
+
 2006-02-24  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Hyatt.

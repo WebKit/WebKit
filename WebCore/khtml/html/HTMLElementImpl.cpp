@@ -471,20 +471,22 @@ DOMString HTMLElementImpl::contentEditable() const
 
 void HTMLElementImpl::setContentEditable(MappedAttributeImpl* attr) 
 {
-    Frame *frame = getDocument()->frame();
     const AtomicString& enabled = attr->value();
     if (enabled.isEmpty() || equalIgnoringCase(enabled, "true")) {
         addCSSProperty(attr, CSS_PROP__KHTML_USER_MODIFY, CSS_VAL_READ_WRITE);
-        if (frame)
-            frame->applyEditingStyleToElement(this);    
+        addCSSProperty(attr, CSS_PROP_WORD_WRAP, CSS_VAL_BREAK_WORD);
+        addCSSProperty(attr, CSS_PROP__KHTML_NBSP_MODE, CSS_VAL_SPACE);
+        addCSSProperty(attr, CSS_PROP__KHTML_LINE_BREAK, CSS_VAL_AFTER_WHITE_SPACE);
     } else if (equalIgnoringCase(enabled, "false")) {
         addCSSProperty(attr, CSS_PROP__KHTML_USER_MODIFY, CSS_VAL_READ_ONLY);
-        if (frame)
-            frame->removeEditingStyleFromElement(this);    
+        attr->decl()->removeProperty(CSS_PROP_WORD_WRAP, false);
+        attr->decl()->removeProperty(CSS_PROP__KHTML_NBSP_MODE, false);
+        attr->decl()->removeProperty(CSS_PROP__KHTML_LINE_BREAK, false);
     } else if (equalIgnoringCase(enabled, "inherit")) {
         addCSSProperty(attr, CSS_PROP__KHTML_USER_MODIFY, CSS_VAL_INHERIT);
-        if (frame)
-            frame->removeEditingStyleFromElement(this);    
+        attr->decl()->removeProperty(CSS_PROP_WORD_WRAP, false);
+        attr->decl()->removeProperty(CSS_PROP__KHTML_NBSP_MODE, false);
+        attr->decl()->removeProperty(CSS_PROP__KHTML_LINE_BREAK, false);
     }
 }
 
