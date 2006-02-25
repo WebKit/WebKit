@@ -1,3 +1,15 @@
+2006-02-24  Antti Koivisto  <koivisto@iki.fi>
+
+        Reviewed by Hyatt.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7440
+        Floats not positioned correctly
+
+        * fast/block/float/multiple-float-positioning-expected.checksum: Added.
+        * fast/block/float/multiple-float-positioning-expected.png: Added.
+        * fast/block/float/multiple-float-positioning-expected.txt: Added.
+        * fast/block/float/multiple-float-positioning.html: Added.
+
 2006-02-24  Graham Dennis  <Graham.Dennis@gmail.com>
 
         Reviewed by justin
