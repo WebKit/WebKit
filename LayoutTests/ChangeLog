@@ -1,3 +1,17 @@
+2006-02-24  Graham Dennis  <Graham.Dennis@gmail.com>
+
+        Reviewed by justin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=6933>
+        Selection extends beyond focus ring for some contentEditable divs
+
+        * editing/selection/extend-by-word-002-expected.checksum:
+        * editing/selection/extend-by-word-002-expected.png:
+        * editing/selection/select-all-001-expected.checksum:
+        * editing/selection/select-all-001-expected.png:
+        * editing/selection/select-all-002-expected.checksum:
+        * editing/selection/select-all-002-expected.png:
+        
 2006-02-24  Darin Adler  <darin@apple.com>
 
         - test <rdar://problem/4456287> REGRESSION: assertion failure at mypage.apple.com

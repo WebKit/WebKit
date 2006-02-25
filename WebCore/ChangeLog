@@ -1,3 +1,14 @@
+2006-02-24  Graham Dennis  <Graham.Dennis@gmail.com>
+
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=6933>
+        Selection extends beyond focus ring for some contentEditable divs
+
+        Reviewed by justin
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::isSelectionRoot): Have root editable elements paint their
+        own selection gaps.
+
 2006-02-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

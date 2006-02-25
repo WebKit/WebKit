@@ -1427,9 +1427,24 @@ bool RenderBlock::shouldPaintSelectionGaps() const
 
 bool RenderBlock::isSelectionRoot() const
 {
+    if (!element())
+        return false;
+        
     // FIXME: Eventually tables should have to learn how to fill gaps between cells, at least in simple non-spanning cases.
-    return (isBody() || isRoot() || hasOverflowClip() || isRelPositioned() ||
-            isFloatingOrPositioned() || isTableCell() || isInlineBlockOrInlineTable());
+    if (isTable())
+        return false;
+        
+    if (isBody() || isRoot() || hasOverflowClip() || isRelPositioned() ||
+        isFloatingOrPositioned() || isTableCell() || isInlineBlockOrInlineTable())
+        return true;
+    
+    if (canvas() && canvas()->selectionStart()) {
+        NodeImpl* startElement = canvas()->selectionStart()->element();
+        if (startElement && startElement->rootEditableElement() == element())
+            return true;
+    }
+    
+    return false;
 }
 
 GapRects RenderBlock::selectionGapRects()
