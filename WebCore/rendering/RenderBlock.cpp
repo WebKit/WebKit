@@ -1829,17 +1829,15 @@ void RenderBlock::removeFloatingObject(RenderObject *o)
 void RenderBlock::positionNewFloats()
 {
     if(!m_floatingObjects) return;
-    FloatingObject *f = m_floatingObjects->getLast();
+    FloatingObject *f = m_floatingObjects->last();
     if(!f || f->startY != -1) return;
     FloatingObject *lastFloat;
     while(1)
     {
-        lastFloat = m_floatingObjects->prev();
-        if (!lastFloat || lastFloat->startY != -1) {
-            m_floatingObjects->next();
-            break;
-        }
-        f = lastFloat;
+        lastFloat = m_floatingObjects->getPrev();
+        if (!lastFloat || lastFloat->startY != -1)
+            break;        
+        f = m_floatingObjects->prev();
     }
 
 
