@@ -1,3 +1,20 @@
+2006-02-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix <rdar://problem/4456287> REGRESSION: assertion failure at mypage.apple.com
+          in WebCore::TimerBase::nextFireInterval() const + 100 (Timer.cpp:188)
+
+        Test: fast/dom/Window/redirect-with-timer.html
+
+        * platform/Timer.h: Made isActive no longer inline. Added inHeap function.
+        * platform/Timer.cpp: Changed assertions to use inHeap function for clarity.
+        (WebCore::TimerBase::isActive): Return true for timers that are ready to fire.
+        They have a next fire time of 0, but they should still be considered active.
+        (WebCore::TimerBase::checkConsistency): Correct the consistency check. The new
+        rule is that timers with a next fire time of 0 are not in the heap, and all other
+        timers are.
+
 2006-02-24  Graham Dennis  <Graham.Dennis@gmail.com>
 
         <http://bugzilla.opendarwin.org/show_bug.cgi?id=7245>

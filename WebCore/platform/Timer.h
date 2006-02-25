@@ -46,7 +46,7 @@ namespace WebCore {
         void startOneShot(double interval) { start(interval, 0); }
 
         void stop();
-        bool isActive() const { return m_nextFireTime; }
+        bool isActive() const;
 
         double nextFireInterval() const;
         double repeatInterval() const { return m_repeatInterval; }
@@ -58,6 +58,8 @@ namespace WebCore {
         void checkHeapIndex() const;
 
         void setNextFireTime(double);
+
+        bool inHeap() const { return m_heapIndex != -1; }
 
         void heapDecreaseKey();
         void heapDelete();

@@ -1,3 +1,11 @@
+2006-02-24  Darin Adler  <darin@apple.com>
+
+        - test <rdar://problem/4456287> REGRESSION: assertion failure at mypage.apple.com
+          in WebCore::TimerBase::nextFireInterval() const + 100 (Timer.cpp:188)
+
+        * fast/dom/Window/redirect-with-timer.html: Added.
+        * fast/dom/Window/redirect-with-timer-expected.txt: Added.
+
 2006-02-24  Graham Dennis  <Graham.Dennis@gmail.com>
         
         <http://bugzilla.opendarwin.org/show_bug.cgi?id=7245>
@@ -61,23 +69,6 @@
         * fast/text/justified-text-rect.html:
 
 2006-02-24  Sam Weinig  <sam.weinig@gmail.com>
-
-        Reviewed by Hyatt.
-
-        -tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=5146
-
-        * fast/replaced/maxheight-percent.html: Added.
-        * fast/replaced/maxheight-pxs.html: Added.
-        * fast/replaced/maxwidth-percent.html: Added.
-        * fast/replaced/maxwidth-pxs.html: Added.
-        * fast/replaced/minheight-percent.html: Added.
-        * fast/replaced/minheight-pxs.html: Added.
-        * fast/replaced/minwidth-percent.html: Added.
-        * fast/replaced/minwidth-pxs.html: Added.
-        * fast/replaced/resources/1x1-blue.png: Added.
-        * fast/replaced/resources/square-blue-100x100.png: Added.
-
-2006-02-21  Sam Weinig  <sam.weinig@gmail.com>
 
         Reviewed by Hyatt.
 
