@@ -1,3 +1,37 @@
+2006-02-25  Geoffrey Garen  <ggaren@apple.com>
+
+        RS by mjs.
+
+        -tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=5146
+        Re-landing results after adding missing png's to the test.
+
+        * fast/replaced/resources/1x1-blue.png: Added.
+        * fast/replaced/resources/square-blue-100x100.png: Added.
+        * fast/replaced/maxheight-percent-expected.checksum: Added.
+        * fast/replaced/maxheight-percent-expected.png: Added.
+        * fast/replaced/maxheight-percent-expected.txt:
+        * fast/replaced/maxheight-pxs-expected.checksum: Added.
+        * fast/replaced/maxheight-pxs-expected.png: Added.
+        * fast/replaced/maxheight-pxs-expected.txt:
+        * fast/replaced/maxwidth-percent-expected.checksum: Added.
+        * fast/replaced/maxwidth-percent-expected.png: Added.
+        * fast/replaced/maxwidth-percent-expected.txt:
+        * fast/replaced/maxwidth-pxs-expected.checksum: Added.
+        * fast/replaced/maxwidth-pxs-expected.png: Added.
+        * fast/replaced/maxwidth-pxs-expected.txt:
+        * fast/replaced/minheight-percent-expected.checksum: Added.
+        * fast/replaced/minheight-percent-expected.png: Added.
+        * fast/replaced/minheight-percent-expected.txt:
+        * fast/replaced/minheight-pxs-expected.checksum: Added.
+        * fast/replaced/minheight-pxs-expected.png: Added.
+        * fast/replaced/minheight-pxs-expected.txt:
+        * fast/replaced/minwidth-percent-expected.checksum: Added.
+        * fast/replaced/minwidth-percent-expected.png: Added.
+        * fast/replaced/minwidth-percent-expected.txt:
+        * fast/replaced/minwidth-pxs-expected.checksum: Added.
+        * fast/replaced/minwidth-pxs-expected.png: Added.
+        * fast/replaced/minwidth-pxs-expected.txt:
+
 2006-02-24  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Hyatt.
