@@ -993,7 +993,7 @@
 
 2006-01-28  Darin Adler  <darin@apple.com>
 
-        Reviewed by xxx
+        Reviewed by John Sullivan
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6870
           REGRESSION: JavaScript Date constructor won't accept another Date object
