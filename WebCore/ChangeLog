@@ -1,5 +1,13 @@
 2006-02-27  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by timo.
+
+        Add missing include to fix build.
+
+        * platform/win/TemporaryLinkStubs.cpp:
+
+2006-02-27  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by ggaren.
 
         Move KConfig to platform/PlugInInfoStore and add test.

@@ -30,6 +30,7 @@
 #include "KWQKCookieJar.h"
 #include "Screen.h"
 #include "History.h"
+#include "KWQKLocale.h"
 
 using namespace WebCore;
 
