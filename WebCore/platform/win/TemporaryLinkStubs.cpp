@@ -104,7 +104,6 @@ int  ScrollView::scrollXOffset(void)const  { notImplemented(); return 0; }
 bool  QListBox::isSelected(int)const  { notImplemented(); return 0; }
 void  QLineEdit::setReadOnly(bool) { notImplemented(); }
 void  QPainter::drawLineForText(int,int,int,int) { notImplemented(); }
-void QObject::disconnect(class QObject const *,char const *,class QObject const *,char const *) { notImplemented(); }
 QPainter::QPainter(void) { notImplemented(); }
 QComboBox::~QComboBox(void) { notImplemented(); }
 Cursor::Cursor(class Image *) { notImplemented(); }
@@ -137,7 +136,7 @@ void  QLineEdit::setCursorPosition(int) { notImplemented(); }
 void  QPainter::drawText(int,int,int,int,int,int,int,class QString const &) { notImplemented(); }
 static Pen localPen;
 class Pen const &  QPainter::pen(void)const  { notImplemented(); return localPen; }
-KJavaAppletWidget::KJavaAppletWidget(class IntSize const &,class Frame *,class KXMLCore::HashMap<class String,class String,struct KXMLCore::StrHash<class String>,struct KXMLCore::HashTraits<class String>,struct KXMLCore::HashTraits<class String> > const &) { notImplemented(); }
+KJavaAppletWidget::KJavaAppletWidget(class IntSize const &,class Frame *,class KXMLCore::HashMap<class String,class String> const &) { notImplemented(); }
 int  QFontMetrics::descent(void)const  { notImplemented(); return 0; }
 QListBox::QListBox(void) { notImplemented(); }
 int  QFontMetrics::ascent(void)const  { notImplemented(); return 0; }
@@ -285,3 +284,17 @@ class QString resetButtonDefaultLabel(void) { return "Reset"; }
 bool KWQKCookieJar::cookieEnabled(void) { notImplemented(); return false; }
 void WebCore::Widget::setFocus(void) { notImplemented(); }
 void WebCore::ScrollView::setContentsPos(int,int) { }
+void WebCore::QPainter::setPaintingDisabled(bool) { notImplemented(); }
+void WebCore::QPainter::fillRect(class WebCore::IntRect const &,class WebCore::Brush const &) { notImplemented(); }
+WebCore::QPainter::~QPainter(void) { notImplemented(); }
+WebCore::QPainter::QPainter(bool) { notImplemented(); }
+void WebCore::ScrollView::viewportToContents(int,int,int &,int &) { notImplemented(); }
+void WebCore::TransferJob::kill(void) { notImplemented(); }
+void WebCore::TransferJob::addMetaData(class QString const &,class QString const &) { notImplemented(); }
+void WebCore::TransferJob::addMetaData(class KXMLCore::HashMap<class WebCore::String,class WebCore::String> const &) { notImplemented(); }
+class QString WebCore::TransferJob::queryMetaData(class QString const &)const { notImplemented(); return QString(); }
+int WebCore::TransferJob::error(void)const { notImplemented(); return 0; }
+WebCore::TransferJob::TransferJob(class WebCore::TransferJobClient *,class KURL const &) { notImplemented(); }
+WebCore::TransferJob::TransferJob(class WebCore::TransferJobClient *,class KURL const &,class WebCore::FormData const &) { notImplemented(); }
+void WebCore::Widget::hide(void) { }
+class QString KLocale::language(void) { return "en"; }

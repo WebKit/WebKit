@@ -1,3 +1,9 @@
+2006-02-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        * platform/win/TemporaryLinkStubs.cpp: Added more stubs.
+
 2006-02-27  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
