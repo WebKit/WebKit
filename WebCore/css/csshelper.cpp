@@ -76,13 +76,14 @@ String parseURL(const String& url)
 
     Vector<unsigned short, 2048> buffer(l);
 
+    int nl = 0;
     for (int k = o; k < o + l; k++) {
         unsigned short c = (*i)[k].unicode();
         if (c > '\r')
-            buffer.append(c);
+            buffer[nl++] = c;
     }
 
-    return new StringImpl(reinterpret_cast<QChar*>(buffer.data()), buffer.size());
+    return new StringImpl(reinterpret_cast<QChar*>(buffer.data()), nl);
 }
 
 }

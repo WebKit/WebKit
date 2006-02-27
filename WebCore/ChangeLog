@@ -1,5 +1,10 @@
 2006-02-27  Darin Adler  <darin@apple.com>
 
+        * css/csshelper.cpp: (WebCore::parseURL): Actually, the second version was fine. Rolling
+        back to that; apologies for the churn.
+
+2006-02-27  Darin Adler  <darin@apple.com>
+
         * css/csshelper.cpp: (WebCore::parseURL): Third time's the charm.
 
 2006-02-27  Darin Adler  <darin@apple.com>
