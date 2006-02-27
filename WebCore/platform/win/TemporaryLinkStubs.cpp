@@ -60,7 +60,7 @@ int  QPainter::misspellingLineThickness(void)const  { notImplemented(); return 0
 void  QComboBox::setFrameGeometry(class IntRect const &) { notImplemented(); }
 int  QLineEdit::maxLength(void)const  { notImplemented(); return 0; }
 bool  Widget::isEnabled(void)const  { notImplemented(); return 0; }
-bool __cdecl KWQServeRequest(class Loader *,class DocLoader *,class KIO::TransferJob *) { notImplemented(); return 0; }
+bool __cdecl KWQServeRequest(class Loader *,class DocLoader *,class WebCore::TransferJob *) { notImplemented(); return 0; }
 void  QTextEdit::setText(class String const &) { notImplemented(); }
 void  Widget::paint(class QPainter *,class IntRect const &) { notImplemented(); }
 void  QPainter::addRoundedRectClip(class IntRect const &,class IntSize const &,class IntSize const &,class IntSize const &,class IntSize const &) { notImplemented(); }

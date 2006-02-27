@@ -1,3 +1,9 @@
+2006-02-27  Darin Adler  <darin@apple.com>
+
+        - fix Windows build
+
+        * platform/win/TemporaryLinkStubs.cpp: Change KIO::TransferJob to WebCore::TransferJob.
+
 2006-02-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
