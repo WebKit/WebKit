@@ -542,7 +542,7 @@ namespace KXMLCore {
     {
         typedef Vector<T, inlineCapacity> Vec;
         typename Vec::iterator end = collection.end();
-        for (typename Vec::iterator it = collection.begin(); it != collection.end(); ++it)
+        for (typename Vec::iterator it = collection.begin(); it != end; ++it)
             delete *it;
     }
 
