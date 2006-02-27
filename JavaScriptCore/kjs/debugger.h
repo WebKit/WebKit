@@ -153,7 +153,7 @@ namespace KJS {
      * @param sourceId The ID of the source code being executed
      * @param firstLine The starting line of the statement  that is about to be
      * executed
-     * @param firstLine The ending line of the statement  that is about to be
+     * @param lastLine The ending line of the statement  that is about to be
      * executed (usually the same as firstLine)
      * @return true if execution should be continue, false if it should
      * be aborted

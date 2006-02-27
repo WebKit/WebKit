@@ -96,7 +96,7 @@ void *fastRealloc(void* p, size_t n)
 }
 
 #if !WIN32
-void fastMallocRegisterThread(pthread_t thread) 
+void fastMallocRegisterThread(pthread_t) 
 {
 }
 #endif
