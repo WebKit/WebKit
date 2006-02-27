@@ -74,7 +74,7 @@ String parseURL(const String& url)
     while (l > 0 && (*i)[o+l-1] <= ' ')
         --l;
 
-    Vector<unsigned short, 2048> buffer;
+    Vector<unsigned short, 2048> buffer(l);
 
     int nl = 0;
     for (int k = o; k < o + l; k++) {
