@@ -48,9 +48,9 @@ static KJS::List listFromVariantArgs(KJS::ExecState *exec, const NPVariant *args
     return aList;
 }
 
-static NPObject *jsAllocate(NPP npp, NPClass *aClass)
+static NPObject* jsAllocate(NPP, NPClass*)
 {
-    return (NPObject *)malloc(sizeof(JavaScriptObject));
+    return (NPObject*)malloc(sizeof(JavaScriptObject));
 }
 
 static void jsDeallocate (JavaScriptObject *obj)
@@ -130,7 +130,7 @@ NPObject *_NPN_CreateNoScriptObject(void)
     return _NPN_CreateObject(0, NPNoScriptObjectClass);
 }
 
-bool _NPN_InvokeDefault (NPP npp, NPObject *o, const NPVariant *args, uint32_t argCount, NPVariant *result)
+bool _NPN_InvokeDefault (NPP, NPObject* o, const NPVariant* args, uint32_t argCount, NPVariant* result)
 {
     if (o->_class == NPScriptObjectClass) {
         // No notion of a default function on JS objects.  Just return false, can't handle.
@@ -198,22 +198,22 @@ bool _NPN_Invoke (NPP npp, NPObject *o, NPIdentifier methodName, const NPVariant
     return true;
 }
 
-bool _NPN_Evaluate (NPP npp, NPObject *o, NPString *s, NPVariant *variant)
+bool _NPN_Evaluate(NPP, NPObject* o, NPString* s, NPVariant* variant)
 {
     if (o->_class == NPScriptObjectClass) {
-        JavaScriptObject *obj = (JavaScriptObject *)o; 
+        JavaScriptObject* obj = (JavaScriptObject*)o; 
 
 	if (!_isSafeScript(obj))
 	    return false;
 
-        ExecState *exec = obj->executionContext->interpreter()->globalExec();
-        JSValue *result;
+        ExecState* exec = obj->executionContext->interpreter()->globalExec();
+        JSValue* result;
         
         JSLock lock;
-        NPUTF16 *scriptString;
+        NPUTF16* scriptString;
         unsigned int UTF16Length;
         convertNPStringToUTF16 (s, &scriptString, &UTF16Length);    // requires free() of returned memory.
-        Completion completion = obj->executionContext->interpreter()->evaluate(UString(), 0, UString((const UChar *)scriptString,UTF16Length));
+        Completion completion = obj->executionContext->interpreter()->evaluate(UString(), 0, UString((const UChar*)scriptString,UTF16Length));
         ComplType type = completion.complType();
         
         if (type == Normal) {
@@ -236,7 +236,7 @@ bool _NPN_Evaluate (NPP npp, NPObject *o, NPString *s, NPVariant *variant)
     return false;
 }
 
-bool _NPN_GetProperty (NPP npp, NPObject *o, NPIdentifier propertyName, NPVariant *variant)
+bool _NPN_GetProperty (NPP, NPObject* o, NPIdentifier propertyName, NPVariant* variant)
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject *obj = (JavaScriptObject *)o; 
@@ -283,7 +283,7 @@ bool _NPN_GetProperty (NPP npp, NPObject *o, NPIdentifier propertyName, NPVarian
     return false;
 }
 
-bool _NPN_SetProperty (NPP npp, NPObject *o, NPIdentifier propertyName, const NPVariant *variant)
+bool _NPN_SetProperty (NPP, NPObject* o, NPIdentifier propertyName, const NPVariant* variant)
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject *obj = (JavaScriptObject *)o; 
@@ -306,7 +306,7 @@ bool _NPN_SetProperty (NPP npp, NPObject *o, NPIdentifier propertyName, const NP
     return false;
 }
 
-bool _NPN_RemoveProperty (NPP npp, NPObject *o, NPIdentifier propertyName)
+bool _NPN_RemoveProperty (NPP, NPObject* o, NPIdentifier propertyName)
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject *obj = (JavaScriptObject *)o; 
@@ -339,7 +339,7 @@ bool _NPN_RemoveProperty (NPP npp, NPObject *o, NPIdentifier propertyName)
     return false;
 }
 
-bool _NPN_HasProperty(NPP npp, NPObject *o, NPIdentifier propertyName)
+bool _NPN_HasProperty(NPP, NPObject* o, NPIdentifier propertyName)
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject *obj = (JavaScriptObject *)o; 
@@ -362,7 +362,7 @@ bool _NPN_HasProperty(NPP npp, NPObject *o, NPIdentifier propertyName)
     return false;
 }
 
-bool _NPN_HasMethod(NPP npp, NPObject *o, NPIdentifier methodName)
+bool _NPN_HasMethod(NPP, NPObject* o, NPIdentifier methodName)
 {
     if (o->_class == NPScriptObjectClass) {
         JavaScriptObject *obj = (JavaScriptObject *)o; 

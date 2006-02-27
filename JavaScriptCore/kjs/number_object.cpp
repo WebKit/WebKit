@@ -391,9 +391,7 @@ const ClassInfo NumberObjectImp::info = {"Function", &InternalFunctionImp::info,
   MIN_VALUE             NumberObjectImp::MinValue       DontEnum|DontDelete|ReadOnly
 @end
 */
-NumberObjectImp::NumberObjectImp(ExecState *exec,
-                                 FunctionPrototype *funcProto,
-                                 NumberPrototype *numberProto)
+NumberObjectImp::NumberObjectImp(ExecState*, FunctionPrototype* funcProto, NumberPrototype* numberProto)
   : InternalFunctionImp(funcProto)
 {
   // Number.Prototype
@@ -403,7 +401,7 @@ NumberObjectImp::NumberObjectImp(ExecState *exec,
   putDirect(lengthPropertyName, jsNumber(1), ReadOnly|DontDelete|DontEnum);
 }
 
-bool NumberObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+bool NumberObjectImp::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
   return getStaticValueSlot<NumberObjectImp, InternalFunctionImp>(exec, &numberTable, this, propertyName, slot);
 }

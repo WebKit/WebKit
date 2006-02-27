@@ -72,7 +72,7 @@ const char *ObjcClass::name() const
     return _isa->name;
 }
 
-MethodList ObjcClass::methodsNamed(const char *JSName, Instance *instance) const
+MethodList ObjcClass::methodsNamed(const char *JSName, Instance*) const
 {
     MethodList methodList;
     char fixedSizeBuffer[1024];
@@ -223,7 +223,7 @@ Field *ObjcClass::fieldNamed(const char *name, Instance *instance) const
     return aField;
 }
 
-JSValue *ObjcClass::fallbackObject (ExecState *exec, Instance *instance, const Identifier &propertyName)
+JSValue *ObjcClass::fallbackObject (ExecState*, Instance *instance, const Identifier &propertyName)
 {
     ObjcInstance * objcInstance = static_cast<ObjcInstance*>(instance);
     id targetObject = objcInstance->getObject();

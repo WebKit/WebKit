@@ -242,19 +242,18 @@ ObjcFallbackObjectImp::ObjcFallbackObjectImp(ObjcInstance *i, const KJS::Identif
 {
 }
 
-bool ObjcFallbackObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+bool ObjcFallbackObjectImp::getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot& slot)
 {
     // keep the prototype from getting called instead of just returning false
     slot.setUndefined(this);
     return true;
 }
 
-void ObjcFallbackObjectImp::put(ExecState *exec, const Identifier &propertyName,
-                 JSValue *value, int attr)
+void ObjcFallbackObjectImp::put(ExecState*, const Identifier&, JSValue*, int)
 {
 }
 
-bool ObjcFallbackObjectImp::canPut(ExecState *exec, const Identifier &propertyName) const
+bool ObjcFallbackObjectImp::canPut(ExecState*, const Identifier&) const
 {
     return false;
 }
@@ -309,8 +308,7 @@ JSValue *ObjcFallbackObjectImp::callAsFunction(ExecState *exec, JSObject *thisOb
     return result;
 }
 
-bool ObjcFallbackObjectImp::deleteProperty(ExecState *exec,
-                            const Identifier &propertyName)
+bool ObjcFallbackObjectImp::deleteProperty(ExecState*, const Identifier&)
 {
     return false;
 }
@@ -320,7 +318,7 @@ JSValue *ObjcFallbackObjectImp::defaultValue(ExecState *exec, JSType hint) const
     return _instance->getValueOfUndefinedField(exec, _item, hint);
 }
 
-bool ObjcFallbackObjectImp::toBoolean(ExecState *exec) const
+bool ObjcFallbackObjectImp::toBoolean(ExecState*) const
 {
     id targetObject = _instance->getObject();
     

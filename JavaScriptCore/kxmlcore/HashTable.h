@@ -174,14 +174,17 @@ namespace KXMLCore {
 #endif
         }
 
+
+#if CHECK_HASHTABLE_ITERATORS
         void checkValidity(const const_iterator& other) const
         {
-#if CHECK_HASHTABLE_ITERATORS
             assert(m_table);
             assert(other.m_table);
             assert(m_table == other.m_table);
-#endif
         }
+#else
+        void checkValidity(const const_iterator&) const { }
+#endif
 
         PointerType m_position;
         PointerType m_endPosition;
@@ -251,7 +254,7 @@ namespace KXMLCore {
     public:
         static unsigned hash(const Key& key) { return HashFunctions::hash(key); }
         static bool equal(const Key& a, const Key& b) { return HashFunctions::equal(a, b); }
-        static void translate(Value& location, const Key& key, const Value& value, unsigned) { location = value; }
+        static void translate(Value& location, const Key&, const Value& value, unsigned) { location = value; }
     };
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>

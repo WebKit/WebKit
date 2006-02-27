@@ -332,7 +332,7 @@ JSValue *ObjcInstance::getValueOfField (ExecState *exec, const Field *aField) co
     return aField->valueFromInstance (exec, this);
 }
 
-JSValue *ObjcInstance::getValueOfUndefinedField (ExecState *exec, const Identifier &property, JSType hint) const
+JSValue *ObjcInstance::getValueOfUndefinedField (ExecState* exec, const Identifier& property, JSType) const
 {
     id targetObject = getObject();
     

@@ -294,7 +294,7 @@ JSValue *JavaInstance::invokeMethod (ExecState *exec, const MethodList &methodLi
     return resultValue;
 }
 
-JSValue *JavaInstance::invokeDefaultMethod (ExecState *exec, const List &args)
+JSValue *JavaInstance::invokeDefaultMethod (ExecState*, const List&)
 {
     return jsUndefined();
 }

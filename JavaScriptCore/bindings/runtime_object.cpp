@@ -48,7 +48,7 @@ RuntimeObjectImp::RuntimeObjectImp(Bindings::Instance *i)
 {
 }
 
-JSValue *RuntimeObjectImp::fallbackObjectGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *RuntimeObjectImp::fallbackObjectGetter(ExecState* exec, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
 {
     RuntimeObjectImp *thisObj = static_cast<RuntimeObjectImp *>(slot.slotBase());
     Bindings::Instance *instance = thisObj->instance.get();
@@ -63,7 +63,7 @@ JSValue *RuntimeObjectImp::fallbackObjectGetter(ExecState *exec, JSObject *origi
     return result;
 }
 
-JSValue *RuntimeObjectImp::fieldGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *RuntimeObjectImp::fieldGetter(ExecState* exec, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
 {
     RuntimeObjectImp *thisObj = static_cast<RuntimeObjectImp *>(slot.slotBase());
     Bindings::Instance *instance = thisObj->instance.get();
@@ -79,7 +79,7 @@ JSValue *RuntimeObjectImp::fieldGetter(ExecState *exec, JSObject *originalObject
     return result;
 }
 
-JSValue *RuntimeObjectImp::methodGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *RuntimeObjectImp::methodGetter(ExecState* exec, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
 {
     RuntimeObjectImp *thisObj = static_cast<RuntimeObjectImp *>(slot.slotBase());
     Bindings::Instance *instance = thisObj->instance.get();
@@ -133,8 +133,7 @@ bool RuntimeObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& pro
     return false;
 }
 
-void RuntimeObjectImp::put(ExecState *exec, const Identifier &propertyName,
-                    JSValue *value, int attr)
+void RuntimeObjectImp::put(ExecState* exec, const Identifier& propertyName, JSValue* value, int)
 {
     instance->begin();
 
@@ -152,7 +151,7 @@ void RuntimeObjectImp::put(ExecState *exec, const Identifier &propertyName,
     instance->end();
 }
 
-bool RuntimeObjectImp::canPut(ExecState *exec, const Identifier &propertyName) const
+bool RuntimeObjectImp::canPut(ExecState*, const Identifier& propertyName) const
 {
     bool result = false;
 
@@ -168,14 +167,13 @@ bool RuntimeObjectImp::canPut(ExecState *exec, const Identifier &propertyName) c
     return result;
 }
 
-bool RuntimeObjectImp::deleteProperty(ExecState *exec,
-                            const Identifier &propertyName)
+bool RuntimeObjectImp::deleteProperty(ExecState*, const Identifier&)
 {
     // Can never remove a property of a RuntimeObject.
     return false;
 }
 
-JSValue *RuntimeObjectImp::defaultValue(ExecState *exec, JSType hint) const
+JSValue *RuntimeObjectImp::defaultValue(ExecState*, JSType hint) const
 {
     JSValue *result;
     
@@ -194,7 +192,7 @@ bool RuntimeObjectImp::implementsCall() const
     return true;
 }
 
-JSValue *RuntimeObjectImp::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
+JSValue *RuntimeObjectImp::callAsFunction(ExecState* exec, JSObject*, const List& args)
 {
     instance->begin();
 

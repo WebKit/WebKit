@@ -136,7 +136,7 @@ void convertValueToNPVariant(ExecState *exec, JSValue *value, NPVariant *result)
         NPN_InitializeVariantAsUndefined(result);
 }
 
-JSValue *convertNPVariantToValue(ExecState *exec, const NPVariant *variant)
+JSValue *convertNPVariantToValue(ExecState*, const NPVariant*variant)
 {
     NPVariantType type = variant->type;
 

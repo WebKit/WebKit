@@ -1320,6 +1320,18 @@
 				);
 				PRODUCT_NAME = JavaScriptCore;
 				STYLE_LDFLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wall",
+					"-W",
+					"-Wcast-align",
+					"-Wchar-subscripts",
+					"-Wformat-security",
+					"-Wmissing-format-attribute",
+					"-Wpointer-arith",
+					"-Wwrite-strings",
+					"-Wno-format-y2k",
+					"-Wno-long-double",
+				);
 			};
 			name = Debug;
 		};
@@ -1344,6 +1356,18 @@
 				);
 				PRODUCT_NAME = JavaScriptCore;
 				STYLE_LDFLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wall",
+					"-W",
+					"-Wcast-align",
+					"-Wchar-subscripts",
+					"-Wformat-security",
+					"-Wmissing-format-attribute",
+					"-Wpointer-arith",
+					"-Wwrite-strings",
+					"-Wno-format-y2k",
+					"-Wno-long-double",
+				);
 			};
 			name = Release;
 		};
@@ -1374,6 +1398,18 @@
 					"$(APPLE_INTERNAL_DIR)/OrderFiles/JavaScriptCore.order",
 				);
 				STYLE_LDFLAGS = "-umbrella WebKit -allowable_client JavaScriptGlue";
+				WARNING_CFLAGS = (
+					"-Wall",
+					"-W",
+					"-Wcast-align",
+					"-Wchar-subscripts",
+					"-Wformat-security",
+					"-Wmissing-format-attribute",
+					"-Wpointer-arith",
+					"-Wwrite-strings",
+					"-Wno-format-y2k",
+					"-Wno-long-double",
+				);
 			};
 			name = Production;
 		};

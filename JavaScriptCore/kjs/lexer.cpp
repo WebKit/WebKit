@@ -873,7 +873,8 @@ void Lexer::doneParsing()
 const int initialCapacity = 64;
 const int growthFactor = 2;
 
-Identifier *Lexer::makeIdentifier(KJS::UChar *buffer, unsigned int pos)
+// FIXME: this completely ignores its parameters, instead using buffer16 and pos16 - wtf?
+Identifier *Lexer::makeIdentifier(KJS::UChar*, unsigned int)
 {
   if (numIdentifiers == identifiersCapacity) {
     identifiersCapacity = (identifiersCapacity == 0) ? initialCapacity : identifiersCapacity *growthFactor;
@@ -885,7 +886,8 @@ Identifier *Lexer::makeIdentifier(KJS::UChar *buffer, unsigned int pos)
   return identifier;
 }
  
-UString *Lexer::makeUString(KJS::UChar *buffer, unsigned int pos)
+// FIXME: this completely ignores its parameters, instead using buffer16 and pos16 - wtf?
+UString *Lexer::makeUString(KJS::UChar*, unsigned int)
 {
   if (numStrings == stringsCapacity) {
     stringsCapacity = (stringsCapacity == 0) ? initialCapacity : stringsCapacity *growthFactor;

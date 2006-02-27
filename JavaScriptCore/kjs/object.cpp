@@ -380,7 +380,7 @@ const HashEntry* JSObject::findPropertyHashEntry(const Identifier& propertyName)
   return 0;
 }
 
-void JSObject::defineGetter(ExecState *exec, const Identifier& propertyName, JSObject *getterFunc)
+void JSObject::defineGetter(ExecState*, const Identifier& propertyName, JSObject* getterFunc)
 {
     JSValue *o = getDirect(propertyName);
     GetterSetterImp *gs;
@@ -396,7 +396,7 @@ void JSObject::defineGetter(ExecState *exec, const Identifier& propertyName, JSO
     gs->setGetter(getterFunc);
 }
 
-void JSObject::defineSetter(ExecState *exec, const Identifier& propertyName, JSObject *setterFunc)
+void JSObject::defineSetter(ExecState*, const Identifier& propertyName, JSObject* setterFunc)
 {
     JSValue *o = getDirect(propertyName);
     GetterSetterImp *gs;
@@ -444,13 +444,13 @@ bool JSObject::implementsHasInstance() const
   return false;
 }
 
-bool JSObject::hasInstance(ExecState */*exec*/, JSValue */*value*/)
+bool JSObject::hasInstance(ExecState *, JSValue *)
 {
   assert(false);
   return false;
 }
 
-bool JSObject::propertyIsEnumerable(ExecState *exec, const Identifier &propertyName) const
+bool JSObject::propertyIsEnumerable(ExecState*, const Identifier& propertyName) const
 {
   int attributes;
  

@@ -44,6 +44,7 @@ for these functions came from Scott Wimer. */
 
 
 #include "pcre_internal.h"
+#include <kxmlcore/UnusedParam.h>
 
 
 /*************************************************
@@ -89,6 +90,9 @@ while (top > bot)
   if (c == 0) return (entry[0] << 8) + entry[1];
   if (c > 0) bot = mid + 1; else top = mid;
   }
+#else
+ UNUSED_PARAM(code);
+ UNUSED_PARAM(stringname);
 #endif
 
 return PCRE_ERROR_NOSUBSTRING;

@@ -75,12 +75,12 @@ ArrayInstance::~ArrayInstance()
   fastFree(storage);
 }
 
-JSValue *ArrayInstance::lengthGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *ArrayInstance::lengthGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot)
 {
   return jsNumber(static_cast<ArrayInstance *>(slot.slotBase())->length);
 }
 
-bool ArrayInstance::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+bool ArrayInstance::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
   if (propertyName == lengthPropertyName) {
     slot.setCustom(this, lengthGetter);
@@ -419,14 +419,13 @@ const ClassInfo ArrayPrototype::info = {"Array", &ArrayInstance::info, &arrayTab
 */
 
 // ECMA 15.4.4
-ArrayPrototype::ArrayPrototype(ExecState *exec,
-                                     ObjectPrototype *objProto)
+ArrayPrototype::ArrayPrototype(ExecState*, ObjectPrototype* objProto)
   : ArrayInstance(objProto, 0)
 {
   setInternalValue(jsNull());
 }
 
-bool ArrayPrototype::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
+bool ArrayPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
   return getStaticFunctionSlot<ArrayProtoFunc, ArrayInstance>(exec, &arrayTable, this, propertyName, slot);
 }

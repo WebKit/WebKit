@@ -36,6 +36,8 @@
 #import "runtime_object.h"
 #import "runtime_root.h"
 
+#import <kxmlcore/UnusedParam.h>
+
 #if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
 
 @interface NSObject (WebExtras)
@@ -440,6 +442,7 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
 + (id)allocWithZone:(NSZone *)zone
 {
+    UNUSED_PARAM(zone);
     static WebUndefined *sharedUndefined = 0;
     if (!sharedUndefined)
         sharedUndefined = [super allocWithZone:NULL];
@@ -448,15 +451,18 @@ static List listFromNSArray(ExecState *exec, NSArray *array)
 
 - (id)initWithCoder:(NSCoder *)coder
 {
+    UNUSED_PARAM(coder);
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
+    UNUSED_PARAM(encoder);
 }
 
 - (id)copyWithZone:(NSZone *)zone
 {
+    UNUSED_PARAM(zone);
     return self;
 }
 

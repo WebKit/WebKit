@@ -199,7 +199,7 @@ void FunctionImp::processVarDecls(ExecState */*exec*/)
 {
 }
 
-JSValue *FunctionImp::argumentsGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *FunctionImp::argumentsGetter(ExecState* exec, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
 {
   FunctionImp *thisObj = static_cast<FunctionImp *>(slot.slotBase());
   ContextImp *context = exec->_context;
@@ -212,7 +212,7 @@ JSValue *FunctionImp::argumentsGetter(ExecState *exec, JSObject *originalObject,
   return jsNull();
 }
 
-JSValue *FunctionImp::lengthGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *FunctionImp::lengthGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot)
 {
   FunctionImp *thisObj = static_cast<FunctionImp *>(slot.slotBase());
   const Parameter *p = thisObj->param.get();
@@ -435,7 +435,7 @@ void Arguments::mark()
     _activationObject->mark();
 }
 
-JSValue *Arguments::mappedIndexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *Arguments::mappedIndexGetter(ExecState* exec, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
 {
   Arguments *thisObj = static_cast<Arguments *>(slot.slotBase());
   return thisObj->_activationObject->get(exec, thisObj->indexToNameMap[propertyName]);
@@ -482,7 +482,7 @@ ActivationImp::ActivationImp(FunctionImp *function, const List &arguments)
   // FIXME: Do we need to support enumerating the arguments property?
 }
 
-JSValue *ActivationImp::argumentsGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *ActivationImp::argumentsGetter(ExecState* exec, JSObject*, const Identifier&, const PropertySlot& slot)
 {
   ActivationImp *thisObj = static_cast<ActivationImp *>(slot.slotBase());
 
@@ -524,7 +524,7 @@ bool ActivationImp::deleteProperty(ExecState *exec, const Identifier &propertyNa
     return JSObject::deleteProperty(exec, propertyName);
 }
 
-void ActivationImp::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
+void ActivationImp::put(ExecState*, const Identifier& propertyName, JSValue* value, int attr)
 {
   // There's no way that an activation object can have a prototype or getter/setter properties
   assert(!_prop.hasGetterSetterProperties());

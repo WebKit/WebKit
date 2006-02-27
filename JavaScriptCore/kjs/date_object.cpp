@@ -799,14 +799,14 @@ JSValue *DateObjectImp::callAsFunction(ExecState * /*exec*/, JSObject * /*thisOb
 
 // ------------------------------ DateObjectFuncImp ----------------------------
 
-DateObjectFuncImp::DateObjectFuncImp(ExecState *exec, FunctionPrototype *funcProto, int i, int len, const Identifier& name)
+DateObjectFuncImp::DateObjectFuncImp(ExecState*, FunctionPrototype* funcProto, int i, int len, const Identifier& name)
     : InternalFunctionImp(funcProto, name), id(i)
 {
     putDirect(lengthPropertyName, len, DontDelete|ReadOnly|DontEnum);
 }
 
 // ECMA 15.9.4.2 - 3
-JSValue *DateObjectFuncImp::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
+JSValue *DateObjectFuncImp::callAsFunction(ExecState* exec, JSObject*, const List& args)
 {
   if (id == Parse) {
     return jsNumber(parseDate(args[0]->toString(exec)));

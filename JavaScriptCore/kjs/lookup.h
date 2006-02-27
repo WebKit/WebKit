@@ -125,7 +125,7 @@ namespace KJS {
    * Helper for getStaticFunctionSlot and getStaticPropertySlot
    */
   template <class FuncImp>
-  inline JSValue *staticFunctionGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+  inline JSValue *staticFunctionGetter(ExecState* exec, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
   {
       // Look for cached value in dynamic map of properties (in JSObject)
       JSObject *thisObj = slot.slotBase();
@@ -144,10 +144,10 @@ namespace KJS {
    * Helper for getStaticValueSlot and getStaticPropertySlot
    */
   template <class ThisImp>
-  inline JSValue *staticValueGetter(ExecState *exec, JSObject *originalObject, const Identifier&, const PropertySlot& slot)
+  inline JSValue *staticValueGetter(ExecState* exec, JSObject*, const Identifier&, const PropertySlot& slot)
   {
-      ThisImp *thisObj = static_cast<ThisImp *>(slot.slotBase());
-      const HashEntry *entry = slot.staticEntry();
+      ThisImp* thisObj = static_cast<ThisImp*>(slot.slotBase());
+      const HashEntry* entry = slot.staticEntry();
       return thisObj->getValueProperty(exec, entry->value);
   }
 

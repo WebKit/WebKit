@@ -145,7 +145,7 @@ JSValue *FunctionProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, c
 
 // ------------------------------ FunctionObjectImp ----------------------------
 
-FunctionObjectImp::FunctionObjectImp(ExecState *exec, FunctionPrototype *funcProto)
+FunctionObjectImp::FunctionObjectImp(ExecState*, FunctionPrototype* funcProto)
   : InternalFunctionImp(funcProto)
 {
   putDirect(prototypePropertyName, funcProto, DontEnum|DontDelete|ReadOnly);

@@ -41,7 +41,7 @@ RuntimeMethod::~RuntimeMethod()
 {
 }
 
-JSValue *RuntimeMethod::lengthGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *RuntimeMethod::lengthGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot)
 {
     RuntimeMethod *thisObj = static_cast<RuntimeMethod *>(slot.slotBase());
 
@@ -100,7 +100,7 @@ CodeType RuntimeMethod::codeType() const
 }
 
 
-Completion RuntimeMethod::execute(ExecState *exec)
+Completion RuntimeMethod::execute(ExecState*)
 {
     return Completion(Normal, jsUndefined());
 }

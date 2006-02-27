@@ -272,8 +272,7 @@ void RootObject::dispatchToJavaScriptThread(JSObjectCallContext *context)
     unlockJavaScriptAccess();
 }
 
-static void performJavaScriptAccess(void *info);
-static void performJavaScriptAccess(void *i)
+static void performJavaScriptAccess(void*)
 {
     assert (CFRunLoopGetCurrent() == RootObject::runLoop());
     

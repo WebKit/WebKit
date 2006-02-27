@@ -163,7 +163,7 @@ JSObject *Instance::createRuntimeObject(BindingLanguage language, void *nativeIn
     return new RuntimeObjectImp(interfaceObject);
 }
 
-void *Instance::createLanguageInstanceForValue(ExecState *exec, BindingLanguage language, JSObject *value, const RootObject *origin, const RootObject *current)
+void *Instance::createLanguageInstanceForValue(ExecState*, BindingLanguage language, JSObject* value, const RootObject* origin, const RootObject* current)
 {
     void *result = 0;
     

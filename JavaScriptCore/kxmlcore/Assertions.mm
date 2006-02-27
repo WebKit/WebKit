@@ -115,7 +115,7 @@ static void fprintf_objc(const char *format, ...)
 }
 
 
-void KXCLog(const char *file, int line, const char *function, KXCLogChannel *channel, const char *format, ...)
+void KXCLog(const char*, int, const char*, KXCLogChannel *channel, const char *format, ...)
 {
     if (channel->state == KXCLogChannelUninitialized) {
         channel->state = KXCLogChannelOff;

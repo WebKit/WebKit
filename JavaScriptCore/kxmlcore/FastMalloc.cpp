@@ -933,6 +933,11 @@ bool TCMalloc_PageHeap::Check() {
   return true;
 }
 
+#if ASSERT_DISABLED
+bool TCMalloc_PageHeap::CheckList(Span*, Length, Length) {
+  return true;
+}
+#else
 bool TCMalloc_PageHeap::CheckList(Span* list, Length min_pages, Length max_pages) {
   for (Span* s = list->next; s != list; s = s->next) {
     CHECK_CONDITION(s->free);
@@ -943,6 +948,7 @@ bool TCMalloc_PageHeap::CheckList(Span* list, Length min_pages, Length max_pages
   }
   return true;
 }
+#endif
 
 //-------------------------------------------------------------------
 // Free list

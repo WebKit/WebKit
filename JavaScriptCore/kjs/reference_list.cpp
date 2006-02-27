@@ -149,7 +149,7 @@ const Reference *ReferenceListIterator::operator->() const
   return &node->reference;
 }
 
-const Reference &ReferenceListIterator::operator++(int i) 
+const Reference &ReferenceListIterator::operator++(int) 
 {
   const Reference &ref = node->reference;
   node = node->next;

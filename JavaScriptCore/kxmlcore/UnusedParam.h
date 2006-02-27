@@ -1,7 +1,6 @@
-// -*- c-basic-offset: 4 -*-
+// -*- mode: c++; c-basic-offset: 4 -*-
 /*
- *  This file is part of the KDE libraries
- *  Copyright (C) 2005 Apple Computer, Inc.
+ *  Copyright (C) 2006 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -20,21 +19,12 @@
  *
  */
 
+#ifndef KXMLCORE_UNUSED_PARAM
+#define KXMLCORE_UNUSED_PARAM
 
-#include "config.h"
-#include "property_slot.h"
-#include "object.h"
+// don't use this for C++, it should only be used in plain C files or
+// ObjC methods, where leaving off the parameter name is not allowed.
 
-namespace KJS {
+#define UNUSED_PARAM(x) (void)x
 
-JSValue *PropertySlot::undefinedGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot&)
-{
-    return jsUndefined();
-}
-
-JSValue *PropertySlot::functionGetter(ExecState* exec, JSObject* originalObject, const Identifier&, const PropertySlot& slot)
-{
-    return slot.m_data.getterFunc->call(exec, originalObject, List::empty());
-}
-
-}
+#endif // KXMLCORE_UNUSED_PARM

@@ -376,7 +376,7 @@ namespace KJS {
      * is used to determine if an object is the Window object so we can perform
      * security checks.
      */
-    virtual bool isGlobalObject(JSValue *v) { return false; }
+    virtual bool isGlobalObject(JSValue*) { return false; }
     
     /** 
      * Find the interpreter for a particular global object.  This should really
@@ -385,7 +385,7 @@ namespace KJS {
      * created in an application to correctly implement this method.  The only
      * override of this method is currently in WebCore.
      */
-    virtual Interpreter *interpreterForGlobalObject (const JSValue *imp) { return 0; }
+    virtual Interpreter* interpreterForGlobalObject(const JSValue*) { return 0; }
     
     /**
      * Determine if the it is 'safe' to execute code in the target interpreter from an
@@ -393,7 +393,7 @@ namespace KJS {
      * cross frame security rules.  In particular, attempts to access 'bound' objects are
      * not allowed unless isSafeScript returns true.
      */
-    virtual bool isSafeScript (const Interpreter *target) { return true; }
+    virtual bool isSafeScript(const Interpreter*) { return true; }
   
 #if __APPLE__
     virtual void *createLanguageInstanceForValue(ExecState*, int language, JSObject* value, const Bindings::RootObject* origin, const Bindings::RootObject* current);

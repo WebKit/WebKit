@@ -155,9 +155,7 @@ JSValue *ObjectProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
 
 // ------------------------------ ObjectObjectImp --------------------------------
 
-ObjectObjectImp::ObjectObjectImp(ExecState *exec,
-                                 ObjectPrototype *objProto,
-                                 FunctionPrototype *funcProto)
+ObjectObjectImp::ObjectObjectImp(ExecState*, ObjectPrototype* objProto, FunctionPrototype* funcProto)
   : InternalFunctionImp(funcProto)
 {
   // ECMA 15.2.3.1

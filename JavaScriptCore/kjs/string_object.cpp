@@ -53,12 +53,12 @@ StringInstance::StringInstance(JSObject *proto, const UString &string)
   setInternalValue(jsString(string));
 }
 
-JSValue *StringInstance::lengthGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot &slot)
+JSValue *StringInstance::lengthGetter(ExecState* exec, JSObject*, const Identifier&, const PropertySlot &slot)
 {
-    return jsNumber(static_cast<StringInstance *>(slot.slotBase())->internalValue()->toString(exec).size());
+    return jsNumber(static_cast<StringInstance*>(slot.slotBase())->internalValue()->toString(exec).size());
 }
 
-JSValue *StringInstance::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot &slot)
+JSValue *StringInstance::indexGetter(ExecState* exec, JSObject*, const Identifier&, const PropertySlot &slot)
 {
     const UChar c = static_cast<StringInstance *>(slot.slotBase())->internalValue()->toString(exec)[slot.index()];
     return jsString(UString(&c, 1));
@@ -152,8 +152,7 @@ const ClassInfo StringPrototype::info = {"String", &StringInstance::info, &strin
 @end
 */
 // ECMA 15.5.4
-StringPrototype::StringPrototype(ExecState *exec,
-                                       ObjectPrototype *objProto)
+StringPrototype::StringPrototype(ExecState*, ObjectPrototype* objProto)
   : StringInstance(objProto)
 {
   // The constructor will be added later, after StringObjectImp has been built

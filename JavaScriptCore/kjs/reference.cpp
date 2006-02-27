@@ -43,7 +43,7 @@ Reference::Reference(JSObject *b, unsigned p)
 {
 }
 
-Identifier Reference::getPropertyName(ExecState *exec) const
+Identifier Reference::getPropertyName(ExecState*) const
 {
   if (propertyNameIsNumber && prop.isNull())
     prop = Identifier::from(propertyNameAsNumber);

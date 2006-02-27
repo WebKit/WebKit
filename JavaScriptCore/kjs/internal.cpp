@@ -149,13 +149,13 @@ void GetterSetterImp::mark()
         setter->mark();
 }
 
-JSValue *GetterSetterImp::toPrimitive(ExecState *exec, JSType) const
+JSValue *GetterSetterImp::toPrimitive(ExecState*, JSType) const
 {
     assert(false);
     return jsNull();
 }
 
-bool GetterSetterImp::toBoolean(ExecState *) const
+bool GetterSetterImp::toBoolean(ExecState*) const
 {
     assert(false);
     return false;

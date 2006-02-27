@@ -53,7 +53,7 @@ public:
     
     virtual Field *fieldNamed(const char *name, Instance *instance) const;
     
-    virtual Constructor *constructorAt(int i) const {
+    virtual Constructor *constructorAt(int) const {
         return 0;
     };
     

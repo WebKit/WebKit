@@ -96,7 +96,7 @@ JavaClass::~JavaClass () {
     delete [] _constructors;
 }
 
-MethodList JavaClass::methodsNamed(const char *name, Instance *instance) const
+MethodList JavaClass::methodsNamed(const char *name, Instance*) const
 {
     CFStringRef methodName = CFStringCreateWithCString(NULL, name, kCFStringEncodingASCII);
     MethodList *methodList = (MethodList *)CFDictionaryGetValue(_methods, methodName);
@@ -106,7 +106,7 @@ MethodList JavaClass::methodsNamed(const char *name, Instance *instance) const
     return MethodList();
 }
 
-Field *JavaClass::fieldNamed(const char *name, Instance *instance) const
+Field *JavaClass::fieldNamed(const char *name, Instance*) const
 {
     CFStringRef fieldName = CFStringCreateWithCString(NULL, name, kCFStringEncodingASCII);
     Field *aField = (Field *)CFDictionaryGetValue(_fields, fieldName);

@@ -87,8 +87,7 @@ JSValue *BooleanProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, co
 // ------------------------------ BooleanObjectImp -----------------------------
 
 
-BooleanObjectImp::BooleanObjectImp(ExecState *exec, FunctionPrototype *funcProto,
-                                   BooleanPrototype *booleanProto)
+BooleanObjectImp::BooleanObjectImp(ExecState*, FunctionPrototype* funcProto, BooleanPrototype* booleanProto)
   : InternalFunctionImp(funcProto)
 {
   putDirect(prototypePropertyName, booleanProto, DontEnum|DontDelete|ReadOnly);

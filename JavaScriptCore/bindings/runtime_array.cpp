@@ -44,13 +44,13 @@ RuntimeArray::~RuntimeArray()
     delete _array;
 }
 
-JSValue *RuntimeArray::lengthGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *RuntimeArray::lengthGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot)
 {
     RuntimeArray *thisObj = static_cast<RuntimeArray *>(slot.slotBase());
     return jsNumber(thisObj->getLength());
 }
 
-JSValue *RuntimeArray::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue *RuntimeArray::indexGetter(ExecState* exec, JSObject*, const Identifier&, const PropertySlot& slot)
 {
     RuntimeArray *thisObj = static_cast<RuntimeArray *>(slot.slotBase());
     return thisObj->getConcreteArray()->valueAt(exec, slot.index());
@@ -102,7 +102,7 @@ void RuntimeArray::put(ExecState *exec, const Identifier &propertyName, JSValue 
     JSObject::put(exec, propertyName, value, attr);
 }
 
-void RuntimeArray::put(ExecState *exec, unsigned index, JSValue *value, int attr)
+void RuntimeArray::put(ExecState* exec, unsigned index, JSValue* value, int)
 {
     if (index >= getLength()) {
         throwError(exec, RangeError);
@@ -112,12 +112,12 @@ void RuntimeArray::put(ExecState *exec, unsigned index, JSValue *value, int attr
     getConcreteArray()->setValueAt(exec, index, value);
 }
 
-bool RuntimeArray::deleteProperty(ExecState *exec, const Identifier &propertyName)
+bool RuntimeArray::deleteProperty(ExecState*, const Identifier&)
 {
     return false;
 }
 
-bool RuntimeArray::deleteProperty(ExecState *exec, unsigned index)
+bool RuntimeArray::deleteProperty(ExecState*, unsigned)
 {
     return false;
 }

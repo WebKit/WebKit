@@ -1,3 +1,149 @@
+2006-02-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - Turn off -Wno-unused-param for JavaScriptCore and get rid of unused params
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7384
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bindings/NP_jsobject.cpp:
+        (jsAllocate):
+        (_NPN_InvokeDefault):
+        (_NPN_Evaluate):
+        (_NPN_GetProperty):
+        (_NPN_SetProperty):
+        (_NPN_RemoveProperty):
+        (_NPN_HasProperty):
+        (_NPN_HasMethod):
+        * bindings/c/c_class.h:
+        (KJS::Bindings::CClass::constructorAt):
+        * bindings/c/c_utility.cpp:
+        (KJS::Bindings::convertNPVariantToValue):
+        * bindings/jni/jni_class.cpp:
+        (JavaClass::methodsNamed):
+        (JavaClass::fieldNamed):
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::invokeDefaultMethod):
+        * bindings/jni/jni_jsobject.cpp:
+        * bindings/jni/jni_objc.mm:
+        (-[NSObject KJS::Bindings::]):
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebUndefined allocWithZone:]):
+        (-[WebUndefined initWithCoder:]):
+        (-[WebUndefined encodeWithCoder:]):
+        (-[WebUndefined copyWithZone:]):
+        * bindings/objc/objc_class.h:
+        (KJS::Bindings::ObjcClass::constructorAt):
+        * bindings/objc/objc_class.mm:
+        (KJS::Bindings::ObjcClass::methodsNamed):
+        (KJS::Bindings::ObjcClass::fallbackObject):
+        * bindings/objc/objc_instance.mm:
+        (ObjcInstance::getValueOfUndefinedField):
+        * bindings/objc/objc_runtime.mm:
+        (ObjcFallbackObjectImp::getOwnPropertySlot):
+        (ObjcFallbackObjectImp::put):
+        (ObjcFallbackObjectImp::canPut):
+        (ObjcFallbackObjectImp::deleteProperty):
+        (ObjcFallbackObjectImp::toBoolean):
+        * bindings/runtime.cpp:
+        (KJS::Bindings::Instance::createLanguageInstanceForValue):
+        * bindings/runtime.h:
+        (KJS::Bindings::Instance::getValueOfUndefinedField):
+        (KJS::Bindings::Instance::setValueOfUndefinedField):
+        * bindings/runtime_array.cpp:
+        (RuntimeArray::lengthGetter):
+        (RuntimeArray::indexGetter):
+        (RuntimeArray::put):
+        (RuntimeArray::deleteProperty):
+        * bindings/runtime_method.cpp:
+        (RuntimeMethod::lengthGetter):
+        (RuntimeMethod::execute):
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::fallbackObjectGetter):
+        (RuntimeObjectImp::fieldGetter):
+        (RuntimeObjectImp::methodGetter):
+        (RuntimeObjectImp::put):
+        (RuntimeObjectImp::canPut):
+        (RuntimeObjectImp::deleteProperty):
+        (RuntimeObjectImp::defaultValue):
+        (RuntimeObjectImp::callAsFunction):
+        * bindings/runtime_root.cpp:
+        (performJavaScriptAccess):
+        * kjs/array_object.cpp:
+        (ArrayInstance::lengthGetter):
+        (ArrayInstance::getOwnPropertySlot):
+        (ArrayPrototype::ArrayPrototype):
+        (ArrayPrototype::getOwnPropertySlot):
+        * kjs/bool_object.cpp:
+        (BooleanObjectImp::BooleanObjectImp):
+        * kjs/date_object.cpp:
+        (KJS::DateObjectFuncImp::DateObjectFuncImp):
+        (KJS::DateObjectFuncImp::callAsFunction):
+        * kjs/error_object.cpp:
+        (ErrorObjectImp::ErrorObjectImp):
+        (NativeErrorPrototype::NativeErrorPrototype):
+        (NativeErrorImp::NativeErrorImp):
+        * kjs/function.cpp:
+        (KJS::FunctionImp::argumentsGetter):
+        (KJS::FunctionImp::lengthGetter):
+        (KJS::Arguments::mappedIndexGetter):
+        (KJS::ActivationImp::argumentsGetter):
+        (KJS::ActivationImp::put):
+        * kjs/function_object.cpp:
+        (FunctionObjectImp::FunctionObjectImp):
+        * kjs/internal.cpp:
+        (KJS::GetterSetterImp::toPrimitive):
+        (KJS::GetterSetterImp::toBoolean):
+        * kjs/interpreter.cpp:
+        (KJS::Interpreter::evaluate):
+        * kjs/interpreter.h:
+        (KJS::Interpreter::isGlobalObject):
+        (KJS::Interpreter::interpreterForGlobalObject):
+        (KJS::Interpreter::isSafeScript):
+        * kjs/lexer.cpp:
+        (Lexer::makeIdentifier):
+        (Lexer::makeUString):
+        * kjs/lookup.h:
+        (KJS::staticFunctionGetter):
+        (KJS::staticValueGetter):
+        * kjs/nodes.cpp:
+        (StatementNode::processFuncDecl):
+        (PropertyNode::evaluate):
+        (PropertyNameNode::evaluate):
+        * kjs/number_object.cpp:
+        (NumberObjectImp::NumberObjectImp):
+        (NumberObjectImp::getOwnPropertySlot):
+        * kjs/object.cpp:
+        (KJS::JSObject::defineGetter):
+        (KJS::JSObject::defineSetter):
+        (KJS::JSObject::hasInstance):
+        (KJS::JSObject::propertyIsEnumerable):
+        * kjs/object_object.cpp:
+        (ObjectObjectImp::ObjectObjectImp):
+        * kjs/property_slot.cpp:
+        (KJS::PropertySlot::undefinedGetter):
+        (KJS::PropertySlot::functionGetter):
+        * kjs/reference.cpp:
+        (KJS::Reference::getPropertyName):
+        * kjs/reference_list.cpp:
+        (ReferenceListIterator::operator++):
+        * kjs/regexp_object.cpp:
+        (RegExpObjectImp::RegExpObjectImp):
+        (RegExpObjectImp::getValueProperty):
+        (RegExpObjectImp::putValueProperty):
+        * kjs/string_object.cpp:
+        (StringInstance::lengthGetter):
+        (StringInstance::indexGetter):
+        (StringPrototype::StringPrototype):
+        * kxmlcore/Assertions.mm:
+        * kxmlcore/FastMalloc.cpp:
+        (KXMLCore::TCMalloc_PageHeap::CheckList):
+        * kxmlcore/HashTable.h:
+        (KXMLCore::HashTableConstIterator::checkValidity):
+        (KXMLCore::IdentityHashTranslator::translate):
+        * pcre/pcre_get.c:
+        (pcre_get_stringnumber):
+
 2006-02-23  Darin Adler  <darin@apple.com>
 
         - try to fix buildbot failure
