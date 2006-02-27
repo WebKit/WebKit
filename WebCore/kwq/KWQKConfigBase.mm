@@ -26,126 +26,60 @@
 #include "config.h"
 #import "KWQKConfigBase.h"
 
-#import "Color.h"
 #import "KWQExceptions.h"
-#import "KWQKHTMLSettings.h"
 #import "KWQLogging.h"
-#import "QStringList.h"
-#import "WebCoreSettings.h"
 #import "WebCoreViewFactory.h"
 
-class KWQKConfigImpl
+namespace WebCore {
+
+PluginInfo *PluginInfoStore::createPluginInfoForPluginAtIndex(unsigned index)
 {
-public:
-    bool isPluginInfo;
-    bool isKonquerorRC;
-    int pluginIndex;
-};
+    PluginInfo *pluginInfo = new PluginInfo;
+    
+    KWQ_BLOCK_EXCEPTIONS;
 
-KConfig::KConfig(const QString &n, bool bReadOnly, bool bUseKDEGlobals)
-{
-    impl = new KWQKConfigImpl;
-    impl->isPluginInfo = n.contains("pluginsinfo");
-    impl->isKonquerorRC = (n == "konquerorrc");
-    impl->pluginIndex = 0;
-}
+    id <WebCorePluginInfo> plugin = [[[WebCoreViewFactory sharedFactory] pluginsInfo] objectAtIndex:index];
+    
+    pluginInfo->name = [plugin name];
+    pluginInfo->file = [plugin filename];
+    pluginInfo->desc = [plugin pluginDescription];
 
-KConfig::~KConfig()
-{
-    delete impl;
-}
-
-void KConfig::setGroup(const QString &pGroup)
-{
-    if (impl->isPluginInfo) {
-        impl->pluginIndex = pGroup.toUInt();
-    }
-}
-
-QString KConfig::readEntry(const char *pKey, const QString& aDefault) const
-{
-    if (impl->isPluginInfo) {
-	KWQ_BLOCK_EXCEPTIONS;
-
-	NSString *result = nil;
-
-        id <WebCorePluginInfo> plugin = [[[WebCoreViewFactory sharedFactory] pluginsInfo] objectAtIndex:impl->pluginIndex];
-        if (strcmp(pKey, "name") == 0) {
-            result = [plugin name];
-        } else if (strcmp(pKey, "file") == 0) {
-            result = [plugin filename];
-        } else if (strcmp(pKey, "description") == 0) {
-            result = [plugin pluginDescription];
-        } else if (strcmp(pKey, "mime") == 0) {
-            NSEnumerator *MIMETypeEnumerator = [plugin MIMETypeEnumerator], *extensionEnumerator;
-            NSMutableString *MIMEString = [NSMutableString string];
-            NSString *MIME, *extension;
-            NSArray *extensions;
-            
-            while ((MIME = [MIMETypeEnumerator nextObject]) != nil) {
-                [MIMEString appendFormat:@"%@:", MIME];
-
-                extensions = [plugin extensionsForMIMEType:MIME];
-                extensionEnumerator = [extensions objectEnumerator];
-                
-                while ((extension = [extensionEnumerator nextObject]) != nil) {
-                    [MIMEString appendFormat:@"%@,", extension];
-                }
-                // Delete the last ",".
-                NSRange tempRange = { [MIMEString length]-1, 1 }; // workaround for 4213314
-                [MIMEString deleteCharactersInRange:tempRange];
-                [MIMEString appendFormat:@":%@;", [plugin descriptionForMIMEType:MIME]];
-            }
-
-            result = MIMEString;
-        }
-
-	return QString::fromNSString(result);
-
-	KWQ_UNBLOCK_EXCEPTIONS;
-
-	return QString();
+    NSEnumerator *MIMETypeEnumerator = [plugin MIMETypeEnumerator];
+    while (NSString *MIME = [MIMETypeEnumerator nextObject]) {
+        MimeClassInfo *mime = new MimeClassInfo;
+        pluginInfo->mimes.append(mime);
+        mime->type = String(MIME).lower();
+        mime->suffixes = [[plugin extensionsForMIMEType:MIME] componentsJoinedByString:@","];
+        mime->desc = [plugin descriptionForMIMEType:MIME];
+        mime->plugin = pluginInfo;
     }
     
-    LOG_ERROR("config %s not implemented", pKey);
-    return QString();
+    return pluginInfo;
+
+    KWQ_UNBLOCK_EXCEPTIONS;
+    
+    if (pluginInfo && pluginInfo->mimes)
+        deleteAllValues(pluginInfo->mimes);
+    delete pluginInfo;
+
+    return 0;
 }
 
-int KConfig::readNumEntry(const char *pKey, int nDefault) const
+unsigned PluginInfoStore::pluginCount() const
 {
-    if (impl->isPluginInfo && strcmp(pKey, "number") == 0) {
-        KWQ_BLOCK_EXCEPTIONS;
-	return [[[WebCoreViewFactory sharedFactory] pluginsInfo] count];
-	KWQ_UNBLOCK_EXCEPTIONS;
-	
-	return 0;
-    }
-    LOG_ERROR("config %s not implemented", pKey);
-    return nDefault;
+    KWQ_BLOCK_EXCEPTIONS;
+    return [[[WebCoreViewFactory sharedFactory] pluginsInfo] count];
+    KWQ_UNBLOCK_EXCEPTIONS;
+    
+    return 0;
 }
 
-unsigned KConfig::readUnsignedNumEntry(const KHTMLSettings *settings, const char *pKey, unsigned nDefault) const
-{
-    if (impl->isKonquerorRC && strcmp(pKey, "WindowOpenPolicy") == 0) {
-        if (settings->JavaScriptCanOpenWindowsAutomatically()) {
-	    return 0;
-	} else {
-	    return 3;
-	}
-    }
-    LOG_ERROR("config %s not implemented", pKey);
-    return nDefault;
-}
-
-Color KConfig::readColorEntry(const char *pKey, const Color *pDefault) const
-{
-    return pDefault ? *pDefault : Color(0, 0, 0);
-}
-
-void RefreshPlugins(bool reload)
+void refreshPlugins(bool reload)
 {
     KWQ_BLOCK_EXCEPTIONS;
     [[WebCoreViewFactory sharedFactory] refreshPlugins:reload];
     KWQ_UNBLOCK_EXCEPTIONS;
+}
+
 }
 

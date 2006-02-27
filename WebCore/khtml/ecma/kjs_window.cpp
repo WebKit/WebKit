@@ -56,6 +56,7 @@
 #include <kjs/collector.h>
 #include <klocale.h>
 #include "FrameTree.h"
+#include "khtml_settings.h"
 
 #if KHTML_XSLT
 #include "XSLTProcessor.h"

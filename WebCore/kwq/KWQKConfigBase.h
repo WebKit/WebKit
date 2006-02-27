@@ -23,44 +23,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KCONFIG_H_
-#define KCONFIG_H_
+#ifndef PluginConfig_H
+#define PluginConfig_H
 
-#include "QString.h"
-#include "KWQKHTMLSettings.h"
-
-class QStringList;
-
-class KWQKConfigImpl;
+#include "PlatformString.h"
+#include <kxmlcore/Vector.h>
 
 namespace WebCore {
-    class Color;
-}
 
-class KConfig {
-public:
+struct PluginInfo;
 
-    KConfig(const QString &n, bool bReadOnly=false, bool bUseKDEGlobals = true);
-    ~KConfig();
-
-    void setGroup(const QString &pGroup);
-    
-    QString readEntry(const char *pKey, const QString& aDefault=QString::null) const;
-    
-    int readNumEntry(const char *pKey, int nDefault=0) const;
-    unsigned int readUnsignedNumEntry(const KHTMLSettings *settings, const char *pKey, unsigned int nDefault=0) const;
-    
-    WebCore::Color readColorEntry(const char *pKey, const WebCore::Color *pDefault=0L) const;
-
-private:
-
-    KConfig(const KConfig &);
-    KConfig &operator=(const KConfig &);
-    
-    KWQKConfigImpl *impl;
-
+struct MimeClassInfo {
+    String type;
+    String desc;
+    String suffixes;
+    PluginInfo* plugin;
 };
 
-void RefreshPlugins(bool reload);
+struct PluginInfo {
+    String name;
+    String file;
+    String desc;
+    Vector<MimeClassInfo*> mimes;
+};
+
+class PluginInfoStore {
+public:
+    PluginInfoStore() { }
+    PluginInfo *createPluginInfoForPluginAtIndex(unsigned);
+    unsigned pluginCount() const;
+    
+private:
+    PluginInfoStore(const PluginInfoStore&);
+    PluginInfoStore &operator=(const PluginInfoStore&);
+};
+
+void refreshPlugins(bool reload);
+
+}
 
 #endif

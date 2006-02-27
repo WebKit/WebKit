@@ -2,6 +2,41 @@
 
         Reviewed by darin.
 
+        Reworked KConfig and plugin architecture to be much more sane.
+        This is part one.  Once this lands, I'll move it under platform with a better name.
+
+        Darin had several great suggested further improvements as part of:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7451
+        I'll make some of those when I move this to platform.
+
+        No layout test possible (no way to control which plugins DRT sees).
+
+        * khtml/ecma/kjs_navigator.cpp:
+        (KJS::PluginBase::PluginBase):
+        (KJS::PluginBase::~PluginBase):
+        (KJS::PluginBase::refresh):
+        (KJS::Plugins::getValueProperty):
+        (KJS::Plugins::nameGetter):
+        (KJS::Plugins::getOwnPropertySlot):
+        (KJS::MimeTypes::getValueProperty):
+        (KJS::MimeTypes::nameGetter):
+        (KJS::MimeTypes::getOwnPropertySlot):
+        (KJS::Plugin::getValueProperty):
+        (KJS::Plugin::nameGetter):
+        (KJS::Plugin::getOwnPropertySlot):
+        * khtml/ecma/kjs_navigator.h:
+        * khtml/ecma/kjs_window.cpp:
+        * kwq/KWQKConfigBase.h:
+        (WebCore::PluginInfoStore::PluginInfoStore):
+        * kwq/KWQKConfigBase.mm:
+        (WebCore::PluginInfoStore::createPluginInfoForPluginAtIndex):
+        (WebCore::PluginInfoStore::pluginCount):
+        (WebCore::refreshPlugins):
+
+2006-02-27  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
         Build fix: cast to unsigned from size_t.
 
         * platform/StreamingTextDecoder.cpp:

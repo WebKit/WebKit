@@ -18,8 +18,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _KJS_NAVIGATOR_H_
-#define _KJS_NAVIGATOR_H_
+#ifndef KJS_Navigator_H
+#define KJS_Navigator_H
 
 #include <kjs/object.h>
 
