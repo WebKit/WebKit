@@ -95,7 +95,7 @@ QString StreamingTextDecoder::convertUTF16(const unsigned char *s, int length)
     
     while (len > 1) {
         UChar buffer[ConversionBufferSize];
-        int runLength = min(len / 2, sizeof(buffer) / sizeof(buffer[0]));
+        int runLength = min(len / 2, (unsigned)(sizeof(buffer) / sizeof(buffer[0])));
         int bufferLength = 0;
         if (m_littleEndian) {
             for (int i = 0; i < runLength; ++i) {
