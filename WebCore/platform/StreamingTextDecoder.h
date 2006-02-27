@@ -41,17 +41,17 @@ namespace WebCore {
         QString toUnicode(const char* chs, int len, bool flush = false);
         
     private:
-        QString convert(const char *chs, int len, bool flush)
-            { return convert(reinterpret_cast<const unsigned char *>(chs), len, flush); }
-        QString convert(const unsigned char *chs, int len, bool flush);
-        QString convertLatin1(const unsigned char *chs, int len);
-        QString convertUTF16(const unsigned char *chs, int len);
+        QString convert(const char*chs, int len, bool flush)
+            { return convert(reinterpret_cast<const unsigned char*>(chs), len, flush); }
+        QString convert(const unsigned char* chs, int len, bool flush);
+        QString convertLatin1(const unsigned char* chs, int len);
+        QString convertUTF16(const unsigned char* chs, int len);
         
         // ICU decoding.
         QString convertUsingICU(const unsigned char *chs, int len, bool flush);
         UErrorCode createICUConverter();
 
-        static void appendOmittingUnwanted(QString &s, const UniChar *characters, int byteCount);
+        static void appendOmittingUnwanted(QString& s, const UChar* characters, int byteCount);
 
         TextEncoding m_encoding;
         bool m_littleEndian;

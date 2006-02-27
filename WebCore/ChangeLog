@@ -1,5 +1,12 @@
 2006-02-27  Maciej Stachowiak  <mjs@apple.com>
 
+        - fix problem with a prototype that broke win32 build
+
+        * platform/StreamingTextDecoder.h:
+        (WebCore::StreamingTextDecoder::convert):
+
+2006-02-27  Maciej Stachowiak  <mjs@apple.com>
+
         - fix debug build (broken by my last commit)
 
         * platform/StreamingTextDecoder.cpp:
