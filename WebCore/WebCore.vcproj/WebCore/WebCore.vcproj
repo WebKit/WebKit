@@ -315,6 +315,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kwq\KWQObject.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kwq\KWQObject.h"
 				>
 			</File>

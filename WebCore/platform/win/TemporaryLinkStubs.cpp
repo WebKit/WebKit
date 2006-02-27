@@ -238,13 +238,13 @@ bool  QTextEdit::checksDescendantsForFocus(void)const  { notImplemented(); retur
 enum WebCore::Widget::FocusPolicy  QLineEdit::focusPolicy(void)const  { notImplemented(); return NoFocus; }
 QScrollBar::~QScrollBar(void) { notImplemented(); }
 Path::Path(){ notImplemented(); }
-Path::Path(const IntRect& r, Type t){ notImplemented(); }
-Path::Path(const IntPointArray& arr){ notImplemented(); }
+Path::Path(const IntRect&, Type){ notImplemented(); }
+Path::Path(const IntPointArray&){ notImplemented(); }
 Path::~Path(){ notImplemented(); }
-Path::Path(const Path& other){ notImplemented(); }
-Path& Path::operator=(const Path& other){ notImplemented(); return *this; }
-bool Path::contains(const IntPoint& point) const{ notImplemented(); return false; }
-void Path::translate(int deltaX, int deltaY){ notImplemented(); }
+Path::Path(const Path&){ notImplemented(); }
+Path& Path::operator=(const Path&){ notImplemented(); return *this; }
+bool Path::contains(const IntPoint&) const{ notImplemented(); return false; }
+void Path::translate(int, int){ notImplemented(); }
 IntRect Path::boundingRect() const { notImplemented(); return IntRect(); }
 static Cursor localCursor;
 const Cursor& WebCore::crossCursor() { notImplemented(); return localCursor; }
@@ -261,3 +261,12 @@ const Cursor& WebCore::southResizeCursor() { notImplemented(); return localCurso
 const Cursor& WebCore::southEastResizeCursor() { notImplemented(); return localCursor; }
 const Cursor& WebCore::southWestResizeCursor() { notImplemented(); return localCursor; }
 const Cursor& WebCore::westResizeCursor() { notImplemented(); return localCursor; }
+WebCore::MouseEvent::MouseEvent() { notImplemented(); }
+void QLineEdit::setColors(class Color const &,class Color const &) { notImplemented(); }
+void QTextEdit::setColors(class Color const &,class Color const &) { notImplemented(); }
+class QString searchableIndexIntroduction(void) { notImplemented(); return QString(); }
+void KWQKCookieJar::setCookie(class KURL const &,class KURL const &,class QString const &) { notImplemented(); }
+class QString KWQKCookieJar::cookie(class KURL const &) { notImplemented(); return QString(); }
+class IntRect WebCore::screenRect(class Widget *) { notImplemented(); return IntRect(); }
+void WebCore::ScrollView::scrollBy(int,int) { notImplemented(); }
+void WebCore::Widget::clearFocus(void) { notImplemented(); }

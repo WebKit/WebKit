@@ -1,3 +1,12 @@
+2006-02-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - work toward getting the Win32 build to link
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Added KWQObject.cpp.
+        * platform/win/TemporaryLinkStubs.cpp: Added more stubs.
+
 2006-02-24  Antti Koivisto  <koivisto@iki.fi>
 
         Reviewed by Hyatt.
