@@ -26,6 +26,8 @@
 #include "KWQKJavaAppletWidget.h"
 #include "KWQScrollBar.h"
 #include "Path.h"
+#include "MouseEvent.h"
+#include "KWQKCookieJar.h"
 
 using namespace WebCore;
 
