@@ -1,6 +1,18 @@
+2006-02-25  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Maciej, landed by Geoff.
+
+        - Tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=4977
+        <form> not being displayed at all.
+
+        * fast/forms/form-hides-table-expected.checksum: Added.
+        * fast/forms/form-hides-table-expected.png: Added.
+        * fast/forms/form-hides-table-expected.txt: Added.
+        * fast/forms/form-hides-table.html: Added.
+
 2006-02-26  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
-        Test by Geoff, automated by me, reviewed by Darin.
+        Test by Geoff, automated by me, reviewed by Darin, landed by Geoff.
 
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7293
           REGRESSION: Using Javascript Bookmarklets that reference location.href on a blank tab crashes WebKit
