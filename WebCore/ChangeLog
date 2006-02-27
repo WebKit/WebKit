@@ -1,4 +1,13 @@
 2006-02-27  Maciej Stachowiak  <mjs@apple.com>
+ 
+        Reviewed by Darin.
+
+        - add Selection.cpp to win32 build
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7490
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+
+2006-02-27  Maciej Stachowiak  <mjs@apple.com>
 
         - use proper header for std::min.
 

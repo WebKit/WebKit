@@ -1018,6 +1018,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\editing\Selection.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\editing\Selection.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\editing\SelectionController.cpp"
 					>
 				</File>
