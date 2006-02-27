@@ -65,7 +65,8 @@ static NSCursor* leakNamedCursor(const char* name, int x, int y)
     [resourceName release];
     NSCursor* cursor = 0;
     if (cursorImage) {
-        cursor = [[NSCursor alloc] initWithImage:cursorImage hotSpot:NSMakePoint(x, y)];
+        NSPoint hotSpotPoint = {x, y}; // workaround for 4213314
+        cursor = [[NSCursor alloc] initWithImage:cursorImage hotSpot:hotSpotPoint];
         [cursorImage release];
     }
     return cursor;
