@@ -1,5 +1,16 @@
 2006-02-26  Darin Adler  <darin@apple.com>
 
+        - try again after seeing errors from buildbot
+
+        * loader/CachedObject.cpp: (WebCore::CachedObject::~CachedObject):
+        * loader/CachedObject.h: (WebCore::CachedObject::CachedObject):
+        * loader/loader.cpp:
+        Add __APPLE__ ifdefs to calls to setResponse and setAllData.
+
+        * platform/win/TemporaryLinkStubs.cpp: Add missing includes.
+
+2006-02-26  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - more Win32 link fixes

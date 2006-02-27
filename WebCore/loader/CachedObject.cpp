@@ -38,8 +38,10 @@ CachedObject::~CachedObject()
     if(m_deleted) abort();
     Cache::removeFromLRUList(this);
     m_deleted = true;
+#if __APPLE__
     setResponse(0);
     setAllData(0);
+#endif
 }
 
 void CachedObject::finish()

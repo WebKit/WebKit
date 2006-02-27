@@ -29,6 +29,7 @@
 #include "MouseEvent.h"
 #include "KWQKCookieJar.h"
 #include "Screen.h"
+#include "History.h"
 
 using namespace WebCore;
 
