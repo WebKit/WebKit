@@ -33,6 +33,7 @@
 #include "FrameView.h"
 #include "NodeImpl.h"
 #include "Shared.h"
+#include "TransferJobClient.h"
 #include "edit_actions.h"
 #include "text_affinity.h"
 #include "text_granularity.h"
@@ -90,7 +91,7 @@ enum ObjectContentType {
     ObjectContentPlugin,
 };
 
-class Frame : public Shared<Frame>, public QObject, Noncopyable {
+class Frame : public Shared<Frame>, public QObject, Noncopyable, TransferJobClient {
 
 public:
   enum { NoXPosForVerticalArrowNavigation = INT_MIN };
@@ -721,12 +722,10 @@ public:
 
   void reparseConfiguration();
 
-private slots:
-  void slotData(KIO::Job*, const ByteArray&);
-  void slotFinished(KIO::Job*);
-  void slotRedirection(KIO::Job*, const KURL&);
-
 private:
+    virtual void receivedRedirect(TransferJob*, const KURL&);
+    virtual void receivedAllData(TransferJob*);
+
   void childBegin();
 
   void submitFormAgain();

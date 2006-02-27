@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,17 +25,17 @@
 
 #import "WebCoreResourceLoader.h"
 
-namespace KIO {
+namespace WebCore {
     class TransferJob;
 }
 
 @interface KWQResourceLoader : NSObject <WebCoreResourceLoader>
 {
-    KIO::TransferJob *_job;
+    WebCore::TransferJob* _job;
     id <WebCoreResourceHandle> _handle;
 }
 
-- (id)initWithJob:(KIO::TransferJob *)job;
+- (id)initWithJob:(WebCore::TransferJob*)job;
 - (void)setHandle:(id <WebCoreResourceHandle>)handle;
 - (void)jobWillBeDeallocated;
 - (void)jobCanceledLoad;

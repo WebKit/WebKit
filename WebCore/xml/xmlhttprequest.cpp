@@ -137,19 +137,13 @@ void XMLHttpRequest::setOnLoadListener(EventListener* eventListener)
 }
 
 XMLHttpRequest::XMLHttpRequest(DocumentImpl *d)
-  : qObject(new XMLHttpRequestQObject(this)),
-    doc(d),
+  : doc(d),
     async(true),
     job(0),
     state(Uninitialized),
     createdDocument(false),
     aborted(false)
 {
-}
-
-XMLHttpRequest::~XMLHttpRequest()
-{
-    delete qObject;
 }
 
 void XMLHttpRequest::changeState(XMLHttpRequestState newState)
@@ -261,10 +255,10 @@ void XMLHttpRequest::send(const DOMString& _body)
       if (!codec)   // FIXME: report an error?
         codec = QTextCodec::codecForName("UTF-8");
 
-      job = http_post(url, codec->fromUnicode(_body.qstring()), false);
+      job = new TransferJob(async ? this : 0, url, codec->fromUnicode(_body.qstring()));
   }
   else
-     job = get(url, false, false);
+     job = new TransferJob(async ? this : 0, url);
   if (requestHeaders.length() > 0)
     job->addMetaData("customHTTPHeader", requestHeaders);
 
@@ -295,12 +289,6 @@ void XMLHttpRequest::send(const DOMString& _body)
     gcProtectNullTolerant(KJS::ScriptInterpreter::getDOMObject(this));
   }
   
-  qObject->connect(job, SIGNAL(result(KIO::Job*)), SLOT(slotFinished(KIO::Job*)));
-  qObject->connect(job, SIGNAL(data(KIO::Job*, const char*, int)),
-    SLOT(slotData(KIO::Job*, const char*, int)));
-  qObject->connect(job, SIGNAL(redirection(KIO::Job*, const KURL&)),
-    SLOT(slotRedirection(KIO::Job*, const KURL&)));
-
   addToRequestsByDocument();
 
   KWQServeRequest(Cache::loader(), doc->docLoader(), job);
@@ -455,16 +443,14 @@ void XMLHttpRequest::processSyncLoadResults(const ByteArray &data, const KURL &f
   const char *bytes = (const char *)data.data();
   int len = (int)data.size();
 
-  slotData(0, bytes, len);
-
-  if (aborted) {
+  receivedData(0, bytes, len);
+  if (aborted)
     return;
-  }
 
-  slotFinished(0);
+  receivedAllData(0);
 }
 
-void XMLHttpRequest::slotFinished(Job*)
+void XMLHttpRequest::receivedAllData(TransferJob*)
 {
   if (responseHeaders.isEmpty() && job)
     responseHeaders = job->queryMetaData("HTTP-Headers");
@@ -491,13 +477,13 @@ void XMLHttpRequest::slotFinished(Job*)
   }
 }
 
-void XMLHttpRequest::slotRedirection(Job*, const KURL& url)
+void XMLHttpRequest::receivedRedirect(TransferJob*, const KURL& url)
 {
   if (!urlMatchesDocumentDomain(url))
     abort();
 }
 
-void XMLHttpRequest::slotData(Job*, const char *data, int len)
+void XMLHttpRequest::receivedData(TransferJob*, const char *data, int len)
 {
   if (responseHeaders.isEmpty() && job)
     responseHeaders = job->queryMetaData("HTTP-Headers");

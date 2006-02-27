@@ -23,9 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "KWQCString.h"
-#include "KWQSignal.h"
-
 #if __OBJC__
 @class NSDictionary;
 @class NSString;
@@ -36,32 +33,33 @@ class NSString;
 class NSURLResponse;
 #endif
 
-namespace khtml {
+class KURL;
+class QString;
+
+namespace WebCore {
     class CachedObject;
     class DocLoader;
+    class TransferJob;
     class Loader;
     class Request;
+    class String;
+
+    template <typename T> class Array;
+
+    typedef Array<char> ByteArray;
 }
 
-namespace KIO {
-    class TransferJob;
-}
+bool KWQServeRequest(WebCore::Loader*, WebCore::Request*, WebCore::TransferJob*);
+bool KWQServeRequest(WebCore::Loader*, WebCore::DocLoader*, WebCore::TransferJob*);
 
-namespace DOM {
-    class DOMString;
-}
+WebCore::ByteArray KWQServeSynchronousRequest(WebCore::Loader*, WebCore::DocLoader*, WebCore::TransferJob*, KURL& finalURL, QString& headers);
 
-bool KWQServeRequest(khtml::Loader *, khtml::Request *, KIO::TransferJob *);
-bool KWQServeRequest(khtml::Loader *, khtml::DocLoader *, KIO::TransferJob *);
-
-ByteArray KWQServeSynchronousRequest(khtml::Loader *, khtml::DocLoader *, KIO::TransferJob *, KURL &finalURL, QString &headers);
-
-void KWQCheckCacheObjectStatus(khtml::DocLoader *, khtml::CachedObject *);
-bool KWQCheckIfReloading(khtml::DocLoader *loader);
-bool KWQIsResponseURLEqualToURL(NSURLResponse *response, const DOM::DOMString &m_url);
+void KWQCheckCacheObjectStatus(WebCore::DocLoader*, WebCore::CachedObject*);
+bool KWQCheckIfReloading(WebCore::DocLoader*);
+bool KWQIsResponseURLEqualToURL(NSURLResponse*, const WebCore::String& m_url);
 QString KWQResponseURL(NSURLResponse *response);
 QString KWQResponseMIMEType(NSURLResponse *response);
 bool KWQResponseIsMultipart(NSURLResponse *response);
-int KWQNumberOfPendingOrLoadingRequests(khtml::DocLoader *dl);
-time_t KWQCacheObjectExpiresTime(khtml::DocLoader *docLoader, NSURLResponse *response);
-NSString *KWQHeaderStringFromDictionary(NSDictionary *headers, int statusCode);
+int KWQNumberOfPendingOrLoadingRequests(WebCore::DocLoader*);
+time_t KWQCacheObjectExpiresTime(WebCore::DocLoader*, NSURLResponse*);
+NSString* KWQHeaderStringFromDictionary(NSDictionary* headers, int statusCode);

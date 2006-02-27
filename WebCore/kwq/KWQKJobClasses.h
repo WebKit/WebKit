@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,79 +26,61 @@
 #ifndef JOBCLASSES_H_
 #define JOBCLASSES_H_
 
-#include <kxmlcore/HashMap.h>
-#include "KWQObject.h"
-#include "QString.h"
-#include "KWQKURL.h"
 #include "PlatformString.h"
+#include "TransferJobClient.h" // for PlatformResponse
+#include <kxmlcore/HashMap.h>
 
+#if __APPLE__
 #ifdef __OBJC__
 @class KWQResourceLoader;
-@class NSData;
-@class NSURLResponse;
 #else
 class KWQResourceLoader;
-class NSData;
-class NSURLResponse;
+#endif
 #endif
 
+class KURL;
+
 namespace WebCore {
-    class FormData;
-}
 
-namespace KIO {
-
+class FormData;
 class TransferJobPrivate;
 
-class Job : public QObject {
+class TransferJob {
 public:
-    virtual int error() const = 0;
-    virtual QString errorText() const = 0;
-    virtual void kill() = 0;
-};
-
-class TransferJob : public Job {
-public:
-    TransferJob(const KURL &, bool reload, bool deliverAllData=false);
-    TransferJob(const KURL &, const WebCore::FormData& postData, bool deliverAllData=false);
+    TransferJob(TransferJobClient*, const KURL&);
+    TransferJob(TransferJobClient*, const KURL&, const FormData& postData);
     ~TransferJob();
 
     int error() const;
     void setError(int);
     QString errorText() const;
     bool isErrorPage() const;
-    QString queryMetaData(const QString &key) const;
-    void addMetaData(const QString &key, const QString &value);
-    void addMetaData(const HashMap<WebCore::DOMString, WebCore::DOMString> &value);
+    QString queryMetaData(const QString& key) const;
+    void addMetaData(const QString& key, const QString& value);
+    void addMetaData(const HashMap<String, String>&);
     void kill();
 
-    void setLoader(KWQResourceLoader *);
+    KURL url() const;
+    QString method() const;
+    FormData postData() const;
+
+#if __APPLE__
+    void setLoader(KWQResourceLoader*);
+#endif
+
     void cancel();
     
-    KURL url() const;
+    TransferJobClient* client() const;
 
-    void emitData(const char *, int);
-    void emitRedirection(const KURL &);
-    void emitResult(NSData *allData=0);
-    void emitReceivedResponse(NSURLResponse *);
-
-    WebCore::FormData postData() const;
-    QString method() const;
+    void receivedResponse(PlatformResponse);
 
 private:
     void assembleResponseHeaders() const;
     void retrieveCharset() const;
 
-    TransferJobPrivate *d;
-
-    bool m_deliverAllData;
-    
-    KWQSignal m_data;
-    KWQSignal m_redirection;
-    KWQSignal m_result;
-    KWQSignal m_receivedResponse;    
+    TransferJobPrivate* d;
 };
 
-} // namespace KIO
+}
 
 #endif

@@ -22,23 +22,18 @@
 #ifndef XMLHTTPREQUEST_H_
 #define XMLHTTPREQUEST_H_
 
-#include <KURL.h>
+#include "KURL.h"
+#include "TransferJobClient.h"
 #include <kxmlcore/HashMap.h>
 #include <kxmlcore/HashSet.h>
 #include <qguardedptr.h>
-#include <qobject.h>
-
-namespace KIO {
-    class Job;
-    class TransferJob;
-}
 
 namespace WebCore {
 
   class Decoder;
   class DocumentImpl;
   class EventListener;
-  class XMLHttpRequestQObject;
+  class String;
 
   // these exact numeric values are important because JS expects them
   enum XMLHttpRequestState {
@@ -49,24 +44,23 @@ namespace WebCore {
     Completed = 4       // Finished with all operations
   };
 
-  class XMLHttpRequest : public Shared<XMLHttpRequest> {
+  class XMLHttpRequest : public Shared<XMLHttpRequest>, TransferJobClient {
   public:
-    XMLHttpRequest(DocumentImpl* d);
-    ~XMLHttpRequest();
+    XMLHttpRequest(DocumentImpl*);
 
-    static void cancelRequests(DocumentImpl *d);
+    static void cancelRequests(DocumentImpl*);
 
-    DOMString getStatusText() const;
+    String getStatusText() const;
     int getStatus() const;
     XMLHttpRequestState getReadyState() const;
-    void open(const DOMString& method, const KURL& url, bool async, const DOMString& user, const DOMString& password);
-    void send(const DOMString& _body);
+    void open(const String& method, const KURL& url, bool async, const String& user, const String& password);
+    void send(const String& body);
     void abort();
-    void setRequestHeader(const DOMString& name, const DOMString &value);
-    void overrideMIMEType(const DOMString& override);
-    DOMString getAllResponseHeaders() const;
-    DOMString getResponseHeader(const DOMString& name) const;
-    DOMString getResponseText() const;
+    void setRequestHeader(const String& name, const String &value);
+    void overrideMIMEType(const String& override);
+    String getAllResponseHeaders() const;
+    String getResponseHeader(const String& name) const;
+    String getResponseText() const;
     DocumentImpl* getResponseXML() const;
 
     void setOnReadyStateChangeListener(EventListener*);
@@ -75,15 +69,11 @@ namespace WebCore {
     EventListener* onLoadListener() const;
 
   private:
-    friend class XMLHttpRequestQObject;
-
     bool urlMatchesDocumentDomain(const KURL&) const;
 
-    XMLHttpRequestQObject* qObject;
-
-    void slotData(KIO::Job*, const char *data, int size);
-    void slotFinished(KIO::Job*);
-    void slotRedirection(KIO::Job*, const KURL&);
+    virtual void receivedRedirect(TransferJob*, const KURL&);
+    virtual void receivedData(TransferJob*, const char *data, int size);
+    virtual void receivedAllData(TransferJob*);
 
     void processSyncLoadResults(const ByteArray& data, const KURL& finalURL, const QString& headers);
 
@@ -110,7 +100,7 @@ namespace WebCore {
     bool async;
     QString requestHeaders;
 
-    KIO::TransferJob* job;
+    TransferJob* job;
 
     XMLHttpRequestState state;
 
@@ -124,19 +114,6 @@ namespace WebCore {
     mutable RefPtr<DocumentImpl> responseXML;
 
     bool aborted;
-  };
-
-  class XMLHttpRequestQObject : public QObject {
-  public:
-    XMLHttpRequestQObject(XMLHttpRequest* r) { m_request = r; }
-
-  public slots:
-    void slotData(KIO::Job* job, const char* data, int size) { m_request->slotData(job, data, size); }
-    void slotFinished(KIO::Job* job) { m_request->slotFinished(job); }
-    void slotRedirection(KIO::Job* job, const KURL& url) { m_request->slotRedirection(job, url); }
-
-  private:
-    XMLHttpRequest* m_request;
   };
 
 } // namespace

@@ -29,8 +29,6 @@
 #include "KWQObject.h"
 #include <kxmlcore/Assertions.h>
 
-using KIO::Job;
-
 KWQSignal::KWQSignal(QObject *object, const char *name)
     : _object(object), _next(object->_signalListHead), _name(name)
 {
@@ -90,44 +88,4 @@ void KWQSignal::call(const DOM::DOMString &s) const
     QValueListConstIterator<KWQSlot> end = copiedSlots.end();
     for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it)
         (*it).call(s);
-}
-
-void KWQSignal::call(Job *j) const
-{
-    QValueList<KWQSlot> copiedSlots(_slots);
-    QValueListConstIterator<KWQSlot> end = copiedSlots.end();
-    for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it)
-        (*it).call(j);
-}
-
-void KWQSignal::call(Job *j, const char *d, int s) const
-{
-    QValueList<KWQSlot> copiedSlots(_slots);
-    QValueListConstIterator<KWQSlot> end = copiedSlots.end();
-    for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it)
-        (*it).call(j, d, s);
-}
-
-void KWQSignal::call(Job *j, const KURL &u) const
-{
-    QValueList<KWQSlot> copiedSlots(_slots);
-    QValueListConstIterator<KWQSlot> end = copiedSlots.end();
-    for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it)
-        (*it).call(j, u);
-}
-
-void KWQSignal::callWithData(Job *j, NSData *d) const
-{
-    QValueList<KWQSlot> copiedSlots(_slots);
-    QValueListConstIterator<KWQSlot> end = copiedSlots.end();
-    for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it)
-        (*it).callWithData(j, d);
-}
-
-void KWQSignal::callWithResponse(Job *j, NSURLResponse *r) const
-{
-    QValueList<KWQSlot> copiedSlots(_slots);
-    QValueListConstIterator<KWQSlot> end = copiedSlots.end();
-    for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it)
-        (*it).callWithResponse(j, r);
 }

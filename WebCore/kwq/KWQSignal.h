@@ -43,11 +43,6 @@ public:
     void call() const; // should be "emit"; can't be due to define in qobject.h
     void call(int) const;
     void call(const DOM::DOMString&) const;
-    void call(KIO::Job *) const;
-    void call(KIO::Job *, const char *data, int size) const;
-    void call(KIO::Job *, const KURL &) const;
-    void callWithData(KIO::Job *, NSData *) const;
-    void callWithResponse(KIO::Job *, NSURLResponse *) const;
     
 private:
     // forbid copying and assignment

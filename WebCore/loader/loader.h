@@ -27,13 +27,9 @@
 #ifndef KHTML_Loader_h
 #define KHTML_Loader_h
 
+#include "TransferJobClient.h"
 #include <kxmlcore/HashMap.h>
-#include <qobject.h>
 #include <qptrlist.h>
-
-namespace KIO {
-    class Job;
-}
 
 #if __OBJC__
 @class NSData;
@@ -50,7 +46,7 @@ namespace WebCore {
     class Request;
     class String;
 
-    class Loader : public QObject
+    class Loader : TransferJobClient
     {
     public:
         Loader();
@@ -63,21 +59,18 @@ namespace WebCore {
 
         void removeBackgroundDecodingRequest(Request*);
         
-        // may return 0L
-        KIO::Job* jobForRequest(const String& URL) const;
-
-    protected slots:
-        void slotFinished(KIO::Job*, NSData*);
-        void slotData(KIO::Job*, const char* data, int size);
-        void slotReceivedResponse(KIO::Job*, NSURLResponse*);
+        // may return 0
+        TransferJob* jobForRequest(const String& URL) const;
 
     private:
+        virtual void receivedResponse(TransferJob*, PlatformResponse);
+        virtual void receivedData(TransferJob*, const char*, int);
+        virtual void receivedAllData(TransferJob*, PlatformData);
+
         void servePendingRequests();
 
-        virtual bool isKHTMLLoader() const;
-
         QPtrList<Request> m_requestsPending;
-        typedef HashMap<KIO::Job*, Request*> RequestMap;
+        typedef HashMap<TransferJob*, Request*> RequestMap;
         RequestMap m_requestsLoading;
 
         QPtrList<Request> m_requestsBackgroundDecoding;

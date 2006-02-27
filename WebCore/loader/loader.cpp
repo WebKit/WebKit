@@ -93,15 +93,14 @@ void Loader::servePendingRequests()
   Request *req = m_requestsPending.take(0);
 
   KURL u(req->object->url().qstring());
-  KIO::TransferJob* job = KIO::get( u, false, false /*no GUI*/, true);
+  TransferJob* job = new TransferJob(this, u);
   
   if (!req->object->accept().isEmpty())
       job->addMetaData("accept", req->object->accept());
-  if ( req->m_docLoader )  {
+  if (req->m_docLoader)  {
       KURL r = req->m_docLoader->doc()->URL();
-      if ( r.protocol().startsWith( "http" ) && r.path().isEmpty() )
-          r.setPath( "/" );
-
+      if (r.protocol().startsWith("http") && r.path().isEmpty())
+          r.setPath("/");
       job->addMetaData("referrer", r.url());
       QString domain = r.host();
       if (req->m_docLoader->doc()->isHTMLDocument())
@@ -110,19 +109,11 @@ void Loader::servePendingRequests()
          job->addMetaData("cross-domain", "true");
   }
 
-  connect( job, SIGNAL( result( KIO::Job *, NSData *) ), this, SLOT( slotFinished( KIO::Job *, NSData *) ) );
-  
-  connect( job, SIGNAL( data( KIO::Job*, const char *, int)),
-           SLOT( slotData( KIO::Job*, const char *, int)));
-  connect( job, SIGNAL( receivedResponse( KIO::Job *, NSURLResponse *)), SLOT( slotReceivedResponse( KIO::Job *, NSURLResponse *)) );
-
   if (KWQServeRequest(this, req, job))
     m_requestsLoading.add(job, req);
 }
 
-#if __APPLE__
-
-void Loader::slotFinished(KIO::Job* job, NSData* allData)
+void Loader::receivedAllData(TransferJob* job, PlatformData allData)
 {
     RequestMap::iterator i = m_requestsLoading.find(job);
     if (i == m_requestsLoading.end())
@@ -130,21 +121,20 @@ void Loader::slotFinished(KIO::Job* job, NSData* allData)
     Request* r = i->second;
     m_requestsLoading.remove(i);
 
-    KIO::TransferJob* j = static_cast<KIO::TransferJob*>(job);
-
     CachedObject *object = r->object;
     DocLoader *docLoader = r->m_docLoader;
 
-    if (j->error() || j->isErrorPage()) {
+    if (job->error() || job->isErrorPage()) {
         docLoader->setLoadInProgress(true);
         r->object->error( job->error(), job->errorText().ascii() );
         docLoader->setLoadInProgress(false);
         Cache::remove(object);
-    }
-    else {
+    } else {
         docLoader->setLoadInProgress(true);
         object->data(r->m_buffer, true);
+#ifdef __APPLE__
         r->object->setAllData(allData);
+#endif
         docLoader->setLoadInProgress(false);
         object->finish();
     }
@@ -154,16 +144,16 @@ void Loader::slotFinished(KIO::Job* job, NSData* allData)
     servePendingRequests();
 }
 
-
-void Loader::slotReceivedResponse(KIO::Job* job, NSURLResponse* response)
+void Loader::receivedResponse(TransferJob* job, PlatformResponse response)
 {
+#ifdef __APPLE__
     Request *r = m_requestsLoading.get(job);
     ASSERT(r);
     ASSERT(response);
     r->object->setResponse(response);
     r->object->setExpireDate(KWQCacheObjectExpiresTime(r->m_docLoader, response), false);
     
-    QString chs = static_cast<KIO::TransferJob*>(job)->queryMetaData("charset");
+    QString chs = job->queryMetaData("charset");
     if (!chs.isNull())
         r->object->setCharset(chs);
     
@@ -176,13 +166,12 @@ void Loader::slotReceivedResponse(KIO::Job* job, NSURLResponse* response)
     } else if (KWQResponseIsMultipart(response)) {
         r->multipart = true;
         if (!r->object->isImage())
-            static_cast<KIO::TransferJob*>(job)->cancel();
+            job->cancel();
     }
+#endif
 }
 
-#endif
-
-void Loader::slotData(KIO::Job* job, const char* data, int size)
+void Loader::receivedData(TransferJob* job, const char* data, int size)
 {
     Request *r = m_requestsLoading.get(job);
     if (!r)
@@ -239,7 +228,7 @@ void Loader::cancelRequests(DocLoader* dl)
             ++pIt;
     }
 
-    Vector<KIO::Job*, 256> jobsToCancel;
+    Vector<TransferJob*, 256> jobsToCancel;
 
     RequestMap::iterator end = m_requestsLoading.end();
     for (RequestMap::iterator i = m_requestsLoading.begin(); i != end; ++i) {
@@ -249,7 +238,7 @@ void Loader::cancelRequests(DocLoader* dl)
     }
 
     for (unsigned i = 0; i < jobsToCancel.size(); ++i) {
-        KIO::Job* job = jobsToCancel[i];
+        TransferJob* job = jobsToCancel[i];
         Request* r = m_requestsLoading.get(job);
         m_requestsLoading.remove(job);
         Cache::remove(r->object);
@@ -274,7 +263,7 @@ void Loader::removeBackgroundDecodingRequest (Request *r)
         m_requestsBackgroundDecoding.remove(r);
 }
 
-KIO::Job* Loader::jobForRequest(const DOMString& URL) const
+TransferJob* Loader::jobForRequest(const DOMString& URL) const
 {
     RequestMap::const_iterator end = m_requestsLoading.end();
     for (RequestMap::const_iterator i = m_requestsLoading.begin(); i != end; ++i) {
@@ -283,11 +272,6 @@ KIO::Job* Loader::jobForRequest(const DOMString& URL) const
             return i->first;
     }
     return 0;
-}
-
-bool Loader::isKHTMLLoader() const
-{
-    return true;
 }
 
 }

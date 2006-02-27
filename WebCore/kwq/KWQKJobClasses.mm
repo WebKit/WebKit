@@ -26,33 +26,29 @@
 #import "config.h"
 #import "KWQKJobClasses.h"
 
-#import "KWQExceptions.h"
 #import "FoundationExtras.h"
+#import "KURL.h"
+#import "KWQExceptions.h"
 #import "KWQLoader.h"
 #import "KWQLogging.h"
 #import "KWQResourceLoader.h"
-#import "QString.h"
-#import "PlatformString.h"
 #import "formdata.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-namespace KIO {
-
-typedef HashMap<DOMString, DOMString> StringMap;
-
-    // The allocations and releases in TransferJobPrivate are
-    // definitely Cocoa-exception-free (either simple Foundation
-    // classes or our own KWQResourceLoader which avoides doing work
-    // in dealloc
+// The allocations and releases in TransferJobPrivate are
+// definitely Cocoa-exception-free (either simple Foundation
+// classes or our own KWQResourceLoader which avoides doing work
+// in dealloc.
 
 class TransferJobPrivate
 {
 public:
-    TransferJobPrivate(const KURL& kurl)
-        : status(0)
+    TransferJobPrivate(TransferJobClient* c, const KURL& u)
+        : client(c)
+        , status(0)
         , metaData(KWQRetainNSRelease([[NSMutableDictionary alloc] initWithCapacity:17]))
-	, URL(kurl)
+	, URL(u)
 	, loader(nil)
 	, method("GET")
 	, response(nil)
@@ -61,13 +57,14 @@ public:
     {
     }
 
-    TransferJobPrivate(const KURL& kurl, const FormData &_postData)
-        : status(0)
+    TransferJobPrivate(TransferJobClient* c, const KURL& u, const FormData& p)
+        : client(c)
+        , status(0)
         , metaData(KWQRetainNSRelease([[NSMutableDictionary alloc] initWithCapacity:17]))
-	, URL(kurl)
+	, URL(u)
 	, loader(nil)
 	, method("POST")
-	, postData(_postData)
+	, postData(p)
 	, response(nil)
 	, assembledResponseHeaders(true)
         , retrievedCharset(true)
@@ -81,36 +78,28 @@ public:
         KWQRelease(loader);
     }
 
+    TransferJobClient* client;
+
     int status;
-    NSMutableDictionary *metaData;
+    NSMutableDictionary* metaData;
     KURL URL;
-    KWQResourceLoader *loader;
+    KWQResourceLoader* loader;
     QString method;
     FormData postData;
 
-    NSURLResponse *response;
+    NSURLResponse* response;
     bool assembledResponseHeaders;
     bool retrievedCharset;
     QString responseHeaders;
 };
 
-TransferJob::TransferJob(const KURL &url, bool reload, bool deliverAllData)
-    : d(new TransferJobPrivate(url)),
-      m_deliverAllData(deliverAllData),
-      m_data(this, SIGNAL(data(KIO::Job*, const char*, int))),
-      m_redirection(this, SIGNAL(redirection(KIO::Job*, const KURL&))),
-      m_result(this, deliverAllData ? SIGNAL(result(KIO::Job*, NSData *)) : SIGNAL(result(KIO::Job*))),
-      m_receivedResponse(this, SIGNAL(receivedResponse(KIO::Job*, NSURLResponse *)))
+TransferJob::TransferJob(TransferJobClient* client, const KURL& url)
+    : d(new TransferJobPrivate(client, url))
 {
 }
 
-TransferJob::TransferJob(const KURL &url, const FormData &postData, bool deliverAllData)
-    : d(new TransferJobPrivate(url, postData)),
-      m_deliverAllData(deliverAllData),
-      m_data(this, SIGNAL(data(KIO::Job*, const char*, int))),
-      m_redirection(this, SIGNAL(redirection(KIO::Job*, const KURL&))),
-      m_result(this, deliverAllData ? SIGNAL(result(KIO::Job*, NSData *)) : SIGNAL(result(KIO::Job*))),
-      m_receivedResponse(this, SIGNAL(receivedResponse(KIO::Job*, NSURLResponse *)))
+TransferJob::TransferJob(TransferJobClient* client, const KURL& url, const FormData& postData)
+    : d(new TransferJobPrivate(client, url, postData))
 {
 }
 
@@ -188,10 +177,10 @@ void TransferJob::addMetaData(const QString &key, const QString &value)
     [d->metaData setObject:value.getNSString() forKey:key.getNSString()];
 }
 
-void TransferJob::addMetaData(const StringMap& keysAndValues)
+void TransferJob::addMetaData(const HashMap<String, String>& keysAndValues)
 {
-    StringMap::const_iterator end = keysAndValues.end();
-    for (StringMap::const_iterator it = keysAndValues.begin(); it != end; ++it)
+    HashMap<String, String>::const_iterator end = keysAndValues.end();
+    for (HashMap<String, String>::const_iterator it = keysAndValues.begin(); it != end; ++it)
         [d->metaData setObject:it->second forKey:it->first];
 }
 
@@ -227,29 +216,19 @@ QString TransferJob::method() const
     return d->method;
 }
 
-void TransferJob::emitData(const char *data, int size)
-{
-    m_data.call(this, data, size);
-}
-
-void TransferJob::emitRedirection(const KURL &url)
-{
-    m_redirection.call(this, url);
-}
-
-void TransferJob::emitResult(NSData *allData)
-{
-    m_deliverAllData ? m_result.callWithData(this, allData) : m_result.call(this);
-}
-
-void TransferJob::emitReceivedResponse(NSURLResponse *response)
+void TransferJob::receivedResponse(NSURLResponse* response)
 {
     d->assembledResponseHeaders = false;
     d->retrievedCharset = false;
     d->response = response;
     KWQRetain(d->response);
+    if (d->client)
+        d->client->receivedResponse(this, response);
+}
 
-    m_receivedResponse.callWithResponse(this, response);
+TransferJobClient* TransferJob::client() const
+{
+    return d->client;
 }
 
 } // namespace KIO

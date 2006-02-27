@@ -29,12 +29,9 @@
 #include "DocumentImpl.h"
 #include "Frame.h"
 #include "render_form.h"
-#include "xmlhttprequest.h"
 #include <kxmlcore/Assertions.h>
 
 using namespace WebCore;
-
-using KIO::Job;
 
 enum FunctionNumber {
     slotClicked,
@@ -47,14 +44,6 @@ enum FunctionNumber {
     slotTextChanged,
     slotTextChangedWithString,
     slotValueChanged,
-    slotData_Loader,
-    slotData_XMLHttpRequest,
-    slotRedirection_Frame,
-    slotRedirection_XMLHttpRequest,
-    slotFinished_Frame,
-    slotFinished_Loader,
-    slotFinished_XMLHttpRequest,
-    slotReceivedResponse,
 };
 
 KWQSlot::KWQSlot(QObject *object, const char *member)
@@ -77,28 +66,6 @@ KWQSlot::KWQSlot(QObject *object, const char *member)
 
     if (KWQNamesMatch(member, SLOT(slotTextChanged(const DOMString &)))) {
         m_function = slotTextChangedWithString;
-    } else if (KWQNamesMatch(member, SLOT(slotData(KIO::Job *, const char *, int)))) {
-        if (object->isKHTMLLoader()) {
-            m_function = slotData_Loader;
-        } else {
-            m_function = slotData_XMLHttpRequest;
-        }
-    } else if (KWQNamesMatch(member, SLOT(slotRedirection(KIO::Job *, const KURL&)))) {
-        if (object->isFrame()) {
-            m_function = slotRedirection_Frame;
-        } else {
-            m_function = slotRedirection_XMLHttpRequest;
-        }
-    } else if (KWQNamesMatch(member, SLOT(slotFinished(KIO::Job *, NSData *)))) {
-        m_function = slotFinished_Loader;        
-    } else if (KWQNamesMatch(member, SLOT(slotFinished(KIO::Job *)))) {
-        if (object->isFrame()) {
-            m_function = slotFinished_Frame;
-        } else {
-            m_function = slotFinished_XMLHttpRequest;
-        }
-    } else if (KWQNamesMatch(member, SLOT(slotReceivedResponse(KIO::Job *, NSURLResponse *)))) {
-        m_function = slotReceivedResponse;
     } else {
         LOG_ERROR("trying to create a slot for unknown member %s", member);
         return;
@@ -156,90 +123,6 @@ void KWQSlot::call(const DOM::DOMString &string) const
     switch (m_function) {
         case slotTextChangedWithString:
             static_cast<RenderFormElement *>(m_object.pointer())->slotTextChanged(string);
-            return;
-    }
-    
-    call();
-}
-
-void KWQSlot::call(Job *job) const
-{
-    if (m_object.isNull()) {
-        return;
-    }
-    
-    switch (m_function) {
-        case slotFinished_Frame:
-            static_cast<Frame *>(m_object.pointer())->slotFinished(job);
-            return;
-        case slotFinished_XMLHttpRequest:
-            static_cast<XMLHttpRequestQObject *>(m_object.pointer())->slotFinished(job);
-            return;
-    }
-    
-    call();
-}
-
-void KWQSlot::call(Job *job, const char *data, int size) const
-{
-    if (m_object.isNull()) {
-        return;
-    }
-    
-    switch (m_function) {
-        case slotData_Loader:
-            static_cast<Loader *>(m_object.pointer())->slotData(job, data, size);
-            return;
-        case slotData_XMLHttpRequest:
-            static_cast<XMLHttpRequestQObject *>(m_object.pointer())->slotData(job, data, size);
-            return;
-    }
-
-    call();
-}
-
-void KWQSlot::call(Job *job, const KURL &url) const
-{
-    if (m_object.isNull()) {
-        return;
-    }
-    
-    switch (m_function) {
-        case slotRedirection_Frame:
-            static_cast<Frame *>(m_object.pointer())->slotRedirection(job, url);
-            return;
-        case slotRedirection_XMLHttpRequest:
-            static_cast<XMLHttpRequestQObject *>(m_object.pointer())->slotRedirection(job, url);
-            return;
-    }
-
-    call();
-}
-
-void KWQSlot::callWithData(KIO::Job *job, NSData *allData) const
-{
-    if (m_object.isNull()) {
-        return;
-    }
-    
-    switch (m_function) {
-        case slotFinished_Loader:
-            static_cast<Loader *>(m_object.pointer())->slotFinished(job, allData);
-            return;
-    }
-    
-    call(job);
-}
-
-void KWQSlot::callWithResponse(KIO::Job *job, NSURLResponse *response) const
-{
-    if (m_object.isNull()) {
-        return;
-    }
-    
-    switch (m_function) {
-        case slotReceivedResponse:
-            static_cast<Loader *>(m_object.pointer())->slotReceivedResponse(job, response);
             return;
     }
     

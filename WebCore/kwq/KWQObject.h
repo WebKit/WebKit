@@ -56,7 +56,6 @@ public:
     virtual void eventFilterFocusIn() const { }
     virtual void eventFilterFocusOut() const { }
 
-    virtual bool isKHTMLLoader() const;
     virtual bool isFrame() const;
     virtual bool isFrameView() const;
 

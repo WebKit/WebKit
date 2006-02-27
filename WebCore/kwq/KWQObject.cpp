@@ -79,11 +79,6 @@ void QObject::disconnect(const QObject *sender, const char *signalName, const QO
     signal->disconnect(KWQSlot(const_cast<QObject *>(receiver), member));
 }
 
-bool QObject::isKHTMLLoader() const
-{
-    return false;
-}
-
 bool QObject::isFrame() const
 {
     return false;

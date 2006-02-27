@@ -1,5 +1,91 @@
 2006-02-26  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - merged Job and TransferJob into TransferJob and moved it to WebCore namespace
+        - changed TransferJob to use a TransferJobClient object instead of signals
+
+        * ForwardingHeaders/kio/job.h: Changed to point to "KWQKJobClasses.h".
+        * kwq/KWQKJob.h: Removed.
+        * kwq/TransferJobClient.h: Added.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Updated for file changes.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * dom/xml_tokenizer.cpp: (WebCore::openFunc):
+        * khtml/xsl/xslt_processorimpl.cpp: (DOM::docLoaderFunc):
+        Use "new TransferJob" instead of "KIO::get" and "KIO::http_post".
+
+        * kwq/KWQKJobClasses.h: Eliminate Job. Add a TransferJobClient* parameter to
+        TransferJob. Eliminate the deliverAllData parameter to TransferJob constructor.
+        Remove the signals from TransferJob.
+        * kwq/KWQKJobClasses.mm:
+        (WebCore::TransferJobPrivate::TransferJobPrivate): Store a client pointer.
+        (WebCore::TransferJob::TransferJob): Store a client pointer, remove the
+        deliverAllData boolean.
+        (WebCore::TransferJob::receivedResponse): Added. Replaces the old emitReceivedResponse
+        function; uses client instead of a signal.
+        (WebCore::TransferJob::client): Added.
+
+        * kwq/KWQLoader.h: Switched things to mention the WebCore namespace.
+        Changed KIO::TransferJob to WebCore::TransferJob.
+        * kwq/KWQLoader.mm: Ditto.
+
+        * kwq/KWQObject.h:
+        * kwq/KWQObject.cpp: Removed isKHTMLLoader.
+
+        * kwq/KWQResourceLoader.h: Changed KIO::TransferJob to WebCore::TransferJob.
+        * kwq/KWQResourceLoader.mm:
+        (-[KWQResourceLoader receivedResponse:]): Call receivedResponse function on
+        the job instead of emitReceivedResponse.
+        (-[KWQResourceLoader redirectedToURL:]): Call receivedRedirect function on the
+        client directly instead of emitRedirection on the job.
+        (-[KWQResourceLoader addData:]): Call receivedData function on the
+        client directly instead of emitData on the job.
+        (-[KWQResourceLoader finishJobAndHandle:]): Call receivedAllData function on the
+        client directly instead of emitResult on the job. Also fixed a potential memory leak
+        where the handle was not released if the job was 0.
+
+        * kwq/KWQSignal.h:
+        * kwq/KWQSignal.cpp:
+        * kwq/KWQSlot.h:
+        * kwq/KWQSlot.cpp:
+        Removed the job-related signals and slots.
+
+        * loader/CachedObject.h: Removed unneeded declaration of TransferJob.
+
+        * loader/loader.h:
+        * loader/loader.cpp:
+        (WebCore::Loader::servePendingRequests): Use "new TransferJob" instead of "KIO::get".
+        Also don't connect signals.
+        (WebCore::Loader::receivedAllData): New name for slotFinished.
+        (WebCore::Loader::receivedResponse): New name for slotReceivedResponse.
+        (WebCore::Loader::receivedData): New name for slotData.
+        (WebCore::Loader::cancelRequests): Changed KIO::Job to TransferJob.
+        (WebCore::Loader::jobForRequest): Ditto.
+
+        * page/Frame.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::didOpenURL): Use "new TransferJob" instead of "KIO::get" and
+        "KIO::http_post". Also don't connect signals.
+        (WebCore::Frame::receivedAllData): Renamed from slotFinished. Also slightly
+        cleaned up the logic.
+        (WebCore::Frame::receivedRedirect): Renamed from slotRedirection.
+        * page/FramePrivate.h: Changed KIO::TransferJob to WebCore::TransferJob.
+
+        * xml/xmlhttprequest.h:
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::XMLHttpRequest): Eliminate XMLHttpRequestQObject.
+        (WebCore::XMLHttpRequest::send): Use "new TransferJob" instead of
+        "KIO::get" and "KIO::http_post". Also don't connect signals.
+        (WebCore::XMLHttpRequest::processSyncLoadResults): Change to call the functions
+        by their new names (names changed to use with TransferJobClient).
+        (WebCore::XMLHttpRequest::receivedAllData): Renamed from slotFinished.
+        (WebCore::XMLHttpRequest::receivedRedirect): Renamed from slotRedirection.
+        (WebCore::XMLHttpRequest::receivedData): Renamed from slotData.
+
+2006-02-26  Darin Adler  <darin@apple.com>
+
         - try again after seeing errors from buildbot
 
         * loader/CachedCSSStyleSheet.cpp:

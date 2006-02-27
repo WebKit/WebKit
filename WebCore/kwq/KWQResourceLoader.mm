@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,12 +26,12 @@
 #include "config.h"
 #import "KWQResourceLoader.h"
 
-#import <kxmlcore/Assertions.h>
 #import "KWQKJobClasses.h"
+#import "KURL.h"
 #import "loader.h"
+#import <kxmlcore/Assertions.h>
 
-using khtml::Loader;
-using KIO::TransferJob;
+using namespace WebCore;
 
 @implementation KWQResourceLoader
 
@@ -56,21 +56,23 @@ using KIO::TransferJob;
 {
     ASSERT(response);
     ASSERT(_job);
-    _job->emitReceivedResponse(response);
+    _job->receivedResponse(response);
 }
 
 - (void)redirectedToURL:(NSURL *)url
 {
     ASSERT(url);
     ASSERT(_job);
-    _job->emitRedirection( KURL(url) );
+    if (TransferJobClient* client = _job->client())
+        client->receivedRedirect(_job, KURL(url));
 }
 
 - (void)addData:(NSData *)data
 {
     ASSERT(data);
     ASSERT(_job);
-    _job->emitData((const char *)[data bytes], [data length]);
+    if (TransferJobClient* client = _job->client())
+        client->receivedData(_job, (const char *)[data bytes], [data length]);
 }
 
 - (void)jobWillBeDeallocated
@@ -85,17 +87,19 @@ using KIO::TransferJob;
 
 - (void)finishJobAndHandle:(NSData *)data
 {
-    TransferJob *job = _job;
+    TransferJob* job = _job;
     id <WebCoreResourceHandle> handle = _handle;
     _job = 0;
     _handle = nil;
 
     if (job) {
-        job->emitResult(data);
-        [handle release];
+        if (TransferJobClient* client = job->client()) {
+            client->receivedAllData(job, data);
+            client->receivedAllData(job);
+        }
+        delete job;
     }
-    delete job;
-    job = 0;
+    [handle release];
 }
 
 - (void)jobCanceledLoad

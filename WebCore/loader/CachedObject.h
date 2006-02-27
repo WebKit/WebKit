@@ -34,10 +34,6 @@
 #include <stdlib.h>
 #include <time.h>
 
-namespace KIO {
-    class Job;
-}
-
 #if __OBJC__
 @class NSData;
 @class NSURLResponse;

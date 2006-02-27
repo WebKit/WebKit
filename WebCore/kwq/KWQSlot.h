@@ -39,10 +39,6 @@ class NSURLResponse;
 class QString;
 class KURL;
 
-namespace KIO {
-    class Job;
-}
-
 namespace DOM {
     class DOMString;
 }
@@ -61,11 +57,6 @@ public:
     void call() const;
     void call(int) const;
     void call(const DOM::DOMString&) const;
-    void call(KIO::Job *) const;
-    void call(KIO::Job *, const char *, int) const;
-    void call(KIO::Job *, const KURL &) const;
-    void callWithData(KIO::Job *, NSData *) const;
-    void callWithResponse(KIO::Job *, NSURLResponse *) const;
 
     friend bool operator==(const KWQSlot &, const KWQSlot &);
 

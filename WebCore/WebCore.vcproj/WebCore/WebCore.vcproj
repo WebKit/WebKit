@@ -251,10 +251,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQKJob.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQKJobClasses.h"
 				>
 			</File>
@@ -476,6 +472,10 @@
 			</File>
 			<File
 				RelativePath="..\..\kwq\KWQWMatrix.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kwq\TransferJobClient.h"
 				>
 			</File>
 		</Filter>

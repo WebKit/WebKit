@@ -26,28 +26,27 @@
 #include "config.h"
 #import "KWQLoader.h"
 
+#import "Cache.h"
+#import "CachedImage.h"
+#import "CachedObject.h"
+#import "DocLoader.h"
+#import "FoundationExtras.h"
 #import "KWQExceptions.h"
 #import "KWQFormData.h"
-#import "FoundationExtras.h"
 #import "KWQKJobClasses.h"
 #import "KWQLogging.h"
 #import "KWQResourceLoader.h"
-#import "WebCoreFrameBridge.h"
 #import "MacFrame.h"
+#import "Request.h"
+#import "WebCoreFrameBridge.h"
 #import "loader.h"
-#include "Cache.h"
-#include "CachedObject.h"
-#include "CachedImage.h"
-#include "DocLoader.h"
-#include "loader.h"
-#include "Request.h"
+#import "loader.h"
 
 #import <Foundation/NSURLResponse.h>
 
-using namespace khtml;
-using KIO::TransferJob;
+using namespace WebCore;
 
-bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
+bool KWQServeRequest(Loader* loader, Request* request, TransferJob* job)
 {    
     return KWQServeRequest(loader, request->m_docLoader, job);
 }
