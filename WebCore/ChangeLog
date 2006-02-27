@@ -1,5 +1,15 @@
 2006-02-26  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - more Win32 link fixes
+
+        * loader/CachedObject.h: Put some Mac-specific stuff inside
+        __APPLE__ ifdefs.
+        * platform/win/TemporaryLinkStubs.cpp: Added more stubs.
+
+2006-02-26  Darin Adler  <darin@apple.com>
+
         - try again after seeing errors from buildbot
 
         * platform/win/TemporaryLinkStubs.cpp: Added more includes.

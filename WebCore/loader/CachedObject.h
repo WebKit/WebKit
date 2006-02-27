@@ -146,10 +146,12 @@ namespace WebCore
 
         void setRequest(Request*);
 
+#if __APPLE__
         NSURLResponse* response() const { return m_response; }
         void setResponse(NSURLResponse*);
         NSData* allData() const { return m_allData; }
         void setAllData(NSData*);
+#endif
 
         bool canDelete() const { return m_clients.isEmpty() && !m_request; }
 
@@ -172,8 +174,10 @@ namespace WebCore
         DOMString m_url;
         QString m_accept;
         Request *m_request;
+#if __APPLE__
         NSURLResponse *m_response;
         NSData *m_allData;
+#endif
         Type m_type;
         Status m_status;
     private:
