@@ -28,6 +28,7 @@
 #include "Path.h"
 #include "MouseEvent.h"
 #include "KWQKCookieJar.h"
+#include "Screen.h"
 
 using namespace WebCore;
 
