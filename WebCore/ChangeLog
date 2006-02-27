@@ -1,3 +1,25 @@
+2006-02-27  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by ggaren.
+
+        Move KConfig to platform/PlugInInfoStore and add test.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7498
+
+        Test: plugins/plugin-javascript-access.html
+
+        * ForwardingHeaders/kconfig.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * khtml/ecma/kjs_navigator.cpp:
+        (KJS::PluginBase::PluginBase):
+        * khtml/ecma/kjs_window.cpp:
+        * kwq/KWQKConfigBase.h: Removed.
+        * kwq/KWQKConfigBase.mm: Removed.
+        * platform/PlugInInfoStore.h: Added.
+        * platform/mac/PlugInInfoStoreMac.mm: Added.
+        (WebCore::PlugInInfoStore::createPluginInfoForPluginAtIndex):
+        (WebCore::PlugInInfoStore::pluginCount):
+        (WebCore::refreshPlugins):
+
 2006-02-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

@@ -24,7 +24,7 @@
 #include "config.h"
 #include <klocale.h>
 
-#include <kconfig.h>
+#include <PlugInInfoStore.h>
 
 #include "kjs_navigator.h"
 #include "kjs/lookup.h"
@@ -219,7 +219,7 @@ PluginBase::PluginBase(ExecState *exec)
         mimes = new Vector<MimeClassInfo*>;
         
         // read configuration
-        PluginInfoStore c;
+        PlugInInfoStore c;
         unsigned pluginCount = c.pluginCount();
         for (unsigned n = 0; n < pluginCount; n++) {
             PluginInfo* plugin = c.createPluginInfoForPluginAtIndex(n);

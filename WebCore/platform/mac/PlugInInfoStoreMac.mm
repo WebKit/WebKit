@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#import "KWQKConfigBase.h"
+#import "config.h"
+#import "PlugInInfoStore.h"
 
 #import "KWQExceptions.h"
 #import "KWQLogging.h"
@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-PluginInfo *PluginInfoStore::createPluginInfoForPluginAtIndex(unsigned index)
+PluginInfo *PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned index)
 {
     PluginInfo *pluginInfo = new PluginInfo;
     
@@ -65,7 +65,7 @@ PluginInfo *PluginInfoStore::createPluginInfoForPluginAtIndex(unsigned index)
     return 0;
 }
 
-unsigned PluginInfoStore::pluginCount() const
+unsigned PlugInInfoStore::pluginCount() const
 {
     KWQ_BLOCK_EXCEPTIONS;
     return [[[WebCoreViewFactory sharedFactory] pluginsInfo] count];
@@ -74,10 +74,10 @@ unsigned PluginInfoStore::pluginCount() const
     return 0;
 }
 
-void refreshPlugins(bool reload)
+void refreshPlugins(bool reloadOpenPages)
 {
     KWQ_BLOCK_EXCEPTIONS;
-    [[WebCoreViewFactory sharedFactory] refreshPlugins:reload];
+    [[WebCoreViewFactory sharedFactory] refreshPlugins:reloadOpenPages];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 

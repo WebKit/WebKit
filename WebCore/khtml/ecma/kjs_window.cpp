@@ -27,7 +27,7 @@
 #include "FrameView.h"
 #include "JSMutationEvent.h"
 #include "JSXMLHttpRequest.h"
-#include "KWQKConfigBase.h"
+#include "PlugInInfoStore.h"
 #include "KWQLogging.h"
 #include "Screen.h"
 #include "SelectionController.h"
@@ -52,7 +52,6 @@
 #include "kjs_traversal.h"
 #include "render_canvas.h"
 #include "xmlserializer.h"
-#include <kconfig.h>
 #include <kjs/collector.h>
 #include <klocale.h>
 #include "FrameTree.h"

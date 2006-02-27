@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PluginConfig_H
-#define PluginConfig_H
+#ifndef PlugInInfoStore_H
+#define PlugInInfoStore_H
 
 #include "PlatformString.h"
 #include <kxmlcore/Vector.h>
@@ -47,18 +47,13 @@ struct PluginInfo {
     Vector<MimeClassInfo*> mimes;
 };
 
-class PluginInfoStore {
+class PlugInInfoStore {
 public:
-    PluginInfoStore() { }
     PluginInfo *createPluginInfoForPluginAtIndex(unsigned);
-    unsigned pluginCount() const;
-    
-private:
-    PluginInfoStore(const PluginInfoStore&);
-    PluginInfoStore &operator=(const PluginInfoStore&);
+    unsigned pluginCount() const;    
 };
 
-void refreshPlugins(bool reload);
+void refreshPlugins(bool reloadOpenPages);
 
 }
 
