@@ -33,11 +33,6 @@
 
 namespace WebCore {
 
-const UniChar replacementCharacter = 0xFFFD;
-const UniChar BOM = 0xFEFF;
-
-static const int ConversionBufferSize = 16384;
-
 TextEncoding::TextEncoding(const char* name, bool eightBitOnly)
 {
     m_encodingID = textEncodingIDFromCharsetName(name, &m_flags);

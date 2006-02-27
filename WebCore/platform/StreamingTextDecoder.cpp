@@ -27,6 +27,9 @@
 #include "StreamingTextDecoder.h"
 
 #include <kxmlcore/Assertions.h>
+#include <utility>
+
+using std::min;
 
 namespace WebCore {
 
@@ -92,7 +95,7 @@ QString StreamingTextDecoder::convertUTF16(const unsigned char *s, int length)
     
     while (len > 1) {
         UChar buffer[ConversionBufferSize];
-        int runLength = MIN(len / 2, sizeof(buffer) / sizeof(buffer[0]));
+        int runLength = min(len / 2, sizeof(buffer) / sizeof(buffer[0]));
         int bufferLength = 0;
         if (m_littleEndian) {
             for (int i = 0; i < runLength; ++i) {

@@ -1509,6 +1509,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\platform\CharsetNames.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\CharsetNames.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\platform\Color.cpp"
 				>
 			</File>
@@ -1681,6 +1689,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\platform\StreamingTextDecoder.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\StreamingTextDecoder.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\platform\String.cpp"
 				>
 			</File>
@@ -1694,6 +1710,14 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\SystemTime.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\TextEncoding.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\TextEncoding.h"
 				>
 			</File>
 			<File
@@ -2947,6 +2971,10 @@
 			Name="dom"
 			>
 			<File
+				RelativePath="..\..\dom\AtomicStringList.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\dom\CDATASectionImpl.cpp"
 				>
 			</File>
@@ -3047,10 +3075,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\AtomicStringList.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\dom\dom_elementimpl.cpp"
 				>
 			</File>
@@ -3064,14 +3088,6 @@
 			</File>
 			<File
 				RelativePath="..\..\dom\dom_position.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\dom\QualifiedName.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\dom\QualifiedName.h"
 				>
 			</File>
 			<File
@@ -3132,6 +3148,14 @@
 			</File>
 			<File
 				RelativePath="..\..\dom\NodeListImpl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\QualifiedName.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\QualifiedName.h"
 				>
 			</File>
 			<File

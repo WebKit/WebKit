@@ -62,6 +62,12 @@ if [ platform/ColorData.gperf -nt "$DerivedSourcesDir/ColorData.c" ]; then
   gperf -CDEot -L 'ANSI-C' -k '*' -N findColor platform/ColorData.gperf > "$DerivedSourcesDir/ColorData.c"
 fi
 
+# Generate the charset name table
+if [ platform/character-sets.txt -nt "$DerivedSourcesDir/CharsetData.cpp" -o platform/win/win-encodings.txt -nt "$DerivedSourcesDir/CharsetData.cpp" -o platform/make-charset-table.pl -nt "$DerivedSourcesDir/CharsetData.cpp" ]; then
+  echo "Generating character set name table..."
+  platform/make-charset-table.pl platform/character-sets.txt platform/win/win-encodings.txt "" > "$DerivedSourcesDir/CharsetData.cpp"
+fi
+
 # Generate the lookup tables for the JS bindings
 
 if [ ../JavaScriptCore/kjs/create_hash_table -nt "$DerivedSourcesDir/domparser.lut.h" -o khtml/ecma/domparser.cpp -nt "$DerivedSourcesDir/domparser.lut.h" ]; then

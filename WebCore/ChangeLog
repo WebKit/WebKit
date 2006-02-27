@@ -1,3 +1,16 @@
+2006-02-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - add new TextEncoding stuff to win32 build
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7491
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.vcproj/WebCore/build-generated-files.sh:
+        * platform/StreamingTextDecoder.cpp:
+        (WebCore::StreamingTextDecoder::convertUTF16):
+        * platform/TextEncoding.cpp:
+
 2006-02-27  Darin Adler  <darin@apple.com>
 
         - try to fix Windows build
