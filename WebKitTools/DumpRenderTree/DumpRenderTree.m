@@ -36,6 +36,7 @@
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebPluginDatabase.h>
 
 #import <Carbon/Carbon.h>                           // for GetCurrentEventTime()
 #import <ApplicationServices/ApplicationServices.h> // for CMSetDefaultProfileBySpace
@@ -229,6 +230,10 @@ int main(int argc, const char *argv[])
     [webView setEditingDelegate:editingDelegate];
     [webView setUIDelegate:delegate];
     frame = [webView mainFrame];
+    
+    NSString *pwd = [[NSString stringWithCString:argv[0]] stringByDeletingLastPathComponent];
+    [WebPluginDatabase setAdditionalWebPlugInPaths:[NSArray arrayWithObject:pwd]];
+    [[WebPluginDatabase installedPlugins] refresh];
 
     // The back/forward cache is causing problems due to layouts during transition from one page to another.
     // So, turn it off for now, but we might want to turn it back on some day.

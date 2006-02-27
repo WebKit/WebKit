@@ -1,3 +1,14 @@
+2006-02-27  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by ggaren.
+
+        Test new KConfig -> PlugInInfoStore change.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7498
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (main): load test netscape plugin
+        * Scripts/run-webkit-tests: style update
+
 2006-02-24  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

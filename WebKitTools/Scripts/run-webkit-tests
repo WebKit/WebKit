@@ -687,7 +687,7 @@ sub countAndPrintLeaks
     my $adjustedCount = $count;
     $adjustedCount -= $excluded if $excluded;
 
-    if ($adjustedCount == 0) {
+    if (!$adjustedCount) {
         print " - no leaks found\n";
         unlink $leaksFilePath;
         return 0;
