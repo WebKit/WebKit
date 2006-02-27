@@ -1,3 +1,18 @@
+2006-02-26  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Test: fast/frames/empty-frame-document.html
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7293
+          REGRESSION: Using Javascript Bookmarklets that reference location.href on a blank tab crashes WebKit
+
+        The crash happened because an empty frame did not have a document.
+
+        * WebView/WebFrame.m:
+        (-[WebFrame _commitProvisionalLoad:]): Use "about:blank" instead of an empty URL for empty
+        frames. This causes a document to be created for the frame.
+
 2006-02-21  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Darin.

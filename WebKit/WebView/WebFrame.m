@@ -852,7 +852,10 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
     
     NSURL *baseURL = [[provisionalDataSource request] _webDataRequestBaseURL];        
     NSURL *URL = baseURL ? baseURL : [response URL];
-    
+
+    if (!URL || [URL _web_isEmpty])
+        URL = [NSURL URLWithString:@"about:blank"];    
+
     [[self _bridge] openURL:URL
                     reload:reload 
                     contentType:[response MIMEType]
