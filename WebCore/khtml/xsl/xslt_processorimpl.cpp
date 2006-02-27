@@ -219,7 +219,7 @@ RefPtr<DocumentImpl> XSLTProcessorImpl::createDocumentFromSource(const QString &
     result->determineParseMode(documentSource); // Make sure we parse in the correct mode.
     
     RefPtr<Decoder> decoder = new Decoder;
-    decoder->setEncoding(sourceEncoding.isEmpty() ? "UTF-8" : sourceEncoding.latin1(), Decoder::EncodingFromXMLHeader);
+    decoder->setEncodingName(sourceEncoding.isEmpty() ? "UTF-8" : sourceEncoding.latin1(), Decoder::EncodingFromXMLHeader);
     result->setDecoder(decoder.get());
     
     result->write(documentSource);

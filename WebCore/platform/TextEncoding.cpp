@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,54 +23,56 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "config.h"
-#import "WebCoreTextDecoder.h"
+#include "config.h"
+#include "TextEncoding.h"
 
-#import "TextEncoding.h"
-#import "StreamingTextDecoder.h"
+#include "CharsetNames.h"
+#include <kxmlcore/Assertions.h>
+#include <kxmlcore/HashSet.h>
+#include "StreamingTextDecoder.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-@implementation WebCoreTextDecoder
+const UniChar replacementCharacter = 0xFFFD;
+const UniChar BOM = 0xFEFF;
 
-- (WebCoreTextDecoder *)initWithEncodingName:(NSString *)encodingName
+static const int ConversionBufferSize = 16384;
+
+TextEncoding::TextEncoding(const char* name, bool eightBitOnly)
 {
-    self = [super init];
-    
-    WebCore::TextEncoding encoding = WebCore::TextEncoding([encodingName cStringUsingEncoding:NSASCIIStringEncoding]);
-    if (!encoding.isValid())
-        encoding = WebCore::TextEncoding(Latin1Encoding);
-    
-    _decoder = new StreamingTextDecoder(encoding);
-    
-    return self;
+    m_encodingID = textEncodingIDFromCharsetName(name, &m_flags);
+    if (eightBitOnly && m_encodingID == UTF16Encoding)
+        m_encodingID = UTF8Encoding;
 }
 
-+ (WebCoreTextDecoder *)decoderWithEncodingName:(NSString *)encodingName
+const char* TextEncoding::name() const
 {
-    return [[[WebCoreTextDecoder alloc] initWithEncodingName:encodingName] autorelease];
+    return charsetNameFromTextEncodingID(m_encodingID);
 }
 
-- (void)dealloc
+inline TextEncodingID effectiveEncoding(TextEncodingID encoding)
 {
-    delete _decoder;
-    [super dealloc];
+    if (encoding == Latin1Encoding || encoding == ASCIIEncoding)
+        return WinLatin1Encoding;
+    return encoding;
 }
 
-- (void)finalize
+QChar TextEncoding::backslashAsCurrencySymbol() const
 {
-    delete _decoder;
-    [super finalize];
+    if (m_flags & BackslashIsYen)
+        return 0x00A5; // yen sign
+ 
+    return '\\';
 }
 
-- (NSString *)decodeData:(NSData *)data
+QString TextEncoding::toUnicode(const char *chs, int len) const
 {
-    return _decoder->toUnicode((const char *)[data bytes], [data length], false).getNSString();
+    return StreamingTextDecoder(*this).toUnicode(chs, len, true);
 }
 
-- (NSString *)flush
+QString TextEncoding::toUnicode(const ByteArray &qba, int len) const
 {
-    return _decoder->toUnicode("", 0, true).getNSString();
+    return StreamingTextDecoder(*this).toUnicode(qba, len, true);
 }
 
-@end
+} // namespace WebCore

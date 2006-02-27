@@ -56,7 +56,7 @@
 #include "VisiblePosition.h"
 #include <qmatrix.h>
 #include <qpainter.h>
-#include <qtextcodec.h>
+#include "TextEncoding.h"
 #include <qtextstream.h>
 
 namespace WebCore {
@@ -2504,10 +2504,7 @@ QChar RenderObject::backslashAsCurrencySymbol() const
     Decoder *decoder = document->decoder();
     if (!decoder)
         return '\\';
-    const QTextCodec *codec = decoder->codec();
-    if (!codec)
-        return '\\';
-    return codec->backslashAsCurrencySymbol();
+    return decoder->encoding().backslashAsCurrencySymbol();
 }
 
 void RenderObject::imageChanged(CachedImage *image)

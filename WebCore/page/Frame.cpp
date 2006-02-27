@@ -80,7 +80,7 @@
 #include <klocale.h>
 #include <kxmlcore/Assertions.h>
 #include <qptrlist.h>
-#include <qtextcodec.h>
+#include "TextEncoding.h"
 #include <sys/types.h>
 #include <math.h>
 
@@ -639,15 +639,15 @@ void Frame::begin( const KURL &url, int xOffset, int yOffset )
     d->m_view->resizeContents( 0, 0 );
 }
 
-void Frame::write( const char *str, int len )
+void Frame::write(const char* str, int len)
 {
     if ( !d->m_decoder ) {
         d->m_decoder = new Decoder;
         if (!d->m_encoding.isNull())
-            d->m_decoder->setEncoding(d->m_encoding.latin1(),
+            d->m_decoder->setEncodingName(d->m_encoding.latin1(),
                 d->m_haveEncoding ? Decoder::UserChosenEncoding : Decoder::EncodingFromHTTPHeader);
         else
-            d->m_decoder->setEncoding(settings()->encoding().latin1(), Decoder::DefaultEncoding);
+            d->m_decoder->setEncodingName(settings()->encoding().latin1(), Decoder::DefaultEncoding);
 
         if (d->m_doc)
             d->m_doc->setDecoder(d->m_decoder.get());
@@ -750,7 +750,7 @@ void Frame::gotoAnchor()
         // Decoding here has to match encoding in completeURL, which means it has to use the
         // page's encoding rather than UTF-8.
         if (d->m_decoder)
-            gotoAnchor(KURL::decode_string(ref, d->m_decoder->codec()));
+            gotoAnchor(KURL::decode_string(ref, d->m_decoder->encoding()));
     }
 }
 
@@ -1014,13 +1014,13 @@ void Frame::receivedRedirect(TransferJob*, const KURL& url)
 
 QString Frame::encoding() const
 {
-    if(d->m_haveEncoding && !d->m_encoding.isEmpty())
+    if (d->m_haveEncoding && !d->m_encoding.isEmpty())
         return d->m_encoding;
 
-    if(d->m_decoder && d->m_decoder->encoding())
-        return QString(d->m_decoder->encoding());
+    if (d->m_decoder && d->m_decoder->encoding().isValid())
+        return QString(d->m_decoder->encodingName());
 
-    return(settings()->encoding());
+    return settings()->encoding();
 }
 
 void Frame::setUserStyleSheet(const KURL& url)
@@ -3215,11 +3215,8 @@ QChar Frame::backslashAsCurrencySymbol() const
     Decoder *decoder = doc->decoder();
     if (!decoder)
         return '\\';
-    const QTextCodec *codec = decoder->codec();
-    if (!codec)
-        return '\\';
 
-    return codec->backslashAsCurrencySymbol();
+    return decoder->encoding().backslashAsCurrencySymbol();
 }
 
 bool Frame::markedTextUsesUnderlines() const

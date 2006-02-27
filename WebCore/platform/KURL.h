@@ -27,8 +27,7 @@
 #define KURL_H_
 
 #include "QString.h"
-
-class QTextCodec;
+#include "TextEncoding.h"
 
 #if __APPLE__
 #ifdef __OBJC__
@@ -43,11 +42,11 @@ class NSURL;
 class KURL {
 public:
     KURL();
-    KURL(const char *);
-    KURL(const KURL &, const QString &, const QTextCodec * = 0);
-    KURL(const QString &);
+    KURL(const char*);
+    KURL(const KURL&, const QString&, const WebCore::TextEncoding& encoding = WebCore::TextEncoding(WebCore::UTF8Encoding));
+    KURL(const QString&);
 #if __APPLE__
-    KURL(NSURL *);
+    KURL(NSURL*);
 #endif
     
     bool isEmpty() const { return urlString.isEmpty(); } 
@@ -87,7 +86,7 @@ public:
 
     bool isLocalFile() const;
 
-    static QString decode_string(const QString &, const QTextCodec * = 0);
+    static QString decode_string(const QString &, const WebCore::TextEncoding& encoding = WebCore::TextEncoding(WebCore::UTF8Encoding));
     static QString encode_string(const QString &);
     
     friend bool operator==(const KURL &, const KURL &);

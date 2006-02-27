@@ -28,7 +28,9 @@
 
 #import <kxmlcore/Assertions.h>
 #import <Foundation/Foundation.h>
-#import "KWQTextCodec.h"
+#import "TextEncoding.h"
+
+using namespace WebCore;
 
 void QString::setBufferFromCFString(CFStringRef cfs)
 {
@@ -100,12 +102,3 @@ QCString QString::utf8(int &length) const
     return qcs;
 }
 
-QString QString::fromUtf8(const char *chs)
-{
-    return QTextCodec(kCFStringEncodingUTF8).toUnicode(chs, strlen(chs));
-}
-
-QString QString::fromUtf8(const char *chs, int len)
-{
-    return QTextCodec(kCFStringEncodingUTF8).toUnicode(chs, len);
-}

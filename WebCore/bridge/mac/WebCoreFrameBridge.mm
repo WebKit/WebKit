@@ -35,7 +35,7 @@
 #import "HTMLFormElementImpl.h"
 #import "HTMLInputElementImpl.h"
 #import "KWQAccObjectCache.h"
-#import "KWQCharsets.h"
+#import "CharsetNames.h"
 #import "KWQClipboard.h"
 #import "KWQEditCommand.h"
 #import "KWQFont.h"
@@ -43,7 +43,7 @@
 #import "KWQLoader.h"
 #import "KWQPageState.h"
 #import "KWQRenderTreeDebug.h"
-#import "KWQTextCodec.h"
+#import "TextEncoding.h"
 #import "KWQView.h"
 #import "MacFrame.h"
 #import "NodeImpl.h"
@@ -1389,8 +1389,9 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!doc) {
         return nil;
     }
+    // FIXME: is parseURL appropriate here?
     QString rel = parseURL(QString::fromNSString(string)).qstring();
-    return KURL(doc->baseURL(), rel, doc->decoder() ? doc->decoder()->codec() : 0).getNSURL();
+    return KURL(doc->completeURL(rel)).getNSURL();
 }
 
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag
@@ -1442,7 +1443,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (CFStringEncoding)textEncoding
 {
-    return KWQCFStringEncodingFromIANACharsetName(m_frame->encoding().latin1());
+    return WebCore::TextEncoding(m_frame->encoding().latin1()).encodingID();
 }
 
 - (NSView *)nextKeyView
@@ -1670,15 +1671,15 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 + (NSString *)stringWithData:(NSData *)data textEncoding:(CFStringEncoding)textEncoding
 {
-    if (textEncoding == kCFStringEncodingInvalidId || textEncoding == kCFStringEncodingISOLatin1) {
+    if (textEncoding == kCFStringEncodingInvalidId)
         textEncoding = kCFStringEncodingWindowsLatin1;
-    }
-    return QTextCodec(textEncoding).toUnicode((const char*)[data bytes], [data length]).getNSString();
+
+    return WebCore::TextEncoding(textEncoding).toUnicode((const char*)[data bytes], [data length]).getNSString();
 }
 
 + (NSString *)stringWithData:(NSData *)data textEncodingName:(NSString *)textEncodingName
 {
-    CFStringEncoding textEncoding = KWQCFStringEncodingFromIANACharsetName([textEncodingName lossyCString]);
+    CFStringEncoding textEncoding = WebCore::TextEncoding([textEncodingName lossyCString]).encodingID();
     return [WebCoreFrameBridge stringWithData:data textEncoding:textEncoding];
 }
 

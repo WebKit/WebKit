@@ -20,38 +20,40 @@ sub error ($)
 
 sub emit_line
 {
-    my ($name, $encoding, $flags) = @_;
+    my ($name, $prefix, $encoding, $flags) = @_;
  
     error "$name shows up twice in output" if $namesWritten{$name};
     $namesWritten{$name} = 1;
     
-    $output .= "    { \"$name\", kCFStringEncoding$encoding, $flags },\n";
+    $output .= "    { \"$name\", $prefix$encoding, $flags },\n";
 }
 
-sub process_mac_encodings
+sub process_platform_encodings
 {
-    my ($filename) = @_;
+    my ($filename, $PlatformPrefix) = @_;
+    my $baseFilename = $filename;
+    $baseFilename =~ s|.*/||;
     
-    my %seenMacNames;
+    my %seenPlatformNames;
     my %seenIANANames;
     
-    open MAC_ENCODINGS, $filename or die;
+    open PLATFORM_ENCODINGS, $filename or die;
     
-    while (<MAC_ENCODINGS>) {
+    while (<PLATFORM_ENCODINGS>) {
         chomp;
         s/\#.*$//;
         s/\s+$//;
-	if (my ($MacName, undef, $flags, $IANANames) = /^(.+?)(, (.+))?: (.+)$/) {
+	if (my ($PlatformName, undef, $flags, $IANANames) = /^(.+?)(, (.+))?: (.+)$/) {
             my %aliases;
             
-            my $MacNameWithFlags = $MacName;
+            my $PlatformNameWithFlags = $PlatformName;
             if ($flags) {
-                $MacNameWithFlags .= ", " . $flags;
+                $PlatformNameWithFlags .= ", " . $flags;
             } else {
                 $flags = "NoEncodingFlags";
             }
-            error "CFString encoding name $MacName is mentioned twice in mac-encodings.txt" if $seenMacNames{$MacNameWithFlags};
-            $seenMacNames{$MacNameWithFlags} = 1;
+            error "CFString encoding name $PlatformName is mentioned twice in $baseFilename" if $seenPlatformNames{$PlatformNameWithFlags};
+            $seenPlatformNames{$PlatformNameWithFlags} = 1;
 
             # Build the aliases list.
             # Also check that no two names are part of the same entry in the charsets file.
@@ -62,17 +64,17 @@ sub process_mac_encodings
             for my $name (@IANANames) {
                 if ($firstName eq "") {
                     if ($name !~ /^[-A-Za-z0-9_]+$/) {
-                        error "$name, in mac-encodings.txt, has illegal characters in it";
+                        error "$name, in $baseFilename, has illegal characters in it";
                         next;
                     }
                     $firstName = $name;
                 } else {
                     if ($name !~ /^[a-z0-9]+$/) {
-                        error "$name, in mac-encodings.txt, has illegal characters in it (must be all lowercase alphanumeric)";
+                        error "$name, in $baseFilename, has illegal characters in it (must be all lowercase alphanumeric)";
                         next;
                     }
                     if ($name le $prevName) {
-                        error "$name comes after $prevName in mac-encodings.txt, but everything must be in alphabetical order";
+                        error "$name comes after $prevName in $baseFilename, but everything must be in alphabetical order";
                     }
                     $prevName = $name;
                 }
@@ -82,7 +84,7 @@ sub process_mac_encodings
                 
                 $canonicalFirstName = $canonicalName if $canonicalFirstName eq "";
                 
-                error "$name is mentioned twice in mac-encodings.txt" if $seenIANANames{$canonicalName};
+                error "$name is mentioned twice in $baseFilename" if $seenIANANames{$canonicalName};
                 $seenIANANames{$canonicalName} = 1;
                 
                 $aliases{$canonicalName} = 1;
@@ -95,27 +97,27 @@ sub process_mac_encodings
                     if ($aliasesFromCharsetsFile{$otherName}
                         && $aliasesFromCharsetsFile{$canonicalName} eq $aliasesFromCharsetsFile{$otherName}
                         && $canonicalName le $otherName) {
-                        error "mac-encodings.txt lists both $name and $otherName under $MacName, but that aliasing is already specified in character-sets.txt";
+                        error "$baseFilename lists both $name and $otherName under $PlatformName, but that aliasing is already specified in character-sets.txt";
                     }
                 }
             }
             
             # write out
-            emit_line($firstName, $MacName, $flags);
+            emit_line($firstName, $PlatformPrefix, $PlatformName, $flags);
             for my $alias (sort keys %aliases) {
-                emit_line($alias, $MacName, $flags) if $alias ne $canonicalFirstName;
+                emit_line($alias, $PlatformPrefix, $PlatformName, $flags) if $alias ne $canonicalFirstName;
             }
 	} elsif (/^([a-zA-Z0-9_]+)(, (.+))?$/) {
-            my $MacName = $1;
+            my $PlatformName = $1;
             
-            error "CFString encoding name $MacName is mentioned twice in mac-encodings.txt" if $seenMacNames{$MacName};
-            $seenMacNames{$MacName} = 1;
+            error "Platform encoding name $PlatformName is mentioned twice in $baseFilename" if $seenPlatformNames{$PlatformName};
+            $seenPlatformNames{$PlatformName} = 1;
         } elsif (/./) {
-            error "syntax error in mac-encodings.txt, line $.";
+            error "syntax error in platform-encodings.txt, line $.";
         }
     }
     
-    close MAC_ENCODINGS;
+    close PLATFORM_ENCODINGS;
 }
 
 sub process_iana_charset 
@@ -177,10 +179,10 @@ sub process_iana_charsets
 # Program body
 
 process_iana_charsets($ARGV[0]);
-process_mac_encodings($ARGV[1]);
+process_platform_encodings($ARGV[1], $ARGV[2]);
 
 exit 1 if $error;
 
 print "static const CharsetEntry table[] = {\n";
 print $output;
-print "    { 0, kCFStringEncodingInvalidId, NoEncodingFlags }\n};\n";
+print "    { 0, WebCore::InvalidEncoding, NoEncodingFlags }\n};\n";

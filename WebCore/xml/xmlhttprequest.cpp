@@ -35,7 +35,7 @@
 #include <kio/job.h>
 #include <kjs/protect.h>
 #include <qregexp.h>
-#include <qtextcodec.h>
+#include "TextEncoding.h"
 
 using namespace KIO;
 
@@ -251,11 +251,11 @@ void XMLHttpRequest::send(const DOMString& _body)
       if (charset.isEmpty())
         charset = "UTF-8";
       
-      QTextCodec *codec = QTextCodec::codecForName(charset.latin1());
-      if (!codec)   // FIXME: report an error?
-        codec = QTextCodec::codecForName("UTF-8");
+      TextEncoding encoding = TextEncoding(charset.latin1());
+      if (!encoding.isValid())   // FIXME: report an error?
+        encoding = TextEncoding(UTF8Encoding);
 
-      job = new TransferJob(async ? this : 0, url, codec->fromUnicode(_body.qstring()));
+      job = new TransferJob(async ? this : 0, url, encoding.fromUnicode(_body.qstring()));
   }
   else
      job = new TransferJob(async ? this : 0, url);
@@ -500,10 +500,10 @@ void XMLHttpRequest::receivedData(TransferJob*, const char *data, int len)
     
     decoder = new Decoder;
     if (!encoding.isEmpty())
-      decoder->setEncoding(encoding.latin1(), Decoder::EncodingFromHTTPHeader);
+      decoder->setEncodingName(encoding.latin1(), Decoder::EncodingFromHTTPHeader);
     else
       // only allow Decoder to look inside the response if it's XML
-      decoder->setEncoding("UTF-8", responseIsXML() ? Decoder::DefaultEncoding : Decoder::EncodingFromHTTPHeader);
+      decoder->setEncodingName("UTF-8", responseIsXML() ? Decoder::DefaultEncoding : Decoder::EncodingFromHTTPHeader);
   }
   if (len == 0)
     return;

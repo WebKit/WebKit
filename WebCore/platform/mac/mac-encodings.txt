@@ -113,7 +113,7 @@ JIS_X0208_83, IsJapanese: JIS_X0208-1983
 JIS_X0208_90, IsJapanese: JIS_X0208-1990
 JIS_X0212_90, IsJapanese: JIS_X0212-1990
 JIS_C6226_78, IsJapanese: JIS_C6226-1978
-ShiftJIS_X0213_00, IsJapanese: Shift_JIS_X0213-2000
+ShiftJIS_X0213_00, IsJapanese|BackslashIsYen: Shift_JIS_X0213-2000
 GB_2312_80
 GBK_95
 GB_18030_2000: GB18030
@@ -131,7 +131,7 @@ ISO_2022_CN: ISO-2022-CN
 ISO_2022_CN_EXT: ISO-2022-CN-EXT
 ISO_2022_KR: ISO-2022-KR
 
-EUC_JP, IsJapanese: EUC-JP, xeuc, xeucjp
+EUC_JP, IsJapanese|BackslashIsYen: EUC-JP, xeuc, xeucjp
 EUC_CN_DOSVariant: EUC-CN, cngb, csgb231280, gb2312, gb231280, gbk, xeuccn, xgbk
 EUC_TW: EUC-TW
 EUC_KR_DOSVariant: EUC-KR, cp949, ksc5601

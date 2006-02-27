@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KWQCHARSETS_H_
-#define KWQCHARSETS_H_
+#ifndef CharsetNames_H
+#define CharsetNames_H
 
-#if __APPLE__
-#include <CoreFoundation/CoreFoundation.h>
-#endif
+#include "TextEncoding.h"
 
-enum KWQEncodingFlags {
-    NoEncodingFlags = 0,
-    VisualOrdering = 1,
-    BigEndian = 2,
-    LittleEndian = 4,
-    IsJapanese = 8
-};
+namespace WebCore {
 
-#if __APPLE__
-CFStringEncoding KWQCFStringEncodingFromIANACharsetName(const char *, KWQEncodingFlags *flags = 0);
-const char *KWQCFStringEncodingToIANACharsetName(CFStringEncoding);
-#endif
+TextEncodingID textEncodingIDFromCharsetName(const char*, TextEncodingFlags* flags = 0);
+const char* charsetNameFromTextEncodingID(TextEncodingID);
 
-#endif /* KWQCHARSETS_H_ */
+} // namespace WebCore
+
+#endif // ChaserNames_H

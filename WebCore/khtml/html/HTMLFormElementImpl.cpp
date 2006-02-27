@@ -37,7 +37,7 @@
 
 #include "Frame.h"
 
-#include <qtextcodec.h>
+#include "TextEncoding.h"
 #include "htmlnames.h"
 
 namespace WebCore {
@@ -57,7 +57,6 @@ HTMLFormElementImpl::HTMLFormElementImpl(DocumentImpl *doc)
     m_inreset = false;
     m_enctype = "application/x-www-form-urlencoded";
     m_boundary = "----------0xKhTmLbOuNdArY";
-    m_acceptcharset = "UNKNOWN";
     m_malformed = false;
 }
 
@@ -190,31 +189,26 @@ bool HTMLFormElementImpl::formData(FormData &form_data) const
 {
     QCString enc_string = ""; // used for non-multipart data
 
-    // find out the QTextcodec to use
     QString str = m_acceptcharset.qstring();
     str.replace(',', ' ');
     QStringList charsets = QStringList::split(' ', str);
-    QTextCodec* codec = 0;
+    TextEncoding encoding(InvalidEncoding);
     Frame *frame = getDocument()->frame();
     for (QStringList::Iterator it = charsets.begin(); it != charsets.end(); ++it) {
-        QString enc = (*it);
-        if (enc.contains("UNKNOWN")) {
-            // use standard document encoding
-            enc = "ISO-8859-1";
-            if (frame)
-                enc = frame->encoding();
-        }
-        if ((codec = QTextCodec::codecForName(enc.latin1())))
+        if ((encoding = TextEncoding((*it).latin1())).isValid())
             break;
     }
 
-    if (!codec)
-        codec = QTextCodec::codecForLocale();
-
+    if (!encoding.isValid()) {
+        if (frame)
+            encoding = TextEncoding(frame->encoding().latin1());
+        else
+            encoding = TextEncoding(Latin1Encoding);
+    }
 
     for (unsigned i = 0; i < formElements.size(); ++i) {
         HTMLGenericFormElementImpl* current = formElements[i];
-        FormDataList lst(codec);
+        FormDataList lst(encoding);
 
         if (!current->disabled() && current->appendFormData(lst, m_multipart)) {
             for (QValueListConstIterator<FormDataListItem> it = lst.begin(); it != lst.end(); ++it) {
@@ -256,7 +250,7 @@ bool HTMLFormElementImpl::formData(FormData &form_data) const
                         // things if the filename includes characters you can't encode
                         // in the website's character set.
                         hstr += "; filename=\"";
-                        hstr += codec->fromUnicode(path.mid(path.findRev('/') + 1), true);
+                        hstr += encoding.fromUnicode(path.mid(path.findRev('/') + 1), true);
                         hstr += "\"";
 
                         if(!static_cast<HTMLInputElementImpl*>(current)->value().isEmpty())

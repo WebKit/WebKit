@@ -28,7 +28,7 @@
 
 #include "KWQLogging.h"
 #include "KWQRegExp.h"
-#include "KWQTextCodec.h"
+#include "TextEncoding.h"
 #include <kjs/dtoa.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -2635,4 +2635,14 @@ void freeHandle(KWQStringData **_free)
             freeNodeAllocationPages->next = pageNode;
         freeNodeAllocationPages = pageNode;
     }
+}
+
+QString QString::fromUtf8(const char *chs)
+{
+    return WebCore::TextEncoding(WebCore::UTF8Encoding).toUnicode(chs, strlen(chs));
+}
+
+QString QString::fromUtf8(const char *chs, int len)
+{
+    return WebCore::TextEncoding(WebCore::UTF8Encoding).toUnicode(chs, len);
 }

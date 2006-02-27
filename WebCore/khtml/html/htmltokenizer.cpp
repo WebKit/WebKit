@@ -84,7 +84,7 @@ static const char titleEnd [] = "</title";
 // There may be better equivalents
 
 // We need this for entities at least. For non-entity text, we could
-// handle this in the text codec.
+// handle this in the text encoding.
 
 // To cover non-entity text, I think this function would need to be called
 // in more places. There seem to be some places that don't call fixUpChar.

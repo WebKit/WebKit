@@ -26,15 +26,18 @@
 #import <Foundation/Foundation.h>
 
 #ifdef __cplusplus
-    class QTextDecoder;
+namespace WebCore {
+    class StreamingTextDecoder;
+}
+typedef WebCore::StreamingTextDecoder PlatformDecoder;
 #else
-    @class QTextDecoder;
+    @class PlatformDecoder;
 #endif
 
 @interface WebCoreTextDecoder : NSObject
 {
 @private
-    QTextDecoder *_decoder;
+    PlatformDecoder *_decoder;
 }
 
 - (WebCoreTextDecoder *)initWithEncodingName:(NSString *)encodingName;

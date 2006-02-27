@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,54 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "config.h"
-#import "WebCoreTextDecoder.h"
+#ifndef ExtraCFEncodings_H
+#define ExtraCFEncodings_H
 
-#import "TextEncoding.h"
-#import "StreamingTextDecoder.h"
+// Until there's a CFString constant for these encodings, this works.
+// Since they are macros, they won't cause a compile failure even if the CFString constant is added.
+#define kCFStringEncodingBig5_DOSVariant (kTextEncodingBig5 | (kBig5_DOSVariant << 16))
+#define kCFStringEncodingEUC_CN_DOSVariant (kTextEncodingEUC_CN | (kEUC_CN_DOSVariant << 16))
+#define kCFStringEncodingEUC_KR_DOSVariant (kTextEncodingEUC_KR | (kEUC_KR_DOSVariant << 16))
+#define kCFStringEncodingISOLatin10 kTextEncodingISOLatin10
+#define kCFStringEncodingKOI8_U kTextEncodingKOI8_U
+#define kCFStringEncodingShiftJIS_DOSVariant (kTextEncodingShiftJIS | (kShiftJIS_DOSVariant << 16))
 
-using namespace WebCore;
-
-@implementation WebCoreTextDecoder
-
-- (WebCoreTextDecoder *)initWithEncodingName:(NSString *)encodingName
-{
-    self = [super init];
-    
-    WebCore::TextEncoding encoding = WebCore::TextEncoding([encodingName cStringUsingEncoding:NSASCIIStringEncoding]);
-    if (!encoding.isValid())
-        encoding = WebCore::TextEncoding(Latin1Encoding);
-    
-    _decoder = new StreamingTextDecoder(encoding);
-    
-    return self;
-}
-
-+ (WebCoreTextDecoder *)decoderWithEncodingName:(NSString *)encodingName
-{
-    return [[[WebCoreTextDecoder alloc] initWithEncodingName:encodingName] autorelease];
-}
-
-- (void)dealloc
-{
-    delete _decoder;
-    [super dealloc];
-}
-
-- (void)finalize
-{
-    delete _decoder;
-    [super finalize];
-}
-
-- (NSString *)decodeData:(NSData *)data
-{
-    return _decoder->toUnicode((const char *)[data bytes], [data length], false).getNSString();
-}
-
-- (NSString *)flush
-{
-    return _decoder->toUnicode("", 0, true).getNSString();
-}
-
-@end
+#endif // ExtraCFEncodings_H

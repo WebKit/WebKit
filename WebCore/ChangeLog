@@ -1,3 +1,135 @@
+2006-02-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - platformize KWQTextCodec
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7487
+        
+        I renamed QTextCodec to TextEncoding and QTextDecoder to
+        StreamingTextDecoder. I also made a bunch of other changes to make
+        the API more sensible.
+        
+        * ForwardingHeaders/qtextcodec.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/MacFrame.mm:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge URLWithAttributeString:]):
+        (-[WebCoreFrameBridge textEncoding]):
+        (+[WebCoreFrameBridge stringWithData:textEncoding:]):
+        (+[WebCoreFrameBridge stringWithData:textEncodingName:]):
+        * dom/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::completeURL):
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMDocument::getValueProperty):
+        (KJS::DOMDocument::putValueProperty):
+        * khtml/html/FormDataList.cpp:
+        (DOM::FormDataList::FormDataList):
+        (DOM::FormDataList::appendString):
+        * khtml/html/FormDataList.h:
+        * khtml/html/HTMLFormElementImpl.cpp:
+        (WebCore::HTMLFormElementImpl::HTMLFormElementImpl):
+        (WebCore::HTMLFormElementImpl::formData):
+        * khtml/html/htmltokenizer.cpp:
+        * khtml/misc/decoder.cpp:
+        (Decoder::Decoder):
+        (Decoder::setEncodingName):
+        (Decoder::encodingName):
+        (Decoder::decode):
+        * khtml/misc/decoder.h:
+        (khtml::Decoder::):
+        (khtml::Decoder::visuallyOrdered):
+        (khtml::Decoder::encoding):
+        * khtml/xsl/xslt_processorimpl.cpp:
+        (DOM::XSLTProcessorImpl::createDocumentFromSource):
+        * kwq/KWQCharsets.cpp: Removed.
+        * kwq/KWQCharsets.h: Removed.
+        * kwq/KWQTextCodec.cpp: Removed.
+        * kwq/KWQTextCodec.h: Removed.
+        * kwq/WebCoreTextDecoder.h:
+        * kwq/WebCoreTextDecoder.mm:
+        * kwq/can-convert.mm: Removed.
+        * kwq/character-sets.txt: Removed.
+        * kwq/mac-encodings.txt: Removed.
+        * kwq/make-charset-table.pl: Removed.
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::CachedCSSStyleSheet):
+        (WebCore::CachedCSSStyleSheet::setCharset):
+        (WebCore::CachedCSSStyleSheet::data):
+        * loader/CachedCSSStyleSheet.h:
+        * loader/CachedScript.cpp:
+        (WebCore::CachedScript::CachedScript):
+        (WebCore::CachedScript::setCharset):
+        (WebCore::CachedScript::data):
+        * loader/CachedScript.h:
+        * loader/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::setCharset):
+        * page/Frame.cpp:
+        (WebCore::Frame::write):
+        (WebCore::Frame::gotoAnchor):
+        (WebCore::Frame::encoding):
+        (WebCore::Frame::backslashAsCurrencySymbol):
+        * platform/CharsetNames.cpp: Added.
+        (KXMLCore::):
+        (WebCore::EncodingHash::equal):
+        (WebCore::EncodingHash::hash):
+        (WebCore::buildDictionaries):
+        (WebCore::textEncodingIDFromCharsetName):
+        (WebCore::charsetNameFromTextEncodingID):
+        * platform/CharsetNames.h: Added.
+        * platform/KURL.cpp:
+        (KURL::KURL):
+        (KURL::decode_string):
+        (encodeRelativeString):
+        * platform/KURL.h:
+        * platform/QString.cpp:
+        (QString::fromUtf8):
+        * platform/StreamingTextDecoder.cpp: Added.
+        (WebCore::StreamingTextDecoder::StreamingTextDecoder):
+        (WebCore::StreamingTextDecoder::convertLatin1):
+        (WebCore::StreamingTextDecoder::~StreamingTextDecoder):
+        (WebCore::StreamingTextDecoder::convertUTF16):
+        (WebCore::effectiveEncoding):
+        (WebCore::StreamingTextDecoder::createICUConverter):
+        (WebCore::unwanted):
+        (WebCore::StreamingTextDecoder::appendOmittingUnwanted):
+        (WebCore::StreamingTextDecoder::convertUsingICU):
+        (WebCore::StreamingTextDecoder::convert):
+        (WebCore::StreamingTextDecoder::toUnicode):
+        * platform/StreamingTextDecoder.h: Added.
+        (WebCore::StreamingTextDecoder::convert):
+        * platform/TextEncoding.cpp: Added.
+        (WebCore::TextEncoding::TextEncoding):
+        (WebCore::TextEncoding::name):
+        (WebCore::effectiveEncoding):
+        (WebCore::TextEncoding::backslashAsCurrencySymbol):
+        (WebCore::TextEncoding::toUnicode):
+        * platform/TextEncoding.h: Added.
+        (WebCore::):
+        (WebCore::TextEncoding::):
+        (WebCore::TextEncoding::TextEncoding):
+        (WebCore::TextEncoding::isValid):
+        (WebCore::TextEncoding::usesVisualOrdering):
+        (WebCore::TextEncoding::isJapanese):
+        (WebCore::TextEncoding::encodingID):
+        (WebCore::TextEncoding::flags):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        * platform/character-sets.txt: Added.
+        * platform/mac/ExtraCFEncodings.h: Added.
+        * platform/mac/QStringMac.mm:
+        * platform/mac/TextEncodingMac.cpp: Added.
+        (WebCore::effectiveEncoding):
+        (WebCore::TextEncoding::fromUnicode):
+        * platform/mac/can-convert.mm: Added.
+        * platform/mac/mac-encodings.txt: Added.
+        * platform/make-charset-table.pl: Added.
+        * platform/win/win-encodings.txt: Added.
+        * rendering/render_object.cpp:
+        (WebCore::RenderObject::backslashAsCurrencySymbol):
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+        (WebCore::XMLHttpRequest::slotData):
+
 2006-02-27  Darin Adler  <darin@apple.com>
 
         - fix Windows build

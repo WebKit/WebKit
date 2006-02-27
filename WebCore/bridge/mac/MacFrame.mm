@@ -47,7 +47,7 @@
 #import "KWQPageState.h"
 #import "KWQRegExp.h"
 #import "KWQScrollBar.h"
-#import "KWQTextCodec.h"
+#import "TextEncoding.h"
 #import "KWQWindowWidget.h"
 #import "KeyEvent.h"
 #import "MouseEvent.h"

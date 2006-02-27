@@ -22,18 +22,21 @@
 #ifndef KHTMLDECODER_H
 #define KHTMLDECODER_H
 
-#include <QString.h>
-class QTextCodec;
-class QTextDecoder;
+#include <kxmlcore/OwnPtr.h>
+#include "QString.h"
+#include "TextEncoding.h"
 
 namespace khtml {
+
+    class StreamingTextDecoder;    
+    
 /**
  * @internal
  */
 class Decoder : public Shared<Decoder>
 {
 public:
-    enum EncodingType {
+    enum EncodingSource {
         DefaultEncoding,
         AutoDetectedEncoding,
         EncodingFromXMLHeader,
@@ -45,23 +48,21 @@ public:
     Decoder();
     ~Decoder();
 
-    void setEncoding(const char *encoding, EncodingType type);
-    const char *encoding() const;
+    void setEncodingName(const char* encoding, EncodingSource type);
+    const char* encodingName() const;
 
-    QString decode(const char *data, int len);
+    bool visuallyOrdered() const { return m_encoding.usesVisualOrdering(); }
+    const TextEncoding& encoding() const { return m_encoding; }
 
-    bool visuallyOrdered() const { return visualRTL; }
-
-    const QTextCodec *codec() const { return m_codec; }
-
+    QString decode(const char* data, int len);
     QString flush() const;
 
 protected:
-    // codec used for decoding. default is Latin1.
-    QTextCodec *m_codec;
-    QTextDecoder *m_decoder;
+    // encoding used for decoding. default is Latin1.
+    TextEncoding m_encoding;
+    OwnPtr<StreamingTextDecoder> m_decoder;
     QCString enc;
-    EncodingType m_type;
+    EncodingSource m_type;
 
     // Our version of QString works well for all-8-bit characters, and allows null characters.
     // This works better than QCString when there are null characters involved.
@@ -69,7 +70,6 @@ protected:
 
     bool body;
     bool beginning;
-    bool visualRTL;
 };
 
 }

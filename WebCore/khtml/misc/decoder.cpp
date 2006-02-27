@@ -19,11 +19,7 @@
     the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.
 */
-//----------------------------------------------------------------------------
-//
-// KDE HTML Widget -- decoder for input stream
 
-//#define DECODE_DEBUG
 
 #include "config.h"
 #include "decoder.h"
@@ -33,7 +29,8 @@
 #include <klocale.h>
 #include <kxmlcore/Assertions.h>
 #include <qregexp.h>
-#include <qtextcodec.h>
+#include "TextEncoding.h"
+#include "StreamingTextDecoder.h"
 
 using namespace WebCore;
 using namespace HTMLNames;
@@ -103,11 +100,6 @@ const unsigned char KanjiCode::kanji_map_sjis[] =
  *     http://hp.vector.co.jp/authors/VA003457/vim/
  *
  * Special Thanks to Kenichi Tsuchida
- */
-
-/*
- * Maybe we should use QTextCodec::heuristicContentMatch()
- * But it fails detection. It's not useful.
  */
 
 enum KanjiCode::Type KanjiCode::judge(const char *str, int size)
@@ -261,57 +253,39 @@ breakBreak:
 }
 
 Decoder::Decoder() 
+  : m_encoding(Latin1Encoding)
+  , m_decoder(new StreamingTextDecoder(m_encoding))
+  , enc(0)
+  , m_type(DefaultEncoding)
+  , body(false)
+  , beginning(true)
 {
-    m_codec = QTextCodec::codecForName("iso8859-1"); // latin1
-    m_decoder = m_codec->makeDecoder();
-    enc = 0;
-    m_type = DefaultEncoding;
-    body = false;
-    beginning = true;
-    visualRTL = false;
 }
+
 Decoder::~Decoder()
 {
-    delete m_decoder;
 }
 
-void Decoder::setEncoding(const char *_encoding, EncodingType type)
+void Decoder::setEncodingName(const char* _encoding, EncodingSource type)
 {
-#ifdef DECODE_DEBUG
-    kdDebug(6005) << "setEncoding " << _encoding << " " << type << endl;
-#endif
     enc = _encoding;
-#ifdef DECODE_DEBUG
-    kdDebug(6005) << "old encoding is:" << m_codec->name() << endl;
-#endif
     enc = enc.lower();
-#ifdef DECODE_DEBUG
-    kdDebug(6005) << "requesting:" << enc << endl;
-#endif
-    if(enc.isNull() || enc.isEmpty())
+
+    if (enc.isEmpty())
         return;
 
-    QTextCodec *codec = (type == EncodingFromMetaTag || type == EncodingFromXMLHeader)
-        ? QTextCodec::codecForNameEightBitOnly(enc)
-        : QTextCodec::codecForName(enc);
-    if (codec) {
-        enc = codec->name();
-        visualRTL = codec->usesVisualOrdering();
-    }
+    TextEncoding encoding = TextEncoding(enc, type == EncodingFromMetaTag || type == EncodingFromXMLHeader);
 
-    if( codec ) { // in case the codec didn't exist, we keep the old one (fixes some sites specifying invalid codecs)
-        m_codec = codec;
+    // in case the encoding didn't exist, we keep the old one (fixes some sites specifying invalid encodings)
+    if (encoding.isValid()) {
+        enc = encoding.name();
+        m_encoding = encoding;
         m_type = type;
-        delete m_decoder;
-        m_decoder = m_codec->makeDecoder();
+        m_decoder.set(new StreamingTextDecoder(m_encoding));
     }
-    
-#ifdef DECODE_DEBUG
-    kdDebug(6005) << "Decoder::encoding used is " << m_codec->name() << endl;
-#endif
 }
 
-const char *Decoder::encoding() const
+const char* Decoder::encodingName() const
 {
     return enc;
 }
@@ -414,11 +388,10 @@ QString Decoder::decode(const char *data, int len)
             // If we found a BOM, use the encoding it implies.
             if (autoDetectedEncoding != 0) {
                 m_type = AutoDetectedEncoding;
-                m_codec = QTextCodec::codecForName(autoDetectedEncoding);
-                ASSERT(m_codec);
-                enc = m_codec->name();
-                delete m_decoder;
-                m_decoder = m_codec->makeDecoder();
+                m_encoding = TextEncoding(autoDetectedEncoding);
+                ASSERT(m_encoding.isValid());
+                enc = m_encoding.name();
+                m_decoder.set(new StreamingTextDecoder(m_encoding));
             }
         }
         beginning = false;
@@ -474,13 +447,13 @@ QString Decoder::decode(const char *data, int len)
                         int len;
                         int pos = findXMLEncoding(str, len);
                         if (pos != -1)
-                            setEncoding(str.mid(pos, len), EncodingFromXMLHeader);
+                            setEncodingName(str.mid(pos, len), EncodingFromXMLHeader);
                         if (m_type != EncodingFromXMLHeader)
-                            setEncoding("UTF-8", EncodingFromXMLHeader);
+                            setEncodingName("UTF-8", EncodingFromXMLHeader);
                         // continue looking for a charset - it may be specified in an HTTP-Equiv meta
                     } else if (ptr[0] == 0 && ptr[1] == '?' && ptr[2] == 0 && ptr[3] == 'x' && ptr[4] == 0 && ptr[5] == 'm' && ptr[6] == 0 && ptr[7] == 'l') {
                         // UTF-16 without BOM
-                        setEncoding(((ptr - buffer.latin1()) % 2) ? "UTF-16LE" : "UTF-16BE", AutoDetectedEncoding);
+                        setEncodingName(((ptr - buffer.latin1()) % 2) ? "UTF-16LE" : "UTF-16BE", AutoDetectedEncoding);
                         goto found;
                     }
 
@@ -528,10 +501,7 @@ QString Decoder::decode(const char *data, int len)
                                    (str[endpos] != ' ' && str[endpos] != '"' && str[endpos] != '\''
                                     && str[endpos] != ';' && str[endpos] != '>') )
                                 endpos++;
-#ifdef DECODE_DEBUG
-                            kdDebug( 6005 ) << "Decoder: found charset: " << str.mid(pos, endpos-pos) << endl;
-#endif
-                            setEncoding(str.mid(pos, endpos-pos), EncodingFromMetaTag);
+                            setEncodingName(str.mid(pos, endpos-pos), EncodingFromMetaTag);
                             if( m_type == EncodingFromMetaTag ) goto found;
 
                             if ( endpos >= str.length() || str[endpos] == '/' || str[endpos] == '>' ) break;
@@ -544,9 +514,6 @@ QString Decoder::decode(const char *data, int len)
                                (end || tag != htmlTag) && !withinTitle &&
                                (tag != headTag) && isalpha(tmp[0])) {
                         body = true;
-#ifdef DECODE_DEBUG
-                        kdDebug( 6005 ) << "Decoder: no charset found (bailing because of \"" << tag.qstring().ascii() << "\")." << endl;
-#endif
                         goto found;
                     }
                 }
@@ -559,13 +526,10 @@ QString Decoder::decode(const char *data, int len)
 
  found:
     // Do the auto-detect if our default encoding is one of the Japanese ones.
-    if (m_type != UserChosenEncoding && m_type != AutoDetectedEncoding && m_codec && m_codec->isJapanese())
+    if (m_type != UserChosenEncoding && m_type != AutoDetectedEncoding && m_encoding.isJapanese())
     {
-#ifdef DECODE_DEBUG
-        kdDebug( 6005 ) << "Decoder: use auto-detect (" << strlen(data) << ")" << endl;
-#endif
         const char *autoDetectedEncoding;
-        switch ( KanjiCode::judge( data, len ) ) {
+        switch (KanjiCode::judge(data, len)) {
         case KanjiCode::JIS:
             autoDetectedEncoding = "jis7";
             break;
@@ -579,28 +543,23 @@ QString Decoder::decode(const char *data, int len)
             autoDetectedEncoding = NULL;
             break;
         }
-#ifdef DECODE_DEBUG
-        kdDebug( 6005 ) << "Decoder: auto detect encoding is "
-            << (autoDetectedEncoding ? autoDetectedEncoding : "NULL") << endl;
-#endif
         if (autoDetectedEncoding != 0) {
-            setEncoding(autoDetectedEncoding, AutoDetectedEncoding);
+            setEncodingName(autoDetectedEncoding, AutoDetectedEncoding);
         }
     }
 
-    // if we still haven't found an encoding latin1 will be used...
-    // this is according to HTML4.0 specs
-    if (!m_codec)
+    // if we still haven't found an encoding, assume latin1
+    if (!m_encoding.isValid())
     {
-        if(enc.isEmpty()) enc = "iso8859-1";
-        m_codec = QTextCodec::codecForName(enc);
-        // be sure not to crash
-        if(!m_codec) {
+        if (enc.isEmpty()) 
             enc = "iso8859-1";
-            m_codec = QTextCodec::codecForName(enc);
+        m_encoding = TextEncoding(enc);
+        // be sure not to crash
+        if (!m_encoding.isValid()) {
+            enc = "iso8859-1";
+            m_encoding = TextEncoding(Latin1Encoding);
         }
-        delete m_decoder;
-        m_decoder = m_codec->makeDecoder();
+        m_decoder.set(new StreamingTextDecoder(m_encoding));
     }
     QString out;
 

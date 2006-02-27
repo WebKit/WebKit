@@ -26,12 +26,12 @@
 
 #include "config.h"
 #include "FormDataList.h"
-#include <qtextcodec.h>
+#include "TextEncoding.h"
 
 namespace DOM {
 
-FormDataList::FormDataList(QTextCodec *c)
-    : m_codec(c)
+FormDataList::FormDataList(const TextEncoding& c)
+    : m_encoding(c)
 {
 }
 
@@ -91,7 +91,7 @@ static QCString fixLineBreaks(const QCString &s)
 
 void FormDataList::appendString(const QString &s)
 {
-    QCString cstr = fixLineBreaks(m_codec->fromUnicode(s, true));
+    QCString cstr = fixLineBreaks(m_encoding.fromUnicode(s, true));
     cstr.truncate(cstr.length());
     m_list.append(cstr);
 }

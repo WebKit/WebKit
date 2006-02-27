@@ -71,7 +71,7 @@ void CachedXSLStyleSheet::deref(CachedObjectClient *c)
 void CachedXSLStyleSheet::setCharset( const QString &chs )
 {
     if (!chs.isEmpty())
-        m_decoder->setEncoding(chs.latin1(), Decoder::EncodingFromHTTPHeader);
+        m_decoder->setEncodingName(chs.latin1(), Decoder::EncodingFromHTTPHeader);
 }
 
 void CachedXSLStyleSheet::data(ByteArray& data, bool eof)
