@@ -485,9 +485,9 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
                         return false;
                     DOMStringImpl *i = t->string();
                     unsigned int pos = 0;
-                    while (pos < i->l && (*(i->s+pos) == QChar(' ') ||
-                                          *(i->s+pos) == QChar(0xa0))) pos++;
-                    if (pos == i->l)
+                    while (pos < i->length() && ((*i)[pos] == ' ' || (*i)[pos] == QChar(0xa0)))
+                        pos++;
+                    if (pos == i->length())
                         possiblyMoveStrayContent = false;
                 }
                 if (possiblyMoveStrayContent) {

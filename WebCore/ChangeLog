@@ -1,3 +1,56 @@
+2006-02-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7486
+          a first step in improving String/StringImpl API -- use "s" and "l" less
+
+        * css/csshelper.cpp: (WebCore::parseURL): Use a local buffer rather than
+        manipulating the characters directly inside a StringImpl buffer.
+
+        * css/cssstyleselector.cpp: (WebCore::parseUASheet): Copy the data to parse
+        it rather than going out of our way to hack StringImpl to not copy the data.
+        It would be better not to copy, but this is one-time work.
+
+        * dom/DOMImplementationImpl.cpp: (WebCore::DOMImplementationImpl::createDocument):
+        * dom/dom2_viewsimpl.cpp: (DOM::AbstractViewImpl::getMatchedCSSRules):
+        * dom/dom_elementimpl.cpp: (WebCore::StyledElementImpl::addCSSLength):
+        * dom/dom_xmlimpl.cpp: (WebCore::EntityImpl::toString):
+        * editing/CompositeEditCommand.cpp: (WebCore::CompositeEditCommand::deleteInsignificantText):
+        * khtml/html/htmlparser.cpp: (WebCore::HTMLParser::handleError):
+        * platform/AtomicString.cpp:
+        (WebCore::CStringTranslator::equal):
+        (WebCore::QCharBufferTranslator::equal):
+        (WebCore::AtomicString::add):
+        * platform/StringImpl.h:
+        (WebCore::StringImpl::unicode): Added.
+        (KXMLCore::CaseInsensitiveHash::hash): 
+        (KXMLCore::CaseInsensitiveHash::equal):
+        * rendering/InlineTextBox.cpp: (khtml::InlineTextBox::selectionStartEnd):
+        * rendering/RenderBlock.cpp: (WebCore::RenderBlock::updateFirstLetter):
+        * rendering/RenderText.cpp:
+        (WebCore::getCharacterBreakIterator):
+        (WebCore::RenderText::RenderText):
+        (WebCore::RenderText::atLineWrap):
+        (WebCore::RenderText::allAscii):
+        (WebCore::RenderText::widthFromCache):
+        (WebCore::RenderText::trimmedMinMaxWidth):
+        (WebCore::RenderText::containsOnlyWhitespace):
+        (WebCore::RenderText::setSelectionState):
+        (WebCore::RenderText::setTextWithOffset):
+        (WebCore::RenderText::setText):
+        (WebCore::RenderText::width):
+        (WebCore::RenderText::selectionRect):
+        (WebCore::RenderText::caretMaxOffset):
+        * rendering/RenderTextFragment.cpp:
+        (khtml::RenderTextFragment::RenderTextFragment):
+        (khtml::RenderTextFragment::originalString):
+        Use length() instead of l, unicode() instead of s, and (*x)[] instead of x->s[].
+
+        * editing/visible_units.cpp:
+        (WebCore::startOfParagraph): Use const.
+        (WebCore::endOfParagraph): Ditto.
+
 2006-02-27  Maciej Stachowiak  <mjs@apple.com>
 
         - fix problem with a prototype that broke win32 build

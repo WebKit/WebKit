@@ -3356,11 +3356,11 @@ void RenderBlock::updateFirstLetter()
         RefPtr<DOMStringImpl> oldText = textObj->originalString();
         KHTMLAssert(oldText);
         
-        if (oldText && oldText->l > 0) {
+        if (oldText && oldText->length() > 0) {
             unsigned int length = 0;
             
             // account for leading spaces and punctuation
-            while ( length < oldText->l && ( (oldText->s+length)->isSpace() || (oldText->s+length)->isPunct() ) )
+            while (length < oldText->length() && ((*oldText)[length].isSpace() || (*oldText)[length].isPunct()))
                 length++;
             
             // account for first letter
@@ -3369,7 +3369,7 @@ void RenderBlock::updateFirstLetter()
             // construct text fragment for the text after the first letter
             // NOTE: this might empty
             RenderTextFragment* remainingText = 
-                new (renderArena()) RenderTextFragment(textObj->node(), oldText.get(), length, oldText->l-length);
+                new (renderArena()) RenderTextFragment(textObj->node(), oldText.get(), length, oldText->length() - length);
             remainingText->setStyle(textObj->style());
             if (remainingText->element())
                 remainingText->element()->setRenderer(remainingText);

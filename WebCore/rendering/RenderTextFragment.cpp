@@ -35,7 +35,7 @@ RenderTextFragment::RenderTextFragment(DOM::NodeImpl* node, DOM::DOMStringImpl* 
 }
 
 RenderTextFragment::RenderTextFragment(DOM::NodeImpl* node, DOM::DOMStringImpl* str)
-    : RenderText(node, str), m_start(0), m_end(str ? str->l : 0), m_generatedContentStr(str)
+    : RenderText(node, str), m_start(0), m_end(str ? str->length() : 0), m_generatedContentStr(str)
 {
 }
 
@@ -51,7 +51,7 @@ PassRefPtr<DOMStringImpl> RenderTextFragment::originalString() const
         result = element()->string();
     else
         result = contentString();
-    if (result && (start() > 0 || start() < result->l))
+    if (result && (start() > 0 || start() < result->length()))
         result = result->substring(start(), end());
     return result;
 }

@@ -1462,19 +1462,21 @@ void StyledElementImpl::addCSSLength(MappedAttributeImpl* attr, int id, const DO
     if (!attr->decl()) createMappedDecl(attr);
 
     // strip attribute garbage..
-    DOMStringImpl* v = value.impl();
-    if ( v ) {
+    StringImpl* v = value.impl();
+    if (v) {
         unsigned int l = 0;
         
-        while ( l < v->l && v->s[l].unicode() <= ' ') l++;
+        while (l < v->length() && (*v)[l].unicode() <= ' ')
+            l++;
         
-        for ( ;l < v->l; l++ ) {
-            char cc = v->s[l].latin1();
-            if ( cc > '9' || ( cc < '0' && cc != '*' && cc != '%' && cc != '.') )
+        for (; l < v->length(); l++) {
+            char cc = (*v)[l].latin1();
+            if (cc > '9' || (cc < '0' && cc != '*' && cc != '%' && cc != '.'))
                 break;
         }
-        if ( l != v->l ) {
-            attr->decl()->setLengthProperty(id, DOMString( v->s, l ), false);
+
+        if (l != v->length()) {
+            attr->decl()->setLengthProperty(id, String(v->copy()), false);
             return;
         }
     }

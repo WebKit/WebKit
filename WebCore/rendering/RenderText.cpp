@@ -26,13 +26,13 @@
 #include "RenderText.h"
 
 #include "InlineTextBox.h"
+#include "Pen.h"
+#include "RenderBlock.h"
+#include "VisiblePosition.h"
 #include "break_lines.h"
 #include "dom2_rangeimpl.h"
 #include "render_arena.h"
-#include "RenderBlock.h"
-#include "VisiblePosition.h"
 #include <kxmlcore/AlwaysInline.h>
-#include "Pen.h"
 #include <unicode/ubrk.h>
 
 namespace WebCore {
@@ -53,7 +53,7 @@ static UBreakIterator* getCharacterBreakIterator(const DOMStringImpl* i)
         return 0;
 
     status = U_ZERO_ERROR;
-    ubrk_setText(iterator, reinterpret_cast<const UChar *>(i->s), i->l, &status);
+    ubrk_setText(iterator, reinterpret_cast<const UChar*>(i->unicode()), i->length(), &status);
     if (status != U_ZERO_ERROR)
         return 0;
 
@@ -96,7 +96,7 @@ RenderText::RenderText(DOM::NodeImpl* node, DOMStringImpl *_str)
     setRenderText();
     if (str)
         str = str->replace('\\', backslashAsCurrencySymbol());
-    KHTMLAssert(!str || !str->l || str->s);
+    KHTMLAssert(!str || !str->length() || str->unicode());
 }
 
 void RenderText::setStyle(RenderStyle *_style)
@@ -345,7 +345,7 @@ bool RenderText::atLineWrap(InlineTextBox *box, int offset)
         // Take special care because in preformatted text, the newlines
         // are in between the text boxes (i.e. not in any box's m_start
         // thru m_start+m_len-1), even though they are rendered.
-        if (!style()->preserveNewline() || str->s[offset] != '\n')
+        if (!style()->preserveNewline() || (*str)[offset] != '\n')
             return true;
     }
     
@@ -432,13 +432,12 @@ bool RenderText::allAscii() const
         return m_allAscii;
     m_allAsciiChecked = true;
     
-    unsigned int i;
-    for (i = 0; i < str->l; i++){
-        if (str->s[i].unicode() >= 0x7f){
+    unsigned i;
+    for (i = 0; i < str->length(); i++)
+        if ((*str)[i].unicode() >= 0x7f) {
             m_allAscii = false;
             return m_allAscii;
         }
-    }
     
     m_allAscii = true;
     
@@ -468,15 +467,15 @@ ALWAYS_INLINE int RenderText::widthFromCache(const Font *f, int start, int len, 
 {
     if (m_monospaceCharacterWidth != 0) {
         int i, w = 0;
-        for (i = start; i < start+len; i++){
-            QChar c = str->s[i];
+        for (i = start; i < start+len; i++) {
+            QChar c = (*str)[i];
             int dir = c.direction();
             if (dir != QChar::DirNSM && dir != QChar::DirBN) {
                 if (c == '\t' && tabWidth != 0) {
                     w += tabWidth - ((xpos + w) % tabWidth);
                 } else
                     w += m_monospaceCharacterWidth;
-                if (c.isSpace() && i>start && !str->s[i-1].isSpace())
+                if (c.isSpace() && i>start && !(*str)[i-1].isSpace())
                     w += f->wordSpacing();        
             }
         }
@@ -498,7 +497,7 @@ void RenderText::trimmedMinMaxWidth(int leadWidth,
     if (!collapseWhiteSpace)
         stripFrontSpaces = false;
     
-    int len = str->l;
+    int len = str->length();
     if (len == 0 || (stripFrontSpaces && str->containsOnlyWhitespace())) {
         maxW = 0;
         hasBreak = false;
@@ -520,7 +519,7 @@ void RenderText::trimmedMinMaxWidth(int leadWidth,
     hasBreakableChar = m_hasBreakableChar;
     hasBreak = m_hasBreak;
 
-    if (stripFrontSpaces && (str->s[0] == ' ' || (str->s[0] == '\n' && !style()->preserveNewline()) || str->s[0] == '\t')) {
+    if (stripFrontSpaces && ((*str)[0] == ' ' || ((*str)[0] == '\n' && !style()->preserveNewline()) || (*str)[0] == '\t')) {
         const Font *f = htmlFont( false );
         QChar space[1]; space[0] = ' ';
         int spaceWidth = f->width(space, 1, 0, 0);
@@ -540,7 +539,7 @@ void RenderText::trimmedMinMaxWidth(int leadWidth,
         for (int i = 0; i < len; i++)
         {
             int linelen = 0;
-            while (i+linelen < len && str->s[i+linelen] != '\n')
+            while (i+linelen < len && (*str)[i+linelen] != '\n')
                 linelen++;
                 
             if (linelen)
@@ -730,11 +729,11 @@ void RenderText::calcMinMaxWidth(int leadWidth)
     //kdDebug( 6040 ) << "Text::calcMinMaxWidth(): min = " << m_minWidth << " max = " << m_maxWidth << endl;
 }
 
-bool RenderText::containsOnlyWhitespace(unsigned int from, unsigned int len) const
+bool RenderText::containsOnlyWhitespace(unsigned from, unsigned len) const
 {
-    unsigned int currPos;
+    unsigned currPos;
     for (currPos = from; 
-         currPos < from+len && (str->s[currPos] == '\n' || str->s[currPos].unicode() == ' ' || str->s[currPos] == '\t'); 
+         currPos < from+len && ((*str)[currPos] == '\n' || (*str)[currPos].unicode() == ' ' || (*str)[currPos] == '\t'); 
          currPos++);
     return currPos >= (from+len);
 }
@@ -772,7 +771,7 @@ void RenderText::setSelectionState(SelectionState s)
         int startPos, endPos;
         selectionStartEnd(startPos, endPos);
         if(selectionState() == SelectionStart) {
-            endPos = str->l;
+            endPos = str->length();
             
             // to handle selection from end of text to end of line
             if (startPos != 0 && startPos == endPos) {
@@ -802,8 +801,8 @@ void RenderText::setSelectionState(SelectionState s)
 
 void RenderText::setTextWithOffset(DOMStringImpl *text, uint offset, uint len, bool force)
 {
-    uint oldLen = str ? str->l : 0;
-    uint newLen = text ? text->l : 0;
+    uint oldLen = str ? str->length() : 0;
+    uint newLen = text ? text->length() : 0;
     int delta = newLen - oldLen;
     uint end = len ? offset+len-1 : offset;
 
@@ -890,8 +889,8 @@ void RenderText::setText(DOMStringImpl *text, bool force)
 
     // ### what should happen if we change the text of a
     // RenderBR object ?
-    KHTMLAssert(!isBR() || (str->l == 1 && (*str->s) == '\n'));
-    KHTMLAssert(!str->l || str->s);
+    KHTMLAssert(!isBR() || (str->length() == 1 && (*str)[0] == '\n'));
+    KHTMLAssert(!str->length() || str->unicode());
 
     setNeedsLayoutAndMinMaxRecalc();
 }
@@ -967,8 +966,9 @@ void RenderText::position(InlineBox* box, int from, int len, bool reverse, bool 
 
 unsigned int RenderText::width(unsigned int from, unsigned int len, int xpos, bool firstLine) const
 {
-    if(!str->s || from > str->l ) return 0;
-    if ( from + len > str->l ) len = str->l - from;
+    if (from >= str->length())
+        return 0;
+    if ( from + len > str->length() ) len = str->length() - from;
 
     const Font *f = htmlFont( firstLine );
     return width( from, len, f, xpos );
@@ -1028,11 +1028,11 @@ IntRect RenderText::selectionRect()
     if (selectionState() == SelectionInside) {
         // We are fully selected.
         startPos = 0;
-        endPos = str->l;
+        endPos = str->length();
     } else {
         selectionStartEnd(startPos, endPos);
         if (selectionState() == SelectionStart)
-            endPos = str->l;
+            endPos = str->length();
         else if (selectionState() == SelectionEnd)
             startPos = 0;
     }
@@ -1081,7 +1081,7 @@ int RenderText::caretMaxOffset() const
 {
     InlineTextBox* box = lastTextBox();
     if (!box) 
-        return str->l;
+        return str->length();
     int maxOffset = box->m_start + box->m_len;
     for (box = box->prevTextBox(); box; box = box->prevTextBox())
         maxOffset = kMax(maxOffset,box->m_start + box->m_len);

@@ -26,27 +26,20 @@
 #include "config.h"
 #include "visible_units.h"
 
-#include <QString.h>
-
-#include "htmlnames.h"
-#include "htmlediting.h"
-#include "helper.h"
+#include "DocumentImpl.h"
 #include "InlineTextBox.h"
+#include "QString.h"
 #include "RenderBlock.h"
 #include "VisiblePosition.h"
-#include "visible_text.h"
-#include "DocumentImpl.h"
 #include "dom_elementimpl.h"
+#include "helper.h"
+#include "htmlediting.h"
+#include "htmlnames.h"
+#include "visible_text.h"
 
-using namespace DOM::HTMLNames;
+namespace WebCore {
 
-using DOM::DocumentImpl;
-using DOM::ElementImpl;
-using DOM::NodeImpl;
-using DOM::Position;
-using DOM::RangeImpl;
-
-namespace khtml {
+using namespace HTMLNames;
 
 static VisiblePosition previousBoundary(const VisiblePosition &c, unsigned (*searchFunction)(const QChar *, unsigned))
 {
@@ -64,9 +57,8 @@ static VisiblePosition previousBoundary(const VisiblePosition &c, unsigned (*sea
     if (!boundary)
         return VisiblePosition();
     bool isContentEditable = boundary->isContentEditable();
-    while (boundary && boundary != de && boundary->parentNode() && isContentEditable == boundary->parentNode()->isContentEditable()) {
+    while (boundary && boundary != de && boundary->parentNode() && isContentEditable == boundary->parentNode()->isContentEditable())
         boundary = boundary->parentNode();
-    }
 
     Position start = rangeCompliantEquivalent(Position(boundary, 0));
     Position end = rangeCompliantEquivalent(pos);
@@ -118,15 +110,13 @@ static VisiblePosition previousBoundary(const VisiblePosition &c, unsigned (*sea
         // nextWordPosition(), gives us results we can use directly without having to 
         // iterate again to translate the next value into a DOM position. 
         NodeImpl *node = it.range()->startContainer(exception);
-        if (node->isTextNode() || (node->renderer() && node->renderer()->isBR())) {
+        if (node->isTextNode() || (node->renderer() && node->renderer()->isBR()))
             // The next variable contains a usable index into a text node
             pos = Position(node, next);
-        }
-        else {
+        else
             // If we are not in a text node, we ended on a node boundary, so the
             // range start offset should be used.
             pos = Position(node, it.range()->startOffset(exception));
-        }
     }
 
     return VisiblePosition(pos, DOWNSTREAM);
@@ -148,9 +138,8 @@ static VisiblePosition nextBoundary(const VisiblePosition &c, unsigned (*searchF
     if (!boundary)
         return VisiblePosition();
     bool isContentEditable = boundary->isContentEditable();
-    while (boundary && boundary != de && boundary->parentNode() && isContentEditable == boundary->parentNode()->isContentEditable()) {
+    while (boundary && boundary != de && boundary->parentNode() && isContentEditable == boundary->parentNode()->isContentEditable())
         boundary = boundary->parentNode();
-    }
 
     RefPtr<RangeImpl> searchRange(d->createRange());
     Position start(rangeCompliantEquivalent(pos));
@@ -586,8 +575,8 @@ VisiblePosition startOfParagraph(const VisiblePosition &c)
         if (r->isText()) {
             // FIXME: Not clear what to do with pre-wrap or pre-line here.
             if (style->whiteSpace() == PRE) {
-                QChar *text = static_cast<RenderText *>(r)->text();
-                int i = static_cast<RenderText *>(r)->length();
+                const QChar* text = static_cast<RenderText*>(r)->text();
+                int i = static_cast<RenderText*>(r)->length();
                 int o = offset;
                 if (n == startNode && o < i)
                     i = kMax(0, o);
@@ -647,7 +636,7 @@ VisiblePosition endOfParagraph(const VisiblePosition &c)
             int length = static_cast<RenderText *>(r)->length();
             // FIXME: Not clear what to do with pre-wrap or pre-line here.
             if (style->whiteSpace() == PRE) {
-                QChar *text = static_cast<RenderText *>(r)->text();
+                const QChar* text = static_cast<RenderText *>(r)->text();
                 int o = n == startNode ? offset : 0;
                 for (int i = o; i < length; ++i)
                     if (text[i] == '\n')
@@ -687,9 +676,8 @@ VisiblePosition previousParagraphPosition(const VisiblePosition &p, int x)
     VisiblePosition pos = p;
     do {
         VisiblePosition n = previousLinePosition(pos, x);
-        if (n.isNull() || n == pos) {
+        if (n.isNull() || n == pos)
             return p;
-        }
         pos = n;
     } while (inSameParagraph(p, pos));
     return pos;
@@ -700,9 +688,8 @@ VisiblePosition nextParagraphPosition(const VisiblePosition &p, int x)
     VisiblePosition pos = p;
     do {
         VisiblePosition n = nextLinePosition(pos, x);
-        if (n.isNull() || n == pos) {
+        if (n.isNull() || n == pos)
             return p;
-        }
         pos = n;
     } while (inSameParagraph(p, pos));
     return pos;
@@ -859,4 +846,4 @@ bool isEndOfEditableContent(const VisiblePosition &p)
     return !inSameEditableContent(p, p.next());
 }
 
-} // namespace khtml
+}

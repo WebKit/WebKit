@@ -281,20 +281,10 @@ CSSStyleSelector::~CSSStyleSelector()
 
 static CSSStyleSheetImpl* parseUASheet(const unsigned short* characters, int size)
 {
-    // FIXME: Hack to point a DOMString at existing characters.
-    // Good to avoid copying the array just to parse, but we should find a more elegant way.
-    DOMStringImpl stringImpl("");
-    stringImpl.ref();
-    QChar* saveString = stringImpl.s;
-    stringImpl.s = reinterpret_cast<QChar*>(const_cast<unsigned short*>(characters));
-    stringImpl.l = size;
-
     CSSStyleSheetImpl* const parent = 0;
     CSSStyleSheetImpl* sheet = new CSSStyleSheetImpl(parent);
-    sheet->parseString(&stringImpl);
-
-    stringImpl.s = saveString;
-
+    sheet->ref(); // leak the sheet on purpose since it will be stored in a global variable
+    sheet->parseString(String(reinterpret_cast<const QChar*>(characters), size));
     return sheet;
 }
 

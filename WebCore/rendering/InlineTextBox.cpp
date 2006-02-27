@@ -25,19 +25,16 @@
 #include "config.h"
 #include "InlineTextBox.h"
 
-#include "break_lines.h"
-#include "kxmlcore/AlwaysInline.h"
-#include "render_arena.h"
-#include "RenderBlock.h"
-#include "dom2_rangeimpl.h"
 #include "DocumentImpl.h"
-#include "Pen.h"
-
 #include "Frame.h"
+#include "Pen.h"
+#include "RenderBlock.h"
+#include "break_lines.h"
+#include "dom2_rangeimpl.h"
+#include "render_arena.h"
+#include <kxmlcore/AlwaysInline.h>
 
-using namespace DOM;
-
-namespace khtml {
+namespace WebCore {
 
 #ifndef NDEBUG
 static bool inInlineTextBoxDetach;
@@ -424,11 +421,11 @@ void InlineTextBox::selectionStartEnd(int& sPos, int& ePos)
     int startPos, endPos;
     if (object()->selectionState() == RenderObject::SelectionInside) {
         startPos = 0;
-        endPos = textObject()->string()->l;
+        endPos = textObject()->string()->length();
     } else {
         textObject()->selectionStartEnd(startPos, endPos);
         if (object()->selectionState() == RenderObject::SelectionStart)
-            endPos = textObject()->string()->l;
+            endPos = textObject()->string()->length();
         else if (object()->selectionState() == RenderObject::SelectionEnd)
             startPos = 0;
     }

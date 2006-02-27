@@ -89,24 +89,24 @@ DOMString EntityImpl::toString() const
 {
     DOMString result = "<!ENTITY' ";
 
-    if (m_name && m_name->l != 0) {
+    if (m_name && m_name->length()) {
         result += " ";
         result += m_name.get();
     }
 
-    if (m_publicId && m_publicId->l != 0) {
+    if (m_publicId && m_publicId->length()) {
         result += " PUBLIC \"";
         result += m_publicId.get();
         result += "\" \"";
         result += m_systemId.get();
         result += "\"";
-    } else if (m_systemId && m_systemId->l != 0) {
+    } else if (m_systemId && m_systemId->length()) {
         result += " SYSTEM \"";
         result += m_systemId.get();
         result += "\"";
     }
 
-    if (m_notationName && m_notationName->l != 0) {
+    if (m_notationName && m_notationName->length()) {
         result += " NDATA ";
         result += m_notationName.get();
     }

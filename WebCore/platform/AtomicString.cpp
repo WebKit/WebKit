@@ -44,8 +44,8 @@ struct CStringTranslator
 
     static bool equal(StringImpl* r, const char* s)
     {
-        int length = r->l;
-        const QChar* d = r->s;
+        int length = r->length();
+        const QChar* d = r->unicode();
         for (int i = 0; i != length; ++i)
             if (d[i] != s[i])
                 return false;
@@ -95,12 +95,12 @@ struct QCharBufferTranslator {
 
     static bool equal(StringImpl* const& str, const QCharBuffer& buf)
     {
-        uint strLength = str->l;
+        uint strLength = str->length();
         uint bufLength = buf.length;
         if (strLength != bufLength)
             return false;
         
-        const uint32_t* strChars = reinterpret_cast<const uint32_t*>(str->s);
+        const uint32_t* strChars = reinterpret_cast<const uint32_t*>(str->unicode());
         const uint32_t* bufChars = reinterpret_cast<const uint32_t*>(buf.s);
         
         uint halfLength = strLength >> 1;
@@ -143,7 +143,7 @@ StringImpl* AtomicString::add(StringImpl* r)
     if (!r || r->_inTable)
         return r;
 
-    if (r->l == 0)
+    if (r->length() == 0)
         return StringImpl::empty();
     
     StringImpl* result = *stringTable->add(r).first;

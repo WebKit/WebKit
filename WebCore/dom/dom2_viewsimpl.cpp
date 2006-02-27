@@ -2,7 +2,7 @@
  * This file is part of the DOM implementation for KDE.
  *
  * (C) 2001 Peter Kelly (pmk@post.com)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,12 +24,12 @@
 #include "config.h"
 #include "dom2_viewsimpl.h"
 
-#include "css/css_computedstyle.h"
-#include "dom_elementimpl.h"
 #include "DocumentImpl.h"
+#include "css_computedstyle.h"
 #include "cssstyleselector.h"
+#include "dom_elementimpl.h"
 
-namespace DOM {
+namespace WebCore {
 
 AbstractViewImpl::AbstractViewImpl(DocumentImpl *_document)
 {
@@ -52,7 +52,7 @@ CSSStyleDeclarationImpl *AbstractViewImpl::getComputedStyle(ElementImpl *elt, DO
 
 RefPtr<CSSRuleListImpl> AbstractViewImpl::getMatchedCSSRules(ElementImpl* elt, DOMStringImpl* pseudoElt, bool authorOnly)
 {
-    if (pseudoElt && pseudoElt->l)
+    if (pseudoElt && pseudoElt->length())
         return m_document->styleSelector()->pseudoStyleRulesForElement(elt, pseudoElt, authorOnly);
     return m_document->styleSelector()->styleRulesForElement(elt, authorOnly);
 }

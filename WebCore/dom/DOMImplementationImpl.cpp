@@ -114,7 +114,7 @@ PassRefPtr<DocumentImpl> DOMImplementationImpl::createDocument(const String& nam
         int colonpos = -1;
         uint i;
         StringImpl *qname = qualifiedName.impl();
-        for (i = 0; i < qname->l && colonpos < 0; i++) {
+        for (i = 0; i < qname->length() && colonpos < 0; i++) {
             if ((*qname)[i] == ':')
                 colonpos = i;
         }

@@ -25,51 +25,65 @@
 #include "csshelper.h"
 
 #include "PlatformString.h"
+#include <kxmlcore/Vector.h>
 
 namespace WebCore {
 
 String parseURL(const String& url)
 {
     StringImpl* i = url.impl();
-    if(!i) return String();
+    if (!i)
+        return String();
 
     int o = 0;
-    int l = i->l;
-    while(o < l && (i->s[o] <= ' ')) { o++; l--; }
-    while(l > 0 && (i->s[o+l-1] <= ' ')) l--;
+    int l = i->length();
 
-    if(l >= 5 &&
-       (i->s[o].lower() == 'u') &&
-       (i->s[o+1].lower() == 'r') &&
-       (i->s[o+2].lower() == 'l') &&
-       i->s[o+3].latin1() == '(' &&
-       i->s[o+l-1].latin1() == ')') {
+    while (o < l && (*i)[o] <= ' ') {
+        ++o;
+        --l;
+    }
+    while (l > 0 && (*i)[o+l-1] <= ' ')
+        --l;
+
+    if (l >= 5
+            && (*i)[o].lower() == 'u'
+            && (*i)[o + 1].lower() == 'r'
+            && (*i)[o + 2].lower() == 'l'
+            && (*i)[o + 3] == '('
+            && (*i)[o + l - 1] == ')') {
         o += 4;
         l -= 5;
     }
 
-    while(o < l && (i->s[o] <= ' ')) { o++; l--; }
-    while(l > 0 && (i->s[o+l-1] <= ' ')) l--;
+    while (o < l && (*i)[o] <= ' ') {
+        ++o;
+        --l;
+    }
+    while (l > 0 && (*i)[o+l-1] <= ' ')
+        --l;
 
-    if(l >= 2 && i->s[o] == i->s[o+l-1] &&
-       (i->s[o].latin1() == '\'' || i->s[o].latin1() == '\"')) {
+    if (l >= 2 && (*i)[o] == (*i)[o+l-1] && ((*i)[o] == '\'' || (*i)[o] == '\"')) {
         o++;
         l -= 2;
     }
 
-    while(o < l && (i->s[o] <= ' ')) { o++; l--; }
-    while(l > 0 && (i->s[o+l-1] <= ' ')) l--;
+    while (o < l && (*i)[o] <= ' ') {
+        ++o;
+        --l;
+    }
+    while (l > 0 && (*i)[o+l-1] <= ' ')
+        --l;
 
-    StringImpl* j = new StringImpl(i->s+o,l);
+    Vector<unsigned short, 2048> buffer;
 
     int nl = 0;
-    for(int k = o; k < o+l; k++)
-        if(i->s[k].unicode() > '\r')
-            j->s[nl++] = i->s[k];
+    for (int k = o; k < o + l; k++) {
+        unsigned short c = (*i)[k].unicode();
+        if (c > '\r')
+            buffer[nl++] = c;
+    }
 
-    j->l = nl;
-
-    return j;
+    return new StringImpl(reinterpret_cast<QChar*>(buffer.data()), nl);
 }
 
 }

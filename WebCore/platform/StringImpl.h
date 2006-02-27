@@ -24,10 +24,11 @@
 #ifndef StringImpl_h
 #define StringImpl_h
 
+#include "QString.h"
 #include "Shared.h"
+#include <kxmlcore/Noncopyable.h>
 #include <kxmlcore/RefPtr.h>
 #include <limits.h>
-#include <QString.h>
 
 #if __APPLE__
 #include <CoreFoundation/CoreFoundation.h>
@@ -58,6 +59,7 @@ public:
     StringImpl(const char*, unsigned len);
     ~StringImpl();
 
+    QChar* unicode() const { return s; } // will be changed to const QChar* eventually
     unsigned length() const { return l; }
     
     unsigned hash() const { if (_hash == 0) _hash = computeHash(s, l); return _hash; }
@@ -75,7 +77,7 @@ public:
 
     const QChar& operator[] (int pos) const { return s[pos]; }
 
-    khtml::Length toLength() const;
+    Length toLength() const;
     
     bool containsOnlyWhitespace() const;
     bool containsOnlyWhitespace(unsigned from, unsigned len) const;
@@ -83,8 +85,8 @@ public:
     // ignores trailing garbage, unlike QString
     int toInt(bool* ok = 0) const;
 
-    khtml::Length* toCoordsArray(int& len) const;
-    khtml::Length* toLengthArray(int& len) const;
+    Length* toCoordsArray(int& len) const;
+    Length* toLengthArray(int& len) const;
     bool isLower() const;
     StringImpl* lower() const;
     StringImpl* upper() const;
@@ -142,19 +144,18 @@ namespace KXMLCore {
             if (a == b) return true;
             if (!a || !b) return false;
             
-            unsigned aLength = a->l;
-            unsigned bLength = b->l;
+            unsigned aLength = a->length();
+            unsigned bLength = b->length();
             if (aLength != bLength)
                 return false;
             
-            const uint32_t* aChars = reinterpret_cast<const uint32_t*>(a->s);
-            const uint32_t* bChars = reinterpret_cast<const uint32_t*>(b->s);
+            const uint32_t* aChars = reinterpret_cast<const uint32_t*>(a->unicode());
+            const uint32_t* bChars = reinterpret_cast<const uint32_t*>(b->unicode());
             
             unsigned halfLength = aLength >> 1;
-            for (unsigned i = 0; i != halfLength; ++i) {
+            for (unsigned i = 0; i != halfLength; ++i)
                 if (*aChars++ != *bChars++)
                     return false;
-            }
             
             if (aLength & 1 && *reinterpret_cast<const uint16_t*>(aChars) != *reinterpret_cast<const uint16_t*>(bChars))
                 return false;
@@ -172,8 +173,8 @@ namespace KXMLCore {
         // http://www.azillionmonkeys.com/qed/hash.html
         static unsigned hash(const WebCore::StringImpl* str)
         {
-            unsigned l = str->l;
-            QChar* s = str->s;
+            unsigned l = str->length();
+            const QChar* s = str->unicode();
             uint32_t hash = PHI;
             uint32_t tmp;
             
@@ -262,11 +263,11 @@ namespace KXMLCore {
         {
             if (a == b) return true;
             if (!a || !b) return false;
-            unsigned length = a->l;
-            if (length != b->l)
+            unsigned length = a->length();
+            if (length != b->length())
                 return false;
-            const QChar* as = a->s;
-            const QChar* bs = b->s;
+            const QChar* as = a->unicode();
+            const QChar* bs = b->unicode();
             for (unsigned i = 0; i != length; ++i)
                 if (as[i].lower() != bs[i].lower())
                     return false;
