@@ -2,6 +2,16 @@
 
         - try again after seeing errors from buildbot
 
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::checkNotify):
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::data):
+        Add __APPLE__ ifdefs to two more uses of response.
+
+2006-02-26  Darin Adler  <darin@apple.com>
+
+        - try again after seeing errors from buildbot
+
         * loader/CachedObject.cpp: (WebCore::CachedObject::~CachedObject):
         * loader/CachedObject.h: (WebCore::CachedObject::CachedObject):
         * loader/loader.cpp:

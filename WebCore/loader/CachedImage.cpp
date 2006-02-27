@@ -120,7 +120,13 @@ void CachedImage::data(ByteArray& data, bool eof)
 
     // Create the image if it doesn't yet exist.
     if (!m_image)
-        m_image = new Image(this, KWQResponseMIMEType(m_response) == "application/pdf");
+        m_image = new Image(this,
+#if __APPLE__
+            KWQResponseMIMEType(m_response) == "application/pdf"
+#else
+            false
+#endif
+            );
         
     // Give all the data so far to the image object for processing.
     // It will not do anything now, but will delay decoding until queried for info (like size or specific image frames).

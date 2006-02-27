@@ -107,9 +107,11 @@ void CachedCSSStyleSheet::checkNotify()
 
     CachedObjectClientWalker w(m_clients);
     while (CachedObjectClient *c = w.next()) {
+#if __APPLE__
         if (m_response && !KWQIsResponseURLEqualToURL(m_response, m_url))
             c->setStyleSheet(DOMString(KWQResponseURL(m_response)), m_sheet);
         else
+#endif
             c->setStyleSheet(m_url, m_sheet);
     }
 }
