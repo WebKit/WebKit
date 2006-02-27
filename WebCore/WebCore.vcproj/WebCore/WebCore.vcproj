@@ -1545,6 +1545,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\platform\Font.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\Font.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\platform\FontFamily.cpp"
 				>
 			</File>
@@ -2598,14 +2606,6 @@
 			</File>
 			<File
 				RelativePath="..\..\rendering\DataRef.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\font.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\rendering\font.h"
 				>
 			</File>
 			<File

@@ -1,5 +1,11 @@
 2006-02-27  Darin Adler  <darin@apple.com>
 
+        - try to fix Windows build
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Removed rendering/font.* and added platform/Font.*.
+
+2006-02-27  Darin Adler  <darin@apple.com>
+
         * css/csshelper.cpp: (WebCore::parseURL): Actually, the second version was fine. Rolling
         back to that; apologies for the churn.
 
