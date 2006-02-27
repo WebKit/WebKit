@@ -1,3 +1,11 @@
+2006-02-27  Maciej Stachowiak  <mjs@apple.com>
+
+        - fix debug build (broken by my last commit)
+
+        * platform/StreamingTextDecoder.cpp:
+        (WebCore::StreamingTextDecoder::createICUConverter):
+        (WebCore::StreamingTextDecoder::convertUsingICU):
+
 2006-02-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

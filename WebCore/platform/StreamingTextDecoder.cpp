@@ -149,7 +149,7 @@ UErrorCode StreamingTextDecoder::createICUConverter()
             LOG_ERROR("ICU ambiguous alias warning for encoding: %s", encodingName);
 
         if (!m_converterICU) {
-            LOG_ERROR("the ICU Converter won't convert from text encoding 0x%X, error %d", encoding, err);
+            LOG_ERROR("the ICU Converter won't convert from text encoding 0x%X, error %d", encoding.encodingID(), err);
             return err;
         }
     }
@@ -188,7 +188,7 @@ QString StreamingTextDecoder::convertUsingICU(const unsigned char *chs, int len,
     if (!m_converterICU && U_FAILURE(createICUConverter()))
         return QString();
 
-    ASSERT(_converterICU);
+    ASSERT(m_converterICU);
 
     QString result("");
     result.reserve(len);
