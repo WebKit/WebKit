@@ -6,7 +6,7 @@
 <h2>Building WebKit</h2>
 
 <p>Before you build WebKit, you'll need to <a href="checkout.html">check out</a> sources. Next make sure that you have Xcode, preferably
-the latest version, which is 2.2 at this point. You will need at least Xcode 2.1 to be able to build WebKit.<p>
+the latest version, which is 2.2.1 at this point. You will need at least Xcode 2.1 to be able to build WebKit.<p>
 
 <ol>
 
@@ -26,9 +26,9 @@ so it will start the version of Safari from the Applications directory with the 
 
 <p>If you have specified custom location for the build products directory in Xcode preferences, the frameworks will be built in that directory.
 If you haven't, the build products will be put in a directory named WebKitBuild alongside the source code directories.</p>
-<p>By default, the scripts will do a Deployment build, which is optimized and doesn't have development-only code, like assertions, compiled in.
-If you're prefer to do a Development build, then do execute this command:</p>
-<p class="code">WebKitTools/Scripts/set-webkit-configuration --development</p>
+<p>By default, the scripts will do a Release build, which is optimized and doesn't have debugging code, like assertions, compiled in.
+If you'd prefer to do a Debug build, then execute this command:</p>
+<p class="code">WebKitTools/Scripts/set-webkit-configuration --debug</p>
 <p>You can also pass the configuration on the command line to any of the build commands.</p>
 <p>More information about building WebKit can be found on its <a href="http://www.opendarwin.org/wiki/index.php/WebKit">wiki</a>.</p>
 

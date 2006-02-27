@@ -1,3 +1,12 @@
+2006-02-26  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Maciej, landed by Geoff.
+
+        Change "Deployment" to "Release" and "Development" to "Debug".
+        Update latest Xcode version from 2.2 to 2.2.1.
+
+        * building/build.html
+
 2006-02-21  Geoffrey Garen  <ggaren@apple.com>
 
         Accidentally wrote "Release" instead of "Debug" in my last patch.
