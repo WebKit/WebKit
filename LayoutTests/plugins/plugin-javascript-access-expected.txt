@@ -1,0 +1,16 @@
+Name: WebKit Test PlugIn
+
+Description: Simple Netscape plug-in that handles test content for WebKit
+
+Filename: TestNetscapePlugIn.plugin
+
+Mime Types:
+
+Type: application/x-webkit-test-netscape
+
+Description: test netscape content
+
+Suffixes: testnetscape
+
+
+

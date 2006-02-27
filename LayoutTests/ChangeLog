@@ -1,3 +1,12 @@
+2006-02-25  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by ggaren.
+        
+        Test new PlugInInfoStore class (used to be KConfig).
+        
+        * plugins/plugin-javascript-access-expected.txt: Added.
+        * plugins/plugin-javascript-access.html: Added.
+
 2006-02-25  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Maciej, landed by Geoff.

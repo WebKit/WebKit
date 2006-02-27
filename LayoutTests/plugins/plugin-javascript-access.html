@@ -1,0 +1,41 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Installed Plug-ins</title>
+</head>
+<body>
+<script type="application/x-javascript">
+if (window.layoutTestController)
+    layoutTestController.dumpAsText()
+
+navigator.plugins.refresh(false); // Supposedly helps if new plug-ins were added.
+
+var foundTestPlugin = false;
+
+for (var pi = 0; pi != navigator.plugins.length; pi++) {
+    var plugin = navigator.plugins[pi];
+    
+    // We can only guarantee that the Test PlugIn is installed.
+    if (plugin.name != "WebKit Test PlugIn")
+        continue;
+    else
+        foundTestPlugin = true;
+
+    document.writeln("<p>Name: " + plugin.name + "<\/p>");
+    document.writeln("<p>Description: " + plugin.description + "<\/p>");
+    document.writeln("<p>Filename: " + plugin.filename + "<\/p>");
+
+    document.writeln("<p>Mime Types:<\/p>");
+    for (var mi = 0; mi != plugin.length; ++mi) {
+        document.writeln("<p>Type: " + plugin[mi].type + "<\/p>");
+        document.writeln("<p>Description: " + plugin[mi].description + "<\/p>");
+        document.writeln("<p>Suffixes: " + plugin[mi].suffixes + "<\/p>");
+        document.writeln("<br>");
+    }
+}
+
+if (!foundTestPlugin)
+    document.writeln("<p>FAILURE!  (Failed to find netscape test plugin)<\/p>");
+</script>
+</body>
+</html>
