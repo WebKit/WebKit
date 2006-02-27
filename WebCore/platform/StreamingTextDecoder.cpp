@@ -27,7 +27,7 @@
 #include "StreamingTextDecoder.h"
 
 #include <kxmlcore/Assertions.h>
-#include <utility>
+#include <algorithm>
 
 using std::min;
 

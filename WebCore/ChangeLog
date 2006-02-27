@@ -1,5 +1,11 @@
 2006-02-27  Maciej Stachowiak  <mjs@apple.com>
 
+        - use proper header for std::min.
+
+        * platform/StreamingTextDecoder.cpp:
+
+2006-02-27  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
 
         - add new TextEncoding stuff to win32 build
