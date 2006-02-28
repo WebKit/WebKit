@@ -298,8 +298,6 @@ public:
    */
   void setUserStyleSheet(const QString &styleSheet);
 
-public:
-
   /**
    * Sets the standard font style.
    *
@@ -417,7 +415,7 @@ public:
    */
   void paintCaret(QPainter *p, const IntRect &rect) const;
   
- /**
+  /**
    * Paints the drag caret.
    */
   void paintDragCaret(QPainter *p, const IntRect &rect) const;

@@ -89,7 +89,7 @@ void Image::invalidateNativeData()
 
 Image* Image::loadResource(const char *name)
 {
-    NSData* namedImageData = [[WebCoreImageRendererFactory sharedFactory] imageDataForName:[NSString stringWithCString:name]];
+    NSData* namedImageData = [[WebCoreImageRendererFactory sharedFactory] imageDataForName:[NSString stringWithUTF8String:name]];
     if (namedImageData) {
         Image* image = new Image;
         image->setNativeData((CFDataRef)namedImageData, true);

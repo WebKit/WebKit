@@ -29,13 +29,44 @@
 #import "MacFrame.h"
 #import "PageMac.h"
 #import "WebCoreFrameBridge.h"
+#import "Logging.h"
 
 using namespace WebCore;
 
 @implementation WebCorePageBridge
 
+static inline void initializeLogChannel(KXCLogChannel &channel)
+{
+    channel.state = KXCLogChannelOff;
+    NSString *logLevelString = [[NSUserDefaults standardUserDefaults] objectForKey:[NSString stringWithUTF8String:channel.defaultName]];
+    if (logLevelString) {
+        unsigned logLevel;
+        if (![[NSScanner scannerWithString:logLevelString] scanHexInt:&logLevel])
+            NSLog(@"unable to parse hex value for %s (%@), logging is off", channel.defaultName, logLevelString);
+        if ((logLevel & channel.mask) == channel.mask)
+            channel.state = KXCLogChannelOn;
+    }
+}
+
+static void initializeLoggingChannelsIfNecessary()
+{
+    static bool haveInitializedLoggingChannels = false;
+    if (haveInitializedLoggingChannels)
+        return;
+    haveInitializedLoggingChannels = true;
+    
+    initializeLogChannel(LogNotYetImplemented);
+    initializeLogChannel(LogFrames);
+    initializeLogChannel(LogLoading);
+    initializeLogChannel(LogPopupBlocking);
+    initializeLogChannel(LogEvents);
+    initializeLogChannel(LogEditing);
+    initializeLogChannel(LogTextConversion);
+}
+
 - (id)init
 {
+    initializeLoggingChannelsIfNecessary();
     self = [super init];
     if (self)
         _page = new PageMac(self);

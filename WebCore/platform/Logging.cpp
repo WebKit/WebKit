@@ -25,13 +25,13 @@
 
 #include "Logging.h"
 
-KXCLogChannel KWQLogNotYetImplemented = { 0x00000001, "WebCoreLogLevel", KXCLogChannelUninitialized };
+KXCLogChannel LogNotYetImplemented = { 0x00000001, "WebCoreLogLevel", KXCLogChannelOff };
 
-KXCLogChannel KWQLogFrames =            { 0x00000010, "WebCoreLogLevel", KXCLogChannelUninitialized };
-KXCLogChannel KWQLogLoading =           { 0x00000020, "WebCoreLogLevel", KXCLogChannelUninitialized };
+KXCLogChannel LogFrames =            { 0x00000010, "WebCoreLogLevel", KXCLogChannelOff };
+KXCLogChannel LogLoading =           { 0x00000020, "WebCoreLogLevel", KXCLogChannelOff };
 
-KXCLogChannel KWQLogPopupBlocking =     { 0x00000040, "WebCoreLogLevel", KXCLogChannelUninitialized };
+KXCLogChannel LogPopupBlocking =     { 0x00000040, "WebCoreLogLevel", KXCLogChannelOff };
 
-KXCLogChannel KWQLogEvents =            { 0x00000080, "WebCoreLogLevel", KXCLogChannelUninitialized };
-KXCLogChannel KWQLogEditing =           { 0x00000100, "WebCoreLogLevel", KXCLogChannelUninitialized };
-KXCLogChannel KWQLogTextConversion =    { 0x00000200, "WebCoreLogLevel", KXCLogChannelUninitialized };
+KXCLogChannel LogEvents =            { 0x00000080, "WebCoreLogLevel", KXCLogChannelOff };
+KXCLogChannel LogEditing =           { 0x00000100, "WebCoreLogLevel", KXCLogChannelOff };
+KXCLogChannel LogTextConversion =    { 0x00000200, "WebCoreLogLevel", KXCLogChannelOff };

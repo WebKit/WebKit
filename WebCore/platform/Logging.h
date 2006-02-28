@@ -29,16 +29,16 @@
 #include <kxmlcore/Assertions.h>
 
 #ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX KWQLog
+#define LOG_CHANNEL_PREFIX Log
 #endif
 
-extern KXCLogChannel KWQLogNotYetImplemented;
+extern KXCLogChannel LogNotYetImplemented;
 
-extern KXCLogChannel KWQLogFrames;
-extern KXCLogChannel KWQLogLoading;
-extern KXCLogChannel KWQLogPopupBlocking;
-extern KXCLogChannel KWQLogEvents;
-extern KXCLogChannel KWQLogEditing;
-extern KXCLogChannel KWQLogTextConversion;
+extern KXCLogChannel LogFrames;
+extern KXCLogChannel LogLoading;
+extern KXCLogChannel LogPopupBlocking;
+extern KXCLogChannel LogEvents;
+extern KXCLogChannel LogEditing;
+extern KXCLogChannel LogTextConversion;
 
 #endif
