@@ -101,9 +101,10 @@ JSValue* JSXMLHttpRequest::getValueProperty(ExecState *exec, int token) const
     if (DocumentImpl* responseXML = m_impl->getResponseXML())
       return getDOMNode(exec, responseXML);
     return jsUndefined();
-  case Status:
+  case Status: {
     int status = m_impl->getStatus();
     return status > 0 ? jsNumber(status) : jsUndefined();
+  }
   case StatusText:
     return jsStringOrUndefined(m_impl->getStatusText());
   case Onreadystatechange:

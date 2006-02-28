@@ -1,5 +1,41 @@
 2006-02-27  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by hyatt.
+
+        Fix a bunch more link errors in the win32 build, mostly by adding stubs.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: add JSXMLHttpRequest and PlugInInfoStore
+        * WebCore.vcproj/WebCore/build-generated-files.sh: update for JSXMLHttpRequest
+        * khtml/ecma/JSXMLHttpRequest.cpp:
+        (KJS::JSXMLHttpRequest::getValueProperty): fix switch to compile
+        * platform/PlugInInfoStore.h:
+        * platform/mac/PlugInInfoStoreMac.mm:
+        * platform/win/TemporaryLinkStubs.cpp: add a bunch of stubs.
+        (WebCore::TransferJob::errorText):
+        (WebCore::TransferJob::isErrorPage):
+        (WebCore::Widget::hide):
+        (PlugInInfoStore::createPluginInfoForPluginAtIndex):
+        (PlugInInfoStore::pluginCount):
+        (WebCore::refreshPlugins):
+        (QFont::QFont):
+        (QFont::~QFont):
+        (QFont::italic):
+        (QFont::weight):
+        (QFontMetrics::QFontMetrics):
+        (QFontMetrics::~QFontMetrics):
+        (QFontMetrics::xHeight):
+        (Widget::setActiveWindow):
+        (WebCore::ScrollView::contentsX):
+        (WebCore::ScrollView::contentsY):
+        (WebCore::ScrollView::contentsHeight):
+        (WebCore::ScrollView::contentsWidth):
+        (WebCore::ScrollView::visibleHeight):
+        (WebCore::ScrollView::visibleWidth):
+        (WebCore::ScrollView::hScrollBarMode):
+        (WebCore::ScrollView::vScrollBarMode):
+
+2006-02-27  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by timo.
 
         Add missing include to fix build.

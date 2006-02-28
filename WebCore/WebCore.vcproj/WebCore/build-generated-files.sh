@@ -122,6 +122,10 @@ if [ ../JavaScriptCore/kjs/create_hash_table -nt "$DerivedSourcesDir/XSLTProcess
   ../JavaScriptCore/kjs/create_hash_table khtml/ecma/XSLTProcessor.cpp > "$DerivedSourcesDir/XSLTProcessor.lut.h"
 fi
 
+if [ ../JavaScriptCore/kjs/create_hash_table -nt "$DerivedSourcesDir/JSXMLHttpRequest.lut.h" -o khtml/ecma/JSXMLHttpRequest.cpp -nt "$DerivedSourcesDir/JSXMLHttpRequest.lut.h" ]; then
+  ../JavaScriptCore/kjs/create_hash_table khtml/ecma/JSXMLHttpRequest.cpp > "$DerivedSourcesDir/JSXMLHttpRequest.lut.h"
+fi
+
 # Auto-generate bindings from .idl files
 echo "Auto-generating bindings from .idl files for the dom directory..."
 perl -I"$WebCoreSourceRoot/bindings/scripts" "$WebCoreSourceRoot/bindings/scripts/generate-bindings.pl" --generator JS --idldir "$WebCoreSourceRoot/dom" --outputdir "$DerivedSourcesDir"

@@ -1154,6 +1154,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\khtml\ecma\JSXMLHttpRequest.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\ecma\JSXMLHttpRequest.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\khtml\ecma\kjs_binding.cpp"
 					>
 				</File>
@@ -1646,6 +1654,10 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\PlatformString.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\PlugInInfoStore.h"
 				>
 			</File>
 			<File
