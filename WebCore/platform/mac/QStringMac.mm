@@ -84,21 +84,3 @@ NSString *QString::getNSString() const
     FATAL("invalid character cache");
     return nil;
 }
-
-// FIXME: Need portable version of UTF-8 encoding/decoding
-
-QCString QString::utf8(int &length) const
-{
-    uint len = dataHandle[0]->_length;
-    if (len == 0) {
-        return QCString();
-    }
-    CFStringRef s = getCFString();
-    CFIndex utf8Size;
-    CFStringGetBytes(s, CFRangeMake(0, len), kCFStringEncodingUTF8, '?', false, 0, 0, &utf8Size);
-    length = utf8Size;
-    QCString qcs(utf8Size + 1);
-    CFStringGetCString(s, qcs.data(), utf8Size + 1, kCFStringEncodingUTF8);
-    return qcs;
-}
-

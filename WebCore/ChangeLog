@@ -1,3 +1,14 @@
+2006-02-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - portable version of QString::utf8
+
+        * platform/QString.cpp:
+        (QString::utf8): moved here, rewritten to use TextCodec
+        * platform/mac/QStringMac.mm:
+        (QString::utf8): removed from here
+
 2006-02-27  Eric Seidel  <eseidel@apple.com>
 
         Rubber-stamped by mjs.
