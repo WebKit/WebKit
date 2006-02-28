@@ -395,3 +395,4 @@ Widget* WebCore::FrameView::topLevelWidget() const { notImplemented(); return 0;
  class WebCore::Plugin *  WebCore::FrameWin::createPlugin(class KURL const &,class QStringList const &,class QStringList const &,class QString const &) { notImplemented(); return 0; }
  void  WebCore::FrameWin::handledOnloadEvents(void) { notImplemented(); }
 WebCore::String  WebCore::FrameWin::generateFrameName(void) { notImplemented(); return String(); }
+QCString WebCore::TextEncoding::fromUnicode(QString const&,bool) const { notImplemented(); return QCString(); }

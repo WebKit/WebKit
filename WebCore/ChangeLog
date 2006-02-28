@@ -1,3 +1,14 @@
+2006-02-27  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Add stub to make DRT link.
+        Make WebCore copy libxml.dll into build directory when building.
+
+        * WebCore.vcproj/WebCore/build-generated-files.sh:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::TextEncoding::fromUnicode):
+
 2006-02-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.
