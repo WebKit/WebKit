@@ -74,20 +74,15 @@ public:
     virtual void childrenChanged();
     virtual void parseMappedAttribute(MappedAttributeImpl *attr);
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
-    virtual void attach();
-    virtual void detach();
     virtual bool appendFormData(FormDataList&, bool);
     virtual void reset();
     DOMString value();
     void setValue(const DOMString &value);
     DOMString defaultValue();
     void setDefaultValue(const DOMString &value);
-
-    void invalidateValue() { m_valueIsValid = false; }
-    void updateValue();
-
-    bool valueMatchesRenderer() const { return m_valueMatchesRenderer; }
-    void setValueMatchesRenderer() { m_valueMatchesRenderer = true; }
+    
+    void invalidateValue() { m_valueMatchesRenderer = false; }
+    void rendererWillBeDestroyed();
 
     virtual bool isEditable();
     
@@ -104,9 +99,11 @@ protected:
     int m_rows;
     int m_cols;
     WrapMethod m_wrap;
-    QString m_value;
-    bool m_valueIsValid;
+    String m_value;
     bool m_valueMatchesRenderer;
+    
+private:
+    void updateValue();
 };
 
 } //namespace

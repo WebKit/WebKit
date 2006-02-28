@@ -1,3 +1,17 @@
+2006-02-27  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=6893> 
+        REGRESSION: Major bug with TinyMCE, no value submitted from textarea
+        <rdar://problem/3465857> value from textarea form field inside of hidden div isn't submitted
+        <rdar://problem/3968059> Textarea with hard-wrap: pre-filled text doesn't get hard-wrapped
+
+        * fast/forms/textarea-hard-linewrap-expected.txt: Added.
+        * fast/forms/textarea-hard-linewrap.html: Added.
+        * fast/forms/textarea-setvalue-submit-expected.txt: Added.
+        * fast/forms/textarea-setvalue-submit.html: Added.
+
 2006-02-27  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

@@ -41,6 +41,7 @@ class QTextEdit;
     BOOL inInitWithFrame;
     BOOL resizableByUser;
     BOOL resizableByUserComputed;
+    BOOL normalizeLineEndings;
 }
 
 - initWithQTextEdit:(QTextEdit *)w;

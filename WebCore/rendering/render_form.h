@@ -291,7 +291,8 @@ public:
     DOM::HTMLTextAreaElementImpl* element() const
     { return static_cast<DOM::HTMLTextAreaElementImpl*>(RenderObject::element()); }
 
-    DOM::DOMString text();
+    String text();
+    String textWithHardLineBreaks();
 
     int selectionStart();
     int selectionEnd();

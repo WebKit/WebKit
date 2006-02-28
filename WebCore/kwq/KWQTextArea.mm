@@ -215,6 +215,18 @@ const float LargeNumberForText = 1.0e7;
 
 - (void)textDidChange:(NSNotification *)notification
 {
+    // Turn \r\ns into \ns so that a line ending is always a single character.
+    // Turn \rs into \ns to simplify code that finds paragraph boundaries.
+    if (normalizeLineEndings) {
+    
+        NSMutableString *string = [[textView string] mutableCopy];
+        [string replaceOccurrencesOfString:@"\r\n" withString:@"\n" options:NSLiteralSearch range:NSMakeRange(0, [string length])];
+        [string replaceOccurrencesOfString:@"\r" withString:@"\n" options:NSLiteralSearch range:NSMakeRange(0, [string length])];
+        [textView setString:string];
+        
+        normalizeLineEndings = NO;
+    }
+
     if (widget)
         widget->textChanged();
     
@@ -243,20 +255,7 @@ const float LargeNumberForText = 1.0e7;
 
 - (NSString *)text
 {
-    NSString *text = [textView string];
-    
-    if ([text rangeOfString:@"\r" options:NSLiteralSearch].location != NSNotFound) {
-        NSMutableString *mutableText = [[text mutableCopy] autorelease];
-    
-        [mutableText replaceOccurrencesOfString:@"\r\n" withString:@"\n"
-            options:NSLiteralSearch range:NSMakeRange(0, [mutableText length])];
-        [mutableText replaceOccurrencesOfString:@"\r" withString:@"\n"
-            options:NSLiteralSearch range:NSMakeRange(0, [mutableText length])];
-        
-        text = mutableText;
-    }
-
-    return text;
+    return [textView string];
 }
 
 - (NSString *)textWithHardLineBreaks
@@ -273,17 +272,12 @@ const float LargeNumberForText = 1.0e7;
         NSRange lineRange = [layoutManager characterRangeForGlyphRange:lineGlyphRange actualGlyphRange:NULL];
         if ([textWithHardLineBreaks length]) {
             unichar lastCharacter = [textWithHardLineBreaks characterAtIndex:[textWithHardLineBreaks length] - 1];
-            if (lastCharacter != '\n' && lastCharacter != '\r') {
+            if (lastCharacter != '\n') {
                 [textWithHardLineBreaks appendString:@"\n"];
             }
         }
         [textWithHardLineBreaks appendString:[text substringWithRange:lineRange]];
     }
-
-    [textWithHardLineBreaks replaceOccurrencesOfString:@"\r\n" withString:@"\n"
-        options:NSLiteralSearch range:NSMakeRange(0, [textWithHardLineBreaks length])];
-    [textWithHardLineBreaks replaceOccurrencesOfString:@"\r" withString:@"\n"
-        options:NSLiteralSearch range:NSMakeRange(0, [textWithHardLineBreaks length])];
 
     return textWithHardLineBreaks;
 }
@@ -295,62 +289,12 @@ const float LargeNumberForText = 1.0e7;
 
 - (void)setSelectedRange:(NSRange)aRange
 {
-    NSString *text = [textView string];
-    // Ok, the selection has to match up with the string returned by -text
-    // and since -text translates \r\n to \n, we have to modify our selection
-    // if a \r\n sequence is anywhere in or before the selection
-    unsigned count = 0;
-    NSRange foundRange, searchRange = NSMakeRange(0, aRange.location);
-    while (foundRange = [text rangeOfString:@"\r\n" options:NSLiteralSearch range:searchRange],
-           foundRange.location != NSNotFound) {
-        count++;
-        searchRange.location = NSMaxRange(foundRange);
-        if (searchRange.location >= aRange.location) break;
-        searchRange.length = aRange.location - searchRange.location;
-    }
-    aRange.location += count;
-    count = 0;
-    searchRange = NSMakeRange(aRange.location, aRange.length);
-    while (foundRange = [text rangeOfString:@"\r\n" options:NSLiteralSearch range:searchRange],
-           foundRange.location != NSNotFound) {
-        count++;
-        searchRange.location = NSMaxRange(foundRange);
-        if (searchRange.location >= NSMaxRange(aRange)) break;
-        searchRange.length = NSMaxRange(aRange) - searchRange.location;
-    }
-    aRange.length += count;
     [textView setSelectedRange:aRange];
 }
 
 - (NSRange)selectedRange
 {
-    NSRange aRange = [textView selectedRange];
-    if (aRange.location == NSNotFound) {
-        return aRange;
-    }
-    // Same issue as with -setSelectedRange: regarding \r\n sequences
-    unsigned count = 0;
-    NSRange foundRange, searchRange = NSMakeRange(0, aRange.location);
-    NSString *text = [textView string];
-    while (foundRange = [text rangeOfString:@"\r\n" options:NSLiteralSearch range:searchRange],
-           foundRange.location != NSNotFound) {
-        count++;
-        searchRange.location = NSMaxRange(foundRange);
-        if (searchRange.location >= aRange.location) break;
-        searchRange.length = aRange.location - searchRange.location;
-    }
-    aRange.location -= count;
-    count = 0;
-    searchRange = NSMakeRange(aRange.location, aRange.length);
-    while (foundRange = [text rangeOfString:@"\r\n" options:NSLiteralSearch range:searchRange],
-           foundRange.location != NSNotFound) {
-        count++;
-        searchRange.location = NSMaxRange(foundRange);
-        if (searchRange.location >= NSMaxRange(aRange)) break;
-        searchRange.length = NSMaxRange(aRange) - searchRange.location;
-    }
-    aRange.length -= count;
-    return aRange;
+    return [textView selectedRange];
 }
 
 - (BOOL)hasSelection
@@ -460,7 +404,7 @@ const float LargeNumberForText = 1.0e7;
     
     NSScanner *scanner = [NSScanner scannerWithString:text];
     [scanner setCharactersToBeSkipped:nil];
-    NSCharacterSet *newlineSet = [NSCharacterSet characterSetWithCharactersInString:@"\r\n"];
+    NSCharacterSet *newlineSet = [NSCharacterSet characterSetWithCharactersInString:@"\n"];
 
     while (true) {
         [scanner scanUpToCharactersFromSet:newlineSet intoString:NULL];
@@ -471,11 +415,7 @@ const float LargeNumberForText = 1.0e7;
         
         paragraphSoFar++;
         
-        unichar c = [text characterAtIndex:[scanner scanLocation]];
         [scanner setScanLocation:[scanner scanLocation]+1]; // skip over the found char
-        if (c == '\r') {
-            [scanner scanString:@"\n" intoString:NULL]; // get the entire crlf if it is one
-        }
         
         paragraphStart = [scanner scanLocation];
     }
@@ -494,7 +434,7 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     
     NSScanner *scanner = [NSScanner scannerWithString:text];
     [scanner setCharactersToBeSkipped:nil];
-    NSCharacterSet *newlineSet = [NSCharacterSet characterSetWithCharactersInString:@"\r\n"];
+    NSCharacterSet *newlineSet = [NSCharacterSet characterSetWithCharactersInString:@"\n"];
 
     while (true) {
         [scanner scanUpToCharactersFromSet:newlineSet intoString:NULL];
@@ -505,11 +445,7 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
         
         paragraphSoFar++;
         
-        unichar c = [text characterAtIndex:[scanner scanLocation]];
         [scanner setScanLocation:[scanner scanLocation]+1]; // skip over the found char
-        if (c == '\r') {
-            [scanner scanString:@"\n" intoString:NULL]; // get the entire crlf if it is one
-        }
         
         paragraphStart = [scanner scanLocation];
     }
@@ -853,6 +789,14 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     implementation(view, selector, rect);
 
     return NO;
+}
+
+- (BOOL)textView:(NSTextView *)aTextView shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString
+{
+    if ([replacementString rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"\r"]].location != NSNotFound)
+        normalizeLineEndings = YES;
+    
+    return YES;
 }
 
 - (NSSize)sizeWithColumns:(int)numColumns rows:(int)numRows

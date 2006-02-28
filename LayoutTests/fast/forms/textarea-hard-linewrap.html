@@ -1,0 +1,41 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
+<title>Charsets and submitting forms</title>
+</head>
+<body>
+<p>This tests that a textarea's default value is submitted with hard line wraps (carriage returns where line wraps appear in the textarea).</p>
+<p>Due to a bug, the textarea is actually a bit wider than we specify via the cols attribute, so, the number and position of the carriage returns in the submitted data is not what you'd expect.  The expected results for this testcase should be updated when <a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=7505">http://bugzilla.opendarwin.org/show_bug.cgi?id=7505</a> is fixed.</p>
+<form name="f" method="?" action="textarea-hard-linewrap.html">
+<textarea id="textarea" name="textarea" wrap="hard" cols="5">123456789</textarea>
+<input type="submit">
+</form>
+<script>
+
+function foo() {
+    document.f.submit();
+}
+
+if (document.URL.indexOf('?') == -1) {
+
+    if (window.layoutTestController) {
+        window.layoutTestController.dumpAsText();
+        window.layoutTestController.waitUntilDone();
+    }
+    
+    window.setTimeout(foo, 200);
+        
+} else {
+    var formData = document.URL.substring(document.URL.indexOf('?') + 1, document.URL.length);
+    if (formData == "textarea=1234567%0D%0A89")
+        document.write("Success");
+    else
+        document.write("Failure.  The form data that should have been submitted: textarea=1234567%0D%0A89<br>This is what was actually submitted: " + formData);
+    
+    if (window.layoutTestController)
+        window.layoutTestController.notifyDone();
+}
+
+</script>
+</body>
+</html>

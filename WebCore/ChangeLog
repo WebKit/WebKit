@@ -1,3 +1,43 @@
+2006-02-27  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=6893> 
+        REGRESSION: Major bug with TinyMCE, no value submitted from textarea
+        <rdar://problem/3465857> value from textarea form field inside of hidden div isn't submitted
+        <rdar://problem/3968059> Textarea with hard-wrap: pre-filled text doesn't get hard-wrapped
+        
+        Canonicalize line endings in textareas to avoid the workarounds that were a source of bugs,
+        Also call textWithHardLineWraps inside appendFormData (and nowhere else) if wrap="hard".
+
+        * khtml/html/HTMLTextAreaElementImpl.cpp:
+        (WebCore::HTMLTextAreaElementImpl::HTMLTextAreaElementImpl):
+        (WebCore::HTMLTextAreaElementImpl::select):
+        (WebCore::HTMLTextAreaElementImpl::appendFormData):
+        (WebCore::HTMLTextAreaElementImpl::rendererWillBeDestroyed):
+        (WebCore::HTMLTextAreaElementImpl::updateValue):
+        (WebCore::HTMLTextAreaElementImpl::value):
+        (WebCore::HTMLTextAreaElementImpl::setValue):
+        (WebCore::HTMLTextAreaElementImpl::defaultValue):
+        * khtml/html/HTMLTextAreaElementImpl.h:
+        (DOM::HTMLTextAreaElementImpl::invalidateValue):
+        * kwq/KWQTextArea.h:
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextAreaTextView textDidChange:]):
+        (-[KWQTextAreaTextView text]):
+        (-[KWQTextAreaTextView textWithHardLineBreaks]):
+        (-[KWQTextAreaTextView setSelectedRange:]):
+        (-[KWQTextAreaTextView selectedRange]):
+        (-[KWQTextAreaTextView getCursorPositionAsIndex:inParagraph:]):
+        (RangeOfParagraph):
+        (-[KWQTextAreaTextView textView:shouldChangeTextInRange:replacementString:]):
+        * rendering/render_form.cpp:
+        (WebCore::RenderTextArea::destroy):
+        (WebCore::RenderTextArea::updateFromElement):
+        (WebCore::RenderTextArea::text):
+        (WebCore::RenderTextArea::textWithHardLineBreaks):
+        * rendering/render_form.h:
+
 2006-02-27  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
