@@ -1,3 +1,26 @@
+2006-02-27  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=6844>
+        elementAtPoint returns the list when the point is over a list marker
+        
+        Consider the case of outside list markers in nodeAtPoint.  Had to pull 
+        the code out of RenderListMarker::paint that computed the position/size 
+        of the list marker.
+
+        Added:
+        * fast/events/onclick-list-marker.html
+
+        * rendering/render_list.cpp:
+        (RenderListItem::nodeAtPoint):
+        (RenderListItem::getAbsoluteRepaintRect):
+        (RenderListMarker::paint):
+        (RenderListMarker::nodeAtPoint):
+        (RenderListMarker::getRelativeMarkerRect):
+        * rendering/render_list.h:
+        * rendering/render_object.h:
+
 2006-02-27  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by timo.

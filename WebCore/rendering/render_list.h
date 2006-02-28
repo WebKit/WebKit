@@ -70,7 +70,11 @@ public:
     const QString& text() const { return m_item; }
 
     bool isInside() const;
-
+    
+    virtual bool nodeAtPoint(NodeInfo&, int, int, int, int, HitTestAction);
+    
+    IntRect getRelativeMarkerRect();
+    
 private:
     QString m_item;
     CachedImage *m_listImage;
@@ -116,6 +120,8 @@ public:
     bool notInList() const { return _notInList; }
 
     QString markerStringValue() { return m_marker ? m_marker->text() : ""; }
+    
+    virtual bool nodeAtPoint(NodeInfo&, int, int, int, int, HitTestAction);
 
 private:
     int predefVal;

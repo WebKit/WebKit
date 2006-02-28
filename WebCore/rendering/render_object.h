@@ -494,12 +494,12 @@ public:
         bool readonly() const { return m_readonly; }
         bool active() const { return m_active; }
         bool mouseMove() const { return m_mouseMove; }
-
-    private:
+        
         void setInnerNode(DOM::NodeImpl* n) { m_innerNode = n; }
         void setInnerNonSharedNode(DOM::NodeImpl* n) { m_innerNonSharedNode = n; }
         void setURLElement(DOM::NodeImpl* n) { m_innerURLElement = n; }
 
+    private:
         DOM::NodeImpl* m_innerNode;
         DOM::NodeImpl* m_innerNonSharedNode;
         DOM::NodeImpl* m_innerURLElement;

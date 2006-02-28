@@ -288,6 +288,19 @@ void RenderListItem::updateMarkerLocation()
     }
 }
 
+// We need to override RenderBlock::nodeAtPoint so that a point over an outside list marker will return the list item.
+// We should remove this when we improve the way list markers are stored in the render tree.
+bool RenderListItem::nodeAtPoint(NodeInfo& i, int x, int y, int tx, int ty, HitTestAction hitTestAction)
+{
+    if (RenderBlock::nodeAtPoint(i, x, y, tx, ty, hitTestAction))
+        return true;
+    
+    if (!m_marker || m_marker->isInside() || hitTestAction != HitTestForeground)
+        return false;
+        
+    return m_marker->nodeAtPoint(i, x, y, tx + m_x, ty + m_y, hitTestAction);
+}
+
 void RenderListItem::calcMinMaxWidth()
 {
     // Make sure our marker is in the correct location.
@@ -316,27 +329,12 @@ void RenderListItem::paint(PaintInfo& i, int _tx, int _ty)
 IntRect RenderListItem::getAbsoluteRepaintRect()
 {
     IntRect result = RenderBlock::getAbsoluteRepaintRect();
-    if (m_marker && !m_marker->isInside()) {
-        // This can be a sloppy and imprecise offset as long as it's always too big.
-        int pixHeight = style()->fontDescription().computedPixelSize();
-        int offset = pixHeight*2/3;
-        bool haveImage = m_marker->listImage() && !m_marker->listImage()->isErrorImage();
-        if (haveImage)
-            offset = m_marker->listImage()->image()->width();
-        int bulletWidth = offset/2;
-        if (offset%2)
-            bulletWidth++;
-        int xoff = 0;
-        if (style()->direction() == LTR)
-            xoff = -cMarkerPadding - offset;
-        else
-            xoff = cMarkerPadding + (haveImage ? 0 : (offset - bulletWidth));
-
-        if (xoff < 0) {
-            result.setX(result.x() + xoff);
-            result.setWidth(result.width() - xoff);
-        } else
-            result.setWidth(result.width() + xoff);
+    if (m_marker && m_marker->parent() == this && !m_marker->isInside()) {
+        IntRect markerRect = m_marker->getRelativeMarkerRect();
+        int x, y;
+        absolutePosition(x, y);
+        markerRect.move(x, y);
+        result.unite(markerRect);
     }
     return result;
 }
@@ -388,86 +386,43 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
     
     if (style()->visibility() != VISIBLE)  return;
 
-    _tx += m_x;
-    _ty += m_y;
+    IntRect marker = getRelativeMarkerRect();
+    marker.move(IntPoint(_tx, _ty));
 
-    if (_ty > i.r.bottom() || _ty + m_height < i.r.y())
+    IntRect box(_tx + m_x, _ty + m_y, m_height, m_width);
+
+    if (box.y() > i.r.bottom() || box.y() + box.height() < i.r.y())
         return;
 
     if (shouldPaintBackgroundOrBorder()) 
-        paintBoxDecorations(i, _tx, _ty);
+        paintBoxDecorations(i, box.x(), box.y());
 
     QPainter* p = i.p;
     p->setFont(style()->qfont());
     const QFontMetrics fm = p->fontMetrics();
-    
-    // The marker needs to adjust its tx, for the case where it's an outside marker.
-    RenderObject* listItem = 0;
-    int leftLineOffset = 0;
-    int rightLineOffset = 0;
-    if (!isInside()) {
-        listItem = this;
-        int yOffset = 0;
-        int xOffset = 0;
-        while (listItem && listItem != m_listItem) {
-            yOffset += listItem->yPos();
-            xOffset += listItem->xPos();
-            listItem = listItem->parent();
-        }
-        
-        // Now that we have our xoffset within the listbox, we need to adjust ourselves by the delta
-        // between our current xoffset and our desired position (which is just outside the border box
-        // of the list item).
-        if (style()->direction() == LTR) {
-            leftLineOffset = m_listItem->leftRelOffset(yOffset, m_listItem->leftOffset(yOffset));
-            _tx -= (xOffset - leftLineOffset) + m_listItem->paddingLeft() + m_listItem->borderLeft();
-        } else {
-            rightLineOffset = m_listItem->rightRelOffset(yOffset, m_listItem->rightOffset(yOffset));
-            _tx += (rightLineOffset-xOffset) + m_listItem->paddingRight() + m_listItem->borderRight();
-        }
-    }
 
     if (p->printing()) {
-        if (_ty < i.r.y())
+        if (box.y() < i.r.y())
             // This has been printed already we suppose.
             return;
         
         RenderCanvas* c = canvas();
-        if (_ty + m_height + paddingBottom() + borderBottom() >= c->printRect().bottom()) {
-            if (_ty < c->truncatedAt())
-                c->setBestTruncatedAt(_ty, this);
+        if (box.y() + box.height() + paddingBottom() + borderBottom() >= c->printRect().bottom()) {
+            if (box.y() < c->truncatedAt())
+                c->setBestTruncatedAt(box.y(), this);
             // Let's print this on the next page.
             return; 
         }
     }
-    
-    int offset = fm.ascent()*2/3;
-    bool haveImage = m_listImage && !m_listImage->isErrorImage();
-    if (haveImage)
-        offset = m_listImage->image()->width();
-    
-    int xoff = 0;
-    int yoff = fm.ascent() - offset;
 
-    int bulletWidth = offset/2;
-    if (offset%2)
-        bulletWidth++;
-    if (!isInside()) {
-        if (listItem->style()->direction() == LTR)
-            xoff = -cMarkerPadding - offset;
-        else
-            xoff = cMarkerPadding + (haveImage ? 0 : (offset - bulletWidth));
-    } else if (style()->direction() == RTL)
-        xoff += haveImage ? cMarkerPadding : (m_width - bulletWidth);
-    
     if (m_listImage && !m_listImage->isErrorImage()) {
-        p->drawImageAtPoint(m_listImage->image(), IntPoint(_tx + xoff, _ty));
+        p->drawImageAtPoint(m_listImage->image(), marker.location());
         return;
     }
 
 #ifdef BOX_DEBUG
     p->setPen( Qt::red );
-    p->drawRect( _tx + xoff, _ty + yoff, offset, offset );
+    p->drawRect(box.x(), box.y(), box.width(), box.height());
 #endif
 
     const Color color( style()->color() );
@@ -476,37 +431,35 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
     switch(style()->listStyleType()) {
     case DISC:
         p->setBrush(color);
-        p->drawEllipse(_tx + xoff, _ty + (3 * yoff)/2, bulletWidth, bulletWidth);
+        p->drawEllipse(marker.x(), marker.y(), marker.width(), marker.height());
         return;
     case CIRCLE:
         p->setBrush(WebCore::Brush::NoBrush);
-        p->drawEllipse(_tx + xoff, _ty + (3 * yoff)/2, bulletWidth, bulletWidth);
+        p->drawEllipse(marker.x(), marker.y(), marker.width(), marker.height());
         return;
     case SQUARE:
         p->setBrush(color);
-        p->drawRect(_tx + xoff, _ty + (3 * yoff)/2, bulletWidth, bulletWidth);
+        p->drawRect(marker.x(), marker.y(), marker.width(), marker.height());
         return;
     case LNONE:
         return;
     default:
         if (!m_item.isEmpty()) {
-       	    _ty += fm.ascent();
-
             if (isInside()) {
             	if( style()->direction() == LTR) {
-                    p->drawText(_tx, _ty, 0, 0, 0, 0, Qt::AlignLeft, m_item);
-                    p->drawText(_tx + fm.width(m_item, 0, 0), _ty, 0, 0, 0, 0, Qt::AlignLeft, ". ");
+                    p->drawText(marker.x(), marker.y(), 0, 0, 0, 0, Qt::AlignLeft, m_item);
+                    p->drawText(marker.x() + fm.width(m_item, 0, 0), marker.y(), 0, 0, 0, 0, Qt::AlignLeft, ". ");
                 } else {
-                    p->drawText(_tx, _ty, 0, 0, 0, 0, Qt::AlignLeft, " .");
-            	    p->drawText(_tx + fm.width(" .", 0, 0), _ty, 0, 0, 0, 0, Qt::AlignLeft, m_item);
+                    p->drawText(marker.x(), marker.y(), 0, 0, 0, 0, Qt::AlignLeft, " .");
+            	    p->drawText(marker.x() + fm.width(" .", 0, 0), marker.y(), 0, 0, 0, 0, Qt::AlignLeft, m_item);
                 }
             } else {
                 if (style()->direction() == LTR) {
-                    p->drawText(_tx - offset/2, _ty, 0, 0, 0, 0, Qt::AlignRight, ". ");
-                    p->drawText(_tx - offset/2 - fm.width(". ", 0, 0), _ty, 0, 0, 0, 0, Qt::AlignRight, m_item);
+                    p->drawText(marker.x(), marker.y(), 0, 0, 0, 0, Qt::AlignRight, ". ");
+                    p->drawText(marker.x() - fm.width(". ", 0, 0), marker.y(), 0, 0, 0, 0, Qt::AlignRight, m_item);
                 } else {
-            	    p->drawText(_tx + offset / 2, _ty, 0, 0, 0, 0, Qt::AlignLeft, " .");
-                    p->drawText(_tx + offset / 2 + fm.width(" .", 0, 0), _ty, 0, 0, 0, 0, Qt::AlignLeft, m_item);
+            	    p->drawText(marker.x(), marker.y(), 0, 0, 0, 0, Qt::AlignLeft, " .");
+                    p->drawText(marker.x() + fm.width(" .", 0, 0), marker.y(), 0, 0, 0, 0, Qt::AlignLeft, m_item);
                 }
             }
         }
@@ -646,6 +599,95 @@ short RenderListMarker::baselinePosition(bool, bool) const
 bool RenderListMarker::isInside() const
 {
     return m_listItem->notInList() || style()->listStylePosition() == INSIDE;
+}
+
+bool RenderListMarker::nodeAtPoint(NodeInfo& i, int x, int y, int tx, int ty, HitTestAction hitTestAction)
+{
+    IntRect markerRect = getRelativeMarkerRect();
+    markerRect.move(tx, ty);
+    if (!markerRect.contains(x, y))
+        return false;
+    
+    i.setInnerNode(m_listItem->element());
+    return true;
+}
+
+IntRect RenderListMarker::getRelativeMarkerRect()
+{
+    int x = m_x;
+    int y = m_y;
+    
+    RenderObject* listItem = 0;
+    int leftLineOffset = 0;
+    int rightLineOffset = 0;
+    if (!isInside()) {
+        listItem = this;
+        int yOffset = 0;
+        int xOffset = 0;
+        while (listItem && listItem != m_listItem) {
+            yOffset += listItem->yPos();
+            xOffset += listItem->xPos();
+            listItem = listItem->parent();
+        }
+        
+        // Now that we have our xoffset within the listbox, we need to adjust ourselves by the delta
+        // between our current xoffset and our desired position (which is just outside the border box
+        // of the list item).
+        if (style()->direction() == LTR) {
+            leftLineOffset = m_listItem->leftRelOffset(yOffset, m_listItem->leftOffset(yOffset));
+            x -= (xOffset - leftLineOffset) + m_listItem->paddingLeft() + m_listItem->borderLeft();
+        } else {
+            rightLineOffset = m_listItem->rightRelOffset(yOffset, m_listItem->rightOffset(yOffset));
+            x += (rightLineOffset-xOffset) + m_listItem->paddingRight() + m_listItem->borderRight();
+        }
+    }
+    
+    const QFontMetrics fm = style() ? style()->fontMetrics() : QFontMetrics();
+    
+    int offset = fm.ascent()*2/3;
+    bool haveImage = m_listImage && !m_listImage->isErrorImage();
+    if (haveImage)
+        offset = m_listImage->image()->width();
+    
+    int xoff = 0;
+    int yoff = fm.ascent() - offset;
+
+    int bulletWidth = offset/2;
+    if (offset%2)
+        bulletWidth++;
+    if (!isInside()) {
+        if (listItem->style()->direction() == LTR)
+            xoff = -cMarkerPadding - offset;
+        else
+            xoff = cMarkerPadding + (haveImage ? 0 : (offset - bulletWidth));
+    } else if (style()->direction() == RTL)
+        xoff += haveImage ? cMarkerPadding : (m_width - bulletWidth);
+    
+    if (m_listImage && !m_listImage->isErrorImage())
+        return IntRect(x + xoff, y,  m_listImage->imageSize().width(), m_listImage->imageSize().height());
+    
+    switch(style()->listStyleType()) {
+    case DISC:
+    case CIRCLE:
+    case SQUARE:
+        return IntRect(x + xoff, y + (3 * yoff)/2, bulletWidth, bulletWidth);
+    case LNONE:
+        return IntRect();
+    default:
+        if (m_item.isEmpty())
+            return IntRect();
+            
+        y += fm.ascent();
+
+        if (isInside())
+            return IntRect(x, y, fm.width(m_item, 0, 0) + fm.width(". ", 0, 0), fm.height());
+        else {
+            if (style()->direction() == LTR)
+                return IntRect(x - offset / 2, y, fm.width(m_item, 0, 0) + fm.width(". ", 0, 0), fm.height());
+            else
+                return IntRect(x + offset / 2, y, fm.width(m_item, 0, 0) + fm.width(". ", 0, 0), fm.height());
+        }
+    }
 }
 
 #undef BOX_DEBUG
