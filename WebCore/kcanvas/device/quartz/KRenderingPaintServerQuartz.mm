@@ -39,7 +39,7 @@
 #import "KCanvasMatrix.h"
 #import "KRenderingDevice.h"
 
-#import "KWQLogging.h"
+#import "Logging.h"
 
 namespace WebCore {
 

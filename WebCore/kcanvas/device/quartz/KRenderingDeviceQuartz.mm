@@ -41,7 +41,7 @@
 
 #import <AppKit/NSGraphicsContext.h>
 
-#import "KWQLogging.h"
+#import "Logging.h"
 
 namespace WebCore {
 

@@ -30,7 +30,7 @@
 #import "KURL.h"
 #import "KWQExceptions.h"
 #import "KWQLoader.h"
-#import "KWQLogging.h"
+#import "Logging.h"
 #import "KWQResourceLoader.h"
 #import "formdata.h"
 

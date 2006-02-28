@@ -43,7 +43,7 @@
 #import "KWQExceptions.h"
 #import "KWQFormData.h"
 #import "KWQKJobClasses.h"
-#import "KWQLogging.h"
+#import "Logging.h"
 #import "KWQPageState.h"
 #import "KWQRegExp.h"
 #import "KWQScrollBar.h"

@@ -34,7 +34,7 @@
 #import "KWQExceptions.h"
 #import "KWQFormData.h"
 #import "KWQKJobClasses.h"
-#import "KWQLogging.h"
+#import "Logging.h"
 #import "KWQResourceLoader.h"
 #import "MacFrame.h"
 #import "Request.h"

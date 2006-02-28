@@ -26,7 +26,7 @@
 #import "config.h"
 #import "KeyEvent.h"
 
-#import "KWQLogging.h"
+#import "Logging.h"
 
 namespace WebCore {
 

@@ -29,7 +29,7 @@
 #import <Cocoa/Cocoa.h>
 
 #import "KWQFont.h"
-#import "KWQLogging.h"
+#import "Logging.h"
 #import "FoundationExtras.h"
 
 #import "Shared.h"

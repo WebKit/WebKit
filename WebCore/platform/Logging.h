@@ -23,6 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#ifndef Logging_H
+#define Logging_H
+
 #include <kxmlcore/Assertions.h>
 
 #ifndef LOG_CHANNEL_PREFIX
@@ -37,3 +40,5 @@ extern KXCLogChannel KWQLogPopupBlocking;
 extern KXCLogChannel KWQLogEvents;
 extern KXCLogChannel KWQLogEditing;
 extern KXCLogChannel KWQLogTextConversion;
+
+#endif

@@ -28,7 +28,7 @@
 
 #import "IntRect.h"
 #import "KWQExceptions.h"
-#import "KWQLogging.h"
+#import "Logging.h"
 #import "WebCoreFrameView.h"
 
 /*
