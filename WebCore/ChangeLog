@@ -1,3 +1,12 @@
+2006-02-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix <rdar://problem/4104575> hang due to slow saveDocumentState method
+
+        * bridge/mac/WebCoreFrameBridge.mm: (-[WebCoreFrameBridge saveDocumentState]):
+        Change code that iterates a QStringList with indices to use iterator instead.
+
 2006-02-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

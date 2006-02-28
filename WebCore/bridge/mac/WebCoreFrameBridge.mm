@@ -700,16 +700,17 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (void)saveDocumentState
 {
-    DocumentImpl *doc = m_frame->document();
-    if (doc != 0){
+    DocumentImpl* doc = m_frame->document();
+    if (doc) {
         QStringList list = doc->docState();
-        NSMutableArray *documentState = [[[NSMutableArray alloc] init] autorelease];
-        
-        for (uint i = 0; i < list.count(); i++){
-            QString s = list[i];
-            [documentState addObject: [NSString stringWithCharacters: (const unichar *)s.unicode() length: s.length()]];
+        NSMutableArray* documentState = [[NSMutableArray alloc] init];
+        QStringList::const_iterator end = list.constEnd();
+        for (QStringList::const_iterator i = list.constBegin(); i != end; ++i) {
+            const QString& s = *i;
+            [documentState addObject:[NSString stringWithCharacters:(const unichar *)s.unicode() length:s.length()]];
         }
-        [self saveDocumentState: documentState];
+        [self saveDocumentState:documentState];
+        [documentState release];
     }
 }
 
