@@ -489,6 +489,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kxmlcore\Assertions.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kxmlcore\Assertions.h"
 				>
 			</File>

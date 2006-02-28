@@ -26,6 +26,8 @@
 
 #include "config.h"
 #include "Assertions.h"
+#include "stdio.h"
+#include "stdarg.h"
 
 #if __APPLE__
 #include <CoreFoundation/CFString.h>

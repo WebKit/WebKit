@@ -2,6 +2,15 @@
 
         Reviewed by mjs.
 
+        Fix Assertions.cpp to compile on win32.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * kxmlcore/Assertions.cpp:
+
+2006-02-27  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
         Made Assertions.cpp platform independent.
         Moved mac-specific logging logic up into WebCore.
         http://bugzilla.opendarwin.org/show_bug.cgi?id=7503
