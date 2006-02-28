@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "FrameWin.h"
-
-#include "BrowserExtensionWin.h"
-#include "DocumentImpl.h"
-#include "KWQKHTMLSettings.h"
-#include "render_frames.h"
-#include "Plugin.h"
-#include "FramePrivate.h"
+#include "BrowserExtension.h"
 
 namespace WebCore {
 
-FrameWin::FrameWin(Page* page, RenderPart* renderPart)
-    : Frame(page, renderPart)
-{
-    d->m_extension = new BrowserExtensionWin(this);
-    setSettings(new KHTMLSettings());
-}
+class Frame;
+class WinFrame;
 
-FrameWin::~FrameWin()
-{
-}
+class BrowserExtensionWin : public BrowserExtension {
+public:
+    BrowserExtensionWin(Frame*);
+ 
+    virtual void openURLRequest(const KURL &, 
+                                const URLArgs &args = URLArgs());
+    virtual void openURLNotify();
+     
+    virtual void createNewWindow(const KURL &url, 
+                                 const URLArgs &urlArgs = URLArgs());
+    virtual void createNewWindow(const KURL& url,
+                                 const URLArgs& urlArgs, 
+                                 const WindowArgs& winArgs, 
+                                 Frame*& part);
+
+    virtual void setIconURL(const KURL &url);
+    virtual void setTypedIconURL(const KURL &url, const QString &type);
+
+    virtual int getHistoryLength();
+    virtual void goBackOrForward(int distance);
+
+    virtual bool canRunModal();
+    virtual bool canRunModalNow();
+    virtual void runModal();
+    
+private:
+     WinFrame *m_frame;
+};
 
 }

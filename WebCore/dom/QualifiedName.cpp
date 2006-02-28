@@ -23,6 +23,8 @@
 
 #if AVOID_STATIC_CONSTRUCTORS
 #define KHTML_QNAME_HIDE_GLOBALS 1
+#else
+#define QNAME_DEFAULT_CONSTRUCTOR
 #endif
 
 #include "QualifiedName.h"
@@ -174,14 +176,12 @@ DEFINE_GLOBAL(QualifiedName, anyName, nullAtom, starAtom, starAtom);
 
 void QualifiedName::init()
 {
-#if AVOID_STATIC_CONSTRUCTORS
     static bool initialized;
     if (!initialized) {
         // Use placement new to initialize the globals.
-        new (&anyName) QualifiedName(nullAtom, starAtom, starAtom);
+        new ((void*)&anyName) QualifiedName(nullAtom, starAtom, starAtom);
         initialized = true;
     }
-#endif
 }
 
 }

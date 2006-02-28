@@ -1,3 +1,49 @@
+2006-02-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - make win32 DumpRenderTree run without crashing
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7511
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * bridge/win/BrowserExtensionWin.h: Added.
+        * bridge/win/FrameWin.cpp:
+        (WebCore::FrameWin::FrameWin): Initialize browser
+        extension and settings.
+        * dom/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::attach): Don't create renderers 
+        for now.
+        * dom/EventNames.cpp:
+        (WebCore::EventNames::init): use placement new even when
+        not avoiding static constructors.
+        * khtml/html/htmlnames.cpp:
+        (WebCore::HTMLNames::init): ditto
+        * dom/QualifiedName.cpp:
+        (WebCore::QualifiedName::init): ditto
+        * dom/QualifiedName.h:
+        (WebCore::QualifiedName::QualifiedName): Added default
+        constructor but only in ifdef.
+        * page/Frame.h:
+        * platform/AtomicString.cpp:
+        (WebCore::AtomicString::init): use placement new even when
+        not avoiding static constructors
+        * platform/StaticConstructors.h: don't initialize when
+        not avoiding static constructors, just default construct
+        and let initialization happen normally
+        * platform/win/TemporaryLinkStubs.cpp: Stub out some more things
+        (Cursor::~Cursor):
+        (QFont::~QFont):
+        (QFontMetrics::~QFontMetrics):
+        (WebCore::FrameWin::restoreDocumentState):
+        (WebCore::FrameWin::partClearedInBegin):
+        (WebCore::FrameWin::createEmptyDocument):
+        (WebCore::BrowserExtensionWin::getHistoryLength):
+        (WebCore::BrowserExtensionWin::canRunModal):
+        (WebCore::BrowserExtensionWin::openURLNotify):
+        (WebCore::BrowserExtensionWin::canRunModalNow):
+        (WebCore::BrowserExtensionWin::runModal):
+        (WebCore::BrowserExtensionWin::goBackOrForward):
+
 2006-02-27  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

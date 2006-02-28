@@ -157,11 +157,8 @@ void AtomicString::remove(StringImpl* r)
     stringTable->remove(r);
 }
 
-#if AVOID_STATIC_CONSTRUCTORS
+
 DEFINE_GLOBAL(AtomicString, nullAtom)
-#else
-const AtomicString nullAtom;
-#endif
 DEFINE_GLOBAL(AtomicString, emptyAtom, "")
 DEFINE_GLOBAL(AtomicString, textAtom, "#text")
 DEFINE_GLOBAL(AtomicString, commentAtom, "#comment")
@@ -169,21 +166,19 @@ DEFINE_GLOBAL(AtomicString, starAtom, "*")
 
 void AtomicString::init()
 {
-#if AVOID_STATIC_CONSTRUCTORS
     static bool initialized;
     if (!initialized) {
         stringTable = new HashSet<StringImpl*>;
 
         // Use placement new to initialize the globals.
-        new (&nullAtom) AtomicString;
-        new (&emptyAtom) AtomicString("");
-        new (&textAtom) AtomicString("#text");
-        new (&commentAtom) AtomicString("#comment");
-        new (&starAtom) AtomicString("*");
+        new ((void*)&nullAtom) AtomicString;
+        new ((void*)&emptyAtom) AtomicString("");
+        new ((void*)&textAtom) AtomicString("#text");
+        new ((void*)&commentAtom) AtomicString("#comment");
+        new ((void*)&starAtom) AtomicString("*");
 
         initialized = true;
     }
-#endif
 }
 
 }

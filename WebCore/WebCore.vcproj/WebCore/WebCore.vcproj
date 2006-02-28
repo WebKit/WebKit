@@ -2940,6 +2940,10 @@
 				Name="win"
 				>
 				<File
+					RelativePath="..\..\bridge\win\BrowserExtensionWin.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\bridge\win\FrameWin.cpp"
 					>
 				</File>

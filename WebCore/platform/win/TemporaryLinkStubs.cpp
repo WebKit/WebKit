@@ -34,6 +34,7 @@
 #include "PlugInInfoStore.h"
 #include "render_theme.h"
 #include "FrameWin.h"
+#include "BrowserExtensionWin.h"
 
 using namespace WebCore;
 
@@ -162,7 +163,7 @@ void QTextEdit::setSelectionRange(int,int) { notImplemented(); }
 void QPainter::drawText(int,int,int,int,QChar const*,int,int,int,int,Color const&,QPainter::TextDirection,bool,int,int,bool) { notImplemented(); }
 void ScrollView::scrollPointRecursively(int,int) { notImplemented(); }
 IntSize QLineEdit::sizeForCharacterWidth(int) const { notImplemented(); return IntSize(); }
-Cursor::~Cursor() { notImplemented(); }
+Cursor::~Cursor() { }
 IntRect QFontMetrics::selectionRectForText(int,int,int,int,int,QChar const*,int,int,int,int,bool,bool,int,int,bool) const { notImplemented(); return IntRect(); }
 void ScrollView::suppressScrollBars(bool,bool) { notImplemented(); }
 int QFontMetrics::checkSelectionPoint(QChar*,int,int,int,int,int,int,int,int,bool,int,bool,bool,bool) const { notImplemented(); return 0; }
@@ -310,12 +311,12 @@ unsigned PlugInInfoStore::pluginCount() const { notImplemented(); return 0; }
 void WebCore::refreshPlugins(bool) { notImplemented(); }
 int WebCore::screenDepth(WebCore::Widget*) { notImplemented(); return 96; }
 QFont::QFont() { }
-QFont::~QFont() { notImplemented(); }
+QFont::~QFont() { }
 bool QFont::italic() const { notImplemented(); return false; }
 int QFont::weight() const { notImplemented(); return QFont::Normal; }
 static QFontMetrics localFontMetrics;
 QFontMetrics::QFontMetrics() { }
-QFontMetrics::~QFontMetrics() { notImplemented(); }
+QFontMetrics::~QFontMetrics() { }
 QFontMetrics::QFontMetrics(QFontMetrics const&) { notImplemented(); }
 QFontMetrics& QFontMetrics::operator=(QFontMetrics const&) { notImplemented(); return localFontMetrics; }
 float QFontMetrics::xHeight() const { notImplemented(); return 0; }
@@ -345,7 +346,7 @@ Widget* WebCore::FrameView::topLevelWidget() const { notImplemented(); return 0;
  class KJS::Bindings::Instance *  WebCore::FrameWin::getObjectInstanceForWidget(class WebCore::Widget *) { notImplemented(); return 0; }
  class KJS::Bindings::Instance *  WebCore::FrameWin::getEmbedInstanceForWidget(class WebCore::Widget *) { notImplemented(); return 0; }
  bool  WebCore::FrameWin::canRedo(void)const  { notImplemented(); return 0; }
- void  WebCore::FrameWin::restoreDocumentState(void) { notImplemented(); }
+ void  WebCore::FrameWin::restoreDocumentState(void) { }
  bool  WebCore::FrameWin::canUndo(void)const  { notImplemented(); return 0; }
  bool  WebCore::FrameWin::runJavaScriptPrompt(class WebCore::String const &,class WebCore::String const &,class WebCore::String &) { notImplemented(); return 0; }
  void  WebCore::FrameWin::recordFormValue(class QString const &,class QString const &,class WebCore::HTMLFormElementImpl *) { notImplemented(); }
@@ -366,7 +367,7 @@ Widget* WebCore::FrameView::topLevelWidget() const { notImplemented(); return 0;
  void  WebCore::FrameWin::openURLRequest(class KURL const &,struct WebCore::URLArgs const &) { notImplemented(); }
  void  WebCore::FrameWin::addMessageToConsole(class WebCore::String const &,unsigned int,class WebCore::String const &) { notImplemented(); }
  bool  WebCore::FrameWin::passWheelEventToChildWidget(class WebCore::NodeImpl *) { notImplemented(); return 0; }
- void  WebCore::FrameWin::partClearedInBegin(void) { notImplemented(); }
+ void  WebCore::FrameWin::partClearedInBegin(void) { }
  void  WebCore::FrameWin::issueUndoCommand(void) { notImplemented(); }
  class QString  WebCore::FrameWin::mimeTypeForFileName(class QString const &)const  { notImplemented(); return QString(); }
  void  WebCore::FrameWin::clearRecordedFormValues(void) { notImplemented(); }
@@ -378,7 +379,7 @@ Widget* WebCore::FrameView::topLevelWidget() const { notImplemented(); return 0;
  void  WebCore::FrameWin::markMisspellings(class WebCore::SelectionController const &) { notImplemented(); }
  bool  WebCore::FrameWin::menubarVisible(void) { notImplemented(); return 0; }
  bool  WebCore::FrameWin::personalbarVisible(void) { notImplemented(); return 0; }
- void  WebCore::FrameWin::createEmptyDocument(void) { notImplemented(); }
+ void  WebCore::FrameWin::createEmptyDocument(void) { }
  bool  WebCore::FrameWin::lastEventIsMouseUp(void)const  { notImplemented(); return 0; }
  bool  WebCore::FrameWin::statusbarVisible(void) { notImplemented(); return 0; }
  bool  WebCore::FrameWin::toolbarVisible(void) { notImplemented(); return 0; }
@@ -395,3 +396,15 @@ Widget* WebCore::FrameView::topLevelWidget() const { notImplemented(); return 0;
  class WebCore::Plugin *  WebCore::FrameWin::createPlugin(class KURL const &,class QStringList const &,class QStringList const &,class QString const &) { notImplemented(); return 0; }
  void  WebCore::FrameWin::handledOnloadEvents(void) { notImplemented(); }
 WebCore::String  WebCore::FrameWin::generateFrameName(void) { notImplemented(); return String(); }
+WebCore::BrowserExtensionWin::BrowserExtensionWin(class WebCore::Frame*) { }
+ void  WebCore::BrowserExtensionWin::setTypedIconURL(class KURL const &,class QString const &) { notImplemented(); }
+ void  WebCore::BrowserExtensionWin::openURLRequest(class KURL const &,struct WebCore::URLArgs const &) { notImplemented(); }
+ int  WebCore::BrowserExtensionWin::getHistoryLength(void) { notImplemented(); return 0; }
+ bool  WebCore::BrowserExtensionWin::canRunModal(void) { notImplemented(); return 0; }
+ void  WebCore::BrowserExtensionWin::openURLNotify(void) { notImplemented(); }
+ void  WebCore::BrowserExtensionWin::createNewWindow(class KURL const &,struct WebCore::URLArgs const &,struct WebCore::WindowArgs const &,class WebCore::Frame * &) { notImplemented(); }
+ bool  WebCore::BrowserExtensionWin::canRunModalNow(void) { notImplemented(); return 0; }
+ void  WebCore::BrowserExtensionWin::runModal(void) { notImplemented(); }
+ void  WebCore::BrowserExtensionWin::goBackOrForward(int) { notImplemented(); }
+ void  WebCore::BrowserExtensionWin::setIconURL(class KURL const &) { notImplemented(); }
+ void  WebCore::BrowserExtensionWin::createNewWindow(class KURL const &,struct WebCore::URLArgs const &) { notImplemented(); }

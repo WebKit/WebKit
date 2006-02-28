@@ -24,6 +24,8 @@
 
 #if AVOID_STATIC_CONSTRUCTORS
 #define DOM_HTMLNAMES_HIDE_GLOBALS 1
+#else
+#define QNAME_DEFAULT_CONSTRUCTOR 1
 #endif
 
 #include "htmlnames.h"
@@ -45,16 +47,15 @@ void init()
 {
     static bool initialized;
     if (!initialized) {
-#if AVOID_STATIC_CONSTRUCTORS
         // Use placement new to initialize the globals.
 
         AtomicString xhtmlNS("http://www.w3.org/1999/xhtml");
 
         // Namespace
-        new (&xhtmlNamespaceURI) AtomicString(xhtmlNS);
+        new ((void*)&xhtmlNamespaceURI) AtomicString(xhtmlNS);
 
         // Tags
-        #define INITIALIZE_TAG_GLOBAL(name) new (&name##Tag) QualifiedName(nullAtom, #name, xhtmlNS);
+        #define INITIALIZE_TAG_GLOBAL(name) new ((void*)&name##Tag) QualifiedName(nullAtom, #name, xhtmlNS);
         DOM_HTMLNAMES_FOR_EACH_TAG(INITIALIZE_TAG_GLOBAL)
 
         // Attributes
@@ -63,12 +64,8 @@ void init()
         DOM_HTMLNAMES_FOR_EACH_ATTR(DEFINE_ATTR_STRING)
         accept_charsetAttrString = "accept-charset";
         http_equivAttrString = "http-equiv";
-        #define INITIALIZE_ATTR_GLOBAL(name) new (&name##Attr) QualifiedName(nullAtom, name##AttrString, nullAtom);
+        #define INITIALIZE_ATTR_GLOBAL(name) new ((void*)&name##Attr) QualifiedName(nullAtom, name##AttrString, nullAtom);
         DOM_HTMLNAMES_FOR_EACH_ATTR(INITIALIZE_ATTR_GLOBAL)
-#else
-        const_cast<QualifiedName&>(accept_charsetAttr) = QualifiedName(nullAtom, "accept-charset", nullAtom);
-        const_cast<QualifiedName&>(http_equivAttr) = QualifiedName(nullAtom, "http-equiv", nullAtom);
-#endif
         initialized = true;
     }
 }

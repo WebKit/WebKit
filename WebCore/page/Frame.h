@@ -909,6 +909,7 @@ protected:
 
 public:
   friend class MacFrame;
+  friend class FrameWin;
 
   void checkEmitLoadEvent();
   bool didOpenURL(const KURL &);
