@@ -1,3 +1,15 @@
+2006-02-27  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Test: added to fast/dom/css-selectorText.html
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7338
+          Incorrect selectorText for multiple subselectors.
+
+        * css/css_base.cpp:
+        (CSSSelector::selectorText): Iterate over subselectors
+
 2006-02-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

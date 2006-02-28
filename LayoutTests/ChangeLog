@@ -2,6 +2,18 @@
 
         Reviewed by Darin.
 
+        - added test case for http://bugzilla.opendarwin.org/show_bug.cgi?id=7338
+          Incorrect selectorText for multiple subselectors
+
+        * fast/dom/css-selectorText-expected.checksum: Updated.
+        * fast/dom/css-selectorText-expected.png: Updated.
+        * fast/dom/css-selectorText-expected.txt: Updated.
+        * fast/dom/css-selectorText.html: Added a case with multiple subselectors.
+
+2006-02-27  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7433
           REGRESSION (r12789): Second RTL text run on a line cannot be selected
 

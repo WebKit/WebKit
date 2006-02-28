@@ -265,54 +265,59 @@ DOMString CSSSelector::selectorText() const
     const AtomicString& localName = cs->tag.localName();
     if (cs->match == CSSSelector::None || localName != starAtom)
         str = localName;
-    if (cs->match == CSSSelector::Id) {
-        str += "#";
-        str += cs->value;
-    } else if (cs->match == CSSSelector::Class) {
-        str += ".";
-        str += cs->value;
-    } else if (cs->match == CSSSelector::PseudoClass) {
-        str += ":";
-        str += cs->value;
-    } else if (cs->match == CSSSelector::PseudoElement) {
-        str += "::";
-        str += cs->value;
-    } else if (cs->hasAttribute()) {
-        // FIXME: Add support for dumping namespaces.
-        DOMString attrName = cs->attr.localName();
-        str += "[";
-        str += attrName;
-        switch (cs->match) {
-            case CSSSelector::Exact:
-                str += "=";
-                break;
-            case CSSSelector::Set:
-                // set has no operator or value, just the attrName
-                str += "]";
-                break;
-            case CSSSelector::List:
-                str += "~=";
-                break;
-            case CSSSelector::Hyphen:
-                str += "|=";
-                break;
-            case CSSSelector::Begin:
-                str += "^=";
-                break;
-            case CSSSelector::End:
-                str += "$=";
-                break;
-            case CSSSelector::Contain:
-                str += "*=";
-                break;
-            default:
-                break;
-        }
-        if (cs->match != CSSSelector::Set) {
-            str += "\"";
+    while (true) {
+        if (cs->match == CSSSelector::Id) {
+            str += "#";
             str += cs->value;
-            str += "\"]";
+        } else if (cs->match == CSSSelector::Class) {
+            str += ".";
+            str += cs->value;
+        } else if (cs->match == CSSSelector::PseudoClass) {
+            str += ":";
+            str += cs->value;
+        } else if (cs->match == CSSSelector::PseudoElement) {
+            str += "::";
+            str += cs->value;
+        } else if (cs->hasAttribute()) {
+            // FIXME: Add support for dumping namespaces.
+            DOMString attrName = cs->attr.localName();
+            str += "[";
+            str += attrName;
+            switch (cs->match) {
+                case CSSSelector::Exact:
+                    str += "=";
+                    break;
+                case CSSSelector::Set:
+                    // set has no operator or value, just the attrName
+                    str += "]";
+                    break;
+                case CSSSelector::List:
+                    str += "~=";
+                    break;
+                case CSSSelector::Hyphen:
+                    str += "|=";
+                    break;
+                case CSSSelector::Begin:
+                    str += "^=";
+                    break;
+                case CSSSelector::End:
+                    str += "$=";
+                    break;
+                case CSSSelector::Contain:
+                    str += "*=";
+                    break;
+                default:
+                    break;
+            }
+            if (cs->match != CSSSelector::Set) {
+                str += "\"";
+                str += cs->value;
+                str += "\"]";
+            }
         }
+        if (cs->relation != CSSSelector::SubSelector || !cs->tagHistory)
+            break;
+        cs = cs->tagHistory;
     }
     if (cs->tagHistory) {
         DOMString tagHistoryText = cs->tagHistory->selectorText();
@@ -322,8 +327,6 @@ DOMString CSSSelector::selectorText() const
             str = tagHistoryText + " ~ " + str;
         else if (cs->relation == CSSSelector::Child)
             str = tagHistoryText + " > " + str;
-        else if (cs->relation == CSSSelector::SubSelector)
-            str += tagHistoryText; // the ":" is provided by selectorText()
         else // Descendant
             str = tagHistoryText + " " + str;
     }
