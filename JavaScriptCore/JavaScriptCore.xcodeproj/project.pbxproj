@@ -51,7 +51,7 @@
 		65DFC93408EA173A00F7300B /* HashTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DFC92E08EA173A00F7300B /* HashTable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65DFC93508EA173A00F7300B /* HashTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DFC92F08EA173A00F7300B /* HashTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65E217BD08E7EECC0023E5F6 /* Assertions.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E217B708E7EECC0023E5F6 /* Assertions.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		65E217BE08E7EECC0023E5F6 /* Assertions.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65E217B808E7EECC0023E5F6 /* Assertions.mm */; };
+		65E217BE08E7EECC0023E5F6 /* Assertions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E217B808E7EECC0023E5F6 /* Assertions.cpp */; };
 		65E217BF08E7EECC0023E5F6 /* FastMalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E217B908E7EECC0023E5F6 /* FastMalloc.cpp */; };
 		65E217C008E7EECC0023E5F6 /* FastMalloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E217BA08E7EECC0023E5F6 /* FastMalloc.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65EA4C9B092AF9E20093D800 /* JSLock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65EA4C99092AF9E20093D800 /* JSLock.cpp */; };
@@ -361,7 +361,7 @@
 		65DFC92E08EA173A00F7300B /* HashTable.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HashTable.h; sourceTree = "<group>"; tabWidth = 8; };
 		65DFC92F08EA173A00F7300B /* HashTraits.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HashTraits.h; sourceTree = "<group>"; tabWidth = 8; };
 		65E217B708E7EECC0023E5F6 /* Assertions.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Assertions.h; sourceTree = "<group>"; tabWidth = 8; };
-		65E217B808E7EECC0023E5F6 /* Assertions.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Assertions.mm; sourceTree = "<group>"; tabWidth = 8; };
+		65E217B808E7EECC0023E5F6 /* Assertions.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Assertions.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		65E217B908E7EECC0023E5F6 /* FastMalloc.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FastMalloc.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		65E217BA08E7EECC0023E5F6 /* FastMalloc.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = FastMalloc.h; sourceTree = "<group>"; tabWidth = 8; };
 		65EA4C99092AF9E20093D800 /* JSLock.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSLock.cpp; sourceTree = "<group>"; tabWidth = 8; };
@@ -598,7 +598,7 @@
 			children = (
 				93AA4F770957251F0084B3A7 /* AlwaysInline.h */,
 				65E217B708E7EECC0023E5F6 /* Assertions.h */,
-				65E217B808E7EECC0023E5F6 /* Assertions.mm */,
+				65E217B808E7EECC0023E5F6 /* Assertions.cpp */,
 				65E217B908E7EECC0023E5F6 /* FastMalloc.cpp */,
 				65E217BA08E7EECC0023E5F6 /* FastMalloc.h */,
 				65D7D19B08F10B5B0015ABD8 /* FastMallocInternal.h */,
@@ -1232,7 +1232,7 @@
 				93E26BD408B1514100F85226 /* pcre_xclass.c in Sources */,
 				93E26CF708B29A1C00F85226 /* pcre_get.c in Sources */,
 				93E26DDC08B2A4F400F85226 /* pcre_printint.c in Sources */,
-				65E217BE08E7EECC0023E5F6 /* Assertions.mm in Sources */,
+				65E217BE08E7EECC0023E5F6 /* Assertions.cpp in Sources */,
 				65E217BF08E7EECC0023E5F6 /* FastMalloc.cpp in Sources */,
 				6541BD7408E80A17002CBEE7 /* TCSystemAlloc.cpp in Sources */,
 				65DFC93308EA173A00F7300B /* HashTable.cpp in Sources */,
