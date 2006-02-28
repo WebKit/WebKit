@@ -28,7 +28,7 @@
 #include "JSMutationEvent.h"
 #include "JSXMLHttpRequest.h"
 #include "PlugInInfoStore.h"
-#include "KWQLogging.h"
+#include "Logging.h"
 #include "Screen.h"
 #include "SelectionController.h"
 #include "Shared.h"

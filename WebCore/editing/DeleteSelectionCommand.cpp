@@ -28,7 +28,7 @@
 
 #include "DocumentImpl.h"
 #include "Frame.h"
-#include "KWQLogging.h"
+#include "Logging.h"
 #include "css_computedstyle.h"
 #include "dom2_rangeimpl.h"
 #include "dom_position.h"

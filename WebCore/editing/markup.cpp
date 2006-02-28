@@ -31,7 +31,7 @@
 #include "DocumentTypeImpl.h"
 #include "HTMLElementImpl.h"
 #include "InlineTextBox.h"
-#include "KWQLogging.h"
+#include "Logging.h"
 #include "VisiblePosition.h"
 #include "css_computedstyle.h"
 #include "css_valueimpl.h"

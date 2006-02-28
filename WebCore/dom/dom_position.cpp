@@ -28,7 +28,7 @@
 
 #include "DocumentImpl.h"
 #include "InlineTextBox.h"
-#include "KWQLogging.h"
+#include "Logging.h"
 #include "QString.h"
 #include "RenderBlock.h"
 #include "css_computedstyle.h"

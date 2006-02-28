@@ -27,7 +27,7 @@
 #include "InsertParagraphSeparatorCommand.h"
 
 #include "DocumentImpl.h"
-#include "KWQLogging.h"
+#include "Logging.h"
 #include "css_computedstyle.h"
 #include "dom_elementimpl.h"
 #include "TextImpl.h"

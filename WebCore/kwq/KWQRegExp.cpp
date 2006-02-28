@@ -25,7 +25,7 @@
 
 #include "config.h"
 #include "KWQRegExp.h"
-#include "KWQLogging.h"
+#include "Logging.h"
 
 #include <sys/types.h>
 #include <pcre/pcre.h>

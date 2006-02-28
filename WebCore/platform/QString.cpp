@@ -26,7 +26,7 @@
 #include "config.h"
 #include "QString.h"
 
-#include "KWQLogging.h"
+#include "Logging.h"
 #include "KWQRegExp.h"
 #include "TextEncoding.h"
 #include <kjs/dtoa.h>

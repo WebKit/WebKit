@@ -38,7 +38,7 @@
 #include "FrameView.h"
 #include "HTMLNameCollectionImpl.h"
 #include "KWQAccObjectCache.h"
-#include "KWQLogging.h"
+#include "Logging.h"
 #include "KeyEvent.h"
 #include "MouseEventWithHitTestResults.h"
 #include "NameNodeListImpl.h"

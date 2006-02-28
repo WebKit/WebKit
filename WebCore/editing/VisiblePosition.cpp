@@ -35,7 +35,7 @@
 #include "dom2_rangeimpl.h"
 
 #include <kxmlcore/Assertions.h>
-#include "KWQLogging.h"
+#include "Logging.h"
 
 using namespace DOM::HTMLNames;
 

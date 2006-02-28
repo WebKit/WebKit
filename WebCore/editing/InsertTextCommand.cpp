@@ -29,7 +29,7 @@
 #include "DocumentImpl.h"
 #include "EditingTextImpl.h"
 #include "Frame.h"
-#include "KWQLogging.h"
+#include "Logging.h"
 #include "VisiblePosition.h"
 #include "dom_position.h"
 #include "html_interchange.h"

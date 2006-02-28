@@ -1637,6 +1637,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\platform\Logging.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\Logging.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\platform\MouseEvent.h"
 				>
 			</File>
