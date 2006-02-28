@@ -2,6 +2,16 @@
 
         Reviewed by mjs.
 
+        Add a couple more stubs to make Win32 link.
+
+        * platform/win/TemporaryLinkStubs.cpp:
+        (KWQServeSynchronousRequest):
+        (WebCore::FrameView::topLevelWidget):
+
+2006-02-27  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
         Move mac-specific logging logic up into WebCore (from JavaScriptCore).
         Remove KWQ prefixes from default log channels.
         http://bugzilla.opendarwin.org/show_bug.cgi?id=7503
