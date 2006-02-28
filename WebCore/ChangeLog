@@ -1,3 +1,46 @@
+2006-02-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Eric.
+
+        - add stubs for FrameWin overrides of pure virtual Frame methods
+
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::FrameWin::respondToChangedContents):
+        (WebCore::FrameWin::unfocusWindow):
+        (WebCore::FrameWin::locationbarVisible):
+        (WebCore::FrameWin::respondToChangedSelection):
+        (WebCore::FrameWin::clearUndoRedoOperations):
+        (WebCore::FrameWin::issueRedoCommand):
+        (WebCore::FrameWin::canRedo):
+        (WebCore::FrameWin::restoreDocumentState):
+        (WebCore::FrameWin::canUndo):
+        (WebCore::FrameWin::overrideMediaType):
+        (WebCore::FrameWin::saveDocumentState):
+        (WebCore::FrameWin::print):
+        (WebCore::FrameWin::issueCutCommand):
+        (WebCore::FrameWin::issueCopyCommand):
+        (WebCore::FrameWin::partClearedInBegin):
+        (WebCore::FrameWin::issueUndoCommand):
+        (WebCore::FrameWin::clearRecordedFormValues):
+        (WebCore::FrameWin::issuePasteCommand):
+        (WebCore::FrameWin::markedTextRange):
+        (WebCore::FrameWin::shouldChangeSelection):
+        (WebCore::FrameWin::scheduleClose):
+        (WebCore::FrameWin::menubarVisible):
+        (WebCore::FrameWin::personalbarVisible):
+        (WebCore::FrameWin::createEmptyDocument):
+        (WebCore::FrameWin::lastEventIsMouseUp):
+        (WebCore::FrameWin::statusbarVisible):
+        (WebCore::FrameWin::toolbarVisible):
+        (WebCore::FrameWin::issueTransposeCommand):
+        (WebCore::FrameWin::userAgent):
+        (WebCore::FrameWin::canPaste):
+        (WebCore::FrameWin::incomingReferrer):
+        (WebCore::FrameWin::canGoBackOrForward):
+        (WebCore::FrameWin::issuePasteAndMatchStyleCommand):
+        (WebCore::FrameWin::handledOnloadEvents):
+        (WebCore::FrameWin::generateFrameName):
+
 2006-02-27  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

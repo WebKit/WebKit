@@ -33,6 +33,7 @@
 #include "KWQKLocale.h"
 #include "PlugInInfoStore.h"
 #include "render_theme.h"
+#include "FrameWin.h"
 
 using namespace WebCore;
 
@@ -335,3 +336,62 @@ void KWQCheckCacheObjectStatus(DocLoader*, CachedObject*) { notImplemented(); }
 bool KWQServeRequest(Loader*,Request*, TransferJob*) { notImplemented(); return 0; }
 Array<char> KWQServeSynchronousRequest(Loader*,DocLoader*,TransferJob*,KURL&,QString&) { notImplemented(); return 0; }
 Widget* WebCore::FrameView::topLevelWidget() const { notImplemented(); return 0; }
+ void  WebCore::FrameWin::respondToChangedContents(void) { notImplemented(); }
+ void  WebCore::FrameWin::unfocusWindow(void) { notImplemented(); }
+ bool  WebCore::FrameWin::locationbarVisible(void) { notImplemented(); return 0; }
+ void  WebCore::FrameWin::respondToChangedSelection(class WebCore::SelectionController const &,bool) { notImplemented(); }
+ void  WebCore::FrameWin::clearUndoRedoOperations(void) { notImplemented(); }
+ void  WebCore::FrameWin::issueRedoCommand(void) { notImplemented(); }
+ class KJS::Bindings::Instance *  WebCore::FrameWin::getObjectInstanceForWidget(class WebCore::Widget *) { notImplemented(); return 0; }
+ class KJS::Bindings::Instance *  WebCore::FrameWin::getEmbedInstanceForWidget(class WebCore::Widget *) { notImplemented(); return 0; }
+ bool  WebCore::FrameWin::canRedo(void)const  { notImplemented(); return 0; }
+ void  WebCore::FrameWin::restoreDocumentState(void) { notImplemented(); }
+ bool  WebCore::FrameWin::canUndo(void)const  { notImplemented(); return 0; }
+ bool  WebCore::FrameWin::runJavaScriptPrompt(class WebCore::String const &,class WebCore::String const &,class WebCore::String &) { notImplemented(); return 0; }
+ void  WebCore::FrameWin::recordFormValue(class QString const &,class QString const &,class WebCore::HTMLFormElementImpl *) { notImplemented(); }
+ class QString  WebCore::FrameWin::overrideMediaType(void)const  { notImplemented(); return QString(); }
+ void  WebCore::FrameWin::registerCommandForRedo(class WebCore::EditCommandPtr const &) { notImplemented(); }
+ void  WebCore::FrameWin::runJavaScriptAlert(class WebCore::String const &) { notImplemented(); }
+ void  WebCore::FrameWin::setTitle(class WebCore::String const &) { notImplemented(); }
+ bool  WebCore::FrameWin::runJavaScriptConfirm(class WebCore::String const &) { notImplemented(); return 0; }
+ bool  WebCore::FrameWin::openURL(class KURL const &) { notImplemented(); return 0; }
+ void  WebCore::FrameWin::urlSelected(class KURL const &,struct WebCore::URLArgs const &) { notImplemented(); }
+ void  WebCore::FrameWin::saveDocumentState(void) { notImplemented(); }
+ void  WebCore::FrameWin::print(void) { notImplemented(); }
+ class KJS::Bindings::Instance *  WebCore::FrameWin::getAppletInstanceForWidget(class WebCore::Widget *) { notImplemented(); return 0; }
+ bool  WebCore::FrameWin::passMouseDownEventToWidget(class WebCore::Widget *) { notImplemented(); return 0; }
+ void  WebCore::FrameWin::registerCommandForUndo(class WebCore::EditCommandPtr const &) { notImplemented(); }
+ void  WebCore::FrameWin::issueCutCommand(void) { notImplemented(); }
+ void  WebCore::FrameWin::issueCopyCommand(void) { notImplemented(); }
+ void  WebCore::FrameWin::openURLRequest(class KURL const &,struct WebCore::URLArgs const &) { notImplemented(); }
+ void  WebCore::FrameWin::addMessageToConsole(class WebCore::String const &,unsigned int,class WebCore::String const &) { notImplemented(); }
+ bool  WebCore::FrameWin::passWheelEventToChildWidget(class WebCore::NodeImpl *) { notImplemented(); return 0; }
+ void  WebCore::FrameWin::partClearedInBegin(void) { notImplemented(); }
+ void  WebCore::FrameWin::issueUndoCommand(void) { notImplemented(); }
+ class QString  WebCore::FrameWin::mimeTypeForFileName(class QString const &)const  { notImplemented(); return QString(); }
+ void  WebCore::FrameWin::clearRecordedFormValues(void) { notImplemented(); }
+ void  WebCore::FrameWin::issuePasteCommand(void) { notImplemented(); }
+ class WebCore::RangeImpl *  WebCore::FrameWin::markedTextRange(void)const  { notImplemented(); return 0; }
+ bool  WebCore::FrameWin::shouldChangeSelection(class WebCore::SelectionController const &,class WebCore::SelectionController const &,WebCore::EAffinity,bool)const  { notImplemented(); return 0; }
+ void  WebCore::FrameWin::scheduleClose(void) { notImplemented(); }
+ void  WebCore::FrameWin::markMisspellingsInAdjacentWords(class WebCore::VisiblePosition const &) { notImplemented(); }
+ void  WebCore::FrameWin::markMisspellings(class WebCore::SelectionController const &) { notImplemented(); }
+ bool  WebCore::FrameWin::menubarVisible(void) { notImplemented(); return 0; }
+ bool  WebCore::FrameWin::personalbarVisible(void) { notImplemented(); return 0; }
+ void  WebCore::FrameWin::createEmptyDocument(void) { notImplemented(); }
+ bool  WebCore::FrameWin::lastEventIsMouseUp(void)const  { notImplemented(); return 0; }
+ bool  WebCore::FrameWin::statusbarVisible(void) { notImplemented(); return 0; }
+ bool  WebCore::FrameWin::toolbarVisible(void) { notImplemented(); return 0; }
+ void  WebCore::FrameWin::issueTransposeCommand(void) { notImplemented(); }
+ class QString  WebCore::FrameWin::userAgent(void)const  { notImplemented(); return QString(); }
+ void  WebCore::FrameWin::submitForm(class KURL const &,struct WebCore::URLArgs const &) { notImplemented(); }
+ bool  WebCore::FrameWin::canPaste(void)const  { notImplemented(); return 0; }
+ class QString  WebCore::FrameWin::incomingReferrer(void)const  { notImplemented(); return QString(); }
+ enum WebCore::ObjectContentType  WebCore::FrameWin::objectContentType(class KURL const &,class QString const &) { notImplemented(); return (ObjectContentType)0; }
+ bool  WebCore::FrameWin::passSubframeEventToSubframe(class WebCore::MouseEventWithHitTestResults &) { notImplemented(); return 0; }
+ class WebCore::Frame *  WebCore::FrameWin::createFrame(class KURL const &,class QString const &,class WebCore::RenderPart *,class WebCore::String const &) { notImplemented(); return 0; }
+ bool  WebCore::FrameWin::canGoBackOrForward(int)const  { notImplemented(); return 0; }
+ void  WebCore::FrameWin::issuePasteAndMatchStyleCommand(void) { notImplemented(); }
+ class WebCore::Plugin *  WebCore::FrameWin::createPlugin(class KURL const &,class QStringList const &,class QStringList const &,class QString const &) { notImplemented(); return 0; }
+ void  WebCore::FrameWin::handledOnloadEvents(void) { notImplemented(); }
+WebCore::String  WebCore::FrameWin::generateFrameName(void) { notImplemented(); return String(); }
