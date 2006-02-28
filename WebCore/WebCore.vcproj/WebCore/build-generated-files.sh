@@ -126,11 +126,20 @@ if [ ../JavaScriptCore/kjs/create_hash_table -nt "$DerivedSourcesDir/JSXMLHttpRe
   ../JavaScriptCore/kjs/create_hash_table khtml/ecma/JSXMLHttpRequest.cpp > "$DerivedSourcesDir/JSXMLHttpRequest.lut.h"
 fi
 
-echo "Copying libxml DLLS..."
 WebKitOutputConfigDir="$WebKitUnixDir/$1"
 mkdir -p "$WebKitOutputConfigDir"
 
+echo "Copying libxml2.dll"
 cp ../libxml/bin/libxml2.dll "$WebKitOutputConfigDir" || exit 1
+
+echo "Copying libxslt.dll"
+cp ../libxslt/bin/libxslt.dll "$WebKitOutputConfigDir" || exit 1
+
+echo "Copying iconv.dll"
+cp ../iconv/bin/iconv.dll "$WebKitOutputConfigDir" || exit 1
+
+echo "Copying zlib1.dll"
+cp ../zlib/bin/zlib1.dll "$WebKitOutputConfigDir" || exit 1
 
 # Auto-generate bindings from .idl files
 echo "Auto-generating bindings from .idl files for the dom directory..."

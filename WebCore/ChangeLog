@@ -1,3 +1,14 @@
+2006-02-27  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Copy missing dlls to build directory.
+
+        * Viewer.cpp: fix line endings
+        * Viewer/ImageView.cpp: fix line endings
+        * Viewer/stdafx.cpp: fix line endings
+        * WebCore.vcproj/WebCore/build-generated-files.sh:
+
 2006-02-27  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Test: added to fast/dom/css-selectorText.html
