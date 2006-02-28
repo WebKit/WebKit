@@ -60,6 +60,7 @@
     BOOL hasFocus;
     BOOL currentEventIsUserGesture;
     BOOL isTransparent;
+    BOOL isCompletelyObscured;
     
     int32 specifiedHeight;
     int32 specifiedWidth;

@@ -1,3 +1,18 @@
+2006-02-27  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Adele.
+
+        <rdar://problem/4222043> Safari should reduce null events sent to invisible plugins
+
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView restartNullEvents]):
+        Check to see if the plugin view is completely obscured (scrolled out of view, for example).  If it is
+        obscured and it wasn't before, or the other way around, then restart the null event timer so it can
+        fire at the appropriate rate.
+        (-[WebBaseNetscapePluginView viewHasMoved:]):
+        If a plugin is obscured, send it null events as if it were in an inactive window.
+
 2006-02-26  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Test: fast/frames/empty-frame-document.html

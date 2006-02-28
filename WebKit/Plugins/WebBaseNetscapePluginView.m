@@ -530,23 +530,22 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 {
     ASSERT([self window]);
     
-    if (nullEventTimer) {
+    if (nullEventTimer)
         [self stopNullEvents];
-    }
     
-    if ([[self window] isMiniaturized]) {
+    if ([[self window] isMiniaturized])
         return;
-    }
 
     NSTimeInterval interval;
 
     // Send null events less frequently when the actual window is not key.  Also, allow the DB
     // to override this behavior and send full speed events to non key windows.
-    if ([[self window] isKeyWindow] || [[self webView] _dashboardBehavior:WebDashboardBehaviorAlwaysSendActiveNullEventsToPlugIns]) {
+    // If the plugin is completely obscured (scrolled out of view, for example), then we will
+    // send null events at a reduced rate.
+    if (!isCompletelyObscured && ([[self window] isKeyWindow] || [[self webView] _dashboardBehavior:WebDashboardBehaviorAlwaysSendActiveNullEventsToPlugIns]))
         interval = NullEventIntervalActive;
-    } else {
+    else
         interval = NullEventIntervalNotActive;
-    }
     
     nullEventTimer = [[NSTimer scheduledTimerWithTimeInterval:interval
                                                        target:self
@@ -1337,6 +1336,13 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     [self tellQuickTimeToChill];
     [self updateAndSetWindow];
     [self resetTrackingRect];
+    
+    // Check to see if the plugin view is completely obscured (scrolled out of view, for example).
+    // For performance reasons, we send null events at a lower rate to plugins which are obscured.
+    BOOL oldIsObscured = isCompletelyObscured;
+    isCompletelyObscured = NSEqualSizes([self visibleRect].size, NSZeroSize);
+    if (isCompletelyObscured != oldIsObscured)
+        [self restartNullEvents];
 }
 
 - (void)windowWillClose:(NSNotification *)notification
