@@ -1,3 +1,18 @@
+2006-02-27  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Test: fast/text/in-rendered-text-rtl.html
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7433
+          REGRESSION (r12789): Second RTL text run on a line cannot be selected
+
+        * dom/dom_position.cpp:
+        (WebCore::Position::inRenderedText): If the RenderText contains
+        reversed text, the text boxes are not necessarily ordered by start
+        position, so iterate through all of them.
+        (WebCore::Position::isRenderedCharacter): Ditto.
+
 2006-02-27  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Darin.

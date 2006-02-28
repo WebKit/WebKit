@@ -532,7 +532,7 @@ bool Position::inRenderedText() const
     
     RenderText *textRenderer = static_cast<RenderText *>(renderer);
     for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
-        if (offset() < box->m_start) {
+        if (offset() < box->m_start && !textRenderer->containsReversedText()) {
             // The offset we're looking for is before this node
             // this means the offset must be in content that is
             // not rendered. Return false.
@@ -556,7 +556,7 @@ bool Position::isRenderedCharacter() const
     
     RenderText *textRenderer = static_cast<RenderText *>(renderer);
     for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
-        if (offset() < box->m_start) {
+        if (offset() < box->m_start && !textRenderer->containsReversedText()) {
             // The offset we're looking for is before this node
             // this means the offset must be in content that is
             // not rendered. Return false.
