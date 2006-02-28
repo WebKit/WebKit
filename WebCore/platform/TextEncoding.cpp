@@ -45,13 +45,6 @@ const char* TextEncoding::name() const
     return charsetNameFromTextEncodingID(m_encodingID);
 }
 
-inline TextEncodingID effectiveEncoding(TextEncodingID encoding)
-{
-    if (encoding == Latin1Encoding || encoding == ASCIIEncoding)
-        return WinLatin1Encoding;
-    return encoding;
-}
-
 QChar TextEncoding::backslashAsCurrencySymbol() const
 {
     if (m_flags & BackslashIsYen)
@@ -69,5 +62,111 @@ QString TextEncoding::toUnicode(const ByteArray &qba, int len) const
 {
     return StreamingTextDecoder(*this).toUnicode(qba, len, true);
 }
+
+// We'd like to use ICU for this on OS X as well eventually, but we need to make sure
+// it covers all the encodings that we need
+#ifndef __APPLE__
+
+static UConverter* cachedConverter;
+static TextEncodingID cachedConverterEncoding = InvalidEncoding;
+
+static const int ConversionBufferSize = 16384;
+
+static inline UConverter* getConverter(TextEncodingID encoding, UErrorCode* status)
+{
+    if (cachedConverter && encoding == cachedConverterEncoding) {
+        UConverter* conv = cachedConverter;
+        cachedConverter = 0;
+        return conv;
+    }
+
+    const char* encodingName = charsetNameFromTextEncodingID(encoding);
+    UErrorCode err = U_ZERO_ERROR;
+    UConverter* conv = ucnv_open(encodingName, &err);
+    if (err == U_AMBIGUOUS_ALIAS_WARNING)
+        LOG_ERROR("ICU ambiguous alias warning for encoding: %s", encodingName);
+
+    if (!conv) {
+        LOG_ERROR("the ICU Converter won't convert to text encoding 0x%X, error %d", encoding, err);
+        *status = err;
+        return 0;
+    }
+
+    return conv;
+}
+
+static inline void cacheConverter(TextEncodingID id, UConverter* conv)
+{
+    if (conv) {
+        if (cachedConverter)
+            ucnv_close(cachedConverter);
+        cachedConverter = conv;
+        cachedConverterEncoding = id;
+    }
+}
+
+static inline TextEncodingID effectiveEncoding(TextEncodingID encoding)
+{
+    if (encoding == Latin1Encoding || encoding == ASCIIEncoding)
+        return WinLatin1Encoding;
+    return encoding;
+}
+
+QCString TextEncoding::fromUnicode(const QString &qcs, bool allowEntities) const
+{
+    TextEncodingID encoding = effectiveEncoding(m_encodingID);
+
+    if (encoding == WinLatin1Encoding && qcs.isAllLatin1())
+        return qcs.latin1();
+
+    if ((encoding == WinLatin1Encoding || encoding == UTF8Encoding || encoding == ASCIIEncoding) 
+        && qcs.isAllASCII())
+        return qcs.ascii();
+
+    // FIXME: We should see if there is "force ASCII range" mode in ICU;
+    // until then, we change the backslash into a yen sign.
+    // Encoding will change the yen sign back into a backslash.
+    QString copy = qcs;
+    copy.replace(QChar('\\'), backslashAsCurrencySymbol());
+
+    UErrorCode err = U_ZERO_ERROR;
+    UConverter* conv = getConverter(encoding, &err);
+    if (!conv && U_FAILURE(err))
+        return QCString();
+
+    ASSERT(conv);
+
+    // FIXME: when QString buffer is latin1, it would be nice to
+    // convert from that w/o having to allocate a unicode buffer
+
+    char buffer[ConversionBufferSize];
+    const UChar* source = reinterpret_cast<const UChar*>(copy.unicode());
+    const UChar* sourceLimit = source + copy.length();
+
+    QCString result(1); // for trailng zero
+
+    if (allowEntities)
+        ucnv_setFromUCallBack(conv, UCNV_FROM_U_CALLBACK_ESCAPE, UCNV_ESCAPE_XML_DEC, 0, 0, &err);
+    else {
+        ucnv_setSubstChars(conv, "?", 1, &err);
+        ucnv_setFromUCallBack(conv, UCNV_FROM_U_CALLBACK_SUBSTITUTE, 0, 0, 0, &err);
+    }
+
+    do {
+        char* target = buffer;
+        char* targetLimit = target + ConversionBufferSize;
+        err = U_ZERO_ERROR;
+        ucnv_fromUnicode(conv, &target, targetLimit, &source, sourceLimit, 0, true,  &err);
+        int count = target - buffer;
+        buffer[count] = 0;
+        result.append(buffer);
+    } while (err == U_BUFFER_OVERFLOW_ERROR);
+
+    cacheConverter(encoding, conv);
+
+    return result;
+}
+#endif
+
 
 } // namespace WebCore

@@ -40,6 +40,8 @@ static inline TextEncodingID effectiveEncoding(TextEncodingID encoding)
     return encoding;
 }
 
+// We'd like to use ICU for this on OS X as well eventually, but we need to make sure
+// it covers all the encodings that we need
 QCString TextEncoding::fromUnicode(const QString &qcs, bool allowEntities) const
 {
     // FIXME: We should really use the same API in both directions.

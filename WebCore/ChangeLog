@@ -1,3 +1,19 @@
+2006-02-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - write a portable ICU version of TextEncoding::fromUnicode for use on win32
+
+        * platform/StreamingTextDecoder.h:
+        * platform/TextEncoding.cpp:
+        (WebCore::TextEncoding::fromUnicode): added
+        (WebCore::getConverter): helper
+        (WebCore::cacheConverter): ditto
+        (WebCore::effectiveEncoding): ditto
+        * platform/mac/TextEncodingMac.cpp: Add comment
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::TextEncoding::fromUnicode): remove
+
 2006-02-27  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Test: fast/text/in-rendered-text-rtl.html

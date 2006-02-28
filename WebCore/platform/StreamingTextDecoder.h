@@ -62,7 +62,7 @@ namespace WebCore {
         unsigned char m_bufferedBytes[16]; // bigger than any single multi-byte character
         
         // ICU decoding.
-        UConverter *m_converterICU;
+        UConverter* m_converterICU;
     };
     
 } // namespace WebCore
