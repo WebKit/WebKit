@@ -1,0 +1,40 @@
+<html>
+<head>
+<script src=../editing.js language="JavaScript" type="text/JavaScript"></script>
+<script>
+function log(message) {
+    var console = document.getElementById("console");
+    var li = document.createElement("li");
+    var text = document.createTextNode(message);
+    li.appendChild(text);
+    console.appendChild(li);
+}
+
+function editingTest() {
+    var d = document.getElementById("test");
+    var html = d.innerHTML.toLowerCase();
+    
+    selectAllCommand();
+    deleteCommand();
+    insertHTMLCommand(html);
+
+    var results = d.innerHTML.toLowerCase();
+
+    if (html == results)
+        log("Success");
+    else
+        log("Failure.  Called execCommand(innerHTML, " + html + ") and the results of calling innerHTML afterword were: " + results);
+}
+</script>
+</head>
+
+<body>
+<p>This is a test of execCommand(insertHTML, ...).  It selects the contents of an editable div, d, deletes it, then calls execCommand(insertHTML, d.innerHTML).  d.innerHTML should be what it was when the test began.</p>
+<div id="test" contenteditable="true"><p>hello<table style="display:inline" border=1><tr><td>1</td><td>2</td></tr></table><b>world</b>!</p></div>
+<ul id="console"></ul>
+<script>
+runEditingTest();
+</script>
+</body>
+
+</html>
