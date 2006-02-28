@@ -1,3 +1,14 @@
+2006-02-28  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Eric Seidel
+        
+        Wean WebKit from one more SPI call. We learned about this new-to-Tiger
+        API from filing Radar 4433222.
+
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _autoscroll]):
+        use public CGEventSourceButtonState() instead of WKMouseIsDown() (which was using SPI internally)
+
 2006-02-27  Tim Omernick  <timo@apple.com>
 
         Reviewed by Adele.

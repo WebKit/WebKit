@@ -28,6 +28,7 @@
 
 #import <WebKit/WebHTMLView.h>
 
+#import <ApplicationServices/ApplicationServices.h>
 #import <WebKit/DOM.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>
@@ -1407,7 +1408,7 @@ static WebHTMLView *lastHitView = nil;
 {
     // Guarantee that the autoscroll timer is invalidated, even if we don't receive
     // a mouse up event.
-    BOOL isStillDown = WKMouseIsDown();   
+    BOOL isStillDown = CGEventSourceButtonState(kCGEventSourceStateCombinedSessionState, kCGMouseButtonLeft);   
     if (!isStillDown){
         [self _stopAutoscrollTimer];
         return;
