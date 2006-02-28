@@ -1,3 +1,13 @@
+2006-02-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Eric (sorta).
+
+        - add return values where needed
+
+        * platform/win/TemporaryLinkStubs.cpp:
+        (KWQServeRequest):
+        (KWQServeSynchronousRequest):
+
 2006-02-27  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

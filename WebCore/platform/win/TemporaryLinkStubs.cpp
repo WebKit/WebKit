@@ -332,6 +332,6 @@ WebCore::ScrollBarMode WebCore::ScrollView::hScrollBarMode() const { notImplemen
 WebCore::ScrollBarMode WebCore::ScrollView::vScrollBarMode() const { notImplemented(); return ScrollBarAlwaysOff; }
 RenderTheme* WebCore::theme() { notImplemented(); return 0; }
 void KWQCheckCacheObjectStatus(DocLoader*, CachedObject*) { notImplemented(); }
-bool KWQServeRequest(Loader*,Request*, TransferJob*) { notImplemented(); }
-Array<char> KWQServeSynchronousRequest(Loader*,DocLoader*,TransferJob*,KURL&,QString&) { notImplemented(); }
+bool KWQServeRequest(Loader*,Request*, TransferJob*) { notImplemented(); return 0; }
+Array<char> KWQServeSynchronousRequest(Loader*,DocLoader*,TransferJob*,KURL&,QString&) { notImplemented(); return 0; }
 Widget* WebCore::FrameView::topLevelWidget() const { notImplemented(); return 0; }
