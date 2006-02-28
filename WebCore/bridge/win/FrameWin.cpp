@@ -25,3 +25,16 @@
 
 #include "config.h"
 #include "FrameWin.h"
+
+namespace WebCore {
+
+FrameWin::FrameWin(Page* page, RenderPart* renderPart)
+    : Frame(page, renderPart)
+{
+}
+
+FrameWin::~FrameWin()
+{
+}
+
+}
