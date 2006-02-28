@@ -1,5 +1,11 @@
 2006-02-27  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by darin.
+
+        * Scripts/install-win-extras: fix dll permissions & download zlib too.
+
+2006-02-27  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by ggaren.
 
         Test new KConfig -> PlugInInfoStore change.

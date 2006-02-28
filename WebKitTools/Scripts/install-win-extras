@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Simplified build script for Web Kit Open Source Project.
+# A script to download the extra libraries needed to build WebKit on Windows.
 
 use strict;
 use FindBin;
@@ -48,6 +48,7 @@ if (! -e "icu-3.4-win32-msvc7.1.zip") {
     `unzip icu-3.4-win32-msvc7.1.zip`;
     `rm -rf ../icu`;
     `cp -rp icu ..`;
+    `chmod 755 ../icu/bin/*.dll`;
 }
 
 if (! -e "iconv-1.9.1.win32.zip") {
@@ -58,6 +59,7 @@ if (! -e "iconv-1.9.1.win32.zip") {
     `unzip iconv-1.9.1.win32.zip`;
     `rm -rf ../iconv`;
     `cp -rp iconv-1.9.1.win32 ../iconv`;
+    `chmod 755 ../iconv/bin/*.dll`;
 }
 
 if (! -e "libxml2-2.6.23.win32.zip") {
@@ -68,6 +70,7 @@ if (! -e "libxml2-2.6.23.win32.zip") {
     `unzip libxml2-2.6.23.win32.zip`;
     `rm -rf ../libxml`;
     `cp -rp libxml2-2.6.23.win32 ../libxml`;
+    `chmod 755 ../libxml/bin/*.dll`;
 }
 
 if (! -e "libxslt-1.1.15.win32.zip") {
@@ -78,6 +81,18 @@ if (! -e "libxslt-1.1.15.win32.zip") {
     `unzip libxslt-1.1.15.win32.zip`;
     `rm -rf ../libxslt`;
     `cp -rp libxslt-1.1.15.win32 ../libxslt`;
+    `chmod 755 ../libxslt/bin/*.dll`;
+}
+
+if (! -e "zlib-1.2.3.win32.zip") {
+    print "Downloading zlib-1.2.3.win32.zip...\n\n";
+    `rm -rf zlib*`;
+    `curl -O http://xmlsoft.org/sources/win32/zlib-1.2.3.win32.zip`;
+    print "\nInstalling zlib-1.2.3.win32.zip...\n";
+    `unzip zlib-1.2.3.win32.zip`;
+    `rm -rf ../zlib`;
+    `cp -rp zlib-1.2.3.win32 ../zlib`;
+    `chmod 755 ../zlib/bin/*.dll`;
 }
 
 if (! -x "/cygdrive/c/Program Files/Resource Kit/setx.exe") {
