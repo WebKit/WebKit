@@ -231,7 +231,10 @@ PassRefPtr<NodeImpl> HTMLParser::parseToken(Token *t)
 
         if (form == n)
             form = 0;
-        
+
+        if (head == n)
+            head = 0;
+
         return 0;
     }
     return n;
@@ -607,7 +610,11 @@ bool HTMLParser::commentCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
 
 bool HTMLParser::headCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
 {
-    return (!head || current->localName() == htmlTag);
+    if (!head || current->localName() == htmlTag) {
+        head = new HTMLHeadElementImpl(document);
+        result = head;
+    }
+    return false;
 }
 
 bool HTMLParser::bodyCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)

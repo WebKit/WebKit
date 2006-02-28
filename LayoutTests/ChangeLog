@@ -1,3 +1,29 @@
+2006-02-27  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
+        - Tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=7321
+        REGRESSION: style tag in body causes two head elements to appear in the DOM
+
+        The head-check.html document uses an iframe as a laboratory for loading each
+        head-check-N.html file and checking its DOM, with inspiration from Ian Hixie's
+        Live DOM Viewer: http://software.hixie.ch/utilities/js/live-dom-viewer/
+
+        Each of the four head-check-N.html files tests a different code path for
+        creating a document's head element in WebCore/khtml/html/htmlparser.cpp.
+
+        * editing/inserting/editing-empty-divs-expected.txt: Corrected <html> child
+        index for <body> since the document previously had two <head> nodes.
+        * fast/dom/HTMLHeadElement: Added.
+        * fast/dom/HTMLHeadElement/head-check-expected.txt: Added.
+        * fast/dom/HTMLHeadElement/head-check.html: Added.
+        * fast/dom/HTMLHeadElement/resources: Added.
+        * fast/dom/HTMLHeadElement/resources/head-check-1.html: Added.
+        * fast/dom/HTMLHeadElement/resources/head-check-2.html: Added.
+        * fast/dom/HTMLHeadElement/resources/head-check-3.html: Added.
+        * fast/dom/HTMLHeadElement/resources/head-check-4.html: Added.
+        * fast/dom/HTMLHeadElement/resources/head-check.js: Added.
+
 2006-02-27  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

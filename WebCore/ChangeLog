@@ -1,3 +1,14 @@
+2006-02-27  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
+        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=7321
+        REGRESSION: style tag in body causes two head elements to appear in the DOM
+
+        * khtml/html/htmlparser.cpp: Handle the head node like form and map nodes.
+        (WebCore::HTMLParser::parseToken):
+        (WebCore::HTMLParser::headCreateErrorCheck):
+
 2006-02-27  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
