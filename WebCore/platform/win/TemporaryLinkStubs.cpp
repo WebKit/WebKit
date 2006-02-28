@@ -309,12 +309,12 @@ PluginInfo*PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned) { notImpl
 unsigned PlugInInfoStore::pluginCount() const { notImplemented(); return 0; }
 void WebCore::refreshPlugins(bool) { notImplemented(); }
 int WebCore::screenDepth(WebCore::Widget*) { notImplemented(); return 96; }
-QFont::QFont() { notImplemented(); }
+QFont::QFont() { }
 QFont::~QFont() { notImplemented(); }
 bool QFont::italic() const { notImplemented(); return false; }
 int QFont::weight() const { notImplemented(); return QFont::Normal; }
 static QFontMetrics localFontMetrics;
-QFontMetrics::QFontMetrics() { notImplemented(); }
+QFontMetrics::QFontMetrics() { }
 QFontMetrics::~QFontMetrics() { notImplemented(); }
 QFontMetrics::QFontMetrics(QFontMetrics const&) { notImplemented(); }
 QFontMetrics& QFontMetrics::operator=(QFontMetrics const&) { notImplemented(); return localFontMetrics; }

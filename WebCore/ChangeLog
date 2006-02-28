@@ -1,3 +1,13 @@
+2006-02-27  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Remove abort() from constructors to allow DRT to run.
+
+        * platform/win/TemporaryLinkStubs.cpp:
+        (QFont::QFont):
+        (QFontMetrics::QFontMetrics):
+
 2006-02-27  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
