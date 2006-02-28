@@ -241,10 +241,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\fpconst.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kjs\function.cpp"
 				>
 			</File>

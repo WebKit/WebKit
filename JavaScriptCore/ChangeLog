@@ -1,5 +1,13 @@
 2006-02-27  Eric Seidel  <eseidel@apple.com>
 
+        Rubber-stamped by darin.
+
+        Remove fpconst.cpp, unused on win32 and the cause of linker warnings.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+
+2006-02-27  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by mjs.
 
         Fix Assertions.cpp to compile on win32.
