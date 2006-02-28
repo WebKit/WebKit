@@ -1,3 +1,8 @@
+2006-02-28  John Sullivan  <sullivan@apple.com>
+
+        * WebKitSystemInterface.h: Removed WKMouseIsDown()
+        * libWebKitSystemInterface.a: ditto
+
 2006-02-23  Timothy Hatcher  <timothy@apple.com>
 
         New build to fix the i386 arch. (The _cuEnc64 symbol was missing.)

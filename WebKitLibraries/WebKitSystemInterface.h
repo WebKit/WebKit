@@ -56,7 +56,6 @@ Class WKNSURLProtocolClassForReqest(NSURLRequest *request);
 unsigned WKGetNSAutoreleasePoolCount(void);
 
 NSString *WKMouseMovedNotification(void);
-BOOL WKMouseIsDown(void);
 void WKSetNSWindowShouldPostEventNotifications(NSWindow *window, BOOL post);
 
 CFTypeID WKGetAXTextMarkerTypeID(void);
