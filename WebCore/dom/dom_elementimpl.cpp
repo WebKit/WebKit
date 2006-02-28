@@ -1476,7 +1476,7 @@ void StyledElementImpl::addCSSLength(MappedAttributeImpl* attr, int id, const DO
         }
 
         if (l != v->length()) {
-            attr->decl()->setLengthProperty(id, String(v->copy()), false);
+            attr->decl()->setLengthProperty(id, v->substring(0, l), false);
             return;
         }
     }

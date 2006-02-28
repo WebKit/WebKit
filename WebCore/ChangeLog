@@ -1,3 +1,13 @@
+2006-02-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - fix regression in layout tests
+
+        * dom/dom_elementimpl.cpp: (WebCore::StyledElementImpl::addCSSLength):
+        Fix some code that was not properly truncating. I broke it in my
+        string change this morning. 
+
 2006-02-27  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Eric.
