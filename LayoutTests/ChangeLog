@@ -1,3 +1,12 @@
+2006-03-01  Alexander Kellett  <lypanov@kde.org>
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=5966
+          Update expected results
+
+        * svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.checksum:
+        * svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.png:
+        * svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.txt:
+
 2006-03-01  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

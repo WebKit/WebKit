@@ -30,6 +30,7 @@
 namespace WebCore
 {
     class SVGImageElementImpl;
+    class SVGPreserveAspectRatioImpl;
     class RenderSVGImage : public RenderImage {
     public:
         RenderSVGImage(SVGImageElementImpl *impl);
@@ -42,7 +43,7 @@ namespace WebCore
         virtual IntRect getAbsoluteRepaintRect();
         
         virtual void imageChanged(CachedImage*);
-        
+        void adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& srcRect, SVGPreserveAspectRatioImpl *aspectRatio);
         virtual void paint(PaintInfo& paintInfo, int parentX, int parentY);
     private:
         void translateForAttributes();

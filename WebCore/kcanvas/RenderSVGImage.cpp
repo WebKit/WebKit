@@ -26,6 +26,7 @@
 
 #include "GraphicsContext.h"
 #include "KCanvasMaskerQuartz.h"
+#include "SVGAnimatedPreserveAspectRatioImpl.h"
 #include "KCanvasRenderingStyle.h"
 #include "KCanvasResourcesQuartz.h"
 #include "KRenderingDevice.h"
@@ -33,6 +34,10 @@
 #include "SVGImageElementImpl.h"
 #include <kcanvas/KCanvas.h>
 #include <kdom/core/AttrImpl.h>
+
+#include "SVGImageElementImpl.h"
+
+#include "ksvg.h"
 
 namespace WebCore {
 
@@ -43,6 +48,81 @@ RenderSVGImage::RenderSVGImage(SVGImageElementImpl *impl)
 
 RenderSVGImage::~RenderSVGImage()
 {
+}
+
+void RenderSVGImage::adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& srcRect, SVGPreserveAspectRatioImpl *aspectRatio)
+{
+    float origDestWidth = destRect.width();
+    float origDestHeight = destRect.height();
+    if (aspectRatio->meetOrSlice() == SVG_MEETORSLICE_MEET) {
+        float widthToHeightMultiplier = srcRect.height() / srcRect.width();
+        if (origDestHeight > (origDestWidth * widthToHeightMultiplier)) {
+            destRect.setHeight(origDestWidth * widthToHeightMultiplier);
+            switch(aspectRatio->align()) {
+                case SVG_PRESERVEASPECTRATIO_XMINYMID:
+                case SVG_PRESERVEASPECTRATIO_XMIDYMID:
+                case SVG_PRESERVEASPECTRATIO_XMAXYMID:
+                    destRect.setY(origDestHeight / 2 - destRect.height() / 2);
+                    break;
+                case SVG_PRESERVEASPECTRATIO_XMINYMAX:
+                case SVG_PRESERVEASPECTRATIO_XMIDYMAX:
+                case SVG_PRESERVEASPECTRATIO_XMAXYMAX:
+                    destRect.setY(origDestHeight - destRect.height());
+                    break;
+            }
+        }
+        if (origDestWidth > (origDestHeight / widthToHeightMultiplier)) {
+            destRect.setWidth(origDestHeight / widthToHeightMultiplier);
+            switch(aspectRatio->align()) {
+                case SVG_PRESERVEASPECTRATIO_XMIDYMIN:
+                case SVG_PRESERVEASPECTRATIO_XMIDYMID:
+                case SVG_PRESERVEASPECTRATIO_XMIDYMAX:
+                    destRect.setX(origDestWidth / 2 - destRect.width() / 2);
+                    break;
+                case SVG_PRESERVEASPECTRATIO_XMAXYMIN:
+                case SVG_PRESERVEASPECTRATIO_XMAXYMID:
+                case SVG_PRESERVEASPECTRATIO_XMAXYMAX:
+                    destRect.setX(origDestWidth - destRect.width());
+                    break;
+            }
+        }
+    } else if (aspectRatio->meetOrSlice() == SVG_MEETORSLICE_SLICE) {
+        float widthToHeightMultiplier = srcRect.height() / srcRect.width();
+        // if the destination height is less than the height of the image we'll be drawing
+        if (origDestHeight < (origDestWidth * widthToHeightMultiplier)) {
+            float destToSrcMultiplier = srcRect.width() / destRect.width();
+            srcRect.setHeight(destRect.height() * destToSrcMultiplier);
+            switch(aspectRatio->align()) {
+                case SVG_PRESERVEASPECTRATIO_XMINYMID:
+                case SVG_PRESERVEASPECTRATIO_XMIDYMID:
+                case SVG_PRESERVEASPECTRATIO_XMAXYMID:
+                    srcRect.setY(image()->height() / 2 - srcRect.height() / 2);
+                    break;
+                case SVG_PRESERVEASPECTRATIO_XMINYMAX:
+                case SVG_PRESERVEASPECTRATIO_XMIDYMAX:
+                case SVG_PRESERVEASPECTRATIO_XMAXYMAX:
+                    srcRect.setY(image()->height() - srcRect.height());
+                    break;
+            }
+        }
+        // if the destination width is less than the width of the image we'll be drawing
+        if (origDestWidth < (origDestHeight / widthToHeightMultiplier)) {
+            float destToSrcMultiplier = srcRect.height() / destRect.height();
+            srcRect.setWidth(destRect.width() * destToSrcMultiplier);
+            switch(aspectRatio->align()) {
+                case SVG_PRESERVEASPECTRATIO_XMIDYMIN:
+                case SVG_PRESERVEASPECTRATIO_XMIDYMID:
+                case SVG_PRESERVEASPECTRATIO_XMIDYMAX:
+                    srcRect.setX(image()->width() / 2 - srcRect.width() / 2);
+                    break;
+                case SVG_PRESERVEASPECTRATIO_XMAXYMIN:
+                case SVG_PRESERVEASPECTRATIO_XMAXYMID:
+                case SVG_PRESERVEASPECTRATIO_XMAXYMAX:
+                    srcRect.setX(image()->width() - srcRect.width());
+                    break;
+            }
+        }
+    }
 }
 
 void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
@@ -66,7 +146,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
     translateForAttributes();
     
     FloatRect boundingBox = relativeBBox(true);
-    const KSVG::SVGRenderStyle *svgStyle = style()->svgStyle();
+    const SVGRenderStyle *svgStyle = style()->svgStyle();
             
     if (KCanvasClipper *clipper = getClipperById(document(), svgStyle->clipPath().mid(1)))
         clipper->applyClip(boundingBox);
@@ -78,11 +158,27 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
     if (filter)
         filter->prepareFilter(boundingBox);
     
-    RenderImage::paint(paintInfo, 0, 0);
-    
+    int x = 0, y = 0;
+    if (!shouldPaint(paintInfo, x, y))
+        return;
+        
+    SVGImageElementImpl *imageElt = static_cast<SVGImageElementImpl *>(node());
+        
+    if (imageElt->preserveAspectRatio()->baseVal()->align() == SVG_PRESERVEASPECTRATIO_NONE)
+        RenderImage::paint(paintInfo, 0, 0);
+    else {
+        FloatRect destRect(m_x, m_y, contentWidth(), contentHeight());
+        FloatRect srcRect(0, 0, image()->width(), image()->height());
+        adjustRectsForAspectRatio(destRect, srcRect, imageElt->preserveAspectRatio()->baseVal());
+        paintInfo.p->drawFloatImage(image(),
+                                    destRect.x(), destRect.y(), destRect.width(), destRect.height(), 
+                                    srcRect.x(), srcRect.y(), srcRect.width(), srcRect.height(), 
+                                    Image::CompositeSourceOver);
+    }
+
     if (filter)
         filter->applyFilter(boundingBox);
-
+    
     // restore drawing state
     if (shouldPopContext) {
         device->popContext();
