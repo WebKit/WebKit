@@ -1,3 +1,15 @@
+2006-03-01  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Hyatt.
+
+        - Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7327
+          REGRESSION (r12869): :hover subselector does not work in quirks mode
+
+        * fast/css/hover-subselector-expected.checksum: Added.
+        * fast/css/hover-subselector-expected.png: Added.
+        * fast/css/hover-subselector-expected.txt: Added.
+        * fast/css/hover-subselector.html: Added.
+
 2006-02-28  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by mjs

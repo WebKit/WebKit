@@ -1,3 +1,18 @@
+2006-03-01  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Test: fast/css/hover-subselector.html
+
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7327
+          REGRESSION (r12869): :hover subselector does not work in quirks mode
+
+        * css/cssstyleselector.h:
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::checkSelector): Pass flag to indicate sub-selector.
+        (WebCore::CSSStyleSelector::checkOneSelector): Apply the *:hover and *:active quirks only
+        when there are no sub-selectors.
+
 2006-03-01  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Hyatt.

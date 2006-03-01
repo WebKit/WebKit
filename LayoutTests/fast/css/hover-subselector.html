@@ -1,0 +1,32 @@
+<html>
+<head>
+<title></title>
+<style type="text/css">
+    span#t:hover { color: red; }
+</style>
+<script type="text/javascript">
+function test()
+{
+    if (!window.eventSender)
+        return;
+    eventSender.mouseMoveTo(0, 0);
+    document.body.offsetTop;    // force layout
+    eventSender.mouseMoveTo(16, 16);    // hover
+    eventSender.mouseDown();    // get noticed
+    eventSender.mouseUp();
+}
+</script>
+</head>
+<body onload="test()">
+<div>
+<span id="t">This should turn red when hovered.</span>
+</div>
+<hr>
+<p>
+Test for
+<i><a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=7327">http://bugzilla.opendarwin.org/show_bug.cgi?id=7327</a>
+REGRESSION (r12869): :hover subselector does not work in quirks mode</i>.
+This tests that <code>span#t:hover</code> matches the hovered span.
+</p>
+</body>
+</html>

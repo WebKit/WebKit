@@ -135,7 +135,7 @@ class StyledElementImpl;
         bool checkSelector(CSSSelector* selector, ElementImpl *e);
         
         /* checks if the selector matches the given Element */
-        bool checkOneSelector(CSSSelector *selector, ElementImpl *e);
+        bool checkOneSelector(CSSSelector*, ElementImpl*, bool isSubSelector = false);
 
         /* This function fixes up the default font size if it detects that the
            current generic font family has changed. -dwh */

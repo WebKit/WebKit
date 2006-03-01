@@ -1156,7 +1156,7 @@ bool CSSStyleSelector::checkSelector(CSSSelector* sel, ElementImpl *e)
             // a selector is invalid if something follows :first-xxx
             if (elem == element && dynamicPseudo != RenderStyle::NOPSEUDO)
                 return false;
-            if (!checkOneSelector(sel, elem))
+            if (!checkOneSelector(sel, elem, true))
                 return false;
             break;
         }
@@ -1184,7 +1184,7 @@ bool CSSStyleSelector::checkSelector(CSSSelector* sel, ElementImpl *e)
     return true;
 }
 
-bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
+bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, ElementImpl* e, bool isSubSelector)
 {
     if(!e)
         return false;
@@ -1392,7 +1392,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
             case CSSSelector::PseudoHover: {
                 // If we're in quirks mode, then hover should never match anchors with no
                 // href and *:hover should not match anything.  This is important for sites like wsj.com.
-                if (strictParsing || (sel->hasTag() && !e->hasTagName(aTag)) || e->isLink()) {
+                if (strictParsing || isSubSelector || sel->relation == CSSSelector::SubSelector || (sel->hasTag() && !e->hasTagName(aTag)) || e->isLink()) {
                     if (element == e && style)
                         style->setAffectedByHoverRules(true);
                     if (e->renderer()) {
@@ -1423,7 +1423,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector *sel, ElementImpl *e)
             case CSSSelector::PseudoActive:
                 // If we're in quirks mode, then :active should never match anchors with no
                 // href and *:active should not match anything. 
-                if (strictParsing || (sel->hasTag() && !e->hasTagName(aTag)) || e->isLink()) {
+                if (strictParsing || isSubSelector || sel->relation == CSSSelector::SubSelector || (sel->hasTag() && !e->hasTagName(aTag)) || e->isLink()) {
                     if (element == e && style)
                         style->setAffectedByActiveRules(true);
                     else if (e->renderer())
