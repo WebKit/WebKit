@@ -333,13 +333,13 @@ bool QListBox::checksDescendantsForFocus() const
     return true;
 }
 
-void QListBox::setWritingDirection(QPainter::TextDirection d)
+void QListBox::setWritingDirection(TextDirection d)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
     NSScrollView *scrollView = static_cast<NSScrollView *>(getView());
     KWQTableView *tableView = [scrollView documentView];
-    NSWritingDirection direction = d == QPainter::RTL ? NSWritingDirectionRightToLeft : NSWritingDirectionLeftToRight;
+    NSWritingDirection direction = d == RTL ? NSWritingDirectionRightToLeft : NSWritingDirectionLeftToRight;
     if ([tableView baseWritingDirection] != direction) {
         [tableView setBaseWritingDirection:direction];
         [tableView reloadData];

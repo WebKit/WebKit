@@ -105,7 +105,7 @@ void KCanvasMaskerQuartz::applyMask(const FloatRect& boundingBox) const
     [ciGrayscaleContext drawImage:grayscaleMask atPoint:CGPointZero fromRect:CGRectMake(0, 0, width, height)];
 
     CGImageRef grayscaleImage = CGBitmapContextCreateImage(grayscaleContext);
-    CGContextRef cgContext = static_cast<KRenderingDeviceQuartz*>(QPainter::renderingDevice())->currentCGContext();
+    CGContextRef cgContext = static_cast<KRenderingDeviceQuartz*>(renderingDevice())->currentCGContext();
     CGContextClipToMask(cgContext, CGRectMake(0, 0, width, height), grayscaleImage);
     
     CGImageRelease(grayscaleImage);

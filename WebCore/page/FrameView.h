@@ -41,6 +41,7 @@ class DocumentImpl;
 class ElementImpl;
 class Frame;
 class FrameViewPrivate;
+class GraphicsContext;
 class HTMLAnchorElementImpl;
 class HTMLDocumentImpl;
 class HTMLElementImpl;
@@ -53,7 +54,6 @@ class KeyEvent;
 class MacFrame;
 class MouseEvent;
 class NodeImpl;
-class QPainter;
 class RenderBox;
 class RenderCanvas;
 class RenderLineEdit;
@@ -188,14 +188,14 @@ private:
     void invalidateClick();
 
     /**
-     * Paints the HTML document to a QPainter.
+     * Paints the HTML document.
      * The document will be scaled to match the width of
-     * rc and clipped to fit in the height.
-     * yOff determines the vertical offset in the document to start with.
-     * more, if nonzero will be set to true if the documents extends
-     * beyond the rc or false if everything below yOff was painted.
+     * the rectangle and clipped to fit in the height.
+     * yOffset determines the vertical offset in the document to start with.
+     * more, if not null, will be set to true if the documents extends
+     * beyond the rc or false if everything below yOffset was painted.
      **/
-    void paint(QPainter *p, const IntRect &rc, int yOff = 0, bool *more = 0);
+    void paint(GraphicsContext, const IntRect&, int yOffset = 0, bool* more = 0);
 
     /**
      * Get/set the CSS Media Type.
@@ -207,10 +207,10 @@ private:
      * you only need to enable the media type in the view and if necessary
      * add the media type dependent changes to the renderer.
      */
-    void setMediaType( const QString &medium );
+    void setMediaType(const QString&);
     QString mediaType() const;
 
-    bool scrollTo(const IntRect &);
+    bool scrollTo(const IntRect&);
 
     void focusNextPrevNode(bool next);
 

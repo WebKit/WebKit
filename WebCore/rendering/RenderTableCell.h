@@ -85,7 +85,7 @@ public:
 
     virtual void paint(PaintInfo& i, int tx, int ty);
 
-    void paintCollapsedBorder(QPainter* p, int x, int y, int w, int h);
+    void paintCollapsedBorder(GraphicsContext* p, int x, int y, int w, int h);
     
     // lie about position to outside observers
     virtual int yPos() const { return m_y + _topExtra; }

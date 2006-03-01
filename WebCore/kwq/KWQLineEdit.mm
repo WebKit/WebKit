@@ -26,6 +26,8 @@
 #import "config.h"
 #import "KWQLineEdit.h"
 
+#import "Color.h"
+#import "IntSize.h"
 #import "KWQExceptions.h"
 #import "Font.h"
 #import "Logging.h"
@@ -35,7 +37,7 @@
 #import "WebCoreTextRendererFactory.h"
 #import "WebCoreViewFactory.h"
 
-using DOM::DOMString;
+using namespace WebCore;
 using WebCore::Font;
 
 @interface NSSearchField (SearchFieldSecrets)
@@ -322,10 +324,10 @@ void QLineEdit::setAlignment(AlignmentFlags alignment)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QLineEdit::setWritingDirection(QPainter::TextDirection direction)
+void QLineEdit::setWritingDirection(TextDirection direction)
 {
     KWQ_BLOCK_EXCEPTIONS;
-    [m_controller setBaseWritingDirection:(direction == QPainter::RTL ? NSWritingDirectionRightToLeft : NSWritingDirectionLeftToRight)];
+    [m_controller setBaseWritingDirection:(direction == RTL ? NSWritingDirectionRightToLeft : NSWritingDirectionLeftToRight)];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 

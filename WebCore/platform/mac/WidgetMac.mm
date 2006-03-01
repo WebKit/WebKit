@@ -28,6 +28,7 @@
 
 #import "Cursor.h"
 #import "FoundationExtras.h"
+#import "GraphicsContext.h"
 #import "KWQExceptions.h"
 #import "KWQView.h"
 #import "MacFrame.h"
@@ -354,11 +355,10 @@ void Widget::setDrawingAlpha(float alpha)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void Widget::paint(QPainter *p, const IntRect &r)
+void Widget::paint(GraphicsContext* p, const IntRect& r)
 {
-    if (p->paintingDisabled()) {
+    if (p->paintingDisabled())
         return;
-    }
     NSView *view = getOuterView();
     // KWQTextArea and KWQTextField both rely on the fact that we use this particular
     // NSView display method. If you change this, be sure to update them as well.

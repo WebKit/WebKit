@@ -27,8 +27,12 @@
 #define QTEXTEDIT_H_
 
 #include "KWQSignal.h"
-#include "KWQPainter.h"
 #include "ScrollView.h"
+#include "TextDirection.h"
+
+namespace WebCore {
+    class Color;
+}
 
 class QTextEdit : public WebCore::ScrollView {
  public:
@@ -41,10 +45,10 @@ class QTextEdit : public WebCore::ScrollView {
         PlainText,
     } TextFormat;
 
-    QTextEdit(Widget *parent);
+    QTextEdit(WebCore::Widget* parent);
     ~QTextEdit();
 
-    void setColors(const Color& background, const Color& foreground);
+    void setColors(const WebCore::Color& background, const WebCore::Color& foreground);
 
     void setAlignment(AlignmentFlags);
     void setLineHeight(int lineHeight);
@@ -62,9 +66,9 @@ class QTextEdit : public WebCore::ScrollView {
 
     bool hasSelectedText() const;
     
-    void setText(const DOM::DOMString&);
-    DOM::DOMString text() const;
-    DOM::DOMString textWithHardLineBreaks() const;
+    void setText(const WebCore::String&);
+    WebCore::String text() const;
+    WebCore::String textWithHardLineBreaks() const;
 
     void setTextFormat(TextFormat) { }
 
@@ -73,7 +77,7 @@ class QTextEdit : public WebCore::ScrollView {
 
     void setScrollBarModes(WebCore::ScrollBarMode hMode, WebCore::ScrollBarMode vMode);
 
-    void setWritingDirection(QPainter::TextDirection);
+    void setWritingDirection(WebCore::TextDirection);
 
     int selectionStart();
     int selectionEnd();

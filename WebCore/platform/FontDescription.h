@@ -24,6 +24,8 @@
 #ifndef FONT_DESCRIPTION_H
 #define FONT_DESCRIPTION_H
 
+#include "FontFamily.h"
+
 namespace WebCore {
 
 const unsigned cNormalWeight = 50;

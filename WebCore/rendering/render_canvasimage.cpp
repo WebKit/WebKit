@@ -31,6 +31,7 @@
 #if __APPLE__
 
 #include "DocumentImpl.h"
+#include "GraphicsContext.h"
 #include "html_canvasimpl.h"
 #include "htmlnames.h"
 
@@ -130,7 +131,7 @@ void RenderCanvasImage::paint(PaintInfo& i, int _tx, int _ty)
     if (shouldPaintBackgroundOrBorder() && i.phase != PaintActionOutline) 
         paintBoxDecorations(i, x, y);
 
-    QPainter* p = i.p;
+    GraphicsContext* p = i.p;
     if (p->paintingDisabled())
         return;
     
@@ -171,12 +172,12 @@ void RenderCanvasImage::paint(PaintInfo& i, int _tx, int _ty)
         HTMLCanvasElementImpl* i = (element() && element()->hasTagName(canvasTag)) ? static_cast<HTMLCanvasElementImpl*>(element()) : 0;
         int oldOperation = 0;
         if (i) {
-            oldOperation = QPainter::getCompositeOperation(p->currentContext());
-            QPainter::setCompositeOperation(p->currentContext(), i->compositeOperator());
+            oldOperation = GraphicsContext::getCompositeOperation(GraphicsContext::currentCGContext());
+            GraphicsContext::setCompositeOperation(GraphicsContext::currentCGContext(), i->compositeOperator());
         }
-        CGContextDrawImage(p->currentContext(), CGRectMake(x, y, cWidth, cHeight), drawnImage());
+        CGContextDrawImage(GraphicsContext::currentCGContext(), CGRectMake(x, y, cWidth, cHeight), drawnImage());
         if (i)
-            QPainter::setCompositeOperation (p->currentContext(), oldOperation);
+            GraphicsContext::setCompositeOperation(GraphicsContext::currentCGContext(), oldOperation);
     }
 
     if (drawSelectionTint)

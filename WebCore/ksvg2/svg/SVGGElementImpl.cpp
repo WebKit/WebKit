@@ -48,7 +48,7 @@ void SVGGElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 
 RenderObject *SVGGElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
 {
-    return QPainter::renderingDevice()->createContainer(arena, style, this);
+    return renderingDevice()->createContainer(arena, style, this);
 }
 
 // Helper class for <use> support

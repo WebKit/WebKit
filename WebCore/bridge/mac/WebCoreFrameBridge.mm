@@ -32,6 +32,7 @@
 #import "DocumentTypeImpl.h"
 #import "FrameTree.h"
 #import "FrameView.h"
+#import "GraphicsContext.h"
 #import "HTMLFormElementImpl.h"
 #import "HTMLInputElementImpl.h"
 #import "KWQAccObjectCache.h"
@@ -1011,19 +1012,13 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
     m_frame->sendScrollEvent();
 }
 
-- (void)drawRect:(NSRect)rect withPainter:(QPainter *)p
-{
-    [self _setupRootForPrinting:YES];
-    m_frame->paint(p, enclosingIntRect(rect));
-    [self _setupRootForPrinting:NO];
-}
-
 - (void)drawRect:(NSRect)rect
 {
-    QPainter painter(nowPrinting(self));
-    bool displaysWithFocusAttributes = m_frame->displaysWithFocusAttributes();
-    painter.setUsesInactiveTextBackgroundColor(!displaysWithFocusAttributes);
-    [self drawRect:rect withPainter:&painter];
+    GraphicsContext context(nowPrinting(self));
+    context.setUsesInactiveTextBackgroundColor(!m_frame->displaysWithFocusAttributes());
+    [self _setupRootForPrinting:YES];
+    m_frame->paint(&context, enclosingIntRect(rect));
+    [self _setupRootForPrinting:NO];
 }
 
 // Used by pagination code called from AppKit when a standalone web page is printed.

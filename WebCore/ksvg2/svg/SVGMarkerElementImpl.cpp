@@ -147,7 +147,7 @@ void SVGMarkerElementImpl::setOrientToAngle(SVGAngleImpl *angle)
 KCanvasMarker *SVGMarkerElementImpl::canvasResource()
 {
     if(!m_marker)
-        m_marker = static_cast<KCanvasMarker *>(QPainter::renderingDevice()->createResource(RS_MARKER));
+        m_marker = static_cast<KCanvasMarker *>(renderingDevice()->createResource(RS_MARKER));
     
     m_marker->setMarker(renderer());
 
@@ -178,7 +178,7 @@ KCanvasMarker *SVGMarkerElementImpl::canvasResource()
 
 RenderObject *SVGMarkerElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
 {
-    KCanvasContainer *markerContainer = QPainter::renderingDevice()->createContainer(arena, style, this);
+    KCanvasContainer *markerContainer = renderingDevice()->createContainer(arena, style, this);
     markerContainer->setDrawsContents(false); // Marker contents will be explicitly drawn.
     return markerContainer;
 }

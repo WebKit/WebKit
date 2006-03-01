@@ -44,23 +44,23 @@
 #include "config.h"
 #include "render_layer.h"
 
-#include <assert.h>
-#include "FrameView.h"
-#include "render_canvas.h"
-#include "render_arena.h"
-#include "render_theme.h"
 #include "DocumentImpl.h"
-#include "dom2_eventsimpl.h"
 #include "EventNames.h"
-#include "html/html_blockimpl.h"
+#include "FrameView.h"
+#include "GraphicsContext.h"
+#include "dom2_eventsimpl.h"
+#include "html_blockimpl.h"
 #include "htmlnames.h"
+#include "render_arena.h"
+#include "render_canvas.h"
+#include "render_theme.h"
+#include <assert.h>
+#include <kxmlcore/Vector.h>
+#include <qscrollbar.h>
 
 #if SVG_SUPPORT
 #include "SVGNames.h"
 #endif
-
-#include <qscrollbar.h>
-#include <kxmlcore/Vector.h>
 
 // These match the numbers we use over in WebKit (WebFrameView.m).
 #define LINE_STEP   40
@@ -337,7 +337,7 @@ RenderLayer::transparentAncestor()
     return curr;
 }
 
-void RenderLayer::beginTransparencyLayers(QPainter* p)
+void RenderLayer::beginTransparencyLayers(GraphicsContext* p)
 {
     if (isTransparent() && m_usedTransparency)
         return;
@@ -946,7 +946,7 @@ RenderLayer::updateScrollInfoAfterLayout()
 }
 
 void
-RenderLayer::paintScrollbars(QPainter* p, const IntRect& damageRect)
+RenderLayer::paintScrollbars(GraphicsContext* p, const IntRect& damageRect)
 {
     // Move the widgets if necessary.  We normally move and resize widgets during layout, but sometimes
     // widgets can move without layout occurring (most notably when you scroll a document that
@@ -988,23 +988,20 @@ bool RenderLayer::scroll(KWQScrollDirection direction, KWQScrollGranularity gran
 }
 
 void
-RenderLayer::paint(QPainter *p, const IntRect& damageRect, bool selectionOnly, RenderObject *paintingRoot)
+RenderLayer::paint(GraphicsContext* p, const IntRect& damageRect, bool selectionOnly, RenderObject *paintingRoot)
 {
     paintLayer(this, p, damageRect, false, selectionOnly, paintingRoot);
 }
 
-static void setClip(QPainter* p, const IntRect& paintDirtyRect, const IntRect& clipRect)
+static void setClip(GraphicsContext* p, const IntRect& paintDirtyRect, const IntRect& clipRect)
 {
     if (paintDirtyRect == clipRect)
         return;
-
     p->save();
-    
     p->addClip(clipRect);
-    
 }
 
-static void restoreClip(QPainter* p, const IntRect& paintDirtyRect, const IntRect& clipRect)
+static void restoreClip(GraphicsContext* p, const IntRect& paintDirtyRect, const IntRect& clipRect)
 {
     if (paintDirtyRect == clipRect)
         return;
@@ -1012,7 +1009,7 @@ static void restoreClip(QPainter* p, const IntRect& paintDirtyRect, const IntRec
 }
 
 void
-RenderLayer::paintLayer(RenderLayer* rootLayer, QPainter *p,
+RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
                         const IntRect& paintDirtyRect, bool haveTransparency, bool selectionOnly,
                         RenderObject *paintingRoot)
 {
@@ -1561,7 +1558,7 @@ EMarqueeDirection Marquee::direction() const
     // FIXME: Support the CSS3 "auto" value for determining the direction of the marquee.
     // For now just map MAUTO to MBACKWARD
     EMarqueeDirection result = m_layer->renderer()->style()->marqueeDirection();
-    EDirection dir =  m_layer->renderer()->style()->direction();
+    TextDirection dir = m_layer->renderer()->style()->direction();
     if (result == MAUTO)
         result = MBACKWARD;
     if (result == MFORWARD)

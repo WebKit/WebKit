@@ -68,7 +68,7 @@ void SVGFEFloodElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 KCanvasFEFlood *SVGFEFloodElementImpl::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<KCanvasFEFlood *>(QPainter::renderingDevice()->createFilterEffect(FE_FLOOD));
+        m_filterEffect = static_cast<KCanvasFEFlood *>(renderingDevice()->createFilterEffect(FE_FLOOD));
     if (!m_filterEffect)
         return 0;
     m_filterEffect->setIn(DOMString(in1()->baseVal()).qstring());

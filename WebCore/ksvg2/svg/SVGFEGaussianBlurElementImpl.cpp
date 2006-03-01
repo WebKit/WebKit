@@ -95,7 +95,7 @@ void SVGFEGaussianBlurElementImpl::parseMappedAttribute(MappedAttributeImpl *att
 KCanvasFEGaussianBlur *SVGFEGaussianBlurElementImpl::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<KCanvasFEGaussianBlur *>(QPainter::renderingDevice()->createFilterEffect(FE_GAUSSIAN_BLUR));
+        m_filterEffect = static_cast<KCanvasFEGaussianBlur *>(renderingDevice()->createFilterEffect(FE_GAUSSIAN_BLUR));
     if (!m_filterEffect)
         return 0;
     m_filterEffect->setIn(DOMString(in1()->baseVal()).qstring());

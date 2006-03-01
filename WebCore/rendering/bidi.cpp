@@ -279,9 +279,10 @@ static inline RenderObject* bidiNext(RenderBlock* block, RenderObject* current, 
             if (next && bidi.adjustEmbedding && next->isInlineFlow()) {
                 EUnicodeBidi ub = next->style()->unicodeBidi();
                 if (ub != UBNormal) {
-                    EDirection dir = next->style()->direction();
-                    QChar::Direction d = (ub == Embed ? (dir == RTL ? QChar::DirRLE : QChar::DirLRE)
-                                            : (dir == RTL ? QChar::DirRLO : QChar::DirLRO));
+                    TextDirection dir = next->style()->direction();
+                    QChar::Direction d = (ub == Embed
+                        ? (dir == RTL ? QChar::DirRLE : QChar::DirLRE)
+                        : (dir == RTL ? QChar::DirRLO : QChar::DirLRO));
                     embed(d, bidi);
                 }
             }
@@ -304,9 +305,10 @@ static inline RenderObject* bidiNext(RenderBlock* block, RenderObject* current, 
                     if (bidi.adjustEmbedding && next->isInlineFlow()) {
                         EUnicodeBidi ub = next->style()->unicodeBidi();
                         if (ub != UBNormal) {
-                            EDirection dir = next->style()->direction();
-                            QChar::Direction d = (ub == Embed ? (dir == RTL ? QChar::DirRLE : QChar::DirLRE)
-                                                    : (dir == RTL ? QChar::DirRLO : QChar::DirLRO));
+                            TextDirection dir = next->style()->direction();
+                            QChar::Direction d = (ub == Embed
+                                ? (dir == RTL ? QChar::DirRLE : QChar::DirLRE)
+                                : (dir == RTL ? QChar::DirRLO : QChar::DirLRO));
                             embed(d, bidi);
                         }
                     }
@@ -345,9 +347,10 @@ static RenderObject* bidiFirst(RenderBlock* block, BidiState& bidi, bool skipInl
         if (bidi.adjustEmbedding) {
             EUnicodeBidi ub = o->style()->unicodeBidi();
             if (ub != UBNormal) {
-                EDirection dir = o->style()->direction();
-                QChar::Direction d = (ub == Embed ? (dir == RTL ? QChar::DirRLE : QChar::DirLRE)
-                                        : (dir == RTL ? QChar::DirRLO : QChar::DirLRO));
+                TextDirection dir = o->style()->direction();
+                QChar::Direction d = (ub == Embed
+                    ? (dir == RTL ? QChar::DirRLE : QChar::DirLRE)
+                    : (dir == RTL ? QChar::DirRLO : QChar::DirLRO));
                 embed(d, bidi);
             }
         }
@@ -2114,7 +2117,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
             RenderText *t = static_cast<RenderText *>(o);
             int strlen = t->stringLength();
             int len = strlen - pos;
-            QChar *str = t->text();
+            const QChar* str = t->text();
 
             const Font *f = t->font(m_firstLine);
             // proportional font, needs a bit more work.

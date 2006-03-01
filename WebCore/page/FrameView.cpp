@@ -30,6 +30,7 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "HTMLInputElementImpl.h"
+#include "Image.h"
 #include "KWQAccObjectCache.h"
 #include "KeyEvent.h"
 #include "MouseEvent.h"
@@ -50,7 +51,6 @@
 #include "render_line.h"
 #include "render_replaced.h"
 #include "render_style.h"
-#include <qpainter.h>
 
 namespace WebCore {
 

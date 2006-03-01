@@ -23,22 +23,21 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-#include <kdom/core/AttrImpl.h>
-
-#include <kcanvas/KCanvas.h>
-#include <kcanvas/KCanvasPath.h>
-#include <kcanvas/KCanvasImage.h>
-#include <kcanvas/KCanvasContainer.h>
-#include <kcanvas/device/KRenderingDevice.h>
-#include "cssstyleselector.h"
-
-#include "ksvg.h"
-#include "SVGNames.h"
-#include "SVGHelper.h"
-#include "SVGRenderStyle.h"
 #include "SVGMaskElementImpl.h"
-#include "SVGAnimatedLengthImpl.h"
 
+#include "GraphicsContext.h"
+#include "KCanvasContainer.h"
+#include "KCanvasImage.h"
+#include "KCanvasPath.h"
+#include "KRenderingDevice.h"
+#include "SVGAnimatedLengthImpl.h"
+#include "SVGHelper.h"
+#include "SVGNames.h"
+#include "SVGRenderStyle.h"
+#include "cssstyleselector.h"
+#include "ksvg.h"
+#include <kcanvas/KCanvas.h>
+#include <kdom/core/AttrImpl.h>
 
 namespace WebCore {
 
@@ -111,7 +110,7 @@ void SVGMaskElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 
 KCanvasImage *SVGMaskElementImpl::drawMaskerContent()
 {
-    KRenderingDevice *device = QPainter::renderingDevice();
+    KRenderingDevice *device = renderingDevice();
     if (!device->currentContext()) // FIXME: hack for now until Image::lockFocus exists
         return 0;
     if (!renderer())
@@ -125,7 +124,7 @@ KCanvasImage *SVGMaskElementImpl::drawMaskerContent()
     device->pushContext(patternContext);
 
     KCanvasContainer *maskContainer = static_cast<KCanvasContainer *>(renderer());
-    QPainter p;
+    GraphicsContext p;
     RenderObject::PaintInfo info(&p, IntRect(), PaintActionForeground, 0);
     maskContainer->setDrawsContents(true);
     maskContainer->paint(info, 0, 0);
@@ -139,7 +138,7 @@ KCanvasImage *SVGMaskElementImpl::drawMaskerContent()
 
 RenderObject *SVGMaskElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
 {
-    KCanvasContainer *maskContainer = QPainter::renderingDevice()->createContainer(arena, style, this);
+    KCanvasContainer *maskContainer = renderingDevice()->createContainer(arena, style, this);
     maskContainer->setDrawsContents(false);
     return maskContainer;
 }
@@ -147,7 +146,7 @@ RenderObject *SVGMaskElementImpl::createRenderer(RenderArena *arena, RenderStyle
 KCanvasMasker *SVGMaskElementImpl::canvasResource()
 {
     if (!m_masker) {
-        m_masker = static_cast<KCanvasMasker *>(QPainter::renderingDevice()->createResource(RS_MASKER));
+        m_masker = static_cast<KCanvasMasker *>(renderingDevice()->createResource(RS_MASKER));
         m_dirty = true;
     }
     if (m_dirty) {

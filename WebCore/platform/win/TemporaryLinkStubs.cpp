@@ -13,7 +13,7 @@
 #include "IntPoint.h"
 #include "Widget.h"
 #include "KWQFontMetrics.h"
-#include "KWQPainter.h"
+#include "GraphicsContext.h"
 #include "KWQSlider.h"
 #include "Cursor.h"
 #include "loader.h"
@@ -41,38 +41,38 @@ using namespace WebCore;
 static void notImplemented() { puts("Not yet implemented"); _CrtDbgBreak(); }
 
 void QLineEdit::selectAll() { notImplemented(); }
-void QPainter::save() { notImplemented(); }
+void GraphicsContext::save() { notImplemented(); }
 void Widget::enableFlushDrawing() { notImplemented(); }
-void QPainter::drawHighlightForText(int,int,int,int,int,QChar const*,int,int,int,int,Color const&,QPainter::TextDirection,bool,int,int,bool) { notImplemented(); }
+void GraphicsContext::drawHighlightForText(int,int,int,int,int,QChar const*,int,int,int,int,Color const&,TextDirection,bool,int,int,bool) { notImplemented(); }
 String QTextEdit::textWithHardLineBreaks() const { notImplemented(); return String(); }
 IntPoint Widget::mapFromGlobal(IntPoint const&) const { notImplemented(); return IntPoint(); }
-void QPainter::addClip(IntRect const&) { notImplemented(); }
+void GraphicsContext::addClip(IntRect const&) { notImplemented(); }
 int QLineEdit::cursorPosition() const { notImplemented(); return 0; }
-void QPainter::setPen(Pen::PenStyle) { notImplemented(); }
-Color QPainter::selectedTextBackgroundColor() const { notImplemented(); return Color(); }
-QFontMetrics QPainter::fontMetrics() const { notImplemented(); return QFontMetrics(); }
+void GraphicsContext::setPen(Pen::PenStyle) { notImplemented(); }
+Color GraphicsContext::selectedTextBackgroundColor() const { notImplemented(); return Color(); }
+QFontMetrics GraphicsContext::fontMetrics() const { notImplemented(); return QFontMetrics(); }
 void QSlider::setValue(double) { notImplemented(); }
 void QLineEdit::addSearchResult() { notImplemented(); }
 void KWQFileButton::click(bool) { notImplemented(); }
-void QLineEdit::setWritingDirection(QPainter::TextDirection) { notImplemented(); }
-void QPainter::drawFocusRing(Color const&) { notImplemented(); }
+void QLineEdit::setWritingDirection(TextDirection) { notImplemented(); }
+void GraphicsContext::drawFocusRing(Color const&) { notImplemented(); }
 IntSize KWQFileButton::sizeForCharacterWidth(int) const { notImplemented(); return IntSize(); }
 IntSize QTextEdit::sizeWithColumnsAndRows(int,int) const { notImplemented(); return IntSize(); }
 void QComboBox::clear() { notImplemented(); }
-int QPainter::misspellingLineThickness() const { notImplemented(); return 0; }
+int GraphicsContext::misspellingLineThickness() const { notImplemented(); return 0; }
 void QComboBox::setFrameGeometry(IntRect const&) { notImplemented(); }
 int QLineEdit::maxLength() const { notImplemented(); return 0; }
 bool Widget::isEnabled() const { notImplemented(); return 0; }
 bool KWQServeRequest(Loader*,DocLoader*,WebCore::TransferJob*) { notImplemented(); return 0; }
 void QTextEdit::setText(String const&) { notImplemented(); }
-void Widget::paint(QPainter*,IntRect const&) { notImplemented(); }
-void QPainter::addRoundedRectClip(IntRect const&,IntSize const&,IntSize const&,IntSize const&,IntSize const&) { notImplemented(); }
+void Widget::paint(GraphicsContext*,IntRect const&) { notImplemented(); }
+void GraphicsContext::addRoundedRectClip(IntRect const&,IntSize const&,IntSize const&,IntSize const&,IntSize const&) { notImplemented(); }
 IntPoint FrameView::viewportToGlobal(IntPoint const&) const { notImplemented(); return IntPoint(); }
 int QTextEdit::selectionEnd() { notImplemented(); return 0; }
 void QFont::determinePitch() const { notImplemented(); }
 void QTextEdit::setScrollBarModes(ScrollBarMode,ScrollBarMode) { notImplemented(); }
-void QPainter::drawEllipse(int,int,int,int) { notImplemented(); }
-void QPainter::setPen(unsigned int) { notImplemented(); }
+void GraphicsContext::drawEllipse(int,int,int,int) { notImplemented(); }
+void GraphicsContext::setPen(unsigned int) { notImplemented(); }
 void QTextEdit::setReadOnly(bool) { notImplemented(); }
 void QListBox::appendItem(QString const&,KWQListBoxItemType,bool) { notImplemented(); }
 void QLineEdit::setPlaceholderString(String const&) { notImplemented(); }
@@ -80,13 +80,13 @@ Cursor::Cursor(Cursor const&) { notImplemented(); }
 Widget::FocusPolicy Widget::focusPolicy() const { notImplemented(); return NoFocus; }
 void ScrollView::removeChild(Widget*) { notImplemented(); }
 void QTextEdit::selectAll() { notImplemented(); }
-void QPainter::fillRect(int,int,int,int,Brush const&) { notImplemented(); }
-void QPainter::endTransparencyLayer() { notImplemented(); }
+void GraphicsContext::fillRect(int,int,int,int,Brush const&) { notImplemented(); }
+void GraphicsContext::endTransparencyLayer() { notImplemented(); }
 void ScrollView::addChild(Widget*,int,int) { notImplemented(); }
 void QTextEdit::setDisabled(bool) { notImplemented(); }
 bool QScrollBar::scroll(KWQScrollDirection,KWQScrollGranularity,float) { notImplemented(); return 0; }
 Widget::~Widget() { notImplemented(); }
-IntRect QPainter::xForm(IntRect const&) const { notImplemented(); return IntRect(); }
+IntRect GraphicsContext::xForm(IntRect const&) const { notImplemented(); return IntRect(); }
 IntSize QListBox::sizeForNumberOfLines(int) const { notImplemented(); return IntSize(); }
 int QLineEdit::selectionStart() const { notImplemented(); return 0; }
 QLineEdit::QLineEdit(QLineEdit::Type) { notImplemented(); }
@@ -102,37 +102,37 @@ int QTextEdit::selectionStart() { notImplemented(); return 0; }
 int ScrollView::scrollXOffset() const { notImplemented(); return 0; }
 bool QListBox::isSelected(int) const { notImplemented(); return 0; }
 void QLineEdit::setReadOnly(bool) { notImplemented(); }
-void QPainter::drawLineForText(int,int,int,int) { notImplemented(); }
-QPainter::QPainter() { notImplemented(); }
+void GraphicsContext::drawLineForText(int,int,int,int) { notImplemented(); }
+GraphicsContext::GraphicsContext() { notImplemented(); }
 QComboBox::~QComboBox() { notImplemented(); }
 Cursor::Cursor(Image*) { notImplemented(); }
 Widget::FocusPolicy QComboBox::focusPolicy() const { notImplemented(); return NoFocus; }
-void QPainter::drawImageAtPoint(Image*,IntPoint const&,Image::CompositeOperator) { notImplemented(); }
-void QPainter::clearShadow() { notImplemented(); }
-void QPainter::setPen(Pen const&) { notImplemented(); }
+void GraphicsContext::drawImageAtPoint(Image*,IntPoint const&,Image::CompositeOperator) { notImplemented(); }
+void GraphicsContext::clearShadow() { notImplemented(); }
+void GraphicsContext::setPen(Pen const&) { notImplemented(); }
 void QTextEdit::setLineHeight(int) { notImplemented(); }
 void QScrollBar::setKnobProportion(int,int) { notImplemented(); }
 KWQFileButton::KWQFileButton(Frame*) { notImplemented(); }
 IntRect QFontMetrics::boundingRect(int,int,int,int,int,QString const&,int,int) const { notImplemented(); return IntRect(); }
 void QTextEdit::setSelectionStart(int) { notImplemented(); }
-void QPainter::beginTransparencyLayer(float) { notImplemented(); }
+void GraphicsContext::beginTransparencyLayer(float) { notImplemented(); }
 void QComboBox::setFont(QFont const&) { notImplemented(); }
 IntRect Widget::frameGeometry() const { notImplemented(); return IntRect(); }
 void QListBox::setSelected(int,bool) { notImplemented(); }
-void QPainter::addFocusRingRect(int,int,int,int) { notImplemented(); }
+void GraphicsContext::addFocusRingRect(int,int,int,int) { notImplemented(); }
 void QTextEdit::setCursorPosition(int,int) { notImplemented(); }
-void QPainter::restore() { notImplemented(); }
+void GraphicsContext::restore() { notImplemented(); }
 int QFontMetrics::width(QString const&,int,int,int) const { notImplemented(); return 0; }
 void Widget::setEnabled(bool) { notImplemented(); }
 void QTextEdit::setSelectionEnd(int) { notImplemented(); }
 void QComboBox::populate() { notImplemented(); }
 static QFont localFont;
-QFont const& QPainter::font() const { notImplemented(); return localFont; }
+QFont const& GraphicsContext::font() const { notImplemented(); return localFont; }
 void QTextEdit::setAlignment(Qt::AlignmentFlags) { notImplemented(); }
 void QLineEdit::setCursorPosition(int) { notImplemented(); }
-void QPainter::drawText(int,int,int,int,int,int,int,QString const&) { notImplemented(); }
+void GraphicsContext::drawText(int,int,int,int,int,int,int,QString const&) { notImplemented(); }
 static Pen localPen;
-Pen const& QPainter::pen() const { notImplemented(); return localPen; }
+Pen const& GraphicsContext::pen() const { notImplemented(); return localPen; }
 KJavaAppletWidget::KJavaAppletWidget(IntSize const&,Frame*,KXMLCore::HashMap<String,String> const&) { notImplemented(); }
 QListBox::QListBox() { notImplemented(); }
 QString QLineEdit::selectedText() const { notImplemented(); return QString(); }
@@ -140,16 +140,16 @@ void Widget::setIsSelected(bool) { notImplemented(); }
 String QLineEdit::text() const { notImplemented(); return String(); }
 void Widget::unlockDrawingFocus() { notImplemented(); }
 void QLineEdit::setLiveSearch(bool) { notImplemented(); }
-bool QPainter::paintingDisabled() const { notImplemented(); return 0; }
+bool GraphicsContext::paintingDisabled() const { notImplemented(); return 0; }
 QComboBox::QComboBox() { notImplemented(); }
-void QPainter::drawConvexPolygon(IntPointArray const&) { notImplemented(); }
+void GraphicsContext::drawConvexPolygon(IntPointArray const&) { notImplemented(); }
 void Widget::setFont(QFont const&) { notImplemented(); }
 void QSlider::setMaxValue(double) { notImplemented(); }
 void Widget::lockDrawingFocus() { notImplemented(); }
-void QPainter::drawLine(int,int,int,int) { notImplemented(); }
-void QPainter::setBrush(Brush::BrushStyle) { notImplemented(); }
+void GraphicsContext::drawLine(int,int,int,int) { notImplemented(); }
+void GraphicsContext::setBrush(Brush::BrushStyle) { notImplemented(); }
 void QTextEdit::setSelectionRange(int,int) { notImplemented(); }
-void QPainter::drawText(int,int,int,int,QChar const*,int,int,int,int,Color const&,QPainter::TextDirection,bool,int,int,bool) { notImplemented(); }
+void GraphicsContext::drawText(int,int,int,int,QChar const*,int,int,int,int,Color const&,TextDirection,bool,int,int,bool) { notImplemented(); }
 void ScrollView::scrollPointRecursively(int,int) { notImplemented(); }
 IntSize QLineEdit::sizeForCharacterWidth(int) const { notImplemented(); return IntSize(); }
 IntRect QFontMetrics::selectionRectForText(int,int,int,int,int,QChar const*,int,int,int,int,bool,bool,int,int,bool) const { notImplemented(); return IntRect(); }
@@ -162,43 +162,43 @@ void Widget::setCursor(Cursor const&) { notImplemented(); }
 void QLineEdit::setAutoSaveName(String const&) { notImplemented(); }
 int QComboBox::baselinePosition(int) const { notImplemented(); return 0; }
 void QComboBox::appendItem(QString const&,KWQListBoxItemType,bool) { notImplemented(); }
-void QPainter::setShadow(int,int,int,Color const&) { notImplemented(); }
-void QTextEdit::setWritingDirection(QPainter::TextDirection) { notImplemented(); }
+void GraphicsContext::setShadow(int,int,int,Color const&) { notImplemented(); }
+void QTextEdit::setWritingDirection(GraphicsContext::TextDirection) { notImplemented(); }
 void Widget::setDrawingAlpha(float) { notImplemented(); }
 QSlider::QSlider() { notImplemented(); }
-void QPainter::drawScaledAndTiledImage(Image*,int,int,int,int,int,int,int,int,Image::TileRule,Image::TileRule,void*) { notImplemented(); }
+void GraphicsContext::drawScaledAndTiledImage(Image*,int,int,int,int,int,int,int,int,Image::TileRule,Image::TileRule,void*) { notImplemented(); }
 int ScrollView::scrollYOffset() const { notImplemented(); return 0; }
-void QPainter::drawImage(Image*,int,int,int,int,int,int,int,int,Image::CompositeOperator,void*) { notImplemented(); }
-void QPainter::setBrush(Brush const&) { notImplemented(); }
+void GraphicsContext::drawImage(Image*,int,int,int,int,int,int,int,int,Image::CompositeOperator,void*) { notImplemented(); }
+void GraphicsContext::setBrush(Brush const&) { notImplemented(); }
 void QComboBox::setCurrentItem(int) { notImplemented(); }
-void QComboBox::setWritingDirection(QPainter::TextDirection) { notImplemented(); }
+void QComboBox::setWritingDirection(TextDirection) { notImplemented(); }
 IntSize QComboBox::sizeHint() const { notImplemented(); return IntSize(); }
-void QPainter::drawRect(int,int,int,int) { notImplemented(); }
+void GraphicsContext::drawRect(int,int,int,int) { notImplemented(); }
 void Widget::setFrameGeometry(IntRect const&) { notImplemented(); }
 void QLineEdit::setSelection(int,int) { notImplemented(); }
 void QLineEdit::setMaxResults(int) { notImplemented(); }
 void QListBox::clear() { notImplemented(); }
 bool QLineEdit::edited() const { notImplemented(); return 0; }
-void QPainter::drawTiledImage(Image*,int,int,int,int,int,int,void*) { notImplemented(); }
-void QPainter::clearFocusRing() { notImplemented(); }
+void GraphicsContext::drawTiledImage(Image*,int,int,int,int,int,int,void*) { notImplemented(); }
+void GraphicsContext::clearFocusRing() { notImplemented(); }
 bool QFont::operator==(QFont const&) const { notImplemented(); return 0; }
 String QTextEdit::text() const { notImplemented(); return String(); }
-void QPainter::drawImageInRect(Image*,IntRect const&,Image::CompositeOperator) { notImplemented(); }
-void QPainter::setFont(QFont const&) { notImplemented(); }
+void GraphicsContext::drawImageInRect(Image*,IntRect const&,Image::CompositeOperator) { notImplemented(); }
+void GraphicsContext::setFont(QFont const&) { notImplemented(); }
 void Widget::disableFlushDrawing() { notImplemented(); }
-void QPainter::initFocusRing(int,int) { notImplemented(); }
+void GraphicsContext::initFocusRing(int,int) { notImplemented(); }
 void QSlider::setMinValue(double) { notImplemented(); }
 void QTextEdit::setWordWrap(QTextEdit::WrapStyle) { notImplemented(); }
-void QPainter::drawLineForMisspelling(int,int,int) { notImplemented(); }
+void GraphicsContext::drawLineForMisspelling(int,int,int) { notImplemented(); }
 void QLineEdit::setText(String const&) { notImplemented(); }
 double QSlider::value() const { notImplemented(); return 0; }
-void QPainter::setBrush(unsigned int) { notImplemented(); }
+void GraphicsContext::setBrush(unsigned int) { notImplemented(); }
 void QListBox::setSelectionMode(QListBox::SelectionMode) { notImplemented(); }
 void KWQFileButton::setFilename(QString const&) { notImplemented(); }
 QFontMetrics::QFontMetrics(QFont const&) { notImplemented(); }
 void QLineEdit::setEdited(bool) { notImplemented(); }
 IntRect QComboBox::frameGeometry() const { notImplemented(); return IntRect(); }
-void QListBox::setWritingDirection(QPainter::TextDirection) { notImplemented(); }
+void QListBox::setWritingDirection(TextDirection) { notImplemented(); }
 void QLineEdit::setAlignment(Qt::AlignmentFlags) { notImplemented(); }
 WebCore::Widget::FocusPolicy KWQFileButton::focusPolicy() const { notImplemented(); return NoFocus; }
 void QListBox::setFont(QFont const&) { notImplemented(); }
@@ -263,10 +263,10 @@ int KWQFindNextWordFromIndex(QChar const*,int,int,bool) { notImplemented(); retu
 void KWQFindWordBoundary(QChar const*,int,int,int*,int*) { notImplemented(); }
 bool KWQKCookieJar::cookieEnabled() { notImplemented(); return false; }
 void WebCore::Widget::setFocus() { notImplemented(); }
-void WebCore::QPainter::setPaintingDisabled(bool) { notImplemented(); }
-void WebCore::QPainter::fillRect(WebCore::IntRect const&,WebCore::Brush const&) { notImplemented(); }
-WebCore::QPainter::~QPainter() { notImplemented(); }
-WebCore::QPainter::QPainter(bool) { notImplemented(); }
+void WebCore::GraphicsContext::setPaintingDisabled(bool) { notImplemented(); }
+void WebCore::GraphicsContext::fillRect(WebCore::IntRect const&,WebCore::Brush const&) { notImplemented(); }
+WebCore::GraphicsContext::~GraphicsContext() { notImplemented(); }
+WebCore::GraphicsContext::GraphicsContext(bool) { notImplemented(); }
 void WebCore::ScrollView::viewportToContents(int,int,int&,int&) { notImplemented(); }
 void WebCore::TransferJob::kill() { notImplemented(); }
 void WebCore::TransferJob::addMetaData(KXMLCore::HashMap<WebCore::String,WebCore::String> const&) { notImplemented(); }

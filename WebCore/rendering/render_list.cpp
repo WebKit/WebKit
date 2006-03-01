@@ -25,25 +25,22 @@
 
 #include "config.h"
 #include "render_list.h"
-#include "rendering/render_canvas.h"
+
+#include "GraphicsContext.h"
+#include "render_canvas.h"
 
 #include "DocumentImpl.h"
 #include "CachedImage.h"
 
 #include "htmlnames.h"
 #include "html_listimpl.h"
-
-#include <qpainter.h>
-#include "Pen.h"
-
 #include "helper.h"
 
 //#define BOX_DEBUG
 
-using namespace DOM::HTMLNames;
-using namespace khtml;
+namespace WebCore {
 
-using DOM::DocumentImpl;
+using namespace HTMLNames;
 
 const int cMarkerPadding = 7;
 
@@ -397,7 +394,7 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
     if (shouldPaintBackgroundOrBorder()) 
         paintBoxDecorations(i, box.x(), box.y());
 
-    QPainter* p = i.p;
+    GraphicsContext* p = i.p;
     p->setFont(style()->font());
     const QFontMetrics fm = p->fontMetrics();
 
@@ -690,4 +687,4 @@ IntRect RenderListMarker::getRelativeMarkerRect()
     }
 }
 
-#undef BOX_DEBUG
+}

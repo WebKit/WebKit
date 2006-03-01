@@ -59,7 +59,6 @@ class FloatPoint;
 class FloatRect;
 class IntRect;
 class IntSize;
-class QPainter;
 
 template <typename T> class Timer;
 

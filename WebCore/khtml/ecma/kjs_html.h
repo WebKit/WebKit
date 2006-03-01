@@ -412,7 +412,7 @@ private:
     void restore();
 
 #if __APPLE__
-    // FIXME: Macintosh specific, and should be abstracted by KWQ in QPainter.
+    // FIXME: Macintosh specific, and should be abstracted by GraphicsContext.
     CGContextRef drawingContext();
     CGAffineTransform _lastFillImagePatternCTM;
     CGAffineTransform _lastStrokeImagePatternCTM;
@@ -444,7 +444,7 @@ private:
   };
 
 #if __APPLE__
-    // FIXME: Macintosh specific, and should be abstracted by KWQ in QPainter.
+    // FIXME: Macintosh specific, and should be abstracted by GraphicsContext.
     CGColorRef colorRefFromValue(ExecState *exec, JSValue *value);
 #endif
 
@@ -483,7 +483,7 @@ private:
     };
 
 #if __APPLE__
-    // FIXME: Macintosh specific, and should be abstracted by KWQ in QPainter.
+    // FIXME: Macintosh specific, and should be abstracted by GraphicsContext.
     CGShadingRef getShading();
 #endif
 
@@ -500,7 +500,7 @@ private:
     float _x0, _y0, _r0, _x1, _y1, _r1;
 
 #if __APPLE__
-    // FIXME: Macintosh specific, and should be abstracted by KWQ in QPainter.
+    // FIXME: Macintosh specific, and should be abstracted by GraphicsContext.
     CGShadingRef _shadingRef;
 #endif
 
@@ -526,7 +526,7 @@ private:
     static const ClassInfo info;
 
 #if __APPLE__
-    // FIXME: Macintosh specific, and should be abstracted by KWQ in QPainter.
+    // FIXME: Macintosh specific, and should be abstracted by GraphicsContext.
     CGPatternRef createPattern(CGAffineTransform transform);
 #endif
 
@@ -540,7 +540,7 @@ private:
     float _rw, _rh;
     WebCore::CachedImage* m_cachedImage;
 #if __APPLE__
-    // FIXME: Macintosh specific, and should be abstracted by KWQ in QPainter.
+    // FIXME: Macintosh specific, and should be abstracted by GraphicsContext.
     CGRect _bounds;
 #endif
   };

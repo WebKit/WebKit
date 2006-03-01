@@ -64,7 +64,6 @@ class FrameView;
 class HTMLAreaElementImpl;
 class InlineBox;
 class InlineFlowBox;
-class QPainter;
 class Position;
 class RenderBlock;
 class RenderCanvas;
@@ -125,7 +124,7 @@ class RenderObject : public CachedObjectClient
 public:
     // Anonymous objects should pass the document as their node, and they will then automatically be
     // marked as anonymous in the constructor.
-    RenderObject(DOM::NodeImpl* node);
+    RenderObject(NodeImpl* node);
     virtual ~RenderObject();
 
     RenderObject *parent() const { return m_parent; }
@@ -221,7 +220,7 @@ public:
     static void showTree(const RenderObject *ro);
 #endif
 
-    static RenderObject *createObject(DOM::NodeImpl* node, RenderStyle* style);
+    static RenderObject *createObject(NodeImpl* node, RenderStyle* style);
 
     // Overloaded new operator.  Derived classes must override operator new
     // in order to allocate out of the RenderArena.
@@ -324,10 +323,10 @@ public:
     RenderCanvas* canvas() const;
 
     // don't even think about making this method virtual!
-    DOM::NodeImpl* element() const { return m_isAnonymous ? 0 : m_node; }
-    DOM::DocumentImpl* document() const { return m_node->getDocument(); }
-    void setNode(DOM::NodeImpl* node) { m_node = node; }
-    DOM::NodeImpl* node() const { return m_node; }
+    NodeImpl* element() const { return m_isAnonymous ? 0 : m_node; }
+    DocumentImpl* document() const { return m_node->getDocument(); }
+    void setNode(NodeImpl* node) { m_node = node; }
+    NodeImpl* node() const { return m_node; }
     
    /**
      * returns the object containing this one. can be different from parent for
@@ -398,25 +397,24 @@ public:
      * (tx|ty) is the calculated position of the parent
      */
     struct PaintInfo {
-        PaintInfo(QPainter* _p, const IntRect& _r, PaintAction _phase, RenderObject* _paintingRoot)
+        PaintInfo(GraphicsContext* _p, const IntRect& _r, PaintAction _phase, RenderObject* _paintingRoot)
             : p(_p), r(_r), phase(_phase), paintingRoot(_paintingRoot) {}
-        QPainter* p;
+        GraphicsContext* p;
         IntRect r;
         PaintAction phase;
         RenderObject* paintingRoot; // used to draw just one element and its visual kids
         RenderFlowSequencedSet outlineObjects; // used to list outlines that should be painted by a block with inline children
     };
-    virtual void paint(PaintInfo& i, int tx, int ty);
-    void paintBorder(QPainter *p, int _tx, int _ty, int w, int h, const RenderStyle* style, bool begin=true, bool end=true);
-    bool paintBorderImage(QPainter *p, int _tx, int _ty, int w, int h, const RenderStyle* style);
-    void paintOutline(QPainter *p, int _tx, int _ty, int w, int h, const RenderStyle* style);
+    virtual void paint(PaintInfo&, int tx, int ty);
+    void paintBorder(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle*, bool begin = true, bool end = true);
+    bool paintBorderImage(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle* style);
+    void paintOutline(GraphicsContext*, int tx, int ty, int w, int h, const RenderStyle* style);
 
     // RenderBox implements this.
-    virtual void paintBoxDecorations(PaintInfo& i, int _tx, int _ty) {};
+    virtual void paintBoxDecorations(PaintInfo&, int tx, int ty) {}
 
-    virtual void paintBackgroundExtended(QPainter *p, const Color& c, const BackgroundLayer* bgLayer, int clipy, int cliph,
-                                         int _tx, int _ty, int w, int height,
-                                         int bleft, int bright, int pleft, int pright) {};
+    virtual void paintBackgroundExtended(GraphicsContext*, const Color&, const BackgroundLayer*, int clipy, int cliph,
+        int tx, int ty, int w, int height, int bleft, int bright, int pleft, int pright) {}
 
     /*
      * This function calculates the minimum & maximum width that the object
@@ -482,27 +480,27 @@ public:
         friend class RenderInline;
         friend class RenderObject;
         friend class RenderFrameSet;
-        friend class DOM::HTMLAreaElementImpl;
+        friend class HTMLAreaElementImpl;
     public:
         NodeInfo(bool readonly, bool active, bool mouseMove = false)
             : m_innerNode(0), m_innerNonSharedNode(0), m_innerURLElement(0), m_readonly(readonly), m_active(active), m_mouseMove(mouseMove)
             { }
 
-        DOM::NodeImpl* innerNode() const { return m_innerNode; }
-        DOM::NodeImpl* innerNonSharedNode() const { return m_innerNonSharedNode; }
-        DOM::NodeImpl* URLElement() const { return m_innerURLElement; }
+        NodeImpl* innerNode() const { return m_innerNode; }
+        NodeImpl* innerNonSharedNode() const { return m_innerNonSharedNode; }
+        NodeImpl* URLElement() const { return m_innerURLElement; }
         bool readonly() const { return m_readonly; }
         bool active() const { return m_active; }
         bool mouseMove() const { return m_mouseMove; }
         
-        void setInnerNode(DOM::NodeImpl* n) { m_innerNode = n; }
-        void setInnerNonSharedNode(DOM::NodeImpl* n) { m_innerNonSharedNode = n; }
-        void setURLElement(DOM::NodeImpl* n) { m_innerURLElement = n; }
+        void setInnerNode(NodeImpl* n) { m_innerNode = n; }
+        void setInnerNonSharedNode(NodeImpl* n) { m_innerNonSharedNode = n; }
+        void setURLElement(NodeImpl* n) { m_innerURLElement = n; }
 
     private:
-        DOM::NodeImpl* m_innerNode;
-        DOM::NodeImpl* m_innerNonSharedNode;
-        DOM::NodeImpl* m_innerURLElement;
+        NodeImpl* m_innerNode;
+        NodeImpl* m_innerNonSharedNode;
+        NodeImpl* m_innerURLElement;
         bool m_readonly;
         bool m_active;
         bool m_mouseMove;
@@ -664,13 +662,13 @@ public:
 
     virtual QValueList<IntRect> lineBoxRects();
 
-    virtual void absoluteRects(QValueList<IntRect>& rects, int _tx, int _ty);
+    virtual void absoluteRects(QValueList<IntRect>& rects, int tx, int ty);
     IntRect absoluteBoundingBoxRect();
     
     // the rect that will be painted if this object is passed as the paintingRoot
     IntRect paintingRootRect(IntRect& topLevelRect);
 
-    virtual void addFocusRingRects(QPainter *painter, int _tx, int _ty);
+    virtual void addFocusRingRects(GraphicsContext*, int tx, int ty);
 
     virtual int minWidth() const { return 0; }
     virtual int maxWidth() const { return 0; }
@@ -686,9 +684,8 @@ public:
     enum BorderSide {
         BSTop, BSBottom, BSLeft, BSRight
     };
-    void drawBorder(QPainter *p, int x1, int y1, int x2, int y2, BorderSide s,
-                    Color c, const Color& textcolor, EBorderStyle style,
-                    int adjbw1, int adjbw2, bool invalidisInvert = false);
+    void drawBorder(GraphicsContext*, int x1, int y1, int x2, int y2, BorderSide,
+        Color, const Color& textcolor, EBorderStyle, int adjbw1, int adjbw2, bool invalidisInvert = false);
 
     virtual void setTable(RenderTable*) {};
 
@@ -778,7 +775,7 @@ public:
     bool shouldSelect() const;
     
     // Obtains the selection background color that should be used when painting a selection.
-    virtual Color selectionColor(QPainter *p) const;
+    virtual Color selectionColor(GraphicsContext*) const;
     
     // Whether or not a given block needs to paint selection gaps.
     virtual bool shouldPaintSelectionGaps() const { return false; }
@@ -797,7 +794,7 @@ public:
         SelectionInfo(RenderObject* o) :m_object(o), m_rect(o->selectionRect()), m_state(o->selectionState()) {}
     };
 
-    DOM::NodeImpl* draggableNode(bool dhtmlOK, bool uaOK, int x, int y, bool& dhtmlWillDrag) const;
+    NodeImpl* draggableNode(bool dhtmlOK, bool uaOK, int x, int y, bool& dhtmlWillDrag) const;
 
     /**
      * Returns the content coordinates of the caret within this render object.
@@ -860,25 +857,24 @@ public:
     }
     
 protected:
-
-    virtual void printBoxDecorations(QPainter* /*p*/, int /*_x*/, int /*_y*/,
-                                     int /*_w*/, int /*_h*/, int /*_tx*/, int /*_ty*/) {}
+    virtual void printBoxDecorations(GraphicsContext*, int /*x*/, int /*y*/,
+        int /*w*/, int /*h*/, int /*tx*/, int /*ty*/) {}
 
     virtual IntRect viewRect() const;
 
     void remove();
 
     void invalidateVerticalPositions();
-    short getVerticalPosition( bool firstLine ) const;
+    short getVerticalPosition(bool firstLine) const;
 
     virtual void removeLeftoverAnonymousBoxes();
     
-    void arenaDelete(RenderArena *arena, void *objectBase);
+    void arenaDelete(RenderArena*, void* objectBase);
 
 private:
     RenderStyle* m_style;
 
-    DOM::NodeImpl* m_node;
+    NodeImpl* m_node;
 
     RenderObject *m_parent;
     RenderObject *m_previous;

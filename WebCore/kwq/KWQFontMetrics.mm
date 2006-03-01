@@ -298,7 +298,7 @@ IntRect QFontMetrics::selectionRectForText(int x, int y, int h, int tabWidth, in
     return enclosingIntRect([data->getRenderer() selectionRectForRun:&run style:&style geometry:&geometry]);
 }
 
-int QFontMetrics::checkSelectionPoint(QChar *s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int letterSpacing, int wordSpacing, bool smallCaps, int x, bool reversed, bool dirOverride, bool includePartialGlyphs) const
+int QFontMetrics::checkSelectionPoint(const QChar *s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int letterSpacing, int wordSpacing, bool smallCaps, int x, bool reversed, bool dirOverride, bool includePartialGlyphs) const
 {
     if (!data) {
         LOG_ERROR("called checkSelectionPoint on an empty QFontMetrics");

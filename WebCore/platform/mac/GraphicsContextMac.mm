@@ -23,28 +23,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#import "KWQPainter.h"
+#import "config.h"
+#import "GraphicsContext.h"
 
-#import "Brush.h"
 #import "FloatRect.h"
 #import "FoundationExtras.h"
-#import "Image.h"
 #import "IntPointArray.h"
+#import "KRenderingDeviceQuartz.h"
 #import "KWQExceptions.h"
-#import "Font.h"
-#import "Pen.h"
 #import "WebCoreGraphicsBridge.h"
-#import "WebCoreImageRenderer.h"
 #import "WebCoreImageRendererFactory.h"
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
-#import <kxmlcore/Assertions.h>
-#import <kxmlcore/Vector.h>
 
-#if SVG_SUPPORT
-#import "kcanvas/device/quartz/KRenderingDeviceQuartz.h"
-#endif
+// FIXME: A lot more of this should use CoreGraphics instead of AppKit.
+// FIXME: A lot more of this should move into GraphicsContextCG.cpp.
 
 namespace WebCore {
 
@@ -52,20 +45,20 @@ namespace WebCore {
 // calls in this file are all exception-safe, so we don't block
 // exceptions for those.
 
-struct QPState {
-    QPState() : paintingDisabled(false) { }
+struct GraphicsContextState {
+    GraphicsContextState() : paintingDisabled(false) { }
     Font font;
     Pen pen;
-    WebCore::Brush brush;
+    Brush brush;
     bool paintingDisabled;
 };
 
-struct QPainterPrivate {
-    QPainterPrivate();
-    ~QPainterPrivate();
-    QPState state;
-    
-    Vector<QPState> stack;
+struct GraphicsContextPrivate {
+    GraphicsContextPrivate();
+    ~GraphicsContextPrivate();
+
+    GraphicsContextState state;    
+    Vector<GraphicsContextState> stack;
     id <WebCoreTextRenderer> textRenderer;
     Font textRendererFont;
     CGMutablePathRef focusRingPath;
@@ -76,159 +69,167 @@ struct QPainterPrivate {
 #endif
 };
 
-QPainterPrivate::QPainterPrivate()
+// A fillRect helper to work around the fact that NSRectFill uses copy mode, not source over.
+static inline void fillRectSourceOver(float x, float y, float w, float h, const Color& col)
+{
+    [nsColor(col) set];
+    NSRectFillUsingOperation(NSMakeRect(x, y, w, h), NSCompositeSourceOver);
+}
+
+
+GraphicsContextPrivate::GraphicsContextPrivate()
     : textRenderer(0), focusRingPath(0), focusRingWidth(0), focusRingOffset(0)
 {
 }
 
-QPainterPrivate::~QPainterPrivate()
+GraphicsContextPrivate::~GraphicsContextPrivate()
 {
     KWQRelease(textRenderer);
     CGPathRelease(focusRingPath);
 }
 
-static inline void _fillRectXX(float x, float y, float w, float h, const Color& col);
-QPainter::QPainter() : data(new QPainterPrivate), _isForPrinting(false), _usesInactiveTextBackgroundColor(false), _updatingControlTints(false)
+GraphicsContext::GraphicsContext()
+    : m_data(new GraphicsContextPrivate)
+    , m_isForPrinting(false)
+    , m_usesInactiveTextBackgroundColor(false)
+    , m_updatingControlTints(false)
 {
 }
 
-QPainter::QPainter(bool forPrinting) : data(new QPainterPrivate), _isForPrinting(forPrinting), 
-    _usesInactiveTextBackgroundColor(false), _updatingControlTints(false)
+GraphicsContext::GraphicsContext(bool forPrinting)
+    : m_data(new GraphicsContextPrivate)
+    , m_isForPrinting(forPrinting)
+    , m_usesInactiveTextBackgroundColor(false)
+    , m_updatingControlTints(false)
 {
 }
 
-QPainter::~QPainter()
+GraphicsContext::~GraphicsContext()
 {
-    delete data;
+    delete m_data;
 }
 
-const Font& QPainter::font() const
+const Font& GraphicsContext::font() const
 {
-    return data->state.font;
+    return m_data->state.font;
 }
 
-void QPainter::setFont(const Font& f)
+void GraphicsContext::setFont(const Font& aFont)
 {
-    data->state.font = f;
+    m_data->state.font = aFont;
 }
 
-QFontMetrics QPainter::fontMetrics() const
+QFontMetrics GraphicsContext::fontMetrics() const
 {
-    return data->state.font.fontMetrics();
+    return m_data->state.font.fontMetrics();
 }
 
-const Pen &QPainter::pen() const
+const Pen& GraphicsContext::pen() const
 {
-    return data->state.pen;
+    return m_data->state.pen;
 }
 
-void QPainter::setPen(const Pen &pen)
+void GraphicsContext::setPen(const Pen& pen)
 {
-    data->state.pen = pen;
+    m_data->state.pen = pen;
 }
 
-void QPainter::setPen(Pen::PenStyle style)
+void GraphicsContext::setPen(Pen::PenStyle style)
 {
-    data->state.pen.setStyle(style);
-    data->state.pen.setColor(Color::black);
-    data->state.pen.setWidth(0);
+    m_data->state.pen.setStyle(style);
+    m_data->state.pen.setColor(Color::black);
+    m_data->state.pen.setWidth(0);
 }
 
-void QPainter::setPen(RGBA32 rgb)
+void GraphicsContext::setPen(RGBA32 rgb)
 {
-    data->state.pen.setStyle(Pen::SolidLine);
-    data->state.pen.setColor(rgb);
-    data->state.pen.setWidth(0);
+    m_data->state.pen.setStyle(Pen::SolidLine);
+    m_data->state.pen.setColor(rgb);
+    m_data->state.pen.setWidth(0);
 }
 
-void QPainter::setBrush(const WebCore::Brush &brush)
+void GraphicsContext::setBrush(const Brush& brush)
 {
-    data->state.brush = brush;
+    m_data->state.brush = brush;
 }
 
-void QPainter::setBrush(WebCore::Brush::BrushStyle style)
+void GraphicsContext::setBrush(Brush::BrushStyle style)
 {
-    data->state.brush.setStyle(style);
-    data->state.brush.setColor(Color::black);
+    m_data->state.brush.setStyle(style);
+    m_data->state.brush.setColor(Color::black);
 }
 
-void QPainter::setBrush(RGBA32 rgb)
+void GraphicsContext::setBrush(RGBA32 rgb)
 {
-    data->state.brush.setStyle(WebCore::Brush::SolidPattern);
-    data->state.brush.setColor(rgb);
+    m_data->state.brush.setStyle(Brush::SolidPattern);
+    m_data->state.brush.setColor(rgb);
 }
 
-const WebCore::Brush& QPainter::brush() const
+const Brush& GraphicsContext::brush() const
 {
-    return data->state.brush;
+    return m_data->state.brush;
 }
 
-IntRect QPainter::xForm(const IntRect &aRect) const
+void GraphicsContext::save()
 {
-    // No difference between device and model coords, so the identity transform is ok.
-    return aRect;
-}
-
-void QPainter::save()
-{
-    if (data->state.paintingDisabled)
+    if (m_data->state.paintingDisabled)
         return;
 
-    data->stack.append(data->state);
+    m_data->stack.append(m_data->state);
 
     [NSGraphicsContext saveGraphicsState]; 
 }
 
-void QPainter::restore()
+void GraphicsContext::restore()
 {
-    if (data->state.paintingDisabled)
+    if (m_data->state.paintingDisabled)
         return;
 
-    if (data->stack.isEmpty()) {
-        LOG_ERROR("ERROR void QPainter::restore() stack is empty");
+    if (m_data->stack.isEmpty()) {
+        LOG_ERROR("ERROR void GraphicsContext::restore() stack is empty");
         return;
     }
-    data->state = data->stack.last();
-    data->stack.removeLast();
+    m_data->state = m_data->stack.last();
+    m_data->stack.removeLast();
      
     [NSGraphicsContext restoreGraphicsState];
 }
 
 // Draws a filled rectangle with a stroked border.
-void QPainter::drawRect(int x, int y, int w, int h)
+void GraphicsContext::drawRect(int x, int y, int w, int h)
 {
-    if (data->state.paintingDisabled)
+    if (m_data->state.paintingDisabled)
         return;
          
-    if (data->state.brush.style() != WebCore::Brush::NoBrush)
-        _fillRectXX(x, y, w, h, data->state.brush.color());
+    if (m_data->state.brush.style() != Brush::NoBrush)
+        fillRectSourceOver(x, y, w, h, m_data->state.brush.color());
 
-    if (data->state.pen.style() != Pen::Pen::NoPen) {
-        _setColorFromPen();
+    if (m_data->state.pen.style() != Pen::Pen::NoPen) {
+        setColorFromPen();
         NSFrameRect(NSMakeRect(x, y, w, h));
     }
 }
 
-void QPainter::_setColorFromBrush()
+void GraphicsContext::setColorFromBrush()
 {
-    [nsColor(data->state.brush.color()) set];
+    [nsColor(m_data->state.brush.color()) set];
 }
   
-void QPainter::_setColorFromPen()
+void GraphicsContext::setColorFromPen()
 {
-    [nsColor(data->state.pen.color()) set];
+    [nsColor(m_data->state.pen.color()) set];
 }
   
   // This is only used to draw borders.
-void QPainter::drawLine(int x1, int y1, int x2, int y2)
+void GraphicsContext::drawLine(int x1, int y1, int x2, int y2)
 {
-    if (data->state.paintingDisabled)
+    if (m_data->state.paintingDisabled)
         return;
 
-    Pen::PenStyle penStyle = data->state.pen.style();
+    Pen::PenStyle penStyle = m_data->state.pen.style();
     if (penStyle == Pen::Pen::NoPen)
         return;
-    float width = data->state.pen.width();
+    float width = m_data->state.pen.width();
     if (width < 1)
         width = 1;
 
@@ -279,7 +280,7 @@ void QPainter::drawLine(int x1, int y1, int x2, int y2)
         break;
     }
 
-    _setColorFromPen();
+    setColorFromPen();
     
     NSGraphicsContext *graphicsContext = [NSGraphicsContext currentContext];
     BOOL flag = [graphicsContext shouldAntialias];
@@ -289,12 +290,11 @@ void QPainter::drawLine(int x1, int y1, int x2, int y2)
         // Do a rect fill of our endpoints.  This ensures we always have the
         // appearance of being a border.  We then draw the actual dotted/dashed line.
         if (x1 == x2) {
-            _fillRectXX(p1.x-width/2, p1.y-width, width, width, data->state.pen.color());
-            _fillRectXX(p2.x-width/2, p2.y, width, width, data->state.pen.color());
-        }
-        else {
-            _fillRectXX(p1.x-width, p1.y-width/2, width, width, data->state.pen.color());
-            _fillRectXX(p2.x, p2.y-width/2, width, width, data->state.pen.color());
+            fillRectSourceOver(p1.x-width/2, p1.y-width, width, width, m_data->state.pen.color());
+            fillRectSourceOver(p2.x-width/2, p2.y, width, width, m_data->state.pen.color());
+        } else {
+            fillRectSourceOver(p1.x-width, p1.y-width/2, width, width, m_data->state.pen.color());
+            fillRectSourceOver(p2.x, p2.y-width/2, width, width, m_data->state.pen.color());
         }
         
         // Example: 80 pixels with a width of 30 pixels.
@@ -343,14 +343,14 @@ void QPainter::drawLine(int x1, int y1, int x2, int y2)
 
 
 // This method is only used to draw the little circles used in lists.
-void QPainter::drawEllipse(int x, int y, int w, int h)
+void GraphicsContext::drawEllipse(int x, int y, int w, int h)
 {
     // FIXME: CG added CGContextAddEllipseinRect in Tiger, so we should be able to quite easily draw an ellipse.
     // This code can only handle circles, not ellipses. But khtml only
     // uses it for circles.
     ASSERT(w == h);
 
-    if (data->state.paintingDisabled)
+    if (m_data->state.paintingDisabled)
         return;
         
     CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
@@ -359,12 +359,12 @@ void QPainter::drawEllipse(int x, int y, int w, int h)
     CGContextAddArc(context, x + r, y + r, r, 0, 2*M_PI, true);
     CGContextClosePath(context);
 
-    if (data->state.brush.style() != WebCore::Brush::NoBrush) {
-        _setColorFromBrush();
-        if (data->state.pen.style() != Pen::NoPen) {
+    if (m_data->state.brush.style() != Brush::NoBrush) {
+        setColorFromBrush();
+        if (m_data->state.pen.style() != Pen::NoPen) {
             // stroke and fill
-            _setColorFromPen();
-            uint penWidth = data->state.pen.width();
+            setColorFromPen();
+            uint penWidth = m_data->state.pen.width();
             if (penWidth == 0) 
                 penWidth++;
             CGContextSetLineWidth(context, penWidth);
@@ -373,9 +373,9 @@ void QPainter::drawEllipse(int x, int y, int w, int h)
             CGContextFillPath(context);
         }
     }
-    if (data->state.pen.style() != Pen::NoPen) {
-        _setColorFromPen();
-        uint penWidth = data->state.pen.width();
+    if (m_data->state.pen.style() != Pen::NoPen) {
+        setColorFromPen();
+        uint penWidth = m_data->state.pen.width();
         if (penWidth == 0) 
             penWidth++;
         CGContextSetLineWidth(context, penWidth);
@@ -384,15 +384,15 @@ void QPainter::drawEllipse(int x, int y, int w, int h)
 }
 
 
-void QPainter::drawArc (int x, int y, int w, int h, int a, int alen)
+void GraphicsContext::drawArc (int x, int y, int w, int h, int a, int alen)
 { 
     // Only supports arc on circles.  That's all khtml needs.
     ASSERT(w == h);
 
-    if (data->state.paintingDisabled)
+    if (m_data->state.paintingDisabled)
         return;
     
-    if (data->state.pen.style() != Pen::NoPen) {
+    if (m_data->state.pen.style() != Pen::NoPen) {
         CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
         CGContextBeginPath(context);
         
@@ -401,15 +401,15 @@ void QPainter::drawArc (int x, int y, int w, int h, int a, int alen)
         float falen =  fa + (float)alen / 16;
         CGContextAddArc(context, x + r, y + r, r, -fa * M_PI/180, -falen * M_PI/180, true);
         
-        _setColorFromPen();
-        CGContextSetLineWidth(context, data->state.pen.width());
+        setColorFromPen();
+        CGContextSetLineWidth(context, m_data->state.pen.width());
         CGContextStrokePath(context);
     }
 }
 
-void QPainter::drawConvexPolygon(const IntPointArray &points)
+void GraphicsContext::drawConvexPolygon(const IntPointArray& points)
 {
-    if (data->state.paintingDisabled)
+    if (m_data->state.paintingDisabled)
         return;
 
     int npoints = points.size();
@@ -428,61 +428,39 @@ void QPainter::drawConvexPolygon(const IntPointArray &points)
         CGContextAddLineToPoint(context, points[i].x(), points[i].y());
     CGContextClosePath(context);
 
-    if (data->state.brush.style() != WebCore::Brush::NoBrush) {
-        _setColorFromBrush();
+    if (m_data->state.brush.style() != Brush::NoBrush) {
+        setColorFromBrush();
         CGContextEOFillPath(context);
     }
 
-    if (data->state.pen.style() != Pen::NoPen) {
-        _setColorFromPen();
-        CGContextSetLineWidth(context, data->state.pen.width());
+    if (m_data->state.pen.style() != Pen::NoPen) {
+        setColorFromPen();
+        CGContextSetLineWidth(context, m_data->state.pen.width());
         CGContextStrokePath(context);
     }
 
     CGContextRestoreGState(context);
 }
 
-void QPainter::drawImageAtPoint(Image* image, const IntPoint &p, Image::CompositeOperator compositeOperator)
-{        
-    drawImage(image, p.x(), p.y(), 0, 0, -1, -1, compositeOperator);
-}
-
-void QPainter::drawImageInRect(Image* image, const IntRect &r, Image::CompositeOperator compositeOperator)
-{
-    drawImage(image, r.x(), r.y(), r.width(), r.height(), 0, 0, -1, -1, compositeOperator);
-}
-
-int QPainter::getCompositeOperation(CGContextRef context)
+int GraphicsContext::getCompositeOperation(CGContextRef context)
 {
     return (int)[[WebCoreImageRendererFactory sharedFactory] CGCompositeOperationInContext:context];
 }
 
-void QPainter::setCompositeOperation (CGContextRef context, const QString &op)
+void GraphicsContext::setCompositeOperation (CGContextRef context, const QString& op)
 {
     [[WebCoreImageRendererFactory sharedFactory] setCGCompositeOperationFromString:op.getNSString() inContext:context];
 }
 
-void QPainter::setCompositeOperation (CGContextRef context, int op)
+void GraphicsContext::setCompositeOperation (CGContextRef context, int op)
 {
     [[WebCoreImageRendererFactory sharedFactory] setCGCompositeOperation:op inContext:context];
 }
 
-void QPainter::drawImage(Image* image, int x, int y,
-                         int sx, int sy, int sw, int sh, Image::CompositeOperator compositeOperator, void* context)
-{
-    drawImage(image, x, y, sw, sh, sx, sy, sw, sh, compositeOperator, context);
-}
-
-void QPainter::drawImage(Image* image, int x, int y, int w, int h,
-                         int sx, int sy, int sw, int sh, Image::CompositeOperator compositeOperator, void* context)
-{
-    drawFloatImage(image, (float)x, (float)y, (float)w, (float)h, (float)sx, (float)sy, (float)sw, (float)sh, compositeOperator, context);
-}
-
-void QPainter::drawFloatImage(Image* image, float x, float y, float w, float h, 
+void GraphicsContext::drawFloatImage(Image* image, float x, float y, float w, float h, 
                               float sx, float sy, float sw, float sh, Image::CompositeOperator compositeOperator, void* context)
 {
-    if (data->state.paintingDisabled)
+    if (m_data->state.paintingDisabled)
         return;
 
     float tsw = sw;
@@ -503,52 +481,50 @@ void QPainter::drawFloatImage(Image* image, float x, float y, float w, float h,
     image->drawInRect(FloatRect(x, y, tw, th), FloatRect(sx, sy, tsw, tsh), compositeOperator, context);
 }
 
-void QPainter::drawTiledImage(Image* image, int x, int y, int w, int h,
-                              int sx, int sy, void* context)
+void GraphicsContext::drawTiledImage(Image* image, int x, int y, int w, int h, int sx, int sy, void* context)
 {
-    if (data->state.paintingDisabled)
+    if (m_data->state.paintingDisabled)
         return;
     
     image->tileInRect(FloatRect(x, y, w, h), FloatPoint(sx, sy), context);
 }
 
-void QPainter::drawScaledAndTiledImage(Image* image, int x, int y, int w, int h, int sx, int sy, int sw, int sh, 
-                                       Image::TileRule hRule, Image::TileRule vRule, void* context)
+void GraphicsContext::drawScaledAndTiledImage(Image* image, int x, int y, int w, int h, int sx, int sy, int sw, int sh, 
+    Image::TileRule hRule, Image::TileRule vRule, void* context)
 {
-    if (data->state.paintingDisabled)
+    if (m_data->state.paintingDisabled)
         return;
 
     if (hRule == Image::StretchTile && vRule == Image::StretchTile)
         // Just do a scale.
         return drawImage(image, x, y, w, h, sx, sy, sw, sh, Image::CompositeSourceOver, context);
 
-    image->scaleAndTileInRect(FloatRect(x, y, w, h), FloatRect(sx, sy, sw, sh),
-                             hRule, vRule, context);
+    image->scaleAndTileInRect(FloatRect(x, y, w, h), FloatRect(sx, sy, sw, sh), hRule, vRule, context);
 }
 
-void QPainter::_updateRenderer()
+void GraphicsContext::updateTextRenderer()
 {
-    if (data->textRenderer == 0 || data->state.font.fontDescription() != data->textRendererFont.fontDescription()) {
-        data->textRendererFont = data->state.font;
-        id <WebCoreTextRenderer> oldRenderer = data->textRenderer;
+    if (m_data->textRenderer == 0 || m_data->state.font != m_data->textRendererFont) {
+        m_data->textRendererFont = m_data->state.font;
+        id <WebCoreTextRenderer> oldRenderer = m_data->textRenderer;
         KWQ_BLOCK_EXCEPTIONS;
-        data->textRenderer = KWQRetain([[WebCoreTextRendererFactory sharedFactory]
-            rendererWithFont:data->textRendererFont.getWebCoreFont()]);
+        m_data->textRenderer = KWQRetain([[WebCoreTextRendererFactory sharedFactory]
+            rendererWithFont:m_data->textRendererFont.getWebCoreFont()]);
         KWQRelease(oldRenderer);
         KWQ_UNBLOCK_EXCEPTIONS;
     }
 }
     
-void QPainter::drawText(int x, int y, int tabWidth, int xpos, int, int, int alignmentFlags, const QString &qstring)
+void GraphicsContext::drawText(int x, int y, int tabWidth, int xpos, int, int, int alignmentFlags, const QString& qstring)
 {
-    if (data->state.paintingDisabled)
+    if (m_data->state.paintingDisabled)
         return;
 
     // Avoid allocations, use stack array to pass font families.  Normally these
     // css fallback lists are small <= 3.
-    CREATE_FAMILY_ARRAY(data->state.font.fontDescription(), families);    
+    CREATE_FAMILY_ARRAY(m_data->state.font, families);    
 
-    _updateRenderer();
+    updateTextRenderer();
 
     const UniChar* str = (const UniChar*)qstring.unicode();
 
@@ -557,30 +533,31 @@ void QPainter::drawText(int x, int y, int tabWidth, int xpos, int, int, int alig
     
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);
-    style.textColor = nsColor(data->state.pen.color());
+    style.textColor = nsColor(m_data->state.pen.color());
     style.families = families;
     style.tabWidth = tabWidth;
     style.xpos = xpos;
     
     if (alignmentFlags & Qt::AlignRight)
-        x -= lroundf([data->textRenderer floatWidthForRun:&run style:&style]);
+        x -= lroundf([m_data->textRenderer floatWidthForRun:&run style:&style]);
 
     WebCoreTextGeometry geometry;
     WebCoreInitializeEmptyTextGeometry(&geometry);
     geometry.point = NSMakePoint(x, y);
-    [data->textRenderer drawRun:&run style:&style geometry:&geometry];
+    [m_data->textRenderer drawRun:&run style:&style geometry:&geometry];
 }
 
-void QPainter::drawText(int x, int y, int tabWidth, int xpos, const QChar *str, int len, int from, int to, int toAdd, const Color &backgroundColor, QPainter::TextDirection d, bool visuallyOrdered, int letterSpacing, int wordSpacing, bool smallCaps)
+void GraphicsContext::drawText(int x, int y, int tabWidth, int xpos, const QChar *str, int len, int from, int to, int toAdd,
+    const Color& backgroundColor, TextDirection d, bool visuallyOrdered, int letterSpacing, int wordSpacing, bool smallCaps)
 {
-    if (data->state.paintingDisabled || len <= 0)
+    if (m_data->state.paintingDisabled || len <= 0)
         return;
 
     // Avoid allocations, use stack array to pass font families.  Normally these
     // css fallback lists are small <= 3.
-    CREATE_FAMILY_ARRAY(data->state.font.fontDescription(), families);
+    CREATE_FAMILY_ARRAY(m_data->state.font, families);
 
-    _updateRenderer();
+    updateTextRenderer();
 
     if (from < 0)
         from = 0;
@@ -591,7 +568,7 @@ void QPainter::drawText(int x, int y, int tabWidth, int xpos, const QChar *str, 
     WebCoreInitializeTextRun(&run, (const UniChar *)str, len, from, to);    
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);
-    style.textColor = nsColor(data->state.pen.color());
+    style.textColor = nsColor(m_data->state.pen.color());
     style.backgroundColor = backgroundColor.isValid() ? nsColor(backgroundColor) : nil;
     style.rtl = d == RTL;
     style.directionalOverride = visuallyOrdered;
@@ -605,21 +582,21 @@ void QPainter::drawText(int x, int y, int tabWidth, int xpos, const QChar *str, 
     WebCoreTextGeometry geometry;
     WebCoreInitializeEmptyTextGeometry(&geometry);
     geometry.point = NSMakePoint(x, y);
-    [data->textRenderer drawRun:&run style:&style geometry:&geometry];
+    [m_data->textRenderer drawRun:&run style:&style geometry:&geometry];
 }
 
-void QPainter::drawHighlightForText(int x, int y, int h, int tabWidth, int xpos,
-    const QChar *str, int len, int from, int to, int toAdd, const Color &backgroundColor, 
-    QPainter::TextDirection d, bool visuallyOrdered, int letterSpacing, int wordSpacing, bool smallCaps)
+void GraphicsContext::drawHighlightForText(int x, int y, int h, int tabWidth, int xpos,
+    const QChar *str, int len, int from, int to, int toAdd, const Color& backgroundColor, 
+    TextDirection d, bool visuallyOrdered, int letterSpacing, int wordSpacing, bool smallCaps)
 {
-    if (data->state.paintingDisabled || len <= 0)
+    if (m_data->state.paintingDisabled || len <= 0)
         return;
 
     // Avoid allocations, use stack array to pass font families.  Normally these
     // css fallback lists are small <= 3.
-    CREATE_FAMILY_ARRAY(data->state.font.fontDescription(), families);
+    CREATE_FAMILY_ARRAY(m_data->state.font, families);
 
-    _updateRenderer();
+    updateTextRenderer();
 
     if (from < 0)
         from = 0;
@@ -630,7 +607,7 @@ void QPainter::drawHighlightForText(int x, int y, int h, int tabWidth, int xpos,
     WebCoreInitializeTextRun(&run, (const UniChar *)str, len, from, to);    
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);
-    style.textColor = nsColor(data->state.pen.color());
+    style.textColor = nsColor(m_data->state.pen.color());
     style.backgroundColor = backgroundColor.isValid() ? nsColor(backgroundColor) : nil;
     style.rtl = d == RTL;
     style.directionalOverride = visuallyOrdered;
@@ -647,33 +624,33 @@ void QPainter::drawHighlightForText(int x, int y, int h, int tabWidth, int xpos,
     geometry.selectionY = y;
     geometry.selectionHeight = h;
     geometry.useFontMetricsForSelectionYAndHeight = false;
-    [data->textRenderer drawHighlightForRun:&run style:&style geometry:&geometry];
+    [m_data->textRenderer drawHighlightForRun:&run style:&style geometry:&geometry];
 }
 
-void QPainter::drawLineForText(int x, int y, int yOffset, int width)
+void GraphicsContext::drawLineForText(int x, int y, int yOffset, int width)
 {
-    if (data->state.paintingDisabled)
+    if (m_data->state.paintingDisabled)
         return;
-    _updateRenderer();
-    [data->textRenderer
-        drawLineForCharacters: NSMakePoint(x, y)
-               yOffset:(float)yOffset
-                 width: width
-                 color:nsColor(data->state.pen.color())
-             thickness:data->state.pen.width()];
+    updateTextRenderer();
+    [m_data->textRenderer
+        drawLineForCharacters:NSMakePoint(x, y)
+                      yOffset:(float)yOffset
+                        width:width
+                        color:nsColor(m_data->state.pen.color())
+                    thickness:m_data->state.pen.width()];
 }
 
-void QPainter::drawLineForMisspelling(int x, int y, int width)
+void GraphicsContext::drawLineForMisspelling(int x, int y, int width)
 {
-    if (data->state.paintingDisabled)
+    if (m_data->state.paintingDisabled)
         return;
-    _updateRenderer();
-    [data->textRenderer drawLineForMisspelling:NSMakePoint(x, y) withWidth:width];
+    updateTextRenderer();
+    [m_data->textRenderer drawLineForMisspelling:NSMakePoint(x, y) withWidth:width];
 }
 
-int QPainter::misspellingLineThickness() const
+int GraphicsContext::misspellingLineThickness() const
 {
-    return [data->textRenderer misspellingLineThickness];
+    return [m_data->textRenderer misspellingLineThickness];
 }
 
 static int getBlendedColorComponent(int c, int a)
@@ -685,9 +662,9 @@ static int getBlendedColorComponent(int c, int a)
     return (int)(c/alpha);
 }
 
-Color QPainter::selectedTextBackgroundColor() const
+Color GraphicsContext::selectedTextBackgroundColor() const
 {
-    NSColor *color = _usesInactiveTextBackgroundColor ? [NSColor secondarySelectedControlColor] : [NSColor selectedTextBackgroundColor];
+    NSColor *color = m_usesInactiveTextBackgroundColor ? [NSColor secondarySelectedControlColor] : [NSColor selectedTextBackgroundColor];
     // this needs to always use device colorspace so it can de-calibrate the color for
     // Color to possibly recalibrate it
     color = [color colorUsingColorSpaceName:NSDeviceRGBColorSpace];
@@ -705,39 +682,32 @@ Color QPainter::selectedTextBackgroundColor() const
     return col;
 }
 
-// A fillRect helper to work around the fact that NSRectFill uses copy mode, not source over.
-static inline void _fillRectXX(float x, float y, float w, float h, const Color& col)
+void GraphicsContext::fillRect(int x, int y, int w, int h, const Brush& brush)
 {
-    [nsColor(col) set];
-    NSRectFillUsingOperation(NSMakeRect(x,y,w,h), NSCompositeSourceOver);
-}
-
-void QPainter::fillRect(int x, int y, int w, int h, const WebCore::Brush &brush)
-{
-    if (data->state.paintingDisabled)
+    if (m_data->state.paintingDisabled)
         return;
 
-    if (brush.style() == WebCore::Brush::SolidPattern)
-        _fillRectXX(x, y, w, h, brush.color());
+    if (brush.style() == Brush::SolidPattern)
+        fillRectSourceOver(x, y, w, h, brush.color());
 }
 
-void QPainter::fillRect(const IntRect &rect, const WebCore::Brush &brush)
+void GraphicsContext::fillRect(const IntRect& rect, const Brush& brush)
 {
     fillRect(rect.x(), rect.y(), rect.width(), rect.height(), brush);
 }
 
-void QPainter::addClip(const IntRect &rect)
+void GraphicsContext::addClip(const IntRect& rect)
 {
-    if (data->state.paintingDisabled)
+    if (m_data->state.paintingDisabled)
         return;
 
     [NSBezierPath clipRect:rect];
 }
 
-void QPainter::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight,
+void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight,
                                   const IntSize& bottomLeft, const IntSize& bottomRight)
 {
-    if (data->state.paintingDisabled)
+    if (m_data->state.paintingDisabled)
         return;
 
     // Need sufficient width and height to contain these curves.  Sanity check our top/bottom
@@ -753,7 +723,7 @@ void QPainter::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, c
     addClip(rect);
 
     // Ok, the curves can fit.
-    CGContextRef context = (CGContextRef)([[NSGraphicsContext currentContext] graphicsPort]);
+    CGContextRef context = currentCGContext();
     
     // Add the four ellipses to the path.  Technically this really isn't good enough, since we could end up
     // not clipping the other 3/4 of the ellipse we don't care about.  We're relying on the fact that for
@@ -788,61 +758,54 @@ void QPainter::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, c
     CGContextClip(context);
 }
 
-void QPainter::setPaintingDisabled(bool f)
+void GraphicsContext::setPaintingDisabled(bool f)
 {
-    data->state.paintingDisabled = f;
+    m_data->state.paintingDisabled = f;
 }
 
-bool QPainter::paintingDisabled() const
+bool GraphicsContext::paintingDisabled() const
 {
-    return data->state.paintingDisabled;
+    return m_data->state.paintingDisabled;
 }
 
-CGContextRef QPainter::currentContext()
+CGContextRef GraphicsContext::currentCGContext()
 {
-    ASSERT(!data->state.paintingDisabled);
     return (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
 }
 
 #if SVG_SUPPORT
-WebCore::KRenderingDeviceContext *QPainter::createRenderingDeviceContext()
+KRenderingDeviceContext* GraphicsContext::createRenderingDeviceContext()
 {
-    return new KRenderingDeviceContextQuartz(currentContext());
-}
-
-WebCore::KRenderingDevice *QPainter::renderingDevice()
-{
-    static KRenderingDevice *sharedRenderingDevice = new KRenderingDeviceQuartz();
-    return sharedRenderingDevice;
+    return new KRenderingDeviceContextQuartz(currentCGContext());
 }
 #endif
 
-void QPainter::beginTransparencyLayer(float opacity)
+void GraphicsContext::beginTransparencyLayer(float opacity)
 {
-    if (data->state.paintingDisabled)
+    if (m_data->state.paintingDisabled)
         return;
-    [NSGraphicsContext saveGraphicsState];
-    CGContextRef context = (CGContextRef)([[NSGraphicsContext currentContext] graphicsPort]);
+    CGContextRef context = currentCGContext();
+    CGContextSaveGState(context);
     CGContextSetAlpha(context, opacity);
     CGContextBeginTransparencyLayer(context, 0);
 }
 
-void QPainter::endTransparencyLayer()
+void GraphicsContext::endTransparencyLayer()
 {
-    if (data->state.paintingDisabled)
+    if (m_data->state.paintingDisabled)
         return;
-    CGContextRef context = (CGContextRef)([[NSGraphicsContext currentContext] graphicsPort]);
+    CGContextRef context = currentCGContext();
     CGContextEndTransparencyLayer(context);
-    [NSGraphicsContext restoreGraphicsState];
+    CGContextRestoreGState(context);
 }
 
-void QPainter::setShadow(int x, int y, int blur, const Color& color)
+void GraphicsContext::setShadow(int x, int y, int blur, const Color& color)
 {
-    if (data->state.paintingDisabled)
+    if (m_data->state.paintingDisabled)
         return;
     // Check for an invalid color, as this means that the color was not set for the shadow
     // and we should therefore just use the default shadow color.
-    CGContextRef context = (CGContextRef)([[NSGraphicsContext currentContext] graphicsPort]);
+    CGContextRef context = currentCGContext();
     if (!color.isValid()) {
         CGContextSetShadow(context, CGSizeMake(x,-y), blur); // y is flipped.
     } else {
@@ -855,48 +818,48 @@ void QPainter::setShadow(int x, int y, int blur, const Color& color)
     }
 }
 
-void QPainter::clearShadow()
+void GraphicsContext::clearShadow()
 {
-    if (data->state.paintingDisabled)
+    if (m_data->state.paintingDisabled)
         return;
-    CGContextRef context = (CGContextRef)([[NSGraphicsContext currentContext] graphicsPort]);
+    CGContextRef context = currentCGContext();
     CGContextSetShadowWithColor(context, CGSizeZero, 0, NULL);
 }
 
-void QPainter::initFocusRing(int width, int offset)
+void GraphicsContext::initFocusRing(int width, int offset)
 {
-    if (data->state.paintingDisabled)
+    if (m_data->state.paintingDisabled)
         return;
     clearFocusRing();
-    data->focusRingPath = CGPathCreateMutable();
-    data->focusRingWidth = width;
-    data->focusRingOffset = offset;
+    m_data->focusRingPath = CGPathCreateMutable();
+    m_data->focusRingWidth = width;
+    m_data->focusRingOffset = offset;
 }
 
-void QPainter::addFocusRingRect(int x, int y, int width, int height)
+void GraphicsContext::addFocusRingRect(int x, int y, int width, int height)
 {
-    if (data->state.paintingDisabled)
+    if (m_data->state.paintingDisabled)
         return;
-    int radius = (data->focusRingWidth - 1) / 2;
-    int offset = radius + data->focusRingOffset;
-    CGPathAddRect(data->focusRingPath, 0, CGRectInset(CGRectMake(x, y, width, height), -offset, -offset));
+    int radius = (m_data->focusRingWidth - 1) / 2;
+    int offset = radius + m_data->focusRingOffset;
+    CGPathAddRect(m_data->focusRingPath, 0, CGRectInset(CGRectMake(x, y, width, height), -offset, -offset));
 }
 
-void QPainter::drawFocusRing(const Color& color)
+void GraphicsContext::drawFocusRing(const Color& color)
 {
-    if (data->state.paintingDisabled)
+    if (m_data->state.paintingDisabled)
         return;
-    ASSERT(data->focusRingPath);
-    int radius = (data->focusRingWidth - 1) / 2;
+    ASSERT(m_data->focusRingPath);
+    int radius = (m_data->focusRingWidth - 1) / 2;
     CGColorRef colorRef = color.isValid() ? cgColor(color) : 0;
-    [[WebCoreGraphicsBridge sharedBridge] drawFocusRingWithPath:data->focusRingPath radius:radius color:colorRef];
+    [[WebCoreGraphicsBridge sharedBridge] drawFocusRingWithPath:m_data->focusRingPath radius:radius color:colorRef];
     CGColorRelease(colorRef);
 }
 
-void QPainter::clearFocusRing()
+void GraphicsContext::clearFocusRing()
 {
-    CGPathRelease(data->focusRingPath);
-    data->focusRingPath = 0;
+    CGPathRelease(m_data->focusRingPath);
+    m_data->focusRingPath = 0;
 }
 
 }

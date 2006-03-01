@@ -24,20 +24,18 @@
 #if SVG_SUPPORT
 #include "KCanvasResources.h"
 
-#include "IntRect.h"
-
-#include "kcanvas/KCanvas.h"
-#include "kcanvas/RenderPath.h"
-#include "kcanvas/KCanvasImage.h"
-#include "KCanvasMatrix.h"
-#include "KCanvasContainer.h"
-#include "KRenderingDevice.h"
-
-#include "SVGStyledElementImpl.h"
-
-#include <qtextstream.h>
-#include "KCanvasTreeDebug.h"
 #include "DocumentImpl.h"
+#include "GraphicsContext.h"
+#include "IntRect.h"
+#include "KCanvasContainer.h"
+#include "KCanvasImage.h"
+#include "KCanvasMatrix.h"
+#include "KCanvasTreeDebug.h"
+#include "KRenderingDevice.h"
+#include "RenderPath.h"
+#include "SVGStyledElementImpl.h"
+#include <kcanvas/KCanvas.h>
+#include <qtextstream.h>
 
 namespace WebCore {
 
@@ -242,7 +240,7 @@ void KCanvasMarker::draw(const FloatRect &rect, double x, double y, double strok
 
         // FIXME: PaintInfo should be passed into this method instead.
         // FIXME: bounding box fractions lost
-        QPainter p;
+        GraphicsContext p;
         RenderObject::PaintInfo info(&p, enclosingIntRect(rect), PaintActionForeground, 0);
         m_marker->setLocalTransform(rotation.multiply(translation).qmatrix());
         static_cast<KCanvasContainer *>(m_marker)->setDrawsContents(true);

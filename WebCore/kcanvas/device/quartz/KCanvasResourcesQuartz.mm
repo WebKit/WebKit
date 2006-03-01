@@ -29,16 +29,15 @@
 #if SVG_SUPPORT
 #import "KCanvasResourcesQuartz.h"
 
-#import "kcanvas/KCanvas.h"
-#import "SVGRenderStyle.h"
+#import "GraphicsContext.h"
+#import "KCanvasFilterQuartz.h"
+#import "KCanvasMaskerQuartz.h"
 #import "KCanvasMatrix.h"
-
 #import "KCanvasPathQuartz.h"
 #import "KRenderingDeviceQuartz.h"
-#import "KCanvasMaskerQuartz.h"
-#import "KCanvasFilterQuartz.h"
 #import "QuartzSupport.h"
-
+#import "SVGRenderStyle.h"
+#import <kcanvas/KCanvas.h>
 #import <kxmlcore/Assertions.h>
 
 namespace WebCore {
@@ -111,7 +110,7 @@ void KCanvasContainerQuartz::paint(PaintInfo &paintInfo, int parentX, int parent
     if (!firstChild() && !filter)
         return; // Spec: groups w/o children still may render filter content.
     
-    KRenderingDeviceQuartz *quartzDevice = static_cast<KRenderingDeviceQuartz *>(QPainter::renderingDevice());
+    KRenderingDeviceQuartz *quartzDevice = static_cast<KRenderingDeviceQuartz *>(renderingDevice());
     KRenderingDeviceContext *deviceContext = quartzDevice->currentContext();
     bool shouldPopContext = false;
     if (!deviceContext) {
@@ -229,7 +228,7 @@ QMatrix KCanvasContainerQuartz::absoluteTransform() const
 
 void KCanvasClipperQuartz::applyClip(const FloatRect& boundingBox) const
 {
-    KRenderingDeviceContext *context = QPainter::renderingDevice()->currentContext();
+    KRenderingDeviceContext *context = renderingDevice()->currentContext();
     CGContextRef cgContext = static_cast<KRenderingDeviceContextQuartz*>(context)->cgContext();
     if (m_clipData.count() < 1)
         return;

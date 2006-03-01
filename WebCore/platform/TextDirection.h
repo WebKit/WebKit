@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Kimmo Kinnunen <kimmo.t.kinnunen@nokia.com>.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,10 +10,10 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -23,40 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#if SVG_SUPPORT
-
-#include <qtextstream.h>
-
-#include "KCanvasPath.h"
-#include "KCanvasTreeDebug.h"
-#include "KRenderingDevice.h"
+#ifndef TextDirection_h
+#define TextDirection_h
 
 namespace WebCore {
 
-//KCWindRule
-QTextStream &operator<<(QTextStream &ts, KCWindRule rule)
-{
-    switch (rule) 
-    {
-        case RULE_NONZERO:
-            ts << "NON-ZERO"; break;
-        case RULE_EVENODD:
-            ts << "EVEN-ODD"; break;
-    }
-    return ts;
-}
-
-//KCClipData
-QTextStream &operator<<(QTextStream &ts, const KCClipData &d)
-{
-    ts << "[winding=" << d.windRule  << "]";
-    if (d.bboxUnits)
-        ts << " [bounding box mode=" << d.bboxUnits  << "]";    
-    ts << " [path=" << renderingDevice()->stringForPath(d.path.get()) << "]";
-    return ts;
-}
+    enum TextDirection { RTL, LTR };
 
 }
 
-#endif // SVG_SUPPORT
+#endif

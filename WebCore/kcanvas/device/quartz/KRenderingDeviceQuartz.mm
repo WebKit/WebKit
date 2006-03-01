@@ -143,14 +143,13 @@ void KRenderingDeviceQuartz::pushContext(KRenderingDeviceContext *context)
     [NSGraphicsContext saveGraphicsState];
     [NSGraphicsContext setCurrentContext:quartzContext()->nsGraphicsContext()];
     ASSERT(quartzContext()->nsGraphicsContext() == [NSGraphicsContext currentContext]);
-    ASSERT(currentCGContext() == QPainter().currentContext());
 }
 
 KRenderingDeviceContext *KRenderingDeviceQuartz::popContext()
 {
     [NSGraphicsContext restoreGraphicsState];
     KRenderingDeviceContext *poppedContext = KRenderingDevice::popContext();
-    ASSERT(!currentContext() || (currentCGContext() == QPainter().currentContext()));
+    ASSERT(!currentContext() || currentCGContext() == [[NSGraphicsContext currentContext] graphicsPort]);
     return poppedContext;
 }
 
@@ -270,6 +269,12 @@ KCanvasFilterEffect *KRenderingDeviceQuartz::createFilterEffect(const KCFilterEf
     default:
         return 0;
     }
+}
+
+KRenderingDevice* renderingDevice()
+{
+    static KRenderingDevice* sharedRenderingDevice = new KRenderingDeviceQuartz();
+    return sharedRenderingDevice;
 }
 
 }

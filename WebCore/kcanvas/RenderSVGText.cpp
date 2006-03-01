@@ -25,12 +25,13 @@
 #if SVG_SUPPORT
 #include "RenderSVGText.h"
 
-#include "render_object.h"
-#include "SVGTextElementImpl.h"
-#include "SVGAnimatedLengthListImpl.h"
-#include "KRenderingDevice.h"
+#include "GraphicsContext.h"
 #include "KCanvasMatrix.h"
 #include "KCanvasRenderingStyle.h"
+#include "KRenderingDevice.h"
+#include "SVGAnimatedLengthListImpl.h"
+#include "SVGTextElementImpl.h"
+#include "render_object.h"
 
 namespace WebCore {
 
@@ -60,13 +61,13 @@ void RenderSVGText::paint(PaintInfo& paintInfo, int parentX, int parentY)
     if (paintInfo.p->paintingDisabled())
         return;
 
-    KRenderingDevice *renderingDevice = QPainter::renderingDevice();
-    KRenderingDeviceContext *context = renderingDevice->currentContext();
+    KRenderingDevice* device = renderingDevice();
+    KRenderingDeviceContext* context = device->currentContext();
     bool shouldPopContext = false;
     if (!context) {
         // Need to push a device context on the stack if empty.
         context = paintInfo.p->createRenderingDeviceContext();
-        renderingDevice->pushContext(context);
+        device->pushContext(context);
         shouldPopContext = true;
     } else
         paintInfo.p->save();
@@ -116,7 +117,7 @@ void RenderSVGText::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
     // restore drawing state
     if (shouldPopContext) {
-        renderingDevice->popContext();
+        device->popContext();
         delete context;
     } else
         paintInfo.p->restore();

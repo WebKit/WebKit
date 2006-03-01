@@ -38,6 +38,7 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "GraphicsContext.h"
 #include "HTMLCollectionImpl.h"
 #include "HTMLFormElementImpl.h"
 #include "HTMLGenericFormElementImpl.h"
@@ -1297,13 +1298,13 @@ void Frame::caretBlinkTimerFired(Timer<Frame>*)
     d->m_selection.needsCaretRepaint();
 }
 
-void Frame::paintCaret(QPainter *p, const IntRect &rect) const
+void Frame::paintCaret(GraphicsContext* p, const IntRect &rect) const
 {
     if (d->m_caretPaint)
         d->m_selection.paintCaret(p, rect);
 }
 
-void Frame::paintDragCaret(QPainter *p, const IntRect &rect) const
+void Frame::paintDragCaret(GraphicsContext* p, const IntRect &rect) const
 {
     d->m_dragCaret.paintCaret(p, rect);
 }
@@ -2733,7 +2734,7 @@ bool Frame::scrollOverflow(KWQScrollDirection direction, KWQScrollGranularity gr
 }
 
 // FIXME: why is this here instead of on the FrameView?
-void Frame::paint(QPainter *p, const IntRect& rect)
+void Frame::paint(GraphicsContext* p, const IntRect& rect)
 {
 #if !NDEBUG
     bool fillWithRed;
@@ -2773,7 +2774,7 @@ void Frame::adjustPageHeight(float *newBottom, float oldTop, float oldBottom, fl
     RenderCanvas *root = static_cast<RenderCanvas *>(document()->renderer());
     if (root) {
         // Use a printer device, with painting disabled for the pagination phase
-        QPainter painter(true);
+        GraphicsContext painter(true);
         painter.setPaintingDisabled(true);
         
         root->setTruncatedAt((int)floorf(oldBottom));

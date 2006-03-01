@@ -96,7 +96,7 @@ void SVGFEBlendElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 KCanvasFEBlend *SVGFEBlendElementImpl::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<KCanvasFEBlend *>(QPainter::renderingDevice()->createFilterEffect(FE_BLEND));
+        m_filterEffect = static_cast<KCanvasFEBlend *>(renderingDevice()->createFilterEffect(FE_BLEND));
     if (!m_filterEffect)
         return 0;
     m_filterEffect->setBlendMode((KCBlendModeType)(mode()->baseVal()-1));

@@ -323,10 +323,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQPainter.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQPalette.h"
 				>
 			</File>
@@ -1582,6 +1578,10 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\FontFamily.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\GraphicsContext.h"
 				>
 			</File>
 			<File

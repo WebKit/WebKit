@@ -58,7 +58,7 @@ bool SVGSwitchElementImpl::childShouldCreateRenderer(NodeImpl *child) const
 
 RenderObject *SVGSwitchElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
 {
-    return QPainter::renderingDevice()->createContainer(arena, style, this);
+    return renderingDevice()->createContainer(arena, style, this);
 }
 
 // vim:ts=4:noet

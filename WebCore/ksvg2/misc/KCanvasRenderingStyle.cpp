@@ -52,7 +52,7 @@ static KRenderingPaintServerSolid* sharedSolidPaintServer()
 {
     static KRenderingPaintServerSolid* _sharedSolidPaintServer = 0;
     if (!_sharedSolidPaintServer)
-        _sharedSolidPaintServer = static_cast<KRenderingPaintServerSolid *>(QPainter::renderingDevice()->createPaintServer(PS_SOLID));
+        _sharedSolidPaintServer = static_cast<KRenderingPaintServerSolid *>(renderingDevice()->createPaintServer(PS_SOLID));
     return _sharedSolidPaintServer;
 }
 

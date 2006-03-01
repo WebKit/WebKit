@@ -271,7 +271,7 @@ public:
    */
   void stop();
 
-  void paint(QPainter *, const IntRect&);
+  void paint(GraphicsContext*, const IntRect&);
 
   void setEncoding(const QString &encoding, bool userChosen);
 
@@ -407,20 +407,9 @@ public:
    */
   void invalidateSelection();
 
-  /**
-   * Controls the visibility of the selection.
-   */
-  void setCaretVisible(bool flag=true);
-
-  /**
-   * Paints the caret.
-   */
-  void paintCaret(QPainter *p, const IntRect &rect) const;
-  
-  /**
-   * Paints the drag caret.
-   */
-  void paintDragCaret(QPainter *p, const IntRect &rect) const;
+  void setCaretVisible(bool flag = true);
+  void paintCaret(GraphicsContext*, const IntRect&) const;  
+  void paintDragCaret(GraphicsContext*, const IntRect&) const;
 
   /**
    * Set info for vertical arrow navigation.

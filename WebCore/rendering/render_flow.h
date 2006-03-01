@@ -83,10 +83,10 @@ public:
     
     virtual IntRect caretRect(int offset, EAffinity affinity = UPSTREAM, int *extraWidthToEndOfLine = 0);
 
-    virtual void addFocusRingRects(QPainter *painter, int _tx, int _ty);
-    void paintFocusRing(QPainter *p, int tx, int ty);
-    void paintOutlineForLine(QPainter *p, int tx, int ty, const IntRect &prevLine, const IntRect &thisLine, const IntRect &nextLine);
-    void paintOutlines(QPainter *p, int tx, int ty);
+    virtual void addFocusRingRects(GraphicsContext*, int _tx, int _ty);
+    void paintFocusRing(GraphicsContext*, int tx, int ty);
+    void paintOutlineForLine(GraphicsContext*, int tx, int ty, const IntRect &prevLine, const IntRect &thisLine, const IntRect &nextLine);
+    void paintOutlines(GraphicsContext*, int tx, int ty);
 
 protected:
     // An inline can be split with blocks occurring in between the inline content.

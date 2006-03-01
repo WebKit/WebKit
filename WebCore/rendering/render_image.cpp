@@ -30,13 +30,12 @@
 
 #include "CachedImage.h"
 #include "DocumentImpl.h"
+#include "GraphicsContext.h"
 #include "HTMLInputElementImpl.h"
 #include "helper.h"
 #include "html_imageimpl.h"
-#include "render_canvas.h"
-#include <qpainter.h>
-#include "Pen.h"
 #include "htmlnames.h"
+#include "render_canvas.h"
 
 namespace WebCore {
 
@@ -180,7 +179,7 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
     if (shouldPaintBackgroundOrBorder() && i.phase != PaintActionOutline) 
         paintBoxDecorations(i, _tx, _ty);
 
-    QPainter* p = i.p;
+    GraphicsContext* p = i.p;
     
     if (i.phase == PaintActionOutline && style()->outlineWidth() && style()->visibility() == VISIBLE)
         paintOutline(p, _tx, _ty, width(), height(), style());

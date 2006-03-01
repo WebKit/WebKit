@@ -85,7 +85,7 @@ KCanvasClipper *SVGClipPathElementImpl::canvasResource()
     if (!canvas())
         return 0;
     if (!m_clipper)
-        m_clipper = static_cast<KCanvasClipper *>(QPainter::renderingDevice()->createResource(RS_CLIPPER));
+        m_clipper = static_cast<KCanvasClipper *>(renderingDevice()->createResource(RS_CLIPPER));
     else
         m_clipper->resetClipData();
 

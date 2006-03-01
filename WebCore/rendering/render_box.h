@@ -144,7 +144,7 @@ public:
     
     virtual IntRect caretRect(int offset, EAffinity affinity = UPSTREAM, int *extraWidthToEndOfLine = 0);
 
-    virtual void paintBackgroundExtended(QPainter *p, const Color& c, const BackgroundLayer* bgLayer, int clipy, int cliph,
+    virtual void paintBackgroundExtended(GraphicsContext*, const Color& c, const BackgroundLayer* bgLayer, int clipy, int cliph,
                                          int _tx, int _ty, int w, int height,
                                          int bleft, int bright, int pleft, int pright);
 
@@ -157,9 +157,9 @@ protected:
     virtual void paintBoxDecorations(PaintInfo& i, int _tx, int _ty);
     void paintRootBoxDecorations(PaintInfo& i, int _tx, int _ty);
 
-    void paintBackgrounds(QPainter *p, const Color& c, const BackgroundLayer* bgLayer, int clipy, int cliph, int _tx, int _ty, int w, int h);
-    void paintBackground(QPainter *p, const Color& c, const BackgroundLayer* bgLayer, int clipy, int cliph, int _tx, int _ty, int w, int h);
-    void outlineBox(QPainter *p, int _tx, int _ty, const char *color = "red");
+    void paintBackgrounds(GraphicsContext*, const Color&, const BackgroundLayer*, int clipy, int cliph, int _tx, int _ty, int w, int h);
+    void paintBackground(GraphicsContext*, const Color&, const BackgroundLayer*, int clipy, int cliph, int _tx, int _ty, int w, int h);
+    void outlineBox(GraphicsContext*, int _tx, int _ty, const char *color = "red");
 
     void calcAbsoluteHorizontal();
     void calcAbsoluteVertical();

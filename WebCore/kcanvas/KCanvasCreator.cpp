@@ -53,7 +53,7 @@ KCanvasCreator *KCanvasCreator::self()
 
 KCanvasPath* KCanvasCreator::createRoundedRectangle(float x, float y, float width, float height, float rx, float ry) const
 {
-    KCanvasPath* path = QPainter::renderingDevice()->createPath();
+    KCanvasPath* path = renderingDevice()->createPath();
 
     if (width <= 0.0f || height <= 0.0f || !path)
         return path;
@@ -96,7 +96,7 @@ KCanvasPath* KCanvasCreator::createRoundedRectangle(float x, float y, float widt
 
 KCanvasPath* KCanvasCreator::createRectangle(float x, float y, float width, float height) const
 {
-    KCanvasPath* path = QPainter::renderingDevice()->createPath();
+    KCanvasPath* path = renderingDevice()->createPath();
     
     if (width <= 0.0f || height <= 0.0f || !path)
         return path;
@@ -111,7 +111,7 @@ KCanvasPath* KCanvasCreator::createRectangle(float x, float y, float width, floa
 
 KCanvasPath* KCanvasCreator::createEllipse(float cx, float cy, float rx, float ry) const
 {
-    KCanvasPath* path = QPainter::renderingDevice()->createPath();
+    KCanvasPath* path = renderingDevice()->createPath();
 
     if (rx <= 0.0f || ry <= 0.0f || !path)
         return path;
@@ -151,7 +151,7 @@ KCanvasPath* KCanvasCreator::createCircle(float cx, float cy, float r) const
 
 KCanvasPath* KCanvasCreator::createLine(float x1, float y1, float x2, float y2) const
 {
-    KCanvasPath* path = QPainter::renderingDevice()->createPath();
+    KCanvasPath* path = renderingDevice()->createPath();
     
     if ((x1 == x2 && y1 == y2) || !path)
         return path;

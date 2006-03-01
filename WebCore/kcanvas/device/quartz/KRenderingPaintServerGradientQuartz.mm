@@ -243,7 +243,7 @@ bool KRenderingPaintServerGradientQuartz::setup(const KRenderingPaintServerGradi
     if (!m_shadingCache)
         const_cast<KRenderingPaintServerGradientQuartz*>(this)->updateQuartzGradientCache(server);
     
-    KRenderingDeviceQuartz* quartzDevice = static_cast<KRenderingDeviceQuartz*>(QPainter::renderingDevice());
+    KRenderingDeviceQuartz* quartzDevice = static_cast<KRenderingDeviceQuartz*>(renderingDevice());
     CGContextRef context = quartzDevice->currentCGContext();
     RenderStyle* renderStyle = renderObject->style();
     ASSERT(context != NULL);
@@ -292,7 +292,7 @@ bool KRenderingPaintServerGradientQuartz::setup(const KRenderingPaintServerGradi
 
 void KRenderingPaintServerGradientQuartz::renderPath(const KRenderingPaintServerGradient* server, KRenderingDeviceContext* renderingContext, const RenderPath* path, KCPaintTargetType type) const
 {    
-    KRenderingDeviceQuartz* quartzDevice = static_cast<KRenderingDeviceQuartz*>(QPainter::renderingDevice());
+    KRenderingDeviceQuartz* quartzDevice = static_cast<KRenderingDeviceQuartz*>(renderingDevice());
     CGContextRef context = quartzDevice->currentCGContext();
     RenderStyle* renderStyle = path->style();
     ASSERT(context != NULL);
@@ -307,7 +307,7 @@ void KRenderingPaintServerGradientQuartz::teardown(const KRenderingPaintServerGr
 { 
     CGShadingRef shading = m_shadingCache;
     KCanvasImage* maskImage = m_maskImage;
-    KRenderingDeviceQuartz* quartzDevice = static_cast<KRenderingDeviceQuartz*>(QPainter::renderingDevice());
+    KRenderingDeviceQuartz* quartzDevice = static_cast<KRenderingDeviceQuartz*>(renderingDevice());
     CGContextRef context = quartzDevice->currentCGContext();
     RenderStyle* renderStyle = renderObject->style();
     ASSERT(context != NULL);

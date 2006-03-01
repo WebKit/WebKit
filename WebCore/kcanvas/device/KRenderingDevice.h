@@ -88,6 +88,8 @@ private:
     Vector<KRenderingDeviceContext*> m_contextStack;
 };
 
+KRenderingDevice* renderingDevice(); /* returns the single global rendering device */
+
 }
 
 #endif // SVG_SUPPORT

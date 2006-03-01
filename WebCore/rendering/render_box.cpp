@@ -29,8 +29,9 @@
 
 #include "CachedImage.h"
 #include "DocumentImpl.h"
+#include "FrameView.h"
+#include "GraphicsContext.h"
 #include "HTMLElementImpl.h"
-#include "Pen.h"
 #include "RenderTableCell.h"
 #include "htmlnames.h"
 #include "render_arena.h"
@@ -39,9 +40,7 @@
 #include "render_line.h"
 #include "render_replaced.h"
 #include "render_theme.h"
-#include <FrameView.h>
 #include <assert.h>
-#include <qpainter.h>
 
 namespace WebCore {
 
@@ -350,30 +349,29 @@ void RenderBox::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
         paintBorder(i.p, _tx, _ty, w, h, style());
 }
 
-void RenderBox::paintBackgrounds(QPainter *p, const Color& c, const BackgroundLayer* bgLayer, int clipy, int cliph, int _tx, int _ty, int w, int height)
+void RenderBox::paintBackgrounds(GraphicsContext* p, const Color& c, const BackgroundLayer* bgLayer, int clipy, int cliph, int _tx, int _ty, int w, int height)
 {
     if (!bgLayer) return;
     paintBackgrounds(p, c, bgLayer->next(), clipy, cliph, _tx, _ty, w, height);
     paintBackground(p, c, bgLayer, clipy, cliph, _tx, _ty, w, height);
 }
 
-void RenderBox::paintBackground(QPainter *p, const Color& c, const BackgroundLayer* bgLayer, int clipy, int cliph, int _tx, int _ty, int w, int height)
+void RenderBox::paintBackground(GraphicsContext* p, const Color& c, const BackgroundLayer* bgLayer, int clipy, int cliph, int _tx, int _ty, int w, int height)
 {
     paintBackgroundExtended(p, c, bgLayer, clipy, cliph, _tx, _ty, w, height,
                             borderLeft(), borderRight(), paddingLeft(), paddingRight());
 }
 
-void RenderBox::paintBackgroundExtended(QPainter *p, const Color& c, const BackgroundLayer* bgLayer, int clipy, int cliph,
+void RenderBox::paintBackgroundExtended(GraphicsContext* p, const Color& c, const BackgroundLayer* bgLayer, int clipy, int cliph,
                                         int _tx, int _ty, int w, int h,
                                         int bleft, int bright, int pleft, int pright)
 {
     bool clippedToBorderRadius = false;
     if (style()->hasBorderRadius()) {
-        IntRect clipRect(_tx, _ty, w, h);
-        clipRect = p->xForm(clipRect);
         p->save();
-        p->addRoundedRectClip(clipRect, style()->borderTopLeftRadius(), style()->borderTopRightRadius(),
-                              style()->borderBottomLeftRadius(), style()->borderBottomRightRadius());
+        p->addRoundedRectClip(IntRect(_tx, _ty, w, h),
+            style()->borderTopLeftRadius(), style()->borderTopRightRadius(),
+            style()->borderBottomLeftRadius(), style()->borderBottomRightRadius());
         clippedToBorderRadius = true;
     }
     
@@ -384,10 +382,8 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const Color& c, const Backg
         int y = _ty + borderTop() + (includePadding ? paddingTop() : 0);
         int width = w - bleft - bright - (includePadding ? pleft + pright : 0);
         int height = h - borderTop() - borderBottom() - (includePadding ? paddingTop() + paddingBottom() : 0);
-        IntRect clipRect(x, y, width, height);
-        clipRect = p->xForm(clipRect);
         p->save();
-        p->addClip(clipRect);
+        p->addClip(IntRect(x, y, width, height));
     }
 
     CachedImage* bg = bgLayer->backgroundImage();
@@ -582,7 +578,7 @@ void RenderBox::paintBackgroundExtended(QPainter *p, const Color& c, const Backg
         p->restore(); // Undo the border radius clip
 }
 
-void RenderBox::outlineBox(QPainter *p, int _tx, int _ty, const char *color)
+void RenderBox::outlineBox(GraphicsContext* p, int _tx, int _ty, const char *color)
 {
     p->setPen(Pen(Color(color), 1, Pen::DotLine));
     p->setBrush(WebCore::Brush::NoBrush);

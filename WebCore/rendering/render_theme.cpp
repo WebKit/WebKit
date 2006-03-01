@@ -22,19 +22,17 @@
 #include "config.h"
 #include "render_theme.h"
 
-#include "render_style.h"
-#include "htmlnames.h"
-#include "HTMLInputElementImpl.h"
 #include "DocumentImpl.h"
-
-using namespace DOM::HTMLNames;
-
-using DOM::HTMLInputElementImpl;
-using DOM::ElementImpl;
+#include "GraphicsContext.h"
+#include "HTMLInputElementImpl.h"
+#include "htmlnames.h"
+#include "render_style.h"
 
 // The methods in this file are shared by all themes on every platform.
 
-namespace khtml {
+namespace WebCore {
+
+using namespace HTMLNames;
 
 void RenderTheme::adjustStyle(CSSStyleSelector* selector, RenderStyle* style, ElementImpl* e)
 {

@@ -27,14 +27,15 @@
 #include "DocumentImpl.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "GraphicsContext.h"
 #include "InlineTextBox.h"
+#include "RenderTableCell.h"
 #include "RenderTextFragment.h"
 #include "SelectionController.h"
+#include "VisiblePosition.h"
 #include "htmlnames.h"
 #include "render_canvas.h"
-#include "RenderTableCell.h"
 #include "render_theme.h"
-#include "VisiblePosition.h"
 #include <qtextstream.h>
 
 namespace WebCore {

@@ -21,25 +21,24 @@
 // -------------------------------------------------------------------------
 
 #include "config.h"
-#include <assert.h>
-#include <qpainter.h>
-#include "Pen.h"
-
-#include "InlineTextBox.h"
-#include "DocumentImpl.h"
-#include "CachedImage.h"
-#include "render_inline.h"
-#include "RenderBlock.h"
-#include "render_arena.h"
 #include "render_line.h"
-#include "RenderTableCell.h"
 
+#include "CachedImage.h"
+#include "DocumentImpl.h"
+#include "GraphicsContext.h"
+#include "InlineTextBox.h"
+#include "RenderBlock.h"
+#include "RenderTableCell.h"
+#include "render_arena.h"
+#include "render_inline.h"
+#include <assert.h>
+
+namespace WebCore {
+    
 #ifndef NDEBUG
 static bool inInlineBoxDetach;
 #endif
 
-namespace WebCore {
-    
 class EllipsisBox : public InlineBox
 {
 public:
@@ -783,7 +782,7 @@ void InlineFlowBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
         paintDecorations(i, tx, ty, true);
 }
 
-void InlineFlowBox::paintBackgrounds(QPainter* p, const Color& c, const BackgroundLayer* bgLayer,
+void InlineFlowBox::paintBackgrounds(GraphicsContext* p, const Color& c, const BackgroundLayer* bgLayer,
                                      int my, int mh, int _tx, int _ty, int w, int h)
 {
     if (!bgLayer)
@@ -792,7 +791,7 @@ void InlineFlowBox::paintBackgrounds(QPainter* p, const Color& c, const Backgrou
     paintBackground(p, c, bgLayer, my, mh, _tx, _ty, w, h);
 }
 
-void InlineFlowBox::paintBackground(QPainter* p, const Color& c, const BackgroundLayer* bgLayer,
+void InlineFlowBox::paintBackground(GraphicsContext* p, const Color& c, const BackgroundLayer* bgLayer,
                                     int my, int mh, int _tx, int _ty, int w, int h)
 {
     CachedImage* bg = bgLayer->backgroundImage();
@@ -816,10 +815,8 @@ void InlineFlowBox::paintBackground(QPainter* p, const Color& c, const Backgroun
         int totalWidth = xOffsetOnLine;
         for (InlineRunBox* curr = this; curr; curr = curr->nextLineBox())
             totalWidth += curr->width();
-        IntRect clipRect(_tx, _ty, width(), height());
-        clipRect = p->xForm(clipRect);
         p->save();
-        p->addClip(clipRect);
+        p->addClip(IntRect(_tx, _ty, width(), height()));
         object()->paintBackgroundExtended(p, c, bgLayer, my, mh, startX, _ty,
                                           totalWidth, h, borderLeft(), borderRight(), paddingLeft(), paddingRight());
         p->restore();
@@ -846,7 +843,7 @@ void InlineFlowBox::paintBackgroundAndBorder(RenderObject::PaintInfo& i, int _tx
     else
         mh = kMin(i.r.height(), h);
 
-    QPainter* p = i.p;
+    GraphicsContext* p = i.p;
     
     // You can use p::first-line to specify a background. If so, the root line boxes for
     // a line may actually have to paint a background.
@@ -884,10 +881,8 @@ void InlineFlowBox::paintBackgroundAndBorder(RenderObject::PaintInfo& i, int _tx
                 int totalWidth = xOffsetOnLine;
                 for (InlineRunBox* curr = this; curr; curr = curr->nextLineBox())
                     totalWidth += curr->width();
-                IntRect clipRect(_tx, _ty, width(), height());
-                clipRect = p->xForm(clipRect);
                 p->save();
-                p->addClip(clipRect);
+                p->addClip(IntRect(_tx, _ty, width(), height()));
                 object()->paintBorder(p, startX, _ty, totalWidth, h, object()->style());
                 p->restore();
             }
@@ -923,7 +918,7 @@ void InlineFlowBox::paintDecorations(RenderObject::PaintInfo& i, int _tx, int _t
         object()->style()->visibility() != VISIBLE)
         return;
 
-    QPainter* p = i.p;
+    GraphicsContext* p = i.p;
     _tx += m_x;
     _ty += m_y;
     RenderStyle* styleToUse = object()->style(m_firstLine);
@@ -1052,7 +1047,7 @@ void InlineFlowBox::clearTruncation()
 
 void EllipsisBox::paint(RenderObject::PaintInfo& i, int _tx, int _ty)
 {
-    QPainter* p = i.p;
+    GraphicsContext* p = i.p;
     RenderStyle* _style = m_firstLine ? m_object->firstLineStyle() : m_object->style();
     if (_style->font() != p->font())
         p->setFont(_style->font());
@@ -1075,7 +1070,7 @@ void EllipsisBox::paint(RenderObject::PaintInfo& i, int _tx, int _ty)
                       (str.impl())->s,
                       str.length(), 0, str.length(),
                       0, 
-                      QPainter::LTR, _style->visuallyOrdered());
+                      LTR, _style->visuallyOrdered());
                       
     if (setShadow)
         p->clearShadow();

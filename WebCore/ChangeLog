@@ -1,5 +1,240 @@
 2006-02-28  Darin Adler  <darin@apple.com>
 
+        Reviewed by Eric.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7444
+          move QPainter to platform directory and name it GraphicsContext
+
+        * platform/GraphicsContext.h: Added.
+        * platform/TextDirection.h: Added.
+        * platform/cg/GraphicsContextCG.cpp: Added.
+        * platform/mac/GraphicsContextMac.mm: Added.
+
+        * kwq/KWQPainter.h: Removed.
+        * kwq/KWQPainter.mm: Removed.
+        * ForwardingHeaders/qpainter.h: Removed.
+
+        * WebCore.xcodeproj/project.pbxproj: Updated for moved files.
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Updated for moved files.
+        * platform/win/TemporaryLinkStubs.cpp: Updated.
+
+        * bridge/mac/MacFrame.mm: (WebCore::MacFrame::setDisplaysWithFocusAttributes):
+        * bridge/mac/WebCoreFrameBridge.mm: (-[WebCoreFrameBridge drawRect:]):
+        * editing/SelectionController.h:
+        * editing/SelectionController.cpp: (WebCore::SelectionController::paintCaret):
+        * kcanvas/KCanvasResources.cpp: (WebCore::KCanvasMarker::draw):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::KJS::Context2DFunction::callAsFunction):
+        (KJS::Context2D::putValueProperty):
+        (KJS::drawPattern):
+        * page/Frame.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::paintCaret):
+        (WebCore::Frame::paintDragCaret):
+        (WebCore::Frame::paint):
+        (WebCore::Frame::adjustPageHeight):
+        * page/FrameView.h:
+        * platform/Font.h:
+        * platform/Font.cpp:
+        (WebCore::Font::selectionRectForText):
+        (WebCore::Font::drawHighlightForText):
+        (WebCore::Font::drawText):
+        * platform/Widget.h:
+        * platform/mac/WidgetMac.mm: (WebCore::Widget::paint):
+        * rendering/InlineTextBox.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintMarkedTextBackground):
+        (WebCore::InlineTextBox::paintDecoration):
+        (WebCore::InlineTextBox::paintSpellingMarker):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::paintAllMarkersOfType):
+        (WebCore::InlineTextBox::paintMarkedTextUnderline):
+        (WebCore::InlineTextBox::offsetForPosition):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::outlineBox):
+        (WebCore::RenderTableCell::paintCollapsedBorder):
+        (WebCore::RenderTableCell::paintBoxDecorations):
+        * rendering/RenderTableCell.h:
+        * rendering/render_box.cpp:
+        (WebCore::RenderBox::paintBackgrounds):
+        (WebCore::RenderBox::paintBackground):
+        (WebCore::RenderBox::paintBackgroundExtended):
+        (WebCore::RenderBox::outlineBox):
+        * rendering/render_box.h:
+        * rendering/render_button.cpp:
+        (WebCore::RenderButton::RenderButton):
+        (WebCore::RenderButton::paintObject):
+        * rendering/render_button.h:
+        (WebCore::RenderButton::removeLeftoverAnonymousBoxes):
+        * rendering/render_canvas.cpp:
+        * rendering/render_canvasimage.cpp:
+        (WebCore::RenderCanvasImage::paint):
+        * rendering/render_flow.cpp:
+        (WebCore::RenderFlow::addFocusRingRects):
+        (WebCore::RenderFlow::paintFocusRing):
+        (WebCore::RenderFlow::paintOutlines):
+        (WebCore::RenderFlow::paintOutlineForLine):
+        * rendering/render_flow.h:
+        * rendering/render_form.cpp:
+        (WebCore::RenderLineEdit::setStyle):
+        (WebCore::RenderFieldset::paintBorderMinusLegend):
+        (WebCore::RenderSelect::setWidgetWritingDirection):
+        (WebCore::RenderTextArea::setStyle):
+        * rendering/render_form.h:
+        (WebCore::RenderFieldset::renderName):
+        * rendering/render_frames.cpp:
+        (WebCore::RenderFrameSet::userResize):
+        * rendering/render_image.cpp:
+        (WebCore::RenderImage::paint):
+        * rendering/render_layer.cpp:
+        (WebCore::RenderLayer::beginTransparencyLayers):
+        (WebCore::RenderLayer::paintScrollbars):
+        (WebCore::RenderLayer::paint):
+        (WebCore::setClip):
+        (WebCore::restoreClip):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::Marquee::direction):
+        * rendering/render_layer.h:
+        * rendering/render_line.cpp:
+        (WebCore::InlineFlowBox::paintBackgrounds):
+        (WebCore::InlineFlowBox::paintBackground):
+        (WebCore::InlineFlowBox::paintBackgroundAndBorder):
+        (WebCore::InlineFlowBox::paintDecorations):
+        (WebCore::EllipsisBox::paint):
+        * rendering/render_line.h:
+        * rendering/render_list.cpp:
+        (WebCore::RenderListMarker::paint):
+        * rendering/render_object.cpp:
+        (WebCore::RenderObject::drawBorder):
+        (WebCore::RenderObject::paintBorderImage):
+        (WebCore::RenderObject::paintBorder):
+        (WebCore::RenderObject::addFocusRingRects):
+        (WebCore::RenderObject::paintOutline):
+        (WebCore::RenderObject::selectionColor):
+        * rendering/render_object.h:
+        (WebCore::RenderObject::element):
+        (WebCore::RenderObject::document):
+        (WebCore::RenderObject::setNode):
+        (WebCore::RenderObject::node):
+        (WebCore::RenderObject::PaintInfo::PaintInfo):
+        (WebCore::RenderObject::paintBoxDecorations):
+        (WebCore::RenderObject::paintBackgroundExtended):
+        (WebCore::RenderObject::printBoxDecorations):
+        * rendering/render_replaced.cpp: (WebCore::RenderReplaced::selectionColor):
+        * rendering/render_replaced.h:
+        Updated to use GraphicsContext instead of QPainter.
+
+        * css/cssstyleselector.cpp: (WebCore::CSSStyleSelector::applyProperty):
+        * kwq/KWQComboBox.h:
+        * kwq/KWQComboBox.mm: (QComboBox::setWritingDirection):
+        * kwq/KWQLineEdit.h:
+        * kwq/KWQLineEdit.mm: (QLineEdit::setWritingDirection):
+        * kwq/KWQListBox.h:
+        * kwq/KWQListBox.mm: (QListBox::setWritingDirection):
+        * kwq/KWQTextEdit.h:
+        * kwq/KWQTextEdit.mm: (QTextEdit::setWritingDirection):
+        * rendering/bidi.cpp:
+        (khtml::bidiNext):
+        (khtml::bidiFirst):
+        Updated to use TextDirection instead of QPainter::TextDirection and EDirection.
+
+        * kcanvas/device/KRenderingDevice.h: Added renderingDevice here to
+        replace QPainter::renderingDevice for now.
+
+        * khtml/ecma/kjs_html.h: Fixed comments to mention GraphicsContext.
+
+        * khtml/html/html_imageimpl.h:
+        * page/FrameView.cpp:
+        * rendering/RenderBlock.cpp:
+        Added include needed since I reduced includes elsewhere.
+
+        * kwq/KWQFontMetrics.h:
+        * kwq/KWQFontMetrics.mm: (QFontMetrics::checkSelectionPoint):
+        Changed QChar* to be const QChar*.
+
+        * platform/FontDescription.h: Added include that was missing.
+        * rendering/render_theme.cpp: Ditto.
+
+        * platform/Image.h: Removed unnecessary forward declaration of QPainter.
+
+        * rendering/RenderText.h: Clean up types, use const.
+
+        * rendering/render_style.h: Removed EDirection and replaced it with TextDirection.
+
+        * kcanvas/KCanvasCreator.cpp:
+        (WebCore::KCanvasCreator::createRoundedRectangle):
+        (WebCore::KCanvasCreator::createRectangle):
+        (WebCore::KCanvasCreator::createEllipse):
+        (WebCore::KCanvasCreator::createLine):
+        * kcanvas/KCanvasPath.cpp: (WebCore::operator<<):
+        * kcanvas/KCanvasTreeDebug.cpp: (WebCore::operator<<):
+        * kcanvas/RenderForeignObject.cpp: (WebCore::RenderForeignObject::paint):
+        * kcanvas/RenderPath.cpp: (WebCore::RenderPath::paint):
+        * kcanvas/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        (WebCore::RenderSVGImage::translateForAttributes):
+        * kcanvas/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::paint):
+        * kcanvas/device/quartz/KCanvasFilterQuartz.mm:
+        (WebCore::KCanvasFilterQuartz::prepareFilter):
+        (WebCore::KCanvasFilterQuartz::applyFilter):
+        * kcanvas/device/quartz/KCanvasMaskerQuartz.mm:
+        (WebCore::KCanvasMaskerQuartz::applyMask):
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.mm:
+        (WebCore::KCanvasContainerQuartz::paint):
+        (WebCore::KCanvasClipperQuartz::applyClip):
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.mm:
+        (WebCore::KRenderingDeviceQuartz::pushContext):
+        (WebCore::KRenderingDeviceQuartz::popContext):
+        (WebCore::renderingDevice):
+        * kcanvas/device/quartz/KRenderingPaintServerGradientQuartz.mm:
+        (WebCore::KRenderingPaintServerGradientQuartz::setup):
+        (WebCore::KRenderingPaintServerGradientQuartz::renderPath):
+        (WebCore::KRenderingPaintServerGradientQuartz::teardown):
+        * ksvg2/misc/KCanvasRenderingStyle.cpp: (WebCore::sharedSolidPaintServer):
+        * ksvg2/svg/SVGAElementImpl.cpp: (SVGAElementImpl::createRenderer):
+        * ksvg2/svg/SVGClipPathElementImpl.cpp: (SVGClipPathElementImpl::canvasResource):
+        * ksvg2/svg/SVGFEBlendElementImpl.cpp: (SVGFEBlendElementImpl::filterEffect):
+        * ksvg2/svg/SVGFEColorMatrixElementImpl.cpp: (SVGFEColorMatrixElementImpl::filterEffect):
+        * ksvg2/svg/SVGFEComponentTransferElementImpl.cpp: (SVGFEComponentTransferElementImpl::filterEffect):
+        * ksvg2/svg/SVGFECompositeElementImpl.cpp: (SVGFECompositeElementImpl::filterEffect):
+        * ksvg2/svg/SVGFEDiffuseLightingElementImpl.cpp: (WebCore::SVGFEDiffuseLightingElementImpl::filterEffect):
+        * ksvg2/svg/SVGFEDisplacementMapElementImpl.cpp: (SVGFEDisplacementMapElementImpl::filterEffect):
+        * ksvg2/svg/SVGFEFloodElementImpl.cpp: (SVGFEFloodElementImpl::filterEffect):
+        * ksvg2/svg/SVGFEGaussianBlurElementImpl.cpp: (SVGFEGaussianBlurElementImpl::filterEffect):
+        * ksvg2/svg/SVGFEImageElementImpl.cpp: (SVGFEImageElementImpl::filterEffect):
+        * ksvg2/svg/SVGFEMergeElementImpl.cpp: (SVGFEMergeElementImpl::filterEffect):
+        * ksvg2/svg/SVGFEOffsetElementImpl.cpp: (SVGFEOffsetElementImpl::filterEffect):
+        * ksvg2/svg/SVGFESpecularLightingElementImpl.cpp: (SVGFESpecularLightingElementImpl::filterEffect):
+        * ksvg2/svg/SVGFETileElementImpl.cpp: (SVGFETileElementImpl::filterEffect):
+        * ksvg2/svg/SVGFETurbulenceElementImpl.cpp: (SVGFETurbulenceElementImpl::filterEffect):
+        * ksvg2/svg/SVGFilterElementImpl.cpp: (SVGFilterElementImpl::canvasResource):
+        * ksvg2/svg/SVGGElementImpl.cpp: (SVGGElementImpl::createRenderer):
+        * ksvg2/svg/SVGGradientElementImpl.cpp: (SVGGradientElementImpl::canvasResource):
+        * ksvg2/svg/SVGMarkerElementImpl.cpp:
+        (WebCore::SVGMarkerElementImpl::canvasResource):
+        (WebCore::SVGMarkerElementImpl::createRenderer):
+        * ksvg2/svg/SVGMaskElementImpl.cpp:
+        (WebCore::SVGMaskElementImpl::drawMaskerContent):
+        (WebCore::SVGMaskElementImpl::createRenderer):
+        (WebCore::SVGMaskElementImpl::canvasResource):
+        * ksvg2/svg/SVGPathElementImpl.cpp: (WebCore::SVGPathElementImpl::toPathData):
+        * ksvg2/svg/SVGPatternElementImpl.cpp:
+        (WebCore::SVGPatternElementImpl::drawPatternContentIntoTile):
+        (WebCore::SVGPatternElementImpl::createRenderer):
+        (WebCore::SVGPatternElementImpl::canvasResource):
+        * ksvg2/svg/SVGPolygonElementImpl.cpp: (SVGPolygonElementImpl::toPathData):
+        * ksvg2/svg/SVGPolylineElementImpl.cpp: (SVGPolylineElementImpl::toPathData):
+        * ksvg2/svg/SVGSVGElementImpl.cpp: (WebCore::SVGSVGElementImpl::createRenderer):
+        * ksvg2/svg/SVGStyledElementImpl.cpp: (WebCore::SVGStyledElementImpl::createRenderer):
+        * ksvg2/svg/SVGSwitchElementImpl.cpp: (SVGSwitchElementImpl::createRenderer):
+        * ksvg2/svg/SVGUseElementImpl.cpp: (SVGUseElementImpl::createRenderer):
+        Updated to use renderingDevice instead of QPainter::renderingDevice.
+
+2006-02-28  Darin Adler  <darin@apple.com>
+
         - fixed part of the reason the build is broken
 
         * WebCore.xcodeproj/project.pbxproj: Updated project file.

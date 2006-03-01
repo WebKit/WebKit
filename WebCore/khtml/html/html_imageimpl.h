@@ -26,6 +26,7 @@
 #define HTML_IMAGEIMPL_H
 
 #include "CachedImage.h"
+#include "Image.h"
 #include "Path.h"
 #include "html_inlineimpl.h"
 #include "render_object.h"

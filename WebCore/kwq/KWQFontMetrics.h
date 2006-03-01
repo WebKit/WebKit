@@ -64,7 +64,7 @@ public:
                             const QChar *str, int len, int from, int to, int toAdd,
                             bool rtl, bool visuallyOrdered, int letterSpacing,
                             int wordSpacing, bool smallCaps) const;
-    int checkSelectionPoint(QChar *s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int letterSpacing, int wordSpacing, bool smallCaps, int x, bool reversed, bool dirOverride, bool includePartialGlyphs) const;
+    int checkSelectionPoint(const QChar*, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int letterSpacing, int wordSpacing, bool smallCaps, int x, bool reversed, bool dirOverride, bool includePartialGlyphs) const;
 
     IntRect boundingRect(QChar) const;
     IntRect boundingRect(const QString &, int tabWidth, int xpos, int len=-1) const;

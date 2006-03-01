@@ -262,7 +262,7 @@ void RenderLineEdit::setStyle(RenderStyle *s)
 
     QLineEdit *w = widget();
     w->setAlignment(textAlignment());
-    w->setWritingDirection(style()->direction() == RTL ? QPainter::RTL : QPainter::LTR);
+    w->setWritingDirection(style()->direction() == RTL ? RTL : LTR);
 }
 
 void RenderLineEdit::updateFromElement()
@@ -440,7 +440,7 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
         paintBorderMinusLegend(i.p, _tx, _ty, w, h, style(), legend->xPos(), legend->width());
 }
 
-void RenderFieldset::paintBorderMinusLegend(QPainter *p, int _tx, int _ty, int w, int h,
+void RenderFieldset::paintBorderMinusLegend(GraphicsContext* p, int _tx, int _ty, int w, int h,
                                             const RenderStyle* style, int lx, int lw)
 {
 
@@ -617,7 +617,7 @@ RenderSelect::RenderSelect(HTMLSelectElementImpl *element)
 
 void RenderSelect::setWidgetWritingDirection()
 {
-    QPainter::TextDirection d = style()->direction() == RTL ? QPainter::RTL : QPainter::LTR;
+    TextDirection d = style()->direction() == RTL ? RTL : LTR;
     if (m_useListBox)
         static_cast<QListBox *>(m_widget)->setWritingDirection(d);
     else
@@ -997,7 +997,7 @@ void RenderTextArea::setStyle(RenderStyle *s)
     w->setAlignment(textAlignment());
     w->setLineHeight(RenderObject::lineHeight(true));
 
-    w->setWritingDirection(style()->direction() == RTL ? QPainter::RTL : QPainter::LTR);
+    w->setWritingDirection(style()->direction() == RTL ? RTL : LTR);
 
     ScrollBarMode scrollMode = ScrollBarAuto;
     switch (style()->overflow()) {

@@ -1873,7 +1873,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
     {
         HANDLE_INHERIT_AND_INITIAL(direction, Direction)
         if(!primitiveValue) break;
-        style->setDirection( (EDirection) (primitiveValue->getIdent() - CSS_VAL_LTR) );
+        style->setDirection(primitiveValue->getIdent() == CSS_VAL_LTR ? LTR : RTL);
         return;
     }
     case CSS_PROP_DISPLAY:

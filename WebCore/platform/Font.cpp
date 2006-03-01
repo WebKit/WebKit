@@ -4,7 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,30 +26,29 @@
 #include "config.h"
 #include "Font.h"
 
+#include "GraphicsContext.h"
 #include "khtml_settings.h"
-
 #include <algorithm>
 
-namespace khtml {
+namespace WebCore {
 
 IntRect Font::selectionRectForText(int x, int y, int h, int tabWidth, int xpos, 
-                      QChar *str, int slen, int pos, int len, int toAdd,
-                      bool rtl, bool visuallyOrdered, int from, int to) const
+    const QChar* str, int slen, int pos, int len, int toAdd,
+    bool rtl, bool visuallyOrdered, int from, int to) const
 {
     return fm.selectionRectForText(x, y, h, tabWidth, xpos, str + pos, std::min(slen - pos, len), from, to, toAdd, rtl, visuallyOrdered, m_letterSpacing, m_wordSpacing, m_fontDescription.smallCaps());
-
 }
 
-void Font::drawHighlightForText( QPainter *p, int x, int y, int h, int tabWidth, int xpos, 
-                     QChar *str, int slen, int pos, int len,
-                     int toAdd, QPainter::TextDirection d, bool visuallyOrdered, int from, int to, Color bg) const
+void Font::drawHighlightForText(GraphicsContext *p, int x, int y, int h, int tabWidth, int xpos, 
+    const QChar* str, int slen, int pos, int len,
+    int toAdd, TextDirection d, bool visuallyOrdered, int from, int to, Color bg) const
 {
     p->drawHighlightForText(x, y, h, tabWidth, xpos, str + pos, std::min(slen - pos, len), from, to, toAdd, bg, d, visuallyOrdered,
-                m_letterSpacing, m_wordSpacing, m_fontDescription.smallCaps());
+        m_letterSpacing, m_wordSpacing, m_fontDescription.smallCaps());
 }
                      
-void Font::drawText( QPainter *p, int x, int y, int tabWidth, int xpos, QChar *str, int slen, int pos, int len,
-                     int toAdd, QPainter::TextDirection d, bool visuallyOrdered, int from, int to, Color bg ) const
+void Font::drawText(GraphicsContext *p, int x, int y, int tabWidth, int xpos, const QChar* str, int slen, int pos, int len,
+    int toAdd, TextDirection d, bool visuallyOrdered, int from, int to, Color bg ) const
 {
     p->drawText(x, y, tabWidth, xpos, str + pos, std::min(slen - pos, len), from, to, toAdd, bg, d, visuallyOrdered,
                 m_letterSpacing, m_wordSpacing, m_fontDescription.smallCaps());

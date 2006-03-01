@@ -76,7 +76,7 @@ RenderObject *SVGStyledElementImpl::createRenderer(RenderArena *arena, RenderSty
     RefPtr<KCanvasPath> pathData = toPathData();
     if (!pathData)
         return 0;
-    return QPainter::renderingDevice()->createItem(arena, style, this, pathData.get());
+    return renderingDevice()->createItem(arena, style, this, pathData.get());
 }
 
 void SVGStyledElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)

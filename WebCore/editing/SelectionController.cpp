@@ -27,25 +27,25 @@
 #include "SelectionController.h"
 
 #include "DocumentImpl.h"
+#include "EventNames.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "GraphicsContext.h"
 #include "InlineTextBox.h"
 #include "IntRect.h"
-#include "dom_node.h"
 #include "PlatformString.h"
+#include "VisiblePosition.h"
+#include "dom2_eventsimpl.h"
+#include "dom2_rangeimpl.h"
+#include "dom_elementimpl.h"
+#include "dom_node.h"
 #include "htmlediting.h"
 #include "render_canvas.h"
 #include "render_object.h"
 #include "render_style.h"
-#include "VisiblePosition.h"
 #include "visible_text.h"
 #include "visible_units.h"
-#include "dom2_rangeimpl.h"
-#include "dom2_eventsimpl.h"
-#include "dom_elementimpl.h"
-#include "EventNames.h"
 #include <kxmlcore/Assertions.h>
-#include <qpainter.h>
 
 #define EDIT_DEBUG 0
 
@@ -822,7 +822,7 @@ void SelectionController::needsCaretRepaint()
     v->updateContents(caretRepaintRect(), false);
 }
 
-void SelectionController::paintCaret(QPainter *p, const IntRect &rect)
+void SelectionController::paintCaret(GraphicsContext *p, const IntRect &rect)
 {
     if (! m_sel.isCaret())
         return;

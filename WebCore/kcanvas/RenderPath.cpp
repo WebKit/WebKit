@@ -25,19 +25,18 @@
 #if SVG_SUPPORT
 #include "RenderPath.h"
 
+#include "GraphicsContext.h"
 #include "IntRect.h"
-#include <kxmlcore/Assertions.h>
-
-#include "kcanvas/KCanvas.h"
-#include "KCanvasMatrix.h"
-#include "KRenderingDevice.h"
 #include "KCanvasContainer.h"
+#include "KCanvasMatrix.h"
+#include "KCanvasRenderingStyle.h"
+#include "KRenderingDevice.h"
 #include "KRenderingFillPainter.h"
 #include "KRenderingStrokePainter.h"
-
-#include "KCanvasRenderingStyle.h"
 #include "SVGRenderStyle.h"
 #include "SVGStyledElementImpl.h"
+#include <kcanvas/KCanvas.h>
+#include <kxmlcore/Assertions.h>
 
 namespace WebCore {
 
@@ -192,13 +191,13 @@ void RenderPath::paint(PaintInfo &paintInfo, int parentX, int parentY)
     if (paintInfo.p->paintingDisabled() || (paintInfo.phase != PaintActionForeground) || style()->visibility() == HIDDEN)
         return;
     
-    KRenderingDevice *renderingDevice = QPainter::renderingDevice();
-    KRenderingDeviceContext *deviceContext = renderingDevice->currentContext();
+    KRenderingDevice* device = renderingDevice();
+    KRenderingDeviceContext *deviceContext = device->currentContext();
     bool shouldPopContext = false;
     if (!deviceContext) {
         // I only need to setup for KCanvas rendering if it hasn't already been done.
         deviceContext = paintInfo.p->createRenderingDeviceContext();
-        renderingDevice->pushContext(deviceContext);
+        device->pushContext(deviceContext);
         shouldPopContext = true;
     } else
         paintInfo.p->save();
@@ -209,7 +208,7 @@ void RenderPath::paint(PaintInfo &paintInfo, int parentX, int parentY)
     KCanvasFilter *filter = getFilterById(document(), style()->svgStyle()->filter().mid(1));
     if (filter) {
         filter->prepareFilter(relativeBBox(true));
-        deviceContext = renderingDevice->currentContext();
+        deviceContext = device->currentContext();
     }
 
     if (KCanvasClipper *clipper = getClipperById(document(), style()->svgStyle()->clipPath().mid(1)))
@@ -241,7 +240,7 @@ void RenderPath::paint(PaintInfo &paintInfo, int parentX, int parentY)
 
     // restore drawing state
     if (shouldPopContext) {
-        renderingDevice->popContext();
+        device->popContext();
         delete deviceContext;
     } else
         paintInfo.p->restore();

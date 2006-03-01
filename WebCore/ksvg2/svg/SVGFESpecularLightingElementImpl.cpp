@@ -122,7 +122,7 @@ void SVGFESpecularLightingElementImpl::parseMappedAttribute(MappedAttributeImpl 
 KCanvasFESpecularLighting *SVGFESpecularLightingElementImpl::filterEffect() const
 {
     if (!m_filterEffect) 
-        m_filterEffect = static_cast<KCanvasFESpecularLighting *>(QPainter::renderingDevice()->createFilterEffect(FE_SPECULAR_LIGHTING));
+        m_filterEffect = static_cast<KCanvasFESpecularLighting *>(renderingDevice()->createFilterEffect(FE_SPECULAR_LIGHTING));
     m_filterEffect->setIn(DOMString(in1()->baseVal()).qstring());
     setStandardAttributes(m_filterEffect);
     m_filterEffect->setSpecularConstant((specularConstant()->baseVal()));

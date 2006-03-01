@@ -32,9 +32,9 @@
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "GraphicsContext.h"
 #include "IntPointArray.h"
 #include "KWQAccObjectCache.h" 
-#include "Pen.h"
 #include "RenderBlock.h"
 #include "RenderTable.h"
 #include "RenderTableCell.h"
@@ -55,7 +55,6 @@
 #include "render_theme.h"
 #include "VisiblePosition.h"
 #include <qmatrix.h>
-#include <qpainter.h>
 #include "TextEncoding.h"
 #include <qtextstream.h>
 
@@ -790,7 +789,7 @@ bool RenderObject::mustRepaintBackgroundOrBorder() const
     return false;
 }
 
-void RenderObject::drawBorder(QPainter *p, int x1, int y1, int x2, int y2,
+void RenderObject::drawBorder(GraphicsContext* p, int x1, int y1, int x2, int y2,
                               BorderSide s, Color c, const Color& textcolor, EBorderStyle style,
                               int adjbw1, int adjbw2, bool invalidisInvert)
 {
@@ -1003,7 +1002,7 @@ void RenderObject::drawBorder(QPainter *p, int x1, int y1, int x2, int y2,
     }
 }
 
-bool RenderObject::paintBorderImage(QPainter *p, int _tx, int _ty, int w, int h, const RenderStyle* style)
+bool RenderObject::paintBorderImage(GraphicsContext* p, int _tx, int _ty, int w, int h, const RenderStyle* style)
 {
     CachedImage* borderImage = style->borderImage().image();
     if (!borderImage->isLoaded())
@@ -1013,10 +1012,10 @@ bool RenderObject::paintBorderImage(QPainter *p, int _tx, int _ty, int w, int h,
     bool clipped = false;
     if (style->hasBorderRadius()) {
         IntRect clipRect(_tx, _ty, w, h);
-        clipRect = p->xForm(clipRect);
         p->save();
-        p->addRoundedRectClip(clipRect, style->borderTopLeftRadius(), style->borderTopRightRadius(),
-                              style->borderBottomLeftRadius(), style->borderBottomRightRadius());
+        p->addRoundedRectClip(clipRect,
+            style->borderTopLeftRadius(), style->borderTopRightRadius(),
+            style->borderBottomLeftRadius(), style->borderBottomRightRadius());
         clipped = true;
     }
 
@@ -1111,7 +1110,7 @@ bool RenderObject::paintBorderImage(QPainter *p, int _tx, int _ty, int w, int h,
     return true;
 }
 
-void RenderObject::paintBorder(QPainter *p, int _tx, int _ty, int w, int h, const RenderStyle* style, bool begin, bool end)
+void RenderObject::paintBorder(GraphicsContext* p, int _tx, int _ty, int w, int h, const RenderStyle* style, bool begin, bool end)
 {
     CachedImage* borderImage = style->borderImage().image();
     bool shouldPaintBackgroundImage = borderImage && borderImage->canRender();
@@ -1313,7 +1312,7 @@ IntRect RenderObject::paintingRootRect(IntRect& topLevelRect)
     return result;
 }
 
-void RenderObject::addFocusRingRects(QPainter *p, int _tx, int _ty)
+void RenderObject::addFocusRingRects(GraphicsContext* p, int _tx, int _ty)
 {
     // For blocks inside inlines, we go ahead and include margins so that we run right up to the
     // inline boxes above and below us (thus getting merged with them to form a single irregular
@@ -1328,7 +1327,7 @@ void RenderObject::addFocusRingRects(QPainter *p, int _tx, int _ty)
         p->addFocusRingRect(_tx, _ty, width(), height());
 }
 
-void RenderObject::paintOutline(QPainter *p, int _tx, int _ty, int w, int h, const RenderStyle* style)
+void RenderObject::paintOutline(GraphicsContext* p, int _tx, int _ty, int w, int h, const RenderStyle* style)
 {
     int ow = style->outlineWidth();
     if(!ow) return;
@@ -1620,7 +1619,7 @@ bool RenderObject::shouldSelect() const
     return node->dispatchHTMLEvent(selectstartEvent, true, true);
 }
 
-Color RenderObject::selectionColor(QPainter *p) const
+Color RenderObject::selectionColor(GraphicsContext* p) const
 {
     Color color;
     if (style()->userSelect() != SELECT_NONE) {

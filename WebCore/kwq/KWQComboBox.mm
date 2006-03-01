@@ -339,13 +339,13 @@ Widget::FocusPolicy QComboBox::focusPolicy() const
     return policy == TabFocus ? StrongFocus : policy;
 }
 
-void QComboBox::setWritingDirection(QPainter::TextDirection direction)
+void QComboBox::setWritingDirection(TextDirection direction)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
     KWQPopUpButton *button = static_cast<KWQPopUpButton *>(getView());
     KWQPopUpButtonCell *cell = [button cell];
-    NSWritingDirection d = direction == QPainter::RTL ? NSWritingDirectionRightToLeft : NSWritingDirectionLeftToRight;
+    NSWritingDirection d = direction == RTL ? NSWritingDirectionRightToLeft : NSWritingDirectionLeftToRight;
     if ([cell baseWritingDirection] != d) {
         [cell setBaseWritingDirection:d];
         [button setNeedsDisplay:YES];

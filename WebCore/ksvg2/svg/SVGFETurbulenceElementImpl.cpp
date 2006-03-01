@@ -127,7 +127,7 @@ void SVGFETurbulenceElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 KCanvasFETurbulence *SVGFETurbulenceElementImpl::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<KCanvasFETurbulence *>(QPainter::renderingDevice()->createFilterEffect(FE_TURBULENCE));
+        m_filterEffect = static_cast<KCanvasFETurbulence *>(renderingDevice()->createFilterEffect(FE_TURBULENCE));
     if (!m_filterEffect)
         return 0;
     

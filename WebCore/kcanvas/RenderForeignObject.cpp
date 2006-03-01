@@ -24,6 +24,7 @@
 #if SVG_SUPPORT
 #include "RenderForeignObject.h"
 
+#include "GraphicsContext.h"
 #include "KCanvasMatrix.h"
 #include "KRenderingDevice.h"
 #include "SVGAnimatedLengthImpl.h"
@@ -47,7 +48,7 @@ void RenderForeignObject::paint(PaintInfo& paintInfo, int parentX, int parentY)
     if (paintInfo.p->paintingDisabled())
         return;
 
-    KRenderingDevice *device = QPainter::renderingDevice();
+    KRenderingDevice *device = renderingDevice();
     KRenderingDeviceContext *context = device->currentContext();
     bool shouldPopContext = false;
     if (!context) {

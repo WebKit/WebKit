@@ -67,7 +67,7 @@ void SVGFETileElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 KCanvasFETile *SVGFETileElementImpl::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<KCanvasFETile *>(QPainter::renderingDevice()->createFilterEffect(FE_TILE));
+        m_filterEffect = static_cast<KCanvasFETile *>(renderingDevice()->createFilterEffect(FE_TILE));
     if (!m_filterEffect)
         return 0;
     m_filterEffect->setIn(DOMString(in1()->baseVal()).qstring());

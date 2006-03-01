@@ -26,11 +26,13 @@
 #import "config.h"
 #import "KWQTextEdit.h"
 
-#import <kxmlcore/Assertions.h>
+#import "Color.h"
+#import "IntSize.h"
 #import "KWQExceptions.h"
 #import "Font.h"
 #import "KWQLineEdit.h"
 #import "KWQTextArea.h"
+#import <kxmlcore/Assertions.h>
 
 using namespace WebCore;
 
@@ -357,12 +359,12 @@ void QTextEdit::setLineHeight(int lineHeight)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QTextEdit::setWritingDirection(QPainter::TextDirection direction)
+void QTextEdit::setWritingDirection(TextDirection direction)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
     KWQTextArea *textArea = static_cast<KWQTextArea *>(getView());
-    [textArea setBaseWritingDirection:(direction == QPainter::RTL ? NSWritingDirectionRightToLeft : NSWritingDirectionLeftToRight)];
+    [textArea setBaseWritingDirection:(direction == RTL ? NSWritingDirectionRightToLeft : NSWritingDirectionLeftToRight)];
 
     KWQ_UNBLOCK_EXCEPTIONS;
 }

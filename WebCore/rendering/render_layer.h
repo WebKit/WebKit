@@ -210,7 +210,7 @@ public:
 
     bool isTransparent() const;
     RenderLayer* transparentAncestor();
-    void beginTransparencyLayers(QPainter* p);
+    void beginTransparencyLayers(GraphicsContext*);
     
     RenderLayer* root() {
         RenderLayer* curr = this;
@@ -252,7 +252,7 @@ public:
     int horizontalScrollbarHeight();
     void moveScrollbarsAside();
     void positionScrollbars(const IntRect& absBounds);
-    void paintScrollbars(QPainter* p, const IntRect& damageRect);
+    void paintScrollbars(GraphicsContext*, const IntRect& damageRect);
     void updateScrollInfoAfterLayout();
     void slotValueChanged(int);
     void updateScrollPositionFromScrollbars();
@@ -291,7 +291,7 @@ public:
     // paints the layers that intersect the damage rect from back to
     // front.  The hitTest method looks for mouse events by walking
     // layers that intersect the point from front to back.
-    void paint(QPainter *p, const IntRect& damageRect, bool selectionOnly=false, RenderObject *paintingRoot=0);
+    void paint(GraphicsContext*, const IntRect& damageRect, bool selectionOnly = false, RenderObject* paintingRoot = 0);
     bool hitTest(RenderObject::NodeInfo& info, int x, int y);
 
     // This method figures out our layerBounds in coordinates relative to
@@ -331,10 +331,10 @@ private:
 
     void collectLayers(Vector<RenderLayer*>*&, Vector<RenderLayer*>*&);
 
-    void paintLayer(RenderLayer* rootLayer, QPainter *p, const IntRect& paintDirtyRect, 
-                    bool haveTransparency, bool selectionOnly, RenderObject *paintingRoot);
+    void paintLayer(RenderLayer* rootLayer, GraphicsContext*, const IntRect& paintDirtyRect,
+        bool haveTransparency, bool selectionOnly, RenderObject* paintingRoot);
     RenderLayer* hitTestLayer(RenderLayer* rootLayer, RenderObject::NodeInfo& info,
-                              int x, int y, const IntRect& hitTestRect);
+        int x, int y, const IntRect& hitTestRect);
     void computeScrollDimensions(bool* needHBar = 0, bool* needVBar = 0);
 
 protected:   

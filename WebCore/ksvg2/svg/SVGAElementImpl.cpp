@@ -77,7 +77,7 @@ void SVGAElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 
 RenderObject *SVGAElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
 {
-    return QPainter::renderingDevice()->createContainer(arena, style, this);
+    return renderingDevice()->createContainer(arena, style, this);
 }
 
 void SVGAElementImpl::defaultEventHandler(EventImpl *evt)

@@ -308,7 +308,7 @@ static QTextStream &operator<<(QTextStream &ts, const RenderPath &o)
     
     writeStyle(ts, o);
     
-    ts << " [data=\"" << QPainter::renderingDevice()->stringForPath(o.path()) << "\"]";
+    ts << " [data=\"" << renderingDevice()->stringForPath(o.path()) << "\"]";
     
     return ts;
 }

@@ -25,6 +25,7 @@
 
 #include "DocumentImpl.h"
 #include "FrameView.h"
+#include "GraphicsContext.h"
 #include "render_layer.h"
 
 namespace WebCore {

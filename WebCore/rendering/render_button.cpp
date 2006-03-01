@@ -22,22 +22,19 @@
 
 #include "config.h"
 #include "render_button.h"
+
 #include "DocumentImpl.h"
+#include "GraphicsContext.h"
+#include "HTMLInputElementImpl.h"
 #include "RenderText.h"
 #include "htmlnames.h"
-#include "HTMLInputElementImpl.h"
 
-using namespace DOM;
+namespace WebCore {
+
 using namespace HTMLNames;
 
-namespace khtml {
-
 RenderButton::RenderButton(NodeImpl* node)
-:RenderFlexibleBox(node), m_buttonText(0), m_inner(0)
-{
-}
-
-RenderButton::~RenderButton()
+    : RenderFlexibleBox(node), m_buttonText(0), m_inner(0)
 {
 }
 
@@ -101,11 +98,10 @@ void RenderButton::paintObject(PaintInfo& i, int _tx, int _ty)
 {
     // Push a clip.
     if (m_inner && i.phase == PaintActionForeground) {
-        IntRect clipRect(_tx + borderLeft(), _ty + borderTop(), width() - borderLeft() - borderRight(),
-                       height() - borderBottom() - borderTop());
+        IntRect clipRect(_tx + borderLeft(), _ty + borderTop(),
+            width() - borderLeft() - borderRight(), height() - borderBottom() - borderTop());
         if (clipRect.width() == 0 || clipRect.height() == 0)
             return;
-        clipRect = i.p->xForm(clipRect);
         i.p->save();
         i.p->addClip(clipRect);
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,25 +27,24 @@
 #include "config.h"
 #if SVG_SUPPORT
 #import "KCanvasFilterQuartz.h"
-#import "KCanvasRenderingStyle.h"
+
+#import "CachedImage.h"
+#import "Image.h"
+#import "IntRect.h"
 #import "KCanvasMatrix.h"
+#import "KCanvasRenderingStyle.h"
 #import "KRenderingDeviceQuartz.h"
-#import "QuartzSupport.h"
 #import "KWQExceptions.h"
-#import "WKDisplacementMapFilter.h"
+#import "QuartzSupport.h"
+#import "WKArithmeticFilter.h"
 #import "WKDiffuseLightingFilter.h"
-#import "WKSpecularLightingFilter.h"
-#import "WKSpotLightFilter.h"
-#import "WKPointLightFilter.h"
+#import "WKDisplacementMapFilter.h"
 #import "WKDistantLightFilter.h"
 #import "WKNormalMapFilter.h"
-#import "WKArithmeticFilter.h"
-
+#import "WKPointLightFilter.h"
+#import "WKSpecularLightingFilter.h"
+#import "WKSpotLightFilter.h"
 #import <QuartzCore/QuartzCore.h>
-
-#import "IntRect.h"
-#import "CachedImage.h"
-
 #import <kxmlcore/Assertions.h>
 
 namespace WebCore {
@@ -88,7 +87,7 @@ void KCanvasFilterQuartz::prepareFilter(const FloatRect &bbox)
     if (m_effects.isEmpty())
         return;
     
-    CGContextRef cgContext = static_cast<KRenderingDeviceQuartz*>(QPainter::renderingDevice())->currentCGContext();
+    CGContextRef cgContext = static_cast<KRenderingDeviceQuartz*>(renderingDevice())->currentCGContext();
     
     // get a CIContext, and CGLayer for drawing in.
     bool useSoftware = ! KRenderingDeviceQuartz::hardwareRenderingEnabled();
@@ -101,7 +100,7 @@ void KCanvasFilterQuartz::prepareFilter(const FloatRect &bbox)
     m_filterCGLayer = [m_filterCIContext createCGLayerWithSize:CGRect(bbox).size info:NULL];
     
     KRenderingDeviceContext *filterContext = new KRenderingDeviceContextQuartz(CGLayerGetContext(m_filterCGLayer));
-    QPainter::renderingDevice()->pushContext(filterContext);
+    renderingDevice()->pushContext(filterContext);
     
     filterContext->concatCTM(QMatrix().translate(-1.0f * bbox.x(), -1.0f * bbox.y()));
 }
@@ -112,7 +111,7 @@ void KCanvasFilterQuartz::applyFilter(const FloatRect &bbox)
         return;
 
     // restore the previous context, delete the filter context.
-    delete (QPainter::renderingDevice()->popContext());
+    delete (renderingDevice()->popContext());
 
     // actually apply the filter effects
     CIImage *inputImage = [CIImage imageWithCGLayer:m_filterCGLayer];

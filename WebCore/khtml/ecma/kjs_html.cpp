@@ -22,14 +22,34 @@
 #include "config.h"
 #include "kjs_html.h"
 
-#include "DocLoader.h"
-#include "dom/dom_exception.h"
 #include "AtomicString.h"
-#include "dom2_eventsimpl.h"
-
+#include "Color.h"
+#include "DocLoader.h"
+#include "EventNames.h"
+#include "Frame.h"
+#include "FrameView.h"
+#include "GraphicsContext.h"
+#include "HTMLBaseFontElementImpl.h"
+#include "HTMLButtonElementImpl.h"
+#include "HTMLFieldSetElementImpl.h"
+#include "HTMLFormElementImpl.h"
+#include "HTMLInputElementImpl.h"
+#include "HTMLIsIndexElementImpl.h"
+#include "HTMLLabelElementImpl.h"
+#include "HTMLLegendElementImpl.h"
+#include "HTMLOptGroupElementImpl.h"
+#include "HTMLOptionElementImpl.h"
+#include "HTMLOptionsCollectionImpl.h"
+#include "HTMLSelectElementImpl.h"
+#include "HTMLTextAreaElementImpl.h"
+#include "Image.h"
 #include "NameNodeListImpl.h"
 #include "TextImpl.h"
-#include "EventNames.h"
+#include "css/css_ruleimpl.h"
+#include "css/css_stylesheetimpl.h"
+#include "css/cssparser.h"
+#include "dom/dom_exception.h"
+#include "dom2_eventsimpl.h"
 #include "html/html_baseimpl.h"
 #include "html/html_blockimpl.h"
 #include "html/html_canvasimpl.h"
@@ -40,39 +60,13 @@
 #include "html/html_listimpl.h"
 #include "html/html_objectimpl.h"
 #include "html/html_tableimpl.h"
-#include "HTMLSelectElementImpl.h"
-#include "HTMLInputElementImpl.h"
-#include "HTMLFormElementImpl.h"
-#include "HTMLIsIndexElementImpl.h"
-#include "HTMLOptGroupElementImpl.h"
-#include "HTMLLabelElementImpl.h"
-#include "HTMLLegendElementImpl.h"
-#include "HTMLTextAreaElementImpl.h"
-#include "HTMLButtonElementImpl.h"
-#include "HTMLFieldSetElementImpl.h"
-#include "HTMLOptionElementImpl.h"
-#include "HTMLOptionsCollectionImpl.h"
-#include "HTMLBaseFontElementImpl.h"
-
-#include "Frame.h"
-#include "FrameView.h"
-
 #include "kjs_css.h"
-#include "kjs_window.h"
 #include "kjs_events.h"
 #include "kjs_proxy.h"
-
+#include "kjs_window.h"
 #include "rendering/render_canvasimage.h"
-#include "rendering/render_object.h"
 #include "rendering/render_layer.h"
-
-#include "css/cssparser.h"
-#include "css/css_stylesheetimpl.h"
-#include "css/css_ruleimpl.h"
-
-#include "Color.h"
-#include "Image.h"
-#include <qpainter.h>
+#include "rendering/render_object.h"
 
 #if __APPLE__
 #include <ApplicationServices/ApplicationServices.h>
@@ -4104,7 +4098,7 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
                 return throwError(exec, SyntaxError);
 
             if (!sourceContext && imgElt && imgElt->cachedImage()) {
-                QPainter p;
+                GraphicsContext p;
                 p.drawFloatImage(imgElt->cachedImage()->image(), dx, dy, dw, dh, sx, sy, sw, sh, 
                                  Image::compositeOperatorFromString(contextObject->_globalComposite->toString(exec).qstring().lower().ascii()), drawingContext);
             }
@@ -4166,7 +4160,7 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
             float dh = args[8]->toNumber(exec);
             QString compositeOperator = args[9]->toString(exec).qstring().lower();
             
-            QPainter p;
+            GraphicsContext p;
 
             if (e->cachedImage())
                 p.drawFloatImage(e->cachedImage()->image(), dx, dy, dw, dh, sx, sy, sw, sh, Image::compositeOperatorFromString(compositeOperator.ascii()), drawingContext);
@@ -4185,7 +4179,7 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
             if (args.size() != 1)
                 return throwError(exec, SyntaxError);
             QString compositeOperator = args[0]->toString(exec).qstring().lower();
-            QPainter::setCompositeOperation (drawingContext,compositeOperator);
+            GraphicsContext::setCompositeOperation(drawingContext,compositeOperator);
             break;
         }
         
@@ -4582,7 +4576,7 @@ void Context2D::putValueProperty(ExecState *exec, int token, JSValue *value, int
         case GlobalCompositeOperation: {
             _globalComposite = value;
             QString compositeOperator = value->toString(exec).qstring().lower();
-            QPainter::setCompositeOperation (context, compositeOperator);
+            GraphicsContext::setCompositeOperation(context, compositeOperator);
             break;
         }
         
@@ -5016,7 +5010,7 @@ static void drawPattern (void * info, CGContextRef context)
     if (!pattern->cachedImage())
         return;
 
-    QPainter p;
+    GraphicsContext p;
     float w = pattern->cachedImage()->image()->width();
     float h = pattern->cachedImage()->image()->height();
     

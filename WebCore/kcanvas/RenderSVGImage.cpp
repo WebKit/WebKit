@@ -22,21 +22,17 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-
-#include <kdom/core/AttrImpl.h>
-
 #include "RenderSVGImage.h"
 
-#include "SVGAnimatedLengthImpl.h"
-#include "KCanvasRenderingStyle.h"
-
-#include <kcanvas/KCanvas.h>
-#include <kcanvas/device/KRenderingDevice.h>
-
-#include "SVGImageElementImpl.h"
-
-#include "KCanvasResourcesQuartz.h"
+#include "GraphicsContext.h"
 #include "KCanvasMaskerQuartz.h"
+#include "KCanvasRenderingStyle.h"
+#include "KCanvasResourcesQuartz.h"
+#include "KRenderingDevice.h"
+#include "SVGAnimatedLengthImpl.h"
+#include "SVGImageElementImpl.h"
+#include <kcanvas/KCanvas.h>
+#include <kdom/core/AttrImpl.h>
 
 namespace WebCore {
 
@@ -54,13 +50,13 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
     if (paintInfo.p->paintingDisabled() || (paintInfo.phase != PaintActionForeground) || style()->visibility() == HIDDEN)
         return;
     
-    KRenderingDevice *renderingDevice = QPainter::renderingDevice();
-    KRenderingDeviceContext *context = renderingDevice->currentContext();
+    KRenderingDevice* device = renderingDevice();
+    KRenderingDeviceContext* context = device->currentContext();
     bool shouldPopContext = false;
     if (!context) {
         // Need to push a device context on the stack if empty.
         context = paintInfo.p->createRenderingDeviceContext();
-        renderingDevice->pushContext(context);
+        device->pushContext(context);
         shouldPopContext = true;
     } else
         paintInfo.p->save();
@@ -89,7 +85,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
     // restore drawing state
     if (shouldPopContext) {
-        renderingDevice->popContext();
+        device->popContext();
         delete context;
     } else
         paintInfo.p->restore();
@@ -121,7 +117,7 @@ IntRect RenderSVGImage::getAbsoluteRepaintRect()
 
 void RenderSVGImage::translateForAttributes()
 {
-    KRenderingDeviceContext *context = QPainter::renderingDevice()->currentContext();
+    KRenderingDeviceContext *context = renderingDevice()->currentContext();
     SVGImageElementImpl *image = static_cast<SVGImageElementImpl *>(node());
     float xOffset = image->x()->baseVal() ? image->x()->baseVal()->value() : 0;
     float yOffset = image->y()->baseVal() ? image->y()->baseVal()->value() : 0;

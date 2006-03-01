@@ -37,9 +37,10 @@
 
 #include "Color.h"
 #include "DataRef.h"
+#include "Font.h"
 #include "Length.h"
 #include "Shared.h"
-#include "Font.h"
+#include "TextDirection.h"
 #include <qvaluelist.h>
 
 #if SVG_SUPPORT
@@ -759,10 +760,6 @@ enum ETextTransform {
     CAPITALIZE, UPPERCASE, LOWERCASE, TTNONE
 };
 
-enum EDirection {
-    LTR, RTL
-};
-
 enum ETextDecoration {
     TDNONE = 0x0 , UNDERLINE = 0x1, OVERLINE = 0x2, LINE_THROUGH= 0x4, BLINK = 0x8
 };
@@ -934,7 +931,7 @@ protected:
         ETextTransform _text_transform : 2;
         int _text_decorations : 4;
         ECursor _cursor_style : 4;
-        EDirection _direction : 1;
+        TextDirection _direction : 1;
         bool _border_collapse : 1 ;
         EWhiteSpace _white_space : 3;
         EBoxDirection _box_direction : 1; // CSS3 box_direction property (flexible box layout module)
@@ -1194,7 +1191,7 @@ public:
     int wordSpacing() const { return inherited->font.wordSpacing(); }
     int letterSpacing() const { return inherited->font.letterSpacing(); }
 
-    EDirection direction() const { return inherited_flags._direction; }
+    TextDirection direction() const { return inherited_flags._direction; }
     Length lineHeight() const { return inherited->line_height; }
 
     EWhiteSpace whiteSpace() const { return inherited_flags._white_space; }
@@ -1433,7 +1430,7 @@ public:
     void addToTextDecorationsInEffect(int v) { inherited_flags._text_decorations |= v; }
     void setTextDecorationsInEffect(int v) { inherited_flags._text_decorations = v; }
     void setTextDecoration(int v) { SET_VAR(visual, textDecoration, v); }
-    void setDirection(EDirection v) { inherited_flags._direction = v; }
+    void setDirection(TextDirection v) { inherited_flags._direction = v; }
     void setLineHeight(Length v) { SET_VAR(inherited,line_height,v) }
 
     void setWhiteSpace(EWhiteSpace v) { inherited_flags._white_space = v; }
@@ -1586,7 +1583,7 @@ public:
     static IntSize initialBorderRadius() { return IntSize(0,0); }
     static ECaptionSide initialCaptionSide() { return CAPTOP; }
     static EClear initialClear() { return CNONE; }
-    static EDirection initialDirection() { return LTR; }
+    static TextDirection initialDirection() { return LTR; }
     static EDisplay initialDisplay() { return INLINE; }
     static EEmptyCell initialEmptyCells() { return SHOW; }
     static EFloat initialFloating() { return FNONE; }

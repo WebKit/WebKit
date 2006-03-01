@@ -96,7 +96,7 @@ void SVGFEImageElementImpl::notifyFinished(CachedObject *finishedObj)
 KCanvasFEImage *SVGFEImageElementImpl::filterEffect() const
 {
     if (!m_filterEffect)
-        m_filterEffect = static_cast<KCanvasFEImage *>(QPainter::renderingDevice()->createFilterEffect(FE_IMAGE));
+        m_filterEffect = static_cast<KCanvasFEImage *>(renderingDevice()->createFilterEffect(FE_IMAGE));
     if (!m_filterEffect)
         return 0;
     setStandardAttributes(m_filterEffect);

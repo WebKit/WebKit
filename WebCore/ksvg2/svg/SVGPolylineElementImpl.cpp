@@ -46,7 +46,7 @@ KCanvasPath* SVGPolylineElementImpl::toPathData() const
     if(len < 1)
         return 0;
 
-    KCanvasPath* polyData = QPainter::renderingDevice()->createPath();
+    KCanvasPath* polyData = renderingDevice()->createPath();
     polyData->moveTo(points()->getItem(0)->x(), points()->getItem(0)->y());
     for (int i = 1; i < len; ++i) {
         SVGPointImpl *p = points()->getItem(i);

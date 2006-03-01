@@ -32,16 +32,16 @@
 #include "Frame.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "GraphicsContext.h"
 #include "TextImpl.h"
 #include "dom2_eventsimpl.h"
-#include "html/html_baseimpl.h"
-#include "html/html_objectimpl.h"
-#include "html/htmltokenizer.h"
+#include "html_baseimpl.h"
+#include "html_objectimpl.h"
 #include "htmlnames.h"
+#include "htmltokenizer.h"
 #include "render_arena.h"
 #include "render_canvas.h"
 #include <klocale.h>
-#include <qpainter.h>
 #include <qtextstream.h>
 
 namespace WebCore {
@@ -497,7 +497,7 @@ bool RenderFrameSet::userResize( MouseEventImpl *evt )
     
     else if (m_resizing || evt->type() == mouseupEvent) {
         FrameView *v = canvas()->view();
-        QPainter paint;
+        GraphicsContext paint;
         
         v->disableFlushDrawing();
         v->lockDrawingFocus();

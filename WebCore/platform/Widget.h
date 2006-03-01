@@ -43,10 +43,10 @@ class NSView;
 namespace WebCore {
 
     class Cursor;
+    class GraphicsContext;
     class IntPoint;
     class IntRect;
     class IntSize;
-    class QPainter;
     class WidgetPrivate;
 
     class Widget : public QObject {
@@ -81,7 +81,7 @@ namespace WebCore {
         void move(int, int);
         void move(const IntPoint&);
 
-        virtual void paint(QPainter*, const IntRect&);
+        virtual void paint(GraphicsContext*, const IntRect&);
 
         virtual IntRect frameGeometry() const;
         virtual void setFrameGeometry(const IntRect&);

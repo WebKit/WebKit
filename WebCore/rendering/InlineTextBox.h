@@ -40,7 +40,6 @@ class DOMString;
 class DOMStringImpl;
 class MarkedTextUnderline;
 class Position;
-class QPainter;
 
 class InlineTextBox : public InlineRunBox
 {
@@ -107,13 +106,13 @@ public:
     virtual bool isText() const { return m_treatAsText; }
     void setIsText(bool b) { m_treatAsText = b; }
     
-    void paintDecoration(QPainter* p, int tx, int ty, int decoration);
-    void paintSelection(QPainter* p, int tx, int ty, RenderStyle*, const Font*);
-    void paintMarkedTextBackground(QPainter* p, int tx, int ty, RenderStyle*, const Font*, int startPos, int endPos);
-    void paintAllMarkersOfType(QPainter* p, int tx, int ty, DocumentMarker::MarkerType, RenderStyle*, const Font*);
-    void paintSpellingMarker(QPainter* p, int tx, int ty, DocumentMarker);
-    void paintTextMatchMarker(QPainter* p, int tx, int ty, DocumentMarker, RenderStyle*, const Font*);
-    void paintMarkedTextUnderline(QPainter *pt, int tx, int ty, MarkedTextUnderline& underline);
+    void paintDecoration(GraphicsContext*, int tx, int ty, int decoration);
+    void paintSelection(GraphicsContext*, int tx, int ty, RenderStyle*, const Font*);
+    void paintMarkedTextBackground(GraphicsContext*, int tx, int ty, RenderStyle*, const Font*, int startPos, int endPos);
+    void paintAllMarkersOfType(GraphicsContext*, int tx, int ty, DocumentMarker::MarkerType, RenderStyle*, const Font*);
+    void paintSpellingMarker(GraphicsContext*, int tx, int ty, DocumentMarker);
+    void paintTextMatchMarker(GraphicsContext*, int tx, int ty, DocumentMarker, RenderStyle*, const Font*);
+    void paintMarkedTextUnderline(GraphicsContext*, int tx, int ty, MarkedTextUnderline&);
     virtual int caretMinOffset() const;
     virtual int caretMaxOffset() const;
     virtual unsigned caretMaxRenderedOffset() const;

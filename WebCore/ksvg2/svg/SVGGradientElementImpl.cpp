@@ -126,7 +126,7 @@ void SVGGradientElementImpl::notifyAttributeChange() const
 KRenderingPaintServerGradient *SVGGradientElementImpl::canvasResource()
 {
     if (!m_resource) {
-        KRenderingPaintServer *temp = QPainter::renderingDevice()->createPaintServer(gradientType());
+        KRenderingPaintServer *temp = renderingDevice()->createPaintServer(gradientType());
         m_resource = static_cast<KRenderingPaintServerGradient *>(temp);
         m_resource->setListener(this);
         buildGradient(m_resource);

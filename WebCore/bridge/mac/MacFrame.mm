@@ -34,6 +34,7 @@
 #import "FoundationExtras.h"
 #import "FramePrivate.h"
 #import "FrameView.h"
+#import "GraphicsContext.h"
 #import "HTMLFormElementImpl.h"
 #import "HTMLGenericFormElementImpl.h"
 #import "InlineTextBox.h"
@@ -2998,7 +2999,7 @@ void MacFrame::setDisplaysWithFocusAttributes(bool flag)
         if (documentView && renderer()) {
             doc->updateLayout(); // Ensure layout is up to date.
             IntRect visibleRect(enclosingIntRect([documentView visibleRect]));
-            QPainter p;
+            GraphicsContext p;
             p.setUpdatingControlTints(true);
             paint(&p, visibleRect);
         }
