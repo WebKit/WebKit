@@ -225,10 +225,10 @@ bool Frame::didOpenURL(const KURL &url)
      d->m_cachePolicy = KIO::CC_Verify;
 
   if (args.doPost() && url.protocol().startsWith("http")) {
-      d->m_job = new TransferJob(this, url, args.postData);
+      d->m_job = new TransferJob(this, "POST", url, args.postData);
       d->m_job->addMetaData("content-type", args.contentType() );
   } else
-      d->m_job = new TransferJob(this, url);
+      d->m_job = new TransferJob(this, "GET", url);
 
   d->m_job->addMetaData(args.metaData());
 

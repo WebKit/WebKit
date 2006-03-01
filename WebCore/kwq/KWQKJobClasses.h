@@ -47,8 +47,8 @@ class TransferJobPrivate;
 
 class TransferJob {
 public:
-    TransferJob(TransferJobClient*, const KURL&);
-    TransferJob(TransferJobClient*, const KURL&, const FormData& postData);
+    TransferJob(TransferJobClient*, const String& method, const KURL&);
+    TransferJob(TransferJobClient*, const String& method, const KURL&, const FormData& postData);
     ~TransferJob();
 
     int error() const;
@@ -61,7 +61,7 @@ public:
     void kill();
 
     KURL url() const;
-    QString method() const;
+    String method() const;
     FormData postData() const;
 
 #if __APPLE__

@@ -478,7 +478,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [self addData:data];
 }
 
-- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders
+- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders
 {
     // If we are no longer attached to a WebView, this must be an attempted load from an
     // onUnload handler, so let's just block it.
@@ -491,13 +491,14 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer];
 
     return [WebSubresourceLoader startLoadingResource:resourceLoader
-                                              withURL:URL
+                                           withMethod:method
+                                                  URL:URL
                                         customHeaders:customHeaders
                                              referrer:(hideReferrer ? nil : [self referrer])
                                         forDataSource:[self dataSource]];
 }
 
-- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders postData:(NSArray *)postData
+- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders postData:(NSArray *)postData
 {
     // If we are no longer attached to a WebView, this must be an attempted load from an
     // onUnload handler, so let's just block it.
@@ -510,8 +511,9 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer];
 
     return [WebSubresourceLoader startLoadingResource:resourceLoader
-                                              withURL:URL
-                                         customHeaders:customHeaders
+                                           withMethod:method 
+                                                  URL:URL
+                                        customHeaders:customHeaders
                                              postData:postData
                                              referrer:(hideReferrer ? nil : [self referrer])
                                         forDataSource:[self dataSource]];
@@ -528,7 +530,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [request release];
 }
 
-- (NSData *)syncLoadResourceWithURL:(NSURL *)URL customHeaders:(NSDictionary *)requestHeaders postData:(NSArray *)postData finalURL:(NSURL **)finalURL responseHeaders:(NSDictionary **)responseHeaderDict statusCode:(int *)statusCode
+- (NSData *)syncLoadResourceWithMethod:(NSString *)method URL:(NSURL *)URL customHeaders:(NSDictionary *)requestHeaders postData:(NSArray *)postData finalURL:(NSURL **)finalURL responseHeaders:(NSDictionary **)responseHeaderDict statusCode:(int *)statusCode
 {
     // Since this is a subresource, we can load any URL (we ignore the return value).
     // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
@@ -538,10 +540,9 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
     [request setTimeoutInterval:10];
 
-    if (postData) {
-        [request setHTTPMethod:@"POST"];
+    [request setHTTPMethod:method];
+    if (postData)        
         webSetHTTPBody(request, postData);
-    }
 
     NSEnumerator *e = [requestHeaders keyEnumerator];
     NSString *key;

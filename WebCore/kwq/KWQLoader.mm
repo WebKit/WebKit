@@ -131,11 +131,11 @@ bool KWQServeRequest(Loader *loader, DocLoader *docLoader, TransferJob *job)
         headerDict = [NSDictionary _webcore_dictionaryWithHeaderString:headerString.getNSString()];
     }
 
-    if (job->method() == "POST") {
-        handle = [bridge startLoadingResource:resourceLoader withURL:job->url().getNSURL() customHeaders:headerDict
+    if (job->postData().count() > 0) {
+        handle = [bridge startLoadingResource:resourceLoader withMethod:job->method() URL:job->url().getNSURL() customHeaders:headerDict
             postData:arrayFromFormData(job->postData())];
     } else {
-        handle = [bridge startLoadingResource:resourceLoader withURL:job->url().getNSURL() customHeaders:headerDict];
+        handle = [bridge startLoadingResource:resourceLoader withMethod:job->method() URL:job->url().getNSURL() customHeaders:headerDict];
     }
     [resourceLoader setHandle:handle];
     [resourceLoader release];
@@ -190,14 +190,13 @@ ByteArray KWQServeSynchronousRequest(Loader *loader, DocLoader *docLoader, Trans
     }
 
     NSArray *postData = nil;
-    if (job->method() == "POST") {
+    if (job->postData().count() > 0)
         postData = arrayFromFormData(job->postData());
-    }
 
     NSURL *finalNSURL = nil;
     NSDictionary *responseHeaderDict = nil;
     int statusCode = 0;
-    NSData *resultData = [bridge syncLoadResourceWithURL:job->url().getNSURL() customHeaders:headerDict postData:postData finalURL:&finalNSURL responseHeaders:&responseHeaderDict statusCode:&statusCode];
+    NSData *resultData = [bridge syncLoadResourceWithMethod:job->method() URL:job->url().getNSURL() customHeaders:headerDict postData:postData finalURL:&finalNSURL responseHeaders:&responseHeaderDict statusCode:&statusCode];
     [headerDict release];
     
     job->kill();

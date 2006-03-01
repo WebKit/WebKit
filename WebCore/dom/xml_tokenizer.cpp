@@ -181,7 +181,7 @@ static void* openFunc(const char* uri)
         return &globalDescriptor;
 
     KURL finalURL;
-    TransferJob* job = new TransferJob(0, uri);
+    TransferJob* job = new TransferJob(0, "GET", uri);
     QString headers;
     ByteArray data = KWQServeSynchronousRequest(Cache::loader(), globalDocLoader, job, finalURL, headers);
     

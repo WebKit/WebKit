@@ -1,3 +1,35 @@
+2006-03-01  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=3812
+          XMLHttpRequest: PUT, DELETE, HEAD and all other methods but POST actually do a GET.
+
+        HEAD is currently unimplemented because of what seems to be a bug in NSURLConnection,
+        and does a GET instead.
+
+        * kwq/KWQKJobClasses.h: Add a method parameter to TransferJob.
+        * kwq/KWQKJobClasses.mm:
+        (WebCore::TransferJobPrivate::TransferJobPrivate):
+        (WebCore::TransferJob::TransferJob):
+        (WebCore::TransferJob::method):
+        * bridge/mac/WebCoreFrameBridge.h: URL loading functions now take a method parameter.
+        * dom/xml_tokenizer.cpp:
+        (WebCore::openFunc):
+        * khtml/xsl/xslt_processorimpl.cpp:
+        (DOM::docLoaderFunc):
+        * kwq/KWQLoader.mm:
+        (KWQServeRequest):
+        (KWQServeSynchronousRequest):
+        * loader/loader.cpp:
+        (WebCore::Loader::servePendingRequests):
+        * page/Frame.cpp:
+        (WebCore::Frame::didOpenURL):
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::send): Honor the method passed in open().
+        * khtml/ecma/JSXMLHttpRequest.cpp:
+        (KJS::JSXMLHttpRequestProtoFunc::callAsFunction): Don't serialize null as "null".
+
 2006-03-01  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

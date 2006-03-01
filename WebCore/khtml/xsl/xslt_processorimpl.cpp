@@ -88,7 +88,7 @@ static xmlDocPtr docLoaderFunc(const xmlChar *uri,
             KURL url((const char*)base, (const char*)uri);
             xmlFree(base);
             KURL finalURL;
-            TransferJob* job = new TransferJob(0, url);
+            TransferJob* job = new TransferJob(0, "GET", url);
             QString headers;
             xmlGenericErrorFunc oldErrorFunc = xmlGenericError;
             void *oldErrorContext = xmlGenericErrorContext;

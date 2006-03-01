@@ -240,7 +240,7 @@ void XMLHttpRequest::send(const DOMString& _body)
 
   aborted = false;
 
-  if (method.lower() == "post" && (url.protocol().lower() == "http" || url.protocol().lower() == "https") ) {
+  if (!_body.isNull() && method.lower() != "get" && method.lower() != "head" && (url.protocol().lower() == "http" || url.protocol().lower() == "https")) {
       QString contentType = getRequestHeader("Content-Type");
       QString charset;
       if (contentType.isEmpty())
@@ -255,10 +255,15 @@ void XMLHttpRequest::send(const DOMString& _body)
       if (!encoding.isValid())   // FIXME: report an error?
         encoding = TextEncoding(UTF8Encoding);
 
-      job = new TransferJob(async ? this : 0, url, encoding.fromUnicode(_body.qstring()));
+      job = new TransferJob(async ? this : 0, method, url, encoding.fromUnicode(_body.qstring()));
+  } else {
+     // HEAD requests just crash; see <rdar://4460899> and the commented out tests in http/tests/xmlhttprequest/methods.html.
+     if (method.lower() == "head")
+       method = "GET";
+
+     job = new TransferJob(async ? this : 0, method, url);
   }
-  else
-     job = new TransferJob(async ? this : 0, url);
+
   if (requestHeaders.length() > 0)
     job->addMetaData("customHTTPHeader", requestHeaders);
 

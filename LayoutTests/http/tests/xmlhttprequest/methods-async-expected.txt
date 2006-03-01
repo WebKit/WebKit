@@ -1,0 +1,21 @@
+Tests for bug 3812 - GET and POST should not be the only HTTP methods implemented in XMLHttpRequest.
+
+GET(""): GET(undefined bytes), Content-Type: undefined
+GET(null): GET(undefined bytes), Content-Type: undefined
+GET("123"): GET(undefined bytes), Content-Type: undefined
+POST(""): POST(0 bytes), Content-Type: application/xml
+POST(null): POST(0 bytes), Content-Type: undefined
+POST("123"): POST(3 bytes), Content-Type: application/xml
+PUT(""): PUT(0 bytes), Content-Type: application/xml
+PUT(null): PUT(0 bytes), Content-Type: undefined
+PUT("123"): PUT(3 bytes), Content-Type: application/xml
+DELETE(""): DELETE(0 bytes), Content-Type: application/xml
+DELETE(null): DELETE(0 bytes), Content-Type: undefined
+DELETE("123"): DELETE(3 bytes), Content-Type: application/xml
+WKFOOBAR(""): WKFOOBAR(0 bytes), Content-Type: application/xml
+WKFOOBAR(null): WKFOOBAR(0 bytes), Content-Type: undefined
+WKFOOBAR("123"): WKFOOBAR(3 bytes), Content-Type: application/xml
+SEARCH(""): SEARCH(0 bytes), Content-Type: application/xml
+SEARCH(null): SEARCH(0 bytes), Content-Type: undefined
+SEARCH("123"): SEARCH(3 bytes), Content-Type: application/xml
+

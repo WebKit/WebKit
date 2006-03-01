@@ -44,26 +44,26 @@ namespace WebCore {
 class TransferJobPrivate
 {
 public:
-    TransferJobPrivate(TransferJobClient* c, const KURL& u)
+    TransferJobPrivate(TransferJobClient* c, const String& method, const KURL& u)
         : client(c)
         , status(0)
         , metaData(KWQRetainNSRelease([[NSMutableDictionary alloc] initWithCapacity:17]))
 	, URL(u)
 	, loader(nil)
-	, method("GET")
+	, method(method)
 	, response(nil)
         , assembledResponseHeaders(true)
         , retrievedCharset(true)
     {
     }
 
-    TransferJobPrivate(TransferJobClient* c, const KURL& u, const FormData& p)
+    TransferJobPrivate(TransferJobClient* c, const String& method, const KURL& u, const FormData& p)
         : client(c)
         , status(0)
         , metaData(KWQRetainNSRelease([[NSMutableDictionary alloc] initWithCapacity:17]))
 	, URL(u)
 	, loader(nil)
-	, method("POST")
+	, method(method)
 	, postData(p)
 	, response(nil)
 	, assembledResponseHeaders(true)
@@ -84,7 +84,7 @@ public:
     NSMutableDictionary* metaData;
     KURL URL;
     KWQResourceLoader* loader;
-    QString method;
+    String method;
     FormData postData;
 
     NSURLResponse* response;
@@ -93,13 +93,13 @@ public:
     QString responseHeaders;
 };
 
-TransferJob::TransferJob(TransferJobClient* client, const KURL& url)
-    : d(new TransferJobPrivate(client, url))
+TransferJob::TransferJob(TransferJobClient* client, const String& method, const KURL& url)
+    : d(new TransferJobPrivate(client, method, url))
 {
 }
 
-TransferJob::TransferJob(TransferJobClient* client, const KURL& url, const FormData& postData)
-    : d(new TransferJobPrivate(client, url, postData))
+TransferJob::TransferJob(TransferJobClient* client, const String& method, const KURL& url, const FormData& postData)
+    : d(new TransferJobPrivate(client, method, url, postData))
 {
 }
 
@@ -211,7 +211,7 @@ FormData TransferJob::postData() const
     return d->postData;
 }
 
-QString TransferJob::method() const
+String TransferJob::method() const
 {
     return d->method;
 }

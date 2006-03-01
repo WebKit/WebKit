@@ -43,13 +43,15 @@
 - (void)signalFinish;
 
 + (WebSubresourceLoader *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
-                                       withURL:(NSURL *)URL 
+                                    withMethod:(NSString *)method
+                                           URL:(NSURL *)URL 
                                  customHeaders:(NSDictionary *)customHeaders
                                       referrer:(NSString *)referrer 
                                  forDataSource:(WebDataSource *)source;
 
 + (WebSubresourceLoader *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
-                                       withURL:(NSURL *)URL 
+                                    withMethod:(NSString *)method
+                                           URL:(NSURL *)URL 
                                  customHeaders:(NSDictionary *)customHeaders
                                       postData:(NSArray *)postData 
                                       referrer:(NSString *)referrer 

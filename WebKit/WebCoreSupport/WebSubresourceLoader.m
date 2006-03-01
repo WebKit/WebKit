@@ -99,12 +99,15 @@
 }
 
 + (WebSubresourceLoader *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
-				       withURL:(NSURL *)URL
-				 customHeaders:(NSDictionary *)customHeaders
-				      referrer:(NSString *)referrer
-				 forDataSource:(WebDataSource *)source
+                                    withMethod:(NSString *)method 
+                                           URL:(NSURL *)URL
+                                 customHeaders:(NSDictionary *)customHeaders
+                                      referrer:(NSString *)referrer
+                                 forDataSource:(WebDataSource *)source
 {
     NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
+    [newRequest setHTTPMethod:method];
+
     WebSubresourceLoader *loader = [self startLoadingResource:rLoader withRequest:newRequest customHeaders:customHeaders referrer:referrer forDataSource:source];
     [newRequest release];
 
@@ -112,15 +115,16 @@
 }
 
 + (WebSubresourceLoader *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
-				       withURL:(NSURL *)URL
-				 customHeaders:(NSDictionary *)customHeaders
-				      postData:(NSArray *)postData
-				      referrer:(NSString *)referrer
-				 forDataSource:(WebDataSource *)source
+                                    withMethod:(NSString *)method 
+                                           URL:(NSURL *)URL
+                                 customHeaders:(NSDictionary *)customHeaders
+                                      postData:(NSArray *)postData
+                                      referrer:(NSString *)referrer
+                                 forDataSource:(WebDataSource *)source
 {
     NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
 
-    [newRequest setHTTPMethod:@"POST"];
+    [newRequest setHTTPMethod:method];
     webSetHTTPBody(newRequest, postData);
 
     WebSubresourceLoader *loader = [self startLoadingResource:rLoader withRequest:newRequest customHeaders:customHeaders referrer:referrer forDataSource:source];

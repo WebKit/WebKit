@@ -1,3 +1,21 @@
+2006-03-01  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=3812
+          XMLHttpRequest: PUT, DELETE, HEAD and all other methods but POST actually do a GET.
+
+        All WebKit changes are to use the method parameter passed from WebCore.
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge startLoadingResource:withMethod:URL:customHeaders:]):
+        (-[WebFrameBridge startLoadingResource:withMethod:URL:customHeaders:postData:]):
+        (-[WebFrameBridge syncLoadResourceWithMethod:URL:customHeaders:postData:finalURL:responseHeaders:statusCode:]):
+        * WebCoreSupport/WebSubresourceLoader.h:
+        * WebCoreSupport/WebSubresourceLoader.m:
+        (+[WebSubresourceLoader startLoadingResource:withMethod:URL:customHeaders:referrer:forDataSource:]):
+        (+[WebSubresourceLoader startLoadingResource:withMethod:URL:customHeaders:postData:referrer:forDataSource:]):
+
 2006-03-01  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.

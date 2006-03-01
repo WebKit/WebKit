@@ -93,7 +93,7 @@ void Loader::servePendingRequests()
   Request *req = m_requestsPending.take(0);
 
   KURL u(req->object->url().qstring());
-  TransferJob* job = new TransferJob(this, u);
+  TransferJob* job = new TransferJob(this, "GET", u);
   
   if (!req->object->accept().isEmpty())
       job->addMetaData("accept", req->object->accept());
