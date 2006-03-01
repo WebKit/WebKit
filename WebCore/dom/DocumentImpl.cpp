@@ -904,10 +904,7 @@ void DocumentImpl::attach()
         m_renderArena = new RenderArena();
     
     // Create the rendering tree
-#ifndef WIN32
-    // FIXME: don't build renderers on Windows yet
     setRenderer(new (m_renderArena) RenderCanvas(this, m_view));
-#endif
 
     recalcStyle(Force);
 

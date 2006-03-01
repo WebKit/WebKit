@@ -1,3 +1,23 @@
+2006-02-28  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Fix spacing/style on several of the stubs.
+        Reorganize stubs, separating empty stubs.
+        Remove the abort from certain stubs blocking DRT.
+        Add a virtual setView call to Frame baseclass.
+
+        * bridge/mac/MacFrame.h: mark setView virtual
+        * dom/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::attach): remove no-renderer hack
+        * page/Frame.cpp:
+        (WebCore::Frame::view): fix spacing
+        (WebCore::Frame::setView): added.
+        * page/Frame.h:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (notImplemented): make break directly into debugger.
+        Moved, modified several other stubs not mentioned here.
+
 2006-02-28  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by mjs

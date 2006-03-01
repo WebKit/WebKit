@@ -323,9 +323,14 @@ BrowserExtension *Frame::browserExtension() const
   return d->m_extension;
 }
 
-FrameView *Frame::view() const
+FrameView* Frame::view() const
 {
-  return d->m_view.get();
+    return d->m_view.get();
+}
+
+void Frame::setView(FrameView* view)
+{
+    d->m_view = view;
 }
 
 bool Frame::jScriptEnabled() const
