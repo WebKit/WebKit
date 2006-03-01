@@ -65,6 +65,8 @@ extern NSString *_WebMainFrameIconKey;
 extern NSString *_WebMainFrameTitleKey;
 extern NSString *_WebMainFrameURLKey;
 
+extern NSString *WebElementTitleKey;   // NSString of the title of the element (pending public, used by Safari)
+
 typedef enum {
     WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows,
     WebDashboardBehaviorAlwaysSendActiveNullEventsToPlugIns,

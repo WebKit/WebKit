@@ -177,7 +177,7 @@
     NSImage *dragImage;
     NSPoint origin;
 
-    NSImage *image = (wir != nil) ? [wir image] : [element _image];
+    NSImage *image = (wir != nil) ? [wir image] : [element image];
     if (image != nil && [image size].height * [image size].width <= WebMaxOriginalImageArea) {
         NSSize originalSize = rect.size;
         origin = rect.origin;

@@ -1,3 +1,40 @@
+2006-03-01  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7450
+        elementAtPoint is expensive and should return a smart dictionary
+        
+        elementAtPoint for WebHTMLView now returns a WebElementDictionary,
+        when objectForKey is called it will lookup in the DOM, cache and return the value
+
+        * Misc/WebElementDictionary.h: Added.
+        * Misc/WebElementDictionary.m: Added.
+        (addLookupKey):
+        (cacheValueForKey):
+        (+[WebElementDictionary initializeLookupTable]):
+        (-[WebElementDictionary initWithInnerNonSharedNode:innerNode:URLElement:andPoint:]):
+        (-[WebElementDictionary dealloc]):
+        (-[WebElementDictionary _fillCache]):
+        (-[WebElementDictionary count]):
+        (-[WebElementDictionary keyEnumerator]):
+        (-[WebElementDictionary objectForKey:]):
+        (-[WebElementDictionary _domNode]):
+        (-[WebElementDictionary _webFrame]):
+        (-[WebElementDictionary _targetWebFrame]):
+        (-[WebElementDictionary _title]):
+        (-[WebElementDictionary _imageRect]):
+        (-[WebElementDictionary _isSelected]):
+        * Misc/WebNSViewExtras.m:
+        (-[NSView _web_dragImage:element:rect:event:pasteboard:source:offset:]):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _updateMouseoverWithEvent:]):
+        (-[WebHTMLView _startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]):
+        (-[NSArray elementAtPoint:]):
+        * WebView/WebView.m:
+        * WebView/WebViewPrivate.h:
+
 2006-02-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

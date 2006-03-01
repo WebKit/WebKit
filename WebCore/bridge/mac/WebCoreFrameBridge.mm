@@ -123,19 +123,6 @@ using KJS::Bindings::RootObject;
 
 using WebCore::RenderObject;
 
-NSString *WebCoreElementDOMNodeKey =            @"WebElementDOMNode";
-NSString *WebCoreElementFrameKey =              @"WebElementFrame";
-NSString *WebCoreElementImageAltStringKey =     @"WebElementImageAltString";
-NSString *WebCoreElementImageRectKey =          @"WebElementImageRect";
-NSString *WebCoreElementImageURLKey =           @"WebElementImageURL";
-NSString *WebCoreElementIsSelectedKey =         @"WebElementIsSelected";
-NSString *WebCoreElementLinkURLKey =            @"WebElementLinkURL";
-NSString *WebCoreElementLinkTargetFrameKey =    @"WebElementTargetFrame";
-NSString *WebCoreElementLinkLabelKey =          @"WebElementLinkLabel";
-NSString *WebCoreElementLinkTitleKey =          @"WebElementLinkTitle";
-NSString *WebCoreElementNameKey =               @"WebElementName";
-NSString *WebCoreElementTitleKey =              @"WebCoreElementTitle"; // not in WebKit API for now, could be in API some day
-
 NSString *WebCorePageCacheStateKey =            @"WebCorePageCacheState";
 
 @interface WebCoreFrameBridge (WebCoreBridgeInternal)
@@ -1276,107 +1263,25 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return m_frame->matchLabelsAgainstElement(labels, [element _elementImpl]);
 }
 
-- (NSDictionary *)elementAtPoint:(NSPoint)point
+- (void)getInnerNonSharedNode:(DOMNode **)innerNonSharedNode innerNode:(DOMNode **)innerNode URLElement:(DOMElement **)URLElement atPoint:(NSPoint)point
 {
     RenderObject *renderer = m_frame->renderer();
-    if (!renderer) 
-        return nil;
-    
+    if (!renderer) {
+        *innerNonSharedNode = nil;
+        *innerNode = nil;
+        *URLElement = nil;
+        return;
+    }
+
     RenderObject::NodeInfo nodeInfo = [self nodeInfoAtPoint:point];
-    
-    NSMutableDictionary *element = [NSMutableDictionary dictionary];
-    [element setObject:[NSNumber numberWithBool:m_frame->isPointInsideSelection((int)point.x, (int)point.y)]
-                forKey:WebCoreElementIsSelectedKey];
+    *innerNonSharedNode = [DOMNode _nodeWithImpl:nodeInfo.innerNonSharedNode()];
+    *innerNode = [DOMNode _nodeWithImpl:nodeInfo.innerNode()];
+    *URLElement = [DOMElement _elementWithImpl:nodeInfo.URLElement()];
+}
 
-    // Find the title in the nearest enclosing DOM node.
-    // For <area> tags in image maps, walk the tree for the <area>, not the <img> using it.
-    for (NodeImpl *titleNode = nodeInfo.innerNode(); titleNode; titleNode = titleNode->parentNode()) {
-        if (titleNode->isElementNode()) {
-            const AtomicString& title = static_cast<ElementImpl *>(titleNode)->getAttribute(titleAttr);
-            if (!title.isNull()) {
-                // We found a node with a title.
-                QString titleText = title.qstring();
-                titleText.replace(QChar('\\'), m_frame->backslashAsCurrencySymbol());
-                [element setObject:titleText.getNSString() forKey:WebCoreElementTitleKey];
-                break;
-            }
-        }
-    }
-
-    NodeImpl *URLNode = nodeInfo.URLElement();
-    if (URLNode) {
-        ElementImpl *e = static_cast<ElementImpl *>(URLNode);
-        DocumentImpl *doc = e->getDocument();
-        ASSERT(doc);
-        
-        const AtomicString& title = e->getAttribute(titleAttr);
-        if (!title.isEmpty()) {
-            QString titleText = title.qstring();
-            titleText.replace(QChar('\\'), m_frame->backslashAsCurrencySymbol());
-            [element setObject:titleText.getNSString() forKey:WebCoreElementLinkTitleKey];
-        }
-        
-        const AtomicString& link = e->getAttribute(hrefAttr);
-        if (!link.isNull()) {
-            QString t = plainText(rangeOfContents(e).get());
-            if (!t.isEmpty()) {
-                [element setObject:t.getNSString() forKey:WebCoreElementLinkLabelKey];
-            }
-            QString URLString = parseURL(link).qstring();
-            [element setObject:doc->completeURL(URLString).getNSString() forKey:WebCoreElementLinkURLKey];
-        }
-        
-        DOMString target = e->getAttribute(targetAttr);
-        if (target.isEmpty() && doc) { // FIXME: Take out this doc check when we're not just before a release.
-            target = doc->baseTarget();
-        }
-        if (!target.isEmpty()) {
-            [element setObject:target.qstring().getNSString() forKey:WebCoreElementLinkTargetFrameKey];
-        }
-    }
-
-    NodeImpl *node = nodeInfo.innerNonSharedNode();
-    if (node) {
-        [element setObject:[DOMNode _nodeWithImpl:node] forKey:WebCoreElementDOMNodeKey];
-    
-        // Only return image information if there is an image.
-        if (node->renderer() && node->renderer()->isImage()) {
-            RenderImage *r = static_cast<RenderImage *>(node->renderer());
-            int x, y;
-            if (r->absolutePosition(x, y)) {
-                NSValue *rect = [NSValue valueWithRect:NSMakeRect(x, y, r->contentWidth(), r->contentHeight())];
-                [element setObject:rect forKey:WebCoreElementImageRectKey];
-            }
-
-            ElementImpl *i = static_cast<ElementImpl*>(node);
-    
-            // FIXME: Code copied from RenderImage::updateFromElement; should share.
-            DOMString attr;
-            if (i->hasTagName(objectTag)) {
-                attr = i->getAttribute(dataAttr);
-            } else {
-                attr = i->getAttribute(srcAttr);
-            }
-            if (!attr.isEmpty()) {
-                QString URLString = parseURL(attr).qstring();
-                [element setObject:i->getDocument()->completeURL(URLString).getNSString() forKey:WebCoreElementImageURLKey];
-            }
-            
-            // FIXME: Code copied from RenderImage::updateFromElement; should share.
-            DOMString alt;
-            if (i->hasTagName(inputTag))
-                alt = static_cast<HTMLInputElementImpl *>(i)->altText();
-            else if (i->hasTagName(imgTag))
-                alt = static_cast<HTMLImageElementImpl *>(i)->altText();
-            if (!alt.isNull()) {
-                QString altText = alt.qstring();
-                altText.replace(QChar('\\'), m_frame->backslashAsCurrencySymbol());
-                [element setObject:altText.getNSString() forKey:WebCoreElementImageAltStringKey];
-            }
-        }
-    }
-    
-    return element;
+- (BOOL)isPointInsideSelection:(NSPoint)point
+{
+    return m_frame->isPointInsideSelection((int)point.x, (int)point.y);
 }
 
 - (NSURL *)URLWithAttributeString:(NSString *)string

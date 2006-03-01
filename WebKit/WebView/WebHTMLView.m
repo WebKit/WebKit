@@ -43,6 +43,7 @@
 #import <WebKit/WebDocumentInternal.h>
 #import <WebKit/WebDOMOperationsPrivate.h>
 #import <WebKit/WebEditingDelegate.h>
+#import <WebKit/WebElementDictionary.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameInternal.h>
 #import <WebKit/WebFrameViewInternal.h>
@@ -1051,10 +1052,10 @@ static WebHTMLView *lastHitView = nil;
                     newToolTip = [[(DOMHTMLInputElement *) domElement form] action];
             }
             if (newToolTip == nil)
-                newToolTip = [[element objectForKey:WebCoreElementLinkURLKey] _web_userVisibleString];
+                newToolTip = [[element objectForKey:WebElementLinkURLKey] _web_userVisibleString];
         }
         if (newToolTip == nil)
-            newToolTip = [element objectForKey:WebCoreElementTitleKey];
+            newToolTip = [element objectForKey:WebElementTitleKey];
         [view _setToolTip:newToolTip];
 
         [view release];
@@ -1194,7 +1195,7 @@ static WebHTMLView *lastHitView = nil;
 
     // note per kwebster, the offset arg below is always ignored in positioning the image
     DOMHTMLElement *imageElement = [element objectForKey:WebElementDOMNodeKey];
-    if (imageURL != nil && [imageElement _image] != nil && (_private->dragSourceActionMask & WebDragSourceActionImage)) {
+    if (imageURL != nil && [imageElement image] != nil && (_private->dragSourceActionMask & WebDragSourceActionImage)) {
         id source = self;
         if (!dhtmlWroteData) {
             // Select the image when it is dragged. This allows the image to be moved via MoveSelectionCommandImpl and this matches NSTextView's behavior.
@@ -2865,35 +2866,11 @@ done:
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point
 {
-    NSDictionary *elementInfoWC = [[self _bridge] elementAtPoint:point];
-    NSMutableDictionary *elementInfo = [elementInfoWC mutableCopy];
-    
-    // Convert URL strings to NSURLs.
-    [elementInfo _web_setObjectIfNotNil:[NSURL _web_URLWithDataAsString:[elementInfoWC objectForKey:WebElementLinkURLKey]] forKey:WebElementLinkURLKey];
-    [elementInfo _web_setObjectIfNotNil:[NSURL _web_URLWithDataAsString:[elementInfoWC objectForKey:WebElementImageURLKey]] forKey:WebElementImageURLKey];
-    if ([elementInfoWC objectForKey:WebElementImageURLKey])
-        [elementInfo _web_setObjectIfNotNil:[[elementInfoWC objectForKey:WebElementDOMNodeKey] _image] forKey:WebElementImageKey];
-
-    WebFrameView *webFrameView = [self _web_parentWebFrameView];
-    ASSERT(webFrameView);
-    WebFrame *webFrame = [webFrameView webFrame];
-    
-    if (webFrame) {
-        NSString *frameName = [elementInfoWC objectForKey:WebElementLinkTargetFrameKey];
-        if ([frameName length] == 0) {
-            [elementInfo setObject:webFrame forKey:WebElementLinkTargetFrameKey];
-        } else {
-            WebFrame *wf = [webFrame findFrameNamed:frameName];
-            if (wf != nil)
-                [elementInfo setObject:wf forKey:WebElementLinkTargetFrameKey];
-            else
-                [elementInfo removeObjectForKey:WebElementLinkTargetFrameKey];
-        }
-        
-        [elementInfo setObject:webFrame forKey:WebElementFrameKey];
-    }
-    
-    return [elementInfo autorelease];
+    DOMNode *innerNode = nil;
+    DOMNode *innerNonSharedNode = nil;
+    DOMElement *URLElement = nil;
+    [[self _bridge] getInnerNonSharedNode:&innerNonSharedNode innerNode:&innerNode URLElement:&URLElement atPoint:point];
+    return [[[WebElementDictionary alloc] initWithInnerNonSharedNode:innerNonSharedNode innerNode:innerNode URLElement:URLElement andPoint:point] autorelease];
 }
 
 - (void)mouseUp:(NSEvent *)event

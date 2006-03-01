@@ -69,18 +69,6 @@ typedef WebCore::RenderPart WebCoreRenderPart;
 @protocol WebCoreFileButton;
 @protocol WebCoreFileButtonDelegate;
 
-extern NSString *WebCoreElementDOMNodeKey;
-extern NSString *WebCoreElementFrameKey;
-extern NSString *WebCoreElementImageAltStringKey;
-extern NSString *WebCoreElementImageRectKey;
-extern NSString *WebCoreElementImageURLKey;
-extern NSString *WebCoreElementIsSelectedKey;
-extern NSString *WebCoreElementLinkURLKey;
-extern NSString *WebCoreElementLinkTargetFrameKey;
-extern NSString *WebCoreElementLinkLabelKey;
-extern NSString *WebCoreElementLinkTitleKey;
-extern NSString *WebCoreElementTitleKey;
-
 extern NSString *WebCorePageCacheStateKey;
 
 typedef enum {
@@ -302,7 +290,9 @@ typedef enum {
 - (NSObject *)copyRenderTree:(id <WebCoreRenderTreeCopier>)copier;
 - (NSString *)renderTreeAsExternalRepresentation;
 
-- (NSDictionary *)elementAtPoint:(NSPoint)point;
+- (void)getInnerNonSharedNode:(DOMNode **)innerNonSharedNode innerNode:(DOMNode **)innerNode URLElement:(DOMElement **)URLElement atPoint:(NSPoint)point;
+- (BOOL)isPointInsideSelection:(NSPoint)point;
+
 - (NSURL *)URLWithAttributeString:(NSString *)string;
 
 - (DOMElement *)elementWithName:(NSString *)name inForm:(DOMElement *)form;

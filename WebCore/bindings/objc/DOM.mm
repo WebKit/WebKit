@@ -1451,6 +1451,17 @@ static ListenerMap *listenerMap;
 
 @implementation DOMElement (DOMElementExtensions)
 
+- (NSImage*)image
+{
+    RenderObject* renderer = [self _elementImpl]->renderer();
+    if (renderer && renderer->isImage()) {
+        RenderImage* img = static_cast<RenderImage*>(renderer);
+        if (img->cachedImage() && !img->cachedImage()->isErrorImage())
+            return img->cachedImage()->image()->getNSImage();
+    }
+    return nil;
+}
+
 - (void)focus
 {
     [self _elementImpl]->focus();
@@ -1494,17 +1505,6 @@ static ListenerMap *listenerMap;
     RenderObject *renderer = [self _elementImpl]->renderer();
     if (renderer) {
         return renderer->style()->font().getNSFont();
-    }
-    return nil;
-}
-
-- (NSImage*)_image
-{
-    RenderObject *renderer = [self _elementImpl]->renderer();
-    if (renderer && renderer->isImage()) {
-        RenderImage* img = static_cast<RenderImage*>(renderer);
-        if (img->cachedImage() && !img->cachedImage()->isErrorImage())
-            return img->cachedImage()->image()->getNSImage();
     }
     return nil;
 }

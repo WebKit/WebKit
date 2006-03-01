@@ -1,3 +1,43 @@
+2006-03-01  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+        
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7450
+        elementAtPoint is expensive and should return a smart dictionary
+
+        Support for WebKit. This removes the old elementAtPoint: on the bridge.
+        WebKit now uses the bridge method getInnerNonSharedNode:innerNode:URLElement:atPoint:
+
+        * WebCore.exp: removes the WebCore* dictionary keys
+        * bindings/objc/DOM.mm:
+        (-[DOMElement image]): new method to get an NSImage if the element has an image renderer
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLElement titleDisplayString]): new method that returns the title after doing the backslash as currency symbol conversion
+        (-[DOMHTMLInputElement altDisplayString]): ditto for alt
+        (-[DOMHTMLImageElement altDisplayString]): ditto
+        (-[DOMHTMLAppletElement altDisplayString]): ditto
+        (-[DOMHTMLAreaElement altDisplayString]): ditto
+        (-[DOMHTMLAnchorElement absoluteLinkURL]): new method to get the absolute NSURL
+        (-[DOMHTMLAreaElement absoluteLinkURL]): ditto
+        (-[DOMHTMLLinkElement absoluteLinkURL]): ditto
+        (-[DOMHTMLInputElement absoluteImageURL]): new method to get the absolute image location as an NSURL
+        (-[DOMHTMLImageElement absoluteImageURL]): ditto
+        (-[DOMHTMLObjectElement absoluteImageURL]): ditto
+        * bindings/objc/DOMPrivate.h:
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge getInnerNonSharedNode:innerNode:URLElement:atPoint:]):
+        (-[WebCoreFrameBridge isPointInsideSelection:]):
+        * dom/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::prepareMouseEvent):
+        (WebCore::DocumentImpl::backslashAsCurrencySymbol):
+        * dom/DocumentImpl.h:
+        * rendering/render_layer.cpp:
+        (WebCore::RenderLayer::hitTest):
+        * rendering/render_object.h:
+        (WebCore::RenderObject::NodeInfo::URLElement):
+        (WebCore::RenderObject::NodeInfo::setURLElement):
+
 2006-03-01  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Test: fast/css/hover-subselector.html

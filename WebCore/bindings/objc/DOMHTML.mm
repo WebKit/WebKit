@@ -58,6 +58,7 @@
 
 #import "DOMExtensions.h"
 #import "DOMInternal.h"
+#import "DOMPrivate.h"
 #import "DOMHTMLInternal.h"
 #import <kxmlcore/Assertions.h>
 #import "FoundationExtras.h"
@@ -257,6 +258,11 @@ using namespace DOM::HTMLNames;
 - (NSString *)title
 {
     return [self _HTMLElementImpl]->title();
+}
+
+- (NSString *)titleDisplayString
+{
+    return [self _HTMLElementImpl]->title().replace('\\', [self _elementImpl]->getDocument()->backslashAsCurrencySymbol());
 }
 
 - (void)setTitle:(NSString *)title
@@ -578,6 +584,11 @@ using namespace DOM::HTMLNames;
 - (void)setCharset:(NSString *)charset
 {
     [self _linkElementImpl]->setCharset(charset);
+}
+
+- (NSURL *)absoluteLinkURL
+{
+    return [self _getURLAttribute:@"href"];
 }
 
 - (NSString *)href
@@ -1280,6 +1291,11 @@ using namespace DOM::HTMLNames;
     return [self _inputElementImpl]->alt();
 }
 
+- (NSString *)altDisplayString
+{
+    return [self _inputElementImpl]->alt().replace('\\', [self _elementImpl]->getDocument()->backslashAsCurrencySymbol());
+}
+
 - (void)setAlt:(NSString *)alt
 {
     [self _inputElementImpl]->setAlt(alt);
@@ -1343,6 +1359,13 @@ using namespace DOM::HTMLNames;
 - (void)setSize:(unsigned)size
 {
     [self _inputElementImpl]->setSize(size);
+}
+
+- (NSURL *)absoluteImageURL
+{
+    if (![self _inputElementImpl]->renderer() || ![self _inputElementImpl]->renderer()->isImage())
+        return nil;
+    return [self _getURLAttribute:@"src"];
 }
 
 - (NSString *)src
@@ -2165,6 +2188,11 @@ using namespace DOM::HTMLNames;
     [self _anchorElementImpl]->setAttribute(coordsAttr, coords);
 }
 
+- (NSURL *)absoluteLinkURL
+{
+    return [self _getURLAttribute:@"href"];
+}
+
 - (NSString *)href
 {
     return [self _anchorElementImpl]->href();
@@ -2302,6 +2330,12 @@ using namespace DOM::HTMLNames;
     return [self _imageElementImpl]->getAttribute(altAttr);
 }
 
+- (NSString *)altDisplayString
+{
+    String alt = [self _imageElementImpl]->getAttribute(altAttr);
+    return alt.replace('\\', [self _elementImpl]->getDocument()->backslashAsCurrencySymbol());
+}
+
 - (void)setAlt:(NSString *)alt
 {
     [self _imageElementImpl]->setAttribute(altAttr, alt);
@@ -2357,6 +2391,11 @@ using namespace DOM::HTMLNames;
 - (void)setLongDesc:(NSString *)longDesc
 {
     [self _imageElementImpl]->setAttribute(longdescAttr, longDesc);
+}
+
+- (NSURL *)absoluteImageURL
+{
+    return [self _getURLAttribute:@"src"];
 }
 
 - (NSString *)src
@@ -2473,6 +2512,13 @@ using namespace DOM::HTMLNames;
 - (void)setCodeType:(NSString *)codeType
 {
     [self _objectElementImpl]->setAttribute(codetypeAttr, codeType);
+}
+
+- (NSURL *)absoluteImageURL
+{
+    if (![self _objectElementImpl]->renderer() || ![self _objectElementImpl]->renderer()->isImage())
+        return nil;
+    return [self _getURLAttribute:@"data"];
 }
 
 - (NSString *)data
@@ -2666,6 +2712,12 @@ using namespace DOM::HTMLNames;
     return [self _appletElementImpl]->getAttribute(altAttr);
 }
 
+- (NSString *)altDisplayString
+{
+    String alt = [self _appletElementImpl]->getAttribute(altAttr);
+    return alt.replace('\\', [self _elementImpl]->getDocument()->backslashAsCurrencySymbol());
+}
+
 - (void)setAlt:(NSString *)alt
 {
     [self _appletElementImpl]->setAttribute(altAttr, alt);
@@ -2812,6 +2864,12 @@ using namespace DOM::HTMLNames;
     return [self _areaElementImpl]->getAttribute(altAttr);
 }
 
+- (NSString *)altDisplayString
+{
+    String alt = [self _areaElementImpl]->getAttribute(altAttr);
+    return alt.replace('\\', [self _elementImpl]->getDocument()->backslashAsCurrencySymbol());
+}
+
 - (void)setAlt:(NSString *)alt
 {
     [self _areaElementImpl]->setAttribute(altAttr, alt);
@@ -2825,6 +2883,11 @@ using namespace DOM::HTMLNames;
 - (void)setCoords:(NSString *)coords
 {
     [self _areaElementImpl]->setAttribute(coordsAttr, coords);
+}
+
+- (NSURL *)absoluteLinkURL
+{
+    return [self _getURLAttribute:@"href"];
 }
 
 - (NSString *)href

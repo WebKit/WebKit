@@ -488,19 +488,19 @@ public:
 
         NodeImpl* innerNode() const { return m_innerNode; }
         NodeImpl* innerNonSharedNode() const { return m_innerNonSharedNode; }
-        NodeImpl* URLElement() const { return m_innerURLElement; }
+        ElementImpl* URLElement() const { return m_innerURLElement; }
         bool readonly() const { return m_readonly; }
         bool active() const { return m_active; }
         bool mouseMove() const { return m_mouseMove; }
         
         void setInnerNode(NodeImpl* n) { m_innerNode = n; }
         void setInnerNonSharedNode(NodeImpl* n) { m_innerNonSharedNode = n; }
-        void setURLElement(NodeImpl* n) { m_innerURLElement = n; }
+        void setURLElement(ElementImpl* n) { m_innerURLElement = n; }
 
     private:
         NodeImpl* m_innerNode;
         NodeImpl* m_innerNonSharedNode;
-        NodeImpl* m_innerURLElement;
+        ElementImpl* m_innerURLElement;
         bool m_readonly;
         bool m_active;
         bool m_mouseMove;

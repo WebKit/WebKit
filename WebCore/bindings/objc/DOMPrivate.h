@@ -39,7 +39,6 @@
 
 @interface DOMElement (WebPrivate)
 - (NSFont *)_font;
-- (NSImage *)_image;
 - (NSData *)_imageTIFFRepresentation;
 - (NSURL *)_getURLAttribute:(NSString *)name;
 @end
@@ -76,8 +75,8 @@
 - (void)_activateItemAtIndex:(int)index;
 @end
 
-// BEGIN PENDING PUBLIC WEB INSPECTOR APIS
-// These APIs are for the Web Inspector, and they will be made public eventually.
+// BEGIN PENDING PUBLIC APIS
+// These APIs will be made public eventually.
 @interface DOMAttr (DOMAttrExtensions)
 - (DOMCSSStyleDeclaration *)style;
 @end
@@ -107,11 +106,43 @@
 @end
 
 @interface DOMElement (DOMElementExtensions)
+- (NSImage *)image;
 - (void)focus;
 - (void)blur;
 - (void)scrollIntoView:(BOOL)alignTop;
 - (void)scrollIntoViewIfNeeded:(BOOL)centerIfNeeded;
 @end
+
+@interface DOMHTMLElement (DOMHTMLElementPendingPublic)
+- (NSString *)titleDisplayString;
+@end
+
+@interface DOMHTMLInputElement (DOMHTMLInputElementPendingPublic)
+- (NSString *)altDisplayString;
+- (NSURL *)absoluteImageURL;
+@end
+
+@interface DOMHTMLImageElement (DOMHTMLImageElementPendingPublic)
+- (NSString *)altDisplayString;
+- (NSURL *)absoluteImageURL;
+@end
+
+@interface DOMHTMLObjectElement (DOMHTMLObjectElementPendingPublic)
+- (NSURL *)absoluteImageURL;
+@end
+
+@interface DOMHTMLAnchorElement (DOMHTMLAnchorElementPendingPublic)
+- (NSURL *)absoluteLinkURL;
+@end
+
+@interface DOMHTMLAreaElement (DOMHTMLAreaElementPendingPublic)
+- (NSURL *)absoluteLinkURL;
+@end
+
+@interface DOMHTMLLinkElement (DOMHTMLLinkElementPendingPublic)
+- (NSURL *)absoluteLinkURL;
+@end
+
 // END
 
 // Pending DOM3 APIs
