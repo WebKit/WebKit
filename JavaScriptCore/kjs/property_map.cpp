@@ -36,8 +36,8 @@ using std::max;
 #define DUMP_STATISTICS 0
 #define USE_SINGLE_ENTRY 1
 
-// At the time I added USE_SINGLE_ENTRY, the optimization still gave a 1.5%
-// performance boost to the iBench JavaScript benchmark so I didn't remove it.
+// 2/28/2006 ggaren: super accurate JS iBench says that USE_SINGLE_ENTRY is a
+// 3.2% performance boost.
 
 // FIXME: _singleEntry.index is unused.
 
@@ -99,6 +99,9 @@ SavedProperties::~SavedProperties() { }
 
 // Algorithm concepts from Algorithms in C++, Sedgewick.
 
+// This is a method rather than a variable to work around <rdar://problem/4462053>
+static inline UString::Rep* deletedSentinel() { return reinterpret_cast<UString::Rep*>(-1); }
+
 PropertyMap::~PropertyMap()
 {
     if (!_table) {
@@ -114,9 +117,9 @@ PropertyMap::~PropertyMap()
     Entry *entries = _table->entries;
     for (int i = 0; i < minimumKeysToProcess; i++) {
         UString::Rep *key = entries[i].key;
-        if (key)
+        if (key && key != deletedSentinel())
             key->deref();
-        else
+        else if (key != deletedSentinel())
             ++minimumKeysToProcess;
     }
     fastFree(_table);
@@ -139,7 +142,7 @@ void PropertyMap::clear()
     Entry *entries = _table->entries;
     for (int i = 0; i < size; i++) {
         UString::Rep *key = entries[i].key;
-        if (key) {
+        if (key && key != deletedSentinel()) {
             key->deref();
             entries[i].key = 0;
             entries[i].value = 0;
@@ -342,7 +345,7 @@ void PropertyMap::put(const Identifier &name, JSValue *value, int attributes, bo
             return;
         }
         // If we find the deleted-element sentinel, remember it for use later.
-        if (key == &UString::Rep::null && !foundDeletedElement) {
+        if (key == deletedSentinel() && !foundDeletedElement) {
             foundDeletedElement = true;
             deletedElementIndex = i;
         }
@@ -357,7 +360,6 @@ void PropertyMap::put(const Identifier &name, JSValue *value, int attributes, bo
     // Use either the deleted element or the 0 at the end of the chain.
     if (foundDeletedElement) {
         i = deletedElementIndex;
-        entries[i].key->deref();
         --_table->sentinelCount;
     }
 
@@ -386,7 +388,7 @@ void PropertyMap::insert(UString::Rep *key, JSValue *value, int attributes, int 
     numCollisions += entries[i].key && entries[i].key != key;
 #endif
     while (entries[i].key) {
-        assert(entries[i].key != &UString::Rep::null);
+        assert(entries[i].key != deletedSentinel());
         if (k == 0)
             k = 1 | (h % sizeMask);
         i = (i + k) & sizeMask;
@@ -446,9 +448,7 @@ void PropertyMap::rehash(int newTableSize)
         UString::Rep *key = entry.key;
         if (key) {
             // Don't copy deleted-element sentinels.
-            if (key == &UString::Rep::null)
-                key->deref();
-            else {
+            if (key != deletedSentinel()) {
                 int index = entry.index;
                 lastIndexUsed = max(index, lastIndexUsed);
                 insert(key, entry.value, entry.attributes, index);
@@ -508,12 +508,10 @@ void PropertyMap::remove(const Identifier &name)
     if (!key)
         return;
     
-    // Replace this one element with the deleted sentinel,
-    // &UString::Rep::null; also set value to 0 and attributes to DontEnum
+    // Replace this one element with the deleted sentinel. Also set value to 0 and attributes to DontEnum
     // to help callers that iterate all keys not have to check for the sentinel.
     key->deref();
-    key = &UString::Rep::null;
-    key->ref();
+    key = deletedSentinel();
     entries[i].key = key;
     entries[i].value = 0;
     entries[i].attributes = DontEnum;
@@ -633,7 +631,7 @@ void PropertyMap::addSparseArrayPropertiesToReferenceList(ReferenceList &list, J
     Entry *entries = _table->entries;
     for (int i = 0; i != size; ++i) {
         UString::Rep *key = entries[i].key;
-        if (key && key != &UString::Rep::null) {
+        if (key && key != deletedSentinel()) {
             UString k(key);
             bool fitsInUInt32;
             k.toUInt32(&fitsInUInt32);
@@ -729,7 +727,7 @@ void PropertyMap::checkConsistency()
         UString::Rep *rep = _table->entries[j].key;
         if (!rep)
             continue;
-        if (rep == &UString::Rep::null) {
+        if (rep == deletedSentinel()) {
             ++sentinelCount;
             continue;
         }

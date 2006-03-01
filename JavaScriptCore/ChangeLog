@@ -1,3 +1,29 @@
+2006-02-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin.
+
+        - Fixed <rdar://problem/4448098> Switch PropertyMap deleted entry 
+        placeholder to -1 from UString::Rep::null
+
+        This turned out to be only a small speedup (.12%). That's within the 
+        margin of error for super accurate JS iBench, but Shark confirms the 
+        same, so I think it's worth landing.
+
+        FYI, I also confirmed that the single entry optimization in 
+        PropertyMap is a 3.2% speedup.
+
+        * kjs/property_map.cpp:
+        (KJS::PropertyMap::~PropertyMap):
+        (KJS::PropertyMap::clear):
+        (KJS::PropertyMap::put):
+        (KJS::PropertyMap::insert):
+        (KJS::PropertyMap::rehash):
+        (KJS::PropertyMap::remove):
+        (KJS::PropertyMap::addSparseArrayPropertiesToReferenceList):
+        (KJS::PropertyMap::checkConsistency):
+        * kjs/property_map.h:
+        (KJS::PropertyMap::deletedSentinel):
+
 2006-02-27  Eric Seidel  <eseidel@apple.com>
 
         Rubber-stamped by darin.
