@@ -357,7 +357,7 @@ void RenderWidget::setStyle(RenderStyle *_style)
 {
     RenderReplaced::setStyle(_style);
     if (m_widget) {
-        m_widget->setFont(style()->qfont());
+        m_widget->setFont(style()->font());
         if (style()->visibility() != VISIBLE)
             m_widget->hide();
         else

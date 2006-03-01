@@ -286,7 +286,7 @@ void QComboBox::itemSelected()
     _activated.call(_currentItem);
 }
 
-void QComboBox::setFont(const QFont &f)
+void QComboBox::setFont(const Font& f)
 {
     Widget::setFont(f);
 

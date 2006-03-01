@@ -217,7 +217,7 @@ QSlider::~QSlider()
     [slider detachQSlider];
 }
 
-void QSlider::setFont(const QFont &f)
+void QSlider::setFont(const Font& f)
 {
     KWQ_BLOCK_EXCEPTIONS;
     

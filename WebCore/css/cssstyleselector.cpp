@@ -1983,7 +1983,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
         if (isInherit)
             fontDescription.setWeight(parentStyle->fontDescription().weight());
         else if (isInitial)
-            fontDescription.setWeight(QFont::Normal);
+            fontDescription.setWeight(cNormalWeight);
         else {
             if (!primitiveValue) return;
             if (primitiveValue->getIdent()) {
@@ -1995,7 +1995,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
                     case CSS_VAL_700:
                     case CSS_VAL_800:
                     case CSS_VAL_900:
-                        fontDescription.setWeight(QFont::Bold);
+                        fontDescription.setWeight(cBoldWeight);
                         break;
                     case CSS_VAL_NORMAL:
                     case CSS_VAL_LIGHTER:
@@ -2004,7 +2004,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
                     case CSS_VAL_300:
                     case CSS_VAL_400:
                     case CSS_VAL_500:
-                        fontDescription.setWeight(QFont::Normal);
+                        fontDescription.setWeight(cNormalWeight);
                         break;
                     default:
                         return;
@@ -2930,7 +2930,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
             }
             lineHeight = Length(primitiveValue->computeLength(style, multiplier), Fixed);
         } else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
-            lineHeight = Length( ( style->qfont().pixelSize() * int(primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE)) ) / 100, Fixed );
+            lineHeight = Length( (style->fontSize() * int(primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE)) ) / 100, Fixed );
         else if (type == CSSPrimitiveValue::CSS_NUMBER)
             lineHeight = Length(int(primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_NUMBER)*100), Percent);
         else

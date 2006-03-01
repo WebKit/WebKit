@@ -34,7 +34,6 @@
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
-class QFont;
 class QFontMetrics;
 class QString;
 
@@ -45,6 +44,7 @@ class KRenderingDevice;
 class KRenderingDeviceContext;
 #endif
 
+class Font;
 class IntPoint;
 class IntPointArray;
 class QPainterPrivate;
@@ -57,8 +57,8 @@ public:
     QPainter(bool forPrinting);
     ~QPainter();
    
-    const QFont& font() const;
-    void setFont(const QFont&);
+    const Font& font() const;
+    void setFont(const Font&);
     QFontMetrics fontMetrics() const;
     
     const Pen& pen() const;

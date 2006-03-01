@@ -27,9 +27,11 @@
 #import "KWQFontMetrics.h"
 
 #import <Cocoa/Cocoa.h>
+#import <kxmlcore/Noncopyable.h>
 
-#import "KWQFont.h"
+#import "Font.h"
 #import "Logging.h"
+#import "KWQExceptions.h"
 #import "FoundationExtras.h"
 
 #import "Shared.h"
@@ -37,52 +39,92 @@
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
 
+// FIXME: Remove once this class gets folded in to the WebCore namespace.
+using WebCore::Font;
+using WebCore::FontDescription;
+using WebCore::Pitch;
+using WebCore::UnknownPitch;
+using WebCore::FixedPitch;
+using WebCore::VariablePitch;
+
 // We know that none of the ObjC calls here will raise exceptions
 // because they are all calls to WebCoreTextRenderer, which has a
 // contract of not raising.
-
-struct QFontMetricsPrivate : public Shared<QFontMetricsPrivate>
+struct QFontMetricsPrivate : public Shared<QFontMetricsPrivate>, Noncopyable
 {
-    QFontMetricsPrivate(const QFont &font)
-        : _font(font), _renderer(nil)
+    QFontMetricsPrivate(const FontDescription& fontDescription)
+        : m_fontDescription(fontDescription), m_renderer(nil), m_pitch(UnknownPitch)
     {
+        m_webCoreFont.font = nil;
     }
     ~QFontMetricsPrivate()
     {
-        KWQRelease(_renderer);
+        KWQRelease(m_renderer);
+        KWQRelease(m_webCoreFont.font);
     }
+
     id <WebCoreTextRenderer> getRenderer()
     {
-        if (!_renderer)
-            _renderer = KWQRetain([[WebCoreTextRendererFactory sharedFactory] rendererWithFont:_font.getWebCoreFont()]);
-        return _renderer;
+        if (!m_renderer)
+            m_renderer = KWQRetain([[WebCoreTextRendererFactory sharedFactory] rendererWithFont:getWebCoreFont()]);
+        return m_renderer;
     }
     
-    const QFont &font() const { return _font; }
-    void setFont(const QFont &font)
+    const FontDescription& fontDescription() const { return m_fontDescription; }
+    void setFontDescription(const FontDescription& fontDescription)
     {
-        if (_font == font) {
+        if (m_fontDescription == fontDescription)
             return;
+        m_fontDescription = fontDescription;
+        KWQRelease(m_renderer);
+        m_renderer = nil;
+        KWQRelease(m_webCoreFont.font);
+        m_webCoreFont.font = nil;
+        m_pitch = UnknownPitch;
+    }
+
+    const WebCoreFont& getWebCoreFont() const
+    {
+        if (!m_webCoreFont.font) {
+            CREATE_FAMILY_ARRAY(fontDescription(), families);
+            KWQ_BLOCK_EXCEPTIONS;
+            int traits = 0;
+            if (m_fontDescription.italic())
+                traits |= NSItalicFontMask;
+            if (m_fontDescription.weight() >= WebCore::cBoldWeight)
+                traits |= NSBoldFontMask;
+            m_webCoreFont = [[WebCoreTextRendererFactory sharedFactory] 
+                             fontWithFamilies:families traits:traits size:m_fontDescription.computedPixelSize()];
+            KWQRetain(m_webCoreFont.font);
+            m_webCoreFont.forPrinter = m_fontDescription.usePrinterFont();
+            KWQ_UNBLOCK_EXCEPTIONS;
         }
-        _font = font;
-        KWQRelease(_renderer);
-        _renderer = nil;
+        return m_webCoreFont;
+    }
+
+    bool isFixedPitch() const { if (m_pitch == UnknownPitch) determinePitch(); return m_pitch == FixedPitch; };
+    void determinePitch() const {
+        KWQ_BLOCK_EXCEPTIONS;
+        if ([[WebCoreTextRendererFactory sharedFactory] isFontFixedPitch:getWebCoreFont()])
+            m_pitch = FixedPitch;
+        else
+            m_pitch = VariablePitch;
+        KWQ_UNBLOCK_EXCEPTIONS;
     }
 
 private:
-    QFont _font;
-    id <WebCoreTextRenderer> _renderer;
-    
-    QFontMetricsPrivate(const QFontMetricsPrivate&);
-    QFontMetricsPrivate& operator=(const QFontMetricsPrivate&);
+    FontDescription m_fontDescription;
+    id <WebCoreTextRenderer> m_renderer;
+    mutable WebCoreFont m_webCoreFont;
+    mutable Pitch m_pitch;
 };
 
 QFontMetrics::QFontMetrics()
 {
 }
 
-QFontMetrics::QFontMetrics(const QFont &font)
-    : data(new QFontMetricsPrivate(font))
+QFontMetrics::QFontMetrics(const FontDescription& fontDescription)
+    : data(new QFontMetricsPrivate(fontDescription))
 {
 }
 
@@ -101,13 +143,12 @@ QFontMetrics &QFontMetrics::operator=(const QFontMetrics &other)
     return *this;
 }
 
-void QFontMetrics::setFont(const QFont &font)
+void QFontMetrics::setFontDescription(const FontDescription& fontDescription)
 {
-    if (!data) {
-        data = new QFontMetricsPrivate(font);
-    } else {
-        data->setFont(font);
-    }
+    if (!data)
+        data = new QFontMetricsPrivate(fontDescription);
+    else
+        data->setFontDescription(fontDescription);
 }
 
 int QFontMetrics::ascent() const
@@ -163,7 +204,7 @@ int QFontMetrics::width(const QString &qstring, int tabWidth, int xpos, int len)
         return 0;
     }
     
-    CREATE_FAMILY_ARRAY(data->font(), families);
+    CREATE_FAMILY_ARRAY(data->fontDescription(), families);
 
     int length = len == -1 ? qstring.length() : len;
 
@@ -186,7 +227,7 @@ int QFontMetrics::width(const QChar *uchars, int len, int tabWidth, int xpos) co
         return 0;
     }
     
-    CREATE_FAMILY_ARRAY(data->font(), families);
+    CREATE_FAMILY_ARRAY(data->fontDescription(), families);
 
     WebCoreTextRun run;
     WebCoreInitializeTextRun(&run, (const UniChar *)uchars, len, 0, len);
@@ -207,7 +248,7 @@ float QFontMetrics::floatWidth(const QChar *uchars, int slen, int pos, int len, 
         return 0;
     }
 
-    CREATE_FAMILY_ARRAY(data->font(), families);
+    CREATE_FAMILY_ARRAY(data->fontDescription(), families);
 
     WebCoreTextRun run;
     WebCoreInitializeTextRun(&run, (const UniChar *)uchars, slen, pos, pos+len);
@@ -228,7 +269,7 @@ IntRect QFontMetrics::selectionRectForText(int x, int y, int h, int tabWidth, in
     const QChar *str, int len, int from, int to, int toAdd,
     bool rtl, bool visuallyOrdered, int letterSpacing, int wordSpacing, bool smallCaps) const
 {
-    CREATE_FAMILY_ARRAY(data->font(), families);
+    CREATE_FAMILY_ARRAY(data->fontDescription(), families);
 
     if (from < 0)
         from = 0;
@@ -264,7 +305,7 @@ int QFontMetrics::checkSelectionPoint(QChar *s, int slen, int pos, int len, int 
         return 0;
     }
     
-    CREATE_FAMILY_ARRAY(data->font(), families);
+    CREATE_FAMILY_ARRAY(data->fontDescription(), families);
 
     WebCoreTextRun run;
     WebCoreInitializeTextRun(&run, (const UniChar *)s, slen, pos, pos+len);
@@ -304,3 +345,14 @@ IntSize QFontMetrics::size(int, const QString &qstring, int tabWidth, int xpos) 
 {
     return IntSize(width(qstring, tabWidth, xpos), height());
 }
+
+const WebCoreFont& QFontMetrics::getWebCoreFont() const
+{
+    return data->getWebCoreFont();
+}
+
+bool QFontMetrics::isFixedPitch() const
+{
+    return data->isFixedPitch();
+}
+

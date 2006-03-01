@@ -32,8 +32,7 @@
 #import "Image.h"
 #import "IntPointArray.h"
 #import "KWQExceptions.h"
-#import "KWQFont.h"
-#import "KWQFontMetrics.h"
+#import "Font.h"
 #import "Pen.h"
 #import "WebCoreGraphicsBridge.h"
 #import "WebCoreImageRenderer.h"
@@ -55,7 +54,7 @@ namespace WebCore {
 
 struct QPState {
     QPState() : paintingDisabled(false) { }
-    QFont font;
+    Font font;
     Pen pen;
     WebCore::Brush brush;
     bool paintingDisabled;
@@ -68,7 +67,7 @@ struct QPainterPrivate {
     
     Vector<QPState> stack;
     id <WebCoreTextRenderer> textRenderer;
-    QFont textRendererFont;
+    Font textRendererFont;
     CGMutablePathRef focusRingPath;
     int focusRingWidth;
     int focusRingOffset;
@@ -103,19 +102,19 @@ QPainter::~QPainter()
     delete data;
 }
 
-const QFont &QPainter::font() const
+const Font& QPainter::font() const
 {
     return data->state.font;
 }
 
-void QPainter::setFont(const QFont &aFont)
+void QPainter::setFont(const Font& f)
 {
-    data->state.font = aFont;
+    data->state.font = f;
 }
 
 QFontMetrics QPainter::fontMetrics() const
 {
-    return data->state.font;
+    return data->state.font.fontMetrics();
 }
 
 const Pen &QPainter::pen() const
@@ -529,7 +528,7 @@ void QPainter::drawScaledAndTiledImage(Image* image, int x, int y, int w, int h,
 
 void QPainter::_updateRenderer()
 {
-    if (data->textRenderer == 0 || data->state.font != data->textRendererFont) {
+    if (data->textRenderer == 0 || data->state.font.fontDescription() != data->textRendererFont.fontDescription()) {
         data->textRendererFont = data->state.font;
         id <WebCoreTextRenderer> oldRenderer = data->textRenderer;
         KWQ_BLOCK_EXCEPTIONS;
@@ -547,7 +546,7 @@ void QPainter::drawText(int x, int y, int tabWidth, int xpos, int, int, int alig
 
     // Avoid allocations, use stack array to pass font families.  Normally these
     // css fallback lists are small <= 3.
-    CREATE_FAMILY_ARRAY(data->state.font, families);    
+    CREATE_FAMILY_ARRAY(data->state.font.fontDescription(), families);    
 
     _updateRenderer();
 
@@ -579,7 +578,7 @@ void QPainter::drawText(int x, int y, int tabWidth, int xpos, const QChar *str, 
 
     // Avoid allocations, use stack array to pass font families.  Normally these
     // css fallback lists are small <= 3.
-    CREATE_FAMILY_ARRAY(data->state.font, families);
+    CREATE_FAMILY_ARRAY(data->state.font.fontDescription(), families);
 
     _updateRenderer();
 
@@ -618,7 +617,7 @@ void QPainter::drawHighlightForText(int x, int y, int h, int tabWidth, int xpos,
 
     // Avoid allocations, use stack array to pass font families.  Normally these
     // css fallback lists are small <= 3.
-    CREATE_FAMILY_ARRAY(data->state.font, families);
+    CREATE_FAMILY_ARRAY(data->state.font.fontDescription(), families);
 
     _updateRenderer();
 

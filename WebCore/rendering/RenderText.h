@@ -121,7 +121,7 @@ public:
     virtual int xPos() const;
     virtual int yPos() const;
 
-    virtual const QFont &font();
+    virtual const Font& font();
     virtual short verticalPositionHint( bool firstLine ) const;
 
     void setText(DOM::DOMStringImpl*, bool force = false);
@@ -140,7 +140,7 @@ public:
     virtual IntRect getAbsoluteRepaintRect();
 
     const QFontMetrics &metrics(bool firstLine) const;
-    const Font *htmlFont(bool firstLine) const;
+    const Font* font(bool firstLine) const;
 
     DOM::TextImpl *element() const { return static_cast<DOM::TextImpl*>(RenderObject::element()); }
 
@@ -149,7 +149,7 @@ public:
     
     virtual InlineBox *inlineBox(int offset, EAffinity affinity = UPSTREAM);
 
-    int widthFromCache(const Font *, int start, int len, int tabWidth, int xpos) const;
+    int widthFromCache(const Font*, int start, int len, int tabWidth, int xpos) const;
     bool shouldUseMonospaceCache(const Font *) const;
     void cacheWidths();
     bool allAscii() const;

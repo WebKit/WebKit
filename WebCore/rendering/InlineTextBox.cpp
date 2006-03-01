@@ -122,9 +122,11 @@ IntRect InlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos)
     RenderText* textObj = textObject();
     int selTop = rootBox->selectionTop();
     int selHeight = rootBox->selectionHeight();
-    const Font *f = textObj->htmlFont(m_firstLine);
+    const Font *f = textObj->font(m_firstLine);
 
-    IntRect r = f->selectionRectForText(tx + m_x, ty + selTop, selHeight, textObj->tabWidth(), textPos(), textObj->str->s, textObj->str->l, m_start, m_len, m_toAdd, m_reversed, m_dirOverride, sPos, ePos);
+    IntRect r = f->selectionRectForText(tx + m_x, ty + selTop, selHeight, textObj->tabWidth(), textPos(), 
+                                        textObj->str->s, textObj->str->l, m_start, m_len,
+                                        m_toAdd, m_reversed, m_dirOverride, sPos, ePos);
     if (r.x() > tx + m_x + m_width)
         r.setWidth(0);
     else if (r.right() - 1 > tx + m_x + m_width)
@@ -268,9 +270,9 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
     // Set our font.
     RenderStyle* styleToUse = object()->style(m_firstLine);
     int d = styleToUse->textDecorationsInEffect();
-    if (styleToUse->qfont() != i.p->font())
-        i.p->setFont(styleToUse->qfont());
-    const Font *font = &styleToUse->font();
+    const Font* font = &styleToUse->font();
+    if (*font != i.p->font())
+        i.p->setFont(*font);
 
     // 1. Paint backgrounds behind text if needed.  Examples of such backgrounds include selection
     // and marked text.
@@ -701,7 +703,7 @@ int InlineTextBox::offsetForPosition(int _x, bool includePartialGlyphs) const
 int InlineTextBox::positionForOffset(int offset) const
 {
     RenderText *text = static_cast<RenderText *>(m_object);
-    const Font *f = text->htmlFont(m_firstLine);
+    const Font *f = text->font(m_firstLine);
     int from = m_reversed ? offset - m_start : 0;
     int to = m_reversed ? m_len : offset - m_start;
     // FIXME: Do we need to add rightBearing here?

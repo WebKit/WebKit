@@ -398,7 +398,7 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
         paintBoxDecorations(i, box.x(), box.y());
 
     QPainter* p = i.p;
-    p->setFont(style()->qfont());
+    p->setFont(style()->font());
     const QFontMetrics fm = p->fontMetrics();
 
     if (p->printing()) {

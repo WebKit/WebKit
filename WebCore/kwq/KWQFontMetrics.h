@@ -26,24 +26,30 @@
 #ifndef QFONTMETRICS_H_
 #define QFONTMETRICS_H_
 
+#if __APPLE__
+#include "WebCoreTextRendererFactory.h"
+#endif
+
 #include "IntRect.h"
 #include "IntSize.h"
 #include "QString.h"
 
-class QFont;
+namespace WebCore {
+    class FontDescription;
+}
+
 class QFontMetricsPrivate;
 
 class QFontMetrics {
 public:
     QFontMetrics();
-    QFontMetrics(const QFont &);
+    QFontMetrics(const WebCore::FontDescription&);
     ~QFontMetrics();
 
     QFontMetrics(const QFontMetrics &);
     QFontMetrics &operator=(const QFontMetrics &);
 
-    const QFont &font() const;
-    void setFont(const QFont &);
+    void setFontDescription(const WebCore::FontDescription&);
     
     int ascent() const;
     int descent() const;
@@ -68,6 +74,12 @@ public:
 
     int baselineOffset() const { return ascent(); }
     
+    bool isFixedPitch() const;
+    
+#if __APPLE__
+    const WebCoreFont& getWebCoreFont() const;
+#endif
+
 private:
 #ifndef WIN32_COMPILE_HACK
     RefPtr<QFontMetricsPrivate> data;

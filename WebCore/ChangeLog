@@ -1,3 +1,152 @@
+2006-02-28  David Hyatt  <hyatt@apple.com>
+
+        Fold QFont into Font and eliminate QFont completely.
+
+        Reviewed by eric
+
+        * ForwardingHeaders/qfont.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/objc/DOM.mm:
+        (-[DOMElement _font]):
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::attributedString):
+        (WebCore::MacFrame::fontForSelection):
+        (WebCore::MacFrame::fontAttributesForSelectionStart):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        * css/css_computedstyle.cpp:
+        (WebCore::CSSComputedStyleDeclarationImpl::getPropertyCSSValue):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * dom/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::recalcStyle):
+        * ksvg2/svg/SVGLengthImpl.cpp:
+        (SVGLengthImpl::updateValue):
+        * kwq/KWQAccObject.mm:
+        (AXAttributeStringSetStyle):
+        * kwq/KWQComboBox.h:
+        * kwq/KWQComboBox.mm:
+        (QComboBox::setFont):
+        * kwq/KWQFont.h: Removed.
+        * kwq/KWQFont.mm: Removed.
+        * kwq/KWQFontMetrics.h:
+        * kwq/KWQFontMetrics.mm:
+        (QFontMetricsPrivate::QFontMetricsPrivate):
+        (QFontMetricsPrivate::~QFontMetricsPrivate):
+        (QFontMetricsPrivate::getRenderer):
+        (QFontMetricsPrivate::fontDescription):
+        (QFontMetricsPrivate::setFontDescription):
+        (QFontMetricsPrivate::getWebCoreFont):
+        (QFontMetricsPrivate::isFixedPitch):
+        (QFontMetricsPrivate::determinePitch):
+        (QFontMetrics::QFontMetrics):
+        (QFontMetrics::setFontDescription):
+        (QFontMetrics::width):
+        (QFontMetrics::floatWidth):
+        (QFontMetrics::selectionRectForText):
+        (QFontMetrics::checkSelectionPoint):
+        (QFontMetrics::getWebCoreFont):
+        (QFontMetrics::isFixedPitch):
+        * kwq/KWQKHTMLSettings.h:
+        * kwq/KWQLineEdit.h:
+        * kwq/KWQLineEdit.mm:
+        (-[NSSearchField _addStringToRecentSearches:]):
+        (QLineEdit::setFont):
+        * kwq/KWQListBox.h:
+        * kwq/KWQListBox.mm:
+        (QListBox::sizeForNumberOfLines):
+        (QListBox::setFont):
+        (-[KWQTableView drawRow:clipRect:]):
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (WebCore::QPainter::font):
+        (WebCore::QPainter::setFont):
+        (WebCore::QPainter::fontMetrics):
+        (WebCore::QPainter::_updateRenderer):
+        (WebCore::QPainter::drawText):
+        (WebCore::QPainter::drawHighlightForText):
+        * kwq/KWQSlider.h:
+        * kwq/KWQSlider.mm:
+        (QSlider::setFont):
+        * kwq/KWQTextEdit.h:
+        * kwq/KWQTextEdit.mm:
+        (QTextEdit::setFont):
+        * platform/Font.cpp:
+        (khtml::Font::update):
+        * platform/Font.h:
+        (WebCore::):
+        (WebCore::Font::m_wordSpacing):
+        (WebCore::Font::Font):
+        (WebCore::Font::operator==):
+        (WebCore::Font::operator!=):
+        (WebCore::Font::fontMetrics):
+        (WebCore::Font::pixelSize):
+        (WebCore::Font::size):
+        (WebCore::Font::letterSpacing):
+        (WebCore::Font::setWordSpacing):
+        (WebCore::Font::setLetterSpacing):
+        (WebCore::Font::isFixedPitch):
+        (WebCore::Font::isPrinterFont):
+        (WebCore::Font::firstFamily):
+        (WebCore::Font::family):
+        (WebCore::Font::italic):
+        (WebCore::Font::weight):
+        (WebCore::Font::getNSFamily):
+        (WebCore::Font::getNSFont):
+        (WebCore::Font::getWebCoreFont):
+        * platform/FontDescription.h:
+        (WebCore::FontDescription::FontDescription):
+        * platform/FontFamily.h:
+        * platform/Widget.h:
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::font):
+        (WebCore::Widget::setFont):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionRect):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::positionForOffset):
+        * rendering/RenderBlock.cpp:
+        (WebCore::stripTrailingSpace):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::cacheWidths):
+        (WebCore::RenderText::trimmedMinMaxWidth):
+        (WebCore::RenderText::calcMinMaxWidth):
+        (WebCore::RenderText::font):
+        (WebCore::RenderText::width):
+        * rendering/RenderText.h:
+        * rendering/bidi.cpp:
+        (khtml::RenderBlock::computeHorizontalPositionsForLine):
+        (khtml::RenderBlock::findNextLineBreak):
+        * rendering/render_br.cpp:
+        (WebCore::RenderBR::lineHeight):
+        * rendering/render_flow.cpp:
+        (WebCore::RenderFlow::lineHeight):
+        * rendering/render_form.cpp:
+        (WebCore::RenderFormElement::setStyle):
+        (WebCore::RenderFormElement::addIntrinsicMarginsIfAllowed):
+        * rendering/render_image.cpp:
+        (WebCore::RenderImage::paint):
+        * rendering/render_line.cpp:
+        (WebCore::InlineFlowBox::placeBoxesHorizontally):
+        (WebCore::InlineFlowBox::paintDecorations):
+        (WebCore::EllipsisBox::paint):
+        * rendering/render_list.cpp:
+        (RenderListMarker::paint):
+        * rendering/render_object.cpp:
+        (WebCore::RenderObject::getVerticalPosition):
+        (WebCore::RenderObject::lineHeight):
+        * rendering/render_object.h:
+        (WebCore::RenderObject::font):
+        * rendering/render_replaced.cpp:
+        (WebCore::RenderWidget::setStyle):
+        * rendering/render_style.h:
+        (khtml::RenderStyle::fontSize):
+        (khtml::RenderStyle::fontMetrics):
+        (khtml::RenderStyle::wordSpacing):
+        (khtml::RenderStyle::letterSpacing):
+        (khtml::RenderStyle::setFontDescription):
+        (khtml::RenderStyle::setWordSpacing):
+        (khtml::RenderStyle::setLetterSpacing):
+
 2006-02-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

@@ -1493,7 +1493,7 @@ static ListenerMap *listenerMap;
 {
     RenderObject *renderer = [self _elementImpl]->renderer();
     if (renderer) {
-        return renderer->style()->qfont().getNSFont();
+        return renderer->style()->font().getNSFont();
     }
     return nil;
 }

@@ -794,10 +794,6 @@ void DocumentImpl::recalcStyle(StyleChange change)
         // ### make the font stuff _really_ work!!!!
 
         FontDescription fontDescription;
-        QFont f;
-        fontDescription.setFamily(*(f.firstFamily()));
-        fontDescription.setItalic(f.italic());
-        fontDescription.setWeight(f.weight());
         fontDescription.setUsePrinterFont(printing());
         if (m_view) {
             const KHTMLSettings *settings = m_view->frame()->settings();

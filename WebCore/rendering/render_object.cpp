@@ -2190,7 +2190,7 @@ short RenderObject::getVerticalPosition( bool firstLine ) const
         if ( va == BASELINE )
             return vpos;
 
-        const QFont &f = parent()->font( firstLine );
+        const Font &f = parent()->font(firstLine);
         int fontsize = f.pixelSize();
     
         if (va == SUB)
@@ -2198,11 +2198,11 @@ short RenderObject::getVerticalPosition( bool firstLine ) const
         else if (va == SUPER)
             vpos -= fontsize/3 + 1;
         else if (va == TEXT_TOP)
-            vpos += baselinePosition( firstLine ) - QFontMetrics(f).ascent();
+            vpos += baselinePosition( firstLine ) - QFontMetrics(f.fontDescription()).ascent();
         else if (va == MIDDLE)
-            vpos += - (int)(QFontMetrics(f).xHeight()/2) - lineHeight( firstLine )/2 + baselinePosition( firstLine );
+            vpos += - (int)(QFontMetrics(f.fontDescription()).xHeight()/2) - lineHeight( firstLine )/2 + baselinePosition( firstLine );
         else if (va == TEXT_BOTTOM) {
-            vpos += QFontMetrics(f).descent();
+            vpos += QFontMetrics(f.fontDescription()).descent();
             if (!isReplaced())
                 vpos -= fontMetrics(firstLine).descent();
         } else if ( va == BASELINE_MIDDLE )
@@ -2223,7 +2223,7 @@ short RenderObject::lineHeight( bool firstLine, bool ) const
         return s->fontMetrics().lineSpacing();
 
     if (lh.isPercent())
-        return lh.calcMinValue(s->qfont().pixelSize());
+        return lh.calcMinValue(s->fontSize());
 
     // its fixed
     return lh.value();

@@ -88,10 +88,10 @@ private:
 // performance critical code.  Create a NSSString ** name families
 // and populates with a NSString * for each family name.  Null terminates
 // the array.
-#define CREATE_FAMILY_ARRAY(font,families)\
+#define CREATE_FAMILY_ARRAY(fontDescription,families)\
 int __numFamilies = 0;\
 {\
-    const FontFamily *__ff = (font).firstFamily();\
+    const FontFamily *__ff = &(fontDescription).family();\
     while (__ff)\
     {\
         __numFamilies++;\
@@ -101,7 +101,7 @@ int __numFamilies = 0;\
 NSString *families[__numFamilies+1];\
 {\
     int __i = 0;\
-    const FontFamily *__ff = (font).firstFamily();\
+    const FontFamily *__ff = &(fontDescription).family();\
     while (__ff)\
     {\
         families[__i++] = __ff->getNSFamily();\

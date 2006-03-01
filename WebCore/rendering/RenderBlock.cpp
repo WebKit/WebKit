@@ -2806,7 +2806,7 @@ static inline void stripTrailingSpace(int& inlineMax, int& inlineMin,
     if (trailingSpaceChild && trailingSpaceChild->isText()) {
         // Collapse away the trailing space at the end of a block.
         RenderText* t = static_cast<RenderText *>(trailingSpaceChild);
-        const Font *f = t->htmlFont( false );
+        const Font *f = t->font(false);  // FIXME: Why are we ignoring first-line?
         QChar space[1]; space[0] = ' ';
         int spaceWidth = f->width(space, 1, 0, 0);
         inlineMax -= spaceWidth;

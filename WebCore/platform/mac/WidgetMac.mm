@@ -44,7 +44,7 @@ static Widget *deferredFirstResponder;
 class WidgetPrivate
 {
 public:
-    QFont font;
+    Font font;
     NSView* view;
     bool visible;
     bool mustStayInWindow;
@@ -213,12 +213,12 @@ Widget::FocusPolicy Widget::focusPolicy() const
     return TabFocus;
 }
 
-QFont Widget::font() const
+const Font& Widget::font() const
 {
     return data->font;
 }
 
-void Widget::setFont(const QFont &font)
+void Widget::setFont(const Font& font)
 {
     data->font = font;
 }

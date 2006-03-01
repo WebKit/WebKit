@@ -52,7 +52,7 @@ public:
     IntRect frameGeometry() const;
     void setFrameGeometry(const IntRect &);
     int baselinePosition(int height) const;
-    void setFont(const QFont &);
+    void setFont(const WebCore::Font&);
 
     void itemSelected();
     

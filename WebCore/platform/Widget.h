@@ -28,7 +28,9 @@
 
 #include "KWQObject.h"
 
-class QFont;
+namespace WebCore {
+    class Font;
+}
 
 #if __APPLE__
 #ifdef __OBJC__
@@ -95,8 +97,8 @@ namespace WebCore {
 
         virtual FocusPolicy focusPolicy() const;
 
-        QFont font() const;
-        virtual void setFont(const QFont&);
+        const Font& font() const;
+        virtual void setFont(const Font&);
 
         void setCursor(const Cursor&);
         Cursor cursor();

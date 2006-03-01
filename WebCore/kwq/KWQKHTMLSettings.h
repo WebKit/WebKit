@@ -28,7 +28,7 @@
 
 #include "QString.h"
 #include "QStringList.h"
-#include "KWQFont.h"
+#include "Font.h"
 
 class KHTMLSettings
 {

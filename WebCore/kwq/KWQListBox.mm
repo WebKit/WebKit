@@ -289,8 +289,9 @@ IntSize QListBox::sizeForNumberOfLines(int lines) const
                 groupLabelRenderer = groupLabelTextRenderer();
             } else {
                 renderer = [[WebCoreTextRendererFactory sharedFactory] rendererWithFont:font().getWebCoreFont()];
-                QFont b = font();
-                b.setWeight(QFont::Bold);            
+                FontDescription boldDesc = font().fontDescription();
+                boldDesc.setWeight(cBoldWeight);
+                Font b = Font(boldDesc, font().letterSpacing(), font().wordSpacing());          
                 groupLabelRenderer = [[WebCoreTextRendererFactory sharedFactory] rendererWithFont:b.getWebCoreFont()];
             }
             
@@ -362,7 +363,7 @@ void QListBox::clearCachedTextRenderers()
     groupLabelPrinterRenderer = nil;
 }
 
-void QListBox::setFont(const QFont &font)
+void QListBox::setFont(const Font& font)
 {
     Widget::setFont(font);
 
@@ -697,10 +698,14 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
     if (isSystemFont) {
         renderer = (item.type == KWQListBoxGroupLabel) ? groupLabelTextRenderer() : itemTextRenderer();
     } else {
-        QFont itemFont = _box->font();
-        if (item.type == KWQListBoxGroupLabel)
-            itemFont.setWeight(QFont::Bold);
-        renderer = [[WebCoreTextRendererFactory sharedFactory] rendererWithFont:itemFont.getWebCoreFont()];
+        if (item.type == KWQListBoxGroupLabel) {
+            FontDescription boldDesc = _box->font().fontDescription();
+            boldDesc.setWeight(cBoldWeight);
+            Font b = Font(boldDesc, _box->font().letterSpacing(), _box->font().wordSpacing());          
+            renderer = [[WebCoreTextRendererFactory sharedFactory] rendererWithFont:b.getWebCoreFont()];
+        }
+        else
+            renderer = [[WebCoreTextRendererFactory sharedFactory] rendererWithFont:_box->font().getWebCoreFont()];
     }
    
     WebCoreTextStyle style;

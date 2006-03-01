@@ -1180,11 +1180,10 @@ public:
 
     const Font& font() { return inherited->font; }
     const FontDescription& fontDescription() { return inherited->font.fontDescription(); }
-    int fontSize() const { return inherited->font.f.pixelSize(); }
+    int fontSize() const { return inherited->font.pixelSize(); }
 
-    // FIXME: Will be removed when we eliminate QFont and QFontMetrics.
-    const QFont& qfont() { return inherited->font.f; }
-    const QFontMetrics & fontMetrics() const { return inherited->font.fm; }
+    // FIXME: Will be removed when we eliminate QFontMetrics.
+    const QFontMetrics & fontMetrics() const { return inherited->font.fontMetrics(); }
 
     const Color & color() const { return inherited->color; }
     Length textIndent() const { return inherited->indent; }
@@ -1192,8 +1191,8 @@ public:
     ETextTransform textTransform() const { return inherited_flags._text_transform; }
     int textDecorationsInEffect() const { return inherited_flags._text_decorations; }
     int textDecoration() const { return visual->textDecoration; }
-    int wordSpacing() const { return inherited->font.m_wordSpacing; }
-    int letterSpacing() const { return inherited->font.m_letterSpacing; }
+    int wordSpacing() const { return inherited->font.wordSpacing(); }
+    int letterSpacing() const { return inherited->font.letterSpacing(); }
 
     EDirection direction() const { return inherited_flags._direction; }
     Length lineHeight() const { return inherited->line_height; }
@@ -1420,8 +1419,8 @@ public:
     void ssetColSpan(short v) { SET_VAR(visual,colspan,v) }
 
     bool setFontDescription(const FontDescription& v) {
-        if (inherited->font.m_fontDescription != v) {
-            inherited.access()->font = Font(v, inherited->font.m_letterSpacing, inherited->font.m_wordSpacing);
+        if (inherited->font.fontDescription() != v) {
+            inherited.access()->font = Font(v, inherited->font.letterSpacing(), inherited->font.wordSpacing());
             return true;
         }
         return false;
@@ -1439,8 +1438,8 @@ public:
 
     void setWhiteSpace(EWhiteSpace v) { inherited_flags._white_space = v; }
 
-    void setWordSpacing(int v) { SET_VAR(inherited,font.m_wordSpacing,v) }
-    void setLetterSpacing(int v) { SET_VAR(inherited,font.m_letterSpacing,v) }
+    void setWordSpacing(int v) { inherited.access()->font.setWordSpacing(v); }
+    void setLetterSpacing(int v) { inherited.access()->font.setLetterSpacing(v); }
 
     void clearBackgroundLayers() { background.access()->m_background = BackgroundLayer(); }
     void inheritBackgroundLayers(const BackgroundLayer& parent) { background.access()->m_background = parent; }

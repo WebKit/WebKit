@@ -454,7 +454,7 @@ bool RenderText::shouldUseMonospaceCache(const Font *f) const
 // RenderText.
 void RenderText::cacheWidths()
 {
-    const Font *f = htmlFont(false);
+    const Font *f = font(false);
     if (shouldUseMonospaceCache(f)) {
         QChar c(' ');
         m_monospaceCharacterWidth = (int)f->floatWidth(&c, 1, 0, 1, 0, 0);
@@ -520,7 +520,7 @@ void RenderText::trimmedMinMaxWidth(int leadWidth,
     hasBreak = m_hasBreak;
 
     if (stripFrontSpaces && ((*str)[0] == ' ' || ((*str)[0] == '\n' && !style()->preserveNewline()) || (*str)[0] == '\t')) {
-        const Font *f = htmlFont( false );
+        const Font *f = font(false); // FIXME: Why is it ok to ignore first-line here?
         QChar space[1]; space[0] = ' ';
         int spaceWidth = f->width(space, 1, 0, 0);
         maxW -= spaceWidth + f->wordSpacing();
@@ -533,7 +533,7 @@ void RenderText::trimmedMinMaxWidth(int leadWidth,
 
     // Compute our max widths by scanning the string for newlines.
     if (hasBreak) {
-        const Font *f = htmlFont( false );
+        const Font *f = font(false);
         bool firstLine = true;
         beginMaxW = endMaxW = maxW;
         for (int i = 0; i < len; i++)
@@ -587,8 +587,8 @@ void RenderText::calcMinMaxWidth(int leadWidth)
     int currMaxWidth = 0;
     m_hasBreakableChar = m_hasBreak = m_hasTab = m_hasBeginWS = m_hasEndWS = false;
     
-    // ### not 100% correct for first-line
-    const Font *f = htmlFont( false );
+    // FIXME: not 100% correct for first-line
+    const Font *f = font(false);
     int wordSpacing = style()->wordSpacing();
     int len = str->l;
     QChar *txt = str->s;
@@ -757,9 +757,9 @@ int RenderText::yPos() const
     return m_firstTextBox ? m_firstTextBox->m_y : 0;
 }
 
-const QFont &RenderText::font()
+const Font& RenderText::font()
 {
-    return style()->qfont();
+    return style()->font();
 }
 
 void RenderText::setSelectionState(SelectionState s)
@@ -970,7 +970,7 @@ unsigned int RenderText::width(unsigned int from, unsigned int len, int xpos, bo
         return 0;
     if ( from + len > str->length() ) len = str->length() - from;
 
-    const Font *f = htmlFont( firstLine );
+    const Font *f = font(firstLine);
     return width( from, len, f, xpos );
 }
 
@@ -1061,7 +1061,7 @@ const QFontMetrics &RenderText::metrics(bool firstLine) const
     return style(firstLine)->fontMetrics();
 }
 
-const Font *RenderText::htmlFont(bool firstLine) const
+const Font *RenderText::font(bool firstLine) const
 {
     return &style(firstLine)->font();
 }

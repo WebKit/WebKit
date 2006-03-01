@@ -214,8 +214,8 @@ void SVGLengthImpl::updateValue(bool notify)
         case SVG_LENGTHTYPE_EMS:
         case SVG_LENGTHTYPE_EXS:
             if (m_context && m_context->renderer()) {
-                khtml::RenderStyle *style = m_context->renderer()->style();
-                float useSize = style->qfont().pixelSize();
+                RenderStyle *style = m_context->renderer()->style();
+                float useSize = style->fontSize();
                 ASSERT(useSize > 0);
                 if (m_unitType == SVG_LENGTHTYPE_EMS)
                     m_value = m_valueInSpecifiedUnits * useSize;

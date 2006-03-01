@@ -72,7 +72,7 @@ short RenderBR::lineHeight(bool firstLine, bool isRootLineBox) const
             return s->fontMetrics().lineSpacing();
         }
         if (lh.isPercent())
-            return lh.calcMinValue(s->qfont().pixelSize());
+            return lh.calcMinValue(s->fontSize());
         return lh.value();
     }
     

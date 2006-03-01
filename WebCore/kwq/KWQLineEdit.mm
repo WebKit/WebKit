@@ -27,7 +27,7 @@
 #import "KWQLineEdit.h"
 
 #import "KWQExceptions.h"
-#import "KWQFont.h"
+#import "Font.h"
 #import "Logging.h"
 #import "KWQTextField.h"
 #import "WebCoreFrameBridge.h"
@@ -36,12 +36,13 @@
 #import "WebCoreViewFactory.h"
 
 using DOM::DOMString;
+using WebCore::Font;
 
 @interface NSSearchField (SearchFieldSecrets)
 - (void)_addStringToRecentSearches:(NSString *)string;
 @end
 
-NSControlSize KWQNSControlSizeForFont(const QFont& f)
+NSControlSize KWQNSControlSizeForFont(const Font& f)
 {
     const int fontSize = f.pixelSize();
     if (fontSize >= 16)
@@ -104,7 +105,7 @@ int QLineEdit::cursorPosition() const
     return 0;
 }
 
-void QLineEdit::setFont(const QFont &font)
+void QLineEdit::setFont(const Font &font)
 {
     Widget::setFont(font);
     if (m_type == Search) {

@@ -52,7 +52,7 @@ class QTextEdit : public WebCore::ScrollView {
     void setCursorPosition(int, int);
     void getCursorPosition(int *, int *) const;
 
-    void setFont(const QFont &);
+    void setFont(const WebCore::Font&);
 
     void setReadOnly(bool);
     bool isReadOnly() const;

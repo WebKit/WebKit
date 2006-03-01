@@ -80,7 +80,7 @@ public:
     virtual bool checksDescendantsForFocus() const;
     
     static void clearCachedTextRenderers();
-    void setFont(const QFont &font);
+    void setFont(const WebCore::Font&);
 
 private:
     void appendItem(const QString &, KWQListBoxItemType, bool);

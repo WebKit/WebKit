@@ -33,7 +33,7 @@
 
 #ifdef __OBJC__
 @class KWQTextFieldController;
-NSControlSize KWQNSControlSizeForFont(const QFont&);
+NSControlSize KWQNSControlSizeForFont(const WebCore::Font&);
 #else
 class KWQTextFieldController;
 #endif
@@ -55,7 +55,7 @@ public:
     void setEdited(bool);
     bool edited() const;
 
-    void setFont(const QFont &);
+    void setFont(const WebCore::Font&);
     
     void setMaxLength(int);
     int maxLength() const;

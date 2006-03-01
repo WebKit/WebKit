@@ -28,7 +28,7 @@
 
 #import <kxmlcore/Assertions.h>
 #import "KWQExceptions.h"
-#import "KWQFont.h"
+#import "Font.h"
 #import "KWQLineEdit.h"
 #import "KWQTextArea.h"
 
@@ -322,7 +322,7 @@ void QTextEdit::setSelectionRange(int start, int length)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QTextEdit::setFont(const QFont &font)
+void QTextEdit::setFont(const Font& font)
 {
     Widget::setFont(font);
     KWQTextArea *textView = (KWQTextArea *)getView();
