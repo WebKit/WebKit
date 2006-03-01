@@ -23,6 +23,8 @@
         http://bugzilla.opendarwin.org/show_bug.cgi?id=7450
         elementAtPoint is expensive and should return a smart dictionary
         
+        <rdar://problem/2952761> moving the mouse around eats more CPU than I would expect (7450)
+        
         elementAtPoint for WebHTMLView now returns a WebElementDictionary,
         when objectForKey is called it will lookup in the DOM, cache and return the value
 

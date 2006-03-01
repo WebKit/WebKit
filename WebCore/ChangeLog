@@ -36,6 +36,8 @@
         
         http://bugzilla.opendarwin.org/show_bug.cgi?id=7450
         elementAtPoint is expensive and should return a smart dictionary
+        
+        <rdar://problem/2952761> moving the mouse around eats more CPU than I would expect (7450)
 
         Support for WebKit. This removes the old elementAtPoint: on the bridge.
         WebKit now uses the bridge method getInnerNonSharedNode:innerNode:URLElement:atPoint:
