@@ -1,3 +1,30 @@
+2006-03-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Hyatt.
+
+        - fix win32 build (and make dumprendertree run)
+
+        * kwq/KWQComboBox.h:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (QTextEdit::selectionEnd):
+        (Widget::~Widget):
+        (GraphicsContext::beginTransparencyLayer):
+        (QComboBox::populate):
+        (GraphicsContext::drawConvexPolygon):
+        (QFontMetrics::selectionRectForText):
+        (GraphicsContext::setShadow):
+        (GraphicsContext::clearFocusRing):
+        (GraphicsContext::drawImageInRect):
+        (KWQFileButton::setFilename):
+        (KWQFileButton::focusPolicy):
+        (KWQFileButton::frameGeometry):
+        (QSlider::focusPolicy):
+        (WebCore::GraphicsContext::font):
+        (QTextEdit::setWritingDirection):
+        (QFontMetrics::checkSelectionPoint):
+        (QFontMetrics::isFixedPitch):
+        (WebCore::TransferJob::addMetaData):
+
 2006-02-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

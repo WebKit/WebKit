@@ -33,6 +33,7 @@
 #else
 class KWQComboBoxAdapter;
 class NSMenuItem;
+class NSFont;
 #endif
 
 class QComboBox : public Widget {

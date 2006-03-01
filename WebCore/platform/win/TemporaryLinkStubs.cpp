@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include "NodeImpl.h"
 #include "KWQLineEdit.h"
-#include "KWQFont.h"
+#include "Font.h"
 #include "KWQFileButton.h"
 #include "KWQTextEdit.h"
 #include "KWQComboBox.h"
@@ -69,7 +69,6 @@ void Widget::paint(GraphicsContext*,IntRect const&) { notImplemented(); }
 void GraphicsContext::addRoundedRectClip(IntRect const&,IntSize const&,IntSize const&,IntSize const&,IntSize const&) { notImplemented(); }
 IntPoint FrameView::viewportToGlobal(IntPoint const&) const { notImplemented(); return IntPoint(); }
 int QTextEdit::selectionEnd() { notImplemented(); return 0; }
-void QFont::determinePitch() const { notImplemented(); }
 void QTextEdit::setScrollBarModes(ScrollBarMode,ScrollBarMode) { notImplemented(); }
 void GraphicsContext::drawEllipse(int,int,int,int) { notImplemented(); }
 void GraphicsContext::setPen(unsigned int) { notImplemented(); }
@@ -86,7 +85,6 @@ void ScrollView::addChild(Widget*,int,int) { notImplemented(); }
 void QTextEdit::setDisabled(bool) { notImplemented(); }
 bool QScrollBar::scroll(KWQScrollDirection,KWQScrollGranularity,float) { notImplemented(); return 0; }
 Widget::~Widget() { notImplemented(); }
-IntRect GraphicsContext::xForm(IntRect const&) const { notImplemented(); return IntRect(); }
 IntSize QListBox::sizeForNumberOfLines(int) const { notImplemented(); return IntSize(); }
 int QLineEdit::selectionStart() const { notImplemented(); return 0; }
 QLineEdit::QLineEdit(QLineEdit::Type) { notImplemented(); }
@@ -116,7 +114,6 @@ KWQFileButton::KWQFileButton(Frame*) { notImplemented(); }
 IntRect QFontMetrics::boundingRect(int,int,int,int,int,QString const&,int,int) const { notImplemented(); return IntRect(); }
 void QTextEdit::setSelectionStart(int) { notImplemented(); }
 void GraphicsContext::beginTransparencyLayer(float) { notImplemented(); }
-void QComboBox::setFont(QFont const&) { notImplemented(); }
 IntRect Widget::frameGeometry() const { notImplemented(); return IntRect(); }
 void QListBox::setSelected(int,bool) { notImplemented(); }
 void GraphicsContext::addFocusRingRect(int,int,int,int) { notImplemented(); }
@@ -126,8 +123,6 @@ int QFontMetrics::width(QString const&,int,int,int) const { notImplemented(); re
 void Widget::setEnabled(bool) { notImplemented(); }
 void QTextEdit::setSelectionEnd(int) { notImplemented(); }
 void QComboBox::populate() { notImplemented(); }
-static QFont localFont;
-QFont const& GraphicsContext::font() const { notImplemented(); return localFont; }
 void QTextEdit::setAlignment(Qt::AlignmentFlags) { notImplemented(); }
 void QLineEdit::setCursorPosition(int) { notImplemented(); }
 void GraphicsContext::drawText(int,int,int,int,int,int,int,QString const&) { notImplemented(); }
@@ -143,7 +138,6 @@ void QLineEdit::setLiveSearch(bool) { notImplemented(); }
 bool GraphicsContext::paintingDisabled() const { notImplemented(); return 0; }
 QComboBox::QComboBox() { notImplemented(); }
 void GraphicsContext::drawConvexPolygon(IntPointArray const&) { notImplemented(); }
-void Widget::setFont(QFont const&) { notImplemented(); }
 void QSlider::setMaxValue(double) { notImplemented(); }
 void Widget::lockDrawingFocus() { notImplemented(); }
 void GraphicsContext::drawLine(int,int,int,int) { notImplemented(); }
@@ -153,7 +147,6 @@ void GraphicsContext::drawText(int,int,int,int,QChar const*,int,int,int,int,Colo
 void ScrollView::scrollPointRecursively(int,int) { notImplemented(); }
 IntSize QLineEdit::sizeForCharacterWidth(int) const { notImplemented(); return IntSize(); }
 IntRect QFontMetrics::selectionRectForText(int,int,int,int,int,QChar const*,int,int,int,int,bool,bool,int,int,bool) const { notImplemented(); return IntRect(); }
-int QFontMetrics::checkSelectionPoint(QChar*,int,int,int,int,int,int,int,int,bool,int,bool,bool,bool) const { notImplemented(); return 0; }
 void QTextEdit::getCursorPosition(int*,int*) const { notImplemented(); }
 bool FrameView::isFrameView() const { notImplemented(); return 0; }
 void QScrollBar::setSteps(int,int) { notImplemented(); }
@@ -163,7 +156,6 @@ void QLineEdit::setAutoSaveName(String const&) { notImplemented(); }
 int QComboBox::baselinePosition(int) const { notImplemented(); return 0; }
 void QComboBox::appendItem(QString const&,KWQListBoxItemType,bool) { notImplemented(); }
 void GraphicsContext::setShadow(int,int,int,Color const&) { notImplemented(); }
-void QTextEdit::setWritingDirection(GraphicsContext::TextDirection) { notImplemented(); }
 void Widget::setDrawingAlpha(float) { notImplemented(); }
 QSlider::QSlider() { notImplemented(); }
 void GraphicsContext::drawScaledAndTiledImage(Image*,int,int,int,int,int,int,int,int,Image::TileRule,Image::TileRule,void*) { notImplemented(); }
@@ -181,10 +173,8 @@ void QListBox::clear() { notImplemented(); }
 bool QLineEdit::edited() const { notImplemented(); return 0; }
 void GraphicsContext::drawTiledImage(Image*,int,int,int,int,int,int,void*) { notImplemented(); }
 void GraphicsContext::clearFocusRing() { notImplemented(); }
-bool QFont::operator==(QFont const&) const { notImplemented(); return 0; }
 String QTextEdit::text() const { notImplemented(); return String(); }
 void GraphicsContext::drawImageInRect(Image*,IntRect const&,Image::CompositeOperator) { notImplemented(); }
-void GraphicsContext::setFont(QFont const&) { notImplemented(); }
 void Widget::disableFlushDrawing() { notImplemented(); }
 void GraphicsContext::initFocusRing(int,int) { notImplemented(); }
 void QSlider::setMinValue(double) { notImplemented(); }
@@ -195,25 +185,20 @@ double QSlider::value() const { notImplemented(); return 0; }
 void GraphicsContext::setBrush(unsigned int) { notImplemented(); }
 void QListBox::setSelectionMode(QListBox::SelectionMode) { notImplemented(); }
 void KWQFileButton::setFilename(QString const&) { notImplemented(); }
-QFontMetrics::QFontMetrics(QFont const&) { notImplemented(); }
 void QLineEdit::setEdited(bool) { notImplemented(); }
 IntRect QComboBox::frameGeometry() const { notImplemented(); return IntRect(); }
 void QListBox::setWritingDirection(TextDirection) { notImplemented(); }
 void QLineEdit::setAlignment(Qt::AlignmentFlags) { notImplemented(); }
 WebCore::Widget::FocusPolicy KWQFileButton::focusPolicy() const { notImplemented(); return NoFocus; }
-void QListBox::setFont(QFont const&) { notImplemented(); }
 bool QLineEdit::checksDescendantsForFocus() const { notImplemented(); return false; }
 int KWQFileButton::baselinePosition(int) const { notImplemented(); return 0; }
 QSlider::~QSlider() { notImplemented(); }
 void KWQFileButton::setFrameGeometry(WebCore::IntRect const&) { notImplemented(); }
 QListBox::~QListBox() { notImplemented(); }
 WebCore::IntRect KWQFileButton::frameGeometry() const { notImplemented(); return IntRect(); }
-void QTextEdit::setFont(QFont const&) { notImplemented(); }
-void QLineEdit::setFont(QFont const&) { notImplemented(); }
 KWQFileButton::~KWQFileButton() { notImplemented(); }
 WebCore::Widget::FocusPolicy QTextEdit::focusPolicy() const { notImplemented(); return NoFocus; }
 WebCore::Widget::FocusPolicy QSlider::focusPolicy() const { notImplemented(); return NoFocus; }
-void QSlider::setFont(QFont const&) { notImplemented(); }
 void QListBox::setEnabled(bool) { notImplemented(); }
 bool QListBox::checksDescendantsForFocus() const { notImplemented(); return 0; }
 WebCore::Widget::FocusPolicy QListBox::focusPolicy() const { notImplemented(); return NoFocus; }
@@ -351,6 +336,18 @@ void WebCore::BrowserExtensionWin::runModal(void) { notImplemented(); }
 void WebCore::BrowserExtensionWin::goBackOrForward(int) { notImplemented(); }
 void WebCore::BrowserExtensionWin::setIconURL(KURL const &) { notImplemented(); }
 void WebCore::BrowserExtensionWin::createNewWindow(KURL const &,struct WebCore::URLArgs const &) { notImplemented(); }
+void  QSlider::setFont(class WebCore::Font const &) { notImplemented(); }
+void  QLineEdit::setFont(class WebCore::Font const &) { notImplemented(); }
+static WebCore::Font localFont;
+class WebCore::Font const &  WebCore::GraphicsContext::font(void)const  { notImplemented(); return localFont; }
+void  QListBox::setFont(class WebCore::Font const &) { notImplemented(); }
+QFontMetrics::QFontMetrics(class WebCore::FontDescription const &) { notImplemented(); }
+void  WebCore::Widget::setFont(class WebCore::Font const &) { notImplemented(); }
+void  QComboBox::setFont(class WebCore::Font const &) { notImplemented(); }
+void  QTextEdit::setFont(class WebCore::Font const &) { notImplemented(); }
+void  WebCore::GraphicsContext::setFont(class WebCore::Font const &) { notImplemented(); }
+void  QTextEdit::setWritingDirection(enum WebCore::TextDirection) { notImplemented(); }
+int  QFontMetrics::checkSelectionPoint(class QChar const *,int,int,int,int,int,int,int,int,bool,int,bool,bool,bool)const  { notImplemented(); return 0; }
 
 
 // Completely empty stubs (mostly to allow DRT to run):
@@ -362,19 +359,6 @@ QString KLocale::language() { return "en"; }
 
 Cursor::~Cursor() { }
 
-QFont::QFont() { }
-QFont::~QFont() { }
-QFont::QFont(QFont const&) { }
-QFont& QFont::operator=(QFont const&) { return localFont; }
-bool QFont::italic() const { return false; }
-int QFont::weight() const { return QFont::Normal; }
-void QFont::setPrinterFont(bool) { }
-void QFont::setItalic(bool) { }
-void QFont::setFirstFamily(FontFamily const&) { }
-void QFont::setWeight(int) { }
-void QFontMetrics::setFont(QFont const&) { }
-void QFont::setPixelSize(float) { }
-
 QFontMetrics::QFontMetrics() { }
 QFontMetrics::~QFontMetrics() { }
 QFontMetrics::QFontMetrics(QFontMetrics const&) { }
@@ -384,6 +368,8 @@ int QFontMetrics::lineSpacing() const { return 10; }
 int QFontMetrics::ascent() const { return 10; }
 int QFontMetrics::height() const { return 10; }
 int QFontMetrics::descent() const { return 10; }
+void  QFontMetrics::setFontDescription(class WebCore::FontDescription const &) { }
+bool  QFontMetrics::isFixedPitch(void)const  { return 0; }
 
 void WebCore::FrameWin::restoreDocumentState() { }
 void WebCore::FrameWin::partClearedInBegin() { }
@@ -421,4 +407,3 @@ void ScrollView::setStaticBackground(bool) { }
 
 WebCore::TransferJob::TransferJob(WebCore::TransferJobClient*,KURL const&) { }
 void WebCore::TransferJob::addMetaData(QString const&,QString const&) { }
-
