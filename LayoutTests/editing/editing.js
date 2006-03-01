@@ -346,6 +346,21 @@ function justifyRightCommand() {
 
 //-------------------------------------------------------------------------------------------------------
 
+function execInsertHTMLCommand(html) {
+    document.execCommand("InsertHTML", false, html);
+}
+function insertHTMLCommand(html) {
+    if (commandDelay > 0) {
+        window.setTimeout(execInsertHTMLCommand, commandCount * commandDelay, html);
+        commandCount++;
+    }
+    else {
+        execInsertHTMLCommand(html);
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
 function execInsertLineBreakCommand() {
     document.execCommand("InsertLineBreak");
 }
