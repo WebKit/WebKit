@@ -1,3 +1,87 @@
+2006-02-28  Darin Adler  <darin@apple.com>
+
+        Rubber-stamped by Hyatt.
+
+        - moved the WebCoreXXX files from kwq to appropriate directories
+
+        No changes to the contents of the files.
+
+        * WebCore.xcodeproj/project.pbxproj: Updated project file.
+        * bridge/mac/WebCoreCache.h: Added.
+        * bridge/mac/WebCoreCache.mm: Added.
+        * bridge/mac/WebCoreEncodings.h: Added.
+        * bridge/mac/WebCoreEncodings.mm: Added.
+        * bridge/mac/WebCoreFrameNamespaces.h: Added.
+        * bridge/mac/WebCoreFrameNamespaces.m: Added.
+        * bridge/mac/WebCoreFrameView.h: Added.
+        * bridge/mac/WebCoreJavaScript.h: Added.
+        * bridge/mac/WebCoreJavaScript.mm: Added.
+        * bridge/mac/WebCoreKeyboardAccess.h: Added.
+        * bridge/mac/WebCoreResourceLoader.h: Added.
+        * bridge/mac/WebCoreScriptDebugger.h: Added.
+        * bridge/mac/WebCoreScriptDebugger.mm: Added.
+        * bridge/mac/WebCoreSettings.h: Added.
+        * bridge/mac/WebCoreSettings.mm: Added.
+        * bridge/mac/WebCoreTextDecoder.h: Added.
+        * bridge/mac/WebCoreTextDecoder.mm: Added.
+        * bridge/mac/WebCoreViewFactory.h: Added.
+        * bridge/mac/WebCoreViewFactory.m: Added.
+        * bridge/mac/WebDashboardRegion.h: Added.
+        * bridge/mac/WebDashboardRegion.m: Added.
+        * kwq/WebCoreCache.h: Removed.
+        * kwq/WebCoreCache.mm: Removed.
+        * kwq/WebCoreCookieAdapter.h: Removed.
+        * kwq/WebCoreCookieAdapter.m: Removed.
+        * kwq/WebCoreEncodings.h: Removed.
+        * kwq/WebCoreEncodings.mm: Removed.
+        * kwq/WebCoreFrameNamespaces.h: Removed.
+        * kwq/WebCoreFrameNamespaces.m: Removed.
+        * kwq/WebCoreFrameView.h: Removed.
+        * kwq/WebCoreGraphicsBridge.h: Removed.
+        * kwq/WebCoreGraphicsBridge.m: Removed.
+        * kwq/WebCoreHistory.h: Removed.
+        * kwq/WebCoreHistory.m: Removed.
+        * kwq/WebCoreImageRenderer.h: Removed.
+        * kwq/WebCoreImageRendererFactory.h: Removed.
+        * kwq/WebCoreImageRendererFactory.m: Removed.
+        * kwq/WebCoreJavaScript.h: Removed.
+        * kwq/WebCoreJavaScript.mm: Removed.
+        * kwq/WebCoreKeyGenerator.h: Removed.
+        * kwq/WebCoreKeyGenerator.m: Removed.
+        * kwq/WebCoreKeyboardAccess.h: Removed.
+        * kwq/WebCoreResourceLoader.h: Removed.
+        * kwq/WebCoreScriptDebugger.h: Removed.
+        * kwq/WebCoreScriptDebugger.mm: Removed.
+        * kwq/WebCoreSettings.h: Removed.
+        * kwq/WebCoreSettings.mm: Removed.
+        * kwq/WebCoreTextDecoder.h: Removed.
+        * kwq/WebCoreTextDecoder.mm: Removed.
+        * kwq/WebCoreTextRenderer.h: Removed.
+        * kwq/WebCoreTextRendererFactory.h: Removed.
+        * kwq/WebCoreTextRendererFactory.mm: Removed.
+        * kwq/WebCoreView.h: Removed.
+        * kwq/WebCoreView.m: Removed.
+        * kwq/WebCoreViewFactory.h: Removed.
+        * kwq/WebCoreViewFactory.m: Removed.
+        * kwq/WebDashboardRegion.h: Removed.
+        * kwq/WebDashboardRegion.m: Removed.
+        * platform/mac/WebCoreCookieAdapter.h: Added.
+        * platform/mac/WebCoreCookieAdapter.m: Added.
+        * platform/mac/WebCoreGraphicsBridge.h: Added.
+        * platform/mac/WebCoreGraphicsBridge.m: Added.
+        * platform/mac/WebCoreHistory.h: Added.
+        * platform/mac/WebCoreHistory.m: Added.
+        * platform/mac/WebCoreImageRenderer.h: Added.
+        * platform/mac/WebCoreImageRendererFactory.h: Added.
+        * platform/mac/WebCoreImageRendererFactory.m: Added.
+        * platform/mac/WebCoreKeyGenerator.h: Added.
+        * platform/mac/WebCoreKeyGenerator.m: Added.
+        * platform/mac/WebCoreTextRenderer.h: Added.
+        * platform/mac/WebCoreTextRendererFactory.h: Added.
+        * platform/mac/WebCoreTextRendererFactory.mm: Added.
+        * platform/mac/WebCoreView.h: Added.
+        * platform/mac/WebCoreView.m: Added.
+
 2006-02-28  David Hyatt  <hyatt@apple.com>
 
         Fold QFont into Font and eliminate QFont completely.

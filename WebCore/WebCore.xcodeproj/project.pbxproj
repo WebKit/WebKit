@@ -1110,8 +1110,8 @@
 		2D90660B0665D937006B6F1A /* KWQClipboard.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQClipboard.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		2D90660C0665D937006B6F1A /* KWQClipboard.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQClipboard.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		4758C44308C5F217009BAF05 /* KCanvasPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KCanvasPath.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		5150C2A10702629000AF642C /* WebDashboardRegion.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDashboardRegion.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		5150C2A50702629800AF642C /* WebDashboardRegion.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebDashboardRegion.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		5150C2A10702629000AF642C /* WebDashboardRegion.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = file; name = WebDashboardRegion.h; path = WebDashboardRegion.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		5150C2A50702629800AF642C /* WebDashboardRegion.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = file; name = WebDashboardRegion.m; path = WebDashboardRegion.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51F6A3D50663BF04004D2919 /* html_canvasimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = html_canvasimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51F6A3D60663BF04004D2919 /* html_canvasimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = html_canvasimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		550A0BC7085F6039007353D6 /* QualifiedName.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QualifiedName.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2263,7 +2263,7 @@
 		F58786BE02DE3B8601EA4122 /* KWQTextEdit.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQTextEdit.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58786BF02DE3B8601EA4122 /* KWQTextStream.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQTextStream.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58786C202DE3B8601EA4122 /* KWQValueList.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQValueList.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F58EF58E02DFDFB7018635CA /* WebCore.exp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.exports; name = WebCore.exp; path = ../WebCore.exp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F58EF58E02DFDFB7018635CA /* WebCore.exp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.exports; path = WebCore.exp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5A1B04902DE8ABA018635CA /* linkCursor.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = linkCursor.tiff; path = Resources/linkCursor.tiff; sourceTree = "<group>"; };
 		F5B2A4FC02E2220F018635CB /* WebCoreCache.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreCache.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5B2A4FD02E2220F018635CB /* WebCoreCache.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreCache.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2310,6 +2310,7 @@
 			isa = PBXGroup;
 			children = (
 				65C97AF208EA908800ACD273 /* config.h */,
+				F58EF58E02DFDFB7018635CA /* WebCore.exp */,
 				BC1A3790097C6F970019F3D8 /* bindings */,
 				65BF021F097480EF00C43196 /* bridge */,
 				F523D18402DE42E8018635CA /* css */,
@@ -2323,7 +2324,6 @@
 				65BF02180974806300C43196 /* page */,
 				BCF1A5BA097832090061A123 /* platform */,
 				F523D2F302DE443B018635CA /* rendering */,
-				F58785E902DE378A01EA4122 /* WebCore SPI */,
 				A8C0F6DC089701F100BA5114 /* WebCore+SVG */,
 				E1F0424309839389006694EA /* xml */,
 				089C1665FE841158C02AAC07 /* Resources */,
@@ -2371,11 +2371,9 @@
 		6582A14809999D6C00BEEB6D /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				65F5386809B2BFDA00F3DC4A /* ExtraCFEncodings.h */,
-				65F5382409B2B57500F3DC4A /* mac-encodings.txt */,
-				6576F9D509B2484A000041F7 /* TextEncodingMac.cpp */,
 				6582A14909999D6C00BEEB6D /* ColorMac.mm */,
 				F58784F002DE375901EA4122 /* CursorMac.mm */,
+				65F5386809B2BFDA00F3DC4A /* ExtraCFEncodings.h */,
 				6582A14A09999D6C00BEEB6D /* FloatPointMac.mm */,
 				6582A14B09999D6C00BEEB6D /* FloatRectMac.mm */,
 				6582A14C09999D6C00BEEB6D /* FloatSizeMac.mm */,
@@ -2387,9 +2385,10 @@
 				6582A15009999D6D00BEEB6D /* IntRectMac.mm */,
 				6582A15109999D6D00BEEB6D /* IntSizeMac.mm */,
 				935C476E09AC4D7300A6AAB4 /* KeyEventMac.mm */,
+				6593923909AE435C002C531F /* KURLMac.mm */,
+				65F5382409B2B57500F3DC4A /* mac-encodings.txt */,
 				935C476F09AC4D7300A6AAB4 /* MouseEventMac.mm */,
 				6582A15209999D6D00BEEB6D /* PDFDocumentImage.h */,
-				6593923909AE435C002C531F /* KURLMac.mm */,
 				6582A15309999D6D00BEEB6D /* PDFDocumentImage.mm */,
 				A82398A709B3ACF500B60641 /* PlugInInfoStoreMac.mm */,
 				651B4D8E09AC859F0029F1EF /* QStringListMac.mm */,
@@ -2398,6 +2397,23 @@
 				9353676A09AED88B00D35CD6 /* ScrollViewMac.mm */,
 				93309E9F099EB78C0056E581 /* SharedTimerMac.cpp */,
 				6582A15509999D6D00BEEB6D /* SystemTimeMac.cpp */,
+				6576F9D509B2484A000041F7 /* TextEncodingMac.cpp */,
+				F587854902DE375901EA4122 /* WebCoreCookieAdapter.h */,
+				F587854A02DE375901EA4122 /* WebCoreCookieAdapter.m */,
+				BE26F15305517DE000BFA0C3 /* WebCoreGraphicsBridge.h */,
+				BE26F15405517DE000BFA0C3 /* WebCoreGraphicsBridge.m */,
+				F5517DC2031AB56301A80180 /* WebCoreHistory.h */,
+				F5517DC3031AB56301A80180 /* WebCoreHistory.m */,
+				F587854D02DE375901EA4122 /* WebCoreImageRenderer.h */,
+				F587854E02DE375901EA4122 /* WebCoreImageRendererFactory.h */,
+				F587854F02DE375901EA4122 /* WebCoreImageRendererFactory.m */,
+				84B2B1F7056BEF3A00D2B771 /* WebCoreKeyGenerator.h */,
+				84B2B1F8056BEF3A00D2B771 /* WebCoreKeyGenerator.m */,
+				F587855102DE375901EA4122 /* WebCoreTextRenderer.h */,
+				F587855202DE375901EA4122 /* WebCoreTextRendererFactory.h */,
+				F587855302DE375901EA4122 /* WebCoreTextRendererFactory.mm */,
+				BE855F7F0701E83500239769 /* WebCoreView.h */,
+				BE8560510701F91100239769 /* WebCoreView.m */,
 				935C477209AC4D7700A6AAB4 /* WheelEventMac.mm */,
 				9380F47709A11ACC001FDB34 /* WidgetMac.mm */,
 			);
@@ -2443,10 +2459,31 @@
 				65BF023B0974819000C43196 /* MacFrame.h */,
 				65BF023C0974819000C43196 /* MacFrame.mm */,
 				937D809909A063330092A01E /* PageMac.h */,
+				F5B2A4FC02E2220F018635CB /* WebCoreCache.h */,
+				F5B2A4FD02E2220F018635CB /* WebCoreCache.mm */,
+				F56234DF03026D7301629B47 /* WebCoreEncodings.h */,
+				F56234E003026D7301629B47 /* WebCoreEncodings.mm */,
 				654EC60F097778F500DAB52C /* WebCoreFrameBridge.h */,
 				654EC610097778F500DAB52C /* WebCoreFrameBridge.mm */,
+				6552E7A8096AA11B0006F248 /* WebCoreFrameNamespaces.h */,
+				6552E7A9096AA11B0006F248 /* WebCoreFrameNamespaces.m */,
+				F587854C02DE375901EA4122 /* WebCoreFrameView.h */,
+				F5B2A52B02E22573018635CB /* WebCoreJavaScript.h */,
+				F5B2A52C02E22573018635CB /* WebCoreJavaScript.mm */,
+				BE983D95052A2E0A00892D85 /* WebCoreKeyboardAccess.h */,
 				65C7F4310979E2620022E453 /* WebCorePageBridge.h */,
 				65C7F44B0979E8C90022E453 /* WebCorePageBridge.mm */,
+				F587855002DE375901EA4122 /* WebCoreResourceLoader.h */,
+				7E6FEED60898582300C44C3F /* WebCoreScriptDebugger.h */,
+				7E6FEED70898582300C44C3F /* WebCoreScriptDebugger.mm */,
+				F565AE8502ECA583018635CA /* WebCoreSettings.h */,
+				F565AE8602ECA583018635CA /* WebCoreSettings.mm */,
+				E1EE773508F1086C00166870 /* WebCoreTextDecoder.h */,
+				E1EE773608F1086C00166870 /* WebCoreTextDecoder.mm */,
+				F587855402DE375901EA4122 /* WebCoreViewFactory.h */,
+				F587855502DE375901EA4122 /* WebCoreViewFactory.m */,
+				5150C2A10702629000AF642C /* WebDashboardRegion.h */,
+				5150C2A50702629800AF642C /* WebDashboardRegion.m */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -3290,10 +3327,6 @@
 		BCF1A5BA097832090061A123 /* platform */ = {
 			isa = PBXGroup;
 			children = (
-				65F5386A09B2C05E00F3DC4A /* CharsetNames.cpp */,
-				65F5382009B2B55700F3DC4A /* character-sets.txt */,
-				65F5382109B2B55700F3DC4A /* make-charset-table.pl */,
-				BC6D6E2509AF943500F59759 /* ScrollView.h */,
 				93032CCC09AEC36200F82A18 /* cg */,
 				6582A14809999D6C00BEEB6D /* mac */,
 				BCFB2F74097A2E1A00BA703D /* Arena.cpp */,
@@ -3305,6 +3338,8 @@
 				93CD4FD80995F9EA007ECC97 /* AtomicString.h */,
 				93CD4FD90995F9EA007ECC97 /* AtomicStringImpl.h */,
 				BC075985098861A400407B48 /* Brush.h */,
+				65F5382009B2B55700F3DC4A /* character-sets.txt */,
+				65F5386A09B2C05E00F3DC4A /* CharsetNames.cpp */,
 				65F537D809B2B20F00F3DC4A /* CharsetNames.h */,
 				BCC8CFC80986CD2400140BF2 /* Color.cpp */,
 				BCC8CFC90986CD2400140BF2 /* Color.h */,
@@ -3332,13 +3367,14 @@
 				BCB16AF80979A08500467741 /* IntRect.h */,
 				BCF1A5EF097839600061A123 /* IntSize.h */,
 				935C476609AC4D4300A6AAB4 /* KeyEvent.h */,
+				6593923509AE4346002C531F /* KURL.cpp */,
+				6593923609AE4346002C531F /* KURL.h */,
 				A8239DFE09B3CF8A00B60641 /* Logging.cpp */,
 				A8239DFF09B3CF8A00B60641 /* Logging.h */,
+				65F5382109B2B55700F3DC4A /* make-charset-table.pl */,
 				935C476709AC4D4300A6AAB4 /* MouseEvent.h */,
 				93032CC909AEC34B00F82A18 /* Path.h */,
 				BC6B7BBB0993611A0052867B /* PDFDocumentImage.h */,
-				6593923509AE4346002C531F /* KURL.cpp */,
-				6593923609AE4346002C531F /* KURL.h */,
 				BCC8D1710988301200140BF2 /* Pen.cpp */,
 				BCC8D1720988301200140BF2 /* Pen.h */,
 				93CD4FEB0995FD2A007ECC97 /* PlatformString.h */,
@@ -3349,6 +3385,7 @@
 				651B4D8409AC83370029F1EF /* QStringList.h */,
 				9385F761098D9C3100D90D24 /* Screen.h */,
 				9353673E09AED79200D35CD6 /* ScrollBarMode.h */,
+				BC6D6E2509AF943500F59759 /* ScrollView.h */,
 				BCFB2F3F097A24B500BA703D /* SegmentedString.cpp */,
 				BCFB2F40097A24B500BA703D /* SegmentedString.h */,
 				BCFB2E830979FD4F00BA703D /* Shared.h */,
@@ -3359,9 +3396,9 @@
 				93CD4FDC0995F9EA007ECC97 /* StringImpl.cpp */,
 				93CD4FDD0995F9EA007ECC97 /* StringImpl.h */,
 				93E62D990985F41600E1B5E3 /* SystemTime.h */,
-				93309EA1099EB78C0056E581 /* Timer.cpp */,
 				657BD74B09AFDC54005A2056 /* TextEncoding.cpp */,
 				657BD74C09AFDC54005A2056 /* TextEncoding.h */,
+				93309EA1099EB78C0056E581 /* Timer.cpp */,
 				9305B24C098F1B6B00C28855 /* Timer.h */,
 				935C476A09AC4D4F00A6AAB4 /* WheelEvent.h */,
 				9380F47109A11AB4001FDB34 /* Widget.cpp */,
@@ -3748,52 +3785,6 @@
 				F587864302DE3A1601EA4122 /* khtml */,
 				F523D15002DE4271018635CA /* other */,
 			);
-			path = kwq;
-			sourceTree = "<group>";
-		};
-		F58785E902DE378A01EA4122 /* WebCore SPI */ = {
-			isa = PBXGroup;
-			children = (
-				F58EF58E02DFDFB7018635CA /* WebCore.exp */,
-				F5B2A4FC02E2220F018635CB /* WebCoreCache.h */,
-				F5B2A4FD02E2220F018635CB /* WebCoreCache.mm */,
-				F587854902DE375901EA4122 /* WebCoreCookieAdapter.h */,
-				F587854A02DE375901EA4122 /* WebCoreCookieAdapter.m */,
-				F56234DF03026D7301629B47 /* WebCoreEncodings.h */,
-				F56234E003026D7301629B47 /* WebCoreEncodings.mm */,
-				6552E7A8096AA11B0006F248 /* WebCoreFrameNamespaces.h */,
-				6552E7A9096AA11B0006F248 /* WebCoreFrameNamespaces.m */,
-				F587854C02DE375901EA4122 /* WebCoreFrameView.h */,
-				BE26F15305517DE000BFA0C3 /* WebCoreGraphicsBridge.h */,
-				BE26F15405517DE000BFA0C3 /* WebCoreGraphicsBridge.m */,
-				F5517DC2031AB56301A80180 /* WebCoreHistory.h */,
-				F5517DC3031AB56301A80180 /* WebCoreHistory.m */,
-				F587854D02DE375901EA4122 /* WebCoreImageRenderer.h */,
-				F587854E02DE375901EA4122 /* WebCoreImageRendererFactory.h */,
-				F587854F02DE375901EA4122 /* WebCoreImageRendererFactory.m */,
-				F5B2A52B02E22573018635CB /* WebCoreJavaScript.h */,
-				F5B2A52C02E22573018635CB /* WebCoreJavaScript.mm */,
-				BE983D95052A2E0A00892D85 /* WebCoreKeyboardAccess.h */,
-				84B2B1F7056BEF3A00D2B771 /* WebCoreKeyGenerator.h */,
-				84B2B1F8056BEF3A00D2B771 /* WebCoreKeyGenerator.m */,
-				F587855002DE375901EA4122 /* WebCoreResourceLoader.h */,
-				7E6FEED60898582300C44C3F /* WebCoreScriptDebugger.h */,
-				7E6FEED70898582300C44C3F /* WebCoreScriptDebugger.mm */,
-				F565AE8502ECA583018635CA /* WebCoreSettings.h */,
-				F565AE8602ECA583018635CA /* WebCoreSettings.mm */,
-				E1EE773508F1086C00166870 /* WebCoreTextDecoder.h */,
-				E1EE773608F1086C00166870 /* WebCoreTextDecoder.mm */,
-				F587855102DE375901EA4122 /* WebCoreTextRenderer.h */,
-				F587855202DE375901EA4122 /* WebCoreTextRendererFactory.h */,
-				F587855302DE375901EA4122 /* WebCoreTextRendererFactory.mm */,
-				BE855F7F0701E83500239769 /* WebCoreView.h */,
-				BE8560510701F91100239769 /* WebCoreView.m */,
-				F587855402DE375901EA4122 /* WebCoreViewFactory.h */,
-				F587855502DE375901EA4122 /* WebCoreViewFactory.m */,
-				5150C2A10702629000AF642C /* WebDashboardRegion.h */,
-				5150C2A50702629800AF642C /* WebDashboardRegion.m */,
-			);
-			name = "WebCore SPI";
 			path = kwq;
 			sourceTree = "<group>";
 		};
