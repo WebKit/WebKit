@@ -825,6 +825,11 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     [super viewWillMoveToWindow:window];
 }
 
+- (BOOL)autoforwardsScrollWheelEvents
+{
+    return YES;
+}
+
 @end
 
 @implementation KWQTextAreaTextView

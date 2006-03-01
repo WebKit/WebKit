@@ -27,12 +27,11 @@
  */
 
 #import <WebCore/WebCoreFrameView.h>
-#import <WebCore/WebCoreScrollView.h>
 
 // FIXME 2980779: This has grown to be more than just a dynamic scroll bar view,
 // and it is no longer completely appropriate for use outside of WebKit.
 
-@interface WebDynamicScrollBarsView : WebCoreScrollView <WebCoreFrameView>
+@interface WebDynamicScrollBarsView : NSScrollView <WebCoreFrameView>
 {
     WebCoreScrollBarMode hScroll;
     WebCoreScrollBarMode vScroll;

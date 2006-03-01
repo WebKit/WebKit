@@ -208,4 +208,10 @@
     vScroll = hScroll = mode;
     [self updateScrollers];
 }
+
+- (BOOL)autoforwardsScrollWheelEvents
+{
+    return YES;
+}
+
 @end

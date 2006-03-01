@@ -30,7 +30,6 @@
 #import "KWQView.h"
 #import "MacFrame.h"
 #import "WebCoreFrameBridge.h"
-#import "WebCoreScrollView.h"
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
 #import <kxmlcore/Assertions.h>
@@ -44,9 +43,7 @@ const float bottomMargin = 1;
 const float leftMargin = 2;
 const float rightMargin = 2;
 
-@interface KWQListBoxScrollView : WebCoreScrollView <KWQWidgetHolder>
-{
-}
+@interface KWQListBoxScrollView : NSScrollView <KWQWidgetHolder>
 @end
 
 @interface KWQTableView : NSTableView <KWQWidgetHolder>
@@ -399,6 +396,11 @@ void QListBox::setFont(const QFont &font)
     KWQTableView *documentView = [self documentView];
     Widget *widget = [documentView widget];
     [MacFrame::bridgeForWidget(widget) makeFirstResponder:documentView];
+    return YES;
+}
+
+- (BOOL)autoforwardsScrollWheelEvents
+{
     return YES;
 }
 

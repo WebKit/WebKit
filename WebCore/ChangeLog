@@ -1,3 +1,19 @@
+2006-02-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - remove obsolete WebCoreScrollView class
+
+        * WebCore.exp: Remove WebCoreScrollView class name.
+
+        * kwq/WebCoreScrollView.h: Removed.
+        * kwq/WebCoreScrollView.m: Removed.
+        * WebCore.xcodeproj/project.pbxproj: Remove WebCoreScrollView source files.
+
+        * kwq/KWQListBox.mm: (-[KWQListBoxScrollView autoforwardsScrollWheelEvents]): Added.
+        * kwq/KWQTextArea.h: Change base class to NSScrollView instead of WebCoreScrollView.
+        * kwq/KWQTextArea.mm: (-[KWQTextAreaTextView autoforwardsScrollWheelEvents]): Ditto.
+
 2006-02-28  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

@@ -1,3 +1,12 @@
+2006-02-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - remove obsolete WebCoreScrollView class
+
+        * WebView/WebDynamicScrollBarsView.h: Change base class to NSScrollView instead of WebCoreScrollView.
+        * WebView/WebDynamicScrollBarsView.m: (-[WebDynamicScrollBarsView autoforwardsScrollWheelEvents]): Added.
+
 2006-02-28  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Eric Seidel

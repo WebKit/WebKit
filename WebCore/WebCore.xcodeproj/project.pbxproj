@@ -283,7 +283,6 @@
 		93F199AB08245E59001E9ABC /* WebCoreImageRendererFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = F587854E02DE375901EA4122 /* WebCoreImageRendererFactory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199AC08245E59001E9ABC /* WebCoreJavaScript.h in Headers */ = {isa = PBXBuildFile; fileRef = F5B2A52B02E22573018635CB /* WebCoreJavaScript.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199AD08245E59001E9ABC /* WebCoreResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = F587855002DE375901EA4122 /* WebCoreResourceLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93F199AE08245E59001E9ABC /* WebCoreScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = 9325AAB7041D0E9A00A9CAC5 /* WebCoreScrollView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199AF08245E59001E9ABC /* WebCoreSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = F565AE8502ECA583018635CA /* WebCoreSettings.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199B008245E59001E9ABC /* WebCoreTextRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = F587855102DE375901EA4122 /* WebCoreTextRenderer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199B108245E59001E9ABC /* WebCoreTextRendererFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = F587855202DE375901EA4122 /* WebCoreTextRendererFactory.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -401,7 +400,6 @@
 		93F19ACD08245E59001E9ABC /* KWQResourceLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93386B91037045B3008635CE /* KWQResourceLoader.mm */; };
 		93F19AD208245E59001E9ABC /* KWQPageState.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9394E0A503AA5BBE008635CE /* KWQPageState.mm */; };
 		93F19AD508245E59001E9ABC /* KWQRenderTreeDebug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93955A4203D72932008635CE /* KWQRenderTreeDebug.cpp */; };
-		93F19ADB08245E59001E9ABC /* WebCoreScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9325AAB8041D0E9A00A9CAC5 /* WebCoreScrollView.m */; };
 		93F19ADC08245E59001E9ABC /* KWQScrollBar.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC7B2AF90450824100A8000F /* KWQScrollBar.mm */; };
 		93F19ADF08245E59001E9ABC /* KWQAccObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55998A5B052B59CC0017A6C1 /* KWQAccObject.mm */; };
 		93F19AE008245E59001E9ABC /* KWQAccObjectCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = 55998A5D052B59CC0017A6C1 /* KWQAccObjectCache.mm */; };
@@ -1214,8 +1212,6 @@
 		93032CC709AEC34300F82A18 /* PathCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PathCG.cpp; sourceTree = "<group>"; };
 		93032CC909AEC34B00F82A18 /* Path.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Path.h; path = platform/Path.h; sourceTree = "<group>"; };
 		9305B24C098F1B6B00C28855 /* Timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Timer.h; path = platform/Timer.h; sourceTree = "<group>"; };
-		9325AAB7041D0E9A00A9CAC5 /* WebCoreScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreScrollView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		9325AAB8041D0E9A00A9CAC5 /* WebCoreScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebCoreScrollView.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9327A94109968D1A0068A546 /* HTMLOptionsCollectionImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLOptionsCollectionImpl.cpp; sourceTree = "<group>"; };
 		93309D87099E64910056E581 /* AppendNodeCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AppendNodeCommand.cpp; sourceTree = "<group>"; };
 		93309D88099E64910056E581 /* AppendNodeCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppendNodeCommand.h; sourceTree = "<group>"; };
@@ -3787,8 +3783,6 @@
 				F587855002DE375901EA4122 /* WebCoreResourceLoader.h */,
 				7E6FEED60898582300C44C3F /* WebCoreScriptDebugger.h */,
 				7E6FEED70898582300C44C3F /* WebCoreScriptDebugger.mm */,
-				9325AAB7041D0E9A00A9CAC5 /* WebCoreScrollView.h */,
-				9325AAB8041D0E9A00A9CAC5 /* WebCoreScrollView.m */,
 				F565AE8502ECA583018635CA /* WebCoreSettings.h */,
 				F565AE8602ECA583018635CA /* WebCoreSettings.mm */,
 				E1EE773508F1086C00166870 /* WebCoreTextDecoder.h */,
@@ -3980,7 +3974,6 @@
 				93F199AB08245E59001E9ABC /* WebCoreImageRendererFactory.h in Headers */,
 				93F199AC08245E59001E9ABC /* WebCoreJavaScript.h in Headers */,
 				93F199AD08245E59001E9ABC /* WebCoreResourceLoader.h in Headers */,
-				93F199AE08245E59001E9ABC /* WebCoreScrollView.h in Headers */,
 				93F199AF08245E59001E9ABC /* WebCoreSettings.h in Headers */,
 				93F199B008245E59001E9ABC /* WebCoreTextRenderer.h in Headers */,
 				93F199B108245E59001E9ABC /* WebCoreTextRendererFactory.h in Headers */,
@@ -5128,7 +5121,6 @@
 				93F19ACD08245E59001E9ABC /* KWQResourceLoader.mm in Sources */,
 				93F19AD208245E59001E9ABC /* KWQPageState.mm in Sources */,
 				93F19AD508245E59001E9ABC /* KWQRenderTreeDebug.cpp in Sources */,
-				93F19ADB08245E59001E9ABC /* WebCoreScrollView.m in Sources */,
 				93F19ADC08245E59001E9ABC /* KWQScrollBar.mm in Sources */,
 				93F19ADF08245E59001E9ABC /* KWQAccObject.mm in Sources */,
 				93F19AE008245E59001E9ABC /* KWQAccObjectCache.mm in Sources */,
