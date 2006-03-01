@@ -1,5 +1,11 @@
 2006-02-28  Darin Adler  <darin@apple.com>
 
+        - fixed part of the reason the build is broken
+
+        * WebCore.xcodeproj/project.pbxproj: Updated project file.
+
+2006-02-28  Darin Adler  <darin@apple.com>
+
         Rubber-stamped by Hyatt.
 
         - moved the WebCoreXXX files from kwq to appropriate directories
