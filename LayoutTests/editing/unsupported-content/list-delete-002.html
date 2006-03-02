@@ -21,9 +21,11 @@
 <script>
 
 function editingTest() {
-    moveSelectionForwardByLineCommand();
-    for (i = 0; i < 4; i++)
+	moveSelectionForwardByLineCommand();
+    for (i = 0; i < 2; i++)
         extendSelectionForwardByLineCommand();
+    for (i = 0; i < 10; i++)
+        extendSelectionForwardByCharacterCommand();
     deleteCommand();
 }
 
