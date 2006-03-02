@@ -1,3 +1,12 @@
+2006-03-02  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        Changed an Objective-C forward declaration from "class" to "@class".
+        This doesn't appear to fix any problems, though.
+
+        * platform/StringImpl.h:
+
 2006-03-01  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

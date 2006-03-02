@@ -35,7 +35,7 @@
 #endif
 
 #if __OBJC__
-class NSString;
+@class NSString;
 #endif
 
 namespace WebCore {
