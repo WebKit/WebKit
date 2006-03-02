@@ -29,11 +29,12 @@
 #include "WebView.h"
 #include "Resource.h"
 
-#include "FrameWin.h"
 #include "FrameView.h"
+#include "FrameWin.h"
+#include "GraphicsContext.h"
+#include "MouseEvent.h"
 #include "Page.h"
 #include "render_frames.h"
-#include "GraphicsContext.h"
 
 
 using namespace WebCore;
@@ -52,12 +53,13 @@ public:
     }
 
     FrameWin* frame;
+    FrameView* frameView;
     HWND windowHandle;
 };
 
 const LPCWSTR kWebViewWindowClassName = L"WebViewWindowClass";
 
-LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
+LRESULT CALLBACK WebViewWndProc(HWND, UINT, WPARAM, LPARAM);
 
 static ATOM registerWebViewWithInstance(HINSTANCE hInstance)
 {
@@ -70,7 +72,7 @@ static ATOM registerWebViewWithInstance(HINSTANCE hInstance)
     wcex.cbSize = sizeof(WNDCLASSEX);
 
     wcex.style          = CS_HREDRAW | CS_VREDRAW; // CS_DBLCLKS?
-    wcex.lpfnWndProc    = WndProc;
+    wcex.lpfnWndProc    = WebViewWndProc;
     wcex.cbClsExtra     = 0;
     wcex.cbWndExtra     = 0;
     wcex.hInstance      = hInstance;
@@ -106,8 +108,8 @@ WebView::WebView(HWND hWnd)
 
     Page *page = new Page();
     d->frame = new FrameWin(page, 0);
-    FrameView *frameView = new FrameView(d->frame);
-    d->frame->setView(frameView);
+    d->frameView = new FrameView(d->frame);
+    d->frame->setView(d->frameView);
 
     d->frame->begin();
     d->frame->write("<img src=\"data:image/gif;base64,R0lGODdhMAAwAPAAAAAAAP///ywAAAAAMAAwAAAC8IyPqcvt3wCcDkiLc7C0qwyGHhSWpjQu5yqmCYsapyuvUUlvONmOZtfzgFzByTB10QgxOR0TqBQejhRNzOfkVJ+5YiUqrXF5Y5lKh/DeuNcP5yLWGsEbtLiOSpa/TPg7JpJHxyendzWTBfX0cxOnKPjgBzi4diinWGdkF8kjdfnycQZXZeYGejmJlZeGl9i2icVqaNVailT6F5iJ90m6mvuTS4OK05M0vDk0Q4XUtwvKOzrcd3iq9uisF81M1OIcR7lEewwcLp7tuNNkM3uNna3F2JQFo97Vriy/Xl4/f1cf5VWzXyym7PHhhx4dbgYKAAA7\" alt=\"Larry\"><div style=\"border: 1px black\">foo</div><ul><li>foo<li>bar<li>baz</ul>");
@@ -130,7 +132,31 @@ HWND WebView::windowHandle()
     return d->windowHandle;
 }
 
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+void WebView::mouseMoved(HWND hWnd, WPARAM wParam, LPARAM lParam)
+{
+    MouseEvent mouseEvent(hWnd, wParam, lParam, 0);
+    d->frameView->viewportMouseMoveEvent(&mouseEvent);
+}
+
+void WebView::mouseDown(HWND hWnd, WPARAM wParam, LPARAM lParam)
+{
+    MouseEvent mouseEvent(hWnd, wParam, lParam, 1);
+    d->frameView->viewportMousePressEvent(&mouseEvent);
+}
+
+void WebView::mouseUp(HWND hWnd, WPARAM wParam, LPARAM lParam)
+{
+    MouseEvent mouseEvent(hWnd, wParam, lParam, 1);
+    d->frameView->viewportMouseReleaseEvent(&mouseEvent);
+}
+
+void WebView::mouseDoubleClick(HWND hWnd, WPARAM wParam, LPARAM lParam)
+{
+    MouseEvent mouseEvent(hWnd, wParam, lParam, 2);
+    d->frameView->viewportMouseReleaseEvent(&mouseEvent);
+}
+
+LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     int wmId, wmEvent;
     HDC hdc;
@@ -153,12 +179,29 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_PAINT:
         PAINTSTRUCT ps;
         hdc = BeginPaint(hWnd, &ps);
-        // TODO: Add any drawing code here...
         gSharedWebViewHack->drawRect(ps);
         EndPaint(hWnd, &ps);
         break;
     case WM_DESTROY:
         // Do nothing?
+        break;
+    case WM_MOUSEMOVE:
+        gSharedWebViewHack->mouseMoved(hWnd, wParam, lParam);
+        break;
+    case WM_LBUTTONDOWN:
+    case WM_MBUTTONDOWN:
+    case WM_RBUTTONDOWN:
+        gSharedWebViewHack->mouseDown(hWnd, wParam, lParam);
+        break;
+    case WM_LBUTTONUP:
+    case WM_MBUTTONUP:
+    case WM_RBUTTONUP:
+        gSharedWebViewHack->mouseUp(hWnd, wParam, lParam);
+        break;
+    case WM_LBUTTONDBLCLK:
+    case WM_MBUTTONDBLCLK:
+    case WM_RBUTTONDBLCLK:
+        gSharedWebViewHack->mouseDoubleClick(hWnd, wParam, lParam);
         break;
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);

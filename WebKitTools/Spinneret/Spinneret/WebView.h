@@ -26,6 +26,8 @@
 #ifndef WebView_H
 #define WebView_H
 
+#include <windows.h>
+
 namespace WebKit {
     
     class WebView {
@@ -35,6 +37,11 @@ namespace WebKit {
         ~WebView();
 
         void drawRect(const PAINTSTRUCT&);
+
+        void mouseMoved(HWND, WPARAM, LPARAM);
+        void mouseDown(HWND, WPARAM, LPARAM);
+        void mouseUp(HWND, WPARAM, LPARAM);
+        void mouseDoubleClick(HWND, WPARAM, LPARAM);
 
         HWND windowHandle();
     private:
