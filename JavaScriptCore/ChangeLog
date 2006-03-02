@@ -1,5 +1,11 @@
 2006-03-02  Maciej Stachowiak  <mjs@apple.com>
 
+        - now fix mac build again
+
+        * kjs/identifier.cpp:
+
+2006-03-02  Maciej Stachowiak  <mjs@apple.com>
+
         Rubber stamped by Anders and Eric.
 
 	- add fpconst.cpp to win32 build, it is now needed

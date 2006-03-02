@@ -20,8 +20,6 @@
  */
 
 #include "config.h"
-#include "identifier.h"
-
 // For JavaScriptCore we need to avoid having static constructors.
 // Our strategy is to declare the global objects with a different type (initialized to 0)
 // and then use placement new to initialize the global objects later. This is not completely
@@ -37,6 +35,8 @@
 #if AVOID_STATIC_CONSTRUCTORS
 #define KJS_IDENTIFIER_HIDE_GLOBALS 1
 #endif
+
+#include "identifier.h"
 
 #include <kxmlcore/FastMalloc.h>
 #include <kxmlcore/HashSet.h>
