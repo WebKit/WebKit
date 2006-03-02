@@ -1,3 +1,21 @@
+2006-03-01  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by andersca.
+
+        Make spinneret take advantage of the new GraphicsContextCairo.
+
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.cpp:
+        (main): updated to match style guidelines.
+        * Spinneret/Spinneret/Spinneret.cpp:
+        (_tWinMain):
+        * Spinneret/Spinneret/WebView.cpp:
+        (WebKit::registerWebViewWithInstance):
+        (WebKit::WebView::WebView):
+        (WebKit::WebView::~WebView):
+        (WebKit::WebView::drawRect):
+        (WebKit::WndProc):
+        * Spinneret/Spinneret/WebView.h:
+
 2006-03-01  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

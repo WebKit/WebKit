@@ -45,16 +45,16 @@ using namespace WebCore;
 
 int main(int argc, char* argv[])
 {
-    Page *page = new Page();
-    FrameWin *frame = new FrameWin(page, 0);
-    FrameView *frameView = new FrameView(frame);
+    Page* page = new Page();
+    FrameWin* frame = new FrameWin(page, 0);
+    FrameView* frameView = new FrameView(frame);
     frame->setView(frameView);
     
     frame->begin();
 
 #if LOCAL_FILE_TEST
-    char *path = "c:\\cygwin\\tmp\\test.html";
-    FILE *file = fopen(path, "rb");
+    char* path = "c:\\cygwin\\tmp\\test.html";
+    FILE* file = fopen(path, "rb");
     if (!file) {
         printf("Failed to open file: %s\n", path);
         printf("Current path: %s\n", _getcwd(0,0));

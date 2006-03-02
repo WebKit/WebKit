@@ -67,7 +67,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
     gWebView = WebView::createWebView(hInstance, hMainWnd);
     ShowWindow(gWebView->windowHandle(), nCmdShow);
-    UpdateWindow(gWebView->windowHandle());    
+    UpdateWindow(gWebView->windowHandle());
 
     hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_SPINNERET));
 

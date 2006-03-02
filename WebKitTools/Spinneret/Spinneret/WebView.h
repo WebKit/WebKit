@@ -34,14 +34,14 @@ namespace WebKit {
 
         ~WebView();
 
-        void drawRect(const RECT&);
+        void drawRect(const PAINTSTRUCT&);
 
         HWND windowHandle();
     private:
         WebView(HWND);
         
         class WebViewPrivate;
-        WebViewPrivate *d;
+        WebViewPrivate* d;
     };
 }
 
