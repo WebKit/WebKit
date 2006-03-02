@@ -1,5 +1,14 @@
 2006-03-02  Maciej Stachowiak  <mjs@apple.com>
 
+        Rubber stamped by Anders and Eric.
+
+	- add fpconst.cpp to win32 build, it is now needed
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * kjs/fpconst.cpp:
+
+2006-03-02  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Eric.
 
 	- fix windows build, broken by my last patch
