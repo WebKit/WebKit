@@ -169,7 +169,6 @@
 		9353676B09AED88B00D35CD6 /* ScrollViewMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9353676A09AED88B00D35CD6 /* ScrollViewMac.mm */; };
 		935367E509AF77DD00D35CD6 /* GraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 935367E409AF77DD00D35CD6 /* GraphicsContext.h */; };
 		935367E909AF77EF00D35CD6 /* GraphicsContextMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 935367E809AF77EF00D35CD6 /* GraphicsContextMac.mm */; };
-		935367ED09AF77FC00D35CD6 /* GraphicsContextCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 935367EC09AF77FC00D35CD6 /* GraphicsContextCG.cpp */; };
 		9353686B09AF78F600D35CD6 /* TextDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9353686A09AF78F600D35CD6 /* TextDirection.h */; };
 		935C475D09AC4CA000A6AAB4 /* History.h in Headers */ = {isa = PBXBuildFile; fileRef = 935C475C09AC4CA000A6AAB4 /* History.h */; };
 		935C475F09AC4CAE00A6AAB4 /* HistoryMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 935C475E09AC4CAE00A6AAB4 /* HistoryMac.mm */; };
@@ -492,6 +491,7 @@
 		A82398A809B3ACF500B60641 /* PlugInInfoStoreMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A82398A709B3ACF500B60641 /* PlugInInfoStoreMac.mm */; };
 		A8239E0009B3CF8A00B60641 /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8239DFE09B3CF8A00B60641 /* Logging.cpp */; };
 		A8239E0109B3CF8A00B60641 /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = A8239DFF09B3CF8A00B60641 /* Logging.h */; };
+		A823A75C09B6E53900B60641 /* GraphicsContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A823A75B09B6E53900B60641 /* GraphicsContext.cpp */; };
 		A83C81A3091189B9009BF4A7 /* XSLTProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = A83C819F091189B9009BF4A7 /* XSLTProcessor.h */; };
 		A83C81A4091189B9009BF4A7 /* XSLTProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A83C81A0091189B9009BF4A7 /* XSLTProcessor.cpp */; };
 		A88AD3860952486D001DD196 /* KRenderingDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0FB54089701F700BA5114 /* KRenderingDevice.cpp */; };
@@ -1301,7 +1301,6 @@
 		9353676A09AED88B00D35CD6 /* ScrollViewMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollViewMac.mm; sourceTree = "<group>"; };
 		935367E409AF77DD00D35CD6 /* GraphicsContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GraphicsContext.h; path = platform/GraphicsContext.h; sourceTree = "<group>"; };
 		935367E809AF77EF00D35CD6 /* GraphicsContextMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GraphicsContextMac.mm; sourceTree = "<group>"; };
-		935367EC09AF77FC00D35CD6 /* GraphicsContextCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContextCG.cpp; sourceTree = "<group>"; };
 		9353686A09AF78F600D35CD6 /* TextDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextDirection.h; path = platform/TextDirection.h; sourceTree = "<group>"; };
 		935C475C09AC4CA000A6AAB4 /* History.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = History.h; sourceTree = "<group>"; };
 		935C475E09AC4CAE00A6AAB4 /* HistoryMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = HistoryMac.mm; sourceTree = "<group>"; };
@@ -1528,6 +1527,7 @@
 		A82398A709B3ACF500B60641 /* PlugInInfoStoreMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = PlugInInfoStoreMac.mm; sourceTree = "<group>"; };
 		A8239DFE09B3CF8A00B60641 /* Logging.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Logging.cpp; path = platform/Logging.cpp; sourceTree = "<group>"; };
 		A8239DFF09B3CF8A00B60641 /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Logging.h; path = platform/Logging.h; sourceTree = "<group>"; };
+		A823A75B09B6E53900B60641 /* GraphicsContext.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = GraphicsContext.cpp; path = platform/GraphicsContext.cpp; sourceTree = "<group>"; };
 		A82FC33B08CBB07C00EFEE23 /* SVGCursorElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGCursorElementImpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A82FC33C08CBB07C00EFEE23 /* SVGCursorElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGCursorElementImpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A83C819F091189B9009BF4A7 /* XSLTProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = XSLTProcessor.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2520,7 +2520,6 @@
 		93032CCC09AEC36200F82A18 /* cg */ = {
 			isa = PBXGroup;
 			children = (
-				935367EC09AF77FC00D35CD6 /* GraphicsContextCG.cpp */,
 				93032CC709AEC34300F82A18 /* PathCG.cpp */,
 			);
 			name = cg;
@@ -3368,6 +3367,7 @@
 				BCC47E6A09A3FE4700ADB771 /* FontDescription.h */,
 				BCC47E2409A3D6F100ADB771 /* FontFamily.cpp */,
 				BCC47E2509A3D6F100ADB771 /* FontFamily.h */,
+				A823A75B09B6E53900B60641 /* GraphicsContext.cpp */,
 				935367E409AF77DD00D35CD6 /* GraphicsContext.h */,
 				BC6B7BAE0993603C0052867B /* Image.cpp */,
 				BCD75ABB0989A446003E28DF /* Image.h */,
@@ -5519,7 +5519,6 @@
 				BC6D6DD209AF906600F59759 /* Font.cpp in Sources */,
 				9353676B09AED88B00D35CD6 /* ScrollViewMac.mm in Sources */,
 				935367E909AF77EF00D35CD6 /* GraphicsContextMac.mm in Sources */,
-				935367ED09AF77FC00D35CD6 /* GraphicsContextCG.cpp in Sources */,
 				BC9B62E509B3DC85006131EB /* KWQFontMetrics.mm in Sources */,
 				657BD74D09AFDC54005A2056 /* StreamingTextDecoder.cpp in Sources */,
 				657BD74F09AFDC54005A2056 /* TextEncoding.cpp in Sources */,
@@ -5528,6 +5527,7 @@
 				A82398A809B3ACF500B60641 /* PlugInInfoStoreMac.mm in Sources */,
 				A8239E0009B3CF8A00B60641 /* Logging.cpp in Sources */,
 				C6D74AE409AA290A000B0A52 /* ModifySelectionListLevelCommand.cpp in Sources */,
+				A823A75C09B6E53900B60641 /* GraphicsContext.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
