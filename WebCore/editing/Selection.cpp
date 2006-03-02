@@ -37,7 +37,7 @@ namespace WebCore {
 
 Selection::Selection()
     : m_affinity(DOWNSTREAM)
-    , m_granularity(CHARACTER)
+    , m_granularity(CharacterGranularity)
     , m_state(NONE)
     , m_baseIsFirst(true)
 {
@@ -46,7 +46,7 @@ Selection::Selection()
 Selection::Selection(const Position &pos, EAffinity affinity)
     : m_base(pos), m_extent(pos)
     , m_affinity(affinity)
-    , m_granularity(CHARACTER)
+    , m_granularity(CharacterGranularity)
     , m_state(NONE)
     , m_baseIsFirst(true)
 {
@@ -56,7 +56,7 @@ Selection::Selection(const Position &pos, EAffinity affinity)
 Selection::Selection(const Position &base, const Position &extent, EAffinity affinity)
     : m_base(base), m_extent(extent)
     , m_affinity(affinity)
-    , m_granularity(CHARACTER)
+    , m_granularity(CharacterGranularity)
     , m_state(NONE)
     , m_baseIsFirst(true)
 {
@@ -184,10 +184,10 @@ void Selection::validate()
     
     // Expand the selection if requested.
     switch (m_granularity) {
-        case CHARACTER:
+        case CharacterGranularity:
             // Don't do any expansion.
             break;
-        case WORD: {
+        case WordGranularity: {
             // General case: Select the word the caret is positioned inside of, or at the start of (RightWordIfOnBoundary).
             // Edge case: If the caret is after the last word in a soft-wrapped line or the last word in
             // the document, select that last word (LeftWordIfOnBoundary).
@@ -206,7 +206,7 @@ void Selection::validate()
             
             break;
             }
-        case LINE: {
+        case LineGranularity: {
             m_start = startOfLine(VisiblePosition(m_start, m_affinity)).deepEquivalent();
             VisiblePosition end = endOfLine(VisiblePosition(m_end, m_affinity));
             // If the end of this line is at the end of a paragraph, include the space 
@@ -224,7 +224,7 @@ void Selection::validate()
             m_end = endOfLine(VisiblePosition(m_end, m_affinity)).deepEquivalent();
             break;
         }
-        case PARAGRAPH: {
+        case ParagraphGranularity: {
             VisiblePosition pos(m_start, m_affinity);
             if (isStartOfLine(pos) && isEndOfDocument(pos))
                 pos = pos.previous();

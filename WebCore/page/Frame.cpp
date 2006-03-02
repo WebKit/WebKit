@@ -1741,12 +1741,12 @@ void Frame::selectClosestWordFromMouseEvent(MouseEvent *mouse, NodeImpl *innerNo
         VisiblePosition pos(innerNode->renderer()->positionForCoordinates(x, y));
         if (pos.isNotNull()) {
             selection.moveTo(pos);
-            selection.expandUsingGranularity(WORD);
+            selection.expandUsingGranularity(WordGranularity);
         }
     }
     
     if (selection.isRange()) {
-        d->m_selectionGranularity = WORD;
+        d->m_selectionGranularity = WordGranularity;
         d->m_beganSelectingText = true;
     }
     
@@ -1785,10 +1785,10 @@ void Frame::handleMousePressEventTripleClick(MouseEventWithHitTestResults* event
         VisiblePosition pos(innerNode->renderer()->positionForCoordinates(x, y));
         if (pos.isNotNull()) {
             selection.moveTo(pos);
-            selection.expandUsingGranularity(PARAGRAPH);
+            selection.expandUsingGranularity(ParagraphGranularity);
         }
         if (selection.isRange()) {
-            d->m_selectionGranularity = PARAGRAPH;
+            d->m_selectionGranularity = ParagraphGranularity;
             d->m_beganSelectingText = true;
         }
         
@@ -1836,13 +1836,13 @@ void Frame::handleMousePressEventSingleClick(MouseEventWithHitTestResults* event
                     sel.setBaseAndExtent(start.node(), start.offset(), pos.node(), pos.offset());
                 }
 
-                if (d->m_selectionGranularity != CHARACTER) {
+                if (d->m_selectionGranularity != CharacterGranularity) {
                     sel.expandUsingGranularity(d->m_selectionGranularity);
                 }
                 d->m_beganSelectingText = true;
             } else {
                 sel = SelectionController(visiblePos);
-                d->m_selectionGranularity = CHARACTER;
+                d->m_selectionGranularity = CharacterGranularity;
             }
             
             if (shouldChangeSelection(sel))
@@ -1915,7 +1915,7 @@ void Frame::handleMouseMoveEventSelection(MouseEventWithHitTestResults* event)
     }
 
     sel.setExtent(pos);
-    if (d->m_selectionGranularity != CHARACTER)
+    if (d->m_selectionGranularity != CharacterGranularity)
         sel.expandUsingGranularity(d->m_selectionGranularity);
 
     if (shouldChangeSelection(sel))

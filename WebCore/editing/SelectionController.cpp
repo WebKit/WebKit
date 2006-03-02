@@ -281,22 +281,22 @@ VisiblePosition SelectionController::modifyExtendingRightForward(ETextGranularit
 {
     VisiblePosition pos(m_sel.extent(), m_sel.affinity());
     switch (granularity) {
-        case CHARACTER:
+        case CharacterGranularity:
             if (isLastVisiblePositionBeforeTableElement(pos.deepEquivalent()))
                 pos = VisiblePosition(positionAfterFollowingTableElement(pos.deepEquivalent()), VP_DEFAULT_AFFINITY);
             else
                 pos = pos.next();
             break;
-        case WORD:
+        case WordGranularity:
             if (isLastVisiblePositionBeforeTableElement(pos.deepEquivalent()))
                 pos = VisiblePosition(positionAfterFollowingTableElement(pos.deepEquivalent()), VP_DEFAULT_AFFINITY);
             else
                 pos = nextWordPosition(pos);
             break;
-        case PARAGRAPH:
+        case ParagraphGranularity:
             pos = nextParagraphPosition(pos, xPosForVerticalArrowNavigation(EXTENT));
             break;
-        case LINE:
+        case LineGranularity:
             pos = nextLinePosition(pos, xPosForVerticalArrowNavigation(EXTENT));
             break;
         case LINE_BOUNDARY:
@@ -317,19 +317,19 @@ VisiblePosition SelectionController::modifyMovingRightForward(ETextGranularity g
 {
     VisiblePosition pos;
     switch (granularity) {
-        case CHARACTER:
+        case CharacterGranularity:
             if (isRange()) 
                 pos = VisiblePosition(m_sel.end(), m_sel.affinity());
             else
                 pos = VisiblePosition(m_sel.extent(), m_sel.affinity()).next();
             break;
-        case WORD:
+        case WordGranularity:
             pos = nextWordPosition(VisiblePosition(m_sel.extent(), m_sel.affinity()));
             break;
-        case PARAGRAPH:
+        case ParagraphGranularity:
             pos = nextParagraphPosition(VisiblePosition(m_sel.end(), m_sel.affinity()), xPosForVerticalArrowNavigation(END, isRange()));
             break;
-        case LINE: {
+        case LineGranularity: {
             // down-arrowing from a range selection that ends at the start of a line needs
             // to leave the selection at that line start (no need to call nextLinePosition!)
             pos = VisiblePosition(m_sel.end(), m_sel.affinity());
@@ -359,22 +359,22 @@ VisiblePosition SelectionController::modifyExtendingLeftBackward(ETextGranularit
     // It was done here instead of in VisiblePosition because we want VPs to iterate
     // over everything.
     switch (granularity) {
-        case CHARACTER:
+        case CharacterGranularity:
             if (isFirstVisiblePositionAfterTableElement(pos.deepEquivalent()))
                 pos = VisiblePosition(positionBeforePrecedingTableElement(pos.deepEquivalent()), VP_DEFAULT_AFFINITY);
             else
                 pos = pos.previous();
             break;
-        case WORD:
+        case WordGranularity:
             if (isFirstVisiblePositionAfterTableElement(pos.deepEquivalent()))
                 pos = VisiblePosition(positionBeforePrecedingTableElement(pos.deepEquivalent()), VP_DEFAULT_AFFINITY);
             else
                 pos = previousWordPosition(pos);
             break;
-        case PARAGRAPH:
+        case ParagraphGranularity:
             pos = previousParagraphPosition(pos, xPosForVerticalArrowNavigation(EXTENT));
             break;
-        case LINE:
+        case LineGranularity:
             pos = previousLinePosition(pos, xPosForVerticalArrowNavigation(EXTENT));
             break;
         case LINE_BOUNDARY:
@@ -394,19 +394,19 @@ VisiblePosition SelectionController::modifyMovingLeftBackward(ETextGranularity g
 {
     VisiblePosition pos;
     switch (granularity) {
-        case CHARACTER:
+        case CharacterGranularity:
             if (isRange()) 
                 pos = VisiblePosition(m_sel.start(), m_sel.affinity());
             else
                 pos = VisiblePosition(m_sel.extent(), m_sel.affinity()).previous();
             break;
-        case WORD:
+        case WordGranularity:
             pos = previousWordPosition(VisiblePosition(m_sel.extent(), m_sel.affinity()));
             break;
-        case PARAGRAPH:
+        case ParagraphGranularity:
             pos = previousParagraphPosition(VisiblePosition(m_sel.start(), m_sel.affinity()), xPosForVerticalArrowNavigation(START, isRange()));
             break;
-        case LINE:
+        case LineGranularity:
             pos = previousLinePosition(VisiblePosition(m_sel.start(), m_sel.affinity()), xPosForVerticalArrowNavigation(START, isRange()));
             break;
         case LINE_BOUNDARY:
@@ -449,13 +449,13 @@ bool SelectionController::modify(const DOMString &alterString, const DOMString &
     DOMString granularityStringLower = granularityString.lower();
     ETextGranularity granularity;
     if (granularityStringLower == "character")
-        granularity = CHARACTER;
+        granularity = CharacterGranularity;
     else if (granularityStringLower == "word")
-        granularity = WORD;
+        granularity = WordGranularity;
     else if (granularityStringLower == "line")
-        granularity = LINE;
+        granularity = LineGranularity;
     else if (granularityStringLower == "paragraph")
-        granularity = PARAGRAPH;
+        granularity = ParagraphGranularity;
     else
         return false;
                 

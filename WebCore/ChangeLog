@@ -1,3 +1,32 @@
+2006-03-01  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by justing.
+
+       Update ESelectionGranulartiy enum to use newer CamelCase styling.
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge alterCurrentSelection:direction:granularity:]):
+        * editing/Selection.cpp:
+        (WebCore::Selection::Selection):
+        (WebCore::Selection::validate):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::modifyExtendingRightForward):
+        (WebCore::SelectionController::modifyMovingRightForward):
+        (WebCore::SelectionController::modifyExtendingLeftBackward):
+        (WebCore::SelectionController::modifyMovingLeftBackward):
+        (WebCore::SelectionController::modify):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        * editing/jsediting.cpp:
+        * editing/text_granularity.h:
+        (WebCore::):
+        * page/Frame.cpp:
+        (WebCore::Frame::selectClosestWordFromMouseEvent):
+        (WebCore::Frame::handleMousePressEventTripleClick):
+        (WebCore::Frame::handleMousePressEventSingleClick):
+        (WebCore::Frame::handleMouseMoveEventSelection):
+
 2006-03-01  Alexander Kellett  <lypanov@kde.org>
 
         Reviewed by Maciej.

@@ -1767,7 +1767,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     // to preserve smart delete behavior when extending by word.  e.g. double-click,
     // then shift-option-rightarrow, then delete needs to smart delete, per TextEdit.
     if (!((alteration == WebSelectByExtending) &&
-          (granularity == WebBridgeSelectByWord) && (m_frame->selectionGranularity() == WORD)))
+          (granularity == WebBridgeSelectByWord) && (m_frame->selectionGranularity() == WordGranularity)))
         m_frame->setSelectionGranularity(static_cast<ETextGranularity>(WebBridgeSelectByCharacter));
     
     // restore vertical navigation x position if necessary

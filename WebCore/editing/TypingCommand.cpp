@@ -316,7 +316,7 @@ void TypingCommand::deleteKeyPressed()
             // Do nothing in the case that the caret is at the start of a
             // root editable element or at the start of a document.
             SelectionController sc = SelectionController(endingSelection().start(), endingSelection().end(), SEL_DEFAULT_AFFINITY);
-            sc.modify(SelectionController::EXTEND, SelectionController::BACKWARD, CHARACTER);
+            sc.modify(SelectionController::EXTEND, SelectionController::BACKWARD, CharacterGranularity);
             selectionToDelete = sc.selection();
             break;
         }
@@ -345,7 +345,7 @@ void TypingCommand::forwardDeleteKeyPressed()
             // Do nothing in the case that the caret is at the start of a
             // root editable element or at the start of a document.
             SelectionController sc = SelectionController(endingSelection().start(), endingSelection().end(), SEL_DEFAULT_AFFINITY);
-            sc.modify(SelectionController::EXTEND, SelectionController::FORWARD, CHARACTER);
+            sc.modify(SelectionController::EXTEND, SelectionController::FORWARD, CharacterGranularity);
             selectionToDelete = sc.selection();
             break;
         }
