@@ -66,6 +66,11 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
         return FALSE;
 
     gWebView = WebView::createWebView(hInstance, hMainWnd);
+    RECT rcClient;
+    GetClientRect(hMainWnd, &rcClient); 
+    MoveWindow(gWebView->windowHandle(), 
+                   0, 0, rcClient.right, rcClient.bottom, 
+                   TRUE);
     ShowWindow(gWebView->windowHandle(), nCmdShow);
     UpdateWindow(gWebView->windowHandle());
 
@@ -120,16 +125,6 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     return RegisterClassEx(&wcex);
 }
 
-//
-//   FUNCTION: InitInstance(HINSTANCE, int)
-//
-//   PURPOSE: Saves instance handle and creates main window
-//
-//   COMMENTS:
-//
-//        In this function, we save the instance handle in a global variable and
-//        create and display the main program window.
-//
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
    hInst = hInstance; // Store instance handle in our global variable
@@ -146,16 +141,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    return TRUE;
 }
 
-//
-//  FUNCTION: WndProc(HWND, UINT, WPARAM, LPARAM)
-//
-//  PURPOSE:  Processes messages for the main window.
-//
-//  WM_COMMAND    - process the application menu
-//  WM_PAINT    - Paint the main window
-//  WM_DESTROY    - post a quit message and return
-//
-//
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     int wmId, wmEvent;
