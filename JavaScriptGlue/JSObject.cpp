@@ -26,6 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "JSObject.h"
 
 JSUserObject::JSUserObject(JSObjectCallBacksPtr callBacks, JSObjectMarkProcPtr markProc, void *data, int dataType)

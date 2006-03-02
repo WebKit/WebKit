@@ -18,6 +18,8 @@
  *
  */
 
+#include <kxmlcore/Platform.h>
+
 #define KHTML_NO_XBL 1
 #define KHTML_XSLT 1
 

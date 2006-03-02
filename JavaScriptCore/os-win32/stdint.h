@@ -4,7 +4,7 @@
 /* This file emulates enough of unix's stdint.h on Windows
    to make WebCore compile */
    
-#ifndef WIN32
+#if !PLATFORM(WIN_OS)
 #error "This stdint.h file should only be compiled under Windows"
 #endif
 typedef unsigned short uint16_t;

@@ -28,15 +28,6 @@
 #include <kxmlcore/RefPtr.h>
 #include <kxmlcore/PassRefPtr.h>
 
-#if __APPLE__
-#include <sys/types.h>
-#ifndef KWQ_UNSIGNED_TYPES_DEFINED
-#define KWQ_UNSIGNED_TYPES_DEFINED
-typedef unsigned char uchar;
-typedef unsigned long ulong;
-#endif
-#endif
-
 #include <stdint.h>
 
 /**

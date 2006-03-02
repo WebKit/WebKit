@@ -47,9 +47,9 @@
 
 #include "config.h"
 
-#if defined HAVE_STDINT_H
+#if HAVE(STDINT_H)
 #include <stdint.h>
-#elif defined HAVE_INTTYPES_H
+#elif HAVE(INTTYPES_H)
 #include <inttypes.h>
 #else
 #include <sys/types.h>

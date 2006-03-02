@@ -27,7 +27,7 @@
 
 namespace KJS {
 
-#if KJS_MULTIPLE_THREADS
+#if USE(MULTIPLE_THREADS)
 
 static pthread_once_t interpreterLockOnce = PTHREAD_ONCE_INIT;
 static pthread_mutex_t interpreterLock;

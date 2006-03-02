@@ -36,11 +36,12 @@
 #include "nodes.h"
 #include "object.h"
 #include "operations.h"
-#if __APPLE__
-#include "runtime.h"
-#endif
 #include "types.h"
 #include "value.h"
+
+#if PLATFORM(MAC)
+#include "runtime.h"
+#endif
 
 namespace KJS {
 
@@ -124,7 +125,7 @@ Completion Interpreter::evaluate(const UString& sourceURL, int startingLineNumbe
         CString f = sourceURL.UTF8String();
         CString message = comp.value()->toObject(exec)->toString(exec).UTF8String();
         int line = comp.value()->toObject(exec)->get(exec, "line")->toUInt32(exec);
-#ifdef WIN32
+#if PLATFORM(WIN_OS)
         printf("%s line %d: %s\n", f.c_str(), line, message.c_str());
 #else
         printf("[%d] %s line %d: %s\n", getpid(), f.c_str(), line, message.c_str());
@@ -325,12 +326,12 @@ void Interpreter::setShouldPrintExceptions(bool print)
   printExceptions = print;
 }
 
-#if __APPLE__
+// bindings are OS X WebKit-only for now
+#if PLATFORM(MAC)
 void *Interpreter::createLanguageInstanceForValue(ExecState *exec, int language, JSObject *value, const Bindings::RootObject *origin, const Bindings::RootObject *current)
 {
     return Bindings::Instance::createLanguageInstanceForValue (exec, (Bindings::Instance::BindingLanguage)language, value, origin, current);
 }
-
 #endif
 
 void Interpreter::saveBuiltins (SavedBuiltins &builtins) const

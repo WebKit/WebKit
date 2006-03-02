@@ -1,3 +1,22 @@
+2006-03-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed, but I noticed these trivial extra changes were needed to avoid
+        breaking the build with my reviewed patch for:
+        
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7387
+        
+        Add config.h, includes of it, and Platform.h forwarding header.
+
+        * JSBase.cpp:
+        * JSObject.cpp:
+        * JSRun.cpp:
+        * JSUtils.cpp:
+        * JSValueWrapper.cpp:
+        * JavaScriptGlue.cpp:
+        * UserObjectImp.cpp:
+        * config.h: Added.
+        * kxmlcore/Platform.h: Added.
+
 === JavaScriptGlue-521.7 ===
 
 2006-02-10  Geoffrey Garen  <ggaren@apple.com>

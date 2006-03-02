@@ -22,19 +22,19 @@
 #include "config.h"
 #include "date_object.h"
 
-#if HAVE_ERRNO_H
+#if HAVE(ERRNO_H)
 #include <errno.h>
 #endif
 
-#if HAVE_SYS_PARAM_H
+#if HAVE(SYS_PARAM_H)
 #include <sys/param.h>
 #endif
 
-#if HAVE_SYS_TIME_H
+#if HAVE(SYS_TIME_H)
 #include <sys/time.h>
 #endif
 
-#if HAVE_SYS_TIMEB_H
+#if HAVE(SYS_TIMEB_H)
 #include <sys/timeb.h>
 #endif
 
@@ -51,11 +51,11 @@
 #include "error_object.h"
 #include "operations.h"
 
-#if __APPLE__
+#if PLATFORM(MAC)
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
-#if WIN32
+#if PLATFORM(WIN_OS)
 #define copysign(x, y) _copysign(x, y)
 #define isfinite(x) _finite(x)
 #define strncasecmp(x, y, z) strnicmp(x, y, z)
@@ -64,7 +64,7 @@
 
 inline int gmtoffset(const tm& t)
 {
-#if WIN32
+#if PLATFORM(WIN_OS)
     // Time is supposed to be in the current timezone.
     // FIXME: Use undocumented _dstbias?
     return -(_timezone / 60 - (t.tm_isdst > 0 ? 60 : 0 )) * 60;
@@ -141,7 +141,7 @@ static double parseDate(const UString &);
 static double timeClip(double);
 static void millisecondsToTM(double milli, bool utc, tm *t);
 
-#if __APPLE__
+#if PLATFORM(MAC)
 
 static CFDateFormatterStyle styleFromArgString(const UString& string, CFDateFormatterStyle defaultStyle)
 {
@@ -206,7 +206,7 @@ static UString formatLocaleDate(ExecState *exec, double time, bool includeDate, 
     return UString(buffer, length);
 }
 
-#endif // __APPLE__
+#endif // PLATFORM(MAC)
 
 static UString formatDate(const tm &t)
 {
@@ -230,7 +230,8 @@ static UString formatTime(const tm &t, bool utc)
 {
     char buffer[100];
     if (utc) {
-#if !WIN32
+        // FIXME: why not on windows?
+#if !PLATFORM(WIN_OS)
         ASSERT(t.tm_gmtoff == 0);
 #endif
         snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT", t.tm_hour, t.tm_min, t.tm_sec);
@@ -553,7 +554,7 @@ JSValue *DateProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
 
   JSValue *result = 0;
   UString s;
-#if !__APPLE__
+#if !PLATFORM(DARWIN)
   const int bufsize=100;
   char timebuffer[bufsize];
   CString oldlocale = setlocale(LC_TIME, 0);
@@ -609,7 +610,7 @@ JSValue *DateProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
   case ToUTCString:
     return jsString(formatDateUTCVariant(t) + " " + formatTime(t, utc));
     break;
-#if __APPLE__
+#if PLATFORM(MAC)
   case ToLocaleString:
     return jsString(formatLocaleDate(exec, secs, true, true, args));
     break;
@@ -734,19 +735,19 @@ JSObject *DateObjectImp::construct(ExecState *exec, const List &args)
   double value;
 
   if (numArgs == 0) { // new Date() ECMA 15.9.3.3
-#if !WIN32
+#if PLATFORM(WIN_OS)
+#if COMPILER(BORLAND)
+    struct timeb timebuffer;
+    ftime(&timebuffer);
+#else
+    struct _timeb timebuffer;
+    _ftime(&timebuffer);
+#endif
+    double utc = timebuffer.time * msPerSecond + timebuffer.millitm;
+#else
     struct timeval tv;
     gettimeofday(&tv, 0);
     double utc = floor(tv.tv_sec * msPerSecond + tv.tv_usec / 1000);
-#else
-#  if __BORLANDC__
-    struct timeb timebuffer;
-    ftime(&timebuffer);
-#  else
-    struct _timeb timebuffer;
-    _ftime(&timebuffer);
-#  endif
-    double utc = timebuffer.time * msPerSecond + timebuffer.millitm;
 #endif
     value = utc;
   } else if (numArgs == 1) {
@@ -854,7 +855,7 @@ static inline double ymdhmsToSeconds(long year, int mon, int day, int hour, int 
 // We follow the recommendation of RFC 2822 to consider all
 // obsolete time zones not listed here equivalent to "-0000".
 static const struct KnownZone {
-#if !WIN32
+#if !PLATFORM(WIN_OS)
     const
 #endif
         char tzName[4];
@@ -877,20 +878,20 @@ static double makeTime(tm *t, double ms, bool utc)
     int utcOffset;
     if (utc) {
         time_t zero = 0;
-#if !WIN32
+#if PLATFORM(WIN_OS)
+        // FIXME: not thread safe
+        (void)localtime(&zero);
+#if COMPILER(BORLAND) || COMPILER(CYGWIN)
+        utcOffset = - _timezone;
+#else
+        utcOffset = - timezone;
+#endif
+        t->tm_isdst = 0;
+#else
         tm t3;
         localtime_r(&zero, &t3);
         utcOffset = t3.tm_gmtoff;
         t->tm_isdst = t3.tm_isdst;
-#else
-        // FIXME: not thread safe
-        (void)localtime(&zero);
-#  if __BORLANDC__ || __CYGWIN__
-        utcOffset = - _timezone;
-#  else
-        utcOffset = - timezone;
-#  endif
-        t->tm_isdst = 0;
 #endif
     } else {
         utcOffset = 0;

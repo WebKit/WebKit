@@ -25,7 +25,7 @@
 
 #include <JavaVM/jni.h>
 
-#if __cplusplus
+#ifdef __cplusplus
 extern "C"
 #endif
 jint KJS_GetCreatedJavaVMs(JavaVM **vmBuf, jsize bufLen, jsize *nVMs);

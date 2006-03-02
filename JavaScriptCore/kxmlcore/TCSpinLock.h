@@ -36,16 +36,16 @@
 #include "config.h"
 #include <time.h>       /* For nanosleep() */
 #include <sched.h>      /* For sched_yield() */
-#if defined HAVE_STDINT_H
+#if HAVE(STDINT_H)
 #include <stdint.h>
-#elif defined HAVE_INTTYPES_H
+#elif HAVE(INTTYPES_H)
 #include <inttypes.h>
 #else
 #include <sys/types.h>
 #endif
 #include <stdlib.h>     /* for abort() */
 
-#if (defined __i386__ || defined __ppc__) && defined __GNUC__
+#if (PLATFORM(X86) || PLATFORM(PPC)) && COMPILER(GCC)
 static void TCMalloc_SlowLock(volatile unsigned int* lockword);
 
 // The following is a struct so that it can be initialized at compile time
@@ -57,7 +57,7 @@ struct TCMalloc_SpinLock {
     
   inline void Lock() {
     int r;
-#if  __i386__
+#if PLATFORM(X86)
     __asm__ __volatile__
       ("xchgl %0, %1"
        : "=r"(r), "=m"(private_lockword_)
@@ -78,7 +78,7 @@ struct TCMalloc_SpinLock {
   }
 
   inline void Unlock() {
-#if  __i386__
+#if PLATFORM(X86)
     __asm__ __volatile__
       ("movl $0, %0"
        : "=m"(private_lockword_)
@@ -102,7 +102,7 @@ static void TCMalloc_SlowLock(volatile unsigned int* lockword) {
   sched_yield();        // Yield immediately since fast path failed
   while (true) {
     int r;
-#if __i386__
+#if PLATFORM(X86)
     __asm__ __volatile__
       ("xchgl %0, %1"
        : "=r"(r), "=m"(*lockword)

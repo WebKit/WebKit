@@ -32,7 +32,7 @@ namespace KJS {
 RegExp::RegExp(const UString &p, int flags)
   : _flags(flags), _numSubPatterns(0)
 {
-#ifdef HAVE_PCREPOSIX
+#if HAVE(PCREPOSIX)
 
   int options = PCRE_UTF8;
   // Note: the Global flag is already handled by RegExpProtoFunc::execute.
@@ -60,7 +60,7 @@ RegExp::RegExp(const UString &p, int flags)
   pcre_fullinfo(_regex, NULL, PCRE_INFO_CAPTURECOUNT, &_numSubPatterns);
 #endif
 
-#else /* HAVE_PCREPOSIX */
+#else /* HAVE(PCREPOSIX) */
 
   int regflags = 0;
 #ifdef REG_EXTENDED
@@ -84,7 +84,7 @@ RegExp::RegExp(const UString &p, int flags)
 
 RegExp::~RegExp()
 {
-#ifdef HAVE_PCREPOSIX
+#if HAVE(PCREPOSIX)
   pcre_free(_regex);
 #else
   /* TODO: is this really okay after an error ? */
@@ -106,7 +106,7 @@ UString RegExp::match(const UString &s, int i, int *pos, int **ovector)
   if (i > s.size() || s.isNull())
     return UString::null();
 
-#ifdef HAVE_PCREPOSIX
+#if HAVE(PCREPOSIX)
 
   if (!_regex)
     return UString::null();

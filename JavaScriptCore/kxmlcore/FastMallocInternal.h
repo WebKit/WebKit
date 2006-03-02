@@ -23,7 +23,7 @@
 #ifndef KXMLCORE_FAST_MALLOC_INTERNAL_H
 #define KXMLCORE_FAST_MALLOC_INTERNAL_H
 
-#ifndef WIN32
+#if !PLATFORM(WIN_OS)
 
 #include <pthread.h>
 

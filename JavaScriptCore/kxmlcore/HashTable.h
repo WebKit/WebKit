@@ -33,7 +33,7 @@ namespace KXMLCore {
 #define DUMP_HASHTABLE_STATS 0
 #define CHECK_HASHTABLE_CONSISTENCY 0
 
-#if NDEBUG
+#ifdef NDEBUG
 #define CHECK_HASHTABLE_ITERATORS 0
 #else
 #define CHECK_HASHTABLE_ITERATORS 1
@@ -235,7 +235,7 @@ namespace KXMLCore {
 
     using std::swap;
 
-#if !WIN32
+#if !COMPILER(MSVC)
     // Visual C++ has a swap for pairs defined.
 
     // swap pairs by component, in case of pair members that specialize swap

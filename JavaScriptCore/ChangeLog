@@ -1,3 +1,88 @@
+2006-03-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - Set up new prototype macros and avoid using #if without defined() in JSC
+        
+        Added new PLATFORM macros and related, to make sure #if's all check if relevant macros
+        are defined, and to separate core OS-level dependencies from operating environment
+        dependencies so you can, e.g., build KDE on Mac or Windows.
+
+        * kxmlcore/Platform.h: Added.
+
+        - deploy them everywhere in JavaScriptCore
+        
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bindings/jni/jni_utility.cpp:
+        (KJS::Bindings::convertValueToJValue):
+        * bindings/objc/WebScriptObject.mm:
+        * bindings/objc/objc_instance.mm:
+        (ObjcInstance::end):
+        * bindings/softlinking.h:
+        * bindings/testbindings.mm:
+        (main):
+        * kjs/JSLock.cpp:
+        * kjs/collector.cpp:
+        (KJS::Collector::markCurrentThreadConservatively):
+        (KJS::Collector::markOtherThreadConservatively):
+        (KJS::Collector::markStackObjectsConservatively):
+        * kjs/config.h:
+        * kjs/date_object.cpp:
+        (gmtoffset):
+        (KJS::formatTime):
+        (KJS::DateProtoFunc::callAsFunction):
+        (KJS::DateObjectImp::construct):
+        (KJS::makeTime):
+        * kjs/dtoa.cpp:
+        * kjs/fpconst.cpp:
+        (KJS::sizeof):
+        (KJS::):
+        * kjs/grammar.y:
+        * kjs/identifier.cpp:
+        * kjs/internal.cpp:
+        * kjs/interpreter.cpp:
+        (KJS::Interpreter::evaluate):
+        (KJS::Interpreter::createLanguageInstanceForValue):
+        * kjs/interpreter.h:
+        * kjs/lookup.cpp:
+        * kjs/lookup.h:
+        * kjs/math_object.cpp:
+        * kjs/object.cpp:
+        * kjs/object.h:
+        * kjs/operations.cpp:
+        (KJS::isNaN):
+        (KJS::isInf):
+        (KJS::isPosInf):
+        (KJS::isNegInf):
+        * kjs/operations.h:
+        * kjs/regexp.cpp:
+        (KJS::RegExp::RegExp):
+        (KJS::RegExp::~RegExp):
+        (KJS::RegExp::match):
+        * kjs/regexp.h:
+        * kjs/testkjs.cpp:
+        (StopWatch::start):
+        (StopWatch::stop):
+        (StopWatch::getElapsedMS):
+        * kjs/ustring.cpp:
+        * kjs/ustring.h:
+        * kxmlcore/AlwaysInline.h:
+        * kxmlcore/Assertions.cpp:
+        * kxmlcore/Assertions.h:
+        * kxmlcore/FastMalloc.cpp:
+        (KXMLCore::):
+        * kxmlcore/FastMalloc.h:
+        * kxmlcore/FastMallocInternal.h:
+        * kxmlcore/HashTable.h:
+        * kxmlcore/TCPageMap.h:
+        * kxmlcore/TCSpinLock.h:
+        (TCMalloc_SpinLock::Lock):
+        (TCMalloc_SpinLock::Unlock):
+        (TCMalloc_SlowLock):
+        * kxmlcore/TCSystemAlloc.cpp:
+        (TCMalloc_SystemAlloc):
+        * os-win32/stdint.h:
+
 2006-02-28  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin.

@@ -40,9 +40,7 @@
 #include "error_object.h"
 #include "nodes.h"
 
-#ifndef NDEBUG
-//#define JAVASCRIPT_CALL_TRACING 1
-#endif
+#define JAVASCRIPT_CALL_TRACING 0
 
 #if JAVASCRIPT_CALL_TRACING
 static bool _traceJavaScript = false;

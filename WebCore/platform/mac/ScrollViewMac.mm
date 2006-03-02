@@ -301,7 +301,7 @@ void ScrollView::addChild(Widget* child, int x, int y)
 
 #ifndef NDEBUG
     NSView *subview = child->getOuterView();
-
+    
     LOG(Frames, "Adding %p %@ at (%d,%d) w %d h %d\n", subview,
         [(id)[subview class] className], x, y, (int)[subview frame].size.width, (int)[subview frame].size.height);
 #endif

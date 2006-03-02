@@ -26,9 +26,6 @@
 
 #include "lookup.h"
 
-#ifdef HAVE_CONFIG_H
-#endif
-
 using namespace KJS;
 
 static inline bool keysMatch(const UChar *c, unsigned len, const char *s)

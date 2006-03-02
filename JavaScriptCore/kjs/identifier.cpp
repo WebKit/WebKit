@@ -25,7 +25,7 @@
 // portable, and it would be good to figure out a 100% clean way that still avoids code that
 // runs at init time.
 
-#if !defined(WIN32) // can't get this to compile on Visual C++ yet
+#if !PLATFORM(WIN_OS) // can't get this to compile on Visual C++ yet
 #define AVOID_STATIC_CONSTRUCTORS 1
 #endif
 

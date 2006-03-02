@@ -737,7 +737,7 @@ jvalue convertValueToJValue (ExecState *exec, JSValue *value, JNIType _JNIType, 
             // Now convert value to a string if the target type is a java.lang.string, and we're not
             // converting from a Null.
             if (result.l == 0 && strcmp(javaClassName, "java.lang.String") == 0) {
-#if CONVERT_NULL_TO_EMPTY_STRING
+#ifdef CONVERT_NULL_TO_EMPTY_STRING
 		if (value->isNull()) {
 		    JNIEnv *env = getJNIEnv();
 		    jchar buf[2];

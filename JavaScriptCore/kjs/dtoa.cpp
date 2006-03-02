@@ -172,7 +172,7 @@
 #include "config.h"
 #include "dtoa.h"
 
-#ifdef WORDS_BIGENDIAN
+#if PLATFORM(BIG_ENDIAN)
 #define IEEE_MC68k
 #else
 #define IEEE_8087

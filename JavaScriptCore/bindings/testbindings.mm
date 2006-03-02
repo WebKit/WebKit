@@ -281,12 +281,7 @@ int main(int argc, char **argv)
         }
         
         [myInterface release];
-        
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
-        [pool release];
-#else
         [pool drain];
-#endif
     } // end block, so that Interpreter and global get deleted
     
     return ret ? 0 : 3;

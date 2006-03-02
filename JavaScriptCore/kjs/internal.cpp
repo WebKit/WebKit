@@ -52,25 +52,7 @@ extern int kjsyyparse();
 
 namespace KJS {
 
-#if !__APPLE__
- 
-#ifdef WORDS_BIGENDIAN
-  const unsigned char NaN_Bytes[] = { 0x7f, 0xf8, 0, 0, 0, 0, 0, 0 };
-  const unsigned char Inf_Bytes[] = { 0x7f, 0xf0, 0, 0, 0, 0, 0, 0 };
-#elif defined(arm)
-  const unsigned char NaN_Bytes[] = { 0, 0, 0xf8, 0x7f, 0, 0, 0, 0 };
-  const unsigned char Inf_Bytes[] = { 0, 0, 0xf0, 0x7f, 0, 0, 0, 0 };
-#else
-  const unsigned char NaN_Bytes[] = { 0, 0, 0, 0, 0, 0, 0xf8, 0x7f };
-  const unsigned char Inf_Bytes[] = { 0, 0, 0, 0, 0, 0, 0xf0, 0x7f };
-#endif
- 
-  const double NaN = *(const double*) NaN_Bytes;
-  const double Inf = *(const double*) Inf_Bytes;
- 
-#endif
-
-#if WIN32
+#if PLATFORM(WIN_OS)
 #define copysign _copysign
 #endif
 

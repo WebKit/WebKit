@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#import "config.h"
 #import "WebCoreImageRendererFactory.h"
 #import <kxmlcore/Assertions.h>
 #import "KWQRenderTreeDebug.h"

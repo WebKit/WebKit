@@ -67,6 +67,8 @@
 
 #ifndef NDEBUG
 #define USE_SYSTEM_MALLOC 1
+#else
+#define USE_SYSTEM_MALLOC 0
 #endif
 
 #if USE_SYSTEM_MALLOC
@@ -95,7 +97,7 @@ void *fastRealloc(void* p, size_t n)
     return realloc(p, n);
 }
 
-#if !WIN32
+#if PLATFORM(WIN_OS)
 void fastMallocRegisterThread(pthread_t) 
 {
 }
@@ -105,9 +107,9 @@ void fastMallocRegisterThread(pthread_t)
 
 #else
 
-#if HAVE_STDINT_H
+#if HAVE(STDINT_H)
 #include <stdint.h>
-#elif HAVE_INTTYPES_H
+#elif HAVE(INTTYPES_H)
 #include <inttypes.h>
 #else
 #include <sys/types.h>
@@ -140,7 +142,7 @@ namespace KXMLCore {
 
 #endif
 
-#if defined HAVE_INTTYPES_H
+#if HAVE(INTTYPES_H)
 #define __STDC_FORMAT_MACROS
 #include <inttypes.h>
 #define LLU   PRIu64
@@ -220,7 +222,7 @@ static size_t class_to_size[kNumClasses];
 static size_t class_to_pages[kNumClasses];
 
 // Return floor(log2(n)) for n > 0.
-#if defined __i386__ && defined __GNUC__
+#if PLATFORM(X86) && COMPILER(GCC)
 static inline int LgFloor(size_t n) {
   // "ro" for the input spec means the input can come from either a
   // register ("r") or offsetable memory ("o").
@@ -233,7 +235,7 @@ static inline int LgFloor(size_t n) {
   return result;
 }
 
-#elif defined __ppc__ && defined __GNUC__
+#elif PLATFORM(PPC) && COMPILER(GCC)
 static inline int LgFloor(size_t n) {
   // "r" for the input spec means the input must come from a
   // register ("r")
@@ -2280,7 +2282,7 @@ extern "C" struct mallinfo mallinfo(void) {
 //-------------------------------------------------------------------
 
 extern "C" {
-#if defined(__GNUC__) && defined(HAVE___ATTRIBUTE__)
+#if COMPILER(GCC) && HAVE(__ATTRIBUTE__)
   // Potentially faster variants that use the gcc alias extension
 #define ALIAS(x) __attribute__ ((weak, alias (x)))
   void* __libc_malloc(size_t size)              ALIAS("malloc");

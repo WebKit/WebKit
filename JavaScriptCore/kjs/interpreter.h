@@ -395,7 +395,7 @@ namespace KJS {
      */
     virtual bool isSafeScript(const Interpreter*) { return true; }
   
-#if __APPLE__
+#if PLATFORM(MAC)
     virtual void *createLanguageInstanceForValue(ExecState*, int language, JSObject* value, const Bindings::RootObject* origin, const Bindings::RootObject* current);
 #endif
 

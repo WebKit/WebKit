@@ -299,7 +299,7 @@ inline KJS::JSObject *cacheGlobalObject(KJS::ExecState *exec, const KJS::Identif
  */
 
 // Work around a bug in GCC 4.1
-#if !__GNUC__
+#if !COMPILER(GCC)
 #define KJS_GCC_ROOT_NS_HACK ::
 #else
 #define KJS_GCC_ROOT_NS_HACK

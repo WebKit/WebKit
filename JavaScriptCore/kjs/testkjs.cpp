@@ -34,7 +34,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#if HAVE_SYS_TIME_H
+#if HAVE(SYS_TIME_H)
 #include <sys/time.h>
 #endif
 
@@ -52,7 +52,7 @@ public:
     long getElapsedMS(); // call stop() first
     
 private:
-#if !WIN32
+#if !PLATFORM(WIN_OS)
     // Windows does not have timeval, disabling this class for now (bug 7399)
     timeval m_startTime;
     timeval m_stopTime;
@@ -61,21 +61,21 @@ private:
 
 void StopWatch::start()
 {
-#if !WIN32
+#if !PLATFORM(WIN_OS)
     gettimeofday(&m_startTime, 0);
 #endif
 }
 
 void StopWatch::stop()
 {
-#if !WIN32
+#if !PLATFORM(WIN_OS)
     gettimeofday(&m_stopTime, 0);
 #endif
 }
 
 long StopWatch::getElapsedMS()
 {
-#if !WIN32
+#if !PLATFORM(WIN_OS)
     timeval elapsedTime;
     timersub(&m_stopTime, &m_startTime, &elapsedTime);
     

@@ -29,7 +29,7 @@
 #include "stdio.h"
 #include "stdarg.h"
 
-#if __APPLE__
+#if PLATFORM(MAC)
 #include <CoreFoundation/CFString.h>
 #endif
 
@@ -41,7 +41,7 @@ static int (* vfprintf_no_warning)(FILE *, const char *, va_list) = vfprintf;
 
 static void vprintf_stderr_common(const char *format, va_list args)
 {
-#if __APPLE__
+#if PLATFORM(MAC)
     if (!strstr(format, "%@")) {
         CFStringRef cfFormat = CFStringCreateWithCString(NULL, format, kCFStringEncodingUTF8);
         CFStringRef str = CFStringCreateWithFormatAndArguments(NULL, NULL, cfFormat, args);

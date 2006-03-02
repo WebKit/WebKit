@@ -35,14 +35,10 @@
 // For non-debug builds, everything is disabled by default.
 // Defining any of the symbols explicitly prevents this from having any effect.
 
-#if !__APPLE__
-#define ASSERT_DISABLED 1 // FIXME: We have to undo all the assert macros, since they are currently in a .mm file and use obj-c.
-#else
 #ifdef NDEBUG
 #define ASSERTIONS_DISABLED_DEFAULT 1
 #else
 #define ASSERTIONS_DISABLED_DEFAULT 0
-#endif
 #endif
 
 #ifndef ASSERT_DISABLED
@@ -65,7 +61,7 @@
 #define LOG_DISABLED ASSERTIONS_DISABLED_DEFAULT
 #endif
 
-#ifdef __GNUC__
+#if COMPILER(GCC)
 #define KXMLCORE_PRETTY_FUNCTION __PRETTY_FUNCTION__
 #else
 #define KXMLCORE_PRETTY_FUNCTION __FUNCTION__

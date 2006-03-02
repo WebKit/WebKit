@@ -3,6 +3,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
+ *  Copyright (C) 2006 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -37,7 +38,8 @@
 
 /* default values for bison */
 #define YYDEBUG 0
-#if !__APPLE__ /* work around the fact that YYERROR_VERBOSE causes a compiler warning in bison code */
+#if !PLATFORM(DARWIN)
+    // avoid triggering warnings in older bison
 #define YYERROR_VERBOSE
 #endif
 

@@ -32,28 +32,28 @@
 #include <setjmp.h>
 #include <algorithm>
 
-#if __APPLE__
+#if PLATFORM(DARWIN)
 
 #include <pthread.h>
 #include <mach/mach_port.h>
 #include <mach/task.h>
 #include <mach/thread_act.h>
 
-#elif WIN32
+#elif PLATFORM(WIN_OS)
 
 #include <windows.h>
 
-#else
+#elif PLATFORM(UNIX)
 
 #include <pthread.h>
 
-#ifdef HAVE_PTHREAD_NP_H
-
+#if HAVE(PTHREAD_NP_H)
 #include <pthread_np.h>
-
 #endif
 
 #endif
+
+#define DEBUG_COLLECTOR 0
 
 using std::max;
 
@@ -191,7 +191,7 @@ allocateNewBlock:
   return newCell;
 }
 
-#if KJS_MULTIPLE_THREADS
+#if USE(MULTIPLE_THREADS)
 
 struct Collector::Thread {
   Thread(pthread_t pthread, mach_port_t mthread) : posixThread(pthread), machThread(mthread) {}
@@ -300,23 +300,23 @@ void Collector::markCurrentThreadConservatively()
     jmp_buf registers;
     setjmp(registers);
 
-#if __APPLE__
+#if PLATFORM(DARWIN)
     pthread_t thread = pthread_self();
     void *stackBase = pthread_get_stackaddr_np(thread);
-#elif WIN32
+#elif PLATFORM(WIN_OS) && PLATFORM(X86) && COMPILER(MSVC)
     NT_TIB *pTib;
     __asm {
         MOV EAX, FS:[18h]
         MOV pTib, EAX
     }
     void *stackBase = (void *)pTib->StackBase;
-#else
+#elif PLATFORM(UNIX)
     static void *stackBase = 0;
     static pthread_t stackThread;
     pthread_t thread = pthread_self();
     if (stackBase == 0 || thread != stackThread) {
         pthread_attr_t sattr;
-#ifdef HAVE_PTHREAD_NP_H
+#if HAVE(PTHREAD_NP_H)
         // e.g. on FreeBSD 5.4, neundorf@kde.org
         pthread_attr_get_np(thread, &sattr);
 #else
@@ -329,6 +329,8 @@ void Collector::markCurrentThreadConservatively()
         assert(stackBase);
         stackThread = thread;
     }
+#else
+#error Need a way to get the stack base on this platform
 #endif
 
     int dummy;
@@ -337,7 +339,7 @@ void Collector::markCurrentThreadConservatively()
     markStackObjectsConservatively(stackPointer, stackBase);
 }
 
-#if KJS_MULTIPLE_THREADS
+#if USE(MULTIPLE_THREADS)
 
 typedef unsigned long usword_t; // word size, assumed to be either 32 or 64 bit
 
@@ -345,15 +347,15 @@ void Collector::markOtherThreadConservatively(Thread *thread)
 {
   thread_suspend(thread->machThread);
 
-#if KJS_CPU_X86
+#if PLATFORM(X86)
   i386_thread_state_t regs;
   unsigned user_count = sizeof(regs)/sizeof(int);
   thread_state_flavor_t flavor = i386_THREAD_STATE;
-#elif KJS_CPU_PPC
+#elif PLATFORM(PPC)
   ppc_thread_state_t  regs;
   unsigned user_count = PPC_THREAD_STATE_COUNT;
   thread_state_flavor_t flavor = PPC_THREAD_STATE;
-#elif KJS_CPU_PPC64
+#elif PLATFORM(PPC64)
   ppc_thread_state64_t  regs;
   unsigned user_count = PPC_THREAD_STATE64_COUNT;
   thread_state_flavor_t flavor = PPC_THREAD_STATE64;
@@ -367,9 +369,9 @@ void Collector::markOtherThreadConservatively(Thread *thread)
   markStackObjectsConservatively((void *)&regs, (void *)((char *)&regs + (user_count * sizeof(usword_t))));
   
   // scan the stack
-#if KJS_CPU_X86
+#if PLATFORM(X86)
   markStackObjectsConservatively((void *)regs.esp, pthread_get_stackaddr_np(thread->posixThread));
-#elif KJS_CPU_PPC || KJS_CPU_PPC64
+#elif PLATFORM(PPC) || PLATFORM(PPC64)
   markStackObjectsConservatively((void *)regs.r1, pthread_get_stackaddr_np(thread->posixThread));
 #else
 #error Unknown Architecture
@@ -384,7 +386,7 @@ void Collector::markStackObjectsConservatively()
 {
   markCurrentThreadConservatively();
 
-#if KJS_MULTIPLE_THREADS
+#if USE(MULTIPLE_THREADS)
   for (Thread *thread = registeredThreads; thread != NULL; thread = thread->next) {
     if (thread->posixThread != pthread_self()) {
       markOtherThreadConservatively(thread);

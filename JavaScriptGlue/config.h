@@ -1,0 +1,2 @@
+#include <kxmlcore/Platform.h>
+

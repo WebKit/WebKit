@@ -103,11 +103,7 @@ void ObjcInstance::end()
     _beginCount--;
     assert (_beginCount >= 0);
     if (_beginCount == 0) {
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
-        [_pool release];
-#else
         [_pool drain];
-#endif
     }
     _pool = 0;
 }
