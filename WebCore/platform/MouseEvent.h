@@ -36,6 +36,12 @@ class NSEvent;
 #endif
 #endif
 
+#if WIN32
+typedef struct HWND__ *HWND;
+typedef unsigned    WPARAM;
+typedef long        LPARAM;
+#endif
+
 namespace WebCore {
 
     // These button numbers match the one used in the DOM API.
@@ -44,6 +50,9 @@ namespace WebCore {
     class MouseEvent {
     public:
         MouseEvent(); // "current event"
+#if WIN32
+        MouseEvent(HWND hWnd, WPARAM wParam, LPARAM lParam, int clickCount);
+#endif
 
         const IntPoint& pos() const { return m_position; }
         int x() const { return m_position.x(); }

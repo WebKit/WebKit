@@ -43,6 +43,10 @@ typedef struct _NSPoint NSPoint;
 
 #endif
 
+#if WIN32
+typedef struct tagPOINT POINT;
+#endif
+
 namespace WebCore {
 
 class IntPoint {
@@ -66,6 +70,11 @@ public:
     operator NSPoint() const;
 #endif
 
+#endif
+
+#if WIN32
+    IntPoint(const POINT&);
+    operator POINT() const;
 #endif
 
 private:

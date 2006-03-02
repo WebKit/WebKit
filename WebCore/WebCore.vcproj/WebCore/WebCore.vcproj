@@ -1784,7 +1784,15 @@
 				Name="win"
 				>
 				<File
+					RelativePath="..\..\platform\win\IntPointWin.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\platform\win\IntRectWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\platform\win\MouseEventWin.cpp"
 					>
 				</File>
 				<File

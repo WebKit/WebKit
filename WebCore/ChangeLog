@@ -1,3 +1,62 @@
+2006-03-02  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by ggaren.
+
+        Add (partially stubbed out) mouse event handling for Win32.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * platform/IntPoint.h:
+        * platform/MouseEvent.h:
+        * platform/win/IntPointWin.cpp: Added.
+        (WebCore::IntPoint::IntPoint):
+        (WebCore::IntPoint::operator POINT):
+        * platform/win/MouseEventWin.cpp: Added.
+        (WebCore::MouseEvent::MouseEvent):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (QLineEdit::setMaxLength):
+        (ScrollView::scrollBy):
+        (WebCore::Widget::setFocus):
+        (FrameWin::respondToChangedSelection):
+        (FrameWin::runJavaScriptPrompt):
+        (FrameWin::recordFormValue):
+        (FrameWin::registerCommandForRedo):
+        (FrameWin::runJavaScriptAlert):
+        (FrameWin::runJavaScriptConfirm):
+        (FrameWin::openURL):
+        (FrameWin::registerCommandForUndo):
+        (FrameWin::addMessageToConsole):
+        (FrameWin::mimeTypeForFileName):
+        (FrameWin::shouldChangeSelection):
+        (FrameWin::markMisspellingsInAdjacentWords):
+        (FrameWin::markMisspellings):
+        (FrameWin::personalbarVisible):
+        (FrameWin::objectContentType):
+        (FrameWin::createFrame):
+        (FrameWin::createPlugin):
+        (BrowserExtensionWin::setTypedIconURL):
+        (BrowserExtensionWin::getHistoryLength):
+        (BrowserExtensionWin::canRunModal):
+        (BrowserExtensionWin::openURLNotify):
+        (BrowserExtensionWin::createNewWindow):
+        (BrowserExtensionWin::canRunModalNow):
+        (BrowserExtensionWin::runModal):
+        (BrowserExtensionWin::goBackOrForward):
+        (BrowserExtensionWin::setIconURL):
+        (FrameWin::passSubframeEventToSubframe):
+        (FrameWin::lastEventIsMouseUp):
+        (BrowserExtensionWin::BrowserExtensionWin):
+        (Widget::setCursor):
+        (ScrollView::visibleHeight):
+        (ScrollView::visibleWidth):
+        (ScrollView::setContentsPos):
+        (ScrollView::contentsX):
+        (ScrollView::contentsY):
+        (ScrollView::contentsHeight):
+        (ScrollView::contentsWidth):
+        (ScrollView::viewportToContents):
+        (TransferJob::TransferJob):
+        (TransferJob::addMetaData):
+
 2006-03-02  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by mjs
