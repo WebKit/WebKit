@@ -1,3 +1,20 @@
+2006-03-02  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7540
+          REGRESSION: frequent cache-related crashes
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7393
+          A stale comment about XMLHttpRequest responses being never cached
+
+        * WebCoreSupport/WebFrameBridge.m: Don't call setHTTPHeader if the method is GET.
+        (-[WebFrameBridge syncLoadResourceWithMethod:URL:customHeaders:postData:finalURL:responseHeaders:statusCode:]):
+        * WebCoreSupport/WebSubresourceLoader.m: Ditto. Also removed a stale comment about
+        XMLHTTPRequests.
+        (+[WebSubresourceLoader startLoadingResource:withMethod:URL:customHeaders:referrer:forDataSource:]):
+        (+[WebSubresourceLoader startLoadingResource:withMethod:URL:customHeaders:postData:referrer:forDataSource:]):
+
 2006-02-23  David Harrison  <harrison@apple.com>
 
         Reviewed by Justin.

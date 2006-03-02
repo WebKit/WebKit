@@ -540,7 +540,10 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
     [request setTimeoutInterval:10];
 
-    [request setHTTPMethod:method];
+    // setHTTPMethod is not called for GET requests to work aroound <rdar://4464032>.
+    if (![method isEqualToString:@"GET"])
+        [request setHTTPMethod:method];
+
     if (postData)        
         webSetHTTPBody(request, postData);
 
@@ -550,7 +553,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         [request addValue:[requestHeaders objectForKey:key] forHTTPHeaderField:key];
     }
     
-    // Never use cached data for these requests (xmlhttprequests).
     [request setCachePolicy:[[[self dataSource] request] cachePolicy]];
     if (!hideReferrer)
         [request _web_setHTTPReferrer:[self referrer]];

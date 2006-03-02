@@ -106,7 +106,10 @@
                                  forDataSource:(WebDataSource *)source
 {
     NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
-    [newRequest setHTTPMethod:method];
+
+    // setHTTPMethod is not called for GET requests to work aroound <rdar://4464032>.
+    if (![method isEqualToString:@"GET"])
+        [newRequest setHTTPMethod:method];
 
     WebSubresourceLoader *loader = [self startLoadingResource:rLoader withRequest:newRequest customHeaders:customHeaders referrer:referrer forDataSource:source];
     [newRequest release];
@@ -124,7 +127,10 @@
 {
     NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
 
-    [newRequest setHTTPMethod:method];
+    // setHTTPMethod is not called for GET requests to work aroound <rdar://4464032>.
+    if (![method isEqualToString:@"GET"])
+        [newRequest setHTTPMethod:method];
+
     webSetHTTPBody(newRequest, postData);
 
     WebSubresourceLoader *loader = [self startLoadingResource:rLoader withRequest:newRequest customHeaders:customHeaders referrer:referrer forDataSource:source];
