@@ -540,7 +540,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
     [request setTimeoutInterval:10];
 
-    // setHTTPMethod is not called for GET requests to work aroound <rdar://4464032>.
+    // setHTTPMethod is not called for GET requests to work around <rdar://4464032>.
     if (![method isEqualToString:@"GET"])
         [request setHTTPMethod:method];
 

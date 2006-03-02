@@ -1,5 +1,15 @@
 2006-03-02  Alexey Proskuryakov  <ap@nypop.com>
 
+        Fixed a typo in the comments added in the previous checkin.
+
+        * WebCoreSupport/WebFrameBridge.m:
+        (-[WebFrameBridge syncLoadResourceWithMethod:URL:customHeaders:postData:finalURL:responseHeaders:statusCode:]):
+        * WebCoreSupport/WebSubresourceLoader.m:
+        (+[WebSubresourceLoader startLoadingResource:withMethod:URL:customHeaders:referrer:forDataSource:]):
+        (+[WebSubresourceLoader startLoadingResource:withMethod:URL:customHeaders:postData:referrer:forDataSource:]):
+
+2006-03-02  Alexey Proskuryakov  <ap@nypop.com>
+
         Reviewed by Darin.
 
         - http://bugzilla.opendarwin.org/show_bug.cgi?id=7540
