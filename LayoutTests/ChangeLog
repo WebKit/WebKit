@@ -1,3 +1,13 @@
+2006-03-02  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by mjs
+        
+        <http://tinymce.moxiecode.com/example_full.php?example=true>
+        TinyMCE: Undo still enabled after a location change, crashes if performed
+
+        * editing/undo/undo-iframe-location-change-expected.txt: Added.
+        * editing/undo/undo-iframe-location-change.html: Added.
+
 2006-03-01  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

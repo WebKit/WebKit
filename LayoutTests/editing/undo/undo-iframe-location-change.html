@@ -1,0 +1,55 @@
+
+<script src="../editing.js"></script>
+<iframe name="iframe" src="../resources/contenteditable-iframe-src.html"></iframe>
+<ul id="console"></ul>
+
+<script>
+function log(message) {
+    var console = document.getElementById("console");
+    var li = document.createElement("li");
+    var text = document.createTextNode(message);
+    li.appendChild(text);
+    console.appendChild(li);
+}
+
+function part1() {
+
+    // Hack to focus the frame, should be able to do frames['iframe'].focus()
+    eventSender.mouseMoveTo(50, 50);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    
+    // Hack to perform the editing command.  Should be able to 
+    // call execCommand on the main document.
+    frames['iframe'].document.execCommand('InsertText', false, 'c');
+    
+    window.location = window.location.toString() + "?part2";
+}
+
+function part2() {
+    if (!document.queryCommandEnabled('Undo'))
+        log("Success");
+    else
+        log("Failure, Undo was still enabled after the location changed.");
+        
+    window.layoutTestController.notifyDone();
+}
+
+function runTest() {
+    if (!window.layoutTestController)
+        return;
+
+    if (window.location.toString().indexOf("?part2") == -1) {
+        window.layoutTestController.waitUntilDone();
+        window.layoutTestController.dumpAsText();
+        // Give the iframe a moment to come into being.
+        window.setTimeout(part1, 100);
+    } else {
+        part2();
+    }
+
+}
+
+runTest();
+
+</script>
