@@ -1,4 +1,17 @@
 2006-03-02  Justin Garcia  <justin.garcia@apple.com>
+        
+        Patch reviewed by sullivan
+        Test written by mitz
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7542>
+        REGRESSION: (r13028) Scrolling causes incomplete drawing of <ul> bullets
+
+        * fast/lists/scrolled-marker-paint-expected.checksum: Added.
+        * fast/lists/scrolled-marker-paint-expected.png: Added.
+        * fast/lists/scrolled-marker-paint-expected.txt: Added.
+        * fast/lists/scrolled-marker-paint.html: Added.
+
+2006-03-02  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by mjs
         

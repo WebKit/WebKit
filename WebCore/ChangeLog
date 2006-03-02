@@ -1,3 +1,13 @@
+2006-03-02  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by sullivan
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7542>
+        REGRESSION: (r13028) Scrolling causes incomplete drawing of <ul> bullets
+
+        * rendering/render_list.cpp:
+        (WebCore::RenderListMarker::paint):
+
 2006-03-02  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by ggaren.
