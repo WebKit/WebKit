@@ -19,6 +19,7 @@
  *
  */
 
+#include "config.h"
 #include "JSImmediate.h"
 #include "kxmlcore/Assertions.h"
 #include "object.h"

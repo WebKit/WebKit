@@ -1,3 +1,14 @@
+2006-03-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+	- fix windows build, broken by my last patch
+
+        * kjs/JSImmediate.cpp:
+        * kjs/identifier.cpp:
+        * kxmlcore/FastMalloc.cpp:
+        * kxmlcore/Platform.h:
+
 2006-03-01  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

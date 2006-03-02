@@ -28,10 +28,10 @@
 #define KXMLCORE_PLATFORM_H
 
 // PLATFORM handles OS, operating environment, graphics API, and CPU
-#define PLATFORM(FEATURE) (defined(KXMLCORE_PLATFORM_##FEATURE) && KXMLCORE_PLATFORM_##FEATURE)
-#define COMPILER(FEATURE) (defined(KXMLCORE_COMPILER_##FEATURE) && KXMLCORE_COMPILER_##FEATURE)
-#define HAVE(FEATURE) (defined(HAVE_##FEATURE) && HAVE_##FEATURE)
-#define USE(FEATURE) (defined(KXMLCORE_USE_##FEATURE) && KXMLCORE_USE_##FEATURE)
+#define PLATFORM(KX_FEATURE) (defined( KXMLCORE_PLATFORM_##KX_FEATURE ) && KXMLCORE_PLATFORM_##KX_FEATURE)
+#define COMPILER(KX_FEATURE) (defined( KXMLCORE_COMPILER_##KX_FEATURE ) && KXMLCORE_COMPILER_##KX_FEATURE)
+#define HAVE(KX_FEATURE) (defined( HAVE_##KX_FEATURE ) && HAVE_##KX_FEATURE)
+#define USE(KX_FEATURE) (defined( KXMLCORE_USE_##KX_FEATURE ) && KXMLCORE_USE_##KX_FEATURE)
 
 // Operating systems - low-level dependencies
 
@@ -125,7 +125,7 @@
 // Compiler
 
 // COMPILER(MSVC)
-#if defined(_MSC_Ver)
+#if defined(_MSC_VER)
 #define KXMLCORE_COMPILER_MSVC 1
 #endif
 

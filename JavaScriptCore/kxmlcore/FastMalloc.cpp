@@ -97,7 +97,7 @@ void *fastRealloc(void* p, size_t n)
     return realloc(p, n);
 }
 
-#if PLATFORM(WIN_OS)
+#if !PLATFORM(WIN_OS)
 void fastMallocRegisterThread(pthread_t) 
 {
 }
