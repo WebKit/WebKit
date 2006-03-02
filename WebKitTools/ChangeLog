@@ -1,3 +1,38 @@
+2006-03-01  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Add a stub win32 application to test WebCore drawing on windows.
+
+        * Spinneret: Added.
+        * Spinneret/Spinneret: Added.
+        * Spinneret/Spinneret.sln: Added.
+        * Spinneret/Spinneret/Resource.h: Added.
+        * Spinneret/Spinneret/Spinneret.cpp: Added.
+        (_tWinMain):
+        (MyRegisterClass):
+        (InitInstance):
+        (WndProc):
+        (About):
+        * Spinneret/Spinneret/Spinneret.h: Added.
+        * Spinneret/Spinneret/Spinneret.ico: Added.
+        * Spinneret/Spinneret/Spinneret.rc: Added.
+        * Spinneret/Spinneret/Spinneret.vcproj: Added.
+        * Spinneret/Spinneret/WebView.cpp: Added.
+        (WebKit::WebView::WebViewPrivate::WebViewPrivate):
+        (WebKit::WebView::WebViewPrivate::~WebViewPrivate):
+        (WebKit::registerWebViewWithInstance):
+        (WebKit::WebView::createWebView):
+        (WebKit::WebView::WebView):
+        (WebKit::WebView::~WebView):
+        (WebKit::WebView::drawRect):
+        (WebKit::WebView::windowHandle):
+        (WebKit::WndProc):
+        * Spinneret/Spinneret/WebView.h: Added.
+        * Spinneret/Spinneret/small.ico: Added.
+        * Spinneret/Spinneret/stdafx.cpp: Added.
+        * Spinneret/Spinneret/stdafx.h: Added.
+
 2006-02-28  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
