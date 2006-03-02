@@ -101,7 +101,6 @@ int ScrollView::scrollXOffset() const { notImplemented(); return 0; }
 bool QListBox::isSelected(int) const { notImplemented(); return 0; }
 void QLineEdit::setReadOnly(bool) { notImplemented(); }
 void GraphicsContext::drawLineForText(int,int,int,int) { notImplemented(); }
-GraphicsContext::GraphicsContext() { notImplemented(); }
 QComboBox::~QComboBox() { notImplemented(); }
 Cursor::Cursor(Image*) { notImplemented(); }
 Widget::FocusPolicy QComboBox::focusPolicy() const { notImplemented(); return NoFocus; }
@@ -250,7 +249,6 @@ bool KWQKCookieJar::cookieEnabled() { notImplemented(); return false; }
 void WebCore::Widget::setFocus() { notImplemented(); }
 void WebCore::GraphicsContext::setPaintingDisabled(bool) { notImplemented(); }
 void WebCore::GraphicsContext::fillRect(WebCore::IntRect const&,WebCore::Brush const&) { notImplemented(); }
-WebCore::GraphicsContext::~GraphicsContext() { notImplemented(); }
 WebCore::GraphicsContext::GraphicsContext(bool) { notImplemented(); }
 void WebCore::ScrollView::viewportToContents(int,int,int&,int&) { notImplemented(); }
 void WebCore::TransferJob::kill() { notImplemented(); }
@@ -259,7 +257,7 @@ QString WebCore::TransferJob::queryMetaData(QString const&) const { notImplement
 int WebCore::TransferJob::error() const { notImplemented(); return 0; }
 QString WebCore::TransferJob::errorText() const { notImplemented(); return "Houston, we have a problem."; }
 bool WebCore::TransferJob::isErrorPage() const { notImplemented(); return 0; }
-WebCore::TransferJob::TransferJob(WebCore::TransferJobClient*,KURL const&,WebCore::FormData const&) { notImplemented(); }
+WebCore::TransferJob::TransferJob(WebCore::TransferJobClient*, const String&, KURL const&,WebCore::FormData const&) { notImplemented(); }
 void WebCore::Widget::hide() { notImplemented(); }
 PluginInfo*PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned) { notImplemented(); return 0;}
 unsigned PlugInInfoStore::pluginCount() const { notImplemented(); return 0; }
@@ -405,5 +403,8 @@ int WebCore::ScrollView::contentsWidth() const { return 800; }
 void ScrollView::updateContents(const IntRect&,bool) { }
 void ScrollView::setStaticBackground(bool) { }
 
-WebCore::TransferJob::TransferJob(WebCore::TransferJobClient*,KURL const&) { }
+WebCore::TransferJob::TransferJob(WebCore::TransferJobClient*,const String&,KURL const&) { }
 void WebCore::TransferJob::addMetaData(QString const&,QString const&) { }
+
+GraphicsContext::GraphicsContext() { }
+WebCore::GraphicsContext::~GraphicsContext() { }

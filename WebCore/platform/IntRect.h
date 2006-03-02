@@ -41,11 +41,18 @@ typedef struct _NSRect NSRect;
 
 #endif
 
+#if WIN32
+typedef struct tagRECT RECT;
+#endif
+
 namespace WebCore {
 
 class IntRect {
 public:
     IntRect() { }
+#if WIN32
+    IntRect(const RECT&);
+#endif
     IntRect(const IntPoint& location, const IntSize& size)
         : m_location(location), m_size(size) { }
     IntRect(int x, int y, int width, int height)

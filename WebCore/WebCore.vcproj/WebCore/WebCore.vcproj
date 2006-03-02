@@ -1780,6 +1780,10 @@
 				Name="win"
 				>
 				<File
+					RelativePath="..\..\platform\win\IntRectWin.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\platform\win\SharedTimerWin.cpp"
 					>
 				</File>
@@ -2187,6 +2191,10 @@
 			<Filter
 				Name="cairo"
 				>
+				<File
+					RelativePath="..\..\platform\cairo\GraphicsContextCairo.cpp"
+					>
+				</File>
 				<File
 					RelativePath="..\..\platform\cairo\ImageCairo.cpp"
 					>

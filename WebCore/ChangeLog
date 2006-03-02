@@ -1,3 +1,21 @@
+2006-03-01  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Fix win32 build, add IntRectWin and GraphicsContextCairo stub.
+
+        * Viewer/ImageDocument.cpp:
+        * Viewer/ImageMainFrame.cpp:
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * platform/IntRect.h:
+        * platform/cairo/GraphicsContextCairo.cpp: Added.
+        * platform/win/TemporaryLinkStubs.cpp:
+        (GraphicsContext::drawLineForText):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::TransferJob::TransferJob):
+        (GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::~GraphicsContext):
+
 2006-02-23  David Harrison  <harrison@apple.com>
 
         Reviewed by Justin.
