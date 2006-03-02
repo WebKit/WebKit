@@ -71,6 +71,7 @@
 #import "kjs_window.h"
 #import "loader.h"
 #import "markup.h"
+#import "ModifySelectionListLevelCommand.h"
 #import "MoveSelectionCommand.h"
 #import "render_canvas.h"
 #import "render_frames.h"
@@ -2112,6 +2113,34 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 - (void)replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace
 {
     [self replaceSelectionWithFragment:[self documentFragmentWithText:text] selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:YES];
+}
+
+- (bool)canIncreaseSelectionListLevel
+{
+    return ModifySelectionListLevelCommand::canIncreaseSelectionListLevel(m_frame->document());
+}
+
+- (bool)canDecreaseSelectionListLevel
+{
+    return ModifySelectionListLevelCommand::canDecreaseSelectionListLevel(m_frame->document());
+}
+
+- (void)increaseSelectionListLevel
+{
+    if (!frameHasSelection(self))
+        return;
+    
+    ModifySelectionListLevelCommand::increaseSelectionListLevel(m_frame->document());
+    [self ensureSelectionVisible];
+}
+
+- (void)decreaseSelectionListLevel
+{
+    if (!frameHasSelection(self))
+        return;
+    
+    ModifySelectionListLevelCommand::decreaseSelectionListLevel(m_frame->document());
+    [self ensureSelectionVisible];
 }
 
 - (void)insertLineBreak

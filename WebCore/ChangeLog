@@ -1,3 +1,15 @@
+2006-03-01  David Harrison  <harrison@apple.com>
+
+        Reviewed by Justin.
+        (missed these in my earlier commit for <rdar://problem/4359736>)
+
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge canIncreaseSelectionListLevel]):
+        (-[WebCoreFrameBridge canDecreaseSelectionListLevel]):
+        (-[WebCoreFrameBridge increaseSelectionListLevel]):
+        (-[WebCoreFrameBridge decreaseSelectionListLevel]):
+
 2006-03-01  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

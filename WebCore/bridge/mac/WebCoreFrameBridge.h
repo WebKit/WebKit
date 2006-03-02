@@ -419,6 +419,11 @@ typedef enum {
 - (void)replaceSelectionWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace;
 - (void)replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace;
 
+- (bool)canIncreaseSelectionListLevel;
+- (bool)canDecreaseSelectionListLevel;
+- (void)increaseSelectionListLevel;
+- (void)decreaseSelectionListLevel;
+
 - (void)insertLineBreak;
 - (void)insertParagraphSeparator;
 - (void)insertParagraphSeparatorInQuotedContent;
