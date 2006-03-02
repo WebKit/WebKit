@@ -1579,6 +1579,34 @@ static WebHTMLView *lastHitView = nil;
     return NSZeroRect;
 }
 
+- (BOOL)_canIncreaseSelectionListLevel
+{
+    return ([self _canEdit] && [[self _bridge] canIncreaseSelectionListLevel]);
+}
+
+- (BOOL)_canDecreaseSelectionListLevel
+{
+    return ([self _canEdit] && [[self _bridge] canDecreaseSelectionListLevel]);
+}
+
+- (void)_increaseSelectionListLevel
+{
+    if (![self _canEdit])
+        return;
+        
+    WebFrameBridge *bridge = [self _bridge];
+    [bridge increaseSelectionListLevel];
+}
+
+- (void)_decreaseSelectionListLevel
+{
+    if (![self _canEdit])
+        return;
+        
+    WebFrameBridge *bridge = [self _bridge];
+    [bridge decreaseSelectionListLevel];
+}
+
 - (void)_updateFocusState
 {
     // This method does the job of updating the view based on the view's firstResponder-ness and

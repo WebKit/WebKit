@@ -91,6 +91,10 @@
 // SPI's for Mail.
 - (NSImage *)_selectionDraggingImage;
 - (NSRect)_selectionDraggingRect;
+- (BOOL)_canIncreaseSelectionListLevel;
+- (BOOL)_canDecreaseSelectionListLevel;
+- (void)_increaseSelectionListLevel;
+- (void)_decreaseSelectionListLevel;
 
 // SPI for DumpRenderTree
 - (void)_updateFocusState;

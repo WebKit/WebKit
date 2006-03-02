@@ -1,3 +1,19 @@
+2006-02-23  David Harrison  <harrison@apple.com>
+
+        Reviewed by Justin.
+
+        <rdar://problem/4359736> Support outlining ability with lists
+
+        Added Mail SPI for list level changes.  It is SPI because it is not complete support
+        for outlining.  See <rdar://problem/4457070> "API for html lists as note outlines".
+        
+        * WebView/WebHTMLView.m:
+        (-[WebHTMLView _canIncreaseSelectionListLevel]):
+        (-[WebHTMLView _canDecreaseSelectionListLevel]):
+        (-[WebHTMLView _increaseSelectionListLevel]):
+        (-[WebHTMLView _decreaseSelectionListLevel]):
+        * WebView/WebHTMLViewPrivate.h:
+
 2006-03-01  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
