@@ -1,3 +1,129 @@
+2006-03-01  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by andersca.
+
+        Add first-stab GraphicsContextCairo.
+        Shuffle a few more link stubs around, remove uncessary WebCore::
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * platform/GraphicsContext.cpp: Added.
+        * platform/GraphicsContext.h:
+        * platform/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContextState::GraphicsContextState):
+        (WebCore::setColor):
+        (WebCore::fillRectSourceOver):
+        (WebCore::GraphicsContextPrivate::GraphicsContextPrivate):
+        (WebCore::GraphicsContextPrivate::~GraphicsContextPrivate):
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::~GraphicsContext):
+        (WebCore::GraphicsContext::pen):
+        (WebCore::GraphicsContext::setPen):
+        (WebCore::GraphicsContext::setBrush):
+        (WebCore::GraphicsContext::brush):
+        (WebCore::GraphicsContext::save):
+        (WebCore::GraphicsContext::restore):
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::GraphicsContext::setColorFromBrush):
+        (WebCore::GraphicsContext::setColorFromPen):
+        (WebCore::adjustLineToPixelBounderies):
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::drawEllipse):
+        (WebCore::GraphicsContext::drawArc):
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::GraphicsContext::drawFloatImage):
+        (WebCore::GraphicsContext::drawTiledImage):
+        (WebCore::GraphicsContext::drawScaledAndTiledImage):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::addClip):
+        (WebCore::GraphicsContext::setPaintingDisabled):
+        (WebCore::GraphicsContext::paintingDisabled):
+        * platform/cairo/ImageCairo.cpp:
+        * platform/cg/GraphicsContextCG.cpp: Removed.
+        * platform/win/TemporaryLinkStubs.cpp:
+        (QLineEdit::selectAll):
+        (Widget::mapFromGlobal):
+        (QLineEdit::cursorPosition):
+        (QTextEdit::setScrollBarModes):
+        (QTextEdit::selectAll):
+        (QComboBox::focusPolicy):
+        (GraphicsContext::clearShadow):
+        (QTextEdit::setCursorPosition):
+        (GraphicsContext::drawText):
+        (QLineEdit::setLiveSearch):
+        (QComboBox::QComboBox):
+        (Widget::lockDrawingFocus):
+        (QTextEdit::setSelectionRange):
+        (QSlider::QSlider):
+        (ScrollView::scrollYOffset):
+        (QComboBox::sizeHint):
+        (QLineEdit::edited):
+        (QTextEdit::text):
+        (QSlider::value):
+        (WebCore::Widget::setFocus):
+        (WebCore::TransferJob::addMetaData):
+        (FrameWin::respondToChangedContents):
+        (FrameWin::unfocusWindow):
+        (FrameWin::locationbarVisible):
+        (FrameWin::respondToChangedSelection):
+        (FrameWin::clearUndoRedoOperations):
+        (FrameWin::issueRedoCommand):
+        (FrameWin::getObjectInstanceForWidget):
+        (FrameWin::getEmbedInstanceForWidget):
+        (FrameWin::canRedo):
+        (FrameWin::canUndo):
+        (FrameWin::runJavaScriptPrompt):
+        (FrameWin::recordFormValue):
+        (FrameWin::registerCommandForRedo):
+        (FrameWin::runJavaScriptAlert):
+        (FrameWin::runJavaScriptConfirm):
+        (FrameWin::openURL):
+        (FrameWin::saveDocumentState):
+        (FrameWin::print):
+        (FrameWin::getAppletInstanceForWidget):
+        (FrameWin::passMouseDownEventToWidget):
+        (FrameWin::registerCommandForUndo):
+        (FrameWin::issueCutCommand):
+        (FrameWin::issueCopyCommand):
+        (FrameWin::addMessageToConsole):
+        (FrameWin::passWheelEventToChildWidget):
+        (FrameWin::issueUndoCommand):
+        (FrameWin::mimeTypeForFileName):
+        (FrameWin::clearRecordedFormValues):
+        (FrameWin::issuePasteCommand):
+        (FrameWin::shouldChangeSelection):
+        (FrameWin::scheduleClose):
+        (FrameWin::markMisspellingsInAdjacentWords):
+        (FrameWin::markMisspellings):
+        (FrameWin::menubarVisible):
+        (FrameWin::personalbarVisible):
+        (FrameWin::lastEventIsMouseUp):
+        (FrameWin::statusbarVisible):
+        (FrameWin::toolbarVisible):
+        (FrameWin::issueTransposeCommand):
+        (FrameWin::userAgent):
+        (FrameWin::canPaste):
+        (FrameWin::incomingReferrer):
+        (FrameWin::objectContentType):
+        (FrameWin::passSubframeEventToSubframe):
+        (FrameWin::createFrame):
+        (FrameWin::canGoBackOrForward):
+        (FrameWin::issuePasteAndMatchStyleCommand):
+        (FrameWin::createPlugin):
+        (FrameWin::generateFrameName):
+        (QTextEdit::setWritingDirection):
+        (QFontMetrics::checkSelectionPoint):
+        (GraphicsContext::GraphicsContext):
+        (QFontMetrics::isFixedPitch):
+        (FrameWin::restoreDocumentState):
+        (FrameWin::partClearedInBegin):
+        (FrameWin::createEmptyDocument):
+        (FrameWin::overrideMediaType):
+        (FrameWin::setTitle):
+        (FrameWin::handledOnloadEvents):
+        (FrameWin::markedTextRange):
+        (GraphicsContext::font):
+        (GraphicsContext::setFont):
+
 2006-03-02  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

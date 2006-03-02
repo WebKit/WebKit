@@ -32,9 +32,6 @@
 #include "FloatRect.h"
 #include "Image.h"
 
-// FIXME: Hack for image viewer test app.  Will have to remove when we add to
-// WebCore for real.
-class QString {};
 
 namespace WebCore {
 

@@ -36,6 +36,10 @@
 typedef struct CGContext* CGContextRef;
 #endif
 
+#if WIN32
+typedef struct HDC__ *HDC;
+#endif
+
 class QFontMetrics;
 class QString;
 
@@ -54,6 +58,14 @@ namespace WebCore {
     class GraphicsContext : Noncopyable {
     public:
         GraphicsContext();
+#if WIN32
+        // It's possible to use GetDC to grab the current context from
+        // an HWND; however, we currently require clients to pass in the
+        // Device Context handle directly.  Printing will also
+        // eventually require clients to pass some sort of printer-info
+        // struct to that we can CreateDC the printer device correctly.
+        GraphicsContext(HDC);
+#endif
         GraphicsContext(bool forPrinting);
         ~GraphicsContext();
        
