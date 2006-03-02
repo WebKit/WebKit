@@ -1,3 +1,14 @@
+2006-03-01  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        Give the events that eventSender sends a unique eventNumber
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (-[EventSendingController mouseDown]):
+        (-[EventSendingController mouseUp]):
+        (-[EventSendingController mouseMoveToX:Y:]):
+
 2006-03-01  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.

@@ -1,3 +1,16 @@
+2006-03-01  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7059>
+        TinyMCE: Select All + delete sends you Back intsead of deleting
+
+        * editing/resources/select-all-iframe-src.html: Added.
+        * editing/selection/select-all-iframe-expected.checksum: Added.
+        * editing/selection/select-all-iframe-expected.png: Added.
+        * editing/selection/select-all-iframe-expected.txt: Added.
+        * editing/selection/select-all-iframe.html: Added.
+
 2006-03-01  David Harrison  <harrison@apple.com>
 
         Updated test case after improving list deletion.

@@ -1,3 +1,13 @@
+2006-03-01  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7059>
+        TinyMCE: Select All + delete sends you Back intsead of deleting
+
+        * page/Frame.cpp:
+        (WebCore::Frame::selectFrameElementInParentIfFullySelected):
+
 2006-03-01  David Harrison  <harrison@apple.com>
 
         Reviewed by Justin.

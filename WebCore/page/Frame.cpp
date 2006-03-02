@@ -2525,6 +2525,10 @@ void Frame::selectFrameElementInParentIfFullySelected()
     NodeImpl *ownerElementParent = ownerElement->parentNode();
     if (!ownerElementParent)
         return;
+        
+    // This method's purpose is it to make it easier to select iframes (in order to delete them).  Don't do anything if the iframe isn't deletable.
+    if (!ownerElementParent->isContentEditable())
+        return;
 
     // Create compute positions before and after the element.
     unsigned ownerElementNodeIndex = ownerElement->nodeIndex();
