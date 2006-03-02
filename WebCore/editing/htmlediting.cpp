@@ -369,15 +369,25 @@ Position positionAfterNode(const NodeImpl *node)
 
 bool isListElement(NodeImpl *n)
 {
-    return (n->hasTagName(ulTag) || n->hasTagName(olTag) || n->hasTagName(dlTag));
+    return (n && (n->hasTagName(ulTag) || n->hasTagName(olTag) || n->hasTagName(dlTag)));
+}
+
+NodeImpl *enclosingListChild (NodeImpl *node)
+{
+    // check not just for li elements per se, but also
+    // for any node whose parent is a list element
+    for (NodeImpl *n = node; n && n->parentNode(); n = n->parentNode()) {
+        if (isListElement(n->parentNode()))
+            return n;
+    }
+    
+    return 0;
 }
 
 // FIXME: do not require renderer, so that this can be used within fragments, or rename to isRenderedTable()
 bool isTableElement(NodeImpl *n)
 {
-    RenderObject *renderer = n->renderer();
-    // all editing tests pass with this, but I don't want to commit it until I check more
-//  ASSERT(renderer != 0);
+    RenderObject *renderer = n ? n->renderer() : 0;
     return (renderer && (renderer->style()->display() == TABLE || renderer->style()->display() == INLINE_TABLE));
 }
 

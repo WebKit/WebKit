@@ -85,6 +85,7 @@ Position positionAfterContainingSpecialElement(const Position&, NodeImpl** conta
 Position positionOutsideContainingSpecialElement(const Position&, NodeImpl** containingSpecialElement=0);
 
 bool isListElement(NodeImpl* n);
+NodeImpl *enclosingListChild(NodeImpl *n);
 bool isTableElement(NodeImpl* n);
 bool isFirstVisiblePositionAfterTableElement(const Position&);
 Position positionBeforePrecedingTableElement(const Position&);

@@ -81,8 +81,10 @@ bool RenderContainer::canHaveChildren() const
 
 static void updateListMarkerNumbers(RenderObject *child)
 {
-    for (RenderObject *r = child; r && r->isListItem(); r = r->nextSibling())
-        static_cast<RenderListItem *>(r)->resetValue();
+    for (RenderObject *r = child; r; r = r->nextSibling()) {
+        if (r->isListItem())
+            static_cast<RenderListItem *>(r)->resetValue();
+    }
 }
 
 void RenderContainer::addChild(RenderObject *newChild, RenderObject *beforeChild)
@@ -92,7 +94,7 @@ void RenderContainer::addChild(RenderObject *newChild, RenderObject *beforeChild
     if(!newChild->isText() && !newChild->isReplaced()) {
         switch(newChild->style()->display()) {
         case LIST_ITEM:
-            updateListMarkerNumbers(beforeChild);
+            updateListMarkerNumbers(beforeChild ? beforeChild : lastChild());
             break;
         case INLINE:
         case BLOCK:

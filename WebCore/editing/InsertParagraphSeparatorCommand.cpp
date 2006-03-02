@@ -29,10 +29,14 @@
 #include "DocumentImpl.h"
 #include "Logging.h"
 #include "css_computedstyle.h"
+#include "cssproperties.h"
 #include "dom_elementimpl.h"
+#include "dom_position.h"
 #include "TextImpl.h"
 #include "htmlediting.h"
+#include "HTMLElementImpl.h"
 #include "htmlnames.h"
+#include "render_object.h"
 #include "VisiblePosition.h"
 #include "visible_units.h"
 #include <kxmlcore/Assertions.h>
@@ -76,6 +80,59 @@ void InsertParagraphSeparatorCommand::applyStyleAfterInsertion()
         applyStyle(m_style.get());
 }
 
+
+PassRefPtr<ElementImpl> createListItemElement(DocumentImpl *document)
+{
+    int exceptionCode = 0;
+    RefPtr<ElementImpl> breakNode = document->createElementNS(xhtmlNamespaceURI, "li", exceptionCode);
+    ASSERT(exceptionCode == 0);
+    return breakNode.release();
+}
+
+static NodeImpl* embeddedSublist(NodeImpl* listItem)
+{
+    // check for sublist embedded in the list item
+    // NOTE: Must allow for collapsed sublist (i.e. no renderer), so just check DOM
+    for (NodeImpl* n = listItem->firstChild(); n; n = n->nextSibling()) {
+        if (isListElement(n))
+            return n;
+    }
+    
+    return 0;
+}
+
+static NodeImpl* appendedSublist(NodeImpl* listItem)
+{
+    // check for sublist between regular list items
+    // NOTE: Must allow for collapsed sublist (i.e. no renderer), so just check DOM
+    for (NodeImpl* n = listItem->nextSibling(); n; n = n->nextSibling()) {
+        if (isListElement(n))
+            return n;
+        if (n->renderer() && n->renderer()->isListItem())
+            return 0;
+    }
+    
+    return 0;
+}
+
+static NodeImpl* enclosingEmptyListItem(const VisiblePosition& visiblePos)
+{
+    // check that position is on a line by itself inside a list item
+    NodeImpl* listChildNode = enclosingListChild(visiblePos.deepEquivalent().node());
+    if (!listChildNode || !isStartOfLine(visiblePos) || !isEndOfLine(visiblePos))
+        return 0;
+    
+    // check for sublist embedded in the list item
+    if (embeddedSublist(listChildNode))
+        return 0;
+    
+    // check for sublist between regular list items
+    if (appendedSublist(listChildNode))
+        return 0;
+        
+    return listChildNode;
+}
+
 void InsertParagraphSeparatorCommand::doApply()
 {
     bool splitText = false;
@@ -94,53 +151,69 @@ void InsertParagraphSeparatorCommand::doApply()
         affinity = endingSelection().affinity();
     }
 
+    // Adjust the insertion position after the delete
     pos = positionAvoidingSpecialElementBoundary(pos);
-
+    VisiblePosition visiblePos(pos, affinity);
     calculateStyleBeforeInsertion(pos);
 
-    // Find the start block.
+    //---------------------------------------------------------------------
+    // Handle special case of typing return on an empty list item
+    NodeImpl *emptyListItem = enclosingEmptyListItem(visiblePos);
+    if (emptyListItem) {
+        NodeImpl *listNode = emptyListItem->parentNode();
+        RefPtr<NodeImpl> newBlock = isListElement(listNode->parentNode()) ? createListItemElement(document()) : createDefaultParagraphElement(document());
+        
+        if (emptyListItem->renderer()->nextSibling()) {
+            if (emptyListItem->renderer()->previousSibling())
+                splitElement(static_cast<ElementImpl *>(listNode), emptyListItem);
+            insertNodeBefore(newBlock.get(), listNode);
+            removeNode(emptyListItem);
+        } else {
+            insertNodeAfter(newBlock.get(), listNode);
+            removeNode(emptyListItem->renderer()->previousSibling() ? emptyListItem : listNode);
+        }
+        
+        appendBlockPlaceholder(newBlock.get());
+        setEndingSelection(Position(newBlock.get(), 0), DOWNSTREAM);
+        applyStyleAfterInsertion();
+        return;
+    }
+
+    //---------------------------------------------------------------------
+    // Prepare for more general cases.
     NodeImpl *startNode = pos.node();
     NodeImpl *startBlock = startNode->enclosingBlockFlowElement();
     if (!startBlock || !startBlock->parentNode())
         return;
 
-    VisiblePosition visiblePos(pos, affinity);
     bool isFirstInBlock = isStartOfBlock(visiblePos);
     bool isLastInBlock = isEndOfBlock(visiblePos);
-    bool startBlockIsRoot = startBlock == startBlock->rootEditableElement();
+    bool nestNewBlock = false;
 
-    // This is the block that is going to be inserted.
-    RefPtr<NodeImpl> blockToInsert = startBlockIsRoot
-        ? static_pointer_cast<NodeImpl>(createDefaultParagraphElement(document()))
-        : startBlock->cloneNode(false);
-
+    // Create block to be inserted.
+    RefPtr<NodeImpl> blockToInsert;
+    if (startBlock == startBlock->rootEditableElement()) {
+        blockToInsert = static_pointer_cast<NodeImpl>(createDefaultParagraphElement(document()));
+        nestNewBlock = true;
+    } else
+        blockToInsert = startBlock->cloneNode(false);
+    
     //---------------------------------------------------------------------
-    // Handle empty block case.
-    if (isFirstInBlock && isLastInBlock) {
-        LOG(Editing, "insert paragraph separator: empty block case");
-        if (startBlockIsRoot) {
-            RefPtr<NodeImpl> extraBlock = createDefaultParagraphElement(document());
-            appendNode(extraBlock.get(), startBlock);
-            appendBlockPlaceholder(extraBlock.get());
-            appendNode(blockToInsert.get(), startBlock);
-        }
-        else {
-            insertNodeAfter(blockToInsert.get(), startBlock);
-        }
-        appendBlockPlaceholder(blockToInsert.get());
-        setEndingSelection(Position(blockToInsert.get(), 0), DOWNSTREAM);
-        applyStyleAfterInsertion();
-        return;
-    }
-
-    //---------------------------------------------------------------------
-    // Handle case when position is in the last visible position in its block. 
+    // Handle case when position is in the last visible position in its block,
+    // including when the block is empty. 
     if (isLastInBlock) {
-        LOG(Editing, "insert paragraph separator: last in block case");
-        if (startBlockIsRoot)
+        if (nestNewBlock) {
+            if (isFirstInBlock) {
+                // block is empty: create an empty paragraph to
+                // represent the content before the new one.
+                RefPtr<NodeImpl> extraBlock = createDefaultParagraphElement(document());
+                appendNode(extraBlock.get(), startBlock);
+                appendBlockPlaceholder(extraBlock.get());
+            }
             appendNode(blockToInsert.get(), startBlock);
-        else
+        } else
             insertNodeAfter(blockToInsert.get(), startBlock);
+
         appendBlockPlaceholder(blockToInsert.get());
         setEndingSelection(Position(blockToInsert.get(), 0), DOWNSTREAM);
         applyStyleAfterInsertion();
@@ -148,24 +221,19 @@ void InsertParagraphSeparatorCommand::doApply()
     }
 
     //---------------------------------------------------------------------
-    // Handle case when position is in the first visible position in its block.
-    // and similar case where upstream position is in another block.
-    bool prevInDifferentBlock = !inSameBlock(visiblePos, visiblePos.previous());
-
-    if (prevInDifferentBlock || isFirstInBlock) {
-        LOG(Editing, "insert paragraph separator: first in block case");
+    // Handle case when position is in the first visible position in its block, and
+    // similar case where previous position is in another, presumeably nested, block.
+    if (isFirstInBlock || !inSameBlock(visiblePos, visiblePos.previous())) {
         pos = pos.downstream();
-        pos = positionOutsideContainingSpecialElement(pos);
         Position refPos;
         NodeImpl *refNode;
-        if (isFirstInBlock && !startBlockIsRoot) {
+        if (isFirstInBlock && !nestNewBlock)
             refNode = startBlock;
-        } else if (pos.node() == startBlock && startBlockIsRoot) {
-            ASSERT(startBlock->childNode(pos.offset())); // must be true or we'd be in the end of block case
+        else if (pos.node() == startBlock && nestNewBlock) {
             refNode = startBlock->childNode(pos.offset());
-        } else {
+            ASSERT(refNode); // must be true or we'd be in the end of block case
+        } else
             refNode = pos.node();
-        }
 
         insertNodeBefore(blockToInsert.get(), refNode);
         appendBlockPlaceholder(blockToInsert.get());
@@ -177,8 +245,6 @@ void InsertParagraphSeparatorCommand::doApply()
 
     //---------------------------------------------------------------------
     // Handle the (more complicated) general case,
-
-    LOG(Editing, "insert paragraph separator: general case");
 
     // If pos.node() is a <br> and the document is in quirks mode, this <br>
     // will collapse away when we add a block after it. Add an extra <br>.
@@ -220,11 +286,10 @@ void InsertParagraphSeparatorCommand::doApply()
     }
 
     // Put the added block in the tree.
-    if (startBlockIsRoot) {
+    if (nestNewBlock)
         appendNode(blockToInsert.get(), startBlock);
-    } else {
+    else
         insertNodeAfter(blockToInsert.get(), startBlock);
-    }
 
     // Make clones of ancestors in between the start node and the start block.
     RefPtr<NodeImpl> parent = blockToInsert;
@@ -244,9 +309,9 @@ void InsertParagraphSeparatorCommand::doApply()
     // Move the start node and the siblings of the start node.
     if (startNode != startBlock) {
         NodeImpl *n = startNode;
-        if (pos.offset() >= startNode->caretMaxOffset()) {
+        if (pos.offset() >= startNode->caretMaxOffset())
             n = startNode->nextSibling();
-        }
+
         while (n && n != blockToInsert) {
             NodeImpl *next = n->nextSibling();
             removeNode(n);

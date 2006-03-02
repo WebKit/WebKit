@@ -958,6 +958,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\editing\ModifySelectionListLevelCommand.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\editing\ModifySelectionListLevelCommand.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\editing\MoveSelectionCommand.cpp"
 					>
 				</File>
