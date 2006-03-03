@@ -1,3 +1,26 @@
+2006-03-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin.
+
+        - Fixed <rdar://problem/4465598> REGRESSION (TOT): Crash occurs at 
+        http://maps.google.com/?output=html ( KJS::Identifier::add(KJS::UString::Rep*)
+
+        This regression was caused by my fix for 4448098. I failed to account for the
+        deleted entry sentinel in the mehtod that saves the contents of a property map to 
+        the back/forward cache.
+
+        Manual test in WebCore/manual-tests/property-map-save-crash.html
+
+        * kjs/property_map.cpp:
+        (KJS::deletedSentinel): Use 1 instead of -1 to facilitate an easy bit mask
+        (KJS::isValid): New function: checks if a key is null or the deleted sentinel
+        (KJS::PropertyMap::~PropertyMap): Fixed up the branch logic here for readability
+        and a slight performance win
+        (KJS::PropertyMap::clear):
+        (KJS::PropertyMap::rehash):
+        (KJS::PropertyMap::addSparseArrayPropertiesToReferenceList):
+        (KJS::PropertyMap::save): Check keys with isValid()
+
 2006-03-02  Maciej Stachowiak  <mjs@apple.com>
 
         - now fix mac build again

@@ -1,3 +1,10 @@
+2006-03-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Test case for <rdar://problem/4465598> REGRESSION (TOT): Crash occurs at 
+        http://maps.google.com/?output=html ( KJS::Identifier::add(KJS::UString::Rep*)
+
+        * manual-tests/property-map-save-crash.html: Added.
+
 2006-03-03  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by adele.

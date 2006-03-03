@@ -100,7 +100,13 @@ SavedProperties::~SavedProperties() { }
 // Algorithm concepts from Algorithms in C++, Sedgewick.
 
 // This is a method rather than a variable to work around <rdar://problem/4462053>
-static inline UString::Rep* deletedSentinel() { return reinterpret_cast<UString::Rep*>(-1); }
+static inline UString::Rep* deletedSentinel() { return reinterpret_cast<UString::Rep*>(0x1); }
+
+// Returns true if the key is not null or the deleted sentinel, false otherwise
+static inline bool isValid(UString::Rep* key)
+{
+    return reinterpret_cast<uintptr_t>(key) & ~0x1;
+}
 
 PropertyMap::~PropertyMap()
 {
@@ -117,9 +123,10 @@ PropertyMap::~PropertyMap()
     Entry *entries = _table->entries;
     for (int i = 0; i < minimumKeysToProcess; i++) {
         UString::Rep *key = entries[i].key;
-        if (key && key != deletedSentinel())
-            key->deref();
-        else if (key != deletedSentinel())
+        if (key) {
+            if (key != deletedSentinel())
+                key->deref();
+        } else
             ++minimumKeysToProcess;
     }
     fastFree(_table);
@@ -142,7 +149,7 @@ void PropertyMap::clear()
     Entry *entries = _table->entries;
     for (int i = 0; i < size; i++) {
         UString::Rep *key = entries[i].key;
-        if (key && key != deletedSentinel()) {
+        if (isValid(key)) {
             key->deref();
             entries[i].key = 0;
             entries[i].value = 0;
@@ -446,13 +453,10 @@ void PropertyMap::rehash(int newTableSize)
     for (int i = 0; i != oldTableSize; ++i) {
         Entry &entry = oldTable->entries[i];
         UString::Rep *key = entry.key;
-        if (key) {
-            // Don't copy deleted-element sentinels.
-            if (key != deletedSentinel()) {
-                int index = entry.index;
-                lastIndexUsed = max(index, lastIndexUsed);
-                insert(key, entry.value, entry.attributes, index);
-            }
+        if (isValid(key)) {
+            int index = entry.index;
+            lastIndexUsed = max(index, lastIndexUsed);
+            insert(key, entry.value, entry.attributes, index);
         }
     }
     _table->lastIndexUsed = lastIndexUsed;
@@ -631,7 +635,7 @@ void PropertyMap::addSparseArrayPropertiesToReferenceList(ReferenceList &list, J
     Entry *entries = _table->entries;
     for (int i = 0; i != size; ++i) {
         UString::Rep *key = entries[i].key;
-        if (key && key != deletedSentinel()) {
+        if (isValid(key)) {
             UString k(key);
             bool fitsInUInt32;
             k.toUInt32(&fitsInUInt32);
@@ -654,7 +658,7 @@ void PropertyMap::save(SavedProperties &p) const
         int size = _table->size;
         Entry *entries = _table->entries;
         for (int i = 0; i != size; ++i)
-            if (entries[i].key && !(entries[i].attributes & (ReadOnly | Function)))
+            if (isValid(entries[i].key) && !(entries[i].attributes & (ReadOnly | Function)))
                 ++count;
     }
 
@@ -690,7 +694,7 @@ void PropertyMap::save(SavedProperties &p) const
         Entry* entries = _table->entries;
         for (int i = 0; i != size; ++i) {
             Entry *e = &entries[i];
-            if (e->key && !(e->attributes & (ReadOnly | Function)))
+            if (isValid(e->key) && !(e->attributes & (ReadOnly | Function)))
                 *p++ = e;
         }
         assert(p - sortedEntries.data() == count);
