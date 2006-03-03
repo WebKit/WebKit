@@ -346,7 +346,6 @@ bool FrameWin::lastEventIsMouseUp() const { return false; }
 
 BrowserExtensionWin::BrowserExtensionWin(WebCore::Frame*) { }
 
-bool KWQServeRequest(Loader*, DocLoader*, WebCore::TransferJob*) { return false; } // false may not be "right" as a stub.
 bool KWQCheckIfReloading(WebCore::DocLoader*) { return false; }
 void KWQCheckCacheObjectStatus(DocLoader*, CachedObject*) { }
 

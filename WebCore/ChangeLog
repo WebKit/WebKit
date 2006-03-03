@@ -1,5 +1,13 @@
 2006-03-02  Maciej Stachowiak  <mjs@apple.com>
 
+        Rubber stamped by Eric.
+
+        - remove function that is now gone
+
+        * platform/win/TemporaryLinkStubs.cpp:
+
+2006-03-02  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Eric.
         
         - move logic to kick off load from KWQLoader function to a TransferJob method
