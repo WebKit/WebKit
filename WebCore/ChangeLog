@@ -1,5 +1,19 @@
 2006-03-03  Maciej Stachowiak  <mjs@apple.com>
 
+        Rubber stamped by Eric.
+
+        - add new files to build, fix link stubs.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (KWQKCookieJar::cookieEnabled):
+        (WebCore::TransferJob::retrieveCharset):
+        (WebCore::TransferJob::assembleResponseHeaders):
+        (WebCore::TransferJob::~TransferJob):
+        * platform/win/TransferJobWin.cpp: Added.
+
+2006-03-03  Maciej Stachowiak  <mjs@apple.com>
+
         - add file I forgot in my last commit.
 
         * platform/TransferJobInternal.h: Added.

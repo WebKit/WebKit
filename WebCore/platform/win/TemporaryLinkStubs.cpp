@@ -17,7 +17,6 @@
 #include "KWQSlider.h"
 #include "Cursor.h"
 #include "loader.h"
-#include "KWQKJobClasses.h"
 #include "FrameView.h"
 #include "KWQScrollBar.h"
 #include "KWQObject.h"
@@ -35,6 +34,7 @@
 #include "render_theme.h"
 #include "FrameWin.h"
 #include "BrowserExtensionWin.h"
+#include "TransferJob.h"
 
 using namespace WebCore;
 
@@ -198,13 +198,6 @@ void KWQFindSentenceBoundary(QChar const*,int,int,int*,int*) { notImplemented();
 int KWQFindNextWordFromIndex(QChar const*,int,int,bool) { notImplemented(); return 0; }
 void KWQFindWordBoundary(QChar const*,int,int,int*,int*) { notImplemented(); }
 bool KWQKCookieJar::cookieEnabled() { notImplemented(); return false; }
-void WebCore::TransferJob::kill() { notImplemented(); }
-void WebCore::TransferJob::addMetaData(KXMLCore::HashMap<String,String> const&) { notImplemented(); }
-QString WebCore::TransferJob::queryMetaData(QString const&) const { notImplemented(); return QString(); }
-int WebCore::TransferJob::error() const { notImplemented(); return 0; }
-QString WebCore::TransferJob::errorText() const { notImplemented(); return "Houston, we have a problem."; }
-bool WebCore::TransferJob::isErrorPage() const { notImplemented(); return 0; }
-WebCore::TransferJob::TransferJob(WebCore::TransferJobClient*, const String&, KURL const&,WebCore::FormData const&) { notImplemented(); }
 PluginInfo*PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned) { notImplemented(); return 0;}
 unsigned PlugInInfoStore::pluginCount() const { notImplemented(); return 0; }
 void WebCore::refreshPlugins(bool) { notImplemented(); }
@@ -282,6 +275,9 @@ void QComboBox::setFont(WebCore::Font const&) { notImplemented(); }
 void QTextEdit::setFont(WebCore::Font const&) { notImplemented(); }
 void QTextEdit::setWritingDirection(enum WebCore::TextDirection) { notImplemented(); }
 GraphicsContext::GraphicsContext() { notImplemented(); }
+void WebCore::TransferJob::retrieveCharset() const { notImplemented(); }
+void WebCore::TransferJob::assembleResponseHeaders(void)const { notImplemented(); }
+WebCore::TransferJob::~TransferJob(void) { notImplemented(); }
 
 // Completely empty stubs (mostly to allow DRT to run):
 bool WebCore::historyContains(QString const&) { return false; }
@@ -340,8 +336,6 @@ int ScrollView::contentsWidth() const { return 1000; }
 void ScrollView::viewportToContents(int x1, int y1, int& x2, int& y2) { x2 = x1; y2 = y1; }
 void ScrollView::setStaticBackground(bool) { }
 
-TransferJob::TransferJob(WebCore::TransferJobClient*,const String&,KURL const&) { }
-void TransferJob::addMetaData(QString const&,QString const&) { }
 bool TransferJob::start(class WebCore::DocLoader *){ return false; }
 
 Font const& GraphicsContext::font() const { return localFont; }

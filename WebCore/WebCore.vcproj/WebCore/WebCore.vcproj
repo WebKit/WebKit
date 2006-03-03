@@ -1769,6 +1769,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\platform\TransferJob.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\TransferJob.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\TransferJobClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\TransferJobInternal.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\platform\WheelEvent.h"
 				>
 			</File>
