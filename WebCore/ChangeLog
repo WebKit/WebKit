@@ -1,3 +1,10 @@
+2006-03-03  Maciej Stachowiak  <mjs@apple.com>
+
+        - add file I forgot in my last commit.
+
+        * platform/TransferJobInternal.h: Added.
+        (WebCore::TransferJobInternal::TransferJobInternal):
+
 2006-03-03  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
