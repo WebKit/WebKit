@@ -40,6 +40,10 @@ class NSView;
 #endif
 #endif
 
+#if WIN32
+typedef struct HWND__ *HWND;
+#endif
+
 namespace WebCore {
 
     class Cursor;
@@ -115,6 +119,12 @@ namespace WebCore {
         void setDrawingAlpha(float alpha);
 
         void setIsSelected(bool isSelected);
+
+#if WIN32
+        Widget(HWND);
+        HWND windowHandle();
+        void setWindowHandle(HWND);
+#endif
 
 #if __APPLE__
         Widget(NSView* view);

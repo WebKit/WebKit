@@ -1,3 +1,96 @@
+2006-03-03  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Wire up WidgetWin, CursorWin, ScrollViewWin.
+        Stub out methods for selection and cursors.
+
+        * Viewer/ImageDocument.h:
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * bridge/win/FrameWin.cpp:
+        * khtml/ecma/kjs_proxy.cpp:
+        (WebCore::KJSProxyImpl::initScriptIfNeeded):
+        * platform/IntRect.h:
+        (WebCore::IntRect::IntRect):
+        * platform/Widget.h:
+        * platform/win/CursorWin.cpp:
+        (WebCore::eastResizeCursor):
+        (WebCore::northResizeCursor):
+        (WebCore::northEastResizeCursor):
+        (WebCore::northWestResizeCursor):
+        (WebCore::southResizeCursor):
+        (WebCore::southEastResizeCursor):
+        (WebCore::southWestResizeCursor):
+        (WebCore::westResizeCursor):
+        * platform/win/IntRectWin.cpp:
+        (WebCore::IntRect::IntRect):
+        (WebCore::IntRect::operator RECT):
+        * platform/win/MouseEventWin.cpp:
+        * platform/win/ScrollViewWin.cpp: Added.
+        (WebCore::ScrollView::updateContents):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (QTextEdit::textWithHardLineBreaks):
+        (QLineEdit::setPlaceholderString):
+        (QScrollBar::scroll):
+        (GraphicsContext::beginTransparencyLayer):
+        (Widget::setIsSelected):
+        (QLineEdit::selectedText):
+        (QComboBox::sizeHint):
+        (KWQFileButton::focusPolicy):
+        (QTextEdit::focusPolicy):
+        (QSlider::focusPolicy):
+        (QListBox::focusPolicy):
+        (QLineEdit::focusPolicy):
+        (WebCore::moveCursor):
+        (ScrollView::scrollBy):
+        (KWQKCookieJar::cookieEnabled):
+        (WebCore::TransferJob::TransferJob):
+        (WebCore::screenDepth):
+        (WebCore::usableScreenRect):
+        (FrameWin::getObjectInstanceForWidget):
+        (FrameWin::getEmbedInstanceForWidget):
+        (FrameWin::getAppletInstanceForWidget):
+        (FrameWin::passMouseDownEventToWidget):
+        (FrameWin::issuePasteCommand):
+        (FrameWin::issueTransposeCommand):
+        (QSlider::setFont):
+        (QLineEdit::setFont):
+        (QListBox::setFont):
+        (QFontMetrics::QFontMetrics):
+        (QComboBox::setFont):
+        (QTextEdit::setFont):
+        (QTextEdit::setWritingDirection):
+        (QFontMetrics::setFontDescription):
+        (QFontMetrics::checkSelectionPoint):
+        (FrameWin::addMessageToConsole):
+        (FrameWin::shouldChangeSelection):
+        (ScrollView::resizeContents):
+        (ScrollView::visibleHeight):
+        (ScrollView::visibleWidth):
+        (ScrollView::setContentsPos):
+        (ScrollView::contentsX):
+        (ScrollView::contentsY):
+        (ScrollView::contentsHeight):
+        (ScrollView::contentsWidth):
+        (ScrollView::viewportToContents):
+        * platform/win/WidgetWin.cpp: Added.
+        (WebCore::Widget::Widget):
+        (WebCore::Widget::~Widget):
+        (WebCore::Widget::windowHandle):
+        (WebCore::Widget::setWindowHandle):
+        (WebCore::Widget::setActiveWindow):
+        (WebCore::Widget::frameGeometry):
+        (WebCore::Widget::hasFocus):
+        (WebCore::Widget::setFocus):
+        (WebCore::Widget::clearFocus):
+        (WebCore::Widget::font):
+        (WebCore::Widget::setFont):
+        (WebCore::Widget::setCursor):
+        (WebCore::Widget::show):
+        (WebCore::Widget::hide):
+        (WebCore::Widget::setFrameGeometry):
+        (WebCore::Widget::mapFromGlobal):
+
 2006-03-03  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
@@ -44,7 +137,6 @@
         (GraphicsContext::drawText):
         (GraphicsContext::drawLineForText):
 
->>>>>>> .r13111
 2006-03-02  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Eric.

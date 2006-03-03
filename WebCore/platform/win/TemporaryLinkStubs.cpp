@@ -44,7 +44,6 @@ void QLineEdit::selectAll() { notImplemented(); }
 void Widget::enableFlushDrawing() { notImplemented(); }
 void GraphicsContext::drawHighlightForText(int,int,int,int,int,QChar const*,int,int,int,int,Color const&,TextDirection,bool,int,int,bool) { notImplemented(); }
 String QTextEdit::textWithHardLineBreaks() const { notImplemented(); return String(); }
-IntPoint Widget::mapFromGlobal(IntPoint const&) const { notImplemented(); return IntPoint(); }
 int QLineEdit::cursorPosition() const { notImplemented(); return 0; }
 Color GraphicsContext::selectedTextBackgroundColor() const { notImplemented(); return Color(); }
 void QSlider::setValue(double) { notImplemented(); }
@@ -68,7 +67,6 @@ void QTextEdit::setScrollBarModes(ScrollBarMode,ScrollBarMode) { notImplemented(
 void QTextEdit::setReadOnly(bool) { notImplemented(); }
 void QListBox::appendItem(QString const&,KWQListBoxItemType,bool) { notImplemented(); }
 void QLineEdit::setPlaceholderString(String const&) { notImplemented(); }
-Cursor::Cursor(Cursor const&) { notImplemented(); }
 Widget::FocusPolicy Widget::focusPolicy() const { notImplemented(); return NoFocus; }
 void ScrollView::removeChild(Widget*) { notImplemented(); }
 void QTextEdit::selectAll() { notImplemented(); }
@@ -76,7 +74,6 @@ void GraphicsContext::endTransparencyLayer() { notImplemented(); }
 void ScrollView::addChild(Widget*,int,int) { notImplemented(); }
 void QTextEdit::setDisabled(bool) { notImplemented(); }
 bool QScrollBar::scroll(KWQScrollDirection,KWQScrollGranularity,float) { notImplemented(); return 0; }
-Widget::~Widget() { notImplemented(); }
 IntSize QListBox::sizeForNumberOfLines(int) const { notImplemented(); return IntSize(); }
 int QLineEdit::selectionStart() const { notImplemented(); return 0; }
 QLineEdit::QLineEdit(QLineEdit::Type) { notImplemented(); }
@@ -102,19 +99,18 @@ KWQFileButton::KWQFileButton(Frame*) { notImplemented(); }
 IntRect QFontMetrics::boundingRect(int,int,int,int,int,QString const&,int,int) const { notImplemented(); return IntRect(); }
 void QTextEdit::setSelectionStart(int) { notImplemented(); }
 void GraphicsContext::beginTransparencyLayer(float) { notImplemented(); }
-IntRect Widget::frameGeometry() const { notImplemented(); return IntRect(); }
 void QListBox::setSelected(int,bool) { notImplemented(); }
 void GraphicsContext::addFocusRingRect(int,int,int,int) { notImplemented(); }
 void QTextEdit::setCursorPosition(int,int) { notImplemented(); }
 void Widget::setEnabled(bool) { notImplemented(); }
 void QTextEdit::setSelectionEnd(int) { notImplemented(); }
 void QComboBox::populate() { notImplemented(); }
+void Widget::setIsSelected(bool) { notImplemented(); }
 void QTextEdit::setAlignment(Qt::AlignmentFlags) { notImplemented(); }
 void QLineEdit::setCursorPosition(int) { notImplemented(); }
 KJavaAppletWidget::KJavaAppletWidget(IntSize const&,Frame*,KXMLCore::HashMap<String,String> const&) { notImplemented(); }
 QListBox::QListBox() { notImplemented(); }
 QString QLineEdit::selectedText() const { notImplemented(); return QString(); }
-void Widget::setIsSelected(bool) { notImplemented(); }
 String QLineEdit::text() const { notImplemented(); return String(); }
 void Widget::unlockDrawingFocus() { notImplemented(); }
 void QLineEdit::setLiveSearch(bool) { notImplemented(); }
@@ -139,7 +135,6 @@ int ScrollView::scrollYOffset() const { notImplemented(); return 0; }
 void QComboBox::setCurrentItem(int) { notImplemented(); }
 void QComboBox::setWritingDirection(TextDirection) { notImplemented(); }
 IntSize QComboBox::sizeHint() const { notImplemented(); return IntSize(); }
-void Widget::setFrameGeometry(IntRect const&) { notImplemented(); }
 void QLineEdit::setSelection(int,int) { notImplemented(); }
 void QLineEdit::setMaxResults(int) { notImplemented(); }
 void QListBox::clear() { notImplemented(); }
@@ -159,7 +154,7 @@ void QLineEdit::setEdited(bool) { notImplemented(); }
 IntRect QComboBox::frameGeometry() const { notImplemented(); return IntRect(); }
 void QListBox::setWritingDirection(TextDirection) { notImplemented(); }
 void QLineEdit::setAlignment(Qt::AlignmentFlags) { notImplemented(); }
-WebCore::Widget::FocusPolicy KWQFileButton::focusPolicy() const { notImplemented(); return NoFocus; }
+Widget::FocusPolicy KWQFileButton::focusPolicy() const { notImplemented(); return NoFocus; }
 bool QLineEdit::checksDescendantsForFocus() const { notImplemented(); return false; }
 int KWQFileButton::baselinePosition(int) const { notImplemented(); return 0; }
 QSlider::~QSlider() { notImplemented(); }
@@ -167,17 +162,17 @@ void KWQFileButton::setFrameGeometry(WebCore::IntRect const&) { notImplemented()
 QListBox::~QListBox() { notImplemented(); }
 WebCore::IntRect KWQFileButton::frameGeometry() const { notImplemented(); return IntRect(); }
 KWQFileButton::~KWQFileButton() { notImplemented(); }
-WebCore::Widget::FocusPolicy QTextEdit::focusPolicy() const { notImplemented(); return NoFocus; }
-WebCore::Widget::FocusPolicy QSlider::focusPolicy() const { notImplemented(); return NoFocus; }
+Widget::FocusPolicy QTextEdit::focusPolicy() const { notImplemented(); return NoFocus; }
+Widget::FocusPolicy QSlider::focusPolicy() const { notImplemented(); return NoFocus; }
 void QListBox::setEnabled(bool) { notImplemented(); }
 bool QListBox::checksDescendantsForFocus() const { notImplemented(); return 0; }
-WebCore::Widget::FocusPolicy QListBox::focusPolicy() const { notImplemented(); return NoFocus; }
+Widget::FocusPolicy QListBox::focusPolicy() const { notImplemented(); return NoFocus; }
 int QLineEdit::baselinePosition(int) const { notImplemented(); return 0; }
 WebCore::IntSize QSlider::sizeHint() const { notImplemented(); return IntSize(); }
 QLineEdit::~QLineEdit() { notImplemented(); }
 QTextEdit::~QTextEdit() { notImplemented(); }
 bool QTextEdit::checksDescendantsForFocus() const { notImplemented(); return false; }
-WebCore::Widget::FocusPolicy QLineEdit::focusPolicy() const { notImplemented(); return NoFocus; }
+Widget::FocusPolicy QLineEdit::focusPolicy() const { notImplemented(); return NoFocus; }
 QScrollBar::~QScrollBar() { notImplemented(); }
 Path::Path(){ notImplemented(); }
 Path::Path(const IntRect&, Type){ notImplemented(); }
@@ -189,20 +184,7 @@ bool Path::contains(const IntPoint&) const{ notImplemented(); return false; }
 void Path::translate(int, int){ notImplemented(); }
 IntRect Path::boundingRect() const { notImplemented(); return IntRect(); }
 static Cursor localCursor;
-const Cursor& WebCore::crossCursor() { notImplemented(); return localCursor; }
-const Cursor& WebCore::handCursor() { notImplemented(); return localCursor; }
 const Cursor& WebCore::moveCursor() { notImplemented(); return localCursor; }
-const Cursor& WebCore::iBeamCursor() { notImplemented(); return localCursor; }
-const Cursor& WebCore::waitCursor() { notImplemented(); return localCursor; }
-const Cursor& WebCore::helpCursor() { notImplemented(); return localCursor; }
-const Cursor& WebCore::eastResizeCursor() { notImplemented(); return localCursor; }
-const Cursor& WebCore::northResizeCursor() { notImplemented(); return localCursor; }
-const Cursor& WebCore::northEastResizeCursor() { notImplemented(); return localCursor; }
-const Cursor& WebCore::northWestResizeCursor() { notImplemented(); return localCursor; }
-const Cursor& WebCore::southResizeCursor() { notImplemented(); return localCursor; }
-const Cursor& WebCore::southEastResizeCursor() { notImplemented(); return localCursor; }
-const Cursor& WebCore::southWestResizeCursor() { notImplemented(); return localCursor; }
-const Cursor& WebCore::westResizeCursor() { notImplemented(); return localCursor; }
 WebCore::MouseEvent::MouseEvent() { notImplemented(); }
 void QLineEdit::setColors(Color const&,Color const&) { notImplemented(); }
 void QTextEdit::setColors(Color const&,Color const&) { notImplemented(); }
@@ -211,13 +193,11 @@ void KWQKCookieJar::setCookie(KURL const&,KURL const&,QString const&) { notImple
 QString KWQKCookieJar::cookie(KURL const&) { notImplemented(); return QString(); }
 IntRect WebCore::screenRect(Widget*) { notImplemented(); return IntRect(); }
 void ScrollView::scrollBy(int,int) { notImplemented(); }
-void WebCore::Widget::clearFocus() { notImplemented(); }
 int KWQFindNextSentenceFromIndex(QChar const*,int,int,bool) { notImplemented(); return 0; }
 void KWQFindSentenceBoundary(QChar const*,int,int,int*,int*) { notImplemented(); }
 int KWQFindNextWordFromIndex(QChar const*,int,int,bool) { notImplemented(); return 0; }
 void KWQFindWordBoundary(QChar const*,int,int,int*,int*) { notImplemented(); }
 bool KWQKCookieJar::cookieEnabled() { notImplemented(); return false; }
-void WebCore::Widget::setFocus() { notImplemented(); }
 void WebCore::TransferJob::kill() { notImplemented(); }
 void WebCore::TransferJob::addMetaData(KXMLCore::HashMap<String,String> const&) { notImplemented(); }
 QString WebCore::TransferJob::queryMetaData(QString const&) const { notImplemented(); return QString(); }
@@ -225,15 +205,13 @@ int WebCore::TransferJob::error() const { notImplemented(); return 0; }
 QString WebCore::TransferJob::errorText() const { notImplemented(); return "Houston, we have a problem."; }
 bool WebCore::TransferJob::isErrorPage() const { notImplemented(); return 0; }
 WebCore::TransferJob::TransferJob(WebCore::TransferJobClient*, const String&, KURL const&,WebCore::FormData const&) { notImplemented(); }
-void WebCore::Widget::hide() { notImplemented(); }
 PluginInfo*PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned) { notImplemented(); return 0;}
 unsigned PlugInInfoStore::pluginCount() const { notImplemented(); return 0; }
 void WebCore::refreshPlugins(bool) { notImplemented(); }
-int WebCore::screenDepth(WebCore::Widget*) { notImplemented(); return 96; }
+int WebCore::screenDepth(Widget*) { notImplemented(); return 96; }
 static QFontMetrics localFontMetrics;
 float QFontMetrics::xHeight() const { notImplemented(); return 0; }
-IntRect WebCore::usableScreenRect(WebCore::Widget*) { notImplemented(); return IntRect(0,0,800,600); }
-void Widget::setActiveWindow() { notImplemented(); }
+IntRect WebCore::usableScreenRect(Widget*) { notImplemented(); return IntRect(0,0,800,600); }
 RenderTheme* WebCore::theme() { notImplemented(); return 0; }
 Array<char> KWQServeSynchronousRequest(Loader*,DocLoader*,TransferJob*,KURL&,QString&) { notImplemented(); return 0; }
 Widget* WebCore::FrameView::topLevelWidget() const { notImplemented(); return 0; }
@@ -243,8 +221,8 @@ bool FrameWin::locationbarVisible(void) { notImplemented(); return 0; }
 void FrameWin::respondToChangedSelection(WebCore::SelectionController const&,bool) { notImplemented(); }
 void FrameWin::clearUndoRedoOperations(void) { notImplemented(); }
 void FrameWin::issueRedoCommand(void) { notImplemented(); }
-KJS::Bindings::Instance * FrameWin::getObjectInstanceForWidget(WebCore::Widget *) { notImplemented(); return 0; }
-KJS::Bindings::Instance * FrameWin::getEmbedInstanceForWidget(WebCore::Widget *) { notImplemented(); return 0; }
+KJS::Bindings::Instance * FrameWin::getObjectInstanceForWidget(Widget *) { notImplemented(); return 0; }
+KJS::Bindings::Instance * FrameWin::getEmbedInstanceForWidget(Widget *) { notImplemented(); return 0; }
 bool FrameWin::canRedo(void)const { notImplemented(); return 0; }
 bool FrameWin::canUndo(void)const { notImplemented(); return 0; }
 bool FrameWin::runJavaScriptPrompt(String const&,String const&,String &) { notImplemented(); return 0; }
@@ -256,19 +234,17 @@ bool FrameWin::openURL(KURL const&) { notImplemented(); return 0; }
 void FrameWin::urlSelected(KURL const&,struct WebCore::URLArgs const&) { notImplemented(); }
 void FrameWin::saveDocumentState(void) { notImplemented(); }
 void FrameWin::print(void) { notImplemented(); }
-KJS::Bindings::Instance * FrameWin::getAppletInstanceForWidget(WebCore::Widget *) { notImplemented(); return 0; }
-bool FrameWin::passMouseDownEventToWidget(WebCore::Widget *) { notImplemented(); return 0; }
+KJS::Bindings::Instance * FrameWin::getAppletInstanceForWidget(Widget *) { notImplemented(); return 0; }
+bool FrameWin::passMouseDownEventToWidget(Widget *) { notImplemented(); return 0; }
 void FrameWin::registerCommandForUndo(WebCore::EditCommandPtr const&) { notImplemented(); }
 void FrameWin::issueCutCommand(void) { notImplemented(); }
 void FrameWin::issueCopyCommand(void) { notImplemented(); }
 void FrameWin::openURLRequest(KURL const&,struct WebCore::URLArgs const&) { notImplemented(); }
-void FrameWin::addMessageToConsole(String const&,unsigned int,String const&) { notImplemented(); }
 bool FrameWin::passWheelEventToChildWidget(WebCore::NodeImpl *) { notImplemented(); return 0; }
 void FrameWin::issueUndoCommand(void) { notImplemented(); }
 QString FrameWin::mimeTypeForFileName(QString const&)const { notImplemented(); return QString(); }
 void FrameWin::clearRecordedFormValues(void) { notImplemented(); }
 void FrameWin::issuePasteCommand(void) { notImplemented(); }
-bool FrameWin::shouldChangeSelection(WebCore::SelectionController const&,WebCore::SelectionController const&,WebCore::EAffinity,bool)const { notImplemented(); return 0; }
 void FrameWin::scheduleClose(void) { notImplemented(); }
 void FrameWin::markMisspellingsInAdjacentWords(WebCore::VisiblePosition const&) { notImplemented(); }
 void FrameWin::markMisspellings(WebCore::SelectionController const&) { notImplemented(); }
@@ -277,7 +253,6 @@ bool FrameWin::personalbarVisible(void) { notImplemented(); return 0; }
 bool FrameWin::statusbarVisible(void) { notImplemented(); return 0; }
 bool FrameWin::toolbarVisible(void) { notImplemented(); return 0; }
 void FrameWin::issueTransposeCommand(void) { notImplemented(); }
-QString FrameWin::userAgent(void)const { notImplemented(); return QString(); }
 void FrameWin::submitForm(KURL const&,struct WebCore::URLArgs const&) { notImplemented(); }
 bool FrameWin::canPaste(void)const { notImplemented(); return 0; }
 QString FrameWin::incomingReferrer(void)const { notImplemented(); return QString(); }
@@ -298,16 +273,14 @@ void BrowserExtensionWin::runModal(void) { notImplemented(); }
 void BrowserExtensionWin::goBackOrForward(int) { notImplemented(); }
 void BrowserExtensionWin::setIconURL(KURL const&) { notImplemented(); }
 void BrowserExtensionWin::createNewWindow(KURL const&,struct WebCore::URLArgs const&) { notImplemented(); }
-void QSlider::setFont(class WebCore::Font const&) { notImplemented(); }
-void QLineEdit::setFont(class WebCore::Font const&) { notImplemented(); }
+void QSlider::setFont(WebCore::Font const&) { notImplemented(); }
+void QLineEdit::setFont(WebCore::Font const&) { notImplemented(); }
 static WebCore::Font localFont;
-void QListBox::setFont(class WebCore::Font const&) { notImplemented(); }
-QFontMetrics::QFontMetrics(class WebCore::FontDescription const&) { notImplemented(); }
-void WebCore::Widget::setFont(class WebCore::Font const&) { notImplemented(); }
-void QComboBox::setFont(class WebCore::Font const&) { notImplemented(); }
-void QTextEdit::setFont(class WebCore::Font const&) { notImplemented(); }
+void QListBox::setFont(WebCore::Font const&) { notImplemented(); }
+QFontMetrics::QFontMetrics(WebCore::FontDescription const&) { notImplemented(); }
+void QComboBox::setFont(WebCore::Font const&) { notImplemented(); }
+void QTextEdit::setFont(WebCore::Font const&) { notImplemented(); }
 void QTextEdit::setWritingDirection(enum WebCore::TextDirection) { notImplemented(); }
-int QFontMetrics::checkSelectionPoint(class QChar const *,int,int,int,int,int,int,int,int,bool,int,bool,bool,bool)const { notImplemented(); return 0; }
 GraphicsContext::GraphicsContext() { notImplemented(); }
 
 // Completely empty stubs (mostly to allow DRT to run):
@@ -316,8 +289,6 @@ QString submitButtonDefaultLabel() { return "Submit"; }
 QString inputElementAltText() { return QString(); }
 QString resetButtonDefaultLabel() { return "Reset"; }
 QString KLocale::language() { return "en"; }
-
-Cursor::~Cursor() { }
 
 QFontMetrics::QFontMetrics() { }
 QFontMetrics::~QFontMetrics() { }
@@ -329,8 +300,10 @@ int QFontMetrics::ascent() const { return 10; }
 int QFontMetrics::height() const { return 10; }
 int QFontMetrics::width(QString const&,int,int,int) const { return 10; }
 int QFontMetrics::descent() const { return 10; }
-void QFontMetrics::setFontDescription(class WebCore::FontDescription const&) { }
+void QFontMetrics::setFontDescription(WebCore::FontDescription const&) { }
 bool QFontMetrics::isFixedPitch(void)const { return 0; }
+int QFontMetrics::checkSelectionPoint(QChar const*,int,int,int,int,int,int,int,int,bool,int,bool,bool,bool) const { return 0; }
+
 
 void FrameWin::restoreDocumentState() { }
 void FrameWin::partClearedInBegin() { }
@@ -341,33 +314,30 @@ void FrameWin::handledOnloadEvents() { }
 RangeImpl* FrameWin::markedTextRange() const { return 0; }
 bool FrameWin::passSubframeEventToSubframe(WebCore::MouseEventWithHitTestResults&) { return false; }
 bool FrameWin::lastEventIsMouseUp() const { return false; }
+void FrameWin::addMessageToConsole(String const&,unsigned int,String const&) { }
+bool FrameWin::shouldChangeSelection(SelectionController const&,SelectionController const&,WebCore::EAffinity,bool)const { return 0; }
+
 
 BrowserExtensionWin::BrowserExtensionWin(WebCore::Frame*) { }
 
 bool KWQCheckIfReloading(WebCore::DocLoader*) { return false; }
 void KWQCheckCacheObjectStatus(DocLoader*, CachedObject*) { }
 
-Widget::Widget() { }
-void Widget::show() { }
-void Widget::setCursor(Cursor const&) { }
-
-void ScrollView::resizeContents(int,int) { }
+void ScrollView::resizeContents(int w,int h) { resize(w, h); }
 WebCore::ScrollBarMode ScrollView::hScrollBarMode() const { return ScrollBarAlwaysOff; }
 WebCore::ScrollBarMode ScrollView::vScrollBarMode() const { return ScrollBarAlwaysOff; }
 void ScrollView::suppressScrollBars(bool,bool) { }
 void ScrollView::setHScrollBarMode(ScrollBarMode) { }
 void ScrollView::setVScrollBarMode(ScrollBarMode) { }
 void ScrollView::setScrollBarsMode(ScrollBarMode) { }
-int ScrollView::visibleHeight() const { return 600; }
-int ScrollView::visibleWidth() const { return 800; }
-void ScrollView::setContentsPos(int,int) { }
-int ScrollView::contentsX() const { return 0; }
-int ScrollView::contentsY() const { return 0; }
-int ScrollView::contentsHeight() const { return 600; }
-int ScrollView::contentsWidth() const { return 800; }
-void ScrollView::viewportToContents(int x1, int y1, int& x2, int& y2) { x2 = x1; y2 = y2; }
-
-void ScrollView::updateContents(const IntRect&,bool) { }
+int ScrollView::visibleHeight() const { return 800; }
+int ScrollView::visibleWidth() const { return 1000; }
+void ScrollView::setContentsPos(int x,int y) { move(x, y); }
+int ScrollView::contentsX() const { return x(); }
+int ScrollView::contentsY() const { return y(); }
+int ScrollView::contentsHeight() const { return 800; }
+int ScrollView::contentsWidth() const { return 1000; }
+void ScrollView::viewportToContents(int x1, int y1, int& x2, int& y2) { x2 = x1; y2 = y1; }
 void ScrollView::setStaticBackground(bool) { }
 
 TransferJob::TransferJob(WebCore::TransferJobClient*,const String&,KURL const&) { }

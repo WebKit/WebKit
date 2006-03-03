@@ -50,9 +50,6 @@ namespace WebCore {
 class IntRect {
 public:
     IntRect() { }
-#if WIN32
-    IntRect(const RECT&);
-#endif
     IntRect(const IntPoint& location, const IntSize& size)
         : m_location(location), m_size(size) { }
     IntRect(int x, int y, int width, int height)
@@ -102,6 +99,11 @@ public:
         m_size.setHeight(m_size.height() + dy + dy);
     }
     void inflate(int d) { inflateX(d); inflateY(d); }
+
+#if WIN32
+    IntRect(const RECT&);
+    operator RECT() const;
+#endif
 
 #if __APPLE__
 

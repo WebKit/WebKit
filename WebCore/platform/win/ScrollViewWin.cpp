@@ -24,31 +24,18 @@
  */
 
 #include "config.h"
-#include "FrameWin.h"
-
-#include "BrowserExtensionWin.h"
-#include "DocumentImpl.h"
-#include "KWQKHTMLSettings.h"
-#include "render_frames.h"
-#include "Plugin.h"
-#include "FramePrivate.h"
+#include "ScrollView.h"
+#include "IntRect.h"
+#include <windows.h>
 
 namespace WebCore {
 
-FrameWin::FrameWin(Page* page, RenderPart* renderPart)
-    : Frame(page, renderPart)
+void ScrollView::updateContents(const IntRect& dirtyRect, bool now)
 {
-    d->m_extension = new BrowserExtensionWin(this);
-    setSettings(new KHTMLSettings());
-}
-
-FrameWin::~FrameWin()
-{
-}
-
-QString FrameWin::userAgent() const
-{
-    return "Mozilla/5.0 (PC; U; Intel; Windows; en) AppleWebKit/420+ (KHTML, like Gecko)";
+    RECT repaintRect = RECT(dirtyRect);
+    InvalidateRect(windowHandle(), &repaintRect, true);
+    if (now)
+        UpdateWindow(windowHandle());
 }
 
 }

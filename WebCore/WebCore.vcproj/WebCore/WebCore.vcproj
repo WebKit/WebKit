@@ -1784,6 +1784,10 @@
 				Name="win"
 				>
 				<File
+					RelativePath="..\..\platform\win\CursorWin.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\platform\win\IntPointWin.cpp"
 					>
 				</File>
@@ -1796,6 +1800,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\platform\win\ScrollViewWin.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\platform\win\SharedTimerWin.cpp"
 					>
 				</File>
@@ -1805,6 +1813,10 @@
 				</File>
 				<File
 					RelativePath="..\..\platform\win\TemporaryLinkStubs.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\platform\win\WidgetWin.cpp"
 					>
 				</File>
 			</Filter>

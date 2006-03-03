@@ -152,13 +152,11 @@ void KJSProxyImpl::initScriptIfNeeded()
   globalObject->put(m_script->globalExec(), "debug", new TestFunctionImp(), Internal);
 
   QString userAgent = m_frame->userAgent();
-  if (userAgent.find(QString::fromLatin1("Microsoft")) >= 0 ||
-      userAgent.find(QString::fromLatin1("MSIE")) >= 0)
+  if (userAgent.find("Microsoft") >= 0 || userAgent.find("MSIE") >= 0)
     m_script->setCompatMode(Interpreter::IECompat);
   else
     // If we find "Mozilla" but not "(compatible, ...)" we are a real Netscape
-    if (userAgent.find(QString::fromLatin1("Mozilla")) >= 0 &&
-        userAgent.find(QString::fromLatin1("compatible")) == -1)
+    if (userAgent.find("Mozilla") >= 0 && userAgent.find("compatible") == -1)
       m_script->setCompatMode(Interpreter::NetscapeCompat);
 }
 

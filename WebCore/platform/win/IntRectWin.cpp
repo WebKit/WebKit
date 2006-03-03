@@ -30,8 +30,14 @@
 namespace WebCore {
 
 IntRect::IntRect(const RECT& r)
-    : m_location(IntPoint(r.left, r.top)), m_size(IntSize(r.right, r.bottom))
+    : m_location(IntPoint(r.left, r.top)), m_size(IntSize(r.right-r.left, r.bottom-r.top))
 {
+}
+
+IntRect::operator RECT() const
+{
+    RECT rect = {m_location.x(), m_location.y(), m_location.x() + m_size.width(), m_location.y() + m_size.height()};
+    return rect;
 }
 
 }

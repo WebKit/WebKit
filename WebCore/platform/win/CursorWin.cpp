@@ -23,16 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "config.h"
-#import "Cursor.h"
+#include "config.h"
+#include "Cursor.h"
 
 namespace WebCore {
-
-Cursor::Cursor(Image* /*image*/)
-    : m_impl(0)
-{
-    // FIXME: Implement custom cursors.
-}
 
 Cursor::Cursor(const Cursor& other)
     : m_impl(other.m_impl)
@@ -66,12 +60,6 @@ const Cursor& handCursor()
     return c;
 }
 
-const Cursor& moveCursor()
-{
-    static Cursor c; // FIXME
-    return c;
-}
-
 const Cursor& iBeamCursor()
 {
     static Cursor c = LoadCursor(0, IDC_IBEAM);
@@ -92,49 +80,49 @@ const Cursor& helpCursor()
 
 const Cursor& eastResizeCursor()
 {
-    static Cursor c; // FIXME
+    static Cursor c = LoadCursor(0, IDC_HELP);
     return c;
 }
 
 const Cursor& northResizeCursor()
 {
-    static Cursor c; // FIXME
+    static Cursor c = LoadCursor(0, IDC_HELP);
     return c;
 }
 
 const Cursor& northEastResizeCursor()
 {
-    static Cursor c; // FIXME
+    static Cursor c = LoadCursor(0, IDC_SIZENESW);
     return c;
 }
 
 const Cursor& northWestResizeCursor()
 {
-    static Cursor c; // FIXME
+    static Cursor c = LoadCursor(0, IDC_SIZENWSE);
     return c;
 }
 
 const Cursor& southResizeCursor()
 {
-    static Cursor c; // FIXME
+    static Cursor c = LoadCursor(0, IDC_SIZENS);
     return c;
 }
 
 const Cursor& southEastResizeCursor()
 {
-    static Cursor c; // FIXME
+    static Cursor c = LoadCursor(0, IDC_SIZENWSE);
     return c;
 }
 
 const Cursor& southWestResizeCursor()
 {
-    static Cursor c; // FIXME
+    static Cursor c = LoadCursor(0, IDC_SIZENESW);
     return c;
 }
 
 const Cursor& westResizeCursor()
 {
-    static Cursor c; // FIXME
+    static Cursor c = LoadCursor(0, IDC_SIZEWE);
     return c;
 }
 
