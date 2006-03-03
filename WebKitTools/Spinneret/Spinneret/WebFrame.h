@@ -23,37 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebView_H
-#define WebView_H
-
-#include <windows.h>
+namespace WebCore {
+    class Frame;
+    class FrameView;
+}
 
 namespace WebKit {
 
-    class WebFrame;
-    
-    class WebView {
+    class WebView;
+
+    class WebFrame {
     public:
-        static WebView* createWebView(HINSTANCE, HWND parent = 0);
+    WebFrame(char* name, WebView*);
 
-        ~WebView();
+    void loadFilePath(char*);
+    void loadHTMLString(char* html, char* baseURL = 0);
 
-        void drawRect(const PAINTSTRUCT&);
+    void paint();
 
-        void mouseMoved(HWND, WPARAM, LPARAM);
-        void mouseDown(HWND, WPARAM, LPARAM);
-        void mouseUp(HWND, WPARAM, LPARAM);
-        void mouseDoubleClick(HWND, WPARAM, LPARAM);
+    WebCore::Frame* impl();
+    WebCore::FrameView* viewImpl();
 
-        WebFrame* mainFrame();
-
-        HWND windowHandle();
     private:
-        WebView(HWND);
-        
-        class WebViewPrivate;
-        WebViewPrivate* d;
+        class WebFramePrivate;
+        WebFramePrivate *d;
     };
 }
-
-#endif

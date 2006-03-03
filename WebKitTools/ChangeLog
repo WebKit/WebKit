@@ -1,3 +1,38 @@
+2006-03-03  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Add WebFrame class (to hold Frame and FrameView).
+        Add Location bar support to Spinneret.
+
+        * Spinneret/Spinneret/Spinneret.cpp:
+        (resizeSubViews):
+        (_tWinMain):
+        (WndProc):
+        (MyEditProc):
+        * Spinneret/Spinneret/Spinneret.vcproj:
+        * Spinneret/Spinneret/WebFrame.cpp: Added.
+        (WebKit::WebFrame::WebFramePrivate::WebFramePrivate):
+        (WebKit::WebFrame::WebFramePrivate::~WebFramePrivate):
+        (WebKit::WebFrame::WebFrame):
+        (WebKit::WebFrame::loadFilePath):
+        (WebKit::WebFrame::loadHTMLString):
+        (WebKit::WebFrame::paint):
+        (WebKit::WebFrame::impl):
+        (WebKit::WebFrame::viewImpl):
+        * Spinneret/Spinneret/WebFrame.h: Added.
+        * Spinneret/Spinneret/WebView.cpp:
+        (WebKit::WebView::WebViewPrivate::~WebViewPrivate):
+        (WebKit::WebView::WebView):
+        (WebKit::WebView::windowHandle):
+        (WebKit::WebView::mainFrame):
+        (WebKit::WebView::mouseMoved):
+        (WebKit::WebView::mouseDown):
+        (WebKit::WebView::mouseUp):
+        (WebKit::WebView::mouseDoubleClick):
+        (WebKit::WebViewWndProc):
+        * Spinneret/Spinneret/WebView.h:
+
 2006-03-02  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by ggaren.

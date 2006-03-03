@@ -47,7 +47,7 @@
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
 				WarningLevel="1"
-				Detect64BitPortabilityProblems="true"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\WebCore.lib&quot;&#x0D;&#x0A;&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\JavaScriptCore.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\iconv\lib\iconv.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\libxml\lib\libxml2.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\libxslt\lib\libxslt.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\icu\lib\icuuc.lib&quot;"
+				AdditionalOptions="&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\WebCore.lib&quot;&#x0D;&#x0A;&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\JavaScriptCore.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\iconv\lib\iconv.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\libxml\lib\libxml2.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\libxslt\lib\libxslt.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\icu\lib\icuuc.lib&quot;&#x0D;&#x0A;comctl32.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -122,7 +122,7 @@
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
 				WarningLevel="1"
-				Detect64BitPortabilityProblems="true"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -136,7 +136,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\WebCore.lib&quot;&#x0D;&#x0A;&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\JavaScriptCore.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\iconv\lib\iconv.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\libxml\lib\libxml2.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\libxslt\lib\libxslt.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\icu\lib\icuuc.lib&quot;"
+				AdditionalOptions="&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\WebCore.lib&quot;&#x0D;&#x0A;&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\JavaScriptCore.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\iconv\lib\iconv.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\libxml\lib\libxml2.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\libxslt\lib\libxslt.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\icu\lib\icuuc.lib&quot;&#x0D;&#x0A;comctl32.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -203,6 +203,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\WebFrame.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\WebView.cpp"
 				>
 			</File>
@@ -222,6 +226,10 @@
 			</File>
 			<File
 				RelativePath=".\stdafx.h"
+				>
+			</File>
+			<File
+				RelativePath=".\WebFrame.h"
 				>
 			</File>
 			<File

@@ -26,14 +26,20 @@
 #include "stdafx.h"
 #include "Spinneret.h"
 #include "WebView.h"
+#include "WebFrame.h"
+
+#include <commctrl.h>
 
 #define MAX_LOADSTRING 100
+#define URLBAR_HEIGHT  24
 
 using namespace WebKit;
 
 // Global Variables:
 HINSTANCE hInst;                                // current instance
 HWND hMainWnd;
+HWND hURLBarWnd;
+long DefEditProc;
 WebView* gWebView = 0;
 TCHAR szTitle[MAX_LOADSTRING];                    // The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
@@ -43,6 +49,15 @@ ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
+LRESULT CALLBACK    MyEditProc(HWND, UINT, WPARAM, LPARAM);
+
+static void resizeSubViews()
+{
+    RECT rcClient;
+    GetClientRect(hMainWnd, &rcClient);
+    MoveWindow(hURLBarWnd, 0, 0, rcClient.right, URLBAR_HEIGHT, TRUE);
+    MoveWindow(gWebView->windowHandle(), 0, URLBAR_HEIGHT, rcClient.right, rcClient.bottom - URLBAR_HEIGHT, TRUE);
+}
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
@@ -56,6 +71,12 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     MSG msg;
     HACCEL hAccelTable;
 
+    INITCOMMONCONTROLSEX InitCtrlEx;
+
+    InitCtrlEx.dwSize = sizeof(INITCOMMONCONTROLSEX);
+    InitCtrlEx.dwICC  = ICC_STANDARD_CLASSES;
+    InitCommonControlsEx(&InitCtrlEx);
+
     // Initialize global strings
     LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadString(hInstance, IDC_SPINNERET, szWindowClass, MAX_LOADSTRING);
@@ -65,12 +86,18 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     if (!InitInstance (hInstance, nCmdShow))
         return FALSE;
 
+    hURLBarWnd = CreateWindow(L"EDIT", 0,
+                        WS_CHILD | WS_VISIBLE  | ES_LEFT | ES_AUTOVSCROLL, 
+                        0, 0, 0, 0,
+                        hMainWnd,
+                        0,
+                        hInstance, 0);
+
+    DefEditProc = GetWindowLong(hURLBarWnd, GWL_WNDPROC);
+    SetWindowLong(hURLBarWnd, GWL_WNDPROC,(long)MyEditProc);
+
     gWebView = WebView::createWebView(hInstance, hMainWnd);
-    RECT rcClient;
-    GetClientRect(hMainWnd, &rcClient); 
-    MoveWindow(gWebView->windowHandle(), 
-                   0, 0, rcClient.right, rcClient.bottom, 
-                   TRUE);
+    resizeSubViews();
     ShowWindow(gWebView->windowHandle(), nCmdShow);
     UpdateWindow(gWebView->windowHandle());
 
@@ -89,21 +116,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     return (int) msg.wParam;
 }
 
-
-
-//
-//  FUNCTION: MyRegisterClass()
-//
-//  PURPOSE: Registers the window class.
-//
-//  COMMENTS:
-//
-//    This function and its usage are only necessary if you want this code
-//    to be compatible with Win32 systems prior to the 'RegisterClassEx'
-//    function that was added to Windows 95. It is important to call this function
-//    so that the application will get 'well formed' small icons associated
-//    with it.
-//
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
     WNDCLASSEX wcex;
@@ -176,22 +188,47 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_SIZE:
         if (!gWebView)
             break;
-        // Get the dimensions of the main window's client 
-        // area, and enumerate the child windows. Pass the 
-        // dimensions to the child windows during enumeration. 
-
-        RECT rcClient;
-        GetClientRect(hWnd, &rcClient); 
-        MoveWindow(gWebView->windowHandle(), 
-                   0, 0, rcClient.right, rcClient.bottom, 
-                   TRUE);
-        ShowWindow(gWebView->windowHandle(), SW_SHOW); 
+        resizeSubViews();
         break; 
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }
     return 0;
 }
+
+
+#define MAX_URL_LENGTH  1024
+
+LRESULT CALLBACK MyEditProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    switch (message) {
+        case WM_CHAR:
+            if( wParam == 13 ) { // Enter Key
+                wchar_t strPtr[MAX_URL_LENGTH];
+                char    cstrPtr[MAX_URL_LENGTH];
+                *((LPWORD)strPtr) = MAX_URL_LENGTH; 
+                int strLen = SendMessage(hDlg, EM_GETLINE, 0, (LPARAM)strPtr);
+
+                MessageBox(hMainWnd, strPtr, L"Foo", MB_OK);
+
+                int x;
+                for(x = 0; x < strLen; x++)
+                    cstrPtr[x] = strPtr[x];
+                cstrPtr[x] = 0;
+    
+                gWebView->mainFrame()->loadFilePath(cstrPtr);            
+
+                return 0;
+            } else
+                return (LRESULT)CallWindowProc((WNDPROC)DefEditProc,hDlg,message,wParam,lParam);
+            break;
+        default:
+             return (LRESULT)CallWindowProc((WNDPROC)DefEditProc,hDlg,message,wParam,lParam);
+        break;
+    }
+    return 0;
+}
+
 
 // Message handler for about box.
 INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
