@@ -1,3 +1,11 @@
+2006-03-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Eric.
+
+        - win32 build fix.
+
+        * platform/win/MouseEventWin.cpp:
+
 2006-03-02  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by eric

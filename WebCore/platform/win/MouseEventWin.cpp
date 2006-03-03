@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-#define HIGH_BIT_MASK_SHORT 0x8000;
+#define HIGH_BIT_MASK_SHORT 0x8000
 
 MouseEvent::MouseEvent(HWND hWnd, WPARAM wParam, LPARAM lParam, int clkCount)
     : m_position(LOWORD(lParam), HIWORD(lParam))
