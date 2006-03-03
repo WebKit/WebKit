@@ -1,3 +1,26 @@
+2006-03-02  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed by Darin, landed by Beth.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=3230
+        CSS1: Words with inline elements get extra capital letters
+
+        Update existing tests for new results and add new test
+
+        * css1/text_properties/text-transCapitalize-expected.txt:
+        * css1/text_properties/text_transform-expected.checksum:
+        * css1/text_properties/text_transform-expected.png:
+        * css1/text_properties/text_transform-expected.txt:
+        * css2.1/t1605-c545-txttrans-00-b-ag-expected.checksum:
+        * css2.1/t1605-c545-txttrans-00-b-ag-expected.png:
+        * css2.1/t1605-c545-txttrans-00-b-ag-expected.txt:
+        * fast/css/resources: Added.
+        * fast/css/resources/greenbox.png: Added.
+        * fast/css/textCapitalizeEdgeCases-expected.checksum: Added.
+        * fast/css/textCapitalizeEdgeCases-expected.png: Added.
+        * fast/css/textCapitalizeEdgeCases-expected.txt: Added.
+        * fast/css/textCapitalizeEdgeCases.html: Added.
+
 2006-03-02  Justin Garcia  <justin.garcia@apple.com>
         
         Patch reviewed by sullivan

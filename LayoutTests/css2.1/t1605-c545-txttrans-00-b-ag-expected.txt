@@ -78,7 +78,7 @@ layer at (0,0) size 800x190
             RenderText {TEXT} at (230,0) size 20x10
               text run at (230,0) width 20: "Xx"
           RenderText {TEXT} at (250,0) size 40x10
-            text run at (250,0) width 40: "Xxx "
+            text run at (250,0) width 40: "xxx "
           RenderInline {SPAN} at (0,0) size 30x10
             RenderText {TEXT} at (290,0) size 30x10
               text run at (290,0) width 30: "xxx"
@@ -88,7 +88,7 @@ layer at (0,0) size 800x190
             RenderText {TEXT} at (230,10) size 20x10
               text run at (230,10) width 20: "Pp"
           RenderText {TEXT} at (250,10) size 40x10
-            text run at (250,10) width 40: "Ppp "
+            text run at (250,10) width 40: "ppp "
           RenderInline {SPAN} at (0,0) size 30x10
             RenderText {TEXT} at (290,10) size 30x10
               text run at (290,10) width 30: "ppp"
@@ -98,7 +98,7 @@ layer at (0,0) size 800x190
             RenderText {TEXT} at (230,20) size 20x10
               text run at (230,20) width 20: "\x{C9}\x{E9}"
           RenderText {TEXT} at (250,20) size 40x10
-            text run at (250,20) width 40: "\x{C9}\x{E9}\x{E9} "
+            text run at (250,20) width 40: "\x{E9}\x{E9}\x{E9} "
           RenderInline {SPAN} at (0,0) size 30x10
             RenderText {TEXT} at (290,20) size 30x10
               text run at (290,20) width 30: "\x{E9}\x{E9}\x{E9}"

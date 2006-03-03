@@ -414,21 +414,21 @@ layer at (0,0) size 785x1186
               RenderInline {SPAN} at (0,0) size 34x18
                 RenderText {TEXT} at (2,38) size 34x18
                   text run at (2,38) width 34: "Earth"
-              RenderText {TEXT} at (36,38) size 80x18
-                text run at (36,38) width 80: "Quake Earth"
-              RenderInline {SPAN} at (0,0) size 40x18
-                RenderText {TEXT} at (116,38) size 40x18
-                  text run at (116,38) width 40: "Worm"
-              RenderText {TEXT} at (156,38) size 4x18
-                text run at (156,38) width 4: " "
+              RenderText {TEXT} at (36,38) size 76x18
+                text run at (36,38) width 76: "quake Earth"
+              RenderInline {SPAN} at (0,0) size 37x18
+                RenderText {TEXT} at (112,38) size 37x18
+                  text run at (112,38) width 37: "worm"
+              RenderText {TEXT} at (149,38) size 4x18
+                text run at (149,38) width 4: " "
               RenderInline {SPAN} at (0,0) size 46x18
-                RenderText {TEXT} at (160,38) size 46x18
-                  text run at (160,38) width 46: "Cheese"
-              RenderInline {SPAN} at (0,0) size 44x18
-                RenderText {TEXT} at (206,38) size 44x18
-                  text run at (206,38) width 44: "Burger"
-              RenderText {TEXT} at (250,38) size 126x18
-                text run at (250,38) width 126: " [House] ~Six -Big-"
+                RenderText {TEXT} at (153,38) size 46x18
+                  text run at (153,38) width 46: "Cheese"
+              RenderInline {SPAN} at (0,0) size 41x18
+                RenderText {TEXT} at (199,38) size 41x18
+                  text run at (199,38) width 41: "burger"
+              RenderText {TEXT} at (240,38) size 126x18
+                text run at (240,38) width 126: " [House] ~Six -Big-"
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TH} at (2,170) size 53x22 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=4 c=0 rs=1 cs=1]
               RenderText {TEXT} at (20,2) size 13x18
@@ -443,9 +443,9 @@ layer at (0,0) size 785x1186
             RenderTableCell {TD} at (57,194) size 710x26 [border: (1px solid #EEEEEE)] [r=5 c=1 rs=1 cs=1]
               RenderText {TEXT} at (2,6) size 223x18
                 text run at (2,6) width 223: "Quelqu'un L\x{2019}amour T'appelles\x{2011}tu 3"
-              RenderInline {SUP} at (0,0) size 24x15
-                RenderText {TEXT} at (225,2) size 24x15
-                  text run at (225,2) width 24: "Eme"
+              RenderInline {SUP} at (0,0) size 22x15
+                RenderText {TEXT} at (225,2) size 22x15
+                  text run at (225,2) width 22: "eme"
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TH} at (2,222) size 53x22 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=6 c=0 rs=1 cs=1]
               RenderText {TEXT} at (17,2) size 18x18
