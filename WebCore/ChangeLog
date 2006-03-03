@@ -1,5 +1,21 @@
 2006-03-02  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Eric.
+        
+        - move logic to kick off load from KWQLoader function to a TransferJob method
+
+        * kwq/KWQKJobClasses.h:
+        * kwq/KWQKJobClasses.mm:
+        (WebCore::TransferJob::start):
+        * kwq/KWQLoader.h:
+        * kwq/KWQLoader.mm:
+        * loader/loader.cpp:
+        (WebCore::Loader::servePendingRequests):
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+
+2006-03-02  Maciej Stachowiak  <mjs@apple.com>
+
         Rubber stamped by Eric.
 
         - remove unused loader parameter to KWQServeRequest.

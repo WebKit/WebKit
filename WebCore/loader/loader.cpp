@@ -109,7 +109,7 @@ void Loader::servePendingRequests()
          job->addMetaData("cross-domain", "true");
   }
 
-  if (KWQServeRequest(req->m_docLoader, job))
+  if (job->start(req->m_docLoader))
     m_requestsLoading.add(job, req);
 }
 

@@ -44,12 +44,15 @@ namespace WebCore {
 
 class FormData;
 class TransferJobPrivate;
+class DocLoader;
 
 class TransferJob {
 public:
     TransferJob(TransferJobClient*, const String& method, const KURL&);
     TransferJob(TransferJobClient*, const String& method, const KURL&, const FormData& postData);
     ~TransferJob();
+
+    bool start(DocLoader*);
 
     int error() const;
     void setError(int);

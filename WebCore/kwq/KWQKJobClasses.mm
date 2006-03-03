@@ -33,6 +33,11 @@
 #import "Logging.h"
 #import "KWQResourceLoader.h"
 #import "formdata.h"
+#import "MacFrame.h"
+#import "WebCoreFrameBridge.h"
+#import "DocLoader.h"
+#import "KWQFormData.h"
+#import "KWQLoader.h"
 
 namespace WebCore {
 
@@ -110,6 +115,45 @@ TransferJob::~TransferJob()
     [d->loader jobWillBeDeallocated];
     KWQ_UNBLOCK_EXCEPTIONS;
     delete d;
+}
+
+
+bool TransferJob::start(DocLoader* docLoader)
+{
+    MacFrame *frame = Mac(docLoader->frame());
+    
+    if (!frame) {
+        delete this;
+        return false;
+    }
+    
+    WebCoreFrameBridge* bridge = frame->bridge();
+
+    frame->didTellBridgeAboutLoad(url().url());
+
+    KWQ_BLOCK_EXCEPTIONS;
+    KWQResourceLoader* resourceLoader = [[KWQResourceLoader alloc] initWithJob:this];
+
+    id <WebCoreResourceHandle> handle;
+
+    NSDictionary* headerDict = nil;
+    QString headerString = queryMetaData("customHTTPHeader");
+
+    if (!headerString.isEmpty())
+        headerDict = [NSDictionary _webcore_dictionaryWithHeaderString:headerString.getNSString()];
+
+    if (postData().count() > 0) {
+        handle = [bridge startLoadingResource:resourceLoader withMethod:method() URL:url().getNSURL() customHeaders:headerDict
+            postData:arrayFromFormData(postData())];
+    } else {
+        handle = [bridge startLoadingResource:resourceLoader withMethod:method() URL:url().getNSURL() customHeaders:headerDict];
+    }
+    [resourceLoader setHandle:handle];
+    [resourceLoader release];
+    return handle != nil;
+    KWQ_UNBLOCK_EXCEPTIONS;
+
+    return true;
 }
 
 bool TransferJob::isErrorPage() const

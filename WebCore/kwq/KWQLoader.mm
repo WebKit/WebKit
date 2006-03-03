@@ -46,10 +46,6 @@
 
 using namespace WebCore;
 
-@interface NSDictionary (WebCore_Extras)
-+ (id)_webcore_dictionaryWithHeaderString:(NSString *)string;
-@end
-
 @implementation NSDictionary (WebCore_Extras)
 
 + (id)_webcore_dictionaryWithHeaderString:(NSString *)string
@@ -100,45 +96,6 @@ using namespace WebCore;
 }
 
 @end
-
-bool KWQServeRequest(DocLoader *docLoader, TransferJob *job)
-{
-    MacFrame *frame = static_cast<MacFrame *>(docLoader->frame());
-    
-    if (!frame) {
-        delete job;
-        return false;
-    }
-    
-    WebCoreFrameBridge *bridge = frame->bridge();
-
-    frame->didTellBridgeAboutLoad(job->url().url());
-
-    KWQ_BLOCK_EXCEPTIONS;
-    KWQResourceLoader *resourceLoader = [[KWQResourceLoader alloc] initWithJob:job];
-
-    id <WebCoreResourceHandle> handle;
-
-    NSDictionary *headerDict = nil;
-    QString headerString = job->queryMetaData("customHTTPHeader");
-
-    if (!headerString.isEmpty()) {
-        headerDict = [NSDictionary _webcore_dictionaryWithHeaderString:headerString.getNSString()];
-    }
-
-    if (job->postData().count() > 0) {
-        handle = [bridge startLoadingResource:resourceLoader withMethod:job->method() URL:job->url().getNSURL() customHeaders:headerDict
-            postData:arrayFromFormData(job->postData())];
-    } else {
-        handle = [bridge startLoadingResource:resourceLoader withMethod:job->method() URL:job->url().getNSURL() customHeaders:headerDict];
-    }
-    [resourceLoader setHandle:handle];
-    [resourceLoader release];
-    return handle != nil;
-    KWQ_UNBLOCK_EXCEPTIONS;
-
-    return true;
-}
 
 NSString *KWQHeaderStringFromDictionary(NSDictionary *headers, int statusCode)
 {

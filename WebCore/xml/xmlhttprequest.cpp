@@ -296,7 +296,7 @@ void XMLHttpRequest::send(const DOMString& _body)
   
   addToRequestsByDocument();
 
-  KWQServeRequest(doc->docLoader(), job);
+  job->start(doc->docLoader());
 }
 
 void XMLHttpRequest::abort()
