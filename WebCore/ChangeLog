@@ -1,5 +1,19 @@
 2006-03-02  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Eric.
+
+        - remove one of the versions of KWQServeRequest.
+
+        * kwq/KWQLoader.h:
+        * kwq/KWQLoader.mm:
+        * loader/loader.cpp:
+        (WebCore::Loader::servePendingRequests):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (Widget::isEnabled):
+        (KWQServeRequest):
+
+2006-03-02  Maciej Stachowiak  <mjs@apple.com>
+
         Rubber stamped by Eric.
 
         - win32 build fix.

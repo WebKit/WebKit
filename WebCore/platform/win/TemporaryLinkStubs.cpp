@@ -59,7 +59,6 @@ int GraphicsContext::misspellingLineThickness() const { notImplemented(); return
 void QComboBox::setFrameGeometry(IntRect const&) { notImplemented(); }
 int QLineEdit::maxLength() const { notImplemented(); return 0; }
 bool Widget::isEnabled() const { notImplemented(); return 0; }
-bool KWQServeRequest(Loader*,DocLoader*,WebCore::TransferJob*) { notImplemented(); return 0; }
 void QTextEdit::setText(String const&) { notImplemented(); }
 void Widget::paint(GraphicsContext*,IntRect const&) { notImplemented(); }
 void GraphicsContext::addRoundedRectClip(IntRect const&,IntSize const&,IntSize const&,IntSize const&,IntSize const&) { notImplemented(); }
@@ -347,7 +346,7 @@ bool FrameWin::lastEventIsMouseUp() const { return false; }
 
 BrowserExtensionWin::BrowserExtensionWin(WebCore::Frame*) { }
 
-bool KWQServeRequest(Loader*,Request*, TransferJob*) { return false; } // false may not be "right" as a stub.
+bool KWQServeRequest(Loader*, DocLoader*, WebCore::TransferJob*) { return false; } // false may not be "right" as a stub.
 bool KWQCheckIfReloading(WebCore::DocLoader*) { return false; }
 void KWQCheckCacheObjectStatus(DocLoader*, CachedObject*) { }
 

@@ -46,11 +46,6 @@
 
 using namespace WebCore;
 
-bool KWQServeRequest(Loader* loader, Request* request, TransferJob* job)
-{    
-    return KWQServeRequest(loader, request->m_docLoader, job);
-}
-
 @interface NSDictionary (WebCore_Extras)
 + (id)_webcore_dictionaryWithHeaderString:(NSString *)string;
 @end
