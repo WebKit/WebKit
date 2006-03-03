@@ -1,5 +1,19 @@
 2006-03-02  Maciej Stachowiak  <mjs@apple.com>
 
+        Rubber stamped by Eric.
+
+        - remove unused loader parameter to KWQServeRequest.
+
+        * kwq/KWQLoader.h:
+        * kwq/KWQLoader.mm:
+        (KWQServeRequest):
+        * loader/loader.cpp:
+        (WebCore::Loader::servePendingRequests):
+        * xml/xmlhttprequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+
+2006-03-02  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Eric.
 
         - remove one of the versions of KWQServeRequest.

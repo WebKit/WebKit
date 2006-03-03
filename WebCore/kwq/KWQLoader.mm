@@ -101,7 +101,7 @@ using namespace WebCore;
 
 @end
 
-bool KWQServeRequest(Loader *loader, DocLoader *docLoader, TransferJob *job)
+bool KWQServeRequest(DocLoader *docLoader, TransferJob *job)
 {
     MacFrame *frame = static_cast<MacFrame *>(docLoader->frame());
     
