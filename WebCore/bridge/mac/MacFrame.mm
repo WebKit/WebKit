@@ -43,7 +43,7 @@
 #import "KWQEditCommand.h"
 #import "KWQExceptions.h"
 #import "KWQFormData.h"
-#import "KWQKJobClasses.h"
+#import "TransferJob.h"
 #import "Logging.h"
 #import "KWQPageState.h"
 #import "KWQRegExp.h"

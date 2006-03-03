@@ -18,6 +18,11 @@
 		651B4D8509AC83370029F1EF /* QStringList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651B4D8309AC83370029F1EF /* QStringList.cpp */; };
 		651B4D8609AC83370029F1EF /* QStringList.h in Headers */ = {isa = PBXBuildFile; fileRef = 651B4D8409AC83370029F1EF /* QStringList.h */; };
 		651B4D8F09AC859F0029F1EF /* QStringListMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 651B4D8E09AC859F0029F1EF /* QStringListMac.mm */; };
+		6545F67009B82FED0013006F /* TransferJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6545F66C09B82FED0013006F /* TransferJob.cpp */; };
+		6545F67109B82FED0013006F /* TransferJob.h in Headers */ = {isa = PBXBuildFile; fileRef = 6545F66D09B82FED0013006F /* TransferJob.h */; };
+		6545F67209B82FED0013006F /* TransferJobClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 6545F66E09B82FED0013006F /* TransferJobClient.h */; };
+		6545F67309B82FED0013006F /* TransferJobInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 6545F66F09B82FED0013006F /* TransferJobInternal.h */; };
+		6545F67609B830180013006F /* TransferJobMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6545F67509B830180013006F /* TransferJobMac.mm */; };
 		654EC611097778F500DAB52C /* WebCoreFrameBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 654EC60F097778F500DAB52C /* WebCoreFrameBridge.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		654EC612097778F500DAB52C /* WebCoreFrameBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 654EC610097778F500DAB52C /* WebCoreFrameBridge.mm */; };
 		6550B69D099DF0270090D781 /* CDATASectionImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6550B693099DF0270090D781 /* CDATASectionImpl.cpp */; };
@@ -182,7 +187,6 @@
 		935C477109AC4D7300A6AAB4 /* MouseEventMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 935C476F09AC4D7300A6AAB4 /* MouseEventMac.mm */; };
 		935C477309AC4D7700A6AAB4 /* WheelEventMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 935C477209AC4D7700A6AAB4 /* WheelEventMac.mm */; };
 		935C477509AC4D8E00A6AAB4 /* GapRects.h in Headers */ = {isa = PBXBuildFile; fileRef = 935C477409AC4D8D00A6AAB4 /* GapRects.h */; };
-		935EB36209B2D7DB00F3AF5B /* TransferJobClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 935EB36109B2D7DB00F3AF5B /* TransferJobClient.h */; };
 		936B424E09A436CD00BAA820 /* KSVGCSSParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F6F6089701F100BA5114 /* KSVGCSSParser.cpp */; };
 		937A36A7097E2E3200E4EE2F /* UserAgentStyleSheets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 937A36A6097E2E3200E4EE2F /* UserAgentStyleSheets.cpp */; };
 		937D809A09A063330092A01E /* PageMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 937D809909A063330092A01E /* PageMac.h */; };
@@ -249,7 +253,6 @@
 		93F1994F08245E59001E9ABC /* KWQKHTMLSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = F587863A02DE3A1401EA4122 /* KWQKHTMLSettings.h */; };
 		93F1995008245E59001E9ABC /* KWQKIOGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = F587864902DE3A9A01EA4122 /* KWQKIOGlobal.h */; };
 		93F1995408245E59001E9ABC /* KWQKJavaAppletWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = F587864502DE3A7701EA4122 /* KWQKJavaAppletWidget.h */; };
-		93F1995608245E59001E9ABC /* KWQKJobClasses.h in Headers */ = {isa = PBXBuildFile; fileRef = F587864B02DE3A9A01EA4122 /* KWQKJobClasses.h */; };
 		93F1995B08245E59001E9ABC /* KWQKLocale.h in Headers */ = {isa = PBXBuildFile; fileRef = F58785FA02DE382001EA4122 /* KWQKLocale.h */; };
 		93F1996308245E59001E9ABC /* KWQKSSLKeyGen.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866202DE3B1101EA4122 /* KWQKSSLKeyGen.h */; };
 		93F1996B08245E59001E9ABC /* KWQLineEdit.h in Headers */ = {isa = PBXBuildFile; fileRef = F587869802DE3B8601EA4122 /* KWQLineEdit.h */; };
@@ -334,7 +337,6 @@
 		93F19A2508245E59001E9ABC /* KWQKCookieJar.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784EF02DE375901EA4122 /* KWQKCookieJar.mm */; };
 		93F19A2608245E59001E9ABC /* CursorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784F002DE375901EA4122 /* CursorMac.mm */; };
 		93F19A2E08245E59001E9ABC /* KWQKJavaAppletWidget.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784FF02DE375901EA4122 /* KWQKJavaAppletWidget.mm */; };
-		93F19A3008245E59001E9ABC /* KWQKJobClasses.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587850102DE375901EA4122 /* KWQKJobClasses.mm */; };
 		93F19A3108245E59001E9ABC /* KWQLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587850302DE375901EA4122 /* KWQLoader.mm */; };
 		93F19A3208245E59001E9ABC /* KWQKLocale.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587850402DE375901EA4122 /* KWQKLocale.mm */; };
 		93F19A3A08245E59001E9ABC /* KWQLineEdit.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587851202DE375901EA4122 /* KWQLineEdit.mm */; };
@@ -1129,6 +1131,11 @@
 		651B4D8309AC83370029F1EF /* QStringList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = QStringList.cpp; path = platform/QStringList.cpp; sourceTree = "<group>"; };
 		651B4D8409AC83370029F1EF /* QStringList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = QStringList.h; path = platform/QStringList.h; sourceTree = "<group>"; };
 		651B4D8E09AC859F0029F1EF /* QStringListMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = QStringListMac.mm; sourceTree = "<group>"; };
+		6545F66C09B82FED0013006F /* TransferJob.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = TransferJob.cpp; path = platform/TransferJob.cpp; sourceTree = "<group>"; };
+		6545F66D09B82FED0013006F /* TransferJob.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = TransferJob.h; path = platform/TransferJob.h; sourceTree = "<group>"; };
+		6545F66E09B82FED0013006F /* TransferJobClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = TransferJobClient.h; path = platform/TransferJobClient.h; sourceTree = "<group>"; };
+		6545F66F09B82FED0013006F /* TransferJobInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = TransferJobInternal.h; path = platform/TransferJobInternal.h; sourceTree = "<group>"; };
+		6545F67509B830180013006F /* TransferJobMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = TransferJobMac.mm; sourceTree = "<group>"; };
 		654EC60F097778F500DAB52C /* WebCoreFrameBridge.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreFrameBridge.h; sourceTree = "<group>"; };
 		654EC610097778F500DAB52C /* WebCoreFrameBridge.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreFrameBridge.mm; sourceTree = "<group>"; };
 		6550B693099DF0270090D781 /* CDATASectionImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CDATASectionImpl.cpp; sourceTree = "<group>"; };
@@ -1314,7 +1321,6 @@
 		935C476F09AC4D7300A6AAB4 /* MouseEventMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MouseEventMac.mm; sourceTree = "<group>"; };
 		935C477209AC4D7700A6AAB4 /* WheelEventMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WheelEventMac.mm; sourceTree = "<group>"; };
 		935C477409AC4D8D00A6AAB4 /* GapRects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GapRects.h; sourceTree = "<group>"; };
-		935EB36109B2D7DB00F3AF5B /* TransferJobClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransferJobClient.h; sourceTree = "<group>"; };
 		937A36A6097E2E3200E4EE2F /* UserAgentStyleSheets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserAgentStyleSheets.cpp; sourceTree = "<group>"; };
 		937D809909A063330092A01E /* PageMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageMac.h; sourceTree = "<group>"; };
 		9380F47109A11AB4001FDB34 /* Widget.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Widget.cpp; path = platform/Widget.cpp; sourceTree = "<group>"; };
@@ -2216,7 +2222,6 @@
 		F58784EF02DE375901EA4122 /* KWQKCookieJar.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKCookieJar.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58784F002DE375901EA4122 /* CursorMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CursorMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58784FF02DE375901EA4122 /* KWQKJavaAppletWidget.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKJavaAppletWidget.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587850102DE375901EA4122 /* KWQKJobClasses.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKJobClasses.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587850302DE375901EA4122 /* KWQLoader.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQLoader.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587850402DE375901EA4122 /* KWQKLocale.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKLocale.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587851202DE375901EA4122 /* KWQLineEdit.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQLineEdit.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2254,7 +2259,6 @@
 		F587863A02DE3A1401EA4122 /* KWQKHTMLSettings.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKHTMLSettings.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587864502DE3A7701EA4122 /* KWQKJavaAppletWidget.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKJavaAppletWidget.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587864902DE3A9A01EA4122 /* KWQKIOGlobal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKIOGlobal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587864B02DE3A9A01EA4122 /* KWQKJobClasses.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKJobClasses.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587866202DE3B1101EA4122 /* KWQKSSLKeyGen.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKSSLKeyGen.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587868002DE3B8601EA4122 /* KWQCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQCollection.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587868202DE3B8601EA4122 /* KWQComboBox.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQComboBox.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2379,6 +2383,7 @@
 		6582A14809999D6C00BEEB6D /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				6545F67509B830180013006F /* TransferJobMac.mm */,
 				6582A14909999D6C00BEEB6D /* ColorMac.mm */,
 				F58784F002DE375901EA4122 /* CursorMac.mm */,
 				65F5386809B2BFDA00F3DC4A /* ExtraCFEncodings.h */,
@@ -3414,6 +3419,10 @@
 				657BD74C09AFDC54005A2056 /* TextEncoding.h */,
 				93309EA1099EB78C0056E581 /* Timer.cpp */,
 				9305B24C098F1B6B00C28855 /* Timer.h */,
+				6545F66C09B82FED0013006F /* TransferJob.cpp */,
+				6545F66D09B82FED0013006F /* TransferJob.h */,
+				6545F66E09B82FED0013006F /* TransferJobClient.h */,
+				6545F66F09B82FED0013006F /* TransferJobInternal.h */,
 				935C476A09AC4D4F00A6AAB4 /* WheelEvent.h */,
 				9380F47109A11AB4001FDB34 /* Widget.cpp */,
 				9380F47209A11AB4001FDB34 /* Widget.h */,
@@ -3825,11 +3834,8 @@
 			isa = PBXGroup;
 			children = (
 				F587864902DE3A9A01EA4122 /* KWQKIOGlobal.h */,
-				F587864B02DE3A9A01EA4122 /* KWQKJobClasses.h */,
-				F587850102DE375901EA4122 /* KWQKJobClasses.mm */,
 				F587866202DE3B1101EA4122 /* KWQKSSLKeyGen.h */,
 				84B2B24F056BF15F00D2B771 /* KWQKSSLKeyGen.mm */,
-				935EB36109B2D7DB00F3AF5B /* TransferJobClient.h */,
 			);
 			name = kio;
 			sourceTree = "<group>";
@@ -3934,7 +3940,6 @@
 				93F1994F08245E59001E9ABC /* KWQKHTMLSettings.h in Headers */,
 				93F1995008245E59001E9ABC /* KWQKIOGlobal.h in Headers */,
 				93F1995408245E59001E9ABC /* KWQKJavaAppletWidget.h in Headers */,
-				93F1995608245E59001E9ABC /* KWQKJobClasses.h in Headers */,
 				93F1995B08245E59001E9ABC /* KWQKLocale.h in Headers */,
 				93F1996308245E59001E9ABC /* KWQKSSLKeyGen.h in Headers */,
 				93F1996B08245E59001E9ABC /* KWQLineEdit.h in Headers */,
@@ -4407,10 +4412,12 @@
 				BC9B62E409B3DC85006131EB /* KWQFontMetrics.h in Headers */,
 				65F537D909B2B20F00F3DC4A /* CharsetNames.h in Headers */,
 				65F5386909B2BFDA00F3DC4A /* ExtraCFEncodings.h in Headers */,
-				935EB36209B2D7DB00F3AF5B /* TransferJobClient.h in Headers */,
 				A82398A609B3ACDB00B60641 /* PlugInInfoStore.h in Headers */,
 				A8239E0109B3CF8A00B60641 /* Logging.h in Headers */,
 				C6D74AD509AA282E000B0A52 /* ModifySelectionListLevelCommand.h in Headers */,
+				6545F67109B82FED0013006F /* TransferJob.h in Headers */,
+				6545F67209B82FED0013006F /* TransferJobClient.h in Headers */,
+				6545F67309B82FED0013006F /* TransferJobInternal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5053,7 +5060,6 @@
 				93F19A2508245E59001E9ABC /* KWQKCookieJar.mm in Sources */,
 				93F19A2608245E59001E9ABC /* CursorMac.mm in Sources */,
 				93F19A2E08245E59001E9ABC /* KWQKJavaAppletWidget.mm in Sources */,
-				93F19A3008245E59001E9ABC /* KWQKJobClasses.mm in Sources */,
 				93F19A3108245E59001E9ABC /* KWQLoader.mm in Sources */,
 				93F19A3208245E59001E9ABC /* KWQKLocale.mm in Sources */,
 				93F19A3A08245E59001E9ABC /* KWQLineEdit.mm in Sources */,
@@ -5528,6 +5534,8 @@
 				A8239E0009B3CF8A00B60641 /* Logging.cpp in Sources */,
 				C6D74AE409AA290A000B0A52 /* ModifySelectionListLevelCommand.cpp in Sources */,
 				A823A75C09B6E53900B60641 /* GraphicsContext.cpp in Sources */,
+				6545F67009B82FED0013006F /* TransferJob.cpp in Sources */,
+				6545F67609B830180013006F /* TransferJobMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

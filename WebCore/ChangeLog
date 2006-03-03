@@ -2,6 +2,38 @@
 
         Reviewed by Eric.
 
+        - move TransferJob from kwq to platform, separate platform from non-platform bits
+
+        * ForwardingHeaders/kio/job.h: Removed.
+        * ForwardingHeaders/kio/jobclasses.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/MacFrame.mm:
+        * dom/xml_tokenizer.cpp:
+        * khtml/xsl/xslt_processorimpl.cpp:
+        * kwq/KWQKJobClasses.h: Removed.
+        * kwq/KWQKJobClasses.mm: Removed.
+        * kwq/KWQLoader.mm:
+        * kwq/KWQResourceLoader.mm:
+        * kwq/TransferJobClient.h: Removed.
+        * loader/Cache.cpp:
+        * loader/loader.cpp:
+        * page/Frame.cpp:
+        * platform/TransferJob.cpp: Added.
+        (WebCore::TransferJob::TransferJob):
+        (WebCore::TransferJob::queryMetaData):
+        (WebCore::TransferJob::addMetaData):
+        * platform/TransferJob.h: Added.
+        * platform/TransferJobClient.h: Added.
+        * platform/mac/TransferJobMac.mm: Added.
+        (WebCore::TransferJobInternal::~TransferJobInternal):
+        (WebCore::TransferJob::retrieveCharset):
+        (WebCore::TransferJob::cancel):
+        * xml/xmlhttprequest.cpp:
+
+2006-03-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
         - enough link stubs to "display" local copy of WebKit site w/o hitting breakpoint
 
         * platform/win/TemporaryLinkStubs.cpp:
@@ -12,6 +44,7 @@
         (GraphicsContext::drawText):
         (GraphicsContext::drawLineForText):
 
+>>>>>>> .r13111
 2006-03-02  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Eric.

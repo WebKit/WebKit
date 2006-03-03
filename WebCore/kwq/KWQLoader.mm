@@ -33,7 +33,7 @@
 #import "FoundationExtras.h"
 #import "KWQExceptions.h"
 #import "KWQFormData.h"
-#import "KWQKJobClasses.h"
+#import "TransferJob.h"
 #import "Logging.h"
 #import "KWQResourceLoader.h"
 #import "MacFrame.h"

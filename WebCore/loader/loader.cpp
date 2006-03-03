@@ -36,8 +36,8 @@
 #include "KWQLoader.h"
 #include "Request.h"
 #include "html_documentimpl.h"
-#include <kio/job.h>
-#include <kio/jobclasses.h>
+#include "TransferJob.h"
+#include "TransferJob.h"
 #include <kxmlcore/Assertions.h>
 #include <kxmlcore/Vector.h>
 

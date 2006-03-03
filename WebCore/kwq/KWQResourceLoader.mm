@@ -26,7 +26,7 @@
 #include "config.h"
 #import "KWQResourceLoader.h"
 
-#import "KWQKJobClasses.h"
+#import "TransferJob.h"
 #import "KURL.h"
 #import "loader.h"
 #import <kxmlcore/Assertions.h>

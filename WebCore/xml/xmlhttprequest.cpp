@@ -32,7 +32,7 @@
 #include "formdata.h"
 #include "html_documentimpl.h"
 #include "kjs_binding.h"
-#include <kio/job.h>
+#include "TransferJob.h"
 #include <kjs/protect.h>
 #include <qregexp.h>
 #include "TextEncoding.h"

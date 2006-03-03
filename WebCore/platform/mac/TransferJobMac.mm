@@ -24,7 +24,9 @@
  */
 
 #import "config.h"
-#import "KWQKJobClasses.h"
+#import "TransferJob.h"
+
+#import "TransferJobInternal.h"
 
 #import "FoundationExtras.h"
 #import "KURL.h"
@@ -40,72 +42,11 @@
 #import "KWQLoader.h"
 
 namespace WebCore {
-
-// The allocations and releases in TransferJobPrivate are
-// definitely Cocoa-exception-free (either simple Foundation
-// classes or our own KWQResourceLoader which avoides doing work
-// in dealloc.
-
-class TransferJobPrivate
+    
+TransferJobInternal::~TransferJobInternal()
 {
-public:
-    TransferJobPrivate(TransferJobClient* c, const String& method, const KURL& u)
-        : client(c)
-        , status(0)
-        , metaData(KWQRetainNSRelease([[NSMutableDictionary alloc] initWithCapacity:17]))
-	, URL(u)
-	, loader(nil)
-	, method(method)
-	, response(nil)
-        , assembledResponseHeaders(true)
-        , retrievedCharset(true)
-    {
-    }
-
-    TransferJobPrivate(TransferJobClient* c, const String& method, const KURL& u, const FormData& p)
-        : client(c)
-        , status(0)
-        , metaData(KWQRetainNSRelease([[NSMutableDictionary alloc] initWithCapacity:17]))
-	, URL(u)
-	, loader(nil)
-	, method(method)
-	, postData(p)
-	, response(nil)
-	, assembledResponseHeaders(true)
-        , retrievedCharset(true)
-    {
-    }
-
-    ~TransferJobPrivate()
-    {
-	KWQRelease(response);
-        KWQRelease(metaData);
-        KWQRelease(loader);
-    }
-
-    TransferJobClient* client;
-
-    int status;
-    NSMutableDictionary* metaData;
-    KURL URL;
-    KWQResourceLoader* loader;
-    String method;
-    FormData postData;
-
-    NSURLResponse* response;
-    bool assembledResponseHeaders;
-    bool retrievedCharset;
-    QString responseHeaders;
-};
-
-TransferJob::TransferJob(TransferJobClient* client, const String& method, const KURL& url)
-    : d(new TransferJobPrivate(client, method, url))
-{
-}
-
-TransferJob::TransferJob(TransferJobClient* client, const String& method, const KURL& url, const FormData& postData)
-    : d(new TransferJobPrivate(client, method, url, postData))
-{
+    KWQRelease(response);
+    KWQRelease(loader);
 }
 
 TransferJob::~TransferJob()
@@ -116,7 +57,6 @@ TransferJob::~TransferJob()
     KWQ_UNBLOCK_EXCEPTIONS;
     delete d;
 }
-
 
 bool TransferJob::start(DocLoader* docLoader)
 {
@@ -156,27 +96,6 @@ bool TransferJob::start(DocLoader* docLoader)
     return true;
 }
 
-bool TransferJob::isErrorPage() const
-{
-    return d->status != 0;
-}
-
-int TransferJob::error() const
-{
-    return d->status;
-}
-
-void TransferJob::setError(int e)
-{
-    d->status = e;
-}
-
-QString TransferJob::errorText() const
-{
-    LOG(NotYetImplemented, "not yet implemented");
-    return QString::null;
-}
-
 void TransferJob::assembleResponseHeaders() const
 {
     if (!d->assembledResponseHeaders) {
@@ -193,44 +112,10 @@ void TransferJob::retrieveCharset() const
 {
     if (!d->retrievedCharset) {
         NSString *charset = [d->response textEncodingName];
-        if (charset) {
-            [d->metaData setObject:charset forKey:@"charset"];
-        }
+        if (charset)
+            d->metaData.set("charset", charset);
         d->retrievedCharset = true;
     }
-}
-
-QString TransferJob::queryMetaData(const QString &key) const
-{
-    if (key == "HTTP-Headers") {
-	assembleResponseHeaders();
-	return d->responseHeaders;
-    } 
-
-    if (key == "charset") {
-        // this will put it in the regular metadata dictionary
-        retrieveCharset();
-    }
-
-    NSString *value = [d->metaData objectForKey:key.getNSString()]; 
-    return value ? QString::fromNSString(value) : QString::null;
-}
-
-void TransferJob::addMetaData(const QString &key, const QString &value)
-{
-    [d->metaData setObject:value.getNSString() forKey:key.getNSString()];
-}
-
-void TransferJob::addMetaData(const HashMap<String, String>& keysAndValues)
-{
-    HashMap<String, String>::const_iterator end = keysAndValues.end();
-    for (HashMap<String, String>::const_iterator it = keysAndValues.begin(); it != end; ++it)
-        [d->metaData setObject:it->second forKey:it->first];
-}
-
-void TransferJob::kill()
-{
-    delete this;
 }
 
 void TransferJob::setLoader(KWQResourceLoader *loader)
@@ -238,26 +123,6 @@ void TransferJob::setLoader(KWQResourceLoader *loader)
     KWQRetain(loader);
     KWQRelease(d->loader);
     d->loader = loader;
-}
-
-void TransferJob::cancel()
-{
-    [d->loader jobCanceledLoad];
-}
-
-KURL TransferJob::url() const
-{
-    return d->URL;
-}
-
-FormData TransferJob::postData() const
-{
-    return d->postData;
-}
-
-String TransferJob::method() const
-{
-    return d->method;
 }
 
 void TransferJob::receivedResponse(NSURLResponse* response)
@@ -270,9 +135,9 @@ void TransferJob::receivedResponse(NSURLResponse* response)
         d->client->receivedResponse(this, response);
 }
 
-TransferJobClient* TransferJob::client() const
+void TransferJob::cancel()
 {
-    return d->client;
+    [d->loader jobCanceledLoad];
 }
 
-} // namespace KIO
+} // namespace WebCore

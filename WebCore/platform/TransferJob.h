@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JOBCLASSES_H_
-#define JOBCLASSES_H_
+#ifndef TransferJob_H_
+#define TransferJob_H_
 
 #include "PlatformString.h"
 #include "TransferJobClient.h" // for PlatformResponse
@@ -43,7 +43,7 @@ class KURL;
 namespace WebCore {
 
 class FormData;
-class TransferJobPrivate;
+class TransferJobInternal;
 class DocLoader;
 
 class TransferJob {
@@ -58,7 +58,7 @@ public:
     void setError(int);
     QString errorText() const;
     bool isErrorPage() const;
-    QString queryMetaData(const QString& key) const;
+    QString queryMetaData(const QString&) const;
     void addMetaData(const QString& key, const QString& value);
     void addMetaData(const HashMap<String, String>&);
     void kill();
@@ -81,9 +81,9 @@ private:
     void assembleResponseHeaders() const;
     void retrieveCharset() const;
 
-    TransferJobPrivate* d;
+    TransferJobInternal* d;
 };
 
 }
 
-#endif
+#endif // TransferJob_H_

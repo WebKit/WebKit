@@ -38,7 +38,7 @@
 #include "Frame.h"
 #include "KWQLoader.h"
 
-#include <kio/job.h>
+#include "TransferJob.h"
 
 #include <libxslt/xsltutils.h>
 #include <libxslt/documents.h>

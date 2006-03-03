@@ -46,7 +46,7 @@
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>
 
-#include <kio/job.h>
+#include "TransferJob.h"
 
 #if SVG_SUPPORT
 #include "SVGNames.h"

@@ -77,7 +77,7 @@
 #include "xmlhttprequest.h"
 #include <assert.h>
 #include <kio/global.h>
-#include <kio/job.h>
+#include "TransferJob.h"
 #include <klocale.h>
 #include <kxmlcore/Assertions.h>
 #include <qptrlist.h>

@@ -35,8 +35,8 @@
 #include "DocLoader.h"
 #include "DocumentImpl.h"
 #include "loader.h"
-#include <kio/job.h>
-#include <kio/jobclasses.h>
+#include "TransferJob.h"
+#include "TransferJob.h"
 #include <kxmlcore/Assertions.h>
 #include "Image.h"
 
