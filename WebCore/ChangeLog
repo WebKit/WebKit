@@ -1,3 +1,17 @@
+2006-03-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - enough link stubs to "display" local copy of WebKit site w/o hitting breakpoint
+
+        * platform/win/TemporaryLinkStubs.cpp:
+        (QLineEdit::setReadOnly):
+        (QTextEdit::setCursorPosition):
+        (QLineEdit::setCursorPosition):
+        (QFontMetrics::width):
+        (GraphicsContext::drawText):
+        (GraphicsContext::drawLineForText):
+
 2006-03-02  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Eric.

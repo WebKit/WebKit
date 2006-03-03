@@ -92,7 +92,6 @@ int QTextEdit::selectionStart() { notImplemented(); return 0; }
 int ScrollView::scrollXOffset() const { notImplemented(); return 0; }
 bool QListBox::isSelected(int) const { notImplemented(); return 0; }
 void QLineEdit::setReadOnly(bool) { notImplemented(); }
-void GraphicsContext::drawLineForText(int,int,int,int) { notImplemented(); }
 QComboBox::~QComboBox() { notImplemented(); }
 Cursor::Cursor(Image*) { notImplemented(); }
 Widget::FocusPolicy QComboBox::focusPolicy() const { notImplemented(); return NoFocus; }
@@ -107,13 +106,11 @@ IntRect Widget::frameGeometry() const { notImplemented(); return IntRect(); }
 void QListBox::setSelected(int,bool) { notImplemented(); }
 void GraphicsContext::addFocusRingRect(int,int,int,int) { notImplemented(); }
 void QTextEdit::setCursorPosition(int,int) { notImplemented(); }
-int QFontMetrics::width(QString const&,int,int,int) const { notImplemented(); return 0; }
 void Widget::setEnabled(bool) { notImplemented(); }
 void QTextEdit::setSelectionEnd(int) { notImplemented(); }
 void QComboBox::populate() { notImplemented(); }
 void QTextEdit::setAlignment(Qt::AlignmentFlags) { notImplemented(); }
 void QLineEdit::setCursorPosition(int) { notImplemented(); }
-void GraphicsContext::drawText(int,int,int,int,int,int,int,QString const&) { notImplemented(); }
 KJavaAppletWidget::KJavaAppletWidget(IntSize const&,Frame*,KXMLCore::HashMap<String,String> const&) { notImplemented(); }
 QListBox::QListBox() { notImplemented(); }
 QString QLineEdit::selectedText() const { notImplemented(); return QString(); }
@@ -330,6 +327,7 @@ float QFontMetrics::floatWidth(QChar const*,int,int,int,int,int,int,int,bool) co
 int QFontMetrics::lineSpacing() const { return 10; }
 int QFontMetrics::ascent() const { return 10; }
 int QFontMetrics::height() const { return 10; }
+int QFontMetrics::width(QString const&,int,int,int) const { return 10; }
 int QFontMetrics::descent() const { return 10; }
 void QFontMetrics::setFontDescription(class WebCore::FontDescription const&) { }
 bool QFontMetrics::isFixedPitch(void)const { return 0; }
@@ -374,9 +372,12 @@ void ScrollView::setStaticBackground(bool) { }
 
 TransferJob::TransferJob(WebCore::TransferJobClient*,const String&,KURL const&) { }
 void TransferJob::addMetaData(QString const&,QString const&) { }
+bool TransferJob::start(class WebCore::DocLoader *){ return false; }
 
 Font const& GraphicsContext::font() const { return localFont; }
 void GraphicsContext::setFont(Font const&) { }
+void GraphicsContext::drawText(int,int,int,int,int,int,int,QString const&) { }
 void GraphicsContext::drawText(int,int,int,int,QChar const*,int,int,int,int,Color const&,TextDirection,bool,int,int,bool) { }
+void GraphicsContext::drawLineForText(int,int,int,int) { }
 QFontMetrics GraphicsContext::fontMetrics() const { return QFontMetrics(); }
 
