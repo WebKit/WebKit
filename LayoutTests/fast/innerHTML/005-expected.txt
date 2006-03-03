@@ -4,7 +4,8 @@ Content:
 <TITLE>html innerHTML test</TITLE>
 </HEAD><BODY>
 <SPAN>Content:</SPAN>
-<PRE id="content">placeholder</PRE><DIV></DIV>
+<PRE id="content">placeholder</PRE>
+<DIV></DIV>
 <SPAN></SPAN>
 <B>test</B>
 <BR>

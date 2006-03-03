@@ -1,3 +1,22 @@
+2006-03-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7480
+          non-HTML elems w/o children in HTML docs get serialized self-closing
+        - update tests for problem where the HTML tokenizer would discard the
+          first newline after </pre>
+
+        * fast/innerHTML/innerHTML-custom-tag.html: Added.
+        * fast/innerHTML/innerHTML-custom-tag-expected.txt: Added.
+
+        * fast/innerHTML/005-expected.txt: Updated. Now matches the original document as expected.
+        Old result had the <div> after a <pre> put on the same line.
+
+        * editing/inserting/4278698-expected.txt: Updated because offset of node changed since we
+        have one more text node (from after a /pre).
+        * fast/text/whitespace/pre-wrap-overflow-selection-expected.txt: Ditto.
+
 2006-03-02  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Darin, landed by Beth.

@@ -47,7 +47,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static inline bool doesHTMLForbidEndTag(const NodeImpl *node);
 static inline bool shouldSelfClose(const NodeImpl *node);
 
 static QString escapeTextForMarkup(const QString &in)
@@ -253,20 +252,19 @@ static inline bool doesHTMLForbidEndTag(const NodeImpl *node)
 }
 
 // Rules of self-closure
-// 1. all html elements in html documents close with >
-// 2. all elements w/ children close with >
-// 3. all non-html elements w/o children close with />
-// 4. all html elements with a FORBIDDEN close tag, self close in XML docs
+// 1. No elements in HTML documents use the self-closing syntax.
+// 2. Elements w/ children never self-close because they use a separate end tag.
+// 3. HTML elements which do not have a "forbidden" end tag will close with a separate end tag.
+// 4. Other elements self-close.
 static inline bool shouldSelfClose(const NodeImpl *node)
 {
-    bool htmlForbidsEndTag = doesHTMLForbidEndTag(node);
-    bool documentIsHTML = node->getDocument()->isHTMLDocument();
-    
-    if (node->isHTMLElement() && (documentIsHTML || !htmlForbidsEndTag))
+    if (node->getDocument()->isHTMLDocument())
         return false;
-    else if (!node->hasChildNodes() || htmlForbidsEndTag)
-        return true;
-    return false;
+    if (node->hasChildNodes())
+        return false;
+    if (node->isHTMLElement() && !doesHTMLForbidEndTag(node))
+        return false;
+    return true;
 }
 
 static QString endMarkup(const NodeImpl *node)

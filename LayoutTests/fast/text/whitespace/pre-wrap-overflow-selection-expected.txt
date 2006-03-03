@@ -37,4 +37,4 @@ layer at (8,109) size 108x83 clip at (12,113) size 100x75
       text run at (4,49) width 80: "within the"
       text run at (4,64) width 32: "box."
 selection start: position 7 of child 0 {TEXT} of child 7 {PRE} of child 1 {BODY} of child 0 {HTML} of document
-selection end:   position 15 of child 0 {TEXT} of child 10 {PRE} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 15 of child 0 {TEXT} of child 11 {PRE} of child 1 {BODY} of child 0 {HTML} of document

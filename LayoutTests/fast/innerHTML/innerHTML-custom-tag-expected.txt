@@ -1,0 +1,18 @@
+Content:
+
+<SPAN>Content:</SPAN>
+<PRE id="content">placeholder</PRE>
+<DIV></DIV>
+<SPAN></SPAN>
+<B>test</B>
+<BR>
+<EMPTYCUSTOMTAG></EMPTYCUSTOMTAG>
+<anotherEmptyCustomTag></anotherEmptyCustomTag>
+<CUSTOMTAG>more test</CUSTOMTAG>
+<DIV id="testArea"></DIV>
+
+
+
+test 
+more test
+

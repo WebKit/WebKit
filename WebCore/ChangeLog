@@ -1,3 +1,20 @@
+2006-03-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7480
+          non-HTML elems w/o children in HTML docs get serialized self-closing
+        - fix problem where the HTML tokenizer would discard the first newline after </pre>
+
+        Test: fast/innerHTML/innerHTML-custom-tag.html
+
+        * editing/markup.cpp: (WebCore::shouldSelfClose): Refined rule so that it doesn't
+        try to do any self-closing tags in HTML documents at all; updated comment.
+
+        * khtml/html/htmltokenizer.cpp: (WebCore::HTMLTokenizer::parseTag): Added a check
+        of beginTag in the <pre> tag case. We were accidentally discarding a newline after
+        a </pre> tag.
+
 2006-03-03  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Eric.
