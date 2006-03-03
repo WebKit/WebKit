@@ -5,6 +5,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -112,21 +113,21 @@ void RenderContainer::addChild(RenderObject *newChild, RenderObject *beforeChild
         case TABLE_ROW_GROUP:
         case TABLE_HEADER_GROUP:
         case TABLE_FOOTER_GROUP:
-            if ( !isTable() )
+            if (!isTable())
                 needsTable = true;
             break;
         case TABLE_ROW:
-            if ( !isTableSection() )
+            if (!isTableSection())
                 needsTable = true;
             break;
         case TABLE_CELL:
-            if ( !isTableRow() )
+            if (!isTableRow())
                 needsTable = true;
             // I'm not 100% sure this is the best way to fix this, but without this
             // change we recurse infinitely when trying to render the CSS2 test page:
             // http://www.bath.ac.uk/%7Epy8ieh/internet/eviltests/htmlbodyheadrendering2.html.
             // See Radar 2925291.
-            if ( isTableCell() && !firstChild() && !newChild->isTableCell() )
+            if (isTableCell() && !firstChild() && !newChild->isTableCell())
                 needsTable = false;
             break;
         case NONE:
@@ -134,11 +135,11 @@ void RenderContainer::addChild(RenderObject *newChild, RenderObject *beforeChild
         }
     }
 
-    if ( needsTable ) {
+    if (needsTable) {
         RenderTable *table;
-        if( !beforeChild )
+        if(!beforeChild)
             beforeChild = lastChild();
-        if( beforeChild && beforeChild->isAnonymous() && beforeChild->isTable() )
+        if(beforeChild && beforeChild->isAnonymous() && beforeChild->isTable())
             table = static_cast<RenderTable *>(beforeChild);
         else {
             table = new (renderArena()) RenderTable(document() /* is anonymous */);
@@ -152,6 +153,12 @@ void RenderContainer::addChild(RenderObject *newChild, RenderObject *beforeChild
     } else {
 	// just add it...
 	insertChildNode(newChild, beforeChild);
+    }
+    
+    if (newChild->isText() && newChild->style()->textTransform() == CAPITALIZE) {
+        RefPtr<DOMStringImpl> textToTransform =  static_cast<RenderText*>(newChild)->originalString();
+        if (textToTransform)
+            static_cast<RenderText*>(newChild)->setText(textToTransform.get(), true);
     }
 }
 

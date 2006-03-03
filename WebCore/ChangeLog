@@ -1,3 +1,24 @@
+2006-03-02  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed by Darin, landed by Beth
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=3230
+        CSS1: Words with inline elements get extra capital letters
+
+        Does not use UBreakIterator (yet?) for this, but a relatively
+        simple change that fixes our failure in the CSS1 test suite 
+        (5.4.5).
+
+        * platform/StringImpl.cpp:
+        (WebCore::StringImpl::capitalize): Specify if this is a run-on
+        * platform/StringImpl.h:
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::addChild): Change to re-run 
+        capitalisation when added into tree as previous text node changes
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::setText): Check if previous node is text that
+        doesn't end in a space
+
 2006-03-02  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by sullivan

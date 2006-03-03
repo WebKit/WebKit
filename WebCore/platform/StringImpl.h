@@ -90,7 +90,7 @@ public:
     bool isLower() const;
     StringImpl* lower() const;
     StringImpl* upper() const;
-    StringImpl* capitalize() const;
+    StringImpl* capitalize(bool runOnString) const;
 
     int find(const char*, int index = 0, bool caseSensitive = true) const;
     int find(QChar, int index = 0) const;

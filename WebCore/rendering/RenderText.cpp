@@ -4,6 +4,7 @@
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -876,7 +877,22 @@ void RenderText::setText(DOMStringImpl *text, bool force)
         str = str->replace('\\', backslashAsCurrencySymbol());
         if (style()) {
             switch (style()->textTransform()) {
-                case CAPITALIZE: str = str->capitalize();  break;
+                case CAPITALIZE:
+                {
+                    // find previous text renderer if one exists
+                    RenderObject* o;
+                    bool runOnString = false;
+                    for (o = previousRenderer(); o && o->isInlineFlow(); o = o->previousRenderer())
+                        ;
+                    if (o && o->isText()) {
+                        DOMStringImpl* prevStr = static_cast<RenderText*>(o)->string();
+                        QChar c = (*prevStr)[prevStr->length() - 1];
+                        if (!c.isSpace())
+                            runOnString = true;
+                    }
+                    str = str->capitalize(runOnString);
+                }
+                    break;
                 case UPPERCASE:  str = str->upper();       break;
                 case LOWERCASE:  str = str->lower();       break;
                 case NONE:

@@ -5,6 +5,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller ( mueller@kde.org )
  * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -372,10 +373,10 @@ StringImpl* StringImpl::upper() const
     return c;
 }
 
-StringImpl* StringImpl::capitalize() const
+StringImpl* StringImpl::capitalize(bool runOnString) const
 {
     StringImpl* c = new StringImpl;
-    bool haveCapped = false;
+    bool haveCapped = runOnString;
     if(!l) return c;
 
     c->s = newQCharVector(l);
