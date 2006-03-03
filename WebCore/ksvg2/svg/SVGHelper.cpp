@@ -31,7 +31,7 @@
 #include "SVGSVGElementImpl.h"
 #include "SVGStringListImpl.h"
 #include "ksvg.h"
-#include <cmath>
+#include <math.h>
 #include <kcanvas/KCanvas.h>
 
 using namespace WebCore;

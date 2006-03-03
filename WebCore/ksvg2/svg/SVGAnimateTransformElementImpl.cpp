@@ -38,7 +38,7 @@
 #include "DocumentImpl.h"
 #include "SVGDocumentExtensions.h"
 
-#include <cmath>
+#include <math.h>
 
 using namespace WebCore;
 using namespace std;

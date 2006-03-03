@@ -36,7 +36,7 @@
 #include "SVGAnimatedRectImpl.h"
 #include "SVGAnimatedLengthImpl.h"
 
-#include <cmath>
+#include <math.h>
 
 using namespace WebCore;
 using namespace std;
