@@ -1,3 +1,10 @@
+2006-03-03  Alexander Kellett  <lypanov@kde.org>
+
+        - local machine unfortunately shows slightly differing results to the
+        build bots, reverting to fix the built bot.
+
+        * svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.txt:
+
 2006-03-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.
