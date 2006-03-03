@@ -1,3 +1,18 @@
+2006-03-03  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by adele.
+
+        Fix clearly bogus cairo elipse drawing code.
+        Make QFontMetrics stubs slightly more sane.
+
+        * platform/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawEllipse):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (QFontMetrics::floatWidth):
+        (QFontMetrics::height):
+        (QFontMetrics::width):
+        (QFontMetrics::isFixedPitch):
+
 2006-03-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

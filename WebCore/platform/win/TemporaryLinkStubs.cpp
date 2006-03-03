@@ -290,14 +290,14 @@ QFontMetrics::QFontMetrics() { }
 QFontMetrics::~QFontMetrics() { }
 QFontMetrics::QFontMetrics(QFontMetrics const&) { }
 QFontMetrics& QFontMetrics::operator=(QFontMetrics const&) { return localFontMetrics; }
-float QFontMetrics::floatWidth(QChar const*,int,int,int,int,int,int,int,bool) const { return 14.0; }
+float QFontMetrics::floatWidth(QChar const*,int,int,int len,int,int,int,int,bool) const { return len * 10; }
 int QFontMetrics::lineSpacing() const { return 10; }
 int QFontMetrics::ascent() const { return 10; }
-int QFontMetrics::height() const { return 10; }
-int QFontMetrics::width(QString const&,int,int,int) const { return 10; }
+int QFontMetrics::height() const { return 24; }
+int QFontMetrics::width(QString const& str,int,int,int) const { return str.length() * 10; }
 int QFontMetrics::descent() const { return 10; }
 void QFontMetrics::setFontDescription(WebCore::FontDescription const&) { }
-bool QFontMetrics::isFixedPitch(void)const { return 0; }
+bool QFontMetrics::isFixedPitch() const { return false; }
 int QFontMetrics::checkSelectionPoint(QChar const*,int,int,int,int,int,int,int,int,bool,int,bool,bool,bool) const { return 0; }
 
 

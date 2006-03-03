@@ -336,8 +336,10 @@ void GraphicsContext::drawEllipse(int x, int y, int width, int height)
     
     cairo_t* context = m_data->context;
     cairo_save(context);
-    cairo_translate(context, x + width / 2., y + height / 2.);
-    cairo_scale(context, 1. / (height / 2.), 1. / (width / 2.));
+    float yRadius = .5 * height;
+    float xRadius = .5 * width;
+    cairo_translate(context, x + xRadius, y + yRadius);
+    cairo_scale(context, xRadius, yRadius);
     cairo_arc(context, 0., 0., 1., 0., 2 * M_PI);
     cairo_restore(context);
 
