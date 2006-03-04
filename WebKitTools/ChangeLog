@@ -1,3 +1,11 @@
+2006-03-04  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Eric.
+
+        Automatically kill httpd if it appears to be already running.
+
+        * Scripts/run-webkit-tests: 
+
 2006-03-04  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

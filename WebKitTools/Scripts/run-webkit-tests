@@ -216,8 +216,18 @@ sub openHTTPDIfNeeded()
     if (-f "/tmp/WebKit/httpd.pid") {
         my $oldPid = `cat /tmp/WebKit/httpd.pid`;
         chomp $oldPid;
-        (0 == kill 0, $oldPid) || die "\nhttpd is already running: pid $oldPid\n" . 
-            "Please try again in a few seconds if it is still shutting down after a previous run-webkit-tests invocation; or kill it manually.\n";
+        if (0 != kill 0, $oldPid) {
+            print "\nhttpd is already running: pid $oldPid, killing...\n";
+            kill 15, $oldPid;
+            
+            my $retryCount = 20;
+            while ((0 != kill 0, $oldPid) && $retryCount) {
+                sleep 1;
+                --$retryCount;
+            }
+            
+            die "Timed out waiting for httpd to quit" unless $retryCount;
+        }
     }
     
     my $httpdConfig = "$testDirectory/http/conf/httpd.conf";
