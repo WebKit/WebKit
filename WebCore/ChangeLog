@@ -2,6 +2,16 @@
 
         Reviewed by Eric.
 
+         - fix mistake in TransferJob::start that made it cause a crash
+        on non-file URLs
+
+        * platform/win/TransferJobWin.cpp:
+        (WebCore::TransferJob::start):
+
+2006-03-04  Maciej Stachowiak  <mjs@apple.com
+
+        Reviewed by Eric.
+
         - make TransferJobWin handle file: URLs, and fix other bugs
         as needed to make local file image loads work
         http://bugzilla.opendarwin.org/show_bug.cgi?id=7587
