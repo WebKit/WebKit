@@ -578,7 +578,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 
 - (void)_refreshSearch
 {
-    BOOL selectFirst = (![_private->searchResults count] ? YES : NO);
+    BOOL selectFirst = ![_private->searchResults count];
 
     if (!_private->searchResults)
         _private->searchResults = [[NSMutableArray alloc] initWithCapacity:100];

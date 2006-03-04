@@ -178,7 +178,7 @@ function performSearch(query)
         searchCount.style.display = "block";
         searchField.style.width = "150px";
         searchActive = true;
-    } else if(!query.length && searchActive) {
+    } else if (!query.length && searchActive) {
         treePopup.style.display = null;
         searchCount.style.display = null;
         searchField.style.width = null;
