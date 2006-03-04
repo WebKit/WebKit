@@ -64,24 +64,28 @@ WebFrame::WebFrame(char* name, WebView* view)
     d->frameView->setWindowHandle(view->windowHandle());
 }
 
-void WebFrame::loadFilePath(char *path)
+void WebFrame::loadFilePath(char* path)
 {
-    FILE* file = fopen(path, "rb");
-    if (!file) {
-        printf("Failed to open file: %s\n", path);
-        printf("Current path: %s\n", _getcwd(0,0));
-        return;
-    }
+    char URL[2048];
+    strcpy(URL, "file://localhost/");
+    strcat(URL, path);
 
-    d->frame->begin();
-
-    char buffer[4000];
-    int newBytes = 0;
-    while ((newBytes = fread(buffer, 1, 4000, file)) > 0) {
-        d->frame->write(buffer, newBytes);
-    }
-    fclose(file);
-
+    d->frame->didOpenURL(URL);
+    d->frame->begin(URL);
+    HANDLE fileHandle = CreateFileA(path, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+     
+    bool result = false;
+    DWORD bytesRead = 0;
+    
+    do {
+      const int bufferSize = 8193;
+      char buffer[bufferSize];
+      result = ReadFile(fileHandle, &buffer, bufferSize - 1, &bytesRead, NULL); 
+      buffer[bytesRead] = '\0';
+      d->frame->write(buffer);
+      // Check for end of file. 
+    } while (result && bytesRead);
+    
     d->frame->end();
 }
 

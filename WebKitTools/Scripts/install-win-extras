@@ -48,8 +48,8 @@ if (! -e "icu-3.4-win32-msvc7.1.zip") {
     `unzip icu-3.4-win32-msvc7.1.zip`;
     `rm -rf ../icu`;
     `cp -rp icu ..`;
-    `chmod 755 ../icu/bin/*.dll`;
 }
+`chmod 755 ../icu/bin/*.dll`;
 
 if (! -e "iconv-1.9.1.win32.zip") {
     print "Downloading iconv-1.9.1.win32.zip...\n\n";
@@ -59,8 +59,8 @@ if (! -e "iconv-1.9.1.win32.zip") {
     `unzip iconv-1.9.1.win32.zip`;
     `rm -rf ../iconv`;
     `cp -rp iconv-1.9.1.win32 ../iconv`;
-    `chmod 755 ../iconv/bin/*.dll`;
 }
+`chmod 755 ../iconv/bin/*.dll`;
 
 if (! -e "libxml2-2.6.23.win32.zip") {
     print "Downloading libxml2-2.6.23.win32.zip...\n\n";
@@ -70,8 +70,8 @@ if (! -e "libxml2-2.6.23.win32.zip") {
     `unzip libxml2-2.6.23.win32.zip`;
     `rm -rf ../libxml`;
     `cp -rp libxml2-2.6.23.win32 ../libxml`;
-    `chmod 755 ../libxml/bin/*.dll`;
 }
+`chmod 755 ../libxml/bin/*.dll`;
 
 if (! -e "libxslt-1.1.15.win32.zip") {
     print "Downloading libxmslt-1.1.15.win32.zip...\n";
@@ -81,8 +81,8 @@ if (! -e "libxslt-1.1.15.win32.zip") {
     `unzip libxslt-1.1.15.win32.zip`;
     `rm -rf ../libxslt`;
     `cp -rp libxslt-1.1.15.win32 ../libxslt`;
-    `chmod 755 ../libxslt/bin/*.dll`;
 }
+`chmod 755 ../libxslt/bin/*.dll`;
 
 if (! -e "zlib-1.2.3.win32.zip") {
     print "Downloading zlib-1.2.3.win32.zip...\n\n";
@@ -92,8 +92,8 @@ if (! -e "zlib-1.2.3.win32.zip") {
     `unzip zlib-1.2.3.win32.zip`;
     `rm -rf ../zlib`;
     `cp -rp zlib-1.2.3.win32 ../zlib`;
-    `chmod 755 ../zlib/bin/*.dll`;
 }
+`chmod 755 ../zlib/bin/*.dll`;
 
 if (! -x "/cygdrive/c/Program Files/Resource Kit/setx.exe") {
     unlink("setx_setup.exe"); 
