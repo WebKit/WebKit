@@ -72,7 +72,7 @@ void TransferJob::fileLoadTimer(Timer<TransferJob>* timer)
 	result = ReadFile(d->m_fileHandle, &buffer, bufferSize, &bytesRead, NULL); 
 	d->client->receivedData(this, buffer, bytesRead);
 	// Check for end of file. 
-    } while (!result || bytesRead);
+    } while (result && bytesRead);
 
     CloseHandle(d->m_fileHandle);
     d->m_fileHandle = 0;
