@@ -1,5 +1,22 @@
 2006-03-03  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by darin.
+
+        Make run-webkit-tests work on win32.
+
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.cpp:
+        (localFileTest):
+        (dumpRenderTreeMain):
+        (dumpRenderTreeToStdOut):
+        (serializeToStdOut):
+        (main):
+        * Scripts/run-webkit-tests:
+        * Scripts/webkitdirs.pm:
+        * Spinneret/Spinneret/WebView.cpp:
+        (WebKit::WebView::WebView):
+
+2006-03-03  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by mjs.
 
         Add WebFrame class (to hold Frame and FrameView).

@@ -232,13 +232,21 @@ sub builtDylibPathForName
 {
     my $framework = shift;
     determineConfigurationProductDir();
-    return "$configurationProductDir/$framework.framework/Versions/A/$framework";
+    if (isOSX()) {
+        return "$configurationProductDir/$framework.framework/Versions/A/$framework";
+    }
+    if (isCygwin()) {
+        return "$baseProductDir/$framework.intermediate/$configuration/$framework.intermediate/$framework.lib";
+    }
+    die "Unsupported platform, can't determine built library locations.";
 }
 
 # Check to see that all the frameworks are built.
 sub checkFrameworks
 {
-    for my $framework ("JavaScriptCore", "WebCore", "WebKit") {
+    my @frameworks = ("JavaScriptCore", "WebCore");
+    push(@frameworks, "WebKit") if isOSX();
+    for my $framework (@frameworks) {
         my $path = builtDylibPathForName($framework);
         die "Can't find built framework at \"$path\".\n" unless -x $path;
     }
@@ -246,6 +254,7 @@ sub checkFrameworks
 
 sub hasSVGSupport
 {
+    return 0 if isCygwin(); 
     my $path = shift;
     open NM, "-|", "nm", $path or die;
     my $hasSVGSupport = 0;

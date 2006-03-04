@@ -126,6 +126,7 @@ if (!$testHTTP) {
 }
 my $findArguments = "$prunePart -or $extensionPart";
 
+my $findOrderArg = isCygwin() ? "" : "-s";
 my $foundTestName = 0;
 for my $test (@ARGV) {
     next if $test =~ /^-/;
@@ -140,7 +141,7 @@ for my $test (@ARGV) {
             push @tests, $test;
         }
     } elsif (-d "$testDirectory/$test") {
-        push @tests, sort pathcmp map { chomp; s-^$testDirectory/--; $_; } `find -Ls $testDirectory/$test $findArguments`;
+        push @tests, sort pathcmp map { chomp; s-^$testDirectory/--; $_; } `find -L $findOrderArg "$testDirectory/$test" $findArguments`;
     } else {
         print "test $test not found\n";
     }
@@ -294,7 +295,12 @@ for my $test (@tests) {
     my $startTime = time if $report10Slowest;
 
     if ($test !~ /^http\//) {
-        print OUT "$testDirectory/$test\n";
+        my $testPath = "$testDirectory/$test";
+        if (isCygwin()) {
+            $testPath =~ s|/cygdrive/c|c:|;
+            $testPath =~ s|/|\\|g;
+        } 
+        print OUT "$testPath\n";
     } else {
         openHTTPDIfNeeded();
         
