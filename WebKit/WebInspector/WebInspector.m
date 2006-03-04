@@ -26,29 +26,34 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebView.h>
-#import <WebKit/WebViewPrivate.h>
-#import <WebKit/WebHTMLView.h>
-#import <WebKit/WebFrame.h>
-#import <WebKit/DOMCore.h>
-#import <WebKit/DOMEvents.h>
-#import <WebKit/DOMHTML.h>
-#import <WebKit/DOMCSS.h>
-#import <WebKit/DOMTraversal.h>
-#import <WebKit/DOMExtensions.h>
-#import <WebKit/DOMPrivate.h>
-#import <WebKit/WebInspector.h>
-#import <WebKit/WebInspectorInternal.h>
-#import <WebKit/WebLocalizableStrings.h>
+#import "WebInspector.h"
+#import "WebInspectorInternal.h"
 
-#import "WebKitNSStringExtras.h"
-#import "WebNodeHighlight.h"
 #import "WebInspectorPanel.h"
 #import "WebInspectorOutlineView.h"
+#import "WebNodeHighlight.h"
+#import "WebView.h"
+#import "WebViewPrivate.h"
+#import "WebHTMLView.h"
+#import "WebFrame.h"
+#import "WebLocalizableStrings.h"
+#import "WebKitNSStringExtras.h"
+
+#import <WebKit/DOMCore.h>
+#import <WebKit/DOMHTML.h>
+#import <WebKit/DOMCSS.h>
+#import <WebKit/DOMExtensions.h>
+#import <WebKit/DOMPrivate.h>
 
 static NSMapTable *lengthIgnoringWhitespaceCache = NULL;
 static NSMapTable *lastChildIndexIgnoringWhitespaceCache = NULL;
 static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
+
+@interface NSWindow (NSWindowPrivate)
+- (void)_setContentHasShadow:(BOOL)hasShadow;
+@end
+
+#pragma mark -
 
 @implementation WebInspector
 + (WebInspector *)sharedWebInspector
@@ -86,7 +91,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 
 - (void)dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"WebNodeHighlightExpired" object:nil];
+    [self close];
     [_private release];
     [super dealloc];
 }
@@ -125,40 +130,30 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
         [[_private->webView mainFrame] loadRequest:[[[NSURLRequest alloc] initWithURL:[NSURL fileURLWithPath:path]] autorelease]];
 
         [self setWindow:window];
-        [self windowDidLoad];
         return window;
     }
 
     return window;
 }
 
-- (void)windowDidLoad
-{
-    if (_private->windowLoaded)
-        return;
-    _private->windowLoaded = YES;
-
-    _private->rightArrowImage = [[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[self class]] pathForResource:@"rightTriangle" ofType:@"png" inDirectory:@"webInspector/Images"]];
-    _private->downArrowImage = [[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[self class]] pathForResource:@"downTriangle" ofType:@"png" inDirectory:@"webInspector/Images"]];
-
-    if ([_private->searchQuery length]) {
-        [self _showSearchResults:YES];
-        [self _refreshSearch];
-    }
-
-    [self performSelector:@selector(_highlightNode:) withObject:_private->focusedNode afterDelay:0.0];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_nodeHighlightExpired:) name:@"WebNodeHighlightExpired" object:nil];
-}
-
 - (void)windowWillClose:(NSNotification *)notification
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:WebNodeHighlightExpiredNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSViewFrameDidChangeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSSystemColorsDidChangeNotification object:nil];
+
     if (!_private->isSharedInspector)
         [self release];
 }
 
 - (IBAction)showWindow:(id)sender
 {
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_nodeHighlightExpired:) name:WebNodeHighlightExpiredNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_updateSystemColors) name:NSSystemColorsDidChangeNotification object:nil];
+
     [self _update];
+    [self _updateSystemColors];
+
     [super showWindow:sender];
 }
 
@@ -257,18 +252,16 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 
 - (void)setSearchQuery:(NSString *)query
 {
-    if ([query isEqualToString:_private->searchQuery])
-        return;
-
-    [query retain];
-    [_private->searchQuery release];
-    _private->searchQuery = query;
-
     if (_private->webViewLoaded) {
+        if (!query)
+            query = @"";
+        [[_private->webView windowScriptObject] callWebScriptMethod:@"performSearch" withArguments:[NSArray arrayWithObject:query]];
         DOMHTMLInputElement *search = (DOMHTMLInputElement *)[_private->domDocument getElementById:@"search"];
-        [search setValue:(query ? query : @"")];
-        [self _showSearchResults:([query length] ? YES : NO)];
-        [self _refreshSearch];
+        [search setValue:query];
+    } else {
+        [query retain];
+        [_private->searchQuery release];
+        _private->searchQuery = query;
     }
 }
 
@@ -314,7 +307,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
     unsigned index = [popup selectedIndex];
     unsigned count = 0;
 
-    DOMNode *currentNode = _private->rootNode;
+    DOMNode *currentNode = [self rootDOMNode];
     while (currentNode) {
         if (count == index) {
             [self setRootDOMNode:currentNode];
@@ -325,7 +318,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
     }
 }
 
-- (void)resizeTopArea:(DOMEvent *)domEvent
+- (void)resizeTopArea
 {
     NSWindow *window = [self window];
     NSEvent *event = [window currentEvent];
@@ -433,9 +426,9 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
     }
 
     if (node) {
-        DOMNode *root = _private->rootNode;
+        DOMNode *root = [self rootDOMNode];
         if (![root isSameNode:node] && ![root _isAncestorOfNode:node])
-            [self setRootDOMNode:[_private->focusedNode _firstAncestorCommonWithNode:node]];
+            [self setRootDOMNode:[[self focusedDOMNode] _firstAncestorCommonWithNode:node]];
         [self setFocusedDOMNode:node];
     }
 }
@@ -470,11 +463,27 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
     }
 
     if (node) {
-        DOMNode *root = _private->rootNode;
+        DOMNode *root = [self rootDOMNode];
         if (![root isSameNode:node] && ![root _isAncestorOfNode:node])
-            [self setRootDOMNode:[_private->focusedNode _firstAncestorCommonWithNode:node]];
+            [self setRootDOMNode:[[self focusedDOMNode] _firstAncestorCommonWithNode:node]];
         [self setFocusedDOMNode:node];
     }
+}
+
+- (void)searchPerformed:(NSString *)query
+{
+    [query retain];
+    [_private->searchQuery release];
+    _private->searchQuery = query;
+
+    BOOL show = [query length];
+    if (show != _private->searchResultsVisible) {
+        [_private->treeOutlineView setDoubleAction:(show ? @selector(_exitSearch:) : @selector(_focusRootNode:))];
+        _private->preventRevealOnFocus = show;
+        _private->searchResultsVisible = show;
+    }
+
+    [self _refreshSearch];
 }
 @end
 
@@ -485,6 +494,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 {
     _private->ignoreWhitespace = !_private->ignoreWhitespace;
     [_private->treeOutlineView reloadData];
+    [self _updateTreeScrollbar];
 }
 
 - (void)_highlightNode:(DOMNode *)node
@@ -521,27 +531,23 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
     }
 }
 
+- (void)_exitSearch:(id)sender
+{
+    [self setSearchQuery:nil];
+}
+
 - (void)_focusRootNode:(id)sender
 {
-    id node = nil;
-    if ([sender isKindOfClass:[NSMenuItem class]]) {
-        node = [sender representedObject];
-    } else if(sender == _private->treeOutlineView) {
-        int index = [sender selectedRow];
-        if (index == -1)
-            return;
-        node = [sender itemAtRow:index];
-    }
-
-    if (![node isSameNode:_private->rootNode]) {
+    int index = [sender selectedRow];
+    if (index == -1 || !sender)
+        return;
+    DOMNode *node = [sender itemAtRow:index];
+    if (![node isSameNode:[self rootDOMNode]])
         [self setRootDOMNode:node];
-        [self setSearchQuery:nil]; // exit search mode
-    }
 }
 
 - (void)_revealAndSelectNodeInTree:(DOMNode *)node
 {
-
     if (!_private->webViewLoaded || !node)
         return;
 
@@ -550,7 +556,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
         DOMNode *currentNode = [node parentNode];
         while (currentNode) {
             [ancestors addObject:currentNode];
-            if ([currentNode isSameNode:_private->rootNode])
+            if ([currentNode isSameNode:[self rootDOMNode]])
                 break;
             currentNode = [currentNode parentNode];
         }
@@ -566,34 +572,14 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
     if (index != -1) {
         [_private->treeOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
         [_private->treeOutlineView scrollRowToVisible:index];
+        [self _updateTreeScrollbar];
     }
-}
-
-- (void)_showSearchResults:(BOOL)show
-{
-    if (show == _private->searchResultsVisible)
-        return;
-
-    DOMHTMLElement *treePopup = (DOMHTMLElement *)[_private->domDocument getElementById:@"treePopup"];
-    DOMHTMLElement *searchField = (DOMHTMLElement *)[_private->domDocument getElementById:@"search"];
-    DOMHTMLElement *searchCount = (DOMHTMLElement *)[_private->domDocument getElementById:@"searchCount"];
-
-    if (show) {
-        [[treePopup style] setDisplay:@"none"];
-        [[searchCount style] setDisplay:@"block"];
-        [[searchField style] setWidth:@"150px"];
-    } else {
-        [[treePopup style] removeProperty:@"display"];
-        [[searchCount style] removeProperty:@"display"];
-        [[searchField style] setWidth:@"90px"];
-    }
-
-    _private->preventRevealOnFocus = show;
-    _private->searchResultsVisible = show;
 }
 
 - (void)_refreshSearch
 {
+    BOOL selectFirst = (![_private->searchResults count] ? YES : NO);
+
     if (!_private->searchResults)
         _private->searchResults = [[NSMutableArray alloc] initWithCapacity:100];
     else
@@ -601,7 +587,21 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 
     NSString *query = _private->searchQuery;
     if (![query length]) {
+        // switch back to the DOM tree and reveal the focused node
+        DOMNode *node = [[self focusedDOMNode] retain];
+        DOMNode *root = [self rootDOMNode];
+        if (![root _isAncestorOfNode:node])
+            [self setRootDOMNode:[node parentNode]];
+
+        _private->preventSelectionRefocus = YES;
         [_private->treeOutlineView reloadData];
+        _private->preventSelectionRefocus = NO;
+
+        [self _revealAndSelectNodeInTree:node];
+        [self _updateTraversalButtons];
+        [node release];
+
+        [[_private->webView windowScriptObject] callWebScriptMethod:@"toggleNoSelection" withArguments:[NSArray arrayWithObject:[NSNumber numberWithBool:NO]]];
         return;
     }
 
@@ -626,21 +626,28 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 
     DOMHTMLElement *searchCount = (DOMHTMLElement *)[_private->domDocument getElementById:@"searchCount"];
     if (count == 1)
-        [searchCount setInnerText:[NSString stringWithFormat:UI_STRING("1 node", "web inspector node search results count with 1 result"), count]];
+        [searchCount setInnerText:@"1 node"];
     else
-        [searchCount setInnerText:[NSString stringWithFormat:UI_STRING("%u nodes", "web inspector node search results count with zero or more than 1 results"), count]];
+        [searchCount setInnerText:[NSString stringWithFormat:@"%u nodes", count]];
 
     [_private->treeOutlineView reloadData];
+    [self _updateTreeScrollbar];
+
+    [[_private->webView windowScriptObject] callWebScriptMethod:@"toggleNoSelection" withArguments:[NSArray arrayWithObject:[NSNumber numberWithBool:!count]]];
+
+    if (selectFirst && count)
+        [_private->treeOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
 }
 
 - (void)_update
 {
-    if (!_private->webViewLoaded || !_private->focusedNode)
-        return;
+    if (_private->webViewLoaded && [self focusedDOMNode])
+        [[_private->webView windowScriptObject] callWebScriptMethod:@"updatePanes" withArguments:nil];
+}
 
-    [[_private->webView windowScriptObject] callWebScriptMethod:@"updatePanes" withArguments:nil];
-
-    DOMNode *node = _private->focusedNode;
+- (void)_updateTraversalButtons
+{
+    DOMNode *node = [self focusedDOMNode];
     DOMHTMLButtonElement *back = (DOMHTMLButtonElement *)[_private->domDocument getElementById:@"traverseUp"];
     DOMHTMLButtonElement *forward = (DOMHTMLButtonElement *)[_private->domDocument getElementById:@"traverseDown"];
     if (_private->searchResultsVisible) {
@@ -666,16 +673,16 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 
 - (void)_updateRoot
 {
-    if (!_private->webViewLoaded || !_private->rootNode || _private->searchResultsVisible)
+    if (!_private->webViewLoaded || ![self rootDOMNode] || _private->searchResultsVisible)
         return;
 
     DOMHTMLElement *titleArea = (DOMHTMLElement *)[_private->domDocument getElementById:@"treePopupTitleArea"];
-    [titleArea setTextContent:[_private->rootNode _displayName]];
+    [titleArea setTextContent:[[self rootDOMNode] _displayName]];
 
     DOMHTMLElement *popup = (DOMHTMLElement *)[_private->domDocument getElementById:@"realTreePopup"];
     [popup setInnerHTML:@""]; // reset the list
 
-    DOMNode *currentNode = _private->rootNode;
+    DOMNode *currentNode = [self rootDOMNode];
     while (currentNode) {
         DOMHTMLOptionElement *option = (DOMHTMLOptionElement *)[_private->domDocument createElement:@"option"];
         [option setTextContent:[currentNode _displayName]];
@@ -684,9 +691,9 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
     }
 
     _private->preventSelectionRefocus = YES;
-    DOMNode *focusedNode = [_private->focusedNode retain];
+    DOMNode *focusedNode = [[self focusedDOMNode] retain];
     [_private->treeOutlineView reloadData];
-    [_private->treeOutlineView expandItem:_private->rootNode];
+    [_private->treeOutlineView expandItem:[self rootDOMNode]];
     [self _revealAndSelectNodeInTree:focusedNode];
     [focusedNode release];
     _private->preventSelectionRefocus = NO;
@@ -694,7 +701,29 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 
 - (void)_updateTreeScrollbar
 {
-    [[_private->webView windowScriptObject] evaluateWebScript:@"treeScrollbar.refresh()"];
+    if (_private->webViewLoaded)
+        [[_private->webView windowScriptObject] evaluateWebScript:@"treeScrollbar.refresh()"];
+}
+
+- (void)_updateSystemColors
+{
+    if (!_private->webViewLoaded)
+        return;
+
+    float red = 0.0, green = 0.0, blue = 0.0;
+    NSColor *color = [[NSColor alternateSelectedControlColor] colorUsingColorSpaceName:NSDeviceRGBColorSpace];
+    [color getRed:&red green:&green blue:&blue alpha:NULL];
+
+    NSString *colorText = [NSString stringWithFormat:@"background-color: rgba(%d, %d, %d, 0.4) !important", (int)(red * 255), (int)(green * 255), (int)(blue * 255)];
+    NSString *styleText = [NSString stringWithFormat:@"#styleRulesScrollview > .row.focused { %@ }; .treeList li.focused { %1$@ }", colorText];
+    DOMElement *style = [_private->domDocument getElementById:@"systemColors"];
+    if (!style) {
+        style = [_private->domDocument createElement:@"style"];
+        [[[_private->domDocument getElementsByTagName:@"head"] item:0] appendChild:style];
+    }
+
+    [style setAttribute:@"id" :@"systemColors"];
+    [style setTextContent:styleText];
 }
 
 #pragma mark -
@@ -719,14 +748,6 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 
 #pragma mark -
 
-- (void)handleEvent:(DOMEvent *)event
-{
-    if ([[event type] isEqualToString:@"search"] && [[event target] isKindOfClass:[DOMHTMLInputElement class]]) {
-        DOMHTMLInputElement *search = (DOMHTMLInputElement *)[event target];
-        [self setSearchQuery:[search value]];
-    }
-}
-
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
 {
     _private->webViewLoaded = YES;
@@ -735,18 +756,16 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
     [_private->domDocument release];
     _private->domDocument = (DOMHTMLDocument *)[[[sender mainFrame] DOMDocument] retain];
 
-    [_private->domDocument addEventListener:@"search" :self :NO];
-
-    if ([[self searchQuery] length]) {
-        DOMHTMLInputElement *search = (DOMHTMLInputElement *)[_private->domDocument getElementById:@"search"];
-        [search setValue:[self searchQuery]];
-        [self _showSearchResults:YES];
-        [self _refreshSearch];
-    }
+    [[self window] invalidateShadow];
 
     [self _update];
     [self _updateRoot];
-    [[self window] invalidateShadow];
+    [self _updateSystemColors];
+
+    if ([[self searchQuery] length])
+        [self setSearchQuery:[self searchQuery]];
+
+    [self _highlightNode:[self focusedDOMNode]];
 }
 
 - (NSView *)webView:(WebView *)sender plugInViewWithArguments:(NSDictionary *)arguments
@@ -754,7 +773,6 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
     NSDictionary *attributes = [arguments objectForKey:@"WebPlugInAttributesKey"];
     if ([[attributes objectForKey:@"type"] isEqualToString:@"application/x-inspector-tree"]) {
         if (!_private->treeOutlineView) {
-            _private->nodeCache = [[NSMutableSet alloc] init];
             _private->treeScrollView = [[NSScrollView alloc] initWithFrame:NSMakeRect(0.0, 0.0, 250.0, 100.0)];
             [_private->treeScrollView setDrawsBackground:NO];
             [_private->treeScrollView setBorderType:NSNoBorder];
@@ -834,7 +852,7 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
         if (!item && _private->searchResultsVisible)
             return [_private->searchResults objectAtIndex:index];
         if (!item)
-            return _private->rootNode;
+            return [self rootDOMNode];
         id node = nil;
         if (!_private->ignoreWhitespace)
             node = [[item childNodes] item:index];
@@ -907,12 +925,12 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 
 - (void)outlineViewSelectionDidChange:(NSNotification *)notification
 {
-    if ([notification object] == _private->treeOutlineView && !_private->preventSelectionRefocus) {
+    if ([notification object] == _private->treeOutlineView && !_private->preventSelectionRefocus && _private->webViewLoaded) {
         int index = [_private->treeOutlineView selectedRow];
-        if (index == -1)
-            return;
-        [self setFocusedDOMNode:[_private->treeOutlineView itemAtRow:index]];
+        if (index != -1)
+            [self setFocusedDOMNode:[_private->treeOutlineView itemAtRow:index]];
         [self _updateTreeScrollbar];
+        [self _updateTraversalButtons];
     }
 }
 @end
@@ -920,6 +938,15 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 #pragma mark -
 
 @implementation WebInspectorPrivate
+- (id)init
+{
+    [super init];
+    nodeCache = [[NSMutableSet alloc] initWithCapacity:100];
+    rightArrowImage = [[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[self class]] pathForResource:@"rightTriangle" ofType:@"png" inDirectory:@"webInspector/Images"]];
+    downArrowImage = [[NSImage alloc] initWithContentsOfFile:[[NSBundle bundleForClass:[self class]] pathForResource:@"downTriangle" ofType:@"png" inDirectory:@"webInspector/Images"]];
+    return self;
+}
+
 - (void)dealloc
 {
     [webView release];
@@ -931,41 +958,10 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
     [nodeCache release];
     [treeScrollView release];
     [treeOutlineView release];
-    [matchedRules release];
     [currentHighlight release];
     [rightArrowImage release];
     [downArrowImage release];
     [super dealloc];
-}
-@end
-
-#pragma mark -
-
-@implementation DOMHTMLElement (DOMHTMLElementInspectorAdditions)
-- (void)_addClassName:(NSString *)name
-{
-    NSString *class = [self className];
-    if ([class rangeOfString:name].location != NSNotFound)
-        return;
-    if ([class length]) {
-        NSString *new = [[NSString alloc] initWithFormat:@"%@ %@", class, name];
-        [self setClassName:new];
-        [new release];
-    } else {
-        [self setClassName:name];
-    }
-}
-
-- (void)_removeClassName:(NSString *)name
-{
-    if ([[self className] isEqualToString:name]) {
-        [self setClassName:@""];
-    } else if ([[self className] rangeOfString:name].location != NSNotFound) {
-        NSMutableString *class = [[self className] mutableCopy];
-        [class replaceOccurrencesOfString:name withString:@"" options:NSLiteralSearch range:NSMakeRange(0, [class length])];
-        [self setClassName:[class _webkit_stringByCollapsingWhitespaceCharacters]];
-        [class release];
-    }
 }
 @end
 
@@ -1214,37 +1210,11 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
 
 #pragma mark -
 
-- (NSString *)_nodeTypeName
-{
-    switch([self nodeType]) {
-        case DOM_ELEMENT_NODE: return UI_STRING("Element", "element node type name");
-        case DOM_ATTRIBUTE_NODE: return UI_STRING("Attribute", "attribute node type name");
-        case DOM_TEXT_NODE: return UI_STRING("Text", "text node type name");
-        case DOM_CDATA_SECTION_NODE: return UI_STRING("Character Data", "character data node type name");
-        case DOM_ENTITY_REFERENCE_NODE: return UI_STRING("Entity Reference", "entity reference node type name");
-        case DOM_ENTITY_NODE: return UI_STRING("Entity", "entity node type name");
-        case DOM_PROCESSING_INSTRUCTION_NODE: return UI_STRING("Processing Instruction", "processing instruction node type name");
-        case DOM_COMMENT_NODE: return UI_STRING("Comment", "comment node type name");
-        case DOM_DOCUMENT_NODE: return UI_STRING_KEY("Document", "Document (node type)", "document node type name");
-        case DOM_DOCUMENT_TYPE_NODE: return UI_STRING("Document Type", "document type node type name");
-        case DOM_DOCUMENT_FRAGMENT_NODE: return UI_STRING("Document Fragment", "document fragment node type name");
-        case DOM_NOTATION_NODE: return UI_STRING("Notation", "notation node type name");
-    }
-    return nil;
-}
-
-- (NSString *)_shortDisplayName
-{
-    if ([self nodeType] == DOM_TEXT_NODE)
-        return UI_STRING("Text", "text node type name");
-    return [self _displayName];
-}
-
 - (NSString *)_displayName
 {
     switch([self nodeType]) {
         case DOM_DOCUMENT_NODE:
-            return UI_STRING_KEY("Document", "Document (node)", "document node name");
+            return @"Document";
         case DOM_ELEMENT_NODE: {
             if ([self hasAttributes]) {
                 NSMutableString *name = [NSMutableString stringWithFormat:@"<%@", [[self nodeName] lowercaseString]];
@@ -1288,10 +1258,10 @@ static NSMapTable *lastChildIgnoringWhitespaceCache = NULL;
         }
         case DOM_TEXT_NODE: {
             if ([self _isWhitespace])
-                return UI_STRING("(whitespace)", "whitespace text node name");
+                return @"(whitespace)";
             NSString *value = [[self nodeValue] _webkit_stringByCollapsingWhitespaceCharacters];
             CFStringTrimWhitespace((CFMutableStringRef)value);
-            return [NSString stringWithFormat:UI_STRING("\"%@\"", "text node name with text included"), value];
+            return [NSString stringWithFormat:@"\"%@\"", value];
         }
     }
     return [[self nodeName] lowercaseString];

@@ -30,6 +30,8 @@
 #import "WebNodeHighlightView.h"
 #import "WebNodeHighlight.h"
 
+NSString *WebNodeHighlightExpiredNotification = @"WebNodeHighlightExpiredNotification";
+
 @implementation WebNodeHighlight
 - (id)initWithBounds:(NSRect)bounds andRects:(NSArray *)rects forView:(NSView *)view
 {

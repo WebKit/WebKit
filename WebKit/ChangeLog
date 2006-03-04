@@ -1,3 +1,51 @@
+2006-03-03  Timothy Hatcher  <timothy@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/4411822> wrong element shown in Inspector inspecting main image at apple.com
+        <rdar://problem/4411908> in the Web Inspector, state of disclosure triangles should be preserved after search
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6616
+        Bug 6616: Double-clicking on a search result seems broken
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6709
+        Bug 6709: TypeError: Value undefined (result of expression treeScrollbar.refresh) is not object.
+
+        Code clean up and move more code into JavaScript.
+        Removes a few unused ObjC methods.
+        Many search fixes. Reveals the focused node when exiting the search.
+        Shows a "No Selection" screen when there are no search results.
+        Shows a node count for the number of results.
+        Fixes a couple of TypeErrors that show on the console.
+        Uses the system selection color in the Style pane tables.
+
+        * English.lproj/Localizable.strings: removed localized strings
+        * WebInspector.subproj/WebInspector.m:
+        (-[WebInspector init]):
+        (-[WebInspector dealloc]):
+        (-[WebInspector window]):
+        (-[WebInspector setSearchQuery:]):
+        (-[WebInspector resizeTopArea]):
+        (-[WebInspector searchPerformed:]): called from JavaScript when a search happens
+        (-[WebInspector _toggleIgnoreWhitespace:]):
+        (-[WebInspector _exitSearch:]): exit search results on double click
+        (-[WebInspector _focusRootNode:]):
+        (-[WebInspector _revealAndSelectNodeInTree:]):
+        (-[WebInspector _refreshSearch]):
+        (-[WebInspector _update]):
+        (-[WebInspector _updateTraversalButtons]):
+        (-[WebInspector _updateRoot]):
+        (-[WebInspector _updateTreeScrollbar]):
+        (-[WebInspector _updateSystemColors]): update CSS with system colors
+        (-[WebInspector webView:didFinishLoadForFrame:]):
+        (-[WebInspector webView:plugInViewWithArguments:]):
+        (-[WebInspector outlineViewSelectionDidChange:]): test for webViewLoaded
+        (-[WebInspectorPrivate init]): alloc rightArrowImage and downArrowImage
+        (-[WebInspectorPrivate dealloc]): no more matchedRules
+        (-[DOMNode _displayName]): removed localization UI_STRING calls.
+        * WebInspector.subproj/WebInspectorInternal.h:
+        * WebInspector.subproj/webInspector/inspector.css:
+        * WebInspector.subproj/webInspector/inspector.html:
+        * WebInspector.subproj/webInspector/inspector.js:
+
 2006-03-02  Alexey Proskuryakov  <ap@nypop.com>
 
         Fixed a typo in the comments added in the previous checkin.

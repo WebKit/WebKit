@@ -48,21 +48,22 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <button id="treePopupButton" class="popup"><div class="left"></div><div id="treePopupTitleArea" class="middle"></div><div class="right"></div></button>
         </div>
         <div id="searchCount"></div>
-        <input id="search" type="search" autosave="nodeSearch" results="20" placeholder="Search" incremental="incremental" />
+        <input id="search" type="search" autosave="nodeSearch" results="20" placeholder="Search" incremental="incremental" onsearch="performSearch(this.value)" />
     </div>
     <div id="tree">
         <div id="treeScrollArea"><object id="treeOutlineView"><param name="type" value="application/x-inspector-tree" /></object></div>
         <div id="treeScrollbar"></div>
     </div>
 </div>
-<div id="splitter" onmousedown="Inspector.resizeTopArea(event)"><hr size="2" /></div>
+<div id="splitter" onmousedown="Inspector.resizeTopArea()"><hr size="2" /></div>
 <div id="bottom">
     <div id="tabs">
         <button class="square selected" id="nodeButton" onclick="switchPane('node')"><div class="left"></div><div class="middle">Node</div></button>
         <button class="square" id="styleButton" onclick="switchPane('style')"><img src="Images/popupFillPressed.png" /><div class="middle">Style</div></button>
         <button class="square" id="metricsButton" onclick="switchPane('metrics')"><img src="Images/popupFillPressed.png" /><div class="middle">Metrics</div></button>
-        <button class="square" id="javascriptButton" onclick="switchPane('javascript')"><img src="Images/popupFillPressed.png" /><div class="middle">Properties</div><div class="right"></div></button>
+        <button class="square" id="propertiesButton" onclick="switchPane('properties')"><img src="Images/popupFillPressed.png" /><div class="middle">Properties</div><div class="right"></div></button>
     </div>
+    <div id="noSelection" style="display: none">No Selection</div>
     <div id="nodePane" class="pane">
         <div class="infoRow">
             <span class="label">Node Type:</span>
@@ -107,7 +108,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <div id="stylePropertiesScrollbar" class="scrollbar"></div>
         </div>
     </div>
-    <div id="javascriptPane" class="pane" style="display: none; text-align: center"><br /><br /><br />(not finished)</div>
+    <div id="propertiesPane" class="pane" style="display: none; text-align: center"><br /><br /><br />(not finished)</div>
 </div>
 <div id="resize"></div>
 </div>

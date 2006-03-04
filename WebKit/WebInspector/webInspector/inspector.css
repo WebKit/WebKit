@@ -98,11 +98,12 @@ button {
 #searchCount {
     font-size: 11px;
     position: absolute;
-    top: 2px;
-    right: 110px;
+    top: 5px;
+    right: 170px;
     width: 100px;
     text-align: right;
     display: none;
+    z-index: 100;
 }
 
 #treePopup {
@@ -228,14 +229,14 @@ button {
     width: 55px;
 }
 
-#javascriptButton {
+#propertiesButton {
     position: absolute;
     top: 0;
     left: 180px;
     width: 80px;
 }
 
-#javascriptButton .middle {
+#propertiesButton .middle {
     padding-left: 6px;
     left: 0;
     right: 6px;
@@ -539,6 +540,14 @@ button.toggle.down {
 
 button.toggle.right {
     background-image: url( Images/rightTriangle.png );
+}
+
+#noSelection {
+    font-size: 16px;
+    font-weight: bold;
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    margin-top: 40%;
 }
 
 #nodePane {

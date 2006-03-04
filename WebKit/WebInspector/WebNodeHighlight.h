@@ -28,6 +28,8 @@
 
 @class WebNodeHighlightView;
 
+extern NSString *WebNodeHighlightExpiredNotification;
+
 @interface WebNodeHighlight : NSObject
 {
     NSWindow *_webNodeHighlightWindow;

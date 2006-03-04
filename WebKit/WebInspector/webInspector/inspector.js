@@ -26,7 +26,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function loaded() {
+var Inspector = null;
+
+function loaded()
+{
     treeScrollbar = new AppleVerticalScrollbar(document.getElementById("treeScrollbar"));
 
     treeScrollbar.setTrackStart("Images/scrollTrackTop.png", 18);
@@ -151,7 +154,8 @@ function loaded() {
     window.addEventListener("resize", refreshScrollbars, false);
 }
 
-function refreshScrollbars() {
+function refreshScrollbars()
+{
     if (currentPane == "node") {
         nodeContentsScrollArea.refresh();
         elementAttributesScrollArea.refresh();
@@ -161,21 +165,63 @@ function refreshScrollbars() {
     }
 }
 
-var tabNames = ["node","metrics","style","javascript"];
+var searchActive = false;
+
+function performSearch(query)
+{
+    var treePopup = document.getElementById("treePopup");
+    var searchField = document.getElementById("search");
+    var searchCount = document.getElementById("searchCount");
+
+    if (query.length && !searchActive) {
+        treePopup.style.display = "none";
+        searchCount.style.display = "block";
+        searchField.style.width = "150px";
+        searchActive = true;
+    } else if(!query.length && searchActive) {
+        treePopup.style.display = null;
+        searchCount.style.display = null;
+        searchField.style.width = null;
+        searchActive = false;
+    }
+
+    Inspector.searchPerformed(query);
+}
+
+var tabNames = ["node","metrics","style","properties"];
 var currentPane = "node";
 var paneUpdateState = new Array();
+var noSelection = false;
 
-function switchPane(pane) {
+function toggleNoSelection(state)
+{
+    noSelection = state;
+    if (noSelection) {
+        for (var i = 0; i < tabNames.length; i++)
+            document.getElementById(tabNames[i] + "Pane").style.display = "none";
+        document.getElementById("noSelection").style.display = null;
+    } else {
+        document.getElementById("noSelection").style.display = "none";
+        switchPane(currentPane);
+    }
+}
+
+function switchPane(pane)
+{
     currentPane = pane;
     for (var i = 0; i < tabNames.length; i++) {
         if (pane == tabNames[i]) {
-            document.getElementById(tabNames[i] + "Pane").style.display = null;
+            if (!noSelection)
+                document.getElementById(tabNames[i] + "Pane").style.display = null;
             document.getElementById(tabNames[i] + "Button").className = "square selected";
         } else {
             document.getElementById(tabNames[i] + "Pane").style.display = "none";
             document.getElementById(tabNames[i] + "Button").className = "square";
         }
     }
+
+    if (noSelection)
+        return;
 
     if (!paneUpdateState[pane]) {
         eval("update" + pane.charAt(0).toUpperCase() + pane.substr(1) + "Pane()");
@@ -185,7 +231,8 @@ function switchPane(pane) {
     }
 }
 
-function nodeTypeName(node) {
+function nodeTypeName(node)
+{
     switch (node.nodeType) {
         case Node.ELEMENT_NODE: return "Element";
         case Node.ATTRIBUTE_NODE: return "Attribute";
@@ -203,14 +250,18 @@ function nodeTypeName(node) {
     return "(unknown)";
 }
 
-function updatePanes() {
+function updatePanes()
+{
     for (var i = 0; i < tabNames.length; i++)
         paneUpdateState[tabNames[i]] = false;
+    if (noSelection)
+        return;
     eval("update" + currentPane.charAt(0).toUpperCase() + currentPane.substr(1) + "Pane()");    
     paneUpdateState[currentPane] = true;
 }
 
-function updateElementAttributes() {
+function updateElementAttributes()
+{
     var focusedNode = Inspector.focusedDOMNode();
     var attributesList = document.getElementById("elementAttributesList")
 
@@ -289,7 +340,8 @@ function updateNodePane() {
 }
 
 var nodeUpdateTimeout = null;
-function delayedNodePaneUpdate() {
+function delayedNodePaneUpdate()
+{
     var focusedNode = Inspector.focusedDOMNode();
     var serializer = new XMLSerializer();
     document.getElementById("nodeContentsScrollview").textContent = serializer.serializeToString(focusedNode);
@@ -301,7 +353,8 @@ var selectedStyleRuleIndex = 0;
 var styleProperties = null;
 var expandedStyleShorthands = new Array();
 
-function updateStylePane() {
+function updateStylePane()
+{
     var focusedNode = Inspector.focusedDOMNode();
     var rulesArea = document.getElementById("styleRulesScrollview");
     var propertiesArea = document.getElementById("stylePropertiesTree");
@@ -487,7 +540,8 @@ function updateStylePane() {
     styleRulesScrollArea.refresh();
 }
 
-function styleRuleSelect(event) {
+function styleRuleSelect(event)
+{
     var row = document.getElementById("styleRulesScrollview").firstChild;
     while (row) {
         if (row.nodeName == "DIV")
@@ -502,7 +556,8 @@ function styleRuleSelect(event) {
     updateStyleProperties();
 }
 
-function updateStyleProperties() {
+function updateStyleProperties()
+{
     var focusedNode = Inspector.focusedDOMNode();
     var propertiesTree = document.getElementById("stylePropertiesTree");
     propertiesTree.innerHTML = "";
@@ -584,7 +639,8 @@ function updateStyleProperties() {
     stylePropertiesScrollArea.refresh();
 }
 
-function toggleStyleShorthand(event) {
+function toggleStyleShorthand(event)
+{
     var li = event.currentTarget.parentNode;
     if (li.className.indexOf("expanded") != -1) {
         li.className = li.className.replace(/ expanded/, "");
@@ -599,7 +655,8 @@ function toggleStyleShorthand(event) {
     stylePropertiesScrollArea.refresh();
 }
 
-function selectMappedStyleRule(attrName) {
+function selectMappedStyleRule(attrName)
+{
     if (!paneUpdateState["style"])
         updateStylePane();
 
@@ -624,4 +681,12 @@ function selectMappedStyleRule(attrName) {
 
     updateStyleProperties();
     switchPane("style");
+}
+
+function updateMetricsPane()
+{
+}
+
+function updatePropertiesPane()
+{
 }

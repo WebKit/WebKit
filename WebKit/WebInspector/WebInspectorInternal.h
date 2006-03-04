@@ -32,20 +32,11 @@
 #import <WebKit/WebInspector.h>
 #import <WebKit/DOMCore.h>
 
+@class WebView;
 @class WebFrame;
-@class NSView;
-@class NSPopUpButton;
-@class NSSegmentedControl;
-@class NSSearchField;
-@class NSTabView;
-@class NSTextField;
-@class NSTableView;
+@class DOMHTMLDocument;
 @class NSOutlineView;
-@class NSTextView;
-@class NSWindow;
-@class NSNotification;
 @class WebNodeHighlight;
-@class DOMCSSRuleList;
 
 @interface WebInspectorPrivate : NSObject
 {
@@ -60,12 +51,10 @@
     NSMutableArray *searchResults;
     NSScrollView *treeScrollView;
     NSOutlineView *treeOutlineView;
-    DOMCSSRuleList *matchedRules;
     WebNodeHighlight *currentHighlight;
     NSImage *rightArrowImage;
     NSImage *downArrowImage;
     BOOL ignoreWhitespace;
-    BOOL windowLoaded;
     BOOL webViewLoaded;
     BOOL searchResultsVisible;
     BOOL preventHighlight;
@@ -75,19 +64,15 @@
 }
 @end
 
-@interface WebInspector (WebInspectorPrivate) <DOMEventListener>
+@interface WebInspector (WebInspectorPrivate)
 - (void)_highlightNode:(DOMNode *)node;
 - (void)_revealAndSelectNodeInTree:(DOMNode *)node;
 - (void)_update;
 - (void)_updateRoot;
+- (void)_updateSystemColors;
 - (void)_updateTreeScrollbar;
-- (void)_showSearchResults:(BOOL)show;
+- (void)_updateTraversalButtons;
 - (void)_refreshSearch;
-@end
-
-@interface DOMHTMLElement (DOMHTMLElementInspectorAdditions)
-- (void)_addClassName:(NSString *)name;
-- (void)_removeClassName:(NSString *)name;
 @end
 
 @interface DOMNode (DOMNodeInspectorAdditions)
@@ -114,11 +99,5 @@
 - (DOMNode *)_traversePreviousNode;
 - (DOMNode *)_traversePreviousNodeSkippingWhitespace;
 
-- (NSString *)_nodeTypeName;
-- (NSString *)_shortDisplayName;
 - (NSString *)_displayName;
-@end
-
-@interface NSWindow (NSWindowContentShadow)
-- (void)_setContentHasShadow:(BOOL)hasShadow;
 @end
