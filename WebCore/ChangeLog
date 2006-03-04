@@ -1,3 +1,21 @@
+2006-03-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin.
+
+        - Fixed <rdar://problem/4467143> JavaScript enumeration of HTML 
+        element properties skips DOM node properties
+
+        No test case yet because this is a preliminary step toward enabling my
+        uber test case for DOM support, which will cover this.
+
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::): Make DOMNode's classinfo reflect inheritance from 
+        DOMNodeProto, so a for in enumeration can properly walk the 
+        inheritance chain.
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::): Used a script to sort classInfo data alphbetically.
+        (KJS::KJS::HTMLElement::classInfo): Ditto.
+
 2006-03-04  Maciej Stachowiak  <mjs@apple.com
 
         Reviewed by Eric.
