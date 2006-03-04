@@ -104,7 +104,7 @@ void TransferJob::assembleResponseHeaders() const
             NSDictionary *headers = [httpResponse allHeaderFields];
             d->responseHeaders = QString::fromNSString(KWQHeaderStringFromDictionary(headers, [httpResponse statusCode]));
         }
-	d->assembledResponseHeaders = true;
+        d->assembledResponseHeaders = true;
     }
 }
 

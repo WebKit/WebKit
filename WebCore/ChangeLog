@@ -1,3 +1,41 @@
+2006-03-04  Maciej Stachowiak  <mjs@apple.com
+
+        Reviewed by Eric.
+
+        - make TransferJobWin handle file: URLs, and fix other bugs
+        as needed to make local file image loads work
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7587
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: add TransferJobWin
+        to build.
+        * bridge/win/FrameWin.cpp:
+        (WebCore::FrameWin::FrameWin): Set autoLoadImages to true.
+        * platform/TransferJob.cpp:
+        (WebCore::TransferJob::TransferJob): Pass this to internal
+        constructor, so windows version can initialize timer
+        * platform/TransferJob.h:
+        * platform/TransferJobInternal.h:
+        (WebCore::TransferJobInternal::TransferJobInternal): On windows,
+        prepare a timer for file loads.
+        * platform/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawFloatImage): If passed-in context
+        is null, use our built-in context (this is probably not the best,
+        but should work for now).
+        * platform/win/TemporaryLinkStubs.cpp:
+        (FrameWin::issueRedoCommand): Don't break.
+        (WebCore::TransferJob::assembleResponseHeaders): ditto
+        (FrameWin::saveDocumentState): ditto
+        (FrameWin::clearUndoRedoOperations): ditto
+        * platform/win/TransferJobWin.cpp:
+        (WebCore::TransferJobInternal::~TransferJobInternal): Close file
+        handle if we have one.
+        (WebCore::TransferJob::~TransferJob): Empty.
+        (WebCore::TransferJob::start): Open a windows file handle.
+        (WebCore::TransferJob::fileLoadTimer): Load from windows file
+        handle.
+        (WebCore::TransferJob::cancel): Stop timer and close windows file 
+        handle if present.
+
 2006-03-03  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.

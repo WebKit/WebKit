@@ -413,6 +413,9 @@ void GraphicsContext::drawConvexPolygon(const IntPointArray& points)
 void GraphicsContext::drawFloatImage(Image* image, float x, float y, float w, float h, 
                               float sx, float sy, float sw, float sh, Image::CompositeOperator compositeOperator, void* context)
 {
+    if (!context)
+        context = m_data->context;
+
     if (m_data->state.paintingDisabled)
         return;
 

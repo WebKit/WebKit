@@ -211,8 +211,7 @@ void FrameWin::respondToChangedContents() { notImplemented(); }
 void FrameWin::unfocusWindow() { notImplemented(); }
 bool FrameWin::locationbarVisible() { notImplemented(); return 0; }
 void FrameWin::respondToChangedSelection(WebCore::SelectionController const&,bool) { notImplemented(); }
-void FrameWin::clearUndoRedoOperations() { notImplemented(); }
-void FrameWin::issueRedoCommand() { notImplemented(); }
+void FrameWin::issueRedoCommand(void) { notImplemented(); }
 KJS::Bindings::Instance * FrameWin::getObjectInstanceForWidget(Widget *) { notImplemented(); return 0; }
 KJS::Bindings::Instance * FrameWin::getEmbedInstanceForWidget(Widget *) { notImplemented(); return 0; }
 bool FrameWin::canRedo() const { notImplemented(); return 0; }
@@ -224,7 +223,6 @@ void FrameWin::runJavaScriptAlert(String const&) { notImplemented(); }
 bool FrameWin::runJavaScriptConfirm(String const&) { notImplemented(); return 0; }
 bool FrameWin::openURL(KURL const&) { notImplemented(); return 0; }
 void FrameWin::urlSelected(KURL const&,struct WebCore::URLArgs const&) { notImplemented(); }
-void FrameWin::saveDocumentState() { notImplemented(); }
 void FrameWin::print() { notImplemented(); }
 KJS::Bindings::Instance * FrameWin::getAppletInstanceForWidget(Widget *) { notImplemented(); return 0; }
 bool FrameWin::passMouseDownEventToWidget(Widget *) { notImplemented(); return 0; }
@@ -273,7 +271,6 @@ void QTextEdit::setWritingDirection(enum WebCore::TextDirection) { notImplemente
 GraphicsContext::GraphicsContext() { notImplemented(); }
 void WebCore::TransferJob::retrieveCharset() const { notImplemented(); }
 void WebCore::TransferJob::assembleResponseHeaders() const { notImplemented(); }
-WebCore::TransferJob::~TransferJob() { notImplemented(); }
 
 // Completely empty stubs (mostly to allow DRT to run):
 bool WebCore::historyContains(QString const&) { return false; }
@@ -312,7 +309,8 @@ bool FrameWin::shouldChangeSelection(SelectionController const&,SelectionControl
 static int frameNumber = 0;
 String FrameWin::generateFrameName() { return QString::number(frameNumber++); }
 Frame* FrameWin::createFrame(KURL const&,QString const&,RenderPart*,String const&) { return 0; }
-
+void FrameWin::saveDocumentState(void) { }
+void FrameWin::clearUndoRedoOperations(void) {}
 
 BrowserExtensionWin::BrowserExtensionWin(WebCore::Frame*) { }
 
@@ -335,8 +333,6 @@ int ScrollView::contentsHeight() const { return 800; }
 int ScrollView::contentsWidth() const { return 1000; }
 void ScrollView::viewportToContents(int x1, int y1, int& x2, int& y2) { x2 = x1; y2 = y1; }
 void ScrollView::setStaticBackground(bool) { }
-
-bool TransferJob::start(class WebCore::DocLoader *){ return false; }
 
 Font const& GraphicsContext::font() const { return localFont; }
 void GraphicsContext::setFont(Font const&) { }

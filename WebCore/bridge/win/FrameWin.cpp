@@ -39,7 +39,9 @@ FrameWin::FrameWin(Page* page, RenderPart* renderPart)
     : Frame(page, renderPart)
 {
     d->m_extension = new BrowserExtensionWin(this);
-    setSettings(new KHTMLSettings());
+    KHTMLSettings* settings = new KHTMLSettings();
+    settings->setAutoLoadImages(true);
+    setSettings(settings);
 }
 
 FrameWin::~FrameWin()

@@ -37,12 +37,12 @@
 namespace WebCore {
 
 TransferJob::TransferJob(TransferJobClient* client, const String& method, const KURL& url)
-    : d(new TransferJobInternal(client, method, url))
+    : d(new TransferJobInternal(this, client, method, url))
 {
 }
 
 TransferJob::TransferJob(TransferJobClient* client, const String& method, const KURL& url, const FormData& postData)
-    : d(new TransferJobInternal(client, method, url, postData))
+    : d(new TransferJobInternal(this, client, method, url, postData))
 {
 }
 
@@ -70,8 +70,8 @@ QString TransferJob::errorText() const
 QString TransferJob::queryMetaData(const QString &key) const
 {
     if (key == "HTTP-Headers") {
-	assembleResponseHeaders();
-	return d->responseHeaders;
+        assembleResponseHeaders();
+        return d->responseHeaders;
     } 
 
     if (key == "charset")

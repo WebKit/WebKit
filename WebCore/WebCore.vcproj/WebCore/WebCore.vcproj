@@ -1832,6 +1832,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\platform\win\TransferJobWin.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\platform\win\WidgetWin.cpp"
 					>
 				</File>

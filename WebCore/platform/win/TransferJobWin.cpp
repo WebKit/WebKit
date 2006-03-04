@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,121 +23,64 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "config.h"
-#import "TransferJob.h"
+#include "config.h"
+#include "TransferJob.h"
 
-#import "TransferJobInternal.h"
-
-#import "FoundationExtras.h"
-#import "KURL.h"
-#import "KWQExceptions.h"
-#import "KWQLoader.h"
-#import "Logging.h"
-#import "KWQResourceLoader.h"
-#import "formdata.h"
-#import "MacFrame.h"
-#import "WebCoreFrameBridge.h"
-#import "DocLoader.h"
-#import "KWQFormData.h"
-#import "KWQLoader.h"
+#include "TransferJobInternal.h"
+#include "KURL.h"
+#include "formdata.h"
 
 namespace WebCore {
     
 TransferJobInternal::~TransferJobInternal()
 {
-    KWQRelease(response);
-    KWQRelease(loader);
+	if (m_fileHandle)
+		CloseHandle(m_fileHandle);
 }
 
 TransferJob::~TransferJob()
 {
-    // This will cancel the handle, and who knows what that could do
-    KWQ_BLOCK_EXCEPTIONS;
-    [d->loader jobWillBeDeallocated];
-    KWQ_UNBLOCK_EXCEPTIONS;
-    delete d;
 }
 
 bool TransferJob::start(DocLoader* docLoader)
 {
-    MacFrame *frame = Mac(docLoader->frame());
-    
-    if (!frame) {
+    if (d->URL.isLocalFile()) {
+        QString path = d->URL.path();
+        // windows does not enjoy a leading slash on paths
+        if (path[0] == '/')
+	        path = path.mid(1);
+	    d->m_fileHandle = CreateFileA(path.ascii(), GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    }
+
+    if (d->m_fileHandle == INVALID_HANDLE_VALUE) {
         delete this;
-        return false;
+	    return false;
     }
-    
-    WebCoreFrameBridge* bridge = frame->bridge();
 
-    frame->didTellBridgeAboutLoad(url().url());
-
-    KWQ_BLOCK_EXCEPTIONS;
-    KWQResourceLoader* resourceLoader = [[KWQResourceLoader alloc] initWithJob:this];
-
-    id <WebCoreResourceHandle> handle;
-
-    NSDictionary* headerDict = nil;
-    QString headerString = queryMetaData("customHTTPHeader");
-
-    if (!headerString.isEmpty())
-        headerDict = [NSDictionary _webcore_dictionaryWithHeaderString:headerString.getNSString()];
-
-    if (postData().count() > 0) {
-        handle = [bridge startLoadingResource:resourceLoader withMethod:method() URL:url().getNSURL() customHeaders:headerDict
-            postData:arrayFromFormData(postData())];
-    } else {
-        handle = [bridge startLoadingResource:resourceLoader withMethod:method() URL:url().getNSURL() customHeaders:headerDict];
-    }
-    [resourceLoader setHandle:handle];
-    [resourceLoader release];
-    return handle != nil;
-    KWQ_UNBLOCK_EXCEPTIONS;
-
+    d->m_fileLoadTimer.startOneShot(0.0);
     return true;
 }
 
-void TransferJob::assembleResponseHeaders() const
+void TransferJob::fileLoadTimer(Timer<TransferJob>* timer)
 {
-    if (!d->assembledResponseHeaders) {
-        if ([d->response isKindOfClass:[NSHTTPURLResponse class]]) {
-            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)d->response;
-            NSDictionary *headers = [httpResponse allHeaderFields];
-            d->responseHeaders = QString::fromNSString(KWQHeaderStringFromDictionary(headers, [httpResponse statusCode]));
-        }
-	d->assembledResponseHeaders = true;
-    }
-}
+    bool result = false;
+    DWORD bytesRead = 0;
 
-void TransferJob::retrieveCharset() const
-{
-    if (!d->retrievedCharset) {
-        NSString *charset = [d->response textEncodingName];
-        if (charset)
-            d->metaData.set("charset", charset);
-        d->retrievedCharset = true;
-    }
-}
+    do {
+        const int bufferSize = 8192;
+	char buffer[bufferSize];
+	result = ReadFile(d->m_fileHandle, &buffer, bufferSize, &bytesRead, NULL); 
+	d->client->receivedData(this, buffer, bytesRead);
+	// Check for end of file. 
+    } while (!result || bytesRead);
 
-void TransferJob::setLoader(KWQResourceLoader *loader)
-{
-    KWQRetain(loader);
-    KWQRelease(d->loader);
-    d->loader = loader;
-}
-
-void TransferJob::receivedResponse(NSURLResponse* response)
-{
-    d->assembledResponseHeaders = false;
-    d->retrievedCharset = false;
-    d->response = response;
-    KWQRetain(d->response);
-    if (d->client)
-        d->client->receivedResponse(this, response);
+    CloseHandle(d->m_fileHandle);
+    d->m_fileHandle = 0;
 }
 
 void TransferJob::cancel()
 {
-    [d->loader jobCanceledLoad];
+    d->m_fileLoadTimer.stop();
 }
 
 } // namespace WebCore
