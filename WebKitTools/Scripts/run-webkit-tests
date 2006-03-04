@@ -126,7 +126,6 @@ if (!$testHTTP) {
 }
 my $findArguments = "$prunePart -or $extensionPart";
 
-my $findOrderArg = isCygwin() ? "" : "-s";
 my $foundTestName = 0;
 for my $test (@ARGV) {
     next if $test =~ /^-/;
@@ -141,13 +140,13 @@ for my $test (@ARGV) {
             push @tests, $test;
         }
     } elsif (-d "$testDirectory/$test") {
-        push @tests, sort pathcmp map { chomp; s-^$testDirectory/--; $_; } `find -L $findOrderArg "$testDirectory/$test" $findArguments`;
+        push @tests, sort pathcmp map { chomp; s-^$testDirectory/--; $_; } `find -L "$testDirectory/$test" $findArguments`;
     } else {
         print "test $test not found\n";
     }
 }
 if (!$foundTestName) {
-    @tests = sort pathcmp map { chomp; s-^$testDirectory/--; $_; } `find -Ls $testDirectory $findArguments`;
+    @tests = sort pathcmp map { chomp; s-^$testDirectory/--; $_; } `find -L "$testDirectory" $findArguments`;
 }
 
 die "no tests to run\n" if !@tests;

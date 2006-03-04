@@ -1,5 +1,15 @@
 2006-03-03  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by hyatt.
+
+        A few more fixes to make run-webkit-tests really work on win32.
+
+        * DumpRenderTree/DumpRenderTree.vcproj/DumpRenderTree/DumpRenderTree.cpp:
+        (localFileTest):
+        * Scripts/run-webkit-tests:
+
+2006-03-03  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by darin.
 
         Make run-webkit-tests work on win32.

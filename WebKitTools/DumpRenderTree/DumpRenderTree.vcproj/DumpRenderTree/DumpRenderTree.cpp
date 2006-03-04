@@ -43,7 +43,6 @@ using namespace WebCore;
 
 static void localFileTest(FrameWin* frame, char* path)
 {
-    fprintf(stderr, "Testing file: %s\n", path);
     frame->begin();
     FILE* file = fopen(path, "rb");
     if (!file) {
