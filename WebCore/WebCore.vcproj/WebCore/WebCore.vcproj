@@ -2889,10 +2889,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_theme_mac.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\rendering\RenderBlock.cpp"
 				>
 			</File>
@@ -2970,6 +2966,14 @@
 			</File>
 			<File
 				RelativePath="..\..\rendering\RenderTextFragment.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderThemeWin.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\rendering\RenderThemeWin.h"
 				>
 			</File>
 			<File

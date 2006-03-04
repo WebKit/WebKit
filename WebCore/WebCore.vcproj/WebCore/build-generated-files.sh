@@ -129,17 +129,26 @@ fi
 WebKitOutputConfigDir="$WebKitUnixDir/$1"
 mkdir -p "$WebKitOutputConfigDir"
 
-echo "Copying libxml2.dll"
-cp ../libxml/bin/libxml2.dll "$WebKitOutputConfigDir" || exit 1
 
-echo "Copying libxslt.dll"
-cp ../libxslt/bin/libxslt.dll "$WebKitOutputConfigDir" || exit 1
+if [ ../libxml/bin/libxml2.dll -nt "$WebKitOutputConfigDir/libxml2.dll" ]; then
+    echo "Copying libxml2.dll"
+    cp ../libxml/bin/libxml2.dll "$WebKitOutputConfigDir" || exit 1
+fi
 
-echo "Copying iconv.dll"
-cp ../iconv/bin/iconv.dll "$WebKitOutputConfigDir" || exit 1
+if [ ../libxml/bin/libxslt.dll -nt "$WebKitOutputConfigDir/libxslt.dll" ]; then
+    echo "Copying libxslt.dll"
+    cp ../libxslt/bin/libxslt.dll "$WebKitOutputConfigDir" || exit 1
+fi
 
-echo "Copying zlib1.dll"
-cp ../zlib/bin/zlib1.dll "$WebKitOutputConfigDir" || exit 1
+if [ ../libxml/bin/iconv.dll -nt "$WebKitOutputConfigDir/iconv.dll" ]; then
+    echo "Copying iconv.dll"
+    cp ../iconv/bin/iconv.dll "$WebKitOutputConfigDir" || exit 1
+fi
+
+if [ ../libxml/bin/zlib1.dll -nt "$WebKitOutputConfigDir/zlib1.dll" ]; then
+    echo "Copying zlib1.dll"
+    cp ../zlib/bin/zlib1.dll "$WebKitOutputConfigDir" || exit 1
+fi
 
 # Auto-generate bindings from .idl files
 echo "Auto-generating bindings from .idl files for the dom directory..."

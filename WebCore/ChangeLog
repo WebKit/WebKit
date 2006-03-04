@@ -1,3 +1,72 @@
+2006-03-03  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Fix QString crasher on Win32, also remove c-style casts from file.
+        Add a few more stubs to allow more layout tests to not crash.
+        Make dlls only copy when changed.
+        Add RenderThemeWin stubs.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.vcproj/WebCore/build-generated-files.sh:
+        * platform/QString.cpp:
+        (QString::stripWhiteSpace):
+        (QString::simplifyWhiteSpace):
+        (QString::setLatin1):
+        (QString::sprintf):
+        (QString::insert):
+        (QString::fill):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::usableScreenRect):
+        (FrameWin::respondToChangedContents):
+        (FrameWin::unfocusWindow):
+        (FrameWin::locationbarVisible):
+        (FrameWin::clearUndoRedoOperations):
+        (FrameWin::issueRedoCommand):
+        (FrameWin::canRedo):
+        (FrameWin::canUndo):
+        (FrameWin::saveDocumentState):
+        (FrameWin::print):
+        (FrameWin::issueCutCommand):
+        (FrameWin::issueCopyCommand):
+        (FrameWin::issueUndoCommand):
+        (FrameWin::mimeTypeForFileName):
+        (FrameWin::clearRecordedFormValues):
+        (FrameWin::issuePasteCommand):
+        (FrameWin::scheduleClose):
+        (FrameWin::menubarVisible):
+        (FrameWin::personalbarVisible):
+        (FrameWin::statusbarVisible):
+        (FrameWin::toolbarVisible):
+        (FrameWin::issueTransposeCommand):
+        (FrameWin::canPaste):
+        (FrameWin::incomingReferrer):
+        (FrameWin::canGoBackOrForward):
+        (FrameWin::issuePasteAndMatchStyleCommand):
+        (FrameWin::createPlugin):
+        (BrowserExtensionWin::getHistoryLength):
+        (BrowserExtensionWin::canRunModal):
+        (BrowserExtensionWin::openURLNotify):
+        (BrowserExtensionWin::canRunModalNow):
+        (BrowserExtensionWin::runModal):
+        (QListBox::setFont):
+        (WebCore::TransferJob::assembleResponseHeaders):
+        (WebCore::TransferJob::~TransferJob):
+        (QFontMetrics::QFontMetrics):
+        (QFontMetrics::lineSpacing):
+        (QFontMetrics::xHeight):
+        (QFontMetrics::ascent):
+        (FrameWin::shouldChangeSelection):
+        (FrameWin::generateFrameName):
+        (FrameWin::createFrame):
+        (RenderThemeWin::paintCheckbox):
+        (RenderThemeWin::paintRadio):
+        (RenderThemeWin::paintButton):
+        (RenderThemeWin::paintTextField):
+        * rendering/RenderThemeWin.cpp: Added.
+        (WebCore::theme):
+        * rendering/RenderThemeWin.h: Added.
+
 2006-03-03  Geoffrey Garen  <ggaren@apple.com>
 
         Test case for <rdar://problem/4465598> REGRESSION (TOT): Crash occurs at 

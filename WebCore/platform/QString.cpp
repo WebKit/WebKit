@@ -1686,7 +1686,7 @@ QString QString::stripWhiteSpace() const
     if (dataHandle[0]->_isAsciiValid){
         result.setLength( l );
         if ( l )
-            memcpy( (char *)result.dataHandle[0]->ascii(), &ascii()[start], l );
+            memcpy(const_cast<char*>(result.dataHandle[0]->ascii()), &ascii()[start], l );
     }
     else if (dataHandle[0]->_isUnicodeValid){
         result.setLength( l );
@@ -1711,7 +1711,7 @@ QString QString::simplifyWhiteSpace() const
         const char *fromend = from + dataHandle[0]->_length;
         int outc=0;
         
-        char *to = (char *)result.ascii();
+        char *to = const_cast<char*>(result.ascii());
         while ( true ) {
             while ( from!=fromend && QChar(*from).isSpace() )
                 from++;
@@ -1810,7 +1810,7 @@ QString &QString::setLatin1(const char *str, int len)
         *dataHandle = new KWQStringData(str,len);
         dataHandle[0]->_isHeapAllocated = 1;
     } else {
-        strcpy( (char *)ascii(), str );
+        strcpy(const_cast<char*>(ascii()), str );
         dataHandle[0]->_length = len;
         dataHandle[0]->_isUnicodeValid = 0;
     }
@@ -1859,13 +1859,14 @@ QString &QString::sprintf(const char *format, ...)
     
     // Do the format once to get the length.
     char ch;
-    size_t len = vsnprintf(&ch, 1, format, args);
+    int result = vsnprintf(&ch, 1, format, args);
     
     // Handle the empty string case to simplify the code below.
-    if (len == 0) {
+    if (result <= 0) { // POSIX returns 0 in error; Windows returns a negative number.
         setUnicode(0, 0);
         return *this;
     }
+    unsigned len = result;
     
     // Arrange for storage for the resulting string.
     detachAndDiscardCharacters();
@@ -1884,7 +1885,7 @@ QString &QString::sprintf(const char *format, ...)
     }
 
     // Now do the formatting again, guaranteed to fit.
-    vsprintf((char *)ascii(), format, args);
+    vsprintf(const_cast<char*>(ascii()), format, args);
 
     return *this;
 }
@@ -1927,7 +1928,7 @@ QString &QString::insert(uint index, const char *insertChars, uint insertLength)
         
         // Ensure that we have enough space.
         setLength (originalLength + insertLength);
-        targetChars = (char *)ascii();
+        targetChars = const_cast<char*>(ascii());
         
         // Move tail to make space for inserted characters.
         memmove (targetChars+index+insertLength, targetChars+index, originalLength-index);
@@ -1986,7 +1987,7 @@ QString &QString::insert(uint index, const QString &qs)
         if (qs.dataHandle[0]->_isAsciiValid){
             uint i = insertLength;
             QChar *target = targetChars+index;
-            char *a = (char *)qs.ascii();
+            char *a = const_cast<char*>(qs.ascii());
             
             while (i--)
                 *target++ = *a++;
@@ -2034,7 +2035,7 @@ QString &QString::insert(uint index, QChar qc)
         
         // Ensure that we have enough space.
         setLength (originalLength + 1);
-        targetChars = (char *)ascii();
+        targetChars = const_cast<char*>(ascii());
         
         // Move tail to make space for inserted character.
         memmove (targetChars+index+1, targetChars+index, originalLength-index);
@@ -2073,7 +2074,7 @@ QString &QString::insert(uint index, char ch)
         
         // Ensure that we have enough space.
         setLength (originalLength + 1);
-        targetChars = (char *)ascii();
+        targetChars = const_cast<char*>(ascii());
         
         // Move tail to make space for inserted character.
         memmove (targetChars+index+1, targetChars+index, originalLength-index);
@@ -2340,7 +2341,7 @@ void QString::fill(QChar qc, int len)
     } else {
         if (dataHandle[0]->_isAsciiValid && IS_ASCII_QCHAR(qc)) {
             setLength(len);
-            char *nd = (char *)ascii();
+            char *nd = const_cast<char*>(ascii());
             while (len--) 
                 *nd++ = (char)qc;
             dataHandle[0]->_isUnicodeValid = 0;

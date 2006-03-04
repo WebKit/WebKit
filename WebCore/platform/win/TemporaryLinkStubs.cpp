@@ -35,6 +35,7 @@
 #include "FrameWin.h"
 #include "BrowserExtensionWin.h"
 #include "TransferJob.h"
+#include "RenderThemeWin.h"
 
 using namespace WebCore;
 
@@ -203,21 +204,19 @@ unsigned PlugInInfoStore::pluginCount() const { notImplemented(); return 0; }
 void WebCore::refreshPlugins(bool) { notImplemented(); }
 int WebCore::screenDepth(Widget*) { notImplemented(); return 96; }
 static QFontMetrics localFontMetrics;
-float QFontMetrics::xHeight() const { notImplemented(); return 0; }
 IntRect WebCore::usableScreenRect(Widget*) { notImplemented(); return IntRect(0,0,800,600); }
-RenderTheme* WebCore::theme() { notImplemented(); return 0; }
 Array<char> KWQServeSynchronousRequest(Loader*,DocLoader*,TransferJob*,KURL&,QString&) { notImplemented(); return 0; }
 Widget* WebCore::FrameView::topLevelWidget() const { notImplemented(); return 0; }
-void FrameWin::respondToChangedContents(void) { notImplemented(); }
-void FrameWin::unfocusWindow(void) { notImplemented(); }
-bool FrameWin::locationbarVisible(void) { notImplemented(); return 0; }
+void FrameWin::respondToChangedContents() { notImplemented(); }
+void FrameWin::unfocusWindow() { notImplemented(); }
+bool FrameWin::locationbarVisible() { notImplemented(); return 0; }
 void FrameWin::respondToChangedSelection(WebCore::SelectionController const&,bool) { notImplemented(); }
-void FrameWin::clearUndoRedoOperations(void) { notImplemented(); }
-void FrameWin::issueRedoCommand(void) { notImplemented(); }
+void FrameWin::clearUndoRedoOperations() { notImplemented(); }
+void FrameWin::issueRedoCommand() { notImplemented(); }
 KJS::Bindings::Instance * FrameWin::getObjectInstanceForWidget(Widget *) { notImplemented(); return 0; }
 KJS::Bindings::Instance * FrameWin::getEmbedInstanceForWidget(Widget *) { notImplemented(); return 0; }
-bool FrameWin::canRedo(void)const { notImplemented(); return 0; }
-bool FrameWin::canUndo(void)const { notImplemented(); return 0; }
+bool FrameWin::canRedo() const { notImplemented(); return 0; }
+bool FrameWin::canUndo() const { notImplemented(); return 0; }
 bool FrameWin::runJavaScriptPrompt(String const&,String const&,String &) { notImplemented(); return 0; }
 void FrameWin::recordFormValue(QString const&,QString const&,WebCore::HTMLFormElementImpl *) { notImplemented(); }
 void FrameWin::registerCommandForRedo(WebCore::EditCommandPtr const&) { notImplemented(); }
@@ -225,44 +224,42 @@ void FrameWin::runJavaScriptAlert(String const&) { notImplemented(); }
 bool FrameWin::runJavaScriptConfirm(String const&) { notImplemented(); return 0; }
 bool FrameWin::openURL(KURL const&) { notImplemented(); return 0; }
 void FrameWin::urlSelected(KURL const&,struct WebCore::URLArgs const&) { notImplemented(); }
-void FrameWin::saveDocumentState(void) { notImplemented(); }
-void FrameWin::print(void) { notImplemented(); }
+void FrameWin::saveDocumentState() { notImplemented(); }
+void FrameWin::print() { notImplemented(); }
 KJS::Bindings::Instance * FrameWin::getAppletInstanceForWidget(Widget *) { notImplemented(); return 0; }
 bool FrameWin::passMouseDownEventToWidget(Widget *) { notImplemented(); return 0; }
 void FrameWin::registerCommandForUndo(WebCore::EditCommandPtr const&) { notImplemented(); }
-void FrameWin::issueCutCommand(void) { notImplemented(); }
-void FrameWin::issueCopyCommand(void) { notImplemented(); }
+void FrameWin::issueCutCommand() { notImplemented(); }
+void FrameWin::issueCopyCommand() { notImplemented(); }
 void FrameWin::openURLRequest(KURL const&,struct WebCore::URLArgs const&) { notImplemented(); }
 bool FrameWin::passWheelEventToChildWidget(WebCore::NodeImpl *) { notImplemented(); return 0; }
-void FrameWin::issueUndoCommand(void) { notImplemented(); }
-QString FrameWin::mimeTypeForFileName(QString const&)const { notImplemented(); return QString(); }
-void FrameWin::clearRecordedFormValues(void) { notImplemented(); }
-void FrameWin::issuePasteCommand(void) { notImplemented(); }
-void FrameWin::scheduleClose(void) { notImplemented(); }
+void FrameWin::issueUndoCommand() { notImplemented(); }
+QString FrameWin::mimeTypeForFileName(QString const&) const { notImplemented(); return QString(); }
+void FrameWin::clearRecordedFormValues() { notImplemented(); }
+void FrameWin::issuePasteCommand() { notImplemented(); }
+void FrameWin::scheduleClose() { notImplemented(); }
 void FrameWin::markMisspellingsInAdjacentWords(WebCore::VisiblePosition const&) { notImplemented(); }
 void FrameWin::markMisspellings(WebCore::SelectionController const&) { notImplemented(); }
-bool FrameWin::menubarVisible(void) { notImplemented(); return 0; }
-bool FrameWin::personalbarVisible(void) { notImplemented(); return 0; }
-bool FrameWin::statusbarVisible(void) { notImplemented(); return 0; }
-bool FrameWin::toolbarVisible(void) { notImplemented(); return 0; }
-void FrameWin::issueTransposeCommand(void) { notImplemented(); }
+bool FrameWin::menubarVisible() { notImplemented(); return 0; }
+bool FrameWin::personalbarVisible() { notImplemented(); return 0; }
+bool FrameWin::statusbarVisible() { notImplemented(); return 0; }
+bool FrameWin::toolbarVisible() { notImplemented(); return 0; }
+void FrameWin::issueTransposeCommand() { notImplemented(); }
 void FrameWin::submitForm(KURL const&,struct WebCore::URLArgs const&) { notImplemented(); }
-bool FrameWin::canPaste(void)const { notImplemented(); return 0; }
-QString FrameWin::incomingReferrer(void)const { notImplemented(); return QString(); }
+bool FrameWin::canPaste() const { notImplemented(); return 0; }
+QString FrameWin::incomingReferrer() const { notImplemented(); return QString(); }
 enum WebCore::ObjectContentType FrameWin::objectContentType(KURL const&,QString const&) { notImplemented(); return (ObjectContentType)0; }
-WebCore::Frame * FrameWin::createFrame(KURL const&,QString const&,WebCore::RenderPart *,String const&) { notImplemented(); return 0; }
-bool FrameWin::canGoBackOrForward(int)const { notImplemented(); return 0; }
-void FrameWin::issuePasteAndMatchStyleCommand(void) { notImplemented(); }
+bool FrameWin::canGoBackOrForward(int) const { notImplemented(); return 0; }
+void FrameWin::issuePasteAndMatchStyleCommand() { notImplemented(); }
 WebCore::Plugin * FrameWin::createPlugin(KURL const&,QStringList const&,QStringList const&,QString const&) { notImplemented(); return 0; }
-String FrameWin::generateFrameName(void) { notImplemented(); return String(); }
 void BrowserExtensionWin::setTypedIconURL(KURL const&,QString const&) { notImplemented(); }
 void BrowserExtensionWin::openURLRequest(KURL const&,struct WebCore::URLArgs const&) { notImplemented(); }
-int BrowserExtensionWin::getHistoryLength(void) { notImplemented(); return 0; }
-bool BrowserExtensionWin::canRunModal(void) { notImplemented(); return 0; }
-void BrowserExtensionWin::openURLNotify(void) { notImplemented(); }
+int BrowserExtensionWin::getHistoryLength() { notImplemented(); return 0; }
+bool BrowserExtensionWin::canRunModal() { notImplemented(); return 0; }
+void BrowserExtensionWin::openURLNotify() { notImplemented(); }
 void BrowserExtensionWin::createNewWindow(KURL const&,struct WebCore::URLArgs const&,struct WebCore::WindowArgs const&,WebCore::Frame * &) { notImplemented(); }
-bool BrowserExtensionWin::canRunModalNow(void) { notImplemented(); return 0; }
-void BrowserExtensionWin::runModal(void) { notImplemented(); }
+bool BrowserExtensionWin::canRunModalNow() { notImplemented(); return 0; }
+void BrowserExtensionWin::runModal() { notImplemented(); }
 void BrowserExtensionWin::goBackOrForward(int) { notImplemented(); }
 void BrowserExtensionWin::setIconURL(KURL const&) { notImplemented(); }
 void BrowserExtensionWin::createNewWindow(KURL const&,struct WebCore::URLArgs const&) { notImplemented(); }
@@ -270,14 +267,13 @@ void QSlider::setFont(WebCore::Font const&) { notImplemented(); }
 void QLineEdit::setFont(WebCore::Font const&) { notImplemented(); }
 static WebCore::Font localFont;
 void QListBox::setFont(WebCore::Font const&) { notImplemented(); }
-QFontMetrics::QFontMetrics(WebCore::FontDescription const&) { notImplemented(); }
 void QComboBox::setFont(WebCore::Font const&) { notImplemented(); }
 void QTextEdit::setFont(WebCore::Font const&) { notImplemented(); }
 void QTextEdit::setWritingDirection(enum WebCore::TextDirection) { notImplemented(); }
 GraphicsContext::GraphicsContext() { notImplemented(); }
 void WebCore::TransferJob::retrieveCharset() const { notImplemented(); }
-void WebCore::TransferJob::assembleResponseHeaders(void)const { notImplemented(); }
-WebCore::TransferJob::~TransferJob(void) { notImplemented(); }
+void WebCore::TransferJob::assembleResponseHeaders() const { notImplemented(); }
+WebCore::TransferJob::~TransferJob() { notImplemented(); }
 
 // Completely empty stubs (mostly to allow DRT to run):
 bool WebCore::historyContains(QString const&) { return false; }
@@ -289,17 +285,18 @@ QString KLocale::language() { return "en"; }
 QFontMetrics::QFontMetrics() { }
 QFontMetrics::~QFontMetrics() { }
 QFontMetrics::QFontMetrics(QFontMetrics const&) { }
+QFontMetrics::QFontMetrics(WebCore::FontDescription const&) { }
 QFontMetrics& QFontMetrics::operator=(QFontMetrics const&) { return localFontMetrics; }
 float QFontMetrics::floatWidth(QChar const*,int,int,int len,int,int,int,int,bool) const { return len * 10; }
 int QFontMetrics::lineSpacing() const { return 10; }
-int QFontMetrics::ascent() const { return 10; }
 int QFontMetrics::height() const { return 24; }
 int QFontMetrics::width(QString const& str,int,int,int) const { return str.length() * 10; }
+float QFontMetrics::xHeight() const { return 5; }
+int QFontMetrics::ascent() const { return 10; }
 int QFontMetrics::descent() const { return 10; }
 void QFontMetrics::setFontDescription(WebCore::FontDescription const&) { }
 bool QFontMetrics::isFixedPitch() const { return false; }
 int QFontMetrics::checkSelectionPoint(QChar const*,int,int,int,int,int,int,int,int,bool,int,bool,bool,bool) const { return 0; }
-
 
 void FrameWin::restoreDocumentState() { }
 void FrameWin::partClearedInBegin() { }
@@ -311,7 +308,10 @@ RangeImpl* FrameWin::markedTextRange() const { return 0; }
 bool FrameWin::passSubframeEventToSubframe(WebCore::MouseEventWithHitTestResults&) { return false; }
 bool FrameWin::lastEventIsMouseUp() const { return false; }
 void FrameWin::addMessageToConsole(String const&,unsigned int,String const&) { }
-bool FrameWin::shouldChangeSelection(SelectionController const&,SelectionController const&,WebCore::EAffinity,bool)const { return 0; }
+bool FrameWin::shouldChangeSelection(SelectionController const&,SelectionController const&,WebCore::EAffinity,bool) const { return 0; }
+static int frameNumber = 0;
+String FrameWin::generateFrameName() { return QString::number(frameNumber++); }
+Frame* FrameWin::createFrame(KURL const&,QString const&,RenderPart*,String const&) { return 0; }
 
 
 BrowserExtensionWin::BrowserExtensionWin(WebCore::Frame*) { }
@@ -345,3 +345,7 @@ void GraphicsContext::drawText(int,int,int,int,QChar const*,int,int,int,int,Colo
 void GraphicsContext::drawLineForText(int,int,int,int) { }
 QFontMetrics GraphicsContext::fontMetrics() const { return QFontMetrics(); }
 
+bool RenderThemeWin::paintCheckbox(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { notImplemented(); return false; }
+bool RenderThemeWin::paintRadio(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { notImplemented(); return false; }
+bool RenderThemeWin::paintButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { notImplemented(); return false; }
+bool RenderThemeWin::paintTextField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { notImplemented(); return false; }
