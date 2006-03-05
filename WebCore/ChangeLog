@@ -1,3 +1,10 @@
+2006-03-05  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        * platform/Font.cpp:
+        (WebCore::Font::update): remove extra ref causing large leak.
+
 2006-03-04  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.

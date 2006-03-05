@@ -71,10 +71,8 @@ void Font::update() const
     // style anyway.  Other copies are transient, e.g., the state in the GraphicsContext, and
     // won't stick around long enough to get you in trouble).  Still, this is pretty disgusting,
     // and could eventually be rectified by using RefPtrs for Fonts themselves.
-    if (!m_renderer) {
+    if (!m_renderer)
         m_renderer = new FontRenderer();
-        m_renderer->ref();
-    }
     m_renderer->update(fontDescription());
 }
 
