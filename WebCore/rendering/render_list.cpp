@@ -92,7 +92,7 @@ static QString toHebrew( int number ) {
 
     QString letter;
     if (number>999) {
-  	letter = toHebrew(number/1000) + QString::fromLatin1("'");
+  	letter = toHebrew(number/1000) + "'";
    	number = number%1000;
     }
 
@@ -396,7 +396,6 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
 
     GraphicsContext* p = i.p;
     p->setFont(style()->font());
-    const QFontMetrics fm = p->fontMetrics();
 
     if (p->printing()) {
         if (box.y() < i.r.y())
@@ -442,21 +441,22 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
         return;
     default:
         if (!m_item.isEmpty()) {
+            const Font& font = style()->font();
             if (isInside()) {
             	if( style()->direction() == LTR) {
                     p->drawText(marker.x(), marker.y(), 0, 0, 0, 0, Qt::AlignLeft, m_item);
-                    p->drawText(marker.x() + fm.width(m_item, 0, 0), marker.y(), 0, 0, 0, 0, Qt::AlignLeft, ". ");
+                    p->drawText(marker.x() + font.width(m_item), marker.y(), 0, 0, 0, 0, Qt::AlignLeft, ". ");
                 } else {
                     p->drawText(marker.x(), marker.y(), 0, 0, 0, 0, Qt::AlignLeft, " .");
-            	    p->drawText(marker.x() + fm.width(" .", 0, 0), marker.y(), 0, 0, 0, 0, Qt::AlignLeft, m_item);
+            	    p->drawText(marker.x() + font.width(" ."), marker.y(), 0, 0, 0, 0, Qt::AlignLeft, m_item);
                 }
             } else {
                 if (style()->direction() == LTR) {
                     p->drawText(marker.x(), marker.y(), 0, 0, 0, 0, Qt::AlignRight, ". ");
-                    p->drawText(marker.x() - fm.width(". ", 0, 0), marker.y(), 0, 0, 0, 0, Qt::AlignRight, m_item);
+                    p->drawText(marker.x() - font.width(". "), marker.y(), 0, 0, 0, 0, Qt::AlignRight, m_item);
                 } else {
             	    p->drawText(marker.x(), marker.y(), 0, 0, 0, 0, Qt::AlignLeft, " .");
-                    p->drawText(marker.x() + fm.width(" .", 0, 0), marker.y(), 0, 0, 0, 0, Qt::AlignLeft, m_item);
+                    p->drawText(marker.x() + font.width(" ."), marker.y(), 0, 0, 0, 0, Qt::AlignLeft, m_item);
                 }
             }
         }
@@ -503,8 +503,8 @@ void RenderListMarker::calcMinMaxWidth()
     if (m_listItem->value() < 0) // not yet calculated
         m_listItem->calcValue();
 
-    const QFontMetrics &fm = style()->fontMetrics();
-    m_height = fm.ascent();
+    const Font& font = style()->font();
+    m_height = font.ascent();
 
     switch(style()->listStyleType())
     {
@@ -541,7 +541,7 @@ void RenderListMarker::calcMinMaxWidth()
 
    	m_item = QChar(945 + l);
     	for (int i = 0; i < (number / 24); i++) {
-       	    m_item += QString::fromLatin1("'");
+       	    m_item += "'";
     	}
 	break;
      }
@@ -560,9 +560,8 @@ void RenderListMarker::calcMinMaxWidth()
         break;
     }
 
-    if (isInside()) {
-        m_width = fm.width(m_item, 0, 0) + fm.width(QString::fromLatin1(". "), 0, 0);
-    }
+    if (isInside())
+        m_width = font.width(m_item) + font.width(". ");
 
 end:
 
@@ -587,8 +586,8 @@ short RenderListMarker::lineHeight(bool, bool) const
 short RenderListMarker::baselinePosition(bool, bool) const
 {
     if (!m_listImage) {
-        const QFontMetrics &fm = style()->fontMetrics();
-        return fm.ascent() + (lineHeight(false) - fm.height())/2;
+        const Font& font = style()->font();
+        return font.ascent() + (lineHeight(false) - font.height())/2;
     }
     return height();
 }
@@ -639,15 +638,15 @@ IntRect RenderListMarker::getRelativeMarkerRect()
         }
     }
     
-    const QFontMetrics fm = style() ? style()->fontMetrics() : QFontMetrics();
+    const Font& font = style()->font();
     
-    int offset = fm.ascent()*2/3;
+    int offset = font.ascent()*2/3;
     bool haveImage = m_listImage && !m_listImage->isErrorImage();
     if (haveImage)
         offset = m_listImage->image()->width();
     
     int xoff = 0;
-    int yoff = fm.ascent() - offset;
+    int yoff = font.ascent() - offset;
 
     int bulletWidth = offset/2;
     if (offset%2)
@@ -674,15 +673,15 @@ IntRect RenderListMarker::getRelativeMarkerRect()
         if (m_item.isEmpty())
             return IntRect();
             
-        y += fm.ascent();
+        y += font.ascent();
 
         if (isInside())
-            return IntRect(x, y, fm.width(m_item, 0, 0) + fm.width(". ", 0, 0), fm.height());
+            return IntRect(x, y, font.width(m_item) + font.width(". "), font.height());
         else {
             if (style()->direction() == LTR)
-                return IntRect(x - offset / 2, y, fm.width(m_item, 0, 0) + fm.width(". ", 0, 0), fm.height());
+                return IntRect(x - offset / 2, y, font.width(m_item) + font.width(". "), font.height());
             else
-                return IntRect(x + offset / 2, y, fm.width(m_item, 0, 0) + fm.width(". ", 0, 0), fm.height());
+                return IntRect(x + offset / 2, y, font.width(m_item) + font.width(". "), font.height());
         }
     }
 }

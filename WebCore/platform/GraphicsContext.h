@@ -40,7 +40,6 @@ typedef struct CGContext* CGContextRef;
 typedef struct HDC__ *HDC;
 #endif
 
-class QFontMetrics;
 class QString;
 
 namespace WebCore {
@@ -71,7 +70,6 @@ namespace WebCore {
        
         const Font& font() const;
         void setFont(const Font&);
-        QFontMetrics fontMetrics() const;
         
         const Pen& pen() const;
         void setPen(const Pen&);

@@ -38,6 +38,7 @@
 #include "Color.h"
 #include "DataRef.h"
 #include "Font.h"
+#include "IntRect.h"
 #include "Length.h"
 #include "Shared.h"
 #include "TextDirection.h"
@@ -1178,9 +1179,6 @@ public:
     const Font& font() { return inherited->font; }
     const FontDescription& fontDescription() { return inherited->font.fontDescription(); }
     int fontSize() const { return inherited->font.pixelSize(); }
-
-    // FIXME: Will be removed when we eliminate QFontMetrics.
-    const QFontMetrics & fontMetrics() const { return inherited->font.fontMetrics(); }
 
     const Color & color() const { return inherited->color; }
     Length textIndent() const { return inherited->indent; }

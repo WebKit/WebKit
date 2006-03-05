@@ -103,12 +103,9 @@ void RenderImage::imageChanged(CachedImage* o)
 
         // we have an alt and the user meant it (its not a text we invented)
         if (!m_altText.isEmpty()) {
-            const QFontMetrics &fm = style()->fontMetrics();
-            IntRect br = fm.boundingRect(0, 0, 1024, 256, Qt::AlignAuto, m_altText.qstring(), 0, 0);  // FIX: correct tabwidth?
-            if (br.width() > iw)
-                iw = br.width();
-            if (br.height() > ih)
-                ih = br.height();
+            const Font& font = style()->font();
+            iw = kMax(iw, kMin(font.width(m_altText.qstring()), 1024));
+            ih = kMax(ih, kMin(font.height(), 256));
         }
 
         if (iw != intrinsicWidth()) {
@@ -246,16 +243,16 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
                 p->setPen(style()->color());
                 int ax = _tx + leftBorder + leftPad;
                 int ay = _ty + topBorder + topPad;
-                const QFontMetrics &fm = style()->fontMetrics();
-                int ascent = fm.ascent();
+                const Font& font = style()->font();
+                int ascent = font.ascent();
                 
                 // Only draw the alt text if it'll fit within the content box,
                 // and only if it fits above the error image.
-                int textWidth = fm.width (text, 0, 0, text.length());
+                int textWidth = font.width(text);
                 if (errorPictureDrawn) {
-                    if (usableWidth >= textWidth && fm.height() <= imageY)
+                    if (usableWidth >= textWidth && font.height() <= imageY)
                         p->drawText(ax, ay+ascent, tabWidth(), 0, 0 /* ignored */, 0 /* ignored */, 0, text );
-                } else if (usableWidth >= textWidth && cHeight >= fm.height())
+                } else if (usableWidth >= textWidth && cHeight >= font.height())
                     p->drawText(ax, ay+ascent, tabWidth(), 0, 0 /* ignored */, 0 /* ignored */, 0, text );
             }
         }

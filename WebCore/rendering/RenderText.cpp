@@ -523,7 +523,7 @@ void RenderText::trimmedMinMaxWidth(int leadWidth,
     if (stripFrontSpaces && ((*str)[0] == ' ' || ((*str)[0] == '\n' && !style()->preserveNewline()) || (*str)[0] == '\t')) {
         const Font *f = font(false); // FIXME: Why is it ok to ignore first-line here?
         QChar space[1]; space[0] = ' ';
-        int spaceWidth = f->width(space, 1, 0, 0);
+        int spaceWidth = f->width(space, 1);
         maxW -= spaceWidth + f->wordSpacing();
     }
     
@@ -926,13 +926,6 @@ short RenderText::lineHeight(bool firstLine, bool) const
     return parent()->lineHeight(firstLine, true);
 }
 
-short RenderText::baselinePosition( bool firstLine, bool ) const
-{
-    const QFontMetrics &fm = metrics( firstLine );
-    return fm.ascent() +
-        ( lineHeight( firstLine ) - fm.height() ) / 2;
-}
-
 void RenderText::dirtyLineBoxes(bool fullLayout, bool)
 {
     if (fullLayout)
@@ -1070,11 +1063,6 @@ IntRect RenderText::selectionRect()
 short RenderText::verticalPositionHint( bool firstLine ) const
 {
     return parent()->verticalPositionHint( firstLine );
-}
-
-const QFontMetrics &RenderText::metrics(bool firstLine) const
-{
-    return style(firstLine)->fontMetrics();
 }
 
 const Font *RenderText::font(bool firstLine) const

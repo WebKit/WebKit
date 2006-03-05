@@ -837,7 +837,7 @@ int RenderBlock::tabWidth(bool isWhitespacePre)
     if (!m_tabWidth) {
         QChar spaceChar(' ');
         const Font& font = style()->font();
-        int spaceWidth = font.width(&spaceChar, 1, 0, 0);
+        int spaceWidth = font.width(&spaceChar, 1);
         m_tabWidth = spaceWidth * 8;
         assert(m_tabWidth != 0);
     }
@@ -2527,8 +2527,8 @@ void RenderBlock::checkLinesForTextOverflow()
     static AtomicString ellipsisStr(ellipsis);
     const Font& firstLineFont = firstLineStyle()->font();
     const Font& font = style()->font();
-    int firstLineEllipsisWidth = firstLineFont.width(&ellipsis, 1, 0, 0);
-    int ellipsisWidth = (font == firstLineFont) ? firstLineEllipsisWidth : font.width(&ellipsis, 1, 0, 0);
+    int firstLineEllipsisWidth = firstLineFont.width(&ellipsis, 1);
+    int ellipsisWidth = (font == firstLineFont) ? firstLineEllipsisWidth : font.width(&ellipsis, 1);
 
     // For LTR text truncation, we want to get the right edge of our padding box, and then we want to see
     // if the right edge of a line box exceeds that.  For RTL, we use the left edge of the padding box and

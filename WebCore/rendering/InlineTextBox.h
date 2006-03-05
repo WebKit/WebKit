@@ -29,8 +29,6 @@
 #include "RenderText.h"
 #include "render_line.h"
 
-class QFontMetrics;
-
 namespace WebCore {
 
 const int cNoTruncation = -1;

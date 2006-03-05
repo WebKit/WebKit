@@ -182,9 +182,8 @@ void RenderTextField::calcMinMaxWidth()
     int size = static_cast<HTMLInputElementImpl*>(element())->size();
     if (size <= 0)
         size = 20;
-    const QFontMetrics &fm = style()->fontMetrics();
-    m_maxWidth = fm.width("w", 0, 0, 1) * size + paddingLeft() + paddingRight() + borderLeft() + borderRight();
     
+    m_maxWidth = style()->font().width("w") * size + paddingLeft() + paddingRight() + borderLeft() + borderRight();
     setMinMaxKnown();
 }
 

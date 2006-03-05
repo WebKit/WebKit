@@ -846,8 +846,7 @@ double CSSPrimitiveValueImpl::computeLengthFloat(RenderStyle *style, bool applyZ
         // FIXME: We have a bug right now where the zoom will be applied multiple times to EX units.
         // We really need to compute EX using fontMetrics for the original specifiedSize and not use
         // our actual constructed rendering font.
-        QFontMetrics fm = style->fontMetrics();
-        factor = fm.xHeight();
+        factor = style->font().xHeight();
         break;
     }
     case CSSPrimitiveValue::CSS_PX:

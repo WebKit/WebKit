@@ -220,7 +220,7 @@ void SVGLengthImpl::updateValue(bool notify)
                 if (m_unitType == SVG_LENGTHTYPE_EMS)
                     m_value = m_valueInSpecifiedUnits * useSize;
                 else {
-                    float xHeight = style->fontMetrics().xHeight();
+                    float xHeight = style->font().xHeight();
                     // Use of ceil allows a pixel match to the W3Cs expected output of coords-units-03-b.svg
                     // if this causes problems in real world cases maybe it would be best to remove this
                     m_value = m_valueInSpecifiedUnits * ceil(xHeight);

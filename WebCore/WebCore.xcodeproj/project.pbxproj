@@ -903,8 +903,6 @@
 		BC73E3190978AFFC00EDFF8A /* IntPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = BC73E3180978AFFB00EDFF8A /* IntPoint.h */; };
 		BC73E3920978CED700EDFF8A /* FloatPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC73E3900978CED700EDFF8A /* FloatPoint.cpp */; };
 		BC73E3930978CED700EDFF8A /* FloatPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = BC73E3910978CED700EDFF8A /* FloatPoint.h */; };
-		BC9B62E409B3DC85006131EB /* KWQFontMetrics.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9B62E209B3DC85006131EB /* KWQFontMetrics.h */; };
-		BC9B62E509B3DC85006131EB /* KWQFontMetrics.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC9B62E309B3DC85006131EB /* KWQFontMetrics.mm */; };
 		BC9C328B09933A6E001D6924 /* ImageAnimationObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9C328A09933A6D001D6924 /* ImageAnimationObserver.h */; };
 		BCB16AF90979A08500467741 /* FloatRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB16AF50979A08500467741 /* FloatRect.cpp */; };
 		BCB16AFA0979A08500467741 /* FloatRect.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB16AF60979A08500467741 /* FloatRect.h */; };
@@ -1026,6 +1024,8 @@
 		BCEA4944097F0F5C0094C9E4 /* BrowserExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4943097F0F5C0094C9E4 /* BrowserExtension.h */; };
 		BCEA4947097F0F770094C9E4 /* BrowserExtensionMac.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4945097F0F770094C9E4 /* BrowserExtensionMac.h */; };
 		BCEA4948097F0F770094C9E4 /* BrowserExtensionMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4946097F0F770094C9E4 /* BrowserExtensionMac.mm */; };
+		BCEB377309B7BA3900CB38B1 /* FontMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCEB377209B7BA3900CB38B1 /* FontMac.mm */; };
+		BCEB377609B7BB0D00CB38B1 /* FontRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEB377509B7BB0D00CB38B1 /* FontRenderer.h */; };
 		BCEF3434087B563E00BBF833 /* htmlfactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEF3432087B563E00BBF833 /* htmlfactory.cpp */; };
 		BCEF3435087B563E00BBF833 /* htmlfactory.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEF3433087B563E00BBF833 /* htmlfactory.h */; };
 		BCF1A5F1097839600061A123 /* IntSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF1A5EF097839600061A123 /* IntSize.h */; };
@@ -1968,8 +1968,6 @@
 		BC7B2AF90450824100A8000F /* KWQScrollBar.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQScrollBar.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC86FB8D061F5C23006BB822 /* KWQSlider.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQSlider.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BC86FB8E061F5C23006BB822 /* KWQSlider.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQSlider.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BC9B62E209B3DC85006131EB /* KWQFontMetrics.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = KWQFontMetrics.h; sourceTree = "<group>"; };
-		BC9B62E309B3DC85006131EB /* KWQFontMetrics.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQFontMetrics.mm; sourceTree = "<group>"; };
 		BC9C328A09933A6D001D6924 /* ImageAnimationObserver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ImageAnimationObserver.h; path = platform/ImageAnimationObserver.h; sourceTree = "<group>"; };
 		BCB16AF50979A08500467741 /* FloatRect.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FloatRect.cpp; path = platform/FloatRect.cpp; sourceTree = "<group>"; };
 		BCB16AF60979A08500467741 /* FloatRect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FloatRect.h; path = platform/FloatRect.h; sourceTree = "<group>"; };
@@ -2099,6 +2097,8 @@
 		BCEA4946097F0F770094C9E4 /* BrowserExtensionMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = BrowserExtensionMac.mm; sourceTree = "<group>"; };
 		BCEACC8E0592E0AD009D6AEF /* xbl_docimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = xbl_docimpl.cpp; path = xbl/xbl_docimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BCEACC8F0592E0AD009D6AEF /* xbl_docimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = xbl_docimpl.h; path = xbl/xbl_docimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		BCEB377209B7BA3900CB38B1 /* FontMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FontMac.mm; sourceTree = "<group>"; };
+		BCEB377509B7BB0D00CB38B1 /* FontRenderer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FontRenderer.h; path = platform/FontRenderer.h; sourceTree = "<group>"; };
 		BCEF3432087B563E00BBF833 /* htmlfactory.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = htmlfactory.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BCEF3433087B563E00BBF833 /* htmlfactory.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = htmlfactory.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BCF1A5EF097839600061A123 /* IntSize.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = IntSize.h; path = platform/IntSize.h; sourceTree = "<group>"; };
@@ -2391,6 +2391,7 @@
 				6582A14B09999D6C00BEEB6D /* FloatRectMac.mm */,
 				6582A14C09999D6C00BEEB6D /* FloatSizeMac.mm */,
 				BCC47E2209A3D6B300ADB771 /* FontFamilyMac.mm */,
+				BCEB377209B7BA3900CB38B1 /* FontMac.mm */,
 				935C476C09AC4D6300A6AAB4 /* FoundationExtras.h */,
 				935367E809AF77EF00D35CD6 /* GraphicsContextMac.mm */,
 				6582A14D09999D6C00BEEB6D /* ImageMac.mm */,
@@ -3372,6 +3373,7 @@
 				BCC47E6A09A3FE4700ADB771 /* FontDescription.h */,
 				BCC47E2409A3D6F100ADB771 /* FontFamily.cpp */,
 				BCC47E2509A3D6F100ADB771 /* FontFamily.h */,
+				BCEB377509B7BB0D00CB38B1 /* FontRenderer.h */,
 				A823A75B09B6E53900B60641 /* GraphicsContext.cpp */,
 				935367E409AF77DD00D35CD6 /* GraphicsContext.h */,
 				BC6B7BAE0993603C0052867B /* Image.cpp */,
@@ -3848,8 +3850,6 @@
 				F58784D202DE375901EA4122 /* KWQComboBox.mm */,
 				F58784D502DE375901EA4122 /* KWQCString.cpp */,
 				F587868302DE3B8601EA4122 /* KWQCString.h */,
-				BC9B62E209B3DC85006131EB /* KWQFontMetrics.h */,
-				BC9B62E309B3DC85006131EB /* KWQFontMetrics.mm */,
 				F58784E602DE375901EA4122 /* KWQGuardedPtr.cpp */,
 				F587869002DE3B8601EA4122 /* KWQGuardedPtr.h */,
 				F587869802DE3B8601EA4122 /* KWQLineEdit.h */,
@@ -4409,11 +4409,11 @@
 				657BD74E09AFDC54005A2056 /* StreamingTextDecoder.h in Headers */,
 				657BD75009AFDC54005A2056 /* TextEncoding.h in Headers */,
 				BC6D6E2609AF943500F59759 /* ScrollView.h in Headers */,
-				BC9B62E409B3DC85006131EB /* KWQFontMetrics.h in Headers */,
 				65F537D909B2B20F00F3DC4A /* CharsetNames.h in Headers */,
 				65F5386909B2BFDA00F3DC4A /* ExtraCFEncodings.h in Headers */,
 				A82398A609B3ACDB00B60641 /* PlugInInfoStore.h in Headers */,
 				A8239E0109B3CF8A00B60641 /* Logging.h in Headers */,
+				BCEB377609B7BB0D00CB38B1 /* FontRenderer.h in Headers */,
 				C6D74AD509AA282E000B0A52 /* ModifySelectionListLevelCommand.h in Headers */,
 				6545F67109B82FED0013006F /* TransferJob.h in Headers */,
 				6545F67209B82FED0013006F /* TransferJobClient.h in Headers */,
@@ -5525,13 +5525,13 @@
 				BC6D6DD209AF906600F59759 /* Font.cpp in Sources */,
 				9353676B09AED88B00D35CD6 /* ScrollViewMac.mm in Sources */,
 				935367E909AF77EF00D35CD6 /* GraphicsContextMac.mm in Sources */,
-				BC9B62E509B3DC85006131EB /* KWQFontMetrics.mm in Sources */,
 				657BD74D09AFDC54005A2056 /* StreamingTextDecoder.cpp in Sources */,
 				657BD74F09AFDC54005A2056 /* TextEncoding.cpp in Sources */,
 				6576F9D609B2484A000041F7 /* TextEncodingMac.cpp in Sources */,
 				65F5386B09B2C05E00F3DC4A /* CharsetNames.cpp in Sources */,
 				A82398A809B3ACF500B60641 /* PlugInInfoStoreMac.mm in Sources */,
 				A8239E0009B3CF8A00B60641 /* Logging.cpp in Sources */,
+				BCEB377309B7BA3900CB38B1 /* FontMac.mm in Sources */,
 				C6D74AE409AA290A000B0A52 /* ModifySelectionListLevelCommand.cpp in Sources */,
 				A823A75C09B6E53900B60641 /* GraphicsContext.cpp in Sources */,
 				6545F67009B82FED0013006F /* TransferJob.cpp in Sources */,

@@ -26,37 +26,66 @@
 #include "config.h"
 #include "Font.h"
 
+#include "FontRenderer.h"
 #include "GraphicsContext.h"
 #include "khtml_settings.h"
 #include <algorithm>
 
 namespace WebCore {
 
-IntRect Font::selectionRectForText(int x, int y, int h, int tabWidth, int xpos, 
-    const QChar* str, int slen, int pos, int len, int toAdd,
-    bool rtl, bool visuallyOrdered, int from, int to) const
+Font::Font() :m_renderer(0), m_letterSpacing(0), m_wordSpacing(0) {}
+Font::Font(const FontDescription& fd, short letterSpacing, short wordSpacing) 
+: m_fontDescription(fd),
+  m_renderer(0),
+  m_letterSpacing(letterSpacing),
+  m_wordSpacing(wordSpacing)
+{}
+
+Font::Font(const Font& other)
 {
-    return fm.selectionRectForText(x, y, h, tabWidth, xpos, str + pos, std::min(slen - pos, len), from, to, toAdd, rtl, visuallyOrdered, m_letterSpacing, m_wordSpacing, m_fontDescription.smallCaps());
+    m_fontDescription = other.m_fontDescription;
+    m_renderer = other.m_renderer;
+    m_letterSpacing = other.m_letterSpacing;
+    m_wordSpacing = other.m_wordSpacing;
 }
 
-void Font::drawHighlightForText(GraphicsContext *p, int x, int y, int h, int tabWidth, int xpos, 
-    const QChar* str, int slen, int pos, int len,
-    int toAdd, TextDirection d, bool visuallyOrdered, int from, int to, Color bg) const
+Font& Font::operator=(const Font& other)
 {
-    p->drawHighlightForText(x, y, h, tabWidth, xpos, str + pos, std::min(slen - pos, len), from, to, toAdd, bg, d, visuallyOrdered,
-        m_letterSpacing, m_wordSpacing, m_fontDescription.smallCaps());
+    if (&other != this) {
+        m_fontDescription = other.m_fontDescription;
+        m_renderer = other.m_renderer;
+        m_letterSpacing = other.m_letterSpacing;
+        m_wordSpacing = other.m_wordSpacing;
+    }
+    return *this;
 }
-                     
-void Font::drawText(GraphicsContext *p, int x, int y, int tabWidth, int xpos, const QChar* str, int slen, int pos, int len,
-    int toAdd, TextDirection d, bool visuallyOrdered, int from, int to, Color bg ) const
+
+Font::~Font()
 {
-    p->drawText(x, y, tabWidth, xpos, str + pos, std::min(slen - pos, len), from, to, toAdd, bg, d, visuallyOrdered,
-                m_letterSpacing, m_wordSpacing, m_fontDescription.smallCaps());
 }
 
 void Font::update() const
 {
-    fm.setFontDescription(fontDescription());
+    // FIXME: It is pretty crazy that we are willing to just poke into a RefPtr, but it ends up 
+    // being reasonably safe (because inherited fonts in the render tree pick up the new
+    // style anyway.  Other copies are transient, e.g., the state in the GraphicsContext, and
+    // won't stick around long enough to get you in trouble).  Still, this is pretty disgusting,
+    // and could eventually be rectified by using RefPtrs for Fonts themselves.
+    if (!m_renderer) {
+        m_renderer = new FontRenderer();
+        m_renderer->ref();
+    }
+    m_renderer->update(fontDescription());
+}
+
+int Font::width(const QChar* chs, int slen, int pos, int len, int tabWidth, int xpos) const
+{
+    // FIXME: Want to define an lroundf for win32.
+#if __APPLE__
+    return lroundf(floatWidth(chs + pos, slen - pos, 0, len, tabWidth, xpos));
+#else
+    return floatWidth(chs + pos, slen - pos, 0, len, tabWidth, xpos) + 0.5f;
+#endif
 }
 
 }

@@ -663,10 +663,10 @@ void InlineFlowBox::placeBoxesVertically(int y, int maxHeight, int maxAscent, bo
         int newHeight = curr->height();
         int newBaseline = curr->baseline();
         if (curr->isText() || curr->isInlineFlowBox()) {
-            const QFontMetrics &fm = curr->object()->fontMetrics( m_firstLine );
-            newBaseline = fm.ascent();
+            const Font& font = curr->object()->font(m_firstLine);
+            newBaseline = font.ascent();
             newY += curr->baseline() - newBaseline;
-            newHeight = newBaseline+fm.descent();
+            newHeight = newBaseline + font.descent();
             if (curr->isInlineFlowBox()) {
                 newHeight += curr->object()->borderTop() + curr->object()->paddingTop() +
                             curr->object()->borderBottom() + curr->object()->paddingBottom();
@@ -692,10 +692,10 @@ void InlineFlowBox::placeBoxesVertically(int y, int maxHeight, int maxAscent, bo
     }
 
     if (isRootInlineBox()) {
-        const QFontMetrics &fm = object()->fontMetrics( m_firstLine );
-        setHeight(fm.ascent()+fm.descent());
-        setYPos(yPos() + baseline() - fm.ascent());
-        setBaseline(fm.ascent());
+        const Font& font = object()->font(m_firstLine);
+        setHeight(font.ascent() + font.descent());
+        setYPos(yPos() + baseline() - font.ascent());
+        setBaseline(font.ascent());
         if (hasTextChildren() || strictMode) {
             if (yPos() < topPosition)
                 topPosition = yPos();

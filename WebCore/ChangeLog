@@ -1,3 +1,84 @@
+2006-03-04  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 7586, eliminate QFontMetrics.
+
+        Reviewed by eric
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/css_valueimpl.cpp:
+        (WebCore::CSSPrimitiveValueImpl::computeLengthFloat):
+        * ksvg2/svg/SVGLengthImpl.cpp:
+        (SVGLengthImpl::updateValue):
+        * kwq/KWQFontMetrics.h: Removed.
+        * kwq/KWQFontMetrics.mm: Removed.
+        * platform/Font.cpp:
+        (WebCore::m_wordSpacing):
+        (WebCore::Font::Font):
+        (WebCore::Font::operator=):
+        (WebCore::Font::~Font):
+        (WebCore::Font::update):
+        (WebCore::Font::width):
+        * platform/Font.h:
+        (WebCore::Font::operator==):
+        (WebCore::Font::width):
+        (WebCore::Font::height):
+        * platform/FontRenderer.h: Added.
+        (WebCore::FontRenderer::isFixedPitch):
+        * platform/GraphicsContext.h:
+        * platform/mac/FontMac.mm: Added.
+        (WebCore::m_renderer):
+        (WebCore::FontRenderer::getWebCoreFont):
+        (WebCore::FontRenderer::getRenderer):
+        (WebCore::FontRenderer::determinePitch):
+        (WebCore::FontRenderer::update):
+        (WebCore::Font::getWebCoreFont):
+        (WebCore::Font::ascent):
+        (WebCore::Font::descent):
+        (WebCore::Font::lineSpacing):
+        (WebCore::Font::xHeight):
+        (WebCore::Font::isFixedPitch):
+        (WebCore::Font::selectionRectForText):
+        (WebCore::Font::drawHighlightForText):
+        (WebCore::Font::drawText):
+        (WebCore::Font::floatWidth):
+        (WebCore::Font::checkSelectionPoint):
+        * platform/mac/GraphicsContextMac.mm:
+        * rendering/InlineTextBox.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::stripTrailingSpace):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::trimmedMinMaxWidth):
+        * rendering/RenderText.h:
+        * rendering/RenderTextField.cpp:
+        (WebCore::RenderTextField::calcMinMaxWidth):
+        * rendering/bidi.cpp:
+        (khtml::RenderBlock::tabWidth):
+        (khtml::RenderBlock::checkLinesForTextOverflow):
+        * rendering/render_box.cpp:
+        (WebCore::RenderBox::caretRect):
+        * rendering/render_br.cpp:
+        (WebCore::RenderBR::lineHeight):
+        * rendering/render_flow.cpp:
+        (WebCore::RenderFlow::lineHeight):
+        (WebCore::RenderFlow::caretRect):
+        * rendering/render_image.cpp:
+        (WebCore::RenderImage::imageChanged):
+        (WebCore::RenderImage::paint):
+        * rendering/render_line.cpp:
+        (WebCore::InlineFlowBox::placeBoxesVertically):
+        * rendering/render_list.cpp:
+        (WebCore::toHebrew):
+        (WebCore::RenderListMarker::paint):
+        (WebCore::RenderListMarker::calcMinMaxWidth):
+        (WebCore::RenderListMarker::baselinePosition):
+        (WebCore::RenderListMarker::getRelativeMarkerRect):
+        * rendering/render_object.cpp:
+        (WebCore::RenderObject::getVerticalPosition):
+        (WebCore::RenderObject::lineHeight):
+        (WebCore::RenderObject::baselinePosition):
+        * rendering/render_object.h:
+        * rendering/render_style.h:
+
 2006-03-04  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by ggaren.

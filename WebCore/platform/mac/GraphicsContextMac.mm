@@ -119,11 +119,6 @@ void GraphicsContext::setFont(const Font& aFont)
     m_data->state.font = aFont;
 }
 
-QFontMetrics GraphicsContext::fontMetrics() const
-{
-    return m_data->state.font.fontMetrics();
-}
-
 const Pen& GraphicsContext::pen() const
 {
     return m_data->state.pen;

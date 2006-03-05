@@ -823,10 +823,6 @@ public:
         return style(firstLine)->font();
     }
 
-    const QFontMetrics &fontMetrics(bool firstLine) const {
-        return style( firstLine )->fontMetrics();
-    }
-
     // Virtual function helpers for CSS3 Flexible Box Layout
     virtual bool isFlexibleBox() const { return false; }
     virtual bool isFlexingChildren() const { return false; }

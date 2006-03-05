@@ -26,11 +26,15 @@
 #ifndef FONT_H
 #define FONT_H
 
+#if __APPLE__
+#include "WebCoreTextRendererFactory.h"
+#endif
+
+#include <kxmlcore/RefPtr.h>
 #include "Color.h"
 #include "TextDirection.h"
 #include "FontFamily.h"
 #include "FontDescription.h"
-#include <qfontmetrics.h>
 
 #undef min
 #undef max
@@ -38,22 +42,24 @@
 
 namespace WebCore {
 
+class FontRenderer;
 class GraphicsContext;
+class IntRect;
 
 enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
 
 class Font {
 public:
-    Font() :m_letterSpacing(0), m_wordSpacing(0) {}
-    Font(const FontDescription& fd, short letterSpacing, short wordSpacing) 
-      : m_fontDescription(fd),
-        m_letterSpacing(letterSpacing),
-        m_wordSpacing(wordSpacing)
-    {}
+    Font();
+    Font(const FontDescription& fd, short letterSpacing, short wordSpacing);
+    ~Font();
     
+    Font(const Font&);
+    Font& operator=(const Font&);
+
     bool operator==(const Font& other) const {
-        // The platform-specific pointers don't have to be checked, since
-        // any result will be fine.
+        // The renderer pointer doesn't have to be checked, since
+        // checking the font description will be fine.
         return (m_fontDescription == other.m_fontDescription &&
                 m_letterSpacing == other.m_letterSpacing &&
                 m_wordSpacing == other.m_wordSpacing);
@@ -64,9 +70,7 @@ public:
     }
 
     const FontDescription& fontDescription() const { return m_fontDescription; }
-    
-    const QFontMetrics& fontMetrics() const { return fm; }
-    
+
     int pixelSize() const { return fontDescription().computedPixelSize(); }
     float size() const { return fontDescription().computedSize(); }
     
@@ -86,7 +90,8 @@ public:
         TextDirection, bool visuallyOrdered = false, int from = -1, int to = -1, Color bg = Color()) const;
 
     int width(const QChar*, int slen, int pos, int len, int tabWidth, int xpos) const;
-    int width(const QChar*, int slen, int tabWidth, int xpos) const;
+    int width(const QChar* chs, int slen, int tabWidth = 0, int xpos = 0) const { return width(chs, slen, 0, slen, tabWidth, xpos); }
+    int width(const QString& s) const { return width(s.unicode(), s.length(), 0, 0); }
 
     bool isSmallCaps() const { return m_fontDescription.smallCaps(); }
 
@@ -95,8 +100,7 @@ public:
     void setWordSpacing(short s) { m_wordSpacing = s; }
     void setLetterSpacing(short s) { m_letterSpacing = s; }
 
-    bool isFixedPitch() const { return fm.isFixedPitch(); };
-
+    bool isFixedPitch() const;
     bool isPrinterFont() const { return m_fontDescription.usePrinterFont(); }
 
     FontFamily& firstFamily() { return m_fontDescription.firstFamily(); }
@@ -108,42 +112,22 @@ public:
 #if __APPLE__
     NSString* getNSFamily() const { return m_fontDescription.family().getNSFamily(); }    
     NSFont* getNSFont() const { return getWebCoreFont().font; }
-    const WebCoreFont& getWebCoreFont() const { return fm.getWebCoreFont(); }
+    const WebCoreFont& getWebCoreFont() const;
 #endif
+
+    // Metrics that we query the FontRenderer for.
+    int ascent() const;
+    int descent() const;
+    int height() const { return ascent() + descent(); }
+    int lineSpacing() const;
+    float xHeight() const;
 
 private:
     FontDescription m_fontDescription;
-    mutable QFontMetrics fm; // FIXME: This is going to morph into the platform-specific wrapper for measurement/drawing.
+    mutable RefPtr<FontRenderer> m_renderer;
     short m_letterSpacing;
     short m_wordSpacing;
 };
-
-inline float Font::floatWidth(const QChar* chs, int slen, int pos, int len, int tabWidth, int xpos) const
-{
-    return fm.floatWidth(chs, slen, pos, len, tabWidth, xpos, m_letterSpacing, m_wordSpacing, m_fontDescription.smallCaps());
-}
-
-inline int Font::checkSelectionPoint(const QChar* s, int slen, int pos, int len, int toAdd, int tabWidth, int xpos, int x, TextDirection d, bool visuallyOrdered, bool includePartialGlyphs) const
-{
-    return fm.checkSelectionPoint(s + pos, std::min(slen - pos, len), 0, len, toAdd, tabWidth, xpos, m_letterSpacing, m_wordSpacing, 
-        m_fontDescription.smallCaps(), x, d == RTL, visuallyOrdered, includePartialGlyphs);
-}
-
-inline int Font::width(const QChar* chs, int slen, int pos, int len, int tabWidth, int xpos) const
-{
-    // FIXME: Want to define an lroundf for win32.
-#if __APPLE__
-    return lroundf(fm.floatWidth(chs + pos, slen - pos, 0, len, tabWidth, xpos, 
-                                 m_letterSpacing, m_wordSpacing, m_fontDescription.smallCaps()));
-#else
-    return fm.floatWidth(chs + pos, slen - pos, 0, len, tabWidth, xpos, m_letterSpacing, m_wordSpacing, m_fontDescription.smallCaps()) + 0.5f;
-#endif
-}
-
-inline int Font::width(const QChar* chs, int slen, int tabWidth, int xpos) const
-{
-    return width(chs, slen, 0, 1, tabWidth, xpos);
-}
 
 }
 

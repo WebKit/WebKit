@@ -299,7 +299,7 @@ short RenderFlow::lineHeight(bool firstLine, bool isRootLineBox) const
                     m_lineHeight = RenderObject::lineHeight(false);
                 return m_lineHeight;
             }
-            return s->fontMetrics().lineSpacing();
+            return s->font().lineSpacing();
         }
         if (lh.isPercent())
             return lh.calcMinValue(s->fontSize());
@@ -604,7 +604,6 @@ IntRect RenderFlow::caretRect(int offset, EAffinity affinity, int *extraWidthToE
     // the caret size of an empty :first-line'd block is wrong, but I think we
     // can live with that.
     RenderStyle *currentStyle = firstLineStyle();
-    //height = currentStyle->fontMetrics().height();
     height = lineHeight(true);
     width = 1;
 

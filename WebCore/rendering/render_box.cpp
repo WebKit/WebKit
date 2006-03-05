@@ -1753,7 +1753,7 @@ IntRect RenderBox::caretRect(int offset, EAffinity affinity, int *extraWidthToEn
     // <rdar://problem/3777804> Deleting all content in a document can result in giant tall-as-window insertion point
     //
     // FIXME: ignoring :first-line, missing good reason to take care of
-    int fontHeight = style()->fontMetrics().height();
+    int fontHeight = style()->font().height();
     if (fontHeight > height || !isReplaced())
         height = fontHeight;
     

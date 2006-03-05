@@ -2197,13 +2197,13 @@ short RenderObject::getVerticalPosition( bool firstLine ) const
         else if (va == SUPER)
             vpos -= fontsize/3 + 1;
         else if (va == TEXT_TOP)
-            vpos += baselinePosition( firstLine ) - QFontMetrics(f.fontDescription()).ascent();
+            vpos += baselinePosition(firstLine) - f.ascent();
         else if (va == MIDDLE)
-            vpos += - (int)(QFontMetrics(f.fontDescription()).xHeight()/2) - lineHeight( firstLine )/2 + baselinePosition( firstLine );
+            vpos += - (int)(f.xHeight()/2) - lineHeight( firstLine )/2 + baselinePosition( firstLine );
         else if (va == TEXT_BOTTOM) {
-            vpos += QFontMetrics(f.fontDescription()).descent();
+            vpos += f.descent();
             if (!isReplaced())
-                vpos -= fontMetrics(firstLine).descent();
+                vpos -= font(firstLine).descent();
         } else if ( va == BASELINE_MIDDLE )
             vpos += - lineHeight( firstLine )/2 + baselinePosition( firstLine );
     }
@@ -2219,7 +2219,7 @@ short RenderObject::lineHeight( bool firstLine, bool ) const
 
     // its "unset", choose nice default
     if (lh.value() < 0)
-        return s->fontMetrics().lineSpacing();
+        return s->font().lineSpacing();
 
     if (lh.isPercent())
         return lh.calcMinValue(s->fontSize());
@@ -2228,10 +2228,10 @@ short RenderObject::lineHeight( bool firstLine, bool ) const
     return lh.value();
 }
 
-short RenderObject::baselinePosition( bool firstLine, bool isRootLineBox ) const
+short RenderObject::baselinePosition(bool firstLine, bool isRootLineBox) const
 {
-    const QFontMetrics &fm = fontMetrics( firstLine );
-    return fm.ascent() + ( lineHeight( firstLine, isRootLineBox ) - fm.height() ) / 2;
+    const Font& f = font(firstLine);
+    return f.ascent() + (lineHeight(firstLine, isRootLineBox) - f.height()) / 2;
 }
 
 void RenderObject::invalidateVerticalPositions()
