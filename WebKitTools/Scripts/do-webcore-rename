@@ -98,9 +98,6 @@ my %otherRenames = (
     "HTMLDocument" => "JSHTMLDocument",
     "MacFrame" => "FrameMac",
     "createAttrImplIfNeeded" => "createAttrIfNeeded",
-);
-
-my %fileOnlyRenames = (
     "dom2_rangeimpl" => "Range",
     "dom2_viewsimpl" => "AbstractView",
     "dom_position" => "Position",
@@ -123,18 +120,18 @@ my %fileOnlyRenames = (
     "visible_text" => "TextIterator",
     "xml_tokenizer" => "Tokenizer",
     "xmlserializer" => "JSXMLSerializer",
-    "xslt_processorimpl" => "XSLTProcessor",
+    "xslt_processorimpl" => "XSLTProcessorImpl",
 );
 
 # rename most files with names ending in Impl
 
 my %newFile;
 for my $file (sort @paths) {
-    if ($file =~ /^(.*?)(\w+)Impl(\.\w+)$/) {
-        $newFile{$file} = "$1$2$3" if !$exceptions{$2};
-    } elsif ($file =~ /^(.*\/)(\w+)(\.\w+)$/) {
-        $newFile{$file} = "$1$otherRenames{$2}$3" if $otherRenames{$2};
-        $newFile{$file} = "$1$fileOnlyRenames{$2}$3" if $fileOnlyRenames{$2};
+    my $f = $file;
+    $f = "$1$otherRenames{$2}$3" if $f =~ /^(.*\/)(\w+)(\.\w+)$/ && $otherRenames{$2};
+    $f = "$1$2$3" if $f =~ /^(.*?)(\w+)Impl(\.\w+)$/ && !$exceptions{$2};
+    if ($f ne $file) {
+        $newFile{$file} = $f;
     }
 }
 
@@ -189,6 +186,7 @@ for my $file (sort @paths) {
         $newContents =~ s/interfaceName \. "Impl"/interfaceName/g;
         $newContents =~ s/{interfaceName}Impl/{interfaceName}/g;
         $newContents =~ s/{type}Impl/{type}/g;
+        $newContents =~ s/html_documentimpl/HTMLDocument/g;
     }
 
     # fix words with Impl suffix

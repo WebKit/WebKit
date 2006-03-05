@@ -1,5 +1,10 @@
 2006-03-05  Darin Adler  <darin@apple.com>
 
+        * Scripts/do-webcore-rename: Fix a couple of things found while testing.
+        Script now works (after landing my two pending patches).
+
+2006-03-05  Darin Adler  <darin@apple.com>
+
         - check in a script to do a "big" rename in WebCore
           (can be run whenever we're ready to do it)
 
