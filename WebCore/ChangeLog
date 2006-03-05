@@ -1,3 +1,19 @@
+2006-03-04  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by ggaren.
+
+        Add urlSelected stub, adjust font metrics, and fix view size/move bug.
+
+        * platform/win/TemporaryLinkStubs.cpp:
+        (MouseEvent::MouseEvent):
+        (FrameWin::urlSelected):
+        (QFontMetrics::height):
+        (QFontMetrics::xHeight):
+        (QFontMetrics::ascent):
+        (QFontMetrics::descent):
+        (ScrollView::resizeContents):
+        (ScrollView::setContentsPos):
+
 2006-03-04  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

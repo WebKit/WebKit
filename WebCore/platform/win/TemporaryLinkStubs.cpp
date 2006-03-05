@@ -186,7 +186,7 @@ void Path::translate(int, int){ notImplemented(); }
 IntRect Path::boundingRect() const { notImplemented(); return IntRect(); }
 static Cursor localCursor;
 const Cursor& WebCore::moveCursor() { notImplemented(); return localCursor; }
-WebCore::MouseEvent::MouseEvent() { notImplemented(); }
+MouseEvent::MouseEvent() { notImplemented(); }
 void QLineEdit::setColors(Color const&,Color const&) { notImplemented(); }
 void QTextEdit::setColors(Color const&,Color const&) { notImplemented(); }
 QString searchableIndexIntroduction() { notImplemented(); return QString(); }
@@ -222,7 +222,6 @@ void FrameWin::registerCommandForRedo(WebCore::EditCommandPtr const&) { notImple
 void FrameWin::runJavaScriptAlert(String const&) { notImplemented(); }
 bool FrameWin::runJavaScriptConfirm(String const&) { notImplemented(); return 0; }
 bool FrameWin::openURL(KURL const&) { notImplemented(); return 0; }
-void FrameWin::urlSelected(KURL const&,struct WebCore::URLArgs const&) { notImplemented(); }
 void FrameWin::print() { notImplemented(); }
 KJS::Bindings::Instance * FrameWin::getAppletInstanceForWidget(Widget *) { notImplemented(); return 0; }
 bool FrameWin::passMouseDownEventToWidget(Widget *) { notImplemented(); return 0; }
@@ -286,11 +285,11 @@ QFontMetrics::QFontMetrics(WebCore::FontDescription const&) { }
 QFontMetrics& QFontMetrics::operator=(QFontMetrics const&) { return localFontMetrics; }
 float QFontMetrics::floatWidth(QChar const*,int,int,int len,int,int,int,int,bool) const { return len * 10; }
 int QFontMetrics::lineSpacing() const { return 10; }
-int QFontMetrics::height() const { return 24; }
+int QFontMetrics::height() const { return ascent() + descent(); }
 int QFontMetrics::width(QString const& str,int,int,int) const { return str.length() * 10; }
-float QFontMetrics::xHeight() const { return 5; }
-int QFontMetrics::ascent() const { return 10; }
-int QFontMetrics::descent() const { return 10; }
+float QFontMetrics::xHeight() const { return 10; }
+int QFontMetrics::ascent() const { return 12; }
+int QFontMetrics::descent() const { return 12; }
 void QFontMetrics::setFontDescription(WebCore::FontDescription const&) { }
 bool QFontMetrics::isFixedPitch() const { return false; }
 int QFontMetrics::checkSelectionPoint(QChar const*,int,int,int,int,int,int,int,int,bool,int,bool,bool,bool) const { return 0; }
@@ -311,13 +310,14 @@ String FrameWin::generateFrameName() { return QString::number(frameNumber++); }
 Frame* FrameWin::createFrame(KURL const&,QString const&,RenderPart*,String const&) { return 0; }
 void FrameWin::saveDocumentState(void) { }
 void FrameWin::clearUndoRedoOperations(void) {}
+void FrameWin::urlSelected(KURL const&,struct WebCore::URLArgs const&) { }
 
 BrowserExtensionWin::BrowserExtensionWin(WebCore::Frame*) { }
 
 bool KWQCheckIfReloading(WebCore::DocLoader*) { return false; }
 void KWQCheckCacheObjectStatus(DocLoader*, CachedObject*) { }
 
-void ScrollView::resizeContents(int w,int h) { resize(w, h); }
+void ScrollView::resizeContents(int w,int h) { }
 WebCore::ScrollBarMode ScrollView::hScrollBarMode() const { return ScrollBarAlwaysOff; }
 WebCore::ScrollBarMode ScrollView::vScrollBarMode() const { return ScrollBarAlwaysOff; }
 void ScrollView::suppressScrollBars(bool,bool) { }
@@ -326,7 +326,7 @@ void ScrollView::setVScrollBarMode(ScrollBarMode) { }
 void ScrollView::setScrollBarsMode(ScrollBarMode) { }
 int ScrollView::visibleHeight() const { return 800; }
 int ScrollView::visibleWidth() const { return 1000; }
-void ScrollView::setContentsPos(int x,int y) { move(x, y); }
+void ScrollView::setContentsPos(int x,int y) { }
 int ScrollView::contentsX() const { return x(); }
 int ScrollView::contentsY() const { return y(); }
 int ScrollView::contentsHeight() const { return 800; }
