@@ -38,9 +38,11 @@ typedef struct CGContext* CGContextRef;
 
 #if WIN32
 typedef struct HDC__ *HDC;
+typedef struct _cairo cairo_t;
 #endif
 
 class QString;
+class QChar;
 
 namespace WebCore {
 
@@ -64,6 +66,11 @@ namespace WebCore {
         // eventually require clients to pass some sort of printer-info
         // struct to that we can CreateDC the printer device correctly.
         GraphicsContext(HDC);
+
+        // This is temporarily public to allow Spinneret to do double-buffering.
+        // Long term, we should get the GraphicsContext from the FrameView
+        // and then have a blit() method on the FrameView.
+        GraphicsContext(cairo_t* context);
 #endif
         GraphicsContext(bool forPrinting);
         ~GraphicsContext();

@@ -9,8 +9,10 @@
 #include "Image.h"
 #include "FloatRect.h"
 #include "IntSize.h"
+#include "GraphicsContext.h"
+#include "FrameWin.h"
 
-using WebCore::Image;
+using namespace WebCore;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -33,6 +35,8 @@ END_MESSAGE_MAP()
 
 ImageView::ImageView()
 {
+    // Needed to make sure everything is properly initialized;
+    static FrameWin *dummyFrame = new FrameWin(0,0);
 }
 
 ImageView::~ImageView()
@@ -81,11 +85,10 @@ void ImageView::OnDraw(CDC* pDC)
                                                             CAIRO_CONTENT_COLOR_ALPHA,
                                                             rect.right, rect.bottom);
 
-    // Fill with white.
     cairo_t* context = cairo_create(surface);
-    cairo_rectangle(context, 0, 0, rect.right, rect.bottom);
-    cairo_set_source_rgb(context, 1.0, 1.0, 1.0);
-    cairo_fill(context);
+    GraphicsContext gc(context);
+    // Fill with white.
+    gc.fillRect(0, 0, rect.right, rect.bottom, Brush(Color::white));
 
     // Comment in to test overlapping.
     bool overlapping = false; // true;
@@ -106,14 +109,14 @@ void ImageView::OnDraw(CDC* pDC)
     FloatRect dstRect(FloatPoint(left, top), FloatSize(width, height));
     FloatRect imageRect(srcPoint, image->size());
     if (tile)
-        image->tileInRect(dstRect, srcPoint, context);
+        gc.drawTiledImage(image, dstRect.x(), dstRect.y(), dstRect.width(), dstRect.height(), srcPoint.x(), srcPoint.y());
     else {
-        image->drawInRect(dstRect, imageRect, Image::CompositeSourceOver, (void*)context);
+        gc.drawFloatImage(image, dstRect.x(), dstRect.y(), dstRect.width(), dstRect.height(),
+            imageRect.x(), imageRect.y(), imageRect.width(), imageRect.height(), Image::CompositeSourceOver);
     //    if (overlapping)
      //       image->drawInRect(FloatRect(dstRect.x() + dstRect.width()/2, dstRect.y(), dstRect.width(), dstRect.height()),
      //                        imageRect, Image::CompositeSourceOver, context);
     }
-    cairo_destroy(context);
     
     context = cairo_create(finalSurface);
     cairo_set_operator(context, CAIRO_OPERATOR_SOURCE);

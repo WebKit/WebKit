@@ -12,7 +12,6 @@
 #include "KWQComboBox.h"
 #include "IntPoint.h"
 #include "Widget.h"
-#include "KWQFontMetrics.h"
 #include "GraphicsContext.h"
 #include "KWQSlider.h"
 #include "Cursor.h"
@@ -36,6 +35,7 @@
 #include "BrowserExtensionWin.h"
 #include "TransferJob.h"
 #include "RenderThemeWin.h"
+#include "FontRenderer.h"
 
 using namespace WebCore;
 
@@ -97,7 +97,6 @@ void GraphicsContext::clearShadow() { notImplemented(); }
 void QTextEdit::setLineHeight(int) { notImplemented(); }
 void QScrollBar::setKnobProportion(int,int) { notImplemented(); }
 KWQFileButton::KWQFileButton(Frame*) { notImplemented(); }
-IntRect QFontMetrics::boundingRect(int,int,int,int,int,QString const&,int,int) const { notImplemented(); return IntRect(); }
 void QTextEdit::setSelectionStart(int) { notImplemented(); }
 void GraphicsContext::beginTransparencyLayer(float) { notImplemented(); }
 void QListBox::setSelected(int,bool) { notImplemented(); }
@@ -121,7 +120,6 @@ void Widget::lockDrawingFocus() { notImplemented(); }
 void QTextEdit::setSelectionRange(int,int) { notImplemented(); }
 void ScrollView::scrollPointRecursively(int,int) { notImplemented(); }
 IntSize QLineEdit::sizeForCharacterWidth(int) const { notImplemented(); return IntSize(); }
-IntRect QFontMetrics::selectionRectForText(int,int,int,int,int,QChar const*,int,int,int,int,bool,bool,int,int,bool) const { notImplemented(); return IntRect(); }
 void QTextEdit::getCursorPosition(int*,int*) const { notImplemented(); }
 bool FrameView::isFrameView() const { notImplemented(); return 0; }
 void QScrollBar::setSteps(int,int) { notImplemented(); }
@@ -203,7 +201,6 @@ PluginInfo*PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned) { notImpl
 unsigned PlugInInfoStore::pluginCount() const { notImplemented(); return 0; }
 void WebCore::refreshPlugins(bool) { notImplemented(); }
 int WebCore::screenDepth(Widget*) { notImplemented(); return 96; }
-static QFontMetrics localFontMetrics;
 IntRect WebCore::usableScreenRect(Widget*) { notImplemented(); return IntRect(0,0,800,600); }
 Array<char> KWQServeSynchronousRequest(Loader*,DocLoader*,TransferJob*,KURL&,QString&) { notImplemented(); return 0; }
 Widget* WebCore::FrameView::topLevelWidget() const { notImplemented(); return 0; }
@@ -249,7 +246,6 @@ enum WebCore::ObjectContentType FrameWin::objectContentType(KURL const&,QString 
 bool FrameWin::canGoBackOrForward(int) const { notImplemented(); return 0; }
 void FrameWin::issuePasteAndMatchStyleCommand() { notImplemented(); }
 WebCore::Plugin * FrameWin::createPlugin(KURL const&,QStringList const&,QStringList const&,QString const&) { notImplemented(); return 0; }
-void BrowserExtensionWin::setTypedIconURL(KURL const&,QString const&) { notImplemented(); }
 void BrowserExtensionWin::openURLRequest(KURL const&,struct WebCore::URLArgs const&) { notImplemented(); }
 int BrowserExtensionWin::getHistoryLength() { notImplemented(); return 0; }
 bool BrowserExtensionWin::canRunModal() { notImplemented(); return 0; }
@@ -270,6 +266,8 @@ void QTextEdit::setWritingDirection(enum WebCore::TextDirection) { notImplemente
 GraphicsContext::GraphicsContext() { notImplemented(); }
 void WebCore::TransferJob::retrieveCharset() const { notImplemented(); }
 void WebCore::TransferJob::assembleResponseHeaders() const { notImplemented(); }
+IntRect Font::selectionRectForText(int, int, int, int, int, const QChar*, int, int, int, int, bool, bool, int, int) const { notImplemented(); return IntRect(); }
+void Font::drawHighlightForText(WebCore::GraphicsContext*, int, int, int, int, int, const QChar*, int, int, int, int, WebCore::TextDirection, bool, int, int, WebCore::Color) const { notImplemented(); }
 
 // Completely empty stubs (mostly to allow DRT to run):
 bool WebCore::historyContains(QString const&) { return false; }
@@ -277,22 +275,6 @@ QString submitButtonDefaultLabel() { return "Submit"; }
 QString inputElementAltText() { return QString(); }
 QString resetButtonDefaultLabel() { return "Reset"; }
 QString KLocale::language() { return "en"; }
-
-QFontMetrics::QFontMetrics() { }
-QFontMetrics::~QFontMetrics() { }
-QFontMetrics::QFontMetrics(QFontMetrics const&) { }
-QFontMetrics::QFontMetrics(WebCore::FontDescription const&) { }
-QFontMetrics& QFontMetrics::operator=(QFontMetrics const&) { return localFontMetrics; }
-float QFontMetrics::floatWidth(QChar const*,int,int,int len,int,int,int,int,bool) const { return len * 10; }
-int QFontMetrics::lineSpacing() const { return 10; }
-int QFontMetrics::height() const { return ascent() + descent(); }
-int QFontMetrics::width(QString const& str,int,int,int) const { return str.length() * 10; }
-float QFontMetrics::xHeight() const { return 10; }
-int QFontMetrics::ascent() const { return 12; }
-int QFontMetrics::descent() const { return 12; }
-void QFontMetrics::setFontDescription(WebCore::FontDescription const&) { }
-bool QFontMetrics::isFixedPitch() const { return false; }
-int QFontMetrics::checkSelectionPoint(QChar const*,int,int,int,int,int,int,int,int,bool,int,bool,bool,bool) const { return 0; }
 
 void FrameWin::restoreDocumentState() { }
 void FrameWin::partClearedInBegin() { }
@@ -313,6 +295,7 @@ void FrameWin::clearUndoRedoOperations(void) {}
 void FrameWin::urlSelected(KURL const&,struct WebCore::URLArgs const&) { }
 
 BrowserExtensionWin::BrowserExtensionWin(WebCore::Frame*) { }
+void BrowserExtensionWin::setTypedIconURL(KURL const&,QString const&) { }
 
 bool KWQCheckIfReloading(WebCore::DocLoader*) { return false; }
 void KWQCheckCacheObjectStatus(DocLoader*, CachedObject*) { }
@@ -334,12 +317,23 @@ int ScrollView::contentsWidth() const { return 1000; }
 void ScrollView::viewportToContents(int x1, int y1, int& x2, int& y2) { x2 = x1; y2 = y1; }
 void ScrollView::setStaticBackground(bool) { }
 
+float Font::floatWidth(QChar const*, int, int, int len, int, int) const { return len * 10; }
+int Font::descent() const { return 10; }
+float Font::xHeight() const { return 10; }
+int Font::ascent() const { return 10; }
+int Font::lineSpacing() const { return 10; }
+bool Font::isFixedPitch() const { return true; }
+void Font::drawText(WebCore::GraphicsContext *, int, int, int, int, const QChar*, int, int, int, int, WebCore::TextDirection, bool, int, int, WebCore::Color) const { }
+int Font::checkSelectionPoint(const QChar*, int, int, int, int, int, int, int, WebCore::TextDirection, bool, bool) const { return 0; }
+
+FontRenderer::FontRenderer() { }
+void FontRenderer::update(FontDescription const &) { }
+
 Font const& GraphicsContext::font() const { return localFont; }
 void GraphicsContext::setFont(Font const&) { }
 void GraphicsContext::drawText(int,int,int,int,int,int,int,QString const&) { }
 void GraphicsContext::drawText(int,int,int,int,QChar const*,int,int,int,int,Color const&,TextDirection,bool,int,int,bool) { }
 void GraphicsContext::drawLineForText(int,int,int,int) { }
-QFontMetrics GraphicsContext::fontMetrics() const { return QFontMetrics(); }
 
 bool RenderThemeWin::paintCheckbox(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { notImplemented(); return false; }
 bool RenderThemeWin::paintRadio(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { notImplemented(); return false; }

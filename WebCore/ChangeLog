@@ -1,3 +1,22 @@
+2006-03-04  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Re-work ImageViewer to use GraphicsContext.
+        Add GraphicsContext(cairo_t*) constructor to make double-buffering easier.
+        Add one more stub to prevent slashdot from crashing.
+        Also fixed win32 build after Font change.
+
+        * Viewer.vcproj:
+        * Viewer/ImageView.cpp:
+        * platform/Color.h:
+        * platform/GraphicsContext.h:
+        * platform/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::GraphicsContext):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (FrameWin::createPlugin):
+        (BrowserExtensionWin::setTypedIconURL):
+
 2006-03-05  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin, landed by ap.

@@ -29,6 +29,7 @@
 #include "Cursor.h"
 #include "GraphicsContext.h"
 #include "FrameWin.h"
+#include "IntRect.h"
 #include "Font.h"
 
 namespace WebCore {

@@ -30,6 +30,7 @@
 #include "Pen.h"
 #include "FloatRect.h"
 #include "IntPointArray.h"
+#include "IntRect.h"
 
 #include <cairo.h>
 #include <cairo-win32.h>
@@ -91,6 +92,15 @@ GraphicsContext::GraphicsContext(HDC dc)
 {
     cairo_surface_t* surface = cairo_win32_surface_create(dc);
     m_data->context = cairo_create(surface);
+}
+
+GraphicsContext::GraphicsContext(cairo_t* context)
+    : m_data(new GraphicsContextPrivate)
+    , m_isForPrinting(false)
+    , m_usesInactiveTextBackgroundColor(false)
+    , m_updatingControlTints(false)
+{
+    m_data->context = cairo_reference(context);
 }
 
 GraphicsContext::GraphicsContext(bool forPrinting)

@@ -2990,34 +2990,6 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="bridge"
-			>
-			<File
-				RelativePath="..\..\bridge\BrowserExtension.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bridge\History.h"
-				>
-			</File>
-			<Filter
-				Name="win"
-				>
-				<File
-					RelativePath="..\..\bridge\win\BrowserExtensionWin.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\bridge\win\FrameWin.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\bridge\win\FrameWin.h"
-					>
-				</File>
-			</Filter>
-		</Filter>
-		<Filter
 			Name="xml"
 			>
 			<File
@@ -3270,6 +3242,34 @@
 				RelativePath="..\..\dom\xml_tokenizer.h"
 				>
 			</File>
+		</Filter>
+		<Filter
+			Name="bridge"
+			>
+			<File
+				RelativePath="..\..\bridge\BrowserExtension.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bridge\History.h"
+				>
+			</File>
+			<Filter
+				Name="win"
+				>
+				<File
+					RelativePath="..\..\bridge\win\BrowserExtensionWin.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\bridge\win\FrameWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\bridge\win\FrameWin.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>
