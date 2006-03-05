@@ -99,7 +99,7 @@ namespace KJS {
 KJS_IMPLEMENT_PROTOFUNC(DOMNodeProtoFunc)
 KJS_IMPLEMENT_PROTOTYPE("DOMNode", DOMNodeProto, DOMNodeProtoFunc)
 
-const ClassInfo DOMNode::info = { "Node", &DOMNodeProto::info, &DOMNodeTable, 0 };
+const ClassInfo DOMNode::info = { "Node", 0, &DOMNodeTable, 0 };
 
 DOMNode::DOMNode(ExecState *exec, NodeImpl *n)
   : m_impl(n)
