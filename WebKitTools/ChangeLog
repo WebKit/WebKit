@@ -1,5 +1,22 @@
 2006-03-04  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by hyatt.
+
+        Take advantage of new GraphicsContext constructor to implement double buffering to avoid tearing.
+        Disable background erase to avoid tearing.
+        Fix potential memory smasher from extra long urls. 
+
+        * Spinneret/Spinneret/Spinneret.cpp:
+        (MyRegisterClass):
+        * Spinneret/Spinneret/Spinneret.vcproj:
+        * Spinneret/Spinneret/WebFrame.cpp:
+        (WebKit::WebFrame::loadFilePath):
+        (WebKit::WebFrame::paint):
+        * Spinneret/Spinneret/WebView.cpp:
+        (WebKit::registerWebViewWithInstance):
+
+2006-03-04  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by ggaren.
 
         Hang WebView pointer off of HWND (gets rid of global hack).

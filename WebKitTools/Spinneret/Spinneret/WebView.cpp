@@ -64,14 +64,14 @@ static ATOM registerWebViewWithInstance(HINSTANCE hInstance)
 
     wcex.cbSize = sizeof(WNDCLASSEX);
 
-    wcex.style          = CS_HREDRAW | CS_VREDRAW; // CS_DBLCLKS?
+    wcex.style          = CS_DBLCLKS;
     wcex.lpfnWndProc    = WebViewWndProc;
     wcex.cbClsExtra     = 0;
     wcex.cbWndExtra     = 4; // 4 bytes for the WebView pointer
     wcex.hInstance      = hInstance;
     wcex.hIcon          = 0;
     wcex.hCursor        = LoadCursor(0, IDC_ARROW);
-    wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
+    wcex.hbrBackground  = 0;
     wcex.lpszMenuName   = 0;
     wcex.lpszClassName  = kWebViewWindowClassName;
     wcex.hIconSm        = 0;

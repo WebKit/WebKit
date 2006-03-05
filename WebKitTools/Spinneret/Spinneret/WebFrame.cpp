@@ -34,6 +34,8 @@
 #include "GraphicsContext.h"
 #include "Page.h"
 #include "render_frames.h"
+#include "cairo.h"
+#include "cairo-win32.h"
 
 #include <io.h>
 #include <fcntl.h>
@@ -68,7 +70,7 @@ void WebFrame::loadFilePath(char* path)
 {
     char URL[2048];
     strcpy(URL, "file://localhost/");
-    strcat(URL, path);
+    strncat(URL, path, 2020);
 
     d->frame->didOpenURL(URL);
     d->frame->begin(URL);
@@ -99,9 +101,28 @@ void WebFrame::loadHTMLString(char *html, char *baseURL)
 void WebFrame::paint()
 {
     PAINTSTRUCT ps;
-    HDC hdc = BeginPaint(d->webView->windowHandle(), &ps);
-    GraphicsContext context(ps.hdc);
-    d->frame->paint(&context, ps.rcPaint);
+    HDC hdc = BeginPaint(d->webView->windowHandle(), &ps);   
+    cairo_surface_t* finalSurface = cairo_win32_surface_create(hdc);
+    cairo_surface_t* surface = cairo_surface_create_similar(finalSurface,
+                                                            CAIRO_CONTENT_COLOR_ALPHA,
+                                                            ps.rcPaint.right, ps.rcPaint.bottom);
+
+    cairo_t* context = cairo_create(surface);
+    GraphicsContext gc(context);
+    
+    d->frame->paint(&gc, ps.rcPaint);
+
+    cairo_destroy(context);
+    context = cairo_create(finalSurface);
+    cairo_set_operator(context, CAIRO_OPERATOR_SOURCE);
+    cairo_set_source_surface(context, surface, 0, 0);
+    cairo_rectangle(context, 0, 0, ps.rcPaint.right, ps.rcPaint.bottom);
+    cairo_fill(context);
+    cairo_destroy(context);
+
+    cairo_surface_destroy(surface);
+    cairo_surface_destroy(finalSurface);
+
     EndPaint(d->webView->windowHandle(), &ps);
 }
 
