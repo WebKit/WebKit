@@ -37,7 +37,6 @@ typedef struct CGContext *CGContextRef;
 @class NSGraphicsContext;
 #else
 class NSGraphicsContext;
-#endif // SVG_SUPPORT
 #endif
 
 namespace WebCore {
@@ -102,4 +101,5 @@ public:
 
 }
 
+#endif // SVG_SUPPORT
 #endif

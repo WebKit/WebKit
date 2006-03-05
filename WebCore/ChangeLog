@@ -1,3 +1,9 @@
+2006-03-05  Eric Seidel  <eseidel@apple.com>
+
+        Move improperly placed #endif causing no-svg build to fail.
+
+        * kcanvas/device/quartz/KRenderingDeviceQuartz.h:
+
 2006-03-05  Alexander Kellett  <lypanov@kde.org>
 
         Reviewed by Eric.
