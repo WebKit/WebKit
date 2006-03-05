@@ -823,14 +823,12 @@
 		A88AD50B095248F0001DD196 /* SVGZoomAndPanImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F8EB089701F400BA5114 /* SVGZoomAndPanImpl.cpp */; };
 		A88AD50C095248F0001DD196 /* SVGZoomAndPanImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F8EC089701F400BA5114 /* SVGZoomAndPanImpl.h */; };
 		A88AD50D095248F0001DD196 /* ksvg.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F8ED089701F400BA5114 /* ksvg.h */; };
-		A88AD50F095248F0001DD196 /* KSVGSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F8F1089701F400BA5114 /* KSVGSettings.h */; };
 		A88AD5140952499F001DD196 /* Namespace.h in Headers */ = {isa = PBXBuildFile; fileRef = A884284009308C1C00B6D461 /* Namespace.h */; };
 		A88AD5150952499F001DD196 /* kdomevents.h in Headers */ = {isa = PBXBuildFile; fileRef = A884283A09308C1C00B6D461 /* kdomevents.h */; };
 		A88AD5160952499F001DD196 /* kdom.h in Headers */ = {isa = PBXBuildFile; fileRef = A884283C09308C1C00B6D461 /* kdom.h */; };
 		A88AD5170952499F001DD196 /* DOMList.h in Headers */ = {isa = PBXBuildFile; fileRef = A884283D09308C1C00B6D461 /* DOMList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A88AD5180952499F001DD196 /* RGBColorImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A884283E09308C1C00B6D461 /* RGBColorImpl.h */; };
 		A88AD5190952499F001DD196 /* KDOMHeaders.h in Headers */ = {isa = PBXBuildFile; fileRef = A884284609308C1C00B6D461 /* KDOMHeaders.h */; };
-		A88AD51A0952499F001DD196 /* KDOMSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = A884284309308C1C00B6D461 /* KDOMSettings.h */; };
 		A88AD51B0952499F001DD196 /* RGBColorImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A884283F09308C1C00B6D461 /* RGBColorImpl.cpp */; };
 		A88AD51C0952499F001DD196 /* SVGElementFactoryWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A884283909308C1C00B6D461 /* SVGElementFactoryWrapper.cpp */; };
 		A88AD51D0952499F001DD196 /* XLinkNamesWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C32D96093D8EA4000B9CAC /* XLinkNamesWrapper.cpp */; };
@@ -1549,7 +1547,6 @@
 		A884283E09308C1C00B6D461 /* RGBColorImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = RGBColorImpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A884283F09308C1C00B6D461 /* RGBColorImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RGBColorImpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A884284009308C1C00B6D461 /* Namespace.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Namespace.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A884284309308C1C00B6D461 /* KDOMSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KDOMSettings.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A884284609308C1C00B6D461 /* KDOMHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KDOMHeaders.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A890DF1B0930974800513F88 /* SVGStyledTransformableElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGStyledTransformableElementImpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A890DF1C0930974800513F88 /* SVGStyledTransformableElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGStyledTransformableElementImpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1809,7 +1806,6 @@
 		A8C0F8EB089701F400BA5114 /* SVGZoomAndPanImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGZoomAndPanImpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F8EC089701F400BA5114 /* SVGZoomAndPanImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SVGZoomAndPanImpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0F8ED089701F400BA5114 /* ksvg.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ksvg.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A8C0F8F1089701F400BA5114 /* KSVGSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KSVGSettings.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB54089701F700BA5114 /* KRenderingDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KRenderingDevice.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB55089701F700BA5114 /* KRenderingDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KRenderingDevice.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A8C0FB59089701F700BA5114 /* KRenderingFillPainter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KRenderingFillPainter.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2767,7 +2763,6 @@
 				A884283C09308C1C00B6D461 /* kdom.h */,
 				A884283A09308C1C00B6D461 /* kdomevents.h */,
 				A884284609308C1C00B6D461 /* KDOMHeaders.h */,
-				A884284309308C1C00B6D461 /* KDOMSettings.h */,
 				A884284009308C1C00B6D461 /* Namespace.h */,
 				A884283F09308C1C00B6D461 /* RGBColorImpl.cpp */,
 				A884283E09308C1C00B6D461 /* RGBColorImpl.h */,
@@ -2796,7 +2791,6 @@
 				A8C0F6EA089701F100BA5114 /* misc */,
 				A8C0F7FC089701F300BA5114 /* svg */,
 				A8C0F8ED089701F400BA5114 /* ksvg.h */,
-				A8C0F8F1089701F400BA5114 /* KSVGSettings.h */,
 			);
 			path = ksvg2;
 			sourceTree = "<group>";
@@ -4179,14 +4173,12 @@
 				A88AD50A095248F0001DD196 /* SVGViewElementImpl.h in Headers */,
 				A88AD50C095248F0001DD196 /* SVGZoomAndPanImpl.h in Headers */,
 				A88AD50D095248F0001DD196 /* ksvg.h in Headers */,
-				A88AD50F095248F0001DD196 /* KSVGSettings.h in Headers */,
 				A88AD5140952499F001DD196 /* Namespace.h in Headers */,
 				A88AD5150952499F001DD196 /* kdomevents.h in Headers */,
 				A88AD5160952499F001DD196 /* kdom.h in Headers */,
 				A88AD5170952499F001DD196 /* DOMList.h in Headers */,
 				A88AD5180952499F001DD196 /* RGBColorImpl.h in Headers */,
 				A88AD5190952499F001DD196 /* KDOMHeaders.h in Headers */,
-				A88AD51A0952499F001DD196 /* KDOMSettings.h in Headers */,
 				6552E7AA096AA11B0006F248 /* WebCoreFrameNamespaces.h in Headers */,
 				A81655D4096BBEAC00601058 /* KCanvasMaskerQuartz.h in Headers */,
 				A81655E5096BC13900601058 /* SVGMaskElementImpl.h in Headers */,

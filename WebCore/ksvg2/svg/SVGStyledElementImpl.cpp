@@ -38,7 +38,6 @@
 #include <kcanvas/device/KRenderingDevice.h>
 
 #include "ksvg.h"
-#include "KSVGSettings.h"
 #include "SVGMatrixImpl.h"
 #include "SVGRenderStyle.h"
 #include "SVGElementImpl.h"

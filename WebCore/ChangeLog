@@ -1,3 +1,15 @@
+2006-03-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Eric.
+
+        - remove no longer used KDOMSettings and KSVGSettings
+
+        * WebCore+SVG/KDOMSettings.cpp: Removed.
+        * WebCore+SVG/KDOMSettings.h: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+        * ksvg2/KSVGSettings.h: Removed.
+        * ksvg2/svg/SVGStyledElementImpl.cpp:
+
 2006-03-05  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
