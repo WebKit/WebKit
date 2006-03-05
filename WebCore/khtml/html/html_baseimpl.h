@@ -207,7 +207,6 @@ protected:
     bool frameborder : 1;
     bool frameBorderSet : 1;
     bool noresize : 1;
-    bool m_resizing : 1;  // is the user resizing currently
 };
 
 // -------------------------------------------------------------------------

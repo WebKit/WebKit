@@ -101,6 +101,7 @@ public:
         hoverTimer.stop();
         if (repaintRects)
             repaintRects->clear();
+        resizingFrameSet = 0;
     }
 
     RefPtr<NodeImpl> underMouse;
@@ -142,6 +143,7 @@ public:
     QPtrList<RenderObject::RepaintInfo>* repaintRects;
     
     RefPtr<NodeImpl> dragTarget;
+    RefPtr<HTMLFrameSetElementImpl> resizingFrameSet;
 };
 
 FrameView::FrameView(Frame *frame)
@@ -606,6 +608,11 @@ void FrameView::viewportMouseMoveEvent(MouseEvent* mouseEvent)
     int xm, ym;
     viewportToContents(mouseEvent->x(), mouseEvent->y(), xm, ym);
 
+    if (d->resizingFrameSet) {
+        dispatchMouseEvent(mousemoveEvent, d->resizingFrameSet.get(), false, 0, mouseEvent, false);
+        return;
+    }
+
     // Treat mouse move events while the mouse is pressed as "read-only" in prepareMouseEvent
     // if we are allowed to select.
     // This means that :hover and :active freeze in the state they were in when the mouse
@@ -638,6 +645,11 @@ void FrameView::viewportMouseReleaseEvent(MouseEvent* mouseEvent)
     viewportToContents(mouseEvent->x(), mouseEvent->y(), xm, ym);
 
     d->mousePressed = false;
+
+    if (d->resizingFrameSet) {
+        dispatchMouseEvent(mouseupEvent, d->resizingFrameSet.get(), true, d->clickCount, mouseEvent, false);
+        return;
+    }
 
     MouseEventWithHitTestResults mev = m_frame->document()->prepareMouseEvent(false, false, false, xm, ym, mouseEvent);
 
@@ -921,6 +933,11 @@ void FrameView::setHScrollBarMode(ScrollBarMode mode)
 void FrameView::restoreScrollBar()
 {
     suppressScrollBars(false);
+}
+
+void FrameView::setResizingFrameSet(HTMLFrameSetElementImpl *frameSet)
+{
+    d->resizingFrameSet = frameSet;
 }
 
 bool FrameView::dispatchMouseEvent(const AtomicString& eventType, NodeImpl* targetNode, bool cancelable,

@@ -651,8 +651,6 @@ HTMLFrameSetElementImpl::HTMLFrameSetElementImpl(DocumentImpl *doc)
     frameBorderSet = false;
     m_border = 4;
     noresize = false;
-
-    m_resizing = false;
 }
 
 HTMLFrameSetElementImpl::~HTMLFrameSetElementImpl()

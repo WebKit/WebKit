@@ -46,6 +46,7 @@ class HTMLAnchorElementImpl;
 class HTMLDocumentImpl;
 class HTMLElementImpl;
 class HTMLFormElementImpl;
+class HTMLFrameSetElementImpl;
 class HTMLGenericFormElementImpl;
 class HTMLTitleElementImpl;
 class InlineBox;
@@ -173,6 +174,8 @@ public:
     void setHasBorder(bool);
     bool hasBorder() const;
     
+    void setResizingFrameSet(HTMLFrameSetElementImpl *);
+
 #if __APPLE__
     void updateDashboardRegions();
 #endif

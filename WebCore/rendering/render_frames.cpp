@@ -544,6 +544,7 @@ void RenderFrameSet::setResizing(bool e)
     for (RenderObject* p = parent(); p; p = p->parent())
         if (p->isFrameSet())
             static_cast<RenderFrameSet*>(p)->m_clientResizing = m_resizing;
+    canvas()->view()->setResizingFrameSet(e ? element() : 0);
 }
 
 bool RenderFrameSet::canResize( int _x, int _y )

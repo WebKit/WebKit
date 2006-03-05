@@ -1,3 +1,24 @@
+2006-03-05  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin, landed by ap.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4840
+          Frames only resize wider, can't make them narrower
+
+        * khtml/html/html_baseimpl.cpp:
+        (WebCore::HTMLFrameSetElementImpl::HTMLFrameSetElementImpl): Removed unused m_resizing flag.
+        * khtml/html/html_baseimpl.h:
+        * manual-tests/bugzilla-4840.html: Added.
+        * page/FrameView.cpp:
+        (WebCore::FrameViewPrivate::reset):
+        (WebCore::FrameView::viewportMouseMoveEvent):
+        (WebCore::FrameView::viewportMouseReleaseEvent):
+        (WebCore::FrameView::setResizingFrameSet): New method. When a resizing frameset is set,
+        mouse move and mouse release events target it instead of hit-testing.
+        * page/FrameView.h:
+        * rendering/render_frames.cpp:
+        (WebCore::RenderFrameSet::setResizing): Inform the FrameView that we are resizing (or not).
+
 2006-03-04  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 7586, eliminate QFontMetrics.
