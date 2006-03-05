@@ -38,9 +38,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-// FIXME: we need to hang a pointer off the HWND
-WebView* gSharedWebViewHack = 0;
-
 class WebView::WebViewPrivate {
 public:
     WebViewPrivate() {}
@@ -50,7 +47,6 @@ public:
     }
 
     WebFrame* mainFrame;
-
     HWND windowHandle;
 };
 
@@ -71,7 +67,7 @@ static ATOM registerWebViewWithInstance(HINSTANCE hInstance)
     wcex.style          = CS_HREDRAW | CS_VREDRAW; // CS_DBLCLKS?
     wcex.lpfnWndProc    = WebViewWndProc;
     wcex.cbClsExtra     = 0;
-    wcex.cbWndExtra     = 0;
+    wcex.cbWndExtra     = 4; // 4 bytes for the WebView pointer
     wcex.hInstance      = hInstance;
     wcex.hIcon          = 0;
     wcex.hCursor        = LoadCursor(0, IDC_ARROW);
@@ -94,8 +90,9 @@ WebView* WebView::createWebView(HINSTANCE hInstance, HWND parent)
    if (!hWnd)
       return 0;
 
-   gSharedWebViewHack = new WebView(hWnd);
-   return gSharedWebViewHack;
+   WebView* newWebView = new WebView(hWnd);
+   SetWindowLongPtr(hWnd, 0, (LONG)newWebView);
+   return newWebView;
 }
 
 WebView::WebView(HWND hWnd)
@@ -148,31 +145,32 @@ void WebView::mouseDoubleClick(HWND hWnd, WPARAM wParam, LPARAM lParam)
 LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     int wmId, wmEvent;
+    WebView* webview = (WebView*)GetWindowLongPtr(hWnd, 0);
     switch (message)
     {
     case WM_PAINT:
-        gSharedWebViewHack->mainFrame()->paint();
+        webview->mainFrame()->paint();
         break;
     case WM_DESTROY:
         // Do nothing?
         break;
     case WM_MOUSEMOVE:
-        gSharedWebViewHack->mouseMoved(hWnd, wParam, lParam);
+        webview->mouseMoved(hWnd, wParam, lParam);
         break;
     case WM_LBUTTONDOWN:
     case WM_MBUTTONDOWN:
     case WM_RBUTTONDOWN:
-        gSharedWebViewHack->mouseDown(hWnd, wParam, lParam);
+        webview->mouseDown(hWnd, wParam, lParam);
         break;
     case WM_LBUTTONUP:
     case WM_MBUTTONUP:
     case WM_RBUTTONUP:
-        gSharedWebViewHack->mouseUp(hWnd, wParam, lParam);
+        webview->mouseUp(hWnd, wParam, lParam);
         break;
     case WM_LBUTTONDBLCLK:
     case WM_MBUTTONDBLCLK:
     case WM_RBUTTONDBLCLK:
-        gSharedWebViewHack->mouseDoubleClick(hWnd, wParam, lParam);
+        webview->mouseDoubleClick(hWnd, wParam, lParam);
         break;
     case WM_SIZE:
         // FIXME: not sure if we need anything here...

@@ -177,11 +177,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             return DefWindowProc(hWnd, message, wParam, lParam);
         }
         break;
-    case WM_PAINT:
-        hdc = BeginPaint(hWnd, &ps);
-        // TODO: Add any drawing code here...
-        EndPaint(hWnd, &ps);
-        break;
     case WM_DESTROY:
         PostQuitMessage(0);
         break;
@@ -209,14 +204,12 @@ LRESULT CALLBACK MyEditProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
                 *((LPWORD)strPtr) = MAX_URL_LENGTH; 
                 int strLen = SendMessage(hDlg, EM_GETLINE, 0, (LPARAM)strPtr);
 
-                MessageBox(hMainWnd, strPtr, L"Foo", MB_OK);
-
                 int x;
                 for(x = 0; x < strLen; x++)
                     cstrPtr[x] = strPtr[x];
                 cstrPtr[x] = 0;
-    
-                gWebView->mainFrame()->loadFilePath(cstrPtr);            
+
+                gWebView->mainFrame()->loadFilePath(cstrPtr);
 
                 return 0;
             } else
