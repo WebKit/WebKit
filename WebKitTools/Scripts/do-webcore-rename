@@ -1,0 +1,205 @@
+#!/usr/bin/perl -w
+
+# Copyright (C) 2006 Apple Computer, Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer. 
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution. 
+# 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
+#     its contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission. 
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Script to do a rename in WebCore. It's sort of a "one time use" script,
+# but we might change it around for other uses later.
+
+use strict;
+use FindBin;
+use lib $FindBin::Bin;
+use webkitdirs;
+use File::Find;
+
+setConfiguration();
+chdirWebKit();
+
+my %words;
+
+# find all files in WebCore we want to process
+
+my @paths;
+find(\&wanted, "WebCore");
+
+sub wanted
+{
+    my $file = $_;
+
+    if ($file eq "icu") {
+        $File::Find::prune = 1;
+        return;
+    }
+
+    if ($file =~ /^\../) {
+        $File::Find::prune = 1;
+        return;
+    }
+
+    return if $file =~ /^ChangeLog/;
+    return if -d $file;
+
+    push @paths, $File::Find::name;
+}
+
+# find all symbols ending in Impl
+
+my %exceptions = (
+    "Array" => 1,
+    "AtomicString" => 1,
+    "KWQList" => 1,
+    "KWQValueList" => 1,
+    "QualifiedName" => 1,
+    "String" => 1,
+    "feature" => 1,
+    "name" => 1,
+    "namespaceURI" => 1,
+    "node" => 1,
+    "qualifiedName" => 1,
+    "str" => 1,
+    "version" => 1,
+
+    "Rect" => 1,
+);
+
+my %otherRenames = (
+    "MouseEvent" => "PlatformMouseEvent",
+    "WheelEvent" => "PlatformWheelEvent",
+    "XSLTProcessor" => "JSXSLTProcessor",
+    "Document" => "Document_",
+    "Event" => "Event_",
+    "HTMLCollection" => "JSHTMLCollection",
+    "HTMLSelectCollection" => "JSHTMLSelectCollection",
+    "HTMLSelectElement" => "JSHTMLSelectElement",
+    "HTMLElement" => "JSHTMLElement",
+    "HTMLDocument" => "JSHTMLDocument",
+    "MacFrame" => "FrameMac",
+    "createAttrImplIfNeeded" => "createAttrIfNeeded",
+);
+
+my %fileOnlyRenames = (
+    "dom2_rangeimpl" => "Range",
+    "dom2_viewsimpl" => "AbstractView",
+    "dom_position" => "Position",
+    "html_canvasimpl" => "HTMLCanvasElement",
+    "html_documentimpl" => "HTMLDocument",
+    "jsediting" => "JSEditor",
+    "render_arena" => "RenderArena",
+    "render_box" => "RenderBox",
+    "render_br" => "RenderBR",
+    "render_canvas" => "RenderCanvas",
+    "render_canvasimage" => "RenderCanvasImage",
+    "render_flexbox" => "RenderFlexibleBox",
+    "render_flow" => "RenderFlow",
+    "render_image" => "RenderImage",
+    "render_inline" => "RenderInline",
+    "render_layer" => "RenderLayer",
+    "render_object" => "RenderObject",
+    "render_theme" => "RenderTheme",
+    "render_theme_mac" => "RenderThemeMac",
+    "visible_text" => "TextIterator",
+    "xml_tokenizer" => "Tokenizer",
+    "xmlserializer" => "JSXMLSerializer",
+    "xslt_processorimpl" => "XSLTProcessor",
+);
+
+# rename most files with names ending in Impl
+
+my %newFile;
+for my $file (sort @paths) {
+    if ($file =~ /^(.*?)(\w+)Impl(\.\w+)$/) {
+        $newFile{$file} = "$1$2$3" if !$exceptions{$2};
+    } elsif ($file =~ /^(.*\/)(\w+)(\.\w+)$/) {
+        $newFile{$file} = "$1$otherRenames{$2}$3" if $otherRenames{$2};
+        $newFile{$file} = "$1$fileOnlyRenames{$2}$3" if $fileOnlyRenames{$2};
+    }
+}
+
+for my $file (sort @paths) {
+    if ($newFile{$file}) {
+        my $newFile = $newFile{$file};
+        print "Renaming $file to $newFile\n";
+        system "mv $file $newFile"; # use svn move when "doing the real thing"
+    }
+}
+
+# change all file contents
+
+for my $file (sort @paths) {
+    $file = $newFile{$file} if $newFile{$file};
+    my $contents;
+    {
+        local $/;
+        open FILE, $file or die;
+        $contents = <FILE>;
+        close FILE;
+    }
+    my $newContents = $contents;
+
+    # fix DOM and khtml namespaces
+    $newContents =~ s/\bDOM::/WebCore::/g;
+    $newContents =~ s/\bkhtml::/WebCore::/g;
+    $newContents =~ s/namespace DOM/namespace WebCore/g;
+    $newContents =~ s/namespace khtml/namespace WebCore/g;
+
+    if ($file !~ /\.(pm|idl)$/) {
+        # fix DOMString
+        $newContents =~ s/\#define DOMStringImpl StringImpl\n//;
+        $newContents =~ s/\bDOMString\b/String/g;
+        $newContents =~ s/\bDOMStringImpl\b/StringImpl/g;
+        $newContents =~ s/\#define String String/#define DOMString String/;
+
+        # fix other identifiers that would collide otherwise
+        for my $from (keys %otherRenames) {
+            my $to = $otherRenames{$from};
+            $newContents =~ s/\b$from\b/$to/g;
+            $newContents =~ s/"$to"/"$from"/g;
+        }
+        $newContents =~ s/\#\#Event_/\#\#Event/g;
+    }
+
+    # remove bogus friend declaration
+    $newContents =~ s/friend class HTMLFormElement;\s*\n\s*(friend class HTMLFormCollection)/$1/;
+
+    # fix binding code generation
+    if ($file =~ /\.pm$/) {
+        $newContents =~ s/interfaceName \. "Impl"/interfaceName/g;
+        $newContents =~ s/{interfaceName}Impl/{interfaceName}/g;
+        $newContents =~ s/{type}Impl/{type}/g;
+    }
+
+    # fix words with Impl suffix
+    $newContents =~ s/\b(\w+)Impl\b/$exceptions{$1} ? "$1Impl" : $1/ge;
+
+    # fix typo that annoys me
+    $newContents =~ s/it.s base class/its base class/;
+
+    if ($newContents ne $contents) {
+        open FILE, ">", $file or die;
+        print FILE $newContents;
+        close FILE;
+    }
+}

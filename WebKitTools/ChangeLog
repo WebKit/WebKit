@@ -1,3 +1,10 @@
+2006-03-05  Darin Adler  <darin@apple.com>
+
+        - check in a script to do a "big" rename in WebCore
+          (can be run whenever we're ready to do it)
+
+        * Scripts/do-webcore-rename: Added.
+
 2006-03-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
