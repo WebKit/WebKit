@@ -1,3 +1,10 @@
+2006-03-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        * Spinneret/Spinneret/WebFrame.cpp:
+        (WebKit::WebFrame::loadFilePath): Close file when done.
+
 2006-03-05  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin, landed by ap.

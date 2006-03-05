@@ -87,6 +87,8 @@ void WebFrame::loadFilePath(char* path)
       d->frame->write(buffer);
       // Check for end of file. 
     } while (result && bytesRead);
+
+    CloseHandle(fileHandle);
     
     d->frame->end();
 }
