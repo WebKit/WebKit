@@ -2,6 +2,20 @@
 
         Reviewed by Eric.
 
+        - missing results from previous commit
+
+        * svg/custom/polyline-invalid-points-expected.checksum: Added.
+        * svg/custom/polyline-invalid-points-expected.png: Added.
+        * svg/custom/polyline-invalid-points-expected.txt: Added.
+        * svg/custom/polyline-setattribute-points-null-expected.checksum:
+        Added.
+        * svg/custom/polyline-setattribute-points-null-expected.png: Added.
+        * svg/custom/polyline-setattribute-points-null-expected.txt: Added.
+
+2006-03-05  Alexander Kellett  <lypanov@kde.org>
+
+        Reviewed by Eric.
+
         - new reduced testcases for:
           http://bugzilla.opendarwin.org/show_bug.cgi?id=6951
           http://bugzilla.opendarwin.org/show_bug.cgi?id=6890  
