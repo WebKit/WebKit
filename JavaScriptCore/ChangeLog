@@ -1,3 +1,14 @@
+2006-03-05  Andrew Wellington  <proton@wiretapped.net>
+
+        Reviewed by Eric, landed by ap.
+        
+        - Remove unused breakpoint bool from StatementNodes. No test provided as
+        there is no functionality change.
+
+        * kjs/nodes.cpp:
+        (StatementNode::StatementNode):
+        * kjs/nodes.h:
+
 2006-03-03  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin.

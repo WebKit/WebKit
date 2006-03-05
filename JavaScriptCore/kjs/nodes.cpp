@@ -204,7 +204,7 @@ Node *Node::nodeInsideAllParens()
 
 // ------------------------------ StatementNode --------------------------------
 
-StatementNode::StatementNode() : l0(-1), l1(-1), sid(-1), breakPoint(false)
+StatementNode::StatementNode() : l0(-1), l1(-1), sid(-1)
 {
 }
 
