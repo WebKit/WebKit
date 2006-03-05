@@ -1,3 +1,17 @@
+2006-03-05  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin, landed by ap.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7589
+          Mouse moved events do not work in DumpRenderTree
+
+        * fast/css/hover-subselector-expected.txt: Updated results.
+        * fast/css/hover-subselector.html: Changed to work with the new mechanism.
+        * fast/events/event-sender-mouse-moved-expected.checksum: Added.
+        * fast/events/event-sender-mouse-moved-expected.png: Added.
+        * fast/events/event-sender-mouse-moved-expected.txt: Added.
+        * fast/events/event-sender-mouse-moved.html: Added.
+
 2006-03-03  Alexander Kellett  <lypanov@kde.org>
 
         - local machine unfortunately shows slightly differing results to the

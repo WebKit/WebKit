@@ -1,3 +1,15 @@
+2006-03-05  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin, landed by ap.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7589
+          Mouse moved events do not work in DumpRenderTree
+
+        Test: fast/events/event-sender-mouse-moved.html
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (-[EventSendingController mouseMoveToX:Y:]): Pass the correct windowNumber in the event.
+
 2006-03-04  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.

@@ -9,11 +9,9 @@ function test()
 {
     if (!window.eventSender)
         return;
-    eventSender.mouseMoveTo(0, 0);
-    document.body.offsetTop;    // force layout
-    eventSender.mouseMoveTo(16, 16);    // hover
-    eventSender.mouseDown();    // get noticed
-    eventSender.mouseUp();
+    document.body.offsetTop;    // Force layout. The mouse is not tracked before first layout.
+    eventSender.mouseMoveTo(16, 16);    // Hover.
+    document.body.offsetTop;    // Update layout for hovered state.
 }
 </script>
 </head>

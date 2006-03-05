@@ -1,5 +1,3 @@
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 1 of #text > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
 layer at (0,0) size 800x600
@@ -28,4 +26,3 @@ layer at (0,0) size 800x600
             text run at (192,20) width 96: "span#t:hover"
         RenderText {TEXT} at (288,18) size 170x18
           text run at (288,18) width 170: " matches the hovered span."
-caret: position 1 of child 0 {TEXT} of child 1 {SPAN} of child 1 {DIV} of child 1 {BODY} of child 0 {HTML} of document

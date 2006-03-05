@@ -723,7 +723,7 @@ static void dump(void)
 - (void)mouseMoveToX:(int)x Y:(int)y
 {
     lastMousePosition = NSMakePoint(x, [[frame webView] frame].size.height - y);
-    NSEvent *event = [NSEvent mouseEventWithType:(down ? NSLeftMouseDragged : NSMouseMoved) location:lastMousePosition modifierFlags:nil timestamp:GetCurrentEventTime() windowNumber:0 context:[NSGraphicsContext currentContext] eventNumber:++eventNumber clickCount:(down ? clickCount : 0) pressure:nil];
+    NSEvent *event = [NSEvent mouseEventWithType:(down ? NSLeftMouseDragged : NSMouseMoved) location:lastMousePosition modifierFlags:nil timestamp:GetCurrentEventTime() windowNumber:[[[frame webView] window] windowNumber] context:[NSGraphicsContext currentContext] eventNumber:++eventNumber clickCount:(down ? clickCount : 0) pressure:nil];
 
     NSView *subView = [[frame webView] hitTest:[event locationInWindow]];
     if (subView) {
