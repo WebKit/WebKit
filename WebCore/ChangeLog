@@ -1,3 +1,18 @@
+2006-03-05  Alexander Kellett  <lypanov@kde.org>
+
+        Reviewed by Eric.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6890
+          and http://bugzilla.opendarwin.org/show_bug.cgi?id=6951
+          by being more tolerant towards invalid points data
+
+        - new tests:
+          svg/custom/polyline-setattribute-points-null.svg
+          svg/custom/polyline-invalid-points.svg
+
+        * ksvg2/svg/svgpathparser.cpp:
+        (SVGPolyParser::parsePoints):
+
 2006-03-05  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Eric.

@@ -1,5 +1,6 @@
 /* This file is part of the KDE project
    Copyright (C) 2002, 2003 The Karbon Developers
+                 2006       Alexander Kellett <lypanov@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -89,30 +90,35 @@ const char *KSVG::parseCoord(const char *ptr, double &number)
     return ptr;
 }
 
-void
-SVGPolyParser::parsePoints( const QString &s ) const
+void SVGPolyParser::parsePoints(const QString &s) const
 {
-    if(!s.isEmpty())
-    {
-        QString points = s;
-        points = points.replace(',', ' ');
-        points = points.simplifyWhiteSpace();
-        const char *ptr = points.latin1();
-        const char *end = points.latin1() + points.length();
+    if (!s.isEmpty()) {
+        QString pointData = s;
+        pointData = pointData.replace(',', ' ');
+        pointData = pointData.simplifyWhiteSpace();
+        const char* currSegment = pointData.latin1();
+        const char* eoString = pointData.latin1() + pointData.length();
+        
+        int segmentNum = 0;
+        while (currSegment < eoString) {
+            const char* prevSegment = currSegment;
+            double xPos = 0;
+            currSegment = parseCoord(currSegment, xPos); 
+            if (currSegment == prevSegment)
+                break;
+                
+            if (*currSegment == ',' || *currSegment == ' ')
+                currSegment++;
 
-        double curx = 0, cury = 0;
-        int nr = 0;
-        while( ptr < end )
-        {
-            //std::cout << "ptr : " << ptr << std::endl;
-            //std::cout << "end : " << end << std::endl;
-            ptr = parseCoord( ptr, curx );
-            if( *ptr == ',' || *ptr == ' ' )
-                ptr++;
-            ptr = parseCoord( ptr, cury );
-            svgPolyTo( curx, cury, nr++ );
-            if( *ptr == ' ' )
-                ptr++;
+            prevSegment = currSegment;
+            double yPos = 0;
+            currSegment = parseCoord(currSegment, yPos);
+            if (currSegment == prevSegment)
+                break;
+                
+            svgPolyTo(xPos, yPos, segmentNum++);
+            if (*currSegment == ' ')
+                currSegment++;
         }
     }
 }

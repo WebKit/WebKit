@@ -1,3 +1,14 @@
+2006-03-05  Alexander Kellett  <lypanov@kde.org>
+
+        Reviewed by Eric.
+
+        - new reduced testcases for:
+          http://bugzilla.opendarwin.org/show_bug.cgi?id=6951
+          http://bugzilla.opendarwin.org/show_bug.cgi?id=6890  
+
+        * svg/custom/polyline-invalid-points.svg: Added.
+        * svg/custom/polyline-setattribute-points-null.svg: Added.
+
 2006-03-05  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin, landed by ap.
