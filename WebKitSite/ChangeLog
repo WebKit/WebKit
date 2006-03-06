@@ -1,5 +1,15 @@
 2006-03-06  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Beth.
+
+        Some site cleanup.
+
+        * blog/wp-content/themes/webkit/sidebar.php: sync with the sidebar
+        for the rest of the site.
+        * quality/lifecycle.html: add Joost's homepage to his contact info.
+
+2006-03-06  Geoffrey Garen  <ggaren@apple.com>
+
         Doing penance after being set straight by Joost.
 
         * projects/compat/hitlist.html: Remove slur against QA. My humblest 
