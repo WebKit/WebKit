@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,6 @@
 #define KWQSCROLLBAR_H_
 
 #include "Widget.h"
-#include "KWQNamespace.h"
 
 #ifdef __OBJC__
 @class NSScroller;
@@ -50,12 +49,16 @@ typedef enum {
     KWQScrollWheel
 } KWQScrollGranularity;
 
+namespace WebCore {
+    enum ScrollBarOrientation { HorizontalScrollBar, VerticalScrollBar };
+}
+
 class QScrollBar : public Widget {
 public:
-    QScrollBar(Orientation orientation, Widget* parent);
-    ~QScrollBar();
+    QScrollBar(WebCore::ScrollBarOrientation);
+    virtual ~QScrollBar();
 
-    Orientation orientation() { return m_orientation; }
+    WebCore::ScrollBarOrientation orientation() { return m_orientation; }
 
     int value() { return m_currentPos; }
     bool setValue(int v);
@@ -69,13 +72,12 @@ public:
     bool scroll(KWQScrollDirection, KWQScrollGranularity, float multiplier = 1.0);
     
 private:
-    Orientation m_orientation;
+    WebCore::ScrollBarOrientation m_orientation;
     int m_visibleSize;
     int m_totalSize;
     int m_currentPos;
     int m_lineStep;
     int m_pageStep;
-    KWQSignal m_valueChanged;
 };
 
 #endif

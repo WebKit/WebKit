@@ -25,7 +25,6 @@
 #if SVG_SUPPORT
 
 #include "Color.h"
-#include <qobject.h>
 #include <kxmlcore/Vector.h>
 
 #include <kcanvas/KCanvasFilters.h>
@@ -51,12 +50,10 @@ public:
     virtual void addPath(const KCanvasPath*) = 0;
 };
 
-// Must be a QObject to be able to be loaded by KLibLoader...
 class KCanvasImage;
 class KCanvasFilterEffect;
-class KRenderingDevice : public QObject
+class KRenderingDevice
 {
-Q_OBJECT
 public:
     KRenderingDevice();
     virtual ~KRenderingDevice();

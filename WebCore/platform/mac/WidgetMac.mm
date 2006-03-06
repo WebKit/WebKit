@@ -27,6 +27,7 @@
 #import "Widget.h"
 
 #import "Cursor.h"
+#import "Font.h"
 #import "FoundationExtras.h"
 #import "GraphicsContext.h"
 #import "KWQExceptions.h"
@@ -35,7 +36,7 @@
 #import "WebCoreFrameBridge.h"
 #import "WebCoreFrameView.h"
 #import "WebCoreView.h"
-#import "render_replaced.h"
+#import "WidgetClient.h"
 
 namespace WebCore {
 
@@ -47,6 +48,7 @@ class WidgetPrivate
 public:
     Font font;
     NSView* view;
+    WidgetClient* client;
     bool visible;
     bool mustStayInWindow;
     bool removeFromSuperviewSoon;
@@ -55,6 +57,7 @@ public:
 Widget::Widget() : data(new WidgetPrivate)
 {
     data->view = nil;
+    data->client = 0;
     data->visible = true;
     data->mustStayInWindow = false;
     data->removeFromSuperviewSoon = false;
@@ -63,6 +66,7 @@ Widget::Widget() : data(new WidgetPrivate)
 Widget::Widget(NSView* view) : data(new WidgetPrivate)
 {
     data->view = KWQRetain(view);
+    data->client = 0;
     data->visible = true;
     data->mustStayInWindow = false;
     data->removeFromSuperviewSoon = false;
@@ -198,19 +202,18 @@ Widget::FocusPolicy Widget::focusPolicy() const
     // 2. be enabled
     // 3. accept first responder
 
-    RenderWidget *widget = const_cast<RenderWidget *>
-        (static_cast<const RenderWidget *>(eventFilterObject()));
-    if (widget->style()->visibility() != VISIBLE)
+    if (!client())
         return NoFocus;
-
+    if (!client()->isVisible(const_cast<Widget*>(this)))
+        return NoFocus;
     if (!isEnabled())
         return NoFocus;
-    
+
     KWQ_BLOCK_EXCEPTIONS;
     if (![getView() acceptsFirstResponder])
         return NoFocus;
     KWQ_UNBLOCK_EXCEPTIONS;
-    
+
     return TabFocus;
 }
 
@@ -369,12 +372,8 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
 
 void Widget::sendConsumedMouseUp()
 {
-    RenderWidget* widget = const_cast<RenderWidget *>
-        (static_cast<const RenderWidget *>(eventFilterObject()));
-
-    KWQ_BLOCK_EXCEPTIONS;
-    widget->sendConsumedMouseUp();
-    KWQ_UNBLOCK_EXCEPTIONS;
+    if (client())
+        client()->sendConsumedMouseUp(this);
 }
 
 void Widget::setIsSelected(bool isSelected)
@@ -445,6 +444,16 @@ void Widget::setDeferFirstResponderChanges(bool defer)
             r->setFocus();
         }
     }
+}
+
+void Widget::setClient(WidgetClient* c)
+{
+    data->client = c;
+}
+
+WidgetClient* Widget::client() const
+{
+    return data->client;
 }
 
 }

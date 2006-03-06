@@ -50,9 +50,7 @@ using namespace WebCore;
 @end
 
 KWQFileButton::KWQFileButton(Frame *frame)
-    : _clicked(this, SIGNAL(clicked()))
-    , _textChanged(this, SIGNAL(textChanged(const QString &)))
-    , _adapter(0)
+    : _adapter(0)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
@@ -145,31 +143,12 @@ Widget::FocusPolicy KWQFileButton::focusPolicy() const
     return Widget::focusPolicy();
 }
 
-void KWQFileButton::filenameChanged(const QString &filename)
+void KWQFileButton::filenameChanged(const QString& filename)
 {
-    _textChanged.call(filename);
+    m_name = filename;
+    if (client())
+        client()->valueChanged(this);
 }
-
-void KWQFileButton::focusChanged(bool nowHasFocus)
-{
-    if (nowHasFocus) {
-        if (!MacFrame::currentEventIsMouseDownInWidget(this)) {
-            RenderWidget *widget = const_cast<RenderWidget *> (static_cast<const RenderWidget *>(eventFilterObject()));
-            RenderLayer *layer = widget->enclosingLayer();
-            layer = layer->renderer()->enclosingLayer();
-            if (layer)
-                layer->scrollRectToVisible(widget->absoluteBoundingBoxRect());
-        }        
-        eventFilterObject()->eventFilterFocusIn();
-    } else
-        eventFilterObject()->eventFilterFocusOut();
-}
-
-void KWQFileButton::clicked()
-{
-    _clicked.call();
-}
-
 
 @implementation KWQFileButtonAdapter
 
@@ -182,24 +161,29 @@ void KWQFileButton::clicked()
 
 - (void)filenameChanged:(NSString *)filename
 {
-    if (button) {
+    if (button)
         button->filenameChanged(QString::fromNSString(filename));
-    }
 }
 
 - (void)focusChanged:(BOOL)nowHasFocus
 {
-    if (button) {
-        button->focusChanged(nowHasFocus);
+    if (nowHasFocus) {
+        if (button && button->client() && !MacFrame::currentEventIsMouseDownInWidget(button))
+            button->client()->scrollToVisible(button);
+        if (button && button->client())
+            button->client()->focusIn(button);
+    } else {
+        if (button && button->client())
+            button->client()->focusOut(button);
     }
 }
 
 -(void)clicked
 {
-    if (button) {
+    if (button)
         button->sendConsumedMouseUp();
-        button->clicked();
-    }
+    if (button && button->client())
+        button->client()->clicked(button);
 }
 
 @end

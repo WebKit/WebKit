@@ -26,8 +26,6 @@
 #ifndef WEBCORE_PLATFORM_WIDGET_H_
 #define WEBCORE_PLATFORM_WIDGET_H_
 
-#include "KWQObject.h"
-
 namespace WebCore {
     class Font;
 }
@@ -51,9 +49,12 @@ namespace WebCore {
     class IntPoint;
     class IntRect;
     class IntSize;
+    class WidgetClient;
     class WidgetPrivate;
 
-    class Widget : public QObject {
+    enum HorizontalAlignment { AlignLeft, AlignRight, AlignHCenter };
+
+    class Widget {
     public:
 
         enum FocusPolicy {
@@ -118,7 +119,12 @@ namespace WebCore {
         void disableFlushDrawing();
         void setDrawingAlpha(float alpha);
 
-        void setIsSelected(bool isSelected);
+        void setIsSelected(bool);
+
+        void setClient(WidgetClient*);
+        WidgetClient* client() const;
+
+        virtual bool isFrameView() const;
 
 #if WIN32
         Widget(HWND);

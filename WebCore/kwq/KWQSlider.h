@@ -27,7 +27,6 @@
 #define KWQSLIDER_H_
 
 #include "Widget.h"
-#include "KWQNamespace.h"
 
 class QSlider : public Widget {
 public:
@@ -44,19 +43,14 @@ public:
     double value() const;
     double minValue() const;
     double maxValue() const;
-    
+
     void sliderValueChanged();
 
     const int* dimensions() const;
 
-    void clicked();
-    
     virtual FocusPolicy focusPolicy() const;
 
-
 private:
-    KWQSignal m_sliderValueChanged;
-    KWQSignal m_clicked;
     double m_minVal;
     double m_maxVal;
     double m_val;

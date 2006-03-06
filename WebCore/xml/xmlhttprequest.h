@@ -26,7 +26,6 @@
 #include "TransferJobClient.h"
 #include <kxmlcore/HashMap.h>
 #include <kxmlcore/HashSet.h>
-#include <qguardedptr.h>
 
 namespace WebCore {
 
@@ -47,7 +46,9 @@ namespace WebCore {
   class XMLHttpRequest : public Shared<XMLHttpRequest>, TransferJobClient {
   public:
     XMLHttpRequest(DocumentImpl*);
+    ~XMLHttpRequest();
 
+    static void detachRequests(DocumentImpl*);
     static void cancelRequests(DocumentImpl*);
 
     String getStatusText() const;
@@ -85,13 +86,7 @@ namespace WebCore {
     void changeState(XMLHttpRequestState newState);
     void callReadyStateChangeListener();
 
-    typedef HashSet<XMLHttpRequest*> RequestsSet;
-    typedef HashMap<DocumentImpl*, RequestsSet*> RequestsMap;
-    static RequestsMap &requestsByDocument();
-    void addToRequestsByDocument();
-    void removeFromRequestsByDocument();
-
-    QGuardedPtr<DocumentImpl> doc;
+    DocumentImpl* doc;
     RefPtr<EventListener> m_onReadyStateChangeListener;
     RefPtr<EventListener> m_onLoadListener;
 

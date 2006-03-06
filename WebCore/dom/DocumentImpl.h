@@ -28,7 +28,6 @@
 
 #include "Color.h"
 #include "DocumentMarker.h"
-#include "KWQSignal.h"
 #include "Shared.h"
 #include "Timer.h"
 #include "decoder.h"
@@ -37,7 +36,6 @@
 #include <KURL.h>
 #include <kxmlcore/HashCountedSet.h>
 #include <kxmlcore/HashMap.h>
-#include <qobject.h>
 #include <qptrlist.h>
 #include <QStringList.h>
 
@@ -100,7 +98,7 @@ namespace WebCore {
     class SVGDocumentExtensions;
 #endif
 
-class DocumentImpl : public QObject, public ContainerNodeImpl
+class DocumentImpl : public ContainerNodeImpl
 {
 public:
     DocumentImpl(DOMImplementationImpl*, FrameView*);

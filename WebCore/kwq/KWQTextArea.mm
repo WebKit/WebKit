@@ -33,6 +33,7 @@
 #import "KWQTextEdit.h"
 #import "MacFrame.h"
 #import "WebCoreFrameBridge.h"
+#import "dom_elementimpl.h"
 #import "render_replaced.h"
 #import <kxmlcore/Assertions.h>
 
@@ -209,8 +210,8 @@ const float LargeNumberForText = 1.0e7;
 
 - (void)textViewDidChangeSelection:(NSNotification *)notification
 {
-    if (widget && ![textView inResponderChange])
-        widget->selectionChanged();
+    if (widget && widget->client() && ![textView inResponderChange])
+        widget->client()->selectionChanged(widget);
 }
 
 - (void)textDidChange:(NSNotification *)notification
@@ -227,8 +228,8 @@ const float LargeNumberForText = 1.0e7;
         normalizeLineEndings = NO;
     }
 
-    if (widget)
-        widget->textChanged();
+    if (widget && widget->client())
+        widget->client()->valueChanged(widget);
     
     WebCoreFrameBridge *bridge = MacFrame::bridgeForWidget(widget);
     [bridge textDidChangeInTextArea:(DOMHTMLTextAreaElement *)[bridge elementForView:self]];
@@ -913,15 +914,11 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
     --inResponderChange;
 
     if (become) {
-        if (!MacFrame::currentEventIsMouseDownInWidget(widget)) {
-            RenderWidget *w = const_cast<RenderWidget *> (static_cast<const RenderWidget *>(widget->eventFilterObject()));
-            RenderLayer *layer = w->enclosingLayer();
-            if (layer)
-                layer->scrollRectToVisible(w->absoluteBoundingBoxRect());
-        }
+        if (widget && widget->client() && !MacFrame::currentEventIsMouseDownInWidget(widget))
+            widget->client()->scrollToVisible(widget);
         [self _KWQ_setKeyboardFocusRingNeedsDisplay];
-        if (widget && widget->eventFilterObject())
-            widget->eventFilterObject()->eventFilterFocusIn();
+        if (widget && widget->client())
+            widget->client()->focusIn(widget);
     }
 
     return become;
@@ -938,11 +935,11 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
     if (resign) {
         [self _KWQ_setKeyboardFocusRingNeedsDisplay];
 
-        if (widget && widget->eventFilterObject()) {
-            widget->eventFilterObject()->eventFilterFocusOut();
+        if (widget && widget->client()) {
+            widget->client()->focusOut(widget);
             if (widget)
                 [MacFrame::bridgeForWidget(widget) formControlIsResigningFirstResponder:self];
-        }        
+        }
     }
 
     return resign;
@@ -1047,12 +1044,10 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
     }
     
     [super mouseDown:event];
-    if (widget) {
+    if (widget)
         widget->sendConsumedMouseUp();
-    }
-    if (widget) {
-        widget->clicked();
-    }
+    if (widget && widget->client())
+        widget->client()->clicked(widget);
 }
 
 - (void)keyDown:(NSEvent *)event
@@ -1141,8 +1136,8 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
 - (void)dispatchHTMLEvent:(const AtomicString &)eventType
 {
     if (widget)
-        if (const RenderWidget *rw = static_cast<const RenderWidget *>(widget->eventFilterObject()))
-            if (NodeImpl *node = rw->element())
+        if (WidgetClient* c = widget->client())
+            if (NodeImpl* node = c->element(widget))
                 node->dispatchHTMLEvent(eventType, false, false);
 }
 

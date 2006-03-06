@@ -42,6 +42,7 @@
 #include "helper.h"
 #include <klocale.h>
 #include <qcombobox.h>
+#include <qtextedit.h>
 
 namespace WebCore {
 
@@ -95,16 +96,16 @@ void RenderFormElement::layout()
     setNeedsLayout(false);
 }
 
-void RenderFormElement::slotClicked()
+void RenderFormElement::clicked(Widget*)
 {
-    RenderArena *arena = ref();
+    RenderArena* arena = ref();
     MouseEvent event; // gets "current event"
     if (element())
         element()->dispatchMouseEvent(&event, clickEvent, event.clickCount());
     deref(arena);
 }
 
-Qt::AlignmentFlags RenderFormElement::textAlignment() const
+HorizontalAlignment RenderFormElement::textAlignment() const
 {
     switch (style()->textAlign()) {
         case LEFT:
@@ -149,17 +150,6 @@ void RenderFormElement::addIntrinsicMarginsIfAllowed(RenderStyle* _style)
     }
 }
 
-void RenderFormElement::slotTextChanged(const DOM::DOMString&)
-{
-    // do nothing
-}
-
-void RenderFormElement::slotSelectionChanged()
-{
-    // do nothing
-}
-
-
 // -------------------------------------------------------------------------------
 
 RenderImageButton::RenderImageButton(HTMLInputElementImpl *element)
@@ -187,34 +177,22 @@ RenderLineEdit::RenderLineEdit(HTMLInputElementImpl *element)
         default:
             type = QLineEdit::Normal;
     }
-    QLineEdit *edit = new QLineEdit(type);
+    QLineEdit* edit = new QLineEdit(type);
     if (type == QLineEdit::Search)
         edit->setLiveSearch(false);
-    connect(edit,SIGNAL(returnPressed()), this, SLOT(slotReturnPressed()));
-    connect(edit, SIGNAL(selectionChanged()), this, SLOT(slotSelectionChanged()));
-    connect(edit,SIGNAL(textChanged(const QString &)),this,SLOT(slotTextChanged(const DOMString &)));
-    connect(edit,SIGNAL(clicked()),this,SLOT(slotClicked()));
-
-    connect(edit,SIGNAL(performSearch()), this, SLOT(slotPerformSearch()));
-
-
-    setQWidget(edit);
+    setWidget(edit);
 }
 
-void RenderLineEdit::slotSelectionChanged()
+void RenderLineEdit::selectionChanged(Widget*)
 {
-    QLineEdit* w = static_cast<QLineEdit*>(m_widget);
-    
     // We only want to call onselect if there actually is a selection
-    if (!w->hasSelectedText())
-        return;
-    
-    element()->onSelect();
+    QLineEdit* w = static_cast<QLineEdit*>(m_widget);
+    if (w->hasSelectedText())
+        element()->onSelect();
 }
 
-void RenderLineEdit::slotReturnPressed()
+void RenderLineEdit::returnPressed(Widget*)
 {
-
     // Emit onChange if necessary
     // Works but might not be enough, dirk said he had another solution at
     // hand (can't remember which) - David
@@ -223,12 +201,11 @@ void RenderLineEdit::slotReturnPressed()
         setEdited(false);
     }
 
-    HTMLFormElementImpl* fe = element()->form();
-    if ( fe )
+    if (HTMLFormElementImpl* fe = element()->form())
         fe->submitClick();
 }
 
-void RenderLineEdit::slotPerformSearch()
+void RenderLineEdit::performSearch(Widget*)
 {
     // Fire the "search" DOM event.
     element()->dispatchHTMLEvent(searchEvent, true, false);
@@ -309,16 +286,20 @@ void RenderLineEdit::updateFromElement()
     RenderFormElement::updateFromElement();
 }
 
-void RenderLineEdit::slotTextChanged(const DOMString &string)
+void RenderLineEdit::valueChanged(Widget*)
 {
     if (m_updating) // Don't alter the value if we are in the middle of initing the control, since
         return;     // we are getting the value from the DOM and it's not user input.
 
+    String newText = widget()->text();
+
     // A null string value is used to indicate that the form control has not altered the original
     // default value.  That means that we should never use the null string value when the user
     // empties a textfield, but should always force an empty textfield to use the empty string.
-    DOMString newText = string.isNull() ? "" : string;
-    newText.replace(backslashAsCurrencySymbol(), QChar('\\'));
+    if (newText.isNull())
+        newText = "";
+
+    newText.replace(backslashAsCurrencySymbol(), '\\');
     element()->setValueFromRenderer(newText);
 }
 
@@ -525,10 +506,7 @@ void RenderFieldset::setStyle(RenderStyle* _style)
 RenderFileButton::RenderFileButton(HTMLInputElementImpl *element)
     : RenderFormElement(element)
 {
-    KWQFileButton *w = new KWQFileButton(view()->frame());
-    connect(w, SIGNAL(textChanged(const QString &)),this,SLOT(slotTextChanged(const DOMString &)));
-    connect(w, SIGNAL(clicked()), this, SLOT(slotClicked()));
-    setQWidget(w);
+    setWidget(new KWQFileButton(view()->frame()));
 }
 
 void RenderFileButton::calcMinMaxWidth()
@@ -545,12 +523,6 @@ void RenderFileButton::calcMinMaxWidth()
     RenderFormElement::calcMinMaxWidth();
 }
 
-
-void RenderFileButton::slotClicked()
-{
-    RenderFormElement::slotClicked();
-}
-
 void RenderFileButton::updateFromElement()
 {
     static_cast<KWQFileButton *>(widget())->setFilename(element()->value().qstring());
@@ -558,15 +530,15 @@ void RenderFileButton::updateFromElement()
     RenderFormElement::updateFromElement();
 }
 
-void RenderFileButton::slotReturnPressed()
+void RenderFileButton::returnPressed(Widget*)
 {
     if (element()->form())
         element()->form()->prepareSubmit();
 }
 
-void RenderFileButton::slotTextChanged(const DOMString &string)
+void RenderFileButton::valueChanged(Widget*)
 {
-    element()->m_value = string;
+    element()->m_value = static_cast<KWQFileButton*>(widget())->filename();
     element()->onChange();
 }
 
@@ -592,7 +564,7 @@ RenderLabel::RenderLabel(HTMLGenericFormElementImpl *element)
 // -------------------------------------------------------------------------
 
 RenderLegend::RenderLegend(HTMLGenericFormElementImpl *element)
-: RenderBlock(element)
+    : RenderBlock(element)
 {
 }
 
@@ -608,10 +580,10 @@ RenderSelect::RenderSelect(HTMLSelectElementImpl *element)
     m_selectionChanged = true;
     m_optionsChanged = true;
 
-    if(m_useListBox)
-        setQWidget(createListBox());
+    if (m_useListBox)
+        setWidget(createListBox());
     else
-        setQWidget(createComboBox());
+        setWidget(new QComboBox);
 }
 
 
@@ -649,10 +621,10 @@ void RenderSelect::updateFromElement()
             // type of select has changed
             delete m_widget;
 
-            if(m_useListBox)
-                setQWidget(createListBox());
+            if (m_useListBox)
+                setWidget(createListBox());
             else
-                setQWidget(createComboBox());
+                setWidget(new QComboBox);
             setWidgetWritingDirection();
         }
 
@@ -817,20 +789,21 @@ void RenderSelect::layout( )
     m_widget->setEnabled(foundOption && ! element()->disabled());
 }
 
-void RenderSelect::slotSelected(int index)
+void RenderSelect::valueChanged(Widget*)
 {
-    if ( m_ignoreSelectEvents ) return;
+    if (m_ignoreSelectEvents)
+        return;
 
-    KHTMLAssert( !m_useListBox );
+    KHTMLAssert(!m_useListBox);
+
+    int index = static_cast<QComboBox*>(m_widget)->currentItem();
 
     Array<HTMLElementImpl*> listItems = element()->listItems();
-    if(index >= 0 && index < int(listItems.size()))
-    {
-        bool found = (listItems[index]->hasTagName(optionTag));
-
-        if ( !found ) {
+    if (index >= 0 && index < (int)listItems.size()) {
+        bool found = listItems[index]->hasTagName(optionTag);
+        if (!found) {
             // this one is not selectable,  we need to find an option element
-            while ( ( unsigned ) index < listItems.size() ) {
+            while ((unsigned) index < listItems.size()) {
                 if (listItems[index]->hasTagName(optionTag)) {
                     found = true;
                     break;
@@ -838,8 +811,8 @@ void RenderSelect::slotSelected(int index)
                 ++index;
             }
 
-            if ( !found ) {
-                while ( index >= 0 ) {
+            if (!found) {
+                while (index >= 0) {
                     if (listItems[index]->hasTagName(optionTag)) {
                         found = true;
                         break;
@@ -849,11 +822,11 @@ void RenderSelect::slotSelected(int index)
             }
         }
 
-        if ( found ) {
-            if ( index != static_cast<QComboBox*>( m_widget )->currentItem() )
-                static_cast<QComboBox*>( m_widget )->setCurrentItem( index );
+        if (found) {
+            if ( index != static_cast<QComboBox*>(m_widget)->currentItem() )
+                static_cast<QComboBox*>(m_widget)->setCurrentItem( index );
 
-            for ( unsigned int i = 0; i < listItems.size(); ++i )
+            for (unsigned i = 0; i < listItems.size(); ++i)
                 if (listItems[i]->hasTagName(optionTag) && i != (unsigned int) index)
                     static_cast<HTMLOptionElementImpl*>( listItems[i] )->m_selected = false;
 
@@ -865,15 +838,16 @@ void RenderSelect::slotSelected(int index)
 }
 
 
-void RenderSelect::slotSelectionChanged()
+void RenderSelect::selectionChanged(Widget*)
 {
-    if ( m_ignoreSelectEvents ) return;
+    if (m_ignoreSelectEvents)
+        return;
 
     // don't use listItems() here as we have to avoid recalculations - changing the
     // option list will make use update options not in the way the user expects them
     Array<HTMLElementImpl*> listItems = element()->m_listItems;
     int j = 0;
-    for ( unsigned i = 0; i < listItems.count(); i++ ) {
+    for (unsigned i = 0; i < listItems.count(); i++) {
         // don't use setSelected() here because it will cause us to be called
         // again with updateSelection.
         if (listItems[i]->hasTagName(optionTag))
@@ -895,18 +869,8 @@ QListBox* RenderSelect::createListBox()
 {
     QListBox *lb = new QListBox();
     lb->setSelectionMode(m_multiple ? QListBox::Extended : QListBox::Single);
-    connect( lb, SIGNAL( selectionChanged() ), this, SLOT( slotSelectionChanged() ) );
-    connect( lb, SIGNAL( clicked( QListBoxItem * ) ), this, SLOT( slotClicked() ) );
     m_ignoreSelectEvents = false;
-
     return lb;
-}
-
-QComboBox* RenderSelect::createComboBox()
-{
-    QComboBox* cb = new QComboBox;
-    connect(cb, SIGNAL(activated(int)), this, SLOT(slotSelected(int)));
-    return cb;
 }
 
 void RenderSelect::updateSelection()
@@ -962,12 +926,7 @@ RenderTextArea::RenderTextArea(HTMLTextAreaElementImpl *element)
     else
         edit->setWordWrap(QTextEdit::NoWrap);
 
-
-    setQWidget(edit);
-
-    connect(edit,SIGNAL(textChanged()),this,SLOT(slotTextChanged()));
-    connect(edit,SIGNAL(clicked()),this,SLOT(slotClicked()));
-    connect(edit,SIGNAL(selectionChanged()),this,SLOT(slotSelectionChanged()));
+    setWidget(edit);
 }
 
 void RenderTextArea::destroy()
@@ -1063,7 +1022,7 @@ String RenderTextArea::textWithHardLineBreaks()
     return txt.replace(backslashAsCurrencySymbol(), QChar('\\'));
 }
 
-void RenderTextArea::slotTextChanged()
+void RenderTextArea::valueChanged(Widget*)
 {
     if (m_updating)
         return;
@@ -1106,7 +1065,7 @@ void RenderTextArea::setSelectionRange(int start, int end)
     textEdit->setSelectionRange(start, end-start);
 }
 
-void RenderTextArea::slotSelectionChanged()
+void RenderTextArea::selectionChanged(Widget*)
 {
     QTextEdit* w = static_cast<QTextEdit*>(m_widget);
 
@@ -1120,12 +1079,9 @@ void RenderTextArea::slotSelectionChanged()
 // ---------------------------------------------------------------------------
 
 RenderSlider::RenderSlider(HTMLInputElementImpl* element)
-:RenderFormElement(element)
+    : RenderFormElement(element)
 {
-    QSlider* slider = new QSlider();
-    setQWidget(slider);
-    connect(slider, SIGNAL(sliderValueChanged()), this, SLOT(slotSliderValueChanged()));
-    connect(slider, SIGNAL(clicked()), this, SLOT(slotClicked()));
+    setWidget(new QSlider);
 }
 
 void RenderSlider::calcMinMaxWidth()
@@ -1176,9 +1132,9 @@ void RenderSlider::updateFromElement()
     RenderFormElement::updateFromElement();
 }
 
-void RenderSlider::slotSliderValueChanged()
+void RenderSlider::valueChanged(Widget*)
 {
-    QSlider* slider = (QSlider*)widget();
+    QSlider* slider = static_cast<QSlider*>(widget());
 
     double val = slider->value();
     const AtomicString& precision = element()->getAttribute(precisionAttr);
@@ -1191,12 +1147,6 @@ void RenderSlider::slotSliderValueChanged()
     
     // Fire the "input" DOM event.
     element()->dispatchHTMLEvent(inputEvent, true, false);
-}
-
-void RenderSlider::slotClicked()
-{
-    // emit mouseClick event etc
-    RenderFormElement::slotClicked();
 }
 
 }

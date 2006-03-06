@@ -423,7 +423,7 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
     }
 
 #ifdef BOX_DEBUG
-    p->setPen( Qt::red );
+    p->setPen( red );
     p->drawRect(box.x(), box.y(), box.width(), box.height());
 #endif
 
@@ -450,19 +450,19 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
             const Font& font = style()->font();
             if (isInside()) {
             	if( style()->direction() == LTR) {
-                    p->drawText(marker.x(), marker.y(), 0, 0, 0, 0, Qt::AlignLeft, m_item);
-                    p->drawText(marker.x() + font.width(m_item), marker.y(), 0, 0, 0, 0, Qt::AlignLeft, ". ");
+                    p->drawText(marker.x(), marker.y(), 0, 0, 0, 0, AlignLeft, m_item);
+                    p->drawText(marker.x() + font.width(m_item), marker.y(), 0, 0, 0, 0, AlignLeft, ". ");
                 } else {
-                    p->drawText(marker.x(), marker.y(), 0, 0, 0, 0, Qt::AlignLeft, " .");
-            	    p->drawText(marker.x() + font.width(" ."), marker.y(), 0, 0, 0, 0, Qt::AlignLeft, m_item);
+                    p->drawText(marker.x(), marker.y(), 0, 0, 0, 0, AlignLeft, " .");
+            	    p->drawText(marker.x() + font.width(" ."), marker.y(), 0, 0, 0, 0, AlignLeft, m_item);
                 }
             } else {
                 if (style()->direction() == LTR) {
-                    p->drawText(marker.x(), marker.y(), 0, 0, 0, 0, Qt::AlignRight, ". ");
-                    p->drawText(marker.x() - font.width(". "), marker.y(), 0, 0, 0, 0, Qt::AlignRight, m_item);
+                    p->drawText(marker.x(), marker.y(), 0, 0, 0, 0, AlignRight, ". ");
+                    p->drawText(marker.x() - font.width(". "), marker.y(), 0, 0, 0, 0, AlignRight, m_item);
                 } else {
-            	    p->drawText(marker.x(), marker.y(), 0, 0, 0, 0, Qt::AlignLeft, " .");
-                    p->drawText(marker.x() + font.width(" ."), marker.y(), 0, 0, 0, 0, Qt::AlignLeft, m_item);
+            	    p->drawText(marker.x(), marker.y(), 0, 0, 0, 0, AlignLeft, " .");
+                    p->drawText(marker.x() + font.width(" ."), marker.y(), 0, 0, 0, 0, AlignLeft, m_item);
                 }
             }
         }

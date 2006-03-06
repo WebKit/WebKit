@@ -36,9 +36,9 @@
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
 #import "WebCoreViewFactory.h"
+#import "WidgetClient.h"
 
 using namespace WebCore;
-using WebCore::Font;
 
 @interface NSSearchField (SearchFieldSecrets)
 - (void)_addStringToRecentSearches:(NSString *)string;
@@ -55,12 +55,7 @@ NSControlSize KWQNSControlSizeForFont(const Font& f)
 }
 
 QLineEdit::QLineEdit(Type type)
-    : m_returnPressed(this, SIGNAL(returnPressed()))
-    , m_textChanged(this, SIGNAL(textChanged(const QString &)))
-    , m_clicked(this, SIGNAL(clicked()))
-    , m_performSearch(this, SIGNAL(performSearch()))
-    , m_selectionChanged(this, SIGNAL(selectionChanged()))
-    , m_type(type)
+    : m_type(type)
 {
     KWQ_BLOCK_EXCEPTIONS;
     id view = nil;
@@ -309,17 +304,12 @@ int QLineEdit::baselinePosition(int height) const
     return 0;
 }
 
-void QLineEdit::clicked()
-{
-    m_clicked.call();
-}
-
-void QLineEdit::setAlignment(AlignmentFlags alignment)
+void QLineEdit::setAlignment(HorizontalAlignment alignment)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
     NSTextField *textField = (NSTextField *)getView();
-    [textField setAlignment:KWQNSTextAlignmentForAlignmentFlags(alignment)];
+    [textField setAlignment:KWQNSTextAlignment(alignment)];
 
     KWQ_UNBLOCK_EXCEPTIONS;
 }
@@ -342,18 +332,18 @@ bool QLineEdit::checksDescendantsForFocus() const
     return true;
 }
 
-NSTextAlignment KWQNSTextAlignmentForAlignmentFlags(Qt::AlignmentFlags a)
+NSTextAlignment KWQNSTextAlignment(HorizontalAlignment a)
 {
     switch (a) {
-        default:
-            LOG_ERROR("unsupported alignment");
-        case Qt::AlignLeft:
+        case AlignLeft:
             return NSLeftTextAlignment;
-        case Qt::AlignRight:
+        case AlignRight:
             return NSRightTextAlignment;
-        case Qt::AlignHCenter:
+        case AlignHCenter:
             return NSCenterTextAlignment;
     }
+    LOG_ERROR("unsupported alignment");
+    return NSLeftTextAlignment;
 }
 
 void QLineEdit::setLiveSearch(bool liveSearch)

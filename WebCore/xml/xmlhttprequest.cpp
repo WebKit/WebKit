@@ -42,6 +42,44 @@ namespace WebCore {
 
 using namespace EventNames;
 
+typedef HashSet<XMLHttpRequest*> RequestsSet;
+
+static HashMap<DocumentImpl*, RequestsSet*>& requestsByDocument()
+{
+    static HashMap<DocumentImpl*, RequestsSet*> map;
+    return map;
+}
+
+static void addToRequestsByDocument(DocumentImpl* doc, XMLHttpRequest* req)
+{
+    ASSERT(doc);
+    ASSERT(req);
+
+    RequestsSet* requests = requestsByDocument().get(doc);
+    if (!requests) {
+        requests = new RequestsSet;
+        requestsByDocument().set(doc, requests);
+    }
+
+    ASSERT(!requests->contains(req));
+    requests->add(req);
+}
+
+static void removeFromRequestsByDocument(DocumentImpl* doc, XMLHttpRequest* req)
+{
+    ASSERT(doc);
+    ASSERT(req);
+
+    RequestsSet* requests = requestsByDocument().get(doc);
+    ASSERT(requests);
+    ASSERT(requests->contains(req));
+    requests->remove(req);
+    if (requests->isEmpty()) {
+        requestsByDocument().remove(doc);
+        delete requests;
+    }
+}
+
 static inline QString getMIMEType(const QString& contentTypeString)
 {
     return QStringList::split(";", contentTypeString, true)[0].stripWhiteSpace();
@@ -91,7 +129,7 @@ XMLHttpRequestState XMLHttpRequest::getReadyState() const
     return state;
 }
 
-DOMString XMLHttpRequest::getResponseText() const
+String XMLHttpRequest::getResponseText() const
 {
     return response;
 }
@@ -99,17 +137,17 @@ DOMString XMLHttpRequest::getResponseText() const
 DocumentImpl* XMLHttpRequest::getResponseXML() const
 {
     if (state != Completed)
-      return 0;
+        return 0;
 
     if (!createdDocument) {
-      if (responseIsXML()) {
-        responseXML = doc->implementation()->createDocument();
-        responseXML->open();
-        responseXML->write(response);
-        responseXML->finishParsing();
-        responseXML->close();
-      }
-      createdDocument = true;
+        if (responseIsXML()) {
+            responseXML = doc->implementation()->createDocument();
+            responseXML->open();
+            responseXML->write(response);
+            responseXML->finishParsing();
+            responseXML->close();
+        }
+        createdDocument = true;
     }
 
     return responseXML.get();
@@ -136,13 +174,21 @@ void XMLHttpRequest::setOnLoadListener(EventListener* eventListener)
 }
 
 XMLHttpRequest::XMLHttpRequest(DocumentImpl *d)
-  : doc(d),
-    async(true),
-    job(0),
-    state(Uninitialized),
-    createdDocument(false),
-    aborted(false)
+    : doc(d)
+    , async(true)
+    , job(0)
+    , state(Uninitialized)
+    , createdDocument(false)
+    , aborted(false)
 {
+    ASSERT(doc);
+    addToRequestsByDocument(doc, this);
+}
+
+XMLHttpRequest::~XMLHttpRequest()
+{
+    if (doc)
+        removeFromRequestsByDocument(doc, this);
 }
 
 void XMLHttpRequest::changeState(XMLHttpRequestState newState)
@@ -156,17 +202,17 @@ void XMLHttpRequest::changeState(XMLHttpRequestState newState)
 void XMLHttpRequest::callReadyStateChangeListener()
 {
     if (doc && doc->frame() && m_onReadyStateChangeListener) {
-      int ignoreException;
-      RefPtr<EventImpl> ev = doc->createEvent("HTMLEvents", ignoreException);
-      ev->initEvent(readystatechangeEvent, true, true);
-      m_onReadyStateChangeListener->handleEvent(ev.get(), true);
+        ExceptionCode ec;
+        RefPtr<EventImpl> ev = doc->createEvent("HTMLEvents", ec);
+        ev->initEvent(readystatechangeEvent, true, true);
+        m_onReadyStateChangeListener->handleEvent(ev.get(), true);
     }
     
     if (doc && doc->frame() && state == Completed && m_onLoadListener) {
-      int ignoreException;
-      RefPtr<EventImpl> ev = doc->createEvent("HTMLEvents", ignoreException);
-      ev->initEvent(loadEvent, true, true);
-      m_onLoadListener->handleEvent(ev.get(), true);
+        ExceptionCode ec;
+        RefPtr<EventImpl> ev = doc->createEvent("HTMLEvents", ec);
+        ev->initEvent(loadEvent, true, true);
+        m_onLoadListener->handleEvent(ev.get(), true);
     }
 }
 
@@ -174,210 +220,197 @@ bool XMLHttpRequest::urlMatchesDocumentDomain(const KURL& _url) const
 {
   KURL documentURL(doc->URL());
 
-  // a local file can load anything
-  if (documentURL.protocol().lower() == "file") {
-    return true;
-  }
+    // a local file can load anything
+    if (documentURL.protocol().lower() == "file")
+        return true;
 
-  // but a remote document can only load from the same port on the server
-  if (documentURL.protocol().lower() == _url.protocol().lower() &&
-      documentURL.host().lower() == _url.host().lower() &&
-      documentURL.port() == _url.port()) {
-    return true;
-  }
+    // but a remote document can only load from the same port on the server
+    if (documentURL.protocol().lower() == _url.protocol().lower()
+            && documentURL.host().lower() == _url.host().lower()
+            && documentURL.port() == _url.port())
+        return true;
 
-  return false;
+    return false;
 }
 
-void XMLHttpRequest::open(const DOMString& _method, const KURL& _url, bool _async, const DOMString& user, const DOMString& password)
+void XMLHttpRequest::open(const String& _method, const KURL& _url, bool _async, const String& user, const String& password)
 {
-  abort();
-  aborted = false;
+    abort();
+    aborted = false;
 
-  // clear stuff from possible previous load
-  requestHeaders = QString();
-  responseHeaders = QString();
-  response = QString();
-  createdDocument = false;
-  responseXML = 0;
+    // clear stuff from possible previous load
+    requestHeaders = QString();
+    responseHeaders = QString();
+    response = QString();
+    createdDocument = false;
+    responseXML = 0;
 
-  changeState(Uninitialized);
+    changeState(Uninitialized);
 
-  if (aborted) {
-    return;
-  }
+    if (aborted)
+        return;
 
-  if (!urlMatchesDocumentDomain(_url)) {
-    return;
-  }
+    if (!urlMatchesDocumentDomain(_url))
+        return;
 
-  url = _url;
+    url = _url;
 
-  if (!user.isNull())
-    url.setUser(user.qstring());
+    if (!user.isNull())
+        url.setUser(user.qstring());
 
-  if (!password.isNull())
-    url.setPass(password.qstring());
+    if (!password.isNull())
+        url.setPass(password.qstring());
 
-  method = _method.qstring();
-  async = _async;
+    method = _method.qstring();
+    async = _async;
 
-  changeState(Loading);
+    changeState(Loading);
 }
 
-void XMLHttpRequest::send(const DOMString& _body)
+void XMLHttpRequest::send(const String& _body)
 {
-  if (!doc)
-    return;
+    if (!doc)
+        return;
 
-  if (state != Loading)
-    return;
+    if (state != Loading)
+        return;
   
-  // FIXME: Should this abort instead if we already have a job going?
-  if (job)
-    return;
+    // FIXME: Should this abort instead if we already have a job going?
+    if (job)
+        return;
 
-  aborted = false;
+    aborted = false;
 
-  if (!_body.isNull() && method.lower() != "get" && method.lower() != "head" && (url.protocol().lower() == "http" || url.protocol().lower() == "https")) {
-      QString contentType = getRequestHeader("Content-Type");
-      QString charset;
-      if (contentType.isEmpty())
-        setRequestHeader("Content-Type", "application/xml");
-      else
-        charset = getCharset(contentType);
+    if (!_body.isNull() && method.lower() != "get" && method.lower() != "head" && (url.protocol().lower() == "http" || url.protocol().lower() == "https")) {
+        QString contentType = getRequestHeader("Content-Type");
+        QString charset;
+        if (contentType.isEmpty())
+            setRequestHeader("Content-Type", "application/xml");
+        else
+            charset = getCharset(contentType);
       
-      if (charset.isEmpty())
-        charset = "UTF-8";
+        if (charset.isEmpty())
+            charset = "UTF-8";
       
-      TextEncoding encoding = TextEncoding(charset.latin1());
-      if (!encoding.isValid())   // FIXME: report an error?
-        encoding = TextEncoding(UTF8Encoding);
+        TextEncoding encoding = TextEncoding(charset.latin1());
+        if (!encoding.isValid())   // FIXME: report an error?
+            encoding = TextEncoding(UTF8Encoding);
 
-      job = new TransferJob(async ? this : 0, method, url, encoding.fromUnicode(_body.qstring()));
-  } else {
-     // HEAD requests just crash; see <rdar://4460899> and the commented out tests in http/tests/xmlhttprequest/methods.html.
-     if (method.lower() == "head")
-       method = "GET";
-
-     job = new TransferJob(async ? this : 0, method, url);
-  }
-
-  if (requestHeaders.length() > 0)
-    job->addMetaData("customHTTPHeader", requestHeaders);
-
-  if (!async) {
-    ByteArray data;
-    KURL finalURL;
-    QString headers;
-
-    { // scope
-        // avoid deadlock in case the loader wants to use JS on a background thread
-        KJS::JSLock::DropAllLocks dropLocks;
-
-        data = KWQServeSynchronousRequest(Cache::loader(), doc->docLoader(), job, finalURL, headers);
+        job = new TransferJob(async ? this : 0, method, url, encoding.fromUnicode(_body.qstring()));
+    } else {
+        // HEAD requests just crash; see <rdar://4460899> and the commented out tests in http/tests/xmlhttprequest/methods.html.
+        if (method.lower() == "head")
+            method = "GET";
+        job = new TransferJob(async ? this : 0, method, url);
     }
 
-    job = 0;
-    processSyncLoadResults(data, finalURL, headers);
+    if (requestHeaders.length())
+        job->addMetaData("customHTTPHeader", requestHeaders);
+
+    if (!async) {
+        ByteArray data;
+        KURL finalURL;
+        QString headers;
+
+        {
+            // avoid deadlock in case the loader wants to use JS on a background thread
+            KJS::JSLock::DropAllLocks dropLocks;
+            data = KWQServeSynchronousRequest(Cache::loader(), doc->docLoader(), job, finalURL, headers);
+        }
+
+        job = 0;
+        processSyncLoadResults(data, finalURL, headers);
     
-    return;
-  }
+        return;
+    }
 
-  // Neither this object nor the JavaScript wrapper should be deleted while
-  // a request is in progress because we need to keep the listeners alive,
-  // and they are referenced by the JavaScript wrapper.
-  ref();
-  {
-    KJS::JSLock lock;
-    gcProtectNullTolerant(KJS::ScriptInterpreter::getDOMObject(this));
-  }
+    // Neither this object nor the JavaScript wrapper should be deleted while
+    // a request is in progress because we need to keep the listeners alive,
+    // and they are referenced by the JavaScript wrapper.
+    ref();
+    {
+        KJS::JSLock lock;
+        gcProtectNullTolerant(KJS::ScriptInterpreter::getDOMObject(this));
+    }
   
-  addToRequestsByDocument();
-
-  job->start(doc->docLoader());
+    job->start(doc->docLoader());
 }
 
 void XMLHttpRequest::abort()
 {
-  bool hadJob = job;
+    bool hadJob = job;
 
-  if (hadJob) {
-    removeFromRequestsByDocument();
-    job->kill();
-    job = 0;
-  }
-  decoder = 0;
-  aborted = true;
-
-  if (hadJob) {
-    {
-      KJS::JSLock lock;
-      gcUnprotectNullTolerant(KJS::ScriptInterpreter::getDOMObject(this));
+    if (hadJob) {
+        job->kill();
+        job = 0;
     }
-    deref();
-  }
+    decoder = 0;
+    aborted = true;
+
+    if (hadJob) {
+        {
+            KJS::JSLock lock;
+            gcUnprotectNullTolerant(KJS::ScriptInterpreter::getDOMObject(this));
+        }
+        deref();
+    }
 }
 
-void XMLHttpRequest::overrideMIMEType(const DOMString& override)
+void XMLHttpRequest::overrideMIMEType(const String& override)
 {
-  MIMETypeOverride = override.qstring();
+    MIMETypeOverride = override.qstring();
 }
 
-void XMLHttpRequest::setRequestHeader(const DOMString& name, const DOMString &value)
+void XMLHttpRequest::setRequestHeader(const String& name, const String& value)
 {
-  if (requestHeaders.length() > 0)
-    requestHeaders += "\r\n";
-  requestHeaders += name.qstring();
-  requestHeaders += ": ";
-  requestHeaders += value.qstring();
+    if (requestHeaders.length() > 0)
+        requestHeaders += "\r\n";
+    requestHeaders += name.qstring();
+    requestHeaders += ": ";
+    requestHeaders += value.qstring();
 }
 
 QString XMLHttpRequest::getRequestHeader(const QString& name) const
 {
-  return getSpecificHeader(requestHeaders, name);
+    return getSpecificHeader(requestHeaders, name);
 }
 
-DOMString XMLHttpRequest::getAllResponseHeaders() const
+String XMLHttpRequest::getAllResponseHeaders() const
 {
-  if (responseHeaders.isEmpty())
-    return DOMString();
+    if (responseHeaders.isEmpty())
+        return String();
 
-  int endOfLine = responseHeaders.find("\n");
+    int endOfLine = responseHeaders.find("\n");
+    if (endOfLine == -1)
+        return String();
 
-  if (endOfLine == -1)
-    return DOMString();
-
-  return responseHeaders.mid(endOfLine + 1) + "\n";
+    return responseHeaders.mid(endOfLine + 1) + "\n";
 }
 
-DOMString XMLHttpRequest::getResponseHeader(const DOMString& name) const
+String XMLHttpRequest::getResponseHeader(const String& name) const
 {
-  return getSpecificHeader(responseHeaders, name.qstring());
+    return getSpecificHeader(responseHeaders, name.qstring());
 }
 
 QString XMLHttpRequest::getSpecificHeader(const QString& headers, const QString& name)
 {
-  if (headers.isEmpty())
-    return QString();
+    if (headers.isEmpty())
+        return QString();
 
-  QRegExp headerLinePattern(name + ":", false);
+    QRegExp headerLinePattern(name + ":", false);
 
-  int matchLength;
-  int headerLinePos = headerLinePattern.match(headers, 0, &matchLength);
-  while (headerLinePos != -1) {
-    if (headerLinePos == 0 || headers[headerLinePos-1] == '\n')
-      break;
+    int matchLength;
+    int headerLinePos = headerLinePattern.match(headers, 0, &matchLength);
+    while (headerLinePos != -1) {
+        if (headerLinePos == 0 || headers[headerLinePos-1] == '\n')
+            break;
+        headerLinePos = headerLinePattern.match(headers, headerLinePos + 1, &matchLength);
+    }
+    if (headerLinePos == -1)
+        return QString();
     
-    headerLinePos = headerLinePattern.match(headers, headerLinePos + 1, &matchLength);
-  }
-
-  if (headerLinePos == -1)
-    return QString();
-    
-  int endOfLine = headers.find("\n", headerLinePos + matchLength);
-  
-  return headers.mid(headerLinePos + matchLength, endOfLine - (headerLinePos + matchLength)).stripWhiteSpace();
+    int endOfLine = headers.find("\n", headerLinePos + matchLength);
+    return headers.mid(headerLinePos + matchLength, endOfLine - (headerLinePos + matchLength)).stripWhiteSpace();
 }
 
 bool XMLHttpRequest::responseIsXML() const
@@ -386,50 +419,44 @@ bool XMLHttpRequest::responseIsXML() const
     if (mimeType.isEmpty())
         mimeType = getMIMEType(getResponseHeader("Content-Type").qstring());
     if (mimeType.isEmpty())
-      mimeType = "text/xml";
-    
+        mimeType = "text/xml";
     return DOMImplementationImpl::isXMLMIMEType(mimeType);
 }
 
 int XMLHttpRequest::getStatus() const
 {
-  if (responseHeaders.isEmpty())
-    return -1;
+    if (responseHeaders.isEmpty())
+        return -1;
   
-  int endOfLine = responseHeaders.find("\n");
-  QString firstLine = endOfLine == -1 ? responseHeaders : responseHeaders.left(endOfLine);
-  int codeStart = firstLine.find(" ");
-  int codeEnd = firstLine.find(" ", codeStart + 1);
+    int endOfLine = responseHeaders.find("\n");
+    QString firstLine = endOfLine == -1 ? responseHeaders : responseHeaders.left(endOfLine);
+    int codeStart = firstLine.find(" ");
+    int codeEnd = firstLine.find(" ", codeStart + 1);
+    if (codeStart == -1 || codeEnd == -1)
+        return -1;
   
-  if (codeStart == -1 || codeEnd == -1)
-    return -1;
-  
-  QString number = firstLine.mid(codeStart + 1, codeEnd - (codeStart + 1));
-  
-  bool ok = false;
-  int code = number.toInt(&ok);
-  if (!ok)
-    return -1;
-
-  return code;
+    QString number = firstLine.mid(codeStart + 1, codeEnd - (codeStart + 1));
+    bool ok = false;
+    int code = number.toInt(&ok);
+    if (!ok)
+        return -1;
+    return code;
 }
 
-DOMString XMLHttpRequest::getStatusText() const
+String XMLHttpRequest::getStatusText() const
 {
-  if (responseHeaders.isEmpty())
-    return DOMString();
+    if (responseHeaders.isEmpty())
+        return String();
   
-  int endOfLine = responseHeaders.find("\n");
-  QString firstLine = endOfLine == -1 ? responseHeaders : responseHeaders.left(endOfLine);
-  int codeStart = firstLine.find(" ");
-  int codeEnd = firstLine.find(" ", codeStart + 1);
-
-  if (codeStart == -1 || codeEnd == -1)
-    return DOMString();
+    int endOfLine = responseHeaders.find("\n");
+    QString firstLine = endOfLine == -1 ? responseHeaders : responseHeaders.left(endOfLine);
+    int codeStart = firstLine.find(" ");
+    int codeEnd = firstLine.find(" ", codeStart + 1);
+    if (codeStart == -1 || codeEnd == -1)
+        return String();
   
-  QString statusText = firstLine.mid(codeEnd + 1, endOfLine - (codeEnd + 1)).stripWhiteSpace();
-  
-  return DOMString(statusText);
+    QString statusText = firstLine.mid(codeEnd + 1, endOfLine - (codeEnd + 1)).stripWhiteSpace();
+    return String(statusText);
 }
 
 void XMLHttpRequest::processSyncLoadResults(const ByteArray &data, const KURL &finalURL, const QString &headers)
@@ -456,120 +483,100 @@ void XMLHttpRequest::processSyncLoadResults(const ByteArray &data, const KURL &f
 
 void XMLHttpRequest::receivedAllData(TransferJob*)
 {
-  if (responseHeaders.isEmpty() && job)
-    responseHeaders = job->queryMetaData("HTTP-Headers");
+    if (responseHeaders.isEmpty() && job)
+        responseHeaders = job->queryMetaData("HTTP-Headers");
 
-  if (state < Loaded)
-    changeState(Loaded);
+    if (state < Loaded)
+        changeState(Loaded);
 
-  if (decoder)
-    response += decoder->flush();
+    if (decoder)
+        response += decoder->flush();
 
-  bool hadJob = job;
-  removeFromRequestsByDocument();
-  job = 0;
+    bool hadJob = job;
+    job = 0;
 
-  changeState(Completed);
-  decoder = 0;
+    changeState(Completed);
+    decoder = 0;
 
-  if (hadJob) {
-    {
-      KJS::JSLock lock;
-      gcUnprotectNullTolerant(KJS::ScriptInterpreter::getDOMObject(this));
+    if (hadJob) {
+        {
+            KJS::JSLock lock;
+            gcUnprotectNullTolerant(KJS::ScriptInterpreter::getDOMObject(this));
+        }
+        deref();
     }
-    deref();
-  }
 }
 
 void XMLHttpRequest::receivedRedirect(TransferJob*, const KURL& url)
 {
-  if (!urlMatchesDocumentDomain(url))
-    abort();
+    if (!urlMatchesDocumentDomain(url))
+        abort();
 }
 
 void XMLHttpRequest::receivedData(TransferJob*, const char *data, int len)
 {
-  if (responseHeaders.isEmpty() && job)
-    responseHeaders = job->queryMetaData("HTTP-Headers");
+    if (responseHeaders.isEmpty() && job)
+        responseHeaders = job->queryMetaData("HTTP-Headers");
 
-  if (state < Loaded)
-    changeState(Loaded);
+    if (state < Loaded)
+        changeState(Loaded);
   
-  if (!decoder) {
-    encoding = getCharset(MIMETypeOverride);
-    if (encoding.isEmpty())
-      encoding = getCharset(getResponseHeader("Content-Type").qstring());
-    if (encoding.isEmpty() && job)
-      encoding = job->queryMetaData("charset");
+    if (!decoder) {
+        encoding = getCharset(MIMETypeOverride);
+        if (encoding.isEmpty())
+            encoding = getCharset(getResponseHeader("Content-Type").qstring());
+        if (encoding.isEmpty() && job)
+            encoding = job->queryMetaData("charset");
     
-    decoder = new Decoder;
-    if (!encoding.isEmpty())
-      decoder->setEncodingName(encoding.latin1(), Decoder::EncodingFromHTTPHeader);
-    else
-      // only allow Decoder to look inside the response if it's XML
-      decoder->setEncodingName("UTF-8", responseIsXML() ? Decoder::DefaultEncoding : Decoder::EncodingFromHTTPHeader);
-  }
-  if (len == 0)
-    return;
+        decoder = new Decoder;
+        if (!encoding.isEmpty())
+            decoder->setEncodingName(encoding.latin1(), Decoder::EncodingFromHTTPHeader);
+        else
+            // only allow Decoder to look inside the response if it's XML
+            decoder->setEncodingName("UTF-8", responseIsXML() ? Decoder::DefaultEncoding : Decoder::EncodingFromHTTPHeader);
+    }
+    if (len == 0)
+        return;
 
-  if (len == -1)
-    len = strlen(data);
+    if (len == -1)
+        len = strlen(data);
 
-  QString decoded = decoder->decode(data, len);
+    QString decoded = decoder->decode(data, len);
 
-  response += decoded;
+    response += decoded;
 
-  if (!aborted) {
-    if (state != Interactive)
-        changeState(Interactive);
-    else
-        // Firefox calls readyStateChanged every time it receives data, 4449442
-        callReadyStateChangeListener();
-  }
+    if (!aborted) {
+        if (state != Interactive)
+            changeState(Interactive);
+        else
+            // Firefox calls readyStateChanged every time it receives data, 4449442
+            callReadyStateChangeListener();
+    }
 }
 
-XMLHttpRequest::RequestsMap& XMLHttpRequest::requestsByDocument()
+void XMLHttpRequest::cancelRequests(DocumentImpl* doc)
 {
-    static RequestsMap map;
-    return map;
+    RequestsSet* requests = requestsByDocument().get(doc);
+    if (!requests)
+        return;
+    RequestsSet copy = *requests;
+    RequestsSet::const_iterator end = copy.end();
+    for (RequestsSet::const_iterator it = copy.begin(); it != end; ++it)
+        (*it)->abort();
 }
 
-void XMLHttpRequest::addToRequestsByDocument()
+void XMLHttpRequest::detachRequests(DocumentImpl* doc)
 {
-  assert(doc);
-
-  RequestsSet* requests = requestsByDocument().get(doc);
-  if (!requests) {
-    requests = new RequestsSet;
-    requestsByDocument().set(doc, requests);
-  }
-
-  assert(!requests->contains(this));
-  requests->add(this);
-}
-
-void XMLHttpRequest::removeFromRequestsByDocument()
-{
-  assert(doc);
-
-  RequestsSet* requests = requestsByDocument().get(doc);
-
-  // Since synchronous loads are not added to requestsByDocument(), we need to make sure we found the request.
-  if (!requests || !requests->contains(this))
-    return;
-
-  requests->remove(this);
-
-  if (requests->isEmpty()) {
+    RequestsSet* requests = requestsByDocument().get(doc);
+    if (!requests)
+        return;
     requestsByDocument().remove(doc);
+    RequestsSet::const_iterator end = requests->end();
+    for (RequestsSet::const_iterator it = requests->begin(); it != end; ++it) {
+        (*it)->doc = 0;
+        (*it)->abort();
+    }
     delete requests;
-  }
-}
-
-void XMLHttpRequest::cancelRequests(DocumentImpl* d)
-{
-  while (RequestsSet* requests = requestsByDocument().get(d))
-    (*requests->begin())->abort();
 }
 
 } // end namespace

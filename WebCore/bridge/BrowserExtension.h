@@ -29,7 +29,6 @@
 #include "PlatformString.h"
 #include "formdata.h"
 #include <kxmlcore/HashMap.h>
-#include <qobject.h>
 
 class KURL;
 
@@ -88,8 +87,10 @@ struct WindowArgs {
     bool dialog;
 };
 
-class BrowserExtension : public QObject {
+class BrowserExtension {
 public:
+    virtual ~BrowserExtension() { }
+
     virtual void openURLRequest(const KURL &, const URLArgs &args = URLArgs()) = 0;
     virtual void openURLNotify() = 0;
     

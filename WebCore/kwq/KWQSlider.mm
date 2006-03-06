@@ -75,19 +75,16 @@ using namespace WebCore;
     Widget::beforeMouseDown(self);
     [super mouseDown:event];
     Widget::afterMouseDown(self);
-    if (slider) {
+    if (slider)
         slider->sendConsumedMouseUp();
-    }
-    if (slider) {
-        slider->clicked();
-    }
+    if (slider && slider->client())
+        slider->client()->clicked(slider);
 }
 
 - (IBAction)slide:(NSSlider*)sender
 {
-    if (slider) {
+    if (slider)
         slider->sliderValueChanged();
-    }
 }
 
 - (Widget *)widget
@@ -101,15 +98,10 @@ using namespace WebCore;
 {
     BOOL become = [super becomeFirstResponder];
     if (become && slider) {
-        if (!MacFrame::currentEventIsMouseDownInWidget(slider)) {
-            RenderWidget *widget = const_cast<RenderWidget *> (static_cast<const RenderWidget *>(slider->eventFilterObject()));
-            RenderLayer *layer = widget->enclosingLayer();
-            if (layer)
-                layer->scrollRectToVisible(widget->absoluteBoundingBoxRect());
-        }
-
-        if (slider && slider->eventFilterObject())
-            slider->eventFilterObject()->eventFilterFocusIn();
+        if (slider && slider->client() && !MacFrame::currentEventIsMouseDownInWidget(slider))
+            slider->client()->scrollToVisible(slider);
+        if (slider && slider->client())
+            slider->client()->focusIn(slider);
     }
     return become;
 }
@@ -117,8 +109,8 @@ using namespace WebCore;
 - (BOOL)resignFirstResponder
 {
     BOOL resign = [super resignFirstResponder];
-    if (resign && slider && slider->eventFilterObject()) {
-        slider->eventFilterObject()->eventFilterFocusOut();
+    if (resign && slider && slider->client()) {
+        slider->client()->focusOut(slider);
         if (slider)
             [MacFrame::bridgeForWidget(slider) formControlIsResigningFirstResponder:self];
     }
@@ -199,9 +191,7 @@ enum {
 };
 
 QSlider::QSlider()
-: m_sliderValueChanged(this, SIGNAL(sliderValueChanged())), 
-  m_clicked(this, SIGNAL(clicked())),
-  m_minVal(0.0), m_maxVal(100.0), m_val(50.0)
+    : m_minVal(0.0), m_maxVal(100.0), m_val(50.0)
 {
     KWQ_BLOCK_EXCEPTIONS;
     KWQSlider* slider = [[KWQSlider alloc] initWithQSlider:this];
@@ -298,7 +288,8 @@ void QSlider::sliderValueChanged()
     double v = [slider doubleValue];
     if (m_val != v) {
         m_val = v;
-        m_sliderValueChanged.call();
+        if (client())
+            client()->valueChanged(this);
     }
 }
 
@@ -318,9 +309,4 @@ const int* QSlider::dimensions() const
     KWQ_UNBLOCK_EXCEPTIONS;
     
     return w[NSSmallControlSize];
-}
-
-void QSlider::clicked()
-{
-    m_clicked.call();
 }

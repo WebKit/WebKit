@@ -78,7 +78,6 @@ QComboBox::QComboBox()
     , _currentItem(0)
     , _menuPopulated(true)
     , _labelFont(nil)
-    , _activated(this, SIGNAL(activated(int)))
 {
     KWQ_BLOCK_EXCEPTIONS;
 
@@ -283,7 +282,8 @@ void QComboBox::itemSelected()
 
     KWQ_UNBLOCK_EXCEPTIONS;
 
-    _activated.call(_currentItem);
+    if (client())
+        client()->valueChanged(this);
 }
 
 void QComboBox::setFont(const Font& f)
@@ -487,17 +487,11 @@ void QComboBox::populate()
 {
     BOOL become = [super becomeFirstResponder];
     if (become) {
-        Widget *widget = [self widget];
-        if (widget) {
-            if (!MacFrame::currentEventIsMouseDownInWidget(widget)) {
-                RenderWidget *w = const_cast<RenderWidget *> (static_cast<const RenderWidget *>(widget->eventFilterObject()));
-                RenderLayer *layer = w->enclosingLayer();
-                if (layer)
-                    layer->scrollRectToVisible(w->absoluteBoundingBoxRect());
-            }
-            if (widget->eventFilterObject())
-                widget->eventFilterObject()->eventFilterFocusIn();
-        }
+        Widget* widget = [self widget];
+        if (widget && widget->client() && !MacFrame::currentEventIsMouseDownInWidget(widget))
+            widget->client()->scrollToVisible(widget);
+        if (widget && widget->client())
+            widget->client()->focusIn(widget);
     }
     return become;
 }
@@ -506,9 +500,9 @@ void QComboBox::populate()
 {
     BOOL resign = [super resignFirstResponder];
     if (resign) {
-        Widget *widget = [self widget];
-        if (widget && widget->eventFilterObject()) {
-            widget->eventFilterObject()->eventFilterFocusOut();
+        Widget* widget = [self widget];
+        if (widget && widget->client()) {
+            widget->client()->focusOut(widget);
             if (widget)
                 [MacFrame::bridgeForWidget(widget) formControlIsResigningFirstResponder:self];
         }

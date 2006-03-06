@@ -24,8 +24,8 @@
 #ifndef render_replaced_h
 #define render_replaced_h
 
+#include "WidgetClient.h"
 #include "render_box.h"
-#include <qobject.h>
 
 namespace WebCore {
 
@@ -74,7 +74,7 @@ protected:
 };
 
 
-class RenderWidget : public QObject, public RenderReplaced
+class RenderWidget : public RenderReplaced, public WidgetClient
 {
 public:
     RenderWidget(NodeImpl*);
@@ -97,20 +97,28 @@ public:
     
     virtual void setSelectionState(SelectionState);
 
-    void sendConsumedMouseUp();
     virtual void updateWidgetPosition();
 
-    void setQWidget(Widget*, bool deleteWidget = true);
+    virtual void setWidget(Widget*);
 
-protected:
-    virtual void eventFilterFocusIn() const;
-    virtual void eventFilterFocusOut() const;
+    using RenderReplaced::element;
+
+private:
+    virtual void focusIn(Widget*);
+    virtual void focusOut(Widget*);
+    virtual void scrollToVisible(Widget*);
+    virtual ElementImpl* element(Widget*);
+    virtual bool isVisible(Widget*);
+    virtual void sendConsumedMouseUp(Widget*);
 
     void resizeWidget(Widget*, int w, int h);
 
-    bool m_deleteWidget;
+    virtual void deleteWidget();
+
+protected:
     Widget* m_widget;
     FrameView* m_view;
+private:
     int m_refCount;
 };
 

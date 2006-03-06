@@ -1152,11 +1152,9 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
     // FIXME: implemented currently for only a subset of the KWQ widgets
     if ([view conformsToProtocol:@protocol(KWQWidgetHolder)]) {
         NSView <KWQWidgetHolder> *widgetHolder = view;
-        Widget *widget = [widgetHolder widget];
-        if (widget != nil && widget->eventFilterObject() != nil) {
-            NodeImpl *node = static_cast<const RenderWidget *>(widget->eventFilterObject())->element();
-            return [DOMElement _elementWithImpl:static_cast<ElementImpl *>(node)];
-        }
+        Widget* widget = [widgetHolder widget];
+        if (widget && widget->client())
+            return [DOMElement _elementWithImpl:widget->client()->element(widget)];
     }
     return nil;
 }

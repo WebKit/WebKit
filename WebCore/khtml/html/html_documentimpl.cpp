@@ -130,7 +130,7 @@ void HTMLDocumentImpl::setBody(HTMLElementImpl *_body, ExceptionCode& ec)
 
 Tokenizer *HTMLDocumentImpl::createTokenizer()
 {
-    return new HTMLTokenizer(this, m_view);
+    return new HTMLTokenizer(this);
 }
 
 // --------------------------------------------------------------------------

@@ -535,7 +535,7 @@ void GraphicsContext::drawText(int x, int y, int tabWidth, int xpos, int, int, i
     style.tabWidth = tabWidth;
     style.xpos = xpos;
     
-    if (alignmentFlags & Qt::AlignRight)
+    if (alignmentFlags == AlignRight)
         x -= lroundf([m_data->textRenderer floatWidthForRun:&run style:&style]);
 
     WebCoreTextGeometry geometry;

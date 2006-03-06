@@ -74,6 +74,7 @@
 #include "render_frames.h"
 #include "visible_text.h"
 #include "xml_tokenizer.h"
+#include "xmlhttprequest.h"
 #include <qregexp.h>
 
 #ifdef KHTML_XSLT
@@ -305,6 +306,7 @@ DocumentImpl::~DocumentImpl()
     delete m_svgExtensions;
 #endif
 
+    XMLHttpRequest::detachRequests(this);
     KJS::ScriptInterpreter::forgetAllDOMNodesForDocument(this);
 
     if (m_docChanged && changedDocuments)

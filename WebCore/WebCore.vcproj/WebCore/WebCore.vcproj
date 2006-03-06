@@ -191,14 +191,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQGuardedPtr.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQGuardedPtr.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQKCookieJar.h"
 				>
 			</File>
@@ -247,18 +239,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQNamespace.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQObject.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQObject.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQPageState.h"
 				>
 			</File>
@@ -295,23 +275,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQSignal.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQSignal.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQSlider.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQSlot.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQSlot.h"
 				>
 			</File>
 			<File
@@ -1646,6 +1610,10 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\Widget.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\WidgetClient.h"
 				>
 			</File>
 			<Filter

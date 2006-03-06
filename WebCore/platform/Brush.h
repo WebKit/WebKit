@@ -27,7 +27,6 @@
 #define BRUSH_H_
 
 #include "Color.h"
-#include "KWQNamespace.h"
 
 namespace WebCore {
 

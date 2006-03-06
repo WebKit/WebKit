@@ -47,6 +47,7 @@
 #include "Color.h"
 #include "IntRect.h"
 #include "Timer.h"
+#include "WidgetClient.h"
 #include "render_object.h"
 #include <assert.h>
 #include <kxmlcore/Vector.h>
@@ -62,17 +63,6 @@ class RenderObject;
 class RenderStyle;
 class RenderTable;
 class RenderText;
-
-class RenderScrollMediator : public QObject
-{
-public:
-    RenderScrollMediator(RenderLayer* layer) : m_layer(layer) {}
-
-    void slotValueChanged(int);
-    
-private:
-    RenderLayer* m_layer;
-};
 
 class ClipRects
 {
@@ -154,8 +144,7 @@ private:
     EMarqueeDirection m_direction : 4;
 };
 
-class RenderLayer
-{
+class RenderLayer : WidgetClient {
 public:
     enum ScrollBehavior {
         noScroll,
@@ -185,19 +174,19 @@ public:
 
     static QScrollBar* gScrollBar;
     
-    RenderLayer(RenderObject* object);
+    RenderLayer(RenderObject*);
     ~RenderLayer();
     
     RenderObject* renderer() const { return m_object; }
-    RenderLayer *parent() const { return m_parent; }
-    RenderLayer *previousSibling() const { return m_previous; }
-    RenderLayer *nextSibling() const { return m_next; }
+    RenderLayer* parent() const { return m_parent; }
+    RenderLayer* previousSibling() const { return m_previous; }
+    RenderLayer* nextSibling() const { return m_next; }
 
-    RenderLayer *firstChild() const { return m_first; }
-    RenderLayer *lastChild() const { return m_last; }
+    RenderLayer* firstChild() const { return m_first; }
+    RenderLayer* lastChild() const { return m_last; }
 
-    void addChild(RenderLayer *newChild, RenderLayer* beforeChild = 0);
-    RenderLayer* removeChild(RenderLayer *oldChild);
+    void addChild(RenderLayer* newChild, RenderLayer* beforeChild = 0);
+    RenderLayer* removeChild(RenderLayer*);
 
     void removeOnlyThisLayer();
     void insertOnlyThisLayer();
@@ -256,7 +245,6 @@ public:
     void paintScrollbars(GraphicsContext*, const IntRect& damageRect);
     void updateScrollInfoAfterLayout();
     void slotValueChanged(int);
-    void updateScrollPositionFromScrollbars();
     bool scroll(KWQScrollDirection direction, KWQScrollGranularity granularity, float multiplier=1.0);
     
     void updateLayerPosition();
@@ -338,6 +326,8 @@ private:
         int x, int y, const IntRect& hitTestRect);
     void computeScrollDimensions(bool* needHBar = 0, bool* needVBar = 0);
 
+    virtual void valueChanged(Widget*);
+
 protected:   
     RenderObject* m_object;
     
@@ -378,7 +368,6 @@ protected:
     // For layers with overflow, we have a pair of scrollbars.
     QScrollBar* m_hBar;
     QScrollBar* m_vBar;
-    RenderScrollMediator* m_scrollMediator;
 
     // For layers that establish stacking contexts, m_posZOrderList holds a sorted list of all the
     // descendant layers within the stacking context that have z-indices of 0 or greater

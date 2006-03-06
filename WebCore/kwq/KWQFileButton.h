@@ -26,6 +26,7 @@
 #ifndef KWQFILEBUTTON_H
 #define KWQFILEBUTTON_H
 
+#include "PlatformString.h"
 #include "Widget.h"
 
 #ifdef __OBJC__
@@ -54,13 +55,12 @@ public:
     virtual FocusPolicy focusPolicy() const;
     
     void filenameChanged(const QString &);
-    void focusChanged(bool);
-    void clicked();
+
+    const WebCore::String& filename() const { return m_name; }
 
 private:
-    KWQSignal _clicked;
-    KWQSignal _textChanged;
-    KWQFileButtonAdapter *_adapter;
+    KWQFileButtonAdapter* _adapter;
+    WebCore::String m_name;
 };
 
 #endif

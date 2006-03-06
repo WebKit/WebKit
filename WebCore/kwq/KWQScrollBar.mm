@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,11 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
 #import "KWQScrollBar.h"
 
 #import "KWQExceptions.h"
 #import "KWQView.h"
+#import "WidgetClient.h"
+
+using namespace WebCore;
 
 @interface KWQScrollBar : NSScroller <KWQWidgetHolder>
 {
@@ -47,11 +50,10 @@
     // dimensions, so we have to do this unsavory hack.
     NSRect orientation;
     orientation.origin.x = orientation.origin.y = 0;
-    if ( s->orientation() == Qt::Vertical ) {
+    if (s->orientation() == VerticalScrollBar) {
         orientation.size.width = [NSScroller scrollerWidth];
         orientation.size.height = 100;
-    }
-    else {
+    } else {
         orientation.size.width = 100;
         orientation.size.height = [NSScroller scrollerWidth];
     }
@@ -93,14 +95,13 @@
 
 @end
 
-QScrollBar::QScrollBar(Orientation orientation, Widget* parent)
+QScrollBar::QScrollBar(ScrollBarOrientation orientation)
     : m_orientation(orientation)
     , m_visibleSize(0)
     , m_totalSize(0)
     , m_currentPos(0)
     , m_lineStep(0)
     , m_pageStep(0)
-    , m_valueChanged(this, SIGNAL(valueChanged(int)))
 {
     KWQ_BLOCK_EXCEPTIONS;
 
@@ -200,13 +201,14 @@ bool QScrollBar::scrollbarHit(NSScrollerPart hitPart)
 
 void QScrollBar::valueChanged()
 {
-    m_valueChanged.call(m_currentPos);
+    if (client())
+        client()->valueChanged(this);
 }
 
 bool QScrollBar::scroll(KWQScrollDirection direction, KWQScrollGranularity granularity, float multiplier)
 {
     float delta = 0.0;
-    if ((direction == KWQScrollUp && m_orientation == Vertical) || (direction == KWQScrollLeft && m_orientation == Horizontal)) {
+    if ((direction == KWQScrollUp && m_orientation == VerticalScrollBar) || (direction == KWQScrollLeft && m_orientation == HorizontalScrollBar)) {
         if (granularity == KWQScrollLine) {
             delta = -m_lineStep;
         } else if (granularity == KWQScrollPage) {
@@ -216,7 +218,7 @@ bool QScrollBar::scroll(KWQScrollDirection direction, KWQScrollGranularity granu
         } else if (granularity == KWQScrollWheel) {
             delta = -m_lineStep;
         }
-    } else if ((direction == KWQScrollDown && m_orientation == Vertical) || (direction == KWQScrollRight && m_orientation == Horizontal)) {
+    } else if ((direction == KWQScrollDown && m_orientation == VerticalScrollBar) || (direction == KWQScrollRight && m_orientation == HorizontalScrollBar)) {
         if (granularity == KWQScrollLine) {
             delta = m_lineStep;
         } else if (granularity == KWQScrollPage) {

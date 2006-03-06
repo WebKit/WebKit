@@ -170,7 +170,7 @@ FrameView::~FrameView()
         if (DocumentImpl* doc = m_frame->document())
             doc->detach();
         if (RenderPart* renderer = m_frame->ownerRenderer())
-            renderer->setQWidget(0);
+            renderer->setWidget(0);
     }
 
     delete d;

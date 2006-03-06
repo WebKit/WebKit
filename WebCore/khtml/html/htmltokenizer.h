@@ -27,7 +27,6 @@
 #define HTMLTOKENIZER_H
 
 #include "CachedObjectClient.h"
-#include "KWQGuardedPtr.h"
 #include "SegmentedString.h"
 #include "Timer.h"
 #include "QualifiedName.h"
@@ -86,8 +85,8 @@ public:
 class HTMLTokenizer : public Tokenizer, public CachedObjectClient
 {
 public:
-    HTMLTokenizer(DocumentImpl*, FrameView* = 0, bool includesComments = false);
-    HTMLTokenizer(DocumentImpl*, DocumentFragmentImpl*, bool includesComments = false);
+    HTMLTokenizer(DocumentImpl*);
+    HTMLTokenizer(DocumentFragmentImpl*);
     virtual ~HTMLTokenizer();
 
     virtual bool write(const SegmentedString &str, bool appendData);
@@ -330,8 +329,6 @@ private:
     // The timer for continued processing.
     Timer<HTMLTokenizer> m_timer;
 
-    bool includesCommentsInDOM;
-
 // This buffer can hold arbitrarily long user-defined attribute names, such as in EMBED tags.
 // So any fixed number might be too small, but rather than rewriting all usage of this buffer
 // we'll just make it large enough to handle all imaginable cases.
@@ -340,9 +337,10 @@ private:
     unsigned int m_cBufferPos;
     
     SegmentedString src;
+    DocumentImpl* m_doc;
     HTMLParser* parser;
-    QGuardedPtr<FrameView> view;    
     bool inWrite;
+    bool m_fragment;
 };
 
 void parseHTMLDocumentFragment(const String&, DocumentFragmentImpl*);

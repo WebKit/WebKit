@@ -165,6 +165,9 @@ Frame::Frame(Page* page, RenderPart* ownerRenderer)
 #if !NDEBUG
     ++FrameCounter::count;
 #endif
+
+    if (ownerRenderer)
+        ownerRenderer->setFrame(this);
 }
 
 Frame::~Frame()
@@ -183,8 +186,23 @@ Frame::~Frame()
     clear(false);
 
     if (d->m_jscript && d->m_jscript->haveInterpreter())
-        if (Window* w = Window::retrieveWindow(this))
+        if (Window* w = Window::retrieveWindow(this)) {
             w->disconnectFrame();
+            // Must clear the window pointer, otherwise we will not
+            // garbage-collect collect the window (inside the call to
+            // delete d below).
+            w = 0;
+        }
+
+    setOpener(0);
+    HashSet<Frame*> openedBy = d->m_openedFrames;
+    HashSet<Frame*>::iterator end = openedBy.end();
+    for (HashSet<Frame*>::iterator it = openedBy.begin(); it != end; ++it)
+        (*it)->setOpener(0);
+
+    if (d->m_ownerRenderer)
+        d->m_ownerRenderer->setFrame(0);
+    ASSERT(!d->m_ownerRenderer);
 
     if (d->m_view) {
         d->m_view->hide();
@@ -2087,9 +2105,13 @@ Frame *Frame::opener()
     return d->m_opener;
 }
 
-void Frame::setOpener(Frame *_opener)
+void Frame::setOpener(Frame* opener)
 {
-    d->m_opener = _opener;
+    if (d->m_opener)
+        d->m_opener->d->m_openedFrames.remove(this);
+    if (opener)
+        opener->d->m_openedFrames.add(this);
+    d->m_opener = opener;
 }
 
 bool Frame::openedByJS()
@@ -2902,11 +2924,13 @@ Frame *Frame::frameForNode(NodeImpl *node)
     return node->getDocument()->frame();
 }
 
-NodeImpl *Frame::nodeForWidget(const Widget *widget)
+NodeImpl* Frame::nodeForWidget(const Widget* widget)
 {
     ASSERT_ARG(widget, widget);
-    const QObject *o = widget->eventFilterObject();
-    return o ? static_cast<const RenderWidget *>(o)->element() : 0;
+    WidgetClient* client = widget->client();
+    if (!client)
+        return 0;
+    return client->element(const_cast<Widget*>(widget));
 }
 
 void Frame::setDocumentFocus(Widget *widget)
@@ -3270,11 +3294,6 @@ void Frame::prepareForUserAction()
     _submittedFormURL = KURL();
 }
 
-bool Frame::isFrame() const
-{
-    return true;
-}
-
 NodeImpl *Frame::mousePressNode()
 {
     return d->m_mousePressNode.get();
@@ -3345,6 +3364,11 @@ void Frame::started()
 {
     for (Frame* frame = this; frame; frame = frame->tree()->parent())
         frame->d->m_bComplete = false;
+}
+
+void Frame::disconnectOwnerRenderer()
+{
+    d->m_ownerRenderer = 0;
 }
 
 } // namespace WebCore

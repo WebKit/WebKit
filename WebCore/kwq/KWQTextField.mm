@@ -117,12 +117,10 @@ using namespace WebCore;
 
 - (void)action:(id)sender
 {
-    if (!widget)
-        return;
-    widget->textChanged();
-    if (!widget)
-        return;
-    widget->performSearch();
+    if (widget && widget->client())
+        widget->client()->valueChanged(widget);
+    if (widget && widget->client())
+        widget->client()->performSearch(widget);
 }
 
 - (void)dealloc
@@ -179,8 +177,8 @@ using namespace WebCore;
     WebCoreFrameBridge *bridge = MacFrame::bridgeForWidget(widget);
     [bridge textFieldDidEndEditing:(DOMHTMLInputElement *)[bridge elementForView:field]];
     
-    if (widget && [[[notification userInfo] objectForKey:@"NSTextMovement"] intValue] == NSReturnTextMovement)
-        widget->returnPressed();
+    if (widget && widget->client() && [[[notification userInfo] objectForKey:@"NSTextMovement"] intValue] == NSReturnTextMovement)
+        widget->client()->returnPressed(widget);
 }
 
 - (void)controlTextDidChange:(NSNotification *)notification
@@ -197,8 +195,7 @@ using namespace WebCore;
     }
     
     edited = YES;
-    if (widget)
-        widget->textChanged();
+    [self textChanged];
 }
 
 - (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor
@@ -240,8 +237,8 @@ using namespace WebCore;
 
 - (void)textChanged
 {
-    if (widget)
-        widget->textChanged();
+    if (widget && widget->client())
+        widget->client()->valueChanged(widget);
 }
 
 - (void)setInDrawingMachinery:(BOOL)inDrawing
@@ -315,9 +312,8 @@ using namespace WebCore;
 
     if ([event type] == NSLeftMouseUp) {
         widget->sendConsumedMouseUp();
-        if (widget) {
-            widget->clicked();
-        }
+        if (widget && widget->client())
+            widget->client()->clicked(widget);
     }
 }
 
@@ -396,15 +392,10 @@ using namespace WebCore;
         
         hasFocusAndSelectionSet = YES;
 
-        if (!MacFrame::currentEventIsMouseDownInWidget(widget) && widget) {
-            RenderWidget *w = const_cast<RenderWidget *> (static_cast<const RenderWidget *>(widget->eventFilterObject()));
-            RenderLayer *layer = w->enclosingLayer();
-            if (layer)
-                layer->scrollRectToVisible(w->absoluteBoundingBoxRect());
-        }
-        
-        if (widget && widget->eventFilterObject())
-            widget->eventFilterObject()->eventFilterFocusIn();
+        if (widget && widget->client() && !MacFrame::currentEventIsMouseDownInWidget(widget))
+            widget->client()->scrollToVisible(widget);
+        if (widget && widget->client())
+            widget->client()->focusIn(widget);
         
         // Sending the onFocus event above, may have resulted in a blur() - if this
         // happens when tabbing from another text field, then endEditing: and
@@ -420,8 +411,8 @@ using namespace WebCore;
     } else {
         lastSelectedRange = [self selectedRange];
         
-        if (widget && widget->eventFilterObject()) {
-            widget->eventFilterObject()->eventFilterFocusOut();
+        if (widget && widget->client()) {
+            widget->client()->focusOut(widget);
             if (widget)
                 [MacFrame::bridgeForWidget(widget) formControlIsResigningFirstResponder:field];
         }
@@ -478,8 +469,8 @@ using namespace WebCore;
 
 - (void)textViewDidChangeSelection:(NSNotification *)notification
 {
-    if (widget && hasFocusAndSelectionSet)
-        widget->selectionChanged();
+    if (widget && widget->client() && hasFocusAndSelectionSet)
+        widget->client()->selectionChanged(widget);
 }
 
 @end

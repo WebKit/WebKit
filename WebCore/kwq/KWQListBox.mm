@@ -125,8 +125,6 @@ QListBox::QListBox()
     : _changingSelection(false)
     , _enabled(true)
     , _widthGood(false)
-    , _clicked(this, SIGNAL(clicked(QListBoxItem *)))
-    , _selectionChanged(this, SIGNAL(selectionChanged()))
 {
     KWQ_BLOCK_EXCEPTIONS;
 
@@ -569,16 +567,11 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
     BOOL become = [super becomeFirstResponder];
     
     if (become) {
-        if (_box && !MacFrame::currentEventIsMouseDownInWidget(_box)) {
-            RenderWidget *widget = const_cast<RenderWidget *> (static_cast<const RenderWidget *>(_box->eventFilterObject()));
-            RenderLayer *layer = widget->enclosingLayer();
-            if (layer)
-                layer->scrollRectToVisible(widget->absoluteBoundingBoxRect());
-        }        
+        if (_box && _box->client() && !MacFrame::currentEventIsMouseDownInWidget(_box))
+            _box->client()->scrollToVisible(_box);
         [self _KWQ_setKeyboardFocusRingNeedsDisplay];
-
-        if (_box && _box->eventFilterObject())
-            _box->eventFilterObject()->eventFilterFocusIn();
+        if (_box && _box->client())
+            _box->client()->focusIn(_box);
     }
 
     return become;
@@ -587,8 +580,8 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
 - (BOOL)resignFirstResponder
 {
     BOOL resign = [super resignFirstResponder];
-    if (resign && _box && _box->eventFilterObject()) {
-        _box->eventFilterObject()->eventFilterFocusOut();
+    if (resign && _box && _box->client()) {
+        _box->client()->focusOut(_box);
         if (_box)
             [MacFrame::bridgeForWidget(_box) formControlIsResigningFirstResponder:self];
     }
@@ -644,17 +637,15 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
 
 - (void)tableViewSelectionDidChange:(NSNotification *)notification
 {
-    if (_box) {
-        _box->selectionChanged();
-    }
+    if (_box && _box->client())
+        _box->client()->selectionChanged(_box);
     if (_box && !_box->changingSelection()) {
-    if (processingMouseEvent) {
-        clickedDuringMouseEvent = true;
-        _box->sendConsumedMouseUp();
-    }
-        if (_box) {
-            _box->clicked();
+        if (processingMouseEvent) {
+            clickedDuringMouseEvent = true;
+            _box->sendConsumedMouseUp();
         }
+        if (_box && _box->client())
+            _box->client()->clicked(_box);
     }
 }
 

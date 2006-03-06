@@ -27,19 +27,17 @@
 #import "KWQTextEdit.h"
 
 #import "Color.h"
+#import "Font.h"
 #import "IntSize.h"
 #import "KWQExceptions.h"
-#import "Font.h"
 #import "KWQLineEdit.h"
 #import "KWQTextArea.h"
+#import "WidgetClient.h"
 #import <kxmlcore/Assertions.h>
 
 using namespace WebCore;
 
 QTextEdit::QTextEdit(Widget *parent)
-    : _clicked(this, SIGNAL(clicked()))
-    , _textChanged(this, SIGNAL(textChanged()))
-    , _selectionChanged(this, SIGNAL(selectionChanged()))
 {
     KWQ_BLOCK_EXCEPTIONS;
     KWQTextArea *textView = [[KWQTextArea alloc] initWithQTextEdit:this];
@@ -334,17 +332,12 @@ void QTextEdit::setFont(const Font& font)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QTextEdit::clicked()
-{
-    _clicked.call();
-}
-
-void QTextEdit::setAlignment(AlignmentFlags alignment)
+void QTextEdit::setAlignment(HorizontalAlignment alignment)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
     KWQTextArea *textArea = static_cast<KWQTextArea *>(getView());
-    [textArea setAlignment:KWQNSTextAlignmentForAlignmentFlags(alignment)];
+    [textArea setAlignment:KWQNSTextAlignment(alignment)];
 
     KWQ_UNBLOCK_EXCEPTIONS;
 }

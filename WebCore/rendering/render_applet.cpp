@@ -84,7 +84,7 @@ void RenderApplet::createWidgetIfNecessary()
                     HTMLParamElementImpl* p = static_cast<HTMLParamElementImpl*>(child);
                     m_args.set(p->name(), p->value());
                 }
-            setQWidget(new KJavaAppletWidget(IntSize(width, height), element()->getDocument()->frame(), m_args));
+            setWidget(new KJavaAppletWidget(IntSize(width, height), element()->getDocument()->frame(), m_args));
         }
     }
 }

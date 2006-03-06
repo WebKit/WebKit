@@ -585,8 +585,8 @@ void RenderFrameSet::dump(QTextStream *stream, QString ind) const
 
 /**************************************************************************************/
 
-RenderPart::RenderPart(DOM::HTMLElementImpl* node)
-    : RenderWidget(node)
+RenderPart::RenderPart(HTMLElementImpl* node)
+    : RenderWidget(node), m_frame(0)
 {
     // init RenderObject attributes
     setInline(false);
@@ -594,41 +594,57 @@ RenderPart::RenderPart(DOM::HTMLElementImpl* node)
 
 RenderPart::~RenderPart()
 {
-    if (m_widget && m_widget->isFrameView())
-        static_cast<FrameView*>(m_widget)->deref();
+    // Must call this here because by the time we get to ~RenderWidget,
+    // the RenderPart will be destroyed and it won't call our version
+    // of deleteWidget.
+    deleteWidget();
+    m_widget = 0;
+
+    setFrame(0);
+}
+
+void RenderPart::setFrame(Frame* frame)
+{
+    if (frame == m_frame)
+        return;
+    if (m_frame)
+        m_frame->disconnectOwnerRenderer();
+    m_frame = frame;
 }
 
 void RenderPart::setWidget(Widget* widget)
 {
-    if (widget == m_widget)
-        return;
+    if (widget != m_widget) {
+        if (widget && widget->isFrameView())
+            static_cast<FrameView*>(widget)->ref();
+        RenderWidget::setWidget(widget);
 
-    if (m_widget && m_widget->isFrameView())
-        static_cast<FrameView*>(m_widget)->deref();
-    
-    if (widget && widget->isFrameView()) {
-        static_cast<FrameView*>(widget)->ref();
-        setQWidget(widget, false);
-    } else {
-        setQWidget(widget);
+        setNeedsLayoutAndMinMaxRecalc();
+
+        // make sure the scrollbars are set correctly for restore
+        // ### find better fix
+        viewCleared();
     }
-    setNeedsLayoutAndMinMaxRecalc();
-    
-    // make sure the scrollbars are set correctly for restore
-    // ### find better fix
-    viewCleared();
 }
 
 void RenderPart::viewCleared()
 {
 }
 
+void RenderPart::deleteWidget()
+{
+    if (m_widget && m_widget->isFrameView())
+        static_cast<FrameView*>(m_widget)->deref();
+    else
+        delete m_widget;
+}
+
 /***************************************************************************************/
 
-RenderFrame::RenderFrame( DOM::HTMLFrameElementImpl *frame )
+RenderFrame::RenderFrame(HTMLFrameElementImpl* frame)
     : RenderPart(frame)
 {
-    setInline( false );
+    setInline(false);
 }
 
 void RenderFrame::viewCleared()
@@ -650,8 +666,8 @@ void RenderFrame::viewCleared()
 
 /****************************************************************************************/
 
-RenderPartObject::RenderPartObject( DOM::HTMLElementImpl* element )
-    : RenderPart( element )
+RenderPartObject::RenderPartObject(HTMLElementImpl* element)
+    : RenderPart(element)
 {
     // init RenderObject attributes
     setInline(true);
@@ -865,11 +881,10 @@ void RenderPartObject::updateWidget()
   }
 }
 
-void RenderPartObject::layout( )
+void RenderPartObject::layout()
 {
-    KHTMLAssert( needsLayout() );
-    KHTMLAssert( minMaxKnown() );
-
+    KHTMLAssert(needsLayout());
+    KHTMLAssert(minMaxKnown());
 
     calcWidth();
     calcHeight();

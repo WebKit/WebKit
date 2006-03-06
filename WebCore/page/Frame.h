@@ -91,7 +91,7 @@ enum ObjectContentType {
     ObjectContentPlugin,
 };
 
-class Frame : public Shared<Frame>, public QObject, Noncopyable, TransferJobClient {
+class Frame : public Shared<Frame>, Noncopyable, TransferJobClient {
 
 public:
   enum { NoXPosForVerticalArrowNavigation = INT_MIN };
@@ -601,7 +601,7 @@ public:
 
   static void endAllLifeSupport();
 
-signals:
+protected:
   /**
    * Emitted if the cursor is moved over an URL.
    */
@@ -863,12 +863,13 @@ private:
   // Call this method before handling a new user action, like on a mouse down or key down.
   // Currently, all this does is clear the "don't submit form twice" data member.
   void prepareForUserAction();
-  virtual bool isFrame() const;
   NodeImpl *mousePressNode();
 
   bool isComplete();
   
   void replaceContentsWithScriptResult(const KURL &url);
+
+    void disconnectOwnerRenderer();
 
 protected:
     virtual void startRedirectionTimer();

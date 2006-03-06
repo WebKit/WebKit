@@ -129,31 +129,35 @@ void Token::addAttribute(DocumentImpl* doc, const AtomicString& attrName, const 
 
 // ----------------------------------------------------------------------------
 
-HTMLTokenizer::HTMLTokenizer(DocumentImpl* _doc, FrameView* _view, bool includesComments)
-    : m_timer(this, &HTMLTokenizer::timerFired), inWrite(false)
+HTMLTokenizer::HTMLTokenizer(DocumentImpl* doc)
+    : buffer(0)
+    , scriptCode(0)
+    , scriptCodeSize(0)
+    , scriptCodeMaxSize(0)
+    , scriptCodeResync(0)
+    , m_executingScript(0)
+    , m_timer(this, &HTMLTokenizer::timerFired)
+    , m_doc(doc)
+    , inWrite(false)
+    , m_fragment(false)
 {
-    view = _view;
-    buffer = 0;
-    scriptCode = 0;
-    scriptCodeSize = scriptCodeMaxSize = scriptCodeResync = 0;
-    parser = new HTMLParser(_view, _doc, includesComments);
-    m_executingScript = 0;
-    includesCommentsInDOM = includesComments;
-    
+    parser = new HTMLParser(doc);
     begin();
 }
 
-HTMLTokenizer::HTMLTokenizer(DocumentImpl *_doc, DocumentFragmentImpl *i, bool includesComments)
-    : m_timer(this, &HTMLTokenizer::timerFired), inWrite(false)
+HTMLTokenizer::HTMLTokenizer(DocumentFragmentImpl* frag)
+    : buffer(0)
+    , scriptCode(0)
+    , scriptCodeSize(0)
+    , scriptCodeMaxSize(0)
+    , scriptCodeResync(0)
+    , m_executingScript(0)
+    , m_timer(this, &HTMLTokenizer::timerFired)
+    , m_doc(frag->getDocument())
+    , inWrite(false)
+    , m_fragment(true)
 {
-    view = 0;
-    buffer = 0;
-    scriptCode = 0;
-    scriptCodeSize = scriptCodeMaxSize = scriptCodeResync = 0;
-    parser = new HTMLParser(i, _doc, includesComments);
-    m_executingScript = 0;
-    includesCommentsInDOM = includesComments;
-
+    parser = new HTMLParser(frag);
     begin();
 }
 
@@ -399,7 +403,7 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
             if (!pendingScripts.isEmpty())
                 state.setLoadingExtScript(true);
         }
-        else if (view && doScriptExec && javascript ) {
+        else if (!m_fragment && doScriptExec && javascript ) {
             if (!m_executingScript)
                 pendingSrc.prepend(src);
             else
@@ -442,19 +446,14 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
     return state;
 }
 
-HTMLTokenizer::State HTMLTokenizer::scriptExecution(const QString& str, State state, 
-                                                    QString scriptURL, int baseLine)
+HTMLTokenizer::State HTMLTokenizer::scriptExecution(const QString& str, State state, QString scriptURL, int baseLine)
 {
-    if (!view || !view->frame())
+    if (m_fragment || !m_doc->frame())
         return state;
     bool oldscript = state.inScript();
     m_executingScript++;
     state.setInScript(false);
-    QString url;    
-    if (scriptURL.isNull())
-      url = view->frame()->document()->URL();
-    else
-      url = scriptURL;
+    QString url = scriptURL.isNull() ? m_doc->frame()->document()->URL() : scriptURL;
 
     SegmentedString *savedPrependingSrc = currentPrependingSrc;
     SegmentedString prependingSrc;
@@ -466,7 +465,7 @@ HTMLTokenizer::State HTMLTokenizer::scriptExecution(const QString& str, State st
 #endif
 
     m_state = state;
-    view->frame()->executeScript(url,baseLine,0,str);
+    m_doc->frame()->executeScript(url,baseLine,0,str);
     state = m_state;
 
     state.setAllowYield(true);
@@ -552,18 +551,18 @@ HTMLTokenizer::State HTMLTokenizer::parseComment(SegmentedString &src, State sta
             if (canClose || handleBrokenComments || endCharsCount > 1) {
                 ++src;
                 if (!(state.inScript() || state.inXmp() || state.inTextArea() || state.inStyle())) {
-                    if (includesCommentsInDOM) {
-                        checkScriptBuffer();
-                        scriptCode[ scriptCodeSize ] = 0;
-                        scriptCode[ scriptCodeSize + 1 ] = 0;
-                        currToken.tagName = commentAtom;
-                        currToken.beginTag = true;
-                        state = processListing(SegmentedString(scriptCode, scriptCodeSize - endCharsCount), state);
-                        processToken();
-                        currToken.tagName = commentAtom;
-                        currToken.beginTag = false;
-                        processToken();
-                    }
+#ifdef INCLUDE_COMMENTS_IN_DOM // FIXME: Turn this on soon.
+                    checkScriptBuffer();
+                    scriptCode[scriptCodeSize] = 0;
+                    scriptCode[scriptCodeSize + 1] = 0;
+                    currToken.tagName = commentAtom;
+                    currToken.beginTag = true;
+                    state = processListing(SegmentedString(scriptCode, scriptCodeSize - endCharsCount), state);
+                    processToken();
+                    currToken.tagName = commentAtom;
+                    currToken.beginTag = false;
+                    processToken();
+#endif
                     scriptCodeSize = 0;
                 }
                 state.setInComment(false);
@@ -1168,7 +1167,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                 if ( currToken.attrs && /* potentially have a ATTR_SRC ? */
                      parser->doc()->frame() &&
                      parser->doc()->frame()->jScriptEnabled() && /* jscript allowed at all? */
-                     view /* are we a regular tokenizer or just for innerHTML ? */
+                     !m_fragment /* are we a regular tokenizer or just for innerHTML ? */
                     ) {
                     if ((a = currToken.attrs->getAttributeItem(srcAttr)))
                         scriptSrc = parser->doc()->completeURL(parseURL(a->value()).qstring());
@@ -1498,8 +1497,8 @@ void HTMLTokenizer::stopParsing()
 
     // The part needs to know that the tokenizer has finished with its data,
     // regardless of whether it happened naturally or due to manual intervention.
-    if (view && view->frame())
-        view->frame()->tokenizerProcessedData();
+    if (!m_fragment && m_doc->frame())
+        m_doc->frame()->tokenizerProcessedData();
 }
 
 bool HTMLTokenizer::processingData() const
@@ -1521,7 +1520,7 @@ void HTMLTokenizer::timerFired(Timer<HTMLTokenizer>*)
         return;
     }
     
-    RefPtr<Frame> frame = view ? view->frame() : 0;
+    RefPtr<Frame> frame = m_fragment ? 0 : m_doc->frame();
 
     // Invoke write() as though more data came in.
     bool didCallEnd = write(SegmentedString(), true);
@@ -1593,11 +1592,10 @@ void HTMLTokenizer::finish()
 
 PassRefPtr<NodeImpl> HTMLTokenizer::processToken()
 {
-    KJSProxyImpl *jsProxy = (view && view->frame()) ? view->frame()->jScript() : 0L;    
+    KJSProxyImpl* jsProxy = (!m_fragment && m_doc->frame()) ? m_doc->frame()->jScript() : 0;
     if (jsProxy)
         jsProxy->setEventHandlerLineno(tagStartLineno);
-    if ( dest > buffer )
-    {
+    if (dest > buffer) {
 #ifdef TOKEN_DEBUG
         if(currToken.tagName.length()) {
             qDebug( "unexpected token: %s, str: *%s*", currToken.tagName.qstring().latin1(),QConstString( buffer,dest-buffer ).qstring().latin1() );
@@ -1608,8 +1606,7 @@ PassRefPtr<NodeImpl> HTMLTokenizer::processToken()
         currToken.text = new DOMStringImpl( buffer, dest - buffer );
         if (currToken.tagName != commentAtom)
             currToken.tagName = textAtom;
-    }
-    else if (currToken.tagName == nullAtom) {
+    } else if (currToken.tagName == nullAtom) {
         currToken.reset();
         if (jsProxy)
             jsProxy->setEventHandlerLineno(lineno+src.lineCount());
@@ -1759,7 +1756,7 @@ void HTMLTokenizer::setSrc(const SegmentedString &source)
 
 void parseHTMLDocumentFragment(const DOMString &source, DocumentFragmentImpl *fragment)
 {
-    HTMLTokenizer tok(fragment->getDocument(), fragment);
+    HTMLTokenizer tok(fragment);
     tok.setForceSynchronous(true);
     tok.write(source.qstring(), true);
     tok.finish();

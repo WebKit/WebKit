@@ -64,7 +64,7 @@ void InlineTextBox::operator delete(void* ptr, size_t sz)
     assert(inInlineTextBoxDetach);
     
     // Stash size where destroy can find it.
-    *(size_t *)ptr = sz;
+    *static_cast<size_t*>(ptr) = sz;
 }
 
 bool InlineTextBox::checkVerticalPoint(int _y, int _ty, int _h)

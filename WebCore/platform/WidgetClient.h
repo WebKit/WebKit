@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "KWQGuardedPtr.h"
+#ifndef WidgetClient_h
+#define WidgetClient_h
 
-#include "KWQObject.h"
+namespace WebCore {
 
-KWQGuardedPtrBase::KWQGuardedPtrBase(QObject *o)
-{
-    if (o) {
-        iterator = QPtrListIterator<QObject>(o->_guardedPtrDummyList);
-    }
+    class ElementImpl;
+    class Widget;
+
+    class WidgetClient {
+    public:
+        virtual ~WidgetClient() { }
+
+        virtual void scrollToVisible(Widget*) { }
+
+        virtual void focusIn(Widget*) { }
+        virtual void focusOut(Widget*) { }
+
+        virtual void clicked(Widget*) { }
+        virtual void valueChanged(Widget*) { }
+        virtual void selectionChanged(Widget*) { }
+
+        virtual void returnPressed(Widget*) { }
+        virtual void performSearch(Widget*) { }
+
+        virtual ElementImpl* element(Widget*) { return 0; }
+        virtual void sendConsumedMouseUp(Widget*) { }
+        virtual bool isVisible(Widget*) { return false; }
+    };
+
 }
+
+#endif

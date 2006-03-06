@@ -52,8 +52,8 @@ NodeImpl::NodeType CDATASectionImpl::nodeType() const
 
 PassRefPtr<NodeImpl> CDATASectionImpl::cloneNode(bool /*deep*/)
 {
-    int ignoreException = 0;
-    return getDocument()->createCDATASection(str, ignoreException);
+    ExceptionCode ec = 0;
+    return getDocument()->createCDATASection(str, ec);
 }
 
 // DOM Section 1.1.1

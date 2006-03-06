@@ -85,15 +85,15 @@ private:
     bool m_clientResizing;
 };
 
-class RenderPart : public RenderWidget
-{
+class RenderPart : public RenderWidget {
 public:
     RenderPart(HTMLElementImpl*);
     virtual ~RenderPart();
     
     virtual const char* renderName() const { return "RenderPart"; }
 
-    virtual void setWidget(Widget*);
+    void setFrame(Frame*);
+    void setWidget(Widget*);
 
     // FIXME: This should not be necessary.
     // Remove this once WebKit knows to properly schedule layouts using WebCore when objects resize.
@@ -105,6 +105,11 @@ public:
 
 protected:
     bool m_hasFallbackContent;
+
+private:
+    virtual void deleteWidget();
+
+    Frame* m_frame;
 };
 
 class RenderFrame : public RenderPart

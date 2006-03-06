@@ -1,3 +1,261 @@
+2006-03-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7564
+          remove QObject, QGuardedPtr, slots, and signals
+
+        I had written a detailed change log entry, but I lost it!
+        I'm too annoyed to write one all over again.
+
+        * ForwardingHeaders/qguardedptr.h: Removed.
+        * ForwardingHeaders/qobject.h: Removed.
+
+        * kwq/KWQGuardedPtr.cpp: Removed.
+        * kwq/KWQGuardedPtr.h: Removed.
+        * kwq/KWQNamespace.h: Removed.
+        * kwq/KWQObject.cpp: Removed.
+        * kwq/KWQObject.h: Removed.
+        * kwq/KWQSignal.cpp: Removed.
+        * kwq/KWQSignal.h: Removed.
+        * kwq/KWQSlot.cpp: Removed.
+        * kwq/KWQSlot.h: Removed.
+
+        * platform/WidgetClient.h: Added.
+
+        * WebCore.xcodeproj/project.pbxproj: Updated for removed and added files.
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Ditto.
+
+        * bindings/js/JSDOMCore.cpp: Touched.
+        * bindings/js/JSDOMEvents.cpp: Ditto.
+
+        * bridge/BrowserExtension.h:
+        (WebCore::BrowserExtension::~BrowserExtension):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge elementForView:]):
+        * dom/CDATASectionImpl.cpp:
+        (WebCore::CDATASectionImpl::cloneNode):
+        * dom/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::~DocumentImpl):
+        * dom/DocumentImpl.h:
+        * kcanvas/device/KRenderingDevice.h:
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::DOMCSSStyleDeclaration::put):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::FrameArray::indexGetter):
+        (KJS::FrameArray::nameGetter):
+        * khtml/html/html_documentimpl.cpp:
+        (WebCore::HTMLDocumentImpl::createTokenizer):
+        * khtml/html/htmlparser.cpp:
+        (WebCore::HTMLParser::HTMLParser):
+        (WebCore::HTMLParser::insertNode):
+        (WebCore::HTMLParser::handleError):
+        (WebCore::HTMLParser::commentCreateErrorCheck):
+        (WebCore::HTMLParser::noscriptCreateErrorCheck):
+        (WebCore::HTMLParser::isInline):
+        (WebCore::HTMLParser::finished):
+        * khtml/html/htmlparser.h:
+        * khtml/html/htmltokenizer.cpp:
+        (WebCore::HTMLTokenizer::HTMLTokenizer):
+        (WebCore::HTMLTokenizer::scriptHandler):
+        (WebCore::HTMLTokenizer::scriptExecution):
+        (WebCore::HTMLTokenizer::parseComment):
+        (WebCore::HTMLTokenizer::parseTag):
+        (WebCore::HTMLTokenizer::stopParsing):
+        (WebCore::HTMLTokenizer::timerFired):
+        (WebCore::HTMLTokenizer::processToken):
+        (WebCore::parseHTMLDocumentFragment):
+        * khtml/html/htmltokenizer.h:
+        * kwq/KWQComboBox.h:
+        * kwq/KWQComboBox.mm:
+        (-[KWQPopUpButton setPopulatingMenu:QComboBox:::]):
+        (QComboBox::itemSelected):
+        (-[KWQPopUpButton becomeFirstResponder]):
+        (-[KWQPopUpButton resignFirstResponder]):
+        * kwq/KWQFileButton.h:
+        (KWQFileButton::filename):
+        * kwq/KWQFileButton.mm:
+        (KWQFileButton::KWQFileButton):
+        (KWQFileButton::filenameChanged):
+        (-[KWQFileButtonAdapter filenameChanged:]):
+        (-[KWQFileButtonAdapter focusChanged:]):
+        (-[KWQFileButtonAdapter clicked]):
+        * kwq/KWQLineEdit.h:
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::QLineEdit):
+        (QLineEdit::setAlignment):
+        (KWQNSTextAlignment):
+        * kwq/KWQListBox.h:
+        (QListBox::changingSelection):
+        * kwq/KWQListBox.mm:
+        (QListBox::QListBox):
+        (-[KWQTableView becomeFirstResponder]):
+        (-[KWQTableView resignFirstResponder]):
+        (-[KWQTableView tableViewSelectionDidChange:]):
+        * kwq/KWQScrollBar.h:
+        (WebCore::):
+        (QScrollBar::orientation):
+        * kwq/KWQScrollBar.mm:
+        (-[KWQScrollBar initWithQScrollBar:]):
+        (QScrollBar::QScrollBar):
+        (QScrollBar::valueChanged):
+        (QScrollBar::scroll):
+        * kwq/KWQSlider.h:
+        * kwq/KWQSlider.mm:
+        (-[KWQSlider mouseDown:]):
+        (-[KWQSlider slide:]):
+        (-[KWQSlider becomeFirstResponder]):
+        (-[KWQSlider resignFirstResponder]):
+        (QSlider::QSlider):
+        (QSlider::sliderValueChanged):
+        (QSlider::dimensions):
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextAreaTextView textViewDidChangeSelection:]):
+        (-[KWQTextAreaTextView textDidChange:]):
+        (-[KWQTextAreaTextView becomeFirstResponder]):
+        (-[KWQTextAreaTextView resignFirstResponder]):
+        (-[KWQTextAreaTextView mouseDown:]):
+        (-[KWQTextAreaTextView dispatchHTMLEvent:]):
+        * kwq/KWQTextEdit.h:
+        * kwq/KWQTextEdit.mm:
+        (QTextEdit::QTextEdit):
+        (QTextEdit::setAlignment):
+        * kwq/KWQTextField.mm:
+        (-[KWQTextFieldController action:]):
+        (-[KWQTextFieldController controlTextDidEndEditing:]):
+        (-[KWQTextFieldController controlTextDidChange:]):
+        (-[KWQTextFieldController textChanged]):
+        (-[KWQTextFieldController textView:didHandleEvent:]):
+        (-[KWQTextFieldController setHasFocus:]):
+        (-[KWQTextFieldController textViewDidChangeSelection:]):
+        * loader/CachedObject.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        (WebCore::Frame::~Frame):
+        (WebCore::Frame::setOpener):
+        (WebCore::Frame::nodeForWidget):
+        (WebCore::Frame::disconnectOwnerRenderer):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        (WebCore::FramePrivate::FramePrivate):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::~FrameView):
+        * platform/Brush.h:
+        * platform/Pen.h:
+        * platform/Widget.cpp:
+        (WebCore::Widget::isFrameView):
+        * platform/Widget.h:
+        (WebCore::):
+        * platform/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawText):
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::Widget):
+        (WebCore::Widget::focusPolicy):
+        (WebCore::Widget::sendConsumedMouseUp):
+        (WebCore::Widget::setClient):
+        (WebCore::Widget::client):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::operator delete):
+        * rendering/render_applet.cpp:
+        (WebCore::RenderApplet::createWidgetIfNecessary):
+        * rendering/render_form.cpp:
+        (WebCore::RenderFormElement::clicked):
+        (WebCore::RenderFormElement::textAlignment):
+        (WebCore::RenderLineEdit::RenderLineEdit):
+        (WebCore::RenderLineEdit::selectionChanged):
+        (WebCore::RenderLineEdit::returnPressed):
+        (WebCore::RenderLineEdit::performSearch):
+        (WebCore::RenderLineEdit::valueChanged):
+        (WebCore::RenderFileButton::RenderFileButton):
+        (WebCore::RenderFileButton::returnPressed):
+        (WebCore::RenderFileButton::valueChanged):
+        (WebCore::RenderLegend::RenderLegend):
+        (WebCore::RenderSelect::RenderSelect):
+        (WebCore::RenderSelect::updateFromElement):
+        (WebCore::RenderSelect::valueChanged):
+        (WebCore::RenderSelect::selectionChanged):
+        (WebCore::RenderSelect::createListBox):
+        (WebCore::RenderTextArea::RenderTextArea):
+        (WebCore::RenderTextArea::valueChanged):
+        (WebCore::RenderTextArea::selectionChanged):
+        (WebCore::RenderSlider::RenderSlider):
+        (WebCore::RenderSlider::valueChanged):
+        * rendering/render_form.h:
+        (WebCore::RenderFormElement::element):
+        (WebCore::RenderLineEdit::element):
+        (WebCore::RenderFileButton::element):
+        (WebCore::RenderFileButton::isEditable):
+        (WebCore::RenderSelect::element):
+        (WebCore::RenderTextArea::element):
+        (WebCore::RenderSlider::element):
+        * rendering/render_frames.cpp:
+        (WebCore::RenderPart::RenderPart):
+        (WebCore::RenderPart::~RenderPart):
+        (WebCore::RenderPart::setFrame):
+        (WebCore::RenderPart::setWidget):
+        (WebCore::RenderPart::deleteWidget):
+        (WebCore::RenderFrame::RenderFrame):
+        (WebCore::RenderPartObject::RenderPartObject):
+        (WebCore::RenderPartObject::layout):
+        * rendering/render_frames.h:
+        * rendering/render_layer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::~RenderLayer):
+        (WebCore::RenderLayer::valueChanged):
+        (WebCore::RenderLayer::setHasHorizontalScrollbar):
+        (WebCore::RenderLayer::setHasVerticalScrollbar):
+        (WebCore::RenderLayer::hitTest):
+        * rendering/render_layer.h:
+        (WebCore::RenderLayer::parent):
+        (WebCore::RenderLayer::previousSibling):
+        (WebCore::RenderLayer::nextSibling):
+        (WebCore::RenderLayer::firstChild):
+        (WebCore::RenderLayer::lastChild):
+        * rendering/render_list.cpp:
+        (WebCore::RenderListMarker::paint):
+        * rendering/render_replaced.cpp:
+        (WebCore::RenderWidget::RenderWidget):
+        (WebCore::RenderWidget::destroy):
+        (WebCore::RenderWidget::~RenderWidget):
+        (WebCore::RenderWidget::setWidget):
+        (WebCore::RenderWidget::layout):
+        (WebCore::RenderWidget::sendConsumedMouseUp):
+        (WebCore::RenderWidget::focusIn):
+        (WebCore::RenderWidget::focusOut):
+        (WebCore::RenderWidget::scrollToVisible):
+        (WebCore::RenderWidget::isVisible):
+        (WebCore::RenderWidget::element):
+        (WebCore::RenderWidget::deleteWidget):
+        * rendering/render_replaced.h:
+        * xml/xmlhttprequest.cpp:
+        (WebCore::requestsByDocument):
+        (WebCore::addToRequestsByDocument):
+        (WebCore::removeFromRequestsByDocument):
+        (WebCore::XMLHttpRequest::getResponseText):
+        (WebCore::XMLHttpRequest::getResponseXML):
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        (WebCore::XMLHttpRequest::~XMLHttpRequest):
+        (WebCore::XMLHttpRequest::callReadyStateChangeListener):
+        (WebCore::XMLHttpRequest::urlMatchesDocumentDomain):
+        (WebCore::XMLHttpRequest::open):
+        (WebCore::XMLHttpRequest::send):
+        (WebCore::XMLHttpRequest::abort):
+        (WebCore::XMLHttpRequest::overrideMIMEType):
+        (WebCore::XMLHttpRequest::setRequestHeader):
+        (WebCore::XMLHttpRequest::getRequestHeader):
+        (WebCore::XMLHttpRequest::getAllResponseHeaders):
+        (WebCore::XMLHttpRequest::getResponseHeader):
+        (WebCore::XMLHttpRequest::getSpecificHeader):
+        (WebCore::XMLHttpRequest::responseIsXML):
+        (WebCore::XMLHttpRequest::getStatus):
+        (WebCore::XMLHttpRequest::getStatusText):
+        (WebCore::XMLHttpRequest::receivedAllData):
+        (WebCore::XMLHttpRequest::receivedRedirect):
+        (WebCore::XMLHttpRequest::receivedData):
+        (WebCore::XMLHttpRequest::cancelRequests):
+        (WebCore::XMLHttpRequest::detachRequests):
+        * xml/xmlhttprequest.h:
+
 2006-03-06  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by beth.

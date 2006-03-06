@@ -80,8 +80,6 @@ private:
     mutable bool _menuPopulated;
 
     mutable NSFont *_labelFont;
-
-    KWQSignal _activated;
 };
 
 #endif

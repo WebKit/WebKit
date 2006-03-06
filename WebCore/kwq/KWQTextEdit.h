@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,12 +26,12 @@
 #ifndef QTEXTEDIT_H_
 #define QTEXTEDIT_H_
 
-#include "KWQSignal.h"
 #include "ScrollView.h"
 #include "TextDirection.h"
 
 namespace WebCore {
     class Color;
+    class String;
 }
 
 class QTextEdit : public WebCore::ScrollView {
@@ -50,7 +50,7 @@ class QTextEdit : public WebCore::ScrollView {
 
     void setColors(const WebCore::Color& background, const WebCore::Color& foreground);
 
-    void setAlignment(AlignmentFlags);
+    void setAlignment(WebCore::HorizontalAlignment);
     void setLineHeight(int lineHeight);
 
     void setCursorPosition(int, int);
@@ -89,18 +89,8 @@ class QTextEdit : public WebCore::ScrollView {
 
     IntSize sizeWithColumnsAndRows(int numColumns, int numRows) const;
 
-    void textChanged() { _textChanged.call(); }
-
-    void selectionChanged() { _selectionChanged.call(); }
-    void clicked();
-
     virtual FocusPolicy focusPolicy() const;
     virtual bool checksDescendantsForFocus() const;
-
-  private:
-    KWQSignal _clicked;
-    KWQSignal _textChanged;
-    KWQSignal _selectionChanged;
 };
 
 #endif /* QTEXTEDIT_H_ */

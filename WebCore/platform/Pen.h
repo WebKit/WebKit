@@ -26,7 +26,6 @@
 #ifndef PEN_H_
 #define PEN_H_
 
-#include "KWQNamespace.h"
 #include "Color.h"
 
 namespace WebCore {
