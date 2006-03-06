@@ -1,3 +1,19 @@
+2006-03-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+
+        - JSC support for the fix for <rdar://problem/4467143> JavaScript 
+        enumeration of HTML element properties skips DOM node properties
+
+        * kjs/lookup.h: 
+        (1) Added the KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE macro. The 
+        class definiton macro needs to know about the prototype's prototype so 
+        that the class constructor properly sets it. 
+        (2) Removed the KJS_IMPLEMENT_PROTOTYPE_WITH_PARENT macro. The class
+        implementation macro does not need to know about the prototype's
+        prototype, since getOwnPropertySlot should only look in the current 
+        object's property map, and not its prototype's.
+
 2006-03-05  Andrew Wellington  <proton@wiretapped.net>
 
         Reviewed by Eric, landed by ap.

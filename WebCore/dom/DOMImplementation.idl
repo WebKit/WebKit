@@ -21,3 +21,4 @@ module core {
         HTMLDocument createHTMLDocument(in DOMString title);
     };
 }
+

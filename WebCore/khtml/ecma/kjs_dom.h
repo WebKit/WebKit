@@ -145,7 +145,7 @@ namespace KJS {
 
   DOM::AttrImpl *toAttr(JSValue *); // returns 0 if passed-in value is not a DOMAttr object
 
-  KJS_DEFINE_PROTOTYPE(DOMElementProto)
+  KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE(DOMElementProto, DOMNodeProto)
 
   class DOMElement : public DOMNode {
   public:

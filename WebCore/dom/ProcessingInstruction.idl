@@ -6,3 +6,4 @@ module core {
         readonly attribute StyleSheet sheet;
     };
 }
+

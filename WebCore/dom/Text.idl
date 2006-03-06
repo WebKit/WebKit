@@ -5,3 +5,4 @@ module core {
             raises (DOMException);
     };
 }
+

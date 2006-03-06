@@ -5,3 +5,4 @@ module core {
         readonly attribute [ConvertNullStringTo=Null] DOMString notationName;
     };
 }
+

@@ -1,3 +1,39 @@
+2006-03-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+
+        - Second cut at fixing <rdar://problem/4467143> JavaScript enumeration 
+        of HTML element properties skips DOM node properties
+ 
+        The approach here is for prototypes, in their constructor methods, 
+        to set their own prototypes, preserving the prototype 
+        chain in cases of multiple levels of inheritance. (Previously, our
+        code assumed that a prototype never had a prototype of its own,
+        and always used an empty object as a prototype's prototype).
+
+        * bindings/scripts/CodeGeneratorJS.pm: Use the new
+        DEFINE_PROTOTYPE_WITH_PROTOTYPE macro in place of the  
+        KJS_IMPLEMENT_PROTOTYPE_WITH_PARENT macro.
+        * khtml/ecma/kjs_dom.cpp: Ditto.
+        * khtml/ecma/kjs_dom.h: Ditto.
+        * khtml/ecma/kjs_events.cpp: Ditto.
+
+        Touched these files to force a rebuild:
+
+        * bindings/js/JSDOMCore.cpp:
+        * bindings/js/JSDOMEvents.cpp:
+        * dom/Attr.idl:
+        * dom/CharacterData.idl:
+        * dom/DOMImplementation.idl:
+        * dom/DocumentType.idl:
+        * dom/Element.idl:
+        * dom/Entity.idl:
+        * dom/MutationEvent.idl:
+        * dom/Notation.idl:
+        * dom/ProcessingInstruction.idl:
+        * dom/Text.idl:
+        * dom/WheelEvent.idl:
+
 2006-03-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

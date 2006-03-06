@@ -1,3 +1,13 @@
+2006-03-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej.
+
+        - Layout test for <rdar://problem/4467143> JavaScript enumeration of 
+        HTML element properties skips DOM node properties
+
+        * fast/dom/prototype-chain-expected.txt: Added.
+        * fast/dom/prototype-chain.html: Added.
+
 2006-03-05  Alexander Kellett  <lypanov@kde.org>
 
         Reviewed by Eric.

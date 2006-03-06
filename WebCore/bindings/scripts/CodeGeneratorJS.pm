@@ -368,8 +368,12 @@ sub GenerateHeader
   push(@headerContent, "};\n\n");
   
   # Add prototype declaration
-  if ($numFunctions > 0) {    
-    push(@headerContent, "KJS_DEFINE_PROTOTYPE(${className}Proto);\n\n");
+  if ($numFunctions > 0) {
+    if ($hasParent) {
+      push(@headerContent, "KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE(${className}Proto, ${parentClassName}Proto);\n\n");
+    } else {
+      push(@headerContent, "KJS_DEFINE_PROTOTYPE(${className}Proto);\n\n");
+    }
   }
   
   push(@headerContent, "}\n\n#endif\n");
@@ -513,14 +517,7 @@ sub GenerateImplementation
                                \@hashSpecials, \@hashParameters);
 
     push(@implContent, "KJS_IMPLEMENT_PROTOFUNC(${className}ProtoFunc)\n");
-
-    if ($hasParent) {
-      push(@implContent, "KJS_IMPLEMENT_PROTOTYPE_WITH_PARENT(\"$interfaceName\", " .
-                         "${className}Proto, ${className}ProtoFunc, ${parentClassName}Proto)\n\n");
-    } else {
-      push(@implContent, "KJS_IMPLEMENT_PROTOTYPE(\"$className\", ${className}Proto, ${className}ProtoFunc)\n\n");
-    }
-  
+    push(@implContent, "KJS_IMPLEMENT_PROTOTYPE(\"$className\", ${className}Proto, ${className}ProtoFunc)\n\n");
   }
   
   # - Initialize static ClassInfo object

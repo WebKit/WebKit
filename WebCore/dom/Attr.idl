@@ -10,3 +10,4 @@ module core {
         readonly attribute CSSStyleDeclaration style;
     };
 }
+

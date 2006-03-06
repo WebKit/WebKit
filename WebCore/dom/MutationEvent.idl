@@ -20,3 +20,4 @@ module events {
                                in unsigned short attrChangeArg);
     };
 }
+

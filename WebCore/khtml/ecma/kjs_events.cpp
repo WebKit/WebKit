@@ -565,9 +565,9 @@ const ClassInfo DOMUIEvent::info = { "UIEvent", &DOMEvent::info, &DOMUIEventTabl
   initUIEvent   DOMUIEvent::InitUIEvent DontDelete|Function 5
 @end
 */
-KJS_DEFINE_PROTOTYPE(DOMUIEventProto)
+KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE(DOMUIEventProto, DOMEventProto)
 KJS_IMPLEMENT_PROTOFUNC(DOMUIEventProtoFunc)
-KJS_IMPLEMENT_PROTOTYPE_WITH_PARENT("DOMUIEvent",DOMUIEventProto,DOMUIEventProtoFunc,DOMEventProto)
+KJS_IMPLEMENT_PROTOTYPE("DOMUIEvent", DOMUIEventProto, DOMUIEventProtoFunc)
 
 DOMUIEvent::DOMUIEvent(ExecState *exec, UIEventImpl *e)
   : DOMEvent(exec, e)
@@ -651,9 +651,9 @@ const ClassInfo DOMMouseEvent::info = { "MouseEvent", &DOMUIEvent::info, &DOMMou
   initMouseEvent        DOMMouseEvent::InitMouseEvent   DontDelete|Function 15
 @end
 */
-KJS_DEFINE_PROTOTYPE(DOMMouseEventProto)
+KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE(DOMMouseEventProto, DOMUIEventProto)
 KJS_IMPLEMENT_PROTOFUNC(DOMMouseEventProtoFunc)
-KJS_IMPLEMENT_PROTOTYPE_WITH_PARENT("DOMMouseEvent",DOMMouseEventProto,DOMMouseEventProtoFunc,DOMUIEventProto)
+KJS_IMPLEMENT_PROTOTYPE("DOMMouseEvent", DOMMouseEventProto, DOMMouseEventProtoFunc)
 
 DOMMouseEvent::DOMMouseEvent(ExecState *exec, MouseEventImpl *e)
   : DOMUIEvent(exec, e)
@@ -752,9 +752,9 @@ const ClassInfo DOMKeyboardEvent::info = { "KeyboardEvent", &DOMUIEvent::info, &
   initKeyboardEvent     DOMKeyboardEvent::InitKeyboardEvent     DontDelete|Function 11
 @end
 */
-KJS_DEFINE_PROTOTYPE(DOMKeyboardEventProto)
+KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE(DOMKeyboardEventProto, DOMUIEventProto)
 KJS_IMPLEMENT_PROTOFUNC(DOMKeyboardEventProtoFunc)
-KJS_IMPLEMENT_PROTOTYPE_WITH_PARENT("DOMKeyboardEvent", DOMKeyboardEventProto, DOMKeyboardEventProtoFunc, DOMUIEventProto)
+KJS_IMPLEMENT_PROTOTYPE("DOMKeyboardEvent", DOMKeyboardEventProto, DOMKeyboardEventProtoFunc)
 
 DOMKeyboardEvent::DOMKeyboardEvent(ExecState *exec, KeyboardEventImpl *e)
   : DOMUIEvent(exec, e)
