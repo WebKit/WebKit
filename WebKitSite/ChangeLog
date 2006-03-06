@@ -1,3 +1,12 @@
+2006-03-06  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        Change "Mail.app" to "Mail".
+        
+        * index.html:
+        * projects/editing/index.html:
+
 2006-03-06  Geoffrey Garen  <ggaren@apple.com>
 
         Oops, accidentally deleted the archives links.
