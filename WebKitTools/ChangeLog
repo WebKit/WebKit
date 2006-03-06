@@ -1,3 +1,10 @@
+2006-03-06  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        * Spinneret/Spinneret/WebFrame.cpp:
+        (WebKit::WebFrame::paint): force layout before painting
+
 2006-03-06  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

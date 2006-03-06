@@ -102,6 +102,8 @@ void WebFrame::loadHTMLString(char *html, char *baseURL)
 
 void WebFrame::paint()
 {
+    d->frameView->layout();
+
     PAINTSTRUCT ps;
     HDC hdc = BeginPaint(d->webView->windowHandle(), &ps);   
     cairo_surface_t* finalSurface = cairo_win32_surface_create(hdc);
