@@ -289,7 +289,8 @@ IntSize QListBox::sizeForNumberOfLines(int lines) const
                 renderer = [[WebCoreTextRendererFactory sharedFactory] rendererWithFont:font().getWebCoreFont()];
                 FontDescription boldDesc = font().fontDescription();
                 boldDesc.setWeight(cBoldWeight);
-                Font b = Font(boldDesc, font().letterSpacing(), font().wordSpacing());          
+                Font b = Font(boldDesc, font().letterSpacing(), font().wordSpacing());
+                b.update();
                 groupLabelRenderer = [[WebCoreTextRendererFactory sharedFactory] rendererWithFont:b.getWebCoreFont()];
             }
             
@@ -692,7 +693,8 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
         if (item.type == KWQListBoxGroupLabel) {
             FontDescription boldDesc = _box->font().fontDescription();
             boldDesc.setWeight(cBoldWeight);
-            Font b = Font(boldDesc, _box->font().letterSpacing(), _box->font().wordSpacing());          
+            Font b = Font(boldDesc, _box->font().letterSpacing(), _box->font().wordSpacing());
+            b.update();
             renderer = [[WebCoreTextRendererFactory sharedFactory] rendererWithFont:b.getWebCoreFont()];
         }
         else

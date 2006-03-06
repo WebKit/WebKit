@@ -1,3 +1,16 @@
+2006-03-06  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=7566 (also 
+        <rdar://problem/4467128> ). Must call update() on a Font before 
+        attempting to use it because the FontRenderer is not created until 
+        update() is called.
+
+        * kwq/KWQListBox.mm:
+        (QListBox::sizeForNumberOfLines): Call update()
+        (-[KWQTableView drawRow:clipRect:]): Call update()
+
 2006-03-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.
