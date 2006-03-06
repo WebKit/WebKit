@@ -1,3 +1,12 @@
+2006-03-06  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Fix suggested by Alexey Proskuryakov <ap@nypop.com>, reviewed by Maciej and Hyatt.
+        
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7601
+          REGRESSION (r13089): Reproducible crash dereferencing a deallocated element on google image search
+
+        * kxmlcore/Platform.h: Corrected the define to enable USE(MULTIPLE_THREADS) on Mac OS X.
+
 2006-03-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
