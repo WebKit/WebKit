@@ -1,3 +1,114 @@
+2006-03-06  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by beth.
+
+        Reorganize link stubs (alphabetically).
+        Stub out Path methods to make cnn.com work.
+
+        * platform/win/TemporaryLinkStubs.cpp:
+        (FrameView::viewportToGlobal):
+        (FrameView::updateBorder):
+        (FrameView::isFrameView):
+        (FrameView::topLevelWidget):
+        (QScrollBar::~QScrollBar):
+        (QScrollBar::setSteps):
+        (QScrollBar::scroll):
+        (QScrollBar::QScrollBar):
+        (QScrollBar::setValue):
+        (QScrollBar::setKnobProportion):
+        (QListBox::QListBox):
+        (QListBox::setSelected):
+        (QListBox::sizeForNumberOfLines):
+        (QListBox::isSelected):
+        (QListBox::appendItem):
+        (QListBox::doneAppendingItems):
+        (ScrollView::scrollXOffset):
+        (QComboBox::focusPolicy):
+        (QTextEdit::QTextEdit):
+        (QTextEdit::~QTextEdit):
+        (QTextEdit::textWithHardLineBreaks):
+        (QTextEdit::sizeWithColumnsAndRows):
+        (QTextEdit::setColors):
+        (QTextEdit::setFont):
+        (QTextEdit::setWritingDirection):
+        (QTextEdit::checksDescendantsForFocus):
+        (QTextEdit::selectionStart):
+        (QTextEdit::hasSelectedText):
+        (QTextEdit::setReadOnly):
+        (QTextEdit::setDisabled):
+        (QTextEdit::setLineHeight):
+        (QTextEdit::setSelectionStart):
+        (QTextEdit::text):
+        (QTextEdit::setWordWrap):
+        (QTextEdit::setAlignment):
+        (QTextEdit::getCursorPosition):
+        (QTextEdit::setSelectionRange):
+        (Widget::enableFlushDrawing):
+        (Widget::isEnabled):
+        (Widget::focusPolicy):
+        (Widget::disableFlushDrawing):
+        (Widget::setIsSelected):
+        (Widget::unlockDrawingFocus):
+        (KJavaAppletWidget::KJavaAppletWidget):
+        (ScrollView::scrollPointRecursively):
+        (ScrollView::scrollBy):
+        (QLineEdit::selectAll):
+        (QLineEdit::addSearchResult):
+        (QLineEdit::selectionStart):
+        (QLineEdit::hasSelectedText):
+        (QLineEdit::selectedText):
+        (QLineEdit::setAutoSaveName):
+        (QLineEdit::checksDescendantsForFocus):
+        (QLineEdit::setMaxResults):
+        (GraphicsContext::GraphicsContext):
+        (GraphicsContext::addFocusRingRect):
+        (GraphicsContext::drawLineForMisspelling):
+        (GraphicsContext::drawFocusRing):
+        (GraphicsContext::selectedTextBackgroundColor):
+        (GraphicsContext::drawHighlightForText):
+        (GraphicsContext::misspellingLineThickness):
+        (GraphicsContext::addRoundedRectClip):
+        (QSlider::QSlider):
+        (QSlider::sizeHint):
+        (QSlider::setValue):
+        (QSlider::setMaxValue):
+        (QSlider::~QSlider):
+        (QSlider::setFont):
+        (QListBox::setFont):
+        (QListBox::~QListBox):
+        (QListBox::setSelectionMode):
+        (QListBox::setEnabled):
+        (QListBox::clear):
+        (QListBox::checksDescendantsForFocus):
+        (KWQFileButton::KWQFileButton):
+        (KWQFileButton::click):
+        (KWQFileButton::sizeForCharacterWidth):
+        (KWQFileButton::frameGeometry):
+        (KWQFileButton::setFilename):
+        (KWQFileButton::baselinePosition):
+        (KWQFileButton::setFrameGeometry):
+        (QSlider::focusPolicy):
+        (QListBox::focusPolicy):
+        (Cursor::Cursor):
+        (MouseEvent::MouseEvent):
+        (KWQKCookieJar::cookieEnabled):
+        (WebCore::screenDepth):
+        (WebCore::usableScreenRect):
+        (FrameWin::createPlugin):
+        (ScrollView::resizeContents):
+        (ScrollView::visibleHeight):
+        (ScrollView::visibleWidth):
+        (ScrollView::setContentsPos):
+        (ScrollView::contentsHeight):
+        (ScrollView::contentsWidth):
+        (ScrollView::inWindow):
+        (Path::~Path):
+        (Path::Path):
+        (Path::contains):
+        (Path::translate):
+        (Path::boundingRect):
+        (Path::operator=):
+
 2006-03-03  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
