@@ -52,9 +52,7 @@ void KWQFileButton::click(bool) { notImplemented(); }
 void GraphicsContext::drawFocusRing(Color const&) { notImplemented(); }
 IntSize KWQFileButton::sizeForCharacterWidth(int) const { notImplemented(); return IntSize(); }
 IntSize QTextEdit::sizeWithColumnsAndRows(int,int) const { notImplemented(); return IntSize(); }
-void QComboBox::clear() { notImplemented(); }
 int GraphicsContext::misspellingLineThickness() const { notImplemented(); return 0; }
-void QComboBox::setFrameGeometry(IntRect const&) { notImplemented(); }
 bool Widget::isEnabled() const { notImplemented(); return 0; }
 void QTextEdit::setText(String const&) { notImplemented(); }
 void GraphicsContext::addRoundedRectClip(IntRect const&,IntSize const&,IntSize const&,IntSize const&,IntSize const&) { notImplemented(); }
@@ -65,7 +63,6 @@ void QTextEdit::setReadOnly(bool) { notImplemented(); }
 void QListBox::appendItem(QString const&,KWQListBoxItemType,bool) { notImplemented(); }
 Widget::FocusPolicy Widget::focusPolicy() const { notImplemented(); return NoFocus; }
 void QTextEdit::selectAll() { notImplemented(); }
-void GraphicsContext::endTransparencyLayer() { notImplemented(); }
 void QTextEdit::setDisabled(bool) { notImplemented(); }
 bool QScrollBar::scroll(KWQScrollDirection,KWQScrollGranularity,float) { notImplemented(); return 0; }
 IntSize QListBox::sizeForNumberOfLines(int) const { notImplemented(); return IntSize(); }
@@ -87,7 +84,6 @@ void QTextEdit::setLineHeight(int) { notImplemented(); }
 void QScrollBar::setKnobProportion(int,int) { notImplemented(); }
 KWQFileButton::KWQFileButton(Frame*) { notImplemented(); }
 void QTextEdit::setSelectionStart(int) { notImplemented(); }
-void GraphicsContext::beginTransparencyLayer(float) { notImplemented(); }
 void QListBox::setSelected(int,bool) { notImplemented(); }
 void GraphicsContext::addFocusRingRect(int,int,int,int) { notImplemented(); }
 void QTextEdit::setCursorPosition(int,int) { notImplemented(); }
@@ -99,8 +95,6 @@ KJavaAppletWidget::KJavaAppletWidget(IntSize const&,Frame*,KXMLCore::HashMap<Str
 QListBox::QListBox() { notImplemented(); }
 QString QLineEdit::selectedText() const { notImplemented(); return QString(); }
 void Widget::unlockDrawingFocus() { notImplemented(); }
-void QLineEdit::setLiveSearch(bool) { notImplemented(); }
-QComboBox::QComboBox() { notImplemented(); }
 void QSlider::setMaxValue(double) { notImplemented(); }
 void Widget::lockDrawingFocus() { notImplemented(); }
 void QTextEdit::setSelectionRange(int,int) { notImplemented(); }
@@ -109,14 +103,9 @@ void QTextEdit::getCursorPosition(int*,int*) const { notImplemented(); }
 bool FrameView::isFrameView() const { notImplemented(); return 0; }
 void QScrollBar::setSteps(int,int) { notImplemented(); }
 void QLineEdit::setAutoSaveName(String const&) { notImplemented(); }
-int QComboBox::baselinePosition(int) const { notImplemented(); return 0; }
-void QComboBox::appendItem(QString const&,KWQListBoxItemType,bool) { notImplemented(); }
 void Widget::setDrawingAlpha(float) { notImplemented(); }
 QSlider::QSlider() { notImplemented(); }
 int ScrollView::scrollYOffset() const { notImplemented(); return 0; }
-void QComboBox::setCurrentItem(int) { notImplemented(); }
-void QComboBox::setWritingDirection(TextDirection) { notImplemented(); }
-IntSize QComboBox::sizeHint() const { notImplemented(); return IntSize(); }
 void QLineEdit::setSelection(int,int) { notImplemented(); }
 void QLineEdit::setMaxResults(int) { notImplemented(); }
 void QListBox::clear() { notImplemented(); }
@@ -131,7 +120,6 @@ void GraphicsContext::drawLineForMisspelling(int,int,int) { notImplemented(); }
 double QSlider::value() const { notImplemented(); return 0; }
 void QListBox::setSelectionMode(QListBox::SelectionMode) { notImplemented(); }
 void KWQFileButton::setFilename(QString const&) { notImplemented(); }
-IntRect QComboBox::frameGeometry() const { notImplemented(); return IntRect(); }
 void QListBox::setWritingDirection(TextDirection) { notImplemented(); }
 Widget::FocusPolicy KWQFileButton::focusPolicy() const { notImplemented(); return NoFocus; }
 bool QLineEdit::checksDescendantsForFocus() const { notImplemented(); return false; }
@@ -237,7 +225,6 @@ void BrowserExtensionWin::createNewWindow(KURL const&,struct WebCore::URLArgs co
 void QSlider::setFont(WebCore::Font const&) { notImplemented(); }
 static WebCore::Font localFont;
 void QListBox::setFont(WebCore::Font const&) { notImplemented(); }
-void QComboBox::setFont(WebCore::Font const&) { notImplemented(); }
 void QTextEdit::setFont(WebCore::Font const&) { notImplemented(); }
 void QTextEdit::setWritingDirection(enum WebCore::TextDirection) { notImplemented(); }
 GraphicsContext::GraphicsContext() { notImplemented(); }
@@ -319,6 +306,8 @@ void GraphicsContext::drawText(int,int,int,int,QChar const*,int,int,int,int,Colo
 void GraphicsContext::drawLineForText(int,int,int,int) { }
 void GraphicsContext::setShadow(int,int,int,Color const&) { }
 void GraphicsContext::clearShadow() { }
+void GraphicsContext::beginTransparencyLayer(float) { }
+void GraphicsContext::endTransparencyLayer() { }
 
 bool RenderThemeWin::paintCheckbox(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return false; }
 bool RenderThemeWin::paintRadio(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return false; }
@@ -341,3 +330,17 @@ void QLineEdit::setPlaceholderString(String const&) { }
 void QLineEdit::setColors(Color const&,Color const&) { }
 IntSize QLineEdit::sizeForCharacterWidth(int) const { return IntSize(); }
 int QLineEdit::baselinePosition(int) const { return 0; }
+
+QComboBox::QComboBox() { }
+void QComboBox::setFont(WebCore::Font const&) { }
+int QComboBox::baselinePosition(int) const { return 0; }
+void QComboBox::setWritingDirection(TextDirection) { }
+void QComboBox::clear() { }
+void QComboBox::appendItem(QString const&,KWQListBoxItemType,bool) { }
+void QComboBox::setCurrentItem(int) { }
+IntSize QComboBox::sizeHint() const { return IntSize(); }
+IntRect QComboBox::frameGeometry() const { return IntRect(); }
+void QComboBox::setFrameGeometry(IntRect const&) { }
+
+void QLineEdit::setLiveSearch(bool) { }
+

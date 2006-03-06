@@ -1,5 +1,35 @@
 2006-03-06  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by andersca.
+
+        Empty enough stubs to make apple.com load.
+
+        * platform/win/TemporaryLinkStubs.cpp:
+        (QTextEdit::sizeWithColumnsAndRows):
+        (GraphicsContext::misspellingLineThickness):
+        (QTextEdit::selectAll):
+        (QTextEdit::setSelectionStart):
+        (Widget::unlockDrawingFocus):
+        (QLineEdit::setAutoSaveName):
+        (ScrollView::scrollYOffset):
+        (KWQFileButton::setFilename):
+        (QListBox::setFont):
+        (GraphicsContext::beginTransparencyLayer):
+        (GraphicsContext::endTransparencyLayer):
+        (QComboBox::QComboBox):
+        (QComboBox::setFont):
+        (QComboBox::baselinePosition):
+        (QComboBox::setWritingDirection):
+        (QComboBox::clear):
+        (QComboBox::appendItem):
+        (QComboBox::setCurrentItem):
+        (QComboBox::sizeHint):
+        (QComboBox::frameGeometry):
+        (QComboBox::setFrameGeometry):
+        (QLineEdit::setLiveSearch):
+
+2006-03-06  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by darin.
 
         Fix external resource loading.
