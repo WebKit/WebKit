@@ -1,3 +1,12 @@
+2006-03-05  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by adele.
+
+        Add missing files to vcproj (fix win32 build).
+        Also add svn:eol-style=native to new files.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+
 2006-03-05  Darin Adler  <mjs@apple.com>
 
         - fix build

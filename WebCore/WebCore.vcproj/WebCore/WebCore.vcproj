@@ -798,6 +798,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\khtml\html\HTMLTextFieldInnerElementImpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\khtml\html\HTMLTextFieldInnerElementImpl.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\khtml\html\htmltokenizer.cpp"
 					>
 				</File>
@@ -3040,6 +3048,14 @@
 			>
 			<File
 				RelativePath="..\..\dom\AtomicStringList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\BeforeTextInsertedEventImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\BeforeTextInsertedEventImpl.h"
 				>
 			</File>
 			<File
