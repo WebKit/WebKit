@@ -1,3 +1,19 @@
+2006-03-06  David Carson <dacarson@gmail.com>
+
+        Reviewed by Darin, landed by ap.
+
+        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=7582
+        c_utility.cpp contains CFString OS X platform-dependent code; should use ICU
+
+        Tested with test case from:
+	http://bugzilla.opendarwin.org/show_bug.cgi?id=5163
+
+        * bindings/c_utility.cpp
+        (convertUTF8ToUTF16): Changed to using Unicode converter from ICU, and manual Latin-1 conversion.
+        * icu/unicode/ucnv.h: Copied from WebCore.
+        * icu/unicode/ucnv_err.h: Ditto.
+        * icu/unicode/uenum.h: Ditto.
+
 2006-03-05  Darin Adler  <darin@apple.com>
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Updated.
