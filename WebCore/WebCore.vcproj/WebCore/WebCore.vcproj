@@ -487,50 +487,6 @@
 			Name="khtml"
 			>
 			<Filter
-				Name="dom"
-				>
-				<File
-					RelativePath="..\..\khtml\dom\css_rule.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\khtml\dom\css_stylesheet.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\khtml\dom\css_value.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\khtml\dom\dom2_events.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\khtml\dom\dom2_events.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\khtml\dom\dom2_range.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\khtml\dom\dom2_traversal.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\khtml\dom\dom2_traversal.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\khtml\dom\dom_exception.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\khtml\dom\dom_node.h"
-					>
-				</File>
-			</Filter>
-			<Filter
 				Name="html"
 				>
 				<File
@@ -3199,11 +3155,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\dom\EventListener.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\dom\EventNames.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\dom\EventNames.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\ExceptionCode.h"
 				>
 			</File>
 			<File

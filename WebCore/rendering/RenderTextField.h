@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer
+ * Copyright (C) 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,28 +17,25 @@
  * Boston, MA 02111-1307, USA.
  *
  */
+
 #ifndef RenderTextField_H
 #define RenderTextField_H
 
-#include "render_flexbox.h"
+#include "RenderBlock.h"
 
-namespace WebCore
-{
+namespace WebCore {
 
 class HTMLTextFieldInnerElementImpl;
 
-class RenderTextField;
-
-class RenderTextField : public RenderBlock
-{
+class RenderTextField : public RenderBlock {
 public:
-    RenderTextField(NodeImpl* node);
+    RenderTextField(NodeImpl*);
     virtual ~RenderTextField();
 
     virtual void calcMinMaxWidth();
-    virtual const char *renderName() const { return "RenderTextField"; }
-    virtual void removeLeftoverAnonymousBoxes() {};
-    virtual void setStyle(RenderStyle* style);
+    virtual const char* renderName() const { return "RenderTextField"; }
+    virtual void removeLeftoverAnonymousBoxes() {}
+    virtual void setStyle(RenderStyle*);
     virtual void updateFromElement();
     
     RenderStyle* createDivStyle(RenderStyle* startStyle);
@@ -63,5 +60,6 @@ protected:
     bool m_dirty;
 };
 
-};
+}
+
 #endif

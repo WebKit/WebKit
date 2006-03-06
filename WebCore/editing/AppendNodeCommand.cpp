@@ -43,9 +43,9 @@ void AppendNodeCommand::doApply()
     ASSERT(m_appendChild);
     ASSERT(m_parentNode);
 
-    int exceptionCode = 0;
-    m_parentNode->appendChild(m_appendChild.get(), exceptionCode);
-    ASSERT(exceptionCode == 0);
+    ExceptionCode ec = 0;
+    m_parentNode->appendChild(m_appendChild.get(), ec);
+    ASSERT(ec == 0);
 }
 
 void AppendNodeCommand::doUnapply()
@@ -54,9 +54,9 @@ void AppendNodeCommand::doUnapply()
     ASSERT(m_parentNode);
     ASSERT(state() == Applied);
 
-    int exceptionCode = 0;
-    m_parentNode->removeChild(m_appendChild.get(), exceptionCode);
-    ASSERT(exceptionCode == 0);
+    ExceptionCode ec = 0;
+    m_parentNode->removeChild(m_appendChild.get(), ec);
+    ASSERT(ec == 0);
 }
 
 } // namespace khtml

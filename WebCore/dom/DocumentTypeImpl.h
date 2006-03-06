@@ -52,7 +52,7 @@ public:
     DOMImplementationImpl *implementation() const { return m_implementation.get(); }
 
     virtual DOMString nodeName() const;
-    virtual unsigned short nodeType() const;
+    virtual NodeType nodeType() const;
     virtual PassRefPtr<NodeImpl> cloneNode(bool deep);
     virtual DOMString toString() const;
 

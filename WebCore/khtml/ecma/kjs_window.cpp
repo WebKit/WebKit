@@ -37,7 +37,6 @@
 #include "dom2_eventsimpl.h"
 #include "dom2_rangeimpl.h"
 #include "dom_elementimpl.h"
-#include "dom_node.h"
 #include "dom_position.h"
 #include "PlatformString.h"
 #include "domparser.h"

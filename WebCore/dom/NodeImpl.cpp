@@ -29,16 +29,15 @@
 #include "ChildNodeListImpl.h"
 #include "DOMImplementationImpl.h"
 #include "DocumentImpl.h"
+#include "EventListener.h"
 #include "EventNames.h"
+#include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "MouseEvent.h"
 #include "TextImpl.h"
 #include "WheelEvent.h"
-#include "dom2_events.h"
 #include "dom2_eventsimpl.h"
-#include "dom_exception.h"
-#include "dom_node.h"
 #include "htmlediting.h"
 #include "htmlnames.h"
 #include "kjs_binding.h"
@@ -174,11 +173,11 @@ DOMString NodeImpl::nodeValue() const
   return DOMString();
 }
 
-void NodeImpl::setNodeValue( const DOMString &/*_nodeValue*/, int &exceptioncode )
+void NodeImpl::setNodeValue( const DOMString &/*_nodeValue*/, ExceptionCode& ec)
 {
     // NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly
     if (isReadOnly()) {
-        exceptioncode = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
 
@@ -210,35 +209,35 @@ NodeImpl *NodeImpl::lastDescendant() const
 
 bool NodeImpl::insertBefore(PassRefPtr<NodeImpl>, NodeImpl*, ExceptionCode& ec)
 {
-    ec = DOMException::HIERARCHY_REQUEST_ERR;
+    ec = HIERARCHY_REQUEST_ERR;
     return false;
 }
 
 bool NodeImpl::replaceChild(PassRefPtr<NodeImpl>, NodeImpl*, ExceptionCode& ec)
 {
-    ec = DOMException::HIERARCHY_REQUEST_ERR;
+    ec = HIERARCHY_REQUEST_ERR;
     return false;
 }
 
 bool NodeImpl::removeChild(NodeImpl*, ExceptionCode& ec)
 {
-    ec = DOMException::NOT_FOUND_ERR;
+    ec = NOT_FOUND_ERR;
     return false;
 }
 
 bool NodeImpl::appendChild(PassRefPtr<NodeImpl>, ExceptionCode& ec)
 {
-    ec = DOMException::HIERARCHY_REQUEST_ERR;
+    ec = HIERARCHY_REQUEST_ERR;
     return false;
 }
 
-void NodeImpl::remove(int &exceptioncode)
+void NodeImpl::remove(ExceptionCode& ec)
 {
     ref();
     if (NodeImpl *p = parentNode())
-        p->removeChild(this, exceptioncode);
+        p->removeChild(this, ec);
     else
-        exceptioncode = DOMException::HIERARCHY_REQUEST_ERR;
+        ec = HIERARCHY_REQUEST_ERR;
     deref();
 }
 
@@ -249,7 +248,7 @@ bool NodeImpl::hasChildNodes(  ) const
 
 void NodeImpl::normalize ()
 {
-    int exceptioncode = 0;
+    ExceptionCode ec = 0;
     NodeImpl *child = firstChild();
 
     if (isElementNode()) {
@@ -275,17 +274,17 @@ void NodeImpl::normalize ()
     while (child) {
         NodeImpl *nextChild = child->nextSibling();
 
-        if (nextChild && child->nodeType() == Node::TEXT_NODE && nextChild->nodeType() == Node::TEXT_NODE) {
+        if (nextChild && child->nodeType() == TEXT_NODE && nextChild->nodeType() == TEXT_NODE) {
             // Current child and the next one are both text nodes... merge them
             TextImpl *currentText = static_cast<TextImpl*>(child);
             TextImpl *nextText = static_cast<TextImpl*>(nextChild);
 
-            currentText->appendData(nextText->data(),exceptioncode);
-            if (exceptioncode)
+            currentText->appendData(nextText->data(),ec);
+            if (ec)
                 return;
 
-            nextChild->remove(exceptioncode);
-            if (exceptioncode)
+            nextChild->remove(ec);
+            if (ec)
                 return;
         }
         else {
@@ -299,7 +298,7 @@ void NodeImpl::normalize ()
     if (child && !child->nextSibling() && child->isTextNode()) {
         TextImpl *text = static_cast<TextImpl*>(child);
         if (text->data().isEmpty())
-            child->remove(exceptioncode);
+            child->remove(ec);
     }
 }
 
@@ -309,12 +308,12 @@ const AtomicString& NodeImpl::prefix() const
     return nullAtom;
 }
 
-void NodeImpl::setPrefix(const AtomicString &/*_prefix*/, int &exceptioncode )
+void NodeImpl::setPrefix(const AtomicString &/*_prefix*/, ExceptionCode& ec)
 {
     // The spec says that for nodes other than elements and attributes, prefix is always null.
     // It does not say what to do when the user tries to set the prefix on another type of
     // node, however mozilla throws a NAMESPACE_ERR exception
-    exceptioncode = DOMException::NAMESPACE_ERR;
+    ec = NAMESPACE_ERR;
 }
 
 const AtomicString& NodeImpl::localName() const
@@ -456,7 +455,7 @@ void NodeImpl::removeHTMLEventListener(const AtomicString &eventType)
 
     QPtrListIterator<RegisteredEventListener> it(*m_regdListeners);
     for (; it.current(); ++it)
-        if (it.current()->eventType() == eventType && it.current()->listener()->eventListenerType() == "_khtml_HTMLEventListener") {
+        if (it.current()->eventType() == eventType && it.current()->listener()->isHTMLEventListener()) {
             m_regdListeners->removeRef(it.current());
             // removed last
             if (m_regdListeners->isEmpty() && getDocument() && !inDocument())
@@ -480,28 +479,28 @@ EventListener *NodeImpl::getHTMLEventListener(const AtomicString &eventType)
 
     QPtrListIterator<RegisteredEventListener> it(*m_regdListeners);
     for (; it.current(); ++it)
-        if (it.current()->eventType() == eventType && it.current()->listener()->eventListenerType() == "_khtml_HTMLEventListener")
+        if (it.current()->eventType() == eventType && it.current()->listener()->isHTMLEventListener())
             return it.current()->listener();
     return 0;
 }
 
 
-bool NodeImpl::dispatchEvent(PassRefPtr<EventImpl> e, int &exceptioncode, bool tempEvent)
+bool NodeImpl::dispatchEvent(PassRefPtr<EventImpl> e, ExceptionCode& ec, bool tempEvent)
 {
     RefPtr<EventImpl> evt(e);
     assert(!eventDispatchForbidden());
     if (!evt || evt->type().isEmpty()) { 
-        exceptioncode = EventException::_EXCEPTION_OFFSET + EventException::UNSPECIFIED_EVENT_TYPE_ERR;
+        ec = UNSPECIFIED_EVENT_TYPE_ERR;
         return false;
     }
     evt->setTarget(this);
 
     RefPtr<FrameView> view = getDocument()->view();
 
-    return dispatchGenericEvent(evt.release(), exceptioncode, tempEvent);
+    return dispatchGenericEvent(evt.release(), ec, tempEvent);
 }
 
-bool NodeImpl::dispatchGenericEvent(PassRefPtr<EventImpl> e, int &/*exceptioncode */, bool tempEvent)
+bool NodeImpl::dispatchGenericEvent(PassRefPtr<EventImpl> e, ExceptionCode&, bool tempEvent)
 {
     RefPtr<EventImpl> evt(e);
     assert(!eventDispatchForbidden());
@@ -524,7 +523,7 @@ bool NodeImpl::dispatchGenericEvent(PassRefPtr<EventImpl> e, int &/*exceptioncod
     void* data = preDispatchEventHandler(evt.get());
 
     // trigger any capturing event handlers on our way down
-    evt->setEventPhase(Event::CAPTURING_PHASE);
+    evt->setEventPhase(EventImpl::CAPTURING_PHASE);
 
     it.toFirst();
     // Handle window events for capture phase
@@ -540,7 +539,7 @@ bool NodeImpl::dispatchGenericEvent(PassRefPtr<EventImpl> e, int &/*exceptioncod
     // dispatch to the actual target node
     it.toLast();
     if (!evt->propagationStopped()) {
-        evt->setEventPhase(Event::AT_TARGET);
+        evt->setEventPhase(EventImpl::AT_TARGET);
         evt->setCurrentTarget(it.current());
 
         if (!evt->propagationStopped())
@@ -561,7 +560,7 @@ bool NodeImpl::dispatchGenericEvent(PassRefPtr<EventImpl> e, int &/*exceptioncod
     // (tobias)
 
     if (evt->bubbles()) {
-        evt->setEventPhase(Event::BUBBLING_PHASE);
+        evt->setEventPhase(EventImpl::BUBBLING_PHASE);
         for (; it.current() && !evt->propagationStopped() && !evt->getCancelBubble(); --it) {
             evt->setCurrentTarget(it.current());
             it.current()->handleLocalEvents(evt.get(), false);
@@ -613,14 +612,14 @@ bool NodeImpl::dispatchGenericEvent(PassRefPtr<EventImpl> e, int &/*exceptioncod
 bool NodeImpl::dispatchHTMLEvent(const AtomicString &eventType, bool canBubbleArg, bool cancelableArg)
 {
     assert(!eventDispatchForbidden());
-    int exceptioncode = 0;
-    return dispatchEvent(new EventImpl(eventType, canBubbleArg, cancelableArg), exceptioncode, true);
+    ExceptionCode ec = 0;
+    return dispatchEvent(new EventImpl(eventType, canBubbleArg, cancelableArg), ec, true);
 }
 
 void NodeImpl::dispatchWindowEvent(const AtomicString &eventType, bool canBubbleArg, bool cancelableArg)
 {
     assert(!eventDispatchForbidden());
-    int exceptioncode = 0;
+    ExceptionCode ec = 0;
     RefPtr<EventImpl> evt = new EventImpl(eventType, canBubbleArg, cancelableArg);
     RefPtr<DocumentImpl> doc = getDocument();
     evt->setTarget(doc.get());
@@ -634,7 +633,7 @@ void NodeImpl::dispatchWindowEvent(const AtomicString &eventType, bool canBubble
         if (ownerElement) {
             RefPtr<EventImpl> ownerEvent = new EventImpl(eventType, false, cancelableArg);
             ownerEvent->setTarget(ownerElement);
-            ownerElement->dispatchGenericEvent(ownerEvent.release(), exceptioncode, true);
+            ownerElement->dispatchGenericEvent(ownerEvent.release(), ec, true);
         }
      }
 }
@@ -728,9 +727,9 @@ bool NodeImpl::dispatchUIEvent(const AtomicString &eventType, int detail)
 
     bool cancelable = eventType == DOMActivateEvent;
 
-    int exceptioncode = 0;
+    ExceptionCode ec = 0;
     UIEventImpl* evt = new UIEventImpl(eventType, true, cancelable, getDocument()->defaultView(), detail);
-    return dispatchEvent(evt, exceptioncode, true);
+    return dispatchEvent(evt, ec, true);
 }
 
 void NodeImpl::registerNodeList(NodeListImpl* list)
@@ -792,17 +791,17 @@ bool NodeImpl::dispatchSubtreeModifiedEvent(bool sendChildrenChanged)
 
     if (!getDocument()->hasListenerType(DocumentImpl::DOMSUBTREEMODIFIED_LISTENER))
         return false;
-    int exceptioncode = 0;
+    ExceptionCode ec = 0;
     return dispatchEvent(new MutationEventImpl(DOMSubtreeModifiedEvent,
-                         true,false,0,DOMString(),DOMString(),DOMString(),0),exceptioncode,true);
+                         true,false,0,DOMString(),DOMString(),DOMString(),0),ec,true);
 }
 
 bool NodeImpl::dispatchKeyEvent(KeyEvent* key)
 {
     assert(!eventDispatchForbidden());
-    int exceptioncode = 0;
+    ExceptionCode ec = 0;
     RefPtr<KeyboardEventImpl> keyboardEventImpl = new KeyboardEventImpl(key, getDocument()->defaultView());
-    bool r = dispatchEvent(keyboardEventImpl,exceptioncode,true);
+    bool r = dispatchEvent(keyboardEventImpl,ec,true);
 
     // we want to return false if default is prevented (already taken care of)
     // or if the element is default-handled by the DOM. Otherwise we let it just
@@ -835,8 +834,8 @@ void NodeImpl::dispatchWheelEvent(WheelEvent *e)
         getDocument()->defaultView(), e->globalX(), e->globalY(), x, y,
         e->ctrlKey(), e->altKey(), e->shiftKey(), e->metaKey());
 
-    int exceptionCode = 0;
-    if (!dispatchEvent(we, exceptionCode, true))
+    ExceptionCode ec = 0;
+    if (!dispatchEvent(we, ec, true))
         e->accept();
 }
 
@@ -852,7 +851,7 @@ void NodeImpl::handleLocalEvents(EventImpl *evt, bool useCapture)
     QPtrListIterator<RegisteredEventListener> it(listenersCopy);
     for (; it.current(); ++it)
         if (it.current()->eventType() == evt->type() && it.current()->useCapture() == useCapture)
-            it.current()->listener()->handleEventImpl(evt, false);
+            it.current()->listener()->handleEvent(evt, false);
 }
 
 void NodeImpl::defaultEventHandler(EventImpl *evt)
@@ -943,7 +942,7 @@ NodeImpl *NodeImpl::traversePreviousNodePostOrder(const NodeImpl *stayWithin) co
     return 0;
 }
 
-void NodeImpl::checkSetPrefix(const AtomicString &_prefix, int &exceptioncode)
+void NodeImpl::checkSetPrefix(const AtomicString &_prefix, ExceptionCode& ec)
 {
     // Perform error checking as required by spec for setting Node.prefix. Used by
     // ElementImpl::setPrefix() and AttrImpl::setPrefix()
@@ -952,7 +951,7 @@ void NodeImpl::checkSetPrefix(const AtomicString &_prefix, int &exceptioncode)
     
     // NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
     if (isReadOnly()) {
-        exceptioncode = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
 
@@ -968,25 +967,25 @@ void NodeImpl::checkSetPrefix(const AtomicString &_prefix, int &exceptioncode)
     // - or if this node is an attribute and the qualifiedName of this node is "xmlns" [Namespaces].
     if ((namespacePart(id()) == noNamespace && id() > ID_LAST_TAG) ||
         (_prefix == "xml" && DOMString(getDocument()->namespaceURI(id())) != "http://www.w3.org/XML/1998/namespace")) {
-        exceptioncode = DOMException::NAMESPACE_ERR;
+        ec = NAMESPACE_ERR;
         return;
     }*/
 }
 
-void NodeImpl::checkAddChild(NodeImpl *newChild, int &exceptioncode)
+void NodeImpl::checkAddChild(NodeImpl *newChild, ExceptionCode& ec)
 {
     // Perform error checking as required by spec for adding a new child. Used by
     // appendChild(), replaceChild() and insertBefore()
 
     // Not mentioned in spec: throw NOT_FOUND_ERR if newChild is null
     if (!newChild) {
-        exceptioncode = DOMException::NOT_FOUND_ERR;
+        ec = NOT_FOUND_ERR;
         return;
     }
 
     // NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly
     if (isReadOnly()) {
-        exceptioncode = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
 
@@ -1004,7 +1003,7 @@ void NodeImpl::checkAddChild(NodeImpl *newChild, int &exceptioncode)
         if (!newChild->inDocument()) {
             shouldAdoptChild = true;
         } else {
-            exceptioncode = DOMException::WRONG_DOCUMENT_ERR;
+            ec = WRONG_DOCUMENT_ERR;
             return;
         }
     }
@@ -1014,20 +1013,20 @@ void NodeImpl::checkAddChild(NodeImpl *newChild, int &exceptioncode)
 
     // check for ancestor/same node
     if (newChild == this || isAncestor(newChild)) {
-        exceptioncode = DOMException::HIERARCHY_REQUEST_ERR;
+        ec = HIERARCHY_REQUEST_ERR;
         return;
     }
     
-    if (newChild->nodeType() != Node::DOCUMENT_FRAGMENT_NODE) {
+    if (newChild->nodeType() != DOCUMENT_FRAGMENT_NODE) {
         if (!childTypeAllowed(newChild->nodeType())) {
-            exceptioncode = DOMException::HIERARCHY_REQUEST_ERR;
+            ec = HIERARCHY_REQUEST_ERR;
             return;
         }
     }
     else {
         for (NodeImpl *n = newChild->firstChild(); n; n = n->nextSibling()) {
             if (!childTypeAllowed(n->nodeType())) {
-                exceptioncode = DOMException::HIERARCHY_REQUEST_ERR;
+                ec = HIERARCHY_REQUEST_ERR;
                 return;
             }
         }
@@ -1192,8 +1191,7 @@ bool NodeImpl::isReadOnly()
     // Entity & Entity Reference nodes and their descendants are read-only
     NodeImpl *n = this;
     while (n) {
-        if (n->nodeType() == Node::ENTITY_NODE ||
-            n->nodeType() == Node::ENTITY_REFERENCE_NODE)
+        if (n->nodeType() == ENTITY_NODE || n->nodeType() == ENTITY_REFERENCE_NODE)
             return true;
         n = n->parentNode();
     }
@@ -1606,7 +1604,7 @@ bool NodeImpl::isDefaultNamespace(const DOMString &namespaceURI) const
     // http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407/namespaces-algorithms.html#isDefaultNamespaceAlgo
     
     switch (nodeType()) {
-        case Node::ELEMENT_NODE: {
+        case ELEMENT_NODE: {
             const ElementImpl *elem = static_cast<const ElementImpl *>(this);
             
             if (elem->prefix().isNull())
@@ -1628,14 +1626,14 @@ bool NodeImpl::isDefaultNamespace(const DOMString &namespaceURI) const
 
             return false;
         }
-        case Node::DOCUMENT_NODE:
+        case DOCUMENT_NODE:
             return static_cast <const DocumentImpl *>(this)->documentElement()->isDefaultNamespace(namespaceURI);
-        case Node::ENTITY_NODE:
-        case Node::NOTATION_NODE:
-        case Node::DOCUMENT_TYPE_NODE:
-        case Node::DOCUMENT_FRAGMENT_NODE:
+        case ENTITY_NODE:
+        case NOTATION_NODE:
+        case DOCUMENT_TYPE_NODE:
+        case DOCUMENT_FRAGMENT_NODE:
             return false;
-        case Node::ATTRIBUTE_NODE: {
+        case ATTRIBUTE_NODE: {
             const AttrImpl *attr = static_cast<const AttrImpl *>(this);
             if (attr->ownerElement())
                 return attr->ownerElement()->isDefaultNamespace(namespaceURI);
@@ -1657,16 +1655,16 @@ DOMString NodeImpl::lookupPrefix(const DOMString &namespaceURI) const
         return DOMString();
     
     switch (nodeType()) {
-        case Node::ELEMENT_NODE:
+        case ELEMENT_NODE:
             return lookupNamespacePrefix(namespaceURI, static_cast<const ElementImpl *>(this));
-        case Node::DOCUMENT_NODE:
+        case DOCUMENT_NODE:
             return static_cast<const DocumentImpl *>(this)->documentElement()->lookupPrefix(namespaceURI);
-        case Node::ENTITY_NODE:
-        case Node::NOTATION_NODE:
-        case Node::DOCUMENT_FRAGMENT_NODE:
-        case Node::DOCUMENT_TYPE_NODE:
+        case ENTITY_NODE:
+        case NOTATION_NODE:
+        case DOCUMENT_FRAGMENT_NODE:
+        case DOCUMENT_TYPE_NODE:
             return DOMString();
-        case Node::ATTRIBUTE_NODE: {
+        case ATTRIBUTE_NODE: {
             const AttrImpl *attr = static_cast<const AttrImpl *>(this);
             if (attr->ownerElement())
                 return attr->ownerElement()->lookupPrefix(namespaceURI);
@@ -1688,7 +1686,7 @@ DOMString NodeImpl::lookupNamespaceURI(const DOMString &prefix) const
         return DOMString();
     
     switch (nodeType()) {
-        case Node::ELEMENT_NODE: {
+        case ELEMENT_NODE: {
             const ElementImpl *elem = static_cast<const ElementImpl *>(this);
             
             if (!elem->namespaceURI().isNull() && elem->prefix() == prefix)
@@ -1717,14 +1715,14 @@ DOMString NodeImpl::lookupNamespaceURI(const DOMString &prefix) const
                 return ancestor->lookupNamespaceURI(prefix);
             return DOMString();
         }
-        case Node::DOCUMENT_NODE:
+        case DOCUMENT_NODE:
             return static_cast<const DocumentImpl *>(this)->documentElement()->lookupNamespaceURI(prefix);
-        case Node::ENTITY_NODE:
-        case Node::NOTATION_NODE:
-        case Node::DOCUMENT_TYPE_NODE:
-        case Node::DOCUMENT_FRAGMENT_NODE:
+        case ENTITY_NODE:
+        case NOTATION_NODE:
+        case DOCUMENT_TYPE_NODE:
+        case DOCUMENT_FRAGMENT_NODE:
             return DOMString();
-        case Node::ATTRIBUTE_NODE: {
+        case ATTRIBUTE_NODE: {
             const AttrImpl *attr = static_cast<const AttrImpl *>(this);
             
             if (attr->ownerElement())
@@ -1768,22 +1766,21 @@ DOMString NodeImpl::lookupNamespacePrefix(const DOMString &_namespaceURI, const 
 DOMString NodeImpl::textContent() const
 {
     switch (nodeType()) {
-        case Node::TEXT_NODE:
-        case Node::CDATA_SECTION_NODE:
-        case Node::COMMENT_NODE:
-        case Node::PROCESSING_INSTRUCTION_NODE:
+        case TEXT_NODE:
+        case CDATA_SECTION_NODE:
+        case COMMENT_NODE:
+        case PROCESSING_INSTRUCTION_NODE:
             return nodeValue();
         
-        case Node::ELEMENT_NODE:
-        case Node::ATTRIBUTE_NODE:
-        case Node::ENTITY_NODE:
-        case Node::ENTITY_REFERENCE_NODE:
-        case Node::DOCUMENT_FRAGMENT_NODE: {
+        case ELEMENT_NODE:
+        case ATTRIBUTE_NODE:
+        case ENTITY_NODE:
+        case ENTITY_REFERENCE_NODE:
+        case DOCUMENT_FRAGMENT_NODE: {
             DOMString s = "";
         
             for (NodeImpl *child = firstChild(); child; child = child->nextSibling()) {
-                if (child->nodeType() == Node::COMMENT_NODE || 
-                    child->nodeType() == Node::PROCESSING_INSTRUCTION_NODE)
+                if (child->nodeType() == COMMENT_NODE || child->nodeType() == PROCESSING_INSTRUCTION_NODE)
                     continue;
             
                 s += child->textContent();
@@ -1792,39 +1789,39 @@ DOMString NodeImpl::textContent() const
             return s;
         }
         
-        case Node::DOCUMENT_NODE:
-        case Node::DOCUMENT_TYPE_NODE:
-        case Node::NOTATION_NODE:
+        case DOCUMENT_NODE:
+        case DOCUMENT_TYPE_NODE:
+        case NOTATION_NODE:
         default:
             return DOMString();            
     }
 }
 
-void NodeImpl::setTextContent(const DOMString &text, int &exception)
+void NodeImpl::setTextContent(const DOMString &text, ExceptionCode& ec)
 {           
     switch (nodeType()) {
-        case Node::TEXT_NODE:
-        case Node::CDATA_SECTION_NODE:
-        case Node::COMMENT_NODE:
-        case Node::PROCESSING_INSTRUCTION_NODE:
-            setNodeValue(text, exception);
+        case TEXT_NODE:
+        case CDATA_SECTION_NODE:
+        case COMMENT_NODE:
+        case PROCESSING_INSTRUCTION_NODE:
+            setNodeValue(text, ec);
             break;
-        case Node::ELEMENT_NODE:
-        case Node::ATTRIBUTE_NODE:
-        case Node::ENTITY_NODE:
-        case Node::ENTITY_REFERENCE_NODE:
-        case Node::DOCUMENT_FRAGMENT_NODE: {
+        case ELEMENT_NODE:
+        case ATTRIBUTE_NODE:
+        case ENTITY_NODE:
+        case ENTITY_REFERENCE_NODE:
+        case DOCUMENT_FRAGMENT_NODE: {
             ContainerNodeImpl *container = static_cast<ContainerNodeImpl *>(this);
             
             container->removeChildren();
             
             if (!text.isEmpty())
-                appendChild(getDocument()->createTextNode(text), exception);
+                appendChild(getDocument()->createTextNode(text), ec);
             break;
         }
-        case Node::DOCUMENT_NODE:
-        case Node::DOCUMENT_TYPE_NODE:
-        case Node::NOTATION_NODE:
+        case DOCUMENT_NODE:
+        case DOCUMENT_TYPE_NODE:
+        case NOTATION_NODE:
         default:
             // Do nothing
             break;
@@ -1839,6 +1836,11 @@ ElementImpl* NodeImpl::ancestorElement() const
             return static_cast<ElementImpl*>(n);
     }
     return 0;
+}
+
+bool NodeImpl::offsetInCharacters() const
+{
+    return false;
 }
 
 #ifndef NDEBUG

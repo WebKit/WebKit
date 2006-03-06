@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "DOMInternal.h"
 
-#import "css_stylesheet.h"
-#import "dom2_range.h"
-#import "dom2_events.h"
-#import "dom_exception.h"
-#import "PlatformString.h"
 #import "DocumentImpl.h"
-
+#import "MacFrame.h"
+#import "PlatformString.h"
+#import "dom2_rangeimpl.h"
 #import "kjs_dom.h"
 #import "kjs_proxy.h"
-
-#import <kxmlcore/Assertions.h>
-#import "MacFrame.h"
-
+#import <JavaScriptCore/WebScriptObjectPrivate.h>
 #import <JavaScriptCore/interpreter.h>
 #import <JavaScriptCore/runtime_root.h>
-#import <JavaScriptCore/WebScriptObjectPrivate.h>
+#import <kxmlcore/Assertions.h>
 
 using namespace WebCore;
 
@@ -54,30 +48,27 @@ using KJS::Bindings::RootObject;
 //------------------------------------------------------------------------------------------
 // Wrapping khtml implementation objects
 
-static CFMutableDictionaryRef wrapperCache = NULL;
+static HashMap<DOMObjectInternal*, NSObject*>* wrapperCache;
 
-id getDOMWrapperImpl(DOMObjectInternal *impl)
+NSObject* getDOMWrapperImpl(DOMObjectInternal* impl)
 {
     if (!wrapperCache)
         return nil;
-    return (id)CFDictionaryGetValue(wrapperCache, impl);
+    return wrapperCache->get(impl);
 }
 
-void addDOMWrapperImpl(id wrapper, DOMObjectInternal *impl)
+void addDOMWrapperImpl(NSObject* wrapper, DOMObjectInternal* impl)
 {
-    if (!wrapperCache) {
-        // No need to retain/free either impl key, or id value.  Items will be removed
-        // from the cache in dealloc methods.
-        wrapperCache = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
-    }
-    CFDictionarySetValue(wrapperCache, impl, wrapper);
+    if (!wrapperCache)
+        wrapperCache = new HashMap<DOMObjectInternal*, NSObject*>;
+    wrapperCache->set(impl, wrapper);
 }
 
-void removeDOMWrapper(DOMObjectInternal *impl)
+void removeDOMWrapper(DOMObjectInternal* impl)
 {
     if (!wrapperCache)
         return;
-    CFDictionaryRemoveValue(wrapperCache, impl);
+    wrapperCache->remove(impl);
 }
 
 //------------------------------------------------------------------------------------------
@@ -85,24 +76,21 @@ void removeDOMWrapper(DOMObjectInternal *impl)
 
 NSString * const DOMException = @"DOMException";
 NSString * const DOMRangeException = @"DOMRangeException";
-NSString * const DOMCSSException = @"DOMCSSException";
 NSString * const DOMEventException = @"DOMEventException";
 
-void raiseDOMException(int code)
+void raiseDOMException(ExceptionCode ec)
 {
-    ASSERT(code);
+    ASSERT(ec);
 
     NSString *name = ::DOMException;
 
-    if (code >= RangeException::_EXCEPTION_OFFSET && code <= RangeException::_EXCEPTION_MAX) {
+    int code = ec;
+    if (ec >= RangeExceptionOffset && ec <= RangeExceptionMax) {
         name = DOMRangeException;
-        code -= RangeException::_EXCEPTION_OFFSET;
-    } else if (code >= CSSException::_EXCEPTION_OFFSET && code <= CSSException::_EXCEPTION_MAX) {
-        name = DOMCSSException;
-        code -= CSSException::_EXCEPTION_OFFSET;
-    } else if (code >= EventException::_EXCEPTION_OFFSET && code<= EventException::_EXCEPTION_MAX) {
+        code -= RangeExceptionOffset;
+    } else if (ec >= EventExceptionOffset && ec <= EventExceptionMax) {
         name = DOMEventException;
-        code -= EventException::_EXCEPTION_OFFSET;
+        code -= EventExceptionOffset;
     }
 
     NSString *reason = [NSString stringWithFormat:@"*** Exception received from DOM API: %d", code];
@@ -170,7 +158,7 @@ DOMString::DOMString(NSString *str)
     if (![self isKindOfClass:[DOMNode class]]) {
         // DOMObject can't map back to a document, and thus an interpreter,
         // so for now only create wrappers for DOMNodes.
-        NSLog (@"%s:%d:  We don't know how to create ObjC JS wrappers from DOMObjects yet.", __FILE__, __LINE__);
+        NSLog(@"%s:%d:  We don't know how to create ObjC JS wrappers from DOMObjects yet.", __FILE__, __LINE__);
         return;
     }
     

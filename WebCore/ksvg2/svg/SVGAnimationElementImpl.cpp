@@ -486,11 +486,11 @@ void SVGAnimationElementImpl::setTargetAttribute(SVGElementImpl *target, DOMStri
                 attributeType = ATTRIBUTETYPE_CSS;
         }
     }
-    int exceptioncode;
+    ExceptionCode ec;
     if (attributeType == ATTRIBUTETYPE_CSS && styled && styled->style())
-        styled->style()->setProperty(name, value, "", exceptioncode);
+        styled->style()->setProperty(name, value, "", ec);
     else if (attributeType == ATTRIBUTETYPE_XML)
-        target->setAttribute(nameImpl, value, exceptioncode);
+        target->setAttribute(nameImpl, value, ec);
 }
 
 QString SVGAnimationElementImpl::attributeName() const

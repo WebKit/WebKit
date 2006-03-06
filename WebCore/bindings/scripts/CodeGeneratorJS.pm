@@ -3,6 +3,7 @@
 #
 # Copyright (C) 2005 Nikolas Zimmermann <wildfox@kde.org>
 # Copyright (C) 2006 Anders Carlsson <andersca@mac.com> 
+# Copyright (C) 2006 Apple Computer, Inc.
 #
 # This file is part of the KDE project
 # 
@@ -132,8 +133,8 @@ sub GenerateInterface
   my $headerFileName = "$outputDir/JS$name.h";
   my $implFileName = "$outputDir/JS$name.cpp";
 
-  open($IMPL, ">$implFileName") || die "Coudln't open file $implFileName";
-  open($HEADER, ">$headerFileName") || die "Coudln't open file $headerFileName";
+  open($IMPL, ">$implFileName") || die "Couldn't open file $implFileName";
+  open($HEADER, ">$headerFileName") || die "Couldn't open file $headerFileName";
 
 #  print " |-\n |\n";
 }
@@ -450,7 +451,7 @@ sub GenerateImplementation
       my $name = $constant->name;
       push(@hashKeys, $name);
      
-      my $value = "DOM::${interfaceName}::$name";
+      my $value = "${implClassName}::$name";
       push(@hashValues, $value);
 
       my $special = "DontDelete|ReadOnly";
@@ -659,9 +660,9 @@ sub GenerateImplementation
         # If a parameter is "an index", it should throw an INDEX_SIZE_ERR
         # exception        
         if ($parameter->extendedAttributes->{"IsIndex"}) {
-          $implIncludes{"dom_exception.h"} = 1;
+          $implIncludes{"ExceptionCode.h"} = 1;
           push(@implContent, "        if ($name < 0) {\n");
-          push(@implContent, "            setDOMException(exec, DOMException::INDEX_SIZE_ERR);\n");
+          push(@implContent, "            setDOMException(exec, INDEX_SIZE_ERR);\n");
           push(@implContent, "            break;\n        }\n");          
         }
         $paramIndex++;

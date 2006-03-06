@@ -42,18 +42,18 @@ void WrapContentsInDummySpanCommand::doApply()
 {
     ASSERT(m_element);
 
-    int exceptionCode = 0;
+    ExceptionCode ec = 0;
 
     if (!m_dummySpan)
         m_dummySpan = static_pointer_cast<HTMLElementImpl>(createStyleSpanElement(document()));
  
     while (m_element->firstChild()) {
-        m_dummySpan->appendChild(m_element->firstChild(), exceptionCode);
-        ASSERT(exceptionCode == 0);
+        m_dummySpan->appendChild(m_element->firstChild(), ec);
+        ASSERT(ec == 0);
     }
 
-    m_element->appendChild(m_dummySpan.get(), exceptionCode);
-    ASSERT(exceptionCode == 0);
+    m_element->appendChild(m_dummySpan.get(), ec);
+    ASSERT(ec == 0);
 }
 
 void WrapContentsInDummySpanCommand::doUnapply()
@@ -64,15 +64,15 @@ void WrapContentsInDummySpanCommand::doUnapply()
     ASSERT(m_element->firstChild() == m_dummySpan);
     ASSERT(!m_element->firstChild()->nextSibling());
 
-    int exceptionCode = 0;
+    ExceptionCode ec = 0;
 
     while (m_dummySpan->firstChild()) {
-        m_element->appendChild(m_dummySpan->firstChild(), exceptionCode);
-        ASSERT(exceptionCode == 0);
+        m_element->appendChild(m_dummySpan->firstChild(), ec);
+        ASSERT(ec == 0);
     }
 
-    m_element->removeChild(m_dummySpan.get(), exceptionCode);
-    ASSERT(exceptionCode == 0);
+    m_element->removeChild(m_dummySpan.get(), ec);
+    ASSERT(ec == 0);
 }
 
 } // namespace khtml

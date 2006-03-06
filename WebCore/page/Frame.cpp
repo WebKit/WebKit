@@ -2285,9 +2285,9 @@ Frame::TriState Frame::selectionHasStyle(CSSStyleDeclarationImpl *style) const
             return falseTriState;
         updateState(mutableStyle.get(), selectionStyle.get(), atStart, state);
         if (nodeToRemove) {
-            int exceptionCode = 0;
-            nodeToRemove->remove(exceptionCode);
-            assert(exceptionCode == 0);
+            ExceptionCode ec = 0;
+            nodeToRemove->remove(ec);
+            assert(ec == 0);
         }
     } else {
         for (NodeImpl* node = d->m_selection.start().node(); node; node = node->traverseNextNode()) {
@@ -2324,9 +2324,9 @@ bool Frame::selectionStartHasStyle(CSSStyleDeclarationImpl *style) const
     }
 
     if (nodeToRemove) {
-        int exceptionCode = 0;
-        nodeToRemove->remove(exceptionCode);
-        assert(exceptionCode == 0);
+        ExceptionCode ec = 0;
+        nodeToRemove->remove(ec);
+        assert(ec == 0);
     }
 
     return match;
@@ -2342,9 +2342,9 @@ DOMString Frame::selectionStartStylePropertyValue(int stylePropertyID) const
     DOMString value = selectionStyle->getPropertyValue(stylePropertyID);
 
     if (nodeToRemove) {
-        int exceptionCode = 0;
-        nodeToRemove->remove(exceptionCode);
-        assert(exceptionCode == 0);
+        ExceptionCode ec = 0;
+        nodeToRemove->remove(ec);
+        assert(ec == 0);
     }
 
     return value;
@@ -2368,31 +2368,31 @@ CSSComputedStyleDeclarationImpl *Frame::selectionComputedStyle(NodeImpl *&nodeTo
         return 0;
     
     RefPtr<ElementImpl> styleElement = elem;
-    int exceptionCode = 0;
+    ExceptionCode ec = 0;
 
     if (d->m_typingStyle) {
-        styleElement = document()->createElementNS(xhtmlNamespaceURI, "span", exceptionCode);
-        assert(exceptionCode == 0);
+        styleElement = document()->createElementNS(xhtmlNamespaceURI, "span", ec);
+        assert(ec == 0);
 
-        styleElement->setAttribute(styleAttr, d->m_typingStyle->cssText().impl(), exceptionCode);
-        assert(exceptionCode == 0);
+        styleElement->setAttribute(styleAttr, d->m_typingStyle->cssText().impl(), ec);
+        assert(ec == 0);
         
-        styleElement->appendChild(document()->createEditingTextNode(""), exceptionCode);
-        assert(exceptionCode == 0);
+        styleElement->appendChild(document()->createEditingTextNode(""), ec);
+        assert(ec == 0);
 
         if (elem->renderer() && elem->renderer()->canHaveChildren()) {
-            elem->appendChild(styleElement, exceptionCode);
+            elem->appendChild(styleElement, ec);
         } else {
             NodeImpl *parent = elem->parent();
             NodeImpl *next = elem->nextSibling();
 
             if (next) {
-                parent->insertBefore(styleElement, next, exceptionCode);
+                parent->insertBefore(styleElement, next, ec);
             } else {
-                parent->appendChild(styleElement, exceptionCode);
+                parent->appendChild(styleElement, ec);
             }
         }
-        assert(exceptionCode == 0);
+        assert(ec == 0);
 
         nodeToRemove = styleElement.get();
     }
@@ -3159,18 +3159,18 @@ RenderStyle *Frame::styleForSelectionStart(NodeImpl *&nodeToRemove) const
     if (!d->m_typingStyle)
         return node->renderer()->style();
     
-    int exceptionCode = 0;
-    RefPtr<ElementImpl> styleElement = document()->createElementNS(xhtmlNamespaceURI, "span", exceptionCode);
-    ASSERT(exceptionCode == 0);
+    ExceptionCode ec = 0;
+    RefPtr<ElementImpl> styleElement = document()->createElementNS(xhtmlNamespaceURI, "span", ec);
+    ASSERT(ec == 0);
     
-    styleElement->setAttribute(styleAttr, d->m_typingStyle->cssText().impl(), exceptionCode);
-    ASSERT(exceptionCode == 0);
+    styleElement->setAttribute(styleAttr, d->m_typingStyle->cssText().impl(), ec);
+    ASSERT(ec == 0);
     
-    styleElement->appendChild(document()->createEditingTextNode(""), exceptionCode);
-    ASSERT(exceptionCode == 0);
+    styleElement->appendChild(document()->createEditingTextNode(""), ec);
+    ASSERT(ec == 0);
     
-    node->parentNode()->appendChild(styleElement, exceptionCode);
-    ASSERT(exceptionCode == 0);
+    node->parentNode()->appendChild(styleElement, ec);
+    ASSERT(ec == 0);
     
     nodeToRemove = styleElement.get();    
     return styleElement->renderer()->style();

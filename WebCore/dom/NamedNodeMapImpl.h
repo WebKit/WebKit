@@ -35,6 +35,8 @@ namespace WebCore {
 class NodeImpl;
 class QualifiedName;
 
+typedef int ExceptionCode;
+
 // Generic NamedNodeMap interface
 // Other classes implement this for more specific situations e.g. attributes of an element.
 class NamedNodeMapImpl : public Shared<NamedNodeMapImpl>
@@ -44,16 +46,16 @@ public:
     virtual ~NamedNodeMapImpl() { }
 
     PassRefPtr<NodeImpl> getNamedItem(const DOMString& name) const { return getNamedItemNS(DOMString(), name); }
-    PassRefPtr<NodeImpl> removeNamedItem(const DOMString& name, int &exception) { return removeNamedItemNS(DOMString(), name, exception); }
+    PassRefPtr<NodeImpl> removeNamedItem(const DOMString& name, ExceptionCode& ec) { return removeNamedItemNS(DOMString(), name, ec); }
 
     virtual PassRefPtr<NodeImpl> getNamedItemNS(const DOMString &namespaceURI, const DOMString &localName) const = 0;
-    PassRefPtr<NodeImpl> setNamedItemNS(NodeImpl *arg, int &exception) { return setNamedItem(arg, exception); }
-    virtual PassRefPtr<NodeImpl> removeNamedItemNS(const DOMString &namespaceURI, const DOMString &localName, int &exception) = 0;
+    PassRefPtr<NodeImpl> setNamedItemNS(NodeImpl* arg, ExceptionCode& ec) { return setNamedItem(arg, ec); }
+    virtual PassRefPtr<NodeImpl> removeNamedItemNS(const String& namespaceURI, const String& localName, ExceptionCode&) = 0;
 
     // DOM methods & attributes for NamedNodeMap
     virtual PassRefPtr<NodeImpl> getNamedItem(const QualifiedName& attrName) const = 0;
-    virtual PassRefPtr<NodeImpl> removeNamedItem (const QualifiedName& attrName, int &exceptioncode) = 0;
-    virtual PassRefPtr<NodeImpl> setNamedItem (NodeImpl* arg, int &exceptioncode) = 0;
+    virtual PassRefPtr<NodeImpl> removeNamedItem (const QualifiedName& attrName, ExceptionCode&) = 0;
+    virtual PassRefPtr<NodeImpl> setNamedItem (NodeImpl* arg, ExceptionCode&) = 0;
 
     virtual PassRefPtr<NodeImpl> item(unsigned index) const = 0;
     virtual unsigned length() const = 0;

@@ -39,12 +39,13 @@ public:
     // DOM methods overridden from  parent classes
     const AtomicString& localName() const;
     virtual DOMString nodeName() const;
-    virtual unsigned short nodeType() const;
+    virtual NodeType nodeType() const;
     virtual PassRefPtr<NodeImpl> cloneNode(bool deep);
 
     // Other methods (not part of DOM)
     virtual bool isCommentNode() const { return true; }
-    virtual bool childTypeAllowed( unsigned short type );
+    virtual bool childTypeAllowed(NodeType);
+    virtual bool offsetInCharacters() const;
 
     virtual DOMString toString() const;
 };

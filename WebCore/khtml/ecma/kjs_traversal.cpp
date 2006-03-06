@@ -19,15 +19,14 @@
 
 #include "config.h"
 #include "kjs_traversal.h"
+
+#include "DocumentImpl.h"
+#include "Frame.h"
+#include "kjs_proxy.h"
+
 #include "kjs_traversal.lut.h"
 
-#include "kjs_proxy.h"
-#include "DocumentImpl.h"
-#include "dom2_traversalimpl.h"
-#include "Frame.h"
-#include <kjs/protect.h>
-
-using namespace DOM;
+using namespace WebCore;
 
 namespace KJS {
 
@@ -125,22 +124,22 @@ JSValue *getDOMNodeIterator(ExecState *exec, NodeIteratorImpl *ni)
 const ClassInfo NodeFilterConstructor::info = { "NodeFilterConstructor", 0, &NodeFilterConstructorTable, 0 };
 /*
 @begin NodeFilterConstructorTable 17
-  FILTER_ACCEPT		DOM::NodeFilter::FILTER_ACCEPT	DontDelete|ReadOnly
-  FILTER_REJECT		DOM::NodeFilter::FILTER_REJECT	DontDelete|ReadOnly
-  FILTER_SKIP		DOM::NodeFilter::FILTER_SKIP	DontDelete|ReadOnly
-  SHOW_ALL		DOM::NodeFilter::SHOW_ALL	DontDelete|ReadOnly
-  SHOW_ELEMENT		DOM::NodeFilter::SHOW_ELEMENT	DontDelete|ReadOnly
-  SHOW_ATTRIBUTE	DOM::NodeFilter::SHOW_ATTRIBUTE	DontDelete|ReadOnly
-  SHOW_TEXT		DOM::NodeFilter::SHOW_TEXT	DontDelete|ReadOnly
-  SHOW_CDATA_SECTION	DOM::NodeFilter::SHOW_CDATA_SECTION	DontDelete|ReadOnly
-  SHOW_ENTITY_REFERENCE	DOM::NodeFilter::SHOW_ENTITY_REFERENCE	DontDelete|ReadOnly
-  SHOW_ENTITY		DOM::NodeFilter::SHOW_ENTITY	DontDelete|ReadOnly
-  SHOW_PROCESSING_INSTRUCTION	DOM::NodeFilter::SHOW_PROCESSING_INSTRUCTION	DontDelete|ReadOnly
-  SHOW_COMMENT		DOM::NodeFilter::SHOW_COMMENT	DontDelete|ReadOnly
-  SHOW_DOCUMENT		DOM::NodeFilter::SHOW_DOCUMENT	DontDelete|ReadOnly
-  SHOW_DOCUMENT_TYPE	DOM::NodeFilter::SHOW_DOCUMENT_TYPE	DontDelete|ReadOnly
-  SHOW_DOCUMENT_FRAGMENT	DOM::NodeFilter::SHOW_DOCUMENT_FRAGMENT	DontDelete|ReadOnly
-  SHOW_NOTATION		DOM::NodeFilter::SHOW_NOTATION	DontDelete|ReadOnly
+  FILTER_ACCEPT		WebCore::NodeFilterImpl::FILTER_ACCEPT	DontDelete|ReadOnly
+  FILTER_REJECT		WebCore::NodeFilterImpl::FILTER_REJECT	DontDelete|ReadOnly
+  FILTER_SKIP		WebCore::NodeFilterImpl::FILTER_SKIP	DontDelete|ReadOnly
+  SHOW_ALL		WebCore::NodeFilterImpl::SHOW_ALL	DontDelete|ReadOnly
+  SHOW_ELEMENT		WebCore::NodeFilterImpl::SHOW_ELEMENT	DontDelete|ReadOnly
+  SHOW_ATTRIBUTE	WebCore::NodeFilterImpl::SHOW_ATTRIBUTE	DontDelete|ReadOnly
+  SHOW_TEXT		WebCore::NodeFilterImpl::SHOW_TEXT	DontDelete|ReadOnly
+  SHOW_CDATA_SECTION	WebCore::NodeFilterImpl::SHOW_CDATA_SECTION	DontDelete|ReadOnly
+  SHOW_ENTITY_REFERENCE	WebCore::NodeFilterImpl::SHOW_ENTITY_REFERENCE	DontDelete|ReadOnly
+  SHOW_ENTITY		WebCore::NodeFilterImpl::SHOW_ENTITY	DontDelete|ReadOnly
+  SHOW_PROCESSING_INSTRUCTION	WebCore::NodeFilterImpl::SHOW_PROCESSING_INSTRUCTION	DontDelete|ReadOnly
+  SHOW_COMMENT		WebCore::NodeFilterImpl::SHOW_COMMENT	DontDelete|ReadOnly
+  SHOW_DOCUMENT		WebCore::NodeFilterImpl::SHOW_DOCUMENT	DontDelete|ReadOnly
+  SHOW_DOCUMENT_TYPE	WebCore::NodeFilterImpl::SHOW_DOCUMENT_TYPE	DontDelete|ReadOnly
+  SHOW_DOCUMENT_FRAGMENT	WebCore::NodeFilterImpl::SHOW_DOCUMENT_FRAGMENT	DontDelete|ReadOnly
+  SHOW_NOTATION		WebCore::NodeFilterImpl::SHOW_NOTATION	DontDelete|ReadOnly
 @end
 */
 bool NodeFilterConstructor::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -345,7 +344,7 @@ short JSNodeFilterCondition::acceptNode(NodeImpl* filterNode) const
         return result->toInt32(exec);
     }
 
-    return DOM::NodeFilter::FILTER_REJECT;
+    return NodeFilterImpl::FILTER_REJECT;
 }
 
 } // namespace

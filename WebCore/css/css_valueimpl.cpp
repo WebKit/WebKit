@@ -21,27 +21,25 @@
  */
 
 #include "config.h"
-#include "css/css_valueimpl.h"
+#include "css_valueimpl.h"
 
 #include "Cache.h"
 #include "CachedImage.h"
 #include "DocLoader.h"
 #include "DocumentImpl.h"
-#include "css/css_ruleimpl.h"
-#include "css/css_stylesheetimpl.h"
-#include "css/cssparser.h"
-#include "css/cssstyleselector.h"
-#include "cssproperties.h"
-#include "cssvalues.h"
-#include "dom/css_stylesheet.h"
-#include "dom/css_value.h"
-#include "dom/dom_exception.h"
-#include "PlatformString.h"
-#include "HTMLElementImpl.h"
-#include "misc/helper.h"
+#include "ExceptionCode.h"
 #include "Font.h"
-#include "rendering/render_style.h"
+#include "HTMLElementImpl.h"
+#include "PlatformString.h"
 #include "StringImpl.h"
+#include "css_ruleimpl.h"
+#include "css_stylesheetimpl.h"
+#include "cssparser.h"
+#include "cssproperties.h"
+#include "cssstyleselector.h"
+#include "cssvalues.h"
+#include "helper.h"
+#include "render_style.h"
 #include <qregexp.h>
 
 #if SVG_SUPPORT
@@ -150,21 +148,21 @@ bool CSSStyleDeclarationImpl::isPropertyImplicit(const String &propertyName)
     return isPropertyImplicit(propID);
 }
 
-void CSSStyleDeclarationImpl::setProperty(const String &propertyName, const String &value, const String &priority, int &exception)
+void CSSStyleDeclarationImpl::setProperty(const String& propertyName, const String& value, const String& priority, ExceptionCode& ec)
 {
     int propID = propertyID(propertyName);
     if (!propID) // set exception?
         return;
     bool important = priority.find("important", 0, false) != -1;
-    setProperty(propID, value, important, exception);
+    setProperty(propID, value, important, ec);
 }
 
-String CSSStyleDeclarationImpl::removeProperty(const String &propertyName, int &exception)
+String CSSStyleDeclarationImpl::removeProperty(const String& propertyName, ExceptionCode& ec)
 {
     int propID = propertyID(propertyName);
     if (!propID)
         return String();
-    return removeProperty(propID, exception);
+    return removeProperty(propID, ec);
 }
 
 bool CSSStyleDeclarationImpl::isPropertyName(const String &propertyName)
@@ -345,9 +343,9 @@ PassRefPtr<CSSValueImpl> CSSMutableStyleDeclarationImpl::getPropertyCSSValue(int
     return 0;
 }
 
-String CSSMutableStyleDeclarationImpl::removeProperty(int propertyID, bool notifyChanged, int &exceptionCode)
+String CSSMutableStyleDeclarationImpl::removeProperty(int propertyID, bool notifyChanged, ExceptionCode& ec)
 {
-    exceptionCode = 0;
+    ec = 0;
 
     if (m_node && !m_node->getDocument())
         return ""; // FIXME: This (not well-understood) situation happens on albertsons.com.
@@ -422,29 +420,29 @@ bool CSSMutableStyleDeclarationImpl::isPropertyImplicit(int propertyID) const
     return false;
 }
 
-void CSSMutableStyleDeclarationImpl::setProperty(int propertyID, const String &value, bool important, int &exceptionCode)
+void CSSMutableStyleDeclarationImpl::setProperty(int propertyID, const String &value, bool important, ExceptionCode& ec)
 {
-    setProperty(propertyID, value, important, true, exceptionCode);
+    setProperty(propertyID, value, important, true, ec);
 }
 
-String CSSMutableStyleDeclarationImpl::removeProperty(int propertyID, int &exceptionCode)
+String CSSMutableStyleDeclarationImpl::removeProperty(int propertyID, ExceptionCode& ec)
 {
-    return removeProperty(propertyID, true, exceptionCode);
+    return removeProperty(propertyID, true, ec);
 }
 
-bool CSSMutableStyleDeclarationImpl::setProperty(int propertyID, const String &value, bool important, bool notifyChanged, int &exceptionCode)
+bool CSSMutableStyleDeclarationImpl::setProperty(int propertyID, const String &value, bool important, bool notifyChanged, ExceptionCode& ec)
 {
     if (m_node && !m_node->getDocument())
         return false; // FIXME: This (not well-understood) situation happens on albertsons.com.  We don't really know how they managed to run a script on a node
                       // with no document pointer, but this sidesteps the crash.
-    exceptionCode = 0;
+    ec = 0;
 
     removeProperty(propertyID);
 
     CSSParser parser(useStrictParsing());
     bool success = parser.parseValue(this, propertyID, value, important);
     if (!success) {
-        exceptionCode = CSSException::SYNTAX_ERR + CSSException::_EXCEPTION_OFFSET;
+        ec = SYNTAX_ERR;
     } else if (notifyChanged)
         setChanged();
     return success;
@@ -459,7 +457,7 @@ bool CSSMutableStyleDeclarationImpl::setProperty(int propertyID, int value, bool
     return true;
 }
 
-void CSSMutableStyleDeclarationImpl::setStringProperty(int propertyId, const String &value, CSSPrimitiveValue::UnitTypes type, bool important)
+void CSSMutableStyleDeclarationImpl::setStringProperty(int propertyId, const String &value, CSSPrimitiveValueImpl::UnitTypes type, bool important)
 {
     removeProperty(propertyId);
     m_values.append(CSSProperty(propertyId, new CSSPrimitiveValueImpl(value, type), important));
@@ -527,13 +525,13 @@ String CSSMutableStyleDeclarationImpl::cssText() const
     return result;
 }
 
-void CSSMutableStyleDeclarationImpl::setCssText(const String& text, int &exceptionCode)
+void CSSMutableStyleDeclarationImpl::setCssText(const String& text, ExceptionCode& ec)
 {
-    exceptionCode = 0;
+    ec = 0;
     m_values.clear();
     CSSParser parser(useStrictParsing());
     parser.parseDeclaration(this, text);
-    // FIXME: Detect syntax errors and set exceptionCode.
+    // FIXME: Detect syntax errors and set ec.
     setChanged();
 }
 
@@ -668,7 +666,7 @@ PassRefPtr<CSSMutableStyleDeclarationImpl> CSSMutableStyleDeclarationImpl::copy(
 
 unsigned short CSSInheritedValueImpl::cssValueType() const
 {
-    return CSSValue::CSS_INHERIT;
+    return CSS_INHERIT;
 }
 
 String CSSInheritedValueImpl::cssText() const
@@ -678,7 +676,7 @@ String CSSInheritedValueImpl::cssText() const
 
 unsigned short CSSInitialValueImpl::cssValueType() const
 { 
-    return CSSValue::CSS_INITIAL; 
+    return CSS_INITIAL; 
 }
 
 String CSSInitialValueImpl::cssText() const
@@ -696,7 +694,7 @@ CSSValueListImpl::~CSSValueListImpl()
 
 unsigned short CSSValueListImpl::cssValueType() const
 {
-    return CSSValue::CSS_VALUE_LIST;
+    return CSS_VALUE_LIST;
 }
 
 void CSSValueListImpl::append(PassRefPtr<CSSValueImpl> val)
@@ -719,60 +717,60 @@ String CSSValueListImpl::cssText() const
 
 // -------------------------------------------------------------------------------------
 
-CSSPrimitiveValueImpl::CSSPrimitiveValueImpl()
+CSSPrimitiveValue::CSSPrimitiveValueImpl()
 {
     m_type = 0;
 }
 
-CSSPrimitiveValueImpl::CSSPrimitiveValueImpl(int ident)
+CSSPrimitiveValue::CSSPrimitiveValueImpl(int ident)
 {
     m_value.ident = ident;
-    m_type = CSSPrimitiveValue::CSS_IDENT;
+    m_type = CSS_IDENT;
 }
 
-CSSPrimitiveValueImpl::CSSPrimitiveValueImpl(double num, CSSPrimitiveValue::UnitTypes type)
+CSSPrimitiveValue::CSSPrimitiveValueImpl(double num, UnitTypes type)
 {
     m_value.num = num;
     m_type = type;
 }
 
-CSSPrimitiveValueImpl::CSSPrimitiveValueImpl(const String& str, CSSPrimitiveValue::UnitTypes type)
+CSSPrimitiveValue::CSSPrimitiveValueImpl(const String& str, UnitTypes type)
 {
     if ((m_value.string = str.impl()))
         m_value.string->ref();
     m_type = type;
 }
 
-CSSPrimitiveValueImpl::CSSPrimitiveValueImpl(PassRefPtr<CounterImpl> c)
+CSSPrimitiveValue::CSSPrimitiveValueImpl(PassRefPtr<CounterImpl> c)
 {
     m_value.counter = c.release();
-    m_type = CSSPrimitiveValue::CSS_COUNTER;
+    m_type = CSS_COUNTER;
 }
 
-CSSPrimitiveValueImpl::CSSPrimitiveValueImpl(PassRefPtr<RectImpl> r)
+CSSPrimitiveValue::CSSPrimitiveValueImpl(PassRefPtr<RectImpl> r)
 {
     m_value.rect = r.release();
-    m_type = CSSPrimitiveValue::CSS_RECT;
+    m_type = CSS_RECT;
 }
 
 #if __APPLE__
-CSSPrimitiveValueImpl::CSSPrimitiveValueImpl(PassRefPtr<DashboardRegionImpl> r)
+CSSPrimitiveValue::CSSPrimitiveValueImpl(PassRefPtr<DashboardRegionImpl> r)
 {
     m_value.region = r.release();
-    m_type = CSSPrimitiveValue::CSS_DASHBOARD_REGION;
+    m_type = CSS_DASHBOARD_REGION;
 }
 #endif
 
-CSSPrimitiveValueImpl::CSSPrimitiveValueImpl(RGBA32 color)
+CSSPrimitiveValue::CSSPrimitiveValueImpl(RGBA32 color)
 {
     m_value.rgbcolor = color;
-    m_type = CSSPrimitiveValue::CSS_RGBCOLOR;
+    m_type = CSS_RGBCOLOR;
 }
 
-CSSPrimitiveValueImpl::CSSPrimitiveValueImpl(PassRefPtr<PairImpl> p)
+CSSPrimitiveValue::CSSPrimitiveValueImpl(PassRefPtr<PairImpl> p)
 {
     m_value.pair = p.release();
-    m_type = CSSPrimitiveValue::CSS_PAIR;
+    m_type = CSS_PAIR;
 }
 
 CSSPrimitiveValueImpl::~CSSPrimitiveValueImpl()
@@ -783,20 +781,20 @@ CSSPrimitiveValueImpl::~CSSPrimitiveValueImpl()
 void CSSPrimitiveValueImpl::cleanup()
 {
     switch(m_type) {
-    case CSSPrimitiveValue::CSS_STRING:
-    case CSSPrimitiveValue::CSS_URI:
-    case CSSPrimitiveValue::CSS_ATTR:
+    case CSS_STRING:
+    case CSS_URI:
+    case CSS_ATTR:
         if (m_value.string)
             m_value.string->deref();
         break;
-    case CSSPrimitiveValue::CSS_COUNTER:
+    case CSS_COUNTER:
         m_value.counter->deref();
         break;
-    case CSSPrimitiveValue::CSS_RECT:
+    case CSS_RECT:
         m_value.rect->deref();
         break;
 #if __APPLE__
-    case CSSPrimitiveValue::CSS_DASHBOARD_REGION:
+    case CSS_DASHBOARD_REGION:
         if (m_value.region)
             m_value.region->deref();
         break;
@@ -837,33 +835,33 @@ double CSSPrimitiveValueImpl::computeLengthFloat(RenderStyle *style, bool applyZ
 
     double factor = 1.;
     switch(type) {
-    case CSSPrimitiveValue::CSS_EMS:
+    case CSS_EMS:
         factor = applyZoomFactor ?
           style->fontDescription().computedSize() :
           style->fontDescription().specifiedSize();
         break;
-    case CSSPrimitiveValue::CSS_EXS: {
+    case CSS_EXS: {
         // FIXME: We have a bug right now where the zoom will be applied multiple times to EX units.
         // We really need to compute EX using fontMetrics for the original specifiedSize and not use
         // our actual constructed rendering font.
         factor = style->font().xHeight();
         break;
     }
-    case CSSPrimitiveValue::CSS_PX:
+    case CSS_PX:
         break;
-    case CSSPrimitiveValue::CSS_CM:
+    case CSS_CM:
         factor = cssPixelsPerInch/2.54; // (2.54 cm/in)
         break;
-    case CSSPrimitiveValue::CSS_MM:
+    case CSS_MM:
         factor = cssPixelsPerInch/25.4;
         break;
-    case CSSPrimitiveValue::CSS_IN:
+    case CSS_IN:
         factor = cssPixelsPerInch;
         break;
-    case CSSPrimitiveValue::CSS_PT:
+    case CSS_PT:
         factor = cssPixelsPerInch/72.;
         break;
-    case CSSPrimitiveValue::CSS_PC:
+    case CSS_PC:
         // 1 pc == 12 pt
         factor = cssPixelsPerInch*12./72.;
         break;
@@ -874,31 +872,31 @@ double CSSPrimitiveValueImpl::computeLengthFloat(RenderStyle *style, bool applyZ
     return getFloatValue(type)*factor;
 }
 
-void CSSPrimitiveValueImpl::setFloatValue( unsigned short unitType, double floatValue, int &exceptioncode )
+void CSSPrimitiveValueImpl::setFloatValue( unsigned short unitType, double floatValue, ExceptionCode& ec)
 {
-    exceptioncode = 0;
+    ec = 0;
     cleanup();
     // ### check if property supports this type
-    if (m_type > CSSPrimitiveValue::CSS_DIMENSION) {
-        exceptioncode = CSSException::SYNTAX_ERR + CSSException::_EXCEPTION_OFFSET;
+    if (m_type > CSS_DIMENSION) {
+        ec = SYNTAX_ERR;
         return;
     }
-    //if(m_type > CSSPrimitiveValue::CSS_DIMENSION) throw DOMException(DOMException::INVALID_ACCESS_ERR);
+    //if(m_type > CSS_DIMENSION) throw DOMException(INVALID_ACCESS_ERR);
     m_value.num = floatValue;
     m_type = unitType;
 }
 
-void CSSPrimitiveValueImpl::setStringValue( unsigned short stringType, const String &stringValue, int &exceptioncode )
+void CSSPrimitiveValueImpl::setStringValue( unsigned short stringType, const String &stringValue, ExceptionCode& ec)
 {
-    exceptioncode = 0;
+    ec = 0;
     cleanup();
-    //if(m_type < CSSPrimitiveValue::CSS_STRING) throw DOMException(DOMException::INVALID_ACCESS_ERR);
-    //if(m_type > CSSPrimitiveValue::CSS_ATTR) throw DOMException(DOMException::INVALID_ACCESS_ERR);
-    if (m_type < CSSPrimitiveValue::CSS_STRING || m_type > CSSPrimitiveValue::CSS_ATTR) {
-        exceptioncode = CSSException::SYNTAX_ERR + CSSException::_EXCEPTION_OFFSET;
+    //if(m_type < CSS_STRING) throw DOMException(INVALID_ACCESS_ERR);
+    //if(m_type > CSS_ATTR) throw DOMException(INVALID_ACCESS_ERR);
+    if (m_type < CSS_STRING || m_type > CSS_ATTR) {
+        ec = SYNTAX_ERR;
         return;
     }
-    if (stringType != CSSPrimitiveValue::CSS_IDENT) {
+    if (stringType != CSS_IDENT) {
         m_value.string = stringValue.impl();
         m_value.string->ref();
         m_type = stringType;
@@ -909,11 +907,11 @@ void CSSPrimitiveValueImpl::setStringValue( unsigned short stringType, const Str
 String CSSPrimitiveValueImpl::getStringValue() const
 {
     switch (m_type) {
-        case CSSPrimitiveValue::CSS_STRING:
-        case CSSPrimitiveValue::CSS_ATTR:
-        case CSSPrimitiveValue::CSS_URI:
+        case CSS_STRING:
+        case CSS_ATTR:
+        case CSS_URI:
             return m_value.string;
-        case CSSPrimitiveValue::CSS_IDENT:
+        case CSS_IDENT:
             return getValueName(m_value.ident);
         default:
             // FIXME: The CSS 2.1 spec says you should throw an exception here.
@@ -925,7 +923,7 @@ String CSSPrimitiveValueImpl::getStringValue() const
 
 unsigned short CSSPrimitiveValueImpl::cssValueType() const
 {
-    return CSSValue::CSS_PRIMITIVE_VALUE;
+    return CSS_PRIMITIVE_VALUE;
 }
 
 bool CSSPrimitiveValueImpl::parseString( const String &/*string*/, bool )
@@ -936,7 +934,7 @@ bool CSSPrimitiveValueImpl::parseString( const String &/*string*/, bool )
 
 int CSSPrimitiveValueImpl::getIdent()
 {
-    if(m_type != CSSPrimitiveValue::CSS_IDENT) return 0;
+    if(m_type != CSS_IDENT) return 0;
     return m_value.ident;
 }
 
@@ -946,79 +944,79 @@ String CSSPrimitiveValueImpl::cssText() const
     // name if it was specified) - check what spec says about this
     String text;
     switch ( m_type ) {
-        case CSSPrimitiveValue::CSS_UNKNOWN:
+        case CSS_UNKNOWN:
             // ###
             break;
-        case CSSPrimitiveValue::CSS_NUMBER:
+        case CSS_NUMBER:
             text = QString::number(m_value.num);
             break;
-        case CSSPrimitiveValue::CSS_PERCENTAGE:
+        case CSS_PERCENTAGE:
             text = QString::number(m_value.num) + "%";
             break;
-        case CSSPrimitiveValue::CSS_EMS:
+        case CSS_EMS:
             text = QString::number(m_value.num) + "em";
             break;
-        case CSSPrimitiveValue::CSS_EXS:
+        case CSS_EXS:
             text = QString::number(m_value.num) + "ex";
             break;
-        case CSSPrimitiveValue::CSS_PX:
+        case CSS_PX:
             text = QString::number(m_value.num) + "px";
             break;
-        case CSSPrimitiveValue::CSS_CM:
+        case CSS_CM:
             text = QString::number(m_value.num) + "cm";
             break;
-        case CSSPrimitiveValue::CSS_MM:
+        case CSS_MM:
             text = QString::number(m_value.num) + "mm";
             break;
-        case CSSPrimitiveValue::CSS_IN:
+        case CSS_IN:
             text = QString::number(m_value.num) + "in";
             break;
-        case CSSPrimitiveValue::CSS_PT:
+        case CSS_PT:
             text = QString::number(m_value.num) + "pt";
             break;
-        case CSSPrimitiveValue::CSS_PC:
+        case CSS_PC:
             text = QString::number(m_value.num) + "pc";
             break;
-        case CSSPrimitiveValue::CSS_DEG:
+        case CSS_DEG:
             text = QString::number(m_value.num) + "deg";
             break;
-        case CSSPrimitiveValue::CSS_RAD:
+        case CSS_RAD:
             text = QString::number(m_value.num) + "rad";
             break;
-        case CSSPrimitiveValue::CSS_GRAD:
+        case CSS_GRAD:
             text = QString::number(m_value.num) + "grad";
             break;
-        case CSSPrimitiveValue::CSS_MS:
+        case CSS_MS:
             text = QString::number(m_value.num) + "ms";
             break;
-        case CSSPrimitiveValue::CSS_S:
+        case CSS_S:
             text = QString::number(m_value.num) + "s";
             break;
-        case CSSPrimitiveValue::CSS_HZ:
+        case CSS_HZ:
             text = QString::number(m_value.num) + "hz";
             break;
-        case CSSPrimitiveValue::CSS_KHZ:
+        case CSS_KHZ:
             text = QString::number(m_value.num) + "khz";
             break;
-        case CSSPrimitiveValue::CSS_DIMENSION:
+        case CSS_DIMENSION:
             // ###
             break;
-        case CSSPrimitiveValue::CSS_STRING:
+        case CSS_STRING:
             text = quoteStringIfNeeded(m_value.string);
             break;
-        case CSSPrimitiveValue::CSS_URI:
+        case CSS_URI:
             text = "url(" + String(m_value.string) + ")";
             break;
-        case CSSPrimitiveValue::CSS_IDENT:
+        case CSS_IDENT:
             text = getValueName(m_value.ident);
             break;
-        case CSSPrimitiveValue::CSS_ATTR:
+        case CSS_ATTR:
             // ###
             break;
-        case CSSPrimitiveValue::CSS_COUNTER:
+        case CSS_COUNTER:
             // ###
             break;
-        case CSSPrimitiveValue::CSS_RECT: {
+        case CSS_RECT: {
             RectImpl* rectVal = getRectValue();
             text = "rect(";
             text += rectVal->top()->cssText() + " ";
@@ -1027,7 +1025,7 @@ String CSSPrimitiveValueImpl::cssText() const
             text += rectVal->left()->cssText() + ")";
             break;
         }
-        case CSSPrimitiveValue::CSS_RGBCOLOR: {
+        case CSS_RGBCOLOR: {
             Color color(m_value.rgbcolor);
             if (color.alpha() < 0xFF)
                 text = "rgba(";
@@ -1041,13 +1039,13 @@ String CSSPrimitiveValueImpl::cssText() const
             text += ")";
             break;
         }
-        case CSSPrimitiveValue::CSS_PAIR:
+        case CSS_PAIR:
             text = m_value.pair->first()->cssText();
             text += " ";
             text += m_value.pair->second()->cssText();
             break;
 #if __APPLE__
-        case CSSPrimitiveValue::CSS_DASHBOARD_REGION:
+        case CSS_DASHBOARD_REGION:
             for (DashboardRegionImpl* region = getDashboardRegionValue(); region; region = region->m_next.get()) {
                 text = "dashboard-region(";
                 text += region->m_label;
@@ -1084,7 +1082,7 @@ PairImpl::~PairImpl()
 // -----------------------------------------------------------------
 
 CSSImageValueImpl::CSSImageValueImpl(const String& url, StyleBaseImpl *style)
-    : CSSPrimitiveValueImpl(url, CSSPrimitiveValue::CSS_URI), m_image(0), m_accessedImage(false)
+    : CSSPrimitiveValueImpl(url, CSS_URI), m_image(0), m_accessedImage(false)
 {
 }
 
@@ -1152,7 +1150,7 @@ String CSSBorderImageValueImpl::cssText() const
 // ------------------------------------------------------------------------
 
 FontFamilyValueImpl::FontFamilyValueImpl(const QString& string)
-    : CSSPrimitiveValueImpl(String(), CSSPrimitiveValue::CSS_STRING)
+    : CSSPrimitiveValueImpl(String(), CSS_STRING)
 {
     static const QRegExp parenReg(" \\(.*\\)$");
     static const QRegExp braceReg(" \\[.*\\]$");

@@ -27,7 +27,6 @@
 
 #include "DOMImplementationImpl.h"
 #include "DocumentImpl.h"
-#include "dom_node.h"
 
 namespace DOM {
 
@@ -79,9 +78,9 @@ DOMString DocumentTypeImpl::nodeName() const
     return name();
 }
 
-unsigned short DocumentTypeImpl::nodeType() const
+NodeImpl::NodeType DocumentTypeImpl::nodeType() const
 {
-    return Node::DOCUMENT_TYPE_NODE;
+    return DOCUMENT_TYPE_NODE;
 }
 
 PassRefPtr<NodeImpl> DocumentTypeImpl::cloneNode(bool /*deep*/)

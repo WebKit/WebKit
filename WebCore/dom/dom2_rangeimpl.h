@@ -27,7 +27,6 @@
 #ifndef DOM2_RangeImpl_h_
 #define DOM2_RangeImpl_h_
 
-#include "dom2_range.h"
 #include "Shared.h"
 #include <kxmlcore/RefPtr.h>
 
@@ -46,6 +45,10 @@ class NodeImpl;
 class Position;
 class String;
 
+const int RangeExceptionOffset = 200;
+const int RangeExceptionMax = 299;
+enum RangeExceptionCode { BAD_BOUNDARYPOINTS_ERR = RangeExceptionOffset + 1, INVALID_NODE_TYPE_ERR };
+
 class RangeImpl : public Shared<RangeImpl>
 {
 public:
@@ -63,8 +66,9 @@ public:
     void setStart(NodeImpl* container, int offset, ExceptionCode&);
     void setEnd(NodeImpl* container, int offset, ExceptionCode&);
     void collapse(bool toStart, ExceptionCode&);
-    short compareBoundaryPoints(Range::CompareHow how, const RangeImpl* sourceRange, ExceptionCode&) const;
-    static short compareBoundaryPoints(NodeImpl* containerA, int offsetA, NodeImpl* containerB, int offsetB );
+    enum CompareHow { START_TO_START, START_TO_END, END_TO_END, END_TO_START };
+    short compareBoundaryPoints(CompareHow, const RangeImpl* sourceRange, ExceptionCode&) const;
+    static short compareBoundaryPoints(NodeImpl* containerA, int offsetA, NodeImpl* containerB, int offsetB);
     static short compareBoundaryPoints(const Position&, const Position&);
     bool boundaryPointsValid() const;
     void deleteContents(ExceptionCode&);

@@ -165,7 +165,7 @@ public:
     // DOM methods overridden from  parent classes
 
     virtual String nodeName() const;
-    virtual unsigned short nodeType() const;
+    virtual NodeType nodeType() const;
 
     // Other methods (not part of DOM)
     virtual bool isDocumentNode() const { return true; }
@@ -339,7 +339,7 @@ public:
     MouseEventWithHitTestResults prepareMouseEvent(bool readonly, bool active, bool mouseMove, int x, int y, MouseEvent*);
 
     virtual bool childAllowed(NodeImpl*);
-    virtual bool childTypeAllowed(unsigned short nodeType);
+    virtual bool childTypeAllowed(NodeType);
     virtual PassRefPtr<NodeImpl> cloneNode(bool deep);
 
     StyleSheetListImpl* styleSheets();

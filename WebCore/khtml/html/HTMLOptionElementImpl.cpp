@@ -26,16 +26,13 @@
 
 #include "config.h"
 #include "HTMLOptionElementImpl.h"
-#include "rendering/render_form.h"
 
 #include "DocumentImpl.h"
+#include "ExceptionCode.h"
 #include "TextImpl.h"
-#include "dom_exception.h"
-#include "dom_node.h"
+#include "render_form.h"
 
-using namespace khtml;
-
-namespace DOM {
+namespace WebCore {
 
 using namespace HTMLNames;
 
@@ -68,7 +65,7 @@ DOMString HTMLOptionElementImpl::text() const
 
     const NodeImpl *n = this->firstChild();
     while (n) {
-        if (n->nodeType() == Node::TEXT_NODE || n->nodeType() == Node::CDATA_SECTION_NODE)
+        if (n->nodeType() == TEXT_NODE || n->nodeType() == CDATA_SECTION_NODE)
             text += n->nodeValue();
         // skip script content
         if (n->isElementNode() && n->hasTagName(HTMLNames::scriptTag))
@@ -80,17 +77,17 @@ DOMString HTMLOptionElementImpl::text() const
     return text;
 }
 
-void HTMLOptionElementImpl::setText(const DOMString &text, int &exception)
+void HTMLOptionElementImpl::setText(const DOMString &text, ExceptionCode& ec)
 {
     // Handle the common special case where there's exactly 1 child node, and it's a text node.
     NodeImpl *child = firstChild();
     if (child && child->isTextNode() && !child->nextSibling()) {
-        static_cast<TextImpl *>(child)->setData(text, exception);
+        static_cast<TextImpl *>(child)->setData(text, ec);
         return;
     }
 
     removeChildren();
-    appendChild(new TextImpl(getDocument(), text), exception);
+    appendChild(new TextImpl(getDocument(), text), ec);
 }
 
 int HTMLOptionElementImpl::index() const
@@ -113,9 +110,9 @@ int HTMLOptionElementImpl::index() const
     return 0;
 }
 
-void HTMLOptionElementImpl::setIndex(int, int &exception)
+void HTMLOptionElementImpl::setIndex(int, ExceptionCode& ec)
 {
-    exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+    ec = NO_MODIFICATION_ALLOWED_ERR;
     // ###
 }
 

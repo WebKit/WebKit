@@ -30,6 +30,7 @@
 #import "FloatRect.h"
 #import "FoundationExtras.h"
 #import "IntPointArray.h"
+#import "IntRect.h"
 #import "KRenderingDeviceQuartz.h"
 #import "KWQExceptions.h"
 #import "WebCoreGraphicsBridge.h"

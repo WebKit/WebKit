@@ -26,19 +26,15 @@
 #include "config.h"
 #include "kjs_binding.h"
 
+#include "EventNames.h"
+#include "Frame.h"
+#include "dom2_eventsimpl.h"
+#include "dom2_rangeimpl.h"
 #include "kjs_dom.h"
 #include "kjs_window.h"
-#include <kjs/internal.h> // for InterpreterImp
 #include <kjs/collector.h>
+#include <kjs/internal.h> // for InterpreterImp
 #include <kxmlcore/HashMap.h>
-
-#include "dom/dom_exception.h"
-#include "dom/dom2_events.h"
-#include "dom/dom2_range.h"
-#include "dom2_eventsimpl.h"
-#include "EventNames.h"
-#include "dom/css_stylesheet.h"
-#include "Frame.h"
 
 using namespace WebCore;
 using namespace EventNames;
@@ -71,16 +67,10 @@ ScriptInterpreter::ScriptInterpreter( JSObject *global, Frame *frame )
   : Interpreter( global ), m_frame(frame),
     m_evt( 0L ), m_inlineCode(false), m_timerCallback(false)
 {
-#ifdef KJS_VERBOSE
-  kdDebug(6070) << "ScriptInterpreter::ScriptInterpreter " << this << " for frame=" << m_frame << endl;
-#endif
 }
 
 ScriptInterpreter::~ScriptInterpreter()
 {
-#ifdef KJS_VERBOSE
-  kdDebug(6070) << "ScriptInterpreter::~ScriptInterpreter " << this << " for frame=" << m_frame << endl;
-#endif
 }
 
 DOMObject* ScriptInterpreter::getDOMObject(void* objectHandle) 
@@ -214,16 +204,14 @@ bool ScriptInterpreter::isGlobalObject(JSValue *v)
     return v->isObject(&Window::info);
 }
 
-bool ScriptInterpreter::isSafeScript (const Interpreter *_target)
+bool ScriptInterpreter::isSafeScript(const Interpreter* target)
 {
-    const KJS::ScriptInterpreter *target = static_cast<const ScriptInterpreter *>(_target);
-
-    return KJS::Window::isSafeScript (this, target);
+    return Window::isSafeScript(this, static_cast<const ScriptInterpreter*>(target));
 }
 
-Interpreter *ScriptInterpreter::interpreterForGlobalObject (const JSValue *imp)
+Interpreter* ScriptInterpreter::interpreterForGlobalObject(const JSValue* imp)
 {
-    const KJS::Window *win = static_cast<const KJS::Window *>(imp);
+    const Window* win = static_cast<const Window*>(imp);
     return win->interpreter();
 }
 
@@ -247,8 +235,7 @@ void *ScriptInterpreter::createLanguageInstanceForValue (ExecState *exec, int la
 
 UString::UString(const QString &d)
 {
-  // reinterpret_cast is ugly but in this case safe, since QChar and UChar have the same
-  // memory layout
+  // reinterpret_cast is ugly but in this case safe, since QChar and UChar have the same memory layout
   m_rep = UString::Rep::createCopying(reinterpret_cast<const UChar *>(d.unicode()), d.length());
 }
 
@@ -258,8 +245,7 @@ UString::UString(const DOMString &d)
     m_rep = &Rep::null;
     return;
   }
-  // reinterpret_cast is ugly but in this case safe, since QChar and UChar have the same
-  // memory layout
+  // reinterpret_cast is ugly but in this case safe, since QChar and UChar have the same memory layout
   m_rep = UString::Rep::createCopying(reinterpret_cast<const UChar *>(d.unicode()), d.length());
 }
 
@@ -269,8 +255,7 @@ UString::UString(const AtomicString &d)
     m_rep = &Rep::null;
     return;
   }
-  // reinterpret_cast is ugly but in this case safe, since QChar and UChar have the same
-  // memory layout
+  // reinterpret_cast is ugly but in this case safe, since QChar and UChar have the same memory layout
   m_rep = UString::Rep::createCopying(reinterpret_cast<const UChar *>(d.domString().unicode()), d.domString().length());
 }
 
@@ -279,7 +264,7 @@ DOMString UString::domString() const
   if (isNull())
     return DOMString();
   if (isEmpty())
-    return DOMString("");
+    return "";
   return DOMString((QChar*) data(), size());
 }
 
@@ -288,7 +273,7 @@ QString UString::qstring() const
   if (isNull())
     return QString();
   if (isEmpty())
-    return QString("");
+    return "";
   return QString((QChar*) data(), size());
 }
 
@@ -302,7 +287,7 @@ DOMString Identifier::domString() const
   if (isNull())
     return DOMString();
   if (isEmpty())
-    return DOMString("");
+    return "";
   return DOMString((QChar*) data(), size());
 }
 
@@ -311,7 +296,7 @@ QString Identifier::qstring() const
   if (isNull())
     return QString();
   if (isEmpty())
-    return QString("");
+    return "";
   return QString((QChar*) data(), size());
 }
 
@@ -333,7 +318,6 @@ DOMString valueToStringWithNullCheck(ExecState *exec, JSValue *val)
 {
     if (val->isNull())
         return DOMString();
-    
     return val->toString(exec).domString();
 }
 
@@ -360,37 +344,28 @@ static const char * const rangeExceptionNames[] = {
     0, "BAD_BOUNDARYPOINTS_ERR", "INVALID_NODE_TYPE_ERR"
 };
 
-static const char * const cssExceptionNames[] = {
-    "SYNTAX_ERR", "INVALID_MODIFICATION_ERR"
-};
-
 static const char * const eventExceptionNames[] = {
     "UNSPECIFIED_EVENT_TYPE_ERR"
 };
 
-void setDOMException(ExecState *exec, int DOMExceptionCode)
+void setDOMException(ExecState* exec, ExceptionCode ec)
 {
-  if (DOMExceptionCode == 0 || exec->hadException())
+  if (ec == 0 || exec->hadException())
     return;
 
   const char* type = "DOM";
-  int code = DOMExceptionCode;
+  int code = ec;
 
   const char * const * nameTable;
   int nameTableSize;
-  if (code >= RangeException::_EXCEPTION_OFFSET && code <= RangeException::_EXCEPTION_MAX) {
+  if (code >= RangeExceptionOffset && code <= RangeExceptionMax) {
     type = "DOM Range";
-    code -= RangeException::_EXCEPTION_OFFSET;
+    code -= RangeExceptionOffset;
     nameTable = rangeExceptionNames;
     nameTableSize = sizeof(rangeExceptionNames) / sizeof(rangeExceptionNames[0]);
-  } else if (code >= CSSException::_EXCEPTION_OFFSET && code <= CSSException::_EXCEPTION_MAX) {
-    type = "CSS";
-    code -= CSSException::_EXCEPTION_OFFSET;
-    nameTable = cssExceptionNames;
-    nameTableSize = sizeof(cssExceptionNames) / sizeof(cssExceptionNames[0]);
-  } else if (code >= EventException::_EXCEPTION_OFFSET && code <= EventException::_EXCEPTION_MAX) {
+  } else if (code >= EventExceptionOffset && code <= EventExceptionMax) {
     type = "DOM Events";
-    code -= EventException::_EXCEPTION_OFFSET;
+    code -= EventExceptionOffset;
     nameTable = eventExceptionNames;
     nameTableSize = sizeof(eventExceptionNames) / sizeof(eventExceptionNames[0]);
   } else {
@@ -414,7 +389,7 @@ void setDOMException(ExecState *exec, int DOMExceptionCode)
   else
     sprintf(buffer, "%s Exception %d", type, code);
 
-  JSObject *errorObject = throwError(exec, GeneralError, buffer);
+  JSObject* errorObject = throwError(exec, GeneralError, buffer);
   errorObject->put(exec, "code", jsNumber(code));
 }
 

@@ -109,9 +109,9 @@ float SVGLengthImpl::valueInSpecifiedUnits() const
     return m_valueInSpecifiedUnits;
 }                                                
 
-void SVGLengthImpl::setValueAsString(DOMStringImpl *valueAsStringImpl)
+void SVGLengthImpl::setValueAsString(DOMStringImpl* s)
 {
-    DOMString valueAsString(valueAsStringImpl);
+    DOMString valueAsString(s);
     if(valueAsString.isEmpty())
         return;
 

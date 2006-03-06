@@ -164,7 +164,7 @@ bool StyleChange::checkForLegacyHTMLStyleChange(const CSSProperty *property)
             m_applyFontFace = valueText;
             return true;
         case CSS_PROP_FONT_SIZE:
-            if (property->value()->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE) {
+            if (property->value()->cssValueType() == CSSValueImpl::CSS_PRIMITIVE_VALUE) {
                 CSSPrimitiveValueImpl *value = static_cast<CSSPrimitiveValueImpl *>(property->value());
                 float number = value->getFloatValue(CSSPrimitiveValue::CSS_PX);
                 if (number <= 9)
@@ -241,18 +241,18 @@ static bool isEmptyFontTag(const NodeImpl *node)
 
 static PassRefPtr<ElementImpl> createFontElement(DocumentImpl* document)
 {
-    int exceptionCode = 0;
-    RefPtr<ElementImpl> fontNode = document->createElementNS(xhtmlNamespaceURI, "font", exceptionCode);
-    ASSERT(exceptionCode == 0);
+    ExceptionCode ec = 0;
+    RefPtr<ElementImpl> fontNode = document->createElementNS(xhtmlNamespaceURI, "font", ec);
+    ASSERT(ec == 0);
     fontNode->setAttribute(classAttr, styleSpanClassString());
     return fontNode.release();
 }
 
 PassRefPtr<HTMLElementImpl> createStyleSpanElement(DocumentImpl* document)
 {
-    int exceptionCode = 0;
-    RefPtr<ElementImpl> styleElement = document->createElementNS(xhtmlNamespaceURI, "span", exceptionCode);
-    ASSERT(exceptionCode == 0);
+    ExceptionCode ec = 0;
+    RefPtr<ElementImpl> styleElement = document->createElementNS(xhtmlNamespaceURI, "span", ec);
+    ASSERT(ec == 0);
     styleElement->setAttribute(classAttr, styleSpanClassString());
     return static_pointer_cast<HTMLElementImpl>(styleElement.release());
 }
@@ -400,7 +400,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(CSSMutableStyleDeclarationI
     if (!value)
         return;
     float adjustment = NoFontDelta;
-    if (value->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE) {
+    if (value->cssValueType() == CSSValueImpl::CSS_PRIMITIVE_VALUE) {
         CSSPrimitiveValueImpl *primitiveValue = static_cast<CSSPrimitiveValueImpl *>(value.get());
         if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_PX) {
             // Only PX handled now. If we handle more types in the future, perhaps
@@ -637,21 +637,21 @@ void ApplyStyleCommand::removeHTMLFontStyle(CSSMutableStyleDeclarationImpl *styl
     if (!elem->hasLocalName(fontTag))
         return;
 
-    int exceptionCode = 0;
+    ExceptionCode ec = 0;
     QValueListConstIterator<CSSProperty> end;
     for (QValueListConstIterator<CSSProperty> it = style->valuesIterator(); it != end; ++it) {
         switch ((*it).id()) {
             case CSS_PROP_COLOR:
-                elem->removeAttribute(colorAttr, exceptionCode);
-                ASSERT(exceptionCode == 0);
+                elem->removeAttribute(colorAttr, ec);
+                ASSERT(ec == 0);
                 break;
             case CSS_PROP_FONT_FAMILY:
-                elem->removeAttribute(faceAttr, exceptionCode);
-                ASSERT(exceptionCode == 0);
+                elem->removeAttribute(faceAttr, ec);
+                ASSERT(ec == 0);
                 break;
             case CSS_PROP_FONT_SIZE:
-                elem->removeAttribute(sizeAttr, exceptionCode);
-                ASSERT(exceptionCode == 0);
+                elem->removeAttribute(sizeAttr, ec);
+                ASSERT(ec == 0);
                 break;
         }
     }
@@ -841,7 +841,7 @@ void ApplyStyleCommand::pushDownTextDecorationStyleAtBoundaries(const Position &
 
 static int maxRangeOffset(NodeImpl *n)
 {
-    if (DOM::offsetInCharacters(n->nodeType()))
+    if (n->offsetInCharacters())
         return n->maxOffset();
 
     if (n->isElementNode())
@@ -1199,14 +1199,14 @@ void ApplyStyleCommand::addBlockStyleIfNeeded(CSSMutableStyleDeclarationImpl *st
 void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclarationImpl *style, NodeImpl *startNode, NodeImpl *endNode)
 {
     StyleChange styleChange(style, Position(startNode, 0), StyleChange::styleModeForParseMode(document()->inCompatMode()));
-    int exceptionCode = 0;
+    ExceptionCode ec = 0;
     
     //
     // Font tags need to go outside of CSS so that CSS font sizes override leagcy font sizes.
     //
     if (styleChange.applyFontColor() || styleChange.applyFontFace() || styleChange.applyFontSize()) {
         RefPtr<ElementImpl> fontElement = createFontElement(document());
-        ASSERT(exceptionCode == 0);
+        ASSERT(ec == 0);
         insertNodeBefore(fontElement.get(), startNode);
         if (styleChange.applyFontColor())
             fontElement->setAttribute(colorAttr, styleChange.fontColor());
@@ -1225,15 +1225,15 @@ void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclarationImpl *s
     }
 
     if (styleChange.applyBold()) {
-        RefPtr<ElementImpl> boldElement = document()->createElementNS(xhtmlNamespaceURI, "b", exceptionCode);
-        ASSERT(exceptionCode == 0);
+        RefPtr<ElementImpl> boldElement = document()->createElementNS(xhtmlNamespaceURI, "b", ec);
+        ASSERT(ec == 0);
         insertNodeBefore(boldElement.get(), startNode);
         surroundNodeRangeWithElement(startNode, endNode, boldElement.get());
     }
 
     if (styleChange.applyItalic()) {
-        RefPtr<ElementImpl> italicElement = document()->createElementNS(xhtmlNamespaceURI, "i", exceptionCode);
-        ASSERT(exceptionCode == 0);
+        RefPtr<ElementImpl> italicElement = document()->createElementNS(xhtmlNamespaceURI, "i", ec);
+        ASSERT(ec == 0);
         insertNodeBefore(italicElement.get(), startNode);
         surroundNodeRangeWithElement(startNode, endNode, italicElement.get());
     }

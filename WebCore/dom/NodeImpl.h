@@ -64,6 +64,21 @@ class NodeImpl : public TreeShared<NodeImpl>
 {
     friend class DocumentImpl;
 public:
+    enum NodeType {
+        ELEMENT_NODE = 1,
+        ATTRIBUTE_NODE = 2,
+        TEXT_NODE = 3,
+        CDATA_SECTION_NODE = 4,
+        ENTITY_REFERENCE_NODE = 5,
+        ENTITY_NODE = 6,
+        PROCESSING_INSTRUCTION_NODE = 7,
+        COMMENT_NODE = 8,
+        DOCUMENT_NODE = 9,
+        DOCUMENT_TYPE_NODE = 10,
+        DOCUMENT_FRAGMENT_NODE = 11,
+        NOTATION_NODE = 12
+    };
+
     NodeImpl(DocumentImpl*);
     virtual ~NodeImpl();
 
@@ -73,7 +88,7 @@ public:
     virtual DOMString nodeName() const = 0;
     virtual DOMString nodeValue() const;
     virtual void setNodeValue(const DOMString&, ExceptionCode&);
-    virtual unsigned short nodeType() const = 0;
+    virtual NodeType nodeType() const = 0;
     NodeImpl* parentNode() const { return parent(); }
     NodeImpl* previousSibling() const { return m_previous; }
     NodeImpl* nextSibling() const { return m_next; }
@@ -110,7 +125,7 @@ public:
     DOMString lookupNamespacePrefix(const DOMString& namespaceURI, const ElementImpl* originalElement) const;
     
     DOMString textContent() const;
-    void setTextContent(const DOMString&, int &exception);
+    void setTextContent(const DOMString&, ExceptionCode&);
     
     NodeImpl* lastDescendant() const;
 
@@ -283,7 +298,7 @@ public:
     virtual bool disabled() const;
 
     virtual bool isReadOnly();
-    virtual bool childTypeAllowed(unsigned short /*type*/) { return false; }
+    virtual bool childTypeAllowed(NodeType) { return false; }
     virtual unsigned childNodeCount() const;
     virtual NodeImpl* childNode(unsigned index) const;
 
@@ -333,6 +348,9 @@ public:
     // to sanity-check against the DTD for error recovery.
     void checkAddChild(NodeImpl* newChild, ExceptionCode&); // Error-checking when adding via the DOM API
     virtual bool childAllowed(NodeImpl* newChild);          // Error-checking during parsing that checks the DTD
+
+    // Used to determine whether range offsets use characters or node indices.
+    virtual bool offsetInCharacters() const;
 
     // FIXME: These next 7 functions are mostly editing-specific and should be moved out.
     virtual int maxOffset() const;

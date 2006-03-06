@@ -24,9 +24,9 @@
 #include "SVGDocumentExtensions.h"
 
 #include "DocumentImpl.h"
+#include "EventListener.h"
 #include "Frame.h"
 #include "KSVGTimeScheduler.h"
-#include "dom2_events.h"
 #include "kjs_proxy.h"
 
 namespace WebCore {

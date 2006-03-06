@@ -42,9 +42,9 @@ void RemoveNodeCommand::doApply()
     ASSERT(m_parent);
     ASSERT(m_removeChild);
 
-    int exceptionCode = 0;
-    m_parent->removeChild(m_removeChild.get(), exceptionCode);
-    ASSERT(exceptionCode == 0);
+    ExceptionCode ec = 0;
+    m_parent->removeChild(m_removeChild.get(), ec);
+    ASSERT(ec == 0);
 }
 
 void RemoveNodeCommand::doUnapply()
@@ -52,9 +52,9 @@ void RemoveNodeCommand::doUnapply()
     ASSERT(m_parent);
     ASSERT(m_removeChild);
 
-    int exceptionCode = 0;
-    m_parent->insertBefore(m_removeChild.get(), m_refChild.get(), exceptionCode);
-    ASSERT(exceptionCode == 0);
+    ExceptionCode ec = 0;
+    m_parent->insertBefore(m_removeChild.get(), m_refChild.get(), ec);
+    ASSERT(ec == 0);
 }
 
 }

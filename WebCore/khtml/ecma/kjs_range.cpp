@@ -24,14 +24,11 @@
 
 #include "DocumentFragmentImpl.h"
 #include "DocumentImpl.h"
-#include "dom2_range.h"
 #include "dom2_rangeimpl.h"
 
-using WebCore::String;
-using WebCore::Range;
-using WebCore::RangeImpl;
-
 #include "kjs_range.lut.h"
+
+using namespace WebCore;
 
 namespace KJS {
 
@@ -148,7 +145,7 @@ JSValue *DOMRangeProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, c
       range.selectNodeContents(toNode(args[0]), exception);
       break;
     case DOMRange::CompareBoundaryPoints:
-        result = jsNumber(range.compareBoundaryPoints(static_cast<Range::CompareHow>(args[0]->toInt32(exec)), toRange(args[1]), exception));
+        result = jsNumber(range.compareBoundaryPoints(static_cast<RangeImpl::CompareHow>(args[0]->toInt32(exec)), toRange(args[1]), exception));
         break;
     case DOMRange::DeleteContents:
       range.deleteContents(exception);
@@ -193,10 +190,10 @@ JSValue *getDOMRange(ExecState *exec, RangeImpl *r)
 const ClassInfo RangeConstructor::info = { "RangeConstructor", 0, &RangeConstructorTable, 0 };
 /*
 @begin RangeConstructorTable 5
-  START_TO_START	DOM::Range::START_TO_START	DontDelete|ReadOnly
-  START_TO_END		DOM::Range::START_TO_END	DontDelete|ReadOnly
-  END_TO_END		DOM::Range::END_TO_END		DontDelete|ReadOnly
-  END_TO_START		DOM::Range::END_TO_START	DontDelete|ReadOnly
+  START_TO_START	WebCore::RangeImpl::START_TO_START	DontDelete|ReadOnly
+  START_TO_END		WebCore::RangeImpl::START_TO_END	DontDelete|ReadOnly
+  END_TO_END		WebCore::RangeImpl::END_TO_END		DontDelete|ReadOnly
+  END_TO_START		WebCore::RangeImpl::END_TO_START	DontDelete|ReadOnly
 @end
 */
 bool RangeConstructor::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)

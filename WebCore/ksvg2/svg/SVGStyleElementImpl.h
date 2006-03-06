@@ -44,16 +44,16 @@ namespace WebCore
 
         // 'SVGStyleElement' functions
         AtomicString xmlspace() const;
-        void setXmlspace(const AtomicString&, int &exceptioncode);
+        void setXmlspace(const AtomicString&, ExceptionCode&);
 
         AtomicString type() const;
-        void setType(const AtomicString&, int &exceptioncode);
+        void setType(const AtomicString&, ExceptionCode&);
 
         AtomicString media() const;
-        void setMedia(const AtomicString&, int &exceptioncode);
+        void setMedia(const AtomicString&, ExceptionCode&);
 
         AtomicString title() const;
-        void setTitle(const AtomicString&, int &exceptioncode);
+        void setTitle(const AtomicString&, ExceptionCode&);
 
         CSSStyleSheetImpl *sheet();
 

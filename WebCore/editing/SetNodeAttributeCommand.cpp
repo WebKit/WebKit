@@ -51,22 +51,22 @@ void SetNodeAttributeCommand::doApply()
     ASSERT(m_element);
     ASSERT(!m_value.isNull());
 
-    int exceptionCode = 0;
+    ExceptionCode ec = 0;
     m_oldValue = m_element->getAttribute(m_attribute);
-    m_element->setAttribute(m_attribute, m_value.impl(), exceptionCode);
-    ASSERT(exceptionCode == 0);
+    m_element->setAttribute(m_attribute, m_value.impl(), ec);
+    ASSERT(ec == 0);
 }
 
 void SetNodeAttributeCommand::doUnapply()
 {
     ASSERT(m_element);
 
-    int exceptionCode = 0;
+    ExceptionCode ec = 0;
     if (m_oldValue.isNull())
-        m_element->removeAttribute(m_attribute, exceptionCode);
+        m_element->removeAttribute(m_attribute, ec);
     else
-        m_element->setAttribute(m_attribute, m_oldValue.impl(), exceptionCode);
-    ASSERT(exceptionCode == 0);
+        m_element->setAttribute(m_attribute, m_oldValue.impl(), ec);
+    ASSERT(ec == 0);
 }
 
 } // namespace khtml

@@ -458,9 +458,9 @@ using namespace DOM::HTMLNames;
 
 - (void)setBody:(DOMHTMLElement *)body
 {
-    int exceptionCode = 0;
-    [self _HTMLDocumentImpl]->setBody([body _HTMLElementImpl], exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    [self _HTMLDocumentImpl]->setBody([body _HTMLElementImpl], ec);
+    raiseOnDOMError(ec);
 }
 
 - (NSString *)cookie
@@ -1098,9 +1098,9 @@ using namespace DOM::HTMLNames;
 
 - (void)add:(DOMHTMLElement *)element :(DOMHTMLElement *)before
 {
-    int exceptionCode = 0;
-    [self _selectElementImpl]->add([element _HTMLElementImpl], [before _HTMLElementImpl], exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    [self _selectElementImpl]->add([element _HTMLElementImpl], [before _HTMLElementImpl], ec);
+    raiseOnDOMError(ec);
 }
 
 - (void)remove:(int)index
@@ -3102,17 +3102,17 @@ using namespace DOM::HTMLNames;
 
 - (DOMHTMLElement *)insertRow:(int)index
 {
-    int exceptioncode = 0;
-    HTMLElementImpl *impl = [self _tableSectionElementImpl]->insertRow(index, exceptioncode);
-    raiseOnDOMError(exceptioncode);
+    ExceptionCode ec = 0;
+    HTMLElementImpl *impl = [self _tableSectionElementImpl]->insertRow(index, ec);
+    raiseOnDOMError(ec);
     return [DOMHTMLElement _elementWithImpl:impl];
 }
 
 - (void)deleteRow:(int)index
 {
-    int exceptioncode = 0;
-    [self _tableSectionElementImpl]->deleteRow(index, exceptioncode);
-    raiseOnDOMError(exceptioncode);
+    ExceptionCode ec = 0;
+    [self _tableSectionElementImpl]->deleteRow(index, ec);
+    raiseOnDOMError(ec);
 }
 
 @end
@@ -3300,17 +3300,17 @@ using namespace DOM::HTMLNames;
 
 - (DOMHTMLElement *)insertRow:(int)index
 {
-    int exceptioncode = 0;
-    HTMLTableElementImpl *impl = static_cast<HTMLTableElementImpl *>([self _tableElementImpl]->insertRow(index, exceptioncode));
-    raiseOnDOMError(exceptioncode);
+    ExceptionCode ec = 0;
+    HTMLTableElementImpl *impl = static_cast<HTMLTableElementImpl *>([self _tableElementImpl]->insertRow(index, ec));
+    raiseOnDOMError(ec);
     return [DOMHTMLTableElement _tableElementWithImpl:impl];
 }
 
 - (void)deleteRow:(int)index
 {
-    int exceptioncode = 0;
-    [self _tableElementImpl]->deleteRow(index, exceptioncode);
-    raiseOnDOMError(exceptioncode);
+    ExceptionCode ec = 0;
+    [self _tableElementImpl]->deleteRow(index, ec);
+    raiseOnDOMError(ec);
 }
 
 @end
@@ -3474,17 +3474,17 @@ using namespace DOM::HTMLNames;
 
 - (DOMHTMLElement *)insertCell:(int)index
 {
-    int exceptioncode = 0;
-    HTMLTableCellElementImpl *impl = static_cast<HTMLTableCellElementImpl *>([self _tableRowElementImpl]->insertCell(index, exceptioncode));
-    raiseOnDOMError(exceptioncode);
+    ExceptionCode ec = 0;
+    HTMLTableCellElementImpl *impl = static_cast<HTMLTableCellElementImpl *>([self _tableRowElementImpl]->insertCell(index, ec));
+    raiseOnDOMError(ec);
     return [DOMHTMLTableCellElement _tableCellElementWithImpl:impl];
 }
 
 - (void)deleteCell:(int)index
 {
-    int exceptioncode = 0;
-    [self _tableRowElementImpl]->deleteCell(index, exceptioncode);
-    raiseOnDOMError(exceptioncode);
+    ExceptionCode ec = 0;
+    [self _tableRowElementImpl]->deleteCell(index, ec);
+    raiseOnDOMError(ec);
 }
 
 @end

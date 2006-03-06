@@ -19,37 +19,32 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * $Id: css_ruleimpl.h 11645 2005-12-17 20:12:35Z andersca $
  */
 
 #ifndef CSS_css_ruleimpl_h_
 #define CSS_css_ruleimpl_h_
 
-#include "PlatformString.h"
-#include "dom/css_rule.h"
-#include "css/css_base.h"
 #include "CachedObjectClient.h"
+#include "PlatformString.h"
 #include "Shared.h"
+#include "css_base.h"
 #include "css_valueimpl.h"
 
-namespace khtml {
-    class CachedCSSStyleSheet;
-}
+namespace WebCore {
 
-namespace DOM {
-
+class CachedCSSStyleSheet;
 class CSSMutableStyleDeclarationImpl;
-class CSSRule;
 class CSSStyleSheet;
 class CSSStyleSheetImpl;
 class MediaListImpl;
+
+enum CSSRuleType { UNKNOWN_RULE, STYLE_RULE, CHARSET_RULE, IMPORT_RULE, MEDIA_RULE, FONT_FACE_RULE, PAGE_RULE };
 
 class CSSRuleImpl : public StyleBaseImpl
 {
 public:
     CSSRuleImpl(StyleBaseImpl *parent)
-        : StyleBaseImpl(parent), m_type(CSSRule::UNKNOWN_RULE) {}
+        : StyleBaseImpl(parent), m_type(UNKNOWN_RULE) {}
 
     virtual bool isRule() { return true; }
     unsigned short type() const { return m_type; }
@@ -61,7 +56,7 @@ public:
     void setCssText(DOM::DOMString str);
 
 protected:
-    CSSRule::RuleType m_type;
+    CSSRuleType m_type;
 };
 
 
@@ -69,7 +64,7 @@ class CSSCharsetRuleImpl : public CSSRuleImpl
 {
 public:
     CSSCharsetRuleImpl(StyleBaseImpl *parent)
-        : CSSRuleImpl(parent) { m_type = CSSRule::CHARSET_RULE; }
+        : CSSRuleImpl(parent) { m_type = CHARSET_RULE; }
 
     virtual bool isCharsetRule() { return true; }
     virtual DOMString cssText() const;
@@ -224,7 +219,6 @@ public:
 
     virtual bool isUnknownRule() { return true; }
 };
-
 
 } // namespace
 

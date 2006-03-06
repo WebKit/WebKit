@@ -50,7 +50,7 @@ namespace WebCore {
         
         DOMString title() const;
         
-        virtual PassRefPtr<ElementImpl> createElement(const DOMString& tagName, int& exceptionCode);
+        virtual PassRefPtr<ElementImpl> createElement(const DOMString& tagName, ExceptionCode&);
 
         // Derived from: 'CachedObjectClient'
         virtual void notifyFinished(CachedObject *finishedObj);

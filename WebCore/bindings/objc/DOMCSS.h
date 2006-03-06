@@ -24,7 +24,6 @@
  */
 
 #import <WebCore/DOMStylesheets.h>
-#import <WebCore/DOMViews.h>
 
 @class DOMCounter;
 @class DOMCSSRule;
@@ -33,16 +32,6 @@
 @class DOMCSSValue;
 @class DOMRect;
 @class DOMRGBColor;
-
-extern NSString * const DOMCSSException;
-
-enum {
-    //
-    // CSS exception codes
-    //
-    DOM_CSS_SYNTAX_ERR                = 0,
-    DOM_CSS_INVALID_MODIFICATION_ERR  = 1,
-};
 
 @interface DOMCSSRuleList : DOMObject
 - (unsigned)length;

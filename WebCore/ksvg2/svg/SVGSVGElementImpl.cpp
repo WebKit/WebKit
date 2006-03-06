@@ -25,6 +25,7 @@
 #include "SVGSVGElementImpl.h"
 
 #include "DocumentImpl.h"
+#include "EventListener.h"
 #include "EventNames.h"
 #include "KCanvasRenderingStyle.h"
 #include "KSVGTimeScheduler.h"
@@ -48,7 +49,6 @@
 #include "SVGZoomEventImpl.h"
 #include "StringImpl.h"
 #include "cssproperties.h"
-#include "dom2_events.h"
 #include "htmlnames.h"
 #include "ksvg.h"
 #include <kcanvas/KCanvas.h>

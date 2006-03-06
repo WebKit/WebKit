@@ -4,7 +4,7 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 1. Redistributions of source exceptionCode must retain the above copyright
+ * 1. Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
@@ -32,7 +32,6 @@
 #import "css_base.h"
 #import "css_ruleimpl.h"
 #import "css_stylesheetimpl.h"
-#import "css_value.h"
 #import "css_valueimpl.h"
 #import "dom2_viewsimpl.h"
 #import "DocumentImpl.h"
@@ -267,17 +266,17 @@ using namespace DOM;
 
 - (unsigned)insertRule:(NSString *)rule :(unsigned)index
 {
-    int exceptionCode;
-    unsigned result = [self _CSSStyleSheetImpl]->insertRule(rule, index, exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec;
+    unsigned result = [self _CSSStyleSheetImpl]->insertRule(rule, index, ec);
+    raiseOnDOMError(ec);
     return result;
 }
 
 - (void)deleteRule:(unsigned)index
 {
-    int exceptionCode;
-    [self _CSSStyleSheetImpl]->deleteRule(index, exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec;
+    [self _CSSStyleSheetImpl]->deleteRule(index, ec);
+    raiseOnDOMError(ec);
 }
 
 @end
@@ -729,9 +728,9 @@ using namespace DOM;
 
 - (void)setCssText:(NSString *)cssText
 {
-    int exceptionCode;
-    [self _styleDeclarationImpl]->setCssText(cssText, exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec;
+    [self _styleDeclarationImpl]->setCssText(cssText, ec);
+    raiseOnDOMError(ec);
 }
 
 - (NSString *)getPropertyValue:(NSString *)propertyName
@@ -746,9 +745,9 @@ using namespace DOM;
 
 - (NSString *)removeProperty:(NSString *)propertyName
 {
-    int exceptionCode = 0;
-    DOMString result = [self _styleDeclarationImpl]->removeProperty(propertyName, exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    DOMString result = [self _styleDeclarationImpl]->removeProperty(propertyName, ec);
+    raiseOnDOMError(ec);
     return result;
 }
 
@@ -769,9 +768,9 @@ using namespace DOM;
 
 - (void)setProperty:(NSString *)propertyName :(NSString *)value :(NSString *)priority
 {
-    int exceptionCode;
-    [self _styleDeclarationImpl]->setProperty(propertyName, value, priority, exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec;
+    [self _styleDeclarationImpl]->setProperty(propertyName, value, priority, ec);
+    raiseOnDOMError(ec);
 }
 
 - (unsigned)length
@@ -928,9 +927,9 @@ using namespace DOM;
 
 - (void)setFloatValue:(unsigned short)unitType :(float)floatValue
 {
-    int exceptionCode;
-    [self _primitiveValueImpl]->setFloatValue(unitType, floatValue, exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec;
+    [self _primitiveValueImpl]->setFloatValue(unitType, floatValue, ec);
+    raiseOnDOMError(ec);
 }
 
 - (float)getFloatValue:(unsigned short)unitType
@@ -940,10 +939,10 @@ using namespace DOM;
 
 - (void)setStringValue:(unsigned short)stringType :(NSString *)stringValue
 {
-    int exceptionCode;
+    ExceptionCode ec;
     DOMString string(stringValue);
-    [self _primitiveValueImpl]->setStringValue(stringType, string, exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    [self _primitiveValueImpl]->setStringValue(stringType, string, ec);
+    raiseOnDOMError(ec);
 }
 
 - (NSString *)getStringValue
@@ -1037,21 +1036,21 @@ void removeWrapperForRGB(RGBA32 value)
 {
     RGBA32 rgb = reinterpret_cast<RGBA32>(_internal);
     int value = (rgb >> 16) & 0xFF;
-    return [DOMCSSPrimitiveValue _valueWithImpl:new CSSPrimitiveValueImpl(value, DOM::CSSPrimitiveValue::CSS_NUMBER)];
+    return [DOMCSSPrimitiveValue _valueWithImpl:new CSSPrimitiveValueImpl(value, CSSPrimitiveValue::CSS_NUMBER)];
 }
 
 - (DOMCSSPrimitiveValue *)green
 {
     RGBA32 rgb = reinterpret_cast<RGBA32>(_internal);
     int value = (rgb >> 8) & 0xFF;
-    return [DOMCSSPrimitiveValue _valueWithImpl:new CSSPrimitiveValueImpl(value, DOM::CSSPrimitiveValue::CSS_NUMBER)];
+    return [DOMCSSPrimitiveValue _valueWithImpl:new CSSPrimitiveValueImpl(value, CSSPrimitiveValue::CSS_NUMBER)];
 }
 
 - (DOMCSSPrimitiveValue *)blue
 {
     RGBA32 rgb = reinterpret_cast<RGBA32>(_internal);
     int value = rgb & 0xFF;
-    return [DOMCSSPrimitiveValue _valueWithImpl:new CSSPrimitiveValueImpl(value, DOM::CSSPrimitiveValue::CSS_NUMBER)];
+    return [DOMCSSPrimitiveValue _valueWithImpl:new CSSPrimitiveValueImpl(value, CSSPrimitiveValue::CSS_NUMBER)];
 }
 
 - (id)copyWithZone:(NSZone *)zone
@@ -1089,7 +1088,7 @@ void removeWrapperForRGB(RGBA32 value)
 {
     RGBA32 rgb = reinterpret_cast<RGBA32>(_internal);
     float value = (float)Color(rgb).alpha() / 0xFF;
-    return [DOMCSSPrimitiveValue _valueWithImpl:new CSSPrimitiveValueImpl(value, DOM::CSSPrimitiveValue::CSS_NUMBER)];
+    return [DOMCSSPrimitiveValue _valueWithImpl:new CSSPrimitiveValueImpl(value, CSSPrimitiveValue::CSS_NUMBER)];
     
 }
 

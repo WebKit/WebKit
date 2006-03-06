@@ -24,28 +24,23 @@
 // -------------------------------------------------------------------------
 
 #include "config.h"
-#include "html/html_headimpl.h"
-
-#include "html/html_documentimpl.h"
-#include "TextImpl.h"
-#include "EventNames.h"
-#include "dom_node.h"
-
-#include "Frame.h"
-#include "FrameTree.h"
-#include "kjs_proxy.h"
+#include "html_headimpl.h"
 
 #include "CachedCSSStyleSheet.h"
 #include "CachedScript.h"
 #include "DocLoader.h"
+#include "EventNames.h"
+#include "Frame.h"
+#include "FrameTree.h"
+#include "KURL.h"
+#include "TextImpl.h"
+#include "css_stylesheetimpl.h"
+#include "csshelper.h"
+#include "cssstyleselector.h"
 #include "helper.h"
-
-#include "css/cssstyleselector.h"
-#include "css/css_stylesheetimpl.h"
-#include "css/csshelper.h"
+#include "html_documentimpl.h"
 #include "htmlnames.h"
-
-#include <KURL.h>
+#include "kjs_proxy.h"
 
 namespace WebCore {
 
@@ -271,7 +266,7 @@ void HTMLLinkElementImpl::removedFromDocument()
     process();
 }
 
-void HTMLLinkElementImpl::setStyleSheet(const DOM::DOMString &url, const DOM::DOMString &sheetStr)
+void HTMLLinkElementImpl::setStyleSheet(const DOMString &url, const DOMString &sheetStr)
 {
     m_sheet = new CSSStyleSheetImpl(this, url);
     m_sheet->parseString(sheetStr, !getDocument()->inCompatMode());
@@ -624,11 +619,11 @@ DOMString HTMLScriptElementImpl::text() const
 
 void HTMLScriptElementImpl::setText(const DOMString &value)
 {
-    int exceptioncode = 0;
+    ExceptionCode ec = 0;
     int numChildren = childNodeCount();
     
     if (numChildren == 1 && firstChild()->isTextNode()) {
-        static_cast<DOM::TextImpl *>(firstChild())->setData(value, exceptioncode);
+        static_cast<TextImpl *>(firstChild())->setData(value, ec);
         return;
     }
     
@@ -636,7 +631,7 @@ void HTMLScriptElementImpl::setText(const DOMString &value)
         removeChildren();
     }
     
-    appendChild(getDocument()->createTextNode(value.impl()), exceptioncode);
+    appendChild(getDocument()->createTextNode(value.impl()), ec);
 }
 
 DOMString HTMLScriptElementImpl::htmlFor() const
@@ -737,12 +732,9 @@ void HTMLStyleElementImpl::childrenChanged()
 {
     DOMString text = "";
 
-    for (NodeImpl *c = firstChild(); c != 0; c = c->nextSibling()) {
-	if ((c->nodeType() == Node::TEXT_NODE) ||
-	    (c->nodeType() == Node::CDATA_SECTION_NODE) ||
-	    (c->nodeType() == Node::COMMENT_NODE))
+    for (NodeImpl* c = firstChild(); c; c = c->nextSibling())
+	if (c->nodeType() == TEXT_NODE || c->nodeType() == CDATA_SECTION_NODE || c->nodeType() == COMMENT_NODE)
 	    text += c->nodeValue();
-    }
 
     if (m_sheet) {
         if (static_cast<CSSStyleSheetImpl *>(m_sheet.get())->isLoading())
@@ -838,10 +830,9 @@ void HTMLTitleElementImpl::childrenChanged()
 {
     HTMLElementImpl::childrenChanged();
     m_title = "";
-    for (NodeImpl *c = firstChild(); c != 0; c = c->nextSibling()) {
-	if ((c->nodeType() == Node::TEXT_NODE) || (c->nodeType() == Node::CDATA_SECTION_NODE))
+    for (NodeImpl* c = firstChild(); c != 0; c = c->nextSibling())
+	if (c->nodeType() == TEXT_NODE || c->nodeType() == CDATA_SECTION_NODE)
 	    m_title += c->nodeValue();
-    }
     if (inDocument())
         getDocument()->setTitle(m_title, this);
 }
@@ -860,17 +851,17 @@ DOMString HTMLTitleElementImpl::text() const
 
 void HTMLTitleElementImpl::setText(const DOMString &value)
 {
-    int exceptioncode = 0;
+    ExceptionCode ec = 0;
     int numChildren = childNodeCount();
     
     if (numChildren == 1 && firstChild()->isTextNode()) {
-        static_cast<DOM::TextImpl *>(firstChild())->setData(value, exceptioncode);
+        static_cast<TextImpl *>(firstChild())->setData(value, ec);
     } else {  
         if (numChildren > 0) {
             removeChildren();
         }
     
-        appendChild(getDocument()->createTextNode(value.impl()), exceptioncode);
+        appendChild(getDocument()->createTextNode(value.impl()), ec);
     }
 }
 

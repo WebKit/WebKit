@@ -51,12 +51,12 @@ void JoinTextNodesCommand::doApply()
     ASSERT(m_text2);
     ASSERT(m_text1->nextSibling() == m_text2);
 
-    int exceptionCode = 0;
-    m_text2->insertData(0, m_text1->data(), exceptionCode);
-    ASSERT(exceptionCode == 0);
+    ExceptionCode ec = 0;
+    m_text2->insertData(0, m_text1->data(), ec);
+    ASSERT(ec == 0);
 
-    m_text2->parentNode()->removeChild(m_text1.get(), exceptionCode);
-    ASSERT(exceptionCode == 0);
+    m_text2->parentNode()->removeChild(m_text1.get(), ec);
+    ASSERT(ec == 0);
 
     m_offset = m_text1->length();
 }
@@ -66,13 +66,13 @@ void JoinTextNodesCommand::doUnapply()
     ASSERT(m_text2);
     ASSERT(m_offset > 0);
 
-    int exceptionCode = 0;
+    ExceptionCode ec = 0;
 
-    m_text2->deleteData(0, m_offset, exceptionCode);
-    ASSERT(exceptionCode == 0);
+    m_text2->deleteData(0, m_offset, ec);
+    ASSERT(ec == 0);
 
-    m_text2->parentNode()->insertBefore(m_text1.get(), m_text2.get(), exceptionCode);
-    ASSERT(exceptionCode == 0);
+    m_text2->parentNode()->insertBefore(m_text1.get(), m_text2.get(), ec);
+    ASSERT(ec == 0);
         
     ASSERT(m_text2->previousSibling()->isTextNode());
     ASSERT(m_text2->previousSibling() == m_text1);

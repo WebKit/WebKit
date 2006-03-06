@@ -27,7 +27,6 @@
 
 #include "DocumentImpl.h"
 #include "NodeImpl.h"
-#include "dom_node.h"
 
 namespace DOM {
 
@@ -55,7 +54,7 @@ unsigned NodeListImpl::recursiveLength(NodeImpl* start) const
     unsigned len = 0;
 
     for (NodeImpl* n = start->firstChild(); n; n = n->nextSibling())
-        if (n->nodeType() == Node::ELEMENT_NODE) {
+        if (n->isElementNode()) {
             if (nodeMatches(n))
                 len++;
             len += recursiveLength(n);
@@ -85,7 +84,7 @@ NodeImpl* NodeListImpl::recursiveItem(unsigned offset, NodeImpl* start) const
     }
 
     for (NodeImpl *n = start; n; n = n->traverseNextNode(rootNode.get())) {
-        if (n->nodeType() == Node::ELEMENT_NODE) {
+        if (n->isElementNode()) {
             if (nodeMatches(n)) {
                 if (!remainingOffset) {
                     lastItem = n;

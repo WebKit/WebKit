@@ -51,9 +51,9 @@ public:
     DOMString notationName() const { return m_notationName.get(); }
 
     virtual DOMString nodeName() const;
-    virtual unsigned short nodeType() const;
+    virtual NodeType nodeType() const;
     virtual PassRefPtr<NodeImpl> cloneNode(bool deep);
-    virtual bool childTypeAllowed(unsigned short type);
+    virtual bool childTypeAllowed(NodeType);
     virtual DOMString toString() const;
 
 private:
@@ -70,9 +70,9 @@ public:
     EntityReferenceImpl(DocumentImpl*, DOMStringImpl* entityName);
 
     virtual DOMString nodeName() const;
-    virtual unsigned short nodeType() const;
+    virtual NodeType nodeType() const;
     virtual PassRefPtr<NodeImpl> cloneNode(bool deep);
-    virtual bool childTypeAllowed(unsigned short type);
+    virtual bool childTypeAllowed(NodeType);
     virtual DOMString toString() const;
 
 private:
@@ -90,9 +90,9 @@ public:
     DOMString systemId() const { return m_systemId. get(); }
 
     virtual DOMString nodeName() const;
-    virtual unsigned short nodeType() const;
+    virtual NodeType nodeType() const;
     virtual PassRefPtr<NodeImpl> cloneNode(bool deep);
-    virtual bool childTypeAllowed(unsigned short type);
+    virtual bool childTypeAllowed(NodeType);
 
 private:
     RefPtr<DOMStringImpl> m_name;
@@ -101,7 +101,7 @@ private:
 };
 
 
-class ProcessingInstructionImpl : public ContainerNodeImpl, private khtml::CachedObjectClient
+class ProcessingInstructionImpl : public ContainerNodeImpl, private CachedObjectClient
 {
 public:
     ProcessingInstructionImpl(DocumentImpl*);
@@ -111,14 +111,15 @@ public:
     // DOM methods & attributes for Notation
     DOMString target() const { return m_target.get(); }
     DOMString data() const { return m_data.get(); }
-    void setData(const DOMString &data, int &exceptioncode);
+    void setData(const DOMString &data, ExceptionCode&);
 
     virtual DOMString nodeName() const;
-    virtual unsigned short nodeType() const;
+    virtual NodeType nodeType() const;
     virtual DOMString nodeValue() const;
-    virtual void setNodeValue(const DOMString& nodeValue, int &exceptioncode);
+    virtual void setNodeValue(const DOMString& nodeValue, ExceptionCode&);
     virtual PassRefPtr<NodeImpl> cloneNode(bool deep);
-    virtual bool childTypeAllowed( unsigned short type );
+    virtual bool childTypeAllowed(NodeType);
+    virtual bool offsetInCharacters() const;
 
     // Other methods (not part of DOM)
     DOMString localHref() const { return m_localHref.get(); }
@@ -138,7 +139,7 @@ private:
     RefPtr<DOMStringImpl> m_target;
     RefPtr<DOMStringImpl> m_data;
     RefPtr<DOMStringImpl> m_localHref;
-    khtml::CachedObject* m_cachedSheet;
+    CachedObject* m_cachedSheet;
     RefPtr<StyleSheetImpl> m_sheet;
     bool m_loading;
 #ifdef KHTML_XSLT

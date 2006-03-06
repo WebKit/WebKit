@@ -92,9 +92,9 @@ void SVGPolyElementImpl::notifyAttributeChange() const
     DOMString p("points");
     RefPtr<AttrImpl> attr = const_cast<SVGPolyElementImpl *>(this)->getAttributeNode(p.impl());
     if (attr) {
-        int exceptionCode;
+        ExceptionCode ec;
         ignoreNotifications = true; // prevent recursion.
-        attr->setValue(_points, exceptionCode);
+        attr->setValue(_points, ec);
         ignoreNotifications = false;
     }
 }

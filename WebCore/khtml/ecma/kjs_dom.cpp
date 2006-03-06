@@ -26,6 +26,7 @@
 #include "DOMImplementationImpl.h"
 #include "DocumentFragmentImpl.h"
 #include "DocumentTypeImpl.h"
+#include "ExceptionCode.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "JSAttr.h"
@@ -41,7 +42,6 @@
 #include "dom2_eventsimpl.h"
 #include "dom2_rangeimpl.h"
 #include "dom2_viewsimpl.h"
-#include "dom_exception.h"
 #include "dom_xmlimpl.h"
 #include "html_documentimpl.h"
 #include "html_objectimpl.h"
@@ -1338,39 +1338,39 @@ JSValue *getDOMNode(ExecState *exec, PassRefPtr<NodeImpl> node)
     return ret;
 
   switch (n->nodeType()) {
-    case DOM::Node::ELEMENT_NODE:
+    case WebCore::NodeImpl::ELEMENT_NODE:
       if (n->isHTMLElement())
         ret = new HTMLElement(exec, static_cast<HTMLElementImpl *>(n));
       else
         ret = new JSElement(exec, static_cast<ElementImpl *>(n));
       break;
-    case DOM::Node::ATTRIBUTE_NODE:
+    case WebCore::NodeImpl::ATTRIBUTE_NODE:
       ret = new JSAttr(exec, static_cast<AttrImpl *>(n));
       break;
-    case DOM::Node::TEXT_NODE:
-    case DOM::Node::CDATA_SECTION_NODE:
+    case WebCore::NodeImpl::TEXT_NODE:
+    case WebCore::NodeImpl::CDATA_SECTION_NODE:
       ret = new JSText(exec, static_cast<TextImpl *>(n));
       break;
-    case DOM::Node::ENTITY_NODE:
+    case WebCore::NodeImpl::ENTITY_NODE:
       ret = new JSEntity(exec, static_cast<EntityImpl *>(n));
       break;
-    case DOM::Node::PROCESSING_INSTRUCTION_NODE:
+    case WebCore::NodeImpl::PROCESSING_INSTRUCTION_NODE:
       ret = new JSProcessingInstruction(exec, static_cast<ProcessingInstructionImpl *>(n));
       break;
-    case DOM::Node::COMMENT_NODE:
+    case WebCore::NodeImpl::COMMENT_NODE:
       ret = new JSCharacterData(exec, static_cast<CharacterDataImpl *>(n));
       break;
-    case DOM::Node::DOCUMENT_NODE:
+    case WebCore::NodeImpl::DOCUMENT_NODE:
       // we don't want to cache the document itself in the per-document dictionary
       return getDOMDocumentNode(exec, static_cast<DocumentImpl *>(n));
-    case DOM::Node::DOCUMENT_TYPE_NODE:
+    case WebCore::NodeImpl::DOCUMENT_TYPE_NODE:
       ret = new JSDocumentType(exec, static_cast<DocumentTypeImpl *>(n));
       break;
-    case DOM::Node::NOTATION_NODE:
+    case WebCore::NodeImpl::NOTATION_NODE:
       ret = new JSNotation(exec, static_cast<NotationImpl *>(n));
       break;
-    case DOM::Node::DOCUMENT_FRAGMENT_NODE:
-    case DOM::Node::ENTITY_REFERENCE_NODE:
+    case WebCore::NodeImpl::DOCUMENT_FRAGMENT_NODE:
+    case WebCore::NodeImpl::ENTITY_REFERENCE_NODE:
     default:
       ret = new DOMNode(exec, n);
   }
@@ -1428,18 +1428,18 @@ JSValue *getDOMDOMImplementation(ExecState *exec, DOMImplementationImpl *i)
 const ClassInfo NodeConstructor::info = { "NodeConstructor", 0, &NodeConstructorTable, 0 };
 /* Source for NodeConstructorTable. Use "make hashtables" to regenerate.
 @begin NodeConstructorTable 11
-  ELEMENT_NODE          DOM::Node::ELEMENT_NODE         DontDelete|ReadOnly
-  ATTRIBUTE_NODE        DOM::Node::ATTRIBUTE_NODE               DontDelete|ReadOnly
-  TEXT_NODE             DOM::Node::TEXT_NODE            DontDelete|ReadOnly
-  CDATA_SECTION_NODE    DOM::Node::CDATA_SECTION_NODE   DontDelete|ReadOnly
-  ENTITY_REFERENCE_NODE DOM::Node::ENTITY_REFERENCE_NODE        DontDelete|ReadOnly
-  ENTITY_NODE           DOM::Node::ENTITY_NODE          DontDelete|ReadOnly
-  PROCESSING_INSTRUCTION_NODE DOM::Node::PROCESSING_INSTRUCTION_NODE DontDelete|ReadOnly
-  COMMENT_NODE          DOM::Node::COMMENT_NODE         DontDelete|ReadOnly
-  DOCUMENT_NODE         DOM::Node::DOCUMENT_NODE                DontDelete|ReadOnly
-  DOCUMENT_TYPE_NODE    DOM::Node::DOCUMENT_TYPE_NODE   DontDelete|ReadOnly
-  DOCUMENT_FRAGMENT_NODE DOM::Node::DOCUMENT_FRAGMENT_NODE      DontDelete|ReadOnly
-  NOTATION_NODE         DOM::Node::NOTATION_NODE                DontDelete|ReadOnly
+  ELEMENT_NODE          WebCore::NodeImpl::ELEMENT_NODE         DontDelete|ReadOnly
+  ATTRIBUTE_NODE        WebCore::NodeImpl::ATTRIBUTE_NODE               DontDelete|ReadOnly
+  TEXT_NODE             WebCore::NodeImpl::TEXT_NODE            DontDelete|ReadOnly
+  CDATA_SECTION_NODE    WebCore::NodeImpl::CDATA_SECTION_NODE   DontDelete|ReadOnly
+  ENTITY_REFERENCE_NODE WebCore::NodeImpl::ENTITY_REFERENCE_NODE        DontDelete|ReadOnly
+  ENTITY_NODE           WebCore::NodeImpl::ENTITY_NODE          DontDelete|ReadOnly
+  PROCESSING_INSTRUCTION_NODE WebCore::NodeImpl::PROCESSING_INSTRUCTION_NODE DontDelete|ReadOnly
+  COMMENT_NODE          WebCore::NodeImpl::COMMENT_NODE         DontDelete|ReadOnly
+  DOCUMENT_NODE         WebCore::NodeImpl::DOCUMENT_NODE                DontDelete|ReadOnly
+  DOCUMENT_TYPE_NODE    WebCore::NodeImpl::DOCUMENT_TYPE_NODE   DontDelete|ReadOnly
+  DOCUMENT_FRAGMENT_NODE WebCore::NodeImpl::DOCUMENT_FRAGMENT_NODE      DontDelete|ReadOnly
+  NOTATION_NODE         WebCore::NodeImpl::NOTATION_NODE                DontDelete|ReadOnly
 @end
 */
 bool NodeConstructor::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -1464,21 +1464,21 @@ const ClassInfo DOMExceptionConstructor::info = { "DOMExceptionConstructor", 0, 
 
 /* Source for DOMExceptionConstructorTable. Use "make hashtables" to regenerate.
 @begin DOMExceptionConstructorTable 15
-  INDEX_SIZE_ERR                DOM::DOMException::INDEX_SIZE_ERR               DontDelete|ReadOnly
-  DOMSTRING_SIZE_ERR            DOM::DOMException::DOMSTRING_SIZE_ERR   DontDelete|ReadOnly
-  HIERARCHY_REQUEST_ERR         DOM::DOMException::HIERARCHY_REQUEST_ERR        DontDelete|ReadOnly
-  WRONG_DOCUMENT_ERR            DOM::DOMException::WRONG_DOCUMENT_ERR   DontDelete|ReadOnly
-  INVALID_CHARACTER_ERR         DOM::DOMException::INVALID_CHARACTER_ERR        DontDelete|ReadOnly
-  NO_DATA_ALLOWED_ERR           DOM::DOMException::NO_DATA_ALLOWED_ERR  DontDelete|ReadOnly
-  NO_MODIFICATION_ALLOWED_ERR   DOM::DOMException::NO_MODIFICATION_ALLOWED_ERR  DontDelete|ReadOnly
-  NOT_FOUND_ERR                 DOM::DOMException::NOT_FOUND_ERR                DontDelete|ReadOnly
-  NOT_SUPPORTED_ERR             DOM::DOMException::NOT_SUPPORTED_ERR    DontDelete|ReadOnly
-  INUSE_ATTRIBUTE_ERR           DOM::DOMException::INUSE_ATTRIBUTE_ERR  DontDelete|ReadOnly
-  INVALID_STATE_ERR             DOM::DOMException::INVALID_STATE_ERR    DontDelete|ReadOnly
-  SYNTAX_ERR                    DOM::DOMException::SYNTAX_ERR           DontDelete|ReadOnly
-  INVALID_MODIFICATION_ERR      DOM::DOMException::INVALID_MODIFICATION_ERR     DontDelete|ReadOnly
-  NAMESPACE_ERR                 DOM::DOMException::NAMESPACE_ERR                DontDelete|ReadOnly
-  INVALID_ACCESS_ERR            DOM::DOMException::INVALID_ACCESS_ERR   DontDelete|ReadOnly
+  INDEX_SIZE_ERR                WebCore::INDEX_SIZE_ERR               DontDelete|ReadOnly
+  DOMSTRING_SIZE_ERR            WebCore::DOMSTRING_SIZE_ERR   DontDelete|ReadOnly
+  HIERARCHY_REQUEST_ERR         WebCore::HIERARCHY_REQUEST_ERR        DontDelete|ReadOnly
+  WRONG_DOCUMENT_ERR            WebCore::WRONG_DOCUMENT_ERR   DontDelete|ReadOnly
+  INVALID_CHARACTER_ERR         WebCore::INVALID_CHARACTER_ERR        DontDelete|ReadOnly
+  NO_DATA_ALLOWED_ERR           WebCore::NO_DATA_ALLOWED_ERR  DontDelete|ReadOnly
+  NO_MODIFICATION_ALLOWED_ERR   WebCore::NO_MODIFICATION_ALLOWED_ERR  DontDelete|ReadOnly
+  NOT_FOUND_ERR                 WebCore::NOT_FOUND_ERR                DontDelete|ReadOnly
+  NOT_SUPPORTED_ERR             WebCore::NOT_SUPPORTED_ERR    DontDelete|ReadOnly
+  INUSE_ATTRIBUTE_ERR           WebCore::INUSE_ATTRIBUTE_ERR  DontDelete|ReadOnly
+  INVALID_STATE_ERR             WebCore::INVALID_STATE_ERR    DontDelete|ReadOnly
+  SYNTAX_ERR                    WebCore::SYNTAX_ERR           DontDelete|ReadOnly
+  INVALID_MODIFICATION_ERR      WebCore::INVALID_MODIFICATION_ERR     DontDelete|ReadOnly
+  NAMESPACE_ERR                 WebCore::NAMESPACE_ERR                DontDelete|ReadOnly
+  INVALID_ACCESS_ERR            WebCore::INVALID_ACCESS_ERR   DontDelete|ReadOnly
 @end
 */
 

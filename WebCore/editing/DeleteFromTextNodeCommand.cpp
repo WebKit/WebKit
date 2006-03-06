@@ -48,12 +48,12 @@ void DeleteFromTextNodeCommand::doApply()
 {
     ASSERT(m_node);
 
-    int exceptionCode = 0;
-    m_text = m_node->substringData(m_offset, m_count, exceptionCode);
-    ASSERT(exceptionCode == 0);
+    ExceptionCode ec = 0;
+    m_text = m_node->substringData(m_offset, m_count, ec);
+    ASSERT(ec == 0);
     
-    m_node->deleteData(m_offset, m_count, exceptionCode);
-    ASSERT(exceptionCode == 0);
+    m_node->deleteData(m_offset, m_count, ec);
+    ASSERT(ec == 0);
 }
 
 void DeleteFromTextNodeCommand::doUnapply()
@@ -61,9 +61,9 @@ void DeleteFromTextNodeCommand::doUnapply()
     ASSERT(m_node);
     ASSERT(!m_text.isEmpty());
 
-    int exceptionCode = 0;
-    m_node->insertData(m_offset, m_text, exceptionCode);
-    ASSERT(exceptionCode == 0);
+    ExceptionCode ec = 0;
+    m_node->insertData(m_offset, m_text, ec);
+    ASSERT(ec == 0);
 }
 
 } // namespace khtml

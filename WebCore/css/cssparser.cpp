@@ -197,7 +197,7 @@ RGBA32 CSSParser::parseColor(const DOMString &string)
         // Now try to create a color from the rgb() or rgba() syntax.
         if (parser.parseColor(dummyStyleDeclaration.get(), string)) {
             CSSValueImpl *value = parser.parsedProperties[0]->value();
-            if (value->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE) {
+            if (value->cssValueType() == CSSValueImpl::CSS_PRIMITIVE_VALUE) {
                 CSSPrimitiveValueImpl *primitiveValue = static_cast<CSSPrimitiveValueImpl *>(value);
                 color = primitiveValue->getRGBColorValue();
             }
@@ -889,7 +889,7 @@ bool CSSParser::parseValue( int propId, bool important )
         if (!valid_primitive)
             return false;
         CSSPrimitiveValueImpl* parsedValue1 = new CSSPrimitiveValueImpl(value->fValue,
-                                                                        (CSSPrimitiveValue::UnitTypes)value->unit);
+                                                                        (CSSPrimitiveValueImpl::UnitTypes)value->unit);
         CSSPrimitiveValueImpl* parsedValue2 = parsedValue1;
         if (num == 2) {
             value = valueList->next();
@@ -898,7 +898,7 @@ bool CSSParser::parseValue( int propId, bool important )
                 delete parsedValue1;
                 return false;
             }
-            parsedValue2 = new CSSPrimitiveValueImpl(value->fValue, (CSSPrimitiveValue::UnitTypes)value->unit);
+            parsedValue2 = new CSSPrimitiveValueImpl(value->fValue, (CSSPrimitiveValueImpl::UnitTypes)value->unit);
         }
         
         PairImpl* pair = new PairImpl;
@@ -1181,12 +1181,12 @@ bool CSSParser::parseValue( int propId, bool important )
             parsedValue = new CSSPrimitiveValueImpl( id );
         } else if ( value->unit == CSSPrimitiveValue::CSS_STRING )
             parsedValue = new CSSPrimitiveValueImpl( domString( value->string ),
-                                                     (CSSPrimitiveValue::UnitTypes) value->unit );
+                                                     (CSSPrimitiveValueImpl::UnitTypes) value->unit );
         else if ( value->unit >= CSSPrimitiveValue::CSS_NUMBER &&
                   value->unit <= CSSPrimitiveValue::CSS_KHZ ) {
             // qDebug(" new value: value=%.2f, unit=%d", value->fValue, value->unit );
             parsedValue = new CSSPrimitiveValueImpl( value->fValue,
-                                                     (CSSPrimitiveValue::UnitTypes) value->unit );
+                                                     (CSSPrimitiveValueImpl::UnitTypes) value->unit );
         } else if ( value->unit >= Value::Q_EMS ) {
             // qDebug(" new quirks value: value=%.2f, unit=%d", value->fValue, value->unit );
             parsedValue = new CSSQuirkPrimitiveValueImpl( value->fValue, CSSPrimitiveValue::CSS_EMS );
@@ -1518,7 +1518,7 @@ CSSValueImpl* CSSParser::parseBackgroundPositionXY(bool& xFound, bool& yFound)
     }
     if (validUnit(valueList->current(), FPercent|FLength, strict))
         return new CSSPrimitiveValueImpl(valueList->current()->fValue,
-                                         (CSSPrimitiveValue::UnitTypes)valueList->current()->unit);
+                                         (CSSPrimitiveValueImpl::UnitTypes)valueList->current()->unit);
                 
     return 0;
 }
@@ -1794,7 +1794,7 @@ bool CSSParser::parseDashboardRegions( int propId, bool important )
         if (numArgs == DASHBOARD_REGION_SHORT_NUM_PARAMETERS || numArgs == (DASHBOARD_REGION_SHORT_NUM_PARAMETERS*2-1)) {
             CSSPrimitiveValueImpl *amount = arg->id == CSS_VAL_AUTO ?
                 new CSSPrimitiveValueImpl(CSS_VAL_AUTO) :
-                new CSSPrimitiveValueImpl((double)0, (CSSPrimitiveValue::UnitTypes) arg->unit );
+                new CSSPrimitiveValueImpl((double)0, (CSSPrimitiveValueImpl::UnitTypes) arg->unit );
                 
             region->setTop( amount );
             region->setRight( amount );
@@ -1814,7 +1814,7 @@ bool CSSParser::parseDashboardRegions( int propId, bool important )
                     
                 CSSPrimitiveValueImpl *amount = arg->id == CSS_VAL_AUTO ?
                     new CSSPrimitiveValueImpl(CSS_VAL_AUTO) :
-                    new CSSPrimitiveValueImpl(arg->fValue, (CSSPrimitiveValue::UnitTypes) arg->unit );
+                    new CSSPrimitiveValueImpl(arg->fValue, (CSSPrimitiveValueImpl::UnitTypes) arg->unit );
                     
                 if ( i == 0 )
                     region->setTop( amount );
@@ -1858,7 +1858,7 @@ bool CSSParser::parseShape( int propId, bool important )
             break;
         CSSPrimitiveValueImpl *length = a->id == CSS_VAL_AUTO ?
             new CSSPrimitiveValueImpl(CSS_VAL_AUTO) :
-            new CSSPrimitiveValueImpl( a->fValue, (CSSPrimitiveValue::UnitTypes) a->unit );
+            new CSSPrimitiveValueImpl( a->fValue, (CSSPrimitiveValueImpl::UnitTypes) a->unit );
         if ( i == 0 )
             rect->setTop( length );
         else if ( i == 1 )
@@ -1973,7 +1973,7 @@ bool CSSParser::parseFont( bool important )
     if ( value->id >= CSS_VAL_XX_SMALL && value->id <= CSS_VAL_LARGER )
         font->size = new CSSPrimitiveValueImpl( value->id );
     else if ( validUnit( value, FLength|FPercent, strict ) ) {
-        font->size = new CSSPrimitiveValueImpl( value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit );
+        font->size = new CSSPrimitiveValueImpl( value->fValue, (CSSPrimitiveValueImpl::UnitTypes) value->unit );
     }
     value = valueList->next();
     if ( !font->size || !value )
@@ -1989,7 +1989,7 @@ bool CSSParser::parseFont( bool important )
         if ( value->id == CSS_VAL_NORMAL ) {
             // default value, nothing to do
         } else if ( validUnit( value, FNumber|FLength|FPercent, strict ) ) {
-            font->lineHeight = new CSSPrimitiveValueImpl( value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit );
+            font->lineHeight = new CSSPrimitiveValueImpl( value->fValue, (CSSPrimitiveValueImpl::UnitTypes) value->unit );
         } else {
             goto invalid;
         }
@@ -2251,7 +2251,7 @@ struct ShadowParseContext {
 
     void commitLength(Value* v) {
         CSSPrimitiveValueImpl* val = new CSSPrimitiveValueImpl(v->fValue,
-                                                               (CSSPrimitiveValue::UnitTypes)v->unit);
+                                                               (CSSPrimitiveValueImpl::UnitTypes)v->unit);
         if (allowX) {
             x = val;
             allowX = false; allowY = true; allowColor = false; allowBreak = false;
@@ -2375,7 +2375,7 @@ struct BorderImageParseContext
     void commitImage(CSSImageValueImpl* image) { m_image = image; m_allowNumber = true; }
     void commitNumber(Value* v) {
         CSSPrimitiveValueImpl* val = new CSSPrimitiveValueImpl(v->fValue,
-                                                               (CSSPrimitiveValue::UnitTypes)v->unit);
+                                                               (CSSPrimitiveValueImpl::UnitTypes)v->unit);
         if (!m_top)
             m_top = val;
         else if (!m_right)
@@ -2416,16 +2416,16 @@ struct BorderImageParseContext
     void commitBorderImage(CSSParser* p, int propId, bool important) {
         // We need to clone and repeat values for any omissions.
         if (!m_right) {
-            m_right = new CSSPrimitiveValueImpl(m_top->getFloatValue(m_top->primitiveType()), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
-            m_bottom = new CSSPrimitiveValueImpl(m_top->getFloatValue(m_top->primitiveType()), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
-            m_left = new CSSPrimitiveValueImpl(m_top->getFloatValue(m_top->primitiveType()), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
+            m_right = new CSSPrimitiveValueImpl(m_top->getFloatValue(m_top->primitiveType()), (CSSPrimitiveValueImpl::UnitTypes)m_top->primitiveType());
+            m_bottom = new CSSPrimitiveValueImpl(m_top->getFloatValue(m_top->primitiveType()), (CSSPrimitiveValueImpl::UnitTypes)m_top->primitiveType());
+            m_left = new CSSPrimitiveValueImpl(m_top->getFloatValue(m_top->primitiveType()), (CSSPrimitiveValueImpl::UnitTypes)m_top->primitiveType());
         }
         if (!m_bottom) {
-            m_bottom = new CSSPrimitiveValueImpl(m_top->getFloatValue(m_top->primitiveType()), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
-            m_left = new CSSPrimitiveValueImpl(m_right->getFloatValue(m_right->primitiveType()), (CSSPrimitiveValue::UnitTypes)m_right->primitiveType());
+            m_bottom = new CSSPrimitiveValueImpl(m_top->getFloatValue(m_top->primitiveType()), (CSSPrimitiveValueImpl::UnitTypes)m_top->primitiveType());
+            m_left = new CSSPrimitiveValueImpl(m_right->getFloatValue(m_right->primitiveType()), (CSSPrimitiveValueImpl::UnitTypes)m_right->primitiveType());
         }
         if (!m_left)
-             m_left = new CSSPrimitiveValueImpl(m_top->getFloatValue(m_top->primitiveType()), (CSSPrimitiveValue::UnitTypes)m_top->primitiveType());
+             m_left = new CSSPrimitiveValueImpl(m_top->getFloatValue(m_top->primitiveType()), (CSSPrimitiveValueImpl::UnitTypes)m_top->primitiveType());
              
         // Now build a rect value to hold all four of our primitive values.
         RectImpl* rect = new RectImpl;

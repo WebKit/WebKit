@@ -4,7 +4,7 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 1. Redistributions of source exceptionCode must retain the above copyright
+ * 1. Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
@@ -37,6 +37,7 @@
 #import "DocumentFragmentImpl.h"
 #import "DocumentImpl.h"
 #import "DocumentTypeImpl.h"
+#import "EventListener.h"
 #import "FoundationExtras.h"
 #import "HTMLElementImpl.h"
 #import "MacFrame.h"
@@ -45,14 +46,10 @@
 #import "StringImpl.h"
 #import "css_stylesheetimpl.h"
 #import "csshelper.h"
-#import "dom2_events.h"
-#import "dom2_range.h"
 #import "dom2_rangeimpl.h"
-#import "dom2_traversal.h"
+#import "dom2_traversalimpl.h"
 #import "dom2_viewsimpl.h"
 #import "dom_elementimpl.h"
-#import "dom_exception.h"
-#import "dom_node.h"
 #import "dom_xmlimpl.h"
 #import "htmlnames.h"
 #import "render_image.h"
@@ -61,8 +58,36 @@
 #import <kxmlcore/HashMap.h>
 #import <objc/objc-class.h>
 
-using namespace WebCore;
-using namespace HTMLNames;
+using WebCore::AttrImpl;
+using WebCore::CharacterDataImpl;
+using WebCore::DocumentImpl;
+using WebCore::DocumentFragmentImpl;
+using WebCore::DocumentTypeImpl;
+using WebCore::ElementImpl;
+using WebCore::EntityImpl;
+using WebCore::EventImpl;
+using WebCore::EventListener;
+using WebCore::ExceptionCode;
+using WebCore::HTMLElementImpl;
+using WebCore::MacFrame;
+using WebCore::NamedNodeMapImpl;
+using WebCore::NodeImpl;
+using WebCore::NodeFilterImpl;
+using WebCore::NodeFilterCondition;
+using WebCore::NodeIteratorImpl;
+using WebCore::NodeListImpl;
+using WebCore::NotationImpl;
+using WebCore::ProcessingInstructionImpl;
+using WebCore::RangeImpl;
+using WebCore::RenderImage;
+using WebCore::RenderObject;
+using WebCore::String;
+using WebCore::TextImpl;
+using WebCore::TreeWalkerImpl;
+
+using namespace WebCore::HTMLNames;
+
+typedef class WebCore::DOMImplementationImpl WebCoreDOMImplementation;
 
 @interface DOMAttr (WebCoreInternal)
 + (DOMAttr *)_attrWithImpl:(AttrImpl *)impl;
@@ -74,8 +99,8 @@ using namespace HTMLNames;
 @end
 
 @interface DOMImplementation (WebCoreInternal)
-+ (DOMImplementation *)_DOMImplementationWithImpl:(DOMImplementationImpl *)impl;
-- (DOMImplementationImpl *)_DOMImplementationImpl;
++ (DOMImplementation *)_DOMImplementationWithImpl:(WebCoreDOMImplementation *)impl;
+- (WebCoreDOMImplementation *)_DOMImplementationImpl;
 @end
 
 @interface DOMNamedNodeMap (WebCoreInternal)
@@ -197,9 +222,9 @@ static ListenerMap *listenerMap;
 {
     ASSERT(string);
     
-    int exceptionCode = 0;
-    [self _nodeImpl]->setNodeValue(string, exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    [self _nodeImpl]->setNodeValue(string, ec);
+    raiseOnDOMError(ec);
 }
 
 - (unsigned short)nodeType
@@ -254,10 +279,10 @@ static ListenerMap *listenerMap;
     ASSERT(newChild);
     ASSERT(refChild);
 
-    int exceptionCode = 0;
-    if ([self _nodeImpl]->insertBefore([newChild _nodeImpl], [refChild _nodeImpl], exceptionCode))
+    ExceptionCode ec = 0;
+    if ([self _nodeImpl]->insertBefore([newChild _nodeImpl], [refChild _nodeImpl], ec))
         return newChild;
-    raiseOnDOMError(exceptionCode);
+    raiseOnDOMError(ec);
     return nil;
 }
 
@@ -266,10 +291,10 @@ static ListenerMap *listenerMap;
     ASSERT(newChild);
     ASSERT(oldChild);
 
-    int exceptionCode = 0;
-    if ([self _nodeImpl]->replaceChild([newChild _nodeImpl], [oldChild _nodeImpl], exceptionCode))
+    ExceptionCode ec = 0;
+    if ([self _nodeImpl]->replaceChild([newChild _nodeImpl], [oldChild _nodeImpl], ec))
         return oldChild;
-    raiseOnDOMError(exceptionCode);
+    raiseOnDOMError(ec);
     return nil;
 }
 
@@ -277,10 +302,10 @@ static ListenerMap *listenerMap;
 {
     ASSERT(oldChild);
 
-    int exceptionCode = 0;
-    if ([self _nodeImpl]->removeChild([oldChild _nodeImpl], exceptionCode))
+    ExceptionCode ec = 0;
+    if ([self _nodeImpl]->removeChild([oldChild _nodeImpl], ec))
         return oldChild;
-    raiseOnDOMError(exceptionCode);
+    raiseOnDOMError(ec);
     return nil;
 }
 
@@ -288,10 +313,10 @@ static ListenerMap *listenerMap;
 {
     ASSERT(newChild);
 
-    int exceptionCode = 0;
-    if ([self _nodeImpl]->appendChild([newChild _nodeImpl], exceptionCode))
+    ExceptionCode ec = 0;
+    if ([self _nodeImpl]->appendChild([newChild _nodeImpl], ec))
         return newChild;
-    raiseOnDOMError(exceptionCode);
+    raiseOnDOMError(ec);
     return nil;
 }
 
@@ -332,10 +357,10 @@ static ListenerMap *listenerMap;
 {
     ASSERT(prefix);
 
-    int exceptionCode = 0;
+    ExceptionCode ec = 0;
     DOMString prefixStr(prefix);
-    [self _nodeImpl]->setPrefix(prefixStr.impl(), exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    [self _nodeImpl]->setPrefix(prefixStr.impl(), ec);
+    raiseOnDOMError(ec);
 }
 
 - (NSString *)localName
@@ -380,9 +405,9 @@ static ListenerMap *listenerMap;
 
 - (void)setTextContent:(NSString *)text
 {
-    int exceptionCode = 0;
-    [self _nodeImpl]->setTextContent(text, exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    [self _nodeImpl]->setTextContent(text, ec);
+    raiseOnDOMError(ec);
 }
 
 - (void)addEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture
@@ -400,9 +425,9 @@ static ListenerMap *listenerMap;
 
 - (BOOL)dispatchEvent:(DOMEvent *)event
 {
-    int exceptionCode = 0;
-    BOOL result = [self _nodeImpl]->dispatchEvent([event _eventImpl], exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    BOOL result = [self _nodeImpl]->dispatchEvent([event _eventImpl], ec);
+    raiseOnDOMError(ec);
     return result;
 }
 
@@ -456,7 +481,7 @@ static ListenerMap *listenerMap;
     
     Class wrapperClass = nil;
     switch (impl->nodeType()) {
-        case Node::ELEMENT_NODE:
+        case NodeImpl::ELEMENT_NODE:
             if (impl->isHTMLElement()) {
                 // FIXME: Reflect marquee once the API has been determined.
                 // FIXME: We could make the HTML classes hand back their class names and then use that to make
@@ -579,41 +604,41 @@ static ListenerMap *listenerMap;
                 wrapperClass = [DOMElement class];
             }
             break;
-        case Node::ATTRIBUTE_NODE:
+        case NodeImpl::ATTRIBUTE_NODE:
             wrapperClass = [DOMAttr class];
             break;
-        case Node::TEXT_NODE:
+        case NodeImpl::TEXT_NODE:
             wrapperClass = [DOMText class];
             break;
-        case Node::CDATA_SECTION_NODE:
+        case NodeImpl::CDATA_SECTION_NODE:
             wrapperClass = [DOMCDATASection class];
             break;
-        case Node::ENTITY_REFERENCE_NODE:
+        case NodeImpl::ENTITY_REFERENCE_NODE:
             wrapperClass = [DOMEntityReference class];
             break;
-        case Node::ENTITY_NODE:
+        case NodeImpl::ENTITY_NODE:
             wrapperClass = [DOMEntity class];
             break;
-        case Node::PROCESSING_INSTRUCTION_NODE:
+        case NodeImpl::PROCESSING_INSTRUCTION_NODE:
             wrapperClass = [DOMProcessingInstruction class];
             break;
-        case Node::COMMENT_NODE:
+        case NodeImpl::COMMENT_NODE:
             wrapperClass = [DOMComment class];
             break;
-        case Node::DOCUMENT_NODE:
+        case NodeImpl::DOCUMENT_NODE:
             if (static_cast<DocumentImpl *>(impl)->isHTMLDocument()) {
                 wrapperClass = [DOMHTMLDocument class];
             } else {
                 wrapperClass = [DOMDocument class];
             }
             break;
-        case Node::DOCUMENT_TYPE_NODE:
+        case NodeImpl::DOCUMENT_TYPE_NODE:
             wrapperClass = [DOMDocumentType class];
             break;
-        case Node::DOCUMENT_FRAGMENT_NODE:
+        case NodeImpl::DOCUMENT_FRAGMENT_NODE:
             wrapperClass = [DOMDocumentFragment class];
             break;
-        case Node::NOTATION_NODE:
+        case NodeImpl::NOTATION_NODE:
             wrapperClass = [DOMNotation class];
             break;
     }
@@ -846,7 +871,7 @@ static ListenerMap *listenerMap;
 - (void)dealloc
 {
     if (_internal) {
-        DOM_cast<DOMImplementationImpl *>(_internal)->deref();
+        DOM_cast<WebCoreDOMImplementation *>(_internal)->deref();
     }
     [super dealloc];
 }
@@ -854,7 +879,7 @@ static ListenerMap *listenerMap;
 - (void)finalize
 {
     if (_internal) {
-        DOM_cast<DOMImplementationImpl *>(_internal)->deref();
+        DOM_cast<WebCoreDOMImplementation *>(_internal)->deref();
     }
     [super finalize];
 }
@@ -873,9 +898,9 @@ static ListenerMap *listenerMap;
     ASSERT(publicId);
     ASSERT(systemId);
 
-    int exceptionCode = 0;
-    RefPtr<DocumentTypeImpl> impl = [self _DOMImplementationImpl]->createDocumentType(qualifiedName, publicId, systemId, exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    RefPtr<DocumentTypeImpl> impl = [self _DOMImplementationImpl]->createDocumentType(qualifiedName, publicId, systemId, ec);
+    raiseOnDOMError(ec);
     return static_cast<DOMDocumentType *>([DOMNode _nodeWithImpl:impl.get()]);
 }
 
@@ -884,9 +909,9 @@ static ListenerMap *listenerMap;
     ASSERT(namespaceURI);
     ASSERT(qualifiedName);
 
-    int exceptionCode = 0;
-    RefPtr<DocumentImpl> impl = [self _DOMImplementationImpl]->createDocument(namespaceURI, qualifiedName, [doctype _documentTypeImpl], exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    RefPtr<DocumentImpl> impl = [self _DOMImplementationImpl]->createDocument(namespaceURI, qualifiedName, [doctype _documentTypeImpl], ec);
+    raiseOnDOMError(ec);
     return static_cast<DOMDocument *>([DOMNode _nodeWithImpl:impl.get()]);
 }
 
@@ -899,9 +924,9 @@ static ListenerMap *listenerMap;
     ASSERT(title);
     ASSERT(media);
 
-    int exceptionCode = 0;
-    DOMCSSStyleSheet *result = [DOMCSSStyleSheet _CSSStyleSheetWithImpl:[self _DOMImplementationImpl]->createCSSStyleSheet(title, media, exceptionCode).get()];
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    DOMCSSStyleSheet *result = [DOMCSSStyleSheet _CSSStyleSheetWithImpl:[self _DOMImplementationImpl]->createCSSStyleSheet(title, media, ec).get()];
+    raiseOnDOMError(ec);
     return result;
 }
 
@@ -909,7 +934,7 @@ static ListenerMap *listenerMap;
  
 @implementation DOMImplementation (WebCoreInternal)
 
-- (id)_initWithDOMImplementationImpl:(DOMImplementationImpl *)impl
+- (id)_initWithDOMImplementationImpl:(WebCoreDOMImplementation *)impl
 {
     ASSERT(impl);
 
@@ -920,7 +945,7 @@ static ListenerMap *listenerMap;
     return self;
 }
 
-+ (DOMImplementation *)_DOMImplementationWithImpl:(DOMImplementationImpl *)impl
++ (DOMImplementation *)_DOMImplementationWithImpl:(WebCoreDOMImplementation *)impl
 {
     if (!impl)
         return nil;
@@ -933,9 +958,9 @@ static ListenerMap *listenerMap;
     return [[[self alloc] _initWithDOMImplementationImpl:impl] autorelease];
 }
 
-- (DOMImplementationImpl *)_DOMImplementationImpl
+- (WebCoreDOMImplementation *)_DOMImplementationImpl
 {
-    return DOM_cast<DOMImplementationImpl *>(_internal);
+    return DOM_cast<WebCoreDOMImplementation *>(_internal);
 }
 
 @end
@@ -968,9 +993,9 @@ static ListenerMap *listenerMap;
 
 - (DOMNode *)adoptNode:(DOMNode *)source
 {
-    int exceptionCode = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _documentImpl]->adoptNode([source _nodeImpl], exceptionCode).get()];
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    DOMNode *result = [DOMNode _nodeWithImpl:[self _documentImpl]->adoptNode([source _nodeImpl], ec).get()];
+    raiseOnDOMError(ec);
     return result;
 }
 
@@ -993,9 +1018,9 @@ static ListenerMap *listenerMap;
 {
     ASSERT(tagName);
 
-    int exceptionCode = 0;
-    DOMElement *result = static_cast<DOMElement *>([DOMNode _nodeWithImpl:[self _documentImpl]->createElement(tagName, exceptionCode).get()]);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    DOMElement *result = static_cast<DOMElement *>([DOMNode _nodeWithImpl:[self _documentImpl]->createElement(tagName, ec).get()]);
+    raiseOnDOMError(ec);
     return result;
 }
 
@@ -1061,9 +1086,9 @@ static ListenerMap *listenerMap;
 
 - (DOMNode *)importNode:(DOMNode *)importedNode :(BOOL)deep
 {
-    int exceptionCode = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _documentImpl]->importNode([importedNode _nodeImpl], deep, exceptionCode).get()];
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    DOMNode *result = [DOMNode _nodeWithImpl:[self _documentImpl]->importNode([importedNode _nodeImpl], deep, ec).get()];
+    raiseOnDOMError(ec);
     return result;
 }
 
@@ -1072,9 +1097,9 @@ static ListenerMap *listenerMap;
     ASSERT(namespaceURI);
     ASSERT(qualifiedName);
 
-    int exceptionCode = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _documentImpl]->createElementNS(namespaceURI, qualifiedName, exceptionCode).get()];
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    DOMNode *result = [DOMNode _nodeWithImpl:[self _documentImpl]->createElementNS(namespaceURI, qualifiedName, ec).get()];
+    raiseOnDOMError(ec);
     return static_cast<DOMElement *>(result);
 }
 
@@ -1185,9 +1210,9 @@ static ListenerMap *listenerMap;
 {
     ASSERT(data);
     
-    int exceptionCode = 0;
-    [self _characterDataImpl]->setData(data, exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    [self _characterDataImpl]->setData(data, ec);
+    raiseOnDOMError(ec);
 }
 
 - (unsigned)length
@@ -1197,9 +1222,9 @@ static ListenerMap *listenerMap;
 
 - (NSString *)substringData:(unsigned)offset :(unsigned)count
 {
-    int exceptionCode = 0;
-    NSString *result = [self _characterDataImpl]->substringData(offset, count, exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    NSString *result = [self _characterDataImpl]->substringData(offset, count, ec);
+    raiseOnDOMError(ec);
     return result;
 }
 
@@ -1207,34 +1232,34 @@ static ListenerMap *listenerMap;
 {
     ASSERT(arg);
     
-    int exceptionCode = 0;
-    [self _characterDataImpl]->appendData(arg, exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    [self _characterDataImpl]->appendData(arg, ec);
+    raiseOnDOMError(ec);
 }
 
 - (void)insertData:(unsigned)offset :(NSString *)arg
 {
     ASSERT(arg);
     
-    int exceptionCode = 0;
-    [self _characterDataImpl]->insertData(offset, arg, exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    [self _characterDataImpl]->insertData(offset, arg, ec);
+    raiseOnDOMError(ec);
 }
 
 - (void)deleteData:(unsigned)offset :(unsigned) count
 {
-    int exceptionCode = 0;
-    [self _characterDataImpl]->deleteData(offset, count, exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    [self _characterDataImpl]->deleteData(offset, count, ec);
+    raiseOnDOMError(ec);
 }
 
 - (void)replaceData:(unsigned)offset :(unsigned)count :(NSString *)arg
 {
     ASSERT(arg);
 
-    int exceptionCode = 0;
-    [self _characterDataImpl]->replaceData(offset, count, arg, exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    [self _characterDataImpl]->replaceData(offset, count, arg, ec);
+    raiseOnDOMError(ec);
 }
 
 @end
@@ -1263,9 +1288,9 @@ static ListenerMap *listenerMap;
 {
     ASSERT(value);
 
-    int exceptionCode = 0;
-    [self _attrImpl]->setValue(value, exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    [self _attrImpl]->setValue(value, ec);
+    raiseOnDOMError(ec);
 }
 
 - (DOMElement *)ownerElement
@@ -1542,9 +1567,9 @@ static ListenerMap *listenerMap;
 
 - (DOMText *)splitText:(unsigned)offset
 {
-    int exceptionCode = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _textImpl]->splitText(offset, exceptionCode)];
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    DOMNode *result = [DOMNode _nodeWithImpl:[self _textImpl]->splitText(offset, ec)];
+    raiseOnDOMError(ec);
     return static_cast<DOMText *>(result);
 }
 
@@ -1690,9 +1715,9 @@ static ListenerMap *listenerMap;
 {
     ASSERT(data);
 
-    int exceptionCode = 0;
-    [self _processingInstructionImpl]->setData(data, exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    [self _processingInstructionImpl]->setData(data, ec);
+    raiseOnDOMError(ec);
 }
 
 @end
@@ -1729,181 +1754,181 @@ static ListenerMap *listenerMap;
 
 - (DOMNode *)startContainer
 {
-    int exceptionCode = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _rangeImpl]->startContainer(exceptionCode)];
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    DOMNode *result = [DOMNode _nodeWithImpl:[self _rangeImpl]->startContainer(ec)];
+    raiseOnDOMError(ec);
     return result;
 }
 
 - (int)startOffset
 {
-    int exceptionCode = 0;
-    int result = [self _rangeImpl]->startOffset(exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    int result = [self _rangeImpl]->startOffset(ec);
+    raiseOnDOMError(ec);
     return result;
 }
 
 - (DOMNode *)endContainer
 {
-    int exceptionCode = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _rangeImpl]->endContainer(exceptionCode)];
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    DOMNode *result = [DOMNode _nodeWithImpl:[self _rangeImpl]->endContainer(ec)];
+    raiseOnDOMError(ec);
     return result;
 }
 
 - (int)endOffset
 {
-    int exceptionCode = 0;
-    int result = [self _rangeImpl]->endOffset(exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    int result = [self _rangeImpl]->endOffset(ec);
+    raiseOnDOMError(ec);
     return result;
 }
 
 - (BOOL)collapsed
 {
-    int exceptionCode = 0;
-    BOOL result = [self _rangeImpl]->collapsed(exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    BOOL result = [self _rangeImpl]->collapsed(ec);
+    raiseOnDOMError(ec);
     return result;
 }
 
 - (DOMNode *)commonAncestorContainer
 {
-    int exceptionCode = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _rangeImpl]->commonAncestorContainer(exceptionCode)];
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    DOMNode *result = [DOMNode _nodeWithImpl:[self _rangeImpl]->commonAncestorContainer(ec)];
+    raiseOnDOMError(ec);
     return result;
 }
 
 - (void)setStart:(DOMNode *)refNode :(int)offset
 {
-    int exceptionCode = 0;
-    [self _rangeImpl]->setStart([refNode _nodeImpl], offset, exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    [self _rangeImpl]->setStart([refNode _nodeImpl], offset, ec);
+    raiseOnDOMError(ec);
 }
 
 - (void)setEnd:(DOMNode *)refNode :(int)offset
 {
-    int exceptionCode = 0;
-    [self _rangeImpl]->setEnd([refNode _nodeImpl], offset, exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    [self _rangeImpl]->setEnd([refNode _nodeImpl], offset, ec);
+    raiseOnDOMError(ec);
 }
 
 - (void)setStartBefore:(DOMNode *)refNode
 {
-    int exceptionCode = 0;
-    [self _rangeImpl]->setStartBefore([refNode _nodeImpl], exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    [self _rangeImpl]->setStartBefore([refNode _nodeImpl], ec);
+    raiseOnDOMError(ec);
 }
 
 - (void)setStartAfter:(DOMNode *)refNode
 {
-    int exceptionCode = 0;
-    [self _rangeImpl]->setStartAfter([refNode _nodeImpl], exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    [self _rangeImpl]->setStartAfter([refNode _nodeImpl], ec);
+    raiseOnDOMError(ec);
 }
 
 - (void)setEndBefore:(DOMNode *)refNode
 {
-    int exceptionCode = 0;
-    [self _rangeImpl]->setEndBefore([refNode _nodeImpl], exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    [self _rangeImpl]->setEndBefore([refNode _nodeImpl], ec);
+    raiseOnDOMError(ec);
 }
 
 - (void)setEndAfter:(DOMNode *)refNode
 {
-    int exceptionCode = 0;
-    [self _rangeImpl]->setEndAfter([refNode _nodeImpl], exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    [self _rangeImpl]->setEndAfter([refNode _nodeImpl], ec);
+    raiseOnDOMError(ec);
 }
 
 - (void)collapse:(BOOL)toStart
 {
-    int exceptionCode = 0;
-    [self _rangeImpl]->collapse(toStart, exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    [self _rangeImpl]->collapse(toStart, ec);
+    raiseOnDOMError(ec);
 }
 
 - (void)selectNode:(DOMNode *)refNode
 {
-    int exceptionCode = 0;
-    [self _rangeImpl]->selectNode([refNode _nodeImpl], exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    [self _rangeImpl]->selectNode([refNode _nodeImpl], ec);
+    raiseOnDOMError(ec);
 }
 
 - (void)selectNodeContents:(DOMNode *)refNode
 {
-    int exceptionCode = 0;
-    [self _rangeImpl]->selectNodeContents([refNode _nodeImpl], exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    [self _rangeImpl]->selectNodeContents([refNode _nodeImpl], ec);
+    raiseOnDOMError(ec);
 }
 
 - (short)compareBoundaryPoints:(unsigned short)how :(DOMRange *)sourceRange
 {
-    int exceptionCode = 0;
-    short result = [self _rangeImpl]->compareBoundaryPoints(static_cast<Range::CompareHow>(how), [sourceRange _rangeImpl], exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    short result = [self _rangeImpl]->compareBoundaryPoints(static_cast<RangeImpl::CompareHow>(how), [sourceRange _rangeImpl], ec);
+    raiseOnDOMError(ec);
     return result;
 }
 
 - (void)deleteContents
 {
-    int exceptionCode = 0;
-    [self _rangeImpl]->deleteContents(exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    [self _rangeImpl]->deleteContents(ec);
+    raiseOnDOMError(ec);
 }
 
 - (DOMDocumentFragment *)extractContents
 {
-    int exceptionCode = 0;
-    DOMDocumentFragment *result = [DOMDocumentFragment _documentFragmentWithImpl:[self _rangeImpl]->extractContents(exceptionCode).get()];
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    DOMDocumentFragment *result = [DOMDocumentFragment _documentFragmentWithImpl:[self _rangeImpl]->extractContents(ec).get()];
+    raiseOnDOMError(ec);
     return result;
 }
 
 - (DOMDocumentFragment *)cloneContents
 {
-    int exceptionCode = 0;
-    DOMDocumentFragment *result = [DOMDocumentFragment _documentFragmentWithImpl:[self _rangeImpl]->cloneContents(exceptionCode).get()];
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    DOMDocumentFragment *result = [DOMDocumentFragment _documentFragmentWithImpl:[self _rangeImpl]->cloneContents(ec).get()];
+    raiseOnDOMError(ec);
     return result;
 }
 
 - (void)insertNode:(DOMNode *)newNode
 {
-    int exceptionCode = 0;
-    [self _rangeImpl]->insertNode([newNode _nodeImpl], exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    [self _rangeImpl]->insertNode([newNode _nodeImpl], ec);
+    raiseOnDOMError(ec);
 }
 
 - (void)surroundContents:(DOMNode *)newParent
 {
-    int exceptionCode = 0;
-    [self _rangeImpl]->surroundContents([newParent _nodeImpl], exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    [self _rangeImpl]->surroundContents([newParent _nodeImpl], ec);
+    raiseOnDOMError(ec);
 }
 
 - (DOMRange *)cloneRange
 {
-    int exceptionCode = 0;
-    DOMRange *result = [DOMRange _rangeWithImpl:[self _rangeImpl]->cloneRange(exceptionCode).get()];
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    DOMRange *result = [DOMRange _rangeWithImpl:[self _rangeImpl]->cloneRange(ec).get()];
+    raiseOnDOMError(ec);
     return result;
 }
 
 - (NSString *)toString
 {
-    int exceptionCode = 0;
-    NSString *result = [self _rangeImpl]->toString(exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    NSString *result = [self _rangeImpl]->toString(ec);
+    raiseOnDOMError(ec);
     return result;
 }
 
 - (void)detach
 {
-    int exceptionCode = 0;
-    [self _rangeImpl]->detach(exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    [self _rangeImpl]->detach(ec);
+    raiseOnDOMError(ec);
 }
 
 @end
@@ -2072,25 +2097,25 @@ static ListenerMap *listenerMap;
 
 - (DOMNode *)nextNode
 {
-    int exceptionCode = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _nodeIteratorImpl]->nextNode(exceptionCode)];
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    DOMNode *result = [DOMNode _nodeWithImpl:[self _nodeIteratorImpl]->nextNode(ec)];
+    raiseOnDOMError(ec);
     return result;
 }
 
 - (DOMNode *)previousNode
 {
-    int exceptionCode = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _nodeIteratorImpl]->previousNode(exceptionCode)];
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    DOMNode *result = [DOMNode _nodeWithImpl:[self _nodeIteratorImpl]->previousNode(ec)];
+    raiseOnDOMError(ec);
     return result;
 }
 
 - (void)detach
 {
-    int exceptionCode = 0;
-    [self _nodeIteratorImpl]->detach(exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    [self _nodeIteratorImpl]->detach(ec);
+    raiseOnDOMError(ec);
 }
 
 @end
@@ -2181,9 +2206,9 @@ static ListenerMap *listenerMap;
 
 - (void)setCurrentNode:(DOMNode *)currentNode
 {
-    int exceptionCode = 0;
-    [self _treeWalkerImpl]->setCurrentNode([currentNode _nodeImpl], exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    [self _treeWalkerImpl]->setCurrentNode([currentNode _nodeImpl], ec);
+    raiseOnDOMError(ec);
 }
 
 - (DOMNode *)parentNode
@@ -2269,7 +2294,7 @@ ObjCNodeFilterCondition::~ObjCNodeFilterCondition()
 short ObjCNodeFilterCondition::acceptNode(NodeImpl* node) const
 {
     if (!node)
-        return NodeFilter::FILTER_REJECT;
+        return NodeFilterImpl::FILTER_REJECT;
     return [m_filter acceptNode:[DOMNode _nodeWithImpl:node]];
 }
 
@@ -2280,9 +2305,9 @@ short ObjCNodeFilterCondition::acceptNode(NodeImpl* node) const
     RefPtr<NodeFilterImpl> cppFilter;
     if (filter)
         cppFilter = new NodeFilterImpl(new ObjCNodeFilterCondition(filter));
-    int exceptionCode = 0;
-    RefPtr<NodeIteratorImpl> impl = [self _documentImpl]->createNodeIterator([root _nodeImpl], whatToShow, cppFilter, expandEntityReferences, exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    RefPtr<NodeIteratorImpl> impl = [self _documentImpl]->createNodeIterator([root _nodeImpl], whatToShow, cppFilter, expandEntityReferences, ec);
+    raiseOnDOMError(ec);
     return [DOMNodeIterator _nodeIteratorWithImpl:impl.get() filter:filter];
 }
 
@@ -2291,9 +2316,9 @@ short ObjCNodeFilterCondition::acceptNode(NodeImpl* node) const
     RefPtr<NodeFilterImpl> cppFilter;
     if (filter)
         cppFilter = new NodeFilterImpl(new ObjCNodeFilterCondition(filter));
-    int exceptionCode = 0;
-    RefPtr<TreeWalkerImpl> impl = [self _documentImpl]->createTreeWalker([root _nodeImpl], whatToShow, cppFilter, expandEntityReferences, exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    RefPtr<TreeWalkerImpl> impl = [self _documentImpl]->createTreeWalker([root _nodeImpl], whatToShow, cppFilter, expandEntityReferences, ec);
+    raiseOnDOMError(ec);
     return [DOMTreeWalker _treeWalkerWithImpl:impl.get() filter:filter];
 }
 

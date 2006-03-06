@@ -77,11 +77,11 @@ static DOMString stringValueForRange(const NodeImpl *node, const RangeImpl *rang
 {
     DOMString str = node->nodeValue().copy();
     if (range) {
-        int exceptionCode;
-        if (node == range->endContainer(exceptionCode))
-            str.truncate(range->endOffset(exceptionCode));
-        if (node == range->startContainer(exceptionCode))
-            str.remove(0, range->startOffset(exceptionCode));
+        ExceptionCode ec;
+        if (node == range->endContainer(ec))
+            str.truncate(range->endOffset(ec));
+        if (node == range->startContainer(ec))
+            str.remove(0, range->startOffset(ec));
     }
     return str;
 }
@@ -97,15 +97,15 @@ static QString renderedText(const NodeImpl *node, const RangeImpl *range)
 
     QString result = "";
 
-    int exceptionCode;
+    ExceptionCode ec;
     const TextImpl *textNode = static_cast<const TextImpl *>(node);
     unsigned startOffset = 0;
     unsigned endOffset = textNode->length();
 
-    if (range && node == range->startContainer(exceptionCode))
-        startOffset = range->startOffset(exceptionCode);
-    if (range && node == range->endContainer(exceptionCode))
-        endOffset = range->endOffset(exceptionCode);
+    if (range && node == range->startContainer(ec))
+        startOffset = range->startOffset(ec);
+    if (range && node == range->endContainer(ec))
+        endOffset = range->endOffset(ec);
     
     RenderText *textRenderer = static_cast<RenderText *>(r);
     QString str = node->nodeValue().qstring();
@@ -150,9 +150,9 @@ static QString renderedText(const NodeImpl *node, const RangeImpl *range)
 static QString startMarkup(const NodeImpl *node, const RangeImpl *range, EAnnotateForInterchange annotate, CSSMutableStyleDeclarationImpl *defaultStyle)
 {
     bool documentIsHTML = node->getDocument()->isHTMLDocument();
-    unsigned short type = node->nodeType();
+    NodeImpl::NodeType type = node->nodeType();
     switch (type) {
-        case Node::TEXT_NODE: {
+        case NodeImpl::TEXT_NODE: {
             if (node->parentNode()) {
                 if (node->parentNode()->hasTagName(preTag) ||
                     node->parentNode()->hasTagName(scriptTag) ||
@@ -176,24 +176,24 @@ static QString startMarkup(const NodeImpl *node, const RangeImpl *range, EAnnota
             }
             return annotate ? convertHTMLTextToInterchangeFormat(markup) : markup;
         }
-        case Node::COMMENT_NODE:
+        case NodeImpl::COMMENT_NODE:
             return static_cast<const CommentImpl *>(node)->toString().qstring();
-        case Node::DOCUMENT_NODE: {
+        case NodeImpl::DOCUMENT_NODE: {
             // Documents do not normally contain a docType as a child node, force it to print here instead.
             const DocumentTypeImpl* docType = static_cast<const DocumentImpl*>(node)->doctype();
             if (docType)
                 return docType->toString().qstring();
             return "";
         }
-        case Node::DOCUMENT_FRAGMENT_NODE:
+        case NodeImpl::DOCUMENT_FRAGMENT_NODE:
             return "";
-        case Node::DOCUMENT_TYPE_NODE:
+        case NodeImpl::DOCUMENT_TYPE_NODE:
             return static_cast<const DocumentTypeImpl*>(node)->toString().qstring();
-        case Node::PROCESSING_INSTRUCTION_NODE:
+        case NodeImpl::PROCESSING_INSTRUCTION_NODE:
             return static_cast<const ProcessingInstructionImpl *>(node)->toString().qstring();
-        case Node::ELEMENT_NODE: {
+        case NodeImpl::ELEMENT_NODE: {
             QString markup = QChar('<') + node->nodeName().qstring();
-            if (type == Node::ELEMENT_NODE) {
+            if (type == NodeImpl::ELEMENT_NODE) {
                 const ElementImpl *el = static_cast<const ElementImpl *>(node);
                 DOMString additionalStyle;
                 if (defaultStyle && el->isHTMLElement()) {
@@ -238,6 +238,12 @@ static QString startMarkup(const NodeImpl *node, const RangeImpl *range, EAnnota
             
             return markup;
         }
+        case NodeImpl::ATTRIBUTE_NODE:
+        case NodeImpl::CDATA_SECTION_NODE:
+        case NodeImpl::ENTITY_NODE:
+        case NodeImpl::ENTITY_REFERENCE_NODE:
+        case NodeImpl::NOTATION_NODE:
+            break;
     }
     return "";
 }
@@ -301,7 +307,7 @@ static void completeURLs(NodeImpl *node, const QString &baseURL)
 {
     NodeImpl *end = node->traverseNextSibling();
     for (NodeImpl *n = node; n != end; n = n->traverseNextNode()) {
-        if (n->nodeType() == Node::ELEMENT_NODE) {
+        if (n->isElementNode()) {
             ElementImpl *e = static_cast<ElementImpl *>(n);
             NamedAttrMapImpl *attrs = e->attributes();
             unsigned length = attrs->length();
@@ -321,9 +327,9 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
 
     static const QString interchangeNewlineString = QString("<br class=\"") + AppleInterchangeNewline + "\">";
 
-    int exceptionCode = 0;
-    NodeImpl *commonAncestor = range->commonAncestorContainer(exceptionCode);
-    ASSERT(exceptionCode == 0);
+    ExceptionCode ec = 0;
+    NodeImpl *commonAncestor = range->commonAncestorContainer(ec);
+    ASSERT(ec == 0);
 
     DocumentImpl *doc = commonAncestor->getDocument();
     doc->updateLayoutIgnorePendingStylesheets();
@@ -418,8 +424,8 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
     }
     
     NodeImpl *rangeStartNode = range->startNode();
-    int rangeStartOffset = range->startOffset(exceptionCode);
-    ASSERT(exceptionCode == 0);
+    int rangeStartOffset = range->startOffset(ec);
+    ASSERT(ec == 0);
     
     // Add ancestors up to the common ancestor block so inline ancestors such as FONT and B are part of the markup.
     if (lastClosed) {
@@ -496,10 +502,10 @@ QString createMarkup(const DOM::NodeImpl *node, EChildrenOnly includeChildren,
 
 static void createParagraphContentsFromString(DOM::DocumentImpl *document, ElementImpl *paragraph, const QString &string)
 {
-    int exceptionCode = 0;
+    ExceptionCode ec = 0;
     if (string.isEmpty()) {
-        paragraph->appendChild(createBlockPlaceholderElement(document), exceptionCode);
-        ASSERT(exceptionCode == 0);
+        paragraph->appendChild(createBlockPlaceholderElement(document), ec);
+        ASSERT(ec == 0);
         return;
     }
 
@@ -514,14 +520,14 @@ static void createParagraphContentsFromString(DOM::DocumentImpl *document, Eleme
         // append the non-tab textual part
         if (!s.isEmpty()) {
             if (tabText != "") {
-                paragraph->appendChild(createTabSpanElement(document, tabText), exceptionCode);
-                ASSERT(exceptionCode == 0);
+                paragraph->appendChild(createTabSpanElement(document, tabText), ec);
+                ASSERT(ec == 0);
                 tabText = "";
             }
             RefPtr<NodeImpl> textNode = document->createTextNode(s);
             rebalanceWhitespaceInTextNode(textNode.get(), 0, s.length());
-            paragraph->appendChild(textNode.release(), exceptionCode);
-            ASSERT(exceptionCode == 0);
+            paragraph->appendChild(textNode.release(), ec);
+            ASSERT(ec == 0);
         }
 
         // there is a tab after every entry, except the last entry
@@ -529,8 +535,8 @@ static void createParagraphContentsFromString(DOM::DocumentImpl *document, Eleme
         if (!tabList.isEmpty()) {
             tabText += '\t';
         } else if (tabText != "") {
-            paragraph->appendChild(createTabSpanElement(document, tabText), exceptionCode);
-            ASSERT(exceptionCode == 0);
+            paragraph->appendChild(createTabSpanElement(document, tabText), ec);
+            ASSERT(ec == 0);
         }
     }
 }
@@ -553,19 +559,19 @@ PassRefPtr<DocumentFragmentImpl> createFragmentFromText(DocumentImpl *document, 
             QString s = list.first();
             list.pop_front();
 
-            int exceptionCode = 0;
+            ExceptionCode ec = 0;
             RefPtr<ElementImpl> element;
             if (s.isEmpty() && list.isEmpty()) {
                 // For last line, use the "magic BR" rather than a P.
-                element = document->createElementNS(xhtmlNamespaceURI, "br", exceptionCode);
-                ASSERT(exceptionCode == 0);
+                element = document->createElementNS(xhtmlNamespaceURI, "br", ec);
+                ASSERT(ec == 0);
                 element->setAttribute(classAttr, AppleInterchangeNewline);            
             } else {
                 element = createDefaultParagraphElement(document);
                 createParagraphContentsFromString(document, element.get(), s);
             }
-            fragment->appendChild(element.get(), exceptionCode);
-            ASSERT(exceptionCode == 0);
+            fragment->appendChild(element.get(), ec);
+            ASSERT(ec == 0);
         }
     }
     return fragment.release();
@@ -578,13 +584,13 @@ PassRefPtr<DocumentFragmentImpl> createFragmentFromNodeList(DocumentImpl *docume
     
     RefPtr<DocumentFragmentImpl> fragment = document->createDocumentFragment();
 
-    int exceptionCode = 0;
+    ExceptionCode ec = 0;
     for (QPtrListIterator<NodeImpl> i(nodeList); i.current(); ++i) {
         RefPtr<ElementImpl> element = createDefaultParagraphElement(document);
-        element->appendChild(i.current(), exceptionCode);
-        ASSERT(exceptionCode == 0);
-        fragment->appendChild(element.release(), exceptionCode);
-        ASSERT(exceptionCode == 0);
+        element->appendChild(i.current(), ec);
+        ASSERT(ec == 0);
+        fragment->appendChild(element.release(), ec);
+        ASSERT(ec == 0);
     }
 
     return fragment.release();

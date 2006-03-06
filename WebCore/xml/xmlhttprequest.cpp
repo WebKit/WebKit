@@ -23,11 +23,10 @@
 
 #include "Cache.h"
 #include "DOMImplementationImpl.h"
+#include "EventListener.h"
 #include "EventNames.h"
 #include "KWQLoader.h"
-#include "dom2_events.h"
 #include "dom2_eventsimpl.h"
-#include "dom_exception.h"
 #include "PlatformString.h"
 #include "formdata.h"
 #include "html_documentimpl.h"
@@ -160,14 +159,14 @@ void XMLHttpRequest::callReadyStateChangeListener()
       int ignoreException;
       RefPtr<EventImpl> ev = doc->createEvent("HTMLEvents", ignoreException);
       ev->initEvent(readystatechangeEvent, true, true);
-      m_onReadyStateChangeListener->handleEventImpl(ev.get(), true);
+      m_onReadyStateChangeListener->handleEvent(ev.get(), true);
     }
     
     if (doc && doc->frame() && state == Completed && m_onLoadListener) {
       int ignoreException;
       RefPtr<EventImpl> ev = doc->createEvent("HTMLEvents", ignoreException);
       ev->initEvent(loadEvent, true, true);
-      m_onLoadListener->handleEventImpl(ev.get(), true);
+      m_onLoadListener->handleEvent(ev.get(), true);
     }
 }
 

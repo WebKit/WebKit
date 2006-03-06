@@ -25,21 +25,18 @@
 #if SVG_SUPPORT
 
 #include "DOMImplementationImpl.h"
-#include <QStringList.h>
+#include "QStringList.h"
 
-namespace WebCore
-{
-    class DOMString;
+namespace WebCore {
+    class CSSStyleSheetImpl;
     class DocumentImpl;
     class DocumentTypeImpl;
-    class CSSStyleSheetImpl;
+    class String;
+    class StringImpl;
 
     typedef FrameView KDOMView;
-}
 
-namespace WebCore
-{
-    class SVGDOMImplementationImpl : public DOM::DOMImplementationImpl
+    class SVGDOMImplementationImpl : public DOMImplementationImpl
     {
     public:
         SVGDOMImplementationImpl();
@@ -49,9 +46,9 @@ namespace WebCore
 
         // 'SVGDOMImplementationImpl' functions
         bool hasFeature(DOMStringImpl *feature, DOMStringImpl *version) const;
-        PassRefPtr<DocumentTypeImpl> createDocumentType(DOMStringImpl *qualifiedName, DOMStringImpl *publicId, DOMStringImpl *systemId, int& exceptioncode) const;
-        PassRefPtr<DocumentImpl> createDocument(DOMStringImpl *namespaceURI, DOMStringImpl *qualifiedName, DocumentTypeImpl *doctype, int& exceptioncode) const;
-        PassRefPtr<DocumentImpl> createDocument(DOMStringImpl *namespaceURI, DOMStringImpl *qualifiedName, DocumentTypeImpl *doctype, bool createDocElement, KDOMView *view, int& exceptioncode) const;
+        PassRefPtr<DocumentTypeImpl> createDocumentType(DOMStringImpl *qualifiedName, DOMStringImpl *publicId, DOMStringImpl *systemId, ExceptionCode&) const;
+        PassRefPtr<DocumentImpl> createDocument(DOMStringImpl *namespaceURI, DOMStringImpl *qualifiedName, DocumentTypeImpl *doctype, ExceptionCode&) const;
+        PassRefPtr<DocumentImpl> createDocument(DOMStringImpl *namespaceURI, DOMStringImpl *qualifiedName, DocumentTypeImpl *doctype, bool createDocElement, FrameView*, ExceptionCode&) const;
 
         virtual PassRefPtr<CSSStyleSheetImpl> createCSSStyleSheet(DOMStringImpl *title, DOMStringImpl *media) const;
 

@@ -25,7 +25,6 @@
 #include "config.h"
 
 #include "DocumentFragmentImpl.h"
-#include "dom_node.h"
 
 namespace DOM {
 
@@ -38,21 +37,21 @@ DOMString DocumentFragmentImpl::nodeName() const
   return "#document-fragment";
 }
 
-unsigned short DocumentFragmentImpl::nodeType() const
+NodeImpl::NodeType DocumentFragmentImpl::nodeType() const
 {
-    return Node::DOCUMENT_FRAGMENT_NODE;
+    return DOCUMENT_FRAGMENT_NODE;
 }
 
 // DOM Section 1.1.1
-bool DocumentFragmentImpl::childTypeAllowed( unsigned short type )
+bool DocumentFragmentImpl::childTypeAllowed(NodeType type)
 {
     switch (type) {
-        case Node::ELEMENT_NODE:
-        case Node::PROCESSING_INSTRUCTION_NODE:
-        case Node::COMMENT_NODE:
-        case Node::TEXT_NODE:
-        case Node::CDATA_SECTION_NODE:
-        case Node::ENTITY_REFERENCE_NODE:
+        case ELEMENT_NODE:
+        case PROCESSING_INSTRUCTION_NODE:
+        case COMMENT_NODE:
+        case TEXT_NODE:
+        case CDATA_SECTION_NODE:
+        case ENTITY_REFERENCE_NODE:
             return true;
         default:
             return false;

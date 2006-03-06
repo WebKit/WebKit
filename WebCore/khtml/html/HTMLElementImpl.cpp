@@ -25,16 +25,16 @@
 #include "config.h"
 #include "HTMLElementImpl.h"
 
+#include "EventListener.h"
 #include "EventNames.h"
+#include "ExceptionCode.h"
 #include "Frame.h"
 #include "css_ruleimpl.h"
 #include "css_stylesheetimpl.h"
 #include "css_valueimpl.h"
 #include "cssproperties.h"
 #include "cssvalues.h"
-#include "dom2_events.h"
 #include "dom2_eventsimpl.h"
-#include "dom_exception.h"
 #include "html_documentimpl.h"
 #include "htmlfactory.h"
 #include "htmlnames.h"
@@ -289,42 +289,42 @@ PassRefPtr<DocumentFragmentImpl> HTMLElementImpl::createContextualFragment(const
     return fragment.release();
 }
 
-void HTMLElementImpl::setInnerHTML(const DOMString &html, int &exception)
+void HTMLElementImpl::setInnerHTML(const DOMString &html, ExceptionCode& ec)
 {
     RefPtr<DocumentFragmentImpl> fragment = createContextualFragment(html);
     if (!fragment) {
-        exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
 
     removeChildren();
-    appendChild(fragment.release(), exception);
+    appendChild(fragment.release(), ec);
 }
 
-void HTMLElementImpl::setOuterHTML(const DOMString &html, int &exception)
+void HTMLElementImpl::setOuterHTML(const DOMString &html, ExceptionCode& ec)
 {
     NodeImpl *p = parent();
     if (!p || !p->isHTMLElement()) {
-        exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
     HTMLElementImpl *parent = static_cast<HTMLElementImpl *>(p);
     RefPtr<DocumentFragmentImpl> fragment = parent->createContextualFragment(html);
 
     if (!fragment) {
-        exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
     
-    parent->replaceChild(fragment.release(), this, exception);
+    parent->replaceChild(fragment.release(), this, ec);
 }
 
 
-void HTMLElementImpl::setInnerText(const DOMString &text, int &exception)
+void HTMLElementImpl::setInnerText(const DOMString &text, ExceptionCode& ec)
 {
     // following the IE specs.
     if (endTagRequirement() == TagStatusForbidden) {
-        exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
 
@@ -332,19 +332,19 @@ void HTMLElementImpl::setInnerText(const DOMString &text, int &exception)
         hasLocalName(headTag) || hasLocalName(htmlTag) || hasLocalName(tableTag) || 
         hasLocalName(tbodyTag) || hasLocalName(tfootTag) || hasLocalName(theadTag) ||
         hasLocalName(trTag)) {
-        exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
 
     removeChildren();
-    appendChild(new TextImpl(getDocument(), text), exception);
+    appendChild(new TextImpl(getDocument(), text), ec);
 }
 
-void HTMLElementImpl::setOuterText(const DOMString &text, int &exception)
+void HTMLElementImpl::setOuterText(const DOMString &text, ExceptionCode& ec)
 {
     // following the IE specs.
     if (endTagRequirement() == TagStatusForbidden) {
-        exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
 
@@ -352,31 +352,32 @@ void HTMLElementImpl::setOuterText(const DOMString &text, int &exception)
         hasLocalName(headTag) || hasLocalName(htmlTag) || hasLocalName(tableTag) || 
         hasLocalName(tbodyTag) || hasLocalName(tfootTag) || hasLocalName(theadTag) ||
         hasLocalName(trTag)) {
-        exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
 
     NodeImpl *parent = parentNode();
 
     if (!parent) {
-        exception = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        ec = NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
 
     RefPtr<TextImpl> t = new TextImpl(getDocument(), text);
-    parent->replaceChild(t, this, exception);
-    if (exception)
+    ec = 0;
+    parent->replaceChild(t, this, ec);
+    if (ec)
         return;
 
     // is previous node a text node? if so, merge into it
     NodeImpl *prev = t->previousSibling();
     if (prev && prev->isTextNode()) {
         TextImpl *textPrev = static_cast<TextImpl *>(prev);
-        textPrev->appendData(t->data(), exception);
-        if (exception)
+        textPrev->appendData(t->data(), ec);
+        if (ec)
             return;
-        t->remove(exception);
-        if (exception)
+        t->remove(ec);
+        if (ec)
             return;
         t = textPrev;
     }
@@ -385,11 +386,11 @@ void HTMLElementImpl::setOuterText(const DOMString &text, int &exception)
     NodeImpl *next = t->nextSibling();
     if (next && next->isTextNode()) {
         TextImpl *textNext = static_cast<TextImpl *>(next);
-        t->appendData(textNext->data(), exception);
-        if (exception)
+        t->appendData(textNext->data(), ec);
+        if (ec)
             return;
-        textNext->remove(exception);
-        if (exception)
+        textNext->remove(ec);
+        if (ec)
             return;
     }
 }
@@ -493,8 +494,8 @@ void HTMLElementImpl::setContentEditable(MappedAttributeImpl* attr)
 void HTMLElementImpl::setContentEditable(const DOMString &enabled)
 {
     if (enabled == "inherit") {
-        int exceptionCode;
-        removeAttribute(contenteditableAttr, exceptionCode);
+        ExceptionCode ec;
+        removeAttribute(contenteditableAttr, ec);
     }
     else
         setAttribute(contenteditableAttr, enabled.isEmpty() ? "true" : enabled);

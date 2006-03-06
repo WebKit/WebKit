@@ -82,14 +82,14 @@ TextIterator::TextIterator(const RangeImpl *r, IteratorKind kind) : m_endContain
     if (!r)
         return;
 
-    int exceptionCode = 0;
+    ExceptionCode ec = 0;
 
     // get and validate the range endpoints
-    NodeImpl *startContainer = r->startContainer(exceptionCode);
-    int startOffset = r->startOffset(exceptionCode);
-    NodeImpl *endContainer = r->endContainer(exceptionCode);
-    int endOffset = r->endOffset(exceptionCode);
-    if (exceptionCode != 0)
+    NodeImpl *startContainer = r->startContainer(ec);
+    int startOffset = r->startOffset(ec);
+    NodeImpl *endContainer = r->endContainer(ec);
+    int endOffset = r->endOffset(ec);
+    if (ec != 0)
         return;
 
     // remember ending place - this does not change
@@ -157,7 +157,7 @@ void TextIterator::advance()
         // handle current node according to its type
         if (!m_handledNode) {
             RenderObject *renderer = m_node->renderer();
-            if (renderer && renderer->isText() && m_node->nodeType() == Node::TEXT_NODE) {
+            if (renderer && renderer->isText() && m_node->nodeType() == NodeImpl::TEXT_NODE) {
                 // FIXME: What about CDATA_SECTION_NODE?
                 if (renderer->style()->visibility() == VISIBLE) {
                     m_handledNode = handleTextNode();
@@ -509,13 +509,13 @@ SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const RangeImpl
     if (exception)
         return;
 
-    if (!offsetInCharacters(startNode->nodeType())) {
+    if (!startNode->offsetInCharacters()) {
         if (startOffset >= 0 && startOffset < static_cast<int>(startNode->childNodeCount())) {
             startNode = startNode->childNode(startOffset);
             startOffset = 0;
         }
     }
-    if (!offsetInCharacters(endNode->nodeType())) {
+    if (!endNode->offsetInCharacters()) {
         if (endOffset > 0 && endOffset <= static_cast<int>(endNode->childNodeCount())) {
             endNode = endNode->childNode(endOffset - 1);
             endOffset = endNode->hasChildNodes() ? endNode->childNodeCount() : endNode->maxOffset();
@@ -551,7 +551,7 @@ void SimplifiedBackwardsTextIterator::advance()
     while (m_node) {
         if (!m_handledNode) {
             RenderObject *renderer = m_node->renderer();
-            if (renderer && renderer->isText() && m_node->nodeType() == Node::TEXT_NODE) {
+            if (renderer && renderer->isText() && m_node->nodeType() == NodeImpl::TEXT_NODE) {
                 // FIXME: What about CDATA_SECTION_NODE?
                 if (renderer->style()->visibility() == VISIBLE && m_offset > 0) {
                     m_handledNode = handleTextNode();

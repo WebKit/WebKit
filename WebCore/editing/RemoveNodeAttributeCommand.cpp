@@ -50,9 +50,9 @@ void RemoveNodeAttributeCommand::doApply()
     m_oldValue = m_element->getAttribute(m_attribute);
     ASSERT(!m_oldValue.isNull());
 
-    int exceptionCode = 0;
-    m_element->removeAttribute(m_attribute, exceptionCode);
-    ASSERT(exceptionCode == 0);
+    ExceptionCode ec = 0;
+    m_element->removeAttribute(m_attribute, ec);
+    ASSERT(ec == 0);
 }
 
 void RemoveNodeAttributeCommand::doUnapply()
@@ -60,9 +60,9 @@ void RemoveNodeAttributeCommand::doUnapply()
     ASSERT(m_element);
     ASSERT(!m_oldValue.isNull());
 
-    int exceptionCode = 0;
-    m_element->setAttribute(m_attribute, m_oldValue.impl(), exceptionCode);
-    ASSERT(exceptionCode == 0);
+    ExceptionCode ec = 0;
+    m_element->setAttribute(m_attribute, m_oldValue.impl(), ec);
+    ASSERT(ec == 0);
 }
 
 } // namespace khtml

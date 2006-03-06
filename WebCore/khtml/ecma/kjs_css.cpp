@@ -36,31 +36,7 @@
 
 using namespace DOM::HTMLNames;
 
-using DOM::CSSCharsetRuleImpl;
-using DOM::CSSFontFaceRuleImpl;
-using DOM::CSSImportRuleImpl;
-using DOM::CSSMediaRuleImpl;
-using DOM::CSSPageRuleImpl;
-using DOM::CSSPrimitiveValue;
-using DOM::CSSPrimitiveValueImpl;
-using DOM::CSSRule;
-using DOM::CSSRuleImpl;
-using DOM::CSSRuleListImpl;
-using DOM::CSSStyleDeclarationImpl;
-using DOM::CSSStyleRuleImpl;
-using DOM::CSSStyleSheetImpl;
-using DOM::CSSValue;
-using DOM::CSSValueImpl;
-using DOM::CSSValueListImpl;
-using DOM::CounterImpl;
-using DOM::DocumentImpl;
-using DOM::DOMString;
-using DOM::ElementImpl;
-using DOM::HTMLStyleElementImpl;
-using DOM::MediaListImpl;
-using DOM::RectImpl;
-using DOM::StyleSheetImpl;
-using DOM::StyleSheetListImpl;
+using namespace WebCore;
 
 namespace KJS {
 
@@ -155,7 +131,7 @@ JSValue *DOMCSSStyleDeclaration::cssPropertyGetter(ExecState *exec, JSObject *or
   DOMString prop = cssPropertyName(propertyName, &pixelOrPos);
   RefPtr<CSSValueImpl> v = thisObj->m_impl->getPropertyCSSValue(prop);
   if (v) {
-    if (pixelOrPos && v->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE)
+    if (pixelOrPos && v->cssValueType() == CSSValueImpl::CSS_PRIMITIVE_VALUE)
       return jsNumber(static_pointer_cast<CSSPrimitiveValueImpl>(v)->getFloatValue(CSSPrimitiveValue::CSS_PX));
     return jsStringOrNull(v->cssText());
   }
@@ -732,19 +708,19 @@ const ClassInfo* DOMCSSRule::classInfo() const
 {
   CSSRuleImpl &cssRule = *m_impl;
   switch (cssRule.type()) {
-  case DOM::CSSRule::STYLE_RULE:
+  case WebCore::STYLE_RULE:
     return &style_info;
-  case DOM::CSSRule::MEDIA_RULE:
+  case WebCore::MEDIA_RULE:
     return &media_info;
-  case DOM::CSSRule::FONT_FACE_RULE:
+  case WebCore::FONT_FACE_RULE:
     return &fontface_info;
-  case DOM::CSSRule::PAGE_RULE:
+  case WebCore::PAGE_RULE:
     return &page_info;
-  case DOM::CSSRule::IMPORT_RULE:
+  case WebCore::IMPORT_RULE:
     return &import_info;
-  case DOM::CSSRule::CHARSET_RULE:
+  case WebCore::CHARSET_RULE:
     return &charset_info;
-  case DOM::CSSRule::UNKNOWN_RULE:
+  case WebCore::UNKNOWN_RULE:
   default:
     return &info;
   }
@@ -808,29 +784,29 @@ JSValue *DOMCSSRule::getValueProperty(ExecState *exec, int token) const
   case ParentRule:
     return getDOMCSSRule(exec,cssRule.parentRule());
 
-  // for DOM::CSSRule::STYLE_RULE:
+  // for STYLE_RULE:
   case Style_SelectorText:
     return jsStringOrNull(static_cast<CSSStyleRuleImpl *>(m_impl.get())->selectorText());
   case Style_Style:
     return getDOMCSSStyleDeclaration(exec, static_cast<CSSStyleRuleImpl *>(m_impl.get())->style());
 
-  // for DOM::CSSRule::MEDIA_RULE:
+  // for MEDIA_RULE:
   case Media_Media:
     return getDOMMediaList(exec, static_cast<CSSMediaRuleImpl *>(m_impl.get())->media());
   case Media_CssRules:
     return getDOMCSSRuleList(exec, static_cast<CSSMediaRuleImpl *>(m_impl.get())->cssRules());
 
-  // for DOM::CSSRule::FONT_FACE_RULE:
+  // for FONT_FACE_RULE:
   case FontFace_Style:
     return getDOMCSSStyleDeclaration(exec, static_cast<CSSFontFaceRuleImpl *>(m_impl.get())->style());
 
-  // for DOM::CSSRule::PAGE_RULE:
+  // for PAGE_RULE:
   case Page_SelectorText:
     return jsStringOrNull(static_cast<CSSPageRuleImpl *>(m_impl.get())->selectorText());
   case Page_Style:
     return getDOMCSSStyleDeclaration(exec, static_cast<CSSPageRuleImpl *>(m_impl.get())->style());
 
-  // for DOM::CSSRule::IMPORT_RULE:
+  // for IMPORT_RULE:
   case Import_Href:
     return jsStringOrNull(static_cast<CSSImportRuleImpl *>(m_impl.get())->href());
   case Import_Media:
@@ -838,7 +814,7 @@ JSValue *DOMCSSRule::getValueProperty(ExecState *exec, int token) const
   case Import_StyleSheet:
     return getDOMStyleSheet(exec, static_cast<CSSImportRuleImpl *>(m_impl.get())->styleSheet());
 
-  // for DOM::CSSRule::CHARSET_RULE:
+  // for CHARSET_RULE:
   case Charset_Encoding:
     return jsStringOrNull(static_cast<CSSCharsetRuleImpl *>(m_impl.get())->encoding());
 
@@ -870,17 +846,17 @@ void DOMCSSRule::put(ExecState *exec, const Identifier &propertyName, JSValue *v
 void DOMCSSRule::putValueProperty(ExecState *exec, int token, JSValue *value, int)
 {
   switch (token) {
-  // for DOM::CSSRule::STYLE_RULE:
+  // for STYLE_RULE:
   case Style_SelectorText:
     static_cast<CSSStyleRuleImpl *>(m_impl.get())->setSelectorText(value->toString(exec).domString());
     return;
 
-  // for DOM::CSSRule::PAGE_RULE:
+  // for PAGE_RULE:
   case Page_SelectorText:
     static_cast<CSSPageRuleImpl *>(m_impl.get())->setSelectorText(value->toString(exec).domString());
     return;
 
-  // for DOM::CSSRule::CHARSET_RULE:
+  // for CHARSET_RULE:
   case Charset_Encoding:
     static_cast<CSSCharsetRuleImpl *>(m_impl.get())->setEncoding(value->toString(exec).domString());
     return;
@@ -893,7 +869,7 @@ JSValue *DOMCSSRuleFunc::callAsFunction(ExecState *exec, JSObject *thisObj, cons
     return throwError(exec, TypeError);
   CSSRuleImpl &cssRule = *static_cast<DOMCSSRule *>(thisObj)->impl();
 
-  if (cssRule.type() == DOM::CSSRule::MEDIA_RULE) {
+  if (cssRule.type() == WebCore::MEDIA_RULE) {
     CSSMediaRuleImpl &rule = static_cast<CSSMediaRuleImpl &>(cssRule);
     if (id == DOMCSSRule::Media_InsertRule)
       return jsNumber(rule.insertRule(args[0]->toString(exec).domString(), args[1]->toInt32(exec)));
@@ -933,19 +909,19 @@ JSValue *CSSRuleConstructor::getValueProperty(ExecState *, int token) const
 {
   switch (token) {
   case UNKNOWN_RULE:
-    return jsNumber(DOM::CSSRule::UNKNOWN_RULE);
+    return jsNumber(WebCore::UNKNOWN_RULE);
   case STYLE_RULE:
-    return jsNumber(DOM::CSSRule::STYLE_RULE);
+    return jsNumber(WebCore::STYLE_RULE);
   case CHARSET_RULE:
-    return jsNumber(DOM::CSSRule::CHARSET_RULE);
+    return jsNumber(WebCore::CHARSET_RULE);
   case IMPORT_RULE:
-    return jsNumber(DOM::CSSRule::IMPORT_RULE);
+    return jsNumber(WebCore::IMPORT_RULE);
   case MEDIA_RULE:
-    return jsNumber(DOM::CSSRule::MEDIA_RULE);
+    return jsNumber(WebCore::MEDIA_RULE);
   case FONT_FACE_RULE:
-    return jsNumber(DOM::CSSRule::FONT_FACE_RULE);
+    return jsNumber(WebCore::FONT_FACE_RULE);
   case PAGE_RULE:
-    return jsNumber(DOM::CSSRule::PAGE_RULE);
+    return jsNumber(WebCore::PAGE_RULE);
   }
   return NULL;
 }
@@ -1038,13 +1014,13 @@ JSValue *CSSValueConstructor::getValueProperty(ExecState *, int token) const
 {
   switch (token) {
   case CSS_INHERIT:
-    return jsNumber(DOM::CSSValue::CSS_INHERIT);
+    return jsNumber(WebCore::CSSValueImpl::CSS_INHERIT);
   case CSS_PRIMITIVE_VALUE:
-    return jsNumber(DOM::CSSValue::CSS_PRIMITIVE_VALUE);
+    return jsNumber(WebCore::CSSValueImpl::CSS_PRIMITIVE_VALUE);
   case CSS_VALUE_LIST:
-    return jsNumber(DOM::CSSValue::CSS_VALUE_LIST);
+    return jsNumber(WebCore::CSSValueImpl::CSS_VALUE_LIST);
   case CSS_CUSTOM:
-    return jsNumber(DOM::CSSValue::CSS_CUSTOM);
+    return jsNumber(WebCore::CSSValueImpl::CSS_CUSTOM);
   }
   return NULL;
 }
@@ -1126,32 +1102,32 @@ const ClassInfo CSSPrimitiveValueConstructor::info = { "CSSPrimitiveValueConstru
 
 /*
 @begin CSSPrimitiveValueConstructorTable 27
-  CSS_UNKNOWN   	DOM::CSSPrimitiveValue::CSS_UNKNOWN	DontDelete|ReadOnly
-  CSS_NUMBER    	DOM::CSSPrimitiveValue::CSS_NUMBER	DontDelete|ReadOnly
-  CSS_PERCENTAGE	DOM::CSSPrimitiveValue::CSS_PERCENTAGE	DontDelete|ReadOnly
-  CSS_EMS       	DOM::CSSPrimitiveValue::CSS_EMS		DontDelete|ReadOnly
-  CSS_EXS       	DOM::CSSPrimitiveValue::CSS_EXS		DontDelete|ReadOnly
-  CSS_PX        	DOM::CSSPrimitiveValue::CSS_PX		DontDelete|ReadOnly
-  CSS_CM        	DOM::CSSPrimitiveValue::CSS_CM		DontDelete|ReadOnly
-  CSS_MM        	DOM::CSSPrimitiveValue::CSS_MM		DontDelete|ReadOnly
-  CSS_IN        	DOM::CSSPrimitiveValue::CSS_IN		DontDelete|ReadOnly
-  CSS_PT        	DOM::CSSPrimitiveValue::CSS_PT		DontDelete|ReadOnly
-  CSS_PC        	DOM::CSSPrimitiveValue::CSS_PC		DontDelete|ReadOnly
-  CSS_DEG       	DOM::CSSPrimitiveValue::CSS_DEG		DontDelete|ReadOnly
-  CSS_RAD       	DOM::CSSPrimitiveValue::CSS_RAD		DontDelete|ReadOnly
-  CSS_GRAD      	DOM::CSSPrimitiveValue::CSS_GRAD	DontDelete|ReadOnly
-  CSS_MS        	DOM::CSSPrimitiveValue::CSS_MS		DontDelete|ReadOnly
-  CSS_S			DOM::CSSPrimitiveValue::CSS_S		DontDelete|ReadOnly
-  CSS_HZ        	DOM::CSSPrimitiveValue::CSS_HZ		DontDelete|ReadOnly
-  CSS_KHZ       	DOM::CSSPrimitiveValue::CSS_KHZ		DontDelete|ReadOnly
-  CSS_DIMENSION 	DOM::CSSPrimitiveValue::CSS_DIMENSION	DontDelete|ReadOnly
-  CSS_STRING    	DOM::CSSPrimitiveValue::CSS_STRING	DontDelete|ReadOnly
-  CSS_URI       	DOM::CSSPrimitiveValue::CSS_URI		DontDelete|ReadOnly
-  CSS_IDENT     	DOM::CSSPrimitiveValue::CSS_IDENT	DontDelete|ReadOnly
-  CSS_ATTR      	DOM::CSSPrimitiveValue::CSS_ATTR	DontDelete|ReadOnly
-  CSS_COUNTER   	DOM::CSSPrimitiveValue::CSS_COUNTER	DontDelete|ReadOnly
-  CSS_RECT      	DOM::CSSPrimitiveValue::CSS_RECT	DontDelete|ReadOnly
-  CSS_RGBCOLOR  	DOM::CSSPrimitiveValue::CSS_RGBCOLOR	DontDelete|ReadOnly
+  CSS_UNKNOWN   	WebCore::CSSPrimitiveValue::CSS_UNKNOWN	DontDelete|ReadOnly
+  CSS_NUMBER    	WebCore::CSSPrimitiveValue::CSS_NUMBER	DontDelete|ReadOnly
+  CSS_PERCENTAGE	WebCore::CSSPrimitiveValue::CSS_PERCENTAGE	DontDelete|ReadOnly
+  CSS_EMS       	WebCore::CSSPrimitiveValue::CSS_EMS		DontDelete|ReadOnly
+  CSS_EXS       	WebCore::CSSPrimitiveValue::CSS_EXS		DontDelete|ReadOnly
+  CSS_PX        	WebCore::CSSPrimitiveValue::CSS_PX		DontDelete|ReadOnly
+  CSS_CM        	WebCore::CSSPrimitiveValue::CSS_CM		DontDelete|ReadOnly
+  CSS_MM        	WebCore::CSSPrimitiveValue::CSS_MM		DontDelete|ReadOnly
+  CSS_IN        	WebCore::CSSPrimitiveValue::CSS_IN		DontDelete|ReadOnly
+  CSS_PT        	WebCore::CSSPrimitiveValue::CSS_PT		DontDelete|ReadOnly
+  CSS_PC        	WebCore::CSSPrimitiveValue::CSS_PC		DontDelete|ReadOnly
+  CSS_DEG       	WebCore::CSSPrimitiveValue::CSS_DEG		DontDelete|ReadOnly
+  CSS_RAD       	WebCore::CSSPrimitiveValue::CSS_RAD		DontDelete|ReadOnly
+  CSS_GRAD      	WebCore::CSSPrimitiveValue::CSS_GRAD	DontDelete|ReadOnly
+  CSS_MS        	WebCore::CSSPrimitiveValue::CSS_MS		DontDelete|ReadOnly
+  CSS_S			WebCore::CSSPrimitiveValue::CSS_S		DontDelete|ReadOnly
+  CSS_HZ        	WebCore::CSSPrimitiveValue::CSS_HZ		DontDelete|ReadOnly
+  CSS_KHZ       	WebCore::CSSPrimitiveValue::CSS_KHZ		DontDelete|ReadOnly
+  CSS_DIMENSION 	WebCore::CSSPrimitiveValue::CSS_DIMENSION	DontDelete|ReadOnly
+  CSS_STRING    	WebCore::CSSPrimitiveValue::CSS_STRING	DontDelete|ReadOnly
+  CSS_URI       	WebCore::CSSPrimitiveValue::CSS_URI		DontDelete|ReadOnly
+  CSS_IDENT     	WebCore::CSSPrimitiveValue::CSS_IDENT	DontDelete|ReadOnly
+  CSS_ATTR      	WebCore::CSSPrimitiveValue::CSS_ATTR	DontDelete|ReadOnly
+  CSS_COUNTER   	WebCore::CSSPrimitiveValue::CSS_COUNTER	DontDelete|ReadOnly
+  CSS_RECT      	WebCore::CSSPrimitiveValue::CSS_RECT	DontDelete|ReadOnly
+  CSS_RGBCOLOR  	WebCore::CSSPrimitiveValue::CSS_RGBCOLOR	DontDelete|ReadOnly
 @end
 */
 

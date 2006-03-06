@@ -36,43 +36,6 @@ namespace WebCore
     /**
      * All DOM constants
      */
-    enum NodeType
-    {
-        ELEMENT_NODE                = 1,
-        ATTRIBUTE_NODE              = 2,
-        TEXT_NODE                   = 3,
-        CDATA_SECTION_NODE          = 4,
-        ENTITY_REFERENCE_NODE       = 5,
-        ENTITY_NODE                 = 6,
-        PROCESSING_INSTRUCTION_NODE = 7,
-        COMMENT_NODE                = 8,
-        DOCUMENT_NODE               = 9,
-        DOCUMENT_TYPE_NODE          = 10,
-        DOCUMENT_FRAGMENT_NODE      = 11,
-        NOTATION_NODE               = 12
-    };
-
-    enum ExceptionCodes
-    {
-        INDEX_SIZE_ERR              = 1,
-        DOMSTRING_SIZE_ERR          = 2,
-        HIERARCHY_REQUEST_ERR       = 3,
-        WRONG_DOCUMENT_ERR          = 4,
-        INVALID_CHARACTER_ERR       = 5,
-        NO_DATA_ALLOWED_ERR         = 6,
-        NO_MODIFICATION_ALLOWED_ERR = 7,
-        NOT_FOUND_ERR               = 8,
-        NOT_SUPPORTED_ERR           = 9,
-        INUSE_ATTRIBUTE_ERR         = 10,
-        INVALID_STATE_ERR           = 11,
-        SYNTAX_ERR                  = 12,
-        INVALID_MODIFICATION_ERR    = 13,
-        NAMESPACE_ERR               = 14,
-        INVALID_ACCESS_ERR          = 15,
-        VALIDATION_ERR              = 16,   // DOM3
-        TYPE_MISMATCH_ERR           = 17    // DOM3
-    };
-
     enum DocumentPosition
     {
         DOCUMENT_POSITION_DISCONNECTED              = 0x01,
@@ -119,12 +82,7 @@ namespace WebCore
         FEATURE_FORMAT_PRETTY_PRINT                = 0x080000,
         FEATURE_XML_DECLARATION                    = 0x100000
     };
-
-    /**
-     * A TimeStamp represents a number of milliseconds
-     */
-    typedef unsigned long long DOMTimeStamp;
-};
+}
 
 #endif // SVG_SUPPORT
 #endif

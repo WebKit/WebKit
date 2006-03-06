@@ -25,7 +25,6 @@
 #include "CDATASectionImpl.h"
 
 #include "DocumentImpl.h"
-#include "dom_node.h"
 
 namespace WebCore {
 
@@ -46,9 +45,9 @@ DOMString CDATASectionImpl::nodeName() const
   return "#cdata-section";
 }
 
-unsigned short CDATASectionImpl::nodeType() const
+NodeImpl::NodeType CDATASectionImpl::nodeType() const
 {
-    return Node::CDATA_SECTION_NODE;
+    return CDATA_SECTION_NODE;
 }
 
 PassRefPtr<NodeImpl> CDATASectionImpl::cloneNode(bool /*deep*/)
@@ -58,7 +57,7 @@ PassRefPtr<NodeImpl> CDATASectionImpl::cloneNode(bool /*deep*/)
 }
 
 // DOM Section 1.1.1
-bool CDATASectionImpl::childTypeAllowed( unsigned short /*type*/ )
+bool CDATASectionImpl::childTypeAllowed(NodeType)
 {
     return false;
 }

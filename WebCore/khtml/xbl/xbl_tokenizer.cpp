@@ -247,7 +247,7 @@ bool XBLTokenHandler::characters(const QString& text)
 
 void XBLTokenHandler::createBinding()
 {
-    if (!m_currentNode || m_currentNode->nodeType() != Node::ELEMENT_NODE)
+    if (!m_currentNode || !m_currentNode->isElementNode())
         return;
     
     ElementImpl* elt = static_cast<ElementImpl*>(m_currentNode);

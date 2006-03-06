@@ -55,10 +55,10 @@ public:
     DOMString type() const;
 
     DOMString text() const;
-    void setText(const DOMString &, int &exception);
+    void setText(const DOMString &, ExceptionCode&);
 
     int index() const;
-    void setIndex(int, int &exception);
+    void setIndex(int, ExceptionCode&);
     virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
     DOMString value() const;

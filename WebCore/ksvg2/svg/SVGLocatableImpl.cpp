@@ -101,8 +101,7 @@ SVGMatrixImpl *SVGLocatableImpl::getCTM(const SVGElementImpl *element)
     SVGMatrixImpl *ctm = SVGSVGElementImpl::createSVGMatrix();
 
     NodeImpl *parent = element->parentNode();
-    if(parent && parent->nodeType() == ELEMENT_NODE)
-    {
+    if (parent && parent->isElementNode()) {
         SVGElementImpl *parentElement = svg_dynamic_cast(parent);
         if(parentElement && parentElement->isStyledLocatable())
         {

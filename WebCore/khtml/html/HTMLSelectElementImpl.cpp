@@ -123,29 +123,29 @@ int HTMLSelectElementImpl::length() const
     return len;
 }
 
-void HTMLSelectElementImpl::add( HTMLElementImpl *element, HTMLElementImpl *before, int &exceptioncode )
+void HTMLSelectElementImpl::add( HTMLElementImpl *element, HTMLElementImpl *before, ExceptionCode& ec)
 {
     RefPtr<HTMLElementImpl> protectNewChild(element); // make sure the element is ref'd and deref'd so we don't leak it
 
     if (!element || !(element->hasLocalName(optionTag) || element->hasLocalName(hrTag)))
         return;
 
-    insertBefore(element, before, exceptioncode);
-    if (!exceptioncode)
+    insertBefore(element, before, ec);
+    if (!ec)
         setRecalcListItems();
 }
 
 void HTMLSelectElementImpl::remove(int index)
 {
-    int exceptioncode = 0;
+    ExceptionCode ec = 0;
     int listIndex = optionToListIndex(index);
 
     Array<HTMLElementImpl*> items = listItems();
     if (listIndex < 0 || index >= int(items.size()))
         return; // ### what should we do ? remove the last item?
 
-    removeChild(items[listIndex], exceptioncode);
-    if (!exceptioncode)
+    removeChild(items[listIndex], ec);
+    if (!ec)
         setRecalcListItems();
 }
 

@@ -1808,9 +1808,9 @@ bool MacFrame::dispatchCPPEvent(const AtomicString &eventType, KWQClipboard::Acc
 
     RefPtr<KWQClipboard> clipboard = new KWQClipboard(false, [NSPasteboard generalPasteboard], (KWQClipboard::AccessPolicy)policy);
 
-    int exceptioncode = 0;
+    ExceptionCode ec = 0;
     RefPtr<EventImpl> evt = new ClipboardEventImpl(eventType, true, true, clipboard.get());
-    target->dispatchEvent(evt, exceptioncode, true);
+    target->dispatchEvent(evt, ec, true);
     bool noDefaultProcessing = evt->defaultPrevented();
 
     // invalidate clipboard here for security
@@ -2805,9 +2805,9 @@ NSFont *MacFrame::fontForSelection(bool *hasMultipleFonts) const
             result = style->font().getNSFont();
         
         if (nodeToRemove) {
-            int exceptionCode;
-            nodeToRemove->remove(exceptionCode);
-            ASSERT(exceptionCode == 0);
+            ExceptionCode ec;
+            nodeToRemove->remove(ec);
+            ASSERT(ec == 0);
         }
 
         return result;
@@ -2897,9 +2897,9 @@ NSDictionary *MacFrame::fontAttributesForSelectionStart() const
         [result setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
 
     if (nodeToRemove) {
-        int exceptionCode = 0;
-        nodeToRemove->remove(exceptionCode);
-        ASSERT(exceptionCode == 0);
+        ExceptionCode ec = 0;
+        nodeToRemove->remove(ec);
+        ASSERT(ec == 0);
     }
 
     return result;
@@ -3388,7 +3388,7 @@ void MacFrame::setMarkedTextRange(const RangeImpl *range, NSArray *attributes, N
     int exception = 0;
 
     ASSERT(!range || range->startContainer(exception) == range->endContainer(exception));
-    ASSERT(!range || range->collapsed(exception) || range->startContainer(exception)->nodeType() == DOM::Node::TEXT_NODE);
+    ASSERT(!range || range->collapsed(exception) || range->startContainer(exception)->isTextNode());
 
     if (attributes == nil) {
         m_markedTextUsesUnderlines = false;

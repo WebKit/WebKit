@@ -33,7 +33,6 @@
 #include "RenderBlock.h"
 #include "css_computedstyle.h"
 #include "css_valueimpl.h"
-#include "dom2_range.h"
 #include "dom2_rangeimpl.h"
 #include "dom2_viewsimpl.h"
 #include "dom_elementimpl.h"
@@ -752,16 +751,16 @@ Position startPosition(const RangeImpl *r)
 {
     if (!r || r->isDetached())
         return Position();
-    int exceptionCode;
-    return Position(r->startContainer(exceptionCode), r->startOffset(exceptionCode));
+    ExceptionCode ec;
+    return Position(r->startContainer(ec), r->startOffset(ec));
 }
 
 Position endPosition(const RangeImpl *r)
 {
     if (!r || r->isDetached())
         return Position();
-    int exceptionCode;
-    return Position(r->endContainer(exceptionCode), r->endOffset(exceptionCode));
+    ExceptionCode ec;
+    return Position(r->endContainer(ec), r->endOffset(ec));
 }
 
 } // namespace WebCore

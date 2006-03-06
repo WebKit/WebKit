@@ -57,9 +57,9 @@ public:
     PassRefPtr<CSSMutableStyleDeclarationImpl> copyInheritableProperties() const;
 
 private:
-    virtual void setCssText(const String&, int& exceptionCode);
-    virtual String removeProperty(int propertyID, int& exceptionCode);
-    virtual void setProperty(int propertyId, const String& value, bool important, int& exceptionCode);
+    virtual void setCssText(const String&, ExceptionCode&);
+    virtual String removeProperty(int propertyID, ExceptionCode&);
+    virtual void setProperty(int propertyId, const String& value, bool important, ExceptionCode&);
 
     RefPtr<NodeImpl> m_node;
 };

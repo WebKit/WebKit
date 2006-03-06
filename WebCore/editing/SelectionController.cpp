@@ -38,7 +38,6 @@
 #include "dom2_eventsimpl.h"
 #include "dom2_rangeimpl.h"
 #include "dom_elementimpl.h"
-#include "dom_node.h"
 #include "htmlediting.h"
 #include "render_canvas.h"
 #include "render_object.h"

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <WebCore/DOM.h>
+#import "DOM.h"
 
-namespace DOM {
+namespace WebCore {
     class CSSStyleDeclarationImpl;
     class CSSStyleSheetImpl;
     class DocumentFragmentImpl;
@@ -39,6 +39,8 @@ namespace DOM {
     class RangeImpl;
     class StyleSheetListImpl;
     class TreeWalkerImpl;
+
+    typedef int ExceptionCode;
 }
 
 @interface DOMNode (WebCoreInternal)
@@ -107,29 +109,29 @@ template <class Target, class Source> Target DOM_cast(Source) { Source::failToCo
 
 // Type safe DOM wrapper access.
 
-id getDOMWrapperImpl(DOMObjectInternal *impl);
-void addDOMWrapperImpl(id wrapper, DOMObjectInternal *impl);
+NSObject* getDOMWrapperImpl(DOMObjectInternal*);
+void addDOMWrapperImpl(NSObject* wrapper, DOMObjectInternal*);
 
-template <class Source> inline id getDOMWrapper(Source impl) { return getDOMWrapperImpl(DOM_cast<DOMObjectInternal *>(impl)); }
-template <class Source> inline void addDOMWrapper(NSObject * wrapper, Source impl) { addDOMWrapperImpl(wrapper, DOM_cast<DOMObjectInternal *>(impl)); }
-void removeDOMWrapper(DOMObjectInternal *impl);
+template <class Source> inline id getDOMWrapper(Source impl) { return getDOMWrapperImpl(DOM_cast<DOMObjectInternal*>(impl)); }
+template <class Source> inline void addDOMWrapper(NSObject* wrapper, Source impl) { addDOMWrapperImpl(wrapper, DOM_cast<DOMObjectInternal*>(impl)); }
+void removeDOMWrapper(DOMObjectInternal*);
 
-void raiseDOMException(int code);
+void raiseDOMException(WebCore::ExceptionCode);
 
-inline void raiseOnDOMError(int code) 
+inline void raiseOnDOMError(WebCore::ExceptionCode ec) 
 {
-    if (code) 
-        raiseDOMException(code);
+    if (ec) 
+        raiseDOMException(ec);
 }
 
 // Implementation details for the above.
 
 #define ALLOW_DOM_CAST(type) \
-    namespace DOM { class type; } \
-    template <> inline DOMObjectInternal *DOM_cast<DOMObjectInternal *, DOM::type *>(DOM::type *p) \
+    namespace WebCore { class type; } \
+    template <> inline DOMObjectInternal* DOM_cast<DOMObjectInternal*, class WebCore::type*>(class WebCore::type* p) \
         { return reinterpret_cast<DOMObjectInternal *>(p); } \
-    template <> inline DOM::type *DOM_cast<DOM::type *, DOMObjectInternal *>(DOMObjectInternal *p) \
-        { return reinterpret_cast<DOM::type *>(p); }
+    template <> inline class WebCore::type* DOM_cast<class WebCore::type*, DOMObjectInternal*>(DOMObjectInternal* p) \
+        { return reinterpret_cast<class WebCore::type*>(p); }
 
 // No class should appear in this list if it's base class is already here.
 ALLOW_DOM_CAST(CounterImpl)

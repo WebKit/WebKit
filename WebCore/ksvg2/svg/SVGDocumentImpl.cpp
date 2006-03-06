@@ -73,8 +73,8 @@ SVGDocumentImpl::~SVGDocumentImpl()
     // Fire UNLOAD_EVENT upon destruction...
     //if(DocumentImpl::hasListenerType(UNLOAD_EVENT))
     {
-        int exceptioncode;
-        RefPtr<EventImpl> event = createEvent("SVGEvents", exceptioncode);
+        ExceptionCode ec;
+        RefPtr<EventImpl> event = createEvent("SVGEvents", ec);
         event->initEvent(EventNames::unloadEvent, false, false);
         dispatchRecursiveEvent(event.get(), lastChild());
     }
@@ -95,12 +95,12 @@ DOMString SVGDocumentImpl::title() const
     return DOMString();
 }
 
-PassRefPtr<ElementImpl> SVGDocumentImpl::createElement(const DOMString& tagName, int& exceptionCode)
+PassRefPtr<ElementImpl> SVGDocumentImpl::createElement(const DOMString& tagName, ExceptionCode& ec)
 {
     QualifiedName qname(nullAtom, tagName.impl(), SVGNames::svgNamespaceURI);
     RefPtr<SVGElementImpl> elem = SVGElementFactory::createSVGElement(qname, this, false);
     if (!elem)
-        return DocumentImpl::createElement(tagName, exceptionCode);
+        return DocumentImpl::createElement(tagName, ec);
     return elem;
 }
 
@@ -152,47 +152,47 @@ void SVGDocumentImpl::dispatchRecursiveEvent(EventImpl *event, NodeImpl *obj)
     // Iterate the tree, backwards, and dispatch the event to every child
     for(NodeImpl *n = obj; n != 0; n = n->previousSibling())
     {
-        int exceptioncode;
+        ExceptionCode ec;
         if(n->hasChildNodes())
         {
             // Dispatch to all children
             dispatchRecursiveEvent(event, n->lastChild());
 
             // Dispatch, locally
-            n->dispatchEvent(event, exceptioncode);
+            n->dispatchEvent(event, ec);
         }
         else
-            n->dispatchEvent(event, exceptioncode);
+            n->dispatchEvent(event, ec);
     }
 }
 
 void SVGDocumentImpl::dispatchZoomEvent(float prevScale, float newScale)
 {
     // dispatch zoom event
-    int exceptioncode;
-    RefPtr<SVGZoomEventImpl> event = static_pointer_cast<SVGZoomEventImpl>(createEvent("SVGZoomEvents", exceptioncode));
+    ExceptionCode ec;
+    RefPtr<SVGZoomEventImpl> event = static_pointer_cast<SVGZoomEventImpl>(createEvent("SVGZoomEvents", ec));
     event->initEvent(EventNames::zoomEvent, true, false);
     event->setPreviousScale(prevScale);
     event->setNewScale(newScale);
-    rootElement()->dispatchEvent(event.get(), exceptioncode);
+    rootElement()->dispatchEvent(event.get(), ec);
 }
 
 void SVGDocumentImpl::dispatchScrollEvent()
 {
     // dispatch zoom event
-    int exceptioncode;
-    RefPtr<EventImpl> event = createEvent("SVGEvents", exceptioncode);
+    ExceptionCode ec;
+    RefPtr<EventImpl> event = createEvent("SVGEvents", ec);
     event->initEvent(EventNames::scrollEvent, true, false);
-    rootElement()->dispatchEvent(event.get(), exceptioncode);
+    rootElement()->dispatchEvent(event.get(), ec);
 }
 
 bool SVGDocumentImpl::dispatchKeyEvent(EventTargetImpl* target, KeyEvent* key, bool keypress)
 {
     // dispatch key event
-    int exceptioncode;
-    RefPtr<KeyboardEventImpl> keyEventImpl = static_pointer_cast<KeyboardEventImpl>(createEvent("KeyboardEvents", exceptioncode));
+    ExceptionCode ec;
+    RefPtr<KeyboardEventImpl> keyEventImpl = static_pointer_cast<KeyboardEventImpl>(createEvent("KeyboardEvents", ec));
     //keyEventImpl->initKeyboardEvent(key);
-    target->dispatchEvent(keyEventImpl.get(), exceptioncode);
+    target->dispatchEvent(keyEventImpl.get(), ec);
 
     return /*keyEventImpl->defaultHandled() ||*/ keyEventImpl->defaultPrevented();
 }
@@ -249,8 +249,8 @@ void SVGDocumentImpl::executeScripts(bool needsStyleSelectorUpdate)
     // Fire LOAD_EVENT after all scripts are evaluated
     if(!m_scriptsIt->current())
     {
-        int exceptioncode;
-        RefPtr<EventImpl> event = createEvent("SVGEvents", exceptioncode);
+        ExceptionCode ec;
+        RefPtr<EventImpl> event = createEvent("SVGEvents", ec);
         event->initEvent(EventNames::loadEvent, false, false);
         dispatchRecursiveEvent(event.get(), lastChild());
     }
@@ -282,19 +282,19 @@ void SVGDocumentImpl::recalcStyle(StyleChange change)
 void SVGDocumentImpl::dispatchUIEvent(EventTargetImpl *target, const AtomicString &type)
 {
     // Setup kdom 'UIEvent'...
-    int exceptioncode;
-    RefPtr<UIEventImpl> event = static_pointer_cast<UIEventImpl>(createEvent("UIEvents", exceptioncode));
+    ExceptionCode ec;
+    RefPtr<UIEventImpl> event = static_pointer_cast<UIEventImpl>(createEvent("UIEvents", ec));
     event->initUIEvent(type, true, true, 0, 0);
-    target->dispatchEvent(event.get(), exceptioncode);
+    target->dispatchEvent(event.get(), ec);
 }
 
 void SVGDocumentImpl::dispatchMouseEvent(EventTargetImpl *target, const AtomicString &type)
 {
     // Setup kdom 'MouseEvent'...
-    int exceptioncode;
-    RefPtr<MouseEventImpl> event = static_pointer_cast<MouseEventImpl>(createEvent("MouseEvents", exceptioncode));
+    ExceptionCode ec;
+    RefPtr<MouseEventImpl> event = static_pointer_cast<MouseEventImpl>(createEvent("MouseEvents", ec));
     event->initEvent(type, true, true);
-    target->dispatchEvent(event.get(), exceptioncode);
+    target->dispatchEvent(event.get(), ec);
 }
 
 void SVGDocumentImpl::addForwardReference(const SVGElementImpl *element)

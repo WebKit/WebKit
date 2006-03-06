@@ -34,6 +34,8 @@ namespace WebCore {
     class EventImpl;
     class Frame;
     class NodeImpl;
+
+    typedef int ExceptionCode;
 }
 
 namespace KJS {
@@ -122,17 +124,17 @@ namespace KJS {
   }
 
   // Convert a DOM implementation exception code into a JavaScript exception in the execution state.
-  void setDOMException(ExecState *exec, int DOMExceptionCode);
+  void setDOMException(ExecState*, WebCore::ExceptionCode);
 
   // Helper class to call setDOMException on exit without adding lots of separate calls to that function.
   class DOMExceptionTranslator {
   public:
     explicit DOMExceptionTranslator(ExecState *exec) : m_exec(exec), m_code(0) { }
     ~DOMExceptionTranslator() { setDOMException(m_exec, m_code); }
-    operator int &() { return m_code; }
+    operator WebCore::ExceptionCode&() { return m_code; }
   private:
     ExecState *m_exec;
-    int m_code;
+    WebCore::ExceptionCode m_code;
   };
 
   /**

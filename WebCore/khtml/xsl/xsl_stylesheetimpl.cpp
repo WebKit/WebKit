@@ -24,7 +24,6 @@
 #ifdef KHTML_XSLT
 
 #include "PlatformString.h"
-#include "dom/dom_exception.h"
 
 #include "html/html_documentimpl.h"
 #include "loader.h"

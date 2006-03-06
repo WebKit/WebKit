@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
+    Copyright (C) 2006 Apple Computer, Inc.
 
     This file is part of the KDE project
 
@@ -22,22 +23,22 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-
-#include <kdom/kdom.h>
-#include <kdom/Helper.h>
-#include "PlatformString.h"
-#include <kdom/Namespace.h>
-#include <kdom/core/ElementImpl.h>
-#include "DocumentImpl.h"
-#include <kdom/core/DOMExceptionImpl.h>
-#include "DocumentTypeImpl.h"
-#include "css_stylesheetimpl.h"
-
-#include "ksvg.h"
-#include "SVGRenderStyle.h"
-#include "SVGDocumentImpl.h"
-#include "SVGSVGElementImpl.h"
 #include "SVGDOMImplementationImpl.h"
+
+#include "DocumentImpl.h"
+#include "DocumentTypeImpl.h"
+#include "ExceptionCode.h"
+#include "PlatformString.h"
+#include "SVGDocumentImpl.h"
+#include "SVGRenderStyle.h"
+#include "SVGSVGElementImpl.h"
+#include "css_stylesheetimpl.h"
+#include "ksvg.h"
+#include <kdom/Helper.h>
+#include <kdom/Namespace.h>
+#include <kdom/core/DOMExceptionImpl.h>
+#include <kdom/core/ElementImpl.h>
+#include <kdom/kdom.h>
 
 using namespace WebCore;
 
@@ -131,19 +132,19 @@ bool SVGDOMImplementationImpl::hasFeature(DOMStringImpl *featureImpl, DOMStringI
     return DOMImplementationImpl::hasFeature(featureImpl, versionImpl);
 }
 
-PassRefPtr<DocumentTypeImpl> SVGDOMImplementationImpl::createDocumentType(DOMStringImpl *qualifiedNameImpl, DOMStringImpl *publicId, DOMStringImpl *systemId, int& exceptioncode) const
+PassRefPtr<DocumentTypeImpl> SVGDOMImplementationImpl::createDocumentType(DOMStringImpl *qualifiedNameImpl, DOMStringImpl *publicId, DOMStringImpl *systemId, ExceptionCode& ec) const
 {
     DOMString qualifiedName(qualifiedNameImpl);
 #if 0
     // INVALID_CHARACTER_ERR: Raised if the specified qualified name contains an illegal character.
     if(!qualifiedName.isEmpty() && !Helper::ValidateAttributeName(qualifiedNameImpl)) {
-        exceptioncode = INVALID_CHARACTER_ERR;
+        ec = INVALID_CHARACTER_ERR;
         return 0;
     }
 
     // NAMESPACE_ERR: Raised if no qualifiedName supplied (not mentioned in the spec!)
     if(qualifiedName.isEmpty()) {
-        exceptioncode = NAMESPACE_ERR;
+        ec = NAMESPACE_ERR;
         return 0;
     }
 
@@ -154,17 +155,17 @@ PassRefPtr<DocumentTypeImpl> SVGDOMImplementationImpl::createDocumentType(DOMStr
     return new DocumentTypeImpl(0, qualifiedName, publicId, systemId);
 }
 
-PassRefPtr<DocumentImpl> SVGDOMImplementationImpl::createDocument(DOMStringImpl *namespaceURI, DOMStringImpl *qualifiedNameImpl, DocumentTypeImpl *doctype, int& exceptioncode) const
+PassRefPtr<DocumentImpl> SVGDOMImplementationImpl::createDocument(DOMStringImpl *namespaceURI, DOMStringImpl *qualifiedNameImpl, DocumentTypeImpl *doctype, ExceptionCode& ec) const
 {
-    return createDocument(namespaceURI, qualifiedNameImpl, doctype, true, 0, exceptioncode);
+    return createDocument(namespaceURI, qualifiedNameImpl, doctype, true, 0, ec);
 }
 
-PassRefPtr<DocumentImpl> SVGDOMImplementationImpl::createDocument(DOMStringImpl *namespaceURIImpl, DOMStringImpl *qualifiedNameImpl, DocumentTypeImpl *doctype, bool createDocElement, KDOMView *view, int& exceptioncode) const
+PassRefPtr<DocumentImpl> SVGDOMImplementationImpl::createDocument(DOMStringImpl *namespaceURIImpl, DOMStringImpl *qualifiedNameImpl, DocumentTypeImpl *doctype, bool createDocElement, KDOMView *view, ExceptionCode& ec) const
 {
     DOMString namespaceURI(namespaceURIImpl);
     DOMString qualifiedName(qualifiedNameImpl);
     if((namespaceURI != SVGNames::svgNamespaceURI) || (qualifiedName != "svg" && qualifiedName != "svg:svg"))
-        return DOMImplementationImpl::instance()->createDocument(namespaceURIImpl, qualifiedNameImpl, doctype, exceptioncode);
+        return DOMImplementationImpl::instance()->createDocument(namespaceURIImpl, qualifiedNameImpl, doctype, ec);
 
 #if 0
     int dummy;
@@ -174,7 +175,7 @@ PassRefPtr<DocumentImpl> SVGDOMImplementationImpl::createDocument(DOMStringImpl 
     // WRONG_DOCUMENT_ERR: Raised if docType has already been used with a different
     //                     document or was created from a different implementation.
     if(doctype != 0 && doctype->ownerDocument() != 0) {
-        exceptioncode = WRONG_DOCUMENT_ERR;
+        ec = WRONG_DOCUMENT_ERR;
         return 0;
     }
 
@@ -186,7 +187,7 @@ PassRefPtr<DocumentImpl> SVGDOMImplementationImpl::createDocument(DOMStringImpl 
 
     // Add root element...
     if (createDocElement)
-        doc->appendChild(doc->createElementNS(namespaceURI, qualifiedName, exceptioncode), exceptioncode);
+        doc->appendChild(doc->createElementNS(namespaceURI, qualifiedName, ec), ec);
 
     return doc.release();
 }

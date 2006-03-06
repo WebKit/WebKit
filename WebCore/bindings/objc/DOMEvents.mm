@@ -4,7 +4,7 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 1. Redistributions of source exceptionCode must retain the above copyright
+ * 1. Redistributions of source ec must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
@@ -23,22 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
+#import "config.h"
 #import "DOMEvents.h"
 
 #import "DOMEventsInternal.h"
-#import "DOMViewsInternal.h"
 #import "DOMInternal.h"
-#import <kxmlcore/Assertions.h>
-
+#import "DOMViewsInternal.h"
 #import "DocumentImpl.h"
 #import "dom2_eventsimpl.h"
 #import "dom2_viewsimpl.h"
+#import <kxmlcore/Assertions.h>
 
-using DOM::EventImpl;
-using DOM::MouseEventImpl;
-using DOM::MutationEventImpl;
-using DOM::UIEventImpl;
+using WebCore::EventImpl;
+using WebCore::ExceptionCode;
+using WebCore::MouseEventImpl;
+using WebCore::MutationEventImpl;
+using WebCore::UIEventImpl;
 
 ALLOW_DOM_CAST(EventImpl)
 
@@ -275,9 +275,9 @@ ALLOW_DOM_CAST(EventImpl)
 
 - (DOMEvent *)createEvent:(NSString *)eventType
 {
-    int exceptionCode = 0;
-    RefPtr<EventImpl> event = [self _documentImpl]->createEvent(eventType, exceptionCode);
-    raiseOnDOMError(exceptionCode);
+    ExceptionCode ec = 0;
+    RefPtr<EventImpl> event = [self _documentImpl]->createEvent(eventType, ec);
+    raiseOnDOMError(ec);
     return [DOMEvent _eventWithImpl:event.get()];
 }
 

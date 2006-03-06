@@ -2,7 +2,7 @@
  * This file is part of the DOM implementation for KDE.
  *
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,67 +18,62 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * $Id: css_stylesheetimpl.h 11600 2005-12-15 21:39:57Z eseidel $
  */
-#ifndef _CSS_css_stylesheetimpl_h_
-#define _CSS_css_stylesheetimpl_h_
 
-#include <qvaluelist.h>
+#ifndef CSS_css_stylesheetimpl_h_
+#define CSS_css_stylesheetimpl_h_
+
+#include "css_base.h"
 #include <qptrlist.h>
+#include <qvaluelist.h>
 
-#include "PlatformString.h"
-#include "css/css_base.h"
-
-namespace khtml {
-    class CachedCSSStyleSheet;
-    class DocLoader;
-};
-
-namespace DOM {
+namespace WebCore {
 
 class CSSParser;
-class StyleSheet;
-class CSSStyleSheet;
-class MediaListImpl;
 class CSSRuleImpl;
 class CSSRuleListImpl;
 class CSSStyleRuleImpl;
+class CSSStyleSheet;
 class CSSValueImpl;
-class NodeImpl;
+class CachedCSSStyleSheet;
+class DocLoader;
 class DocumentImpl;
+class MediaListImpl;
+class NodeImpl;
+class StyleSheet;
 
-class StyleSheetImpl : public StyleListImpl
-{
+typedef int ExceptionCode;
+
+class StyleSheetImpl : public StyleListImpl {
 public:
-    StyleSheetImpl(DOM::NodeImpl *ownerNode, DOM::DOMString href = DOMString());
-    StyleSheetImpl(StyleSheetImpl *parentSheet, DOM::DOMString href = DOMString());
-    StyleSheetImpl(StyleBaseImpl *owner, DOM::DOMString href  = DOMString());
-    StyleSheetImpl(khtml::CachedCSSStyleSheet *cached, DOM::DOMString href  = DOMString());
+    StyleSheetImpl(NodeImpl *ownerNode, String href = String());
+    StyleSheetImpl(StyleSheetImpl *parentSheet, String href = String());
+    StyleSheetImpl(StyleBaseImpl *owner, String href = String());
+    StyleSheetImpl(CachedCSSStyleSheet *cached, String href = String());
     virtual ~StyleSheetImpl();
 
     virtual bool isStyleSheet() const { return true; }
 
-    virtual DOM::DOMString type() const { return DOMString(); }
+    virtual String type() const { return String(); }
 
     bool disabled() const { return m_disabled; }
-    void setDisabled( bool disabled ) { m_disabled = disabled; styleSheetChanged(); }
+    void setDisabled(bool disabled) { m_disabled = disabled; styleSheetChanged(); }
 
-    DOM::NodeImpl *ownerNode() const { return m_parentNode; }
+    NodeImpl *ownerNode() const { return m_parentNode; }
     StyleSheetImpl *parentStyleSheet() const;
-    DOM::DOMString href() const { return m_strHref; }
-    DOM::DOMString title() const { return m_strTitle; }
-    MediaListImpl *media() const { return m_media.get(); }
-    void setMedia( MediaListImpl *media );
+    String href() const { return m_strHref; }
+    String title() const { return m_strTitle; }
+    MediaListImpl* media() const { return m_media.get(); }
+    void setMedia(MediaListImpl*);
 
     virtual bool isLoading() { return false; }
 
     virtual void styleSheetChanged() { }
     
 protected:
-    DOM::NodeImpl *m_parentNode;
-    DOM::DOMString m_strHref;
-    DOM::DOMString m_strTitle;
+    NodeImpl *m_parentNode;
+    String m_strHref;
+    String m_strTitle;
     RefPtr<MediaListImpl> m_media;
     bool m_disabled;
 };
@@ -86,38 +81,39 @@ protected:
 class CSSStyleSheetImpl : public StyleSheetImpl
 {
 public:
-    CSSStyleSheetImpl(DOM::NodeImpl *parentNode, DOM::DOMString href = DOMString(), bool _implicit = false);
-    CSSStyleSheetImpl(CSSStyleSheetImpl *parentSheet, DOM::DOMString href = DOMString());
-    CSSStyleSheetImpl(CSSRuleImpl *ownerRule, DOM::DOMString href = DOMString());
+    CSSStyleSheetImpl(NodeImpl *parentNode, String href = String(), bool _implicit = false);
+    CSSStyleSheetImpl(CSSStyleSheetImpl *parentSheet, String href = String());
+    CSSStyleSheetImpl(CSSRuleImpl *ownerRule, String href = String());
     
     ~CSSStyleSheetImpl() { delete m_namespaces; }
     
     virtual bool isCSSStyleSheet() const { return true; }
 
-    virtual DOM::DOMString type() const { return "text/css"; }
+    virtual String type() const { return "text/css"; }
 
     CSSRuleImpl *ownerRule() const;
     CSSRuleListImpl *cssRules();
-    unsigned insertRule ( const DOM::DOMString &rule, unsigned index, int &exceptioncode );
-    void deleteRule ( unsigned index, int &exceptioncode );
-    unsigned addRule ( const DOMString &selector, const DOMString &style, int index, int &exceptioncode );
-    void removeRule(unsigned index, int& exceptioncode) { deleteRule(index, exceptioncode); }
+    unsigned insertRule(const String &rule, unsigned index, ExceptionCode&);
+    void deleteRule(unsigned index, ExceptionCode&);
+    unsigned addRule(const String &selector, const String &style, int index, ExceptionCode&);
+    void removeRule(unsigned index, ExceptionCode& ec) { deleteRule(index, ec); }
     
     void addNamespace(CSSParser* p, const AtomicString& prefix, const AtomicString& uri);
     const AtomicString& determineNamespace(const AtomicString& prefix);
     
     virtual void styleSheetChanged();
 
-    virtual bool parseString( const DOMString &string, bool strict = true );
+    virtual bool parseString(const String&, bool strict = true);
 
     virtual bool isLoading();
 
     virtual void checkLoaded();
-    khtml::DocLoader *docLoader();
-    DocumentImpl *doc() { return m_doc; }
+    DocLoader* docLoader();
+    DocumentImpl* doc() { return m_doc; }
     bool implicit() { return m_implicit; }
+
 protected:
-    DocumentImpl *m_doc;
+    DocumentImpl* m_doc;
     bool m_implicit;
     CSSNamespace* m_namespaces;
 };
@@ -127,12 +123,11 @@ protected:
 class StyleSheetListImpl : public Shared<StyleSheetListImpl>
 {
 public:
-    StyleSheetListImpl() {}
     ~StyleSheetListImpl();
 
     // the following two ignore implicit stylesheets
     unsigned length() const;
-    StyleSheetImpl *item ( unsigned index );
+    StyleSheetImpl* item(unsigned index);
 
     void add(StyleSheetImpl* s);
     void remove(StyleSheetImpl* s);
@@ -145,26 +140,22 @@ public:
 class MediaListImpl : public StyleBaseImpl
 {
 public:
-    MediaListImpl()
-        : StyleBaseImpl( 0 ) {}
-    MediaListImpl( CSSStyleSheetImpl *parentSheet )
-        : StyleBaseImpl(parentSheet) {}
-    MediaListImpl( CSSStyleSheetImpl *parentSheet,
-                   const DOM::DOMString &media );
-    //MediaListImpl( CSSRuleImpl *parentRule );
-    MediaListImpl( CSSRuleImpl *parentRule, const DOM::DOMString &media );
+    MediaListImpl() : StyleBaseImpl(0) {}
+    MediaListImpl(CSSStyleSheetImpl* parentSheet) : StyleBaseImpl(parentSheet) {}
+    MediaListImpl(CSSStyleSheetImpl* parentSheet, const String& media);
+    MediaListImpl(CSSRuleImpl* parentRule, const String& media);
 
     virtual bool isMediaList() { return true; }
 
-    CSSStyleSheetImpl *parentStyleSheet() const;
-    CSSRuleImpl *parentRule() const;
+    CSSStyleSheetImpl* parentStyleSheet() const;
+    CSSRuleImpl* parentRule() const;
     unsigned length() const { return m_lstMedia.count(); }
-    DOM::DOMString item ( unsigned index ) const { return m_lstMedia[index]; }
-    void deleteMedium ( const DOM::DOMString &oldMedium );
-    void appendMedium ( const DOM::DOMString &newMedium ) { m_lstMedia.append(newMedium); }
+    String item(unsigned index) const { return m_lstMedia[index]; }
+    void deleteMedium(const String& oldMedium);
+    void appendMedium(const String& newMedium) { m_lstMedia.append(newMedium); }
 
-    DOM::DOMString mediaText() const;
-    void setMediaText(const DOM::DOMString &value);
+    String mediaText() const;
+    void setMediaText(const String&);
 
     /**
      * Check if the list contains either the requested medium, or the
@@ -174,14 +165,12 @@ public:
      *
      * _NOT_ part of the DOM!
      */
-    bool contains( const DOM::DOMString &medium ) const;
+    bool contains(const String& medium) const;
 
 protected:
-    QValueList<DOM::DOMString> m_lstMedia;
+    QValueList<String> m_lstMedia;
 };
 
-
-}; // namespace
+} // namespace
 
 #endif
-

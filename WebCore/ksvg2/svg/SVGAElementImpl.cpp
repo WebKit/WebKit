@@ -24,7 +24,6 @@
 #if SVG_SUPPORT
 #include <kdom/core/AttrImpl.h>
 #include <kdom/events/MouseEventImpl.h>
-#include <kdom/events/kdomevents.h>
 #include <kdom/Helper.h>
 #include "dom2_eventsimpl.h"
 #include "csshelper.h"

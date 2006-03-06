@@ -46,7 +46,6 @@
 #import "html_imageimpl.h"
 #import "PlatformString.h"
 #import "dom2_eventsimpl.h"
-#import "dom2_range.h"
 #import "FrameView.h"
 #import "MacFrame.h"
 #import "render_canvas.h"

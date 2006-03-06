@@ -26,9 +26,9 @@
 #include "DOMImplementationImpl.h"
 
 #include "DocumentTypeImpl.h"
+#include "ExceptionCode.h"
 #include "PlatformString.h"
 #include "css_stylesheetimpl.h"
-#include "dom_exception.h"
 #include "html_documentimpl.h"
 
 namespace WebCore {
@@ -68,20 +68,20 @@ PassRefPtr<DocumentTypeImpl> DOMImplementationImpl::createDocumentType(const Str
 {
     // Not mentioned in spec: throw NAMESPACE_ERR if no qualifiedName supplied
     if (qualifiedName.isNull()) {
-        ec = DOMException::NAMESPACE_ERR;
+        ec = NAMESPACE_ERR;
         return 0;
     }
 
     // INVALID_CHARACTER_ERR: Raised if the specified qualified name contains an illegal character.
     String prefix, localName;
     if (!DocumentImpl::parseQualifiedName(qualifiedName, prefix, localName)) {
-        ec = DOMException::INVALID_CHARACTER_ERR;
+        ec = INVALID_CHARACTER_ERR;
         return 0;
     }
 
     // NAMESPACE_ERR: Raised if the qualifiedName is malformed.
     if (qualifiedNameIsMalformed(qualifiedName)) {
-        ec = DOMException::NAMESPACE_ERR;
+        ec = NAMESPACE_ERR;
         return 0;
     }
 
@@ -102,7 +102,7 @@ PassRefPtr<DocumentImpl> DOMImplementationImpl::createDocument(const String& nam
         // INVALID_CHARACTER_ERR: Raised if the specified qualified name contains an illegal character.
         String prefix, localName;
         if (!DocumentImpl::parseQualifiedName(qualifiedName, prefix, localName)) {
-            ec = DOMException::INVALID_CHARACTER_ERR;
+            ec = INVALID_CHARACTER_ERR;
             return 0;
         }
 
@@ -124,7 +124,7 @@ PassRefPtr<DocumentImpl> DOMImplementationImpl::createDocument(const String& nam
             (colonpos == 3 && qualifiedName[0] == 'x' && qualifiedName[1] == 'm' && qualifiedName[2] == 'l' &&
              namespaceURI != "http://www.w3.org/XML/1998/namespace")) {
 
-            ec = DOMException::NAMESPACE_ERR;
+            ec = NAMESPACE_ERR;
             return 0;
         }
     }
@@ -132,7 +132,7 @@ PassRefPtr<DocumentImpl> DOMImplementationImpl::createDocument(const String& nam
     // WRONG_DOCUMENT_ERR: Raised if doctype has already been used with a different document or was
     // created from a different implementation.
     if (doctype && (doctype->getDocument() || doctype->implementation() != this)) {
-        ec = DOMException::WRONG_DOCUMENT_ERR;
+        ec = WRONG_DOCUMENT_ERR;
         return 0;
     }
 

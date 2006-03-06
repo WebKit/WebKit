@@ -1,3 +1,229 @@
+2006-03-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - moved all the remnants of the public C++ DOM API out of khtml/dom
+        - changed from "int" to "ExceptionCode" for DOM exceptions
+        - removed unused CSS_HTML_RELATIVE
+        - changed offsetInCharacters to be a member function of NodeImpl
+        - changed DOM functions that take a NodeType to use NodeType instead of
+          unsigned short for clarity (will still be unsigned short in bindings)
+        - changed exception constants so they can be used directly in the
+          implementation code (added in the offsets for different types of exceptions)
+        - replaced the eventListenerType function with an isHTMLEventListener function
+        - got rid of EventListenerEvent, which is a synonym for EventImpl*
+        - eliminated handleEventImpl, whish is now the same as handleEvent
+
+        - did other preparation for the "remove Impl suffix" renaming
+          (tested by using a script that does the renaming)
+
+        * khtml/dom/css_rule.h: Removed.
+        * khtml/dom/css_stylesheet.h: Removed.
+        * khtml/dom/css_value.h: Removed.
+        * khtml/dom/dom2_events.cpp: Removed.
+        * khtml/dom/dom2_events.h: Removed.
+        * khtml/dom/dom2_range.h: Removed.
+        * khtml/dom/dom2_traversal.cpp: Removed.
+        * khtml/dom/dom2_traversal.h: Removed.
+        * khtml/dom/dom_exception.h: Removed.
+        * khtml/dom/dom_node.h: Removed.
+
+        * dom/EventListener.h: Added.
+        * dom/ExceptionCode.h: Added.
+
+        * WebCore+SVG/kdom.h: Removed NodeType and ExceptionCodes
+        * WebCore+SVG/kdomevents.h: Removed.
+
+        * WebCore.xcodeproj/project.pbxproj: Updated for file changes.
+        * WebCore.xcodeproj/project.pbxproj: Updated for file changes.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Removed unneeded DOM:: prefix. Updated file
+        names and exception prefix for changes in DOM exceptions.
+
+        * bindings/js/JSDOMCore.cpp: Touched to cause auto-generated code to be
+        recompiled. We need to get this fixed!
+        * bindings/js/JSDOMEvents.cpp: Ditto.
+
+        * dom/Attr.idl:
+        * dom/CharacterData.idl:
+        * dom/DOMImplementation.idl:
+        * dom/DocumentType.idl:
+        * dom/Element.idl:
+        * dom/Entity.idl:
+        * dom/MutationEvent.idl:
+        * dom/Notation.idl:
+        * dom/ProcessingInstruction.idl:
+        * dom/Text.idl:
+        * dom/WheelEvent.idl:
+        Touched all IDL files so that changes in CodeGeneratorJS.pm would take effect.
+        Added license headers.
+
+        * bindings/objc/DOM.mm: Fixed garbled license agreement. Updated includes.
+        Changed from a single "using namespace WebCore" to individual using statements
+        because of the imminent conflict between DOMImplementation in Objective C
+        and WebCore::DOMImplementation (currently has an Impl suffix). Added a typedef
+        for WebCore::DOMImplementationImpl. Changed to use ExceptionCode instead of int.
+
+        * bindings/objc/DOMCSS.h: Removed DOMCSSException and the special CSS exception
+        codes. This is a feature of DOM Level 1 only. In DOM Level 2 these were eliminated
+        and use basic DOM exception codes instead. We might have to do something for binary
+        compatibility eventually, but perhaps not.
+
+        * bindings/objc/DOMCSS.mm:
+        * bindings/objc/DOMEvents.mm:
+        * bindings/objc/DOMEventsInternal.h:
+        * bindings/objc/DOMHTML.mm:
+        * bindings/objc/DOMHTMLInternal.h:
+        * bindings/objc/DOMViews.mm:
+        * bindings/objc/DOMViewsInternal.h:
+        Fixed garbled license agreements.
+        Changed to use ExceptionCode instead of int and name the variable "ec".
+
+        * bindings/objc/DOMInternal.h: Changed addDOMWrapperImpl to take NSObject* instead
+        of id. This helps with overload resolution when addDOMWrapperImpl is renamed to be
+        addDOMWrapper. Changed ALLOW_DOM_CAST to always use "class" in from of the type name
+        of the WebCore class. This helps work around what seems like a bug in namespace support
+        in Objective-C mode, although the bug only happens after the "remove Impl" renaming.
+        * bindings/objc/DOMInternal.mm:
+        (getDOMWrapperImpl): Changed to use HashMap.
+        (addDOMWrapperImpl): Ditto.
+        (removeDOMWrapper): Ditto.
+        (raiseDOMException): Update to use new names for exception number ranges.
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        * khtml/ecma/xmlserializer.cpp:
+        * kwq/KWQAccObject.mm:
+        Removed unneeded includes.
+
+        * css/css_ruleimpl.h: Moved "rule type" into this header.
+
+        * dom/CommentImpl.h:
+        * dom/CommentImpl.cpp: (WebCore::CommentImpl::offsetInCharacters): Added. Returns true.
+
+        * khtml/ecma/XSLTProcessor.cpp: (KJS::XSLTProcessorProtoFunc::callAsFunction):
+        Changed this around so we don't have a local variable named docImpl.
+
+        * khtml/ecma/kjs_binding.cpp: (KJS::setDOMException): Updated for new form of exception
+        constants.
+
+        * khtml/ecma/kjs_events.h:
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::JSAbstractEventListener::handleEvent): Changed to no longer use EventListenerEvent.
+        (KJS::JSAbstractEventListener::isHTMLEventListener): Added.
+
+        * rendering/RenderTextField.h: Updated includes. Tweaked the code formatting of
+        InputMutationListener. (Might be unnecessary since this class might be deleted soon.)
+
+        * bridge/mac/MacFrame.mm:
+        * css/css_computedstyle.cpp:
+        * css/css_computedstyle.h:
+        * css/css_ruleimpl.cpp:
+        * css/css_stylesheetimpl.cpp:
+        * css/css_stylesheetimpl.h:
+        * css/css_valueimpl.cpp:
+        * css/css_valueimpl.cpp:
+        * css/css_valueimpl.h:
+        * css/css_valueimpl.h:
+        * css/cssparser.cpp:
+        * css/cssstyleselector.cpp:
+        * dom/CDATASectionImpl.cpp:
+        * dom/CDATASectionImpl.h:
+        * dom/CharacterDataImpl.cpp:
+        * dom/CharacterDataImpl.h:
+        * dom/ContainerNodeImpl.cpp:
+        * dom/DOMImplementationImpl.cpp:
+        * dom/DocumentFragmentImpl.cpp:
+        * dom/DocumentFragmentImpl.h:
+        * dom/DocumentImpl.cpp:
+        * dom/DocumentImpl.h:
+        * dom/DocumentTypeImpl.cpp:
+        * dom/DocumentTypeImpl.h:
+        * dom/NamedNodeMapImpl.h:
+        * dom/NodeImpl.cpp:
+        * dom/NodeImpl.h:
+        * dom/NodeListImpl.cpp:
+        * dom/TextImpl.cpp:
+        * dom/TextImpl.h:
+        * dom/dom2_eventsimpl.cpp:
+        * dom/dom2_eventsimpl.h:
+        * dom/dom2_rangeimpl.cpp:
+        * dom/dom2_rangeimpl.h:
+        * dom/dom2_traversalimpl.cpp:
+        * dom/dom2_traversalimpl.h:
+        * dom/dom_elementimpl.cpp:
+        * dom/dom_elementimpl.h:
+        * dom/dom_position.cpp:
+        * dom/dom_xmlimpl.cpp:
+        * dom/dom_xmlimpl.h:
+        * dom/xml_tokenizer.cpp:
+        * editing/AppendNodeCommand.cpp:
+        * editing/ApplyStyleCommand.cpp:
+        * editing/CompositeEditCommand.cpp:
+        * editing/DeleteFromTextNodeCommand.cpp:
+        * editing/InsertIntoTextNodeCommand.cpp:
+        * editing/InsertLineBreakCommand.cpp:
+        * editing/InsertNodeBeforeCommand.cpp:
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        * editing/JoinTextNodesCommand.cpp:
+        * editing/MergeIdenticalElementsCommand.cpp:
+        * editing/RemoveNodeAttributeCommand.cpp:
+        * editing/RemoveNodeCommand.cpp:
+        * editing/ReplaceSelectionCommand.cpp:
+        * editing/Selection.cpp:
+        * editing/SelectionController.cpp:
+        * editing/SelectionController.h:
+        * editing/SetNodeAttributeCommand.cpp:
+        * editing/SplitElementCommand.cpp:
+        * editing/SplitTextNodeCommand.cpp:
+        * editing/VisiblePosition.cpp:
+        * editing/WrapContentsInDummySpanCommand.cpp:
+        * editing/htmlediting.cpp:
+        * editing/markup.cpp:
+        * editing/visible_text.cpp:
+        * khtml/ecma/kjs_binding.h:
+        * khtml/ecma/kjs_css.cpp:
+        * khtml/ecma/kjs_dom.cpp:
+        * khtml/ecma/kjs_html.cpp:
+        * khtml/ecma/kjs_range.cpp:
+        * khtml/ecma/kjs_traversal.cpp:
+        * khtml/ecma/kjs_traversal.h:
+        * khtml/ecma/kjs_window.cpp:
+        * khtml/html/HTMLElementImpl.cpp:
+        * khtml/html/HTMLOptionElementImpl.cpp:
+        * khtml/html/HTMLOptionElementImpl.h:
+        * khtml/html/HTMLOptionsCollectionImpl.cpp:
+        * khtml/html/HTMLSelectElementImpl.cpp:
+        * khtml/html/HTMLTextAreaElementImpl.cpp:
+        * khtml/html/html_documentimpl.cpp:
+        * khtml/html/html_documentimpl.h:
+        * khtml/html/html_headimpl.cpp:
+        * khtml/html/html_tableimpl.cpp:
+        * khtml/html/html_tableimpl.h:
+        * khtml/html/htmlparser.cpp:
+        * khtml/xbl/xbl_tokenizer.cpp:
+        * khtml/xsl/xsl_stylesheetimpl.cpp:
+        * ksvg2/misc/SVGDocumentExtensions.cpp:
+        * ksvg2/svg/SVGAnimationElementImpl.cpp:
+        * ksvg2/svg/SVGDOMImplementationImpl.cpp:
+        * ksvg2/svg/SVGDOMImplementationImpl.h:
+        * ksvg2/svg/SVGDocumentImpl.cpp:
+        * ksvg2/svg/SVGDocumentImpl.h:
+        * ksvg2/svg/SVGElementImpl.cpp:
+        * ksvg2/svg/SVGLengthImpl.cpp:
+        * ksvg2/svg/SVGLocatableImpl.cpp:
+        * ksvg2/svg/SVGPolyElementImpl.cpp:
+        * ksvg2/svg/SVGSVGElementImpl.cpp:
+        * ksvg2/svg/SVGStyleElementImpl.cpp:
+        * ksvg2/svg/SVGStyleElementImpl.h:
+        * ksvg2/svg/SVGUseElementImpl.cpp:
+        * page/Frame.cpp:
+        * page/FrameView.cpp:
+        * rendering/render_object.cpp:
+        * xml/xmlhttprequest.cpp:
+        Changed to use ExceptionCode instead of int and name the variable "ec".
+        Also updated use of exception codes and other constants to get them from
+        their new locations.
+
 2006-03-06  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

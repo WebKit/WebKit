@@ -36,7 +36,6 @@
 #include "HTMLIsIndexElementImpl.h"
 #include "cssproperties.h"
 #include "cssvalues.h"
-#include "dom_exception.h"
 #include "TextImpl.h"
 #include "CommentImpl.h"
 #include "html_baseimpl.h"
@@ -409,8 +408,8 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
                 else if (current->hasTagName(tdTag) || current->hasTagName(thTag))
                     tsection = current->parent()->parent();
                 NodeImpl* table = tsection->parent();
-                int exceptioncode = 0;
-                table->insertBefore(n, tsection, exceptioncode);
+                ExceptionCode ec = 0;
+                table->insertBefore(n, tsection, ec);
                 pushBlock(localName, tagPriority);
                 setCurrent(n);
                 inStrayTableContent++;
@@ -481,7 +480,7 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
                 handled = true;      // ...and start a new one
             } else {
                 bool possiblyMoveStrayContent = true;
-                int exceptionCode = 0;
+                ExceptionCode ec = 0;
                 if (n->isTextNode()) {
                     TextImpl *t = static_cast<TextImpl *>(n);
                     if (t->containsOnlyWhitespace())
@@ -507,8 +506,8 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
                         node = (node->hasTagName(tableTag)) ? node :
                                 ((node->hasTagName(trTag)) ? grandparent : parent);
                         NodeImpl *parent = node->parentNode();
-                        parent->insertBefore(n, node, exceptionCode);
-                        if (!exceptionCode) {
+                        parent->insertBefore(n, node, ec);
+                        if (!ec) {
                             if (n->isHTMLElement() && tagPriority > 0 && 
                                 !flat && static_cast<HTMLElementImpl*>(n)->endTagRequirement() != TagStatusForbidden)
                             {
@@ -521,7 +520,7 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
                         }
                     }
 
-                    if (!exceptionCode) {
+                    if (!ec) {
                         if (current->hasTagName(trTag))
                             e = new HTMLTableCellElementImpl(tdTag, document);
                         else if (current->hasTagName(tableTag))
@@ -957,7 +956,7 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
     // Find the element that crosses over to a higher level.   For now, if there is more than
     // one, we will just give up and not attempt any sort of correction.  It's highly unlikely that
     // there will be more than one, since <p> tags aren't allowed to be nested.
-    int exceptionCode = 0;
+    ExceptionCode ec = 0;
     HTMLStackElem* curr = blockStack;
     HTMLStackElem* maxElem = 0;
     HTMLStackElem* prev = 0;
@@ -1026,7 +1025,7 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
                 
                 // Attach the previous node as a child of this new node.
                 if (prevNode)
-                    currNode->appendChild(prevNode, exceptionCode);
+                    currNode->appendChild(prevNode, ec);
                 else // The new parent for the block element is going to be the innermost clone.
                     parentElem = currNode.get();
                                 
@@ -1038,7 +1037,7 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
 
         // Now append the chain of new residual style elements if one exists.
         if (prevNode)
-            elem->node->appendChild(prevNode, exceptionCode);
+            elem->node->appendChild(prevNode, ec);
     }
          
     // Check if the block is still in the tree. If it isn't, then we don't
@@ -1055,7 +1054,7 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
     //
     // Step 1: Remove |blockElem| from its parent, doing a batch detach of all the kids.
     if (isBlockStillInTree)
-        blockElem->parentNode()->removeChild(blockElem, exceptionCode);
+        blockElem->parentNode()->removeChild(blockElem, ec);
         
     // Step 2: Clone |residualElem|.
     RefPtr<NodeImpl> newNode = residualElem->cloneNode(false); // Shallow clone. We don't pick up the same kids.
@@ -1066,17 +1065,17 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
     NodeImpl* currNode = blockElem->firstChild();
     while (currNode) {
         NodeImpl* nextNode = currNode->nextSibling();
-        newNode->appendChild(currNode, exceptionCode);
+        newNode->appendChild(currNode, ec);
         currNode = nextNode;
     }
 
     // Step 4: Place |newNode| under |blockElem|.  |blockElem| is still out of the document, so no
     // attachment can occur yet.
-    blockElem->appendChild(newNode.release(), exceptionCode);
+    blockElem->appendChild(newNode.release(), ec);
     
     // Step 5: Reparent |blockElem|.  Now the full attachment of the fixed up tree takes place.
     if (isBlockStillInTree)
-        parentElem->appendChild(blockElem, exceptionCode);
+        parentElem->appendChild(blockElem, ec);
         
     // Step 6: Elide |elem|, since it is effectively no longer open.  Also update
     // the node associated with the previous stack element so that when it gets popped,
@@ -1132,11 +1131,11 @@ void HTMLParser::reopenResidualStyleTags(HTMLStackElem* elem, NodeImpl* malforme
 
         // Append the new node. In the malformed table case, we need to insert before the table,
         // which will be the last child.
-        int exceptionCode = 0;
+        ExceptionCode ec = 0;
         if (malformedTableParent)
-            malformedTableParent->insertBefore(newNode, malformedTableParent->lastChild(), exceptionCode);
+            malformedTableParent->insertBefore(newNode, malformedTableParent->lastChild(), ec);
         else
-            current->appendChild(newNode, exceptionCode);
+            current->appendChild(newNode, ec);
         // FIXME: Is it really OK to ignore the exceptions here?
 
         // Now push a new stack element for this node we just created.
@@ -1288,16 +1287,15 @@ void HTMLParser::freeBlock()
 
 void HTMLParser::createHead()
 {
-    if(head || !doc()->firstChild())
+    if (head || !doc()->firstChild())
         return;
 
     head = new HTMLHeadElementImpl(document);
-    HTMLElementImpl *body = doc()->body();
-    int exceptioncode = 0;
-    doc()->firstChild()->insertBefore(head, body, exceptioncode);
-    if ( exceptioncode ) {
+    HTMLElementImpl* body = doc()->body();
+    ExceptionCode ec = 0;
+    doc()->firstChild()->insertBefore(head, body, ec);
+    if (ec)
         head = 0;
-    }
 }
 
 NodeImpl* HTMLParser::handleIsindex(Token* t)

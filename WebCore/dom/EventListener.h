@@ -1,8 +1,5 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
- * (C) 2001 Peter Kelly (pmk@post.com)
- * Copyright (C) 2003 Apple Computer, Inc.
+/*
+ * Copyright (C) 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,33 +18,22 @@
  *
  */
 
-#include "config.h"
-#include "dom2_events.h"
+#ifndef EventListener_h
+#define EventListener_h
 
-#include "dom2_eventsimpl.h"
+#include "Shared.h"
 
-namespace DOM {
+namespace WebCore {
 
-EventListener::EventListener()
-{
+    class EventImpl;
+
+    class EventListener : public Shared<EventListener> {
+    public:
+        virtual ~EventListener() { }
+        virtual void handleEvent(EventImpl*, bool isWindowEvent) = 0;
+        virtual bool isHTMLEventListener() const { return false; }
+    };
+
 }
 
-EventListener::~EventListener()
-{
-}
-
-void EventListener::handleEventImpl(EventImpl *evt, bool isWindowEvent)
-{
-    handleEvent(evt, isWindowEvent);
-}
-
-void EventListener::handleEvent(EventListenerEvent, bool)
-{
-}
-
-DOMString EventListener::eventListenerType()
-{
-    return "";
-}
-
-} // namespace
+#endif

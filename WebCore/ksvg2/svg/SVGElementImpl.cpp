@@ -25,12 +25,12 @@
 #include "SVGElementImpl.h"
 
 #include "DocumentImpl.h"
+#include "EventListener.h"
 #include "EventNames.h"
 #include "SVGDOMImplementationImpl.h"
 #include "SVGNames.h"
 #include "SVGSVGElementImpl.h"
 #include "css_stylesheetimpl.h"
-#include "dom2_events.h"
 #include "htmlnames.h"
 #include "ksvg.h"
 #include "PlatformString.h"

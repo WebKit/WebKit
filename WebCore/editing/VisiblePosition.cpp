@@ -37,18 +37,9 @@
 #include <kxmlcore/Assertions.h>
 #include "Logging.h"
 
-using namespace DOM::HTMLNames;
+namespace WebCore {
 
-using DOM::CharacterDataImpl;
-using DOM::NodeImpl;
-using DOM::offsetInCharacters;
-using DOM::UsingComposedCharacters;
-using DOM::Position;
-using DOM::Range;
-using DOM::RangeImpl;
-using DOM::TextImpl;
-
-namespace khtml {
+using namespace HTMLNames;
 
 VisiblePosition::VisiblePosition(const Position &pos, EAffinity affinity)
 {
@@ -216,7 +207,7 @@ Position VisiblePosition::deepEquivalent(const Position &pos)
 
 int VisiblePosition::maxOffset(const NodeImpl *node)
 {
-    return offsetInCharacters(node->nodeType()) ? (int)static_cast<const CharacterDataImpl *>(node)->length() : (int)node->childNodeCount();
+    return node->offsetInCharacters() ? (int)static_cast<const CharacterDataImpl *>(node)->length() : (int)node->childNodeCount();
 }
 
 QChar VisiblePosition::character() const

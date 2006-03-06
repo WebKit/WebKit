@@ -25,7 +25,6 @@
 
 #include "CachedObjectClient.h"
 #include "css_base.h"
-#include "css_value.h"
 #include <qptrlist.h>
 #include <qvaluelist.h>
 #include <kxmlcore/PassRefPtr.h>
@@ -47,6 +46,8 @@ class RenderStyle;
 class DashboardRegionImpl;
 #endif
 
+typedef int ExceptionCode;
+
 extern const int inheritableProperties[];
 extern const unsigned numInheritableProperties;
 
@@ -59,7 +60,7 @@ public:
     CSSRuleImpl* parentRule() const;
 
     virtual String cssText() const = 0;
-    virtual void setCssText(const String&, int &exceptionCode) = 0;
+    virtual void setCssText(const String&, ExceptionCode&) = 0;
 
     virtual unsigned length() const = 0;
     virtual String item(unsigned index) const = 0;
@@ -76,10 +77,10 @@ public:
     virtual int getPropertyShorthand(int propertyID) const = 0;
     virtual bool isPropertyImplicit(int propertyID) const = 0;
 
-    void setProperty(const String& propertyName, const String& value, const String& priority, int &exception);
-    String removeProperty(const String& propertyName, int &exception);
-    virtual void setProperty(int propertyId, const String& value, bool important, int &exceptionCode) = 0;
-    virtual String removeProperty(int propertyID, int &exceptionCode) = 0;
+    void setProperty(const String& propertyName, const String& value, const String& priority, ExceptionCode&);
+    String removeProperty(const String& propertyName, ExceptionCode&);
+    virtual void setProperty(int propertyId, const String& value, bool important, ExceptionCode&) = 0;
+    virtual String removeProperty(int propertyID, ExceptionCode&) = 0;
 
     virtual PassRefPtr<CSSMutableStyleDeclarationImpl> copy() const = 0;
     virtual PassRefPtr<CSSMutableStyleDeclarationImpl> makeMutable() = 0;
@@ -99,9 +100,17 @@ private:
 class CSSValueImpl : public StyleBaseImpl
 {
 public:
+    enum UnitTypes {
+        CSS_INHERIT = 0,
+        CSS_PRIMITIVE_VALUE = 1,
+        CSS_VALUE_LIST = 2,
+        CSS_CUSTOM = 3,
+        CSS_INITIAL = 4
+    };
+
     CSSValueImpl() : StyleBaseImpl(0) { }
 
-    virtual unsigned short cssValueType() const { return CSSValue::CSS_CUSTOM; }
+    virtual unsigned short cssValueType() const { return CSS_CUSTOM; }
     virtual String cssText() const = 0;
     void setCssText(const String&) { } // FIXME: Not implemented.
 
@@ -146,11 +155,42 @@ protected:
 class CSSPrimitiveValueImpl : public CSSValueImpl
 {
 public:
+    enum UnitTypes {
+        CSS_UNKNOWN = 0,
+        CSS_NUMBER = 1,
+        CSS_PERCENTAGE = 2,
+        CSS_EMS = 3,
+        CSS_EXS = 4,
+        CSS_PX = 5,
+        CSS_CM = 6,
+        CSS_MM = 7,
+        CSS_IN = 8,
+        CSS_PT = 9,
+        CSS_PC = 10,
+        CSS_DEG = 11,
+        CSS_RAD = 12,
+        CSS_GRAD = 13,
+        CSS_MS = 14,
+        CSS_S = 15,
+        CSS_HZ = 16,
+        CSS_KHZ = 17,
+        CSS_DIMENSION = 18,
+        CSS_STRING = 19,
+        CSS_URI = 20,
+        CSS_IDENT = 21,
+        CSS_ATTR = 22,
+        CSS_COUNTER = 23,
+        CSS_RECT = 24,
+        CSS_RGBCOLOR = 25,
+        CSS_PAIR = 100, // We envision this being exposed as a means of getting computed style values for pairs (border-spacing/radius, background-position, etc.)
+        CSS_DASHBOARD_REGION = 101 // FIXME: What on earth is this doing as a primitive value? It should not be!
+    };
+
     // FIXME: int vs. unsigned overloading is too tricky for color vs. ident
     CSSPrimitiveValueImpl();
     CSSPrimitiveValueImpl(int ident);
-    CSSPrimitiveValueImpl(double, CSSPrimitiveValue::UnitTypes);
-    CSSPrimitiveValueImpl(const String&, CSSPrimitiveValue::UnitTypes);
+    CSSPrimitiveValueImpl(double, UnitTypes);
+    CSSPrimitiveValueImpl(const String&, UnitTypes);
     CSSPrimitiveValueImpl(PassRefPtr<CounterImpl>);
     CSSPrimitiveValueImpl(PassRefPtr<RectImpl>);
     CSSPrimitiveValueImpl(unsigned color); // RGB value
@@ -182,31 +222,31 @@ public:
 
     // use with care!!!
     void setPrimitiveType(unsigned short type) { m_type = type; }
-    void setFloatValue(unsigned short unitType, double floatValue, int &exceptioncode );
+    void setFloatValue(unsigned short unitType, double floatValue, ExceptionCode&);
     double getFloatValue(unsigned short /* unitType */) const { return m_value.num; }
 
-    void setStringValue(unsigned short stringType, const String& stringValue, int &exceptioncode);
+    void setStringValue(unsigned short stringType, const String& stringValue, ExceptionCode&);
     String getStringValue() const;
     
     CounterImpl* getCounterValue () const {
-        return m_type != CSSPrimitiveValue::CSS_COUNTER ? 0 : m_value.counter;
+        return m_type != CSS_COUNTER ? 0 : m_value.counter;
     }
 
     RectImpl* getRectValue () const {
-        return m_type != CSSPrimitiveValue::CSS_RECT ? 0 : m_value.rect;
+        return m_type != CSS_RECT ? 0 : m_value.rect;
     }
 
     unsigned getRGBColorValue() const {
-        return m_type != CSSPrimitiveValue::CSS_RGBCOLOR ? 0 : m_value.rgbcolor;
+        return m_type != CSS_RGBCOLOR ? 0 : m_value.rgbcolor;
     }
 
     PairImpl* getPairValue() const {
-        return m_type != CSSPrimitiveValue::CSS_PAIR ? 0 : m_value.pair;
+        return m_type != CSS_PAIR ? 0 : m_value.pair;
     }
 
 #if __APPLE__
     DashboardRegionImpl *getDashboardRegionValue () const {
-        return m_type != CSSPrimitiveValue::CSS_DASHBOARD_REGION ? 0 : m_value.region;
+        return m_type != CSS_DASHBOARD_REGION ? 0 : m_value.region;
     }
 #endif
 
@@ -236,6 +276,9 @@ protected:
     } m_value;
 };
 
+// FIXME: Remove when we rename everything to remove Impl.
+typedef CSSPrimitiveValueImpl CSSPrimitiveValue;
+
 // This value is used to handle quirky margins in reflow roots (body, td, and th) like WinIE.
 // The basic idea is that a stylesheet can use the value __qem (for quirky em) instead of em
 // in a stylesheet.  When the quirky value is used, if you're in quirks mode, the margin will
@@ -243,7 +286,7 @@ protected:
 class CSSQuirkPrimitiveValueImpl : public CSSPrimitiveValueImpl
 {
 public:
-    CSSQuirkPrimitiveValueImpl(double num, CSSPrimitiveValue::UnitTypes type)
+    CSSQuirkPrimitiveValueImpl(double num, UnitTypes type)
         : CSSPrimitiveValueImpl(num, type) {}
 
     virtual bool isQuirkValue() { return true; }
@@ -447,7 +490,7 @@ public:
     void setNode(NodeImpl* node) { m_node = node; }
 
     virtual String cssText() const;
-    virtual void setCssText(const String&, int &exceptionCode);
+    virtual void setCssText(const String&, ExceptionCode&);
 
     virtual unsigned length() const;
     virtual String item(unsigned index) const;
@@ -458,8 +501,8 @@ public:
     virtual int getPropertyShorthand(int propertyID) const;
     virtual bool isPropertyImplicit(int propertyID) const;
 
-    virtual void setProperty(int propertyId, const String& value, bool important, int &exceptionCode);
-    virtual String removeProperty(int propertyID, int &exceptionCode);
+    virtual void setProperty(int propertyId, const String& value, bool important, ExceptionCode&);
+    virtual String removeProperty(int propertyID, ExceptionCode&);
 
     virtual PassRefPtr<CSSMutableStyleDeclarationImpl> copy() const;
     virtual PassRefPtr<CSSMutableStyleDeclarationImpl> makeMutable();
@@ -467,13 +510,13 @@ public:
     QValueListConstIterator<CSSProperty> valuesIterator() const { return m_values.begin(); }
 
     bool setProperty(int propertyID, int value, bool important = false, bool notifyChanged = true);
-    bool setProperty(int propertyID, const String& value, bool important, bool notifyChanged, int &exceptionCode);
+    bool setProperty(int propertyID, const String& value, bool important, bool notifyChanged, ExceptionCode&);
     bool setProperty(int propertyId, const String& value, bool important = false, bool notifyChanged = true)
-        { int exceptionCode; return setProperty(propertyId, value, important, notifyChanged, exceptionCode); }
+        { ExceptionCode ec; return setProperty(propertyId, value, important, notifyChanged, ec); }
 
-    String removeProperty(int propertyID, bool notifyChanged, int &exceptionCode);
+    String removeProperty(int propertyID, bool notifyChanged, ExceptionCode&);
     String removeProperty(int propertyID, bool notifyChanged = true)
-        { int exceptionCode; return removeProperty(propertyID, notifyChanged, exceptionCode); }
+        { ExceptionCode ec; return removeProperty(propertyID, notifyChanged, ec); }
 
     void clear();
 
@@ -481,7 +524,7 @@ public:
  
     // setLengthProperty treats integers as pixels! (Needed for conversion of HTML attributes.)
     void setLengthProperty(int propertyId, const String& value, bool important, bool multiLength = false);
-    void setStringProperty(int propertyId, const String& value, CSSPrimitiveValue::UnitTypes, bool important = false); // parsed string value
+    void setStringProperty(int propertyId, const String& value, CSSPrimitiveValueImpl::UnitTypes, bool important = false); // parsed string value
     void setImageProperty(int propertyId, const String& URL, bool important = false);
  
     // The following parses an entire new style declaration.

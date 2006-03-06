@@ -21,13 +21,13 @@
 #ifndef KJS_EVENTS_H
 #define KJS_EVENTS_H
 
+#include "EventListener.h"
+#include "PlatformString.h"
 #include "kjs_dom.h"
 #include "kjs_html.h"
-
-#include "dom/dom2_events.h"
 #include <kjs/protect.h>
 
-namespace DOM {
+namespace WebCore {
     class ClipboardImpl;
     class EventImpl;
     class KeyboardEventImpl;
@@ -41,11 +41,11 @@ namespace KJS {
     class Window;
     class Clipboard;
     
-    class JSAbstractEventListener : public DOM::EventListener {
+    class JSAbstractEventListener : public WebCore::EventListener {
     public:
         JSAbstractEventListener(bool HTML = false);
-        virtual void handleEvent(DOM::EventListenerEvent, bool isWindowEvent);
-        virtual DOM::DOMString eventListenerType();
+        virtual void handleEvent(WebCore::EventImpl*, bool isWindowEvent);
+        virtual bool isHTMLEventListener() const;
         virtual JSObject* listenerObj() const = 0;
         virtual Window* windowObj() const = 0;
     private:

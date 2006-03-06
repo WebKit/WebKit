@@ -29,54 +29,53 @@
 
 namespace WebCore {
 
-class CharacterDataImpl : public NodeImpl
-{
+class CharacterDataImpl : public NodeImpl {
 public:
-    CharacterDataImpl(DocumentImpl*, const DOMString &_text);
+    CharacterDataImpl(DocumentImpl*, const String& text);
     CharacterDataImpl(DocumentImpl*);
     virtual ~CharacterDataImpl();
 
     // DOM methods & attributes for CharacterData
 
-    virtual DOMString data() const;
-    virtual void setData( const DOMString &_data, int &exceptioncode );
-    virtual unsigned length (  ) const;
-    virtual DOMString substringData ( const unsigned offset, const unsigned count, int &exceptioncode );
-    virtual void appendData ( const DOMString &arg, int &exceptioncode );
-    virtual void insertData ( const unsigned offset, const DOMString &arg, int &exceptioncode );
-    virtual void deleteData ( const unsigned offset, const unsigned count, int &exceptioncode );
-    virtual void replaceData ( const unsigned offset, const unsigned count, const DOMString &arg, int &exceptioncode );
+    virtual String data() const;
+    virtual void setData(const String&, ExceptionCode&);
+    virtual unsigned length() const;
+    virtual String substringData(unsigned offset, unsigned count, ExceptionCode&);
+    virtual void appendData(const String&, ExceptionCode&);
+    virtual void insertData(unsigned offset, const String&, ExceptionCode&);
+    virtual void deleteData(unsigned offset, unsigned count, ExceptionCode&);
+    virtual void replaceData(unsigned offset, unsigned count, const String &arg, ExceptionCode&);
 
     bool containsOnlyWhitespace() const;
-    bool containsOnlyWhitespace(unsigned int from, unsigned int len) const;
+    bool containsOnlyWhitespace(unsigned from, unsigned len) const;
     
     // DOM methods overridden from  parent classes
 
-    virtual DOMString nodeValue() const;
-    virtual void setNodeValue( const DOMString &_nodeValue, int &exceptioncode );
+    virtual String nodeValue() const;
+    virtual void setNodeValue(const String&, ExceptionCode&);
 
     // Other methods (not part of DOM)
 
-    DOMStringImpl *string() { return str; }
-    virtual void checkCharDataOperation( const unsigned offset, int &exceptioncode );
+    StringImpl* string() { return str; }
+    virtual void checkCharDataOperation(unsigned offset, ExceptionCode&);
 
     virtual int maxOffset() const;
     virtual int caretMinOffset() const;
     virtual int caretMaxOffset() const;
     virtual unsigned caretMaxRenderedOffset() const;
-
-    virtual bool rendererIsNeeded(RenderStyle *);
+    virtual bool offsetInCharacters() const;
+    virtual bool rendererIsNeeded(RenderStyle*);
     
 #ifndef NDEBUG
-    virtual void dump(QTextStream *stream, QString ind = "") const;
+    virtual void dump(QTextStream*, QString ind = "") const;
 #endif
 
 protected:
     // note: since DOMStrings are shared, str should always be copied when making
     // a change or returning a string
-    DOMStringImpl *str;
+    StringImpl* str;
 
-    void dispatchModifiedEvent(DOMStringImpl *prevValue);
+    void dispatchModifiedEvent(StringImpl* prevValue);
 };
 
 } // namespace WebCore

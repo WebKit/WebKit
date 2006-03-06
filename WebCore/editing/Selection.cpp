@@ -107,16 +107,16 @@ PassRefPtr<RangeImpl> Selection::toRange() const
         e = rangeCompliantEquivalent(e);
     }
 
-    int exceptionCode = 0;
+    ExceptionCode ec = 0;
     RefPtr<RangeImpl> result(new RangeImpl(s.node()->getDocument()));
-    result->setStart(s.node(), s.offset(), exceptionCode);
-    if (exceptionCode) {
-        LOG_ERROR("Exception setting Range start from Selection: %d", exceptionCode);
+    result->setStart(s.node(), s.offset(), ec);
+    if (ec) {
+        LOG_ERROR("Exception setting Range start from Selection: %d", ec);
         return 0;
     }
-    result->setEnd(e.node(), e.offset(), exceptionCode);
-    if (exceptionCode) {
-        LOG_ERROR("Exception setting Range end from Selection: %d", exceptionCode);
+    result->setEnd(e.node(), e.offset(), ec);
+    if (ec) {
+        LOG_ERROR("Exception setting Range end from Selection: %d", ec);
         return 0;
     }
     return result.release();

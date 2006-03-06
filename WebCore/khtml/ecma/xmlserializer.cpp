@@ -23,7 +23,6 @@
 #include "xmlserializer.lut.h"
 
 #include "kjs_dom.h"
-#include "dom/dom_exception.h"
 #include "markup.h"
 
 using DOM::NodeImpl;

@@ -18,14 +18,14 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _KJS_TRAVERSAL_H_
-#define _KJS_TRAVERSAL_H_
+#ifndef KJS_TRAVERSAL_H_
+#define KJS_TRAVERSAL_H_
 
+#include "dom2_traversalimpl.h"
 #include "kjs_dom.h"
-#include "dom/dom2_traversal.h"
-#include "kjs/protect.h"
+#include <kjs/protect.h>
 
-namespace DOM {
+namespace WebCore {
     class NodeFilterImpl;
     class NodeIteratorImpl;
     class TreeWalkerImpl;
@@ -35,27 +35,27 @@ namespace KJS {
 
   class DOMNodeIterator : public DOMObject {
   public:
-    DOMNodeIterator(ExecState *exec, DOM::NodeIteratorImpl *ni);
+    DOMNodeIterator(ExecState*, WebCore::NodeIteratorImpl*);
     ~DOMNodeIterator();
     virtual void mark();
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *exec, int token) const;
+    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+    JSValue *getValueProperty(ExecState*, int token) const;
     // no put - all read-only
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { Filter, Root, WhatToShow, ExpandEntityReferences, ReferenceNode, PointerBeforeReferenceNode,
            NextNode, PreviousNode, Detach };
-    DOM::NodeIteratorImpl *impl() const { return m_impl.get(); }
+    WebCore::NodeIteratorImpl* impl() const { return m_impl.get(); }
   private:
-    RefPtr<DOM::NodeIteratorImpl> m_impl;
+    RefPtr<WebCore::NodeIteratorImpl> m_impl;
   };
 
   // Constructor object NodeFilter
   class NodeFilterConstructor : public DOMObject {
   public:
-    NodeFilterConstructor(ExecState *) { }
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot& slot);
-    JSValue *getValueProperty(ExecState *exec, int token) const;
+    NodeFilterConstructor(ExecState*) { }
+    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+    JSValue *getValueProperty(ExecState*, int token) const;
     // no put - all read-only
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
@@ -63,48 +63,47 @@ namespace KJS {
 
   class DOMNodeFilter : public DOMObject {
   public:
-    DOMNodeFilter(ExecState *exec, DOM::NodeFilterImpl *nf);
+    DOMNodeFilter(ExecState*, WebCore::NodeFilterImpl*);
     ~DOMNodeFilter();
     virtual void mark();
     // no put - all read-only
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
-    DOM::NodeFilterImpl *impl() const { return m_impl.get(); }
+    WebCore::NodeFilterImpl* impl() const { return m_impl.get(); }
     enum { AcceptNode };
   private:
-    RefPtr<DOM::NodeFilterImpl> m_impl;
+    RefPtr<WebCore::NodeFilterImpl> m_impl;
   };
 
   class DOMTreeWalker : public DOMObject {
   public:
-    DOMTreeWalker(ExecState *exec, DOM::TreeWalkerImpl *tw);
+    DOMTreeWalker(ExecState*, WebCore::TreeWalkerImpl*);
     ~DOMTreeWalker();
     virtual void mark();
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot& slot);
-    JSValue *getValueProperty(ExecState *exec, int token) const;
-    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
+    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
+    JSValue* getValueProperty(ExecState*, int token) const;
+    virtual void put(ExecState*, const Identifier& propertyName, JSValue*, int attr = None);
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { Root, WhatToShow, Filter, ExpandEntityReferences, CurrentNode,
            ParentNode, FirstChild, LastChild, PreviousSibling, NextSibling,
            PreviousNode, NextNode };
-    DOM::TreeWalkerImpl *impl() const { return m_impl.get(); }
+    WebCore::TreeWalkerImpl* impl() const { return m_impl.get(); }
   private:
-    RefPtr<DOM::TreeWalkerImpl> m_impl;
+    RefPtr<WebCore::TreeWalkerImpl> m_impl;
   };
 
-  JSValue *getDOMNodeIterator(ExecState *exec, DOM::NodeIteratorImpl *ni);
-  JSValue *getNodeFilterConstructor(ExecState *exec);
-  JSValue *getDOMNodeFilter(ExecState *exec, DOM::NodeFilterImpl *nf);
-  JSValue *getDOMTreeWalker(ExecState *exec, DOM::TreeWalkerImpl *tw);
+  JSValue* getDOMNodeIterator(ExecState*, WebCore::NodeIteratorImpl*);
+  JSValue* getNodeFilterConstructor(ExecState*);
+  JSValue* getDOMNodeFilter(ExecState*, WebCore::NodeFilterImpl*);
+  JSValue* getDOMTreeWalker(ExecState*, WebCore::TreeWalkerImpl*);
 
-  DOM::NodeFilterImpl *toNodeFilter(const JSValue *); // returns 0 if value is not a DOMNodeFilter
+  WebCore::NodeFilterImpl* toNodeFilter(const JSValue*); // returns 0 if value is not a DOMNodeFilter
 
-  class JSNodeFilterCondition : public DOM::NodeFilterCondition {
+  class JSNodeFilterCondition : public WebCore::NodeFilterCondition {
   public:
-    JSNodeFilterCondition(JSObject * _filter);
-    virtual ~JSNodeFilterCondition() {}
-    virtual short acceptNode(DOM::NodeImpl*) const;
+    JSNodeFilterCondition(JSObject* filter);
+    virtual short acceptNode(WebCore::NodeImpl*) const;
     virtual void mark();
   protected:
     JSObject *filter;

@@ -48,18 +48,18 @@ void MergeIdenticalElementsCommand::doApply()
     ASSERT(m_element2);
     ASSERT(m_element1->nextSibling() == m_element2);
 
-    int exceptionCode = 0;
+    ExceptionCode ec = 0;
 
     if (!m_atChild)
         m_atChild = m_element2->firstChild();
 
     while (m_element1->lastChild()) {
-        m_element2->insertBefore(m_element1->lastChild(), m_element2->firstChild(), exceptionCode);
-        ASSERT(exceptionCode == 0);
+        m_element2->insertBefore(m_element1->lastChild(), m_element2->firstChild(), ec);
+        ASSERT(ec == 0);
     }
 
-    m_element2->parentNode()->removeChild(m_element1.get(), exceptionCode);
-    ASSERT(exceptionCode == 0);
+    m_element2->parentNode()->removeChild(m_element1.get(), ec);
+    ASSERT(ec == 0);
 }
 
 void MergeIdenticalElementsCommand::doUnapply()
@@ -67,15 +67,15 @@ void MergeIdenticalElementsCommand::doUnapply()
     ASSERT(m_element1);
     ASSERT(m_element2);
 
-    int exceptionCode = 0;
+    ExceptionCode ec = 0;
 
-    m_element2->parent()->insertBefore(m_element1.get(), m_element2.get(), exceptionCode);
-    ASSERT(exceptionCode == 0);
+    m_element2->parent()->insertBefore(m_element1.get(), m_element2.get(), ec);
+    ASSERT(ec == 0);
 
     while (m_element2->firstChild() != m_atChild) {
         ASSERT(m_element2->firstChild());
-        m_element1->appendChild(m_element2->firstChild(), exceptionCode);
-        ASSERT(exceptionCode == 0);
+        m_element1->appendChild(m_element2->firstChild(), ec);
+        ASSERT(ec == 0);
     }
 }
 

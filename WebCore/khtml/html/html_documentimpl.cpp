@@ -53,15 +53,15 @@
  */
 
 #include "config.h"
-#include "html/html_documentimpl.h"
+#include "html_documentimpl.h"
 
 #include "DocumentTypeImpl.h"
+#include "ExceptionCode.h"
 #include "Frame.h"
 #include "KWQKCookieJar.h"
 #include "css/css_stylesheetimpl.h"
 #include "css/cssstyleselector.h"
 #include "cssproperties.h"
-#include "dom/dom_exception.h"
 #include "html/html_baseimpl.h"
 #include "html/html_headimpl.h"
 #include "html/html_imageimpl.h"
@@ -115,17 +115,17 @@ void HTMLDocumentImpl::setCookie( const DOMString & value )
     return KWQKCookieJar::setCookie(URL(), m_policyBaseURL.qstring(), value.qstring());
 }
 
-void HTMLDocumentImpl::setBody(HTMLElementImpl *_body, int &exceptioncode)
+void HTMLDocumentImpl::setBody(HTMLElementImpl *_body, ExceptionCode& ec)
 {
     if (!_body) { 
-        exceptioncode = DOMException::HIERARCHY_REQUEST_ERR;
+        ec = HIERARCHY_REQUEST_ERR;
         return;
     }
     HTMLElementImpl* b = body();
     if (!b)
-        documentElement()->appendChild(_body, exceptioncode);
+        documentElement()->appendChild(_body, ec);
     else
-        documentElement()->replaceChild(_body, b, exceptioncode);
+        documentElement()->replaceChild(_body, b, ec);
 }
 
 Tokenizer *HTMLDocumentImpl::createTokenizer()
@@ -142,11 +142,11 @@ bool HTMLDocumentImpl::childAllowed( NodeImpl *newChild )
     return newChild->hasTagName(htmlTag) || newChild->isCommentNode();
 }
 
-PassRefPtr<ElementImpl> HTMLDocumentImpl::createElement(const DOMString &name, int &exceptioncode)
+PassRefPtr<ElementImpl> HTMLDocumentImpl::createElement(const DOMString &name, ExceptionCode& ec)
 {
     DOMString lowerName(name.lower());
     if (!isValidName(lowerName)) {
-        exceptioncode = DOMException::INVALID_CHARACTER_ERR;
+        ec = INVALID_CHARACTER_ERR;
         return 0;
     }
     return HTMLElementFactory::createHTMLElement(AtomicString(lowerName), this, 0, false);

@@ -59,7 +59,7 @@ void CSSRuleImpl::setCssText(DOMString /*str*/)
 CSSFontFaceRuleImpl::CSSFontFaceRuleImpl(StyleBaseImpl *parent)
     : CSSRuleImpl(parent)
 {
-    m_type = CSSRule::FONT_FACE_RULE;
+    m_type = FONT_FACE_RULE;
 }
 
 CSSFontFaceRuleImpl::~CSSFontFaceRuleImpl()
@@ -75,7 +75,7 @@ CSSImportRuleImpl::CSSImportRuleImpl(StyleBaseImpl* parent, const String& href, 
     , m_cachedSheet(0)
     , m_loading(false)
 {
-    m_type = CSSRule::IMPORT_RULE;
+    m_type = IMPORT_RULE;
 
     if (m_lstMedia)
         m_lstMedia->setParent(this);
@@ -162,7 +162,7 @@ DOMString CSSImportRuleImpl::cssText() const
 CSSMediaRuleImpl::CSSMediaRuleImpl( StyleBaseImpl *parent, MediaListImpl *mediaList, CSSRuleListImpl *ruleList )
     :   CSSRuleImpl( parent )
 {
-    m_type = CSSRule::MEDIA_RULE;
+    m_type = MEDIA_RULE;
     m_lstMedia = mediaList;
     m_lstCSSRules = ruleList;
 }
@@ -170,7 +170,7 @@ CSSMediaRuleImpl::CSSMediaRuleImpl( StyleBaseImpl *parent, MediaListImpl *mediaL
 CSSMediaRuleImpl::CSSMediaRuleImpl(StyleBaseImpl *parent)
     :   CSSRuleImpl( parent )
 {
-    m_type = CSSRule::MEDIA_RULE;
+    m_type = MEDIA_RULE;
     m_lstMedia = 0;
     m_lstCSSRules = new CSSRuleListImpl();
 }
@@ -178,7 +178,7 @@ CSSMediaRuleImpl::CSSMediaRuleImpl(StyleBaseImpl *parent)
 CSSMediaRuleImpl::CSSMediaRuleImpl( StyleBaseImpl *parent, const DOMString &media )
 :   CSSRuleImpl( parent )
 {
-    m_type = CSSRule::MEDIA_RULE;
+    m_type = MEDIA_RULE;
     m_lstMedia = new MediaListImpl( this, media );
     m_lstCSSRules = new CSSRuleListImpl();
 }
@@ -261,7 +261,7 @@ CSSRuleListImpl::~CSSRuleListImpl()
 CSSPageRuleImpl::CSSPageRuleImpl(StyleBaseImpl *parent)
     : CSSRuleImpl(parent)
 {
-    m_type = CSSRule::PAGE_RULE;
+    m_type = PAGE_RULE;
 }
 
 CSSPageRuleImpl::~CSSPageRuleImpl()
@@ -284,7 +284,7 @@ void CSSPageRuleImpl::setSelectorText(DOMString /*str*/)
 CSSStyleRuleImpl::CSSStyleRuleImpl(StyleBaseImpl *parent)
     : CSSRuleImpl(parent)
 {
-    m_type = CSSRule::STYLE_RULE;
+    m_type = STYLE_RULE;
     m_selector = 0;
 }
 

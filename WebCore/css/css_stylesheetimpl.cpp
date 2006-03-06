@@ -2,7 +2,7 @@
  * This file is part of the DOM implementation for KDE.
  *
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,28 +18,21 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- *
- * $Id: css_stylesheetimpl.cpp 11751 2005-12-23 18:44:39Z eseidel $
  */
 
-//#define CSS_STYLESHEET_DEBUG
-
 #include "config.h"
+#include "css_stylesheetimpl.h"
+
+#include "ExceptionCode.h"
 #include "PlatformString.h"
-#include "dom/dom_exception.h"
-#include "dom/css_stylesheet.h"
-#include "dom/css_rule.h"
-
-#include "css/css_ruleimpl.h"
-#include "css/css_valueimpl.h"
-#include "css/cssparser.h"
-#include "css/css_stylesheetimpl.h"
-
-#include "html/html_documentimpl.h"
+#include "css_ruleimpl.h"
+#include "css_valueimpl.h"
+#include "cssparser.h"
+#include "html_documentimpl.h"
 #include "loader.h"
 
-using namespace DOM;
-using namespace khtml;
+namespace WebCore {
+
 // --------------------------------------------------------------------------------
 
 StyleSheetImpl::StyleSheetImpl(StyleSheetImpl *parentSheet, DOMString href)
@@ -115,18 +108,18 @@ CSSRuleImpl *CSSStyleSheetImpl::ownerRule() const
     return (parent() && parent()->isRule()) ? static_cast<CSSRuleImpl *>(parent()) : 0;
 }
 
-unsigned CSSStyleSheetImpl::insertRule(const DOMString& rule, unsigned index, int& exceptioncode)
+unsigned CSSStyleSheetImpl::insertRule(const DOMString& rule, unsigned index, ExceptionCode& ec)
 {
-    exceptioncode = 0;
+    ec = 0;
     if (index > length()) {
-        exceptioncode = DOMException::INDEX_SIZE_ERR;
+        ec = INDEX_SIZE_ERR;
         return 0;
     }
     CSSParser p(useStrictParsing());
     RefPtr<CSSRuleImpl> r = p.parseRule(this, rule);
 
     if (!r) {
-        exceptioncode = CSSException::SYNTAX_ERR + CSSException::_EXCEPTION_OFFSET;
+        ec = SYNTAX_ERR;
         return 0;
     }
 
@@ -140,11 +133,11 @@ unsigned CSSStyleSheetImpl::insertRule(const DOMString& rule, unsigned index, in
     return index;
 }
 
-unsigned CSSStyleSheetImpl::addRule( const DOMString &selector, const DOMString &style, int index, int &exceptioncode )
+unsigned CSSStyleSheetImpl::addRule( const DOMString &selector, const DOMString &style, int index, ExceptionCode& ec)
 {
     if (index == -1)
         index = length();
-    return insertRule(selector + " { " + style + " }", index, exceptioncode);
+    return insertRule(selector + " { " + style + " }", index, ec);
 }
 
 CSSRuleListImpl *CSSStyleSheetImpl::cssRules()
@@ -152,14 +145,14 @@ CSSRuleListImpl *CSSStyleSheetImpl::cssRules()
     return new CSSRuleListImpl(this);
 }
 
-void CSSStyleSheetImpl::deleteRule( unsigned index, int &exceptioncode )
+void CSSStyleSheetImpl::deleteRule( unsigned index, ExceptionCode& ec)
 {
     if (index >= length()) {
-        exceptioncode = DOMException::INDEX_SIZE_ERR;
+        ec = INDEX_SIZE_ERR;
         return;
     }
 
-    exceptioncode = 0;
+    ec = 0;
     remove(index);
     styleSheetChanged();
 }
@@ -350,4 +343,6 @@ void MediaListImpl::setMediaText(const DOM::DOMString &value)
         if (!medium.isEmpty())
             m_lstMedia.append( medium );
     }
+}
+
 }

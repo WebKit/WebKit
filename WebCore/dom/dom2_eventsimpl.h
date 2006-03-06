@@ -25,11 +25,10 @@
 #ifndef DOM_EVENTSIMPL_H
 #define DOM_EVENTSIMPL_H
 
-#include "dom_node.h"
-#include "NodeImpl.h"
 #include "AtomicString.h"
-#include "dom2_viewsimpl.h"
+#include "NodeImpl.h"
 #include "Shared.h"
+#include "dom2_viewsimpl.h"
 
 class QStringList;
 
@@ -41,9 +40,16 @@ class Image;
 class IntPoint;
 class KeyEvent;
 
+typedef unsigned long long DOMTimeStamp;
+
+const int EventExceptionOffset = 100;
+const int EventExceptionMax = 199;
+enum EventExceptionCode { UNSPECIFIED_EVENT_TYPE_ERR = EventExceptionOffset };
+
 class EventImpl : public Shared<EventImpl>
 {
 public:
+    enum PhaseType { CAPTURING_PHASE = 1, AT_TARGET = 2, BUBBLING_PHASE = 3 };
     EventImpl();
     EventImpl(const AtomicString& type, bool canBubbleArg, bool cancelableArg);
     virtual ~EventImpl();
@@ -264,6 +270,12 @@ private:
 // Introduced in DOM Level 3
 class KeyboardEventImpl : public UIEventWithKeyStateImpl {
 public:
+    enum KeyLocationCode {
+        DOM_KEY_LOCATION_STANDARD      = 0x00,
+        DOM_KEY_LOCATION_LEFT          = 0x01,
+        DOM_KEY_LOCATION_RIGHT         = 0x02,
+        DOM_KEY_LOCATION_NUMPAD        = 0x03,
+    };
     KeyboardEventImpl();
     KeyboardEventImpl(KeyEvent*, AbstractViewImpl*);
     KeyboardEventImpl(const AtomicString &type,
@@ -312,8 +324,8 @@ private:
 };
 
 class MutationEventImpl : public EventImpl {
-// ### fire these during parsing (if necessary)
 public:
+    enum attrChangeType { MODIFICATION = 1, ADDITION = 2, REMOVAL = 3 };
     MutationEventImpl();
     MutationEventImpl(const AtomicString &type,
                       bool canBubbleArg,
@@ -323,7 +335,6 @@ public:
                       const DOMString &newValueArg,
                       const DOMString &attrNameArg,
                       unsigned short attrChangeArg);
-
     NodeImpl *relatedNode() const { return m_relatedNode.get(); }
     DOMString prevValue() const { return m_prevValue.get(); }
     DOMString newValue() const { return m_newValue.get(); }

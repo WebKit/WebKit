@@ -25,8 +25,7 @@
 #include "TextImpl.h"
 
 #include "DocumentImpl.h"
-#include "dom_exception.h"
-#include "dom_node.h"
+#include "ExceptionCode.h"
 #include "RenderText.h"
 
 namespace WebCore {
@@ -49,24 +48,20 @@ TextImpl::~TextImpl()
 {
 }
 
-TextImpl *TextImpl::splitText( const unsigned offset, int &exceptioncode )
+TextImpl *TextImpl::splitText(unsigned offset, ExceptionCode& ec)
 {
-    exceptioncode = 0;
+    ec = 0;
 
     // INDEX_SIZE_ERR: Raised if the specified offset is negative or greater than
     // the number of 16-bit units in data.
-
-    // ### we explicitly check for a negative number that has been cast to an unsigned
-    // ... this can happen if JS code passes in -1 - we need to catch this earlier! (in the
-    // kjs bindings)
-    if (offset > str->l || (int)offset < 0) {
-        exceptioncode = DOMException::INDEX_SIZE_ERR;
+    if (offset > str->l) {
+        ec = INDEX_SIZE_ERR;
         return 0;
     }
 
     // NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
     if (isReadOnly()) {
-        exceptioncode = DOMException::NO_MODIFICATION_ALLOWED_ERR;
+        ec = NO_MODIFICATION_ALLOWED_ERR;
         return 0;
     }
 
@@ -80,8 +75,8 @@ TextImpl *TextImpl::splitText( const unsigned offset, int &exceptioncode )
     oldStr->deref();
 
     if (parentNode())
-        parentNode()->insertBefore(newText,nextSibling(), exceptioncode );
-    if ( exceptioncode )
+        parentNode()->insertBefore(newText,nextSibling(), ec );
+    if ( ec )
         return 0;
 
     if (renderer())
@@ -100,9 +95,9 @@ DOMString TextImpl::nodeName() const
     return textAtom.domString();
 }
 
-unsigned short TextImpl::nodeType() const
+NodeImpl::NodeType TextImpl::nodeType() const
 {
-    return Node::TEXT_NODE;
+    return TEXT_NODE;
 }
 
 PassRefPtr<NodeImpl> TextImpl::cloneNode(bool /*deep*/)
@@ -174,7 +169,7 @@ void TextImpl::recalcStyle( StyleChange change )
 }
 
 // DOM Section 1.1.1
-bool TextImpl::childTypeAllowed( unsigned short /*type*/ )
+bool TextImpl::childTypeAllowed(NodeType)
 {
     return false;
 }

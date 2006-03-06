@@ -48,7 +48,6 @@
 #include "css/css_ruleimpl.h"
 #include "css/css_stylesheetimpl.h"
 #include "css/cssparser.h"
-#include "dom/dom_exception.h"
 #include "dom2_eventsimpl.h"
 #include "html/html_baseimpl.h"
 #include "html/html_blockimpl.h"

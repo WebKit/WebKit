@@ -26,9 +26,9 @@
 #ifndef KHTML_EDITING_SELECTIONCONTROLLER_H
 #define KHTML_EDITING_SELECTIONCONTROLLER_H
 
+#include "EventListener.h"
 #include "IntRect.h"
 #include "Selection.h"
-#include "dom2_events.h"
 #include "dom2_rangeimpl.h"
 
 namespace WebCore {
@@ -47,7 +47,7 @@ public:
     SelectionController *selectionController() const { return m_selectionController; }
     void setSelectionController(SelectionController *s) { m_selectionController = s; }
     
-    virtual void handleEvent(EventListenerEvent evt, bool isWindowEvent);
+    virtual void handleEvent(EventImpl*, bool isWindowEvent);
     
 private:
     SelectionController *m_selectionController;

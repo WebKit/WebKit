@@ -52,9 +52,9 @@ void InsertIntoTextNodeCommand::doApply()
     ASSERT(m_offset >= 0);
     ASSERT(!m_text.isEmpty());
 
-    int exceptionCode = 0;
-    m_node->insertData(m_offset, m_text, exceptionCode);
-    ASSERT(exceptionCode == 0);
+    ExceptionCode ec = 0;
+    m_node->insertData(m_offset, m_text, ec);
+    ASSERT(ec == 0);
 }
 
 void InsertIntoTextNodeCommand::doUnapply()
@@ -63,9 +63,9 @@ void InsertIntoTextNodeCommand::doUnapply()
     ASSERT(m_offset >= 0);
     ASSERT(!m_text.isEmpty());
 
-    int exceptionCode = 0;
-    m_node->deleteData(m_offset, m_text.length(), exceptionCode);
-    ASSERT(exceptionCode == 0);
+    ExceptionCode ec = 0;
+    m_node->deleteData(m_offset, m_text.length(), ec);
+    ASSERT(ec == 0);
 }
 
 } // namespace khtml

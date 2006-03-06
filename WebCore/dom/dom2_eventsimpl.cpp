@@ -25,12 +25,12 @@
 #include "dom2_eventsimpl.h"
 
 #include "DocumentImpl.h"
+#include "EventListener.h"
 #include "EventNames.h"
 #include "FrameView.h"
 #include "SystemTime.h"
 #include "KeyEvent.h"
 #include "SystemTime.h"
-#include "dom2_events.h"
 #include "dom2_viewsimpl.h"
 #include "render_layer.h"
 
@@ -437,7 +437,7 @@ NodeImpl* MouseEventImpl::fromElement() const
 
 KeyboardEventImpl::KeyboardEventImpl()
   : m_keyEvent(0)
-  , m_keyLocation(KeyboardEvent::DOM_KEY_LOCATION_STANDARD)
+  , m_keyLocation(DOM_KEY_LOCATION_STANDARD)
   , m_altGraphKey(false)
 {
 }
@@ -447,7 +447,7 @@ KeyboardEventImpl::KeyboardEventImpl(KeyEvent *key, AbstractViewImpl *view)
     true, true, view, 0, key->ctrlKey(), key->altKey(), key->shiftKey(), key->metaKey())
   , m_keyEvent(new KeyEvent(*key))
   , m_keyIdentifier(DOMString(key->keyIdentifier()).impl())
-  , m_keyLocation(key->isKeypad() ? KeyboardEvent::DOM_KEY_LOCATION_NUMPAD : KeyboardEvent::DOM_KEY_LOCATION_STANDARD)
+  , m_keyLocation(key->isKeypad() ? DOM_KEY_LOCATION_NUMPAD : DOM_KEY_LOCATION_STANDARD)
   , m_altGraphKey(false)
 {
 }

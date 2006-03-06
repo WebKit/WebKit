@@ -44,9 +44,9 @@ void InsertNodeBeforeCommand::doApply()
     ASSERT(m_refChild);
     ASSERT(m_refChild->parentNode());
 
-    int exceptionCode = 0;
-    m_refChild->parentNode()->insertBefore(m_insertChild.get(), m_refChild.get(), exceptionCode);
-    ASSERT(exceptionCode == 0);
+    ExceptionCode ec = 0;
+    m_refChild->parentNode()->insertBefore(m_insertChild.get(), m_refChild.get(), ec);
+    ASSERT(ec == 0);
 }
 
 void InsertNodeBeforeCommand::doUnapply()
@@ -55,9 +55,9 @@ void InsertNodeBeforeCommand::doUnapply()
     ASSERT(m_refChild);
     ASSERT(m_refChild->parentNode());
 
-    int exceptionCode = 0;
-    m_refChild->parentNode()->removeChild(m_insertChild.get(), exceptionCode);
-    ASSERT(exceptionCode == 0);
+    ExceptionCode ec = 0;
+    m_refChild->parentNode()->removeChild(m_insertChild.get(), ec);
+    ASSERT(ec == 0);
 }
 
 }
