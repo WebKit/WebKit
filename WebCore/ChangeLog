@@ -1,3 +1,9 @@
+2006-03-05  Eric Seidel  <eseidel@apple.com>
+
+        Add "Font.h" to (try to) fix the no-svg build.
+
+        * platform/mac/GraphicsContextMac.mm:
+
 2006-03-05  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Darin.

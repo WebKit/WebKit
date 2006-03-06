@@ -26,6 +26,7 @@
 #import "config.h"
 #import "GraphicsContext.h"
 
+#import "Font.h"
 #import "FloatRect.h"
 #import "FoundationExtras.h"
 #import "IntPointArray.h"
