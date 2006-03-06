@@ -1,5 +1,11 @@
 2006-03-06  Geoffrey Garen  <ggaren@apple.com>
 
+        Oops, accidentally deleted the archives links.
+
+        * blog/wp-content/themes/webkit/sidebar.php: Bring them back.
+
+2006-03-06  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Beth.
 
         Some site cleanup.
