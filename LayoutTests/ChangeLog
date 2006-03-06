@@ -1,3 +1,10 @@
+2006-03-05  Geoffrey Garen  <ggaren@apple.com>
+
+        - Checked in new results for the test I just landed. Looks like I
+        landed an old copy.
+
+        * fast/dom/prototype-chain-expected.txt:
+
 2006-03-05  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
