@@ -1,3 +1,9 @@
+2006-03-05  Darin Adler  <mjs@apple.com>
+
+        - fix build
+
+        * rendering/render_style.h: (compareEqual): Made it inline, fixed variable name.
+
 2006-03-05  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
