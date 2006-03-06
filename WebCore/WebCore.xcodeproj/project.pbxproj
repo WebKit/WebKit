@@ -863,6 +863,10 @@
 		A8FEFB0B0979F472005839FD /* RenderForeignObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8FEFB090979F472005839FD /* RenderForeignObject.cpp */; };
 		A8FEFB310979F4F6005839FD /* SVGForeignObjectElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8FEFB2F0979F4F6005839FD /* SVGForeignObjectElementImpl.cpp */; };
 		A8FEFB320979F4F6005839FD /* SVGForeignObjectElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8FEFB300979F4F6005839FD /* SVGForeignObjectElementImpl.h */; };
+		AB23A31209BBA7760067CC53 /* HTMLTextFieldInnerElementImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB23A31009BBA7760067CC53 /* HTMLTextFieldInnerElementImpl.cpp */; };
+		AB23A31309BBA7760067CC53 /* HTMLTextFieldInnerElementImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = AB23A31109BBA7760067CC53 /* HTMLTextFieldInnerElementImpl.h */; };
+		AB23A32709BBA7D00067CC53 /* BeforeTextInsertedEventImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB23A32509BBA7D00067CC53 /* BeforeTextInsertedEventImpl.cpp */; };
+		AB23A32809BBA7D00067CC53 /* BeforeTextInsertedEventImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = AB23A32609BBA7D00067CC53 /* BeforeTextInsertedEventImpl.h */; };
 		AB67D1A8097F3AE300F9392E /* RenderTextField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB67D1A6097F3AE300F9392E /* RenderTextField.cpp */; };
 		AB67D1A9097F3AE300F9392E /* RenderTextField.h in Headers */ = {isa = PBXBuildFile; fileRef = AB67D1A7097F3AE300F9392E /* RenderTextField.h */; };
 		BC075986098861A400407B48 /* Brush.h in Headers */ = {isa = PBXBuildFile; fileRef = BC075985098861A400407B48 /* Brush.h */; };
@@ -1911,6 +1915,10 @@
 		A8FEFB090979F472005839FD /* RenderForeignObject.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderForeignObject.cpp; sourceTree = "<group>"; };
 		A8FEFB2F0979F4F6005839FD /* SVGForeignObjectElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGForeignObjectElementImpl.cpp; sourceTree = "<group>"; };
 		A8FEFB300979F4F6005839FD /* SVGForeignObjectElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGForeignObjectElementImpl.h; sourceTree = "<group>"; };
+		AB23A31009BBA7760067CC53 /* HTMLTextFieldInnerElementImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLTextFieldInnerElementImpl.cpp; sourceTree = "<group>"; };
+		AB23A31109BBA7760067CC53 /* HTMLTextFieldInnerElementImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLTextFieldInnerElementImpl.h; sourceTree = "<group>"; };
+		AB23A32509BBA7D00067CC53 /* BeforeTextInsertedEventImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BeforeTextInsertedEventImpl.cpp; sourceTree = "<group>"; };
+		AB23A32609BBA7D00067CC53 /* BeforeTextInsertedEventImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BeforeTextInsertedEventImpl.h; sourceTree = "<group>"; };
 		AB67D1A6097F3AE300F9392E /* RenderTextField.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTextField.cpp; sourceTree = "<group>"; };
 		AB67D1A7097F3AE300F9392E /* RenderTextField.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderTextField.h; sourceTree = "<group>"; };
 		BC06F24906D18A7E004A6FA3 /* xsl_stylesheetimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = xsl_stylesheetimpl.cpp; path = xsl/xsl_stylesheetimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3572,6 +3580,8 @@
 		F523D27702DE4398018635CA /* html */ = {
 			isa = PBXGroup;
 			children = (
+				AB23A31009BBA7760067CC53 /* HTMLTextFieldInnerElementImpl.cpp */,
+				AB23A31109BBA7760067CC53 /* HTMLTextFieldInnerElementImpl.h */,
 				A8136D370973A8E700D74463 /* FormDataList.cpp */,
 				A8136D360973A8E700D74463 /* FormDataList.h */,
 				F523D23702DE4396018635CA /* html_baseimpl.cpp */,
@@ -3739,6 +3749,8 @@
 		F523D32402DE4478018635CA /* dom */ = {
 			isa = PBXGroup;
 			children = (
+				AB23A32509BBA7D00067CC53 /* BeforeTextInsertedEventImpl.cpp */,
+				AB23A32609BBA7D00067CC53 /* BeforeTextInsertedEventImpl.h */,
 				ED2BA83B09A24B91006C0AC4 /* DocumentMarker.h */,
 				939885C108B7E3D100E707C4 /* EventNames.cpp */,
 				939885C208B7E3D100E707C4 /* EventNames.h */,
@@ -4410,6 +4422,8 @@
 				6545F67109B82FED0013006F /* TransferJob.h in Headers */,
 				6545F67209B82FED0013006F /* TransferJobClient.h in Headers */,
 				6545F67309B82FED0013006F /* TransferJobInternal.h in Headers */,
+				AB23A31309BBA7760067CC53 /* HTMLTextFieldInnerElementImpl.h in Headers */,
+				AB23A32809BBA7D00067CC53 /* BeforeTextInsertedEventImpl.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5528,6 +5542,8 @@
 				A823A75C09B6E53900B60641 /* GraphicsContext.cpp in Sources */,
 				6545F67009B82FED0013006F /* TransferJob.cpp in Sources */,
 				6545F67609B830180013006F /* TransferJobMac.mm in Sources */,
+				AB23A31209BBA7760067CC53 /* HTMLTextFieldInnerElementImpl.cpp in Sources */,
+				AB23A32709BBA7D00067CC53 /* BeforeTextInsertedEventImpl.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

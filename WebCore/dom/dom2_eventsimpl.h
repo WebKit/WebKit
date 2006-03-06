@@ -69,6 +69,7 @@ public:
     virtual bool isDragEvent() const; // a subset of mouse events
     virtual bool isClipboardEvent() const;
     virtual bool isWheelEvent() const;
+    virtual bool isBeforeTextInsertedEvent() const;
 
     bool propagationStopped() const { return m_propagationStopped; }
     bool defaultPrevented() const { return m_defaultPrevented; }

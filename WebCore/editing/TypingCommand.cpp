@@ -26,8 +26,11 @@
 #include "config.h"
 #include "TypingCommand.h"
 
+#include "BeforeTextInsertedEventImpl.h"
 #include "BreakBlockquoteCommand.h"
 #include "DocumentImpl.h"
+#include "dom2_events.h"
+#include "dom2_eventsimpl.h"
 #include "Frame.h"
 #include "InsertLineBreakCommand.h"
 #include "InsertParagraphSeparatorCommand.h"
@@ -96,13 +99,26 @@ void TypingCommand::insertText(DocumentImpl *document, const DOMString &text, bo
     Frame *frame = document->frame();
     ASSERT(frame);
     
+    String newText = text.copy();
+    NodeImpl* startNode = frame->selection().start().node();
+    
+    if (startNode && startNode->rootEditableElement()) {        
+        // Send khtmlBeforeTextInsertedEvent.  The event handler will update text if necessary.
+        ExceptionCode ec = 0;
+        RefPtr<EventImpl> evt = new BeforeTextInsertedEventImpl(newText);
+        startNode->rootEditableElement()->dispatchEvent(evt, ec, true);
+    }
+    
+    if (newText.isEmpty())
+        return;
+    
     EditCommandPtr lastEditCommand = frame->lastEditCommand();
     if (isOpenForMoreTypingCommand(lastEditCommand)) {
-        static_cast<TypingCommand *>(lastEditCommand.get())->insertText(text, selectInsertedText);
+        static_cast<TypingCommand *>(lastEditCommand.get())->insertText(newText, selectInsertedText);
         return;
     }
 
-    EditCommandPtr cmd(new TypingCommand(document, InsertText, text, selectInsertedText));
+    EditCommandPtr cmd(new TypingCommand(document, InsertText, newText, selectInsertedText));
     cmd.apply();
 }
 

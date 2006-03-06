@@ -1,0 +1,43 @@
+<html>
+<head>
+<script>
+
+function test()
+{
+    document.getElementById('sp').focus();
+    
+    var res = "";
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+    }
+    
+    if (document.getElementById('sp').value == "12345") {
+        res+= "Test 1 Passed.  Maxlength works for default value.\n";
+    } else {
+        res+= "Test 1 Failed.  Maxlength does not work for default value.\n";
+    }
+    
+    document.getElementById('sp').value = "123";
+    
+    document.execCommand("InsertText", false, 'abcd');
+    document.execCommand("InsertText", false, 'efghi');
+    
+    if (document.getElementById('sp').value == "abcde") {
+        res+= "Test 2 Passed.  Maxlength works for inserted text.\n";
+    } else {
+        res+= "Test 2 Failed.  Maxlength does not work for inserted text.\n";
+    }
+    
+    document.getElementById('result').innerHTML = res;
+}
+
+</script>
+</head>
+<body onload="test()">
+This test changes the value of the text field by simulating typing, and then gets the value.
+<br><br>
+<input type="text" id="sp" style="-khtml-appearance:textfield" maxlength=5 value="123456"></input>
+<div id="result">
+</div>
+</body>
+</html>

@@ -1,3 +1,14 @@
+2006-03-05  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Test for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=6987
+        Implement maxlength for new text fields
+
+        * fast/forms/input-appearance-maxlength-expected.txt: Added.
+        * fast/forms/input-appearance-maxlength.html: Added.
+
 2006-03-05  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej.

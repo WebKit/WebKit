@@ -84,12 +84,14 @@ namespace WebCore { namespace EventNames {
     macro(DOMNodeRemovedFromDocument) \
     macro(DOMSubtreeModified) \
     \
+    macro(khtmlBeforeTextInserted) \
     macro(khtmlDblclick) \
     macro(khtmlDragdrop) \
     macro(khtmlError) \
     macro(khtmlHorizontalmousewheel) \
     macro(khtmlMove) \
     macro(khtmlOrigclickMouseup) \
+    macro(khtmlTextInserted) \
     \
 // end of DOM_EVENT_NAMES_FOR_EACH
 

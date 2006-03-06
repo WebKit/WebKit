@@ -26,36 +26,23 @@
 #include "RenderText.h"
 #include "htmlnames.h"
 #include "HTMLInputElementImpl.h"
+#include "HTMLTextFieldInnerElementImpl.h"
 #include "dom_elementimpl.h"
-#include "EventNames.h"
-#include "dom2_eventsimpl.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
-using namespace EventNames;
-
-void InputMutationListener::handleEvent(EventImpl *event, bool isWindowEvent)
-{
-    if (!m_renderTextField)
-        return;
-    
-    if (event->type() == DOMCharacterDataModifiedEvent)
-        m_renderTextField->subtreeHasChanged();
-}
 
 RenderTextField::RenderTextField(NodeImpl* node)
-:RenderBlock(node), m_mutationListener(new InputMutationListener(this)), m_dirty(false)
+:RenderBlock(node), m_dirty(false)
 {
 }
 
 RenderTextField::~RenderTextField()
 {
     // The renderer for the div has already been destroyed by destroyLeftoverChildren
-    if (m_div) {
-        m_div->removeEventListener(DOMCharacterDataModifiedEvent, m_mutationListener.get(), false);
+    if (m_div)
         m_div->detach();
-    }
 }
 
 void RenderTextField::setStyle(RenderStyle* style)
@@ -85,13 +72,19 @@ void RenderTextField::updateFromElement()
 {
     if (element()->hasTagName(inputTag)) {
         HTMLInputElementImpl* input = static_cast<HTMLInputElementImpl*>(element());
-        DOMString value = input->value();
+        String value = input->value().copy();
         if (value.isNull())
-            value = DOMString("");
+            value = String("");
+        unsigned ml = input->maxLength();
+        bool valueHasChanged = false;
+        if (value.length() > ml) {
+            value.truncate(ml);
+            valueHasChanged = true;
+        }
             
         if (!m_div) {
             // Create the div and give it a parent, renderer, and style
-            m_div = new HTMLDivElementImpl(document());
+            m_div = new HTMLTextFieldInnerElementImpl(document(), node());
             RenderBlock* divRenderer = new (renderArena()) RenderBlock(m_div.get());
             m_div->setRenderer(divRenderer);
             m_div->setAttached();
@@ -112,11 +105,10 @@ void RenderTextField::updateFromElement()
             text = new TextImpl(document(), value.impl());
             int exception = 0;
             m_div->appendChild(text, exception);
-            m_div->addEventListener(DOMCharacterDataModifiedEvent, m_mutationListener.get(), false);
         }
         
         if (!input->valueMatchesRenderer()) {
-            DOMString oldText = text->data();
+            String oldText = this->text();
             value.replace(QChar('\\'), backslashAsCurrencySymbol());
             if (value != oldText) {
                 int exception = 0;
@@ -126,6 +118,9 @@ void RenderTextField::updateFromElement()
             }
             input->setValueMatchesRenderer();
         }
+        
+        if (valueHasChanged)
+            input->setValueFromRenderer(value);
     }
 }
 
@@ -167,10 +162,17 @@ void RenderTextField::setSelectionRange(int start, int end)
 void RenderTextField::subtreeHasChanged()
 {
     HTMLInputElementImpl* input = static_cast<HTMLInputElementImpl*>(element());
-    if (input && m_div) {
-        input->setValueFromRenderer(m_div->textContent());
+    if (input) {
+        input->setValueFromRenderer(text());
         setEdited(true);
     }
+}
+
+String RenderTextField::text()
+{
+    if (m_div)
+        return m_div->textContent();
+    return String();
 }
 
 void RenderTextField::calcMinMaxWidth()

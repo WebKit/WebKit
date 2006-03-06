@@ -1,3 +1,57 @@
+2006-03-05  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        - Fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=6987
+        Implement maxlength for new text fields
+
+        Test added:
+        * fast/forms/input-appearance-maxlength.html
+
+        * WebCore.xcodeproj/project.pbxproj: 
+         Added BeforeTextInsertedEventImpl.h, BeforeTextInsertedEventImpl.cpp, HTMLTextFieldInnerElementImpl.h, and HTMLTextFieldInnerElementImpl.cpp
+
+        * khtml/html/HTMLInputElementImpl.cpp:
+        (WebCore::HTMLInputElementImpl::init): initialize max length to 1024.
+        (WebCore::HTMLInputElementImpl::defaultEventHandler): Added case to use the khtmlBeforeTextInsertedEvent to check for maxlength.
+        (WebCore::HTMLInputElementImpl::parseMappedAttribute): Makes sure that maxlength is between 0 and 1024.
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment): After doing a test insert of the fragment,
+         Send khtmlBeforeTextInsertedEvent to the root editable element so the event handler can update the text, and we can update the fragment.
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::insertText): Send khtmlBeforeTextInsertedEvent to the root editable element so the event handler can update the text if necessary.
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::apply): If we've just applied a command, send the khtmlTextInsertedEvent to the root editable element. 
+        (WebCore::EditCommand::unapply): ditto.
+        (WebCore::EditCommand::reapply): ditto.
+
+        * khtml/html/HTMLTextFieldInnerElementImpl.h: Added this class to store a pointer to the input element for the text field and to handle default events.
+        (DOM::HTMLTextFieldInnerElementImpl::shadowParentNode): Added.
+        (DOM::HTMLTextFieldInnerElementImpl::setShadowParentNode): Added.
+        * khtml/html/HTMLTextFieldInnerElementImpl.cpp: Added.
+        (WebCore::HTMLTextFieldInnerElementImpl::HTMLTextFieldInnerElementImpl):
+        (WebCore::HTMLTextFieldInnerElementImpl::~HTMLTextFieldInnerElementImpl):
+        (WebCore::HTMLTextFieldInnerElementImpl::defaultEventHandler):
+         Sends khtmlBeforeTextInsertedEvents to the shadowParentNode, 
+         and handles khtmlTextInsertedEvents by telling the renderer that the subtree has changed.
+
+        * rendering/RenderTextField.cpp: Removed InputMutationListener since subtreeHasChanged is now called from the editing code.
+        (WebCore::RenderTextField::~RenderTextField): removed event listener code.
+        (WebCore::RenderTextField::updateFromElement): ditto.  And creates HTMLTextFieldInnerElementImpl.
+        (WebCore::RenderTextField::subtreeHasChanged): calls new text() method.
+        (WebCore::RenderTextField::text): created to get a String of all text in the RenderTextField.
+        * rendering/RenderTextField.h: Removed InputMutationListener class.
+
+        * dom/EventNames.h: Added khtmlTextInserted and khtmlBeforeTextInserted.
+        * dom/BeforeTextInsertedEventImpl.cpp: Added.
+        (WebCore::BeforeTextInsertedEventImpl::BeforeTextInsertedEventImpl):
+        * dom/BeforeTextInsertedEventImpl.h: Added.
+        (WebCore::BeforeTextInsertedEventImpl::isBeforeTextInsertedEvent):
+        (WebCore::BeforeTextInsertedEventImpl::text):
+        * dom/dom2_eventsimpl.cpp: (WebCore::EventImpl::isBeforeTextInsertedEvent): Added.
+        * dom/dom2_eventsimpl.h: Added isBeforeTextInsertedEvent.
+
 2006-03-05  Maciej Stachowiak  <mjs@apple.com>
 
         - fix build, give this a return type.

@@ -27,6 +27,7 @@
 #include "ReplaceSelectionCommand.h"
 
 #include "ApplyStyleCommand.h"
+#include "BeforeTextInsertedEventImpl.h"
 #include "DocumentFragmentImpl.h"
 #include "DocumentImpl.h"
 #include "EditingTextImpl.h"
@@ -36,13 +37,16 @@
 #include "css_computedstyle.h"
 #include "css_valueimpl.h"
 #include "cssproperties.h"
+#include "dom2_eventsimpl.h"
 #include "dom2_rangeimpl.h"
 #include "dom_position.h"
 #include "html_interchange.h"
 #include "htmlediting.h"
 #include "htmlnames.h"
 #include "render_object.h"
+#include "SelectionController.h"
 #include "visible_units.h"
+#include "visible_text.h"
 #include <kxmlcore/Assertions.h>
 
 namespace WebCore {
@@ -118,6 +122,31 @@ ReplacementFragment::ReplacementFragment(DocumentImpl *document, DocumentFragmen
         computeStylesUsingTestRendering(holder.get());
     removeUnrenderedNodesUsingTestRendering(holder.get());
     m_hasMoreThanOneBlock = countRenderedBlocks(holder.get()) > 1;
+    
+    // Send khtmlBeforeTextInsertedEvent.  The event handler will update text if necessary.
+    if (m_document->frame()) {
+        NodeImpl* selectionStartNode = m_document->frame()->selection().start().node();
+        if (selectionStartNode && selectionStartNode->rootEditableElement()) {
+            RefPtr<RangeImpl> range = new RangeImpl(holder->getDocument(), holder->firstChild(), 0, holder->lastChild(), maxDeepOffset(holder->lastChild()));
+            String text = plainText(range.get());
+            String newText = text.copy();
+            RefPtr<EventImpl> evt = new BeforeTextInsertedEventImpl(newText);
+            ExceptionCode ec = 0;
+            selectionStartNode->rootEditableElement()->dispatchEvent(evt, ec, true);
+            if (text != newText) {
+                // If the event handler has changed the text, create a new holder node for test rendering
+                m_fragment->removeChildren();
+                m_fragment->appendChild(new TextImpl(m_document.get(), newText), ec);
+                removeNode(holder);
+                holder = insertFragmentForTestRendering();
+                if (!m_matchStyle)
+                    computeStylesUsingTestRendering(holder.get());
+                removeUnrenderedNodesUsingTestRendering(holder.get());
+                m_hasMoreThanOneBlock = countRenderedBlocks(holder.get()) > 1;
+            }
+        }
+    }
+    
     restoreTestRenderingNodesToFragment(holder.get());
     removeNode(holder);
     removeStyleNodes();

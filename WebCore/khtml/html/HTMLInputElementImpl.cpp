@@ -31,12 +31,14 @@
 #include "dom2_eventsimpl.h"
 #include "FormDataList.h"
 
+#include "BeforeTextInsertedEventImpl.h"
 #include "cssproperties.h"
 #include "Frame.h"
 #include "render_form.h"
 #include "render_button.h"
 #include "RenderTextField.h"
 #include "render_theme.h"
+#include "SelectionController.h"
 #include "DocumentImpl.h"
 
 #include <klocale.h>
@@ -68,7 +70,7 @@ void HTMLInputElementImpl::init()
     m_imageLoader = 0;
     m_valueMatchesRenderer = false;
     m_type = TEXT;
-    m_maxLen = -1;
+    m_maxLen = 1024;
     m_size = 20;
     m_checked = false;
     m_defaultChecked = false;
@@ -537,7 +539,9 @@ void HTMLInputElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
             m_useDefaultChecked = true;
         }
     } else if (attr->name() == maxlengthAttr) {
-        m_maxLen = !attr->isNull() ? attr->value().toInt() : -1;
+        m_maxLen = !attr->isNull() ? attr->value().toInt() : 1024;
+        if (m_maxLen <= 0 || m_maxLen > 1024)
+            m_maxLen = 1024;
         setChanged();
     } else if (attr->name() == sizeAttr) {
         m_size = !attr->isNull() ? attr->value().toInt() : 20;
@@ -1170,6 +1174,20 @@ void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
         }
     }
 
+    if (evt->isBeforeTextInsertedEvent()) {
+        // Make sure that the text to be inserted will not violate the maxLength
+        unsigned ml = maxLength();
+        unsigned currentLength = value().length();
+        String text = static_cast<BeforeTextInsertedEventImpl *>(evt)->text();
+        int selectionLength = getDocument()->frame()->selection().toString().length();
+        
+        // Truncate the inserted text if necessary
+        if (currentLength + text.length() - selectionLength > ml) {
+            ASSERT(currentLength <= ml);
+            text.truncate(ml - currentLength);
+        }        
+    }
+    
     HTMLGenericFormElementImpl::defaultEventHandler(evt);
 }
 

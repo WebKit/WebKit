@@ -32,11 +32,15 @@
 #include "VisiblePosition.h"
 #include "css_computedstyle.h"
 #include "css_valueimpl.h"
+#include "dom2_eventsimpl.h"
 #include "dom_position.h"
+#include "EventNames.h"
 #include "htmlediting.h"
 #include <kxmlcore/Assertions.h>
 
 namespace WebCore {
+
+using namespace EventNames;
 
 #define IF_IMPL_NULL_RETURN_ARG(arg) do { \
         if (*this == 0) { return arg; } \
@@ -217,6 +221,14 @@ void EditCommand::apply()
         EditCommandPtr cmd(this);
         frame->appliedEditing(cmd);
     }
+    
+    NodeImpl* startNode = endingSelection().start().node();
+    if (startNode && startNode->rootEditableElement()) {
+        // Send khtmlTextInsertedEvent to rootEditableElement.
+        ExceptionCode ec = 0;
+        RefPtr<EventImpl> evt = new EventImpl(khtmlTextInsertedEvent, false, false);
+        startNode->rootEditableElement()->dispatchEvent(evt, ec, true);
+    }
 }
 
 void EditCommand::unapply()
@@ -238,6 +250,14 @@ void EditCommand::unapply()
         EditCommandPtr cmd(this);
         frame->unappliedEditing(cmd);
     }
+    
+    NodeImpl* startNode = endingSelection().start().node();
+    if (startNode && startNode->rootEditableElement()) {
+        // Send khtmlTextInsertedEvent to rootEditableElement.
+        ExceptionCode ec = 0;
+        RefPtr<EventImpl> evt = new EventImpl(khtmlTextInsertedEvent, false, false);
+        startNode->rootEditableElement()->dispatchEvent(evt, ec, true);
+    }
 }
 
 void EditCommand::reapply()
@@ -258,6 +278,14 @@ void EditCommand::reapply()
         updateLayout();
         EditCommandPtr cmd(this);
         frame->reappliedEditing(cmd);
+    }
+    
+    NodeImpl* startNode = endingSelection().start().node();
+    if (startNode && startNode->rootEditableElement()) {
+        // Send khtmlTextInsertedEvent to rootEditableElement.
+        ExceptionCode ec = 0;
+        RefPtr<EventImpl> evt = new EventImpl(khtmlTextInsertedEvent, false, false);
+        startNode->rootEditableElement()->dispatchEvent(evt, ec, true);
     }
 }
 

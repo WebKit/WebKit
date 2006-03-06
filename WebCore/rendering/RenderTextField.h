@@ -20,28 +20,14 @@
 #ifndef RenderTextField_H
 #define RenderTextField_H
 
-#include "dom2_events.h"
 #include "render_flexbox.h"
-#include "html_blockimpl.h"
 
 namespace WebCore
 {
 
-class RenderTextField;
+class HTMLTextFieldInnerElementImpl;
 
-class InputMutationListener : public EventListener
-{
-public:
-    InputMutationListener() { m_renderTextField = 0; }
-    InputMutationListener(RenderTextField *r) { m_renderTextField = r; }
-    RenderTextField *renderTextField() const { return m_renderTextField; }
-    void setInputElement(RenderTextField *r) { m_renderTextField = r; }
-    
-    virtual void handleEvent(EventListenerEvent evt, bool isWindowEvent);
-    
-private:
-    RenderTextField *m_renderTextField;
-};
+class RenderTextField;
 
 class RenderTextField : public RenderBlock
 {
@@ -69,10 +55,10 @@ public:
     void setSelectionRange(int, int);
 
     void subtreeHasChanged();
+    String text();
 
 protected:
-    RefPtr<HTMLDivElementImpl> m_div;
-    RefPtr<InputMutationListener> m_mutationListener;
+    RefPtr<HTMLTextFieldInnerElementImpl> m_div;
     
     bool m_dirty;
 };

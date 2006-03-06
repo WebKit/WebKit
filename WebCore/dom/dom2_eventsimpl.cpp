@@ -114,6 +114,11 @@ bool EventImpl::isWheelEvent() const
     return false;
 }
 
+bool EventImpl::isBeforeTextInsertedEvent() const
+{
+    return false;
+}
+
 bool EventImpl::storesResultAsString() const
 {
     return false;
