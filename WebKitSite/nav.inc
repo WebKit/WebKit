@@ -23,6 +23,7 @@
 
         <li class="subtitle">Bugs</li>
 
+        <li><a href="/projects/compat/hitlist.html">Compatibility Hit List</a></li>
         <li><a href="/quality/reporting.html">Reporting Bugs</a></li>
         <li><a href="/quality/bugwriting.html">Bug Report Guidelines</a></li>
         <li><a href="/quality/bugpriorities.html">Bug Prioritization</a></li>
