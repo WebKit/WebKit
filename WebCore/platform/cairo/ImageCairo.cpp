@@ -64,7 +64,7 @@ void Image::invalidateNativeData()
 Image* Image::loadResource(const char *name)
 {
     // FIXME: Read the error image from disk.
-    return 0;
+    return new Image();
 }
 
 bool Image::supportsType(const QString& type)

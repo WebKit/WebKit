@@ -1,5 +1,31 @@
 2006-03-06  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by mjs.
+
+        Fix more pages (apple.com, yahoo.com) by returning empty error image.
+        Empty a couple more stubs and clean up stub style a little.
+
+        * platform/cairo/ImageCairo.cpp:
+        (WebCore::Image::loadResource):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (QListBox::isSelected):
+        (QSlider::sizeHint):
+        (QScrollBar::~QScrollBar):
+        (FrameWin::getObjectInstanceForWidget):
+        (FrameWin::getEmbedInstanceForWidget):
+        (FrameWin::recordFormValue):
+        (FrameWin::getAppletInstanceForWidget):
+        (FrameWin::passMouseDownEventToWidget):
+        (FrameWin::passWheelEventToChildWidget):
+        (FrameWin::createPlugin):
+        (BrowserExtensionWin::createNewWindow):
+        (Path::Path):
+        (QLineEdit::~QLineEdit):
+        (QLineEdit::setLiveSearch):
+        (QComboBox::~QComboBox):
+
+2006-03-06  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by andersca.
 
         Empty enough stubs to make apple.com load.
