@@ -48,7 +48,7 @@
 #include "SVGRenderStyle.h"
 #endif
 
-template<typename T, typename U> compareEqual(const T& t, const U& u) { return a == static_cast<const T>(u); }
+template<typename T, typename U> bool compareEqual(const T& t, const U& u) { return a == static_cast<const T>(u); }
 
 #define SET_VAR(group, variable, value) \
     if (!compareEqual(group->variable, value)) \

@@ -1,3 +1,10 @@
+2006-03-05  Maciej Stachowiak  <mjs@apple.com>
+
+        - fix build, give this a return type.
+
+        * rendering/render_style.h:
+        (compareEqual):
+
 2006-03-05  Eric Seidel  <eseidel@apple.com>
 
         Add "Font.h" to (try to) fix the no-svg build.
