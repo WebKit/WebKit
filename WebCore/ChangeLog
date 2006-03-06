@@ -1,3 +1,14 @@
+2006-03-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix failure seen running editing layout tests
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment):
+        Use selectNodeContents instead of rolling our own.
+        It handles the "nothing at all" edget case properly.
+
 2006-03-05  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

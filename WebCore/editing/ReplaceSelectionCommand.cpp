@@ -127,11 +127,12 @@ ReplacementFragment::ReplacementFragment(DocumentImpl *document, DocumentFragmen
     if (m_document->frame()) {
         NodeImpl* selectionStartNode = m_document->frame()->selection().start().node();
         if (selectionStartNode && selectionStartNode->rootEditableElement()) {
-            RefPtr<RangeImpl> range = new RangeImpl(holder->getDocument(), holder->firstChild(), 0, holder->lastChild(), maxDeepOffset(holder->lastChild()));
+            RefPtr<RangeImpl> range = new RangeImpl(holder->getDocument());
+            ExceptionCode ec = 0;
+            range->selectNodeContents(holder.get(), ec);
             String text = plainText(range.get());
             String newText = text.copy();
             RefPtr<EventImpl> evt = new BeforeTextInsertedEventImpl(newText);
-            ExceptionCode ec = 0;
             selectionStartNode->rootEditableElement()->dispatchEvent(evt, ec, true);
             if (text != newText) {
                 // If the event handler has changed the text, create a new holder node for test rendering
