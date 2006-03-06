@@ -1,3 +1,7 @@
+2006-03-05  Darin Adler  <darin@apple.com>
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Updated.
+
 2006-03-06  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Fix suggested by Alexey Proskuryakov <ap@nypop.com>, reviewed by Maciej and Hyatt.

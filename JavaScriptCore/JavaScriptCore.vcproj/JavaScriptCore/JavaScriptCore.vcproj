@@ -381,6 +381,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\Parser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\Parser.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\property_map.cpp"
 				>
 			</File>
