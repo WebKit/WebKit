@@ -151,10 +151,6 @@
 			Name="kwq"
 			>
 			<File
-				RelativePath="..\..\kwq\KWQCharsets.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQClipboard.h"
 				>
 			</File>
@@ -175,10 +171,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQDateTime.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQDef.h"
 				>
 			</File>
@@ -195,14 +187,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQFont.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQFontMetrics.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQFormData.h"
 				>
 			</File>
@@ -215,27 +199,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQIODevice.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQKConfigBase.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQKCookieJar.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQKDebug.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\kwqkhtmlpart.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQKHTMLPartBrowserExtension.h"
 				>
 			</File>
 			<File
@@ -243,31 +207,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQKIOGlobal.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQKJavaAppletWidget.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQKJobClasses.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQKLocale.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQKPartsBrowserExtension.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQKPartsBrowserInterface.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQKPartsPart.h"
 				>
 			</File>
 			<File
@@ -303,10 +247,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQLogging.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQNamespace.h"
 				>
 			</File>
@@ -323,22 +263,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQPalette.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQPixmap.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQPtrDict.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQPtrDictImpl.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQPtrList.h"
 				>
 			</File>
@@ -347,23 +271,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQPtrStack.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQPtrVector.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQRegExp.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\kwq\KWQRegExp.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQRegion.h"
 				>
 			</File>
 			<File
@@ -403,23 +315,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQSortedList.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\kwqstring.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQStringList.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQTextArea.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQTextCodec.h"
 				>
 			</File>
 			<File
@@ -455,10 +351,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQValueVector.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQView.h"
 				>
 			</File>
@@ -468,10 +360,6 @@
 			</File>
 			<File
 				RelativePath="..\..\kwq\KWQWMatrix.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\TransferJobClient.h"
 				>
 			</File>
 		</Filter>

@@ -1,5 +1,10 @@
 2006-03-05  Darin Adler  <darin@apple.com>
 
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Removed a lot of long-ago-deleted files
+        from the kwq directory.
+
+2006-03-05  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - moved all the remnants of the public C++ DOM API out of khtml/dom
@@ -35,7 +40,7 @@
         * WebCore+SVG/kdomevents.h: Removed.
 
         * WebCore.xcodeproj/project.pbxproj: Updated for file changes.
-        * WebCore.xcodeproj/project.pbxproj: Updated for file changes.
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Ditto.
 
         * bindings/scripts/CodeGeneratorJS.pm: Removed unneeded DOM:: prefix. Updated file
         names and exception prefix for changes in DOM exceptions.
