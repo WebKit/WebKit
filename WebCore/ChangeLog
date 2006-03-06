@@ -1,3 +1,17 @@
+2006-03-03  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=6844>
+        elementAtPoint returns the list when the point is over a list marker
+
+        Call RenderObject::setInnerNode(), which sets both the 
+        innerNode and the innerNonSharedNode.
+
+        * rendering/render_list.cpp:
+        (WebCore::RenderListItem::nodeAtPoint):
+        * rendering/render_list.h:
+
 2006-03-05  Darin Adler  <darin@apple.com>
 
         * WebCore.vcproj/WebCore/WebCore.vcproj: Removed a lot of long-ago-deleted files

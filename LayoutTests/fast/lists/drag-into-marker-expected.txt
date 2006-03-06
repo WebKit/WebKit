@@ -1,0 +1,47 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of LI > UL > BODY > HTML > #document to 2 of LI > UL > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 2 of #text > SPAN > LI > UL > BODY > HTML > #document to 2 of #text > SPAN > LI > UL > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > SPAN > LI > UL > BODY > HTML > #document to 2 of #text > SPAN > LI > UL > BODY > HTML > #document toDOMRange:range from 0 of #text > SPAN > LI > UL > BODY > HTML > #document to 5 of #text > SPAN > LI > UL > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of LI > UL > BODY > HTML > #document to 0 of LI > UL > BODY > HTML > #document givenAction:WebViewInsertActionDropped
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 6 of #text > SPAN > LI > UL > BODY > HTML > #document to 6 of #text > SPAN > LI > UL > BODY > HTML > #document toDOMRange:range from 0 of #text > SPAN > LI > UL > BODY > HTML > #document to 6 of #text > SPAN > LI > UL > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,16) size 784x568
+      RenderBlock {UL} at (16,0) size 752x57 [border: (1px solid #000000)]
+        RenderListItem {LI} at (41,1) size 710x55
+          RenderListMarker at (0,0) size 0x43
+          RenderInline {SPAN} at (0,0) size 124x55
+            RenderText {TEXT} at (0,0) size 124x55
+              text run at (0,0) width 124: "world "
+          RenderText {TEXT} at (124,0) size 107x55
+            text run at (124,0) width 107: "hello "
+          RenderInline {SPAN} at (0,0) size 112x55
+            RenderText {TEXT} at (231,0) size 112x55
+              text run at (231,0) width 112: "world"
+      RenderBlock {P} at (0,73) size 784x72
+        RenderText {TEXT} at (0,0) size 764x72
+          text run at (0,0) width 562: "This is an automated test for elementAtPoint for points over position:outside list markers. "
+          text run at (562,0) width 168: "The dictionary returned by"
+          text run at (0,18) width 743: "elementAtPoint should contain the list item as the DOMNode, not the list, for points over position:outside list markers."
+          text run at (0,36) width 743: "elementAtPoint is used to determine the drag operation that will occur when something is dropped over a given point. "
+          text run at (743,36) width 21: "So,"
+          text run at (0,54) width 371: "this test drags a bit of text over the list marker and drops it. "
+          text run at (371,54) width 386: "It should be pasted into the list item, which is contenteditable."
+      RenderBlock {P} at (0,161) size 784x36
+        RenderInline {B} at (0,0) size 771x36
+          RenderText {TEXT} at (0,0) size 771x36
+            text run at (0,0) width 713: "This test case demonstrates a bug in DumpRenderTree's drag and drop support, which is that the source "
+            text run at (713,0) width 58: "is copied"
+            text run at (0,18) width 113: "on drop, not cut."
+        RenderText {TEXT} at (113,18) size 173x18
+          text run at (113,18) width 4: " "
+          text run at (117,18) width 169: "So you'll see 'world' twice."
+selection start: position 0 of child 0 {TEXT} of child 0 {SPAN} of child 0 {LI} of child 1 {UL} of child 0 {BODY} of child 0 {HTML} of document
+selection end:   position 6 of child 0 {TEXT} of child 0 {SPAN} of child 0 {LI} of child 1 {UL} of child 0 {BODY} of child 0 {HTML} of document

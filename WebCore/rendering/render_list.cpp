@@ -292,10 +292,16 @@ bool RenderListItem::nodeAtPoint(NodeInfo& i, int x, int y, int tx, int ty, HitT
     if (RenderBlock::nodeAtPoint(i, x, y, tx, ty, hitTestAction))
         return true;
     
-    if (!m_marker || m_marker->isInside() || hitTestAction != HitTestForeground)
-        return false;
-        
-    return m_marker->nodeAtPoint(i, x, y, tx + m_x, ty + m_y, hitTestAction);
+    if (m_marker && !m_marker->isInside() && hitTestAction == HitTestForeground) {
+        IntRect markerRect = m_marker->getRelativeMarkerRect();
+        markerRect.move(tx + m_x, ty + m_y);
+        if (markerRect.contains(x, y)) {
+            setInnerNode(i);
+            return true;
+        }
+    }
+    
+    return false;
 }
 
 void RenderListItem::calcMinMaxWidth()
@@ -595,17 +601,6 @@ short RenderListMarker::baselinePosition(bool, bool) const
 bool RenderListMarker::isInside() const
 {
     return m_listItem->notInList() || style()->listStylePosition() == INSIDE;
-}
-
-bool RenderListMarker::nodeAtPoint(NodeInfo& i, int x, int y, int tx, int ty, HitTestAction hitTestAction)
-{
-    IntRect markerRect = getRelativeMarkerRect();
-    markerRect.move(tx, ty);
-    if (!markerRect.contains(x, y))
-        return false;
-    
-    i.setInnerNode(m_listItem->element());
-    return true;
 }
 
 IntRect RenderListMarker::getRelativeMarkerRect()

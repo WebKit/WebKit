@@ -93,6 +93,7 @@
     int clickCount;
     NSTimeInterval lastClick;
     int eventNumber;
+    double timeOffset;
 }
 @end
 
@@ -659,15 +660,18 @@ static void dump(void)
 {
     if (aSelector == @selector(mouseDown)
             || aSelector == @selector(mouseUp)
-            || aSelector == @selector(mouseMoveToX:Y:))
+            || aSelector == @selector(mouseMoveToX:Y:)
+            || aSelector == @selector(leapForward:))
         return NO;
     return YES;
 }
 
 + (NSString *)webScriptNameForSelector:(SEL)aSelector
 {
-    if(aSelector == @selector(mouseMoveToX:Y:))
+    if (aSelector == @selector(mouseMoveToX:Y:))
         return @"mouseMoveTo";
+    if (aSelector == @selector(leapForward:))
+        return @"leapForward";
     return nil;
 }
 
@@ -680,14 +684,32 @@ static void dump(void)
     return self;
 }
 
+- (double)currentEventTime
+{
+    return GetCurrentEventTime() + timeOffset;
+}
+
+- (void)leapForward:(int)milliseconds
+{
+    timeOffset += milliseconds / 1000.0;
+}
+
 - (void)mouseDown
 {
     [[[frame frameView] documentView] layout];
-    if (GetCurrentEventTime() - lastClick >= 1)
+    if ([self currentEventTime] - lastClick >= 1)
         clickCount = 1;
     else
         clickCount++;
-    NSEvent *event = [NSEvent mouseEventWithType:NSLeftMouseDown location:lastMousePosition modifierFlags:nil timestamp:GetCurrentEventTime() windowNumber:0 context:[NSGraphicsContext currentContext] eventNumber:++eventNumber clickCount:clickCount pressure:nil];
+    NSEvent *event = [NSEvent mouseEventWithType:NSLeftMouseDown 
+                                        location:lastMousePosition 
+                                   modifierFlags:nil 
+                                       timestamp:[self currentEventTime]
+                                    windowNumber:[[[frame webView] window] windowNumber] 
+                                         context:[NSGraphicsContext currentContext] 
+                                     eventNumber:++eventNumber 
+                                      clickCount:clickCount 
+                                        pressure:nil];
 
     NSView *subView = [[frame webView] hitTest:[event locationInWindow]];
     if (subView) {
@@ -699,7 +721,15 @@ static void dump(void)
 - (void)mouseUp
 {
     [[[frame frameView] documentView] layout];
-    NSEvent *event = [NSEvent mouseEventWithType:NSLeftMouseUp location:lastMousePosition modifierFlags:nil timestamp:GetCurrentEventTime() windowNumber:0 context:[NSGraphicsContext currentContext] eventNumber:++eventNumber clickCount:clickCount pressure:nil];
+    NSEvent *event = [NSEvent mouseEventWithType:NSLeftMouseUp 
+                                        location:lastMousePosition 
+                                   modifierFlags:nil 
+                                       timestamp:[self currentEventTime]
+                                    windowNumber:[[[frame webView] window] windowNumber] 
+                                         context:[NSGraphicsContext currentContext] 
+                                     eventNumber:++eventNumber 
+                                      clickCount:clickCount 
+                                        pressure:nil];
 
     NSView *subView = [[frame webView] hitTest:[event locationInWindow]];
     if (subView) {
@@ -723,7 +753,15 @@ static void dump(void)
 - (void)mouseMoveToX:(int)x Y:(int)y
 {
     lastMousePosition = NSMakePoint(x, [[frame webView] frame].size.height - y);
-    NSEvent *event = [NSEvent mouseEventWithType:(down ? NSLeftMouseDragged : NSMouseMoved) location:lastMousePosition modifierFlags:nil timestamp:GetCurrentEventTime() windowNumber:[[[frame webView] window] windowNumber] context:[NSGraphicsContext currentContext] eventNumber:++eventNumber clickCount:(down ? clickCount : 0) pressure:nil];
+    NSEvent *event = [NSEvent mouseEventWithType:(down ? NSLeftMouseDragged : NSMouseMoved) 
+                                        location:lastMousePosition 
+                                   modifierFlags:nil 
+                                       timestamp:[self currentEventTime]
+                                    windowNumber:[[[frame webView] window] windowNumber] 
+                                         context:[NSGraphicsContext currentContext] 
+                                     eventNumber:++eventNumber 
+                                      clickCount:(down ? clickCount : 0) 
+                                        pressure:nil];
 
     NSView *subView = [[frame webView] hitTest:[event locationInWindow]];
     if (subView) {
