@@ -1,3 +1,63 @@
+2006-03-06  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Fix external resource loading.
+        Make a bunch of stubs not abort (to fix slashdot).
+
+        * platform/win/TemporaryLinkStubs.cpp:
+        (QTextEdit::textWithHardLineBreaks):
+        (KWQFileButton::click):
+        (QComboBox::setFrameGeometry):
+        (QTextEdit::setText):
+        (QListBox::appendItem):
+        (GraphicsContext::endTransparencyLayer):
+        (QLineEdit::selectionStart):
+        (QTextEdit::QTextEdit):
+        (QListBox::isSelected):
+        (QComboBox::focusPolicy):
+        (QTextEdit::setCursorPosition):
+        (QTextEdit::setAlignment):
+        (QLineEdit::selectedText):
+        (ScrollView::scrollPointRecursively):
+        (QScrollBar::setSteps):
+        (QComboBox::appendItem):
+        (GraphicsContext::drawLineForMisspelling):
+        (KWQFileButton::setFilename):
+        (QListBox::setWritingDirection):
+        (QListBox::focusPolicy):
+        (MouseEvent::MouseEvent):
+        (QSlider::setFont):
+        (Widget::setEnabled):
+        (Widget::paint):
+        (ScrollView::addChild):
+        (ScrollView::inWindow):
+        (GraphicsContext::setShadow):
+        (GraphicsContext::clearShadow):
+        (RenderThemeWin::paintCheckbox):
+        (RenderThemeWin::paintRadio):
+        (RenderThemeWin::paintButton):
+        (RenderThemeWin::paintTextField):
+        (QLineEdit::QLineEdit):
+        (QLineEdit::setFont):
+        (QLineEdit::setAlignment):
+        (QLineEdit::setWritingDirection):
+        (QLineEdit::maxLength):
+        (QLineEdit::setMaxLength):
+        (QLineEdit::text):
+        (QLineEdit::setText):
+        (QLineEdit::cursorPosition):
+        (QLineEdit::setCursorPosition):
+        (QLineEdit::setEdited):
+        (QLineEdit::setReadOnly):
+        (QLineEdit::setPlaceholderString):
+        (QLineEdit::setColors):
+        (QLineEdit::sizeForCharacterWidth):
+        (QLineEdit::baselinePosition):
+        * platform/win/TransferJobWin.cpp:
+        (WebCore::TransferJob::fileLoadTimer):
+        (WebCore::TransferJob::cancel):
+
 2006-03-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

@@ -76,11 +76,16 @@ void TransferJob::fileLoadTimer(Timer<TransferJob>* timer)
 
     CloseHandle(d->m_fileHandle);
     d->m_fileHandle = 0;
+
+    d->client->receivedAllData(this, 0);
+    d->client->receivedAllData(this);
 }
 
 void TransferJob::cancel()
 {
     d->m_fileLoadTimer.stop();
+    d->client->receivedAllData(this, 0);
+    d->client->receivedAllData(this);
 }
 
 } // namespace WebCore
