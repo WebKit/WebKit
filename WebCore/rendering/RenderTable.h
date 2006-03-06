@@ -77,7 +77,7 @@ public:
     int borderTop() const;
     int borderBottom() const;
     
-    Rules getRules() const { return rules; }
+    Rules getRules() const { return static_cast<Rules>(rules); }
 
     const Color& bgColor() const { return style()->backgroundColor(); }
 
@@ -173,12 +173,12 @@ private:
 
     CollapsedBorderValue* m_currentBorder;
     
-    Frame frame                 : 4;
-    Rules rules                 : 4;
+    unsigned frame : 4; // Frame
+    unsigned rules : 4; // Rules
 
-    bool has_col_elems          : 1;
-    unsigned padding            : 22;
-    uint needSectionRecalc      : 1;
+    bool has_col_elems : 1;
+    unsigned padding : 22;
+    bool needSectionRecalc : 1;
     
     short hspacing;
     short vspacing;

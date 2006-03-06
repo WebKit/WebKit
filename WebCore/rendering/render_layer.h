@@ -115,13 +115,14 @@ public:
 
     int speed() const { return m_speed; }
     int marqueeSpeed() const;
-    EMarqueeDirection direction() const;
     EMarqueeDirection reverseDirection() const { return static_cast<EMarqueeDirection>(-direction()); }
+    EMarqueeDirection direction() const;
+
     bool isHorizontal() const;
     bool isUnfurlMarquee() const;
     int unfurlPos() const { return m_unfurlPos; }
 
-    EWhiteSpace whiteSpace() { return m_whiteSpace; }
+    EWhiteSpace whiteSpace() { return static_cast<EWhiteSpace>(m_whiteSpace); }
     
     int computePosition(EMarqueeDirection dir, bool stopAtClientEdge);
 
@@ -149,7 +150,7 @@ private:
     bool m_reset: 1;
     bool m_suspended : 1;
     bool m_stopped : 1;
-    EWhiteSpace m_whiteSpace : 3;
+    unsigned m_whiteSpace : 3; // EWhiteSpace
     EMarqueeDirection m_direction : 4;
 };
 

@@ -142,12 +142,12 @@ namespace WebCore
         double m_simpleDuration;
 
         // Shared animation properties
-        EFillMode m_fill : 1;
-        ERestart m_restart : 2;
-        ECalcMode m_calcMode : 2;
-        EAdditiveMode m_additive : 1;
-        EAccumulateMode m_accumulate : 1;
-        EAttributeType m_attributeType : 2;
+        unsigned m_fill : 1; // EFillMode m_fill
+        unsigned m_restart : 2; // ERestart
+        unsigned m_calcMode : 2; // ECalcMode
+        unsigned m_additive : 1; // EAdditiveMode
+        unsigned m_accumulate : 1; // EAccumulateMode
+        unsigned m_attributeType : 2; // EAttributeType
         
         QString m_to;
         QString m_by;

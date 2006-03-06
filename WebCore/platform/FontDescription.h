@@ -54,7 +54,7 @@ public:
     bool smallCaps() const { return m_smallCaps; }
     bool isAbsoluteSize() const { return m_isAbsoluteSize; }
     unsigned weight() const { return m_weight; }
-    GenericFamilyType genericFamily() const { return m_genericFamily; }
+    GenericFamilyType genericFamily() const { return static_cast<GenericFamilyType>(m_genericFamily); }
     bool usePrinterFont() const { return m_usePrinterFont; }
 
     void setFamily(const FontFamily& family) { m_familyList = family; }
@@ -79,7 +79,7 @@ private:
     bool m_isAbsoluteSize : 1;   // Whether or not CSS specified an explicit size
                                  // (logical sizes like "medium" don't count).
     unsigned m_weight : 8;
-    GenericFamilyType m_genericFamily : 3;
+    unsigned m_genericFamily : 3; // GenericFamilyType
     bool m_usePrinterFont : 1;
 };
 

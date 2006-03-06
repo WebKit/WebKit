@@ -141,8 +141,8 @@ protected:
 
     bool m_noBorder     : 1;
     bool m_solid        : 1;
-    uint unused         : 14;
-    unsigned padding    : 16;
+    // 14 bits unused
+    unsigned short padding;
     friend class HTMLTableCellElementImpl;
 };
 

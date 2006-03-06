@@ -504,7 +504,7 @@ selector:
             CSSSelector* end = $$;
             while (end->tagHistory)
                 end = end->tagHistory;
-            end->relation = $2;
+            end->m_relation = $2;
             end->tagHistory = p->sinkFloatingSelector($1);
             if ($2 == CSSSelector::Descendant || $2 == CSSSelector::Child) {
                 if (WebCore::DocumentImpl* doc = p->document())
@@ -609,7 +609,7 @@ specifier_list:
             CSSSelector* end = $1;
             while (end->tagHistory)
                 end = end->tagHistory;
-            end->relation = CSSSelector::SubSelector;
+            end->m_relation = CSSSelector::SubSelector;
             end->tagHistory = p->sinkFloatingSelector($2);
         }
     }

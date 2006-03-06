@@ -245,7 +245,7 @@ bool CSSSelector::operator == ( const CSSSelector &other )
 
     while ( sel1 && sel2 ) {
 	if ( sel1->tag != sel2->tag || sel1->attr != sel2->attr ||
-	     sel1->relation != sel2->relation || sel1->match != sel2->match ||
+	     sel1->relation() != sel2->relation() || sel1->match != sel2->match ||
 	     sel1->value != sel2->value ||
              sel1->pseudoType() != sel2->pseudoType())
 	    return false;
@@ -315,17 +315,17 @@ DOMString CSSSelector::selectorText() const
                 str += "\"]";
             }
         }
-        if (cs->relation != CSSSelector::SubSelector || !cs->tagHistory)
+        if (cs->relation() != CSSSelector::SubSelector || !cs->tagHistory)
             break;
         cs = cs->tagHistory;
     }
     if (cs->tagHistory) {
         DOMString tagHistoryText = cs->tagHistory->selectorText();
-        if (cs->relation == CSSSelector::DirectAdjacent)
+        if (cs->relation() == CSSSelector::DirectAdjacent)
             str = tagHistoryText + " + " + str;
-        else if (cs->relation == CSSSelector::IndirectAdjacent)
+        else if (cs->relation() == CSSSelector::IndirectAdjacent)
             str = tagHistoryText + " ~ " + str;
-        else if (cs->relation == CSSSelector::Child)
+        else if (cs->relation() == CSSSelector::Child)
             str = tagHistoryText + " > " + str;
         else // Descendant
             str = tagHistoryText + " " + str;

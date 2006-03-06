@@ -50,7 +50,7 @@ QTextStream &operator<<(QTextStream &ts, KCWindRule rule)
 //KCClipData
 QTextStream &operator<<(QTextStream &ts, const KCClipData &d)
 {
-    ts << "[winding=" << d.windRule  << "]";
+    ts << "[winding=" << d.windRule() << "]";
     if (d.bboxUnits)
         ts << " [bounding box mode=" << d.bboxUnits  << "]";    
     ts << " [path=" << renderingDevice()->stringForPath(d.path.get()) << "]";

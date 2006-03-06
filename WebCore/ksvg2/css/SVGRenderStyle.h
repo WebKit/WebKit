@@ -130,24 +130,22 @@ namespace WebCore
             {
                 struct
                 {
-                    EColorRendering _colorRendering : 2;
-                    EImageRendering _imageRendering : 2;
-                    EShapeRendering _shapeRendering : 2;
-                    ETextRendering  _textRendering : 2;
-                    EWindRule _clipRule : 1; 
-                    EWindRule _fillRule : 1;
-                    ECapStyle _capStyle : 2;
-                    EJoinStyle _joinStyle : 2;
-                    ETextAnchor _textAnchor : 2;
-                    EColorInterpolation _colorInterpolation : 2;
-                    EColorInterpolation _colorInterpolationFilters : 2;
-                    EPointerEvents _pointerEvents : 4;
-                    EWritingMode _writingMode : 3;
-
-                    unsigned int unused : 32;
-                    unsigned int unused2 : 5;
+                    unsigned _colorRendering : 2; // EColorRendering
+                    unsigned _imageRendering : 2; // EImageRendering 
+                    unsigned _shapeRendering : 2; // EShapeRendering 
+                    unsigned _textRendering : 2; // ETextRendering
+                    unsigned _clipRule : 1; // EWindRule
+                    unsigned _fillRule : 1; // EWindRule
+                    unsigned _capStyle : 2; // ECapStyle
+                    unsigned _joinStyle : 2; // EJoinStyle
+                    unsigned _textAnchor : 2; // ETextAnchor
+                    unsigned _colorInterpolation : 2; // EColorInterpolation
+                    unsigned _colorInterpolationFilters : 2; // EColorInterpolation
+                    unsigned _pointerEvents : 4; // EPointerEvents
+                    unsigned _writingMode : 3; // EWritingMode
+                    // 5 bits unused
                 } f;
-                uint64_t _iflags;
+                uint32_t _iflags;
             };
         } svg_inherited_flags;
 
@@ -162,13 +160,11 @@ namespace WebCore
             {
                 struct
                 {
-                    EAlignmentBaseline _alignmentBaseline : 4;
-                    EDominantBaseline _dominantBaseline : 4;
-
-                    unsigned int unused : 32;
-                    unsigned int unused2 : 24;
+                    unsigned _alignmentBaseline : 4; // EAlignmentBaseline 
+                    unsigned _dominantBaseline : 4; // EDominantBaseline
+                    // 24 bits unused
                 } f;
-                uint64_t _niflags;
+                uint32_t _niflags;
             };
         } svg_noninherited_flags;
 
@@ -204,13 +200,9 @@ namespace WebCore
             svg_inherited_flags.f._colorInterpolationFilters = initialColorInterpolationFilters();
             svg_inherited_flags.f._pointerEvents = initialPointerEvents();
             svg_inherited_flags.f._writingMode = initialWritingMode();
-            svg_inherited_flags.f.unused = 0;
-            svg_inherited_flags.f.unused2 = 0;
 
             svg_noninherited_flags.f._alignmentBaseline = initialAlignmentBaseline();
             svg_noninherited_flags.f._dominantBaseline = initialDominantBaseline();
-            svg_noninherited_flags.f.unused = 0;
-            svg_noninherited_flags.f.unused2 = 0;
         }
     };
 };

@@ -66,9 +66,9 @@ public:
 protected:
     DOMString m_value;
     DOMString m_currValue;
-    typeEnum  m_type : 2;
-    bool      m_dirty : 1;
-    bool      m_activeSubmit : 1;
+    unsigned m_type : 2; // typeEnum
+    bool m_dirty : 1;
+    bool m_activeSubmit : 1;
 };
 
 } //namespace

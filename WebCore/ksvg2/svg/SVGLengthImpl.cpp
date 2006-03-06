@@ -95,7 +95,7 @@ float SVGLengthImpl::value() const
         return value;
 
     // Use the manual override "m_viewportElement" when there is no context element off of which to establish the viewport.
-    return SVGHelper::PercentageOfViewport(value, m_context ? m_context->viewportElement() : m_viewportElement, m_mode);
+    return SVGHelper::PercentageOfViewport(value, m_context ? m_context->viewportElement() : m_viewportElement, static_cast<LengthMode>(m_mode));
 }
 
 void SVGLengthImpl::setValueInSpecifiedUnits(float valueInSpecifiedUnits)

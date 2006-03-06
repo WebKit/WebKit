@@ -188,13 +188,13 @@ void HTMLInputElementImpl::setInputType(const DOMString& t)
     // ### IMPORTANT: Don't allow the type to be changed to FILE after the first
     // type change, otherwise a JavaScript programmer would be able to set a text
     // field's value to something like /etc/passwd and then change it to a file field.
-    if (m_type != newType) {
+    if (inputType() != newType) {
         if (newType == FILE && m_haveType) {
             // Set the attribute back to the old value.
             // Useful in case we were called from inside parseMappedAttribute.
             setAttribute(typeAttr, type());
         } else {
-            if (m_type == RADIO && !name().isEmpty()) {
+            if (inputType() == RADIO && !name().isEmpty()) {
                 if (getDocument()->checkedRadioButtonForGroup(name().impl(), m_form) == this)
                     getDocument()->removeRadioButtonGroup(name().impl(), m_form);
             }

@@ -75,12 +75,12 @@ namespace WebCore {
     public:
         CSSSelector()
             : tagHistory(0), simpleSelector(0), nextSelector(0), attr(anyQName()), tag(anyQName()),
-              relation(Descendant), match(None), pseudoId(0), _pseudoType(PseudoNotParsed)
+              m_relation(Descendant), match(None), pseudoId(0), _pseudoType(PseudoNotParsed)
         {}
         
         CSSSelector(const QualifiedName& qName)
             : tagHistory(0), simpleSelector(0), nextSelector(0), attr(anyQName()), tag(qName),
-              relation(Descendant), match(None), pseudoId(0), _pseudoType(PseudoNotParsed)
+              m_relation(Descendant), match(None), pseudoId(0), _pseudoType(PseudoNotParsed)
         {}
 
         ~CSSSelector() {
@@ -174,7 +174,7 @@ namespace WebCore {
         {
             if (_pseudoType == PseudoNotParsed)
                 extractPseudoType();
-            return _pseudoType;
+            return static_cast<PseudoType>(_pseudoType);
         }
 
         bool hasTag() const { return tag != anyQName(); }
@@ -188,10 +188,12 @@ namespace WebCore {
         QualifiedName attr;
         QualifiedName tag;
         
-        Relation relation              : 3;
-        mutable Match  match           : 4;
-        unsigned int pseudoId          : 3;
-        mutable PseudoType _pseudoType : 5;
+        Relation relation() const { return static_cast<Relation>(m_relation); }
+
+        unsigned m_relation          : 3; // enum Relation
+        mutable unsigned match       : 4; // enum Match
+        unsigned pseudoId            : 3;
+        mutable unsigned _pseudoType : 5; // PseudoType
 
     private:
         void extractPseudoType() const;

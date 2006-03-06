@@ -432,9 +432,8 @@ DOMString SVGAnimationElementImpl::targetAttribute() const
     
     DOMString ret;
 
-    EAttributeType attributeType = m_attributeType;
-    if(attributeType == ATTRIBUTETYPE_AUTO)
-    {
+    EAttributeType attributeType = static_cast<EAttributeType>(m_attributeType);
+    if (attributeType == ATTRIBUTETYPE_AUTO) {
         attributeType = ATTRIBUTETYPE_XML;
 
         // Spec: The implementation should match the attributeName to an attribute
@@ -460,7 +459,7 @@ DOMString SVGAnimationElementImpl::targetAttribute() const
 
 void SVGAnimationElementImpl::setTargetAttribute(DOMStringImpl *value)
 {
-    SVGAnimationElementImpl::setTargetAttribute(targetElement(), DOMString(m_attributeName).impl(), value, m_attributeType);
+    SVGAnimationElementImpl::setTargetAttribute(targetElement(), DOMString(m_attributeName).impl(), value, static_cast<EAttributeType>(m_attributeType));
 }
 
 void SVGAnimationElementImpl::setTargetAttribute(SVGElementImpl *target, DOMStringImpl *nameImpl, DOMStringImpl *value, EAttributeType type)

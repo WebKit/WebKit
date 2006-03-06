@@ -30,7 +30,7 @@ XBLPrototypeHandler::XBLPrototypeHandler(const DOMString& event,
                                          const DOMString& preventdefault,
                                          XBLPrototypeBinding* binding)
 :m_binding(binding), m_next(0), m_eventName(event), 
- m_phase(bubblingPhase), m_preventDefault(false), m_keyMask(0), m_misc(0), m_button(-1), m_unused(0)
+ m_phase(bubblingPhase), m_preventDefault(false), m_keyMask(0), m_misc(0), m_button(-1)
 {
     if (event.isEmpty())
         return;

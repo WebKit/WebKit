@@ -72,9 +72,9 @@ namespace WebCore
         float m_value;
         float m_valueInSpecifiedUnits;
 
-        LengthMode m_mode : 2;
+        unsigned m_mode : 2; // LengthMode
         bool m_bboxRelative : 1;
-        unsigned short m_unitType : 4;
+        unsigned m_unitType : 4;
         bool m_requiresLayout : 1;
 
         const SVGStyledElementImpl *m_context;

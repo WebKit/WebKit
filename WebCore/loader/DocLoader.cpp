@@ -199,23 +199,24 @@ void DocLoader::setAutoloadImages( bool enable )
         }
 }
 
-void DocLoader::setCachePolicy( KIO::CacheControl cachePolicy )
+void DocLoader::setCachePolicy(KIO::CacheControl cachePolicy)
 {
     m_cachePolicy = cachePolicy;
 }
 
-void DocLoader::setShowAnimations( KHTMLSettings::KAnimationAdvice showAnimations )
+void DocLoader::setShowAnimations(KHTMLSettings::KAnimationAdvice showAnimations)
 {
-    if ( showAnimations == m_showAnimations ) return;
+    if (showAnimations == static_cast<KHTMLSettings::KAnimationAdvice>(m_showAnimations))
+        return;
     m_showAnimations = showAnimations;
 
     const CachedObject* co;
-    for ( co=m_docObjects.first(); co; co=m_docObjects.next() )
-        if ( co->type() == CachedObject::ImageResource )
+    for (co=m_docObjects.first(); co; co = m_docObjects.next())
+        if (co->type() == CachedObject::ImageResource)
         {
-            CachedImage *img = const_cast<CachedImage*>( static_cast<const CachedImage *>( co ) );
+            CachedImage *img = const_cast<CachedImage*>(static_cast<const CachedImage*>(co));
 
-            img->setShowAnimations( showAnimations );
+            img->setShowAnimations(showAnimations);
         }
 }
 

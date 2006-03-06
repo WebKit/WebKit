@@ -234,7 +234,7 @@ void KCanvasClipperQuartz::applyClip(const FloatRect& boundingBox) const
         return;
 
     BOOL heterogenousClipRules = NO;
-    KCWindRule clipRule = m_clipData[0].windRule;
+    KCWindRule clipRule = m_clipData[0].windRule();
 
     context->clearPath();
 
@@ -242,7 +242,7 @@ void KCanvasClipperQuartz::applyClip(const FloatRect& boundingBox) const
 
     for (unsigned int x = 0; x < m_clipData.count(); x++) {
         KCClipData data = m_clipData[x];
-        if (data.windRule != clipRule)
+        if (data.windRule() != clipRule)
             heterogenousClipRules = YES;
         
         KCanvasPathQuartz *path = static_cast<KCanvasPathQuartz*>(data.path.get());        

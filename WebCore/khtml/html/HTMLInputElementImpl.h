@@ -136,7 +136,7 @@ public:
     virtual bool isActivatedSubmit() const;
     virtual void setActivatedSubmit(bool flag);
 
-    typeEnum inputType() const { return m_type; }
+    typeEnum inputType() const { return static_cast<typeEnum>(m_type); }
     void setInputType(const DOMString& value);
 
     virtual void reset();
@@ -198,7 +198,7 @@ protected:
 
     HTMLImageLoader* m_imageLoader;
 
-    typeEnum m_type : 4;
+    unsigned m_type : 4; // typeEnum 
     bool m_checked : 1;
     bool m_defaultChecked : 1;
     bool m_useDefaultChecked : 1;

@@ -450,7 +450,7 @@ void RenderWidget::updateWidgetPosition()
 
 void RenderWidget::setSelectionState(SelectionState s) 
 {
-    if (m_selectionState != s) {
+    if (selectionState() != s) {
         RenderReplaced::setSelectionState(s);
         m_selectionState = s;
         if (m_widget)

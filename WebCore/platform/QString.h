@@ -391,11 +391,11 @@ struct KWQStringData
     uint _length;
     mutable QChar *_unicode;
     mutable char *_ascii;
-    uint _maxUnicode:30;
-    uint _isUnicodeValid:1;
-    uint _isHeapAllocated:1; // Fragile, but the only way we can be sure the instance was created with 'new'.
-    uint _maxAscii:31;
-    uint _isAsciiValid:1;
+    unsigned _maxUnicode : 30;
+    bool _isUnicodeValid : 1;
+    bool _isHeapAllocated : 1; // Fragile, but the only way we can be sure the instance was created with 'new'.
+    unsigned _maxAscii : 31;
+    bool _isAsciiValid : 1;
     
     char _internalBuffer[QS_INTERNAL_BUFFER_SIZE]; // Pad out to a (((size + 1) & ~15) + 14) size
 

@@ -1,3 +1,185 @@
+2006-03-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - use unsigned bitfields when storing enums in them, to avoid mangling on win32 (was causing all layout to be RTL)
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7618
+
+        * css/css_base.cpp:
+        (WebCore::CSSSelector::operator == ):
+        (WebCore::CSSSelector::selectorText):
+        * css/css_base.h:
+        (WebCore::CSSSelector::CSSSelector):
+        (WebCore::CSSSelector::pseudoType):
+        (WebCore::CSSSelector::relation):
+        * css/css_grammar.y:
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::checkSelector):
+        (WebCore::CSSStyleSelector::checkOneSelector):
+        * kcanvas/KCanvasPath.cpp:
+        (WebCore::operator<<):
+        * kcanvas/KCanvasPath.h:
+        (WebCore::KCClipData::windRule):
+        (WebCore::KCClipDataList::addPath):
+        * kcanvas/device/quartz/KCanvasResourcesQuartz.mm:
+        (WebCore::KCanvasClipperQuartz::applyClip):
+        * khtml/ecma/kjs_html.h:
+        * khtml/html/HTMLButtonElementImpl.h:
+        * khtml/html/HTMLInputElementImpl.cpp:
+        (WebCore::HTMLInputElementImpl::setInputType):
+        * khtml/html/HTMLInputElementImpl.h:
+        (DOM::HTMLInputElementImpl::inputType):
+        * khtml/html/html_tableimpl.h:
+        * khtml/xbl/xbl_protohandler.cpp:
+        (XBL::m_button):
+        * khtml/xbl/xbl_protohandler.h:
+        * ksvg2/css/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::InheritedFlags::):
+        (WebCore::SVGRenderStyle::NonInheritedFlags::):
+        (WebCore::SVGRenderStyle::setBitDefaults):
+        * ksvg2/svg/SVGAnimateTransformElementImpl.h:
+        * ksvg2/svg/SVGAnimationElementImpl.cpp:
+        (SVGAnimationElementImpl::targetAttribute):
+        (SVGAnimationElementImpl::setTargetAttribute):
+        * ksvg2/svg/SVGAnimationElementImpl.h:
+        * ksvg2/svg/SVGLengthImpl.cpp:
+        (SVGLengthImpl::value):
+        * ksvg2/svg/SVGLengthImpl.h:
+        * kwq/KWQKHTMLSettings.h:
+        * loader/CachedImage.h:
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::setCachePolicy):
+        (WebCore::DocLoader::setShowAnimations):
+        * loader/DocLoader.h:
+        (WebCore::DocLoader::showAnimations):
+        * platform/FontDescription.h:
+        (WebCore::FontDescription::genericFamily):
+        * platform/QString.cpp:
+        (HandleNode::):
+        * platform/QString.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::setSelectionState):
+        (WebCore::RenderBlock::leftRelOffset):
+        (WebCore::RenderBlock::rightRelOffset):
+        (WebCore::RenderBlock::leftBottom):
+        (WebCore::RenderBlock::rightBottom):
+        (WebCore::RenderBlock::addOverhangingFloats):
+        (WebCore::RenderBlock::addIntrudingFloats):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::selectionState):
+        (WebCore::RenderBlock::FloatingObject::FloatingObject):
+        (WebCore::RenderBlock::FloatingObject::type):
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::getRules):
+        * rendering/bidi.cpp:
+        (khtml::BidiContext::BidiContext):
+        (khtml::operator==):
+        (khtml::embed):
+        (khtml::RenderBlock::computeHorizontalPositionsForLine):
+        (khtml::RenderBlock::bidiReorderLine):
+        (khtml::RenderBlock::layoutInlineChildren):
+        * rendering/bidi.h:
+        (khtml::BidiContext::dir):
+        (khtml::BidiContext::basicDir):
+        (khtml::BidiRun::BidiRun):
+        * rendering/render_canvasimage.h:
+        * rendering/render_layer.h:
+        (WebCore::Marquee::whiteSpace):
+        * rendering/render_object.cpp:
+        (WebCore::RenderObject::paintBorderImage):
+        * rendering/render_replaced.cpp:
+        (WebCore::RenderWidget::setSelectionState):
+        * rendering/render_replaced.h:
+        (WebCore::RenderReplaced::selectionState):
+        * rendering/render_style.cpp:
+        (WebCore::RenderStyle::getPseudoStyle):
+        * rendering/render_style.h:
+        (khtml::BorderValue::BorderValue):
+        (khtml::BorderValue::style):
+        (khtml::BorderValue::nonZero):
+        (khtml::BorderValue::operator==):
+        (khtml::OutlineValue::operator==):
+        (khtml::CollapsedBorderValue::style):
+        (khtml::BorderImage::horizontalRule):
+        (khtml::BorderImage::verticalRule):
+        (khtml::BorderData::borderLeftWidth):
+        (khtml::BorderData::borderRightWidth):
+        (khtml::BorderData::borderTopWidth):
+        (khtml::BorderData::borderBottomWidth):
+        (khtml::BackgroundLayer::backgroundClip):
+        (khtml::BackgroundLayer::backgroundOrigin):
+        (khtml::BackgroundLayer::backgroundRepeat):
+        (khtml::RenderStyle::styleType):
+        (khtml::RenderStyle::display):
+        (khtml::RenderStyle::originalDisplay):
+        (khtml::RenderStyle::position):
+        (khtml::RenderStyle::floating):
+        (khtml::RenderStyle::borderLeftStyle):
+        (khtml::RenderStyle::borderLeftColor):
+        (khtml::RenderStyle::borderRightStyle):
+        (khtml::RenderStyle::borderRightColor):
+        (khtml::RenderStyle::borderTopStyle):
+        (khtml::RenderStyle::borderTopColor):
+        (khtml::RenderStyle::borderBottomStyle):
+        (khtml::RenderStyle::borderBottomColor):
+        (khtml::RenderStyle::outlineWidth):
+        (khtml::RenderStyle::outlineStyle):
+        (khtml::RenderStyle::overflow):
+        (khtml::RenderStyle::visibility):
+        (khtml::RenderStyle::verticalAlign):
+        (khtml::RenderStyle::unicodeBidi):
+        (khtml::RenderStyle::clear):
+        (khtml::RenderStyle::tableLayout):
+        (khtml::RenderStyle::textAlign):
+        (khtml::RenderStyle::textTransform):
+        (khtml::RenderStyle::direction):
+        (khtml::RenderStyle::whiteSpace):
+        (khtml::RenderStyle::backgroundRepeat):
+        (khtml::RenderStyle::backgroundClip):
+        (khtml::RenderStyle::backgroundOrigin):
+        (khtml::RenderStyle::emptyCells):
+        (khtml::RenderStyle::captionSide):
+        (khtml::RenderStyle::listStyleType):
+        (khtml::RenderStyle::listStylePosition):
+        (khtml::RenderStyle::cursor):
+        (khtml::RenderStyle::pageBreakInside):
+        (khtml::RenderStyle::pageBreakBefore):
+        (khtml::RenderStyle::pageBreakAfter):
+        (khtml::RenderStyle::outlineOffset):
+        (khtml::RenderStyle::appearance):
+        (khtml::RenderStyle::boxAlign):
+        (khtml::RenderStyle::boxDirection):
+        (khtml::RenderStyle::boxLines):
+        (khtml::RenderStyle::boxOrient):
+        (khtml::RenderStyle::boxPack):
+        (khtml::RenderStyle::boxSizing):
+        (khtml::RenderStyle::marqueeBehavior):
+        (khtml::RenderStyle::marqueeDirection):
+        (khtml::RenderStyle::userModify):
+        (khtml::RenderStyle::userDrag):
+        (khtml::RenderStyle::userSelect):
+        (khtml::RenderStyle::marginTopCollapse):
+        (khtml::RenderStyle::marginBottomCollapse):
+        (khtml::RenderStyle::wordWrap):
+        (khtml::RenderStyle::nbspMode):
+        (khtml::RenderStyle::khtmlLineBreak):
+        (khtml::RenderStyle::matchNearestMailBlockquoteColor):
+        (khtml::RenderStyle::setBorderLeftWidth):
+        (khtml::RenderStyle::setBorderLeftStyle):
+        (khtml::RenderStyle::setBorderLeftColor):
+        (khtml::RenderStyle::setBorderRightWidth):
+        (khtml::RenderStyle::setBorderRightStyle):
+        (khtml::RenderStyle::setBorderRightColor):
+        (khtml::RenderStyle::setBorderTopWidth):
+        (khtml::RenderStyle::setBorderTopStyle):
+        (khtml::RenderStyle::setBorderTopColor):
+        (khtml::RenderStyle::setBorderBottomWidth):
+        (khtml::RenderStyle::setBorderBottomStyle):
+        (khtml::RenderStyle::setBorderBottomColor):
+        (khtml::RenderStyle::setOutlineWidth):
+        (khtml::RenderStyle::setOutlineStyle):
+        (khtml::RenderStyle::pseudoState):
+
 2006-03-05  Geoffrey Garen  <ggaren@apple.com>
 
         - Rolled out the fix for <rdar://problem/4467143> because it's the

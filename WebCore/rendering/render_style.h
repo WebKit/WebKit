@@ -48,8 +48,8 @@
 #include "SVGRenderStyle.h"
 #endif
 
-#define SET_VAR(group,variable,value) \
-    if (!(group->variable == value)) \
+#define SET_VAR(group, variable, value) \
+    if (!(group->variable == static_cast<typeof(group->variable)>(value))) \
         group.access()->variable = value;
 
 class RenderArena;
@@ -121,15 +121,17 @@ class BorderValue
 public:
     BorderValue() {
         width = 3; // medium is default value
-        style = BNONE;
+        m_style = BNONE;
     }
 
     Color color;
-    unsigned short width : 12;
-    EBorderStyle style : 4;
+    unsigned width : 12;
+    unsigned m_style : 4; // EBorderStyle 
 
+    EBorderStyle style() const { return static_cast<EBorderStyle>(m_style); }
+    
     bool nonZero(bool checkStyle = true) const {
-        return width != 0 && (!checkStyle || style != BNONE);
+        return width != 0 && (!checkStyle || m_style != BNONE);
     }
 
     bool isTransparent() const {
@@ -138,7 +140,7 @@ public:
     
     bool operator==(const BorderValue& o) const
     {
-        return width==o.width && style==o.style && color==o.color;
+        return width == o.width && m_style == o.m_style && color == o.color;
     }
 
     bool operator!=(const BorderValue& o) const
@@ -158,7 +160,7 @@ public:
     
     bool operator==(const OutlineValue& o) const
     {
-        return width==o.width && style==o.style && color==o.color && _offset == o._offset && _auto == o._auto;
+        return width == o.width && m_style == o.m_style && color == o.color && _offset == o._offset && _auto == o._auto;
     }
     
     bool operator!=(const OutlineValue& o) const
@@ -178,7 +180,7 @@ struct CollapsedBorderValue
     CollapsedBorderValue(const BorderValue* b, EBorderPrecedence p) :border(b), precedence(p) {}
     
     int width() const { return border && border->nonZero() ? border->width : 0; }
-    EBorderStyle style() const { return border ? border->style : BHIDDEN; }
+    EBorderStyle style() const { return border ? border->style() : BHIDDEN; }
     bool exists() const { return border; }
     Color color() const { return border ? border->color : Color(); }
     bool isTransparent() const { return border ? border->isTransparent() : true; }
@@ -213,11 +215,14 @@ public:
 
     bool hasImage() const { return m_image != 0; }
     CachedImage* image() const { return m_image; }
-
+    
+    EBorderImageRule horizontalRule() const { return static_cast<EBorderImageRule>(m_horizontalRule); }
+    EBorderImageRule verticalRule() const { return static_cast<EBorderImageRule>(m_verticalRule); }
+    
     CachedImage* m_image;
     LengthBox m_slices;
-    EBorderImageRule m_horizontalRule : 2;
-    EBorderImageRule m_verticalRule : 2;
+    unsigned m_horizontalRule : 2; // EBorderImageRule
+    unsigned m_verticalRule : 2; // EBorderImageRule
 };
 
 class BorderData
@@ -254,25 +259,25 @@ public:
     }
     
     unsigned short borderLeftWidth() const {
-        if (!image.hasImage() && (left.style == BNONE || left.style == BHIDDEN))
+        if (!image.hasImage() && (left.style() == BNONE || left.style() == BHIDDEN))
             return 0; 
         return left.width;
     }
     
     unsigned short borderRightWidth() const {
-        if (!image.hasImage() && (right.style == BNONE || right.style == BHIDDEN))
+        if (!image.hasImage() && (right.style() == BNONE || right.style() == BHIDDEN))
             return 0;
         return right.width;
     }
     
     unsigned short borderTopWidth() const {
-        if (!image.hasImage() && (top.style == BNONE || top.style == BHIDDEN))
+        if (!image.hasImage() && (top.style() == BNONE || top.style() == BHIDDEN))
             return 0;
         return top.width;
     }
     
     unsigned short borderBottomWidth() const {
-        if (!image.hasImage() && (bottom.style == BNONE || bottom.style == BHIDDEN))
+        if (!image.hasImage() && (bottom.style() == BNONE || bottom.style() == BHIDDEN))
             return 0;
         return bottom.width;
     }
@@ -341,7 +346,7 @@ public:
 
     int z_index;
     bool z_auto : 1;
-    EBoxSizing boxSizing : 1;
+    unsigned boxSizing : 1; // EBoxSizing
 };
 
 //------------------------------------------------
@@ -410,7 +415,7 @@ public:
 
     LengthBox clip;
     bool hasClip : 1;
-    int textDecoration : 4; // Text decorations defined *only* by this element.
+    unsigned textDecoration : 4; // Text decorations defined *only* by this element.
     
     short colspan; // for html, not a css2 attribute
 
@@ -437,9 +442,9 @@ public:
     Length backgroundXPosition() const { return m_xPosition; }
     Length backgroundYPosition() const { return m_yPosition; }
     bool backgroundAttachment() const { return m_bgAttachment; }
-    EBackgroundBox backgroundClip() const { return m_bgClip; }
-    EBackgroundBox backgroundOrigin() const { return m_bgOrigin; }
-    EBackgroundRepeat backgroundRepeat() const { return m_bgRepeat; }
+    EBackgroundBox backgroundClip() const { return static_cast<EBackgroundBox>(m_bgClip); }
+    EBackgroundBox backgroundOrigin() const { return static_cast<EBackgroundBox>(m_bgOrigin); }
+    EBackgroundRepeat backgroundRepeat() const { return static_cast<EBackgroundRepeat>(m_bgRepeat); }
 
     BackgroundLayer* next() const { return m_next; }
     BackgroundLayer* next() { return m_next; }
@@ -500,9 +505,9 @@ public:
     Length m_yPosition;
 
     bool m_bgAttachment : 1;
-    EBackgroundBox m_bgClip : 2;
-    EBackgroundBox m_bgOrigin : 2;
-    EBackgroundRepeat m_bgRepeat : 2;
+    unsigned m_bgClip : 2; // EBackgroundBox
+    unsigned m_bgOrigin : 2; // EBackgroundBox
+    unsigned m_bgRepeat : 2; // EBackgroundRepeat
 
     bool m_imageSet : 1;
     bool m_attachmentSet : 1;
@@ -554,8 +559,8 @@ public:
     
     int loops; // -1 means infinite.
     
-    EMarqueeBehavior behavior : 3;
-    EMarqueeDirection direction : 3;
+    unsigned behavior : 3; // EMarqueeBehavior 
+    EMarqueeDirection direction : 3; // not unsigned because EMarqueeDirection has negative values
 };
     
 //------------------------------------------------
@@ -581,10 +586,10 @@ public:
     unsigned int flex_group;
     unsigned int ordinal_group;
 
-    EBoxAlignment align : 3;
-    EBoxAlignment pack: 3;
-    EBoxOrient orient: 1;
-    EBoxLines lines : 1;
+    unsigned align : 3; // EBoxAlignment
+    unsigned pack: 3; // EBoxAlignment
+    unsigned orient: 1; // EBoxOrient
+    unsigned lines : 1; // EBoxLines
 };
 
 // This struct holds information about shadows for the text-shadow and box-shadow properties.
@@ -704,14 +709,14 @@ public:
     float opacity;         // Whether or not we're transparent.
     DataRef<StyleFlexibleBoxData> flexibleBox; // Flexible box properties 
     DataRef<StyleMarqueeData> marquee; // Marquee properties
-    EUserDrag userDrag : 2; // Whether or not a drag can be initiated by this element.
-    EUserSelect userSelect : 2;  // Whether or not the element is selectable.
+    unsigned userDrag : 2; // EUserDrag
+    unsigned userSelect : 2;  // EUserSelect
     bool textOverflow : 1; // Whether or not lines that spill out should be truncated with "..."
-    EMarginCollapse marginTopCollapse : 2;
-    EMarginCollapse marginBottomCollapse : 2;
-    EMatchNearestMailBlockquoteColor matchNearestMailBlockquoteColor : 1;    
+    unsigned marginTopCollapse : 2; // EMarginCollapse
+    unsigned marginBottomCollapse : 2; // EMarginCollapse
+    unsigned matchNearestMailBlockquoteColor : 1; // EMatchNearestMailBlockquoteColor
 
-    EAppearance m_appearance : 5;
+    unsigned m_appearance : 5; // EAppearance
 
 #ifndef KHTML_NO_XBL
     BindingURI* bindingURI; // The XBL binding URI list.
@@ -735,10 +740,10 @@ public:
     bool shadowDataEquivalent(const StyleCSS3InheritedData& o) const;
 
     ShadowData* textShadow;  // Our text shadow information for shadowed text drawing.
-    EUserModify userModify : 2; // Flag used for editing state
-    EWordWrap wordWrap : 1;    // Flag used for word wrap
-    ENBSPMode nbspMode : 1;    
-    EKHTMLLineBreak khtmlLineBreak : 1;    
+    unsigned userModify : 2; // EUserModify  (editing)
+    unsigned wordWrap : 1; // EWordWrap 
+    unsigned nbspMode : 1; // ENBSPMode
+    unsigned khtmlLineBreak : 1; // EKHTMLLineBreak
     bool textSizeAdjust : 1;    // An Apple extension.  Not really CSS3 but not worth making a new struct over.
     
 private:
@@ -798,7 +803,7 @@ public:
     // Paged media properties.
     short widows;
     short orphans;
-    EPageBreak page_break_inside : 2;
+    unsigned page_break_inside : 2; // EPageBreak
 };
 
 
@@ -923,19 +928,19 @@ protected:
             return !(*this == other);
         }
 
-        EEmptyCell _empty_cells : 1 ;
-        ECaptionSide _caption_side : 2;
-        EListStyleType _list_style_type : 5 ;
-        EListStylePosition _list_style_position :1;
-        EVisibility _visibility : 2;
-        ETextAlign _text_align : 4;
-        ETextTransform _text_transform : 2;
-        int _text_decorations : 4;
-        ECursor _cursor_style : 4;
-        TextDirection _direction : 1;
+        unsigned _empty_cells : 1; // EEmptyCell 
+        unsigned _caption_side : 2; // ECaptionSide
+        unsigned _list_style_type : 5 ; // EListStyleType
+        unsigned _list_style_position : 1; // EListStylePosition
+        unsigned _visibility : 2; // EVisibility
+        unsigned _text_align : 4; // ETextAlign
+        unsigned _text_transform : 2; // ETextTransform
+        unsigned _text_decorations : 4;
+        unsigned _cursor_style : 4; // ECursor
+        unsigned _direction : 1; // TextDirection
         bool _border_collapse : 1 ;
-        EWhiteSpace _white_space : 3;
-        EBoxDirection _box_direction : 1; // CSS3 box_direction property (flexible box layout module)
+        unsigned _white_space : 3; // EWhiteSpace
+        unsigned _box_direction : 1; // EBoxDirection (CSS3 box_direction property, flexible box layout module)
         
         // non CSS2 inherited
         bool _visuallyOrdered : 1;
@@ -969,25 +974,25 @@ protected:
             return !(*this == other);
         }
         
-        EDisplay _effectiveDisplay : 5;
-        EDisplay _originalDisplay : 5;
-        EBackgroundRepeat _bg_repeat : 2;
-        EOverflow _overflow : 4 ;
-        EVerticalAlign _vertical_align : 4;
-        EClear _clear : 2;
-        EPosition _position : 2;
-        EFloat _floating : 2;
-        ETableLayout _table_layout : 1;
+        unsigned _effectiveDisplay : 5; // EDisplay
+        unsigned _originalDisplay : 5; // EDisplay
+        unsigned _bg_repeat : 2; // EBackgroundRepeat
+        unsigned _overflow : 4; // EOverflow
+        unsigned _vertical_align : 4; // EVerticalAlign
+        unsigned _clear : 2; // EClear
+        unsigned _position : 2; // EPosition
+        unsigned _floating : 2; // EFloat
+        unsigned _table_layout : 1; // ETableLayout
         
-        EPageBreak _page_break_before : 2;
-        EPageBreak _page_break_after : 2;
+        unsigned _page_break_before : 2; // EPageBreak
+        unsigned _page_break_after : 2; // EPageBreak
 
-        PseudoId _styleType : 3;
+        unsigned _styleType : 3; // PseudoId
         bool _affectedByHover : 1;
         bool _affectedByActive : 1;
         bool _affectedByDrag : 1;
-        int _pseudoBits : 6;
-        EUnicodeBidi _unicodeBidi : 2;
+        unsigned _pseudoBits : 6;
+        unsigned _unicodeBidi : 2; // EUnicodeBidi
     } noninherited_flags;
 
 // non-inherited attributes
@@ -1008,7 +1013,7 @@ protected:
     // makes up for the same size.
     ContentData *content;
 
-    PseudoState m_pseudoState : 3;
+    unsigned m_pseudoState : 3; // PseudoState
     bool m_affectedByAttributeSelectors : 1;
     
     int m_ref;
@@ -1067,7 +1072,7 @@ public:
 
     void inheritFrom(const RenderStyle* inheritParent);
 
-    PseudoId styleType() { return  noninherited_flags._styleType; }
+    PseudoId styleType() { return  static_cast<PseudoId>(noninherited_flags._styleType); }
 
     RenderStyle* getPseudoStyle(PseudoId pi);
     void addPseudoStyle(RenderStyle* pseudo);
@@ -1102,16 +1107,16 @@ public:
     
 // attribute getter methods
 
-    EDisplay    display() const { return noninherited_flags._effectiveDisplay; }
-    EDisplay    originalDisplay() const { return noninherited_flags._originalDisplay; }
+    EDisplay    display() const { return static_cast<EDisplay>(noninherited_flags._effectiveDisplay); }
+    EDisplay    originalDisplay() const { return static_cast<EDisplay>(noninherited_flags._originalDisplay); }
     
     Length      left() const {  return surround->offset.left; }
     Length      right() const {  return surround->offset.right; }
     Length      top() const {  return surround->offset.top; }
     Length      bottom() const {  return surround->offset.bottom; }
 
-    EPosition   position() const { return  noninherited_flags._position; }
-    EFloat      floating() const { return  noninherited_flags._floating; }
+    EPosition   position() const { return  static_cast<EPosition>(noninherited_flags._position); }
+    EFloat      floating() const { return  static_cast<EFloat>(noninherited_flags._floating); }
 
     Length      width() const { return box->width; }
     Length      height() const { return box->height; }
@@ -1135,31 +1140,31 @@ public:
     bool hasBorderRadius() const { return surround->border.hasBorderRadius(); }
 
     unsigned short  borderLeftWidth() const { return surround->border.borderLeftWidth(); }
-    EBorderStyle    borderLeftStyle() const { return surround->border.left.style; }
-    const Color &  borderLeftColor() const { return surround->border.left.color; }
+    EBorderStyle    borderLeftStyle() const { return surround->border.left.style(); }
+    const Color&  borderLeftColor() const { return surround->border.left.color; }
     bool borderLeftIsTransparent() const { return surround->border.left.isTransparent(); }
     unsigned short  borderRightWidth() const { return surround->border.borderRightWidth(); }
-    EBorderStyle    borderRightStyle() const {  return surround->border.right.style; }
-    const Color &   borderRightColor() const {  return surround->border.right.color; }
+    EBorderStyle    borderRightStyle() const {  return surround->border.right.style(); }
+    const Color&   borderRightColor() const {  return surround->border.right.color; }
     bool borderRightIsTransparent() const { return surround->border.right.isTransparent(); }
     unsigned short  borderTopWidth() const { return surround->border.borderTopWidth(); }
-    EBorderStyle    borderTopStyle() const {return surround->border.top.style; }
-    const Color &  borderTopColor() const {  return surround->border.top.color; }
+    EBorderStyle    borderTopStyle() const { return surround->border.top.style(); }
+    const Color&  borderTopColor() const {  return surround->border.top.color; }
     bool borderTopIsTransparent() const { return surround->border.top.isTransparent(); }
     unsigned short  borderBottomWidth() const { return surround->border.borderBottomWidth(); }
-    EBorderStyle    borderBottomStyle() const {  return surround->border.bottom.style; }
-    const Color &   borderBottomColor() const {  return surround->border.bottom.color; }
+    EBorderStyle    borderBottomStyle() const {  return surround->border.bottom.style(); }
+    const Color&   borderBottomColor() const {  return surround->border.bottom.color; }
     bool borderBottomIsTransparent() const { return surround->border.bottom.isTransparent(); }
     
     unsigned short outlineSize() const { return outlineWidth() + outlineOffset(); }
-    unsigned short outlineWidth() const { if (background->m_outline.style == BNONE || background->m_outline.style == BHIDDEN) return 0; return background->m_outline.width; }
-    EBorderStyle   outlineStyle() const {  return background->m_outline.style; }
+    unsigned short outlineWidth() const { if (background->m_outline.style() == BNONE || background->m_outline.style() == BHIDDEN) return 0; return background->m_outline.width; }
+    EBorderStyle   outlineStyle() const {  return background->m_outline.style(); }
     bool outlineStyleIsAuto() const { return background->m_outline._auto; }
     const Color &  outlineColor() const {  return background->m_outline.color; }
 
-    EOverflow overflow() const { return  noninherited_flags._overflow; }
-    EVisibility visibility() const { return inherited_flags._visibility; }
-    EVerticalAlign verticalAlign() const { return  noninherited_flags._vertical_align; }
+    EOverflow overflow() const { return  static_cast<EOverflow>(noninherited_flags._overflow); }
+    EVisibility visibility() const { return static_cast<EVisibility>(inherited_flags._visibility); }
+    EVerticalAlign verticalAlign() const { return  static_cast<EVerticalAlign>(noninherited_flags._vertical_align); }
     Length verticalAlignLength() const { return box->vertical_align; }
 
     Length clipLeft() const { return visual->clip.left; }
@@ -1169,10 +1174,10 @@ public:
     LengthBox clip() const { return visual->clip; }
     bool hasClip() const { return visual->hasClip; }
     
-    EUnicodeBidi unicodeBidi() const { return noninherited_flags._unicodeBidi; }
+    EUnicodeBidi unicodeBidi() const { return static_cast<EUnicodeBidi>(noninherited_flags._unicodeBidi); }
 
-    EClear clear() const { return  noninherited_flags._clear; }
-    ETableLayout tableLayout() const { return  noninherited_flags._table_layout; }
+    EClear clear() const { return static_cast<EClear>(noninherited_flags._clear); }
+    ETableLayout tableLayout() const { return static_cast<ETableLayout>(noninherited_flags._table_layout); }
 
     short colSpan() const { return visual->colspan; }
 
@@ -1182,17 +1187,17 @@ public:
 
     const Color & color() const { return inherited->color; }
     Length textIndent() const { return inherited->indent; }
-    ETextAlign textAlign() const { return inherited_flags._text_align; }
-    ETextTransform textTransform() const { return inherited_flags._text_transform; }
+    ETextAlign textAlign() const { return static_cast<ETextAlign>(inherited_flags._text_align); }
+    ETextTransform textTransform() const { return static_cast<ETextTransform>(inherited_flags._text_transform); }
     int textDecorationsInEffect() const { return inherited_flags._text_decorations; }
     int textDecoration() const { return visual->textDecoration; }
     int wordSpacing() const { return inherited->font.wordSpacing(); }
     int letterSpacing() const { return inherited->font.letterSpacing(); }
 
-    TextDirection direction() const { return inherited_flags._direction; }
+    TextDirection direction() const { return static_cast<TextDirection>(inherited_flags._direction); }
     Length lineHeight() const { return inherited->line_height; }
 
-    EWhiteSpace whiteSpace() const { return inherited_flags._white_space; }
+    EWhiteSpace whiteSpace() const { return static_cast<EWhiteSpace>(inherited_flags._white_space); }
     static bool autoWrap(EWhiteSpace ws) {
         // Nowrap and pre don't automatically wrap.
         return ws != NOWRAP && ws != PRE;
@@ -1230,10 +1235,10 @@ public:
 
     const Color & backgroundColor() const { return background->m_color; }
     CachedImage *backgroundImage() const { return background->m_background.m_image; }
-    EBackgroundRepeat backgroundRepeat() const { return background->m_background.m_bgRepeat; }
+    EBackgroundRepeat backgroundRepeat() const { return static_cast<EBackgroundRepeat>(background->m_background.m_bgRepeat); }
     bool backgroundAttachment() const { return background->m_background.m_bgAttachment; }
-    EBackgroundBox backgroundClip() const { return background->m_background.m_bgClip; }
-    EBackgroundBox backgroundOrigin() const { return background->m_background.m_bgOrigin; }
+    EBackgroundBox backgroundClip() const { return static_cast<EBackgroundBox>(background->m_background.m_bgClip); }
+    EBackgroundBox backgroundOrigin() const { return static_cast<EBackgroundBox>(background->m_background.m_bgOrigin); }
     Length backgroundXPosition() const { return background->m_background.m_xPosition; }
     Length backgroundYPosition() const { return background->m_background.m_yPosition; }
     BackgroundLayer* accessBackgroundLayers() { return &(background.access()->m_background); }
@@ -1243,15 +1248,15 @@ public:
     bool borderCollapse() const { return inherited_flags._border_collapse; }
     short horizontalBorderSpacing() const { return inherited->horizontal_border_spacing; }
     short verticalBorderSpacing() const { return inherited->vertical_border_spacing; }
-    EEmptyCell emptyCells() const { return inherited_flags._empty_cells; }
-    ECaptionSide captionSide() const { return inherited_flags._caption_side; }
+    EEmptyCell emptyCells() const { return static_cast<EEmptyCell>(inherited_flags._empty_cells); }
+    ECaptionSide captionSide() const { return static_cast<ECaptionSide>(inherited_flags._caption_side); }
 
     short counterIncrement() const { return visual->counter_increment; }
     short counterReset() const { return visual->counter_reset; }
 
-    EListStyleType listStyleType() const { return inherited_flags._list_style_type; }
+    EListStyleType listStyleType() const { return static_cast<EListStyleType>(inherited_flags._list_style_type); }
     CachedImage *listStyleImage() const { return inherited->style_image; }
-    EListStylePosition listStylePosition() const { return inherited_flags._list_style_position; }
+    EListStylePosition listStylePosition() const { return static_cast<EListStylePosition>(inherited_flags._list_style_position); }
 
     Length marginTop() const { return surround->margin.top; }
     Length marginBottom() const {  return surround->margin.bottom; }
@@ -1263,50 +1268,50 @@ public:
     Length paddingLeft() const { return surround->padding.left; }
     Length paddingRight() const {  return surround->padding.right; }
 
-    ECursor cursor() const { return inherited_flags._cursor_style; }
+    ECursor cursor() const { return static_cast<ECursor>(inherited_flags._cursor_style); }
     
     CachedImage *cursorImage() const { return inherited->cursor_image; }
 
     short widows() const { return inherited->widows; }
     short orphans() const { return inherited->orphans; }
-    EPageBreak pageBreakInside() const { return inherited->page_break_inside; }
-    EPageBreak pageBreakBefore() const { return noninherited_flags._page_break_before; }
-    EPageBreak pageBreakAfter() const { return noninherited_flags._page_break_after; }
+    EPageBreak pageBreakInside() const { return static_cast<EPageBreak>(inherited->page_break_inside); }
+    EPageBreak pageBreakBefore() const { return static_cast<EPageBreak>(noninherited_flags._page_break_before); }
+    EPageBreak pageBreakAfter() const { return static_cast<EPageBreak>(noninherited_flags._page_break_after); }
     
     // CSS3 Getter Methods
 #ifndef KHTML_NO_XBL
     BindingURI* bindingURIs() const { return css3NonInheritedData->bindingURI; }
 #endif
     int outlineOffset() const { 
-        if (background->m_outline.style == BNONE || background->m_outline.style == BHIDDEN) return 0; return background->m_outline._offset;
+        if (background->m_outline.style() == BNONE || background->m_outline.style() == BHIDDEN) return 0; return background->m_outline._offset;
     }
     ShadowData* textShadow() const { return css3InheritedData->textShadow; }
     float opacity() const { return css3NonInheritedData->opacity; }
-    EAppearance appearance() const { return css3NonInheritedData->m_appearance; }
-    EBoxAlignment boxAlign() const { return css3NonInheritedData->flexibleBox->align; }
-    EBoxDirection boxDirection() const { return inherited_flags._box_direction; }
+    EAppearance appearance() const { return static_cast<EAppearance>(css3NonInheritedData->m_appearance); }
+    EBoxAlignment boxAlign() const { return static_cast<EBoxAlignment>(css3NonInheritedData->flexibleBox->align); }
+    EBoxDirection boxDirection() const { return static_cast<EBoxDirection>(inherited_flags._box_direction); }
     float boxFlex() { return css3NonInheritedData->flexibleBox->flex; }
     unsigned int boxFlexGroup() const { return css3NonInheritedData->flexibleBox->flex_group; }
-    EBoxLines boxLines() { return css3NonInheritedData->flexibleBox->lines; }
+    EBoxLines boxLines() { return static_cast<EBoxLines>(css3NonInheritedData->flexibleBox->lines); }
     unsigned int boxOrdinalGroup() const { return css3NonInheritedData->flexibleBox->ordinal_group; }
-    EBoxOrient boxOrient() const { return css3NonInheritedData->flexibleBox->orient; }
-    EBoxAlignment boxPack() const { return css3NonInheritedData->flexibleBox->pack; }
-    EBoxSizing boxSizing() const { return box->boxSizing; }
+    EBoxOrient boxOrient() const { return static_cast<EBoxOrient>(css3NonInheritedData->flexibleBox->orient); }
+    EBoxAlignment boxPack() const { return static_cast<EBoxAlignment>(css3NonInheritedData->flexibleBox->pack); }
+    EBoxSizing boxSizing() const { return static_cast<EBoxSizing>(box->boxSizing); }
     Length marqueeIncrement() const { return css3NonInheritedData->marquee->increment; }
     int marqueeSpeed() const { return css3NonInheritedData->marquee->speed; }
     int marqueeLoopCount() const { return css3NonInheritedData->marquee->loops; }
-    EMarqueeBehavior marqueeBehavior() const { return css3NonInheritedData->marquee->behavior; }
-    EMarqueeDirection marqueeDirection() const { return css3NonInheritedData->marquee->direction; }
-    EUserModify userModify() const { return css3InheritedData->userModify; }
-    EUserDrag userDrag() const { return css3NonInheritedData->userDrag; }
-    EUserSelect userSelect() const { return css3NonInheritedData->userSelect; }
+    EMarqueeBehavior marqueeBehavior() const { return static_cast<EMarqueeBehavior>(css3NonInheritedData->marquee->behavior); }
+    EMarqueeDirection marqueeDirection() const { return static_cast<EMarqueeDirection>(css3NonInheritedData->marquee->direction); }
+    EUserModify userModify() const { return static_cast<EUserModify>(css3InheritedData->userModify); }
+    EUserDrag userDrag() const { return static_cast<EUserDrag>(css3NonInheritedData->userDrag); }
+    EUserSelect userSelect() const { return static_cast<EUserSelect>(css3NonInheritedData->userSelect); }
     bool textOverflow() const { return css3NonInheritedData->textOverflow; }
-    EMarginCollapse marginTopCollapse() const { return css3NonInheritedData->marginTopCollapse; }
-    EMarginCollapse marginBottomCollapse() const { return css3NonInheritedData->marginBottomCollapse; }
-    EWordWrap wordWrap() const { return css3InheritedData->wordWrap; }
-    ENBSPMode nbspMode() const { return css3InheritedData->nbspMode; }
-    EKHTMLLineBreak khtmlLineBreak() const { return css3InheritedData->khtmlLineBreak; }
-    EMatchNearestMailBlockquoteColor matchNearestMailBlockquoteColor() const { return css3NonInheritedData->matchNearestMailBlockquoteColor; }
+    EMarginCollapse marginTopCollapse() const { return static_cast<EMarginCollapse>(css3NonInheritedData->marginTopCollapse); }
+    EMarginCollapse marginBottomCollapse() const { return static_cast<EMarginCollapse>(css3NonInheritedData->marginBottomCollapse); }
+    EWordWrap wordWrap() const { return static_cast<EWordWrap>(css3InheritedData->wordWrap); }
+    ENBSPMode nbspMode() const { return static_cast<ENBSPMode>(css3InheritedData->nbspMode); }
+    EKHTMLLineBreak khtmlLineBreak() const { return static_cast<EKHTMLLineBreak>(css3InheritedData->khtmlLineBreak); }
+    EMatchNearestMailBlockquoteColor matchNearestMailBlockquoteColor() const { return static_cast<EMatchNearestMailBlockquoteColor>(css3NonInheritedData->matchNearestMailBlockquoteColor); }
     // End CSS3 Getters
 
     // Apple-specific property getter methods
@@ -1375,23 +1380,23 @@ public:
         setBorderTopLeftRadius(s); setBorderTopRightRadius(s); setBorderBottomLeftRadius(s); setBorderBottomRightRadius(s);
     }
 
-    void setBorderLeftWidth(unsigned short v)   {  SET_VAR(surround,border.left.width,v) }
-    void setBorderLeftStyle(EBorderStyle v)     {  SET_VAR(surround,border.left.style,v) }
-    void setBorderLeftColor(const Color & v)   {  SET_VAR(surround,border.left.color,v) }
-    void setBorderRightWidth(unsigned short v)  {  SET_VAR(surround,border.right.width,v) }
-    void setBorderRightStyle(EBorderStyle v)    {  SET_VAR(surround,border.right.style,v) }
-    void setBorderRightColor(const Color & v)  {  SET_VAR(surround,border.right.color,v) }
-    void setBorderTopWidth(unsigned short v)    {  SET_VAR(surround,border.top.width,v) }
-    void setBorderTopStyle(EBorderStyle v)      {  SET_VAR(surround,border.top.style,v) }
-    void setBorderTopColor(const Color & v)    {  SET_VAR(surround,border.top.color,v) }    
-    void setBorderBottomWidth(unsigned short v) {  SET_VAR(surround,border.bottom.width,v) }
-    void setBorderBottomStyle(EBorderStyle v)   {  SET_VAR(surround,border.bottom.style,v) }
-    void setBorderBottomColor(const Color & v) {  SET_VAR(surround,border.bottom.color,v) }
-    void setOutlineWidth(unsigned short v) {  SET_VAR(background,m_outline.width,v) }
+    void setBorderLeftWidth(unsigned short v)   {  SET_VAR(surround, border.left.width, v) }
+    void setBorderLeftStyle(EBorderStyle v)     {  SET_VAR(surround, border.left.m_style, v) }
+    void setBorderLeftColor(const Color & v)   {  SET_VAR(surround, border.left.color, v) }
+    void setBorderRightWidth(unsigned short v)  {  SET_VAR(surround, border.right.width, v) }
+    void setBorderRightStyle(EBorderStyle v)    {  SET_VAR(surround, border.right.m_style, v) }
+    void setBorderRightColor(const Color & v)  {  SET_VAR(surround, border.right.color, v) }
+    void setBorderTopWidth(unsigned short v)    {  SET_VAR(surround, border.top.width, v) }
+    void setBorderTopStyle(EBorderStyle v)      {  SET_VAR(surround, border.top.m_style, v) }
+    void setBorderTopColor(const Color & v)    {  SET_VAR(surround, border.top.color, v) }    
+    void setBorderBottomWidth(unsigned short v) {  SET_VAR(surround, border.bottom.width, v) }
+    void setBorderBottomStyle(EBorderStyle v)   {  SET_VAR(surround, border.bottom.m_style, v) }
+    void setBorderBottomColor(const Color & v) {  SET_VAR(surround, border.bottom.color, v) }
+    void setOutlineWidth(unsigned short v) {  SET_VAR(background, m_outline.width, v) }
     void setOutlineStyle(EBorderStyle v, bool isAuto = false)   
     {  
-        SET_VAR(background,m_outline.style,v)
-        SET_VAR(background,m_outline._auto, isAuto)
+        SET_VAR(background, m_outline.m_style, v)
+        SET_VAR(background, m_outline._auto, isAuto)
     }
     void setOutlineColor(const Color & v) {  SET_VAR(background,m_outline.color,v) }
 
@@ -1563,7 +1568,7 @@ public:
     }
     
     // To obtain at any time the pseudo state for a given link.
-    PseudoState pseudoState() const { return m_pseudoState; }
+    PseudoState pseudoState() const { return static_cast<PseudoState>(m_pseudoState); }
     void setPseudoState(PseudoState s) { m_pseudoState = s; }
     
     // To tell if this style matched attribute selectors. This makes it impossible to share.

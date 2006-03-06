@@ -113,13 +113,13 @@ private:
     int _minimumLogicalFontSize;
     int _defaultFontSize;
     int _defaultFixedFontSize;
-    uint _JavaEnabled:1;
-    uint _willLoadImagesAutomatically:1;
-    uint _pluginsEnabled:1;
-    uint _JavaScriptEnabled:1;
-    uint _JavaScriptCanOpenWindowsAutomatically:1;
-    uint _shouldPrintBackgrounds:1;
-    uint _textAreasAreResizable:1;
+    bool _JavaEnabled : 1;
+    bool _willLoadImagesAutomatically : 1;
+    bool _pluginsEnabled : 1;
+    bool _JavaScriptEnabled : 1;
+    bool _JavaScriptCanOpenWindowsAutomatically : 1;
+    bool _shouldPrintBackgrounds : 1;
+    bool _textAreasAreResizable : 1;
     
 };
 

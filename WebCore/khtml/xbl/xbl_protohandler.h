@@ -48,16 +48,16 @@ private:
     DOM::DOMString m_eventName; // The name of the event.
 
     // The following values make up 32 bits.
-    int m_phase : 2;            // The phase (capturing, bubbling, target)
+    unsigned m_phase : 2;       // The phase (capturing, bubbling, target)
     bool m_preventDefault : 1;  // Whether or not to preventDefault after executing the event handler.
-    int m_keyMask : 4;          // Which modifier keys this event handler expects to have down
+    unsigned m_keyMask : 4;     // Which modifier keys this event handler expects to have down
                                 // in order to be matched.
-    int m_misc : 8;             // Miscellaneous extra information.  For key events,
+    unsigned m_misc : 8;        // Miscellaneous extra information.  For key events,
                                 // stores whether or not we're a key code or char code.
                                 // For mouse events, stores the clickCount.
+    // 1 bit unused
     // The primary filter information for mouse/key events.
     short m_button;             // For mouse events, stores the button info.
-    int m_unused: 1;
     DOM::DOMString m_key;            // The keycode/charcode we want to match for key events
 };
 
