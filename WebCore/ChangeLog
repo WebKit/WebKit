@@ -7,7 +7,7 @@
         * editing/ReplaceSelectionCommand.cpp:
         (WebCore::ReplacementFragment::ReplacementFragment):
         Use selectNodeContents instead of rolling our own.
-        It handles the "nothing at all" edget case properly.
+        It handles the "nothing at all" edge case properly.
 
 2006-03-05  Eric Seidel  <eseidel@apple.com>
 
