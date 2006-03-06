@@ -1,5 +1,12 @@
 2006-03-06  Geoffrey Garen  <ggaren@apple.com>
 
+        Doing penance after being set straight by Joost.
+
+        * projects/compat/hitlist.html: Remove slur against QA. My humblest 
+        apologies.
+
+2006-03-06  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Maciej, Darin.
 
         Added Safari Compatibility Hit List.
