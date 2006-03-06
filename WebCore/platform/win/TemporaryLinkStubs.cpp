@@ -18,8 +18,6 @@
 #include "loader.h"
 #include "FrameView.h"
 #include "KWQScrollBar.h"
-#include "KWQObject.h"
-#include "KWQSignal.h"
 #include "KWQKJavaAppletWidget.h"
 #include "KWQScrollBar.h"
 #include "Path.h"
@@ -48,7 +46,7 @@ Widget* FrameView::topLevelWidget() const { notImplemented(); return 0; }
 QScrollBar::~QScrollBar() { notImplemented(); }
 void QScrollBar::setSteps(int,int) { notImplemented(); }
 bool QScrollBar::scroll(KWQScrollDirection,KWQScrollGranularity,float) { notImplemented(); return 0; }
-QScrollBar::QScrollBar(Qt::Orientation,Widget*) { notImplemented(); }
+QScrollBar::QScrollBar(ScrollBarOrientation) { notImplemented(); }
 bool QScrollBar::setValue(int) { notImplemented(); return 0; }
 void QScrollBar::setKnobProportion(int,int) { notImplemented(); }
 
@@ -83,7 +81,7 @@ void QTextEdit::setSelectionStart(int) { notImplemented(); }
 void QTextEdit::setCursorPosition(int,int) { notImplemented(); }
 String QTextEdit::text() const { notImplemented(); return String(); }
 void QTextEdit::setWordWrap(QTextEdit::WrapStyle) { notImplemented(); }
-void QTextEdit::setAlignment(Qt::AlignmentFlags) { notImplemented(); }
+void QTextEdit::setAlignment(HorizontalAlignment) { notImplemented(); }
 void QTextEdit::setSelectionEnd(int) { notImplemented(); }
 void QTextEdit::getCursorPosition(int*,int*) const { notImplemented(); }
 void QTextEdit::setSelectionRange(int,int) { notImplemented(); }
@@ -98,6 +96,8 @@ void Widget::setIsSelected(bool) { notImplemented(); }
 void Widget::lockDrawingFocus() { notImplemented(); }
 void Widget::unlockDrawingFocus() { notImplemented(); }
 void Widget::setDrawingAlpha(float) { notImplemented(); }
+WidgetClient* Widget::client() const { notImplemented(); return 0; }
+void Widget::setClient(WidgetClient*) { notImplemented(); }
 
 KJavaAppletWidget::KJavaAppletWidget(IntSize const&,Frame*,KXMLCore::HashMap<String,String> const&) { notImplemented(); }
 
@@ -343,7 +343,7 @@ bool RenderThemeWin::paintTextField(RenderObject*, const RenderObject::PaintInfo
 QLineEdit::QLineEdit(QLineEdit::Type) { }
 QLineEdit::~QLineEdit() { }
 void QLineEdit::setFont(WebCore::Font const&) { }
-void QLineEdit::setAlignment(Qt::AlignmentFlags) { }
+void QLineEdit::setAlignment(HorizontalAlignment) { }
 void QLineEdit::setWritingDirection(TextDirection) { }
 int QLineEdit::maxLength() const { return 0; }
 void QLineEdit::setMaxLength(int) { }
