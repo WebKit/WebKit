@@ -1,3 +1,22 @@
+2006-03-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7616
+          get all references to KJS::Node out of internal.h
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Updated for file changes.
+
+        * kjs/Parser.cpp: Added.
+        * kjs/Parser.h: Added.
+
+        * kjs/internal.cpp: Removed the Parser class.
+        * kjs/internal.h: Ditto. Also removed unnecessary declarations of classes
+        not used in this header.
+
+        * kjs/nodes.h: Added an include of "Parser.h".
+        * kjs/function.h: Added a declaration of FunctionBodyNode.
+
 2006-03-05  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej.

@@ -3,7 +3,7 @@
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -22,13 +22,13 @@
  *
  */
 
-#ifndef _NODES_H_
-#define _NODES_H_
+#ifndef NODES_H_
+#define NODES_H_
 
-#include <kxmlcore/RefPtr.h>
-#include <kxmlcore/ListRefPtr.h>
-
+#include "Parser.h"
 #include "internal.h"
+#include <kxmlcore/ListRefPtr.h>
+#include <kxmlcore/RefPtr.h>
 
 namespace KJS {
 

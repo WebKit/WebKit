@@ -29,8 +29,9 @@
 
 namespace KJS {
 
-  class Parameter;
   class ActivationImp;
+  class FunctionBodyNode;
+  class Parameter;
 
   /**
    * @short Implementation class for internal Functions.

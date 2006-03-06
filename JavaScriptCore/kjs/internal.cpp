@@ -48,8 +48,6 @@
 #include <math.h>
 #include <stdio.h>
 
-extern int kjsyyparse();
-
 namespace KJS {
 
 #if PLATFORM(WIN_OS)
@@ -248,92 +246,6 @@ void ContextImp::mark()
   for (ContextImp *context = this; context; context = context->_callingContext) {
     context->scope.mark();
   }
-}
-
-// ------------------------------ Parser ---------------------------------------
-
-static RefPtr<ProgramNode> *progNode;
-int Parser::sid = 0;
-
-static Vector<RefPtr<Node> >* newNodes;
-static HashSet<Node*>* nodeCycles;
-
-void Parser::saveNewNode(Node *node)
-{
-    if (!newNodes)
-        newNodes = new Vector<RefPtr<Node> >;
-
-    newNodes->append(node);
-}
-
-void Parser::noteNodeCycle(Node *node)
-{
-    if (!nodeCycles)
-        nodeCycles = new HashSet<Node*>;
-    nodeCycles->add(node);
-}
-
-void Parser::removeNodeCycle(Node *node)
-{
-    ASSERT(nodeCycles);
-    nodeCycles->remove(node);
-}
-
-static void clearNewNodes()
-{
-    if (nodeCycles) {
-        for (HashSet<Node*>::iterator it = nodeCycles->begin(); it != nodeCycles->end(); ++it)
-            (*it)->breakCycle();
-        delete nodeCycles;
-        nodeCycles = 0;
-    }
-
-    delete newNodes;
-    newNodes = 0;
-}
-
-RefPtr<ProgramNode> Parser::parse(const UString &sourceURL, int startingLineNumber,
-                                     const UChar *code, unsigned int length, int *sourceId,
-                                     int *errLine, UString *errMsg)
-{
-  if (errLine)
-    *errLine = -1;
-  if (errMsg)
-    *errMsg = 0;
-  if (!progNode)
-    progNode = new RefPtr<ProgramNode>;
-
-  Lexer::curr()->setCode(sourceURL, startingLineNumber, code, length);
-  *progNode = 0;
-  sid++;
-  if (sourceId)
-    *sourceId = sid;
-  // Enable this (and the #define YYDEBUG in grammar.y) to debug a parse error
-  //extern int kjsyydebug;
-  //kjsyydebug=1;
-  int parseError = kjsyyparse();
-  bool lexError = Lexer::curr()->sawError();
-  Lexer::curr()->doneParsing();
-  RefPtr<ProgramNode> prog = *progNode;
-  *progNode = 0;
-
-  clearNewNodes();
-
-  if (parseError || lexError) {
-    int eline = Lexer::curr()->lineNo();
-    if (errLine)
-      *errLine = eline;
-    if (errMsg)
-      *errMsg = "Parse error";
-    return RefPtr<ProgramNode>();
-  }
-
-  return prog;
-}
-
-void Parser::accept(ProgramNode *prog)
-{
-  *progNode = prog;
 }
 
 // ------------------------------ InterpreterImp -------------------------------

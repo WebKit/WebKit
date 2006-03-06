@@ -3,7 +3,7 @@
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -40,12 +40,8 @@
 
 namespace KJS {
 
-  class Node;
-  class ProgramNode;
-  class FunctionBodyNode;
-  class FunctionPrototype;
-  class FunctionImp;
   class Debugger;
+  class FunctionPrototype;
 
   // ---------------------------------------------------------------------------
   //                            Primitive impls
@@ -135,34 +131,13 @@ namespace KJS {
 
 
   // ---------------------------------------------------------------------------
-  //                            Parsing & evaluation
+  //                            Evaluation
   // ---------------------------------------------------------------------------
 
   enum CodeType { GlobalCode,
                   EvalCode,
                   FunctionCode,
                   AnonymousCode };
-
-  /**
-   * @internal
-   *
-   * Parses ECMAScript source code and converts into ProgramNode objects, which
-   * represent the root of a parse tree. This class provides a conveniant workaround
-   * for the problem of the bison parser working in a static context.
-   */
-  class Parser {
-  public:
-    static RefPtr<ProgramNode> parse(const UString &sourceURL, int startingLineNumber,
-                                        const UChar *code, unsigned int length, int *sourceId = 0,
-                                        int *errLine = 0, UString *errMsg = 0);
-    static void accept(ProgramNode *prog);
-
-    static void saveNewNode(Node *node);
-    static void noteNodeCycle(Node *node);
-    static void removeNodeCycle(Node *node);
-
-    static int sid;
-  };
 
   class SavedBuiltinsInternal {
     friend class InterpreterImp;
