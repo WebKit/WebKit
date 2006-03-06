@@ -30,10 +30,10 @@
 
 namespace WebCore {
 
-void ScrollView::updateContents(const IntRect& dirtyRect, bool now)
+void ScrollView::updateContents(const IntRect&, bool now)
 {
-    RECT repaintRect = RECT(dirtyRect);
-    InvalidateRect(windowHandle(), &repaintRect, true);
+    // FIXME: Too many other things are broken to turn on precise invalidation
+    InvalidateRect(windowHandle(), 0, true);
     if (now)
         UpdateWindow(windowHandle());
 }

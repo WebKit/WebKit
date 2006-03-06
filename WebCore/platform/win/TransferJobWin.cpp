@@ -34,8 +34,8 @@ namespace WebCore {
     
 TransferJobInternal::~TransferJobInternal()
 {
-	if (m_fileHandle)
-		CloseHandle(m_fileHandle);
+    if (m_fileHandle)
+        CloseHandle(m_fileHandle);
 }
 
 TransferJob::~TransferJob()
@@ -48,13 +48,13 @@ bool TransferJob::start(DocLoader* docLoader)
         QString path = d->URL.path();
         // windows does not enjoy a leading slash on paths
         if (path[0] == '/')
-	        path = path.mid(1);
-	    d->m_fileHandle = CreateFileA(path.ascii(), GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+            path = path.mid(1);
+        d->m_fileHandle = CreateFileA(path.ascii(), GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     }
 
     if (!d->m_fileHandle || d->m_fileHandle == INVALID_HANDLE_VALUE) {
         delete this;
-	return false;
+        return false;
     }
 
     d->m_fileLoadTimer.startOneShot(0.0);
@@ -68,10 +68,10 @@ void TransferJob::fileLoadTimer(Timer<TransferJob>* timer)
 
     do {
         const int bufferSize = 8192;
-	char buffer[bufferSize];
-	result = ReadFile(d->m_fileHandle, &buffer, bufferSize, &bytesRead, NULL); 
-	d->client->receivedData(this, buffer, bytesRead);
-	// Check for end of file. 
+        char buffer[bufferSize];
+        result = ReadFile(d->m_fileHandle, &buffer, bufferSize, &bytesRead, NULL); 
+        d->client->receivedData(this, buffer, bytesRead);
+        // Check for end of file. 
     } while (result && bytesRead);
 
     CloseHandle(d->m_fileHandle);

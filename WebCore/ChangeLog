@@ -1,5 +1,17 @@
 2006-03-05  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by darin.
+
+        Make updateContents invalidate entire window for now.
+        Fix indentation in fileLoadTimer.
+
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::updateContents):
+        * platform/win/TransferJobWin.cpp:
+        (WebCore::TransferJob::fileLoadTimer):
+
+2006-03-05  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by adele.
 
         Add missing files to vcproj (fix win32 build).
