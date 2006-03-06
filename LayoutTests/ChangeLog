@@ -1,3 +1,14 @@
+2006-03-06  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+        Layout test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7566
+
+        * fast/text/updateNewFont-expected.checksum: Added.
+        * fast/text/updateNewFont-expected.png: Added.
+        * fast/text/updateNewFont-expected.txt: Added.
+        * fast/text/updateNewFont.html: Added.
+
 2006-03-06  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
