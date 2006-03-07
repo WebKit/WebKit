@@ -70,8 +70,8 @@ sub wanted
 my %exceptions = (
     "Array" => 1,
     "AtomicString" => 1,
-    "KWQList" => 1,
-    "KWQValueList" => 1,
+    "DeprecatedValueList" => 1,
+    "DeprecatedPtrList" => 1,
     "QualifiedName" => 1,
     "String" => 1,
     "feature" => 1,
@@ -123,8 +123,43 @@ my %otherRenames = (
     "xslt_processorimpl" => "XSLTProcessorImpl",
     "KWQ_BLOCK_EXCEPTIONS" => "BEGIN_BLOCK_OBJC_EXCEPTIONS",
     "KWQ_UNBLOCK_EXCEPTIONS" => "END_BLOCK_OBJC_EXCEPTIONS",
-    "KWQReportBlockedException" => "WebCoreReportBlockedException",
+    "KWQReportBlockedException" => "ReportBlockedObjCException",
     "KWQExceptions" => "BlockExceptions",
+    "KWQAccObject" => "WebCoreAXObject",
+    "KWQAccObjectID" => "WebCoreAXID",
+    "KWQAccObjectCache" => "AccessibilityObjectCache",
+    "accObjectID" => "axObjectID",
+    "setAccObjectID" => "setAXObjectID",
+    "removeAccObjectID" => "removeAXObjectID",
+    "KWQClipboard" => "ClipboardMac",
+    "KWQTextField" => "WebCoreTextField",
+    "KWQTextArea" => "WebCoreTextArea",
+    "KWQTextAreaTextView" => "WebCoreTextView",
+    "KWQValueList" => "DeprecatedValueList",
+    "QValueList" => "DeprecatedValueList",
+    "QString" => "DeprecatedString",
+    "QCString" => "DeprecatedCString",
+    "Array" => "DeprecatedArray",
+    "ByteArray" => "DeprecatedByteArray",
+    "KURL" => "DeprecatedURL",
+    "QStringList" => "DeprecatedStringList",
+    "KWQPtrList" => "DeprecatedPtrList",
+    "QPtrList" => "DeprecatedPtrList",
+    "KWQListImpl" => "DeprecatedPtrListImpl",
+    "KWQValueListImpl" => "DeprecatedValueListImpl",
+    "QPtrQueue" => "DeprecatedPtrQueue",
+    "KWQValueListNodeImpl" => "DeprecatedValueListImplNode",
+    "KWQValueListIteratorImpl" => "DeprecatedValueListImplIterator",
+    "KWQListIteratorImpl" => "DeprecatedPtrListImplIterator",
+    "QPtrListIterator" => "DeprecatedPtrListIterator",
+    "QValueListConstIterator" => "DeprecatedValueListConstIterator",
+    "QValueListIterator" => "DeprecatedValueListIterator",
+    "QValueListNode" => "DeprecatedValueListNode",
+    "KWQRenderTreeDebug" => "RenderTreeTextForm",
+    "QRegExp" => "Regexp",
+    "KWQRegExp" => "Regexp",
+    "KJavaAppletWidget" => "JavaAppletWidget",
+    "KWQKJavaAppletWidget" => "JavaAppletWidget",
 );
 
 # rename most files with names ending in Impl
@@ -163,8 +198,8 @@ for my $file (sort @paths) {
     # fix DOM and khtml namespaces
     $newContents =~ s/\bDOM::/WebCore::/g;
     $newContents =~ s/\bkhtml::/WebCore::/g;
-    $newContents =~ s/namespace DOM/namespace WebCore/g;
-    $newContents =~ s/namespace khtml/namespace WebCore/g;
+    $newContents =~ s/namespace DOM\b/namespace WebCore/g;
+    $newContents =~ s/namespace khtml\b/namespace WebCore/g;
 
     if ($file !~ /\.(pm|idl)$/) {
         # fix DOMString
