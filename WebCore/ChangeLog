@@ -1,3 +1,9 @@
+2006-03-07  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        * platform/mac/GraphicsContextMac.mm: Add Widget.h to fix no-svg build.
+
 2006-03-06  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.

@@ -37,6 +37,7 @@
 #import "WebCoreImageRendererFactory.h"
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
+#import "Widget.h"
 
 // FIXME: A lot more of this should use CoreGraphics instead of AppKit.
 // FIXME: A lot more of this should move into GraphicsContextCG.cpp.
