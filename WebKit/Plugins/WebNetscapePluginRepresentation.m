@@ -71,11 +71,13 @@
     if (instance == NULL) {
         [self setRequestURL:[[_dataSource request] URL]];
         [self setPluginPointer:[view pluginPointer]];
+        ASSERT(instance);
         [self startStreamWithResponse:[ds response]];
     }
     
-    ASSERT(instance != NULL);
-    [self receivedData:data];
+    // Do not add data if there is no NPP instance.  The instance is cleared when the stream is destroyed.
+    if (instance)
+        [self receivedData:data];
 }
 
 - (void)receivedError:(NSError *)error withDataSource:(WebDataSource *)ds

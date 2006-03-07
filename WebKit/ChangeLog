@@ -1,3 +1,22 @@
+2006-03-06  Tim Omernick  <timo@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        <rdar://problem/4457574> assertion failure watching trailers at netflix.com -[WebNetscapePluginRepresentation
+        receivedData:withDataSource:] + 684
+
+        * Plugins/WebNetscapePluginRepresentation.m:
+        (-[WebNetscapePluginRepresentation receivedData:withDataSource:]):
+        Moved the ASSERT(instance) to the block that actually requires an assertion -- the plugin view should never
+        have a NULL instance by the time we start the NPStream (by calling -startStreamWithResponse:).
+        Some stream teardown logic changed with my fix to 4153419: when a WebBaseNetscapePluginStream is destroyed,
+        it now clears its NPP instance backpointer.  The WebBaseNetscapePluginStream may be destroyed from within
+        -startStreamWithResponse: if NPP_NewStream() returns an error.  We can handle this gracefully by changing
+        the assertion before -receivedData: to a simple NULL check.
+        This is unrelated to the Radar, but prior to this fix, we would attempt an NPP_Write() with the initial
+        stream data even if NPP_NewStream() returned an error.  Seems like that alone could cause issues, though
+        I'm guessing that plugins handle this in practice.
+
 2006-03-03  Timothy Hatcher  <timothy@apple.com>
 
         Reviewed by Darin.
