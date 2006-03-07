@@ -1,3 +1,19 @@
+2006-03-07  Dave Hyatt <hyatt@apple.com>
+
+        Eliminate the unused parameters of the QString version of drawText.
+
+        Reviewed by eric
+
+        * platform/GraphicsContext.h:
+        * platform/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawText):
+        * platform/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContext::drawText):
+        * rendering/render_image.cpp:
+        (WebCore::RenderImage::paint):
+        * rendering/render_list.cpp:
+        (WebCore::RenderListMarker::paint):
+
 2006-03-07  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.

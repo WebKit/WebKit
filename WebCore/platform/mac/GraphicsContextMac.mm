@@ -513,7 +513,7 @@ void GraphicsContext::updateTextRenderer()
     }
 }
     
-void GraphicsContext::drawText(int x, int y, int tabWidth, int xpos, int, int, int alignmentFlags, const QString& qstring)
+void GraphicsContext::drawText(int x, int y, int tabWidth, int xpos, int alignmentFlags, const QString& qstring)
 {
     if (m_data->state.paintingDisabled)
         return;

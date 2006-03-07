@@ -123,7 +123,7 @@ namespace WebCore {
         void addClip(const IntRect&);
         void addRoundedRectClip(const IntRect&, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight);
 
-        void drawText(int x, int y, int tabWidth, int xpos, int, int, int alignmentFlags, const QString&);
+        void drawText(int x, int y, int tabWidth, int xpos, int alignmentFlags, const QString&);
         void drawHighlightForText(int x, int y, int h, int tabWidth, int xpos,
             const QChar*, int length, int from, int to, int toAdd,
             const Color& backgroundColor, TextDirection, bool visuallyOrdered,
