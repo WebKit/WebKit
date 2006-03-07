@@ -1,3 +1,12 @@
+2006-03-07  Adele Peterson  <adele@apple.com>
+
+        Updating tests for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7319
+        Can't see caret at the end of a contenteditable div with overflow:hidden
+
+        * fast/clip/outline-overflowClip-expected.txt:
+        * fast/overflow/overflow-focus-ring-expected.txt:
+
 2006-03-07  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Darin.
