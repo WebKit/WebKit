@@ -3,13 +3,15 @@ XCODE_OPTIONS = `perl -I../WebKitTools/Scripts -Mwebkitdirs -e 'print XcodeOptio
 all:
 	xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS)
 
-debug d development dev develop:
+debug d development dev develop: force
 	../WebKitTools/Scripts/set-webkit-configuration --debug
 	xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS)
 
-release r deployment dep deploy:
+release r deployment dep deploy: force
 	../WebKitTools/Scripts/set-webkit-configuration --release
 	xcodebuild $(OTHER_OPTIONS) $(XCODE_OPTIONS)
 
 clean:
 	xcodebuild -alltargets clean $(XCODE_OPTIONS)
+
+force: ;
