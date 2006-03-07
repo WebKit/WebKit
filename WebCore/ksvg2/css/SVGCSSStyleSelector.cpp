@@ -29,26 +29,20 @@
 
 #include "config.h"
 #if SVG_SUPPORT
+#include "cssstyleselector.h"
 
-#include <q3cstring.h>
-
-#include "css_ruleimpl.h"
-
-#include "ksvg.h"
-#include "SVGNames.h"
-#include "cssvalues.h"
-#include <ksvg2/css/cssvalues.h>
 #include "SVGColorImpl.h"
+#include "SVGNames.h"
 #include "SVGPaintImpl.h"
-#include <ksvg2/css/cssproperties.h>
 #include "SVGRenderStyle.h"
 #include "SVGRenderStyleDefs.h"
 #include "SVGStyledElementImpl.h"
-#include "cssstyleselector.h"
-
+#include "css_ruleimpl.h"
+#include "cssvalues.h"
+#include "ksvg.h"
+#include <ksvg2/css/cssproperties.h>
+#include <ksvg2/css/cssvalues.h>
 #include <stdlib.h>
-
-using namespace WebCore;
 
 #define HANDLE_INHERIT(prop, Prop) \
 if(isInherit) \
@@ -87,6 +81,8 @@ if(id == propID) \
     svgstyle->set##Prop(SVGRenderStyle::initial##Value());\
     return;\
 }
+
+namespace WebCore {
 
 void CSSStyleSelector::applySVGProperty(int id, CSSValueImpl *value)
 {
@@ -734,6 +730,7 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValueImpl *value)
     }
 }
 
+}
+
 // vim:ts=4:noet
 #endif // SVG_SUPPORT
-

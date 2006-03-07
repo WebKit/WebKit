@@ -1,0 +1,19 @@
+This test exercises the source URL and line number that is embedded in JavaScript exceptions, which is displayed in places like the JavaScript console. It differs from exception-linenums.html in that the line numbers are derived from within the HTML source, not a JavaScript source file.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS typeof e.sourceURL is "string"
+PASS e.line is 21
+PASS typeof e.sourceURL is "string"
+PASS e.line is 31
+PASS typeof e.sourceURL is "string"
+PASS e.line is 41
+PASS typeof e.sourceURL is "string"
+PASS e.line is 51
+PASS typeof e.sourceURL is "string"
+PASS e.line is 14
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

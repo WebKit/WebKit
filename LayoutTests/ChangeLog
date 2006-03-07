@@ -1,3 +1,44 @@
+2006-03-07  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
+        - Tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=3905
+        Missing </title> makes page blank
+
+        * fast/js/exception-linenums-in-html-1-expected.txt: Added.
+        * fast/js/exception-linenums-in-html-1.html: Added.
+
+        Tests line numbers from HTML source files instead of JavaScript source files
+        which is tested by fast/js/exception-linenums.html.  This test does not test
+        changes made for Bug 3905, but was added for better coverage.
+
+        * fast/js/exception-linenums-in-html-2-expected.txt: Added.
+        * fast/js/exception-linenums-in-html-2.html: Added.
+
+        Identical to fast/js/exception-linenums-in-html-1.html except that it contains
+        an unclosed <title> tag, which causes the code path for Bug 3905 to be tested.
+
+        * fast/js/missing-title-end-tag-js-expected.txt: Added.
+        * fast/js/missing-title-end-tag-js.html: Added.
+
+        While developing a fix for Bug 3905, a state variable (scriptCodeSize) was not
+        reset in the tokenizer causing the next <script></script> tags to contain the
+        entire contents of the document after the open <title> tag.  This test case
+        tests for that condition.
+
+        * fast/tokenizer/missing-title-end-tag-1-expected.checksum: Added.
+        * fast/tokenizer/missing-title-end-tag-1-expected.png: Added.
+        * fast/tokenizer/missing-title-end-tag-1-expected.txt: Added.
+        * fast/tokenizer/missing-title-end-tag-1.html: Added.
+        * fast/tokenizer/missing-title-end-tag-2-expected.checksum: Added.
+        * fast/tokenizer/missing-title-end-tag-2-expected.png: Added.
+        * fast/tokenizer/missing-title-end-tag-2-expected.txt: Added.
+        * fast/tokenizer/missing-title-end-tag-2.html: Added.
+
+        The first test case contains an unclosed <title> tag in <head>, while the
+        second test case contains an unclosed <title> tag in <body>.  These two test
+        cases result in different code paths being taken.
+
 2006-03-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin.

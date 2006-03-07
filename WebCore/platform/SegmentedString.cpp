@@ -24,6 +24,35 @@
 
 namespace WebCore {
 
+SegmentedString::SegmentedString(const SegmentedString &other) :
+    m_pushedChar1(other.m_pushedChar1), m_pushedChar2(other.m_pushedChar2), m_currentString(other.m_currentString),
+    m_substrings(other.m_substrings), m_lines(other.m_lines), m_composite(other.m_composite)
+{
+    if (other.m_currentChar == &other.m_pushedChar1)
+        m_currentChar = &m_pushedChar1;
+    else if (other.m_currentChar == &other.m_pushedChar2)
+        m_currentChar = &m_pushedChar2;
+    else
+        m_currentChar = other.m_currentChar;
+}
+
+const SegmentedString& SegmentedString::operator=(const SegmentedString &other)
+{
+    m_pushedChar1 = other.m_pushedChar1;
+    m_pushedChar2 = other.m_pushedChar2;
+    m_currentString = other.m_currentString;
+    m_substrings = other.m_substrings;
+    m_lines = other.m_lines;
+    m_composite = other.m_composite;
+    if (other.m_currentChar == &other.m_pushedChar1)
+        m_currentChar = &m_pushedChar1;
+    else if (other.m_currentChar == &other.m_pushedChar2)
+        m_currentChar = &m_pushedChar2;
+    else
+        m_currentChar = other.m_currentChar;
+    return *this;
+}
+
 uint SegmentedString::length() const
 {
     uint length = m_currentString.m_length;

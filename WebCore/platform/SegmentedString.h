@@ -73,6 +73,9 @@ public:
     SegmentedString() : m_currentChar(0), m_lines(0), m_composite(false) {}
     SegmentedString(const QChar *str, int length) : m_currentString(str, length), m_currentChar(m_currentString.m_current), m_lines(0), m_composite(false) {}
     SegmentedString(const QString &str) : m_currentString(str), m_currentChar(m_currentString.m_current), m_lines(0), m_composite(false) {}
+    SegmentedString(const SegmentedString&);
+
+    const SegmentedString& operator=(const SegmentedString&);
 
     void clear();
 

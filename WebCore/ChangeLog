@@ -1,3 +1,32 @@
+2006-03-07  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
+        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=3905
+        Missing </title> makes page blank
+
+        Test: fast/js/exception-linenums-in-html-1.html
+        Test: fast/js/exception-linenums-in-html-2.html
+        Test: fast/js/missing-title-end-tag-js.html
+        Test: fast/tokenizer/missing-title-end-tag-1.html
+        Test: fast/tokenizer/missing-title-end-tag-2.html
+
+        * khtml/html/htmlparser.cpp:
+        (WebCore::HTMLParser::handleError): Add check for missing </title> tag and handle
+        this condition if identified.
+        * khtml/html/htmltokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseTag): If parseSpecial() consumes the rest of the
+        document looking for a </title> tag, reset the state of the tokenizer and
+        retokenize with no special handling for <title>.  The parser will handle the
+        missing </title> tag in HTMLParser::handleError().
+        * platform/SegmentedString.cpp:
+        (WebCore::SegmentedString::SegmentedString): Added copy constructor.
+        (WebCore::SegmentedString::operator=): Added assignment operator.  Previously the
+        compiler was generating a default method for the assignment operator, but it did
+        not handle m_currentChar properly.
+        * platform/SegmentedString.h: Added prototypes for copy constructor and
+        assignment operator.
+
 2006-03-07  Eric Seidel  <eseidel@apple.com>
 
         Fix win32 link stubs.

@@ -1,0 +1,9 @@
+This test checks that the first <script> tag after an unclosed <title> tag is parsed correctly. Early versions of the patch for Bugzilla Bug 3905 did not reset a state variable properly, causing the first <script></script> tag in the document to contain everything after the <title> tag.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
