@@ -2161,6 +2161,9 @@ int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSel
             int rp = currBox->xPos() + currBox->width();
             right = kMax(right, rp);
         }
+        // If this node is a root editable element, then the rightmostPosition should account for a caret at the end.
+        if (node()->isContentEditable() && node() == node()->rootEditableElement() && style()->direction() == LTR)
+            right += 1;
     }
     
     return right;

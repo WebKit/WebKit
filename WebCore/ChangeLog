@@ -1,3 +1,16 @@
+2006-03-07  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=7319
+        Can't see caret at the end of a contenteditable div with overflow:hidden
+
+        No tests added since I don't think the blinking caret will show up in our tests.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::rightmostPosition): When calculating the rightmostPosition for editable blocks, 
+        we need to account for the caret that can be drawn 1 px past the last child inline box.
+
 2006-03-07  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Darin.
