@@ -22,10 +22,11 @@
 #include "KWQScrollBar.h"
 #include "Path.h"
 #include "MouseEvent.h"
-#include "KWQKCookieJar.h"
+#include "CookieJar.h"
 #include "Screen.h"
 #include "History.h"
-#include "KWQKLocale.h"
+#include "Language.h"
+#include "LocalizedStrings.h"
 #include "PlugInInfoStore.h"
 #include "render_theme.h"
 #include "FrameWin.h"
@@ -33,6 +34,7 @@
 #include "TransferJob.h"
 #include "RenderThemeWin.h"
 #include "FontRenderer.h"
+#include "TextBoundaries.h"
 
 using namespace WebCore;
 
@@ -162,20 +164,20 @@ Cursor::Cursor(Image*) { notImplemented(); }
 const Cursor& WebCore::moveCursor() { notImplemented(); return localCursor; }
 
 MouseEvent::MouseEvent() { notImplemented(); }
-QString searchableIndexIntroduction() { notImplemented(); return QString(); }
+String WebCore::searchableIndexIntroduction() { notImplemented(); return String(); }
 
-void KWQKCookieJar::setCookie(KURL const&,KURL const&,QString const&) { notImplemented(); }
-QString KWQKCookieJar::cookie(KURL const&) { notImplemented(); return QString(); }
-bool KWQKCookieJar::cookieEnabled() { notImplemented(); return false; }
+void WebCore::setCookies(KURL const&,KURL const&,String const&) { notImplemented(); }
+String WebCore::cookies(KURL const&) { notImplemented(); return String(); }
+bool WebCore::cookiesEnabled() { notImplemented(); return false; }
 
 IntRect WebCore::screenRect(Widget*) { notImplemented(); return IntRect(); }
 int WebCore::screenDepth(Widget*) { notImplemented(); return 96; }
 IntRect WebCore::usableScreenRect(Widget*) { notImplemented(); return IntRect(0,0,800,600); }
 
-int KWQFindNextSentenceFromIndex(QChar const*,int,int,bool) { notImplemented(); return 0; }
-void KWQFindSentenceBoundary(QChar const*,int,int,int*,int*) { notImplemented(); }
-int KWQFindNextWordFromIndex(QChar const*,int,int,bool) { notImplemented(); return 0; }
-void KWQFindWordBoundary(QChar const*,int,int,int*,int*) { notImplemented(); }
+int WebCore::findNextSentenceFromIndex(QChar const*,int,int,bool) { notImplemented(); return 0; }
+void WebCore::findSentenceBoundary(QChar const*,int,int,int*,int*) { notImplemented(); }
+int WebCore::findNextWordFromIndex(QChar const*,int,int,bool) { notImplemented(); return 0; }
+void WebCore::findWordBoundary(QChar const*,int,int,int*,int*) { notImplemented(); }
 
 PluginInfo*PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned) { notImplemented(); return 0;}
 unsigned PlugInInfoStore::pluginCount() const { notImplemented(); return 0; }
@@ -247,10 +249,10 @@ void Font::drawHighlightForText(WebCore::GraphicsContext*, int, int, int, int, i
 
 // Completely empty stubs (mostly to allow DRT to run):
 bool WebCore::historyContains(QString const&) { return false; }
-QString submitButtonDefaultLabel() { return "Submit"; }
-QString inputElementAltText() { return QString(); }
-QString resetButtonDefaultLabel() { return "Reset"; }
-QString KLocale::language() { return "en"; }
+String WebCore::submitButtonDefaultLabel() { return "Submit"; }
+String WebCore::inputElementAltText() { return QString(); }
+String WebCore::resetButtonDefaultLabel() { return "Reset"; }
+String WebCore::defaultLanguage() { return "en"; }
 
 void FrameWin::restoreDocumentState() { }
 void FrameWin::partClearedInBegin() { }

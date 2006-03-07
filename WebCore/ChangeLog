@@ -1,3 +1,21 @@
+2006-03-07  Eric Seidel  <eseidel@apple.com>
+
+        Fix win32 link stubs.
+
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::searchableIndexIntroduction):
+        (WebCore::setCookies):
+        (WebCore::cookies):
+        (WebCore::cookiesEnabled):
+        (WebCore::findNextSentenceFromIndex):
+        (WebCore::findSentenceBoundary):
+        (WebCore::findNextWordFromIndex):
+        (WebCore::findWordBoundary):
+        (WebCore::submitButtonDefaultLabel):
+        (WebCore::inputElementAltText):
+        (WebCore::resetButtonDefaultLabel):
+        (WebCore::defaultLanguage):
+
 2006-03-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele, except for the first change listed.
