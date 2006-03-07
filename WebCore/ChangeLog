@@ -1,5 +1,19 @@
 2006-03-06  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by hyatt.
+
+        Make spinneret run again, fix webview to support dynamic resize.
+
+        * platform/win/TemporaryLinkStubs.cpp:
+        (Widget::setDrawingAlpha):
+        * platform/win/WidgetWin.cpp:
+        (WebCore::Widget::Widget):
+        (WebCore::Widget::setClient):
+        (WebCore::Widget::client):
+        (WebCore::Widget::frameGeometry):
+
+2006-03-06  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by darin.
 
         Fix win32 build.

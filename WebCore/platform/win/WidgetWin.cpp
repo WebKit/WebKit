@@ -39,12 +39,14 @@ class WidgetPrivate
 public:
     HWND windowHandle;
     Font font;
+    WidgetClient* client;
 };
 
 Widget::Widget()
     : data(new WidgetPrivate)
 {
     data->windowHandle = 0;
+    data->client = 0;
 }
 
 Widget::Widget(HWND hWnd)
@@ -73,11 +75,25 @@ void Widget::setActiveWindow()
     BringWindowToTop(data->windowHandle);
 }
 
+void Widget::setClient(WidgetClient* c)
+{
+    data->client = c;
+}
+
+WidgetClient* Widget::client() const
+{
+    return data->client;
+}
+
 IntRect Widget::frameGeometry() const
 {
     RECT frame;
-    if (GetWindowRect(data->windowHandle, &frame))
+    if (GetWindowRect(data->windowHandle, &frame)) {
+        if (HWND parent = GetParent(data->windowHandle))
+            MapWindowPoints(NULL, parent, (LPPOINT)&frame, 2);
         return frame;
+    }
+    
     return IntRect();
 }
 
