@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#import "KWQTextUtilities.h"
+#import "config.h"
+#import "TextBoundaries.h"
 
-#import "QString.h"
-#import <AppKit/NSAttributedString.h>
+#import <Cocoa/Cocoa.h>
 #import <unicode/ubrk.h>
-#import <unicode/ustring.h>
-#import <unicode/utypes.h>
 
-void KWQFindWordBoundary(const QChar *chars, int len, int position, int *start, int *end)
+namespace WebCore {
+
+void findWordBoundary(const QChar* chars, int len, int position, int* start, int* end)
 {
-    NSString *string = [[NSString alloc] initWithCharactersNoCopy:const_cast<unichar *>(reinterpret_cast<const unichar *>(chars))
+    NSString* string = [[NSString alloc] initWithCharactersNoCopy:const_cast<unichar*>(reinterpret_cast<const unichar*>(chars))
         length:len freeWhenDone:NO];
-    NSAttributedString *attr = [[NSAttributedString alloc] initWithString:string];
+    NSAttributedString* attr = [[NSAttributedString alloc] initWithString:string];
     NSRange range = [attr doubleClickAtIndex:(position >= len) ? len - 1 : position];
     [attr release];
     [string release];
@@ -44,44 +43,46 @@ void KWQFindWordBoundary(const QChar *chars, int len, int position, int *start, 
     *end = range.location + range.length;
 }
 
-int KWQFindNextWordFromIndex(const QChar *chars, int len, int position, bool forward)
+int findNextWordFromIndex(const QChar* chars, int len, int position, bool forward)
 {   
-    NSString *string = [[NSString alloc] initWithCharactersNoCopy:const_cast<unichar *>(reinterpret_cast<const unichar *>(chars))
+    NSString* string = [[NSString alloc] initWithCharactersNoCopy:const_cast<unichar*>(reinterpret_cast<const unichar*>(chars))
         length:len freeWhenDone:NO];
-    NSAttributedString *attr = [[NSAttributedString alloc] initWithString:string];
+    NSAttributedString* attr = [[NSAttributedString alloc] initWithString:string];
     int result = [attr nextWordFromIndex:position forward:forward];
     [attr release];
     [string release];
     return result;
 }
 
-// This code was swiped from the CarbonCore UnicodeUtilities.  One change from that is to use the empty
-// string instead of the "old locale model" as the ultimate fallback.  This change is per the UnicodeUtilities
+// This code was swiped from the CarbonCore UnicodeUtilities. One change from that is to use the empty
+// string instead of the "old locale model" as the ultimate fallback. This change is per the UnicodeUtilities
 // engineer.
+//
 // NOTE: this abviously could be fairly expensive to do.  If it turns out to be a bottleneck, it might
 // help to instead put a call in the iteratory initializer to set the current text break locale.  Unfortunately,
 // we can not cache it across calls to our API since the result can change without our knowing (AFAIK
 // there are no notifiers for AppleTextBreakLocale and/or AppleLanguages changes).
-static char * currentTextBreakLocaleID(void)
+static char* currentTextBreakLocaleID()
 {
-#define localeStringLength 32
-    static char     localeStringBuffer[localeStringLength];
-    char *          localeString = &localeStringBuffer[0];
+    const int localeStringLength = 32;
+    static char localeStringBuffer[localeStringLength] = { 0 };
+    char* localeString = &localeStringBuffer[0];
     
-    // empty string means "root locale", which what we use if we can't use a pref
-    *localeString = 0;
+    // Empty string means "root locale", which what we use if we can't use a pref.
     
     // We get the parts string from AppleTextBreakLocale pref.
     // If that fails then look for the first language in the AppleLanguages pref.
-    CFStringRef prefLocaleStr = (CFStringRef) CFPreferencesCopyValue( CFSTR("AppleTextBreakLocale"), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost );
+    CFStringRef prefLocaleStr = (CFStringRef)CFPreferencesCopyValue(CFSTR("AppleTextBreakLocale"),
+        kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
     if (!prefLocaleStr) {
-        CFArrayRef appleLangArr = (CFArrayRef) CFPreferencesCopyValue( CFSTR("AppleLanguages"), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost );
+        CFArrayRef appleLangArr = (CFArrayRef)CFPreferencesCopyValue(CFSTR("AppleLanguages"),
+            kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost);
         if (appleLangArr)  {
             // Take the topmost language. Retain so that we can blindly release later.                                                                                                   
-            prefLocaleStr = (CFStringRef) CFArrayGetValueAtIndex(appleLangArr, 0);
+            prefLocaleStr = (CFStringRef)CFArrayGetValueAtIndex(appleLangArr, 0);
             if (prefLocaleStr)
-                CFRetain( prefLocaleStr ); 
-            CFRelease( appleLangArr );
+                CFRetain(prefLocaleStr); 
+            CFRelease(appleLangArr);
         }
     }
     
@@ -98,14 +99,15 @@ static char * currentTextBreakLocaleID(void)
     return localeString;
 }
 
-void KWQFindSentenceBoundary(const QChar *chars, int len, int position, int *start, int *end)
+void findSentenceBoundary(const QChar* chars, int len, int position, int* start, int* end)
 {
-    int  startPos = 0;
-    int  endPos = 0;
+    int startPos = 0;
+    int endPos = 0;
 
     UErrorCode status = U_ZERO_ERROR;
-    UBreakIterator *boundary = ubrk_open(UBRK_SENTENCE, currentTextBreakLocaleID(), const_cast<unichar *>(reinterpret_cast<const unichar *>(chars)), len, &status);
-    if ( boundary && U_SUCCESS(status) ) {
+    UBreakIterator* boundary = ubrk_open(UBRK_SENTENCE, currentTextBreakLocaleID(),
+        const_cast<unichar*>(reinterpret_cast<const unichar*>(chars)), len, &status);
+    if (boundary && U_SUCCESS(status)) {
         startPos = ubrk_preceding(boundary, position);
         if (startPos == UBRK_DONE) {
             startPos = 0;
@@ -121,13 +123,14 @@ void KWQFindSentenceBoundary(const QChar *chars, int len, int position, int *sta
     *end = endPos;
 }
 
-int KWQFindNextSentenceFromIndex(const QChar *chars, int len, int position, bool forward)
+int findNextSentenceFromIndex(const QChar* chars, int len, int position, bool forward)
 {
     int pos = 0;
     
     UErrorCode status = U_ZERO_ERROR;
-    UBreakIterator *boundary = ubrk_open(UBRK_SENTENCE, currentTextBreakLocaleID(), const_cast<unichar *>(reinterpret_cast<const unichar *>(chars)), len, &status);
-    if ( boundary && U_SUCCESS(status) ) {
+    UBreakIterator* boundary = ubrk_open(UBRK_SENTENCE, currentTextBreakLocaleID(),
+        const_cast<unichar*>(reinterpret_cast<const unichar*>(chars)), len, &status);
+    if (boundary && U_SUCCESS(status)) {
         if (forward) {
             pos = ubrk_following(boundary, position);
             if (pos == UBRK_DONE)
@@ -141,4 +144,6 @@ int KWQFindNextSentenceFromIndex(const QChar *chars, int len, int position, bool
     }
         
     return pos;
+}
+
 }

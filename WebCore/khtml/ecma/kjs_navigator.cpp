@@ -22,17 +22,14 @@
  */
 
 #include "config.h"
-#include <klocale.h>
-
-#include <PlugInInfoStore.h>
-
 #include "kjs_navigator.h"
-#include "kjs/lookup.h"
-#include "kjs_binding.h"
-#include "NodeImpl.h"
-#include "Frame.h"
 
-#include "KWQKCookieJar.h"
+#include "CookieJar.h"
+#include "Frame.h"
+#include "Language.h"
+#include "NodeImpl.h"
+#include "PlugInInfoStore.h"
+#include "kjs_binding.h"
 
 using namespace WebCore;
 
@@ -157,28 +154,18 @@ JSValue *Navigator::getValueProperty(ExecState *exec, int token) const
     return jsString("Mozilla");
   case AppName:
     // If we find "Mozilla" but not "(compatible, ...)" we are a real Netscape
-    if (userAgent.find(QString::fromLatin1("Mozilla")) >= 0 &&
-        userAgent.find(QString::fromLatin1("compatible")) == -1)
-    {
-      //kdDebug() << "appName -> Mozilla" << endl;
+    if (userAgent.find("Mozilla") >= 0 && userAgent.find("compatible") == -1)
       return jsString("Netscape");
-    }
-    if (userAgent.find(QString::fromLatin1("Microsoft")) >= 0 ||
-        userAgent.find(QString::fromLatin1("MSIE")) >= 0)
-    {
-      //kdDebug() << "appName -> IE" << endl;
+    if (userAgent.find("Microsoft") >= 0 || userAgent.find("MSIE") >= 0)
       return jsString("Microsoft Internet Explorer");
-    }
-    // FIXME: Should we define a fallback result here besides "Konqueror"?
     return jsUndefined();
   case AppVersion:
     // We assume the string is something like Mozilla/version (properties)
     return jsString(userAgent.mid(userAgent.find('/') + 1));
   case Product:
     // When acting normal, we pretend to be "Gecko".
-    if (userAgent.find("Mozilla/5.0") >= 0 && userAgent.find("compatible") == -1) {
+    if (userAgent.find("Mozilla/5.0") >= 0 && userAgent.find("compatible") == -1)
         return jsString("Gecko");
-    }
     // When spoofing as IE, we use jsUndefined().
     return jsUndefined();
   case ProductSub:
@@ -186,27 +173,24 @@ JSValue *Navigator::getValueProperty(ExecState *exec, int token) const
   case Vendor:
     return jsString("Apple Computer, Inc.");
   case Language:
-    return jsString(KLocale::language());
+    return jsString(defaultLanguage());
   case UserAgent:
     return jsString(userAgent);
   case Platform:
-    // yet another evil hack, but necessary to spoof some sites...
-    if ( (userAgent.find(QString::fromLatin1("Win"),0,false)>=0) )
-      return jsString(QString::fromLatin1("Win32"));
-    else if ( (userAgent.find(QString::fromLatin1("Macintosh"),0,false)>=0) ||
-              (userAgent.find(QString::fromLatin1("Mac_PowerPC"),0,false)>=0) )
-      return jsString(QString::fromLatin1("MacPPC"));
-    else
-      return jsString(QString::fromLatin1("X11"));
+    if (userAgent.find("Win", 0, false) >= 0)
+      return jsString("Win32");
+    if (userAgent.find("Macintosh", 0, false) >= 0 || userAgent.find("Mac_PowerPC", 0, false) >= 0)
+      return jsString("MacPPC");
+    // FIXME: What about Macintosh Intel?
+    return jsString("X11");
   case _Plugins:
     return new Plugins(exec);
   case _MimeTypes:
     return new MimeTypes(exec);
   case CookieEnabled:
-    return jsBoolean(KWQKCookieJar::cookieEnabled());
-  default:
-    return 0;
+    return jsBoolean(cookiesEnabled());
   }
+  return 0;
 }
 
 /*******************************************************************/

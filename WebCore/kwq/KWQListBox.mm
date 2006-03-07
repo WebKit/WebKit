@@ -27,11 +27,11 @@
 #import "KWQListBox.h"
 
 #import "KWQExceptions.h"
-#import "KWQView.h"
 #import "MacFrame.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
+#import "WebCoreWidgetHolder.h"
 #import <kxmlcore/Assertions.h>
 
 #import "render_form.h"
@@ -43,10 +43,10 @@ const float bottomMargin = 1;
 const float leftMargin = 2;
 const float rightMargin = 2;
 
-@interface KWQListBoxScrollView : NSScrollView <KWQWidgetHolder>
+@interface KWQListBoxScrollView : NSScrollView <WebCoreWidgetHolder>
 @end
 
-@interface KWQTableView : NSTableView <KWQWidgetHolder>
+@interface KWQTableView : NSTableView <WebCoreWidgetHolder>
 {
 @public
     QListBox *_box;

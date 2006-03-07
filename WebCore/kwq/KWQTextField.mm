@@ -27,9 +27,9 @@
 #import "KWQTextField.h"
 
 #import "KWQLineEdit.h"
-#import "KWQView.h"
 #import "MacFrame.h"
 #import "WebCoreFrameBridge.h"
+#import "WebCoreWidgetHolder.h"
 #import "render_form.h"
 #import <kxmlcore/Assertions.h>
 

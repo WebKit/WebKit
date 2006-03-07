@@ -28,17 +28,16 @@
 #include "config.h"
 #include "DocLoader.h"
 
+#include "Cache.h"
+#include "CachedCSSStyleSheet.h"
 #include "CachedImage.h"
 #include "CachedScript.h"
-#include "CachedCSSStyleSheet.h"
 #include "CachedXSLStyleSheet.h"
-#include "Cache.h"
-#include "loader.h"
 #include "DocumentImpl.h"
-#include "KWQLoader.h"
 #include "Frame.h"
-
-#include <KURL.h>
+#include "KURL.h"
+#include "KWQLoader.h"
+#include "loader.h"
 
 namespace WebCore {
 

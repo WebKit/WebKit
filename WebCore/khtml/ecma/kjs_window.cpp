@@ -52,7 +52,6 @@
 #include "render_canvas.h"
 #include "xmlserializer.h"
 #include <kjs/collector.h>
-#include <klocale.h>
 #include "FrameTree.h"
 #include "khtml_settings.h"
 

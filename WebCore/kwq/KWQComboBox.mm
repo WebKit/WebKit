@@ -29,11 +29,11 @@
 #import "KWQExceptions.h"
 #import "FoundationExtras.h"
 #import "KWQLineEdit.h"
-#import "KWQView.h"
 #import "MacFrame.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
+#import "WebCoreWidgetHolder.h"
 #import "render_form.h"
 #import <kxmlcore/Assertions.h>
 
@@ -53,7 +53,7 @@ enum {
     minimumTextWidth
 };
 
-@interface KWQPopUpButtonCell : NSPopUpButtonCell <KWQWidgetHolder>
+@interface KWQPopUpButtonCell : NSPopUpButtonCell <WebCoreWidgetHolder>
 {
     QComboBox *box;
     NSWritingDirection baseWritingDirection;
@@ -64,7 +64,7 @@ enum {
 - (NSWritingDirection)baseWritingDirection;
 @end
 
-@interface KWQPopUpButton : NSPopUpButton <KWQWidgetHolder>
+@interface KWQPopUpButton : NSPopUpButton <WebCoreWidgetHolder>
 {
     BOOL inNextValidKeyView;
     BOOL populatingMenu;

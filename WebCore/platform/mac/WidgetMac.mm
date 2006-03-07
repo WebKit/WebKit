@@ -31,11 +31,11 @@
 #import "FoundationExtras.h"
 #import "GraphicsContext.h"
 #import "KWQExceptions.h"
-#import "KWQView.h"
 #import "MacFrame.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreFrameView.h"
 #import "WebCoreView.h"
+#import "WebCoreWidgetHolder.h"
 #import "WidgetClient.h"
 
 namespace WebCore {
@@ -409,8 +409,8 @@ void Widget::removeFromSuperview()
 
 void Widget::beforeMouseDown(NSView *view)
 {
-    ASSERT([view conformsToProtocol:@protocol(KWQWidgetHolder)]);
-    Widget* widget = [(NSView <KWQWidgetHolder> *)view widget];
+    ASSERT([view conformsToProtocol:@protocol(WebCoreWidgetHolder)]);
+    Widget* widget = [(NSView <WebCoreWidgetHolder> *)view widget];
     if (widget) {
         ASSERT(view == widget->getOuterView());
         ASSERT(!widget->data->mustStayInWindow);
@@ -420,8 +420,8 @@ void Widget::beforeMouseDown(NSView *view)
 
 void Widget::afterMouseDown(NSView *view)
 {
-    ASSERT([view conformsToProtocol:@protocol(KWQWidgetHolder)]);
-    Widget* widget = [(NSView <KWQWidgetHolder>*)view widget];
+    ASSERT([view conformsToProtocol:@protocol(WebCoreWidgetHolder)]);
+    Widget* widget = [(NSView <WebCoreWidgetHolder>*)view widget];
     if (!widget) {
         KWQ_BLOCK_EXCEPTIONS;
         [view removeFromSuperview];

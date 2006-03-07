@@ -170,6 +170,15 @@
 		93309EA2099EB78C0056E581 /* SharedTimerMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309E9F099EB78C0056E581 /* SharedTimerMac.cpp */; };
 		93309EA3099EB78C0056E581 /* SharedTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309EA0099EB78C0056E581 /* SharedTimer.h */; };
 		93309EA4099EB78C0056E581 /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309EA1099EB78C0056E581 /* Timer.cpp */; };
+		9352071909BD3BA500F2038D /* StaticConstructors.h in Headers */ = {isa = PBXBuildFile; fileRef = 9352071709BD3BA500F2038D /* StaticConstructors.h */; };
+		9352071A09BD3BA500F2038D /* TextBoundaries.h in Headers */ = {isa = PBXBuildFile; fileRef = 9352071809BD3BA500F2038D /* TextBoundaries.h */; };
+		9352071D09BD3BBB00F2038D /* TextBoundaries.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9352071B09BD3BBB00F2038D /* TextBoundaries.mm */; };
+		9352071E09BD3BBB00F2038D /* WebCoreWidgetHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = 9352071C09BD3BBB00F2038D /* WebCoreWidgetHolder.h */; };
+		935207BE09BD410A00F2038D /* LocalizedStrings.h in Headers */ = {isa = PBXBuildFile; fileRef = 935207BD09BD410A00F2038D /* LocalizedStrings.h */; };
+		935207C009BD412100F2038D /* LocalizedStringsMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 935207BF09BD412000F2038D /* LocalizedStringsMac.mm */; };
+		9352084509BD43B900F2038D /* Language.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9352084409BD43B900F2038D /* Language.mm */; };
+		9352087709BD453400F2038D /* CookieJar.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9352087609BD453400F2038D /* CookieJar.mm */; };
+		9352088209BD45E900F2038D /* CookieJar.h in Headers */ = {isa = PBXBuildFile; fileRef = 9352088109BD45E900F2038D /* CookieJar.h */; };
 		9353673F09AED79200D35CD6 /* ScrollBarMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 9353673E09AED79200D35CD6 /* ScrollBarMode.h */; };
 		9353676B09AED88B00D35CD6 /* ScrollViewMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9353676A09AED88B00D35CD6 /* ScrollViewMac.mm */; };
 		935367E509AF77DD00D35CD6 /* GraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 935367E409AF77DD00D35CD6 /* GraphicsContext.h */; };
@@ -232,7 +241,6 @@
 		93F198EF08245E59001E9ABC /* htmlparser.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D25102DE4396018635CA /* htmlparser.h */; };
 		93F198F008245E59001E9ABC /* htmltokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D25302DE4396018635CA /* htmltokenizer.h */; };
 		93F198F608245E59001E9ABC /* decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D27902DE43D7018635CA /* decoder.h */; };
-		93F198F708245E59001E9ABC /* helper.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D27B02DE43D7018635CA /* helper.h */; };
 		93F1991708245E59001E9ABC /* dom2_eventsimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D30202DE4476018635CA /* dom2_eventsimpl.h */; };
 		93F1991808245E59001E9ABC /* dom2_rangeimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D30402DE4476018635CA /* dom2_rangeimpl.h */; };
 		93F1991908245E59001E9ABC /* dom2_traversalimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D30602DE4476018635CA /* dom2_traversalimpl.h */; };
@@ -241,16 +249,13 @@
 		93F1992008245E59001E9ABC /* dom_xmlimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D30002DE4476018635CA /* dom_xmlimpl.h */; };
 		93F1992108245E59001E9ABC /* xml_tokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D30A02DE4476018635CA /* xml_tokenizer.h */; };
 		93F1992908245E59001E9ABC /* KWQCString.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868302DE3B8601EA4122 /* KWQCString.h */; };
-		93F1992C08245E59001E9ABC /* KWQCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868002DE3B8601EA4122 /* KWQCollection.h */; };
 		93F1992E08245E59001E9ABC /* KWQComboBox.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868202DE3B8601EA4122 /* KWQComboBox.h */; };
 		93F1992F08245E59001E9ABC /* Cursor.h in Headers */ = {isa = PBXBuildFile; fileRef = F587868402DE3B8601EA4122 /* Cursor.h */; };
 		93F1993308245E59001E9ABC /* KWQDef.h in Headers */ = {isa = PBXBuildFile; fileRef = F58784DA02DE375901EA4122 /* KWQDef.h */; };
 		93F1993908245E59001E9ABC /* KWQFileButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 93CCF7D4033BD43C008635CE /* KWQFileButton.h */; };
-		93F1994508245E59001E9ABC /* KWQKCookieJar.h in Headers */ = {isa = PBXBuildFile; fileRef = F58784EE02DE375901EA4122 /* KWQKCookieJar.h */; };
 		93F1994F08245E59001E9ABC /* KWQKHTMLSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = F587863A02DE3A1401EA4122 /* KWQKHTMLSettings.h */; };
 		93F1995008245E59001E9ABC /* KWQKIOGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = F587864902DE3A9A01EA4122 /* KWQKIOGlobal.h */; };
 		93F1995408245E59001E9ABC /* KWQKJavaAppletWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = F587864502DE3A7701EA4122 /* KWQKJavaAppletWidget.h */; };
-		93F1995B08245E59001E9ABC /* KWQKLocale.h in Headers */ = {isa = PBXBuildFile; fileRef = F58785FA02DE382001EA4122 /* KWQKLocale.h */; };
 		93F1996308245E59001E9ABC /* KWQKSSLKeyGen.h in Headers */ = {isa = PBXBuildFile; fileRef = F587866202DE3B1101EA4122 /* KWQKSSLKeyGen.h */; };
 		93F1996B08245E59001E9ABC /* KWQLineEdit.h in Headers */ = {isa = PBXBuildFile; fileRef = F587869802DE3B8601EA4122 /* KWQLineEdit.h */; };
 		93F1996C08245E59001E9ABC /* KWQListBox.h in Headers */ = {isa = PBXBuildFile; fileRef = F587851302DE375901EA4122 /* KWQListBox.h */; };
@@ -268,7 +273,6 @@
 		93F1999B08245E59001E9ABC /* KWQTextStream.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786BF02DE3B8601EA4122 /* KWQTextStream.h */; };
 		93F1999D08245E59001E9ABC /* KWQValueList.h in Headers */ = {isa = PBXBuildFile; fileRef = F58786C202DE3B8601EA4122 /* KWQValueList.h */; };
 		93F1999E08245E59001E9ABC /* KWQValueListImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F587853B02DE375901EA4122 /* KWQValueListImpl.h */; };
-		93F199A108245E59001E9ABC /* KWQView.h in Headers */ = {isa = PBXBuildFile; fileRef = F587854002DE375901EA4122 /* KWQView.h */; };
 		93F199A308245E59001E9ABC /* KWQWindowWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = F587854302DE375901EA4122 /* KWQWindowWidget.h */; };
 		93F199A508245E59001E9ABC /* WebCoreCache.h in Headers */ = {isa = PBXBuildFile; fileRef = F5B2A4FC02E2220F018635CB /* WebCoreCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F199A608245E59001E9ABC /* WebCoreCookieAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = F587854902DE375901EA4122 /* WebCoreCookieAdapter.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -303,7 +307,6 @@
 		93F199D508245E59001E9ABC /* KWQEditCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = BEF7EEA005FF8F0D009717EE /* KWQEditCommand.h */; };
 		93F199DE08245E59001E9ABC /* dom_position.h in Headers */ = {isa = PBXBuildFile; fileRef = BE91FC8B06133666005E3790 /* dom_position.h */; };
 		93F199E008245E59001E9ABC /* KWQSlider.h in Headers */ = {isa = PBXBuildFile; fileRef = BC86FB8D061F5C23006BB822 /* KWQSlider.h */; };
-		93F199E108245E59001E9ABC /* KWQTextUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = BE8BD8F306359F6000D3F20B /* KWQTextUtilities.h */; };
 		93F199E508245E59001E9ABC /* html_canvasimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F6A3D60663BF04004D2919 /* html_canvasimpl.h */; };
 		93F199E708245E59001E9ABC /* KWQClipboard.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D90660B0665D937006B6F1A /* KWQClipboard.h */; };
 		93F199EC08245E59001E9ABC /* xsl_stylesheetimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06F24A06D18A7E004A6FA3 /* xsl_stylesheetimpl.h */; };
@@ -326,11 +329,9 @@
 		93F19A0B08245E59001E9ABC /* westResizeCursor.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 84C0FA2E052B966D000440A1 /* westResizeCursor.tiff */; };
 		93F19A1708245E59001E9ABC /* KWQComboBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784D202DE375901EA4122 /* KWQComboBox.mm */; };
 		93F19A1808245E59001E9ABC /* KWQCString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F58784D502DE375901EA4122 /* KWQCString.cpp */; };
-		93F19A2508245E59001E9ABC /* KWQKCookieJar.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784EF02DE375901EA4122 /* KWQKCookieJar.mm */; };
 		93F19A2608245E59001E9ABC /* CursorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784F002DE375901EA4122 /* CursorMac.mm */; };
 		93F19A2E08245E59001E9ABC /* KWQKJavaAppletWidget.mm in Sources */ = {isa = PBXBuildFile; fileRef = F58784FF02DE375901EA4122 /* KWQKJavaAppletWidget.mm */; };
 		93F19A3108245E59001E9ABC /* KWQLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587850302DE375901EA4122 /* KWQLoader.mm */; };
-		93F19A3208245E59001E9ABC /* KWQKLocale.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587850402DE375901EA4122 /* KWQKLocale.mm */; };
 		93F19A3A08245E59001E9ABC /* KWQLineEdit.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587851202DE375901EA4122 /* KWQLineEdit.mm */; };
 		93F19A3B08245E59001E9ABC /* KWQListBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = F587851402DE375901EA4122 /* KWQListBox.mm */; };
 		93F19A3C08245E59001E9ABC /* KWQListImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F587851602DE375901EA4122 /* KWQListImpl.cpp */; };
@@ -369,7 +370,6 @@
 		93F19A9B08245E59001E9ABC /* htmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D25002DE4396018635CA /* htmlparser.cpp */; };
 		93F19A9C08245E59001E9ABC /* htmltokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D25202DE4396018635CA /* htmltokenizer.cpp */; };
 		93F19A9D08245E59001E9ABC /* decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D27802DE43D7018635CA /* decoder.cpp */; };
-		93F19A9E08245E59001E9ABC /* helper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D27A02DE43D7018635CA /* helper.cpp */; };
 		93F19AB308245E59001E9ABC /* dom_elementimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D2F702DE4476018635CA /* dom_elementimpl.cpp */; };
 		93F19AB708245E59001E9ABC /* dom_xmlimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D2FF02DE4476018635CA /* dom_xmlimpl.cpp */; };
 		93F19AB808245E59001E9ABC /* dom2_eventsimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D30102DE4476018635CA /* dom2_eventsimpl.cpp */; };
@@ -406,7 +406,6 @@
 		93F19AFA08245E59001E9ABC /* KWQSlider.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC86FB8E061F5C23006BB822 /* KWQSlider.mm */; };
 		93F19AFD08245E59001E9ABC /* html_canvasimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51F6A3D50663BF04004D2919 /* html_canvasimpl.cpp */; };
 		93F19AFF08245E59001E9ABC /* KWQClipboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D90660C0665D937006B6F1A /* KWQClipboard.mm */; };
-		93F19B0208245E59001E9ABC /* KWQTextUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = BE1A407106CA8A33005B28CF /* KWQTextUtilities.mm */; };
 		93F19B0308245E59001E9ABC /* xsl_stylesheetimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F24906D18A7E004A6FA3 /* xsl_stylesheetimpl.cpp */; };
 		93F19B0408245E59001E9ABC /* xslt_processorimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F24B06D18A7E004A6FA3 /* xslt_processorimpl.cpp */; };
 		93F19B0508245E59001E9ABC /* formdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93ABCE5D06E1A42E0085925B /* formdata.cpp */; };
@@ -1293,6 +1292,15 @@
 		93309EA1099EB78C0056E581 /* Timer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Timer.cpp; path = platform/Timer.cpp; sourceTree = "<group>"; };
 		93386B90037045B3008635CE /* KWQResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQResourceLoader.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93386B91037045B3008635CE /* KWQResourceLoader.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQResourceLoader.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		9352071709BD3BA500F2038D /* StaticConstructors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StaticConstructors.h; path = platform/StaticConstructors.h; sourceTree = "<group>"; };
+		9352071809BD3BA500F2038D /* TextBoundaries.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextBoundaries.h; path = platform/TextBoundaries.h; sourceTree = "<group>"; };
+		9352071B09BD3BBB00F2038D /* TextBoundaries.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TextBoundaries.mm; sourceTree = "<group>"; };
+		9352071C09BD3BBB00F2038D /* WebCoreWidgetHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreWidgetHolder.h; sourceTree = "<group>"; };
+		935207BD09BD410A00F2038D /* LocalizedStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LocalizedStrings.h; path = platform/LocalizedStrings.h; sourceTree = "<group>"; };
+		935207BF09BD412000F2038D /* LocalizedStringsMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalizedStringsMac.mm; sourceTree = "<group>"; };
+		9352084409BD43B900F2038D /* Language.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Language.mm; sourceTree = "<group>"; };
+		9352087609BD453400F2038D /* CookieJar.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookieJar.mm; sourceTree = "<group>"; };
+		9352088109BD45E900F2038D /* CookieJar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CookieJar.h; path = platform/CookieJar.h; sourceTree = "<group>"; };
 		9353673E09AED79200D35CD6 /* ScrollBarMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScrollBarMode.h; path = platform/ScrollBarMode.h; sourceTree = "<group>"; };
 		9353676A09AED88B00D35CD6 /* ScrollViewMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollViewMac.mm; sourceTree = "<group>"; };
 		935367E409AF77DD00D35CD6 /* GraphicsContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GraphicsContext.h; path = platform/GraphicsContext.h; sourceTree = "<group>"; };
@@ -2102,12 +2110,10 @@
 		BCFB2F40097A24B500BA703D /* SegmentedString.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SegmentedString.h; path = platform/SegmentedString.h; sourceTree = "<group>"; };
 		BCFB2F74097A2E1A00BA703D /* Arena.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Arena.cpp; path = platform/Arena.cpp; sourceTree = "<group>"; };
 		BCFB2F75097A2E1A00BA703D /* Arena.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Arena.h; path = platform/Arena.h; sourceTree = "<group>"; };
-		BE1A407106CA8A33005B28CF /* KWQTextUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQTextUtilities.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE26F15305517DE000BFA0C3 /* WebCoreGraphicsBridge.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreGraphicsBridge.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE26F15405517DE000BFA0C3 /* WebCoreGraphicsBridge.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebCoreGraphicsBridge.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE855F7F0701E83500239769 /* WebCoreView.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE8560510701F91100239769 /* WebCoreView.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebCoreView.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BE8BD8F306359F6000D3F20B /* KWQTextUtilities.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQTextUtilities.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE91FC8B06133666005E3790 /* dom_position.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = dom_position.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE91FC8C06133666005E3790 /* dom_position.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dom_position.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE983D95052A2E0A00892D85 /* WebCoreKeyboardAccess.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreKeyboardAccess.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2172,8 +2178,6 @@
 		F523D25302DE4396018635CA /* htmltokenizer.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = htmltokenizer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D27802DE43D7018635CA /* decoder.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = decoder.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D27902DE43D7018635CA /* decoder.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = decoder.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D27A02DE43D7018635CA /* helper.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = helper.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D27B02DE43D7018635CA /* helper.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = helper.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D2F702DE4476018635CA /* dom_elementimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dom_elementimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D2F802DE4476018635CA /* dom_elementimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = dom_elementimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D2FF02DE4476018635CA /* dom_xmlimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dom_xmlimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2197,12 +2201,9 @@
 		F58784D202DE375901EA4122 /* KWQComboBox.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQComboBox.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58784D502DE375901EA4122 /* KWQCString.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KWQCString.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58784DA02DE375901EA4122 /* KWQDef.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQDef.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F58784EE02DE375901EA4122 /* KWQKCookieJar.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKCookieJar.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F58784EF02DE375901EA4122 /* KWQKCookieJar.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKCookieJar.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58784F002DE375901EA4122 /* CursorMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CursorMac.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F58784FF02DE375901EA4122 /* KWQKJavaAppletWidget.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKJavaAppletWidget.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587850302DE375901EA4122 /* KWQLoader.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQLoader.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587850402DE375901EA4122 /* KWQKLocale.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQKLocale.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587851202DE375901EA4122 /* KWQLineEdit.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQLineEdit.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587851302DE375901EA4122 /* KWQListBox.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQListBox.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587851402DE375901EA4122 /* KWQListBox.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQListBox.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2218,7 +2219,6 @@
 		F587853902DE375901EA4122 /* KWQTextStream.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KWQTextStream.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587853B02DE375901EA4122 /* KWQValueListImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQValueListImpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587853C02DE375901EA4122 /* KWQValueListImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KWQValueListImpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587854002DE375901EA4122 /* KWQView.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587854302DE375901EA4122 /* KWQWindowWidget.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQWindowWidget.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587854402DE375901EA4122 /* KWQWindowWidget.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KWQWindowWidget.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587854902DE375901EA4122 /* WebCoreCookieAdapter.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreCookieAdapter.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2233,12 +2233,10 @@
 		F587855302DE375901EA4122 /* WebCoreTextRendererFactory.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; indentWidth = 4; path = WebCoreTextRendererFactory.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587855402DE375901EA4122 /* WebCoreViewFactory.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreViewFactory.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587855502DE375901EA4122 /* WebCoreViewFactory.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebCoreViewFactory.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F58785FA02DE382001EA4122 /* KWQKLocale.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKLocale.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587863A02DE3A1401EA4122 /* KWQKHTMLSettings.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKHTMLSettings.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587864502DE3A7701EA4122 /* KWQKJavaAppletWidget.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKJavaAppletWidget.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587864902DE3A9A01EA4122 /* KWQKIOGlobal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKIOGlobal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587866202DE3B1101EA4122 /* KWQKSSLKeyGen.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQKSSLKeyGen.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F587868002DE3B8601EA4122 /* KWQCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQCollection.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587868202DE3B8601EA4122 /* KWQComboBox.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQComboBox.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587868302DE3B8601EA4122 /* KWQCString.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQCString.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587868402DE3B8601EA4122 /* Cursor.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = Cursor.h; path = platform/Cursor.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2358,8 +2356,8 @@
 		6582A14809999D6C00BEEB6D /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				6545F67509B830180013006F /* TransferJobMac.mm */,
 				6582A14909999D6C00BEEB6D /* ColorMac.mm */,
+				9352087609BD453400F2038D /* CookieJar.mm */,
 				F58784F002DE375901EA4122 /* CursorMac.mm */,
 				65F5386809B2BFDA00F3DC4A /* ExtraCFEncodings.h */,
 				6582A14A09999D6C00BEEB6D /* FloatPointMac.mm */,
@@ -2376,6 +2374,8 @@
 				6582A15109999D6D00BEEB6D /* IntSizeMac.mm */,
 				935C476E09AC4D7300A6AAB4 /* KeyEventMac.mm */,
 				6593923909AE435C002C531F /* KURLMac.mm */,
+				9352084409BD43B900F2038D /* Language.mm */,
+				935207BF09BD412000F2038D /* LocalizedStringsMac.mm */,
 				65F5382409B2B57500F3DC4A /* mac-encodings.txt */,
 				935C476F09AC4D7300A6AAB4 /* MouseEventMac.mm */,
 				6582A15209999D6D00BEEB6D /* PDFDocumentImage.h */,
@@ -2387,7 +2387,9 @@
 				9353676A09AED88B00D35CD6 /* ScrollViewMac.mm */,
 				93309E9F099EB78C0056E581 /* SharedTimerMac.cpp */,
 				6582A15509999D6D00BEEB6D /* SystemTimeMac.cpp */,
+				9352071B09BD3BBB00F2038D /* TextBoundaries.mm */,
 				6576F9D509B2484A000041F7 /* TextEncodingMac.cpp */,
+				6545F67509B830180013006F /* TransferJobMac.mm */,
 				F587854902DE375901EA4122 /* WebCoreCookieAdapter.h */,
 				F587854A02DE375901EA4122 /* WebCoreCookieAdapter.m */,
 				BE26F15305517DE000BFA0C3 /* WebCoreGraphicsBridge.h */,
@@ -2404,6 +2406,7 @@
 				F587855302DE375901EA4122 /* WebCoreTextRendererFactory.mm */,
 				BE855F7F0701E83500239769 /* WebCoreView.h */,
 				BE8560510701F91100239769 /* WebCoreView.m */,
+				9352071C09BD3BBB00F2038D /* WebCoreWidgetHolder.h */,
 				935C477209AC4D7700A6AAB4 /* WheelEventMac.mm */,
 				9380F47709A11ACC001FDB34 /* WidgetMac.mm */,
 			);
@@ -3334,6 +3337,7 @@
 				BCC8CFC80986CD2400140BF2 /* Color.cpp */,
 				BCC8CFC90986CD2400140BF2 /* Color.h */,
 				BCC8CFCA0986CD2400140BF2 /* ColorData.gperf */,
+				9352088109BD45E900F2038D /* CookieJar.h */,
 				F587868402DE3B8601EA4122 /* Cursor.h */,
 				BC73E3900978CED700EDFF8A /* FloatPoint.cpp */,
 				BC73E3910978CED700EDFF8A /* FloatPoint.h */,
@@ -3362,6 +3366,7 @@
 				935C476609AC4D4300A6AAB4 /* KeyEvent.h */,
 				6593923509AE4346002C531F /* KURL.cpp */,
 				6593923609AE4346002C531F /* KURL.h */,
+				935207BD09BD410A00F2038D /* LocalizedStrings.h */,
 				A8239DFE09B3CF8A00B60641 /* Logging.cpp */,
 				A8239DFF09B3CF8A00B60641 /* Logging.h */,
 				65F5382109B2B55700F3DC4A /* make-charset-table.pl */,
@@ -3383,12 +3388,14 @@
 				BCFB2F40097A24B500BA703D /* SegmentedString.h */,
 				BCFB2E830979FD4F00BA703D /* Shared.h */,
 				93309EA0099EB78C0056E581 /* SharedTimer.h */,
+				9352071709BD3BA500F2038D /* StaticConstructors.h */,
 				657BD74909AFDC54005A2056 /* StreamingTextDecoder.cpp */,
 				657BD74A09AFDC54005A2056 /* StreamingTextDecoder.h */,
 				93CD4FDA0995F9EA007ECC97 /* String.cpp */,
 				93CD4FDC0995F9EA007ECC97 /* StringImpl.cpp */,
 				93CD4FDD0995F9EA007ECC97 /* StringImpl.h */,
 				93E62D990985F41600E1B5E3 /* SystemTime.h */,
+				9352071809BD3BA500F2038D /* TextBoundaries.h */,
 				9353686A09AF78F600D35CD6 /* TextDirection.h */,
 				657BD74B09AFDC54005A2056 /* TextEncoding.cpp */,
 				657BD74C09AFDC54005A2056 /* TextEncoding.h */,
@@ -3429,8 +3436,6 @@
 				93CCF7D5033BD43C008635CE /* KWQFileButton.mm */,
 				93B641F206E28C5C0055F610 /* KWQFormData.h */,
 				93B641F106E28C5C0055F610 /* KWQFormData.mm */,
-				F58784EE02DE375901EA4122 /* KWQKCookieJar.h */,
-				F58784EF02DE375901EA4122 /* KWQKCookieJar.mm */,
 				F587851702DE375901EA4122 /* KWQLoader.h */,
 				F587850302DE375901EA4122 /* KWQLoader.mm */,
 				9394E0A403AA5BBE008635CE /* KWQPageState.h */,
@@ -3445,9 +3450,6 @@
 				F587853602DE375901EA4122 /* KWQTextArea.mm */,
 				F587851B02DE375901EA4122 /* KWQTextField.h */,
 				F587851C02DE375901EA4122 /* KWQTextField.mm */,
-				BE8BD8F306359F6000D3F20B /* KWQTextUtilities.h */,
-				BE1A407106CA8A33005B28CF /* KWQTextUtilities.mm */,
-				F587854002DE375901EA4122 /* KWQView.h */,
 				F587854302DE375901EA4122 /* KWQWindowWidget.h */,
 				F587854402DE375901EA4122 /* KWQWindowWidget.mm */,
 			);
@@ -3615,8 +3617,6 @@
 				F523D27902DE43D7018635CA /* decoder.h */,
 				93ABCE5D06E1A42E0085925B /* formdata.cpp */,
 				93ABCE5E06E1A42E0085925B /* formdata.h */,
-				F523D27A02DE43D7018635CA /* helper.cpp */,
-				F523D27B02DE43D7018635CA /* helper.h */,
 			);
 			path = misc;
 			sourceTree = "<group>";
@@ -3778,8 +3778,6 @@
 		F587861C02DE382201EA4122 /* kdecore */ = {
 			isa = PBXGroup;
 			children = (
-				F58785FA02DE382001EA4122 /* KWQKLocale.h */,
-				F587850402DE375901EA4122 /* KWQKLocale.mm */,
 			);
 			name = kdecore;
 			sourceTree = "<group>";
@@ -3807,7 +3805,6 @@
 		F587871802DE3B8801EA4122 /* qt */ = {
 			isa = PBXGroup;
 			children = (
-				F587868002DE3B8601EA4122 /* KWQCollection.h */,
 				F587868202DE3B8601EA4122 /* KWQComboBox.h */,
 				F58784D202DE375901EA4122 /* KWQComboBox.mm */,
 				F58784D502DE375901EA4122 /* KWQCString.cpp */,
@@ -3869,7 +3866,6 @@
 				93F198EF08245E59001E9ABC /* htmlparser.h in Headers */,
 				93F198F008245E59001E9ABC /* htmltokenizer.h in Headers */,
 				93F198F608245E59001E9ABC /* decoder.h in Headers */,
-				93F198F708245E59001E9ABC /* helper.h in Headers */,
 				93F1991708245E59001E9ABC /* dom2_eventsimpl.h in Headers */,
 				93F1991808245E59001E9ABC /* dom2_rangeimpl.h in Headers */,
 				93F1991908245E59001E9ABC /* dom2_traversalimpl.h in Headers */,
@@ -3878,16 +3874,13 @@
 				93F1992008245E59001E9ABC /* dom_xmlimpl.h in Headers */,
 				93F1992108245E59001E9ABC /* xml_tokenizer.h in Headers */,
 				93F1992908245E59001E9ABC /* KWQCString.h in Headers */,
-				93F1992C08245E59001E9ABC /* KWQCollection.h in Headers */,
 				93F1992E08245E59001E9ABC /* KWQComboBox.h in Headers */,
 				93F1992F08245E59001E9ABC /* Cursor.h in Headers */,
 				93F1993308245E59001E9ABC /* KWQDef.h in Headers */,
 				93F1993908245E59001E9ABC /* KWQFileButton.h in Headers */,
-				93F1994508245E59001E9ABC /* KWQKCookieJar.h in Headers */,
 				93F1994F08245E59001E9ABC /* KWQKHTMLSettings.h in Headers */,
 				93F1995008245E59001E9ABC /* KWQKIOGlobal.h in Headers */,
 				93F1995408245E59001E9ABC /* KWQKJavaAppletWidget.h in Headers */,
-				93F1995B08245E59001E9ABC /* KWQKLocale.h in Headers */,
 				93F1996308245E59001E9ABC /* KWQKSSLKeyGen.h in Headers */,
 				93F1996B08245E59001E9ABC /* KWQLineEdit.h in Headers */,
 				93F1996C08245E59001E9ABC /* KWQListBox.h in Headers */,
@@ -3905,7 +3898,6 @@
 				93F1999B08245E59001E9ABC /* KWQTextStream.h in Headers */,
 				93F1999D08245E59001E9ABC /* KWQValueList.h in Headers */,
 				93F1999E08245E59001E9ABC /* KWQValueListImpl.h in Headers */,
-				93F199A108245E59001E9ABC /* KWQView.h in Headers */,
 				93F199A308245E59001E9ABC /* KWQWindowWidget.h in Headers */,
 				93F199A508245E59001E9ABC /* WebCoreCache.h in Headers */,
 				93F199A608245E59001E9ABC /* WebCoreCookieAdapter.h in Headers */,
@@ -3940,7 +3932,6 @@
 				93F199D508245E59001E9ABC /* KWQEditCommand.h in Headers */,
 				93F199DE08245E59001E9ABC /* dom_position.h in Headers */,
 				93F199E008245E59001E9ABC /* KWQSlider.h in Headers */,
-				93F199E108245E59001E9ABC /* KWQTextUtilities.h in Headers */,
 				93F199E508245E59001E9ABC /* html_canvasimpl.h in Headers */,
 				93F199E708245E59001E9ABC /* KWQClipboard.h in Headers */,
 				93F199EC08245E59001E9ABC /* xsl_stylesheetimpl.h in Headers */,
@@ -4364,6 +4355,11 @@
 				935FBCF209BA143B00E230B1 /* ExceptionCode.h in Headers */,
 				AB23A31309BBA7760067CC53 /* HTMLTextFieldInnerElementImpl.h in Headers */,
 				AB23A32809BBA7D00067CC53 /* BeforeTextInsertedEventImpl.h in Headers */,
+				9352071909BD3BA500F2038D /* StaticConstructors.h in Headers */,
+				9352071A09BD3BA500F2038D /* TextBoundaries.h in Headers */,
+				9352071E09BD3BBB00F2038D /* WebCoreWidgetHolder.h in Headers */,
+				935207BE09BD410A00F2038D /* LocalizedStrings.h in Headers */,
+				9352088209BD45E900F2038D /* CookieJar.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5002,11 +4998,9 @@
 			files = (
 				93F19A1708245E59001E9ABC /* KWQComboBox.mm in Sources */,
 				93F19A1808245E59001E9ABC /* KWQCString.cpp in Sources */,
-				93F19A2508245E59001E9ABC /* KWQKCookieJar.mm in Sources */,
 				93F19A2608245E59001E9ABC /* CursorMac.mm in Sources */,
 				93F19A2E08245E59001E9ABC /* KWQKJavaAppletWidget.mm in Sources */,
 				93F19A3108245E59001E9ABC /* KWQLoader.mm in Sources */,
-				93F19A3208245E59001E9ABC /* KWQKLocale.mm in Sources */,
 				93F19A3A08245E59001E9ABC /* KWQLineEdit.mm in Sources */,
 				93F19A3B08245E59001E9ABC /* KWQListBox.mm in Sources */,
 				93F19A3C08245E59001E9ABC /* KWQListImpl.cpp in Sources */,
@@ -5045,7 +5039,6 @@
 				93F19A9B08245E59001E9ABC /* htmlparser.cpp in Sources */,
 				93F19A9C08245E59001E9ABC /* htmltokenizer.cpp in Sources */,
 				93F19A9D08245E59001E9ABC /* decoder.cpp in Sources */,
-				93F19A9E08245E59001E9ABC /* helper.cpp in Sources */,
 				93F19AB308245E59001E9ABC /* dom_elementimpl.cpp in Sources */,
 				93F19AB708245E59001E9ABC /* dom_xmlimpl.cpp in Sources */,
 				93F19AB808245E59001E9ABC /* dom2_eventsimpl.cpp in Sources */,
@@ -5082,7 +5075,6 @@
 				93F19AFA08245E59001E9ABC /* KWQSlider.mm in Sources */,
 				93F19AFD08245E59001E9ABC /* html_canvasimpl.cpp in Sources */,
 				93F19AFF08245E59001E9ABC /* KWQClipboard.mm in Sources */,
-				93F19B0208245E59001E9ABC /* KWQTextUtilities.mm in Sources */,
 				93F19B0308245E59001E9ABC /* xsl_stylesheetimpl.cpp in Sources */,
 				93F19B0408245E59001E9ABC /* xslt_processorimpl.cpp in Sources */,
 				93F19B0508245E59001E9ABC /* formdata.cpp in Sources */,
@@ -5478,6 +5470,10 @@
 				6545F67609B830180013006F /* TransferJobMac.mm in Sources */,
 				AB23A31209BBA7760067CC53 /* HTMLTextFieldInnerElementImpl.cpp in Sources */,
 				AB23A32709BBA7D00067CC53 /* BeforeTextInsertedEventImpl.cpp in Sources */,
+				9352071D09BD3BBB00F2038D /* TextBoundaries.mm in Sources */,
+				935207C009BD412100F2038D /* LocalizedStringsMac.mm in Sources */,
+				9352084509BD43B900F2038D /* Language.mm in Sources */,
+				9352087709BD453400F2038D /* CookieJar.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

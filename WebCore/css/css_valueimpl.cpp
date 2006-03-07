@@ -38,7 +38,6 @@
 #include "cssproperties.h"
 #include "cssstyleselector.h"
 #include "cssvalues.h"
-#include "helper.h"
 #include "render_style.h"
 #include <qregexp.h>
 

@@ -55,10 +55,10 @@
 #include "config.h"
 #include "html_documentimpl.h"
 
+#include "CookieJar.h"
 #include "DocumentTypeImpl.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
-#include "KWQKCookieJar.h"
 #include "css/css_stylesheetimpl.h"
 #include "css/cssstyleselector.h"
 #include "cssproperties.h"
@@ -107,12 +107,12 @@ DOMString HTMLDocumentImpl::lastModified() const
 
 DOMString HTMLDocumentImpl::cookie() const
 {
-    return KWQKCookieJar::cookie(URL());
+    return cookies(URL());
 }
 
-void HTMLDocumentImpl::setCookie( const DOMString & value )
+void HTMLDocumentImpl::setCookie(const String& value)
 {
-    return KWQKCookieJar::setCookie(URL(), m_policyBaseURL.qstring(), value.qstring());
+    setCookies(URL(), m_policyBaseURL.qstring(), value);
 }
 
 void HTMLDocumentImpl::setBody(HTMLElementImpl *_body, ExceptionCode& ec)

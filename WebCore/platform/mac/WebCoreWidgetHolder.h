@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,18 +22,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+ 
+#import <Cocoa/Cocoa.h>
 
-#ifdef __cplusplus
-
-#include "QString.h"
-#include "KWQTextStream.h"
-#include "render_object.h"
-
-namespace khtml {
-    class RenderObject;
+namespace WebCore {
+    class Widget;
 }
 
-QString externalRepresentation(khtml::RenderObject *);
-void write(QTextStream &ts, const khtml::RenderObject &o, int indent = 0);
-
-#endif
+// NSView subclasses in WebCore should implement this protocol
+@protocol WebCoreWidgetHolder
+- (WebCore::Widget *)widget;
+@end

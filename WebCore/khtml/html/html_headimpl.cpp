@@ -37,7 +37,6 @@
 #include "css_stylesheetimpl.h"
 #include "csshelper.h"
 #include "cssstyleselector.h"
-#include "helper.h"
 #include "html_documentimpl.h"
 #include "htmlnames.h"
 #include "kjs_proxy.h"

@@ -32,7 +32,6 @@
 #include "DocumentImpl.h"
 #include "GraphicsContext.h"
 #include "HTMLInputElementImpl.h"
-#include "helper.h"
 #include "html_imageimpl.h"
 #include "htmlnames.h"
 #include "render_canvas.h"

@@ -26,7 +26,6 @@
 #ifndef QVALUELIST_H_
 #define QVALUELIST_H_
 
-#include "KWQDef.h"
 #include "KWQValueListImpl.h"
 
 template <class T> class QValueList;

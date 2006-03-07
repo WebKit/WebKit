@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -416,16 +416,8 @@ static void writeSelection(QTextStream &ts, const RenderObject *o)
     }
 }
 
-static bool debuggingRenderTreeFlag = false;
-
-bool debuggingRenderTree()
-{
-    return debuggingRenderTreeFlag;
-}
-
 QString externalRepresentation(RenderObject* o)
 {
-    debuggingRenderTreeFlag = true;
     JSEditor::setSupportsPasteCommand(true);
 
     QString s;

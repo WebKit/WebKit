@@ -34,9 +34,6 @@
 #endif
 #include "KWQCString.h"
 
-// Make htmltokenizer.cpp happy
-#define QT_VERSION 300
-
 class QRegExp;
 
 #if __APPLE__

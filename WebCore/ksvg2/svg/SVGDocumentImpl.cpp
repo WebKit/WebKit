@@ -24,8 +24,7 @@
 #if SVG_SUPPORT
 #include <assert.h>
 
-#include <KURL.h>
-#include <klocale.h>
+#include "KURL.h"
 
 #include <kdom/Helper.h>
 #include "Shared.h"

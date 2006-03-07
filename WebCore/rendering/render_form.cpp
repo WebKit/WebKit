@@ -39,8 +39,6 @@
 #include "KWQSlider.h"
 #include "MouseEvent.h"
 #include "dom2_eventsimpl.h"
-#include "helper.h"
-#include <klocale.h>
 #include <qcombobox.h>
 #include <qtextedit.h>
 

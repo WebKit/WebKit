@@ -34,6 +34,7 @@
 #include "FrameView.h"
 #include "HTMLFormElementImpl.h"
 #include "HTMLIsIndexElementImpl.h"
+#include "LocalizedStrings.h"
 #include "cssproperties.h"
 #include "cssvalues.h"
 #include "TextImpl.h"
@@ -51,7 +52,6 @@
 #include "htmlfactory.h"
 #include "htmltokenizer.h"
 #include "render_object.h"
-#include <klocale.h>
 #include <kxmlcore/HashMap.h>
 #include <kxmlcore/HashSet.h>
 

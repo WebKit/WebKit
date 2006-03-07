@@ -36,7 +36,6 @@
 #include "dom2_rangeimpl.h"
 #include "dom2_viewsimpl.h"
 #include "dom_elementimpl.h"
-#include "helper.h"
 #include "htmlediting.h"
 #include "htmlnames.h"
 #include "render_flow.h"

@@ -28,14 +28,14 @@
 
 #import "KWQExceptions.h"
 #import "KWQLineEdit.h"
-#import "KWQView.h"
 #import "MacFrame.h"
 #import "WebCoreFrameBridge.h"
+#import "WebCoreWidgetHolder.h"
 #import "render_form.h"
 
 using namespace WebCore;
 
-@interface KWQSlider : NSSlider <KWQWidgetHolder>
+@interface KWQSlider : NSSlider <WebCoreWidgetHolder>
 {
     QSlider* slider;
     BOOL inNextValidKeyView;

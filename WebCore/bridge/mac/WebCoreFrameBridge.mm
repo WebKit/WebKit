@@ -45,7 +45,6 @@
 #import "KWQPageState.h"
 #import "KWQRenderTreeDebug.h"
 #import "TextEncoding.h"
-#import "KWQView.h"
 #import "MacFrame.h"
 #import "NodeImpl.h"
 #import "PageMac.h"
@@ -55,6 +54,7 @@
 #import "WebCoreSettings.h"
 #import "WebCoreTextRendererFactory.h"
 #import "WebCoreViewFactory.h"
+#import "WebCoreWidgetHolder.h"
 #import "csshelper.h"
 #import "DeleteSelectionCommand.h"
 #import "dom2_eventsimpl.h"
@@ -1147,11 +1147,11 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
     return m_frame->sendContextMenuEvent(event);
 }
 
-- (DOMElement *)elementForView:(NSView *)view
+- (DOMElement*)elementForView:(NSView*)view
 {
     // FIXME: implemented currently for only a subset of the KWQ widgets
-    if ([view conformsToProtocol:@protocol(KWQWidgetHolder)]) {
-        NSView <KWQWidgetHolder> *widgetHolder = view;
+    if ([view conformsToProtocol:@protocol(WebCoreWidgetHolder)]) {
+        NSView <WebCoreWidgetHolder>* widgetHolder = view;
         Widget* widget = [widgetHolder widget];
         if (widget && widget->client())
             return [DOMElement _elementWithImpl:widget->client()->element(widget)];
@@ -1159,12 +1159,11 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
     return nil;
 }
 
-static HTMLInputElementImpl *inputElementFromDOMElement(DOMElement *element)
+static HTMLInputElementImpl* inputElementFromDOMElement(DOMElement* element)
 {
-    NodeImpl *node = [element _nodeImpl];
-    if (node->hasTagName(inputTag)) {
-        return static_cast<HTMLInputElementImpl *>(node);
-    }
+    NodeImpl* node = [element _nodeImpl];
+    if (node->hasTagName(inputTag))
+        return static_cast<HTMLInputElementImpl*>(node);
     return nil;
 }
 

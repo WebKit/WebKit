@@ -22,18 +22,17 @@
 
 #include "config.h"
 #if SVG_SUPPORT
-#include <klocale.h>
+#include "SVGTestsImpl.h"
 
+#include "Language.h"
+#include "SVGDOMImplementationImpl.h"
+#include "SVGElementImpl.h"
+#include "SVGHelper.h"
+#include "SVGNames.h"
+#include "SVGStringListImpl.h"
 #include <kdom/core/AttrImpl.h>
 
-#include "SVGNames.h"
-#include "SVGHelper.h"
-#include "SVGTestsImpl.h"
-#include "SVGElementImpl.h"
-#include "SVGStringListImpl.h"
-#include "SVGDOMImplementationImpl.h"
-
-using namespace WebCore;
+namespace WebCore {
 
 SVGTestsImpl::SVGTestsImpl()
 {
@@ -74,12 +73,9 @@ bool SVGTestsImpl::isValid() const
     }
 
     list = systemLanguage();
-    for(unsigned long i = 0;i < list->numberOfItems();i++)
-    {
-        DOMString value = DOMString(list->getItem(i));
-        if(value.isEmpty() || value.qstring() != (KLocale::language()).left(2))
+    for (unsigned long i = 0; i < list->numberOfItems(); i++)
+        if (!equal(list->getItem(i), defaultLanguage().substring(0, 2).impl()))
             return false;
-    }
 
     list = requiredExtensions();
     if(list->numberOfItems() > 0)
@@ -105,6 +101,7 @@ bool SVGTestsImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     return false;
 }
 
+}
+
 // vim:ts=4:noet
 #endif // SVG_SUPPORT
-

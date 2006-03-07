@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,58 +20,41 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#import "KWQKLocale.h"
+#import "config.h"
+#import "CookieJar.h"
 
+#import "KURL.h"
 #import "KWQExceptions.h"
-#import "Logging.h"
-#import "QString.h"
-#import "WebCoreViewFactory.h"
+#import "PlatformString.h"
+#import "WebCoreCookieAdapter.h"
 
-QString inputElementAltText()
+namespace WebCore {
+
+String cookies(const KURL& url)
 {
     KWQ_BLOCK_EXCEPTIONS;
-    return QString::fromNSString([[WebCoreViewFactory sharedFactory] inputElementAltText]);
+    return [[WebCoreCookieAdapter sharedAdapter] cookiesForURL:url.url().getNSString()];
     KWQ_UNBLOCK_EXCEPTIONS;
-
-    return QString();
+    return String();
 }
 
-QString resetButtonDefaultLabel()
+void setCookies(const KURL& url, const KURL& policyBaseURL, const String& cookies)
 {
     KWQ_BLOCK_EXCEPTIONS;
-    return QString::fromNSString([[WebCoreViewFactory sharedFactory] resetButtonDefaultLabel]);
+    [[WebCoreCookieAdapter sharedAdapter] setCookies:cookies
+        forURL:url.url().getNSString() policyBaseURL:policyBaseURL.url().getNSString()];
     KWQ_UNBLOCK_EXCEPTIONS;
-
-    return QString();
 }
 
-QString searchableIndexIntroduction()
+bool cookiesEnabled()
 {
     KWQ_BLOCK_EXCEPTIONS;
-    return QString::fromNSString([[WebCoreViewFactory sharedFactory] searchableIndexIntroduction]);
+    return [[WebCoreCookieAdapter sharedAdapter] cookiesEnabled];
     KWQ_UNBLOCK_EXCEPTIONS;
-
-    return QString();
+    return false;
 }
 
-QString submitButtonDefaultLabel()
-{
-    KWQ_BLOCK_EXCEPTIONS;
-    return QString::fromNSString([[WebCoreViewFactory sharedFactory] submitButtonDefaultLabel]);
-    KWQ_UNBLOCK_EXCEPTIONS;
-
-    return QString();
-}
-
-QString KLocale::language()
-{
-    KWQ_BLOCK_EXCEPTIONS;
-    return QString::fromNSString([[WebCoreViewFactory sharedFactory] defaultLanguageCode]);
-    KWQ_UNBLOCK_EXCEPTIONS;
-
-    return QString();
 }

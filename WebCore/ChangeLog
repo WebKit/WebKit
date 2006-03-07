@@ -1,3 +1,106 @@
+2006-03-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele, except for the first change listed.
+
+        - fix recently-introduced bug that GuardMalloc found while I was debugging my other change
+
+        * rendering/render_frames.cpp: (WebCore::RenderPart::~RenderPart):
+        Set m_widget to 0 before calling deref so we don't end up trying to do unwanted work.
+
+        - removed 10 more files from KWQ
+
+        * ForwardingHeaders/klocale.h: Removed.
+
+        * khtml/misc/helper.cpp: Removed.
+        * khtml/misc/helper.h: Removed.
+
+        * kwq/KWQCollection.h: Removed.
+        * kwq/KWQKCookieJar.h: Removed.
+        * kwq/KWQKCookieJar.mm: Removed.
+        * kwq/KWQKLocale.h: Removed.
+        * kwq/KWQKLocale.mm: Removed.
+        * kwq/KWQKURL.h: Removed.
+        * kwq/KWQKURL.mm: Removed.
+        * kwq/KWQTextUtilities.h: Removed.
+        * kwq/KWQTextUtilities.mm: Removed.
+        * kwq/KWQView.h: Removed.
+
+        * platform/CookieJar.h: Added.
+        * platform/Language.h: Added.
+        * platform/LocalizedStrings.h: Added.
+        * platform/TextBoundaries.h: Added.
+        * platform/mac/CookieJar.mm: Added.
+        * platform/mac/Language.mm: Added.
+        * platform/mac/LocalizedStringsMac.mm: Added.
+        * platform/mac/TextBoundaries.mm: Added.
+        * platform/mac/WebCoreWidgetHolder.h: Added.
+
+        * WebCore.xcodeproj/project.pbxproj: Updated for removed and added files.
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Updated for removed and added files.
+
+        * bridge/mac/WebCoreFrameBridge.mm: Updated includes.
+        (-[WebCoreFrameBridge elementForView:]): Changed KWQWidgetHolder to WebCoreWidgetHolder.
+
+        * editing/visible_units.cpp:
+        (WebCore::previousWordPositionBoundary):
+        (WebCore::nextWordPositionBoundary):
+        (WebCore::previousSentencePositionBoundary):
+        (WebCore::nextSentencePositionBoundary):
+        Call TextBoundaries.h functions instead of helper.h ones.
+
+        * khtml/ecma/kjs_navigator.cpp: (KJS::Navigator::getValueProperty):
+        * ksvg2/svg/SVGTestsImpl.cpp: (WebCore::SVGTestsImpl::isValid):
+        Changed to call defaultLanguage; cleaned up formatting.
+
+        * khtml/html/HTMLFormElementImpl.cpp: Removed stray comment.
+
+        * khtml/html/html_documentimpl.cpp:
+        (WebCore::HTMLDocumentImpl::cookie):
+        (WebCore::HTMLDocumentImpl::setCookie):
+        Call CookieJar.h functions.
+
+        * css/css_valueimpl.cpp:
+        * css/cssparser.cpp:
+        * css/cssstyleselector.cpp:
+        * dom/DocumentImpl.cpp:
+        * dom/dom_position.cpp:
+        * khtml/ecma/kjs_window.cpp:
+        * khtml/html/HTMLInputElementImpl.cpp:
+        * khtml/html/html_headimpl.cpp:
+        * khtml/html/htmlparser.cpp:
+        * khtml/misc/decoder.cpp:
+        * ksvg2/svg/SVGDocumentImpl.cpp:
+        * kwq/KWQComboBox.mm:
+        * kwq/KWQKSSLKeyGen.mm:
+        * kwq/KWQListBox.mm:
+        * kwq/KWQListImpl.cpp:
+        * kwq/KWQListImpl.h:
+        * kwq/KWQScrollBar.mm:
+        * kwq/KWQSlider.mm:
+        * kwq/KWQTextField.mm:
+        * kwq/KWQValueList.h:
+        * loader/DocLoader.cpp:
+        * page/Frame.cpp:
+        * page/FrameView.cpp:
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::beforeMouseDown):
+        (WebCore::Widget::afterMouseDown):
+        * rendering/render_applet.cpp:
+        * rendering/render_form.cpp:
+        * rendering/render_image.cpp:
+        * rendering/render_list.cpp:
+        Updated includes and protocol names.
+
+        * khtml/html/htmltokenizer.cpp: (WebCore::HTMLTokenizer::write): Remove
+        QT_VERSION code.
+        * platform/QString.h: Remove QT_VERSION.
+
+        * kwq/KWQPtrList.h: Change to no longer use QPtrCollection.
+
+        * kwq/KWQRenderTreeDebug.h:
+        * kwq/KWQRenderTreeDebug.cpp: (externalRepresentation):
+        Remove unused debuggingRenderTree boolean.
+
 2006-03-07  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

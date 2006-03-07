@@ -40,7 +40,6 @@
 #include "WheelEvent.h"
 #include "cssstyleselector.h"
 #include "dom2_eventsimpl.h"
-#include "helper.h"
 #include "html_documentimpl.h"
 #include "html_inlineimpl.h"
 #include "htmlnames.h"

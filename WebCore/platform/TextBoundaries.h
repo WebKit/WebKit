@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,41 +20,24 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#import "KWQKCookieJar.h"
+#ifndef TextBoundaries_h
+#define TextBoundaries_h
 
-#import "KWQExceptions.h"
-#import "KWQKURL.h"
-#import "WebCoreCookieAdapter.h"
-#import <Foundation/NSString.h>
+// FIXME: Change clients to use ICU and remove these functions.
 
-QString KWQKCookieJar::cookie(const KURL &url)
-{
-    KWQ_BLOCK_EXCEPTIONS;
-    return QString::fromNSString([[WebCoreCookieAdapter sharedAdapter] cookiesForURL:url.url().getNSString()]);
-    KWQ_UNBLOCK_EXCEPTIONS;
+class QChar;
 
-    return QString();
+namespace WebCore {
+
+    void findWordBoundary(const QChar*, int len, int position, int *start, int *end);
+    int findNextWordFromIndex(const QChar*, int len, int position, bool forward);
+
+    void findSentenceBoundary(const QChar*, int len, int position, int *start, int *end);
+    int findNextSentenceFromIndex(const QChar*, int len, int position, bool forward);
+
 }
 
-void KWQKCookieJar::setCookie(const KURL &url, const KURL &policyBaseURL, const QString &cookie)
-{
-    KWQ_BLOCK_EXCEPTIONS;
-
-    [[WebCoreCookieAdapter sharedAdapter] setCookies:cookie.getNSString()
-     forURL:url.url().getNSString() policyBaseURL:policyBaseURL.url().getNSString()];
-
-    KWQ_UNBLOCK_EXCEPTIONS;
-}
-
-bool KWQKCookieJar::cookieEnabled()
-{
-    KWQ_BLOCK_EXCEPTIONS;
-    return [[WebCoreCookieAdapter sharedAdapter] cookiesEnabled];
-    KWQ_UNBLOCK_EXCEPTIONS;
-
-    return false;
-}
+#endif

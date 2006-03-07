@@ -34,9 +34,6 @@
 
 #include "htmlnames.h"
 #include "html_listimpl.h"
-#include "helper.h"
-
-//#define BOX_DEBUG
 
 namespace WebCore {
 

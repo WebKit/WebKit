@@ -26,25 +26,23 @@
 
 #include "config.h"
 #include "HTMLInputElementImpl.h"
-#include "HTMLFormElementImpl.h"
-#include "html_imageimpl.h" // for HTMLImageLoader
-#include "dom2_eventsimpl.h"
-#include "FormDataList.h"
 
 #include "BeforeTextInsertedEventImpl.h"
-#include "cssproperties.h"
-#include "Frame.h"
-#include "render_form.h"
-#include "render_button.h"
-#include "RenderTextField.h"
-#include "render_theme.h"
-#include "SelectionController.h"
 #include "DocumentImpl.h"
-
-#include <klocale.h>
-
 #include "EventNames.h"
+#include "FormDataList.h"
+#include "Frame.h"
+#include "HTMLFormElementImpl.h"
+#include "LocalizedStrings.h"
+#include "RenderTextField.h"
+#include "SelectionController.h"
+#include "cssproperties.h"
+#include "dom2_eventsimpl.h"
+#include "html_imageimpl.h"
 #include "htmlnames.h"
+#include "render_button.h"
+#include "render_form.h"
+#include "render_theme.h"
 
 using WebCore::ControlState;
 

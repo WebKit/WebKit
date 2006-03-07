@@ -26,17 +26,16 @@
 #ifndef QLIST_H_
 #define QLIST_H_
 
-#include "KWQDef.h"
-#include "KWQCollection.h"
 #include "KWQListImpl.h"
 
 template <class T> class QPtrListIterator;
 
-template <class T> class QPtrList : public QPtrCollection {
+template <class T> class QPtrList {
 public:
-    QPtrList() : impl(deleteFunc) { }
+    QPtrList() : impl(deleteFunc), del_item(false) { }
     ~QPtrList() { impl.clear(del_item); }
     
+    QPtrList(const QPtrList& l) : impl(l.impl), del_item(false) { }
     QPtrList& operator=(const QPtrList &l) { impl.assign(l.impl, del_item); return *this; }
 
     bool isEmpty() const { return impl.isEmpty(); }
@@ -48,7 +47,7 @@ public:
     bool insert(uint n, const T *item) { return impl.insert(n, item); }
     bool remove() { return impl.remove(del_item); }
     bool remove(uint n) { return impl.remove(n, del_item); }
-    bool remove(const T *item) { return impl.remove(item, del_item, compareFunc, this); }
+    bool remove(const T *item) { return impl.removeRef(item, del_item); }
     bool removeFirst() { return impl.removeFirst(del_item); }
     bool removeLast() { return impl.removeLast(del_item); }
     bool removeRef(const T *item) { return impl.removeRef(item, del_item); }
@@ -71,20 +70,21 @@ public:
     uint containsRef(const T *item) const { return impl.containsRef(item); }
     int findRef(const T *item) { return impl.findRef(item); }
 
-    virtual int compareItems(void *a, void *b) { return a != b; }
-    
     typedef QPtrListIterator<T> Iterator;
     typedef QPtrListIterator<T> ConstIterator;
     ConstIterator begin() const { return ConstIterator(*this); }
     ConstIterator end() const { ConstIterator itr(*this); itr.toLast(); ++itr; return itr; }
 
+    bool autoDelete() const { return del_item; }
+    void setAutoDelete(bool autoDelete) { del_item = autoDelete; }
+
  private:
     static void deleteFunc(void *item) { delete (T *)item; }
-    static int compareFunc(void *a, void *b, void *data) { return ((QPtrList *)data)->compareItems(a, b);  }
 
     friend class QPtrListIterator<T>;
 
     KWQListImpl impl;
+    bool del_item;
 };
 
 template <class T> class QPtrListIterator {

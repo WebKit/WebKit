@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,17 +20,22 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _KWQTextUtilities_h_
-#define _KWQTextUtilities_h_
+#ifndef CookieJar_h
+#define CookieJar_h
 
-class QChar;
- 
-void KWQFindWordBoundary(const QChar *chars, int len, int position, int *start, int *end);
-int KWQFindNextWordFromIndex(const QChar *chars, int len, int position, bool forward);
-void KWQFindSentenceBoundary(const QChar *chars, int len, int position, int *start, int *end);
-int KWQFindNextSentenceFromIndex(const QChar *chars, int len, int position, bool forward);
+class KURL;
+
+namespace WebCore {
+
+    class String;
+
+    String cookies(const KURL&);
+    void setCookies(const KURL&, const KURL& policyBaseURL, const String&);
+    bool cookiesEnabled();
+
+}
 
 #endif

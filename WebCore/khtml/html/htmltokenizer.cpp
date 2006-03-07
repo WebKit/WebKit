@@ -1464,11 +1464,6 @@ bool HTMLTokenizer::write(const SegmentedString &str, bool appendData)
             ++src;
         } else {
             state.setDiscardLF(false);
-#if QT_VERSION < 300
-            unsigned char row = src->row();
-            if ( row > 0x05 && row < 0x10 || row > 0xfd )
-                    currToken.complexText = true;
-#endif
             *dest++ = fixUpChar(*src);
             ++src;
         }

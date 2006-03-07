@@ -31,7 +31,6 @@
 #include "csshelper.h"
 #include "cssproperties.h"
 #include "cssvalues.h"
-#include "helper.h"
 #include <KURL.h>
 #include <kxmlcore/Assertions.h>
 #include <stdlib.h>

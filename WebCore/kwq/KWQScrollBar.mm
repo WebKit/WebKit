@@ -27,12 +27,12 @@
 #import "KWQScrollBar.h"
 
 #import "KWQExceptions.h"
-#import "KWQView.h"
+#import "WebCoreWidgetHolder.h"
 #import "WidgetClient.h"
 
 using namespace WebCore;
 
-@interface KWQScrollBar : NSScroller <KWQWidgetHolder>
+@interface KWQScrollBar : NSScroller <WebCoreWidgetHolder>
 {
     QScrollBar* scrollBar;
 }

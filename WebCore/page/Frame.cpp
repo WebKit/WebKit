@@ -78,7 +78,6 @@
 #include <assert.h>
 #include <kio/global.h>
 #include "TransferJob.h"
-#include <klocale.h>
 #include <kxmlcore/Assertions.h>
 #include <qptrlist.h>
 #include "TextEncoding.h"

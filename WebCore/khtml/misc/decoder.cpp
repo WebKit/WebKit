@@ -26,7 +26,6 @@
 
 #include "htmlnames.h"
 #include <ctype.h>
-#include <klocale.h>
 #include <kxmlcore/Assertions.h>
 #include <qregexp.h>
 #include "TextEncoding.h"

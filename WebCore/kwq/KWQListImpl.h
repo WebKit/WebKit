@@ -42,14 +42,12 @@ public:
     bool isEmpty() const { return nodeCount == 0; }
     uint count() const { return nodeCount; }
     void clear(bool deleteItems);
-    void sort(int (*compareFunc)(void *a, void *b, void *data), void *data); 
 
     void *at(uint n);
 
     bool insert(uint n, const void *item);
     bool remove(bool deleteItem);
     bool remove(uint n, bool deleteItem);
-    bool remove(const void *item, bool deleteItem, int (*compareFunc)(void *a, void *b, void *data), void *data);
     bool removeFirst(bool deleteItem);
     bool removeLast(bool deleteItem);
     bool removeRef(const void *item, bool deleteItem);

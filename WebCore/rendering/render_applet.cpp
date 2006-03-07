@@ -29,7 +29,6 @@
 #include "html_objectimpl.h"
 #include "java/kjavaappletwidget.h"
 #include "render_canvas.h"
-#include <klocale.h>
 #include "htmlnames.h"
 
 namespace WebCore {

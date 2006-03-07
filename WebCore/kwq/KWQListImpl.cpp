@@ -244,25 +244,6 @@ bool KWQListImpl::removeLast(bool deleteItem)
     return remove(nodeCount - 1, deleteItem);
 }
 
-bool KWQListImpl::remove(const void *item, bool deleteItem, int (*compareFunc)(void *a, void *b, void *data), void *data)
-{
-    KWQListNode *node;
-
-    node = head;
-
-    while (node && compareFunc((void *)item, node->data, data) != 0) {
-	node = node->next;
-    }
-    
-    if (node == 0) {
-	return false;
-    }
-
-    cur = node;
-
-    return remove(deleteItem);
-}
-
 bool KWQListImpl::removeRef(const void *item, bool deleteItem)
 {
     KWQListNode *node;

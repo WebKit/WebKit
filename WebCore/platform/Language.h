@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KLOCALE_H_
-#define KLOCALE_H_
+#ifndef Language_h
+#define Language_h
 
-#include "QStringList.h"
+namespace WebCore {
 
-QString inputElementAltText();
-QString resetButtonDefaultLabel();
-QString searchableIndexIntroduction();
-QString submitButtonDefaultLabel();
+    class String;
 
-class KLocale {
-public:
-    static QString language();
-};
+    String defaultLanguage();
+
+}
 
 #endif

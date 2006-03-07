@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,14 +22,22 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
- 
-#import <Cocoa/Cocoa.h>
+
+#import "config.h"
+#import "Language.h"
+
+#import "KWQExceptions.h"
+#import "PlatformString.h"
+#import "WebCoreViewFactory.h"
 
 namespace WebCore {
-    class Widget;
+
+String defaultLanguage()
+{
+    KWQ_BLOCK_EXCEPTIONS;
+    return [[WebCoreViewFactory sharedFactory] defaultLanguageCode];
+    KWQ_UNBLOCK_EXCEPTIONS;
+    return String();
 }
 
-// all AK View subclasses in KWQ should implement this protocol
-@protocol KWQWidgetHolder
-- (WebCore::Widget *)widget;
-@end
+}

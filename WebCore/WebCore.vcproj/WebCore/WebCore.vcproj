@@ -155,10 +155,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQCollection.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQComboBox.h"
 				>
 			</File>
@@ -191,10 +187,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQKCookieJar.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQKHTMLSettings.h"
 				>
 			</File>
@@ -203,15 +195,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQKLocale.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQKSSLKeyGen.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQKURL.h"
 				>
 			</File>
 			<File
@@ -299,10 +283,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQTextUtilities.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kwq\KWQValueList.h"
 				>
 			</File>
@@ -312,10 +292,6 @@
 			</File>
 			<File
 				RelativePath="..\..\kwq\KWQValueListImpl.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kwq\KWQView.h"
 				>
 			</File>
 			<File
@@ -1105,14 +1081,6 @@
 					RelativePath="..\..\khtml\misc\formdata.h"
 					>
 				</File>
-				<File
-					RelativePath="..\..\khtml\misc\helper.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\khtml\misc\helper.h"
-					>
-				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -1229,24 +1197,6 @@
 			<File
 				RelativePath="..\..\loader\DocLoader.cpp"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\loader\DocLoader.h"
@@ -1263,24 +1213,6 @@
 			<File
 				RelativePath="..\..\loader\Request.cpp"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\loader\Request.h"
@@ -1293,24 +1225,6 @@
 			<File
 				RelativePath="..\..\platform\Arena.cpp"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\platform\Arena.h"
@@ -1358,6 +1272,10 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\Color.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\CookieJar.h"
 				>
 			</File>
 			<File
@@ -1465,6 +1383,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\platform\Language.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\LocalizedStrings.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\platform\Logging.cpp"
 				>
 			</File>
@@ -1566,6 +1492,10 @@
 			</File>
 			<File
 				RelativePath="..\..\platform\SystemTime.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\platform\TextBoundaries.h"
 				>
 			</File>
 			<File
@@ -2815,24 +2745,6 @@
 			<File
 				RelativePath="..\..\xml\xmlhttprequest.cpp"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\xml\xmlhttprequest.h"

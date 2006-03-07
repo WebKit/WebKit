@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QCOLLECTION_H
-#define QCOLLECTION_H
+#ifndef LocalizedStrings_h
+#define LocalizedStrings_h
 
-#include "KWQDef.h"
+namespace WebCore {
 
-class QPtrCollection {
- public:
-    typedef void *Item;
+    class String;
 
-    bool autoDelete() { return del_item; }
-    void setAutoDelete(bool autoDelete) { del_item = autoDelete; }
+    String inputElementAltText();
+    String resetButtonDefaultLabel();
+    String searchableIndexIntroduction();
+    String submitButtonDefaultLabel();
 
-    QPtrCollection(const QPtrCollection &) : del_item(false) { }
-    QPtrCollection &operator=(const QPtrCollection &) { return *this; }
-
- protected:
-    QPtrCollection() : del_item(false) { }
-    virtual ~QPtrCollection() { }
-
-    bool del_item;
-};
-
-#define Q3PtrCollection QPtrCollection
+}
 
 #endif

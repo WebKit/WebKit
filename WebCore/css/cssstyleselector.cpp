@@ -36,7 +36,6 @@
 #include "cssproperties.h"
 #include "cssvalues.h"
 #include "Font.h"
-#include "helper.h"
 #include "html_documentimpl.h"
 #include "htmlnames.h"
 #include "khtml_settings.h"
