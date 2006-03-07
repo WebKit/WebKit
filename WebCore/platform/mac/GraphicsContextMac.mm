@@ -513,7 +513,7 @@ void GraphicsContext::updateTextRenderer()
     }
 }
     
-void GraphicsContext::drawText(int x, int y, int tabWidth, int xpos, int alignmentFlags, const QString& qstring)
+void GraphicsContext::drawText(int x, int y, int alignmentFlags, const QString& qstring)
 {
     if (m_data->state.paintingDisabled)
         return;
@@ -533,8 +533,8 @@ void GraphicsContext::drawText(int x, int y, int tabWidth, int xpos, int alignme
     WebCoreInitializeEmptyTextStyle(&style);
     style.textColor = nsColor(m_data->state.pen.color());
     style.families = families;
-    style.tabWidth = tabWidth;
-    style.xpos = xpos;
+    style.tabWidth = 0;
+    style.xpos = 0;
     
     if (alignmentFlags == AlignRight)
         x -= lroundf([m_data->textRenderer floatWidthForRun:&run style:&style]);

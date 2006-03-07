@@ -250,9 +250,9 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
                 int textWidth = font.width(text);
                 if (errorPictureDrawn) {
                     if (usableWidth >= textWidth && font.height() <= imageY)
-                        p->drawText(ax, ay+ascent, tabWidth(), 0, 0, text);
+                        p->drawText(ax, ay+ascent, 0, text);
                 } else if (usableWidth >= textWidth && cHeight >= font.height())
-                    p->drawText(ax, ay+ascent, tabWidth(), 0, 0, text);
+                    p->drawText(ax, ay+ascent, 0, text);
             }
         }
     }
