@@ -155,11 +155,12 @@ my %otherRenames = (
     "QValueListConstIterator" => "DeprecatedValueListConstIterator",
     "QValueListIterator" => "DeprecatedValueListIterator",
     "QValueListNode" => "DeprecatedValueListNode",
-    "KWQRenderTreeDebug" => "RenderTreeTextForm",
-    "QRegExp" => "Regexp",
-    "KWQRegExp" => "Regexp",
+    "KWQRenderTreeDebug" => "RenderTreeAsText",
+    "QRegExp" => "RegularExpression",
+    "KWQRegExp" => "RegularExpression",
     "KJavaAppletWidget" => "JavaAppletWidget",
     "KWQKJavaAppletWidget" => "JavaAppletWidget",
+    "uint" => "unsigned",
 );
 
 # rename most files with names ending in Impl
@@ -195,10 +196,14 @@ for my $file (sort @paths) {
     }
     my $newContents = $contents;
 
-    # fix DOM and khtml namespaces
+    # fix namespace names
     $newContents =~ s/\bDOM::/WebCore::/g;
+    $newContents =~ s/\bKDOM::/WebCore::/g;
+    $newContents =~ s/\bKSVG::/WebCore::/g;
     $newContents =~ s/\bkhtml::/WebCore::/g;
     $newContents =~ s/namespace DOM\b/namespace WebCore/g;
+    $newContents =~ s/namespace KDOM\b/namespace WebCore/g;
+    $newContents =~ s/namespace KSVG\b/namespace WebCore/g;
     $newContents =~ s/namespace khtml\b/namespace WebCore/g;
 
     if ($file !~ /\.(pm|idl)$/) {
@@ -217,7 +222,8 @@ for my $file (sort @paths) {
         $newContents =~ s/\#\#Event_/\#\#Event/g;
     }
 
-    # remove bogus friend declaration
+    # remove some bogus stuff
+    $newContents =~ s/typedef unsigned unsigned;\n//;
     $newContents =~ s/friend class HTMLFormElement;\s*\n\s*(friend class HTMLFormCollection)/$1/;
 
     # fix binding code generation
