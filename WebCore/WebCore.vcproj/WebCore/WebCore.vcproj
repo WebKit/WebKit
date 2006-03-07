@@ -1554,6 +1554,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\platform\win\FontRendererWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\platform\win\FontWin.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\platform\win\IntPointWin.cpp"
 					>
 				</File>

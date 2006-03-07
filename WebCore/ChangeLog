@@ -1,3 +1,23 @@
+2006-03-07  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Add very basic text support.
+        Sort a few more stubs.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * platform/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::font):
+        (WebCore::GraphicsContext::setFont):
+        (WebCore::GraphicsContext::drawText):
+        * platform/win/FontWin.cpp: Added.
+        (WebCore::Font::drawText):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (QComboBox::focusPolicy):
+        (ScrollView::scrollXOffset):
+        (Font::isFixedPitch):
+        (Path::boundingRect):
+
 2006-03-07  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.

@@ -59,9 +59,6 @@ bool QListBox::isSelected(int) const { notImplemented(); return 0; }
 void QListBox::appendItem(QString const&,KWQListBoxItemType,bool) { notImplemented(); }
 void QListBox::doneAppendingItems() { notImplemented(); }
 
-int ScrollView::scrollXOffset() const { notImplemented(); return 0; }
-Widget::FocusPolicy QComboBox::focusPolicy() const { notImplemented(); return NoFocus; }
-
 QTextEdit::QTextEdit(Widget*) { notImplemented(); }
 QTextEdit::~QTextEdit() { notImplemented(); }
 String QTextEdit::textWithHardLineBreaks() const { notImplemented(); return String(); }
@@ -88,6 +85,7 @@ void QTextEdit::setSelectionEnd(int) { notImplemented(); }
 void QTextEdit::getCursorPosition(int*,int*) const { notImplemented(); }
 void QTextEdit::setSelectionRange(int,int) { notImplemented(); }
 
+Widget::FocusPolicy QComboBox::focusPolicy() const { notImplemented(); return NoFocus; }
 void QComboBox::populate() { notImplemented(); }
 
 void Widget::enableFlushDrawing() { notImplemented(); }
@@ -101,6 +99,7 @@ void Widget::setDrawingAlpha(float) { notImplemented(); }
 
 KJavaAppletWidget::KJavaAppletWidget(IntSize const&,Frame*,KXMLCore::HashMap<String,String> const&) { notImplemented(); }
 
+int ScrollView::scrollXOffset() const { notImplemented(); return 0; }
 int ScrollView::scrollYOffset() const { notImplemented(); return 0; }
 void ScrollView::scrollPointRecursively(int,int) { notImplemented(); }
 void ScrollView::scrollBy(int,int) { notImplemented(); }
@@ -307,17 +306,11 @@ float Font::xHeight() const { return 10; }
 int Font::ascent() const { return 10; }
 int Font::lineSpacing() const { return 10; }
 bool Font::isFixedPitch() const { return true; }
-void Font::drawText(WebCore::GraphicsContext *, int, int, int, int, const QChar*, int, int, int, int, WebCore::TextDirection, bool, int, int, WebCore::Color) const { }
 int Font::checkSelectionPoint(const QChar*, int, int, int, int, int, int, int, WebCore::TextDirection, bool, bool) const { return 0; }
 
 FontRenderer::FontRenderer() { }
 void FontRenderer::update(FontDescription const &) { }
 
-static WebCore::Font localFont;
-Font const& GraphicsContext::font() const { return localFont; }
-void GraphicsContext::setFont(Font const&) { }
-void GraphicsContext::drawText(int,int,int,int,int,int,int,QString const&) { }
-void GraphicsContext::drawText(int,int,int,int,QChar const*,int,int,int,int,Color const&,TextDirection,bool,int,int,bool) { }
 void GraphicsContext::drawLineForText(int,int,int,int) { }
 void GraphicsContext::setShadow(int,int,int,Color const&) { }
 void GraphicsContext::clearShadow() { }
@@ -332,7 +325,6 @@ Path::Path(const IntPointArray&){ }
 bool Path::contains(const IntPoint&) const{ return false; }
 void Path::translate(int, int){ }
 IntRect Path::boundingRect() const { return IntRect(); }
-
 Path& Path::operator=(const Path&){ return*this; }
 
 bool RenderThemeWin::paintCheckbox(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return false; }
