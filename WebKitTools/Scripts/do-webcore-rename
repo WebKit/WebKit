@@ -121,6 +121,10 @@ my %otherRenames = (
     "xml_tokenizer" => "Tokenizer",
     "xmlserializer" => "JSXMLSerializer",
     "xslt_processorimpl" => "XSLTProcessorImpl",
+    "KWQ_BLOCK_EXCEPTIONS" => "BEGIN_BLOCK_OBJC_EXCEPTIONS",
+    "KWQ_UNBLOCK_EXCEPTIONS" => "END_BLOCK_OBJC_EXCEPTIONS",
+    "KWQReportBlockedException" => "WebCoreReportBlockedException",
+    "KWQExceptions" => "BlockExceptions",
 );
 
 # rename most files with names ending in Impl
