@@ -538,7 +538,16 @@ void GraphicsContext::drawText(int x, int y, int tabWidth, int xpos, const QChar
     cairo_surface_t* surface = cairo_get_target(m_data->context);
     HDC dc = cairo_win32_surface_get_dc(surface);
 
-    TextOut(dc, x, y, (LPCWSTR)(str + from), to-from);
+    int offset = 0;
+    int length = len;
+    if (from > 0) {
+        offset = from;
+        length = len - from;
+    }
+    if (to > 0)
+        length = to-from;
+
+    TextOut(dc, x, y, (LPCWSTR)(str + offset), length);
 }
 
 

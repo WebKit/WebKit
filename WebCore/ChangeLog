@@ -1,3 +1,13 @@
+2006-03-07  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Fix basic text support.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * platform/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawText):
+
 2006-03-07  Dave Hyatt <hyatt@apple.com>
 
         Eliminate the unused parameters of the QString version of drawText.
