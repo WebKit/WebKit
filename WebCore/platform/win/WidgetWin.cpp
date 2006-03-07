@@ -125,7 +125,11 @@ void Widget::setFont(const Font& font)
 
 void Widget::setCursor(const Cursor& cursor)
 {
-    SetProp(data->windowHandle, L"PROP_CURSOR", cursor.impl());
+    // SetCursor only works until the next event is recieved.
+    // However, we call this method on every mouse-moved,
+    // so this should work well enough for our purposes.
+    if (HCURSOR c = cursor.impl())
+        SetCursor(c);
 }
 
 void Widget::show()
