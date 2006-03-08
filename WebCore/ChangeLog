@@ -1,3 +1,18 @@
+2006-03-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adele.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7647
+          Crash when typing into text contols
+
+        I missed a couple places that were still saying KWQWidgetHolder
+        in the change I landed late last night.
+
+        * kwq/KWQTextArea.h:
+        * kwq/KWQTextArea.mm:
+        * kwq/KWQTextField.h:
+        Changed them all to say WebCoreWidgetHolder.
+
 2006-03-07  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.

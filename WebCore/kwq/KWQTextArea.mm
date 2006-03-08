@@ -83,7 +83,7 @@ using namespace EventNames;
 const int MinimumWidthWhileResizing = 100;
 const int MinimumHeightWhileResizing = 40;
 
-@interface KWQTextAreaTextView : NSTextView <KWQWidgetHolder>
+@interface KWQTextAreaTextView : NSTextView <WebCoreWidgetHolder>
 {
     QTextEdit *widget;
     BOOL disabled;

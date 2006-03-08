@@ -27,7 +27,7 @@
 
 class QLineEdit;
 @class KWQTextFieldFormatter;
-@protocol KWQWidgetHolder;
+@protocol WebCoreWidgetHolder;
 
 @interface KWQTextFieldController : NSObject
 {
@@ -63,7 +63,7 @@ class QLineEdit;
 
 @end
 
-@interface KWQTextField : NSTextField <KWQWidgetHolder>
+@interface KWQTextField : NSTextField <WebCoreWidgetHolder>
 {
 @private
     KWQTextFieldController* controller;
@@ -75,7 +75,7 @@ class QLineEdit;
 
 @end
 
-@interface KWQSecureTextField : NSSecureTextField <KWQWidgetHolder>
+@interface KWQSecureTextField : NSSecureTextField <WebCoreWidgetHolder>
 {
 @private
     KWQTextFieldController* controller;
@@ -88,7 +88,7 @@ class QLineEdit;
 
 @end
 
-@interface KWQSearchField : NSSearchField <KWQWidgetHolder>
+@interface KWQSearchField : NSSearchField <WebCoreWidgetHolder>
 {
 @private
     KWQTextFieldController* controller;

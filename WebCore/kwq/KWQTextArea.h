@@ -27,9 +27,9 @@
 
 @class KWQTextAreaTextView;
 class QTextEdit;
-@protocol KWQWidgetHolder;
+@protocol WebCoreWidgetHolder;
 
-@interface KWQTextArea : NSScrollView <KWQWidgetHolder>
+@interface KWQTextArea : NSScrollView <WebCoreWidgetHolder>
 {
     KWQTextAreaTextView *textView;
     QTextEdit *widget;
