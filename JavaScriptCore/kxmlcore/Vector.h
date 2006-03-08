@@ -29,6 +29,10 @@
 #include <stdlib.h>
 #include <utility>
 
+// Temporary workaround for Win32.
+// We should use NOMINMAX instead.
+#undef max
+
 namespace KXMLCore {
 
     using std::min;

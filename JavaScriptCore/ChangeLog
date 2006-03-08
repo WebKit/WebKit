@@ -1,5 +1,9 @@
 2006-03-07  Darin Adler  <darin@apple.com>
 
+        * kxmlcore/Vector.h: Quick fix to try to get Windows compiling again.
+
+2006-03-07  Darin Adler  <darin@apple.com>
+
         Reviewed by Anders.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7655
