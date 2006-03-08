@@ -1,3 +1,14 @@
+2006-03-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - fixed AppleScript layout test results to not be endian-dependent
+          (Hyatt complained to me about this one)
+
+        * DumpRenderTree/AppleScriptController.m: (-[AppleScriptController doJavaScript:]):
+        Added specific code for dumping LongDateTime, instead of dumping the raw bytes
+        (which are endian-dependent).
+
 2006-03-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.

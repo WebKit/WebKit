@@ -62,12 +62,32 @@
     if (!aeDesc)
         return @"(null)";
     
-    DescType descType = CFSwapInt32HostToBig([aeDesc descriptorType]);
-    id printableValue = [aeDesc stringValue];
-    if (!printableValue)
-        printableValue = [aeDesc data];
+    id value = nil;
+
+    DescType descType = [aeDesc descriptorType];
+    switch (descType) {
+        case typeLongDateTime:
+            if ([[aeDesc data] length] == sizeof(LongDateTime)) {
+                LongDateTime d;
+                [[aeDesc data] getBytes:&d];
+                value = [NSString stringWithFormat:@"%016llX", (unsigned long long)d];
+            }
+            break;
+    }
+ 
+    if (!value)
+        value = [aeDesc stringValue];
+    if (!value)
+        value = [aeDesc data];
+
+    char descTypeStr[5];
+    descTypeStr[0] = descType >> 24;
+    descTypeStr[1] = descType >> 16;
+    descTypeStr[2] = descType >> 8;
+    descTypeStr[3] = descType;
+    descTypeStr[4] = 0;
     
-    return [NSString stringWithFormat:@"%@ ('%.4s')", printableValue, &descType];
+    return [NSString stringWithFormat:@"%@ ('%s')", value, descTypeStr];
 }
 
 @end
