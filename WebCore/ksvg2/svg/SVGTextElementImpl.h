@@ -47,7 +47,7 @@ namespace WebCore
         virtual SVGMatrixImpl *getScreenCTM() const;
         virtual SVGMatrixImpl *getTransformToElement(SVGElementImpl *element) const { return 0; }
 
-        virtual bool rendererIsNeeded(RenderStyle *) { return true; }
+        virtual bool rendererIsNeeded(RenderStyle *style) { return StyledElementImpl::rendererIsNeeded(style); }
         virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
         virtual bool childShouldCreateRenderer(DOM::NodeImpl *) const;
         virtual void attach();

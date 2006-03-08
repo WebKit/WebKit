@@ -59,7 +59,7 @@ namespace WebCore
 
         virtual void parseMappedAttribute(MappedAttributeImpl *attr);
 
-        virtual bool rendererIsNeeded(RenderStyle *) { return true; }
+        virtual bool rendererIsNeeded(RenderStyle *style) { return StyledElementImpl::rendererIsNeeded(style); }
         virtual RenderObject *createRenderer(RenderArena *arena, RenderStyle *style);
 
     private:
