@@ -162,22 +162,10 @@ const Cursor& WebCore::moveCursor() { notImplemented(); return localCursor; }
 MouseEvent::MouseEvent() { notImplemented(); }
 String WebCore::searchableIndexIntroduction() { notImplemented(); return String(); }
 
-void WebCore::setCookies(KURL const&,KURL const&,String const&) { notImplemented(); }
-String WebCore::cookies(KURL const&) { notImplemented(); return String(); }
-bool WebCore::cookiesEnabled() { notImplemented(); return false; }
-
-IntRect WebCore::screenRect(Widget*) { notImplemented(); return IntRect(); }
-int WebCore::screenDepth(Widget*) { notImplemented(); return 96; }
-IntRect WebCore::usableScreenRect(Widget*) { notImplemented(); return IntRect(0,0,800,600); }
-
 int WebCore::findNextSentenceFromIndex(QChar const*,int,int,bool) { notImplemented(); return 0; }
 void WebCore::findSentenceBoundary(QChar const*,int,int,int*,int*) { notImplemented(); }
 int WebCore::findNextWordFromIndex(QChar const*,int,int,bool) { notImplemented(); return 0; }
 void WebCore::findWordBoundary(QChar const*,int,int,int*,int*) { notImplemented(); }
-
-PluginInfo*PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned) { notImplemented(); return 0;}
-unsigned PlugInInfoStore::pluginCount() const { notImplemented(); return 0; }
-void WebCore::refreshPlugins(bool) { notImplemented(); }
 
 Array<char> KWQServeSynchronousRequest(Loader*,DocLoader*,TransferJob*,KURL&,QString&) { notImplemented(); return 0; }
 
@@ -190,11 +178,9 @@ KJS::Bindings::Instance* FrameWin::getObjectInstanceForWidget(Widget *) { notImp
 KJS::Bindings::Instance* FrameWin::getEmbedInstanceForWidget(Widget *) { notImplemented(); return 0; }
 bool FrameWin::canRedo() const { notImplemented(); return 0; }
 bool FrameWin::canUndo() const { notImplemented(); return 0; }
-bool FrameWin::runJavaScriptPrompt(String const&,String const&,String &) { notImplemented(); return 0; }
 void FrameWin::recordFormValue(QString const&,QString const&,WebCore::HTMLFormElementImpl*) { notImplemented(); }
 void FrameWin::registerCommandForRedo(WebCore::EditCommandPtr const&) { notImplemented(); }
-void FrameWin::runJavaScriptAlert(String const&) { notImplemented(); }
-bool FrameWin::runJavaScriptConfirm(String const&) { notImplemented(); return 0; }
+bool FrameWin::runJavaScriptPrompt(String const&,String const&,String &) { notImplemented(); return 0; }
 bool FrameWin::openURL(KURL const&) { notImplemented(); return 0; }
 void FrameWin::print() { notImplemented(); }
 KJS::Bindings::Instance* FrameWin::getAppletInstanceForWidget(Widget*) { notImplemented(); return 0; }
@@ -218,7 +204,6 @@ bool FrameWin::toolbarVisible() { notImplemented(); return 0; }
 void FrameWin::issueTransposeCommand() { notImplemented(); }
 void FrameWin::submitForm(KURL const&,struct WebCore::URLArgs const&) { notImplemented(); }
 bool FrameWin::canPaste() const { notImplemented(); return 0; }
-QString FrameWin::incomingReferrer() const { notImplemented(); return QString(); }
 enum WebCore::ObjectContentType FrameWin::objectContentType(KURL const&,QString const&) { notImplemented(); return (ObjectContentType)0; }
 bool FrameWin::canGoBackOrForward(int) const { notImplemented(); return 0; }
 void FrameWin::issuePasteAndMatchStyleCommand() { notImplemented(); }
@@ -248,6 +233,14 @@ String WebCore::inputElementAltText() { return QString(); }
 String WebCore::resetButtonDefaultLabel() { return "Reset"; }
 String WebCore::defaultLanguage() { return "en"; }
 
+void WebCore::setCookies(KURL const&,KURL const&,String const&) { }
+String WebCore::cookies(KURL const&) { return String(); }
+bool WebCore::cookiesEnabled() { return false; }
+
+PluginInfo*PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned) { return 0;}
+unsigned PlugInInfoStore::pluginCount() const { return 0; }
+void WebCore::refreshPlugins(bool) { }
+
 void FrameWin::restoreDocumentState() { }
 void FrameWin::partClearedInBegin() { }
 void FrameWin::createEmptyDocument() { }
@@ -263,7 +256,8 @@ static int frameNumber = 0;
 String FrameWin::generateFrameName() { return QString::number(frameNumber++); }
 Frame* FrameWin::createFrame(KURL const&,QString const&,RenderPart*,String const&) { return 0; }
 void FrameWin::saveDocumentState(void) { }
-void FrameWin::clearUndoRedoOperations(void) {}
+void FrameWin::clearUndoRedoOperations(void) { }
+QString FrameWin::incomingReferrer() const { return QString(); }
 void FrameWin::urlSelected(KURL const&,struct WebCore::URLArgs const&) { }
 
 BrowserExtensionWin::BrowserExtensionWin(WebCore::Frame*) { }

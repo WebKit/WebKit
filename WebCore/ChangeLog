@@ -1,3 +1,33 @@
+2006-03-08  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Add stubs to allow JavaScript-enabled WebCore to not crash.
+        Add ScreenWin implementation.
+        Add alert() support.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * bridge/win/FrameWin.cpp:
+        (WebCore::FrameWin::runJavaScriptAlert):
+        (WebCore::FrameWin::runJavaScriptConfirm):
+        * platform/win/ScreenWin.cpp: Added.
+        (WebCore::monitorInfoForWidget):
+        (WebCore::WebCore::screenRect):
+        (WebCore::WebCore::screenDepth):
+        (WebCore::WebCore::usableScreenRect):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (FrameWin::canUndo):
+        (FrameWin::runJavaScriptPrompt):
+        (FrameWin::canPaste):
+        (WebCore::setCookies):
+        (WebCore::cookies):
+        (WebCore::cookiesEnabled):
+        (PlugInInfoStore::createPluginInfoForPluginAtIndex):
+        (PlugInInfoStore::pluginCount):
+        (WebCore::refreshPlugins):
+        (FrameWin::clearUndoRedoOperations):
+        (FrameWin::incomingReferrer):
+
 2006-03-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

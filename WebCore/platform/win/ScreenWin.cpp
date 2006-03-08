@@ -23,53 +23,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "FrameWin.h"
+#include "Screen.h"
 
-#include "BrowserExtensionWin.h"
-#include "DocumentImpl.h"
-#include "KWQKHTMLSettings.h"
-#include "render_frames.h"
-#include "Plugin.h"
-#include "FramePrivate.h"
+#include "IntRect.h"
+#include "Widget.h"
 #include <windows.h>
 
 namespace WebCore {
 
-FrameWin::FrameWin(Page* page, RenderPart* renderPart)
-    : Frame(page, renderPart)
+static MONITORINFOEX monitorInfoForWidget(Widget* widget)
 {
-    d->m_extension = new BrowserExtensionWin(this);
-    KHTMLSettings* settings = new KHTMLSettings();
-    settings->setAutoLoadImages(true);
-    setSettings(settings);
+    HMONITOR monitor = MonitorFromWindow(widget->windowHandle(), MONITOR_DEFAULTTOPRIMARY);
+    MONITORINFOEX info;
+    info.cbSize = sizeof(MONITORINFOEX);
+    GetMonitorInfo(monitor, &info);
+    return info;
 }
 
-FrameWin::~FrameWin()
+IntRect WebCore::screenRect(Widget* widget)
 {
+    return monitorInfoForWidget(widget).rcMonitor;
 }
 
-QString FrameWin::userAgent() const
+int WebCore::screenDepth(Widget* widget)
 {
-    return "Mozilla/5.0 (PC; U; Intel; Windows; en) AppleWebKit/420+ (KHTML, like Gecko)";
+    DEVMODE deviceInfo;
+    deviceInfo.dmSize = sizeof(DEVMODE);
+    deviceInfo.dmDriverExtra = 0;
+    EnumDisplaySettings(0, ENUM_CURRENT_SETTINGS, &deviceInfo);
+    return deviceInfo.dmBitsPerPel;
 }
 
-void FrameWin::runJavaScriptAlert(String const& message)
+IntRect WebCore::usableScreenRect(Widget* widget)
 {
-    String text = message;
-    text.replace(QChar('\\'), backslashAsCurrencySymbol());
-    QChar nullChar('\0');
-    text += String(&nullChar, 1);
-    MessageBox(view()->windowHandle(), (LPCWSTR)text.unicode(), L"JavaScript Alert", MB_OK);
-}
-
-bool FrameWin::runJavaScriptConfirm(String const& message)
-{
-    String text = message;
-    text.replace(QChar('\\'), backslashAsCurrencySymbol());
-    QChar nullChar('\0');
-    text += String(&nullChar, 1);
-    return (MessageBox(view()->windowHandle(), (LPCWSTR)text.unicode(), L"JavaScript Alert", MB_OKCANCEL) == IDOK);
+    return monitorInfoForWidget(widget).rcWork;
 }
 
 }
