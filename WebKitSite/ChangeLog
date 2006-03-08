@@ -1,3 +1,11 @@
+2006-03-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth.
+
+        Updated links to gap and bananarepublic bugs.
+
+        * projects/compat/hitlist.html:
+
 2006-03-06  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.
