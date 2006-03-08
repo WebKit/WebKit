@@ -116,6 +116,11 @@ GraphicsContext::~GraphicsContext()
     delete m_data;
 }
 
+cairo_t* GraphicsContext::platformContext() const
+{
+    return m_data->context;
+}
+
 const Pen& GraphicsContext::pen() const
 {
     return m_data->state.pen;
@@ -517,38 +522,5 @@ bool GraphicsContext::paintingDisabled() const
 {
     return m_data->state.paintingDisabled;
 }
-
-void GraphicsContext::drawText(int x, int y, int alignmentFlags, const QString& qstring)
-{
-    if (m_data->state.paintingDisabled)
-        return;
-
-    cairo_surface_t* surface = cairo_get_target(m_data->context);
-    HDC dc = cairo_win32_surface_get_dc(surface);
-
-    TextOut(dc, x, y, (LPCWSTR)qstring.unicode(), qstring.length());
-}
-
-void GraphicsContext::drawText(int x, int y, int tabWidth, int xpos, const QChar *str, int len, int from, int to, int toAdd,
-    const Color& backgroundColor, TextDirection d, bool visuallyOrdered, int letterSpacing, int wordSpacing, bool smallCaps)
-{
-    if (m_data->state.paintingDisabled || len <= 0)
-        return;
-
-    cairo_surface_t* surface = cairo_get_target(m_data->context);
-    HDC dc = cairo_win32_surface_get_dc(surface);
-
-    int offset = 0;
-    int length = len;
-    if (from > 0) {
-        offset = from;
-        length = len - from;
-    }
-    if (to > 0)
-        length = to-from;
-
-    TextOut(dc, x, y, (LPCWSTR)(str + offset), length);
-}
-
 
 }

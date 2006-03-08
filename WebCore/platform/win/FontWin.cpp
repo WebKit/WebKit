@@ -30,12 +30,42 @@
 
 namespace WebCore {
 
-void Font::drawText(GraphicsContext* context, int x, int y, int tabWidth, int xpos, const QChar* str, int slen, int pos, int len,
-    int toAdd, TextDirection d, bool visuallyOrdered, int from, int to, Color bg ) const
+void Font::drawText(const GraphicsContext* context, int x, int y, int tabWidth, int xpos, const QChar* str, int len, int from, int to,
+                    int toAdd, TextDirection d, bool visuallyOrdered)) const
 {
-    // FIXME: We should be drawing this, and people should be using the GraphicsContext API instead of calling us directly.
-    context->drawText(x, y, tabWidth, xpos, str + pos, std::min(slen - pos, len), from, to, toAdd, bg, d, visuallyOrdered,
-                      m_letterSpacing, m_wordSpacing, fontDescription().smallCaps());
+    cairo_surface_t* surface = cairo_get_target(context->platformContext());
+    HDC dc = cairo_win32_surface_get_dc(surface);
+
+    int offset = 0;
+    int length = len;
+    if (from > 0) {
+        offset = from;
+        length = len - from;
+    }
+    if (to > 0)
+        length = to - from;
+
+    TextOut(dc, x, y, (LPCWSTR)(str+offset), length);
 }
+
+void Font::drawHighlightForText(const GraphicsContext* context, int x, int y, int h, int tabWidth, int xpos, const QChar* str,
+                                int len, int from, int to, int toAdd,
+                                TextDirection d, bool visuallyOrdered, const Color& backgroundColor) const
+{
+{
+
+void Font::drawLineForText(const GraphicsContext* context, int x, int y, int yOffset, int width) const
+{
+}
+
+void Font::drawLineForMisspelling(const GraphicsContext* context, int x, int y, int width) const
+{
+}
+
+int Font::misspellingLineThickness(const GraphicsContext* context) const
+{
+    return 0;
+}
+
 
 }

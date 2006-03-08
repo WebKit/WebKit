@@ -27,6 +27,8 @@
 #include "GraphicsContext.h"
 
 #include "IntRect.h"
+#include "QString.h"
+#include "Font.h"
 
 namespace WebCore {
 
@@ -50,6 +52,63 @@ void GraphicsContext::drawImage(Image* image, int x, int y, int w, int h,
                          int sx, int sy, int sw, int sh, Image::CompositeOperator compositeOperator, void* context)
 {
     drawFloatImage(image, (float)x, (float)y, (float)w, (float)h, (float)sx, (float)sy, (float)sw, (float)sh, compositeOperator, context);
+}
+
+void GraphicsContext::drawText(int x, int y, int alignmentFlags, const QString& qstring)
+{
+    if (paintingDisabled())
+        return;
+
+    drawText(x, y, 0, 0, qstring.unicode(), qstring.length(), 0, qstring.length(), 0);
+}
+
+void GraphicsContext::drawText(int x, int y, int tabWidth, int xpos, const QChar *str, int slen, int pos, int len, int toAdd,
+                               TextDirection d, bool visuallyOrdered, int from, int to)
+{
+    if (paintingDisabled())
+        return;
+
+    int length = std::min(slen - pos, len);
+    if (length <= 0)
+        return;
+    
+    font().drawText(this, x, y, tabWidth, xpos, str + pos, length, from, to, toAdd, d, visuallyOrdered);
+}
+
+void GraphicsContext::drawHighlightForText(int x, int y, int h, int tabWidth, int xpos, const QChar *str, int slen, int pos, int len, int toAdd,
+                                           TextDirection d, bool visuallyOrdered, int from, int to, const Color& backgroundColor)
+{
+    if (paintingDisabled())
+        return;
+        
+    int length = std::min(slen - pos, len);
+    if (length <= 0)
+        return;
+
+    return font().drawHighlightForText(this, x, y, h, tabWidth, xpos, str + pos, length, from, to,
+                                       toAdd, d, visuallyOrdered, backgroundColor);
+}
+
+void GraphicsContext::drawLineForText(int x, int y, int yOffset, int width)
+{
+    if (paintingDisabled())
+        return;
+
+    return font().drawLineForText(this, x, y, yOffset, width);
+}
+
+
+void GraphicsContext::drawLineForMisspelling(int x, int y, int width)
+{
+    if (paintingDisabled())
+        return;
+
+    return font().drawLineForMisspelling(this, x, y, width);
+}
+
+int GraphicsContext::misspellingLineThickness() const
+{
+    return font().misspellingLineThickness(this);
 }
 
 }

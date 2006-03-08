@@ -125,13 +125,12 @@ namespace WebCore {
 
         void drawText(int x, int y, int alignmentFlags, const QString&);
         void drawHighlightForText(int x, int y, int h, int tabWidth, int xpos,
-            const QChar*, int length, int from, int to, int toAdd,
-            const Color& backgroundColor, TextDirection, bool visuallyOrdered,
-            int letterSpacing, int wordSpacing, bool smallCaps);
+            const QChar*, int slen, int pos, int len, int toAdd,
+            TextDirection d, bool visuallyOrdered,
+            int from, int to, const Color& backgroundColor);
         void drawText(int x, int y, int tabWidth, int xpos,
-            const QChar*, int length, int from, int to, int toAdd,
-            const Color& backgroundColor, TextDirection, bool visuallyOrdered,
-            int letterSpacing, int wordSpacing, bool smallCaps);
+            const QChar*, int slen, int pos, int len, int toAdd,
+            TextDirection d = LTR, bool visuallyOrdered = false, int from = -1, int to = -1);
         void drawLineForText(int x, int y, int yOffset, int width);
         void drawLineForMisspelling(int x, int y, int width);
         int misspellingLineThickness() const;
@@ -163,6 +162,13 @@ namespace WebCore {
         static void setCompositeOperation(CGContextRef, int operation);
 #endif
 
+#if __APPLE__
+        CGContextRef platformContext() const { return currentCGContext(); }
+#endif
+#if WIN32
+        cairo_t* platformContext() const;
+#endif
+
 #if SVG_SUPPORT
         KRenderingDeviceContext* createRenderingDeviceContext();
         static KRenderingDevice* renderingDevice();
@@ -173,8 +179,6 @@ namespace WebCore {
 private:
         void setColorFromBrush();
         void setColorFromPen();
-
-        void updateTextRenderer();
 
         GraphicsContextPrivate* m_data;
         bool m_isForPrinting;

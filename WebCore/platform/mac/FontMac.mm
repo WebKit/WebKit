@@ -159,22 +159,95 @@ IntRect Font::selectionRectForText(int x, int y, int h, int tabWidth, int xpos,
     geometry.useFontMetricsForSelectionYAndHeight = false;
     return enclosingIntRect([m_renderer->getRenderer(fontDescription()) selectionRectForRun:&run style:&style geometry:&geometry]);
 }
-
-void Font::drawHighlightForText(GraphicsContext* context, int x, int y, int h, int tabWidth, int xpos, 
-    const QChar* str, int slen, int pos, int len,
-    int toAdd, TextDirection d, bool visuallyOrdered, int from, int to, Color bg) const
-{
-    // FIXME: We should be drawing this, and people should be using the GraphicsContext API instead of calling us directly.
-    context->drawHighlightForText(x, y, h, tabWidth, xpos, str + pos, std::min(slen - pos, len), from, to, toAdd, bg, d, visuallyOrdered,
-                                  m_letterSpacing, m_wordSpacing, fontDescription().smallCaps());
-}
                      
-void Font::drawText(GraphicsContext* context, int x, int y, int tabWidth, int xpos, const QChar* str, int slen, int pos, int len,
-    int toAdd, TextDirection d, bool visuallyOrdered, int from, int to, Color bg ) const
+void Font::drawText(const GraphicsContext* context, int x, int y, int tabWidth, int xpos, const QChar* str, int len, int from, int to,
+                    int toAdd, TextDirection d, bool visuallyOrdered) const
 {
-    // FIXME: We should be drawing this, and people should be using the GraphicsContext API instead of calling us directly.
-    context->drawText(x, y, tabWidth, xpos, str + pos, std::min(slen - pos, len), from, to, toAdd, bg, d, visuallyOrdered,
-                      m_letterSpacing, m_wordSpacing, fontDescription().smallCaps());
+    // Avoid allocations, use stack array to pass font families.  Normally these
+    // css fallback lists are small <= 3.
+    CREATE_FAMILY_ARRAY(*this, families);
+
+    if (from < 0)
+        from = 0;
+    if (to < 0)
+        to = len;
+        
+    WebCoreTextRun run;
+    WebCoreInitializeTextRun(&run, (const UniChar *)str, len, from, to);    
+    WebCoreTextStyle style;
+    WebCoreInitializeEmptyTextStyle(&style);
+    style.textColor = nsColor(context->pen().color());
+    style.backgroundColor = nil;
+    style.rtl = d == RTL;
+    style.directionalOverride = visuallyOrdered;
+    style.letterSpacing = letterSpacing();
+    style.wordSpacing = wordSpacing();
+    style.smallCaps = isSmallCaps();
+    style.families = families;
+    style.padding = toAdd;
+    style.tabWidth = tabWidth;
+    style.xpos = xpos;
+    WebCoreTextGeometry geometry;
+    WebCoreInitializeEmptyTextGeometry(&geometry);
+    geometry.point = NSMakePoint(x, y);
+    [m_renderer->getRenderer(fontDescription()) drawRun:&run style:&style geometry:&geometry];
+}
+
+void Font::drawHighlightForText(const GraphicsContext* context, int x, int y, int h, int tabWidth, int xpos, const QChar* str,
+                                int len, int from, int to, int toAdd,
+                                TextDirection d, bool visuallyOrdered, const Color& backgroundColor) const
+{
+    // Avoid allocations, use stack array to pass font families.  Normally these
+    // css fallback lists are small <= 3.
+    CREATE_FAMILY_ARRAY(*this, families);
+
+    if (from < 0)
+        from = 0;
+    if (to < 0)
+        to = len;
+        
+    WebCoreTextRun run;
+    WebCoreInitializeTextRun(&run, (const UniChar *)str, len, from, to);    
+    WebCoreTextStyle style;
+    WebCoreInitializeEmptyTextStyle(&style);
+    style.textColor = nsColor(context->pen().color());
+    style.backgroundColor = backgroundColor.isValid() ? nsColor(backgroundColor) : nil;
+    style.rtl = d == RTL;
+    style.directionalOverride = visuallyOrdered;
+    style.letterSpacing = letterSpacing();
+    style.wordSpacing = wordSpacing();
+    style.smallCaps = isSmallCaps();
+    style.families = families;    
+    style.padding = toAdd;
+    style.tabWidth = tabWidth;
+    style.xpos = xpos;
+    WebCoreTextGeometry geometry;
+    WebCoreInitializeEmptyTextGeometry(&geometry);
+    geometry.point = NSMakePoint(x, y);
+    geometry.selectionY = y;
+    geometry.selectionHeight = h;
+    geometry.useFontMetricsForSelectionYAndHeight = false;
+    [m_renderer->getRenderer(fontDescription()) drawHighlightForRun:&run style:&style geometry:&geometry];
+}
+
+void Font::drawLineForText(const GraphicsContext* context, int x, int y, int yOffset, int width) const
+{
+    [m_renderer->getRenderer(fontDescription())
+        drawLineForCharacters:NSMakePoint(x, y)
+                      yOffset:(float)yOffset
+                        width:width
+                        color:nsColor(context->pen().color())
+                    thickness:context->pen().width()];
+}
+
+void Font::drawLineForMisspelling(const GraphicsContext* context, int x, int y, int width) const
+{
+    [m_renderer->getRenderer(fontDescription()) drawLineForMisspelling:NSMakePoint(x, y) withWidth:width];
+}
+
+int Font::misspellingLineThickness(const GraphicsContext* context) const
+{
+    return [m_renderer->getRenderer(fontDescription()) misspellingLineThickness];
 }
 
 float Font::floatWidth(const QChar* uchars, int slen, int pos, int len, int tabWidth, int xpos) const

@@ -340,28 +340,28 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
         int endPoint = m_len;
         if (m_truncation != cNoTruncation)
             endPoint = m_truncation - m_start;
-        font->drawText(i.p, m_x + tx, m_y + ty + m_baseline, textObject()->tabWidth(), textPos(),
-                       textObject()->string()->s, textObject()->string()->l, m_start, endPoint,
-                       m_toAdd, m_reversed ? RTL : LTR, m_dirOverride || styleToUse->visuallyOrdered());
+        i.p->drawText(m_x + tx, m_y + ty + m_baseline, textObject()->tabWidth(), textPos(),
+                      textObject()->string()->s, textObject()->string()->l, m_start, endPoint,
+                      m_toAdd, m_reversed ? RTL : LTR, m_dirOverride || styleToUse->visuallyOrdered());
     } else {
         int sPos, ePos;
         selectionStartEnd(sPos, ePos);
         if (paintSelectedTextSeparately) {
             // paint only the text that is not selected
             if (sPos >= ePos) {
-                font->drawText(i.p, m_x + tx, m_y + ty + m_baseline, textObject()->tabWidth(), textPos(),
-                               textObject()->string()->s, textObject()->string()->l, m_start, m_len,
-                               m_toAdd, m_reversed ? RTL : LTR, m_dirOverride || styleToUse->visuallyOrdered());
+                i.p->drawText(m_x + tx, m_y + ty + m_baseline, textObject()->tabWidth(), textPos(),
+                              textObject()->string()->s, textObject()->string()->l, m_start, m_len,
+                              m_toAdd, m_reversed ? RTL : LTR, m_dirOverride || styleToUse->visuallyOrdered());
             } else {
                 if (sPos - 1 >= 0) {
-                    font->drawText(i.p, m_x + tx, m_y + ty + m_baseline, textObject()->tabWidth(), textPos(),
-                                   textObject()->string()->s, textObject()->string()->l, m_start, m_len,
-                                   m_toAdd, m_reversed ? RTL : LTR, m_dirOverride || styleToUse->visuallyOrdered(), 0, sPos);
+                    i.p->drawText(m_x + tx, m_y + ty + m_baseline, textObject()->tabWidth(), textPos(),
+                                  textObject()->string()->s, textObject()->string()->l, m_start, m_len,
+                                  m_toAdd, m_reversed ? RTL : LTR, m_dirOverride || styleToUse->visuallyOrdered(), 0, sPos);
                 }
                 if (ePos < m_start + m_len) {
-                    font->drawText(i.p, m_x + tx, m_y + ty + m_baseline, textObject()->tabWidth(), textPos(),
-                                   textObject()->string()->s, textObject()->string()->l, m_start, m_len,
-                                   m_toAdd, m_reversed ? RTL : LTR, m_dirOverride || styleToUse->visuallyOrdered(), ePos, -1);
+                    i.p->drawText(m_x + tx, m_y + ty + m_baseline, textObject()->tabWidth(), textPos(),
+                                  textObject()->string()->s, textObject()->string()->l, m_start, m_len,
+                                  m_toAdd, m_reversed ? RTL : LTR, m_dirOverride || styleToUse->visuallyOrdered(), ePos, -1);
                 }
             }
         }
@@ -376,9 +376,9 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
                                selectionTextShadow->y,
                                selectionTextShadow->blur,
                                selectionTextShadow->color);
-            font->drawText(i.p, m_x + tx, m_y + ty + m_baseline, textObject()->tabWidth(), textPos(),
-                           textObject()->string()->s, textObject()->string()->l, m_start, m_len,
-                           m_toAdd, m_reversed ? RTL : LTR, m_dirOverride || styleToUse->visuallyOrdered(), sPos, ePos);
+            i.p->drawText(m_x + tx, m_y + ty + m_baseline, textObject()->tabWidth(), textPos(),
+                          textObject()->string()->s, textObject()->string()->l, m_start, m_len,
+                          m_toAdd, m_reversed ? RTL : LTR, m_dirOverride || styleToUse->visuallyOrdered(), sPos, ePos);
             if (selectionTextShadow)
                 i.p->clearShadow();
         }
@@ -461,7 +461,7 @@ void InlineTextBox::paintSelection(GraphicsContext* p, int tx, int ty, RenderSty
     int y = r->selectionTop();
     int h = r->selectionHeight();
     p->addClip(IntRect(m_x + tx, y + ty, m_width, h));
-    f->drawHighlightForText(p, m_x + tx, y + ty, h, textObject()->tabWidth(), textPos(), 
+    p->drawHighlightForText(m_x + tx, y + ty, h, textObject()->tabWidth(), textPos(), 
                             textObject()->str->s, textObject()->str->l, m_start, m_len,
                             m_toAdd, m_reversed ? RTL : LTR, m_dirOverride || style->visuallyOrdered(), sPos, ePos, c);
     p->restore();
@@ -485,8 +485,8 @@ void InlineTextBox::paintMarkedTextBackground(GraphicsContext* p, int tx, int ty
     RootInlineBox* r = root();
     int y = r->selectionTop();
     int h = r->selectionHeight();
-    f->drawHighlightForText(p, m_x + tx, y + ty, h, textObject()->tabWidth(), textPos(), textObject()->str->s, textObject()->str->l, m_start, m_len,
-            m_toAdd, m_reversed ? RTL : LTR, m_dirOverride || style->visuallyOrdered(), sPos, ePos, c);
+    p->drawHighlightForText(m_x + tx, y + ty, h, textObject()->tabWidth(), textPos(), textObject()->str->s, textObject()->str->l, m_start, m_len,
+                            m_toAdd, m_reversed ? RTL : LTR, m_dirOverride || style->visuallyOrdered(), sPos, ePos, c);
     p->restore();
 }
 
@@ -583,9 +583,9 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, int _tx, int _ty, 
     int sPos = kMax(marker.startOffset - m_start, (unsigned)0);
     int ePos = kMin(marker.endOffset - m_start, (unsigned)m_len);
     
-    f->drawHighlightForText(pt, m_x + _tx, y + _ty, h, textObject()->tabWidth(), textPos(), 
-                            textObject()->str->s, textObject()->str->l, m_start, m_len,
-                            m_toAdd, m_reversed ? RTL : LTR, m_dirOverride || style->visuallyOrdered(), sPos, ePos, yellow);
+    pt->drawHighlightForText(m_x + _tx, y + _ty, h, textObject()->tabWidth(), textPos(), 
+                             textObject()->str->s, textObject()->str->l, m_start, m_len,
+                             m_toAdd, m_reversed ? RTL : LTR, m_dirOverride || style->visuallyOrdered(), sPos, ePos, yellow);
     pt->restore();
 }
 
