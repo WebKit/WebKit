@@ -1,3 +1,13 @@
+2006-03-08  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Partially fix JS on win32 by fixing hash table generation.
+
+        * kjs/create_hash_table: limit << results to 32 bits.
+        * kjs/testkjs.cpp:
+        (TestFunctionImp::callAsFunction):
+
 2006-03-07  Darin Adler  <darin@apple.com>
 
         * kxmlcore/Vector.h: Quick fix to try to get Windows compiling again.

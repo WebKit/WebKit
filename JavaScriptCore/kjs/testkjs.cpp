@@ -148,6 +148,7 @@ JSValue* TestFunctionImp::callAsFunction(ExecState* exec, JSObject*, const List 
     default:
       abort();
   }
+  return 0;
 }
 
 int main(int argc, char** argv)
