@@ -40,6 +40,19 @@
 
 2006-03-08  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Eric.
+
+        - very rough implementation of networking in TransferJob for windows
+
+        * platform/TransferJob.h:
+        * platform/TransferJobInternal.h:
+        (WebCore::TransferJobInternal::TransferJobInternal):
+        * platform/win/TransferJobWin.cpp:
+        (WebCore::transferJobStatusCallback):
+        (WebCore::TransferJob::start):
+
+2006-03-08  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
 
         - fix win32 build

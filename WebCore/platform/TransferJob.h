@@ -31,6 +31,14 @@
 #include <kxmlcore/HashMap.h>
 #include "Timer.h"
 
+#ifdef WIN32
+typedef unsigned long DWORD;
+typedef unsigned long DWORD_PTR;
+typedef void* LPVOID;
+typedef LPVOID HINTERNET;
+typedef LPVOID HANDLE;
+#endif
+
 #if __APPLE__
 #ifdef __OBJC__
 @class KWQResourceLoader;
@@ -72,7 +80,8 @@ public:
     void setLoader(KWQResourceLoader*);
 #endif
 #if WIN32
-    void TransferJob::fileLoadTimer(Timer<TransferJob>* timer);
+    void fileLoadTimer(Timer<TransferJob>* timer);
+    friend void __stdcall transferJobStatusCallback(HINTERNET, DWORD_PTR, DWORD, LPVOID, DWORD);
 #endif
 
     void cancel();
