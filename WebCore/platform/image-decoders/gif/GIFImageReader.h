@@ -39,7 +39,6 @@
 
 #define MAX_LZW_BITS          12
 #define MAX_BITS            4097 /* 2^MAX_LZW_BITS+1 */
-#define MINIMUM_DELAY_TIME   100
 #define MAX_COLORS           256
 #define MAX_HOLD_SIZE        256
 

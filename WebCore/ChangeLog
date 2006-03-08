@@ -1,3 +1,13 @@
+2006-03-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix another instance of the bug I just fixed in the Macintosh-specific code path
+
+        * platform/image-decoders/gif/GIFImageReader.h: Remove not-so-useful 100ms constant.
+        * platform/image-decoders/gif/GIFImageReader.cpp: (GIFImageReader::read):
+        Use the correct rule for minimum frame durations.
+
 2006-03-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
