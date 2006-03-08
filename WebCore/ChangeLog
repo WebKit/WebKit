@@ -1,3 +1,21 @@
+2006-03-08  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7579>
+        TinyMCE: Implement execCommand(insertImage, ...)
+        
+        Implemented InsertImage and also changed paste to use a single 
+        rule for when to remove junk that remains after node removal. 
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::removeNodeAndPruneAncestors):
+        (WebCore::ReplaceSelectionCommand::doApply):
+        (WebCore::ReplaceSelectionCommand::removeLinePlaceholderIfNeeded):
+        * editing/ReplaceSelectionCommand.h:
+        * editing/htmlediting.cpp:
+        * editing/jsediting.cpp:
+
 2006-03-08  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.

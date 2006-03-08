@@ -296,6 +296,21 @@ static DOMString &matchNearestBlockquoteColorString()
     return matchNearestBlockquoteColorString;
 }
 
+// FIXME: Move this somewhere so that the other editing operations can use it to clean up after themselves.
+void ReplaceSelectionCommand::removeNodeAndPruneAncestors(NodeImpl* node)
+{
+    NodeImpl* parent = node->parentNode();
+    removeNode(node);
+    while (parent) {
+        NodeImpl* nextParent = parent->parentNode();
+        // If you change this rule you may have to add an updateLayout() here.
+        if (parent->renderer() && parent->renderer()->firstChild())
+            return;
+        removeNode(parent);
+        parent = nextParent;
+    }
+}
+
 void ReplaceSelectionCommand::fixupNodeStyles(const QValueList<NodeDesiredStyle> &list)
 {
     // This function uses the mapped "desired style" to apply the additional style needed, if any,
@@ -791,17 +806,16 @@ void ReplaceSelectionCommand::doApply()
         if (beyondEndNode) {
             updateLayout();
             QValueList<NodeDesiredStyle> styles;
-            QPtrList<NodeImpl> blocks;
-            NodeImpl *node = beyondEndNode->enclosingInlineElement();
-            NodeImpl *refNode = m_lastNodeInserted.get();
+            NodeImpl* node = beyondEndNode->enclosingInlineElement();
+            NodeImpl* refNode = m_lastNodeInserted.get();
+            
             while (node) {
                 if (node->isBlockFlowOrBlockTable())
                     break;
                     
                 NodeImpl *next = node->nextSibling();
-                blocks.append(node->enclosingBlockFlowElement());
                 computeAndStoreNodeDesiredStyle(node, styles);
-                removeNode(node);
+                removeNodeAndPruneAncestors(node);
                 // No need to update inserted node variables.
                 insertNodeAfter(node, refNode);
                 refNode = node;
@@ -809,18 +823,6 @@ void ReplaceSelectionCommand::doApply()
                 if (node->hasTagName(brTag))
                     break;
                 node = next;
-            }
-            updateLayout();
-            for (QPtrListIterator<NodeImpl> it(blocks); it.current(); ++it) {
-                NodeImpl *blockToRemove = it.current();
-                if (!blockToRemove->inDocument())
-                    continue;
-                if (!blockToRemove->renderer() || !blockToRemove->renderer()->firstChild()) {
-                    if (blockToRemove->parentNode())
-                        blocks.append(blockToRemove->parentNode()->enclosingBlockFlowElement());
-                    removeNode(blockToRemove);
-                    updateLayout();
-                }
             }
 
             fixupNodeStyles(styles);
@@ -845,11 +847,8 @@ void ReplaceSelectionCommand::removeLinePlaceholderIfNeeded(NodeImpl *linePlaceh
         VisiblePosition placeholderPos(linePlaceholder, linePlaceholder->renderer()->caretMinOffset(), DOWNSTREAM);
         if (placeholderPos.next().isNull() ||
             !(isStartOfLine(placeholderPos) && isEndOfLine(placeholderPos))) {
-            NodeImpl *block = linePlaceholder->enclosingBlockFlowElement();
-            removeNode(linePlaceholder);
-            updateLayout();
-            if (!block->renderer() || block->renderer()->height() == 0)
-                removeNode(block);
+            
+            removeNodeAndPruneAncestors(linePlaceholder);
         }
     }
 }

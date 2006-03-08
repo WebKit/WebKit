@@ -1,3 +1,17 @@
+2006-03-08  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by darin
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7579>
+        TinyMCE: Implement execCommand(insertImage, ...)
+
+        * editing/editing.js:
+        * editing/execCommand/insertImage-expected.checksum: Added.
+        * editing/execCommand/insertImage-expected.png: Added.
+        * editing/execCommand/insertImage-expected.txt: Added.
+        * editing/execCommand/insertImage.html: Added.
+        * editing/pasteboard/3976872-expected.txt:
+
 2006-03-08  Rob Buis  <buis@kde.org>
 
         Reviewed by eseidel.

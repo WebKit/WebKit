@@ -361,6 +361,21 @@ function insertHTMLCommand(html) {
 
 //-------------------------------------------------------------------------------------------------------
 
+function execInsertImageCommand(imgSrc) {
+    document.execCommand("InsertImage", false, imgSrc);
+}
+function insertImageCommand(imgSrc) {
+    if (commandDelay > 0) {
+        window.setTimeout(execInsertImageCommand, commandCount * commandDelay, imgSrc);
+        commandCount++;
+    }
+    else {
+        execInsertImageCommand(imgSrc);
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
 function execInsertLineBreakCommand() {
     document.execCommand("InsertLineBreak");
 }

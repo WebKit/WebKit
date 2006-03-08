@@ -31,7 +31,6 @@ layer at (0,0) size 800x600
           RenderInline {B} at (0,0) size 187x18
             RenderText {TEXT} at (1,1) size 187x18
               text run at (1,1) width 187: "this text should end up bold"
-          RenderInline {B} at (0,0) size 0x18
         RenderBlock {DIV} at (0,20) size 784x20 [border: (1px solid #FF0000)]
           RenderInline {B} at (0,0) size 187x18
             RenderText {TEXT} at (1,1) size 187x18
