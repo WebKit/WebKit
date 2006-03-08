@@ -98,7 +98,8 @@ typedef struct {
 
     HFONT scaled_hfont;
     HFONT unscaled_hfont;
-    
+
+    cairo_bool_t delete_scaled_hfont;
 } cairo_win32_scaled_font_t;
 
 static cairo_status_t 
@@ -225,6 +226,7 @@ _get_system_quality (void)
 
 static cairo_scaled_font_t *
 _win32_scaled_font_create (LOGFONTW                   *logfont,
+			   HFONT                      hfont,
 			   cairo_font_face_t	      *font_face,
 			   const cairo_matrix_t       *font_matrix,
 			   const cairo_matrix_t       *ctm,
@@ -270,8 +272,11 @@ _win32_scaled_font_create (LOGFONTW                   *logfont,
     }
     
     f->em_square = 0;
-    f->scaled_hfont = NULL;
+    f->scaled_hfont = hfont;
     f->unscaled_hfont = NULL;
+
+    /* don't delete the hfont if it was passed in to us */
+    f->delete_scaled_hfont = !hfont;
 
     cairo_matrix_multiply (&scale, font_matrix, ctm);
     _compute_transform (f, &scale);
@@ -516,7 +521,7 @@ _cairo_win32_scaled_font_create_toy (cairo_toy_font_face_t *toy_face,
     if (!logfont.lfFaceName)
 	return CAIRO_STATUS_NO_MEMORY;
     
-    scaled_font = _win32_scaled_font_create (&logfont, &toy_face->base,
+    scaled_font = _win32_scaled_font_create (&logfont, NULL, &toy_face->base,
 					     font_matrix, ctm, options);
     if (!scaled_font)
 	return CAIRO_STATUS_NO_MEMORY;
@@ -534,7 +539,7 @@ _cairo_win32_scaled_font_fini (void *abstract_font)
     if (scaled_font == NULL)
 	return;
 
-    if (scaled_font->scaled_hfont)
+    if (scaled_font->scaled_hfont && scaled_font->delete_scaled_hfont)
 	DeleteObject (scaled_font->scaled_hfont);
 
     if (scaled_font->unscaled_hfont)
@@ -1127,6 +1132,7 @@ _cairo_win32_scaled_font_show_glyphs (void		       *abstract_font,
 	return CAIRO_STATUS_SUCCESS;
 
     if (_cairo_surface_is_win32 (generic_surface) &&
+	surface->format == CAIRO_FORMAT_RGB24 &&
 	op == CAIRO_OPERATOR_OVER &&
 	_cairo_pattern_is_opaque_solid (pattern)) {
 
@@ -1159,7 +1165,7 @@ _cairo_win32_scaled_font_show_glyphs (void		       *abstract_font,
 	cairo_surface_pattern_t mask;
 	RECT r;
 
-	tmp_surface = (cairo_win32_surface_t *)_cairo_win32_surface_create_dib (CAIRO_FORMAT_ARGB32, width, height);
+	tmp_surface = (cairo_win32_surface_t *)cairo_win32_surface_create_dib (CAIRO_FORMAT_ARGB32, width, height);
 	if (tmp_surface->base.status)
 	    return CAIRO_STATUS_NO_MEMORY;
 
@@ -1170,8 +1176,7 @@ _cairo_win32_scaled_font_show_glyphs (void		       *abstract_font,
 	FillRect (tmp_surface->dc, &r, GetStockObject (WHITE_BRUSH));
 
 	_draw_glyphs_on_surface (tmp_surface, scaled_font, RGB (0, 0, 0),
-				 dest_x - surface->base.device_x_offset,
-				 dest_y - surface->base.device_y_offset,
+				 dest_x, dest_y,
 				 glyphs, num_glyphs);
 
 	if (scaled_font->quality == CLEARTYPE_QUALITY) {
@@ -1371,6 +1376,7 @@ typedef struct _cairo_win32_font_face cairo_win32_font_face_t;
 struct _cairo_win32_font_face {
     cairo_font_face_t base;
     LOGFONTW logfont;
+    HFONT hfont;
 };
 
 /* implement the platform-specific interface */
@@ -1390,6 +1396,7 @@ _cairo_win32_font_face_scaled_font_create (void			*abstract_face,
     cairo_win32_font_face_t *font_face = abstract_face;
 
     *font = _win32_scaled_font_create (&font_face->logfont,
+				       font_face->hfont,
 				       &font_face->base,
 				       font_matrix, ctm, options);
     if (*font)
@@ -1430,6 +1437,26 @@ cairo_win32_font_face_create_for_logfontw (LOGFONTW *logfont)
     }
     
     font_face->logfont = *logfont;
+    font_face->hfont = NULL;
+    
+    _cairo_font_face_init (&font_face->base, &_cairo_win32_font_face_backend);
+
+    return &font_face->base;
+}
+
+
+cairo_font_face_t *
+cairo_win32_font_face_create_for_hfont (HFONT font)
+{
+    cairo_win32_font_face_t *font_face;
+
+    font_face = malloc (sizeof (cairo_win32_font_face_t));
+    if (!font_face) {
+	_cairo_error (CAIRO_STATUS_NO_MEMORY);
+	return (cairo_font_face_t *)&_cairo_font_face_nil;
+    }
+    
+    font_face->hfont = font;
     
     _cairo_font_face_init (&font_face->base, &_cairo_win32_font_face_backend);
 

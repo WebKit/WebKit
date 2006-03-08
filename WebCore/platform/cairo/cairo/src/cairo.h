@@ -1138,6 +1138,24 @@ cairo_append_path (cairo_t	*cr,
 cairo_public void
 cairo_path_destroy (cairo_path_t *path);
 
+/**
+ * cairo_clip_rect_t:
+ * 
+ * A data structure for holding clip rectangles.
+ */
+typedef struct _cairo_clip_rect {
+    double x, y, width, height;
+} cairo_clip_rect_t;
+
+cairo_public cairo_bool_t
+cairo_has_clip (cairo_t *cr);
+
+cairo_public cairo_bool_t
+cairo_extract_clip_rectangles (cairo_t *cr,
+                               int max_rectangles,
+                               cairo_clip_rect_t *rectangles_out,
+                               int *num_rectangles_out);
+
 /* Error status queries */
 
 cairo_public cairo_status_t

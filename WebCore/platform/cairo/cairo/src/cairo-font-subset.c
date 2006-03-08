@@ -88,25 +88,25 @@ cairo_pdf_ft_font_use_glyph (void *abstract_font, int glyph);
 
 #else
 
-static inline unsigned short
+static unsigned short
 cpu_to_be16(unsigned short v)
 {
     return (v << 8) | (v >> 8);
 }
 
-static inline unsigned short
+static unsigned short
 be16_to_cpu(unsigned short v)
 {
     return cpu_to_be16 (v);
 }
 
-static inline unsigned long
+static unsigned long
 cpu_to_be32(unsigned long v)
 {
     return (cpu_to_be16 (v) << 16) | cpu_to_be16 (v >> 16);
 }
 
-static inline unsigned long
+static unsigned long
 be32_to_cpu(unsigned long v)
 {
     return cpu_to_be32 (v);

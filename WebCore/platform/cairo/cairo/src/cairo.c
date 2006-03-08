@@ -2584,6 +2584,45 @@ cairo_copy_path (cairo_t *cr)
 }
 
 /**
+ * cairo_has_clip
+ * @cr: a cairo context
+ * 
+ * Returns TRUE if the cairo context has any clipping active, otherwise
+ * FALSE.
+ */
+cairo_bool_t
+cairo_has_clip (cairo_t *cr)
+{
+    if (cr->status)
+        return FALSE;
+    return _cairo_gstate_has_clip (cr->gstate);
+}
+
+/**
+ * cairo_extract_clip_rectangles
+ * @cr: a cairo context
+ * @max_rectangles: the maximum number of rectangles to be returned
+ * @rectangles_out: the output buffer for the rectangles
+ * @num_rectangles_out: the number of rectangles returned
+ * 
+ * If the current clip can be expressed as the union of at most
+ * 'max_rectangles' device-coordinate rectangles, then we fill in the array
+ * with the rectangles, and return True. Otherwise we return False. When there
+ * is no clipping active, we return False.
+ */
+cairo_bool_t
+cairo_extract_clip_rectangles (cairo_t *cr,
+                               int max_rectangles,
+                               cairo_clip_rect_t *rectangles_out,
+                               int *num_rectangles_out)
+{
+    if (cr->status)
+        return FALSE;
+    return _cairo_gstate_extract_clip_rectangles (cr->gstate, max_rectangles,
+                                                  rectangles_out, num_rectangles_out);
+}
+
+/**
  * cairo_copy_path_flat:
  * @cr: a cairo context
  * 

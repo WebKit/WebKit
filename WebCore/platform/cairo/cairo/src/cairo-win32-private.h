@@ -70,11 +70,6 @@ typedef struct _cairo_win32_surface {
 cairo_status_t
 _cairo_win32_print_gdi_error (const char *context);
 
-cairo_surface_t *
-_cairo_win32_surface_create_dib (cairo_format_t format,
-				 int            width,
-				 int            height);
-
 cairo_bool_t
 _cairo_surface_is_win32 (cairo_surface_t *surface);
 

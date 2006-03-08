@@ -50,6 +50,13 @@
 #define FloatToFixed(a)     ((Fixed)((float)(a) * fixed1))
 #endif
 
+/* If this isn't defined, we must be building on non-intel,
+ * hence it will be 0.
+ */
+#ifndef kCGBitmapByteOrder32Host
+#define kCGBitmapByteOrder32Host 0
+#endif
+
 typedef struct _cairo_atsui_font_face cairo_atsui_font_face_t;
 typedef struct _cairo_atsui_font cairo_atsui_font_t;
 
@@ -307,16 +314,18 @@ _cairo_atsui_font_create_toy(cairo_toy_font_face_t *toy_face,
 				   kFontNoLanguageCode, &fontID);
     }
 
+    /* Need to specify more tags, e.g. kATSUHangingInhibitFactorTag */
+    /* Should use ATSU Variations to exactly specify weight and slant */
     ATSUAttributeTag styleTags[] =
         { kATSUQDItalicTag, kATSUQDBoldfaceTag, kATSUFontTag };
-    ATSUAttributeValuePtr styleValues[] = { &isItalic, &isBold, &fontID };
+    ATSUAttributeValuePtr styleValues[] =
+        { &isItalic, &isBold, &fontID };
     ByteCount styleSizes[] =
         { sizeof(Boolean), sizeof(Boolean), sizeof(ATSUFontID) };
 
     err = ATSUSetAttributes(style,
                             sizeof(styleTags) / sizeof(styleTags[0]),
                             styleTags, styleSizes, styleValues);
-
 
     return _cairo_atsui_font_create_scaled (&toy_face->base, fontID, style,
 					    font_matrix, ctm, options, font_out);
@@ -334,6 +343,28 @@ _cairo_atsui_font_fini(void *abstract_font)
         ATSUDisposeStyle(font->style);
     if (font->unscaled_style)
         ATSUDisposeStyle(font->unscaled_style);
+}
+
+cairo_bool_t
+_cairo_scaled_font_is_atsui (cairo_scaled_font_t *sfont)
+{
+    return (sfont->backend == &cairo_atsui_scaled_font_backend);
+}
+
+ATSUStyle
+_cairo_atsui_scaled_font_get_atsu_style (cairo_scaled_font_t *sfont)
+{
+    cairo_atsui_font_t *afont = (cairo_atsui_font_t *) sfont;
+
+    return afont->style;
+}
+
+ATSUFontID
+_cairo_atsui_scaled_font_get_atsu_font_id (cairo_scaled_font_t *sfont)
+{
+    cairo_atsui_font_t *afont = (cairo_atsui_font_t *) sfont;
+
+    return afont->fontID;
 }
 
 static cairo_status_t
@@ -565,7 +596,7 @@ _cairo_atsui_font_old_show_glyphs (void		       *abstract_font,
     CGContextRef myBitmapContext;
     CGColorSpaceRef colorSpace;
     cairo_image_surface_t *destImageSurface;
-    int i;
+    int i, bits_per_comp, alpha;
     void *extra = NULL;
 
     cairo_rectangle_t rect = {dest_x, dest_y, width, height};
@@ -576,15 +607,34 @@ _cairo_atsui_font_old_show_glyphs (void		       *abstract_font,
 				      &extra);
 
     // Create a CGBitmapContext for the dest surface for drawing into
-    colorSpace = CGColorSpaceCreateDeviceRGB();
+    if (destImageSurface->depth == 1) {
+        colorSpace = CGColorSpaceCreateDeviceGray();
+        bits_per_comp = 1;
+        alpha = kCGImageAlphaNone;
+    } else if (destImageSurface->depth == 8) {
+        colorSpace = CGColorSpaceCreateDeviceGray();
+        bits_per_comp = 8;
+        alpha = kCGImageAlphaNone;
+    } else if (destImageSurface->depth == 24) {
+        colorSpace = CGColorSpaceCreateDeviceRGB();
+        bits_per_comp = 8;
+        alpha = kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder32Host;
+    } else if (destImageSurface->depth == 32) {
+        colorSpace = CGColorSpaceCreateDeviceRGB();
+        bits_per_comp = 8;
+        alpha = kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host;
+    } else {
+        // not reached
+        return CAIRO_INT_STATUS_UNSUPPORTED;
+    }
 
     myBitmapContext = CGBitmapContextCreate(destImageSurface->data,
                                             destImageSurface->width,
                                             destImageSurface->height,
-                                            destImageSurface->depth / 4,
+                                            bits_per_comp,
                                             destImageSurface->stride,
                                             colorSpace,
-                                            kCGImageAlphaPremultipliedFirst);
+                                            alpha);
     CGContextTranslateCTM(myBitmapContext, 0, destImageSurface->height);
     CGContextScaleCTM(myBitmapContext, 1.0f, -1.0f);
 

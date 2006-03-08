@@ -44,8 +44,9 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-// #define PIXMAN_CONVOLUTION
-// #define PIXMAN_INDEXED_FORMATS
+
+/* #define PIXMAN_CONVOLUTION */
+/* #define PIXMAN_INDEXED_FORMATS */
 
 static Bool
 PictureTransformPoint3d (pixman_transform_t *transform,

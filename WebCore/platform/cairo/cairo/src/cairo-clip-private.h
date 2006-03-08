@@ -114,4 +114,13 @@ _cairo_clip_combine_to_surface (cairo_clip_t            *clip,
 				int                      dst_y,
 				const cairo_rectangle_t *extents);
 
+cairo_private cairo_bool_t
+_cairo_clip_has_clip (cairo_clip_t *clip);
+
+cairo_private cairo_bool_t
+_cairo_clip_extract_rectangles (cairo_clip_t *clip,
+                                 int max_rectangles,
+                                 cairo_clip_rect_t *rectangles_out,
+                                 int *num_rectangles_out);
+
 #endif /* CAIRO_CLIP_PRIVATE_H */

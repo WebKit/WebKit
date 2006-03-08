@@ -47,8 +47,19 @@ CAIRO_BEGIN_DECLS
 cairo_public cairo_surface_t *
 cairo_win32_surface_create (HDC hdc);
 
+cairo_public cairo_surface_t *
+cairo_win32_surface_create_dib (cairo_format_t format,
+				int width,
+				int height);
+
+cairo_public HDC
+cairo_win32_surface_get_dc (cairo_surface_t *surface);
+
 cairo_public cairo_font_face_t *
 cairo_win32_font_face_create_for_logfontw (LOGFONTW *logfont);
+
+cairo_public cairo_font_face_t *
+cairo_win32_font_face_create_for_hfont (HFONT font);
 
 cairo_public cairo_status_t
 cairo_win32_scaled_font_select_font (cairo_scaled_font_t *scaled_font,
@@ -59,9 +70,6 @@ cairo_win32_scaled_font_done_font (cairo_scaled_font_t *scaled_font);
 
 cairo_public double
 cairo_win32_scaled_font_get_metrics_factor (cairo_scaled_font_t *scaled_font);
-
-cairo_public HDC
-cairo_win32_surface_get_dc (cairo_surface_t *surface);
 
 CAIRO_END_DECLS
 

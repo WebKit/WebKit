@@ -459,3 +459,53 @@ _cairo_clip_clip (cairo_clip_t       *clip,
 
     return status;
 }
+
+cairo_bool_t
+_cairo_clip_has_clip (cairo_clip_t *clip)
+{
+    return clip->region != NULL || clip->surface != NULL || clip->path != NULL;
+}
+
+static cairo_bool_t
+_cairo_region_to_clip_rectangles (pixman_region16_t *region,
+                                  int max_rectangles,
+                                  cairo_clip_rect_t *rectangles_out,
+                                  int *num_rectangles_out)
+{
+    int n_boxes, i;
+    pixman_box16_t *boxes;
+
+    /* no region -> we can't represent it as rectangles */
+    if (region == NULL)
+        return FALSE;
+
+    n_boxes = pixman_region_num_rects (region);
+    *num_rectangles_out = n_boxes;
+    if (n_boxes > max_rectangles)
+        return FALSE;
+
+    boxes = pixman_region_rects (region);
+    
+    for (i = 0; i < n_boxes; i++) {
+        rectangles_out[i].x = boxes[i].x1;
+        rectangles_out[i].y = boxes[i].y1;
+        rectangles_out[i].width = boxes[i].x2 - boxes[i].x1;
+        rectangles_out[i].height = boxes[i].y2 - boxes[i].y1;
+    }
+
+    return TRUE;
+}
+
+cairo_bool_t
+_cairo_clip_extract_rectangles (cairo_clip_t *clip,
+                                int max_rectangles,
+                                cairo_clip_rect_t *rectangles_out,
+                                int *num_rectangles_out)
+{
+    /* can't handle paths or surfaces for now */
+    if (clip->path != NULL || clip->surface != NULL)
+        return FALSE;
+ 
+    return _cairo_region_to_clip_rectangles (clip->region,
+        max_rectangles, rectangles_out, num_rectangles_out);
+}

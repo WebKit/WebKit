@@ -53,7 +53,7 @@ typedef enum {
      * fallbacks should never get triggered). So the plan is to
      * eliminate as many of these as possible. */
 
-    CAIRO_COMMAND_INTERSECT_CLIP_PATH,
+    CAIRO_COMMAND_INTERSECT_CLIP_PATH
 
 } cairo_command_type_t;
 

@@ -233,6 +233,22 @@ _cairo_xlib_surface_create_similar_with_format (void	       *abstract_src,
     return &surface->base;
 }
 
+static cairo_bool_t
+_xrender_format_matches_content (XRenderPictFormat *format,
+                                 cairo_content_t   content)
+{
+    cairo_bool_t has_alpha = format->direct.alpha != 0;
+    cairo_bool_t has_color = format->direct.red != 0 ||
+        format->direct.green != 0 || format->direct.blue != 0;
+    if (has_alpha != (content == CAIRO_CONTENT_ALPHA ||
+                      content == CAIRO_CONTENT_COLOR_ALPHA))
+        return False;
+    if (has_color != (content == CAIRO_CONTENT_COLOR ||
+                      content == CAIRO_CONTENT_COLOR_ALPHA))
+        return False;
+    return True;
+}
+
 static cairo_surface_t *
 _cairo_xlib_surface_create_similar (void	       *abstract_src,
 				    cairo_content_t	content,
@@ -240,10 +256,42 @@ _cairo_xlib_surface_create_similar (void	       *abstract_src,
 				    int			height)
 {
     cairo_format_t format = _cairo_format_from_content (content);
+    cairo_xlib_surface_t *src = abstract_src;
+
+    /* Try to create a surface with the same visual and depth as the
+       existing surface.
+       Don't bother if the X server doesn't have COMPOSITE, because we prefer
+       to just fall back to image surfaces in that case. */
+    if (src->visual != NULL && CAIRO_SURFACE_RENDER_HAS_COMPOSITE(src)) {
+        Display *dpy = src->dpy;
+        XRenderPictFormat *xrender_format =
+            XRenderFindVisualFormat (dpy, src->visual);
+        /* Give up if the requested content type isn't compatible with the
+           visual format */
+        if (xrender_format != NULL &&
+            _xrender_format_matches_content (xrender_format, content)) {
+            Pixmap pix = XCreatePixmap (dpy, RootWindowOfScreen (src->screen),
+               width <= 0 ? 1 : width, height <= 0 ? 1 : height,
+               xrender_format->depth);
+    
+            cairo_xlib_surface_t *surface = (cairo_xlib_surface_t *)
+                cairo_xlib_surface_create_with_xrender_format (dpy, pix, src->screen,
+                                                               xrender_format,
+                                                               width, height);
+            if (surface->base.status != CAIRO_STATUS_SUCCESS) {
+                 _cairo_error (CAIRO_STATUS_NO_MEMORY);
+                 return (cairo_surface_t*) &_cairo_surface_nil;
+            }
+         
+            surface->owns_pixmap = TRUE;
+            surface->visual = src->visual;
+
+            return &surface->base;
+        }
+    }
+
     return _cairo_xlib_surface_create_similar_with_format (abstract_src,
-							   format,
-							   width,
-							   height);
+                                                           format, width, height);
 }
 
 static cairo_status_t
@@ -2002,6 +2050,72 @@ cairo_xlib_surface_set_drawable (cairo_surface_t   *abstract_surface,
     }
     surface->width = width;
     surface->height = height;
+}
+
+static cairo_bool_t _is_valid_xlib_surface (cairo_surface_t *abstract_surface)
+{
+    return _cairo_surface_is_xlib (abstract_surface) &&
+        abstract_surface->status == CAIRO_STATUS_SUCCESS;
+}
+
+Drawable
+cairo_xlib_surface_get_drawable (cairo_surface_t *abstract_surface)
+{
+    cairo_xlib_surface_t *surface = (cairo_xlib_surface_t *)abstract_surface;
+
+    /* XXX: How do we want to handle this error case? */
+    if (! _is_valid_xlib_surface (abstract_surface))
+  return 0;
+
+    return surface->drawable;
+}
+
+Display *
+cairo_xlib_surface_get_display (cairo_surface_t *abstract_surface)
+{
+    cairo_xlib_surface_t *surface = (cairo_xlib_surface_t *)abstract_surface;
+
+    /* XXX: How do we want to handle this error case? */
+    if (! _is_valid_xlib_surface (abstract_surface))
+  return NULL;
+
+    return surface->dpy;
+}
+
+Screen *
+cairo_xlib_surface_get_screen (cairo_surface_t *abstract_surface)
+{
+    cairo_xlib_surface_t *surface = (cairo_xlib_surface_t *)abstract_surface;
+
+    /* XXX: How do we want to handle this error case? */
+    if (! _is_valid_xlib_surface (abstract_surface))
+  return NULL;
+
+    return surface->screen;
+}
+
+Visual *
+cairo_xlib_surface_get_visual (cairo_surface_t *abstract_surface)
+{
+    cairo_xlib_surface_t *surface = (cairo_xlib_surface_t *)abstract_surface;
+
+    /* XXX: How do we want to handle this error case? */
+    if (! _is_valid_xlib_surface (abstract_surface))
+  return NULL;
+
+    return surface->visual;
+}
+
+int
+cairo_xlib_surface_get_depth (cairo_surface_t *abstract_surface)
+{
+    cairo_xlib_surface_t *surface = (cairo_xlib_surface_t *)abstract_surface;
+
+    /* XXX: How do we want to handle this error case? */
+    if (! _is_valid_xlib_surface (abstract_surface))
+  return -1;
+
+    return surface->depth;
 }
 
 typedef struct _cairo_xlib_surface_font_private {

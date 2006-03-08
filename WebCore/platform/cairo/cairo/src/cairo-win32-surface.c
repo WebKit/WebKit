@@ -31,11 +31,19 @@
  *
  * Contributor(s):
  *	Owen Taylor <otaylor@redhat.com>
+ *	Stuart Parmenter <stuart@mozilla.com>
  */
 
 #include <stdio.h>
 #include "cairoint.h"
 #include "cairo-win32-private.h"
+
+#ifndef SHADEBLENDCAPS
+#define SHADEBLENDCAPS  120
+#endif
+#ifndef SB_NONE
+#define SB_NONE         0x00000000
+#endif
 
 static const cairo_surface_backend_t cairo_win32_surface_backend;
 
@@ -337,9 +345,9 @@ _cairo_win32_surface_create_similar (void	    *abstract_src,
  *   be created (probably because of lack of memory)
  **/
 cairo_surface_t *
-_cairo_win32_surface_create_dib (cairo_format_t format,
-				 int	        width,
-				 int	        height)
+cairo_win32_surface_create_dib (cairo_format_t format,
+				int	       width,
+				int	       height)
 {
     return _cairo_win32_surface_create_for_dc (NULL, format, width, height);
 }
@@ -390,8 +398,18 @@ _cairo_win32_surface_get_subimage (cairo_win32_surface_t  *surface,
 		 width, height,
 		 surface->dc,
 		 x, y,
-		 SRCCOPY))
-	goto FAIL;
+		 SRCCOPY)) {
+	/* If we fail to BitBlt here, most likely the source is a printer.
+	 * You can't reliably get bits from a printer DC, so just fill in
+	 * the surface as white (common case for printing).
+	 */
+
+	RECT r;
+	r.left = r.top = 0;
+	r.right = width;
+	r.bottom = height;
+	FillRect(local->dc, &r, (HBRUSH)GetStockObject(WHITE_BRUSH));
+    }
 
     GdiFlush();
 
@@ -612,6 +630,8 @@ _composite_alpha_blend (cairo_win32_surface_t *dst,
 
     if (alpha_blend == NULL)
 	return CAIRO_INT_STATUS_UNSUPPORTED;
+    if (GetDeviceCaps(dst->dc, SHADEBLENDCAPS) == SB_NONE)
+	return CAIRO_INT_STATUS_UNSUPPORTED;
     
     blend_function.BlendOp = AC_SRC_OVER;
     blend_function.BlendFlags = 0;
@@ -677,6 +697,33 @@ _cairo_win32_surface_composite (cairo_operator_t	op,
     if (!integer_transform)
 	return CAIRO_INT_STATUS_UNSUPPORTED;
 
+    /* Fix up src coordinates; the src coords and size must be within the
+     * bounds of the source surface.
+     * XXX the region not covered should be appropriately rendered!
+     * - for OVER/SOURCE with RGB24 source -> opaque black
+     * - for SOURCE with ARGB32 source -> 100% transparent black
+     */
+    src_x += itx;
+    src_y += ity;
+
+    if (src_x < 0) {
+        width += src_x;
+        dst_x -= src_x;
+        src_x = 0;
+    }
+
+    if (src_y < 0) {
+        height += src_y;
+        dst_y -= src_y;
+        src_y = 0;
+    }
+
+    if (src_x + width > src->extents.width)
+        width = src->extents.width - src_x;
+
+    if (src_y + height > src->extents.height)
+        height = src->extents.height - src_y;
+
     if (alpha == 255 &&
 	(op == CAIRO_OPERATOR_SOURCE ||
 	 (src->format == CAIRO_FORMAT_RGB24 && op == CAIRO_OPERATOR_OVER))) {
@@ -685,19 +732,18 @@ _cairo_win32_surface_composite (cairo_operator_t	op,
 		     dst_x, dst_y,
 		     width, height,
 		     src->dc,
-		     src_x + itx, src_y + ity,
+		     src_x, src_y,
 		     SRCCOPY))
 	    return _cairo_win32_print_gdi_error ("_cairo_win32_surface_composite(BitBlt)");
 
 	return CAIRO_STATUS_SUCCESS;
 	
-    } else if (integer_transform &&
-	       (src->format == CAIRO_FORMAT_RGB24 || src->format == CAIRO_FORMAT_ARGB32) &&
+    } else if ((src->format == CAIRO_FORMAT_RGB24 || src->format == CAIRO_FORMAT_ARGB32) &&
 	       (dst->format == CAIRO_FORMAT_RGB24 || dst->format == CAIRO_FORMAT_ARGB32) &&
 	       op == CAIRO_OPERATOR_OVER) {
 
 	return _composite_alpha_blend (dst, src, alpha,
-				       src_x + itx, src_y + ity,
+				       src_x, src_y,
 				       dst_x, dst_y, width, height);
     }
     
@@ -918,7 +964,7 @@ _cairo_win32_surface_set_clip_region (void              *abstract_surface,
 	    return CAIRO_STATUS_NO_MEMORY;
 
 	/* Combine the new region with the original clip */
-	    
+
 	if (surface->saved_clip) {
 	    if (CombineRgn (gdi_region, gdi_region, surface->saved_clip, RGN_AND) == ERROR)
 		goto FAIL;
@@ -959,6 +1005,8 @@ cairo_win32_surface_create (HDC hdc)
 {
     cairo_win32_surface_t *surface;
     RECT rect;
+    int depth;
+    cairo_format_t format;
 
     /* Try to figure out the drawing bounds for the Device context
      */
@@ -968,7 +1016,28 @@ cairo_win32_surface_create (HDC hdc)
 	_cairo_error (CAIRO_STATUS_NO_MEMORY);
 	return &_cairo_surface_nil;
     }
-    
+
+    if (GetDeviceCaps(hdc, TECHNOLOGY) == DT_RASDISPLAY) {
+	depth = GetDeviceCaps(hdc, BITSPIXEL);
+	if (depth == 32)
+	    format = CAIRO_FORMAT_ARGB32;
+	else if (depth == 24)
+	    format = CAIRO_FORMAT_RGB24;
+	else if (depth == 16)
+	    format = CAIRO_FORMAT_RGB24;
+	else if (depth == 8)
+	    format = CAIRO_FORMAT_A8;
+	else if (depth == 1)
+	    format = CAIRO_FORMAT_A1;
+	else {
+	    _cairo_win32_print_gdi_error("cairo_win32_surface_create(bad BITSPIXEL)");
+	    _cairo_error (CAIRO_STATUS_NO_MEMORY);
+	    return &_cairo_surface_nil;
+	}
+    } else {
+	format = CAIRO_FORMAT_RGB24;
+    }
+
     surface = malloc (sizeof (cairo_win32_surface_t));
     if (surface == NULL) {
 	_cairo_error (CAIRO_STATUS_NO_MEMORY);
@@ -976,7 +1045,7 @@ cairo_win32_surface_create (HDC hdc)
     }
 
     surface->image = NULL;
-    surface->format = CAIRO_FORMAT_RGB24;
+    surface->format = format;
     
     surface->dc = hdc;
     surface->bitmap = NULL;

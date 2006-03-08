@@ -1238,6 +1238,15 @@ _cairo_gstate_clip (cairo_gstate_t *gstate, cairo_path_fixed_t *path);
 cairo_private cairo_status_t
 _cairo_gstate_reset_clip (cairo_gstate_t *gstate);
 
+cairo_private cairo_bool_t
+_cairo_gstate_has_clip (cairo_gstate_t *gstate);
+
+cairo_private cairo_bool_t
+_cairo_gstate_extract_clip_rectangles (cairo_gstate_t *gstate,
+                                       int max_rectangles,
+                                       cairo_clip_rect_t *rectangles_out,
+                                       int *num_rectangles_out);
+
 cairo_private cairo_status_t
 _cairo_gstate_show_surface (cairo_gstate_t	*gstate,
 			    cairo_surface_t	*surface,

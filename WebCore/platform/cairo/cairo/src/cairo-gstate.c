@@ -1183,6 +1183,24 @@ _cairo_gstate_clip (cairo_gstate_t *gstate, cairo_path_fixed_t *path)
 			     gstate->antialias, gstate->target);
 }
 
+cairo_bool_t
+_cairo_gstate_has_clip (cairo_gstate_t *gstate)
+{
+   return _cairo_clip_has_clip (&gstate->clip);
+}
+
+cairo_bool_t
+_cairo_gstate_extract_clip_rectangles (cairo_gstate_t *gstate,
+                                       int max_rectangles,
+                                       cairo_clip_rect_t *rectangles_out,
+                                       int *num_rectangles_out)
+{
+    return _cairo_clip_extract_rectangles (&gstate->clip,
+                                           max_rectangles,
+                                           rectangles_out,
+                                           num_rectangles_out);
+}
+
 static void
 _cairo_gstate_unset_scaled_font (cairo_gstate_t *gstate)
 {
