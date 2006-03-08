@@ -25,10 +25,10 @@ function runTest() {
     eventSender.mouseUp();
     
     // Wait a moment so that the next mouseDown will kick off a drag, instead of a triple-click
-    eventSender.leapForward(1000);
+    eventSender.leapForward(1300);
     eventSender.mouseDown();
     // Wait a moment so that the mouseDown will kick off a drag instead of starting a new selection.
-    eventSender.leapForward(200);
+    eventSender.leapForward(400);
     
     var li = document.getElementById("li");
     var ul = document.getElementById("ul");

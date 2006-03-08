@@ -1,3 +1,12 @@
+2006-03-07  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+        
+        I think this layout test is failing b/c the wait times are
+        right on the threshold of what is necessary to register a drag.
+
+        * fast/lists/drag-into-marker.html:
+
 2006-03-07  Adele Peterson  <adele@apple.com>
 
         Updating tests for:
