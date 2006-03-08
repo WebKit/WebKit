@@ -1,9 +1,16 @@
+2006-03-08  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Fix build script to properly copy dll files.
+
+        * WebCore.vcproj/WebCore/build-generated-files.sh:
+
 2006-03-08  Rob Buis  <buis@kde.org>
 
         Reviewed by eseidel.
 
-        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6899
-        SVG <rect> does not respect display: none
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6899 SVG <rect> does not respect display: none
 
         For svg elements that can render, call StyledElementImpl::rendererIsNeeded
         to decide whether the element should render. In particular this way

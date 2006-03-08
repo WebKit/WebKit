@@ -135,17 +135,17 @@ if [ ../libxml/bin/libxml2.dll -nt "$WebKitOutputConfigDir/libxml2.dll" ]; then
     cp ../libxml/bin/libxml2.dll "$WebKitOutputConfigDir" || exit 1
 fi
 
-if [ ../libxml/bin/libxslt.dll -nt "$WebKitOutputConfigDir/libxslt.dll" ]; then
+if [ ../libxslt/bin/libxslt.dll -nt "$WebKitOutputConfigDir/libxslt.dll" ]; then
     echo "Copying libxslt.dll"
     cp ../libxslt/bin/libxslt.dll "$WebKitOutputConfigDir" || exit 1
 fi
 
-if [ ../libxml/bin/iconv.dll -nt "$WebKitOutputConfigDir/iconv.dll" ]; then
+if [ ../iconv/bin/iconv.dll -nt "$WebKitOutputConfigDir/iconv.dll" ]; then
     echo "Copying iconv.dll"
     cp ../iconv/bin/iconv.dll "$WebKitOutputConfigDir" || exit 1
 fi
 
-if [ ../libxml/bin/zlib1.dll -nt "$WebKitOutputConfigDir/zlib1.dll" ]; then
+if [ ../zlib/bin/zlib1.dll -nt "$WebKitOutputConfigDir/zlib1.dll" ]; then
     echo "Copying zlib1.dll"
     cp ../zlib/bin/zlib1.dll "$WebKitOutputConfigDir" || exit 1
 fi
