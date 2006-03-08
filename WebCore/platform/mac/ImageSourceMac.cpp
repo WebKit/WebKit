@@ -28,6 +28,8 @@
 
 #include "IntSize.h"
 
+using std::max;
+
 namespace WebCore {
 
 ImageSource::ImageSource()
@@ -143,19 +145,16 @@ float ImageSource::frameDurationAtIndex(size_t index)
         CFDictionaryRef typeProperties = (CFDictionaryRef)CFDictionaryGetValue(properties, kCGImagePropertyGIFDictionary);
         if (typeProperties) {
             CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(typeProperties, kCGImagePropertyGIFDelayTime);
-            if (num) {
+            if (num)
                 CFNumberGetValue(num, kCFNumberFloatType, &duration);
-                // Init the frame duration. Many annoying ads specify a 0 duration to make an image flash
-                // as quickly as possible.  We follow Firefox's behavior and set the minimum duration to 
-                // 100 ms.  See 4051389 for more details.
-                if (duration < 0.1)
-                    duration = 0.1;
-            }
         }
         CFRelease(properties);
     }
-    
-    return duration;
+
+    // Many annoying ads specify a 0 duration to make an image flash as quickly as possible.
+    // We follow Firefox's behavior and set the minimum duration to 100 ms.
+    // See bug 4051389 for more details.
+    return max(duration, 0.1f);
 }
 
 bool ImageSource::frameHasAlphaAtIndex(size_t index)

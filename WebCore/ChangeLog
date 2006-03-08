@@ -1,3 +1,15 @@
+2006-03-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fixed super-fast animation of many animated GIFs
+
+        No layout test because I don't know how to test animated GIF speed.
+
+        * platform/mac/ImageSourceMac.cpp: (WebCore::ImageSource::frameDurationAtIndex):
+        Always take the minimum duration into account, even if there's some kind of failure
+        getting the duration from the GIF.
+
 2006-03-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.
