@@ -46,6 +46,7 @@
 #import <CommonCrypto/CommonDigest.h>               // for MD5 functions
 
 #import <getopt.h>
+#import <malloc/malloc.h>
 
 #import "TextInputController.h"
 #import "NavigationController.h"
@@ -162,6 +163,32 @@ static void setDefaultColorProfileToRGB(void)
     CFRelease(previousProfileName);
 }
 
+static void* (*savedMalloc)(malloc_zone_t*, size_t);
+static void* (*savedRealloc)(malloc_zone_t*, void*, size_t);
+
+static void* checkedMalloc(malloc_zone_t* zone, size_t size)
+{
+    if (size >= 0x10000000)
+        return 0;
+    return savedMalloc(zone, size);
+}
+
+static void* checkedRealloc(malloc_zone_t* zone, void* ptr, size_t size)
+{
+    if (size >= 0x10000000)
+        return 0;
+    return savedRealloc(zone, ptr, size);
+}
+
+static void makeLargeMallocFailSilently(void)
+{
+    malloc_zone_t* zone = malloc_default_zone();
+    savedMalloc = zone->malloc;
+    savedRealloc = zone->realloc;
+    zone->malloc = checkedMalloc;
+    zone->realloc = checkedRealloc;
+}
+
 int main(int argc, const char *argv[])
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -249,6 +276,8 @@ int main(int argc, const char *argv[])
     [window setAutodisplay:NO];
 
     [webView setContinuousSpellCheckingEnabled:YES];
+
+    makeLargeMallocFailSilently();
     
     // For reasons that are not entirely clear, the following pair of calls makes WebView handle its
     // dynamic scrollbars properly. Without it, every frame will always have scrollbars.

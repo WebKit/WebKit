@@ -48,12 +48,8 @@ RegExp::RegExp(const UString &p, int flags)
   char null(0);
   nullTerminated.append(null);
   _regex = pcre_compile(reinterpret_cast<const uint16_t *>(nullTerminated.data()), options, &errorMessage, &errorOffset, NULL);
-  if (!_regex) {
-#ifndef NDEBUG
-    fprintf(stderr, "KJS: pcre_compile() failed with '%s'\n", errorMessage);
-#endif
+  if (!_regex)
     return;
-  }
 
 #ifdef PCRE_INFO_CAPTURECOUNT
   // Get number of subpatterns that will be returned.

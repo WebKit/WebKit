@@ -25,14 +25,11 @@
 
 #include "config.h"
 #include "ArrayImpl.h"
-#include <stddef.h>
 
+#include <limits>
 #include <new>
+#include <stddef.h>
 #include <string.h>
-
-#define	MIN(a,b) (((a)<(b))?(a):(b))
-
-using std::nothrow;
 
 namespace WebCore {
 
@@ -80,12 +77,14 @@ bool ArrayImpl::resize(size_t newSize)
         char *newData;
         
 	if (newSize != 0) {
+            size_t maxSize = std::numeric_limits<size_t>::max() / d->itemSize;
+            if (newSize > maxSize)
+                return false;
 	    newData = static_cast<char *>(fastRealloc(d->data, newSize * d->itemSize));
-	    if (newData == NULL) {
+	    if (!newData)
 	        return false;
-	    }
 	} else {
-	    newData = NULL;
+	    newData = 0;
             fastFree(d->data);
 	}
 

@@ -1,3 +1,20 @@
+2006-03-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7655
+          unwanted output while running layout tests
+
+        * WebView/WebDataSourcePrivate.h:
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _setRepresentation:]): Clear the flag that records whether we've sent
+        all the data to the representation or not; need this to prevent telling the same representation
+        both that we've succeeded and then later that we've failed.
+        (-[WebDataSource _setMainDocumentError:]): Don't send an error if representationFinishedLoading
+        is already YES. Set representationFinishedLoading.
+        (-[WebDataSource _finishedLoading]): Set representationFinishedLoading.
+        (-[WebDataSource _setupForReplaceByMIMEType:]): Ditto.
+
 2006-03-06  Tim Omernick  <timo@apple.com>
 
         Reviewed by Kevin Decker.

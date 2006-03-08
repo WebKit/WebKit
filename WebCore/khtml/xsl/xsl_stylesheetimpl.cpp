@@ -127,11 +127,10 @@ bool XSLStyleSheetImpl::parseString(const DOMString &string, bool strict)
     if (!m_stylesheetDocTaken)
         xmlFreeDoc(m_stylesheetDoc);
     m_stylesheetDocTaken = false;
-    m_stylesheetDoc = xmlReadMemory(reinterpret_cast<const char *>(string.unicode()),
-                                    string.length() * sizeof(QChar),
-                                    m_ownerDocument->URL().ascii(),
-                                    BOMHighByte == 0xFF ? "UTF-16LE" : "UTF-16BE", 
-                                    XML_PARSE_NOCDATA|XML_PARSE_DTDATTR|XML_PARSE_NOENT);
+    m_stylesheetDoc = xmlReadMemory(reinterpret_cast<const char *>(string.unicode()), string.length() * sizeof(QChar),
+        m_ownerDocument->URL().ascii(),
+        BOMHighByte == 0xFF ? "UTF-16LE" : "UTF-16BE", 
+        XML_PARSE_NOENT | XML_PARSE_DTDATTR | XML_PARSE_NOERROR | XML_PARSE_NOWARNING | XML_PARSE_NOCDATA);
     loadChildSheets();
     setLoaderForLibXMLCallbacks(0);
     return m_stylesheetDoc;

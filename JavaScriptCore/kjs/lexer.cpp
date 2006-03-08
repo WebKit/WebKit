@@ -556,7 +556,9 @@ int Lexer::lex()
     token = NUMBER;
     break;
   case Bad:
+#ifdef KJS_DEBUG_LEX
     fprintf(stderr, "yylex: ERROR.\n");
+#endif
     error = true;
     return -1;
   default:

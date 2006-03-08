@@ -97,6 +97,7 @@
 
     BOOL gotFirstByte; // got first byte
     BOOL committed; // This data source has been committed
+    BOOL representationFinishedLoading;
 
     BOOL defersCallbacks;
 

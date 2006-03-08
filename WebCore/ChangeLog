@@ -1,5 +1,22 @@
 2006-03-07  Darin Adler  <darin@apple.com>
 
+        Reviewed by Anders.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7655
+          unwanted output while running layout tests
+
+        * khtml/xsl/xsl_stylesheetimpl.cpp: (WebCore::XSLStyleSheetImpl::parseString):
+        Pass XML_PARSE_NOERROR and XML_PARSE_NOWARNING. We don't want errors and warnings
+        to be logged to stdout or stderr. If we later decide we want the error messages,
+        then we should do the additional work to put them into the web page or the
+        console (along with the JavaScript errors).
+
+        * platform/ArrayImpl.cpp: (WebCore::ArrayImpl::resize): Add a preflight to protect
+        against integer overflow due to large array size. Noticed this while looking into
+        the malloc error message.
+
+2006-03-07  Darin Adler  <darin@apple.com>
+
         Reviewed by Adele.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7647

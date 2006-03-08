@@ -218,6 +218,7 @@
 {
     [_private->representation release];
     _private->representation = [representation retain];
+    _private->representationFinishedLoading = NO;
 }
 
 - (void)_setLoading:(BOOL)loading
@@ -553,7 +554,10 @@
     [_private->mainDocumentError release];
     _private->mainDocumentError = error;
 
-    [[self representation] receivedError:error withDataSource:self];
+    if (!_private->representationFinishedLoading) {
+        _private->representationFinishedLoading = YES;
+        [[self representation] receivedError:error withDataSource:self];
+    }
 }
 
 - (void)_clearErrors
@@ -650,9 +654,8 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     _private->gotFirstByte = YES;
     [self _commitIfReady];
 
+    _private->representationFinishedLoading = YES;
     [[self representation] finishedLoadingWithDataSource:self];
-    // Since we've sent openURL to the bridge, it's important to send end too, so that WebCore
-    // can realize that the load is completed.
     [[self _bridge] end];
 }
 
@@ -916,6 +919,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
         [self _commitLoadWithData:[self data]];
     }
     
+    _private->representationFinishedLoading = YES;
     [[self representation] finishedLoadingWithDataSource:self];
     [[self _bridge] end];
 

@@ -24,9 +24,10 @@
 #define KXMLCORE_VECTOR_H
 
 #include "Assertions.h"
+#include "VectorTraits.h"
+#include <limits>
 #include <stdlib.h>
 #include <utility>
-#include "VectorTraits.h"
 
 namespace KXMLCore {
 
@@ -241,6 +242,8 @@ namespace KXMLCore {
         {
             ASSERT(newCapacity >= m_capacity);
             m_capacity = newCapacity;
+            if (newCapacity > std::numeric_limits<size_t>::max() / sizeof(T))
+                abort();
             m_buffer = reinterpret_cast<T*>(fastMalloc(newCapacity * sizeof(T)));
         }
 

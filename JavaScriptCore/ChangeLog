@@ -1,3 +1,17 @@
+2006-03-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7655
+          unwanted output while running layout tests
+
+        * kjs/lexer.cpp: (Lexer::lex): Turn off the "yylex: ERROR" message.
+        * kjs/regexp.cpp: (KJS::RegExp::RegExp): Remove the code to log errors from PCRE
+        to standard output. I think we should arrange for the error text to be in JavaScript
+        exceptions instead at some point.
+        * kxmlcore/Vector.h: Add a check for overflow so that we'll abort if we pass a
+        too-large size rather than allocating a buffer smaller than requested.
+
 2006-03-06  David Carson <dacarson@gmail.com>
 
         Reviewed by Darin, landed by ap.
