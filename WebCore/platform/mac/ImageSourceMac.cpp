@@ -28,13 +28,12 @@
 
 #include "IntSize.h"
 
-using std::max;
-
 namespace WebCore {
 
 ImageSource::ImageSource()
-  : m_decoder(0)
-{}
+    : m_decoder(0)
+{
+}
 
 ImageSource::~ImageSource()
 {
@@ -152,9 +151,11 @@ float ImageSource::frameDurationAtIndex(size_t index)
     }
 
     // Many annoying ads specify a 0 duration to make an image flash as quickly as possible.
-    // We follow Firefox's behavior and set the minimum duration to 100 ms.
-    // See bug 4051389 for more details.
-    return max(duration, 0.1f);
+    // We follow Firefox's behavior and use a duration of 100 ms for any frames that specify
+    // a duration of <= 10 ms. See gfxImageFrame::GetTimeout in Gecko or Radar 4051389 for more.
+    if (duration <= 0.010)
+        return 0.100;
+    return duration;
 }
 
 bool ImageSource::frameHasAlphaAtIndex(size_t index)

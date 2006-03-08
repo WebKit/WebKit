@@ -1,3 +1,16 @@
+2006-03-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix one more thing from http://bugzilla.opendarwin.org/show_bug.cgi?id=7528
+          REGRESSION: GIF animation speeds are wrong on a page with many animated GIFs
+
+        No layout test because I don't know how to test animated GIF speed.
+
+        * platform/mac/ImageSourceMac.cpp: (WebCore::ImageSource::frameDurationAtIndex):
+        Use the correct rule for minimum frame durations. It's a bit non-intuitive, so
+        I made the comment more explicit. The old code in WebKit had this rule.
+
 2006-03-08  David Hyatt  <hyatt@apple.com>
 
         Make GraphicsContext call into Font to draw all text and eliminate
