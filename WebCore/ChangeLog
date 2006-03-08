@@ -1,3 +1,17 @@
+2006-03-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        - fix win32 build
+
+        * platform/win/FontWin.cpp:
+        (WebCore::Font::drawText):
+        (WebCore::Font::drawHighlightForText):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (GraphicsContext::clearFocusRing):
+        (GraphicsContext::selectedTextBackgroundColor):
+        (Font::selectionRectForText):
+
 2006-03-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

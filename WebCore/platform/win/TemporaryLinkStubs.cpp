@@ -118,11 +118,8 @@ bool QLineEdit::edited() const { notImplemented(); return 0; }
 GraphicsContext::GraphicsContext() { notImplemented(); }
 void GraphicsContext::addFocusRingRect(int,int,int,int) { notImplemented(); }
 void GraphicsContext::clearFocusRing() { notImplemented(); }
-void GraphicsContext::drawLineForMisspelling(int,int,int) { notImplemented(); }
 void GraphicsContext::drawFocusRing(Color const&) { notImplemented(); }
 Color GraphicsContext::selectedTextBackgroundColor() const { notImplemented(); return Color(); }
-void GraphicsContext::drawHighlightForText(int,int,int,int,int,QChar const*,int,int,int,int,Color const&,TextDirection,bool,int,int,bool) { notImplemented(); }
-int GraphicsContext::misspellingLineThickness() const { notImplemented(); return 0; }
 void GraphicsContext::addRoundedRectClip(IntRect const&,IntSize const&,IntSize const&,IntSize const&,IntSize const&) { notImplemented(); }
 void GraphicsContext::initFocusRing(int,int) { notImplemented(); }
 
@@ -242,8 +239,6 @@ void WebCore::TransferJob::retrieveCharset() const { notImplemented(); }
 void WebCore::TransferJob::assembleResponseHeaders() const { notImplemented(); }
 
 IntRect Font::selectionRectForText(int, int, int, int, int, const QChar*, int, int, int, int, bool, bool, int, int) const { notImplemented(); return IntRect(); }
-void Font::drawHighlightForText(WebCore::GraphicsContext*, int, int, int, int, int, const QChar*, int, int, int, int, WebCore::TextDirection, bool, int, int, WebCore::Color) const { notImplemented(); }
-
 
 
 // Completely empty stubs (mostly to allow DRT to run):
@@ -311,7 +306,6 @@ int Font::checkSelectionPoint(const QChar*, int, int, int, int, int, int, int, W
 FontRenderer::FontRenderer() { }
 void FontRenderer::update(FontDescription const &) { }
 
-void GraphicsContext::drawLineForText(int,int,int,int) { }
 void GraphicsContext::setShadow(int,int,int,Color const&) { }
 void GraphicsContext::clearShadow() { }
 void GraphicsContext::beginTransparencyLayer(float) { }

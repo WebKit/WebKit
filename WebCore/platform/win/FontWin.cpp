@@ -27,11 +27,14 @@
 
 #include "Font.h"
 #include "GraphicsContext.h"
+#include <cairo.h>
+#include <cairo-win32.h>
+
 
 namespace WebCore {
 
 void Font::drawText(const GraphicsContext* context, int x, int y, int tabWidth, int xpos, const QChar* str, int len, int from, int to,
-                    int toAdd, TextDirection d, bool visuallyOrdered)) const
+                    int toAdd, TextDirection d, bool visuallyOrdered) const
 {
     cairo_surface_t* surface = cairo_get_target(context->platformContext());
     HDC dc = cairo_win32_surface_get_dc(surface);
@@ -52,7 +55,7 @@ void Font::drawHighlightForText(const GraphicsContext* context, int x, int y, in
                                 int len, int from, int to, int toAdd,
                                 TextDirection d, bool visuallyOrdered, const Color& backgroundColor) const
 {
-{
+}
 
 void Font::drawLineForText(const GraphicsContext* context, int x, int y, int yOffset, int width) const
 {
