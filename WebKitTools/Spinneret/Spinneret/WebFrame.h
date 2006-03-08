@@ -23,21 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "TransferJobClient.h"
+
 namespace WebCore {
     class Frame;
     class FrameView;
+    class TransferJob;
 }
 
 namespace WebKit {
 
     class WebView;
 
-    class WebFrame {
+    class WebFrame : public WebCore::TransferJobClient {
     public:
     WebFrame(char* name, WebView*);
 
     void loadFilePath(char*);
     void loadHTMLString(char* html, char* baseURL = 0);
+
+    void loadURL(char*);
+    
+    virtual void receivedData(WebCore::TransferJob*, const char*, int);
+    virtual void receivedAllData(WebCore::TransferJob*, WebCore::PlatformData);
 
     void paint();
 

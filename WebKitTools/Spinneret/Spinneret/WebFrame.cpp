@@ -36,6 +36,7 @@
 #include "render_frames.h"
 #include "cairo.h"
 #include "cairo-win32.h"
+#include "TransferJob.h"
 
 #include <io.h>
 #include <fcntl.h>
@@ -98,6 +99,25 @@ void WebFrame::loadHTMLString(char *html, char *baseURL)
     d->frame->begin();
     d->frame->write(html);
     d->frame->end();
+}
+
+void WebFrame::loadURL(char* URL)
+{
+    d->frame->didOpenURL(URL);
+    d->frame->begin(URL);
+    WebCore::TransferJob* job = new TransferJob(this, "GET", URL);
+    job->start(0);
+}
+    
+void WebFrame::receivedData(WebCore::TransferJob*, const char* data, int length)
+{
+    d->frame->write(data, length);
+}
+
+void WebFrame::receivedAllData(WebCore::TransferJob* job, WebCore::PlatformData)
+{
+    d->frame->end();
+    delete job;
 }
 
 void WebFrame::paint()

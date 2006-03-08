@@ -1,3 +1,20 @@
+2006-03-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - load URLs, not file paths, in Spinneret
+
+        * Spinneret/Spinneret/Spinneret.cpp:
+        (MyEditProc):
+        * Spinneret/Spinneret/Spinneret.vcproj:
+        * Spinneret/Spinneret/WebFrame.cpp:
+        (WebKit::WebFrame::loadURL):
+        (WebKit::WebFrame::receivedData):
+        (WebKit::WebFrame::receivedAllData):
+        * Spinneret/Spinneret/WebFrame.h:
+        * Spinneret/Spinneret/WebView.cpp:
+        (WebKit::WebView::WebView):
+
 2006-03-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

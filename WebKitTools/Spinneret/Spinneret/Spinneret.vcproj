@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\WebCore.lib&quot;&#x0D;&#x0A;&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\JavaScriptCore.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\iconv\lib\iconv.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\libxml\lib\libxml2.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\libxslt\lib\libxslt.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\icu\lib\icuuc.lib&quot;&#x0D;&#x0A;comctl32.lib"
+				AdditionalOptions="&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\WebCore.lib&quot;&#x0D;&#x0A;&quot;$(WebKitOutputDir)\JavaScriptCore.intermediate\$(ConfigurationName)\JavaScriptCore.intermediate\JavaScriptCore.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\iconv\lib\iconv.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\libxml\lib\libxml2.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\libxslt\lib\libxslt.lib&quot;&#x0D;&#x0A;&quot;$(SolutionDir)\..\..\icu\lib\icuuc.lib&quot;&#x0D;&#x0A;comctl32.lib&#x0D;&#x0A;wininet.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
