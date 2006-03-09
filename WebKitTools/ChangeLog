@@ -1,3 +1,18 @@
+2006-03-09  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Test: fast/events/event-sender-mouse-click.html
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7583
+          DRT hangs when doing eventSender.mouseDown on native widgets
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (+[EventSendingController isSelectorExcludedFromWebScript:]):
+        (-[EventSendingController mouseClick]): Simulates a click in a native
+        widget by queueing a mouseUp before sending the mouseDown, so that
+        the widget's mouse tracking event loop doesn't hang indefinitely.
+
 2006-03-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

@@ -1,3 +1,13 @@
+2006-03-09  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7583
+          DRT hangs when doing eventSender.mouseDown on native widgets
+
+        * fast/events/event-sender-mouse-click-expected.txt: Added.
+        * fast/events/event-sender-mouse-click.html: Added.
+
 2006-03-09  David Carson  <dacarson@gmail.com>
 
         Reviewed by Darin.

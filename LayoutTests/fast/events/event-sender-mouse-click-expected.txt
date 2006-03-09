@@ -1,0 +1,6 @@
+
+Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7583 DRT hangs when doing eventSender.mouseDown on native widgets. This tests eventSender.mouseClick().
+
+Test result: PASS.
+
+

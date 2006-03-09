@@ -1,0 +1,20 @@
+<script>
+var clicked = false;
+</script>
+<input type="text" onfocus="clicked = true;">
+<p>
+    Test for <i><a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=7583">http://bugzilla.opendarwin.org/show_bug.cgi?id=7583</a>
+    DRT hangs when doing eventSender.mouseDown on native widgets</i>. This tests eventSender.mouseClick().
+</p>
+<hr>
+<p>
+    Test result: <span id="result">(cannot run interactively)</span>.
+</p>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    eventSender.mouseMoveTo(20, 20);
+    eventSender.mouseClick();
+    document.getElementById('result').innerText = clicked ? 'PASS' : 'FAIL';
+}
+</script>

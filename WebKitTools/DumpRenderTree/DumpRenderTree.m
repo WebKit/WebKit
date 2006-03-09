@@ -689,6 +689,7 @@ static void dump(void)
 {
     if (aSelector == @selector(mouseDown)
             || aSelector == @selector(mouseUp)
+            || aSelector == @selector(mouseClick)
             || aSelector == @selector(mouseMoveToX:Y:)
             || aSelector == @selector(leapForward:))
         return NO;
@@ -801,6 +802,40 @@ static void dump(void)
         }
         else
             [subView mouseMoved:event];
+    }
+}
+
+- (void)mouseClick
+{
+    [[[frame frameView] documentView] layout];
+    if ([self currentEventTime] - lastClick >= 1)
+        clickCount = 1;
+    else
+        clickCount++;
+    NSEvent *mouseDownEvent = [NSEvent mouseEventWithType:NSLeftMouseDown 
+                                        location:lastMousePosition 
+                                   modifierFlags:nil 
+                                       timestamp:[self currentEventTime]
+                                    windowNumber:[[[frame webView] window] windowNumber] 
+                                         context:[NSGraphicsContext currentContext] 
+                                     eventNumber:++eventNumber 
+                                      clickCount:clickCount 
+                                        pressure:nil];
+
+    NSView *subView = [[frame webView] hitTest:[mouseDownEvent locationInWindow]];
+    if (subView) {
+        [self leapForward:1];
+        NSEvent *mouseUpEvent = [NSEvent mouseEventWithType:NSLeftMouseUp
+                                                   location:lastMousePosition
+                                              modifierFlags:nil
+                                                  timestamp:[self currentEventTime]
+                                               windowNumber:[[[frame webView] window] windowNumber]
+                                                    context:[NSGraphicsContext currentContext]
+                                                eventNumber:++eventNumber
+                                                 clickCount:clickCount
+                                                   pressure:nil];
+        [NSApp postEvent:mouseUpEvent atStart:NO];
+        [subView mouseDown:mouseDownEvent];
     }
 }
 
