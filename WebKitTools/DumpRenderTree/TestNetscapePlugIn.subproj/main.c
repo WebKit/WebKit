@@ -30,9 +30,8 @@
  WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING NEGLIGENCE), STRICT LIABILITY OR 
  OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#import "PluginObject.h"
 
-NPNetscapeFuncs *browser;
+#import "PluginObject.h"
 
 // Mach-o entry points
 NPError NP_Initialize(NPNetscapeFuncs *browserFuncs);
@@ -69,33 +68,27 @@ NPError NP_GetEntryPoints(NPPluginFuncs *pluginFuncs)
 
 void NP_Shutdown(void)
 {
-    
 }
 
 NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, char *argn[], char *argv[], NPSavedData *saved)
 {
     if (browser->version >= 14)
-        instance->pdata = browser->createobject (instance, getPluginClass());
-    
+        instance->pdata = browser->createobject(instance, getPluginClass());
     return NPERR_NO_ERROR;
 }
 
 NPError NPP_Destroy(NPP instance, NPSavedData **save)
 {
+    PluginObject *obj = instance->pdata;
+    if (obj)
+        browser->releaseobject(&obj->header);
     return NPERR_NO_ERROR;
 }
 
 NPError NPP_SetWindow(NPP instance, NPWindow *window)
 {
-    PluginObject *obj = instance->pdata;
-    
-    // Do nothing if browser didn't support NPN_CreateObject which would have created the PluginObject.
-    if (obj != NULL)
-        obj->window = window;
-    
     return NPERR_NO_ERROR;
 }
-
 
 NPError NPP_NewStream(NPP instance, NPMIMEType type, NPStream *stream, NPBool seekable, uint16 *stype)
 {
@@ -120,12 +113,10 @@ int32 NPP_Write(NPP instance, NPStream *stream, int32 offset, int32 len, void *b
 
 void NPP_StreamAsFile(NPP instance, NPStream *stream, const char *fname)
 {
-    
 }
 
 void NPP_Print(NPP instance, NPPrint *platformPrint)
 {
-    
 }
 
 int16 NPP_HandleEvent(NPP instance, void *event)
@@ -135,7 +126,6 @@ int16 NPP_HandleEvent(NPP instance, void *event)
 
 void NPP_URLNotify(NPP instance, const char *url, NPReason reason, void *notifyData)
 {
-    
 }
 
 NPError NPP_GetValue(NPP instance, NPPVariable variable, void *value)

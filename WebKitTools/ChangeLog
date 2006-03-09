@@ -1,3 +1,40 @@
+2006-03-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7681
+          memory leak in the plug-in tests
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.c:
+        (NPP_Destroy): Added code to release the plug-in object. This is the leak fix.
+        (NPP_SetWindow): Remove unneeded code to store the window pointer.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c:
+        Moved the browser global in here since it's declared in this file's header.
+        Changed the code to set up the pluginClass structure to not use function
+        pointer casts. Those are dangerous because they can hide many types of mismatch.
+        And indeed when I did this I discovered that many functions were missing their
+        boolean return values or had parameter declarations with the wrong types.
+        (pluginGetProperty): Use STRINGZ_TO_NPVARIANT macro for greater simplicity and
+        clarity. Added boolean return value: return true when successful and false when not.
+        (pluginSetProperty): Added boolean return value, return false since we have no
+        properties we can set.
+        (pluginInvoke): Added boolean return value. Return true when successful and false
+        when not. Use NPVARIANT macros where appropriate. Added a missing release for the
+        return value from calling the browser. Changed code to put the strings in malloc
+        buffers instead of relying on GCC's extension that allows variable-sized arrays
+        on the stack.
+        (pluginInvokeDefault): Added boolean return value, return false since we have no
+        default function to call.
+        (pluginInvalidate): Added missing parameter. Removed comment.
+        (pluginAllocate): Removed unneeded cast. This is C code, not C++, so you don't have
+        to cast the result of malloc.
+        (pluginDeallocate): Removed uneeded cast.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h: Removed some unneeded
+        includes. Changed our PluginObject to use NPObject instead of re-declaring fields
+        that match NPObject's fields. Removed unused NPWindow pointer.
+
 2006-03-09  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Test: fast/events/event-sender-mouse-click.html

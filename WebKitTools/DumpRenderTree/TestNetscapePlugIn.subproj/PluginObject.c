@@ -30,34 +30,37 @@
  WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING NEGLIGENCE), STRICT LIABILITY OR 
  OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #import "PluginObject.h"
 
-void pluginInvalidate ();
-bool pluginHasProperty (NPClass *theClass, NPIdentifier name);
-bool pluginHasMethod (NPClass *theClass, NPIdentifier name);
-void pluginGetProperty (PluginObject *obj, NPIdentifier name, NPVariant *variant);
-void pluginSetProperty (PluginObject *obj, NPIdentifier name, const NPVariant *variant);
-void pluginInvoke (PluginObject *obj, NPIdentifier name, NPVariant *args, uint32_t argCount, NPVariant *result);
-void pluginInvokeDefault (PluginObject *obj, NPVariant *args, uint32_t argCount, NPVariant *result);
-NPObject *pluginAllocate (NPP npp, NPClass *theClass);
-void pluginDeallocate (PluginObject *obj);
+static void pluginInvalidate(NPObject *obj);
+static bool pluginHasProperty(NPObject *obj, NPIdentifier name);
+static bool pluginHasMethod(NPObject *obj, NPIdentifier name);
+static bool pluginGetProperty(NPObject *obj, NPIdentifier name, NPVariant *variant);
+static bool pluginSetProperty(NPObject *obj, NPIdentifier name, const NPVariant *variant);
+static bool pluginInvoke(NPObject *obj, NPIdentifier name, const NPVariant *args, uint32_t argCount, NPVariant *result);
+static bool pluginInvokeDefault(NPObject *obj, const NPVariant *args, uint32_t argCount, NPVariant *result);
+static NPObject *pluginAllocate(NPP npp, NPClass *theClass);
+static void pluginDeallocate(NPObject *obj);
 
-static NPClass _pluginFunctionPtrs = { 
+NPNetscapeFuncs *browser;
+
+static NPClass pluginClass = { 
     NP_CLASS_STRUCT_VERSION,
-    (NPAllocateFunctionPtr) pluginAllocate, 
-    (NPDeallocateFunctionPtr) pluginDeallocate, 
-    (NPInvalidateFunctionPtr) pluginInvalidate,
-    (NPHasMethodFunctionPtr) pluginHasMethod,
-    (NPInvokeFunctionPtr) pluginInvoke,
-    (NPInvokeDefaultFunctionPtr) pluginInvokeDefault,
-    (NPHasPropertyFunctionPtr) pluginHasProperty,
-    (NPGetPropertyFunctionPtr) pluginGetProperty,
-    (NPSetPropertyFunctionPtr) pluginSetProperty,
+    pluginAllocate, 
+    pluginDeallocate, 
+    pluginInvalidate,
+    pluginHasMethod,
+    pluginInvoke,
+    pluginInvokeDefault,
+    pluginHasProperty,
+    pluginGetProperty,
+    pluginSetProperty,
 };
  
 NPClass *getPluginClass(void)
 {
-    return &_pluginFunctionPtrs;
+    return &pluginClass;
 }
 
 static bool identifiersInitialized = false;
@@ -80,102 +83,99 @@ static const NPUTF8 *pluginMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
     "getURL"
 };
 
-static void initializeIdentifiers()
+static NPUTF8* createCStringFromNPVariant(const NPVariant *variant)
 {
-    browser->getstringidentifiers (pluginPropertyIdentifierNames, NUM_PROPERTY_IDENTIFIERS, pluginPropertyIdentifiers);
-    browser->getstringidentifiers (pluginMethodIdentifierNames, NUM_METHOD_IDENTIFIERS, pluginMethodIdentifiers);
-};
+    size_t length = NPVARIANT_TO_STRING(*variant).UTF8Length;
+    NPUTF8* result = malloc(length + 1);
+    memcpy(result, NPVARIANT_TO_STRING(*variant).UTF8Characters, length);
+    result[length] = '\0';
+    return result;
+}
 
-bool pluginHasProperty (NPClass *theClass, NPIdentifier name)
+static void initializeIdentifiers(void)
 {
-    for (int i = 0; i < NUM_PROPERTY_IDENTIFIERS; i++) {
+    browser->getstringidentifiers(pluginPropertyIdentifierNames, NUM_PROPERTY_IDENTIFIERS, pluginPropertyIdentifiers);
+    browser->getstringidentifiers(pluginMethodIdentifierNames, NUM_METHOD_IDENTIFIERS, pluginMethodIdentifiers);
+}
+
+static bool pluginHasProperty(NPObject *obj, NPIdentifier name)
+{
+    for (int i = 0; i < NUM_PROPERTY_IDENTIFIERS; i++)
         if (name == pluginPropertyIdentifiers[i])
             return true;
-    }
     return false;
 }
 
-bool pluginHasMethod (NPClass *theClass, NPIdentifier name)
+static bool pluginHasMethod(NPObject *obj, NPIdentifier name)
 {
-    for (int i = 0; i < NUM_METHOD_IDENTIFIERS; i++) {
+    for (int i = 0; i < NUM_METHOD_IDENTIFIERS; i++)
         if (name == pluginMethodIdentifiers[i])
             return true;
+    return false;
+}
+
+static bool pluginGetProperty(NPObject *obj, NPIdentifier name, NPVariant *variant)
+{
+    if (name == pluginPropertyIdentifiers[ID_PROPERTY_PROPERTY]) {
+        STRINGZ_TO_NPVARIANT("property", *variant);
+        return true;
     }
     return false;
 }
 
-void pluginGetProperty (PluginObject *obj, NPIdentifier name, NPVariant *variant)
+static bool pluginSetProperty(NPObject *obj, NPIdentifier name, const NPVariant *variant)
 {
-    if (name == pluginPropertyIdentifiers[ID_PROPERTY_PROPERTY]) {
-        // just return "property"
-        NPString propertyNameString;
-        propertyNameString.UTF8Characters = "property";
-        propertyNameString.UTF8Length = sizeof("property") - 1;
-        variant->type = NPVariantType_String;
-        variant->value.stringValue = propertyNameString;
-    } else
-        variant->type = NPVariantType_Void;
+    return false;
 }
 
-void pluginSetProperty (PluginObject *obj, NPIdentifier name, const NPVariant *variant)
+static bool pluginInvoke(NPObject *header, NPIdentifier name, const NPVariant *args, uint32_t argCount, NPVariant *result)
 {
-}
-
-void pluginInvoke (PluginObject *obj, NPIdentifier name, NPVariant *args, unsigned argCount, NPVariant *result)
-{
+    PluginObject *obj = (PluginObject *)header;
     if (name == pluginMethodIdentifiers[ID_TEST_CALLBACK_METHOD]) {
         // call whatever method name we're given
-        if (argCount > 0 && args->type == NPVariantType_String) {
-            NPVariant browserResult;
-            
+        if (argCount > 0 && NPVARIANT_IS_STRING(args[0])) {
             NPObject *windowScriptObject;
             browser->getvalue(obj->npp, NPPVpluginScriptableNPObject, &windowScriptObject);
 
-            NPString argString = args[0].value.stringValue;
-            int size = argString.UTF8Length + 1;
-            NPUTF8 callbackString[size];
-            strncpy(callbackString, argString.UTF8Characters, argString.UTF8Length);
-            callbackString[size - 1] = '\0';
+            NPUTF8* callbackString = createCStringFromNPVariant(&args[0]);
+            NPIdentifier callbackIdentifier = browser->getstringidentifier(callbackString);
+            free(callbackString);
 
-            NPIdentifier callbackMethodID = browser->getstringidentifier(callbackString);
-            browser->invoke(obj->npp, windowScriptObject, callbackMethodID, 0, 0, &browserResult);
+            NPVariant browserResult;
+            browser->invoke(obj->npp, windowScriptObject, callbackIdentifier, 0, 0, &browserResult);
+            browser->releasevariantvalue(&browserResult);
+
+            VOID_TO_NPVARIANT(*result);
+            return true;
         }
     } else if (name == pluginMethodIdentifiers[ID_TEST_GETURL]) {
-        if (argCount == 2 && args[0].type == NPVariantType_String && args[1].type == NPVariantType_String) {
-            NPString argString = args[0].value.stringValue;
-            int size = argString.UTF8Length + 1;
-            NPUTF8 urlString[size];
-            strncpy(urlString, argString.UTF8Characters, argString.UTF8Length);
-            urlString[size - 1] = '\0';
-
-            argString = args[1].value.stringValue;
-            size = argString.UTF8Length + 1;
-            NPUTF8 targetString[size];
-            strncpy(targetString, argString.UTF8Characters, argString.UTF8Length);
-            targetString[size - 1] = '\0';
-            
+        if (argCount == 2 && NPVARIANT_IS_STRING(args[0]) && NPVARIANT_IS_STRING(args[1])) {
+            NPUTF8* urlString = createCStringFromNPVariant(&args[0]);
+            NPUTF8* targetString = createCStringFromNPVariant(&args[1]);
             browser->geturl(obj->npp, urlString, targetString);
+            free(urlString);
+            free(targetString);
+
+            VOID_TO_NPVARIANT(*result);
+            return true;
         }
     }
 
-
-    result->type = NPVariantType_Void;
+    return false;
 }
 
-void pluginInvokeDefault (PluginObject *obj, NPVariant *args, unsigned argCount, NPVariant *result)
+static bool pluginInvokeDefault(NPObject *obj, const NPVariant *args, uint32_t argCount, NPVariant *result)
 {
-    result->type = NPVariantType_Void;
+    return false;
 }
 
-void pluginInvalidate ()
+static void pluginInvalidate(NPObject *obj)
 {
-    // Make sure we've released any remainging references to JavaScript
-    // objects.
 }
 
-NPObject *pluginAllocate (NPP npp, NPClass *theClass)
+static NPObject *pluginAllocate(NPP npp, NPClass *theClass)
 {
-    PluginObject *newInstance = (PluginObject *)malloc (sizeof(PluginObject));
+    PluginObject *newInstance = malloc(sizeof(PluginObject));
     
     if (!identifiersInitialized) {
         identifiersInitialized = true;
@@ -187,8 +187,7 @@ NPObject *pluginAllocate (NPP npp, NPClass *theClass)
     return (NPObject *)newInstance;
 }
 
-void pluginDeallocate (PluginObject *obj) 
+static void pluginDeallocate(NPObject *obj) 
 {
-    free ((void *)obj);
+    free(obj);
 }
-
