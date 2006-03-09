@@ -286,6 +286,7 @@ void Font::drawText(const GraphicsContext* context, int x, int y, int tabWidth, 
 
     y -= font->ascent();
 
+    SetBkMode(dc, TRANSPARENT);
     TextOutW(dc, x, y, (LPCWSTR)(str+offset), length);
 
     RestoreDC(dc, -1);
