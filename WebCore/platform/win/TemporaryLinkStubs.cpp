@@ -221,7 +221,7 @@ void BrowserExtensionWin::setIconURL(KURL const&) { notImplemented(); }
 void BrowserExtensionWin::createNewWindow(KURL const&,struct WebCore::URLArgs const&) { notImplemented(); }
 
 IntRect Font::selectionRectForText(int, int, int, int, int, const QChar*, int, int, int, int, bool, bool, int, int) const { notImplemented(); return IntRect(); }
-
+int Font::checkSelectionPoint(const QChar*, int, int, int, int, int, int, int, WebCore::TextDirection, bool, bool) const { notImplemented(); return 0; }
 
 // Completely empty stubs (mostly to allow DRT to run):
 bool WebCore::historyContains(QString const&) { return false; }
@@ -287,17 +287,6 @@ void ScrollView::setStaticBackground(bool) { }
 void ScrollView::addChild(Widget*,int,int) { }
 void ScrollView::removeChild(Widget*) { }
 bool ScrollView::inWindow() const { return true; }
-
-float Font::floatWidth(QChar const*, int, int, int len, int, int) const { return len * 10; }
-int Font::descent() const { return 10; }
-float Font::xHeight() const { return 10; }
-int Font::ascent() const { return 10; }
-int Font::lineSpacing() const { return 10; }
-bool Font::isFixedPitch() const { return true; }
-int Font::checkSelectionPoint(const QChar*, int, int, int, int, int, int, int, WebCore::TextDirection, bool, bool) const { return 0; }
-
-FontRenderer::FontRenderer() { }
-void FontRenderer::update(FontDescription const &) { }
 
 void GraphicsContext::setShadow(int,int,int,Color const&) { }
 void GraphicsContext::clearShadow() { }

@@ -1315,6 +1315,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\platform\FontDescription.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\platform\FontFamily.cpp"
 				>
 			</File>

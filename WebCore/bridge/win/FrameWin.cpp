@@ -42,6 +42,13 @@ FrameWin::FrameWin(Page* page, RenderPart* renderPart, FrameWinClient* client)
     d->m_extension = new BrowserExtensionWin(this);
     KHTMLSettings* settings = new KHTMLSettings();
     settings->setAutoLoadImages(true);
+    settings->setMediumFixedFontSize(16);
+    settings->setMediumFontSize(16);
+    settings->setSerifFontName("Times New Roman");
+    settings->setFixedFontName("Courier New");
+    settings->setSansSerifFontName("Arial");
+    settings->setStdFontName("Times New Roman");
+
     setSettings(settings);
     m_client = client;
 }

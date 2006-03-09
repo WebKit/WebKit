@@ -1,3 +1,77 @@
+2006-03-09  David Hyatt <hyatt@apple.com>
+
+        Make basic text rendering work on Win32.
+
+        Reviewed by eric
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        Add FontDescription.h to the Visual Studio project.
+
+        * bridge/win/FrameWin.cpp:
+        (WebCore::FrameWin::FrameWin):
+        Add some good default font settings to KHTMLSettings.
+
+        * platform/Font.cpp:
+        (WebCore::Font::update):
+        Renamed the FontRenderer method to invalidate, so that's what
+        update calls now.
+
+        * platform/FontRenderer.h:
+        * platform/mac/FontMac.mm:
+        (WebCore::FontRenderer::~FontRenderer):
+        (WebCore::FontRenderer::invalidate):
+        Rename the update method to invalidate.  Make sure the Mac
+        font renderer releases its resources when it gets destroyed.
+
+        * platform/win/FontWin.cpp:
+        (WebCore::CairoFont::CairoFont):
+        (WebCore::CairoFont::~CairoFont):
+        (WebCore::CairoFont::hfont):
+        (WebCore::CairoFont::scaledFont):
+        (WebCore::CairoFont::setMetrics):
+        (WebCore::CairoFont::ascent):
+        (WebCore::CairoFont::descent):
+        (WebCore::CairoFont::xHeight):
+        (WebCore::CairoFont::lineSpacing):
+        Implement a new class called CairoFont that encapsulates
+        the windows HFONT, the cairo font face, and the cairo scaled
+        font.
+
+        (WebCore::getCairoFont):
+        The method to look up a Cairo font.  This will eventually use
+        a hash, but for now it just always makes the fonts over and
+        over again.
+
+        (WebCore:::m_pitch):
+        (WebCore::FontRenderer::~FontRenderer):
+        (WebCore::FontRenderer::determinePitch):
+        (WebCore::FontRenderer::invalidate):
+        More of the FontRenderer plumbing.
+
+        (WebCore::FontRenderer::primaryCairoFont):
+        Returns the primary Cairo font for a family list.  This is basically
+        the first family that is present on the system.
+
+        (WebCore::Font::floatWidth):
+        The width method uses GetTextExtentPoint32W for now.  This
+        is totally wrong and will eventually be replaced by Cairo
+        code.
+
+        (WebCore::Font::ascent):
+        (WebCore::Font::descent):
+        (WebCore::Font::xHeight):
+        (WebCore::Font::lineSpacing):
+        (WebCore::Font::isFixedPitch):
+        Accessors for the metrics and pitch info.
+
+        (WebCore::Font::drawText):
+        Drawing of text.  Uses TextOut and is also basically throwaway
+        code.
+
+        * platform/win/TemporaryLinkStubs.cpp:
+        (Font::checkSelectionPoint):
+        Move the checkSelectionPoint method back to the link stubs.
+
 2006-03-09  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison

@@ -46,6 +46,12 @@ FontRenderer::FontRenderer()
     m_webCoreFont.font = nil;
 }
 
+FontRenderer::~FontRenderer()
+{
+    KWQRelease(m_renderer);
+    KWQRelease(m_webCoreFont.font);
+}
+
 const WebCoreFont& FontRenderer::getWebCoreFont(const FontDescription& fontDescription) const
 {
     if (!m_webCoreFont.font) {
@@ -81,7 +87,7 @@ void FontRenderer::determinePitch(const FontDescription& fontDescription) const 
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void FontRenderer::update(const FontDescription& fontDescription)
+void FontRenderer::invalidate()
 {
     KWQRelease(m_renderer);
     m_renderer = nil;

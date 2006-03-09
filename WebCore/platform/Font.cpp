@@ -73,7 +73,7 @@ void Font::update() const
     // and could eventually be rectified by using RefPtrs for Fonts themselves.
     if (!m_renderer)
         m_renderer = new FontRenderer();
-    m_renderer->update(fontDescription());
+    m_renderer->invalidate();
 }
 
 int Font::width(const QChar* chs, int slen, int pos, int len, int tabWidth, int xpos) const
