@@ -2,6 +2,14 @@
 
         Reviewed by Beth.
 
+        Clarified that sites on the list aren't necessarily "broken."
+
+        * projects/compat/hitlist.html:
+
+2006-03-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Beth.
+
         Updated links to gap and bananarepublic bugs.
 
         * projects/compat/hitlist.html:
