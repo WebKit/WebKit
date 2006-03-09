@@ -117,7 +117,6 @@ void WebFrame::receivedData(WebCore::TransferJob*, const char* data, int length)
 void WebFrame::receivedAllData(WebCore::TransferJob* job, WebCore::PlatformData)
 {
     d->frame->end();
-    delete job;
 }
 
 void WebFrame::paint()
@@ -125,7 +124,7 @@ void WebFrame::paint()
     d->frameView->layout();
 
     PAINTSTRUCT ps;
-    HDC hdc = BeginPaint(d->webView->windowHandle(), &ps);   
+    HDC hdc = BeginPaint(d->webView->windowHandle(), &ps);
     cairo_surface_t* finalSurface = cairo_win32_surface_create(hdc);
     cairo_surface_t* surface = cairo_surface_create_similar(finalSurface,
                                                             CAIRO_CONTENT_COLOR_ALPHA,

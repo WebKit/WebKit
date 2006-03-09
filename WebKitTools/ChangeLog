@@ -1,3 +1,18 @@
+2006-03-08  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Focus URL bar on Spinneret launch, remove border from WebView.
+        Stop WebFrame from deleting the job (prevent crash).
+
+        * Spinneret/Spinneret/Spinneret.cpp:
+        (_tWinMain):
+        * Spinneret/Spinneret/WebFrame.cpp:
+        (WebKit::WebFrame::receivedAllData):
+        (WebKit::WebFrame::paint):
+        * Spinneret/Spinneret/WebView.cpp:
+        (WebKit::WebView::createWebView):
+
 2006-03-09  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.
