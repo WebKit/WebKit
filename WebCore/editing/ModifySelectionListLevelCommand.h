@@ -57,8 +57,8 @@ private:
     void insertSiblingNodeRangeAfter(NodeImpl* startNode, NodeImpl* endNode, NodeImpl* refNode);
     
     // main functionality
-    void increaseListLevel(Selection);
-    void decreaseListLevel(Selection);
+    void increaseListLevel(const Selection&);
+    void decreaseListLevel(const Selection&);
 };
 
 } // namespace khtml

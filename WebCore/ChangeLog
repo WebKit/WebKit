@@ -1,3 +1,23 @@
+2006-03-09  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by harrison
+    
+        Fixed formatting and changed functions to take in 
+        a const Selection& instead of a Selection.
+
+        * editing/ModifySelectionListLevelCommand.cpp:
+        (WebCore::ModifySelectionListLevelCommand::canIncreaseSelectionListLevel):
+        (WebCore::ModifySelectionListLevelCommand::canDecreaseSelectionListLevel):
+        (WebCore::ModifySelectionListLevelCommand::increaseSelectionListLevel):
+        (WebCore::ModifySelectionListLevelCommand::decreaseSelectionListLevel):
+        (WebCore::modifySelectionListLevel):
+        (WebCore::getStartEndListChildren):
+        (WebCore::canIncreaseListLevel):
+        (WebCore::canDecreaseListLevel):
+        (WebCore::ModifySelectionListLevelCommand::increaseListLevel):
+        (WebCore::ModifySelectionListLevelCommand::decreaseListLevel):
+        * editing/ModifySelectionListLevelCommand.h:
+
 2006-03-09  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin.
