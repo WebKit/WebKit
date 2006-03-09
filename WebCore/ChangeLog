@@ -1,5 +1,20 @@
 2006-03-09  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        No test because this fixes an existing pixel test (and does not affect
+        the render tree).
+
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7664
+          REGRESSION: tests that include numeric list markers fail in pixel mode
+
+        * platform/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawText): Restored AlignRight behavior.
+
+2006-03-09  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        No test because we couldn't figure out how to write one.
+
         Reviewed by Darin.
 
         - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7680
