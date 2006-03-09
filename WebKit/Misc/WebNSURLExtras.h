@@ -57,6 +57,7 @@
 
 - (NSURL *)_webkit_canonicalize;
 - (NSURL *)_webkit_URLByRemovingFragment;
+- (NSURL *)_webkit_URLByRemovingResourceSpecifier;
 
 - (BOOL)_webkit_isJavaScriptURL;
 - (NSString *)_webkit_scriptIfJavaScriptURL;

@@ -1,3 +1,18 @@
+2006-03-09  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7656
+         Query string always appended to Flash URLs, instead of being replaced.
+
+        * Misc/WebNSURLExtras.h: Added _webkit_URLByRemovingResourceSpecifier.
+        * Misc/WebNSURLExtras.m:
+        (+[NSURL _web_URLWithData:relativeToURL:]): Call _webkit_URLByRemovingResourceSpecifier to
+        work around CFURL not removing non-path components from base URLs in some cases.
+        (-[NSURL _webkit_URLByRemovingComponent:]): New generic function for removing URL components.
+        (-[NSURL _webkit_URLByRemovingFragment]): Moved implementation to the above method.
+        (-[NSURL _webkit_URLByRemovingResourceSpecifier]): Added.
+
 2006-03-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders.

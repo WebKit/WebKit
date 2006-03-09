@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -364,6 +365,9 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
     NSURL *result = nil;
     int length = [data length];
     if (length > 0) {
+        // work around <rdar://4470771>: CFURLCreateAbsoluteURLWithBytes(.., TRUE) doesn't remove non-path components.
+        baseURL = [baseURL _webkit_URLByRemovingResourceSpecifier];
+    
         const UInt8 *bytes = [data bytes];
         // NOTE: We use UTF-8 here since this encoding is used when computing strings when returning URL components
         // (e.g calls to NSURL -path). However, this function is not tolerant of illegal UTF-8 sequences, which
@@ -539,9 +543,9 @@ typedef struct {
 
 
 
-- (NSURL *)_webkit_URLByRemovingFragment
+- (NSURL *)_webkit_URLByRemovingComponent:(CFURLComponentType)component
 {
-    CFRange fragRg = CFURLGetByteRangeForComponent((CFURLRef)self, kCFURLComponentFragment, NULL);
+    CFRange fragRg = CFURLGetByteRangeForComponent((CFURLRef)self, component, NULL);
     // Check to see if a fragment exists before decomposing the URL.
     if (fragRg.location == kCFNotFound) {
         return self;
@@ -563,6 +567,16 @@ typedef struct {
 
     if (urlBytes != buffer) free(urlBytes);
     return result ? [result autorelease] : self;
+}
+
+- (NSURL *)_webkit_URLByRemovingFragment
+{
+    return [self _webkit_URLByRemovingComponent:kCFURLComponentFragment];
+}
+
+- (NSURL *)_webkit_URLByRemovingResourceSpecifier
+{
+    return [self _webkit_URLByRemovingComponent:kCFURLComponentResourceSpecifier];
 }
 
 - (BOOL)_webkit_isJavaScriptURL

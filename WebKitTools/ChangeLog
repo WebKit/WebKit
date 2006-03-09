@@ -1,3 +1,10 @@
+2006-03-09  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.c:
+        (pluginInvoke): Added a method to test getURL.
+
 2006-03-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

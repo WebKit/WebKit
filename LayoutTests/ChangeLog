@@ -1,3 +1,13 @@
+2006-03-09  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - Tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=7656
+         Query string always appended to Flash URLs, instead of being replaced.
+
+        * plugins/geturl-replace-query-expected.txt: Added.
+        * plugins/geturl-replace-query.html: Added.
+
 2006-03-08  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin

@@ -71,11 +71,13 @@ static const NPUTF8 *pluginPropertyIdentifierNames[NUM_PROPERTY_IDENTIFIERS] = {
 };
 
 #define ID_TEST_CALLBACK_METHOD     0
-#define NUM_METHOD_IDENTIFIERS      1
+#define ID_TEST_GETURL              1
+#define NUM_METHOD_IDENTIFIERS      2
 
 static NPIdentifier pluginMethodIdentifiers[NUM_METHOD_IDENTIFIERS];
 static const NPUTF8 *pluginMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
-    "testCallback"
+    "testCallback",
+    "getURL"
 };
 
 static void initializeIdentifiers()
@@ -138,7 +140,24 @@ void pluginInvoke (PluginObject *obj, NPIdentifier name, NPVariant *args, unsign
             NPIdentifier callbackMethodID = browser->getstringidentifier(callbackString);
             browser->invoke(obj->npp, windowScriptObject, callbackMethodID, 0, 0, &browserResult);
         }
+    } else if (name == pluginMethodIdentifiers[ID_TEST_GETURL]) {
+        if (argCount == 2 && args[0].type == NPVariantType_String && args[1].type == NPVariantType_String) {
+            NPString argString = args[0].value.stringValue;
+            int size = argString.UTF8Length + 1;
+            NPUTF8 urlString[size];
+            strncpy(urlString, argString.UTF8Characters, argString.UTF8Length);
+            urlString[size - 1] = '\0';
+
+            argString = args[1].value.stringValue;
+            size = argString.UTF8Length + 1;
+            NPUTF8 targetString[size];
+            strncpy(targetString, argString.UTF8Characters, argString.UTF8Length);
+            targetString[size - 1] = '\0';
+            
+            browser->geturl(obj->npp, urlString, targetString);
+        }
     }
+
 
     result->type = NPVariantType_Void;
 }
