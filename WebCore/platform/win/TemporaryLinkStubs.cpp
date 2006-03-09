@@ -220,9 +220,6 @@ void BrowserExtensionWin::goBackOrForward(int) { notImplemented(); }
 void BrowserExtensionWin::setIconURL(KURL const&) { notImplemented(); }
 void BrowserExtensionWin::createNewWindow(KURL const&,struct WebCore::URLArgs const&) { notImplemented(); }
 
-void WebCore::TransferJob::retrieveCharset() const { notImplemented(); }
-void WebCore::TransferJob::assembleResponseHeaders() const { notImplemented(); }
-
 IntRect Font::selectionRectForText(int, int, int, int, int, const QChar*, int, int, int, int, bool, bool, int, int) const { notImplemented(); return IntRect(); }
 
 
@@ -240,6 +237,9 @@ bool WebCore::cookiesEnabled() { return false; }
 PluginInfo*PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned) { return 0;}
 unsigned PlugInInfoStore::pluginCount() const { return 0; }
 void WebCore::refreshPlugins(bool) { }
+
+void WebCore::TransferJob::assembleResponseHeaders() const { }
+void WebCore::TransferJob::retrieveCharset() const { }
 
 void FrameWin::restoreDocumentState() { }
 void FrameWin::partClearedInBegin() { }

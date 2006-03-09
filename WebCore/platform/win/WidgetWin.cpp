@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+HINSTANCE Widget::instanceHandle = 0;
+
 class WidgetPrivate
 {
 public:

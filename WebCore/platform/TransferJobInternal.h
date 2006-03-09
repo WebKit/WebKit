@@ -54,6 +54,8 @@ namespace WebCore {
 #if WIN32
             , m_fileHandle(0)
             , m_fileLoadTimer(job, &TransferJob::fileLoadTimer)
+            , m_jobId(0)
+            , m_threadId(0)
 #endif
         {
         }
@@ -73,6 +75,8 @@ namespace WebCore {
 #if WIN32
             , m_fileHandle(0)
             , m_fileLoadTimer(job, &TransferJob::fileLoadTimer)
+            , m_jobId(0)
+            , m_threadId(0)
 #endif
         {
         }
@@ -99,6 +103,8 @@ namespace WebCore {
         HANDLE m_fileHandle;
         Timer<TransferJob> m_fileLoadTimer;
         HINTERNET m_resourceHandle;
+        unsigned m_jobId;
+        DWORD m_threadId;
 #endif
         };
 

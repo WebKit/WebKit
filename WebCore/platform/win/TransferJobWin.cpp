@@ -25,15 +25,124 @@
 
 #include "config.h"
 #include "TransferJob.h"
-
 #include "TransferJobInternal.h"
-#include "KURL.h"
+
 #include "formdata.h"
+#include "kxmlcore/HashMap.h"
+#include "KURL.h"
+#include "Widget.h"
 #include <windows.h>
 #include <wininet.h>
 
 namespace WebCore {
-    
+
+static unsigned transferJobId = 0;
+static HashMap<int, TransferJob*>* jobIdMap = 0;
+
+static HWND transferJobWindowHandle = 0;
+static UINT loadStatusMessage = 0;
+const LPCWSTR kTransferJobWindowClassName = L"TransferJobWindowClass";
+
+static int addToOutstandingJobs(TransferJob* job)
+{
+    if (!jobIdMap)
+        jobIdMap = new HashMap<int, TransferJob*>;
+    transferJobId++;
+    jobIdMap->set(transferJobId, job);
+    return transferJobId;
+}
+
+static void removeFromOutstandingJobs(int jobId)
+{
+    if (!jobIdMap)
+        return;
+    jobIdMap->remove(jobId);
+}
+
+static TransferJob* lookupTransferJob(int jobId)
+{
+    if (!jobIdMap)
+        return 0;
+    return jobIdMap->get(jobId);
+}
+
+struct JobLoadStatus {
+    DWORD internetStatus;
+    DWORD_PTR dwResult;
+};
+
+LRESULT CALLBACK TransferJobWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    if (message == loadStatusMessage) {
+        JobLoadStatus* jobLoadStatus = (JobLoadStatus*)lParam;
+        DWORD internetStatus = jobLoadStatus->internetStatus;
+        DWORD_PTR dwResult = jobLoadStatus->dwResult;
+        delete jobLoadStatus;
+        jobLoadStatus = 0;
+
+        // If we get a message about a job we no longer know about (already deleted), ignore it.
+        unsigned jobId = (unsigned)wParam;
+        TransferJob* job = lookupTransferJob(jobId);
+        if (!job)
+            return 0;
+
+        ASSERT(job->d->m_jobId == jobId);
+        ASSERT(job->d->m_threadId == GetCurrentThreadId());
+
+        if (internetStatus == INTERNET_STATUS_HANDLE_CREATED) {
+            job->d->m_resourceHandle = HINTERNET(dwResult);
+            if (job->d->status != 0) {
+                // We were canceled before Windows actually created a handle for us, close and delete now.
+                InternetCloseHandle(job->d->m_resourceHandle);
+                delete job;
+            }
+        } else if (internetStatus == INTERNET_STATUS_REQUEST_COMPLETE) {
+            char buffer[32728];
+            DWORD bytesRead = 0;
+            DWORD totalBytes = 0;
+            bool ok = false;
+            while ((ok = InternetReadFile(job->d->m_resourceHandle, buffer, 32728, &bytesRead)) && bytesRead) {
+                job->client()->receivedData(job, buffer, bytesRead);
+                totalBytes += bytesRead;
+                bytesRead = 0;
+            }
+
+            if (!ok) {
+                int error = GetLastError();
+                if (error == ERROR_IO_PENDING)
+                    return 0;
+                else
+                    _RPTF1(_CRT_WARN, "Load error: %i\n", error);
+            }
+            
+            InternetCloseHandle(job->d->m_resourceHandle);
+            job->client()->receivedAllData(job, 0);
+            job->client()->receivedAllData(job);
+            delete job;
+        }
+    } else
+        return DefWindowProc(hWnd, message, wParam, lParam);
+    return 0;
+}
+
+static void initializeOffScreenTransferJobWindow()
+{
+    if (transferJobWindowHandle)
+        return;
+
+    WNDCLASSEX wcex;
+    memset(&wcex, 0, sizeof(WNDCLASSEX));
+    wcex.cbSize = sizeof(WNDCLASSEX);
+    wcex.lpfnWndProc    = TransferJobWndProc;
+    wcex.hInstance      = Widget::instanceHandle;
+    wcex.lpszClassName  = kTransferJobWindowClassName;
+    RegisterClassEx(&wcex);
+
+    transferJobWindowHandle = CreateWindow(kTransferJobWindowClassName, 0, 0, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0,
+        HWND_MESSAGE, 0, Widget::instanceHandle, 0);
+    loadStatusMessage = RegisterWindowMessage(L"com.apple.WebKit.TransferJobLoadStatus");
+}
+
 TransferJobInternal::~TransferJobInternal()
 {
     if (m_fileHandle)
@@ -42,32 +151,19 @@ TransferJobInternal::~TransferJobInternal()
 
 TransferJob::~TransferJob()
 {
+    if (d->m_jobId)
+        removeFromOutstandingJobs(d->m_jobId);
 }
 
-static void __stdcall transferJobStatusCallback(HINTERNET internetHandle, DWORD_PTR context, DWORD internetStatus, LPVOID statusInformation, DWORD statusInformationLength)
+static void __stdcall transferJobStatusCallback(HINTERNET internetHandle, DWORD_PTR timerId, DWORD internetStatus, LPVOID statusInformation, DWORD statusInformationLength)
 {
-    TransferJob* job = (TransferJob*)context;
-
-    if (internetStatus == INTERNET_STATUS_HANDLE_CREATED)
-        job->d->m_resourceHandle = HINTERNET(LPINTERNET_ASYNC_RESULT(statusInformation)->dwResult);
-    else if (internetStatus == INTERNET_STATUS_REQUEST_COMPLETE) {
-        HINTERNET resourceHandle = job->d->m_resourceHandle;
-
-        char buffer[32728];
-        DWORD bytesRead = 0;
-        DWORD totalBytes = 0;
-        bool ok = false;
-        while ((ok = InternetReadFile(resourceHandle, buffer, 32728, &bytesRead)) && bytesRead) {
-            job->client()->receivedData(job, buffer, bytesRead);
-            totalBytes += bytesRead;
-            bytesRead = 0;
-        }
-         
-        if (ok) {
-            InternetCloseHandle(resourceHandle);
-            job->client()->receivedAllData(job, 0);
-            job->client()->receivedAllData(job);
-        }
+    switch (internetStatus) {
+    case INTERNET_STATUS_HANDLE_CREATED:
+    case INTERNET_STATUS_REQUEST_COMPLETE:
+        JobLoadStatus* jobLoadStatus = new JobLoadStatus;
+        jobLoadStatus->internetStatus = internetStatus;
+        jobLoadStatus->dwResult = LPINTERNET_ASYNC_RESULT(statusInformation)->dwResult;
+        PostMessage(transferJobWindowHandle, loadStatusMessage, (WPARAM)timerId, (LPARAM)jobLoadStatus);
     }
 }
 
@@ -96,13 +192,16 @@ bool TransferJob::start(DocLoader* docLoader)
         }
         static INTERNET_STATUS_CALLBACK callbackHandle = InternetSetStatusCallback(internetHandle, transferJobStatusCallback);
 
-        HINTERNET urlHandle =
-            InternetOpenUrlA(internetHandle, d->URL.url().ascii(), NULL, -1, 0, (DWORD_PTR)this);
+        initializeOffScreenTransferJobWindow();
+        d->m_jobId = addToOutstandingJobs(this);
+
+        HINTERNET urlHandle = InternetOpenUrlA(internetHandle, d->URL.url().ascii(), NULL, -1, 0, (DWORD_PTR)d->m_jobId);
 
         if (urlHandle == INVALID_HANDLE_VALUE) {
             delete this;
             return false;
         }
+        d->m_threadId = GetCurrentThreadId();
 
         return true;
     }
@@ -130,9 +229,17 @@ void TransferJob::fileLoadTimer(Timer<TransferJob>* timer)
 
 void TransferJob::cancel()
 {
-    d->m_fileLoadTimer.stop();
+    if (d->m_resourceHandle)
+        InternetCloseHandle(d->m_resourceHandle);
+    else
+        d->m_fileLoadTimer.stop();
+
     d->client->receivedAllData(this, 0);
     d->client->receivedAllData(this);
+
+    if (!d->m_resourceHandle)
+        // Async load canceled before we have a handle -- mark ourselves as in error, to be deleted later.
+        setError(1);
 }
 
 } // namespace WebCore

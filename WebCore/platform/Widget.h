@@ -40,6 +40,7 @@ class NSView;
 
 #if WIN32
 typedef struct HWND__ *HWND;
+typedef struct HINSTANCE__ *HINSTANCE;
 #endif
 
 namespace WebCore {
@@ -130,6 +131,8 @@ namespace WebCore {
         Widget(HWND);
         HWND windowHandle();
         void setWindowHandle(HWND);
+        // The global DLL or application instance used for all WebCore windows.
+        static HINSTANCE instanceHandle;
 #endif
 
 #if __APPLE__

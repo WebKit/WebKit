@@ -1,3 +1,33 @@
+2006-03-09  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Add support for Timers under 10ms.
+        Fix random crashers due to multi-threaded loading.
+
+        * platform/TransferJob.h:
+        * platform/TransferJobInternal.h:
+        (WebCore::TransferJobInternal::TransferJobInternal):
+        * platform/Widget.h:
+        * platform/win/SharedTimerWin.cpp:
+        (WebCore::TimerWindowWndProc):
+        (WebCore::initializeOffScreenTimerWindow):
+        (WebCore::setSharedTimerFireTime):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::TransferJob::assembleResponseHeaders):
+        (WebCore::TransferJob::retrieveCharset):
+        * platform/win/TransferJobWin.cpp:
+        (WebCore::addToOutstandingJobs):
+        (WebCore::removeFromOutstandingJobs):
+        (WebCore::lookupTransferJob):
+        (WebCore::TransferJobWndProc):
+        (WebCore::initializeOffScreenTransferJobWindow):
+        (WebCore::TransferJob::~TransferJob):
+        (WebCore::transferJobStatusCallback):
+        (WebCore::TransferJob::start):
+        (WebCore::TransferJob::cancel):
+        * platform/win/WidgetWin.cpp:
+
 2006-03-08  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by darin
