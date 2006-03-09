@@ -1,3 +1,39 @@
+2006-03-09  David Carson  <dacarson@gmail.com>
+
+        Reviewed by Darin.
+
+        * fast/canvas: Added.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6103
+          Rectangles are not filled according to the Web Applications Working Draft
+
+        * fast/canvas/fillrect_gradient-expected.checksum: Added.
+        * fast/canvas/fillrect_gradient-expected.png: Added.
+        * fast/canvas/fillrect_gradient-expected.txt: Added.
+        * fast/canvas/fillrect_gradient.html: Added.
+
+        - moved other canvas tests here
+
+        * fast/canvas/image-object-in-canvas-expected.checksum: Added.
+        * fast/canvas/image-object-in-canvas-expected.png: Added.
+        * fast/canvas/image-object-in-canvas-expected.txt: Added.
+        * fast/canvas/image-object-in-canvas.html: Added.
+        * fast/canvas/quadraticCurveTo-expected.checksum: Added.
+        * fast/canvas/quadraticCurveTo-expected.png: Added.
+        * fast/canvas/quadraticCurveTo-expected.txt: Added.
+        * fast/canvas/quadraticCurveTo.xml: Added.
+        * fast/canvas/resources: Added.
+        * fast/canvas/resources/apple.gif: Added.
+
+        * fast/dom/image-object-in-canvas-expected.checksum: Removed.
+        * fast/dom/image-object-in-canvas-expected.png: Removed.
+        * fast/dom/image-object-in-canvas-expected.txt: Removed.
+        * fast/dom/image-object-in-canvas.html: Removed.
+        * fast/dom/quadraticCurveTo-expected.checksum: Removed.
+        * fast/dom/quadraticCurveTo-expected.png: Removed.
+        * fast/dom/quadraticCurveTo-expected.txt: Removed.
+        * fast/dom/quadraticCurveTo.xml: Removed.
+
 2006-03-09  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

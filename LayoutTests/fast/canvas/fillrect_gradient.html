@@ -1,0 +1,18 @@
+<body>
+The canvas below should show a gradient, starting at green at the top and fading to white at the bottom of the rect.
+<canvas id="canvas" width="150" height="150"></canvas>
+<script>
+    var ctx = document.getElementById('canvas').getContext('2d');
+
+    // Create gradient
+    var lingrad = ctx.createLinearGradient(0,0,0,150);
+    lingrad.addColorStop(0, '#0f0');
+    lingrad.addColorStop(1, '#fff');
+
+    // assign gradient to fill
+    ctx.fillStyle = lingrad;
+        
+    // draw shapes
+    ctx.fillRect(10,10,130,130);
+</script>
+</body>

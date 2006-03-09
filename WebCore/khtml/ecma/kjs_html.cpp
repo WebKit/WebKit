@@ -3773,7 +3773,6 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
 
                 JSObject *o = static_cast<JSObject*>(contextObject->_strokeStyle);
                 Gradient *gradient = static_cast<Gradient*>(o);
-                
                 CGShadingRef shading = gradient->getShading();
                 CGContextDrawShading(drawingContext, shading);
                 
@@ -3910,9 +3909,29 @@ JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisO
             float y = (float)args[1]->toNumber(exec);
             float w = (float)args[2]->toNumber(exec);
             float h = (float)args[3]->toNumber(exec);
-            if (isImagePattern(contextObject->_fillStyle))
-                contextObject->updateFillImagePattern();
-            CGContextFillRect (drawingContext, CGRectMake(x,y,w,h));
+            
+            if (isGradient(contextObject->_fillStyle)) {
+                CGContextSaveGState(drawingContext);
+                
+                // Can't use a gradient fill with a FillRect, must use a path.
+                CGContextBeginPath(drawingContext);
+                CGContextAddRect(drawingContext, CGRectMake(x, y, w, h));
+
+                // Set the clip from the current path because shading only
+                // operates on clippin regions!  Odd, but true.
+                CGContextClip(drawingContext);
+
+                JSObject *o = static_cast<JSObject*>(contextObject->_fillStyle);
+                Gradient *gradient = static_cast<Gradient*>(o);
+                CGShadingRef shading = gradient->getShading();
+                CGContextDrawShading(drawingContext, shading);
+                
+                CGContextRestoreGState(drawingContext);
+            } else {
+                if (isImagePattern(contextObject->_fillStyle))
+                    contextObject->updateFillImagePattern();
+                CGContextFillRect(drawingContext, CGRectMake(x, y, w, h));
+            }
             renderer->setNeedsImageUpdate();
             break;
         }

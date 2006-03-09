@@ -1,3 +1,16 @@
+2006-03-09  David Carson  <dacarson@gmail.com>
+
+        Test: fast/canvas/fillrect_gradient.html
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=6103
+          Rectangles are not filled according to the Web Applications Working Draft
+
+        * khtml/ecma/kjs_html.cpp: (KJS::Context2DFunction::callAsFunction):
+        Modified fillrect function to check and use a gradient if set.
+        Builds a path to fill rects with a gradient.
+
 2006-03-09  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         No test because this fixes an existing pixel test (and does not affect
