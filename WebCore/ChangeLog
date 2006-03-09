@@ -1,3 +1,15 @@
+2006-03-09  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=7675
+        When new text fields change from visibility:hidden to visibility:visible, value doesn't display
+
+        Test: fast/forms/input-appearance-visibility.html
+
+        * rendering/RenderTextField.cpp: (WebCore::RenderTextField::setStyle):
+        Sets the style directly on the children of the inner div.
+
 2006-03-09  David Hyatt <hyatt@apple.com>
 
         Make basic text rendering work on Win32.

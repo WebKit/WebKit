@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock (anonymous) at (0,0) size 784x18
+        RenderText {TEXT} at (0,0) size 480x18
+          text run at (0,0) width 480: "This tests that the value becomes visible when the text field becomes visible."
+      RenderBlock {P} at (0,34) size 784x23
+        RenderTextField {INPUT} at (2,2) size 186x19
+        RenderText {TEXT} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,73) size 784x0
+      RenderBlock {P} at (0,73) size 784x0
+layer at (13,47) size 180x13
+  RenderBlock {DIV} at (3,3) size 180x13
+    RenderText {TEXT} at (0,0) size 63x13
+      text run at (0,0) width 63: "Test Passed"

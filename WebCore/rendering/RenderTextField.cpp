@@ -57,6 +57,9 @@ void RenderTextField::setStyle(RenderStyle* style)
         RenderBlock* divRenderer = static_cast<RenderBlock*>(m_div->renderer());
         RenderStyle* divStyle = createDivStyle(style);
         divRenderer->setStyle(divStyle);
+        for (NodeImpl *n = m_div->firstChild(); n; n = n->traverseNextNode(m_div.get()))
+            if (n->renderer())
+                n->renderer()->setStyle(divStyle);
     }
     setReplaced(isInline());
 }
