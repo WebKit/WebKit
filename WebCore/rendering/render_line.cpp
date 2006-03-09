@@ -1,7 +1,7 @@
 /**
 * This file is part of the html renderer for KDE.
  *
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2003, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -1052,7 +1052,6 @@ void EllipsisBox::paint(RenderObject::PaintInfo& i, int _tx, int _ty)
     if (_style->font() != p->font())
         p->setFont(_style->font());
 
-    const Font* font = &_style->font();
     Color textColor = _style->color();
     if (textColor != p->pen().color())
         p->setPen(textColor);
@@ -1062,19 +1061,14 @@ void EllipsisBox::paint(RenderObject::PaintInfo& i, int _tx, int _ty)
                      _style->textShadow()->blur, _style->textShadow()->color);
         setShadow = true;
     }
-    
-    const DOMString& str = m_str;
-    font->drawText(p, m_x + _tx, 
-                      m_y + _ty + m_baseline,
-                      0, 0,
-                      (str.impl())->s,
-                      str.length(), 0, str.length(),
-                      0, 
-                      LTR, _style->visuallyOrdered());
-                      
+
+    const String& str = m_str;
+    p->drawText(m_x + _tx, m_y + _ty + m_baseline, 0, 0, str.unicode(), str.length(),
+        0, str.length(), 0, LTR, _style->visuallyOrdered(), 0, str.length());
+
     if (setShadow)
         p->clearShadow();
-    
+
     if (m_markupBox) {
         // Paint the markup box
         _tx += m_x + m_width - m_markupBox->xPos();

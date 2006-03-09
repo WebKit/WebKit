@@ -1,3 +1,14 @@
+2006-03-09  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7680
+          REGRESSION: Ellipsis painted over the chrome and in invalid contexts
+
+        * rendering/render_line.cpp:
+        (WebCore::EllipsisBox::paint): Replaced call to Font::drawText with
+        GraphicsContext::drawText, which checks the paintingDisabled flag.
+
 2006-03-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.
