@@ -21,6 +21,12 @@
         * svg/custom/display-none-expected.txt: Added.
         * svg/custom/display-none.svg: Added.
 
+2006-03-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        * fast/AppleScript/date-expected.txt: Updated for endian-independence.
+
 2006-03-07  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by harrison
