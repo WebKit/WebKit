@@ -51,6 +51,11 @@ LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK    MyEditProc(HWND, UINT, WPARAM, LPARAM);
 
+void updateLocationBar(const char* URL)
+{
+    SendMessageA(hURLBarWnd, (UINT)WM_SETTEXT, 0, (LPARAM)URL);
+}
+
 static void resizeSubViews()
 {
     RECT rcClient;

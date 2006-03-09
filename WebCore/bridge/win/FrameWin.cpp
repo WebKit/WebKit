@@ -36,17 +36,24 @@
 
 namespace WebCore {
 
-FrameWin::FrameWin(Page* page, RenderPart* renderPart)
+FrameWin::FrameWin(Page* page, RenderPart* renderPart, FrameWinClient* client)
     : Frame(page, renderPart)
 {
     d->m_extension = new BrowserExtensionWin(this);
     KHTMLSettings* settings = new KHTMLSettings();
     settings->setAutoLoadImages(true);
     setSettings(settings);
+    m_client = client;
 }
 
 FrameWin::~FrameWin()
 {
+}
+
+void FrameWin::urlSelected(const KURL& url, const URLArgs&)
+{
+    if (m_client)
+        m_client->openURL(url.url());
 }
 
 QString FrameWin::userAgent() const

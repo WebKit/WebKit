@@ -258,7 +258,6 @@ Frame* FrameWin::createFrame(KURL const&,QString const&,RenderPart*,String const
 void FrameWin::saveDocumentState(void) { }
 void FrameWin::clearUndoRedoOperations(void) { }
 QString FrameWin::incomingReferrer() const { return QString(); }
-void FrameWin::urlSelected(KURL const&,struct WebCore::URLArgs const&) { }
 
 BrowserExtensionWin::BrowserExtensionWin(WebCore::Frame*) { }
 void BrowserExtensionWin::setTypedIconURL(KURL const&,QString const&) { }

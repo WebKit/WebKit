@@ -26,3 +26,5 @@
 #pragma once
 
 #include "resource.h"
+
+void updateLocationBar(const char* URL);

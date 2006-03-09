@@ -1,3 +1,19 @@
+2006-03-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - make link clicks work by handling link click requests
+        from WebCore
+
+        * Spinneret/Spinneret/Spinneret.cpp:
+        (updateLocationBar):
+        * Spinneret/Spinneret/Spinneret.h:
+        * Spinneret/Spinneret/WebFrame.cpp:
+        (WebKit::WebFrame::WebFrame):
+        (WebKit::WebFrame::openURL):
+        (WebKit::WebFrame::loadURL):
+        * Spinneret/Spinneret/WebFrame.h:
+
 2006-03-08  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

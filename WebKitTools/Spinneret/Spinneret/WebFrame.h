@@ -23,7 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "config.h"
+#include "QString.h"
 #include "TransferJobClient.h"
+#include "FrameWin.h"
 
 namespace WebCore {
     class Frame;
@@ -35,14 +38,16 @@ namespace WebKit {
 
     class WebView;
 
-    class WebFrame : public WebCore::TransferJobClient {
+    class WebFrame : public WebCore::TransferJobClient, public WebCore::FrameWinClient {
     public:
     WebFrame(char* name, WebView*);
 
     void loadFilePath(char*);
     void loadHTMLString(char* html, char* baseURL = 0);
 
-    void loadURL(char*);
+    virtual void openURL(const QString&);
+
+    void loadURL(const char*);
     
     virtual void receivedData(WebCore::TransferJob*, const char*, int);
     virtual void receivedAllData(WebCore::TransferJob*, WebCore::PlatformData);

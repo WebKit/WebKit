@@ -36,7 +36,7 @@ END_MESSAGE_MAP()
 ImageView::ImageView()
 {
     // Needed to make sure everything is properly initialized;
-    static FrameWin *dummyFrame = new FrameWin(0,0);
+    static FrameWin *dummyFrame = new FrameWin(0, 0, 0);
 }
 
 ImageView::~ImageView()

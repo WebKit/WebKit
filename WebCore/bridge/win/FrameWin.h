@@ -30,19 +30,24 @@
 
 namespace WebCore {
 
+class FrameWinClient
+{
+public:
+    virtual void openURL(const QString&) = 0;
+};
+
 class FrameWin : public Frame
 {
 public:
-    FrameWin(Page*, RenderPart*);
+    FrameWin(Page*, RenderPart*, FrameWinClient*);
     ~FrameWin();
 
     virtual bool openURL(const KURL&);
     virtual void openURLRequest(const KURL&, const URLArgs&);
     virtual void submitForm(const KURL&, const URLArgs&);
+    virtual void urlSelected(const KURL&, const URLArgs&);
 
     virtual void setTitle(const String&);
-
-    virtual void urlSelected(const KURL& url, const URLArgs& args);
 
     virtual ObjectContentType objectContentType(const KURL& url, const QString& mimeType);
     virtual Plugin* createPlugin(const KURL&, const QStringList& paramNames, const QStringList& paramValues, const QString& mimeType);
@@ -118,6 +123,7 @@ protected:
     virtual String generateFrameName();
 private:
     virtual bool passMouseDownEventToWidget(Widget*);
+    FrameWinClient* m_client;
 };
 
 inline FrameWin* Win(Frame* frame) { return static_cast<FrameWin*>(frame); }

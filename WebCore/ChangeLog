@@ -1,3 +1,15 @@
+2006-03-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - make link clicks work by propagating them up to a client
+
+        * Viewer/ImageView.cpp:
+        * bridge/win/FrameWin.cpp:
+        * bridge/win/FrameWin.h:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (FrameWin::incomingReferrer):
+
 2006-03-09  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

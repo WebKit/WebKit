@@ -28,6 +28,7 @@
 
 #include "WebFrame.h"
 #include "WebView.h"
+#include "Spinneret.h"
 
 #include "FrameView.h"
 #include "FrameWin.h"
@@ -61,7 +62,7 @@ WebFrame::WebFrame(char* name, WebView* view)
 {
     d->webView = view;
     Page *page = new Page();
-    d->frame = new FrameWin(page, 0);
+    d->frame = new FrameWin(page, 0, this);
     d->frameView = new FrameView(d->frame);
     d->frame->setView(d->frameView);
     d->frameView->setWindowHandle(view->windowHandle());
@@ -101,7 +102,13 @@ void WebFrame::loadHTMLString(char *html, char *baseURL)
     d->frame->end();
 }
 
-void WebFrame::loadURL(char* URL)
+void WebFrame::openURL(const QString& str)
+{
+   updateLocationBar(str.ascii());
+   loadURL(str.ascii());
+}
+
+void WebFrame::loadURL(const char* URL)
 {
     d->frame->didOpenURL(URL);
     d->frame->begin(URL);
