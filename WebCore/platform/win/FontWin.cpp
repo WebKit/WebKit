@@ -95,7 +95,8 @@ CairoFont* getCairoFont(const FontDescription& fontDescription, const AtomicStri
     winfont.lfStrikeOut = false;
     winfont.lfCharSet = DEFAULT_CHARSET;
     winfont.lfOutPrecision = OUT_DEFAULT_PRECIS;
-    winfont.lfQuality = DEFAULT_QUALITY;
+    const int CLEARTYPE_QUALITY = 5;
+    winfont.lfQuality = CLEARTYPE_QUALITY; // FIXME: This is the Windows XP constant to force ClearType on.
     winfont.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
     winfont.lfItalic = fontDescription.italic();
     winfont.lfWeight = fontDescription.weight() == cBoldWeight ? 700 : 400; // FIXME: Support weights for real.
@@ -133,7 +134,7 @@ CairoFont* getCairoFont(const FontDescription& fontDescription, const AtomicStri
     WCHAR name[LF_FACESIZE];
     int resultLength = GetTextFaceW(dc, LF_FACESIZE, name);
     RestoreDC(dc, -1);
-    if (fontFace != String((QChar*)name, resultLength - 1)) {
+    if (!equalIgnoringCase(fontFace, String((QChar*)name, resultLength - 1))) {
         DeleteObject(font);
         return 0;
     }
@@ -287,6 +288,8 @@ void Font::drawText(const GraphicsContext* context, int x, int y, int tabWidth, 
     y -= font->ascent();
 
     SetBkMode(dc, TRANSPARENT);
+    const Color& color = context->pen().color();
+    SetTextColor(dc, RGB(color.red(), color.green(), color.blue())); // FIXME: Need to support alpha in the text color.
     TextOutW(dc, x, y, (LPCWSTR)(str+offset), length);
 
     RestoreDC(dc, -1);

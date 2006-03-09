@@ -1,3 +1,15 @@
+2006-03-09  David Hyatt <hyatt@apple.com>
+
+        Make text paint with the correct foreground color on Windows.
+        Make the face validation check case insensitive.
+        Force ClearType to be on for font rendering.
+
+        Reviewed by Tim Hatcher
+
+        * platform/win/FontWin.cpp:
+        (WebCore::getCairoFont):
+        (WebCore::Font::drawText):
+
 2006-03-09  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.
