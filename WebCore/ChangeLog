@@ -1,3 +1,25 @@
+2006-03-09  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6814
+        Implement selection methods for RenderTextField
+
+        Test: fast/forms/input-appearance-selection.html
+
+        * rendering/RenderTextField.cpp:
+        (WebCore::RenderTextField::createDivStyle): removed extra space.
+        (WebCore::RenderTextField::select): Removed checks for document and m_div since there should always be a document and 
+         m_div will be initialized as the renderer gets attached.
+        (WebCore::RenderTextField::selectionStart): Calls indexForVisiblePosition.
+        (WebCore::RenderTextField::selectionEnd): ditto.
+        (WebCore::RenderTextField::setSelectionStart): calls setSelectionRange.
+        (WebCore::RenderTextField::setSelectionEnd): ditto.
+        (WebCore::RenderTextField::setSelectionRange): gets VisiblePositions for both indices, and sets the selection.
+        (WebCore::RenderTextField::visiblePositionForIndex): Added helper method.
+        (WebCore::RenderTextField::indexForVisiblePosition): Added helper method.
+        * rendering/RenderTextField.h: Added new helper methods for selection.
+
 2006-03-09  David Carson  <dacarson@gmail.com>
 
         Test: fast/canvas/fillrect_gradient.html

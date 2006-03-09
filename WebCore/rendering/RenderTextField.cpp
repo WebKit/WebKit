@@ -21,6 +21,7 @@
 #include "config.h"
 #include "RenderTextField.h"
 
+#include <algorithm>
 #include "DocumentImpl.h"
 #include "Frame.h"
 #include "RenderText.h"
@@ -28,10 +29,14 @@
 #include "HTMLInputElementImpl.h"
 #include "HTMLTextFieldInnerElementImpl.h"
 #include "dom_elementimpl.h"
+#include "SelectionController.h"
+#include "VisiblePosition.h"
+#include "visible_text.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
+using namespace std;
 
 RenderTextField::RenderTextField(NodeImpl* node)
 :RenderBlock(node), m_dirty(false)
@@ -64,7 +69,6 @@ RenderStyle* RenderTextField::createDivStyle(RenderStyle* startStyle)
     divStyle->setOverflow(OHIDDEN);
     divStyle->setWhiteSpace(NOWRAP);
     divStyle->setUserModify(READ_WRITE);
-    
     return divStyle;
 }
 
@@ -127,36 +131,69 @@ void RenderTextField::updateFromElement()
 
 int RenderTextField::selectionStart()
 {
-    // FIXME: Implement this.
-    return 0;
+    return indexForVisiblePosition(document()->frame()->selection().start());        
 }
 
 int RenderTextField::selectionEnd()
 {
-    // FIXME: Implement this.
-    return 0;
+    return indexForVisiblePosition(document()->frame()->selection().end());        
 }
 
 void RenderTextField::setSelectionStart(int start)
 {
-    // FIXME: Implement this.
+    setSelectionRange(start, selectionEnd());
 }
  
 void RenderTextField::setSelectionEnd(int end)
 {
-    // FIXME: Implement this.
+    setSelectionRange(selectionStart(), end);
 }
     
 void RenderTextField::select()
 {
-    DocumentImpl* doc = document();
-    if (doc && m_div)
-        doc->frame()->selectContentsOfNode(m_div.get());
+    if (m_div)
+        document()->frame()->selectContentsOfNode(m_div.get());
 }
 
 void RenderTextField::setSelectionRange(int start, int end)
 {
-    // FIXME: Implement this.
+    end = max(end, 0);
+    start = min(max(start, 0), end);
+    
+    VisiblePosition startPosition = visiblePositionForIndex(start);
+    VisiblePosition endPosition = visiblePositionForIndex(end);
+    
+    ASSERT(startPosition.isNotNull() && endPosition.isNotNull());
+    ASSERT(startPosition.deepEquivalent().node()->rootEditableElement() == m_div && endPosition.deepEquivalent().node()->rootEditableElement() == m_div);
+    
+    SelectionController sel = SelectionController(startPosition, endPosition);    
+    if (document()->frame()->shouldChangeSelection(sel))
+        document()->frame()->setSelection(sel);
+}
+
+VisiblePosition RenderTextField::visiblePositionForIndex(int index)
+{    
+    if (index <= 0)
+        return VisiblePosition(m_div.get(), 0, DOWNSTREAM);
+    ExceptionCode ec = 0;
+    RefPtr<RangeImpl> range = new RangeImpl(document());
+    range->selectNodeContents(m_div.get(), ec);
+    CharacterIterator it(range.get());
+    if (!it.atEnd())
+        it.advance(index - 1);
+    return VisiblePosition(it.range()->endContainer(ec), it.range()->endOffset(ec), UPSTREAM);
+}
+
+int RenderTextField::indexForVisiblePosition(const VisiblePosition& pos)
+{
+    Position indexPosition = pos.deepEquivalent();
+    if (!indexPosition.node() || indexPosition.node()->rootEditableElement() != m_div)
+        return 0;
+    ExceptionCode ec = 0;
+    RefPtr<RangeImpl> range = new RangeImpl(document());
+    range->setStart(m_div.get(), 0, ec);
+    range->setEnd(indexPosition.node(), indexPosition.offset(), ec);
+    return TextIterator::rangeLength(range.get());
 }
 
 void RenderTextField::subtreeHasChanged()

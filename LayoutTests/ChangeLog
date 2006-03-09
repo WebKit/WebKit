@@ -1,3 +1,13 @@
+2006-03-09  Adele Peterson  <adele@apple.com>
+
+        - Tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=6814
+        Implement selection methods for RenderTextField
+
+        * fast/forms/input-appearance-selection-expected.checksum: Added.
+        * fast/forms/input-appearance-selection-expected.png: Added.
+        * fast/forms/input-appearance-selection-expected.txt: Added.
+        * fast/forms/input-appearance-selection.html: Added.
+
 2006-03-09  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

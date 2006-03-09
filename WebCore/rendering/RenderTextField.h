@@ -54,10 +54,13 @@ public:
     void subtreeHasChanged();
     String text();
 
-protected:
-    RefPtr<HTMLTextFieldInnerElementImpl> m_div;
+private:
+    VisiblePosition visiblePositionForIndex(int index);
+    int indexForVisiblePosition(const VisiblePosition&);
     
+    RefPtr<HTMLTextFieldInnerElementImpl> m_div;
     bool m_dirty;
+
 };
 
 }
