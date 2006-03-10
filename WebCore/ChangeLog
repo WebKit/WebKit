@@ -1,3 +1,13 @@
+2006-03-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - fix win32 networking to properly use async load API
+
+        * platform/win/TransferJobWin.cpp:
+        (WebCore::TransferJobWndProc):
+        (WebCore::TransferJob::start):
+
 2006-03-10  Eric Seidel  <eseidel@apple.com>
 
         Fix build.

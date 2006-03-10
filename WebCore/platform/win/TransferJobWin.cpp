@@ -97,14 +97,18 @@ LRESULT CALLBACK TransferJobWndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
                 delete job;
             }
         } else if (internetStatus == INTERNET_STATUS_REQUEST_COMPLETE) {
-            char buffer[32728];
-            DWORD bytesRead = 0;
-            DWORD totalBytes = 0;
             bool ok = false;
-            while ((ok = InternetReadFile(job->d->m_resourceHandle, buffer, 32728, &bytesRead)) && bytesRead) {
-                job->client()->receivedData(job, buffer, bytesRead);
-                totalBytes += bytesRead;
-                bytesRead = 0;
+
+            static const int bufferSize = 32768;
+            char buffer[bufferSize];
+            INTERNET_BUFFERSA buffers;
+            buffers.dwStructSize = sizeof(INTERNET_BUFFERSA);
+            buffers.lpvBuffer = buffer;
+            buffers.dwBufferLength = bufferSize;
+
+            while ((ok = InternetReadFileExA(job->d->m_resourceHandle, &buffers, IRF_NO_WAIT, (DWORD_PTR)job)) && buffers.dwBufferLength) {
+                job->client()->receivedData(job, buffer, buffers.dwBufferLength);
+                buffers.dwBufferLength = bufferSize;
             }
 
             if (!ok) {
