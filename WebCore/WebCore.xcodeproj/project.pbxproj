@@ -1013,7 +1013,7 @@
 		BCEA4947097F0F770094C9E4 /* BrowserExtensionMac.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA4945097F0F770094C9E4 /* BrowserExtensionMac.h */; };
 		BCEA4948097F0F770094C9E4 /* BrowserExtensionMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCEA4946097F0F770094C9E4 /* BrowserExtensionMac.mm */; };
 		BCEB377309B7BA3900CB38B1 /* FontMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCEB377209B7BA3900CB38B1 /* FontMac.mm */; };
-		BCEB377609B7BB0D00CB38B1 /* FontRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEB377509B7BB0D00CB38B1 /* FontRenderer.h */; };
+		BCEB377609B7BB0D00CB38B1 /* FontDataSet.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEB377509B7BB0D00CB38B1 /* FontDataSet.h */; };
 		BCEF3434087B563E00BBF833 /* htmlfactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEF3432087B563E00BBF833 /* htmlfactory.cpp */; };
 		BCEF3435087B563E00BBF833 /* htmlfactory.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEF3433087B563E00BBF833 /* htmlfactory.h */; };
 		BCF1A5F1097839600061A123 /* IntSize.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF1A5EF097839600061A123 /* IntSize.h */; };
@@ -2100,7 +2100,7 @@
 		BCEACC8E0592E0AD009D6AEF /* xbl_docimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = xbl_docimpl.cpp; path = xbl/xbl_docimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BCEACC8F0592E0AD009D6AEF /* xbl_docimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = xbl_docimpl.h; path = xbl/xbl_docimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BCEB377209B7BA3900CB38B1 /* FontMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FontMac.mm; sourceTree = "<group>"; };
-		BCEB377509B7BB0D00CB38B1 /* FontRenderer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FontRenderer.h; path = platform/FontRenderer.h; sourceTree = "<group>"; };
+		BCEB377509B7BB0D00CB38B1 /* FontDataSet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FontDataSet.h; path = platform/FontDataSet.h; sourceTree = "<group>"; };
 		BCEF3432087B563E00BBF833 /* htmlfactory.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = htmlfactory.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BCEF3433087B563E00BBF833 /* htmlfactory.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = htmlfactory.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BCF1A5EF097839600061A123 /* IntSize.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = IntSize.h; path = platform/IntSize.h; sourceTree = "<group>"; };
@@ -3350,7 +3350,7 @@
 				BCC47E6A09A3FE4700ADB771 /* FontDescription.h */,
 				BCC47E2409A3D6F100ADB771 /* FontFamily.cpp */,
 				BCC47E2509A3D6F100ADB771 /* FontFamily.h */,
-				BCEB377509B7BB0D00CB38B1 /* FontRenderer.h */,
+				BCEB377509B7BB0D00CB38B1 /* FontDataSet.h */,
 				A823A75B09B6E53900B60641 /* GraphicsContext.cpp */,
 				935367E409AF77DD00D35CD6 /* GraphicsContext.h */,
 				BC6B7BAE0993603C0052867B /* Image.cpp */,
@@ -4346,7 +4346,7 @@
 				93B780CA09B3B7FE00690162 /* WidgetClient.h in Headers */,
 				A82398A609B3ACDB00B60641 /* PlugInInfoStore.h in Headers */,
 				A8239E0109B3CF8A00B60641 /* Logging.h in Headers */,
-				BCEB377609B7BB0D00CB38B1 /* FontRenderer.h in Headers */,
+				BCEB377609B7BB0D00CB38B1 /* FontDataSet.h in Headers */,
 				C6D74AD509AA282E000B0A52 /* ModifySelectionListLevelCommand.h in Headers */,
 				6545F67109B82FED0013006F /* TransferJob.h in Headers */,
 				6545F67209B82FED0013006F /* TransferJobClient.h in Headers */,

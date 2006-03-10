@@ -1,3 +1,28 @@
+2006-03-10  David Hyatt  <hyatt@apple.com>
+
+        Rename FontRenderer to FontDataSet.
+
+        Reviewed by adele
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/Font.cpp:
+        (WebCore::Font::update):
+        * platform/Font.h:
+        * platform/FontDataSet.h: Added.
+        * platform/FontRenderer.h: Removed.
+        * platform/mac/FontMac.mm:
+        (WebCore::FontDataSet::~FontDataSet):
+        (WebCore::FontDataSet::getWebCoreFont):
+        (WebCore::FontDataSet::getRenderer):
+        (WebCore::FontDataSet::determinePitch):
+        (WebCore::FontDataSet::invalidate):
+        * platform/win/FontWin.cpp:
+        (WebCore::getCairoFont):
+        (WebCore::FontDataSet::~FontDataSet):
+        (WebCore::FontDataSet::determinePitch):
+        (WebCore::FontDataSet::invalidate):
+        (WebCore::FontDataSet::primaryCairoFont):
+
 2006-03-09  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by adele

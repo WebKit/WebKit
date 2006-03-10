@@ -38,10 +38,10 @@ class IntRect;
 class CairoFont;
 #endif
 
-class FontRenderer : public Shared<FontRenderer>, Noncopyable {
+class FontDataSet : public Shared<FontDataSet>, Noncopyable {
 public:
-    FontRenderer();
-    ~FontRenderer();
+    FontDataSet();
+    ~FontDataSet();
 
     void invalidate();
     

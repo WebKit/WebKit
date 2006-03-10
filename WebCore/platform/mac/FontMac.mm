@@ -30,7 +30,7 @@
 #import "KWQExceptions.h"
 #import "FoundationExtras.h"
 
-#import "FontRenderer.h"
+#import "FontDataSet.h"
 #import "GraphicsContext.h"
 #import "khtml_settings.h"
 #import <algorithm>
@@ -40,19 +40,19 @@
 
 namespace WebCore {
 
-FontRenderer::FontRenderer()
+FontDataSet::FontDataSet()
 :m_pitch(UnknownPitch), m_renderer(nil)
 {
     m_webCoreFont.font = nil;
 }
 
-FontRenderer::~FontRenderer()
+FontDataSet::~FontDataSet()
 {
     KWQRelease(m_renderer);
     KWQRelease(m_webCoreFont.font);
 }
 
-const WebCoreFont& FontRenderer::getWebCoreFont(const FontDescription& fontDescription) const
+const WebCoreFont& FontDataSet::getWebCoreFont(const FontDescription& fontDescription) const
 {
     if (!m_webCoreFont.font) {
         CREATE_FAMILY_ARRAY(fontDescription, families);
@@ -71,14 +71,14 @@ const WebCoreFont& FontRenderer::getWebCoreFont(const FontDescription& fontDescr
     return m_webCoreFont;
 }
 
-id <WebCoreTextRenderer> FontRenderer::getRenderer(const FontDescription& fontDescription)
+id <WebCoreTextRenderer> FontDataSet::getRenderer(const FontDescription& fontDescription)
 {
     if (!m_renderer)
         m_renderer = KWQRetain([[WebCoreTextRendererFactory sharedFactory] rendererWithFont:getWebCoreFont(fontDescription)]);
     return m_renderer;
 }
 
-void FontRenderer::determinePitch(const FontDescription& fontDescription) const {
+void FontDataSet::determinePitch(const FontDescription& fontDescription) const {
     KWQ_BLOCK_EXCEPTIONS;
     if ([[WebCoreTextRendererFactory sharedFactory] isFontFixedPitch:getWebCoreFont(fontDescription)])
         m_pitch = FixedPitch;
@@ -87,7 +87,7 @@ void FontRenderer::determinePitch(const FontDescription& fontDescription) const 
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void FontRenderer::invalidate()
+void FontDataSet::invalidate()
 {
     KWQRelease(m_renderer);
     m_renderer = nil;

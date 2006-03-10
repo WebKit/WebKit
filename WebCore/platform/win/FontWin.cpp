@@ -26,7 +26,7 @@
 #include "config.h"
 #include "Font.h"
 
-#include "FontRenderer.h"
+#include "FontDataSet.h"
 #include "GraphicsContext.h"
 #include <cairo.h>
 #include <cairo-win32.h>
@@ -106,7 +106,7 @@ CairoFont* getCairoFont(const FontDescription& fontDescription, const AtomicStri
 
     HFONT font = CreateFontIndirectW(&winfont);
     
-    // Windows will always give us valid pointer here, even if the face name is non-existent.  We have to double-check
+    // Windows will always give us a valid pointer here, even if the face name is non-existent.  We have to double-check
     // and see if the family name was really used.
     HDC dc = GetDC((HWND)0);
     SaveDC(dc);
@@ -147,31 +147,31 @@ CairoFont* getCairoFont(const FontDescription& fontDescription, const AtomicStri
     return result;
 }
 
-FontRenderer::FontRenderer()
+FontDataSet::FontDataSet()
 :m_pitch(UnknownPitch)
 {
     
 }
 
-FontRenderer::~FontRenderer()
+FontDataSet::~FontDataSet()
 {
     deleteAllValues(m_fontSet);
 }
 
-void FontRenderer::determinePitch(const FontDescription& fontDescription) const
+void FontDataSet::determinePitch(const FontDescription& fontDescription) const
 {
     // FIXME: Implement this.
     m_pitch = VariablePitch;
 }
 
-void FontRenderer::invalidate()
+void FontDataSet::invalidate()
 {
     // Delete the Cairo fonts.
     m_pitch = UnknownPitch;
     deleteAllValues(m_fontSet);
 }
 
-CairoFont* FontRenderer::primaryCairoFont(const FontDescription& fontDescription) const
+CairoFont* FontDataSet::primaryCairoFont(const FontDescription& fontDescription) const
 {
     if (!m_fontSet.isEmpty())
         return m_fontSet[0];
