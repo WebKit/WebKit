@@ -221,7 +221,6 @@ void BrowserExtensionWin::setIconURL(KURL const&) { notImplemented(); }
 void BrowserExtensionWin::createNewWindow(KURL const&,struct WebCore::URLArgs const&) { notImplemented(); }
 
 IntRect Font::selectionRectForText(int, int, int, int, int, const QChar*, int, int, int, int, bool, bool, int, int) const { notImplemented(); return IntRect(); }
-int Font::checkSelectionPoint(const QChar*, int, int, int, int, int, int, int, WebCore::TextDirection, bool, bool) const { notImplemented(); return 0; }
 
 // Completely empty stubs (mostly to allow DRT to run):
 bool WebCore::historyContains(QString const&) { return false; }
@@ -258,6 +257,8 @@ Frame* FrameWin::createFrame(KURL const&,QString const&,RenderPart*,String const
 void FrameWin::saveDocumentState(void) { }
 void FrameWin::clearUndoRedoOperations(void) { }
 QString FrameWin::incomingReferrer() const { return QString(); }
+
+int Font::checkSelectionPoint(const QChar*, int, int, int, int, int, int, int, WebCore::TextDirection, bool, bool) const { return 0; }
 
 BrowserExtensionWin::BrowserExtensionWin(WebCore::Frame*) { }
 void BrowserExtensionWin::setTypedIconURL(KURL const&,QString const&) { }
