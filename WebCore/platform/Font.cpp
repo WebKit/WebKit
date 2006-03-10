@@ -33,10 +33,10 @@
 
 namespace WebCore {
 
-Font::Font() :m_renderer(0), m_letterSpacing(0), m_wordSpacing(0) {}
+Font::Font() :m_dataSet(0), m_letterSpacing(0), m_wordSpacing(0) {}
 Font::Font(const FontDescription& fd, short letterSpacing, short wordSpacing) 
 : m_fontDescription(fd),
-  m_renderer(0),
+  m_dataSet(0),
   m_letterSpacing(letterSpacing),
   m_wordSpacing(wordSpacing)
 {}
@@ -44,7 +44,7 @@ Font::Font(const FontDescription& fd, short letterSpacing, short wordSpacing)
 Font::Font(const Font& other)
 {
     m_fontDescription = other.m_fontDescription;
-    m_renderer = other.m_renderer;
+    m_dataSet = other.m_dataSet;
     m_letterSpacing = other.m_letterSpacing;
     m_wordSpacing = other.m_wordSpacing;
 }
@@ -53,7 +53,7 @@ Font& Font::operator=(const Font& other)
 {
     if (&other != this) {
         m_fontDescription = other.m_fontDescription;
-        m_renderer = other.m_renderer;
+        m_dataSet = other.m_dataSet;
         m_letterSpacing = other.m_letterSpacing;
         m_wordSpacing = other.m_wordSpacing;
     }
@@ -71,9 +71,9 @@ void Font::update() const
     // style anyway.  Other copies are transient, e.g., the state in the GraphicsContext, and
     // won't stick around long enough to get you in trouble).  Still, this is pretty disgusting,
     // and could eventually be rectified by using RefPtrs for Fonts themselves.
-    if (!m_renderer)
-        m_renderer = new FontDataSet();
-    m_renderer->invalidate();
+    if (!m_dataSet)
+        m_dataSet = new FontDataSet();
+    m_dataSet->invalidate();
 }
 
 int Font::width(const QChar* chs, int slen, int pos, int len, int tabWidth, int xpos) const

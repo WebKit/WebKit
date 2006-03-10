@@ -1,5 +1,47 @@
 2006-03-10  David Hyatt  <hyatt@apple.com>
 
+        Rename the m_renderer variable to m_dataSet now that the class name
+        has changed.
+
+        Reviewed by adele
+
+        * platform/Font.cpp:
+        (WebCore::m_wordSpacing):
+        (WebCore::Font::Font):
+        (WebCore::Font::operator=):
+        (WebCore::Font::update):
+        * platform/Font.h:
+        * platform/FontDataSet.h:
+        * platform/mac/FontMac.mm:
+        (WebCore::Font::getWebCoreFont):
+        (WebCore::Font::ascent):
+        (WebCore::Font::descent):
+        (WebCore::Font::lineSpacing):
+        (WebCore::Font::xHeight):
+        (WebCore::Font::isFixedPitch):
+        (WebCore::Font::selectionRectForText):
+        (WebCore::Font::drawText):
+        (WebCore::Font::drawHighlightForText):
+        (WebCore::Font::drawLineForText):
+        (WebCore::Font::drawLineForMisspelling):
+        (WebCore::Font::misspellingLineThickness):
+        (WebCore::Font::floatWidth):
+        (WebCore::Font::checkSelectionPoint):
+        * platform/win/FontWin.cpp:
+        (WebCore::FontData::FontData):
+        (WebCore::FontData::~FontData):
+        (WebCore::getFontData):
+        (WebCore::FontDataSet::primaryFont):
+        (WebCore::Font::floatWidth):
+        (WebCore::Font::ascent):
+        (WebCore::Font::descent):
+        (WebCore::Font::xHeight):
+        (WebCore::Font::lineSpacing):
+        (WebCore::Font::isFixedPitch):
+        (WebCore::Font::drawText):
+
+2006-03-10  David Hyatt  <hyatt@apple.com>
+
         Rename FontRenderer to FontDataSet.
 
         Reviewed by adele
