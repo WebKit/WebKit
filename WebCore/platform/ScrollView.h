@@ -23,11 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QSCROLLVIEW_H_
-#define QSCROLLVIEW_H_
+#ifndef ScrollView_H
+#define ScrollView_H
 
 #include "ScrollBarMode.h"
 #include "Widget.h"
+#include "IntRect.h"
 
 namespace WebCore {
 
@@ -74,6 +75,17 @@ namespace WebCore {
 
 #if __APPLE__
         NSView* getDocumentView() const;
+#endif
+
+#if WIN32
+        ScrollView();
+        ~ScrollView();
+    private:
+        void updateScrollBars();
+        IntPoint maximumScroll() const;
+        int updateScrollInfo(short type, int current, int max, int pageSize);
+        class ScrollViewPrivate;
+        ScrollViewPrivate* m_data;
 #endif
     };
 

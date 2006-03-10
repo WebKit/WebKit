@@ -62,7 +62,7 @@ Widget::~Widget()
     delete data;
 }
 
-HWND Widget::windowHandle()
+HWND Widget::windowHandle() const
 {
     return data->windowHandle;
 }

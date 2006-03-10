@@ -1,3 +1,47 @@
+2006-03-10  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Add real ScrollViewWin implementation (fixes redraw bugs, adds ScrollBar support.)
+
+        * platform/ScrollView.h:
+        * platform/Widget.h:
+        * platform/win/FontWin.cpp:
+        (WebCore::getCairoFont): Fix crasher.
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::ScrollViewPrivate):
+        (WebCore::ScrollView::ScrollView):
+        (WebCore::ScrollView::~ScrollView):
+        (WebCore::ScrollView::updateContents):
+        (WebCore::ScrollView::visibleWidth):
+        (WebCore::ScrollView::visibleHeight):
+        (WebCore::ScrollView::setContentsPos):
+        (WebCore::ScrollView::resizeContents):
+        (WebCore::ScrollView::contentsX):
+        (WebCore::ScrollView::contentsY):
+        (WebCore::ScrollView::contentsWidth):
+        (WebCore::ScrollView::contentsHeight):
+        (WebCore::ScrollView::viewportToContents):
+        (WebCore::ScrollView::contentsToViewport):
+        (WebCore::ScrollView::scrollXOffset):
+        (WebCore::ScrollView::scrollYOffset):
+        (WebCore::ScrollView::scrollBy):
+        (WebCore::ScrollView::hScrollBarMode):
+        (WebCore::ScrollView::vScrollBarMode):
+        (WebCore::ScrollView::suppressScrollBars):
+        (WebCore::ScrollView::setHScrollBarMode):
+        (WebCore::ScrollView::setVScrollBarMode):
+        (WebCore::ScrollView::setScrollBarsMode):
+        (WebCore::ScrollView::setStaticBackground):
+        (WebCore::ScrollView::updateScrollInfo):
+        (WebCore::ScrollView::updateScrollBars):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (BrowserExtensionWin::goBackOrForward):
+        (BrowserExtensionWin::setIconURL):
+        (ScrollView::scrollPointRecursively):
+        * platform/win/WidgetWin.cpp:
+        (WebCore::Widget::windowHandle): mark as const
+
 2006-03-10  David Hyatt  <hyatt@apple.com>
 
         Rename the m_renderer variable to m_dataSet now that the class name

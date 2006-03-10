@@ -129,7 +129,7 @@ namespace WebCore {
 
 #if WIN32
         Widget(HWND);
-        HWND windowHandle();
+        HWND windowHandle() const;
         void setWindowHandle(HWND);
         // The global DLL or application instance used for all WebCore windows.
         static HINSTANCE instanceHandle;
