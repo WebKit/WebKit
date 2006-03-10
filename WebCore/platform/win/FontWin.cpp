@@ -134,8 +134,6 @@ FontData* getFontData(const FontDescription& fontDescription, const AtomicString
     WCHAR name[LF_FACESIZE];
     unsigned resultLength = GetTextFaceW(dc, LF_FACESIZE, name);
     if (resultLength > 0)
-        resultLength--; // Subtract the null terminator.
-    if (resultLength > 0)
         resultLength--; // ignore the null terminator
     RestoreDC(dc, -1);
     if (!equalIgnoringCase(fontFace, String((QChar*)name, resultLength))) {

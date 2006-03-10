@@ -33,7 +33,6 @@
 #include "BrowserExtensionWin.h"
 #include "TransferJob.h"
 #include "RenderThemeWin.h"
-#include "FontRenderer.h"
 #include "TextBoundaries.h"
 
 using namespace WebCore;
