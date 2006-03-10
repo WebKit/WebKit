@@ -1,3 +1,16 @@
+2006-03-09  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by adele
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7692>
+        Should use an iterator in CompositeEditCommand::doUnapply()
+        
+        ~30% speedup of a big undo
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::doUnapply):
+        (WebCore::CompositeEditCommand::doReapply):
+
 2006-03-09  Adele Peterson  <adele@apple.com>
 
         Reviewed by Tim O.

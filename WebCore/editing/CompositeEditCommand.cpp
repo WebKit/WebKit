@@ -68,21 +68,20 @@ CompositeEditCommand::CompositeEditCommand(DocumentImpl *document)
 
 void CompositeEditCommand::doUnapply()
 {
-    if (m_cmds.count() == 0) {
+    if (m_cmds.count() == 0)
         return;
-    }
     
-    for (int i = m_cmds.count() - 1; i >= 0; --i)
-        m_cmds[i]->unapply();
+    QValueList<EditCommandPtr>::ConstIterator end;
+    for (QValueList<EditCommandPtr>::ConstIterator it = m_cmds.fromLast(); it != end; --it)
+        (*it)->unapply();
 
     setState(NotApplied);
 }
 
 void CompositeEditCommand::doReapply()
 {
-    if (m_cmds.count() == 0) {
+    if (m_cmds.count() == 0)
         return;
-    }
 
     for (QValueList<EditCommandPtr>::ConstIterator it = m_cmds.begin(); it != m_cmds.end(); ++it)
         (*it)->reapply();
