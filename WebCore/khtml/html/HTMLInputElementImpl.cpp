@@ -509,7 +509,7 @@ bool HTMLInputElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttri
 void HTMLInputElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
 {
     if (attr->name() == nameAttr) {
-        if (m_type == RADIO && checked() && m_form) {
+        if (m_type == RADIO && checked()) {
             // Remove the radio from its old group.
             if (m_type == RADIO && !m_name.isEmpty())
                 getDocument()->removeRadioButtonGroup(m_name.impl(), m_form);
@@ -518,9 +518,16 @@ void HTMLInputElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         // Update our cached reference to the name.
         m_name = attr->value();
         
-        // Add it to its new group.
-        if (m_type == RADIO && checked())
-            getDocument()->radioButtonChecked(this, m_form);
+        if (m_type == RADIO) {
+            // In case we parsed the checked attribute first, call setChecked if the element is checked by default.
+            if (m_useDefaultChecked)
+                setChecked(m_defaultChecked);
+            // Add the button to its new group.
+            if (checked())
+                getDocument()->radioButtonChecked(this, m_form);
+        }
+        
+        
     } else if (attr->name() == autocompleteAttr) {
         m_autocomplete = !equalIgnoringCase(attr->value(), "off");
     } else if (attr->name() ==  typeAttr) {

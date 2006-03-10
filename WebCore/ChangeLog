@@ -1,3 +1,18 @@
+2006-03-10  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        - fix for <rdar://problem/4469419> 
+        REGRESSION: RadioButtons are not checked in Safari when name attribute comes after checked attribute
+
+        Test: fast/forms/radio-attr-order.html
+
+        * khtml/html/HTMLInputElementImpl.cpp: (WebCore::HTMLInputElementImpl::parseMappedAttribute):
+        When the name attribute gets parsed for radio buttons, if its supposed to be checked by default, call setChecked.
+        Also, when the name changes on a checked button, we don't need to check that 
+        there's a form before removing it as the checked button for that group.  
+        That was an old check from when we required a form to keep track of checked buttons.
+
 2006-03-10  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
