@@ -177,13 +177,12 @@ void RenderTextField::setSelectionRange(int start, int end)
 VisiblePosition RenderTextField::visiblePositionForIndex(int index)
 {    
     if (index <= 0)
-        return VisiblePosition(m_div.get(), 0, DOWNSTREAM);
+        return VisiblePosition(m_div.get(), 0, UPSTREAM);
     ExceptionCode ec = 0;
     RefPtr<RangeImpl> range = new RangeImpl(document());
     range->selectNodeContents(m_div.get(), ec);
     CharacterIterator it(range.get());
-    if (!it.atEnd())
-        it.advance(index - 1);
+    it.advance(index - 1);
     return VisiblePosition(it.range()->endContainer(ec), it.range()->endOffset(ec), UPSTREAM);
 }
 

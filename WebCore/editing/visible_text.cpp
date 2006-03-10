@@ -130,9 +130,6 @@ TextIterator::TextIterator(const RangeImpl *r, IteratorKind kind) : m_endContain
 
 void TextIterator::advance()
 {
-    // otherwise, where are we advancing from?
-    assert(m_positionNode);
-
     // reset the run information
     m_positionNode = 0;
     m_textLength = 0;
@@ -756,8 +753,6 @@ PassRefPtr<RangeImpl> CharacterIterator::range() const
 
 void CharacterIterator::advance(int count)
 {
-    assert(!atEnd());
-
     m_atBreak = false;
 
     // easy if there is enough left in the current m_textIterator run
