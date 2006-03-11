@@ -1,5 +1,11 @@
 2006-03-10  Darin Adler  <darin@apple.com>
 
+        - fix Windows build
+
+        * bridge/win/FrameWin.h: Removed declaration of generateFrameName.
+
+2006-03-10  Darin Adler  <darin@apple.com>
+
         Reviewed by Adele.
 
         - removed some unused stuff from Frame and MacFrame

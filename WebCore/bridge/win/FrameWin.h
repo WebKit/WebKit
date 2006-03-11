@@ -119,8 +119,6 @@ public:
     virtual bool canUndo() const;
     virtual void print();
 
-protected:
-    virtual String generateFrameName();
 private:
     virtual bool passMouseDownEventToWidget(Widget*);
     FrameWinClient* m_client;
