@@ -502,40 +502,9 @@ public:
    */
   void clearTypingStyle();
 
-  virtual void tokenizerProcessedData() {};
+  virtual void tokenizerProcessedData() {}
 
-  const KHTMLSettings *settings() const;
-
-  /**
-   * Returns a list of names of all frame (including iframe) objects of
-   * the current document. Note that this method is not working recursively
-   * for sub-frames.
-   */
-  QStringList frameNames() const;
-
-  QPtrList<Frame> frames() const;
-
-  Frame *childFrameNamed(const QString &name) const;
-
-  /**
-   * Finds a frame by name. Returns 0L if frame can't be found.
-   */
-  Frame *findFrame( const QString &f );
-
-  /**
-   * Return the current frame (the one that has focus)
-   * Not necessarily a direct child of ours, framesets can be nested.
-   * Returns "this" if this part isn't a frameset.
-   */
-  Frame* currentFrame() const;
-
-  /**
-   * Returns whether a frame with the specified name is exists or not.
-   * In contrary to the @ref findFrame method this one also returns true
-   * if the frame is defined but no displaying component has been
-   * found/loaded, yet.
-   */
-  bool frameExists( const QString &frameName );
+  const KHTMLSettings* settings() const;
 
   void setJSStatusBarText(const String&);
   void setJSDefaultStatusBarText(const String&);
@@ -564,10 +533,6 @@ public:
   virtual bool tabsToAllControls() const;
 
   bool restored() const;
-
-  void incrementFrameCount();
-  void decrementFrameCount();
-  int topLevelFrameCount();
 
   // Editing operations.
   // Not clear if these will be wanted in Frame by KDE,
@@ -690,7 +655,6 @@ public:
   virtual bool lastEventIsMouseUp() const = 0;
   virtual QString overrideMediaType() const = 0;
 protected:
-  virtual String generateFrameName() = 0;
   virtual Plugin* createPlugin(const KURL& url, const QStringList& paramNames, const QStringList& paramValues, const QString& mimeType) = 0;
   virtual Frame* createFrame(const KURL& url, const QString& name, RenderPart* renderer, const String& referrer) = 0;
   virtual ObjectContentType objectContentType(const KURL& url, const QString& mimeType) = 0;
@@ -753,7 +717,6 @@ public:
   bool requestObject(RenderPart *frame, const QString &url, const QString &frameName,
                      const QString &serviceType, const QStringList &paramNames, const QStringList &paramValues);
   bool requestFrame(RenderPart *frame, const QString &url, const QString &frameName);
-  String requestFrameName();
 
   DocumentImpl *document() const;
   void setDocument(DocumentImpl* newDoc);

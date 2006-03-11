@@ -699,7 +699,7 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
         return jsUndefined();
       return jsNumber(m_frame->view()->visibleWidth());
     case Length:
-      return jsNumber(m_frame->frames().count());
+      return jsNumber(m_frame->tree()->childCount());
     case _Location:
       return location();
     case Name:
@@ -890,27 +890,23 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
    return jsUndefined();
 }
 
-JSValue *Window::childFrameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* Window::childFrameGetter(ExecState*, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
 {
-  Window *thisObj = static_cast<Window *>(slot.slotBase());
-  return retrieve(thisObj->m_frame->childFrameNamed(propertyName.qstring()));
+    return retrieve(static_cast<Window*>(slot.slotBase())->m_frame->tree()->child(AtomicString(propertyName.domString())));
 }
 
-JSValue *Window::namedFrameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* Window::namedFrameGetter(ExecState*, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
 {
-  Window *thisObj = static_cast<Window *>(slot.slotBase());
-  return retrieve(thisObj->m_frame->findFrame(propertyName.qstring()));
+    // FIXME: I'm pretty sure this is wrong, because it's the same as the function above.
+    // There's no point in checking for child frames twice. I suspect this should be using
+    // find instead of "child". But I don't want to change the behavior without testing,
+    // so I'm leaving this as-is for now.
+    return retrieve(static_cast<Window*>(slot.slotBase())->m_frame->tree()->child(AtomicString(propertyName.domString())));
 }
 
-JSValue* Window::indexGetter(ExecState* exec, JSObject* originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* Window::indexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot)
 {
-  Window* thisObj = static_cast<Window*>(slot.slotBase());
-  
-  QPtrList<Frame> frames = thisObj->m_frame->frames();
-  Frame* frame = frames.at(slot.index());
-  ASSERT(frame);
-
-  return retrieve(frame);
+    return retrieve(static_cast<Window*>(slot.slotBase())->m_frame->tree()->child(slot.index()));
 }
 
 JSValue *Window::namedItemGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
@@ -960,8 +956,8 @@ bool Window::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName,
   // naming frames things that conflict with window properties that
   // are in Moz but not IE. Since we have some of these, we have to do
   // it the Moz way.
-  Frame *childFrame = m_frame->childFrameNamed(propertyName.qstring());
-  if (childFrame) {
+  AtomicString atomicPropertyName = AtomicString(propertyName.domString());
+  if (m_frame->tree()->child(atomicPropertyName)) {
     slot.setCustom(this, childFrameGetter);
     return true;
   }
@@ -990,32 +986,27 @@ bool Window::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName,
     return true;
   }
 
-  Frame *kp = m_frame->findFrame(propertyName.qstring());
-  if (kp) {
+  // FIXME: I'm pretty sure this is wrong, because it's the same as childFrameGetter above.
+  // There's no point in checking for child frames twice. I suspect this should be using
+  // find instead of "child". But I don't want to change the behavior without testing,
+  // so I'm leaving this as-is for now.
+  if (m_frame->tree()->child(atomicPropertyName)) {
     slot.setCustom(this, namedFrameGetter);
     return true;
   }
 
   // allow window[1] or parent[1] etc. (#56983)
   bool ok;
-  unsigned int i = propertyName.toArrayIndex(&ok);
-  if (ok) {
-    QPtrList<Frame> frames = m_frame->frames();
-    unsigned int len = frames.count();
-    if (i < len) {
-      Frame* frame = frames.at(i);
-      if (frame) {
-        slot.setCustomIndex(this, i, indexGetter);
-        return true;
-      }
-    }
+  unsigned i = propertyName.toArrayIndex(&ok);
+  if (ok && i < m_frame->tree()->childCount()) {
+    slot.setCustomIndex(this, i, indexGetter);
+    return true;
   }
 
   // allow shortcuts like 'Image1' instead of document.images.Image1
   DocumentImpl *doc = m_frame->document();
   if (isSafeScript(exec) && doc && doc->isHTMLDocument()) {
-    AtomicString name = propertyName.domString().impl();
-    if (static_cast<HTMLDocumentImpl *>(doc)->hasNamedItem(name) || doc->getElementById(name)) {
+    if (static_cast<HTMLDocumentImpl*>(doc)->hasNamedItem(atomicPropertyName) || doc->getElementById(atomicPropertyName)) {
       slot.setCustom(this, namedItemGetter);
       return true;
     }
@@ -1583,9 +1574,9 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
   }
   case Window::Open:
   {
-      QString frameName = args[1]->isUndefinedOrNull() ? QString("_blank") : args[1]->toString(exec).qstring();
-      if (!allowPopUp(exec, window)
-            && !(frameName == "_top" || frameName == "_parent" || frameName == "_self" || frame->findFrame(frameName)))
+      AtomicString frameName = args[1]->isUndefinedOrNull()
+        ? "_blank" : AtomicString(args[1]->toString(exec).domString());
+      if (!allowPopUp(exec, window) && !frame->tree()->find(frameName))
           return jsUndefined();
       
       WindowArgs windowArgs;
@@ -1600,7 +1591,7 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
           url = activePart->document()->completeURL(str.qstring());
 
       URLArgs uargs;
-      uargs.frameName = frameName;
+      uargs.frameName = frameName.qstring();
       if (uargs.frameName == "_top") {
           while (frame->tree()->parent())
               frame = frame->tree()->parent();
@@ -2023,11 +2014,8 @@ location        FrameArray::Location    DontDelete|ReadOnly
 JSValue *FrameArray::getValueProperty(ExecState *exec, int token)
 {
   switch (token) {
-  case Length: {
-    QPtrList<Frame> frames = m_frame->frames();
-    unsigned int len = frames.count();
-    return jsNumber(len);
-  }
+  case Length:
+    return jsNumber(m_frame->tree()->childCount());
   case Location:
     // non-standard property, but works in NS and IE
     if (JSObject *obj = Window::retrieveWindow(m_frame))
@@ -2039,26 +2027,14 @@ JSValue *FrameArray::getValueProperty(ExecState *exec, int token)
   }
 }
 
-JSValue *FrameArray::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+JSValue* FrameArray::indexGetter(ExecState*, JSObject*, const Identifier&, const PropertySlot& slot)
 {
-  FrameArray *thisObj = static_cast<FrameArray *>(slot.slotBase());
-  Frame* frame = thisObj->m_frame->frames().at(slot.index());
-
-  if (frame)
-    return Window::retrieve(frame);
-
-  return jsUndefined();
+    return Window::retrieve(static_cast<FrameArray*>(slot.slotBase())->m_frame->tree()->child(slot.index()));
 }
-
-JSValue *FrameArray::nameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
+  
+JSValue* FrameArray::nameGetter(ExecState*, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
 {
-  FrameArray *thisObj = static_cast<FrameArray *>(slot.slotBase());
-  Frame* frame = thisObj->m_frame->findFrame(propertyName.qstring());
-
-  if (frame)
-    return Window::retrieve(frame);
-
-  return jsUndefined();
+    return Window::retrieve(static_cast<FrameArray*>(slot.slotBase())->m_frame->tree()->child(AtomicString(propertyName.domString())));
 }
 
 bool FrameArray::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -2075,15 +2051,14 @@ bool FrameArray::getOwnPropertySlot(ExecState *exec, const Identifier& propertyN
   }
 
   // check for the name or number
-  Frame* frame = m_frame->findFrame(propertyName.qstring());
-  if (frame) {
+  if (m_frame->tree()->child(AtomicString(propertyName.domString()))) {
     slot.setCustom(this, nameGetter);
     return true;
   }
 
   bool ok;
-  unsigned int i = propertyName.toArrayIndex(&ok);
-  if (ok && i < m_frame->frames().count()) {
+  unsigned i = propertyName.toArrayIndex(&ok);
+  if (ok && i < m_frame->tree()->childCount()) {
     slot.setCustomIndex(this, i, indexGetter);
     return true;
   }

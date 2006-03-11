@@ -5,7 +5,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Simon Hausmann (hausmann@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,27 +27,26 @@
 #include "config.h"
 #include "html_baseimpl.h"
 
-#include "html/html_documentimpl.h"
-
-#include "FrameView.h"
+#include "EventNames.h"
 #include "Frame.h"
 #include "FrameTree.h"
-
-#include "rendering/render_frames.h"
-#include "css/cssstyleselector.h"
-#include "css/css_stylesheetimpl.h"
-#include "cssproperties.h"
-#include "cssvalues.h"
-#include "css/csshelper.h"
-#include "loader.h"
+#include "FrameView.h"
+#include "KURL.h"
+#include "Page.h"
 #include "PlatformString.h"
+#include "css_stylesheetimpl.h"
+#include "csshelper.h"
+#include "cssproperties.h"
+#include "cssstyleselector.h"
+#include "cssvalues.h"
 #include "dom2_eventsimpl.h"
-#include "EventNames.h"
+#include "html_documentimpl.h"
 #include "htmlnames.h"
-
-#include <KURL.h>
+#include "loader.h"
+#include "render_frames.h"
 
 namespace WebCore {
+
 using namespace EventNames;
 using namespace HTMLNames;
 
@@ -299,7 +298,7 @@ bool HTMLFrameElementImpl::isURLAllowed(const AtomicString &URLString) const
     // FIXME: This limit could be higher, but WebKit has some
     // algorithms that happen while loading which appear to be N^2 or
     // worse in the number of frames
-    if (w->frame()->topLevelFrameCount() >= 200) {
+    if (w->frame()->page()->frameCount() >= 200) {
         return false;
     }
 
@@ -324,23 +323,19 @@ void HTMLFrameElementImpl::openURL()
 {
     DocumentImpl *d = getDocument();
     FrameView *w = d ? d->view() : 0;
-    if (!w) {
+    if (!w)
         return;
-    }
     
     AtomicString relativeURL = m_URL;
-    if (relativeURL.isEmpty()) {
+    if (relativeURL.isEmpty())
         relativeURL = "about:blank";
-    }
 
     // Load the frame contents.
-    Frame *frame = w->frame();
-    Frame *framePart = frame->findFrame(m_name.qstring());
-    if (framePart) {
-        framePart->openURL(getDocument()->completeURL(relativeURL.qstring()));
-    } else {
-        frame->requestFrame(static_cast<RenderFrame *>(renderer()), relativeURL.qstring(), m_name.qstring());
-    }
+    Frame* parentFrame = w->frame();
+    if (Frame* childFrame = parentFrame->tree()->child(m_name))
+        childFrame->openURL(getDocument()->completeURL(relativeURL.qstring()));
+    else
+        parentFrame->requestFrame(static_cast<RenderFrame *>(renderer()), relativeURL.qstring(), m_name.qstring());
 }
 
 
@@ -421,21 +416,18 @@ void HTMLFrameElementImpl::attach()
     if (!renderer())
         return;
 
-    Frame *frame = getDocument()->frame();
+    Frame* frame = getDocument()->frame();
 
     if (!frame)
         return;
 
-    frame->incrementFrameCount();
+    frame->page()->incrementFrameCount();
     
     AtomicString relativeURL = m_URL;
-    if (relativeURL.isEmpty()) {
+    if (relativeURL.isEmpty())
         relativeURL = "about:blank";
-    }
 
-    // we need a unique name for every frame in the frameset. Hope that's unique enough.
-    if (m_name.isEmpty() || frame->frameExists(m_name.qstring()))
-        m_name = AtomicString(frame->requestFrameName());
+    m_name = frame->tree()->uniqueChildName(m_name);
 
     // load the frame contents
     frame->requestFrame(static_cast<RenderFrame*>(renderer()), relativeURL.qstring(), m_name.qstring());
@@ -443,13 +435,11 @@ void HTMLFrameElementImpl::attach()
 
 void HTMLFrameElementImpl::close()
 {
-    Frame *frame = getDocument()->frame();
-
+    Frame* frame = getDocument()->frame();
     if (renderer() && frame) {
-        frame->decrementFrameCount();
-        Frame *framePart = frame->findFrame(m_name.qstring());
-        if (framePart)
-            framePart->frameDetached();
+        frame->page()->decrementFrameCount();
+        if (Frame* childFrame = frame->tree()->child(m_name))
+            childFrame->frameDetached();
     }
 }
 
@@ -513,26 +503,22 @@ void HTMLFrameElementImpl::setFocus(bool received)
         renderFrame->widget()->clearFocus();
 }
 
-Frame* HTMLFrameElementImpl::contentPart() const
+Frame* HTMLFrameElementImpl::contentFrame() const
 {
     // Start with the part that contains this element, our ownerDocument.
-    Frame* ownerDocumentPart = getDocument()->frame();
-    if (!ownerDocumentPart) {
+    Frame* parentFrame = getDocument()->frame();
+    if (!parentFrame)
         return 0;
-    }
 
     // Find the part for the subframe that this element represents.
-    return ownerDocumentPart->findFrame(m_name.qstring());
+    return parentFrame->tree()->child(m_name);
 }
 
 DocumentImpl* HTMLFrameElementImpl::contentDocument() const
 {
-    Frame *frame = contentPart();
-    if (!frame) {
+    Frame* frame = contentFrame();
+    if (!frame)
         return 0;
-    }
-
-    // Return the document for that part, which is our contentDocument.
     return frame->document();
 }
 
@@ -916,16 +902,13 @@ void HTMLIFrameElementImpl::attach()
     m_name = getAttribute(nameAttr);
     if (m_name.isNull())
         m_name = getAttribute(idAttr);
-    
+
     HTMLElementImpl::attach();
 
-    Frame *frame = getDocument()->frame();
-    if (renderer() && frame) {
-        // we need a unique name for every frame in the frameset. Hope that's unique enough.
-        frame->incrementFrameCount();
-        if (m_name.isEmpty() || frame->frameExists(m_name.qstring()))
-            m_name = AtomicString(frame->requestFrameName());
-
+    Frame* parentFrame = getDocument()->frame();
+    if (renderer() && parentFrame) {
+        parentFrame->page()->incrementFrameCount();
+        m_name = parentFrame->tree()->uniqueChildName(m_name);
         static_cast<RenderPartObject*>(renderer())->updateWidget();
         needWidgetUpdate = false;
     }

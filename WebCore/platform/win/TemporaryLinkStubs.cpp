@@ -245,7 +245,6 @@ bool FrameWin::lastEventIsMouseUp() const { return false; }
 void FrameWin::addMessageToConsole(String const&,unsigned int,String const&) { }
 bool FrameWin::shouldChangeSelection(SelectionController const&,SelectionController const&,WebCore::EAffinity,bool) const { return 0; }
 static int frameNumber = 0;
-String FrameWin::generateFrameName() { return QString::number(frameNumber++); }
 Frame* FrameWin::createFrame(KURL const&,QString const&,RenderPart*,String const&) { return 0; }
 void FrameWin::saveDocumentState(void) { }
 void FrameWin::clearUndoRedoOperations(void) { }

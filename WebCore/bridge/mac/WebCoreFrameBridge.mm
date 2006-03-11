@@ -49,7 +49,6 @@
 #import "NodeImpl.h"
 #import "PageMac.h"
 #import "SelectionController.h"
-#import "WebCoreFrameNamespaces.h"
 #import "WebCorePageBridge.h"
 #import "WebCoreSettings.h"
 #import "WebCoreTextRendererFactory.h"
@@ -330,13 +329,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (WebCoreFrameBridge *)childFrameNamed:(NSString *)name
 {
-    // FIXME: with a better data structure this could be O(1) instead of O(n) in number 
-    // of child frames
-    for (WebCoreFrameBridge *child = [self firstChild]; child; child = [child nextSibling])
-        if ([[child name] isEqualToString:name])
-            return child;
-
-    return nil;
+    return bridge(m_frame->tree()->child(name));
 }
 
 // Returns the last child of us and any children, or self
@@ -375,25 +368,6 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
     // top view is always the last one in this ordering, so prev is nil without wrap
     return nil;
-}
-
-- (void)setFrameNamespace:(NSString *)ns
-{
-    ASSERT(self == [[self page] mainFrame]);
-
-    if (ns != _frameNamespace){
-        [WebCoreFrameNamespaces removeFrame:self fromNamespace:_frameNamespace];
-        ns = [ns copy];
-        [_frameNamespace release];
-        _frameNamespace = ns;
-        [WebCoreFrameNamespaces addFrame:self toNamespace:_frameNamespace];
-    }
-}
-
-- (NSString *)frameNamespace
-{
-    ASSERT(self == [[self page] mainFrame]);
-    return _frameNamespace;
 }
 
 - (BOOL)_shouldAllowAccessFrom:(WebCoreFrameBridge *)source
@@ -435,64 +409,9 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     return NO;
 }
 
-- (WebCoreFrameBridge *)_descendantFrameNamed:(NSString *)name sourceFrame:(WebCoreFrameBridge *)source
-{
-    for (WebCoreFrameBridge *frame = self; frame; frame = [frame traverseNextFrameStayWithin:self])
-        // for security reasons, we do not want to even make frames visible to frames that
-        // can't access them 
-        if ([[frame name] isEqualToString:name] && [frame _shouldAllowAccessFrom:source])
-            return frame;
-
-    return nil;
-}
-
-- (WebCoreFrameBridge *)_frameInAnyWindowNamed:(NSString *)name sourceFrame:(WebCoreFrameBridge *)source
-{
-    ASSERT(self == [[self page] mainFrame]);
-
-    // Try this WebView first.
-    WebCoreFrameBridge *frame = [self _descendantFrameNamed:name sourceFrame:source];
-
-    if (frame != nil)
-        return frame;
-
-    // Try other WebViews in the same set
-
-    if ([self frameNamespace] != nil) {
-        NSEnumerator *enumerator = [WebCoreFrameNamespaces framesInNamespace:[self frameNamespace]];
-        WebCoreFrameBridge *searchFrame;
-        while ((searchFrame = [enumerator nextObject]))
-            frame = [searchFrame _descendantFrameNamed:name sourceFrame:source];
-    }
-
-    return frame;
-}
-
 - (WebCoreFrameBridge *)findFrameNamed:(NSString *)name
 {
-    // First, deal with 'special' names.
-    if ([name isEqualToString:@"_self"] || [name isEqualToString:@"_current"])
-        return self;
-    
-    if ([name isEqualToString:@"_top"])
-        return [[self page] mainFrame];
-    
-    if ([name isEqualToString:@"_parent"]) {
-        WebCoreFrameBridge *parent = [self parent];
-        return parent ? parent : self;
-    }
-    
-    if ([name isEqualToString:@"_blank"])
-        return nil;
-
-    // Search from this frame down.
-    WebCoreFrameBridge *frame = [self _descendantFrameNamed:name sourceFrame:self];
-
-    // Search in the main frame for this window then in others.
-    if (!frame)
-        frame = [[[self page] mainFrame] _frameInAnyWindowNamed:name sourceFrame:self];
-
-    return frame;
+    return bridge(m_frame->tree()->find(name));
 }
 
 + (NSArray *)supportedMIMETypes
@@ -1492,38 +1411,6 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return m_frame->tree()->name();
 }
 
-- (void)_addFramePathToString:(NSMutableString *)path
-{
-    NSString *name = [self name];
-    if ([name hasPrefix:@"<!--framePath "]) {
-        // we have a generated name - take the path from our name
-        NSRange ourPathRange = {14, [name length] - 14 - 3};
-        [path appendString:[name substringWithRange:ourPathRange]];
-    } else {
-        // we don't have a generated name - just add our simple name to the end
-        [[self parent] _addFramePathToString:path];
-        [path appendString:@"/"];
-        if (name)
-            [path appendString:name];
-    }
-}
-
-// Generate a repeatable name for a child about to be added to us.  The name must be
-// unique within the frame tree.  The string we generate includes a "path" of names
-// from the root frame down to us.  For this path to be unique, each set of siblings must
-// contribute a unique name to the path, which can't collide with any HTML-assigned names.
-// We generate this path component by index in the child list along with an unlikely frame name.
-- (NSString *)generateFrameName
-{
-    NSMutableString *path = [NSMutableString stringWithCapacity:256];
-    [path insertString:@"<!--framePath " atIndex:0];
-    [self _addFramePathToString:path];
-    // The new child's path component is all but the 1st char and the last 3 chars
-    // FIXME: Shouldn't this number be the index of this frame in its parent rather than the child count?
-    [path appendFormat:@"/<!--frame%d-->-->", [self childCount]];
-    return path;
-}
-
 - (NSURL *)URL
 {
     return m_frame->url().getNSURL();
@@ -1987,7 +1874,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 }
 
 // Determines whether whitespace needs to be added around aString to preserve proper spacing and
-// punctuation when itâ€™s inserted into the receiverâ€™s text over charRange. Returns by reference
+// punctuation when itÕs inserted into the receiverÕs text over charRange. Returns by reference
 // in beforeString and afterString any whitespace that should be added, unless either or both are
 // nil. Both are returned as nil if aString is nil or if smart insertion and deletion are disabled.
 - (void)smartInsertForString:(NSString *)pasteString replacingRange:(DOMRange *)rangeToReplace beforeString:(NSString **)beforeString afterString:(NSString **)afterString
@@ -2575,8 +2462,8 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         widget = static_cast<RenderWidget *>(n->renderer())->widget();
         if (!widget || !widget->isFrameView())
             break;
-        Frame *kpart = static_cast<HTMLFrameElementImpl *>(n)->contentPart();
-        if (!kpart || !static_cast<MacFrame *>(kpart)->renderer())
+        Frame* frame = static_cast<HTMLFrameElementImpl *>(n)->contentFrame();
+        if (!frame || !frame->renderer())
             break;
         int absX, absY;
         n->renderer()->absolutePosition(absX, absY, true);
@@ -2585,7 +2472,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         widgetPoint.setY(widgetPoint.y() - absY + view->contentsY());
 
         RenderObject::NodeInfo widgetNodeInfo(true, true);
-        static_cast<MacFrame *>(kpart)->renderer()->layer()->hitTest(widgetNodeInfo, widgetPoint.x(), widgetPoint.y());
+        frame->renderer()->layer()->hitTest(widgetNodeInfo, widgetPoint.x(), widgetPoint.y());
         nodeInfo = widgetNodeInfo;
     }
     

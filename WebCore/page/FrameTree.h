@@ -21,17 +21,16 @@
 #ifndef FRAME_TREE_H
 #define FRAME_TREE_H
 
+#include "AtomicString.h"
 #include <kxmlcore/Noncopyable.h>
 #include <kxmlcore/PassRefPtr.h>
 #include <kxmlcore/RefPtr.h>
-#include "PlatformString.h"
 
 namespace WebCore {
 
     class Frame;
 
-    class FrameTree : Noncopyable
-    {
+    class FrameTree : Noncopyable {
     public:
         FrameTree(Frame* thisFrame, Frame* parentFrame) 
             : m_thisFrame(thisFrame)
@@ -42,9 +41,9 @@ namespace WebCore {
         {
         }
         ~FrameTree();
-        
-        const String& name() const { return m_name; }
-        void setName(const String&);
+
+        const AtomicString& name() const { return m_name; }
+        void setName(const AtomicString&);
         Frame* parent() const { return m_parent; }
         void setParent(Frame* parent) { m_parent = parent; }
         
@@ -52,23 +51,32 @@ namespace WebCore {
         Frame* previousSibling() const { return m_previousSibling; }
         Frame* firstChild() const { return m_firstChild.get(); }
         Frame* lastChild() const { return m_lastChild; }
-        int childCount() const { return m_childCount; }
+        unsigned childCount() const { return m_childCount; }
+
+        bool isDescendantOf(Frame* ancestor) const;
+        Frame* traverseNext(Frame* stayWithin = 0) const;
         
         void appendChild(PassRefPtr<Frame>);
         void removeChild(Frame*);
-        
+
+        Frame* child(unsigned index) const;
+        Frame* child(const AtomicString& name) const;
+        Frame* find(const AtomicString& name) const;
+
+        AtomicString uniqueChildName(const AtomicString& requestedName) const;
+
     private:
         Frame* m_thisFrame;
-        
+
         Frame* m_parent;
-        String m_name;
-        
+        AtomicString m_name;
+
         // FIXME: use ListRefPtr?
         RefPtr<Frame> m_nextSibling;
         Frame* m_previousSibling;
         RefPtr<Frame> m_firstChild;
         Frame* m_lastChild;
-        int m_childCount;
+        unsigned m_childCount;
     };
 
 } // namespace WebCore

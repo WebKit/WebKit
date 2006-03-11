@@ -316,8 +316,6 @@ public:
     virtual void print();
 
 protected:
-    virtual DOMString generateFrameName();
-
     virtual void startRedirectionTimer();
     virtual void stopRedirectionTimer();
     virtual void redirectionTimerFired(Timer<Frame>*);

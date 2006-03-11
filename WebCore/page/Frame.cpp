@@ -1355,11 +1355,6 @@ void Frame::urlSelected(const QString &url, const QString& _target, const URLArg
   urlSelected(cURL, argsCopy);
 }
 
-DOMString Frame::requestFrameName()
-{
-    return generateFrameName();
-}
-
 bool Frame::requestFrame(RenderPart* renderer, const QString& _url, const QString& frameName)
 {
     // Support for <frame src="javascript:string">
@@ -1371,7 +1366,7 @@ bool Frame::requestFrame(RenderPart* renderer, const QString& _url, const QStrin
     } else
         url = completeURL(_url);
 
-    Frame* frame = childFrameNamed(frameName);
+    Frame* frame = tree()->child(frameName);
     if (frame) {
         URLArgs args;
         args.metaData().set("referrer", d->m_referrer);
@@ -1591,21 +1586,6 @@ void Frame::childCompleted(bool complete)
     checkCompleted();
 }
 
-Frame* Frame::findFrame(const QString& f)
-{
-    // FIXME: this only finds child frames, is it ever appropriate to use this?
-    // ### http://www.w3.org/TR/html4/appendix/notes.html#notes-frames
-    for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
-        if (child->tree()->name() == f)
-            return child;
-    return 0;
-}
-
-bool Frame::frameExists(const QString& frameName)
-{
-    return findFrame(frameName);
-}
-
 int Frame::zoomFactor() const
 {
   return d->m_zoomFactor;
@@ -1678,34 +1658,6 @@ void Frame::reparseConfiguration()
     setUserStyleSheet( QString() );
 
   if(d->m_doc) d->m_doc->updateStyleSelector();
-}
-
-QStringList Frame::frameNames() const
-{
-  QStringList res;
-
-  for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
-      res += child->tree()->name().qstring();
-
-  return res;
-}
-
-QPtrList<Frame> Frame::frames() const
-{
-  QPtrList<Frame> res;
-
-  for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
-      res.append(child);
-
-  return res;
-}
-
-Frame* Frame::childFrameNamed(const QString& name) const
-{
-    for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
-        if (child->tree()->name() == name)
-            return child;
-    return 0;
 }
 
 bool Frame::shouldDragAutoNode(NodeImpl *node, int x, int y) const
@@ -2136,30 +2088,6 @@ void Frame::preloadScript(const QString &url, const QString &script)
 bool Frame::restored() const
 {
   return d->m_restored;
-}
-
-void Frame::incrementFrameCount()
-{
-    // FIXME: this should be in Page
-    frameCount++;
-    if (tree()->parent())
-        tree()->parent()->incrementFrameCount();
-}
-
-void Frame::decrementFrameCount()
-{
-    // FIXME: this should be in Page
-    frameCount--;
-    if (tree()->parent())
-        tree()->parent()->decrementFrameCount();
-}
-
-int Frame::topLevelFrameCount()
-{
-    // FIXME: this should be in Page
-    if (tree()->parent())
-        return tree()->parent()->topLevelFrameCount();
-    return frameCount;
 }
 
 bool Frame::tabsToLinks() const

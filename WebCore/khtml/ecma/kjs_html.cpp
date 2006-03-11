@@ -208,12 +208,10 @@ JSValue *HTMLDocument::namedItemGetter(ExecState *exec, JSObject *originalObject
   RefPtr<DOM::HTMLCollectionImpl> collection = doc.documentNamedItems(name);
 
   if (collection->length() == 1) {
-    NodeImpl *node = collection->firstItem();
+    NodeImpl* node = collection->firstItem();
     Frame *frame;
-    if (node->hasTagName(iframeTag) && 
-        (frame = static_cast<DOM::HTMLIFrameElementImpl *>(node)->contentPart()))
+    if (node->hasTagName(iframeTag) && (frame = static_cast<DOM::HTMLIFrameElementImpl *>(node)->contentFrame()))
       return Window::retrieve(frame);
-
     return getDOMNode(exec, node);
   }
 
@@ -2091,7 +2089,7 @@ JSValue *HTMLElement::frameGetter(ExecState* exec, int token) const
         case FrameContentDocument: return checkNodeSecurity(exec,frameElement.contentDocument()) ? 
                                           getDOMNode(exec, frameElement.contentDocument()) : jsUndefined();
         case FrameContentWindow:   return checkNodeSecurity(exec,frameElement.contentDocument())
-                                        ? Window::retrieve(frameElement.contentPart())
+                                        ? Window::retrieve(frameElement.contentFrame())
                                         : jsUndefined();
         case FrameFrameBorder:     return jsString(frameElement.frameBorder());
         case FrameLongDesc:        return jsString(frameElement.longDesc());
@@ -2117,8 +2115,8 @@ JSValue *HTMLElement::iFrameGetter(ExecState* exec, int token) const
         case IFrameDocument: // non-standard, mapped to contentDocument
         case IFrameContentDocument: return checkNodeSecurity(exec,iFrame.contentDocument()) ? 
                                       getDOMNode(exec, iFrame.contentDocument()) : jsUndefined();
-        case IFrameContentWindow:       return checkNodeSecurity(exec,iFrame.contentDocument()) 
-                                        ? Window::retrieve(iFrame.contentPart())
+        case IFrameContentWindow:   return checkNodeSecurity(exec,iFrame.contentDocument()) 
+                                        ? Window::retrieve(iFrame.contentFrame())
                                         : jsUndefined();
         case IFrameFrameBorder:     return jsString(iFrame.frameBorder());
         case IFrameHeight:          return jsString(iFrame.height());

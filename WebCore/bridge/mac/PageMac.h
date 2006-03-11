@@ -23,6 +23,12 @@
 
 #include "Page.h"
 
+#ifdef __OBJC__
+@class WebCorePageBridge;
+#else
+class WebCorePageBridge;
+#endif
+
 namespace WebCore {
 
     class PageMac : public Page {

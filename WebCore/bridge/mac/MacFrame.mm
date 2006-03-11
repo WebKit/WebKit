@@ -152,15 +152,6 @@ void MacFrame::freeClipboard()
         _dragClipboard->setAccessPolicy(KWQClipboard::Numb);
 }
 
-DOMString MacFrame::generateFrameName()
-{
-    KWQ_BLOCK_EXCEPTIONS;
-    return [_bridge generateFrameName];
-    KWQ_UNBLOCK_EXCEPTIONS;
-
-    return QString();
-}
-
 bool MacFrame::openURL(const KURL &url)
 {
     KWQ_BLOCK_EXCEPTIONS;

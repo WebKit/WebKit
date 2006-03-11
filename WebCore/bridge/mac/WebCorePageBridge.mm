@@ -89,6 +89,16 @@ static void initializeLoggingChannelsIfNecessary()
     return Mac(_page->mainFrame())->bridge();
 }
 
+- (void)setGroupName:(NSString *)groupName
+{
+    _page->setGroupName(groupName);
+}
+
+- (NSString *)groupName
+{
+    return _page->groupName();
+}
+
 @end
 
 @implementation WebCorePageBridge (WebCoreInternalUse)

@@ -21,6 +21,8 @@
 #ifndef PAGE_H
 #define PAGE_H
 
+#include "PlatformString.h"
+#include <kxmlcore/HashSet.h>
 #include <kxmlcore/Noncopyable.h>
 #include <kxmlcore/PassRefPtr.h>
 #include <kxmlcore/RefPtr.h>
@@ -28,15 +30,29 @@
 namespace WebCore {
 
     class Frame;
+    class FrameNamespace;
     
     class Page : Noncopyable {
     public:
         Page();
         virtual ~Page();
+
         void setMainFrame(PassRefPtr<Frame> mainFrame);
         Frame* mainFrame() { return m_mainFrame.get(); }
+
+        void setGroupName(const String&);
+        String groupName() const { return m_groupName; }
+        const HashSet<Page*>* frameNamespace() const;
+        static const HashSet<Page*>* frameNamespace(const String&);
+
+        void incrementFrameCount() { ++m_frameCount; }
+        void decrementFrameCount() { --m_frameCount; }
+        int frameCount() const { return m_frameCount; }
+
     private:
         RefPtr<Frame> m_mainFrame;
+        int m_frameCount;
+        String m_groupName;
     };
 
 } // namespace WebCore

@@ -24,21 +24,24 @@
 #include "Frame.h"
 #include <kjs/collector.h>
 #include <kjs/JSLock.h>
+#include <kxmlcore/HashMap.h>
 
 using namespace KJS;
 
 namespace WebCore {
 
 static int pageCount;
+static HashMap<String, HashSet<Page*>*>* frameNamespaces;
 
-Page::Page() 
+Page::Page() : m_frameCount(0)
 {
     ++pageCount;
 }
 
 Page::~Page() 
-{ 
+{
     m_mainFrame->detachFromView(); 
+    setGroupName(String());
     if (!--pageCount) {
         Frame::endAllLifeSupport();
 #ifndef NDEBUG
@@ -53,6 +56,41 @@ void Page::setMainFrame(PassRefPtr<Frame> mainFrame)
 {
     ASSERT(!m_mainFrame);
     m_mainFrame = mainFrame;
+}
+
+void Page::setGroupName(const String& name)
+{
+    if (frameNamespaces && !m_groupName.isEmpty()) {
+        HashSet<Page*>* oldNamespace = frameNamespaces->get(m_groupName);
+        if (oldNamespace) {
+            oldNamespace->remove(this);
+            if (oldNamespace->isEmpty()) {
+                frameNamespaces->remove(m_groupName);
+                delete oldNamespace;
+            }
+        }
+    }
+    m_groupName = name;
+    if (!name.isEmpty()) {
+        if (!frameNamespaces)
+            frameNamespaces = new HashMap<String, HashSet<Page*>*>;
+        HashSet<Page*>* newNamespace = frameNamespaces->get(name);
+        if (!newNamespace) {
+            newNamespace = new HashSet<Page*>;
+            frameNamespaces->add(name, newNamespace);
+        }
+        newNamespace->add(this);
+    }
+}
+
+const HashSet<Page*>* Page::frameNamespace() const
+{
+    return (frameNamespaces && !m_groupName.isEmpty()) ? frameNamespaces->get(m_groupName) : 0;
+}
+
+const HashSet<Page*>* Page::frameNamespace(const String& groupName)
+{
+    return (frameNamespaces && !groupName.isEmpty()) ? frameNamespaces->get(groupName) : 0;
 }
 
 }

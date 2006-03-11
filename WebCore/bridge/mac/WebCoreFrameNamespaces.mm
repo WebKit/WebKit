@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,68 +26,28 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#import "config.h"
 #import "WebCoreFrameNamespaces.h"
 
-static CFSetCallBacks NonRetainingSetCallbacks = {
-0,
-NULL,
-NULL,
-CFCopyDescription,
-CFEqual,
-CFHash
-};
+#import "PageMac.h"
+
+using namespace WebCore;
 
 @implementation WebCoreFrameNamespaces
 
-NSMutableDictionary *namespaces = nil;
-
-+(void)addFrame:(WebCoreFrameBridge *)frame toNamespace:(NSString *)name
++ (NSEnumerator *)framesInNamespace:(NSString *)name;
 {
-    if (!name)
-        return;
-
-    if (!namespaces)
-        namespaces = [[NSMutableDictionary alloc] init];
-
-    CFMutableSetRef namespace = (CFMutableSetRef)[namespaces objectForKey:name];
-
-    if (!namespace) {
-        namespace = CFSetCreateMutable(NULL, 0, &NonRetainingSetCallbacks);
-        [namespaces setObject:(id)namespace forKey:name];
-        CFRelease(namespace);
+    const HashSet<Page*>* set = Page::frameNamespace(name);
+    if (!set)
+        return [[[NSEnumerator alloc] init] autorelease];
+    NSMutableArray* array = [[NSMutableArray alloc] initWithCapacity:set->size()];
+    HashSet<Page*>::const_iterator end = set->end();
+    for (HashSet<Page*>::const_iterator it = set->begin(); it != end; ++it) {
+        [array addObject:Mac(*it)->bridge()];
     }
-    
-    CFSetSetValue(namespace, frame);
-}
-
-+(void)removeFrame:(WebCoreFrameBridge *)frame fromNamespace:(NSString *)name
-{
-    if (!name)
-        return;
-
-    CFMutableSetRef namespace = (CFMutableSetRef)[namespaces objectForKey:name];
-
-    if (!namespace)
-        return;
-
-    CFSetRemoveValue(namespace, frame);
-
-    if (CFSetGetCount(namespace) == 0)
-        [namespaces removeObjectForKey:name];
-}
-
-+(NSEnumerator *)framesInNamespace:(NSString *)name;
-{
-    if (!name)
-        return [[[NSEnumerator alloc] init] autorelease];
-
-    CFMutableSetRef namespace = (CFMutableSetRef)[namespaces objectForKey:name];
-
-    if (!namespace)
-        return [[[NSEnumerator alloc] init] autorelease];
-    
-    return [(NSSet *)namespace objectEnumerator];
+    NSEnumerator* enumerator = [array objectEnumerator];
+    [array release];
+    return enumerator;
 }
 
 @end

@@ -33,6 +33,7 @@
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "Page.h"
 #include "TextImpl.h"
 #include "dom2_eventsimpl.h"
 #include "html_baseimpl.h"
@@ -681,7 +682,7 @@ static bool isURLAllowed(DOM::DocumentImpl *doc, const QString &url)
     KURL newURL(doc->completeURL(url));
     newURL.setRef(QString::null);
     
-    if (doc->frame()->topLevelFrameCount() >= 200)
+    if (doc->frame()->page()->frameCount() >= 200)
         return false;
 
     // We allow one level of self-reference because some sites depend on that.

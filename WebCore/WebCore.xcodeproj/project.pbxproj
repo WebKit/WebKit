@@ -36,7 +36,7 @@
 		6550B6A5099DF0270090D781 /* TextImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6550B69B099DF0270090D781 /* TextImpl.cpp */; };
 		6550B6A6099DF0270090D781 /* TextImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 6550B69C099DF0270090D781 /* TextImpl.h */; };
 		6552E7AA096AA11B0006F248 /* WebCoreFrameNamespaces.h in Headers */ = {isa = PBXBuildFile; fileRef = 6552E7A8096AA11B0006F248 /* WebCoreFrameNamespaces.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		6552E7AB096AA11B0006F248 /* WebCoreFrameNamespaces.m in Sources */ = {isa = PBXBuildFile; fileRef = 6552E7A9096AA11B0006F248 /* WebCoreFrameNamespaces.m */; };
+		6552E7AB096AA11B0006F248 /* WebCoreFrameNamespaces.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6552E7A9096AA11B0006F248 /* WebCoreFrameNamespaces.mm */; };
 		65743B52097076F8001E7CEF /* RenderSVGText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65743B50097076F8001E7CEF /* RenderSVGText.cpp */; };
 		65743B53097076F8001E7CEF /* RenderSVGText.h in Headers */ = {isa = PBXBuildFile; fileRef = 65743B51097076F8001E7CEF /* RenderSVGText.h */; };
 		6576F9D609B2484A000041F7 /* TextEncodingMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6576F9D509B2484A000041F7 /* TextEncodingMac.cpp */; };
@@ -1137,7 +1137,7 @@
 		6550B69B099DF0270090D781 /* TextImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextImpl.cpp; sourceTree = "<group>"; };
 		6550B69C099DF0270090D781 /* TextImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = TextImpl.h; sourceTree = "<group>"; };
 		6552E7A8096AA11B0006F248 /* WebCoreFrameNamespaces.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreFrameNamespaces.h; sourceTree = "<group>"; };
-		6552E7A9096AA11B0006F248 /* WebCoreFrameNamespaces.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WebCoreFrameNamespaces.m; sourceTree = "<group>"; };
+		6552E7A9096AA11B0006F248 /* WebCoreFrameNamespaces.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreFrameNamespaces.mm; sourceTree = "<group>"; };
 		65743B50097076F8001E7CEF /* RenderSVGText.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGText.cpp; sourceTree = "<group>"; };
 		65743B51097076F8001E7CEF /* RenderSVGText.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSVGText.h; sourceTree = "<group>"; };
 		6576F9D509B2484A000041F7 /* TextEncodingMac.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = TextEncodingMac.cpp; sourceTree = "<group>"; };
@@ -2459,7 +2459,7 @@
 				654EC60F097778F500DAB52C /* WebCoreFrameBridge.h */,
 				654EC610097778F500DAB52C /* WebCoreFrameBridge.mm */,
 				6552E7A8096AA11B0006F248 /* WebCoreFrameNamespaces.h */,
-				6552E7A9096AA11B0006F248 /* WebCoreFrameNamespaces.m */,
+				6552E7A9096AA11B0006F248 /* WebCoreFrameNamespaces.mm */,
 				F587854C02DE375901EA4122 /* WebCoreFrameView.h */,
 				F5B2A52B02E22573018635CB /* WebCoreJavaScript.h */,
 				F5B2A52C02E22573018635CB /* WebCoreJavaScript.mm */,
@@ -5252,7 +5252,7 @@
 				A88AD51D0952499F001DD196 /* XLinkNamesWrapper.cpp in Sources */,
 				A88AD51E0952499F001DD196 /* SVGNamesWrapper.cpp in Sources */,
 				A88AD5AA09525131001DD196 /* SVGCSSStyleSelector.cpp in Sources */,
-				6552E7AB096AA11B0006F248 /* WebCoreFrameNamespaces.m in Sources */,
+				6552E7AB096AA11B0006F248 /* WebCoreFrameNamespaces.mm in Sources */,
 				A81655D5096BBEAC00601058 /* KCanvasMaskerQuartz.mm in Sources */,
 				A81655E4096BC13900601058 /* SVGMaskElementImpl.cpp in Sources */,
 				65743B52097076F8001E7CEF /* RenderSVGText.cpp in Sources */,

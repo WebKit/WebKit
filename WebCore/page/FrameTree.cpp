@@ -21,15 +21,28 @@
 #include "config.h"
 #include "FrameTree.h"
 
-#include <kxmlcore/Assertions.h>
 #include "Frame.h"
 #include "NodeImpl.h"
-
+#include "Page.h"
 #include <algorithm>
+#include <kxmlcore/Assertions.h>
+#include <kxmlcore/Vector.h>
 
 using std::swap;
 
 namespace WebCore {
+
+// This belongs in some header file where multiple clients can share it.
+#if WIN32
+int snprintf(char* str, size_t size, const char* format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    int result = vsnprintf_s(str, size, _TRUNCATE, format, args);
+    va_end(args);
+    return result;
+}
+#endif
 
 FrameTree::~FrameTree()
 {
@@ -37,15 +50,14 @@ FrameTree::~FrameTree()
         child->detachFromView();
 }
 
-void FrameTree::setName(const DOMString& name) 
-{ 
-    DOMString n = name;
-        
-    // FIXME: is the blank rule needed or useful?
-    if (parent() && (name.isEmpty() || parent()->frameExists(name.qstring()) || name == "_blank"))
-        n = parent()->requestFrameName();
-    
-    m_name = n;
+void FrameTree::setName(const AtomicString& name) 
+{
+    if (!parent()) {
+        m_name = name;
+        return;
+    }
+    m_name = AtomicString(); // Remove our old frame name so it's not considered in uniqueChildName.
+    m_name = parent()->tree()->uniqueChildName(name);
 }
 
 void FrameTree::appendChild(PassRefPtr<Frame> child)
@@ -84,6 +96,154 @@ void FrameTree::removeChild(Frame* child)
     child->tree()->m_nextSibling = 0;
 
     m_childCount--;
+}
+
+AtomicString FrameTree::uniqueChildName(const AtomicString& requestedName) const
+{
+    if (!requestedName.isEmpty() && !child(requestedName) && requestedName != "_blank")
+        return requestedName;
+
+    // Create a repeatable name for a child about to be added to us. The name must be
+    // unique within the frame tree. The string we generate includes a "path" of names
+    // from the root frame down to us. For this path to be unique, each set of siblings must
+    // contribute a unique name to the path, which can't collide with any HTML-assigned names.
+    // We generate this path component by index in the child list along with an unlikely
+    // frame name that can't be set in HTML because it collides with comment syntax.
+
+    const char framePathPrefix[] = "<!--framePath ";
+    const int framePathPrefixLength = 14;
+    const int framePathSuffixLength = 3;
+
+    // Find the nearest parent that has a frame with a path in it.
+    Vector<Frame*, 16> chain;
+    Frame* frame;
+    for (frame = m_thisFrame; frame; frame = frame->tree()->parent()) {
+        if (frame->tree()->name().startsWith(framePathPrefix))
+            break;
+        chain.append(frame);
+    }
+    String name;
+    name += framePathPrefix;
+    if (frame)
+        name += frame->tree()->name().domString().substring(framePathPrefixLength,
+            frame->tree()->name().length() - framePathPrefixLength - framePathSuffixLength);
+    for (int i = chain.size() - 1; i >= 0; --i) {
+        frame = chain[i];
+        name += "/";
+        name += frame->tree()->name();
+    }
+
+    // Suffix buffer has more than enough space for:
+    //     10 characters before the number
+    //     a number (3 digits for the highest this gets in practice, 20 digits for the largest 64-bit integer)
+    //     6 characters after the number
+    //     trailing null byte
+    // But we still use snprintf just to be extra-safe.
+    char suffix[40];
+    snprintf(suffix, sizeof(suffix), "/<!--frame%u-->-->", childCount());
+
+    name += suffix;
+
+    return AtomicString(name);
+}
+
+Frame* FrameTree::child(unsigned index) const
+{
+    Frame* result = firstChild();
+    for (unsigned i = 0; result && i != index; ++i)
+        result = result->tree()->nextSibling();
+    return result;
+}
+
+Frame* FrameTree::child(const AtomicString& name) const
+{
+    for (Frame* child = firstChild(); child; child = child->tree()->nextSibling())
+        if (child->tree()->name() == name)
+            return child;
+    return 0;
+}
+
+Frame* FrameTree::find(const AtomicString& name) const
+{
+    if (name == "_self" || name == "_current")
+        return m_thisFrame;
+    
+    if (name == "_top")
+        return m_thisFrame->page()->mainFrame();
+    
+    if (name == "_parent")
+        return parent() ? parent() : m_thisFrame;
+
+    // Since "_blank" should never be any frame's name, the following just amounts to an optimization.
+    if (name == "_blank")
+        return 0;
+
+    // Search subtree starting with this frame first.
+    for (Frame* frame = m_thisFrame; frame; frame = frame->tree()->traverseNext(m_thisFrame))
+        if (frame->tree()->name() == name)
+            return frame;
+
+    // Search the entire tree for this page next.
+    Page* page = m_thisFrame->page();
+    for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext())
+        if (frame->tree()->name() == name)
+            return frame;
+
+    // Search the entire tree for all other pages in this namespace.
+    const HashSet<Page*>* pages = page->frameNamespace();
+    if (pages) {
+        HashSet<Page*>::const_iterator end = pages->end();
+        for (HashSet<Page*>::const_iterator it = pages->begin(); it != end; ++it) {
+            Page* otherPage = *it;
+            if (otherPage != page)
+                for (Frame* frame = otherPage->mainFrame(); frame; frame = frame->tree()->traverseNext())
+                    if (frame->tree()->name() == name)
+                        return frame;
+        }
+    }
+
+    return 0;
+}
+
+bool FrameTree::isDescendantOf(Frame* ancestor) const
+{
+    for (Frame* frame = m_thisFrame; frame; frame = frame->tree()->parent())
+        if (frame == ancestor)
+            return true;
+    return false;
+}
+
+Frame* FrameTree::traverseNext(Frame* stayWithin) const
+{
+    Frame* child = firstChild();
+    if (child) {
+        ASSERT(!stayWithin || child->tree()->isDescendantOf(stayWithin));
+        return child;
+    }
+
+    if (m_thisFrame == stayWithin)
+        return 0;
+
+    Frame* sibling = nextSibling();
+    if (sibling) {
+        ASSERT(!stayWithin || sibling->tree()->isDescendantOf(stayWithin));
+        return sibling;
+    }
+
+    Frame* frame = m_thisFrame;
+    while (!sibling && (!stayWithin || frame->tree()->parent() != stayWithin)) {
+        frame = frame->tree()->parent();
+        if (!frame)
+            return 0;
+        sibling = frame->tree()->nextSibling();
+    }
+
+    if (frame) {
+        ASSERT(!stayWithin || !sibling || sibling->tree()->isDescendantOf(stayWithin));
+        return sibling;
+    }
+
+    return 0;
 }
 
 }

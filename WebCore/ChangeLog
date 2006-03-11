@@ -1,3 +1,120 @@
+2006-03-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3308
+          Pop-up blocking blocks window.open for already open windows
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7422
+          Setting a frame name to the same value resets it to a generated one
+
+        - refactor frame-name-related functions into the FrameTree object
+
+        * WebCore.xcodeproj/project.pbxproj: Update for rename.
+        * bridge/mac/MacFrame.h: Remove generateFrameName.
+        * bridge/mac/MacFrame.mm: Ditto.
+        * bridge/mac/PageMac.h: Added a declaration for WebCorePageBridge.
+
+        * bridge/mac/WebCoreFrameBridge.h: Remove _frameNamespace, generateFrameName,
+        setFrameNamespace, frameNamespace.
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge childFrameNamed:]): Change to call the new child
+        function on the FrameTree.
+        (-[WebCoreFrameBridge findFrameNamed:]): Change to call the new find
+        function on the FrameTree.
+        (-[WebCoreFrameBridge RenderObject::nodeInfoAtPoint:]): Change since the
+        contentPart function has been renamed to contentFrame.
+
+        * bridge/mac/WebCoreFrameNamespaces.h: Removed everything except for the
+        one method still used on the WebKit side, framesInNamespace:.
+        * bridge/mac/WebCoreFrameNamespaces.m: Renamed.
+        * bridge/mac/WebCoreFrameNamespaces.mm: Added. Reimplemented the
+        framesInNamespace method to use the namespace in WebCore::Page.
+
+        * bridge/mac/WebCorePageBridge.h: Added setGroupName and groupName.
+        * bridge/mac/WebCorePageBridge.mm:
+        (-[WebCorePageBridge setGroupName:]): Added. Calls through to Page.
+        (-[WebCorePageBridge groupName]): Ditto.
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::namedItemGetter): Changed to call contentFrame by its new name.
+        (KJS::HTMLElement::frameGetter): Ditto.
+        (KJS::HTMLElement::iFrameGetter): Ditto.
+
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::getValueProperty): Changed to call FrameTree::childCount
+        instead of Frame::frames.
+        (KJS::Window::childFrameGetter): Changed to call FrameTree::child
+        instead of Frame::childFrameNamed.
+        (KJS::Window::namedFrameGetter): Changed to call FrameTree::find
+        instead of Frame::findFrame.
+        (KJS::Window::indexGetter): Changed to call FrameTree::child
+        instead of Frame::frames.
+        (KJS::Window::getOwnPropertySlot): Changed to call FrameTree::child,
+        FrameTree::find, and FrameTree::childCount instead of Frame::childFrameNamed,
+        and Frame::findFrame, and Frame::frames.
+        (KJS::WindowFunc::callAsFunction): Call FrameTree::find to check if the window
+        is already open when considering whether to block a pop-up.
+        (KJS::FrameArray::getValueProperty): Changed to call FrameTree::childCount
+        instead of Frame::frames.
+        (KJS::FrameArray::indexGetter): Changed to call FrameTree::child
+        instead of Frame::frames.
+        (KJS::FrameArray::nameGetter): Changed to call FrameTree::child
+        instead of Frame::findFrame.
+        (KJS::FrameArray::getOwnPropertySlot): Changed to call FrameTree::child,
+        and FrameTree::childCount instead of Frame::findFrame and Frame::frames.
+
+        * khtml/html/html_baseimpl.h:
+        * khtml/html/html_baseimpl.cpp:
+        (WebCore::HTMLFrameElementImpl::isURLAllowed): Changed to call Page::frameCount
+        instead of Frame::topLevelFrameCount.
+        (WebCore::HTMLFrameElementImpl::openURL): Changed to call FrameTree::child
+        instead of Frame::findFrame.
+        (WebCore::HTMLFrameElementImpl::attach): Changed to call Page::incrementFrameCount
+        instead of Frame::incrementFrameCount. Changed to call FrameTree::uniqueChildName
+        instead of Frame::requestFrameName.
+        (WebCore::HTMLFrameElementImpl::close): Changed to call Page::decrementFrameCount
+        instead of Frame::decrementFrameCount. Changed to call FrameTree::child
+        instead of Frame::findFrame.
+        (WebCore::HTMLFrameElementImpl::contentFrame): Renamed from contentPart. Also
+        changed to call FrameTree::child instead of Frame::findFrame.
+        (WebCore::HTMLFrameElementImpl::contentDocument): Updated for name change of
+        contentFrame from contentPart.
+        (WebCore::HTMLIFrameElementImpl::attach): Changed to call Page::incrementFrameCount
+        instead of Frame::incrementFrameCount. Changed to call FrameTree::uniqueChildName
+        instead of Frame::requestFrameName.
+
+        * rendering/render_frames.cpp: (WebCore::isURLAllowed): Changed to call Page::frameCount
+        instead of Frame::topLevelFrameCount.
+
+        * page/Frame.h: Removed frameNames, frames, childFrameNamed, findFrame, currentFrame,
+        frameExists, incrementFrameCount, decrementFrameCount, topLevelFrameCount,
+        generateFrameName, and requestFrameName functions.
+        * page/Frame.cpp: (WebCore::Frame::requestFrame): Changed to use FrameTree::child
+        instead of Frame::childFrameNamed.
+
+        * page/FrameTree.h: Changed name to an atomic string. Changed childCount to unsigned.
+        Added isDescendantOf, traverseNext, child, find, uniqueChildName.
+        * page/FrameTree.cpp:
+        (WebCore::FrameTree::setName): Changed to call uniqueChildName to handle name
+        duplication logic.
+        (WebCore::FrameTree::uniqueChildName): Added. Checks for duplication and generates
+        an appropriate frame name if there is a duplicate.
+        (WebCore::FrameTree::child): Added.
+        (WebCore::FrameTree::find): Added.
+        (WebCore::FrameTree::isDescendantOf): Added.
+        (WebCore::FrameTree::traverseNext): Added.
+
+        * page/Page.h: Added setGroupName, groupName, frameNamespace, incrementFrameCount,
+        decrementFrameCount, and frameCount.
+        * page/Page.cpp:
+        (WebCore::Page::Page): Initialize m_frameCount to 0.
+        (WebCore::Page::~Page): Call setGroupName to remove the page from any group it's in.
+        (WebCore::Page::setGroupName): Added.
+        (WebCore::Page::frameNamespace): Added.
+
+        * platform/win/TemporaryLinkStubs.cpp: Removed FrameWin::generateFrameName.
+
 2006-03-10  Justin Garcia  <justin.garcia@apple.com>
         
         Reviewed by darin, harrison

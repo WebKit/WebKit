@@ -1,3 +1,23 @@
+2006-03-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff, except for frame-name-reset, which was done by Alexey.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=3308
+          Pop-up blocking blocks window.open for already open windows
+
+        * fast/dom/Window/open-existing-pop-up-blocking-expected.checksum: Added.
+        * fast/dom/Window/open-existing-pop-up-blocking-expected.png: Added.
+        * fast/dom/Window/open-existing-pop-up-blocking-expected.txt: Added.
+        * fast/dom/Window/open-existing-pop-up-blocking.html: Added.
+        * fast/dom/Window/resources/open-sibling-subframe.html: Added.
+        * fast/dom/Window/resources/sibling-subframe-content.html: Added.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7422
+          Setting a frame name to the same value resets it to a generated one
+
+        * fast/frames/frame-name-reset.html: Added.
+        * fast/frames/frame-name-reset-expected.txt: Added.
+
 2006-03-10  Adele Peterson  <adele@apple.com>
 
         - Test for <rdar://problem/4469419> 
