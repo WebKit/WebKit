@@ -1315,6 +1315,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\platform\FontDataSet.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\platform\FontDescription.h"
 				>
 			</File>
@@ -1555,6 +1559,10 @@
 				>
 				<File
 					RelativePath="..\..\platform\win\CursorWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\platform\win\FontPlatformDataWin.cpp"
 					>
 				</File>
 				<File

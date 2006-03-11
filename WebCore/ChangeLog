@@ -1,3 +1,29 @@
+2006-03-10  David Hyatt <hyatt@apple.com>
+
+        More refactoring.  Split the FontData into cross-platform and
+        platform-specific components.
+
+        Reviewed by eric
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * platform/FontData.h: Added.
+        (WebCore::FontData:::m_platformData):
+        (WebCore::FontData::platformData):
+        (WebCore::FontData::setMetrics):
+        (WebCore::FontData::ascent):
+        (WebCore::FontData::descent):
+        (WebCore::FontData::xHeight):
+        (WebCore::FontData::lineSpacing):
+        * platform/FontPlatformData.h: Added.
+        (WebCore::FontPlatformData::hfont):
+        (WebCore::FontPlatformData::scaledFont):
+        * platform/win/FontPlatformDataWin.cpp: Added.
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::~FontPlatformData):
+        * platform/win/FontWin.cpp:
+        (WebCore::Font::floatWidth):
+        (WebCore::Font::drawText):
+
 2006-03-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

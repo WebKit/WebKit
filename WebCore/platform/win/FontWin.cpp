@@ -26,61 +26,12 @@
 #include "config.h"
 #include "Font.h"
 
+#include <cairo-win32.h>
 #include "FontDataSet.h"
 #include "GraphicsContext.h"
-#include <cairo.h>
-#include <cairo-win32.h>
-
+#include "FontData.h"
 
 namespace WebCore {
-
-class FontData
-{
-public:
-    FontData(HFONT font, const FontDescription& fontDescription) {
-        m_font = font;
-        m_fontFace = cairo_win32_font_face_create_for_hfont(font);
-        cairo_matrix_t sizeMatrix, ctm;
-        cairo_matrix_init_identity(&ctm);
-        cairo_matrix_init_scale(&sizeMatrix, fontDescription.computedPixelSize(), fontDescription.computedPixelSize());
-        cairo_font_options_t* fontOptions = cairo_font_options_create();
-        m_scaledFont = cairo_scaled_font_create(m_fontFace, &sizeMatrix, &ctm, fontOptions);
-        cairo_font_options_destroy(fontOptions);
-    }
-
-    ~FontData() {
-        cairo_font_face_destroy(m_fontFace);
-        cairo_scaled_font_destroy(m_scaledFont);
-        DeleteObject(m_font);
-    }
-
-    HFONT hfont() const { return m_font; }
-    cairo_scaled_font_t* scaledFont() const { return m_scaledFont; }
-
-    void setMetrics(int ascent, int descent, int xHeight, int lineSpacing)
-    {
-        m_ascent = ascent;
-        m_descent = descent;
-        m_xHeight = xHeight;
-        m_lineSpacing = lineSpacing;
-    }
-
-    int ascent() const { return m_ascent; }
-    int descent() const { return m_descent; }
-    int xHeight() const { return m_xHeight; }
-    int lineSpacing() const { return m_lineSpacing; }
-
-private:
-    HFONT m_font;
-
-    int m_ascent;
-    int m_descent;
-    int m_xHeight;
-    int m_lineSpacing;
-
-    cairo_font_face_t* m_fontFace;
-    cairo_scaled_font_t* m_scaledFont;
-};
 
 FontData* getFontData(const FontDescription& fontDescription, const AtomicString& fontFace)
 {
@@ -209,7 +160,7 @@ float Font::floatWidth(const QChar* str, int slen, int pos, int len,
     HDC dc = GetDC((HWND)0); // FIXME: Need a way to get to the real HDC.
     SaveDC(dc);
 
-    SelectObject(dc, font->hfont());
+    SelectObject(dc, font->platformData().hfont());
 
     // Get the text extent of the characters.
     // FIXME: Eventually we will have to go glyph by glyph.  For now we just assume that all
@@ -276,7 +227,7 @@ void Font::drawText(const GraphicsContext* context, int x, int y, int tabWidth, 
     HDC dc = cairo_win32_surface_get_dc(surface);
 
     SaveDC(dc);
-    SelectObject(dc, font->hfont());
+    SelectObject(dc, font->platformData().hfont());
 
     int offset = 0;
     int length = len;
