@@ -1,5 +1,33 @@
 2006-03-10  Darin Adler  <darin@apple.com>
 
+        Reviewed by Adele.
+
+        - removed some unused stuff from Frame and MacFrame
+
+        * page/Frame.h: Removed autoloadImages (the setter), enableMetaRefresh,
+        setCharset, backgroundURL, findTextBegin, findTextNext, preloadStyleSheet,
+        preloadScript, restored, onURL, selectionChanged, htmlError, openFile,
+        updateActions, openURLInFrame, overURL, checkLinkSecurity, and cacheId.
+        * page/FramePrivate.h: Removed m_restored, m_frameNameId, m_strSelectedURL,
+        m_strSelectedURLTarget, m_bDnd, m_bClearing, m_bSecurityInQuestion,
+        m_focusNodeRestored, m_focusNodeNumber, and m_newJSInterpreterExists.
+        * page/Frame.cpp:
+        (WebCore::Frame::didOpenURL): Removed use of m_restored, code to set
+        m_bClearing.
+        (WebCore::Frame::clear): Removed code to set m_bClearing and m_frameNameId.
+        (WebCore::Frame::khtmlMousePressEvent): Removed code to set m_strSelectedURL
+        and m_strSelectedURLTarget.
+
+        * bridge/mac/MacFrame.h: Removed scheduleHistoryNavigation and
+        requestedURLString.
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::openURLFromPageCache): Removed use of m_restored.
+        Removed unused requestedURLString.
+
+        * bridge/mac/WebCoreFrameBridge.h: Removed requestedURLString.
+
+2006-03-10  Darin Adler  <darin@apple.com>
+
         - fix Windows build
 
         * page/FrameTree.cpp: Add include of <stdarg.h>.

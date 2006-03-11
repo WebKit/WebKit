@@ -63,8 +63,6 @@ namespace WebCore {
             , m_bJavaEnabled(true)
             , m_bPluginsEnabled(true)
             , m_metaRefreshEnabled(true)
-            , m_restored(false)
-            , m_frameNameId(1)
             , m_settings(0)
             , m_job(0)
             , m_bComplete(true)
@@ -86,17 +84,11 @@ namespace WebCore {
             , m_caretVisible(false)
             , m_caretBlinks(true)
             , m_caretPaint(true)
-            , m_bDnd(true)
             , m_bFirstData(true)
-            , m_bClearing(false)
             , m_bCleared(true)
-            , m_bSecurityInQuestion(false)
-            , m_focusNodeRestored(false)
             , m_isFocused(false)
-            , m_focusNodeNumber(-1)
             , m_opener(0)
             , m_openedByJS(false)
-            , m_newJSInterpreterExists(false)
             , m_bPendingChildRedirection(false)
             , m_executingJavaScriptFormAction(false)
             , m_cancelWithLoadInProgress(false)
@@ -131,8 +123,6 @@ namespace WebCore {
         bool m_bJavaEnabled : 1;
         bool m_bPluginsEnabled : 1;
         bool m_metaRefreshEnabled : 1;
-        bool m_restored : 1;
-        int m_frameNameId;
 
         KHTMLSettings* m_settings;
 
@@ -165,8 +155,6 @@ namespace WebCore {
 
         int m_zoomFactor;
 
-        QString m_strSelectedURL;
-        QString m_strSelectedURLTarget;
         QString m_referrer;
 
         struct SubmitForm {
@@ -193,26 +181,19 @@ namespace WebCore {
         bool m_caretVisible : 1;
         bool m_caretBlinks : 1;
         bool m_caretPaint : 1;
-        bool m_bDnd : 1;
         bool m_bFirstData : 1;
-        bool m_bClearing : 1;
         bool m_bCleared : 1;
-        bool m_bSecurityInQuestion : 1;
-        bool m_focusNodeRestored : 1;
         bool m_isFocused : 1;
 
         EditCommandPtr m_lastEditCommand;
         int m_xPosForVerticalArrowNavigation;
         RefPtr<CSSMutableStyleDeclarationImpl> m_typingStyle;
 
-        int m_focusNodeNumber;
-
         IntPoint m_dragStartPos;
 
         Frame* m_opener;
         HashSet<Frame*> m_openedFrames;
         bool m_openedByJS;
-        bool m_newJSInterpreterExists; // set to 1 by setOpenedByJS, for window.open
         bool m_bPendingChildRedirection;
         bool m_executingJavaScriptFormAction;
         bool m_cancelWithLoadInProgress;

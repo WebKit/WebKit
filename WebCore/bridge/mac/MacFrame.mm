@@ -1162,8 +1162,7 @@ void MacFrame::openURLFromPageCache(KWQPageState *state)
     cancelRedirection();
 
     // We still have to close the previous part page.
-    if (!d->m_restored)
-        closeURL();
+    closeURL();
             
     d->m_bComplete = false;
     
@@ -1251,15 +1250,6 @@ void MacFrame::restoreDocumentState()
     KWQ_BLOCK_EXCEPTIONS;
     [_bridge restoreDocumentState];
     KWQ_UNBLOCK_EXCEPTIONS;
-}
-
-QString MacFrame::requestedURLString() const
-{
-    KWQ_BLOCK_EXCEPTIONS;
-    return QString::fromNSString([_bridge requestedURLString]);
-    KWQ_UNBLOCK_EXCEPTIONS;
-
-    return QString();
 }
 
 QString MacFrame::incomingReferrer() const

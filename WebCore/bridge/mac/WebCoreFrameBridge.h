@@ -563,9 +563,6 @@ typedef enum {
 
 - (void)tokenizerProcessedData;
 
-// OK to be an NSString rather than an NSURL.
-// This URL is only used for coloring visited links.
-- (NSString *)requestedURLString;
 - (NSString *)incomingReferrer;
 
 - (NSView *)viewForPluginWithURL:(NSURL *)URL

@@ -132,8 +132,6 @@ public:
     virtual void openURLRequest(const KURL &, const URLArgs &);
     virtual void submitForm(const KURL &, const URLArgs &);
 
-    void scheduleHistoryNavigation( int steps );
-    
     QString advanceToNextMisspelling(bool startBeforeSelection = false);
     
     virtual void setTitle(const DOMString &);
@@ -183,7 +181,6 @@ public:
 
     static WebCoreFrameBridge *bridgeForWidget(const Widget *);
     
-    QString requestedURLString() const;
     virtual QString incomingReferrer() const;
     virtual QString userAgent() const;
 
@@ -232,7 +229,7 @@ public:
     
     bool sendContextMenuEvent(NSEvent *);
 
-    bool passMouseDownEventToWidget(Widget *);
+    virtual bool passMouseDownEventToWidget(Widget *);
     virtual bool passSubframeEventToSubframe(MouseEventWithHitTestResults &);
     virtual bool passWheelEventToChildWidget(NodeImpl *);
     
@@ -247,7 +244,7 @@ public:
 
     KWQWindowWidget *topLevelWidget();
     
-    void tokenizerProcessedData();
+    virtual void tokenizerProcessedData();
 
     virtual QString overrideMediaType() const;
     
@@ -292,14 +289,14 @@ public:
     virtual void partClearedInBegin();
     
     // Implementation of CSS property -khtml-user-drag == auto
-    bool shouldDragAutoNode(NodeImpl*, int x, int y) const;
+    virtual bool shouldDragAutoNode(NodeImpl*, int x, int y) const;
 
     void setMarkedTextRange(const RangeImpl *, NSArray *attributes, NSArray *ranges);
     virtual RangeImpl *markedTextRange() const { return m_markedTextRange.get(); }
 
     virtual bool canGoBackOrForward(int distance) const;
 
-    void didFirstLayout();
+    virtual void didFirstLayout();
     
     NSMutableDictionary *dashboardRegionsDictionary();
     void dashboardRegionsChanged();

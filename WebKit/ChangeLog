@@ -1,5 +1,11 @@
 2006-03-10  Darin Adler  <darin@apple.com>
 
+        Reviewed by Adele.
+
+        * WebCoreSupport/WebFrameBridge.m: Remove unused requestedURLString method.
+
+2006-03-10  Darin Adler  <darin@apple.com>
+
         Reviewed by Geoff.
 
         - change how frame namespacing works to be more completely on the WebCore side

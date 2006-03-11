@@ -892,13 +892,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [_frame _checkLoadComplete];
 }
 
-// OK to be an NSString rather than an NSURL.
-// This URL is only used for coloring visited links.
-- (NSString *)requestedURLString
-{
-    return [[[[self dataSource] request] URL] _web_originalDataAsString];
-}
-
 - (NSString *)incomingReferrer
 {
     return [[[self dataSource] request] _web_HTTPReferrer];

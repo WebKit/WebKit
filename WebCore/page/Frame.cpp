@@ -230,12 +230,9 @@ bool Frame::didOpenURL(const KURL &url)
   
   URLArgs args( d->m_extension->urlArgs() );
 
-  if (!d->m_restored)
-    closeURL();
+  closeURL();
 
-  if (d->m_restored)
-     d->m_cachePolicy = KIO::CC_Cache;
-  else if (args.reload)
+  if (args.reload)
      d->m_cachePolicy = KIO::CC_Refresh;
   else
      d->m_cachePolicy = KIO::CC_Verify;
@@ -457,7 +454,6 @@ void Frame::clear(bool clearWindowProperties)
   if ( d->m_bCleared )
     return;
   d->m_bCleared = true;
-  d->m_bClearing = true;
   d->m_mousePressNode = 0;
 
   if (d->m_doc) {
@@ -486,19 +482,12 @@ void Frame::clear(bool clearWindowProperties)
   d->m_redirectLockHistory = true;
   d->m_redirectUserGesture = false;
   d->m_bHTTPRefresh = false;
-  d->m_bClearing = false;
-  d->m_frameNameId = 1;
   d->m_bFirstData = true;
 
   d->m_bMousePressed = false;
 
   if ( !d->m_haveEncoding )
     d->m_encoding = QString::null;
-}
-
-bool Frame::openFile()
-{
-  return true;
 }
 
 DocumentImpl *Frame::document() const
@@ -1828,13 +1817,6 @@ void Frame::khtmlMousePressEvent(MouseEventWithHitTestResults* event)
     d->m_mousePressNode = innerNode;
     d->m_dragStartPos = mouse->pos();
 
-    if (!event->url().isNull()) {
-        d->m_strSelectedURL = d->m_strSelectedURLTarget = QString::null;
-    } else {
-        d->m_strSelectedURL = event->url().qstring();
-        d->m_strSelectedURLTarget = event->target().qstring();
-    }
-
     if (mouse->button() == LeftButton || mouse->button() == MiddleButton) {
         d->m_bMousePressed = true;
         d->m_beganSelectingText = false;
@@ -2073,21 +2055,6 @@ bool Frame::openedByJS()
 void Frame::setOpenedByJS(bool _openedByJS)
 {
     d->m_openedByJS = _openedByJS;
-}
-
-void Frame::preloadStyleSheet(const QString &url, const QString &stylesheet)
-{
-    Cache::preloadStyleSheet(url, stylesheet);
-}
-
-void Frame::preloadScript(const QString &url, const QString &script)
-{
-    Cache::preloadScript(url, script);
-}
-
-bool Frame::restored() const
-{
-  return d->m_restored;
 }
 
 bool Frame::tabsToLinks() const
