@@ -144,11 +144,11 @@ Position Position::next(EUsingComposedCharacters usingComposedCharacters) const
     int o = offset();
     assert(o >= 0);
 
-    if (o < maxDeepOffset(n)) {
-        NodeImpl *child = n->childNode(o);
-        if (child) {
+    NodeImpl* child = n->childNode(o);
+    if (child || !n->hasChildNodes() && o < maxDeepOffset(n)) {
+        if (child)
             return Position(child, 0);
-        }
+            
         // There are two reasons child might be 0:
         //   1) The node is node like a text node that is not an element, and therefore has no children.
         //      Going forward one character at a time is correct.
@@ -179,7 +179,7 @@ bool Position::atEnd() const
     if (!n)
         return true;
     
-    return offset() >= maxDeepOffset(n) && n->parent() == 0;
+    return n->parent() == 0 && offset() >= maxDeepOffset(n);
 }
 
 int Position::renderedOffset() const
