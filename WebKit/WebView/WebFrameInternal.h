@@ -50,9 +50,6 @@
                                                            error:(NSError *)error;
 - (void)_setupForReplace;
 
-- (void)_setFrameNamespace:(NSString *)namespace;
-- (NSString *)_frameNamespace;
-
 - (BOOL)_hasSelection;
 - (void)_clearSelection;
 - (WebFrame *)_findFrameWithSelection;

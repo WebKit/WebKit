@@ -2642,16 +2642,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [self _detachChildren];
 }
 
-- (void)_setFrameNamespace:(NSString *)namespace
-{
-    [[self _bridge] setFrameNamespace:namespace];
-}
-
-- (NSString *)_frameNamespace
-{
-    return [[self _bridge] frameNamespace];
-}
-
 - (BOOL)_hasSelection
 {
     id documentView = [[self frameView] documentView];    

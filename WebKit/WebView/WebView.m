@@ -2296,12 +2296,12 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)setGroupName:(NSString *)groupName
 {
-    [[self mainFrame] _setFrameNamespace:groupName];
+    [[self _pageBridge] setGroupName:groupName];
 }
 
 - (NSString *)groupName
 {
-    return [[self mainFrame] _frameNamespace];
+    return [[self _pageBridge] groupName];
 }
 
 - (double)estimatedProgress
