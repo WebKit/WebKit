@@ -27,6 +27,7 @@
 #include <algorithm>
 #include <kxmlcore/Assertions.h>
 #include <kxmlcore/Vector.h>
+#include <stdarg.h>
 
 using std::swap;
 
