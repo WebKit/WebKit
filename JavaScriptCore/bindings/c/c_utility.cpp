@@ -62,7 +62,7 @@ void convertUTF8ToUTF16(const NPUTF8 *UTF8Chars, int UTF8Length, NPUTF16 **UTF16
     if (U_SUCCESS(status)) { 
         *UTF16Chars = (NPUTF16 *)malloc(sizeof(NPUTF16) * (*UTF16Length));
         ucnv_setToUCallBack(conv, UCNV_TO_U_CALLBACK_STOP, 0, 0, 0, &status);
-        ucnv_toUChars(conv, *UTF16Chars, *UTF16Length, UTF8Chars, UTF8Length, &status); 
+        *UTF16Length = ucnv_toUChars(conv, *UTF16Chars, *UTF16Length, UTF8Chars, UTF8Length, &status); 
         ucnv_close(conv);
     } 
     
@@ -71,12 +71,13 @@ void convertUTF8ToUTF16(const NPUTF8 *UTF8Chars, int UTF8Length, NPUTF16 **UTF16
     // There is no "bad data" for latin1. It is unlikely that the plugin was really sending text in this encoding,
     // but it should have used UTF-8, and now we are simply avoiding a crash.
     if (!U_SUCCESS(status)) {
+        *UTF16Length = UTF8Length;
+        
         if (!*UTF16Chars)   // If the memory wasn't allocated, allocate it.
             *UTF16Chars = (NPUTF16 *)malloc(sizeof(NPUTF16) * (*UTF16Length));
  
         for (unsigned i = 0; i < *UTF16Length; i++)
             (*UTF16Chars)[i] = UTF8Chars[i] & 0xFF;
-
     }
 }
 

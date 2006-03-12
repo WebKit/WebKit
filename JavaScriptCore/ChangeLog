@@ -1,3 +1,15 @@
+2006-03-12  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7708
+        REGRESSION: Flash callback to JavaScript function not working.
+
+        Test: plugins/invoke.html
+
+        * bindings/c/c_utility.cpp:
+        (KJS::Bindings::convertUTF8ToUTF16): Return a correct string length.
+
 2006-03-08  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
