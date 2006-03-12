@@ -1,4 +1,19 @@
-2006-03-13  Alexey Proskuryakov  <ap@nypop.com>
+2006-03-12  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Maciej, landed by ap.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=5923
+          REGRESSION: scrolling on Google maps continues after the mouse is 
+          released outside the window
+
+        Test: fast/events/drag-outside-window.html
+
+        * rendering/render_layer.cpp:
+        (WebCore::RenderLayer::containsPoint): Always return true for the root
+        object to ensure that mouse events occurring outside the window target
+        the document.
+
+2006-03-12  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Maciej.
 

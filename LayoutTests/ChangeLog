@@ -1,3 +1,16 @@
+2006-03-12  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Maciej, landed by ap.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=5923
+          REGRESSION: scrolling on Google maps continues after the mouse is 
+          released outside the window
+
+        * fast/events/drag-outside-window-expected.txt: Added.
+        * fast/events/drag-outside-window.html: Added.
+        * fast/events/resources: Added.
+        * fast/events/resources/drag-outside-window-frame.html: Added.
+
 2006-03-12  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Maciej.

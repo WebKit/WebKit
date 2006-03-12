@@ -1,0 +1,5 @@
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 31 of #text > P > BODY > HTML > #document to 31 of #text > P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 31 of #text > P > BODY > HTML > #document to 31 of #text > P > BODY > HTML > #document toDOMRange:range from 31 of #text > P > BODY > HTML > #document to 31 of #text > P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+ALERT: Test result: PASS
+
