@@ -279,6 +279,8 @@ print "void init()
     initialized = true;
     
     // Use placement new to initialize the globals.
+    
+    AtomicString::init();
 ";
 	
     print("    AtomicString ${lowerNamespace}NS(\"$namespaceURI\");\n\n");

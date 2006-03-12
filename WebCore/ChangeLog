@@ -1,3 +1,20 @@
+2006-03-13  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Maciej.
+
+        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=7735
+        REGRESSION: crash on importing bookmarks
+
+        No test - only reproducible when Safari imports the bookmarks.
+
+        * dom/EventNames.cpp:
+        (WebCore::EventNames::init): Initialize AtomicString before using it.
+        * dom/QualifiedName.cpp:
+        (WebCore::QualifiedName::init): Ditto.
+        * khtml/html/htmlnames.cpp:
+        (WebCore::HTMLNames::init): Ditto.
+        * ksvg2/scripts/make_names.pl: Ditto.
+
 2006-03-12  David Kilzer  <ddkilzer@kilzer.net>
 
         Reviewed by Darin, landed by ap.

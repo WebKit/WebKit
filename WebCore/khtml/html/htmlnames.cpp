@@ -49,6 +49,7 @@ void init()
     if (!initialized) {
         // Use placement new to initialize the globals.
 
+        AtomicString::init();
         AtomicString xhtmlNS("http://www.w3.org/1999/xhtml");
 
         // Namespace

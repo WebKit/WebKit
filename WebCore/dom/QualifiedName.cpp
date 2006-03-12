@@ -179,6 +179,8 @@ void QualifiedName::init()
     static bool initialized;
     if (!initialized) {
         // Use placement new to initialize the globals.
+        
+        AtomicString::init();
         new ((void*)&anyName) QualifiedName(nullAtom, starAtom, starAtom);
         initialized = true;
     }

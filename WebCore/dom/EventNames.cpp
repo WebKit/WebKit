@@ -43,6 +43,8 @@ void init()
     static bool initialized;
     if (!initialized) {
         // Use placement new to initialize the globals.
+        
+        AtomicString::init();
         #define INITIALIZE_GLOBAL(name) new ((void*)&name##Event) AtomicString(#name);
         DOM_EVENT_NAMES_FOR_EACH(INITIALIZE_GLOBAL)
         initialized = true;
