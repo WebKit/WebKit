@@ -1,3 +1,29 @@
+2006-03-12  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin, landed by ap.
+
+        - Tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=7724
+        Minor refactoring to HTMLParser::handleError() to remove duplicate code
+
+        These tests cover the changed code.  No change in behavior.
+
+        * fast/invalid/missing-address-end-tag-expected.checksum: Added.
+        * fast/invalid/missing-address-end-tag-expected.png: Added.
+        * fast/invalid/missing-address-end-tag-expected.txt: Added.
+        * fast/invalid/missing-address-end-tag.html: Added.
+        * fast/invalid/missing-dl-end-tag-expected.checksum: Added.
+        * fast/invalid/missing-dl-end-tag-expected.png: Added.
+        * fast/invalid/missing-dl-end-tag-expected.txt: Added.
+        * fast/invalid/missing-dl-end-tag.html: Added.
+        * fast/invalid/missing-dt-end-tag-expected.checksum: Added.
+        * fast/invalid/missing-dt-end-tag-expected.png: Added.
+        * fast/invalid/missing-dt-end-tag-expected.txt: Added.
+        * fast/invalid/missing-dt-end-tag.html: Added.
+        * fast/invalid/missing-font-end-tag-expected.checksum: Added.
+        * fast/invalid/missing-font-end-tag-expected.png: Added.
+        * fast/invalid/missing-font-end-tag-expected.txt: Added.
+        * fast/invalid/missing-font-end-tag.html: Added.
+
 2006-03-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff, except for frame-name-reset, which was done by Alexey.
