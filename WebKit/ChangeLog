@@ -1,3 +1,14 @@
+2006-03-13  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Tim Omernick.
+        
+        - fixed <rdar://problem/4475857> API: Setting a history item limit programmatically doesn't work
+
+        * History/WebHistory.m:
+        (-[WebHistoryPrivate _loadHistoryGuts:URL:error:]):
+        use [self historyItemLimit], which prefers the explicitly-set value and falls back to the
+        NSUserDefaults value, instead of using the NSUserDefaults value explicitly.
+
 2006-03-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

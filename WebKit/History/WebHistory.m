@@ -461,7 +461,7 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 
     NSArray *array = [fileAsDictionary objectForKey:DatesArrayKey];
         
-    int limit = [[NSUserDefaults standardUserDefaults] integerForKey: @"WebKitHistoryItemLimit"];
+    int limit = [self historyItemLimit];
     NSCalendarDate *ageLimitDate = [self _ageLimitDate];
     int index = 0;
     // reverse dates so you're loading the oldest first, to minimize the number of comparisons
