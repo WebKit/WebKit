@@ -167,4 +167,6 @@ extern NSString *WebPageCacheDocumentViewKey;
 - (void)_recursive_pauseNullEventsForAllNetscapePlugins;
 - (void)_recursive_resumeNullEventsForAllNetscapePlugins;
 
+- (BOOL)_firstLayoutDone;
+
 @end

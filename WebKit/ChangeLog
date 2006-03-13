@@ -1,3 +1,62 @@
+2006-03-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by timo.
+
+        - Fixed the load progress indicator to give more incremental feedback, 
+        and to stop spending so much time near 100%.
+
+        I did two things:
+        (1) Fixed some bugs and a misspelling in the previous heuristic's 
+        implementation
+        (2) Added two new rules to the heuristic:
+            (a) Treat the first layout as the half-way point.
+            (b) Just like we jump the first 10% to indicate that a load has
+            started, jump the last 10% to indicate that a load has finished.
+
+        Rule 2a is good for two reasons. First, it seems unnatural for loading
+        to be "more than half done" when you can't even see anything. Second,
+        in the early stages of laading our estimate of how much we'll need to
+        load is often off by as much as 6000% (e.g., cnn.com). So anything that
+        makes the progress indicator more conservative in the early stages of 
+        loading is helpful.
+
+        Rule 2b is good because it's confusing for loading to be "100% done"
+        but still ongoing.
+
+        FIXME: The indicator still isn't perfect. For example, the old behavior
+        shows up @ moviefone.com. Two areas for future work:
+        (1) Estimate number of linked resources. Our code estimates the size
+        of a single resource, but does nothing to estimate the number of
+        resources that resource might link to. This is the key to why we're
+        so wrong at the beginning.
+        (2) Improve "when to do first layout" heuristic. A JavaScript query
+        for a style property forces layout, creating a phantom first layout 
+        with no content, essentially nullifying 2a for certain pages.
+        
+        Filed <rdar://problem/4475834> to track estimating the number of 
+        linked resources. Phantom layouts are already on Hyatt's radar.
+
+        * WebView/WebFrame.m:
+        (-[WebFrame _setState:]): Update firstLayoutDone
+        (-[WebFrame _numPendingOrLoadingRequests:]): Bug fix: In the recurisve 
+        case, query 'frame' instead of 'self', so that we actually recurse.
+        (-[WebFrame _firstLayoutDone]): New method
+        (-[WebFrame _didFirstLayout]): Update firstLayoutDone
+        * WebView/WebFramePrivate.h: Added firstLayoutDone ivar
+        * WebView/WebView.m:
+        (-[WebView _incrementProgressForConnectionDelegate:data:]):
+        (1) Implemented 2a and 2b
+        (2) Bug fix: only update the 'last time I sent a notification' time if 
+        we actually send a notification.
+        (3) Don't test for progress < 0 because ensuring progress < max
+        also ensures max - progress > 0. (Do still test for progress > max 
+        because rounding errors make that a possibility -- although a very 
+        minor one.)
+        (4) Query only the loading frame and its subframes for pending
+        requests instead of defaulting to the main frame. This is a slight
+        optimization in cases where the main frame did not begin the load,
+        and it makes the code more consistent.
+
 2006-03-13  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Tim Omernick.

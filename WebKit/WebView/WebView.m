@@ -50,6 +50,7 @@
 #import "WebFormDelegatePrivate.h"
 #import "WebFrameBridge.h"
 #import "WebFrameInternal.h"
+#import "WebFramePrivate.h"
 #import "WebFrameViewInternal.h"
 #import "WebHTMLRepresentation.h"
 #import "WebHTMLViewInternal.h"
@@ -86,6 +87,7 @@
 #import <CoreFoundation/CFSet.h>
 #import <Foundation/NSURLConnection.h>
 #import <WebCore/WebCoreEncodings.h>
+#import <WebCore/WebCoreFrameBridge.h>
 #import <WebCore/WebCoreSettings.h>
 #import <WebCore/WebCoreView.h>
 #import <WebKit/DOM.h>
@@ -256,7 +258,7 @@ macro(yankAndSelect) \
     double progressNotificationInterval;
     double progressNotificationTimeInterval;
     BOOL finalProgressChangedSent;
-    WebFrame *orginatingProgressFrame;
+    WebFrame *originatingProgressFrame;
     
     int numProgressTrackedFrames;
     NSMutableDictionary *progressItems;
@@ -1000,10 +1002,12 @@ static bool debugWidget = true;
     [self willChangeValueForKey: key];
 }
 
-// Always start progress at INITIAL_PROGRESS_VALUE so it appears progress indicators
-// will immediately show some progress.  This helps provide feedback as soon as a load
-// starts.
+// Always start progress at INITIAL_PROGRESS_VALUE. This helps provide feedback as 
+// soon as a load starts.
 #define INITIAL_PROGRESS_VALUE 0.1
+// Similarly, always leave space at the end. This helps show the user that we're not done
+// until we're done.
+#define FINAL_PROGRESS_VALUE 1.0 - INITIAL_PROGRESS_VALUE
 
 - (void)_resetProgress
 {
@@ -1016,17 +1020,17 @@ static bool debugWidget = true;
     _private->lastNotifiedProgressTime = 0;
     _private->finalProgressChangedSent = NO;
     _private->numProgressTrackedFrames = 0;
-    [_private->orginatingProgressFrame release];
-    _private->orginatingProgressFrame = nil;
+    [_private->originatingProgressFrame release];
+    _private->originatingProgressFrame = nil;
 }
 - (void)_progressStarted:(WebFrame *)frame
 {
-    LOG (Progress, "frame %p(%@), _private->numProgressTrackedFrames %d, _private->orginatingProgressFrame %p", frame, [frame name], _private->numProgressTrackedFrames, _private->orginatingProgressFrame);
+    LOG (Progress, "frame %p(%@), _private->numProgressTrackedFrames %d, _private->originatingProgressFrame %p", frame, [frame name], _private->numProgressTrackedFrames, _private->originatingProgressFrame);
     [self _willChangeValueForKey: @"estimatedProgress"];
-    if (_private->numProgressTrackedFrames == 0 || _private->orginatingProgressFrame == frame){
+    if (_private->numProgressTrackedFrames == 0 || _private->originatingProgressFrame == frame){
         [self _resetProgress];
         _private->progressValue = INITIAL_PROGRESS_VALUE;
-        _private->orginatingProgressFrame = [frame retain];
+        _private->originatingProgressFrame = [frame retain];
         [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressStartedNotification object:self];
     }
     _private->numProgressTrackedFrames++;
@@ -1051,7 +1055,7 @@ static bool debugWidget = true;
 
 - (void)_progressCompleted:(WebFrame *)frame
 {    
-    LOG (Progress, "frame %p(%@), _private->numProgressTrackedFrames %d, _private->orginatingProgressFrame %p", frame, [frame name], _private->numProgressTrackedFrames, _private->orginatingProgressFrame);
+    LOG (Progress, "frame %p(%@), _private->numProgressTrackedFrames %d, _private->originatingProgressFrame %p", frame, [frame name], _private->numProgressTrackedFrames, _private->originatingProgressFrame);
 
     if (_private->numProgressTrackedFrames <= 0)
         return;
@@ -1060,7 +1064,7 @@ static bool debugWidget = true;
 
     _private->numProgressTrackedFrames--;
     if (_private->numProgressTrackedFrames == 0 ||
-        (frame == _private->orginatingProgressFrame && _private->numProgressTrackedFrames != 0)){
+        (frame == _private->originatingProgressFrame && _private->numProgressTrackedFrames != 0)){
         [self _finalProgressComplete];
     }
     [self _didChangeValueForKey: @"estimatedProgress"];
@@ -1071,7 +1075,7 @@ static bool debugWidget = true;
     if (!connectionDelegate)
         return;
 
-    LOG (Progress, "_private->numProgressTrackedFrames %d, _private->orginatingProgressFrame %p", _private->numProgressTrackedFrames, _private->orginatingProgressFrame);
+    LOG (Progress, "_private->numProgressTrackedFrames %d, _private->originatingProgressFrame %p", _private->numProgressTrackedFrames, _private->originatingProgressFrame);
     
     if (_private->numProgressTrackedFrames <= 0)
         return;
@@ -1108,7 +1112,7 @@ static bool debugWidget = true;
     [self _willChangeValueForKey: @"estimatedProgress"];
 
     unsigned bytesReceived = [data length];
-    double increment = 0, percentOfRemainingBytes;
+    double increment, percentOfRemainingBytes;
     long long remainingBytes, estimatedBytesForPendingRequests;
 
     item->bytesReceived += bytesReceived;
@@ -1117,25 +1121,25 @@ static bool debugWidget = true;
         item->estimatedLength = item->bytesReceived*2;
     }
     
-    int numPendingOrLoadingRequests = [[self mainFrame] _numPendingOrLoadingRequests:YES];
+    int numPendingOrLoadingRequests = [_private->originatingProgressFrame _numPendingOrLoadingRequests:YES];
     estimatedBytesForPendingRequests = WebProgressItemDefaultEstimatedLength * numPendingOrLoadingRequests;
     remainingBytes = ((_private->totalPageAndResourceBytesToLoad + estimatedBytesForPendingRequests) - _private->totalBytesReceived);
     percentOfRemainingBytes = (double)bytesReceived / (double)remainingBytes;
-    increment = (1.0 - _private->progressValue) * percentOfRemainingBytes;
-    
-    _private->totalBytesReceived += bytesReceived;
-    
+
+    // Treat the first layout as the half-way point.
+    double maxProgressValue = [_private->originatingProgressFrame _firstLayoutDone]
+        ? FINAL_PROGRESS_VALUE
+        : .5;
+    increment = (maxProgressValue - _private->progressValue) * percentOfRemainingBytes;
     _private->progressValue += increment;
+    if (_private->progressValue > maxProgressValue)
+        _private->progressValue = maxProgressValue;
+    ASSERT(_private->progressValue >= INITIAL_PROGRESS_VALUE);
 
-    if (_private->progressValue < 0.0)
-        _private->progressValue = 0.0;
-
-    if (_private->progressValue > 1.0)
-        _private->progressValue = 1.0;
+    _private->totalBytesReceived += bytesReceived;
 
     double now = CFAbsoluteTimeGetCurrent();
-    double notifiedProgressTimeDelta = CFAbsoluteTimeGetCurrent() - _private->lastNotifiedProgressTime;
-    _private->lastNotifiedProgressTime = now;
+    double notifiedProgressTimeDelta = now - _private->lastNotifiedProgressTime;
     
     LOG (Progress, "_private->progressValue %g, _private->numProgressTrackedFrames %d", _private->progressValue, _private->numProgressTrackedFrames);
     double notificationProgressDelta = _private->progressValue - _private->lastNotifiedProgressValue;
@@ -1147,6 +1151,7 @@ static bool debugWidget = true;
                 _private->finalProgressChangedSent = YES;
             [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressEstimateChangedNotification object:self];
             _private->lastNotifiedProgressValue = _private->progressValue;
+            _private->lastNotifiedProgressTime = now;
         }
     }
 

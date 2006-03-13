@@ -195,6 +195,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     BOOL delegateIsHandlingProvisionalLoadError;
     BOOL delegateIsDecidingNavigationPolicy;
     BOOL delegateIsHandlingUnimplementablePolicy;
+    BOOL firstLayoutDone;
     
     id internalLoadDelegate;
     WebScriptDebugger *scriptDebugger;
@@ -655,7 +656,7 @@ static inline WebFrame *Frame(WebCoreFrameBridge *bridge)
 - (void)_transitionToCommitted:(NSDictionary *)pageCache
 {
     ASSERT([self webView] != nil);
-
+    
     switch ([self _state]) {
         case WebFrameStateProvisional:
         {
@@ -940,6 +941,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     _private->state = newState;
     
     if (_private->state == WebFrameStateProvisional) {
+        _private->firstLayoutDone = NO;
         [_private->bridge provisionalLoadStarted];
     
         // FIXME: This is OK as long as no one resizes the window,
@@ -998,6 +1000,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         _timeOfLastCompletedLoad = CFAbsoluteTimeGetCurrent();
 
         [[self dataSource] _stopRecordingResponses];
+
+        // After a canceled provisional load, firstLayoutDone is NO. Reset it to YES if we're displaying a page.
+        if (_private->dataSource)
+            _private->firstLayoutDone = YES;
     }
 }
 
@@ -2392,7 +2398,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
     int num = 0;
     for (WebFrame *frame = self; frame; frame = [frame _traverseNextFrameStayWithin:self])
-        num += [[self _bridge] numPendingOrLoadingRequests];
+        num += [[frame _bridge] numPendingOrLoadingRequests];
 
     return num;
 }
@@ -2451,6 +2457,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         if ([documentView isKindOfClass:[WebHTMLView class]])
             [(WebHTMLView *)documentView _resumeNullEventsForAllNetscapePlugins];
     }
+}
+
+- (BOOL)_firstLayoutDone
+{
+    return _private->firstLayoutDone;
 }
 
 @end
@@ -2629,6 +2640,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             [self _restoreScrollPositionAndViewState];
         }
     }
+    
+    _private->firstLayoutDone = YES;
 }
 
 - (void)_setupForReplace
