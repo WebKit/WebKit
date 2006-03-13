@@ -1,3 +1,14 @@
+2006-03-13  Alexey Proskuryakov  <ap@nypop.com>
+
+        Fix proposed by Mitz Pettel, reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7718
+          run-webkit-tests fast/dom/HTMLObjectElement/ hangs
+
+        * Scripts/run-webkit-tests: Make test paths canonical, to form proper URLs
+        (sequences of slashes are equivalent to a single slash in POSIX paths, but not 
+        in URLs).
+
 2006-03-09  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.

@@ -309,11 +309,11 @@ for my $test (@tests) {
             $testPath =~ s|/cygdrive/c|c:|;
             $testPath =~ s|/|\\|g;
         } 
-        print OUT "$testPath\n";
+        print OUT File::Spec->canonpath("$testPath") . "\n";
     } else {
         openHTTPDIfNeeded();
         
-        my $path = $test;
+        my $path = File::Spec->canonpath($test);
         $path =~ s/^http\/tests\///;
         print OUT "http://127.0.0.1:$httpdPort/$path\n";
     }
