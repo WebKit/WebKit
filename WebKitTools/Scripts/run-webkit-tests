@@ -238,7 +238,25 @@ sub openHTTPDIfNeeded()
 
     mkpath $absTestResultsDirectory;
 
-    open2(\*HTTPDIN, \*HTTPDOUT, "/usr/sbin/httpd", 
+    my $httpdPath;
+    if (-x "/usr/sbin/httpd-1.3") {
+        $httpdPath = "/usr/sbin/httpd-1.3";
+        open CONFIG, $httpdConfig or die;
+        open CONFIGOUT, ">", "/tmp/WebKit/httpd.conf" or die;
+        while (<CONFIG>) {
+            s|/httpd/|/httpd-1.3/|g;
+            print CONFIGOUT;
+        }
+        close CONFIG;
+        close CONFIGOUT;
+        $httpdConfig = "/tmp/WebKit/httpd.conf";
+    } elsif (-x "/usr/sbin/httpd") {
+        $httpdPath = "/usr/sbin/httpd";
+    } else {
+        die "Can't locate the httpd binary";
+    }
+
+    open2(\*HTTPDIN, \*HTTPDOUT, $httpdPath, 
         "-f", "$httpdConfig",
         "-C", "DocumentRoot \"$documentRoot\"",
         "-C", "Listen $listen",

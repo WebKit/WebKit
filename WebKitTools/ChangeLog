@@ -1,3 +1,10 @@
+2006-03-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        * Scripts/run-webkit-tests: Fix httpd handling to work on systems that
+        have it named httpd-1.3 instead.
+
 2006-03-13  Alexey Proskuryakov  <ap@nypop.com>
 
         Fix proposed by Mitz Pettel, reviewed by Darin.
