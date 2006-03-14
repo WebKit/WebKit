@@ -31,18 +31,29 @@ namespace WebCore {
 
 #define HIGH_BIT_MASK_SHORT 0x8000
 
+static IntPoint positionForEvent(HWND hWnd, LPARAM lParam)
+{
+    POINT point = {LOWORD(lParam), HIWORD(lParam)};
+    MapWindowPoints(hWnd, GetAncestor(hWnd, GA_ROOT), &point, 1);
+    return point;
+}
+
+static IntPoint globalPositionForEvent(HWND hWnd, LPARAM lParam)
+{
+    POINT point = {LOWORD(lParam), HIWORD(lParam)};
+    ClientToScreen(hWnd, &point);
+    return point;
+}
+
 MouseEvent::MouseEvent(HWND hWnd, WPARAM wParam, LPARAM lParam, int clkCount)
-    : m_position(LOWORD(lParam), HIWORD(lParam))
+    : m_position(positionForEvent(hWnd, lParam))
+    , m_globalPosition(globalPositionForEvent(hWnd, lParam))
     , m_clickCount(clkCount)
     , m_shiftKey(wParam & MK_SHIFT)
     , m_ctrlKey(wParam & MK_CONTROL)
     , m_altKey(GetAsyncKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT)
     , m_metaKey(m_altKey) // FIXME: We'll have to test other browsers
 {
-    POINT globalPosition = {m_position.x(), m_position.y()};
-    ClientToScreen(hWnd, &globalPosition);
-    m_globalPosition = globalPosition;
-
     if (wParam & MK_LBUTTON)
         m_button = LeftButton;
     else if (wParam & MK_RBUTTON)

@@ -2,6 +2,17 @@
 
         Reviewed by mjs.
 
+        Fix mouse events to be window-relative.
+
+        * platform/win/MouseEventWin.cpp:
+        (WebCore::positionForEvent):
+        (WebCore::globalPositionForEvent):
+        (WebCore::MouseEvent::MouseEvent):
+
+2006-03-13  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
         Close DeviceContext leaks in Font code.
         Also add moveCursor stub to make maps.google.com not crash.
 
