@@ -149,4 +149,25 @@
     [super viewDidMoveToHostWindow];
 }
 
+- (BOOL)documentViewShouldHandlePrint
+{
+    // Allow the plugin to take over printing if it defines an NPP_Print function
+    return (NPP_Print != NULL);
+}
+
+- (void)printDocumentView
+{
+    // The plugin cannot print if it does not have an NPP_Print function
+    if (!NPP_Print)
+        return;
+    
+    // Let the plugin take control of printing when in NP_FULL mode
+    NPPrint platformPrint;
+    platformPrint.mode = NP_FULL;
+    platformPrint.print.fullPrint.pluginPrinted = 0;
+    platformPrint.print.fullPrint.printOne = 0;
+    platformPrint.print.fullPrint.platformPrint = NULL;
+    NPP_Print(instance, &platformPrint);
+}
+
 @end
