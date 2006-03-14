@@ -1365,7 +1365,7 @@ IntRect RenderLayer::absoluteBoundingBox() const
             result.unite(floatRect);
         
         // We have to adjust the x/y of this result so that it is in the coordinate space of the layer.
-        result.move(m_x + result.x(), m_y + result.y());
+        result.move(m_x, m_y);
     }
     
     // Convert the bounding box to an absolute position.  We can do this easily by looking at the delta
@@ -1373,7 +1373,7 @@ IntRect RenderLayer::absoluteBoundingBox() const
     // passed in.
     int absX = 0, absY = 0;
     convertToLayerCoords(root(), absX, absY);
-    result.move(absX + result.x() - m_x, absY + result.y() - m_y);
+    result.move(absX - m_x, absY - m_y);
     return result;
 }
 
