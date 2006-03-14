@@ -1,3 +1,17 @@
+2006-03-10  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by hyatt.
+
+        Add scrolling support into Spinneret.
+
+        * Spinneret/Spinneret/WebFrame.cpp:
+        (WebKit::WebFrame::paint):
+        * Spinneret/Spinneret/WebView.cpp:
+        (WebKit::WebView::createWebView):
+        (WebKit::calculateScrollDelta):
+        (WebKit::scrollMessageForKey):
+        (WebKit::WebViewWndProc):
+
 2006-03-13  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

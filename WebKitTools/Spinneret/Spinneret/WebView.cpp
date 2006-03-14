@@ -87,7 +87,7 @@ WebView* WebView::createWebView(HINSTANCE hInstance, HWND parent)
 
     registerWebViewWithInstance(hInstance);
 
-    HWND hWnd = CreateWindow(kWebViewWindowClassName, 0, WS_CHILD,
+    HWND hWnd = CreateWindow(kWebViewWindowClassName, 0, WS_CHILD | WS_HSCROLL | WS_VSCROLL,
        CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, parent, 0, hInstance, 0);
 
     if (!hWnd)
@@ -145,6 +145,44 @@ void WebView::mouseDoubleClick(HWND hWnd, WPARAM wParam, LPARAM lParam)
     d->mainFrame->viewImpl()->viewportMouseReleaseEvent(&mouseEvent);
 }
 
+#define LINE_SCROLL_SIZE 30
+
+static int calculateScrollDelta(WPARAM wParam, int oldPosition, int pageSize)
+{
+    switch (LOWORD(wParam)) {
+        case SB_PAGEUP: 
+            return -(pageSize - LINE_SCROLL_SIZE); 
+         case SB_PAGEDOWN: 
+            return (pageSize - LINE_SCROLL_SIZE); 
+        case SB_LINEUP: 
+            return -LINE_SCROLL_SIZE;
+        case SB_LINEDOWN: 
+            return LINE_SCROLL_SIZE;
+        case SB_THUMBPOSITION: 
+            return HIWORD(wParam) - oldPosition; 
+    }
+    return 0;
+}
+
+static int scrollMessageForKey(WPARAM keyCode)
+{
+    switch (keyCode) {
+    case VK_UP:
+        return SB_LINEUP;
+    case VK_PRIOR: 
+        return SB_PAGEUP;
+    case VK_NEXT:
+        return SB_PAGEDOWN;
+    case VK_DOWN:
+        return SB_LINEDOWN;
+    case VK_HOME:
+        return SB_TOP;
+    case VK_END:
+        return SB_BOTTOM;
+    }
+    return -1;
+}
+
 LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     int wmId, wmEvent;
@@ -175,8 +213,22 @@ LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
     case WM_RBUTTONDBLCLK:
         webview->mouseDoubleClick(hWnd, wParam, lParam);
         break;
-    case WM_SIZE:
-        // FIXME: not sure if we need anything here...
+    case WM_HSCROLL: {
+        ScrollView* view = webview->mainFrame()->impl()->view();
+        view->scrollBy(calculateScrollDelta(wParam, view->contentsX(), view->visibleWidth()), 0);
+        break;
+    }
+    case WM_VSCROLL: {
+        ScrollView* view = webview->mainFrame()->impl()->view();
+        view->scrollBy(0, calculateScrollDelta(wParam, view->contentsY(), view->visibleHeight()));
+        break;
+    }
+    case WM_KEYDOWN: {
+        WORD wScrollNotify = scrollMessageForKey(wParam);
+        if (wScrollNotify != -1)
+            SendMessage(hWnd, WM_VSCROLL, MAKELONG(wScrollNotify, 0), 0L);
+        break;
+    }
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }

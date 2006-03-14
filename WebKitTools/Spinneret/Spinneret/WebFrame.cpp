@@ -140,7 +140,16 @@ void WebFrame::paint()
     cairo_t* context = cairo_create(surface);
     GraphicsContext gc(context);
     
-    d->frame->paint(&gc, ps.rcPaint);
+    IntRect documentDirtyRect = ps.rcPaint;
+    documentDirtyRect.move(d->frameView->contentsX(), d->frameView->contentsY());
+
+    // FIXME: We have to set the transform using both cairo and GDI until we use cairo for text.
+    HDC surfaceDC = cairo_win32_surface_get_dc(surface);
+    SaveDC(surfaceDC);
+    OffsetViewportOrgEx(surfaceDC, -d->frameView->contentsX(), -d->frameView->contentsY(), 0);
+    cairo_translate(context, -d->frameView->contentsX(), -d->frameView->contentsY());
+    d->frame->paint(&gc, documentDirtyRect);
+    RestoreDC(surfaceDC, -1);
 
     cairo_destroy(context);
     context = cairo_create(finalSurface);
