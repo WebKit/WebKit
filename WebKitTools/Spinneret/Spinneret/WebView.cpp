@@ -179,6 +179,8 @@ static int scrollMessageForKey(WPARAM keyCode)
         return SB_TOP;
     case VK_END:
         return SB_BOTTOM;
+    case VK_SPACE:
+        return (GetKeyState(VK_SHIFT) & 0x8000) ? SB_PAGEUP : SB_PAGEDOWN;
     }
     return -1;
 }
@@ -199,6 +201,11 @@ LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
         webview->mouseMoved(hWnd, wParam, lParam);
         break;
     case WM_LBUTTONDOWN:
+        // Make ourselves the focused window before doing anything else
+        // FIXME: I'm not sure if this is the "right" way to do this
+        // but w/o this call, we never become focused since we don't allow
+        // the default handling of mouse events.
+        SetFocus(hWnd);
     case WM_MBUTTONDOWN:
     case WM_RBUTTONDOWN:
         webview->mouseDown(hWnd, wParam, lParam);
@@ -224,6 +231,10 @@ LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
         break;
     }
     case WM_KEYDOWN: {
+        // FIXME: First we should send key events up through the DOM
+        // to form controls, etc.  If they are not handled, we fall
+        // through to the top level webview and do things like scrolling
+
         WORD wScrollNotify = scrollMessageForKey(wParam);
         if (wScrollNotify != -1)
             SendMessage(hWnd, WM_VSCROLL, MAKELONG(wScrollNotify, 0), 0L);
