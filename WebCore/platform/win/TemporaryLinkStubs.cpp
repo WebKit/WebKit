@@ -149,9 +149,7 @@ Widget::FocusPolicy QSlider::focusPolicy() const { notImplemented(); return NoFo
 Widget::FocusPolicy QListBox::focusPolicy() const { notImplemented(); return NoFocus; }
 Widget::FocusPolicy QLineEdit::focusPolicy() const { notImplemented(); return NoFocus; }
 
-static Cursor localCursor;
 Cursor::Cursor(Image*) { notImplemented(); }
-const Cursor& WebCore::moveCursor() { notImplemented(); return localCursor; }
 
 MouseEvent::MouseEvent() { notImplemented(); }
 String WebCore::searchableIndexIntroduction() { notImplemented(); return String(); }
@@ -215,7 +213,13 @@ void BrowserExtensionWin::createNewWindow(KURL const&,struct WebCore::URLArgs co
 
 IntRect Font::selectionRectForText(int, int, int, int, int, const QChar*, int, int, int, int, bool, bool, int, int) const { notImplemented(); return IntRect(); }
 
-// Completely empty stubs (mostly to allow DRT to run):
+
+/********************************************************/
+/* Completely empty stubs (mostly to allow DRT to run): */
+/********************************************************/
+static Cursor localCursor;
+const Cursor& WebCore::moveCursor() { return localCursor; }
+
 bool WebCore::historyContains(QString const&) { return false; }
 String WebCore::submitButtonDefaultLabel() { return "Submit"; }
 String WebCore::inputElementAltText() { return QString(); }

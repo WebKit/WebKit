@@ -1,5 +1,20 @@
 2006-03-13  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by mjs.
+
+        Close DeviceContext leaks in Font code.
+        Also add moveCursor stub to make maps.google.com not crash.
+
+        * platform/win/FontWin.cpp:
+        (WebCore::getFontData):
+        (WebCore::Font::floatWidth):
+        (WebCore::Font::drawText):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (Cursor::Cursor):
+        (WebCore::moveCursor):
+
+2006-03-13  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by ggaren & TimH.
 
         <rdar://problem/4473288> XSL file containing <xsl:include href="../Styles/EscapeString.xsl" /> fails to load file

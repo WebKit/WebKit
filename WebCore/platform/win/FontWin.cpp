@@ -87,6 +87,8 @@ FontData* getFontData(const FontDescription& fontDescription, const AtomicString
     if (resultLength > 0)
         resultLength--; // ignore the null terminator
     RestoreDC(dc, -1);
+    ReleaseDC(0, dc);
+    dc = 0;
     if (!equalIgnoringCase(fontFace, String((QChar*)name, resultLength))) {
         DeleteObject(font);
         return 0;
@@ -172,6 +174,7 @@ float Font::floatWidth(const QChar* str, int slen, int pos, int len,
     BOOL result = GetTextExtentPoint32W(dc, (WCHAR*)(str + pos), len, &s);
 
     RestoreDC(dc, -1);
+    ReleaseDC(0, dc);
 
     if (!result)
         return 0;
@@ -246,6 +249,7 @@ void Font::drawText(const GraphicsContext* context, int x, int y, int tabWidth, 
     TextOutW(dc, x, y, (LPCWSTR)(str+offset), length);
 
     RestoreDC(dc, -1);
+    // No need to ReleaseDC the HDC borrowed from cairo
 }
 
 void Font::drawHighlightForText(const GraphicsContext* context, int x, int y, int h, int tabWidth, int xpos, const QChar* str,
