@@ -2,6 +2,15 @@
 
         Reviewed by mjs.
 
+        Fix Gif crasher.
+
+        * platform/image-decoders/gif/GIFImageReader.cpp:
+        (GIFImageReader::do_lzw): Initialize array after new.
+
+2006-03-14  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
         Make MouseEvents aware of current scroll position.
 
         * platform/win/ScrollViewWin.cpp:

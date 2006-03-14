@@ -243,8 +243,10 @@ int GIFImageReader::do_lzw(const unsigned char *q)
   unsigned char firstchar = gs->firstchar;
   int datum     = gs->datum;
 
-  if (!gs->prefix)
+  if (!gs->prefix) {
     gs->prefix = new unsigned short[MAX_BITS];
+    memset(gs->prefix, 0, MAX_BITS * sizeof(short));
+  }
 
   unsigned short *prefix  = gs->prefix;
   unsigned char *stackp   = gs->stackp;
