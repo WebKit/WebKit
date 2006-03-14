@@ -61,34 +61,35 @@ KCanvasPath* KCanvasCreator::createRoundedRectangle(float x, float y, float widt
     double nrx = rx, nry = ry;
     // If rx is greater than half of the width of the rectangle
     // then set rx to half of the width (required in SVG spec)
-    if(nrx > width / 2)
+    if (nrx > width / 2)
         nrx = width / 2;
 
     // If ry is greater than half of the height of the rectangle
     // then set ry to half of the height (required in SVG spec)
-    if(nry > height / 2)
+    if (nry > height / 2)
         nry = height / 2;
 
     path->moveTo(x + nrx, y);
-    path->curveTo(x + nrx * (1 - 0.552), y, x, y + nry * (1 - 0.552), x, y + nry);
 
-    if(nry < height / 2)
-        path->lineTo(x, y + height - nry);
+    if (nrx < width / 2)
+        path->lineTo(x + width - rx, y);
 
-    path->curveTo(x, y + height - nry * (1 - 0.552), x + nrx * (1 - 0.552), y + height, x + nrx, y + height);
+    path->curveTo(x + width - nrx * (1 - 0.552), y, x + width, y + nry * (1 - 0.552), x + width, y + nry);
 
-    if(nrx < width / 2)
-        path->lineTo(x + width - nrx, y + height);
+    if (nry < height / 2)
+        path->lineTo(x + width, y + height - nry);
 
-    path->curveTo(x + width - nrx * (1 - 0.552), y + height, x + width, y + height - nry * (1 - 0.552), x + width, y + height - nry);
+    path->curveTo(x + width, y + height - nry * (1 - 0.552), x + width - nrx * (1 - 0.552), y + height, x + width - nrx, y + height);
 
-    if(nry < height / 2)
-        path->lineTo(x + width, y + nry);
+    if (nrx < width / 2)
+        path->lineTo(x + nrx, y + height);
 
-    path->curveTo(x + width, y + nry * (1 - 0.552), x + width - nrx * (1 - 0.552), y, x + width - nrx, y);
+    path->curveTo(x + nrx * (1 - 0.552), y + height, x, y + height - nry * (1 - 0.552), x, y + height - nry);
 
-    if(nrx < width / 2)
-        path->lineTo(x + nrx, y);
+    if (nry < height / 2)
+        path->lineTo(x, y + nry);
+
+    path->curveTo(x, y + nry * (1 - 0.552), x + nrx * (1 - 0.552), y, x + nrx, y);
 
     path->closeSubpath();
     return path;

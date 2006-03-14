@@ -1,3 +1,18 @@
+2006-03-10  Rob Buis  <buis@kde.org>
+
+        Reviewed by darin.  Landed by eseidel.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=7666:
+        dasharray on rounded rectangles is broken
+
+        Make sure the rounded rectangle is drawn clockwise, as outlined
+        in the specification.
+
+        Test: svg/custom/dashArrayOrigin.svg
+
+        * kcanvas/KCanvasCreator.cpp:
+        (WebCore::KCanvasCreator::createRoundedRectangle):
+
 2006-03-12  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Maciej, landed by ap.
