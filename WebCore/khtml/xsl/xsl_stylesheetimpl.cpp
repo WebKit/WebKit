@@ -142,11 +142,16 @@ void XSLStyleSheetImpl::loadChildSheets()
         return;
     
     xmlNodePtr stylesheetRoot = document()->children;
+    
+    // Top level children may include other things such as DTD nodes, we ignore those.
+    while (stylesheetRoot && stylesheetRoot->type != XML_ELEMENT_NODE)
+        stylesheetRoot = stylesheetRoot->next;
+    
     if (m_embedded) {
         // We have to locate (by ID) the appropriate embedded stylesheet element, so that we can walk the 
         // import/include list.
         xmlAttrPtr idNode = xmlGetID(document(), (const xmlChar*)(href().qstring().utf8().data()));
-        if (idNode == NULL)
+        if (!idNode)
             return;
         stylesheetRoot = idNode->parent;
     } else {

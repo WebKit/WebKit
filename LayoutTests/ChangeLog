@@ -1,3 +1,13 @@
+2006-03-13  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by ggaren & TimH.
+
+        * fast/xsl/resources/xslt-second-level-import.xsl: Added.
+        * fast/xsl/resources/xslt-second-level-import.xsl.dtd: Added.
+        * fast/xsl/resources/xslt-second-level-import2.xsl: Added.
+        * fast/xsl/xslt-second-level-import-expected.txt: Added.
+        * fast/xsl/xslt-second-level-import.xml: Added.
+
 2006-03-12  Rob Buis  <buis@kde.org>
 
         Reviewed by darin.  Landed by eseidel.
