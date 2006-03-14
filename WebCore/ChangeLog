@@ -1,3 +1,20 @@
+2006-03-14  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6796
+        This fix prevents infinite recursion when a block with overflow: 
+        auto can't decide if it needs scrollbars or not. This fix puts a 
+        guard in place in updateScrollInforAfterLayout that only allows you 
+        to re-layout if you are not currently laying out.  
+
+        * rendering/render_layer.cpp:
+        (WebCore::RenderLayer::RenderLayer): Initialize 
+        m_inOverflowRelayout to false. Fixed spacing too.
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout): Place guard 
+        around layout calls in overflow:auto case.
+        * rendering/render_layer.h: Add m_inOverflowRelayout.
+
 2006-03-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff and Eric.

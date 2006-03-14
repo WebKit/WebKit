@@ -106,33 +106,34 @@ void ClipRects::destroy(RenderArena* renderArena)
 }
 
 RenderLayer::RenderLayer(RenderObject* object)
-: m_object( object ),
-m_parent( 0 ),
-m_previous( 0 ),
-m_next( 0 ),
-m_first( 0 ),
-m_last( 0 ),
-m_relX( 0 ),
-m_relY( 0 ),
-m_x( 0 ),
-m_y( 0 ),
-m_width( 0 ),
-m_height( 0 ),
-m_scrollX( 0 ),
-m_scrollY( 0 ),
-m_scrollOriginX( 0 ),
-m_scrollLeftOverflow( 0 ),
-m_scrollWidth( 0 ),
-m_scrollHeight( 0 ),
-m_hBar( 0 ),
-m_vBar( 0 ),
-m_posZOrderList( 0 ),
-m_negZOrderList( 0 ),
-m_clipRects( 0 ) ,
-m_scrollDimensionsDirty( true ),
-m_zOrderListsDirty( true ),
-m_usedTransparency( false ),
-m_marquee( 0 )
+: m_object(object),
+m_parent(0),
+m_previous(0),
+m_next(0),
+m_first(0),
+m_last(0),
+m_relX(0),
+m_relY(0),
+m_x(0),
+m_y(0),
+m_width(0),
+m_height(0),
+m_scrollX(0),
+m_scrollY(0),
+m_scrollOriginX(0),
+m_scrollLeftOverflow(0),
+m_scrollWidth(0),
+m_scrollHeight(0),
+m_hBar(0),
+m_vBar(0),
+m_posZOrderList(0),
+m_negZOrderList(0),
+m_clipRects(0) ,
+m_scrollDimensionsDirty(true),
+m_zOrderListsDirty(true),
+m_usedTransparency(false),
+m_inOverflowRelayout(false),
+m_marquee(0)
 {
 }
 
@@ -913,12 +914,16 @@ RenderLayer::updateScrollInfoAfterLayout()
         m_object->repaint();
 
         if (m_object->style()->overflow() == OAUTO) {
-            // Our proprietary overflow: overlay value doesn't trigger a layout.
-            m_object->setNeedsLayout(true);
-            if (m_object->isRenderBlock())
-                static_cast<RenderBlock*>(m_object)->layoutBlock(true);
-            else
-                m_object->layout();
+            if (!m_inOverflowRelayout) {
+                // Our proprietary overflow: overlay value doesn't trigger a layout.
+                m_inOverflowRelayout = true;
+                m_object->setNeedsLayout(true);
+                if (m_object->isRenderBlock())
+                    static_cast<RenderBlock*>(m_object)->layoutBlock(true);
+                else
+                    m_object->layout();
+                m_inOverflowRelayout = false;
+            }
         }
     }
 
