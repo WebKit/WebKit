@@ -1,3 +1,17 @@
+2006-03-14  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Maciej.
+
+        - Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=4059
+        Some values used with setAttribute() cause the attribute to be removed
+        (null strings vs. empty strings)
+
+        The fix occurred somewhere between r9638 (2005-07-09) and the first CVS
+        nightly build (WebKit-CVS-2005-10-01 03-27-01 GMT.dmg).
+
+        * fast/dom/setAttribute-using-initial-input-value-expected.txt: Added.
+        * fast/dom/setAttribute-using-initial-input-value.html: Added.
+
 2006-03-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff and Eric.
