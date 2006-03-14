@@ -1,3 +1,13 @@
+2006-03-14  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Make MouseEvents aware of current scroll position.
+
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::viewportToContents):
+        (WebCore::ScrollView::contentsToViewport):
+
 2006-03-13  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

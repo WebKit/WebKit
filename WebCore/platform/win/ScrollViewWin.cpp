@@ -123,13 +123,13 @@ void ScrollView::viewportToContents(int x1, int y1, int& x2, int& y2)
 {
     POINT point = {x1, y1};
     MapWindowPoints(GetAncestor(windowHandle(), GA_ROOT), windowHandle(), &point, 1);
-    x2 = point.x;
-    y2 = point.y;
+    x2 = point.x + scrollXOffset();
+    y2 = point.y + scrollYOffset();
 }
 
 void ScrollView::contentsToViewport(int x1, int y1, int& x2, int& y2)
 {
-    POINT point = {x1, y1};
+    POINT point = {x1 - scrollXOffset(), y1 - scrollYOffset()};
     MapWindowPoints(windowHandle(), GetAncestor(windowHandle(), GA_ROOT), &point, 1);
     x2 = point.x;
     y2 = point.y;
