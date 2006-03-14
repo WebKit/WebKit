@@ -164,17 +164,26 @@ float computePercentageDifferent(NSBitmapImageRep *diffBitmap)
     // if diffBiatmap is nil, then there was an error, and it didn't match.
     if (diffBitmap == nil)
         return 100.0;
-        
-    int totalPixels = [diffBitmap pixelsHigh] * [diffBitmap pixelsWide];
-    int totalBytes = [diffBitmap bytesPerRow] * [diffBitmap pixelsHigh];
-    unsigned char *bitmapData = [diffBitmap bitmapData];
-    int differences = 0;
+    
+    unsigned bitmapFormat = [diffBitmap bitmapFormat];
+    assert(!(bitmapFormat & NSAlphaFirstBitmapFormat));
+    assert(!(bitmapFormat & NSFloatingPointSamplesBitmapFormat));
+    
+    unsigned pixelsHigh = [diffBitmap pixelsHigh];
+    unsigned pixelsWide = [diffBitmap pixelsWide];
+    unsigned bytesPerRow = [diffBitmap bytesPerRow];
+    unsigned char *pixelRowData = [diffBitmap bitmapData];
+    unsigned differences = 0;
     
     // NOTE: This may not be safe when switching between ENDIAN types
-    for (int i = 0; i < totalBytes; i += 4) {
-        if (*(bitmapData + i) != 0 || *(bitmapData + i + 1) != 0 || *(bitmapData + i + 2) != 0)
-            differences++;
+    for (unsigned row = 0; row < pixelsHigh; row++) {
+        for (unsigned col = 0; col < (pixelsWide * 4); col += 4) {
+            if (*(pixelRowData + col) != 0 || *(pixelRowData + col + 1) != 0 || *(pixelRowData + col + 2) != 0)
+                differences++;
+        }
+        pixelRowData += bytesPerRow;
     }
     
-    return (differences * 100.0)/totalPixels;
+    float totalPixels = pixelsHigh * pixelsWide;
+    return (differences * 100.f) / totalPixels;
 }

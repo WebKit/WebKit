@@ -1,3 +1,18 @@
+2006-03-13  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Fix checksum generation on Intel machines.
+        Also moved to CGImage APIs instead of NSBitmapImageRep, may possibly
+        give a small speed boost now that it uses a shared buffer.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (main):
+        (dump):
+        (md5HashStringForBitmap):
+        * DumpRenderTree/ImageDiff.m:
+        (computePercentageDifferent):
+
 2006-03-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Tim Hatcher.

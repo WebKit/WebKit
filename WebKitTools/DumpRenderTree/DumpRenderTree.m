@@ -99,7 +99,7 @@
 @end
 
 static void dumpRenderTree(const char *pathOrURL);
-static NSString *md5HashStringForBitmap(NSBitmapImageRep *bitmap);
+static NSString *md5HashStringForBitmap(CGImageRef bitmap);
 
 static volatile BOOL done;
 static WebFrame *frame;
@@ -116,6 +116,11 @@ static NSPasteboard *localPasteboard;
 static BOOL windowIsKey = YES;
 static NSPoint lastMousePosition;
 static DumpRenderTreeDraggingInfo *draggingInfo;
+static unsigned char* screenCaptureBuffer;
+static CGColorSpaceRef sharedColorSpace;
+
+const unsigned maxViewHeight = 600;
+const unsigned maxViewWidth = 800;
 
 static CMProfileRef currentColorProfile = 0;
 static void restoreColorSpace(int ignored)
@@ -244,13 +249,16 @@ int main(int argc, const char *argv[])
         exit(1);
     }
     
-    if (dumpPixels)
+    if (dumpPixels) {
         setDefaultColorProfileToRGB();
+        screenCaptureBuffer = malloc(maxViewHeight * maxViewWidth * 4);
+        sharedColorSpace = CGColorSpaceCreateDeviceRGB();
+    }
     
     localPasteboard = [NSPasteboard pasteboardWithUniqueName];
     navigationController = [[NavigationController alloc] init];
 
-    NSRect rect = NSMakeRect(0, 0, 800, 600);
+    NSRect rect = NSMakeRect(0, 0, maxViewWidth, maxViewHeight);
     
     WebView *webView = [[WebView alloc] initWithFrame:rect];
     WaitUntilDoneDelegate *delegate = [[WaitUntilDoneDelegate alloc] init];
@@ -260,7 +268,7 @@ int main(int argc, const char *argv[])
     [webView setUIDelegate:delegate];
     frame = [webView mainFrame];
     
-    NSString *pwd = [[NSString stringWithCString:argv[0]] stringByDeletingLastPathComponent];
+    NSString *pwd = [[NSString stringWithUTF8String:argv[0]] stringByDeletingLastPathComponent];
     [WebPluginDatabase setAdditionalWebPlugInPaths:[NSArray arrayWithObject:pwd]];
     [[WebPluginDatabase installedPlugins] refresh];
 
@@ -348,7 +356,7 @@ static void dump(void)
             if (isSVGW3CTest)
                 [[frame webView] setFrameSize:NSMakeSize(480, 360)];
             else 
-                [[frame webView] setFrameSize:NSMakeSize(800, 600)];
+                [[frame webView] setFrameSize:NSMakeSize(maxViewWidth, maxViewHeight)];
             result = [frame renderTreeAsExternalRepresentation];
         }
         
@@ -374,20 +382,33 @@ static void dump(void)
             
             // grab a bitmap from the view
             WebView *view = [frame webView];
-            NSBitmapImageRep *imageRep = [view bitmapImageRepForCachingDisplayInRect:[view frame]];
-            [view cacheDisplayInRect:[view frame] toBitmapImageRep:imageRep];
+            NSSize webViewSize = [[frame webView] frame].size;
+            CGContextRef cgContext = CGBitmapContextCreate(screenCaptureBuffer, webViewSize.width, webViewSize.height, 8, webViewSize.width * 4, sharedColorSpace, kCGBitmapByteOrder32Host | kCGImageAlphaPremultipliedLast);
+            NSGraphicsContext *nsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:cgContext flipped:NO];
+            [NSGraphicsContext saveGraphicsState];
+            [NSGraphicsContext setCurrentContext:nsContext];
+            [view displayRectIgnoringOpacity:NSMakeRect(0, 0, webViewSize.width, webViewSize.height) inContext:nsContext];
+            [NSGraphicsContext restoreGraphicsState];
             
             // has the actual hash to compare to the expected image's hash
-            NSString *actualHash = md5HashStringForBitmap(imageRep);
+            CGImageRef bitmapImage = CGBitmapContextCreateImage(cgContext);
+            NSString *actualHash = md5HashStringForBitmap(bitmapImage);
             printf("\nActualHash: %s\n", [actualHash UTF8String]);
             printf("BaselineHash: %s\n", [baselineHash UTF8String]);
             
             // if the hashes don't match, send image back to stdout for diff comparision
-            if (![baselineHash isEqualToString:actualHash] || access([baselineImagePath fileSystemRepresentation], F_OK) != 0) {            
-                NSData *imageData = [imageRep representationUsingType:NSPNGFileType properties:nil];
-                printf("Content-length: %d\n", [imageData length]);
-                fwrite([imageData bytes], 1, [imageData length], stdout);
+            if (![baselineHash isEqualToString:actualHash] || access([baselineImagePath fileSystemRepresentation], F_OK) != 0) {
+                CFMutableDataRef imageData = CFDataCreateMutable(0, 0);
+                CGImageDestinationRef imageDest = CGImageDestinationCreateWithData(imageData, CFSTR("public.png"), 1, 0);
+                CGImageDestinationAddImage(imageDest, bitmapImage, 0);
+                CGImageDestinationFinalize(imageDest);
+                CFRelease(imageDest);
+                printf("Content-length: %lu\n", CFDataGetLength(imageData));
+                fwrite(CFDataGetBytePtr(imageData), 1, CFDataGetLength(imageData), stdout);
+                CFRelease(imageData);
             }
+            CGImageRelease(bitmapImage);
+            CGContextRelease(cgContext);
         }
 
         printf("#EOF\n");
@@ -888,13 +909,25 @@ static void dumpRenderTree(const char *pathOrURL)
 }
 
 /* Hashes a bitmap and returns a text string for comparison and saving to a file */
-static NSString *md5HashStringForBitmap(NSBitmapImageRep *bitmap)
+static NSString *md5HashStringForBitmap(CGImageRef bitmap)
 {
     MD5_CTX md5Context;
     unsigned char hash[16];
-
+    
+    unsigned bitsPerPixel = CGImageGetBitsPerPixel(bitmap);
+    assert(bitsPerPixel == 32); // ImageDiff assumes 32 bit RGBA, we must as well.
+    unsigned bytesPerPixel = bitsPerPixel / 8;
+    unsigned pixelsHigh = CGImageGetHeight(bitmap);
+    unsigned pixelsWide = CGImageGetWidth(bitmap);
+    unsigned bytesPerRow = CGImageGetBytesPerRow(bitmap);
+    assert(bytesPerRow >= (pixelsWide * bytesPerPixel));
+    
     MD5_Init(&md5Context);
-    MD5_Update(&md5Context, [bitmap bitmapData], [bitmap bytesPerPlane]);
+    unsigned char *bitmapData = screenCaptureBuffer;
+    for (unsigned row = 0; row < pixelsHigh; row++) {
+        MD5_Update(&md5Context, bitmapData, pixelsWide * bytesPerPixel);
+        bitmapData += bytesPerRow;
+    }
     MD5_Final(hash, &md5Context);
     
     char hex[33] = "";
