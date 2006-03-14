@@ -1379,7 +1379,7 @@ void StyledElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         if (namedAttrMap) {
             if (attr->isNull())
                 namedAttrMap->setID(nullAtom);
-            else if (getDocument()->inCompatMode() && !attr->value().impl()->isLower())
+            else if (getDocument() && getDocument()->inCompatMode() && !attr->value().impl()->isLower())
                 namedAttrMap->setID(AtomicString(attr->value().domString().lower()));
             else
                 namedAttrMap->setID(attr->value());

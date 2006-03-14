@@ -1,3 +1,10 @@
+2006-03-14  Darin Adler  <darin@apple.com>
+
+        - oops, didn't mean to check this in
+
+        * dom/dom_elementimpl.cpp: (WebCore::StyledElementImpl::parseMappedAttribute):
+        Reverted nil-document check that I didn't mean to remove.
+
 2006-03-14  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Hyatt
