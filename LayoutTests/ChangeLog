@@ -1,3 +1,14 @@
+2006-03-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff and Eric.
+
+        - test for <http://bugzilla.opendarwin.org/show_bug.cgi?id=7765>, <rdar://problem/4474884>
+          hasAttribute always returns false for uppercase attribute names like "STYLE"
+        - also incidentally tests getAttributeNS and handling of null namespace parameters
+
+        * fast/dom/Element/attribute-uppercase.html: Added.
+        * fast/dom/Element/attribute-uppercase-expected.txt: Added.
+
 2006-03-13  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by ggaren & TimH.

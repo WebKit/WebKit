@@ -382,28 +382,30 @@ void ElementImpl::scrollIntoViewIfNeeded(bool centerIfNeeded)
     }
 }
 
-const AtomicString& ElementImpl::getAttributeNS(const DOMString &namespaceURI,
-                                                const DOMString &localName) const
+static inline bool inHTMLDocument(const ElementImpl* e)
 {
-    DOMString ln(localName);
-    if (getDocument() && getDocument()->isHTMLDocument())
-        ln = localName.lower();
-    QualifiedName name(nullAtom, ln.impl(), namespaceURI.impl());
-    return getAttribute(name);
+    return e && e->getDocument() && e->getDocument()->isHTMLDocument();
+}
+
+const AtomicString& ElementImpl::getAttribute(const String& name) const
+{
+    String localName = inHTMLDocument(this) ? name.lower() : name;
+    return getAttribute(QualifiedName(nullAtom, localName.impl(), nullAtom));
+}
+
+const AtomicString& ElementImpl::getAttributeNS(const String& namespaceURI, const String& localName) const
+{
+    return getAttribute(QualifiedName(nullAtom, localName.impl(), namespaceURI.impl()));
 }
 
 void ElementImpl::setAttribute(const String& name, const String& value, ExceptionCode& ec)
 {
-    DOMString ln(name);
-    if (getDocument() && getDocument()->isHTMLDocument())
-        ln = name.lower();
-
-    if (!DocumentImpl::isValidName(ln)) {
+    if (!DocumentImpl::isValidName(name)) {
         ec = INVALID_CHARACTER_ERR;
         return;
     }
-
-    setAttribute(QualifiedName(nullAtom, ln.impl(), nullAtom), value.impl(), ec);
+    String localName = inHTMLDocument(this) ? name.lower() : name;
+    setAttribute(QualifiedName(nullAtom, localName.impl(), nullAtom), value.impl(), ec);
 }
 
 void ElementImpl::setAttribute(const QualifiedName& name, DOMStringImpl* value, ExceptionCode& ec)
@@ -770,49 +772,59 @@ PassRefPtr<AttrImpl> ElementImpl::removeAttributeNode(AttrImpl *attr, ExceptionC
     return static_pointer_cast<AttrImpl>(attrs->removeNamedItem(attr->qualifiedName(), ec));
 }
 
-void ElementImpl::setAttributeNS(const DOMString &namespaceURI, const DOMString &qualifiedName, const DOMString &value, ExceptionCode& ec)
+void ElementImpl::setAttributeNS(const String& namespaceURI, const String& qualifiedName, const String& value, ExceptionCode& ec)
 {
     DOMString prefix, localName;
     if (!DocumentImpl::parseQualifiedName(qualifiedName, prefix, localName)) {
         ec = INVALID_CHARACTER_ERR;
         return;
     }
-
-    if (getDocument()->isHTMLDocument())
-        localName = localName.lower();
-
     setAttribute(QualifiedName(prefix.impl(), localName.impl(), namespaceURI.impl()), value.impl(), ec);
 }
 
-void ElementImpl::removeAttributeNS(const DOMString &namespaceURI, const DOMString &localName, ExceptionCode& ec)
+void ElementImpl::removeAttribute(const String& name, ExceptionCode& ec)
 {
-    DOMString ln(localName);
-    if (getDocument() && getDocument()->isHTMLDocument())
-        ln = localName.lower();
-    removeAttribute(QualifiedName(nullAtom, ln.impl(), namespaceURI.impl()), ec);
+    String localName = inHTMLDocument(this) ? name.lower() : name;
+    removeAttribute(QualifiedName(nullAtom, localName.impl(), nullAtom), ec);
 }
 
-PassRefPtr<AttrImpl> ElementImpl::getAttributeNodeNS(const DOMString &namespaceURI, const DOMString &localName)
+void ElementImpl::removeAttributeNS(const String& namespaceURI, const String& localName, ExceptionCode& ec)
+{
+    removeAttribute(QualifiedName(nullAtom, localName.impl(), namespaceURI.impl()), ec);
+}
+
+PassRefPtr<AttrImpl> ElementImpl::getAttributeNode(const String& name)
 {
     NamedAttrMapImpl *attrs = attributes(true);
     if (!attrs)
         return 0;
-    DOMString ln(localName);
-    if (getDocument() && getDocument()->isHTMLDocument())
-        ln = localName.lower();
-    return static_pointer_cast<AttrImpl> (attrs->getNamedItem(QualifiedName(nullAtom, localName.impl(), namespaceURI.impl())));
+    String localName = inHTMLDocument(this) ? name.lower() : name;
+    return static_pointer_cast<AttrImpl>(attrs->getNamedItem(QualifiedName(nullAtom, localName.impl(), nullAtom)));
 }
 
-bool ElementImpl::hasAttributeNS(const DOMString &namespaceURI, const DOMString &localName) const
+PassRefPtr<AttrImpl> ElementImpl::getAttributeNodeNS(const String& namespaceURI, const String& localName)
+{
+    NamedAttrMapImpl *attrs = attributes(true);
+    if (!attrs)
+        return 0;
+    return static_pointer_cast<AttrImpl>(attrs->getNamedItem(QualifiedName(nullAtom, localName.impl(), namespaceURI.impl())));
+}
+
+bool ElementImpl::hasAttribute(const String& name) const
 {
     NamedAttrMapImpl *attrs = attributes(true);
     if (!attrs)
         return false;
-    DOMString ln(localName);
-    if (getDocument() && getDocument()->isHTMLDocument())
-        ln = localName.lower();
-    return attrs->getAttributeItem(QualifiedName(nullAtom, localName.impl(), 
-                                                 namespaceURI.impl()));
+    String localName = inHTMLDocument(this) ? name.lower() : name;
+    return attrs->getAttributeItem(QualifiedName(nullAtom, localName.impl(), nullAtom));
+}
+
+bool ElementImpl::hasAttributeNS(const String& namespaceURI, const String& localName) const
+{
+    NamedAttrMapImpl *attrs = attributes(true);
+    if (!attrs)
+        return false;
+    return attrs->getAttributeItem(QualifiedName(nullAtom, localName.impl(), namespaceURI.impl()));
 }
 
 CSSStyleDeclarationImpl *ElementImpl::style()
@@ -863,20 +875,26 @@ bool NamedAttrMapImpl::isMappedAttributeMap() const
     return false;
 }
 
-PassRefPtr<NodeImpl> NamedAttrMapImpl::getNamedItemNS(const DOMString &namespaceURI, const DOMString &localName) const
+PassRefPtr<NodeImpl> NamedAttrMapImpl::getNamedItem(const String& name) const
 {
-    DOMString ln(localName);
-    if (element->getDocument()->isHTMLDocument())
-        ln = localName.lower();
-    return getNamedItem(QualifiedName(nullAtom, ln.impl(), namespaceURI.impl()));
+    String localName = inHTMLDocument(element) ? name.lower() : name;
+    return getNamedItem(QualifiedName(nullAtom, localName.impl(), nullAtom));
 }
 
-PassRefPtr<NodeImpl> NamedAttrMapImpl::removeNamedItemNS(const DOMString &namespaceURI, const DOMString &localName, ExceptionCode& ec)
+PassRefPtr<NodeImpl> NamedAttrMapImpl::getNamedItemNS(const String& namespaceURI, const String& localName) const
 {
-    DOMString ln(localName);
-    if (element->getDocument()->isHTMLDocument())
-        ln = localName.lower();
-    return removeNamedItem(QualifiedName(nullAtom, ln.impl(), namespaceURI.impl()), ec);
+    return getNamedItem(QualifiedName(nullAtom, localName.impl(), namespaceURI.impl()));
+}
+
+PassRefPtr<NodeImpl> NamedAttrMapImpl::removeNamedItem(const String& name, ExceptionCode& ec)
+{
+    String localName = inHTMLDocument(element) ? name.lower() : name;
+    return removeNamedItem(QualifiedName(nullAtom, localName.impl(), nullAtom), ec);
+}
+
+PassRefPtr<NodeImpl> NamedAttrMapImpl::removeNamedItemNS(const String& namespaceURI, const String& localName, ExceptionCode& ec)
+{
+    return removeNamedItem(QualifiedName(nullAtom, localName.impl(), namespaceURI.impl()), ec);
 }
 
 PassRefPtr<NodeImpl> NamedAttrMapImpl::getNamedItem(const QualifiedName& name) const
@@ -1361,7 +1379,7 @@ void StyledElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         if (namedAttrMap) {
             if (attr->isNull())
                 namedAttrMap->setID(nullAtom);
-            else if (getDocument() && getDocument()->inCompatMode() && !attr->value().impl()->isLower())
+            else if (getDocument()->inCompatMode() && !attr->value().impl()->isLower())
                 namedAttrMap->setID(AtomicString(attr->value().domString().lower()));
             else
                 namedAttrMap->setID(attr->value());

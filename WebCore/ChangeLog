@@ -1,3 +1,56 @@
+2006-03-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff and Eric.
+
+        - fix <http://bugzilla.opendarwin.org/show_bug.cgi?id=7765>, <rdar://problem/4474884>
+          hasAttribute always returns false for uppercase attribute names like "STYLE"
+        - re-add missing JavaScript binding for getAttributeNS
+        - fixed handling of null namespace parameters in getAttributeNS and friends
+
+        Test: fast/dom/Element/attribute-uppercase.html
+
+        To match Gecko's behavior, the magic "lowercasing" of all attribute names
+        is only done when calling DOM Level 1 functions that lack an NS suffix.
+        The functions with an NS suffix are case sensitive, even in HTML documents.
+
+        * dom/NamedNodeMapImpl.h: Changed getNamedItem and removeNamedItem to be pure virtual
+        functions instead of calling through to getNamedItemNS and removeNamedItemNS.
+
+        * dom/dom_elementimpl.h: Eliminated inline versions of non-NS functions that called
+        the NS functions. They can't work that way any more since the lowercasing behavior
+        is different.
+        * dom/dom_elementimpl.cpp:
+        (WebCore::ElementImpl::getAttribute): Added. Lowercases the name if the document
+        is an HTML document, and then calls through to the qualified name version. Removed
+        the null check since getDocument is guaranteed to never return 0 now that nodes
+        hold a reference to their document.
+        (WebCore::ElementImpl::getAttributeNS): Removed the lowercasing code.
+        (WebCore::ElementImpl::setAttribute): More of the same.
+        (WebCore::ElementImpl::setAttributeNS): Ditto.
+        (WebCore::ElementImpl::removeAttribute): Ditto.
+        (WebCore::ElementImpl::removeAttributeNS): Ditto.
+        (WebCore::ElementImpl::getAttributeNode): Ditto.
+        (WebCore::ElementImpl::getAttributeNodeNS): Ditto.
+        (WebCore::ElementImpl::hasAttribute): Ditto.
+        (WebCore::ElementImpl::hasAttributeNS): Ditto.
+        (WebCore::NamedAttrMapImpl::getNamedItem): Ditto.
+        (WebCore::NamedAttrMapImpl::getNamedItemNS): Ditto.
+        (WebCore::NamedAttrMapImpl::removeNamedItem): Ditto.
+        (WebCore::NamedAttrMapImpl::removeNamedItemNS): Ditto.
+        (WebCore::StyledElementImpl::parseMappedAttribute): Removed another unneeded null
+        check like the one mentioned above.
+
+        * dom/Element.idl: Set ConvertNullToNullString for all the namespaceURI
+        parameters, since we don't want null to turn into "null". Added a semicolon
+        to the end of the hasAttributeNS line -- was causing the next declaration to
+        be eaten up (so getAttributeNS was completely broken).
+
+        * khtml/ecma/kjs_dom.cpp: (KJS::DOMNamedNodeMapProtoFunc::callAsFunction):
+        Call valueToStringWithNullCheck to do the equivalent of ConvertNullToNullString
+        for both getNamedItemNS and removeNamedItemNS.
+
+        * bindings/js/JSDOMCore.cpp: Touched so that the changes above will take effect.
+
 2006-03-14  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 7259, opacity performs badly.

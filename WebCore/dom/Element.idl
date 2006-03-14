@@ -21,6 +21,8 @@ module core {
 
     interface [LegacyParent=KJS::DOMElement] Element : Node {
 
+        // DOM Level 1
+
         NodeList getElementsByTagName(in DOMString name);
 
         // ConvertNullStringTo=Null should be used here, since if the attribute isn't present at all, you should
@@ -42,16 +44,17 @@ module core {
         Attr removeAttributeNode(in Attr oldAttr)
             raises(DOMException);                    
 
-        // DOM2
-        NodeList getElementsByTagNameNS(in DOMString namespaceURI, 
+        // DOM Level 2
+
+        NodeList getElementsByTagNameNS(in [ConvertNullToNullString] DOMString namespaceURI, 
                                         in DOMString localName);
 
         boolean hasAttribute(in DOMString name);
 
-        boolean hasAttributeNS(in DOMString namespaceURI, 
-                               in DOMString localName)
+        boolean hasAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI, 
+                               in DOMString localName);
 
-        DOMString getAttributeNS(in DOMString namespaceURI, 
+        DOMString getAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI, 
                                  in DOMString localName);
 
         void setAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI, 
@@ -59,17 +62,18 @@ module core {
                             in DOMString value)
             raises(DOMException);
 
-        void removeAttributeNS(in DOMString namespaceURI, 
+        void removeAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI, 
                                in DOMString localName)
             raises(DOMException);
 
-        Attr getAttributeNodeNS(in DOMString namespaceURI, 
+        Attr getAttributeNodeNS(in [ConvertNullToNullString] DOMString namespaceURI, 
                                 in DOMString localName);
 
         Attr setAttributeNodeNS(in Attr newAttr)
             raises(DOMException);
 
-        // Extensions
+        // extensions
+
         void focus();
         void blur();
 

@@ -1275,11 +1275,11 @@ JSValue *DOMNamedNodeMapProtoFunc::callAsFunction(ExecState *exec, JSObject *thi
     case DOMNamedNodeMap::Item:
       return getDOMNode(exec, map.item(args[0]->toInt32(exec)));
     case DOMNamedNodeMap::GetNamedItemNS: // DOM2
-      return getDOMNode(exec, map.getNamedItemNS(args[0]->toString(exec).domString(), args[1]->toString(exec).domString()));
+      return getDOMNode(exec, map.getNamedItemNS(valueToStringWithNullCheck(exec, args[0]), args[1]->toString(exec).domString()));
     case DOMNamedNodeMap::SetNamedItemNS: // DOM2
       return getDOMNode(exec, map.setNamedItemNS(toNode(args[0]), exception).get());
     case DOMNamedNodeMap::RemoveNamedItemNS: // DOM2
-      return getDOMNode(exec, map.removeNamedItemNS(args[0]->toString(exec).domString(), args[1]->toString(exec).domString(), exception).get());
+      return getDOMNode(exec, map.removeNamedItemNS(valueToStringWithNullCheck(exec, args[0]), args[1]->toString(exec).domString(), exception).get());
     default:
       break;
   }

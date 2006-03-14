@@ -27,27 +27,24 @@
 #ifndef DOM_ELEMENTIMPL_H
 #define DOM_ELEMENTIMPL_H
 
-#include "NamedNodeMapImpl.h"
+#include "AtomicStringList.h"
 #include "ContainerNodeImpl.h"
+#include "NamedNodeMapImpl.h"
+#include "QualifiedName.h"
 #include "StringImpl.h"
 #include "css_valueimpl.h"
-#include "QualifiedName.h"
-#include "AtomicStringList.h"
 
 #if __OBJC__
 #define id id_AVOID_KEYWORD
 #endif
 
-namespace khtml {
-    class CSSStyleSelector;
-}
+namespace WebCore {
 
-namespace DOM {
-
+class AttrImpl;
 class CSSStyleDeclarationImpl;
+class CSSStyleSelector;
 class ElementImpl;
 class NamedAttrMapImpl;
-class AttrImpl;
 
 // this has no counterpart in DOM, purely internal
 // representation of the nodevalue of an Attr.
@@ -173,23 +170,23 @@ public:
 
     bool hasAttributes() const;
 
-    bool hasAttribute(const DOMString &name) const { return hasAttributeNS(DOMString(), name); }
-    bool hasAttributeNS(const DOMString &namespaceURI, const DOMString &localName) const;
+    bool hasAttribute(const String& name) const;
+    bool hasAttributeNS(const String& namespaceURI, const String& localName) const;
 
-    const AtomicString& getAttribute(const DOMString& name) const { return getAttributeNS(DOMString(), name); }
-    const AtomicString& getAttributeNS(const DOMString &namespaceURI, const DOMString &localName) const;
+    const AtomicString& getAttribute(const String& name) const;
+    const AtomicString& getAttributeNS(const String& namespaceURI, const String& localName) const;
 
-    void setAttribute(const DOMString &name, const DOMString &value, ExceptionCode&);
-    void setAttributeNS(const DOMString &namespaceURI, const DOMString &qualifiedName, const DOMString &value, ExceptionCode&);
+    void setAttribute(const String& name, const String& value, ExceptionCode&);
+    void setAttributeNS(const String& namespaceURI, const String& qualifiedName, const String& value, ExceptionCode&);
 
     void scrollIntoView (bool alignToTop);
     void scrollIntoViewIfNeeded(bool centerIfNeeded);
 
-    void removeAttribute(const DOMString &name, ExceptionCode& ec) { removeAttributeNS(DOMString(), name, ec); }
-    void removeAttributeNS(const DOMString &namespaceURI, const DOMString &localName, ExceptionCode&);
+    void removeAttribute(const String &name, ExceptionCode& ec);
+    void removeAttributeNS(const String &namespaceURI, const String& localName, ExceptionCode&);
 
-    PassRefPtr<AttrImpl> getAttributeNode(const DOMString &name) { return getAttributeNodeNS(DOMString(), name); }
-    PassRefPtr<AttrImpl> getAttributeNodeNS(const DOMString &namespaceURI, const DOMString &localName);
+    PassRefPtr<AttrImpl> getAttributeNode(const String& name);
+    PassRefPtr<AttrImpl> getAttributeNodeNS(const String& namespaceURI, const String& localName);
     PassRefPtr<AttrImpl> setAttributeNode(AttrImpl*, ExceptionCode&);
     PassRefPtr<AttrImpl> setAttributeNodeNS(AttrImpl* newAttr, ExceptionCode& ec) { return setAttributeNode(newAttr, ec); }
     PassRefPtr<AttrImpl> removeAttributeNode(AttrImpl*, ExceptionCode&);
@@ -217,7 +214,7 @@ public:
     virtual void removedFromDocument();
 
     // convenience methods which ignore exceptions
-    void setAttribute(const QualifiedName& name, const DOMString &value);
+    void setAttribute(const QualifiedName& name, const String& value);
 
     virtual NamedAttrMapImpl *attributes() const;
     NamedAttrMapImpl* attributes(bool readonly) const;
@@ -283,11 +280,14 @@ public:
     NamedAttrMapImpl &operator =(const NamedAttrMapImpl &other);
 
     // DOM methods & attributes for NamedNodeMap
-    virtual PassRefPtr<NodeImpl> getNamedItemNS(const DOMString &namespaceURI, const DOMString &localName) const;
-    virtual PassRefPtr<NodeImpl> removeNamedItemNS(const DOMString &namespaceURI, const DOMString &localName, ExceptionCode& ec);
+
+    virtual PassRefPtr<NodeImpl> getNamedItem(const String& name) const;
+    virtual PassRefPtr<NodeImpl> removeNamedItem(const String& name, ExceptionCode&);
+
+    virtual PassRefPtr<NodeImpl> getNamedItemNS(const String& namespaceURI, const String& localName) const;
+    virtual PassRefPtr<NodeImpl> removeNamedItemNS(const String& namespaceURI, const String& localName, ExceptionCode&);
 
     virtual PassRefPtr<NodeImpl> getNamedItem(const QualifiedName& name) const;
-
     virtual PassRefPtr<NodeImpl> removeNamedItem(const QualifiedName& name, ExceptionCode&);
     virtual PassRefPtr<NodeImpl> setNamedItem(NodeImpl* arg, ExceptionCode&);
 
