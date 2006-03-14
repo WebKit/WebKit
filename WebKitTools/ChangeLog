@@ -2,6 +2,15 @@
 
         Reviewed by mjs.
 
+        Make the URL bar relinquish focus on page load.
+
+        * Spinneret/Spinneret/Spinneret.cpp:
+        (MyEditProc):
+
+2006-03-14  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
         Fix WebView to allow KeyFocus.
         Add handling of space and shift-space for scrolling.
 
