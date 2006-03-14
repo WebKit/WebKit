@@ -200,10 +200,10 @@ public:
 
     bool isTransparent() const;
     RenderLayer* transparentAncestor();
-    void beginTransparencyLayers(GraphicsContext*);
+    void beginTransparencyLayers(GraphicsContext*, const IntRect&);
     
-    RenderLayer* root() {
-        RenderLayer* curr = this;
+    const RenderLayer* root() const {
+        const RenderLayer* curr = this;
         while (curr->parent()) curr = curr->parent();
         return curr;
     }
@@ -293,7 +293,10 @@ public:
 
     bool intersectsDamageRect(const IntRect& layerBounds, const IntRect& damageRect) const;
     bool containsPoint(int x, int y, const IntRect& damageRect) const;
-    
+
+    // Returns a bounding box for this layer only.
+    IntRect absoluteBoundingBox() const;
+
     void updateHoverActiveState(RenderObject::NodeInfo& info);
     
     IntRect repaintRect() const { return m_repaintRect; }
@@ -306,7 +309,7 @@ public:
 
     // Overridden to prevent the normal delete from being called.
     void operator delete(void* ptr, size_t sz);
-        
+
 private:
     // The normal operator new is disallowed on all render objects.
     void* operator new(size_t sz) throw();

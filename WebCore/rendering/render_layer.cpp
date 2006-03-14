@@ -53,6 +53,7 @@
 #include "htmlnames.h"
 #include "render_arena.h"
 #include "render_canvas.h"
+#include "render_inline.h"
 #include "render_theme.h"
 #include <assert.h>
 #include <kxmlcore/Vector.h>
@@ -330,17 +331,39 @@ RenderLayer::transparentAncestor()
     return curr;
 }
 
-void RenderLayer::beginTransparencyLayers(GraphicsContext* p)
+static IntRect transparencyClipBox(RenderLayer* l)
 {
-    if (isTransparent() && m_usedTransparency)
+    // FIXME: Although this completely ignores clipping, we ultimately intersect with the
+    // paintDirtyRect, and that should cut down on the amount we have to paint.  Still it
+    // would be better to respect clips.
+    IntRect clipRect = l->absoluteBoundingBox();
+    
+    // Note: we don't have to walk z-order lists since transparent elements always establish
+    // a stacking context.  This means we can just walk the layer tree directly. 
+    for (RenderLayer* curr = l->firstChild(); curr; curr = curr->nextSibling()) {
+        // Transparent children paint in a different transparency layer, and so we exclude them.
+        if (!curr->isTransparent())
+            clipRect.unite(curr->absoluteBoundingBox());
+    }
+    
+    return clipRect;
+}
+
+void RenderLayer::beginTransparencyLayers(GraphicsContext* p, const IntRect& paintDirtyRect)
+{
+    if (p->paintingDisabled() || (isTransparent() && m_usedTransparency))
         return;
     
     RenderLayer* ancestor = transparentAncestor();
     if (ancestor)
-        ancestor->beginTransparencyLayers(p);
+        ancestor->beginTransparencyLayers(p, paintDirtyRect);
     
     if (isTransparent()) {
         m_usedTransparency = true;
+        IntRect clipRect = transparencyClipBox(this);
+        clipRect.intersect(paintDirtyRect);
+        p->save();
+        p->addClip(clipRect);
         p->beginTransparencyLayer(renderer()->style()->opacity());
     }
 }
@@ -1022,7 +1045,7 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     if (shouldPaint && !selectionOnly && !damageRect.isEmpty()) {
         // Begin transparency layers lazily now that we know we have to paint something.
         if (haveTransparency)
-            beginTransparencyLayers(p);
+            beginTransparencyLayers(p, paintDirtyRect);
         
         // Paint our background first, before painting any child layers.
         // Establish the clip used to paint our background.
@@ -1048,7 +1071,7 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     if (shouldPaint && !clipRectToApply.isEmpty()) {
         // Begin transparency layers lazily now that we know we have to paint something.
         if (haveTransparency)
-            beginTransparencyLayers(p);
+            beginTransparencyLayers(p, paintDirtyRect);
 
         // Set up the clip used when painting our children.
         setClip(p, paintDirtyRect, clipRectToApply);
@@ -1083,6 +1106,7 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     // End our transparency layer
     if (isTransparent() && m_usedTransparency) {
         p->endTransparencyLayer();
+        p->restore();
         m_usedTransparency = false;
     }
 }
@@ -1290,25 +1314,67 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& pa
     }
 }
 
-static bool mustExamineRenderer(RenderObject* renderer)
-{
-    if (renderer->isCanvas() || renderer->isRoot() || renderer->isInlineFlow())
-        return true;
-    
-    IntRect bbox = renderer->borderBox();
-    IntRect overflowRect = renderer->overflowRect(false);
-    if (bbox != overflowRect)
-        return true;
-    IntRect floatRect = renderer->floatRect();
-    if (bbox != floatRect)
-        return true;
-
-    return false;
-}
-
 bool RenderLayer::intersectsDamageRect(const IntRect& layerBounds, const IntRect& damageRect) const
 {
-    return mustExamineRenderer(renderer()) || layerBounds.intersects(damageRect);
+    // Always examine the canvas and the root.
+    if (renderer()->isCanvas() || renderer()->isRoot())
+        return true;
+
+    // If we aren't an inline flow, and our layer bounds do intersect the damage rect, then we 
+    // can go ahead and return true.
+    if (!renderer()->isInlineFlow() && layerBounds.intersects(damageRect))
+        return true;
+        
+    // Otherwise we need to compute the bounding box of this single layer and see if it intersects
+    // the damage rect.
+    return absoluteBoundingBox().intersects(damageRect);
+}
+
+IntRect RenderLayer::absoluteBoundingBox() const
+{
+    // There are three special cases we need to consider.
+    // (1) Inline Flows.  For inline flows we will create a bounding box that fully encompasses all of the lines occupied by the
+    // inline.  In other words, if some <span> wraps to three lines, we'll create a bounding box that fully encloses the root
+    // line boxes of all three lines (including overflow on those lines).
+    // (2) Left/Top Overflow.  The width/height of layers already includes right/bottom overflow.  However, in the case of left/top
+    // overflow, we have to create a bounding box that will extend to include this overflow.
+    // (3) Floats.  When a layer has overhanging floats that it paints, we need to make sure to include these overhanging floats
+    // as part of our bounding box.  We do this because we are the responsible layer for both hit testing and painting those
+    // floats.
+    IntRect result;
+    if (renderer()->isInlineFlow()) {
+        // Go from our first line box to our last line box.
+        RenderInline* inlineFlow = static_cast<RenderInline*>(renderer());
+        InlineFlowBox* firstBox = inlineFlow->firstLineBox();
+        if (!firstBox)
+            return result;
+        int top = firstBox->root()->topOverflow();
+        int bottom = inlineFlow->lastLineBox()->root()->bottomOverflow();
+        int left = firstBox->xPos();
+        for (InlineRunBox* curr = firstBox->nextLineBox(); curr; curr = curr->nextLineBox())
+            left = kMin(left, curr->xPos());
+        result = IntRect(m_x + left, m_y + (top - renderer()->yPos()), width(), bottom - top);
+    } else {
+        IntRect bbox = renderer()->borderBox();
+        result = bbox;
+        IntRect overflowRect = renderer()->overflowRect(false);
+        if (bbox != overflowRect)
+            result.unite(overflowRect);
+        IntRect floatRect = renderer()->floatRect();
+        if (bbox != floatRect)
+            result.unite(floatRect);
+        
+        // We have to adjust the x/y of this result so that it is in the coordinate space of the layer.
+        result.move(m_x + result.x(), m_y + result.y());
+    }
+    
+    // Convert the bounding box to an absolute position.  We can do this easily by looking at the delta
+    // between the bounding box's xpos and our layer's xpos and then applying that to the absolute layerBounds
+    // passed in.
+    int absX = 0, absY = 0;
+    convertToLayerCoords(root(), absX, absY);
+    result.move(absX + result.x() - m_x, absY + result.y() - m_y);
+    return result;
 }
 
 bool RenderLayer::containsPoint(int x, int y, const IntRect& damageRect) const

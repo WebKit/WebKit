@@ -1,3 +1,22 @@
+2006-03-14  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 7259, opacity performs badly.
+
+        Reviewed by mjs
+
+        Adding some tests in fast/opacity.
+
+        * rendering/RenderTableRow.h:
+        (WebCore::RenderTableRow::requiresLayer):
+        * rendering/render_layer.cpp:
+        (WebCore::transparencyClipBox):
+        (WebCore::RenderLayer::beginTransparencyLayers):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::intersectsDamageRect):
+        (WebCore::RenderLayer::absoluteBoundingBox):
+        * rendering/render_layer.h:
+        (WebCore::RenderLayer::root):
+
 2006-03-14  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
