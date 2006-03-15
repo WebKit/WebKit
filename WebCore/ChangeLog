@@ -1,5 +1,19 @@
 2006-03-15  Adele Peterson  <adele@apple.com>
 
+       Reviewed by Maciej.
+
+       Followup fix for previous checkin.
+       http://bugzilla.opendarwin.org/show_bug.cgi?id=7114
+       <rdar://problem/3695120> dragging to scroll doesn't work with overflow:auto/scroll/overlay areas 
+
+       Many of the bugs related to the Radar bug have to do with autoscrolling in the RSS View.  
+       This fix walks the layer tree to find the first scrollable layer, so that autoscrolling will 
+       also work with nested layers, like those in the RSS View.
+
+       * bridge/mac/MacFrame.mm: (WebCore::MacFrame::khtmlMouseMoveEvent):
+
+2006-03-15  Adele Peterson  <adele@apple.com>
+
         Reviewed by Maciej.
 
         - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=7114

@@ -1767,9 +1767,11 @@ void MacFrame::khtmlMouseMoveEvent(MouseEventWithHitTestResults *event)
         if (node && node->renderer())
             layer = node->renderer()->enclosingLayer();
             
-        // If the selection began in a layer that can scroll, the layer should handle the autoscroll
+        // If the selection is contained in a layer that can scroll, that layer should handle the autoscroll
         // Otherwise, let the bridge handle it so the view can scroll itself.
-        if (layer && layer->shouldAutoscroll())
+        while (layer && !layer->shouldAutoscroll())
+            layer = layer->parent();
+        if (layer)
             handleAutoscroll(layer);
         else
             [_bridge handleAutoscrollForMouseDragged:_currentEvent];
