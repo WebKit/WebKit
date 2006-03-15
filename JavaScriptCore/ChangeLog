@@ -1,3 +1,15 @@
+2006-03-15  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Fix CString copy constructor, fixes Date.parse("") on Win32.
+
+        * kjs/date_object.cpp:
+        (KJS::DateProtoFunc::callAsFunction):
+        * kjs/ustring.cpp:
+        (KJS::CString::CString):
+        (KJS::CString::operator=):
+
 2006-03-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders.

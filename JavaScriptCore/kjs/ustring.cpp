@@ -69,13 +69,12 @@ CString::CString(const char *c, int len)
 CString::CString(const CString &b)
 {
   length = b.length;
-  if (length > 0 && b.data) {
+  if (b.data) {
     data = new char[length+1];
     memcpy(data, b.data, length + 1);
   }
-  else {
+  else
     data = 0;
-  }
 }
 
 CString::~CString()
@@ -119,13 +118,12 @@ CString &CString::operator=(const CString &str)
   if (data)
     delete [] data;
   length = str.length;
-  if (length > 0 && str.data) {
+  if (str.data) {
     data = new char[length + 1];
     memcpy(data, str.data, length + 1);
   }
-  else {
+  else
     data = 0;
-  }
 
   return *this;
 }

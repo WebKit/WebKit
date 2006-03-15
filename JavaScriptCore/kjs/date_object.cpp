@@ -558,7 +558,7 @@ JSValue *DateProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
   const int bufsize=100;
   char timebuffer[bufsize];
   CString oldlocale = setlocale(LC_TIME, 0);
-  if (!oldlocale.c_str())
+  if (!oldlocale.len())
     oldlocale = setlocale(LC_ALL, 0);
   // FIXME: Where's the code to set the locale back to oldlocale?
 #endif
