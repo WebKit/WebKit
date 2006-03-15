@@ -1,5 +1,14 @@
 2006-03-14  Darin Adler  <darin@apple.com>
 
+        Reviewed by Eric.
+
+        - fix <rdar://problem/4478121> -[WebCoreFrameBridge finalize] crashes under GC
+
+        * bridge/mac/WebCoreFrameBridge.mm: (-[WebCoreFrameBridge finalize]):
+        Don't call setBridge(nil).
+
+2006-03-14  Darin Adler  <darin@apple.com>
+
         - oops, didn't mean to check this in
 
         * dom/dom_elementimpl.cpp: (WebCore::StyledElementImpl::parseMappedAttribute):

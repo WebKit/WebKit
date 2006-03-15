@@ -495,10 +495,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 {
     // FIXME: This work really should not be done at deallocation time.
     // We need to do it at some well-defined time instead.
-
-    [self removeFromFrame];
-    m_frame->setBridge(nil);
-        
+    [self removeFromFrame];        
     [super finalize];
 }
 
