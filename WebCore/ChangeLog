@@ -1,3 +1,9 @@
+2006-03-15  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by geoff.
+
+        * platform/KeyEvent.h: Fix #define from QEvent_H to KeyEvent_H
+
 2006-03-15  David Hyatt  <hyatt@apple.com>
 
         Fix the box-sizing layout test by stopping integer overflowing from

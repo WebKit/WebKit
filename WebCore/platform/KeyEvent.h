@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QEVENT_H_
-#define QEVENT_H_
+#ifndef KeyEvent_H
+#define KeyEvent_H
 
 #include "PlatformString.h"
 
