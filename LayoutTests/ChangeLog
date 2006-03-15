@@ -1,3 +1,12 @@
+2006-03-14  Darin Adler  <darin@apple.com>
+
+        - land new results for tests affected by my setAttribute change
+
+        * dom/xhtml/level3/core/nodeisequalnode15-expected.txt: Updated to
+        reflect a new kind of failure.
+        * dom/xhtml/level3/core/nodeisequalnode16-expected.txt: Updated to
+        reflect success.
+
 2006-03-14  Geoffrey Garen  <ggaren@apple.com>
 
         Oops, forgot to add this file.
