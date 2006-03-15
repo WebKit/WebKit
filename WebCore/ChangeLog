@@ -1,3 +1,24 @@
+2006-03-14  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=4171
+        This patch changes the word-break algorithm used to apply text-
+        transform:capitalize to use a UBreakIterator. This fixes some 
+        existing edge cases we have in our text-transform:capitalize 
+        support and generally makes our results more consistent.
+
+        * platform/StringImpl.cpp:
+        (WebCore::getWordBreakIterator): Returns a UBreakIterator for a 
+        given string of a given length.
+        (WebCore::StringImpl::capitalize): Now uses the UBreakIterator to 
+        step between words and requires the previous character as input.
+        * platform/StringImpl.h: Change the declaration of capitalize() to 
+        take the previous character as a parameter. 
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::setText): Find the previous character and 
+        send it to StringImpl::capitalize()
+
 2006-03-14  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by adele

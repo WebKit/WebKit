@@ -1,3 +1,18 @@
+2006-03-14  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej
+
+        These expected results change for http://bugzilla.opendarwin.org/
+        show_bug.cgi?id=4171
+
+        * css1/text_properties/text-transCapitalize-expected.txt:
+        * css1/text_properties/text_transform-expected.checksum:
+        * css1/text_properties/text_transform-expected.png:
+        * css1/text_properties/text_transform-expected.txt:
+        * css2.1/t1605-c545-txttrans-00-b-ag-expected.checksum:
+        * css2.1/t1605-c545-txttrans-00-b-ag-expected.png:
+        * css2.1/t1605-c545-txttrans-00-b-ag-expected.txt:
+
 2006-03-14  Darin Adler  <darin@apple.com>
 
         Rubber stamped by Hyatt.

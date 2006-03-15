@@ -31,6 +31,7 @@
 #include "Length.h"
 #include <kxmlcore/Assertions.h>
 #include <string.h>
+#include <unicode/ubrk.h>
 
 using namespace KXMLCore;
 
@@ -373,33 +374,56 @@ StringImpl* StringImpl::upper() const
     return c;
 }
 
-StringImpl* StringImpl::capitalize(bool runOnString) const
+static UBreakIterator* getWordBreakIterator(const QChar* string, int length)
 {
-    StringImpl* c = new StringImpl;
-    bool haveCapped = runOnString;
-    if(!l) return c;
+    // The locale is currently ignored when determining character cluster breaks.
+    // This may change in the future, according to Deborah Goldsmith.
+    static bool createdIterator = false;
+    static UBreakIterator* iterator;
+    UErrorCode status;
+    if (!createdIterator) {
+        status = U_ZERO_ERROR;
+        iterator = ubrk_open(UBRK_WORD, "en_us", 0, 0, &status);
+        createdIterator = true;
+    }
+    if (!iterator)
+        return 0;
 
-    c->s = newQCharVector(l);
-    c->l = l;
+    status = U_ZERO_ERROR;
+    ubrk_setText(iterator, reinterpret_cast<const UChar*>(string), length, &status);
+    if (status != U_ZERO_ERROR)
+        return 0;
 
-    if ( l ) c->s[0] = s[0].upper();
+    return iterator;
+}
+
+StringImpl* StringImpl::capitalize(QChar previous) const
+{
+    StringImpl* capitalizedString = new StringImpl;
+    if(!l) return capitalizedString;
     
-    // This patch takes care of a lot of the text_transform: capitalize problems, particularly
-    // with the apostrophe. But it is just a temporary fix until we implement UBreakIterator as a 
-    // way to determine when to break for words.
-    for (unsigned int i = 0; i < l; i++) {
-        if (haveCapped) {
-            if (s[i].isSpace()) 
-                haveCapped = false;
-            c->s[i] = s[i];
-        } else if (s[i].isLetterOrNumber()) {
-            c->s[i] = s[i].upper();
-            haveCapped = true;
-        } else 
-            c->s[i] = s[i];
+    QChar* stringWithPrevious = newQCharVector(l + 1);
+    stringWithPrevious[0] = previous;
+    for (unsigned i = 1; i < l + 1; i++)
+        stringWithPrevious[i] = s[i - 1];
+    
+    UBreakIterator* boundary = getWordBreakIterator(stringWithPrevious, l + 1);
+    if (!boundary)
+        return capitalizedString;
+    
+    capitalizedString->s = newQCharVector(l);
+    capitalizedString->l = l;
+    
+    int32_t end;
+    int32_t start = ubrk_first(boundary);
+    for (end = ubrk_next(boundary); end != UBRK_DONE; start = end, end = ubrk_next(boundary)) {
+        if (start != 0)
+            capitalizedString->s[start - 1] = stringWithPrevious[start].upper();
+        for (int i = start; i < end; i++)
+            capitalizedString->s[i] = stringWithPrevious[i + 1];
     }
     
-    return c;
+    return capitalizedString;
 }
 
 int StringImpl::toInt(bool* ok) const

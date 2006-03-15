@@ -73,7 +73,7 @@ layer at (0,0) size 800x190
           RenderText {TEXT} at (0,0) size 0x0
         RenderBlock {P} at (3,63) size 320x30
           RenderText {TEXT} at (0,0) size 230x10
-            text run at (0,0) width 230: "Xx Xx X. (X.x. XX) X x "
+            text run at (0,0) width 230: "Xx Xx X. (X.X. XX) X X "
           RenderInline {SPAN} at (0,0) size 20x10
             RenderText {TEXT} at (230,0) size 20x10
               text run at (230,0) width 20: "Xx"
@@ -83,7 +83,7 @@ layer at (0,0) size 800x190
             RenderText {TEXT} at (290,0) size 30x10
               text run at (290,0) width 30: "xxx"
           RenderText {TEXT} at (0,10) size 230x10
-            text run at (0,10) width 230: "Pp Pp P. (P.p. PP) P p "
+            text run at (0,10) width 230: "Pp Pp P. (P.P. PP) P P "
           RenderInline {SPAN} at (0,0) size 20x10
             RenderText {TEXT} at (230,10) size 20x10
               text run at (230,10) width 20: "Pp"
@@ -93,7 +93,7 @@ layer at (0,0) size 800x190
             RenderText {TEXT} at (290,10) size 30x10
               text run at (290,10) width 30: "ppp"
           RenderText {TEXT} at (0,20) size 230x10
-            text run at (0,20) width 230: "\x{C9}\x{E9} \x{C9}\x{E9} \x{C9}. (\x{C9}.\x{E9}. \x{C9}\x{C9}) \x{C9} \x{E9} "
+            text run at (0,20) width 230: "\x{C9}\x{E9} \x{C9}\x{E9} \x{C9}. (\x{C9}.\x{C9}. \x{C9}\x{C9}) \x{C9} \x{C9} "
           RenderInline {SPAN} at (0,0) size 20x10
             RenderText {TEXT} at (230,20) size 20x10
               text run at (230,20) width 20: "\x{C9}\x{E9}"

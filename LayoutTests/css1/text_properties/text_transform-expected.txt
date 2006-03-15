@@ -20,8 +20,8 @@ layer at (0,0) size 785x732
       RenderBlock {P} at (0,192) size 769x54
         RenderText {TEXT} at (0,0) size 750x54
           text run at (0,0) width 750: "This Paragraph Is Capitalized And The First Letter In Each Word Should Therefore Appear In Uppercase. Words That"
-          text run at (0,18) width 718: "Are In Uppercase In The Source (E.g. USA) Should Remain So. There Should Be A Capital Letter After A Non-"
-          text run at (0,36) width 532: "breaking space (&Nbsp;). Both Those Characters Appear In The Previous Sentence."
+          text run at (0,18) width 722: "Are In Uppercase In The Source (E.G. USA) Should Remain So. There Should Be A Capital Letter After A Non-"
+          text run at (0,36) width 538: "Breaking Space (&Nbsp;). Both Those Characters Appear In The Previous Sentence."
       RenderBlock {P} at (0,262) size 769x36
         RenderText {TEXT} at (0,0) size 753x36
           text run at (0,0) width 753: "Words with inline elements inside them should only capitalize the first letter of the word. Therefore, the last word in this"
@@ -67,10 +67,10 @@ layer at (0,0) size 785x732
                   text run at (0,0) width 718: "This page tests the 'text-transform' property of CSS1. This paragraph has no text transformation and should appear"
                   text run at (0,18) width 48: "normal."
               RenderBlock {P} at (4,56) size 747x54
-                RenderText {TEXT} at (0,0) size 717x54
+                RenderText {TEXT} at (0,0) size 718x54
                   text run at (0,0) width 717: "This Paragraph Is Capitalized And The First Letter In Each Word Should Therefore Appear In Uppercase. Words"
-                  text run at (0,18) width 714: "That Are In Uppercase In The Source (E.g. USA) Should Remain So. There Should Be A Capital Letter After A"
-                  text run at (0,36) width 565: "Non-breaking space (&Nbsp;). Both Those Characters Appear In The Previous Sentence."
+                  text run at (0,18) width 718: "That Are In Uppercase In The Source (E.G. USA) Should Remain So. There Should Be A Capital Letter After A"
+                  text run at (0,36) width 571: "Non-Breaking Space (&Nbsp;). Both Those Characters Appear In The Previous Sentence."
               RenderBlock {P} at (4,126) size 747x36
                 RenderText {TEXT} at (0,0) size 727x36
                   text run at (0,0) width 727: "Words with inline elements inside them should only capitalize the first letter of the word. Therefore, the last word in"
