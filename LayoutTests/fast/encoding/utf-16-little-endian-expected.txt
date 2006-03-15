@@ -448,9 +448,6 @@ layer at (23,42) size 104x15
         RenderText {TEXT} at (0,0) size 0x0
       RenderText {TEXT} at (0,0) size 0x0
     RenderText {TEXT} at (0,0) size 0x0
-layer at (48,42) size 0x0
-  RenderInline (relative positioned) {SPAN} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
 layer at (23,99) size 592x38
   RenderInline (relative positioned) {SPAN} at (0,0) size 592x38
     RenderText {TEXT} at (0,0) size 0x0
@@ -499,11 +496,3 @@ layer at (28,205) size 529x52
       RenderTableRow {TR} at (0,0) size 0x0
       RenderTableRow {TR} at (0,0) size 0x0
       RenderTableRow {TR} at (0,0) size 0x0
-layer at (23,272) size 0x0
-  RenderInline (relative positioned) {SPAN} at (0,0) size 0x0
-layer at (33,1026) size 0x0
-  RenderInline (relative positioned) {SPAN} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0
-    RenderInline {SPAN} at (0,0) size 0x0
-      RenderText {TEXT} at (0,0) size 0x0
-    RenderText {TEXT} at (0,0) size 0x0

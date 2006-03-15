@@ -1,5 +1,18 @@
 2006-03-14  Darin Adler  <darin@apple.com>
 
+        Rubber stamped by Hyatt.
+
+        - land new results for two tests affected by Hyatt's layer change
+
+        * fast/encoding/utf-16-big-endian-expected.checksum: Updated.
+        * fast/encoding/utf-16-big-endian-expected.png: Ditto.
+        * fast/encoding/utf-16-big-endian-expected.txt: Ditto.
+        * fast/encoding/utf-16-little-endian-expected.checksum: Ditto.
+        * fast/encoding/utf-16-little-endian-expected.png: Ditto.
+        * fast/encoding/utf-16-little-endian-expected.txt: Ditto.
+
+2006-03-14  Darin Adler  <darin@apple.com>
+
         - land new results for tests affected by my setAttribute change
 
         * dom/xhtml/level3/core/nodeisequalnode15-expected.txt: Updated to
