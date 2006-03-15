@@ -103,13 +103,13 @@ void CompositeEditCommand::applyCommandToComposite(EditCommandPtr &cmd)
 
 void CompositeEditCommand::applyStyle(CSSStyleDeclarationImpl *style, EditAction editingAction)
 {
-    EditCommandPtr cmd(new ApplyStyleCommand(document(), style, editingAction));
+    EditCommandPtr cmd(new ApplyStyleCommand(document(), style, 0, editingAction));
     applyCommandToComposite(cmd);
 }
 
 void CompositeEditCommand::applyStyle(CSSStyleDeclarationImpl *style, Position start, Position end, EditAction editingAction)
 {
-    EditCommandPtr cmd(new ApplyStyleCommand(document(), style, start, end, editingAction));
+    EditCommandPtr cmd(new ApplyStyleCommand(document(), style, 0, start, end, editingAction));
     applyCommandToComposite(cmd);
 }
 

@@ -558,6 +558,21 @@ function pasteCommand() {
 
 //-------------------------------------------------------------------------------------------------------
 
+function execCreateLinkCommand(url) {
+    document.execCommand("CreateLink", false, url);
+}
+function createLinkCommand(url) {
+    if (commandDelay > 0) {
+        window.setTimeout(execCreateLinkCommand, commandCount * commandDelay, url);
+        commandCount++;
+    }
+    else {
+        execCreateLinkCommand(url);
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
 function execPasteAndMatchStyleCommand() {
     document.execCommand("PasteAndMatchStyle");
 }

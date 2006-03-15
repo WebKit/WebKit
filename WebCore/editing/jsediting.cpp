@@ -26,6 +26,7 @@
 #include "config.h"
 #include "jsediting.h"
 
+#include "CreateLinkCommand.h"
 #include "DocumentImpl.h"
 #include "Frame.h"
 #include "SelectionController.h"
@@ -197,6 +198,19 @@ bool execBold(Frame *frame, bool userInterface, const DOMString &value)
 bool execCopy(Frame *frame, bool userInterface, const DOMString &value)
 {
     frame->copyToPasteboard();
+    return true;
+}
+
+bool execCreateLink(Frame* frame, bool userInterface, const String& value)
+{
+    // FIXME: If userInterface is true, we should display a dialog box to let the user enter a url.
+    if (userInterface)
+        LOG_ERROR("A dialog box for link creation is not yet implemented.\n");
+    
+    if (value.isEmpty())
+        return false;
+    
+    EditCommandPtr(new CreateLinkCommand(frame->document(), value)).apply();
     return true;
 }
 
@@ -542,6 +556,7 @@ CommandMap *createCommandDictionary()
         { "BackColor", { execBackColor, enabled, stateNone, valueBackColor } },
         { "Bold", { execBold, enabledAnySelection, stateBold, valueNull } },
         { "Copy", { execCopy, enabledRangeSelection, stateNone, valueNull } },
+        { "CreateLink", { execCreateLink, enabledRangeSelection, stateNone, valueNull } },
         { "Cut", { execCut, enabledRangeSelection, stateNone, valueNull } },
         { "Delete", { execDelete, enabledAnySelection, stateNone, valueNull } },
         { "FontName", { execFontName, enabledAnySelection, stateNone, valueFontName } },
@@ -588,7 +603,6 @@ CommandMap *createCommandDictionary()
         // BrowseMode (not supported)
         // ClearAuthenticationCache (not supported)
         // CreateBookmark (not supported)
-        // CreateLink (not supported)
         // DirLTR (not supported)
         // DirRTL (not supported)
         // EditMode (not supported)

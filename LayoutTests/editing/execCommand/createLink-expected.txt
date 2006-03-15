@@ -1,0 +1,191 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > LI > OL > BODY > HTML > #document to 1 of DIV > LI > OL > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > A > DIV > LI > OL > BODY > HTML > #document to 95 of #text > A > DIV > LI > OL > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > LI > OL > BODY > HTML > #document to 1 of DIV > LI > OL > BODY > HTML > #document
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > LI > OL > BODY > HTML > #document to 1 of DIV > LI > OL > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of #text > A > DIV > LI > OL > BODY > HTML > #document to 14 of #text > A > DIV > LI > OL > BODY > HTML > #document toDOMRange:range from 0 of #text > A > DIV > LI > OL > BODY > HTML > #document to 10 of #text > A > DIV > LI > OL > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > LI > OL > BODY > HTML > #document to 3 of DIV > LI > OL > BODY > HTML > #document
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > LI > OL > BODY > HTML > #document to 3 of DIV > LI > OL > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > A > SPAN > A > DIV > LI > OL > BODY > HTML > #document to 121 of #text > A > DIV > LI > OL > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldEndEditingInDOMRange:range from 0 of DIV > LI > OL > BODY > HTML > #document to 3 of DIV > LI > OL > BODY > HTML > #document
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > LI > OL > BODY > HTML > #document to 13 of DIV > LI > OL > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of P > DIV > LI > OL > BODY > HTML > #document to 0 of P > DIV > LI > OL > BODY > HTML > #document toDOMRange:range from 0 of #text > P > DIV > LI > OL > BODY > HTML > #document to 10 of #text > DIV > LI > OL > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of #text > A > P > DIV > LI > OL > BODY > HTML > #document to 10 of #text > A > DIV > LI > OL > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x580
+      RenderBlock {P} at (0,0) size 784x14
+        RenderText {TEXT} at (0,0) size 260x14
+          text run at (0,0) width 226: "This is a test of execCommand(CreateLink, ...). "
+          text run at (226,0) width 34: "It tests:"
+      RenderBlock {OL} at (0,26) size 784x56
+        RenderListItem {LI} at (40,0) size 744x14
+          RenderListMarker at (0,0) size 0x11
+          RenderText {TEXT} at (0,0) size 279x14
+            text run at (0,0) width 279: "Creating a link from a selection that is completely unlinked."
+        RenderListItem {LI} at (40,14) size 744x14
+          RenderListMarker at (0,0) size 0x11
+          RenderText {TEXT} at (0,0) size 287x14
+            text run at (0,0) width 287: "Creating a link from a selection that is inside an existing link."
+        RenderListItem {LI} at (40,28) size 744x14
+          RenderListMarker at (0,0) size 0x11
+          RenderText {TEXT} at (0,0) size 254x14
+            text run at (0,0) width 254: "Creating a link from a selection that is partially linked."
+        RenderListItem {LI} at (40,42) size 744x14
+          RenderListMarker at (0,0) size 0x11
+          RenderText {TEXT} at (0,0) size 380x14
+            text run at (0,0) width 380: "Creating a link from a selection that contains lists, tables, styled text, and images."
+      RenderBlock {OL} at (0,94) size 784x256
+        RenderListItem {LI} at (40,0) size 744x14
+          RenderBlock {DIV} at (0,0) size 744x14
+            RenderListMarker at (0,0) size 0x11
+            RenderInline {A} at (0,0) size 447x14 [color=#0000EE]
+              RenderText {TEXT} at (0,0) size 447x14
+                text run at (0,0) width 149: "This paragraph starts unlinked. "
+                text run at (149,0) width 298: "The entire paragraph should end up being a link to google.com."
+        RenderListItem {LI} at (40,14) size 744x14
+          RenderBlock {DIV} at (0,0) size 744x14
+            RenderListMarker at (0,0) size 0x11
+            RenderInline {A} at (0,0) size 21x14 [color=#0000EE]
+              RenderText {TEXT} at (0,0) size 21x14
+                text run at (0,0) width 21: "This"
+            RenderInline {A} at (0,0) size 50x14 [color=#0000EE]
+              RenderText {TEXT} at (21,0) size 50x14
+                text run at (21,0) width 50: " paragraph"
+            RenderInline {A} at (0,0) size 519x14 [color=#0000EE]
+              RenderText {TEXT} at (71,0) size 519x14
+                text run at (71,0) width 157: " starts out as a link to apple.com. "
+                text run at (228,0) width 362: "The second word in the paragraph should end up being a link to google.com."
+        RenderListItem {LI} at (40,28) size 744x14
+          RenderBlock {DIV} at (0,0) size 744x14
+            RenderListMarker at (0,0) size 0x11
+            RenderText {TEXT} at (0,0) size 114x14
+              text run at (0,0) width 114: "This line starts out with "
+            RenderInline {A} at (0,0) size 27x14 [color=#0000EE]
+              RenderInline {B} at (0,0) size 6x14
+                RenderText {TEXT} at (114,0) size 6x14
+                  text run at (114,0) width 6: "a"
+              RenderInline {SPAN} at (0,0) size 21x14
+                RenderInline {A} at (0,0) size 21x14
+                  RenderText {TEXT} at (120,0) size 21x14
+                    text run at (120,0) width 21: " link"
+            RenderInline {A} at (0,0) size 547x14 [color=#0000EE]
+              RenderText {TEXT} at (141,0) size 547x14
+                text run at (141,0) width 70: " in the middle. "
+                text run at (211,0) width 477: "The second half of this paragraph, starting after the bold 'a' should end up being a link to google.com."
+        RenderListItem {LI} at (40,54) size 744x202
+          RenderBlock {DIV} at (0,0) size 744x202
+            RenderBlock {P} at (0,0) size 744x14
+              RenderListMarker at (0,0) size 0x11
+              RenderInline {A} at (0,0) size 24x14 [color=#0000EE]
+                RenderText {TEXT} at (0,0) size 24x14
+                  text run at (0,0) width 24: "This "
+              RenderInline {I} at (0,0) size 71x14
+                RenderInline {A} at (0,0) size 71x14 [color=#0000EE]
+                  RenderText {TEXT} at (24,0) size 71x14
+                    text run at (24,0) width 71: "editable region"
+              RenderInline {A} at (0,0) size 497x14 [color=#0000EE]
+                RenderText {TEXT} at (95,0) size 497x14
+                  text run at (95,0) width 216: " contains lists, tables, styled text, and images. "
+                  text run at (311,0) width 281: "The entire region should end up being a link to google.com."
+            RenderBlock {UL} at (0,26) size 744x28
+              RenderListItem {LI} at (40,0) size 704x14
+                RenderListMarker at (0,0) size 0x11
+                RenderInline {A} at (0,0) size 30x14 [color=#0000EE]
+                  RenderText {TEXT} at (0,0) size 30x14
+                    text run at (0,0) width 30: "Item 1"
+              RenderListItem {LI} at (40,14) size 704x14
+                RenderListMarker at (0,0) size 0x11
+                RenderInline {A} at (0,0) size 30x14 [color=#0000EE]
+                  RenderText {TEXT} at (0,0) size 30x14
+                    text run at (0,0) width 30: "Item 2"
+            RenderTable {TABLE} at (0,54) size 46x28 [border: (1px outset #808080)]
+              RenderTableSection {TBODY} at (1,1) size 0x26
+                RenderTableRow {TR} at (0,0) size 0x0
+                  RenderTableCell {TD} at (2,2) size 12x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                    RenderInline {A} at (0,0) size 8x18 [color=#0000EE]
+                      RenderText {TEXT} at (2,2) size 8x18
+                        text run at (2,2) width 8: "1"
+                  RenderTableCell {TD} at (16,2) size 12x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                    RenderInline {A} at (0,0) size 8x18 [color=#0000EE]
+                      RenderText {TEXT} at (2,2) size 8x18
+                        text run at (2,2) width 8: "2"
+                  RenderTableCell {TD} at (30,2) size 12x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+                    RenderInline {A} at (0,0) size 8x18 [color=#0000EE]
+                      RenderText {TEXT} at (2,2) size 8x18
+                        text run at (2,2) width 8: "3"
+            RenderBlock (anonymous) at (0,82) size 744x120
+              RenderInline {A} at (0,0) size 24x120 [color=#0000EE]
+                RenderBR {BR} at (0,0) size 0x14
+                RenderText {TEXT} at (0,106) size 24x14
+                  text run at (0,106) width 24: "This "
+              RenderInline {B} at (0,0) size 18x14
+                RenderInline {A} at (0,0) size 18x14 [color=#0000EE]
+                  RenderText {TEXT} at (24,106) size 18x14
+                    text run at (24,106) width 18: "line"
+              RenderInline {A} at (0,0) size 45x14 [color=#0000EE]
+                RenderText {TEXT} at (42,106) size 45x14
+                  text run at (42,106) width 45: " contains "
+              RenderInline {A} at (0,0) size 124x14 [color=#0000EE]
+                RenderImage {IMG} at (87,14) size 76x103
+                RenderText {TEXT} at (163,106) size 48x14
+                  text run at (163,106) width 48: " an image."
+      RenderBlock {P} at (0,362) size 784x14
+        RenderText {TEXT} at (0,0) size 211x14
+          text run at (0,0) width 211: "innerHTML of editable regions after the test:"
+      RenderBlock {OL} at (0,388) size 784x168
+        RenderListItem {LI} at (40,0) size 744x14
+          RenderListMarker at (0,0) size 0x11
+          RenderText {TEXT} at (0,0) size 650x14
+            text run at (0,0) width 326: "<A href=\"http://www.google.com/\">This paragraph starts unlinked. "
+            text run at (326,0) width 324: "The entire paragraph should end up being a link to google.com.</A>"
+        RenderListItem {LI} at (40,14) size 744x28
+          RenderListMarker at (0,0) size 0x11
+          RenderText {TEXT} at (0,0) size 740x28
+            text run at (0,0) width 740: "<A href=\"http://www.apple.com/\">This</A><A href=\"http://www.google.com/\"> paragraph</A><A href=\"http://www.apple.com/\"> starts out as a link to"
+            text run at (0,14) width 54: "apple.com. "
+            text run at (54,14) width 388: "The second word in the paragraph should end up being a link to google.com.</A>"
+        RenderListItem {LI} at (40,42) size 744x28
+          RenderListMarker at (0,0) size 0x11
+          RenderText {TEXT} at (0,0) size 740x28
+            text run at (0,0) width 740: "<A href=\"http://www.apple.com/\">This</A><A href=\"http://www.google.com/\"> paragraph</A><A href=\"http://www.apple.com/\"> starts out as a link to"
+            text run at (0,14) width 54: "apple.com. "
+            text run at (54,14) width 388: "The second word in the paragraph should end up being a link to google.com.</A>"
+        RenderListItem {LI} at (40,70) size 744x98
+          RenderListMarker at (0,0) size 0x11
+          RenderText {TEXT} at (0,0) size 736x98
+            text run at (0,0) width 736: "<P><A href=\"http://www.google.com/\">This </A><I><A href=\"http://www.google.com/\">editable region</A></I><A href=\"http://www.google.com/\">"
+            text run at (0,14) width 213: "contains lists, tables, styled text, and images. "
+            text run at (213,14) width 408: "The entire region should end up being a link to google.com.</A></P> <UL> <LI><A"
+            text run at (0,28) width 615: "href=\"http://www.google.com/\">Item 1</A></LI> <LI><A href=\"http://www.google.com/\">Item 2</A></LI> </UL> <TABLE"
+            text run at (0,42) width 736: "border=\"1\"><TBODY><TR><TD><A href=\"http://www.google.com/\">1</A></TD><TD><A href=\"http://www.google.com/\">2</A></TD><TD><A"
+            text run at (0,56) width 670: "href=\"http://www.google.com/\">3</A></TD></TR></TBODY></TABLE> <A href=\"http://www.google.com/\"><BR> This </A><B><A"
+            text run at (0,70) width 682: "href=\"http://www.google.com/\">line</A></B><A href=\"http://www.google.com/\"> contains </A><A href=\"http://www.google.com/\"><IMG"
+            text run at (0,84) width 206: "src=\"../resources/abe.jpg\"> an image. </A>"
+selection start: position 0 of child 0 {TEXT} of child 0 {A} of child 1 {P} of child 0 {DIV} of child 7 {LI} of child 5 {OL} of child 1 {BODY} of child 0 {HTML} of document
+selection end:   position 10 of child 1 {TEXT} of child 10 {A} of child 0 {DIV} of child 7 {LI} of child 5 {OL} of child 1 {BODY} of child 0 {HTML} of document

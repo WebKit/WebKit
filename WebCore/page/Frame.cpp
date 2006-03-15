@@ -2143,7 +2143,7 @@ void Frame::computeAndSetTypingStyle(CSSStyleDeclarationImpl *style, EditAction 
     RefPtr<CSSMutableStyleDeclarationImpl> blockStyle = mutableStyle->copyBlockProperties();
     blockStyle->diff(mutableStyle.get());
     if (document() && blockStyle->length() > 0) {
-        EditCommandPtr cmd(new ApplyStyleCommand(document(), blockStyle.get(), editingAction));
+        EditCommandPtr cmd(new ApplyStyleCommand(document(), blockStyle.get(), 0, editingAction));
         cmd.apply();
     }
     
@@ -2163,7 +2163,7 @@ void Frame::applyStyle(CSSStyleDeclarationImpl *style, EditAction editingAction)
         }
         case Selection::RANGE:
             if (document() && style) {
-                EditCommandPtr cmd(new ApplyStyleCommand(document(), style, editingAction));
+                EditCommandPtr cmd(new ApplyStyleCommand(document(), style, 0, editingAction));
                 cmd.apply();
             }
             break;
@@ -2179,7 +2179,7 @@ void Frame::applyParagraphStyle(CSSStyleDeclarationImpl *style, EditAction editi
         case Selection::CARET:
         case Selection::RANGE:
             if (document() && style) {
-                EditCommandPtr cmd(new ApplyStyleCommand(document(), style, editingAction, ApplyStyleCommand::ForceBlockProperties));
+                EditCommandPtr cmd(new ApplyStyleCommand(document(), style, 0, editingAction, ApplyStyleCommand::ForceBlockProperties));
                 cmd.apply();
             }
             break;

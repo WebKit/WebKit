@@ -257,24 +257,28 @@ PassRefPtr<HTMLElementImpl> createStyleSpanElement(DocumentImpl* document)
     return static_pointer_cast<HTMLElementImpl>(styleElement.release());
 }
 
-ApplyStyleCommand::ApplyStyleCommand(DocumentImpl* document, CSSStyleDeclarationImpl* style,
-    EditAction editingAction, EPropertyLevel propertyLevel)
-    : CompositeEditCommand(document), m_style(style->makeMutable()), m_editingAction(editingAction), m_propertyLevel(propertyLevel)
-{   
-    ASSERT(style);
-    m_start = endingSelection().start().downstream();
-    m_end = endingSelection().end().upstream();
-    m_useEndingSelection = true;
+ApplyStyleCommand::ApplyStyleCommand(DocumentImpl* document, CSSStyleDeclarationImpl* style, ElementImpl* element, EditAction editingAction, EPropertyLevel propertyLevel)
+    : CompositeEditCommand(document)
+    , m_style(style->makeMutable())
+    , m_editingAction(editingAction)
+    , m_propertyLevel(propertyLevel)
+    , m_start(endingSelection().start().downstream())
+    , m_end(endingSelection().end().upstream())
+    , m_useEndingSelection(true)
+    , m_styledInlineElement(element)
+{
 }
 
-ApplyStyleCommand::ApplyStyleCommand(DocumentImpl* document, CSSStyleDeclarationImpl* style, const Position& start, const Position& end,
-    EditAction editingAction, EPropertyLevel propertyLevel)
-    : CompositeEditCommand(document), m_style(style->makeMutable()), m_editingAction(editingAction), m_propertyLevel(propertyLevel)
+ApplyStyleCommand::ApplyStyleCommand(DocumentImpl* document, CSSStyleDeclarationImpl* style, ElementImpl* element, const Position& start, const Position& end, EditAction editingAction, EPropertyLevel propertyLevel)
+    : CompositeEditCommand(document)
+    , m_style(style->makeMutable())
+    , m_editingAction(editingAction)
+    , m_propertyLevel(propertyLevel)
+    , m_start(start)
+    , m_end(end)
+    , m_useEndingSelection(false)
+    , m_styledInlineElement(element)
 {
-    ASSERT(style);
-    m_start = start;
-    m_end = end;
-    m_useEndingSelection = false;
 }
 
 void ApplyStyleCommand::updateStartEnd(const Position& newStart, const Position& newEnd)
@@ -314,7 +318,7 @@ void ApplyStyleCommand::doApply()
             applyBlockStyle(blockStyle.get());
             // apply any remaining styles to the inline elements
             // NOTE: hopefully, this string comparison is the same as checking for a non-null diff
-            if (blockStyle->length() < m_style->length()) {
+            if (blockStyle->length() < m_style->length() || m_styledInlineElement) {
                 RefPtr<CSSMutableStyleDeclarationImpl> inlineStyle = m_style->copy();
                 applyRelativeFontStyleChange(inlineStyle.get());
                 blockStyle->diff(inlineStyle.get());
@@ -879,9 +883,10 @@ void ApplyStyleCommand::removeInlineStyle(PassRefPtr<CSSMutableStyleDeclarationI
             HTMLElementImpl *elem = static_cast<HTMLElementImpl *>(node);
             NodeImpl *prev = elem->traversePreviousNodePostOrder();
             NodeImpl *next = elem->traverseNextNode();
-            if (isHTMLStyleNode(style.get(), elem)) {
+            if (m_styledInlineElement && elem->hasTagName(m_styledInlineElement->tagName()))
+                removeNodePreservingChildren(elem);
+            if (isHTMLStyleNode(style.get(), elem))
                 removeHTMLStyleNode(elem);
-            }
             else {
                 removeHTMLFontStyle(style.get(), elem);
                 removeCSSStyle(style.get(), elem);
@@ -1236,6 +1241,12 @@ void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclarationImpl *s
         ASSERT(ec == 0);
         insertNodeBefore(italicElement.get(), startNode);
         surroundNodeRangeWithElement(startNode, endNode, italicElement.get());
+    }
+    
+    if (m_styledInlineElement) {
+        RefPtr<ElementImpl> clonedElement = static_pointer_cast<ElementImpl>(m_styledInlineElement->cloneNode(false));
+        insertNodeBefore(clonedElement.get(), startNode);
+        surroundNodeRangeWithElement(startNode, endNode, clonedElement.get());
     }
 }
 

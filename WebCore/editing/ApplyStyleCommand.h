@@ -38,8 +38,8 @@ class ApplyStyleCommand : public CompositeEditCommand
 public:
     enum EPropertyLevel { PropertyDefault, ForceBlockProperties };
 
-    ApplyStyleCommand(DocumentImpl*, CSSStyleDeclarationImpl*, EditAction = EditActionChangeAttributes, EPropertyLevel = PropertyDefault);
-    ApplyStyleCommand(DocumentImpl*, CSSStyleDeclarationImpl*, const Position& start, const Position& end, EditAction = EditActionChangeAttributes, EPropertyLevel = PropertyDefault);
+    ApplyStyleCommand(DocumentImpl*, CSSStyleDeclarationImpl*, ElementImpl*, EditAction = EditActionChangeAttributes, EPropertyLevel = PropertyDefault);
+    ApplyStyleCommand(DocumentImpl*, CSSStyleDeclarationImpl*, ElementImpl*, const Position& start, const Position& end, EditAction = EditActionChangeAttributes, EPropertyLevel = PropertyDefault);
 
     virtual void doApply();
     virtual EditAction editingAction() const;
@@ -84,12 +84,13 @@ private:
     Position startPosition();
     Position endPosition();
 
-    Position m_start;
-    Position m_end;
     RefPtr<CSSMutableStyleDeclarationImpl> m_style;
     EditAction m_editingAction;
     EPropertyLevel m_propertyLevel;
+    Position m_start;
+    Position m_end;
     bool m_useEndingSelection;
+    RefPtr<ElementImpl> m_styledInlineElement;
 };
 
 bool isStyleSpan(const NodeImpl*);

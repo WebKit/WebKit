@@ -1,3 +1,32 @@
+2006-03-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by mjs
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7578>
+        TinyMCE: Implement execCommand CreateLink
+        
+        Used ApplyStyleCommand so that creating a link from
+        a selection doesn't change document structure.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::ApplyStyleCommand):
+        (WebCore::ApplyStyleCommand::doApply):
+        (WebCore::ApplyStyleCommand::removeInlineStyle):
+        (WebCore::ApplyStyleCommand::addInlineStyleIfNeeded):
+        * editing/ApplyStyleCommand.h:
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::applyStyle):
+        * editing/CreateLinkCommand.cpp: Added.
+        (WebCore::CreateLinkCommand::CreateLinkCommand):
+        (WebCore::CreateLinkCommand::doApply):
+        * editing/CreateLinkCommand.h: Added.
+        * editing/jsediting.cpp:
+        * page/Frame.cpp:
+        (WebCore::Frame::computeAndSetTypingStyle):
+        (WebCore::Frame::applyStyle):
+        (WebCore::Frame::applyParagraphStyle):
+
 2006-03-14  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej
