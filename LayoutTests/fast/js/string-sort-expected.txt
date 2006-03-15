@@ -1,0 +1,27 @@
+This page tests sorting of string values
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS "12" < "123" is true
+PASS ["12","123"].sort().toString() is "12,123"
+PASS "123" < "13" is true
+PASS ["123","13"].sort().toString() is "123,13"
+PASS "" < " " is true
+PASS [""," "].sort().toString() is ", "
+PASS "close" < "closed" is true
+PASS ["close","closed"].sort().toString() is "close,closed"
+PASS "a" < "~" is true
+PASS ["a","~"].sort().toString() is "a,~"
+PASS "_" < "a" is true
+PASS ["_","a"].sort().toString() is "_,a"
+PASS "0" < "A" is true
+PASS ["0","A"].sort().toString() is "0,A"
+PASS "-" < "0" is true
+PASS ["-","0"].sort().toString() is "-,0"
+PASS " " < "-" is true
+PASS [" ","-"].sort().toString() is " ,-"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

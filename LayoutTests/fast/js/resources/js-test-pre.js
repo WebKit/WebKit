@@ -45,8 +45,10 @@ function shouldBe(_a, _b)
     testFailed(_a + " should be " + _bv + ". Threw exception " + exception);
   else if (_av === _bv)
     testPassed(_a + " is " + _b);
-  else
-    testFailed(_a + " should be " + _bv + ". Was " + _av);
+  else {
+    testFailed(_a + " should be " + _bv + " (of type " + typeof _bv 
+               + "). Was " + _av + " (of type " + typeof _av + ").");
+  }
 }
 
 function shouldBeTrue(_a) { shouldBe(_a, "true"); }

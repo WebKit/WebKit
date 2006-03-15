@@ -1176,13 +1176,14 @@ int compare(const UString& s1, const UString& s2)
     c2++;
     l++;
   }
+
   if (l < lmin)
     return (c1->uc > c2->uc) ? 1 : -1;
 
-  if (l1 == l2) {
+  if (l1 == l2)
     return 0;
-  }
-  return (l1 < l2) ? 1 : -1;
+
+  return (l1 > l2) ? 1 : -1;
 }
 
 inline int inlineUTF8SequenceLengthNonASCII(char b0)

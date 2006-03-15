@@ -65,10 +65,10 @@ PASS arr.length is 40
 PASS arr[maxint] is undefined
 PASS arr.length is maxint
 PASS arr[maxint-1] is "test2"
-FAIL propnames.length should be 3. Was 4
+FAIL propnames.length should be 3 (of type number). Was 4 (of type number).
 PASS propnames[0] is '0'
 PASS propnames[1] is '1'
-FAIL propnames[2] should be 2. Was 1
+FAIL propnames[2] should be 2 (of type string). Was 1 (of type string).
 PASS successfullyParsed is true
 
 TEST COMPLETE

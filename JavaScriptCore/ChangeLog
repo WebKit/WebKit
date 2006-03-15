@@ -1,3 +1,14 @@
+2006-03-14  Geoffrey Garen  <ggaren@apple.com>
+
+        - Fixed <rdar://problem/4478239> string sort puts "closed" before 
+        "close"
+
+        Reviewed by Eric.
+
+        * kjs/ustring.cpp:
+        (KJS::compare): Inverted a < in order to treat the longer string as > 
+        the shorter string.
+
 2006-03-12  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Maciej.
