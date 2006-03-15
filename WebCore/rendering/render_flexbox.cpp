@@ -1039,8 +1039,9 @@ int RenderFlexibleBox::allowedChildFlex(RenderObject* child, bool expanding, uns
                 maxW = child->maxWidth();
             else if (child->style()->maxWidth().type() == MinIntrinsic)
                 maxW = child->minWidth();
-            int allowedGrowth = kMax(0, maxW - w);
-            return allowedGrowth;
+            if (maxW == INT_MAX)
+                return maxW;
+            return kMax(0, maxW - w);
         }
         else {
             // FIXME: For now just handle fixed values.
@@ -1049,8 +1050,9 @@ int RenderFlexibleBox::allowedChildFlex(RenderObject* child, bool expanding, uns
             if (child->style()->maxHeight().value() != undefinedLength &&
                 child->style()->maxHeight().isFixed())
                 maxH = child->style()->maxHeight().value();
-            int allowedGrowth = kMax(0, maxH - h);
-            return allowedGrowth;
+            if (maxH == INT_MAX)
+                return maxH;
+            return kMax(0, maxH - h);
         }
     }
 

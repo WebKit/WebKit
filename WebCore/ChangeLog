@@ -1,3 +1,13 @@
+2006-03-15  David Hyatt  <hyatt@apple.com>
+
+        Fix the box-sizing layout test by stopping integer overflowing from
+        occurring in the flexbox code.
+
+        Reviewed by beth
+
+        * rendering/render_flexbox.cpp:
+        (khtml::RenderFlexibleBox::allowedChildFlex):
+
 2006-03-15  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Eric
