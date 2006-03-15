@@ -1952,12 +1952,24 @@ EditCommandPtr Frame::lastEditCommand()
     return d->m_lastEditCommand;
 }
 
+void dispatchKHTMLEditableContentChanged(NodeImpl* root)
+{
+    if (!root)
+        return;
+        
+    ExceptionCode ec = 0;
+    RefPtr<EventImpl> evt = new EventImpl(khtmlEditableContentChangedEvent, false, false);
+    root->dispatchEvent(evt, ec, true);
+}
+
 void Frame::appliedEditing(EditCommandPtr &cmd)
 {
     SelectionController sel(cmd.endingSelection());
     if (shouldChangeSelection(sel)) {
         setSelection(sel, false);
     }
+    
+    dispatchKHTMLEditableContentChanged(!selection().isNone() ? selection().start().node()->rootEditableElement() : 0);
 
     // Now set the typing style from the command. Clear it when done.
     // This helps make the case work where you completely delete a piece
@@ -1989,6 +2001,9 @@ void Frame::unappliedEditing(EditCommandPtr &cmd)
     if (shouldChangeSelection(sel)) {
         setSelection(sel, true);
     }
+    
+    dispatchKHTMLEditableContentChanged(!selection().isNone() ? selection().start().node()->rootEditableElement() : 0);
+        
     registerCommandForRedo(cmd);
     respondToChangedContents();
     d->m_lastEditCommand = EditCommandPtr::emptyCommand();
@@ -2000,6 +2015,9 @@ void Frame::reappliedEditing(EditCommandPtr &cmd)
     if (shouldChangeSelection(sel)) {
         setSelection(sel, true);
     }
+    
+    dispatchKHTMLEditableContentChanged(!selection().isNone() ? selection().start().node()->rootEditableElement() : 0);
+        
     registerCommandForUndo(cmd);
     respondToChangedContents();
     d->m_lastEditCommand = EditCommandPtr::emptyCommand();

@@ -221,14 +221,6 @@ void EditCommand::apply()
         EditCommandPtr cmd(this);
         frame->appliedEditing(cmd);
     }
-    
-    NodeImpl* startNode = endingSelection().start().node();
-    if (startNode && startNode->rootEditableElement()) {
-        // Send khtmlTextInsertedEvent to rootEditableElement.
-        ExceptionCode ec = 0;
-        RefPtr<EventImpl> evt = new EventImpl(khtmlTextInsertedEvent, false, false);
-        startNode->rootEditableElement()->dispatchEvent(evt, ec, true);
-    }
 }
 
 void EditCommand::unapply()
@@ -236,8 +228,6 @@ void EditCommand::unapply()
     ASSERT(m_document);
     ASSERT(m_document->frame());
     ASSERT(state() == Applied);
-
-    bool topLevel = !isCompositeStep();
  
     Frame *frame = m_document->frame();
     
@@ -245,18 +235,10 @@ void EditCommand::unapply()
     
     m_state = NotApplied;
 
-    if (topLevel) {
+    if (!isCompositeStep()) {
         updateLayout();
         EditCommandPtr cmd(this);
         frame->unappliedEditing(cmd);
-    }
-    
-    NodeImpl* startNode = endingSelection().start().node();
-    if (startNode && startNode->rootEditableElement()) {
-        // Send khtmlTextInsertedEvent to rootEditableElement.
-        ExceptionCode ec = 0;
-        RefPtr<EventImpl> evt = new EventImpl(khtmlTextInsertedEvent, false, false);
-        startNode->rootEditableElement()->dispatchEvent(evt, ec, true);
     }
 }
 
@@ -265,8 +247,6 @@ void EditCommand::reapply()
     ASSERT(m_document);
     ASSERT(m_document->frame());
     ASSERT(state() == NotApplied);
-    
-    bool topLevel = !isCompositeStep();
  
     Frame *frame = m_document->frame();
     
@@ -274,18 +254,10 @@ void EditCommand::reapply()
     
     m_state = Applied;
 
-    if (topLevel) {
+    if (!isCompositeStep()) {
         updateLayout();
         EditCommandPtr cmd(this);
         frame->reappliedEditing(cmd);
-    }
-    
-    NodeImpl* startNode = endingSelection().start().node();
-    if (startNode && startNode->rootEditableElement()) {
-        // Send khtmlTextInsertedEvent to rootEditableElement.
-        ExceptionCode ec = 0;
-        RefPtr<EventImpl> evt = new EventImpl(khtmlTextInsertedEvent, false, false);
-        startNode->rootEditableElement()->dispatchEvent(evt, ec, true);
     }
 }
 

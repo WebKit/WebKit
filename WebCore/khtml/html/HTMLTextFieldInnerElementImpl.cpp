@@ -52,7 +52,7 @@ void HTMLTextFieldInnerElementImpl::defaultEventHandler(EventImpl* evt)
         if (evt->isBeforeTextInsertedEvent())
             static_cast<HTMLInputElementImpl*>(shadowParentNode())->defaultEventHandler(evt);
 
-        if (evt->type() == khtmlTextInsertedEvent) {
+        if (evt->type() == khtmlEditableContentChangedEvent) {
             if (shadowParentNode()->renderer()->style()->appearance() == TextFieldAppearance) 
                 static_cast<RenderTextField*>(shadowParentNode()->renderer())->subtreeHasChanged();
         }

@@ -1,3 +1,28 @@
+2006-03-14  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by adele
+        
+        <http://bugzilla.opendarwin.org/show_bug.cgi?id=7770>
+        Should only dispatch the khtmlTextInsertedEvent for high level editing operations
+
+        Dispatching this event for low level editing operations 
+        isn't necessary and causes a big performance regression. 
+        Also renamed the event because it's dispatched for changes
+        other than just text insertion.
+
+        * dom/EventNames.h: 
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::apply):
+        (WebCore::EditCommand::unapply):
+        (WebCore::EditCommand::reapply):
+        * khtml/html/HTMLTextFieldInnerElementImpl.cpp:
+        (WebCore::HTMLTextFieldInnerElementImpl::defaultEventHandler):
+        * page/Frame.cpp:
+        (WebCore::dispatchKHTMLEditableContentChanged):
+        (WebCore::Frame::appliedEditing):
+        (WebCore::Frame::unappliedEditing):
+        (WebCore::Frame::reappliedEditing):
+
 2006-03-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.
