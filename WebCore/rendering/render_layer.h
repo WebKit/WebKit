@@ -246,6 +246,8 @@ public:
     void updateScrollInfoAfterLayout();
     void slotValueChanged(int);
     bool scroll(KWQScrollDirection direction, KWQScrollGranularity granularity, float multiplier=1.0);
+    void autoscroll();
+    bool shouldAutoscroll();
     
     void updateLayerPosition();
     void updateLayerPositions(bool doFullRepaint = false, bool checkForRepaint=true);

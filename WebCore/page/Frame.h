@@ -69,6 +69,7 @@ class Page;
 class Plugin;
 class MouseEventWithHitTestResults;
 class RangeImpl;
+class RenderLayer;
 class Selection;
 class SelectionController;
 class VisiblePosition;
@@ -777,6 +778,10 @@ private:
 protected:
     virtual void startRedirectionTimer();
     virtual void stopRedirectionTimer();
+    
+    void handleAutoscroll(RenderLayer*);
+    void startAutoscrollTimer();
+    void stopAutoscrollTimer();
 
  private:
   void emitLoadEvent();
@@ -799,6 +804,8 @@ protected:
   CSSComputedStyleDeclarationImpl *selectionComputedStyle(NodeImpl *&nodeToRemove) const;
 
     virtual void setStatusBarText(const String&);
+    
+    void autoscrollTimerFired(Timer<Frame>*);
 
 public:
   friend class MacFrame;

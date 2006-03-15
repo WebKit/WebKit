@@ -1,3 +1,31 @@
+2006-03-15  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Maciej.
+
+        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=7114
+        Dragging to scroll doesn't work for overflow areas
+
+        No test case.  There doesn't appear to be a way to trigger the autoscroll with the EventSender.
+
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::khtmlMouseMoveEvent):  If we have a layer that can scroll, let the layer handle its autoscroll.  
+         Otherwise, call over the bridge to let AppKit scroll the view.
+        (WebCore::MacFrame::khtmlMouseReleaseEvent): Stops the autoscroll timer.
+        * page/Frame.cpp:
+        (WebCore::Frame::khtmlMouseReleaseEvent): Stops the autoscroll timer.
+        (WebCore::Frame::handleAutoscroll): Added. Saves the layer, and starts the timer.
+        (WebCore::Frame::autoscrollTimerFired): Added. Calls autoscroll() on the layer.
+        (WebCore::Frame::startAutoscrollTimer): Added.
+        (WebCore::Frame::stopAutoscrollTimer): Added.
+        * page/Frame.h: Added new autoscroll methods.
+        * page/FramePrivate.h: (WebCore::FramePrivate::FramePrivate): Initialize m_autoscrollTimer and m_autoscrollLayer.
+        * rendering/render_layer.cpp:
+        (WebCore::RenderLayer::autoscroll): Calculates how much the layer should scroll, and actually scrolls.
+        (WebCore::RenderLayer::shouldAutoscroll): If the layer has overflow then it should be able to scroll.  
+         Except for overflow:hidden areas that aren't editable.  
+         In the future, we may want to have a css property that indicates an overflow:hidden style that should also scroll.
+        * rendering/render_layer.h: Added new autoscroll methods.
+
 2006-03-14  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by mjs

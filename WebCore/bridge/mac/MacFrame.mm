@@ -1762,8 +1762,18 @@ void MacFrame::khtmlMouseMoveEvent(MouseEventWithHitTestResults *event)
         _mouseDownMayStartDrag = false;
         d->m_view->invalidateClick();
 
-        // We use khtml's selection but our own autoscrolling.
-        [_bridge handleAutoscrollForMouseDragged:_currentEvent];
+        NodeImpl* node = event->innerNode();
+        RenderLayer* layer = 0;
+        if (node && node->renderer())
+            layer = node->renderer()->enclosingLayer();
+            
+        // If the selection began in a layer that can scroll, the layer should handle the autoscroll
+        // Otherwise, let the bridge handle it so the view can scroll itself.
+        if (layer && layer->shouldAutoscroll())
+            handleAutoscroll(layer);
+        else
+            [_bridge handleAutoscrollForMouseDragged:_currentEvent];
+            
     } else {
         // If we allowed the other side of the bridge to handle a drag
         // last time, then m_bMousePressed might still be set. So we
@@ -1857,6 +1867,7 @@ void MacFrame::khtmlMouseReleaseEvent(MouseEventWithHitTestResults *event)
         }
         return;
     }
+    stopAutoscrollTimer();
     
     _sendingEventToSubview = true;
     KWQ_BLOCK_EXCEPTIONS;

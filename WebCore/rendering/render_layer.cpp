@@ -47,6 +47,7 @@
 #include "DocumentImpl.h"
 #include "EventNames.h"
 #include "FrameView.h"
+#include "Frame.h"
 #include "GraphicsContext.h"
 #include "dom2_eventsimpl.h"
 #include "html_blockimpl.h"
@@ -55,6 +56,7 @@
 #include "render_canvas.h"
 #include "render_inline.h"
 #include "render_theme.h"
+#include "SelectionController.h"
 #include <assert.h>
 #include <kxmlcore/Vector.h>
 #include <qscrollbar.h>
@@ -724,6 +726,42 @@ IntRect RenderLayer::getRectToExpose(const IntRect &visibleRect, const IntRect &
         y = exposeRect.y();
 
     return IntRect(IntPoint(x, y), visibleRect.size());
+}
+
+void RenderLayer::autoscroll()
+{    
+    int xOffset = scrollXOffset();
+    int yOffset = scrollYOffset();
+
+    // Get the rectangle for the extent of the selection
+    SelectionController sel = renderer()->document()->frame()->selection();
+    IntRect extentRect = SelectionController(sel.extent(), sel.affinity()).caretRect();
+    extentRect.move(xOffset, yOffset);
+
+    IntRect bounds = IntRect(xPos() + xOffset, yPos() + yOffset, width() - verticalScrollbarWidth(), height() - horizontalScrollbarHeight());
+    
+    // Calculate how much the layer should scroll horizontally.
+    int diffX = 0;
+    if (extentRect.right() > bounds.right())
+        diffX = extentRect.right() - bounds.right();
+    else if (extentRect.x() < bounds.x())
+        diffX = extentRect.x() - bounds.x();
+        
+    // Calculate how much the layer should scroll vertically.
+    int diffY = 0;
+    if (extentRect.bottom() > bounds.bottom())
+        diffY = extentRect.bottom() - bounds.bottom();
+    else if (extentRect.y() < bounds.y())
+        diffY = extentRect.y() - bounds.y();
+
+    scrollToOffset(xOffset + diffX, yOffset + diffY);
+}
+
+bool RenderLayer::shouldAutoscroll()
+{
+    if (renderer()->hasOverflowClip() && (m_object->style()->overflow() != OHIDDEN || renderer()->node()->isContentEditable()))
+        return true;
+    return false;
 }
 
 void RenderLayer::valueChanged(Widget*)

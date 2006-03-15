@@ -71,6 +71,7 @@
 #include "markup.h"
 #include "render_canvas.h"
 #include "render_frames.h"
+#include "render_layer.h"
 #include "visible_text.h"
 #include "visible_units.h"
 #include "xml_tokenizer.h"
@@ -102,6 +103,7 @@ using namespace EventNames;
 using namespace HTMLNames;
 
 const double caretBlinkFrequency = 0.5;
+const double autoscrollInterval = 0.1;
 
 class UserStyleSheetLoader : public CachedObjectClient {
 public:
@@ -1879,6 +1881,8 @@ void Frame::khtmlMouseMoveEvent(MouseEventWithHitTestResults* event)
 
 void Frame::khtmlMouseReleaseEvent(MouseEventWithHitTestResults* event)
 {
+    stopAutoscrollTimer();
+    
     // Used to prevent mouseMoveEvent from initiating a drag before
     // the mouse is pressed again.
     d->m_bMousePressed = false;
@@ -2668,6 +2672,36 @@ bool Frame::scrollOverflow(KWQScrollDirection direction, KWQScrollGranularity gr
     }
     
     return false;
+}
+
+void Frame::handleAutoscroll(RenderLayer* layer)
+{
+    if (d->m_autoscrollTimer.isActive())
+        return;
+    d->m_autoscrollLayer = layer;
+    startAutoscrollTimer();
+}
+
+void Frame::autoscrollTimerFired(Timer<Frame>*)
+{
+    bool isStillDown = CGEventSourceButtonState(kCGEventSourceStateCombinedSessionState, kCGMouseButtonLeft);   
+    if (!isStillDown){
+        stopAutoscrollTimer();
+        return;
+    }
+    if (d->m_autoscrollLayer) {
+        d->m_autoscrollLayer->autoscroll();
+    } 
+}
+
+void Frame::startAutoscrollTimer()
+{
+    d->m_autoscrollTimer.startRepeating(autoscrollInterval);
+}
+
+void Frame::stopAutoscrollTimer()
+{
+    d->m_autoscrollTimer.stop();
 }
 
 // FIXME: why is this here instead of on the FrameView?
