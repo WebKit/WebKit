@@ -400,7 +400,8 @@ static UBreakIterator* getWordBreakIterator(const QChar* string, int length)
 StringImpl* StringImpl::capitalize(QChar previous) const
 {
     StringImpl* capitalizedString = new StringImpl;
-    if(!l) return capitalizedString;
+    if (!l)
+        return capitalizedString;
     
     QChar* stringWithPrevious = newQCharVector(l + 1);
     stringWithPrevious[0] = previous;
@@ -408,21 +409,24 @@ StringImpl* StringImpl::capitalize(QChar previous) const
         stringWithPrevious[i] = s[i - 1];
     
     UBreakIterator* boundary = getWordBreakIterator(stringWithPrevious, l + 1);
-    if (!boundary)
+    if (!boundary) {
+        deleteQCharVector(stringWithPrevious);
         return capitalizedString;
+    }
     
     capitalizedString->s = newQCharVector(l);
     capitalizedString->l = l;
     
-    int32_t end;
-    int32_t start = ubrk_first(boundary);
-    for (end = ubrk_next(boundary); end != UBRK_DONE; start = end, end = ubrk_next(boundary)) {
-        if (start != 0)
-            capitalizedString->s[start - 1] = stringWithPrevious[start].upper();
-        for (int i = start; i < end; i++)
-            capitalizedString->s[i] = stringWithPrevious[i + 1];
+    int32_t endOfWord;
+    int32_t startOfWord = ubrk_first(boundary);
+    for (endOfWord = ubrk_next(boundary); endOfWord != UBRK_DONE; startOfWord = endOfWord, endOfWord = ubrk_next(boundary)) {
+        if (startOfWord != 0) // Ignore first char of previous string
+            capitalizedString->s[startOfWord - 1] = stringWithPrevious[startOfWord].upper();
+        for (int i = startOfWord + 1; i < endOfWord; i++)
+            capitalizedString->s[i - 1] = stringWithPrevious[i];
     }
     
+    deleteQCharVector(stringWithPrevious);
     return capitalizedString;
 }
 
