@@ -48,7 +48,7 @@ int kjsyyerror(const char *);
 static bool allowAutomaticSemicolon();
 
 #define AUTO_SEMICOLON do { if (!allowAutomaticSemicolon()) YYABORT; } while (0)
-#define DBG(l, s, e) (l)->setLoc((s).first_line, (e).last_line, Parser::sid)
+#define DBG(l, s, e) (l)->setLoc((s).first_line, (e).last_line)
 
 using namespace KJS;
 

@@ -361,11 +361,11 @@ void Interpreter::virtual_hook( int, void* )
 
 Interpreter *ExecState::lexicalInterpreter() const
 {
-  if (!_context) {
+  if (!m_context) {
     return dynamicInterpreter();
   }
 
-  InterpreterImp *result = InterpreterImp::interpreterWithGlobalObject(_context->scopeChain().bottom());
+  InterpreterImp *result = InterpreterImp::interpreterWithGlobalObject(m_context->scopeChain().bottom());
 
   if (!result) {
     return dynamicInterpreter();

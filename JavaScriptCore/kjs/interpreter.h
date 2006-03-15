@@ -444,7 +444,7 @@ namespace KJS {
      *
      * @return The interpreter executing the script
      */
-    Interpreter *dynamicInterpreter() const { return _interpreter; }
+    Interpreter *dynamicInterpreter() const { return m_interpreter; }
 
     // for compatibility
     Interpreter *interpreter() const { return dynamicInterpreter(); }
@@ -462,19 +462,23 @@ namespace KJS {
      *
      * @return The current execution state context
      */
-    Context context() const { return _context; }
+    Context context() const { return m_context; }
 
-    void setException(JSValue* e) { _exception = e; }
-    void clearException() { _exception = 0; }
-    JSValue* exception() const { return _exception; }
-    bool hadException() const { return _exception; }
+    void setException(JSValue* e) { m_exception = e; }
+    void clearException() { m_exception = 0; }
+    JSValue* exception() const { return m_exception; }
+    bool hadException() const { return m_exception; }
 
   private:
     ExecState(Interpreter* interp, ContextImp* con)
-        : _interpreter(interp), _context(con), _exception(0) { }
-    Interpreter* _interpreter;
-    ContextImp* _context;
-    JSValue* _exception;
+        : m_interpreter(interp)
+        , m_context(con)
+        , m_exception(0)
+    { 
+    }
+    Interpreter* m_interpreter;
+    ContextImp* m_context;
+    JSValue* m_exception;
   };
 
 } // namespace

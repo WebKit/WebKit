@@ -44,6 +44,8 @@
 #include "operations.h"
 #include "ustring.h"
 #include "reference_list.h"
+#include <kxmlcore/HashSet.h>
+#include <kxmlcore/HashCountedSet.h>
 
 using namespace KJS;
 
@@ -95,16 +97,18 @@ int NodeCounter::count = 0;
 static NodeCounter nodeImplCounter;
 #endif NDEBUG
 
+static HashSet<Node*>* newNodes;
+static HashCountedSet<Node*>* nodeExtraRefCounts;
 
 Node::Node()
 {
 #ifndef NDEBUG
     ++NodeCounter::count;
 #endif
-  line = Lexer::curr()->lineNo();
-  sourceURL = Lexer::curr()->sourceURL();
-  m_refcount = 0;
-  Parser::saveNewNode(this);
+  m_line = Lexer::curr()->lineNo();
+  if (!newNodes)
+      newNodes = new HashSet<Node*>;
+  newNodes->add(this);
 }
 
 Node::~Node()
@@ -114,6 +118,51 @@ Node::~Node()
 #endif
 }
 
+void Node::ref()
+{
+    // bumping from 0 to 1 is just removing from the new nodes set
+    if (newNodes) {
+        HashSet<Node*>::iterator it = newNodes->find(this);
+        if (it != newNodes->end()) {
+            newNodes->remove(it);
+            return;
+        }
+    }   
+    
+    if (!nodeExtraRefCounts)
+        nodeExtraRefCounts = new HashCountedSet<Node*>;
+    nodeExtraRefCounts->add(this);
+}
+
+void Node::deref()
+{
+    HashCountedSet<Node*>::iterator it = nodeExtraRefCounts->find(this);
+    if (it == nodeExtraRefCounts->end())
+        delete this;
+    else
+        nodeExtraRefCounts->remove(it);
+}
+
+unsigned int Node::refcount() 
+{
+    if (newNodes && newNodes->contains(this))
+        return 0;
+
+    if (!nodeExtraRefCounts)
+        return 1;
+
+    return 1 + nodeExtraRefCounts->count(this);
+}
+
+void Node::clearNewNodes()
+{
+    if (newNodes) {
+        deleteAllValues(*newNodes);
+        delete newNodes;
+        newNodes = 0;
+    }
+}
+
 static void substitute(UString &string, const UString &substring)
 {
     int position = string.find("%s");
@@ -121,21 +170,31 @@ static void substitute(UString &string, const UString &substring)
     string = string.substr(0, position) + substring + string.substr(position + 2);
 }
 
-Completion Node::createErrorCompletion(ExecState *exec, ErrorType e, const char *msg)
+static inline int currentSourceId(ExecState* exec)
 {
-    return Completion(Throw, Error::create(exec, e, msg, lineNo(), sourceId(), &sourceURL));
+    return exec->context().imp()->currentBody()->sourceId();
+}
+
+static inline const UString& currentSourceURL(ExecState* exec)
+{
+    return exec->context().imp()->currentBody()->sourceURL();
+}
+
+Completion Node::createErrorCompletion(ExecState* exec, ErrorType e, const char *msg)
+{
+    return Completion(Throw, Error::create(exec, e, msg, lineNo(), currentSourceId(exec), &currentSourceURL(exec)));
 }
 
 Completion Node::createErrorCompletion(ExecState *exec, ErrorType e, const char *msg, const Identifier &ident)
 {
     UString message = msg;
     substitute(message, ident.ustring());
-    return Completion(Throw, Error::create(exec, e, message, lineNo(), sourceId(), &sourceURL));
+    return Completion(Throw, Error::create(exec, e, message, lineNo(), currentSourceId(exec), &currentSourceURL(exec)));
 }
 
-JSValue *Node::throwError(ExecState *exec, ErrorType e, const char *msg)
+JSValue *Node::throwError(ExecState* exec, ErrorType e, const char *msg)
 {
-    return KJS::throwError(exec, e, msg, lineNo(), sourceId(), &sourceURL);
+    return KJS::throwError(exec, e, msg, lineNo(), currentSourceId(exec), &currentSourceURL(exec));
 }
 
 JSValue *Node::throwError(ExecState *exec, ErrorType e, const char *msg, JSValue *v, Node *expr)
@@ -143,7 +202,7 @@ JSValue *Node::throwError(ExecState *exec, ErrorType e, const char *msg, JSValue
     UString message = msg;
     substitute(message, v->toString(exec));
     substitute(message, expr->toString());
-    return KJS::throwError(exec, e, message, lineNo(), sourceId(), &sourceURL);
+    return KJS::throwError(exec, e, message, lineNo(), currentSourceId(exec), &currentSourceURL(exec));
 }
 
 
@@ -151,7 +210,7 @@ JSValue *Node::throwError(ExecState *exec, ErrorType e, const char *msg, const I
 {
     UString message = msg;
     substitute(message, label.ustring());
-    return KJS::throwError(exec, e, message, lineNo(), sourceId(), &sourceURL);
+    return KJS::throwError(exec, e, message, lineNo(), currentSourceId(exec), &currentSourceURL(exec));
 }
 
 JSValue *Node::throwError(ExecState *exec, ErrorType e, const char *msg, JSValue *v, Node *e1, Node *e2)
@@ -160,7 +219,7 @@ JSValue *Node::throwError(ExecState *exec, ErrorType e, const char *msg, JSValue
     substitute(message, v->toString(exec));
     substitute(message, e1->toString());
     substitute(message, e2->toString());
-    return KJS::throwError(exec, e, message, lineNo(), sourceId(), &sourceURL);
+    return KJS::throwError(exec, e, message, lineNo(), currentSourceId(exec), &currentSourceURL(exec));
 }
 
 JSValue *Node::throwError(ExecState *exec, ErrorType e, const char *msg, JSValue *v, Node *expr, const Identifier &label)
@@ -169,7 +228,7 @@ JSValue *Node::throwError(ExecState *exec, ErrorType e, const char *msg, JSValue
     substitute(message, v->toString(exec));
     substitute(message, expr->toString());
     substitute(message, label.ustring());
-    return KJS::throwError(exec, e, message, lineNo(), sourceId(), &sourceURL);
+    return KJS::throwError(exec, e, message, lineNo(), currentSourceId(exec), &currentSourceURL(exec));
 }
 
 JSValue *Node::throwError(ExecState *exec, ErrorType e, const char *msg, JSValue *v, const Identifier &label)
@@ -177,7 +236,7 @@ JSValue *Node::throwError(ExecState *exec, ErrorType e, const char *msg, JSValue
     UString message = msg;
     substitute(message, v->toString(exec));
     substitute(message, label.ustring());
-    return KJS::throwError(exec, e, message, lineNo(), sourceId(), &sourceURL);
+    return KJS::throwError(exec, e, message, lineNo(), currentSourceId(exec), &currentSourceURL(exec));
 }
 
 JSValue *Node::throwUndefinedVariableError(ExecState *exec, const Identifier &ident)
@@ -191,8 +250,8 @@ void Node::setExceptionDetailsIfNeeded(ExecState *exec)
     if (exceptionValue->isObject()) {
         JSObject *exception = static_cast<JSObject *>(exceptionValue);
         if (!exception->hasProperty(exec, "line") && !exception->hasProperty(exec, "sourceURL")) {
-            exception->put(exec, "line", jsNumber(line));
-            exception->put(exec, "sourceURL", jsString(sourceURL));
+            exception->put(exec, "line", jsNumber(m_line));
+            exception->put(exec, "sourceURL", jsString(currentSourceURL(exec)));
         }
     }
 }
@@ -204,23 +263,24 @@ Node *Node::nodeInsideAllParens()
 
 // ------------------------------ StatementNode --------------------------------
 
-StatementNode::StatementNode() : l0(-1), l1(-1), sid(-1)
+StatementNode::StatementNode() 
+    : m_lastLine(-1)
 {
+    m_line = -1;
 }
 
-void StatementNode::setLoc(int line0, int line1, int sourceId)
+void StatementNode::setLoc(int firstLine, int lastLine)
 {
-    l0 = line0;
-    l1 = line1;
-    sid = sourceId;
+    m_line = firstLine;
+    m_lastLine = lastLine;
 }
 
 // return true if the debugger wants us to stop at this point
-bool StatementNode::hitStatement(ExecState *exec)
+bool StatementNode::hitStatement(ExecState* exec)
 {
   Debugger *dbg = exec->dynamicInterpreter()->imp()->debugger();
   if (dbg)
-    return dbg->atStatement(exec,sid,l0,l1);
+    return dbg->atStatement(exec, currentSourceId(exec), firstLine(), lastLine());
   else
     return true; // continue
 }
@@ -1442,14 +1502,14 @@ StatListNode::StatListNode(StatementNode *s)
   : statement(s), next(this)
 {
     Parser::noteNodeCycle(this);
-    setLoc(s->firstLine(), s->lastLine(), s->sourceId());
+    setLoc(s->firstLine(), s->lastLine());
 }
  
 StatListNode::StatListNode(StatListNode *l, StatementNode *s)
   : statement(s), next(l->next)
 {
   l->next = this;
-  setLoc(l->firstLine(), s->lastLine(), l->sourceId());
+  setLoc(l->firstLine(), s->lastLine());
 }
 
 // ECMA 12.1
@@ -1600,7 +1660,7 @@ BlockNode::BlockNode(SourceElementsNode *s)
     source = s->next;
     Parser::removeNodeCycle(source.get());
     s->next = 0;
-    setLoc(s->firstLine(), s->lastLine(), s->sourceId());
+    setLoc(s->firstLine(), s->lastLine());
   } else {
     source = 0;
   }
@@ -1689,9 +1749,9 @@ Completion DoWhileNode::execute(ExecState *exec)
     // bail out on error
     KJS_CHECKEXCEPTION
 
-    exec->context().imp()->seenLabels()->pushIteration();
+    exec->context().imp()->pushIteration();
     c = statement->execute(exec);
-    exec->context().imp()->seenLabels()->popIteration();
+    exec->context().imp()->popIteration();
     if (!((c.complType() == Continue) && ls.contains(c.target()))) {
       if ((c.complType() == Break) && ls.contains(c.target()))
         return Completion(Normal, 0);
@@ -1733,9 +1793,9 @@ Completion WhileNode::execute(ExecState *exec)
     if (!b)
       return Completion(Normal, value);
 
-    exec->context().imp()->seenLabels()->pushIteration();
+    exec->context().imp()->pushIteration();
     c = statement->execute(exec);
-    exec->context().imp()->seenLabels()->popIteration();
+    exec->context().imp()->popIteration();
     if (c.isValueCompletion())
       value = c.value();
 
@@ -1776,9 +1836,9 @@ Completion ForNode::execute(ExecState *exec)
     // bail out on error
     KJS_CHECKEXCEPTION
 
-    exec->context().imp()->seenLabels()->pushIteration();
+    exec->context().imp()->pushIteration();
     Completion c = statement->execute(exec);
-    exec->context().imp()->seenLabels()->popIteration();
+    exec->context().imp()->popIteration();
     if (c.isValueCompletion())
       cval = c.value();
     if (!((c.complType() == Continue) && ls.contains(c.target()))) {
@@ -1904,9 +1964,9 @@ Completion ForInNode::execute(ExecState *exec)
 
     KJS_CHECKEXCEPTION
 
-    exec->context().imp()->seenLabels()->pushIteration();
+    exec->context().imp()->pushIteration();
     c = statement->execute(exec);
-    exec->context().imp()->seenLabels()->popIteration();
+    exec->context().imp()->popIteration();
     if (c.isValueCompletion())
       retval = c.value();
 
@@ -1941,7 +2001,7 @@ Completion ContinueNode::execute(ExecState *exec)
 {
   KJS_BREAKPOINT;
 
-  if (ident.isEmpty() && !exec->context().imp()->seenLabels()->inIteration())
+  if (ident.isEmpty() && !exec->context().imp()->inIteration())
     return createErrorCompletion(exec, SyntaxError, "Invalid continue statement.");
   else if (!ident.isEmpty() && !exec->context().imp()->seenLabels()->contains(ident))
     return createErrorCompletion(exec, SyntaxError, "Label %s not found.", ident);
@@ -1956,8 +2016,8 @@ Completion BreakNode::execute(ExecState *exec)
 {
   KJS_BREAKPOINT;
 
-  if (ident.isEmpty() && !exec->context().imp()->seenLabels()->inIteration() &&
-      !exec->context().imp()->seenLabels()->inSwitch())
+  if (ident.isEmpty() && !exec->context().imp()->inIteration() &&
+      !exec->context().imp()->inSwitch())
     return createErrorCompletion(exec, SyntaxError, "Invalid break statement.");
   else if (!ident.isEmpty() && !exec->context().imp()->seenLabels()->contains(ident))
     return createErrorCompletion(exec, SyntaxError, "Label %s not found.");
@@ -2171,9 +2231,9 @@ Completion SwitchNode::execute(ExecState *exec)
   JSValue *v = expr->evaluate(exec);
   KJS_CHECKEXCEPTION
 
-  exec->context().imp()->seenLabels()->pushSwitch();
+  exec->context().imp()->pushSwitch();
   Completion res = block->evalBlock(exec,v);
-  exec->context().imp()->seenLabels()->popSwitch();
+  exec->context().imp()->popSwitch();
 
   if ((res.complType() == Break) && ls.contains(res.target()))
     return Completion(Normal, res.value());
@@ -2269,15 +2329,18 @@ void ParameterNode::breakCycle()
 // ------------------------------ FunctionBodyNode -----------------------------
 
 FunctionBodyNode::FunctionBodyNode(SourceElementsNode *s)
-  : BlockNode(s)
+    : BlockNode(s)
+    , m_sourceURL(Lexer::curr()->sourceURL())
+    , m_sourceId(Parser::sid)
 {
-  setLoc(-1, -1, -1);
+
+  setLoc(-1, -1);
 }
 
 void FunctionBodyNode::processFuncDecl(ExecState *exec)
 {
-  if (source)
-    source->processFuncDecl(exec);
+    if (source)
+        source->processFuncDecl(exec);
 }
 
 // ------------------------------ FuncDeclNode ---------------------------------
@@ -2362,14 +2425,14 @@ SourceElementsNode::SourceElementsNode(StatementNode *s1)
   : node(s1), next(this)
 {
     Parser::noteNodeCycle(this);
-    setLoc(s1->firstLine(), s1->lastLine(), s1->sourceId());
+    setLoc(s1->firstLine(), s1->lastLine());
 }
 
 SourceElementsNode::SourceElementsNode(SourceElementsNode *s1, StatementNode *s2)
   : node(s2), next(s1->next)
 {
   s1->next = this;
-  setLoc(s1->firstLine(), s2->lastLine(), s1->sourceId());
+  setLoc(s1->firstLine(), s2->lastLine());
 }
 
 // ECMA 14

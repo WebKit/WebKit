@@ -1,3 +1,105 @@
+2006-03-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders.
+        
+        - KJS::Node and KJS::StatementNode are bigger than they need to be
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7775
+
+        The memory usage of Node was reduced by 2 machine words per node:
+
+        - sourceURL was removed and only kept on FunctionBodyNode. The
+        source URL can only be distinct per function or top-level program node, 
+        and you always have one.
+        
+        - refcount was removed and kept in a separate hashtable when
+        greater than 1. newNodes set represents floating nodes with
+        refcount of 0. This helps because almost all nodes have a refcount of 1
+        for almost all of their lifetime.
+        
+        * bindings/runtime_method.cpp:
+        (RuntimeMethod::RuntimeMethod): Pass null body, added FIXME.
+        * kjs/Parser.cpp:
+        (KJS::clearNewNodes): New nodes are tracked in nodes.cpp now, but still clear
+        them at the appropriate time.
+        * kjs/context.h:
+        (KJS::ContextImp::currentBody): added; used to retrieve source URL and sid
+        for current code.
+        (KJS::ContextImp::pushIteration): moved here from LabelStack
+        (KJS::ContextImp::popIteration): ditto
+        (KJS::ContextImp::inIteration): ditto
+        (KJS::ContextImp::pushSwitch): ditto
+        (KJS::ContextImp::popSwitch): ditto
+        (KJS::ContextImp::inSwitch): ditto
+        * kjs/function.cpp:
+        (KJS::FunctionImp::FunctionImp): Add FunctionBodyNode* parameter.
+        (KJS::FunctionImp::callAsFunction): Pass body to ContextImp.
+        (KJS::FunctionImp::argumentsGetter): _context renamed to m_context.
+        (KJS::DeclaredFunctionImp::DeclaredFunctionImp): Pass body to superclass
+        constructor.
+        (KJS::GlobalFuncImp::callAsFunction): Pass progNode as body for ContextImp in
+        eval.
+        * kjs/function.h: Move body field from DeclaredFunctionImp to
+        FunctionImp.
+        * kjs/grammar.y: Change DBG; statements no longer have a sourceid.
+        * kjs/internal.cpp:
+        (KJS::ContextImp::ContextImp): Initialize new m_currentBody, m_iterationDepth
+        and m_switchDepth data members. New FunctionBodyNode* parameter - the
+        function body provides source URL and SourceId.
+        (KJS::InterpreterImp::mark): Use exception() function, not _exception directly.
+        (KJS::InterpreterImp::evaluate): Pass progNode to ContextImp constructor
+        to use as the body.
+        * kjs/internal.h:
+        (KJS::LabelStack::LabelStack): Remove iteration depth and switch depth;
+        statement label stacks don't need these and it bloats their size. Put them
+        in the ContextImp instead.
+        * kjs/interpreter.cpp:
+        (KJS::ExecState::lexicalInterpreter): Renamed _context to m_context.
+        * kjs/interpreter.h:
+        (KJS::ExecState::dynamicInterpreter): Renamed _context to m_context.
+        (KJS::ExecState::context): ditto
+        (KJS::ExecState::setException): Renamed _exception to m_exception
+        (KJS::ExecState::clearException): ditto
+        (KJS::ExecState::exception): ditto
+        (KJS::ExecState::hadException): ditto
+        (KJS::ExecState::ExecState): ditto both above renames
+        * kjs/nodes.cpp:
+        (Node::Node): Removed initialization of line, source URL and refcount. Add to
+        local newNodes set instead of involving parser.
+        (Node::ref): Instead of managing refcount directly, story refcount over 1 in a
+        HashCountedSet, and keep a separate HashSet of "floating" nodes with refcount
+        0.
+        (Node::deref): ditto
+        (Node::refcount): ditto
+        (Node::clearNewNodes): Destroy anything left in the new nodes set.
+        (currentSourceId): Inline helper to get sourceId from function body via context.
+        (currentSourceURL): ditto for sourceURL.
+        (Node::createErrorCompletion): use new helper
+        (Node::throwError): ditto
+        (Node::setExceptionDetailsIfNeeded): ditto
+        (StatementNode::StatementNode): remove initialization of l0 and sid, rename
+        l1 to m_lastLine.
+        (StatementNode::setLoc): Set own m_lastLine and Node's m_line.
+        (StatementNode::hitStatement): Get sid, first line, last line in the proper new ways.
+        (StatListNode::StatListNode): updated for setLoc changes
+        (BlockNode::BlockNode): ditto
+        (DoWhileNode::execute): excpect iteraton counts on ContextImp, not LabelStack
+        (WhileNode::execute): ditto
+        (ForNode::execute): ditto
+        (ForInNode::execute): ditto
+        (ContinueNode::execute): excpect inIteration on ContextImp, not LabelStack
+        (BreakNode::execute): excpect inIteration and inSwitch on ContextImp, not LabelStack
+        (SwitchNode::execute): expect switch counts on ContextImp, not LabelStack
+        (FunctionBodyNode::FunctionBodyNode): update for new setLoc
+        (FunctionBodyNode::processFuncDecl): reindent
+        (SourceElementsNode::SourceElementsNode): update for new setLoc
+        * kjs/nodes.h:
+        (KJS::Node::lineNo): Renamed _line to m_line
+        (KJS::StatementNode::firstLine): Use lineNo()
+        (KJS::StatementNode::lastLine): Renamed l1 to m_lastLine
+        (KJS::FunctionBodyNode::sourceId): added
+        (KJS::FunctionBodyNode::sourceURL): added
+        * kjs/testkjs.cpp:
+
 2006-03-14  Geoffrey Garen  <ggaren@apple.com>
 
         - Fixed <rdar://problem/4478239> string sort puts "closed" before 

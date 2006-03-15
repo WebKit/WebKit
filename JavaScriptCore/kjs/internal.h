@@ -93,7 +93,10 @@ namespace KJS {
    */
   class LabelStack : Noncopyable {
   public:
-    LabelStack(): tos(0), iterationDepth(0), switchDepth(0) {}
+    LabelStack()
+      : tos(0)
+    {
+    }
     ~LabelStack();
 
     /**
@@ -110,14 +113,6 @@ namespace KJS {
      */
     void pop();
     
-    void pushIteration() { iterationDepth++; }
-    void popIteration() { iterationDepth--; }
-    bool inIteration() const { return (iterationDepth > 0); }
-    
-    void pushSwitch() { switchDepth++; }
-    void popSwitch() { switchDepth--; }
-    bool inSwitch() const { return (switchDepth > 0); }
-    
   private:
     struct StackElem {
       Identifier id;
@@ -125,8 +120,6 @@ namespace KJS {
     };
 
     StackElem *tos;
-    int iterationDepth;
-    int switchDepth;
   };
 
 

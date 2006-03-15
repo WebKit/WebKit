@@ -55,9 +55,10 @@ const ClassInfo FunctionImp::info = {"Function", &InternalFunctionImp::info, 0, 
     OwnPtr<Parameter> next;
   };
 
-FunctionImp::FunctionImp(ExecState *exec, const Identifier &n)
+FunctionImp::FunctionImp(ExecState *exec, const Identifier &n, FunctionBodyNode* b)
   : InternalFunctionImp(static_cast<FunctionPrototype*>
                         (exec->lexicalInterpreter()->builtinFunctionPrototype()), n)
+  , body(b)
 {
 }
 
@@ -65,13 +66,13 @@ FunctionImp::~FunctionImp()
 {
 }
 
-JSValue *FunctionImp::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
+JSValue *FunctionImp::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
 {
   JSObject *globalObj = exec->dynamicInterpreter()->globalObject();
 
   // enter a new execution context
-  ContextImp ctx(globalObj, exec->dynamicInterpreter()->imp(), thisObj, codeType(),
-                 exec->context().imp(), this, &args);
+  ContextImp ctx(globalObj, exec->dynamicInterpreter()->imp(), thisObj, body.get(),
+                 codeType(), exec->context().imp(), this, &args);
   ExecState newExec(exec->dynamicInterpreter(), &ctx);
   newExec.setException(exec->exception()); // could be null
 
@@ -202,7 +203,7 @@ void FunctionImp::processVarDecls(ExecState */*exec*/)
 JSValue *FunctionImp::argumentsGetter(ExecState* exec, JSObject*, const Identifier& propertyName, const PropertySlot& slot)
 {
   FunctionImp *thisObj = static_cast<FunctionImp *>(slot.slotBase());
-  ContextImp *context = exec->_context;
+  ContextImp *context = exec->m_context;
   while (context) {
     if (context->function() == thisObj) {
       return static_cast<ActivationImp *>(context->activationObject())->get(exec, propertyName);
@@ -294,7 +295,7 @@ const ClassInfo DeclaredFunctionImp::info = {"Function", &FunctionImp::info, 0, 
 
 DeclaredFunctionImp::DeclaredFunctionImp(ExecState *exec, const Identifier &n,
 					 FunctionBodyNode *b, const ScopeChain &sc)
-  : FunctionImp(exec,n), body(b)
+  : FunctionImp(exec, n, b)
 {
   setScope(sc);
 }
@@ -803,6 +804,7 @@ JSValue *GlobalFuncImp::callAsFunction(ExecState *exec, JSObject */*thisObj*/, c
         ContextImp ctx(exec->dynamicInterpreter()->globalObject(),
                        exec->dynamicInterpreter()->imp(),
                        thisVal,
+                       progNode.get(),
                        EvalCode,
                        exec->context().imp());
         

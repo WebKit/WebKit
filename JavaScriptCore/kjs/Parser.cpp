@@ -37,15 +37,7 @@ namespace KJS {
 int Parser::sid = 0;
 
 static RefPtr<ProgramNode>* progNode;
-static Vector<RefPtr<Node> >* newNodes;
 static HashSet<Node*>* nodeCycles;
-
-void Parser::saveNewNode(Node *node)
-{
-    if (!newNodes)
-        newNodes = new Vector<RefPtr<Node> >;
-    newNodes->append(node);
-}
 
 void Parser::noteNodeCycle(Node *node)
 {
@@ -68,9 +60,7 @@ static void clearNewNodes()
         delete nodeCycles;
         nodeCycles = 0;
     }
-
-    delete newNodes;
-    newNodes = 0;
+    Node::clearNewNodes();
 }
 
 PassRefPtr<ProgramNode> Parser::parse(const UString& sourceURL, int startingLineNumber,

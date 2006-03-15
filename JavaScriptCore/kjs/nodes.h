@@ -80,12 +80,12 @@ namespace KJS {
     UString toString() const;
     virtual void streamTo(SourceStream &s) const = 0;
     virtual void processVarDecls(ExecState *) {}
-    int lineNo() const { return line; }
+    int lineNo() const { return m_line; }
 
-    // reference counting mechanism
-    void ref() { ++m_refcount; }
-    void deref() { --m_refcount; if (!m_refcount) delete this; }
-    unsigned int refcount() { return m_refcount; }
+    void ref();
+    void deref();
+    unsigned int refcount();
+    static void clearNewNodes();
 
     virtual Node *nodeInsideAllParens();
 
@@ -112,11 +112,7 @@ namespace KJS {
 
     void setExceptionDetailsIfNeeded(ExecState *);
 
-    int line;
-    UString sourceURL;
-    unsigned int m_refcount;
-    virtual int sourceId() const { return -1; }
-
+    int m_line;
   private:
     // disallow assignment
     Node& operator=(const Node&);
@@ -126,10 +122,9 @@ namespace KJS {
   class StatementNode : public Node {
   public:
     StatementNode();
-    void setLoc(int line0, int line1, int sourceId);
-    int firstLine() const { return l0; }
-    int lastLine() const { return l1; }
-    int sourceId() const { return sid; }
+    void setLoc(int line0, int line1);
+    int firstLine() const { return lineNo(); }
+    int lastLine() const { return m_lastLine; }
     bool hitStatement(ExecState *exec);
     virtual Completion execute(ExecState *exec) = 0;
     void pushLabel(const Identifier &id) { ls.push(id); }
@@ -138,8 +133,7 @@ namespace KJS {
     LabelStack ls;
   private:
     JSValue *evaluate(ExecState */*exec*/) { return jsUndefined(); }
-    int l0, l1;
-    int sid;
+    int m_lastLine;
   };
 
   class NullNode : public Node {
@@ -1053,8 +1047,13 @@ namespace KJS {
   // inherited by ProgramNode
   class FunctionBodyNode : public BlockNode {
   public:
-    FunctionBodyNode(SourceElementsNode *s);
-    void processFuncDecl(ExecState *exec);
+    FunctionBodyNode(SourceElementsNode *);
+    virtual void processFuncDecl(ExecState *exec);
+    int sourceId() { return m_sourceId; }
+    const UString& sourceURL() { return m_sourceURL; }
+  private:
+    UString m_sourceURL;
+    int m_sourceId;
   };
 
   class FuncExprNode : public Node {
