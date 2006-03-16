@@ -118,4 +118,26 @@ int GraphicsContext::misspellingLineThickness() const
     return font().misspellingLineThickness(this);
 }
 
+void GraphicsContext::initFocusRing(int width, int offset)
+{
+    if (paintingDisabled())
+        return;
+    clearFocusRing();
+    
+    m_focusRingWidth = width;
+    m_focusRingOffset = offset;
+}
+
+void GraphicsContext::clearFocusRing()
+{
+    m_focusRingRects.clear();
+}
+
+void GraphicsContext::addFocusRingRect(const IntRect& rect)
+{
+    if (paintingDisabled())
+        return;
+    m_focusRingRects.append(rect);
+}
+
 }

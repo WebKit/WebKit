@@ -64,9 +64,6 @@ struct GraphicsContextPrivate {
     Vector<GraphicsContextState> stack;
     id <WebCoreTextRenderer> textRenderer;
     Font textRendererFont;
-    CGMutablePathRef focusRingPath;
-    int focusRingWidth;
-    int focusRingOffset;
 #if SVG_SUPPORT
     KRenderingDevice *renderingDevice;
 #endif
@@ -81,18 +78,19 @@ static inline void fillRectSourceOver(float x, float y, float w, float h, const 
 
 
 GraphicsContextPrivate::GraphicsContextPrivate()
-    : textRenderer(0), focusRingPath(0), focusRingWidth(0), focusRingOffset(0)
+    : textRenderer(0) 
 {
 }
 
 GraphicsContextPrivate::~GraphicsContextPrivate()
 {
     KWQRelease(textRenderer);
-    CGPathRelease(focusRingPath);
 }
 
 GraphicsContext::GraphicsContext()
     : m_data(new GraphicsContextPrivate)
+    , m_focusRingWidth(0)
+    , m_focusRingOffset(0)
     , m_isForPrinting(false)
     , m_usesInactiveTextBackgroundColor(false)
     , m_updatingControlTints(false)
@@ -101,6 +99,8 @@ GraphicsContext::GraphicsContext()
 
 GraphicsContext::GraphicsContext(bool forPrinting)
     : m_data(new GraphicsContextPrivate)
+    , m_focusRingWidth(0)
+    , m_focusRingOffset(0)
     , m_isForPrinting(forPrinting)
     , m_usesInactiveTextBackgroundColor(false)
     , m_updatingControlTints(false)
@@ -653,9 +653,9 @@ void GraphicsContext::setShadow(int x, int y, int blur, const Color& color)
     // Check for an invalid color, as this means that the color was not set for the shadow
     // and we should therefore just use the default shadow color.
     CGContextRef context = currentCGContext();
-    if (!color.isValid()) {
+    if (!color.isValid())
         CGContextSetShadow(context, CGSizeMake(x,-y), blur); // y is flipped.
-    } else {
+    else {
         CGColorRef colorCG = cgColor(color);
         CGContextSetShadowWithColor(context,
                                     CGSizeMake(x,-y), // y is flipped.
@@ -673,40 +673,23 @@ void GraphicsContext::clearShadow()
     CGContextSetShadowWithColor(context, CGSizeZero, 0, NULL);
 }
 
-void GraphicsContext::initFocusRing(int width, int offset)
-{
-    if (m_data->state.paintingDisabled)
-        return;
-    clearFocusRing();
-    m_data->focusRingPath = CGPathCreateMutable();
-    m_data->focusRingWidth = width;
-    m_data->focusRingOffset = offset;
-}
-
-void GraphicsContext::addFocusRingRect(int x, int y, int width, int height)
-{
-    if (m_data->state.paintingDisabled)
-        return;
-    int radius = (m_data->focusRingWidth - 1) / 2;
-    int offset = radius + m_data->focusRingOffset;
-    CGPathAddRect(m_data->focusRingPath, 0, CGRectInset(CGRectMake(x, y, width, height), -offset, -offset));
-}
-
 void GraphicsContext::drawFocusRing(const Color& color)
 {
     if (m_data->state.paintingDisabled)
         return;
-    ASSERT(m_data->focusRingPath);
-    int radius = (m_data->focusRingWidth - 1) / 2;
+    int radius = (m_focusRingWidth - 1) / 2;
+    int offset = radius + m_focusRingOffset;
     CGColorRef colorRef = color.isValid() ? cgColor(color) : 0;
-    [[WebCoreGraphicsBridge sharedBridge] drawFocusRingWithPath:m_data->focusRingPath radius:radius color:colorRef];
+    
+    CGMutablePathRef focusRingPath = CGPathCreateMutable();
+    unsigned rectCount = m_focusRingRects.size();
+    
+    for (unsigned i = 0; i < rectCount; i++)
+        CGPathAddRect(focusRingPath, 0, CGRectInset(m_focusRingRects[i], -offset, -offset));
+    
+    [[WebCoreGraphicsBridge sharedBridge] drawFocusRingWithPath:focusRingPath radius:radius color:colorRef];
     CGColorRelease(colorRef);
-}
-
-void GraphicsContext::clearFocusRing()
-{
-    CGPathRelease(m_data->focusRingPath);
-    m_data->focusRingPath = 0;
+    CGPathRelease(focusRingPath);
 }
 
 }

@@ -1972,9 +1972,8 @@ bool MacFrame::passWheelEventToChildWidget(NodeImpl *node)
 void MacFrame::mouseDown(NSEvent *event)
 {
     FrameView *v = d->m_view.get();
-    if (!v || _sendingEventToSubview) {
+    if (!v || _sendingEventToSubview)
         return;
-    }
 
     KWQ_BLOCK_EXCEPTIONS;
 

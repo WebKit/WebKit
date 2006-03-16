@@ -1,3 +1,26 @@
+2006-03-16  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Pushed focus ring handling down into GraphicsContext.cpp
+
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::mouseDown):
+        * platform/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::initFocusRing):
+        (WebCore::GraphicsContext::clearFocusRing):
+        (WebCore::GraphicsContext::addFocusRingRect):
+        * platform/GraphicsContext.h:
+        * platform/mac/GraphicsContextMac.mm:
+        (WebCore::GraphicsContextPrivate::GraphicsContextPrivate):
+        (WebCore::GraphicsContextPrivate::~GraphicsContextPrivate):
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::drawFocusRing):
+        * rendering/render_flow.cpp:
+        (WebCore::RenderFlow::addFocusRingRects):
+        * rendering/render_object.cpp:
+        (WebCore::RenderObject::addFocusRingRects):
+
 2006-03-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

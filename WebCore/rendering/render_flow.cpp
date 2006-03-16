@@ -656,11 +656,11 @@ IntRect RenderFlow::caretRect(int offset, EAffinity affinity, int *extraWidthToE
 void RenderFlow::addFocusRingRects(GraphicsContext* p, int _tx, int _ty)
 {
     if (isRenderBlock())
-       p->addFocusRingRect(_tx, _ty, width(), height());
+       p->addFocusRingRect(IntRect(_tx, _ty, width(), height()));
 
     if (!hasOverflowClip()) {
         for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox())
-            p->addFocusRingRect(_tx + curr->xPos(), _ty + curr->yPos(), curr->width(), curr->height());
+            p->addFocusRingRect(IntRect(_tx + curr->xPos(), _ty + curr->yPos(), curr->width(), curr->height()));
         
         for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
             if (!curr->isText())
