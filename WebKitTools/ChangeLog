@@ -1,3 +1,11 @@
+2006-03-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Fix path
+        that had a lowercase "i" in it so this builds on case-sensitive
+        file systems.
+
 2006-03-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Eric.

@@ -462,7 +462,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
-				INFOPLIST_FILE = TestNetscapePlugin.subproj/Info.plist;
+				INFOPLIST_FILE = TestNetscapePlugIn.subproj/Info.plist;
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Plugins";
 				LIBRARY_STYLE = BUNDLE;
 				OPTIMIZATION_CFLAGS = "-O0";
@@ -492,7 +492,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
-				INFOPLIST_FILE = TestNetscapePlugin.subproj/Info.plist;
+				INFOPLIST_FILE = TestNetscapePlugIn.subproj/Info.plist;
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Plugins";
 				LIBRARY_STYLE = BUNDLE;
 				OPTIMIZATION_CFLAGS = "-O0";
