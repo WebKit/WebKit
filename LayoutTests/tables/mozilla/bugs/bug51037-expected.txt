@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock (anonymous) at (0,0) size 784x18
+        RenderText {TEXT} at (0,0) size 240x18
+          text run at (0,0) width 240: "The tables left position should be 250."
+      RenderBlock {P} at (0,34) size 784x23
+        RenderText {TEXT} at (0,2) size 34x18
+          text run at (0,2) width 34: "Left: "
+        RenderLineEdit {INPUT} at (36,2) size 148x19
+      RenderBlock {P} at (0,73) size 784x23
+        RenderText {TEXT} at (0,2) size 34x18
+          text run at (0,2) width 34: "Top: "
+        RenderLineEdit {INPUT} at (36,2) size 148x19
+      RenderBlock {P} at (0,112) size 784x22
+        RenderButton {INPUT} at (2,2) size 45x18 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (8,2) size 29x13
+            RenderText at (0,0) size 29x13
+              text run at (0,0) width 29: "Move"
+layer at (250,120) size 29x48
+  RenderTable {TABLE} at (250,120) size 29x48 [border: (1px outset #808080)]
+    RenderTableSection {TBODY} at (1,1) size 0x46
+      RenderTableRow {TR} at (0,0) size 0x0
+        RenderTableCell {TD} at (2,2) size 23x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+          RenderText {TEXT} at (1,1) size 21x18
+            text run at (1,1) width 21: "foo"
+      RenderTableRow {TR} at (0,0) size 0x0
+        RenderTableCell {TD} at (2,24) size 23x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderText {TEXT} at (1,1) size 20x18
+            text run at (1,1) width 20: "bar"

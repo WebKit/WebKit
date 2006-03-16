@@ -1,0 +1,17 @@
+layer at (0,0) size 785x1136
+  RenderCanvas at (0,0) size 785x600
+layer at (0,0) size 785x1136
+  RenderBlock {HTML} at (0,0) size 785x1136
+    RenderBody {BODY} at (8,8) size 769x1120
+      RenderTable {TABLE} at (0,0) size 4x1078
+      RenderTable {TABLE} at (0,1078) size 102x24
+        RenderTableSection {TBODY} at (0,0) size 0x24
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,2) size 98x20 [r=0 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 96x18
+                text run at (1,1) width 96: "I'm down here!"
+      RenderBlock (anonymous) at (0,1102) size 769x18
+        RenderText {TEXT} at (0,0) size 56x18
+          text run at (0,0) width 56: "The end."
+        RenderText {TEXT} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0

@@ -1,0 +1,57 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFCC00]
+      RenderTable {TABLE} at (0,0) size 600x22 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 0x20
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (0,0) size 133x20 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderInline {B} at (0,0) size 97x18
+                RenderText {TEXT} at (1,1) size 97x18
+                  text run at (1,1) width 97: "MERCHANT"
+            RenderTableCell {TD} at (133,8) size 3x3 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 1x1
+            RenderTableCell {TD} at (136,0) size 309x20 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderInline {B} at (0,0) size 113x18
+                RenderText {TEXT} at (98,1) size 113x18
+                  text run at (98,1) width 113: "DESCRIPTION"
+            RenderTableCell {TD} at (445,8) size 3x3 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 1x1
+            RenderTableCell {TD} at (448,0) size 78x20 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
+              RenderInline {B} at (0,0) size 51x18
+                RenderText {TEXT} at (26,1) size 51x18
+                  text run at (26,1) width 51: "PRICE"
+            RenderTableCell {TD} at (526,8) size 3x3 [border: (1px inset #808080)] [r=0 c=5 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 1x1
+            RenderTableCell {TD} at (529,0) size 69x20 [border: (1px inset #808080)] [r=0 c=6 rs=1 cs=1]
+              RenderInline {B} at (0,0) size 40x18
+                RenderText {TEXT} at (14,1) size 40x18
+                  text run at (14,1) width 40: "INFO"
+      RenderTable {TABLE} at (0,22) size 600x25 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 0x23
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (0,1) size 133x17 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderInline {FONT} at (0,0) size 93x15
+                RenderText {TEXT} at (1,1) size 93x15
+                  text run at (1,1) width 93: "American Starlex"
+            RenderTableCell {TD} at (133,8) size 3x3 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 1x1
+            RenderTableCell {TD} at (136,1) size 309x17 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderInline {FONT} at (0,0) size 249x15
+                RenderText {TEXT} at (1,1) size 249x15
+                  text run at (1,1) width 249: "Digital_Cameras DC200 New|In stock; Kodak"
+            RenderTableCell {TD} at (445,8) size 3x3 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 1x1
+            RenderTableCell {TD} at (448,1) size 78x17 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
+              RenderInline {FONT} at (0,0) size 45x15
+                RenderText {TEXT} at (32,1) size 45x15
+                  text run at (32,1) width 45: "$270.00"
+            RenderTableCell {TD} at (526,8) size 3x3 [border: (1px inset #808080)] [r=0 c=5 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 1x1
+            RenderTableCell {TD} at (529,0) size 69x20 [border: (1px inset #808080)] [r=0 c=6 rs=1 cs=1]
+              RenderText {TEXT} at (17,1) size 34x18
+                text run at (17,1) width 34: "More"
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (0,20) size 598x3 [bgcolor=#000000] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=8]
+              RenderImage {IMG} at (1,1) size 1x1

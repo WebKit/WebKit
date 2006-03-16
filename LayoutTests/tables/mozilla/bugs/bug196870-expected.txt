@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x103
+  RenderBlock {HTML} at (0,0) size 800x103
+    RenderBody {BODY} at (8,8) size 784x87
+      RenderTable {TABLE} at (0,0) size 130x87
+        RenderTableSection {TBODY} at (0,0) size 0x87
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,2) size 126x83 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (100,1) size 25x25
+                RenderImage {IMG} at (0,0) size 77x77

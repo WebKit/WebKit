@@ -1,0 +1,39 @@
+layer at (0,0) size 999x600
+  RenderCanvas at (0,0) size 785x585
+layer at (0,0) size 999x600
+  RenderBlock {HTML} at (0,0) size 785x600
+    RenderBody {BODY} at (8,8) size 769x584
+      RenderTable {TABLE} at (0,0) size 991x147 [border: (2px solid #0000FF)]
+        RenderTableSection {TBODY} at (2,2) size 0x143
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,2) size 207x139 [border: (1px solid #C0C0C0)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 203x135 [border: (2px solid #008000)]
+                RenderBlock {FORM} at (0,0) size 0x0
+                RenderTableSection {TBODY} at (2,2) size 0x131
+                  RenderTableRow {TR} at (0,0) size 0x0
+                    RenderTableCell {TD} at (2,2) size 195x87 [border: (1px solid #C0C0C0)] [r=0 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (2,2) size 164x35 [border: (2px solid #FF0000)]
+                        RenderTableSection {TBODY} at (2,2) size 0x31
+                          RenderTableRow {TR} at (0,0) size 0x0
+                            RenderTableCell {TD} at (2,2) size 156x27 [border: (1px solid #C0C0C0)] [r=0 c=0 rs=1 cs=1]
+                              RenderLineEdit {INPUT} at (4,4) size 148x19
+                              RenderText {TEXT} at (0,0) size 0x0
+                      RenderTable {TABLE} at (2,37) size 191x48 [border: (2px solid #FF0000)]
+                        RenderTableSection {TBODY} at (2,2) size 0x44
+                          RenderTableRow {TR} at (0,0) size 0x0
+                            RenderTableCell {TD} at (2,2) size 183x40 [border: (1px solid #C0C0C0)] [r=0 c=0 rs=1 cs=1]
+                              RenderText {TEXT} at (2,2) size 176x36
+                                text run at (2,2) width 176: "THIS TABLE NEEDS TO"
+                                text run at (2,20) width 68: "BE HERE"
+                  RenderTableRow {TR} at (0,0) size 0x0
+                    RenderTableCell {TD} at (2,91) size 195x38 [border: (1px solid #C0C0C0)] [r=1 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (2,2) size 191x34 [border: (2px solid #FF0000)]
+                        RenderTableSection {TBODY} at (2,2) size 0x30
+                          RenderTableRow {TR} at (0,0) size 0x0
+                            RenderTableCell {TD} at (2,2) size 183x26 [border: (1px solid #C0C0C0)] [r=0 c=0 rs=1 cs=1]
+                              RenderSelect {SELECT} at (4,4) size 175x18
+                              RenderText {TEXT} at (0,0) size 0x0
+            RenderTableCell {TD} at (211,2) size 774x40 [border: (1px solid #C0C0C0)] [r=0 c=1 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 770x36
+                text run at (2,2) width 770: "KEEPoTHEoTEXToHEREoASoLONGoASoPOSSIBLEooKEEPoTHEoTEXToHEREoASoLONGoASoPOSSIBLE"
+                text run at (2,20) width 618: "THIS SIMULATES THE PROBLEM ON THE WWW.MAPBLAST.COM/ \"CREATE MAP\""

@@ -1,0 +1,29 @@
+layer at (0,0) size 785x640
+  RenderCanvas at (0,0) size 785x600
+layer at (0,0) size 785x640
+  RenderBlock {HTML} at (0,0) size 785x640
+    RenderBody {BODY} at (8,8) size 769x624
+      RenderTable {TABLE} at (0,0) size 306x306
+        RenderTableSection {TBODY} at (0,0) size 0x306
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,2) size 302x302 [r=0 c=0 rs=1 cs=1]
+              RenderPartObject {IFRAME} at (1,1) size 300x300
+              RenderText {TEXT} at (0,0) size 0x0
+      RenderTable {TABLE} at (0,306) size 606x306
+        RenderTableSection {TBODY} at (0,0) size 0x306
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,2) size 602x302 [r=0 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 600x300
+              RenderText {TEXT} at (0,0) size 0x0
+      RenderTable {TABLE} at (0,612) size 306x6
+        RenderTableSection {TBODY} at (0,0) size 0x6
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,2) size 302x2 [r=0 c=0 rs=1 cs=1]
+              RenderPartObject {IFRAME} at (1,1) size 300x0
+              RenderText {TEXT} at (0,0) size 0x0
+      RenderTable {TABLE} at (0,618) size 606x6
+        RenderTableSection {TBODY} at (0,0) size 0x6
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,2) size 602x2 [r=0 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 600x0
+              RenderText {TEXT} at (0,0) size 0x0

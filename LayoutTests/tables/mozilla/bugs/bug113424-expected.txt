@@ -1,0 +1,74 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 600x122
+        RenderTableSection {TBODY} at (0,0) size 0x122
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (0,0) size 600x122 [r=0 c=0 rs=1 cs=1]
+              RenderBlock (anonymous) at (0,0) size 600x54
+                RenderBR {BR} at (300,0) size 0x18
+                RenderBR {BR} at (300,18) size 0x18
+                RenderBR {BR} at (300,36) size 0x18
+              RenderTable {TABLE} at (0,54) size 600x68 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 0x66
+                  RenderTableRow {TR} at (0,0) size 0x0
+                    RenderTableCell {TD} at (0,0) size 299x66 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderTable {TABLE} at (1,1) size 297x64
+                        RenderTableSection {TBODY} at (0,0) size 0x64
+                          RenderTableRow {TR} at (0,0) size 0x0 [bgcolor=#CD9944]
+                            RenderTableCell {TD} at (1,1) size 102x20 [r=0 c=0 rs=1 cs=1]
+                              RenderInline {FONT} at (0,0) size 41x13 [color=#FFFFFF]
+                                RenderText {TEXT} at (3,3) size 41x14
+                                  text run at (3,3) width 41: "Funktion"
+                          RenderTableRow {TR} at (0,0) size 0x0 [bgcolor=#E7E7AD]
+                            RenderTableCell {TD} at (1,22) size 102x20 [r=1 c=0 rs=1 cs=1]
+                              RenderInline {FONT} at (0,0) size 68x13
+                                RenderText {TEXT} at (3,3) size 68x14
+                                  text run at (3,3) width 68: "Umlaufrendite"
+                          RenderTableRow {TR} at (0,0) size 0x0 [bgcolor=#E7DEA5]
+                            RenderTableCell {TD} at (1,43) size 102x20 [r=2 c=0 rs=1 cs=1]
+                              RenderInline {FONT} at (0,0) size 72x13
+                                RenderText {TEXT} at (3,3) size 72x14
+                                  text run at (3,3) width 72: "10 Jahre US %"
+                            RenderTableCell {TD} at (104,43) size 39x20 [r=2 c=1 rs=1 cs=1]
+                              RenderInline {FONT} at (0,0) size 24x13
+                                RenderText {TEXT} at (3,3) size 24x14
+                                  text run at (3,3) width 24: "4,75"
+                            RenderTableCell {TD} at (144,44) size 22x17 [r=2 c=2 rs=1 cs=1]
+                              RenderImage {IMG} at (5,3) size 11x11
+                            RenderTableCell {TD} at (167,43) size 44x20 [r=2 c=3 rs=1 cs=1]
+                              RenderInline {FONT} at (0,0) size 28x13
+                                RenderText {TEXT} at (3,3) size 28x14
+                                  text run at (3,3) width 28: "-0.02"
+                            RenderTableCell {TD} at (212,43) size 53x20 [r=2 c=4 rs=1 cs=1]
+                              RenderInline {FONT} at (0,0) size 34x13
+                                RenderText {TEXT} at (3,3) size 34x14
+                                  text run at (3,3) width 34: "03.12."
+                            RenderTableCell {TD} at (266,45) size 30x16 [r=2 c=5 rs=1 cs=1]
+                              RenderInline {FONT} at (0,0) size 16x10
+                                RenderInline {A} at (0,0) size 16x10 [color=#0000EE]
+                                  RenderImage {IMG} at (7,3) size 16x10
+                    RenderTableCell {TD} at (299,0) size 299x66 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                      RenderTable {TABLE} at (1,1) size 297x64
+                        RenderTableSection {TBODY} at (0,0) size 0x64
+                          RenderTableRow {TR} at (0,0) size 0x0 [bgcolor=#CD9944]
+                            RenderTableCell {TD} at (1,2) size 207x20 [r=0 c=0 rs=1 cs=1]
+                              RenderInline {FONT} at (0,0) size 47x13 [color=#FFFFFF]
+                                RenderText {TEXT} at (3,3) size 47x14
+                                  text run at (3,3) width 47: "Rohstoffe"
+                          RenderTableRow {TR} at (0,0) size 0x0 [bgcolor=#E7E7AD]
+                            RenderTableCell {TD} at (1,25) size 207x17 [r=1 c=0 rs=1 cs=1]
+                              RenderImage {IMG} at (98,3) size 11x11
+                            RenderTableCell {TD} at (209,25) size 87x16 [r=1 c=1 rs=1 cs=1]
+                              RenderInline {FONT} at (0,0) size 16x10
+                                RenderInline {A} at (0,0) size 16x10 [color=#0000EE]
+                                  RenderImage {IMG} at (35,3) size 16x10
+                          RenderTableRow {TR} at (0,0) size 0x0 [bgcolor=#E7DEA5]
+                            RenderTableCell {TD} at (1,45) size 207x17 [r=2 c=0 rs=1 cs=1]
+                              RenderImage {IMG} at (98,3) size 11x11
+                            RenderTableCell {TD} at (209,45) size 87x16 [r=2 c=1 rs=1 cs=1]
+                              RenderInline {FONT} at (0,0) size 16x10
+                                RenderInline {A} at (0,0) size 16x10 [color=#0000EE]
+                                  RenderImage {IMG} at (35,3) size 16x10
