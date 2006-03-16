@@ -31,6 +31,7 @@
 #import "Cursor.h"
 #import "DOMInternal.h"
 #import "EventNames.h"
+#import "FloatRect.h"
 #import "FoundationExtras.h"
 #import "FramePrivate.h"
 #import "FrameView.h"
@@ -2681,25 +2682,11 @@ NSAttributedString *MacFrame::attributedString(NodeImpl *_start, int startOffset
     return nil;
 }
 
-// returns NSRect because going through IntRect would truncate any floats
-NSRect MacFrame::visibleSelectionRect() const
-{
-    if (!d->m_view) {
-        return NSZeroRect;
-    }
-    NSView *documentView = d->m_view->getDocumentView();
-    if (!documentView) {
-        return NSZeroRect;
-    }
-    return NSIntersectionRect(selectionRect(), [documentView visibleRect]);     
-}
-
 NSImage *MacFrame::imageFromRect(NSRect rect) const
 {
     NSView *view = d->m_view->getDocumentView();
-    if (!view) {
+    if (!view)
         return nil;
-    }
     
     NSImage *resultImage;
     KWQ_BLOCK_EXCEPTIONS;
@@ -2940,43 +2927,17 @@ void MacFrame::setDisplaysWithFocusAttributes(bool flag)
 {
     if (d->m_isFocused == flag)
         return;
-        
-    d->m_isFocused = flag;
-
-    // This method does the job of updating the view based on whether the view is "active".
-    // This involves four kinds of drawing updates:
-
-    // 1. The background color used to draw behind selected content (active | inactive color)
-    if (d->m_view)
-        d->m_view->updateContents(enclosingIntRect(visibleSelectionRect()));
-
-    // 2. Caret blinking (blinks | does not blink)
-    if (flag)
-        setSelectionFromNone();
-    setCaretVisible(flag);
     
-    // 3. The drawing of a focus ring around links in web pages.
+    Frame::setDisplaysWithFocusAttributes(flag);
     DocumentImpl *doc = document();
-    if (doc) {
-        NodeImpl *node = doc->focusNode();
-        if (node) {
-            node->setChanged();
-            if (node->renderer() && node->renderer()->style()->hasAppearance())
-                theme()->stateChanged(node->renderer(), FocusState);
-        }
-    }
-    
-    // 4. Changing the tint of controls from clear to aqua/graphite and vice versa.  We
+    // Mac Specific: Changing the tint of controls from clear to aqua/graphite and vice versa.  We
     // do a "fake" paint.  When the theme gets a paint call, it can then do an invalidate.
-    if (theme()->supportsControlTints()) {
-        NSView *documentView = d->m_view ? d->m_view->getDocumentView() : 0;
-        if (documentView && renderer()) {
-            doc->updateLayout(); // Ensure layout is up to date.
-            IntRect visibleRect(enclosingIntRect([documentView visibleRect]));
-            GraphicsContext p;
-            p.setUpdatingControlTints(true);
-            paint(&p, visibleRect);
-        }
+    if (doc && d->m_view && d->m_view->getDocumentView() && theme()->supportsControlTints() && renderer()) {
+        doc->updateLayout(); // Ensure layout is up to date.
+        IntRect visibleRect(enclosingIntRect(d->m_view->visibleContentRect()));
+        GraphicsContext p;
+        p.setUpdatingControlTints(true);
+        paint(&p, visibleRect);
     }
 }
 
@@ -2984,9 +2945,8 @@ NSColor *MacFrame::bodyBackgroundColor() const
 {
     if (document() && document()->body() && document()->body()->renderer()) {
         Color bgColor = document()->body()->renderer()->style()->backgroundColor();
-        if (bgColor.isValid()) {
+        if (bgColor.isValid())
             return nsColor(bgColor);
-        }
     }
     return nil;
 }

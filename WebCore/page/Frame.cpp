@@ -36,6 +36,7 @@
 #include "DocLoader.h"
 #include "EditingTextImpl.h"
 #include "EventNames.h"
+#include "FloatRect.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
@@ -72,6 +73,7 @@
 #include "render_canvas.h"
 #include "render_frames.h"
 #include "render_layer.h"
+#include "render_theme.h"
 #include "visible_text.h"
 #include "visible_units.h"
 #include "xml_tokenizer.h"
@@ -2540,6 +2542,15 @@ IntRect Frame::selectionRect() const
     return root->selectionRect();
 }
 
+// returns FloatRect because going through IntRect would truncate any floats
+FloatRect Frame::visibleSelectionRect() const
+{
+    if (!d->m_view)
+        return FloatRect();
+    
+    return intersection(selectionRect(), d->m_view->visibleContentRect());
+}
+
 bool Frame::isFrameSet() const
 {
     DocumentImpl* document = d->m_doc.get();
@@ -3168,6 +3179,37 @@ void Frame::setSelectionFromNone()
 bool Frame::displaysWithFocusAttributes() const
 {
     return d->m_isFocused;
+}
+
+void Frame::setDisplaysWithFocusAttributes(bool flag)
+{
+    if (d->m_isFocused == flag)
+        return;
+    
+    d->m_isFocused = flag;
+
+    // This method does the job of updating the view based on whether the view is "active".
+    // This involves three kinds of drawing updates:
+
+    // 1. The background color used to draw behind selected content (active | inactive color)
+    if (d->m_view)
+        d->m_view->updateContents(enclosingIntRect(visibleSelectionRect()));
+
+    // 2. Caret blinking (blinks | does not blink)
+    if (flag)
+        setSelectionFromNone();
+    setCaretVisible(flag);
+    
+    // 3. The drawing of a focus ring around links in web pages.
+    DocumentImpl *doc = document();
+    if (doc) {
+        NodeImpl *node = doc->focusNode();
+        if (node) {
+            node->setChanged();
+            if (node->renderer() && node->renderer()->style()->hasAppearance())
+                theme()->stateChanged(node->renderer(), FocusState);
+        }
+    }
 }
 
 void Frame::setWindowHasFocus(bool flag)

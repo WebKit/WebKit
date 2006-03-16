@@ -28,14 +28,15 @@
 
 #include "ScrollBarMode.h"
 #include "Widget.h"
-#include "IntRect.h"
 
 namespace WebCore {
+    class FloatRect;
 
     class ScrollView : public Widget {
     public:
         int visibleWidth() const;
         int visibleHeight() const;
+        FloatRect visibleContentRect() const;
         int contentsWidth() const;
         int contentsHeight() const;
         int contentsX() const;

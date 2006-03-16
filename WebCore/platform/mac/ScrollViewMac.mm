@@ -26,6 +26,7 @@
 #import "config.h"
 #import "ScrollView.h"
 
+#import "FloatRect.h"
 #import "IntRect.h"
 #import "KWQExceptions.h"
 #import "Logging.h"
@@ -53,11 +54,10 @@ int ScrollView::visibleWidth() const
     NSScrollView *view = (NSScrollView *)getView();
 
     KWQ_BLOCK_EXCEPTIONS;
-    if ([view isKindOfClass:[NSScrollView class]]) {
+    if ([view isKindOfClass:[NSScrollView class]])
         return (int)[view documentVisibleRect].size.width;
-    } else {
+    else
         return (int)[view bounds].size.width;
-    }
     KWQ_UNBLOCK_EXCEPTIONS;
 
     return 0;
@@ -68,14 +68,22 @@ int ScrollView::visibleHeight() const
     NSScrollView *view = (NSScrollView *)getView();
     
     KWQ_BLOCK_EXCEPTIONS;
-    if ([view isKindOfClass:[NSScrollView class]]) {
+    if ([view isKindOfClass:[NSScrollView class]])
         return (int)[view documentVisibleRect].size.height;
-    } else {
+    else
         return (int)[view bounds].size.height;
-    }
     KWQ_UNBLOCK_EXCEPTIONS;
     
     return 0;
+}
+
+FloatRect ScrollView::visibleContentRect() const
+{
+    KWQ_BLOCK_EXCEPTIONS;
+    if (NSView *docView = getDocumentView())
+        return [docView visibleRect];
+    KWQ_UNBLOCK_EXCEPTIONS;
+    return FloatRect();
 }
 
 int ScrollView::contentsWidth() const
@@ -84,11 +92,10 @@ int ScrollView::contentsWidth() const
     docView = getDocumentView();
 
     KWQ_BLOCK_EXCEPTIONS;
-    if (docView) {
+    if (docView)
         return (int)[docView bounds].size.width;
-    } else {
+    else
         return (int)[view bounds].size.width;
-    }
     KWQ_UNBLOCK_EXCEPTIONS;
 
     return 0;
@@ -100,11 +107,10 @@ int ScrollView::contentsHeight() const
     docView = getDocumentView();
 
     KWQ_BLOCK_EXCEPTIONS;
-    if (docView) {
+    if (docView)
         return (int)[docView bounds].size.height;
-    } else {
+    else
         return (int)[view bounds].size.height;
-    }
     KWQ_UNBLOCK_EXCEPTIONS;
 
     return 0;
@@ -115,11 +121,10 @@ int ScrollView::contentsX() const
     NSView *view = getView();
 
     KWQ_BLOCK_EXCEPTIONS;
-    if ([view isKindOfClass:[NSScrollView class]]) {
+    if ([view isKindOfClass:[NSScrollView class]])
         return (int)[(NSScrollView *)view documentVisibleRect].origin.x;
-    } else {
+    else
         return (int)[view visibleRect].origin.x;
-    }
     KWQ_UNBLOCK_EXCEPTIONS;
 
     return 0;
@@ -130,11 +135,10 @@ int ScrollView::contentsY() const
     NSView *view = getView();
 
     KWQ_BLOCK_EXCEPTIONS;
-    if ([view isKindOfClass:[NSScrollView class]]) {
+    if ([view isKindOfClass:[NSScrollView class]])
         return (int)[(NSScrollView *)view documentVisibleRect].origin.y;
-    } else {
+    else
         return (int)[view visibleRect].origin.y;
-    }
     KWQ_UNBLOCK_EXCEPTIONS;
 
     return 0;
@@ -145,9 +149,8 @@ int ScrollView::scrollXOffset() const
     NSView *view = getView();
     
     KWQ_BLOCK_EXCEPTIONS;
-    if ([view isKindOfClass:[NSScrollView class]]) {
+    if ([view isKindOfClass:[NSScrollView class]])
         return (int)[[(NSScrollView *)view contentView] visibleRect].origin.x;
-    }
     KWQ_UNBLOCK_EXCEPTIONS;
     return 0;
 }
@@ -157,9 +160,8 @@ int ScrollView::scrollYOffset() const
     NSView *view = getView();
     
     KWQ_BLOCK_EXCEPTIONS;
-    if ([view isKindOfClass:[NSScrollView class]]) {
+    if ([view isKindOfClass:[NSScrollView class]])
         return (int)[[(NSScrollView *)view contentView] visibleRect].origin.y;
-    }
     KWQ_UNBLOCK_EXCEPTIONS;
     return 0;
 }
@@ -442,8 +444,7 @@ NSView *ScrollView::getDocumentView() const
 
 bool ScrollView::inWindow() const
 {
-    NSView* view = getView();
-    return [view window];
+    return [getView() window];
 }
 
 }

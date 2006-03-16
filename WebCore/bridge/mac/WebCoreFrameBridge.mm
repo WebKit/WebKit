@@ -39,6 +39,7 @@
 #import "CharsetNames.h"
 #import "KWQClipboard.h"
 #import "KWQEditCommand.h"
+#import "FloatRect.h"
 #import "Font.h"
 #import "FoundationExtras.h"
 #import "KWQLoader.h"

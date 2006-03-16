@@ -2,6 +2,36 @@
 
         Reviewed by darin.
 
+        Push more of MacFrame down into Frame.
+        Add visibleContentRect method to ScrollView.
+
+        * bridge/mac/MacFrame.h:
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::imageFromRect):
+        (WebCore::MacFrame::setDisplaysWithFocusAttributes):
+        (WebCore::MacFrame::bodyBackgroundColor):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        * page/Frame.cpp:
+        (WebCore::Frame::visibleSelectionRect):
+        (WebCore::Frame::setDisplaysWithFocusAttributes):
+        * page/Frame.h:
+        * platform/ScrollView.h:
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::visibleWidth):
+        (WebCore::ScrollView::visibleHeight):
+        (WebCore::ScrollView::visibleContentRect):
+        (WebCore::ScrollView::contentsWidth):
+        (WebCore::ScrollView::contentsHeight):
+        (WebCore::ScrollView::contentsX):
+        (WebCore::ScrollView::contentsY):
+        (WebCore::ScrollView::scrollXOffset):
+        (WebCore::ScrollView::scrollYOffset):
+        (WebCore::ScrollView::inWindow):
+
+2006-03-15  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
         Remove unused code and clean-up style.
 
         * bridge/mac/MacFrame.mm:
