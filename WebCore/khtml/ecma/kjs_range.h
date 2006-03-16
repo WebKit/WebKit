@@ -61,7 +61,7 @@ namespace KJS {
     static const ClassInfo info;
   };
 
-  JSValue *getDOMRange(ExecState *exec, DOM::RangeImpl *r);
+  JSValue* toJS(ExecState*, WebCore::RangeImpl*);
   JSValue *getRangeConstructor(ExecState *exec);
 
   DOM::RangeImpl *toRange(JSValue *); // returns 0 if the value is not a DOMRange object

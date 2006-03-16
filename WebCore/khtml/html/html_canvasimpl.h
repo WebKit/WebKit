@@ -28,13 +28,24 @@
 
 #include "html_imageimpl.h"
 
+#if __APPLE__
+typedef struct CGImage* CGImageRef;
+#endif
+
 namespace WebCore {
 
-class HTMLCanvasElementImpl
-    : public HTMLImageElementImpl
-{
+class CanvasRenderingContext2D;
+typedef CanvasRenderingContext2D CanvasRenderingContext;
+
+// FIXME: Should inherit from HTMLElementImpl instead of HTMLImageElementImpl.
+class HTMLCanvasElementImpl : public HTMLImageElementImpl {
 public:
     HTMLCanvasElementImpl(DocumentImpl*);
+    ~HTMLCanvasElementImpl();
+
+    CanvasRenderingContext* getContext(const String&);
+
+    // FIXME: Web Applications 1.0 describes a toDataURL function.
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(MappedAttributeImpl*);
@@ -44,6 +55,17 @@ public:
     virtual void detach();
     
     virtual bool isURLAttribute(AttributeImpl*) const;
+
+    IntSize size() const;
+
+#if __APPLE__
+    CGImageRef createPlatformImage() const;
+#endif
+
+private:
+    RefPtr<CanvasRenderingContext2D> m_2DContext;
+    // FIXME: Web Applications 1.0 describes a security feature where we track if we ever drew
+    // any images outside the domain.
 };
 
 } //namespace

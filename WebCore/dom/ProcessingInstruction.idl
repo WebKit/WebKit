@@ -20,10 +20,17 @@
 module core {
 
     interface [LegacyParent=KJS::DOMNode] ProcessingInstruction : Node {
+
+        // DOM Level 1
+
         readonly attribute [ConvertNullStringTo=Null] DOMString target;
                  attribute [ConvertNullStringTo=Null] DOMString data
                      raises (DOMException);
+
+        // interface LinkStyle from DOM Level 2 Style Sheets
+
         readonly attribute StyleSheet sheet;
+
     };
 
 }

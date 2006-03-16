@@ -152,26 +152,22 @@ sub GenerateModule
 sub GetParentClassName
 {
   my $dataNode = shift;
-  
-  if (@{$dataNode->parents} eq 0) {
-    return "KJS::DOMObject";
-  }
-  
-  # Check if there's a legacy parent class set and
-  # use it.
-  if ($dataNode->extendedAttributes->{"LegacyParent"}) {
-    return $dataNode->extendedAttributes->{"LegacyParent"};
-  } else {
-    return "JS" . $dataNode->parents(0);
-  }
+  return $dataNode->extendedAttributes->{"LegacyParent"} if $dataNode->extendedAttributes->{"LegacyParent"};
+  return "KJS::DOMObject" if @{$dataNode->parents} eq 0;
+  return "JS" . $dataNode->parents(0);
 }
 
 sub GetLegacyHeaderIncludes
 {
-  if ($module eq "events") {
+  my $legacyParent = shift;
+  if ($legacyParent eq "JSCanvasRenderingContext2DBase") {
+    return "#include \"JSCanvasRenderingContext2DBase.h\"\n\n";
+  } elsif ($module eq "events") {
     return "#include \"kjs_events.h\"\n\n";
   } elsif ($module eq "core") {
     return "#include \"kjs_dom.h\"\n\n";
+  } elsif ($module eq "html") {
+    return "#include \"kjs_html.h\"\n\n";
   } else {
     die ("Don't know what headers to include for module $module");
   }
@@ -205,6 +201,16 @@ sub AddIncludesForType
            $type eq "Entity" or
            $type eq "Notation") {
     $implIncludes{"dom_xmlimpl.h"} = 1;
+  } elsif ($type eq "CanvasRenderingContext2D") {
+    $implIncludes{"CanvasGradient.h"} = 1;
+    $implIncludes{"CanvasPattern.h"} = 1;
+    $implIncludes{"CanvasRenderingContext2D.h"} = 1;
+    $implIncludes{"CanvasStyle.h"} = 1;
+  } elsif ($type eq "CanvasGradient") {
+    $implIncludes{"CanvasGradient.h"} = 1;
+    $implIncludes{"PlatformString.h"} = 1;
+  } elsif ($type eq "CanvasPattern") {
+    $implIncludes{"$type.h"} = 1;
   } elsif ($codeGenerator->IsPrimitiveType($type) or
            $type eq "DOMString") {
     # Do nothing
@@ -234,6 +240,8 @@ sub GenerateHeader
   my $interfaceName = $dataNode->name;
   my $className = "JS$interfaceName";
   my $implClassName = $interfaceName . "Impl";
+  # Canvas classes don't have Impl suffix (remove this when removing the Impl suffix elsewhere).
+  $implClassName = $interfaceName if $interfaceName =~ /^Canvas/;
   
   # FIXME: If we're sure that an interface can't have more than
   # one parent we can do the check in the parser instead
@@ -241,7 +249,9 @@ sub GenerateHeader
     die "A class can't have more than one parent";
   }
   
-  my $hasParent = @{$dataNode->parents} > 0;
+  my $hasLegacyParent = $dataNode->extendedAttributes->{"LegacyParent"};
+  my $hasRealParent = @{$dataNode->parents} > 0;
+  my $hasParent = $hasLegacyParent || $hasRealParent;
   my $parentClassName = GetParentClassName($dataNode);
   
   # - Add default header template
@@ -252,7 +262,7 @@ sub GenerateHeader
   push(@headerContent, "\n#define $className" . "_H\n\n");
   
   if (exists $dataNode->extendedAttributes->{"LegacyParent"}) {
-    push(@headerContent, GetLegacyHeaderIncludes());
+    push(@headerContent, GetLegacyHeaderIncludes($dataNode->extendedAttributes->{"LegacyParent"}));
   } else {
     if ($hasParent) {
       push(@headerContent, "#include \"$parentClassName.h\"\n");
@@ -278,7 +288,6 @@ sub GenerateHeader
   push(@headerContent, "    $className(KJS::ExecState*, $implClassName*);\n");
     
   # Destructor
-  # FIXME: If we know that a class can't have subclasses, we don't need a virtual destructor
   if (!$hasParent) {
     push(@headerContent, "    virtual ~$className();\n");
   }
@@ -299,7 +308,7 @@ sub GenerateHeader
   
   if ($hasReadWriteProperties) {
     push(@headerContent, "    virtual void put(KJS::ExecState*, const KJS::Identifier&, KJS::JSValue*, int attr = KJS::None);\n");
-    push(@headerContent, "    void putValueProperty(KJS::ExecState*, int, KJS::JSValue*, int);\n");
+    push(@headerContent, "    void putValueProperty(KJS::ExecState*, int, KJS::JSValue*, int attr);\n");
   }
   
   # Class info
@@ -361,13 +370,17 @@ sub GenerateHeader
   }
 
   if (!$hasParent) {
-    push(@headerContent, "    $implClassName* impl() { return m_impl.get(); }\n");
-    push(@headerContent, "protected:\n");
+    push(@headerContent, "    $implClassName* impl() const { return m_impl.get(); }\n");
+    push(@headerContent, "private:\n");
     push(@headerContent, "    RefPtr<$implClassName> m_impl;\n");
   }
   
   push(@headerContent, "};\n\n");
   
+  if (!$hasParent) {
+    push(@headerContent, "KJS::JSValue* toJS(KJS::ExecState*, $implClassName*);\n\n");
+  }
+
   # Add prototype declaration
   if ($numFunctions > 0) {
     if ($hasParent) {
@@ -388,8 +401,12 @@ sub GenerateImplementation
   my $interfaceName = $dataNode->name;
   my $className = "JS$interfaceName";
   my $implClassName = $interfaceName . "Impl";
+  # Canvas classes don't have Impl suffix (remove this when removing the Impl suffix elsewhere).
+  $implClassName = $interfaceName if $interfaceName =~ /^Canvas/;
   
-  my $hasParent = @{$dataNode->parents} > 0;
+  my $hasLegacyParent = $dataNode->extendedAttributes->{"LegacyParent"};
+  my $hasRealParent = @{$dataNode->parents} > 0;
+  my $hasParent = $hasLegacyParent || $hasRealParent;
   my $parentClassName = GetParentClassName($dataNode);
   
   # - Add default header template
@@ -563,7 +580,7 @@ sub GenerateImplementation
                        "(exec, &${className}Table, this, propertyName, slot);\n}\n\n");
   
     push(@implContent, "JSValue* ${className}::getValueProperty(ExecState *exec, int token) const\n{\n");
-    push(@implContent, "    $implClassName* impl = static_cast<$implClassName*>(m_impl.get());\n\n");
+    push(@implContent, "    $implClassName* impl = static_cast<$implClassName*>(${className}::impl());\n\n");
     push(@implContent, "    switch (token) {\n");
 
     foreach my $attribute (@{$dataNode->attributes}) {
@@ -598,7 +615,7 @@ sub GenerateImplementation
       if ($raisesExceptions) {
         push(@implContent, "    DOMExceptionTranslator exception(exec);\n");
       }
-      push(@implContent, "    $implClassName* impl = static_cast<$implClassName*>(m_impl.get());\n\n");
+      push(@implContent, "    $implClassName* impl = static_cast<$implClassName*>(${className}::impl());\n\n");
       push(@implContent, "    switch (token) {\n");
       
       foreach my $attribute (@{$dataNode->attributes}) {
@@ -693,6 +710,13 @@ sub GenerateImplementation
     push(@implContent, "}\n")
   }
   
+  if (!$hasParent) {
+    push(@implContent, "KJS::JSValue* toJS(KJS::ExecState* exec, $implClassName* obj)\n");
+    push(@implContent, "{\n");
+    push(@implContent, "    return KJS::cacheDOMObject<$implClassName, $className>(exec, obj);\n");
+    push(@implContent, "}\n");
+  }
+
   push(@implContent, "\n}\n");
 }
 
@@ -716,10 +740,12 @@ sub GetNativeType
     return "int";
   } elsif ($type eq "unsigned short") {
     return "unsigned short";
+  } elsif ($type eq "float") {
+    return "float";
   } elsif ($type eq "AtomicString") {
     return "AtomicString";
   } elsif ($type eq "DOMString") {
-    return "DOMString";
+    return "String";
   } elsif ($type eq "views::AbstractView") {
     return "AbstractViewImpl*";
   } elsif ($type eq "Node" or $type eq "Attr" or
@@ -743,6 +769,8 @@ sub JSValueToNative
     return "$value->toInt32(exec)";
   } elsif ($type eq "unsigned short") {
     return "$value->toInt32(exec)";
+  } elsif ($type eq "float") {
+    return "$value->toNumber(exec)";
   } elsif ($type eq "AtomicString") {
     return "AtomicString($value->toString(exec).domString())";
   } elsif ($type eq "DOMString") {
@@ -778,7 +806,7 @@ sub NativeToJSValue
   if ($type eq "boolean") {
     return "jsBoolean($value)";
   } elsif ($type eq "long" or $type eq "unsigned long" or 
-           $type eq "unsigned short") {
+           $type eq "unsigned short" or $type eq "float") {
     return "jsNumber($value)";
   } elsif ($type eq "DOMString") {
     my $conv = $signature->extendedAttributes->{"ConvertNullStringTo"};
@@ -796,28 +824,30 @@ sub NativeToJSValue
            $type eq "HTMLDocument" or $type eq "Element" or
            $type eq "Attr") {
     # Add necessary includes
-    $implIncludes{"kjs_dom.h"} = 1;   
-    $implIncludes{"NodeImpl.h"} = 1;     
-    return "getDOMNode(exec, $value)";
-  } elsif ($type eq "NodeList") {
+    $implIncludes{"kjs_dom.h"} = 1;
+    $implIncludes{"NodeImpl.h"} = 1;
+    return "toJS(exec, $value)";
+  } elsif ($type eq "NodeList" or $type eq "NamedNodeMap") {
     # Add necessary includes
-    $implIncludes{"kjs_dom.h"} = 1;    
-    return "getDOMNodeList(exec, $value)";    
-  } elsif ($type eq "NamedNodeMap") {
+    $implIncludes{"kjs_dom.h"} = 1;
+    return "toJS(exec, $value)";
+  } elsif ($type eq "CSSStyleSheet" or $type eq "StyleSheet") {
     # Add necessary includes
-    $implIncludes{"kjs_dom.h"} = 1;    
-    return "getDOMNamedNodeMap(exec, $value)";
-  } elsif ($type eq "CSSStyleSheet" or 
-           $type eq "StyleSheet") {
-    # Add necessary includes
-    $implIncludes{"css_ruleimpl.h"} = 1;    
-    $implIncludes{"kjs_css.h"} = 1;        
-    return "getDOMStyleSheet(exec, $value)";    
+    $implIncludes{"css_ruleimpl.h"} = 1;
+    $implIncludes{"kjs_css.h"} = 1;
+    return "toJS(exec, $value)";    
   } elsif ($type eq "CSSStyleDeclaration") {
     # Add necessary includes
-    $implIncludes{"css_valueimpl.h"} = 1; 
-    $implIncludes{"kjs_css.h"} = 1;            
-    return "getDOMCSSStyleDeclaration(exec, $value)";
+    $implIncludes{"css_valueimpl.h"} = 1;
+    $implIncludes{"kjs_css.h"} = 1;
+    return "toJS(exec, $value)";
+  } elsif ($type eq "HTMLCanvasElement") {
+    $implIncludes{"kjs_dom.h"} = 1;
+    $implIncludes{"html_canvasimpl.h"} = 1;
+    return "toJS(exec, $value)";
+  } elsif ($type eq "CanvasGradient") {
+    $implIncludes{"kjs_html.h"} = 1;
+    return "toJS(exec, $value)";
   } else {
     die "Don't know how to convert a value of type $type to a JS Value";
   }
@@ -898,7 +928,7 @@ sub GenerateHashTable
   }
 
   # Dump the hash table...
-  push(@implContent, "\nstatic const struct HashEntry $nameEntries\[\] =\n\{\n");
+  push(@implContent, "\nstatic const HashEntry $nameEntries\[\] =\n\{\n");
 
   $i = 0;
   foreach $entry (@table) {
@@ -927,7 +957,7 @@ sub GenerateHashTable
   }
 
   push(@implContent, "};\n\n");
-  push(@implContent, "const struct HashTable $name = \n");
+  push(@implContent, "static const HashTable $name = \n");
   push(@implContent, "{\n    2, $size, $nameEntries, $savedSize\n};\n\n");
 }
 

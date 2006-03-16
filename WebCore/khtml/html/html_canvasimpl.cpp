@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,20 +24,28 @@
  */
 
 #include "config.h"
-#include "html/html_canvasimpl.h"
-#include "htmlnames.h"
+#include "html_canvasimpl.h"
 
+#include "CanvasGradient.h"
+#include "CanvasPattern.h"
+#include "CanvasRenderingContext2D.h"
+#include "CanvasStyle.h"
+#include "htmlnames.h"
 #include "render_canvasimage.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-// -------------------------------------------------------------------------
-
 HTMLCanvasElementImpl::HTMLCanvasElementImpl(DocumentImpl *doc)
-    : HTMLImageElementImpl(canvasTag, doc)
+    : HTMLImageElementImpl(canvasTag, doc), m_2DContext(0)
 {
+}
+
+HTMLCanvasElementImpl::~HTMLCanvasElementImpl()
+{
+    if (m_2DContext)
+        m_2DContext->detachCanvas();
 }
 
 bool HTMLCanvasElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
@@ -72,11 +80,52 @@ void HTMLCanvasElementImpl::detach()
 {
     // Don't want to call image's detach().
     HTMLElementImpl::detach();
+
+    if (m_2DContext)
+        m_2DContext->reset();
 }
 
 bool HTMLCanvasElementImpl::isURLAttribute(AttributeImpl *attr) const
 {
     return ((attr->name() == usemapAttr && attr->value().domString()[0] != '#'));
 }
+
+CanvasRenderingContext* HTMLCanvasElementImpl::getContext(const String& type)
+{
+    // FIXME: Web Applications 1.0 says "2d" only, but the code here matches historical behavior of WebKit.
+    if (type.isNull() || type == "2d" || type == "2D") {
+        if (!m_2DContext)
+            m_2DContext = new CanvasRenderingContext2D(this);
+        return m_2DContext.get();
+    }
+    return 0;
+}
+
+IntSize HTMLCanvasElementImpl::size() const
+{
+    RenderCanvasImage* canvasRenderer = static_cast<RenderCanvasImage*>(renderer());
+    if (!canvasRenderer)
+        return IntSize();
+#if __APPLE__
+    if (CGContextRef context = canvasRenderer->drawingContext())
+        return IntSize(CGBitmapContextGetWidth(context), CGBitmapContextGetHeight(context));
+#endif
+    return IntSize();
+}
+
+#if __APPLE__
+
+CGImageRef HTMLCanvasElementImpl::createPlatformImage() const
+{
+    RenderCanvasImage* canvasRenderer = static_cast<RenderCanvasImage*>(renderer());
+    if (!canvasRenderer)
+        return 0;
+    CGContextRef context = canvasRenderer->drawingContext();
+    if (!context)
+        return 0;
+    return CGBitmapContextCreateImage(context);
+}
+
+#endif
 
 }

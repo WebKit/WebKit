@@ -264,12 +264,12 @@ sub ParseInterface
         push(@$arrayRef, $newDataNode);
 
         print "  |  |>  Attribute; TYPE \"$attributeType\" DATA NAME \"$attributeDataName\" DATA TYPE \"$attributeDataType\" EXCEPTION? \"$attributeException\"" .
-              dumpExtendedAttributes("\n  |                 ", $newDataNode->extendedAttributes) . "\n" if(!$beQuiet);
+              dumpExtendedAttributes("\n  |                 ", $newDataNode->signature->extendedAttributes) . "\n" if(!$beQuiet);
 
         $attributeException =~ s/\s+//g;
         @{$newDataNode->raisesExceptions} = split(/,/, $attributeException);
       } elsif(($line !~ s/^\s*$//g) and ($line !~ /^\s+const/)) {
-        $line =~ /$IDLStructure::interfaceMethodSelector/;
+        $line =~ /$IDLStructure::interfaceMethodSelector/ or die "Parsing error!\nSource:\n$line\n)";
 
         my $methodExtendedAttributes = (defined($1) ? $1 : " "); chop($methodExtendedAttributes);
         my $methodType = (defined($2) ? $2 : die("Parsing error!\nSource:\n$line\n)"));

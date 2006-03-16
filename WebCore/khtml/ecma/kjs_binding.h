@@ -151,6 +151,8 @@ namespace KJS {
    *  Get a DOMString object or a null DOMString if the value is null
    */
   DOM::DOMString valueToStringWithNullCheck(ExecState* exec, JSValue *val);
+
+    template <typename T> inline JSValue* toJS(ExecState* exec, PassRefPtr<T> ptr) { return toJS(exec, ptr.get()); }
   
 } // namespace
 

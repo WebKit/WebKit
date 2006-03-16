@@ -87,7 +87,7 @@ void JSAbstractEventListener::handleEvent(EventImpl* ele, bool isWindowEvent)
         ref();
       
         List args;
-        args.append(getDOMEvent(exec, event));
+        args.append(toJS(exec, event));
       
         // Set the event we're handling in the Window object
         window->setCurrentEvent(event);
@@ -102,7 +102,7 @@ void JSAbstractEventListener::handleEvent(EventImpl* ele, bool isWindowEvent)
             if (isWindowEvent)
                 thisObj = window;
             else
-                thisObj = static_cast<JSObject*>(getDOMNode(exec, event->currentTarget()));
+                thisObj = static_cast<JSObject*>(toJS(exec, event->currentTarget()));
             retval = listener->call(exec, thisObj, args);
         }
 
@@ -272,7 +272,7 @@ void JSLazyEventListener::parseCode() const
             // (and the document, and the form - see HTMLElement::eventHandlerScope)
             ScopeChain scope = listener->scope();
 
-            JSValue* thisObj = getDOMNode(exec, originalNode);
+            JSValue* thisObj = toJS(exec, originalNode);
             if (thisObj->isObject()) {
                 static_cast<DOMNode*>(thisObj)->pushEventHandlerScope(exec, scope);
                 listener->setScope(scope);
@@ -398,9 +398,9 @@ JSValue *DOMEvent::getValueProperty(ExecState *exec, int token) const
     return jsString(event.type().domString());
   case Target:
   case SrcElement: /*MSIE extension - "the object that fired the event"*/
-    return getDOMNode(exec, event.target());
+    return toJS(exec, event.target());
   case CurrentTarget:
-    return getDOMNode(exec, event.currentTarget());
+    return toJS(exec, event.currentTarget());
   case EventPhase:
     return jsNumber(event.eventPhase());
   case Bubbles:
@@ -483,7 +483,7 @@ JSValue *DOMEventProtoFunc::callAsFunction(ExecState *exec, JSObject * thisObj, 
   return jsUndefined();
 }
 
-JSValue *getDOMEvent(ExecState *exec, EventImpl *e)
+JSValue *toJS(ExecState *exec, EventImpl *e)
 {
   if (!e)
     return jsNull();
@@ -583,7 +583,7 @@ JSValue *DOMUIEvent::getValueProperty(ExecState *exec, int token) const
   UIEventImpl &event = *static_cast<UIEventImpl *>(impl());
   switch (token) {
   case View:
-    return getDOMAbstractView(exec, event.view());
+    return toJS(exec, event.view());
   case Detail:
     return jsNumber(event.detail());
   case KeyCode:
@@ -691,11 +691,11 @@ JSValue *DOMMouseEvent::getValueProperty(ExecState *exec, int token) const
   case Button:
     return jsNumber(event.button());
   case ToElement:
-    return getDOMNode(exec, event.toElement());
+    return toJS(exec, event.toElement());
   case FromElement:
-    return getDOMNode(exec, event.fromElement());
+    return toJS(exec, event.fromElement());
   case RelatedTarget:
-    return getDOMNode(exec, event.relatedTarget());
+    return toJS(exec, event.relatedTarget());
   case X:
     return jsNumber(event.x());
   case Y:

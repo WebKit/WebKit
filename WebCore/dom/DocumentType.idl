@@ -21,10 +21,14 @@ module core {
 
     interface [LegacyParent=KJS::DOMNode] DocumentType : Node {
 
+        // DOM Level 1
+
         readonly attribute DOMString name;
         readonly attribute NamedNodeMap entities;
         readonly attribute NamedNodeMap notations;
-        
+
+        // DOM Level 2
+
         readonly attribute [ConvertNullStringTo=Null] DOMString publicId;
         readonly attribute [ConvertNullStringTo=Null] DOMString systemId;
         readonly attribute [ConvertNullStringTo=Null] DOMString internalSubset;        

@@ -2,7 +2,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004 Apple Computer, Inc.
+ *  Copyright (C) 2004, 2006 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -22,25 +22,20 @@
 #ifndef KJS_HTML_H_
 #define KJS_HTML_H_
 
-#include "CachedObjectClient.h"
-#include "Color.h"
-#include "Image.h"
 #include "JSElement.h"
 #include "kjs_dom.h"
-#include <qptrlist.h>
 
-#if __APPLE__
-#include <ApplicationServices/ApplicationServices.h>
-#endif
-
-namespace DOM {
+namespace WebCore {
+    class CanvasRenderingContext2D;
     class HTMLCollectionImpl;
     class HTMLDocumentImpl;
     class HTMLElementImpl;
+    class CanvasGradient;
+    class CanvasPattern;
     class HTMLSelectElementImpl;
     class HTMLTableCaptionElementImpl;
     class HTMLTableSectionElementImpl;
-};
+}
 
 namespace KJS {
 
@@ -48,7 +43,7 @@ namespace KJS {
 
   class HTMLDocument : public DOMDocument {
   public:
-    HTMLDocument(ExecState *exec, DOM::HTMLDocumentImpl *d);
+    HTMLDocument(ExecState *exec, WebCore::HTMLDocumentImpl *d);
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     JSValue *getValueProperty(ExecState *exec, int token) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
@@ -362,187 +357,6 @@ namespace KJS {
     virtual JSObject *construct(ExecState *exec, const List &args);
   private:
     RefPtr<DOM::DocumentImpl> m_doc;
-  };
-
-  ////////////////////// Context2D Object ////////////////////////
-  class Context2D : public DOMObject {
-  friend class Context2DFunction;
-  public:
-    Context2D(DOM::HTMLElementImpl *e);
-    ~Context2D();
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *exec, int token) const;
-    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
-    void putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/);
-    virtual bool toBoolean(ExecState *) const { return true; }
-    virtual void mark();
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-
-    enum { 
-        StrokeStyle,
-        FillStyle,
-        LineWidth,
-        LineCap,
-        LineJoin,
-        MiterLimit,
-        ShadowOffsetX,
-        ShadowOffsetY,
-        ShadowBlur,
-        ShadowColor,
-        GlobalAlpha,
-        GlobalCompositeOperation,
-        Save, Restore,
-        Scale, Rotate, Translate,
-        BeginPath, ClosePath, 
-        SetStrokeColor, SetFillColor, SetLineWidth, SetLineCap, SetLineJoin, SetMiterLimit, 
-        Fill, Stroke, 
-        MoveTo, LineTo, QuadraticCurveTo, BezierCurveTo, ArcTo, Arc, Rect, Clip,
-        ClearRect, FillRect, StrokeRect,
-        DrawImage, DrawImageFromRect,
-        SetShadow, ClearShadow,
-        SetAlpha, SetCompositeOperation,
-        CreateLinearGradient,
-        CreateRadialGradient,
-        CreatePattern
-    };
-
-private:
-    void save();
-    void restore();
-
-#if __APPLE__
-    // FIXME: Macintosh specific, and should be abstracted by GraphicsContext.
-    CGContextRef drawingContext();
-    CGAffineTransform _lastFillImagePatternCTM;
-    CGAffineTransform _lastStrokeImagePatternCTM;
-#endif
-
-    bool _validFillImagePattern;
-    bool _validStrokeImagePattern;
-    void updateFillImagePattern();
-    void updateStrokeImagePattern();
-    
-    void setShadow(ExecState *exec);
-
-    RefPtr<DOM::HTMLElementImpl> _element;
-    
-    QPtrList<List> stateStack;
-    
-    JSValue *_strokeStyle;
-    JSValue *_fillStyle;
-    JSValue *_lineWidth;
-    JSValue *_lineCap;
-    JSValue *_lineJoin;
-    JSValue *_miterLimit;
-    JSValue *_shadowOffsetX;
-    JSValue *_shadowOffsetY;
-    JSValue *_shadowBlur;
-    JSValue *_shadowColor;
-    JSValue *_globalAlpha;
-    JSValue *_globalComposite;
-  };
-
-#if __APPLE__
-    // FIXME: Macintosh specific, and should be abstracted by GraphicsContext.
-    CGColorRef colorRefFromValue(ExecState *exec, JSValue *value);
-#endif
-
-    Color colorFromValue(ExecState *exec, JSValue *value);
-
-    struct ColorStop {
-        float stop;
-        float red;
-        float green;
-        float blue;
-        float alpha;
-        
-        ColorStop(float s, float r, float g, float b, float a) : stop(s), red(r), green(g), blue(b), alpha(a) {};
-    };
-
-  class Gradient : public DOMObject {
-  friend class Context2DFunction;
-  public:
-    Gradient(float x0, float y0, float x1, float y1);
-    Gradient(float x0, float y0, float r0, float x1, float y1, float r1);
-    ~Gradient();
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *exec, int token) const;
-    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
-    void putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/);
-    virtual bool toBoolean(ExecState *) const { return true; }
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-
-    enum { 
-        AddColorStop
-    };
-    
-    enum {
-        Radial, Linear
-    };
-
-#if __APPLE__
-    // FIXME: Macintosh specific, and should be abstracted by GraphicsContext.
-    CGShadingRef getShading();
-#endif
-
-    void addColorStop (float s, float r, float g, float b, float alpha);
-    const ColorStop *colorStops(int *count) const;
-    
-    int lastStop;
-    int nextStop;
-    
-private:    
-    void commonInit();
-    
-    int _gradientType;
-    float _x0, _y0, _r0, _x1, _y1, _r1;
-
-#if __APPLE__
-    // FIXME: Macintosh specific, and should be abstracted by GraphicsContext.
-    CGShadingRef _shadingRef;
-#endif
-
-    int maxStops;
-    int stopCount;
-    ColorStop *stops;
-    mutable int adjustedStopCount;
-    mutable ColorStop *adjustedStops;
-    mutable bool stopsNeedAdjusting : 1;
-    mutable bool regenerateShading : 1;
-  };
-
-  class ImagePattern : public DOMObject, public WebCore::CachedObjectClient {
-  public:
-    ImagePattern(WebCore::CachedImage* cachedImage, int repetitionType);
-    ~ImagePattern();
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    JSValue *getValueProperty(ExecState *exec, int token) const;
-    virtual void put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr = None);
-    void putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/);
-    virtual bool toBoolean(ExecState *) const { return true; }
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-
-#if __APPLE__
-    // FIXME: Macintosh specific, and should be abstracted by GraphicsContext.
-    CGPatternRef createPattern(CGAffineTransform transform);
-#endif
-
-    WebCore::CachedImage* cachedImage() const { return m_cachedImage; }
-    
-    enum {
-        Repeat, RepeatX, RepeatY, NoRepeat
-    };
-    
-private:
-    float _rw, _rh;
-    WebCore::CachedImage* m_cachedImage;
-#if __APPLE__
-    // FIXME: Macintosh specific, and should be abstracted by GraphicsContext.
-    CGRect _bounds;
-#endif
   };
 
   JSValue *getHTMLCollection(ExecState *exec, DOM::HTMLCollectionImpl *c);

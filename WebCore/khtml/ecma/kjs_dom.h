@@ -209,13 +209,12 @@ namespace KJS {
     static const ClassInfo info;
   };
 
-  JSValue *getDOMDocumentNode(ExecState *exec, DOM::DocumentImpl *n);
+  JSValue* toJS(ExecState*, WebCore::DocumentImpl*);
   bool checkNodeSecurity(ExecState *exec, DOM::NodeImpl *n);
   JSValue *getRuntimeObject(ExecState *exec, DOM::NodeImpl *n);
-  JSValue *getDOMNode(ExecState*, PassRefPtr<DOM::NodeImpl>);
-  JSValue *getDOMNamedNodeMap(ExecState *exec, DOM::NamedNodeMapImpl *m);
-  JSValue *getDOMNodeList(ExecState *exec, PassRefPtr<DOM::NodeListImpl>);
-  JSValue *getDOMDOMImplementation(ExecState *exec, DOM::DOMImplementationImpl *i);
+  JSValue* toJS(ExecState*, PassRefPtr<WebCore::NodeImpl>);
+  JSValue* toJS(ExecState*, WebCore::NamedNodeMapImpl *);
+  JSValue* toJS(ExecState*, PassRefPtr<WebCore::NodeListImpl>);
   JSObject *getNodeConstructor(ExecState *exec);
   JSObject *getDOMExceptionConstructor(ExecState *exec);
 

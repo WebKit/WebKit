@@ -172,7 +172,7 @@ JSValue *DOMCSSStyleDeclaration::getValueProperty(ExecState *exec, int token)
   case Length:
     return jsNumber(m_impl->length());
   case ParentRule:
-    return getDOMCSSRule(exec, m_impl->parentRule());
+    return toJS(exec, m_impl->parentRule());
   default:
     assert(0);
     return jsUndefined();
@@ -229,7 +229,7 @@ JSValue *DOMCSSStyleDeclarationProtoFunc::callAsFunction(ExecState *exec, JSObje
     case DOMCSSStyleDeclaration::GetPropertyValue:
       return jsStringOrNull(styleDecl.getPropertyValue(s));
     case DOMCSSStyleDeclaration::GetPropertyCSSValue:
-      return getDOMCSSValue(exec, styleDecl.getPropertyCSSValue(s).get());
+      return toJS(exec, styleDecl.getPropertyCSSValue(s).get());
     case DOMCSSStyleDeclaration::RemoveProperty:
       return jsStringOrNull(styleDecl.removeProperty(s, exception));
     case DOMCSSStyleDeclaration::GetPropertyPriority:
@@ -248,7 +248,7 @@ JSValue *DOMCSSStyleDeclarationProtoFunc::callAsFunction(ExecState *exec, JSObje
   }
 }
 
-JSValue *getDOMCSSStyleDeclaration(ExecState *exec, CSSStyleDeclarationImpl *s)
+JSValue *toJS(ExecState *exec, CSSStyleDeclarationImpl *s)
 {
   return cacheDOMObject<CSSStyleDeclarationImpl, DOMCSSStyleDeclaration>(exec, s);
 }
@@ -287,15 +287,15 @@ JSValue *DOMStyleSheet::getValueProperty(ExecState *exec, int token) const
   case Disabled:
     return jsBoolean(styleSheet.disabled());
   case OwnerNode:
-    return getDOMNode(exec,styleSheet.ownerNode());
+    return toJS(exec,styleSheet.ownerNode());
   case ParentStyleSheet:
-    return getDOMStyleSheet(exec,styleSheet.parentStyleSheet());
+    return toJS(exec,styleSheet.parentStyleSheet());
   case Href:
     return jsStringOrNull(styleSheet.href());
   case Title:
     return jsStringOrNull(styleSheet.title());
   case Media:
-    return getDOMMediaList(exec, styleSheet.media());
+    return toJS(exec, styleSheet.media());
   }
   return NULL;
 }
@@ -309,7 +309,7 @@ void DOMStyleSheet::put(ExecState *exec, const Identifier &propertyName, JSValue
     DOMObject::put(exec, propertyName, value, attr);
 }
 
-JSValue* getDOMStyleSheet(ExecState *exec, PassRefPtr<StyleSheetImpl> ss)
+JSValue* toJS(ExecState *exec, PassRefPtr<StyleSheetImpl> ss)
 {
   DOMObject *ret;
   if (!ss)
@@ -358,14 +358,14 @@ JSValue *DOMStyleSheetList::getValueProperty(ExecState *exec, int token) const
 JSValue *DOMStyleSheetList::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMStyleSheetList *thisObj = static_cast<DOMStyleSheetList *>(slot.slotBase());
-  return getDOMStyleSheet(exec, thisObj->m_impl->item(slot.index()));
+  return toJS(exec, thisObj->m_impl->item(slot.index()));
 }
 
 JSValue *DOMStyleSheetList::nameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMStyleSheetList *thisObj = static_cast<DOMStyleSheetList *>(slot.slotBase());
   ElementImpl *element = thisObj->m_doc->getElementById(propertyName.domString().impl());
-  return getDOMStyleSheet(exec, static_cast<HTMLStyleElementImpl *>(element)->sheet());
+  return toJS(exec, static_cast<HTMLStyleElementImpl *>(element)->sheet());
 }
 
 bool DOMStyleSheetList::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -429,7 +429,7 @@ JSValue *DOMStyleSheetListFunc::callAsFunction(ExecState *exec, JSObject *thisOb
     return throwError(exec, TypeError);
   StyleSheetListImpl &styleSheetList = *static_cast<DOMStyleSheetList *>(thisObj)->impl();
   if (id == DOMStyleSheetList::Item)
-    return getDOMStyleSheet(exec, styleSheetList.item(args[0]->toInt32(exec)));
+    return toJS(exec, styleSheetList.item(args[0]->toInt32(exec)));
   return jsUndefined();
 }
 
@@ -509,7 +509,7 @@ void DOMMediaList::put(ExecState *exec, const Identifier &propertyName, JSValue 
     DOMObject::put(exec, propertyName, value, attr);
 }
 
-JSValue *getDOMMediaList(ExecState *exec, MediaListImpl *ml)
+JSValue *toJS(ExecState *exec, MediaListImpl *ml)
 {
   return cacheDOMObject<MediaListImpl, DOMMediaList>(exec, ml);
 }
@@ -570,10 +570,10 @@ JSValue *DOMCSSStyleSheet::getValueProperty(ExecState *exec, int token) const
 {
   switch (token) {
   case OwnerRule:
-    return getDOMCSSRule(exec, static_cast<CSSStyleSheetImpl *>(impl())->ownerRule());
+    return toJS(exec, static_cast<CSSStyleSheetImpl *>(impl())->ownerRule());
   case CssRules:
   case Rules:
-    return getDOMCSSRuleList(exec, static_cast<CSSStyleSheetImpl *>(impl())->cssRules());
+    return toJS(exec, static_cast<CSSStyleSheetImpl *>(impl())->cssRules());
   default:
     assert(0);
     return jsUndefined();
@@ -642,7 +642,7 @@ JSValue *DOMCSSRuleList::getValueProperty(ExecState *exec, int token) const
 JSValue *DOMCSSRuleList::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMCSSRuleList *thisObj = static_cast<DOMCSSRuleList *>(slot.slotBase());
-  return getDOMCSSRule(exec, thisObj->m_impl->item(slot.index()));
+  return toJS(exec, thisObj->m_impl->item(slot.index()));
 }
 
 bool DOMCSSRuleList::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -676,13 +676,13 @@ JSValue *DOMCSSRuleListFunc::callAsFunction(ExecState *exec, JSObject *thisObj, 
   CSSRuleListImpl &cssRuleList = *static_cast<DOMCSSRuleList *>(thisObj)->impl();
   switch (id) {
     case DOMCSSRuleList::Item:
-      return getDOMCSSRule(exec,cssRuleList.item(args[0]->toInt32(exec)));
+      return toJS(exec,cssRuleList.item(args[0]->toInt32(exec)));
     default:
       return jsUndefined();
   }
 }
 
-JSValue *getDOMCSSRuleList(ExecState *exec, CSSRuleListImpl *rl)
+JSValue *toJS(ExecState *exec, CSSRuleListImpl *rl)
 {
   return cacheDOMObject<CSSRuleListImpl, DOMCSSRuleList>(exec, rl);
 }
@@ -780,39 +780,39 @@ JSValue *DOMCSSRule::getValueProperty(ExecState *exec, int token) const
   case CssText:
     return jsStringOrNull(cssRule.cssText());
   case ParentStyleSheet:
-    return getDOMStyleSheet(exec,cssRule.parentStyleSheet());
+    return toJS(exec,cssRule.parentStyleSheet());
   case ParentRule:
-    return getDOMCSSRule(exec,cssRule.parentRule());
+    return toJS(exec,cssRule.parentRule());
 
   // for STYLE_RULE:
   case Style_SelectorText:
     return jsStringOrNull(static_cast<CSSStyleRuleImpl *>(m_impl.get())->selectorText());
   case Style_Style:
-    return getDOMCSSStyleDeclaration(exec, static_cast<CSSStyleRuleImpl *>(m_impl.get())->style());
+    return toJS(exec, static_cast<CSSStyleRuleImpl *>(m_impl.get())->style());
 
   // for MEDIA_RULE:
   case Media_Media:
-    return getDOMMediaList(exec, static_cast<CSSMediaRuleImpl *>(m_impl.get())->media());
+    return toJS(exec, static_cast<CSSMediaRuleImpl *>(m_impl.get())->media());
   case Media_CssRules:
-    return getDOMCSSRuleList(exec, static_cast<CSSMediaRuleImpl *>(m_impl.get())->cssRules());
+    return toJS(exec, static_cast<CSSMediaRuleImpl *>(m_impl.get())->cssRules());
 
   // for FONT_FACE_RULE:
   case FontFace_Style:
-    return getDOMCSSStyleDeclaration(exec, static_cast<CSSFontFaceRuleImpl *>(m_impl.get())->style());
+    return toJS(exec, static_cast<CSSFontFaceRuleImpl *>(m_impl.get())->style());
 
   // for PAGE_RULE:
   case Page_SelectorText:
     return jsStringOrNull(static_cast<CSSPageRuleImpl *>(m_impl.get())->selectorText());
   case Page_Style:
-    return getDOMCSSStyleDeclaration(exec, static_cast<CSSPageRuleImpl *>(m_impl.get())->style());
+    return toJS(exec, static_cast<CSSPageRuleImpl *>(m_impl.get())->style());
 
   // for IMPORT_RULE:
   case Import_Href:
     return jsStringOrNull(static_cast<CSSImportRuleImpl *>(m_impl.get())->href());
   case Import_Media:
-    return getDOMMediaList(exec, static_cast<CSSImportRuleImpl *>(m_impl.get())->media());
+    return toJS(exec, static_cast<CSSImportRuleImpl *>(m_impl.get())->media());
   case Import_StyleSheet:
-    return getDOMStyleSheet(exec, static_cast<CSSImportRuleImpl *>(m_impl.get())->styleSheet());
+    return toJS(exec, static_cast<CSSImportRuleImpl *>(m_impl.get())->styleSheet());
 
   // for CHARSET_RULE:
   case Charset_Encoding:
@@ -880,7 +880,7 @@ JSValue *DOMCSSRuleFunc::callAsFunction(ExecState *exec, JSObject *thisObj, cons
   return jsUndefined();
 }
 
-JSValue *getDOMCSSRule(ExecState *exec, CSSRuleImpl *r)
+JSValue *toJS(ExecState *exec, CSSRuleImpl *r)
 {
   return cacheDOMObject<CSSRuleImpl, DOMCSSRule>(exec, r);
 }
@@ -974,7 +974,7 @@ void DOMCSSValue::put(ExecState *exec, const Identifier &propertyName, JSValue *
     DOMObject::put(exec, propertyName, value, attr);
 }
 
-JSValue *getDOMCSSValue(ExecState *exec, CSSValueImpl *v)
+JSValue *toJS(ExecState *exec, CSSValueImpl *v)
 {
   DOMObject *ret;
   if (!v)
@@ -1086,9 +1086,9 @@ JSValue *DOMCSSPrimitiveValueProtoFunc::callAsFunction(ExecState *exec, JSObject
     case DOMCSSPrimitiveValue::GetStringValue:
       return jsStringOrNull(val.getStringValue());
     case DOMCSSPrimitiveValue::GetCounterValue:
-      return getDOMCounter(exec,val.getCounterValue());
+      return toJS(exec,val.getCounterValue());
     case DOMCSSPrimitiveValue::GetRectValue:
-      return getDOMRect(exec,val.getRectValue());
+      return toJS(exec,val.getRectValue());
     case DOMCSSPrimitiveValue::GetRGBColorValue:
       return getDOMRGBColor(exec,val.getRGBColorValue());
     default:
@@ -1173,7 +1173,7 @@ JSValue *DOMCSSValueList::getValueProperty(ExecState *exec, int token) const
 JSValue *DOMCSSValueList::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMCSSValueList *thisObj = static_cast<DOMCSSValueList *>(slot.slotBase());
-  return getDOMCSSValue(exec, static_cast<CSSValueListImpl *>(thisObj->impl())->item(slot.index()));
+  return toJS(exec, static_cast<CSSValueListImpl *>(thisObj->impl())->item(slot.index()));
 }
 
 bool DOMCSSValueList::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -1204,7 +1204,7 @@ JSValue *DOMCSSValueListFunc::callAsFunction(ExecState *exec, JSObject *thisObj,
   CSSValueListImpl &valueList = *static_cast<CSSValueListImpl *>(static_cast<DOMCSSValueList *>(thisObj)->impl());
   switch (id) {
     case DOMCSSValueList::Item:
-      return getDOMCSSValue(exec,valueList.item(args[0]->toInt32(exec)));
+      return toJS(exec,valueList.item(args[0]->toInt32(exec)));
     default:
       return jsUndefined();
   }
@@ -1280,19 +1280,19 @@ JSValue *DOMRect::getValueProperty(ExecState *exec, int token) const
   RectImpl &rect = *m_rect;
   switch (token) {
   case Top:
-    return getDOMCSSValue(exec, rect.top());
+    return toJS(exec, rect.top());
   case Right:
-    return getDOMCSSValue(exec, rect.right());
+    return toJS(exec, rect.right());
   case Bottom:
-    return getDOMCSSValue(exec, rect.bottom());
+    return toJS(exec, rect.bottom());
   case Left:
-    return getDOMCSSValue(exec, rect.left());
+    return toJS(exec, rect.left());
   default:
     return NULL;
   }
 }
 
-JSValue *getDOMRect(ExecState *exec, RectImpl *r)
+JSValue *toJS(ExecState *exec, RectImpl *r)
 {
   return cacheDOMObject<RectImpl, DOMRect>(exec, r);
 }
@@ -1333,7 +1333,7 @@ JSValue *DOMCounter::getValueProperty(ExecState *, int token) const
   }
 }
 
-JSValue *getDOMCounter(ExecState *exec, CounterImpl *c)
+JSValue *toJS(ExecState *exec, CounterImpl *c)
 {
   return cacheDOMObject<CounterImpl, DOMCounter>(exec, c);
 }

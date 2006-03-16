@@ -270,19 +270,19 @@ JSValue *DOMNode::getValueProperty(ExecState *exec, int token) const
     return jsNumber(node.nodeType());
   case ParentNode:
   case ParentElement: // IE only apparently
-    return getDOMNode(exec,node.parentNode());
+    return toJS(exec,node.parentNode());
   case ChildNodes:
-    return getDOMNodeList(exec,node.childNodes().get());
+    return toJS(exec,node.childNodes().get());
   case FirstChild:
-    return getDOMNode(exec,node.firstChild());
+    return toJS(exec,node.firstChild());
   case LastChild:
-    return getDOMNode(exec,node.lastChild());
+    return toJS(exec,node.lastChild());
   case PreviousSibling:
-    return getDOMNode(exec,node.previousSibling());
+    return toJS(exec,node.previousSibling());
   case NextSibling:
-    return getDOMNode(exec,node.nextSibling());
+    return toJS(exec,node.nextSibling());
   case Attributes:
-    return getDOMNamedNodeMap(exec,node.attributes());
+    return toJS(exec,node.attributes());
   case NamespaceURI:
     return jsStringOrNull(node.namespaceURI());
   case Prefix:
@@ -290,7 +290,7 @@ JSValue *DOMNode::getValueProperty(ExecState *exec, int token) const
   case LocalName:
     return jsStringOrNull(node.localName());
   case OwnerDocument:
-    return getDOMNode(exec,node.ownerDocument());
+    return toJS(exec,node.ownerDocument());
   case TextContent:
     return jsStringOrNull(node.textContent());
   case OnAbort:
@@ -399,7 +399,7 @@ JSValue *DOMNode::getValueProperty(ExecState *exec, int token) const
       return rend ? jsNumber(rend->offsetHeight()) : static_cast<JSValue *>(jsUndefined());
     case OffsetParent: {
       RenderObject* par = rend ? rend->offsetParent() : 0;
-      return getDOMNode(exec, par ? par->element() : 0);
+      return toJS(exec, par ? par->element() : 0);
     }
     case ClientWidth:
       return rend ? jsNumber(rend->clientWidth()) : static_cast<JSValue *>(jsUndefined());
@@ -627,7 +627,7 @@ JSValue *DOMNodeProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, co
     case DOMNode::HasChildNodes:
       return jsBoolean(node.hasChildNodes());
     case DOMNode::CloneNode:
-      return getDOMNode(exec,node.cloneNode(args[0]->toBoolean(exec)));
+      return toJS(exec,node.cloneNode(args[0]->toBoolean(exec)));
     case DOMNode::Normalize:
       node.normalize();
       return jsUndefined();
@@ -730,13 +730,13 @@ JSValue *DOMNodeList::getValueProperty(ExecState *exec, int token) const
 JSValue *DOMNodeList::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMNodeList *thisObj = static_cast<DOMNodeList *>(slot.slotBase());
-  return getDOMNode(exec, thisObj->m_impl->item(slot.index()));
+  return toJS(exec, thisObj->m_impl->item(slot.index()));
 }
 
 JSValue *DOMNodeList::nameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMNodeList *thisObj = static_cast<DOMNodeList *>(slot.slotBase());
-  return getDOMNode(exec, thisObj->m_impl->itemById(propertyName.domString().impl()));
+  return toJS(exec, thisObj->m_impl->itemById(propertyName.domString().impl()));
 }
 
 bool DOMNodeList::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -775,7 +775,7 @@ JSValue *DOMNodeList::callAsFunction(ExecState *exec, JSObject *, const List &ar
   bool ok;
   unsigned int u = s.toUInt32(&ok);
   if (ok)
-    return getDOMNode(exec, m_impl->item(u));
+    return toJS(exec, m_impl->item(u));
 
   return jsUndefined();
 }
@@ -788,7 +788,7 @@ JSValue *DOMNodeListFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
   DOM::NodeListImpl &list = *static_cast<DOMNodeList *>(thisObj)->impl();
 
   if (id == DOMNodeList::Item)
-    return getDOMNode(exec, list.item(args[0]->toInt32(exec)));
+    return toJS(exec, list.item(args[0]->toInt32(exec)));
 
   return jsUndefined();
 }
@@ -884,11 +884,11 @@ JSValue *DOMDocument::getValueProperty(ExecState *exec, int token) const
 
   switch(token) {
   case DocType:
-    return getDOMNode(exec,doc.doctype());
+    return toJS(exec,doc.doctype());
   case Implementation:
-    return getDOMDOMImplementation(exec, doc.implementation());
+    return toJS(exec, doc.implementation());
   case DocumentElement:
-    return getDOMNode(exec,doc.documentElement());
+    return toJS(exec,doc.documentElement());
   case Charset:
   case CharacterSet:
   case ActualEncoding:
@@ -917,7 +917,7 @@ JSValue *DOMDocument::getValueProperty(ExecState *exec, int token) const
     }
     return jsUndefined();
   case DOMDocument::DefaultView: // DOM2
-    return getDOMAbstractView(exec,doc.defaultView());
+    return toJS(exec,doc.defaultView());
   default:
     return NULL;
   }
@@ -953,39 +953,39 @@ JSValue *DOMDocumentProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj
 
   switch(id) {
   case DOMDocument::AdoptNode:
-    return getDOMNode(exec,doc.adoptNode(toNode(args[0]),exception));
+    return toJS(exec,doc.adoptNode(toNode(args[0]),exception));
   case DOMDocument::CreateElement:
-    return getDOMNode(exec,doc.createElement(s, exception));
+    return toJS(exec,doc.createElement(s, exception));
   case DOMDocument::CreateDocumentFragment:
-    return getDOMNode(exec,doc.createDocumentFragment());
+    return toJS(exec,doc.createDocumentFragment());
   case DOMDocument::CreateTextNode:
-    return getDOMNode(exec,doc.createTextNode(s));
+    return toJS(exec,doc.createTextNode(s));
   case DOMDocument::CreateComment:
-    return getDOMNode(exec,doc.createComment(s));
+    return toJS(exec,doc.createComment(s));
   case DOMDocument::CreateCDATASection:
-    return getDOMNode(exec, doc.createCDATASection(s, exception));
+    return toJS(exec, doc.createCDATASection(s, exception));
   case DOMDocument::CreateProcessingInstruction:
-    return getDOMNode(exec, doc.createProcessingInstruction(args[0]->toString(exec).domString(), args[1]->toString(exec).domString(), exception));
+    return toJS(exec, doc.createProcessingInstruction(args[0]->toString(exec).domString(), args[1]->toString(exec).domString(), exception));
   case DOMDocument::CreateAttribute:
-    return getDOMNode(exec,doc.createAttribute(s, exception));
+    return toJS(exec,doc.createAttribute(s, exception));
   case DOMDocument::CreateEntityReference:
-    return getDOMNode(exec, doc.createEntityReference(s, exception));
+    return toJS(exec, doc.createEntityReference(s, exception));
   case DOMDocument::ElementFromPoint:
-    return getDOMNode(exec,doc.elementFromPoint((int)args[0]->toNumber(exec), (int)args[1]->toNumber(exec)));
+    return toJS(exec,doc.elementFromPoint((int)args[0]->toNumber(exec), (int)args[1]->toNumber(exec)));
   case DOMDocument::GetElementsByTagName:
-    return getDOMNodeList(exec,doc.getElementsByTagName(s).get());
+    return toJS(exec,doc.getElementsByTagName(s).get());
   case DOMDocument::ImportNode: // DOM2
-    return getDOMNode(exec,doc.importNode(toNode(args[0]), args[1]->toBoolean(exec), exception));
+    return toJS(exec,doc.importNode(toNode(args[0]), args[1]->toBoolean(exec), exception));
   case DOMDocument::CreateElementNS: // DOM2
-    return getDOMNode(exec,doc.createElementNS(s, args[1]->toString(exec).domString(), exception));
+    return toJS(exec,doc.createElementNS(s, args[1]->toString(exec).domString(), exception));
   case DOMDocument::CreateAttributeNS: // DOM2
-    return getDOMNode(exec,doc.createAttributeNS(s, args[1]->toString(exec).domString(), exception));
+    return toJS(exec,doc.createAttributeNS(s, args[1]->toString(exec).domString(), exception));
   case DOMDocument::GetElementsByTagNameNS: // DOM2
-    return getDOMNodeList(exec,doc.getElementsByTagNameNS(s, args[1]->toString(exec).domString()).get());
+    return toJS(exec,doc.getElementsByTagNameNS(s, args[1]->toString(exec).domString()).get());
   case DOMDocument::GetElementById:
-    return getDOMNode(exec,doc.getElementById(args[0]->toString(exec).domString().impl()));
+    return toJS(exec,doc.getElementById(args[0]->toString(exec).domString().impl()));
   case DOMDocument::CreateRange:
-    return getDOMRange(exec, doc.createRange().get());
+    return toJS(exec, doc.createRange().get());
   case DOMDocument::CreateNodeIterator: {
     RefPtr<NodeFilterImpl> filter;
     JSValue* arg2 = args[2];
@@ -993,7 +993,7 @@ JSValue *DOMDocumentProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj
       JSObject* o(static_cast<JSObject*>(arg2));
       filter = new NodeFilterImpl(new JSNodeFilterCondition(o));
     }
-    return getDOMNodeIterator(exec, doc.createNodeIterator(toNode(args[0]), args[1]->toUInt32(exec),
+    return toJS(exec, doc.createNodeIterator(toNode(args[0]), args[1]->toUInt32(exec),
         filter.release(), args[3]->toBoolean(exec), exception).get());
   }
   case DOMDocument::CreateTreeWalker: {
@@ -1003,14 +1003,14 @@ JSValue *DOMDocumentProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj
       JSObject* o(static_cast<JSObject *>(arg2));
       filter = new NodeFilterImpl(new JSNodeFilterCondition(o));
     }
-    return getDOMTreeWalker(exec, doc.createTreeWalker(toNode(args[0]), args[1]->toUInt32(exec),
+    return toJS(exec, doc.createTreeWalker(toNode(args[0]), args[1]->toUInt32(exec),
         filter.release(), args[3]->toBoolean(exec), exception).get());
   }
   case DOMDocument::CreateEvent:
-    return getDOMEvent(exec, doc.createEvent(s, exception).get());
+    return toJS(exec, doc.createEvent(s, exception).get());
   case DOMDocument::GetOverrideStyle:
     if (ElementImpl *element0 = toElement(args[0]))
-        return getDOMCSSStyleDeclaration(exec,doc.getOverrideStyle(element0, args[1]->toString(exec).domString()));
+        return toJS(exec,doc.getOverrideStyle(element0, args[1]->toString(exec).domString()));
     // FIXME: Is undefined right here, or should we raise an exception?
     return jsUndefined();
   case DOMDocument::ExecCommand: {
@@ -1221,13 +1221,13 @@ JSValue *DOMNamedNodeMap::lengthGetter(ExecState* exec, JSObject *originalObject
 JSValue *DOMNamedNodeMap::indexGetter(ExecState* exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMNamedNodeMap *thisObj = static_cast<DOMNamedNodeMap *>(slot.slotBase());
-  return getDOMNode(exec, thisObj->m_impl->item(slot.index()));
+  return toJS(exec, thisObj->m_impl->item(slot.index()));
 }
 
 JSValue *DOMNamedNodeMap::nameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMNamedNodeMap *thisObj = static_cast<DOMNamedNodeMap *>(slot.slotBase());
-  return getDOMNode(exec, thisObj->m_impl->getNamedItem(propertyName.domString()));
+  return toJS(exec, thisObj->m_impl->getNamedItem(propertyName.domString()));
 }
 
 bool DOMNamedNodeMap::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
@@ -1264,33 +1264,32 @@ JSValue *DOMNamedNodeMapProtoFunc::callAsFunction(ExecState *exec, JSObject *thi
     return throwError(exec, TypeError);
   DOMExceptionTranslator exception(exec);
   NamedNodeMapImpl &map = *static_cast<DOMNamedNodeMap *>(thisObj)->impl();
-
-  switch(id) {
+  switch (id) {
     case DOMNamedNodeMap::GetNamedItem:
-      return getDOMNode(exec, map.getNamedItem(args[0]->toString(exec).domString()));
+      return toJS(exec, map.getNamedItem(args[0]->toString(exec).domString()));
     case DOMNamedNodeMap::SetNamedItem:
-      return getDOMNode(exec, map.setNamedItem(toNode(args[0]), exception).get());
+      return toJS(exec, map.setNamedItem(toNode(args[0]), exception).get());
     case DOMNamedNodeMap::RemoveNamedItem:
-      return getDOMNode(exec, map.removeNamedItem(args[0]->toString(exec).domString(), exception).get());
+      return toJS(exec, map.removeNamedItem(args[0]->toString(exec).domString(), exception).get());
     case DOMNamedNodeMap::Item:
-      return getDOMNode(exec, map.item(args[0]->toInt32(exec)));
+      return toJS(exec, map.item(args[0]->toInt32(exec)));
     case DOMNamedNodeMap::GetNamedItemNS: // DOM2
-      return getDOMNode(exec, map.getNamedItemNS(valueToStringWithNullCheck(exec, args[0]), args[1]->toString(exec).domString()));
+      return toJS(exec, map.getNamedItemNS(valueToStringWithNullCheck(exec, args[0]), args[1]->toString(exec).domString()));
     case DOMNamedNodeMap::SetNamedItemNS: // DOM2
-      return getDOMNode(exec, map.setNamedItemNS(toNode(args[0]), exception).get());
+      return toJS(exec, map.setNamedItemNS(toNode(args[0]), exception).get());
     case DOMNamedNodeMap::RemoveNamedItemNS: // DOM2
-      return getDOMNode(exec, map.removeNamedItemNS(valueToStringWithNullCheck(exec, args[0]), args[1]->toString(exec).domString(), exception).get());
-    default:
-      break;
+      return toJS(exec, map.removeNamedItemNS(valueToStringWithNullCheck(exec, args[0]), args[1]->toString(exec).domString(), exception).get());
   }
-
   return jsUndefined();
 }
 
 // -------------------------------------------------------------------------
 
-JSValue *getDOMDocumentNode(ExecState *exec, DocumentImpl *n)
+JSValue* toJS(ExecState *exec, DocumentImpl *n)
 {
+  if (!n)
+    return jsNull();
+
   DOMDocument *ret = 0;
   ScriptInterpreter* interp = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter());
 
@@ -1325,7 +1324,7 @@ bool checkNodeSecurity(ExecState *exec, NodeImpl *n)
   return win && win->isSafeScript(exec);
 }
 
-JSValue *getDOMNode(ExecState *exec, PassRefPtr<NodeImpl> node)
+JSValue *toJS(ExecState *exec, PassRefPtr<NodeImpl> node)
 {
   NodeImpl* n = node.get();
   DOMNode *ret = 0;
@@ -1362,7 +1361,7 @@ JSValue *getDOMNode(ExecState *exec, PassRefPtr<NodeImpl> node)
       break;
     case WebCore::NodeImpl::DOCUMENT_NODE:
       // we don't want to cache the document itself in the per-document dictionary
-      return getDOMDocumentNode(exec, static_cast<DocumentImpl *>(n));
+      return toJS(exec, static_cast<DocumentImpl *>(n));
     case WebCore::NodeImpl::DOCUMENT_TYPE_NODE:
       ret = new JSDocumentType(exec, static_cast<DocumentTypeImpl *>(n));
       break;
@@ -1380,7 +1379,7 @@ JSValue *getDOMNode(ExecState *exec, PassRefPtr<NodeImpl> node)
   return ret;
 }
 
-JSValue *getDOMNamedNodeMap(ExecState *exec, NamedNodeMapImpl *m)
+JSValue *toJS(ExecState *exec, NamedNodeMapImpl *m)
 {
   return cacheDOMObject<NamedNodeMapImpl, DOMNamedNodeMap>(exec, m);
 }
@@ -1413,14 +1412,9 @@ JSValue *getRuntimeObject(ExecState *exec, NodeImpl *n)
     return 0;
 }
 
-JSValue *getDOMNodeList(ExecState *exec, PassRefPtr<NodeListImpl> l)
+JSValue *toJS(ExecState *exec, PassRefPtr<NodeListImpl> l)
 {
   return cacheDOMObject<NodeListImpl, DOMNodeList>(exec, l.get());
-}
-
-JSValue *getDOMDOMImplementation(ExecState *exec, DOMImplementationImpl *i)
-{
-  return cacheDOMObject<DOMImplementationImpl, JSDOMImplementation>(exec, i);
 }
 
 // -------------------------------------------------------------------------
@@ -1517,7 +1511,7 @@ JSValue *DOMNamedNodesCollection::lengthGetter(ExecState* exec, JSObject *origin
 JSValue *DOMNamedNodesCollection::indexGetter(ExecState* exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
   DOMNamedNodesCollection *thisObj = static_cast<DOMNamedNodesCollection *>(slot.slotBase());
-  return getDOMNode(exec, thisObj->m_nodes[slot.index()].get());
+  return toJS(exec, thisObj->m_nodes[slot.index()].get());
 }
 
 bool DOMNamedNodesCollection::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)

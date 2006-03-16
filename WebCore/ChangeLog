@@ -1,3 +1,184 @@
+2006-03-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7749
+          canvas should be in DOM, not implemented in the JS bindings
+
+        * WebCore.xcodeproj/project.pbxproj: Added new files.
+        Changed bindings-generation code to work on the new html directory
+        as well as the dom one.
+
+        * bindings/js/JSCanvasRenderingContext2DBase.cpp: Added.
+        * bindings/js/JSCanvasRenderingContext2DBase.h: Added.
+        * bindings/js/JSDOMHTML.cpp: Added.
+        * html: Added.
+        * html/CanvasGradient.cpp: Added.
+        * html/CanvasGradient.h: Added.
+        * html/CanvasGradient.idl: Added.
+        * html/CanvasPattern.cpp: Added.
+        * html/CanvasPattern.h: Added.
+        * html/CanvasPattern.idl: Added.
+        * html/CanvasRenderingContext2D.cpp: Added.
+        * html/CanvasRenderingContext2D.h: Added.
+        * html/CanvasRenderingContext2D.idl: Added.
+        * html/CanvasStyle.cpp: Added.
+        * html/CanvasStyle.h: Added.
+
+        * bindings/js/JSDOMCore.cpp: Touched so that it will recompile.
+        * bindings/js/JSDOMEvents.cpp: Ditto.
+        * dom/Attr.idl: Ditto.
+        * dom/DOMImplementation.idl: Ditto.
+        * dom/DocumentType.idl: Ditto.
+        * dom/MutationEvent.idl: Ditto.
+        * dom/ProcessingInstruction.idl: Ditto.
+        * dom/Text.idl: Ditto.
+
+        * khtml/ecma/kjs_binding.h: (KJS::toJS): Added. Template so that you can call
+        toJS on a PassRefPtr as well as on a raw pointer.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Fixed handling of a class that has only
+        a legacy parent, no conventional parents. Added JSCanvasRenderingContext2DBase
+        as a legacy parent, and html as a legacy module. Added CanvasRenderingContext2D,
+        CanvasGradient, and CanvasPattern to the "waht to include". Added a special
+        case for strings beginning with Canvas to not add an "Impl" suffix. Made the
+        generated impl() function be a const member function. Made m_mimpl be private
+        instead of protected. Generate a toJS function for each class. Added flaot as
+        a type. Generate String, not DOMString. Made the HashTable const.
+
+        * bindings/scripts/IDLParser.pm: Fix a couple small things. I had started to
+        try to make a missing semicolon trigger an error, but ended up giving up on
+        that for now.
+
+        * khtml/html/html_canvasimpl.h:
+        * khtml/html/html_canvasimpl.cpp:
+        (WebCore::HTMLCanvasElementImpl::HTMLCanvasElementImpl): Set m_2DContext to 0.
+        (WebCore::HTMLCanvasElementImpl::~HTMLCanvasElementImpl): Call detachCanvas
+        on m_2DContext, if any.
+        (WebCore::HTMLCanvasElementImpl::detach): Call reset on m_2DContext, if any.
+        (WebCore::HTMLCanvasElementImpl::getContext): Added.
+        (WebCore::HTMLCanvasElementImpl::size): Added.
+        (WebCore::HTMLCanvasElementImpl::createPlatformImage): Added.
+
+        * platform/Image.h:
+        * platform/Image.cpp: (WebCore::Image::compositeOperatorFromString):
+        Changed to take a String instead of a const char*.
+
+        * khtml/html/html_imageimpl.h:
+        * khtml/html/html_imageimpl.cpp: (WebCore::HTMLMapElementImpl::areas):
+        Tweaked formatting. Changed to use PassRefPtr.
+
+        * bindings/objc/DOMInternal.mm: (-[WebScriptObject _initializeScriptDOMNodeImp]):
+        * khtml/ecma/JSXMLHttpRequest.cpp: (KJS::JSXMLHttpRequest::getValueProperty):
+        * khtml/ecma/XSLTProcessor.cpp: (KJS::XSLTProcessorProtoFunc::callAsFunction):
+        * khtml/ecma/domparser.cpp: (KJS::DOMParserProtoFunc::callAsFunction):
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::DOMCSSStyleDeclaration::getValueProperty):
+        (KJS::DOMCSSStyleDeclarationProtoFunc::callAsFunction):
+        (KJS::toJS):
+        (KJS::DOMStyleSheet::getValueProperty):
+        (KJS::DOMStyleSheetList::indexGetter):
+        (KJS::DOMStyleSheetList::nameGetter):
+        (KJS::DOMStyleSheetListFunc::callAsFunction):
+        (KJS::DOMCSSStyleSheet::getValueProperty):
+        (KJS::DOMCSSRuleList::indexGetter):
+        (KJS::DOMCSSRuleListFunc::callAsFunction):
+        (KJS::DOMCSSRule::getValueProperty):
+        (KJS::DOMCSSPrimitiveValueProtoFunc::callAsFunction):
+        (KJS::DOMCSSValueList::indexGetter):
+        (KJS::DOMCSSValueListFunc::callAsFunction):
+        (KJS::DOMRect::getValueProperty):
+        * khtml/ecma/kjs_css.h:
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNode::getValueProperty):
+        (KJS::DOMNodeProtoFunc::callAsFunction):
+        (KJS::DOMNodeList::indexGetter):
+        (KJS::DOMNodeList::nameGetter):
+        (KJS::DOMNodeList::callAsFunction):
+        (KJS::DOMNodeListFunc::callAsFunction):
+        (KJS::DOMDocument::getValueProperty):
+        (KJS::DOMDocumentProtoFunc::callAsFunction):
+        (KJS::DOMNamedNodeMap::indexGetter):
+        (KJS::DOMNamedNodeMap::nameGetter):
+        (KJS::DOMNamedNodeMapProtoFunc::callAsFunction):
+        (KJS::toJS):
+        (KJS::DOMNamedNodesCollection::indexGetter):
+        * khtml/ecma/kjs_dom.h:
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::JSAbstractEventListener::handleEvent):
+        (KJS::JSLazyEventListener::parseCode):
+        (KJS::DOMEvent::getValueProperty):
+        (KJS::toJS):
+        (KJS::DOMUIEvent::getValueProperty):
+        (KJS::DOMMouseEvent::getValueProperty):
+        * khtml/ecma/kjs_events.h:
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocFunction::callAsFunction):
+        (KJS::HTMLDocument::namedItemGetter):
+        (KJS::HTMLDocument::getValueProperty):
+        (KJS::HTMLDocument::put):
+        (KJS::HTMLDocument::putValueProperty):
+        (KJS::HTMLElement::classInfo):
+        (KJS::HTMLElement::formIndexGetter):
+        (KJS::HTMLElement::selectIndexGetter):
+        (KJS::HTMLElement::implementsCall):
+        (KJS::HTMLElement::callAsFunction):
+        (KJS::HTMLElement::linkGetter):
+        (KJS::HTMLElement::isIndexGetter):
+        (KJS::HTMLElement::styleGetter):
+        (KJS::HTMLElement::selectGetter):
+        (KJS::HTMLElement::optionGetter):
+        (KJS::HTMLElement::inputGetter):
+        (KJS::HTMLElement::textAreaGetter):
+        (KJS::HTMLElement::buttonGetter):
+        (KJS::HTMLElement::labelGetter):
+        (KJS::HTMLElement::fieldSetGetter):
+        (KJS::HTMLElement::legendGetter):
+        (KJS::HTMLElement::objectGetter):
+        (KJS::HTMLElement::tableGetter):
+        (KJS::HTMLElement::frameGetter):
+        (KJS::HTMLElement::iFrameGetter):
+        (KJS::HTMLElement::getValueProperty):
+        (KJS::HTMLElement::toString):
+        (KJS::HTMLElement::pushEventHandlerScope):
+        (KJS::toJS):
+        (KJS::HTMLElementFunction::callAsFunction):
+        (KJS::HTMLElement::put):
+        (KJS::HTMLCollection::indexGetter):
+        (KJS::HTMLCollection::callAsFunction):
+        (KJS::HTMLCollection::getNamedItems):
+        (KJS::HTMLCollectionProtoFunc::callAsFunction):
+        (KJS::HTMLSelectCollection::put):
+        (KJS::OptionConstructorImp::construct):
+        (KJS::ImageConstructorImp::construct):
+        * khtml/ecma/kjs_html.h:
+        * khtml/ecma/kjs_proxy.cpp: (WebCore::KJSProxyImpl::evaluate):
+        * khtml/ecma/kjs_range.cpp:
+        (KJS::DOMRange::getValueProperty):
+        (KJS::DOMRangeProtoFunc::callAsFunction):
+        (KJS::toJS):
+        * khtml/ecma/kjs_range.h:
+        * khtml/ecma/kjs_traversal.cpp:
+        (KJS::DOMNodeIterator::getValueProperty):
+        (KJS::DOMNodeIteratorProtoFunc::callAsFunction):
+        (KJS::toJS):
+        (KJS::DOMTreeWalker::getValueProperty):
+        (KJS::DOMTreeWalkerProtoFunc::callAsFunction):
+        (KJS::JSNodeFilterCondition::acceptNode):
+        * khtml/ecma/kjs_traversal.h:
+        * khtml/ecma/kjs_views.cpp:
+        (KJS::DOMAbstractView::getValueProperty):
+        (KJS::DOMAbstractViewProtoFunc::callAsFunction):
+        (KJS::toJS):
+        * khtml/ecma/kjs_views.h:
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::getValueProperty):
+        (KJS::Window::namedItemGetter):
+        (KJS::Selection::getValueProperty):
+        (KJS::SelectionFunc::callAsFunction):
+        Rename uses and definitions of all the various converstions to JavaScript
+        wrappers to the new common overloaded name: "toJS".
+
 2006-03-15  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

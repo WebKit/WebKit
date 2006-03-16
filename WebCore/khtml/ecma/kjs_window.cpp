@@ -689,7 +689,7 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
     case Event:
       if (!m_evt)
         return jsUndefined();
-      return getDOMEvent(exec, m_evt);
+      return toJS(exec, m_evt);
     case InnerHeight:
       if (!m_frame->view())
         return jsUndefined();
@@ -814,7 +814,7 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
       if (DocumentImpl *doc = m_frame->document())
         if (ElementImpl *fe = doc->ownerElement())
           if (checkNodeSecurity(exec, fe)) {
-            return getDOMNode(exec, fe);
+            return toJS(exec, fe);
           }
       return jsUndefined();
    }
@@ -830,7 +830,7 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
        m_frame->write("<HTML><BODY>");
        m_frame->end();
      }
-     return getDOMNode(exec, m_frame->document());
+     return toJS(exec, m_frame->document());
    case Onabort:
      return getListener(exec, abortEvent);
    case Onblur:
@@ -918,7 +918,7 @@ JSValue *Window::namedItemGetter(ExecState *exec, JSObject *originalObject, cons
   DOMString name = propertyName.domString();
   RefPtr<DOM::HTMLCollectionImpl> collection = doc->windowNamedItems(name);
   if (collection->length() == 1)
-    return getDOMNode(exec, collection->firstItem());
+    return toJS(exec, collection->firstItem());
   else 
     return getHTMLCollection(exec, collection.get());
 }
@@ -2315,17 +2315,17 @@ JSValue *Selection::getValueProperty(ExecState *exec, int token) const
         
     switch (token) {
     case AnchorNode:
-        return getDOMNode(exec, s.anchorNode());
+        return toJS(exec, s.anchorNode());
     case BaseNode:
-        return getDOMNode(exec, s.baseNode());
+        return toJS(exec, s.baseNode());
     case AnchorOffset:
         return jsNumber(s.anchorOffset());
     case BaseOffset:
         return jsNumber(s.baseOffset());
     case FocusNode:
-        return getDOMNode(exec, s.focusNode());
+        return toJS(exec, s.focusNode());
     case ExtentNode:
-        return getDOMNode(exec, s.extentNode());
+        return toJS(exec, s.extentNode());
     case FocusOffset:
         return jsNumber(s.focusOffset());
     case ExtentOffset:
@@ -2390,7 +2390,7 @@ JSValue *SelectionFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const
                 s.modify(args[0]->toString(exec).domString(), args[1]->toString(exec).domString(), args[2]->toString(exec).domString());
                 break;
             case Selection::GetRangeAt:
-                return getDOMRange(exec, s.getRangeAt(args[0]->toInt32(exec)).get());
+                return toJS(exec, s.getRangeAt(args[0]->toInt32(exec)).get());
             case Selection::ToString:
                 return jsString(s.toString());
         }

@@ -99,7 +99,7 @@ JSValue* JSXMLHttpRequest::getValueProperty(ExecState *exec, int token) const
     return jsStringOrNull(m_impl->getResponseText());
   case ResponseXML:
     if (DocumentImpl* responseXML = m_impl->getResponseXML())
-      return getDOMNode(exec, responseXML);
+      return toJS(exec, responseXML);
     return jsUndefined();
   case Status: {
     int status = m_impl->getStatus();

@@ -21,6 +21,8 @@ module events {
 
     interface [LegacyParent=KJS::DOMEvent] MutationEvent : Event {
 
+        // DOM Level 2
+
         const unsigned short MODIFICATION = 1;
         const unsigned short ADDITION     = 2;
         const unsigned short REMOVAL      = 3;

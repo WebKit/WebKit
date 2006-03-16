@@ -25,14 +25,16 @@
 
 #include "config.h"
 #include "Image.h"
-#include <kxmlcore/Vector.h>
+
 #include "Array.h"
+#include "FloatRect.h"
 #include "Image.h"
+#include "ImageAnimationObserver.h"
 #include "ImageSource.h"
 #include "IntRect.h"
-#include "FloatRect.h"
-#include "ImageAnimationObserver.h"
+#include "PlatformString.h"
 #include "Timer.h"
+#include <kxmlcore/Vector.h>
 
 #if __APPLE__
 // FIXME: Will go away when we make PDF a subclass.
@@ -328,22 +330,13 @@ struct CompositeOperatorEntry compositeOperators[NUM_COMPOSITE_OPERATORS] = {
     { "lighter", Image::CompositePlusLighter }
 };
 
-Image::CompositeOperator Image::compositeOperatorFromString(const char* aString)
+Image::CompositeOperator Image::compositeOperatorFromString(const String& s)
 {
     CompositeOperator op = CompositeSourceOver;
-    
-    if (strlen(aString)) {
-        for (int i = 0; i < NUM_COMPOSITE_OPERATORS; i++) {
-#if WIN32
-            // FIXME: Use the new String class 
-            if (strcmp(aString, compositeOperators[i].name) == 0) {
-#else
-            if (strcasecmp(aString, compositeOperators[i].name) == 0) {
-#endif
+    if (!s.isEmpty())
+        for (int i = 0; i < NUM_COMPOSITE_OPERATORS; i++)
+            if (equalIgnoringCase(s, compositeOperators[i].name))
                 return compositeOperators[i].value;
-            }
-        }
-    }
     return op;
 }
 

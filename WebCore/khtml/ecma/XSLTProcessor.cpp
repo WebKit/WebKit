@@ -91,7 +91,7 @@ JSValue *XSLTProcessorProtoFunc::callAsFunction(ExecState *exec, JSObject *thisO
             if (nodeVal->isObject(&DOMNode::info) && docVal->isObject(&DOMDocument::info)) {
                 NodeImpl* node = static_cast<DOMNode *>(nodeVal)->impl();
                 DocumentImpl* doc = static_cast<DocumentImpl*>(static_cast<DOMDocument *>(docVal)->impl());
-                return getDOMNode(exec, processor.transformToFragment(node, doc).get());
+                return toJS(exec, processor.transformToFragment(node, doc).get());
             }
             // Throw exception?
             break;
@@ -103,7 +103,7 @@ JSValue *XSLTProcessorProtoFunc::callAsFunction(ExecState *exec, JSObject *thisO
                 DOMNode *node = static_cast<DOMNode *>(nodeVal);
                 RefPtr<DocumentImpl> resultDocument = processor.transformToDocument(node->impl());
                 if (resultDocument)
-                    return getDOMDocumentNode(exec, resultDocument.get());
+                    return toJS(exec, resultDocument.get());
                 return jsUndefined();
             }
             // Throw exception?

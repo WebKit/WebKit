@@ -151,5 +151,6 @@ if [ ../zlib/bin/zlib1.dll -nt "$WebKitOutputConfigDir/zlib1.dll" ]; then
 fi
 
 # Auto-generate bindings from .idl files
-echo "Auto-generating bindings from .idl files for the dom directory..."
+echo "Auto-generating bindings from .idl files"
 perl -I"$WebCoreSourceRoot/bindings/scripts" "$WebCoreSourceRoot/bindings/scripts/generate-bindings.pl" --generator JS --idldir "$WebCoreSourceRoot/dom" --outputdir "$DerivedSourcesDir"
+perl -I"$WebCoreSourceRoot/bindings/scripts" "$WebCoreSourceRoot/bindings/scripts/generate-bindings.pl" --generator JS --idldir "$WebCoreSourceRoot/html" --outputdir "$DerivedSourcesDir"

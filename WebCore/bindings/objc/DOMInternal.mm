@@ -172,7 +172,7 @@ DOMString::DOMString(NSString *str)
     ExecState *exec = interpreter->globalExec();
     
     // Get (or create) a cached JS object for the DOM node.
-    JSObject *scriptImp = static_cast<JSObject *>(getDOMNode(exec, nodeImpl));
+    JSObject *scriptImp = static_cast<JSObject *>(toJS(exec, nodeImpl));
 
     const RootObject *executionContext = Mac(frame)->bindingRootObject();
 

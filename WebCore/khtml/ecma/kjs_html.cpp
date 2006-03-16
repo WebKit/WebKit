@@ -23,12 +23,10 @@
 #include "kjs_html.h"
 
 #include "AtomicString.h"
-#include "Color.h"
 #include "DocLoader.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameView.h"
-#include "GraphicsContext.h"
 #include "HTMLBaseFontElementImpl.h"
 #include "HTMLButtonElementImpl.h"
 #include "HTMLFieldSetElementImpl.h"
@@ -43,40 +41,32 @@
 #include "HTMLSelectElementImpl.h"
 #include "HTMLTextAreaElementImpl.h"
 #include "Image.h"
+#include "JSCanvasRenderingContext2D.h"
 #include "NameNodeListImpl.h"
 #include "TextImpl.h"
-#include "css/css_ruleimpl.h"
-#include "css/css_stylesheetimpl.h"
-#include "css/cssparser.h"
+#include "css_ruleimpl.h"
 #include "dom2_eventsimpl.h"
-#include "html/html_baseimpl.h"
-#include "html/html_blockimpl.h"
-#include "html/html_canvasimpl.h"
-#include "html/html_documentimpl.h"
-#include "html/html_headimpl.h"
-#include "html/html_imageimpl.h"
-#include "html/html_inlineimpl.h"
-#include "html/html_listimpl.h"
-#include "html/html_objectimpl.h"
-#include "html/html_tableimpl.h"
+#include "html_baseimpl.h"
+#include "html_blockimpl.h"
+#include "html_canvasimpl.h"
+#include "html_documentimpl.h"
+#include "html_headimpl.h"
+#include "html_imageimpl.h"
+#include "html_inlineimpl.h"
+#include "html_listimpl.h"
+#include "html_objectimpl.h"
+#include "html_tableimpl.h"
 #include "kjs_css.h"
 #include "kjs_events.h"
 #include "kjs_proxy.h"
 #include "kjs_window.h"
-#include "rendering/render_canvasimage.h"
-#include "rendering/render_layer.h"
-#include "rendering/render_object.h"
-
-#if __APPLE__
-#include <ApplicationServices/ApplicationServices.h>
-using khtml::RenderCanvasImage;
-#endif
-
-using namespace DOM;
-using namespace DOM::HTMLNames;
-using namespace DOM::EventNames;
+#include "render_layer.h"
 
 #include "kjs_html.lut.h"
+
+using namespace WebCore;
+using namespace HTMLNames;
+using namespace EventNames;
 
 namespace KJS {
 
@@ -90,7 +80,7 @@ private:
 
 KJS_IMPLEMENT_PROTOFUNC(HTMLDocFunction)
 
-JSValue *KJS::HTMLDocFunction::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
+JSValue *HTMLDocFunction::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
   if (!thisObj->inherits(&HTMLDocument::info))
     return throwError(exec, TypeError);
@@ -136,7 +126,7 @@ JSValue *KJS::HTMLDocFunction::callAsFunction(ExecState *exec, JSObject *thisObj
     return jsUndefined();
   }
   case HTMLDocument::GetElementsByName:
-    return getDOMNodeList(exec, doc.getElementsByName(args[0]->toString(exec).domString()).get());
+    return toJS(exec, doc.getElementsByName(args[0]->toString(exec).domString()).get());
   case HTMLDocument::CaptureEvents:
   case HTMLDocument::ReleaseEvents:
     // Do nothing for now. These are NS-specific legacy calls.
@@ -146,7 +136,7 @@ JSValue *KJS::HTMLDocFunction::callAsFunction(ExecState *exec, JSObject *thisObj
   return jsUndefined();
 }
 
-const ClassInfo KJS::HTMLDocument::info =
+const ClassInfo HTMLDocument::info =
   { "HTMLDocument", &DOMDocument::info, &HTMLDocumentTable, 0 };
 /* Source for HTMLDocumentTable. Use "make hashtables" to regenerate.
 @begin HTMLDocumentTable 30
@@ -212,7 +202,7 @@ JSValue *HTMLDocument::namedItemGetter(ExecState *exec, JSObject *originalObject
     Frame *frame;
     if (node->hasTagName(iframeTag) && (frame = static_cast<DOM::HTMLIFrameElementImpl *>(node)->contentFrame()))
       return Window::retrieve(frame);
-    return getDOMNode(exec, node);
+    return toJS(exec, node);
   }
 
   return getHTMLCollection(exec, collection.get());
@@ -238,7 +228,7 @@ JSValue *HTMLDocument::getValueProperty(ExecState *exec, int token) const
   case URL:
     return jsString(doc.URL());
   case Body:
-    return getDOMNode(exec, body);
+    return toJS(exec, body);
   case Location:
     if (Window* win = Window::retrieveWindow(frame))
       return win->location();
@@ -330,12 +320,12 @@ bool HTMLDocument::getOwnPropertySlot(ExecState *exec, const Identifier& propert
   return DOMDocument::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-void KJS::HTMLDocument::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
+void HTMLDocument::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
 {
     lookupPut<HTMLDocument, DOMDocument>(exec, propertyName, value, attr, &HTMLDocumentTable, this);
 }
 
-void KJS::HTMLDocument::putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/)
+void HTMLDocument::putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/)
 {
   DOMExceptionTranslator exception(exec);
   HTMLDocumentImpl &doc = *static_cast<HTMLDocumentImpl *>(impl());
@@ -364,7 +354,7 @@ void KJS::HTMLDocument::putValueProperty(ExecState *exec, int token, JSValue *va
       // When assigning location, IE and Mozilla both resolve the URL
       // relative to the frame where the JavaScript is executing not
       // the target frame.
-      Frame *activePart = static_cast<KJS::ScriptInterpreter *>( exec->dynamicInterpreter() )->frame();
+      Frame *activePart = static_cast<ScriptInterpreter *>( exec->dynamicInterpreter() )->frame();
       if (activePart)
         str = activePart->document()->completeURL(str);
 
@@ -437,64 +427,64 @@ void KJS::HTMLDocument::putValueProperty(ExecState *exec, int token, JSValue *va
 
 // -------------------------------------------------------------------------
 
-const ClassInfo KJS::HTMLElement::a_info = { "HTMLAnchorElement", &KJS::HTMLElement::info, &HTMLAnchorElementTable, 0 };
-const ClassInfo KJS::HTMLElement::applet_info = { "HTMLAppletElement", &KJS::HTMLElement::info, &HTMLAppletElementTable, 0 };
-const ClassInfo KJS::HTMLElement::area_info = { "HTMLAreaElement", &KJS::HTMLElement::info, &HTMLAreaElementTable, 0 };
-const ClassInfo KJS::HTMLElement::baseFont_info = { "HTMLBaseFontElement", &KJS::HTMLElement::info, &HTMLBaseFontElementTable, 0 };
-const ClassInfo KJS::HTMLElement::base_info = { "HTMLBaseElement", &KJS::HTMLElement::info, &HTMLBaseElementTable, 0 };
-const ClassInfo KJS::HTMLElement::blockQuote_info = { "HTMLBlockQuoteElement", &KJS::HTMLElement::info, &HTMLBlockQuoteElementTable, 0 };
-const ClassInfo KJS::HTMLElement::body_info = { "HTMLBodyElement", &KJS::HTMLElement::info, &HTMLBodyElementTable, 0 };
-const ClassInfo KJS::HTMLElement::br_info = { "HTMLBRElement", &KJS::HTMLElement::info, &HTMLBRElementTable, 0 };
-const ClassInfo KJS::HTMLElement::button_info = { "HTMLButtonElement", &KJS::HTMLElement::info, &HTMLButtonElementTable, 0 };
-const ClassInfo KJS::HTMLElement::canvas_info = { "HTMLCanvasElement", &KJS::HTMLElement::info, &HTMLCanvasElementTable, 0 };
-const ClassInfo KJS::HTMLElement::caption_info = { "HTMLTableCaptionElement", &KJS::HTMLElement::info, &HTMLTableCaptionElementTable, 0 };
-const ClassInfo KJS::HTMLElement::col_info = { "HTMLTableColElement", &KJS::HTMLElement::info, &HTMLTableColElementTable, 0 };
-const ClassInfo KJS::HTMLElement::dir_info = { "HTMLDirectoryElement", &KJS::HTMLElement::info, &HTMLDirectoryElementTable, 0 };
-const ClassInfo KJS::HTMLElement::div_info = { "HTMLDivElement", &KJS::HTMLElement::info, &HTMLDivElementTable, 0 };
-const ClassInfo KJS::HTMLElement::dl_info = { "HTMLDListElement", &KJS::HTMLElement::info, &HTMLDListElementTable, 0 };
-const ClassInfo KJS::HTMLElement::fieldSet_info = { "HTMLFieldSetElement", &KJS::HTMLElement::info, &HTMLFieldSetElementTable, 0 };
-const ClassInfo KJS::HTMLElement::font_info = { "HTMLFontElement", &KJS::HTMLElement::info, &HTMLFontElementTable, 0 };
-const ClassInfo KJS::HTMLElement::form_info = { "HTMLFormElement", &KJS::HTMLElement::info, &HTMLFormElementTable, 0 };
-const ClassInfo KJS::HTMLElement::frameSet_info = { "HTMLFrameSetElement", &KJS::HTMLElement::info, &HTMLFrameSetElementTable, 0 };
-const ClassInfo KJS::HTMLElement::frame_info = { "HTMLFrameElement", &KJS::HTMLElement::info, &HTMLFrameElementTable, 0 };
-const ClassInfo KJS::HTMLElement::head_info = { "HTMLHeadElement", &KJS::HTMLElement::info, &HTMLHeadElementTable, 0 };
-const ClassInfo KJS::HTMLElement::heading_info = { "HTMLHeadingElement", &KJS::HTMLElement::info, &HTMLHeadingElementTable, 0 };
-const ClassInfo KJS::HTMLElement::hr_info = { "HTMLHRElement", &KJS::HTMLElement::info, &HTMLHRElementTable, 0 };
-const ClassInfo KJS::HTMLElement::html_info = { "HTMLHtmlElement", &KJS::HTMLElement::info, &HTMLHtmlElementTable, 0 };
-const ClassInfo KJS::HTMLElement::iFrame_info = { "HTMLIFrameElement", &KJS::HTMLElement::info, &HTMLIFrameElementTable, 0 };
-const ClassInfo KJS::HTMLElement::img_info = { "HTMLImageElement", &KJS::HTMLElement::info, &HTMLImageElementTable, 0 };
-const ClassInfo KJS::HTMLElement::info = { "HTMLElement", &JSElement::info, &HTMLElementTable, 0 };
-const ClassInfo KJS::HTMLElement::input_info = { "HTMLInputElement", &KJS::HTMLElement::info, &HTMLInputElementTable, 0 };
-const ClassInfo KJS::HTMLElement::isIndex_info = { "HTMLIsIndexElement", &KJS::HTMLElement::info, &HTMLIsIndexElementTable, 0 };
-const ClassInfo KJS::HTMLElement::label_info = { "HTMLLabelElement", &KJS::HTMLElement::info, &HTMLLabelElementTable, 0 };
-const ClassInfo KJS::HTMLElement::legend_info = { "HTMLLegendElement", &KJS::HTMLElement::info, &HTMLLegendElementTable, 0 };
-const ClassInfo KJS::HTMLElement::li_info = { "HTMLLIElement", &KJS::HTMLElement::info, &HTMLLIElementTable, 0 };
-const ClassInfo KJS::HTMLElement::link_info = { "HTMLLinkElement", &KJS::HTMLElement::info, &HTMLLinkElementTable, 0 };
-const ClassInfo KJS::HTMLElement::map_info = { "HTMLMapElement", &KJS::HTMLElement::info, &HTMLMapElementTable, 0 };
-const ClassInfo KJS::HTMLElement::marquee_info = { "HTMLMarqueeElement", &KJS::HTMLElement::info, &HTMLMarqueeElementTable, 0 };
-const ClassInfo KJS::HTMLElement::menu_info = { "HTMLMenuElement", &KJS::HTMLElement::info, &HTMLMenuElementTable, 0 };
-const ClassInfo KJS::HTMLElement::meta_info = { "HTMLMetaElement", &KJS::HTMLElement::info, &HTMLMetaElementTable, 0 };
-const ClassInfo KJS::HTMLElement::mod_info = { "HTMLModElement", &KJS::HTMLElement::info, &HTMLModElementTable, 0 };
-const ClassInfo KJS::HTMLElement::object_info = { "HTMLObjectElement", &KJS::HTMLElement::info, &HTMLObjectElementTable, 0 };
-const ClassInfo KJS::HTMLElement::ol_info = { "HTMLOListElement", &KJS::HTMLElement::info, &HTMLOListElementTable, 0 };
-const ClassInfo KJS::HTMLElement::optGroup_info = { "HTMLOptGroupElement", &KJS::HTMLElement::info, &HTMLOptGroupElementTable, 0 };
-const ClassInfo KJS::HTMLElement::option_info = { "HTMLOptionElement", &KJS::HTMLElement::info, &HTMLOptionElementTable, 0 };
-const ClassInfo KJS::HTMLElement::p_info = { "HTMLParagraphElement", &KJS::HTMLElement::info, &HTMLParagraphElementTable, 0 };
-const ClassInfo KJS::HTMLElement::param_info = { "HTMLParamElement", &KJS::HTMLElement::info, &HTMLParamElementTable, 0 };
-const ClassInfo KJS::HTMLElement::pre_info = { "HTMLPreElement", &KJS::HTMLElement::info, &HTMLPreElementTable, 0 };
-const ClassInfo KJS::HTMLElement::q_info = { "HTMLQuoteElement", &KJS::HTMLElement::info, &HTMLQuoteElementTable, 0 };
-const ClassInfo KJS::HTMLElement::script_info = { "HTMLScriptElement", &KJS::HTMLElement::info, &HTMLScriptElementTable, 0 };
-const ClassInfo KJS::HTMLElement::select_info = { "HTMLSelectElement", &KJS::HTMLElement::info, &HTMLSelectElementTable, 0 };
-const ClassInfo KJS::HTMLElement::style_info = { "HTMLStyleElement", &KJS::HTMLElement::info, &HTMLStyleElementTable, 0 };
-const ClassInfo KJS::HTMLElement::table_info = { "HTMLTableElement", &KJS::HTMLElement::info, &HTMLTableElementTable, 0 };
-const ClassInfo KJS::HTMLElement::tablecell_info = { "HTMLTableCellElement", &KJS::HTMLElement::info, &HTMLTableCellElementTable, 0 };
-const ClassInfo KJS::HTMLElement::tablesection_info = { "HTMLTableSectionElement", &KJS::HTMLElement::info, &HTMLTableSectionElementTable, 0 };
-const ClassInfo KJS::HTMLElement::textArea_info = { "HTMLTextAreaElement", &KJS::HTMLElement::info, &HTMLTextAreaElementTable, 0 };
-const ClassInfo KJS::HTMLElement::title_info = { "HTMLTitleElement", &KJS::HTMLElement::info, &HTMLTitleElementTable, 0 };
-const ClassInfo KJS::HTMLElement::tr_info = { "HTMLTableRowElement", &KJS::HTMLElement::info, &HTMLTableRowElementTable, 0 };
-const ClassInfo KJS::HTMLElement::ul_info = { "HTMLUListElement", &KJS::HTMLElement::info, &HTMLUListElementTable, 0 };
+const ClassInfo HTMLElement::a_info = { "HTMLAnchorElement", &HTMLElement::info, &HTMLAnchorElementTable, 0 };
+const ClassInfo HTMLElement::applet_info = { "HTMLAppletElement", &HTMLElement::info, &HTMLAppletElementTable, 0 };
+const ClassInfo HTMLElement::area_info = { "HTMLAreaElement", &HTMLElement::info, &HTMLAreaElementTable, 0 };
+const ClassInfo HTMLElement::baseFont_info = { "HTMLBaseFontElement", &HTMLElement::info, &HTMLBaseFontElementTable, 0 };
+const ClassInfo HTMLElement::base_info = { "HTMLBaseElement", &HTMLElement::info, &HTMLBaseElementTable, 0 };
+const ClassInfo HTMLElement::blockQuote_info = { "HTMLBlockQuoteElement", &HTMLElement::info, &HTMLBlockQuoteElementTable, 0 };
+const ClassInfo HTMLElement::body_info = { "HTMLBodyElement", &HTMLElement::info, &HTMLBodyElementTable, 0 };
+const ClassInfo HTMLElement::br_info = { "HTMLBRElement", &HTMLElement::info, &HTMLBRElementTable, 0 };
+const ClassInfo HTMLElement::button_info = { "HTMLButtonElement", &HTMLElement::info, &HTMLButtonElementTable, 0 };
+const ClassInfo HTMLElement::canvas_info = { "HTMLCanvasElement", &HTMLElement::info, &HTMLCanvasElementTable, 0 };
+const ClassInfo HTMLElement::caption_info = { "HTMLTableCaptionElement", &HTMLElement::info, &HTMLTableCaptionElementTable, 0 };
+const ClassInfo HTMLElement::col_info = { "HTMLTableColElement", &HTMLElement::info, &HTMLTableColElementTable, 0 };
+const ClassInfo HTMLElement::dir_info = { "HTMLDirectoryElement", &HTMLElement::info, &HTMLDirectoryElementTable, 0 };
+const ClassInfo HTMLElement::div_info = { "HTMLDivElement", &HTMLElement::info, &HTMLDivElementTable, 0 };
+const ClassInfo HTMLElement::dl_info = { "HTMLDListElement", &HTMLElement::info, &HTMLDListElementTable, 0 };
+const ClassInfo HTMLElement::fieldSet_info = { "HTMLFieldSetElement", &HTMLElement::info, &HTMLFieldSetElementTable, 0 };
+const ClassInfo HTMLElement::font_info = { "HTMLFontElement", &HTMLElement::info, &HTMLFontElementTable, 0 };
+const ClassInfo HTMLElement::form_info = { "HTMLFormElement", &HTMLElement::info, &HTMLFormElementTable, 0 };
+const ClassInfo HTMLElement::frameSet_info = { "HTMLFrameSetElement", &HTMLElement::info, &HTMLFrameSetElementTable, 0 };
+const ClassInfo HTMLElement::frame_info = { "HTMLFrameElement", &HTMLElement::info, &HTMLFrameElementTable, 0 };
+const ClassInfo HTMLElement::head_info = { "HTMLHeadElement", &HTMLElement::info, &HTMLHeadElementTable, 0 };
+const ClassInfo HTMLElement::heading_info = { "HTMLHeadingElement", &HTMLElement::info, &HTMLHeadingElementTable, 0 };
+const ClassInfo HTMLElement::hr_info = { "HTMLHRElement", &HTMLElement::info, &HTMLHRElementTable, 0 };
+const ClassInfo HTMLElement::html_info = { "HTMLHtmlElement", &HTMLElement::info, &HTMLHtmlElementTable, 0 };
+const ClassInfo HTMLElement::iFrame_info = { "HTMLIFrameElement", &HTMLElement::info, &HTMLIFrameElementTable, 0 };
+const ClassInfo HTMLElement::img_info = { "HTMLImageElement", &HTMLElement::info, &HTMLImageElementTable, 0 };
+const ClassInfo HTMLElement::info = { "HTMLElement", &JSElement::info, &HTMLElementTable, 0 };
+const ClassInfo HTMLElement::input_info = { "HTMLInputElement", &HTMLElement::info, &HTMLInputElementTable, 0 };
+const ClassInfo HTMLElement::isIndex_info = { "HTMLIsIndexElement", &HTMLElement::info, &HTMLIsIndexElementTable, 0 };
+const ClassInfo HTMLElement::label_info = { "HTMLLabelElement", &HTMLElement::info, &HTMLLabelElementTable, 0 };
+const ClassInfo HTMLElement::legend_info = { "HTMLLegendElement", &HTMLElement::info, &HTMLLegendElementTable, 0 };
+const ClassInfo HTMLElement::li_info = { "HTMLLIElement", &HTMLElement::info, &HTMLLIElementTable, 0 };
+const ClassInfo HTMLElement::link_info = { "HTMLLinkElement", &HTMLElement::info, &HTMLLinkElementTable, 0 };
+const ClassInfo HTMLElement::map_info = { "HTMLMapElement", &HTMLElement::info, &HTMLMapElementTable, 0 };
+const ClassInfo HTMLElement::marquee_info = { "HTMLMarqueeElement", &HTMLElement::info, &HTMLMarqueeElementTable, 0 };
+const ClassInfo HTMLElement::menu_info = { "HTMLMenuElement", &HTMLElement::info, &HTMLMenuElementTable, 0 };
+const ClassInfo HTMLElement::meta_info = { "HTMLMetaElement", &HTMLElement::info, &HTMLMetaElementTable, 0 };
+const ClassInfo HTMLElement::mod_info = { "HTMLModElement", &HTMLElement::info, &HTMLModElementTable, 0 };
+const ClassInfo HTMLElement::object_info = { "HTMLObjectElement", &HTMLElement::info, &HTMLObjectElementTable, 0 };
+const ClassInfo HTMLElement::ol_info = { "HTMLOListElement", &HTMLElement::info, &HTMLOListElementTable, 0 };
+const ClassInfo HTMLElement::optGroup_info = { "HTMLOptGroupElement", &HTMLElement::info, &HTMLOptGroupElementTable, 0 };
+const ClassInfo HTMLElement::option_info = { "HTMLOptionElement", &HTMLElement::info, &HTMLOptionElementTable, 0 };
+const ClassInfo HTMLElement::p_info = { "HTMLParagraphElement", &HTMLElement::info, &HTMLParagraphElementTable, 0 };
+const ClassInfo HTMLElement::param_info = { "HTMLParamElement", &HTMLElement::info, &HTMLParamElementTable, 0 };
+const ClassInfo HTMLElement::pre_info = { "HTMLPreElement", &HTMLElement::info, &HTMLPreElementTable, 0 };
+const ClassInfo HTMLElement::q_info = { "HTMLQuoteElement", &HTMLElement::info, &HTMLQuoteElementTable, 0 };
+const ClassInfo HTMLElement::script_info = { "HTMLScriptElement", &HTMLElement::info, &HTMLScriptElementTable, 0 };
+const ClassInfo HTMLElement::select_info = { "HTMLSelectElement", &HTMLElement::info, &HTMLSelectElementTable, 0 };
+const ClassInfo HTMLElement::style_info = { "HTMLStyleElement", &HTMLElement::info, &HTMLStyleElementTable, 0 };
+const ClassInfo HTMLElement::table_info = { "HTMLTableElement", &HTMLElement::info, &HTMLTableElementTable, 0 };
+const ClassInfo HTMLElement::tablecell_info = { "HTMLTableCellElement", &HTMLElement::info, &HTMLTableCellElementTable, 0 };
+const ClassInfo HTMLElement::tablesection_info = { "HTMLTableSectionElement", &HTMLElement::info, &HTMLTableSectionElementTable, 0 };
+const ClassInfo HTMLElement::textArea_info = { "HTMLTextAreaElement", &HTMLElement::info, &HTMLTextAreaElementTable, 0 };
+const ClassInfo HTMLElement::title_info = { "HTMLTitleElement", &HTMLElement::info, &HTMLTitleElementTable, 0 };
+const ClassInfo HTMLElement::tr_info = { "HTMLTableRowElement", &HTMLElement::info, &HTMLTableRowElementTable, 0 };
+const ClassInfo HTMLElement::ul_info = { "HTMLUListElement", &HTMLElement::info, &HTMLUListElementTable, 0 };
 
-const ClassInfo* KJS::HTMLElement::classInfo() const
+const ClassInfo* HTMLElement::classInfo() const
 {
     static HashMap<DOM::AtomicStringImpl*, const ClassInfo*> classInfoMap;
     if (classInfoMap.isEmpty()) {
@@ -1195,7 +1185,7 @@ JSValue *HTMLElement::formIndexGetter(ExecState *exec, JSObject *originalObject,
     HTMLElement *thisObj = static_cast<HTMLElement *>(slot.slotBase());
     HTMLFormElementImpl *form = static_cast<HTMLFormElementImpl *>(thisObj->impl());
 
-    return getDOMNode(exec, form->elements()->item(slot.index()));
+    return toJS(exec, form->elements()->item(slot.index()));
 }
 
 JSValue *HTMLElement::formNameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
@@ -1211,7 +1201,7 @@ JSValue *HTMLElement::selectIndexGetter(ExecState *exec, JSObject *originalObjec
     HTMLElement *thisObj = static_cast<HTMLElement *>(slot.slotBase());
     HTMLSelectElementImpl *select = static_cast<HTMLSelectElementImpl *>(thisObj->impl());
 
-    return getDOMNode(exec, select->options()->item(slot.index()));
+    return toJS(exec, select->options()->item(slot.index()));
 }
 
 JSValue *HTMLElement::framesetNameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
@@ -1325,7 +1315,7 @@ bool HTMLElement::getOwnPropertySlot(ExecState *exec, const Identifier& property
     return getStaticPropertySlot<HTMLElementFunction, HTMLElement, JSElement>(exec, &HTMLElementTable, this, propertyName, slot);
 }
 
-bool KJS::HTMLElement::implementsCall() const
+bool HTMLElement::implementsCall() const
 {
     HTMLElementImpl *element = static_cast<HTMLElementImpl *>(impl());
     if (element->hasTagName(embedTag) || element->hasTagName(objectTag) || element->hasTagName(appletTag)) {
@@ -1338,7 +1328,7 @@ bool KJS::HTMLElement::implementsCall() const
     return false;
 }
 
-JSValue *KJS::HTMLElement::callAsFunction(ExecState *exec, JSObject *thisObj, const List&args)
+JSValue *HTMLElement::callAsFunction(ExecState *exec, JSObject *thisObj, const List&args)
 {
     HTMLElementImpl *element = static_cast<HTMLElementImpl *>(impl());
     if (element->hasTagName(embedTag) || element->hasTagName(objectTag) || element->hasTagName(appletTag)) {
@@ -1387,7 +1377,7 @@ JSValue *HTMLElement::linkGetter(ExecState* exec, int token) const
         case LinkType:            
             return jsString(link.type());
         case LinkSheet:           
-            return getDOMStyleSheet(exec, link.sheet());
+            return toJS(exec, link.sheet());
     }
     return jsUndefined();
 }
@@ -1426,7 +1416,7 @@ JSValue *HTMLElement::isIndexGetter(ExecState* exec, int token) const
 {
     HTMLIsIndexElementImpl& isindex = *static_cast<HTMLIsIndexElementImpl*>(impl());
     switch (token) {
-        case IsIndexForm:            return getDOMNode(exec, isindex.form()); // type HTMLFormElement
+        case IsIndexForm:            return toJS(exec, isindex.form()); // type HTMLFormElement
         case IsIndexPrompt:          return jsString(isindex.prompt());
     }
     return jsUndefined();
@@ -1439,7 +1429,7 @@ JSValue *HTMLElement::styleGetter(ExecState* exec, int token) const
         case StyleDisabled:        return jsBoolean(style.disabled());
         case StyleMedia:           return jsString(style.media());
         case StyleType:            return jsString(style.type());
-        case StyleSheet:           return getDOMStyleSheet(exec, style.sheet());
+        case StyleSheet:           return toJS(exec, style.sheet());
     }
     return jsUndefined();
 }
@@ -1499,7 +1489,7 @@ JSValue *HTMLElement::selectGetter(ExecState* exec, int token) const
         case SelectSelectedIndex:   return jsNumber(select.selectedIndex());
         case SelectValue:           return jsString(select.value());
         case SelectLength:          return jsNumber(select.length());
-        case SelectForm:            return getDOMNode(exec, select.form()); // type HTMLFormElement
+        case SelectForm:            return toJS(exec, select.form()); // type HTMLFormElement
         case SelectOptions:         return getSelectHTMLCollection(exec, select.options().get(), &select); // type HTMLCollection
         case SelectDisabled:        return jsBoolean(select.disabled());
         case SelectMultiple:        return jsBoolean(select.multiple());
@@ -1524,7 +1514,7 @@ JSValue *HTMLElement::optionGetter(ExecState* exec, int token) const
 {
     HTMLOptionElementImpl& option = *static_cast<HTMLOptionElementImpl*>(impl());
     switch (token) {
-        case OptionForm:            return getDOMNode(exec,option.form()); // type HTMLFormElement
+        case OptionForm:            return toJS(exec,option.form()); // type HTMLFormElement
         case OptionDefaultSelected: return jsBoolean(option.defaultSelected());
         case OptionText:            return jsString(option.text());
         case OptionIndex:           return jsNumber(option.index());
@@ -1556,7 +1546,7 @@ JSValue *HTMLElement::inputGetter(ExecState* exec, int token) const
     switch (token) {
         case InputDefaultValue:    return jsString(input.defaultValue());
         case InputDefaultChecked:  return jsBoolean(input.defaultChecked());
-        case InputForm:            return getDOMNode(exec,input.form()); // type HTMLFormElement
+        case InputForm:            return toJS(exec,input.form()); // type HTMLFormElement
         case InputAccept:          return jsString(input.accept());
         case InputAccessKey:       return jsString(input.accessKey());
         case InputAlign:           return jsString(input.align());
@@ -1584,7 +1574,7 @@ JSValue *HTMLElement::textAreaGetter(ExecState* exec, int token) const
     HTMLTextAreaElementImpl& textarea = *static_cast<HTMLTextAreaElementImpl*>(impl());
     switch (token) {
         case TextAreaDefaultValue:    return jsString(textarea.defaultValue());
-        case TextAreaForm:            return getDOMNode(exec,textarea.form()); // type HTMLFormElement
+        case TextAreaForm:            return toJS(exec,textarea.form()); // type HTMLFormElement
         case TextAreaAccessKey:       return jsString(textarea.accessKey());
         case TextAreaCols:            return jsNumber(textarea.cols());
         case TextAreaDisabled:        return jsBoolean(textarea.disabled());
@@ -1604,7 +1594,7 @@ JSValue *HTMLElement::buttonGetter(ExecState* exec, int token) const
 {
     HTMLButtonElementImpl& button = *static_cast<HTMLButtonElementImpl*>(impl());
     switch (token) {
-        case ButtonForm:            return getDOMNode(exec,button.form()); // type HTMLFormElement
+        case ButtonForm:            return toJS(exec,button.form()); // type HTMLFormElement
         case ButtonAccessKey:       return jsString(button.accessKey());
         case ButtonDisabled:        return jsBoolean(button.disabled());
         case ButtonName:            return jsString(button.name());
@@ -1619,7 +1609,7 @@ JSValue *HTMLElement::labelGetter(ExecState* exec, int token) const
 {
     HTMLLabelElementImpl& label = *static_cast<HTMLLabelElementImpl*>(impl());
     switch (token) {
-        case LabelForm:            return getDOMNode(exec,label.form()); // type HTMLFormElement
+        case LabelForm:            return toJS(exec,label.form()); // type HTMLFormElement
         case LabelAccessKey:       return jsString(label.accessKey());
         case LabelHtmlFor:         return jsString(label.htmlFor());
     }
@@ -1630,7 +1620,7 @@ JSValue *HTMLElement::fieldSetGetter(ExecState* exec, int token) const
 {
     HTMLFieldSetElementImpl& fieldSet = *static_cast<HTMLFieldSetElementImpl*>(impl());
     if (token == FieldSetForm)
-        return getDOMNode(exec,fieldSet.form()); // type HTMLFormElement
+        return toJS(exec,fieldSet.form()); // type HTMLFormElement
     return jsUndefined();
 }
 
@@ -1638,7 +1628,7 @@ JSValue *HTMLElement::legendGetter(ExecState* exec, int token) const
 {
     HTMLLegendElementImpl& legend = *static_cast<HTMLLegendElementImpl*>(impl());
     switch (token) {
-        case LegendForm:            return getDOMNode(exec,legend.form()); // type HTMLFormElement
+        case LegendForm:            return toJS(exec,legend.form()); // type HTMLFormElement
         case LegendAccessKey:       return jsString(legend.accessKey());
         case LegendAlign:           return jsString(legend.align());
     }
@@ -1867,7 +1857,7 @@ JSValue *HTMLElement::objectGetter(ExecState* exec, int token) const
 {
     HTMLObjectElementImpl& object = *static_cast<HTMLObjectElementImpl*>(impl());
     switch (token) {
-        case ObjectForm:            return getDOMNode(exec,object.form()); // type HTMLFormElement
+        case ObjectForm:            return toJS(exec,object.form()); // type HTMLFormElement
         case ObjectCode:            return jsString(object.code());
         case ObjectAlign:           return jsString(object.align());
         case ObjectArchive:         return jsString(object.archive());
@@ -1875,7 +1865,7 @@ JSValue *HTMLElement::objectGetter(ExecState* exec, int token) const
         case ObjectCodeBase:        return jsString(object.codeBase());
         case ObjectCodeType:        return jsString(object.codeType());
         case ObjectContentDocument: return checkNodeSecurity(exec,object.contentDocument()) ? 
-                                           getDOMNode(exec, object.contentDocument()) : jsUndefined();
+                                           toJS(exec, object.contentDocument()) : jsUndefined();
         case ObjectData:            return jsString(object.data());
         case ObjectDeclare:         return jsBoolean(object.declare());
         case ObjectHeight:          return jsString(object.height());
@@ -1980,9 +1970,9 @@ JSValue *HTMLElement::tableGetter(ExecState* exec, int token) const
 {
     HTMLTableElementImpl& table = *static_cast<HTMLTableElementImpl*>(impl());
     switch (token) {
-        case TableCaption:         return getDOMNode(exec,table.caption()); // type HTMLTableCaptionElement
-        case TableTHead:           return getDOMNode(exec,table.tHead()); // type HTMLTableSectionElement
-        case TableTFoot:           return getDOMNode(exec,table.tFoot()); // type HTMLTableSectionElement
+        case TableCaption:         return toJS(exec,table.caption()); // type HTMLTableCaptionElement
+        case TableTHead:           return toJS(exec,table.tHead()); // type HTMLTableSectionElement
+        case TableTFoot:           return toJS(exec,table.tFoot()); // type HTMLTableSectionElement
         case TableRows:            return getHTMLCollection(exec, table.rows().get()); // type HTMLCollection
         case TableTBodies:         return getHTMLCollection(exec, table.tBodies().get()); // type HTMLCollection
         case TableAlign:           return jsString(table.align());
@@ -2087,7 +2077,7 @@ JSValue *HTMLElement::frameGetter(ExecState* exec, int token) const
     HTMLFrameElementImpl& frameElement = *static_cast<HTMLFrameElementImpl*>(impl());
     switch (token) {
         case FrameContentDocument: return checkNodeSecurity(exec,frameElement.contentDocument()) ? 
-                                          getDOMNode(exec, frameElement.contentDocument()) : jsUndefined();
+                                          toJS(exec, frameElement.contentDocument()) : jsUndefined();
         case FrameContentWindow:   return checkNodeSecurity(exec,frameElement.contentDocument())
                                         ? Window::retrieve(frameElement.contentFrame())
                                         : jsUndefined();
@@ -2114,7 +2104,7 @@ JSValue *HTMLElement::iFrameGetter(ExecState* exec, int token) const
           // ### security check ?
         case IFrameDocument: // non-standard, mapped to contentDocument
         case IFrameContentDocument: return checkNodeSecurity(exec,iFrame.contentDocument()) ? 
-                                      getDOMNode(exec, iFrame.contentDocument()) : jsUndefined();
+                                      toJS(exec, iFrame.contentDocument()) : jsUndefined();
         case IFrameContentWindow:   return checkNodeSecurity(exec,iFrame.contentDocument()) 
                                         ? Window::retrieve(iFrame.contentFrame())
                                         : jsUndefined();
@@ -2165,7 +2155,7 @@ JSValue *HTMLElement::getValueProperty(ExecState *exec, int token) const
         case ElementOuterText:
             return jsString(element.outerText());
         case ElementDocument:
-            return getDOMNode(exec,element.ownerDocument());
+            return toJS(exec,element.ownerDocument());
         case ElementChildren:
             return getHTMLCollection(exec, element.children().get());
         case ElementContentEditable:
@@ -2181,7 +2171,7 @@ JSValue *HTMLElement::getValueProperty(ExecState *exec, int token) const
     return jsUndefined();
 }
 
-UString KJS::HTMLElement::toString(ExecState *exec) const
+UString HTMLElement::toString(ExecState *exec) const
 {
     if (impl()->hasTagName(aTag))
         return UString(static_cast<const HTMLAnchorElementImpl *>(impl())->href());
@@ -2201,12 +2191,12 @@ static HTMLFormElementImpl *getForm(HTMLElementImpl *element)
     return 0;
 }
 
-void KJS::HTMLElement::pushEventHandlerScope(ExecState *exec, ScopeChain &scope) const
+void HTMLElement::pushEventHandlerScope(ExecState *exec, ScopeChain &scope) const
 {
   HTMLElementImpl *element = static_cast<HTMLElementImpl *>(impl());
 
   // The document is put on first, fall back to searching it only after the element and form.
-  scope.push(static_cast<JSObject *>(getDOMNode(exec, element->ownerDocument())));
+  scope.push(static_cast<JSObject *>(toJS(exec, element->ownerDocument())));
 
   // The form is next, searched before the document, but after the element itself.
   
@@ -2215,18 +2205,18 @@ void KJS::HTMLElement::pushEventHandlerScope(ExecState *exec, ScopeChain &scope)
   // <table> or <tbody>.
   HTMLFormElementImpl *form = getForm(element);
   if (form)
-    scope.push(static_cast<JSObject *>(getDOMNode(exec, form)));
+    scope.push(static_cast<JSObject *>(toJS(exec, form)));
   else {
     NodeImpl *form = element->parentNode();
     while (form && !form->hasTagName(formTag))
       form = form->parentNode();
     
     if (form)
-      scope.push(static_cast<JSObject *>(getDOMNode(exec, form)));
+      scope.push(static_cast<JSObject *>(toJS(exec, form)));
   }
   
   // The element is on top, searched first.
-  scope.push(static_cast<JSObject *>(getDOMNode(exec, element)));
+  scope.push(static_cast<JSObject *>(toJS(exec, element)));
 }
 
 HTMLElementFunction::HTMLElementFunction(ExecState *exec, int i, int len, const Identifier& name)
@@ -2236,146 +2226,151 @@ HTMLElementFunction::HTMLElementFunction(ExecState *exec, int i, int len, const 
   put(exec,lengthPropertyName,jsNumber(len),DontDelete|ReadOnly|DontEnum);
 }
 
-JSValue *KJS::HTMLElementFunction::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
+static JSValue* toJS(ExecState* exec, CanvasRenderingContext2D* context)
 {
-    if (!thisObj->inherits(&KJS::HTMLElement::info))
+    return cacheDOMObject<CanvasRenderingContext2D, JSCanvasRenderingContext2D>(exec, context);
+}
+
+JSValue *HTMLElementFunction::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
+{
+    if (!thisObj->inherits(&HTMLElement::info))
         return throwError(exec, TypeError);
     DOMExceptionTranslator exception(exec);
     HTMLElementImpl &element = *static_cast<HTMLElementImpl *>(static_cast<HTMLElement *>(thisObj)->impl());
 
     if (element.hasLocalName(formTag)) {
         HTMLFormElementImpl &form = static_cast<HTMLFormElementImpl &>(element);
-        if (id == KJS::HTMLElement::FormSubmit) {
+        if (id == HTMLElement::FormSubmit) {
             form.submit();
             return jsUndefined();
         }
-        else if (id == KJS::HTMLElement::FormReset) {
+        else if (id == HTMLElement::FormReset) {
             form.reset();
             return jsUndefined();
         }
     }
     else if (element.hasLocalName(selectTag)) {
         HTMLSelectElementImpl &select = static_cast<HTMLSelectElementImpl &>(element);
-        if (id == KJS::HTMLElement::SelectAdd) {
+        if (id == HTMLElement::SelectAdd) {
             select.add(toHTMLElement(args[0]), toHTMLElement(args[1]), exception);
             return jsUndefined();
         }
-        else if (id == KJS::HTMLElement::SelectRemove) {
+        else if (id == HTMLElement::SelectRemove) {
             select.remove(int(args[0]->toNumber(exec)));
             return jsUndefined();
         }
-        else if (id == KJS::HTMLElement::SelectBlur) {
+        else if (id == HTMLElement::SelectBlur) {
             select.blur();
             return jsUndefined();
         }
-        else if (id == KJS::HTMLElement::SelectFocus) {
+        else if (id == HTMLElement::SelectFocus) {
             select.focus();
             return jsUndefined();
         }
     }
     else if (element.hasLocalName(inputTag)) {
         HTMLInputElementImpl &input = static_cast<HTMLInputElementImpl &>(element);
-        if (id == KJS::HTMLElement::InputBlur) {
+        if (id == HTMLElement::InputBlur) {
             input.blur();
             return jsUndefined();
         }
-        else if (id == KJS::HTMLElement::InputFocus) {
+        else if (id == HTMLElement::InputFocus) {
             input.focus();
             return jsUndefined();
         }
-        else if (id == KJS::HTMLElement::InputSelect) {
+        else if (id == HTMLElement::InputSelect) {
             input.select();
             return jsUndefined();
         }
-        else if (id == KJS::HTMLElement::InputClick) {
+        else if (id == HTMLElement::InputClick) {
             input.click();
             return jsUndefined();
         }
-        else if (id == KJS::HTMLElement::InputSetSelectionRange) {
+        else if (id == HTMLElement::InputSetSelectionRange) {
             input.setSelectionRange(args[0]->toInt32(exec), args[1]->toInt32(exec));
             return jsUndefined();
         }
     }
     else if (element.hasLocalName(buttonTag)) {
         HTMLButtonElementImpl &button = static_cast<HTMLButtonElementImpl &>(element);
-        if (id == KJS::HTMLElement::ButtonBlur) {
+        if (id == HTMLElement::ButtonBlur) {
             button.blur();
             return jsUndefined();
         }
-        else if (id == KJS::HTMLElement::ButtonFocus) {
+        else if (id == HTMLElement::ButtonFocus) {
             button.focus();
             return jsUndefined();
         }
     }
     else if (element.hasLocalName(labelTag)) {
         HTMLLabelElementImpl &label = static_cast<HTMLLabelElementImpl &>(element);
-        if (id == KJS::HTMLElement::LabelFocus) {
+        if (id == HTMLElement::LabelFocus) {
             label.focus();
             return jsUndefined();
         }
     }
     else if (element.hasLocalName(legendTag)) {
         HTMLLegendElementImpl &legend = static_cast<HTMLLegendElementImpl &>(element);
-        if (id == KJS::HTMLElement::LegendFocus) {
+        if (id == HTMLElement::LegendFocus) {
             legend.focus();
             return jsUndefined();
         }
     }
     else if (element.hasLocalName(textareaTag)) {
         HTMLTextAreaElementImpl &textarea = static_cast<HTMLTextAreaElementImpl &>(element);
-        if (id == KJS::HTMLElement::TextAreaBlur) {
+        if (id == HTMLElement::TextAreaBlur) {
             textarea.blur();
             return jsUndefined();
         }
-        else if (id == KJS::HTMLElement::TextAreaFocus) {
+        else if (id == HTMLElement::TextAreaFocus) {
             textarea.focus();
             return jsUndefined();
         }
-        else if (id == KJS::HTMLElement::TextAreaSelect) {
+        else if (id == HTMLElement::TextAreaSelect) {
             textarea.select();
             return jsUndefined();
         }
-        else if (id == KJS::HTMLElement::TextAreaSetSelectionRange) {
+        else if (id == HTMLElement::TextAreaSetSelectionRange) {
             textarea.setSelectionRange(args[0]->toInt32(exec), args[1]->toInt32(exec));
             return jsUndefined();
         }
     }
     else if (element.hasLocalName(aTag)) {
         HTMLAnchorElementImpl &anchor = static_cast<HTMLAnchorElementImpl &>(element);
-        if (id == KJS::HTMLElement::AnchorBlur) {
+        if (id == HTMLElement::AnchorBlur) {
             anchor.blur();
             return jsUndefined();
         }
-        else if (id == KJS::HTMLElement::AnchorFocus) {
+        else if (id == HTMLElement::AnchorFocus) {
             anchor.focus();
             return jsUndefined();
         }
-        else if (id == KJS::HTMLElement::AnchorToString)
+        else if (id == HTMLElement::AnchorToString)
             return jsString(thisObj->toString(exec));
     }
     else if (element.hasLocalName(tableTag)) {
         HTMLTableElementImpl &table = static_cast<HTMLTableElementImpl &>(element);
-        if (id == KJS::HTMLElement::TableCreateTHead)
-            return getDOMNode(exec,table.createTHead());
-        else if (id == KJS::HTMLElement::TableDeleteTHead) {
+        if (id == HTMLElement::TableCreateTHead)
+            return toJS(exec,table.createTHead());
+        else if (id == HTMLElement::TableDeleteTHead) {
             table.deleteTHead();
             return jsUndefined();
         }
-        else if (id == KJS::HTMLElement::TableCreateTFoot)
-            return getDOMNode(exec,table.createTFoot());
-        else if (id == KJS::HTMLElement::TableDeleteTFoot) {
+        else if (id == HTMLElement::TableCreateTFoot)
+            return toJS(exec,table.createTFoot());
+        else if (id == HTMLElement::TableDeleteTFoot) {
             table.deleteTFoot();
             return jsUndefined();
         }
-        else if (id == KJS::HTMLElement::TableCreateCaption)
-            return getDOMNode(exec,table.createCaption());
-        else if (id == KJS::HTMLElement::TableDeleteCaption) {
+        else if (id == HTMLElement::TableCreateCaption)
+            return toJS(exec,table.createCaption());
+        else if (id == HTMLElement::TableDeleteCaption) {
             table.deleteCaption();
             return jsUndefined();
         }
-        else if (id == KJS::HTMLElement::TableInsertRow)
-            return getDOMNode(exec,table.insertRow(args[0]->toInt32(exec), exception));
-        else if (id == KJS::HTMLElement::TableDeleteRow) {
+        else if (id == HTMLElement::TableInsertRow)
+            return toJS(exec,table.insertRow(args[0]->toInt32(exec), exception));
+        else if (id == HTMLElement::TableDeleteRow) {
             table.deleteRow(args[0]->toInt32(exec), exception);
             return jsUndefined();
         }
@@ -2384,30 +2379,30 @@ JSValue *KJS::HTMLElementFunction::callAsFunction(ExecState *exec, JSObject *thi
              element.hasLocalName(tbodyTag) ||
              element.hasLocalName(tfootTag)) {
         HTMLTableSectionElementImpl &tableSection = static_cast<HTMLTableSectionElementImpl &>(element);
-        if (id == KJS::HTMLElement::TableSectionInsertRow)
-            return getDOMNode(exec, tableSection.insertRow(args[0]->toInt32(exec), exception));
-        else if (id == KJS::HTMLElement::TableSectionDeleteRow) {
+        if (id == HTMLElement::TableSectionInsertRow)
+            return toJS(exec, tableSection.insertRow(args[0]->toInt32(exec), exception));
+        else if (id == HTMLElement::TableSectionDeleteRow) {
             tableSection.deleteRow(args[0]->toInt32(exec), exception);
             return jsUndefined();
         }
     }
     else if (element.hasLocalName(trTag)) {
         HTMLTableRowElementImpl &tableRow = static_cast<HTMLTableRowElementImpl &>(element);
-        if (id == KJS::HTMLElement::TableRowInsertCell)
-            return getDOMNode(exec,tableRow.insertCell(args[0]->toInt32(exec), exception));
-        else if (id == KJS::HTMLElement::TableRowDeleteCell) {
+        if (id == HTMLElement::TableRowInsertCell)
+            return toJS(exec,tableRow.insertCell(args[0]->toInt32(exec), exception));
+        else if (id == HTMLElement::TableRowDeleteCell) {
             tableRow.deleteCell(args[0]->toInt32(exec), exception);
             return jsUndefined();
         }
     }
     else if (element.hasLocalName(marqueeTag)) {
-        if (id == KJS::HTMLElement::MarqueeStart && element.renderer() && 
+        if (id == HTMLElement::MarqueeStart && element.renderer() && 
             element.renderer()->layer() &&
             element.renderer()->layer()->marquee()) {
             element.renderer()->layer()->marquee()->start();
             return jsUndefined();
         }
-        if (id == KJS::HTMLElement::MarqueeStop && element.renderer() && 
+        if (id == HTMLElement::MarqueeStop && element.renderer() && 
             element.renderer()->layer() &&
             element.renderer()->layer()->marquee()) {
             element.renderer()->layer()->marquee()->stop();
@@ -2415,18 +2410,14 @@ JSValue *KJS::HTMLElementFunction::callAsFunction(ExecState *exec, JSObject *thi
         }
     }
     else if (element.hasLocalName(canvasTag)) {
-        if (id == KJS::HTMLElement::GetContext) {
-            if (args.size() == 0 || (args.size() == 1 && args[0]->toString(exec).domString().lower() == "2d")) {
-                return new Context2D(&element);
-            }
-            return jsUndefined();
-        }
+        if (id == HTMLElement::GetContext)
+            return toJS(exec, static_cast<HTMLCanvasElementImpl*>(&element)->getContext(args[0]->toString(exec).domString()));
     }
 
     return jsUndefined();
 }
 
-void KJS::HTMLElement::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
+void HTMLElement::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
 {
     HTMLElementImpl &element = *static_cast<HTMLElementImpl *>(impl());
     // First look at dynamic properties
@@ -2461,7 +2452,7 @@ void KJS::HTMLElement::put(ExecState *exec, const Identifier &propertyName, JSVa
         }
     }
 
-    lookupPut<KJS::HTMLElement, JSElement>(exec, propertyName, value, attr, &HTMLElementTable, this);
+    lookupPut<HTMLElement, JSElement>(exec, propertyName, value, attr, &HTMLElementTable, this);
 }
 
 void HTMLElement::htmlSetter(ExecState *exec, int token, JSValue *value, const DOM::DOMString& str)
@@ -3225,7 +3216,7 @@ JSValue *HTMLCollection::lengthGetter(ExecState *exec, JSObject *originalObject,
 JSValue *HTMLCollection::indexGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
 {
     HTMLCollection *thisObj = static_cast<HTMLCollection *>(slot.slotBase());
-    return getDOMNode(exec, thisObj->m_impl->item(slot.index()));
+    return toJS(exec, thisObj->m_impl->item(slot.index()));
 }
 
 JSValue *HTMLCollection::nameGetter(ExecState *exec, JSObject *originalObject, const Identifier& propertyName, const PropertySlot& slot)
@@ -3264,7 +3255,7 @@ bool HTMLCollection::getOwnPropertySlot(ExecState *exec, const Identifier& prope
 
 // HTMLCollections are strange objects, they support both get and call,
 // so that document.forms.item(0) and document.forms(0) both work.
-JSValue *KJS::HTMLCollection::callAsFunction(ExecState *exec, JSObject *, const List &args)
+JSValue *HTMLCollection::callAsFunction(ExecState *exec, JSObject *, const List &args)
 {
   // Do not use thisObj here. It can be the HTMLDocument, in the document.forms(i) case.
   HTMLCollectionImpl &collection = *m_impl;
@@ -3277,7 +3268,7 @@ JSValue *KJS::HTMLCollection::callAsFunction(ExecState *exec, JSObject *, const 
     UString s = args[0]->toString(exec);
     unsigned int u = s.toUInt32(&ok);
     if (ok)
-      return getDOMNode(exec, collection.item(u));
+      return toJS(exec, collection.item(u));
     // support for document.images('<name>') etc.
     return getNamedItems(exec, Identifier(s));
   }
@@ -3292,7 +3283,7 @@ JSValue *KJS::HTMLCollection::callAsFunction(ExecState *exec, JSObject *, const 
       NodeImpl *node = collection.namedItem(pstr);
       while (node) {
         if (!u)
-          return getDOMNode(exec,node);
+          return toJS(exec,node);
         node = collection.nextNamedItem(pstr);
         --u;
       }
@@ -3301,7 +3292,7 @@ JSValue *KJS::HTMLCollection::callAsFunction(ExecState *exec, JSObject *, const 
   return jsUndefined();
 }
 
-JSValue *KJS::HTMLCollection::getNamedItems(ExecState *exec, const Identifier &propertyName) const
+JSValue *HTMLCollection::getNamedItems(ExecState *exec, const Identifier &propertyName) const
 {
     QValueList< RefPtr<NodeImpl> > namedItems = m_impl->namedItems(AtomicString(propertyName.domString()));
 
@@ -3309,23 +3300,23 @@ JSValue *KJS::HTMLCollection::getNamedItems(ExecState *exec, const Identifier &p
         return jsUndefined();
 
     if (namedItems.count() == 1)
-        return getDOMNode(exec, namedItems[0].get());
+        return toJS(exec, namedItems[0].get());
 
     return new DOMNamedNodesCollection(exec, namedItems);
 }
 
-JSValue *KJS::HTMLCollectionProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
+JSValue *HTMLCollectionProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
 {
-  if (!thisObj->inherits(&KJS::HTMLCollection::info))
+  if (!thisObj->inherits(&HTMLCollection::info))
     return throwError(exec, TypeError);
   HTMLCollectionImpl &coll = *static_cast<HTMLCollection *>(thisObj)->impl();
 
   switch (id) {
-  case KJS::HTMLCollection::Item:
-    return getDOMNode(exec,coll.item(args[0]->toUInt32(exec)));
-  case KJS::HTMLCollection::Tags:
-    return getDOMNodeList(exec, coll.base()->getElementsByTagName(args[0]->toString(exec).domString()).get());
-  case KJS::HTMLCollection::NamedItem:
+  case HTMLCollection::Item:
+    return toJS(exec,coll.item(args[0]->toUInt32(exec)));
+  case HTMLCollection::Tags:
+    return toJS(exec, coll.base()->getElementsByTagName(args[0]->toString(exec).domString()).get());
+  case HTMLCollection::NamedItem:
     return static_cast<HTMLCollection *>(thisObj)->getNamedItems(exec, Identifier(args[0]->toString(exec)));
   default:
     return jsUndefined();
@@ -3356,10 +3347,10 @@ bool HTMLSelectCollection::getOwnPropertySlot(ExecState *exec, const Identifier&
   return HTMLCollection::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-void KJS::HTMLSelectCollection::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int)
+void HTMLSelectCollection::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int)
 {
 #ifdef KJS_VERBOSE
-  kdDebug(6070) << "KJS::HTMLSelectCollection::put " << propertyName.qstring() << endl;
+  kdDebug(6070) << "HTMLSelectCollection::put " << propertyName.qstring() << endl;
 #endif
   if ( propertyName == "selectedIndex" ) {
     m_element->setSelectedIndex( value->toInt32( exec ) );
@@ -3475,7 +3466,7 @@ JSObject *OptionConstructorImp::construct(ExecState *exec, const List &args)
   }
 
   setDOMException(exec, exception);
-  return static_cast<JSObject *>(getDOMNode(exec,opt));
+  return static_cast<JSObject *>(toJS(exec,opt));
 }
 
 ////////////////////// Image Object ////////////////////////
@@ -3512,1600 +3503,7 @@ JSObject *ImageConstructorImp::construct(ExecState * exec, const List & list)
     if (heightSet)
         result->setHeight(height);
     
-    return static_cast<JSObject*>(getDOMNode(exec, result));
-}
-
-////////////////////// Context2D Object ////////////////////////
-
-KJS_IMPLEMENT_PROTOFUNC(Context2DFunction)
-
-static bool isGradient(JSValue *value)
-{
-    return value->isObject(&Gradient::info);
-}
-
-static bool isImagePattern(JSValue *value)
-{
-    return value->isObject(&ImagePattern::info);
-}
-
-#define BITS_PER_COMPONENT 8
-#define BYTES_PER_ROW(width,bitsPerComponent,numComponents) ((width * bitsPerComponent * numComponents + 7)/8)
-
-JSValue *KJS::Context2DFunction::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
-{
-    if (!thisObj->inherits(&Context2D::info))
-        return throwError(exec, TypeError);
-
-#if __APPLE__
-    Context2D *contextObject = static_cast<KJS::Context2D *>(thisObj);
-    khtml::RenderCanvasImage *renderer = static_cast<khtml::RenderCanvasImage*>(contextObject->_element->renderer());
-    if (!renderer)
-        return jsUndefined();
-
-    CGContextRef drawingContext = renderer->drawingContext();
-    if (!drawingContext)
-        return jsUndefined();
-    
-    switch (id) {
-        case Context2D::Save: {
-            if (args.size() != 0)
-                return throwError(exec, SyntaxError);
-            CGContextSaveGState(drawingContext);
-            
-            contextObject->save();
-            
-            break;
-        }
-        case Context2D::Restore: {
-            if (args.size() != 0)
-                return throwError(exec, SyntaxError);
-            CGContextRestoreGState(drawingContext);
-            
-            contextObject->restore();
-            
-            break;
-        }
-        case Context2D::BeginPath: {
-            if (args.size() != 0)
-                return throwError(exec, SyntaxError);
-            CGContextBeginPath(drawingContext);
-            break;
-        }
-        case Context2D::ClosePath: {
-            if (args.size() != 0)
-                return throwError(exec, SyntaxError);
-            CGContextClosePath(drawingContext);
-            break;
-        }
-        case Context2D::SetStrokeColor: {
-            // string arg = named color
-            // string arg, number arg = named color, alpha
-            // number arg = gray color
-            // number arg, number arg = gray color, alpha
-            // 4 args (string or number) = r, g, b, a
-            // 5 args (string or number) = c, m, y, k, a
-            int numArgs = args.size();
-            switch (numArgs) {
-                case 1: {
-                    if (args[0]->isString()) {                    
-                        RGBA32 color = DOM::CSSParser::parseColor(args[0]->toString(exec).domString());
-                        Color qc(color);
-                        CGContextSetRGBStrokeColor(drawingContext, qc.red()/255., qc.green()/255., qc.blue()/255., qc.alpha()/255.);
-
-                    }
-                    else {
-                        float g = (float)args[0]->toNumber(exec);
-                        CGContextSetGrayStrokeColor(drawingContext, g, 1.);
-                    }
-                }
-                break;
-                case 2: {
-                    float a = args[1]->toNumber(exec);
-                    if (args[0]->isString()) {
-                        RGBA32 color = DOM::CSSParser::parseColor(args[0]->toString(exec).domString());
-                        Color qc(color);
-                        CGContextSetRGBStrokeColor(drawingContext, qc.red()/255., qc.green()/255., qc.blue()/255., a);
-                    }
-                    else {
-                        float g = (float)args[0]->toNumber(exec);
-                        CGContextSetGrayStrokeColor(drawingContext, g, a);
-                    }
-                }
-                break;
-                case 4: {
-                    float r = (float)args[0]->toNumber(exec);
-                    float g = (float)args[1]->toNumber(exec);
-                    float b = (float)args[2]->toNumber(exec);
-                    float a = (float)args[3]->toNumber(exec);
-                    CGContextSetRGBStrokeColor(drawingContext, r, g, b, a);
-                }
-                break;
-                case 5: {
-                    float c = (float)args[0]->toNumber(exec);
-                    float m = (float)args[1]->toNumber(exec);
-                    float y = (float)args[2]->toNumber(exec);
-                    float k = (float)args[3]->toNumber(exec);
-                    float a = (float)args[4]->toNumber(exec);
-                    CGContextSetCMYKStrokeColor(drawingContext, c, m, y, k, a);
-                }
-                break;
-                default:
-                    return throwError(exec, SyntaxError);
-            }
-            break;
-        }
-        case Context2D::SetFillColor: {
-            // string arg = named color
-            // string arg, number arg = named color, alpha
-            // number arg = gray color
-            // number arg, number arg = gray color, alpha
-            // 4 args (string or number) = r, g, b, a
-            // 5 args (string or number) = c, m, y, k, a
-            int numArgs = args.size();
-            switch (numArgs) {
-                case 1: {
-                    if (args[0]->isString()) {
-                        RGBA32 color = DOM::CSSParser::parseColor(args[0]->toString(exec).domString());
-                        Color qc(color);
-                        CGContextSetRGBFillColor(drawingContext, qc.red()/255., qc.green()/255., qc.blue()/255., qc.alpha()/255.);
-                    }
-                    else {
-                        float g = (float)args[0]->toNumber(exec);
-                        CGContextSetGrayFillColor(drawingContext, g, 1.);
-                    }
-                }
-                break;
-                case 2: {
-                    float a = args[1]->toNumber(exec);
-                    if (args[0]->isString()) {
-                        RGBA32 color = DOM::CSSParser::parseColor(args[0]->toString(exec).domString());
-                        Color qc(color);
-                        CGContextSetRGBFillColor(drawingContext, qc.red()/255., qc.green()/255., qc.blue()/255., a);
-                    }
-                    else {
-                        float g = (float)args[0]->toNumber(exec);
-                        CGContextSetGrayFillColor(drawingContext, g, a);
-                    }
-                }
-                break;
-                case 4: {
-                    float r = (float)args[0]->toNumber(exec);
-                    float g = (float)args[1]->toNumber(exec);
-                    float b = (float)args[2]->toNumber(exec);
-                    float a = (float)args[3]->toNumber(exec);
-                    CGContextSetRGBFillColor(drawingContext, r, g, b, a);
-                }
-                break;
-                case 5: {
-                    float c = (float)args[0]->toNumber(exec);
-                    float m = (float)args[1]->toNumber(exec);
-                    float y = (float)args[2]->toNumber(exec);
-                    float k = (float)args[3]->toNumber(exec);
-                    float a = (float)args[4]->toNumber(exec);
-                    CGContextSetCMYKStrokeColor(drawingContext, c, m, y, k, a);
-                }
-                break;
-                default:
-                    return throwError(exec, SyntaxError);
-            }
-            break;
-        }
-        case Context2D::SetLineWidth: {
-            if (args.size() != 1)
-                return throwError(exec, SyntaxError);
-            float w = (float)args[0]->toNumber(exec);
-            CGContextSetLineWidth (drawingContext, w);
-            break;
-        }
-        case Context2D::SetLineCap: {
-            if (args.size() != 1)
-                return throwError(exec, SyntaxError);
-            CGLineCap cap = kCGLineCapButt;
-            DOMString capString = args[0]->toString(exec).domString().lower();
-            if (capString == "round")
-                cap = kCGLineCapRound;
-            else if (capString == "square")
-                cap = kCGLineCapSquare;
-            CGContextSetLineCap (drawingContext, cap);
-            break;
-        }
-        case Context2D::SetLineJoin: {
-            if (args.size() != 1)
-                return throwError(exec, SyntaxError);
-            CGLineJoin join = kCGLineJoinMiter;
-            DOMString joinString = args[0]->toString(exec).domString().lower();
-            if (joinString == "round")
-                join = kCGLineJoinRound;
-            else if (joinString == "bevel")
-                join = kCGLineJoinBevel;
-            CGContextSetLineJoin (drawingContext, join);
-            break;
-        }
-        case Context2D::SetMiterLimit: {
-            if (args.size() != 1)
-                return throwError(exec, SyntaxError);
-            float l = (float)args[0]->toNumber(exec);
-            CGContextSetMiterLimit (drawingContext, l);
-            break;
-        }
-        case Context2D::Fill: {
-            if (args.size() != 0)
-                return throwError(exec, SyntaxError);
-            
-            if (isGradient(contextObject->_fillStyle)) {
-                CGContextSaveGState(drawingContext);
-                
-                // Set the clip from the current path because shading only
-                // operates on clippin regions!  Odd, but true.
-                CGContextClip(drawingContext);
-
-                JSObject *o = static_cast<JSObject*>(contextObject->_fillStyle);
-                Gradient *gradient = static_cast<Gradient*>(o);
-                CGShadingRef shading = gradient->getShading();
-                CGContextDrawShading(drawingContext, shading);
-                
-                CGContextRestoreGState(drawingContext);
-            } else if (isImagePattern(contextObject->_fillStyle)) {
-                contextObject->updateFillImagePattern();
-                CGContextFillPath(drawingContext);
-            }
-            else
-                CGContextFillPath(drawingContext);
-                
-            renderer->setNeedsImageUpdate();
-            break;
-        }
-        case Context2D::Stroke: {
-            if (args.size() != 0)
-                return throwError(exec, SyntaxError);
-            if (isGradient(contextObject->_strokeStyle)) {
-                CGContextSaveGState(drawingContext);
-                
-                // Convert the stroke normally performed on the path
-                // into a path.  Then set the clip from that path 
-                // because shading only operates on clipping regions!  Odd, 
-                // but true.
-                CGContextReplacePathWithStrokedPath(drawingContext);
-                CGContextClip(drawingContext);
-
-                JSObject *o = static_cast<JSObject*>(contextObject->_strokeStyle);
-                Gradient *gradient = static_cast<Gradient*>(o);
-                CGShadingRef shading = gradient->getShading();
-                CGContextDrawShading(drawingContext, shading);
-                
-                CGContextRestoreGState(drawingContext);
-            } else if (isImagePattern(contextObject->_strokeStyle)) {
-                contextObject->updateStrokeImagePattern();
-                CGContextFillPath(drawingContext);
-            }
-            else
-                CGContextStrokePath (drawingContext);
-            renderer->setNeedsImageUpdate();
-            break;
-        }
-        case Context2D::Scale: {
-            if (args.size() != 2)
-                return throwError(exec, SyntaxError);
-            float sx = (float)args[0]->toNumber(exec);
-            float sy = (float)args[1]->toNumber(exec);
-            CGContextScaleCTM (drawingContext, sx, sy);
-            break;
-        }
-        case Context2D::Rotate: {
-            if (args.size() != 1)
-                return throwError(exec, SyntaxError);
-            float angle = (float)args[0]->toNumber(exec);
-            CGContextRotateCTM (drawingContext, angle);
-            break;
-        }
-        case Context2D::Translate: {
-            if (args.size() != 2)
-                return throwError(exec, SyntaxError);
-            float tx = (float)args[0]->toNumber(exec);
-            float ty = (float)args[1]->toNumber(exec);
-            CGContextTranslateCTM (drawingContext, tx, ty);
-            break;
-        }
-        case Context2D::MoveTo: {
-            if (args.size() != 2)
-                return throwError(exec, SyntaxError);
-            float x = (float)args[0]->toNumber(exec);
-            float y = (float)args[1]->toNumber(exec);
-            CGContextMoveToPoint (drawingContext, x, y);
-            renderer->setNeedsImageUpdate();
-            break;
-        }
-        case Context2D::LineTo: {
-            if (args.size() != 2)
-                return throwError(exec, SyntaxError);
-            float x = (float)args[0]->toNumber(exec);
-            float y = (float)args[1]->toNumber(exec);
-            CGContextAddLineToPoint (drawingContext, x, y);
-            renderer->setNeedsImageUpdate();
-            break;
-        }
-        case Context2D::QuadraticCurveTo: {
-            if (args.size() != 4)
-                return throwError(exec, SyntaxError);
-            float cpx = (float)args[0]->toNumber(exec);
-            float cpy = (float)args[1]->toNumber(exec);
-            float x = (float)args[2]->toNumber(exec);
-            float y = (float)args[3]->toNumber(exec);
-            CGContextAddQuadCurveToPoint (drawingContext, cpx, cpy, x, y);
-            renderer->setNeedsImageUpdate();
-            break;
-        }
-        case Context2D::BezierCurveTo: {
-            if (args.size() != 6)
-                return throwError(exec, SyntaxError);
-            float cp1x = (float)args[0]->toNumber(exec);
-            float cp1y = (float)args[1]->toNumber(exec);
-            float cp2x = (float)args[2]->toNumber(exec);
-            float cp2y = (float)args[3]->toNumber(exec);
-            float x = (float)args[4]->toNumber(exec);
-            float y = (float)args[5]->toNumber(exec);
-            CGContextAddCurveToPoint (drawingContext, cp1x, cp1y, cp2x, cp2y, x, y);
-            renderer->setNeedsImageUpdate();
-            break;
-        }
-        case Context2D::ArcTo: {
-            if (args.size() != 5)
-                return throwError(exec, SyntaxError);
-            float x1 = (float)args[0]->toNumber(exec);
-            float y1 = (float)args[1]->toNumber(exec);
-            float x2 = (float)args[2]->toNumber(exec);
-            float y2 = (float)args[3]->toNumber(exec);
-            float r = (float)args[4]->toNumber(exec);
-            CGContextAddArcToPoint (drawingContext, x1, y1, x2, y2, r);
-            break;
-        }
-        case Context2D::Arc: {
-            if (args.size() != 6)
-                return throwError(exec, SyntaxError);
-            float x = (float)args[0]->toNumber(exec);
-            float y = (float)args[1]->toNumber(exec);
-            float r = (float)args[2]->toNumber(exec);
-            float sa = (float)args[3]->toNumber(exec);
-            float ea = (float)args[4]->toNumber(exec);
-            bool clockwise = args[5]->toBoolean(exec);
-            CGContextAddArc (drawingContext, x, y, r, sa, ea, clockwise);
-            break;
-        }
-        case Context2D::Rect: {
-            if (args.size() != 4)
-                return throwError(exec, SyntaxError);
-            float x = (float)args[0]->toNumber(exec);
-            float y = (float)args[1]->toNumber(exec);
-            float w = (float)args[2]->toNumber(exec);
-            float h = (float)args[3]->toNumber(exec);
-            CGContextAddRect (drawingContext, CGRectMake(x,y,w,h));
-            break;
-        }
-        case Context2D::Clip: {
-            if (args.size() != 0)
-                return throwError(exec, SyntaxError);
-            CGContextClip (drawingContext);
-            break;
-        }
-
-        case Context2D::ClearRect: {
-            if (args.size() != 4)
-                return throwError(exec, SyntaxError);
-            float x = (float)args[0]->toNumber(exec);
-            float y = (float)args[1]->toNumber(exec);
-            float w = (float)args[2]->toNumber(exec);
-            float h = (float)args[3]->toNumber(exec);
-            CGContextClearRect (drawingContext, CGRectMake(x,y,w,h));
-            renderer->setNeedsImageUpdate();
-            break;
-        }
-        case Context2D::FillRect: {
-            if (args.size() != 4)
-                return throwError(exec, SyntaxError);
-            float x = (float)args[0]->toNumber(exec);
-            float y = (float)args[1]->toNumber(exec);
-            float w = (float)args[2]->toNumber(exec);
-            float h = (float)args[3]->toNumber(exec);
-            
-            if (isGradient(contextObject->_fillStyle)) {
-                CGContextSaveGState(drawingContext);
-                
-                // Can't use a gradient fill with a FillRect, must use a path.
-                CGContextBeginPath(drawingContext);
-                CGContextAddRect(drawingContext, CGRectMake(x, y, w, h));
-
-                // Set the clip from the current path because shading only
-                // operates on clippin regions!  Odd, but true.
-                CGContextClip(drawingContext);
-
-                JSObject *o = static_cast<JSObject*>(contextObject->_fillStyle);
-                Gradient *gradient = static_cast<Gradient*>(o);
-                CGShadingRef shading = gradient->getShading();
-                CGContextDrawShading(drawingContext, shading);
-                
-                CGContextRestoreGState(drawingContext);
-            } else {
-                if (isImagePattern(contextObject->_fillStyle))
-                    contextObject->updateFillImagePattern();
-                CGContextFillRect(drawingContext, CGRectMake(x, y, w, h));
-            }
-            renderer->setNeedsImageUpdate();
-            break;
-        }
-        case Context2D::StrokeRect: {
-            int size = args.size();
-            if (size < 4)
-                return throwError(exec, SyntaxError);
-            float x = (float)args[0]->toNumber(exec);
-            float y = (float)args[1]->toNumber(exec);
-            float w = (float)args[2]->toNumber(exec);
-            float h = (float)args[3]->toNumber(exec);
-            
-            if (isImagePattern(contextObject->_strokeStyle))
-                contextObject->updateStrokeImagePattern();
-            if (size > 4)
-                CGContextStrokeRectWithWidth (drawingContext, CGRectMake(x,y,w,h), (float)args[4]->toNumber(exec));
-            else
-                CGContextStrokeRect (drawingContext, CGRectMake(x,y,w,h));
-            renderer->setNeedsImageUpdate();
-            break;
-        }
-        case Context2D::SetShadow: {
-            int numArgs = args.size();
-            
-            if (numArgs < 3)
-                return throwError(exec, SyntaxError);
-            CGSize offset;
-            
-            offset.width = (float)args[0]->toNumber(exec);
-            offset.height = (float)args[1]->toNumber(exec);
-            float blur = (float)args[2]->toNumber(exec);
-            
-            Color color = Color(args[3]->toString(exec).ascii());
-
-             if (numArgs == 3) {
-                CGContextSetShadow (drawingContext, offset, blur);
-            } else {
-                CGColorSpaceRef colorSpace;
-                float components[5];
-                
-                switch (numArgs - 3) {
-                    case 1: {
-                        if (args[3]->isString()) {
-                            RGBA32 color = DOM::CSSParser::parseColor(args[3]->toString(exec).domString());
-                            Color qc(color);
-                            components[0] = qc.red()/255.;
-                            components[1] = qc.green()/255.;
-                            components[2] = qc.blue()/255.;
-                            components[3] = 1.0f;
-                            colorSpace = CGColorSpaceCreateDeviceRGB();
-                        }
-                        else {
-                            components[0] = (float)args[3]->toNumber(exec);
-                            components[1] = 1.0f;
-                            colorSpace = CGColorSpaceCreateDeviceGray();
-                        }
-                    }
-                    break;
-                    case 2: {
-                        float a = args[4]->toNumber(exec);
-                        if (args[3]->isString()) {
-                            RGBA32 color = DOM::CSSParser::parseColor(args[3]->toString(exec).domString());
-                            Color qc(color);
-                            components[0] = qc.red()/255.;
-                            components[1] = qc.green()/255.;
-                            components[2] = qc.blue()/255.;
-                            components[3] = a;
-                            colorSpace = CGColorSpaceCreateDeviceRGB();
-                        }
-                        else {
-                            components[0] = (float)args[3]->toNumber(exec);
-                            components[1] = a;
-                            colorSpace = CGColorSpaceCreateDeviceGray();
-                        }
-                    }
-                    break;
-                    case 4: {
-                        components[0] = (float)args[3]->toNumber(exec); // r
-                        components[1] = (float)args[4]->toNumber(exec); // g
-                        components[2] = (float)args[5]->toNumber(exec); // b
-                        components[3] = (float)args[6]->toNumber(exec); // a
-                        colorSpace = CGColorSpaceCreateDeviceRGB();
-                    }
-                    break;
-                    case 5: {
-                        components[0] = (float)args[3]->toNumber(exec); // c
-                        components[1] = (float)args[4]->toNumber(exec); // m
-                        components[2] = (float)args[5]->toNumber(exec); // y
-                        components[3] = (float)args[6]->toNumber(exec); // k
-                        components[4] = (float)args[7]->toNumber(exec); // a
-
-                        colorSpace = CGColorSpaceCreateDeviceCMYK();
-                    }
-                    break;
-                    default:
-                        return throwError(exec, SyntaxError);
-                }
-                
-                CGColorRef colorRef = CGColorCreate (colorSpace, components);
-                CGContextSetShadowWithColor (drawingContext, offset, blur, colorRef);
-                CFRelease (colorRef);
-                CFRelease (colorSpace);
-            }
-            break;
-        }
-        case Context2D::ClearShadow: {
-            if (args.size() != 0)
-                return throwError(exec, SyntaxError);
-            CGContextSetShadowWithColor (drawingContext, CGSizeMake(0, 0), 0, nil);
-            break;
-        }
-
-        // DrawImage has three variants:
-        // drawImage (img, dx, dy)
-        // drawImage (img, dx, dy, dw, dh)
-        // drawImage (img, sx, sy, sw, sh, dx, dy, dw, dh)
-        // composite operation is specified with globalCompositeOperation
-        // img parameter can be a JavaScript Image, <img>, or a <canvas>
-        case Context2D::DrawImage: {
-            if (args.size() < 3)
-                return throwError(exec, SyntaxError);
-            
-            // Make sure first argument is an object.
-            JSObject *o = static_cast<JSObject*>(args[0]);
-            if (!o->isObject())
-                return throwError(exec, TypeError);
-
-            float w = 0; // quiet incorrect gcc 4.0 warning
-            float h = 0; // quiet incorrect gcc 4.0 warning
-            CGContextRef sourceContext = 0;
-            
-            // Check for <img> or <canvas>.
-            HTMLImageElementImpl* imgElt = 0;
-            if (o->inherits(&KJS::HTMLElement::img_info)){
-                NodeImpl *n = static_cast<HTMLElement *>(args[0])->impl();
-                imgElt = static_cast<HTMLImageElementImpl*>(n);
-                if (imgElt->cachedImage()) {
-                    w = imgElt->cachedImage()->image()->width();
-                    h = imgElt->cachedImage()->image()->height();
-                }
-            }
-            else if (o->inherits(&KJS::HTMLElement::canvas_info)){
-                NodeImpl *n = static_cast<HTMLElement *>(args[0])->impl();
-                HTMLCanvasElementImpl *e = static_cast<HTMLCanvasElementImpl*>(n);
-                khtml::RenderCanvasImage *renderer = static_cast<khtml::RenderCanvasImage*>(e->renderer());
-                if (!renderer) {
-                    // No renderer, nothing to draw.
-                    return jsUndefined();
-                }
-
-                sourceContext = renderer->drawingContext();
-                w = (float)CGBitmapContextGetWidth(sourceContext);
-                h = (float)CGBitmapContextGetHeight(sourceContext);
-            }
-            else
-                return throwError(exec, TypeError);
-            
-            float dx, dy, dw = w, dh = h;
-            float sx = 0.f, sy = 0.f, sw = w, sh = h;
-            
-            if (args.size() == 3) {
-                dx = args[1]->toNumber(exec);
-                dy = args[2]->toNumber(exec);
-            }
-            else if (args.size() == 5) {
-                dx = args[1]->toNumber(exec);
-                dy = args[2]->toNumber(exec);
-                dw = args[3]->toNumber(exec);
-                dh = args[4]->toNumber(exec);
-            }
-            else if (args.size() == 9) {
-                sx = args[1]->toNumber(exec);
-                sy = args[2]->toNumber(exec);
-                sw = args[3]->toNumber(exec);
-                sh = args[4]->toNumber(exec);
-                dx = args[5]->toNumber(exec);
-                dy = args[6]->toNumber(exec);
-                dw = args[7]->toNumber(exec);
-                dh = args[8]->toNumber(exec);
-            }
-            else
-                return throwError(exec, SyntaxError);
-
-            if (!sourceContext && imgElt && imgElt->cachedImage()) {
-                GraphicsContext p;
-                p.drawFloatImage(imgElt->cachedImage()->image(), dx, dy, dw, dh, sx, sy, sw, sh, 
-                                 Image::compositeOperatorFromString(contextObject->_globalComposite->toString(exec).qstring().lower().ascii()), drawingContext);
-            }
-            else {
-                // Cheap, because the image is backed by copy-on-write memory, and we're
-                // guaranteed to release before doing any more drawing in the source context.
-                CGImageRef sourceImage = CGBitmapContextCreateImage(sourceContext);
-                if (sx == 0 && sy == 0 && sw == w && sh == h) {
-                    // Fast path, yay!
-                    CGContextDrawImage (drawingContext, CGRectMake(dx, dy, dw, dh), sourceImage);
-                }
-                else {
-                    // Create a new bitmap of the appropriate size and then draw that into our context.
-                    // Slow path, boo!
-                    CGContextRef clippedSourceContext;
-                    CGImageRef clippedSourceImage;
-                    size_t csw = (size_t)sw;
-                    size_t csh = (size_t)sh;
-                                        
-                    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-                    size_t numComponents = CGColorSpaceGetNumberOfComponents(colorSpace);
-                    size_t bytesPerRow = BYTES_PER_ROW(csw,BITS_PER_COMPONENT,(numComponents+1)); // + 1 for alpha
-                    void *_drawingContextData = fastMalloc(csh * bytesPerRow);
-                    
-                    clippedSourceContext = CGBitmapContextCreate(_drawingContextData, csw, csh, BITS_PER_COMPONENT, bytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast);
-                    CGContextTranslateCTM (clippedSourceContext, -sx, -sy);
-                    CGContextDrawImage (clippedSourceContext, CGRectMake(0,0,w,h), sourceImage);
-                    clippedSourceImage = CGBitmapContextCreateImage(clippedSourceContext);
-                    CGContextDrawImage (drawingContext, CGRectMake(dx, dy, dw, dh), clippedSourceImage);
-                    
-                    CGImageRelease (clippedSourceImage);
-                    CGContextRelease (clippedSourceContext);
-                    fastFree (_drawingContextData);
-                }
-                
-                CGImageRelease (sourceImage);
-            }
-
-            renderer->setNeedsImageUpdate();
-
-            break;
-        }
-        case Context2D::DrawImageFromRect: {
-            if (args.size() != 10)
-                return throwError(exec, SyntaxError);
-            JSObject *o = static_cast<JSObject*>(args[0]);
-            if (!o->inherits(&KJS::HTMLElement::img_info))
-                return throwError(exec, TypeError);
-            NodeImpl *n = static_cast<HTMLElement *>(args[0])->impl();
-            HTMLImageElementImpl *e = static_cast<HTMLImageElementImpl*>(n);
-            
-            float sx = args[1]->toNumber(exec);
-            float sy = args[2]->toNumber(exec);
-            float sw = args[3]->toNumber(exec);
-            float sh = args[4]->toNumber(exec);
-            float dx = args[5]->toNumber(exec);
-            float dy = args[6]->toNumber(exec);
-            float dw = args[7]->toNumber(exec);
-            float dh = args[8]->toNumber(exec);
-            QString compositeOperator = args[9]->toString(exec).qstring().lower();
-            
-            GraphicsContext p;
-
-            if (e->cachedImage())
-                p.drawFloatImage(e->cachedImage()->image(), dx, dy, dw, dh, sx, sy, sw, sh, Image::compositeOperatorFromString(compositeOperator.ascii()), drawingContext);
-          
-            renderer->setNeedsImageUpdate();
-            break;
-        }
-        case Context2D::SetAlpha: {
-            if (args.size() != 1)
-                return throwError(exec, SyntaxError);
-            float a =  (float)args[0]->toNumber(exec);
-            CGContextSetAlpha (drawingContext, a);
-            break;
-        }
-        case Context2D::SetCompositeOperation: {
-            if (args.size() != 1)
-                return throwError(exec, SyntaxError);
-            QString compositeOperator = args[0]->toString(exec).qstring().lower();
-            GraphicsContext::setCompositeOperation(drawingContext,compositeOperator);
-            break;
-        }
-        
-        case Context2D::CreateLinearGradient: {
-            if (args.size() != 4)
-                return throwError(exec, SyntaxError);
-            float x0 = args[0]->toNumber(exec);
-            float y0 = args[1]->toNumber(exec);
-            float x1 = args[2]->toNumber(exec);
-            float y1 = args[3]->toNumber(exec);
-
-            return new Gradient(x0, y0, x1, y1);
-        }
-        
-        case Context2D::CreateRadialGradient: {
-            if (args.size() != 6)
-                return throwError(exec, SyntaxError);
-            float x0 = args[0]->toNumber(exec);
-            float y0 = args[1]->toNumber(exec);
-            float r0 = args[2]->toNumber(exec);
-            float x1 = args[3]->toNumber(exec);
-            float y1 = args[4]->toNumber(exec);
-            float r1 = args[5]->toNumber(exec);
-
-            return new Gradient(x0, y0, r0, x1, y1, r1);
-        }
-        
-        case Context2D::CreatePattern: {
-            if (args.size() != 2)
-                return throwError(exec, SyntaxError);
-            JSObject *o = static_cast<JSObject*>(args[0]);
-            if (!o->inherits(&KJS::HTMLElement::img_info))
-                return throwError(exec, TypeError);
-            int repetitionType = ImagePattern::Repeat;
-            DOMString repetitionString = args[1]->toString(exec).domString().lower();
-            if (repetitionString == "repeat-x")
-                repetitionType = ImagePattern::RepeatX;
-            else if (repetitionString == "repeat-y")
-                repetitionType = ImagePattern::RepeatY;
-            else if (repetitionString == "no-repeat")
-                repetitionType = ImagePattern::NoRepeat;
-            NodeImpl *n = static_cast<HTMLElement *>(args[0])->impl();
-            return new ImagePattern(static_cast<HTMLImageElementImpl *>(n)->cachedImage(), repetitionType);
-        }
-    }
-#endif
-
-    return jsUndefined();
-}
-
-const ClassInfo Context2D::info = { "Context2D", 0, &Context2DTable, 0 };
-
-/* Source for Context2DTable. Use "make hashtables" to regenerate.
-@begin Context2DTable 48
-  strokeStyle              Context2D::StrokeStyle                 DontDelete
-  fillStyle                Context2D::FillStyle                   DontDelete
-  lineWidth                Context2D::LineWidth                   DontDelete
-  lineCap                  Context2D::LineCap                     DontDelete
-  lineJoin                 Context2D::LineJoin                    DontDelete
-  miterLimit               Context2D::MiterLimit                  DontDelete
-  shadowOffsetX            Context2D::ShadowOffsetX               DontDelete
-  shadowOffsetY            Context2D::ShadowOffsetY               DontDelete
-  shadowBlur               Context2D::ShadowBlur                  DontDelete
-  shadowColor              Context2D::ShadowColor                 DontDelete
-  globalAlpha              Context2D::GlobalAlpha                 DontDelete
-  globalCompositeOperation Context2D::GlobalCompositeOperation    DontDelete
-  save                     Context2D::Save                        DontDelete|Function 0
-  restore                  Context2D::Restore                     DontDelete|Function 0
-  scale                    Context2D::Scale                       DontDelete|Function 2
-  rotate                   Context2D::Rotate                      DontDelete|Function 2
-  translate                Context2D::Translate                   DontDelete|Function 1
-  beginPath                Context2D::BeginPath                   DontDelete|Function 0
-  closePath                Context2D::ClosePath                   DontDelete|Function 0
-  setStrokeColor           Context2D::SetStrokeColor              DontDelete|Function 1
-  setFillColor             Context2D::SetFillColor                DontDelete|Function 1
-  setLineWidth             Context2D::SetLineWidth                DontDelete|Function 1
-  setLineCap               Context2D::SetLineCap                  DontDelete|Function 1
-  setLineJoin              Context2D::SetLineJoin                 DontDelete|Function 1
-  setMiterLimit            Context2D::SetMiterLimit               DontDelete|Function 1
-  fill                     Context2D::Fill                        DontDelete|Function 0
-  stroke                   Context2D::Stroke                      DontDelete|Function 0
-  moveTo                   Context2D::MoveTo                      DontDelete|Function 2
-  lineTo                   Context2D::LineTo                      DontDelete|Function 2
-  quadraticCurveTo         Context2D::QuadraticCurveTo            DontDelete|Function 4
-  bezierCurveTo            Context2D::BezierCurveTo               DontDelete|Function 6
-  arcTo                    Context2D::ArcTo                       DontDelete|Function 5
-  arc                      Context2D::Arc                         DontDelete|Function 6
-  rect                     Context2D::Rect                        DontDelete|Function 4
-  clip                     Context2D::Clip                        DontDelete|Function 0
-  clearRect                Context2D::ClearRect                   DontDelete|Function 4
-  fillRect                 Context2D::FillRect                    DontDelete|Function 4
-  strokeRect               Context2D::StrokeRect                  DontDelete|Function 4
-  drawImage                Context2D::DrawImage                   DontDelete|Function 6
-  drawImageFromRect        Context2D::DrawImageFromRect           DontDelete|Function 10
-  setShadow                Context2D::SetShadow                   DontDelete|Function 3
-  clearShadow              Context2D::ClearShadow                 DontDelete|Function 0
-  setAlpha                 Context2D::SetAlpha                    DontDelete|Function 1
-  setCompositeOperation    Context2D::SetCompositeOperation       DontDelete|Function 1
-  createLinearGradient     Context2D::CreateLinearGradient        DontDelete|Function 4
-  createRadialGradient     Context2D::CreateRadialGradient        DontDelete|Function 6
-  createPattern            Context2D::CreatePattern               DontDelete|Function 2
-@end
-*/
-
-bool Context2D::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    // FIXME: functions should be on the prototype, not in the object itself
-    return getStaticPropertySlot<Context2DFunction, Context2D, DOMObject>(exec, &Context2DTable, this, propertyName, slot);
-}
-
-JSValue *Context2D::getValueProperty(ExecState *, int token) const
-{
-    switch(token) {
-        case StrokeStyle: {
-            return _strokeStyle;
-        }
-        
-        case FillStyle: {
-            return _fillStyle;
-        }
-        
-        case LineWidth: {
-            return _lineWidth;
-        }
-        
-        case LineCap: {
-            return _lineCap;
-        }
-        
-        case LineJoin: {
-            return _lineJoin;
-        }
-        
-        case MiterLimit: {
-            return _miterLimit;
-        }
-        
-        case ShadowOffsetX: {
-            return _shadowOffsetX;
-        }
-        
-        case ShadowOffsetY: {
-            return _shadowOffsetY;
-        }
-        
-        case ShadowBlur: {
-            return _shadowBlur;
-        }
-        
-        case ShadowColor: {
-            return _shadowColor;
-        }
-        
-        case GlobalAlpha: {
-            return _globalAlpha;
-        }
-        
-        case GlobalCompositeOperation: {
-            return _globalComposite;
-        }
-        
-        default: {
-        }
-    }
-    
-    return jsUndefined();
-}
-
-void Context2D::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
-{
-    lookupPut<Context2D,DOMObject>(exec, propertyName, value, attr, &Context2DTable, this );
-}
-
-#if __APPLE__
-CGContextRef Context2D::drawingContext()
-{
-    khtml::RenderCanvasImage *renderer = static_cast<khtml::RenderCanvasImage*>(_element->renderer());
-    if (!renderer)
-        return 0;
-    
-    CGContextRef context = renderer->drawingContext();
-    if (!context)
-        return 0;
-        
-    return context;
-}
-
-
-CGColorRef colorRefFromValue(ExecState *exec, JSValue *value)
-{
-    CGColorSpaceRef colorSpace;
-    float components[4];
-    
-    if (value->isString()) {
-        RGBA32 color = DOM::CSSParser::parseColor(value->toString(exec).domString());
-        Color qc(color);
-        components[0] = qc.red()/255.;
-        components[1] = qc.green()/255.;
-        components[2] = qc.blue()/255.;
-        components[3] = qc.alpha();
-        colorSpace = CGColorSpaceCreateDeviceRGB();
-    }
-    else
-        return 0;
-    
-    CGColorRef colorRef = CGColorCreate (colorSpace, components);
-    CFRelease (colorSpace);
-    
-    return colorRef;
-}
-#endif
-
-Color colorFromValue(ExecState *exec, JSValue *value)
-{
-    RGBA32 color = DOM::CSSParser::parseColor(value->toString(exec).domString());
-    return Color(color);
-}
-
-void Context2D::setShadow(ExecState *exec)
-{
-#if __APPLE__
-    CGContextRef context = drawingContext();
-    if (!context)
-        return;
-    
-    CGSize offset;
-    offset.width = (float)_shadowOffsetX->toNumber(exec);
-    offset.height = (float)_shadowOffsetY->toNumber(exec);
-    float blur = (float)_shadowBlur->toNumber(exec);
-    CGColorRef colorRef = colorRefFromValue(exec, _shadowColor);
-    CGContextSetShadowWithColor (context, offset, blur, colorRef);
-    CFRelease (colorRef);
-#endif
-}
-
-void Context2D::updateFillImagePattern()
-{
-#if __APPLE__
-    CGContextRef context = drawingContext();
-    CGAffineTransform transform = CGContextGetCTM(context);
-    
-    if (!_validFillImagePattern || !CGAffineTransformEqualToTransform(transform, _lastFillImagePatternCTM)) {
-        ImagePattern *imagePattern = static_cast<ImagePattern *>(_fillStyle);
-        CGPatternRef pattern = imagePattern->createPattern(CGContextGetCTM(context));
-        float patternAlpha = 1;
-        CGColorSpaceRef patternSpace = CGColorSpaceCreatePattern(0);
-        CGContextSetFillColorSpace(context, patternSpace);
-        CGContextSetFillPattern(context, pattern, &patternAlpha);
-        CGColorSpaceRelease(patternSpace);
-        CGPatternRelease(pattern);
-        _validFillImagePattern = true;
-        _lastFillImagePatternCTM = transform;
-    }
-#endif
-}
-
-void Context2D::updateStrokeImagePattern()
-{
-#if __APPLE__
-    CGContextRef context = drawingContext();
-    CGAffineTransform transform = CGContextGetCTM(context);
-    
-    if (!_validStrokeImagePattern || !CGAffineTransformEqualToTransform(transform, _lastStrokeImagePatternCTM)) {
-        ImagePattern *imagePattern = static_cast<ImagePattern *>(_fillStyle);
-        CGPatternRef pattern = imagePattern->createPattern(CGContextGetCTM(context));
-        float patternAlpha = 1;
-        CGColorSpaceRef patternSpace = CGColorSpaceCreatePattern(0);
-        CGContextSetStrokeColorSpace(context, patternSpace);
-        CGContextSetStrokePattern(context, pattern, &patternAlpha);
-        CGColorSpaceRelease(patternSpace);
-        CGPatternRelease(pattern);
-        _validStrokeImagePattern = true;
-        _lastStrokeImagePatternCTM = transform;
-    }
-#endif
-}
-
-void Context2D::putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/)
-{
-#if __APPLE__
-    CGContextRef context = drawingContext();
-    if (!context)
-        return;
-    
-    switch(token) {
-        case StrokeStyle: {
-            _strokeStyle = value;
-            if (value->isString()) {
-                Color qc = colorFromValue(exec, value);
-                CGContextSetRGBStrokeColor(context, qc.red()/255., qc.green()/255., qc.blue()/255., qc.alpha()/255.);
-            }
-            else {
-                // _strokeStyle is used when stroke() is called on the context.
-                // CG doesn't have the notion of a setting a stroke gradient.
-                JSObject *o = static_cast<JSObject*>(value);
-                
-                if (!o->isObject() || !(o->inherits(&Gradient::info) || o->inherits(&ImagePattern::info)))
-                    throwError(exec, TypeError);
-            }
-            break;
-        }
-        
-        case FillStyle: {
-            _fillStyle = value;
-            if (value->isString()) {
-                Color qc = colorFromValue(exec, value);
-                CGContextSetRGBFillColor(context, qc.red()/255., qc.green()/255., qc.blue()/255., qc.alpha()/255.);
-            }
-            else {
-                // _fillStyle is checked when fill() is called on the context.
-                // CG doesn't have the notion of setting a fill gradient.
-                JSObject *o = static_cast<JSObject*>(value);
-                
-                if (!o->isObject() || !(o->inherits(&Gradient::info) || o->inherits(&ImagePattern::info)))
-                    throwError(exec, TypeError);
-
-                // Gradients and image patterns are constructed when needed during fill and stroke operations.
-            }
-            break;
-        }
-        
-        case LineWidth: {
-            _lineWidth = value;
-            float w = (float)value->toNumber(exec);
-            CGContextSetLineWidth (context, w);
-            break;
-        }
-        
-        case LineCap: {
-            _lineCap = value;
-        
-            CGLineCap cap = kCGLineCapButt;
-            DOMString capString = value->toString(exec).domString().lower();
-            if (capString == "round")
-                cap = kCGLineCapRound;
-            else if (capString == "square")
-                cap = kCGLineCapSquare;
-            CGContextSetLineCap (context, cap);
-            break;
-        }
-        
-        case LineJoin: {
-            _lineJoin = value;
-            
-            CGLineJoin join = kCGLineJoinMiter;
-            DOMString joinString = value->toString(exec).domString().lower();
-            if (joinString == "round")
-                join = kCGLineJoinRound;
-            else if (joinString == "bevel")
-                join = kCGLineJoinBevel;
-            CGContextSetLineJoin (context, join);
-            break;
-        }
-        
-        case MiterLimit: {
-            _miterLimit = value;
-            
-            float l = (float)value->toNumber(exec);
-            CGContextSetMiterLimit (context, l);
-            break;
-        }
-        
-        case ShadowOffsetX: {
-            _shadowOffsetX = value;
-            setShadow(exec);
-            break;
-        }
-        
-        case ShadowOffsetY: {
-            _shadowOffsetY = value;
-            setShadow(exec);
-            break;
-        }
-        
-        case ShadowBlur: {
-            _shadowBlur = value;
-            setShadow(exec);
-            break;
-        }
-        
-        case ShadowColor: {
-            _shadowColor = value;
-            setShadow(exec);
-            break;
-        }
-        
-        case GlobalAlpha: {
-            _globalAlpha = value;
-            float a =  (float)value->toNumber(exec);
-            CGContextSetAlpha (context, a);
-            break;
-        }
-        
-        case GlobalCompositeOperation: {
-            _globalComposite = value;
-            QString compositeOperator = value->toString(exec).qstring().lower();
-            GraphicsContext::setCompositeOperation(context, compositeOperator);
-            break;
-        }
-        
-        default: {
-        }
-    }
-#endif
-}
-
-void Context2D::save()
-{
-    List *list = new List();
-    
-    list->append(_strokeStyle);
-    list->append(_fillStyle);
-    list->append(_lineWidth);
-    list->append(_lineCap);
-    list->append(_lineJoin);
-    list->append(_miterLimit);
-    list->append(_shadowOffsetX);
-    list->append(_shadowOffsetY);
-    list->append(_shadowBlur);
-    list->append(_shadowColor);
-    list->append(_globalAlpha);
-    list->append(_globalComposite);
-    
-    stateStack.append(list);
-}
-
-void Context2D::restore()
-{
-    if (stateStack.count() < 1) {
-        return;
-    }
-    
-    List *list = stateStack.last();
-    
-    int pos = 0;
-    _strokeStyle = list->at(pos++);
-    _fillStyle = list->at(pos++);
-    _lineWidth = list->at(pos++);
-    _lineCap = list->at(pos++);
-    _lineJoin = list->at(pos++);
-    _miterLimit = list->at(pos++);
-    _shadowOffsetX = list->at(pos++);
-    _shadowOffsetY = list->at(pos++);
-    _shadowBlur = list->at(pos++);
-    _shadowColor = list->at(pos++);
-    _globalAlpha = list->at(pos++);
-    _globalComposite = list->at(pos++);
-
-    // This will delete list.
-    stateStack.removeLast();
-}
-
-Context2D::Context2D(HTMLElementImpl *e)
-  : _validFillImagePattern(false), _validStrokeImagePattern(false),
-    _element(e),
-    _strokeStyle(jsUndefined()),
-    _fillStyle(jsUndefined()),
-    _lineWidth(jsUndefined()),
-    _lineCap(jsUndefined()),
-    _lineJoin(jsUndefined()),
-    _miterLimit(jsUndefined()),
-    _shadowOffsetX(jsUndefined()),
-    _shadowOffsetY(jsUndefined()),
-    _shadowBlur(jsUndefined()),
-    _shadowColor(jsUndefined()),
-    _globalAlpha(jsUndefined()),
-    _globalComposite(jsUndefined())
-{
-    _lineWidth = jsNumber(1);
-    _strokeStyle = jsString("black");
-    _fillStyle = jsString("black");
-    
-    _lineCap = jsString("butt");
-    _lineJoin = jsString("miter");
-    _miterLimit = jsNumber(10);
-    
-    _shadowOffsetX = jsNumber(0);
-    _shadowOffsetY = jsNumber(0);
-    _shadowBlur = jsNumber(0);
-    _shadowColor = jsString("black");
-        
-    _globalAlpha = jsNumber(1);
-    _globalComposite = jsString("source-over");
-    
-    stateStack.setAutoDelete(true);
-}
-
-Context2D::~Context2D()
-{
-}
-
-void Context2D::mark()
-{
-    JSValue *v;
-
-    v = _strokeStyle;
-    if (!v->marked())
-        v->mark();
-
-    v = _fillStyle;
-    if (!v->marked())
-        v->mark();
-
-    v = _lineWidth;
-    if (!v->marked())
-        v->mark();
-
-    v = _lineCap;
-    if (!v->marked())
-        v->mark();
-
-    v = _lineJoin;
-    if (!v->marked())
-        v->mark();
-
-    v = _miterLimit;
-    if (!v->marked())
-        v->mark();
-
-    v = _shadowOffsetX;
-    if (!v->marked())
-        v->mark();
-
-    v = _shadowOffsetY;
-    if (!v->marked())
-        v->mark();
-
-    v = _shadowBlur;
-    if (!v->marked())
-        v->mark();
-
-    v = _shadowColor;
-    if (!v->marked())
-        v->mark();
-
-    v = _globalAlpha;
-    if (!v->marked())
-        v->mark();
-
-    v = _globalComposite;
-    if (!v->marked())
-        v->mark();
-
-    QPtrListIterator<List> it(stateStack);
-    List *list;
-    while ((list = it.current())) {
-        list->mark();
-        ++it;
-    }
-    
-    DOMObject::mark();
-}
-
-const ClassInfo KJS::Gradient::info = { "Gradient", 0, &GradientTable, 0 };
-
-/* Source for GradientTable. Use "make hashtables" to regenerate.
-@begin GradientTable 1
-  addColorStop             Gradient::AddColorStop                DontDelete|Function 2
-@end
-*/
-
-KJS_IMPLEMENT_PROTOFUNC(GradientFunction)
-
-JSValue *GradientFunction::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
-{
-    if (!thisObj->inherits(&Gradient::info))
-        return throwError(exec, TypeError);
-
-    Gradient *gradient = static_cast<KJS::Gradient *>(thisObj);
-
-    switch (id) {
-        case Gradient::AddColorStop: {
-            if (args.size() != 2)
-                return throwError(exec, SyntaxError);
-
-            Color color = colorFromValue(exec, args[1]);
-            gradient->addColorStop ((float)args[0]->toNumber(exec), color.red()/255.f, color.green()/255.f, color.blue()/255.f, color.alpha()/255.f);
-        }
-    }
-
-    return jsUndefined();
-}
-
-void gradientCallback (void *info, const float *in, float *out)
-{
-    Gradient *gradient = static_cast<Gradient*>(info);
-    int numStops;
-    const ColorStop *stops = gradient->colorStops(&numStops);
-    float current = *in;
-    
-    assert (numStops >= 2);
-    
-    if (current == 0) {
-        gradient->lastStop = 0;
-        gradient->nextStop = 1;
-
-        const ColorStop *thisStop = &stops[0];
-        *out++ = thisStop->red;
-        *out++ = thisStop->green;
-        *out++ = thisStop->blue;
-        *out = thisStop->alpha;
-    }
-    else if (current == 1) {
-        const ColorStop *thisStop = &stops[numStops-1];
-        *out++ = thisStop->red;
-        *out++ = thisStop->green;
-        *out++ = thisStop->blue;
-        *out = thisStop->alpha;
-    }
-    else {
-        if (current >= stops[gradient->nextStop].stop) {
-            gradient->lastStop = gradient->nextStop;
-            gradient->nextStop = gradient->lastStop+1;
-        }
-        
-        // Add an interpolation for each component between
-        // stops.
-        const ColorStop *nextStop = &stops[gradient->nextStop];
-        const ColorStop *lastStop = &stops[gradient->lastStop];
-        
-        float stopDelta = nextStop->stop - lastStop->stop;
-        float stopOffset = current - lastStop->stop;
-        float stopPercent = stopOffset/stopDelta;
-        
-        *out++ = lastStop->red + (nextStop->red - lastStop->red) * stopPercent;
-        *out++ = lastStop->green + (nextStop->green - lastStop->green) * stopPercent;
-        *out++ = lastStop->blue + (nextStop->blue - lastStop->blue) * stopPercent;
-        *out = lastStop->alpha + (nextStop->alpha - lastStop->alpha) * stopPercent;
-    }
-}
-
-static float intervalRangeDomin[] = { 0.f, 1.f };
-static float colorComponentRangeDomains[] = { 0.f, 1.f, 0.f, 1.f, 0.f, 1.f, 0.f, 1.f };
-#if __APPLE__
-CGFunctionCallbacks gradientCallbacks = {
-    0, gradientCallback, NULL
-};
-#endif
-
-void Gradient::commonInit()
-{
-    stops = 0;
-    stopCount = 0;
-    maxStops = 0;
-    stopsNeedAdjusting = false;
-    adjustedStopCount = 0;
-    adjustedStops = 0;
-
-#if __APPLE__
-    _shadingRef = 0;
-#endif
-
-    regenerateShading = true;
-}
-
-Gradient::Gradient(float x0, float y0, float x1, float y1)
-{
-    _gradientType = Gradient::Linear;
-    _x0 = x0;
-    _y0 = y0;
-    _x1 = x1;
-    _y1 = y1;
-
-    commonInit();
-}
-
-Gradient::Gradient(float x0, float y0, float r0, float x1, float y1, float r1)
-{
-    _gradientType = Gradient::Radial;
-    _x0 = x0;
-    _y0 = y0;
-    _r0 = r0;
-    _x1 = x1;
-    _y1 = y1;
-    _r1 = r1;
-
-    commonInit();
-}
-
-bool Gradient::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    return getStaticPropertySlot<GradientFunction, Gradient, DOMObject>(exec, &GradientTable, this, propertyName, slot);
-}
-
-JSValue *Gradient::getValueProperty(ExecState *, int token) const
-{
-    return jsUndefined();
-}
-
-void Gradient::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
-{
-    lookupPut<Gradient,DOMObject>(exec, propertyName, value, attr, &GradientTable, this );
-}
-
-void Gradient::putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/)
-{
-}
-
-Gradient::~Gradient()
-{
-#if __APPLE__
-    if (_shadingRef) {
-        CGShadingRelease(_shadingRef);
-        _shadingRef = 0;
-    }
-#endif
-
-    fastFree(stops);
-    stops = 0;
-    
-    fastFree(adjustedStops);
-    adjustedStops = 0;
-}
-
-#if __APPLE__
-CGShadingRef Gradient::getShading()
-{
-    if (!regenerateShading)
-        return _shadingRef;
-    
-    if (_shadingRef)
-        CGShadingRelease (_shadingRef);
-        
-    CGFunctionRef _colorFunction = CGFunctionCreate((void *)this, 1, intervalRangeDomin, 4, colorComponentRangeDomains, &gradientCallbacks);
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    
-    if (_gradientType == Gradient::Radial) {    
-        _shadingRef = CGShadingCreateRadial(colorSpace, CGPointMake(_x0,_y0), _r0, CGPointMake(_x1,_y1), _r1, _colorFunction, true, true);
-    }
-    else {    
-        _shadingRef = CGShadingCreateAxial(colorSpace, CGPointMake(_x0,_y0), CGPointMake(_x1,_y1), _colorFunction, true, true);
-    }
-    
-    CGColorSpaceRelease (colorSpace);
-    CGFunctionRelease (_colorFunction);
-    
-    regenerateShading = false;
-    
-    return _shadingRef;
-}
-#endif
-
-void Gradient::addColorStop (float s, float r, float g, float b, float a)
-{
-    if (stopCount == 0) {
-        maxStops = 4;
-        stops = (ColorStop *)fastMalloc(maxStops * sizeof(ColorStop));
-    }
-    else if (stopCount+1 > maxStops) {
-        maxStops *= 2;
-        stops = (ColorStop *)fastRealloc(stops, maxStops * sizeof(ColorStop));
-    }
-    stops[stopCount++] = ColorStop (s, r, g, b, a);
-    stopsNeedAdjusting = true;
-}
-
-static int sortStops(const ColorStop *a, const ColorStop *b)
-{
-    if (a->stop > b->stop)
-        return 1;
-    else if (a->stop < b->stop)
-        return -1;
-    return 0;
-}
-
-// Return a sorted array of stops guaranteed to contain a 0 and 1 stop.
-const ColorStop *Gradient::colorStops(int *count) const
-{
-    if (stopsNeedAdjusting || !stops) {
-        stopsNeedAdjusting = false;
-        
-        bool haveZeroStop = false;
-        bool haveOneStop = false;
-        if (stops) {
-            qsort (stops, stopCount, sizeof(ColorStop), (int (*)(const void*, const void*))sortStops);
-    
-            // Is there a zero stop?
-            haveZeroStop = (stops[0].stop == 0.f);
-
-            // Is there a one stop.  If not add one at the end.
-            haveOneStop = (stopCount > 0 && stops[stopCount-1].stop == 1.f);
-        }
-        
-        adjustedStopCount = stopCount;
-        if (!haveZeroStop)
-            adjustedStopCount++;
-        if (!haveOneStop)
-            adjustedStopCount++;
-            
-        if (adjustedStopCount != stopCount) {
-            adjustedStops = (ColorStop *)fastMalloc(adjustedStopCount * sizeof(ColorStop));
-            memcpy (haveZeroStop ? adjustedStops : adjustedStops+1,
-                stops, stopCount*sizeof(ColorStop));
-
-            // If not specified use default start (stop 0) and end (stop 1) colors.
-            // This color will be transparent black.
-            if (!haveZeroStop) {
-                adjustedStops[0] = ColorStop(0.f, 0.f, 0.f, 0.f, 1.f);
-            }
-            if (!haveOneStop) {
-                adjustedStops[adjustedStopCount-1] = ColorStop(1.f, 0.f, 0.f, 0.f, 1.f);
-            }
-        }
-        
-        regenerateShading = true;
-    }
-            
-    if (adjustedStops) {
-        *count = adjustedStopCount;
-        return adjustedStops;
-    }
-        
-    *count = stopCount;
-    return stops;
-}
-
-const ClassInfo ImagePattern::info = { "ImagePattern", 0, &ImagePatternTable, 0 };
-
-/* Source for ImagePatternTable. Use "make hashtables" to regenerate.
-@begin ImagePatternTable 0
-@end
-*/
-
-#if __APPLE__
-static void drawPattern (void * info, CGContextRef context)
-{
-    ImagePattern *pattern = static_cast<ImagePattern*>(info);
-    if (!pattern->cachedImage())
-        return;
-
-    GraphicsContext p;
-    float w = pattern->cachedImage()->image()->width();
-    float h = pattern->cachedImage()->image()->height();
-    
-    // Try and draw bitmap directly
-    CGImageRef ref = pattern->cachedImage()->image()->getCGImageRef();
-    if (ref)
-        CGContextDrawImage (context, CGRectMake(0, 0, w, h), ref);    
-    else
-        p.drawFloatImage(pattern->cachedImage()->image(), 0, 0, w, h, 0.f, 0.f, w, h, Image::CompositeSourceOver, context);
-}
-
-CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
-#endif
-
-ImagePattern::ImagePattern(CachedImage* cachedImage, int repetitionType)
-    :_rw(0), _rh(0)
-{
-    m_cachedImage = cachedImage;
-    if (!m_cachedImage)
-        return;
-
-    m_cachedImage->ref(this);
-    
-    float w = m_cachedImage->image()->width();
-    float h = m_cachedImage->image()->height();
-#if __APPLE__
-    _bounds = CGRectMake (0, 0, w, h);
-#endif
-    if (repetitionType == Repeat) {
-        _rw = w; _rh = h;
-    }
-    else if (repetitionType == RepeatX) {
-        _rw = w; _rh = 0;
-    }
-    else if (repetitionType == RepeatY) {
-        _rw = 0; _rh = h;
-    }
-    else if (repetitionType == NoRepeat) {
-        _rw = 0; _rh = 0;
-    }
-}
-
-ImagePattern::~ImagePattern()
-{
-    if (m_cachedImage)
-        m_cachedImage->deref(this);
-}
-
-#if __APPLE__
-CGPatternRef ImagePattern::createPattern(CGAffineTransform transform)
-{
-    if (!m_cachedImage || m_cachedImage->image()->isNull())
-        return 0;
-          
-    CGAffineTransform patternTransform = transform;
-    patternTransform = CGAffineTransformScale(patternTransform, 1, -1);
-    patternTransform = CGAffineTransformTranslate(patternTransform, 0, -m_cachedImage->image()->height());
-
-    return CGPatternCreate(this, _bounds, patternTransform, _rw, _rh, kCGPatternTilingConstantSpacing, true, &patternCallbacks);
-}
-#endif
-
-bool ImagePattern::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    return getStaticValueSlot<ImagePattern, DOMObject>(exec, &ImagePatternTable, this, propertyName, slot);
-}
-
-JSValue *ImagePattern::getValueProperty(ExecState *, int token) const
-{
-    return jsUndefined();
-}
-
-void ImagePattern::put(ExecState *exec, const Identifier &propertyName, JSValue *value, int attr)
-{
-    lookupPut<ImagePattern,DOMObject>(exec, propertyName, value, attr, &ImagePatternTable, this );
-}
-
-void ImagePattern::putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/)
-{
+    return static_cast<JSObject*>(toJS(exec, result));
 }
 
 ////////////////////////////////////////////////////////////////

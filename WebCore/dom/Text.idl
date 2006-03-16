@@ -20,7 +20,9 @@
 module core {
 
     interface Text : CharacterData {
-    
+
+        // DOM Level 1
+
         Text splitText(in [IsIndex] unsigned long offset)
             raises (DOMException);
 

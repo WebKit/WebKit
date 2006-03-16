@@ -18,8 +18,8 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _KJS_VIEWS_H_
-#define _KJS_VIEWS_H_
+#ifndef KJS_VIEWS_H_
+#define KJS_VIEWS_H_
 
 #include "kjs_dom.h"
 
@@ -44,7 +44,7 @@ namespace KJS {
     RefPtr<DOM::AbstractViewImpl> m_impl;
   };
 
-  JSValue *getDOMAbstractView(ExecState *exec, DOM::AbstractViewImpl *av);
+  JSValue* toJS(ExecState*, WebCore::AbstractViewImpl*);
 
   DOM::AbstractViewImpl *toAbstractView(JSValue *);
 

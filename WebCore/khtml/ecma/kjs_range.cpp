@@ -92,17 +92,17 @@ JSValue *DOMRange::getValueProperty(ExecState *exec, int token) const
   RangeImpl &range = *m_impl;
   switch (token) {
   case StartContainer:
-    return getDOMNode(exec, range.startContainer(exception));
+    return toJS(exec, range.startContainer(exception));
   case StartOffset:
     return jsNumber(range.startOffset(exception));
   case EndContainer:
-    return getDOMNode(exec, range.endContainer(exception));
+    return toJS(exec, range.endContainer(exception));
   case EndOffset:
     return jsNumber(range.endOffset(exception));
   case Collapsed:
     return jsBoolean(range.collapsed(exception));
   case CommonAncestorContainer:
-    return getDOMNode(exec, range.commonAncestorContainer(exception));
+    return toJS(exec, range.commonAncestorContainer(exception));
   default:
     return 0;
   }
@@ -151,10 +151,10 @@ JSValue *DOMRangeProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, c
       range.deleteContents(exception);
       break;
     case DOMRange::ExtractContents:
-      result = getDOMNode(exec, range.extractContents(exception));
+      result = toJS(exec, range.extractContents(exception));
       break;
     case DOMRange::CloneContents:
-      result = getDOMNode(exec, range.cloneContents(exception));
+      result = toJS(exec, range.cloneContents(exception));
       break;
     case DOMRange::InsertNode:
       range.insertNode(toNode(args[0]), exception);
@@ -163,7 +163,7 @@ JSValue *DOMRangeProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, c
       range.surroundContents(toNode(args[0]), exception);
       break;
     case DOMRange::CloneRange:
-      result = getDOMRange(exec, range.cloneRange(exception).get());
+      result = toJS(exec, range.cloneRange(exception).get());
       break;
     case DOMRange::ToString:
       result = jsStringOrNull(range.toString(exception));
@@ -172,7 +172,7 @@ JSValue *DOMRangeProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, c
       range.detach(exception);
       break;
     case DOMRange::CreateContextualFragment:
-      result = getDOMNode(exec, range.createContextualFragment(args[0]->toString(exec).domString(), exception));
+      result = toJS(exec, range.createContextualFragment(args[0]->toString(exec).domString(), exception));
       break;
   };
 
@@ -180,7 +180,7 @@ JSValue *DOMRangeProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, c
   return result;
 }
 
-JSValue *getDOMRange(ExecState *exec, RangeImpl *r)
+JSValue *toJS(ExecState *exec, RangeImpl *r)
 {
   return cacheDOMObject<RangeImpl, DOMRange>(exec, r);
 }

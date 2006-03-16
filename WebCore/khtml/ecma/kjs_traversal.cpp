@@ -79,15 +79,15 @@ JSValue *DOMNodeIterator::getValueProperty(ExecState *exec, int token) const
   NodeIteratorImpl &ni = *m_impl;
   switch (token) {
   case Root:
-    return getDOMNode(exec,ni.root());
+    return toJS(exec,ni.root());
   case WhatToShow:
     return jsNumber(ni.whatToShow());
   case Filter:
-    return getDOMNodeFilter(exec,ni.filter());
+    return toJS(exec,ni.filter());
   case ExpandEntityReferences:
     return jsBoolean(ni.expandEntityReferences());
   case ReferenceNode:
-    return getDOMNode(exec,ni.referenceNode());
+    return toJS(exec,ni.referenceNode());
   case PointerBeforeReferenceNode:
     return jsBoolean(ni.pointerBeforeReferenceNode());
  default:
@@ -103,9 +103,9 @@ JSValue *DOMNodeIteratorProtoFunc::callAsFunction(ExecState *exec, JSObject *thi
   NodeIteratorImpl &nodeIterator = *static_cast<DOMNodeIterator *>(thisObj)->impl();
   switch (id) {
   case DOMNodeIterator::PreviousNode:
-    return getDOMNode(exec,nodeIterator.previousNode(exception));
+    return toJS(exec,nodeIterator.previousNode(exception));
   case DOMNodeIterator::NextNode:
-    return getDOMNode(exec,nodeIterator.nextNode(exception));
+    return toJS(exec,nodeIterator.nextNode(exception));
   case DOMNodeIterator::Detach:
     nodeIterator.detach(exception);
     return jsUndefined();
@@ -113,7 +113,7 @@ JSValue *DOMNodeIteratorProtoFunc::callAsFunction(ExecState *exec, JSObject *thi
   return jsUndefined();
 }
 
-JSValue *getDOMNodeIterator(ExecState *exec, NodeIteratorImpl *ni)
+JSValue *toJS(ExecState *exec, NodeIteratorImpl *ni)
 {
   return cacheDOMObject<NodeIteratorImpl, DOMNodeIterator>(exec, ni);
 }
@@ -199,7 +199,7 @@ JSValue *DOMNodeFilterProtoFunc::callAsFunction(ExecState *exec, JSObject *thisO
   return jsUndefined();
 }
 
-JSValue *getDOMNodeFilter(ExecState *exec, NodeFilterImpl *nf)
+JSValue *toJS(ExecState *exec, NodeFilterImpl *nf)
 {
     return cacheDOMObject<NodeFilterImpl, DOMNodeFilter>(exec, nf);
 }
@@ -263,15 +263,15 @@ JSValue *DOMTreeWalker::getValueProperty(ExecState *exec, int token) const
   TreeWalkerImpl &tw = *m_impl;
   switch (token) {
   case Root:
-    return getDOMNode(exec,tw.root());
+    return toJS(exec,tw.root());
   case WhatToShow:
     return jsNumber(tw.whatToShow());
   case Filter:
-    return getDOMNodeFilter(exec,tw.filter());
+    return toJS(exec,tw.filter());
   case ExpandEntityReferences:
     return jsBoolean(tw.expandEntityReferences());
   case CurrentNode:
-    return getDOMNode(exec,tw.currentNode());
+    return toJS(exec,tw.currentNode());
   default:
     return 0;
   }
@@ -295,24 +295,24 @@ JSValue *DOMTreeWalkerProtoFunc::callAsFunction(ExecState *exec, JSObject *thisO
   TreeWalkerImpl &treeWalker = *static_cast<DOMTreeWalker *>(thisObj)->impl();
   switch (id) {
     case DOMTreeWalker::ParentNode:
-      return getDOMNode(exec,treeWalker.parentNode());
+      return toJS(exec,treeWalker.parentNode());
     case DOMTreeWalker::FirstChild:
-      return getDOMNode(exec,treeWalker.firstChild());
+      return toJS(exec,treeWalker.firstChild());
     case DOMTreeWalker::LastChild:
-      return getDOMNode(exec,treeWalker.lastChild());
+      return toJS(exec,treeWalker.lastChild());
     case DOMTreeWalker::PreviousSibling:
-      return getDOMNode(exec,treeWalker.previousSibling());
+      return toJS(exec,treeWalker.previousSibling());
     case DOMTreeWalker::NextSibling:
-      return getDOMNode(exec,treeWalker.nextSibling());
+      return toJS(exec,treeWalker.nextSibling());
     case DOMTreeWalker::PreviousNode:
-      return getDOMNode(exec,treeWalker.previousNode());
+      return toJS(exec,treeWalker.previousNode());
     case DOMTreeWalker::NextNode:
-      return getDOMNode(exec,treeWalker.nextNode());
+      return toJS(exec,treeWalker.nextNode());
   }
   return jsUndefined();
 }
 
-JSValue *getDOMTreeWalker(ExecState *exec, TreeWalkerImpl *tw)
+JSValue *toJS(ExecState *exec, TreeWalkerImpl *tw)
 {
   return cacheDOMObject<TreeWalkerImpl, DOMTreeWalker>(exec, tw);
 }
@@ -338,7 +338,7 @@ short JSNodeFilterCondition::acceptNode(NodeImpl* filterNode) const
         JSLock lock;
         ExecState *exec = proxy->interpreter()->globalExec();
         List args;
-        args.append(getDOMNode(exec, node));
+        args.append(toJS(exec, node));
         JSObject *obj = filter;
         JSValue *result = obj->call(exec, obj, args);
         return result->toInt32(exec);
