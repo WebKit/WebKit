@@ -1,3 +1,11 @@
+2006-03-16  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Make build-webkit print correctly to stdout on windows.
+
+        * Scripts/webkitdirs.pm: Fix to use devenv.com instead of devenv.exe
+
 2006-03-15  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.

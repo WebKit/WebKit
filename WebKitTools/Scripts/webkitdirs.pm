@@ -330,7 +330,7 @@ sub setupCygwinEnv()
 
     my $programFilesPath = `cygpath "$ENV{'PROGRAMFILES'}"`;
     chomp $programFilesPath;
-    $devenvPath = "$programFilesPath/Microsoft Visual Studio 8/Common7/IDE/devenv.exe";
+    $devenvPath = "$programFilesPath/Microsoft Visual Studio 8/Common7/IDE/devenv.com";
     $windowsTmpPath = `cygpath -w /tmp`;
     chomp $windowsTmpPath;
     print "Building results into: ", baseProductDir(), "\n";
@@ -345,11 +345,8 @@ sub buildVisualStudioProject($)
     chdir "$project.vcproj" or die "Failed to cd into $project.vcproj\n";
     my $config = configuration();
 
-    my $resultsFile = "$windowsTmpPath\\buildresults.txt";
-    unlink($resultsFile);
-    print "$devenvPath $project.sln /build $config /Out $resultsFile\n";
-    my $result = system $devenvPath, "$project.sln", "/build", $config, "/Out", $resultsFile;
-    system "cat", $resultsFile;
+    print "$devenvPath $project.sln /build $config";
+    my $result = system $devenvPath, "$project.sln", "/build", $config;
     chdir ".." or die;
     return $result;
 }
