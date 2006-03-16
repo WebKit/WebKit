@@ -3245,9 +3245,14 @@ NodeImpl *Frame::mousePressNode()
     return d->m_mousePressNode.get();
 }
 
-bool Frame::isComplete()
+bool Frame::isComplete() const
 {
     return d->m_bComplete;
+}
+
+bool Frame::isLoadingMainResource() const
+{
+    return d->m_bLoadingMainResource;
 }
 
 FrameTree *Frame::tree() const

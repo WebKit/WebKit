@@ -1,3 +1,20 @@
+2006-03-16  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Maciej.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=4395
+         REGRESSION: document.open doesn't clear the document
+
+        Test: fast/dom/Document/document-reopen.html
+        Test: fast/dom/Document/doc-open-while-parsing.html
+
+        * dom/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::open): Only ignore open() while the frame is still loading the main resource.
+        * page/Frame.cpp:
+        (WebCore::Frame::isComplete): Added const specifier.
+        (WebCore::Frame::isLoadingMainResource): New function.
+        * page/Frame.h:
+
 2006-03-15  Adele Peterson  <adele@apple.com>
 
         Reviewed by Eric.
