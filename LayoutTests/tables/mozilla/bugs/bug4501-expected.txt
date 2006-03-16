@@ -1,0 +1,25 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderTable {TABLE} at (0,0) size 784x221 [bgcolor=#FFCC00] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 0x219
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (0,0) size 113x199 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 111x197
+              RenderText {TEXT} at (0,0) size 0x0
+            RenderTableCell {TD} at (113,0) size 669x100 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 381x98
+              RenderText {TEXT} at (0,0) size 0x0
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (0,199) size 113x20 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 93x18
+                text run at (1,1) width 93: "something else"
+            RenderTableCell {TD} at (113,199) size 669x20 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 216x18
+                RenderTableSection {TBODY} at (0,0) size 0x18
+                  RenderTableRow {TR} at (0,0) size 0x0
+                    RenderTableCell {TD} at (0,0) size 216x18 [r=0 c=0 rs=1 cs=1]
+                      RenderText {TEXT} at (0,0) size 216x18
+                        text run at (0,0) width 216: "Sunday April 11, 1999, 07:34 PM"

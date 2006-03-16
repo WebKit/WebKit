@@ -1,0 +1,138 @@
+layer at (0,0) size 785x929
+  RenderCanvas at (0,0) size 785x600
+layer at (0,0) size 785x929
+  RenderBlock {HTML} at (0,0) size 785x929
+    RenderBody {BODY} at (8,8) size 769x913
+      RenderTable {TABLE} at (0,0) size 600x259 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 0x257
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,2) size 594x77 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=3]
+              RenderImage {IMG} at (2,2) size 590x73
+              RenderText {TEXT} at (0,0) size 0x0
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,81) size 114x40 [bgcolor=#94BD73] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 73x36
+                text run at (2,2) width 73: "LH column"
+                text run at (2,20) width 38: "image"
+            RenderTableCell {TD} at (118,81) size 20x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 16x18
+                text run at (2,2) width 16: "    "
+            RenderTableCell {TD} at (140,81) size 456x90 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderBlock {P} at (2,2) size 452x18
+                RenderText {TEXT} at (0,0) size 223x18
+                  text run at (0,0) width 223: "HP Peripherals Developer Program"
+              RenderBlock {P} at (2,36) size 452x18
+                RenderText {TEXT} at (0,0) size 162x18
+                  text run at (0,0) width 162: "PROGRAM SERVICES"
+              RenderBlock {P} at (2,70) size 452x18
+                RenderText {TEXT} at (0,0) size 68x18
+                  text run at (0,0) width 68: "etc., etc. ..."
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,173) size 594x37 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=3]
+              RenderImage {IMG} at (2,2) size 589x33
+              RenderText {TEXT} at (0,0) size 0x0
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,212) size 114x43 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
+              RenderImage {IMG} at (2,2) size 110x39
+              RenderText {TEXT} at (0,0) size 0x0
+            RenderTableCell {TH} at (118,222) size 478x22 [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=2]
+              RenderText {TEXT} at (208,2) size 61x18
+                text run at (208,2) width 61: "text links"
+      RenderBlock {HR} at (0,267) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,285) size 769x18
+        RenderInline {B} at (0,0) size 471x18
+          RenderText {TEXT} at (0,0) size 471x18
+            text run at (0,0) width 471: "Now, nuke the IMG (two of which are colspan=3) -- the table lines up."
+      RenderTable {TABLE} at (0,319) size 590x179 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 0x177
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,2) size 584x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=3]
+              RenderText {TEXT} at (2,2) size 127x18
+                text run at (2,2) width 127: "IMG in a colspan=3"
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,26) size 108x40 [bgcolor=#94BD73] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 73x36
+                text run at (2,2) width 73: "LH column"
+                text run at (2,20) width 38: "image"
+            RenderTableCell {TD} at (112,26) size 20x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 16x18
+                text run at (2,2) width 16: "    "
+            RenderTableCell {TD} at (134,26) size 452x90 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderBlock {P} at (2,2) size 448x18
+                RenderText {TEXT} at (0,0) size 223x18
+                  text run at (0,0) width 223: "HP Peripherals Developer Program"
+              RenderBlock {P} at (2,36) size 448x18
+                RenderText {TEXT} at (0,0) size 162x18
+                  text run at (0,0) width 162: "PROGRAM SERVICES"
+              RenderBlock {P} at (2,70) size 448x18
+                RenderText {TEXT} at (0,0) size 68x18
+                  text run at (0,0) width 68: "etc., etc. ..."
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,123) size 584x22 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=3]
+              RenderText {TEXT} at (2,2) size 127x18
+                text run at (2,2) width 127: "IMG in a colspan=3"
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,153) size 108x22 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 76x18
+                text run at (2,2) width 76: "just an IMG"
+            RenderTableCell {TH} at (112,153) size 474x22 [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=2]
+              RenderText {TEXT} at (206,2) size 61x18
+                text run at (206,2) width 61: "text links"
+      RenderBlock {HR} at (0,506) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,524) size 769x18
+        RenderInline {B} at (0,0) size 502x18
+          RenderText {TEXT} at (0,0) size 502x18
+            text run at (0,0) width 502: "Simpler comparison -- two rows, first is IMG in colspan=3 -- tables not OK"
+      RenderTable {TABLE} at (0,558) size 600x175 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 0x173
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,2) size 594x77 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=3]
+              RenderImage {IMG} at (2,2) size 590x73
+              RenderText {TEXT} at (0,0) size 0x0
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,81) size 110x40 [bgcolor=#94BD73] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 73x36
+                text run at (2,2) width 73: "LH column"
+                text run at (2,20) width 38: "image"
+            RenderTableCell {TD} at (114,81) size 20x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 16x18
+                text run at (2,2) width 16: "    "
+            RenderTableCell {TD} at (136,81) size 460x90 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderBlock {P} at (2,2) size 456x18
+                RenderText {TEXT} at (0,0) size 223x18
+                  text run at (0,0) width 223: "HP Peripherals Developer Program"
+              RenderBlock {P} at (2,36) size 456x18
+                RenderText {TEXT} at (0,0) size 162x18
+                  text run at (0,0) width 162: "PROGRAM SERVICES"
+              RenderBlock {P} at (2,70) size 456x18
+                RenderText {TEXT} at (0,0) size 68x18
+                  text run at (0,0) width 68: "etc., etc. ..."
+      RenderBlock {HR} at (0,741) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,759) size 769x18
+        RenderInline {B} at (0,0) size 520x18
+          RenderText {TEXT} at (0,0) size 520x18
+            text run at (0,0) width 520: "Simpler comparison -- nuke the IMG (replace with text) -- tables line up now."
+      RenderTable {TABLE} at (0,793) size 590x120 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 0x118
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,2) size 584x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=3]
+              RenderText {TEXT} at (2,2) size 208x18
+                text run at (2,2) width 208: "text instead of IMG in colspan=3"
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,26) size 108x40 [bgcolor=#94BD73] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 73x36
+                text run at (2,2) width 73: "LH column"
+                text run at (2,20) width 38: "image"
+            RenderTableCell {TD} at (112,26) size 20x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 16x18
+                text run at (2,2) width 16: "    "
+            RenderTableCell {TD} at (134,26) size 452x90 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderBlock {P} at (2,2) size 448x18
+                RenderText {TEXT} at (0,0) size 223x18
+                  text run at (0,0) width 223: "HP Peripherals Developer Program"
+              RenderBlock {P} at (2,36) size 448x18
+                RenderText {TEXT} at (0,0) size 162x18
+                  text run at (0,0) width 162: "PROGRAM SERVICES"
+              RenderBlock {P} at (2,70) size 448x18
+                RenderText {TEXT} at (0,0) size 68x18
+                  text run at (0,0) width 68: "etc., etc. ..."

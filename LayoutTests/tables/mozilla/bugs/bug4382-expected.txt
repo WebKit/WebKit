@@ -1,0 +1,27 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock (anonymous) at (0,0) size 784x18
+        RenderText {TEXT} at (0,0) size 264x18
+          text run at (0,0) width 264: "The select should not contain blank items "
+        RenderBR {BR} at (0,0) size 0x0
+      RenderBlock {FORM} at (0,18) size 784x23
+        RenderInline {B} at (0,0) size 47x18
+          RenderText {TEXT} at (0,2) size 47x18
+            text run at (0,2) width 47: "Search"
+        RenderText {TEXT} at (47,2) size 4x18
+          text run at (47,2) width 4: " "
+        RenderLineEdit {INPUT} at (53,2) size 134x19
+        RenderText {TEXT} at (189,2) size 4x18
+          text run at (189,2) width 4: " "
+        RenderSelect {SELECT} at (195,3) size 77x18
+        RenderText {TEXT} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,57) size 784x36
+        RenderBR {BR} at (0,0) size 0x18
+        RenderText {TEXT} at (0,18) size 264x18
+          text run at (0,18) width 264: "The select should not contain blank items "
+        RenderBR {BR} at (0,0) size 0x0
+      RenderBlock {FORM} at (0,93) size 784x22
+        RenderSelect {SELECT} at (2,2) size 230x18

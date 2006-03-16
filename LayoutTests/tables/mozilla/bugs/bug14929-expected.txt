@@ -1,0 +1,58 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x18
+        RenderText {TEXT} at (0,0) size 195x18
+          text run at (0,0) width 195: "The simplified original testcase"
+      RenderBlock {P} at (0,34) size 784x92
+        RenderTable {TABLE} at (0,0) size 640x92 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 0x90
+            RenderTableRow {TR} at (0,0) size 0x0
+              RenderTableCell {TD} at (2,2) size 634x62 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+                RenderImage {IMG} at (2,2) size 600x58
+            RenderTableRow {TR} at (0,0) size 0x0
+              RenderTableCell {TD} at (2,66) size 333x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                RenderText {TEXT} at (2,2) size 58x18
+                  text run at (2,2) width 58: "MC Visa"
+              RenderTableCell {TD} at (337,66) size 299x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+                RenderText {TEXT} at (2,2) size 46x18
+                  text run at (2,2) width 46: "SLmail"
+      RenderBlock {HR} at (0,142) size 130x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,152) size 784x18
+        RenderText {TEXT} at (0,0) size 407x18
+          text run at (0,0) width 407: "The simplified original testcase with image size reduced to190px"
+      RenderBlock {P} at (0,186) size 784x52
+        RenderTable {TABLE} at (0,0) size 640x52 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 0x50
+            RenderTableRow {TR} at (0,0) size 0x0
+              RenderTableCell {TD} at (2,2) size 634x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+                RenderImage {IMG} at (2,2) size 190x18
+            RenderTableRow {TR} at (0,0) size 0x0
+              RenderTableCell {TD} at (2,26) size 127x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                RenderText {TEXT} at (2,2) size 58x18
+                  text run at (2,2) width 58: "MC Visa"
+              RenderTableCell {TD} at (131,26) size 505x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+                RenderText {TEXT} at (2,2) size 46x18
+                  text run at (2,2) width 46: "SLmail"
+      RenderBlock {HR} at (0,254) size 130x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,264) size 784x18
+        RenderText {TEXT} at (0,0) size 148x18
+          text run at (0,0) width 148: "Testcase without image"
+      RenderBlock {P} at (0,298) size 784x70
+        RenderTable {TABLE} at (0,0) size 640x70 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 0x68
+            RenderTableRow {TR} at (0,0) size 0x0
+              RenderTableCell {TD} at (2,2) size 634x40 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+                RenderText {TEXT} at (2,2) size 617x36
+                  text run at (2,2) width 617: "text text text text text text text text text text text text text text text text text text text text text text text"
+                  text run at (2,20) width 158: "text text text text text text"
+            RenderTableRow {TR} at (0,0) size 0x0
+              RenderTableCell {TD} at (2,44) size 127x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                RenderText {TEXT} at (2,2) size 58x18
+                  text run at (2,2) width 58: "MC Visa"
+              RenderTableCell {TD} at (131,44) size 505x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+                RenderText {TEXT} at (2,2) size 46x18
+                  text run at (2,2) width 46: "SLmail"
+      RenderBlock {HR} at (0,384) size 130x2 [border: (1px inset #000000)]

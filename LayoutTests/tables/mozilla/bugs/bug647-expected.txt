@@ -1,0 +1,31 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (anonymous) at (0,0) size 784x18
+        RenderText {TEXT} at (0,0) size 430x18
+          text run at (0,0) width 430: "If the font size is too big for the inside table, it is probably bug 6925."
+      RenderTable {TABLE} at (0,18) size 110x51 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 0x49
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,2) size 104x45 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {CENTER} at (2,2) size 100x41
+                RenderTable {TABLE} at (0,0) size 100x23 [border: (1px outset #808080)]
+                  RenderTableSection {TBODY} at (1,1) size 0x21
+                    RenderTableRow {TR} at (0,0) size 0x0
+                      RenderTableCell {TD} at (2,2) size 94x17 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                        RenderBlock (anonymous) at (2,2) size 90x0
+                          RenderInline {FONT} at (0,0) size 0x0
+                            RenderText {TEXT} at (0,0) size 0x0
+                        RenderBlock (anonymous) at (2,2) size 90x0
+                        RenderBlock (anonymous) at (2,2) size 90x0
+                          RenderInline {FONT} at (0,0) size 0x0
+                        RenderBlock {CENTER} at (2,2) size 90x13
+                          RenderInline {FONT} at (0,0) size 24x13
+                            RenderText {TEXT} at (33,0) size 24x13
+                              text run at (33,0) width 24: "inside"
+                          RenderText {TEXT} at (0,0) size 0x0
+                RenderBlock (anonymous) at (0,23) size 100x18
+                  RenderText {TEXT} at (10,0) size 79x18
+                    text run at (10,0) width 79: "outside table"
