@@ -119,6 +119,8 @@ public:
     virtual bool canUndo() const;
     virtual void print();
 
+    bool keyPress(KeyEvent*);
+
 private:
     virtual bool passMouseDownEventToWidget(Widget*);
     FrameWinClient* m_client;

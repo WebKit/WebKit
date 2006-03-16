@@ -43,6 +43,10 @@ typedef struct _NSSize NSSize;
 
 #endif
 
+#if WIN32
+typedef struct tagSIZE SIZE;
+#endif
+
 namespace WebCore {
 
 class IntSize {
@@ -74,6 +78,11 @@ public:
     operator NSSize() const;
 #endif
 
+#endif
+
+#if WIN32
+    IntSize(const SIZE&);
+    operator SIZE() const;
 #endif
 
 private:

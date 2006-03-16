@@ -34,6 +34,7 @@
 #include "TransferJob.h"
 #include "RenderThemeWin.h"
 #include "TextBoundaries.h"
+#include "render_canvasimage.h"
 
 using namespace WebCore;
 
@@ -43,20 +44,6 @@ IntPoint FrameView::viewportToGlobal(IntPoint const&) const { notImplemented(); 
 void FrameView::updateBorder() { notImplemented(); }
 bool FrameView::isFrameView() const { notImplemented(); return 0; }
 Widget* FrameView::topLevelWidget() const { notImplemented(); return 0; }
-
-QScrollBar::~QScrollBar() { notImplemented(); }
-void QScrollBar::setSteps(int,int) { notImplemented(); }
-bool QScrollBar::scroll(KWQScrollDirection,KWQScrollGranularity,float) { notImplemented(); return 0; }
-QScrollBar::QScrollBar(ScrollBarOrientation) { notImplemented(); }
-bool QScrollBar::setValue(int) { notImplemented(); return 0; }
-void QScrollBar::setKnobProportion(int,int) { notImplemented(); }
-
-QListBox::QListBox() { notImplemented(); }
-void QListBox::setSelected(int,bool) { notImplemented(); }
-IntSize QListBox::sizeForNumberOfLines(int) const { notImplemented(); return IntSize(); }
-bool QListBox::isSelected(int) const { notImplemented(); return 0; }
-void QListBox::appendItem(QString const&,KWQListBoxItemType,bool) { notImplemented(); }
-void QListBox::doneAppendingItems() { notImplemented(); }
 
 QTextEdit::QTextEdit(Widget*) { notImplemented(); }
 QTextEdit::~QTextEdit() { notImplemented(); }
@@ -91,7 +78,6 @@ void Widget::enableFlushDrawing() { notImplemented(); }
 bool Widget::isEnabled() const { notImplemented(); return 0; }
 Widget::FocusPolicy Widget::focusPolicy() const { notImplemented(); return NoFocus; }
 void Widget::disableFlushDrawing() { notImplemented(); }
-void Widget::setIsSelected(bool) { notImplemented(); }
 void Widget::lockDrawingFocus() { notImplemented(); }
 void Widget::unlockDrawingFocus() { notImplemented(); }
 void Widget::setDrawingAlpha(float) { notImplemented(); }
@@ -110,12 +96,6 @@ void QLineEdit::setMaxResults(int) { notImplemented(); }
 bool QLineEdit::edited() const { notImplemented(); return 0; }
 
 GraphicsContext::GraphicsContext() { notImplemented(); }
-void GraphicsContext::addFocusRingRect(int,int,int,int) { notImplemented(); }
-void GraphicsContext::clearFocusRing() { notImplemented(); }
-void GraphicsContext::drawFocusRing(Color const&) { notImplemented(); }
-Color GraphicsContext::selectedTextBackgroundColor() const { notImplemented(); return Color(); }
-void GraphicsContext::addRoundedRectClip(IntRect const&,IntSize const&,IntSize const&,IntSize const&,IntSize const&) { notImplemented(); }
-void GraphicsContext::initFocusRing(int,int) { notImplemented(); }
 
 QSlider::QSlider() { notImplemented(); }
 IntSize QSlider::sizeHint() const { notImplemented(); return IntSize(); }
@@ -126,9 +106,11 @@ QSlider::~QSlider() { notImplemented(); }
 void QSlider::setFont(WebCore::Font const&) { notImplemented(); }
 double QSlider::value() const { notImplemented(); return 0; }
 
-void QListBox::setFont(WebCore::Font const&) { notImplemented(); }
-QListBox::~QListBox() { notImplemented(); }
-void QListBox::setSelectionMode(QListBox::SelectionMode) { notImplemented(); }
+void QListBox::setSelected(int,bool) { notImplemented(); }
+IntSize QListBox::sizeForNumberOfLines(int) const { notImplemented(); return IntSize(); }
+bool QListBox::isSelected(int) const { notImplemented(); return 0; }
+void QListBox::appendItem(QString const&,KWQListBoxItemType,bool) { notImplemented(); }
+void QListBox::doneAppendingItems() { notImplemented(); }
 void QListBox::setWritingDirection(TextDirection) { notImplemented(); }
 void QListBox::setEnabled(bool) { notImplemented(); }
 void QListBox::clear() { notImplemented(); }
@@ -165,13 +147,11 @@ Array<char> KWQServeSynchronousRequest(Loader*,DocLoader*,TransferJob*,KURL&,QSt
 void FrameWin::respondToChangedContents() { notImplemented(); }
 void FrameWin::unfocusWindow() { notImplemented(); }
 bool FrameWin::locationbarVisible() { notImplemented(); return 0; }
-void FrameWin::respondToChangedSelection(WebCore::SelectionController const&,bool) { notImplemented(); }
 void FrameWin::issueRedoCommand(void) { notImplemented(); }
 KJS::Bindings::Instance* FrameWin::getObjectInstanceForWidget(Widget *) { notImplemented(); return 0; }
 KJS::Bindings::Instance* FrameWin::getEmbedInstanceForWidget(Widget *) { notImplemented(); return 0; }
 bool FrameWin::canRedo() const { notImplemented(); return 0; }
 bool FrameWin::canUndo() const { notImplemented(); return 0; }
-void FrameWin::recordFormValue(QString const&,QString const&,WebCore::HTMLFormElementImpl*) { notImplemented(); }
 void FrameWin::registerCommandForRedo(WebCore::EditCommandPtr const&) { notImplemented(); }
 bool FrameWin::runJavaScriptPrompt(String const&,String const&,String &) { notImplemented(); return 0; }
 bool FrameWin::openURL(KURL const&) { notImplemented(); return 0; }
@@ -185,7 +165,6 @@ void FrameWin::openURLRequest(KURL const&,struct WebCore::URLArgs const&) { notI
 bool FrameWin::passWheelEventToChildWidget(NodeImpl*) { notImplemented(); return 0; }
 void FrameWin::issueUndoCommand() { notImplemented(); }
 QString FrameWin::mimeTypeForFileName(QString const&) const { notImplemented(); return QString(); }
-void FrameWin::clearRecordedFormValues() { notImplemented(); }
 void FrameWin::issuePasteCommand() { notImplemented(); }
 void FrameWin::scheduleClose() { notImplemented(); }
 void FrameWin::markMisspellingsInAdjacentWords(WebCore::VisiblePosition const&) { notImplemented(); }
@@ -195,7 +174,6 @@ bool FrameWin::personalbarVisible() { notImplemented(); return 0; }
 bool FrameWin::statusbarVisible() { notImplemented(); return 0; }
 bool FrameWin::toolbarVisible() { notImplemented(); return 0; }
 void FrameWin::issueTransposeCommand() { notImplemented(); }
-void FrameWin::submitForm(KURL const&,struct WebCore::URLArgs const&) { notImplemented(); }
 bool FrameWin::canPaste() const { notImplemented(); return 0; }
 enum WebCore::ObjectContentType FrameWin::objectContentType(KURL const&,QString const&) { notImplemented(); return (ObjectContentType)0; }
 bool FrameWin::canGoBackOrForward(int) const { notImplemented(); return 0; }
@@ -203,7 +181,6 @@ void FrameWin::issuePasteAndMatchStyleCommand() { notImplemented(); }
 Plugin* FrameWin::createPlugin(KURL const&,QStringList const&,QStringList const&,QString const&) { notImplemented(); return 0; }
 
 void BrowserExtensionWin::openURLRequest(KURL const&,struct WebCore::URLArgs const&) { notImplemented(); }
-int BrowserExtensionWin::getHistoryLength() { notImplemented(); return 0; }
 bool BrowserExtensionWin::canRunModal() { notImplemented(); return 0; }
 void BrowserExtensionWin::openURLNotify() { notImplemented(); }
 void BrowserExtensionWin::createNewWindow(KURL const&,struct WebCore::URLArgs const&,struct WebCore::WindowArgs const&,Frame*&) { notImplemented(); }
@@ -212,7 +189,7 @@ void BrowserExtensionWin::runModal() { notImplemented(); }
 void BrowserExtensionWin::goBackOrForward(int) { notImplemented(); }
 void BrowserExtensionWin::createNewWindow(KURL const&,struct WebCore::URLArgs const&) { notImplemented(); }
 
-IntRect Font::selectionRectForText(int, int, int, int, int, const QChar*, int, int, int, int, bool, bool, int, int) const { notImplemented(); return IntRect(); }
+void RenderCanvasImage::setNeedsImageUpdate() { notImplemented(); }
 
 
 /********************************************************/
@@ -248,24 +225,28 @@ RangeImpl* FrameWin::markedTextRange() const { return 0; }
 bool FrameWin::passSubframeEventToSubframe(WebCore::MouseEventWithHitTestResults&) { return false; }
 bool FrameWin::lastEventIsMouseUp() const { return false; }
 void FrameWin::addMessageToConsole(String const&,unsigned int,String const&) { }
-bool FrameWin::shouldChangeSelection(SelectionController const&,SelectionController const&,WebCore::EAffinity,bool) const { return 0; }
+bool FrameWin::shouldChangeSelection(SelectionController const&,SelectionController const&,WebCore::EAffinity,bool) const { return true; }
+void FrameWin::respondToChangedSelection(WebCore::SelectionController const&,bool) { }
 static int frameNumber = 0;
 Frame* FrameWin::createFrame(KURL const&,QString const&,RenderPart*,String const&) { return 0; }
 void FrameWin::saveDocumentState(void) { }
 void FrameWin::clearUndoRedoOperations(void) { }
 QString FrameWin::incomingReferrer() const { return QString(); }
-
-int Font::checkSelectionPoint(const QChar*, int, int, int, int, int, int, int, WebCore::TextDirection, bool, bool) const { return 0; }
+void FrameWin::clearRecordedFormValues() { }
+void FrameWin::recordFormValue(QString const&,QString const&,WebCore::HTMLFormElementImpl*) { }
+void FrameWin::submitForm(KURL const&,struct WebCore::URLArgs const&) { }
 
 BrowserExtensionWin::BrowserExtensionWin(WebCore::Frame*) { }
 void BrowserExtensionWin::setTypedIconURL(KURL const&,QString const&) { }
 void BrowserExtensionWin::setIconURL(KURL const&) { }
+int BrowserExtensionWin::getHistoryLength() { return 0; }
 
 bool KWQCheckIfReloading(WebCore::DocLoader*) { return false; }
 void KWQCheckCacheObjectStatus(DocLoader*, CachedObject*) { }
 
 void Widget::setEnabled(bool) { }
 void Widget::paint(GraphicsContext*,IntRect const&) { }
+void Widget::setIsSelected(bool) { }
 
 void ScrollView::addChild(Widget*,int,int) { }
 void ScrollView::removeChild(Widget*) { }
@@ -276,6 +257,8 @@ void GraphicsContext::setShadow(int,int,int,Color const&) { }
 void GraphicsContext::clearShadow() { }
 void GraphicsContext::beginTransparencyLayer(float) { }
 void GraphicsContext::endTransparencyLayer() { }
+Color GraphicsContext::selectedTextBackgroundColor() const { return Color(0,0,255); }
+void GraphicsContext::addRoundedRectClip(IntRect const&,IntSize const&,IntSize const&,IntSize const&,IntSize const&) { }
 
 Path::Path(){ }
 Path::~Path(){ }
@@ -323,3 +306,14 @@ IntSize QComboBox::sizeHint() const { return IntSize(); }
 IntRect QComboBox::frameGeometry() const { return IntRect(); }
 void QComboBox::setFrameGeometry(IntRect const&) { }
 
+QScrollBar::QScrollBar(ScrollBarOrientation) { }
+QScrollBar::~QScrollBar() { }
+void QScrollBar::setSteps(int, int) { }
+bool QScrollBar::scroll(KWQScrollDirection, KWQScrollGranularity, float) { return 0; }
+bool QScrollBar::setValue(int) { return 0; }
+void QScrollBar::setKnobProportion(int, int) { }
+
+QListBox::QListBox() { }
+QListBox::~QListBox() { }
+void QListBox::setSelectionMode(QListBox::SelectionMode) { }
+void QListBox::setFont(WebCore::Font const&) { }

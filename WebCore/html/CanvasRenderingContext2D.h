@@ -126,7 +126,7 @@ namespace WebCore {
         void clearRect(float x, float y, float width, float height);
         void fillRect(float x, float y, float width, float height);
         void strokeRect(float x, float y, float width, float height);
-        void strokeRect(float x, float y, float width, float height, float width);
+        void strokeRect(float x, float y, float width, float height, float lineWidth);
 
         void setShadow(float width, float height, float blur);
         void setShadow(float width, float height, float blur, const String& color);

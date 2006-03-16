@@ -28,6 +28,7 @@
 
 #include "BrowserExtensionWin.h"
 #include "DocumentImpl.h"
+#include "KeyEvent.h"
 #include "KWQKHTMLSettings.h"
 #include "render_frames.h"
 #include "Plugin.h"
@@ -84,6 +85,35 @@ bool FrameWin::runJavaScriptConfirm(String const& message)
     QChar nullChar('\0');
     text += String(&nullChar, 1);
     return (MessageBox(view()->windowHandle(), (LPCWSTR)text.unicode(), L"JavaScript Alert", MB_OKCANCEL) == IDOK);
+}
+
+// FIXME: This needs to be unified with the keyPress method on MacFrame
+bool FrameWin::keyPress(KeyEvent* keyEvent)
+{
+    bool result;
+    // Check for cases where we are too early for events -- possible unmatched key up
+    // from pressing return in the location bar.
+    DocumentImpl *doc = document();
+    if (!doc)
+        return false;
+    NodeImpl *node = doc->focusNode();
+    if (!node) {
+        if (doc->isHTMLDocument())
+            node = doc->body();
+        else
+            node = doc->documentElement();
+        if (!node)
+            return false;
+    }
+    
+    if (!keyEvent->isKeyUp())
+        prepareForUserAction();
+
+    result = !node->dispatchKeyEvent(keyEvent);
+
+    // FIXME: MacFrame has a keyDown/keyPress hack here which we are not copying.
+
+    return result;
 }
 
 }

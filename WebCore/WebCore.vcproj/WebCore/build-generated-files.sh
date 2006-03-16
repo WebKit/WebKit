@@ -126,6 +126,10 @@ if [ ../JavaScriptCore/kjs/create_hash_table -nt "$DerivedSourcesDir/JSXMLHttpRe
   ../JavaScriptCore/kjs/create_hash_table khtml/ecma/JSXMLHttpRequest.cpp > "$DerivedSourcesDir/JSXMLHttpRequest.lut.h"
 fi
 
+if [ ../JavaScriptCore/kjs/create_hash_table -nt "$DerivedSourcesDir/JSCanvasRenderingContext2DBaseTable.cpp" -o bindings/js/JSCanvasRenderingContext2DBase.cpp -nt "$DerivedSourcesDir/JSCanvasRenderingContext2DBaseTable.cpp" ]; then
+  ../JavaScriptCore/kjs/create_hash_table bindings/js/JSCanvasRenderingContext2DBase.cpp > "$DerivedSourcesDir/JSCanvasRenderingContext2DBaseTable.cpp"
+fi
+
 WebKitOutputConfigDir="$WebKitUnixDir/$1"
 mkdir -p "$WebKitOutputConfigDir"
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,56 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef RENDER_CANVASIMAGE_H
-#define RENDER_CANVASIMAGE_H
+#include "IntSize.h"
 
-
-#include "HTMLElementImpl.h"
-#include "render_image.h"
-
-#if __APPLE__
-// FIXME: Mac-specific parts need to move to the platform directory.
-#include <ApplicationServices/ApplicationServices.h>
-#endif
+#include <windows.h>
 
 namespace WebCore {
 
-class DocLoader;
-
-class RenderCanvasImage : public RenderImage
+IntSize::IntSize(const SIZE& s)
+    : m_width(s.cx)
+    , m_height(s.cy)
 {
-public:
-    RenderCanvasImage(NodeImpl*);
-    virtual ~RenderCanvasImage();
+}
 
-    virtual const char *renderName() const { return "RenderCanvasImage"; }
-    
-    virtual void paint(PaintInfo& i, int tx, int ty);
+IntSize::operator SIZE() const
+{
+    SIZE s = {m_width, m_height};
+    return s;
+}
 
-    virtual void layout();
-
-    void setNeedsImageUpdate();
-    
-    // don't even think about making this method virtual!
-    HTMLElementImpl* element() const
-        { return static_cast<HTMLElementImpl*>(RenderImage::element()); }
-    
-#if __APPLE__
-    void updateDrawnImage();
-    CGContextRef drawingContext();
-    
-private:
-    void createDrawingContext();
-    CGImageRef drawnImage();
-
-    CGContextRef _drawingContext;
-    void *_drawingContextData;
-    CGImageRef _drawnImage;
-    
-    bool _needsImageUpdate : 1;
-#endif
-};
-
-} //namespace
-
-#endif
+}

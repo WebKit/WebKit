@@ -34,14 +34,16 @@
 class NSEvent;
 #endif
 
+#if WIN32
+typedef struct HWND__ *HWND;
+typedef unsigned    WPARAM;
+typedef long        LPARAM;
+#endif
+
 namespace WebCore {
 
     class KeyEvent {
     public:
-#ifdef __APPLE__
-        KeyEvent(NSEvent*, bool forceAutoRepeat = false);
-#endif
-
         String text() const { return m_text; }
         String unmodifiedText() const { return m_unmodifiedText; }
         String keyIdentifier() const { return m_keyIdentifier; }
@@ -57,6 +59,14 @@ namespace WebCore {
 
         void accept() { m_isAccepted = true; }
         void ignore() { m_isAccepted = false; }
+
+#ifdef __APPLE__
+        KeyEvent(NSEvent*, bool forceAutoRepeat = false);
+#endif
+
+#ifdef WIN32
+        KeyEvent(HWND, WPARAM, LPARAM);
+#endif
 
     private:
         String m_text;

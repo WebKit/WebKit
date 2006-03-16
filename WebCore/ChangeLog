@@ -1,3 +1,70 @@
+2006-03-16  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Add additional hackish Font, focusring and caret code.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7803
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * WebCore.vcproj/WebCore/build-generated-files.sh:
+        * bindings/js/JSCanvasRenderingContext2DBase.cpp:
+        * bridge/win/FrameWin.cpp:
+        (WebCore::FrameWin::keyPress):
+        * bridge/win/FrameWin.h:
+        * html/CanvasRenderingContext2D.h:
+        * platform/IntSize.h:
+        * platform/KeyEvent.h:
+        * platform/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawArc):
+        (WebCore::GraphicsContext::drawFocusRing):
+        * platform/win/FontWin.cpp:
+        (WebCore::hackishExtentForString):
+        (WebCore::Font::floatWidth):
+        (WebCore::convertRange):
+        (WebCore::Font::drawText):
+        (WebCore::Font::drawHighlightForText):
+        (WebCore::Font::selectionRectForText):
+        (WebCore::Font::checkSelectionPoint):
+        (WebCore::Font::drawLineForText):
+        (WebCore::Font::misspellingLineThickness):
+        * platform/win/IntSizeWin.cpp: Added.
+        (WebCore::IntSize::IntSize):
+        (WebCore::IntSize::operator SIZE):
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::visibleContentRect):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (Widget::disableFlushDrawing):
+        (GraphicsContext::GraphicsContext):
+        (QListBox::setSelected):
+        (QListBox::sizeForNumberOfLines):
+        (QListBox::isSelected):
+        (QListBox::appendItem):
+        (QListBox::doneAppendingItems):
+        (FrameWin::locationbarVisible):
+        (FrameWin::canUndo):
+        (FrameWin::mimeTypeForFileName):
+        (FrameWin::issueTransposeCommand):
+        (RenderCanvasImage::setNeedsImageUpdate):
+        (FrameWin::shouldChangeSelection):
+        (FrameWin::respondToChangedSelection):
+        (FrameWin::clearRecordedFormValues):
+        (FrameWin::recordFormValue):
+        (BrowserExtensionWin::getHistoryLength):
+        (Widget::setIsSelected):
+        (GraphicsContext::selectedTextBackgroundColor):
+        (GraphicsContext::addRoundedRectClip):
+        (QScrollBar::QScrollBar):
+        (QScrollBar::~QScrollBar):
+        (QScrollBar::setSteps):
+        (QScrollBar::scroll):
+        (QScrollBar::setValue):
+        (QScrollBar::setKnobProportion):
+        (QListBox::QListBox):
+        (QListBox::~QListBox):
+        (QListBox::setSelectionMode):
+        (QListBox::setFont):
+        * rendering/render_canvasimage.h:
+
 2006-03-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

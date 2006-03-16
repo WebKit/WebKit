@@ -37,17 +37,17 @@ namespace WebCore {
 
 /*
 @begin JSCanvasRenderingContext2DBaseProtoTable 7
-  setStrokeColor           JSCanvasRenderingContext2DBase::SetStrokeColor              DontDelete|Function 1
-  setFillColor             JSCanvasRenderingContext2DBase::SetFillColor                DontDelete|Function 1
-  strokeRect               JSCanvasRenderingContext2DBase::StrokeRect                  DontDelete|Function 4
-  drawImage                JSCanvasRenderingContext2DBase::DrawImage                   DontDelete|Function 3
-  drawImageFromRect        JSCanvasRenderingContext2DBase::DrawImageFromRect           DontDelete|Function 10
-  setShadow                JSCanvasRenderingContext2DBase::SetShadow                   DontDelete|Function 3
-  createPattern            JSCanvasRenderingContext2DBase::CreatePattern               DontDelete|Function 2
+  setStrokeColor           WebCore::JSCanvasRenderingContext2DBase::SetStrokeColor              DontDelete|Function 1
+  setFillColor             WebCore::JSCanvasRenderingContext2DBase::SetFillColor                DontDelete|Function 1
+  strokeRect               WebCore::JSCanvasRenderingContext2DBase::StrokeRect                  DontDelete|Function 4
+  drawImage                WebCore::JSCanvasRenderingContext2DBase::DrawImage                   DontDelete|Function 3
+  drawImageFromRect        WebCore::JSCanvasRenderingContext2DBase::DrawImageFromRect           DontDelete|Function 10
+  setShadow                WebCore::JSCanvasRenderingContext2DBase::SetShadow                   DontDelete|Function 3
+  createPattern            WebCore::JSCanvasRenderingContext2DBase::CreatePattern               DontDelete|Function 2
 @end
 @begin JSCanvasRenderingContext2DBaseTable 2
-  strokeStyle              JSCanvasRenderingContext2DBase::StrokeStyle                 DontDelete
-  fillStyle                JSCanvasRenderingContext2DBase::FillStyle                   DontDelete
+  strokeStyle              WebCore::JSCanvasRenderingContext2DBase::StrokeStyle                 DontDelete
+  fillStyle                WebCore::JSCanvasRenderingContext2DBase::FillStyle                   DontDelete
 @end
 */
 
