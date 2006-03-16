@@ -29,6 +29,7 @@
 #include "WebFrame.h"
 
 #include "WebView.h"
+#include "KeyEvent.h"
 #include "Resource.h"
 #include "FrameView.h"
 #include "MouseEvent.h"
@@ -121,28 +122,34 @@ WebFrame* WebView::mainFrame()
     return d->mainFrame;
 }
 
-void WebView::mouseMoved(HWND hWnd, WPARAM wParam, LPARAM lParam)
+void WebView::mouseMoved(WPARAM wParam, LPARAM lParam)
 {
-    MouseEvent mouseEvent(hWnd, wParam, lParam, 0);
+    MouseEvent mouseEvent(windowHandle(), wParam, lParam, 0);
     d->mainFrame->viewImpl()->viewportMouseMoveEvent(&mouseEvent);
 }
 
-void WebView::mouseDown(HWND hWnd, WPARAM wParam, LPARAM lParam)
+void WebView::mouseDown(WPARAM wParam, LPARAM lParam)
 {
-    MouseEvent mouseEvent(hWnd, wParam, lParam, 1);
+    MouseEvent mouseEvent(windowHandle(), wParam, lParam, 1);
     d->mainFrame->viewImpl()->viewportMousePressEvent(&mouseEvent);
 }
 
-void WebView::mouseUp(HWND hWnd, WPARAM wParam, LPARAM lParam)
+void WebView::mouseUp(WPARAM wParam, LPARAM lParam)
 {
-    MouseEvent mouseEvent(hWnd, wParam, lParam, 1);
+    MouseEvent mouseEvent(windowHandle(), wParam, lParam, 1);
     d->mainFrame->viewImpl()->viewportMouseReleaseEvent(&mouseEvent);
 }
 
-void WebView::mouseDoubleClick(HWND hWnd, WPARAM wParam, LPARAM lParam)
+void WebView::mouseDoubleClick(WPARAM wParam, LPARAM lParam)
 {
-    MouseEvent mouseEvent(hWnd, wParam, lParam, 2);
+    MouseEvent mouseEvent(windowHandle(), wParam, lParam, 2);
     d->mainFrame->viewImpl()->viewportMouseReleaseEvent(&mouseEvent);
+}
+
+bool WebView::keyPress(WPARAM wParam, LPARAM lParam)
+{
+    KeyEvent keyEvent(windowHandle(), wParam, lParam);
+    return static_cast<FrameWin*>(d->mainFrame->impl())->keyPress(&keyEvent);
 }
 
 #define LINE_SCROLL_SIZE 30
@@ -198,7 +205,7 @@ LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
         // Do nothing?
         break;
     case WM_MOUSEMOVE:
-        webview->mouseMoved(hWnd, wParam, lParam);
+        webview->mouseMoved(wParam, lParam);
         break;
     case WM_LBUTTONDOWN:
         // Make ourselves the focused window before doing anything else
@@ -208,38 +215,58 @@ LRESULT CALLBACK WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
         SetFocus(hWnd);
     case WM_MBUTTONDOWN:
     case WM_RBUTTONDOWN:
-        webview->mouseDown(hWnd, wParam, lParam);
+        webview->mouseDown(wParam, lParam);
         break;
     case WM_LBUTTONUP:
     case WM_MBUTTONUP:
     case WM_RBUTTONUP:
-        webview->mouseUp(hWnd, wParam, lParam);
+        webview->mouseUp(wParam, lParam);
         break;
     case WM_LBUTTONDBLCLK:
     case WM_MBUTTONDBLCLK:
     case WM_RBUTTONDBLCLK:
-        webview->mouseDoubleClick(hWnd, wParam, lParam);
+        webview->mouseDoubleClick(wParam, lParam);
         break;
     case WM_HSCROLL: {
         ScrollView* view = webview->mainFrame()->impl()->view();
         view->scrollBy(calculateScrollDelta(wParam, view->contentsX(), view->visibleWidth()), 0);
+        webview->mainFrame()->impl()->sendScrollEvent();
         break;
     }
     case WM_VSCROLL: {
         ScrollView* view = webview->mainFrame()->impl()->view();
         view->scrollBy(0, calculateScrollDelta(wParam, view->contentsY(), view->visibleHeight()));
+        webview->mainFrame()->impl()->sendScrollEvent();
         break;
     }
     case WM_KEYDOWN: {
         // FIXME: First we should send key events up through the DOM
         // to form controls, etc.  If they are not handled, we fall
         // through to the top level webview and do things like scrolling
+        if (webview->keyPress(wParam, lParam))
+            break;
 
         WORD wScrollNotify = scrollMessageForKey(wParam);
         if (wScrollNotify != -1)
             SendMessage(hWnd, WM_VSCROLL, MAKELONG(wScrollNotify, 0), 0L);
+    }
+    case WM_KEYUP: {
+        webview->keyPress(wParam, lParam);
         break;
     }
+    case WM_SIZE:
+        if (!webview)
+            break;
+        webview->mainFrame()->impl()->sendResizeEvent();
+        break;
+    case WM_SETFOCUS:
+        webview->mainFrame()->impl()->setWindowHasFocus(true);
+        webview->mainFrame()->impl()->setDisplaysWithFocusAttributes(true);
+        break;
+    case WM_KILLFOCUS:
+        webview->mainFrame()->impl()->setWindowHasFocus(false);
+        webview->mainFrame()->impl()->setDisplaysWithFocusAttributes(false);
+        break;
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }

@@ -40,10 +40,11 @@ namespace WebKit {
 
         void drawRect(const PAINTSTRUCT&);
 
-        void mouseMoved(HWND, WPARAM, LPARAM);
-        void mouseDown(HWND, WPARAM, LPARAM);
-        void mouseUp(HWND, WPARAM, LPARAM);
-        void mouseDoubleClick(HWND, WPARAM, LPARAM);
+        void mouseMoved(WPARAM, LPARAM);
+        void mouseDown(WPARAM, LPARAM);
+        void mouseUp(WPARAM, LPARAM);
+        void mouseDoubleClick(WPARAM, LPARAM);
+        bool keyPress(WPARAM, LPARAM);
 
         WebFrame* mainFrame();
 

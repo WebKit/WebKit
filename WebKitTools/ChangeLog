@@ -2,6 +2,21 @@
 
         Reviewed by darin.
 
+        Add resize, scroll event support.
+
+        * Spinneret/Spinneret/WebView.cpp:
+        (WebKit::WebView::mouseMoved):
+        (WebKit::WebView::mouseDown):
+        (WebKit::WebView::mouseUp):
+        (WebKit::WebView::mouseDoubleClick):
+        (WebKit::WebView::keyPress):
+        (WebKit::WebViewWndProc):
+        * Spinneret/Spinneret/WebView.h:
+
+2006-03-16  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
         Make build-webkit print correctly to stdout on windows.
 
         * Scripts/webkitdirs.pm: Fix to use devenv.com instead of devenv.exe
