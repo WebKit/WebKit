@@ -174,12 +174,12 @@ bool MacFrame::openURL(const KURL &url)
     return true;
 }
 
-void MacFrame::openURLRequest(const KURL &url, const URLArgs &args)
+void MacFrame::openURLRequest(const KURL &url, const ResourceRequest& request)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
     NSString *referrer;
-    DOMString argsReferrer = args.metaData().get("referrer");
+    DOMString argsReferrer = request.metaData().get("referrer");
     if (!argsReferrer.isEmpty())
         referrer = argsReferrer;
     else
@@ -187,9 +187,9 @@ void MacFrame::openURLRequest(const KURL &url, const URLArgs &args)
 
     [_bridge loadURL:url.getNSURL()
             referrer:referrer
-              reload:args.reload
+              reload:request.reload
          userGesture:userGestureHint()
-              target:args.frameName.getNSString()
+              target:request.frameName.getNSString()
      triggeringEvent:nil
                 form:nil
           formValues:nil];
@@ -472,7 +472,7 @@ void MacFrame::recordFormValue(const QString &name, const QString &value, HTMLFo
     [_formValuesAboutToBeSubmitted setObject:value.getNSString() forKey:name.getNSString()];
 }
 
-void MacFrame::submitForm(const KURL &url, const URLArgs &args)
+void MacFrame::submitForm(const KURL& url, const ResourceRequest& request)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
@@ -486,7 +486,7 @@ void MacFrame::submitForm(const KURL &url, const URLArgs &args)
     // FIXME: Frame targeting is only one of the ways the submission could end up doing something other
     // than replacing this frame's content, so this check is flawed. On the other hand, the check is hardly
     // needed any more now that we reset _submittedFormURL on each mouse or key down event.
-    WebCoreFrameBridge *target = args.frameName.isEmpty() ? _bridge : [_bridge findFrameNamed:args.frameName.getNSString()];
+    WebCoreFrameBridge *target = request.frameName.isEmpty() ? _bridge : [_bridge findFrameNamed:request.frameName.getNSString()];
     Frame *targetPart = [target impl];
     bool willReplaceThisFrame = false;
     for (Frame *p = this; p; p = p->tree()->parent()) {
@@ -502,22 +502,22 @@ void MacFrame::submitForm(const KURL &url, const URLArgs &args)
         _submittedFormURL = url;
     }
 
-    if (!args.doPost()) {
+    if (!request.doPost()) {
         [_bridge loadURL:url.getNSURL()
                 referrer:[_bridge referrer] 
-                  reload:args.reload
+                  reload:request.reload
              userGesture:true
-                  target:args.frameName.getNSString()
+                  target:request.frameName.getNSString()
          triggeringEvent:_currentEvent
                     form:_formAboutToBeSubmitted
               formValues:_formValuesAboutToBeSubmitted];
     } else {
-        ASSERT(args.contentType().startsWith("Content-Type: "));
+        ASSERT(request.contentType().startsWith("Content-Type: "));
         [_bridge postWithURL:url.getNSURL()
                     referrer:[_bridge referrer] 
-                      target:args.frameName.getNSString()
-                        data:arrayFromFormData(args.postData)
-                 contentType:args.contentType().mid(14).getNSString()
+                      target:request.frameName.getNSString()
+                        data:arrayFromFormData(request.postData)
+                 contentType:request.contentType().mid(14).getNSString()
              triggeringEvent:_currentEvent
                         form:_formAboutToBeSubmitted
                   formValues:_formValuesAboutToBeSubmitted];
@@ -536,12 +536,12 @@ void MacFrame::frameDetached()
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void MacFrame::urlSelected(const KURL& url, const URLArgs& args)
+void MacFrame::urlSelected(const KURL& url, const ResourceRequest& request)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
     NSString* referrer;
-    DOMString argsReferrer = args.metaData().get("referrer");
+    DOMString argsReferrer = request.metaData().get("referrer");
     if (!argsReferrer.isEmpty())
         referrer = argsReferrer;
     else
@@ -549,9 +549,9 @@ void MacFrame::urlSelected(const KURL& url, const URLArgs& args)
 
     [_bridge loadURL:url.getNSURL()
             referrer:referrer
-              reload:args.reload
+              reload:request.reload
          userGesture:true
-              target:args.frameName.getNSString()
+              target:request.frameName.getNSString()
      triggeringEvent:_currentEvent
                 form:nil
           formValues:nil];

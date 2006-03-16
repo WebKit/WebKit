@@ -18,6 +18,7 @@
 		651B4D8509AC83370029F1EF /* QStringList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651B4D8309AC83370029F1EF /* QStringList.cpp */; };
 		651B4D8609AC83370029F1EF /* QStringList.h in Headers */ = {isa = PBXBuildFile; fileRef = 651B4D8409AC83370029F1EF /* QStringList.h */; };
 		651B4D8F09AC859F0029F1EF /* QStringListMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 651B4D8E09AC859F0029F1EF /* QStringListMac.mm */; };
+		6522BCDF09C9DAA800C9BA7A /* ResourceRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 6522BCDE09C9DAA800C9BA7A /* ResourceRequest.h */; };
 		6545F67009B82FED0013006F /* TransferJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6545F66C09B82FED0013006F /* TransferJob.cpp */; };
 		6545F67109B82FED0013006F /* TransferJob.h in Headers */ = {isa = PBXBuildFile; fileRef = 6545F66D09B82FED0013006F /* TransferJob.h */; };
 		6545F67209B82FED0013006F /* TransferJobClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 6545F66E09B82FED0013006F /* TransferJobClient.h */; };
@@ -1147,6 +1148,7 @@
 		651B4D8309AC83370029F1EF /* QStringList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = QStringList.cpp; path = platform/QStringList.cpp; sourceTree = "<group>"; };
 		651B4D8409AC83370029F1EF /* QStringList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = QStringList.h; path = platform/QStringList.h; sourceTree = "<group>"; };
 		651B4D8E09AC859F0029F1EF /* QStringListMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = QStringListMac.mm; sourceTree = "<group>"; };
+		6522BCDE09C9DAA800C9BA7A /* ResourceRequest.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ResourceRequest.h; sourceTree = "<group>"; };
 		6545F66C09B82FED0013006F /* TransferJob.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = TransferJob.cpp; path = platform/TransferJob.cpp; sourceTree = "<group>"; };
 		6545F66D09B82FED0013006F /* TransferJob.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = TransferJob.h; path = platform/TransferJob.h; sourceTree = "<group>"; };
 		6545F66E09B82FED0013006F /* TransferJobClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = TransferJobClient.h; path = platform/TransferJobClient.h; sourceTree = "<group>"; };
@@ -2474,6 +2476,7 @@
 		65BF02180974806300C43196 /* page */ = {
 			isa = PBXGroup;
 			children = (
+				6522BCDE09C9DAA800C9BA7A /* ResourceRequest.h */,
 				65BF02290974816300C43196 /* Frame.cpp */,
 				65BF022A0974816300C43196 /* Frame.h */,
 				65BF022B0974816300C43196 /* FramePrivate.h */,
@@ -4458,6 +4461,7 @@
 				93EEC20409C2877700C515D1 /* CanvasPattern.h in Headers */,
 				930CAD1509C4F3C300229C04 /* JSCanvasRenderingContext2DBase.h in Headers */,
 				D0B0556809C6700100307E43 /* CreateLinkCommand.h in Headers */,
+				6522BCDF09C9DAA800C9BA7A /* ResourceRequest.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

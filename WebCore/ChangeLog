@@ -1,3 +1,48 @@
+2006-03-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+
+        - renamed URLArgs to ResourceRequest, split it into its own header
+        - moved methods to get and set ResourceRequest to Frame
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/BrowserExtension.h:
+        * bridge/mac/BrowserExtensionMac.h:
+        * bridge/mac/BrowserExtensionMac.mm:
+        (WebCore::BrowserExtensionMac::openURLRequest):
+        (WebCore::BrowserExtensionMac::createNewWindow):
+        * bridge/mac/MacFrame.h:
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::openURLRequest):
+        (WebCore::MacFrame::submitForm):
+        (WebCore::MacFrame::urlSelected):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge openURL:reload:contentType:refresh:lastModified:pageCache:]):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::createNewWindow):
+        (KJS::WindowFunc::callAsFunction):
+        * page/Frame.cpp:
+        (WebCore::Frame::didOpenURL):
+        (WebCore::Frame::receivedFirstData):
+        (WebCore::Frame::setResourceRequest):
+        (WebCore::Frame::resourceRequest):
+        (WebCore::Frame::begin):
+        (WebCore::Frame::changeLocation):
+        (WebCore::Frame::urlSelected):
+        (WebCore::Frame::requestFrame):
+        (WebCore::Frame::submitForm):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        * page/ResourceRequest.h: Added.
+        (WebCore::ResourceRequest::ResourceRequest):
+        (WebCore::ResourceRequest::contentType):
+        (WebCore::ResourceRequest::setContentType):
+        (WebCore::ResourceRequest::doPost):
+        (WebCore::ResourceRequest::setDoPost):
+        (WebCore::ResourceRequest::lockHistory):
+        (WebCore::ResourceRequest::setLockHistory):
+        (WebCore::ResourceRequest::metaData):
+
 2006-03-16  Darin Adler  <darin@apple.com>
 
         - need to touch one more file to fix the build

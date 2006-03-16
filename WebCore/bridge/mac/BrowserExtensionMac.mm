@@ -40,13 +40,13 @@ BrowserExtensionMac::BrowserExtensionMac(Frame *frame)
 {
 }
 
-void BrowserExtensionMac::openURLRequest(const KURL& url, const URLArgs& args)
+void BrowserExtensionMac::openURLRequest(const KURL& url, const ResourceRequest& request)
 {
     if (url.protocol().lower() == "javascript") {
 	m_frame->createEmptyDocument();
 	m_frame->replaceContentsWithScriptResult(url);
      } else {
-	m_frame->openURLRequest(url, args);
+	m_frame->openURLRequest(url, request);
     }
 }
 
@@ -54,37 +54,37 @@ void BrowserExtensionMac::openURLNotify()
 {
 }
 
-void BrowserExtensionMac::createNewWindow(const KURL &url, const URLArgs &urlArgs) 
+void BrowserExtensionMac::createNewWindow(const KURL& url, const ResourceRequest& request) 
 {
-    createNewWindow(url, urlArgs, WindowArgs(), NULL);
+    createNewWindow(url, request, WindowArgs(), NULL);
 }
 
-void BrowserExtensionMac::createNewWindow(const KURL &url, 
-						const URLArgs &urlArgs, 
-						const WindowArgs &winArgs, 
-						Frame*& part)
+void BrowserExtensionMac::createNewWindow(const KURL& url, 
+                                          const ResourceRequest& request, 
+                                          const WindowArgs& winArgs, 
+                                          Frame*& part)
 {
-    createNewWindow(url, urlArgs, winArgs, &part);
+    createNewWindow(url, request, winArgs, &part);
 }
 
-void BrowserExtensionMac::createNewWindow(const KURL &url, 
-						const URLArgs &urlArgs, 
-						const WindowArgs &winArgs, 
-						Frame** partResult)
+void BrowserExtensionMac::createNewWindow(const KURL& url, 
+                                          const ResourceRequest& request, 
+                                          const WindowArgs& winArgs, 
+                                          Frame** partResult)
 { 
     KWQ_BLOCK_EXCEPTIONS;
 
-    ASSERT(!winArgs.dialog || urlArgs.frameName.isEmpty());
+    ASSERT(!winArgs.dialog || request.frameName.isEmpty());
 
     if (partResult)
 	*partResult = NULL;
 
-    NSString *frameName = urlArgs.frameName.length() == 0 ? nil : urlArgs.frameName.getNSString();
+    NSString *frameName = request.frameName.length() == 0 ? nil : request.frameName.getNSString();
     if (frameName) {
         // FIXME: Can't we just use m_frame->findFrame?
         if (WebCoreFrameBridge *bridge = [m_frame->bridge() findFrameNamed:frameName]) {
             if (!url.isEmpty()) {
-                DOMString argsReferrer = urlArgs.metaData().get("referrer");
+                DOMString argsReferrer = request.metaData().get("referrer");
                 NSString *referrer;
                 if (!argsReferrer.isEmpty())
                     referrer = argsReferrer;
@@ -93,7 +93,7 @@ void BrowserExtensionMac::createNewWindow(const KURL &url,
 
                 [bridge loadURL:url.getNSURL() 
                        referrer:referrer 
-                         reload:urlArgs.reload 
+                         reload:request.reload 
                     userGesture:true 
                          target:nil 
                 triggeringEvent:nil 
@@ -120,7 +120,7 @@ void BrowserExtensionMac::createNewWindow(const KURL &url,
     
     WebCoreFrameBridge *bridge = [page mainFrame];
     if ([bridge impl])
-	[bridge impl]->tree()->setName(urlArgs.frameName);
+	[bridge impl]->tree()->setName(request.frameName);
     
     if (partResult)
 	*partResult = [bridge impl];

@@ -528,12 +528,11 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     }
         
     // arguments
-    URLArgs args(m_frame->browserExtension()->urlArgs());
-    args.reload = reload;
-    if (contentType) {
-        args.serviceType = QString::fromNSString(contentType);
-    }
-    m_frame->browserExtension()->setURLArgs(args);
+    ResourceRequest request(m_frame->resourceRequest());
+    request.reload = reload;
+    if (contentType)
+        request.serviceType = QString::fromNSString(contentType);
+    m_frame->setResourceRequest(request);
 
     // opening the URL
     if (m_frame->didOpenURL(URL)) {
