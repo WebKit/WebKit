@@ -152,6 +152,7 @@ Widget::FocusPolicy QLineEdit::focusPolicy() const { notImplemented(); return No
 Cursor::Cursor(Image*) { notImplemented(); }
 
 MouseEvent::MouseEvent() { notImplemented(); }
+bool MouseEvent::isMouseButtonDown(MouseButton) { notImplemented(); return false; }
 String WebCore::searchableIndexIntroduction() { notImplemented(); return String(); }
 
 int WebCore::findNextSentenceFromIndex(QChar const*,int,int,bool) { notImplemented(); return 0; }

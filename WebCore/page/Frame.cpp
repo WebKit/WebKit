@@ -2684,7 +2684,7 @@ void Frame::handleAutoscroll(RenderLayer* layer)
 
 void Frame::autoscrollTimerFired(Timer<Frame>*)
 {
-    bool isStillDown = CGEventSourceButtonState(kCGEventSourceStateCombinedSessionState, kCGMouseButtonLeft);   
+    bool isStillDown = MouseEvent::isMouseButtonDown(LeftButton);  
     if (!isStillDown){
         stopAutoscrollTimer();
         return;

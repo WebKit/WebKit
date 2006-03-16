@@ -1,3 +1,14 @@
+2006-03-15  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Eric.
+
+        - Fixes win32 build.
+
+        * page/Frame.cpp: (WebCore::Frame::autoscrollTimerFired): Calls isMouseButtonDown instead of CG function.
+        * platform/MouseEvent.h: Added isMouseButtonDown
+        * platform/mac/MouseEventMac.mm: (WebCore::MouseEvent::isMouseButtonDown): Calls CG function to get state of mouse button.
+        * platform/win/TemporaryLinkStubs.cpp: (MouseEvent::isMouseButtonDown): Added stub.
+
 2006-03-15  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by geoff.
