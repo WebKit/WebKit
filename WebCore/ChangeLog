@@ -1,5 +1,22 @@
 2006-03-15  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by darin.
+
+        Remove unused code and clean-up style.
+
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::advanceToNextMisspelling):
+        (WebCore::MacFrame::wheelEvent):
+        (WebCore::MacFrame::nextKeyViewInFrame):
+        (WebCore::MacFrame::nextKeyViewInFrameHierarchy):
+        (WebCore::MacFrame::nextKeyView):
+        * page/Frame.cpp:
+        * page/Frame.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::dispatchMouseEvent):
+
+2006-03-15  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by mjs.
 
         http://bugzilla.opendarwin.org/show_bug.cgi?id=7790

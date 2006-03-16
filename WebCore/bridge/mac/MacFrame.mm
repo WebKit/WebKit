@@ -689,9 +689,8 @@ QString MacFrame::advanceToNextMisspelling(bool startBeforeSelection)
             // We match AppKit's rule: Start 1 character before the selection.
             VisiblePosition oneBeforeStart = start.previous();
             setStart(searchRange.get(), oneBeforeStart.isNotNull() ? oneBeforeStart : start);
-        } else {
+        } else
             setStart(searchRange.get(), VisiblePosition(selection().end(), selection().affinity()));
-        }
     }
 
     // If we're not in an editable node, try to find one, make that our range to work in
@@ -718,9 +717,8 @@ QString MacFrame::advanceToNextMisspelling(bool startBeforeSelection)
         } // else we were already at the start of the editable node
     }
     
-    if (searchRange->collapsed(exception)) {
+    if (searchRange->collapsed(exception))
         return QString();       // nothing to search in
-    }
     
     // Get the spell checker if it is available
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
@@ -819,28 +817,24 @@ bool MacFrame::wheelEvent(NSEvent *event)
     }  else if (deltaY > 0) {
         direction = KWQScrollUp;
         multiplier = deltaY;
-    } else {
+    } else
         return false;
-    }
 
     RenderObject *r = renderer();
-    if (r == 0) {
+    if (!r)
         return false;
-    }
     
     NSPoint point = [d->m_view->getDocumentView() convertPoint:[event locationInWindow] fromView:nil];
     RenderObject::NodeInfo nodeInfo(true, true);
     r->layer()->hitTest(nodeInfo, (int)point.x, (int)point.y);    
     
     NodeImpl *node = nodeInfo.innerNode();
-    if (node == 0) {
+    if (!node)
         return false;
-    }
     
     r = node->renderer();
-    if (r == 0) {
+    if (!r)
         return false;
-    }
     
     return r->scroll(direction, KWQScrollWheel, multiplier);
 }
@@ -912,32 +906,29 @@ QString MacFrame::mimeTypeForFileName(const QString &fileName) const
 NSView *MacFrame::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirection direction)
 {
     DocumentImpl *doc = document();
-    if (!doc) {
+    if (!doc)
         return nil;
-    }
+    
     for (;;) {
         node = direction == KWQSelectingNext
             ? doc->nextFocusNode(node) : doc->previousFocusNode(node);
-        if (!node) {
+        if (!node)
             return nil;
-        }
+        
         RenderObject *renderer = node->renderer();
         if (renderer->isWidget()) {
             RenderWidget *renderWidget = static_cast<RenderWidget *>(renderer);
             Widget *widget = renderWidget->widget();
             FrameView *childFrameWidget = widget->isFrameView() ? static_cast<FrameView *>(widget) : 0;
             NSView *view = nil;
-            if (childFrameWidget) {
+            if (childFrameWidget)
                 view = Mac(childFrameWidget->frame())->nextKeyViewInFrame(0, direction);
-            } else if (widget) {
+            else if (widget)
                 view = widget->getView();
-            }
-            if (view) {
+            if (view)
                 return view;
-            }
-        } else {
+        } else
             static_cast<ElementImpl *>(node)->focus(); 
-        } 
         [_bridge makeFirstResponder:[_bridge documentView]];
         return [_bridge documentView];
     }
@@ -946,19 +937,14 @@ NSView *MacFrame::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirection direc
 NSView *MacFrame::nextKeyViewInFrameHierarchy(NodeImpl *node, KWQSelectionDirection direction)
 {
     NSView *next = nextKeyViewInFrame(node, direction);
-    if (!next) {
-        MacFrame *parent = Mac(tree()->parent());
-        if (parent)
+    if (!next)
+        if (MacFrame *parent = Mac(tree()->parent()))
             next = parent->nextKeyViewInFrameHierarchy(ownerElement(), direction);
-    }
     
     // remove focus from currently focused node if we're giving focus to another view
-    if (next && (next != [_bridge documentView])) {
-        DocumentImpl *doc = document();
-        if (doc) {
+    if (next && (next != [_bridge documentView]))
+        if (DocumentImpl *doc = document())
             doc->setFocusNode(0);
-        }            
-    }    
     
     return next;
 }
@@ -969,9 +955,8 @@ NSView *MacFrame::nextKeyView(NodeImpl *node, KWQSelectionDirection direction)
     KWQ_BLOCK_EXCEPTIONS;
 
     next = nextKeyViewInFrameHierarchy(node, direction);
-    if (next) {
+    if (next)
         return next;
-    }
 
     // Look at views from the top level part up, looking for a next key view that we can use.
 
@@ -979,9 +964,8 @@ NSView *MacFrame::nextKeyView(NodeImpl *node, KWQSelectionDirection direction)
         ? [_bridge nextKeyViewOutsideWebFrameViews]
         : [_bridge previousKeyViewOutsideWebFrameViews];
 
-    if (next) {
+    if (next)
         return next;
-    }
 
     KWQ_UNBLOCK_EXCEPTIONS;
     

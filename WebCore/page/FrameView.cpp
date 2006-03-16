@@ -1004,7 +1004,7 @@ bool FrameView::dispatchMouseEvent(const AtomicString& eventType, NodeImpl* targ
                 swallowEvent = true;
         } else if (!node || !node->focused()) {
             if (!m_frame->document()->setFocusNode(0))
-            swallowEvent = true;
+                swallowEvent = true;
         }
     }
 

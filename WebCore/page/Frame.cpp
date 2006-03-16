@@ -2879,13 +2879,6 @@ NodeImpl* Frame::nodeForWidget(const Widget* widget)
     return client->element(const_cast<Widget*>(widget));
 }
 
-void Frame::setDocumentFocus(Widget *widget)
-{
-    NodeImpl *node = nodeForWidget(widget);
-    ASSERT(node);
-    node->getDocument()->setFocusNode(node);
-}
-
 void Frame::clearDocumentFocus(Widget *widget)
 {
     NodeImpl *node = nodeForWidget(widget);

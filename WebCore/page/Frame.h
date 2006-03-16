@@ -730,7 +730,6 @@ private:
   static NodeImpl *nodeForWidget(const Widget *);
   static Frame *frameForNode(NodeImpl *);
 
-  static void setDocumentFocus(Widget *);
   static void clearDocumentFocus(Widget *);
 
   static const QPtrList<Frame> &instances() { return mutableInstances(); }    
