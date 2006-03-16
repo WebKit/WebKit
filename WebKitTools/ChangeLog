@@ -1,3 +1,13 @@
+2006-03-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Eric.
+
+        Added run-testkjs and compare-timing-files scripts, to support super
+        accurate JS iBench.
+
+        * Scripts/compare-timing-files: Added.
+        * Scripts/run-testkjs: Added.
+
 2006-03-14  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by mjs.
@@ -1810,7 +1820,6 @@
         Added display of "-w3c.png" baseline images for SVG.
         http://bugzilla.opendarwin.org/show_bug.cgi?id=4581
 
->>>>>>> 1.80
 2005-08-20  Eric Seidel  <eseidel@apple.com>
 
         * Scripts/run-webkit-tests:
