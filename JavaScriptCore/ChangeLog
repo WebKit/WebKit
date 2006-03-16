@@ -1,3 +1,18 @@
+2006-03-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed Vector so that you can pass a reference to something in the vector
+          to the append or insert functions
+
+        * kxmlcore/Vector.h:
+        (KXMLCore::Vector::expandCapacity): Added new overloads that take a pointer to adjust
+        and return the adjusted value of the pointer.
+        (KXMLCore::Vector::append): Pass a pointer when expanding the vector, and use it when
+        adding the new element. Makes the case where the element moves when the vector
+        is expanded work.
+        (KXMLCore::Vector::insert): Ditto.
+
 2006-03-15  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by adele.

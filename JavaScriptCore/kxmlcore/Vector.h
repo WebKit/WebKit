@@ -399,6 +399,8 @@ namespace KXMLCore {
 
     private:
         void expandCapacity(size_t newMinCapacity);
+        const T* expandCapacity(size_t newMinCapacity, const T*);
+        template<typename U> U* expandCapacity(size_t newMinCapacity, U*); 
 
         size_t m_size;
         Impl m_impl;
@@ -484,6 +486,25 @@ namespace KXMLCore {
     }
     
     template<typename T, size_t inlineCapacity>
+    const T* Vector<T, inlineCapacity>::expandCapacity(size_t newMinCapacity, const T* ptr)
+    {
+        if (ptr < begin() || ptr >= end()) {
+            expandCapacity(newMinCapacity);
+            return ptr;
+        }
+        size_t index = ptr - begin();
+        expandCapacity(newMinCapacity);
+        return begin() + index;
+    }
+
+    template<typename T, size_t inlineCapacity> template<typename U>
+    inline U* Vector<T, inlineCapacity>::expandCapacity(size_t newMinCapacity, U* ptr)
+    {
+        expandCapacity(newMinCapacity);
+        return ptr;
+    }
+
+    template<typename T, size_t inlineCapacity>
     void Vector<T, inlineCapacity>::resize(size_t size)
     {
         if (size <= m_size)
@@ -516,9 +537,10 @@ namespace KXMLCore {
     template<typename T, size_t inlineCapacity> template<typename U>
     inline void Vector<T, inlineCapacity>::append(const U& val)
     {
+        const U* ptr = &val;
         if (size() == capacity())
-            expandCapacity(size() + 1);
-        new (end()) T(val);
+            ptr = expandCapacity(size() + 1, ptr);
+        new (end()) T(*ptr);
         ++m_size;
     }
 
@@ -526,11 +548,12 @@ namespace KXMLCore {
     inline void Vector<T, inlineCapacity>::insert(size_t position, const U& val)
     {
         ASSERT(position <= size());
+        const U* ptr = &val;
         if (size() == capacity())
-            expandCapacity(size() + 1);
+            ptr = expandCapacity(size() + 1, ptr);
         T* spot = begin() + position;
         TypeOperations::moveOverlapping(spot, end(), spot + 1);
-        new (spot) T(val);
+        new (spot) T(*ptr);
         ++m_size;
     }
 
