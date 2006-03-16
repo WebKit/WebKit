@@ -25,16 +25,16 @@ module core {
 
         NodeList getElementsByTagName(in DOMString name);
 
-        // ConvertNullStringTo=Null should be used here, since if the attribute isn't present at all, you should
-        // return null and not "".    
+        // ConvertNullStringTo=Null is used here since if the attribute isn't present at all
+        // the function should return null and not "".
         [ConvertNullStringTo=Null] DOMString getAttribute(in DOMString name);
 
-        void setAttribute(in DOMString name, 
+        void setAttribute(in DOMString name,
                           in DOMString value)
             raises(DOMException);
 
         void removeAttribute(in DOMString name)
-            raises(DOMException);        
+            raises(DOMException);
 
         Attr getAttributeNode(in DOMString name);
 
@@ -42,31 +42,31 @@ module core {
             raises(DOMException);
 
         Attr removeAttributeNode(in Attr oldAttr)
-            raises(DOMException);                    
+            raises(DOMException);
 
         // DOM Level 2
 
-        NodeList getElementsByTagNameNS(in [ConvertNullToNullString] DOMString namespaceURI, 
+        NodeList getElementsByTagNameNS(in [ConvertNullToNullString] DOMString namespaceURI,
                                         in DOMString localName);
 
         boolean hasAttribute(in DOMString name);
 
-        boolean hasAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI, 
+        boolean hasAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
                                in DOMString localName);
 
-        DOMString getAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI, 
+        DOMString getAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
                                  in DOMString localName);
 
-        void setAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI, 
+        void setAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
                             in DOMString qualifiedName, 
                             in DOMString value)
             raises(DOMException);
 
-        void removeAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI, 
+        void removeAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
                                in DOMString localName)
             raises(DOMException);
 
-        Attr getAttributeNodeNS(in [ConvertNullToNullString] DOMString namespaceURI, 
+        Attr getAttributeNodeNS(in [ConvertNullToNullString] DOMString namespaceURI,
                                 in DOMString localName);
 
         Attr setAttributeNodeNS(in Attr newAttr)
