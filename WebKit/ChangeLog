@@ -1,3 +1,14 @@
+2006-03-15  Darin Adler  <darin@apple.com>
+
+        Fix by Patrick Beard, reviewed by me.
+
+        - fix <rdar://problem/4478181> WebPluginController leaks NSArray and NSMutableSet objects
+
+        * Plugins/WebPluginController.m:
+        (-[WebPluginController initWithDocumentView:]): Call CFMakeCollectable on the CFSet
+        so we can act like it's an NSSet.
+        (-[WebPluginController dealloc]): Release _views and _checksInProgress.
+
 2006-03-13  Tim Omernick  <timo@apple.com>
 
         Reviewed by Maciej.
