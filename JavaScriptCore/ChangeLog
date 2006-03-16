@@ -1,3 +1,16 @@
+2006-03-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - tweaks to my change to redo KJS::Node refcounting
+
+        * kjs/nodes.cpp:
+        (Node::ref):
+        (Node::deref):
+        (Node::refcount):
+        (Node::clearNewNodes):
+        * kjs/nodes.h:
+
 2006-03-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

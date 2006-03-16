@@ -84,7 +84,7 @@ namespace KJS {
 
     void ref();
     void deref();
-    unsigned int refcount();
+    unsigned refcount();
     static void clearNewNodes();
 
     virtual Node *nodeInsideAllParens();

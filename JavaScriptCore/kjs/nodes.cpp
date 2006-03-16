@@ -125,9 +125,12 @@ void Node::ref()
         HashSet<Node*>::iterator it = newNodes->find(this);
         if (it != newNodes->end()) {
             newNodes->remove(it);
+            ASSERT(!nodeExtraRefCounts || !nodeExtraRefCounts->contains(this));
             return;
         }
     }   
+
+    ASSERT(!newNodes || !newNodes->contains(this));
     
     if (!nodeExtraRefCounts)
         nodeExtraRefCounts = new HashCountedSet<Node*>;
@@ -136,6 +139,8 @@ void Node::ref()
 
 void Node::deref()
 {
+    ASSERT(!newNodes || !newNodes->contains(this));
+
     HashCountedSet<Node*>::iterator it = nodeExtraRefCounts->find(this);
     if (it == nodeExtraRefCounts->end())
         delete this;
@@ -143,10 +148,14 @@ void Node::deref()
         nodeExtraRefCounts->remove(it);
 }
 
-unsigned int Node::refcount() 
+unsigned Node::refcount()
 {
-    if (newNodes && newNodes->contains(this))
+    if (newNodes && newNodes->contains(this)) {
+        ASSERT(!nodeExtraRefCounts || !nodeExtraRefCounts->contains(this));
         return 0;
+    }
+ 
+    ASSERT(!newNodes || !newNodes->contains(this));
 
     if (!nodeExtraRefCounts)
         return 1;
@@ -156,11 +165,17 @@ unsigned int Node::refcount()
 
 void Node::clearNewNodes()
 {
-    if (newNodes) {
-        deleteAllValues(*newNodes);
-        delete newNodes;
-        newNodes = 0;
-    }
+    if (!newNodes)
+        return;
+
+#ifndef NDEBUG
+    HashSet<Node*>::iterator end = newNodes->end();
+    for (HashSet<Node*>::iterator it = newNodes->begin(); it != end; ++it)
+        ASSERT(!nodeExtraRefCounts || !nodeExtraRefCounts->contains(*it));
+#endif
+    deleteAllValues(*newNodes);
+    delete newNodes;
+    newNodes = 0;
 }
 
 static void substitute(UString &string, const UString &substring)
