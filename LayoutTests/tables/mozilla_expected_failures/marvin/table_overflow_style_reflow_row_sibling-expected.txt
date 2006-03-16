@@ -1,0 +1,34 @@
+layer at (0,0) size 785x666
+  RenderCanvas at (0,0) size 785x600
+layer at (0,0) size 785x666
+  RenderBlock {HTML} at (0,0) size 785x666
+    RenderBody {BODY} at (8,8) size 769x650
+      RenderTable {TABLE} at (0,0) size 200x650 [border: (1px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 198x206 [border: (3px solid #FFA500)]
+          RenderText {TEXT} at (77,3) size 44x37
+            text run at (77,3) width 44: "cap"
+        RenderTableSection {TBODY} at (1,207) size 0x442
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (30,45) size 54x17 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 18x15
+                text run at (1,1) width 18: "foo"
+            RenderTableCell {TD} at (114,30) size 54x47 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 17x15
+                text run at (1,1) width 17: "bar"
+              RenderBR {BR} at (18,1) size 0x15
+              RenderText {TEXT} at (1,16) size 19x15
+                text run at (1,16) width 19: "baz"
+              RenderBR {BR} at (20,16) size 0x15
+              RenderText {TEXT} at (1,31) size 19x15
+                text run at (1,31) width 19: "zap"
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (30,203) size 54x113 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 44x111
+                text run at (1,1) width 43: "foo"
+                text run at (1,38) width 41: "bar"
+                text run at (1,75) width 44: "baz"
+            RenderTableCell {TD} at (114,107) size 54x305 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 52x52 [border: (1px solid #008000)]
+                RenderBlock {DIV} at (1,1) size 402x302 [border: (1px solid #FF0000)]
+                  RenderText {TEXT} at (1,1) size 16x37
+                    text run at (1,1) width 16: "d"

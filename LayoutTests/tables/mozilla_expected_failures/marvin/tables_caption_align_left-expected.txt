@@ -1,0 +1,33 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {TEXT} at (0,0) size 423x18
+          text run at (0,0) width 423: "The caption should be aligned at the left side of the top of the table."
+      RenderTable {TABLE} at (0,34) size 168x70 [border: (1px outset #808080)]
+        RenderBlock {CAPTION} at (0,0) size 166x18
+          RenderText {TEXT} at (51,0) size 63x18
+            text run at (51,0) width 63: "Wild Cats"
+        RenderTableSection {TBODY} at (1,19) size 0x50
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,2) size 45x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 30x18
+                text run at (2,2) width 30: "Lion"
+            RenderTableCell {TD} at (49,2) size 57x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 53x18
+                text run at (2,2) width 53: "Leopard"
+            RenderTableCell {TD} at (108,2) size 56x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 52x18
+                text run at (2,2) width 52: "Cheetah"
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,26) size 45x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 41x18
+                text run at (2,2) width 41: "Jaguar"
+            RenderTableCell {TD} at (49,26) size 57x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 45x18
+                text run at (2,2) width 45: "Bobcat"
+            RenderTableCell {TD} at (108,26) size 56x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 42x18
+                text run at (2,2) width 42: "Ocelot"

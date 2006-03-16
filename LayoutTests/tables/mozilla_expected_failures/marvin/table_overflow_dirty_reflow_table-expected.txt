@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x556
+  RenderBlock {HTML} at (0,0) size 800x556
+    RenderBody {BODY} at (8,8) size 784x540
+      RenderTable {TABLE} at (0,0) size 200x540 [bgcolor=#0000FF]
+        RenderBlock {CAPTION} at (0,0) size 200x200 [bgcolor=#FFA500]
+          RenderText {TEXT} at (89,0) size 22x18
+            text run at (89,0) width 22: "cap"
+        RenderTableSection {TBODY} at (0,200) size 0x340
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (0,141) size 80x58 [bgcolor=#FFFF00] [r=0 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (20,20) size 21x18
+                text run at (20,20) width 21: "foo"
+            RenderTableCell {TD} at (80,0) size 120x340 [bgcolor=#FFFF00] [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (20,20) size 50x50 [bgcolor=#008000]
+                RenderBlock {DIV} at (0,0) size 400x300 [bgcolor=#FF0000]
+                  RenderText {TEXT} at (0,0) size 8x18
+                    text run at (0,0) width 8: "d"
