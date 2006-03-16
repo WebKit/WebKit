@@ -1,0 +1,81 @@
+/*
+ * Copyright (C) 2006 Apple Computer, Inc.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+module html {
+
+    interface [LegacyParent=JSCanvasRenderingContext2DBase] CanvasRenderingContext2D {
+
+        // Web Applications 1.0 draft
+
+        readonly attribute HTMLCanvasElement canvas;
+
+        void save();
+        void restore();
+
+        void scale(in float sx, in float sy);
+        void rotate(in float angle);
+        void translate(in float tx, in float ty);
+
+        attribute float globalAlpha;
+        attribute DOMString globalCompositeOperation;
+
+        CanvasGradient createLinearGradient(in float x0, in float y0, in float x1, in float y1);
+        CanvasGradient createRadialGradient(in float x0, in float y0, in float r0, in float x1, in float y1, in float r1);
+
+        attribute float lineWidth;
+        attribute DOMString lineCap;
+        attribute DOMString lineJoin;
+        attribute float miterLimit;
+
+        attribute float shadowOffsetX;
+        attribute float shadowOffsetY;
+        attribute float shadowBlur;
+        attribute DOMString shadowColor;
+
+        void clearRect(in float x, in float y, in float width, in float height);
+        void fillRect(in float x, in float y, in float width, in float height);
+
+        void beginPath();
+        void closePath();
+        void moveTo(in float x, in float y);
+        void lineTo(in float x, in float y);
+        void quadraticCurveTo(in float cpx, in float cpy, in float x, in float y);
+        void bezierCurveTo(in float cp1x, in float cp1y, in float cp2x, in float cp2y, in float x, in float y);
+        void arcTo(in float x1, in float y1, in float x2, in float y2, in float radius);
+        void rect(in float x, in float y, in float width, in float height);
+        void arc(in float x, in float y, in float radius, in float startAngle, in float endAngle, in boolean clockwise);
+        void fill();
+        void stroke();
+        void clip();
+
+        // other
+
+        void setAlpha(in float alpha);
+        void setCompositeOperation(in DOMString compositeOperation);
+
+        void setLineWidth(in float width);
+        void setLineCap(in DOMString cap);
+        void setLineJoin(in DOMString join);
+        void setMiterLimit(in float limit);
+
+        void clearShadow();
+
+    };
+
+}
