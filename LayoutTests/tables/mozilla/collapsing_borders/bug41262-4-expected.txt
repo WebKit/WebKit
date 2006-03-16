@@ -1,0 +1,41 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {BLOCKQUOTE} at (40,0) size 704x113
+        RenderBlock {CENTER} at (0,0) size 704x113
+          RenderTable {TABLE} at (300,0) size 103x75
+            RenderTableSection {TBODY} at (0,0) size 0x75
+              RenderTableRow {TR} at (0,0) size 0x0
+                RenderTableCell {TD} at (0,0) size 37x25 [border: (3px groove #0000FF)] [r=0 c=0 rs=1 cs=1]
+                  RenderText {TEXT} at (4,4) size 29x18
+                    text run at (4,4) width 29: "EST"
+                RenderTableCell {TD} at (37,0) size 66x25 [border: (3px groove #0000FF)] [r=0 c=1 rs=1 cs=1]
+                  RenderText {TEXT} at (4,4) size 59x18
+                    text run at (4,4) width 59: "9:00 a.m."
+              RenderTableRow {TR} at (0,0) size 0x0
+                RenderTableCell {TD} at (0,25) size 37x25 [border: (3px groove #0000FF)] [r=1 c=0 rs=1 cs=1]
+                  RenderText {TEXT} at (4,4) size 30x18
+                    text run at (4,4) width 30: "CST"
+                RenderTableCell {TD} at (37,25) size 66x25 [border: (3px groove #0000FF)] [r=1 c=1 rs=1 cs=1]
+                  RenderText {TEXT} at (4,4) size 59x18
+                    text run at (4,4) width 59: "8:00 a.m."
+              RenderTableRow {TR} at (0,0) size 0x0
+                RenderTableCell {TD} at (0,50) size 37x25 [border: (3px groove #0000FF)] [r=2 c=0 rs=1 cs=1]
+                  RenderText {TEXT} at (4,4) size 28x18
+                    text run at (4,4) width 28: "PST"
+                RenderTableCell {TD} at (37,50) size 66x25 [border: (3px groove #0000FF)] [r=2 c=1 rs=1 cs=1]
+                  RenderText {TEXT} at (4,4) size 59x18
+                    text run at (4,4) width 59: "6:00 a.m."
+          RenderBlock {P} at (0,91) size 704x22
+            RenderButton {INPUT} at (287,2) size 62x18 [bgcolor=#C0C0C0]
+              RenderBlock (anonymous) at (8,2) size 46x13
+                RenderText at (0,0) size 46x13
+                  text run at (0,0) width 46: "separate"
+            RenderText {TEXT} at (351,1) size 4x18
+              text run at (351,1) width 4: " "
+            RenderButton {INPUT} at (357,2) size 60x18 [bgcolor=#C0C0C0]
+              RenderBlock (anonymous) at (8,2) size 44x13
+                RenderText at (0,0) size 44x13
+                  text run at (0,0) width 44: "collapse"
