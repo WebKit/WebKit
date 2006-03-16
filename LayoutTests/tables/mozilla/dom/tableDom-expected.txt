@@ -1,0 +1,46 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {FORM} at (0,0) size 784x23
+        RenderSelect {SELECT} at (2,3) size 95x18
+        RenderText {TEXT} at (99,2) size 52x18
+          text run at (99,2) width 52: "   tbody "
+        RenderLineEdit {INPUT} at (153,2) size 43x19
+        RenderText {TEXT} at (198,2) size 41x18
+          text run at (198,2) width 41: "   row "
+        RenderLineEdit {INPUT} at (241,2) size 43x19
+        RenderText {TEXT} at (286,2) size 35x18
+          text run at (286,2) width 35: "   col "
+        RenderLineEdit {INPUT} at (323,2) size 43x19
+        RenderText {TEXT} at (368,2) size 74x18
+          text run at (368,2) width 74: "   row span "
+        RenderLineEdit {INPUT} at (444,2) size 43x19
+        RenderText {TEXT} at (489,2) size 68x18
+          text run at (489,2) width 68: "   col span "
+        RenderLineEdit {INPUT} at (559,2) size 43x19
+        RenderText {TEXT} at (604,2) size 20x18
+          text run at (604,2) width 20: "     "
+        RenderButton {INPUT} at (626,3) size 42x18 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (8,2) size 26x13
+            RenderText at (0,0) size 26x13
+              text run at (0,0) width 26: "Do It"
+        RenderText {TEXT} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,39) size 784x18
+        RenderBR {BR} at (0,0) size 0x18
+      RenderTable {TABLE} at (0,57) size 62x52 [bgcolor=#FFA500] [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 0x50
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,2) size 27x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 23x18
+                text run at (2,2) width 23: "c11"
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,26) size 27x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 23x18
+                text run at (2,2) width 23: "c21"
+            RenderTableCell {TD} at (31,26) size 27x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 23x18
+                text run at (2,2) width 23: "c22"
+      RenderBlock (anonymous) at (0,109) size 784x18
+        RenderBR {BR} at (0,0) size 0x18
