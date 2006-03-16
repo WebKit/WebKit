@@ -1,5 +1,14 @@
 2006-03-15  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by adele.
+
+        Build fix.
+
+        * kjs/date_object.cpp:
+        (KJS::DateProtoFunc::callAsFunction): use size() not "len()"
+
+2006-03-15  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by mjs.
 
         Fix CString copy constructor, fixes Date.parse("") on Win32.
