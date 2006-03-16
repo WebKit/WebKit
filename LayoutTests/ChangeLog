@@ -1,3 +1,12 @@
+2006-03-15  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7790
+
+        * fast/events/dblclick-addEventListener-expected.txt: Added.
+        * fast/events/dblclick-addEventListener.html: Added.
+
 2006-03-16  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Maciej.

@@ -2044,9 +2044,8 @@ void MacFrame::mouseDragged(NSEvent *event)
 void MacFrame::mouseUp(NSEvent *event)
 {
     FrameView *v = d->m_view.get();
-    if (!v || _sendingEventToSubview) {
+    if (!v || _sendingEventToSubview)
         return;
-    }
 
     KWQ_BLOCK_EXCEPTIONS;
 
@@ -2144,9 +2143,8 @@ void MacFrame::mouseMoved(NSEvent *event)
     FrameView *v = d->m_view.get();
     // Reject a mouse moved if the button is down - screws up tracking during autoscroll
     // These happen because WebKit sometimes has to fake up moved events.
-    if (!v || d->m_bMousePressed || _sendingEventToSubview) {
+    if (!v || d->m_bMousePressed || _sendingEventToSubview)
         return;
-    }
     
     KWQ_BLOCK_EXCEPTIONS;
 
@@ -2175,18 +2173,16 @@ bool MacFrame::shouldDragAutoNode(NodeImpl* node, int x, int y) const
         d->m_view->contentsToViewport(x, y, windowX, windowY);
         NSPoint eventLoc = {windowX, windowY};
         return [_bridge mayStartDragAtEventLocation:eventLoc];
-    } else {
+    } else
         return NO;
-    }
 }
 
 bool MacFrame::sendContextMenuEvent(NSEvent *event)
 {
     DocumentImpl* doc = d->m_doc.get();
     FrameView* v = d->m_view.get();
-    if (!doc || !v) {
+    if (!doc || !v)
         return false;
-    }
 
     bool swallowEvent;
     KWQ_BLOCK_EXCEPTIONS;
@@ -2194,17 +2190,17 @@ bool MacFrame::sendContextMenuEvent(NSEvent *event)
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = KWQRetain(event);
     
-    MouseEvent qev(event);
+    MouseEvent mouseEvent(event);
 
     int xm, ym;
-    v->viewportToContents(qev.x(), qev.y(), xm, ym);
+    v->viewportToContents(mouseEvent.x(), mouseEvent.y(), xm, ym);
 
-    MouseEventWithHitTestResults mev = doc->prepareMouseEvent(false, true, false, xm, ym, &qev);
+    MouseEventWithHitTestResults mev = doc->prepareMouseEvent(false, true, false, xm, ym, &mouseEvent);
 
-    swallowEvent = v->dispatchMouseEvent(contextmenuEvent, mev.innerNode(), true, 0, &qev, true);
+    swallowEvent = v->dispatchMouseEvent(contextmenuEvent, mev.innerNode(), true, 0, &mouseEvent, true);
     if (!swallowEvent && !isPointInsideSelection(xm, ym) &&
         ([_bridge selectWordBeforeMenuEvent] || [_bridge isEditable] || mev.innerNode()->isContentEditable())) {
-        selectClosestWordFromMouseEvent(&qev, mev.innerNode(), xm, ym);
+        selectClosestWordFromMouseEvent(&mouseEvent, mev.innerNode(), xm, ym);
     }
 
     ASSERT(_currentEvent == event);

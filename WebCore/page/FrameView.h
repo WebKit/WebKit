@@ -231,7 +231,7 @@ private:
     void addFormCompletionItem(const QString &name, const QString &value);
 
     bool dispatchMouseEvent(const AtomicString& eventType, NodeImpl* target,
-        bool cancelable, int detail, MouseEvent*, bool setUnder);
+        bool cancelable, int clickCount, MouseEvent*, bool setUnder);
     bool dispatchDragEvent(const AtomicString& eventType, NodeImpl* target,
         const IntPoint& loc, ClipboardImpl*);
 

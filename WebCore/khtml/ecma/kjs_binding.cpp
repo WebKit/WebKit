@@ -180,7 +180,7 @@ bool ScriptInterpreter::wasRunByUserGesture() const
     const AtomicString &type = m_evt->type();
     bool eventOk = ( // mouse events
       type == clickEvent || type == mousedownEvent ||
-      type == mouseupEvent || type == khtmlDblclickEvent ||
+      type == mouseupEvent || type == dblclickEvent ||
       // keyboard events
       type == keydownEvent || type == keypressEvent ||
       type == keyupEvent ||

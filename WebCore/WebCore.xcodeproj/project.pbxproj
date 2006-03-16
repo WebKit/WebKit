@@ -810,7 +810,6 @@
 		A88AD50C095248F0001DD196 /* SVGZoomAndPanImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F8EC089701F400BA5114 /* SVGZoomAndPanImpl.h */; };
 		A88AD50D095248F0001DD196 /* ksvg.h in Headers */ = {isa = PBXBuildFile; fileRef = A8C0F8ED089701F400BA5114 /* ksvg.h */; };
 		A88AD5140952499F001DD196 /* Namespace.h in Headers */ = {isa = PBXBuildFile; fileRef = A884284009308C1C00B6D461 /* Namespace.h */; };
-		A88AD5150952499F001DD196 /* kdomevents.h in Headers */ = {isa = PBXBuildFile; fileRef = A884283A09308C1C00B6D461 /* kdomevents.h */; };
 		A88AD5160952499F001DD196 /* kdom.h in Headers */ = {isa = PBXBuildFile; fileRef = A884283C09308C1C00B6D461 /* kdom.h */; };
 		A88AD5170952499F001DD196 /* DOMList.h in Headers */ = {isa = PBXBuildFile; fileRef = A884283D09308C1C00B6D461 /* DOMList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A88AD5180952499F001DD196 /* RGBColorImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = A884283E09308C1C00B6D461 /* RGBColorImpl.h */; };
@@ -1545,7 +1544,6 @@
 		A85D7A8D0879EC64006A9172 /* KWQWMatrix.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = KWQWMatrix.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A884283809308C1C00B6D461 /* SVGNamesWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGNamesWrapper.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A884283909308C1C00B6D461 /* SVGElementFactoryWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGElementFactoryWrapper.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		A884283A09308C1C00B6D461 /* kdomevents.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = kdomevents.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A884283C09308C1C00B6D461 /* kdom.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = kdom.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A884283D09308C1C00B6D461 /* DOMList.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DOMList.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		A884283E09308C1C00B6D461 /* RGBColorImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = RGBColorImpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2749,7 +2747,6 @@
 			children = (
 				A884283D09308C1C00B6D461 /* DOMList.h */,
 				A884283C09308C1C00B6D461 /* kdom.h */,
-				A884283A09308C1C00B6D461 /* kdomevents.h */,
 				A884284609308C1C00B6D461 /* KDOMHeaders.h */,
 				A884284009308C1C00B6D461 /* Namespace.h */,
 				A884283F09308C1C00B6D461 /* RGBColorImpl.cpp */,
@@ -4120,7 +4117,6 @@
 				A88AD50C095248F0001DD196 /* SVGZoomAndPanImpl.h in Headers */,
 				A88AD50D095248F0001DD196 /* ksvg.h in Headers */,
 				A88AD5140952499F001DD196 /* Namespace.h in Headers */,
-				A88AD5150952499F001DD196 /* kdomevents.h in Headers */,
 				A88AD5160952499F001DD196 /* kdom.h in Headers */,
 				A88AD5170952499F001DD196 /* DOMList.h in Headers */,
 				A88AD5180952499F001DD196 /* RGBColorImpl.h in Headers */,

@@ -840,7 +840,7 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
    case Onclick:
      return getListener(exec, clickEvent);
    case Ondblclick:
-     return getListener(exec, khtmlDblclickEvent);
+     return getListener(exec, dblclickEvent);
    case Ondragdrop:
      return getListener(exec, khtmlDragdropEvent);
    case Onerror:
@@ -1073,7 +1073,7 @@ void Window::put(ExecState* exec, const Identifier &propertyName, JSValue *value
       return;
     case Ondblclick:
       if (isSafeScript(exec))
-        setListener(exec,khtmlDblclickEvent,value);
+        setListener(exec, dblclickEvent,value);
       return;
     case Ondragdrop:
       if (isSafeScript(exec))

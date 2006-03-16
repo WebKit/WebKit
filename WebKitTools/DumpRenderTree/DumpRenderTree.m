@@ -857,6 +857,7 @@ static void dump(void)
                                                    pressure:nil];
         [NSApp postEvent:mouseUpEvent atStart:NO];
         [subView mouseDown:mouseDownEvent];
+        lastClick = [mouseUpEvent timestamp];
     }
 }
 

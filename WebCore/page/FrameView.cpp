@@ -940,7 +940,7 @@ void FrameView::setResizingFrameSet(HTMLFrameSetElementImpl *frameSet)
 }
 
 bool FrameView::dispatchMouseEvent(const AtomicString& eventType, NodeImpl* targetNode, bool cancelable,
-    int detail, MouseEvent* mouseEvent, bool setUnder)
+    int clickCount, MouseEvent* mouseEvent, bool setUnder)
 {
     // if the target node is a text node, dispatch on the parent node - rdar://4196646
     if (targetNode && targetNode->isTextNode())
@@ -979,7 +979,7 @@ bool FrameView::dispatchMouseEvent(const AtomicString& eventType, NodeImpl* targ
     bool swallowEvent = false;
 
     if (targetNode)
-        swallowEvent = targetNode->dispatchMouseEvent(mouseEvent, eventType, detail);
+        swallowEvent = targetNode->dispatchMouseEvent(mouseEvent, eventType, clickCount);
     
     if (!swallowEvent && eventType == mousedownEvent) {
         // Focus should be shifted on mouse down, not on a click.  -dwh

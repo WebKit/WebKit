@@ -304,7 +304,7 @@ JSValue *DOMNode::getValueProperty(ExecState *exec, int token) const
   case OnContextMenu:
     return getListener(contextmenuEvent);
   case OnDblClick:
-    return getListener(khtmlDblclickEvent);
+    return getListener(dblclickEvent);
   case OnDragDrop:
     return getListener(khtmlDragdropEvent);
   case OnError:
@@ -456,7 +456,7 @@ void DOMNode::putValueProperty(ExecState *exec, int token, JSValue *value, int /
     setListener(exec,contextmenuEvent,value);
     break;
   case OnDblClick:
-    setListener(exec,khtmlDblclickEvent,value);
+    setListener(exec,dblclickEvent,value);
     break;
   case OnDragDrop:
     setListener(exec,khtmlDragdropEvent,value);

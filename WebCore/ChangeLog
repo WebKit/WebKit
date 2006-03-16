@@ -1,3 +1,37 @@
+2006-03-15  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7790
+        addEventListener does not work with "dblclick" event.
+        Renamed khtmlDblclickEvent to dblclickEvent to fix.
+
+        Test: fast/events/dblclick-addEventListener.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::mouseUp):
+        (WebCore::MacFrame::mouseMoved):
+        (WebCore::MacFrame::shouldDragAutoNode):
+        (WebCore::MacFrame::sendContextMenuEvent):
+        * dom/EventNames.h:
+        * dom/NodeImpl.cpp:
+        (WebCore::NodeImpl::dispatchMouseEvent):
+        * dom/NodeImpl.h:
+        * khtml/ecma/kjs_binding.cpp:
+        (KJS::ScriptInterpreter::wasRunByUserGesture):
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNode::getValueProperty):
+        (KJS::DOMNode::putValueProperty):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::getValueProperty):
+        (KJS::Window::put):
+        * khtml/html/HTMLElementImpl.cpp:
+        (WebCore::HTMLElementImpl::parseMappedAttribute):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::dispatchMouseEvent):
+        * page/FrameView.h:
+
 2006-03-16  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Maciej.

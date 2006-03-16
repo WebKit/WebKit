@@ -268,9 +268,9 @@ public:
     bool dispatchHTMLEvent(const AtomicString& eventType, bool canBubble, bool cancelable);
     void dispatchWindowEvent(const AtomicString& eventType, bool canBubble, bool cancelable);
     bool dispatchMouseEvent(MouseEvent*, const AtomicString& eventType,
-        int detail = 0, NodeImpl* relatedTarget = 0);
+        int clickCount = 0, NodeImpl* relatedTarget = 0);
     bool dispatchSimulatedMouseEvent(const AtomicString& eventType);
-    bool dispatchMouseEvent(const AtomicString& eventType, int button, int detail,
+    bool dispatchMouseEvent(const AtomicString& eventType, int button, int clickCount,
         int clientX, int clientY, int screenX, int screenY,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
         bool isSimulated = false, NodeImpl* relatedTarget = 0);

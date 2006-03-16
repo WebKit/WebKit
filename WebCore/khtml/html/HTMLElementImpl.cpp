@@ -153,7 +153,7 @@ void HTMLElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     } else if (attr->name() == oncontextmenuAttr) {
         setHTMLEventListener(contextmenuEvent, attr);
     } else if (attr->name() == ondblclickAttr) {
-        setHTMLEventListener(khtmlDblclickEvent, attr);
+        setHTMLEventListener(dblclickEvent, attr);
     } else if (attr->name() == onmousedownAttr) {
         setHTMLEventListener(mousedownEvent, attr);
     } else if (attr->name() == onmousemoveAttr) {

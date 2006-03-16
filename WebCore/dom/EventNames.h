@@ -39,6 +39,7 @@ namespace WebCore { namespace EventNames {
     macro(contextmenu) \
     macro(copy) \
     macro(cut) \
+    macro(dblclick) \
     macro(drag) \
     macro(dragend) \
     macro(dragenter) \
@@ -85,7 +86,6 @@ namespace WebCore { namespace EventNames {
     macro(DOMSubtreeModified) \
     \
     macro(khtmlBeforeTextInserted) \
-    macro(khtmlDblclick) \
     macro(khtmlDragdrop) \
     macro(khtmlEditableContentChanged) \
     macro(khtmlError) \

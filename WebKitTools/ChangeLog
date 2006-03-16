@@ -1,3 +1,12 @@
+2006-03-15  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by mjs.
+
+        Fix eventSender.mouseClick() to update lastClick timestamp.
+
+        * DumpRenderTree/DumpRenderTree.m:
+        (-[EventSendingController mouseClick]):
+
 2006-03-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
