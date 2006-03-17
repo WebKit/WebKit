@@ -1,3 +1,13 @@
+2006-03-17  Darin Adler  <darin@apple.com>
+
+        - missing bit of my check-in yesterday
+
+        Maciej moved setWindowFrame for me, but I also had removed
+        setWindowContentRect.
+
+        * WebCoreSupport/WebFrameBridge.m: Removed unused setWindowContextRect and
+        windowContentRect methods.
+
 2006-03-17  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.
