@@ -43,9 +43,9 @@ public:
     ~FrameWin();
 
     virtual bool openURL(const KURL&);
-    virtual void openURLRequest(const KURL&, const URLArgs&);
-    virtual void submitForm(const KURL&, const URLArgs&);
-    virtual void urlSelected(const KURL&, const URLArgs&);
+    virtual void openURLRequest(const KURL&, const ResourceRequest&);
+    virtual void submitForm(const KURL&, const ResourceRequest&);
+    virtual void urlSelected(const KURL&, const ResourceRequest&);
 
     virtual void setTitle(const String&);
 
@@ -119,7 +119,7 @@ public:
     virtual bool canUndo() const;
     virtual void print();
 
-    bool keyPress(KeyEvent*);
+    bool keyPress(const KeyEvent&);
 
 private:
     virtual bool passMouseDownEventToWidget(Widget*);

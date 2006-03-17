@@ -40,7 +40,6 @@ using namespace WebCore;
 
 static void notImplemented() { puts("Not yet implemented"); _CrtDbgBreak(); }
 
-IntPoint FrameView::viewportToGlobal(IntPoint const&) const { notImplemented(); return IntPoint(); }
 void FrameView::updateBorder() { notImplemented(); }
 bool FrameView::isFrameView() const { notImplemented(); return 0; }
 
@@ -139,11 +138,9 @@ String WebCore::searchableIndexIntroduction() { notImplemented(); return String(
 int WebCore::findNextSentenceFromIndex(QChar const*,int,int,bool) { notImplemented(); return 0; }
 void WebCore::findSentenceBoundary(QChar const*,int,int,int*,int*) { notImplemented(); }
 int WebCore::findNextWordFromIndex(QChar const*,int,int,bool) { notImplemented(); return 0; }
-void WebCore::findWordBoundary(QChar const*,int,int,int*,int*) { notImplemented(); }
 
 Array<char> KWQServeSynchronousRequest(Loader*,DocLoader*,TransferJob*,KURL&,QString&) { notImplemented(); return 0; }
 
-void FrameWin::respondToChangedContents() { notImplemented(); }
 void FrameWin::unfocusWindow() { notImplemented(); }
 bool FrameWin::locationbarVisible() { notImplemented(); return 0; }
 void FrameWin::issueRedoCommand(void) { notImplemented(); }
@@ -157,16 +154,14 @@ bool FrameWin::openURL(KURL const&) { notImplemented(); return 0; }
 void FrameWin::print() { notImplemented(); }
 KJS::Bindings::Instance* FrameWin::getAppletInstanceForWidget(Widget*) { notImplemented(); return 0; }
 bool FrameWin::passMouseDownEventToWidget(Widget*) { notImplemented(); return 0; }
-void FrameWin::registerCommandForUndo(WebCore::EditCommandPtr const&) { notImplemented(); }
 void FrameWin::issueCutCommand() { notImplemented(); }
 void FrameWin::issueCopyCommand() { notImplemented(); }
-void FrameWin::openURLRequest(KURL const&,struct WebCore::URLArgs const&) { notImplemented(); }
+void FrameWin::openURLRequest(KURL const&,struct WebCore::ResourceRequest const&) { notImplemented(); }
 bool FrameWin::passWheelEventToChildWidget(NodeImpl*) { notImplemented(); return 0; }
 void FrameWin::issueUndoCommand() { notImplemented(); }
 QString FrameWin::mimeTypeForFileName(QString const&) const { notImplemented(); return QString(); }
 void FrameWin::issuePasteCommand() { notImplemented(); }
 void FrameWin::scheduleClose() { notImplemented(); }
-void FrameWin::markMisspellingsInAdjacentWords(WebCore::VisiblePosition const&) { notImplemented(); }
 void FrameWin::markMisspellings(WebCore::SelectionController const&) { notImplemented(); }
 bool FrameWin::menubarVisible() { notImplemented(); return 0; }
 bool FrameWin::personalbarVisible() { notImplemented(); return 0; }
@@ -179,14 +174,14 @@ bool FrameWin::canGoBackOrForward(int) const { notImplemented(); return 0; }
 void FrameWin::issuePasteAndMatchStyleCommand() { notImplemented(); }
 Plugin* FrameWin::createPlugin(KURL const&,QStringList const&,QStringList const&,QString const&) { notImplemented(); return 0; }
 
-void BrowserExtensionWin::openURLRequest(KURL const&,struct WebCore::URLArgs const&) { notImplemented(); }
+void BrowserExtensionWin::openURLRequest(KURL const&,struct WebCore::ResourceRequest const&) { notImplemented(); }
 bool BrowserExtensionWin::canRunModal() { notImplemented(); return 0; }
 void BrowserExtensionWin::openURLNotify() { notImplemented(); }
-void BrowserExtensionWin::createNewWindow(KURL const&,struct WebCore::URLArgs const&,struct WebCore::WindowArgs const&,Frame*&) { notImplemented(); }
+void BrowserExtensionWin::createNewWindow(KURL const&,struct WebCore::ResourceRequest const&,struct WebCore::WindowArgs const&,Frame*&) { notImplemented(); }
 bool BrowserExtensionWin::canRunModalNow() { notImplemented(); return 0; }
 void BrowserExtensionWin::runModal() { notImplemented(); }
 void BrowserExtensionWin::goBackOrForward(int) { notImplemented(); }
-void BrowserExtensionWin::createNewWindow(KURL const&,struct WebCore::URLArgs const&) { notImplemented(); }
+void BrowserExtensionWin::createNewWindow(KURL const&,struct WebCore::ResourceRequest const&) { notImplemented(); }
 
 void RenderCanvasImage::setNeedsImageUpdate() { notImplemented(); }
 
@@ -202,6 +197,8 @@ String WebCore::submitButtonDefaultLabel() { return "Submit"; }
 String WebCore::inputElementAltText() { return QString(); }
 String WebCore::resetButtonDefaultLabel() { return "Reset"; }
 String WebCore::defaultLanguage() { return "en"; }
+
+void WebCore::findWordBoundary(QChar const* str,int len,int position,int* start, int* end) {*start=position; *end=position; }
 
 void WebCore::setCookies(KURL const&,KURL const&,String const&) { }
 String WebCore::cookies(KURL const&) { return String(); }
@@ -229,11 +226,14 @@ void FrameWin::respondToChangedSelection(WebCore::SelectionController const&,boo
 static int frameNumber = 0;
 Frame* FrameWin::createFrame(KURL const&,QString const&,RenderPart*,String const&) { return 0; }
 void FrameWin::saveDocumentState(void) { }
+void FrameWin::registerCommandForUndo(WebCore::EditCommandPtr const&) { }
 void FrameWin::clearUndoRedoOperations(void) { }
 QString FrameWin::incomingReferrer() const { return QString(); }
 void FrameWin::clearRecordedFormValues() { }
 void FrameWin::recordFormValue(QString const&,QString const&,WebCore::HTMLFormElementImpl*) { }
-void FrameWin::submitForm(KURL const&,struct WebCore::URLArgs const&) { }
+void FrameWin::submitForm(KURL const&,struct WebCore::ResourceRequest const&) { }
+void FrameWin::markMisspellingsInAdjacentWords(WebCore::VisiblePosition const&) { }
+void FrameWin::respondToChangedContents() { }
 
 BrowserExtensionWin::BrowserExtensionWin(WebCore::Frame*) { }
 void BrowserExtensionWin::setTypedIconURL(KURL const&,QString const&) { }

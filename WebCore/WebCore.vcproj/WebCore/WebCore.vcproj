@@ -2453,6 +2453,10 @@
 					RelativePath="..\..\bridge\win\FrameWin.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\bridge\win\PageWin.cpp"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter

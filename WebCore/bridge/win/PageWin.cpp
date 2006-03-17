@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "BrowserExtension.h"
+#include "config.h"
+#include "Page.h"
+
+#include "Frame.h"
+#include "FrameView.h"
+#include "IntRect.h"
+#include <windows.h>
 
 namespace WebCore {
 
-class Frame;
-class WinFrame;
+static HWND rootWindowForFrame(const Frame* frame)
+{
+    if (!frame)
+        return 0;
+    FrameView* frameView = frame->view();
+    if (!frameView)
+        return 0;
+    HWND frameWnd = frameView->windowHandle();
+    if (!frameWnd)
+        return 0;
+    return GetAncestor(frameWnd, GA_ROOT);
+}
 
-class BrowserExtensionWin : public BrowserExtension {
-public:
-    BrowserExtensionWin(Frame*);
- 
-    virtual void openURLRequest(const KURL &, 
-                                const ResourceRequest &args = ResourceRequest());
-    virtual void openURLNotify();
-     
-    virtual void createNewWindow(const KURL &url, 
-                                 const ResourceRequest &ResourceRequest = ResourceRequest());
-    virtual void createNewWindow(const KURL& url,
-                                 const ResourceRequest& ResourceRequest, 
-                                 const WindowArgs& winArgs, 
-                                 Frame*& part);
+IntRect Page::windowRect() const
+{
+    HWND windowHandle = rootWindowForFrame(mainFrame());
+    if (!windowHandle)
+        return IntRect();
+    RECT rect;
+    GetWindowRect(windowHandle, &rect);
+    return rect;
+}
 
-    virtual void setIconURL(const KURL &url);
-    virtual void setTypedIconURL(const KURL &url, const QString &type);
-
-    virtual int getHistoryLength();
-    virtual void goBackOrForward(int distance);
-
-    virtual bool canRunModal();
-    virtual bool canRunModalNow();
-    virtual void runModal();
-    
-private:
-     WinFrame *m_frame;
-};
+void Page::setWindowRect(const IntRect& r)
+{
+    HWND windowHandle = rootWindowForFrame(mainFrame());
+    if (!windowHandle)
+        return;
+    MoveWindow(windowHandle, r.x(), r.y(), r.width(), r.height(), true);
+}
 
 }

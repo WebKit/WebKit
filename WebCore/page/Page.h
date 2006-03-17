@@ -46,7 +46,7 @@ namespace WebCore {
         ~Page();
 
         void setMainFrame(PassRefPtr<Frame> mainFrame);
-        Frame* mainFrame() { return m_mainFrame.get(); }
+        Frame* mainFrame() const { return m_mainFrame.get(); }
 
         IntRect windowRect() const;
         void setWindowRect(const IntRect&);

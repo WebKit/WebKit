@@ -1,3 +1,39 @@
+2006-03-17  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by adele.
+
+        Fix win32 build.
+        Add PageWin class.
+        Add previously forgotten KeyEventWin class.
+        Pass MouseEvent() instead of 0 in a couple places to make compiler happy.
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj:
+        * bridge/win/BrowserExtensionWin.h:
+        * bridge/win/FrameWin.cpp:
+        (WebCore::FrameWin::urlSelected):
+        (WebCore::FrameWin::keyPress):
+        * bridge/win/FrameWin.h:
+        * bridge/win/PageWin.cpp: Added.
+        (WebCore::rootWindowForFrame):
+        (WebCore::Page::windowRect):
+        (WebCore::Page::setWindowRect):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateDragAndDrop):
+        (WebCore::FrameView::hoverTimerFired):
+        * page/Page.h:
+        (WebCore::Page::mainFrame):
+        * platform/win/KeyEventWin.cpp: Added.
+        (WebCore::KeyEvent::KeyEvent):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (WebCore::findNextWordFromIndex):
+        (FrameWin::passMouseDownEventToWidget):
+        (FrameWin::scheduleClose):
+        (BrowserExtensionWin::createNewWindow):
+        (WebCore::findWordBoundary):
+        (FrameWin::registerCommandForUndo):
+        (FrameWin::markMisspellingsInAdjacentWords):
+        (FrameWin::respondToChangedContents):
+
 2006-03-17  David Hyatt  <hyatt@apple.com>
 
         Fix pixel test regression in fast/table/overflowHidden.html.  There was
