@@ -29,6 +29,7 @@
 #import "WebURLsWithTitles.h"
 
 #import <WebKit/WebNSURLExtras.h>
+#import <WebKit/WebKitNSStringExtras.h>
 
 @implementation WebURLsWithTitles
 
@@ -67,7 +68,7 @@
     titlesOrEmptyStrings = [NSMutableArray arrayWithCapacity:count];
     for (index = 0; index < count; ++index) {
         [URLStrings addObject:[[URLs objectAtIndex:index] _web_userVisibleString]];
-        [titlesOrEmptyStrings addObject:(titles == nil) ? @"" : [titles objectAtIndex:index]];
+        [titlesOrEmptyStrings addObject:(titles == nil) ? @"" : [[titles objectAtIndex:index] _webkit_stringByTrimmingWhitespace]];
     }
 
     [pasteboard setPropertyList:[NSArray arrayWithObjects:URLStrings, titlesOrEmptyStrings, nil]

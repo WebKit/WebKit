@@ -1,3 +1,16 @@
+2006-03-17  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Beth Dakin
+        
+        - fixed <rdar://problem/4239051> Sometimes "Copy Link" in Safari results in a 
+        URL on the pasteboard with no usable "title"
+
+        * History/WebURLsWithTitles.m:
+        (+[WebURLsWithTitles writeURLs:andTitles:toPasteboard:]):
+        trim whitespace from titles that are put on pasteboard. This leaves an empty string
+        for the title in cases where there's no displayed text, like an image in an <a> element
+        that happens to have whitespace in the source, e.g. <a href="foo"> <img whatever></a>
+
 2006-03-17  Darin Adler  <darin@apple.com>
 
         - missing bit of my check-in yesterday
