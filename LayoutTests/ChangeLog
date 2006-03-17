@@ -1,3 +1,14 @@
+2006-03-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin, landed by Beth.
+
+        - Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7693
+          WebKit relies on unpredictable timing for onload events
+
+        * fast/css/acid2-expected.txt:
+        * fast/events/onload-webkit-before-webcore-expected.txt: Added.
+        * fast/events/onload-webkit-before-webcore.html: Added.
+
 2006-03-17  Adele Peterson  <adele@apple.com>
 
         Updated results for background color change.

@@ -1,3 +1,22 @@
+2006-03-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin, landed by Beth.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7693
+          WebKit relies on unpredictable timing for onload events
+
+        * WebView/WebDataSource.m:
+        (-[WebDataSource _receivedMainResourceError:complete:]): Check for 
+        completion on the WebCore side before checking on the WebKit side, 
+        to ensure that the onload event is emitted before the WebFrame load 
+        delegate is sent the webView:didFinishLoadForFrame: message. For 
+        DumpRenderTree, this ensures that the render tree is dumped after 
+        the onload handler is run.
+        * WebView/WebLoader.m:
+        (-[NSURLProtocol didFailWithError:]): If load has already been 
+        cancelled (which could happen if the parent's onload handler caused 
+        the frame to detach), do nothing.
+
 2006-03-17  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Beth Dakin

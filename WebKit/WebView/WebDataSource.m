@@ -666,11 +666,6 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     // Retain the bridge because the stop may release the last reference to it.
     [bridge retain];
 
-    [[self webFrame] _receivedMainResourceError:error];
-    [[self _webView] _mainReceivedError:error
-                         fromDataSource:self
-                               complete:isComplete];
-
     if (isComplete) {
         // FIXME: Don't want to do this if an entirely new load is going, so should check
         // that both data sources on the frame are either self or nil.
@@ -682,6 +677,11 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class class,
     }
 
     [bridge release];
+
+    [[self webFrame] _receivedMainResourceError:error];
+    [[self _webView] _mainReceivedError:error
+                         fromDataSource:self
+                               complete:isComplete];
 }
 
 - (void)_updateIconDatabaseWithURL:(NSURL *)iconURL

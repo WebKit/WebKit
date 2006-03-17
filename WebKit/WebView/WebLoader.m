@@ -579,6 +579,10 @@ static BOOL NSURLConnectionSupportsBufferedData;
 
 - (void)didFailWithError:(NSError *)error
 {
+    if (cancelledFlag) {
+        return;
+    }
+    
     ASSERT(!reachedTerminalState);
 
     // retain/release self in this delegate method since the additional processing can do
