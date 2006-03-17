@@ -267,20 +267,6 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [[wv _UIDelegateForwarder] webView:wv setStatusBarVisible:visible];
 }
 
-- (void)setWindowFrame:(NSRect)frameRect
-{
-    ASSERT(_frame != nil);
-    WebView *webView = [self webView];
-    [[webView _UIDelegateForwarder] webView:webView setFrame:frameRect];
-}
-
-- (NSRect)windowFrame
-{
-    ASSERT(_frame != nil);
-    WebView *webView = [self webView];
-    return [[webView _UIDelegateForwarder] webViewFrame:webView];
-}
-
 - (void)setWindowContentRect:(NSRect)contentRect
 {
     ASSERT(_frame != nil);

@@ -1,3 +1,14 @@
+2006-03-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Eric.
+        
+        - move setWindowFrame / windowFrame to WebPageBridge to fix build
+
+        * WebCoreSupport/WebFrameBridge.m:
+        * WebCoreSupport/WebPageBridge.m:
+        (-[WebPageBridge setWindowFrame:]):
+        (-[WebPageBridge windowFrame]):
+
 2006-03-15  Darin Adler  <darin@apple.com>
 
         Fix by Patrick Beard, reviewed by me.

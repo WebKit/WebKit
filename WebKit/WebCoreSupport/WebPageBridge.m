@@ -30,6 +30,9 @@
 
 #import "WebFrameBridge.h"
 #import "WebView.h"
+#import "WebViewPrivate.h"
+#import "WebAssertions.h"
+#import "WebUIDelegate.h"
 
 @implementation WebPageBridge
 
@@ -53,6 +56,18 @@
 - (NSView *)outerView
 {
     return _webView;
+}
+
+- (void)setWindowFrame:(NSRect)frameRect
+{
+    ASSERT(_webView != nil);
+    [[_webView _UIDelegateForwarder] webView:_webView setFrame:frameRect];
+}
+
+- (NSRect)windowFrame
+{
+    ASSERT(_webView != nil);
+    return [[_webView _UIDelegateForwarder] webViewFrame:_webView];
 }
 
 @end
