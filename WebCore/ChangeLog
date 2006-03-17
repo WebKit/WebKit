@@ -1,3 +1,122 @@
+2006-03-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric.
+
+        - removed KWQWindowWidget
+        - changed most event handling to use references instead of pointers
+        - chagned PageMac to no longer be a subclass of Page
+
+        Yes, I know there's no detail in this ChangeLog entry.
+        No, I don't plan to make a habit of doing things this way.
+        Yes, this will probably break the Windows build again.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/mac/BrowserExtensionMac.mm:
+        (WebCore::BrowserExtensionMac::createNewWindow):
+        * bridge/mac/FrameViewMac.mm:
+        * bridge/mac/MacFrame.h:
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::MacFrame):
+        (WebCore::MacFrame::~MacFrame):
+        (WebCore::MacFrame::wheelEvent):
+        (WebCore::MacFrame::keyEvent):
+        (WebCore::MacFrame::khtmlMousePressEvent):
+        (WebCore::MacFrame::khtmlMouseMoveEvent):
+        (WebCore::MacFrame::khtmlMouseReleaseEvent):
+        (WebCore::MacFrame::mouseDown):
+        (WebCore::MacFrame::mouseDragged):
+        (WebCore::MacFrame::mouseUp):
+        (WebCore::MacFrame::mouseMoved):
+        (WebCore::MacFrame::sendContextMenuEvent):
+        (WebCore::MacFrame::setBridge):
+        (WebCore::MacFrame::dragSourceMovedTo):
+        (WebCore::MacFrame::dragSourceEndedAt):
+        (WebCore::MacFrame::dispatchDragSrcEvent):
+        * bridge/mac/PageMac.h: Removed.
+        * bridge/mac/PageMac.mm: Added.
+        (WebCore::Page::Page):
+        (WebCore::Page::windowRect):
+        (WebCore::Page::setWindowRect):
+        * bridge/mac/WebCoreFrameBridge.h:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge page]):
+        (-[WebCoreFrameBridge initializeSettings:]):
+        (globalPoint):
+        (createMouseEventFromDraggingInfo):
+        (-[WebCoreFrameBridge dragOperationForDraggingInfo:]):
+        (-[WebCoreFrameBridge dragExitedWithDraggingInfo:]):
+        (-[WebCoreFrameBridge concludeDragForDraggingInfo:]):
+        (-[WebCoreFrameBridge dragSourceMovedTo:]):
+        (-[WebCoreFrameBridge dragSourceEndedAt:operation:]):
+        * bridge/mac/WebCoreFrameNamespaces.mm:
+        (WebCore::):
+        * bridge/mac/WebCorePageBridge.h:
+        * bridge/mac/WebCorePageBridge.mm:
+        (-[WebCorePageBridge init]):
+        * dom/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::prepareMouseEvent):
+        (WebCore::DocumentImpl::defaultEventHandler):
+        * dom/DocumentImpl.h:
+        * dom/NodeImpl.cpp:
+        (WebCore::NodeImpl::dispatchMouseEvent):
+        (WebCore::NodeImpl::dispatchKeyEvent):
+        (WebCore::NodeImpl::dispatchWheelEvent):
+        * dom/NodeImpl.h:
+        * dom/dom2_eventsimpl.cpp:
+        (WebCore::KeyboardEventImpl::KeyboardEventImpl):
+        * dom/dom2_eventsimpl.h:
+        (WebCore::KeyboardEventImpl::keyEvent):
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::Window::getValueProperty):
+        (KJS::WindowFunc::callAsFunction):
+        * khtml/html/html_inlineimpl.cpp:
+        (WebCore::HTMLAnchorElementImpl::defaultEventHandler):
+        * ksvg2/svg/SVGDocumentImpl.cpp:
+        * ksvg2/svg/SVGDocumentImpl.h:
+        * kwq/KWQWindowWidget.h:
+        * kwq/KWQWindowWidget.mm: Removed.
+        * page/Frame.cpp:
+        (WebCore::Frame::selectClosestWordFromMouseEvent):
+        (WebCore::Frame::handleMousePressEventDoubleClick):
+        (WebCore::Frame::handleMousePressEventTripleClick):
+        (WebCore::Frame::handleMousePressEventSingleClick):
+        (WebCore::Frame::khtmlMousePressEvent):
+        (WebCore::Frame::handleMouseMoveEventSelection):
+        (WebCore::Frame::khtmlMouseMoveEvent):
+        (WebCore::Frame::khtmlMouseReleaseEvent):
+        (WebCore::Frame::khtmlMouseDoubleClickEvent):
+        (WebCore::Frame::passWidgetMouseDownEventToWidget):
+        * page/Frame.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::viewportMousePressEvent):
+        (WebCore::FrameView::viewportMouseDoubleClickEvent):
+        (WebCore::FrameView::viewportMouseMoveEvent):
+        (WebCore::FrameView::viewportMouseReleaseEvent):
+        (WebCore::FrameView::dispatchDragEvent):
+        (WebCore::FrameView::updateDragAndDrop):
+        (WebCore::FrameView::cancelDragAndDrop):
+        (WebCore::FrameView::performDragAndDrop):
+        (WebCore::FrameView::dispatchMouseEvent):
+        (WebCore::FrameView::viewportWheelEvent):
+        * page/FrameView.h:
+        * page/MouseEventWithHitTestResults.h:
+        (WebCore::MouseEventWithHitTestResults::MouseEventWithHitTestResults):
+        (WebCore::MouseEventWithHitTestResults::event):
+        * page/Page.cpp:
+        (WebCore::Page::init):
+        * page/Page.h:
+        (WebCore::Page::bridge):
+        * platform/KeyEvent.h:
+        (WebCore::KeyEvent::isAutoRepeat):
+        * platform/MouseEvent.h:
+        (WebCore::MouseEvent::MouseEvent):
+        * platform/mac/KeyEventMac.mm:
+        (WebCore::KeyEvent::KeyEvent):
+        * platform/win/TemporaryLinkStubs.cpp:
+        (FrameView::isFrameView):
+        * rendering/render_form.cpp:
+        (WebCore::RenderFormElement::clicked):
+
 2006-03-16  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

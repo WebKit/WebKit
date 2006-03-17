@@ -99,7 +99,7 @@ void RenderFormElement::clicked(Widget*)
     RenderArena* arena = ref();
     MouseEvent event; // gets "current event"
     if (element())
-        element()->dispatchMouseEvent(&event, clickEvent, event.clickCount());
+        element()->dispatchMouseEvent(event, clickEvent, event.clickCount());
     deref(arena);
 }
 

@@ -50,7 +50,6 @@
 #import "KWQRegExp.h"
 #import "KWQScrollBar.h"
 #import "TextEncoding.h"
-#import "KWQWindowWidget.h"
 #import "KeyEvent.h"
 #import "MouseEvent.h"
 #import "MouseEventWithHitTestResults.h"
@@ -123,7 +122,6 @@ MacFrame::MacFrame(Page* page, RenderPart* ownerRenderer)
     , _activationEventNumber(0)
     , _formValuesAboutToBeSubmitted(nil)
     , _formAboutToBeSubmitted(nil)
-    , _windowWidget(0)
     , _bindingRoot(0)
     , _windowScriptObject(0)
     , _windowScriptNPObject(0)
@@ -143,8 +141,6 @@ MacFrame::~MacFrame()
     [_bridge clearFrame];
     KWQRelease(_bridge);
     _bridge = nil;
-
-    delete _windowWidget;
 }
 
 void MacFrame::freeClipboard()
@@ -789,7 +785,7 @@ bool MacFrame::wheelEvent(NSEvent *event)
         _currentEvent = KWQRetain(event);
 
         WheelEvent qEvent(event);
-        v->viewportWheelEvent(&qEvent);
+        v->viewportWheelEvent(qEvent);
 
         ASSERT(_currentEvent == event);
         KWQRelease(event);
@@ -1373,7 +1369,7 @@ bool MacFrame::keyEvent(NSEvent *event)
     _currentEvent = KWQRetain(event);
 
     KeyEvent qEvent(event);
-    result = !node->dispatchKeyEvent(&qEvent);
+    result = !node->dispatchKeyEvent(qEvent);
 
     // We want to send both a down and a press for the initial key event.
     // To get KHTML to do this, we send a second KeyPress with "is repeat" set to true,
@@ -1381,9 +1377,8 @@ bool MacFrame::keyEvent(NSEvent *event)
     // That's not a great hack; it would be good to do this in a better way.
     if ([event type] == NSKeyDown && ![event isARepeat]) {
         KeyEvent repeatEvent(event, true);
-        if (!node->dispatchKeyEvent(&repeatEvent)) {
+        if (!node->dispatchKeyEvent(repeatEvent))
             result = true;
-        }
     }
 
     ASSERT(_currentEvent == event);
@@ -1397,18 +1392,18 @@ bool MacFrame::keyEvent(NSEvent *event)
     return false;
 }
 
-void MacFrame::khtmlMousePressEvent(MouseEventWithHitTestResults *event)
+void MacFrame::khtmlMousePressEvent(const MouseEventWithHitTestResults& event)
 {
     bool singleClick = [_currentEvent clickCount] <= 1;
 
     // If we got the event back, that must mean it wasn't prevented,
     // so it's allowed to start a drag or selection.
-    _mouseDownMayStartSelect = canMouseDownStartSelect(event->innerNode());
+    _mouseDownMayStartSelect = canMouseDownStartSelect(event.innerNode());
     
     // Careful that the drag starting logic stays in sync with eventMayStartDrag()
     _mouseDownMayStartDrag = singleClick;
 
-    d->m_mousePressNode = event->innerNode();
+    d->m_mousePressNode = event.innerNode();
     
     if (!passWidgetMouseDownEventToWidget(event, false)) {
         // We don't do this at the start of mouse down handling (before calling into WebCore),
@@ -1609,7 +1604,7 @@ bool MacFrame::dragHysteresisExceeded(float dragLocationX, float dragLocationY) 
     return deltaX >= threshold || deltaY >= threshold;
 }
 
-void MacFrame::khtmlMouseMoveEvent(MouseEventWithHitTestResults *event)
+void MacFrame::khtmlMouseMoveEvent(const MouseEventWithHitTestResults& event)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
@@ -1697,7 +1692,7 @@ void MacFrame::khtmlMouseMoveEvent(MouseEventWithHitTestResults *event)
                         _dragClipboard->setDragImageElement(_dragSrc.get(), IntPoint(_mouseDownX - srcX, _mouseDownY - srcY));
                     } 
 
-                    _mouseDownMayStartDrag = dispatchDragSrcEvent(dragstartEvent, IntPoint(_mouseDownWinX, _mouseDownWinY));
+                    _mouseDownMayStartDrag = dispatchDragSrcEvent(dragstartEvent, m_mouseDown);
                     // Invalidate clipboard here against anymore pasteboard writing for security.  The drag
                     // image can still be changed as we drag, but not the pasteboard data.
                     _dragClipboard->setAccessPolicy(KWQClipboard::ImageWritable);
@@ -1724,7 +1719,8 @@ void MacFrame::khtmlMouseMoveEvent(MouseEventWithHitTestResults *event)
                     BOOL startedDrag = [_bridge startDraggingImage:dragImage at:dragLoc operation:srcOp event:_currentEvent sourceIsDHTML:_dragSrcIsDHTML DHTMLWroteData:wcWrotePasteboard];
                     if (!startedDrag && _dragSrcMayBeDHTML) {
                         // WebKit canned the drag at the last minute - we owe _dragSrc a DRAGEND event
-                        dispatchDragSrcEvent(dragendEvent, IntPoint(dragLocation));
+                        MouseEvent event;
+                        dispatchDragSrcEvent(dragendEvent, event);
                         _mouseDownMayStartDrag = false;
                     }
                 } 
@@ -1747,7 +1743,7 @@ void MacFrame::khtmlMouseMoveEvent(MouseEventWithHitTestResults *event)
         _mouseDownMayStartDrag = false;
         d->m_view->invalidateClick();
 
-        NodeImpl* node = event->innerNode();
+        NodeImpl* node = event.innerNode();
         RenderLayer* layer = 0;
         if (node && node->renderer())
             layer = node->renderer()->enclosingLayer();
@@ -1840,7 +1836,7 @@ bool MacFrame::tryPaste()
     return !dispatchCPPEvent(pasteEvent, KWQClipboard::Readable);
 }
 
-void MacFrame::khtmlMouseReleaseEvent(MouseEventWithHitTestResults *event)
+void MacFrame::khtmlMouseReleaseEvent(const MouseEventWithHitTestResults& event)
 {
     NSView *view = mouseDownViewIfStillGood();
     if (!view) {
@@ -1849,9 +1845,8 @@ void MacFrame::khtmlMouseReleaseEvent(MouseEventWithHitTestResults *event)
         // the mouse down and drag events to see if we might start a drag.  For other first clicks
         // in a window, we just don't acceptFirstMouse, and the whole down-drag-up sequence gets
         // ignored upstream of this layer.
-        if (_activationEventNumber != [_currentEvent eventNumber]) {
+        if (_activationEventNumber != [_currentEvent eventNumber])
             Frame::khtmlMouseReleaseEvent(event);
-        }
         return;
     }
     stopAutoscrollTimer();
@@ -1984,17 +1979,15 @@ void MacFrame::mouseDown(NSEvent *event)
     
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = KWQRetain(event);
+    m_mouseDown = MouseEvent(event);
     NSPoint loc = [event locationInWindow];
-    _mouseDownWinX = (int)loc.x;
-    _mouseDownWinY = (int)loc.y;
-    d->m_view->viewportToContents(_mouseDownWinX, _mouseDownWinY, _mouseDownX, _mouseDownY);
+    d->m_view->viewportToContents((int)loc.x, (int)loc.y, _mouseDownX, _mouseDownY);
     _mouseDownTimestamp = [event timestamp];
 
     _mouseDownMayStartDrag = false;
     _mouseDownMayStartSelect = false;
 
-    MouseEvent kEvent(event);
-    v->viewportMousePressEvent(&kEvent);
+    v->viewportMousePressEvent(event);
     
     ASSERT(_currentEvent == event);
     KWQRelease(event);
@@ -2015,8 +2008,7 @@ void MacFrame::mouseDragged(NSEvent *event)
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = KWQRetain(event);
 
-    MouseEvent kEvent(event);
-    v->viewportMouseMoveEvent(&kEvent);
+    v->viewportMouseMoveEvent(event);
     
     ASSERT(_currentEvent == event);
     KWQRelease(event);
@@ -2044,13 +2036,10 @@ void MacFrame::mouseUp(NSEvent *event)
     // a triple click is treated as a single click, but the fourth is then
     // treated as another double click. Hence the "% 2" below.
     int clickCount = [event clickCount];
-    if (clickCount > 0 && clickCount % 2 == 0) {
-        MouseEvent doubleClickEvent(event);
-        v->viewportMouseDoubleClickEvent(&doubleClickEvent);
-    } else {
-        MouseEvent releaseEvent(event);
-        v->viewportMouseReleaseEvent(&releaseEvent);
-    }
+    if (clickCount > 0 && clickCount % 2 == 0)
+        v->viewportMouseDoubleClickEvent(event);
+    else
+        v->viewportMouseReleaseEvent(event);
     
     ASSERT(_currentEvent == event);
     KWQRelease(event);
@@ -2135,8 +2124,7 @@ void MacFrame::mouseMoved(NSEvent *event)
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = KWQRetain(event);
     
-    MouseEvent kEvent(event);
-    v->viewportMouseMoveEvent(&kEvent);
+    v->viewportMouseMoveEvent(event);
     
     ASSERT(_currentEvent == event);
     KWQRelease(event);
@@ -2179,12 +2167,12 @@ bool MacFrame::sendContextMenuEvent(NSEvent *event)
     int xm, ym;
     v->viewportToContents(mouseEvent.x(), mouseEvent.y(), xm, ym);
 
-    MouseEventWithHitTestResults mev = doc->prepareMouseEvent(false, true, false, xm, ym, &mouseEvent);
+    MouseEventWithHitTestResults mev = doc->prepareMouseEvent(false, true, false, xm, ym, mouseEvent);
 
-    swallowEvent = v->dispatchMouseEvent(contextmenuEvent, mev.innerNode(), true, 0, &mouseEvent, true);
+    swallowEvent = v->dispatchMouseEvent(contextmenuEvent, mev.innerNode(), true, 0, mouseEvent, true);
     if (!swallowEvent && !isPointInsideSelection(xm, ym) &&
         ([_bridge selectWordBeforeMenuEvent] || [_bridge isEditable] || mev.innerNode()->isContentEditable())) {
-        selectClosestWordFromMouseEvent(&mouseEvent, mev.innerNode(), xm, ym);
+        selectClosestWordFromMouseEvent(mouseEvent, mev.innerNode(), xm, ym);
     }
 
     ASSERT(_currentEvent == event);
@@ -2889,11 +2877,6 @@ NSWritingDirection MacFrame::baseWritingDirectionForSelectionStart() const
     return result;
 }
 
-KWQWindowWidget *MacFrame::topLevelWidget()
-{
-    return _windowWidget;
-}
-
 void MacFrame::tokenizerProcessedData()
 {
     if (d->m_doc) {
@@ -2907,11 +2890,9 @@ void MacFrame::setBridge(WebCoreFrameBridge *bridge)
     if (_bridge == bridge)
         return;
 
-    delete _windowWidget;
     KWQRetain(bridge);
     KWQRelease(_bridge);
     _bridge = bridge;
-    _windowWidget = new KWQWindowWidget(_bridge);
 }
 
 QString MacFrame::overrideMediaType() const
@@ -3451,29 +3432,29 @@ bool MacFrame::shouldClose()
     return true;
 }
 
-void MacFrame::dragSourceMovedTo(const IntPoint &loc)
+void MacFrame::dragSourceMovedTo(const MouseEvent& event)
 {
     if (_dragSrc && _dragSrcMayBeDHTML) {
         // for now we don't care if event handler cancels default behavior, since there is none
-        dispatchDragSrcEvent(dragEvent, loc);
+        dispatchDragSrcEvent(dragEvent, event);
     }
 }
 
-void MacFrame::dragSourceEndedAt(const IntPoint &loc, NSDragOperation operation)
+void MacFrame::dragSourceEndedAt(const MouseEvent& event, NSDragOperation operation)
 {
     if (_dragSrc && _dragSrcMayBeDHTML) {
         _dragClipboard->setDestinationOperation(operation);
         // for now we don't care if event handler cancels default behavior, since there is none
-        dispatchDragSrcEvent(dragendEvent, loc);
+        dispatchDragSrcEvent(dragendEvent, event);
     }
     freeClipboard();
     _dragSrc = 0;
 }
 
 // returns if we should continue "default processing", i.e., whether eventhandler canceled
-bool MacFrame::dispatchDragSrcEvent(const AtomicString &eventType, const IntPoint &loc) const
+bool MacFrame::dispatchDragSrcEvent(const AtomicString &eventType, const MouseEvent& event) const
 {
-    bool noDefaultProc = d->m_view->dispatchDragEvent(eventType, _dragSrc.get(), loc, _dragClipboard.get());
+    bool noDefaultProc = d->m_view->dispatchDragEvent(eventType, _dragSrc.get(), event, _dragClipboard.get());
     return !noDefaultProc;
 }
 

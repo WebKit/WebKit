@@ -267,7 +267,7 @@ public:
     bool dispatchGenericEvent(PassRefPtr<EventImpl>, ExceptionCode&, bool tempEvent = false);
     bool dispatchHTMLEvent(const AtomicString& eventType, bool canBubble, bool cancelable);
     void dispatchWindowEvent(const AtomicString& eventType, bool canBubble, bool cancelable);
-    bool dispatchMouseEvent(MouseEvent*, const AtomicString& eventType,
+    bool dispatchMouseEvent(const MouseEvent&, const AtomicString& eventType,
         int clickCount = 0, NodeImpl* relatedTarget = 0);
     bool dispatchSimulatedMouseEvent(const AtomicString& eventType);
     bool dispatchMouseEvent(const AtomicString& eventType, int button, int clickCount,
@@ -276,8 +276,8 @@ public:
         bool isSimulated = false, NodeImpl* relatedTarget = 0);
     bool dispatchUIEvent(const AtomicString& eventType, int detail = 0);
     bool dispatchSubtreeModifiedEvent(bool childrenChanged = true);
-    bool dispatchKeyEvent(KeyEvent*);
-    void dispatchWheelEvent(WheelEvent*);
+    bool dispatchKeyEvent(const KeyEvent&);
+    void dispatchWheelEvent(WheelEvent&);
 
     void handleLocalEvents(EventImpl*, bool useCapture);
 

@@ -27,18 +27,29 @@
 #include <kxmlcore/PassRefPtr.h>
 #include <kxmlcore/RefPtr.h>
 
+#if __APPLE__
+#ifdef __OBJC__
+@class WebCorePageBridge;
+#else
+class WebCorePageBridge;
+#endif
+#endif
+
 namespace WebCore {
 
     class Frame;
     class FrameNamespace;
+    class IntRect;
     
     class Page : Noncopyable {
     public:
-        Page();
-        virtual ~Page();
+        ~Page();
 
         void setMainFrame(PassRefPtr<Frame> mainFrame);
         Frame* mainFrame() { return m_mainFrame.get(); }
+
+        IntRect windowRect() const;
+        void setWindowRect(const IntRect&);
 
         void setGroupName(const String&);
         String groupName() const { return m_groupName; }
@@ -49,10 +60,21 @@ namespace WebCore {
         void decrementFrameCount() { --m_frameCount; }
         int frameCount() const { return m_frameCount; }
 
+#if __APPLE__
+        Page(WebCorePageBridge*);
+        WebCorePageBridge* bridge() const { return m_bridge; }
+#endif
+
     private:
+        void init();
+
         RefPtr<Frame> m_mainFrame;
         int m_frameCount;
         String m_groupName;
+
+#if __APPLE__
+        WebCorePageBridge* m_bridge;
+#endif
     };
 
 } // namespace WebCore

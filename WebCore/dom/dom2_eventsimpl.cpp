@@ -442,12 +442,12 @@ KeyboardEventImpl::KeyboardEventImpl()
 {
 }
 
-KeyboardEventImpl::KeyboardEventImpl(KeyEvent *key, AbstractViewImpl *view)
-  : UIEventWithKeyStateImpl(key->isKeyUp() ? keyupEvent : key->isAutoRepeat() ? keypressEvent : keydownEvent,
-    true, true, view, 0, key->ctrlKey(), key->altKey(), key->shiftKey(), key->metaKey())
-  , m_keyEvent(new KeyEvent(*key))
-  , m_keyIdentifier(DOMString(key->keyIdentifier()).impl())
-  , m_keyLocation(key->isKeypad() ? DOM_KEY_LOCATION_NUMPAD : DOM_KEY_LOCATION_STANDARD)
+KeyboardEventImpl::KeyboardEventImpl(const KeyEvent& key, AbstractViewImpl *view)
+  : UIEventWithKeyStateImpl(key.isKeyUp() ? keyupEvent : key.isAutoRepeat() ? keypressEvent : keydownEvent,
+    true, true, view, 0, key.ctrlKey(), key.altKey(), key.shiftKey(), key.metaKey())
+  , m_keyEvent(new KeyEvent(key))
+  , m_keyIdentifier(DOMString(key.keyIdentifier()).impl())
+  , m_keyLocation(key.isKeypad() ? DOM_KEY_LOCATION_NUMPAD : DOM_KEY_LOCATION_STANDARD)
   , m_altGraphKey(false)
 {
 }

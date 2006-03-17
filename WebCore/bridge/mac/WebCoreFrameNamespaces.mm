@@ -29,7 +29,7 @@
 #import "config.h"
 #import "WebCoreFrameNamespaces.h"
 
-#import "PageMac.h"
+#import "Page.h"
 
 using namespace WebCore;
 
@@ -43,7 +43,7 @@ using namespace WebCore;
     NSMutableArray* array = [[NSMutableArray alloc] initWithCapacity:set->size()];
     HashSet<Page*>::const_iterator end = set->end();
     for (HashSet<Page*>::const_iterator it = set->begin(); it != end; ++it) {
-        [array addObject:Mac(*it)->bridge()];
+        [array addObject:(*it)->bridge()];
     }
     NSEnumerator* enumerator = [array objectEnumerator];
     [array release];

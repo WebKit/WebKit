@@ -43,7 +43,6 @@ static void notImplemented() { puts("Not yet implemented"); _CrtDbgBreak(); }
 IntPoint FrameView::viewportToGlobal(IntPoint const&) const { notImplemented(); return IntPoint(); }
 void FrameView::updateBorder() { notImplemented(); }
 bool FrameView::isFrameView() const { notImplemented(); return 0; }
-Widget* FrameView::topLevelWidget() const { notImplemented(); return 0; }
 
 QTextEdit::QTextEdit(Widget*) { notImplemented(); }
 QTextEdit::~QTextEdit() { notImplemented(); }

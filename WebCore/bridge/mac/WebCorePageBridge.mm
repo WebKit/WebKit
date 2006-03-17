@@ -27,7 +27,7 @@
 #import "WebCorePageBridge.h"
 
 #import "MacFrame.h"
-#import "PageMac.h"
+#import "Page.h"
 #import "WebCoreFrameBridge.h"
 #import "Logging.h"
 
@@ -69,7 +69,7 @@ static void initializeLoggingChannelsIfNecessary()
     initializeLoggingChannelsIfNecessary();
     self = [super init];
     if (self)
-        _page = new PageMac(self);
+        _page = new Page(self);
     return self;
 }
 

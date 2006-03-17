@@ -33,7 +33,7 @@ namespace WebCore {
 static int pageCount;
 static HashMap<String, HashSet<Page*>*>* frameNamespaces;
 
-Page::Page() : m_frameCount(0)
+void Page::init()
 {
     ++pageCount;
 }

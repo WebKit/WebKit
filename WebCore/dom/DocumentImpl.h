@@ -334,7 +334,7 @@ public:
     void resetVisitedLinkColor();
     void resetActiveLinkColor();
     
-    MouseEventWithHitTestResults prepareMouseEvent(bool readonly, bool active, bool mouseMove, int x, int y, MouseEvent*);
+    MouseEventWithHitTestResults prepareMouseEvent(bool readonly, bool active, bool mouseMove, int x, int y, const MouseEvent&);
 
     virtual bool childAllowed(NodeImpl*);
     virtual bool childTypeAllowed(NodeType);

@@ -130,7 +130,7 @@ void BrowserExtensionMac::createNewWindow(const KURL& url,
     [bridge setScrollbarsVisible:winArgs.scrollBarsVisible];
     [bridge setWindowIsResizable:winArgs.resizable];
     
-    NSRect windowFrame = [bridge windowFrame];
+    NSRect windowFrame = [page windowFrame];
 
     NSSize size = { 1, 1 }; // workaround for 4213314
     NSSize scaleRect = [[page outerView] convertSize:size toView:nil];
@@ -162,7 +162,7 @@ void BrowserExtensionMac::createNewWindow(const KURL& url,
 	windowFrame.origin.y -= heightDelta;
     }
     
-    [bridge setWindowFrame:windowFrame];
+    [page setWindowFrame:windowFrame];
     
     [bridge showWindow];
     

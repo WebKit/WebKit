@@ -37,9 +37,9 @@ class NSEvent;
 #endif
 
 #if WIN32
-typedef struct HWND__ *HWND;
-typedef unsigned    WPARAM;
-typedef long        LPARAM;
+typedef struct HWND__* HWND;
+typedef unsigned WPARAM;
+typedef long LPARAM;
 #endif
 
 namespace WebCore {
@@ -50,9 +50,12 @@ namespace WebCore {
     class MouseEvent {
     public:
         MouseEvent(); // "current event"
-#if WIN32
-        MouseEvent(HWND hWnd, WPARAM wParam, LPARAM lParam, int clickCount);
-#endif
+        MouseEvent(const IntPoint& pos, const IntPoint& globalPos, MouseButton button,
+                int clickCount, bool shift, bool ctrl, bool alt, bool meta)
+            : m_position(pos), m_globalPosition(globalPos), m_button(button)
+            , m_clickCount(clickCount)
+            , m_shiftKey(shift), m_ctrlKey(ctrl), m_altKey(alt), m_metaKey(meta)
+            { }
 
         const IntPoint& pos() const { return m_position; }
         int x() const { return m_position.x(); }
@@ -69,6 +72,9 @@ namespace WebCore {
         static bool isMouseButtonDown(MouseButton);
 #if __APPLE__
         MouseEvent(NSEvent*);
+#endif
+#if WIN32
+        MouseEvent(HWND, WPARAM, LPARAM, int clickCount);
 #endif
 
     private:

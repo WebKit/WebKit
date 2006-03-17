@@ -48,7 +48,7 @@
 #import "TextEncoding.h"
 #import "MacFrame.h"
 #import "NodeImpl.h"
-#import "PageMac.h"
+#import "Page.h"
 #import "SelectionController.h"
 #import "WebCorePageBridge.h"
 #import "WebCoreSettings.h"
@@ -478,12 +478,12 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (WebCorePageBridge *)page
 {
-    return Mac(m_frame->page())->bridge();
+    return m_frame->page()->bridge();
 }
 
-- (void)initializeSettings: (WebCoreSettings *)settings
+- (void)initializeSettings:(WebCoreSettings *)settings
 {
-    m_frame->setSettings ([settings settings]);
+    m_frame->setSettings([settings settings]);
 }
 
 - (void)dealloc
@@ -2291,6 +2291,19 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return m_frame ? m_frame->eventMayStartDrag(event) : NO;
 }
 
+static IntPoint globalPoint(NSWindow* window, NSPoint windowPoint)
+{
+    NSPoint screenPoint = [window convertBaseToScreen:windowPoint];
+    return IntPoint((int)screenPoint.x, (int)(NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - screenPoint.y));
+}
+
+static MouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id <NSDraggingInfo> info)
+{
+    // FIXME: Fake modifier keys here.
+    return MouseEvent(IntPoint([info draggingLocation]), globalPoint(window, [info draggingLocation]),
+        LeftButton, 0, false, false, false, false);
+}
+
 - (NSDragOperation)dragOperationForDraggingInfo:(id <NSDraggingInfo>)info
 {
     NSDragOperation op = NSDragOperationNone;
@@ -2302,7 +2315,8 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             NSDragOperation srcOp = [info draggingSourceOperationMask];
             clipboard->setSourceOperation(srcOp);
 
-            if (v->updateDragAndDrop(IntPoint([info draggingLocation]), clipboard.get())) {
+            MouseEvent event = createMouseEventFromDraggingInfo([self window], info);
+            if (v->updateDragAndDrop(event, clipboard.get())) {
                 // *op unchanged if no source op was set
                 if (!clipboard->destinationOperation(&op)) {
                     // The element accepted but they didn't pick an operation, so we pick one for them
@@ -2338,7 +2352,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             KWQClipboard::AccessPolicy policy = m_frame->baseURL().isLocalFile() ? KWQClipboard::Readable : KWQClipboard::TypesReadable;
             RefPtr<KWQClipboard> clipboard = new KWQClipboard(true, [info draggingPasteboard], policy);
             clipboard->setSourceOperation([info draggingSourceOperationMask]);            
-            v->cancelDragAndDrop(IntPoint([info draggingLocation]), clipboard.get());
+            v->cancelDragAndDrop(createMouseEventFromDraggingInfo([self window], info), clipboard.get());
             clipboard->setAccessPolicy(KWQClipboard::Numb);    // invalidate clipboard here for security
         }
     }
@@ -2352,7 +2366,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             // Sending an event can result in the destruction of the view and part.
             RefPtr<KWQClipboard> clipboard = new KWQClipboard(true, [info draggingPasteboard], KWQClipboard::Readable);
             clipboard->setSourceOperation([info draggingSourceOperationMask]);
-            BOOL result = v->performDragAndDrop(IntPoint([info draggingLocation]), clipboard.get());
+            BOOL result = v->performDragAndDrop(createMouseEventFromDraggingInfo([self window], info), clipboard.get());
             clipboard->setAccessPolicy(KWQClipboard::Numb);    // invalidate clipboard here for security
             return result;
         }
@@ -2363,14 +2377,20 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 - (void)dragSourceMovedTo:(NSPoint)windowLoc
 {
     if (m_frame) {
-        m_frame->dragSourceMovedTo(IntPoint(windowLoc));
+        // FIXME: Fake modifier keys here.
+        MouseEvent event(IntPoint(windowLoc), globalPoint([self window], windowLoc),
+            LeftButton, 0, false, false, false, false);
+        m_frame->dragSourceMovedTo(event);
     }
 }
 
 - (void)dragSourceEndedAt:(NSPoint)windowLoc operation:(NSDragOperation)operation
 {
     if (m_frame) {
-        m_frame->dragSourceEndedAt(IntPoint(windowLoc), operation);
+        // FIXME: Fake modifier keys here.
+        MouseEvent event(IntPoint(windowLoc), globalPoint([self window], windowLoc),
+            LeftButton, 0, false, false, false, false);
+        m_frame->dragSourceEndedAt(event, operation);
     }
 }
 

@@ -65,6 +65,9 @@ class WebCoreFrameBridge;
 
 - (NSView *)outerView;
 
+- (void)setWindowFrame:(NSRect)frame;
+- (NSRect)windowFrame;
+
 @end
 
 // This interface definition allows those who hold a WebCorePageBridge * to call all the methods

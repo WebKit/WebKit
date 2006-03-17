@@ -185,17 +185,6 @@ void SVGDocumentImpl::dispatchScrollEvent()
     rootElement()->dispatchEvent(event.get(), ec);
 }
 
-bool SVGDocumentImpl::dispatchKeyEvent(EventTargetImpl* target, KeyEvent* key, bool keypress)
-{
-    // dispatch key event
-    ExceptionCode ec;
-    RefPtr<KeyboardEventImpl> keyEventImpl = static_pointer_cast<KeyboardEventImpl>(createEvent("KeyboardEvents", ec));
-    //keyEventImpl->initKeyboardEvent(key);
-    target->dispatchEvent(keyEventImpl.get(), ec);
-
-    return /*keyEventImpl->defaultHandled() ||*/ keyEventImpl->defaultPrevented();
-}
-
 CSSStyleSelector *SVGDocumentImpl::createStyleSelector(const QString &usersheet)
 {
     return new CSSStyleSelector(this, usersheet, m_styleSheets.get(), false);

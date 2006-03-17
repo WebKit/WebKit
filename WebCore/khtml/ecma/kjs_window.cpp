@@ -24,11 +24,14 @@
 
 #include "EventNames.h"
 #include "Frame.h"
+#include "FrameTree.h"
 #include "FrameView.h"
 #include "JSMutationEvent.h"
 #include "JSXMLHttpRequest.h"
-#include "PlugInInfoStore.h"
 #include "Logging.h"
+#include "Page.h"
+#include "PlatformString.h"
+#include "PlugInInfoStore.h"
 #include "Screen.h"
 #include "SelectionController.h"
 #include "Shared.h"
@@ -38,10 +41,10 @@
 #include "dom2_rangeimpl.h"
 #include "dom_elementimpl.h"
 #include "dom_position.h"
-#include "PlatformString.h"
 #include "domparser.h"
 #include "html_documentimpl.h"
 #include "htmlediting.h"
+#include "khtml_settings.h"
 #include "kjs_css.h"
 #include "kjs_events.h"
 #include "kjs_html.h"
@@ -52,8 +55,6 @@
 #include "render_canvas.h"
 #include "xmlserializer.h"
 #include <kjs/collector.h>
-#include "FrameTree.h"
-#include "khtml_settings.h"
 
 #if KHTML_XSLT
 #include "XSLTProcessor.h"
@@ -726,14 +727,9 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
       else
         return jsNull();
     case OuterHeight:
+        return jsNumber(m_frame->page()->windowRect().height());
     case OuterWidth:
-    {
-      if (m_frame->view()) {
-        IntRect frame = m_frame->view()->topLevelWidget()->frameGeometry();
-        return jsNumber(token == OuterHeight ? frame.height() : frame.width());
-      } else
-        return jsNumber(0);
-    }
+        return jsNumber(m_frame->page()->windowRect().width());
     case PageXOffset:
       if (!m_frame->view())
         return jsUndefined();
@@ -745,23 +741,15 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
       updateLayout();
       return jsNumber(m_frame->view()->contentsY());
     case Parent:
-      return retrieve(m_frame->tree()->parent() ? m_frame->tree()->parent() : (Frame*)m_frame);
+      return retrieve(m_frame->tree()->parent() ? m_frame->tree()->parent() : m_frame);
     case Personalbar:
       return personalbar(exec);
     case ScreenLeft:
     case ScreenX:
-      if (!m_frame->view())
-        return jsUndefined();
-      // We want to use frameGeometry here instead of mapToGlobal because it goes through
-      // the windowFrame method of the WebKit's UI delegate. Also we don't want to try
-      // to do anything relative to the screen the window is on.
-      return jsNumber(m_frame->view()->topLevelWidget()->frameGeometry().x());
+      return jsNumber(m_frame->page()->windowRect().x());
     case ScreenTop:
     case ScreenY:
-      if (!m_frame->view())
-        return jsUndefined();
-      // See comment above in ScreenX.
-      return jsNumber(m_frame->view()->topLevelWidget()->frameGeometry().y());
+      return jsNumber(m_frame->page()->windowRect().y());
     case ScrollX:
       if (!m_frame->view())
         return jsUndefined();
@@ -781,12 +769,8 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
     case Self:
     case _Window:
       return retrieve(m_frame);
-    case Top: {
-      Frame *p = m_frame;
-      while (p->tree()->parent())
-        p = p->tree()->parent();
-      return retrieve(p);
-    }
+    case Top:
+      return retrieve(m_frame->page()->mainFrame());
     case _Screen:
       if (!screen)
         screen = new Screen(exec, m_frame);
@@ -1662,58 +1646,44 @@ JSValue *WindowFunc::callAsFunction(ExecState *exec, JSObject *thisObj, const Li
       widget->setContentsPos(args[0]->toInt32(exec), args[1]->toInt32(exec));
     return jsUndefined();
   case Window::MoveBy:
-    if(args.size() >= 2 && widget)
-    {
-      Widget* tl = widget->topLevelWidget();
-      IntRect sg = screenRect(widget);
-      IntPoint dest = tl->pos() + IntPoint(args[0]->toInt32(exec), args[1]->toInt32(exec));
+    if (args.size() >= 2 && widget) {
+      IntRect r = frame->page()->windowRect();
+      r.move(args[0]->toInt32(exec), args[1]->toInt32(exec));
       // Security check (the spec talks about UniversalBrowserWrite to disable this check...)
-      if (sg.contains(IntRect(dest, IntSize(tl->width(), tl->height()))))
-        tl->move(dest);
+      if (screenRect(widget).contains(r))
+        frame->page()->setWindowRect(r);
     }
     return jsUndefined();
   case Window::MoveTo:
-    if(args.size() >= 2 && widget)
-    {
-      Widget* tl = widget->topLevelWidget();
-      IntRect sg = screenRect(widget);
-      IntPoint dest(args[0]->toInt32(exec) + sg.x(), args[1]->toInt32(exec) + sg.y());
+    if (args.size() >= 2 && widget) {
+      IntRect r = frame->page()->windowRect();
+      IntRect sr = screenRect(widget);
+      r.setLocation(sr.location() + IntPoint(args[0]->toInt32(exec), args[1]->toInt32(exec)));
       // Security check (the spec talks about UniversalBrowserWrite to disable this check...)
-      if (sg.contains(IntRect(dest, IntSize(tl->width(), tl->height()))))
-        tl->move(dest);
+      if (sr.contains(r))
+        frame->page()->setWindowRect(r);
     }
     return jsUndefined();
   case Window::ResizeBy:
-    if(args.size() >= 2 && widget)
-    {
-      Widget* tl = widget->topLevelWidget();
-      IntSize dest = tl->size() + IntSize(args[0]->toInt32(exec), args[1]->toInt32(exec));
+    if (args.size() >= 2 && widget) {
+      IntRect r = frame->page()->windowRect();
+      IntSize dest = r.size() + IntSize(args[0]->toInt32(exec), args[1]->toInt32(exec));
       IntRect sg = screenRect(widget);
       // Security check: within desktop limits and bigger than 100x100 (per spec)
-      if (tl->x() + dest.width() <= sg.right() && tl->y() + dest.height() <= sg.bottom()
+      if (r.x() + dest.width() <= sg.right() && r.y() + dest.height() <= sg.bottom()
            && dest.width() >= 100 && dest.height() >= 100)
-      {
-        // Take into account the window frame
-        int deltaWidth = tl->frameGeometry().width() - tl->width();
-        int deltaHeight = tl->frameGeometry().height() - tl->height();
-        tl->resize(dest.width() - deltaWidth, dest.height() - deltaHeight);
-      }
+        frame->page()->setWindowRect(IntRect(r.location(), dest));
     }
     return jsUndefined();
   case Window::ResizeTo:
     if (args.size() >= 2 && widget) {
-      Widget* tl = widget->topLevelWidget();
+      IntRect r = frame->page()->windowRect();
       IntSize dest = IntSize(args[0]->toInt32(exec), args[1]->toInt32(exec));
       IntRect sg = screenRect(widget);
       // Security check: within desktop limits and bigger than 100x100 (per spec)
-      if (tl->x() + dest.width() <= sg.right() && tl->y() + dest.height() <= sg.bottom() &&
+      if (r.x() + dest.width() <= sg.right() && r.y() + dest.height() <= sg.bottom() &&
            dest.width() >= 100 && dest.height() >= 100)
-      {
-        // Take into account the window frame
-        int deltaWidth = tl->frameGeometry().width() - tl->width();
-        int deltaHeight = tl->frameGeometry().height() - tl->height();
-        tl->resize(dest.width() - deltaWidth, dest.height() - deltaHeight);
-      }
+        frame->page()->setWindowRect(IntRect(r.location(), dest));
     }
     return jsUndefined();
   case Window::SetTimeout:

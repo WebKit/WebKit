@@ -706,7 +706,6 @@ KeyEvent::KeyEvent(NSEvent *event, bool forceAutoRepeat)
       m_keyIdentifier(keyIdentifierForKeyEvent(event)),
       m_isKeyUp([event type] == NSKeyUp),
       m_autoRepeat(forceAutoRepeat || [event isARepeat]),
-      m_isAccepted(false),
       m_WindowsKeyCode(WindowsKeyCodeForKeyEvent(event)),
       m_isKeypad(isKeypadEvent(event)),
       m_shiftKey([event modifierFlags] & NSShiftKeyMask),

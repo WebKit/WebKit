@@ -135,7 +135,6 @@ void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
                 return;
             }
             if (k->keyEvent()) {
-                k->keyEvent()->accept();
                 evt->setDefaultHandled();
                 click(false);
                 return;

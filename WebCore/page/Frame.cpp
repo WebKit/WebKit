@@ -1700,7 +1700,7 @@ bool Frame::isPointInsideSelection(int x, int y)
    return false;
 }
 
-void Frame::selectClosestWordFromMouseEvent(MouseEvent *mouse, NodeImpl *innerNode, int x, int y)
+void Frame::selectClosestWordFromMouseEvent(const MouseEvent& mouse, NodeImpl *innerNode, int x, int y)
 {
     SelectionController selection;
 
@@ -1721,9 +1721,9 @@ void Frame::selectClosestWordFromMouseEvent(MouseEvent *mouse, NodeImpl *innerNo
         setSelection(selection);
 }
 
-void Frame::handleMousePressEventDoubleClick(MouseEventWithHitTestResults* event)
+void Frame::handleMousePressEventDoubleClick(const MouseEventWithHitTestResults& event)
 {
-    if (event->event()->button() == LeftButton) {
+    if (event.event().button() == LeftButton) {
         if (selection().isRange())
             // A double-click when range is already selected
             // should not change the selection.  So, do not call
@@ -1733,22 +1733,21 @@ void Frame::handleMousePressEventDoubleClick(MouseEventWithHitTestResults* event
             d->m_beganSelectingText = true;
         else {
             int x, y;
-            view()->viewportToContents(event->event()->x(), event->event()->y(), x, y);
-            selectClosestWordFromMouseEvent(event->event(), event->innerNode(), x, y);
+            view()->viewportToContents(event.event().x(), event.event().y(), x, y);
+            selectClosestWordFromMouseEvent(event.event(), event.innerNode(), x, y);
         }
     }
 }
 
-void Frame::handleMousePressEventTripleClick(MouseEventWithHitTestResults* event)
+void Frame::handleMousePressEventTripleClick(const MouseEventWithHitTestResults& event)
 {
-    MouseEvent *mouse = event->event();
-    NodeImpl *innerNode = event->innerNode();
+    NodeImpl *innerNode = event.innerNode();
     
-    if (mouse->button() == LeftButton && innerNode && innerNode->renderer() &&
+    if (event.event().button() == LeftButton && innerNode && innerNode->renderer() &&
         mouseDownMayStartSelect() && innerNode->renderer()->shouldSelect()) {
         SelectionController selection;
         int x, y;
-        view()->viewportToContents(event->event()->x(), event->event()->y(), x, y);
+        view()->viewportToContents(event.event().x(), event.event().y(), x, y);
         VisiblePosition pos(innerNode->renderer()->positionForCoordinates(x, y));
         if (pos.isNotNull()) {
             selection.moveTo(pos);
@@ -1764,23 +1763,22 @@ void Frame::handleMousePressEventTripleClick(MouseEventWithHitTestResults* event
     }
 }
 
-void Frame::handleMousePressEventSingleClick(MouseEventWithHitTestResults* event)
+void Frame::handleMousePressEventSingleClick(const MouseEventWithHitTestResults& event)
 {
-    MouseEvent *mouse = event->event();
-    NodeImpl *innerNode = event->innerNode();
+    NodeImpl *innerNode = event.innerNode();
     
-    if (mouse->button() == LeftButton) {
+    if (event.event().button() == LeftButton) {
         if (innerNode && innerNode->renderer() &&
             mouseDownMayStartSelect() && innerNode->renderer()->shouldSelect()) {
             SelectionController sel;
             
             // Extend the selection if the Shift key is down, unless the click is in a link.
-            bool extendSelection = mouse->shiftKey() && event->url().isNull();
+            bool extendSelection = event.event().shiftKey() && event.url().isNull();
 
             // Don't restart the selection when the mouse is pressed on an
             // existing selection so we can allow for text dragging.
             int x, y;
-            view()->viewportToContents(event->event()->x(), event->event()->y(), x, y);
+            view()->viewportToContents(event.event().x(), event.event().y(), x, y);
             if (!extendSelection && isPointInsideSelection(x, y))
                 return;
 
@@ -1818,24 +1816,23 @@ void Frame::handleMousePressEventSingleClick(MouseEventWithHitTestResults* event
     }
 }
 
-void Frame::khtmlMousePressEvent(MouseEventWithHitTestResults* event)
+void Frame::khtmlMousePressEvent(const MouseEventWithHitTestResults& event)
 {
-    DOMString url = event->url();
-    MouseEvent *mouse = event->event();
-    NodeImpl *innerNode = event->innerNode();
+    DOMString url = event.url();
+    NodeImpl *innerNode = event.innerNode();
 
     d->m_mousePressNode = innerNode;
-    d->m_dragStartPos = mouse->pos();
+    d->m_dragStartPos = event.event().pos();
 
-    if (mouse->button() == LeftButton || mouse->button() == MiddleButton) {
+    if (event.event().button() == LeftButton || event.event().button() == MiddleButton) {
         d->m_bMousePressed = true;
         d->m_beganSelectingText = false;
 
-        if (mouse->clickCount() == 2) {
+        if (event.event().clickCount() == 2) {
             handleMousePressEventDoubleClick(event);
             return;
         }
-        if (mouse->clickCount() >= 3) {
+        if (event.event().clickCount() >= 3) {
             handleMousePressEventTripleClick(event);
             return;
         }
@@ -1843,21 +1840,20 @@ void Frame::khtmlMousePressEvent(MouseEventWithHitTestResults* event)
     }
 }
 
-void Frame::handleMouseMoveEventSelection(MouseEventWithHitTestResults* event)
+void Frame::handleMouseMoveEventSelection(const MouseEventWithHitTestResults& event)
 {
     // Mouse not pressed. Do nothing.
     if (!d->m_bMousePressed)
         return;
 
-    MouseEvent *mouse = event->event();
-    NodeImpl *innerNode = event->innerNode();
+    NodeImpl *innerNode = event.innerNode();
 
-    if (mouse->button() != 0 || !innerNode || !innerNode->renderer() || !mouseDownMayStartSelect() || !innerNode->renderer()->shouldSelect())
+    if (event.event().button() != 0 || !innerNode || !innerNode->renderer() || !mouseDownMayStartSelect() || !innerNode->renderer()->shouldSelect())
         return;
 
     // handle making selection
     int x, y;
-    view()->viewportToContents(event->event()->x(), event->event()->y(), x, y);
+    view()->viewportToContents(event.event().x(), event.event().y(), x, y);
     VisiblePosition pos(innerNode->renderer()->positionForCoordinates(x, y));
 
     // Don't modify the selection if we're not on a node.
@@ -1882,12 +1878,12 @@ void Frame::handleMouseMoveEventSelection(MouseEventWithHitTestResults* event)
         setSelection(sel);
 }
 
-void Frame::khtmlMouseMoveEvent(MouseEventWithHitTestResults* event)
+void Frame::khtmlMouseMoveEvent(const MouseEventWithHitTestResults& event)
 {
     handleMouseMoveEventSelection(event);
 }
 
-void Frame::khtmlMouseReleaseEvent(MouseEventWithHitTestResults* event)
+void Frame::khtmlMouseReleaseEvent(const MouseEventWithHitTestResults& event)
 {
     stopAutoscrollTimer();
     
@@ -1899,13 +1895,13 @@ void Frame::khtmlMouseReleaseEvent(MouseEventWithHitTestResults* event)
     // We do this so when clicking on the selection, the selection goes away.
     // However, if we are editing, place the caret.
     if (mouseDownMayStartSelect() && !d->m_beganSelectingText
-            && d->m_dragStartPos == event->event()->pos()
+            && d->m_dragStartPos == event.event().pos()
             && d->m_selection.isRange()) {
         SelectionController selection;
-        NodeImpl *node = event->innerNode();
+        NodeImpl *node = event.innerNode();
         if (node && node->isContentEditable() && node->renderer()) {
             int x, y;
-            view()->viewportToContents(event->event()->x(), event->event()->y(), x, y);
+            view()->viewportToContents(event.event().x(), event.event().y(), x, y);
             VisiblePosition pos = node->renderer()->positionForCoordinates(x, y);
             selection.moveTo(pos);
         }
@@ -3039,15 +3035,15 @@ bool Frame::canMouseDownStartSelect(NodeImpl* node)
     return true;
 }
 
-void Frame::khtmlMouseDoubleClickEvent(MouseEventWithHitTestResults* event)
+void Frame::khtmlMouseDoubleClickEvent(const MouseEventWithHitTestResults& event)
 {
     passWidgetMouseDownEventToWidget(event, true);
 }
 
-bool Frame::passWidgetMouseDownEventToWidget(MouseEventWithHitTestResults* event, bool isDoubleClick)
+bool Frame::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults& event, bool isDoubleClick)
 {
     // Figure out which view to send the event to.
-    RenderObject *target = event->innerNode() ? event->innerNode()->renderer() : 0;
+    RenderObject *target = event.innerNode() ? event.innerNode()->renderer() : 0;
     if (!target)
         return false;
     

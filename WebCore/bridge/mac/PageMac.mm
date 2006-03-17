@@ -18,30 +18,35 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef PAGE_MAC_H
-#define PAGE_MAC_H
+#import "config.h"
+#import "Page.h"
 
-#include "Page.h"
-
-#ifdef __OBJC__
-@class WebCorePageBridge;
-#else
-class WebCorePageBridge;
-#endif
+#import "Frame.h"
+#import "IntRect.h"
+#import "WebCorePageBridge.h"
 
 namespace WebCore {
 
-    class PageMac : public Page {
-    public:
-        PageMac(WebCorePageBridge* b) : m_bridge(b) { }
-        WebCorePageBridge* bridge() const { return m_bridge; }
-    private:
-        WebCorePageBridge* m_bridge;
-    };
+static NSRect flipGlobalRect(NSRect rect)
+{
+    rect.origin.y = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(rect);
+    return rect;
+}
 
-    inline PageMac* Mac(Page* page) { return static_cast<PageMac*>(page); }
-    inline const PageMac* Mac(const Page* page) { return static_cast<const PageMac*>(page); }
+Page::Page(WebCorePageBridge* bridge)
+    : m_frameCount(0), m_bridge(bridge)
+{
+    init();
+}
 
-} // namespace WebCore
-    
-#endif // PAGE_H
+IntRect Page::windowRect() const
+{
+    return enclosingIntRect(flipGlobalRect([bridge() windowFrame]));
+}
+
+void Page::setWindowRect(const IntRect& r)
+{
+    [bridge() setWindowFrame:flipGlobalRect(r)];
+}
+
+}

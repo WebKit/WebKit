@@ -511,10 +511,6 @@ typedef enum {
 - (BOOL)areScrollbarsVisible;
 - (void)setScrollbarsVisible:(BOOL)visible;
 - (NSWindow *)window;
-- (void)setWindowFrame:(NSRect)frame;
-- (NSRect)windowFrame;
-- (void)setWindowContentRect:(NSRect)frame;
-- (NSRect)windowContentRect;
 
 - (void)setWindowIsResizable:(BOOL)resizable;
 - (BOOL)windowIsResizable;
