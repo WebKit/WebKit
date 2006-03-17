@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title></title>
+<style type="text/css">
+#target:first-letter { color: blue;	}
+</style>
+
+<script type="text/javascript">
+function test()
+{
+    document.body.offsetTop;
+    document.getElementById("target").innerHTML = "PASS";
+}
+</script>
+
+</head>
+<body onload="test()">
+<p>
+Test for <i><a href="http://bugzilla.opendarwin.org/show_bug.cgi?id=3560">http://bugzilla.opendarwin.org/show_bug.cgi?id=3560</a>
+page with use of first-letter crashes reproducibly in RenderObject::renderArena()</i>.
+</p>
+<p>
+The next line should read &ldquo;<span style="color: blue;">P</span>ASS&rdquo;, with nothing before the P.
+</p>
+<hr>
+<p id="target">didn&rsquo;t run</p>
+</body>
+</html>

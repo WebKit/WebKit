@@ -1,3 +1,16 @@
+2006-03-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Maciej, landed by Beth.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=3560
+        page with use of first-letter crashes reproducibly in 
+        RenderObject::renderArena()
+
+        * fast/css/first-letter-detach-expected.checksum: Added.
+        * fast/css/first-letter-detach-expected.png: Added.
+        * fast/css/first-letter-detach-expected.txt: Added.
+        * fast/css/first-letter-detach.html: Added.
+
 2006-03-17  Adele Peterson  <adele@apple.com>
 
         Reviewed by Eric.        

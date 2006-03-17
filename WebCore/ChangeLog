@@ -1,3 +1,25 @@
+2006-03-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Maciej, landed by Beth.
+
+        fix http://bugzilla.opendarwin.org/show_bug.cgi?id=3560
+        page with use of first-letter crashes reproducibly in 
+        RenderObject::renderArena()
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetter): Pass the first-leter 
+        renderer to the remaining text fragment.
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::destroyLeftoverChildren): Do not destroy 
+        first-letter renderers since they are destroyed by their remaining 
+        text now.
+        * rendering/RenderTextFragment.cpp:
+        (khtml::RenderTextFragment::RenderTextFragment):
+        (khtml::RenderTextFragment::destroy): Destroy the first-letter 
+        renderer.
+        * rendering/RenderTextFragment.h:
+        (khtml::RenderTextFragment::firstLetter):
+
 2006-03-17  Adele Peterson  <adele@apple.com>
 
         Reviewed by Eric.

@@ -29,13 +29,13 @@ using namespace DOM;
 
 namespace khtml {
 
-RenderTextFragment::RenderTextFragment(DOM::NodeImpl* node, DOM::DOMStringImpl* str, int startOffset, int length)
-    : RenderText(node, str ? str->substring(startOffset, length) : 0), m_start(startOffset), m_end(length)
+RenderTextFragment::RenderTextFragment(DOM::NodeImpl* node, DOM::DOMStringImpl* str, int startOffset, int length, RenderObject* firstLetter)
+    : RenderText(node, str ? str->substring(startOffset, length) : 0), m_start(startOffset), m_end(length), m_firstLetter(firstLetter)
 {
 }
 
 RenderTextFragment::RenderTextFragment(DOM::NodeImpl* node, DOM::DOMStringImpl* str)
-    : RenderText(node, str), m_start(0), m_end(str ? str->length() : 0), m_generatedContentStr(str)
+    : RenderText(node, str), m_start(0), m_end(str ? str->length() : 0), m_generatedContentStr(str), m_firstLetter(0)
 {
 }
 
@@ -56,4 +56,10 @@ PassRefPtr<DOMStringImpl> RenderTextFragment::originalString() const
     return result;
 }
 
+void RenderTextFragment::destroy()
+{
+    if (firstLetter())
+        firstLetter()->destroy();
+    RenderText::destroy();
+}
 }

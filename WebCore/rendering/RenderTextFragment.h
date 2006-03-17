@@ -41,13 +41,16 @@ namespace khtml
 class RenderTextFragment : public RenderText
 {
 public:
-    RenderTextFragment(DOM::NodeImpl*, DOM::DOMStringImpl*, int startOffset, int length);
+    RenderTextFragment(DOM::NodeImpl*, DOM::DOMStringImpl*, int startOffset, int length, RenderObject* firstLetter = 0);
     RenderTextFragment(DOM::NodeImpl*, DOM::DOMStringImpl*);
     
     virtual bool isTextFragment() const;
     
+    virtual void destroy();
+
     uint start() const { return m_start; }
     uint end() const { return m_end; }
+    RenderObject* firstLetter() const { return m_firstLetter; }
     
     DOM::DOMStringImpl* contentString() const { return m_generatedContentStr.get(); }
     virtual PassRefPtr<DOM::DOMStringImpl> originalString() const;
@@ -56,6 +59,7 @@ private:
     uint m_start;
     uint m_end;
     RefPtr<DOM::DOMStringImpl> m_generatedContentStr;
+    RenderObject* m_firstLetter;
 };
 
 }
