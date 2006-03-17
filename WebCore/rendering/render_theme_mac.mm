@@ -30,6 +30,7 @@
 #import "Font.h"
 #import "render_canvas.h"
 #import "render_style.h"
+#import "WebCoreGraphicsBridge.h"
 
 // The methods in this file are specific to the Mac OS X platform.
 
@@ -522,22 +523,18 @@ bool RenderThemeMac::paintTextField(RenderObject* o, const RenderObject::PaintIn
 {
     // Initialize text field and update state.
     setTextFieldCellState(o, r);
-        
-    [textField drawWithFrame:NSRect(r) inView:o->canvas()->view()->getDocumentView()];
+    
+    [[WebCoreGraphicsBridge sharedBridge] drawBezeledTextFieldCell:NSRect(r) enabled:[textField isEnabled]];
+
     [textField setControlView: nil];
     
-    return false;
+    return true;
 }
 
 void RenderThemeMac::setTextFieldCellState(const RenderObject* o, const IntRect& r)
 {
-    if (!textField) {
+    if (!textField)
         textField = KWQRetainNSRelease([[NSTextFieldCell alloc] initTextCell:@""]);
-        [textField setBezeled:YES];
-        [textField setBezelStyle:NSTextFieldSquareBezel];
-        [textField setDrawsBackground:NO];
-        [textField setEditable:YES];
-    }
     updateEnabledState(textField, o);
 }
 

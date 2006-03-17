@@ -1,3 +1,16 @@
+2006-03-17  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        WebKit part of fix for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7797 
+        Can't set background color on new text fields
+
+        Added function to draw bezeled text field without drawing background.
+
+        * WebCoreSupport/WebGraphicsBridge.m:
+        (-[WebGraphicsBridge drawBezeledTextFieldCell:enabled:]): Added.
+
 2006-03-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Eric.

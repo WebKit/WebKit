@@ -55,4 +55,8 @@ static WebCoreGraphicsBridge *sharedBridge;
 {
 }
 
+- (void)drawBezeledTextFieldCell:(NSRect)rect enabled:(BOOL)active
+{
+}
+
 @end

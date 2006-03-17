@@ -1,3 +1,17 @@
+2006-03-17  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7797 
+        Can't set background color on new text fields
+
+        * fast/forms/input-appearance-bkcolor-expected.checksum: Added.
+        * fast/forms/input-appearance-bkcolor-expected.png: Added.
+        * fast/forms/input-appearance-bkcolor-expected.txt: Added.
+        * fast/forms/input-appearance-bkcolor.html: Added.
+        * fast/forms/resources
+        * fast/forms/resources/apple.gif
+
 2006-03-16  Beth Dakin  <bdakin@apple.com>
 
         Rubber stamped by Geoff.

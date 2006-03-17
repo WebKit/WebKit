@@ -1,3 +1,31 @@
+2006-03-17  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Hyatt.
+
+        WebCore part of fix for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7797 
+        Can't set background color on new text fields
+
+        Bezeled NSTextFieldCells always draw a background, so instead we'll use a new 
+        WebKitSystemInterface function to just draw the border of the cell.
+
+        Since the theme is drawing the border and the engine is drawing the background 
+        (which is different from the other form controls), we have to make sure we let the 
+        theme paint the border after the engine paints the background.
+
+        * platform/mac/WebCoreGraphicsBridge.h:
+        * platform/mac/WebCoreGraphicsBridge.m:
+        (-[WebCoreGraphicsBridge drawBezeledTextFieldCell:enabled:]):
+        * rendering/render_box.cpp: (WebCore::RenderBox::paintBoxDecorations):
+        * rendering/render_theme.cpp:
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::paintBorder):
+        (WebCore::RenderTheme::shouldPaintBorder):
+        * rendering/render_theme.h:
+        * rendering/render_theme_mac.mm:
+        (WebCore::RenderThemeMac::paintTextField):
+        (WebCore::RenderThemeMac::setTextFieldCellState):
+
 2006-03-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

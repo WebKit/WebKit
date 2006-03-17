@@ -77,4 +77,9 @@
     [NSApp postEvent:ev atStart:YES];
 }
 
+- (void)drawBezeledTextFieldCell:(NSRect)rect enabled:(BOOL)active
+{
+    WKDrawBezeledTextFieldCell(rect, active);
+}
+
 @end

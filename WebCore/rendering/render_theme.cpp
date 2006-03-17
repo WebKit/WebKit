@@ -84,12 +84,51 @@ bool RenderTheme::paint(RenderObject* o, const RenderObject::PaintInfo& i, const
         case ButtonAppearance:
             return paintButton(o, i, r);
         case TextFieldAppearance:
-            return paintTextField(o, i, r);
+            return true;
         default:
             break;
     }
     
     return true; // We don't support the appearance, so let the normal background/border paint.
+}
+
+bool RenderTheme::paintBorder(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
+{
+    if (i.p->paintingDisabled())
+        return false;
+        
+    // Call the appropriate paint method based off the appearance value.
+    switch (o->style()->appearance()) {
+        case TextFieldAppearance:
+            return paintTextField(o, i, r);
+        case CheckboxAppearance:
+        case RadioAppearance:
+        case PushButtonAppearance:
+        case SquareButtonAppearance:
+        case ButtonAppearance:
+        default:
+            break;
+    }
+    
+    return false;
+}
+bool RenderTheme::shouldPaintBorder(RenderObject* o)
+{
+    // Call the appropriate paint method based off the appearance value.
+    switch (o->style()->appearance()) {
+        case TextFieldAppearance:
+            return true;
+        case CheckboxAppearance:
+        case RadioAppearance:
+        case PushButtonAppearance:
+        case SquareButtonAppearance:
+        case ButtonAppearance:
+            return false;
+        default:
+            break;
+    }
+    
+    return false; // We don't support the appearance, so let the normal background/border paint.
 }
 
 short RenderTheme::baselinePosition(const RenderObject* o) const
