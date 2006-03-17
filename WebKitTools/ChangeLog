@@ -1,3 +1,21 @@
+2006-03-17  Eric Seidel  <eseidel@apple.com>
+
+        Rubber-stamped by ggaren.
+
+        Break DumpRenderTree.m up into several files to make the code more readable.
+
+        * DumpRenderTree/DumpRenderTree.h: Added.
+        * DumpRenderTree/DumpRenderTree.m:
+        (doneLoading): new accessor function for "done" global.
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/DumpRenderTreeDraggingInfo.h: Added.
+        * DumpRenderTree/DumpRenderTreeDraggingInfo.m: Added.
+        * DumpRenderTree/EditingDelegate.h: Added.
+        * DumpRenderTree/EditingDelegate.m: Added.
+        (-[EditingDelegate webViewDidChangeSelection:]):
+        * DumpRenderTree/EventSendingController.h: Added.
+        * DumpRenderTree/EventSendingController.m: Added.
+
 2006-03-16  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.
