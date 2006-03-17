@@ -28,12 +28,15 @@
 
 #include "WebFrame.h"
 
-#include "WebView.h"
-#include "KeyEvent.h"
-#include "Resource.h"
+#include "DocumentImpl.h"
 #include "FrameView.h"
-#include "MouseEvent.h"
 #include "IntRect.h"
+#include "KeyEvent.h"
+#include "MouseEvent.h"
+#include "Resource.h"
+#include "SelectionController.h"
+#include "TypingCommand.h"
+#include "WebView.h"
 
 using namespace WebCore;
 
@@ -104,7 +107,7 @@ WebView::WebView(HWND hWnd)
     d = new WebViewPrivate();
     d->windowHandle = hWnd;
     d->mainFrame = new WebFrame("dummy", this);
-    d->mainFrame->loadHTMLString("<p style=\"background-color: #00FF00\">Testing</p><img src=\"http://webkit.opendarwin.org/images/icon-gold.png\" alt=\"Face\"><div style=\"border: solid blue\">div with blue border</div><ul><li>foo<li>bar<li>baz</ul>");
+    d->mainFrame->loadHTMLString("<p style=\"background-color: #00FF00\">Testing</p><img src=\"http://webkit.opendarwin.org/images/icon-gold.png\" alt=\"Face\"><div style=\"border: solid blue\" contenteditable=\"true\">div with blue border</div><ul><li>foo<li>bar<li>baz</ul>");
 }
 
 WebView::~WebView()
@@ -149,7 +152,38 @@ void WebView::mouseDoubleClick(WPARAM wParam, LPARAM lParam)
 bool WebView::keyPress(WPARAM wParam, LPARAM lParam)
 {
     KeyEvent keyEvent(windowHandle(), wParam, lParam);
-    return static_cast<FrameWin*>(d->mainFrame->impl())->keyPress(&keyEvent);
+
+    FrameWin* frame = static_cast<FrameWin*>(d->mainFrame->impl());
+    bool handled = frame->keyPress(&keyEvent);
+    if (!handled && !keyEvent.isKeyUp()) {
+        NodeImpl* start = frame->selection().start().node();
+        if (start && start->isContentEditable()) {
+            switch(keyEvent.WindowsKeyCode()) {
+            case VK_BACK:
+                TypingCommand::deleteKeyPressed(frame->document());
+                break;
+            case VK_DELETE:
+                TypingCommand::forwardDeleteKeyPressed(frame->document());
+                break;
+            case VK_LEFT:
+                frame->selection().modify(SelectionController::MOVE, SelectionController::LEFT, CharacterGranularity);
+                break;
+            case VK_RIGHT:
+                frame->selection().modify(SelectionController::MOVE, SelectionController::RIGHT, CharacterGranularity);
+                break;
+            case VK_UP:
+                frame->selection().modify(SelectionController::MOVE, SelectionController::BACKWARD, ParagraphGranularity);
+                break;
+            case VK_DOWN:
+                frame->selection().modify(SelectionController::MOVE, SelectionController::FORWARD, ParagraphGranularity);
+                break;
+            default:
+                TypingCommand::insertText(frame->document(), keyEvent.text(), false);
+            }
+            handled = true;
+        }
+    }
+    return handled;
 }
 
 #define LINE_SCROLL_SIZE 30

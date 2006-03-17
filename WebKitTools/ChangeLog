@@ -1,5 +1,15 @@
 2006-03-17  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by justing.
+
+        Add support for basic HTML editing.
+
+        * Spinneret/Spinneret/WebView.cpp:
+        (WebKit::WebView::WebView):
+        (WebKit::WebView::keyPress):
+
+2006-03-17  Eric Seidel  <eseidel@apple.com>
+
         Rubber-stamped by ggaren.
 
         Break DumpRenderTree.m up into several files to make the code more readable.
