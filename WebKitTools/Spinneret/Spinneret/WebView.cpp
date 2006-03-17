@@ -128,25 +128,25 @@ WebFrame* WebView::mainFrame()
 void WebView::mouseMoved(WPARAM wParam, LPARAM lParam)
 {
     MouseEvent mouseEvent(windowHandle(), wParam, lParam, 0);
-    d->mainFrame->viewImpl()->viewportMouseMoveEvent(&mouseEvent);
+    d->mainFrame->viewImpl()->viewportMouseMoveEvent(mouseEvent);
 }
 
 void WebView::mouseDown(WPARAM wParam, LPARAM lParam)
 {
     MouseEvent mouseEvent(windowHandle(), wParam, lParam, 1);
-    d->mainFrame->viewImpl()->viewportMousePressEvent(&mouseEvent);
+    d->mainFrame->viewImpl()->viewportMousePressEvent(mouseEvent);
 }
 
 void WebView::mouseUp(WPARAM wParam, LPARAM lParam)
 {
     MouseEvent mouseEvent(windowHandle(), wParam, lParam, 1);
-    d->mainFrame->viewImpl()->viewportMouseReleaseEvent(&mouseEvent);
+    d->mainFrame->viewImpl()->viewportMouseReleaseEvent(mouseEvent);
 }
 
 void WebView::mouseDoubleClick(WPARAM wParam, LPARAM lParam)
 {
     MouseEvent mouseEvent(windowHandle(), wParam, lParam, 2);
-    d->mainFrame->viewImpl()->viewportMouseReleaseEvent(&mouseEvent);
+    d->mainFrame->viewImpl()->viewportMouseReleaseEvent(mouseEvent);
 }
 
 bool WebView::keyPress(WPARAM wParam, LPARAM lParam)
@@ -154,7 +154,7 @@ bool WebView::keyPress(WPARAM wParam, LPARAM lParam)
     KeyEvent keyEvent(windowHandle(), wParam, lParam);
 
     FrameWin* frame = static_cast<FrameWin*>(d->mainFrame->impl());
-    bool handled = frame->keyPress(&keyEvent);
+    bool handled = frame->keyPress(keyEvent);
     if (!handled && !keyEvent.isKeyUp()) {
         NodeImpl* start = frame->selection().start().node();
         if (start && start->isContentEditable()) {

@@ -1,5 +1,18 @@
 2006-03-17  Eric Seidel  <eseidel@apple.com>
 
+        Reviewed by ggaren.
+
+        Fix Spinneret to pass Events as const & not as pointers.
+
+        * Spinneret/Spinneret/WebView.cpp:
+        (WebKit::WebView::mouseMoved):
+        (WebKit::WebView::mouseDown):
+        (WebKit::WebView::mouseUp):
+        (WebKit::WebView::mouseDoubleClick):
+        (WebKit::WebView::keyPress):
+
+2006-03-17  Eric Seidel  <eseidel@apple.com>
+
         Reviewed by justing.
 
         Add support for basic HTML editing.
