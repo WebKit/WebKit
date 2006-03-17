@@ -148,6 +148,15 @@ layer at (16,341) size 135x100
   RenderTableCell {TH} at (7,44) size 135x26 [bgcolor=#0000FF] [border: (1px dotted #000000)] [r=0 c=0 rs=1 cs=1]
     RenderText {TEXT} at (45,2) size 45x22
       text run at (45,2) width 45: "TH A"
+layer at (9,661) size 616x129
+  RenderTableSection {TFOOT} at (1,350) size 0x129 [bgcolor=#FFFF00]
+    RenderTableRow {TR} at (0,0) size 0x0 [bgcolor=#FF0000]
+      RenderTableCell {TD} at (7,51) size 348x26 [border: (1px dotted #000000)] [r=0 c=0 rs=1 cs=2]
+        RenderText {TEXT} at (2,2) size 47x22
+          text run at (2,2) width 47: "TD M"
+      RenderTableCell {TD} at (362,51) size 122x26 [border: (1px dotted #000000)] [r=0 c=2 rs=1 cs=1]
+        RenderText {TEXT} at (2,2) size 46x22
+          text run at (2,2) width 46: "TD O"
 layer at (500,668) size 118x115
   RenderTableCell {TD} at (491,51) size 118x26 [bgcolor=#0000FF] [border: (1px dotted #000000)] [r=0 c=3 rs=1 cs=1]
     RenderText {TEXT} at (2,2) size 44x22
@@ -156,6 +165,15 @@ layer at (8,813) size 134x99
   RenderTableCell {TH} at (0,37) size 134x25 [bgcolor=#0000FF] [border: (1px dotted #000000)] [r=0 c=0 rs=1 cs=1]
     RenderText {TEXT} at (42,2) size 45x22
       text run at (42,2) width 45: "TH A"
+layer at (8,1102) size 577x114
+  RenderTableSection {TFOOT} at (0,311) size 0x114 [bgcolor=#FFFF00]
+    RenderTableRow {TR} at (0,0) size 0x0 [bgcolor=#FF0000]
+      RenderTableCell {TD} at (0,41) size 338x31 [border: (1px dotted #000000)] [r=0 c=0 rs=1 cs=2]
+        RenderText {TEXT} at (2,2) size 47x22
+          text run at (2,2) width 47: "TD M"
+      RenderTableCell {TD} at (338,44) size 122x25 [border: (1px dotted #000000)] [r=0 c=2 rs=1 cs=1]
+        RenderText {TEXT} at (2,2) size 46x22
+          text run at (2,2) width 46: "TD O"
 layer at (468,1102) size 117x114
   RenderTableCell {TD} at (460,44) size 117x25 [bgcolor=#0000FF] [border: (1px dotted #000000)] [r=0 c=3 rs=1 cs=1]
     RenderText {TEXT} at (2,2) size 44x22
