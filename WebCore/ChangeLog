@@ -1,3 +1,20 @@
+2006-03-17  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Eric.
+
+        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=7798 
+        New text fields are much wider than they should be for a specified size
+
+        I changed the character we use to calculate the width from "w" back to "0", 
+        which matches our old behavior.  The original change was intentional, to try
+        to better match other browsers, but "w" is a little too wide.  For now, lets
+        go back to the old behavior.
+
+        I also set the minWidth = maxWidth.  We were trying to match a WinIE quirk,
+        but that caused some odd behavior with growth of the text field in table cells.
+
+        * rendering/RenderTextField.cpp: (WebCore::RenderTextField::calcMinMaxWidth):
+
 2006-03-17  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by adele.

@@ -1,5 +1,35 @@
 2006-03-17  Adele Peterson  <adele@apple.com>
 
+        Reviewed by Eric.        
+
+        Updating test results for:
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7798 
+        New text fields are much wider than they should be for a specified size
+
+        * fast/forms/input-appearance-bkcolor-expected.checksum:
+        * fast/forms/input-appearance-bkcolor-expected.png:
+        * fast/forms/input-appearance-bkcolor-expected.txt:
+        * fast/forms/input-appearance-focus-expected.checksum:
+        * fast/forms/input-appearance-focus-expected.png:
+        * fast/forms/input-appearance-focus-expected.txt:
+        * fast/forms/input-appearance-minWidth-expected.checksum:
+        * fast/forms/input-appearance-minWidth-expected.png:
+        * fast/forms/input-appearance-minWidth-expected.txt:
+        * fast/forms/input-appearance-selection-expected.checksum:
+        * fast/forms/input-appearance-selection-expected.png:
+        * fast/forms/input-appearance-selection-expected.txt:
+        * fast/forms/input-appearance-visibility-expected.checksum:
+        * fast/forms/input-appearance-visibility-expected.png:
+        * fast/forms/input-appearance-visibility-expected.txt:
+        * fast/forms/input-appearance-width-expected.checksum:
+        * fast/forms/input-appearance-width-expected.png:
+        * fast/forms/input-appearance-width-expected.txt:
+        * fast/forms/input-baseline-expected.checksum:
+        * fast/forms/input-baseline-expected.png:
+        * fast/forms/input-baseline-expected.txt:
+
+2006-03-17  Adele Peterson  <adele@apple.com>
+
         Reviewed by Hyatt.
 
         Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7797 

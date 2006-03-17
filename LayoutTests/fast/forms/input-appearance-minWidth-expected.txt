@@ -1,59 +1,59 @@
-layer at (0,0) size 800x600
-  RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x18
+layer at (0,0) size 1105x600
+  RenderCanvas at (0,0) size 785x585
+layer at (0,0) size 1105x600
+  RenderBlock {HTML} at (0,0) size 785x600
+    RenderBody {BODY} at (8,8) size 769x584
+      RenderBlock (anonymous) at (0,0) size 769x18
         RenderText {TEXT} at (0,0) size 326x18
           text run at (0,0) width 326: "This tests that text fields have the correct minWidth."
-      RenderTable {TABLE} at (0,18) size 784x27
+      RenderTable {TABLE} at (0,18) size 769x27
         RenderTableSection {TBODY} at (0,0) size 0x27
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (1,1) size 192x25 [r=0 c=0 rs=1 cs=1]
-              RenderTextField {INPUT} at (3,3) size 190x19
-            RenderTableCell {TD} at (194,1) size 41x25 [r=0 c=1 rs=1 cs=1]
-              RenderTextField {INPUT} at (3,3) size 39x19
-            RenderTableCell {TD} at (236,1) size 58x25 [r=0 c=2 rs=1 cs=1]
-              RenderTextField {INPUT} at (3,3) size 56x19
-            RenderTableCell {TD} at (295,3) size 488x20 [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (1,1) size 152x25 [r=0 c=0 rs=1 cs=1]
+              RenderTextField {INPUT} at (3,3) size 150x19
+            RenderTableCell {TD} at (154,1) size 152x25 [r=0 c=1 rs=1 cs=1]
+              RenderTextField {INPUT} at (3,3) size 150x19
+            RenderTableCell {TD} at (307,1) size 152x25 [r=0 c=2 rs=1 cs=1]
+              RenderTextField {INPUT} at (3,3) size 150x19
+            RenderTableCell {TD} at (460,3) size 308x20 [r=0 c=3 rs=1 cs=1]
               RenderText {TEXT} at (1,1) size 4x18
                 text run at (1,1) width 4: " "
-      RenderTable {TABLE} at (0,45) size 784x27
+      RenderTable {TABLE} at (0,45) size 1097x27
         RenderTableSection {TBODY} at (0,0) size 0x27
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (1,1) size 462x25 [r=0 c=0 rs=1 cs=1]
-              RenderTextField {INPUT} at (3,3) size 460x19
-            RenderTableCell {TD} at (464,1) size 41x25 [r=0 c=1 rs=1 cs=1]
-              RenderTextField {INPUT} at (3,3) size 39x19
-            RenderTableCell {TD} at (506,1) size 58x25 [r=0 c=2 rs=1 cs=1]
-              RenderTextField {INPUT} at (3,3) size 56x19
-            RenderTableCell {TD} at (565,3) size 218x20 [r=0 c=3 rs=1 cs=1]
+            RenderTableCell {TD} at (1,1) size 362x25 [r=0 c=0 rs=1 cs=1]
+              RenderTextField {INPUT} at (3,3) size 360x19
+            RenderTableCell {TD} at (364,1) size 362x25 [r=0 c=1 rs=1 cs=1]
+              RenderTextField {INPUT} at (3,3) size 360x19
+            RenderTableCell {TD} at (727,1) size 362x25 [r=0 c=2 rs=1 cs=1]
+              RenderTextField {INPUT} at (3,3) size 360x19
+            RenderTableCell {TD} at (1090,3) size 6x20 [r=0 c=3 rs=1 cs=1]
               RenderText {TEXT} at (1,1) size 4x18
                 text run at (1,1) width 4: " "
-      RenderBlock (anonymous) at (0,72) size 784x36
+      RenderBlock (anonymous) at (0,72) size 769x36
         RenderBR {BR} at (0,0) size 0x18
         RenderBR {BR} at (0,18) size 0x18
-layer at (15,33) size 184x13
-  RenderBlock {DIV} at (3,3) size 184x13
+layer at (15,33) size 144x13
+  RenderBlock {DIV} at (3,3) size 144x13
     RenderText {TEXT} at (0,0) size 48x13
       text run at (0,0) width 48: "New Mail"
-layer at (208,33) size 33x13
-  RenderBlock {DIV} at (3,3) size 33x13
+layer at (168,33) size 144x13
+  RenderBlock {DIV} at (3,3) size 144x13
     RenderText {TEXT} at (0,0) size 29x13
       text run at (0,0) width 29: "Reply"
-layer at (250,33) size 50x13
-  RenderBlock {DIV} at (3,3) size 50x13
+layer at (321,33) size 144x13
+  RenderBlock {DIV} at (3,3) size 144x13
     RenderText {TEXT} at (0,0) size 46x13
       text run at (0,0) width 46: "Reply All"
-layer at (15,60) size 454x13
-  RenderBlock {DIV} at (3,3) size 454x13
+layer at (15,60) size 354x13
+  RenderBlock {DIV} at (3,3) size 354x13
     RenderText {TEXT} at (0,0) size 48x13
       text run at (0,0) width 48: "New Mail"
-layer at (478,60) size 33x13
-  RenderBlock {DIV} at (3,3) size 33x13
+layer at (378,60) size 354x13
+  RenderBlock {DIV} at (3,3) size 354x13
     RenderText {TEXT} at (0,0) size 29x13
       text run at (0,0) width 29: "Reply"
-layer at (520,60) size 50x13
-  RenderBlock {DIV} at (3,3) size 50x13
+layer at (741,60) size 354x13
+  RenderBlock {DIV} at (3,3) size 354x13
     RenderText {TEXT} at (0,0) size 46x13
       text run at (0,0) width 46: "Reply All"

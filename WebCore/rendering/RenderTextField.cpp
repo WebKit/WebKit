@@ -216,15 +216,13 @@ String RenderTextField::text()
 
 void RenderTextField::calcMinMaxWidth()
 {
-    RenderBlock::calcMinMaxWidth();
-
     // Figure out how big a text field needs to be for a given number of characters
-    // (using "w" as the nominal character).
+    // (using "0" as the nominal character).
     int size = static_cast<HTMLInputElementImpl*>(element())->size();
     if (size <= 0)
         size = 20;
     
-    m_maxWidth = style()->font().width("w") * size + paddingLeft() + paddingRight() + borderLeft() + borderRight();
+    m_minWidth = m_maxWidth = style()->font().width("0") * size + paddingLeft() + paddingRight() + borderLeft() + borderRight();
     setMinMaxKnown();
 }
 
