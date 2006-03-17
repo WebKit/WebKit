@@ -12,10 +12,10 @@ layer at (0,0) size 800x600
         RenderText {TEXT} at (0,0) size 755x18
           text run at (0,0) width 755: "This test uses the new text field to test focus() and blur() and to make sure that onFocus and onBlur events fire correctly."
       RenderBlock {P} at (0,34) size 784x23
-        RenderTextField {INPUT} at (2,2) size 146x19
+        RenderTextField {INPUT} at (2,2) size 146x19 [bgcolor=#FFFFFF]
         RenderText {TEXT} at (150,2) size 4x18
           text run at (150,2) width 4: " "
-        RenderTextField {INPUT} at (156,2) size 146x19
+        RenderTextField {INPUT} at (156,2) size 146x19 [bgcolor=#FFFFFF]
         RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {DIV} at (0,73) size 784x72
         RenderBR {BR} at (0,0) size 0x18

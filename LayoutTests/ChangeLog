@@ -1,3 +1,14 @@
+2006-03-17  Adele Peterson  <adele@apple.com>
+
+        Updated results for background color change.
+
+        * fast/forms/input-appearance-focus-expected.txt:
+        * fast/forms/input-appearance-minWidth-expected.txt:
+        * fast/forms/input-appearance-selection-expected.txt:
+        * fast/forms/input-appearance-visibility-expected.txt:
+        * fast/forms/input-appearance-width-expected.txt:
+        * fast/forms/input-baseline-expected.txt:
+
 2006-03-17  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Geoff

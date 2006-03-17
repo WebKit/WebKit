@@ -10,11 +10,11 @@ layer at (0,0) size 1105x600
         RenderTableSection {TBODY} at (0,0) size 0x27
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (1,1) size 152x25 [r=0 c=0 rs=1 cs=1]
-              RenderTextField {INPUT} at (3,3) size 150x19
+              RenderTextField {INPUT} at (3,3) size 150x19 [bgcolor=#FFFFFF]
             RenderTableCell {TD} at (154,1) size 152x25 [r=0 c=1 rs=1 cs=1]
-              RenderTextField {INPUT} at (3,3) size 150x19
+              RenderTextField {INPUT} at (3,3) size 150x19 [bgcolor=#FFFFFF]
             RenderTableCell {TD} at (307,1) size 152x25 [r=0 c=2 rs=1 cs=1]
-              RenderTextField {INPUT} at (3,3) size 150x19
+              RenderTextField {INPUT} at (3,3) size 150x19 [bgcolor=#FFFFFF]
             RenderTableCell {TD} at (460,3) size 308x20 [r=0 c=3 rs=1 cs=1]
               RenderText {TEXT} at (1,1) size 4x18
                 text run at (1,1) width 4: " "
@@ -22,11 +22,11 @@ layer at (0,0) size 1105x600
         RenderTableSection {TBODY} at (0,0) size 0x27
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (1,1) size 362x25 [r=0 c=0 rs=1 cs=1]
-              RenderTextField {INPUT} at (3,3) size 360x19
+              RenderTextField {INPUT} at (3,3) size 360x19 [bgcolor=#FFFFFF]
             RenderTableCell {TD} at (364,1) size 362x25 [r=0 c=1 rs=1 cs=1]
-              RenderTextField {INPUT} at (3,3) size 360x19
+              RenderTextField {INPUT} at (3,3) size 360x19 [bgcolor=#FFFFFF]
             RenderTableCell {TD} at (727,1) size 362x25 [r=0 c=2 rs=1 cs=1]
-              RenderTextField {INPUT} at (3,3) size 360x19
+              RenderTextField {INPUT} at (3,3) size 360x19 [bgcolor=#FFFFFF]
             RenderTableCell {TD} at (1090,3) size 6x20 [r=0 c=3 rs=1 cs=1]
               RenderText {TEXT} at (1,1) size 4x18
                 text run at (1,1) width 4: " "
