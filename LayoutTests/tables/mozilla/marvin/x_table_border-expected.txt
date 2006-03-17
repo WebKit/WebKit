@@ -1,0 +1,59 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x162
+  RenderBlock {HTML} at (0,0) size 800x162
+    RenderBody {BODY} at (8,16) size 784x138
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {TEXT} at (0,0) size 726x18
+          text run at (0,0) width 406: "No 'number' specification is given for border. There should be a "
+          text run at (406,0) width 320: "2 pixel border around the frame of the table below."
+      RenderTable {TABLE} at (0,34) size 196x104 [border: (1px outset #808080)]
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableCol {COLGROUP} at (0,0) size 0x0
+          RenderTableCol {COL} at (0,0) size 0x0
+        RenderTableSection {THEAD} at (1,1) size 0x26
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TH} at (2,2) size 62x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 58x18
+                text run at (2,2) width 58: "THEAD"
+            RenderTableCell {TH} at (66,2) size 62x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 58x18
+                text run at (2,2) width 58: "THEAD"
+            RenderTableCell {TH} at (130,2) size 62x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 58x18
+                text run at (2,2) width 58: "THEAD"
+        RenderTableSection {TFOOT} at (1,77) size 0x26
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,2) size 62x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 53x18
+                text run at (2,2) width 53: "TFOOT"
+            RenderTableCell {TD} at (66,2) size 62x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 53x18
+                text run at (2,2) width 53: "TFOOT"
+            RenderTableCell {TD} at (130,2) size 62x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 53x18
+                text run at (2,2) width 53: "TFOOT"
+        RenderTableSection {TBODY} at (1,27) size 0x50
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,2) size 62x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 57x18
+                text run at (2,2) width 57: "TBODY"
+            RenderTableCell {TD} at (66,2) size 62x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 57x18
+                text run at (2,2) width 57: "TBODY"
+            RenderTableCell {TD} at (130,2) size 62x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 57x18
+                text run at (2,2) width 57: "TBODY"
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,26) size 62x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 57x18
+                text run at (2,2) width 57: "TBODY"
+            RenderTableCell {TD} at (66,26) size 62x22 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 57x18
+                text run at (2,2) width 57: "TBODY"
+            RenderTableCell {TD} at (130,26) size 62x22 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 57x18
+                text run at (2,2) width 57: "TBODY"
