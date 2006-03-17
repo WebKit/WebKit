@@ -174,14 +174,13 @@ bool FrameWin::canGoBackOrForward(int) const { notImplemented(); return 0; }
 void FrameWin::issuePasteAndMatchStyleCommand() { notImplemented(); }
 Plugin* FrameWin::createPlugin(KURL const&,QStringList const&,QStringList const&,QString const&) { notImplemented(); return 0; }
 
-void BrowserExtensionWin::openURLRequest(KURL const&,struct WebCore::ResourceRequest const&) { notImplemented(); }
 bool BrowserExtensionWin::canRunModal() { notImplemented(); return 0; }
 void BrowserExtensionWin::openURLNotify() { notImplemented(); }
-void BrowserExtensionWin::createNewWindow(KURL const&,struct WebCore::ResourceRequest const&,struct WebCore::WindowArgs const&,Frame*&) { notImplemented(); }
+void BrowserExtensionWin::createNewWindow(struct WebCore::ResourceRequest const&,struct WebCore::WindowArgs const&,Frame*&) { notImplemented(); }
 bool BrowserExtensionWin::canRunModalNow() { notImplemented(); return 0; }
 void BrowserExtensionWin::runModal() { notImplemented(); }
 void BrowserExtensionWin::goBackOrForward(int) { notImplemented(); }
-void BrowserExtensionWin::createNewWindow(KURL const&,struct WebCore::ResourceRequest const&) { notImplemented(); }
+void BrowserExtensionWin::createNewWindow(struct WebCore::ResourceRequest const&) { notImplemented(); }
 
 void RenderCanvasImage::setNeedsImageUpdate() { notImplemented(); }
 
@@ -231,7 +230,7 @@ void FrameWin::clearUndoRedoOperations(void) { }
 QString FrameWin::incomingReferrer() const { return QString(); }
 void FrameWin::clearRecordedFormValues() { }
 void FrameWin::recordFormValue(QString const&,QString const&,WebCore::HTMLFormElementImpl*) { }
-void FrameWin::submitForm(KURL const&,struct WebCore::ResourceRequest const&) { }
+void FrameWin::submitForm(struct WebCore::ResourceRequest const&) { }
 void FrameWin::markMisspellingsInAdjacentWords(WebCore::VisiblePosition const&) { }
 void FrameWin::respondToChangedContents() { }
 

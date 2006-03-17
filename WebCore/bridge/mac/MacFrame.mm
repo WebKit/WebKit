@@ -170,18 +170,18 @@ bool MacFrame::openURL(const KURL &url)
     return true;
 }
 
-void MacFrame::openURLRequest(const KURL &url, const ResourceRequest& request)
+void MacFrame::openURLRequest(const ResourceRequest& request)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
     NSString *referrer;
-    DOMString argsReferrer = request.metaData().get("referrer");
+    DOMString argsReferrer = request.referrer();
     if (!argsReferrer.isEmpty())
         referrer = argsReferrer;
     else
         referrer = [_bridge referrer];
 
-    [_bridge loadURL:url.getNSURL()
+    [_bridge loadURL:request.url().getNSURL()
             referrer:referrer
               reload:request.reload
          userGesture:userGestureHint()
@@ -468,7 +468,7 @@ void MacFrame::recordFormValue(const QString &name, const QString &value, HTMLFo
     [_formValuesAboutToBeSubmitted setObject:value.getNSString() forKey:name.getNSString()];
 }
 
-void MacFrame::submitForm(const KURL& url, const ResourceRequest& request)
+void MacFrame::submitForm(const ResourceRequest& request)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
@@ -492,14 +492,14 @@ void MacFrame::submitForm(const KURL& url, const ResourceRequest& request)
         }
     }
     if (willReplaceThisFrame) {
-        if (_submittedFormURL == url) {
+        if (_submittedFormURL == request.url()) {
             return;
         }
-        _submittedFormURL = url;
+        _submittedFormURL = request.url();
     }
 
     if (!request.doPost()) {
-        [_bridge loadURL:url.getNSURL()
+        [_bridge loadURL:request.url().getNSURL()
                 referrer:[_bridge referrer] 
                   reload:request.reload
              userGesture:true
@@ -509,7 +509,7 @@ void MacFrame::submitForm(const KURL& url, const ResourceRequest& request)
               formValues:_formValuesAboutToBeSubmitted];
     } else {
         ASSERT(request.contentType().startsWith("Content-Type: "));
-        [_bridge postWithURL:url.getNSURL()
+        [_bridge postWithURL:request.url().getNSURL()
                     referrer:[_bridge referrer] 
                       target:request.frameName.getNSString()
                         data:arrayFromFormData(request.postData)
@@ -532,18 +532,18 @@ void MacFrame::frameDetached()
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void MacFrame::urlSelected(const KURL& url, const ResourceRequest& request)
+void MacFrame::urlSelected(const ResourceRequest& request)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
     NSString* referrer;
-    DOMString argsReferrer = request.metaData().get("referrer");
+    DOMString argsReferrer = request.referrer();
     if (!argsReferrer.isEmpty())
         referrer = argsReferrer;
     else
         referrer = [_bridge referrer];
 
-    [_bridge loadURL:url.getNSURL()
+    [_bridge loadURL:request.url().getNSURL()
             referrer:referrer
               reload:request.reload
          userGesture:true

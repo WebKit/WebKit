@@ -1,3 +1,51 @@
+2006-03-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adele.
+
+        - clean up ResourceRequest to be closer to a proper request interface
+
+        * page/ResourceRequest.h: folded URL into ResourceRequest, other cleanup
+        (WebCore::ResourceRequest::ResourceRequest): Add new explicit constructor
+        that takes a KURL.
+        (WebCore::ResourceRequest::url): getter for KURL
+        (WebCore::ResourceRequest::setURL): corresponding setter
+        (WebCore::ResourceRequest::referrer): new getter for referrer, instead
+        of storing it in m_metaData (it was the only remaining real use of it)
+        (WebCore::ResourceRequest::setReferrer): corresponding setter
+        * bridge/BrowserExtension.h: 
+        - removed unused openURLRequest and openURLNotify methods
+        - folded KURL parameter into ResourceRequest
+        * bridge/mac/BrowserExtensionMac.h: remove KURL args from methods that
+        also take a ResourceRequest
+        * bridge/mac/BrowserExtensionMac.mm:
+        (WebCore::BrowserExtensionMac::createNewWindow): adjust for ResourceRequest
+        changes.
+        * bridge/mac/MacFrame.h: remove KURL args from methods that also take a
+        ResourceRequest
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::openURLRequest): adjust for ResourceRequest changes
+        (WebCore::MacFrame::submitForm): ditto
+        (WebCore::MacFrame::urlSelected): ditto
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge openURL:reload:contentType:refresh:lastModified:pageCache:]): 
+        adjust for ResourceRequest changes
+        * bridge/win/BrowserExtensionWin.h:
+        * khtml/ecma/kjs_window.cpp:
+        (KJS::createNewWindow): adjust for ResourceRequest changes
+        (KJS::WindowFunc::callAsFunction): ditto
+        * page/Frame.cpp:
+        (WebCore::Frame::didOpenURL): adjust for ResourceRequest changes
+        (WebCore::Frame::receivedFirstData): ditto
+        (WebCore::Frame::begin): ditto
+        (WebCore::Frame::completeURL): ditto
+        (WebCore::Frame::changeLocation): ditto
+        (WebCore::Frame::urlSelected): ditto
+        (WebCore::Frame::requestFrame): ditto
+        (WebCore::Frame::submitForm): ditto
+        * page/Frame.h:
+        * platform/win/TemporaryLinkStubs.cpp:
+        (BrowserExtensionWin::createNewWindow): ditto
+
 2006-03-17  Adele Peterson  <adele@apple.com>
 
         Reviewed by Tim H.

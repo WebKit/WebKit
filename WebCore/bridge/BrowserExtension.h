@@ -62,19 +62,14 @@ class BrowserExtension {
 public:
     virtual ~BrowserExtension() { }
 
-    virtual void openURLRequest(const KURL&, const ResourceRequest& request = ResourceRequest()) = 0;
-    virtual void openURLNotify() = 0;
+    virtual void createNewWindow(const ResourceRequest&) = 0;
     
-    virtual void createNewWindow(const KURL &url, 
-                                 const ResourceRequest& request = ResourceRequest()) = 0;
-    
-    virtual void createNewWindow(const KURL& url, 
-                                 const ResourceRequest& request, 
-                                 const WindowArgs& winArgs, 
+    virtual void createNewWindow(const ResourceRequest&, 
+                                 const WindowArgs&, 
                                  Frame*& part) = 0;
     
-    virtual void setIconURL(const KURL &url) = 0;
-    virtual void setTypedIconURL(const KURL &url, const QString &type) = 0;
+    virtual void setIconURL(const KURL&) = 0;
+    virtual void setTypedIconURL(const KURL&, const QString& type) = 0;
     
     virtual int getHistoryLength() = 0;
     virtual void goBackOrForward(int distance) = 0;

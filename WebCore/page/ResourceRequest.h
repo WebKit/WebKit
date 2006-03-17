@@ -27,23 +27,20 @@
 #ifndef ResourceRequest_H_
 #define ResourceRequest_H_
 
-#include "PlatformString.h"
 #include "formdata.h"
-#include <kxmlcore/HashMap.h>
+#include "PlatformString.h"
+#include "KURL.h"
 
 namespace WebCore {
 
     struct ResourceRequest {
-        
-        QString frameName;
-        FormData postData;
-        bool reload;
-        QString serviceType;
-        int xOffset;
-        int yOffset;
-        
-        ResourceRequest() : reload(false), xOffset(0), yOffset(0), m_doPost(false), m_lockHistory(false) { }
-        
+
+        ResourceRequest() : m_lockHistory(false), reload(false), m_doPost(false) { }
+        explicit ResourceRequest(const KURL& url) : m_lockHistory(false), reload(false), m_url(url), m_doPost(false) { }
+
+        const KURL& url() const { return m_url; }
+        void setURL(const KURL& url) { m_url = url; }
+
         QString contentType() const { return m_contentType; }
         void setContentType(const QString &t) { m_contentType = t; }
         
@@ -53,14 +50,27 @@ namespace WebCore {
         bool lockHistory() const { return m_lockHistory; }
         void setLockHistory(bool lock) { m_lockHistory = lock; }
         
-        HashMap<DOMString, DOMString>& metaData() { return m_metadata; }
-        const HashMap<DOMString, DOMString>& metaData() const { return m_metadata; }
-        
+        const String& referrer() const { return m_referrer; }
+        void setReferrer(const String& referrer) { m_referrer = referrer; }
+
+        // FIXME: these two parameters are specific to frame opening,
+        // should move to FrameRequest once we have that
+        QString frameName;
     private:
+        bool m_lockHistory;
+
+    public:
+        // FIXME: the response MIME type shouldn't be in here, it
+        // should be in some kind of response object
+        String m_responseMIMEType;
+        
+        FormData postData;
+        bool reload;
+    private:
+        KURL m_url;
+        String m_referrer;
         QString m_contentType;
         bool m_doPost;
-        bool m_lockHistory;
-        HashMap<String, String> m_metadata;
     };
 
 }

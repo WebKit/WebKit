@@ -40,35 +40,19 @@ BrowserExtensionMac::BrowserExtensionMac(Frame *frame)
 {
 }
 
-void BrowserExtensionMac::openURLRequest(const KURL& url, const ResourceRequest& request)
+void BrowserExtensionMac::createNewWindow(const ResourceRequest& request) 
 {
-    if (url.protocol().lower() == "javascript") {
-	m_frame->createEmptyDocument();
-	m_frame->replaceContentsWithScriptResult(url);
-     } else {
-	m_frame->openURLRequest(url, request);
-    }
+    createNewWindow(request, WindowArgs(), NULL);
 }
 
-void BrowserExtensionMac::openURLNotify()
-{
-}
-
-void BrowserExtensionMac::createNewWindow(const KURL& url, const ResourceRequest& request) 
-{
-    createNewWindow(url, request, WindowArgs(), NULL);
-}
-
-void BrowserExtensionMac::createNewWindow(const KURL& url, 
-                                          const ResourceRequest& request, 
+void BrowserExtensionMac::createNewWindow(const ResourceRequest& request, 
                                           const WindowArgs& winArgs, 
                                           Frame*& part)
 {
-    createNewWindow(url, request, winArgs, &part);
+    createNewWindow(request, winArgs, &part);
 }
 
-void BrowserExtensionMac::createNewWindow(const KURL& url, 
-                                          const ResourceRequest& request, 
+void BrowserExtensionMac::createNewWindow(const ResourceRequest& request, 
                                           const WindowArgs& winArgs, 
                                           Frame** partResult)
 { 
@@ -78,13 +62,15 @@ void BrowserExtensionMac::createNewWindow(const KURL& url,
 
     if (partResult)
 	*partResult = NULL;
+    
+    const KURL& url = request.url();
 
     NSString *frameName = request.frameName.length() == 0 ? nil : request.frameName.getNSString();
     if (frameName) {
         // FIXME: Can't we just use m_frame->findFrame?
         if (WebCoreFrameBridge *bridge = [m_frame->bridge() findFrameNamed:frameName]) {
             if (!url.isEmpty()) {
-                DOMString argsReferrer = request.metaData().get("referrer");
+                DOMString argsReferrer = request.referrer();
                 NSString *referrer;
                 if (!argsReferrer.isEmpty())
                     referrer = argsReferrer;

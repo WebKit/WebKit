@@ -209,16 +209,10 @@ public:
    * are generating the HTML on the fly, it may be useful to specify
    * a directory so that any images are found.
    *
-   * @param xOffset is the initial horizontal scrollbar value. Usually
-   * you don't want to use this.
-   *
-   * @param yOffset is the initial vertical scrollbar value. Usually
-   * you don't want to use this.
-   *
    * All child frames and the old document are removed if you call
    * this method.
    */
-  virtual void begin( const KURL &url = KURL(), int xOffset = 0, int yOffset = 0 );
+  virtual void begin( const KURL &url = KURL());
 
   /**
    * Writes another part of the HTML code to the widget.
@@ -549,7 +543,8 @@ public:
   
   void selectClosestWordFromMouseEvent(const MouseEvent&, NodeImpl* innerNode, int x, int y);
 
-  virtual void urlSelected(const QString& url, const QString& target, const ResourceRequest& request = ResourceRequest());
+  virtual void urlSelected(const QString& url, const QString& target);
+  virtual void urlSelected(const ResourceRequest&, const QString& target);
 
 
   // Methods with platform-specific overrides (and no base class implementation).
@@ -595,9 +590,9 @@ public:
   virtual void saveDocumentState() = 0;
   virtual void restoreDocumentState() = 0;
   virtual bool canGoBackOrForward(int distance) const = 0;
-  virtual void openURLRequest(const KURL&, const ResourceRequest&) = 0;
-  virtual void submitForm(const KURL&, const ResourceRequest&) = 0;
-  virtual void urlSelected(const KURL&, const ResourceRequest&) = 0;
+  virtual void openURLRequest(const ResourceRequest&) = 0;
+  virtual void submitForm(const ResourceRequest&) = 0;
+  virtual void urlSelected(const ResourceRequest&) = 0;
   virtual bool passSubframeEventToSubframe(MouseEventWithHitTestResults&) = 0;
   virtual bool passWheelEventToChildWidget(NodeImpl *) = 0;
   virtual bool lastEventIsMouseUp() const = 0;

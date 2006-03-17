@@ -531,7 +531,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     ResourceRequest request(m_frame->resourceRequest());
     request.reload = reload;
     if (contentType)
-        request.serviceType = QString::fromNSString(contentType);
+        request.m_responseMIMEType = QString::fromNSString(contentType);
     m_frame->setResourceRequest(request);
 
     // opening the URL

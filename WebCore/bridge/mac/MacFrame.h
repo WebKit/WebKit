@@ -129,15 +129,15 @@ public:
 
     virtual bool openURL(const KURL &);
     
-    virtual void openURLRequest(const KURL&, const ResourceRequest&);
-    virtual void submitForm(const KURL&, const ResourceRequest&);
+    virtual void openURLRequest(const ResourceRequest&);
+    virtual void submitForm(const ResourceRequest&);
 
     QString advanceToNextMisspelling(bool startBeforeSelection = false);
     
     virtual void setTitle(const DOMString &);
     virtual void setStatusBarText(const String&);
 
-    virtual void urlSelected(const KURL&, const ResourceRequest&);
+    virtual void urlSelected(const ResourceRequest&);
 
     virtual ObjectContentType objectContentType(const KURL& url, const QString& mimeType);
     virtual Plugin* createPlugin(const KURL& url, const QStringList& paramNames, const QStringList& paramValues, const QString& mimeType);
