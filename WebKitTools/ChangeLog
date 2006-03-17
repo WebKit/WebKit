@@ -1,3 +1,10 @@
+2006-03-17  Anders Carlsson  <andersca@mac.com>
+
+        Reviewed by Eric.
+        
+        * Scripts/install-win-extras:
+        Fetch "Program Files" location from the environment.
+        
 2006-03-17  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by ggaren.

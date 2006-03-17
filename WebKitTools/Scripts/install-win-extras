@@ -95,17 +95,23 @@ if (! -e "zlib-1.2.3.win32.zip") {
 }
 `chmod 755 ../zlib/bin/*.dll`;
 
-if (! -x "/cygdrive/c/Program Files/Resource Kit/setx.exe") {
+my $PROGRAMFILES = $ENV{"PROGRAMFILES"};
+my $unixProgramFiles = `cygpath -u "$PROGRAMFILES"`;
+chomp $unixProgramFiles;
+
+my $setx = "$unixProgramFiles/Resource\ Kit/setx.exe";
+
+if (! -x "$setx") {
     unlink("setx_setup.exe"); 
     print "Downloading setx_setup.exe...\n\n";
     `curl -O http://download.microsoft.com/download/win2000platform/setx/1.00.0.1/nt5/en-us/setx_setup.exe`;
     print "Instaling setx_setup.exe, please install in the default location...\n";
     `chmod +x ./setx_setup.exe`;
     `./setx_setup.exe`;
-    `chmod +x "/cygdrive/c/Program\ Files/Resource\ Kit/setx.exe"`;
+    `chmod +x "$setx"`;
 
-    print "/cygdrive/c/Program Files/Resource Kit/setx.exe WebKitOutputDir 'c:\\WebKitBuild'\n";
-    system '/cygdrive/c/Program Files/Resource Kit/setx.exe', "WebKitOutputDir", 'c:\\WebKitBuild';
+    print "$setx WebKitOutputDir 'c:\\WebKitBuild'\n";
+    system '$setx', "WebKitOutputDir", 'c:\\WebKitBuild';
 
     my $PATH = $ENV{"PATH"};
     my $WINPATH = `cygpath -p -w "$PATH"`;
@@ -123,7 +129,7 @@ if (! -x "/cygdrive/c/Program Files/Resource Kit/setx.exe") {
 	$WINPATH = "c:\\cygwin\\bin;$WINPATH";
     }
 
-    print "/cygdrive/c/Program Files/Resource Kit/setx.exe Path \"$WINPATH\" -m\n";
-    system '/cygdrive/c/Program Files/Resource Kit/setx.exe', "Path", "$WINPATH", "-m";
+    print "$setx Path \"$WINPATH\" -m\n";
+    system '$setx', "Path", "$WINPATH", "-m";
 }
 
