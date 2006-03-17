@@ -552,6 +552,9 @@ void RenderThemeMac::adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyl
     style->setMarginBottom(Length(2, Fixed));
     style->setMarginLeft(Length(2, Fixed));
     style->setMarginRight(Length(2, Fixed));
+    
+    if (!style->hasBackground())
+        style->setBackgroundColor(Color(Color::white));
 }
 
 }

@@ -1,3 +1,17 @@
+2006-03-17  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Tim H.
+
+        Make default backgrounds for new text fields white
+        instead of transparent.  This will move to html4.css
+        when we flip the switch.
+
+        Test added:
+        * fast/forms/input-appearance-default-bkcolor.html
+
+        * rendering/render_theme_mac.mm:
+        (WebCore::RenderThemeMac::adjustTextFieldStyle):
+
 2006-03-17  David Hyatt  <hyatt@apple.com>
 
         Make table sections and table captions support opacity.

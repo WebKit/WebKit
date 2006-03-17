@@ -1,3 +1,12 @@
+2006-03-17  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        * fast/forms/input-appearance-default-bkcolor-expected.checksum: Added.
+        * fast/forms/input-appearance-default-bkcolor-expected.png: Added.
+        * fast/forms/input-appearance-default-bkcolor-expected.txt: Added.
+        * fast/forms/input-appearance-default-bkcolor.html: Added.
+
 2006-03-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Maciej, landed by Beth.
