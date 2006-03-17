@@ -1,3 +1,13 @@
+2006-03-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - fixed "charAt layout test fails on intel macs; some NaNs are printed as -NaN"
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7745
+
+        * kjs/ustring.cpp:
+        (KJS::UString::from): Use "NaN" for all NaN values, regardless of sign.
+
 2006-03-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

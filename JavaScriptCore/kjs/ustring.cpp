@@ -561,6 +561,10 @@ UString UString::from(long l)
 
 UString UString::from(double d)
 {
+  // avoid ever printing -NaN, in JS conceptually there is only one NaN value
+  if (isNaN(d))
+    return "NaN";
+
   char buf[80];
   int decimalPoint;
   int sign;
