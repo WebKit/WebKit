@@ -392,7 +392,7 @@ void RenderTable::paint(PaintInfo& i, int _tx, int _ty)
     PaintInfo paintInfo(i.p, i.r, paintAction, paintingRootForChildren(i));
     
     for (RenderObject *child = firstChild(); child; child = child->nextSibling())
-        if (child->isTableSection() || child == tCaption)
+        if (!child->layer() && (child->isTableSection() || child == tCaption))
             child->paint(paintInfo, _tx, _ty);
 
     if (collapseBorders() && paintAction == PaintActionChildBlockBackground && style()->visibility() == VISIBLE) {

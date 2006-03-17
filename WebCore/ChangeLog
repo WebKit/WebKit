@@ -1,3 +1,14 @@
+2006-03-17  David Hyatt  <hyatt@apple.com>
+
+        Make table sections and table captions support opacity.
+
+        Reviewed by darin
+
+        Covered by some of the new Mozilla table tests.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paint):
+
 2006-03-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Maciej, landed by Beth.
