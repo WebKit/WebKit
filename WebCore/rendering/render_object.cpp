@@ -1275,12 +1275,12 @@ void RenderObject::absoluteRects(QValueList<IntRect>& rects, int _tx, int _ty)
                                       _ty - yPos() + continuation()->containingBlock()->yPos());
     }
     else
-        rects.append(IntRect(_tx, _ty, width(), height()));
+        rects.append(IntRect(_tx, _ty, width(), height() + borderTopExtra() + borderBottomExtra()));
 }
 
 IntRect RenderObject::absoluteBoundingBoxRect()
 {
-    int x, y;
+    int x = 0, y = 0;
     absolutePosition(x, y);
     QValueList<IntRect> rects;
     absoluteRects(rects, x, y);
@@ -1877,6 +1877,7 @@ bool RenderObject::absolutePosition(int &xPos, int &yPos, bool f)
     RenderObject* o = parent();
     if (o) {
         o->absolutePosition(xPos, yPos, f);
+        yPos += o->borderTopExtra();
         if (o->hasOverflowClip())
             o->layer()->subtractScrollOffset(xPos, yPos); 
         return true;

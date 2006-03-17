@@ -145,6 +145,7 @@ bool RenderTableSection::ensureRows(int numRows)
         for (int r = nRows; r < numRows; r++) {
             grid[r].row = new Row(nCols);
             grid[r].row->fill(emptyCellStruct);
+            grid[r].rowRenderer = 0;
             grid[r].baseLine = 0;
             grid[r].height = Length();
         }
@@ -153,7 +154,7 @@ bool RenderTableSection::ensureRows(int numRows)
     return true;
 }
 
-void RenderTableSection::addCell(RenderTableCell *cell)
+void RenderTableSection::addCell(RenderTableCell *cell, RenderObject* row)
 {
     int rSpan = cell->rowSpan();
     int cSpan = cell->colSpan();
@@ -196,6 +197,8 @@ void RenderTableSection::addCell(RenderTableCell *cell)
     // make sure we have enough rows
     if (!ensureRows(cRow + rSpan))
         return;
+
+    grid[cRow].rowRenderer = row;
 
     int col = cCol;
     // tell the cell where it is
@@ -362,6 +365,9 @@ int RenderTableSection::layoutRows(int toAdd)
     int hspacing = table()->hBorderSpacing();
     int vspacing = table()->vBorderSpacing();
     
+    // Set the width of our section now.  The rows will also be this width.
+    m_width = table()->contentWidth();
+    
     if (toAdd && totalRows && (rowPos[totalRows] || !nextSibling())) {
 
         int totalHeight = rowPos[totalRows] + toAdd;
@@ -429,6 +435,14 @@ int RenderTableSection::layoutRows(int toAdd)
     for (int r = 0; r < totalRows; r++) {
         Row *row = grid[r].row;
         int totalCols = row->size();
+        
+        // Set the row's x/y position and width/height.
+        if (grid[r].rowRenderer) {
+            grid[r].rowRenderer->setPos(0, rowPos[r]);
+            grid[r].rowRenderer->setWidth(m_width);
+            grid[r].rowRenderer->setHeight(rowPos[r+1] - rowPos[r] - vspacing);
+        }
+
         for (int c = 0; c < nEffCols; c++) {
             CellStruct current = cellAt(r, c);
             RenderTableCell* cell = current.cell;
@@ -659,12 +673,14 @@ void RenderTableSection::recalcCells()
     gridRows = 0;
 
     for (RenderObject *row = firstChild(); row; row = row->nextSibling()) {
-        cRow++;
-        cCol = 0;
-        ensureRows(cRow + 1);
-        for (RenderObject *cell = row->firstChild(); cell; cell = cell->nextSibling())
-            if (cell->isTableCell())
-                addCell(static_cast<RenderTableCell *>(cell));
+        if (row->isTableRow()) {
+            cRow++;
+            cCol = 0;
+            ensureRows(cRow + 1);
+            for (RenderObject *cell = row->firstChild(); cell; cell = cell->nextSibling())
+                if (cell->isTableCell())
+                    addCell(static_cast<RenderTableCell *>(cell), row);
+        }
     }
     needCellRecalc = false;
     setNeedsLayout(true);
@@ -696,6 +712,28 @@ RenderObject* RenderTableSection::removeChildNode(RenderObject* child)
 {
     setNeedCellRecalc();
     return RenderContainer::removeChildNode(child);
+}
+
+// Hit Testing
+bool RenderTableSection::nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty, HitTestAction action)
+{
+    // Table sections cannot ever be hit tested.  Effectively they do not exist.
+    // Just forward to our children always.
+    tx += m_x;
+    ty += m_y;
+
+    for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
+        // FIXME: We have to skip over inline flows, since they can show up inside table rows
+        // at the moment (a demoted inline <form> for example). If we ever implement a
+        // table-specific hit-test method (which we should do for performance reasons anyway),
+        // then we can remove this check.
+        if (!child->layer() && !child->isInlineFlow() && child->nodeAtPoint(info, x, y, tx, ty, action)) {
+            setInnerNode(info);
+            return true;
+        }
+    }
+    
+    return false;
 }
 
 #ifndef NDEBUG

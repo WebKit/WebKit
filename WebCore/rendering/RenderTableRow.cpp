@@ -92,8 +92,8 @@ void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)
 
     RenderTableCell* cell = static_cast<RenderTableCell*>(child);
 
-    section()->addCell(cell);
-
+    section()->addCell(cell, this);
+    
     RenderContainer::addChild(cell, beforeChild);
 
     if (beforeChild || nextSibling())
@@ -122,12 +122,32 @@ void RenderTableRow::layout()
 IntRect RenderTableRow::getAbsoluteRepaintRect()
 {
     // For now, just repaint the whole table.
-    // FIXME: Find a better way to do this.
+    // FIXME: Find a better way to do this, e.g., need to repaint all the cells that we
+    // might have propagated a background color into.
     RenderTable* parentTable = table();
     if (parentTable)
         return parentTable->getAbsoluteRepaintRect();
     else
         return IntRect();
+}
+
+// Hit Testing
+bool RenderTableRow::nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty, HitTestAction action)
+{
+    // Table rows cannot ever be hit tested.  Effectively they do not exist.
+    // Just forward to our children always.
+    for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
+        // FIXME: We have to skip over inline flows, since they can show up inside table rows
+        // at the moment (a demoted inline <form> for example). If we ever implement a
+        // table-specific hit-test method (which we should do for performance reasons anyway),
+        // then we can remove this check.
+        if (!child->layer() && !child->isInlineFlow() && child->nodeAtPoint(info, x, y, tx, ty, action)) {
+            setInnerNode(info);
+            return true;
+        }
+    }
+    
+    return false;
 }
 
 }

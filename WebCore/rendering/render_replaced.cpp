@@ -434,7 +434,7 @@ void RenderWidget::updateWidgetPosition()
         return;
     
     int x, y, width, height;
-    absolutePosition(x,y);
+    absolutePosition(x, y);
     x += borderLeft() + paddingLeft();
     y += borderTop() + paddingTop();
     width = m_width - borderLeft() - borderRight() - paddingLeft() - paddingRight();

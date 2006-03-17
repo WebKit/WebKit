@@ -113,9 +113,9 @@ IntRect RenderBR::caretRect(int offset, EAffinity affinity, int *extraWidthToEnd
     // an accurate position can be determined.
 
     int absx, absy;
-    absolutePosition(absx,absy);
+    absolutePosition(absx, absy);
 
-   if (extraWidthToEndOfLine)
+    if (extraWidthToEndOfLine)
         *extraWidthToEndOfLine = containingBlockWidth() - xPos();
  
     // FIXME: an older version of this code wasn't setting width at

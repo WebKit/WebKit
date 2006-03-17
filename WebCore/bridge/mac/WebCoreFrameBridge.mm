@@ -989,7 +989,7 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
     NSView *view = widget ? widget->getView() : nil;
     
     int nx, ny;
-    node->absolutePosition(nx,ny);
+    node->absolutePosition(nx, ny);
     NSObject *copiedNode = [copier nodeWithName:name
                                        position:NSMakePoint(nx,ny)
                                            rect:NSMakeRect(node->xPos(), node->yPos(), node->width(), node->height())

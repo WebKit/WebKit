@@ -1454,7 +1454,7 @@ GapRects RenderBlock::selectionGapRects()
         return GapRects();
 
     int tx, ty;
-    absolutePosition(tx, ty);
+    absolutePositionForContent(tx, ty);
     
     int lastTop = -borderTopExtra();
     int lastLeft = leftSelectionOffset(this, lastTop);
@@ -2586,7 +2586,7 @@ VisiblePosition RenderBlock::positionForCoordinates(int _x, int _y)
         return RenderFlow::positionForCoordinates(_x, _y); 
 
     int absx, absy;
-    absolutePosition(absx, absy);
+    absolutePositionForContent(absx, absy);
 
     int top = absy + borderTop() + paddingTop();
     int bottom = top + contentHeight();
@@ -2637,12 +2637,12 @@ VisiblePosition RenderBlock::positionForCoordinates(int _x, int _y)
     for (RenderObject *renderer = firstChild(); renderer; renderer = renderer->nextSibling()) {
         if (renderer->height() == 0 || renderer->style()->visibility() != VISIBLE || renderer->isFloatingOrPositioned())
             continue;
-        renderer->absolutePosition(absx, top);
+        renderer->absolutePositionForContent(absx, top);
         RenderObject *next = renderer->nextSibling();
         while (next && next->isFloatingOrPositioned())
             next = next->nextSibling();
         if (next) 
-            next->absolutePosition(absx, bottom);
+            next->absolutePositionForContent(absx, bottom);
         else
             bottom = top + contentHeight();
         if (_y >= top && _y < bottom) {

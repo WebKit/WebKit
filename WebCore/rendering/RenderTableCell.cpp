@@ -122,15 +122,16 @@ void RenderTableCell::layout()
 void RenderTableCell::computeAbsoluteRepaintRect(IntRect& r, bool f)
 {
     r.setY(r.y() + _topExtra);
+    r.move(-parent()->xPos(), -parent()->yPos()); // Rows are in the same coordinate space, so don't add their offset in.
     RenderBlock::computeAbsoluteRepaintRect(r, f);
 }
 
 bool RenderTableCell::absolutePosition(int &xPos, int &yPos, bool f)
 {
-    bool ret = RenderBlock::absolutePosition(xPos, yPos, f);
-    if (ret)
-      yPos += _topExtra;
-    return ret;
+    bool result = RenderBlock::absolutePosition(xPos, yPos, f);
+    xPos -= parent()->xPos(); // Rows are in the same coordinate space, so don't add their offset in.
+    yPos -= parent()->yPos();
+    return result;
 }
 
 short RenderTableCell::baselinePosition(bool) const

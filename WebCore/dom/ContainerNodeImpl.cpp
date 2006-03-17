@@ -629,7 +629,7 @@ bool ContainerNodeImpl::getUpperLeftCorner(int &xPos, int &yPos) const
 
     xPos = yPos = 0;
     if (!o->isInline() || o->isReplaced()) {
-        o->absolutePosition( xPos, yPos );
+        o->absolutePosition(xPos, yPos);
         return true;
     }
 
@@ -653,14 +653,14 @@ bool ContainerNodeImpl::getUpperLeftCorner(int &xPos, int &yPos) const
         }
 
         if (!o->isInline() || o->isReplaced()) {
-            o->absolutePosition( xPos, yPos );
+            o->absolutePosition(xPos, yPos);
             return true;
         }
 
         if (p->element() && p->element() == this && o->isText() && !o->isBR() && !static_cast<RenderText*>(o)->firstTextBox()) {
                 // do nothing - skip unrendered whitespace that is a child or next sibling of the anchor
         } else if ((o->isText() && !o->isBR()) || o->isReplaced()) {
-            o->container()->absolutePosition( xPos, yPos );
+            o->container()->absolutePosition(xPos, yPos);
             if (o->isText() && static_cast<RenderText *>(o)->firstTextBox()) {
                 xPos += static_cast<RenderText *>(o)->minXPos();
                 yPos += static_cast<RenderText *>(o)->firstTextBox()->root()->topOverflow();
@@ -690,9 +690,9 @@ bool ContainerNodeImpl::getLowerRightCorner(int &xPos, int &yPos) const
     xPos = yPos = 0;
     if (!o->isInline() || o->isReplaced())
     {
-        o->absolutePosition( xPos, yPos );
+        o->absolutePosition(xPos, yPos);
         xPos += o->width();
-        yPos += o->height();
+        yPos += o->height() + o->borderTopExtra() + o->borderBottomExtra();
         return true;
     }
     // find the last text/image child, to get a position
@@ -710,7 +710,7 @@ bool ContainerNodeImpl::getLowerRightCorner(int &xPos, int &yPos) const
             }
             o = prev;
         }
-        if(o->isText() || o->isReplaced()) {
+        if (o->isText() || o->isReplaced()) {
             o->container()->absolutePosition(xPos, yPos);
             if (o->isText())
                 xPos += static_cast<RenderText *>(o)->minXPos() + o->width();

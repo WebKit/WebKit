@@ -652,6 +652,7 @@ bool RenderBox::absolutePosition(int &xPos, int &yPos, bool f)
         f = true;
     RenderObject *o = container();
     if (o && o->absolutePosition(xPos, yPos, f)) {
+        yPos += o->borderTopExtra();
         if (style()->position() == AbsolutePosition && o->isRelPositioned() && o->isInlineFlow()) {
             // When we have an enclosing relpositioned inline, we need to add in the offset of the first line
             // box from the rest of the content, but only in the cases where we know we're positioned
@@ -685,8 +686,10 @@ bool RenderBox::absolutePosition(int &xPos, int &yPos, bool f)
         if (o->hasOverflowClip())
             o->layer()->subtractScrollOffset(xPos, yPos); 
             
-        if (!isInline() || isReplaced())
-            xPos += m_x, yPos += m_y;
+        if (!isInline() || isReplaced()) {
+            xPos += m_x;
+            yPos += m_y;
+        }
 
         if (isRelPositioned())
             relativePositionOffset(xPos, yPos);
@@ -1759,7 +1762,7 @@ IntRect RenderBox::caretRect(int offset, EAffinity affinity, int *extraWidthToEn
     
     int absx, absy;
     RenderObject *cb = containingBlock();
-    if (cb && cb != this && cb->absolutePosition(absx,absy)) {
+    if (cb && cb != this && cb->absolutePosition(absx, absy)) {
         _x += absx;
         _y += absy;
     } 

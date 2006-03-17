@@ -424,7 +424,7 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
     
     if (root) {
         int absx, absy;
-        containingBlock->absolutePosition(absx, absy);
+        containingBlock->absolutePositionForContent(absx, absy);
         RenderObject *renderer = root->closestLeafChildForXPos(x, absx)->object();
         return renderer->positionForCoordinates(x, absy + root->topOverflow());
     }
@@ -487,7 +487,7 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
     
     if (root) {
         int absx, absy;
-        containingBlock->absolutePosition(absx, absy);
+        containingBlock->absolutePositionForContent(absx, absy);
         RenderObject *renderer = root->closestLeafChildForXPos(x, absx)->object();
         return renderer->positionForCoordinates(x, absy + root->topOverflow());
     }    

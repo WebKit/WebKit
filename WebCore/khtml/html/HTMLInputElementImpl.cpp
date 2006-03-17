@@ -1046,7 +1046,7 @@ void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
             yPos = 0;
         } else {
             int offsetX, offsetY;
-            renderer()->absolutePosition(offsetX,offsetY);
+            renderer()->absolutePosition(offsetX, offsetY);
             xPos = me->clientX() - offsetX;
             yPos = me->clientY() - offsetY;
         }

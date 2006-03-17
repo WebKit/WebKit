@@ -636,17 +636,17 @@ IntRect RenderFlow::caretRect(int offset, EAffinity affinity, int *extraWidthToE
         } else {
             int myRight = _x + width;
             int ignore;
-            absolutePosition(myRight, ignore);
+            absolutePositionForContent(myRight, ignore);
             
             int containerRight = containingBlock()->xPos() + containingBlockWidth();
-            absolutePosition(containerRight, ignore);
+            absolutePositionForContent(containerRight, ignore);
             
             *extraWidthToEndOfLine = containerRight - myRight;
         }
     }
 
     int absx, absy;
-    absolutePosition(absx, absy, false);
+    absolutePositionForContent(absx, absy);
     _x += absx + paddingLeft() + borderLeft();
     _y += absy + paddingTop() + borderTop();
 

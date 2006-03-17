@@ -755,7 +755,7 @@ void SelectionController::layout()
             m_caretRect = pos.node()->renderer()->caretRect(pos.offset(), m_sel.affinity());
             
             int x, y;
-            pos.node()->renderer()->absolutePosition(x, y);
+            pos.node()->renderer()->absolutePositionForContent(x, y);
             m_caretPositionOnLayout = IntPoint(x, y);
         }
     }
@@ -772,7 +772,7 @@ IntRect SelectionController::caretRect() const
 
     if (m_sel.start().node() && m_sel.start().node()->renderer()) {
         int x, y;
-        m_sel.start().node()->renderer()->absolutePosition(x, y);
+        m_sel.start().node()->renderer()->absolutePositionForContent(x, y);
         caret.move(IntPoint(x, y) - m_caretPositionOnLayout);
     }
 

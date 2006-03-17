@@ -340,7 +340,7 @@ IntRect NodeImpl::getRect() const
 {
     int _x, _y;
     if (renderer() && renderer()->absolutePosition(_x, _y))
-        return IntRect( _x, _y, renderer()->width(), renderer()->height() );
+        return IntRect( _x, _y, renderer()->width(), renderer()->height() + renderer()->borderTopExtra() + renderer()->borderBottomExtra());
 
     return IntRect();
 }

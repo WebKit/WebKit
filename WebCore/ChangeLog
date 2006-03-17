@@ -1,3 +1,80 @@
+2006-03-17  David Hyatt  <hyatt@apple.com>
+
+        Give table rows and sections accurate dimensions.  Fix absolutePosition
+        to work for table cells properly.  Add an absolutePositionForContent method
+        to make sure callers that want to deal with the content of a cell handle
+        the cell's extra space correctly.
+
+        Reviewed by darin
+
+        Existing layout tests cover this change.
+
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge copyRenderNode:copier:]):
+        * dom/ContainerNodeImpl.cpp:
+        (WebCore::ContainerNodeImpl::getUpperLeftCorner):
+        (WebCore::ContainerNodeImpl::getLowerRightCorner):
+        * dom/NodeImpl.cpp:
+        (WebCore::NodeImpl::getRect):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::layout):
+        (WebCore::SelectionController::caretRect):
+        * editing/visible_units.cpp:
+        (WebCore::previousLinePosition):
+        (WebCore::nextLinePosition):
+        * khtml/html/HTMLInputElementImpl.cpp:
+        (WebCore::HTMLInputElementImpl::defaultEventHandler):
+        * kwq/KWQRenderTreeDebug.cpp:
+        (operator<<):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::selectionGapRects):
+        (WebCore::RenderBlock::positionForCoordinates):
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::positionForCoordinates):
+        (WebCore::RenderContainer::lineBoxRects):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::computeAbsoluteRepaintRect):
+        (WebCore::RenderTableCell::absolutePosition):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::addChild):
+        (WebCore::RenderTableRow::getAbsoluteRepaintRect):
+        (WebCore::RenderTableRow::nodeAtPoint):
+        * rendering/RenderTableRow.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::ensureRows):
+        (WebCore::RenderTableSection::addCell):
+        (WebCore::RenderTableSection::layoutRows):
+        (WebCore::RenderTableSection::recalcCells):
+        (WebCore::RenderTableSection::nodeAtPoint):
+        * rendering/RenderTableSection.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::lineBoxRects):
+        (WebCore::RenderText::positionForCoordinates):
+        (WebCore::RenderText::caretRect):
+        (WebCore::RenderText::posOfChar):
+        (WebCore::RenderText::selectionRect):
+        * rendering/render_box.cpp:
+        (WebCore::RenderBox::absolutePosition):
+        (WebCore::RenderBox::caretRect):
+        * rendering/render_br.cpp:
+        (WebCore::RenderBR::caretRect):
+        * rendering/render_canvas.h:
+        * rendering/render_flow.cpp:
+        (WebCore::RenderFlow::caretRect):
+        * rendering/render_frames.cpp:
+        (WebCore::RenderPart::updateWidgetPosition):
+        * rendering/render_layer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition):
+        * rendering/render_object.cpp:
+        (WebCore::RenderObject::absoluteRects):
+        (WebCore::RenderObject::absoluteBoundingBoxRect):
+        (WebCore::RenderObject::absolutePosition):
+        * rendering/render_object.h:
+        (WebCore::RenderObject::absolutePositionForContent):
+        (WebCore::RenderObject::offsetHeight):
+        * rendering/render_replaced.cpp:
+        (WebCore::RenderWidget::updateWidgetPosition):
+
 2006-03-17  Adele Peterson  <adele@apple.com>
 
         Reviewed by Hyatt.

@@ -487,7 +487,7 @@ VisiblePosition RenderContainer::positionForCoordinates(int _x, int _y)
             continue;
 
         int absx, absy;
-        renderer->absolutePosition(absx, absy);
+        renderer->absolutePositionForContent(absx, absy);
         
         int top = absy + borderTop() + paddingTop();
         int bottom = top + renderer->contentHeight();
@@ -512,7 +512,7 @@ QValueList<IntRect> RenderContainer::lineBoxRects()
     if (!firstChild() && (isInline() || isAnonymousBlock())) {
         QValueList<IntRect> rects;
         int x = 0, y = 0;
-        absolutePosition(x, y);
+        absolutePositionForContent(x, y);
         absoluteRects(rects, x, y);
         return rects;
     }
@@ -524,7 +524,7 @@ QValueList<IntRect> RenderContainer::lineBoxRects()
     for (RenderObject *child = firstChild(); child; child = child->nextSibling()) {
         if (child->isText() || child->isInline() || child->isAnonymousBlock()) {
             int x = 0, y = 0;
-            child->absolutePosition(x, y);
+            child->absolutePositionForContent(x, y);
             child->absoluteRects(rects, x, y);
         }
     }

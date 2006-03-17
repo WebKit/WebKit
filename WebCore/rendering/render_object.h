@@ -563,6 +563,14 @@ public:
 
     // calculate client position of box
     virtual bool absolutePosition(int &/*xPos*/, int &/*yPos*/, bool fixed = false);
+    
+    // This function is used to deal with the extra top space that can occur in table cells (called borderTopExtra).
+    // The children of the cell do not factor this space in, so we have to add it in.  Any code that wants to
+    // accurately deal with the contents of a cell must call this function instad of absolutePosition.
+    void absolutePositionForContent(int& xPos, int& yPos, bool fixed = false) {
+        absolutePosition(xPos, yPos, fixed);
+        yPos += borderTopExtra();
+    }
 
     // width and height are without margins but include paddings and borders
     virtual int width() const { return 0; }
@@ -584,7 +592,7 @@ public:
     // IE extensions. Used to calculate offsetWidth/Height.  Overridden by inlines (render_flow) 
     // to return the remaining width on a given line (and the height of a single line). -dwh
     virtual int offsetWidth() const { return width(); }
-    virtual int offsetHeight() const { return height(); }
+    virtual int offsetHeight() const { return height() + borderTopExtra() + borderBottomExtra(); }
     
     // IE exxtensions.  Also supported by Gecko.  We override in render flow to get the
     // left and top correct. -dwh

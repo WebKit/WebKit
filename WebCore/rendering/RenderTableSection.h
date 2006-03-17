@@ -55,7 +55,7 @@ public:
     virtual void dump(QTextStream *stream, QString ind = "") const;
 #endif
 
-    void addCell(RenderTableCell *cell);
+    void addCell(RenderTableCell *cell, RenderObject* row);
 
     void setCellWidths();
     void calcRowHeight();
@@ -69,7 +69,8 @@ public:
     };
     typedef Array<CellStruct> Row;
     struct RowStruct {
-        Row *row;
+        Row* row;
+        RenderObject* rowRenderer;
         int baseLine;
         Length height;
     };
@@ -96,6 +97,8 @@ public:
     }
 
     virtual RenderObject* removeChildNode(RenderObject* child);
+
+    virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty, HitTestAction action);
 
     // this gets a cell grid data structure. changing the number of
     // columns is done by the table

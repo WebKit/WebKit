@@ -45,7 +45,8 @@ public:
     virtual void position(int, int, int, int, int, bool, bool, int) { }
     virtual void layout();
     virtual IntRect getAbsoluteRepaintRect();
-    
+    virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty, HitTestAction action);
+
     // FIXME: We can't support things like opacity on table rows because they have no dimensions.  This can be removed when
     // table rows really work right.
     virtual bool requiresLayer() { return false; }

@@ -134,12 +134,19 @@ static QTextStream &operator<<(QTextStream &ts, const RenderObject &o)
     
     // FIXME: Will remove this <br> code once all layout tests pass.  Until then, we can't really change
     // all the results easily.
+    // FIXME: Will also remove the table row and section hacks once all layout tests pass.
     bool usePositions = true;
+    bool useWidth = true;
+    bool useHeight = true;
     if (o.isBR()) {
         const RenderBR* br = static_cast<const RenderBR*>(&o);
         usePositions = (br->firstTextBox() && br->firstTextBox()->isText());
-    }
-    IntRect r(usePositions ? o.xPos() : 0, usePositions ? o.yPos() : 0, o.width(), o.height());
+    } else if (o.isTableRow())
+        usePositions = useWidth = useHeight = false;
+    else if (o.isTableSection())
+        useWidth = false;
+
+    IntRect r(usePositions ? o.xPos() : 0, usePositions ? o.yPos() : 0, useWidth ? o.width() : 0, useHeight ? o.height() : 0);
     ts << " " << r;
     
     if (!o.isText()) {

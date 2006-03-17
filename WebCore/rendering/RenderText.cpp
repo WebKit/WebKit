@@ -215,7 +215,7 @@ QValueList<IntRect> RenderText::lineBoxRects()
 {
     QValueList<IntRect> rects;
     int x = 0, y = 0;
-    absolutePosition(x, y);
+    absolutePositionForContent(x, y);
     absoluteRects(rects, x, y);
     return rects;
 }
@@ -249,7 +249,7 @@ VisiblePosition RenderText::positionForCoordinates(int _x, int _y)
 
     int absx, absy;
     RenderBlock *cb = containingBlock();
-    cb->absolutePosition(absx, absy);
+    cb->absolutePositionForContent(absx, absy);
     if (cb->hasOverflowClip())
         cb->layer()->subtractScrollOffset(absx, absy);
 
@@ -399,7 +399,7 @@ IntRect RenderText::caretRect(int offset, EAffinity affinity, int *extraWidthToE
         *extraWidthToEndOfLine = (box->root()->width() + box->root()->xPos()) - (left + 1);
 
     int absx, absy;
-    absolutePosition(absx,absy);
+    absolutePositionForContent(absx, absy);
     left += absx;
     top += absy;
 
@@ -417,7 +417,7 @@ IntRect RenderText::caretRect(int offset, EAffinity affinity, int *extraWidthToE
 
 void RenderText::posOfChar(int chr, int &x, int &y)
 {
-    absolutePosition(x, y, false);
+    absolutePositionForContent(x, y);
 
     int pos;
     if (InlineTextBox* s = findNextInlineTextBox(chr, pos)) {
@@ -1048,7 +1048,7 @@ IntRect RenderText::selectionRect()
         return rect;
 
     int absx, absy;
-    cb->absolutePosition(absx, absy);
+    cb->absolutePositionForContent(absx, absy);
     RenderLayer* layer = cb->layer();
     if (layer)
        layer->subtractScrollOffset(absx, absy); 
