@@ -1412,7 +1412,11 @@ IntRect RenderLayer::absoluteBoundingBox() const
             result.unite(floatRect);
         
         // We have to adjust the x/y of this result so that it is in the coordinate space of the layer.
-        result.move(m_x, m_y);
+        // We also have to add in borderTopExtra here, since borderBox(), in order to play well with methods like
+        // floatRect that deal with child content, uses an origin of (0,0) that is at the child content box (so
+        // border box returns a y coord of -borderTopExtra().  The layer, however, uses the outer box.  This is all
+        // really confusing.
+        result.move(m_x, m_y + renderer()->borderTopExtra());
     }
     
     // Convert the bounding box to an absolute position.  We can do this easily by looking at the delta
