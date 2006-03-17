@@ -1,3 +1,8 @@
+2006-03-17  Adele Peterson  <adele@apple.com>
+
+        * WebKitSystemInterface.h: Added WKDrawBezeledTextFieldCell()
+        * libWebKitSystemInterface.a: ditto
+
 2006-02-28  John Sullivan  <sullivan@apple.com>
 
         * WebKitSystemInterface.h: Removed WKMouseIsDown()
