@@ -1,3 +1,12 @@
+2006-03-17  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Justin.
+
+        * fast/dom/HTMLHeadElement/head-link-style-href-check-expected.checksum: Added.
+        * fast/dom/HTMLHeadElement/head-link-style-href-check-expected.png: Added.
+        * fast/dom/HTMLHeadElement/head-link-style-href-check-expected.txt: Added.
+        * fast/dom/HTMLHeadElement/head-link-style-href-check.html: Added.
+
 2006-03-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin.
