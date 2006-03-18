@@ -1,3 +1,20 @@
+2006-03-17  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fixed http://bugzilla.opendarwin.org/show_bug.cgi?id=6999
+          "Dynamically added link-tag disables the use of change styles 
+           dynamically"
+
+        * khtml/html/html_headimpl.cpp:
+        (WebCore::HTMLLinkElementImpl::process):
+        - dynamically added link-tags for stylesheets were messing up the
+          counting of pending stylesheets.  If a head link element 
+          specifies a new stylesheet but the previously specified 
+          stylesheet is still loading, tell the document that stylesheets 
+          are loaded so that there are no remaining requests for it to be 
+          loaded.
+
 2006-03-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin.

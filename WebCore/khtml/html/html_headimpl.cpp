@@ -231,7 +231,6 @@ void HTMLLinkElementImpl::process()
         // ### there may be in some situations e.g. for an editor or script to manipulate
 	// also, don't load style sheets for standalone documents
         if (m_media.isNull() || m_media.contains("screen") || m_media.contains("all") || m_media.contains("print")) {
-            m_loading = true;
 
             // Add ourselves as a pending sheet, but only if we aren't an alternate 
             // stylesheet.  Alternate stylesheets don't hold up render tree construction.
@@ -239,8 +238,13 @@ void HTMLLinkElementImpl::process()
                 getDocument()->addPendingSheet();
             
             QString chset = getAttribute(charsetAttr).qstring();
-            if (m_cachedSheet)
+            if (m_cachedSheet) {
+                if (m_loading) {
+                    getDocument()->stylesheetLoaded();
+                }
                 m_cachedSheet->deref(this);
+            }
+            m_loading = true;
             m_cachedSheet = getDocument()->docLoader()->requestStyleSheet(m_url, chset);
             if (m_cachedSheet)
                 m_cachedSheet->ref(this);
