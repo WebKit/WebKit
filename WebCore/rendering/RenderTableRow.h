@@ -47,9 +47,10 @@ public:
     virtual IntRect getAbsoluteRepaintRect();
     virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty, HitTestAction action);
 
-    // FIXME: We can't support things like opacity on table rows because they have no dimensions.  This can be removed when
-    // table rows really work right.
-    virtual bool requiresLayer() { return false; }
+    // The only time rows get a layer is when they have transparency.
+    virtual bool requiresLayer() { return isTransparent(); }
+
+    virtual void paint(PaintInfo& i, int tx, int ty);
 
     RenderTable* table() const { return static_cast<RenderTable*>(parent()->parent()); }
     RenderTableSection* section() const { return static_cast<RenderTableSection*>(parent()); }

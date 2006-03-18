@@ -1,3 +1,35 @@
+2006-03-17  David Hyatt  <hyatt@apple.com>
+
+        Fix for 7837, make opacity work with table rows.  Make transparent backgrounds
+        stack properly in cells (so that the layers behind can show through like they
+        should).
+
+        Reviewed by beth
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::requiresLayer):
+        (WebCore::RenderTableCell::paintBackgroundsBehindCell):
+        (WebCore::RenderTableCell::paintBoxDecorations):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::paint):
+        * rendering/RenderTableRow.h:
+        (WebCore::RenderTableRow::requiresLayer):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::paint):
+        * rendering/render_layer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition):
+        (WebCore::RenderLayer::isTransparent):
+        (WebCore::RenderLayer::transparentAncestor):
+        (WebCore::RenderLayer::beginTransparencyLayers):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::absoluteBoundingBox):
+        * rendering/render_object.cpp:
+        (WebCore::RenderObject::requiresLayer):
+        * rendering/render_object.h:
+        (WebCore::RenderObject::isTransparent):
+        (WebCore::RenderObject::opacity):
+
 2006-03-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adele.

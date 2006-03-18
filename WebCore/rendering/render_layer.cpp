@@ -237,6 +237,11 @@ void RenderLayer::updateLayerPosition()
             curr = curr->parent();
         }
         y += curr->borderTopExtra();
+        if (curr->isTableRow()) {
+            // Put ourselves into the row coordinate space.
+            x -= curr->xPos();
+            y -= curr->yPos();
+        }
     }
 
     m_relX = m_relY = 0;
@@ -327,14 +332,14 @@ RenderLayer::isTransparent() const
     if (m_object->node()->namespaceURI() == KSVG::SVGNames::svgNamespaceURI)
         return false;
 #endif
-    return m_object->style()->opacity() < 1.0f;
+    return m_object->isTransparent();
 }
 
 RenderLayer*
 RenderLayer::transparentAncestor()
 {
     RenderLayer* curr = parent();
-    for ( ; curr && curr->m_object->style()->opacity() == 1.0f; curr = curr->parent());
+    for ( ; curr && !curr->isTransparent(); curr = curr->parent());
     return curr;
 }
 
@@ -371,7 +376,7 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext* p, const IntRect& pai
         clipRect.intersect(paintDirtyRect);
         p->save();
         p->addClip(clipRect);
-        p->beginTransparencyLayer(renderer()->style()->opacity());
+        p->beginTransparencyLayer(renderer()->opacity());
     }
 }
 
@@ -1083,9 +1088,8 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     // Else, our renderer tree may or may not contain the painting root, so we pass that root along
     // so it will be tested against as we decend through the renderers.
     RenderObject *paintingRootForRenderer = 0;
-    if (paintingRoot && !m_object->hasAncestor(paintingRoot)) {
+    if (paintingRoot && !m_object->hasAncestor(paintingRoot))
         paintingRootForRenderer = paintingRoot;
-    }
     
     // We want to paint our layer, but only if we intersect the damage rect.
     bool shouldPaint = intersectsDamageRect(layerBounds, damageRect);
@@ -1401,6 +1405,20 @@ IntRect RenderLayer::absoluteBoundingBox() const
         for (InlineRunBox* curr = firstBox->nextLineBox(); curr; curr = curr->nextLineBox())
             left = kMin(left, curr->xPos());
         result = IntRect(m_x + left, m_y + (top - renderer()->yPos()), width(), bottom - top);
+    } else if (renderer()->isTableRow()) {
+        // Our bounding box is just the union of all of our cells' border/overflow rects.
+        for (RenderObject* child = renderer()->firstChild(); child; child = child->nextSibling()) {
+            if (child->isTableCell()) {
+                IntRect bbox = child->borderBox();
+                bbox.move(0, child->borderTopExtra());
+                result.unite(bbox);
+                IntRect overflowRect = renderer()->overflowRect(false);
+                overflowRect.move(0, child->borderTopExtra());
+                if (bbox != overflowRect)
+                    result.unite(overflowRect);
+            }
+        }
+        result.move(m_x, m_y);
     } else {
         IntRect bbox = renderer()->borderBox();
         result = bbox;

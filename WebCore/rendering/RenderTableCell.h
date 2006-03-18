@@ -60,6 +60,7 @@ public:
     Length styleOrColWidth();
 
     virtual bool requiresLayer();
+
     virtual void calcMinMaxWidth();
     virtual void calcWidth();
     virtual void setWidth(int);
@@ -107,9 +108,11 @@ public:
 
     virtual IntRect getAbsoluteRepaintRect();
     
+    void paintBackgroundsBehindCell(PaintInfo&, int tx, int ty, RenderObject* backgroundObject);
+
 protected:
     virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
-    
+
     int _row;
     int _col;
     int rSpan;

@@ -29,6 +29,7 @@
 #include "RenderTableSection.h"
 #include "RenderTableCell.h"
 #include "RenderTableRow.h"
+#include "RenderTableCol.h"
 #include "DocumentImpl.h"
 #include "htmlnames.h"
 #include <qtextstream.h>
@@ -649,17 +650,44 @@ void RenderTableSection::paint(PaintInfo& i, int tx, int ty)
             for (; c < endcol; c++) {
                 CellStruct current = cellAt(r, c);
                 RenderTableCell *cell = current.cell;
-                
-                if (!cell || (cell->layer() && i.phase != PaintActionCollapsedTableBorders)) 
-                    continue;
-                
+                    
                 // Cells must always paint in the order in which they appear taking into account
                 // their upper left originating row/column.  For cells with rowspans, avoid repainting
                 // if we've already seen the cell.
-                if (r > startrow && (cellAt(r-1, c).cell == cell))
+                if (!cell || (r > startrow && (cellAt(r-1, c).cell == cell)))
                     continue;
 
-                cell->paint(i, tx, ty);
+                if (paintAction == PaintActionBlockBackground || paintAction == PaintActionChildBlockBackground) {
+                    // We need to handle painting a stack of backgrounds.  This stack (from bottom to top) consists of
+                    // the column group, column, row group, row, and then the cell.
+                    RenderObject* col = table()->colElement(c);
+                    RenderObject* colGroup = 0;
+                    if (col) {
+                        RenderStyle *style = col->parent()->style();
+                        if (style->display() == TABLE_COLUMN_GROUP)
+                            colGroup = col->parent();
+                    }
+                    RenderObject* row = cell->parent();
+                    
+                    // Column groups and columns first.
+                    // FIXME: Columns and column groups do not currently support opacity, and they are being painted "too late" in
+                    // the stack, since we have already opened a transparency layer (potentially) for the table row group.
+                    // Note that we deliberately ignore whether or not the cell has a layer, since these backgrounds paint "behind" the
+                    // cell.
+                    cell->paintBackgroundsBehindCell(i, tx, ty, colGroup);
+                    cell->paintBackgroundsBehindCell(i, tx, ty, col);
+                    
+                    // Paint the row group next.
+                    cell->paintBackgroundsBehindCell(i, tx, ty, this);
+                    
+                    // Paint the row next, but only if it doesn't have a layer.  If a row has a layer, it will be responsible for
+                    // painting the row background for the cell.
+                    if (!row->layer())
+                        cell->paintBackgroundsBehindCell(i, tx, ty, row);
+                }
+
+                if ((!cell->layer() && !cell->parent()->layer()) || i.phase == PaintActionCollapsedTableBorders)
+                    cell->paint(i, tx, ty);
             }
         }
     }
