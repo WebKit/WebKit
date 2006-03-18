@@ -1,3 +1,18 @@
+2006-03-17  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by hyatt
+
+        This test should actually be in the failures folder. Moving.
+
+        * tables/mozilla/marvin/backgr_border-table-cell-expected.checksum: Removed.
+        * tables/mozilla/marvin/backgr_border-table-cell-expected.png: Removed.
+        * tables/mozilla/marvin/backgr_border-table-cell-expected.txt: Removed.
+        * tables/mozilla/marvin/backgr_border-table-cell.html: Removed.
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-cell-expected.checksum: Added.
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-cell-expected.png: Added.
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-cell-expected.txt: Added.
+        * tables/mozilla_expected_failures/marvin/backgr_border-table-cell.html: Added.
+
 2006-03-17  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin, landed by Beth.
