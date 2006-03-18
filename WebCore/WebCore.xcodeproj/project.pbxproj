@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		14EC267F09CA07E000E1EEEC /* EventTargetNodeImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 14EC267D09CA07E000E1EEEC /* EventTargetNodeImpl.h */; };
+		14EC268009CA07E000E1EEEC /* EventTargetNodeImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14EC267E09CA07E000E1EEEC /* EventTargetNodeImpl.cpp */; };
 		1A2154EE099A11A800343DF8 /* JSDOMCore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2154EC099A11A800343DF8 /* JSDOMCore.cpp */; };
 		1A2154EF099A11A800343DF8 /* JSDOMEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2154ED099A11A800343DF8 /* JSDOMEvents.cpp */; };
 		1A69D381085627410009880D /* domparser.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A69D37F085627410009880D /* domparser.h */; };
@@ -1124,6 +1126,8 @@
 /* End PBXBuildStyle section */
 
 /* Begin PBXFileReference section */
+		14EC267D09CA07E000E1EEEC /* EventTargetNodeImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTargetNodeImpl.h; sourceTree = "<group>"; };
+		14EC267E09CA07E000E1EEEC /* EventTargetNodeImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTargetNodeImpl.cpp; sourceTree = "<group>"; };
 		1A2154EC099A11A800343DF8 /* JSDOMCore.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSDOMCore.cpp; path = bindings/js/JSDOMCore.cpp; sourceTree = "<group>"; };
 		1A2154ED099A11A800343DF8 /* JSDOMEvents.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JSDOMEvents.cpp; path = bindings/js/JSDOMEvents.cpp; sourceTree = "<group>"; };
 		1A69D37F085627410009880D /* domparser.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = domparser.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1577,7 +1581,7 @@
 		A81872110977D3C0005826D9 /* ContainerNodeImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ContainerNodeImpl.h; sourceTree = "<group>"; };
 		A81872120977D3C0005826D9 /* NodeImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = NodeImpl.cpp; sourceTree = "<group>"; };
 		A81872130977D3C0005826D9 /* NameNodeListImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NameNodeListImpl.h; sourceTree = "<group>"; };
-		A81872140977D3C0005826D9 /* ContainerNodeImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ContainerNodeImpl.cpp; sourceTree = "<group>"; };
+		A81872140977D3C0005826D9 /* ContainerNodeImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContainerNodeImpl.cpp; sourceTree = "<group>"; };
 		A81872150977D3C0005826D9 /* ChildNodeListImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ChildNodeListImpl.h; sourceTree = "<group>"; };
 		A81872160977D3C0005826D9 /* NodeListImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = NodeListImpl.cpp; sourceTree = "<group>"; };
 		A81872170977D3C0005826D9 /* NodeImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NodeImpl.h; sourceTree = "<group>"; };
@@ -3847,6 +3851,8 @@
 				93EEC1F709C2877700C515D1 /* WheelEvent.idl */,
 				F523D30902DE4476018635CA /* xml_tokenizer.cpp */,
 				F523D30A02DE4476018635CA /* xml_tokenizer.h */,
+				14EC267D09CA07E000E1EEEC /* EventTargetNodeImpl.h */,
+				14EC267E09CA07E000E1EEEC /* EventTargetNodeImpl.cpp */,
 			);
 			path = dom;
 			sourceTree = "<group>";
@@ -4446,6 +4452,7 @@
 				9352071E09BD3BBB00F2038D /* WebCoreWidgetHolder.h in Headers */,
 				935207BE09BD410A00F2038D /* LocalizedStrings.h in Headers */,
 				9352088209BD45E900F2038D /* CookieJar.h in Headers */,
+				14EC267F09CA07E000E1EEEC /* EventTargetNodeImpl.h in Headers */,
 				93EEC1FA09C2877700C515D1 /* DocPtr.h in Headers */,
 				93EEC20009C2877700C515D1 /* CanvasRenderingContext2D.h in Headers */,
 				93EEC20109C2877700C515D1 /* CanvasStyle.h in Headers */,
@@ -5600,6 +5607,7 @@
 				935207C009BD412100F2038D /* LocalizedStringsMac.mm in Sources */,
 				9352084509BD43B900F2038D /* Language.mm in Sources */,
 				9352087709BD453400F2038D /* CookieJar.mm in Sources */,
+				14EC268009CA07E000E1EEEC /* EventTargetNodeImpl.cpp in Sources */,
 				93E47C5C09BE2BBB0019C5C1 /* PageMac.mm in Sources */,
 				93EEC1FF09C2877700C515D1 /* CanvasRenderingContext2D.cpp in Sources */,
 				93EEC20209C2877700C515D1 /* CanvasGradient.cpp in Sources */,

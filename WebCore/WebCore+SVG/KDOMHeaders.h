@@ -4,14 +4,14 @@ namespace khtml {
 }
 
 namespace DOM {
-    class NodeImpl;
+    class EventTargetNodeImpl;
 }
 
 namespace KDOM {
     using namespace DOM;
     using namespace khtml;
     typedef khtml::StyleListImpl CSSStyleSelectorList;
-    typedef NodeImpl EventTargetImpl;
+    typedef EventTargetNodeImpl EventTargetImpl;
 }
 
 #include "Shared.h"

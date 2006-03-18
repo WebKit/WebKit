@@ -168,11 +168,11 @@ using namespace HTMLNames;
 -(ElementImpl *)mouseButtonListener
 {
     // FIXME: Do the continuation search like anchorElement does
-    for (NodeImpl *elt = m_renderer->element(); elt; elt = elt->parentNode()) {
+    for (EventTargetNodeImpl* elt = static_cast<EventTargetNodeImpl*>(m_renderer->element()); elt; elt = static_cast<EventTargetNodeImpl*>(elt->parentNode())) {
         if (elt->getHTMLEventListener(clickEvent) || elt->getHTMLEventListener(mousedownEvent) || elt->getHTMLEventListener(mouseupEvent))
             return static_cast<ElementImpl*>(elt);
     }
-    return NULL;
+    return 0;
 }
 
 -(ElementImpl *)actionElement
@@ -710,13 +710,8 @@ static IntRect boundingBoxRect(RenderObject* obj)
         if (!actionElement)
             return;
 
-        DocumentImpl* d = actionElement->getDocument();
-        if (d) {
-            Frame* p = d->frame();
-            if (p) {
-                Mac(p)->prepareForUserAction();
-            }
-        }
+        if (Frame* f = actionElement->getDocument()->frame())
+            Mac(f)->prepareForUserAction();
 
         actionElement->accessKeyAction(true);
     }

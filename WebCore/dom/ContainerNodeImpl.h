@@ -26,11 +26,11 @@
 #ifndef DOM_ContainerNodeImpl_h
 #define DOM_ContainerNodeImpl_h
 
-#include "NodeImpl.h"
+#include "EventTargetNodeImpl.h"
 
 namespace DOM {
 
-class ContainerNodeImpl : public NodeImpl
+class ContainerNodeImpl : public EventTargetNodeImpl
 {
 public:
     ContainerNodeImpl(DocumentImpl *doc);

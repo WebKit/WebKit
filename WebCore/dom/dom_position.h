@@ -46,6 +46,7 @@ public:
     void clear();
 
     NodeImpl *node() const { return m_node.get(); }
+    ElementImpl* documentElement() const;
     int offset() const { return m_offset; }
 
     bool isNull() const { return m_node == 0; }

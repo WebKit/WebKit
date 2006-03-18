@@ -600,7 +600,7 @@ void RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repai
     }
 
     // Fire the scroll DOM event.
-    m_object->element()->dispatchHTMLEvent(scrollEvent, true, false);
+    EventTargetNodeCast(m_object->element())->dispatchHTMLEvent(scrollEvent, true, false);
 }
 
 void RenderLayer::scrollRectToVisible(const IntRect &rect, const ScrollAlignment& alignX, const ScrollAlignment& alignY)

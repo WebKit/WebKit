@@ -1,3 +1,276 @@
+2006-03-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin.
+
+        - Fixed some crashes in event dispatch and settled the question of 
+        when getDocument() can return NULL, removing superfluous NULL checks.
+
+        I promise to check in a test case soon, but I need to land this before
+        the global rename happens, and I left the test file on my other machine.
+
+        Here's what I did:
+
+        (1) Removed NULL checks for getDocument() in cases where we know it
+        should not return NULL (which turned out to be all but one). Replaced 
+        with ASSERT inside getDocument(). Tested to ensure there was no 
+        regression @ albertsons.com.
+
+        (2) Added the EventTargetNode class, which represents Nodes that
+        implement the DOM EventTarget interface. Discussed this design with
+        Maciej and Hyatt. The previous dsign -- assuming that all Nodes were 
+        EventTargets -- made it possible to crash WebKit by, for example, 
+        dispatching a mouse event to a documentType node that was not 
+        associated with a document.
+
+        (3) Reflected (2) into the JS bindings and touched JSDOMCore.cpp to 
+        force a re-build.
+
+        (4) Using classInfo checking, strengthened type constraints on 
+        JavaScript method dispatch so that you can't finagle JavaScript into, 
+        for example, invoking a document-dependent method belonging to a
+        node type that's guaranteed to have a document on a node type that may
+        not have one. 
+
+        (5) Pushed some IE-specific JS bindings that depend on a node having a 
+        document down from DOMNode to DOMElement. (An element always has a 
+        document.) Tested that Firefox's behavior matched. Confirmed with MSDN.
+
+        (6) Updated Objc bindigns to throw an exception if you try to use
+        the event interface on a node that doesn't support it. Discussed this
+        design with Maciej and TimH.
+
+        (7) Consolidated repeated documentElement-finding code in the Position 
+        class into the Position::documentElement() method. Did the same for
+        repeated top-level document finding and DocumentImpl::topDocument().
+        
+        * WebCore+SVG/KDOMHeaders.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMCore.cpp:
+        * bindings/objc/DOM.mm:
+        (-[DOMNode addEventListener:::]):
+        (-[DOMNode removeEventListener:::]):
+        (-[DOMNode dispatchEvent:]):
+        (-[DOMNode KJS::Bindings::]):
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::keyEvent):
+        (WebCore::MacFrame::dispatchCPPEvent):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge setSelectedDOMRange:affinity:closeTyping:]):
+        (-[WebCoreFrameBridge smartDeleteRangeForProposedRange:]):
+        * css/css_base.cpp:
+        (WebCore::StyleBaseImpl::baseURL):
+        * css/css_computedstyle.cpp:
+        (WebCore::CSSComputedStyleDeclarationImpl::getPropertyCSSValue):
+        * css/css_valueimpl.cpp:
+        (WebCore::CSSMutableStyleDeclarationImpl::removeProperty):
+        (WebCore::CSSMutableStyleDeclarationImpl::setProperty):
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * dom/Attr.idl:
+        * dom/CharacterData.idl:
+        * dom/CharacterDataImpl.cpp:
+        (WebCore::CharacterDataImpl::CharacterDataImpl):
+        (WebCore::CharacterDataImpl::rendererIsNeeded):
+        (WebCore::CharacterDataImpl::dump):
+        * dom/CharacterDataImpl.h:
+        * dom/ContainerNodeImpl.cpp:
+        (WebCore::ContainerNodeImpl::ContainerNodeImpl):
+        (WebCore::ContainerNodeImpl::removeChild):
+        (WebCore::ContainerNodeImpl::attach):
+        (WebCore::ContainerNodeImpl::detach):
+        (WebCore::ContainerNodeImpl::insertedIntoDocument):
+        (WebCore::ContainerNodeImpl::removedFromDocument):
+        (WebCore::ContainerNodeImpl::insertedIntoTree):
+        (WebCore::ContainerNodeImpl::removedFromTree):
+        (WebCore::ContainerNodeImpl::setFocus):
+        (WebCore::ContainerNodeImpl::setActive):
+        (WebCore::ContainerNodeImpl::setHovered):
+        (WebCore::dispatchChildInsertionEvents):
+        (WebCore::dispatchChildRemovalEvents):
+        * dom/ContainerNodeImpl.h:
+        * dom/DOMImplementationImpl.cpp:
+        (WebCore::DOMImplementationImpl::createDocument):
+        * dom/DocumentImpl.cpp:
+        (WebCore::DocumentImpl::removeAllEventListenersFromAllNodes):
+        (WebCore::DocumentImpl::removeAllDisconnectedNodeEventListeners):
+        (WebCore::DocumentImpl::getAccObjectCache):
+        (WebCore::DocumentImpl::setFocusNode):
+        (WebCore::DocumentImpl::topDocument):
+        * dom/Element.idl:
+        * dom/EventTargetNodeImpl.cpp: Added.
+        (WebCore::EventTargetNodeImpl::EventTargetNodeImpl):
+        (WebCore::EventTargetNodeImpl::~EventTargetNodeImpl):
+        (WebCore::EventTargetNodeImpl::insertedIntoDocument):
+        (WebCore::EventTargetNodeImpl::removedFromDocument):
+        (WebCore::EventTargetNodeImpl::addEventListener):
+        (WebCore::EventTargetNodeImpl::removeEventListener):
+        (WebCore::EventTargetNodeImpl::removeAllEventListeners):
+        (WebCore::EventTargetNodeImpl::handleLocalEvents):
+        (WebCore::EventTargetNodeImpl::dispatchGenericEvent):
+        (WebCore::EventTargetNodeImpl::dispatchEvent):
+        (WebCore::EventTargetNodeImpl::dispatchSubtreeModifiedEvent):
+        (WebCore::EventTargetNodeImpl::dispatchWindowEvent):
+        (WebCore::EventTargetNodeImpl::dispatchUIEvent):
+        (WebCore::EventTargetNodeImpl::dispatchKeyEvent):
+        (WebCore::EventTargetNodeImpl::dispatchMouseEvent):
+        (WebCore::EventTargetNodeImpl::dispatchSimulatedMouseEvent):
+        (WebCore::EventTargetNodeImpl::dispatchWheelEvent):
+        (WebCore::EventTargetNodeImpl::dispatchHTMLEvent):
+        (WebCore::EventTargetNodeImpl::removeHTMLEventListener):
+        (WebCore::EventTargetNodeImpl::setHTMLEventListener):
+        (WebCore::EventTargetNodeImpl::getHTMLEventListener):
+        (WebCore::EventTargetNodeImpl::disabled):
+        (WebCore::EventTargetNodeImpl::defaultEventHandler):
+        (WebCore::EventTargetNodeImpl::dump):
+        * dom/EventTargetNodeImpl.h: Added.
+        (WebCore::EventTargetNodeImpl::isEventTargetNode):
+        (WebCore::EventTargetNodeImpl::preDispatchEventHandler):
+        (WebCore::EventTargetNodeImpl::postDispatchEventHandler):
+        (WebCore::EventTarget):
+        (WebCore::forbidEventDispatch):
+        (WebCore::allowEventDispatch):
+        (WebCore::eventDispatchForbidden):
+        * dom/NodeImpl.cpp:
+        (WebCore::NodeImpl::NodeImpl):
+        (WebCore::NodeImpl::~NodeImpl):
+        (WebCore::NodeImpl::dump):
+        (WebCore::NodeImpl::detach):
+        (WebCore::NodeImpl::insertedIntoDocument):
+        (WebCore::NodeImpl::removedFromDocument):
+        * dom/NodeImpl.h:
+        (WebCore::NodeImpl::isEventTargetNode):
+        (WebCore::NodeImpl::isLink):
+        (WebCore::NodeImpl::getDocument):
+        (WebCore::NodeImpl::inDocument):
+        * dom/dom2_eventsimpl.cpp:
+        (WebCore::MouseRelatedEventImpl::receivedTarget):
+        * dom/dom2_rangeimpl.cpp:
+        (WebCore::RangeImpl::commonAncestorContainer):
+        * dom/dom_elementimpl.cpp:
+        (WebCore::inHTMLDocument):
+        (WebCore::ElementImpl::focus):
+        (WebCore::ElementImpl::blur):
+        (WebCore::StyledElementImpl::parseMappedAttribute):
+        * dom/dom_position.cpp:
+        (WebCore::Position::documentElement):
+        * dom/dom_position.h:
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::computeAndStoreNodeDesiredStyle):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::needsCaretRepaint):
+        * editing/visible_units.cpp:
+        (WebCore::previousBoundary):
+        (WebCore::nextBoundary):
+        (WebCore::previousLinePosition):
+        (WebCore::nextLinePosition):
+        (WebCore::startOfDocument):
+        (WebCore::endOfDocument):
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::DOMNode::mark):
+        (KJS::DOMNode::getValueProperty):
+        (KJS::DOMNode::putValueProperty):
+        (KJS::DOMNodeProtoFunc::callAsFunction):
+        (KJS::DOMEventTargetNode::DOMEventTargetNode):
+        (KJS::DOMEventTargetNode::getOwnPropertySlot):
+        (KJS::DOMEventTargetNode::getValueProperty):
+        (KJS::DOMEventTargetNode::put):
+        (KJS::DOMEventTargetNode::putValueProperty):
+        (KJS::DOMEventTargetNode::setListener):
+        (KJS::DOMEventTargetNode::getListener):
+        (KJS::DOMEventTargetNode::pushEventHandlerScope):
+        (KJS::DOMEventTargetNodeProtoFunc::callAsFunction):
+        (KJS::):
+        (KJS::DOMDocument::DOMDocument):
+        (KJS::DOMDocument::getOwnPropertySlot):
+        (KJS::DOMDocument::put):
+        (KJS::DOMDocument::putValueProperty):
+        (KJS::DOMDocumentProtoFunc::callAsFunction):
+        (KJS::DOMElement::DOMElement):
+        (KJS::DOMElement::getValueProperty):
+        (KJS::DOMElement::put):
+        (KJS::DOMElement::putValueProperty):
+        (KJS::DOMElement::getOwnPropertySlot):
+        (KJS::DOMElementProtoFunc::callAsFunction):
+        (KJS::checkNodeSecurity):
+        * khtml/ecma/kjs_dom.h:
+        (KJS::DOMNode::):
+        (KJS::DOMEventTargetNode::):
+        (KJS::DOMElement::):
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::JSLazyEventListener::parseCode):
+        (KJS::getNodeEventListener):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElement::bodyGetter):
+        (KJS::HTMLElement::anchorGetter):
+        (KJS::HTMLElement::getValueProperty):
+        (KJS::HTMLElement::bodySetter):
+        * khtml/ecma/kjs_views.cpp:
+        (KJS::DOMAbstractViewProtoFunc::callAsFunction):
+        * khtml/html/HTMLFormElementImpl.cpp:
+        (WebCore::HTMLFormElementImpl::registerFormElement):
+        (WebCore::HTMLFormElementImpl::removeFormElement):
+        * khtml/html/HTMLGenericFormElementImpl.cpp:
+        (WebCore::HTMLGenericFormElementImpl::insertedIntoTree):
+        * khtml/html/HTMLInputElementImpl.cpp:
+        (WebCore::HTMLInputElementImpl::~HTMLInputElementImpl):
+        (WebCore::HTMLInputElementImpl::focus):
+        * khtml/html/HTMLOptionElementImpl.cpp:
+        (WebCore::HTMLOptionElementImpl::text):
+        * khtml/html/HTMLSelectElementImpl.cpp:
+        (WebCore::HTMLSelectElementImpl::~HTMLSelectElementImpl):
+        * khtml/html/HTMLTextAreaElementImpl.cpp:
+        (WebCore::HTMLTextAreaElementImpl::~HTMLTextAreaElementImpl):
+        * khtml/html/html_baseimpl.cpp:
+        (WebCore::HTMLBodyElementImpl::insertedIntoDocument):
+        (WebCore::HTMLFrameElementImpl::isURLAllowed):
+        (WebCore::HTMLFrameElementImpl::openURL):
+        (WebCore::HTMLFrameElementImpl::frameWidth):
+        (WebCore::HTMLFrameElementImpl::frameHeight):
+        * khtml/html/html_imageimpl.cpp:
+        (WebCore::HTMLImageLoader::~HTMLImageLoader):
+        (WebCore::HTMLImageLoader::updateFromElement):
+        (WebCore::HTMLImageLoader::notifyFinished):
+        (WebCore::HTMLImageElementImpl::width):
+        (WebCore::HTMLImageElementImpl::height):
+        (WebCore::HTMLMapElementImpl::~HTMLMapElementImpl):
+        * khtml/html/html_inlineimpl.cpp:
+        (WebCore::HTMLAnchorElementImpl::defaultEventHandler):
+        * khtml/html/htmltokenizer.cpp:
+        (WebCore::HTMLTokenizer::notifyFinished):
+        * ksvg2/svg/SVGAnimateColorElementImpl.cpp:
+        (SVGAnimateColorElementImpl::handleTimerEvent):
+        * ksvg2/svg/SVGAnimateElementImpl.cpp:
+        (SVGAnimateElementImpl::handleTimerEvent):
+        * ksvg2/svg/SVGAnimateTransformElementImpl.cpp:
+        (SVGAnimateTransformElementImpl::handleTimerEvent):
+        * ksvg2/svg/SVGAnimationElementImpl.cpp:
+        (SVGAnimationElementImpl::closeRenderer):
+        * ksvg2/svg/SVGDOMImplementationImpl.cpp:
+        * ksvg2/svg/SVGDocumentImpl.cpp:
+        (WebCore::SVGDocumentImpl::dispatchRecursiveEvent):
+        * ksvg2/svg/SVGDocumentImpl.h:
+        * ksvg2/svg/SVGImageElementImpl.cpp:
+        * ksvg2/svg/SVGSetElementImpl.cpp:
+        (SVGSetElementImpl::handleTimerEvent):
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject mouseButtonListener]):
+        (-[KWQAccObject accessibilityPerformAction:]):
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextAreaTextView dispatchHTMLEvent:]):
+        * page/Frame.cpp:
+        (WebCore::dispatchKHTMLEditableContentChanged):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::dispatchDragEvent):
+        (WebCore::FrameView::dispatchMouseEvent):
+        (WebCore::FrameView::viewportWheelEvent):
+        * rendering/render_layer.cpp:
+        (WebCore::RenderLayer::scrollToOffset):
+        * rendering/render_object.cpp:
+        (WebCore::RenderObject::shouldSelect):
+        (WebCore::RenderObject::backslashAsCurrencySymbol):
+        * rendering/render_replaced.cpp:
+        (WebCore::RenderWidget::sendConsumedMouseUp):
+
 2006-03-17  David Hyatt  <hyatt@apple.com>
 
         Fix for 7837, make opacity work with table rows.  Make transparent backgrounds

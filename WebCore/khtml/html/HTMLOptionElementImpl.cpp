@@ -57,7 +57,7 @@ DOMString HTMLOptionElementImpl::text() const
     DOMString text;
 
     // WinIE does not use the label attribute, so as a quirk, we ignore it.
-    if (getDocument() && !getDocument()->inCompatMode()) {
+    if (!getDocument()->inCompatMode()) {
         DOMString text = getAttribute(labelAttr);
         if (!text.isEmpty())
             return text;

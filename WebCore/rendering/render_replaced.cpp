@@ -343,7 +343,7 @@ void RenderWidget::layout()
 void RenderWidget::sendConsumedMouseUp(Widget*)
 {
     RenderArena* arena = ref();
-    node()->dispatchSimulatedMouseEvent(mouseupEvent);
+    EventTargetNodeCast(node())->dispatchSimulatedMouseEvent(mouseupEvent);
     deref(arena);
 }
 

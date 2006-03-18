@@ -497,7 +497,7 @@ unsigned HTMLFormElementImpl::formElementIndex(HTMLGenericFormElementImpl *e)
 void HTMLFormElementImpl::registerFormElement(HTMLGenericFormElementImpl* e)
 {
     DocumentImpl* doc = getDocument();
-    if (doc && e->isRadioButton() && !e->name().isEmpty()) {
+    if (e->isRadioButton() && !e->name().isEmpty()) {
         HTMLGenericFormElementImpl* currentCheckedRadio = doc->checkedRadioButtonForGroup(e->name().impl(), 0);
         if (currentCheckedRadio == e)
             doc->removeRadioButtonGroup(e->name().impl(), 0);
@@ -509,7 +509,7 @@ void HTMLFormElementImpl::registerFormElement(HTMLGenericFormElementImpl* e)
 
 void HTMLFormElementImpl::removeFormElement(HTMLGenericFormElementImpl* e)
 {
-    if (!e->name().isEmpty() && getDocument()) {
+    if (!e->name().isEmpty()) {
         HTMLGenericFormElementImpl* currentCheckedRadio = getDocument()->checkedRadioButtonForGroup(e->name().impl(), this);
         if (currentCheckedRadio == e)
             getDocument()->removeRadioButtonGroup(e->name().impl(), this);

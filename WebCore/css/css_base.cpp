@@ -59,13 +59,13 @@ DOMString StyleBaseImpl::baseURL()
         return sheet->href();
 
     // find parent
-    if(sheet->parent()) return sheet->parent()->baseURL();
+    if(sheet->parent()) 
+        return sheet->parent()->baseURL();
 
-    if(!sheet->ownerNode()) return DOMString();
+    if(!sheet->ownerNode()) 
+        return DOMString();
 
-    DocumentImpl *doc = sheet->ownerNode()->getDocument();
-
-    return doc->baseURL();
+    return sheet->ownerNode()->getDocument()->baseURL();
 }
 
 // ------------------------------------------------------------------------------

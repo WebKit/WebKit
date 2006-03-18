@@ -29,6 +29,7 @@
 #include "DocPtr.h"
 #include "Shared.h"
 #include "PlatformString.h"
+#include <kxmlcore/Assertions.h>
 #include <kxmlcore/HashSet.h>
 #include <kxmlcore/PassRefPtr.h>
 
@@ -97,7 +98,6 @@ public:
     virtual NodeImpl* lastChild() const;
     virtual bool hasAttributes() const;
     virtual NamedAttrMapImpl* attributes() const;
-    virtual DocumentImpl* ownerDocument() const;
 
     // These should all actually return a node, but this is only important for language bindings,
     // which will already know and hold a ref on the right node to return. Returning bool allows
@@ -141,6 +141,7 @@ public:
     virtual bool isTextNode() const { return false; }
     virtual bool isCommentNode() const { return false; }
     virtual bool isDocumentNode() const { return false; }
+    virtual bool isEventTargetNode() const { return false; }
     bool isBlockFlow() const;
     bool isBlockFlowOrBlockTable() const;
     
@@ -210,9 +211,6 @@ public:
     bool changed() const { return m_changed; }
     bool hasChangedChild() const { return m_hasChangedChild; }
     bool isLink() const { return m_isLink; }
-    // FIXME: Should inDocument also make sure a document exists in case the document
-    // has been destroyed before the node is removed from the document?
-    bool inDocument() const { return document.get() && m_inDocument; }
     bool styleElement() const { return m_styleElement; }
     bool implicitNode() const { return m_implicit; }
     void setHasID(bool b = true) { m_hasId = b; }
@@ -250,53 +248,27 @@ public:
 
     unsigned nodeIndex() const;
 
-    // Returns the document that this node is associated with. This is guaranteed to always be non-null, as opposed to
-    // DOM's ownerDocument() which is null for Document nodes (and sometimes DocumentType nodes).
-    DocumentImpl* getDocument() const { return document.get(); }
+    // Returns the DOM ownerDocument attribute. This method never returns NULL, except in the case 
+    // of (1) a Document node or (2) a DocumentType node that is not used with any Document yet. 
+    virtual DocumentImpl* ownerDocument() const;
 
+    // Returns the document associated with this node. This method never returns NULL, except in the case 
+    // of a DocumentType node that is not used with any Document yet. A Document node returns itself.
+    DocumentImpl* getDocument() const 
+    { 
+      ASSERT(document || nodeType() == DOCUMENT_TYPE_NODE && !inDocument());
+      return document.get(); 
+    }
     void setDocument(DocumentImpl*);
 
-    void addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
-    void removeEventListener(const AtomicString& eventType, EventListener*, bool useCapture);
-    void removeHTMLEventListener(const AtomicString& eventType);
-    void setHTMLEventListener(const AtomicString& eventType, PassRefPtr<EventListener>);
-    EventListener *getHTMLEventListener(const AtomicString& eventType);
-    void removeAllEventListeners();
-
-    bool dispatchEvent(PassRefPtr<EventImpl>, ExceptionCode&, bool tempEvent = false);
-    bool dispatchGenericEvent(PassRefPtr<EventImpl>, ExceptionCode&, bool tempEvent = false);
-    bool dispatchHTMLEvent(const AtomicString& eventType, bool canBubble, bool cancelable);
-    void dispatchWindowEvent(const AtomicString& eventType, bool canBubble, bool cancelable);
-    bool dispatchMouseEvent(const MouseEvent&, const AtomicString& eventType,
-        int clickCount = 0, NodeImpl* relatedTarget = 0);
-    bool dispatchSimulatedMouseEvent(const AtomicString& eventType);
-    bool dispatchMouseEvent(const AtomicString& eventType, int button, int clickCount,
-        int clientX, int clientY, int screenX, int screenY,
-        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
-        bool isSimulated = false, NodeImpl* relatedTarget = 0);
-    bool dispatchUIEvent(const AtomicString& eventType, int detail = 0);
-    bool dispatchSubtreeModifiedEvent(bool childrenChanged = true);
-    bool dispatchKeyEvent(const KeyEvent&);
-    void dispatchWheelEvent(WheelEvent&);
-
-    void handleLocalEvents(EventImpl*, bool useCapture);
-
-    // Handlers to do/undo actions on the target node before an event is dispatched to it and after the event
-    // has been dispatched.  The data pointer is handed back by the preDispatch and passed to postDispatch.
-    virtual void* preDispatchEventHandler(EventImpl*) { return 0; }
-    virtual void postDispatchEventHandler(EventImpl*, void* data) { }
-
-    /**
-     * Perform the default action for an event e.g. submitting a form
-     */
-    virtual void defaultEventHandler(EventImpl*);
-
-    /**
-     * Used for disabled form elements; if true, prevents mouse events from being dispatched
-     * to event listeners, and prevents DOMActivate events from being sent at all.
-     */
-    virtual bool disabled() const;
-
+    // Returns true if this node is associated with a document and is in its associated document's
+    // node tree, false otherwise.
+    bool inDocument() const 
+    { 
+      ASSERT(document || !m_inDocument);
+      return m_inDocument; 
+    }
+    
     virtual bool isReadOnly();
     virtual bool childTypeAllowed(NodeType) { return false; }
     virtual unsigned childNodeCount() const;
@@ -478,7 +450,6 @@ private: // members
     NodeImpl* m_next;
     RenderObject* m_renderer;
 protected:
-    QPtrList<RegisteredEventListener>* m_regdListeners;
     typedef HashSet<NodeListImpl*> NodeListSet;
     NodeListSet* m_nodeLists;
 
@@ -509,20 +480,8 @@ private:
 };
 
 #ifndef NDEBUG
-
 void showTree(const NodeImpl *node);
-
-extern int gEventDispatchForbidden;
-inline void forbidEventDispatch() { ++gEventDispatchForbidden; }
-inline void allowEventDispatch() { if (gEventDispatchForbidden > 0) --gEventDispatchForbidden; }
-inline bool eventDispatchForbidden() { return gEventDispatchForbidden > 0; }
-
-#else
-
-inline void forbidEventDispatch() { }
-inline void allowEventDispatch() { }
-
-#endif NDEBUG
+#endif
 
 } //namespace
 

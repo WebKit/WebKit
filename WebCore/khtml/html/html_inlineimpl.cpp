@@ -168,7 +168,7 @@ void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
             }
         }
         if (!evt->defaultPrevented()) {
-            if (getDocument() && getDocument()->frame())
+            if (getDocument()->frame())
                 getDocument()->frame()->urlSelected(url, utarget);
         }
         evt->setDefaultHandled();

@@ -26,11 +26,12 @@
 
 #include <q3ptrlist.h>
 
-#include "DocumentImpl.h"
 #include <kdom/cache/KDOMCachedScript.h>
 #include <kdom/cache/KDOMCachedObjectClient.h>
-
+#include <kdom/core/DOMConfigurationImpl.h>
 #include <ksvg2/misc/KSVGTimeScheduler.h>
+
+#include "DocumentImpl.h"
 
 namespace WebCore {
 
@@ -71,8 +72,8 @@ namespace WebCore {
         virtual CSSStyleSelector *createStyleSelector(const QString &);
 
     private:
-        void dispatchUIEvent(NodeImpl *target, const AtomicString &type);
-        void dispatchMouseEvent(NodeImpl *target, const AtomicString &type);
+        void dispatchUIEvent(EventTargetImpl *target, const AtomicString &type);
+        void dispatchMouseEvent(EventTargetImpl *target, const AtomicString &type);
 
         // <script> related
         void executeScripts(bool needsStyleSelectorUpdate);

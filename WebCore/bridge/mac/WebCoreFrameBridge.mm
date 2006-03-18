@@ -1700,7 +1700,6 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     NodeImpl *endContainer = [[range endContainer] _nodeImpl];
     ASSERT(startContainer);
     ASSERT(endContainer);
-    ASSERT(startContainer->getDocument());
     ASSERT(startContainer->getDocument() == endContainer->getDocument());
     
     m_frame->document()->updateLayoutIgnorePendingStylesheets();
@@ -1849,7 +1848,6 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (startContainer == nil || endContainer == nil)
         return nil;
 
-    ASSERT(startContainer->getDocument());
     ASSERT(startContainer->getDocument() == endContainer->getDocument());
     
     m_frame->document()->updateLayoutIgnorePendingStylesheets();

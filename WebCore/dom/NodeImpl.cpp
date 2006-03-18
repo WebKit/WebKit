@@ -29,27 +29,19 @@
 #include "ChildNodeListImpl.h"
 #include "DOMImplementationImpl.h"
 #include "DocumentImpl.h"
-#include "EventListener.h"
-#include "EventNames.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameView.h"
-#include "MouseEvent.h"
 #include "TextImpl.h"
-#include "WheelEvent.h"
-#include "dom2_eventsimpl.h"
 #include "htmlediting.h"
 #include "htmlnames.h"
 #include "kjs_binding.h"
-#include "kjs_proxy.h"
 #include "render_object.h"
 #include <kxmlcore/Assertions.h>
-#include <qptrlist.h>
 #include <qtextstream.h>
 
 namespace WebCore {
 
-using namespace EventNames;
 using namespace HTMLNames;
 
 /**
@@ -118,7 +110,6 @@ NodeImpl::NodeImpl(DocumentImpl *doc)
       m_previous(0),
       m_next(0),
       m_renderer(0),
-      m_regdListeners(0),
       m_nodeLists(0),
       m_tabIndex(0),
       m_hasId(false),
@@ -158,9 +149,6 @@ NodeImpl::~NodeImpl()
 #endif
     if (renderer())
         detach();
-    if (m_regdListeners && !m_regdListeners->isEmpty() && getDocument() && !inDocument())
-        getDocument()->unregisterDisconnectedNodeWithEventListeners(this);
-    delete m_regdListeners;
     delete m_nodeLists;
     if (m_previous)
         m_previous->setNextSibling(0);
@@ -385,353 +373,6 @@ unsigned NodeImpl::nodeIndex() const
     return count;
 }
 
-void NodeImpl::addEventListener(const AtomicString &eventType, PassRefPtr<EventListener> listener, const bool useCapture)
-{
-    if (getDocument() && !getDocument()->attached())
-        return;
-
-    DocumentImpl::ListenerType type = static_cast<DocumentImpl::ListenerType>(0);
-    if (eventType == DOMSubtreeModifiedEvent)
-        type = DocumentImpl::DOMSUBTREEMODIFIED_LISTENER;
-    else if (eventType == DOMNodeInsertedEvent)
-        type = DocumentImpl::DOMNODEINSERTED_LISTENER;
-    else if (eventType == DOMNodeRemovedEvent)
-        type = DocumentImpl::DOMNODEREMOVED_LISTENER;
-    else if (eventType == DOMNodeRemovedFromDocumentEvent)
-        type = DocumentImpl::DOMNODEREMOVEDFROMDOCUMENT_LISTENER;
-    else if (eventType == DOMNodeInsertedIntoDocumentEvent)
-        type = DocumentImpl::DOMNODEINSERTEDINTODOCUMENT_LISTENER;
-    else if (eventType == DOMAttrModifiedEvent)
-        type = DocumentImpl::DOMATTRMODIFIED_LISTENER;
-    else if (eventType == DOMCharacterDataModifiedEvent)
-        type = DocumentImpl::DOMCHARACTERDATAMODIFIED_LISTENER;
-    if (type)
-        getDocument()->addListenerType(type);
-
-    if (!m_regdListeners) {
-        m_regdListeners = new QPtrList<RegisteredEventListener>;
-        m_regdListeners->setAutoDelete(true);
-    }
-
-    // Remove existing identical listener set with identical arguments.
-    // The DOM2 spec says that "duplicate instances are discarded" in this case.
-    removeEventListener(eventType, listener.get(), useCapture);
-
-    // adding the first one
-    if (m_regdListeners->isEmpty() && getDocument() && !inDocument())
-        getDocument()->registerDisconnectedNodeWithEventListeners(this);
-        
-    m_regdListeners->append(new RegisteredEventListener(eventType, listener.get(), useCapture));
-}
-
-void NodeImpl::removeEventListener(const AtomicString &eventType, EventListener *listener, bool useCapture)
-{
-    if (!m_regdListeners) // nothing to remove
-        return;
-
-    RegisteredEventListener rl(eventType, listener, useCapture);
-
-    QPtrListIterator<RegisteredEventListener> it(*m_regdListeners);
-    for (; it.current(); ++it)
-        if (*(it.current()) == rl) {
-            m_regdListeners->removeRef(it.current());
-            // removed last
-            if (m_regdListeners->isEmpty() && getDocument() && !inDocument())
-                getDocument()->unregisterDisconnectedNodeWithEventListeners(this);
-            return;
-        }
-}
-
-void NodeImpl::removeAllEventListeners()
-{
-    delete m_regdListeners;
-    m_regdListeners = 0;
-}
-
-void NodeImpl::removeHTMLEventListener(const AtomicString &eventType)
-{
-    if (!m_regdListeners) // nothing to remove
-        return;
-
-    QPtrListIterator<RegisteredEventListener> it(*m_regdListeners);
-    for (; it.current(); ++it)
-        if (it.current()->eventType() == eventType && it.current()->listener()->isHTMLEventListener()) {
-            m_regdListeners->removeRef(it.current());
-            // removed last
-            if (m_regdListeners->isEmpty() && getDocument() && !inDocument())
-                getDocument()->unregisterDisconnectedNodeWithEventListeners(this);
-            return;
-        }
-}
-
-void NodeImpl::setHTMLEventListener(const AtomicString &eventType, PassRefPtr<EventListener> listener)
-{
-    // In case we are the only one holding a reference to it, we don't want removeHTMLEventListener to destroy it.
-    removeHTMLEventListener(eventType);
-    if (listener)
-        addEventListener(eventType, listener.get(), false);
-}
-
-EventListener *NodeImpl::getHTMLEventListener(const AtomicString &eventType)
-{
-    if (!m_regdListeners)
-        return 0;
-
-    QPtrListIterator<RegisteredEventListener> it(*m_regdListeners);
-    for (; it.current(); ++it)
-        if (it.current()->eventType() == eventType && it.current()->listener()->isHTMLEventListener())
-            return it.current()->listener();
-    return 0;
-}
-
-
-bool NodeImpl::dispatchEvent(PassRefPtr<EventImpl> e, ExceptionCode& ec, bool tempEvent)
-{
-    RefPtr<EventImpl> evt(e);
-    assert(!eventDispatchForbidden());
-    if (!evt || evt->type().isEmpty()) { 
-        ec = UNSPECIFIED_EVENT_TYPE_ERR;
-        return false;
-    }
-    evt->setTarget(this);
-
-    RefPtr<FrameView> view = getDocument()->view();
-
-    return dispatchGenericEvent(evt.release(), ec, tempEvent);
-}
-
-bool NodeImpl::dispatchGenericEvent(PassRefPtr<EventImpl> e, ExceptionCode&, bool tempEvent)
-{
-    RefPtr<EventImpl> evt(e);
-    assert(!eventDispatchForbidden());
-    assert(evt->target());
-    
-    // ### check that type specified
-
-    // work out what nodes to send event to
-    QPtrList<NodeImpl> nodeChain;
-    NodeImpl *n;
-    for (n = this; n; n = n->parentNode()) {
-        n->ref();
-        nodeChain.prepend(n);
-    }
-
-    QPtrListIterator<NodeImpl> it(nodeChain);
-    
-    // Before we begin dispatching events, give the target node a chance to do some work prior
-    // to the DOM event handlers getting a crack.
-    void* data = preDispatchEventHandler(evt.get());
-
-    // trigger any capturing event handlers on our way down
-    evt->setEventPhase(EventImpl::CAPTURING_PHASE);
-
-    it.toFirst();
-    // Handle window events for capture phase
-    if (it.current()->isDocumentNode() && !evt->propagationStopped()) {
-        static_cast<DocumentImpl*>(it.current())->handleWindowEvent(evt.get(), true);
-    }  
-    
-    for (; it.current() && it.current() != this && !evt->propagationStopped(); ++it) {
-        evt->setCurrentTarget(it.current());
-        it.current()->handleLocalEvents(evt.get(), true);
-    }
-
-    // dispatch to the actual target node
-    it.toLast();
-    if (!evt->propagationStopped()) {
-        evt->setEventPhase(EventImpl::AT_TARGET);
-        evt->setCurrentTarget(it.current());
-
-        if (!evt->propagationStopped())
-            it.current()->handleLocalEvents(evt.get(), false);
-    }
-    --it;
-
-    // ok, now bubble up again (only non-capturing event handlers will be called)
-    // ### recalculate the node chain here? (e.g. if target node moved in document by previous event handlers)
-    // no. the DOM specs says:
-    // The chain of EventTargets from the event target to the top of the tree
-    // is determined before the initial dispatch of the event.
-    // If modifications occur to the tree during event processing,
-    // event flow will proceed based on the initial state of the tree.
-    //
-    // since the initial dispatch is before the capturing phase,
-    // there's no need to recalculate the node chain.
-    // (tobias)
-
-    if (evt->bubbles()) {
-        evt->setEventPhase(EventImpl::BUBBLING_PHASE);
-        for (; it.current() && !evt->propagationStopped() && !evt->getCancelBubble(); --it) {
-            evt->setCurrentTarget(it.current());
-            it.current()->handleLocalEvents(evt.get(), false);
-        }
-        // Handle window events for bubbling phase
-        it.toFirst();
-        if (it.current()->isDocumentNode() && !evt->propagationStopped() && !evt->getCancelBubble()) {
-            evt->setCurrentTarget(it.current());
-            static_cast<DocumentImpl*>(it.current())->handleWindowEvent(evt.get(), false);
-        } 
-    } 
-
-    evt->setCurrentTarget(0);
-    evt->setEventPhase(0); // I guess this is correct, the spec does not seem to say
-                           // anything about the default event handler phase.
-
-
-    // Now call the post dispatch.
-    postDispatchEventHandler(evt.get(), data);
-    
-    // now we call all default event handlers (this is not part of DOM - it is internal to khtml)
-
-    it.toLast();
-    if (evt->bubbles())
-        for (; it.current() && !evt->defaultPrevented() && !evt->defaultHandled(); --it)
-            it.current()->defaultEventHandler(evt.get());
-    else if (!evt->defaultPrevented() && !evt->defaultHandled())
-            it.current()->defaultEventHandler(evt.get());
-    
-    // deref all nodes in chain
-    it.toFirst();
-    for (; it.current(); ++it)
-        it.current()->deref(); // this may delete us
-
-    DocumentImpl::updateDocumentsRendering();
-
-    // If tempEvent is true, this means that the DOM implementation
-    // will not be storing a reference to the event, i.e.  there is no
-    // way to retrieve it from javascript if a script does not already
-    // have a reference to it in a variable.  So there is no need for
-    // the interpreter to keep the event in it's cache
-    Frame *frame = getDocument()->frame();
-    if (tempEvent && frame && frame->jScript())
-        frame->jScript()->finishedWithEvent(evt.get());
-
-    return !evt->defaultPrevented(); // ### what if defaultPrevented was called before dispatchEvent?
-}
-
-bool NodeImpl::dispatchHTMLEvent(const AtomicString &eventType, bool canBubbleArg, bool cancelableArg)
-{
-    assert(!eventDispatchForbidden());
-    ExceptionCode ec = 0;
-    return dispatchEvent(new EventImpl(eventType, canBubbleArg, cancelableArg), ec, true);
-}
-
-void NodeImpl::dispatchWindowEvent(const AtomicString &eventType, bool canBubbleArg, bool cancelableArg)
-{
-    assert(!eventDispatchForbidden());
-    ExceptionCode ec = 0;
-    RefPtr<EventImpl> evt = new EventImpl(eventType, canBubbleArg, cancelableArg);
-    RefPtr<DocumentImpl> doc = getDocument();
-    evt->setTarget(doc.get());
-    doc->handleWindowEvent(evt.get(), false);
-
-     if (eventType == loadEvent) {
-         // For onload events, send a separate load event to the enclosing frame only.
-         // This is a DOM extension and is independent of bubbling/capturing rules of
-         // the DOM.
-        ElementImpl* ownerElement = doc->ownerElement();
-        if (ownerElement) {
-            RefPtr<EventImpl> ownerEvent = new EventImpl(eventType, false, cancelableArg);
-            ownerEvent->setTarget(ownerElement);
-            ownerElement->dispatchGenericEvent(ownerEvent.release(), ec, true);
-        }
-     }
-}
-
-bool NodeImpl::dispatchMouseEvent(const MouseEvent& _mouse, const AtomicString& eventType,
-    int clickCount, NodeImpl* relatedTarget)
-{
-    assert(!eventDispatchForbidden());
-
-    int clientX = 0;
-    int clientY = 0;
-    if (FrameView *view = getDocument()->view())
-        view->viewportToContents(_mouse.x(), _mouse.y(), clientX, clientY);
-
-    return dispatchMouseEvent(eventType, _mouse.button(), clickCount,
-        clientX, clientY, _mouse.globalX(), _mouse.globalY(),
-        _mouse.ctrlKey(), _mouse.altKey(), _mouse.shiftKey(), _mouse.metaKey(),
-        false, relatedTarget);
-}
-
-bool NodeImpl::dispatchSimulatedMouseEvent(const AtomicString &eventType)
-{
-    assert(!eventDispatchForbidden());
-    // Like Gecko, we just pass 0 for everything when we make a fake mouse event.
-    // Internet Explorer instead gives the current mouse position and state.
-    return dispatchMouseEvent(eventType, 0, 0, 0, 0, 0, 0, false, false, false, false, true);
-}
-
-bool NodeImpl::dispatchMouseEvent(const AtomicString &eventType, int button, int clickCount,
-    int clientX, int clientY, int screenX, int screenY,
-    bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool isSimulated, NodeImpl* relatedTarget)
-{
-    assert(!eventDispatchForbidden());
-    if (disabled()) // Don't even send DOM events for disabled controls..
-        return true;
-
-    if (eventType.isEmpty())
-        return false; // Shouldn't happen.
-
-    // Dispatching the first event can easily result in this node being destroyed.
-    // Since we dispatch up to three events here, we need to make sure we're referenced
-    // so the pointer will be good for the two subsequent ones.
-    RefPtr<NodeImpl> protect(this);
-
-    bool cancelable = eventType != mousemoveEvent;
-    
-    ExceptionCode ec = 0;
-
-    bool swallowEvent = false;
-
-    RefPtr<EventImpl> me = new MouseEventImpl(eventType, true, cancelable, getDocument()->defaultView(),
-        clickCount, screenX, screenY, clientX, clientY,
-        ctrlKey, altKey, shiftKey, metaKey, button,
-        relatedTarget, 0, isSimulated);
-    
-    dispatchEvent(me, ec, true);
-    bool defaultHandled = me->defaultHandled();
-    bool defaultPrevented = me->defaultPrevented();
-    if (defaultHandled || defaultPrevented)
-        swallowEvent = true;
-
-    // Special case: If it's a double click event, we also send the "dblclick" event. This is not part
-    // of the DOM specs, but is used for compatibility with the ondblclick="" attribute.  This is treated
-    // as a separate event in other browsers like Firefox, WinIE, & Opera, so we do the same.
-    if (eventType == clickEvent && clickCount == 2) {
-        me = new MouseEventImpl(dblclickEvent, true, cancelable, getDocument()->defaultView(),
-            clickCount, screenX, screenY, clientX, clientY,
-            ctrlKey, altKey, shiftKey, metaKey, button,
-            relatedTarget, 0, isSimulated);
-        if (defaultHandled)
-            me->setDefaultHandled();
-        dispatchEvent(me, ec, true);
-        if (me->defaultHandled() || me->defaultPrevented())
-            swallowEvent = true;
-    }
-
-    // Also send a DOMActivate event, which causes things like form submissions to occur.
-    if (eventType == clickEvent && !defaultPrevented)
-        dispatchUIEvent(DOMActivateEvent, clickCount);
-
-    return swallowEvent;
-}
-
-bool NodeImpl::dispatchUIEvent(const AtomicString &eventType, int detail)
-{
-    assert(!eventDispatchForbidden());
-    assert(eventType == DOMFocusInEvent || eventType == DOMFocusOutEvent || eventType == DOMActivateEvent);
-
-    if (!getDocument())
-        return false;
-
-    bool cancelable = eventType == DOMActivateEvent;
-
-    ExceptionCode ec = 0;
-    UIEventImpl* evt = new UIEventImpl(eventType, true, cancelable, getDocument()->defaultView(), detail);
-    return dispatchEvent(evt, ec, true);
-}
-
 void NodeImpl::registerNodeList(NodeListImpl* list)
 {
     if (!m_nodeLists)
@@ -776,86 +417,6 @@ void NodeImpl::notifyNodeListsChildrenChanged()
 {
     for (NodeImpl *n = this; n; n = n->parentNode())
         n->notifyLocalNodeListsChildrenChanged();
-}
-
-bool NodeImpl::dispatchSubtreeModifiedEvent(bool sendChildrenChanged)
-{
-    assert(!eventDispatchForbidden());
-
-    // FIXME: Pull this whole if clause out of this function.
-    if (sendChildrenChanged) {
-        notifyNodeListsChildrenChanged();
-        childrenChanged();
-    } else
-        notifyNodeListsAttributeChanged(); // FIXME: Can do better some day. Really only care about the name attribute changing.
-
-    if (!getDocument()->hasListenerType(DocumentImpl::DOMSUBTREEMODIFIED_LISTENER))
-        return false;
-    ExceptionCode ec = 0;
-    return dispatchEvent(new MutationEventImpl(DOMSubtreeModifiedEvent,
-                         true,false,0,DOMString(),DOMString(),DOMString(),0),ec,true);
-}
-
-bool NodeImpl::dispatchKeyEvent(const KeyEvent& key)
-{
-    assert(!eventDispatchForbidden());
-    ExceptionCode ec = 0;
-    RefPtr<KeyboardEventImpl> keyboardEventImpl = new KeyboardEventImpl(key, getDocument()->defaultView());
-    bool r = dispatchEvent(keyboardEventImpl,ec,true);
-
-    // we want to return false if default is prevented (already taken care of)
-    // or if the element is default-handled by the DOM. Otherwise we let it just
-    // let it get handled by AppKit 
-    if (keyboardEventImpl->defaultHandled())
-        r = false;
-    
-    return r;
-}
-
-void NodeImpl::dispatchWheelEvent(WheelEvent& e)
-{
-    assert(!eventDispatchForbidden());
-    if (e.delta() == 0)
-        return;
-
-    DocumentImpl* doc = getDocument();
-    if (!doc)
-        return;
-
-    FrameView* view = getDocument()->view();
-    if (!view)
-        return;
-
-    int x;
-    int y;
-    view->viewportToContents(e.x(), e.y(), x, y);
-
-    RefPtr<WheelEventImpl> we = new WheelEventImpl(e.isHorizontal(), e.delta(),
-        getDocument()->defaultView(), e.globalX(), e.globalY(), x, y,
-        e.ctrlKey(), e.altKey(), e.shiftKey(), e.metaKey());
-
-    ExceptionCode ec = 0;
-    if (!dispatchEvent(we, ec, true))
-        e.accept();
-}
-
-void NodeImpl::handleLocalEvents(EventImpl *evt, bool useCapture)
-{
-    if (!m_regdListeners)
-        return;
-
-    if (disabled() && evt->isMouseEvent())
-        return;
-
-    QPtrList<RegisteredEventListener> listenersCopy = *m_regdListeners;
-    QPtrListIterator<RegisteredEventListener> it(listenersCopy);
-    for (; it.current(); ++it)
-        if (it.current()->eventType() == evt->type() && it.current()->useCapture() == useCapture)
-            it.current()->listener()->handleEvent(evt, false);
-}
-
-void NodeImpl::defaultEventHandler(EventImpl *evt)
-{
 }
 
 unsigned NodeImpl::childNodeCount() const
@@ -1094,8 +655,6 @@ void NodeImpl::dump(QTextStream *stream, QString ind) const
     if (m_implicit) { *stream << " implicit"; }
 
     *stream << " tabIndex=" << m_tabIndex;
-    if (m_regdListeners)
-        *stream << " #regdListeners=" << m_regdListeners->count(); // ### more detail
     *stream << endl;
 
     NodeImpl *child = firstChild();
@@ -1129,13 +688,12 @@ void NodeImpl::detach()
     setRenderer(0);
 
     DocumentImpl* doc = getDocument();
-    if (doc) {
-        if (m_hovered)
-            doc->hoveredNodeDetached(this);
-        if (m_inActiveChain)
-            doc->activeChainNodeDetached(this);
-        doc->incDOMTreeVersion();
-    }
+    if (m_hovered)
+        doc->hoveredNodeDetached(this);
+    if (m_inActiveChain)
+        doc->activeChainNodeDetached(this);
+    doc->incDOMTreeVersion();
+
     m_active = false;
     m_hovered = false;
     m_inActiveChain = false;
@@ -1159,31 +717,18 @@ void NodeImpl::restoreState(QStringList &/*states*/)
 
 void NodeImpl::insertedIntoDocument()
 {
-    if (m_regdListeners && !m_regdListeners->isEmpty() && getDocument())
-        getDocument()->unregisterDisconnectedNodeWithEventListeners(this);
-
     setInDocument(true);
-    
     insertedIntoTree(false);
 }
 
 void NodeImpl::removedFromDocument()
 {
-    if (m_regdListeners && !m_regdListeners->isEmpty() && getDocument())
-        getDocument()->registerDisconnectedNodeWithEventListeners(this);
-
     setInDocument(false);
-    
     removedFromTree(false);
 }
 
 void NodeImpl::childrenChanged()
 {
-}
-
-bool NodeImpl::disabled() const
-{
-    return false;
 }
 
 bool NodeImpl::isReadOnly()

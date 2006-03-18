@@ -42,10 +42,8 @@ void SVGSetElementImpl::handleTimerEvent(double timePercentage)
 {
     // Start condition.
     if (!m_connected) {    
-        if (DocumentImpl *doc = getDocument()) {
-            doc->accessSVGExtensions()->timeScheduler()->connectIntervalTimer(this);
-            m_connected = true;
-        }
+        getDocument()->accessSVGExtensions()->timeScheduler()->connectIntervalTimer(this);
+        m_connected = true;
         return;
     }
 
@@ -63,10 +61,8 @@ void SVGSetElementImpl::handleTimerEvent(double timePercentage)
 
     // End condition.
     if (timePercentage == 1.0) {
-        if (DocumentImpl *doc = getDocument()) {
-            doc->accessSVGExtensions()->timeScheduler()->disconnectIntervalTimer(this);
-            m_connected = false;
-        }
+        getDocument()->accessSVGExtensions()->timeScheduler()->disconnectIntervalTimer(this);
+        m_connected = false;
 
         if (!isFrozen())
             setTargetAttribute(DOMString(m_savedTo).impl());

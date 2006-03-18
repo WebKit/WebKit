@@ -3921,7 +3921,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
             region = region->m_next.get();
         }
         
-        element->getDocument()->setHasDashboardRegions (true);
+        element->getDocument()->setHasDashboardRegions(true);
         
         break;
     }

@@ -56,8 +56,7 @@ HTMLSelectElementImpl::HTMLSelectElementImpl(const QualifiedName& tagName, Docum
 
 HTMLSelectElementImpl::~HTMLSelectElementImpl()
 {
-    if (getDocument())
-        getDocument()->deregisterMaintainsState(this);
+    getDocument()->deregisterMaintainsState(this);
 }
 
 bool HTMLSelectElementImpl::checkDTD(const NodeImpl* newChild)

@@ -25,11 +25,11 @@
 #ifndef DOM_CharacterDataImpl_h
 #define DOM_CharacterDataImpl_h
 
-#include "NodeImpl.h"
+#include "EventTargetNodeImpl.h"
 
 namespace WebCore {
 
-class CharacterDataImpl : public NodeImpl {
+class CharacterDataImpl : public EventTargetNodeImpl {
 public:
     CharacterDataImpl(DocumentImpl*, const String& text);
     CharacterDataImpl(DocumentImpl*);

@@ -91,7 +91,7 @@ void HTMLInputElementImpl::init()
 
 HTMLInputElementImpl::~HTMLInputElementImpl()
 {
-    if (getDocument()) getDocument()->deregisterMaintainsState(this);
+    getDocument()->deregisterMaintainsState(this);
     delete m_imageLoader;
 }
 
@@ -132,13 +132,11 @@ void HTMLInputElementImpl::focus()
 {
     if ((m_type == TEXT || m_type == PASSWORD) && renderer() && renderer()->style()->appearance() == TextFieldAppearance) {
         DocumentImpl* doc = getDocument();
-        if (doc) {
-            doc->updateLayout();
-            if (isFocusable()) {
-                doc->setFocusNode(this);
-                select();
-                doc->frame()->revealSelection();
-            }
+        doc->updateLayout();
+        if (isFocusable()) {
+            doc->setFocusNode(this);
+            select();
+            doc->frame()->revealSelection();
         }
     } else
         HTMLGenericFormElementImpl::focus();

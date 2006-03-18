@@ -1719,10 +1719,10 @@ void HTMLTokenizer::notifyFinished(CachedObject */*finishedObj*/)
 #endif
 
         if (errorOccurred)
-            n->dispatchHTMLEvent(errorEvent, false, false);
+            EventTargetNodeCast(n.get())->dispatchHTMLEvent(errorEvent, false, false);
         else {
             m_state = scriptExecution(scriptSource.qstring(), m_state, cachedScriptUrl);
-            n->dispatchHTMLEvent(loadEvent, false, false);
+            EventTargetNodeCast(n.get())->dispatchHTMLEvent(loadEvent, false, false);
         }
 
         // The state of pendingScripts.isEmpty() can change inside the scriptExecution()

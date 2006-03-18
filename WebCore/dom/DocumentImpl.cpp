@@ -966,7 +966,9 @@ void DocumentImpl::removeAllEventListenersFromAllNodes()
     m_windowEventListeners.clear();
     removeAllDisconnectedNodeEventListeners();
     for (NodeImpl *n = this; n; n = n->traverseNextNode()) {
-        n->removeAllEventListeners();
+        if (!n->isEventTargetNode())
+            continue;
+        EventTargetNodeCast(n)->removeAllEventListeners();
     }
 }
 
@@ -984,7 +986,7 @@ void DocumentImpl::removeAllDisconnectedNodeEventListeners()
 {
     NodeSet::iterator end = m_disconnectedNodesWithEventListeners.end();
     for (NodeSet::iterator i = m_disconnectedNodesWithEventListeners.begin(); i != end; ++i)
-        (*i)->removeAllEventListeners();
+        EventTargetNodeCast((*i))->removeAllEventListeners();
     m_disconnectedNodesWithEventListeners.clear();
 }
 
@@ -1007,19 +1009,11 @@ KWQAccObjectCache* DocumentImpl::getAccObjectCache()
         delete m_accCache;
         m_accCache = 0;
     }
-    
-    // look for top-level document
-    ElementImpl *element = ownerElement();
-    if (element) {
-        DocumentImpl *doc;
-        while (element) {
-            doc = element->getDocument();
-            element = doc->ownerElement();
-        }
-        
-        // ask the top-level document for its cache
+
+    // ask the top-level document for its cache
+    DocumentImpl *doc = topDocument();
+    if (doc != this)
         return doc->getAccObjectCache();
-    }
     
     // this is the top-level document, so install a new cache
     m_accCache = new KWQAccObjectCache;
@@ -2044,12 +2038,12 @@ bool DocumentImpl::setFocusNode(PassRefPtr<NodeImpl> newFocusNode)
         // Dispatch a change event for text fields or textareas that have been edited
         RenderObject *r = static_cast<RenderObject*>(oldFocusNode.get()->renderer());
         if (r && (r->isTextArea() || r->isTextField()) && r->isEdited()) {
-            oldFocusNode->dispatchHTMLEvent(changeEvent, true, false);
+            EventTargetNodeCast(oldFocusNode.get())->dispatchHTMLEvent(changeEvent, true, false);
             if ((r = static_cast<RenderObject*>(oldFocusNode.get()->renderer())))
                 r->setEdited(false);
         }
 
-        oldFocusNode->dispatchHTMLEvent(blurEvent, false, false);
+        EventTargetNodeCast(oldFocusNode.get())->dispatchHTMLEvent(blurEvent, false, false);
 
         if (m_focusNode) {
             // handler shifted focus
@@ -2057,7 +2051,7 @@ bool DocumentImpl::setFocusNode(PassRefPtr<NodeImpl> newFocusNode)
             newFocusNode = 0;
         }
         clearSelectionIfNeeded(newFocusNode.get());
-        oldFocusNode->dispatchUIEvent(DOMFocusOutEvent);
+        EventTargetNodeCast(oldFocusNode.get())->dispatchUIEvent(DOMFocusOutEvent);
         if (m_focusNode) {
             // handler shifted focus
             focusChangeBlocked = true;
@@ -2079,13 +2073,13 @@ bool DocumentImpl::setFocusNode(PassRefPtr<NodeImpl> newFocusNode)
         }
         // Set focus on the new node
         m_focusNode = newFocusNode.get();
-        m_focusNode->dispatchHTMLEvent(focusEvent, false, false);
+        EventTargetNodeCast(m_focusNode.get())->dispatchHTMLEvent(focusEvent, false, false);
         if (m_focusNode != newFocusNode) {
             // handler shifted focus
             focusChangeBlocked = true;
             goto SetFocusNodeDone;
         }
-        m_focusNode->dispatchUIEvent(DOMFocusInEvent);
+        EventTargetNodeCast(m_focusNode.get())->dispatchUIEvent(DOMFocusInEvent);
         if (m_focusNode != newFocusNode) { 
             // handler shifted focus
             focusChangeBlocked = true;
@@ -2933,10 +2927,8 @@ DocumentImpl *DocumentImpl::topDocument() const
 {
     DocumentImpl *doc = const_cast<DocumentImpl *>(this);
     ElementImpl *element;
-    while ((element = doc->ownerElement()) != 0) {
+    while ((element = doc->ownerElement()) != 0)
         doc = element->getDocument();
-        element = doc ? doc->ownerElement() : 0;
-    }
     
     return doc;
 }

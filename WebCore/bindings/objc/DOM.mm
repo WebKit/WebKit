@@ -412,21 +412,30 @@ static ListenerMap *listenerMap;
 
 - (void)addEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture
 {
+    if (![self _nodeImpl]->isEventTargetNode())
+        raiseDOMException(DOM_NOT_SUPPORTED_ERR);
+    
     EventListener *wrapper = ObjCEventListener::create(listener);
-    [self _nodeImpl]->addEventListener(type, wrapper, useCapture);
+    EventTargetNodeCast([self _nodeImpl])->addEventListener(type, wrapper, useCapture);
     wrapper->deref();
 }
 
 - (void)removeEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture
 {
+    if (![self _nodeImpl]->isEventTargetNode())
+        raiseDOMException(DOM_NOT_SUPPORTED_ERR);
+
     if (EventListener *wrapper = ObjCEventListener::find(listener))
-        [self _nodeImpl]->removeEventListener(type, wrapper, useCapture);
+        EventTargetNodeCast([self _nodeImpl])->removeEventListener(type, wrapper, useCapture);
 }
 
 - (BOOL)dispatchEvent:(DOMEvent *)event
 {
+    if (![self _nodeImpl]->isEventTargetNode())
+        raiseDOMException(DOM_NOT_SUPPORTED_ERR);
+
     ExceptionCode ec = 0;
-    BOOL result = [self _nodeImpl]->dispatchEvent([event _eventImpl], ec);
+    BOOL result = EventTargetNodeCast([self _nodeImpl])->dispatchEvent([event _eventImpl], ec);
     raiseOnDOMError(ec);
     return result;
 }
@@ -657,19 +666,11 @@ static ListenerMap *listenerMap;
 
 - (const KJS::Bindings::RootObject *)_executionContext
 {
-    NodeImpl *n = [self _nodeImpl];
-    if (!n)
-        return 0;
-    
-    DocumentImpl *doc = n->getDocument();
-    if (!doc)
-        return 0;
-    
-    MacFrame *p = Mac(doc->frame());
-    if (!p)
-        return 0;
-        
-    return p->executionContextForDOM();
+    if (NodeImpl *n = [self _nodeImpl])
+        if (MacFrame *f = Mac(n->getDocument()->frame()))
+            return f->executionContextForDOM();
+
+    return 0;
 }
 
 @end

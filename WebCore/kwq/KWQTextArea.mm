@@ -1137,7 +1137,7 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
 {
     if (widget)
         if (WidgetClient* c = widget->client())
-            if (NodeImpl* node = c->element(widget))
+            if (EventTargetNodeImpl* node = c->element(widget))
                 node->dispatchHTMLEvent(eventType, false, false);
 }
 

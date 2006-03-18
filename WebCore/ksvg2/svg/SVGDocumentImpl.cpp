@@ -158,10 +158,10 @@ void SVGDocumentImpl::dispatchRecursiveEvent(EventImpl *event, NodeImpl *obj)
             dispatchRecursiveEvent(event, n->lastChild());
 
             // Dispatch, locally
-            n->dispatchEvent(event, ec);
+            EventTargetNodeCast(n)->dispatchEvent(event, ec);
         }
         else
-            n->dispatchEvent(event, ec);
+            EventTargetNodeCast(n)->dispatchEvent(event, ec);
     }
 }
 

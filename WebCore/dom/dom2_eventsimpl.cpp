@@ -259,15 +259,11 @@ void MouseRelatedEventImpl::receivedTarget()
     m_layerX = m_pageX;    
     m_layerY = m_pageY;    
 
-    // Can't do anything if the target is not in a document.
     NodeImpl* targ = target();
     ASSERT(targ);
-    DocumentImpl* doc = targ->getDocument();
-    if (!doc)
-        return;
 
     // Must have an updated render tree for this math to work correctly.
-    doc->updateRendering();
+    targ->getDocument()->updateRendering();
 
     // FIXME: clientX/Y should not be the same as pageX/Y!
     // Currently the passed-in clientX and clientY are incorrectly actually

@@ -25,6 +25,12 @@
 #if SVG_SUPPORT
 #include "SVGDOMImplementationImpl.h"
 
+#include <kdom/Helper.h>
+#include <kdom/Namespace.h>
+#include <kdom/core/DOMExceptionImpl.h>
+#include <kdom/core/ElementImpl.h>
+#include <kdom/kdom.h>
+
 #include "DocumentImpl.h"
 #include "DocumentTypeImpl.h"
 #include "ExceptionCode.h"
@@ -34,11 +40,6 @@
 #include "SVGSVGElementImpl.h"
 #include "css_stylesheetimpl.h"
 #include "ksvg.h"
-#include <kdom/Helper.h>
-#include <kdom/Namespace.h>
-#include <kdom/core/DOMExceptionImpl.h>
-#include <kdom/core/ElementImpl.h>
-#include <kdom/kdom.h>
 
 using namespace WebCore;
 

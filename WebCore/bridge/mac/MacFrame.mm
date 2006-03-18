@@ -1369,7 +1369,7 @@ bool MacFrame::keyEvent(NSEvent *event)
     _currentEvent = KWQRetain(event);
 
     KeyEvent qEvent(event);
-    result = !node->dispatchKeyEvent(qEvent);
+    result = !EventTargetNodeCast(node)->dispatchKeyEvent(qEvent);
 
     // We want to send both a down and a press for the initial key event.
     // To get KHTML to do this, we send a second KeyPress with "is repeat" set to true,
@@ -1377,7 +1377,7 @@ bool MacFrame::keyEvent(NSEvent *event)
     // That's not a great hack; it would be good to do this in a better way.
     if ([event type] == NSKeyDown && ![event isARepeat]) {
         KeyEvent repeatEvent(event, true);
-        if (!node->dispatchKeyEvent(repeatEvent))
+        if (!EventTargetNodeCast(node)->dispatchKeyEvent(repeatEvent))
             result = true;
     }
 
@@ -1784,7 +1784,7 @@ bool MacFrame::dispatchCPPEvent(const AtomicString &eventType, KWQClipboard::Acc
 
     ExceptionCode ec = 0;
     RefPtr<EventImpl> evt = new ClipboardEventImpl(eventType, true, true, clipboard.get());
-    target->dispatchEvent(evt, ec, true);
+    EventTargetNodeCast(target)->dispatchEvent(evt, ec, true);
     bool noDefaultProcessing = evt->defaultPrevented();
 
     // invalidate clipboard here for security

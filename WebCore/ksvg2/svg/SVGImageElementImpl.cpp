@@ -25,6 +25,8 @@
 #if SVG_SUPPORT
 
 #include <kdom/core/AttrImpl.h>
+#include <kdom/core/DOMConfigurationImpl.h>
+#include <kdom/parser/KDOMParser.h>
 
 #include "XLinkNames.h"
 #include "SVGNames.h"
@@ -44,9 +46,6 @@
 #include <kcanvas/KCanvasContainer.h>
 #include <kcanvas/KCanvasImage.h>
 #include <kcanvas/KCanvasPath.h>
-
-#include <kdom/parser/KDOMParser.h>
-#include <kdom/core/DOMConfigurationImpl.h>
 
 #include <kxmlcore/Assertions.h>
 

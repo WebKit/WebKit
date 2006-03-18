@@ -88,8 +88,7 @@ JSValue *DOMAbstractViewProtoFunc::callAsFunction(ExecState *exec, JSObject *thi
         if (!arg0)
           return jsUndefined(); // throw exception?
         else {
-          if (DocumentImpl* doc = arg0->getDocument())
-            doc->updateLayoutIgnorePendingStylesheets();
+          arg0->getDocument()->updateLayoutIgnorePendingStylesheets();
           return toJS(exec, abstractView.getComputedStyle(arg0, args[1]->toString(exec).domString().impl()));
         }
       }

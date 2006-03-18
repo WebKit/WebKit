@@ -128,10 +128,8 @@ void SVGAnimateColorElementImpl::handleTimerEvent(double timePercentage)
             }
         }
 
-        if (DocumentImpl *doc = getDocument()) {
-            doc->accessSVGExtensions()->timeScheduler()->connectIntervalTimer(this);
-            m_connected = true;
-        }
+        getDocument()->accessSVGExtensions()->timeScheduler()->connectIntervalTimer(this);
+        m_connected = true;
 
         return;
     }
@@ -222,10 +220,8 @@ void SVGAnimateColorElementImpl::handleTimerEvent(double timePercentage)
             return;
         }
 
-        if (DocumentImpl *doc = getDocument()) {
-            doc->accessSVGExtensions()->timeScheduler()->disconnectIntervalTimer(this);
-            m_connected = false;
-        }
+        getDocument()->accessSVGExtensions()->timeScheduler()->disconnectIntervalTimer(this);
+        m_connected = false;
 
         // Reset...
         m_currentItem = -1;

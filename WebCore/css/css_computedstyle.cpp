@@ -315,9 +315,8 @@ PassRefPtr<CSSValueImpl> CSSComputedStyleDeclarationImpl::getPropertyCSSValue(in
         return 0;
 
     // Make sure our layout is up to date before we allow a query on these attributes.
-    DocumentImpl* docimpl = node->getDocument();
-    if (docimpl && updateLayout)
-        docimpl->updateLayout();
+    if (updateLayout)
+        node->getDocument()->updateLayout();
 
     RenderObject* renderer = node->renderer();
     if (!renderer)
