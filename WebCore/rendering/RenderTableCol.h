@@ -41,6 +41,7 @@ public:
     virtual short lineHeight(bool) const { return 0; }
     virtual void updateFromElement();
     virtual bool canHaveChildren() const;
+    virtual bool requiresLayer() { return false; }
 
 #ifndef NDEBUG
     virtual void dump(QTextStream*, QString) const;

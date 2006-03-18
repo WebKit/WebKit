@@ -264,7 +264,7 @@ void RenderTable::layout()
     int calculatedHeight = 0;
 
     RenderObject *child = firstChild();
-    while(child) {
+    while (child) {
         // FIXME: What about a form that has a display value that makes it a table section?
         if (child->needsLayout() && !(child->element() && child->element()->hasTagName(formTag)))
             child->layout();
@@ -386,6 +386,7 @@ void RenderTable::paint(PaintInfo& i, int _tx, int _ty)
     // We're done.  We don't bother painting any children.
     if (paintAction == PaintActionBlockBackground)
         return;
+
     // We don't paint our own background, but we do let the kids paint their backgrounds.
     if (paintAction == PaintActionChildBlockBackgrounds)
         paintAction = PaintActionChildBlockBackground;
@@ -768,6 +769,24 @@ RenderBlock* RenderTable::firstLineBlock() const
 
 void RenderTable::updateFirstLetter()
 {
+}
+
+IntRect RenderTable::getOverflowClipRect(int tx, int ty)
+{
+    IntRect rect = RenderBlock::getOverflowClipRect(tx, ty);
+    
+    // If we have a caption, expand the clip to include the caption.
+    // FIXME: Technically this is wrong, but it's virtually impossible to fix this
+    // for real until captions have been re-written.
+    // FIXME: This code assumes (like all our other caption code) that only top/bottom are
+    // supported.  When we actually support left/right and stop mapping them to top/bottom,
+    // we might have to hack this code first (depending on what order we do these bug fixes in).
+    if (tCaption) {
+        rect.setHeight(height());
+        rect.setY(ty);
+    }
+
+    return rect;
 }
 
 #ifndef NDEBUG

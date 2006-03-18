@@ -1,3 +1,26 @@
+2006-03-18  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 7841, tables, table rows, and table row groups should
+        all support overflow:hidden.
+
+        Reviewed by eric
+
+        * css/cssstyleselector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        (WebCore::RenderTable::paint):
+        (WebCore::RenderTable::getOverflowClipRect):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCol.h:
+        (WebCore::RenderTableCol::requiresLayer):
+        * rendering/RenderTableRow.h:
+        (WebCore::RenderTableRow::requiresLayer):
+        * rendering/render_box.cpp:
+        (WebCore::RenderBox::setStyle):
+        * rendering/render_layer.cpp:
+        (WebCore::RenderLayer::paintLayer):
+
 2006-03-17  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Hyatt.

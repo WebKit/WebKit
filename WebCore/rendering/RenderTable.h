@@ -158,6 +158,8 @@ public:
     
     bool hasSections() const { return head || foot || firstBody; }
 
+    virtual IntRect getOverflowClipRect(int tx, int ty);
+
 private:
     void recalcSections();
 

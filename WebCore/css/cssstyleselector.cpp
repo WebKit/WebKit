@@ -1001,6 +1001,13 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, ElementImpl *e)
     else
         style->addToTextDecorationsInEffect(style->textDecoration());
     
+    // Table rows, sections and the table itself will support overflow:hidden and will ignore scroll/auto.
+    // FIXME: Eventually table sections will support auto and scroll.
+    if (style->overflow() != OVISIBLE && style->overflow() != OHIDDEN && 
+        (style->display() == TABLE || style->display() == INLINE_TABLE ||
+         style->display() == TABLE_ROW_GROUP || style->display() == TABLE_ROW))
+        style->setOverflow(OVISIBLE);
+
     // Cull out any useless layers and also repeat patterns into additional layers.
     style->adjustBackgroundLayers();
 

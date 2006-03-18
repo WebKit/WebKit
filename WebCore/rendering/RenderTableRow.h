@@ -48,7 +48,7 @@ public:
     virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty, HitTestAction action);
 
     // The only time rows get a layer is when they have transparency.
-    virtual bool requiresLayer() { return isTransparent(); }
+    virtual bool requiresLayer() { return isTransparent() || hasOverflowClip(); }
 
     virtual void paint(PaintInfo& i, int tx, int ty);
 
