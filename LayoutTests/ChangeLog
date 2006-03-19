@@ -1,5 +1,18 @@
 2006-03-18  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Reviewed by Darin.
+
+        - Test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7761
+          Tabs in class attribute not treated as whitespace
+
+        * fast/dom/Element/class-attribute-whitespace-expected.checksum: Added.
+        * fast/dom/Element/class-attribute-whitespace-expected.png: Added.
+        * fast/dom/Element/class-attribute-whitespace-expected.txt: Added.
+        * fast/dom/Element/class-attribute-whitespace.html: Added.
+        NOTE: This test will get broken if "eol-style" processing is done on it.
+
+2006-03-18  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Reviewed by Hyatt.
 
         - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=6795

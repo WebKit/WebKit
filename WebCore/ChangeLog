@@ -1,5 +1,20 @@
 2006-03-18  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
+        Test: fast/dom/Element/class-attribute-whitespace.html
+
+        Reviewed by Darin.
+
+        - fix http://bugzilla.opendarwin.org/show_bug.cgi?id=7761
+          Tabs in class attribute not treated as whitespace
+
+        * dom/dom_elementimpl.cpp:
+        (WebCore::isClassWhitespace): Helper function to check if a character
+        in the class attribute should be treated as whitespace. Added \r and \t.
+        (WebCore::NamedMappedAttrMapImpl::parseClassAttribute): Instead of creating
+        a QStringList and iterating it, do everything in one pass over the string.
+
+2006-03-18  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
         Test: fast/block/float/vertical-move-relayout.html
 
         Reviewed by Hyatt.

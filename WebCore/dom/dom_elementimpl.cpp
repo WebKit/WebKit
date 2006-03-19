@@ -1246,6 +1246,11 @@ bool NamedMappedAttrMapImpl::mapsEquivalent(const NamedMappedAttrMapImpl* otherM
     return true;
 }
 
+inline static bool isClassWhitespace(QChar c)
+{
+    return c == ' ' || c == '\r' || c == '\n' || c == '\t';
+}
+
 void NamedMappedAttrMapImpl::parseClassAttribute(const DOMString& classStr)
 {
     m_classList.clear();
@@ -1256,27 +1261,32 @@ void NamedMappedAttrMapImpl::parseClassAttribute(const DOMString& classStr)
         (classStr.impl()->isLower() ? classStr : DOMString(classStr.impl()->lower())) :
         classStr;
     
-    if (classAttr.find(' ') == -1 && classAttr.find('\n') == -1)
-        m_classList.setString(AtomicString(classAttr));
-    else {
-        QString val = classAttr.qstring();
-        val.replace('\n', ' ');
-        QStringList list = QStringList::split(' ', val);
-        
-        AtomicStringList* curr = 0;
-        for (QStringList::Iterator it = list.begin(); it != list.end(); ++it) {
-            const QString& singleClass = *it;
-            if (!singleClass.isEmpty()) {
-                if (curr) {
-                    curr->setNext(new AtomicStringList(AtomicString(singleClass)));
-                    curr = curr->next();
-                }
-                else {
-                    m_classList.setString(AtomicString(singleClass));
-                    curr = &m_classList;
-                }
+    AtomicStringList* curr = 0;
+    
+    const QChar* str = classAttr.unicode();
+    int length = classAttr.length();
+    int sPos = 0;
+
+    while (true) {
+        while (sPos < length && isClassWhitespace(str[sPos]))
+            ++sPos;
+        if (sPos >= length)
+            break;
+        int ePos = sPos + 1;
+        while (ePos < length && !isClassWhitespace(str[ePos]))
+            ++ePos;
+        if (curr) {
+            curr->setNext(new AtomicStringList(AtomicString(str + sPos, ePos - sPos)));
+            curr = curr->next();
+        } else {
+            if (sPos == 0 && ePos == length) {
+                m_classList.setString(AtomicString(classAttr));
+                break;
             }
+            m_classList.setString(AtomicString(str + sPos, ePos - sPos));
+            curr = &m_classList;
         }
+        sPos = ePos + 1;
     }
 }
 
