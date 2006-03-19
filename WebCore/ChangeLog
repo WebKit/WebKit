@@ -1,3 +1,14 @@
+2006-03-18  Mitz Pettel  <opendarwin.org@mitzpettel.com>
+
+        Reviewed by Darin.
+
+        - fix leaks caused by the fix for Bugzilla bug 3560
+
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::destroyLeftoverChildren): Text renderers with
+        first-letter pseudo style are children of an existing first-letter inline
+        that has been updated, and should be destroyed.
+
 2006-03-18  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 7841, tables, table rows, and table row groups should
