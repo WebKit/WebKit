@@ -285,16 +285,17 @@ for my $file (sort @paths) {
     $newContents =~ s/DOMAbstractView::Document /DOMAbstractView::Document_/;
     $newContents =~ s/Window::Document /Window::Document_/;
     $newContents =~ s/case Document:/case Document_:/g;
-    $newContents =~ s/token == Document\b/token == Document/;
+    $newContents =~ s/token == Document\b/token == Document_/;
     $newContents =~ s/Document, GetComputedStyle/Document_, GetComputedStyle/;
     $newContents =~ s/Status, Document, Node/Status, Document_, Node/;
 
-    $newContents =~ s/JSDOMParser(\s+Window::)JSDOMParser/DOMParser$1DOMParser/;
-    $newContents =~ s/case JSDOMParser:/case DOMParser:/g;
+    $newContents =~ s/XMLHttpRequest, XMLSerializer, JSDOMParser, JSXSLTProcessor/XMLHttpRequest, XMLSerializer, DOMParser_, XSLTProcessor_/;
 
-    $newContents =~ s/JSXSLTProcessor(\s+Window::)JSXSLTProcessor/XSLTProcessor$1XSLTProcessor/;
-    $newContents =~ s/XMLHttpRequest, XMLSerializer, JSDOMParser, JSXSLTProcessor/XMLHttpRequest, XMLSerializer, DOMParser, XSLTProcessor/;
-    $newContents =~ s/case JSXSLTProcessor:/case XSLTProcessor:/g;
+    $newContents =~ s/JSDOMParser (\s*Window::)JSDOMParser /DOMParser_$1DOMParser_/;
+    $newContents =~ s/case JSDOMParser(:[^:])/case DOMParser_$1/g;
+
+    $newContents =~ s/JSXSLTProcessor (\s*Window::)JSXSLTProcessor /XSLTProcessor_$1XSLTProcessor_/;
+    $newContents =~ s/case JSXSLTProcessor(:[^:])/case XSLTProcessor_$1/g;
 
     if ($newContents ne $contents) {
         open FILE, ">", $file or die;
