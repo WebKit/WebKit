@@ -1,3 +1,14 @@
+2006-03-18  Alexey Proskuryakov  <ap@nypop.com>
+
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=3438
+
+        * fast/replaced/img-1x1-expected.checksum: Added.
+        * fast/replaced/img-1x1-expected.txt: Added.
+        * fast/replaced/img-1x1.html: Added.
+        * fast/replaced/img-1x1-expected.png: Added.
+
 2006-03-18  Darin Adler  <darin@apple.com>
 
         - updated test results for tests affected by Hyatt's latest table fix
