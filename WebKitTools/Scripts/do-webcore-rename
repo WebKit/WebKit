@@ -227,19 +227,19 @@ for my $file (sort @paths) {
     $newContents =~ s/namespace KSVG\b/namespace WebCore/g;
     $newContents =~ s/namespace khtml\b/namespace WebCore/g;
 
-    if ($file !~ /\.(pm|idl)$/) {
+    if ($file !~ /\.idl$/) {
         for my $from (keys %otherRenames) {
-            my $to = $otherRenames{$from};
-            $newContents =~ s/\b$from\b/$to/g;
-            $newContents =~ s/"$to"/"$from"/g;
+            $newContents =~ s/(?<!["\w])$from(?!["\w])/$otherRenames{$from}/g;
         }
         $newContents =~ s/\#\#Event_/\#\#Event/g;
 
-        # fix DOMString and QString
-        $newContents =~ s/\#define DOMStringImpl StringImpl\n//;
-        $newContents =~ s/\bDOMString\b/String/g;
-        $newContents =~ s/\bDOMStringImpl\b/StringImpl/g;
-        $newContents =~ s/\#define String String\n/#define DOMString String\n#define QString DeprecatedString\n/;
+        if ($file !~ /\.pm$/) {
+            # fix DOMString and QString
+            $newContents =~ s/\#define DOMStringImpl StringImpl\n//;
+            $newContents =~ s/\bDOMString\b/String/g;
+            $newContents =~ s/\bDOMStringImpl\b/StringImpl/g;
+            $newContents =~ s/\#define String String\n/#define DOMString String\n#define QString DeprecatedString\n/;
+        }
     }
 
     # remove some bogus stuff
