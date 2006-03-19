@@ -43,9 +43,9 @@ public:
     ~FrameWin();
 
     virtual bool openURL(const KURL&);
-    virtual void openURLRequest(const KURL&, const ResourceRequest&);
-    virtual void submitForm(const KURL&, const ResourceRequest&);
-    virtual void urlSelected(const KURL&, const ResourceRequest&);
+    virtual void openURLRequest(const ResourceRequest&);
+    virtual void submitForm(const ResourceRequest&);
+    virtual void urlSelected(const ResourceRequest&);
 
     virtual void setTitle(const String&);
 

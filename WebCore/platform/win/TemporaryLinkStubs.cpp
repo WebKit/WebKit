@@ -156,7 +156,7 @@ KJS::Bindings::Instance* FrameWin::getAppletInstanceForWidget(Widget*) { notImpl
 bool FrameWin::passMouseDownEventToWidget(Widget*) { notImplemented(); return 0; }
 void FrameWin::issueCutCommand() { notImplemented(); }
 void FrameWin::issueCopyCommand() { notImplemented(); }
-void FrameWin::openURLRequest(KURL const&,struct WebCore::ResourceRequest const&) { notImplemented(); }
+void FrameWin::openURLRequest(struct WebCore::ResourceRequest const&) { notImplemented(); }
 bool FrameWin::passWheelEventToChildWidget(NodeImpl*) { notImplemented(); return 0; }
 void FrameWin::issueUndoCommand() { notImplemented(); }
 QString FrameWin::mimeTypeForFileName(QString const&) const { notImplemented(); return QString(); }
@@ -175,7 +175,6 @@ void FrameWin::issuePasteAndMatchStyleCommand() { notImplemented(); }
 Plugin* FrameWin::createPlugin(KURL const&,QStringList const&,QStringList const&,QString const&) { notImplemented(); return 0; }
 
 bool BrowserExtensionWin::canRunModal() { notImplemented(); return 0; }
-void BrowserExtensionWin::openURLNotify() { notImplemented(); }
 void BrowserExtensionWin::createNewWindow(struct WebCore::ResourceRequest const&,struct WebCore::WindowArgs const&,Frame*&) { notImplemented(); }
 bool BrowserExtensionWin::canRunModalNow() { notImplemented(); return 0; }
 void BrowserExtensionWin::runModal() { notImplemented(); }

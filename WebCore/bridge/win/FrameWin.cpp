@@ -58,10 +58,10 @@ FrameWin::~FrameWin()
 {
 }
 
-void FrameWin::urlSelected(const KURL& url, const ResourceRequest&)
+void FrameWin::urlSelected(const ResourceRequest& request)
 {
     if (m_client)
-        m_client->openURL(url.url());
+        m_client->openURL(request.url().url());
 }
 
 QString FrameWin::userAgent() const
