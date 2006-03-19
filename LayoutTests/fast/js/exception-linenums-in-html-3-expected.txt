@@ -1,19 +1,5 @@
-This test exercises the source URL and line number that is embedded in JavaScript exceptions, which is displayed in places like the JavaScript console. It differs from exception-linenums-in-html-1.html in that it only works if Bugzilla Bug 6314 has been fixed.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS typeof e.sourceURL is "string"
-PASS e.line is 23
-PASS typeof e.sourceURL is "string"
-PASS e.line is 33
-PASS typeof e.sourceURL is "string"
-PASS e.line is 43
-PASS typeof e.sourceURL is "string"
-PASS e.line is 53
-PASS typeof e.sourceURL is "string"
-PASS e.line is 16
-PASS successfullyParsed is true
-
-TEST COMPLETE
-
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584

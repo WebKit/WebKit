@@ -1,3 +1,31 @@
+2006-03-19  Darin Adler  <darin@apple.com>
+
+        - changed these tests to be expected failures because I had to roll
+          out the fix to http://bugzilla.opendarwin.org/show_bug.cgi?id=6314
+          Unclosed <style> element in <head> makes page completely blank
+
+        * fast/js/exception-linenums-in-html-3-expected.txt:
+        * fast/js/exception-linenums-in-html-3-expected.png: Added.
+        * fast/js/exception-linenums-in-html-3-expected.checksum: Added.
+
+        * fast/js/missing-style-end-tag-js-expected.txt:
+        * fast/js/missing-style-end-tag-js-expected.png: Added.
+        * fast/js/missing-style-end-tag-js-expected.checksum: Added.
+
+        * fast/tokenizer/missing-style-end-tag-1-expected.checksum:
+        * fast/tokenizer/missing-style-end-tag-1-expected.png:
+        * fast/tokenizer/missing-style-end-tag-1-expected.txt:
+        * fast/tokenizer/missing-style-end-tag-2-expected.checksum:
+        * fast/tokenizer/missing-style-end-tag-2-expected.png:
+        * fast/tokenizer/missing-style-end-tag-2-expected.txt:
+
+        - added some missing pixel-test results
+
+        * tables/mozilla/marvin/backgr_layers-opacity-expected.checksum: Added.
+        * tables/mozilla/marvin/backgr_layers-opacity-expected.png: Added.
+        * fast/dom/Element/class-attribute-whitespace-expected.png: Added.
+        * fast/canvas/patternfill-repeat-expected.png: Added.
+
 2006-03-18  David Carson  <dacarson@gmail.com>        
 
         Reviewed by Darin.

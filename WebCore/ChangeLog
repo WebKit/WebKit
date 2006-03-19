@@ -1,3 +1,14 @@
+2006-03-19  Darin Adler  <darin@apple.com>
+
+        - roll out fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6314
+          Unclosed <style> element in <head> makes page completely blank
+
+        This fix was breaking major sites -- details in the bug report.
+
+        * khtml/html/htmltokenizer.cpp: (WebCore::HTMLTokenizer::parseTag):
+        Removed the bug fix, added a FIXME about the <title> code that has
+        the same problem.
+
 2006-03-18  David Carson  <dacarson@gmail.com>
 
         Test: fast/canvas/patternfill-repeat.html

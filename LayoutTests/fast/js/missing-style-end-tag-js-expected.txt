@@ -1,11 +1,5 @@
-This test checks that the first <script> tag after an unclosed <style> tag is parsed correctly. Early versions of the patch for Bugzilla Bug 6314 did not reset a state variable properly, causing the first <script></script> tag in the document to contain everything after the <style> tag.
-
-This text should also be blue.
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-PASS successfullyParsed is true
-
-TEST COMPLETE
-
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584

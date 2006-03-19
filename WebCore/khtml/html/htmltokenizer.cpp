@@ -1252,20 +1252,8 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                 if (beginTag) {
                     searchStopper = styleEnd;
                     searchStopperLen = 7;
-                    State savedState = state;
-                    SegmentedString savedSrc = src;
-                    long savedLineno = lineno;
                     state.setInStyle(true);
                     state = parseSpecial(src, state);
-                    if (state.inStyle() && src.isEmpty()) {
-                        // We just ate the rest of the document as the style #text node!
-                        // Reset the state then retokenize without special style handling.
-                        // Let the html parser clean up the missing </style> tag.
-                        state = savedState;
-                        src = savedSrc;
-                        lineno = savedLineno;
-                        scriptCodeSize = 0;
-                    }
                 }
             } else if (tagName == textareaTag) {
                 if (beginTag) {
@@ -1286,7 +1274,11 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                     if (state.inTitle() && src.isEmpty()) {
                         // We just ate the rest of the document as the title #text node!
                         // Reset the state then retokenize without special title handling.
-                        // Let the html parser clean up the missing </title> tag.
+                        // Let the parser clean up the missing </title> tag.
+                        // FIXME: This is incorrect, because src.isEmpty() doesn't mean we're
+                        // at the end of the document unless noMoreData is also true. We need
+                        // to detect this case elsewhere, and save the state somewhere other
+                        // than a local variable.
                         state = savedState;
                         src = savedSrc;
                         lineno = savedLineno;

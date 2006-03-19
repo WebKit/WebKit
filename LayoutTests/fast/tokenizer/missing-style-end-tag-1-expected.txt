@@ -2,17 +2,4 @@ layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x579
-      RenderBlock {DIV} at (0,0) size 784x36
-        RenderText {TEXT} at (0,0) size 779x36
-          text run at (0,0) width 332: "This document is missing its </style> tag in its head. "
-          text run at (332,0) width 447: "The tokenizer should retokenize this document after consuming all of it"
-          text run at (0,18) width 504: "looking for the missing end tag, then let the parser clean up the missing tag. See "
-        RenderInline {A} at (0,0) size 120x18 [color=#0000EE]
-          RenderText {TEXT} at (504,18) size 120x18
-            text run at (504,18) width 120: "Bugzilla Bug 6314"
-        RenderText {TEXT} at (624,18) size 4x18
-          text run at (624,18) width 4: "."
-      RenderBlock {P} at (0,49) size 784x15
-        RenderText {TEXT} at (0,0) size 280x15
-          text run at (0,0) width 280: "This text should also be monospace."
+    RenderBody {BODY} at (8,8) size 784x584
