@@ -1063,6 +1063,8 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren)
         
         // Go ahead and position the child as though it didn't collapse with the top.
         child->setPos(child->xPos(), yPosEstimate);
+        if (yPosEstimate != oldChildY && !child->avoidsFloats() && child->containsFloats())
+            child->markAllDescendantsWithFloatsForLayout();
         child->layoutIfNeeded();
 
         // Now determine the correct ypos based off examination of collapsing margin
