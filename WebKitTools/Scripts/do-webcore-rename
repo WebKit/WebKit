@@ -200,7 +200,7 @@ for my $file (sort @paths) {
     if ($newFile{$file}) {
         my $newFile = $newFile{$file};
         print "Renaming $file to $newFile\n";
-        system "mv $file $newFile"; # use svn move when "doing the real thing"
+        system "svn move $file $newFile";
     }
 }
 
@@ -228,19 +228,18 @@ for my $file (sort @paths) {
     $newContents =~ s/namespace khtml\b/namespace WebCore/g;
 
     if ($file !~ /\.(pm|idl)$/) {
-        # fix DOMString
-        $newContents =~ s/\#define DOMStringImpl StringImpl\n//;
-        $newContents =~ s/\bDOMString\b/String/g;
-        $newContents =~ s/\bDOMStringImpl\b/StringImpl/g;
-        $newContents =~ s/\#define String String/#define DOMString String/;
-
-        # fix other identifiers that would collide otherwise
         for my $from (keys %otherRenames) {
             my $to = $otherRenames{$from};
             $newContents =~ s/\b$from\b/$to/g;
             $newContents =~ s/"$to"/"$from"/g;
         }
         $newContents =~ s/\#\#Event_/\#\#Event/g;
+
+        # fix DOMString and QString
+        $newContents =~ s/\#define DOMStringImpl StringImpl\n//;
+        $newContents =~ s/\bDOMString\b/String/g;
+        $newContents =~ s/\bDOMStringImpl\b/StringImpl/g;
+        $newContents =~ s/\#define String String\n/#define DOMString String\n#define QString DeprecatedString\n/;
     }
 
     # remove some bogus stuff
