@@ -108,7 +108,8 @@ my %otherRenames = (
     "render_box" => "RenderBox",
     "render_br" => "RenderBR",
     "render_canvas" => "RenderCanvas",
-    "render_canvasimage" => "RenderCanvasImage",
+    "render_canvasimage" => "RenderHTMLCanvas",
+    "RenderCanvasImage" => "RenderHTMLCanvas",
     "render_flexbox" => "RenderFlexibleBox",
     "render_flow" => "RenderFlow",
     "render_image" => "RenderImage",
@@ -180,6 +181,7 @@ my %otherRenames = (
     "cssproperties" => "CSSPropertyNames",
     "cssvalues" => "CSSValueStrings",
     "KSVGCSSParser" => "SVGCSSParser",
+    "dispatchKHTMLEditableContentChanged" => "dispatchEditableContentChangedEvent",
 );
 
 # rename most files with names ending in Impl
