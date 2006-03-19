@@ -1,3 +1,15 @@
+2006-03-18  David Carson  <dacarson@gmail.com>        
+
+        Reviewed by Darin.
+
+        - test for http://bugzilla.opendarwin.org/show_bug.cgi?id=7830
+          <canvas> createPattern 'repeat' options fail
+
+        * fast/canvas/patternfill-repeat-expected.checksum: Added.
+        * fast/canvas/patternfill-repeat-expected.png: Added.
+        * fast/canvas/patternfill-repeat-expected.txt: Added.
+        * fast/canvas/patternfill-repeat.html: Added.
+
 2006-03-18  Mitz Pettel  <opendarwin.org@mitzpettel.com>
 
         Reviewed by Darin.

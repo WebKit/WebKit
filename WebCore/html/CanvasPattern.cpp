@@ -85,8 +85,13 @@ CGPatternRef CanvasPattern::createPattern(const CGAffineTransform& transform)
     CGAffineTransform patternTransform =
         CGAffineTransformTranslate(CGAffineTransformScale(transform, 1, -1), 0, -image->height());
 
-    float xStep = m_repeatX ? image->width() : 0;
-    float yStep = m_repeatY ? image->height() : 0;
+    float xStep = m_repeatX ? image->width() : FLT_MAX;
+    // If FLT_MAX should also be used for yStep, nothing is rendered. Using fractions of FLT_MAX also
+    // result in nothing being rendered. This is not a problem with xStep.
+    // INT_MAX is almost correct, but there seems to be some number wrapping occuring making the fill
+    // pattern is not filled correctly. 
+    // So, just pick a really large number that works. 
+    float yStep = m_repeatY ? image->height() : (100000000.0);
 
     const CGPatternCallbacks patternCallbacks = { 0, patternCallback, patternReleaseCallback };
     ref();
