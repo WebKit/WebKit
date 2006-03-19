@@ -229,7 +229,7 @@ for my $file (sort @paths) {
 
     if ($file !~ /\.idl$/) {
         for my $from (keys %otherRenames) {
-            $newContents =~ s/(?<!["\w])$from(?!["\w])/$otherRenames{$from}/g;
+            $newContents =~ s/\b$from(?!["\w])/$otherRenames{$from}/g; # this " unconfuses Xcode syntax highlighting
         }
         $newContents =~ s/\#\#Event_/\#\#Event/g;
 
