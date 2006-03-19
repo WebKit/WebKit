@@ -34,9 +34,13 @@ namespace WebCore
     {
     public:
         SVGTitleElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
-        virtual ~SVGTitleElementImpl();
 
-        DOMString title() const;
+        String title() const;
+
+        virtual void closeRenderer();
+        virtual void insertedIntoDocument();
+        virtual void removedFromDocument();
+        virtual void childrenChanged();
     };
 };
 

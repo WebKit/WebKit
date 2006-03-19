@@ -24,21 +24,47 @@
 #if SVG_SUPPORT
 #include "SVGTitleElementImpl.h"
 
-using namespace WebCore;
+#include "DocumentImpl.h"
 
-SVGTitleElementImpl::SVGTitleElementImpl(const QualifiedName& tagName, DocumentImpl *doc) : SVGStyledElementImpl(tagName, doc), SVGLangSpaceImpl()
+namespace WebCore {
+
+SVGTitleElementImpl::SVGTitleElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
+    : SVGStyledElementImpl(tagName, doc)
 {
 }
 
-SVGTitleElementImpl::~SVGTitleElementImpl()
-{
-}
-
-DOMString SVGTitleElementImpl::title() const
+String SVGTitleElementImpl::title() const
 {
     return textContent();
 }
 
+void SVGTitleElementImpl::closeRenderer()
+{
+    SVGStyledElementImpl::closeRenderer();
+    getDocument()->setTitle(textContent(), this);
+}
+
+void SVGTitleElementImpl::insertedIntoDocument()
+{
+    SVGStyledElementImpl::insertedIntoDocument();
+    if (firstChild())
+        getDocument()->setTitle(textContent(), this);
+}
+
+void SVGTitleElementImpl::removedFromDocument()
+{
+    SVGElementImpl::removedFromDocument();
+    getDocument()->removeTitle(this);
+}
+
+void SVGTitleElementImpl::childrenChanged()
+{
+    SVGElementImpl::childrenChanged();
+    if (inDocument())
+        getDocument()->setTitle(textContent(), this);
+}
+
+}
+
 // vim:ts=4:noet
 #endif // SVG_SUPPORT
-

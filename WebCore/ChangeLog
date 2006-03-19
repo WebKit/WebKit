@@ -1,3 +1,22 @@
+2006-03-15  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=5351:
+        SVG: Safari ignores <title> elements
+
+        Make SVGTitleElementImpl act the same as HTMLTitleElementImpl,
+        in the process setting the title on the right triggers.
+
+        * ksvg2/svg/SVGTitleElementImpl.cpp:
+        (SVGTitleElementImpl::SVGTitleElementImpl):
+        (SVGTitleElementImpl::title):
+        (SVGTitleElementImpl::closeRenderer):
+        (SVGTitleElementImpl::insertedIntoDocument):
+        (SVGTitleElementImpl::removedFromDocument):
+        (SVGTitleElementImpl::childrenChanged):
+        * ksvg2/svg/SVGTitleElementImpl.h:
+
 2006-03-18  Darin Adler  <darin@apple.com>
 
         - another try at fixing Windows build
