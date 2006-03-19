@@ -89,8 +89,11 @@ my %otherRenames = (
     "MouseEvent" => "PlatformMouseEvent",
     "WheelEvent" => "PlatformWheelEvent",
     "XSLTProcessor" => "JSXSLTProcessor",
-    "Document" => "Document_",
-    "Event" => "Event_",
+    "_History" => "History_",
+    "_Location" => "Location_",
+    "_Navigator" => "Navigator_",
+    "_Screen" => "Screen_",
+    "_Window" => "Window_",
     "HTMLCollection" => "JSHTMLCollection",
     "HTMLSelectCollection" => "JSHTMLSelectCollection",
     "HTMLSelectElement" => "JSHTMLSelectElement",
@@ -182,6 +185,18 @@ my %otherRenames = (
     "cssvalues" => "CSSValueStrings",
     "KSVGCSSParser" => "SVGCSSParser",
     "dispatchKHTMLEditableContentChanged" => "dispatchEditableContentChangedEvent",
+    "khtmlMousePressEvent" => "handleMousePressEvent",
+    "khtmlMouseReleaseEvent" => "handleMouseReleaseEvent",
+    "khtmlMouseDoubleClickEvent" => "handleMouseReleaseDoubleClickEvent",
+    "khtmlMouseMoveEvent" => "handleMouseMoveEvent",
+    "handleMouseMoveEventDrag" => "deleteMe1",
+    "handleMouseMoveEventOver" => "deleteMe2",
+    "handleMouseMoveEventSelection" => "handleMouseMoveEventPart2",
+    "viewportMousePressEvent" => "handleMousePressEvent",
+    "viewportMouseDoubleClickEvent" => "handleMouseDoubleClickEvent",
+    "viewportMouseMoveEvent" => "handleMouseMoveEvent",
+    "viewportMouseReleaseEvent" => "handleMouseReleaseEvent",
+    "viewportWheelEvent" => "handleWheelEvent",
 );
 
 # rename most files with names ending in Impl
@@ -259,6 +274,27 @@ for my $file (sort @paths) {
 
     # fix typo that annoys me
     $newContents =~ s/it.s base class/its base class/;
+
+    # fix a few things that get done wrong
+
+    $newContents =~ s/Window::Event /Window::Event_/;
+    $newContents =~ s/case Event:/case Event_:/g;
+
+    $newContents =~ s/Event, InnerHeight/Event_, InnerHeight/;
+
+    $newContents =~ s/DOMAbstractView::Document /DOMAbstractView::Document_/;
+    $newContents =~ s/Window::Document /Window::Document_/;
+    $newContents =~ s/case Document:/case Document_:/g;
+    $newContents =~ s/token == Document\b/token == Document/;
+    $newContents =~ s/Document, GetComputedStyle/Document_, GetComputedStyle/;
+    $newContents =~ s/Status, Document, Node/Status, Document_, Node/;
+
+    $newContents =~ s/JSDOMParser(\s+Window::)JSDOMParser/DOMParser$1DOMParser/;
+    $newContents =~ s/case JSDOMParser:/case DOMParser:/g;
+
+    $newContents =~ s/JSXSLTProcessor(\s+Window::)JSXSLTProcessor/XSLTProcessor$1XSLTProcessor/;
+    $newContents =~ s/XMLHttpRequest, XMLSerializer, JSDOMParser, JSXSLTProcessor/XMLHttpRequest, XMLSerializer, DOMParser, XSLTProcessor/;
+    $newContents =~ s/case JSXSLTProcessor:/case XSLTProcessor:/g;
 
     if ($newContents ne $contents) {
         open FILE, ">", $file or die;
