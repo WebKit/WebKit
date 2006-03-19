@@ -1,3 +1,24 @@
+2006-03-18  Darin Adler  <darin@apple.com>
+
+        - updated test results for tests affected by Hyatt's latest table fix
+
+        * tables/mozilla/bugs/bug44505-expected.txt:
+        * tables/mozilla_expected_failures/bugs/bug106966-expected.checksum:
+        * tables/mozilla_expected_failures/bugs/bug106966-expected.png:
+        * tables/mozilla_expected_failures/bugs/bug106966-expected.txt:
+        * tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden_table-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden_table-expected.png:
+        * tables/mozilla_expected_failures/marvin/table_overflow_caption_hidden_table-expected.txt:
+        * tables/mozilla_expected_failures/marvin/table_overflow_hidden_table-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/table_overflow_hidden_table-expected.png:
+        * tables/mozilla_expected_failures/marvin/table_overflow_hidden_table-expected.txt:
+        * tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody-expected.png:
+        * tables/mozilla_expected_failures/marvin/table_overflow_hidden_tbody-expected.txt:
+        * tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr-expected.checksum:
+        * tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr-expected.png:
+        * tables/mozilla_expected_failures/marvin/table_overflow_hidden_tr-expected.txt:
+
 2006-03-17  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Justin.
