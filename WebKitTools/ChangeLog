@@ -1,3 +1,15 @@
+2006-03-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        * DumpRenderTree/DumpRenderTree.m: (main): Turn on pop-up blocking so that
+        we can test it in layout tests. We don't really need tests that run with
+        pop-up blocking off at the moment. If we do some day, we can add some
+        API for turning it off in the layout test controller.
+
+        * Scripts/run-webkit-tests: Since we don't use NSLanguage at all any more,
+        don't ignore the leak; it should no longer show up.
+
 2006-03-17  Anders Carlsson  <andersca@mac.com>
 
         Reviewed by Eric.

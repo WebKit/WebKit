@@ -700,14 +700,13 @@ sub countAndPrintLeaks
     my @exclude = (
         "pthread_create", # false positive leak of 'THRD', Radar 3387783
         "_CFPreferencesDomainDeepCopyDictionary", # leak apparently in CFPreferences, Radar 4220786
-        "+[NSLanguage initialize]", # leak apparently in NSLanguage, Radar 3986177
         "FOGetCoveredUnicodeChars", # leak apparently in ATS, Radar 3943604
         "PCFragPrepareClosureFromFile", # leak in Code Fragment Manager, Radar 3426998
         "Flash_EnforceLocalSecurity", # leaks in flash plugin code, Radar 4449747
         "ICCFPrefWrapper::GetPrefDictionary()" # leaks in quicktime plugin code, Radar 4449794
     );
 
-    # Note that this exclusion doesn't quite work right; sometimes a leak of 'THRD' with no stack trace will
+    # Note that the exclusion for bug 3387783 doesn't quite work right; sometimes a leak of 'THRD' will
     # still appear in the leaks output.
 
     my $excludes = "-exclude '" . (join "' -exclude '", @exclude) . "'";

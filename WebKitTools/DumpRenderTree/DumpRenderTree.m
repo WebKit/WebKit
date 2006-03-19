@@ -208,6 +208,7 @@ int main(int argc, const char *argv[])
     [preferences setDefaultFixedFontSize:13];
     [preferences setMinimumFontSize:9];
     [preferences setJavaEnabled:NO];
+    [preferences setJavaScriptCanOpenWindowsAutomatically:NO];
 
     int option;
     while ((option = getopt_long(argc, (char * const *)argv, "", options, NULL)) != -1)
