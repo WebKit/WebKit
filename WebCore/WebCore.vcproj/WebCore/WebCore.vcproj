@@ -2371,6 +2371,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\dom\EventTargetNodeImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\dom\EventTargetNodeImpl.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\dom\ExceptionCode.h"
 				>
 			</File>

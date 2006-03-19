@@ -2,6 +2,12 @@
 
         - another try at fixing Windows build
 
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Added EventTargetNodeImpl.h and .cpp.
+
+2006-03-18  Darin Adler  <darin@apple.com>
+
+        - another try at fixing Windows build
+
         * bridge/win/FrameWin.cpp: (WebCore::FrameWin::keyPress): Added EventTargetNodeCast.
 
 2006-03-18  Darin Adler  <darin@apple.com>
