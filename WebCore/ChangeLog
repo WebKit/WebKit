@@ -1,4 +1,25 @@
-2006-03-15  Rob Buis  <buis@kde.org>
+2006-03-18  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
+        - Fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6314
+        Unclosed <style> element in <head> makes page completely blank
+
+        Test: fast/js/exception-linenums-in-html-3.html
+        Test: fast/js/missing-style-end-tag-js.html
+        Test: fast/tokenizer/missing-style-end-tag-1.html
+        Test: fast/tokenizer/missing-style-end-tag-2.html
+
+        * khtml/html/htmlparser.cpp:
+        (WebCore::HTMLParser::handleError): Add check for missing </style> tag and handle
+        this condition if identified.
+        * khtml/html/htmltokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseTag): If parseSpecial() consumes the rest of the
+        document looking for a </style> tag, reset the state of the tokenizer and
+        retokenize with no special handling for <style>.  The parser will handle the
+        missing </style> tag in HTMLParser::handleError().
+
+2006-03-18  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.
 

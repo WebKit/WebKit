@@ -468,7 +468,7 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
                 }
             }
         } else if (h->hasLocalName(addressTag) || h->hasLocalName(dlTag) || h->hasLocalName(dtTag)
-                   || h->hasLocalName(fontTag) || h->hasLocalName(titleTag)) {
+                   || h->hasLocalName(fontTag) || h->hasLocalName(styleTag) || h->hasLocalName(titleTag)) {
             popBlock(currentTagName);
             handled = true;
         } else if (h->hasLocalName(captionTag)) {

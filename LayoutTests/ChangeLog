@@ -1,3 +1,37 @@
+2006-03-18  David Kilzer  <ddkilzer@kilzer.net>
+
+        Reviewed by Darin.
+
+        - Tests for http://bugzilla.opendarwin.org/show_bug.cgi?id=6314
+        Unclosed <style> element in <head> makes page completely blank
+
+        * fast/js/exception-linenums-in-html-3-expected.txt: Added.
+        * fast/js/exception-linenums-in-html-3.html: Added.
+
+        Identical to fast/js/exception-linenums-in-html-1.html except that it contains
+        an unclosed <style> tag, which causes the code path for Bug 6314 to be tested.
+
+        * fast/js/missing-style-end-tag-js-expected.txt: Added.
+        * fast/js/missing-style-end-tag-js.html: Added.
+
+        While developing a fix for Bug 6314, a state variable (scriptCodeSize) was not
+        reset in the tokenizer causing the next <script></script> tags to contain the
+        entire contents of the document after the open <title> tag.  This test case
+        tests for that condition.
+
+        * fast/tokenizer/missing-style-end-tag-1-expected.checksum: Added.
+        * fast/tokenizer/missing-style-end-tag-1-expected.png: Added.
+        * fast/tokenizer/missing-style-end-tag-1-expected.txt: Added.
+        * fast/tokenizer/missing-style-end-tag-1.html: Added.
+        * fast/tokenizer/missing-style-end-tag-2-expected.checksum: Added.
+        * fast/tokenizer/missing-style-end-tag-2-expected.png: Added.
+        * fast/tokenizer/missing-style-end-tag-2-expected.txt: Added.
+        * fast/tokenizer/missing-style-end-tag-2.html: Added.
+
+        The first test case contains an unclosed <style> tag in <head>, while the
+        second test case contains an unclosed <style> tag in <body>.  These two test
+        cases result in different code paths being taken.
+
 2006-03-18  Alexey Proskuryakov  <ap@nypop.com>
 
         Reviewed by Darin.

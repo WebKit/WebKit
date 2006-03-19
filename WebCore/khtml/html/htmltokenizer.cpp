@@ -1252,8 +1252,20 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                 if (beginTag) {
                     searchStopper = styleEnd;
                     searchStopperLen = 7;
+                    State savedState = state;
+                    SegmentedString savedSrc = src;
+                    long savedLineno = lineno;
                     state.setInStyle(true);
                     state = parseSpecial(src, state);
+                    if (state.inStyle() && src.isEmpty()) {
+                        // We just ate the rest of the document as the style #text node!
+                        // Reset the state then retokenize without special style handling.
+                        // Let the html parser clean up the missing </style> tag.
+                        state = savedState;
+                        src = savedSrc;
+                        lineno = savedLineno;
+                        scriptCodeSize = 0;
+                    }
                 }
             } else if (tagName == textareaTag) {
                 if (beginTag) {
