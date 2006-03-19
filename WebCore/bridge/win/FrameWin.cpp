@@ -109,7 +109,7 @@ bool FrameWin::keyPress(const KeyEvent& keyEvent)
     if (!keyEvent.isKeyUp())
         prepareForUserAction();
 
-    result = !node->dispatchKeyEvent(keyEvent);
+    result = !EventTargetNodeCast(node)->dispatchKeyEvent(keyEvent);
 
     // FIXME: MacFrame has a keyDown/keyPress hack here which we are not copying.
 
