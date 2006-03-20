@@ -29,12 +29,12 @@
 
 namespace WebCore {
 
-class SVGForeignObjectElementImpl;
+class SVGForeignObjectElement;
 
 class RenderForeignObject : public RenderBlock
 {
 public:
-    RenderForeignObject(SVGForeignObjectElementImpl *node);
+    RenderForeignObject(SVGForeignObjectElement *node);
     
     const char *renderName() const { return "RenderForeignObject"; }
     void paint(PaintInfo& paintInfo, int parentX, int parentY);

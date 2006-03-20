@@ -27,7 +27,7 @@
 #include "BreakBlockquoteCommand.h"
 
 #include "dom_elementimpl.h"
-#include "TextImpl.h"
+#include "Text.h"
 #include "htmlediting.h"
 #include "htmlnames.h"
 #include "VisiblePosition.h"
@@ -37,14 +37,14 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-BreakBlockquoteCommand::BreakBlockquoteCommand(DocumentImpl *document)
+BreakBlockquoteCommand::BreakBlockquoteCommand(Document *document)
     : CompositeEditCommand(document)
 {
 }
 
 void BreakBlockquoteCommand::doApply()
 {
-    QPtrList<DOM::NodeImpl> ancestors;
+    DeprecatedPtrList<WebCore::Node> ancestors;
     
     Selection selection = endingSelection();
     if (selection.isNone())
@@ -60,9 +60,9 @@ void BreakBlockquoteCommand::doApply()
     }
     
     // Find the top-most blockquote from the start.
-    NodeImpl *startNode = pos.node();
-    NodeImpl *topBlockquote = 0;
-    for (NodeImpl *node = startNode->parentNode(); node; node = node->parentNode()) {
+    Node *startNode = pos.node();
+    Node *topBlockquote = 0;
+    for (Node *node = startNode->parentNode(); node; node = node->parentNode()) {
         if (isMailBlockquote(node))
             topBlockquote = node;
     }
@@ -70,15 +70,15 @@ void BreakBlockquoteCommand::doApply()
         return;
     
     // Insert a break after the top blockquote.
-    RefPtr<ElementImpl> breakNode = createBreakElement(document());
+    RefPtr<Element> breakNode = createBreakElement(document());
     insertNodeAfter(breakNode.get(), topBlockquote);
     
     if (!isLastVisiblePositionInNode(VisiblePosition(pos, affinity), topBlockquote)) {
         
-        NodeImpl *newStartNode = 0;
+        Node *newStartNode = 0;
         // Split at pos if in the middle of a text node.
         if (startNode->isTextNode()) {
-            TextImpl *textNode = static_cast<TextImpl *>(startNode);
+            Text *textNode = static_cast<Text *>(startNode);
             if ((unsigned)pos.offset() >= textNode->length()) {
                 newStartNode = startNode->traverseNextNode();
                 ASSERT(newStartNode);
@@ -95,7 +95,7 @@ void BreakBlockquoteCommand::doApply()
         // If a new start node was determined, find a new top block quote.
         if (newStartNode) {
             startNode = newStartNode;
-            for (NodeImpl *node = startNode->parentNode(); node; node = node->parentNode()) {
+            for (Node *node = startNode->parentNode(); node; node = node->parentNode()) {
                 if (isMailBlockquote(node))
                     topBlockquote = node;
             }
@@ -104,28 +104,28 @@ void BreakBlockquoteCommand::doApply()
         }
         
         // Build up list of ancestors in between the start node and the top blockquote.
-        for (NodeImpl *node = startNode->parentNode(); node != topBlockquote; node = node->parentNode())
+        for (Node *node = startNode->parentNode(); node != topBlockquote; node = node->parentNode())
             ancestors.prepend(node);
         
         // Insert a clone of the top blockquote after the break.
-        RefPtr<NodeImpl> clonedBlockquote = topBlockquote->cloneNode(false);
+        RefPtr<Node> clonedBlockquote = topBlockquote->cloneNode(false);
         insertNodeAfter(clonedBlockquote.get(), breakNode.get());
         
         // Clone startNode's ancestors into the cloned blockquote.
         // On exiting this loop, clonedAncestor is the lowest ancestor
         // that was cloned (i.e. the clone of either ancestors.last()
         // or clonedBlockquote if ancestors is empty).
-        RefPtr<NodeImpl> clonedAncestor = clonedBlockquote;
-        for (QPtrListIterator<NodeImpl> it(ancestors); it.current(); ++it) {
-            RefPtr<NodeImpl> clonedChild = it.current()->cloneNode(false); // shallow clone
+        RefPtr<Node> clonedAncestor = clonedBlockquote;
+        for (DeprecatedPtrListIterator<Node> it(ancestors); it.current(); ++it) {
+            RefPtr<Node> clonedChild = it.current()->cloneNode(false); // shallow clone
             appendNode(clonedChild.get(), clonedAncestor.get());
             clonedAncestor = clonedChild;
         }
         
         // Move the startNode and its siblings.
-        NodeImpl *moveNode = startNode;
+        Node *moveNode = startNode;
         while (moveNode) {
-            NodeImpl *next = moveNode->nextSibling();
+            Node *next = moveNode->nextSibling();
             removeNode(moveNode);
             appendNode(moveNode, clonedAncestor.get());
             moveNode = next;
@@ -138,13 +138,13 @@ void BreakBlockquoteCommand::doApply()
         // Throughout this loop, clonedParent is the clone of ancestor's parent.
         // This is so we can clone ancestor's siblings and place the clones
         // into the clone corresponding to the ancestor's parent.
-        NodeImpl *ancestor, *clonedParent;
+        Node *ancestor, *clonedParent;
         for (ancestor = ancestors.last(), clonedParent = clonedAncestor->parentNode();
              ancestor && ancestor != topBlockquote;
              ancestor = ancestor->parentNode(), clonedParent = clonedParent->parentNode()) {
             moveNode = ancestor->nextSibling();
             while (moveNode) {
-                NodeImpl *next = moveNode->nextSibling();
+                Node *next = moveNode->nextSibling();
                 removeNode(moveNode);
                 appendNode(moveNode, clonedParent);
                 moveNode = next;
@@ -160,4 +160,4 @@ void BreakBlockquoteCommand::doApply()
     rebalanceWhitespace();
 }
 
-} // namespace khtml
+} // namespace WebCore

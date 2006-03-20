@@ -28,22 +28,22 @@
 
 #include "CompositeEditCommand.h"
 
-namespace khtml {
+namespace WebCore {
 
 class RemoveNodePreservingChildrenCommand : public CompositeEditCommand
 {
 public:
-    RemoveNodePreservingChildrenCommand(DOM::DocumentImpl *, DOM::NodeImpl *);
+    RemoveNodePreservingChildrenCommand(WebCore::Document *, WebCore::Node *);
     virtual ~RemoveNodePreservingChildrenCommand() { }
 
     virtual void doApply();
 
-    DOM::NodeImpl *node() const { return m_node.get(); }
+    WebCore::Node *node() const { return m_node.get(); }
 
 private:
-    RefPtr<DOM::NodeImpl> m_node;
+    RefPtr<WebCore::Node> m_node;
 };
 
-} // namespace khtml
+} // namespace WebCore
 
 #endif // __remove_node_preserving_children_command_h__

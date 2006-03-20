@@ -25,7 +25,7 @@
 
 #include "AtomicString.h"
 #include "Color.h"
-#include "QString.h"
+#include "DeprecatedString.h"
 #include <kxmlcore/HashSet.h>
 #include <kxmlcore/Vector.h>
 
@@ -36,19 +36,19 @@ using KXMLCore::PassRefPtr;
 
 namespace WebCore {
 
-    class CSSMutableStyleDeclarationImpl;
-    class CSSPrimitiveValueImpl;
+    class CSSMutableStyleDeclaration;
+    class CSSPrimitiveValue;
     class CSSProperty;
-    class CSSRuleImpl;
-    class CSSRuleListImpl;
+    class CSSRule;
+    class CSSRuleList;
     class CSSSelector;
-    class CSSStyleSheetImpl;
-    class CSSValueImpl;
-    class CSSValueListImpl;
-    class DocumentImpl;
-    class MediaListImpl;
-    class StyleBaseImpl;
-    class StyleListImpl;
+    class CSSStyleSheet;
+    class CSSValue;
+    class CSSValueList;
+    class Document;
+    class MediaList;
+    class StyleBase;
+    class StyleList;
 
     struct ParseString {
         unsigned short* string;
@@ -75,8 +75,8 @@ namespace WebCore {
         int unit;
     };
 
-    static inline QString qString(const ParseString& ps) {
-        return QString((QChar *)ps.string, ps.length);
+    static inline DeprecatedString qString(const ParseString& ps) {
+        return DeprecatedString((QChar *)ps.string, ps.length);
     }
     static inline String domString(const ParseString& ps) {
         return String((QChar *)ps.string, ps.length);
@@ -111,18 +111,18 @@ namespace WebCore {
         CSSParser(bool strictParsing = true);
         ~CSSParser();
 
-        void parseSheet(CSSStyleSheetImpl*, const String&);
-        PassRefPtr<CSSRuleImpl> parseRule(CSSStyleSheetImpl*, const String&);
-        bool parseValue(CSSMutableStyleDeclarationImpl*, int id, const String&, bool important);
+        void parseSheet(CSSStyleSheet*, const String&);
+        PassRefPtr<CSSRule> parseRule(CSSStyleSheet*, const String&);
+        bool parseValue(CSSMutableStyleDeclaration*, int id, const String&, bool important);
         static RGBA32 parseColor(const String&);
-        bool parseColor(CSSMutableStyleDeclarationImpl*, const String&);
-        bool parseDeclaration(CSSMutableStyleDeclarationImpl*, const String&);
+        bool parseColor(CSSMutableStyleDeclaration*, const String&);
+        bool parseDeclaration(CSSMutableStyleDeclaration*, const String&);
 
         static CSSParser* current() { return currentParser; }
 
-        DocumentImpl* document() const;
+        Document* document() const;
 
-        void addProperty(int propId, CSSValueImpl*, bool important);
+        void addProperty(int propId, CSSValue*, bool important);
         bool hasProperties() const { return numParsedProperties > 0; }
 
         bool parseValue(int propId, bool important);
@@ -130,15 +130,15 @@ namespace WebCore {
         bool parse4Values(int propId, const int* properties, bool important);
         bool parseContent(int propId, bool important);
 
-        CSSValueImpl* parseBackgroundColor();
-        CSSValueImpl* parseBackgroundImage();
-        CSSValueImpl* parseBackgroundPositionXY(bool& xFound, bool& yFound);
-        void parseBackgroundPosition(CSSValueImpl*& value1, CSSValueImpl*& value2);
+        CSSValue* parseBackgroundColor();
+        CSSValue* parseBackgroundImage();
+        CSSValue* parseBackgroundPositionXY(bool& xFound, bool& yFound);
+        void parseBackgroundPosition(CSSValue*& value1, CSSValue*& value2);
         
-        bool parseBackgroundProperty(int propId, int& propId1, int& propId2, CSSValueImpl*& retValue1, CSSValueImpl*& retValue2);
+        bool parseBackgroundProperty(int propId, int& propId1, int& propId2, CSSValue*& retValue1, CSSValue*& retValue2);
         bool parseBackgroundShorthand(bool important);
 
-        void addBackgroundValue(CSSValueImpl*& lval, CSSValueImpl* rval);
+        void addBackgroundValue(CSSValue*& lval, CSSValue* rval);
       
 #if __APPLE__
         bool parseDashboardRegions(int propId, bool important);
@@ -146,18 +146,18 @@ namespace WebCore {
 
         bool parseShape(int propId, bool important);
         bool parseFont(bool important);
-        CSSValueListImpl* parseFontFamily();
-        CSSPrimitiveValueImpl* parseColor();
-        CSSPrimitiveValueImpl* parseColorFromValue(Value*);
+        CSSValueList* parseFontFamily();
+        CSSPrimitiveValue* parseColor();
+        CSSPrimitiveValue* parseColorFromValue(Value*);
         
 #if SVG_SUPPORT
         bool parseSVGValue(int propId, bool important);
-        CSSValueImpl* parseSVGPaint();
-        CSSValueImpl* parseSVGColor();
-        CSSValueImpl* parseSVGStrokeDasharray();
+        CSSValue* parseSVGPaint();
+        CSSValue* parseSVGColor();
+        CSSValue* parseSVGStrokeDasharray();
 #endif
 
-        static bool parseColor(const QString&, RGBA32& rgb);
+        static bool parseColor(const DeprecatedString&, RGBA32& rgb);
 
         // CSS3 Parsing Routines (for properties specific to CSS3)
         bool parseShadow(int propId, bool important);
@@ -176,18 +176,18 @@ namespace WebCore {
 
         Value& sinkFloatingValue(Value&);
 
-        MediaListImpl* createMediaList();
-        CSSRuleImpl* createImportRule(const ParseString&, MediaListImpl*);
-        CSSRuleImpl* createMediaRule(MediaListImpl*, CSSRuleListImpl*);
-        CSSRuleListImpl* createRuleList();
-        CSSRuleImpl* createStyleRule(CSSSelector*);
+        MediaList* createMediaList();
+        CSSRule* createImportRule(const ParseString&, MediaList*);
+        CSSRule* createMediaRule(MediaList*, CSSRuleList*);
+        CSSRuleList* createRuleList();
+        CSSRule* createStyleRule(CSSSelector*);
 
     public:
         bool strict;
         bool important;
         int id;
-        StyleListImpl* styleElement;
-        RefPtr<CSSRuleImpl> rule;
+        StyleList* styleElement;
+        RefPtr<CSSRule> rule;
         ValueList* valueList;
         CSSProperty** parsedProperties;
         int numParsedProperties;
@@ -234,8 +234,8 @@ namespace WebCore {
         int yyTok;
         int yy_start;
 
-        Vector<RefPtr<StyleBaseImpl> > m_parsedStyleObjects;
-        Vector<RefPtr<CSSRuleListImpl> > m_parsedRuleLists;
+        Vector<RefPtr<StyleBase> > m_parsedStyleObjects;
+        Vector<RefPtr<CSSRuleList> > m_parsedRuleLists;
         HashSet<CSSSelector*> m_floatingSelectors;
         HashSet<ValueList*> m_floatingValueLists;
         HashSet<Function*> m_floatingFunctions;

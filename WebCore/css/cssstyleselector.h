@@ -38,16 +38,16 @@ class CSSRuleData;
 class CSSRuleDataList;
 class CSSRuleSet;
 class CSSSelector;
-class CSSStyleSheetImpl;
-class CSSValueImpl;
-class DocumentImpl;
-class ElementImpl;
+class CSSStyleSheet;
+class CSSValue;
+class Document;
+class Element;
 class Frame;
 class FrameView;
-class NodeImpl;
-class StyleSheetImpl;
-class StyleSheetListImpl;
-class StyledElementImpl;
+class Node;
+class StyleSheet;
+class StyleSheetList;
+class StyledElement;
 
     /**
      * this class selects a RenderStyle for a given Element based on the
@@ -78,37 +78,37 @@ class StyledElementImpl;
          * goes through all StyleSheets defined in the document and
          * creates a list of rules it needs to apply to objects
          */
-        CSSStyleSelector(DocumentImpl* doc, QString userStyleSheet, 
-                         StyleSheetListImpl *styleSheets,
+        CSSStyleSelector(Document* doc, DeprecatedString userStyleSheet, 
+                         StyleSheetList *styleSheets,
                          bool _strictParsing);
         /**
          * same as above but for a single stylesheet.
          */
-        CSSStyleSelector(CSSStyleSheetImpl *sheet);
+        CSSStyleSelector(CSSStyleSheet *sheet);
         ~CSSStyleSelector();
 
         static void loadDefaultStyle();
 
-        void initElementAndPseudoState(ElementImpl* e);
-        void initForStyleResolve(ElementImpl* e, RenderStyle* parentStyle);
-        RenderStyle *styleForElement(ElementImpl* e, RenderStyle* parentStyle=0, bool allowSharing=true);
+        void initElementAndPseudoState(Element* e);
+        void initForStyleResolve(Element* e, RenderStyle* parentStyle);
+        RenderStyle *styleForElement(Element* e, RenderStyle* parentStyle=0, bool allowSharing=true);
         RenderStyle* pseudoStyleForElement(RenderStyle::PseudoId pseudoStyle, 
-                                           ElementImpl* e, RenderStyle* parentStyle=0);
+                                           Element* e, RenderStyle* parentStyle=0);
 
         RenderStyle* locateSharedStyle();
-        NodeImpl* locateCousinList(ElementImpl* parent);
-        bool canShareStyleWithElement(NodeImpl* n);
+        Node* locateCousinList(Element* parent);
+        bool canShareStyleWithElement(Node* n);
         
         // These methods will give back the set of rules that matched for a given element (or a pseudo-element).
-        RefPtr<CSSRuleListImpl> styleRulesForElement(ElementImpl* e, bool authorOnly);
-        RefPtr<CSSRuleListImpl> pseudoStyleRulesForElement(ElementImpl* e, DOMStringImpl* pseudoStyle, bool authorOnly);
+        RefPtr<CSSRuleList> styleRulesForElement(Element* e, bool authorOnly);
+        RefPtr<CSSRuleList> pseudoStyleRulesForElement(Element* e, StringImpl* pseudoStyle, bool authorOnly);
 
         bool strictParsing;
         
         struct Encodedurl {
-            QString host; //also contains protocol
-            QString path;
-            QString file;
+            DeprecatedString host; //also contains protocol
+            DeprecatedString path;
+            DeprecatedString file;
         } encodedurl;
         void setEncodedURL(const KURL& url);
         
@@ -126,43 +126,43 @@ class StyledElementImpl;
         void setFontSize(FontDescription& FontDescription, float size);
         float getComputedSizeFromSpecifiedSize(bool isAbsoluteSize, float specifiedSize);
         
-        Color getColorFromPrimitiveValue(CSSPrimitiveValueImpl* primitiveValue);
+        Color getColorFromPrimitiveValue(CSSPrimitiveValue* primitiveValue);
         
     protected:
 
         /* checks if a compound selector (which can consist of multiple simple selectors)
            matches the given Element */
-        bool checkSelector(CSSSelector* selector, ElementImpl *e);
+        bool checkSelector(CSSSelector* selector, Element *e);
         
         /* checks if the selector matches the given Element */
-        bool checkOneSelector(CSSSelector*, ElementImpl*, bool isSubSelector = false);
+        bool checkOneSelector(CSSSelector*, Element*, bool isSubSelector = false);
 
         /* This function fixes up the default font size if it detects that the
            current generic font family has changed. -dwh */
         void checkForGenericFamilyChange(RenderStyle* aStyle, RenderStyle* aParentStyle);
         void checkForTextSizeAdjust();
 
-        void adjustRenderStyle(RenderStyle* style, ElementImpl *e);
+        void adjustRenderStyle(RenderStyle* style, Element *e);
     
         void matchRules(CSSRuleSet* rules, int& firstRuleIndex, int& lastRuleIndex);
         void matchRulesForList(CSSRuleDataList* rules,
                                int& firstRuleIndex, int& lastRuleIndex);
-        void sortMatchedRules(uint firstRuleIndex, uint lastRuleIndex);
+        void sortMatchedRules(unsigned firstRuleIndex, unsigned lastRuleIndex);
         void addMatchedRule(CSSRuleData* rule);
-        void addMatchedDeclaration(CSSMutableStyleDeclarationImpl* decl);
+        void addMatchedDeclaration(CSSMutableStyleDeclaration* decl);
         void applyDeclarations(bool firstPass, bool important, int startIndex, int endIndex);
         
-        static CSSStyleSheetImpl *defaultSheet;
-        static CSSStyleSheetImpl *quirksSheet;
+        static CSSStyleSheet *defaultSheet;
+        static CSSStyleSheet *quirksSheet;
 #if SVG_SUPPORT
-        static CSSStyleSheetImpl *svgSheet;
+        static CSSStyleSheet *svgSheet;
 #endif
         static CSSRuleSet* defaultStyle;
         static CSSRuleSet* defaultQuirksStyle;
         static CSSRuleSet* defaultPrintStyle;
         CSSRuleSet* m_authorStyle;
         CSSRuleSet* m_userStyle;
-        CSSStyleSheetImpl* m_userSheet;
+        CSSStyleSheet* m_userSheet;
         
         bool m_hasUAAppearance;
         BorderData m_borderData;
@@ -175,39 +175,39 @@ public:
     private:
         void init();
         
-        void mapBackgroundAttachment(BackgroundLayer* layer, CSSValueImpl* value);
-        void mapBackgroundClip(BackgroundLayer* layer, CSSValueImpl* value);
-        void mapBackgroundOrigin(BackgroundLayer* layer, CSSValueImpl* value);
-        void mapBackgroundImage(BackgroundLayer* layer, CSSValueImpl* value);
-        void mapBackgroundRepeat(BackgroundLayer* layer, CSSValueImpl* value);
-        void mapBackgroundXPosition(BackgroundLayer* layer, CSSValueImpl* value);
-        void mapBackgroundYPosition(BackgroundLayer* layer, CSSValueImpl* value);
+        void mapBackgroundAttachment(BackgroundLayer* layer, CSSValue* value);
+        void mapBackgroundClip(BackgroundLayer* layer, CSSValue* value);
+        void mapBackgroundOrigin(BackgroundLayer* layer, CSSValue* value);
+        void mapBackgroundImage(BackgroundLayer* layer, CSSValue* value);
+        void mapBackgroundRepeat(BackgroundLayer* layer, CSSValue* value);
+        void mapBackgroundXPosition(BackgroundLayer* layer, CSSValue* value);
+        void mapBackgroundYPosition(BackgroundLayer* layer, CSSValue* value);
         
         // We collect the set of decls that match in |m_matchedDecls|.  We then walk the
         // set of matched decls four times, once for those properties that others depend on (like font-size),
         // and then a second time for all the remaining properties.  We then do the same two passes
         // for any !important rules.
-        Array<CSSMutableStyleDeclarationImpl*> m_matchedDecls;
+        DeprecatedArray<CSSMutableStyleDeclaration*> m_matchedDecls;
         unsigned m_matchedDeclCount;
         
         // A buffer used to hold the set of matched rules for an element, and a temporary buffer used for
         // merge sorting.
-        Array<CSSRuleData*> m_matchedRules;
+        DeprecatedArray<CSSRuleData*> m_matchedRules;
         unsigned m_matchedRuleCount;
-        Array<CSSRuleData*> m_tmpRules;
+        DeprecatedArray<CSSRuleData*> m_tmpRules;
         unsigned m_tmpRuleCount;
-        CSSRuleListImpl* m_ruleList;
+        CSSRuleList* m_ruleList;
         bool m_collectRulesOnly;
 
-        QString m_medium;
+        DeprecatedString m_medium;
 
         RenderStyle::PseudoId dynamicPseudo;
         
         RenderStyle *style;
         RenderStyle *parentStyle;
-        ElementImpl *element;
-        StyledElementImpl *styledElement;
-        NodeImpl *parentNode;
+        Element *element;
+        StyledElement *styledElement;
+        Node *parentNode;
         RenderStyle::PseudoId pseudoStyle;
         FrameView *view;
         Frame *frame;
@@ -215,40 +215,40 @@ public:
         bool fontDirty;
         bool isXMLDoc;
         
-        void applyProperty(int id, CSSValueImpl *value);
+        void applyProperty(int id, CSSValue *value);
 #if SVG_SUPPORT
-        void applySVGProperty(int id, CSSValueImpl *value);
+        void applySVGProperty(int id, CSSValue *value);
 #endif
     };
 
     class CSSRuleData {
     public:
-        CSSRuleData(uint pos, CSSStyleRuleImpl* r, CSSSelector* sel, CSSRuleData* prev = 0)
+        CSSRuleData(unsigned pos, CSSStyleRule* r, CSSSelector* sel, CSSRuleData* prev = 0)
         :m_position(pos), m_rule(r), m_selector(sel), m_next(0) { if (prev) prev->m_next = this; }
         ~CSSRuleData() { delete m_next; }
 
-        uint position() { return m_position; }
-        CSSStyleRuleImpl* rule() { return m_rule; }
+        unsigned position() { return m_position; }
+        CSSStyleRule* rule() { return m_rule; }
         CSSSelector* selector() { return m_selector; }
         CSSRuleData* next() { return m_next; }
         
     private:
-        uint m_position;
-        CSSStyleRuleImpl* m_rule;
+        unsigned m_position;
+        CSSStyleRule* m_rule;
         CSSSelector* m_selector;
         CSSRuleData* m_next;
     };
 
     class CSSRuleDataList {
     public:
-        CSSRuleDataList(uint pos, CSSStyleRuleImpl* rule, CSSSelector* sel)
+        CSSRuleDataList(unsigned pos, CSSStyleRule* rule, CSSSelector* sel)
         { m_first = m_last = new CSSRuleData(pos, rule, sel); }
         ~CSSRuleDataList() { delete m_first; }
 
         CSSRuleData* first() { return m_first; }
         CSSRuleData* last() { return m_last; }
         
-        void append(uint pos, CSSStyleRuleImpl* rule, CSSSelector* sel) {
+        void append(unsigned pos, CSSStyleRule* rule, CSSSelector* sel) {
             m_last = new CSSRuleData(pos, rule, sel, m_last);
         }
         

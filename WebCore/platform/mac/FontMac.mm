@@ -27,7 +27,7 @@
 #import "Font.h"
 
 #import "Logging.h"
-#import "KWQExceptions.h"
+#import "BlockExceptions.h"
 #import "FoundationExtras.h"
 
 #import "FontDataSet.h"
@@ -56,7 +56,7 @@ const WebCoreFont& FontDataSet::getWebCoreFont(const FontDescription& fontDescri
 {
     if (!m_webCoreFont.font) {
         CREATE_FAMILY_ARRAY(fontDescription, families);
-        KWQ_BLOCK_EXCEPTIONS;
+        BEGIN_BLOCK_OBJC_EXCEPTIONS;
         int traits = 0;
         if (fontDescription.italic())
             traits |= NSItalicFontMask;
@@ -66,7 +66,7 @@ const WebCoreFont& FontDataSet::getWebCoreFont(const FontDescription& fontDescri
                                      fontWithFamilies:families traits:traits size:fontDescription.computedPixelSize()];
         KWQRetain(m_webCoreFont.font);
         m_webCoreFont.forPrinter = fontDescription.usePrinterFont();
-        KWQ_UNBLOCK_EXCEPTIONS;
+        END_BLOCK_OBJC_EXCEPTIONS;
     }
     return m_webCoreFont;
 }
@@ -79,12 +79,12 @@ id <WebCoreTextRenderer> FontDataSet::getRenderer(const FontDescription& fontDes
 }
 
 void FontDataSet::determinePitch(const FontDescription& fontDescription) const {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     if ([[WebCoreTextRendererFactory sharedFactory] isFontFixedPitch:getWebCoreFont(fontDescription)])
         m_pitch = FixedPitch;
     else
         m_pitch = VariablePitch;
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void FontDataSet::invalidate()

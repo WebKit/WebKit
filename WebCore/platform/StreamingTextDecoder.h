@@ -38,20 +38,20 @@ namespace WebCore {
         StreamingTextDecoder(const TextEncoding&);
         ~StreamingTextDecoder();
         
-        QString toUnicode(const char* chs, int len, bool flush = false);
+        DeprecatedString toUnicode(const char* chs, int len, bool flush = false);
         
     private:
-        QString convert(const char*chs, int len, bool flush)
+        DeprecatedString convert(const char*chs, int len, bool flush)
             { return convert(reinterpret_cast<const unsigned char*>(chs), len, flush); }
-        QString convert(const unsigned char* chs, int len, bool flush);
-        QString convertLatin1(const unsigned char* chs, int len);
-        QString convertUTF16(const unsigned char* chs, int len);
+        DeprecatedString convert(const unsigned char* chs, int len, bool flush);
+        DeprecatedString convertLatin1(const unsigned char* chs, int len);
+        DeprecatedString convertUTF16(const unsigned char* chs, int len);
         
         // ICU decoding.
-        QString convertUsingICU(const unsigned char *chs, int len, bool flush);
+        DeprecatedString convertUsingICU(const unsigned char *chs, int len, bool flush);
         UErrorCode createICUConverter();
 
-        static void appendOmittingUnwanted(QString& s, const UChar* characters, int byteCount);
+        static void appendOmittingUnwanted(DeprecatedString& s, const UChar* characters, int byteCount);
 
         TextEncoding m_encoding;
         bool m_littleEndian;

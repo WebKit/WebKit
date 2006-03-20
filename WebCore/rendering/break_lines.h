@@ -22,7 +22,7 @@
 
 class QChar;
 
-namespace khtml {
+namespace WebCore {
 
     int nextBreakablePosition(const QChar *str, int pos, int len, bool breakNBSP = false);
 

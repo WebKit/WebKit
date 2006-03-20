@@ -28,11 +28,11 @@
 #include "RenderText.h"
 #include <kxmlcore/PassRefPtr.h>
 
-namespace DOM {
-    class DOMStringImpl;
+namespace WebCore {
+    class StringImpl;
 };
 
-namespace khtml
+namespace WebCore
 {
 // Used to represent a text substring of an element, e.g., for text runs that are split because of
 // first letter and that must therefore have different styles (and positions in the render tree).
@@ -41,24 +41,24 @@ namespace khtml
 class RenderTextFragment : public RenderText
 {
 public:
-    RenderTextFragment(DOM::NodeImpl*, DOM::DOMStringImpl*, int startOffset, int length, RenderObject* firstLetter = 0);
-    RenderTextFragment(DOM::NodeImpl*, DOM::DOMStringImpl*);
+    RenderTextFragment(WebCore::Node*, WebCore::StringImpl*, int startOffset, int length, RenderObject* firstLetter = 0);
+    RenderTextFragment(WebCore::Node*, WebCore::StringImpl*);
     
     virtual bool isTextFragment() const;
     
     virtual void destroy();
 
-    uint start() const { return m_start; }
-    uint end() const { return m_end; }
+    unsigned start() const { return m_start; }
+    unsigned end() const { return m_end; }
     RenderObject* firstLetter() const { return m_firstLetter; }
     
-    DOM::DOMStringImpl* contentString() const { return m_generatedContentStr.get(); }
-    virtual PassRefPtr<DOM::DOMStringImpl> originalString() const;
+    WebCore::StringImpl* contentString() const { return m_generatedContentStr.get(); }
+    virtual PassRefPtr<WebCore::StringImpl> originalString() const;
     
 private:
-    uint m_start;
-    uint m_end;
-    RefPtr<DOM::DOMStringImpl> m_generatedContentStr;
+    unsigned m_start;
+    unsigned m_end;
+    RefPtr<WebCore::StringImpl> m_generatedContentStr;
     RenderObject* m_firstLetter;
 };
 

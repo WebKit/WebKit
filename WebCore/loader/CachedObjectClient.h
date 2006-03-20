@@ -29,7 +29,7 @@
 
 #ifndef KHTML_NO_XBL
 namespace XBL {
-    class XBLDocumentImpl;
+    class XBLDocument;
 }
 #endif
 
@@ -37,7 +37,7 @@ namespace WebCore {
 
     class CachedObject;
     class CachedImage;
-    class DOMString;
+    class String;
     class Image;
     class IntRect;
 
@@ -63,10 +63,10 @@ namespace WebCore {
         // e.g., in the b/f cache or in a background tab).
         virtual bool willRenderImage(CachedImage*) { return false; }
 
-        virtual void setStyleSheet(const DOMString& /*URL*/, const DOMString& /*sheet*/) { }
+        virtual void setStyleSheet(const String& /*URL*/, const String& /*sheet*/) { }
 
 #ifndef KHTML_NO_XBL
-        virtual void setXBLDocument(const DOMString& /*URL*/, XBL::XBLDocumentImpl*) { }
+        virtual void setXBLDocument(const String& /*URL*/, XBL::XBLDocument*) { }
 #endif
 
         virtual void notifyFinished(CachedObject*) { }

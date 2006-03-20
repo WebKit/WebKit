@@ -24,55 +24,55 @@
 #ifndef HTML_HEADIMPL_H
 #define HTML_HEADIMPL_H
 
-#include "HTMLElementImpl.h"
+#include "HTMLElement.h"
 #include "CachedObjectClient.h"
 #include "css/css_stylesheetimpl.h"
 
 namespace WebCore {
 
-class CSSStyleSheetImpl;
+class CSSStyleSheet;
 class CachedCSSStyleSheet;
 class CachedScript;
-class DOMString;
+class String;
 class FrameView;
-class HTMLFormElementImpl;
-class StyleSheetImpl;
+class HTMLFormElement;
+class StyleSheet;
 
-class HTMLBaseElementImpl : public HTMLElementImpl
+class HTMLBaseElement : public HTMLElement
 {
 public:
-    HTMLBaseElementImpl(DocumentImpl *doc);
-    ~HTMLBaseElementImpl();
+    HTMLBaseElement(Document *doc);
+    ~HTMLBaseElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
     virtual int tagPriority() const { return 0; }
 
-    DOMString href() const { return m_href; }
-    DOMString target() const { return m_target; }
+    String href() const { return m_href; }
+    String target() const { return m_target; }
 
-    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttribute *attr);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
 
     void process();
     
-    void setHref(const DOMString &);
-    void setTarget(const DOMString &);
+    void setHref(const String &);
+    void setTarget(const String &);
 
 protected:
-    DOMString m_href;
-    DOMString m_target;
+    String m_href;
+    String m_target;
 };
 
 
 
 // -------------------------------------------------------------------------
 
-class HTMLLinkElementImpl : public khtml::CachedObjectClient, public HTMLElementImpl
+class HTMLLinkElement : public WebCore::CachedObjectClient, public HTMLElement
 {
 public:
-    HTMLLinkElementImpl(DocumentImpl *doc);
-    ~HTMLLinkElementImpl();
+    HTMLLinkElement(Document *doc);
+    ~HTMLLinkElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
     virtual int tagPriority() const { return 0; }
@@ -80,34 +80,34 @@ public:
     bool disabled() const;
     void setDisabled(bool);
 
-    DOMString charset() const;
-    void setCharset(const DOMString &);
+    String charset() const;
+    void setCharset(const String &);
 
-    DOMString href() const;
-    void setHref(const DOMString &);
+    String href() const;
+    void setHref(const String &);
 
-    DOMString hreflang() const;
-    void setHreflang(const DOMString &);
+    String hreflang() const;
+    void setHreflang(const String &);
 
-    DOMString media() const;
-    void setMedia(const DOMString &);
+    String media() const;
+    void setMedia(const String &);
 
-    DOMString rel() const;
-    void setRel(const DOMString &);
+    String rel() const;
+    void setRel(const String &);
 
-    DOMString rev() const;
-    void setRev(const DOMString &);
+    String rev() const;
+    void setRev(const String &);
 
-    DOMString target() const;
-    void setTarget(const DOMString &);
+    String target() const;
+    void setTarget(const String &);
 
-    DOMString type() const;
-    void setType(const DOMString &);
+    String type() const;
+    void setType(const String &);
 
-    StyleSheetImpl* sheet() const { return m_sheet.get(); }
+    StyleSheet* sheet() const { return m_sheet.get(); }
 
-    // overload from HTMLElementImpl
-    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
+    // overload from HTMLElement
+    virtual void parseMappedAttribute(MappedAttribute *attr);
 
     void process();
 
@@ -115,7 +115,7 @@ public:
     virtual void removedFromDocument();
 
     // from CachedObjectClient
-    virtual void setStyleSheet(const DOM::DOMString &url, const DOM::DOMString &sheet);
+    virtual void setStyleSheet(const WebCore::String &url, const WebCore::String &sheet);
     bool isLoading() const;
     void sheetLoaded();
 
@@ -126,125 +126,125 @@ public:
     int disabledState() { return m_disabledState; }
     void setDisabledState(bool _disabled);
 
-    virtual bool isURLAttribute(AttributeImpl *attr) const;
+    virtual bool isURLAttribute(Attribute *attr) const;
     
     void tokenizeRelAttribute(const AtomicString& rel);
 
 protected:
-    khtml::CachedCSSStyleSheet *m_cachedSheet;
-    RefPtr<CSSStyleSheetImpl> m_sheet;
-    DOMString m_url;
-    DOMString m_type;
-    QString m_media;
+    WebCore::CachedCSSStyleSheet *m_cachedSheet;
+    RefPtr<CSSStyleSheet> m_sheet;
+    String m_url;
+    String m_type;
+    DeprecatedString m_media;
     int m_disabledState; // 0=unset(default), 1=enabled via script, 2=disabled
     bool m_loading : 1;
     bool m_alternate : 1;
     bool m_isStyleSheet : 1;
     bool m_isIcon : 1;
-    QString m_data; // needed for temporarily storing the loaded style sheet data
+    DeprecatedString m_data; // needed for temporarily storing the loaded style sheet data
 };
 
 // -------------------------------------------------------------------------
 
-class HTMLMetaElementImpl : public HTMLElementImpl
+class HTMLMetaElement : public HTMLElement
 {
 public:
-    HTMLMetaElementImpl(DocumentImpl *doc);
-    ~HTMLMetaElementImpl();
+    HTMLMetaElement(Document *doc);
+    ~HTMLMetaElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
     virtual int tagPriority() const { return 0; }
 
-    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttribute *attr);
     virtual void insertedIntoDocument();
 
     void process();
 
-    DOMString content() const;
-    void setContent(const DOMString &);
+    String content() const;
+    void setContent(const String &);
 
-    DOMString httpEquiv() const;
-    void setHttpEquiv(const DOMString &);
+    String httpEquiv() const;
+    void setHttpEquiv(const String &);
 
-    DOMString name() const;
-    void setName(const DOMString &);
+    String name() const;
+    void setName(const String &);
 
-    DOMString scheme() const;
-    void setScheme(const DOMString &);
+    String scheme() const;
+    void setScheme(const String &);
 
 protected:
-    DOMString m_equiv;
-    DOMString m_content;
+    String m_equiv;
+    String m_content;
 };
 
 // -------------------------------------------------------------------------
 
-class HTMLScriptElementImpl : public HTMLElementImpl, public khtml::CachedObjectClient
+class HTMLScriptElement : public HTMLElement, public WebCore::CachedObjectClient
 {
 public:
-    HTMLScriptElementImpl(DocumentImpl *doc);
-    ~HTMLScriptElementImpl();
+    HTMLScriptElement(Document *doc);
+    ~HTMLScriptElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 1; }
-    virtual bool checkDTD(const NodeImpl* newChild) { return newChild->isTextNode(); }
+    virtual bool checkDTD(const Node* newChild) { return newChild->isTextNode(); }
 
-    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttribute *attr);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
-    virtual void notifyFinished(khtml::CachedObject *finishedObj);
+    virtual void notifyFinished(WebCore::CachedObject *finishedObj);
 
     virtual void childrenChanged();
 
-    virtual bool isURLAttribute(AttributeImpl *attr) const;
+    virtual bool isURLAttribute(Attribute *attr) const;
 
     void setCreatedByParser(bool createdByParser) { m_createdByParser = createdByParser; }
     virtual void closeRenderer();
 
-    void evaluateScript(const DOMString &URL, const DOMString &script);
+    void evaluateScript(const String &URL, const String &script);
 
-    DOMString text() const;
-    void setText(const DOMString &);
+    String text() const;
+    void setText(const String &);
 
-    DOMString htmlFor() const;
-    void setHtmlFor(const DOMString &);
+    String htmlFor() const;
+    void setHtmlFor(const String &);
 
-    DOMString event() const;
-    void setEvent(const DOMString &);
+    String event() const;
+    void setEvent(const String &);
 
-    DOMString charset() const;
-    void setCharset(const DOMString &);
+    String charset() const;
+    void setCharset(const String &);
 
     bool defer() const;
     void setDefer(bool);
 
-    DOMString src() const;
-    void setSrc(const DOMString &);
+    String src() const;
+    void setSrc(const String &);
 
-    DOMString type() const;
-    void setType(const DOMString &);
+    String type() const;
+    void setType(const String &);
 
 private:
-    khtml::CachedScript *m_cachedScript;
+    WebCore::CachedScript *m_cachedScript;
     bool m_createdByParser;
     bool m_evaluated;
 };
 
 // -------------------------------------------------------------------------
 
-class HTMLStyleElementImpl : public HTMLElementImpl
+class HTMLStyleElement : public HTMLElement
 {
 public:
-    HTMLStyleElementImpl(DocumentImpl *doc);
+    HTMLStyleElement(Document *doc);
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 1; }
-    virtual bool checkDTD(const NodeImpl* newChild) { return newChild->isTextNode(); }
+    virtual bool checkDTD(const Node* newChild) { return newChild->isTextNode(); }
 
-    StyleSheetImpl *sheet() const { return m_sheet.get(); }
+    StyleSheet *sheet() const { return m_sheet.get(); }
 
-    // overload from HTMLElementImpl
-    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
+    // overload from HTMLElement
+    virtual void parseMappedAttribute(MappedAttribute *attr);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
     virtual void childrenChanged();
@@ -255,38 +255,38 @@ public:
     bool disabled() const;
     void setDisabled(bool);
 
-    DOMString media() const;
-    void setMedia(const DOMString &);
+    String media() const;
+    void setMedia(const String &);
 
-    DOMString type() const;
-    void setType(const DOMString &);
+    String type() const;
+    void setType(const String &);
 
 protected:
-    RefPtr<CSSStyleSheetImpl> m_sheet;
+    RefPtr<CSSStyleSheet> m_sheet;
     bool m_loading;
-    DOMString m_type;
-    QString m_media;
+    String m_type;
+    DeprecatedString m_media;
 };
 
 // -------------------------------------------------------------------------
 
-class HTMLTitleElementImpl : public HTMLElementImpl
+class HTMLTitleElement : public HTMLElement
 {
 public:
-    HTMLTitleElementImpl(DocumentImpl *doc);
-    ~HTMLTitleElementImpl();
+    HTMLTitleElement(Document *doc);
+    ~HTMLTitleElement();
 
-    virtual bool checkDTD(const NodeImpl* newChild) { return newChild->isTextNode(); }
+    virtual bool checkDTD(const Node* newChild) { return newChild->isTextNode(); }
 
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
     virtual void childrenChanged();
 
-    DOMString text() const;
-    void setText(const DOMString &);
+    String text() const;
+    void setText(const String &);
 
 protected:
-    DOMString m_title;
+    String m_title;
 };
 
 } //namespace

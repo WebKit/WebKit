@@ -26,20 +26,20 @@
 #ifndef KWQPTRQUEUE_H_
 #define KWQPTRQUEUE_H_
 
-#include "KWQPtrList.h"
+#include "DeprecatedPtrList.h"
 
-template<class T> class QPtrQueue
+template<class T> class DeprecatedPtrQueue
 {
 public:
     bool isEmpty() const { return list.isEmpty(); }
     T *dequeue() { T *tmp = list.getFirst(); list.removeFirst(); return tmp; }
     void enqueue(const T *item) { list.append (item); }
-    uint count() const { return list.count(); }
+    unsigned count() const { return list.count(); }
     T *head() const { return list.getFirst(); }
-    QPtrQueue<T> &operator=(const QPtrQueue<T> &q) { list = q.list; return *this; }
+    DeprecatedPtrQueue<T> &operator=(const DeprecatedPtrQueue<T> &q) { list = q.list; return *this; }
 
  private:
-    QPtrList<T> list;
+    DeprecatedPtrList<T> list;
 };
 
 #endif /* KWQPTRQUEUE_H_ */

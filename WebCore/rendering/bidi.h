@@ -23,11 +23,11 @@
 #ifndef BIDI_H
 #define BIDI_H
 
-#include <QString.h>
+#include <DeprecatedString.h>
 
 class RenderArena;
 
-namespace khtml {
+namespace WebCore {
     class RenderBlock;
     class RenderObject;
     class InlineBox;

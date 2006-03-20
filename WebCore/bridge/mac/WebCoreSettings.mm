@@ -27,7 +27,7 @@
 #import "WebCoreSettings.h"
 
 #import "FoundationExtras.h"
-#import "MacFrame.h"
+#import "FrameMac.h"
 #import "KWQKHTMLSettings.h"
 #import "WebCoreFrameBridge.h"
 
@@ -65,8 +65,8 @@ using namespace WebCore;
 
 - (void)_updateAllViews
 {
-    for (QPtrListIterator<Frame> it(Frame::instances()); it.current(); ++it) {
-        MacFrame *frame = Mac(it.current());
+    for (DeprecatedPtrListIterator<Frame> it(Frame::instances()); it.current(); ++it) {
+        FrameMac *frame = Mac(it.current());
         if (frame->settings() == settings) {
             [frame->bridge() setNeedsReapplyStyles];
         }
@@ -80,7 +80,7 @@ using namespace WebCore;
     }
     [standardFontFamily release];
     standardFontFamily = [s copy];
-    settings->setStdFontName(QString::fromNSString(s));
+    settings->setStdFontName(DeprecatedString::fromNSString(s));
     [self _updateAllViews];
 }
 
@@ -96,7 +96,7 @@ using namespace WebCore;
     }
     [fixedFontFamily release];
     fixedFontFamily = [s copy];
-    settings->setFixedFontName(QString::fromNSString(s));
+    settings->setFixedFontName(DeprecatedString::fromNSString(s));
     [self _updateAllViews];
 }
 
@@ -112,7 +112,7 @@ using namespace WebCore;
     }
     [serifFontFamily release];
     serifFontFamily = [s copy];
-    settings->setSerifFontName(QString::fromNSString(s));
+    settings->setSerifFontName(DeprecatedString::fromNSString(s));
     [self _updateAllViews];
 }
 
@@ -128,7 +128,7 @@ using namespace WebCore;
     }
     [sansSerifFontFamily release];
     sansSerifFontFamily = [s copy];
-    settings->setSansSerifFontName(QString::fromNSString(s));
+    settings->setSansSerifFontName(DeprecatedString::fromNSString(s));
     [self _updateAllViews];
 }
 
@@ -144,7 +144,7 @@ using namespace WebCore;
     }
     [cursiveFontFamily release];
     cursiveFontFamily = [s copy];
-    settings->setCursiveFontName(QString::fromNSString(s));
+    settings->setCursiveFontName(DeprecatedString::fromNSString(s));
     [self _updateAllViews];
 }
 
@@ -160,7 +160,7 @@ using namespace WebCore;
     }
     [fantasyFontFamily release];
     fantasyFontFamily = [s copy];
-    settings->setFantasyFontName(QString::fromNSString(s));
+    settings->setFantasyFontName(DeprecatedString::fromNSString(s));
     [self _updateAllViews];
 }
 
@@ -291,7 +291,7 @@ using namespace WebCore;
     }
     [userStyleSheetLocation release];
     userStyleSheetLocation = [s copy];
-    settings->setUserStyleSheet(QString::fromNSString(s));
+    settings->setUserStyleSheet(DeprecatedString::fromNSString(s));
     [self _updateAllViews];
 }
 
@@ -329,7 +329,7 @@ using namespace WebCore;
     }
     [defaultTextEncoding release];
     defaultTextEncoding = [s copy];
-    settings->setEncoding(QString::fromNSString(s));
+    settings->setEncoding(DeprecatedString::fromNSString(s));
 }
 
 - (NSString *)defaultTextEncoding

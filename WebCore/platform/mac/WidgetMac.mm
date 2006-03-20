@@ -30,8 +30,8 @@
 #import "Font.h"
 #import "FoundationExtras.h"
 #import "GraphicsContext.h"
-#import "KWQExceptions.h"
-#import "MacFrame.h"
+#import "BlockExceptions.h"
+#import "FrameMac.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreFrameView.h"
 #import "WebCoreView.h"
@@ -74,9 +74,9 @@ Widget::Widget(NSView* view) : data(new WidgetPrivate)
 
 Widget::~Widget() 
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     KWQRelease(data->view);
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 
     if (deferredFirstResponder == this)
         deferredFirstResponder = 0;
@@ -86,39 +86,39 @@ Widget::~Widget()
 
 void Widget::setActiveWindow() 
 {
-    KWQ_BLOCK_EXCEPTIONS;
-    [MacFrame::bridgeForWidget(this) focusWindow];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    [FrameMac::bridgeForWidget(this) focusWindow];
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void Widget::setEnabled(bool enabled)
 {
     id view = data->view;
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     if ([view respondsToSelector:@selector(setEnabled:)]) {
         [view setEnabled:enabled];
     }
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 bool Widget::isEnabled() const
 {
     id view = data->view;
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     if ([view respondsToSelector:@selector(isEnabled)]) {
         return [view isEnabled];
     }
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 
     return true;
 }
 
 IntRect Widget::frameGeometry() const
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return enclosingIntRect([getOuterView() frame]);
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     return IntRect();
 }
 
@@ -128,11 +128,11 @@ bool Widget::hasFocus() const
         return this == deferredFirstResponder;
     }
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSView *view = [getView() _webcore_effectiveFirstResponder];
 
-    id firstResponder = [MacFrame::bridgeForWidget(this) firstResponder];
+    id firstResponder = [FrameMac::bridgeForWidget(this) firstResponder];
 
     if (!firstResponder) {
         return false;
@@ -153,7 +153,7 @@ bool Widget::hasFocus() const
         return true;
     }
 
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 
     return false;
 }
@@ -168,10 +168,10 @@ void Widget::setFocus()
         return;
     }
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSView *view = [getView() _webcore_effectiveFirstResponder];
     if ([view superview] && [view acceptsFirstResponder]) {
-        WebCoreFrameBridge *bridge = MacFrame::bridgeForWidget(this);
+        WebCoreFrameBridge *bridge = FrameMac::bridgeForWidget(this);
         NSResponder *oldFirstResponder = [bridge firstResponder];
 
         [bridge makeFirstResponder:view];
@@ -184,14 +184,14 @@ void Widget::setFocus()
         if (![view superview])
             [bridge makeFirstResponder:oldFirstResponder];
     }
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void Widget::clearFocus()
 {
     if (!hasFocus())
         return;
-    MacFrame::clearDocumentFocus(this);
+    FrameMac::clearDocumentFocus(this);
 }
 
 Widget::FocusPolicy Widget::focusPolicy() const
@@ -209,10 +209,10 @@ Widget::FocusPolicy Widget::focusPolicy() const
     if (!isEnabled())
         return NoFocus;
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     if (![getView() acceptsFirstResponder])
         return NoFocus;
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 
     return TabFocus;
 }
@@ -229,7 +229,7 @@ void Widget::setFont(const Font& font)
 
 void Widget::setCursor(const Cursor& cursor)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     for (id view = data->view; view; view = [view superview]) {
         if ([view respondsToSelector:@selector(setDocumentCursor:)]) {
             if ([view respondsToSelector:@selector(documentCursor)] && cursor.impl() == [view documentCursor])
@@ -238,7 +238,7 @@ void Widget::setCursor(const Cursor& cursor)
             break;
         }
     }
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void Widget::show()
@@ -248,9 +248,9 @@ void Widget::show()
 
     data->visible = true;
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [getOuterView() setHidden: NO];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void Widget::hide()
@@ -260,31 +260,31 @@ void Widget::hide()
 
     data->visible = false;
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [getOuterView() setHidden: YES];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void Widget::setFrameGeometry(const IntRect &rect)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSView *v = getOuterView();
     NSRect f = rect;
     if (!NSEqualRects(f, [v frame])) {
         [v setFrame:f];
         [v setNeedsDisplay: NO];
     }
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 IntPoint Widget::mapFromGlobal(const IntPoint &p) const
 {
     NSPoint bp = {0,0};
 
-    KWQ_BLOCK_EXCEPTIONS;
-    bp = [[MacFrame::bridgeForWidget(this) window] convertScreenToBase:[data->view convertPoint:p toView:nil]];
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    bp = [[FrameMac::bridgeForWidget(this) window] convertScreenToBase:[data->view convertPoint:p toView:nil]];
     return IntPoint(bp);
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     return IntPoint();
 }
 
@@ -295,11 +295,11 @@ NSView* Widget::getView() const
 
 void Widget::setView(NSView* view)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     KWQRetain(view);
     KWQRelease(data->view);
     data->view = view;
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 NSView* Widget::getOuterView() const
@@ -317,16 +317,16 @@ NSView* Widget::getOuterView() const
 
 void Widget::lockDrawingFocus()
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [getView() lockFocus];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void Widget::unlockDrawingFocus()
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [getView() unlockFocus];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void Widget::disableFlushDrawing()
@@ -334,9 +334,9 @@ void Widget::disableFlushDrawing()
     // It's OK to use the real window here, because if the view's not
     // in the view hierarchy, then we don't actually want to affect
     // flushing.
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [[getView() window] disableFlushWindow];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void Widget::enableFlushDrawing()
@@ -344,18 +344,18 @@ void Widget::enableFlushDrawing()
     // It's OK to use the real window here, because if the view's not
     // in the view hierarchy, then we don't actually want to affect
     // flushing.
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSWindow* window = [getView() window];
     [window enableFlushWindow];
     [window flushWindow];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void Widget::setDrawingAlpha(float alpha)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     CGContextSetAlpha((CGContextRef)[[NSGraphicsContext currentContext] graphicsPort], alpha);
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void Widget::paint(GraphicsContext* p, const IntRect& r)
@@ -363,11 +363,11 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
     if (p->paintingDisabled())
         return;
     NSView *view = getOuterView();
-    // KWQTextArea and KWQTextField both rely on the fact that we use this particular
+    // WebCoreTextArea and WebCoreTextField both rely on the fact that we use this particular
     // NSView display method. If you change this, be sure to update them as well.
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [view displayRectIgnoringOpacity:[view convertRect:r fromView:[view superview]]];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void Widget::sendConsumedMouseUp()
@@ -378,12 +378,12 @@ void Widget::sendConsumedMouseUp()
 
 void Widget::setIsSelected(bool isSelected)
 {
-    [MacFrame::bridgeForWidget(this) setIsSelected:isSelected forView:getView()];
+    [FrameMac::bridgeForWidget(this) setIsSelected:isSelected forView:getView()];
 }
 
 void Widget::addToSuperview(NSView *superview)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     ASSERT(superview);
     NSView *subview = getOuterView();
@@ -392,7 +392,7 @@ void Widget::addToSuperview(NSView *superview)
         [superview addSubview:subview];
     data->removeFromSuperviewSoon = false;
 
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void Widget::removeFromSuperview()
@@ -401,9 +401,9 @@ void Widget::removeFromSuperview()
         data->removeFromSuperviewSoon = true;
     else {
         data->removeFromSuperviewSoon = false;
-        KWQ_BLOCK_EXCEPTIONS;
+        BEGIN_BLOCK_OBJC_EXCEPTIONS;
         [getOuterView() removeFromSuperview];
-        KWQ_UNBLOCK_EXCEPTIONS;
+        END_BLOCK_OBJC_EXCEPTIONS;
     }
 }
 
@@ -423,9 +423,9 @@ void Widget::afterMouseDown(NSView *view)
     ASSERT([view conformsToProtocol:@protocol(WebCoreWidgetHolder)]);
     Widget* widget = [(NSView <WebCoreWidgetHolder>*)view widget];
     if (!widget) {
-        KWQ_BLOCK_EXCEPTIONS;
+        BEGIN_BLOCK_OBJC_EXCEPTIONS;
         [view removeFromSuperview];
-        KWQ_UNBLOCK_EXCEPTIONS;
+        END_BLOCK_OBJC_EXCEPTIONS;
     } else {
         ASSERT(widget->data->mustStayInWindow);
         widget->data->mustStayInWindow = false;

@@ -28,20 +28,20 @@
 #include "FormDataList.h"
 #include "TextEncoding.h"
 
-namespace DOM {
+namespace WebCore {
 
 FormDataList::FormDataList(const TextEncoding& c)
     : m_encoding(c)
 {
 }
 
-void FormDataList::appendString(const QCString &s)
+void FormDataList::appendString(const DeprecatedCString &s)
 {
     m_list.append(s);
 }
 
 // Change plain CR and plain LF to CRLF pairs.
-static QCString fixLineBreaks(const QCString &s)
+static DeprecatedCString fixLineBreaks(const DeprecatedCString &s)
 {
     // Compute the length.
     unsigned newLen = 0;
@@ -67,7 +67,7 @@ static QCString fixLineBreaks(const QCString &s)
     
     // Make a copy of the string.
     p = s.data();
-    QCString result(newLen + 1);
+    DeprecatedCString result(newLen + 1);
     char *q = result.data();
     while (char c = *p++) {
         if (c == '\r') {
@@ -89,17 +89,17 @@ static QCString fixLineBreaks(const QCString &s)
     return result;
 }
 
-void FormDataList::appendString(const QString &s)
+void FormDataList::appendString(const DeprecatedString &s)
 {
-    QCString cstr = fixLineBreaks(m_encoding.fromUnicode(s, true));
+    DeprecatedCString cstr = fixLineBreaks(m_encoding.fromUnicode(s, true));
     cstr.truncate(cstr.length());
     m_list.append(cstr);
 }
 
-void FormDataList::appendFile(const DOMString &key, const DOMString &filename)
+void FormDataList::appendFile(const String &key, const String &filename)
 {
-    appendString(key.qstring());
-    m_list.append(filename.qstring());
+    appendString(key.deprecatedString());
+    m_list.append(filename.deprecatedString());
 }
 
 } // namespace

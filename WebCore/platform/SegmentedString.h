@@ -27,7 +27,7 @@
 
 #include "PlatformString.h"
 
-#include <QString.h>
+#include <DeprecatedString.h>
 #include <qvaluelist.h>
 
 #include <assert.h>
@@ -43,7 +43,7 @@ private:
     friend class SegmentedString;
     
     SegmentedSubstring() : m_length(0), m_current(0) {}
-    SegmentedSubstring(const QString &str) : m_string(str), m_length(str.length()) {
+    SegmentedSubstring(const DeprecatedString &str) : m_string(str), m_length(str.length()) {
         m_current = m_length == 0 ? 0 : m_string.stableUnicode();
     }
 
@@ -51,7 +51,7 @@ private:
 
     void clear() { m_length = 0; m_current = 0; }
     
-    void appendTo(QString &str) const {
+    void appendTo(DeprecatedString &str) const {
         if (m_string.unicode() == m_current) {
             if (str.isEmpty())
                 str = m_string;
@@ -62,7 +62,7 @@ private:
         }
     }
 
-    QString m_string;
+    DeprecatedString m_string;
     int m_length;
     const QChar *m_current;
 };
@@ -72,7 +72,7 @@ class SegmentedString
 public:
     SegmentedString() : m_currentChar(0), m_lines(0), m_composite(false) {}
     SegmentedString(const QChar *str, int length) : m_currentString(str, length), m_currentChar(m_currentString.m_current), m_lines(0), m_composite(false) {}
-    SegmentedString(const QString &str) : m_currentString(str), m_currentChar(m_currentString.m_current), m_lines(0), m_composite(false) {}
+    SegmentedString(const DeprecatedString &str) : m_currentString(str), m_currentChar(m_currentString.m_current), m_lines(0), m_composite(false) {}
     SegmentedString(const SegmentedString&);
 
     const SegmentedString& operator=(const SegmentedString&);
@@ -93,7 +93,7 @@ public:
     }
     
     bool isEmpty() const { return !current(); }
-    uint length() const;
+    unsigned length() const;
 
     void advance() {
         if (!m_pushedChar1.isNull()) {
@@ -112,7 +112,7 @@ public:
     int lineCount() const { return m_lines; }
     void resetLineCount() { m_lines = 0; }
     
-    QString toString() const;
+    DeprecatedString toString() const;
 
     void operator++() { advance(); }
     const QChar &operator*() const { return *current(); }
@@ -129,7 +129,7 @@ private:
     QChar m_pushedChar2;
     SegmentedSubstring m_currentString;
     const QChar *m_currentChar;
-    QValueList<SegmentedSubstring> m_substrings;
+    DeprecatedValueList<SegmentedSubstring> m_substrings;
     int m_lines;
     bool m_composite;
 };

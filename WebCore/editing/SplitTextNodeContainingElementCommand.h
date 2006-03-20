@@ -28,21 +28,21 @@
 
 #include "CompositeEditCommand.h"
 
-namespace khtml {
+namespace WebCore {
 
 class SplitTextNodeContainingElementCommand : public CompositeEditCommand
 {
 public:
-    SplitTextNodeContainingElementCommand(DOM::DocumentImpl *, DOM::TextImpl *, int);
+    SplitTextNodeContainingElementCommand(WebCore::Document *, WebCore::Text *, int);
     virtual ~SplitTextNodeContainingElementCommand() { }
 
     virtual void doApply();
 
 private:
-    RefPtr<DOM::TextImpl> m_text;
+    RefPtr<WebCore::Text> m_text;
     int m_offset;
 };
 
-} // namespace khtml
+} // namespace WebCore
 
 #endif // __split_text_node_containing_element_command_h__

@@ -36,11 +36,11 @@
 #include "PlatformString.h"
 #include "css_stylesheetimpl.h"
 #include "csshelper.h"
-#include "cssproperties.h"
+#include "CSSPropertyNames.h"
 #include "cssstyleselector.h"
-#include "cssvalues.h"
+#include "CSSValueKeywords.h"
 #include "dom2_eventsimpl.h"
-#include "html_documentimpl.h"
+#include "HTMLDocument.h"
 #include "htmlnames.h"
 #include "loader.h"
 #include "render_frames.h"
@@ -50,12 +50,12 @@ namespace WebCore {
 using namespace EventNames;
 using namespace HTMLNames;
 
-HTMLBodyElementImpl::HTMLBodyElementImpl(DocumentImpl *doc)
-    : HTMLElementImpl(bodyTag, doc)
+HTMLBodyElement::HTMLBodyElement(Document *doc)
+    : HTMLElement(bodyTag, doc)
 {
 }
 
-HTMLBodyElementImpl::~HTMLBodyElementImpl()
+HTMLBodyElement::~HTMLBodyElement()
 {
     if (m_linkDecl) {
         m_linkDecl->setNode(0);
@@ -63,15 +63,15 @@ HTMLBodyElementImpl::~HTMLBodyElementImpl()
     }
 }
 
-void HTMLBodyElementImpl::createLinkDecl()
+void HTMLBodyElement::createLinkDecl()
 {
-    m_linkDecl = new CSSMutableStyleDeclarationImpl;
+    m_linkDecl = new CSSMutableStyleDeclaration;
     m_linkDecl->setParent(getDocument()->elementSheet());
     m_linkDecl->setNode(this);
     m_linkDecl->setStrictParsing(!getDocument()->inCompatMode());
 }
 
-bool HTMLBodyElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
+bool HTMLBodyElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
     if (attrName == backgroundAttr) {
         result = (MappedAttributeEntry)(eLastEntry + getDocument()->docID());
@@ -89,13 +89,13 @@ bool HTMLBodyElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttrib
         return false;
     }
 
-    return HTMLElementImpl::mapToEntry(attrName, result);
+    return HTMLElement::mapToEntry(attrName, result);
 }
 
-void HTMLBodyElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
+void HTMLBodyElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == backgroundAttr) {
-        DOMString url = khtml::parseURL(attr->value());
+        String url = WebCore::parseURL(attr->value());
         if (!url.isEmpty())
             addCSSImageProperty(attr, CSS_PROP_BACKGROUND_IMAGE, getDocument()->completeURL(url));
     } else if (attr->name() == marginwidthAttr || attr->name() == leftmarginAttr) {
@@ -126,9 +126,9 @@ void HTMLBodyElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
             if (!m_linkDecl)
                 createLinkDecl();
             m_linkDecl->setProperty(CSS_PROP_COLOR, attr->value(), false, false);
-            RefPtr<CSSValueImpl> val = m_linkDecl->getPropertyCSSValue(CSS_PROP_COLOR);
+            RefPtr<CSSValue> val = m_linkDecl->getPropertyCSSValue(CSS_PROP_COLOR);
             if (val && val->isPrimitiveValue()) {
-                Color col = getDocument()->styleSelector()->getColorFromPrimitiveValue(static_cast<CSSPrimitiveValueImpl*>(val.get()));
+                Color col = getDocument()->styleSelector()->getColorFromPrimitiveValue(static_cast<CSSPrimitiveValue*>(val.get()));
                 if (attr->name() == linkAttr)
                     getDocument()->setLinkColor(col);
                 else if (attr->name() == vlinkAttr)
@@ -155,23 +155,23 @@ void HTMLBodyElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     } else if (attr->name() == onscrollAttr) {
         getDocument()->setHTMLWindowEventListener(scrollEvent, attr);
     } else
-        HTMLElementImpl::parseMappedAttribute(attr);
+        HTMLElement::parseMappedAttribute(attr);
 }
 
-void HTMLBodyElementImpl::insertedIntoDocument()
+void HTMLBodyElement::insertedIntoDocument()
 {
-    HTMLElementImpl::insertedIntoDocument();
+    HTMLElement::insertedIntoDocument();
 
     // FIXME: perhaps this code should be in attach() instead of here
 
     FrameView *w = getDocument()->view();
     if (w && w->marginWidth() != -1) {
-        QString s;
+        DeprecatedString s;
         s.sprintf("%d", w->marginWidth());
         setAttribute(marginwidthAttr, s);
     }
     if (w && w->marginHeight() != -1) {
-        QString s;
+        DeprecatedString s;
         s.sprintf("%d", w->marginHeight());
         setAttribute(marginheightAttr, s);
     }
@@ -180,86 +180,86 @@ void HTMLBodyElementImpl::insertedIntoDocument()
         w->scheduleRelayout();
 }
 
-bool HTMLBodyElementImpl::isURLAttribute(AttributeImpl *attr) const
+bool HTMLBodyElement::isURLAttribute(Attribute *attr) const
 {
     return attr->name() == backgroundAttr;
 }
 
-DOMString HTMLBodyElementImpl::aLink() const
+String HTMLBodyElement::aLink() const
 {
     return getAttribute(alinkAttr);
 }
 
-void HTMLBodyElementImpl::setALink(const DOMString &value)
+void HTMLBodyElement::setALink(const String &value)
 {
     setAttribute(alinkAttr, value);
 }
 
-DOMString HTMLBodyElementImpl::background() const
+String HTMLBodyElement::background() const
 {
     return getAttribute(backgroundAttr);
 }
 
-void HTMLBodyElementImpl::setBackground(const DOMString &value)
+void HTMLBodyElement::setBackground(const String &value)
 {
     setAttribute(backgroundAttr, value);
 }
 
-DOMString HTMLBodyElementImpl::bgColor() const
+String HTMLBodyElement::bgColor() const
 {
     return getAttribute(bgcolorAttr);
 }
 
-void HTMLBodyElementImpl::setBgColor(const DOMString &value)
+void HTMLBodyElement::setBgColor(const String &value)
 {
     setAttribute(bgcolorAttr, value);
 }
 
-DOMString HTMLBodyElementImpl::link() const
+String HTMLBodyElement::link() const
 {
     return getAttribute(linkAttr);
 }
 
-void HTMLBodyElementImpl::setLink(const DOMString &value)
+void HTMLBodyElement::setLink(const String &value)
 {
     setAttribute(linkAttr, value);
 }
 
-DOMString HTMLBodyElementImpl::text() const
+String HTMLBodyElement::text() const
 {
     return getAttribute(textAttr);
 }
 
-void HTMLBodyElementImpl::setText(const DOMString &value)
+void HTMLBodyElement::setText(const String &value)
 {
     setAttribute(textAttr, value);
 }
 
-DOMString HTMLBodyElementImpl::vLink() const
+String HTMLBodyElement::vLink() const
 {
     return getAttribute(vlinkAttr);
 }
 
-void HTMLBodyElementImpl::setVLink(const DOMString &value)
+void HTMLBodyElement::setVLink(const String &value)
 {
     setAttribute(vlinkAttr, value);
 }
 
 // -------------------------------------------------------------------------
 
-HTMLFrameElementImpl::HTMLFrameElementImpl(DocumentImpl *doc)
-    : HTMLElementImpl(frameTag, doc)
+HTMLFrameElement::HTMLFrameElement(Document *doc)
+    : HTMLElement(frameTag, doc)
 {
     init();
 }
 
-HTMLFrameElementImpl::HTMLFrameElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
-    : HTMLElementImpl(tagName, doc)
+HTMLFrameElement::HTMLFrameElement(const QualifiedName& tagName, Document *doc)
+    : HTMLElement(tagName, doc)
 {
     init();
 }
 
-void HTMLFrameElementImpl::init()
+void HTMLFrameElement::init()
 {
     m_frameBorder = true;
     m_frameBorderSet = false;
@@ -269,11 +269,11 @@ void HTMLFrameElementImpl::init()
     m_noResize = false;
 }
 
-HTMLFrameElementImpl::~HTMLFrameElementImpl()
+HTMLFrameElement::~HTMLFrameElement()
 {
 }
 
-bool HTMLFrameElementImpl::isURLAllowed(const AtomicString &URLString) const
+bool HTMLFrameElement::isURLAllowed(const AtomicString &URLString) const
 {
     if (URLString.isEmpty())
         return true;
@@ -282,8 +282,8 @@ bool HTMLFrameElementImpl::isURLAllowed(const AtomicString &URLString) const
     if (!w)
         return false;
 
-    KURL newURL(getDocument()->completeURL(URLString.qstring()));
-    newURL.setRef(QString::null);
+    KURL newURL(getDocument()->completeURL(URLString.deprecatedString()));
+    newURL.setRef(DeprecatedString::null);
 
     // Don't allow more than 1000 total frames in a set. This seems
     // like a reasonable upper bound, and otherwise mutually recursive
@@ -302,7 +302,7 @@ bool HTMLFrameElementImpl::isURLAllowed(const AtomicString &URLString) const
     bool foundSelfReference = false;
     for (Frame *frame = w->frame(); frame; frame = frame->tree()->parent()) {
         KURL frameURL = frame->url();
-        frameURL.setRef(QString::null);
+        frameURL.setRef(DeprecatedString::null);
         if (frameURL == newURL) {
             if (foundSelfReference) {
                 return false;
@@ -314,7 +314,7 @@ bool HTMLFrameElementImpl::isURLAllowed(const AtomicString &URLString) const
     return true;
 }
 
-void HTMLFrameElementImpl::openURL()
+void HTMLFrameElement::openURL()
 {
     FrameView *w = getDocument()->view();
     if (!w)
@@ -327,19 +327,19 @@ void HTMLFrameElementImpl::openURL()
     // Load the frame contents.
     Frame* parentFrame = w->frame();
     if (Frame* childFrame = parentFrame->tree()->child(m_name))
-        childFrame->openURL(getDocument()->completeURL(relativeURL.qstring()));
+        childFrame->openURL(getDocument()->completeURL(relativeURL.deprecatedString()));
     else
-        parentFrame->requestFrame(static_cast<RenderFrame *>(renderer()), relativeURL.qstring(), m_name.qstring());
+        parentFrame->requestFrame(static_cast<RenderFrame *>(renderer()), relativeURL.deprecatedString(), m_name.deprecatedString());
 }
 
 
-void HTMLFrameElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
+void HTMLFrameElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == srcAttr) {
-        setLocation(khtml::parseURL(attr->value()));
+        setLocation(WebCore::parseURL(attr->value()));
     } else if (attr->name() == idAttr) {
         // Important to call through to base for the id attribute so the hasID bit gets set.
-        HTMLElementImpl::parseMappedAttribute(attr);
+        HTMLElement::parseMappedAttribute(attr);
         m_name = attr->value();
     } else if (attr->name() == nameAttr) {
         m_name = attr->value();
@@ -374,30 +374,30 @@ void HTMLFrameElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     } else if (attr->name() == onunloadAttr) {
         setHTMLEventListener(unloadEvent, attr);
     } else
-        HTMLElementImpl::parseMappedAttribute(attr);
+        HTMLElement::parseMappedAttribute(attr);
 }
 
-bool HTMLFrameElementImpl::rendererIsNeeded(RenderStyle *style)
+bool HTMLFrameElement::rendererIsNeeded(RenderStyle *style)
 {
     // Ignore display: none.
     return isURLAllowed(m_URL);
 }
 
-RenderObject *HTMLFrameElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
+RenderObject *HTMLFrameElement::createRenderer(RenderArena *arena, RenderStyle *style)
 {
     return new (arena) RenderFrame(this);
 }
 
-void HTMLFrameElementImpl::attach()
+void HTMLFrameElement::attach()
 {
     m_name = getAttribute(nameAttr);
     if (m_name.isNull())
         m_name = getAttribute(idAttr);
 
     // inherit default settings from parent frameset
-    for (NodeImpl *node = parentNode(); node; node = node->parentNode())
+    for (Node *node = parentNode(); node; node = node->parentNode())
         if (node->hasTagName(framesetTag)) {
-            HTMLFrameSetElementImpl* frameset = static_cast<HTMLFrameSetElementImpl*>(node);
+            HTMLFrameSetElement* frameset = static_cast<HTMLFrameSetElement*>(node);
             if (!m_frameBorderSet)
                 m_frameBorder = frameset->frameBorder();
             if (!m_noResize)
@@ -405,7 +405,7 @@ void HTMLFrameElementImpl::attach()
             break;
         }
 
-    HTMLElementImpl::attach();
+    HTMLElement::attach();
 
     if (!renderer())
         return;
@@ -424,10 +424,10 @@ void HTMLFrameElementImpl::attach()
     m_name = frame->tree()->uniqueChildName(m_name);
 
     // load the frame contents
-    frame->requestFrame(static_cast<RenderFrame*>(renderer()), relativeURL.qstring(), m_name.qstring());
+    frame->requestFrame(static_cast<RenderFrame*>(renderer()), relativeURL.deprecatedString(), m_name.deprecatedString());
 }
 
-void HTMLFrameElementImpl::close()
+void HTMLFrameElement::close()
 {
     Frame* frame = getDocument()->frame();
     if (renderer() && frame) {
@@ -437,7 +437,7 @@ void HTMLFrameElementImpl::close()
     }
 }
 
-void HTMLFrameElementImpl::willRemove()
+void HTMLFrameElement::willRemove()
 {
     // close the frame and dissociate the renderer, but leave the
     // node attached so that frame does not get re-attached before
@@ -448,16 +448,16 @@ void HTMLFrameElementImpl::willRemove()
         setRenderer(0);
     }
     
-    HTMLElementImpl::willRemove();
+    HTMLElement::willRemove();
 }
 
-void HTMLFrameElementImpl::detach()
+void HTMLFrameElement::detach()
 {
     close();
-    HTMLElementImpl::detach();
+    HTMLElement::detach();
 }
 
-void HTMLFrameElementImpl::setLocation(const DOMString& str)
+void HTMLFrameElement::setLocation(const String& str)
 {
     m_URL = AtomicString(str);
 
@@ -480,15 +480,15 @@ void HTMLFrameElementImpl::setLocation(const DOMString& str)
     openURL();
 }
 
-bool HTMLFrameElementImpl::isFocusable() const
+bool HTMLFrameElement::isFocusable() const
 {
     return renderer();
 }
 
-void HTMLFrameElementImpl::setFocus(bool received)
+void HTMLFrameElement::setFocus(bool received)
 {
-    HTMLElementImpl::setFocus(received);
-    khtml::RenderFrame *renderFrame = static_cast<khtml::RenderFrame *>(renderer());
+    HTMLElement::setFocus(received);
+    WebCore::RenderFrame *renderFrame = static_cast<WebCore::RenderFrame *>(renderer());
     if (!renderFrame || !renderFrame->widget())
         return;
     if (received)
@@ -497,7 +497,7 @@ void HTMLFrameElementImpl::setFocus(bool received)
         renderFrame->widget()->clearFocus();
 }
 
-Frame* HTMLFrameElementImpl::contentFrame() const
+Frame* HTMLFrameElement::contentFrame() const
 {
     // Start with the part that contains this element, our ownerDocument.
     Frame* parentFrame = getDocument()->frame();
@@ -508,7 +508,7 @@ Frame* HTMLFrameElementImpl::contentFrame() const
     return parentFrame->tree()->child(m_name);
 }
 
-DocumentImpl* HTMLFrameElementImpl::contentDocument() const
+Document* HTMLFrameElement::contentDocument() const
 {
     Frame* frame = contentFrame();
     if (!frame)
@@ -516,87 +516,87 @@ DocumentImpl* HTMLFrameElementImpl::contentDocument() const
     return frame->document();
 }
 
-bool HTMLFrameElementImpl::isURLAttribute(AttributeImpl *attr) const
+bool HTMLFrameElement::isURLAttribute(Attribute *attr) const
 {
     return attr->name() == srcAttr;
 }
 
-DOMString HTMLFrameElementImpl::frameBorder() const
+String HTMLFrameElement::frameBorder() const
 {
     return getAttribute(frameborderAttr);
 }
 
-void HTMLFrameElementImpl::setFrameBorder(const DOMString &value)
+void HTMLFrameElement::setFrameBorder(const String &value)
 {
     setAttribute(frameborderAttr, value);
 }
 
-DOMString HTMLFrameElementImpl::longDesc() const
+String HTMLFrameElement::longDesc() const
 {
     return getAttribute(longdescAttr);
 }
 
-void HTMLFrameElementImpl::setLongDesc(const DOMString &value)
+void HTMLFrameElement::setLongDesc(const String &value)
 {
     setAttribute(longdescAttr, value);
 }
 
-DOMString HTMLFrameElementImpl::marginHeight() const
+String HTMLFrameElement::marginHeight() const
 {
     return getAttribute(marginheightAttr);
 }
 
-void HTMLFrameElementImpl::setMarginHeight(const DOMString &value)
+void HTMLFrameElement::setMarginHeight(const String &value)
 {
     setAttribute(marginheightAttr, value);
 }
 
-DOMString HTMLFrameElementImpl::marginWidth() const
+String HTMLFrameElement::marginWidth() const
 {
     return getAttribute(marginwidthAttr);
 }
 
-void HTMLFrameElementImpl::setMarginWidth(const DOMString &value)
+void HTMLFrameElement::setMarginWidth(const String &value)
 {
     setAttribute(marginwidthAttr, value);
 }
 
-DOMString HTMLFrameElementImpl::name() const
+String HTMLFrameElement::name() const
 {
     return getAttribute(nameAttr);
 }
 
-void HTMLFrameElementImpl::setName(const DOMString &value)
+void HTMLFrameElement::setName(const String &value)
 {
     setAttribute(nameAttr, value);
 }
 
-void HTMLFrameElementImpl::setNoResize(bool noResize)
+void HTMLFrameElement::setNoResize(bool noResize)
 {
     setAttribute(noresizeAttr, noResize ? "" : 0);
 }
 
-DOMString HTMLFrameElementImpl::scrolling() const
+String HTMLFrameElement::scrolling() const
 {
     return getAttribute(scrollingAttr);
 }
 
-void HTMLFrameElementImpl::setScrolling(const DOMString &value)
+void HTMLFrameElement::setScrolling(const String &value)
 {
     setAttribute(scrollingAttr, value);
 }
 
-DOMString HTMLFrameElementImpl::src() const
+String HTMLFrameElement::src() const
 {
     return getAttribute(srcAttr);
 }
 
-void HTMLFrameElementImpl::setSrc(const DOMString &value)
+void HTMLFrameElement::setSrc(const String &value)
 {
     setAttribute(srcAttr, value);
 }
 
-int HTMLFrameElementImpl::frameWidth() const
+int HTMLFrameElement::frameWidth() const
 {
     if (!renderer())
         return 0;
@@ -605,7 +605,7 @@ int HTMLFrameElementImpl::frameWidth() const
     return renderer()->width();
 }
 
-int HTMLFrameElementImpl::frameHeight() const
+int HTMLFrameElement::frameHeight() const
 {
     if (!renderer())
         return 0;
@@ -616,8 +616,8 @@ int HTMLFrameElementImpl::frameHeight() const
 
 // -------------------------------------------------------------------------
 
-HTMLFrameSetElementImpl::HTMLFrameSetElementImpl(DocumentImpl *doc)
-    : HTMLElementImpl(framesetTag, doc)
+HTMLFrameSetElement::HTMLFrameSetElement(Document *doc)
+    : HTMLElement(framesetTag, doc)
 {
     // default value for rows and cols...
     m_totalRows = 1;
@@ -631,7 +631,7 @@ HTMLFrameSetElementImpl::HTMLFrameSetElementImpl(DocumentImpl *doc)
     noresize = false;
 }
 
-HTMLFrameSetElementImpl::~HTMLFrameSetElementImpl()
+HTMLFrameSetElement::~HTMLFrameSetElement()
 {
     if (m_rows)
         delete [] m_rows;
@@ -639,14 +639,14 @@ HTMLFrameSetElementImpl::~HTMLFrameSetElementImpl()
         delete [] m_cols;
 }
 
-bool HTMLFrameSetElementImpl::checkDTD(const NodeImpl* newChild)
+bool HTMLFrameSetElement::checkDTD(const Node* newChild)
 {
     // FIXME: Old code had adjacent double returns and seemed to want to do something with NOFRAMES (but didn't).
     // What is the correct behavior?
     return newChild->hasTagName(framesetTag) || newChild->hasTagName(frameTag);
 }
 
-void HTMLFrameSetElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
+void HTMLFrameSetElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == rowsAttr) {
         if (!attr->isNull()) {
@@ -680,99 +680,99 @@ void HTMLFrameSetElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     } else if (attr->name() == onunloadAttr) {
         getDocument()->setHTMLWindowEventListener(unloadEvent, attr);
     } else
-        HTMLElementImpl::parseMappedAttribute(attr);
+        HTMLElement::parseMappedAttribute(attr);
 }
 
-bool HTMLFrameSetElementImpl::rendererIsNeeded(RenderStyle *style)
+bool HTMLFrameSetElement::rendererIsNeeded(RenderStyle *style)
 {
     // Ignore display: none but do pay attention if a stylesheet has caused us to delay our loading.
     return style->isStyleAvailable();
 }
 
-RenderObject *HTMLFrameSetElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
+RenderObject *HTMLFrameSetElement::createRenderer(RenderArena *arena, RenderStyle *style)
 {
     return new (arena) RenderFrameSet(this);
 }
 
-void HTMLFrameSetElementImpl::attach()
+void HTMLFrameSetElement::attach()
 {
     // inherit default settings from parent frameset
-    HTMLElementImpl* node = static_cast<HTMLElementImpl*>(parentNode());
+    HTMLElement* node = static_cast<HTMLElement*>(parentNode());
     while(node)
     {
         if (node->hasTagName(framesetTag)) {
-            HTMLFrameSetElementImpl* frameset = static_cast<HTMLFrameSetElementImpl*>(node);
+            HTMLFrameSetElement* frameset = static_cast<HTMLFrameSetElement*>(node);
             if(!frameBorderSet)  frameborder = frameset->frameBorder();
             if(!noresize)  noresize = frameset->noResize();
             break;
         }
-        node = static_cast<HTMLElementImpl*>(node->parentNode());
+        node = static_cast<HTMLElement*>(node->parentNode());
     }
 
-    HTMLElementImpl::attach();
+    HTMLElement::attach();
 }
 
-void HTMLFrameSetElementImpl::defaultEventHandler(EventImpl *evt)
+void HTMLFrameSetElement::defaultEventHandler(Event *evt)
 {
     if (evt->isMouseEvent() && !noresize && renderer()) {
-        static_cast<khtml::RenderFrameSet *>(renderer())->userResize(static_cast<MouseEventImpl*>(evt));
+        static_cast<WebCore::RenderFrameSet *>(renderer())->userResize(static_cast<MouseEvent*>(evt));
         evt->setDefaultHandled();
     }
 
-    HTMLElementImpl::defaultEventHandler(evt);
+    HTMLElement::defaultEventHandler(evt);
 }
 
-void HTMLFrameSetElementImpl::recalcStyle( StyleChange ch )
+void HTMLFrameSetElement::recalcStyle( StyleChange ch )
 {
     if (changed() && renderer()) {
         renderer()->setNeedsLayout(true);
         setChanged(false);
     }
-    HTMLElementImpl::recalcStyle( ch );
+    HTMLElement::recalcStyle( ch );
 }
 
-DOMString HTMLFrameSetElementImpl::cols() const
+String HTMLFrameSetElement::cols() const
 {
     return getAttribute(colsAttr);
 }
 
-void HTMLFrameSetElementImpl::setCols(const DOMString &value)
+void HTMLFrameSetElement::setCols(const String &value)
 {
     setAttribute(colsAttr, value);
 }
 
-DOMString HTMLFrameSetElementImpl::rows() const
+String HTMLFrameSetElement::rows() const
 {
     return getAttribute(rowsAttr);
 }
 
-void HTMLFrameSetElementImpl::setRows(const DOMString &value)
+void HTMLFrameSetElement::setRows(const String &value)
 {
     setAttribute(rowsAttr, value);
 }
 
 // -------------------------------------------------------------------------
 
-HTMLHeadElementImpl::HTMLHeadElementImpl(DocumentImpl *doc)
-    : HTMLElementImpl(headTag, doc)
+HTMLHeadElement::HTMLHeadElement(Document *doc)
+    : HTMLElement(headTag, doc)
 {
 }
 
-HTMLHeadElementImpl::~HTMLHeadElementImpl()
+HTMLHeadElement::~HTMLHeadElement()
 {
 }
 
-DOMString HTMLHeadElementImpl::profile() const
+String HTMLHeadElement::profile() const
 {
     return getAttribute(profileAttr);
 }
 
-void HTMLHeadElementImpl::setProfile(const DOMString &value)
+void HTMLHeadElement::setProfile(const String &value)
 {
     setAttribute(profileAttr, value);
 }
 
-bool HTMLHeadElementImpl::checkDTD(const NodeImpl* newChild)
+bool HTMLHeadElement::checkDTD(const Node* newChild)
 {
     return newChild->hasTagName(titleTag) || newChild->hasTagName(isindexTag) ||
            newChild->hasTagName(baseTag) || newChild->hasTagName(scriptTag) ||
@@ -782,26 +782,26 @@ bool HTMLHeadElementImpl::checkDTD(const NodeImpl* newChild)
 
 // -------------------------------------------------------------------------
 
-HTMLHtmlElementImpl::HTMLHtmlElementImpl(DocumentImpl *doc)
-    : HTMLElementImpl(htmlTag, doc)
+HTMLHtmlElement::HTMLHtmlElement(Document *doc)
+    : HTMLElement(htmlTag, doc)
 {
 }
 
-HTMLHtmlElementImpl::~HTMLHtmlElementImpl()
+HTMLHtmlElement::~HTMLHtmlElement()
 {
 }
 
-DOMString HTMLHtmlElementImpl::version() const
+String HTMLHtmlElement::version() const
 {
     return getAttribute(versionAttr);
 }
 
-void HTMLHtmlElementImpl::setVersion(const DOMString &value)
+void HTMLHtmlElement::setVersion(const String &value)
 {
     setAttribute(versionAttr, value);
 }
 
-bool HTMLHtmlElementImpl::checkDTD(const NodeImpl* newChild)
+bool HTMLHtmlElement::checkDTD(const Node* newChild)
 {
     // FIXME: Why is <script> allowed here?
     return newChild->hasTagName(headTag) || newChild->hasTagName(bodyTag) ||
@@ -811,7 +811,7 @@ bool HTMLHtmlElementImpl::checkDTD(const NodeImpl* newChild)
 
 // -------------------------------------------------------------------------
 
-HTMLIFrameElementImpl::HTMLIFrameElementImpl(DocumentImpl *doc) : HTMLFrameElementImpl(iframeTag, doc)
+HTMLIFrameElement::HTMLIFrameElement(Document *doc) : HTMLFrameElement(iframeTag, doc)
 {
     m_frameBorder = false;
     m_marginWidth = -1;
@@ -819,11 +819,11 @@ HTMLIFrameElementImpl::HTMLIFrameElementImpl(DocumentImpl *doc) : HTMLFrameEleme
     needWidgetUpdate = false;
 }
 
-HTMLIFrameElementImpl::~HTMLIFrameElementImpl()
+HTMLIFrameElement::~HTMLIFrameElement()
 {
 }
 
-bool HTMLIFrameElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
+bool HTMLIFrameElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
     if (attrName == widthAttr || attrName == heightAttr) {
         result = eUniversal;
@@ -835,10 +835,10 @@ bool HTMLIFrameElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttr
         return false;
     }
     
-    return HTMLElementImpl::mapToEntry(attrName, result);
+    return HTMLElement::mapToEntry(attrName, result);
 }
 
-void HTMLIFrameElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
+void HTMLIFrameElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == widthAttr)
         addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
@@ -847,55 +847,55 @@ void HTMLIFrameElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     else if (attr->name() == alignAttr)
         addHTMLAlignment(attr);
     else if (attr->name() == nameAttr) {
-        DOMString newNameAttr = attr->value();
+        String newNameAttr = attr->value();
         if (inDocument() && getDocument()->isHTMLDocument()) {
-            HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+            HTMLDocument *document = static_cast<HTMLDocument *>(getDocument());
             document->removeDocExtraNamedItem(oldNameAttr);
             document->addDocExtraNamedItem(newNameAttr);
         }
         oldNameAttr = newNameAttr;
     } else
-        HTMLFrameElementImpl::parseMappedAttribute(attr);
+        HTMLFrameElement::parseMappedAttribute(attr);
 }
 
-void HTMLIFrameElementImpl::insertedIntoDocument()
+void HTMLIFrameElement::insertedIntoDocument()
 {
     if (getDocument()->isHTMLDocument()) {
-        HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+        HTMLDocument *document = static_cast<HTMLDocument *>(getDocument());
         document->addDocExtraNamedItem(oldNameAttr);
     }
 
-    HTMLElementImpl::insertedIntoDocument();
+    HTMLElement::insertedIntoDocument();
 }
 
-void HTMLIFrameElementImpl::removedFromDocument()
+void HTMLIFrameElement::removedFromDocument()
 {
     if (getDocument()->isHTMLDocument()) {
-        HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
+        HTMLDocument *document = static_cast<HTMLDocument *>(getDocument());
         document->removeDocExtraNamedItem(oldNameAttr);
     }
 
-    HTMLElementImpl::removedFromDocument();
+    HTMLElement::removedFromDocument();
 }
 
-bool HTMLIFrameElementImpl::rendererIsNeeded(RenderStyle *style)
+bool HTMLIFrameElement::rendererIsNeeded(RenderStyle *style)
 {
     // Don't ignore display: none the way frame does.
     return isURLAllowed(m_URL) && style->display() != NONE;
 }
 
-RenderObject *HTMLIFrameElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
+RenderObject *HTMLIFrameElement::createRenderer(RenderArena *arena, RenderStyle *style)
 {
     return new (arena) RenderPartObject(this);
 }
 
-void HTMLIFrameElementImpl::attach()
+void HTMLIFrameElement::attach()
 {
     m_name = getAttribute(nameAttr);
     if (m_name.isNull())
         m_name = getAttribute(idAttr);
 
-    HTMLElementImpl::attach();
+    HTMLElement::attach();
 
     Frame* parentFrame = getDocument()->frame();
     if (renderer() && parentFrame) {
@@ -906,58 +906,58 @@ void HTMLIFrameElementImpl::attach()
     }
 }
 
-void HTMLIFrameElementImpl::recalcStyle( StyleChange ch )
+void HTMLIFrameElement::recalcStyle( StyleChange ch )
 {
     if (needWidgetUpdate) {
         if (renderer())
             static_cast<RenderPartObject*>(renderer())->updateWidget();
         needWidgetUpdate = false;
     }
-    HTMLElementImpl::recalcStyle( ch );
+    HTMLElement::recalcStyle( ch );
 }
 
-void HTMLIFrameElementImpl::openURL()
+void HTMLIFrameElement::openURL()
 {
     needWidgetUpdate = true;
     setChanged();
 }
 
-bool HTMLIFrameElementImpl::isURLAttribute(AttributeImpl *attr) const
+bool HTMLIFrameElement::isURLAttribute(Attribute *attr) const
 {
     return attr->name() == srcAttr;
 }
 
-DOMString HTMLIFrameElementImpl::align() const
+String HTMLIFrameElement::align() const
 {
     return getAttribute(alignAttr);
 }
 
-void HTMLIFrameElementImpl::setAlign(const DOMString &value)
+void HTMLIFrameElement::setAlign(const String &value)
 {
     setAttribute(alignAttr, value);
 }
 
-DOMString HTMLIFrameElementImpl::height() const
+String HTMLIFrameElement::height() const
 {
     return getAttribute(heightAttr);
 }
 
-void HTMLIFrameElementImpl::setHeight(const DOMString &value)
+void HTMLIFrameElement::setHeight(const String &value)
 {
     setAttribute(heightAttr, value);
 }
 
-DOMString HTMLIFrameElementImpl::src() const
+String HTMLIFrameElement::src() const
 {
     return getDocument()->completeURL(getAttribute(srcAttr));
 }
 
-DOMString HTMLIFrameElementImpl::width() const
+String HTMLIFrameElement::width() const
 {
     return getAttribute(widthAttr);
 }
 
-void HTMLIFrameElementImpl::setWidth(const DOMString &value)
+void HTMLIFrameElement::setWidth(const String &value)
 {
     setAttribute(widthAttr, value);
 }

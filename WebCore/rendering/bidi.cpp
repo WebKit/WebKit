@@ -23,18 +23,18 @@
 
 #include "config.h"
 #include "bidi.h"
-#include "DocumentImpl.h"
+#include "Document.h"
 #include "break_lines.h"
 #include "FrameView.h"
 #include <kxmlcore/AlwaysInline.h>
-#include "render_arena.h"
+#include "RenderArena.h"
 #include "RenderBlock.h"
-#include "render_canvas.h"
+#include "RenderCanvas.h"
 #include "InlineTextBox.h"
 
-using namespace DOM;
+using namespace WebCore;
 
-namespace khtml {
+namespace WebCore {
 
 // an iterator which traverses all the objects within a block
 struct BidiIterator
@@ -93,9 +93,9 @@ static bool sBuildingCompactRuns;
 // Midpoint globals.  The goal is not to do any allocation when dealing with
 // these midpoints, so we just keep an array around and never clear it.  We track
 // the number of items and position using the two other variables.
-static Array<BidiIterator> *smidpoints;
-static uint sNumMidpoints;
-static uint sCurrMidpoint;
+static DeprecatedArray<BidiIterator> *smidpoints;
+static unsigned sNumMidpoints;
+static unsigned sCurrMidpoint;
 static bool betweenMidpoints;
 
 static bool isLineEmpty = true;
@@ -490,12 +490,12 @@ static void reverseRuns(int start, int end)
         sLastBidiRun = startRun;
 }
 
-static void chopMidpointsAt(RenderObject* obj, uint pos)
+static void chopMidpointsAt(RenderObject* obj, unsigned pos)
 {
     if (!sNumMidpoints)
         return;
     BidiIterator* midpoints = smidpoints->data();
-    for (uint i = 0; i < sNumMidpoints; i++) {
+    for (unsigned i = 0; i < sNumMidpoints; i++) {
         const BidiIterator& point = midpoints[i];
         if (point.obj == obj && point.pos == pos) {
             sNumMidpoints = i;
@@ -1547,7 +1547,7 @@ IntRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
         bidi.dir = QChar::DirON;
         
         if (!smidpoints)
-            smidpoints = new Array<BidiIterator>;
+            smidpoints = new DeprecatedArray<BidiIterator>;
         
         sNumMidpoints = 0;
         sCurrMidpoint = 0;

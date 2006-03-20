@@ -30,7 +30,7 @@
 namespace WebCore {
 
   class Decoder;
-  class DocumentImpl;
+  class Document;
   class EventListener;
   class String;
 
@@ -45,11 +45,11 @@ namespace WebCore {
 
   class XMLHttpRequest : public Shared<XMLHttpRequest>, TransferJobClient {
   public:
-    XMLHttpRequest(DocumentImpl*);
+    XMLHttpRequest(Document*);
     ~XMLHttpRequest();
 
-    static void detachRequests(DocumentImpl*);
-    static void cancelRequests(DocumentImpl*);
+    static void detachRequests(Document*);
+    static void cancelRequests(Document*);
 
     String getStatusText() const;
     int getStatus() const;
@@ -62,7 +62,7 @@ namespace WebCore {
     String getAllResponseHeaders() const;
     String getResponseHeader(const String& name) const;
     String getResponseText() const;
-    DocumentImpl* getResponseXML() const;
+    Document* getResponseXML() const;
 
     void setOnReadyStateChangeListener(EventListener*);
     EventListener* onReadyStateChangeListener() const;
@@ -76,37 +76,37 @@ namespace WebCore {
     virtual void receivedData(TransferJob*, const char *data, int size);
     virtual void receivedAllData(TransferJob*);
 
-    void processSyncLoadResults(const ByteArray& data, const KURL& finalURL, const QString& headers);
+    void processSyncLoadResults(const DeprecatedByteArray& data, const KURL& finalURL, const DeprecatedString& headers);
 
     bool responseIsXML() const;
     
-    QString getRequestHeader(const QString& name) const;
-    static QString getSpecificHeader(const QString& headers, const QString& name);
+    DeprecatedString getRequestHeader(const DeprecatedString& name) const;
+    static DeprecatedString getSpecificHeader(const DeprecatedString& headers, const DeprecatedString& name);
 
     void changeState(XMLHttpRequestState newState);
     void callReadyStateChangeListener();
 
-    DocumentImpl* doc;
+    Document* doc;
     RefPtr<EventListener> m_onReadyStateChangeListener;
     RefPtr<EventListener> m_onLoadListener;
 
     KURL url;
-    QString method;
+    DeprecatedString method;
     bool async;
-    QString requestHeaders;
+    DeprecatedString requestHeaders;
 
     TransferJob* job;
 
     XMLHttpRequestState state;
 
     RefPtr<Decoder> decoder;
-    QString encoding;
-    QString responseHeaders;
-    QString MIMETypeOverride;
+    DeprecatedString encoding;
+    DeprecatedString responseHeaders;
+    DeprecatedString MIMETypeOverride;
 
-    QString response;
+    DeprecatedString response;
     mutable bool createdDocument;
-    mutable RefPtr<DocumentImpl> responseXML;
+    mutable RefPtr<Document> responseXML;
 
     bool aborted;
   };

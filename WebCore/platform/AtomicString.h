@@ -36,19 +36,19 @@ public:
     AtomicString(const char* s) : m_string(add(s)) { }
     AtomicString(const QChar* s, int length) : m_string(add(s, length)) { }
     AtomicString(const unsigned short* s, int length) : m_string(add((QChar*)s, length)) { }
-    AtomicString(const QString& s) : m_string(add(s.unicode(), s.length())) { }
+    AtomicString(const DeprecatedString& s) : m_string(add(s.unicode(), s.length())) { }
     AtomicString(StringImpl* imp) : m_string(add(imp)) { }
     AtomicString(AtomicStringImpl* imp) : m_string(imp) { }
     explicit AtomicString(const String& s) : m_string(add(s.impl())) { }
     
     operator const String&() const { return m_string; }
     const String& domString() const { return m_string; };
-    QString qstring() const { return m_string.qstring(); };
+    DeprecatedString deprecatedString() const { return m_string.deprecatedString(); };
     
     AtomicStringImpl* impl() const { return static_cast<AtomicStringImpl *>(m_string.impl()); }
     
     const QChar* unicode() const { return m_string.unicode(); }
-    uint length() const { return m_string.length(); }
+    unsigned length() const { return m_string.length(); }
     
     const QChar& operator [](unsigned int i) const { return m_string[i]; }
     

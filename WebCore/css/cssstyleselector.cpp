@@ -27,26 +27,26 @@
 #include "CachedImage.h"
 #include "Frame.h"
 #include "FrameView.h"
-#include "HTMLElementImpl.h"
+#include "HTMLElement.h"
 #include "History.h"
 #include "UserAgentStyleSheets.h"
 #include "css_ruleimpl.h"
 #include "css_stylesheetimpl.h"
 #include "css_valueimpl.h"
-#include "cssproperties.h"
-#include "cssvalues.h"
+#include "CSSPropertyNames.h"
+#include "CSSValueKeywords.h"
 #include "Font.h"
-#include "html_documentimpl.h"
+#include "HTMLDocument.h"
 #include "htmlnames.h"
 #include "khtml_settings.h"
 #include "loader.h"
-#include "render_object.h"
+#include "RenderObject.h"
 #include "render_style.h"
-#include "render_theme.h"
+#include "RenderTheme.h"
 #include <assert.h>
 #include <KURL.h>
 #include <kxmlcore/HashMap.h>
-#include <QString.h>
+#include <DeprecatedString.h>
 #include <qvaluelist.h>
 #include <stdlib.h>
 
@@ -120,7 +120,7 @@ if (value->isPrimitiveValue()) { \
 } \
 else { \
     /* Walk each value and put it into a layer, creating new layers as needed. */ \
-    CSSValueListImpl* valueList = static_cast<CSSValueListImpl*>(value); \
+    CSSValueList* valueList = static_cast<CSSValueList*>(value); \
     for (unsigned int i = 0; i < valueList->length(); i++) { \
         if (!currChild) { \
             /* Need to make a new layer to hold this value */ \
@@ -164,11 +164,11 @@ public:
     
     typedef HashMap<AtomicStringImpl*, CSSRuleDataList*> AtomRuleMap;
     
-    void addRulesFromSheet(CSSStyleSheetImpl* sheet, const DOMString &medium = "screen");
+    void addRulesFromSheet(CSSStyleSheet* sheet, const String &medium = "screen");
     
-    void addRule(CSSStyleRuleImpl* rule, CSSSelector* sel);
+    void addRule(CSSStyleRule* rule, CSSSelector* sel);
     void addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map,
-                      CSSStyleRuleImpl* rule, CSSSelector* sel);
+                      CSSStyleRule* rule, CSSSelector* sel);
     
     CSSRuleDataList* getIDRules(AtomicStringImpl* key) { return m_idRules.get(key); }
     CSSRuleDataList* getClassRules(AtomicStringImpl* key) { return m_classRules.get(key); }
@@ -181,23 +181,23 @@ public:
     AtomRuleMap m_tagRules;
     CSSRuleDataList* m_universalRules;
     
-    uint m_ruleCount;
+    unsigned m_ruleCount;
 };
 
 CSSRuleSet *CSSStyleSelector::defaultStyle = 0;
 CSSRuleSet *CSSStyleSelector::defaultQuirksStyle = 0;
 CSSRuleSet *CSSStyleSelector::defaultPrintStyle = 0;
-CSSStyleSheetImpl *CSSStyleSelector::defaultSheet = 0;
+CSSStyleSheet *CSSStyleSelector::defaultSheet = 0;
 RenderStyle* CSSStyleSelector::styleNotYetAvailable = 0;
-CSSStyleSheetImpl *CSSStyleSelector::quirksSheet = 0;
+CSSStyleSheet *CSSStyleSelector::quirksSheet = 0;
 #if SVG_SUPPORT
-CSSStyleSheetImpl *CSSStyleSelector::svgSheet = 0;
+CSSStyleSheet *CSSStyleSelector::svgSheet = 0;
 #endif
 
 static CSSStyleSelector::Encodedurl *currentEncodedURL = 0;
 static PseudoState pseudoState;
 
-CSSStyleSelector::CSSStyleSelector( DocumentImpl* doc, QString userStyleSheet, StyleSheetListImpl *styleSheets,
+CSSStyleSelector::CSSStyleSelector( Document* doc, DeprecatedString userStyleSheet, StyleSheetList *styleSheets,
                                     bool _strictParsing )
 {
     init();
@@ -207,15 +207,15 @@ CSSStyleSelector::CSSStyleSelector( DocumentImpl* doc, QString userStyleSheet, S
     settings = view ? view->frame()->settings() : 0;
     if (!defaultStyle)
         loadDefaultStyle();
-    m_medium = view ? view->mediaType() : QString("all");
+    m_medium = view ? view->mediaType() : DeprecatedString("all");
 
     m_userStyle = 0;
     m_userSheet = 0;
 
     // FIXME: This sucks! The user sheet is reparsed every time!
     if (!userStyleSheet.isEmpty()) {
-        m_userSheet = new CSSStyleSheetImpl(doc);
-        m_userSheet->parseString(DOMString(userStyleSheet), strictParsing);
+        m_userSheet = new CSSStyleSheet(doc);
+        m_userSheet->parseString(String(userStyleSheet), strictParsing);
 
         m_userStyle = new CSSRuleSet();
         m_userStyle->addRulesFromSheet( m_userSheet, m_medium );
@@ -224,22 +224,22 @@ CSSStyleSelector::CSSStyleSelector( DocumentImpl* doc, QString userStyleSheet, S
     // add stylesheets from document
     m_authorStyle = new CSSRuleSet();
 
-    QPtrListIterator<StyleSheetImpl> it(styleSheets->styleSheets);
+    DeprecatedPtrListIterator<StyleSheet> it(styleSheets->styleSheets);
     for (; it.current(); ++it)
         if (it.current()->isCSSStyleSheet() && !it.current()->disabled())
-            m_authorStyle->addRulesFromSheet(static_cast<CSSStyleSheetImpl*>(it.current()), m_medium);
+            m_authorStyle->addRulesFromSheet(static_cast<CSSStyleSheet*>(it.current()), m_medium);
 
     m_ruleList = 0;
     m_collectRulesOnly = false;
 }
 
-CSSStyleSelector::CSSStyleSelector( CSSStyleSheetImpl *sheet )
+CSSStyleSelector::CSSStyleSelector( CSSStyleSheet *sheet )
 {
     init();
 
     if(!defaultStyle) loadDefaultStyle();
     FrameView *view = sheet->doc()->view();
-    m_medium =  view ? view->mediaType() : QString("all");
+    m_medium =  view ? view->mediaType() : DeprecatedString("all");
 
     m_authorStyle = new CSSRuleSet();
     m_authorStyle->addRulesFromSheet( sheet, m_medium );
@@ -256,8 +256,8 @@ void CSSStyleSelector::setEncodedURL(const KURL& url)
 {
     KURL u = url;
 
-    u.setQuery( QString::null );
-    u.setRef( QString::null );
+    u.setQuery( DeprecatedString::null );
+    u.setRef( DeprecatedString::null );
     encodedurl.file = u.url();
     int pos = encodedurl.file.findRev('/');
     encodedurl.path = encodedurl.file;
@@ -265,7 +265,7 @@ void CSSStyleSelector::setEncodedURL(const KURL& url)
         encodedurl.path.truncate( pos );
         encodedurl.path += '/';
     }
-    u.setPath( QString::null );
+    u.setPath( DeprecatedString::null );
     encodedurl.host = u.url();
 }
 
@@ -276,16 +276,16 @@ CSSStyleSelector::~CSSStyleSelector()
     delete m_userSheet;
 }
 
-static CSSStyleSheetImpl* parseUASheet(const unsigned short* characters, int size)
+static CSSStyleSheet* parseUASheet(const unsigned short* characters, int size)
 {
-    CSSStyleSheetImpl* const parent = 0;
-    CSSStyleSheetImpl* sheet = new CSSStyleSheetImpl(parent);
+    CSSStyleSheet* const parent = 0;
+    CSSStyleSheet* sheet = new CSSStyleSheet(parent);
     sheet->ref(); // leak the sheet on purpose since it will be stored in a global variable
     sheet->parseString(String(reinterpret_cast<const QChar*>(characters), size));
     return sheet;
 }
 
-template<typename T> CSSStyleSheetImpl* parseUASheet(const T& array)
+template<typename T> CSSStyleSheet* parseUASheet(const T& array)
 {
     return parseUASheet(array, sizeof(array) / sizeof(unsigned short));
 }
@@ -323,7 +323,7 @@ void CSSStyleSelector::addMatchedRule(CSSRuleData* rule)
     m_matchedRules[m_matchedRuleCount++] = rule;
 }
 
-void CSSStyleSelector::addMatchedDeclaration(CSSMutableStyleDeclarationImpl* decl)
+void CSSStyleSelector::addMatchedDeclaration(CSSMutableStyleDeclaration* decl)
 {
     if (m_matchedDecls.size() <= m_matchedDeclCount)
         m_matchedDecls.resize(2*m_matchedDecls.size()+1);
@@ -359,7 +359,7 @@ void CSSStyleSelector::matchRules(CSSRuleSet* rules, int& firstRuleIndex, int& l
     } else {
         for (unsigned i = 0; i < m_matchedRuleCount; i++) {
             if (!m_ruleList)
-                m_ruleList = new CSSRuleListImpl();
+                m_ruleList = new CSSRuleList();
             m_ruleList->append(m_matchedRules[i]->rule());
         }
     }
@@ -370,12 +370,12 @@ void CSSStyleSelector::matchRulesForList(CSSRuleDataList* rules,
 {
     if (!rules) return;
     for (CSSRuleData* d = rules->first(); d; d = d->next()) {
-        CSSStyleRuleImpl* rule = d->rule();
+        CSSStyleRule* rule = d->rule();
         const AtomicString& localName = element->localName();
         const AtomicString& selectorLocalName = d->selector()->tag.localName();
         if ((localName == selectorLocalName || selectorLocalName == starAtom) && checkSelector(d->selector(), element)) {
             // If the rule has no properties to apply, then ignore it.
-            CSSMutableStyleDeclarationImpl* decl = rule->declaration();
+            CSSMutableStyleDeclaration* decl = rule->declaration();
             if (!decl || !decl->length()) continue;
             
             // If we're matching normal rules, set a pseudo bit if 
@@ -407,16 +407,16 @@ bool operator <=(CSSRuleData& r1, CSSRuleData& r2)
     return !(r1 > r2);
 }
 
-void CSSStyleSelector::sortMatchedRules(uint start, uint end)
+void CSSStyleSelector::sortMatchedRules(unsigned start, unsigned end)
 {
     if (start >= end || (end-start == 1))
         return; // Sanity check.
     
     if (end - start <= 6) {
         // Apply a bubble sort for smaller lists.
-        for (uint i = end-1; i > start; i--) {
+        for (unsigned i = end-1; i > start; i--) {
             bool sorted = true;
-            for (uint j = start; j < i; j++) {
+            for (unsigned j = start; j < i; j++) {
                 CSSRuleData* elt = m_matchedRules[j];
                 CSSRuleData* elt2 = m_matchedRules[j+1];
                 if (*elt > *elt2) {
@@ -431,7 +431,7 @@ void CSSStyleSelector::sortMatchedRules(uint start, uint end)
     }
     else {
         // Peform a merge sort for larger lists.
-        uint mid = (start+end)/2;
+        unsigned mid = (start+end)/2;
         sortMatchedRules(start, mid);
         sortMatchedRules(mid, end);
         
@@ -446,8 +446,8 @@ void CSSStyleSelector::sortMatchedRules(uint start, uint end)
         // We have to merge sort.  Ensure our merge buffer is big enough to hold
         // all the items.
         m_tmpRules.resize(end - start);
-        uint i1 = start;
-        uint i2 = mid;
+        unsigned i1 = start;
+        unsigned i2 = mid;
         
         elt = m_matchedRules[i1];
         elt2 = m_matchedRules[i2];
@@ -467,25 +467,25 @@ void CSSStyleSelector::sortMatchedRules(uint start, uint end)
             }
         }
         
-        for (uint i = start; i < end; i++)
+        for (unsigned i = start; i < end; i++)
             m_matchedRules[i] = m_tmpRules[i-start];
         
         m_tmpRuleCount = 0;
     }    
 }
 
-void CSSStyleSelector::initElementAndPseudoState(ElementImpl* e)
+void CSSStyleSelector::initElementAndPseudoState(Element* e)
 {
     element = e;
     if (element && element->isStyledElement())
-        styledElement = static_cast<StyledElementImpl*>(element);
+        styledElement = static_cast<StyledElement*>(element);
     else
         styledElement = 0;
     currentEncodedURL = &encodedurl;
     pseudoState = PseudoUnknown;
 }
 
-void CSSStyleSelector::initForStyleResolve(ElementImpl* e, RenderStyle* defaultParent)
+void CSSStyleSelector::initForStyleResolve(Element* e, RenderStyle* defaultParent)
 {
     // set some variables we will need
     pseudoStyle = RenderStyle::NOPSEUDO;
@@ -511,7 +511,7 @@ void CSSStyleSelector::initForStyleResolve(ElementImpl* e, RenderStyle* defaultP
 }
 
 // modified version of the one in kurl.cpp
-static void cleanpath(QString &path)
+static void cleanpath(DeprecatedString &path)
 {
     int pos;
     while ( (pos = path.find( "/../" )) != -1 ) {
@@ -547,7 +547,7 @@ static void cleanpath(QString &path)
         path.remove( pos, 2 );
 }
 
-static void checkPseudoState( ElementImpl *e, bool checkVisited = true )
+static void checkPseudoState( Element *e, bool checkVisited = true )
 {
     if (!e->isLink()) {
         pseudoState = PseudoNone;
@@ -566,7 +566,7 @@ static void checkPseudoState( ElementImpl *e, bool checkVisited = true )
     }
     
     QConstString cu(attr.unicode(), attr.length());
-    QString u = cu.string();
+    DeprecatedString u = cu.string();
     if ( !u.contains("://") ) {
         if ( u[0] == '/' )
             u.prepend(currentEncodedURL->host);
@@ -586,12 +586,12 @@ static int total = 0;
 
 const int siblingThreshold = 10;
 
-NodeImpl* CSSStyleSelector::locateCousinList(ElementImpl* parent)
+Node* CSSStyleSelector::locateCousinList(Element* parent)
 {
     if (parent && parent->isStyledElement()) {
-        StyledElementImpl* p = static_cast<StyledElementImpl *>(parent);
+        StyledElement* p = static_cast<StyledElement *>(parent);
         if (p->renderer() && !p->inlineStyleDecl() && !p->hasID()) {
-            NodeImpl* r = p->previousSibling();
+            Node* r = p->previousSibling();
             int subcount = 0;
             RenderStyle* st = p->renderer()->style();
             while (r) {
@@ -602,7 +602,7 @@ NodeImpl* CSSStyleSelector::locateCousinList(ElementImpl* parent)
                 r = r->previousSibling();
             }
             if (!r)
-                r = locateCousinList(static_cast<ElementImpl*>(parent->parentNode()));
+                r = locateCousinList(static_cast<Element*>(parent->parentNode()));
             while (r) {
                 if (r->renderer() && r->renderer()->style() == st)
                     return r->lastChild();
@@ -615,10 +615,10 @@ NodeImpl* CSSStyleSelector::locateCousinList(ElementImpl* parent)
     return 0;
 }
 
-bool CSSStyleSelector::canShareStyleWithElement(NodeImpl* n)
+bool CSSStyleSelector::canShareStyleWithElement(Node* n)
 {
     if (n->isStyledElement()) {
-        StyledElementImpl* s = static_cast<StyledElementImpl*>(n);
+        StyledElement* s = static_cast<StyledElement*>(n);
         if (s->renderer() && (s->tagName() == element->tagName()) && !s->hasID() &&
             (s->hasClass() == element->hasClass()) && !s->inlineStyleDecl() &&
             (s->hasMappedAttributes() == styledElement->hasMappedAttributes()) &&
@@ -670,7 +670,7 @@ RenderStyle* CSSStyleSelector::locateSharedStyle()
         !styledElement->getDocument()->usesSiblingRules()) {
         // Check previous siblings.
         int count = 0;
-        NodeImpl* n;
+        Node* n;
         for (n = element->previousSibling(); n && !n->isElementNode(); n = n->previousSibling());
         while (n) {
             if (canShareStyleWithElement(n))
@@ -680,7 +680,7 @@ RenderStyle* CSSStyleSelector::locateSharedStyle()
             for (n = n->previousSibling(); n && !n->isElementNode(); n = n->previousSibling());
         }
         if (!n) 
-            n = locateCousinList(static_cast<ElementImpl*>(element->parentNode()));
+            n = locateCousinList(static_cast<Element*>(element->parentNode()));
         while (n) {
             if (canShareStyleWithElement(n))
                 return n->renderer()->style();
@@ -693,7 +693,7 @@ RenderStyle* CSSStyleSelector::locateSharedStyle()
 }
 
 
-RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defaultParent, bool allowSharing)
+RenderStyle* CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultParent, bool allowSharing)
 {
     if (!e->getDocument()->haveStylesheetsLoaded()) {
         if (!styleNotYetAvailable) {
@@ -746,9 +746,9 @@ RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defa
         // Ask if the HTML element has mapped attributes.
         if (styledElement->hasMappedAttributes()) {
             // Walk our attribute list and add in each decl.
-            const NamedMappedAttrMapImpl* map = styledElement->mappedAttributes();
-            for (uint i = 0; i < map->length(); i++) {
-                MappedAttributeImpl* attr = map->attributeItem(i);
+            const NamedMappedAttrMap* map = styledElement->mappedAttributes();
+            for (unsigned i = 0; i < map->length(); i++) {
+                MappedAttribute* attr = map->attributeItem(i);
                 if (attr->decl()) {
                     if (firstAuthorRule == -1) firstAuthorRule = m_matchedDeclCount;
                     lastAuthorRule = m_matchedDeclCount;
@@ -760,7 +760,7 @@ RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defa
         // Now we check additional mapped declarations.
         // Tables and table cells share an additional mapped rule that must be applied
         // after all attributes, since their mapped style depends on the values of multiple attributes.
-        CSSMutableStyleDeclarationImpl* attributeDecl = styledElement->additionalAttributeStyleDecl();
+        CSSMutableStyleDeclaration* attributeDecl = styledElement->additionalAttributeStyleDecl();
         if (attributeDecl) {
             if (firstAuthorRule == -1) firstAuthorRule = m_matchedDeclCount;
             lastAuthorRule = m_matchedDeclCount;
@@ -773,7 +773,7 @@ RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defa
     
     // 7. Now check our inline style attribute.
     if (styledElement) {
-        CSSMutableStyleDeclarationImpl* inlineDecl = styledElement->inlineStyleDecl();
+        CSSMutableStyleDeclaration* inlineDecl = styledElement->inlineStyleDecl();
         if (inlineDecl) {
             if (firstAuthorRule == -1) firstAuthorRule = m_matchedDeclCount;
             lastAuthorRule = m_matchedDeclCount;
@@ -836,7 +836,7 @@ RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defa
 }
 
 RenderStyle* CSSStyleSelector::pseudoStyleForElement(RenderStyle::PseudoId pseudo, 
-                                                     ElementImpl* e, RenderStyle* parentStyle)
+                                                     Element* e, RenderStyle* parentStyle)
 {
     if (!e)
         return 0;
@@ -910,7 +910,7 @@ RenderStyle* CSSStyleSelector::pseudoStyleForElement(RenderStyle::PseudoId pseud
     return style;
 }
 
-void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, ElementImpl *e)
+void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, Element *e)
 {
     // Cache our original display.
     style->setOriginalDisplay(style->display());
@@ -1026,7 +1026,7 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, ElementImpl *e)
         view->useSlowRepaints();
 }
 
-RefPtr<CSSRuleListImpl> CSSStyleSelector::styleRulesForElement(ElementImpl* e, bool authorOnly)
+RefPtr<CSSRuleList> CSSStyleSelector::styleRulesForElement(Element* e, bool authorOnly)
 {
     if (!e->getDocument()->haveStylesheetsLoaded())
         return 0;
@@ -1063,7 +1063,7 @@ RefPtr<CSSRuleListImpl> CSSStyleSelector::styleRulesForElement(ElementImpl* e, b
     return m_ruleList;
 }
 
-RefPtr<CSSRuleListImpl> CSSStyleSelector::pseudoStyleRulesForElement(ElementImpl* e, DOMStringImpl* pseudoStyle, bool authorOnly)
+RefPtr<CSSRuleList> CSSStyleSelector::pseudoStyleRulesForElement(Element* e, StringImpl* pseudoStyle, bool authorOnly)
 {
     // FIXME: Implement this.
     return 0;
@@ -1071,11 +1071,11 @@ RefPtr<CSSRuleListImpl> CSSStyleSelector::pseudoStyleRulesForElement(ElementImpl
 
 static bool subject;
 
-bool CSSStyleSelector::checkSelector(CSSSelector* sel, ElementImpl *e)
+bool CSSStyleSelector::checkSelector(CSSSelector* sel, Element *e)
 {
     dynamicPseudo = RenderStyle::NOPSEUDO;
     
-    NodeImpl *n = e;
+    Node *n = e;
 
     // we have the subject part of the selector
     subject = true;
@@ -1114,7 +1114,7 @@ bool CSSStyleSelector::checkSelector(CSSSelector* sel, ElementImpl *e)
                 n = n->parentNode();
                 if (!n || !n->isElementNode())
                     return false;
-            } while (!checkOneSelector(sel, static_cast<ElementImpl *>(n)));
+            } while (!checkOneSelector(sel, static_cast<Element *>(n)));
             break;
         case CSSSelector::Child:
         {
@@ -1124,7 +1124,7 @@ bool CSSStyleSelector::checkSelector(CSSSelector* sel, ElementImpl *e)
                     n = n->parentNode();
             if (!n || !n->isElementNode())
                 return false;
-            if (!checkOneSelector(sel, static_cast<ElementImpl *>(n)))
+            if (!checkOneSelector(sel, static_cast<Element *>(n)))
                 return false;
             break;
         }
@@ -1135,7 +1135,7 @@ bool CSSStyleSelector::checkSelector(CSSSelector* sel, ElementImpl *e)
                 n = n->previousSibling();
             if (!n)
                 return false;
-            if (!checkOneSelector(sel, static_cast<ElementImpl*>(n)))
+            if (!checkOneSelector(sel, static_cast<Element*>(n)))
                 return false;
             break;
         }
@@ -1147,7 +1147,7 @@ bool CSSStyleSelector::checkSelector(CSSSelector* sel, ElementImpl *e)
                     n = n->previousSibling();
                 if (!n)
                     return false;
-            } while (!checkOneSelector(sel, static_cast<ElementImpl*>(n)));
+            } while (!checkOneSelector(sel, static_cast<Element*>(n)));
             break;
        case CSSSelector::SubSelector:
        {
@@ -1156,7 +1156,7 @@ bool CSSStyleSelector::checkSelector(CSSSelector* sel, ElementImpl *e)
                                    (sel->pseudoType() == CSSSelector::PseudoHover ||
                                     sel->pseudoType() == CSSSelector::PseudoActive));
             
-            ElementImpl *elem = static_cast<ElementImpl *>(n);
+            Element *elem = static_cast<Element *>(n);
             // a selector is invalid if something follows :first-xxx
             if (elem == element && dynamicPseudo != RenderStyle::NOPSEUDO)
                 return false;
@@ -1188,7 +1188,7 @@ bool CSSStyleSelector::checkSelector(CSSSelector* sel, ElementImpl *e)
     return true;
 }
 
-bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, ElementImpl* e, bool isSubSelector)
+bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, Element* e, bool isSubSelector)
 {
     if(!e)
         return false;
@@ -1239,7 +1239,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, ElementImpl* e, bool i
                 if (foundPos == -1)
                     return false;
                 if (foundPos == 0 || value[foundPos-1] == ' ') {
-                    uint endStr = foundPos + sel->value.length();
+                    unsigned endStr = foundPos + sel->value.length();
                     if (endStr == value.length() || value[endStr] == ' ')
                         break; // We found a match.
                 }
@@ -1289,7 +1289,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, ElementImpl* e, bool i
             case CSSSelector::PseudoFirstChild: {
                 // first-child matches the first child that is an element!
                 if (e->parentNode() && e->parentNode()->isElementNode()) {
-                    NodeImpl *n = e->previousSibling();
+                    Node *n = e->previousSibling();
                     while (n && !n->isElementNode())
                         n = n->previousSibling();
                     if (!n)
@@ -1301,9 +1301,9 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, ElementImpl* e, bool i
                 // first-of-type matches the first element of its type!
                 if (e->parentNode() && e->parentNode()->isElementNode()) {
                     const QualifiedName& type = e->tagName();
-                    NodeImpl *n = e->previousSibling();
+                    Node *n = e->previousSibling();
                     while (n) {
-                        if (n->isElementNode() && static_cast<ElementImpl*>(n)->hasTagName(type))
+                        if (n->isElementNode() && static_cast<Element*>(n)->hasTagName(type))
                             break;
                         n = n->previousSibling();
                     }
@@ -1315,7 +1315,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, ElementImpl* e, bool i
             case CSSSelector::PseudoLastChild: {
                 // last-child matches the last child that is an element!
                 if (e->parentNode() && e->parentNode()->isElementNode()) {
-                    NodeImpl *n = e->nextSibling();
+                    Node *n = e->nextSibling();
                     while (n && !n->isElementNode())
                         n = n->nextSibling();
                     if (!n)
@@ -1327,9 +1327,9 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, ElementImpl* e, bool i
                 // last-of-type matches the last element of its type!
                 if (e->parentNode() && e->parentNode()->isElementNode()) {
                     const QualifiedName& type = e->tagName();
-                    NodeImpl *n = e->nextSibling();
+                    Node *n = e->nextSibling();
                     while (n) {
-                        if (n->isElementNode() && static_cast<ElementImpl*>(n)->hasTagName(type))
+                        if (n->isElementNode() && static_cast<Element*>(n)->hasTagName(type))
                             break;
                         n = n->nextSibling();
                     }
@@ -1341,7 +1341,7 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, ElementImpl* e, bool i
             case CSSSelector::PseudoOnlyChild: {
                 // If both first-child and last-child apply, then only-child applies.
                 if (e->parentNode() && e->parentNode()->isElementNode()) {
-                    NodeImpl *n = e->previousSibling();
+                    Node *n = e->previousSibling();
                     while (n && !n->isElementNode())
                         n = n->previousSibling();
                     if (!n) {
@@ -1358,12 +1358,12 @@ bool CSSStyleSelector::checkOneSelector(CSSSelector* sel, ElementImpl* e, bool i
                 // If both first-of-type and last-of-type apply, then only-of-type applies.
                 if (e->parentNode() && e->parentNode()->isElementNode()) {
                     const QualifiedName& type = e->tagName();
-                    NodeImpl *n = e->previousSibling();
-                    while (n && !static_cast<ElementImpl*>(n)->hasTagName(type))
+                    Node *n = e->previousSibling();
+                    while (n && !static_cast<Element*>(n)->hasTagName(type))
                         n = n->previousSibling();
                     if (!n) {
                         n = e->nextSibling();
-                        while (n && !static_cast<ElementImpl*>(n)->hasTagName(type))
+                        while (n && !static_cast<Element*>(n)->hasTagName(type))
                             n = n->nextSibling();
                         if (!n)
                             return true;
@@ -1535,7 +1535,7 @@ CSSRuleSet::~CSSRuleSet()
 
 
 void CSSRuleSet::addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map,
-                              CSSStyleRuleImpl* rule, CSSSelector* sel)
+                              CSSStyleRule* rule, CSSSelector* sel)
 {
     if (!key) return;
     CSSRuleDataList* rules = map.get(key);
@@ -1546,7 +1546,7 @@ void CSSRuleSet::addToRuleSet(AtomicStringImpl* key, AtomRuleMap& map,
         rules->append(m_ruleCount++, rule, sel);
 }
 
-void CSSRuleSet::addRule(CSSStyleRuleImpl* rule, CSSSelector* sel)
+void CSSRuleSet::addRule(CSSStyleRule* rule, CSSSelector* sel)
 {
     if (sel->match == CSSSelector::Id) {
         addToRuleSet(sel->value.impl(), m_idRules, rule, sel);
@@ -1570,7 +1570,7 @@ void CSSRuleSet::addRule(CSSStyleRuleImpl* rule, CSSSelector* sel)
         m_universalRules->append(m_ruleCount++, rule, sel);
 }
 
-void CSSRuleSet::addRulesFromSheet(CSSStyleSheetImpl *sheet, const DOMString &medium)
+void CSSRuleSet::addRulesFromSheet(CSSStyleSheet *sheet, const String &medium)
 {
     if (!sheet || !sheet->isCSSStyleSheet())
         return;
@@ -1583,28 +1583,28 @@ void CSSRuleSet::addRulesFromSheet(CSSStyleSheetImpl *sheet, const DOMString &me
     int len = sheet->length();
 
     for (int i = 0; i < len; i++) {
-        StyleBaseImpl *item = sheet->item(i);
+        StyleBase *item = sheet->item(i);
         if (item->isStyleRule()) {
-            CSSStyleRuleImpl* rule = static_cast<CSSStyleRuleImpl*>(item);
+            CSSStyleRule* rule = static_cast<CSSStyleRule*>(item);
             for (CSSSelector* s = rule->selector(); s; s = s->next())
                 addRule(rule, s);
         }
         else if(item->isImportRule()) {
-            CSSImportRuleImpl *import = static_cast<CSSImportRuleImpl *>(item);
+            CSSImportRule *import = static_cast<CSSImportRule *>(item);
             if (!import->media() || import->media()->contains(medium))
                 addRulesFromSheet(import->styleSheet(), medium);
         }
         else if(item->isMediaRule()) {
-            CSSMediaRuleImpl *r = static_cast<CSSMediaRuleImpl*>(item);
-            CSSRuleListImpl *rules = r->cssRules();
+            CSSMediaRule *r = static_cast<CSSMediaRule*>(item);
+            CSSRuleList *rules = r->cssRules();
 
             if ((!r->media() || r->media()->contains(medium)) && rules) {
                 // Traverse child elements of the @media rule.
                 for (unsigned j = 0; j < rules->length(); j++) {
-                    CSSRuleImpl *childItem = rules->item(j);
+                    CSSRule *childItem = rules->item(j);
                     if (childItem->isStyleRule()) {
                         // It is a StyleRule, so append it to our list
-                        CSSStyleRuleImpl* rule = static_cast<CSSStyleRuleImpl*>(childItem);
+                        CSSStyleRule* rule = static_cast<CSSStyleRule*>(childItem);
                         for (CSSSelector* s = rule->selector(); s; s = s->next())
                             addRule(rule, s);
                         
@@ -1618,7 +1618,7 @@ void CSSRuleSet::addRulesFromSheet(CSSStyleSheetImpl *sheet, const DOMString &me
 // -------------------------------------------------------------------------------------
 // this is mostly boring stuff on how to apply a certain rule to the renderstyle...
 
-static Length convertToLength( CSSPrimitiveValueImpl *primitiveValue, RenderStyle *style, bool *ok = 0 )
+static Length convertToLength( CSSPrimitiveValue *primitiveValue, RenderStyle *style, bool *ok = 0 )
 {
     Length l;
     if ( !primitiveValue ) {
@@ -1714,9 +1714,9 @@ void CSSStyleSelector::applyDeclarations(bool applyFirst, bool isImportant,
 {
     if (startIndex == -1) return;
     for (int i = startIndex; i <= endIndex; i++) {
-        CSSMutableStyleDeclarationImpl* decl = m_matchedDecls[i];
-        QValueListConstIterator<CSSProperty> end;
-        for (QValueListConstIterator<CSSProperty> it = decl->valuesIterator(); it != end; ++it) {
+        CSSMutableStyleDeclaration* decl = m_matchedDecls[i];
+        DeprecatedValueListConstIterator<CSSProperty> end;
+        for (DeprecatedValueListConstIterator<CSSProperty> it = decl->valuesIterator(); it != end; ++it) {
             const CSSProperty& current = *it;
             // give special priority to font-xxx, color properties
             if (isImportant == current.isImportant()) {
@@ -1748,18 +1748,18 @@ void CSSStyleSelector::applyDeclarations(bool applyFirst, bool isImportant,
     }
 }
 
-void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
+void CSSStyleSelector::applyProperty( int id, CSSValue *value )
 {
-    CSSPrimitiveValueImpl *primitiveValue = 0;
-    if(value->isPrimitiveValue()) primitiveValue = static_cast<CSSPrimitiveValueImpl *>(value);
+    CSSPrimitiveValue *primitiveValue = 0;
+    if(value->isPrimitiveValue()) primitiveValue = static_cast<CSSPrimitiveValue *>(value);
 
     Length l;
     bool apply = false;
 
     unsigned short valueType = value->cssValueType();
 
-    bool isInherit = parentNode && valueType == CSSValueImpl::CSS_INHERIT;
-    bool isInitial = valueType == CSSValueImpl::CSS_INITIAL || (!parentNode && valueType == CSSValueImpl::CSS_INHERIT);
+    bool isInherit = parentNode && valueType == CSSValue::CSS_INHERIT;
+    bool isInitial = valueType == CSSValue::CSS_INITIAL || (!parentNode && valueType == CSSValue::CSS_INHERIT);
 
     // These properties are used to set the correct margins/padding on RTL lists.
     if (id == CSS_PROP__KHTML_MARGIN_START)
@@ -2310,7 +2310,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
                 style->setCursor((ECursor)(primitiveValue->getIdent() - CSS_VAL_AUTO));
                 style->setCursorImage(0);
             } else if (type == CSSPrimitiveValue::CSS_URI) {
-                CSSImageValueImpl *image = static_cast<CSSImageValueImpl *>(primitiveValue);
+                CSSImageValue *image = static_cast<CSSImageValue *>(primitiveValue);
                 style->setCursor(CURSOR_AUTO);
                 style->setCursorImage(image->image(element->getDocument()->docLoader()));
             }
@@ -2381,7 +2381,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
     {
         HANDLE_INHERIT_AND_INITIAL(listStyleImage, ListStyleImage)
         if (!primitiveValue) return;
-        style->setListStyleImage(static_cast<CSSImageValueImpl *>(primitiveValue)
+        style->setListStyleImage(static_cast<CSSImageValue *>(primitiveValue)
                                  ->image(element->getDocument()->docLoader()));
         break;
     }
@@ -3009,13 +3009,13 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
         }
         
         if (!value->isValueList()) return;
-        CSSValueListImpl *list = static_cast<CSSValueListImpl *>(value);
+        CSSValueList *list = static_cast<CSSValueList *>(value);
         int len = list->length();
 
         for (int i = 0; i < len; i++) {
-            CSSValueImpl *item = list->item(i);
+            CSSValue *item = list->item(i);
             if (!item->isPrimitiveValue()) continue;
-            CSSPrimitiveValueImpl *val = static_cast<CSSPrimitiveValueImpl *>(item);
+            CSSPrimitiveValue *val = static_cast<CSSPrimitiveValue *>(item);
             if (val->primitiveType()==CSSPrimitiveValue::CSS_STRING)
                 style->setContent(val->getStringValue().impl(), i != 0);
             else if (val->primitiveType()==CSSPrimitiveValue::CSS_ATTR) {
@@ -3024,7 +3024,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
                 style->setContent(element->getAttribute(attr).impl(), i != 0);
             }
             else if (val->primitiveType()==CSSPrimitiveValue::CSS_URI) {
-                CSSImageValueImpl *image = static_cast<CSSImageValueImpl *>(val);
+                CSSImageValue *image = static_cast<CSSImageValue *>(val);
                 style->setContent(image->image(element->getDocument()->docLoader()), i != 0);
             }
         }
@@ -3059,18 +3059,18 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
         
         if (!value->isValueList()) return;
         FontDescription fontDescription = style->fontDescription();
-        CSSValueListImpl *list = static_cast<CSSValueListImpl *>(value);
+        CSSValueList *list = static_cast<CSSValueList *>(value);
         int len = list->length();
         FontFamily& firstFamily = fontDescription.firstFamily();
         FontFamily *currFamily = 0;
         
         for(int i = 0; i < len; i++) {
-            CSSValueImpl *item = list->item(i);
+            CSSValue *item = list->item(i);
             if(!item->isPrimitiveValue()) continue;
-            CSSPrimitiveValueImpl *val = static_cast<CSSPrimitiveValueImpl *>(item);
-            QString face;
+            CSSPrimitiveValue *val = static_cast<CSSPrimitiveValue *>(item);
+            DeprecatedString face;
             if( val->primitiveType() == CSSPrimitiveValue::CSS_STRING )
-                face = static_cast<FontFamilyValueImpl *>(val)->fontName();
+                face = static_cast<FontFamilyValue *>(val)->fontName();
             else if (val->primitiveType() == CSSPrimitiveValue::CSS_IDENT) {
                 switch (val->getIdent()) {
                     case CSS_VAL__KHTML_BODY:
@@ -3131,13 +3131,13 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
             // do nothing
         } else {
             if(!value->isValueList()) return;
-            CSSValueListImpl *list = static_cast<CSSValueListImpl *>(value);
+            CSSValueList *list = static_cast<CSSValueList *>(value);
             int len = list->length();
             for(int i = 0; i < len; i++)
             {
-                CSSValueImpl *item = list->item(i);
+                CSSValue *item = list->item(i);
                 if(!item->isPrimitiveValue()) continue;
-                primitiveValue = static_cast<CSSPrimitiveValueImpl *>(item);
+                primitiveValue = static_cast<CSSPrimitiveValue *>(item);
                 switch(primitiveValue->getIdent())
                 {
                     case CSS_VAL_NONE:
@@ -3292,7 +3292,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
             if (style->setFontDescription(fontDescription))
                 fontDirty = true;
         } else if ( value->isFontValue() ) {
-            FontValueImpl *font = static_cast<FontValueImpl *>(value);
+            FontValue *font = static_cast<FontValue *>(value);
             if ( !font->style || !font->variant || !font->weight ||
                  !font->size || !font->lineHeight || !font->family )
                 return;
@@ -3361,11 +3361,11 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
         }
 
         if (!value->isValueList()) return;
-        CSSValueListImpl* list = static_cast<CSSValueListImpl*>(value);
+        CSSValueList* list = static_cast<CSSValueList*>(value);
         bool firstBinding = true;
         for (unsigned int i = 0; i < list->length(); i++) {
-            CSSValueImpl *item = list->item(i);
-            CSSPrimitiveValueImpl *val = static_cast<CSSPrimitiveValueImpl *>(item);
+            CSSValue *item = list->item(i);
+            CSSPrimitiveValue *val = static_cast<CSSPrimitiveValue *>(item);
             if (val->primitiveType() == CSSPrimitiveValue::CSS_URI) {
                 if (firstBinding) {
                     firstBinding = false;
@@ -3386,7 +3386,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
                 style->setBorderImage(image);
         } else {
             // Retrieve the border image value.
-            CSSBorderImageValueImpl* borderImage = static_cast<CSSBorderImageValueImpl*>(value);
+            CSSBorderImageValue* borderImage = static_cast<CSSBorderImageValue*>(value);
             
             // Set the image (this kicks off the load).
             image.m_image = borderImage->m_image->image(element->getDocument()->docLoader());
@@ -3477,7 +3477,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
         if (!primitiveValue)
             return;
 
-        PairImpl* pair = primitiveValue->getPairValue();
+        Pair* pair = primitiveValue->getPairValue();
         if (!pair)
             return;
 
@@ -3537,10 +3537,10 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
         }
         
         if (!value->isValueList()) return;
-        CSSValueListImpl *list = static_cast<CSSValueListImpl *>(value);
+        CSSValueList *list = static_cast<CSSValueList *>(value);
         int len = list->length();
         for (int i = 0; i < len; i++) {
-            ShadowValueImpl *item = static_cast<ShadowValueImpl*>(list->item(i));
+            ShadowValue *item = static_cast<ShadowValue*>(list->item(i));
 
             int x = item->x->computeLength(style);
             int y = item->y->computeLength(style);
@@ -3662,7 +3662,7 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
             style->setBoxSizing(BORDER_BOX);
         break;
     case CSS_PROP__KHTML_MARQUEE:
-        if (valueType != CSSValueImpl::CSS_INHERIT || !parentNode) return;
+        if (valueType != CSSValue::CSS_INHERIT || !parentNode) return;
         style->setMarqueeDirection(parentStyle->marqueeDirection());
         style->setMarqueeIncrement(parentStyle->marqueeIncrement());
         style->setMarqueeSpeed(parentStyle->marqueeSpeed());
@@ -3909,11 +3909,11 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
             return;
         }
 
-        DashboardRegionImpl *region = primitiveValue->getDashboardRegionValue();
+        DashboardRegion *region = primitiveValue->getDashboardRegionValue();
         if (!region)
             return;
             
-        DashboardRegionImpl *first = region;
+        DashboardRegion *first = region;
         while (region) {
             Length top = convertToLength (region->top(), style);
             Length right = convertToLength (region->right(), style);
@@ -3949,15 +3949,15 @@ void CSSStyleSelector::applyProperty( int id, CSSValueImpl *value )
     }
 }
 
-void CSSStyleSelector::mapBackgroundAttachment(BackgroundLayer* layer, CSSValueImpl* value)
+void CSSStyleSelector::mapBackgroundAttachment(BackgroundLayer* layer, CSSValue* value)
 {
-    if (value->cssValueType() == CSSValueImpl::CSS_INITIAL) {
+    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
         layer->setBackgroundAttachment(RenderStyle::initialBackgroundAttachment());
         return;
     }
 
     if (!value->isPrimitiveValue()) return;
-    CSSPrimitiveValueImpl* primitiveValue = static_cast<CSSPrimitiveValueImpl*>(value);
+    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     switch (primitiveValue->getIdent()) {
         case CSS_VAL_FIXED:
             layer->setBackgroundAttachment(false);
@@ -3970,15 +3970,15 @@ void CSSStyleSelector::mapBackgroundAttachment(BackgroundLayer* layer, CSSValueI
     }
 }
 
-void CSSStyleSelector::mapBackgroundClip(BackgroundLayer* layer, CSSValueImpl* value)
+void CSSStyleSelector::mapBackgroundClip(BackgroundLayer* layer, CSSValue* value)
 {
-    if (value->cssValueType() == CSSValueImpl::CSS_INITIAL) {
+    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
         layer->setBackgroundClip(RenderStyle::initialBackgroundClip());
         return;
     }
 
     if (!value->isPrimitiveValue()) return;
-    CSSPrimitiveValueImpl* primitiveValue = static_cast<CSSPrimitiveValueImpl*>(value);
+    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     switch (primitiveValue->getIdent()) {
         case CSS_VAL_BORDER:
             layer->setBackgroundClip(BGBORDER);
@@ -3992,15 +3992,15 @@ void CSSStyleSelector::mapBackgroundClip(BackgroundLayer* layer, CSSValueImpl* v
     }
 }
 
-void CSSStyleSelector::mapBackgroundOrigin(BackgroundLayer* layer, CSSValueImpl* value)
+void CSSStyleSelector::mapBackgroundOrigin(BackgroundLayer* layer, CSSValue* value)
 {
-    if (value->cssValueType() == CSSValueImpl::CSS_INITIAL) {
+    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
         layer->setBackgroundOrigin(RenderStyle::initialBackgroundOrigin());
         return;
     }
 
     if (!value->isPrimitiveValue()) return;
-    CSSPrimitiveValueImpl* primitiveValue = static_cast<CSSPrimitiveValueImpl*>(value);
+    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     switch (primitiveValue->getIdent()) {
         case CSS_VAL_BORDER:
             layer->setBackgroundOrigin(BGBORDER);
@@ -4014,27 +4014,27 @@ void CSSStyleSelector::mapBackgroundOrigin(BackgroundLayer* layer, CSSValueImpl*
     }
 }
 
-void CSSStyleSelector::mapBackgroundImage(BackgroundLayer* layer, CSSValueImpl* value)
+void CSSStyleSelector::mapBackgroundImage(BackgroundLayer* layer, CSSValue* value)
 {
-    if (value->cssValueType() == CSSValueImpl::CSS_INITIAL) {
+    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
         layer->setBackgroundImage(RenderStyle::initialBackgroundImage());
         return;
     }
     
     if (!value->isPrimitiveValue()) return;
-    CSSPrimitiveValueImpl* primitiveValue = static_cast<CSSPrimitiveValueImpl*>(value);
-    layer->setBackgroundImage(static_cast<CSSImageValueImpl *>(primitiveValue)->image(element->getDocument()->docLoader()));
+    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+    layer->setBackgroundImage(static_cast<CSSImageValue *>(primitiveValue)->image(element->getDocument()->docLoader()));
 }
 
-void CSSStyleSelector::mapBackgroundRepeat(BackgroundLayer* layer, CSSValueImpl* value)
+void CSSStyleSelector::mapBackgroundRepeat(BackgroundLayer* layer, CSSValue* value)
 {
-    if (value->cssValueType() == CSSValueImpl::CSS_INITIAL) {
+    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
         layer->setBackgroundRepeat(RenderStyle::initialBackgroundRepeat());
         return;
     }
     
     if (!value->isPrimitiveValue()) return;
-    CSSPrimitiveValueImpl* primitiveValue = static_cast<CSSPrimitiveValueImpl*>(value);
+    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     switch(primitiveValue->getIdent()) {
         case CSS_VAL_REPEAT:
             layer->setBackgroundRepeat(REPEAT);
@@ -4053,15 +4053,15 @@ void CSSStyleSelector::mapBackgroundRepeat(BackgroundLayer* layer, CSSValueImpl*
     }
 }
 
-void CSSStyleSelector::mapBackgroundXPosition(BackgroundLayer* layer, CSSValueImpl* value)
+void CSSStyleSelector::mapBackgroundXPosition(BackgroundLayer* layer, CSSValue* value)
 {
-    if (value->cssValueType() == CSSValueImpl::CSS_INITIAL) {
+    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
         layer->setBackgroundXPosition(RenderStyle::initialBackgroundXPosition());
         return;
     }
     
     if (!value->isPrimitiveValue()) return;
-    CSSPrimitiveValueImpl* primitiveValue = static_cast<CSSPrimitiveValueImpl*>(value);
+    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     Length l;
     int type = primitiveValue->primitiveType();
     if(type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG)
@@ -4073,15 +4073,15 @@ void CSSStyleSelector::mapBackgroundXPosition(BackgroundLayer* layer, CSSValueIm
     layer->setBackgroundXPosition(l);
 }
 
-void CSSStyleSelector::mapBackgroundYPosition(BackgroundLayer* layer, CSSValueImpl* value)
+void CSSStyleSelector::mapBackgroundYPosition(BackgroundLayer* layer, CSSValue* value)
 {
-    if (value->cssValueType() == CSSValueImpl::CSS_INITIAL) {
+    if (value->cssValueType() == CSSValue::CSS_INITIAL) {
         layer->setBackgroundYPosition(RenderStyle::initialBackgroundYPosition());
         return;
     }
     
     if (!value->isPrimitiveValue()) return;
-    CSSPrimitiveValueImpl* primitiveValue = static_cast<CSSPrimitiveValueImpl*>(value);
+    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     Length l;
     int type = primitiveValue->primitiveType();
     if(type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG)
@@ -4244,7 +4244,7 @@ float CSSStyleSelector::smallerFontSize(float size, bool quirksMode) const
     return size/1.2;
 }
 
-Color CSSStyleSelector::getColorFromPrimitiveValue(CSSPrimitiveValueImpl* primitiveValue)
+Color CSSStyleSelector::getColorFromPrimitiveValue(CSSPrimitiveValue* primitiveValue)
 {
     Color col;
     int ident = primitiveValue->getIdent();

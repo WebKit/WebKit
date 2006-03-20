@@ -113,13 +113,13 @@ namespace WebCore {
         RenderPart* m_ownerRenderer;
         RefPtr<FrameView> m_view;
         BrowserExtension* m_extension;
-        RefPtr<DocumentImpl> m_doc;
+        RefPtr<Document> m_doc;
         RefPtr<Decoder> m_decoder;
-        QString m_encoding;
-        QString scheduledScript;
-        RefPtr<NodeImpl> scheduledScriptNode;
+        DeprecatedString m_encoding;
+        DeprecatedString scheduledScript;
+        RefPtr<Node> scheduledScriptNode;
 
-        KJSProxyImpl* m_jscript;
+        KJSProxy* m_jscript;
         int m_runningScripts;
         bool m_bJScriptEnabled : 1;
         bool m_bJavaEnabled : 1;
@@ -132,7 +132,7 @@ namespace WebCore {
 
         String m_kjsStatusBarText;
         String m_kjsDefaultStatusBarText;
-        QString m_lastModified;
+        DeprecatedString m_lastModified;
 
         bool m_bComplete : 1;
         bool m_bLoadingMainResource : 1;
@@ -152,28 +152,28 @@ namespace WebCore {
 
         RedirectionScheduled m_scheduledRedirection;
         double m_delayRedirect;
-        QString m_redirectURL;
-        QString m_redirectReferrer;
+        DeprecatedString m_redirectURL;
+        DeprecatedString m_redirectReferrer;
         int m_scheduledHistoryNavigationSteps;
 
         int m_zoomFactor;
 
-        QString m_referrer;
+        DeprecatedString m_referrer;
 
         struct SubmitForm {
             const char* submitAction;
-            QString submitUrl;
+            DeprecatedString submitUrl;
             FormData submitFormData;
-            QString target;
-            QString submitContentType;
-            QString submitBoundary;
+            DeprecatedString target;
+            DeprecatedString submitContentType;
+            DeprecatedString submitBoundary;
         };
         SubmitForm* m_submitForm;
 
         bool m_bMousePressed;
-        RefPtr<NodeImpl> m_mousePressNode; // node under the mouse when the mouse was pressed (set in the mouse handler)
+        RefPtr<Node> m_mousePressNode; // node under the mouse when the mouse was pressed (set in the mouse handler)
 
-        ETextGranularity m_selectionGranularity;
+        TextGranularity m_selectionGranularity;
         bool m_beganSelectingText;
 
         SelectionController m_selection;
@@ -190,7 +190,7 @@ namespace WebCore {
 
         EditCommandPtr m_lastEditCommand;
         int m_xPosForVerticalArrowNavigation;
-        RefPtr<CSSMutableStyleDeclarationImpl> m_typingStyle;
+        RefPtr<CSSMutableStyleDeclaration> m_typingStyle;
 
         IntPoint m_dragStartPos;
 

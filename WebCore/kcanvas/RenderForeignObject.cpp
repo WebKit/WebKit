@@ -27,19 +27,19 @@
 #include "GraphicsContext.h"
 #include "KCanvasMatrix.h"
 #include "KRenderingDevice.h"
-#include "SVGAnimatedLengthImpl.h"
-#include "SVGForeignObjectElementImpl.h"
+#include "SVGAnimatedLength.h"
+#include "SVGForeignObjectElement.h"
 
 namespace WebCore {
 
-RenderForeignObject::RenderForeignObject(SVGForeignObjectElementImpl *node) 
+RenderForeignObject::RenderForeignObject(SVGForeignObjectElement *node) 
     : RenderBlock(node)
 {
 }
 
 QMatrix RenderForeignObject::translationForAttributes()
 {
-    SVGForeignObjectElementImpl *foreign = static_cast<SVGForeignObjectElementImpl *>(element());
+    SVGForeignObjectElement *foreign = static_cast<SVGForeignObjectElement *>(element());
     return QMatrix().translate(foreign->x()->baseVal()->value(), foreign->y()->baseVal()->value());
 }
 

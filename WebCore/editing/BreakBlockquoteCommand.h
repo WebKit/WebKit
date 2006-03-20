@@ -29,16 +29,16 @@
 #include "CompositeEditCommand.h"
 #include "qptrlist.h"
 
-namespace khtml {
+namespace WebCore {
 
 class BreakBlockquoteCommand : public CompositeEditCommand
 {
 public:
-    BreakBlockquoteCommand(DOM::DocumentImpl *);
+    BreakBlockquoteCommand(WebCore::Document *);
 
     virtual void doApply();
 };
 
-} // namespace khtml
+} // namespace WebCore
 
 #endif // __break_blockquote_command_h__

@@ -30,26 +30,26 @@
 
 #include "QualifiedName.h"
 
-namespace khtml {
+namespace WebCore {
 
 class RemoveNodeAttributeCommand : public EditCommand
 {
 public:
-    RemoveNodeAttributeCommand(DOM::DocumentImpl *, DOM::ElementImpl *, const DOM::QualifiedName& attribute);
+    RemoveNodeAttributeCommand(WebCore::Document *, WebCore::Element *, const WebCore::QualifiedName& attribute);
     virtual ~RemoveNodeAttributeCommand() { }
 
     virtual void doApply();
     virtual void doUnapply();
 
-    DOM::ElementImpl *element() const { return m_element.get(); }
-    const DOM::QualifiedName& attribute() const { return m_attribute; }
+    WebCore::Element *element() const { return m_element.get(); }
+    const WebCore::QualifiedName& attribute() const { return m_attribute; }
     
 private:
-    RefPtr<DOM::ElementImpl> m_element;
-    DOM::QualifiedName m_attribute;
-    DOM::DOMString m_oldValue;
+    RefPtr<WebCore::Element> m_element;
+    WebCore::QualifiedName m_attribute;
+    WebCore::String m_oldValue;
 };
 
-} // namespace khtml
+} // namespace WebCore
 
 #endif // __remove_node_attribute_command_h__

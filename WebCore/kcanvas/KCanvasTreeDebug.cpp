@@ -44,12 +44,12 @@
 #include <kcanvas/KCanvasResources.h>
 #include <kcanvas/KCanvasFilters.h>
 
-#include "KWQRenderTreeDebug.h"
+#include "RenderTreeAsText.h"
 
 #include <kxmlcore/Assertions.h>
 
 #include "SVGRenderStyle.h"
-#include <ksvg2/svg/SVGStyledElementImpl.h>
+#include <ksvg2/svg/SVGStyledElement.h>
 
 #include "PlatformString.h"
 #include "AtomicString.h"
@@ -63,17 +63,17 @@ namespace WebCore {
 /** class + iomanip to help streaming list separators, i.e. ", " in string "a, b, c, d"
  * Can be used in cases where you don't know which item in the list is the first
  * one to be printed, but still want to avoid strings like ", b, c", works like 
- * QStringList::join for streams
+ * DeprecatedStringList::join for streams
  */
 class QTextStreamSeparator
 {
 public:
-    QTextStreamSeparator(const QString &s) : m_separator(s), m_needToSeparate(false) {}
+    QTextStreamSeparator(const DeprecatedString &s) : m_separator(s), m_needToSeparate(false) {}
 private:
     friend QTextStream& operator<<(QTextStream &ts, QTextStreamSeparator &sep);
     
 private:
-    QString m_separator;
+    DeprecatedString m_separator;
     bool m_needToSeparate;
 };
 
@@ -322,12 +322,12 @@ static QTextStream &operator<<(QTextStream &ts, const KCanvasContainer &o)
     return ts;
 }
 
-static QString getTagName(void *node)
+static DeprecatedString getTagName(void *node)
 {
-    SVGStyledElementImpl *elem = static_cast<SVGStyledElementImpl *>(node);
+    SVGStyledElement *elem = static_cast<SVGStyledElement *>(node);
     if (elem)
-        return DOMString(elem->nodeName()).qstring();
-    return QString();
+        return String(elem->nodeName()).deprecatedString();
+    return DeprecatedString();
 }
 
 void write(QTextStream &ts, const KCanvasContainer &container, int indent)
@@ -336,7 +336,7 @@ void write(QTextStream &ts, const KCanvasContainer &container, int indent)
     ts << container.renderName();
     
     if (container.element()) {
-        QString tagName = getTagName(container.element());
+        DeprecatedString tagName = getTagName(container.element());
         if (!tagName.isEmpty())
             ts << " {" << tagName << "}";
     }
@@ -353,7 +353,7 @@ void write(QTextStream &ts, const RenderPath &path, int indent)
     ts << path.renderName();
     
     if (path.element()) {
-        QString tagName = getTagName(path.element());
+        DeprecatedString tagName = getTagName(path.element());
         if (!tagName.isEmpty())
             ts << " {" << tagName << "}";
     }
@@ -361,23 +361,23 @@ void write(QTextStream &ts, const RenderPath &path, int indent)
     ts << path << endl;
 }
 
-void writeRenderResources(QTextStream &ts, NodeImpl *parent)
+void writeRenderResources(QTextStream &ts, Node *parent)
 {
     ASSERT(parent);
-    NodeImpl *node = parent;
+    Node *node = parent;
     do {
         if (!node->isSVGElement())
             continue;
-        SVGElementImpl *svgElement = static_cast<SVGElementImpl *>(node);
+        SVGElement *svgElement = static_cast<SVGElement *>(node);
         if (!svgElement->isStyled())
             continue;
 
-        SVGStyledElementImpl *styled = static_cast<SVGStyledElementImpl *>(svgElement);
+        SVGStyledElement *styled = static_cast<SVGStyledElement *>(svgElement);
         KCanvasResource *resource = styled->canvasResource();
         if (!resource)
             continue;
         
-        QString elementId = svgElement->getAttribute(DOM::HTMLNames::idAttr).qstring();
+        DeprecatedString elementId = svgElement->getAttribute(WebCore::HTMLNames::idAttr).deprecatedString();
         if (resource->isPaintServer())
             ts << "KRenderingPaintServer {id=\"" << elementId << "\" " << *static_cast<KRenderingPaintServer *>(resource) << "}" << endl;
         else
@@ -385,11 +385,11 @@ void writeRenderResources(QTextStream &ts, NodeImpl *parent)
     } while ((node = node->traverseNextNode(parent)));
 }
 
-QTextStream &operator<<(QTextStream &ts, const QStringList &l)
+QTextStream &operator<<(QTextStream &ts, const DeprecatedStringList &l)
 {
     ts << "[";
-    QStringList::ConstIterator it = l.begin();
-    QStringList::ConstIterator it_e = l.end();
+    DeprecatedStringList::ConstIterator it = l.begin();
+    DeprecatedStringList::ConstIterator it_e = l.end();
     while (it != it_e)
     {
         ts << *it;

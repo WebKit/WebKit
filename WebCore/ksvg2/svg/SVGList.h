@@ -26,7 +26,7 @@
 
 #include <q3ptrlist.h>
 #include <kdom/core/DOMList.h>
-#include <ksvg2/svg/SVGStyledElementImpl.h>
+#include <ksvg2/svg/SVGStyledElement.h>
 
 namespace WebCore
 {
@@ -34,7 +34,7 @@ namespace WebCore
     class SVGList : public DOMList<T>
     {
     public:
-        SVGList(const SVGStyledElementImpl *context = 0)
+        SVGList(const SVGStyledElement *context = 0)
         : DOMList<T>(), m_context(context) {}
 
         void clear()
@@ -86,7 +86,7 @@ namespace WebCore
         }
 
     protected:
-        const SVGStyledElementImpl *m_context;
+        const SVGStyledElement *m_context;
     };
 };
 

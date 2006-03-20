@@ -30,32 +30,32 @@
 
 #include "PlatformString.h"
 
-namespace DOM {
-    class TextImpl;
-    class DOMString;
+namespace WebCore {
+    class Text;
+    class String;
 }
 
-namespace khtml {
+namespace WebCore {
 
 class InsertIntoTextNodeCommand : public EditCommand
 {
 public:
-    InsertIntoTextNodeCommand(DOM::DocumentImpl *document, DOM::TextImpl *, int, const DOM::DOMString &);
+    InsertIntoTextNodeCommand(WebCore::Document *document, WebCore::Text *, int, const WebCore::String &);
     virtual ~InsertIntoTextNodeCommand() { }
 
     virtual void doApply();
     virtual void doUnapply();
 
-    DOM::TextImpl *node() const { return m_node.get(); }
+    WebCore::Text *node() const { return m_node.get(); }
     int offset() const { return m_offset; }
-    DOM::DOMString text() const { return m_text; }
+    WebCore::String text() const { return m_text; }
 
 private:
-    RefPtr<DOM::TextImpl> m_node;
+    RefPtr<WebCore::Text> m_node;
     int m_offset;
-    DOM::DOMString m_text;
+    WebCore::String m_text;
 };
 
-} // namespace khtml
+} // namespace WebCore
 
 #endif // __insert_into_text_node_command_h__

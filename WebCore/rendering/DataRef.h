@@ -28,7 +28,7 @@
 
 #include <assert.h>
 
-namespace khtml {
+namespace WebCore {
 
 template <typename T> class DataRef
 {

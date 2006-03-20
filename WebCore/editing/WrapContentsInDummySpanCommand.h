@@ -28,22 +28,22 @@
 
 #include "EditCommand.h"
 
-namespace khtml {
+namespace WebCore {
 
 class WrapContentsInDummySpanCommand : public EditCommand
 {
 public:
-    WrapContentsInDummySpanCommand(DOM::DocumentImpl *, DOM::ElementImpl *);
+    WrapContentsInDummySpanCommand(WebCore::Document *, WebCore::Element *);
     virtual ~WrapContentsInDummySpanCommand() { }
 
     virtual void doApply();
     virtual void doUnapply();
 
 private:
-    RefPtr<DOM::ElementImpl> m_element;
-    RefPtr<DOM::ElementImpl> m_dummySpan;
+    RefPtr<WebCore::Element> m_element;
+    RefPtr<WebCore::Element> m_dummySpan;
 };
 
-} // namespace khtml
+} // namespace WebCore
 
 #endif // __wrap_contents_in_dummy_span_command_h__

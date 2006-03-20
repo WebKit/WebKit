@@ -31,43 +31,43 @@
 
 namespace WebCore {
 
-class HTMLElementImpl;
+class HTMLElement;
 
 class ApplyStyleCommand : public CompositeEditCommand
 {
 public:
     enum EPropertyLevel { PropertyDefault, ForceBlockProperties };
 
-    ApplyStyleCommand(DocumentImpl*, CSSStyleDeclarationImpl*, ElementImpl*, EditAction = EditActionChangeAttributes, EPropertyLevel = PropertyDefault);
-    ApplyStyleCommand(DocumentImpl*, CSSStyleDeclarationImpl*, ElementImpl*, const Position& start, const Position& end, EditAction = EditActionChangeAttributes, EPropertyLevel = PropertyDefault);
+    ApplyStyleCommand(Document*, CSSStyleDeclaration*, Element*, EditAction = EditActionChangeAttributes, EPropertyLevel = PropertyDefault);
+    ApplyStyleCommand(Document*, CSSStyleDeclaration*, Element*, const Position& start, const Position& end, EditAction = EditActionChangeAttributes, EPropertyLevel = PropertyDefault);
 
     virtual void doApply();
     virtual EditAction editingAction() const;
 
-    CSSMutableStyleDeclarationImpl* style() const { return m_style.get(); }
+    CSSMutableStyleDeclaration* style() const { return m_style.get(); }
 
 private:
     // style-removal helpers
-    bool isHTMLStyleNode(CSSMutableStyleDeclarationImpl*, HTMLElementImpl*);
-    void removeHTMLStyleNode(HTMLElementImpl *);
-    void removeHTMLFontStyle(CSSMutableStyleDeclarationImpl*, HTMLElementImpl*);
-    void removeCSSStyle(CSSMutableStyleDeclarationImpl*, HTMLElementImpl*);
-    void removeBlockStyle(CSSMutableStyleDeclarationImpl*, const Position& start, const Position& end);
-    void removeInlineStyle(PassRefPtr<CSSMutableStyleDeclarationImpl>, const Position& start, const Position& end);
-    bool nodeFullySelected(NodeImpl*, const Position& start, const Position& end) const;
-    bool nodeFullyUnselected(NodeImpl*, const Position& start, const Position& end) const;
-    PassRefPtr<CSSMutableStyleDeclarationImpl> extractTextDecorationStyle(NodeImpl*);
-    PassRefPtr<CSSMutableStyleDeclarationImpl> extractAndNegateTextDecorationStyle(NodeImpl*);
-    void applyTextDecorationStyle(NodeImpl*, CSSMutableStyleDeclarationImpl *style);
-    void pushDownTextDecorationStyleAroundNode(NodeImpl*, const Position& start, const Position& end, bool force);
+    bool isHTMLStyleNode(CSSMutableStyleDeclaration*, HTMLElement*);
+    void removeHTMLStyleNode(HTMLElement *);
+    void removeHTMLFontStyle(CSSMutableStyleDeclaration*, HTMLElement*);
+    void removeCSSStyle(CSSMutableStyleDeclaration*, HTMLElement*);
+    void removeBlockStyle(CSSMutableStyleDeclaration*, const Position& start, const Position& end);
+    void removeInlineStyle(PassRefPtr<CSSMutableStyleDeclaration>, const Position& start, const Position& end);
+    bool nodeFullySelected(Node*, const Position& start, const Position& end) const;
+    bool nodeFullyUnselected(Node*, const Position& start, const Position& end) const;
+    PassRefPtr<CSSMutableStyleDeclaration> extractTextDecorationStyle(Node*);
+    PassRefPtr<CSSMutableStyleDeclaration> extractAndNegateTextDecorationStyle(Node*);
+    void applyTextDecorationStyle(Node*, CSSMutableStyleDeclaration *style);
+    void pushDownTextDecorationStyleAroundNode(Node*, const Position& start, const Position& end, bool force);
     void pushDownTextDecorationStyleAtBoundaries(const Position& start, const Position& end);
     
     // style-application helpers
-    void applyBlockStyle(CSSMutableStyleDeclarationImpl*);
-    void applyRelativeFontStyleChange(CSSMutableStyleDeclarationImpl*);
-    void applyInlineStyle(CSSMutableStyleDeclarationImpl*);
-    void addBlockStyleIfNeeded(CSSMutableStyleDeclarationImpl*, NodeImpl*);
-    void addInlineStyleIfNeeded(CSSMutableStyleDeclarationImpl*, NodeImpl* start, NodeImpl* end);
+    void applyBlockStyle(CSSMutableStyleDeclaration*);
+    void applyRelativeFontStyleChange(CSSMutableStyleDeclaration*);
+    void applyInlineStyle(CSSMutableStyleDeclaration*);
+    void addBlockStyleIfNeeded(CSSMutableStyleDeclaration*, Node*);
+    void addInlineStyleIfNeeded(CSSMutableStyleDeclaration*, Node* start, Node* end);
     bool splitTextAtStartIfNeeded(const Position& start, const Position& end);
     bool splitTextAtEndIfNeeded(const Position& start, const Position& end);
     bool splitTextElementAtStartIfNeeded(const Position& start, const Position& end);
@@ -76,25 +76,25 @@ private:
     bool mergeEndWithNextIfIdentical(const Position& start, const Position& end);
     void cleanUpEmptyStyleSpans(const Position& start, const Position& end);
 
-    void surroundNodeRangeWithElement(NodeImpl* start, NodeImpl* end, ElementImpl* element);
-    float computedFontSize(const NodeImpl*);
-    void joinChildTextNodes(NodeImpl*, const Position& start, const Position& end);
+    void surroundNodeRangeWithElement(Node* start, Node* end, Element* element);
+    float computedFontSize(const Node*);
+    void joinChildTextNodes(Node*, const Position& start, const Position& end);
 
     void updateStartEnd(const Position& newStart, const Position& newEnd);
     Position startPosition();
     Position endPosition();
 
-    RefPtr<CSSMutableStyleDeclarationImpl> m_style;
+    RefPtr<CSSMutableStyleDeclaration> m_style;
     EditAction m_editingAction;
     EPropertyLevel m_propertyLevel;
     Position m_start;
     Position m_end;
     bool m_useEndingSelection;
-    RefPtr<ElementImpl> m_styledInlineElement;
+    RefPtr<Element> m_styledInlineElement;
 };
 
-bool isStyleSpan(const NodeImpl*);
-PassRefPtr<HTMLElementImpl> createStyleSpanElement(DocumentImpl*);
+bool isStyleSpan(const Node*);
+PassRefPtr<HTMLElement> createStyleSpanElement(Document*);
 
 } // namespace WebCore
 

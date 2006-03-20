@@ -27,24 +27,24 @@
 
 namespace WebCore {
     class XMLHttpRequest;
-    class DocumentImpl;
+    class Document;
 }
 
 namespace KJS {
 
   class JSXMLHttpRequestConstructorImp : public JSObject {
   public:
-    JSXMLHttpRequestConstructorImp(ExecState *exec, WebCore::DocumentImpl *d);
+    JSXMLHttpRequestConstructorImp(ExecState *exec, WebCore::Document *d);
     ~JSXMLHttpRequestConstructorImp();
     virtual bool implementsConstruct() const;
     virtual JSObject *construct(ExecState *exec, const List &args);
   private:
-    RefPtr<WebCore::DocumentImpl> doc;
+    RefPtr<WebCore::Document> doc;
   };
 
   class JSXMLHttpRequest : public DOMObject {
   public:
-    JSXMLHttpRequest(ExecState *, WebCore::DocumentImpl *d);
+    JSXMLHttpRequest(ExecState *, WebCore::Document *d);
     ~JSXMLHttpRequest();
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;

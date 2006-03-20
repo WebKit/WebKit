@@ -28,24 +28,24 @@
 #include "html_tableimpl.h"
 
 #include "ExceptionCode.h"
-#include "NodeListImpl.h"
+#include "NodeList.h"
 #include "RenderTable.h"
 #include "RenderTableCell.h"
 #include "RenderTableCol.h"
 #include "css_stylesheetimpl.h"
 #include "css_valueimpl.h"
 #include "csshelper.h"
-#include "cssproperties.h"
+#include "CSSPropertyNames.h"
 #include "cssstyleselector.h"
-#include "cssvalues.h"
-#include "html_documentimpl.h"
+#include "CSSValueKeywords.h"
+#include "HTMLDocument.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLTableElementImpl::HTMLTableElementImpl(DocumentImpl *doc)
-  : HTMLElementImpl(tableTag, doc)
+HTMLTableElement::HTMLTableElement(Document *doc)
+  : HTMLElement(tableTag, doc)
 {
     tCaption = 0;
     head = 0;
@@ -59,13 +59,13 @@ HTMLTableElementImpl::HTMLTableElementImpl(DocumentImpl *doc)
     m_solid = false;
 }
 
-HTMLTableElementImpl::~HTMLTableElementImpl()
+HTMLTableElement::~HTMLTableElement()
 {
     if (firstBody)
         firstBody->deref();
 }
 
-bool HTMLTableElementImpl::checkDTD(const NodeImpl* newChild)
+bool HTMLTableElement::checkDTD(const Node* newChild)
 {
     return newChild->isTextNode() || newChild->hasTagName(captionTag) ||
            newChild->hasTagName(colTag) || newChild->hasTagName(colgroupTag) ||
@@ -74,10 +74,10 @@ bool HTMLTableElementImpl::checkDTD(const NodeImpl* newChild)
            newChild->hasTagName(scriptTag);
 }
 
-NodeImpl* HTMLTableElementImpl::setCaption( HTMLTableCaptionElementImpl *c )
+Node* HTMLTableElement::setCaption( HTMLTableCaptionElement *c )
 {
     ExceptionCode ec = 0;
-    if (NodeImpl *oc = tCaption)
+    if (Node *oc = tCaption)
         replaceChild(c, oc, ec);
     else
         insertBefore(c, firstChild(), ec);
@@ -85,10 +85,10 @@ NodeImpl* HTMLTableElementImpl::setCaption( HTMLTableCaptionElementImpl *c )
     return tCaption;
 }
 
-NodeImpl* HTMLTableElementImpl::setTHead( HTMLTableSectionElementImpl *s )
+Node* HTMLTableElement::setTHead( HTMLTableSectionElement *s )
 {
     ExceptionCode ec = 0;
-    if (NodeImpl *h = head)
+    if (Node *h = head)
         replaceChild(s, h, ec);
     else if (foot)
         insertBefore(s, foot, ec);
@@ -100,10 +100,10 @@ NodeImpl* HTMLTableElementImpl::setTHead( HTMLTableSectionElementImpl *s )
     return head;
 }
 
-NodeImpl* HTMLTableElementImpl::setTFoot( HTMLTableSectionElementImpl *s )
+Node* HTMLTableElement::setTFoot( HTMLTableSectionElement *s )
 {
     ExceptionCode ec = 0;
-    if (NodeImpl *f = foot)
+    if (Node *f = foot)
         replaceChild(s, f, ec);
     else if (firstBody)
         insertBefore(s, firstBody, ec);
@@ -113,12 +113,12 @@ NodeImpl* HTMLTableElementImpl::setTFoot( HTMLTableSectionElementImpl *s )
     return foot;
 }
 
-NodeImpl* HTMLTableElementImpl::setTBody( HTMLTableSectionElementImpl *s )
+Node* HTMLTableElement::setTBody( HTMLTableSectionElement *s )
 {
     ExceptionCode ec = 0;
-    NodeImpl* r;
+    Node* r;
     s->ref();
-    if (NodeImpl *fb = firstBody) {
+    if (Node *fb = firstBody) {
         replaceChild(s, fb, ec);
         fb->deref();
         r = s;
@@ -128,12 +128,12 @@ NodeImpl* HTMLTableElementImpl::setTBody( HTMLTableSectionElementImpl *s )
     return firstBody;
 }
 
-HTMLElementImpl *HTMLTableElementImpl::createTHead(  )
+HTMLElement *HTMLTableElement::createTHead(  )
 {
     if(!head)
     {
         ExceptionCode ec = 0;
-        head = new HTMLTableSectionElementImpl(theadTag, getDocument(), true /* implicit */);
+        head = new HTMLTableSectionElement(theadTag, getDocument(), true /* implicit */);
         if(foot)
             insertBefore( head, foot, ec );
         else if(firstBody)
@@ -144,23 +144,23 @@ HTMLElementImpl *HTMLTableElementImpl::createTHead(  )
     return head;
 }
 
-void HTMLTableElementImpl::deleteTHead(  )
+void HTMLTableElement::deleteTHead(  )
 {
     if(head) {
         ExceptionCode ec = 0;
         head->ref();
-        HTMLElementImpl::removeChild(head, ec);
+        HTMLElement::removeChild(head, ec);
         head->deref();
     }
     head = 0;
 }
 
-HTMLElementImpl *HTMLTableElementImpl::createTFoot(  )
+HTMLElement *HTMLTableElement::createTFoot(  )
 {
     if (!foot)
     {
         ExceptionCode ec = 0;
-        foot = new HTMLTableSectionElementImpl(tfootTag, getDocument(), true /*implicit */);
+        foot = new HTMLTableSectionElement(tfootTag, getDocument(), true /*implicit */);
         if (firstBody)
             insertBefore( foot, firstBody, ec );
         else
@@ -169,53 +169,53 @@ HTMLElementImpl *HTMLTableElementImpl::createTFoot(  )
     return foot;
 }
 
-void HTMLTableElementImpl::deleteTFoot(  )
+void HTMLTableElement::deleteTFoot(  )
 {
     if(foot) {
         ExceptionCode ec = 0;
         foot->ref();
-        HTMLElementImpl::removeChild(foot, ec);
+        HTMLElement::removeChild(foot, ec);
         foot->deref();
     }
     foot = 0;
 }
 
-HTMLElementImpl *HTMLTableElementImpl::createCaption(  )
+HTMLElement *HTMLTableElement::createCaption(  )
 {
     if(!tCaption)
     {
         ExceptionCode ec = 0;
-        tCaption = new HTMLTableCaptionElementImpl(getDocument());
+        tCaption = new HTMLTableCaptionElement(getDocument());
         insertBefore( tCaption, firstChild(), ec );
     }
     return tCaption;
 }
 
-void HTMLTableElementImpl::deleteCaption(  )
+void HTMLTableElement::deleteCaption(  )
 {
     if(tCaption) {
         ExceptionCode ec = 0;
         tCaption->ref();
-        HTMLElementImpl::removeChild(tCaption, ec);
+        HTMLElement::removeChild(tCaption, ec);
         tCaption->deref();
     }
     tCaption = 0;
 }
 
-HTMLElementImpl *HTMLTableElementImpl::insertRow( int index, ExceptionCode& ec)
+HTMLElement *HTMLTableElement::insertRow( int index, ExceptionCode& ec)
 {
     // The DOM requires that we create a tbody if the table is empty
     // (cf DOM2TS HTMLTableElement31 test)
     // (note: this is different from "if the table has no sections", since we can have
     // <TABLE><TR>)
     if(!firstBody && !head && !foot)
-        setTBody( new HTMLTableSectionElementImpl(tbodyTag, getDocument(), true /* implicit */) );
+        setTBody( new HTMLTableSectionElement(tbodyTag, getDocument(), true /* implicit */) );
 
     // IE treats index=-1 as default value meaning 'append after last'
     // This isn't in the DOM. So, not implemented yet.
-    HTMLTableSectionElementImpl* section = 0L;
-    HTMLTableSectionElementImpl* lastSection = 0L;
-    NodeImpl *node = firstChild();
+    HTMLTableSectionElement* section = 0L;
+    HTMLTableSectionElement* lastSection = 0L;
+    Node *node = firstChild();
     bool append = (index == -1);
     bool found = false;
     for ( ; node && (index>=0 || append) ; node = node->nextSibling() )
@@ -224,7 +224,7 @@ HTMLElementImpl *HTMLTableElementImpl::insertRow( int index, ExceptionCode& ec)
         // complicated if statement below.
         if (node != foot && (node->hasTagName(theadTag) || node->hasTagName(tfootTag) || node->hasTagName(tbodyTag)))
         {
-            section = static_cast<HTMLTableSectionElementImpl *>(node);
+            section = static_cast<HTMLTableSectionElement *>(node);
             lastSection = section;
             if (!append) {
                 int rows = section->numRows();
@@ -237,7 +237,7 @@ HTMLElementImpl *HTMLTableElementImpl::insertRow( int index, ExceptionCode& ec)
         }
     }
     if ( !found && foot )
-        section = static_cast<HTMLTableSectionElementImpl *>(foot);
+        section = static_cast<HTMLTableSectionElement *>(foot);
 
     // Index == 0 means "insert before first row in current section"
     // or "append after last row" (if there's no current section anymore)
@@ -255,18 +255,18 @@ HTMLElementImpl *HTMLTableElementImpl::insertRow( int index, ExceptionCode& ec)
     }
 }
 
-void HTMLTableElementImpl::deleteRow( int index, ExceptionCode& ec)
+void HTMLTableElement::deleteRow( int index, ExceptionCode& ec)
 {
-    HTMLTableSectionElementImpl* section = 0L;
-    NodeImpl *node = firstChild();
+    HTMLTableSectionElement* section = 0L;
+    Node *node = firstChild();
     bool lastRow = index == -1;
-    HTMLTableSectionElementImpl* lastSection = 0L;
+    HTMLTableSectionElement* lastSection = 0L;
     bool found = false;
     for ( ; node ; node = node->nextSibling() )
     {
         if (node != foot && (node->hasTagName(theadTag) || node->hasTagName(tfootTag) || 
             node->hasTagName(tbodyTag))) {
-            section = static_cast<HTMLTableSectionElementImpl *>(node);
+            section = static_cast<HTMLTableSectionElement *>(node);
             lastSection = section;
             int rows = section->numRows();
             if ( !lastRow )
@@ -281,7 +281,7 @@ void HTMLTableElementImpl::deleteRow( int index, ExceptionCode& ec)
         section = 0L;
     }
     if ( !found && foot )
-        section = static_cast<HTMLTableSectionElementImpl *>(foot);
+        section = static_cast<HTMLTableSectionElement *>(foot);
 
     if ( lastRow )
         lastSection->deleteRow( -1, ec );
@@ -291,11 +291,11 @@ void HTMLTableElementImpl::deleteRow( int index, ExceptionCode& ec)
         ec = INDEX_SIZE_ERR;
 }
 
-ContainerNodeImpl* HTMLTableElementImpl::addChild(PassRefPtr<NodeImpl> child)
+ContainerNode* HTMLTableElement::addChild(PassRefPtr<Node> child)
 {
     if (child->hasTagName(formTag)) {
         // First add the child.
-        HTMLElementImpl::addChild(child);
+        HTMLElement::addChild(child);
 
         // Now simply return ourselves as the container to insert into.
         // This has the effect of demoting the form to a leaf and moving it safely out of the way.
@@ -308,25 +308,25 @@ ContainerNodeImpl* HTMLTableElementImpl::addChild(PassRefPtr<NodeImpl> child)
     if (!getDocument()->isHTMLDocument() && !childAllowed(child.get()))
         return 0;
 
-    ContainerNodeImpl* container = HTMLElementImpl::addChild(child.get());
+    ContainerNode* container = HTMLElement::addChild(child.get());
     if (container) {
         if (!tCaption && child->hasTagName(captionTag))
-            tCaption = static_cast<HTMLTableCaptionElementImpl *>(child.get());
+            tCaption = static_cast<HTMLTableCaptionElement *>(child.get());
         else if (!head && child->hasTagName(theadTag))
-            head = static_cast<HTMLTableSectionElementImpl *>(child.get());
+            head = static_cast<HTMLTableSectionElement *>(child.get());
         else if (!foot && child->hasTagName(tfootTag))
-            foot = static_cast<HTMLTableSectionElementImpl *>(child.get());
+            foot = static_cast<HTMLTableSectionElement *>(child.get());
         else if (!firstBody && child->hasTagName(tbodyTag)) {
-            firstBody = static_cast<HTMLTableSectionElementImpl *>(child.get());
+            firstBody = static_cast<HTMLTableSectionElement *>(child.get());
             firstBody->ref();
         }
     }
     return container;
 }
 
-void HTMLTableElementImpl::childrenChanged()
+void HTMLTableElement::childrenChanged()
 {
-    HTMLElementImpl::childrenChanged();
+    HTMLElement::childrenChanged();
     
     if (firstBody && firstBody->parentNode() != this) {
         firstBody->deref();
@@ -334,7 +334,7 @@ void HTMLTableElementImpl::childrenChanged()
     }
 } 
 
-bool HTMLTableElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
+bool HTMLTableElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
     if (attrName == backgroundAttr) {
         result = (MappedAttributeEntry)(eLastEntry + getDocument()->docID());
@@ -367,10 +367,10 @@ bool HTMLTableElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttri
         return false;
     } 
     
-    return HTMLElementImpl::mapToEntry(attrName, result);
+    return HTMLElement::mapToEntry(attrName, result);
 }
 
-void HTMLTableElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
+void HTMLTableElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == widthAttr) {
         addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
@@ -379,9 +379,9 @@ void HTMLTableElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     } else if (attr->name() == borderAttr)  {
         m_noBorder = true;
         if (attr->decl()) {
-            RefPtr<CSSValueImpl> val = attr->decl()->getPropertyCSSValue(CSS_PROP_BORDER_LEFT_WIDTH);
+            RefPtr<CSSValue> val = attr->decl()->getPropertyCSSValue(CSS_PROP_BORDER_LEFT_WIDTH);
             if (val && val->isPrimitiveValue()) {
-                CSSPrimitiveValueImpl* primVal = static_cast<CSSPrimitiveValueImpl*>(val.get());
+                CSSPrimitiveValue* primVal = static_cast<CSSPrimitiveValue*>(val.get());
                 m_noBorder = !primVal->getFloatValue(CSSPrimitiveValue::CSS_NUMBER);
             }
         }
@@ -397,7 +397,7 @@ void HTMLTableElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
             border=1;
 #endif
             m_noBorder = !border;
-            DOMString v = QString::number( border );
+            String v = DeprecatedString::number( border );
             addCSSLength(attr, CSS_PROP_BORDER_WIDTH, v );
         }
     } else if (attr->name() == bgcolorAttr) {
@@ -413,7 +413,7 @@ void HTMLTableElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
             m_solid = true;
         }
     } else if (attr->name() == backgroundAttr) {
-        DOMString url = khtml::parseURL(attr->value());
+        String url = WebCore::parseURL(attr->value());
         if (!url.isEmpty())
             addCSSImageProperty(attr, CSS_PROP_BACKGROUND_IMAGE, getDocument()->completeURL(url));
     } else if (attr->name() == frameAttr) {
@@ -446,17 +446,17 @@ void HTMLTableElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         if (!attr->value().isEmpty())
             addCSSProperty(attr, CSS_PROP_VERTICAL_ALIGN, attr->value());
     } else
-        HTMLElementImpl::parseMappedAttribute(attr);
+        HTMLElement::parseMappedAttribute(attr);
 }
 
-CSSMutableStyleDeclarationImpl* HTMLTableElementImpl::additionalAttributeStyleDecl()
+CSSMutableStyleDeclaration* HTMLTableElement::additionalAttributeStyleDecl()
 {
     if (m_noBorder)
         return 0;
-    MappedAttributeImpl attr(tableborderAttr, m_solid ? "solid" : "outset");
-    CSSMappedAttributeDeclarationImpl* decl = getMappedAttributeDecl(ePersistent, &attr);
+    MappedAttribute attr(tableborderAttr, m_solid ? "solid" : "outset");
+    CSSMappedAttributeDeclaration* decl = getMappedAttributeDecl(ePersistent, &attr);
     if (!decl) {
-        decl = new CSSMappedAttributeDeclarationImpl(0);
+        decl = new CSSMappedAttributeDeclaration(0);
         decl->setParent(getDocument()->elementSheet());
         decl->setNode(this);
         decl->setStrictParsing(false); // Mapped attributes are just always quirky.
@@ -477,12 +477,12 @@ CSSMutableStyleDeclarationImpl* HTMLTableElementImpl::additionalAttributeStyleDe
     return decl;
 }
 
-CSSMutableStyleDeclarationImpl* HTMLTableElementImpl::getSharedCellDecl()
+CSSMutableStyleDeclaration* HTMLTableElement::getSharedCellDecl()
 {
-    MappedAttributeImpl attr(cellborderAttr, m_noBorder ? "none" : (m_solid ? "solid" : "inset"));
-    CSSMappedAttributeDeclarationImpl* decl = getMappedAttributeDecl(ePersistent, &attr);
+    MappedAttribute attr(cellborderAttr, m_noBorder ? "none" : (m_solid ? "solid" : "inset"));
+    CSSMappedAttributeDeclaration* decl = getMappedAttributeDecl(ePersistent, &attr);
     if (!decl) {
-        decl = new CSSMappedAttributeDeclarationImpl(0);
+        decl = new CSSMappedAttributeDeclaration(0);
         decl->setParent(getDocument()->elementSheet());
         decl->setNode(this);
         decl->setStrictParsing(false); // Mapped attributes are just always quirky.
@@ -509,122 +509,122 @@ CSSMutableStyleDeclarationImpl* HTMLTableElementImpl::getSharedCellDecl()
     return decl;
 }
 
-void HTMLTableElementImpl::attach()
+void HTMLTableElement::attach()
 {
     assert(!m_attached);
-    HTMLElementImpl::attach();
+    HTMLElement::attach();
     if (renderer() && renderer()->isTable())
         static_cast<RenderTable *>(renderer())->setCellPadding( padding );
 }
 
-bool HTMLTableElementImpl::isURLAttribute(AttributeImpl *attr) const
+bool HTMLTableElement::isURLAttribute(Attribute *attr) const
 {
     return attr->name() == backgroundAttr;
 }
 
-RefPtr<HTMLCollectionImpl> HTMLTableElementImpl::rows()
+RefPtr<HTMLCollection> HTMLTableElement::rows()
 {
-    return RefPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::TABLE_ROWS));
+    return RefPtr<HTMLCollection>(new HTMLCollection(this, HTMLCollection::TABLE_ROWS));
 }
 
-RefPtr<HTMLCollectionImpl> HTMLTableElementImpl::tBodies()
+RefPtr<HTMLCollection> HTMLTableElement::tBodies()
 {
-    return RefPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::TABLE_TBODIES));
+    return RefPtr<HTMLCollection>(new HTMLCollection(this, HTMLCollection::TABLE_TBODIES));
 }
 
-DOMString HTMLTableElementImpl::align() const
+String HTMLTableElement::align() const
 {
     return getAttribute(alignAttr);
 }
 
-void HTMLTableElementImpl::setAlign(const DOMString &value)
+void HTMLTableElement::setAlign(const String &value)
 {
     setAttribute(alignAttr, value);
 }
 
-DOMString HTMLTableElementImpl::bgColor() const
+String HTMLTableElement::bgColor() const
 {
     return getAttribute(bgcolorAttr);
 }
 
-void HTMLTableElementImpl::setBgColor(const DOMString &value)
+void HTMLTableElement::setBgColor(const String &value)
 {
     setAttribute(bgcolorAttr, value);
 }
 
-DOMString HTMLTableElementImpl::border() const
+String HTMLTableElement::border() const
 {
     return getAttribute(borderAttr);
 }
 
-void HTMLTableElementImpl::setBorder(const DOMString &value)
+void HTMLTableElement::setBorder(const String &value)
 {
     setAttribute(borderAttr, value);
 }
 
-DOMString HTMLTableElementImpl::cellPadding() const
+String HTMLTableElement::cellPadding() const
 {
     return getAttribute(cellpaddingAttr);
 }
 
-void HTMLTableElementImpl::setCellPadding(const DOMString &value)
+void HTMLTableElement::setCellPadding(const String &value)
 {
     setAttribute(cellpaddingAttr, value);
 }
 
-DOMString HTMLTableElementImpl::cellSpacing() const
+String HTMLTableElement::cellSpacing() const
 {
     return getAttribute(cellspacingAttr);
 }
 
-void HTMLTableElementImpl::setCellSpacing(const DOMString &value)
+void HTMLTableElement::setCellSpacing(const String &value)
 {
     setAttribute(cellspacingAttr, value);
 }
 
-DOMString HTMLTableElementImpl::frame() const
+String HTMLTableElement::frame() const
 {
     return getAttribute(frameAttr);
 }
 
-void HTMLTableElementImpl::setFrame(const DOMString &value)
+void HTMLTableElement::setFrame(const String &value)
 {
     setAttribute(frameAttr, value);
 }
 
-DOMString HTMLTableElementImpl::rules() const
+String HTMLTableElement::rules() const
 {
     return getAttribute(rulesAttr);
 }
 
-void HTMLTableElementImpl::setRules(const DOMString &value)
+void HTMLTableElement::setRules(const String &value)
 {
     setAttribute(rulesAttr, value);
 }
 
-DOMString HTMLTableElementImpl::summary() const
+String HTMLTableElement::summary() const
 {
     return getAttribute(summaryAttr);
 }
 
-void HTMLTableElementImpl::setSummary(const DOMString &value)
+void HTMLTableElement::setSummary(const String &value)
 {
     setAttribute(summaryAttr, value);
 }
 
-DOMString HTMLTableElementImpl::width() const
+String HTMLTableElement::width() const
 {
     return getAttribute(widthAttr);
 }
 
-void HTMLTableElementImpl::setWidth(const DOMString &value)
+void HTMLTableElement::setWidth(const String &value)
 {
     setAttribute(widthAttr, value);
 }
 
 // --------------------------------------------------------------------------
 
-bool HTMLTablePartElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
+bool HTMLTablePartElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
     if (attrName == backgroundAttr) {
         result = (MappedAttributeEntry)(eLastEntry + getDocument()->docID());
@@ -644,15 +644,15 @@ bool HTMLTablePartElementImpl::mapToEntry(const QualifiedName& attrName, MappedA
         return false;
     }
 
-    return HTMLElementImpl::mapToEntry(attrName, result);
+    return HTMLElement::mapToEntry(attrName, result);
 }
 
-void HTMLTablePartElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
+void HTMLTablePartElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == bgcolorAttr) {
         addCSSColor(attr, CSS_PROP_BACKGROUND_COLOR, attr->value());
     } else if (attr->name() == backgroundAttr) {
-        DOMString url = khtml::parseURL(attr->value());
+        String url = WebCore::parseURL(attr->value());
         if (!url.isEmpty())
             addCSSImageProperty(attr, CSS_PROP_BACKGROUND_IMAGE, getDocument()->completeURL(url));
     } else if (attr->name() == bordercolorAttr) {
@@ -682,54 +682,54 @@ void HTMLTablePartElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         if (!attr->value().isEmpty())
             addCSSLength(attr, CSS_PROP_HEIGHT, attr->value());
     } else
-        HTMLElementImpl::parseMappedAttribute(attr);
+        HTMLElement::parseMappedAttribute(attr);
 }
 
 // -------------------------------------------------------------------------
 
-HTMLTableSectionElementImpl::HTMLTableSectionElementImpl(const QualifiedName& tagName, DocumentImpl *doc, bool implicit)
-    : HTMLTablePartElementImpl(tagName, doc)
+HTMLTableSectionElement::HTMLTableSectionElement(const QualifiedName& tagName, Document *doc, bool implicit)
+    : HTMLTablePartElement(tagName, doc)
 {
     m_implicit = implicit;
 }
 
-bool HTMLTableSectionElementImpl::checkDTD(const NodeImpl* newChild)
+bool HTMLTableSectionElement::checkDTD(const Node* newChild)
 {
     return newChild->hasTagName(trTag) || newChild->hasTagName(formTag) ||
            newChild->hasTagName(scriptTag);
 }
 
-ContainerNodeImpl* HTMLTableSectionElementImpl::addChild(PassRefPtr<NodeImpl> child)
+ContainerNode* HTMLTableSectionElement::addChild(PassRefPtr<Node> child)
 {
     if (child->hasTagName(formTag)) {
         // First add the child.
-        HTMLTablePartElementImpl::addChild(child);
+        HTMLTablePartElement::addChild(child);
 
         // Now simply return ourselves as the container to insert into.
         // This has the effect of demoting the form to a leaf and moving it safely out of the way.
         return this;
     }
 
-    return HTMLTablePartElementImpl::addChild(child);
+    return HTMLTablePartElement::addChild(child);
 }
 
 // these functions are rather slow, since we need to get the row at
 // the index... but they aren't used during usual HTML parsing anyway
-HTMLElementImpl *HTMLTableSectionElementImpl::insertRow( int index, ExceptionCode& ec)
+HTMLElement *HTMLTableSectionElement::insertRow( int index, ExceptionCode& ec)
 {
-    HTMLTableRowElementImpl *r = 0L;
-    RefPtr<NodeListImpl> children = childNodes();
+    HTMLTableRowElement *r = 0L;
+    RefPtr<NodeList> children = childNodes();
     int numRows = children ? (int)children->length() : 0;
     if ( index < -1 || index > numRows ) {
         ec = INDEX_SIZE_ERR; // per the DOM
     }
     else
     {
-        r = new HTMLTableRowElementImpl(getDocument());
+        r = new HTMLTableRowElement(getDocument());
         if ( numRows == index || index == -1 )
             appendChild(r, ec);
         else {
-            NodeImpl *n;
+            Node *n;
             if (index < 1)
                 n = firstChild();
             else
@@ -740,23 +740,23 @@ HTMLElementImpl *HTMLTableSectionElementImpl::insertRow( int index, ExceptionCod
     return r;
 }
 
-void HTMLTableSectionElementImpl::deleteRow( int index, ExceptionCode& ec)
+void HTMLTableSectionElement::deleteRow( int index, ExceptionCode& ec)
 {
-    RefPtr<NodeListImpl> children = childNodes();
+    RefPtr<NodeList> children = childNodes();
     int numRows = children ? (int)children->length() : 0;
     if (index == -1)
         index = numRows - 1;
     if (index >= 0 && index < numRows) {
-        RefPtr<NodeImpl> row = children->item(index);
-        HTMLElementImpl::removeChild(row.get(), ec);
+        RefPtr<Node> row = children->item(index);
+        HTMLElement::removeChild(row.get(), ec);
     } else
         ec = INDEX_SIZE_ERR;
 }
 
-int HTMLTableSectionElementImpl::numRows() const
+int HTMLTableSectionElement::numRows() const
 {
     int rows = 0;
-    const NodeImpl *n = firstChild();
+    const Node *n = firstChild();
     while (n) {
         if (n->hasTagName(trTag))
             rows++;
@@ -766,76 +766,76 @@ int HTMLTableSectionElementImpl::numRows() const
     return rows;
 }
 
-DOMString HTMLTableSectionElementImpl::align() const
+String HTMLTableSectionElement::align() const
 {
     return getAttribute(alignAttr);
 }
 
-void HTMLTableSectionElementImpl::setAlign(const DOMString &value)
+void HTMLTableSectionElement::setAlign(const String &value)
 {
     setAttribute(alignAttr, value);
 }
 
-DOMString HTMLTableSectionElementImpl::ch() const
+String HTMLTableSectionElement::ch() const
 {
     return getAttribute(charAttr);
 }
 
-void HTMLTableSectionElementImpl::setCh(const DOMString &value)
+void HTMLTableSectionElement::setCh(const String &value)
 {
     setAttribute(charAttr, value);
 }
 
-DOMString HTMLTableSectionElementImpl::chOff() const
+String HTMLTableSectionElement::chOff() const
 {
     return getAttribute(charoffAttr);
 }
 
-void HTMLTableSectionElementImpl::setChOff(const DOMString &value)
+void HTMLTableSectionElement::setChOff(const String &value)
 {
     setAttribute(charoffAttr, value);
 }
 
-DOMString HTMLTableSectionElementImpl::vAlign() const
+String HTMLTableSectionElement::vAlign() const
 {
     return getAttribute(valignAttr);
 }
 
-void HTMLTableSectionElementImpl::setVAlign(const DOMString &value)
+void HTMLTableSectionElement::setVAlign(const String &value)
 {
     setAttribute(valignAttr, value);
 }
 
-RefPtr<HTMLCollectionImpl> HTMLTableSectionElementImpl::rows()
+RefPtr<HTMLCollection> HTMLTableSectionElement::rows()
 {
-    return RefPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::TABLE_ROWS));
+    return RefPtr<HTMLCollection>(new HTMLCollection(this, HTMLCollection::TABLE_ROWS));
 }
 
 // -------------------------------------------------------------------------
 
-bool HTMLTableRowElementImpl::checkDTD(const NodeImpl* newChild)
+bool HTMLTableRowElement::checkDTD(const Node* newChild)
 {
     return newChild->hasTagName(tdTag) || newChild->hasTagName(thTag) ||
            newChild->hasTagName(formTag) || newChild->hasTagName(scriptTag);
 }
 
-ContainerNodeImpl* HTMLTableRowElementImpl::addChild(PassRefPtr<NodeImpl> child)
+ContainerNode* HTMLTableRowElement::addChild(PassRefPtr<Node> child)
 {
     if (child->hasTagName(formTag)) {
         // First add the child.
-        HTMLTablePartElementImpl::addChild(child);
+        HTMLTablePartElement::addChild(child);
 
         // Now simply return ourselves as the container to insert into.
         // This has the effect of demoting the form to a leaf and moving it safely out of the way.
         return this;
     }
 
-    return HTMLTablePartElementImpl::addChild(child);
+    return HTMLTablePartElement::addChild(child);
 }
 
-int HTMLTableRowElementImpl::rowIndex() const
+int HTMLTableRowElement::rowIndex() const
 {
-    NodeImpl *table = parentNode();
+    Node *table = parentNode();
     if (!table)
         return -1;
     table = table->parentNode();
@@ -849,18 +849,18 @@ int HTMLTableRowElementImpl::rowIndex() const
 
     int rIndex = 0;
 
-    if (HTMLTableSectionElementImpl* head = static_cast<HTMLTableElementImpl*>(table)->tHead()) {
-        for (NodeImpl *row = head->firstChild(); row; row = row->nextSibling()) {
+    if (HTMLTableSectionElement* head = static_cast<HTMLTableElement*>(table)->tHead()) {
+        for (Node *row = head->firstChild(); row; row = row->nextSibling()) {
             if (row == this)
                 return rIndex;
             ++rIndex;
         }
     }
     
-    for (NodeImpl *node = table->firstChild(); node; node = node->nextSibling()) {
+    for (Node *node = table->firstChild(); node; node = node->nextSibling()) {
         if (node->hasTagName(tbodyTag)) {
-            HTMLTableSectionElementImpl* section = static_cast<HTMLTableSectionElementImpl*>(node);
-            for (NodeImpl* row = section->firstChild(); row; row = row->nextSibling()) {
+            HTMLTableSectionElement* section = static_cast<HTMLTableSectionElement*>(node);
+            for (Node* row = section->firstChild(); row; row = row->nextSibling()) {
                 if (row == this)
                     return rIndex;
                 ++rIndex;
@@ -868,8 +868,8 @@ int HTMLTableRowElementImpl::rowIndex() const
         }
     }
 
-    if (HTMLTableSectionElementImpl* foot = static_cast<HTMLTableElementImpl *>(table)->tFoot()) {
-        for (NodeImpl *row = foot->firstChild(); row; row = row->nextSibling()) {
+    if (HTMLTableSectionElement* foot = static_cast<HTMLTableElement *>(table)->tFoot()) {
+        for (Node *row = foot->firstChild(); row; row = row->nextSibling()) {
             if (row == this)
                 return rIndex;
             ++rIndex;
@@ -880,10 +880,10 @@ int HTMLTableRowElementImpl::rowIndex() const
     return -1;
 }
 
-int HTMLTableRowElementImpl::sectionRowIndex() const
+int HTMLTableRowElement::sectionRowIndex() const
 {
     int rIndex = 0;
-    const NodeImpl *n = this;
+    const Node *n = this;
     do {
         n = n->previousSibling();
         if (n && n->hasTagName(trTag))
@@ -894,20 +894,20 @@ int HTMLTableRowElementImpl::sectionRowIndex() const
     return rIndex;
 }
 
-HTMLElementImpl *HTMLTableRowElementImpl::insertCell( int index, ExceptionCode& ec)
+HTMLElement *HTMLTableRowElement::insertCell( int index, ExceptionCode& ec)
 {
-    HTMLTableCellElementImpl *c = 0L;
-    RefPtr<NodeListImpl> children = childNodes();
+    HTMLTableCellElement *c = 0L;
+    RefPtr<NodeList> children = childNodes();
     int numCells = children ? children->length() : 0;
     if ( index < -1 || index > numCells )
         ec = INDEX_SIZE_ERR; // per the DOM
     else
     {
-        c = new HTMLTableCellElementImpl(tdTag, getDocument());
+        c = new HTMLTableCellElement(tdTag, getDocument());
         if(numCells == index || index == -1)
             appendChild(c, ec);
         else {
-            NodeImpl *n;
+            Node *n;
             if(index < 1)
                 n = firstChild();
             else
@@ -918,83 +918,83 @@ HTMLElementImpl *HTMLTableRowElementImpl::insertCell( int index, ExceptionCode& 
     return c;
 }
 
-void HTMLTableRowElementImpl::deleteCell( int index, ExceptionCode& ec)
+void HTMLTableRowElement::deleteCell( int index, ExceptionCode& ec)
 {
-    RefPtr<NodeListImpl> children = childNodes();
+    RefPtr<NodeList> children = childNodes();
     int numCells = children ? children->length() : 0;
     if (index == -1 )
         index = numCells-1;
     if (index >= 0 && index < numCells) {
-        RefPtr<NodeImpl> row = children->item(index);
-        HTMLElementImpl::removeChild(row.get(), ec);
+        RefPtr<Node> row = children->item(index);
+        HTMLElement::removeChild(row.get(), ec);
     } else
         ec = INDEX_SIZE_ERR;
 }
 
-RefPtr<HTMLCollectionImpl> HTMLTableRowElementImpl::cells()
+RefPtr<HTMLCollection> HTMLTableRowElement::cells()
 {
-    return RefPtr<HTMLCollectionImpl>(new HTMLCollectionImpl(this, HTMLCollectionImpl::TR_CELLS));
+    return RefPtr<HTMLCollection>(new HTMLCollection(this, HTMLCollection::TR_CELLS));
 }
 
-void HTMLTableRowElementImpl::setCells(HTMLCollectionImpl *, ExceptionCode& ec)
+void HTMLTableRowElement::setCells(HTMLCollection *, ExceptionCode& ec)
 {
     ec = NO_MODIFICATION_ALLOWED_ERR;
 }
 
-DOMString HTMLTableRowElementImpl::align() const
+String HTMLTableRowElement::align() const
 {
     return getAttribute(alignAttr);
 }
 
-void HTMLTableRowElementImpl::setAlign(const DOMString &value)
+void HTMLTableRowElement::setAlign(const String &value)
 {
     setAttribute(alignAttr, value);
 }
 
-DOMString HTMLTableRowElementImpl::bgColor() const
+String HTMLTableRowElement::bgColor() const
 {
     return getAttribute(bgcolorAttr);
 }
 
-void HTMLTableRowElementImpl::setBgColor(const DOMString &value)
+void HTMLTableRowElement::setBgColor(const String &value)
 {
     setAttribute(bgcolorAttr, value);
 }
 
-DOMString HTMLTableRowElementImpl::ch() const
+String HTMLTableRowElement::ch() const
 {
     return getAttribute(charAttr);
 }
 
-void HTMLTableRowElementImpl::setCh(const DOMString &value)
+void HTMLTableRowElement::setCh(const String &value)
 {
     setAttribute(charAttr, value);
 }
 
-DOMString HTMLTableRowElementImpl::chOff() const
+String HTMLTableRowElement::chOff() const
 {
     return getAttribute(charoffAttr);
 }
 
-void HTMLTableRowElementImpl::setChOff(const DOMString &value)
+void HTMLTableRowElement::setChOff(const String &value)
 {
     setAttribute(charoffAttr, value);
 }
 
-DOMString HTMLTableRowElementImpl::vAlign() const
+String HTMLTableRowElement::vAlign() const
 {
     return getAttribute(valignAttr);
 }
 
-void HTMLTableRowElementImpl::setVAlign(const DOMString &value)
+void HTMLTableRowElement::setVAlign(const String &value)
 {
     setAttribute(valignAttr, value);
 }
 
 // -------------------------------------------------------------------------
 
-HTMLTableCellElementImpl::HTMLTableCellElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
-  : HTMLTablePartElementImpl(tagName, doc)
+HTMLTableCellElement::HTMLTableCellElement(const QualifiedName& tagName, Document *doc)
+  : HTMLTablePartElement(tagName, doc)
 {
     _col = -1;
     _row = -1;
@@ -1003,14 +1003,14 @@ HTMLTableCellElementImpl::HTMLTableCellElementImpl(const QualifiedName& tagName,
     m_solid = false;
 }
 
-HTMLTableCellElementImpl::~HTMLTableCellElementImpl()
+HTMLTableCellElement::~HTMLTableCellElement()
 {
 }
 
-int HTMLTableCellElementImpl::cellIndex() const
+int HTMLTableCellElement::cellIndex() const
 {
     int index = 0;
-    for (const NodeImpl * node = previousSibling(); node; node = node->previousSibling()) {
+    for (const Node * node = previousSibling(); node; node = node->previousSibling()) {
         if (node->hasTagName(tdTag) || node->hasTagName(thTag))
             index++;
     }
@@ -1018,7 +1018,7 @@ int HTMLTableCellElementImpl::cellIndex() const
     return index;
 }
 
-bool HTMLTableCellElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
+bool HTMLTableCellElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
     if (attrName == nowrapAttr) {
         result = eUniversal;
@@ -1031,10 +1031,10 @@ bool HTMLTableCellElementImpl::mapToEntry(const QualifiedName& attrName, MappedA
         return false;
     }
 
-    return HTMLTablePartElementImpl::mapToEntry(attrName, result);
+    return HTMLTablePartElement::mapToEntry(attrName, result);
 }
 
-void HTMLTableCellElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
+void HTMLTableCellElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == rowspanAttr) {
         rSpan = !attr->isNull() ? attr->value().toInt() : 1;
@@ -1062,178 +1062,178 @@ void HTMLTableCellElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
                 addCSSLength(attr, CSS_PROP_HEIGHT, attr->value());
         }
     } else
-        HTMLTablePartElementImpl::parseMappedAttribute(attr);
+        HTMLTablePartElement::parseMappedAttribute(attr);
 }
 
 // used by table cells to share style decls created by the enclosing table.
-CSSMutableStyleDeclarationImpl* HTMLTableCellElementImpl::additionalAttributeStyleDecl()
+CSSMutableStyleDeclaration* HTMLTableCellElement::additionalAttributeStyleDecl()
 {
-    NodeImpl* p = parentNode();
+    Node* p = parentNode();
     while (p && !p->hasTagName(tableTag))
         p = p->parentNode();
 
     if (p) {
-        HTMLTableElementImpl* table = static_cast<HTMLTableElementImpl*>(p);
+        HTMLTableElement* table = static_cast<HTMLTableElement*>(p);
         return table->getSharedCellDecl();
     }
 
     return 0;
 }
 
-bool HTMLTableCellElementImpl::isURLAttribute(AttributeImpl *attr) const
+bool HTMLTableCellElement::isURLAttribute(Attribute *attr) const
 {
     return attr->name() == backgroundAttr;
 }
 
-DOMString HTMLTableCellElementImpl::abbr() const
+String HTMLTableCellElement::abbr() const
 {
     return getAttribute(abbrAttr);
 }
 
-void HTMLTableCellElementImpl::setAbbr(const DOMString &value)
+void HTMLTableCellElement::setAbbr(const String &value)
 {
     setAttribute(abbrAttr, value);
 }
 
-DOMString HTMLTableCellElementImpl::align() const
+String HTMLTableCellElement::align() const
 {
     return getAttribute(alignAttr);
 }
 
-void HTMLTableCellElementImpl::setAlign(const DOMString &value)
+void HTMLTableCellElement::setAlign(const String &value)
 {
     setAttribute(alignAttr, value);
 }
 
-DOMString HTMLTableCellElementImpl::axis() const
+String HTMLTableCellElement::axis() const
 {
     return getAttribute(axisAttr);
 }
 
-void HTMLTableCellElementImpl::setAxis(const DOMString &value)
+void HTMLTableCellElement::setAxis(const String &value)
 {
     setAttribute(axisAttr, value);
 }
 
-DOMString HTMLTableCellElementImpl::bgColor() const
+String HTMLTableCellElement::bgColor() const
 {
     return getAttribute(bgcolorAttr);
 }
 
-void HTMLTableCellElementImpl::setBgColor(const DOMString &value)
+void HTMLTableCellElement::setBgColor(const String &value)
 {
     setAttribute(bgcolorAttr, value);
 }
 
-DOMString HTMLTableCellElementImpl::ch() const
+String HTMLTableCellElement::ch() const
 {
     return getAttribute(charAttr);
 }
 
-void HTMLTableCellElementImpl::setCh(const DOMString &value)
+void HTMLTableCellElement::setCh(const String &value)
 {
     setAttribute(charAttr, value);
 }
 
-DOMString HTMLTableCellElementImpl::chOff() const
+String HTMLTableCellElement::chOff() const
 {
     return getAttribute(charoffAttr);
 }
 
-void HTMLTableCellElementImpl::setChOff(const DOMString &value)
+void HTMLTableCellElement::setChOff(const String &value)
 {
     setAttribute(charoffAttr, value);
 }
 
-void HTMLTableCellElementImpl::setColSpan(int n)
+void HTMLTableCellElement::setColSpan(int n)
 {
-    setAttribute(colspanAttr, QString::number(n));
+    setAttribute(colspanAttr, DeprecatedString::number(n));
 }
 
-DOMString HTMLTableCellElementImpl::headers() const
+String HTMLTableCellElement::headers() const
 {
     return getAttribute(headersAttr);
 }
 
-void HTMLTableCellElementImpl::setHeaders(const DOMString &value)
+void HTMLTableCellElement::setHeaders(const String &value)
 {
     setAttribute(headersAttr, value);
 }
 
-DOMString HTMLTableCellElementImpl::height() const
+String HTMLTableCellElement::height() const
 {
     return getAttribute(heightAttr);
 }
 
-void HTMLTableCellElementImpl::setHeight(const DOMString &value)
+void HTMLTableCellElement::setHeight(const String &value)
 {
     setAttribute(heightAttr, value);
 }
 
-bool HTMLTableCellElementImpl::noWrap() const
+bool HTMLTableCellElement::noWrap() const
 {
     return !getAttribute(nowrapAttr).isNull();
 }
 
-void HTMLTableCellElementImpl::setNoWrap(bool b)
+void HTMLTableCellElement::setNoWrap(bool b)
 {
     setAttribute(nowrapAttr, b ? "" : 0);
 }
 
-void HTMLTableCellElementImpl::setRowSpan(int n)
+void HTMLTableCellElement::setRowSpan(int n)
 {
-    setAttribute(rowspanAttr, QString::number(n));
+    setAttribute(rowspanAttr, DeprecatedString::number(n));
 }
 
-DOMString HTMLTableCellElementImpl::scope() const
+String HTMLTableCellElement::scope() const
 {
     return getAttribute(scopeAttr);
 }
 
-void HTMLTableCellElementImpl::setScope(const DOMString &value)
+void HTMLTableCellElement::setScope(const String &value)
 {
     setAttribute(scopeAttr, value);
 }
 
-DOMString HTMLTableCellElementImpl::vAlign() const
+String HTMLTableCellElement::vAlign() const
 {
     return getAttribute(valignAttr);
 }
 
-void HTMLTableCellElementImpl::setVAlign(const DOMString &value)
+void HTMLTableCellElement::setVAlign(const String &value)
 {
     setAttribute(valignAttr, value);
 }
 
-DOMString HTMLTableCellElementImpl::width() const
+String HTMLTableCellElement::width() const
 {
     return getAttribute(widthAttr);
 }
 
-void HTMLTableCellElementImpl::setWidth(const DOMString &value)
+void HTMLTableCellElement::setWidth(const String &value)
 {
     setAttribute(widthAttr, value);
 }
 
 // -------------------------------------------------------------------------
 
-HTMLTableColElementImpl::HTMLTableColElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
-    : HTMLTablePartElementImpl(tagName, doc)
+HTMLTableColElement::HTMLTableColElement(const QualifiedName& tagName, Document *doc)
+    : HTMLTablePartElement(tagName, doc)
 {
     _span = (tagName.matches(colgroupTag) ? 0 : 1);
 }
 
-bool HTMLTableColElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
+bool HTMLTableColElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
     if (attrName == widthAttr) {
         result = eUniversal;
         return false;
     }
 
-    return HTMLTablePartElementImpl::mapToEntry(attrName, result);
+    return HTMLTablePartElement::mapToEntry(attrName, result);
 }
 
-void HTMLTableColElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
+void HTMLTableColElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == spanAttr) {
         _span = !attr->isNull() ? attr->value().toInt() : 1;
@@ -1243,91 +1243,91 @@ void HTMLTableColElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         if (!attr->value().isEmpty())
             addCSSLength(attr, CSS_PROP_WIDTH, attr->value());
     } else
-        HTMLTablePartElementImpl::parseMappedAttribute(attr);
+        HTMLTablePartElement::parseMappedAttribute(attr);
 }
 
-DOMString HTMLTableColElementImpl::align() const
+String HTMLTableColElement::align() const
 {
     return getAttribute(alignAttr);
 }
 
-void HTMLTableColElementImpl::setAlign(const DOMString &value)
+void HTMLTableColElement::setAlign(const String &value)
 {
     setAttribute(alignAttr, value);
 }
 
-DOMString HTMLTableColElementImpl::ch() const
+String HTMLTableColElement::ch() const
 {
     return getAttribute(charAttr);
 }
 
-void HTMLTableColElementImpl::setCh(const DOMString &value)
+void HTMLTableColElement::setCh(const String &value)
 {
     setAttribute(charAttr, value);
 }
 
-DOMString HTMLTableColElementImpl::chOff() const
+String HTMLTableColElement::chOff() const
 {
     return getAttribute(charoffAttr);
 }
 
-void HTMLTableColElementImpl::setChOff(const DOMString &value)
+void HTMLTableColElement::setChOff(const String &value)
 {
     setAttribute(charoffAttr, value);
 }
 
-void HTMLTableColElementImpl::setSpan(int n)
+void HTMLTableColElement::setSpan(int n)
 {
-    setAttribute(spanAttr, QString::number(n));
+    setAttribute(spanAttr, DeprecatedString::number(n));
 }
 
-DOMString HTMLTableColElementImpl::vAlign() const
+String HTMLTableColElement::vAlign() const
 {
     return getAttribute(valignAttr);
 }
 
-void HTMLTableColElementImpl::setVAlign(const DOMString &value)
+void HTMLTableColElement::setVAlign(const String &value)
 {
     setAttribute(valignAttr, value);
 }
 
-DOMString HTMLTableColElementImpl::width() const
+String HTMLTableColElement::width() const
 {
     return getAttribute(widthAttr);
 }
 
-void HTMLTableColElementImpl::setWidth(const DOMString &value)
+void HTMLTableColElement::setWidth(const String &value)
 {
     setAttribute(widthAttr, value);
 }
 
 // -------------------------------------------------------------------------
 
-bool HTMLTableCaptionElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
+bool HTMLTableCaptionElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
     if (attrName == alignAttr) {
         result = eCaption;
         return false;
     }
 
-    return HTMLElementImpl::mapToEntry(attrName, result);
+    return HTMLElement::mapToEntry(attrName, result);
 }
 
-void HTMLTableCaptionElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
+void HTMLTableCaptionElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == alignAttr) {
         if (!attr->value().isEmpty())
             addCSSProperty(attr, CSS_PROP_CAPTION_SIDE, attr->value());
     } else
-        HTMLElementImpl::parseMappedAttribute(attr);
+        HTMLElement::parseMappedAttribute(attr);
 }
 
-DOMString HTMLTableCaptionElementImpl::align() const
+String HTMLTableCaptionElement::align() const
 {
     return getAttribute(alignAttr);
 }
 
-void HTMLTableCaptionElementImpl::setAlign(const DOMString &value)
+void HTMLTableCaptionElement::setAlign(const String &value)
 {
     setAttribute(alignAttr, value);
 }

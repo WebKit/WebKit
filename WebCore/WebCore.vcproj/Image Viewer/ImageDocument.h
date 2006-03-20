@@ -31,7 +31,7 @@
 
 #include "config.h"
 #include "ImageAnimationObserver.h"
-#include "Array.h"
+#include "DeprecatedArray.h"
 #include "Image.h"
 
 class ImageDocument : public CDocument, public WebCore::ImageAnimationObserver
@@ -64,7 +64,7 @@ public:
 #endif
 
 protected:
-        ByteArray m_buffer;
+        DeprecatedByteArray m_buffer;
         WebCore::Image* m_image;
 
 // Generated message map functions

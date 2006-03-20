@@ -184,9 +184,9 @@ JSValue* JSCanvasRenderingContext2DBaseProtoFunc::callAsFunction(ExecState* exec
             JSObject* o = static_cast<JSObject*>(args[0]);
             if (!o->isObject())
                 return throwError(exec, TypeError);
-            if (!(o->inherits(&HTMLElement::img_info) || o->inherits(&HTMLElement::canvas_info)))
+            if (!(o->inherits(&JSHTMLElement::img_info) || o->inherits(&JSHTMLElement::canvas_info)))
                 return throwError(exec, TypeError);
-            HTMLImageElementImpl* imgElt = static_cast<HTMLImageElementImpl*>(static_cast<HTMLElement*>(args[0])->impl());
+            HTMLImageElement* imgElt = static_cast<HTMLImageElement*>(static_cast<JSHTMLElement*>(args[0])->impl());
             switch (args.size()) {
                 case 3:
                     context->drawImage(imgElt, args[1]->toNumber(exec), args[2]->toNumber(exec));
@@ -210,9 +210,9 @@ JSValue* JSCanvasRenderingContext2DBaseProtoFunc::callAsFunction(ExecState* exec
             JSObject* o = static_cast<JSObject*>(args[0]);
             if (!o->isObject())
                 return throwError(exec, TypeError);
-            if (!o->inherits(&HTMLElement::img_info))
+            if (!o->inherits(&JSHTMLElement::img_info))
                 return throwError(exec, TypeError);
-            context->drawImageFromRect(static_cast<HTMLImageElementImpl*>(static_cast<HTMLElement*>(args[0])->impl()),
+            context->drawImageFromRect(static_cast<HTMLImageElement*>(static_cast<JSHTMLElement*>(args[0])->impl()),
                 args[1]->toNumber(exec), args[2]->toNumber(exec),
                 args[3]->toNumber(exec), args[4]->toNumber(exec),
                 args[5]->toNumber(exec), args[6]->toNumber(exec),
@@ -224,10 +224,10 @@ JSValue* JSCanvasRenderingContext2DBaseProtoFunc::callAsFunction(ExecState* exec
             JSObject* o = static_cast<JSObject*>(args[0]);
             if (!o->isObject())
                 return throwError(exec, TypeError);
-            if (!o->inherits(&HTMLElement::img_info))
+            if (!o->inherits(&JSHTMLElement::img_info))
                 return throwError(exec, TypeError);
             return toJS(exec,
-                context->createPattern(static_cast<HTMLImageElementImpl*>(static_cast<HTMLElement*>(args[0])->impl()),
+                context->createPattern(static_cast<HTMLImageElement*>(static_cast<JSHTMLElement*>(args[0])->impl()),
                 args[1]->toString(exec).domString()).get());
     }
 

@@ -27,14 +27,14 @@
 #ifndef KHTML_Request_h
 #define KHTML_Request_h
 
-#include "Array.h"
+#include "DeprecatedArray.h"
 
 namespace WebCore {
     class CachedObject;
     class DocLoader;
 
-    template <class T> class Array;
-    typedef Array<char> ByteArray;
+    template <class T> class DeprecatedArray;
+    typedef DeprecatedArray<char> DeprecatedByteArray;
 
     class Request {
     public:
@@ -42,7 +42,7 @@ namespace WebCore {
         ~Request();
 
         bool incremental;
-        ByteArray m_buffer;
+        DeprecatedByteArray m_buffer;
         CachedObject* object;
         DocLoader* m_docLoader;
         bool multipart;

@@ -26,11 +26,11 @@
 #include "config.h"
 #include "Selection.h"
 
-#include "DocumentImpl.h"
+#include "Document.h"
 #include "htmlediting.h"
 #include "VisiblePosition.h"
 #include "visible_units.h"
-#include "dom2_rangeimpl.h"
+#include "Range.h"
 #include <kxmlcore/Assertions.h>
 
 namespace WebCore {
@@ -63,7 +63,7 @@ Selection::Selection(const Position &base, const Position &extent, EAffinity aff
     validate();
 }
 
-PassRefPtr<RangeImpl> Selection::toRange() const
+PassRefPtr<Range> Selection::toRange() const
 {
     if (isNone())
         return 0;
@@ -96,7 +96,7 @@ PassRefPtr<RangeImpl> Selection::toRange() const
         ASSERT(isRange());
         s = m_start.downstream();
         e = m_end.upstream();
-        if (RangeImpl::compareBoundaryPoints(s.node(), s.offset(), e.node(), e.offset()) > 0) {
+        if (Range::compareBoundaryPoints(s.node(), s.offset(), e.node(), e.offset()) > 0) {
             // Make sure the start is before the end.
             // The end can wind up before the start if collapsed whitespace is the only thing selected.
             Position tmp = s;
@@ -108,7 +108,7 @@ PassRefPtr<RangeImpl> Selection::toRange() const
     }
 
     ExceptionCode ec = 0;
-    RefPtr<RangeImpl> result(new RangeImpl(s.node()->getDocument()));
+    RefPtr<Range> result(new Range(s.node()->getDocument()));
     result->setStart(s.node(), s.offset(), ec);
     if (ec) {
         LOG_ERROR("Exception setting Range start from Selection: %d", ec);
@@ -122,7 +122,7 @@ PassRefPtr<RangeImpl> Selection::toRange() const
     return result.release();
 }
 
-bool Selection::expandUsingGranularity(ETextGranularity granularity)
+bool Selection::expandUsingGranularity(TextGranularity granularity)
 {
     if (isNone())
         return false;
@@ -159,7 +159,7 @@ void Selection::validate()
         else {
             // We have no position to work with. See if the BODY element of the page
             // is contentEditable. If it is, put the caret there.
-            //NodeImpl *node = document()
+            //Node *node = document()
             m_start.clear();
             m_end.clear();
         }
@@ -171,7 +171,7 @@ void Selection::validate()
         m_extent = m_base;
         m_baseIsFirst = true;
     } else {
-        m_baseIsFirst = RangeImpl::compareBoundaryPoints(m_base.node(), m_base.offset(), m_extent.node(), m_extent.offset()) <= 0;
+        m_baseIsFirst = Range::compareBoundaryPoints(m_base.node(), m_base.offset(), m_extent.node(), m_extent.offset()) <= 0;
     }
 
     if (m_baseIsFirst) {
@@ -219,7 +219,7 @@ void Selection::validate()
             m_end = end.deepEquivalent();
             break;
         }
-        case LINE_BOUNDARY: {
+        case LineBoundary: {
             m_start = startOfLine(VisiblePosition(m_start, m_affinity)).deepEquivalent();
             m_end = endOfLine(VisiblePosition(m_end, m_affinity)).deepEquivalent();
             break;
@@ -242,11 +242,11 @@ void Selection::validate()
             }
             break;
         }
-        case DOCUMENT_BOUNDARY:
+        case DocumentBoundary:
             m_start = startOfDocument(VisiblePosition(m_start, m_affinity)).deepEquivalent();
             m_end = endOfDocument(VisiblePosition(m_end, m_affinity)).deepEquivalent();
             break;
-        case PARAGRAPH_BOUNDARY:
+        case ParagraphBoundary:
             m_start = startOfParagraph(VisiblePosition(m_start, m_affinity)).deepEquivalent();
             m_end = endOfParagraph(VisiblePosition(m_end, m_affinity)).deepEquivalent();
             break;
@@ -287,9 +287,9 @@ void Selection::adjustForEditableContent()
     if (m_base.isNull())
         return;
 
-    NodeImpl *baseRoot = m_base.node()->rootEditableElement();
-    NodeImpl *startRoot = m_start.node()->rootEditableElement();
-    NodeImpl *endRoot = m_end.node()->rootEditableElement();
+    Node *baseRoot = m_base.node()->rootEditableElement();
+    Node *startRoot = m_start.node()->rootEditableElement();
+    Node *endRoot = m_end.node()->rootEditableElement();
     
     // The base, start and end are all in the same region.  No adjustment necessary.
     if (baseRoot == startRoot && baseRoot == endRoot)
@@ -347,17 +347,17 @@ void Selection::debugPosition() const
 
     if (m_start == m_end) {
         Position pos = m_start;
-        fprintf(stderr, "pos:        %s %p:%d\n", pos.node()->nodeName().qstring().latin1(), pos.node(), pos.offset());
+        fprintf(stderr, "pos:        %s %p:%d\n", pos.node()->nodeName().deprecatedString().latin1(), pos.node(), pos.offset());
     } else {
         Position pos = m_start;
-        fprintf(stderr, "start:      %s %p:%d\n", pos.node()->nodeName().qstring().latin1(), pos.node(), pos.offset());
+        fprintf(stderr, "start:      %s %p:%d\n", pos.node()->nodeName().deprecatedString().latin1(), pos.node(), pos.offset());
         fprintf(stderr, "-----------------------------------\n");
         pos = m_end;
-        fprintf(stderr, "end:        %s %p:%d\n", pos.node()->nodeName().qstring().latin1(), pos.node(), pos.offset());
+        fprintf(stderr, "end:        %s %p:%d\n", pos.node()->nodeName().deprecatedString().latin1(), pos.node(), pos.offset());
         fprintf(stderr, "-----------------------------------\n");
     }
 
     fprintf(stderr, "================================\n");
 }
 
-} // namespace DOM
+} // namespace WebCore

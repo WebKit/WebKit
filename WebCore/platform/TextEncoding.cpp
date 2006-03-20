@@ -53,12 +53,12 @@ QChar TextEncoding::backslashAsCurrencySymbol() const
     return '\\';
 }
 
-QString TextEncoding::toUnicode(const char *chs, int len) const
+DeprecatedString TextEncoding::toUnicode(const char *chs, int len) const
 {
     return StreamingTextDecoder(*this).toUnicode(chs, len, true);
 }
 
-QString TextEncoding::toUnicode(const ByteArray &qba, int len) const
+DeprecatedString TextEncoding::toUnicode(const DeprecatedByteArray &qba, int len) const
 {
     return StreamingTextDecoder(*this).toUnicode(qba, len, true);
 }
@@ -112,7 +112,7 @@ static inline TextEncodingID effectiveEncoding(TextEncodingID encoding)
     return encoding;
 }
 
-QCString TextEncoding::fromUnicode(const QString &qcs, bool allowEntities) const
+DeprecatedCString TextEncoding::fromUnicode(const DeprecatedString &qcs, bool allowEntities) const
 {
     TextEncodingID encoding = effectiveEncoding(m_encodingID);
 
@@ -126,24 +126,24 @@ QCString TextEncoding::fromUnicode(const QString &qcs, bool allowEntities) const
     // FIXME: We should see if there is "force ASCII range" mode in ICU;
     // until then, we change the backslash into a yen sign.
     // Encoding will change the yen sign back into a backslash.
-    QString copy = qcs;
+    DeprecatedString copy = qcs;
     copy.replace(QChar('\\'), backslashAsCurrencySymbol());
 
     UErrorCode err = U_ZERO_ERROR;
     UConverter* conv = getConverter(encoding, &err);
     if (!conv && U_FAILURE(err))
-        return QCString();
+        return DeprecatedCString();
 
     ASSERT(conv);
 
-    // FIXME: when QString buffer is latin1, it would be nice to
+    // FIXME: when DeprecatedString buffer is latin1, it would be nice to
     // convert from that w/o having to allocate a unicode buffer
 
     char buffer[ConversionBufferSize];
     const UChar* source = reinterpret_cast<const UChar*>(copy.unicode());
     const UChar* sourceLimit = source + copy.length();
 
-    QCString result(1); // for trailng zero
+    DeprecatedCString result(1); // for trailng zero
 
     if (allowEntities)
         ucnv_setFromUCallBack(conv, UCNV_FROM_U_CALLBACK_ESCAPE, UCNV_ESCAPE_XML_DEC, 0, 0, &err);

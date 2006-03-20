@@ -186,14 +186,14 @@ sub AddIncludesForType
       $type eq "NodeList" or 
       $type eq "Text" or 
       $type eq "CharacterData") {
-    $implIncludes{"${type}Impl.h"} = 1;
+    $implIncludes{"${type}.h"} = 1;
   } elsif ($type eq "Attr" or
            $type eq "Element") {
     $implIncludes{"dom_elementimpl.h"} = 1;
   } elsif ($type eq "CSSStyleSheet") {
     $implIncludes{"css_stylesheetimpl.h"} = 1;
   } elsif ($type eq "HTMLDocument") {
-    $implIncludes{"html_documentimpl.h"} = 1;
+    $implIncludes{"HTMLDocument.h"} = 1;
   } elsif ($type eq "MutationEvent" or
            $type eq "WheelEvent") {
     $implIncludes{"dom2_eventsimpl.h"} = 1;
@@ -226,7 +226,7 @@ sub GetLegacyImplementationIncludes
   if ($module eq "events") {
     return "#include \"dom2_eventsimpl.h\"\n";
   } elsif ($module eq "core") {
-    return "#include \"${interfaceName}Impl.h\"\n";
+    return "#include \"${interfaceName}.h\"\n";
   } else {
     die ("Don't know what headers to include for module $module");
   }  
@@ -239,7 +239,7 @@ sub GenerateHeader
 
   my $interfaceName = $dataNode->name;
   my $className = "JS$interfaceName";
-  my $implClassName = $interfaceName . "Impl";
+  my $implClassName = $interfaceName;
   # Canvas classes don't have Impl suffix (remove this when removing the Impl suffix elsewhere).
   $implClassName = $interfaceName if $interfaceName =~ /^Canvas/;
   
@@ -400,7 +400,7 @@ sub GenerateImplementation
   
   my $interfaceName = $dataNode->name;
   my $className = "JS$interfaceName";
-  my $implClassName = $interfaceName . "Impl";
+  my $implClassName = $interfaceName;
   # Canvas classes don't have Impl suffix (remove this when removing the Impl suffix elsewhere).
   $implClassName = $interfaceName if $interfaceName =~ /^Canvas/;
   
@@ -747,10 +747,10 @@ sub GetNativeType
   } elsif ($type eq "DOMString") {
     return "String";
   } elsif ($type eq "views::AbstractView") {
-    return "AbstractViewImpl*";
+    return "AbstractView*";
   } elsif ($type eq "Node" or $type eq "Attr" or
            $type eq "DocumentType") {
-    return "${type}Impl*";
+    return "${type}*";
   } else {
     die "Don't know how the native type of $type";
   }
@@ -825,7 +825,7 @@ sub NativeToJSValue
            $type eq "Attr") {
     # Add necessary includes
     $implIncludes{"kjs_dom.h"} = 1;
-    $implIncludes{"NodeImpl.h"} = 1;
+    $implIncludes{"Node.h"} = 1;
     return "toJS(exec, $value)";
   } elsif ($type eq "NodeList" or $type eq "NamedNodeMap") {
     # Add necessary includes
@@ -843,7 +843,7 @@ sub NativeToJSValue
     return "toJS(exec, $value)";
   } elsif ($type eq "HTMLCanvasElement") {
     $implIncludes{"kjs_dom.h"} = 1;
-    $implIncludes{"html_canvasimpl.h"} = 1;
+    $implIncludes{"HTMLCanvasElement.h"} = 1;
     return "toJS(exec, $value)";
   } elsif ($type eq "CanvasGradient") {
     $implIncludes{"kjs_html.h"} = 1;

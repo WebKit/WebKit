@@ -58,7 +58,7 @@ public:
     const AtomicString& localName() const { return m_impl->m_localName; }
     const AtomicString& namespaceURI() const { return m_impl->m_namespace; }
 
-    DOMString toString() const;
+    String toString() const;
 
     // Init routine for globals
     static void init();

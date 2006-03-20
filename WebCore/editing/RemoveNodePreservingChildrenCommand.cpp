@@ -26,12 +26,12 @@
 #include "config.h"
 #include "RemoveNodePreservingChildrenCommand.h"
 
-#include "NodeImpl.h"
+#include "Node.h"
 #include <kxmlcore/Assertions.h>
 
 namespace WebCore {
 
-RemoveNodePreservingChildrenCommand::RemoveNodePreservingChildrenCommand(DocumentImpl *document, NodeImpl *node)
+RemoveNodePreservingChildrenCommand::RemoveNodePreservingChildrenCommand(Document *document, Node *node)
     : CompositeEditCommand(document), m_node(node)
 {
     ASSERT(m_node);
@@ -39,7 +39,7 @@ RemoveNodePreservingChildrenCommand::RemoveNodePreservingChildrenCommand(Documen
 
 void RemoveNodePreservingChildrenCommand::doApply()
 {
-    while (NodeImpl* curr = node()->firstChild()) {
+    while (Node* curr = node()->firstChild()) {
         removeNode(curr);
         insertNodeBefore(curr, node());
     }

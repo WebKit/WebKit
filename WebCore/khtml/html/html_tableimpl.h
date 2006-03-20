@@ -28,17 +28,17 @@
 #ifndef HTMLTableElementImpl_H
 #define HTMLTableElementImpl_H
 
-#include "HTMLElementImpl.h"
+#include "HTMLElement.h"
 #include "htmlnames.h"
 
 namespace WebCore {
 
-class HTMLCollectionImpl;
-class HTMLTableSectionElementImpl;
-class HTMLTableCellElementImpl;
-class HTMLTableCaptionElementImpl;
+class HTMLCollection;
+class HTMLTableSectionElement;
+class HTMLTableCellElement;
+class HTMLTableCaptionElement;
 
-class HTMLTableElementImpl : public HTMLElementImpl {
+class HTMLTableElement : public HTMLElement {
 public:
     enum Rules {
         None    = 0x00,
@@ -60,35 +60,35 @@ public:
         Box    = 0x0f
     };
 
-    HTMLTableElementImpl(DocumentImpl*);
-    ~HTMLTableElementImpl();
+    HTMLTableElement(Document*);
+    ~HTMLTableElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 9; }
-    virtual bool checkDTD(const NodeImpl*);
+    virtual bool checkDTD(const Node*);
 
-    HTMLTableCaptionElementImpl* caption() const { return tCaption; }
-    NodeImpl* setCaption(HTMLTableCaptionElementImpl*);
+    HTMLTableCaptionElement* caption() const { return tCaption; }
+    Node* setCaption(HTMLTableCaptionElement*);
 
-    HTMLTableSectionElementImpl* tHead() const { return head; }
-    NodeImpl* setTHead(HTMLTableSectionElementImpl*);
+    HTMLTableSectionElement* tHead() const { return head; }
+    Node* setTHead(HTMLTableSectionElement*);
 
-    HTMLTableSectionElementImpl* tFoot() const { return foot; }
-    NodeImpl* setTFoot(HTMLTableSectionElementImpl*);
+    HTMLTableSectionElement* tFoot() const { return foot; }
+    Node* setTFoot(HTMLTableSectionElement*);
 
-    NodeImpl* setTBody(HTMLTableSectionElementImpl*);
+    Node* setTBody(HTMLTableSectionElement*);
 
-    HTMLElementImpl* createTHead();
+    HTMLElement* createTHead();
     void deleteTHead();
-    HTMLElementImpl* createTFoot();
+    HTMLElement* createTFoot();
     void deleteTFoot();
-    HTMLElementImpl* createCaption();
+    HTMLElement* createCaption();
     void deleteCaption();
-    HTMLElementImpl* insertRow(int index, ExceptionCode&);
+    HTMLElement* insertRow(int index, ExceptionCode&);
     void deleteRow(int index, ExceptionCode&);
 
-    RefPtr<HTMLCollectionImpl> rows();
-    RefPtr<HTMLCollectionImpl> tBodies();
+    RefPtr<HTMLCollection> rows();
+    RefPtr<HTMLCollection> tBodies();
 
     String align() const;
     void setAlign(const String&);
@@ -118,60 +118,60 @@ public:
     void setWidth(const String&);
 
     // overrides
-    virtual ContainerNodeImpl* addChild(PassRefPtr<NodeImpl>);
+    virtual ContainerNode* addChild(PassRefPtr<Node>);
     virtual void childrenChanged();
     
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttribute *attr);
 
     // Used to obtain either a solid or outset border decl.
-    virtual CSSMutableStyleDeclarationImpl* additionalAttributeStyleDecl();
-    CSSMutableStyleDeclarationImpl* getSharedCellDecl();
+    virtual CSSMutableStyleDeclaration* additionalAttributeStyleDecl();
+    CSSMutableStyleDeclaration* getSharedCellDecl();
 
     virtual void attach();
     
-    virtual bool isURLAttribute(AttributeImpl*) const;
+    virtual bool isURLAttribute(Attribute*) const;
 
 protected:
-    HTMLTableSectionElementImpl* head;
-    HTMLTableSectionElementImpl* foot;
-    HTMLTableSectionElementImpl* firstBody;
-    HTMLTableCaptionElementImpl* tCaption;
+    HTMLTableSectionElement* head;
+    HTMLTableSectionElement* foot;
+    HTMLTableSectionElement* firstBody;
+    HTMLTableCaptionElement* tCaption;
 
     bool m_noBorder     : 1;
     bool m_solid        : 1;
     // 14 bits unused
     unsigned short padding;
-    friend class HTMLTableCellElementImpl;
+    friend class HTMLTableCellElement;
 };
 
 // -------------------------------------------------------------------------
 
-class HTMLTablePartElementImpl : public HTMLElementImpl
+class HTMLTablePartElement : public HTMLElement
 
 {
 public:
-    HTMLTablePartElementImpl(const QualifiedName& tagName, DocumentImpl* doc)
-        : HTMLElementImpl(tagName, doc)
+    HTMLTablePartElement(const QualifiedName& tagName, Document* doc)
+        : HTMLElement(tagName, doc)
         { }
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttributeImpl*);
+    virtual void parseMappedAttribute(MappedAttribute*);
 };
 
 // -------------------------------------------------------------------------
 
-class HTMLTableSectionElementImpl : public HTMLTablePartElementImpl
+class HTMLTableSectionElement : public HTMLTablePartElement
 {
 public:
-    HTMLTableSectionElementImpl(const QualifiedName& tagName, DocumentImpl*, bool implicit);
+    HTMLTableSectionElement(const QualifiedName& tagName, Document*, bool implicit);
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusOptional; }
     virtual int tagPriority() const { return 8; }
-    virtual bool checkDTD(const NodeImpl*);
-    virtual ContainerNodeImpl* addChild(PassRefPtr<NodeImpl>);
+    virtual bool checkDTD(const Node*);
+    virtual ContainerNode* addChild(PassRefPtr<Node>);
     
-    HTMLElementImpl* insertRow(int index, ExceptionCode&);
+    HTMLElement* insertRow(int index, ExceptionCode&);
     void deleteRow(int index, ExceptionCode&);
 
     int numRows() const;
@@ -188,34 +188,34 @@ public:
     String vAlign() const;
     void setVAlign(const String&);
 
-    RefPtr<HTMLCollectionImpl> rows();
+    RefPtr<HTMLCollection> rows();
 };
 
 // -------------------------------------------------------------------------
 
-class HTMLTableRowElementImpl : public HTMLTablePartElementImpl
+class HTMLTableRowElement : public HTMLTablePartElement
 {
 public:
-    HTMLTableRowElementImpl(DocumentImpl* doc)
-        : HTMLTablePartElementImpl(HTMLNames::trTag, doc) {}
+    HTMLTableRowElement(Document* doc)
+        : HTMLTablePartElement(HTMLNames::trTag, doc) {}
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusOptional; }
     virtual int tagPriority() const { return 7; }
-    virtual bool checkDTD(const NodeImpl*);
-    virtual ContainerNodeImpl* addChild(PassRefPtr<NodeImpl>);
+    virtual bool checkDTD(const Node*);
+    virtual ContainerNode* addChild(PassRefPtr<Node>);
     
     int rowIndex() const;
     int sectionRowIndex() const;
 
-    HTMLElementImpl* insertCell(int index, ExceptionCode&);
+    HTMLElement* insertCell(int index, ExceptionCode&);
     void deleteCell(int index, ExceptionCode&);
 
     void setRowIndex(int);
 
     void setSectionRowIndex(int);
 
-    RefPtr<HTMLCollectionImpl> cells();
-    void setCells(HTMLCollectionImpl *, ExceptionCode&);
+    RefPtr<HTMLCollection> cells();
+    void setCells(HTMLCollection *, ExceptionCode&);
 
     String align() const;
     void setAlign(const String&);
@@ -238,11 +238,11 @@ protected:
 
 // -------------------------------------------------------------------------
 
-class HTMLTableCellElementImpl : public HTMLTablePartElementImpl
+class HTMLTableCellElement : public HTMLTablePartElement
 {
 public:
-    HTMLTableCellElementImpl(const QualifiedName& tagName, DocumentImpl*);
-    ~HTMLTableCellElementImpl();
+    HTMLTableCellElement(const QualifiedName& tagName, Document*);
+    ~HTMLTableCellElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusOptional; }
     virtual int tagPriority() const { return 6; }
@@ -258,12 +258,12 @@ public:
     int rowSpan() const { return rSpan; }
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttributeImpl*);
+    virtual void parseMappedAttribute(MappedAttribute*);
 
     // used by table cells to share style decls created by the enclosing table.
-    virtual CSSMutableStyleDeclarationImpl* additionalAttributeStyleDecl();
+    virtual CSSMutableStyleDeclaration* additionalAttributeStyleDecl();
     
-    virtual bool isURLAttribute(AttributeImpl*) const;
+    virtual bool isURLAttribute(Attribute*) const;
 
     void setCellIndex(int);
 
@@ -318,19 +318,19 @@ protected:
 
 // -------------------------------------------------------------------------
 
-class HTMLTableColElementImpl : public HTMLTablePartElementImpl
+class HTMLTableColElement : public HTMLTablePartElement
 {
 public:
-    HTMLTableColElementImpl(const QualifiedName& tagName, DocumentImpl*);
+    HTMLTableColElement(const QualifiedName& tagName, Document*);
 
     virtual HTMLTagStatus endTagRequirement() const { return hasLocalName(HTMLNames::colTag) ? TagStatusForbidden : TagStatusOptional; }
     virtual int tagPriority() const { return hasLocalName(HTMLNames::colTag) ? 0 : 1; }
-    virtual bool checkDTD(const NodeImpl* newChild) { return hasLocalName(HTMLNames::colgroupTag) && newChild->hasTagName(HTMLNames::colTag); }
-    void setTable(HTMLTableElementImpl* t) { table = t; }
+    virtual bool checkDTD(const Node* newChild) { return hasLocalName(HTMLNames::colgroupTag) && newChild->hasTagName(HTMLNames::colTag); }
+    void setTable(HTMLTableElement* t) { table = t; }
 
     // overrides
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttributeImpl*);
+    virtual void parseMappedAttribute(MappedAttribute*);
 
     int span() const { return _span; }
 
@@ -353,22 +353,22 @@ public:
 
 protected:
     int _span;
-    HTMLTableElementImpl *table;
+    HTMLTableElement *table;
 };
 
 // -------------------------------------------------------------------------
 
-class HTMLTableCaptionElementImpl : public HTMLTablePartElementImpl
+class HTMLTableCaptionElement : public HTMLTablePartElement
 {
 public:
-    HTMLTableCaptionElementImpl(DocumentImpl *doc)
-        : HTMLTablePartElementImpl(HTMLNames::captionTag, doc) {}
+    HTMLTableCaptionElement(Document *doc)
+        : HTMLTablePartElement(HTMLNames::captionTag, doc) {}
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 5; }
     
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttributeImpl*);
+    virtual void parseMappedAttribute(MappedAttribute*);
 
     String align() const;
     void setAlign(const String&);

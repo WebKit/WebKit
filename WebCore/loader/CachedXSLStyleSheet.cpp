@@ -39,7 +39,7 @@ namespace WebCore {
 
 #ifdef KHTML_XSLT
 
-CachedXSLStyleSheet::CachedXSLStyleSheet(DocLoader* dl, const DOMString &url, KIO::CacheControl _cachePolicy, time_t _expireDate)
+CachedXSLStyleSheet::CachedXSLStyleSheet(DocLoader* dl, const String &url, KIO::CacheControl _cachePolicy, time_t _expireDate)
 : CachedObject(url, XSLStyleSheet, _cachePolicy, _expireDate)
 {
     // It's XML we want.
@@ -68,19 +68,19 @@ void CachedXSLStyleSheet::deref(CachedObjectClient *c)
         delete this;
 }
 
-void CachedXSLStyleSheet::setCharset( const QString &chs )
+void CachedXSLStyleSheet::setCharset( const DeprecatedString &chs )
 {
     if (!chs.isEmpty())
         m_decoder->setEncodingName(chs.latin1(), Decoder::EncodingFromHTTPHeader);
 }
 
-void CachedXSLStyleSheet::data(ByteArray& data, bool eof)
+void CachedXSLStyleSheet::data(DeprecatedByteArray& data, bool eof)
 {
     if (!eof)
         return;
 
     setSize(data.size());
-    m_sheet = DOMString(m_decoder->decode(data.data(), size()));
+    m_sheet = String(m_decoder->decode(data.data(), size()));
     m_loading = false;
     
     checkNotify();

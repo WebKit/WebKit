@@ -31,15 +31,15 @@
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "cssparser.h"
-#include "html_canvasimpl.h"
+#include "HTMLCanvasElement.h"
 #include "htmlnames.h"
-#include "render_canvasimage.h"
+#include "RenderHTMLCanvas.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-CanvasRenderingContext2D::CanvasRenderingContext2D(HTMLCanvasElementImpl* canvas)
+CanvasRenderingContext2D::CanvasRenderingContext2D(HTMLCanvasElement* canvas)
     : m_canvas(canvas)
     , m_stateStack(1)
 {
@@ -280,7 +280,7 @@ void CanvasRenderingContext2D::setGlobalCompositeOperation(const String& operati
 
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if __APPLE__
-    GraphicsContext::setCompositeOperation(drawingContext(), operation.qstring());
+    GraphicsContext::setCompositeOperation(drawingContext(), operation.deprecatedString());
 #endif
 }
 
@@ -770,16 +770,16 @@ void CanvasRenderingContext2D::applyShadow()
 }
 
 // FIXME: This only exists because canvas is a subclass of image.
-static IntSize imageOrCanvasSize(HTMLImageElementImpl* image)
+static IntSize imageOrCanvasSize(HTMLImageElement* image)
 {
     if (image->hasLocalName(canvasTag))
-        return static_cast<HTMLCanvasElementImpl*>(image)->size();
+        return static_cast<HTMLCanvasElement*>(image)->size();
     if (CachedImage* cachedImage = image->cachedImage())
         return cachedImage->imageSize();
     return IntSize();
 }
 
-void CanvasRenderingContext2D::drawImage(HTMLImageElementImpl* image, float x, float y)
+void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, float x, float y)
 {
     if (!image)
         return;
@@ -787,7 +787,7 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElementImpl* image, float x, f
     drawImage(image, 0, 0, size.width(), size.height(), x, y, size.width(), size.height());
 }
 
-void CanvasRenderingContext2D::drawImage(HTMLImageElementImpl* image, float x, float y, float width, float height)
+void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, float x, float y, float width, float height)
 {
     if (!image)
         return;
@@ -795,7 +795,7 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElementImpl* image, float x, f
     drawImage(image, 0, 0, size.width(), size.height(), x, y, width, height);
 }
 
-void CanvasRenderingContext2D::drawImage(HTMLImageElementImpl* image,
+void CanvasRenderingContext2D::drawImage(HTMLImageElement* image,
     float sx, float sy, float sw, float sh,
     float dx, float dy, float dw, float dh)
 {
@@ -821,7 +821,7 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElementImpl* image,
         return;
     }
 
-    CGImageRef platformImage = static_cast<HTMLCanvasElementImpl*>(image)->createPlatformImage();
+    CGImageRef platformImage = static_cast<HTMLCanvasElement*>(image)->createPlatformImage();
     if (!platformImage)
         return;
 
@@ -863,7 +863,7 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElementImpl* image,
 }
 
 // FIXME: Why isn't this just another overload of drawImage? Why have a different name?
-void CanvasRenderingContext2D::drawImageFromRect(HTMLImageElementImpl* image,
+void CanvasRenderingContext2D::drawImageFromRect(HTMLImageElement* image,
     float sx, float sy, float sw, float sh,
     float dx, float dy, float dw, float dh,
     const String& compositeOperation)
@@ -911,7 +911,7 @@ PassRefPtr<CanvasGradient> CanvasRenderingContext2D::createRadialGradient(float 
     return new CanvasGradient(FloatPoint(x0, y0), r0, FloatPoint(x1, y1), r1);
 }
 
-PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLImageElementImpl* image, const String& repetitionType)
+PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLImageElement* image, const String& repetitionType)
 {
     return new CanvasPattern(image ? image->cachedImage() : 0, repetitionType);
 }
@@ -920,7 +920,7 @@ void CanvasRenderingContext2D::willDraw(const FloatRect&)
 {
     if (!m_canvas)
         return;
-    RenderCanvasImage* renderer = static_cast<RenderCanvasImage*>(m_canvas->renderer());
+    RenderHTMLCanvas* renderer = static_cast<RenderHTMLCanvas*>(m_canvas->renderer());
     if (renderer)
         renderer->setNeedsImageUpdate();
 }
@@ -931,7 +931,7 @@ CGContextRef CanvasRenderingContext2D::drawingContext() const
 {
     if (!m_canvas)
         return 0;
-    RenderCanvasImage* renderer = static_cast<RenderCanvasImage*>(m_canvas->renderer());
+    RenderHTMLCanvas* renderer = static_cast<RenderHTMLCanvas*>(m_canvas->renderer());
     if (!renderer)
         return 0;
     return renderer->drawingContext();

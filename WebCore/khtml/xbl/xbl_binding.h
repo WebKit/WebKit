@@ -1,14 +1,14 @@
 #include "CachedObjectClient.h"
 #include "PlatformString.h"
 
-namespace khtml
+namespace WebCore
 {
     class CachedXBLDocument;
 }
 
-namespace DOM
+namespace WebCore
 {
-    class ElementImpl;
+    class Element;
 }
 
 namespace XBL
@@ -16,10 +16,10 @@ namespace XBL
 class XBLPrototypeBinding;
 class XBLBindingChain;
 
-class XBLBinding: public khtml::CachedObjectClient
+class XBLBinding: public WebCore::CachedObjectClient
 {
 public:
-    XBLBinding(XBLBindingChain* chain, const DOM::DOMString& uri, XBLBinding* derivedBinding = 0);
+    XBLBinding(XBLBindingChain* chain, const WebCore::String& uri, XBLBinding* derivedBinding = 0);
     virtual ~XBLBinding();
 
     bool loaded() const;
@@ -31,13 +31,13 @@ public:
     void setPreviousBinding(XBLBinding* p) { m_previousBinding = p; }
     
     // CachedObjectClient
-    void setXBLDocument(const DOM::DOMString& url, XBL::XBLDocumentImpl* doc);
+    void setXBLDocument(const WebCore::String& url, XBL::XBLDocument* doc);
     
 private:
     XBLBindingChain* m_chain; // The owning binding chain.
-    khtml::CachedXBLDocument* m_xblDocument; // The prototype XBL document.
+    WebCore::CachedXBLDocument* m_xblDocument; // The prototype XBL document.
     XBLPrototypeBinding* m_prototype; // The prototype binding that corresponds to our binding.
-    DOM::DOMString m_id; // The id of the binding.
+    WebCore::String m_id; // The id of the binding.
 
     XBLBinding* m_previousBinding; // The previous explicit connection.
     XBLBinding* m_nextBinding; // The next explicit connection (e.g., a base binding specified via the extends attribute).
@@ -46,10 +46,10 @@ private:
 class XBLBindingChain
 {
 public:
-    XBLBindingChain(DOM::ElementImpl* elt, const DOM::DOMString& uri, bool isStyleChain);
+    XBLBindingChain(WebCore::Element* elt, const WebCore::String& uri, bool isStyleChain);
     ~XBLBindingChain();
     
-    const DOM::DOMString& uri() const { return m_uri; }
+    const WebCore::String& uri() const { return m_uri; }
     
     XBLBindingChain* firstStyleBindingChain();
     XBLBindingChain* lastBindingChain() ;
@@ -67,13 +67,13 @@ public:
     bool loaded() const;
     bool hasStylesheets() const;
     
-    DOM::ElementImpl* element() const { return m_element; }
+    WebCore::Element* element() const { return m_element; }
     
     void failed();
     
 private:
-    DOM::DOMString m_uri; // The URI of the binding that is the leaf of this chain.
-    DOM::ElementImpl* m_element; // The bound element. All the bindings in the chain are attached to this element.
+    WebCore::String m_uri; // The URI of the binding that is the leaf of this chain.
+    WebCore::Element* m_element; // The bound element. All the bindings in the chain are attached to this element.
     XBLBinding* m_binding; // The bindings contained within this chain.
     XBLBindingChain* m_previousChain; // The previous implicit connection.
     XBLBindingChain* m_nextChain; // The next implicit connection (e.g., from addBinding or multiple urls in a CSS binding declaration).

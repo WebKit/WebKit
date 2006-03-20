@@ -21,7 +21,7 @@
 #ifndef KJS_WINDOW_H_
 #define KJS_WINDOW_H_
 
-#include "QString.h"
+#include "DeprecatedString.h"
 #include "kjs_binding.h"
 #include <kjs/protect.h>
 #include <kxmlcore/HashMap.h>
@@ -30,7 +30,7 @@ namespace WebCore {
     class AtomicString;
     class Frame;
     class FrameView;
-    class NodeImpl;
+    class Node;
 }
 
 namespace KJS {
@@ -139,7 +139,7 @@ namespace KJS {
     virtual UString toString(ExecState *) const;
 
     // Set the current "event" object
-    void setCurrentEvent(WebCore::EventImpl*);
+    void setCurrentEvent(WebCore::Event*);
 
     // Set a place to put a dialog return value when the window is cleared.
     void setReturnValueSlot(JSValue **slot) { m_returnValueSlot = slot; }
@@ -150,17 +150,17 @@ namespace KJS {
     UnprotectedListenersMap jsUnprotectedEventListeners;
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
-    enum { Closed, Crypto, DefaultStatus, Status, Document, Node, EventCtor, MutationEventCtor, Range,
-           NodeFilter, DOMException, CSSRule, Frames, _History, Event, InnerHeight,
-           InnerWidth, Length, _Location, Locationbar, Name, _Navigator, ClientInformation,
+    enum { Closed, Crypto, DefaultStatus, Status, Document_, Node, EventCtor, MutationEventCtor, Range,
+           NodeFilter, DOMException, CSSRule, Frames, History_, Event_, InnerHeight,
+           InnerWidth, Length, Location_, Locationbar, Name, Navigator_, ClientInformation,
            Menubar, OffscreenBuffering, Opener, OuterHeight, OuterWidth, PageXOffset, PageYOffset,
            Parent, Personalbar, ScreenX, ScreenY, Scrollbars, Scroll, ScrollBy,
            ScreenTop, ScreenLeft,
-           ScrollTo, ScrollX, ScrollY, MoveBy, MoveTo, ResizeBy, ResizeTo, Self, _Window, Top, _Screen,
+           ScrollTo, ScrollX, ScrollY, MoveBy, MoveTo, ResizeBy, ResizeTo, Self, Window_, Top, Screen_,
            Image, Option, Alert, Confirm, Prompt, Open, Print, SetTimeout, ClearTimeout,
            Focus, GetSelection, Blur, Close, SetInterval, ClearInterval, CaptureEvents, 
            ReleaseEvents, AddEventListener, RemoveEventListener,
-           XMLHttpRequest, XMLSerializer, DOMParser, XSLTProcessor,
+           XMLHttpRequest, XMLSerializer, DOMParser_, XSLTProcessor_,
            Onabort, Onblur, Onchange, Onclick, Ondblclick, Ondragdrop, Onerror, 
            Onfocus, Onkeydown, Onkeypress, Onkeyup, Onload, Onmousedown, Onmousemove,
            Onmouseout, Onmouseover, Onmouseup, OnWindowMouseWheel, Onmove, Onreset, Onresize, Onscroll, Onsearch,
@@ -193,7 +193,7 @@ namespace KJS {
     mutable BarInfo* m_scrollbars;
     mutable BarInfo* m_statusbar;
     mutable BarInfo* m_toolbar;
-    WebCore::EventImpl *m_evt;
+    WebCore::Event *m_evt;
     JSValue **m_returnValueSlot;
     typedef HashMap<int, DOMWindowTimer*> TimeoutsMap;
     TimeoutsMap m_timeouts;
@@ -208,14 +208,14 @@ namespace KJS {
     public:
         ScheduledAction(JSValue *func, const List& args)
             : m_func(func), m_args(args) { }
-        ScheduledAction(const QString& code)
+        ScheduledAction(const DeprecatedString& code)
             : m_code(code) { }
         void execute(Window *);
 
     private:
         ProtectedPtr<JSValue> m_func;
         List m_args;
-        QString m_code;
+        DeprecatedString m_code;
     };
 
   class Location : public JSObject {

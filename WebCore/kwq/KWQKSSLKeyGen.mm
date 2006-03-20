@@ -27,23 +27,23 @@
 #import "KWQKSSLKeyGen.h"
 
 #import "KURL.h"
-#import "QString.h"
+#import "DeprecatedString.h"
 #import "WebCoreKeyGenerator.h"
 
-QStringList KSSLKeyGen::supportedKeySizes()
+DeprecatedStringList KSSLKeyGen::supportedKeySizes()
 { 
     NSEnumerator *enumerator = [[[WebCoreKeyGenerator sharedGenerator] strengthMenuItemTitles] objectEnumerator];
-    QStringList supportedKeySizes = QStringList(); 
+    DeprecatedStringList supportedKeySizes = DeprecatedStringList(); 
     NSString *string;
     while ((string = [enumerator nextObject]) != nil) {
-        supportedKeySizes.append(QString::fromNSString(string));
+        supportedKeySizes.append(DeprecatedString::fromNSString(string));
     }
     return supportedKeySizes;
 }
 
-QString KSSLKeyGen::signedPublicKeyAndChallengeString(unsigned keySizeIndex, const QString &challengeString, const KURL &url)
+DeprecatedString KSSLKeyGen::signedPublicKeyAndChallengeString(unsigned keySizeIndex, const DeprecatedString &challengeString, const KURL &url)
 {   
-    return QString::fromNSString([[WebCoreKeyGenerator sharedGenerator] signedPublicKeyAndChallengeStringWithStrengthIndex:keySizeIndex 
+    return DeprecatedString::fromNSString([[WebCoreKeyGenerator sharedGenerator] signedPublicKeyAndChallengeStringWithStrengthIndex:keySizeIndex 
                                                                                                                  challenge:challengeString.getNSString()
                                                                                                                    pageURL:url.getNSURL()]);
 }

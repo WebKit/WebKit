@@ -28,7 +28,7 @@
 namespace WebCore {
 
 class Frame;
-class MacFrame;
+class FrameMac;
 
 class BrowserExtensionMac : public BrowserExtension {
 public:
@@ -40,7 +40,7 @@ public:
                                  Frame*& part);
 
     virtual void setIconURL(const KURL&);
-    virtual void setTypedIconURL(const KURL&, const QString& type);
+    virtual void setTypedIconURL(const KURL&, const DeprecatedString& type);
 
     virtual int getHistoryLength();
     virtual void goBackOrForward(int distance);
@@ -54,7 +54,7 @@ private:
                           const WindowArgs&, 
                           Frame** part);
 
-     MacFrame *m_frame;
+     FrameMac *m_frame;
 };
 
 }

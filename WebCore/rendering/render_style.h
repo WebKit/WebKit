@@ -31,7 +31,7 @@
  * --------
  *
  * The order of the values in the enums have to agree with the order specified
- * in cssvalues.in, otherwise some optimizations in the parser will fail,
+ * in CSSValueKeywords.in, otherwise some optimizations in the parser will fail,
  * and produce invaliud results.
  */
 
@@ -56,12 +56,12 @@ template<typename T, typename U> inline bool compareEqual(const T& t, const U& u
 
 class RenderArena;
 
-namespace DOM {
-    class DOMStringImpl;
-    class ShadowValueImpl;
+namespace WebCore {
+    class StringImpl;
+    class ShadowValue;
 }
 
-namespace khtml {
+namespace WebCore {
 
     class CachedImage;
     class CachedObject;
@@ -356,7 +356,7 @@ public:
 
 struct StyleDashboardRegion
 {
-    QString label;
+    DeprecatedString label;
     LengthBox offset;
     int type;
     
@@ -616,7 +616,7 @@ struct ShadowData {
 
 #ifndef KHTML_NO_XBL
 struct BindingURI {
-    BindingURI(DOM::DOMStringImpl*);
+    BindingURI(WebCore::StringImpl*);
     ~BindingURI();
 
     BindingURI* copy();
@@ -629,10 +629,10 @@ struct BindingURI {
     BindingURI* next() { return m_next; }
     void setNext(BindingURI* n) { m_next = n; }
     
-    DOM::DOMStringImpl* uri() { return m_uri; }
+    WebCore::StringImpl* uri() { return m_uri; }
     
     BindingURI* m_next;
-    DOM::DOMStringImpl* m_uri;
+    WebCore::StringImpl* m_uri;
 };
 #endif
 
@@ -707,7 +707,7 @@ public:
     }
     
     int lineClamp;         // An Apple extension.  Not really CSS3 but not worth making a new struct over.
-    QValueList<StyleDashboardRegion> m_dashboardRegions;
+    DeprecatedValueList<StyleDashboardRegion> m_dashboardRegions;
     float opacity;         // Whether or not we're transparent.
     DataRef<StyleFlexibleBoxData> flexibleBox; // Flexible box properties 
     DataRef<StyleMarqueeData> marquee; // Marquee properties
@@ -796,7 +796,7 @@ public:
     CachedImage *style_image;
     CachedImage *cursor_image;
 
-    khtml::Font font;
+    WebCore::Font font;
     Color color;
     
     short horizontal_border_spacing;
@@ -848,14 +848,14 @@ struct ContentData {
 
     ContentType contentType() { return _contentType; }
 
-    DOM::DOMStringImpl* contentText() { if (contentType() == CONTENT_TEXT) return _content.text; return 0; }
+    WebCore::StringImpl* contentText() { if (contentType() == CONTENT_TEXT) return _content.text; return 0; }
     CachedObject* contentObject() { if (contentType() == CONTENT_OBJECT) return _content.object; return 0; }
     
     ContentType _contentType;
 
     union {
         CachedObject* object;
-        DOM::DOMStringImpl* text;
+        WebCore::StringImpl* text;
         // counters...
     } _content ;
 
@@ -1021,7 +1021,7 @@ protected:
     int m_ref;
     
 #if SVG_SUPPORT
-    DataRef<KSVG::SVGRenderStyle> m_svgStyle;
+    DataRef<WebCore::SVGRenderStyle> m_svgStyle;
 #endif
     
 // !END SYNC!
@@ -1340,9 +1340,9 @@ public:
     void setMinHeight(Length v) { SET_VAR(box,min_height,v) }
     void setMaxHeight(Length v) { SET_VAR(box,max_height,v) }
 
-    QValueList<StyleDashboardRegion> dashboardRegions() const { return css3NonInheritedData->m_dashboardRegions; }
-    void setDashboardRegions(QValueList<StyleDashboardRegion> regions) { SET_VAR(css3NonInheritedData,m_dashboardRegions,regions); }
-    void setDashboardRegion (int type, QString label, Length t, Length r, Length b, Length l, bool append) {
+    DeprecatedValueList<StyleDashboardRegion> dashboardRegions() const { return css3NonInheritedData->m_dashboardRegions; }
+    void setDashboardRegions(DeprecatedValueList<StyleDashboardRegion> regions) { SET_VAR(css3NonInheritedData,m_dashboardRegions,regions); }
+    void setDashboardRegion (int type, DeprecatedString label, Length t, Length r, Length b, Length l, bool append) {
         StyleDashboardRegion region;
         region.label = label;
         region.offset.top  = t;
@@ -1502,7 +1502,7 @@ public:
     void inheritBindingURIs(BindingURI* other) {
         SET_VAR(css3NonInheritedData, bindingURI, other->copy());
     }
-    void addBindingURI(DOM::DOMStringImpl* uri);
+    void addBindingURI(WebCore::StringImpl* uri);
 #endif
     void setOutlineOffset(unsigned short v) { SET_VAR(background, m_outline._offset, v) }
     void setTextShadow(ShadowData* val, bool add=false);
@@ -1539,13 +1539,13 @@ public:
     void setTextSizeAdjust(bool b) { SET_VAR(css3InheritedData, textSizeAdjust, b); }
 
 #if SVG_SUPPORT
-    const KSVG::SVGRenderStyle* svgStyle() const { return m_svgStyle.get(); }
-    KSVG::SVGRenderStyle* accessSVGStyle() { return m_svgStyle.access(); }
+    const WebCore::SVGRenderStyle* svgStyle() const { return m_svgStyle.get(); }
+    WebCore::SVGRenderStyle* accessSVGStyle() { return m_svgStyle.access(); }
 #endif
 
     ContentData* contentData() { return content; }
     bool contentDataEquivalent(const RenderStyle *otherStyle) const;
-    void setContent(DOM::DOMStringImpl* s, bool add = false);
+    void setContent(WebCore::StringImpl* s, bool add = false);
     void setContent(CachedObject* o, bool add = false);
 
     bool inheritedNotEqual( RenderStyle *other ) const;
@@ -1657,8 +1657,8 @@ public:
     // Keep these at the end.
     static int initialLineClamp() { return -1; }
     static bool initialTextSizeAdjust() { return true; }
-    static const QValueList<StyleDashboardRegion>& initialDashboardRegions();
-    static const QValueList<StyleDashboardRegion>& noneDashboardRegions();
+    static const DeprecatedValueList<StyleDashboardRegion>& initialDashboardRegions();
+    static const DeprecatedValueList<StyleDashboardRegion>& noneDashboardRegions();
 };
 
 

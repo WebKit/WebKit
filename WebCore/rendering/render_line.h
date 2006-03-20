@@ -24,7 +24,7 @@
 #define RENDER_LINE_H
 
 #include "bidi.h"
-#include "render_object.h"
+#include "RenderObject.h"
 
 namespace WebCore {
 
@@ -322,7 +322,7 @@ public:
     virtual int rightOverflow() { return m_rightOverflow; }
     virtual void setVerticalOverflowPositions(int top, int bottom) { m_topOverflow = top; m_bottomOverflow = bottom; }
     void setHorizontalOverflowPositions(int left, int right) { m_leftOverflow = left; m_rightOverflow = right; }
-    void setLineBreakInfo(RenderObject* obj, uint breakPos, BidiStatus* status, BidiContext* context);
+    void setLineBreakInfo(RenderObject* obj, unsigned breakPos, BidiStatus* status, BidiContext* context);
     void setLineBreakPos(int p) { m_lineBreakPos = p; }
 
     void setBlockHeight(int h) { m_blockHeight = h; }
@@ -331,7 +331,7 @@ public:
     int blockHeight() const { return m_blockHeight; }
     bool endsWithBreak() const { return m_endsWithBreak; }
     RenderObject* lineBreakObj() const { return m_lineBreakObj; }
-    uint lineBreakPos() const { return m_lineBreakPos; }
+    unsigned lineBreakPos() const { return m_lineBreakPos; }
     BidiStatus lineBreakBidiStatus() const { return m_lineBreakBidiStatus; }
     BidiContext* lineBreakBidiContext() const { return m_lineBreakContext.get(); }
 
@@ -380,7 +380,7 @@ protected:
     // Where this line ended.  The exact object and the position within that object are stored so that
     // we can create a BidiIterator beginning just after the end of this line.
     RenderObject* m_lineBreakObj;
-    uint m_lineBreakPos;
+    unsigned m_lineBreakPos;
     
     BidiStatus m_lineBreakBidiStatus;
     RefPtr<BidiContext> m_lineBreakContext;

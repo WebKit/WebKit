@@ -26,85 +26,85 @@
 #import "config.h"
 #import "DOM.h"
 
-#import "CDATASectionImpl.h"
-#import "CommentImpl.h"
-#import "ContainerNodeImpl.h"
+#import "CDATASection.h"
+#import "Comment.h"
+#import "ContainerNode.h"
 #import "DOMEventsInternal.h"
 #import "DOMHTML.h"
-#import "DOMImplementationImpl.h"
+#import "DOMImplementation.h"
 #import "DOMInternal.h"
 #import "DOMPrivate.h"
-#import "DocumentFragmentImpl.h"
-#import "DocumentImpl.h"
-#import "DocumentTypeImpl.h"
+#import "DocumentFragment.h"
+#import "Document.h"
+#import "DocumentType.h"
 #import "EventListener.h"
 #import "FoundationExtras.h"
-#import "HTMLElementImpl.h"
-#import "MacFrame.h"
-#import "NodeListImpl.h"
+#import "HTMLElement.h"
+#import "FrameMac.h"
+#import "NodeList.h"
 #import "PlatformString.h"
 #import "StringImpl.h"
 #import "css_stylesheetimpl.h"
 #import "csshelper.h"
-#import "dom2_rangeimpl.h"
+#import "Range.h"
 #import "dom2_traversalimpl.h"
-#import "dom2_viewsimpl.h"
+#import "AbstractView.h"
 #import "dom_elementimpl.h"
 #import "dom_xmlimpl.h"
 #import "htmlnames.h"
-#import "render_image.h"
+#import "RenderImage.h"
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
 #import <kxmlcore/Assertions.h>
 #import <kxmlcore/HashMap.h>
 #import <objc/objc-class.h>
 
-using WebCore::AttrImpl;
-using WebCore::CharacterDataImpl;
-using WebCore::DocumentImpl;
-using WebCore::DocumentFragmentImpl;
-using WebCore::DocumentTypeImpl;
-using WebCore::ElementImpl;
-using WebCore::EntityImpl;
-using WebCore::EventImpl;
+using WebCore::Attr;
+using WebCore::CharacterData;
+using WebCore::Document;
+using WebCore::DocumentFragment;
+using WebCore::DocumentType;
+using WebCore::Element;
+using WebCore::Entity;
+using WebCore::Event;
 using WebCore::EventListener;
 using WebCore::ExceptionCode;
-using WebCore::HTMLElementImpl;
-using WebCore::MacFrame;
-using WebCore::NamedNodeMapImpl;
-using WebCore::NodeImpl;
-using WebCore::NodeFilterImpl;
+using WebCore::HTMLElement;
+using WebCore::FrameMac;
+using WebCore::NamedNodeMap;
+using WebCore::Node;
+using WebCore::NodeFilter;
 using WebCore::NodeFilterCondition;
-using WebCore::NodeIteratorImpl;
-using WebCore::NodeListImpl;
-using WebCore::NotationImpl;
-using WebCore::ProcessingInstructionImpl;
-using WebCore::RangeImpl;
+using WebCore::NodeIterator;
+using WebCore::NodeList;
+using WebCore::Notation;
+using WebCore::ProcessingInstruction;
+using WebCore::Range;
 using WebCore::RenderImage;
 using WebCore::RenderObject;
 using WebCore::String;
-using WebCore::TextImpl;
-using WebCore::TreeWalkerImpl;
+using WebCore::Text;
+using WebCore::TreeWalker;
 
 using namespace WebCore::HTMLNames;
 
-typedef class WebCore::DOMImplementationImpl WebCoreDOMImplementation;
+typedef class WebCore::DOMImplementation WebCoreDOMImplementation;
 
 @interface DOMAttr (WebCoreInternal)
-+ (DOMAttr *)_attrWithImpl:(AttrImpl *)impl;
-- (AttrImpl *)_attrImpl;
++ (DOMAttr *)_attrWith:(Attr *)impl;
+- (Attr *)_attr;
 @end
 
 @interface DOMDocumentType (WebCoreInternal)
-- (DocumentTypeImpl *)_documentTypeImpl;
+- (DocumentType *)_documentType;
 @end
 
 @interface DOMImplementation (WebCoreInternal)
-+ (DOMImplementation *)_DOMImplementationWithImpl:(WebCoreDOMImplementation *)impl;
-- (WebCoreDOMImplementation *)_DOMImplementationImpl;
++ (DOMImplementation *)_DOMImplementationWith:(WebCoreDOMImplementation *)impl;
+- (WebCoreDOMImplementation *)_DOMImplementation;
 @end
 
 @interface DOMNamedNodeMap (WebCoreInternal)
-+ (DOMNamedNodeMap *)_namedNodeMapWithImpl:(NamedNodeMapImpl *)impl;
++ (DOMNamedNodeMap *)_namedNodeMapWith:(NamedNodeMap *)impl;
 @end
 
 class ObjCEventListener : public EventListener {
@@ -116,7 +116,7 @@ private:
     ObjCEventListener(id <DOMEventListener>);
     virtual ~ObjCEventListener();
 
-    virtual void handleEvent(EventImpl *, bool isWindowEvent);
+    virtual void handleEvent(Event *, bool isWindowEvent);
 
     id <DOMEventListener> m_listener;
 };
@@ -178,7 +178,7 @@ static ListenerMap *listenerMap;
 - (void)dealloc
 {
     if (_internal) {
-        DOM_cast<NodeImpl *>(_internal)->deref();
+        DOM_cast<Node *>(_internal)->deref();
     }
     [super dealloc];
 }
@@ -186,7 +186,7 @@ static ListenerMap *listenerMap;
 - (void)finalize
 {
     if (_internal) {
-        DOM_cast<NodeImpl *>(_internal)->deref();
+        DOM_cast<Node *>(_internal)->deref();
     }
     [super finalize];
 }
@@ -208,14 +208,14 @@ static ListenerMap *listenerMap;
 
 - (NSString *)nodeName
 {
-    return [self _nodeImpl]->nodeName();
+    return [self _node]->nodeName();
 }
 
 - (NSString *)nodeValue
 {
     // Documentation says we can raise a DOMSTRING_SIZE_ERR.
     // However, the lower layer does not report that error up to us.
-    return [self _nodeImpl]->nodeValue();
+    return [self _node]->nodeValue();
 }
 
 - (void)setNodeValue:(NSString *)string
@@ -223,43 +223,43 @@ static ListenerMap *listenerMap;
     ASSERT(string);
     
     ExceptionCode ec = 0;
-    [self _nodeImpl]->setNodeValue(string, ec);
+    [self _node]->setNodeValue(string, ec);
     raiseOnDOMError(ec);
 }
 
 - (unsigned short)nodeType
 {
-    return [self _nodeImpl]->nodeType();
+    return [self _node]->nodeType();
 }
 
 - (DOMNode *)parentNode
 {
-    return [DOMNode _nodeWithImpl:[self _nodeImpl]->parentNode()];
+    return [DOMNode _nodeWith:[self _node]->parentNode()];
 }
 
 - (DOMNodeList *)childNodes
 {
-    return [DOMNodeList _nodeListWithImpl:[self _nodeImpl]->childNodes().get()];
+    return [DOMNodeList _nodeListWith:[self _node]->childNodes().get()];
 }
 
 - (DOMNode *)firstChild
 {
-    return [DOMNode _nodeWithImpl:[self _nodeImpl]->firstChild()];
+    return [DOMNode _nodeWith:[self _node]->firstChild()];
 }
 
 - (DOMNode *)lastChild
 {
-    return [DOMNode _nodeWithImpl:[self _nodeImpl]->lastChild()];
+    return [DOMNode _nodeWith:[self _node]->lastChild()];
 }
 
 - (DOMNode *)previousSibling
 {
-    return [DOMNode _nodeWithImpl:[self _nodeImpl]->previousSibling()];
+    return [DOMNode _nodeWith:[self _node]->previousSibling()];
 }
 
 - (DOMNode *)nextSibling
 {
-    return [DOMNode _nodeWithImpl:[self _nodeImpl]->nextSibling()];
+    return [DOMNode _nodeWith:[self _node]->nextSibling()];
 }
 
 - (DOMNamedNodeMap *)attributes
@@ -271,7 +271,7 @@ static ListenerMap *listenerMap;
 
 - (DOMDocument *)ownerDocument
 {
-    return [DOMDocument _documentWithImpl:[self _nodeImpl]->getDocument()];
+    return [DOMDocument _documentWith:[self _node]->getDocument()];
 }
 
 - (DOMNode *)insertBefore:(DOMNode *)newChild :(DOMNode *)refChild
@@ -280,7 +280,7 @@ static ListenerMap *listenerMap;
     ASSERT(refChild);
 
     ExceptionCode ec = 0;
-    if ([self _nodeImpl]->insertBefore([newChild _nodeImpl], [refChild _nodeImpl], ec))
+    if ([self _node]->insertBefore([newChild _node], [refChild _node], ec))
         return newChild;
     raiseOnDOMError(ec);
     return nil;
@@ -292,7 +292,7 @@ static ListenerMap *listenerMap;
     ASSERT(oldChild);
 
     ExceptionCode ec = 0;
-    if ([self _nodeImpl]->replaceChild([newChild _nodeImpl], [oldChild _nodeImpl], ec))
+    if ([self _node]->replaceChild([newChild _node], [oldChild _node], ec))
         return oldChild;
     raiseOnDOMError(ec);
     return nil;
@@ -303,7 +303,7 @@ static ListenerMap *listenerMap;
     ASSERT(oldChild);
 
     ExceptionCode ec = 0;
-    if ([self _nodeImpl]->removeChild([oldChild _nodeImpl], ec))
+    if ([self _node]->removeChild([oldChild _node], ec))
         return oldChild;
     raiseOnDOMError(ec);
     return nil;
@@ -314,7 +314,7 @@ static ListenerMap *listenerMap;
     ASSERT(newChild);
 
     ExceptionCode ec = 0;
-    if ([self _nodeImpl]->appendChild([newChild _nodeImpl], ec))
+    if ([self _node]->appendChild([newChild _node], ec))
         return newChild;
     raiseOnDOMError(ec);
     return nil;
@@ -322,17 +322,17 @@ static ListenerMap *listenerMap;
 
 - (BOOL)hasChildNodes
 {
-    return [self _nodeImpl]->hasChildNodes();
+    return [self _node]->hasChildNodes();
 }
 
 - (DOMNode *)cloneNode:(BOOL)deep
 {
-    return [DOMNode _nodeWithImpl:[self _nodeImpl]->cloneNode(deep).get()];
+    return [DOMNode _nodeWith:[self _node]->cloneNode(deep).get()];
 }
 
 - (void)normalize
 {
-    [self _nodeImpl]->normalize();
+    [self _node]->normalize();
 }
 
 - (BOOL)isSupported:(NSString *)feature :(NSString *)version
@@ -340,17 +340,17 @@ static ListenerMap *listenerMap;
     ASSERT(feature);
     ASSERT(version);
 
-    return [self _nodeImpl]->isSupported(feature, version);
+    return [self _node]->isSupported(feature, version);
 }
 
 - (NSString *)namespaceURI
 {
-    return [self _nodeImpl]->namespaceURI();
+    return [self _node]->namespaceURI();
 }
 
 - (NSString *)prefix
 {
-    return [self _nodeImpl]->prefix();
+    return [self _node]->prefix();
 }
 
 - (void)setPrefix:(NSString *)prefix
@@ -358,91 +358,91 @@ static ListenerMap *listenerMap;
     ASSERT(prefix);
 
     ExceptionCode ec = 0;
-    DOMString prefixStr(prefix);
-    [self _nodeImpl]->setPrefix(prefixStr.impl(), ec);
+    String prefixStr(prefix);
+    [self _node]->setPrefix(prefixStr.impl(), ec);
     raiseOnDOMError(ec);
 }
 
 - (NSString *)localName
 {
-    return [self _nodeImpl]->localName();
+    return [self _node]->localName();
 }
 
 - (BOOL)hasAttributes
 {
-    return [self _nodeImpl]->hasAttributes();
+    return [self _node]->hasAttributes();
 }
 
 - (BOOL)isSameNode:(DOMNode *)other
 {
-    return [self _nodeImpl]->isSameNode([other _nodeImpl]);
+    return [self _node]->isSameNode([other _node]);
 }
 
 - (BOOL)isEqualNode:(DOMNode *)other
 {
-    return [self _nodeImpl]->isEqualNode([other _nodeImpl]);
+    return [self _node]->isEqualNode([other _node]);
 }
 
 - (BOOL)isDefaultNamespace:(NSString *)namespaceURI
 {
-    return [self _nodeImpl]->isDefaultNamespace(namespaceURI);
+    return [self _node]->isDefaultNamespace(namespaceURI);
 }
 
 - (NSString *)lookupPrefix:(NSString *)namespaceURI
 {
-    return [self _nodeImpl]->lookupPrefix(namespaceURI);
+    return [self _node]->lookupPrefix(namespaceURI);
 }
 
 - (NSString *)lookupNamespaceURI:(NSString *)prefix
 {
-    return [self _nodeImpl]->lookupNamespaceURI(prefix);
+    return [self _node]->lookupNamespaceURI(prefix);
 }
 
 - (NSString *)textContent
 {
-    return [self _nodeImpl]->textContent();
+    return [self _node]->textContent();
 }
 
 - (void)setTextContent:(NSString *)text
 {
     ExceptionCode ec = 0;
-    [self _nodeImpl]->setTextContent(text, ec);
+    [self _node]->setTextContent(text, ec);
     raiseOnDOMError(ec);
 }
 
 - (void)addEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture
 {
-    if (![self _nodeImpl]->isEventTargetNode())
+    if (![self _node]->isEventTargetNode())
         raiseDOMException(DOM_NOT_SUPPORTED_ERR);
     
     EventListener *wrapper = ObjCEventListener::create(listener);
-    EventTargetNodeCast([self _nodeImpl])->addEventListener(type, wrapper, useCapture);
+    EventTargetNodeCast([self _node])->addEventListener(type, wrapper, useCapture);
     wrapper->deref();
 }
 
 - (void)removeEventListener:(NSString *)type :(id <DOMEventListener>)listener :(BOOL)useCapture
 {
-    if (![self _nodeImpl]->isEventTargetNode())
+    if (![self _node]->isEventTargetNode())
         raiseDOMException(DOM_NOT_SUPPORTED_ERR);
 
     if (EventListener *wrapper = ObjCEventListener::find(listener))
-        EventTargetNodeCast([self _nodeImpl])->removeEventListener(type, wrapper, useCapture);
+        EventTargetNodeCast([self _node])->removeEventListener(type, wrapper, useCapture);
 }
 
 - (BOOL)dispatchEvent:(DOMEvent *)event
 {
-    if (![self _nodeImpl]->isEventTargetNode())
+    if (![self _node]->isEventTargetNode())
         raiseDOMException(DOM_NOT_SUPPORTED_ERR);
 
     ExceptionCode ec = 0;
-    BOOL result = EventTargetNodeCast([self _nodeImpl])->dispatchEvent([event _eventImpl], ec);
+    BOOL result = EventTargetNodeCast([self _node])->dispatchEvent([event _event], ec);
     raiseOnDOMError(ec);
     return result;
 }
 
 - (NSRect)boundingBox
 {
-    khtml::RenderObject *renderer = [self _nodeImpl]->renderer();
+    WebCore::RenderObject *renderer = [self _node]->renderer();
     if (renderer)
         return renderer->absoluteBoundingBoxRect();
     return NSZeroRect;
@@ -450,12 +450,12 @@ static ListenerMap *listenerMap;
 
 - (NSArray *)lineBoxRects
 {
-    khtml::RenderObject *renderer = [self _nodeImpl]->renderer();
+    WebCore::RenderObject *renderer = [self _node]->renderer();
     if (renderer) {
         NSMutableArray *results = [[NSMutableArray alloc] init];
-        QValueList<IntRect> rects = renderer->lineBoxRects();
+        DeprecatedValueList<IntRect> rects = renderer->lineBoxRects();
         if (!rects.isEmpty()) {
-            for (QValueList<IntRect>::ConstIterator it = rects.begin(); it != rects.end(); ++it)
+            for (DeprecatedValueList<IntRect>::ConstIterator it = rects.begin(); it != rects.end(); ++it)
                 [results addObject:[NSValue valueWithRect:*it]];
         }
         return [results autorelease];
@@ -467,7 +467,7 @@ static ListenerMap *listenerMap;
 
 @implementation DOMNode (WebCoreInternal)
 
-- (id)_initWithNodeImpl:(NodeImpl *)impl
+- (id)_initWithNode:(Node *)impl
 {
     ASSERT(impl);
 
@@ -478,7 +478,7 @@ static ListenerMap *listenerMap;
     return self;
 }
 
-+ (DOMNode *)_nodeWithImpl:(NodeImpl *)impl
++ (DOMNode *)_nodeWith:(Node *)impl
 {
     if (!impl)
         return nil;
@@ -490,12 +490,12 @@ static ListenerMap *listenerMap;
     
     Class wrapperClass = nil;
     switch (impl->nodeType()) {
-        case NodeImpl::ELEMENT_NODE:
+        case Node::ELEMENT_NODE:
             if (impl->isHTMLElement()) {
                 // FIXME: Reflect marquee once the API has been determined.
                 // FIXME: We could make the HTML classes hand back their class names and then use that to make
                 // the appropriate Obj-C class from the string.
-                HTMLElementImpl* htmlElt = static_cast<HTMLElementImpl*>(impl);
+                HTMLElement* htmlElt = static_cast<HTMLElement*>(impl);
                 if (htmlElt->hasLocalName(htmlTag))
                     wrapperClass = [DOMHTMLHtmlElement class];
                 else if (htmlElt->hasLocalName(headTag))
@@ -613,61 +613,61 @@ static ListenerMap *listenerMap;
                 wrapperClass = [DOMElement class];
             }
             break;
-        case NodeImpl::ATTRIBUTE_NODE:
+        case Node::ATTRIBUTE_NODE:
             wrapperClass = [DOMAttr class];
             break;
-        case NodeImpl::TEXT_NODE:
+        case Node::TEXT_NODE:
             wrapperClass = [DOMText class];
             break;
-        case NodeImpl::CDATA_SECTION_NODE:
+        case Node::CDATA_SECTION_NODE:
             wrapperClass = [DOMCDATASection class];
             break;
-        case NodeImpl::ENTITY_REFERENCE_NODE:
+        case Node::ENTITY_REFERENCE_NODE:
             wrapperClass = [DOMEntityReference class];
             break;
-        case NodeImpl::ENTITY_NODE:
+        case Node::ENTITY_NODE:
             wrapperClass = [DOMEntity class];
             break;
-        case NodeImpl::PROCESSING_INSTRUCTION_NODE:
+        case Node::PROCESSING_INSTRUCTION_NODE:
             wrapperClass = [DOMProcessingInstruction class];
             break;
-        case NodeImpl::COMMENT_NODE:
+        case Node::COMMENT_NODE:
             wrapperClass = [DOMComment class];
             break;
-        case NodeImpl::DOCUMENT_NODE:
-            if (static_cast<DocumentImpl *>(impl)->isHTMLDocument()) {
+        case Node::DOCUMENT_NODE:
+            if (static_cast<Document *>(impl)->isHTMLDocument()) {
                 wrapperClass = [DOMHTMLDocument class];
             } else {
                 wrapperClass = [DOMDocument class];
             }
             break;
-        case NodeImpl::DOCUMENT_TYPE_NODE:
+        case Node::DOCUMENT_TYPE_NODE:
             wrapperClass = [DOMDocumentType class];
             break;
-        case NodeImpl::DOCUMENT_FRAGMENT_NODE:
+        case Node::DOCUMENT_FRAGMENT_NODE:
             wrapperClass = [DOMDocumentFragment class];
             break;
-        case NodeImpl::NOTATION_NODE:
+        case Node::NOTATION_NODE:
             wrapperClass = [DOMNotation class];
             break;
     }
-    return [[[wrapperClass alloc] _initWithNodeImpl:impl] autorelease];
+    return [[[wrapperClass alloc] _initWithNode:impl] autorelease];
 }
 
-- (NodeImpl *)_nodeImpl
+- (Node *)_node
 {
-    return DOM_cast<NodeImpl *>(_internal);
+    return DOM_cast<Node *>(_internal);
 }
 
 - (BOOL)isContentEditable
 {
-    return [self _nodeImpl]->isContentEditable();
+    return [self _node]->isContentEditable();
 }
 
 - (const KJS::Bindings::RootObject *)_executionContext
 {
-    if (NodeImpl *n = [self _nodeImpl])
-        if (MacFrame *f = Mac(n->getDocument()->frame()))
+    if (Node *n = [self _node])
+        if (FrameMac *f = Mac(n->getDocument()->frame()))
             return f->executionContextForDOM();
 
     return 0;
@@ -683,7 +683,7 @@ static ListenerMap *listenerMap;
 - (void)dealloc
 {
     if (_internal) {
-        DOM_cast<NamedNodeMapImpl *>(_internal)->deref();
+        DOM_cast<NamedNodeMap *>(_internal)->deref();
     }
     [super dealloc];
 }
@@ -691,21 +691,21 @@ static ListenerMap *listenerMap;
 - (void)finalize
 {
     if (_internal) {
-        DOM_cast<NamedNodeMapImpl *>(_internal)->deref();
+        DOM_cast<NamedNodeMap *>(_internal)->deref();
     }
     [super finalize];
 }
 
-- (NamedNodeMapImpl *)_namedNodeMapImpl
+- (NamedNodeMap *)_namedNodeMap
 {
-    return DOM_cast<NamedNodeMapImpl *>(_internal);
+    return DOM_cast<NamedNodeMap *>(_internal);
 }
 
 - (DOMNode *)getNamedItem:(NSString *)name
 {
     ASSERT(name);
 
-    return [DOMNode _nodeWithImpl:[self _namedNodeMapImpl]->getNamedItem(name).get()];
+    return [DOMNode _nodeWith:[self _namedNodeMap]->getNamedItem(name).get()];
 }
 
 - (DOMNode *)setNamedItem:(DOMNode *)arg
@@ -713,7 +713,7 @@ static ListenerMap *listenerMap;
     ASSERT(arg);
 
     int exception = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _namedNodeMapImpl]->setNamedItem([arg _nodeImpl], exception).get()];
+    DOMNode *result = [DOMNode _nodeWith:[self _namedNodeMap]->setNamedItem([arg _node], exception).get()];
     raiseOnDOMError(exception);
     return result;
 }
@@ -723,19 +723,19 @@ static ListenerMap *listenerMap;
     ASSERT(name);
 
     int exception = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _namedNodeMapImpl]->removeNamedItem(name, exception).get()];
+    DOMNode *result = [DOMNode _nodeWith:[self _namedNodeMap]->removeNamedItem(name, exception).get()];
     raiseOnDOMError(exception);
     return result;
 }
 
 - (DOMNode *)item:(unsigned)index
 {
-    return [DOMNode _nodeWithImpl:[self _namedNodeMapImpl]->item(index).get()];
+    return [DOMNode _nodeWith:[self _namedNodeMap]->item(index).get()];
 }
 
 - (unsigned)length
 {
-    return [self _namedNodeMapImpl]->length();
+    return [self _namedNodeMap]->length();
 }
 
 - (DOMNode *)getNamedItemNS:(NSString *)namespaceURI :(NSString *)localName
@@ -744,7 +744,7 @@ static ListenerMap *listenerMap;
         return nil;
     }
 
-    return [DOMNode _nodeWithImpl:[self _namedNodeMapImpl]->getNamedItemNS(namespaceURI, localName).get()];
+    return [DOMNode _nodeWith:[self _namedNodeMap]->getNamedItemNS(namespaceURI, localName).get()];
 }
 
 - (DOMNode *)setNamedItemNS:(DOMNode *)arg
@@ -752,7 +752,7 @@ static ListenerMap *listenerMap;
     ASSERT(arg);
 
     int exception = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _namedNodeMapImpl]->setNamedItemNS([arg _nodeImpl], exception).get()];
+    DOMNode *result = [DOMNode _nodeWith:[self _namedNodeMap]->setNamedItemNS([arg _node], exception).get()];
     raiseOnDOMError(exception);
     return result;
 }
@@ -763,7 +763,7 @@ static ListenerMap *listenerMap;
     ASSERT(localName);
 
     int exception = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _namedNodeMapImpl]->removeNamedItemNS(namespaceURI, localName, exception).get()];
+    DOMNode *result = [DOMNode _nodeWith:[self _namedNodeMap]->removeNamedItemNS(namespaceURI, localName, exception).get()];
     raiseOnDOMError(exception);
     return result;
 }
@@ -772,7 +772,7 @@ static ListenerMap *listenerMap;
 
 @implementation DOMNamedNodeMap (WebCoreInternal)
 
-- (id)_initWithNamedNodeMapImpl:(NamedNodeMapImpl *)impl
+- (id)_initWithNamedNodeMap:(NamedNodeMap *)impl
 {
     ASSERT(impl);
 
@@ -783,7 +783,7 @@ static ListenerMap *listenerMap;
     return self;
 }
 
-+ (DOMNamedNodeMap *)_namedNodeMapWithImpl:(NamedNodeMapImpl *)impl
++ (DOMNamedNodeMap *)_namedNodeMapWith:(NamedNodeMap *)impl
 {
     if (!impl)
         return nil;
@@ -793,7 +793,7 @@ static ListenerMap *listenerMap;
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
-    return [[[self alloc] _initWithNamedNodeMapImpl:impl] autorelease];
+    return [[[self alloc] _initWithNamedNodeMap:impl] autorelease];
 }
 
 @end
@@ -806,7 +806,7 @@ static ListenerMap *listenerMap;
 - (void)dealloc
 {
     if (_internal) {
-        DOM_cast<NodeListImpl *>(_internal)->deref();
+        DOM_cast<NodeList *>(_internal)->deref();
     }
     [super dealloc];
 }
@@ -814,31 +814,31 @@ static ListenerMap *listenerMap;
 - (void)finalize
 {
     if (_internal) {
-        DOM_cast<NodeListImpl *>(_internal)->deref();
+        DOM_cast<NodeList *>(_internal)->deref();
     }
     [super finalize];
 }
 
-- (NodeListImpl *)_nodeListImpl
+- (NodeList *)_nodeList
 {
-    return DOM_cast<NodeListImpl *>(_internal);
+    return DOM_cast<NodeList *>(_internal);
 }
 
 - (DOMNode *)item:(unsigned)index
 {
-    return [DOMNode _nodeWithImpl:[self _nodeListImpl]->item(index)];
+    return [DOMNode _nodeWith:[self _nodeList]->item(index)];
 }
 
 - (unsigned)length
 {
-    return [self _nodeListImpl]->length();
+    return [self _nodeList]->length();
 }
 
 @end
 
 @implementation DOMNodeList (WebCoreInternal)
 
-- (id)_initWithNodeListImpl:(NodeListImpl *)impl
+- (id)_initWithNodeList:(NodeList *)impl
 {
     ASSERT(impl);
 
@@ -849,7 +849,7 @@ static ListenerMap *listenerMap;
     return self;
 }
 
-+ (DOMNodeList *)_nodeListWithImpl:(NodeListImpl *)impl
++ (DOMNodeList *)_nodeListWith:(NodeList *)impl
 {
     if (!impl)
         return nil;
@@ -859,7 +859,7 @@ static ListenerMap *listenerMap;
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
-    return [[[self alloc] _initWithNodeListImpl:impl] autorelease];
+    return [[[self alloc] _initWithNodeList:impl] autorelease];
 }
 
 @end
@@ -890,7 +890,7 @@ static ListenerMap *listenerMap;
     ASSERT(feature);
     ASSERT(version);
 
-    return [self _DOMImplementationImpl]->hasFeature(feature, version);
+    return [self _DOMImplementation]->hasFeature(feature, version);
 }
 
 - (DOMDocumentType *)createDocumentType:(NSString *)qualifiedName :(NSString *)publicId :(NSString *)systemId
@@ -900,9 +900,9 @@ static ListenerMap *listenerMap;
     ASSERT(systemId);
 
     ExceptionCode ec = 0;
-    RefPtr<DocumentTypeImpl> impl = [self _DOMImplementationImpl]->createDocumentType(qualifiedName, publicId, systemId, ec);
+    RefPtr<DocumentType> impl = [self _DOMImplementation]->createDocumentType(qualifiedName, publicId, systemId, ec);
     raiseOnDOMError(ec);
-    return static_cast<DOMDocumentType *>([DOMNode _nodeWithImpl:impl.get()]);
+    return static_cast<DOMDocumentType *>([DOMNode _nodeWith:impl.get()]);
 }
 
 - (DOMDocument *)createDocument:(NSString *)namespaceURI :(NSString *)qualifiedName :(DOMDocumentType *)doctype
@@ -911,9 +911,9 @@ static ListenerMap *listenerMap;
     ASSERT(qualifiedName);
 
     ExceptionCode ec = 0;
-    RefPtr<DocumentImpl> impl = [self _DOMImplementationImpl]->createDocument(namespaceURI, qualifiedName, [doctype _documentTypeImpl], ec);
+    RefPtr<Document> impl = [self _DOMImplementation]->createDocument(namespaceURI, qualifiedName, [doctype _documentType], ec);
     raiseOnDOMError(ec);
-    return static_cast<DOMDocument *>([DOMNode _nodeWithImpl:impl.get()]);
+    return static_cast<DOMDocument *>([DOMNode _nodeWith:impl.get()]);
 }
 
 @end
@@ -926,7 +926,7 @@ static ListenerMap *listenerMap;
     ASSERT(media);
 
     ExceptionCode ec = 0;
-    DOMCSSStyleSheet *result = [DOMCSSStyleSheet _CSSStyleSheetWithImpl:[self _DOMImplementationImpl]->createCSSStyleSheet(title, media, ec).get()];
+    DOMCSSStyleSheet *result = [DOMCSSStyleSheet _CSSStyleSheetWith:[self _DOMImplementation]->createCSSStyleSheet(title, media, ec).get()];
     raiseOnDOMError(ec);
     return result;
 }
@@ -935,7 +935,7 @@ static ListenerMap *listenerMap;
  
 @implementation DOMImplementation (WebCoreInternal)
 
-- (id)_initWithDOMImplementationImpl:(WebCoreDOMImplementation *)impl
+- (id)_initWithDOMImplementation:(WebCoreDOMImplementation *)impl
 {
     ASSERT(impl);
 
@@ -946,7 +946,7 @@ static ListenerMap *listenerMap;
     return self;
 }
 
-+ (DOMImplementation *)_DOMImplementationWithImpl:(WebCoreDOMImplementation *)impl
++ (DOMImplementation *)_DOMImplementationWith:(WebCoreDOMImplementation *)impl
 {
     if (!impl)
         return nil;
@@ -956,10 +956,10 @@ static ListenerMap *listenerMap;
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
-    return [[[self alloc] _initWithDOMImplementationImpl:impl] autorelease];
+    return [[[self alloc] _initWithDOMImplementation:impl] autorelease];
 }
 
-- (WebCoreDOMImplementation *)_DOMImplementationImpl
+- (WebCoreDOMImplementation *)_DOMImplementation
 {
     return DOM_cast<WebCoreDOMImplementation *>(_internal);
 }
@@ -975,14 +975,14 @@ static ListenerMap *listenerMap;
 
 @implementation DOMDocumentFragment (WebCoreInternal)
 
-+ (DOMDocumentFragment *)_documentFragmentWithImpl:(DocumentFragmentImpl *)impl
++ (DOMDocumentFragment *)_documentFragmentWith:(DocumentFragment *)impl
 {
-    return static_cast<DOMDocumentFragment *>([DOMNode _nodeWithImpl:impl]);
+    return static_cast<DOMDocumentFragment *>([DOMNode _nodeWith:impl]);
 }
 
-- (DocumentFragmentImpl *)_fragmentImpl
+- (DocumentFragment *)_fragment
 {
-    return static_cast<DocumentFragmentImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<DocumentFragment *>(DOM_cast<Node *>(_internal));
 }
 
 @end
@@ -995,24 +995,24 @@ static ListenerMap *listenerMap;
 - (DOMNode *)adoptNode:(DOMNode *)source
 {
     ExceptionCode ec = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _documentImpl]->adoptNode([source _nodeImpl], ec).get()];
+    DOMNode *result = [DOMNode _nodeWith:[self _document]->adoptNode([source _node], ec).get()];
     raiseOnDOMError(ec);
     return result;
 }
 
 - (DOMDocumentType *)doctype
 {
-    return static_cast<DOMDocumentType *>([DOMNode _nodeWithImpl:[self _documentImpl]->doctype()]);
+    return static_cast<DOMDocumentType *>([DOMNode _nodeWith:[self _document]->doctype()]);
 }
 
 - (DOMImplementation *)implementation
 {
-    return [DOMImplementation _DOMImplementationWithImpl:[self _documentImpl]->implementation()];
+    return [DOMImplementation _DOMImplementationWith:[self _document]->implementation()];
 }
 
 - (DOMElement *)documentElement
 {
-    return static_cast<DOMElement *>([DOMNode _nodeWithImpl:[self _documentImpl]->documentElement()]);
+    return static_cast<DOMElement *>([DOMNode _nodeWith:[self _document]->documentElement()]);
 }
 
 - (DOMElement *)createElement:(NSString *)tagName
@@ -1020,33 +1020,33 @@ static ListenerMap *listenerMap;
     ASSERT(tagName);
 
     ExceptionCode ec = 0;
-    DOMElement *result = static_cast<DOMElement *>([DOMNode _nodeWithImpl:[self _documentImpl]->createElement(tagName, ec).get()]);
+    DOMElement *result = static_cast<DOMElement *>([DOMNode _nodeWith:[self _document]->createElement(tagName, ec).get()]);
     raiseOnDOMError(ec);
     return result;
 }
 
 - (DOMDocumentFragment *)createDocumentFragment
 {
-    return static_cast<DOMDocumentFragment *>([DOMNode _nodeWithImpl:[self _documentImpl]->createDocumentFragment().get()]);
+    return static_cast<DOMDocumentFragment *>([DOMNode _nodeWith:[self _document]->createDocumentFragment().get()]);
 }
 
 - (DOMText *)createTextNode:(NSString *)data
 {
     ASSERT(data);
-    return static_cast<DOMText *>([DOMNode _nodeWithImpl:[self _documentImpl]->createTextNode(data).get()]);
+    return static_cast<DOMText *>([DOMNode _nodeWith:[self _document]->createTextNode(data).get()]);
 }
 
 - (DOMComment *)createComment:(NSString *)data
 {
     ASSERT(data);
-    return static_cast<DOMComment *>([DOMNode _nodeWithImpl:[self _documentImpl]->createComment(data).get()]);
+    return static_cast<DOMComment *>([DOMNode _nodeWith:[self _document]->createComment(data).get()]);
 }
 
 - (DOMCDATASection *)createCDATASection:(NSString *)data
 {
     ASSERT(data);
     int exception = 0;
-    DOMCDATASection *result = static_cast<DOMCDATASection *>([DOMNode _nodeWithImpl:[self _documentImpl]->createCDATASection(data, exception).get()]);
+    DOMCDATASection *result = static_cast<DOMCDATASection *>([DOMNode _nodeWith:[self _document]->createCDATASection(data, exception).get()]);
     raiseOnDOMError(exception);
     return result;
 }
@@ -1056,7 +1056,7 @@ static ListenerMap *listenerMap;
     ASSERT(target);
     ASSERT(data);
     int exception = 0;
-    DOMProcessingInstruction *result = static_cast<DOMProcessingInstruction *>([DOMNode _nodeWithImpl:[self _documentImpl]->createProcessingInstruction(target, data, exception).get()]);
+    DOMProcessingInstruction *result = static_cast<DOMProcessingInstruction *>([DOMNode _nodeWith:[self _document]->createProcessingInstruction(target, data, exception).get()]);
     raiseOnDOMError(exception);
     return result;
 }
@@ -1065,7 +1065,7 @@ static ListenerMap *listenerMap;
 {
     ASSERT(name);
     int exception = 0;
-    DOMAttr *result = [DOMAttr _attrWithImpl:[self _documentImpl]->createAttribute(name, exception).get()];
+    DOMAttr *result = [DOMAttr _attrWith:[self _document]->createAttribute(name, exception).get()];
     raiseOnDOMError(exception);
     return result;
 }
@@ -1074,7 +1074,7 @@ static ListenerMap *listenerMap;
 {
     ASSERT(name);
     int exception = 0;
-    DOMEntityReference *result = static_cast<DOMEntityReference *>([DOMNode _nodeWithImpl:[self _documentImpl]->createEntityReference(name, exception).get()]);
+    DOMEntityReference *result = static_cast<DOMEntityReference *>([DOMNode _nodeWith:[self _document]->createEntityReference(name, exception).get()]);
     raiseOnDOMError(exception);
     return result;
 }
@@ -1082,13 +1082,13 @@ static ListenerMap *listenerMap;
 - (DOMNodeList *)getElementsByTagName:(NSString *)tagname
 {
     ASSERT(tagname);
-    return [DOMNodeList _nodeListWithImpl:[self _documentImpl]->getElementsByTagName(tagname).get()];
+    return [DOMNodeList _nodeListWith:[self _document]->getElementsByTagName(tagname).get()];
 }
 
 - (DOMNode *)importNode:(DOMNode *)importedNode :(BOOL)deep
 {
     ExceptionCode ec = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _documentImpl]->importNode([importedNode _nodeImpl], deep, ec).get()];
+    DOMNode *result = [DOMNode _nodeWith:[self _document]->importNode([importedNode _node], deep, ec).get()];
     raiseOnDOMError(ec);
     return result;
 }
@@ -1099,7 +1099,7 @@ static ListenerMap *listenerMap;
     ASSERT(qualifiedName);
 
     ExceptionCode ec = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _documentImpl]->createElementNS(namespaceURI, qualifiedName, ec).get()];
+    DOMNode *result = [DOMNode _nodeWith:[self _document]->createElementNS(namespaceURI, qualifiedName, ec).get()];
     raiseOnDOMError(ec);
     return static_cast<DOMElement *>(result);
 }
@@ -1110,7 +1110,7 @@ static ListenerMap *listenerMap;
     ASSERT(qualifiedName);
 
     int exception = 0;
-    DOMAttr *result = [DOMAttr _attrWithImpl:[self _documentImpl]->createAttributeNS(namespaceURI, qualifiedName, exception).get()];
+    DOMAttr *result = [DOMAttr _attrWith:[self _document]->createAttributeNS(namespaceURI, qualifiedName, exception).get()];
     raiseOnDOMError(exception);
     return result;
 }
@@ -1120,14 +1120,14 @@ static ListenerMap *listenerMap;
     ASSERT(namespaceURI);
     ASSERT(localName);
 
-    return [DOMNodeList _nodeListWithImpl:[self _documentImpl]->getElementsByTagNameNS(namespaceURI, localName).get()];
+    return [DOMNodeList _nodeListWith:[self _document]->getElementsByTagNameNS(namespaceURI, localName).get()];
 }
 
 - (DOMElement *)getElementById:(NSString *)elementId
 {
     ASSERT(elementId);
 
-    return static_cast<DOMElement *>([DOMNode _nodeWithImpl:[self _documentImpl]->getElementById(elementId)]);
+    return static_cast<DOMElement *>([DOMNode _nodeWith:[self _document]->getElementById(elementId)]);
 }
 
 @end
@@ -1136,7 +1136,7 @@ static ListenerMap *listenerMap;
 
 - (DOMRange *)createRange
 {
-    return [DOMRange _rangeWithImpl:[self _documentImpl]->createRange().get()];
+    return [DOMRange _rangeWith:[self _document]->createRange().get()];
 }
 
 @end
@@ -1145,9 +1145,9 @@ static ListenerMap *listenerMap;
 
 - (DOMCSSStyleDeclaration *)getOverrideStyle:(DOMElement *)elt :(NSString *)pseudoElt
 {
-    ElementImpl *elementImpl = [elt _elementImpl];
-    DOMString pseudoEltString(pseudoElt);
-    return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:[self _documentImpl]->getOverrideStyle(elementImpl, pseudoEltString.impl())];
+    Element *element = [elt _element];
+    String pseudoEltString(pseudoElt);
+    return [DOMCSSStyleDeclaration _styleDeclarationWith:[self _document]->getOverrideStyle(element, pseudoEltString.impl())];
 }
 
 @end
@@ -1156,7 +1156,7 @@ static ListenerMap *listenerMap;
 
 - (DOMStyleSheetList *)styleSheets
 {
-    return [DOMStyleSheetList _styleSheetListWithImpl:[self _documentImpl]->styleSheets()];
+    return [DOMStyleSheetList _styleSheetListWith:[self _document]->styleSheets()];
 }
 
 @end
@@ -1165,27 +1165,27 @@ static ListenerMap *listenerMap;
 
 - (DOMCSSStyleDeclaration *)createCSSStyleDeclaration
 {
-    return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:[self _documentImpl]->createCSSStyleDeclaration().get()];
+    return [DOMCSSStyleDeclaration _styleDeclarationWith:[self _document]->createCSSStyleDeclaration().get()];
 }
 
 @end
 
 @implementation DOMDocument (WebCoreInternal)
 
-+ (DOMDocument *)_documentWithImpl:(DocumentImpl *)impl
++ (DOMDocument *)_documentWith:(Document *)impl
 {
-    return static_cast<DOMDocument *>([DOMNode _nodeWithImpl:impl]);
+    return static_cast<DOMDocument *>([DOMNode _nodeWith:impl]);
 }
 
-- (DocumentImpl *)_documentImpl
+- (Document *)_document
 {
-    return static_cast<DocumentImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<Document *>(DOM_cast<Node *>(_internal));
 }
 
 - (DOMElement *)_ownerElement
 {
-    ElementImpl *element = [self _documentImpl]->ownerElement();
-    return element ? [DOMElement _elementWithImpl:element] : nil;
+    Element *element = [self _document]->ownerElement();
+    return element ? [DOMElement _elementWith:element] : nil;
 }
 
 @end
@@ -1195,16 +1195,16 @@ static ListenerMap *listenerMap;
 
 @implementation DOMCharacterData
 
-- (CharacterDataImpl *)_characterDataImpl
+- (CharacterData *)_characterData
 {
-    return static_cast<CharacterDataImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<CharacterData *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)data
 {
     // Documentation says we can raise a DOMSTRING_SIZE_ERR.
     // However, the lower layer does not report that error up to us.
-    return [self _characterDataImpl]->data();
+    return [self _characterData]->data();
 }
 
 - (void)setData:(NSString *)data
@@ -1212,19 +1212,19 @@ static ListenerMap *listenerMap;
     ASSERT(data);
     
     ExceptionCode ec = 0;
-    [self _characterDataImpl]->setData(data, ec);
+    [self _characterData]->setData(data, ec);
     raiseOnDOMError(ec);
 }
 
 - (unsigned)length
 {
-    return [self _characterDataImpl]->length();
+    return [self _characterData]->length();
 }
 
 - (NSString *)substringData:(unsigned)offset :(unsigned)count
 {
     ExceptionCode ec = 0;
-    NSString *result = [self _characterDataImpl]->substringData(offset, count, ec);
+    NSString *result = [self _characterData]->substringData(offset, count, ec);
     raiseOnDOMError(ec);
     return result;
 }
@@ -1234,7 +1234,7 @@ static ListenerMap *listenerMap;
     ASSERT(arg);
     
     ExceptionCode ec = 0;
-    [self _characterDataImpl]->appendData(arg, ec);
+    [self _characterData]->appendData(arg, ec);
     raiseOnDOMError(ec);
 }
 
@@ -1243,14 +1243,14 @@ static ListenerMap *listenerMap;
     ASSERT(arg);
     
     ExceptionCode ec = 0;
-    [self _characterDataImpl]->insertData(offset, arg, ec);
+    [self _characterData]->insertData(offset, arg, ec);
     raiseOnDOMError(ec);
 }
 
 - (void)deleteData:(unsigned)offset :(unsigned) count
 {
     ExceptionCode ec = 0;
-    [self _characterDataImpl]->deleteData(offset, count, ec);
+    [self _characterData]->deleteData(offset, count, ec);
     raiseOnDOMError(ec);
 }
 
@@ -1259,7 +1259,7 @@ static ListenerMap *listenerMap;
     ASSERT(arg);
 
     ExceptionCode ec = 0;
-    [self _characterDataImpl]->replaceData(offset, count, arg, ec);
+    [self _characterData]->replaceData(offset, count, arg, ec);
     raiseOnDOMError(ec);
 }
 
@@ -1272,17 +1272,17 @@ static ListenerMap *listenerMap;
 
 - (NSString *)name
 {
-    return [self _attrImpl]->nodeName();
+    return [self _attr]->nodeName();
 }
 
 - (BOOL)specified
 {
-    return [self _attrImpl]->specified();
+    return [self _attr]->specified();
 }
 
 - (NSString *)value
 {
-    return [self _attrImpl]->nodeValue();
+    return [self _attr]->nodeValue();
 }
 
 - (void)setValue:(NSString *)value
@@ -1290,32 +1290,32 @@ static ListenerMap *listenerMap;
     ASSERT(value);
 
     ExceptionCode ec = 0;
-    [self _attrImpl]->setValue(value, ec);
+    [self _attr]->setValue(value, ec);
     raiseOnDOMError(ec);
 }
 
 - (DOMElement *)ownerElement
 {
-    return [DOMElement _elementWithImpl:[self _attrImpl]->ownerElement()];
+    return [DOMElement _elementWith:[self _attr]->ownerElement()];
 }
 
 - (DOMCSSStyleDeclaration *)style
 {
-    return [DOMCSSStyleDeclaration _styleDeclarationWithImpl: [self _attrImpl]->style()];
+    return [DOMCSSStyleDeclaration _styleDeclarationWith: [self _attr]->style()];
 }
 
 @end
 
 @implementation DOMAttr (WebCoreInternal)
 
-+ (DOMAttr *)_attrWithImpl:(AttrImpl *)impl
++ (DOMAttr *)_attrWith:(Attr *)impl
 {
-    return static_cast<DOMAttr *>([DOMNode _nodeWithImpl:impl]);
+    return static_cast<DOMAttr *>([DOMNode _nodeWith:impl]);
 }
 
-- (AttrImpl *)_attrImpl
+- (Attr *)_attr
 {
-    return static_cast<AttrImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<Attr *>(DOM_cast<Node *>(_internal));
 }
 
 @end
@@ -1327,18 +1327,18 @@ static ListenerMap *listenerMap;
 
 - (NSString *)tagName
 {
-    return [self _elementImpl]->nodeName();
+    return [self _element]->nodeName();
 }
 
 - (DOMNamedNodeMap *)attributes
 {
-    return [DOMNamedNodeMap _namedNodeMapWithImpl:[self _elementImpl]->attributes()];
+    return [DOMNamedNodeMap _namedNodeMapWith:[self _element]->attributes()];
 }
 
 - (NSString *)getAttribute:(NSString *)name
 {
     ASSERT(name);
-    return [self _elementImpl]->getAttribute(name);
+    return [self _element]->getAttribute(name);
 }
 
 - (void)setAttribute:(NSString *)name :(NSString *)value
@@ -1347,7 +1347,7 @@ static ListenerMap *listenerMap;
     ASSERT(value);
 
     int exception = 0;
-    [self _elementImpl]->setAttribute(name, value, exception);
+    [self _element]->setAttribute(name, value, exception);
     raiseOnDOMError(exception);
 }
 
@@ -1356,7 +1356,7 @@ static ListenerMap *listenerMap;
     ASSERT(name);
 
     int exception = 0;
-    [self _elementImpl]->removeAttribute(name, exception);
+    [self _element]->removeAttribute(name, exception);
     raiseOnDOMError(exception);
 }
 
@@ -1364,7 +1364,7 @@ static ListenerMap *listenerMap;
 {
     ASSERT(name);
 
-    return [DOMAttr _attrWithImpl:[self _elementImpl]->getAttributeNode(name).get()];
+    return [DOMAttr _attrWith:[self _element]->getAttributeNode(name).get()];
 }
 
 - (DOMAttr *)setAttributeNode:(DOMAttr *)newAttr
@@ -1372,7 +1372,7 @@ static ListenerMap *listenerMap;
     ASSERT(newAttr);
 
     int exception = 0;
-    DOMAttr *result = [DOMAttr _attrWithImpl:[self _elementImpl]->setAttributeNode([newAttr _attrImpl], exception).get()];
+    DOMAttr *result = [DOMAttr _attrWith:[self _element]->setAttributeNode([newAttr _attr], exception).get()];
     raiseOnDOMError(exception);
     return result;
 }
@@ -1382,7 +1382,7 @@ static ListenerMap *listenerMap;
     ASSERT(oldAttr);
 
     int exception = 0;
-    DOMAttr *result = [DOMAttr _attrWithImpl:[self _elementImpl]->removeAttributeNode([oldAttr _attrImpl], exception).get()];
+    DOMAttr *result = [DOMAttr _attrWith:[self _element]->removeAttributeNode([oldAttr _attr], exception).get()];
     raiseOnDOMError(exception);
     return result;
 }
@@ -1391,7 +1391,7 @@ static ListenerMap *listenerMap;
 {
     ASSERT(name);
 
-    return [DOMNodeList _nodeListWithImpl:[self _elementImpl]->getElementsByTagName(name).get()];
+    return [DOMNodeList _nodeListWith:[self _element]->getElementsByTagName(name).get()];
 }
 
 - (NSString *)getAttributeNS:(NSString *)namespaceURI :(NSString *)localName
@@ -1399,7 +1399,7 @@ static ListenerMap *listenerMap;
     ASSERT(namespaceURI);
     ASSERT(localName);
 
-    return [self _elementImpl]->getAttributeNS(namespaceURI, localName);
+    return [self _element]->getAttributeNS(namespaceURI, localName);
 }
 
 - (void)setAttributeNS:(NSString *)namespaceURI :(NSString *)qualifiedName :(NSString *)value
@@ -1409,7 +1409,7 @@ static ListenerMap *listenerMap;
     ASSERT(value);
 
     int exception = 0;
-    [self _elementImpl]->setAttributeNS(namespaceURI, qualifiedName, value, exception);
+    [self _element]->setAttributeNS(namespaceURI, qualifiedName, value, exception);
     raiseOnDOMError(exception);
 }
 
@@ -1419,7 +1419,7 @@ static ListenerMap *listenerMap;
     ASSERT(localName);
 
     int exception = 0;
-    [self _elementImpl]->removeAttributeNS(namespaceURI, localName, exception);
+    [self _element]->removeAttributeNS(namespaceURI, localName, exception);
     raiseOnDOMError(exception);
 }
 
@@ -1428,7 +1428,7 @@ static ListenerMap *listenerMap;
     ASSERT(namespaceURI);
     ASSERT(localName);
 
-    return [DOMAttr _attrWithImpl:[self _elementImpl]->getAttributeNodeNS(namespaceURI, localName).get()];
+    return [DOMAttr _attrWith:[self _element]->getAttributeNodeNS(namespaceURI, localName).get()];
 }
 
 - (DOMAttr *)setAttributeNodeNS:(DOMAttr *)newAttr
@@ -1436,7 +1436,7 @@ static ListenerMap *listenerMap;
     ASSERT(newAttr);
 
     int exception = 0;
-    DOMAttr *result = [DOMAttr _attrWithImpl:[self _elementImpl]->setAttributeNodeNS([newAttr _attrImpl], exception).get()];
+    DOMAttr *result = [DOMAttr _attrWith:[self _element]->setAttributeNodeNS([newAttr _attr], exception).get()];
     raiseOnDOMError(exception);
     return result;
 }
@@ -1446,14 +1446,14 @@ static ListenerMap *listenerMap;
     ASSERT(namespaceURI);
     ASSERT(localName);
 
-    return [DOMNodeList _nodeListWithImpl:[self _elementImpl]->getElementsByTagNameNS(namespaceURI, localName).get()];
+    return [DOMNodeList _nodeListWith:[self _element]->getElementsByTagNameNS(namespaceURI, localName).get()];
 }
 
 - (BOOL)hasAttribute:(NSString *)name
 {
     ASSERT(name);
 
-    return [self _elementImpl]->hasAttribute(name);
+    return [self _element]->hasAttribute(name);
 }
 
 - (BOOL)hasAttributeNS:(NSString *)namespaceURI :(NSString *)localName
@@ -1461,7 +1461,7 @@ static ListenerMap *listenerMap;
     ASSERT(namespaceURI);
     ASSERT(localName);
 
-    return [self _elementImpl]->hasAttributeNS(namespaceURI, localName);
+    return [self _element]->hasAttributeNS(namespaceURI, localName);
 }
 
 @end
@@ -1470,7 +1470,7 @@ static ListenerMap *listenerMap;
 
 - (DOMCSSStyleDeclaration *)style
 {
-    return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:[self _elementImpl]->style()];
+    return [DOMCSSStyleDeclaration _styleDeclarationWith:[self _element]->style()];
 }
 
 @end
@@ -1479,7 +1479,7 @@ static ListenerMap *listenerMap;
 
 - (NSImage*)image
 {
-    RenderObject* renderer = [self _elementImpl]->renderer();
+    RenderObject* renderer = [self _element]->renderer();
     if (renderer && renderer->isImage()) {
         RenderImage* img = static_cast<RenderImage*>(renderer);
         if (img->cachedImage() && !img->cachedImage()->isErrorImage())
@@ -1490,36 +1490,36 @@ static ListenerMap *listenerMap;
 
 - (void)focus
 {
-    [self _elementImpl]->focus();
+    [self _element]->focus();
 }
 
 - (void)blur
 {
-    [self _elementImpl]->blur();
+    [self _element]->blur();
 }
 
 - (void)scrollIntoView:(BOOL)alignTop
 {
-    [self _elementImpl]->scrollIntoView(alignTop);
+    [self _element]->scrollIntoView(alignTop);
 }
 
 - (void)scrollIntoViewIfNeeded:(BOOL)centerIfNeeded
 {
-    [self _elementImpl]->scrollIntoViewIfNeeded(centerIfNeeded);
+    [self _element]->scrollIntoViewIfNeeded(centerIfNeeded);
 }
 
 @end
 
 @implementation DOMElement (WebCoreInternal)
 
-+ (DOMElement *)_elementWithImpl:(ElementImpl *)impl
++ (DOMElement *)_elementWith:(Element *)impl
 {
-    return static_cast<DOMElement *>([DOMNode _nodeWithImpl:impl]);
+    return static_cast<DOMElement *>([DOMNode _nodeWith:impl]);
 }
 
-- (ElementImpl *)_elementImpl
+- (Element *)_element
 {
-    return static_cast<ElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<Element *>(DOM_cast<Node *>(_internal));
 }
 
 @end
@@ -1528,7 +1528,7 @@ static ListenerMap *listenerMap;
 
 - (NSFont *)_font
 {
-    RenderObject *renderer = [self _elementImpl]->renderer();
+    RenderObject *renderer = [self _element]->renderer();
     if (renderer) {
         return renderer->style()->font().getNSFont();
     }
@@ -1537,7 +1537,7 @@ static ListenerMap *listenerMap;
 
 - (NSData*)_imageTIFFRepresentation
 {
-    RenderObject *renderer = [self _elementImpl]->renderer();
+    RenderObject *renderer = [self _element]->renderer();
     if (renderer && renderer->isImage()) {
         RenderImage* img = static_cast<RenderImage*>(renderer);
         if (img->cachedImage() && !img->cachedImage()->isErrorImage())
@@ -1549,9 +1549,9 @@ static ListenerMap *listenerMap;
 - (NSURL *)_getURLAttribute:(NSString *)name
 {
     ASSERT(name);
-    ElementImpl *e = [self _elementImpl];
+    Element *e = [self _element];
     ASSERT(e);
-    return KURL(e->getDocument()->completeURL(parseURL(e->getAttribute(name)).qstring())).getNSURL();
+    return KURL(e->getDocument()->completeURL(parseURL(e->getAttribute(name)).deprecatedString())).getNSURL();
 }
 
 @end
@@ -1561,15 +1561,15 @@ static ListenerMap *listenerMap;
 
 @implementation DOMText
 
-- (TextImpl *)_textImpl
+- (Text *)_text
 {
-    return static_cast<TextImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<Text *>(DOM_cast<Node *>(_internal));
 }
 
 - (DOMText *)splitText:(unsigned)offset
 {
     ExceptionCode ec = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _textImpl]->splitText(offset, ec)];
+    DOMNode *result = [DOMNode _nodeWith:[self _text]->splitText(offset, ec)];
     raiseOnDOMError(ec);
     return static_cast<DOMText *>(result);
 }
@@ -1597,41 +1597,41 @@ static ListenerMap *listenerMap;
 
 - (NSString *)name
 {
-    return [self _documentTypeImpl]->publicId();
+    return [self _documentType]->publicId();
 }
 
 - (DOMNamedNodeMap *)entities
 {
-    return [DOMNamedNodeMap _namedNodeMapWithImpl:[self _documentTypeImpl]->entities()];
+    return [DOMNamedNodeMap _namedNodeMapWith:[self _documentType]->entities()];
 }
 
 - (DOMNamedNodeMap *)notations
 {
-    return [DOMNamedNodeMap _namedNodeMapWithImpl:[self _documentTypeImpl]->notations()];
+    return [DOMNamedNodeMap _namedNodeMapWith:[self _documentType]->notations()];
 }
 
 - (NSString *)publicId
 {
-    return [self _documentTypeImpl]->publicId();
+    return [self _documentType]->publicId();
 }
 
 - (NSString *)systemId
 {
-    return [self _documentTypeImpl]->systemId();
+    return [self _documentType]->systemId();
 }
 
 - (NSString *)internalSubset
 {
-    return [self _documentTypeImpl]->internalSubset();
+    return [self _documentType]->internalSubset();
 }
 
 @end
 
 @implementation DOMDocumentType (WebCoreInternal)
 
-- (DocumentTypeImpl *)_documentTypeImpl
+- (DocumentType *)_documentType
 {
-    return static_cast<DocumentTypeImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<DocumentType *>(DOM_cast<Node *>(_internal));
 }
 
 @end
@@ -1641,19 +1641,19 @@ static ListenerMap *listenerMap;
 
 @implementation DOMNotation
 
-- (NotationImpl *)_notationImpl
+- (Notation *)_notation
 {
-    return static_cast<NotationImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<Notation *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)publicId
 {
-    return [self _notationImpl]->publicId();
+    return [self _notation]->publicId();
 }
 
 - (NSString *)systemId
 {
-    return [self _notationImpl]->systemId();
+    return [self _notation]->systemId();
 }
 
 @end
@@ -1663,24 +1663,24 @@ static ListenerMap *listenerMap;
 
 @implementation DOMEntity
 
-- (EntityImpl *)_entityImpl
+- (Entity *)_entity
 {
-    return static_cast<EntityImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<Entity *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)publicId
 {
-    return [self _entityImpl]->publicId();
+    return [self _entity]->publicId();
 }
 
 - (NSString *)systemId
 {
-    return [self _entityImpl]->systemId();
+    return [self _entity]->systemId();
 }
 
 - (NSString *)notationName
 {
-    return [self _entityImpl]->notationName();
+    return [self _entity]->notationName();
 }
 
 @end
@@ -1697,19 +1697,19 @@ static ListenerMap *listenerMap;
 
 @implementation DOMProcessingInstruction
 
-- (ProcessingInstructionImpl *)_processingInstructionImpl
+- (ProcessingInstruction *)_processingInstruction
 {
-    return static_cast<ProcessingInstructionImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<ProcessingInstruction *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)target
 {
-    return [self _processingInstructionImpl]->target();
+    return [self _processingInstruction]->target();
 }
 
 - (NSString *)data
 {
-    return [self _processingInstructionImpl]->data();
+    return [self _processingInstruction]->data();
 }
 
 - (void)setData:(NSString *)data
@@ -1717,7 +1717,7 @@ static ListenerMap *listenerMap;
     ASSERT(data);
 
     ExceptionCode ec = 0;
-    [self _processingInstructionImpl]->setData(data, ec);
+    [self _processingInstruction]->setData(data, ec);
     raiseOnDOMError(ec);
 }
 
@@ -1731,7 +1731,7 @@ static ListenerMap *listenerMap;
 - (void)dealloc
 {
     if (_internal) {
-        DOM_cast<RangeImpl *>(_internal)->deref();
+        DOM_cast<Range *>(_internal)->deref();
     }
     [super dealloc];
 }
@@ -1739,7 +1739,7 @@ static ListenerMap *listenerMap;
 - (void)finalize
 {
     if (_internal) {
-        DOM_cast<RangeImpl *>(_internal)->deref();
+        DOM_cast<Range *>(_internal)->deref();
     }
     [super finalize];
 }
@@ -1756,7 +1756,7 @@ static ListenerMap *listenerMap;
 - (DOMNode *)startContainer
 {
     ExceptionCode ec = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _rangeImpl]->startContainer(ec)];
+    DOMNode *result = [DOMNode _nodeWith:[self _range]->startContainer(ec)];
     raiseOnDOMError(ec);
     return result;
 }
@@ -1764,7 +1764,7 @@ static ListenerMap *listenerMap;
 - (int)startOffset
 {
     ExceptionCode ec = 0;
-    int result = [self _rangeImpl]->startOffset(ec);
+    int result = [self _range]->startOffset(ec);
     raiseOnDOMError(ec);
     return result;
 }
@@ -1772,7 +1772,7 @@ static ListenerMap *listenerMap;
 - (DOMNode *)endContainer
 {
     ExceptionCode ec = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _rangeImpl]->endContainer(ec)];
+    DOMNode *result = [DOMNode _nodeWith:[self _range]->endContainer(ec)];
     raiseOnDOMError(ec);
     return result;
 }
@@ -1780,7 +1780,7 @@ static ListenerMap *listenerMap;
 - (int)endOffset
 {
     ExceptionCode ec = 0;
-    int result = [self _rangeImpl]->endOffset(ec);
+    int result = [self _range]->endOffset(ec);
     raiseOnDOMError(ec);
     return result;
 }
@@ -1788,7 +1788,7 @@ static ListenerMap *listenerMap;
 - (BOOL)collapsed
 {
     ExceptionCode ec = 0;
-    BOOL result = [self _rangeImpl]->collapsed(ec);
+    BOOL result = [self _range]->collapsed(ec);
     raiseOnDOMError(ec);
     return result;
 }
@@ -1796,7 +1796,7 @@ static ListenerMap *listenerMap;
 - (DOMNode *)commonAncestorContainer
 {
     ExceptionCode ec = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _rangeImpl]->commonAncestorContainer(ec)];
+    DOMNode *result = [DOMNode _nodeWith:[self _range]->commonAncestorContainer(ec)];
     raiseOnDOMError(ec);
     return result;
 }
@@ -1804,70 +1804,70 @@ static ListenerMap *listenerMap;
 - (void)setStart:(DOMNode *)refNode :(int)offset
 {
     ExceptionCode ec = 0;
-    [self _rangeImpl]->setStart([refNode _nodeImpl], offset, ec);
+    [self _range]->setStart([refNode _node], offset, ec);
     raiseOnDOMError(ec);
 }
 
 - (void)setEnd:(DOMNode *)refNode :(int)offset
 {
     ExceptionCode ec = 0;
-    [self _rangeImpl]->setEnd([refNode _nodeImpl], offset, ec);
+    [self _range]->setEnd([refNode _node], offset, ec);
     raiseOnDOMError(ec);
 }
 
 - (void)setStartBefore:(DOMNode *)refNode
 {
     ExceptionCode ec = 0;
-    [self _rangeImpl]->setStartBefore([refNode _nodeImpl], ec);
+    [self _range]->setStartBefore([refNode _node], ec);
     raiseOnDOMError(ec);
 }
 
 - (void)setStartAfter:(DOMNode *)refNode
 {
     ExceptionCode ec = 0;
-    [self _rangeImpl]->setStartAfter([refNode _nodeImpl], ec);
+    [self _range]->setStartAfter([refNode _node], ec);
     raiseOnDOMError(ec);
 }
 
 - (void)setEndBefore:(DOMNode *)refNode
 {
     ExceptionCode ec = 0;
-    [self _rangeImpl]->setEndBefore([refNode _nodeImpl], ec);
+    [self _range]->setEndBefore([refNode _node], ec);
     raiseOnDOMError(ec);
 }
 
 - (void)setEndAfter:(DOMNode *)refNode
 {
     ExceptionCode ec = 0;
-    [self _rangeImpl]->setEndAfter([refNode _nodeImpl], ec);
+    [self _range]->setEndAfter([refNode _node], ec);
     raiseOnDOMError(ec);
 }
 
 - (void)collapse:(BOOL)toStart
 {
     ExceptionCode ec = 0;
-    [self _rangeImpl]->collapse(toStart, ec);
+    [self _range]->collapse(toStart, ec);
     raiseOnDOMError(ec);
 }
 
 - (void)selectNode:(DOMNode *)refNode
 {
     ExceptionCode ec = 0;
-    [self _rangeImpl]->selectNode([refNode _nodeImpl], ec);
+    [self _range]->selectNode([refNode _node], ec);
     raiseOnDOMError(ec);
 }
 
 - (void)selectNodeContents:(DOMNode *)refNode
 {
     ExceptionCode ec = 0;
-    [self _rangeImpl]->selectNodeContents([refNode _nodeImpl], ec);
+    [self _range]->selectNodeContents([refNode _node], ec);
     raiseOnDOMError(ec);
 }
 
 - (short)compareBoundaryPoints:(unsigned short)how :(DOMRange *)sourceRange
 {
     ExceptionCode ec = 0;
-    short result = [self _rangeImpl]->compareBoundaryPoints(static_cast<RangeImpl::CompareHow>(how), [sourceRange _rangeImpl], ec);
+    short result = [self _range]->compareBoundaryPoints(static_cast<Range::CompareHow>(how), [sourceRange _range], ec);
     raiseOnDOMError(ec);
     return result;
 }
@@ -1875,14 +1875,14 @@ static ListenerMap *listenerMap;
 - (void)deleteContents
 {
     ExceptionCode ec = 0;
-    [self _rangeImpl]->deleteContents(ec);
+    [self _range]->deleteContents(ec);
     raiseOnDOMError(ec);
 }
 
 - (DOMDocumentFragment *)extractContents
 {
     ExceptionCode ec = 0;
-    DOMDocumentFragment *result = [DOMDocumentFragment _documentFragmentWithImpl:[self _rangeImpl]->extractContents(ec).get()];
+    DOMDocumentFragment *result = [DOMDocumentFragment _documentFragmentWith:[self _range]->extractContents(ec).get()];
     raiseOnDOMError(ec);
     return result;
 }
@@ -1890,7 +1890,7 @@ static ListenerMap *listenerMap;
 - (DOMDocumentFragment *)cloneContents
 {
     ExceptionCode ec = 0;
-    DOMDocumentFragment *result = [DOMDocumentFragment _documentFragmentWithImpl:[self _rangeImpl]->cloneContents(ec).get()];
+    DOMDocumentFragment *result = [DOMDocumentFragment _documentFragmentWith:[self _range]->cloneContents(ec).get()];
     raiseOnDOMError(ec);
     return result;
 }
@@ -1898,21 +1898,21 @@ static ListenerMap *listenerMap;
 - (void)insertNode:(DOMNode *)newNode
 {
     ExceptionCode ec = 0;
-    [self _rangeImpl]->insertNode([newNode _nodeImpl], ec);
+    [self _range]->insertNode([newNode _node], ec);
     raiseOnDOMError(ec);
 }
 
 - (void)surroundContents:(DOMNode *)newParent
 {
     ExceptionCode ec = 0;
-    [self _rangeImpl]->surroundContents([newParent _nodeImpl], ec);
+    [self _range]->surroundContents([newParent _node], ec);
     raiseOnDOMError(ec);
 }
 
 - (DOMRange *)cloneRange
 {
     ExceptionCode ec = 0;
-    DOMRange *result = [DOMRange _rangeWithImpl:[self _rangeImpl]->cloneRange(ec).get()];
+    DOMRange *result = [DOMRange _rangeWith:[self _range]->cloneRange(ec).get()];
     raiseOnDOMError(ec);
     return result;
 }
@@ -1920,7 +1920,7 @@ static ListenerMap *listenerMap;
 - (NSString *)toString
 {
     ExceptionCode ec = 0;
-    NSString *result = [self _rangeImpl]->toString(ec);
+    NSString *result = [self _range]->toString(ec);
     raiseOnDOMError(ec);
     return result;
 }
@@ -1928,7 +1928,7 @@ static ListenerMap *listenerMap;
 - (void)detach
 {
     ExceptionCode ec = 0;
-    [self _rangeImpl]->detach(ec);
+    [self _range]->detach(ec);
     raiseOnDOMError(ec);
 }
 
@@ -1936,7 +1936,7 @@ static ListenerMap *listenerMap;
 
 @implementation DOMRange (WebCoreInternal)
 
-- (id)_initWithRangeImpl:(RangeImpl *)impl
+- (id)_initWithRange:(Range *)impl
 {
     ASSERT(impl);
 
@@ -1947,7 +1947,7 @@ static ListenerMap *listenerMap;
     return self;
 }
 
-+ (DOMRange *)_rangeWithImpl:(RangeImpl *)impl
++ (DOMRange *)_rangeWith:(Range *)impl
 {
     if (!impl)
         return nil;
@@ -1957,12 +1957,12 @@ static ListenerMap *listenerMap;
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
-    return [[[self alloc] _initWithRangeImpl:impl] autorelease];
+    return [[[self alloc] _initWithRange:impl] autorelease];
 }
 
-- (RangeImpl *)_rangeImpl
+- (Range *)_range
 {
-    return DOM_cast<RangeImpl *>(_internal);
+    return DOM_cast<Range *>(_internal);
 }
 
 @end
@@ -1971,7 +1971,7 @@ static ListenerMap *listenerMap;
 
 - (NSString *)_text
 {
-    return [self _rangeImpl]->text().qstring().getNSString();
+    return [self _range]->text().deprecatedString().getNSString();
 }
 
 @end
@@ -1982,7 +1982,7 @@ static ListenerMap *listenerMap;
 
 @implementation DOMNodeFilter
 
-- (id)_initWithNodeFilterImpl:(NodeFilterImpl *)impl
+- (id)_initWithNodeFilter:(NodeFilter *)impl
 {
     ASSERT(impl);
 
@@ -1993,7 +1993,7 @@ static ListenerMap *listenerMap;
     return self;
 }
 
-+ (DOMNodeFilter *)_nodeFilterWithImpl:(NodeFilterImpl *)impl
++ (DOMNodeFilter *)_nodeFilterWith:(NodeFilter *)impl
 {
     if (!impl)
         return nil;
@@ -2003,31 +2003,31 @@ static ListenerMap *listenerMap;
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
-    return [[[self alloc] _initWithNodeFilterImpl:impl] autorelease];
+    return [[[self alloc] _initWithNodeFilter:impl] autorelease];
 }
 
-- (NodeFilterImpl *)_nodeFilterImpl
+- (NodeFilter *)_nodeFilter
 {
-    return DOM_cast<NodeFilterImpl *>(_internal);
+    return DOM_cast<NodeFilter *>(_internal);
 }
 
 - (void)dealloc
 {
     if (_internal)
-        DOM_cast<NodeFilterImpl *>(_internal)->deref();
+        DOM_cast<NodeFilter *>(_internal)->deref();
     [super dealloc];
 }
 
 - (void)finalize
 {
     if (_internal)
-        DOM_cast<NodeFilterImpl *>(_internal)->deref();
+        DOM_cast<NodeFilter *>(_internal)->deref();
     [super finalize];
 }
 
 - (short)acceptNode:(DOMNode *)node
 {
-    return [self _nodeFilterImpl]->acceptNode([node _nodeImpl]);
+    return [self _nodeFilter]->acceptNode([node _node]);
 }
 
 @end
@@ -2035,7 +2035,7 @@ static ListenerMap *listenerMap;
 
 @implementation DOMNodeIterator
 
-- (id)_initWithNodeIteratorImpl:(NodeIteratorImpl *)impl filter:(id <DOMNodeFilter>)filter
+- (id)_initWithNodeIterator:(NodeIterator *)impl filter:(id <DOMNodeFilter>)filter
 {
     ASSERT(impl);
 
@@ -2047,9 +2047,9 @@ static ListenerMap *listenerMap;
     return self;
 }
 
-- (NodeIteratorImpl *)_nodeIteratorImpl
+- (NodeIterator *)_nodeIterator
 {
-    return DOM_cast<NodeIteratorImpl *>(_internal);
+    return DOM_cast<NodeIterator *>(_internal);
 }
 
 - (void)dealloc
@@ -2057,7 +2057,7 @@ static ListenerMap *listenerMap;
     [m_filter release];
     if (_internal) {
         [self detach];
-        DOM_cast<NodeIteratorImpl *>(_internal)->deref();
+        DOM_cast<NodeIterator *>(_internal)->deref();
     }
     [super dealloc];
 }
@@ -2066,19 +2066,19 @@ static ListenerMap *listenerMap;
 {
     if (_internal) {
         [self detach];
-        DOM_cast<NodeIteratorImpl *>(_internal)->deref();
+        DOM_cast<NodeIterator *>(_internal)->deref();
     }
     [super finalize];
 }
 
 - (DOMNode *)root
 {
-    return [DOMNode _nodeWithImpl:[self _nodeIteratorImpl]->root()];
+    return [DOMNode _nodeWith:[self _nodeIterator]->root()];
 }
 
 - (unsigned)whatToShow
 {
-    return [self _nodeIteratorImpl]->whatToShow();
+    return [self _nodeIterator]->whatToShow();
 }
 
 - (id <DOMNodeFilter>)filter
@@ -2088,18 +2088,18 @@ static ListenerMap *listenerMap;
         return [[m_filter retain] autorelease];
 
     // This node iterator was created from the c++ side
-    return [DOMNodeFilter _nodeFilterWithImpl:[self _nodeIteratorImpl]->filter()];
+    return [DOMNodeFilter _nodeFilterWith:[self _nodeIterator]->filter()];
 }
 
 - (BOOL)expandEntityReferences
 {
-    return [self _nodeIteratorImpl]->expandEntityReferences();
+    return [self _nodeIterator]->expandEntityReferences();
 }
 
 - (DOMNode *)nextNode
 {
     ExceptionCode ec = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _nodeIteratorImpl]->nextNode(ec)];
+    DOMNode *result = [DOMNode _nodeWith:[self _nodeIterator]->nextNode(ec)];
     raiseOnDOMError(ec);
     return result;
 }
@@ -2107,7 +2107,7 @@ static ListenerMap *listenerMap;
 - (DOMNode *)previousNode
 {
     ExceptionCode ec = 0;
-    DOMNode *result = [DOMNode _nodeWithImpl:[self _nodeIteratorImpl]->previousNode(ec)];
+    DOMNode *result = [DOMNode _nodeWith:[self _nodeIterator]->previousNode(ec)];
     raiseOnDOMError(ec);
     return result;
 }
@@ -2115,7 +2115,7 @@ static ListenerMap *listenerMap;
 - (void)detach
 {
     ExceptionCode ec = 0;
-    [self _nodeIteratorImpl]->detach(ec);
+    [self _nodeIterator]->detach(ec);
     raiseOnDOMError(ec);
 }
 
@@ -2123,7 +2123,7 @@ static ListenerMap *listenerMap;
 
 @implementation DOMNodeIterator(WebCoreInternal)
 
-+ (DOMNodeIterator *)_nodeIteratorWithImpl:(NodeIteratorImpl *)impl filter:(id <DOMNodeFilter>)filter
++ (DOMNodeIterator *)_nodeIteratorWith:(NodeIterator *)impl filter:(id <DOMNodeFilter>)filter
 {
     if (!impl)
         return nil;
@@ -2133,14 +2133,14 @@ static ListenerMap *listenerMap;
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
-    return [[[self alloc] _initWithNodeIteratorImpl:impl filter:filter] autorelease];
+    return [[[self alloc] _initWithNodeIterator:impl filter:filter] autorelease];
 }
 
 @end
 
 @implementation DOMTreeWalker
 
-- (id)_initWithTreeWalkerImpl:(TreeWalkerImpl *)impl filter:(id <DOMNodeFilter>)filter
+- (id)_initWithTreeWalker:(TreeWalker *)impl filter:(id <DOMNodeFilter>)filter
 {
     ASSERT(impl);
 
@@ -2152,9 +2152,9 @@ static ListenerMap *listenerMap;
     return self;
 }
 
-- (TreeWalkerImpl *)_treeWalkerImpl
+- (TreeWalker *)_treeWalker
 {
-    return DOM_cast<TreeWalkerImpl *>(_internal);
+    return DOM_cast<TreeWalker *>(_internal);
 }
 
 - (void)dealloc
@@ -2162,7 +2162,7 @@ static ListenerMap *listenerMap;
     if (m_filter)
         [m_filter release];
     if (_internal) {
-        DOM_cast<TreeWalkerImpl *>(_internal)->deref();
+        DOM_cast<TreeWalker *>(_internal)->deref();
     }
     [super dealloc];
 }
@@ -2170,19 +2170,19 @@ static ListenerMap *listenerMap;
 - (void)finalize
 {
     if (_internal) {
-        DOM_cast<TreeWalkerImpl *>(_internal)->deref();
+        DOM_cast<TreeWalker *>(_internal)->deref();
     }
     [super finalize];
 }
 
 - (DOMNode *)root
 {
-    return [DOMNode _nodeWithImpl:[self _treeWalkerImpl]->root()];
+    return [DOMNode _nodeWith:[self _treeWalker]->root()];
 }
 
 - (unsigned)whatToShow
 {
-    return [self _treeWalkerImpl]->whatToShow();
+    return [self _treeWalker]->whatToShow();
 }
 
 - (id <DOMNodeFilter>)filter
@@ -2192,66 +2192,66 @@ static ListenerMap *listenerMap;
         return [[m_filter retain] autorelease];
 
     // This tree walker was created from the c++ side
-    return [DOMNodeFilter _nodeFilterWithImpl:[self _treeWalkerImpl]->filter()];
+    return [DOMNodeFilter _nodeFilterWith:[self _treeWalker]->filter()];
 }
 
 - (BOOL)expandEntityReferences
 {
-    return [self _treeWalkerImpl]->expandEntityReferences();
+    return [self _treeWalker]->expandEntityReferences();
 }
 
 - (DOMNode *)currentNode
 {
-    return [DOMNode _nodeWithImpl:[self _treeWalkerImpl]->currentNode()];
+    return [DOMNode _nodeWith:[self _treeWalker]->currentNode()];
 }
 
 - (void)setCurrentNode:(DOMNode *)currentNode
 {
     ExceptionCode ec = 0;
-    [self _treeWalkerImpl]->setCurrentNode([currentNode _nodeImpl], ec);
+    [self _treeWalker]->setCurrentNode([currentNode _node], ec);
     raiseOnDOMError(ec);
 }
 
 - (DOMNode *)parentNode
 {
-    return [DOMNode _nodeWithImpl:[self _treeWalkerImpl]->parentNode()];
+    return [DOMNode _nodeWith:[self _treeWalker]->parentNode()];
 }
 
 - (DOMNode *)firstChild
 {
-    return [DOMNode _nodeWithImpl:[self _treeWalkerImpl]->firstChild()];
+    return [DOMNode _nodeWith:[self _treeWalker]->firstChild()];
 }
 
 - (DOMNode *)lastChild
 {
-    return [DOMNode _nodeWithImpl:[self _treeWalkerImpl]->lastChild()];
+    return [DOMNode _nodeWith:[self _treeWalker]->lastChild()];
 }
 
 - (DOMNode *)previousSibling
 {
-    return [DOMNode _nodeWithImpl:[self _treeWalkerImpl]->previousSibling()];
+    return [DOMNode _nodeWith:[self _treeWalker]->previousSibling()];
 }
 
 - (DOMNode *)nextSibling
 {
-    return [DOMNode _nodeWithImpl:[self _treeWalkerImpl]->nextSibling()];
+    return [DOMNode _nodeWith:[self _treeWalker]->nextSibling()];
 }
 
 - (DOMNode *)previousNode
 {
-    return [DOMNode _nodeWithImpl:[self _treeWalkerImpl]->previousNode()];
+    return [DOMNode _nodeWith:[self _treeWalker]->previousNode()];
 }
 
 - (DOMNode *)nextNode
 {
-    return [DOMNode _nodeWithImpl:[self _treeWalkerImpl]->nextNode()];
+    return [DOMNode _nodeWith:[self _treeWalker]->nextNode()];
 }
 
 @end
 
 @implementation DOMTreeWalker (WebCoreInternal)
 
-+ (DOMTreeWalker *)_treeWalkerWithImpl:(TreeWalkerImpl *)impl filter:(id <DOMNodeFilter>)filter
++ (DOMTreeWalker *)_treeWalkerWith:(TreeWalker *)impl filter:(id <DOMNodeFilter>)filter
 {
     if (!impl)
         return nil;
@@ -2261,7 +2261,7 @@ static ListenerMap *listenerMap;
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
-    return [[[self alloc] _initWithTreeWalkerImpl:impl filter:filter] autorelease];
+    return [[[self alloc] _initWithTreeWalker:impl filter:filter] autorelease];
 }
 
 @end
@@ -2271,7 +2271,7 @@ class ObjCNodeFilterCondition : public NodeFilterCondition
 public:
     ObjCNodeFilterCondition(id <DOMNodeFilter>);
     virtual ~ObjCNodeFilterCondition();
-    virtual short acceptNode(NodeImpl*) const;
+    virtual short acceptNode(Node*) const;
 
 private:
     ObjCNodeFilterCondition(const ObjCNodeFilterCondition &);
@@ -2292,35 +2292,35 @@ ObjCNodeFilterCondition::~ObjCNodeFilterCondition()
     CFRelease(m_filter);
 }
 
-short ObjCNodeFilterCondition::acceptNode(NodeImpl* node) const
+short ObjCNodeFilterCondition::acceptNode(Node* node) const
 {
     if (!node)
-        return NodeFilterImpl::FILTER_REJECT;
-    return [m_filter acceptNode:[DOMNode _nodeWithImpl:node]];
+        return NodeFilter::FILTER_REJECT;
+    return [m_filter acceptNode:[DOMNode _nodeWith:node]];
 }
 
 @implementation DOMDocument (DOMDocumentTraversal)
 
 - (DOMNodeIterator *)createNodeIterator:(DOMNode *)root :(unsigned)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences
 {
-    RefPtr<NodeFilterImpl> cppFilter;
+    RefPtr<NodeFilter> cppFilter;
     if (filter)
-        cppFilter = new NodeFilterImpl(new ObjCNodeFilterCondition(filter));
+        cppFilter = new NodeFilter(new ObjCNodeFilterCondition(filter));
     ExceptionCode ec = 0;
-    RefPtr<NodeIteratorImpl> impl = [self _documentImpl]->createNodeIterator([root _nodeImpl], whatToShow, cppFilter, expandEntityReferences, ec);
+    RefPtr<NodeIterator> impl = [self _document]->createNodeIterator([root _node], whatToShow, cppFilter, expandEntityReferences, ec);
     raiseOnDOMError(ec);
-    return [DOMNodeIterator _nodeIteratorWithImpl:impl.get() filter:filter];
+    return [DOMNodeIterator _nodeIteratorWith:impl.get() filter:filter];
 }
 
 - (DOMTreeWalker *)createTreeWalker:(DOMNode *)root :(unsigned)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences
 {
-    RefPtr<NodeFilterImpl> cppFilter;
+    RefPtr<NodeFilter> cppFilter;
     if (filter)
-        cppFilter = new NodeFilterImpl(new ObjCNodeFilterCondition(filter));
+        cppFilter = new NodeFilter(new ObjCNodeFilterCondition(filter));
     ExceptionCode ec = 0;
-    RefPtr<TreeWalkerImpl> impl = [self _documentImpl]->createTreeWalker([root _nodeImpl], whatToShow, cppFilter, expandEntityReferences, ec);
+    RefPtr<TreeWalker> impl = [self _document]->createTreeWalker([root _node], whatToShow, cppFilter, expandEntityReferences, ec);
     raiseOnDOMError(ec);
-    return [DOMTreeWalker _treeWalkerWithImpl:impl.get() filter:filter];
+    return [DOMTreeWalker _treeWalkerWith:impl.get() filter:filter];
 }
 
 @end
@@ -2358,7 +2358,7 @@ ObjCEventListener::~ObjCEventListener()
     [m_listener release];
 }
 
-void ObjCEventListener::handleEvent(EventImpl *event, bool)
+void ObjCEventListener::handleEvent(Event *event, bool)
 {
-    [m_listener handleEvent:[DOMEvent _eventWithImpl:event]];
+    [m_listener handleEvent:[DOMEvent _eventWith:event]];
 }

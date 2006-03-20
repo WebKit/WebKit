@@ -21,11 +21,11 @@
 #include "config.h"
 #include "kjs_dom.h"
 
-#include "CDATASectionImpl.h"
-#include "CommentImpl.h"
-#include "DOMImplementationImpl.h"
-#include "DocumentFragmentImpl.h"
-#include "DocumentTypeImpl.h"
+#include "CDATASection.h"
+#include "Comment.h"
+#include "DOMImplementation.h"
+#include "DocumentFragment.h"
+#include "DocumentType.h"
 #include "ExceptionCode.h"
 #include "EventNames.h"
 #include "Frame.h"
@@ -40,10 +40,10 @@
 #include "css_ruleimpl.h"
 #include "css_stylesheetimpl.h"
 #include "dom2_eventsimpl.h"
-#include "dom2_rangeimpl.h"
-#include "dom2_viewsimpl.h"
+#include "Range.h"
+#include "AbstractView.h"
 #include "dom_xmlimpl.h"
-#include "html_documentimpl.h"
+#include "HTMLDocument.h"
 #include "html_objectimpl.h"
 #include "htmlnames.h"
 #include "khtml_settings.h"
@@ -54,7 +54,7 @@
 #include "kjs_traversal.h"
 #include "kjs_views.h"
 #include "kjs_window.h"
-#include "render_canvas.h"
+#include "RenderCanvas.h"
 
 #if __APPLE__
 #include <JavaScriptCore/runtime_object.h>
@@ -98,13 +98,13 @@ KJS_IMPLEMENT_PROTOTYPE("DOMNode", DOMNodeProto, DOMNodeProtoFunc)
 
 const ClassInfo DOMNode::info = { "Node", 0, &DOMNodeTable, 0 };
 
-DOMNode::DOMNode(ExecState *exec, NodeImpl *n)
+DOMNode::DOMNode(ExecState *exec, Node *n)
   : m_impl(n)
 {
   setPrototype(DOMNodeProto::self(exec));
 }
 
-DOMNode::DOMNode(NodeImpl *n)
+DOMNode::DOMNode(Node *n)
   : m_impl(n)
 {
 }
@@ -118,7 +118,7 @@ void DOMNode::mark()
 {
   assert(!marked());
 
-  NodeImpl *node = m_impl.get();
+  Node *node = m_impl.get();
 
   // Nodes in the document are kept alive by ScriptInterpreter::mark,
   // so we have no special responsibilities and can just call the base class here.
@@ -129,12 +129,12 @@ void DOMNode::mark()
 
   // This is a node outside the document, so find the root of the tree it is in,
   // and start marking from there.
-  NodeImpl *root = node;
-  for (NodeImpl *current = m_impl.get(); current; current = current->parentNode()) {
+  Node *root = node;
+  for (Node *current = m_impl.get(); current; current = current->parentNode()) {
     root = current;
   }
 
-  static HashSet<NodeImpl*> markingRoots;
+  static HashSet<Node*> markingRoots;
 
   // If we're already marking this tree, then we can simply mark this wrapper
   // by calling the base class; our caller is iterating the tree.
@@ -145,7 +145,7 @@ void DOMNode::mark()
 
   // Mark the whole tree; use the global set of roots to avoid reentering.
   markingRoots.add(root);
-  for (NodeImpl *nodeToMark = root; nodeToMark; nodeToMark = nodeToMark->traverseNextNode()) {
+  for (Node *nodeToMark = root; nodeToMark; nodeToMark = nodeToMark->traverseNextNode()) {
     DOMNode *wrapper = ScriptInterpreter::getDOMNodeForDocument(m_impl->getDocument(), nodeToMark);
     if (wrapper) {
       if (!wrapper->marked())
@@ -200,7 +200,7 @@ bool DOMNode::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName
 
 JSValue *DOMNode::getValueProperty(ExecState *exec, int token) const
 {
-  NodeImpl &node = *m_impl;
+  Node &node = *m_impl;
   switch (token) {
   case NodeName:
     return jsStringOrNull(node.nodeName());
@@ -246,7 +246,7 @@ void DOMNode::put(ExecState *exec, const Identifier& propertyName, JSValue *valu
 void DOMNode::putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/)
 {
   DOMExceptionTranslator exception(exec);
-  NodeImpl &node = *m_impl;
+  Node &node = *m_impl;
   switch (token) {
   case NodeValue:
     node.setNodeValue(value->toString(exec).domString(), exception);
@@ -280,7 +280,7 @@ JSValue *DOMNodeProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, co
   if (!thisObj->inherits(&DOMNode::info))
     return throwError(exec, TypeError);
   DOMExceptionTranslator exception(exec);
-  NodeImpl &node = *static_cast<DOMNode *>(thisObj)->impl();
+  Node &node = *static_cast<DOMNode *>(thisObj)->impl();
   switch (id) {
     case DOMNode::HasAttributes:
       return jsBoolean(node.hasAttributes());
@@ -322,7 +322,7 @@ JSValue *DOMNodeProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, co
       return jsNull();
     case DOMNode::Contains:
       if (node.isElementNode())
-        if (NodeImpl *node0 = toNode(args[0]))
+        if (Node *node0 = toNode(args[0]))
           return jsBoolean(node.isAncestor(node0));
       // FIXME: Is there a good reason to return undefined rather than false
       // when the parameter is not a node? When the object is not an element?
@@ -334,7 +334,7 @@ JSValue *DOMNodeProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, co
   return jsUndefined();
 }
 
-NodeImpl *toNode(JSValue *val)
+Node *toNode(JSValue *val)
 {
     if (!val || !val->isObject(&DOMNode::info))
         return 0;
@@ -391,12 +391,12 @@ onunload      DOMEventTargetNode::OnUnload               DontDelete
 @end
 */
 
-DOMEventTargetNode::DOMEventTargetNode(NodeImpl* n)
+DOMEventTargetNode::DOMEventTargetNode(Node* n)
     : DOMNode(n)
 {
 }
 
-DOMEventTargetNode::DOMEventTargetNode(ExecState *exec, NodeImpl *n)
+DOMEventTargetNode::DOMEventTargetNode(ExecState *exec, Node *n)
     : DOMNode(n)
 {
     setPrototype(DOMEventTargetNodeProto::self(exec));
@@ -643,7 +643,7 @@ void DOMEventTargetNode::setListener(ExecState *exec, const AtomicString &eventT
 
 JSValue *DOMEventTargetNode::getListener(const AtomicString &eventType) const
 {
-    DOM::EventListener *listener = EventTargetNodeCast(impl())->getHTMLEventListener(eventType);
+    WebCore::EventListener *listener = EventTargetNodeCast(impl())->getHTMLEventListener(eventType);
     JSEventListener *jsListener = static_cast<JSEventListener*>(listener);
     if (jsListener && jsListener->listenerObj())
         return jsListener->listenerObj();
@@ -673,7 +673,7 @@ JSValue *DOMEventTargetNodeProtoFunc::callAsFunction(ExecState *exec, JSObject *
         return throwError(exec, TypeError);
     DOMExceptionTranslator exception(exec);
     DOMEventTargetNode* DOMNode = static_cast<DOMEventTargetNode*>(thisObj);
-    EventTargetNodeImpl* node = static_cast<EventTargetNodeImpl*>(DOMNode->impl());
+    EventTargetNode* node = static_cast<EventTargetNode*>(DOMNode->impl());
     switch (id) {
         case DOMEventTargetNode::AddEventListener: {
             JSEventListener *listener = Window::retrieveActive(exec)->getJSEventListener(args[1]);
@@ -750,7 +750,7 @@ bool DOMNodeList::getOwnPropertySlot(ExecState *exec, const Identifier& property
     return true;
   }
 
-  NodeListImpl &list = *m_impl;
+  NodeList &list = *m_impl;
 
   // array index ?
   bool ok;
@@ -769,7 +769,7 @@ bool DOMNodeList::getOwnPropertySlot(ExecState *exec, const Identifier& property
 // Need to support both get and call, so that list[0] and list(0) work.
 JSValue *DOMNodeList::callAsFunction(ExecState *exec, JSObject *, const List &args)
 {
-  // Do not use thisObj here. See HTMLCollection.
+  // Do not use thisObj here. See JSHTMLCollection.
   UString s = args[0]->toString(exec);
   bool ok;
   unsigned int u = s.toUInt32(&ok);
@@ -784,7 +784,7 @@ JSValue *DOMNodeListFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
 {
   if (!thisObj->inherits(&KJS::DOMNodeList::info))
     return throwError(exec, TypeError);
-  DOM::NodeListImpl &list = *static_cast<DOMNodeList *>(thisObj)->impl();
+  WebCore::NodeList &list = *static_cast<DOMNodeList *>(thisObj)->impl();
 
   if (id == DOMNodeList::Item)
     return toJS(exec, list.item(args[0]->toInt32(exec)));
@@ -792,11 +792,11 @@ JSValue *DOMNodeListFunc::callAsFunction(ExecState *exec, JSObject *thisObj, con
   return jsUndefined();
 }
 
-AttrImpl *toAttr(JSValue *val)
+Attr *toAttr(JSValue *val)
 {
     if (!val || !val->isObject(&JSAttr::info))
         return 0;
-    return static_cast<AttrImpl *>(static_cast<DOMNode *>(val)->impl());
+    return static_cast<Attr *>(static_cast<DOMNode *>(val)->impl());
 }
 
 // -------------------------------------------------------------------------
@@ -856,20 +856,20 @@ const ClassInfo DOMDocument::info = { "Document", &DOMEventTargetNode::info, &DO
 @end
 */
 
-DOMDocument::DOMDocument(ExecState *exec, DocumentImpl *d)
+DOMDocument::DOMDocument(ExecState *exec, Document *d)
   : DOMEventTargetNode(d) 
 { 
   setPrototype(DOMDocumentProto::self(exec));
 }
 
-DOMDocument::DOMDocument(DocumentImpl *d)
+DOMDocument::DOMDocument(Document *d)
   : DOMEventTargetNode(d) 
 { 
 }
 
 DOMDocument::~DOMDocument()
 {
-  ScriptInterpreter::forgetDOMObject(static_cast<DocumentImpl *>(m_impl.get()));
+  ScriptInterpreter::forgetDOMObject(static_cast<Document *>(m_impl.get()));
 }
 
 bool DOMDocument::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -879,7 +879,7 @@ bool DOMDocument::getOwnPropertySlot(ExecState *exec, const Identifier& property
 
 JSValue *DOMDocument::getValueProperty(ExecState *exec, int token) const
 {
-  DocumentImpl &doc = *static_cast<DocumentImpl *>(impl());
+  Document &doc = *static_cast<Document *>(impl());
 
   switch(token) {
   case DocType:
@@ -929,7 +929,7 @@ void DOMDocument::put(ExecState *exec, const Identifier& propertyName, JSValue *
 
 void DOMDocument::putValueProperty(ExecState *exec, int token, JSValue *value, int)
 {
-  DocumentImpl &doc = *static_cast<DocumentImpl *>(impl());
+  Document &doc = *static_cast<Document *>(impl());
   switch (token) {
     case SelectedStylesheetSet:
       doc.setSelectedStylesheetSet(value->toString(exec).domString());
@@ -945,10 +945,10 @@ JSValue *DOMDocumentProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj
   if (!thisObj->inherits(&KJS::DOMDocument::info))
     return throwError(exec, TypeError);
   DOMExceptionTranslator exception(exec);
-  NodeImpl &node = *static_cast<DOMNode *>(thisObj)->impl();
-  DocumentImpl &doc = static_cast<DocumentImpl &>(node);
+  Node &node = *static_cast<DOMNode *>(thisObj)->impl();
+  Document &doc = static_cast<Document &>(node);
   UString str = args[0]->toString(exec);
-  DOM::DOMString s = str.domString();
+  WebCore::String s = str.domString();
 
   switch(id) {
   case DOMDocument::AdoptNode:
@@ -986,21 +986,21 @@ JSValue *DOMDocumentProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj
   case DOMDocument::CreateRange:
     return toJS(exec, doc.createRange().get());
   case DOMDocument::CreateNodeIterator: {
-    RefPtr<NodeFilterImpl> filter;
+    RefPtr<NodeFilter> filter;
     JSValue* arg2 = args[2];
     if (arg2->isObject()) {
       JSObject* o(static_cast<JSObject*>(arg2));
-      filter = new NodeFilterImpl(new JSNodeFilterCondition(o));
+      filter = new NodeFilter(new JSNodeFilterCondition(o));
     }
     return toJS(exec, doc.createNodeIterator(toNode(args[0]), args[1]->toUInt32(exec),
         filter.release(), args[3]->toBoolean(exec), exception).get());
   }
   case DOMDocument::CreateTreeWalker: {
-    RefPtr<NodeFilterImpl> filter;
+    RefPtr<NodeFilter> filter;
     JSValue* arg2 = args[2];
     if (arg2->isObject()) {
       JSObject* o(static_cast<JSObject *>(arg2));
-      filter = new NodeFilterImpl(new JSNodeFilterCondition(o));
+      filter = new NodeFilter(new JSNodeFilterCondition(o));
     }
     return toJS(exec, doc.createTreeWalker(toNode(args[0]), args[1]->toUInt32(exec),
         filter.release(), args[3]->toBoolean(exec), exception).get());
@@ -1008,7 +1008,7 @@ JSValue *DOMDocumentProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj
   case DOMDocument::CreateEvent:
     return toJS(exec, doc.createEvent(s, exception).get());
   case DOMDocument::GetOverrideStyle:
-    if (ElementImpl *element0 = toElement(args[0]))
+    if (Element *element0 = toElement(args[0]))
         return toJS(exec,doc.getOverrideStyle(element0, args[1]->toString(exec).domString()));
     // FIXME: Is undefined right here, or should we raise an exception?
     return jsUndefined();
@@ -1028,8 +1028,8 @@ JSValue *DOMDocumentProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj
     return jsBoolean(doc.queryCommandSupported(args[0]->toString(exec).domString()));
   }
   case DOMDocument::QueryCommandValue: {
-    DOM::DOMString commandValue(doc.queryCommandValue(args[0]->toString(exec).domString()));
-    // Method returns null DOMString to signal command is unsupported.
+    WebCore::String commandValue(doc.queryCommandValue(args[0]->toString(exec).domString()));
+    // Method returns null String to signal command is unsupported.
     // Microsoft documentation for this method says:
     // "If not supported [for a command identifier], this method returns a Boolean set to false."
     if (commandValue.isNull())
@@ -1078,20 +1078,20 @@ const ClassInfo DOMElement::info = { "Element", &DOMEventTargetNode::info, &DOME
     scrollHeight  DOMElement::ScrollHeight           DontDelete|ReadOnly
 @end
 */
-DOMElement::DOMElement(ExecState *exec, ElementImpl *e)
+DOMElement::DOMElement(ExecState *exec, Element *e)
   : DOMEventTargetNode(e) 
 {
   setPrototype(DOMElementProto::self(exec));
 }
 
-DOMElement::DOMElement(ElementImpl *e)
+DOMElement::DOMElement(Element *e)
   : DOMEventTargetNode(e) 
 { 
 }
 
 JSValue *DOMElement::getValueProperty(ExecState *exec, int token) const
 {
-    ElementImpl *element = static_cast<ElementImpl *>(impl());
+    Element *element = static_cast<Element *>(impl());
     switch (token) {
     case TagName:
         return jsStringOrNull(element->nodeName());
@@ -1142,7 +1142,7 @@ void DOMElement::put(ExecState *exec, const Identifier& propertyName, JSValue *v
 
 void DOMElement::putValueProperty(ExecState *exec, int token, JSValue *value, int /*attr*/)
 {
-    NodeImpl &node = *m_impl;
+    Node &node = *m_impl;
     switch (token) {
         case ScrollTop: {
             RenderObject *rend = node.renderer();
@@ -1163,8 +1163,8 @@ JSValue *DOMElement::attributeGetter(ExecState *exec, JSObject *originalObject, 
 {
   DOMElement *thisObj = static_cast<DOMElement *>(slot.slotBase());
 
-  ElementImpl *element = static_cast<ElementImpl *>(thisObj->impl());
-  DOM::DOMString attr = element->getAttribute(propertyName.domString());
+  Element *element = static_cast<Element *>(thisObj->impl());
+  WebCore::String attr = element->getAttribute(propertyName.domString());
   return jsStringOrNull(attr);
 }
 
@@ -1186,11 +1186,11 @@ bool DOMElement::getOwnPropertySlot(ExecState *exec, const Identifier& propertyN
   if (proto->isObject() && static_cast<JSObject *>(proto)->hasProperty(exec, propertyName))
     return false;
 
-  ElementImpl &element = *static_cast<ElementImpl *>(impl());
+  Element &element = *static_cast<Element *>(impl());
 
   // FIXME: do we really want to do this attribute lookup thing? Mozilla doesn't do it,
   // and it seems like it could interfere with XBL.
-  DOM::DOMString attr = element.getAttribute(propertyName.domString());
+  WebCore::String attr = element.getAttribute(propertyName.domString());
   if (!attr.isNull()) {
     slot.setCustom(this, attributeGetter);
     return true;
@@ -1204,8 +1204,8 @@ JSValue *DOMElementProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj,
   if (!thisObj->inherits(&KJS::DOMElement::info))
     return throwError(exec, TypeError);
   DOMExceptionTranslator exception(exec);
-  NodeImpl &node = *static_cast<DOMNode *>(thisObj)->impl();
-  ElementImpl &element = static_cast<ElementImpl &>(node);
+  Node &node = *static_cast<DOMNode *>(thisObj)->impl();
+  Element &element = static_cast<Element &>(node);
 
   switch(id) {
       case DOMElement::ScrollIntoView: 
@@ -1234,18 +1234,18 @@ JSValue *DOMElementProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj,
     return jsUndefined();
 }
 
-ElementImpl *toElement(JSValue *val)
+Element *toElement(JSValue *val)
 {
     if (!val || !val->isObject(&DOMElement::info))
         return 0;
-    return static_cast<ElementImpl *>(static_cast<DOMElement *>(val)->impl());
+    return static_cast<Element *>(static_cast<DOMElement *>(val)->impl());
 }
 
-DocumentTypeImpl *toDocumentType(JSValue *val)
+DocumentType *toDocumentType(JSValue *val)
 {
     if (!val || !val->isObject(&JSDocumentType::info))
         return 0;
-    return static_cast<DocumentTypeImpl *>(static_cast<DOMNode *>(val)->impl());
+    return static_cast<DocumentType *>(static_cast<DOMNode *>(val)->impl());
 }
 
 // -------------------------------------------------------------------------
@@ -1268,7 +1268,7 @@ KJS_IMPLEMENT_PROTOTYPE("NamedNodeMap",DOMNamedNodeMapProto,DOMNamedNodeMapProto
 
 const ClassInfo DOMNamedNodeMap::info = { "NamedNodeMap", 0, 0, 0 };
 
-DOMNamedNodeMap::DOMNamedNodeMap(ExecState *exec, NamedNodeMapImpl *m)
+DOMNamedNodeMap::DOMNamedNodeMap(ExecState *exec, NamedNodeMap *m)
   : m_impl(m) 
 { 
   setPrototype(DOMNamedNodeMapProto::self(exec));
@@ -1330,7 +1330,7 @@ JSValue *DOMNamedNodeMapProtoFunc::callAsFunction(ExecState *exec, JSObject *thi
   if (!thisObj->inherits(&KJS::DOMNamedNodeMap::info))
     return throwError(exec, TypeError);
   DOMExceptionTranslator exception(exec);
-  NamedNodeMapImpl &map = *static_cast<DOMNamedNodeMap *>(thisObj)->impl();
+  NamedNodeMap &map = *static_cast<DOMNamedNodeMap *>(thisObj)->impl();
   switch (id) {
     case DOMNamedNodeMap::GetNamedItem:
       return toJS(exec, map.getNamedItem(args[0]->toString(exec).domString()));
@@ -1352,7 +1352,7 @@ JSValue *DOMNamedNodeMapProtoFunc::callAsFunction(ExecState *exec, JSObject *thi
 
 // -------------------------------------------------------------------------
 
-JSValue* toJS(ExecState *exec, DocumentImpl *n)
+JSValue* toJS(ExecState *exec, Document *n)
 {
   if (!n)
     return jsNull();
@@ -1364,7 +1364,7 @@ JSValue* toJS(ExecState *exec, DocumentImpl *n)
     return ret;
 
   if (n->isHTMLDocument())
-    ret = new HTMLDocument(exec, static_cast<HTMLDocumentImpl *>(n));
+    ret = new JSHTMLDocument(exec, static_cast<HTMLDocument *>(n));
   else
     ret = new DOMDocument(exec, n);
 
@@ -1378,7 +1378,7 @@ JSValue* toJS(ExecState *exec, DocumentImpl *n)
   return ret;
 }
 
-bool checkNodeSecurity(ExecState *exec, NodeImpl *n)
+bool checkNodeSecurity(ExecState *exec, Node *n)
 {
   if (!n) 
     return false;
@@ -1388,52 +1388,52 @@ bool checkNodeSecurity(ExecState *exec, NodeImpl *n)
   return win && win->isSafeScript(exec);
 }
 
-JSValue *toJS(ExecState *exec, PassRefPtr<NodeImpl> node)
+JSValue *toJS(ExecState *exec, PassRefPtr<Node> node)
 {
-  NodeImpl* n = node.get();
+  Node* n = node.get();
   DOMNode *ret = 0;
   if (!n)
     return jsNull();
   ScriptInterpreter* interp = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter());
-  DocumentImpl *doc = n->getDocument();
+  Document *doc = n->getDocument();
 
   if ((ret = interp->getDOMNodeForDocument(doc, n)))
     return ret;
 
   switch (n->nodeType()) {
-    case WebCore::NodeImpl::ELEMENT_NODE:
+    case WebCore::Node::ELEMENT_NODE:
       if (n->isHTMLElement())
-        ret = new HTMLElement(exec, static_cast<HTMLElementImpl *>(n));
+        ret = new JSHTMLElement(exec, static_cast<HTMLElement *>(n));
       else
-        ret = new JSElement(exec, static_cast<ElementImpl *>(n));
+        ret = new JSElement(exec, static_cast<Element *>(n));
       break;
-    case WebCore::NodeImpl::ATTRIBUTE_NODE:
-      ret = new JSAttr(exec, static_cast<AttrImpl *>(n));
+    case WebCore::Node::ATTRIBUTE_NODE:
+      ret = new JSAttr(exec, static_cast<Attr *>(n));
       break;
-    case WebCore::NodeImpl::TEXT_NODE:
-    case WebCore::NodeImpl::CDATA_SECTION_NODE:
-      ret = new JSText(exec, static_cast<TextImpl *>(n));
+    case WebCore::Node::TEXT_NODE:
+    case WebCore::Node::CDATA_SECTION_NODE:
+      ret = new JSText(exec, static_cast<Text *>(n));
       break;
-    case WebCore::NodeImpl::ENTITY_NODE:
-      ret = new JSEntity(exec, static_cast<EntityImpl *>(n));
+    case WebCore::Node::ENTITY_NODE:
+      ret = new JSEntity(exec, static_cast<Entity *>(n));
       break;
-    case WebCore::NodeImpl::PROCESSING_INSTRUCTION_NODE:
-      ret = new JSProcessingInstruction(exec, static_cast<ProcessingInstructionImpl *>(n));
+    case WebCore::Node::PROCESSING_INSTRUCTION_NODE:
+      ret = new JSProcessingInstruction(exec, static_cast<ProcessingInstruction *>(n));
       break;
-    case WebCore::NodeImpl::COMMENT_NODE:
-      ret = new JSCharacterData(exec, static_cast<CharacterDataImpl *>(n));
+    case WebCore::Node::COMMENT_NODE:
+      ret = new JSCharacterData(exec, static_cast<CharacterData *>(n));
       break;
-    case WebCore::NodeImpl::DOCUMENT_NODE:
+    case WebCore::Node::DOCUMENT_NODE:
       // we don't want to cache the document itself in the per-document dictionary
-      return toJS(exec, static_cast<DocumentImpl *>(n));
-    case WebCore::NodeImpl::DOCUMENT_TYPE_NODE:
-      ret = new JSDocumentType(exec, static_cast<DocumentTypeImpl *>(n));
+      return toJS(exec, static_cast<Document *>(n));
+    case WebCore::Node::DOCUMENT_TYPE_NODE:
+      ret = new JSDocumentType(exec, static_cast<DocumentType *>(n));
       break;
-    case WebCore::NodeImpl::NOTATION_NODE:
-      ret = new JSNotation(exec, static_cast<NotationImpl *>(n));
+    case WebCore::Node::NOTATION_NODE:
+      ret = new JSNotation(exec, static_cast<Notation *>(n));
       break;
-    case WebCore::NodeImpl::DOCUMENT_FRAGMENT_NODE:
-    case WebCore::NodeImpl::ENTITY_REFERENCE_NODE:
+    case WebCore::Node::DOCUMENT_FRAGMENT_NODE:
+    case WebCore::Node::ENTITY_REFERENCE_NODE:
     default:
       ret = new DOMNode(exec, n);
   }
@@ -1443,30 +1443,30 @@ JSValue *toJS(ExecState *exec, PassRefPtr<NodeImpl> node)
   return ret;
 }
 
-JSValue *toJS(ExecState *exec, NamedNodeMapImpl *m)
+JSValue *toJS(ExecState *exec, NamedNodeMap *m)
 {
-  return cacheDOMObject<NamedNodeMapImpl, DOMNamedNodeMap>(exec, m);
+  return cacheDOMObject<NamedNodeMap, DOMNamedNodeMap>(exec, m);
 }
 
-JSValue *getRuntimeObject(ExecState *exec, NodeImpl *n)
+JSValue *getRuntimeObject(ExecState *exec, Node *n)
 {
     if (!n)
         return 0;
 
 #if __APPLE__
     if (n->hasTagName(appletTag)) {
-        HTMLAppletElementImpl *appletElement = static_cast<HTMLAppletElementImpl *>(n);
+        HTMLAppletElement *appletElement = static_cast<HTMLAppletElement *>(n);
         if (appletElement->getAppletInstance())
             // The instance is owned by the applet element.
             return new RuntimeObjectImp(appletElement->getAppletInstance());
     }
     else if (n->hasTagName(embedTag)) {
-        HTMLEmbedElementImpl *embedElement = static_cast<HTMLEmbedElementImpl *>(n);
+        HTMLEmbedElement *embedElement = static_cast<HTMLEmbedElement *>(n);
         if (embedElement->getEmbedInstance())
             return new RuntimeObjectImp(embedElement->getEmbedInstance());
     }
     else if (n->hasTagName(objectTag)) {
-        HTMLObjectElementImpl *objectElement = static_cast<HTMLObjectElementImpl *>(n);
+        HTMLObjectElement *objectElement = static_cast<HTMLObjectElement *>(n);
         if (objectElement->getObjectInstance())
             return new RuntimeObjectImp(objectElement->getObjectInstance());
     }
@@ -1476,9 +1476,9 @@ JSValue *getRuntimeObject(ExecState *exec, NodeImpl *n)
     return 0;
 }
 
-JSValue *toJS(ExecState *exec, PassRefPtr<NodeListImpl> l)
+JSValue *toJS(ExecState *exec, PassRefPtr<NodeList> l)
 {
-  return cacheDOMObject<NodeListImpl, DOMNodeList>(exec, l.get());
+  return cacheDOMObject<NodeList, DOMNodeList>(exec, l.get());
 }
 
 // -------------------------------------------------------------------------
@@ -1486,18 +1486,18 @@ JSValue *toJS(ExecState *exec, PassRefPtr<NodeListImpl> l)
 const ClassInfo NodeConstructor::info = { "NodeConstructor", 0, &NodeConstructorTable, 0 };
 /* Source for NodeConstructorTable. Use "make hashtables" to regenerate.
 @begin NodeConstructorTable 11
-  ELEMENT_NODE          WebCore::NodeImpl::ELEMENT_NODE         DontDelete|ReadOnly
-  ATTRIBUTE_NODE        WebCore::NodeImpl::ATTRIBUTE_NODE               DontDelete|ReadOnly
-  TEXT_NODE             WebCore::NodeImpl::TEXT_NODE            DontDelete|ReadOnly
-  CDATA_SECTION_NODE    WebCore::NodeImpl::CDATA_SECTION_NODE   DontDelete|ReadOnly
-  ENTITY_REFERENCE_NODE WebCore::NodeImpl::ENTITY_REFERENCE_NODE        DontDelete|ReadOnly
-  ENTITY_NODE           WebCore::NodeImpl::ENTITY_NODE          DontDelete|ReadOnly
-  PROCESSING_INSTRUCTION_NODE WebCore::NodeImpl::PROCESSING_INSTRUCTION_NODE DontDelete|ReadOnly
-  COMMENT_NODE          WebCore::NodeImpl::COMMENT_NODE         DontDelete|ReadOnly
-  DOCUMENT_NODE         WebCore::NodeImpl::DOCUMENT_NODE                DontDelete|ReadOnly
-  DOCUMENT_TYPE_NODE    WebCore::NodeImpl::DOCUMENT_TYPE_NODE   DontDelete|ReadOnly
-  DOCUMENT_FRAGMENT_NODE WebCore::NodeImpl::DOCUMENT_FRAGMENT_NODE      DontDelete|ReadOnly
-  NOTATION_NODE         WebCore::NodeImpl::NOTATION_NODE                DontDelete|ReadOnly
+  ELEMENT_NODE          WebCore::Node::ELEMENT_NODE         DontDelete|ReadOnly
+  ATTRIBUTE_NODE        WebCore::Node::ATTRIBUTE_NODE               DontDelete|ReadOnly
+  TEXT_NODE             WebCore::Node::TEXT_NODE            DontDelete|ReadOnly
+  CDATA_SECTION_NODE    WebCore::Node::CDATA_SECTION_NODE   DontDelete|ReadOnly
+  ENTITY_REFERENCE_NODE WebCore::Node::ENTITY_REFERENCE_NODE        DontDelete|ReadOnly
+  ENTITY_NODE           WebCore::Node::ENTITY_NODE          DontDelete|ReadOnly
+  PROCESSING_INSTRUCTION_NODE WebCore::Node::PROCESSING_INSTRUCTION_NODE DontDelete|ReadOnly
+  COMMENT_NODE          WebCore::Node::COMMENT_NODE         DontDelete|ReadOnly
+  DOCUMENT_NODE         WebCore::Node::DOCUMENT_NODE                DontDelete|ReadOnly
+  DOCUMENT_TYPE_NODE    WebCore::Node::DOCUMENT_TYPE_NODE   DontDelete|ReadOnly
+  DOCUMENT_FRAGMENT_NODE WebCore::Node::DOCUMENT_FRAGMENT_NODE      DontDelete|ReadOnly
+  NOTATION_NODE         WebCore::Node::NOTATION_NODE                DontDelete|ReadOnly
 @end
 */
 bool NodeConstructor::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -1561,7 +1561,7 @@ JSObject *getDOMExceptionConstructor(ExecState *exec)
 // Such a collection is usually very short-lived, it only exists
 // for constructs like document.forms.<name>[1],
 // so it shouldn't be a problem that it's storing all the nodes (with the same name). (David)
-DOMNamedNodesCollection::DOMNamedNodesCollection(ExecState *, const QValueList< RefPtr<NodeImpl> >& nodes )
+DOMNamedNodesCollection::DOMNamedNodesCollection(ExecState *, const DeprecatedValueList< RefPtr<Node> >& nodes )
   : m_nodes(nodes)
 {
 }
@@ -1596,10 +1596,10 @@ bool DOMNamedNodesCollection::getOwnPropertySlot(ExecState *exec, const Identifi
   // For IE compatibility, we need to be able to look up elements in a
   // document.formName.name result by id as well as be index.
 
-  QValueListConstIterator< RefPtr<NodeImpl> > end = m_nodes.end();
+  DeprecatedValueListConstIterator< RefPtr<Node> > end = m_nodes.end();
   int i = 0;
-  for (QValueListConstIterator< RefPtr<NodeImpl> > it = m_nodes.begin(); it != end; ++it, ++i) {
-    NodeImpl *node = (*it).get();
+  for (DeprecatedValueListConstIterator< RefPtr<Node> > it = m_nodes.begin(); it != end; ++it, ++i) {
+    Node *node = (*it).get();
     if (node->hasAttributes() &&
         node->attributes()->id() == propertyName.domString()) {
       slot.setCustomIndex(this, i, indexGetter);

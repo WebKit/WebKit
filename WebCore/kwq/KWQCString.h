@@ -26,47 +26,47 @@
 #ifndef QCSTRING_H_
 #define QCSTRING_H_
 
-#include "Array.h"
+#include "DeprecatedArray.h"
 #include <string.h>
 
-class QCString : public ByteArray {
+class DeprecatedCString : public DeprecatedByteArray {
 public:
-    QCString();
-    QCString(int);
-    QCString(const char *);
-    QCString(const char *, uint);
+    DeprecatedCString();
+    DeprecatedCString(int);
+    DeprecatedCString(const char *);
+    DeprecatedCString(const char *, unsigned);
 
-    QCString &operator=(const char *);
+    DeprecatedCString &operator=(const char *);
 
     bool isEmpty() const;
     bool isNull() const { return data() == 0; }
     int find(const char *, int index=0, bool cs=true) const;
     int contains(char, bool cs=true) const;
-    uint length() const;
-    bool truncate(uint);
-    QCString lower() const;
-    QCString upper() const;
-    QCString left(uint) const;
-    QCString right(uint) const;
-    QCString mid(uint, uint len=0xffffffff) const;
+    unsigned length() const;
+    bool truncate(unsigned);
+    DeprecatedCString lower() const;
+    DeprecatedCString upper() const;
+    DeprecatedCString left(unsigned) const;
+    DeprecatedCString right(unsigned) const;
+    DeprecatedCString mid(unsigned, unsigned len=0xffffffff) const;
 
-    QCString &append(char);
-    QCString &append(const char *);
-    QCString &replace(char, char);
+    DeprecatedCString &append(char);
+    DeprecatedCString &append(const char *);
+    DeprecatedCString &replace(char, char);
 
     operator const char *() const { return data(); }
-    QCString &operator+=(const char *s) { return append(s); }
-    QCString &operator+=(char c) { return append(c); }
+    DeprecatedCString &operator+=(const char *s) { return append(s); }
+    DeprecatedCString &operator+=(char c) { return append(c); }
 
 private:
-    bool resize(uint);
+    bool resize(unsigned);
 };
 
-bool operator==(const QCString &s1, const char *s2);
-inline bool operator==(const char *s1, const QCString &s2) { return s2 == s1; }
-inline bool operator!=(const QCString &s1, const char *s2) { return !(s1 == s2); }
-inline bool operator!=(const char *s1, const QCString &s2) { return !(s1 == s2); }
+bool operator==(const DeprecatedCString &s1, const char *s2);
+inline bool operator==(const char *s1, const DeprecatedCString &s2) { return s2 == s1; }
+inline bool operator!=(const DeprecatedCString &s1, const char *s2) { return !(s1 == s2); }
+inline bool operator!=(const char *s1, const DeprecatedCString &s2) { return !(s1 == s2); }
 
-typedef QCString Q3CString;
+typedef DeprecatedCString Q3CString;
 
 #endif

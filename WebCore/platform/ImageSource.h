@@ -37,8 +37,8 @@ namespace WebCore {
 
 class IntSize;
 
-template <typename T> class Array;
-typedef Array<char> ByteArray;
+template <typename T> class DeprecatedArray;
+typedef DeprecatedArray<char> DeprecatedByteArray;
 
 #if __APPLE__
 typedef CGImageSourceRef NativeImageSourcePtr;
@@ -47,7 +47,7 @@ typedef CFDataRef NativeBytePtr;
 #else
 class ImageDecoder;
 typedef ImageDecoder* NativeImageSourcePtr;
-typedef const ByteArray* NativeBytePtr;
+typedef const DeprecatedByteArray* NativeBytePtr;
 typedef cairo_surface_t* NativeImagePtr;
 #endif
 

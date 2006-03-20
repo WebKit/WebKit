@@ -29,7 +29,7 @@
 #include "CompositeEditCommand.h"
 #include "PlatformString.h"
 
-namespace khtml {
+namespace WebCore {
 
 class TypingCommand : public CompositeEditCommand
 {
@@ -43,14 +43,14 @@ public:
         InsertParagraphSeparatorInQuotedContent,
     };
 
-    TypingCommand(DOM::DocumentImpl *document, ETypingCommand, const DOM::DOMString &text = "", bool selectInsertedText = false);
+    TypingCommand(WebCore::Document *document, ETypingCommand, const WebCore::String &text = "", bool selectInsertedText = false);
 
-    static void deleteKeyPressed(DOM::DocumentImpl *, bool smartDelete = false);
-    static void forwardDeleteKeyPressed(DOM::DocumentImpl *, bool smartDelete = false);
-    static void insertText(DOM::DocumentImpl *, const DOM::DOMString &, bool selectInsertedText = false);
-    static void insertLineBreak(DOM::DocumentImpl *);
-    static void insertParagraphSeparator(DOM::DocumentImpl *);
-    static void insertParagraphSeparatorInQuotedContent(DOM::DocumentImpl *);
+    static void deleteKeyPressed(WebCore::Document *, bool smartDelete = false);
+    static void forwardDeleteKeyPressed(WebCore::Document *, bool smartDelete = false);
+    static void insertText(WebCore::Document *, const WebCore::String &, bool selectInsertedText = false);
+    static void insertLineBreak(WebCore::Document *);
+    static void insertParagraphSeparator(WebCore::Document *);
+    static void insertParagraphSeparatorInQuotedContent(WebCore::Document *);
     static bool isOpenForMoreTypingCommand(const EditCommandPtr &);
     static void closeTyping(const EditCommandPtr &);
     
@@ -60,8 +60,8 @@ public:
     bool openForMoreTyping() const { return m_openForMoreTyping; }
     void closeTyping() { m_openForMoreTyping = false; }
 
-    void insertText(const DOM::DOMString &text, bool selectInsertedText);
-    void insertTextRunWithoutNewlines(const DOM::DOMString &text, bool selectInsertedText);
+    void insertText(const WebCore::String &text, bool selectInsertedText);
+    void insertTextRunWithoutNewlines(const WebCore::String &text, bool selectInsertedText);
     void insertLineBreak();
     void insertParagraphSeparatorInQuotedContent();
     void insertParagraphSeparator();
@@ -79,13 +79,13 @@ private:
     void typingAddedToOpenCommand();
     
     ETypingCommand m_commandType;
-    DOM::DOMString m_textToInsert;
+    WebCore::String m_textToInsert;
     bool m_openForMoreTyping;
     bool m_applyEditing;
     bool m_selectInsertedText;
     bool m_smartDelete;
 };
 
-} // namespace khtml
+} // namespace WebCore
 
 #endif // __typing_command_h__

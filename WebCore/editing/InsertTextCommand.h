@@ -28,29 +28,29 @@
 
 #include "CompositeEditCommand.h"
 
-namespace khtml {
+namespace WebCore {
 
 class InsertTextCommand : public CompositeEditCommand
 {
 public:
-    InsertTextCommand(DOM::DocumentImpl *document);
+    InsertTextCommand(WebCore::Document *document);
 
     virtual void doApply();
 
     void deleteCharacter();
-    void input(const DOM::DOMString &text, bool selectInsertedText = false);
+    void input(const WebCore::String &text, bool selectInsertedText = false);
     
     unsigned charactersAdded() const { return m_charactersAdded; }
     
 private:
     virtual bool isInsertTextCommand() const;
 
-    DOM::Position prepareForTextInsertion(const DOM::Position& pos);
-    DOM::Position insertTab(DOM::Position pos);
+    WebCore::Position prepareForTextInsertion(const WebCore::Position& pos);
+    WebCore::Position insertTab(WebCore::Position pos);
 
     unsigned m_charactersAdded;
 };
 
-} // namespace khtml
+} // namespace WebCore
 
 #endif // __insert_text_command_h__

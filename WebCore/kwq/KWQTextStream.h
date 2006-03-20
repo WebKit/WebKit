@@ -26,11 +26,11 @@
 #ifndef QTEXTSTREAM_H_
 #define QTEXTSTREAM_H_
 
-#include "Array.h"
+#include "DeprecatedArray.h"
 
-class QCString;
+class DeprecatedCString;
 class QChar;
-class QString;
+class DeprecatedString;
 class QTextStream;
 
 typedef QTextStream &(*QTextStreamManipulator)(QTextStream &);
@@ -39,8 +39,8 @@ QTextStream &endl(QTextStream& stream);
 
 class QTextStream {
 public:
-    QTextStream(const ByteArray &);
-    QTextStream(QString*);
+    QTextStream(const DeprecatedByteArray &);
+    QTextStream(DeprecatedString*);
 
     QTextStream &operator<<(char);
     QTextStream &operator<<(const QChar &);
@@ -53,8 +53,8 @@ public:
     QTextStream &operator<<(float);
     QTextStream &operator<<(double);
     QTextStream &operator<<(const char *);
-    QTextStream &operator<<(const QString &);
-    QTextStream &operator<<(const QCString &);
+    QTextStream &operator<<(const DeprecatedString &);
+    QTextStream &operator<<(const DeprecatedCString &);
     QTextStream &operator<<(void *);
 
     QTextStream &operator<<(const QTextStreamManipulator &);
@@ -64,8 +64,8 @@ private:
     QTextStream &operator=(const QTextStream &);
 
     bool _hasByteArray;
-    ByteArray _byteArray;
-    QString *_string;
+    DeprecatedByteArray _byteArray;
+    DeprecatedString *_string;
     int _precision;
 };
 

@@ -44,7 +44,7 @@ class String {
 public:
     String() { } // gives null string, distinguishable from an empty string
     String(const QChar*, unsigned length);
-    String(const QString&);
+    String(const DeprecatedString&);
     String(const char*);
     String(StringImpl* i) : m_impl(i) { }
 
@@ -86,7 +86,7 @@ public:
     String upper() const;
 
     QChar *unicode() const;
-    QString qstring() const;
+    DeprecatedString deprecatedString() const;
 
     int toInt() const;
     Length* toLengthArray(int& len) const;
@@ -132,10 +132,10 @@ inline bool equalIgnoringCase(const String& a, const String& b) { return equalIg
 inline bool equalIgnoringCase(const String& a, const char* b) { return equalIgnoringCase(a.impl(), b); }
 inline bool equalIgnoringCase(const char* a, const String& b) { return equalIgnoringCase(a, b.impl()); }
 
-bool operator==(const String& a, const QString& b);
-inline bool operator==( const QString& b, const String& a) { return a == b; }
-inline bool operator!=(const String& a, const QString& b) { return !(a == b); }
-inline bool operator!=(const QString& b, const String& a ) { return !(a == b); }
+bool operator==(const String& a, const DeprecatedString& b);
+inline bool operator==( const DeprecatedString& b, const String& a) { return a == b; }
+inline bool operator!=(const String& a, const DeprecatedString& b) { return !(a == b); }
+inline bool operator!=(const DeprecatedString& b, const String& a ) { return !(a == b); }
 
 }
 

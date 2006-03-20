@@ -29,15 +29,15 @@
 #include "BrowserExtension.h"
 #include "EventNames.h"
 #include "FrameView.h"
-#include "HTMLFormElementImpl.h"
-#include "HTMLInputElementImpl.h"
-#include "HTMLOptGroupElementImpl.h"
-#include "HTMLOptionElementImpl.h"
-#include "HTMLSelectElementImpl.h"
-#include "HTMLTextAreaElementImpl.h"
+#include "HTMLFormElement.h"
+#include "HTMLInputElement.h"
+#include "HTMLOptGroupElement.h"
+#include "HTMLOptionElement.h"
+#include "HTMLSelectElement.h"
+#include "HTMLTextAreaElement.h"
 #include "KWQFileButton.h"
 #include "KWQSlider.h"
-#include "MouseEvent.h"
+#include "PlatformMouseEvent.h"
 #include "dom2_eventsimpl.h"
 #include <qcombobox.h>
 #include <qtextedit.h>
@@ -47,7 +47,7 @@ namespace WebCore {
 using namespace EventNames;
 using namespace HTMLNames;
 
-RenderFormElement::RenderFormElement(HTMLGenericFormElementImpl *element)
+RenderFormElement::RenderFormElement(HTMLGenericFormElement *element)
     : RenderWidget(element)
 {
     setInline(true);
@@ -97,7 +97,7 @@ void RenderFormElement::layout()
 void RenderFormElement::clicked(Widget*)
 {
     RenderArena* arena = ref();
-    MouseEvent event; // gets "current event"
+    PlatformMouseEvent event; // gets "current event"
     if (element())
         element()->dispatchMouseEvent(event, clickEvent, event.clickCount());
     deref(arena);
@@ -150,7 +150,7 @@ void RenderFormElement::addIntrinsicMarginsIfAllowed(RenderStyle* _style)
 
 // -------------------------------------------------------------------------------
 
-RenderImageButton::RenderImageButton(HTMLInputElementImpl *element)
+RenderImageButton::RenderImageButton(HTMLInputElement *element)
     : RenderImage(element)
 {
     // ### support DOMActivate event when clicked
@@ -161,15 +161,15 @@ RenderImageButton::RenderImageButton(HTMLInputElementImpl *element)
 
 // -----------------------------------------------------------------------------
 
-RenderLineEdit::RenderLineEdit(HTMLInputElementImpl *element)
+RenderLineEdit::RenderLineEdit(HTMLInputElement *element)
     : RenderFormElement(element), m_updating(false)
 {
     QLineEdit::Type type;
     switch (element->inputType()) {
-        case HTMLInputElementImpl::PASSWORD:
+        case HTMLInputElement::PASSWORD:
             type = QLineEdit::Password;
             break;
-        case HTMLInputElementImpl::SEARCH:
+        case HTMLInputElement::SEARCH:
             type = QLineEdit::Search;
             break;
         default:
@@ -199,7 +199,7 @@ void RenderLineEdit::returnPressed(Widget*)
         setEdited(false);
     }
 
-    if (HTMLFormElementImpl* fe = element()->form())
+    if (HTMLFormElement* fe = element()->form())
         fe->submitClick();
 }
 
@@ -242,7 +242,7 @@ void RenderLineEdit::setStyle(RenderStyle *s)
 
 void RenderLineEdit::updateFromElement()
 {
-    HTMLInputElementImpl *e = element();
+    HTMLInputElement *e = element();
     QLineEdit *w = widget();
     
     int ml = e->maxLength();
@@ -252,8 +252,8 @@ void RenderLineEdit::updateFromElement()
         w->setMaxLength( ml );
 
     if (!e->valueMatchesRenderer()) {
-        DOMString widgetText = w->text();
-        DOMString newText = e->value();
+        String widgetText = w->text();
+        String newText = e->value();
         newText.replace(QChar('\\'), backslashAsCurrencySymbol());
         if (widgetText != newText) {
             int pos = w->cursorPosition();
@@ -272,7 +272,7 @@ void RenderLineEdit::updateFromElement()
     w->setReadOnly(e->readOnly());
     
     // Handle updating the search attributes.
-    w->setPlaceholderString(e->getAttribute(placeholderAttr).qstring());
+    w->setPlaceholderString(e->getAttribute(placeholderAttr).deprecatedString());
     if (w->type() == QLineEdit::Search) {
         w->setLiveSearch(!e->getAttribute(incrementalAttr).isNull());
         w->setAutoSaveName(e->getAttribute(autosaveAttr));
@@ -361,7 +361,7 @@ void RenderLineEdit::setSelectionRange(int start, int end)
 
 // ---------------------------------------------------------------------------
 
-RenderFieldset::RenderFieldset(HTMLGenericFormElementImpl *element)
+RenderFieldset::RenderFieldset(HTMLGenericFormElement *element)
 : RenderBlock(element)
 {
 }
@@ -501,7 +501,7 @@ void RenderFieldset::setStyle(RenderStyle* _style)
     
 // -------------------------------------------------------------------------
 
-RenderFileButton::RenderFileButton(HTMLInputElementImpl *element)
+RenderFileButton::RenderFileButton(HTMLInputElement *element)
     : RenderFormElement(element)
 {
     setWidget(new KWQFileButton(view()->frame()));
@@ -523,7 +523,7 @@ void RenderFileButton::calcMinMaxWidth()
 
 void RenderFileButton::updateFromElement()
 {
-    static_cast<KWQFileButton *>(widget())->setFilename(element()->value().qstring());
+    static_cast<KWQFileButton *>(widget())->setFilename(element()->value().deprecatedString());
 
     RenderFormElement::updateFromElement();
 }
@@ -553,7 +553,7 @@ void RenderFileButton::click(bool sendMouseEvents)
 
 // -------------------------------------------------------------------------
 
-RenderLabel::RenderLabel(HTMLGenericFormElementImpl *element)
+RenderLabel::RenderLabel(HTMLGenericFormElement *element)
     : RenderFormElement(element)
 {
 
@@ -561,14 +561,14 @@ RenderLabel::RenderLabel(HTMLGenericFormElementImpl *element)
 
 // -------------------------------------------------------------------------
 
-RenderLegend::RenderLegend(HTMLGenericFormElementImpl *element)
+RenderLegend::RenderLegend(HTMLGenericFormElement *element)
     : RenderBlock(element)
 {
 }
 
 // -------------------------------------------------------------------------
 
-RenderSelect::RenderSelect(HTMLSelectElementImpl *element)
+RenderSelect::RenderSelect(HTMLSelectElement *element)
     : RenderFormElement(element)
 {
     m_ignoreSelectEvents = false;
@@ -637,7 +637,7 @@ void RenderSelect::updateFromElement()
     if ( m_optionsChanged ) {
         if (element()->m_recalcListItems)
             element()->recalcListItems();
-        Array<HTMLElementImpl*> listItems = element()->listItems();
+        DeprecatedArray<HTMLElement*> listItems = element()->listItems();
         int listIndex;
 
         if (m_useListBox)
@@ -648,8 +648,8 @@ void RenderSelect::updateFromElement()
         bool groupEnabled = true;
         for (listIndex = 0; listIndex < int(listItems.size()); listIndex++) {
             if (listItems[listIndex]->hasTagName(optgroupTag)) {
-                HTMLOptGroupElementImpl *optgroupElement = static_cast<HTMLOptGroupElementImpl*>(listItems[listIndex]);
-                QString label = optgroupElement->getAttribute(labelAttr).qstring();
+                HTMLOptGroupElement *optgroupElement = static_cast<HTMLOptGroupElement*>(listItems[listIndex]);
+                DeprecatedString label = optgroupElement->getAttribute(labelAttr).deprecatedString();
                 label.replace(QChar('\\'), backslashAsCurrencySymbol());
                 
                 // In WinIE, an optgroup can't start or end with whitespace (other than the indent
@@ -666,12 +666,12 @@ void RenderSelect::updateFromElement()
                     static_cast<QComboBox*>(m_widget)->appendGroupLabel(label);
             }
             else if (listItems[listIndex]->hasTagName(optionTag)) {
-                HTMLOptionElementImpl *optionElement = static_cast<HTMLOptionElementImpl*>(listItems[listIndex]);
-                QString itemText;
+                HTMLOptionElement *optionElement = static_cast<HTMLOptionElement*>(listItems[listIndex]);
+                DeprecatedString itemText;
                 if (optionElement->hasAttribute(labelAttr))
-                    itemText = optionElement->getAttribute(labelAttr).qstring();
+                    itemText = optionElement->getAttribute(labelAttr).deprecatedString();
                 else
-                    itemText = optionElement->text().qstring();
+                    itemText = optionElement->text().deprecatedString();
                 
                 itemText.replace(QChar('\\'), backslashAsCurrencySymbol());
 
@@ -778,10 +778,10 @@ void RenderSelect::layout( )
     RenderFormElement::layout();
 
     // and now disable the widget in case there is no <option> given
-    Array<HTMLElementImpl*> listItems = element()->listItems();
+    DeprecatedArray<HTMLElement*> listItems = element()->listItems();
 
     bool foundOption = false;
-    for (uint i = 0; i < listItems.size() && !foundOption; i++)
+    for (unsigned i = 0; i < listItems.size() && !foundOption; i++)
         foundOption = (listItems[i]->hasTagName(optionTag));
 
     m_widget->setEnabled(foundOption && ! element()->disabled());
@@ -796,7 +796,7 @@ void RenderSelect::valueChanged(Widget*)
 
     int index = static_cast<QComboBox*>(m_widget)->currentItem();
 
-    Array<HTMLElementImpl*> listItems = element()->listItems();
+    DeprecatedArray<HTMLElement*> listItems = element()->listItems();
     if (index >= 0 && index < (int)listItems.size()) {
         bool found = listItems[index]->hasTagName(optionTag);
         if (!found) {
@@ -826,9 +826,9 @@ void RenderSelect::valueChanged(Widget*)
 
             for (unsigned i = 0; i < listItems.size(); ++i)
                 if (listItems[i]->hasTagName(optionTag) && i != (unsigned int) index)
-                    static_cast<HTMLOptionElementImpl*>( listItems[i] )->m_selected = false;
+                    static_cast<HTMLOptionElement*>( listItems[i] )->m_selected = false;
 
-            static_cast<HTMLOptionElementImpl*>(listItems[index])->m_selected = true;
+            static_cast<HTMLOptionElement*>(listItems[index])->m_selected = true;
         }
     }
 
@@ -843,13 +843,13 @@ void RenderSelect::selectionChanged(Widget*)
 
     // don't use listItems() here as we have to avoid recalculations - changing the
     // option list will make use update options not in the way the user expects them
-    Array<HTMLElementImpl*> listItems = element()->m_listItems;
+    DeprecatedArray<HTMLElement*> listItems = element()->m_listItems;
     int j = 0;
     for (unsigned i = 0; i < listItems.count(); i++) {
         // don't use setSelected() here because it will cause us to be called
         // again with updateSelection.
         if (listItems[i]->hasTagName(optionTag))
-            static_cast<HTMLOptionElementImpl*>( listItems[i] )
+            static_cast<HTMLOptionElement*>( listItems[i] )
                 ->m_selected = static_cast<QListBox*>( m_widget )->isSelected( j );
         if (listItems[i]->hasTagName(optionTag) || listItems[i]->hasTagName(optgroupTag))
             ++j;
@@ -873,7 +873,7 @@ QListBox* RenderSelect::createListBox()
 
 void RenderSelect::updateSelection()
 {
-    Array<HTMLElementImpl*> listItems = element()->listItems();
+    DeprecatedArray<HTMLElement*> listItems = element()->listItems();
     int i;
     if (m_useListBox) {
         // if multi-select, we select only the new selected index
@@ -881,7 +881,7 @@ void RenderSelect::updateSelection()
         int j = 0;
         for (i = 0; i < int(listItems.size()); i++) {
             listBox->setSelected(j, listItems[i]->hasTagName(optionTag) &&
-                                static_cast<HTMLOptionElementImpl*>(listItems[i])->selected());
+                                static_cast<HTMLOptionElement*>(listItems[i])->selected());
             if (listItems[i]->hasTagName(optionTag) || listItems[i]->hasTagName(optgroupTag))
                 ++j;
             
@@ -894,8 +894,8 @@ void RenderSelect::updateSelection()
         while (i--)
             if (listItems[i]->hasTagName(optionTag)) {
                 if (found)
-                    static_cast<HTMLOptionElementImpl*>(listItems[i])->m_selected = false;
-                else if (static_cast<HTMLOptionElementImpl*>(listItems[i])->selected()) {
+                    static_cast<HTMLOptionElement*>(listItems[i])->m_selected = false;
+                else if (static_cast<HTMLOptionElement*>(listItems[i])->selected()) {
                     static_cast<QComboBox*>( m_widget )->setCurrentItem(i);
                     found = true;
                 }
@@ -914,12 +914,12 @@ void RenderSelect::updateSelection()
 
 // -------------------------------------------------------------------------
 
-RenderTextArea::RenderTextArea(HTMLTextAreaElementImpl *element)
+RenderTextArea::RenderTextArea(HTMLTextAreaElement *element)
     : RenderFormElement(element), m_dirty(false), m_updating(false)
 {
     QTextEdit *edit = new QTextEdit(view());
 
-    if (element->wrap() != HTMLTextAreaElementImpl::ta_NoWrap)
+    if (element->wrap() != HTMLTextAreaElement::ta_NoWrap)
         edit->setWordWrap(QTextEdit::WidgetWidth);
     else
         edit->setWordWrap(QTextEdit::NoWrap);
@@ -971,7 +971,7 @@ void RenderTextArea::setStyle(RenderStyle *s)
             break;
     }
     ScrollBarMode horizontalScrollMode = scrollMode;
-    if (element()->wrap() != HTMLTextAreaElementImpl::ta_NoWrap)
+    if (element()->wrap() != HTMLTextAreaElement::ta_NoWrap)
         horizontalScrollMode = ScrollBarAlwaysOff;
 
     w->setScrollBarModes(horizontalScrollMode, scrollMode);
@@ -984,7 +984,7 @@ void RenderTextArea::setEdited(bool x)
 
 void RenderTextArea::updateFromElement()
 {
-    HTMLTextAreaElementImpl *e = element();
+    HTMLTextAreaElement *e = element();
     QTextEdit* w = static_cast<QTextEdit*>(m_widget);
 
     w->setReadOnly(e->readOnly());
@@ -1076,7 +1076,7 @@ void RenderTextArea::selectionChanged(Widget*)
 
 // ---------------------------------------------------------------------------
 
-RenderSlider::RenderSlider(HTMLInputElementImpl* element)
+RenderSlider::RenderSlider(HTMLInputElement* element)
     : RenderFormElement(element)
 {
     setWidget(new QSlider);
@@ -1103,23 +1103,23 @@ void RenderSlider::calcMinMaxWidth()
 
 void RenderSlider::updateFromElement()
 {
-    DOMString value = element()->value();
+    String value = element()->value();
     const AtomicString& min = element()->getAttribute(minAttr);
     const AtomicString& max = element()->getAttribute(maxAttr);
     const AtomicString& precision = element()->getAttribute(precisionAttr);
     
-    double minVal = min.isNull() ? 0.0 : min.qstring().toDouble();
-    double maxVal = max.isNull() ? 100.0 : max.qstring().toDouble();
+    double minVal = min.isNull() ? 0.0 : min.deprecatedString().toDouble();
+    double maxVal = max.isNull() ? 100.0 : max.deprecatedString().toDouble();
     minVal = kMin(minVal, maxVal); // Make sure the range is sane.
     
-    double val = value.isNull() ? (maxVal + minVal)/2.0 : value.qstring().toDouble();
+    double val = value.isNull() ? (maxVal + minVal)/2.0 : value.deprecatedString().toDouble();
     val = kMax(minVal, kMin(val, maxVal)); // Make sure val is within min/max.
     
     // Force integer value if not float.
     if (!equalIgnoringCase(precision, "float"))
         val = (int)(val + 0.5);
 
-    element()->setValue(QString::number(val));
+    element()->setValue(DeprecatedString::number(val));
 
     QSlider* slider = (QSlider*)widget();
      
@@ -1141,7 +1141,7 @@ void RenderSlider::valueChanged(Widget*)
     if (!equalIgnoringCase(precision, "float"))
         val = (int)(val + 0.5);
 
-    element()->setValue(QString::number(val));
+    element()->setValue(DeprecatedString::number(val));
     
     // Fire the "input" DOM event.
     element()->dispatchHTMLEvent(inputEvent, true, false);

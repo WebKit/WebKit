@@ -32,12 +32,12 @@
 #include <q3valuelist.h>
 #include "FloatRect.h"
 
-#include "render_object.h"
+#include "RenderObject.h"
 
 namespace WebCore {
 
 class FloatPoint;
-class SVGStyledElementImpl;
+class SVGStyledElement;
 
 class KCanvasPath;
 class KCanvasContainer;
@@ -46,7 +46,7 @@ class KCanvasMatrix;
 class RenderPath : public RenderObject
 {
 public:
-    RenderPath(RenderStyle *style, SVGStyledElementImpl *node);
+    RenderPath(RenderStyle *style, SVGStyledElement *node);
     virtual ~RenderPath();
 
     // Hit-detection seperated for the fill and the stroke

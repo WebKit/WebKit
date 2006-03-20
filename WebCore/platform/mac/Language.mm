@@ -26,7 +26,7 @@
 #import "config.h"
 #import "Language.h"
 
-#import "KWQExceptions.h"
+#import "BlockExceptions.h"
 #import "PlatformString.h"
 #import "WebCoreViewFactory.h"
 
@@ -34,9 +34,9 @@ namespace WebCore {
 
 String defaultLanguage()
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return [[WebCoreViewFactory sharedFactory] defaultLanguageCode];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     return String();
 }
 

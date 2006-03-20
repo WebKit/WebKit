@@ -29,7 +29,7 @@
 #include "EventListener.h"
 #include "IntRect.h"
 #include "Selection.h"
-#include "dom2_rangeimpl.h"
+#include "Range.h"
 
 namespace WebCore {
 
@@ -47,7 +47,7 @@ public:
     SelectionController *selectionController() const { return m_selectionController; }
     void setSelectionController(SelectionController *s) { m_selectionController = s; }
     
-    virtual void handleEvent(EventImpl*, bool isWindowEvent);
+    virtual void handleEvent(Event*, bool isWindowEvent);
     
 private:
     SelectionController *m_selectionController;
@@ -62,7 +62,7 @@ public:
 
     SelectionController();
     SelectionController(const Selection &sel);
-    SelectionController(const RangeImpl *, EAffinity affinity);
+    SelectionController(const Range *, EAffinity affinity);
     SelectionController(const VisiblePosition &);
     SelectionController(const VisiblePosition &, const VisiblePosition &);
     SelectionController(const Position &, EAffinity affinity);
@@ -74,7 +74,7 @@ public:
     SelectionController &operator=(const SelectionController &o);
     SelectionController &operator=(const VisiblePosition &r) { moveTo(r); return *this; }
 
-    void moveTo(const RangeImpl *, EAffinity affinity);
+    void moveTo(const Range *, EAffinity affinity);
     void moveTo(const VisiblePosition &);
     void moveTo(const VisiblePosition &, const VisiblePosition &);
     void moveTo(const Position &, EAffinity);
@@ -88,9 +88,9 @@ public:
 
     EAffinity affinity() const { return m_sel.affinity(); }
 
-    bool modify(EAlter, EDirection, ETextGranularity);
+    bool modify(EAlter, EDirection, TextGranularity);
     bool modify(EAlter, int verticalDistance);
-    bool expandUsingGranularity(ETextGranularity);
+    bool expandUsingGranularity(TextGranularity);
 
     void clear();
 
@@ -115,7 +115,7 @@ public:
     bool isRange() const { return m_sel.isRange(); }
     bool isCaretOrRange() const { return m_sel.isCaretOrRange(); }
 
-    PassRefPtr<RangeImpl> toRange() const { return m_sel.toRange(); }
+    PassRefPtr<Range> toRange() const { return m_sel.toRange(); }
 
     void debugRenderer(RenderObject*, bool selected) const;
 
@@ -123,40 +123,40 @@ public:
     
     Frame* frame() const;
     
-    void nodeWillBeRemoved(NodeImpl *);
+    void nodeWillBeRemoved(Node *);
 
     // Safari Selection Object API
-    NodeImpl *baseNode() const { return m_sel.base().node(); }
-    NodeImpl *extentNode() const { return m_sel.extent().node(); }
+    Node *baseNode() const { return m_sel.base().node(); }
+    Node *extentNode() const { return m_sel.extent().node(); }
     int baseOffset() const { return m_sel.base().offset(); }
     int extentOffset() const { return m_sel.extent().offset(); }
-    DOMString type() const;
-    void setBaseAndExtent(NodeImpl *baseNode, int baseOffset, NodeImpl *extentNode, int extentOffset);
-    void setPosition(NodeImpl *node, int offset);
-    bool modify(const DOMString &alterString, const DOMString &directionString, const DOMString &granularityString);
+    String type() const;
+    void setBaseAndExtent(Node *baseNode, int baseOffset, Node *extentNode, int extentOffset);
+    void setPosition(Node *node, int offset);
+    bool modify(const String &alterString, const String &directionString, const String &granularityString);
     
     // Mozilla Selection Object API
     // In FireFox, anchor/focus are the equal to the start/end of the selection,
     // but reflect the direction in which the selection was made by the user.  That does
     // not mean that they are base/extent, since the base/extent don't reflect
     // expansion.
-    NodeImpl *anchorNode() const { return m_sel.isBaseFirst() ? m_sel.start().node() : m_sel.end().node(); }
+    Node *anchorNode() const { return m_sel.isBaseFirst() ? m_sel.start().node() : m_sel.end().node(); }
     int anchorOffset() const { return m_sel.isBaseFirst() ? m_sel.start().offset() : m_sel.end().offset(); }
-    NodeImpl *focusNode() const { return m_sel.isBaseFirst() ? m_sel.end().node() : m_sel.start().node(); }
+    Node *focusNode() const { return m_sel.isBaseFirst() ? m_sel.end().node() : m_sel.start().node(); }
     int focusOffset() const { return m_sel.isBaseFirst() ? m_sel.end().offset() : m_sel.start().offset(); }
     bool isCollapsed() const { return !isRange(); }
-    DOMString toString() const;
-    void collapse(NodeImpl *node, int offset);
+    String toString() const;
+    void collapse(Node *node, int offset);
     void collapseToEnd();
     void collapseToStart();
-    void extend(NodeImpl *node, int offset);
-    PassRefPtr<RangeImpl> getRangeAt(int index) const;
+    void extend(Node *node, int offset);
+    PassRefPtr<Range> getRangeAt(int index) const;
     //void deleteFromDocument();
-    //bool containsNode(NodeImpl *node, bool entirelyContained);
+    //bool containsNode(Node *node, bool entirelyContained);
     //int rangeCount() const;
-    //void addRange(const RangeImpl *);
-    //void selectAllChildren(const NodeImpl *);
-    //void removeRange(const RangeImpl *);
+    //void addRange(const Range *);
+    //void selectAllChildren(const Node *);
+    //void removeRange(const Range *);
     //void removeAllRanges();
     
     // Microsoft Selection Object API
@@ -172,10 +172,10 @@ public:
 private:
     enum EPositionType { START, END, BASE, EXTENT };
 
-    VisiblePosition modifyExtendingRightForward(ETextGranularity);
-    VisiblePosition modifyMovingRightForward(ETextGranularity);
-    VisiblePosition modifyExtendingLeftBackward(ETextGranularity);
-    VisiblePosition modifyMovingLeftBackward(ETextGranularity);
+    VisiblePosition modifyExtendingRightForward(TextGranularity);
+    VisiblePosition modifyMovingRightForward(TextGranularity);
+    VisiblePosition modifyExtendingLeftBackward(TextGranularity);
+    VisiblePosition modifyMovingLeftBackward(TextGranularity);
 
     void layout();
     void needsCaretRepaint();

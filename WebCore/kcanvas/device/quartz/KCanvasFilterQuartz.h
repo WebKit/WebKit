@@ -47,8 +47,8 @@ public:
     virtual void prepareFilter(const FloatRect& bbox);
     virtual void applyFilter(const FloatRect& bbox);
     
-    CIImage *imageForName(const QString &name) const;
-    void setImageForName(CIImage *image, const QString &name);
+    CIImage *imageForName(const DeprecatedString &name) const;
+    void setImageForName(CIImage *image, const DeprecatedString &name);
     
     void setOutputImage(const KCanvasFilterEffect *filterEffect, CIImage *output);
     CIImage *inputImage(const KCanvasFilterEffect *filterEffect);

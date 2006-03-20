@@ -28,15 +28,15 @@
 #include "css_ruleimpl.h"
 #include "css_valueimpl.h"
 #include "cssparser.h"
-#include "html_documentimpl.h"
+#include "HTMLDocument.h"
 #include "loader.h"
 
 namespace WebCore {
 
 // --------------------------------------------------------------------------------
 
-StyleSheetImpl::StyleSheetImpl(StyleSheetImpl *parentSheet, DOMString href)
-    : StyleListImpl(parentSheet)
+StyleSheet::StyleSheet(StyleSheet *parentSheet, String href)
+    : StyleList(parentSheet)
 {
     m_disabled = false;
     m_parentNode = 0;
@@ -44,34 +44,34 @@ StyleSheetImpl::StyleSheetImpl(StyleSheetImpl *parentSheet, DOMString href)
 }
 
 
-StyleSheetImpl::StyleSheetImpl(DOM::NodeImpl *parentNode, DOMString href)
-    : StyleListImpl(0)
+StyleSheet::StyleSheet(WebCore::Node *parentNode, String href)
+    : StyleList(0)
 {
     m_parentNode = parentNode;
     m_disabled = false;
     m_strHref = href;
 }
 
-StyleSheetImpl::StyleSheetImpl(StyleBaseImpl *owner, DOMString href)
-    : StyleListImpl(owner)
+StyleSheet::StyleSheet(StyleBase *owner, String href)
+    : StyleList(owner)
 {
     m_disabled = false;
     m_parentNode = 0;
     m_strHref = href;
 }
 
-StyleSheetImpl::~StyleSheetImpl()
+StyleSheet::~StyleSheet()
 {
     if (m_media)
         m_media->setParent(0);
 }
 
-StyleSheetImpl *StyleSheetImpl::parentStyleSheet() const
+StyleSheet *StyleSheet::parentStyleSheet() const
 {
-    return (parent() && parent()->isStyleSheet()) ? static_cast<StyleSheetImpl *>(parent()) : 0;
+    return (parent() && parent()->isStyleSheet()) ? static_cast<StyleSheet *>(parent()) : 0;
 }
 
-void StyleSheetImpl::setMedia(MediaListImpl *media)
+void StyleSheet::setMedia(MediaList *media)
 {
     m_media = media;
 }
@@ -79,36 +79,36 @@ void StyleSheetImpl::setMedia(MediaListImpl *media)
 // -----------------------------------------------------------------------
 
 
-CSSStyleSheetImpl::CSSStyleSheetImpl(CSSStyleSheetImpl *parentSheet, DOMString href)
-    : StyleSheetImpl(parentSheet, href)
+CSSStyleSheet::CSSStyleSheet(CSSStyleSheet *parentSheet, String href)
+    : StyleSheet(parentSheet, href)
 {
     m_doc = parentSheet ? parentSheet->doc() : 0;
     m_implicit = false;
     m_namespaces = 0;
 }
 
-CSSStyleSheetImpl::CSSStyleSheetImpl(NodeImpl *parentNode, DOMString href, bool _implicit)
-    : StyleSheetImpl(parentNode, href)
+CSSStyleSheet::CSSStyleSheet(Node *parentNode, String href, bool _implicit)
+    : StyleSheet(parentNode, href)
 {
     m_doc = parentNode->getDocument();
     m_implicit = _implicit; 
     m_namespaces = 0;
 }
 
-CSSStyleSheetImpl::CSSStyleSheetImpl(CSSRuleImpl *ownerRule, DOMString href)
-    : StyleSheetImpl(ownerRule, href)
+CSSStyleSheet::CSSStyleSheet(CSSRule *ownerRule, String href)
+    : StyleSheet(ownerRule, href)
 {
     m_doc = 0;
     m_implicit = false;
     m_namespaces = 0;
 }
 
-CSSRuleImpl *CSSStyleSheetImpl::ownerRule() const
+CSSRule *CSSStyleSheet::ownerRule() const
 {
-    return (parent() && parent()->isRule()) ? static_cast<CSSRuleImpl *>(parent()) : 0;
+    return (parent() && parent()->isRule()) ? static_cast<CSSRule *>(parent()) : 0;
 }
 
-unsigned CSSStyleSheetImpl::insertRule(const DOMString& rule, unsigned index, ExceptionCode& ec)
+unsigned CSSStyleSheet::insertRule(const String& rule, unsigned index, ExceptionCode& ec)
 {
     ec = 0;
     if (index > length()) {
@@ -116,7 +116,7 @@ unsigned CSSStyleSheetImpl::insertRule(const DOMString& rule, unsigned index, Ex
         return 0;
     }
     CSSParser p(useStrictParsing());
-    RefPtr<CSSRuleImpl> r = p.parseRule(this, rule);
+    RefPtr<CSSRule> r = p.parseRule(this, rule);
 
     if (!r) {
         ec = SYNTAX_ERR;
@@ -133,19 +133,19 @@ unsigned CSSStyleSheetImpl::insertRule(const DOMString& rule, unsigned index, Ex
     return index;
 }
 
-unsigned CSSStyleSheetImpl::addRule( const DOMString &selector, const DOMString &style, int index, ExceptionCode& ec)
+unsigned CSSStyleSheet::addRule( const String &selector, const String &style, int index, ExceptionCode& ec)
 {
     if (index == -1)
         index = length();
     return insertRule(selector + " { " + style + " }", index, ec);
 }
 
-CSSRuleListImpl *CSSStyleSheetImpl::cssRules()
+CSSRuleList *CSSStyleSheet::cssRules()
 {
-    return new CSSRuleListImpl(this);
+    return new CSSRuleList(this);
 }
 
-void CSSStyleSheetImpl::deleteRule( unsigned index, ExceptionCode& ec)
+void CSSStyleSheet::deleteRule( unsigned index, ExceptionCode& ec)
 {
     if (index >= length()) {
         ec = INDEX_SIZE_ERR;
@@ -157,7 +157,7 @@ void CSSStyleSheetImpl::deleteRule( unsigned index, ExceptionCode& ec)
     styleSheetChanged();
 }
 
-void CSSStyleSheetImpl::addNamespace(CSSParser* p, const AtomicString& prefix, const AtomicString& uri)
+void CSSStyleSheet::addNamespace(CSSParser* p, const AtomicString& prefix, const AtomicString& uri)
 {
     if (uri.isEmpty())
         return;
@@ -170,7 +170,7 @@ void CSSStyleSheetImpl::addNamespace(CSSParser* p, const AtomicString& prefix, c
         p->defaultNamespace = uri;
 }
 
-const AtomicString& CSSStyleSheetImpl::determineNamespace(const AtomicString& prefix)
+const AtomicString& CSSStyleSheet::determineNamespace(const AtomicString& prefix)
 {
     if (prefix.isEmpty())
         return nullAtom; // No namespace. If an element/attribute has a namespace, we won't match it.
@@ -184,7 +184,7 @@ const AtomicString& CSSStyleSheetImpl::determineNamespace(const AtomicString& pr
     return nullAtom; // Assume we wont match any namespaces.
 }
 
-bool CSSStyleSheetImpl::parseString(const DOMString &string, bool strict)
+bool CSSStyleSheet::parseString(const String &string, bool strict)
 {
     setStrictParsing(strict);
     CSSParser p( strict );
@@ -192,18 +192,18 @@ bool CSSStyleSheetImpl::parseString(const DOMString &string, bool strict)
     return true;
 }
 
-bool CSSStyleSheetImpl::isLoading()
+bool CSSStyleSheet::isLoading()
 {
     unsigned len = length();
     for (unsigned i = 0; i < len; ++i) {
-        StyleBaseImpl* rule = item(i);
-        if (rule->isImportRule() && static_cast<CSSImportRuleImpl*>(rule)->isLoading())
+        StyleBase* rule = item(i);
+        if (rule->isImportRule() && static_cast<CSSImportRule*>(rule)->isLoading())
             return true;
     }
     return false;
 }
 
-void CSSStyleSheetImpl::checkLoaded()
+void CSSStyleSheet::checkLoaded()
 {
     if (isLoading())
         return;
@@ -213,7 +213,7 @@ void CSSStyleSheetImpl::checkLoaded()
         m_parentNode->sheetLoaded();
 }
 
-khtml::DocLoader *CSSStyleSheetImpl::docLoader()
+WebCore::DocLoader *CSSStyleSheet::docLoader()
 {
     if ( !m_doc ) // doc is 0 for the user- and default-sheet!
         return 0;
@@ -222,7 +222,7 @@ khtml::DocLoader *CSSStyleSheetImpl::docLoader()
     return m_doc->docLoader();
 }
 
-void CSSStyleSheetImpl::styleSheetChanged()
+void CSSStyleSheet::styleSheetChanged()
 {
     /* FIXME: We don't need to do everything updateStyleSelector does,
      * basically we just need to recreate the document's selector with the
@@ -235,13 +235,13 @@ void CSSStyleSheetImpl::styleSheetChanged()
 // ---------------------------------------------------------------------------
 
 
-StyleSheetListImpl::~StyleSheetListImpl()
+StyleSheetList::~StyleSheetList()
 {
-    for ( QPtrListIterator<StyleSheetImpl> it ( styleSheets ); it.current(); ++it )
+    for ( DeprecatedPtrListIterator<StyleSheet> it ( styleSheets ); it.current(); ++it )
         it.current()->deref();
 }
 
-void StyleSheetListImpl::add( StyleSheetImpl* s )
+void StyleSheetList::add( StyleSheet* s )
 {
     if ( !styleSheets.containsRef( s ) ) {
         s->ref();
@@ -249,30 +249,30 @@ void StyleSheetListImpl::add( StyleSheetImpl* s )
     }
 }
 
-void StyleSheetListImpl::remove( StyleSheetImpl* s )
+void StyleSheetList::remove( StyleSheet* s )
 {
     if ( styleSheets.removeRef( s ) )
         s->deref();
 }
 
-unsigned StyleSheetListImpl::length() const
+unsigned StyleSheetList::length() const
 {
     // hack so implicit BODY stylesheets don't get counted here
     unsigned l = 0;
-    QPtrListIterator<StyleSheetImpl> it(styleSheets);
+    DeprecatedPtrListIterator<StyleSheet> it(styleSheets);
     for (; it.current(); ++it) {
-        if (!it.current()->isCSSStyleSheet() || !static_cast<CSSStyleSheetImpl*>(it.current())->implicit())
+        if (!it.current()->isCSSStyleSheet() || !static_cast<CSSStyleSheet*>(it.current())->implicit())
             l++;
     }
     return l;
 }
 
-StyleSheetImpl *StyleSheetListImpl::item ( unsigned index )
+StyleSheet *StyleSheetList::item ( unsigned index )
 {
     unsigned l = 0;
-    QPtrListIterator<StyleSheetImpl> it(styleSheets);
+    DeprecatedPtrListIterator<StyleSheet> it(styleSheets);
     for (; it.current(); ++it) {
-        if (!it.current()->isCSSStyleSheet() || !static_cast<CSSStyleSheetImpl*>(it.current())->implicit()) {
+        if (!it.current()->isCSSStyleSheet() || !static_cast<CSSStyleSheet*>(it.current())->implicit()) {
             if (l == index)
                 return it.current();
             l++;
@@ -283,38 +283,38 @@ StyleSheetImpl *StyleSheetListImpl::item ( unsigned index )
 
 // --------------------------------------------------------------------------------------------
 
-MediaListImpl::MediaListImpl( CSSStyleSheetImpl *parentSheet,
-                              const DOMString &media )
-    : StyleBaseImpl( parentSheet )
+MediaList::MediaList( CSSStyleSheet *parentSheet,
+                              const String &media )
+    : StyleBase( parentSheet )
 {
     setMediaText( media );
 }
 
-MediaListImpl::MediaListImpl( CSSRuleImpl *parentRule, const DOMString &media )
-    : StyleBaseImpl(parentRule)
+MediaList::MediaList( CSSRule *parentRule, const String &media )
+    : StyleBase(parentRule)
 {
     setMediaText( media );
 }
 
-bool MediaListImpl::contains( const DOMString &medium ) const
+bool MediaList::contains( const String &medium ) const
 {
     return m_lstMedia.count() == 0 || m_lstMedia.contains( medium ) ||
             m_lstMedia.contains( "all" );
 }
 
-CSSStyleSheetImpl *MediaListImpl::parentStyleSheet() const
+CSSStyleSheet *MediaList::parentStyleSheet() const
 {
-    return parent()->isCSSStyleSheet() ? static_cast<CSSStyleSheetImpl *>(parent()) : 0;
+    return parent()->isCSSStyleSheet() ? static_cast<CSSStyleSheet *>(parent()) : 0;
 }
 
-CSSRuleImpl *MediaListImpl::parentRule() const
+CSSRule *MediaList::parentRule() const
 {
-    return parent()->isRule() ? static_cast<CSSRuleImpl *>(parent()) : 0;
+    return parent()->isRule() ? static_cast<CSSRule *>(parent()) : 0;
 }
 
-void MediaListImpl::deleteMedium( const DOMString &oldMedium )
+void MediaList::deleteMedium( const String &oldMedium )
 {
-    for ( QValueList<DOMString>::Iterator it = m_lstMedia.begin(); it != m_lstMedia.end(); ++it ) {
+    for ( DeprecatedValueList<String>::Iterator it = m_lstMedia.begin(); it != m_lstMedia.end(); ++it ) {
         if ((*it) == oldMedium) {
             m_lstMedia.remove( it );
             return;
@@ -322,10 +322,10 @@ void MediaListImpl::deleteMedium( const DOMString &oldMedium )
     }
 }
 
-DOM::DOMString MediaListImpl::mediaText() const
+WebCore::String MediaList::mediaText() const
 {
-    DOMString text = "";
-    for (QValueList<DOMString>::ConstIterator it = m_lstMedia.begin(); it != m_lstMedia.end(); ++it) {
+    String text = "";
+    for (DeprecatedValueList<String>::ConstIterator it = m_lstMedia.begin(); it != m_lstMedia.end(); ++it) {
         if (text.length() > 0)
             text += ", ";
         text += *it;
@@ -333,13 +333,13 @@ DOM::DOMString MediaListImpl::mediaText() const
     return text;
 }
 
-void MediaListImpl::setMediaText(const DOM::DOMString &value)
+void MediaList::setMediaText(const WebCore::String &value)
 {
     m_lstMedia.clear();
-    QStringList list = QStringList::split( ',', value.qstring() );
-    for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
+    DeprecatedStringList list = DeprecatedStringList::split( ',', value.deprecatedString() );
+    for ( DeprecatedStringList::Iterator it = list.begin(); it != list.end(); ++it )
     {
-        DOMString medium = (*it).stripWhiteSpace();
+        String medium = (*it).stripWhiteSpace();
         if (!medium.isEmpty())
             m_lstMedia.append( medium );
     }

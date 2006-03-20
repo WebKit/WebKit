@@ -26,16 +26,16 @@
 #include "config.h"
 #include "JoinTextNodesCommand.h"
 
-#include "TextImpl.h"
+#include "Text.h"
 
 #include <kxmlcore/Assertions.h>
 
-using DOM::DocumentImpl;
-using DOM::TextImpl;
+using WebCore::Document;
+using WebCore::Text;
 
-namespace khtml {
+namespace WebCore {
 
-JoinTextNodesCommand::JoinTextNodesCommand(DocumentImpl *document, TextImpl *text1, TextImpl *text2)
+JoinTextNodesCommand::JoinTextNodesCommand(Document *document, Text *text1, Text *text2)
     : EditCommand(document), m_text1(text1), m_text2(text2)
 {
     ASSERT(m_text1);
@@ -78,4 +78,4 @@ void JoinTextNodesCommand::doUnapply()
     ASSERT(m_text2->previousSibling() == m_text1);
 }
 
-} // namespace khtml
+} // namespace WebCore

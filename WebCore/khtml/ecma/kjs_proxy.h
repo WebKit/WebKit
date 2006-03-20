@@ -21,7 +21,7 @@
 #ifndef KJS_PROXY_H
 #define KJS_PROXY_H
 
-class QString;
+class DeprecatedString;
 
 namespace KJS {
     class JSValue;
@@ -30,23 +30,23 @@ namespace KJS {
 
 namespace WebCore {
 
-class DOMString;
-class EventImpl;
+class String;
+class Event;
 class EventListener;
 class Frame;
-class NodeImpl;
+class Node;
 
-class KJSProxyImpl {
+class KJSProxy {
 public:
-    KJSProxyImpl(Frame*);
-    ~KJSProxyImpl();
-    KJS::JSValue* evaluate(const DOMString& filename, int baseLine, const DOMString& code, NodeImpl*);
+    KJSProxy(Frame*);
+    ~KJSProxy();
+    KJS::JSValue* evaluate(const String& filename, int baseLine, const String& code, Node*);
     void clear();
-    EventListener* createHTMLEventHandler(const DOMString& code, NodeImpl*);
+    EventListener* createHTMLEventHandler(const String& code, Node*);
 #if SVG_SUPPORT
-    EventListener* createSVGEventHandler(const DOMString& code, NodeImpl*);
+    EventListener* createSVGEventHandler(const String& code, Node*);
 #endif
-    void finishedWithEvent(EventImpl*);
+    void finishedWithEvent(Event*);
     KJS::ScriptInterpreter *interpreter();
     void setEventHandlerLineno(int lineno) { m_handlerLineno = lineno; }
 

@@ -24,60 +24,60 @@
 
 #include "config.h"
 #include "html_blockimpl.h"
-#include "html_documentimpl.h"
+#include "HTMLDocument.h"
 #include "css/cssstyleselector.h"
 
-#include "cssproperties.h"
-#include "cssvalues.h"
+#include "CSSPropertyNames.h"
+#include "CSSValueKeywords.h"
 #include "htmlnames.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLBlockquoteElementImpl::HTMLBlockquoteElementImpl(DocumentImpl *doc)
-    : HTMLElementImpl(blockquoteTag, doc)
+HTMLBlockquoteElement::HTMLBlockquoteElement(Document *doc)
+    : HTMLElement(blockquoteTag, doc)
 {
 }
 
-HTMLBlockquoteElementImpl::~HTMLBlockquoteElementImpl()
+HTMLBlockquoteElement::~HTMLBlockquoteElement()
 {
 }
 
-DOMString HTMLBlockquoteElementImpl::cite() const
+String HTMLBlockquoteElement::cite() const
 {
     return getAttribute(citeAttr);
 }
 
-void HTMLBlockquoteElementImpl::setCite(const DOMString &value)
+void HTMLBlockquoteElement::setCite(const String &value)
 {
     setAttribute(citeAttr, value);
 }
 
 // -------------------------------------------------------------------------
 
-HTMLDivElementImpl::HTMLDivElementImpl(DocumentImpl *doc)
-    : HTMLElementImpl(divTag, doc)
+HTMLDivElement::HTMLDivElement(Document *doc)
+    : HTMLElement(divTag, doc)
 {
 }
 
-HTMLDivElementImpl::~HTMLDivElementImpl()
+HTMLDivElement::~HTMLDivElement()
 {
 }
 
-bool HTMLDivElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
+bool HTMLDivElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
     if (attrName == alignAttr) {
         result = eBlock;
         return false;
     }
-    return HTMLElementImpl::mapToEntry(attrName, result);
+    return HTMLElement::mapToEntry(attrName, result);
 }
         
-void HTMLDivElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
+void HTMLDivElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == alignAttr) {
-        DOMString v = attr->value();
+        String v = attr->value();
         if (equalIgnoringCase(attr->value(), "middle") || equalIgnoringCase(attr->value(), "center"))
            addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_CENTER);
         else if (equalIgnoringCase(attr->value(), "left"))
@@ -87,31 +87,31 @@ void HTMLDivElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         else
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, v);
     } else
-        HTMLElementImpl::parseMappedAttribute(attr);
+        HTMLElement::parseMappedAttribute(attr);
 }
 
-DOMString HTMLDivElementImpl::align() const
+String HTMLDivElement::align() const
 {
     return getAttribute(alignAttr);
 }
 
-void HTMLDivElementImpl::setAlign(const DOMString &value)
+void HTMLDivElement::setAlign(const String &value)
 {
     setAttribute(alignAttr, value);
 }
 
 // -------------------------------------------------------------------------
 
-HTMLHRElementImpl::HTMLHRElementImpl(DocumentImpl *doc)
-    : HTMLElementImpl(hrTag, doc)
+HTMLHRElement::HTMLHRElement(Document *doc)
+    : HTMLElement(hrTag, doc)
 {
 }
 
-HTMLHRElementImpl::~HTMLHRElementImpl()
+HTMLHRElement::~HTMLHRElement()
 {
 }
 
-bool HTMLHRElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
+bool HTMLHRElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
     if (attrName == alignAttr ||
         attrName == widthAttr ||
@@ -121,10 +121,10 @@ bool HTMLHRElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttribut
         result = eHR;
         return false;
     }
-    return HTMLElementImpl::mapToEntry(attrName, result);
+    return HTMLElement::mapToEntry(attrName, result);
 }
 
-void HTMLHRElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
+void HTMLHRElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == alignAttr) {
         if (equalIgnoringCase(attr->value(), "left")) {
@@ -156,67 +156,67 @@ void HTMLHRElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         addCSSProperty(attr, CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID);
         addCSSProperty(attr, CSS_PROP_BORDER_BOTTOM_STYLE, CSS_VAL_SOLID);
         addCSSProperty(attr, CSS_PROP_BORDER_LEFT_STYLE, CSS_VAL_SOLID);
-        addCSSColor(attr, CSS_PROP_BORDER_COLOR, DOMString("grey"));
-        addCSSColor(attr, CSS_PROP_BACKGROUND_COLOR, DOMString("grey"));
+        addCSSColor(attr, CSS_PROP_BORDER_COLOR, String("grey"));
+        addCSSColor(attr, CSS_PROP_BACKGROUND_COLOR, String("grey"));
     } else if (attr->name() == sizeAttr) {
-        DOMStringImpl* si = attr->value().impl();
+        StringImpl* si = attr->value().impl();
         int size = si->toInt();
         if (size <= 1)
-            addCSSProperty(attr, CSS_PROP_BORDER_BOTTOM_WIDTH, DOMString("0"));
+            addCSSProperty(attr, CSS_PROP_BORDER_BOTTOM_WIDTH, String("0"));
         else
-            addCSSLength(attr, CSS_PROP_HEIGHT, DOMString(QString::number(size-2)));
+            addCSSLength(attr, CSS_PROP_HEIGHT, String(DeprecatedString::number(size-2)));
     } else
-        HTMLElementImpl::parseMappedAttribute(attr);
+        HTMLElement::parseMappedAttribute(attr);
 }
 
-DOMString HTMLHRElementImpl::align() const
+String HTMLHRElement::align() const
 {
     return getAttribute(alignAttr);
 }
 
-void HTMLHRElementImpl::setAlign(const DOMString &value)
+void HTMLHRElement::setAlign(const String &value)
 {
     setAttribute(alignAttr, value);
 }
 
-bool HTMLHRElementImpl::noShade() const
+bool HTMLHRElement::noShade() const
 {
     return !getAttribute(noshadeAttr).isNull();
 }
 
-void HTMLHRElementImpl::setNoShade(bool noShade)
+void HTMLHRElement::setNoShade(bool noShade)
 {
     setAttribute(noshadeAttr, noShade ? "" : 0);
 }
 
-DOMString HTMLHRElementImpl::size() const
+String HTMLHRElement::size() const
 {
     return getAttribute(sizeAttr);
 }
 
-void HTMLHRElementImpl::setSize(const DOMString &value)
+void HTMLHRElement::setSize(const String &value)
 {
     setAttribute(sizeAttr, value);
 }
 
-DOMString HTMLHRElementImpl::width() const
+String HTMLHRElement::width() const
 {
     return getAttribute(widthAttr);
 }
 
-void HTMLHRElementImpl::setWidth(const DOMString &value)
+void HTMLHRElement::setWidth(const String &value)
 {
     setAttribute(widthAttr, value);
 }
 
 // -------------------------------------------------------------------------
 
-HTMLHeadingElementImpl::HTMLHeadingElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
-    : HTMLElementImpl(tagName, doc)
+HTMLHeadingElement::HTMLHeadingElement(const QualifiedName& tagName, Document *doc)
+    : HTMLElement(tagName, doc)
 {
 }
 
-bool HTMLHeadingElementImpl::checkDTD(const NodeImpl* newChild)
+bool HTMLHeadingElement::checkDTD(const Node* newChild)
 {
     if (newChild->hasTagName(h1Tag) || newChild->hasTagName(h2Tag) ||
         newChild->hasTagName(h3Tag) || newChild->hasTagName(h4Tag) ||
@@ -226,41 +226,41 @@ bool HTMLHeadingElementImpl::checkDTD(const NodeImpl* newChild)
     return inEitherTagList(newChild);
 }
 
-DOMString HTMLHeadingElementImpl::align() const
+String HTMLHeadingElement::align() const
 {
     return getAttribute(alignAttr);
 }
 
-void HTMLHeadingElementImpl::setAlign(const DOMString &value)
+void HTMLHeadingElement::setAlign(const String &value)
 {
     setAttribute(alignAttr, value);
 }
 
 // -------------------------------------------------------------------------
 
-HTMLParagraphElementImpl::HTMLParagraphElementImpl(DocumentImpl *doc)
-    : HTMLElementImpl(pTag, doc)
+HTMLParagraphElement::HTMLParagraphElement(Document *doc)
+    : HTMLElement(pTag, doc)
 {
 }
 
-bool HTMLParagraphElementImpl::checkDTD(const NodeImpl* newChild)
+bool HTMLParagraphElement::checkDTD(const Node* newChild)
 {
     return inInlineTagList(newChild) || (getDocument()->inCompatMode() && newChild->hasTagName(tableTag));
 }
 
-bool HTMLParagraphElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
+bool HTMLParagraphElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
     if (attrName == alignAttr) {
         result = eBlock; // We can share with DIV here.
         return false;
     }
-    return HTMLElementImpl::mapToEntry(attrName, result);
+    return HTMLElement::mapToEntry(attrName, result);
 }
 
-void HTMLParagraphElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
+void HTMLParagraphElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == alignAttr) {
-        DOMString v = attr->value();
+        String v = attr->value();
         if (equalIgnoringCase(attr->value(), "middle") || equalIgnoringCase(attr->value(), "center"))
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, CSS_VAL__KHTML_CENTER);
         else if (equalIgnoringCase(attr->value(), "left"))
@@ -270,36 +270,36 @@ void HTMLParagraphElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         else
             addCSSProperty(attr, CSS_PROP_TEXT_ALIGN, v);
     } else
-        HTMLElementImpl::parseMappedAttribute(attr);
+        HTMLElement::parseMappedAttribute(attr);
 }
 
-DOMString HTMLParagraphElementImpl::align() const
+String HTMLParagraphElement::align() const
 {
     return getAttribute(alignAttr);
 }
 
-void HTMLParagraphElementImpl::setAlign(const DOMString &value)
+void HTMLParagraphElement::setAlign(const String &value)
 {
     setAttribute(alignAttr, value);
 }
 
 // -------------------------------------------------------------------------
 
-HTMLPreElementImpl::HTMLPreElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
-    : HTMLElementImpl(tagName, doc)
+HTMLPreElement::HTMLPreElement(const QualifiedName& tagName, Document *doc)
+    : HTMLElement(tagName, doc)
 {
 }
 
-bool HTMLPreElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
+bool HTMLPreElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
     if (attrName == widthAttr || attrName == wrapAttr) {
         result = ePre;
         return false;
     }
-    return HTMLElementImpl::mapToEntry(attrName, result);
+    return HTMLElement::mapToEntry(attrName, result);
 }
 
-void HTMLPreElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
+void HTMLPreElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == widthAttr) {
         // FIXME: Implement this some day.  Width on a <pre> is the # of characters that
@@ -310,25 +310,25 @@ void HTMLPreElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
         if (!attr->value().isNull())
             addCSSProperty(attr, CSS_PROP_WHITE_SPACE, CSS_VAL_PRE_WRAP);
     } else
-        return HTMLElementImpl::parseMappedAttribute(attr);
+        return HTMLElement::parseMappedAttribute(attr);
 }
 
-int HTMLPreElementImpl::width() const
+int HTMLPreElement::width() const
 {
     return getAttribute(widthAttr).toInt();
 }
 
-void HTMLPreElementImpl::setWidth(int width)
+void HTMLPreElement::setWidth(int width)
 {
-    setAttribute(widthAttr, QString::number(width));
+    setAttribute(widthAttr, DeprecatedString::number(width));
 }
 
-bool HTMLPreElementImpl::wrap() const
+bool HTMLPreElement::wrap() const
 {
     return !getAttribute(wrapAttr).isNull();
 }
 
-void HTMLPreElementImpl::setWrap(bool wrap)
+void HTMLPreElement::setWrap(bool wrap)
 {
     setAttribute(wrapAttr, wrap ? "" : 0);
 }
@@ -338,13 +338,13 @@ void HTMLPreElementImpl::setWrap(bool wrap)
  // WinIE uses 60ms as the minimum delay by default.
 const int defaultMinimumDelay = 60;
 
-HTMLMarqueeElementImpl::HTMLMarqueeElementImpl(DocumentImpl *doc)
-: HTMLElementImpl(marqueeTag, doc),
+HTMLMarqueeElement::HTMLMarqueeElement(Document *doc)
+: HTMLElement(marqueeTag, doc),
   m_minimumDelay(defaultMinimumDelay)
 {
 }
 
-bool HTMLMarqueeElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
+bool HTMLMarqueeElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
     if (attrName == widthAttr ||
         attrName == heightAttr ||
@@ -360,10 +360,10 @@ bool HTMLMarqueeElementImpl::mapToEntry(const QualifiedName& attrName, MappedAtt
         return false;
     }
 
-    return HTMLElementImpl::mapToEntry(attrName, result);
+    return HTMLElement::mapToEntry(attrName, result);
 }
 
-void HTMLMarqueeElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
+void HTMLMarqueeElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == widthAttr) {
         if (!attr->value().isEmpty())
@@ -406,7 +406,7 @@ void HTMLMarqueeElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     } else if (attr->name() == truespeedAttr) {
         m_minimumDelay = !attr->isNull() ? 0 : defaultMinimumDelay;
     } else
-        HTMLElementImpl::parseMappedAttribute(attr);
+        HTMLElement::parseMappedAttribute(attr);
 }
 
 }

@@ -1,7 +1,7 @@
 module svg
 {
   // TODO: no css::ViewCSS available in kdom!
-  // TODO: Fix SVGSVGElementImpl inheritance (css::DocumentCSS)! 
+  // TODO: Fix SVGSVGElement inheritance (css::DocumentCSS)! 
   interface SVGSVGElement : 
                 SVGElement,
                 SVGTests,

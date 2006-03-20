@@ -26,9 +26,9 @@
 #import "config.h"
 #import "KWQSlider.h"
 
-#import "KWQExceptions.h"
+#import "BlockExceptions.h"
 #import "KWQLineEdit.h"
-#import "MacFrame.h"
+#import "FrameMac.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreWidgetHolder.h"
 #import "render_form.h"
@@ -98,7 +98,7 @@ using namespace WebCore;
 {
     BOOL become = [super becomeFirstResponder];
     if (become && slider) {
-        if (slider && slider->client() && !MacFrame::currentEventIsMouseDownInWidget(slider))
+        if (slider && slider->client() && !FrameMac::currentEventIsMouseDownInWidget(slider))
             slider->client()->scrollToVisible(slider);
         if (slider && slider->client())
             slider->client()->focusIn(slider);
@@ -112,7 +112,7 @@ using namespace WebCore;
     if (resign && slider && slider->client()) {
         slider->client()->focusOut(slider);
         if (slider)
-            [MacFrame::bridgeForWidget(slider) formControlIsResigningFirstResponder:self];
+            [FrameMac::bridgeForWidget(slider) formControlIsResigningFirstResponder:self];
     }
     return resign;
 }
@@ -127,7 +127,7 @@ using namespace WebCore;
         // we tab to it
         [self resignFirstResponder];
         if (slider) {
-            view = MacFrame::nextKeyViewForWidget(slider, KWQSelectingNext);
+            view = FrameMac::nextKeyViewForWidget(slider, KWQSelectingNext);
         } else {
             view = [super nextKeyView];
         }
@@ -147,7 +147,7 @@ using namespace WebCore;
         // we tab to it
         [self resignFirstResponder];
         if (slider) {
-            view = MacFrame::nextKeyViewForWidget(slider, KWQSelectingPrevious);
+            view = FrameMac::nextKeyViewForWidget(slider, KWQSelectingPrevious);
         } else {
             view = [super previousKeyView];
         }
@@ -161,7 +161,7 @@ using namespace WebCore;
 {
     // Simplified method from NSView; overridden to replace NSView's way of checking
     // for full keyboard access with ours.
-    if (slider && !MacFrame::frameForWidget(slider)->tabsToAllControls()) {
+    if (slider && !FrameMac::frameForWidget(slider)->tabsToAllControls()) {
         return NO;
     }
     return ([self window] != nil) && ![self isHiddenOrHasHiddenAncestor] && [self acceptsFirstResponder];
@@ -193,12 +193,12 @@ enum {
 QSlider::QSlider()
     : m_minVal(0.0), m_maxVal(100.0), m_val(50.0)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     KWQSlider* slider = [[KWQSlider alloc] initWithQSlider:this];
     [[slider cell] setControlSize:NSSmallControlSize];
     setView(slider);
     [slider release];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 QSlider::~QSlider()
@@ -209,7 +209,7 @@ QSlider::~QSlider()
 
 void QSlider::setFont(const Font& f)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
     Widget::setFont(f);
     
@@ -218,19 +218,19 @@ void QSlider::setFont(const Font& f)
     [[slider cell] setControlSize:size];
     [slider setFont:[NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:size]]];
     
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 Widget::FocusPolicy QSlider::focusPolicy() const
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
-    WebCoreFrameBridge *bridge = MacFrame::bridgeForWidget(this);
+    WebCoreFrameBridge *bridge = FrameMac::bridgeForWidget(this);
     if (!bridge || ![bridge impl] || ![bridge impl]->tabsToAllControls()) {
         return NoFocus;
     }
     
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     
     return Widget::focusPolicy();
 }
@@ -304,9 +304,9 @@ const int* QSlider::dimensions() const
     };
     NSControl * const slider = static_cast<NSControl *>(getView());
     
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return w[[[slider cell] controlSize]];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     
     return w[NSSmallControlSize];
 }

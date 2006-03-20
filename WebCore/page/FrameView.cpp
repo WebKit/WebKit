@@ -29,23 +29,23 @@
 #include "Cursor.h"
 #include "EventNames.h"
 #include "Frame.h"
-#include "HTMLInputElementImpl.h"
+#include "HTMLInputElement.h"
 #include "Image.h"
-#include "KWQAccObjectCache.h"
-#include "KeyEvent.h"
-#include "MouseEvent.h"
+#include "AccessibilityObjectCache.h"
+#include "PlatformKeyboardEvent.h"
+#include "PlatformMouseEvent.h"
 #include "MouseEventWithHitTestResults.h"
 #include "RenderText.h"
 #include "SelectionController.h"
-#include "WheelEvent.h"
+#include "PlatformWheelEvent.h"
 #include "cssstyleselector.h"
 #include "dom2_eventsimpl.h"
-#include "html_documentimpl.h"
+#include "HTMLDocument.h"
 #include "html_inlineimpl.h"
 #include "htmlnames.h"
 #include "khtml_settings.h"
-#include "render_arena.h"
-#include "render_canvas.h"
+#include "RenderArena.h"
+#include "RenderCanvas.h"
 #include "render_frames.h"
 #include "render_line.h"
 #include "render_replaced.h"
@@ -103,7 +103,7 @@ public:
         resizingFrameSet = 0;
     }
 
-    RefPtr<NodeImpl> underMouse;
+    RefPtr<Node> underMouse;
 
     bool borderTouched : 1;
     bool borderStart : 1;
@@ -119,7 +119,7 @@ public:
 
     int borderX, borderY;
     int clickCount;
-    RefPtr<NodeImpl> clickNode;
+    RefPtr<Node> clickNode;
 
     int prevMouseX, prevMouseY;
     bool scrollingSelf;
@@ -139,10 +139,10 @@ public:
     
     // Used by objects during layout to communicate repaints that need to take place only
     // after all layout has been completed.
-    QPtrList<RenderObject::RepaintInfo>* repaintRects;
+    DeprecatedPtrList<RenderObject::RepaintInfo>* repaintRects;
     
-    RefPtr<NodeImpl> dragTarget;
-    RefPtr<HTMLFrameSetElementImpl> resizingFrameSet;
+    RefPtr<Node> dragTarget;
+    RefPtr<HTMLFrameSetElement> resizingFrameSet;
 };
 
 FrameView::FrameView(Frame *frame)
@@ -166,7 +166,7 @@ FrameView::~FrameView()
         d->hoverTimer.stop();
     if (m_frame) {
         // FIXME: Is this really the right place to call detach on the document?
-        if (DocumentImpl* doc = m_frame->document())
+        if (Document* doc = m_frame->document())
             doc->detach();
         if (RenderPart* renderer = m_frame->ownerRenderer())
             renderer->setWidget(0);
@@ -242,7 +242,7 @@ void FrameView::setMarginHeight(int h)
 void FrameView::adjustViewSize()
 {
     if (m_frame->document()) {
-        DocumentImpl *document = m_frame->document();
+        Document *document = m_frame->document();
 
         RenderCanvas* root = static_cast<RenderCanvas *>(document->renderer());
         if ( !root )
@@ -295,7 +295,7 @@ bool FrameView::needsFullRepaint() const
 void FrameView::addRepaintInfo(RenderObject* o, const IntRect& r)
 {
     if (!d->repaintRects) {
-        d->repaintRects = new QPtrList<RenderObject::RepaintInfo>;
+        d->repaintRects = new DeprecatedPtrList<RenderObject::RepaintInfo>;
         d->repaintRects->setAutoDelete(true);
     }
     
@@ -317,7 +317,7 @@ void FrameView::layout()
         return;
     }
 
-    DocumentImpl* document = m_frame->document();
+    Document* document = m_frame->document();
     if (!document) {
         // FIXME: Should we set _height here too?
         _width = visibleWidth();
@@ -343,7 +343,7 @@ void FrameView::layout()
     
     RenderObject* rootRenderer = document->documentElement() ? document->documentElement()->renderer() : 0;
     if (document->isHTMLDocument()) {
-        NodeImpl *body = static_cast<HTMLDocumentImpl*>(document)->body();
+        Node *body = static_cast<HTMLDocument*>(document)->body();
         if (body && body->renderer()) {
             if (body->hasTagName(framesetTag)) {
                 body->renderer()->setNeedsLayout(true);
@@ -433,7 +433,7 @@ void FrameView::layout()
         // FIXME: Could optimize this and have objects removed from this list
         // if they ever do full repaints.
         RenderObject::RepaintInfo* r;
-        QPtrListIterator<RenderObject::RepaintInfo> it(*d->repaintRects);
+        DeprecatedPtrListIterator<RenderObject::RepaintInfo> it(*d->repaintRects);
         for ( ; (r = it.current()); ++it)
             r->m_object->repaintRectangle(r->m_repaintRect);
         d->repaintRects->clear();
@@ -442,7 +442,7 @@ void FrameView::layout()
     d->layoutCount++;
 
 #if __APPLE__
-    if (KWQAccObjectCache::accessibilityEnabled())
+    if (AccessibilityObjectCache::accessibilityEnabled())
         root->document()->getAccObjectCache()->postNotification(root, "AXLayoutComplete");
     updateDashboardRegions();
 #endif
@@ -463,7 +463,7 @@ void FrameView::layout()
 //
 /////////////////
 
-void FrameView::viewportMousePressEvent(const MouseEvent& mouseEvent)
+void FrameView::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
 {
     if (!m_frame->document())
         return;
@@ -488,7 +488,7 @@ void FrameView::viewportMousePressEvent(const MouseEvent& mouseEvent)
     bool swallowEvent = dispatchMouseEvent(mousedownEvent, mev.innerNode(), true, d->clickCount, mouseEvent, true);
 
     if (!swallowEvent) {
-        m_frame->khtmlMousePressEvent(mev);
+        m_frame->handleMousePressEvent(mev);
         // Many AK widgets run their own event loops and consume events while the mouse is down.
         // When they finish, currentEvent is the mouseUp that they exited on.  We need to update
         // the khtml state with this mouseUp, which khtml never saw.
@@ -499,7 +499,7 @@ void FrameView::viewportMousePressEvent(const MouseEvent& mouseEvent)
     }
 }
 
-void FrameView::viewportMouseDoubleClickEvent(const MouseEvent& mouseEvent)
+void FrameView::handleMouseDoubleClickEvent(const PlatformMouseEvent& mouseEvent)
 {
     if (!m_frame->document())
         return;
@@ -525,16 +525,16 @@ void FrameView::viewportMouseDoubleClickEvent(const MouseEvent& mouseEvent)
 
     // Qt delivers a release event AND a double click event.
     if (!swallowEvent) {
-        m_frame->khtmlMouseReleaseEvent(mev);
-        m_frame->khtmlMouseDoubleClickEvent(mev);
+        m_frame->handleMouseReleaseEvent(mev);
+        m_frame->handleMouseReleaseDoubleClickEvent(mev);
     }
 
     invalidateClick();
 }
 
-static bool isSubmitImage(NodeImpl *node)
+static bool isSubmitImage(Node *node)
 {
-    return node && node->hasTagName(inputTag) && static_cast<HTMLInputElementImpl*>(node)->inputType() == HTMLInputElementImpl::IMAGE;
+    return node && node->hasTagName(inputTag) && static_cast<HTMLInputElement*>(node)->inputType() == HTMLInputElement::IMAGE;
 }
 
 static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* frame, bool mousePressed)
@@ -543,7 +543,7 @@ static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* fra
     if (mousePressed && frame->hasSelection())
         return iBeamCursor();
 
-    NodeImpl* node = event.innerNode();
+    Node* node = event.innerNode();
     RenderObject* renderer = node ? node->renderer() : 0;
     RenderStyle* style = renderer ? renderer->style() : 0;
 
@@ -591,7 +591,7 @@ static Cursor selectCursor(const MouseEventWithHitTestResults& event, Frame* fra
     return pointerCursor();
 }
 
-void FrameView::viewportMouseMoveEvent(const MouseEvent& mouseEvent)
+void FrameView::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent)
 {
     // in Radar 3703768 we saw frequent crashes apparently due to the
     // part being null here, which seems impossible, so check for nil
@@ -624,7 +624,7 @@ void FrameView::viewportMouseMoveEvent(const MouseEvent& mouseEvent)
         
     bool swallowEvent = dispatchMouseEvent(mousemoveEvent, mev.innerNode(), false, 0, mouseEvent, true);
     if (!swallowEvent)
-        m_frame->khtmlMouseMoveEvent(mev);
+        m_frame->handleMouseMoveEvent(mev);
 }
 
 void FrameView::invalidateClick()
@@ -633,7 +633,7 @@ void FrameView::invalidateClick()
     d->clickNode = 0;
 }
 
-void FrameView::viewportMouseReleaseEvent(const MouseEvent& mouseEvent)
+void FrameView::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
 {
     if (!m_frame->document())
         return;
@@ -661,17 +661,17 @@ void FrameView::viewportMouseReleaseEvent(const MouseEvent& mouseEvent)
         dispatchMouseEvent(clickEvent, mev.innerNode(), true, d->clickCount, mouseEvent, true);
 
     if (!swallowEvent)
-        m_frame->khtmlMouseReleaseEvent(mev);
+        m_frame->handleMouseReleaseEvent(mev);
 
     invalidateClick();
 }
 
-bool FrameView::dispatchDragEvent(const AtomicString &eventType, NodeImpl *dragTarget, const MouseEvent& event, ClipboardImpl *clipboard)
+bool FrameView::dispatchDragEvent(const AtomicString &eventType, Node *dragTarget, const PlatformMouseEvent& event, Clipboard *clipboard)
 {
     int clientX, clientY;
     viewportToContents(event.x(), event.y(), clientX, clientY);
     
-    RefPtr<MouseEventImpl> me = new MouseEventImpl(eventType,
+    RefPtr<MouseEvent> me = new MouseEvent(eventType,
         true, true, m_frame->document()->defaultView(),
         0, event.globalX(), event.globalY(), clientX, clientY,
         event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(),
@@ -682,15 +682,15 @@ bool FrameView::dispatchDragEvent(const AtomicString &eventType, NodeImpl *dragT
     return me->defaultPrevented();
 }
 
-bool FrameView::updateDragAndDrop(const MouseEvent& event, ClipboardImpl* clipboard)
+bool FrameView::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard* clipboard)
 {
     bool accept = false;
     int xm, ym;
     viewportToContents(event.x(), event.y(), xm, ym);
-    MouseEventWithHitTestResults mev = m_frame->document()->prepareMouseEvent(true, false, false, xm, ym, MouseEvent());
+    MouseEventWithHitTestResults mev = m_frame->document()->prepareMouseEvent(true, false, false, xm, ym, PlatformMouseEvent());
 
     // Drag events should never go to text nodes (following IE, and proper mouseover/out dispatch)
-    NodeImpl* newTarget = mev.innerNode();
+    Node* newTarget = mev.innerNode();
     if (newTarget && newTarget->isTextNode())
         newTarget = newTarget->parentNode();
 
@@ -709,14 +709,14 @@ bool FrameView::updateDragAndDrop(const MouseEvent& event, ClipboardImpl* clipbo
     return accept;
 }
 
-void FrameView::cancelDragAndDrop(const MouseEvent& event, ClipboardImpl* clipboard)
+void FrameView::cancelDragAndDrop(const PlatformMouseEvent& event, Clipboard* clipboard)
 {
     if (d->dragTarget)
         dispatchDragEvent(dragleaveEvent, d->dragTarget.get(), event, clipboard);
     d->dragTarget = 0;
 }
 
-bool FrameView::performDragAndDrop(const MouseEvent& event, ClipboardImpl* clipboard)
+bool FrameView::performDragAndDrop(const PlatformMouseEvent& event, Clipboard* clipboard)
 {
     bool accept = false;
     if (d->dragTarget)
@@ -725,7 +725,7 @@ bool FrameView::performDragAndDrop(const MouseEvent& event, ClipboardImpl* clipb
     return accept;
 }
 
-NodeImpl* FrameView::nodeUnderMouse() const
+Node* FrameView::nodeUnderMouse() const
 {
     return d->underMouse.get();
 }
@@ -803,12 +803,12 @@ void FrameView::focusNextPrevNode(bool next)
 {
     // Sets the focus node of the document to be the node after (or if next is false, before) the current focus node.
     // Only nodes that are selectable (i.e. for which isSelectable() returns true) are taken into account, and the order
-    // used is that specified in the HTML spec (see DocumentImpl::nextFocusNode() and DocumentImpl::previousFocusNode()
+    // used is that specified in the HTML spec (see Document::nextFocusNode() and Document::previousFocusNode()
     // for details).
 
-    DocumentImpl *doc = m_frame->document();
-    NodeImpl *oldFocusNode = doc->focusNode();
-    NodeImpl *newFocusNode;
+    Document *doc = m_frame->document();
+    Node *oldFocusNode = doc->focusNode();
+    Node *newFocusNode;
 
     // Find the next/previous node from the current one
     if (next)
@@ -820,7 +820,7 @@ void FrameView::focusNextPrevNode(bool next)
     // focusable node in the document, use the first one that lies within the visible area (if possible).
     if (!oldFocusNode && newFocusNode && d->scrollBarMoved) {
         bool visible = false;
-        NodeImpl *toFocus = newFocusNode;
+        Node *toFocus = newFocusNode;
         while (!visible && toFocus) {
             if (toFocus->getRect().intersects(IntRect(contentsX(), contentsY(), visibleWidth(), visibleHeight()))) {
                 // toFocus is visible in the contents area
@@ -873,15 +873,15 @@ void FrameView::focusNextPrevNode(bool next)
     m_frame->document()->setFocusNode(newFocusNode);
 }
 
-void FrameView::setMediaType( const QString &medium )
+void FrameView::setMediaType( const DeprecatedString &medium )
 {
     m_medium = medium;
 }
 
-QString FrameView::mediaType() const
+DeprecatedString FrameView::mediaType() const
 {
     // See if we have an override type.
-    QString overrideType = m_frame->overrideMediaType();
+    DeprecatedString overrideType = m_frame->overrideMediaType();
     if (!overrideType.isNull())
         return overrideType;
     return m_medium;
@@ -919,13 +919,13 @@ void FrameView::restoreScrollBar()
     suppressScrollBars(false);
 }
 
-void FrameView::setResizingFrameSet(HTMLFrameSetElementImpl *frameSet)
+void FrameView::setResizingFrameSet(HTMLFrameSetElement *frameSet)
 {
     d->resizingFrameSet = frameSet;
 }
 
-bool FrameView::dispatchMouseEvent(const AtomicString& eventType, NodeImpl* targetNode, bool cancelable,
-    int clickCount, const MouseEvent& mouseEvent, bool setUnder)
+bool FrameView::dispatchMouseEvent(const AtomicString& eventType, Node* targetNode, bool cancelable,
+    int clickCount, const PlatformMouseEvent& mouseEvent, bool setUnder)
 {
     // if the target node is a text node, dispatch on the parent node - rdar://4196646
     if (targetNode && targetNode->isTextNode())
@@ -941,7 +941,7 @@ bool FrameView::dispatchMouseEvent(const AtomicString& eventType, NodeImpl* targ
             // it again. calculating is expensive! (Dirk)
             // Also, there's no guarantee that the old under node is even around any more,
             // so we could be sending a mouseout to a node that never got a mouseover.
-            RefPtr<NodeImpl> oldUnder;
+            RefPtr<Node> oldUnder;
             if (d->prevMouseX >= 0) {
                 oldUnder = m_frame->document()->prepareMouseEvent(true, false, true,
                     d->prevMouseX, d->prevMouseY, mouseEvent).innerNode();
@@ -971,7 +971,7 @@ bool FrameView::dispatchMouseEvent(const AtomicString& eventType, NodeImpl* targ
         // Blur current focus node when a link/button is clicked; this
         // is expected by some sites that rely on onChange handlers running
         // from form fields before the button click is processed.
-        NodeImpl* node = targetNode;
+        Node* node = targetNode;
         RenderObject* renderer = node ? node->renderer() : 0;
                 
         // Walk up the render tree to search for a node to focus.
@@ -1001,9 +1001,9 @@ void FrameView::setIgnoreWheelEvents( bool e )
     d->ignoreWheelEvents = e;
 }
 
-void FrameView::viewportWheelEvent(WheelEvent& e)
+void FrameView::handleWheelEvent(PlatformWheelEvent& e)
 {
-    DocumentImpl *doc = m_frame->document();
+    Document *doc = m_frame->document();
     if (doc) {
         RenderObject *docRenderer = doc->renderer();
         if (docRenderer) {
@@ -1012,7 +1012,7 @@ void FrameView::viewportWheelEvent(WheelEvent& e)
 
             RenderObject::NodeInfo hitTestResult(true, false);
             doc->renderer()->layer()->hitTest(hitTestResult, x, y); 
-            NodeImpl *node = hitTestResult.innerNode();
+            Node *node = hitTestResult.innerNode();
 
            if (m_frame->passWheelEventToChildWidget(node)) {
                 e.accept();
@@ -1051,7 +1051,7 @@ void FrameView::layoutTimerFired(Timer<FrameView>*)
 void FrameView::hoverTimerFired(Timer<FrameView>*)
 {
     d->hoverTimer.stop();
-    m_frame->document()->prepareMouseEvent(false, false, true, d->prevMouseX, d->prevMouseY, MouseEvent());
+    m_frame->document()->prepareMouseEvent(false, false, true, d->prevMouseX, d->prevMouseY, PlatformMouseEvent());
 }
 
 void FrameView::scheduleRelayout()

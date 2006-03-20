@@ -21,26 +21,26 @@
 #ifndef MouseEventWithHitTestResults_h
 #define MouseEventWithHitTestResults_h
 
-#include "NodeImpl.h"
-#include "MouseEvent.h"
+#include "Node.h"
+#include "PlatformMouseEvent.h"
 
 namespace WebCore {
 
 class MouseEventWithHitTestResults {
 public:
-    MouseEventWithHitTestResults(const MouseEvent& e, const String& u, const String& t, PassRefPtr<NodeImpl> n)
+    MouseEventWithHitTestResults(const PlatformMouseEvent& e, const String& u, const String& t, PassRefPtr<Node> n)
         : m_event(e), m_url(u), m_target(t), m_innerNode(n) { }
 
-    const MouseEvent& event() const { return m_event; }
+    const PlatformMouseEvent& event() const { return m_event; }
     String url() const { return m_url; }
     String target() const { return m_target; }
-    NodeImpl* innerNode() const { return m_innerNode.get(); }
+    Node* innerNode() const { return m_innerNode.get(); }
 
 private:
-    MouseEvent m_event;
+    PlatformMouseEvent m_event;
     String m_url;
     String m_target;
-    RefPtr<NodeImpl> m_innerNode;
+    RefPtr<Node> m_innerNode;
 };
 
 }

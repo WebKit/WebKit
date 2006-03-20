@@ -34,11 +34,11 @@
 class RenderArena;
 
 namespace WebCore {
-    class MacFrame;
+    class FrameMac;
     class RenderPart;
 }
 
-typedef WebCore::MacFrame WebCoreMacFrame;
+typedef WebCore::FrameMac WebCoreMacFrame;
 typedef WebCore::RenderPart WebCoreRenderPart;
 
 #else

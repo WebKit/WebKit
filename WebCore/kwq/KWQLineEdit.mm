@@ -28,10 +28,10 @@
 
 #import "Color.h"
 #import "IntSize.h"
-#import "KWQExceptions.h"
+#import "BlockExceptions.h"
 #import "Font.h"
 #import "Logging.h"
-#import "KWQTextField.h"
+#import "WebCoreTextField.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
@@ -57,11 +57,11 @@ NSControlSize KWQNSControlSizeForFont(const Font& f)
 QLineEdit::QLineEdit(Type type)
     : m_type(type)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     id view = nil;
     switch (type) {
         case Normal:
-            view = [KWQTextField alloc];
+            view = [WebCoreTextField alloc];
             break;
         case Password:
             view = [KWQSecureTextField alloc];
@@ -76,29 +76,29 @@ QLineEdit::QLineEdit(Type type)
     setView((NSView *)view);
     [view release];
     [view setSelectable:YES]; // must do this explicitly so setEditable:NO does not make it NO
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 QLineEdit::~QLineEdit()
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [m_controller detachQLineEdit];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void QLineEdit::setCursorPosition(int pos)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSRange tempRange = {pos, 0}; // 4213314
     [m_controller setSelectedRange:tempRange];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 int QLineEdit::cursorPosition() const
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return [m_controller selectedRange].location;
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     return 0;
 }
 
@@ -113,9 +113,9 @@ void QLineEdit::setFont(const Font &font)
     }
     else {
         NSTextField *textField = (NSTextField *)getView();
-        KWQ_BLOCK_EXCEPTIONS;
+        BEGIN_BLOCK_OBJC_EXCEPTIONS;
         [textField setFont:font.getNSFont()];
-        KWQ_UNBLOCK_EXCEPTIONS;
+        END_BLOCK_OBJC_EXCEPTIONS;
     }
 }
 
@@ -123,7 +123,7 @@ void QLineEdit::setColors(const Color& background, const Color& foreground)
 {
     NSTextField *textField = (NSTextField *)getView();
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     // Below we've added a special case that maps any completely transparent color to white.  This is a workaround for the following
     // AppKit problems: <rdar://problem/3142730> and <rdar://problem/3036580>.  Without this special case we have black
@@ -137,23 +137,23 @@ void QLineEdit::setColors(const Color& background, const Color& foreground)
         bg = Color::white;
     [textField setBackgroundColor:nsColor(bg)];
 
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void QLineEdit::setText(const DOMString& s)
+void QLineEdit::setText(const String& s)
 {
     NSTextField *textField = (NSTextField *)getView();
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [textField setStringValue:s];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-DOMString QLineEdit::text() const
+String QLineEdit::text() const
 {
-    KWQ_BLOCK_EXCEPTIONS;
-    return DOMString([m_controller string]);
-    KWQ_UNBLOCK_EXCEPTIONS;
-    return DOMString();
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return String([m_controller string]);
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return String();
 }
 
 void QLineEdit::setMaxLength(int len)
@@ -165,9 +165,9 @@ bool QLineEdit::isReadOnly() const
 {
     NSTextField *textField = (NSTextField *)getView();
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return ![textField isEditable];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 
     return true;
 }
@@ -175,9 +175,9 @@ bool QLineEdit::isReadOnly() const
 void QLineEdit::setReadOnly(bool flag)
 {
     NSTextField *textField = (NSTextField *)getView();
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [textField setEditable:!flag];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 int QLineEdit::maxLength() const
@@ -193,39 +193,39 @@ void QLineEdit::selectAll()
         // so WebHTMLView will know it's programmatic and not the user clicking.
         setFocus();
     } else {
-        KWQ_BLOCK_EXCEPTIONS;
+        BEGIN_BLOCK_OBJC_EXCEPTIONS;
         NSTextField *textField = (NSTextField *)getView();
         [textField selectText:nil];
-        KWQ_UNBLOCK_EXCEPTIONS;
+        END_BLOCK_OBJC_EXCEPTIONS;
     }
 }
 
 int QLineEdit::selectionStart() const
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     if ([m_controller hasSelection]) {
         return [m_controller selectedRange].location;
     }
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     return -1;
 }
 
-QString QLineEdit::selectedText() const
+DeprecatedString QLineEdit::selectedText() const
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSRange range = [m_controller selectedRange];
     NSString *str = [m_controller string];
-    return QString::fromNSString([str substringWithRange:range]);
-    KWQ_UNBLOCK_EXCEPTIONS;
-    return QString();
+    return DeprecatedString::fromNSString([str substringWithRange:range]);
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return DeprecatedString();
 }
 
 void QLineEdit::setSelection(int start, int length)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSRange tempRange = {start, length}; // 4213314
     [m_controller setSelectedRange:tempRange];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 bool QLineEdit::hasSelectedText() const
@@ -259,7 +259,7 @@ IntSize QLineEdit::sizeForCharacterWidth(int numCharacters) const
     // Note: baselinePosition below also has the height computation.
     NSSize size = textFieldMargins;
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     WebCoreFont font;
     WebCoreInitializeFont(&font);
@@ -283,7 +283,7 @@ IntSize QLineEdit::sizeForCharacterWidth(int numCharacters) const
     size.width += ceilf([renderer floatWidthForRun:&run style:&style] * numCharacters);
 
     return IntSize(size);
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     return IntSize(0, 0);
 }
 
@@ -291,7 +291,7 @@ int QLineEdit::baselinePosition(int height) const
 {
     NSTextField *textField = (NSTextField *)getView();
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSFont *font = [textField font];
     NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
     float lineHeight = [layoutManager defaultLineHeightForFont:font];
@@ -299,26 +299,26 @@ int QLineEdit::baselinePosition(int height) const
     NSRect bounds = NSMakeRect(0, 0, 100, textFieldMargins.height + lineHeight); // bounds width is arbitrary, height same as what sizeForCharacterWidth returns
     NSRect drawingRect = [[textField cell] drawingRectForBounds:bounds];
     return static_cast<int>(ceilf(drawingRect.origin.y - bounds.origin.y + lineHeight + [font descender]));
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 
     return 0;
 }
 
 void QLineEdit::setAlignment(HorizontalAlignment alignment)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSTextField *textField = (NSTextField *)getView();
     [textField setAlignment:KWQNSTextAlignment(alignment)];
 
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void QLineEdit::setWritingDirection(TextDirection direction)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [m_controller setBaseWritingDirection:(direction == RTL ? NSWritingDirectionRightToLeft : NSWritingDirectionLeftToRight)];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 Widget::FocusPolicy QLineEdit::focusPolicy() const
@@ -355,12 +355,12 @@ void QLineEdit::setLiveSearch(bool liveSearch)
     [[searchField cell] setSendsWholeSearchString:!liveSearch];
 }
 
-void QLineEdit::setAutoSaveName(const DOMString& name)
+void QLineEdit::setAutoSaveName(const String& name)
 {
     if (m_type != Search)
         return;
     
-    DOMString autosave;
+    String autosave;
     if (!name.isEmpty())
         autosave = "com.apple.WebKit.searchField:" + name;
     
@@ -393,7 +393,7 @@ void QLineEdit::setMaxResults(int maxResults)
     [searchCell setMaximumRecents:maxResults];
 }
 
-void QLineEdit::setPlaceholderString(const DOM::DOMString& placeholder)
+void QLineEdit::setPlaceholderString(const WebCore::String& placeholder)
 {
     NSTextField *textField = (NSTextField *)getView();
     [[textField cell] setPlaceholderString:placeholder];

@@ -1,5 +1,5 @@
-namespace DOM {
-    class DOMString;
+namespace WebCore {
+    class String;
 }
 
 #include "PlatformString.h"
@@ -12,30 +12,30 @@ class XBLPrototypeBinding;
 class XBLPrototypeMember
 {
 public:
-    XBLPrototypeMember(const DOM::DOMString& name);
+    XBLPrototypeMember(const WebCore::String& name);
     virtual ~XBLPrototypeMember() { delete m_next; }
         
-    void appendData(const DOM::DOMString& data);
+    void appendData(const WebCore::String& data);
         
     void setNext(XBLPrototypeMember* next) { m_next = next; }
     XBLPrototypeMember* next() const { return m_next; }
         
 protected:
-    DOM::DOMString m_name;
-    DOM::DOMString m_data;
+    WebCore::String m_name;
+    WebCore::String m_data;
     XBLPrototypeMember* m_next;
 };
     
 class XBLPrototypeImplementation
 {
 public:
-    XBLPrototypeImplementation(const DOM::DOMString& name, XBLPrototypeBinding* binding);
+    XBLPrototypeImplementation(const WebCore::String& name, XBLPrototypeBinding* binding);
     ~XBLPrototypeImplementation() { delete m_member; }
     
     void setMember(XBLPrototypeMember* m) { m_member = m; }
     
 private:
-    DOM::DOMString m_name;
+    WebCore::String m_name;
     XBLPrototypeBinding* m_binding;
     XBLPrototypeMember* m_member;
     bool m_compiled;
@@ -44,27 +44,27 @@ private:
 class XBLPrototypeParameter
 {
 public:
-    XBLPrototypeParameter(const DOM::DOMString& name) :m_name(name), m_next(0) {}
+    XBLPrototypeParameter(const WebCore::String& name) :m_name(name), m_next(0) {}
     ~XBLPrototypeParameter() { delete m_next; }
     
     XBLPrototypeParameter* next() const { return m_next; }
     void setNext(XBLPrototypeParameter* next) { m_next = next; }
 
 private:
-    DOM::DOMString m_name;
+    WebCore::String m_name;
     XBLPrototypeParameter* m_next;
 };
 
 class XBLPrototypeMethod: public XBLPrototypeMember
 {
 public:
-    XBLPrototypeMethod(const DOM::DOMString& name);
+    XBLPrototypeMethod(const WebCore::String& name);
     virtual ~XBLPrototypeMethod() { delete m_parameter; }
     
     virtual bool isConstructor() const;
     virtual bool isDestructor() const;
     
-    void addParameter(const DOM::DOMString& name);
+    void addParameter(const WebCore::String& name);
     XBLPrototypeParameter* parameter() const { return m_parameter; }
     
 private:
@@ -88,7 +88,7 @@ public:
 class XBLPrototypeField : public XBLPrototypeMember
 {
 public:
-    XBLPrototypeField(const DOM::DOMString& name, bool readonly);
+    XBLPrototypeField(const WebCore::String& name, bool readonly);
     
 private:
     bool m_readonly;
@@ -97,15 +97,15 @@ private:
 class XBLPrototypeProperty : public XBLPrototypeMember
 {
 public:
-    XBLPrototypeProperty(const DOM::DOMString& name, bool readonly, 
-                         const DOM::DOMString& onget,
-                         const DOM::DOMString& onset);
+    XBLPrototypeProperty(const WebCore::String& name, bool readonly, 
+                         const WebCore::String& onget,
+                         const WebCore::String& onset);
     
-    void appendGetterText(const DOM::DOMString& text);
-    void appendSetterText(const DOM::DOMString& text);
+    void appendGetterText(const WebCore::String& text);
+    void appendSetterText(const WebCore::String& text);
 
 private:
-    DOM::DOMString m_setter;
+    WebCore::String m_setter;
     bool m_readonly;
 };
 

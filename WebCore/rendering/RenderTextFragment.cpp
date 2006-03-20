@@ -25,16 +25,16 @@
 #include "config.h"
 #include "RenderTextFragment.h"
 
-using namespace DOM;
+using namespace WebCore;
 
-namespace khtml {
+namespace WebCore {
 
-RenderTextFragment::RenderTextFragment(DOM::NodeImpl* node, DOM::DOMStringImpl* str, int startOffset, int length, RenderObject* firstLetter)
+RenderTextFragment::RenderTextFragment(WebCore::Node* node, WebCore::StringImpl* str, int startOffset, int length, RenderObject* firstLetter)
     : RenderText(node, str ? str->substring(startOffset, length) : 0), m_start(startOffset), m_end(length), m_firstLetter(firstLetter)
 {
 }
 
-RenderTextFragment::RenderTextFragment(DOM::NodeImpl* node, DOM::DOMStringImpl* str)
+RenderTextFragment::RenderTextFragment(WebCore::Node* node, WebCore::StringImpl* str)
     : RenderText(node, str), m_start(0), m_end(str ? str->length() : 0), m_generatedContentStr(str), m_firstLetter(0)
 {
 }
@@ -44,9 +44,9 @@ bool RenderTextFragment::isTextFragment() const
     return true;
 }
 
-PassRefPtr<DOMStringImpl> RenderTextFragment::originalString() const
+PassRefPtr<StringImpl> RenderTextFragment::originalString() const
 {
-    DOM::DOMStringImpl* result = 0;
+    WebCore::StringImpl* result = 0;
     if (element())
         result = element()->string();
     else

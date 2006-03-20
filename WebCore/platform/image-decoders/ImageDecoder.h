@@ -30,12 +30,12 @@
 #include "IntRect.h"
 #include "ImageSource.h"
 #include <kxmlcore/Vector.h>
-#include "Array.h"
+#include "DeprecatedArray.h"
 
 namespace WebCore {
 
-typedef Array<char> ByteArray;
-typedef Array<unsigned> RGBA32Array;
+typedef DeprecatedArray<char> DeprecatedByteArray;
+typedef DeprecatedArray<unsigned> RGBA32Array;
 
 // The RGBA32Buffer object represents the decoded image data in RGBA32 format.  This buffer is what all
 // decoders write a single frame into.  Frames are then instantiated for drawing by being handed this buffer.
@@ -101,7 +101,7 @@ public:
     virtual ~ImageDecoder() {}
 
     // All specific decoder plugins must do something with the data they are given.
-    virtual void setData(const ByteArray& data, bool allDataReceived) { m_data = data; }
+    virtual void setData(const DeprecatedByteArray& data, bool allDataReceived) { m_data = data; }
 
     // Whether or not the size information has been decoded yet.
     virtual bool isSizeAvailable() const = 0;
@@ -126,7 +126,7 @@ public:
     void setFailed() { m_failed = true; }
 
 protected:
-    ByteArray m_data; // The encoded data.
+    DeprecatedByteArray m_data; // The encoded data.
     Vector<RGBA32Buffer> m_frameBufferCache;
     bool m_sizeAvailable;
     mutable bool m_failed;

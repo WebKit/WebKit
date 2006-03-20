@@ -23,12 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <QString.h>
+#include <DeprecatedString.h>
 #include <qtextstream.h>
 #include <q3valuelist.h>
 
 class QMatrix;
-class QStringList;
+class DeprecatedStringList;
 
 namespace WebCore {
     class KCClipData;
@@ -39,14 +39,14 @@ namespace WebCore {
     class FloatRect;
     class IntPoint;
     class IntRect;
-    class NodeImpl;
+    class Node;
     class RenderPath;
     class KCanvasContainer;
 
-// functions used by the main KWQRenderTreeDebug code
+// functions used by the main RenderTreeAsText code
 void write(QTextStream &ts, const WebCore::KCanvasContainer &container, int indent = 0);
 void write(QTextStream &ts, const WebCore::RenderPath &path, int indent = 0);
-void writeRenderResources(QTextStream &ts, WebCore::NodeImpl *parent);
+void writeRenderResources(QTextStream &ts, WebCore::Node *parent);
 
 // helper operators defined used in various classes to dump the render tree. 
 QTextStream &operator<<(QTextStream &ts, const QMatrix &);
@@ -60,7 +60,7 @@ QTextStream &operator<<(QTextStream &ts, const WebCore::FloatPoint &);
 // helper operators specific to dumping the render tree. these are used in various classes to dump the render tree
 // these could be defined in separate namespace to avoid matching these generic signatures unintentionally.
     
-QTextStream &operator<<(QTextStream &ts, const QStringList &l);
+QTextStream &operator<<(QTextStream &ts, const DeprecatedStringList &l);
     
 template<typename Item>
 QTextStream &operator<<(QTextStream &ts, const Q3ValueList<Item*> &l)

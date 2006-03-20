@@ -32,7 +32,7 @@ namespace WebCore {
 
 class InsertParagraphSeparatorCommand : public CompositeEditCommand {
 public:
-    InsertParagraphSeparatorCommand(DocumentImpl*);
+    InsertParagraphSeparatorCommand(Document*);
 
     virtual void doApply();
 
@@ -42,7 +42,7 @@ private:
 
     virtual bool preservesTypingStyle() const;
 
-    RefPtr<CSSMutableStyleDeclarationImpl> m_style;
+    RefPtr<CSSMutableStyleDeclaration> m_style;
 };
 
 }

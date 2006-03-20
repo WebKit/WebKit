@@ -22,14 +22,14 @@
 #include "xmlhttprequest.h"
 
 #include "Cache.h"
-#include "DOMImplementationImpl.h"
+#include "DOMImplementation.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "KWQLoader.h"
 #include "dom2_eventsimpl.h"
 #include "PlatformString.h"
 #include "formdata.h"
-#include "html_documentimpl.h"
+#include "HTMLDocument.h"
 #include "kjs_binding.h"
 #include "TransferJob.h"
 #include <kjs/protect.h>
@@ -44,13 +44,13 @@ using namespace EventNames;
 
 typedef HashSet<XMLHttpRequest*> RequestsSet;
 
-static HashMap<DocumentImpl*, RequestsSet*>& requestsByDocument()
+static HashMap<Document*, RequestsSet*>& requestsByDocument()
 {
-    static HashMap<DocumentImpl*, RequestsSet*> map;
+    static HashMap<Document*, RequestsSet*> map;
     return map;
 }
 
-static void addToRequestsByDocument(DocumentImpl* doc, XMLHttpRequest* req)
+static void addToRequestsByDocument(Document* doc, XMLHttpRequest* req)
 {
     ASSERT(doc);
     ASSERT(req);
@@ -65,7 +65,7 @@ static void addToRequestsByDocument(DocumentImpl* doc, XMLHttpRequest* req)
     requests->add(req);
 }
 
-static void removeFromRequestsByDocument(DocumentImpl* doc, XMLHttpRequest* req)
+static void removeFromRequestsByDocument(Document* doc, XMLHttpRequest* req)
 {
     ASSERT(doc);
     ASSERT(req);
@@ -80,12 +80,12 @@ static void removeFromRequestsByDocument(DocumentImpl* doc, XMLHttpRequest* req)
     }
 }
 
-static inline QString getMIMEType(const QString& contentTypeString)
+static inline DeprecatedString getMIMEType(const DeprecatedString& contentTypeString)
 {
-    return QStringList::split(";", contentTypeString, true)[0].stripWhiteSpace();
+    return DeprecatedStringList::split(";", contentTypeString, true)[0].stripWhiteSpace();
 }
 
-static QString getCharset(const QString& contentTypeString)
+static DeprecatedString getCharset(const DeprecatedString& contentTypeString)
 {
     int pos = 0;
     int length = (int)contentTypeString.length();
@@ -93,7 +93,7 @@ static QString getCharset(const QString& contentTypeString)
     while (pos < length) {
         pos = contentTypeString.find("charset", pos, false);
         if (pos <= 0)
-            return QString();
+            return DeprecatedString();
         
         // is what we found a beginning of a word?
         if (contentTypeString[pos-1] > ' ' && contentTypeString[pos-1] != ';') {
@@ -121,7 +121,7 @@ static QString getCharset(const QString& contentTypeString)
         return contentTypeString.mid(pos, endpos-pos);
     }
     
-    return QString();
+    return DeprecatedString();
 }
 
 XMLHttpRequestState XMLHttpRequest::getReadyState() const
@@ -134,7 +134,7 @@ String XMLHttpRequest::getResponseText() const
     return response;
 }
 
-DocumentImpl* XMLHttpRequest::getResponseXML() const
+Document* XMLHttpRequest::getResponseXML() const
 {
     if (state != Completed)
         return 0;
@@ -173,7 +173,7 @@ void XMLHttpRequest::setOnLoadListener(EventListener* eventListener)
     m_onLoadListener = eventListener;
 }
 
-XMLHttpRequest::XMLHttpRequest(DocumentImpl *d)
+XMLHttpRequest::XMLHttpRequest(Document *d)
     : doc(d)
     , async(true)
     , job(0)
@@ -203,14 +203,14 @@ void XMLHttpRequest::callReadyStateChangeListener()
 {
     if (doc && doc->frame() && m_onReadyStateChangeListener) {
         ExceptionCode ec;
-        RefPtr<EventImpl> ev = doc->createEvent("HTMLEvents", ec);
+        RefPtr<Event> ev = doc->createEvent("HTMLEvents", ec);
         ev->initEvent(readystatechangeEvent, true, true);
         m_onReadyStateChangeListener->handleEvent(ev.get(), true);
     }
     
     if (doc && doc->frame() && state == Completed && m_onLoadListener) {
         ExceptionCode ec;
-        RefPtr<EventImpl> ev = doc->createEvent("HTMLEvents", ec);
+        RefPtr<Event> ev = doc->createEvent("HTMLEvents", ec);
         ev->initEvent(loadEvent, true, true);
         m_onLoadListener->handleEvent(ev.get(), true);
     }
@@ -239,9 +239,9 @@ void XMLHttpRequest::open(const String& _method, const KURL& _url, bool _async, 
     aborted = false;
 
     // clear stuff from possible previous load
-    requestHeaders = QString();
-    responseHeaders = QString();
-    response = QString();
+    requestHeaders = DeprecatedString();
+    responseHeaders = DeprecatedString();
+    response = DeprecatedString();
     createdDocument = false;
     responseXML = 0;
 
@@ -256,12 +256,12 @@ void XMLHttpRequest::open(const String& _method, const KURL& _url, bool _async, 
     url = _url;
 
     if (!user.isNull())
-        url.setUser(user.qstring());
+        url.setUser(user.deprecatedString());
 
     if (!password.isNull())
-        url.setPass(password.qstring());
+        url.setPass(password.deprecatedString());
 
-    method = _method.qstring();
+    method = _method.deprecatedString();
     async = _async;
 
     changeState(Loading);
@@ -282,8 +282,8 @@ void XMLHttpRequest::send(const String& _body)
     aborted = false;
 
     if (!_body.isNull() && method.lower() != "get" && method.lower() != "head" && (url.protocol().lower() == "http" || url.protocol().lower() == "https")) {
-        QString contentType = getRequestHeader("Content-Type");
-        QString charset;
+        DeprecatedString contentType = getRequestHeader("Content-Type");
+        DeprecatedString charset;
         if (contentType.isEmpty())
             setRequestHeader("Content-Type", "application/xml");
         else
@@ -296,7 +296,7 @@ void XMLHttpRequest::send(const String& _body)
         if (!encoding.isValid())   // FIXME: report an error?
             encoding = TextEncoding(UTF8Encoding);
 
-        job = new TransferJob(async ? this : 0, method, url, encoding.fromUnicode(_body.qstring()));
+        job = new TransferJob(async ? this : 0, method, url, encoding.fromUnicode(_body.deprecatedString()));
     } else {
         // HEAD requests just crash; see <rdar://4460899> and the commented out tests in http/tests/xmlhttprequest/methods.html.
         if (method.lower() == "head")
@@ -308,9 +308,9 @@ void XMLHttpRequest::send(const String& _body)
         job->addMetaData("customHTTPHeader", requestHeaders);
 
     if (!async) {
-        ByteArray data;
+        DeprecatedByteArray data;
         KURL finalURL;
-        QString headers;
+        DeprecatedString headers;
 
         {
             // avoid deadlock in case the loader wants to use JS on a background thread
@@ -358,19 +358,19 @@ void XMLHttpRequest::abort()
 
 void XMLHttpRequest::overrideMIMEType(const String& override)
 {
-    MIMETypeOverride = override.qstring();
+    MIMETypeOverride = override.deprecatedString();
 }
 
 void XMLHttpRequest::setRequestHeader(const String& name, const String& value)
 {
     if (requestHeaders.length() > 0)
         requestHeaders += "\r\n";
-    requestHeaders += name.qstring();
+    requestHeaders += name.deprecatedString();
     requestHeaders += ": ";
-    requestHeaders += value.qstring();
+    requestHeaders += value.deprecatedString();
 }
 
-QString XMLHttpRequest::getRequestHeader(const QString& name) const
+DeprecatedString XMLHttpRequest::getRequestHeader(const DeprecatedString& name) const
 {
     return getSpecificHeader(requestHeaders, name);
 }
@@ -389,15 +389,15 @@ String XMLHttpRequest::getAllResponseHeaders() const
 
 String XMLHttpRequest::getResponseHeader(const String& name) const
 {
-    return getSpecificHeader(responseHeaders, name.qstring());
+    return getSpecificHeader(responseHeaders, name.deprecatedString());
 }
 
-QString XMLHttpRequest::getSpecificHeader(const QString& headers, const QString& name)
+DeprecatedString XMLHttpRequest::getSpecificHeader(const DeprecatedString& headers, const DeprecatedString& name)
 {
     if (headers.isEmpty())
-        return QString();
+        return DeprecatedString();
 
-    QRegExp headerLinePattern(name + ":", false);
+    RegularExpression headerLinePattern(name + ":", false);
 
     int matchLength;
     int headerLinePos = headerLinePattern.match(headers, 0, &matchLength);
@@ -407,7 +407,7 @@ QString XMLHttpRequest::getSpecificHeader(const QString& headers, const QString&
         headerLinePos = headerLinePattern.match(headers, headerLinePos + 1, &matchLength);
     }
     if (headerLinePos == -1)
-        return QString();
+        return DeprecatedString();
     
     int endOfLine = headers.find("\n", headerLinePos + matchLength);
     return headers.mid(headerLinePos + matchLength, endOfLine - (headerLinePos + matchLength)).stripWhiteSpace();
@@ -415,12 +415,12 @@ QString XMLHttpRequest::getSpecificHeader(const QString& headers, const QString&
 
 bool XMLHttpRequest::responseIsXML() const
 {
-    QString mimeType = getMIMEType(MIMETypeOverride);
+    DeprecatedString mimeType = getMIMEType(MIMETypeOverride);
     if (mimeType.isEmpty())
-        mimeType = getMIMEType(getResponseHeader("Content-Type").qstring());
+        mimeType = getMIMEType(getResponseHeader("Content-Type").deprecatedString());
     if (mimeType.isEmpty())
         mimeType = "text/xml";
-    return DOMImplementationImpl::isXMLMIMEType(mimeType);
+    return DOMImplementation::isXMLMIMEType(mimeType);
 }
 
 int XMLHttpRequest::getStatus() const
@@ -429,13 +429,13 @@ int XMLHttpRequest::getStatus() const
         return -1;
   
     int endOfLine = responseHeaders.find("\n");
-    QString firstLine = endOfLine == -1 ? responseHeaders : responseHeaders.left(endOfLine);
+    DeprecatedString firstLine = endOfLine == -1 ? responseHeaders : responseHeaders.left(endOfLine);
     int codeStart = firstLine.find(" ");
     int codeEnd = firstLine.find(" ", codeStart + 1);
     if (codeStart == -1 || codeEnd == -1)
         return -1;
   
-    QString number = firstLine.mid(codeStart + 1, codeEnd - (codeStart + 1));
+    DeprecatedString number = firstLine.mid(codeStart + 1, codeEnd - (codeStart + 1));
     bool ok = false;
     int code = number.toInt(&ok);
     if (!ok)
@@ -449,17 +449,17 @@ String XMLHttpRequest::getStatusText() const
         return String();
   
     int endOfLine = responseHeaders.find("\n");
-    QString firstLine = endOfLine == -1 ? responseHeaders : responseHeaders.left(endOfLine);
+    DeprecatedString firstLine = endOfLine == -1 ? responseHeaders : responseHeaders.left(endOfLine);
     int codeStart = firstLine.find(" ");
     int codeEnd = firstLine.find(" ", codeStart + 1);
     if (codeStart == -1 || codeEnd == -1)
         return String();
   
-    QString statusText = firstLine.mid(codeEnd + 1, endOfLine - (codeEnd + 1)).stripWhiteSpace();
+    DeprecatedString statusText = firstLine.mid(codeEnd + 1, endOfLine - (codeEnd + 1)).stripWhiteSpace();
     return String(statusText);
 }
 
-void XMLHttpRequest::processSyncLoadResults(const ByteArray &data, const KURL &finalURL, const QString &headers)
+void XMLHttpRequest::processSyncLoadResults(const DeprecatedByteArray &data, const KURL &finalURL, const DeprecatedString &headers)
 {
   if (!urlMatchesDocumentDomain(finalURL)) {
     abort();
@@ -524,7 +524,7 @@ void XMLHttpRequest::receivedData(TransferJob*, const char *data, int len)
     if (!decoder) {
         encoding = getCharset(MIMETypeOverride);
         if (encoding.isEmpty())
-            encoding = getCharset(getResponseHeader("Content-Type").qstring());
+            encoding = getCharset(getResponseHeader("Content-Type").deprecatedString());
         if (encoding.isEmpty() && job)
             encoding = job->queryMetaData("charset");
     
@@ -541,7 +541,7 @@ void XMLHttpRequest::receivedData(TransferJob*, const char *data, int len)
     if (len == -1)
         len = strlen(data);
 
-    QString decoded = decoder->decode(data, len);
+    DeprecatedString decoded = decoder->decode(data, len);
 
     response += decoded;
 
@@ -554,7 +554,7 @@ void XMLHttpRequest::receivedData(TransferJob*, const char *data, int len)
     }
 }
 
-void XMLHttpRequest::cancelRequests(DocumentImpl* doc)
+void XMLHttpRequest::cancelRequests(Document* doc)
 {
     RequestsSet* requests = requestsByDocument().get(doc);
     if (!requests)
@@ -565,7 +565,7 @@ void XMLHttpRequest::cancelRequests(DocumentImpl* doc)
         (*it)->abort();
 }
 
-void XMLHttpRequest::detachRequests(DocumentImpl* doc)
+void XMLHttpRequest::detachRequests(Document* doc)
 {
     RequestsSet* requests = requestsByDocument().get(doc);
     if (!requests)

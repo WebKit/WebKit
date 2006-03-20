@@ -25,12 +25,12 @@
 
 namespace WebCore {
 
-    class EventImpl;
+    class Event;
 
     class EventListener : public Shared<EventListener> {
     public:
         virtual ~EventListener() { }
-        virtual void handleEvent(EventImpl*, bool isWindowEvent) = 0;
+        virtual void handleEvent(Event*, bool isWindowEvent) = 0;
         virtual bool isHTMLEventListener() const { return false; }
     };
 

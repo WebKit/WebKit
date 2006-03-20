@@ -34,7 +34,7 @@ namespace WebCore {
 class RenderTableRow : public RenderContainer
 {
 public:
-    RenderTableRow(NodeImpl*);
+    RenderTableRow(Node*);
 
     virtual void destroy();
     virtual void setStyle(RenderStyle*);

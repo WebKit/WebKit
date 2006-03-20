@@ -26,27 +26,27 @@
 #import "config.h"
 #import "FrameView.h"
 
-#import "DocumentImpl.h"
-#import "KWQExceptions.h"
-#import "MacFrame.h"
+#import "Document.h"
+#import "BlockExceptions.h"
+#import "FrameMac.h"
 #import "WebCoreFrameBridge.h"
-#import "render_object.h"
+#import "RenderObject.h"
 
 namespace WebCore {
 
 void FrameView::updateBorder()
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [Mac(m_frame.get())->bridge() setHasBorder:hasBorder()];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void FrameView::updateDashboardRegions()
 {
-    DocumentImpl* document = m_frame->document();
+    Document* document = m_frame->document();
     if (document->hasDashboardRegions()) {
-        QValueList<DashboardRegionValue> newRegions = document->renderer()->computeDashboardRegions();
-        QValueList<DashboardRegionValue> currentRegions = document->dashboardRegions();
+        DeprecatedValueList<DashboardRegionValue> newRegions = document->renderer()->computeDashboardRegions();
+        DeprecatedValueList<DashboardRegionValue> currentRegions = document->dashboardRegions();
         document->setDashboardRegions(newRegions);
         Mac(m_frame.get())->dashboardRegionsChanged();
     }

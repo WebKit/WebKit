@@ -60,8 +60,8 @@ public:
     const RenderPath *activeClient() const { return m_activeClient;}
     void setActiveClient(const RenderPath *client) { m_activeClient = client; }
 
-    QString idInRegistry() const {  return m_registryId; }
-    void setIdInRegistry(const QString& newId) { m_registryId = newId; } 
+    DeprecatedString idInRegistry() const {  return m_registryId; }
+    void setIdInRegistry(const DeprecatedString& newId) { m_registryId = newId; } 
     
     virtual KCPaintServerType type() const = 0;
     
@@ -79,7 +79,7 @@ public:
     virtual void renderPath(KRenderingDeviceContext*, const RenderPath*, KCPaintTargetType) const = 0;
 private:
     const RenderPath *m_activeClient;
-    QString m_registryId;
+    DeprecatedString m_registryId;
     bool m_paintingText;
 };
 

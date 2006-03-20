@@ -26,7 +26,7 @@
 #import "config.h"
 #import "PlugInInfoStore.h"
 
-#import "KWQExceptions.h"
+#import "BlockExceptions.h"
 #import "Logging.h"
 #import "WebCoreViewFactory.h"
 
@@ -36,7 +36,7 @@ PluginInfo *PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned index)
 {
     PluginInfo *pluginInfo = new PluginInfo;
     
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     id <WebCorePluginInfo> plugin = [[[WebCoreViewFactory sharedFactory] pluginsInfo] objectAtIndex:index];
     
@@ -56,7 +56,7 @@ PluginInfo *PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned index)
     
     return pluginInfo;
 
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     
     if (pluginInfo && pluginInfo->mimes)
         deleteAllValues(pluginInfo->mimes);
@@ -67,18 +67,18 @@ PluginInfo *PlugInInfoStore::createPluginInfoForPluginAtIndex(unsigned index)
 
 unsigned PlugInInfoStore::pluginCount() const
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return [[[WebCoreViewFactory sharedFactory] pluginsInfo] count];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     
     return 0;
 }
 
 void refreshPlugins(bool reloadOpenPages)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [[WebCoreViewFactory sharedFactory] refreshPlugins:reloadOpenPages];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 }

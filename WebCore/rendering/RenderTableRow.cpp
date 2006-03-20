@@ -27,14 +27,14 @@
 #include "config.h"
 #include "RenderTableRow.h"
 #include "RenderTableCell.h"
-#include "DocumentImpl.h"
+#include "Document.h"
 #include "htmlnames.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderTableRow::RenderTableRow(NodeImpl* node)
+RenderTableRow::RenderTableRow(Node* node)
     : RenderContainer(node)
 {
     // init RenderObject attributes

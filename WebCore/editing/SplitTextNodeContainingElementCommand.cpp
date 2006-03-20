@@ -26,14 +26,14 @@
 #include "config.h"
 #include "SplitTextNodeContainingElementCommand.h"
 
-#include "TextImpl.h"
+#include "Text.h"
 #include "dom_elementimpl.h"
-#include "render_object.h"
+#include "RenderObject.h"
 #include <kxmlcore/Assertions.h>
 
 namespace WebCore {
 
-SplitTextNodeContainingElementCommand::SplitTextNodeContainingElementCommand(DocumentImpl *document, TextImpl *text, int offset)
+SplitTextNodeContainingElementCommand::SplitTextNodeContainingElementCommand(Document *document, Text *text, int offset)
     : CompositeEditCommand(document), m_text(text), m_offset(offset)
 {
     ASSERT(m_text);
@@ -47,13 +47,13 @@ void SplitTextNodeContainingElementCommand::doApply()
 
     splitTextNode(m_text.get(), m_offset);
     
-    NodeImpl *parentNode = m_text->parentNode();
+    Node *parentNode = m_text->parentNode();
     if (!parentNode->renderer() || !parentNode->renderer()->isInline()) {
-        wrapContentsInDummySpan(static_cast<ElementImpl *>(parentNode));
+        wrapContentsInDummySpan(static_cast<Element *>(parentNode));
         parentNode = parentNode->firstChild();
     }
 
-    splitElement(static_cast<ElementImpl *>(parentNode), m_text.get());
+    splitElement(static_cast<Element *>(parentNode), m_text.get());
 }
 
 }

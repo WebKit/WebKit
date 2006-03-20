@@ -47,7 +47,7 @@ class KCanvasRenderingStyle;
 class KCanvasContainer : public RenderContainer
 {
 public:
-    KCanvasContainer(SVGStyledElementImpl *node);
+    KCanvasContainer(SVGStyledElement *node);
     virtual ~KCanvasContainer();
 
     // Some containers do not want it's children

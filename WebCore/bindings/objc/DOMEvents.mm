@@ -29,81 +29,81 @@
 #import "DOMEventsInternal.h"
 #import "DOMInternal.h"
 #import "DOMViewsInternal.h"
-#import "DocumentImpl.h"
+#import "Document.h"
 #import "dom2_eventsimpl.h"
-#import "dom2_viewsimpl.h"
+#import "AbstractView.h"
 #import <kxmlcore/Assertions.h>
 
-using WebCore::EventImpl;
+using WebCore::Event;
 using WebCore::ExceptionCode;
-using WebCore::MouseEventImpl;
-using WebCore::MutationEventImpl;
-using WebCore::UIEventImpl;
+using WebCore::MouseEvent;
+using WebCore::MutationEvent;
+using WebCore::UIEvent;
 
-ALLOW_DOM_CAST(EventImpl)
+ALLOW_DOM_CAST(Event)
 
 @implementation DOMEvent
 
 - (NSString *)type
 {
-    return [self _eventImpl]->type();
+    return [self _event]->type();
 }
 
 - (id <DOMEventTarget>)target
 {
-    return [DOMNode _nodeWithImpl:[self _eventImpl]->target()];
+    return [DOMNode _nodeWith:[self _event]->target()];
 }
 
 - (id <DOMEventTarget>)currentTarget
 {
-    return [DOMNode _nodeWithImpl:[self _eventImpl]->currentTarget()];
+    return [DOMNode _nodeWith:[self _event]->currentTarget()];
 }
 
 - (unsigned short)eventPhase
 {
-    return [self _eventImpl]->eventPhase();
+    return [self _event]->eventPhase();
 }
 
 - (BOOL)bubbles
 {
-    return [self _eventImpl]->bubbles();
+    return [self _event]->bubbles();
 }
 
 - (BOOL)cancelable
 {
-    return [self _eventImpl]->cancelable();
+    return [self _event]->cancelable();
 }
 
 - (DOMTimeStamp)timeStamp
 {
-    return [self _eventImpl]->timeStamp();
+    return [self _event]->timeStamp();
 }
 
 - (void)stopPropagation
 {
-    [self _eventImpl]->stopPropagation();
+    [self _event]->stopPropagation();
 }
 
 - (void)preventDefault
 {
-    [self _eventImpl]->preventDefault();
+    [self _event]->preventDefault();
 }
 
 - (void)initEvent:(NSString *)eventTypeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg
 {
-    [self _eventImpl]->initEvent(eventTypeArg, canBubbleArg, cancelableArg);
+    [self _event]->initEvent(eventTypeArg, canBubbleArg, cancelableArg);
 }
 
 @end
 
 @implementation DOMEvent (WebCoreInternal)
 
-- (EventImpl *)_eventImpl
+- (Event *)_event
 {
-    return DOM_cast<EventImpl *>(_internal);
+    return DOM_cast<Event *>(_internal);
 }
 
-- (id)_initWithEventImpl:(EventImpl *)impl
+- (id)_initWithEvent:(Event *)impl
 {
     ASSERT(impl);
 
@@ -114,7 +114,7 @@ ALLOW_DOM_CAST(EventImpl)
     return self;
 }
 
-+ (DOMEvent *)_eventWithImpl:(EventImpl *)impl
++ (DOMEvent *)_eventWith:(Event *)impl
 {
     if (!impl)
         return nil;
@@ -134,139 +134,139 @@ ALLOW_DOM_CAST(EventImpl)
     } else {
         wrapperClass = [DOMEvent class];
     }
-    return [[[wrapperClass alloc] _initWithEventImpl:impl] autorelease];
+    return [[[wrapperClass alloc] _initWithEvent:impl] autorelease];
 }
 
 @end
 
 @implementation DOMMouseEvent
 
-- (MouseEventImpl *)_mouseEventImpl
+- (MouseEvent *)_mouseEvent
 {
-    return static_cast<MouseEventImpl *>(DOM_cast<EventImpl *>(_internal));
+    return static_cast<MouseEvent *>(DOM_cast<Event *>(_internal));
 }
 
 - (int)screenX
 {
-    return [self _mouseEventImpl]->screenX();
+    return [self _mouseEvent]->screenX();
 }
 
 - (int)screenY
 {
-    return [self _mouseEventImpl]->screenY();
+    return [self _mouseEvent]->screenY();
 }
 
 - (int)clientX
 {
-    return [self _mouseEventImpl]->clientX();
+    return [self _mouseEvent]->clientX();
 }
 
 - (int)clientY
 {
-    return [self _mouseEventImpl]->clientY();
+    return [self _mouseEvent]->clientY();
 }
 
 - (BOOL)ctrlKey
 {
-    return [self _mouseEventImpl]->ctrlKey();
+    return [self _mouseEvent]->ctrlKey();
 }
 
 - (BOOL)shiftKey
 {
-    return [self _mouseEventImpl]->shiftKey();
+    return [self _mouseEvent]->shiftKey();
 }
 
 - (BOOL)altKey
 {
-    return [self _mouseEventImpl]->altKey();
+    return [self _mouseEvent]->altKey();
 }
 
 - (BOOL)metaKey
 {
-    return [self _mouseEventImpl]->metaKey();
+    return [self _mouseEvent]->metaKey();
 }
 
 - (unsigned short)button
 {
-    return [self _mouseEventImpl]->button();
+    return [self _mouseEvent]->button();
 }
 
 - (id <DOMEventTarget>)relatedTarget
 {
-    return [DOMNode _nodeWithImpl:[self _mouseEventImpl]->relatedTarget()];
+    return [DOMNode _nodeWith:[self _mouseEvent]->relatedTarget()];
 }
 
 - (void)initMouseEvent:(NSString *)typeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg :(DOMAbstractView *)viewArg :(int)detailArg :(int)screenXArg :(int)screenYArg :(int)clientX :(int)clientY :(BOOL)ctrlKeyArg :(BOOL)altKeyArg :(BOOL)shiftKeyArg :(BOOL)metaKeyArg :(unsigned short)buttonArg :(id <DOMEventTarget>)relatedTargetArg
 {
     DOMNode *relatedTarget = relatedTargetArg;
-    [self _mouseEventImpl]->initMouseEvent(typeArg, canBubbleArg, cancelableArg,
-        [viewArg _abstractViewImpl], detailArg, screenXArg, screenYArg, clientX, clientY,
+    [self _mouseEvent]->initMouseEvent(typeArg, canBubbleArg, cancelableArg,
+        [viewArg _abstractView], detailArg, screenXArg, screenYArg, clientX, clientY,
         shiftKeyArg, ctrlKeyArg, altKeyArg, metaKeyArg, buttonArg,
-        [relatedTarget _nodeImpl]);
+        [relatedTarget _node]);
 }
 
 @end
 
 @implementation DOMMutationEvent
 
-- (MutationEventImpl *)_mutationEventImpl
+- (MutationEvent *)_mutationEvent
 {
-    return static_cast<MutationEventImpl *>(DOM_cast<EventImpl *>(_internal));
+    return static_cast<MutationEvent *>(DOM_cast<Event *>(_internal));
 }
 
 - (DOMNode *)relatedNode
 {
-    return [DOMNode _nodeWithImpl:[self _mutationEventImpl]->relatedNode()];
+    return [DOMNode _nodeWith:[self _mutationEvent]->relatedNode()];
 }
 
 - (NSString *)prevValue
 {
-    return [self _mutationEventImpl]->prevValue();
+    return [self _mutationEvent]->prevValue();
 }
 
 - (NSString *)newValue
 {
-    return [self _mutationEventImpl]->newValue();
+    return [self _mutationEvent]->newValue();
 }
 
 - (NSString *)attrName
 {
-    return [self _mutationEventImpl]->attrName();
+    return [self _mutationEvent]->attrName();
 }
 
 - (unsigned short)attrChange
 {
-    return [self _mutationEventImpl]->attrChange();
+    return [self _mutationEvent]->attrChange();
 }
 
 - (void)initMutationEvent:(NSString *)typeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg :(DOMNode *)relatedNodeArg :(NSString *)prevValueArg :(NSString *)newValueArg :(NSString *)attrNameArg :(unsigned short)attrChangeArg
 {
-    [self _mutationEventImpl]->initMutationEvent(typeArg, canBubbleArg, cancelableArg,
-        [relatedNodeArg _nodeImpl], prevValueArg, newValueArg, attrNameArg, attrChangeArg);
+    [self _mutationEvent]->initMutationEvent(typeArg, canBubbleArg, cancelableArg,
+        [relatedNodeArg _node], prevValueArg, newValueArg, attrNameArg, attrChangeArg);
 }
 
 @end
 
 @implementation DOMUIEvent
 
-- (UIEventImpl *)_UIEventImpl
+- (UIEvent *)_UIEvent
 {
-    return static_cast<UIEventImpl *>(DOM_cast<EventImpl *>(_internal));
+    return static_cast<UIEvent *>(DOM_cast<Event *>(_internal));
 }
 
 - (DOMAbstractView *)view
 {
-    return [DOMAbstractView _abstractViewWithImpl:[self _UIEventImpl]->view()];
+    return [DOMAbstractView _abstractViewWith:[self _UIEvent]->view()];
 }
 
 - (int)detail
 {
-    return [self _UIEventImpl]->detail();
+    return [self _UIEvent]->detail();
 }
 
 - (void)initUIEvent:(NSString *)typeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg :(DOMAbstractView *)viewArg :(int)detailArg
 {
-    [self _UIEventImpl]->initUIEvent(typeArg, canBubbleArg, cancelableArg, [viewArg _abstractViewImpl], detailArg);
+    [self _UIEvent]->initUIEvent(typeArg, canBubbleArg, cancelableArg, [viewArg _abstractView], detailArg);
 }
 
 @end
@@ -276,9 +276,9 @@ ALLOW_DOM_CAST(EventImpl)
 - (DOMEvent *)createEvent:(NSString *)eventType
 {
     ExceptionCode ec = 0;
-    RefPtr<EventImpl> event = [self _documentImpl]->createEvent(eventType, ec);
+    RefPtr<Event> event = [self _document]->createEvent(eventType, ec);
     raiseOnDOMError(ec);
-    return [DOMEvent _eventWithImpl:event.get()];
+    return [DOMEvent _eventWith:event.get()];
 }
 
 @end

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "Cursor.h"
 
-#import "KWQExceptions.h"
+#import "BlockExceptions.h"
 #import "FoundationExtras.h"
 #import "Image.h"
 
@@ -47,9 +47,9 @@ static NSCursor* createCustomCursor(Image* image)
     NSImage* img = image->getNSImage();
     if (!img)
         return 0;
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return [[NSCursor alloc] initWithImage:img hotSpot:NSZeroPoint];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     return 0;
 }
 
@@ -57,7 +57,7 @@ static NSCursor* createCustomCursor(Image* image)
 // up at process exit time.
 static NSCursor* leakNamedCursor(const char* name, int x, int y)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSString* resourceName = [[NSString alloc] initWithUTF8String:name];
     NSImage* cursorImage = [[NSImage alloc] initWithContentsOfFile:
         [[NSBundle bundleForClass:[WebCoreCursorBundle class]]
@@ -70,7 +70,7 @@ static NSCursor* leakNamedCursor(const char* name, int x, int y)
         [cursorImage release];
     }
     return cursor;
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     return 0;
 }
 

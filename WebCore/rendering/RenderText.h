@@ -25,8 +25,8 @@
 #ifndef KHTML_RenderText_H
 #define KHTML_RenderText_H
 
-#include "TextImpl.h"
-#include "render_object.h"
+#include "Text.h"
+#include "RenderObject.h"
 #include <assert.h>
 #include <kxmlcore/PassRefPtr.h>
 
@@ -45,7 +45,7 @@ class RenderText : public RenderObject {
     friend class InlineTextBox;
 
 public:
-    RenderText(NodeImpl*, StringImpl*);
+    RenderText(Node*, StringImpl*);
 
     virtual bool isTextFragment() const;
     virtual PassRefPtr<StringImpl> originalString() const;
@@ -72,8 +72,8 @@ public:
     virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty,
                              HitTestAction hitTestAction) { assert(false); return false; }
 
-    virtual void absoluteRects(QValueList<IntRect>& rects, int _tx, int _ty);
-    virtual QValueList<IntRect> RenderText::lineBoxRects();
+    virtual void absoluteRects(DeprecatedValueList<IntRect>& rects, int _tx, int _ty);
+    virtual DeprecatedValueList<IntRect> RenderText::lineBoxRects();
 
     virtual VisiblePosition positionForCoordinates(int x, int y);
 
@@ -116,7 +116,7 @@ public:
     virtual short verticalPositionHint( bool firstLine ) const;
 
     void setText(StringImpl*, bool force = false);
-    void setTextWithOffset(StringImpl*, uint offset, uint len, bool force = false);
+    void setTextWithOffset(StringImpl*, unsigned offset, unsigned len, bool force = false);
 
     virtual bool canBeSelectionLeaf() const { return true; }
     virtual SelectionState selectionState() const { return m_selectionState; }
@@ -132,7 +132,7 @@ public:
 
     const Font* font(bool firstLine) const;
 
-    TextImpl *element() const { return static_cast<TextImpl*>(RenderObject::element()); }
+    Text *element() const { return static_cast<Text*>(RenderObject::element()); }
 
     InlineTextBox* firstTextBox() const { return m_firstTextBox; }
     InlineTextBox* lastTextBox() const { return m_lastTextBox; }

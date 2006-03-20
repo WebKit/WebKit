@@ -26,14 +26,14 @@
 #include "config.h"
 #include "EditCommand.h"
 
-#include "DocumentImpl.h"
+#include "Document.h"
 #include "Frame.h"
 #include "SelectionController.h"
 #include "VisiblePosition.h"
-#include "css_computedstyle.h"
+#include "CSSComputedStyleDeclaration.h"
 #include "css_valueimpl.h"
 #include "dom2_eventsimpl.h"
-#include "dom_position.h"
+#include "Position.h"
 #include "EventNames.h"
 #include "htmlediting.h"
 #include <kxmlcore/Assertions.h>
@@ -100,7 +100,7 @@ EditAction EditCommandPtr::editingAction() const
     return get()->editingAction();
 }
 
-DocumentImpl * const EditCommandPtr::document() const
+Document * const EditCommandPtr::document() const
 {
     IF_IMPL_NULL_RETURN_ARG(0);
     return get()->document();
@@ -156,13 +156,13 @@ void EditCommandPtr::setEndingSelection(const Position &p, EAffinity affinity) c
     get()->setEndingSelection(s);
 }
 
-CSSMutableStyleDeclarationImpl *EditCommandPtr::typingStyle() const
+CSSMutableStyleDeclaration *EditCommandPtr::typingStyle() const
 {
     IF_IMPL_NULL_RETURN_ARG(0);
     return get()->typingStyle();
 }
 
-void EditCommandPtr::setTypingStyle(PassRefPtr<CSSMutableStyleDeclarationImpl> style) const
+void EditCommandPtr::setTypingStyle(PassRefPtr<CSSMutableStyleDeclaration> style) const
 {
     IF_IMPL_NULL_RETURN;
     get()->setTypingStyle(style);
@@ -186,7 +186,7 @@ EditCommandPtr &EditCommandPtr::emptyCommand()
     return m_emptyCommand;
 }
 
-EditCommand::EditCommand(DocumentImpl *document) 
+EditCommand::EditCommand(Document *document) 
     : m_document(document), m_state(NotApplied), m_parent(0)
 {
     ASSERT(m_document);
@@ -311,7 +311,7 @@ void EditCommand::setEndingSelection(const Position &p, EAffinity affinity)
         cmd->m_endingSelection = s;
 }
 
-void EditCommand::setTypingStyle(PassRefPtr<CSSMutableStyleDeclarationImpl> style)
+void EditCommand::setTypingStyle(PassRefPtr<CSSMutableStyleDeclaration> style)
 {
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
@@ -340,13 +340,13 @@ bool EditCommand::isTypingCommand() const
     return false;
 }
 
-PassRefPtr<CSSMutableStyleDeclarationImpl> EditCommand::styleAtPosition(const Position &pos)
+PassRefPtr<CSSMutableStyleDeclaration> EditCommand::styleAtPosition(const Position &pos)
 {
-    RefPtr<CSSMutableStyleDeclarationImpl> style = positionBeforeTabSpan(pos).computedStyle()->copyInheritableProperties();
+    RefPtr<CSSMutableStyleDeclaration> style = positionBeforeTabSpan(pos).computedStyle()->copyInheritableProperties();
  
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-    CSSMutableStyleDeclarationImpl* typingStyle = document()->frame()->typingStyle();
+    CSSMutableStyleDeclaration* typingStyle = document()->frame()->typingStyle();
     if (typingStyle)
         style->merge(typingStyle);
 

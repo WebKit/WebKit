@@ -26,7 +26,7 @@
 #ifndef COLOR_H_
 #define COLOR_H_
 
-class QString;
+class DeprecatedString;
 
 #if __APPLE__
 #ifdef __OBJC__
@@ -51,11 +51,11 @@ public:
     Color(RGBA32 col) : color(col), valid(true) { }
     Color(int r, int g, int b) : color(makeRGB(r, g, b)), valid(true) { }
     Color(int r, int g, int b, int a) : color(makeRGBA(r, g, b, a)), valid(true) { }
-    explicit Color(const QString &);
+    explicit Color(const DeprecatedString &);
     explicit Color(const char *);
     
-    QString name() const;
-    void setNamedColor(const QString&);
+    DeprecatedString name() const;
+    void setNamedColor(const DeprecatedString&);
 
     bool isValid() const { return valid; }
 

@@ -27,7 +27,7 @@
 #import "CookieJar.h"
 
 #import "KURL.h"
-#import "KWQExceptions.h"
+#import "BlockExceptions.h"
 #import "PlatformString.h"
 #import "WebCoreCookieAdapter.h"
 
@@ -35,25 +35,25 @@ namespace WebCore {
 
 String cookies(const KURL& url)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return [[WebCoreCookieAdapter sharedAdapter] cookiesForURL:url.url().getNSString()];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     return String();
 }
 
 void setCookies(const KURL& url, const KURL& policyBaseURL, const String& cookies)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [[WebCoreCookieAdapter sharedAdapter] setCookies:cookies
         forURL:url.url().getNSString() policyBaseURL:policyBaseURL.url().getNSString()];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 bool cookiesEnabled()
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return [[WebCoreCookieAdapter sharedAdapter] cookiesEnabled];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     return false;
 }
 

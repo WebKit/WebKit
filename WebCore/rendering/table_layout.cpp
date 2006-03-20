@@ -251,7 +251,7 @@ void FixedTableLayout::layout()
 #endif
 
 
-    Array<int> calcWidth;
+    DeprecatedArray<int> calcWidth;
     calcWidth.resize( nEffCols );
     calcWidth.fill( -1 );
 

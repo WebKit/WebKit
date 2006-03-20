@@ -27,7 +27,7 @@
 #import "WebCoreTextRendererFactory.h"
 
 #import <kxmlcore/Assertions.h>
-#import "MacFrame.h"
+#import "FrameMac.h"
 #import "KWQListBox.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreTextRenderer.h"
@@ -115,7 +115,7 @@ static WebCoreTextRendererFactory *sharedFactory;
 - (void)clearCaches
 {
     QListBox::clearCachedTextRenderers();
-    for (QPtrListIterator<Frame> it(Frame::instances()); it.current(); ++it) {
+    for (DeprecatedPtrListIterator<Frame> it(Frame::instances()); it.current(); ++it) {
         [Mac(it.current())->bridge() setNeedsReapplyStyles];
     }
 }

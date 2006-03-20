@@ -27,7 +27,7 @@
 #include "GraphicsContext.h"
 
 #include "IntRect.h"
-#include "QString.h"
+#include "DeprecatedString.h"
 #include "Font.h"
 #include "Widget.h"
 
@@ -58,15 +58,15 @@ void GraphicsContext::drawImage(Image* image, int x, int y, int w, int h,
 // FIXME: We should consider removing this function and having callers just call the lower-level drawText directly.
 // FIXME: The int parameter should change to a HorizontalAlignment parameter.
 // FIXME: HorizontalAlignment should be moved into a separate header so it's not in Widget.h.
-// FIXME: We should consider changing this function to take a character pointer and length instead of a QString.
-void GraphicsContext::drawText(int x, int y, int horizontalAlignment, const QString& qstring)
+// FIXME: We should consider changing this function to take a character pointer and length instead of a DeprecatedString.
+void GraphicsContext::drawText(int x, int y, int horizontalAlignment, const DeprecatedString& deprecatedString)
 {
     if (paintingDisabled())
         return;
 
     if (horizontalAlignment == AlignRight)
-        x -= font().width(qstring.unicode(), qstring.length(), 0, 0);
-    drawText(x, y, 0, 0, qstring.unicode(), qstring.length(), 0, qstring.length(), 0);
+        x -= font().width(deprecatedString.unicode(), deprecatedString.length(), 0, 0);
+    drawText(x, y, 0, 0, deprecatedString.unicode(), deprecatedString.length(), 0, deprecatedString.length(), 0);
 }
 
 void GraphicsContext::drawText(int x, int y, int tabWidth, int xpos, const QChar *str, int slen, int pos, int len, int toAdd,

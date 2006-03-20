@@ -36,19 +36,19 @@ using KXMLCore::PassRefPtr;
 
 namespace WebCore {
 
-class NodeImpl;
-class DocumentImpl;
+class Node;
+class Document;
 
 typedef int ExceptionCode;
 
 class NodeFilterCondition : public Shared<NodeFilterCondition> {
 public:
     virtual ~NodeFilterCondition() { }
-    virtual short acceptNode(NodeImpl*) const;
+    virtual short acceptNode(Node*) const;
     virtual void mark() { }
 };
 
-class NodeFilterImpl : public Shared<NodeFilterImpl>, Noncopyable {
+class NodeFilter : public Shared<NodeFilter>, Noncopyable {
 public:
     /**
      * The following constants are returned by the acceptNode()
@@ -82,48 +82,48 @@ public:
         SHOW_NOTATION                  = 0x00000800
     };
 
-    NodeFilterImpl(NodeFilterCondition*);
-    short acceptNode(NodeImpl*) const;
+    NodeFilter(NodeFilterCondition*);
+    short acceptNode(Node*) const;
     void mark() { m_condition->mark(); };
 
 private:
     RefPtr<NodeFilterCondition> m_condition;
 };
 
-class TraversalImpl : public Shared<TraversalImpl>
+class Traversal : public Shared<Traversal>
 {
 public:
-    TraversalImpl(NodeImpl*, unsigned whatToShow, PassRefPtr<NodeFilterImpl>, bool expandEntityReferences);
-    virtual ~TraversalImpl();
+    Traversal(Node*, unsigned whatToShow, PassRefPtr<NodeFilter>, bool expandEntityReferences);
+    virtual ~Traversal();
 
-    NodeImpl* root() const { return m_root.get(); }
+    Node* root() const { return m_root.get(); }
     unsigned whatToShow() const { return m_whatToShow; }
-    NodeFilterImpl* filter() const { return m_filter.get(); }
+    NodeFilter* filter() const { return m_filter.get(); }
     bool expandEntityReferences() const { return m_expandEntityReferences; }
 
-    short acceptNode(NodeImpl*) const;
+    short acceptNode(Node*) const;
 
 private:
-    TraversalImpl(const TraversalImpl &);
-    TraversalImpl &operator=(const TraversalImpl &);
+    Traversal(const Traversal &);
+    Traversal &operator=(const Traversal &);
     
-    RefPtr<NodeImpl> m_root;
+    RefPtr<Node> m_root;
     unsigned m_whatToShow;
-    RefPtr<NodeFilterImpl> m_filter;
+    RefPtr<NodeFilter> m_filter;
     bool m_expandEntityReferences;
 };
 
-class NodeIteratorImpl : public TraversalImpl
+class NodeIterator : public Traversal
 {
 public:
-    NodeIteratorImpl(NodeImpl*, unsigned whatToShow, PassRefPtr<NodeFilterImpl>, bool expandEntityReferences);
-    ~NodeIteratorImpl();
+    NodeIterator(Node*, unsigned whatToShow, PassRefPtr<NodeFilter>, bool expandEntityReferences);
+    ~NodeIterator();
 
-    NodeImpl* nextNode(ExceptionCode&);
-    NodeImpl* previousNode(ExceptionCode&);
+    Node* nextNode(ExceptionCode&);
+    Node* previousNode(ExceptionCode&);
     void detach(ExceptionCode&);
 
-    NodeImpl* referenceNode() const { return m_referenceNode.get(); }
+    Node* referenceNode() const { return m_referenceNode.get(); }
     bool pointerBeforeReferenceNode() const { return m_beforeReferenceNode; }
 
     /**
@@ -131,44 +131,44 @@ public:
      * document tree and you want the Iterator to react if there
      * are any changes concerning it.
      */
-    void notifyBeforeNodeRemoval(NodeImpl* removed);
+    void notifyBeforeNodeRemoval(Node* removed);
 
 private:
-    void setReferenceNode(NodeImpl*);
+    void setReferenceNode(Node*);
     void setPointerBeforeReferenceNode(bool flag = true) { m_beforeReferenceNode = flag; }
     bool detached() const { return m_detached; }
     void setDetached(bool flag = true) { m_detached = flag; }
-    DocumentImpl* document() const { return m_doc.get(); }
-    NodeImpl* findNextNode(NodeImpl*) const;
-    NodeImpl* findPreviousNode(NodeImpl*) const;
+    Document* document() const { return m_doc.get(); }
+    Node* findNextNode(Node*) const;
+    Node* findPreviousNode(Node*) const;
 
-    RefPtr<NodeImpl> m_referenceNode;
+    RefPtr<Node> m_referenceNode;
     bool m_beforeReferenceNode;
     bool m_detached;
-    RefPtr<DocumentImpl> m_doc;
+    RefPtr<Document> m_doc;
 };
 
-class TreeWalkerImpl : public TraversalImpl {
+class TreeWalker : public Traversal {
 public:
-    TreeWalkerImpl(NodeImpl*, unsigned whatToShow, PassRefPtr<NodeFilterImpl>, bool expandEntityReferences);
+    TreeWalker(Node*, unsigned whatToShow, PassRefPtr<NodeFilter>, bool expandEntityReferences);
 
-    NodeImpl* currentNode() const { return m_current.get(); }
-    void setCurrentNode(NodeImpl*, ExceptionCode&);
+    Node* currentNode() const { return m_current.get(); }
+    void setCurrentNode(Node*, ExceptionCode&);
 
-    NodeImpl* parentNode();
-    NodeImpl* firstChild();
-    NodeImpl* lastChild();
-    NodeImpl* previousSibling();
-    NodeImpl* nextSibling();
-    NodeImpl* previousNode();
-    NodeImpl* nextNode();
+    Node* parentNode();
+    Node* firstChild();
+    Node* lastChild();
+    Node* previousSibling();
+    Node* nextSibling();
+    Node* previousNode();
+    Node* nextNode();
 
 private:
     // convenience for when it is known there will be no exception
-    void setCurrentNode(NodeImpl*);
-    bool ancestorRejected(const NodeImpl*) const;
+    void setCurrentNode(Node*);
+    bool ancestorRejected(const Node*) const;
 
-    RefPtr<NodeImpl> m_current;
+    RefPtr<Node> m_current;
 };
 
 } // namespace

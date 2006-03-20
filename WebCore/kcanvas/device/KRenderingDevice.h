@@ -70,15 +70,15 @@ public:
     
     virtual KRenderingDeviceContext *contextForImage(KCanvasImage *image) const = 0;
     
-    virtual QString stringForPath(const KCanvasPath* path) = 0;
+    virtual DeprecatedString stringForPath(const KCanvasPath* path) = 0;
 
     // Creation tools
     virtual KCanvasResource *createResource(const KCResourceType &type) const = 0;
     virtual KCanvasFilterEffect *createFilterEffect(const KCFilterEffectType &type) const = 0;
     virtual KRenderingPaintServer *createPaintServer(const KCPaintServerType &type) const = 0;
 
-    virtual RenderPath *createItem(RenderArena *arena, RenderStyle *style, SVGStyledElementImpl *node, KCanvasPath* path) const = 0;
-    virtual KCanvasContainer *createContainer(RenderArena *arena, RenderStyle *style, SVGStyledElementImpl *node) const = 0;
+    virtual RenderPath *createItem(RenderArena *arena, RenderStyle *style, SVGStyledElement *node, KCanvasPath* path) const = 0;
+    virtual KCanvasContainer *createContainer(RenderArena *arena, RenderStyle *style, SVGStyledElement *node) const = 0;
     virtual KCanvasPath* createPath() const = 0;
 
 private:

@@ -30,28 +30,28 @@
 
 #include "QualifiedName.h"
 
-namespace khtml {
+namespace WebCore {
 
 class SetNodeAttributeCommand : public EditCommand
 {
 public:
-    SetNodeAttributeCommand(DOM::DocumentImpl *, DOM::ElementImpl *, const DOM::QualifiedName& attribute, const DOM::DOMString &value);
+    SetNodeAttributeCommand(WebCore::Document *, WebCore::Element *, const WebCore::QualifiedName& attribute, const WebCore::String &value);
     virtual ~SetNodeAttributeCommand() { }
 
     virtual void doApply();
     virtual void doUnapply();
 
-    DOM::ElementImpl *element() const { return m_element.get(); }
-    const DOM::QualifiedName& attribute() const { return m_attribute; }
-    DOM::DOMString value() const { return m_value; }
+    WebCore::Element *element() const { return m_element.get(); }
+    const WebCore::QualifiedName& attribute() const { return m_attribute; }
+    WebCore::String value() const { return m_value; }
     
 private:
-    RefPtr<DOM::ElementImpl> m_element;
-    DOM::QualifiedName m_attribute;
-    DOM::DOMString m_value;
-    DOM::DOMString m_oldValue;
+    RefPtr<WebCore::Element> m_element;
+    WebCore::QualifiedName m_attribute;
+    WebCore::String m_value;
+    WebCore::String m_oldValue;
 };
 
-} // namespace khtml
+} // namespace WebCore
 
 #endif // __set_node_attribute_command_h__

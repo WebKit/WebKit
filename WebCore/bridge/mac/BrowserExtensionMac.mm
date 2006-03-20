@@ -27,8 +27,8 @@
 #import "BrowserExtensionMac.h"
 
 #import "FrameTree.h"
-#import "KWQExceptions.h"
-#import "MacFrame.h"
+#import "BlockExceptions.h"
+#import "FrameMac.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCorePageBridge.h"
 #import <kxmlcore/Assertions.h>
@@ -56,7 +56,7 @@ void BrowserExtensionMac::createNewWindow(const ResourceRequest& request,
                                           const WindowArgs& winArgs, 
                                           Frame** partResult)
 { 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     ASSERT(!winArgs.dialog || request.frameName.isEmpty());
 
@@ -70,7 +70,7 @@ void BrowserExtensionMac::createNewWindow(const ResourceRequest& request,
         // FIXME: Can't we just use m_frame->findFrame?
         if (WebCoreFrameBridge *bridge = [m_frame->bridge() findFrameNamed:frameName]) {
             if (!url.isEmpty()) {
-                DOMString argsReferrer = request.referrer();
+                String argsReferrer = request.referrer();
                 NSString *referrer;
                 if (!argsReferrer.isEmpty())
                     referrer = argsReferrer;
@@ -152,21 +152,21 @@ void BrowserExtensionMac::createNewWindow(const ResourceRequest& request,
     
     [bridge showWindow];
     
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void BrowserExtensionMac::setIconURL(const KURL &url)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [m_frame->bridge() setIconURL:url.getNSURL()];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void BrowserExtensionMac::setTypedIconURL(const KURL &url, const QString &type)
+void BrowserExtensionMac::setTypedIconURL(const KURL &url, const DeprecatedString &type)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [m_frame->bridge() setIconURL:url.getNSURL() withType:type.getNSString()];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 int BrowserExtensionMac::getHistoryLength()
@@ -176,32 +176,32 @@ int BrowserExtensionMac::getHistoryLength()
 
 void BrowserExtensionMac::goBackOrForward(int distance)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [m_frame->bridge() goBackOrForward:distance];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 bool BrowserExtensionMac::canRunModal()
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return [m_frame->bridge() canRunModal];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     return false;
 }
 
 bool BrowserExtensionMac::canRunModalNow()
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return [m_frame->bridge() canRunModalNow];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     return false;
 }
 
 void BrowserExtensionMac::runModal()
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [m_frame->bridge() runModal];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 }

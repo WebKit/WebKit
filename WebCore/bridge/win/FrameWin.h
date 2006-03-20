@@ -33,7 +33,7 @@ namespace WebCore {
 class FrameWinClient
 {
 public:
-    virtual void openURL(const QString&) = 0;
+    virtual void openURL(const DeprecatedString&) = 0;
 };
 
 class FrameWin : public Frame
@@ -49,9 +49,9 @@ public:
 
     virtual void setTitle(const String&);
 
-    virtual ObjectContentType objectContentType(const KURL& url, const QString& mimeType);
-    virtual Plugin* createPlugin(const KURL&, const QStringList& paramNames, const QStringList& paramValues, const QString& mimeType);
-    virtual Frame* createFrame(const KURL&, const QString& name, RenderPart* renderer, const String& referrer);
+    virtual ObjectContentType objectContentType(const KURL& url, const DeprecatedString& mimeType);
+    virtual Plugin* createPlugin(const KURL&, const DeprecatedStringList& paramNames, const DeprecatedStringList& paramValues, const DeprecatedString& mimeType);
+    virtual Frame* createFrame(const KURL&, const DeprecatedString& name, RenderPart* renderer, const String& referrer);
 
     virtual void scheduleClose();
 
@@ -72,12 +72,12 @@ public:
     virtual bool toolbarVisible();
 
     virtual void createEmptyDocument();
-    virtual RangeImpl* markedTextRange() const;
+    virtual Range* markedTextRange() const;
 
-    virtual QString incomingReferrer() const;
-    virtual QString userAgent() const;
+    virtual DeprecatedString incomingReferrer() const;
+    virtual DeprecatedString userAgent() const;
 
-    virtual QString mimeTypeForFileName(const QString&) const;
+    virtual DeprecatedString mimeTypeForFileName(const DeprecatedString&) const;
 
     virtual void markMisspellingsInAdjacentWords(const VisiblePosition&);
     virtual void markMisspellings(const SelectionController&);
@@ -85,12 +85,12 @@ public:
     virtual bool lastEventIsMouseUp() const;
 
     virtual bool passSubframeEventToSubframe(MouseEventWithHitTestResults &);
-    virtual bool passWheelEventToChildWidget(NodeImpl*);
+    virtual bool passWheelEventToChildWidget(Node*);
     
     virtual void clearRecordedFormValues();
-    virtual void recordFormValue(const QString& name, const QString& value, HTMLFormElementImpl*);
+    virtual void recordFormValue(const DeprecatedString& name, const DeprecatedString& value, HTMLFormElement*);
 
-    virtual QString overrideMediaType() const;
+    virtual DeprecatedString overrideMediaType() const;
 
     virtual KJS::Bindings::Instance* getEmbedInstanceForWidget(Widget*);
     virtual KJS::Bindings::Instance* getObjectInstanceForWidget(Widget*);
@@ -119,7 +119,7 @@ public:
     virtual bool canUndo() const;
     virtual void print();
 
-    bool keyPress(const KeyEvent&);
+    bool keyPress(const PlatformKeyboardEvent&);
 
 private:
     virtual bool passMouseDownEventToWidget(Widget*);

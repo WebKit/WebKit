@@ -51,7 +51,7 @@ Path::Path(const IntPointArray& arr)
 {
     CGMutablePathRef path = CGPathCreateMutable();
     CGPathMoveToPoint(path, 0, arr[0].x(), arr[0].y());
-    for (uint i = 1; i < arr.count(); ++i)
+    for (unsigned i = 1; i < arr.count(); ++i)
         CGPathAddLineToPoint(path, 0, arr[i].x(), arr[i].y());
     CGPathCloseSubpath(path);
     m_path = path;

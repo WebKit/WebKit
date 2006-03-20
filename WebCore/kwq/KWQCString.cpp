@@ -31,11 +31,11 @@
 
 using std::ostream;
 
-QCString::QCString()
+DeprecatedCString::DeprecatedCString()
 {
 }
 
-QCString::QCString(int size) : ByteArray(size)
+DeprecatedCString::DeprecatedCString(int size) : DeprecatedByteArray(size)
 {
     if( size>0 && data() )
     {
@@ -46,7 +46,7 @@ QCString::QCString(int size) : ByteArray(size)
 }
 
 
-QCString::QCString(const char *str)
+DeprecatedCString::DeprecatedCString(const char *str)
 {
     size_t len;
     if( str && (len=strlen(str)+1) && resize(len) )     // include null
@@ -55,13 +55,13 @@ QCString::QCString(const char *str)
 }
 
 
-QCString::QCString(const char *str, uint max)
+DeprecatedCString::DeprecatedCString(const char *str, unsigned max)
 {
     if( str && max )
     {
         // perform a truncated strlen on str
         const char* p = str;
-        uint len = 1;                   // for the null
+        unsigned len = 1;                   // for the null
         while( *p++ && len<max )
             len ++;
 
@@ -75,20 +75,20 @@ QCString::QCString(const char *str, uint max)
     // else null
 }
 
-bool QCString::isEmpty() const
+bool DeprecatedCString::isEmpty() const
 { return length()==0; }
 
 
-uint QCString::length() const
+unsigned DeprecatedCString::length() const
 {
     const char *d = data();
     return d ? strlen(d) : 0;
 }
 
 
-bool QCString::resize(uint len)
+bool DeprecatedCString::resize(unsigned len)
 {
-    bool success = ByteArray::resize(len);
+    bool success = DeprecatedByteArray::resize(len);
     if( success && len>0 )
         data()[len-1] = 0;      // always terminate last byte
 
@@ -96,16 +96,16 @@ bool QCString::resize(uint len)
 }
 
 
-bool QCString::truncate(uint pos)
+bool DeprecatedCString::truncate(unsigned pos)
 {
     return resize(pos+1);
 }
 
 
-QCString QCString::lower() const
+DeprecatedCString DeprecatedCString::lower() const
 {
     // convert
-    QCString tmp = *this;       // copy
+    DeprecatedCString tmp = *this;       // copy
     char* str = tmp.data();
     if( str )
     {
@@ -120,9 +120,9 @@ QCString QCString::lower() const
 }
 
 
-QCString QCString::upper() const
+DeprecatedCString DeprecatedCString::upper() const
 {
-    QCString tmp = *this;       // copy
+    DeprecatedCString tmp = *this;       // copy
     char* str = tmp.data();
     if( str )
     {
@@ -137,17 +137,17 @@ QCString QCString::upper() const
 }
 
 
-inline QCString QCString::left(uint len) const
+inline DeprecatedCString DeprecatedCString::left(unsigned len) const
 { return mid(0, len); }
 
 
-inline QCString QCString::right(uint len) const
+inline DeprecatedCString DeprecatedCString::right(unsigned len) const
 { return mid(length() - len, len); }
 
 
-QCString QCString::mid(uint index, uint len) const
+DeprecatedCString DeprecatedCString::mid(unsigned index, unsigned len) const
 {
-    uint size = length();
+    unsigned size = length();
     if( data() && index<size )      // return null if index out-of-range
     {
         // clip length
@@ -155,14 +155,14 @@ QCString QCString::mid(uint index, uint len) const
             len = size - index;
 
         // copy and return
-        return QCString( &(data()[index]), len+1);  // include nul
+        return DeprecatedCString( &(data()[index]), len+1);  // include nul
     }
 
     // degenerate case
-    return QCString();
+    return DeprecatedCString();
 }
 
-int QCString::find(const char *sub, int index, bool cs) const
+int DeprecatedCString::find(const char *sub, int index, bool cs) const
 {
     const char* str = data();
     if( str && str[0] && sub && index>=0 )  // don't search empty strings
@@ -198,10 +198,10 @@ int QCString::find(const char *sub, int index, bool cs) const
     return -1;
 }
 
-int QCString::contains(char c, bool cs) const
+int DeprecatedCString::contains(char c, bool cs) const
 {
-    uint found = 0;
-    uint len = length();
+    unsigned found = 0;
+    unsigned len = length();
 
     if (len) {
         const char *str = data();
@@ -224,20 +224,20 @@ int QCString::contains(char c, bool cs) const
     return found;
 }
 
-QCString &QCString::operator=(const char *assignFrom)
+DeprecatedCString &DeprecatedCString::operator=(const char *assignFrom)
 {
     duplicate(assignFrom, (assignFrom ? strlen(assignFrom) : 0) + 1);
     return *this;
 }
 
-QCString& QCString::append(const char *s)
+DeprecatedCString& DeprecatedCString::append(const char *s)
 {
     if (s) {
-        uint len2 = strlen(s);
+        unsigned len2 = strlen(s);
         if (len2) {
             detach();
-            uint len1 = length();
-            if (ByteArray::resize(len1 + len2 + 1)) {
+            unsigned len1 = length();
+            if (DeprecatedByteArray::resize(len1 + len2 + 1)) {
                 memcpy(data() + len1, s, len2 + 1);
             }
         }
@@ -246,12 +246,12 @@ QCString& QCString::append(const char *s)
     return *this;
 }
 
-QCString &QCString::append(char c)
+DeprecatedCString &DeprecatedCString::append(char c)
 {
     detach();
-    uint len = length();
+    unsigned len = length();
 
-    if (ByteArray::resize(len + 2)) {
+    if (DeprecatedByteArray::resize(len + 2)) {
         *(data() + len) = c;
         *(data() + len + 1) = '\0';
     }
@@ -259,9 +259,9 @@ QCString &QCString::append(char c)
     return *this;
 }
 
-QCString &QCString::replace(char c1, char c2)
+DeprecatedCString &DeprecatedCString::replace(char c1, char c2)
 {
-    uint len = length();
+    unsigned len = length();
 
     if (len) {
         // Search for the first instance of c1 before detaching,
@@ -293,7 +293,7 @@ QCString &QCString::replace(char c1, char c2)
     return *this;
 }
 
-bool operator==(const QCString &s1, const char *s2)
+bool operator==(const DeprecatedCString &s1, const char *s2)
 {
     if (s1.size() == 0 && !s2)
         return true;

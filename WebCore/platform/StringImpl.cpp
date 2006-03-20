@@ -54,7 +54,7 @@ StringImpl* StringImpl::empty()
     return &e;
 }
 
-StringImpl::StringImpl(const QString& str)
+StringImpl::StringImpl(const DeprecatedString& str)
 {
     initWithQChar(str.unicode(), str.length());
 }
@@ -288,7 +288,7 @@ Length* StringImpl::toCoordsArray(int& len) const
         else
             spacified[i] = cc;
     }
-    QString str(spacified, l);
+    DeprecatedString str(spacified, l);
     deleteQCharVector(spacified);
 
     str = str.simplifyWhiteSpace();
@@ -311,7 +311,7 @@ Length* StringImpl::toCoordsArray(int& len) const
 
 Length* StringImpl::toLengthArray(int& len) const
 {
-    QString str(s, l);
+    DeprecatedString str(s, l);
     str = str.simplifyWhiteSpace();
 
     len = str.contains(',') + 1;
@@ -495,7 +495,7 @@ static bool equalCaseInsensitive(const QChar* a, const QChar* b, int l)
 // Our usage patterns are typically small strings.  In time trials
 // this simplistic algorithm is much faster than Boyer-Moore or hash
 // based algorithms.
-// NOTE: Those time trials were done when this function was part of KWQ's QString
+// NOTE: Those time trials were done when this function was part of KWQ's DeprecatedString
 // It was copied here and changed slightly since.
 int StringImpl::find(const char* chs, int index, bool caseSensitive) const
 {
@@ -544,15 +544,15 @@ int StringImpl::find(const QChar c, int start) const
     return -1;
 }
 
-// This was copied from KWQ's QString and made to work here w/ small modifications.
-// FIXME comments were from the QString version.
+// This was copied from KWQ's DeprecatedString and made to work here w/ small modifications.
+// FIXME comments were from the DeprecatedString version.
 int StringImpl::find(const StringImpl* str, int index, bool caseSensitive) const
 {
     // FIXME, use the first character algorithm
     /*
       We use some weird hashing for efficiency's sake.  Instead of
       comparing strings, we compare the sum of str with that of
-      a part of this QString.  Only if that matches, we call memcmp
+      a part of this DeprecatedString.  Only if that matches, we call memcmp
       or ucstrnicmp.
 
       The hash value of a string is the sum of the cells of its

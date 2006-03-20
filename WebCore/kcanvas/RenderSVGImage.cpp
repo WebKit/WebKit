@@ -26,22 +26,22 @@
 
 #include "GraphicsContext.h"
 #include "KCanvasMaskerQuartz.h"
-#include "SVGAnimatedPreserveAspectRatioImpl.h"
+#include "SVGAnimatedPreserveAspectRatio.h"
 #include "KCanvasRenderingStyle.h"
 #include "KCanvasResourcesQuartz.h"
 #include "KRenderingDevice.h"
-#include "SVGAnimatedLengthImpl.h"
-#include "SVGImageElementImpl.h"
+#include "SVGAnimatedLength.h"
+#include "SVGImageElement.h"
 #include <kcanvas/KCanvas.h>
-#include <kdom/core/AttrImpl.h>
+#include <kdom/core/Attr.h>
 
-#include "SVGImageElementImpl.h"
+#include "SVGImageElement.h"
 
 #include "ksvg.h"
 
 namespace WebCore {
 
-RenderSVGImage::RenderSVGImage(SVGImageElementImpl *impl)
+RenderSVGImage::RenderSVGImage(SVGImageElement *impl)
 : RenderImage(impl)
 {
 }
@@ -50,7 +50,7 @@ RenderSVGImage::~RenderSVGImage()
 {
 }
 
-void RenderSVGImage::adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& srcRect, SVGPreserveAspectRatioImpl *aspectRatio)
+void RenderSVGImage::adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& srcRect, SVGPreserveAspectRatio *aspectRatio)
 {
     float origDestWidth = destRect.width();
     float origDestHeight = destRect.height();
@@ -162,7 +162,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int parentX, int parentY)
     if (!shouldPaint(paintInfo, x, y))
         return;
         
-    SVGImageElementImpl *imageElt = static_cast<SVGImageElementImpl *>(node());
+    SVGImageElement *imageElt = static_cast<SVGImageElement *>(node());
         
     if (imageElt->preserveAspectRatio()->baseVal()->align() == SVG_PRESERVEASPECTRATIO_NONE)
         RenderImage::paint(paintInfo, 0, 0);
@@ -214,7 +214,7 @@ IntRect RenderSVGImage::getAbsoluteRepaintRect()
 void RenderSVGImage::translateForAttributes()
 {
     KRenderingDeviceContext *context = renderingDevice()->currentContext();
-    SVGImageElementImpl *image = static_cast<SVGImageElementImpl *>(node());
+    SVGImageElement *image = static_cast<SVGImageElement *>(node());
     float xOffset = image->x()->baseVal() ? image->x()->baseVal()->value() : 0;
     float yOffset = image->y()->baseVal() ? image->y()->baseVal()->value() : 0;
     context->concatCTM(QMatrix().translate(xOffset, yOffset));

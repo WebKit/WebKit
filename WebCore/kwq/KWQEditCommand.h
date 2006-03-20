@@ -23,16 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-namespace khtml {
+namespace WebCore {
     class EditCommand;
 }
 
 @interface KWQEditCommand : NSObject
 {
-    khtml::EditCommand *m_command;   
+    WebCore::EditCommand *m_command;   
 }
 
-+ (KWQEditCommand *)commandWithEditCommand:(khtml::EditCommand *)command;
-- (khtml::EditCommand *)command;
++ (KWQEditCommand *)commandWithEditCommand:(WebCore::EditCommand *)command;
+- (WebCore::EditCommand *)command;
 
 @end

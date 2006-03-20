@@ -24,7 +24,7 @@
 #ifndef StringImpl_h
 #define StringImpl_h
 
-#include "QString.h"
+#include "DeprecatedString.h"
 #include "Shared.h"
 #include <kxmlcore/Noncopyable.h>
 #include <kxmlcore/RefPtr.h>
@@ -53,7 +53,7 @@ private:
 protected:
     StringImpl() : l(0), s(0), _hash(0), _inTable(false) { }
 public:
-    StringImpl(const QString&);
+    StringImpl(const DeprecatedString&);
     StringImpl(const QChar*, unsigned len);
     StringImpl(const char*);
     StringImpl(const char*, unsigned len);
@@ -82,7 +82,7 @@ public:
     bool containsOnlyWhitespace() const;
     bool containsOnlyWhitespace(unsigned from, unsigned len) const;
     
-    // ignores trailing garbage, unlike QString
+    // ignores trailing garbage, unlike DeprecatedString
     int toInt(bool* ok = 0) const;
 
     Length* toCoordsArray(int& len) const;

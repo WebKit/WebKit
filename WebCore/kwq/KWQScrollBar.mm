@@ -26,7 +26,7 @@
 #import "config.h"
 #import "KWQScrollBar.h"
 
-#import "KWQExceptions.h"
+#import "BlockExceptions.h"
 #import "WebCoreWidgetHolder.h"
 #import "WidgetClient.h"
 
@@ -103,13 +103,13 @@ QScrollBar::QScrollBar(ScrollBarOrientation orientation)
     , m_lineStep(0)
     , m_pageStep(0)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     KWQScrollBar *bar = [[KWQScrollBar alloc] initWithQScrollBar:this];
     setView(bar);
     [bar release];
 
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 QScrollBar::~QScrollBar()
@@ -134,11 +134,11 @@ bool QScrollBar::setValue(int v)
         return false; // Our value stayed the same.
     m_currentPos = v;
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     KWQScrollBar *bar = (KWQScrollBar *)getView();
     [bar setFloatValue:(float)m_currentPos/maxPos
         knobProportion:[bar knobProportion]];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 
     valueChanged();
     
@@ -157,11 +157,11 @@ void QScrollBar::setKnobProportion(int visibleArea, int totalArea)
     m_totalSize = totalArea;
     float val = (float)m_visibleSize/m_totalSize;
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     KWQScrollBar *bar = (KWQScrollBar *)getView();
     if (!(val == [bar knobProportion] || val < 0.0))
         [bar setFloatValue: [bar floatValue] knobProportion: val];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 bool QScrollBar::scrollbarHit(NSScrollerPart hitPart)

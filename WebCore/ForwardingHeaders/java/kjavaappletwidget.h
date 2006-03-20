@@ -1,1 +1,1 @@
-#include "KWQKJavaAppletWidget.h"
+#include "JavaAppletWidget.h"

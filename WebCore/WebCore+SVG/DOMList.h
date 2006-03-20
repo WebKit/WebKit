@@ -27,7 +27,7 @@
 #include <q3ptrlist.h>
 #include "Shared.h"
 
-namespace DOM
+namespace WebCore
 {
     template<class T>
     class DOMList : public Shared<DOMList<T> >

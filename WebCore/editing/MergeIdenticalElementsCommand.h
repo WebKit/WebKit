@@ -28,23 +28,23 @@
 
 #include "EditCommand.h"
 
-namespace khtml {
+namespace WebCore {
 
 class MergeIdenticalElementsCommand : public EditCommand
 {
 public:
-    MergeIdenticalElementsCommand(DOM::DocumentImpl *, DOM::ElementImpl *first, DOM::ElementImpl *second);
+    MergeIdenticalElementsCommand(WebCore::Document *, WebCore::Element *first, WebCore::Element *second);
     virtual ~MergeIdenticalElementsCommand() { }
 
     virtual void doApply();
     virtual void doUnapply();
 
 private:
-    RefPtr<DOM::ElementImpl> m_element1;
-    RefPtr<DOM::ElementImpl> m_element2;
-    RefPtr<DOM::NodeImpl> m_atChild;
+    RefPtr<WebCore::Element> m_element1;
+    RefPtr<WebCore::Element> m_element2;
+    RefPtr<WebCore::Node> m_atChild;
 };
 
-} // namespace khtml
+} // namespace WebCore
 
 #endif // __merge_identical_elements_command_h__

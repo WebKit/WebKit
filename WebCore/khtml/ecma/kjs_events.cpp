@@ -22,19 +22,19 @@
 #include "kjs_events.h"
 
 #include "CachedImage.h"
-#include "DocumentImpl.h"
+#include "Document.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "JSMutationEvent.h"
 #include "JSWheelEvent.h"
 #include "dom2_eventsimpl.h"
-#include "dom2_viewsimpl.h"
+#include "AbstractView.h"
 #include "html/html_imageimpl.h"
 #include "htmlnames.h"
 #include "kjs_proxy.h"
 #include "kjs_views.h"
 #include "kjs_window.h"
-#include "rendering/render_object.h"
+#include "rendering/RenderObject.h"
 
 #include "kjs_events.lut.h"
 
@@ -49,14 +49,14 @@ JSAbstractEventListener::JSAbstractEventListener(bool _html)
 {
 }
 
-void JSAbstractEventListener::handleEvent(EventImpl* ele, bool isWindowEvent)
+void JSAbstractEventListener::handleEvent(Event* ele, bool isWindowEvent)
 {
 #ifdef KJS_DEBUGGER
     if (KJSDebugWin::instance() && KJSDebugWin::instance()->inSession())
         return;
 #endif
 
-    EventImpl *event = ele;
+    Event *event = ele;
 
     JSObject* listener = listenerObj();
     if (!listener)
@@ -66,7 +66,7 @@ void JSAbstractEventListener::handleEvent(EventImpl* ele, bool isWindowEvent)
     Frame *frame = window->frame();
     if (!frame)
         return;
-    KJSProxyImpl* proxy = frame->jScript();
+    KJSProxy* proxy = frame->jScript();
     if (!proxy)
         return;
 
@@ -111,11 +111,11 @@ void JSAbstractEventListener::handleEvent(EventImpl* ele, bool isWindowEvent)
 
         if (exec->hadException()) {
             JSObject* exception = exec->exception()->toObject(exec);
-            DOMString message = exception->get(exec, messagePropertyName)->toString(exec).domString();
+            String message = exception->get(exec, messagePropertyName)->toString(exec).domString();
             int lineNumber = exception->get(exec, "line")->toInt32(exec);
-            DOMString sourceURL = exception->get(exec, "sourceURL")->toString(exec).domString();
+            String sourceURL = exception->get(exec, "sourceURL")->toString(exec).domString();
             if (Interpreter::shouldPrintExceptions())
-                printf("(event handler):%s\n", message.qstring().utf8().data());
+                printf("(event handler):%s\n", message.deprecatedString().utf8().data());
             frame->addMessageToConsole(message, lineNumber, sourceURL);
             exec->clearException();
         } else {
@@ -128,7 +128,7 @@ void JSAbstractEventListener::handleEvent(EventImpl* ele, bool isWindowEvent)
             }
         }
 
-        DocumentImpl::updateDocumentsRendering();
+        Document::updateDocumentsRendering();
         deref();
     }
 }
@@ -210,7 +210,7 @@ void JSEventListener::clearWindowObj()
 
 // -------------------------------------------------------------------------
 
-JSLazyEventListener::JSLazyEventListener(const DOMString& _code, Window* _win, NodeImpl* _originalNode, int lineno)
+JSLazyEventListener::JSLazyEventListener(const String& _code, Window* _win, Node* _originalNode, int lineno)
   : JSEventListener(0, _win, true),
     code(_code),
     parsed(false)
@@ -245,7 +245,7 @@ void JSLazyEventListener::parseCode() const
     parsed = true;
 
     Frame *frame = windowObj()->frame();
-    KJSProxyImpl *proxy = 0;
+    KJSProxy *proxy = 0;
     if (frame)
         proxy = frame->jScript();
 
@@ -269,7 +269,7 @@ void JSLazyEventListener::parseCode() const
             listener = 0;
         } else if (originalNode) {
             // Add the event's home element to the scope
-            // (and the document, and the form - see HTMLElement::eventHandlerScope)
+            // (and the document, and the form - see JSHTMLElement::eventHandlerScope)
             ScopeChain scope = listener->scope();
 
             JSValue* thisObj = toJS(exec, originalNode);
@@ -281,13 +281,13 @@ void JSLazyEventListener::parseCode() const
     }
 
     // no more need to keep the unparsed code around
-    code = DOMString();
+    code = String();
 
     if (listener)
         windowObj()->jsEventListeners.set(listener, const_cast<JSLazyEventListener*>(this));
 }
 
-JSValue* getNodeEventListener(EventTargetNodeImpl* n, const AtomicString& eventType)
+JSValue* getNodeEventListener(EventTargetNode* n, const AtomicString& eventType)
 {
     if (JSAbstractEventListener* listener = static_cast<JSAbstractEventListener*>(n->getHTMLEventListener(eventType)))
         if (JSValue* obj = listener->listenerObj())
@@ -300,9 +300,9 @@ JSValue* getNodeEventListener(EventTargetNodeImpl* n, const AtomicString& eventT
 const ClassInfo EventConstructor::info = { "EventConstructor", 0, &EventConstructorTable, 0 };
 /*
 @begin EventConstructorTable 3
-  CAPTURING_PHASE       WebCore::EventImpl::CAPTURING_PHASE     DontDelete|ReadOnly
-  AT_TARGET             WebCore::EventImpl::AT_TARGET           DontDelete|ReadOnly
-  BUBBLING_PHASE        WebCore::EventImpl::BUBBLING_PHASE      DontDelete|ReadOnly
+  CAPTURING_PHASE       WebCore::Event::CAPTURING_PHASE     DontDelete|ReadOnly
+  AT_TARGET             WebCore::Event::AT_TARGET           DontDelete|ReadOnly
+  BUBBLING_PHASE        WebCore::Event::BUBBLING_PHASE      DontDelete|ReadOnly
 # Reverse-engineered from Netscape
   MOUSEDOWN             1                               DontDelete|ReadOnly
   MOUSEUP               2                               DontDelete|ReadOnly
@@ -366,7 +366,7 @@ const ClassInfo DOMEvent::info = { "Event", 0, &DOMEventTable, 0 };
 KJS_IMPLEMENT_PROTOFUNC(DOMEventProtoFunc)
 KJS_IMPLEMENT_PROTOTYPE("DOMEvent", DOMEventProto, DOMEventProtoFunc)
 
-DOMEvent::DOMEvent(ExecState *exec, EventImpl *e)
+DOMEvent::DOMEvent(ExecState *exec, Event *e)
   : m_impl(e), clipboard(0) 
 {
   setPrototype(DOMEventProto::self(exec));
@@ -392,7 +392,7 @@ bool DOMEvent::getOwnPropertySlot(ExecState *exec, const Identifier& propertyNam
 
 JSValue *DOMEvent::getValueProperty(ExecState *exec, int token) const
 {
-  EventImpl &event = *m_impl;
+  Event &event = *m_impl;
   switch (token) {
   case Type:
     return jsString(event.type().domString());
@@ -416,7 +416,7 @@ JSValue *DOMEvent::getValueProperty(ExecState *exec, int token) const
   case ClipboardData:
   {
     if (event.isClipboardEvent()) {
-      ClipboardEventImpl *impl = static_cast<ClipboardEventImpl *>(&event);
+      ClipboardEvent *impl = static_cast<ClipboardEvent *>(&event);
       if (!clipboard) {
         clipboard = new Clipboard(exec, impl->clipboard());
       }
@@ -428,7 +428,7 @@ JSValue *DOMEvent::getValueProperty(ExecState *exec, int token) const
   case DataTransfer:
   {
     if (event.isDragEvent()) {
-      MouseEventImpl *impl = static_cast<MouseEventImpl *>(&event);
+      MouseEvent *impl = static_cast<MouseEvent *>(&event);
       if (!clipboard) {
         clipboard = new Clipboard(exec, impl->clipboard());
       }
@@ -451,7 +451,7 @@ void DOMEvent::put(ExecState *exec, const Identifier &propertyName,
 
 void DOMEvent::putValueProperty(ExecState *exec, int token, JSValue *value, int)
 {
-  EventImpl &event = *m_impl;
+  Event &event = *m_impl;
   switch (token) {
   case ReturnValue:
     event.setDefaultPrevented(!value->toBoolean(exec));
@@ -468,7 +468,7 @@ JSValue *DOMEventProtoFunc::callAsFunction(ExecState *exec, JSObject * thisObj, 
 {
   if (!thisObj->inherits(&DOMEvent::info))
     return throwError(exec, TypeError);
-  EventImpl &event = *static_cast<DOMEvent *>( thisObj )->impl();
+  Event &event = *static_cast<DOMEvent *>( thisObj )->impl();
   switch (id) {
     case DOMEvent::StopPropagation:
       event.stopPropagation();
@@ -483,7 +483,7 @@ JSValue *DOMEventProtoFunc::callAsFunction(ExecState *exec, JSObject * thisObj, 
   return jsUndefined();
 }
 
-JSValue *toJS(ExecState *exec, EventImpl *e)
+JSValue *toJS(ExecState *exec, Event *e)
 {
   if (!e)
     return jsNull();
@@ -494,15 +494,15 @@ JSValue *toJS(ExecState *exec, EventImpl *e)
   DOMObject *ret = interp->getDOMObject(e);
   if (!ret) {
     if (e->isKeyboardEvent())
-      ret = new DOMKeyboardEvent(exec, static_cast<KeyboardEventImpl *>(e));
+      ret = new DOMKeyboardEvent(exec, static_cast<KeyboardEvent *>(e));
     else if (e->isMouseEvent())
-      ret = new DOMMouseEvent(exec, static_cast<MouseEventImpl *>(e));
+      ret = new DOMMouseEvent(exec, static_cast<MouseEvent *>(e));
     else if (e->isWheelEvent())
-      ret = new JSWheelEvent(exec, static_cast<WheelEventImpl *>(e));
+      ret = new JSWheelEvent(exec, static_cast<WheelEvent *>(e));
     else if (e->isUIEvent())
-      ret = new DOMUIEvent(exec, static_cast<UIEventImpl *>(e));
+      ret = new DOMUIEvent(exec, static_cast<UIEvent *>(e));
     else if (e->isMutationEvent())
-      ret = new JSMutationEvent(exec, static_cast<MutationEventImpl *>(e));
+      ret = new JSMutationEvent(exec, static_cast<MutationEvent *>(e));
     else
       ret = new DOMEvent(exec, e);
 
@@ -512,7 +512,7 @@ JSValue *toJS(ExecState *exec, EventImpl *e)
   return ret;
 }
 
-EventImpl *toEvent(JSValue *val)
+Event *toEvent(JSValue *val)
 {
     if (!val || !val->isObject(&DOMEvent::info))
         return 0;
@@ -567,7 +567,7 @@ KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE(DOMUIEventProto, DOMEventProto)
 KJS_IMPLEMENT_PROTOFUNC(DOMUIEventProtoFunc)
 KJS_IMPLEMENT_PROTOTYPE("DOMUIEvent", DOMUIEventProto, DOMUIEventProtoFunc)
 
-DOMUIEvent::DOMUIEvent(ExecState *exec, UIEventImpl *e)
+DOMUIEvent::DOMUIEvent(ExecState *exec, UIEvent *e)
   : DOMEvent(exec, e)
 {
   setPrototype(DOMUIEventProto::self(exec));
@@ -580,7 +580,7 @@ bool DOMUIEvent::getOwnPropertySlot(ExecState *exec, const Identifier& propertyN
 
 JSValue *DOMUIEvent::getValueProperty(ExecState *exec, int token) const
 {
-  UIEventImpl &event = *static_cast<UIEventImpl *>(impl());
+  UIEvent &event = *static_cast<UIEvent *>(impl());
   switch (token) {
   case View:
     return toJS(exec, event.view());
@@ -609,7 +609,7 @@ JSValue *DOMUIEventProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj,
 {
   if (!thisObj->inherits(&DOMUIEvent::info))
     return throwError(exec, TypeError);
-  UIEventImpl &uiEvent = *static_cast<UIEventImpl *>(static_cast<DOMUIEvent *>(thisObj)->impl());
+  UIEvent &uiEvent = *static_cast<UIEvent *>(static_cast<DOMUIEvent *>(thisObj)->impl());
   switch (id) {
     case DOMUIEvent::InitUIEvent:
       uiEvent.initUIEvent(AtomicString(args[0]->toString(exec).domString()),
@@ -653,7 +653,7 @@ KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE(DOMMouseEventProto, DOMUIEventProto)
 KJS_IMPLEMENT_PROTOFUNC(DOMMouseEventProtoFunc)
 KJS_IMPLEMENT_PROTOTYPE("DOMMouseEvent", DOMMouseEventProto, DOMMouseEventProtoFunc)
 
-DOMMouseEvent::DOMMouseEvent(ExecState *exec, MouseEventImpl *e)
+DOMMouseEvent::DOMMouseEvent(ExecState *exec, MouseEvent *e)
   : DOMUIEvent(exec, e)
 {
   setPrototype(DOMMouseEventProto::self(exec));
@@ -666,7 +666,7 @@ bool DOMMouseEvent::getOwnPropertySlot(ExecState *exec, const Identifier& proper
 
 JSValue *DOMMouseEvent::getValueProperty(ExecState *exec, int token) const
 {
-  MouseEventImpl &event = *static_cast<MouseEventImpl *>(impl());
+  MouseEvent &event = *static_cast<MouseEvent *>(impl());
   switch (token) {
   case ScreenX:
     return jsNumber(event.screenX());
@@ -709,7 +709,7 @@ JSValue *DOMMouseEventProtoFunc::callAsFunction(ExecState *exec, JSObject *thisO
 {
   if (!thisObj->inherits(&DOMMouseEvent::info))
     return throwError(exec, TypeError);
-  MouseEventImpl &mouseEvent = *static_cast<MouseEventImpl *>(static_cast<DOMMouseEvent *>(thisObj)->impl());
+  MouseEvent &mouseEvent = *static_cast<MouseEvent *>(static_cast<DOMMouseEvent *>(thisObj)->impl());
   switch (id) {
     case DOMMouseEvent::InitMouseEvent:
       mouseEvent.initMouseEvent(AtomicString(args[0]->toString(exec).domString()), // typeArg
@@ -754,7 +754,7 @@ KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE(DOMKeyboardEventProto, DOMUIEventProto)
 KJS_IMPLEMENT_PROTOFUNC(DOMKeyboardEventProtoFunc)
 KJS_IMPLEMENT_PROTOTYPE("DOMKeyboardEvent", DOMKeyboardEventProto, DOMKeyboardEventProtoFunc)
 
-DOMKeyboardEvent::DOMKeyboardEvent(ExecState *exec, KeyboardEventImpl *e)
+DOMKeyboardEvent::DOMKeyboardEvent(ExecState *exec, KeyboardEvent *e)
   : DOMUIEvent(exec, e)
 {
   setPrototype(DOMKeyboardEventProto::self(exec));
@@ -767,7 +767,7 @@ bool DOMKeyboardEvent::getOwnPropertySlot(ExecState *exec, const Identifier& pro
 
 JSValue *DOMKeyboardEvent::getValueProperty(ExecState *exec, int token) const
 {
-  KeyboardEventImpl &event = *static_cast<KeyboardEventImpl *>(impl());
+  KeyboardEvent &event = *static_cast<KeyboardEvent *>(impl());
   switch (token) {
   case KeyIdentifier:
     return jsString(event.keyIdentifier());
@@ -792,7 +792,7 @@ JSValue *DOMKeyboardEventProtoFunc::callAsFunction(ExecState *exec, JSObject *th
 {
   if (!thisObj->inherits(&DOMKeyboardEvent::info))
     return throwError(exec, TypeError);
-  KeyboardEventImpl &event = *static_cast<KeyboardEventImpl *>(static_cast<DOMUIEvent *>(thisObj)->impl());
+  KeyboardEvent &event = *static_cast<KeyboardEvent *>(static_cast<DOMUIEvent *>(thisObj)->impl());
   switch (id) {
     case DOMKeyboardEvent::InitKeyboardEvent:
       event.initKeyboardEvent(AtomicString(args[0]->toString(exec).domString()), // typeArg
@@ -833,7 +833,7 @@ KJS_DEFINE_PROTOTYPE(ClipboardProto)
 KJS_IMPLEMENT_PROTOFUNC(ClipboardProtoFunc)
 KJS_IMPLEMENT_PROTOTYPE("Clipboard", ClipboardProto, ClipboardProtoFunc)
 
-Clipboard::Clipboard(ExecState *exec, DOM::ClipboardImpl *cb)
+Clipboard::Clipboard(ExecState *exec, WebCore::Clipboard *cb)
   : clipboard(cb)
 {
     setPrototype(ClipboardProto::self(exec));
@@ -855,12 +855,12 @@ JSValue *Clipboard::getValueProperty(ExecState *exec, int token) const
             return jsStringOrUndefined(clipboard->effectAllowed());
         case Types:
         {
-            QStringList qTypes = clipboard->types();
+            DeprecatedStringList qTypes = clipboard->types();
             if (qTypes.isEmpty()) {
                 return jsNull(); 
             } else {
                 List list;
-                for (QStringList::Iterator it = qTypes.begin(); it != qTypes.end(); ++it) {
+                for (DeprecatedStringList::Iterator it = qTypes.begin(); it != qTypes.end(); ++it) {
                     list.append(jsString(UString(*it)));
                 }
                 return exec->lexicalInterpreter()->builtinArray()->construct(exec, list);
@@ -913,7 +913,7 @@ JSValue *ClipboardProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, 
         {
             if (args.size() == 1) {
                 bool success;
-                DOM::DOMString result = cb->clipboard->getData(args[0]->toString(exec).domString(), success);
+                WebCore::String result = cb->clipboard->getData(args[0]->toString(exec).domString(), success);
                 if (success) {
                     return jsString(result);
                 } else {
@@ -942,16 +942,16 @@ JSValue *ClipboardProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, 
             int y = (int)args[2]->toNumber(exec);
 
             // See if they passed us a node
-            NodeImpl *node = toNode(args[0]);
+            Node *node = toNode(args[0]);
             if (!node)
                 return throwError(exec, TypeError);
             
             if (!node->isElementNode())
                 return throwError(exec, SyntaxError, "setDragImageFromElement: Invalid first argument");
 
-            if (static_cast<ElementImpl*>(node)->hasLocalName(imgTag) && 
+            if (static_cast<Element*>(node)->hasLocalName(imgTag) && 
                 !node->inDocument())
-                cb->clipboard->setDragImage(static_cast<HTMLImageElementImpl*>(node)->cachedImage(), IntPoint(x, y));
+                cb->clipboard->setDragImage(static_cast<HTMLImageElement*>(node)->cachedImage(), IntPoint(x, y));
             else
                 cb->clipboard->setDragImageElement(node, IntPoint(x, y));                    
                 

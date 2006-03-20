@@ -45,8 +45,8 @@ namespace WebCore {
         virtual void ref(CachedObjectClient*);
         virtual void deref(CachedObjectClient*);
         
-        virtual void setCharset(const QString&);
-        virtual void data(ByteArray&, bool eof);
+        virtual void setCharset(const DeprecatedString&);
+        virtual void data(DeprecatedByteArray&, bool eof);
         virtual void error(int err, const char* text);
         
         virtual bool schedule() const { return true; }

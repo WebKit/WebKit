@@ -174,7 +174,7 @@ static void __stdcall transferJobStatusCallback(HINTERNET internetHandle, DWORD_
 bool TransferJob::start(DocLoader* docLoader)
 {
     if (d->URL.isLocalFile()) {
-        QString path = d->URL.path();
+        DeprecatedString path = d->URL.path();
         // windows does not enjoy a leading slash on paths
         if (path[0] == '/')
             path = path.mid(1);

@@ -21,12 +21,12 @@
 #include "config.h"
 #if SVG_SUPPORT
 #include "svgpathparser.h"
-#include <QString.h>
+#include <DeprecatedString.h>
 #include <math.h>
 
 using namespace WebCore;
 
-const char *KSVG::parseCoord(const char *ptr, double &number)
+const char *WebCore::parseCoord(const char *ptr, double &number)
 {
     int integer, exponent;
     double decimal, frac;
@@ -90,10 +90,10 @@ const char *KSVG::parseCoord(const char *ptr, double &number)
     return ptr;
 }
 
-void SVGPolyParser::parsePoints(const QString &s) const
+void SVGPolyParser::parsePoints(const DeprecatedString &s) const
 {
     if (!s.isEmpty()) {
-        QString pointData = s;
+        DeprecatedString pointData = s;
         pointData = pointData.replace(',', ' ');
         pointData = pointData.simplifyWhiteSpace();
         const char* currSegment = pointData.latin1();
@@ -124,11 +124,11 @@ void SVGPolyParser::parsePoints(const QString &s) const
 }
 
 void
-SVGPathParser::parseSVG( const QString &s, bool process )
+SVGPathParser::parseSVG( const DeprecatedString &s, bool process )
 {
     if(!s.isEmpty())
     {
-        QString d = s;
+        DeprecatedString d = s;
         d = d.replace(',', ' ');
         d = d.simplifyWhiteSpace();
         const char *ptr = d.latin1();

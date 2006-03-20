@@ -34,7 +34,7 @@
 #include "KRenderingFillPainter.h"
 #include "KRenderingStrokePainter.h"
 #include "SVGRenderStyle.h"
-#include "SVGStyledElementImpl.h"
+#include "SVGStyledElement.h"
 #include <kcanvas/KCanvas.h>
 #include <kxmlcore/Assertions.h>
 
@@ -50,7 +50,7 @@ public:
 };        
 
 // RenderPath
-RenderPath::RenderPath(RenderStyle *style, SVGStyledElementImpl *node) : RenderObject((DOM::NodeImpl *)node), d(new Private())
+RenderPath::RenderPath(RenderStyle *style, SVGStyledElement *node) : RenderObject((WebCore::Node *)node), d(new Private())
 {
     ASSERT(style != 0);
 }
@@ -146,7 +146,7 @@ void RenderPath::layout()
     // pretend that one of the attributes of the element has changed on the DOM
     // to force the DOM object to update this render object with new aboslute position values.
 
-    static_cast<SVGStyledElementImpl*>(element())->notifyAttributeChange();
+    static_cast<SVGStyledElement*>(element())->notifyAttributeChange();
     IntRect layoutRect = getAbsoluteRepaintRect();
     setWidth(layoutRect.width());
     setHeight(layoutRect.height());

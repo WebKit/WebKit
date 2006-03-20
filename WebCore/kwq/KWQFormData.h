@@ -25,8 +25,8 @@
 
 #import <Foundation/Foundation.h>
 
-namespace khtml {
+namespace WebCore {
     class FormData;
 }
 
-NSArray *arrayFromFormData(const khtml::FormData &);
+NSArray *arrayFromFormData(const WebCore::FormData &);

@@ -30,24 +30,24 @@
 #include "CachedObject.h"
 #include "TextEncoding.h"
 
-namespace khtml
+namespace WebCore
 {
     class DocLoader;
 
     class CachedCSSStyleSheet : public CachedObject
     {
     public:
-        CachedCSSStyleSheet(DocLoader*, const DOMString& URL, KIO::CacheControl, time_t expireDate, const QString& charset);
-        CachedCSSStyleSheet(const DOMString& URL, const QString& stylesheetData);
+        CachedCSSStyleSheet(DocLoader*, const String& URL, KIO::CacheControl, time_t expireDate, const DeprecatedString& charset);
+        CachedCSSStyleSheet(const String& URL, const DeprecatedString& stylesheetData);
         virtual ~CachedCSSStyleSheet();
 
-        const DOMString& sheet() const { return m_sheet; }
+        const String& sheet() const { return m_sheet; }
 
         virtual void ref(CachedObjectClient*);
         virtual void deref(CachedObjectClient*);
 
-        virtual void setCharset(const QString&);
-        virtual void data(ByteArray&, bool atEnd);
+        virtual void setCharset(const DeprecatedString&);
+        virtual void data(DeprecatedByteArray&, bool atEnd);
         virtual void error(int code, const char* message);
 
         virtual bool schedule() const { return true; }
@@ -55,7 +55,7 @@ namespace khtml
         void checkNotify();
 
     protected:
-        DOMString m_sheet;
+        String m_sheet;
         TextEncoding m_encoding;
     };
 

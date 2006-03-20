@@ -176,13 +176,13 @@ KCanvasPath* KRenderingDeviceQuartz::createPath() const
     return new KCanvasPathQuartz();
 }
 
-QString KRenderingDeviceQuartz::stringForPath(const KCanvasPath *path)
+DeprecatedString KRenderingDeviceQuartz::stringForPath(const KCanvasPath *path)
 {
-    QString result;
+    DeprecatedString result;
     if (path) {
         CGPathRef cgPath = static_cast<const KCanvasPathQuartz *>(path)->cgPath();
         CFStringRef pathString = CFStringFromCGPath(cgPath);
-        result = QString::fromCFString(pathString);
+        result = DeprecatedString::fromCFString(pathString);
         CFRelease(pathString);
     }
     return result;
@@ -211,12 +211,12 @@ KRenderingPaintServer *KRenderingDeviceQuartz::createPaintServer(const KCPaintSe
     return newServer;
 }
  
-KCanvasContainer *KRenderingDeviceQuartz::createContainer(RenderArena *arena, RenderStyle *style, SVGStyledElementImpl *node) const
+KCanvasContainer *KRenderingDeviceQuartz::createContainer(RenderArena *arena, RenderStyle *style, SVGStyledElement *node) const
 {
     return new (arena) KCanvasContainerQuartz(node);
 }
 
-RenderPath *KRenderingDeviceQuartz::createItem(RenderArena *arena, RenderStyle *style, SVGStyledElementImpl *node, KCanvasPath* path) const
+RenderPath *KRenderingDeviceQuartz::createItem(RenderArena *arena, RenderStyle *style, SVGStyledElement *node, KCanvasPath* path) const
 {
     RenderPath *item = new (arena) KCanvasItemQuartz(style, node);
     item->setPath(path);

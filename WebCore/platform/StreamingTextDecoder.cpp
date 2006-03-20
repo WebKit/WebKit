@@ -43,10 +43,10 @@ StreamingTextDecoder::StreamingTextDecoder(const TextEncoding& encoding)
 {
 }
 
-QString StreamingTextDecoder::convertLatin1(const unsigned char* s, int length)
+DeprecatedString StreamingTextDecoder::convertLatin1(const unsigned char* s, int length)
 {
     ASSERT(m_numBufferedBytes == 0);
-    return QString(reinterpret_cast<const char *>(s), length);
+    return DeprecatedString(reinterpret_cast<const char *>(s), length);
 }
 
 static const UChar replacementCharacter = 0xFFFD;
@@ -66,14 +66,14 @@ StreamingTextDecoder::~StreamingTextDecoder()
     }
 }
 
-QString StreamingTextDecoder::convertUTF16(const unsigned char *s, int length)
+DeprecatedString StreamingTextDecoder::convertUTF16(const unsigned char *s, int length)
 {
     ASSERT(m_numBufferedBytes == 0 || m_numBufferedBytes == 1);
 
     const unsigned char *p = s;
     unsigned len = length;
     
-    QString result("");
+    DeprecatedString result("");
     
     result.reserve(length / 2);
 
@@ -169,7 +169,7 @@ static inline bool unwanted(UChar c)
     return c == replacementCharacter || c == BOM;
 }
 
-void StreamingTextDecoder::appendOmittingUnwanted(QString &s, const UChar *characters, int byteCount)
+void StreamingTextDecoder::appendOmittingUnwanted(DeprecatedString &s, const UChar *characters, int byteCount)
 {
     ASSERT(byteCount % sizeof(UChar) == 0);
     int start = 0;
@@ -185,15 +185,15 @@ void StreamingTextDecoder::appendOmittingUnwanted(QString &s, const UChar *chara
         s.append(reinterpret_cast<const QChar *>(&characters[start]), characterCount - start);
 }
 
-QString StreamingTextDecoder::convertUsingICU(const unsigned char *chs, int len, bool flush)
+DeprecatedString StreamingTextDecoder::convertUsingICU(const unsigned char *chs, int len, bool flush)
 {
     // Get a converter for the passed-in encoding.
     if (!m_converterICU && U_FAILURE(createICUConverter()))
-        return QString();
+        return DeprecatedString();
 
     ASSERT(m_converterICU);
 
-    QString result("");
+    DeprecatedString result("");
     result.reserve(len);
 
     UChar buffer[ConversionBufferSize];
@@ -220,13 +220,13 @@ QString StreamingTextDecoder::convertUsingICU(const unsigned char *chs, int len,
             ucnv_toUnicode(m_converterICU, &target, targetLimit, &source, sourceLimit, offsets, true, &err);
         } while (source < sourceLimit);
         LOG_ERROR("ICU conversion error");
-        return QString();
+        return DeprecatedString();
     }
     
     return result;
 }
 
-QString StreamingTextDecoder::convert(const unsigned char *chs, int len, bool flush)
+DeprecatedString StreamingTextDecoder::convert(const unsigned char *chs, int len, bool flush)
 {
     //#define PARTIAL_CHARACTER_HANDLING_TEST_CHUNK_SIZE 1000
 
@@ -240,7 +240,7 @@ QString StreamingTextDecoder::convert(const unsigned char *chs, int len, bool fl
 
     default:
 #if PARTIAL_CHARACTER_HANDLING_TEST_CHUNK_SIZE
-        QString result;
+        DeprecatedString result;
         int chunkSize;
         for (int i = 0; i != len; i += chunkSize) {
             chunkSize = len - i;
@@ -255,15 +255,15 @@ QString StreamingTextDecoder::convert(const unsigned char *chs, int len, bool fl
 #endif
     }
     ASSERT_NOT_REACHED();
-    return QString();
+    return DeprecatedString();
 }
 
-QString StreamingTextDecoder::toUnicode(const char *chs, int len, bool flush)
+DeprecatedString StreamingTextDecoder::toUnicode(const char *chs, int len, bool flush)
 {
     ASSERT_ARG(len, len >= 0);
     
     if (m_error || !chs)
-        return QString();
+        return DeprecatedString();
 
     if (len <= 0 && !flush)
         return "";
@@ -301,7 +301,7 @@ QString StreamingTextDecoder::toUnicode(const char *chs, int len, bool flush)
         int skip = BOMLength - numBufferedBytes;
         m_numBufferedBytes = 0;
         m_atStart = false;
-        return len == skip ? QString("") : convert(chs + skip, len - skip, flush);
+        return len == skip ? DeprecatedString("") : convert(chs + skip, len - skip, flush);
     }
 
     // Handle case where we know there is no BOM coming.

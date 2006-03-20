@@ -33,7 +33,7 @@ namespace WebCore {
 class CreateLinkCommand : public CompositeEditCommand
 {
 public:
-    CreateLinkCommand(DOM::DocumentImpl*, const String&);
+    CreateLinkCommand(WebCore::Document*, const String&);
     virtual void doApply();
     
 private:
@@ -41,6 +41,6 @@ private:
 
 };
 
-} // namespace khtml
+} // namespace WebCore
 
 #endif // __create_link_command_h__

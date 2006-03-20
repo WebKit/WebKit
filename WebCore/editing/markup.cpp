@@ -26,17 +26,17 @@
 #include "config.h"
 #include "markup.h"
 
-#include "CommentImpl.h"
-#include "DocumentImpl.h"
-#include "DocumentTypeImpl.h"
-#include "HTMLElementImpl.h"
+#include "Comment.h"
+#include "Document.h"
+#include "DocumentType.h"
+#include "HTMLElement.h"
 #include "InlineTextBox.h"
 #include "Logging.h"
 #include "VisiblePosition.h"
-#include "css_computedstyle.h"
+#include "CSSComputedStyleDeclaration.h"
 #include "css_valueimpl.h"
-#include "dom2_rangeimpl.h"
-#include "dom_position.h"
+#include "Range.h"
+#include "Position.h"
 #include "dom_xmlimpl.h"
 #include "htmlediting.h"
 #include "htmlnames.h"
@@ -47,11 +47,11 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static inline bool shouldSelfClose(const NodeImpl *node);
+static inline bool shouldSelfClose(const Node *node);
 
-static QString escapeTextForMarkup(const QString &in)
+static DeprecatedString escapeTextForMarkup(const DeprecatedString &in)
 {
-    QString s = "";
+    DeprecatedString s = "";
 
     unsigned len = in.length();
     for (unsigned i = 0; i < len; ++i) {
@@ -73,9 +73,9 @@ static QString escapeTextForMarkup(const QString &in)
     return s;
 }
 
-static DOMString stringValueForRange(const NodeImpl *node, const RangeImpl *range)
+static String stringValueForRange(const Node *node, const Range *range)
 {
-    DOMString str = node->nodeValue().copy();
+    String str = node->nodeValue().copy();
     if (range) {
         ExceptionCode ec;
         if (node == range->endContainer(ec))
@@ -86,19 +86,19 @@ static DOMString stringValueForRange(const NodeImpl *node, const RangeImpl *rang
     return str;
 }
 
-static QString renderedText(const NodeImpl *node, const RangeImpl *range)
+static DeprecatedString renderedText(const Node *node, const Range *range)
 {
     RenderObject *r = node->renderer();
     if (!r)
-        return QString();
+        return DeprecatedString();
     
     if (!node->isTextNode())
-        return QString();
+        return DeprecatedString();
 
-    QString result = "";
+    DeprecatedString result = "";
 
     ExceptionCode ec;
-    const TextImpl *textNode = static_cast<const TextImpl *>(node);
+    const Text *textNode = static_cast<const Text *>(node);
     unsigned startOffset = 0;
     unsigned endOffset = textNode->length();
 
@@ -108,7 +108,7 @@ static QString renderedText(const NodeImpl *node, const RangeImpl *range)
         endOffset = range->endOffset(ec);
     
     RenderText *textRenderer = static_cast<RenderText *>(r);
-    QString str = node->nodeValue().qstring();
+    DeprecatedString str = node->nodeValue().deprecatedString();
     for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
         unsigned start = box->m_start;
         unsigned end = box->m_start + box->m_len;
@@ -147,84 +147,84 @@ static QString renderedText(const NodeImpl *node, const RangeImpl *range)
     return result;
 }
 
-static QString startMarkup(const NodeImpl *node, const RangeImpl *range, EAnnotateForInterchange annotate, CSSMutableStyleDeclarationImpl *defaultStyle)
+static DeprecatedString startMarkup(const Node *node, const Range *range, EAnnotateForInterchange annotate, CSSMutableStyleDeclaration *defaultStyle)
 {
     bool documentIsHTML = node->getDocument()->isHTMLDocument();
-    NodeImpl::NodeType type = node->nodeType();
+    Node::NodeType type = node->nodeType();
     switch (type) {
-        case NodeImpl::TEXT_NODE: {
+        case Node::TEXT_NODE: {
             if (node->parentNode()) {
                 if (node->parentNode()->hasTagName(preTag) ||
                     node->parentNode()->hasTagName(scriptTag) ||
                     node->parentNode()->hasTagName(styleTag) ||
                     node->parentNode()->hasTagName(textareaTag))
-                    return stringValueForRange(node, range).qstring();
+                    return stringValueForRange(node, range).deprecatedString();
             }
-            QString markup = annotate ? escapeTextForMarkup(renderedText(node, range)) : escapeTextForMarkup(stringValueForRange(node, range).qstring());            
+            DeprecatedString markup = annotate ? escapeTextForMarkup(renderedText(node, range)) : escapeTextForMarkup(stringValueForRange(node, range).deprecatedString());            
             if (defaultStyle) {
-                NodeImpl *element = node->parentNode();
+                Node *element = node->parentNode();
                 if (element) {
-                    RefPtr<CSSComputedStyleDeclarationImpl> computedStyle = Position(element, 0).computedStyle();
-                    RefPtr<CSSMutableStyleDeclarationImpl> style = computedStyle->copyInheritableProperties();
+                    RefPtr<CSSComputedStyleDeclaration> computedStyle = Position(element, 0).computedStyle();
+                    RefPtr<CSSMutableStyleDeclaration> style = computedStyle->copyInheritableProperties();
                     defaultStyle->diff(style.get());
                     if (style->length() > 0) {
                         // FIXME: Handle case where style->cssText() has illegal characters in it, like "
-                        QString openTag = QString("<span class=\"") + AppleStyleSpanClass + "\" style=\"" + style->cssText().qstring() + "\">";
+                        DeprecatedString openTag = DeprecatedString("<span class=\"") + AppleStyleSpanClass + "\" style=\"" + style->cssText().deprecatedString() + "\">";
                         markup = openTag + markup + "</span>";
                     }
                 }            
             }
             return annotate ? convertHTMLTextToInterchangeFormat(markup) : markup;
         }
-        case NodeImpl::COMMENT_NODE:
-            return static_cast<const CommentImpl *>(node)->toString().qstring();
-        case NodeImpl::DOCUMENT_NODE: {
+        case Node::COMMENT_NODE:
+            return static_cast<const Comment *>(node)->toString().deprecatedString();
+        case Node::DOCUMENT_NODE: {
             // Documents do not normally contain a docType as a child node, force it to print here instead.
-            const DocumentTypeImpl* docType = static_cast<const DocumentImpl*>(node)->doctype();
+            const DocumentType* docType = static_cast<const Document*>(node)->doctype();
             if (docType)
-                return docType->toString().qstring();
+                return docType->toString().deprecatedString();
             return "";
         }
-        case NodeImpl::DOCUMENT_FRAGMENT_NODE:
+        case Node::DOCUMENT_FRAGMENT_NODE:
             return "";
-        case NodeImpl::DOCUMENT_TYPE_NODE:
-            return static_cast<const DocumentTypeImpl*>(node)->toString().qstring();
-        case NodeImpl::PROCESSING_INSTRUCTION_NODE:
-            return static_cast<const ProcessingInstructionImpl *>(node)->toString().qstring();
-        case NodeImpl::ELEMENT_NODE: {
-            QString markup = QChar('<') + node->nodeName().qstring();
-            if (type == NodeImpl::ELEMENT_NODE) {
-                const ElementImpl *el = static_cast<const ElementImpl *>(node);
-                DOMString additionalStyle;
+        case Node::DOCUMENT_TYPE_NODE:
+            return static_cast<const DocumentType*>(node)->toString().deprecatedString();
+        case Node::PROCESSING_INSTRUCTION_NODE:
+            return static_cast<const ProcessingInstruction *>(node)->toString().deprecatedString();
+        case Node::ELEMENT_NODE: {
+            DeprecatedString markup = QChar('<') + node->nodeName().deprecatedString();
+            if (type == Node::ELEMENT_NODE) {
+                const Element *el = static_cast<const Element *>(node);
+                String additionalStyle;
                 if (defaultStyle && el->isHTMLElement()) {
-                    RefPtr<CSSComputedStyleDeclarationImpl> computedStyle = Position(const_cast<ElementImpl *>(el), 0).computedStyle();
-                    RefPtr<CSSMutableStyleDeclarationImpl> style = computedStyle->copyInheritableProperties();
+                    RefPtr<CSSComputedStyleDeclaration> computedStyle = Position(const_cast<Element *>(el), 0).computedStyle();
+                    RefPtr<CSSMutableStyleDeclaration> style = computedStyle->copyInheritableProperties();
                     defaultStyle->diff(style.get());
                     if (style->length() > 0) {
-                        CSSMutableStyleDeclarationImpl *inlineStyleDecl = static_cast<const HTMLElementImpl *>(el)->inlineStyleDecl();
+                        CSSMutableStyleDeclaration *inlineStyleDecl = static_cast<const HTMLElement *>(el)->inlineStyleDecl();
                         if (inlineStyleDecl)
                             inlineStyleDecl->diff(style.get());
                         additionalStyle = style->cssText();
                     }
                 }
-                NamedAttrMapImpl *attrs = el->attributes();
+                NamedAttrMap *attrs = el->attributes();
                 unsigned length = attrs->length();
                 if (length == 0 && additionalStyle.length() > 0) {
                     // FIXME: Handle case where additionalStyle has illegal characters in it, like "
-                    markup += " " +  styleAttr.localName().qstring() + "=\"" + additionalStyle.qstring() + "\"";
+                    markup += " " +  styleAttr.localName().deprecatedString() + "=\"" + additionalStyle.deprecatedString() + "\"";
                 }
                 else {
                     for (unsigned int i=0; i<length; i++) {
-                        AttributeImpl *attr = attrs->attributeItem(i);
-                        DOMString value = attr->value();
+                        Attribute *attr = attrs->attributeItem(i);
+                        String value = attr->value();
                         if (attr->name() == styleAttr && additionalStyle.length() > 0)
                             value += "; " + additionalStyle;
                         // FIXME: Handle case where value has illegal characters in it, like "
                         if (documentIsHTML)
-                            markup += " " + attr->name().localName().qstring();
+                            markup += " " + attr->name().localName().deprecatedString();
                         else
-                            markup += " " + attr->name().toString().qstring();
-                        markup += "=\"" + escapeTextForMarkup(value.qstring()) + "\"";
+                            markup += " " + attr->name().toString().deprecatedString();
+                        markup += "=\"" + escapeTextForMarkup(value.deprecatedString()) + "\"";
                     }
                 }
             }
@@ -238,20 +238,20 @@ static QString startMarkup(const NodeImpl *node, const RangeImpl *range, EAnnota
             
             return markup;
         }
-        case NodeImpl::ATTRIBUTE_NODE:
-        case NodeImpl::CDATA_SECTION_NODE:
-        case NodeImpl::ENTITY_NODE:
-        case NodeImpl::ENTITY_REFERENCE_NODE:
-        case NodeImpl::NOTATION_NODE:
+        case Node::ATTRIBUTE_NODE:
+        case Node::CDATA_SECTION_NODE:
+        case Node::ENTITY_NODE:
+        case Node::ENTITY_REFERENCE_NODE:
+        case Node::NOTATION_NODE:
             break;
     }
     return "";
 }
 
-static inline bool doesHTMLForbidEndTag(const NodeImpl *node)
+static inline bool doesHTMLForbidEndTag(const Node *node)
 {
     if (node->isHTMLElement()) {
-        const HTMLElementImpl* htmlElt = static_cast<const HTMLElementImpl*>(node);
+        const HTMLElement* htmlElt = static_cast<const HTMLElement*>(node);
         return (htmlElt->endTagRequirement() == TagStatusForbidden);
     }
     return false;
@@ -262,7 +262,7 @@ static inline bool doesHTMLForbidEndTag(const NodeImpl *node)
 // 2. Elements w/ children never self-close because they use a separate end tag.
 // 3. HTML elements which do not have a "forbidden" end tag will close with a separate end tag.
 // 4. Other elements self-close.
-static inline bool shouldSelfClose(const NodeImpl *node)
+static inline bool shouldSelfClose(const Node *node)
 {
     if (node->getDocument()->isHTMLDocument())
         return false;
@@ -273,26 +273,26 @@ static inline bool shouldSelfClose(const NodeImpl *node)
     return true;
 }
 
-static QString endMarkup(const NodeImpl *node)
+static DeprecatedString endMarkup(const Node *node)
 {
     if (node->isElementNode() && !shouldSelfClose(node) && !doesHTMLForbidEndTag(node))
-        return "</" + node->nodeName().qstring() + ">";
+        return "</" + node->nodeName().deprecatedString() + ">";
     return "";
 }
 
-static QString markup(const NodeImpl *startNode, bool onlyIncludeChildren, bool includeSiblings, QPtrList<NodeImpl> *nodes)
+static DeprecatedString markup(const Node *startNode, bool onlyIncludeChildren, bool includeSiblings, DeprecatedPtrList<Node> *nodes)
 {
     // Doesn't make sense to only include children and include siblings.
     ASSERT(!(onlyIncludeChildren && includeSiblings));
-    QString me = "";
-    for (const NodeImpl *current = startNode; current != NULL; current = includeSiblings ? current->nextSibling() : NULL) {
+    DeprecatedString me = "";
+    for (const Node *current = startNode; current != NULL; current = includeSiblings ? current->nextSibling() : NULL) {
         if (!onlyIncludeChildren) {
             if (nodes)
                 nodes->append(current);
             me += startMarkup(current, 0, DoNotAnnotateForInterchange, 0);
         }
         // print children
-        if (NodeImpl *n = current->firstChild())
+        if (Node *n = current->firstChild())
             if (!(n->getDocument()->isHTMLDocument() && doesHTMLForbidEndTag(current)))
                 me += markup(n, false, true, nodes);
         
@@ -303,38 +303,38 @@ static QString markup(const NodeImpl *startNode, bool onlyIncludeChildren, bool 
     return me;
 }
 
-static void completeURLs(NodeImpl *node, const QString &baseURL)
+static void completeURLs(Node *node, const DeprecatedString &baseURL)
 {
-    NodeImpl *end = node->traverseNextSibling();
-    for (NodeImpl *n = node; n != end; n = n->traverseNextNode()) {
+    Node *end = node->traverseNextSibling();
+    for (Node *n = node; n != end; n = n->traverseNextNode()) {
         if (n->isElementNode()) {
-            ElementImpl *e = static_cast<ElementImpl *>(n);
-            NamedAttrMapImpl *attrs = e->attributes();
+            Element *e = static_cast<Element *>(n);
+            NamedAttrMap *attrs = e->attributes();
             unsigned length = attrs->length();
             for (unsigned i = 0; i < length; i++) {
-                AttributeImpl *attr = attrs->attributeItem(i);
+                Attribute *attr = attrs->attributeItem(i);
                 if (e->isURLAttribute(attr))
-                    e->setAttribute(attr->name(), KURL(baseURL, attr->value().qstring()).url());
+                    e->setAttribute(attr->name(), KURL(baseURL, attr->value().deprecatedString()).url());
             }
         }
     }
 }
 
-QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotateForInterchange annotate)
+DeprecatedString createMarkup(const Range *range, DeprecatedPtrList<Node> *nodes, EAnnotateForInterchange annotate)
 {
     if (!range || range->isDetached())
-        return QString();
+        return DeprecatedString();
 
-    static const QString interchangeNewlineString = QString("<br class=\"") + AppleInterchangeNewline + "\">";
+    static const DeprecatedString interchangeNewlineString = DeprecatedString("<br class=\"") + AppleInterchangeNewline + "\">";
 
     ExceptionCode ec = 0;
-    NodeImpl *commonAncestor = range->commonAncestorContainer(ec);
+    Node *commonAncestor = range->commonAncestorContainer(ec);
     ASSERT(ec == 0);
 
-    DocumentImpl *doc = commonAncestor->getDocument();
+    Document *doc = commonAncestor->getDocument();
     doc->updateLayoutIgnorePendingStylesheets();
 
-    NodeImpl *commonAncestorBlock = 0;
+    Node *commonAncestorBlock = 0;
     if (commonAncestor != 0) {
         commonAncestorBlock = commonAncestor->enclosingBlockFlowElement();
     }
@@ -342,17 +342,17 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
         return "";    
     }
 
-    QStringList markups;
-    NodeImpl *pastEnd = range->pastEndNode();
-    NodeImpl *lastClosed = 0;
-    QPtrList<NodeImpl> ancestorsToClose;
+    DeprecatedStringList markups;
+    Node *pastEnd = range->pastEndNode();
+    Node *lastClosed = 0;
+    DeprecatedPtrList<Node> ancestorsToClose;
 
     // calculate the "default style" for this markup
     Position pos(doc->documentElement(), 0);
-    RefPtr<CSSComputedStyleDeclarationImpl> computedStyle = pos.computedStyle();
-    RefPtr<CSSMutableStyleDeclarationImpl> defaultStyle = computedStyle->copyInheritableProperties();
+    RefPtr<CSSComputedStyleDeclaration> computedStyle = pos.computedStyle();
+    RefPtr<CSSMutableStyleDeclaration> defaultStyle = computedStyle->copyInheritableProperties();
     
-    NodeImpl *startNode = range->startNode();
+    Node *startNode = range->startNode();
     VisiblePosition visibleStart(range->startPosition(), VP_DEFAULT_AFFINITY);
     VisiblePosition visibleEnd(range->endPosition(), VP_DEFAULT_AFFINITY);
     if (!inSameBlock(visibleStart, visibleStart.next())) {
@@ -363,8 +363,8 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
     }
     
     // Iterate through the nodes of the range.
-    NodeImpl *next;
-    for (NodeImpl *n = startNode; n != pastEnd; n = next) {
+    Node *next;
+    for (Node *n = startNode; n != pastEnd; n = next) {
         next = n->traverseNextNode();
 
         if (n->isBlockFlow() && next == pastEnd) {
@@ -391,7 +391,7 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
             if (n->nextSibling() == 0 || next == pastEnd) {
                 if (!ancestorsToClose.isEmpty()) {
                     // Close up the ancestors.
-                    while (NodeImpl *ancestor = ancestorsToClose.last()) {
+                    while (Node *ancestor = ancestorsToClose.last()) {
                         if (next != pastEnd && ancestor == next->parentNode()) {
                             break;
                         }
@@ -403,9 +403,9 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
                 } else {
                     // No ancestors to close, but need to add ancestors not in range since next node is in another tree. 
                     if (next != pastEnd) {
-                        NodeImpl *nextParent = next->parentNode();
+                        Node *nextParent = next->parentNode();
                         if (n != nextParent) {
-                            for (NodeImpl *parent = n->parent(); parent != 0 && parent != nextParent; parent = parent->parentNode()) {
+                            for (Node *parent = n->parent(); parent != 0 && parent != nextParent; parent = parent->parentNode()) {
                                 markups.prepend(startMarkup(parent, range, annotate, defaultStyle.get()));
                                 markups.append(endMarkup(parent));
                                 if (nodes) {
@@ -423,14 +423,14 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
         }
     }
     
-    NodeImpl *rangeStartNode = range->startNode();
+    Node *rangeStartNode = range->startNode();
     int rangeStartOffset = range->startOffset(ec);
     ASSERT(ec == 0);
     
     // Add ancestors up to the common ancestor block so inline ancestors such as FONT and B are part of the markup.
     if (lastClosed) {
-        for (NodeImpl *ancestor = lastClosed->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
-            if (RangeImpl::compareBoundaryPoints(ancestor, 0, rangeStartNode, rangeStartOffset) >= 0) {
+        for (Node *ancestor = lastClosed->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
+            if (Range::compareBoundaryPoints(ancestor, 0, rangeStartNode, rangeStartOffset) >= 0) {
                 // we have already added markup for this node
                 continue;
             }
@@ -461,7 +461,7 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
     }
 
     // Retain the Mail quote level by including all ancestor mail block quotes.
-    for (NodeImpl *ancestor = commonAncestorBlock; ancestor; ancestor = ancestor->parentNode()) {
+    for (Node *ancestor = commonAncestorBlock; ancestor; ancestor = ancestor->parentNode()) {
         if (isMailBlockquote(ancestor)) {
             markups.prepend(startMarkup(ancestor, range, annotate, defaultStyle.get()));
             markups.append(endMarkup(ancestor));
@@ -470,20 +470,20 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
     
     // add in the "default style" for this markup
     // FIXME: Handle case where value has illegal characters in it, like "
-    QString openTag = QString("<span class=\"") + AppleStyleSpanClass + "\" style=\"" + defaultStyle->cssText().qstring() + "\">";
+    DeprecatedString openTag = DeprecatedString("<span class=\"") + AppleStyleSpanClass + "\" style=\"" + defaultStyle->cssText().deprecatedString() + "\">";
     markups.prepend(openTag);
     markups.append("</span>");
 
     return markups.join("");
 }
 
-PassRefPtr<DocumentFragmentImpl> createFragmentFromMarkup(DocumentImpl* document, const QString& markup, const QString& baseURL)
+PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document* document, const DeprecatedString& markup, const DeprecatedString& baseURL)
 {
     ASSERT(document->documentElement()->isHTMLElement());
     // FIXME: What if the document element is not an HTML element?
-    HTMLElementImpl *element = static_cast<HTMLElementImpl *>(document->documentElement());
+    HTMLElement *element = static_cast<HTMLElement *>(document->documentElement());
 
-    RefPtr<DocumentFragmentImpl> fragment = element->createContextualFragment(markup);
+    RefPtr<DocumentFragment> fragment = element->createContextualFragment(markup);
     ASSERT(fragment);
 
     if (!baseURL.isEmpty() && baseURL != document->baseURL())
@@ -492,15 +492,15 @@ PassRefPtr<DocumentFragmentImpl> createFragmentFromMarkup(DocumentImpl* document
     return fragment.release();
 }
 
-QString createMarkup(const DOM::NodeImpl *node, EChildrenOnly includeChildren,
-    QPtrList<DOM::NodeImpl> *nodes, EAnnotateForInterchange annotate)
+DeprecatedString createMarkup(const WebCore::Node *node, EChildrenOnly includeChildren,
+    DeprecatedPtrList<WebCore::Node> *nodes, EAnnotateForInterchange annotate)
 {
     ASSERT(annotate == DoNotAnnotateForInterchange); // annotation not yet implemented for this code path
     node->getDocument()->updateLayoutIgnorePendingStylesheets();
     return markup(node, includeChildren, false, nodes);
 }
 
-static void createParagraphContentsFromString(DOM::DocumentImpl *document, ElementImpl *paragraph, const QString &string)
+static void createParagraphContentsFromString(WebCore::Document *document, Element *paragraph, const DeprecatedString &string)
 {
     ExceptionCode ec = 0;
     if (string.isEmpty()) {
@@ -511,10 +511,10 @@ static void createParagraphContentsFromString(DOM::DocumentImpl *document, Eleme
 
     assert(string.find('\n') == -1);
 
-    QStringList tabList = QStringList::split('\t', string, true);
-    QString tabText = "";
+    DeprecatedStringList tabList = DeprecatedStringList::split('\t', string, true);
+    DeprecatedString tabText = "";
     while (!tabList.isEmpty()) {
-        QString s = tabList.first();
+        DeprecatedString s = tabList.first();
         tabList.pop_front();
 
         // append the non-tab textual part
@@ -524,7 +524,7 @@ static void createParagraphContentsFromString(DOM::DocumentImpl *document, Eleme
                 ASSERT(ec == 0);
                 tabText = "";
             }
-            RefPtr<NodeImpl> textNode = document->createTextNode(s);
+            RefPtr<Node> textNode = document->createTextNode(s);
             rebalanceWhitespaceInTextNode(textNode.get(), 0, s.length());
             paragraph->appendChild(textNode.release(), ec);
             ASSERT(ec == 0);
@@ -541,26 +541,26 @@ static void createParagraphContentsFromString(DOM::DocumentImpl *document, Eleme
     }
 }
 
-PassRefPtr<DocumentFragmentImpl> createFragmentFromText(DocumentImpl *document, const QString &text)
+PassRefPtr<DocumentFragment> createFragmentFromText(Document *document, const DeprecatedString &text)
 {
     if (!document)
         return 0;
 
-    RefPtr<DocumentFragmentImpl> fragment = document->createDocumentFragment();
+    RefPtr<DocumentFragment> fragment = document->createDocumentFragment();
     
     if (!text.isEmpty()) {
-        QString string = text;
+        DeprecatedString string = text;
 
         // Break string into paragraphs. Extra line breaks turn into empty paragraphs.
-        string.replace(QString("\r\n"), "\n");
+        string.replace(DeprecatedString("\r\n"), "\n");
         string.replace('\r', '\n');
-        QStringList list = QStringList::split('\n', string, true); // true gets us empty strings in the list
+        DeprecatedStringList list = DeprecatedStringList::split('\n', string, true); // true gets us empty strings in the list
         while (!list.isEmpty()) {
-            QString s = list.first();
+            DeprecatedString s = list.first();
             list.pop_front();
 
             ExceptionCode ec = 0;
-            RefPtr<ElementImpl> element;
+            RefPtr<Element> element;
             if (s.isEmpty() && list.isEmpty()) {
                 // For last line, use the "magic BR" rather than a P.
                 element = document->createElementNS(xhtmlNamespaceURI, "br", ec);
@@ -577,16 +577,16 @@ PassRefPtr<DocumentFragmentImpl> createFragmentFromText(DocumentImpl *document, 
     return fragment.release();
 }
 
-PassRefPtr<DocumentFragmentImpl> createFragmentFromNodeList(DocumentImpl *document, const QPtrList<NodeImpl> &nodeList)
+PassRefPtr<DocumentFragment> createFragmentFromNodeList(Document *document, const DeprecatedPtrList<Node> &nodeList)
 {
     if (!document)
         return 0;
     
-    RefPtr<DocumentFragmentImpl> fragment = document->createDocumentFragment();
+    RefPtr<DocumentFragment> fragment = document->createDocumentFragment();
 
     ExceptionCode ec = 0;
-    for (QPtrListIterator<NodeImpl> i(nodeList); i.current(); ++i) {
-        RefPtr<ElementImpl> element = createDefaultParagraphElement(document);
+    for (DeprecatedPtrListIterator<Node> i(nodeList); i.current(); ++i) {
+        RefPtr<Element> element = createDefaultParagraphElement(document);
         element->appendChild(i.current(), ec);
         ASSERT(ec == 0);
         fragment->appendChild(element.release(), ec);

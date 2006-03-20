@@ -107,9 +107,9 @@ sub printConstructors
 	for my $name (@names) {
 		my $upperCase = upperCaseName($name);
 	
-		print "${namespace}ElementImpl *${name}Constructor(DocumentImpl *doc, bool createdByParser)\n";
+		print "${namespace}Element *${name}Constructor(Document *doc, bool createdByParser)\n";
 		print "{\n";
-		print "    return new ${namespace}${upperCase}ElementImpl(${name}Tag, doc);\n";
+		print "    return new ${namespace}${upperCase}Element(${name}Tag, doc);\n";
 		print "}\n\n";
 	}
 }
@@ -305,7 +305,7 @@ sub printElementIncludes
 	my @names = @_;
 	for my $name (@names) {
 		my $upperCase = upperCaseName($name);
-		print "#include \"${namespace}${upperCase}ElementImpl.h\"\n";
+		print "#include \"${namespace}${upperCase}Element.h\"\n";
 	}
 }
 
@@ -368,7 +368,7 @@ print <<END
 using namespace WebCore;
 using namespace ${cppNamespace}::${namespace}Names;
 
-typedef ${namespace}ElementImpl *(*ConstructorFunc)(DocumentImpl *doc, bool createdByParser);
+typedef ${namespace}Element *(*ConstructorFunc)(Document *doc, bool createdByParser);
 typedef KXMLCore::HashMap<AtomicStringImpl*, ConstructorFunc> FunctionMap;
 
 static FunctionMap *gFunctionMap = 0;
@@ -397,7 +397,7 @@ printFunctionInits(@tags);
 print <<END
 }
 
-${namespace}ElementImpl *${namespace}ElementFactory::create${namespace}Element(const QualifiedName& qName, DocumentImpl* doc, bool createdByParser)
+${namespace}Element *${namespace}ElementFactory::create${namespace}Element(const QualifiedName& qName, Document* doc, bool createdByParser)
 {
     if (!doc)
         return 0; // Don't allow elements to ever be made without having a doc.
@@ -407,7 +407,7 @@ ${namespace}ElementImpl *${namespace}ElementFactory::create${namespace}Element(c
     if (func)
         return func(doc, createdByParser);
     
-    return new ${namespace}ElementImpl(qName, doc);
+    return new ${namespace}Element(qName, doc);
 }
 
 }; // namespace
@@ -430,23 +430,23 @@ print "#define ${namespace}ELEMENTFACTORY_H\n\n";
 
 print "
 namespace WebCore {
-    class ElementImpl;
-    class DocumentImpl;
+    class Element;
+    class Document;
     class QualifiedName;
     class AtomicString;
 }
 
 namespace ${cppNamespace}
 {
-    class ${namespace}ElementImpl;
+    class ${namespace}Element;
 
     // The idea behind this class is that there will eventually be a mapping from namespace URIs to ElementFactories that can dispense
     // elements.  In a compound document world, the generic createElement function (will end up being virtual) will be called.
     class ${namespace}ElementFactory
     {
     public:
-        WebCore::ElementImpl *createElement(const WebCore::QualifiedName& qName, WebCore::DocumentImpl *doc, bool createdByParser = true);
-        static ${namespace}ElementImpl *create${namespace}Element(const WebCore::QualifiedName& qName, WebCore::DocumentImpl *doc, bool createdByParser = true);
+        WebCore::Element *createElement(const WebCore::QualifiedName& qName, WebCore::Document *doc, bool createdByParser = true);
+        static ${namespace}Element *create${namespace}Element(const WebCore::QualifiedName& qName, WebCore::Document *doc, bool createdByParser = true);
     };
 }
 

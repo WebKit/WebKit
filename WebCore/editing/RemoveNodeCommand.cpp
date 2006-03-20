@@ -26,12 +26,12 @@
 #include "config.h"
 #include "RemoveNodeCommand.h"
 
-#include "NodeImpl.h"
+#include "Node.h"
 #include <kxmlcore/Assertions.h>
 
 namespace WebCore {
 
-RemoveNodeCommand::RemoveNodeCommand(DocumentImpl *document, NodeImpl *removeChild)
+RemoveNodeCommand::RemoveNodeCommand(Document *document, Node *removeChild)
     : EditCommand(document), m_removeChild(removeChild), m_parent(m_removeChild->parentNode()), m_refChild(m_removeChild->nextSibling())
 {
     ASSERT(m_parent);

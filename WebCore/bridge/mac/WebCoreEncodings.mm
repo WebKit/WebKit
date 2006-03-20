@@ -34,9 +34,9 @@
 
 + (NSString *)decodeData:(NSData *)data
 {
-    DOM::HTMLNames::init(); // this method is used for importing bookmarks at startup, so HTMLNames are likely to be uninitialized yet
-    khtml::Decoder *decoder = new khtml::Decoder();
-    QString result = decoder->decode(static_cast<const char *>([data bytes]), [data length]);
+    WebCore::HTMLNames::init(); // this method is used for importing bookmarks at startup, so HTMLNames are likely to be uninitialized yet
+    WebCore::Decoder *decoder = new WebCore::Decoder();
+    DeprecatedString result = decoder->decode(static_cast<const char *>([data bytes]), [data length]);
     result += decoder->flush();
     decoder->deref();
     return result.getNSString();

@@ -28,25 +28,25 @@
 
 #include "EditCommand.h"
 
-namespace khtml {
+namespace WebCore {
 
 class RemoveNodeCommand : public EditCommand
 {
 public:
-    RemoveNodeCommand(DOM::DocumentImpl *, DOM::NodeImpl *);
+    RemoveNodeCommand(WebCore::Document *, WebCore::Node *);
     virtual ~RemoveNodeCommand() { }
 
     virtual void doApply();
     virtual void doUnapply();
 
-    DOM::NodeImpl *node() const { return m_removeChild.get(); }
+    WebCore::Node *node() const { return m_removeChild.get(); }
 
 private:
-    RefPtr<DOM::NodeImpl> m_removeChild;
-    RefPtr<DOM::NodeImpl> m_parent;
-    RefPtr<DOM::NodeImpl> m_refChild;    
+    RefPtr<WebCore::Node> m_removeChild;
+    RefPtr<WebCore::Node> m_parent;
+    RefPtr<WebCore::Node> m_refChild;    
 };
 
-} // namespace khtml
+} // namespace WebCore
 
 #endif // __remove_node_command_h__

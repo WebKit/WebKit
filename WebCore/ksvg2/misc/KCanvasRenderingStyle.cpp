@@ -24,7 +24,7 @@
 #include "config.h"
 #if SVG_SUPPORT
 
-#include <render_object.h>
+#include <RenderObject.h>
 
 #include <kcanvas/KCanvas.h>
 #include <kcanvas/KCanvasPath.h>
@@ -35,14 +35,14 @@
 #include <kcanvas/device/KRenderingPaintServerGradient.h>
 #include <kcanvas/device/KRenderingPaintServer.h>
 
-#include "DocumentImpl.h"
+#include "Document.h"
 #include "PlatformString.h"
 #include "render_style.h"
 #include "css_valueimpl.h"
 
 #include "ksvg.h"
-#include "SVGLengthImpl.h"
-#include "SVGStyledElementImpl.h"
+#include "SVGLength.h"
+#include "SVGStyledElement.h"
 #include "KCanvasRenderingStyle.h"
 #include "SVGRenderStyle.h"
 
@@ -58,7 +58,7 @@ static KRenderingPaintServerSolid* sharedSolidPaintServer()
 
 bool KSVGPainterFactory::isFilled(const RenderStyle *style)
 {
-    SVGPaintImpl *fill = style->svgStyle()->fillPaint();
+    SVGPaint *fill = style->svgStyle()->fillPaint();
     if (fill && fill->paintType() == SVG_PAINTTYPE_NONE)
         return false;
     return true;
@@ -69,7 +69,7 @@ KRenderingPaintServer *KSVGPainterFactory::fillPaintServer(const RenderStyle* st
     if (!isFilled(style))
         return 0;
 
-    SVGPaintImpl *fill = style->svgStyle()->fillPaint();
+    SVGPaint *fill = style->svgStyle()->fillPaint();
 
     KRenderingPaintServer *fillPaintServer;
     if (!fill) {
@@ -77,8 +77,8 @@ KRenderingPaintServer *KSVGPainterFactory::fillPaintServer(const RenderStyle* st
         fillPaintServer = sharedSolidPaintServer();
         static_cast<KRenderingPaintServerSolid *>(fillPaintServer)->setColor(Color::black);
     } else if (fill->paintType() == SVG_PAINTTYPE_URI) {
-        DOMString id(fill->uri());
-        fillPaintServer = getPaintServerById(item->document(), id.qstring().mid(1));
+        String id(fill->uri());
+        fillPaintServer = getPaintServerById(item->document(), id.deprecatedString().mid(1));
         if (item && fillPaintServer && item->isRenderPath())
             fillPaintServer->addClient(static_cast<const RenderPath*>(item));
     } else {
@@ -96,7 +96,7 @@ KRenderingPaintServer *KSVGPainterFactory::fillPaintServer(const RenderStyle* st
 
 bool KSVGPainterFactory::isStroked(const RenderStyle *style)
 {
-    SVGPaintImpl *stroke = style->svgStyle()->strokePaint();
+    SVGPaint *stroke = style->svgStyle()->strokePaint();
     if (!stroke || stroke->paintType() == SVG_PAINTTYPE_NONE)
         return false;
     return true;
@@ -107,12 +107,12 @@ KRenderingPaintServer *KSVGPainterFactory::strokePaintServer(const RenderStyle* 
     if (!isStroked(style))
         return 0;
 
-    SVGPaintImpl *stroke = style->svgStyle()->strokePaint();
+    SVGPaint *stroke = style->svgStyle()->strokePaint();
 
     KRenderingPaintServer *strokePaintServer;
     if (stroke && stroke->paintType() == SVG_PAINTTYPE_URI) {
-        DOMString id(stroke->uri());
-        strokePaintServer = getPaintServerById(item->document(), id.qstring().mid(1));
+        String id(stroke->uri());
+        strokePaintServer = getPaintServerById(item->document(), id.deprecatedString().mid(1));
         if(item && strokePaintServer && item->isRenderPath())
             strokePaintServer->addClient(static_cast<const RenderPath*>(item));
     } else {
@@ -127,9 +127,9 @@ KRenderingPaintServer *KSVGPainterFactory::strokePaintServer(const RenderStyle* 
     return strokePaintServer;
 }
 
-double KSVGPainterFactory::cssPrimitiveToLength(const RenderObject* item, CSSValueImpl *value, double defaultValue)
+double KSVGPainterFactory::cssPrimitiveToLength(const RenderObject* item, CSSValue *value, double defaultValue)
 {
-    CSSPrimitiveValueImpl *primitive = static_cast<CSSPrimitiveValueImpl *>(value);
+    CSSPrimitiveValue *primitive = static_cast<CSSPrimitiveValue *>(value);
 
     unsigned short cssType = (primitive ? primitive->primitiveType() : (unsigned short) CSSPrimitiveValue::CSS_UNKNOWN);
     if(!(cssType > CSSPrimitiveValue::CSS_UNKNOWN && cssType <= CSSPrimitiveValue::CSS_PC))
@@ -137,8 +137,8 @@ double KSVGPainterFactory::cssPrimitiveToLength(const RenderObject* item, CSSVal
 
     if(cssType == CSSPrimitiveValue::CSS_PERCENTAGE)
     {
-        SVGElementImpl *element = static_cast<SVGElementImpl *>(item->element());
-        SVGElementImpl *viewportElement = (element ? element->viewportElement() : 0);
+        SVGElement *element = static_cast<SVGElement *>(item->element());
+        SVGElement *viewportElement = (element ? element->viewportElement() : 0);
         if(viewportElement)
         {
             double result = primitive->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE) / 100.0;
@@ -156,13 +156,13 @@ KRenderingStrokePainter KSVGPainterFactory::strokePainter(const RenderStyle* sty
     strokePainter.setOpacity(style->svgStyle()->strokeOpacity());
     strokePainter.setStrokeWidth(KSVGPainterFactory::cssPrimitiveToLength(item, style->svgStyle()->strokeWidth(), 1.0));
 
-    CSSValueListImpl *dashes = style->svgStyle()->strokeDashArray();
+    CSSValueList *dashes = style->svgStyle()->strokeDashArray();
     if (dashes) {
-        CSSPrimitiveValueImpl *dash = 0;
+        CSSPrimitiveValue *dash = 0;
         KCDashArray array;
         unsigned long len = dashes->length();
         for (unsigned long i = 0; i < len; i++) {
-            dash = static_cast<CSSPrimitiveValueImpl *>(dashes->item(i));
+            dash = static_cast<CSSPrimitiveValue *>(dashes->item(i));
             if (dash)
                 array.append((float) dash->computeLengthFloat(const_cast<RenderStyle *>(style)));
         }

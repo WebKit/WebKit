@@ -26,7 +26,7 @@
 #import "config.h"
 #import "LocalizedStrings.h"
 
-#import "KWQExceptions.h"
+#import "BlockExceptions.h"
 #import "PlatformString.h"
 #import "WebCoreViewFactory.h"
 
@@ -34,33 +34,33 @@ namespace WebCore {
 
 String inputElementAltText()
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return [[WebCoreViewFactory sharedFactory] inputElementAltText];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     return String();
 }
 
 String resetButtonDefaultLabel()
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return [[WebCoreViewFactory sharedFactory] resetButtonDefaultLabel];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     return String();
 }
 
 String searchableIndexIntroduction()
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return [[WebCoreViewFactory sharedFactory] searchableIndexIntroduction];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     return String();
 }
 
 String submitButtonDefaultLabel()
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return [[WebCoreViewFactory sharedFactory] submitButtonDefaultLabel];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     return String();
 }
 

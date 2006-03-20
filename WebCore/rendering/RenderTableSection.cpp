@@ -30,7 +30,7 @@
 #include "RenderTableCell.h"
 #include "RenderTableRow.h"
 #include "RenderTableCol.h"
-#include "DocumentImpl.h"
+#include "Document.h"
 #include "htmlnames.h"
 #include <qtextstream.h>
 
@@ -38,7 +38,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderTableSection::RenderTableSection(NodeImpl* node)
+RenderTableSection::RenderTableSection(Node* node)
     : RenderContainer(node)
 {
     // init RenderObject attributes
@@ -159,7 +159,7 @@ void RenderTableSection::addCell(RenderTableCell *cell, RenderObject* row)
 {
     int rSpan = cell->rowSpan();
     int cSpan = cell->colSpan();
-    Array<RenderTable::ColumnStruct> &columns = table()->columns;
+    DeprecatedArray<RenderTable::ColumnStruct> &columns = table()->columns;
     int nCols = columns.size();
 
     // ### mozilla still seems to do the old HTML way, even for strict DTD
@@ -239,7 +239,7 @@ void RenderTableSection::addCell(RenderTableCell *cell, RenderObject* row)
 
 void RenderTableSection::setCellWidths()
 {
-    Array<int> &columnPos = table()->columnPos;
+    DeprecatedArray<int> &columnPos = table()->columnPos;
 
     int rows = gridRows;
     for (int i = 0; i < rows; i++) {
@@ -765,7 +765,7 @@ bool RenderTableSection::nodeAtPoint(NodeInfo& info, int x, int y, int tx, int t
 }
 
 #ifndef NDEBUG
-void RenderTableSection::dump(QTextStream *stream, QString ind) const
+void RenderTableSection::dump(QTextStream *stream, DeprecatedString ind) const
 {
     *stream << endl << ind << "grid=(" << gridRows << "," << table()->numEffCols() << ")" << endl << ind;
     for (int r = 0; r < gridRows; r++) {

@@ -28,7 +28,7 @@
 
 #include "CompositeEditCommand.h"
 
-namespace khtml {
+namespace WebCore {
 
 enum EListLevelModification { DecreaseListLevel, IncreaseListLevel };
 
@@ -36,12 +36,12 @@ class ModifySelectionListLevelCommand : public CompositeEditCommand
 {
 public:
 
-    static bool canIncreaseSelectionListLevel(DOM::DocumentImpl*);
-    static bool canDecreaseSelectionListLevel(DOM::DocumentImpl*);
-    static void increaseSelectionListLevel(DOM::DocumentImpl*);
-    static void decreaseSelectionListLevel(DOM::DocumentImpl*);
+    static bool canIncreaseSelectionListLevel(WebCore::Document*);
+    static bool canDecreaseSelectionListLevel(WebCore::Document*);
+    static void increaseSelectionListLevel(WebCore::Document*);
+    static void decreaseSelectionListLevel(WebCore::Document*);
 
-    ModifySelectionListLevelCommand(DOM::DocumentImpl* document, EListLevelModification);
+    ModifySelectionListLevelCommand(WebCore::Document* document, EListLevelModification);
 
     virtual void doApply();
 
@@ -52,15 +52,15 @@ private:
     virtual bool preservesTypingStyle() const;
     
     // utility functions
-    void appendSiblingNodeRange(NodeImpl* startNode, NodeImpl* endNode, NodeImpl* newParent);
-    void insertSiblingNodeRangeBefore(NodeImpl* startNode, NodeImpl* endNode, NodeImpl* refNode);
-    void insertSiblingNodeRangeAfter(NodeImpl* startNode, NodeImpl* endNode, NodeImpl* refNode);
+    void appendSiblingNodeRange(Node* startNode, Node* endNode, Node* newParent);
+    void insertSiblingNodeRangeBefore(Node* startNode, Node* endNode, Node* refNode);
+    void insertSiblingNodeRangeAfter(Node* startNode, Node* endNode, Node* refNode);
     
     // main functionality
     void increaseListLevel(const Selection&);
     void decreaseListLevel(const Selection&);
 };
 
-} // namespace khtml
+} // namespace WebCore
 
 #endif // __modify_selection_list_level_command_h__

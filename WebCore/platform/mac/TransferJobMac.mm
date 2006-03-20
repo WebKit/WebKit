@@ -30,12 +30,12 @@
 
 #import "FoundationExtras.h"
 #import "KURL.h"
-#import "KWQExceptions.h"
+#import "BlockExceptions.h"
 #import "KWQLoader.h"
 #import "Logging.h"
 #import "KWQResourceLoader.h"
 #import "formdata.h"
-#import "MacFrame.h"
+#import "FrameMac.h"
 #import "WebCoreFrameBridge.h"
 #import "DocLoader.h"
 #import "KWQFormData.h"
@@ -52,15 +52,15 @@ TransferJobInternal::~TransferJobInternal()
 TransferJob::~TransferJob()
 {
     // This will cancel the handle, and who knows what that could do
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [d->loader jobWillBeDeallocated];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     delete d;
 }
 
 bool TransferJob::start(DocLoader* docLoader)
 {
-    MacFrame *frame = Mac(docLoader->frame());
+    FrameMac *frame = Mac(docLoader->frame());
     
     if (!frame) {
         delete this;
@@ -71,13 +71,13 @@ bool TransferJob::start(DocLoader* docLoader)
 
     frame->didTellBridgeAboutLoad(url().url());
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     KWQResourceLoader* resourceLoader = [[KWQResourceLoader alloc] initWithJob:this];
 
     id <WebCoreResourceHandle> handle;
 
     NSDictionary* headerDict = nil;
-    QString headerString = queryMetaData("customHTTPHeader");
+    DeprecatedString headerString = queryMetaData("customHTTPHeader");
 
     if (!headerString.isEmpty())
         headerDict = [NSDictionary _webcore_dictionaryWithHeaderString:headerString.getNSString()];
@@ -91,7 +91,7 @@ bool TransferJob::start(DocLoader* docLoader)
     [resourceLoader setHandle:handle];
     [resourceLoader release];
     return handle != nil;
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 
     return true;
 }
@@ -102,7 +102,7 @@ void TransferJob::assembleResponseHeaders() const
         if ([d->response isKindOfClass:[NSHTTPURLResponse class]]) {
             NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)d->response;
             NSDictionary *headers = [httpResponse allHeaderFields];
-            d->responseHeaders = QString::fromNSString(KWQHeaderStringFromDictionary(headers, [httpResponse statusCode]));
+            d->responseHeaders = DeprecatedString::fromNSString(KWQHeaderStringFromDictionary(headers, [httpResponse statusCode]));
         }
         d->assembledResponseHeaders = true;
     }

@@ -32,17 +32,17 @@
 namespace WebCore {
 
 class FrameView;
-class HTMLElementImpl;
-class HTMLFrameElementImpl;
-class MouseEventImpl;
+class HTMLElement;
+class HTMLFrameElement;
+class MouseEvent;
 
 struct ChildFrame;
 
 class RenderFrameSet : public RenderContainer
 {
-    friend class HTMLFrameSetElementImpl;
+    friend class HTMLFrameSetElement;
 public:
-    RenderFrameSet(HTMLFrameSetElementImpl*);
+    RenderFrameSet(HTMLFrameSetElement*);
     virtual ~RenderFrameSet();
 
     virtual const char* renderName() const { return "RenderFrameSet"; }
@@ -54,17 +54,17 @@ public:
 
     bool resizing() const { return m_resizing; }
 
-    bool userResize(MouseEventImpl*);
+    bool userResize(MouseEvent*);
     bool canResize(int x, int y);
     void setResizing(bool);
 
     virtual bool nodeAtPoint(NodeInfo&, int x, int y, int tx, int ty, HitTestAction);
 
-    HTMLFrameSetElementImpl* element() const
-        { return static_cast<HTMLFrameSetElementImpl*>(RenderContainer::element()); }
+    HTMLFrameSetElement* element() const
+        { return static_cast<HTMLFrameSetElement*>(RenderContainer::element()); }
 
 #ifndef NDEBUG
-    virtual void dump(QTextStream *stream, QString ind = "") const;
+    virtual void dump(QTextStream *stream, DeprecatedString ind = "") const;
 #endif
 
 private:
@@ -87,7 +87,7 @@ private:
 
 class RenderPart : public RenderWidget {
 public:
-    RenderPart(HTMLElementImpl*);
+    RenderPart(HTMLElement*);
     virtual ~RenderPart();
     
     virtual const char* renderName() const { return "RenderPart"; }
@@ -115,12 +115,12 @@ private:
 class RenderFrame : public RenderPart
 {
 public:
-    RenderFrame(HTMLFrameElementImpl*);
+    RenderFrame(HTMLFrameElement*);
 
     virtual const char* renderName() const { return "RenderFrame"; }
 
-    HTMLFrameElementImpl* element() const
-        { return static_cast<HTMLFrameElementImpl*>(RenderPart::element()); }
+    HTMLFrameElement* element() const
+        { return static_cast<HTMLFrameElement*>(RenderPart::element()); }
 
     virtual void viewCleared();
 };
@@ -129,7 +129,7 @@ public:
 class RenderPartObject : public RenderPart
 {
 public:
-    RenderPartObject(HTMLElementImpl*);
+    RenderPartObject(HTMLElement*);
 
     virtual const char* renderName() const { return "RenderPartObject"; }
 

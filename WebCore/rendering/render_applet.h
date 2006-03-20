@@ -24,7 +24,7 @@
 #ifndef render_applet_h
 #define render_applet_h
 
-#include "HTMLElementImpl.h"
+#include "HTMLElement.h"
 #include "render_replaced.h"
 
 namespace WebCore {
@@ -32,7 +32,7 @@ namespace WebCore {
 class RenderApplet : public RenderWidget
 {
 public:
-    RenderApplet(HTMLElementImpl*, const HashMap<DOMString, DOMString>& args);
+    RenderApplet(HTMLElement*, const HashMap<String, String>& args);
     virtual ~RenderApplet();
 
     virtual const char* renderName() const { return "RenderApplet"; }
@@ -44,17 +44,17 @@ public:
     virtual int intrinsicHeight() const;
     virtual bool isApplet() const { return true; }
 
-    HTMLElementImpl *element() const
-        { return static_cast<HTMLElementImpl*>(RenderObject::element()); }
+    HTMLElement *element() const
+        { return static_cast<HTMLElement*>(RenderObject::element()); }
 
 private:
-    HashMap<DOMString, DOMString> m_args;
+    HashMap<String, String> m_args;
 };
 
 class RenderEmptyApplet : public RenderWidget
 {
 public:
-    RenderEmptyApplet(NodeImpl*);
+    RenderEmptyApplet(Node*);
 
     virtual const char* renderName() const { return "RenderEmptyApplet"; }
 

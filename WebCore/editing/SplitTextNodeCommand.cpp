@@ -26,18 +26,18 @@
 #include "config.h"
 #include "SplitTextNodeCommand.h"
 
-#include "DocumentImpl.h"
-#include "TextImpl.h"
+#include "Document.h"
+#include "Text.h"
 
 #include <kxmlcore/Assertions.h>
 
-using DOM::DocumentImpl;
-using DOM::TextImpl;
-using DOM::NodeImpl;
+using WebCore::Document;
+using WebCore::Text;
+using WebCore::Node;
 
-namespace khtml {
+namespace WebCore {
 
-SplitTextNodeCommand::SplitTextNodeCommand(DocumentImpl *document, TextImpl *text, int offset)
+SplitTextNodeCommand::SplitTextNodeCommand(Document *document, Text *text, int offset)
     : EditCommand(document), m_text2(text), m_offset(offset)
 {
     ASSERT(m_text2);
@@ -92,4 +92,4 @@ void SplitTextNodeCommand::doUnapply()
     m_offset = m_text1->length();
 }
 
-} // namespace khtml
+} // namespace WebCore

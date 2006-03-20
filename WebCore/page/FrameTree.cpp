@@ -22,7 +22,7 @@
 #include "FrameTree.h"
 
 #include "Frame.h"
-#include "NodeImpl.h"
+#include "Node.h"
 #include "Page.h"
 #include <algorithm>
 #include <kxmlcore/Assertions.h>

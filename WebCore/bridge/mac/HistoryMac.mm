@@ -26,12 +26,12 @@
 #import "config.h"
 #import "History.h"
 
-#import "QString.h"
+#import "DeprecatedString.h"
 #import "WebCoreHistory.h"
 
 namespace WebCore {
 
-bool historyContains(const QString& s)
+bool historyContains(const DeprecatedString& s)
 {
     // the other side of the bridge is careful not to throw exceptions here
     if (s.hasFastLatin1())

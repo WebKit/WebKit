@@ -28,8 +28,8 @@
 #include <kxmlcore/HashSet.h>
 
 namespace WebCore {
-    class DocumentImpl;
-    class SVGAnimationElementImpl;
+    class Document;
+    class SVGAnimationElement;
     class SVGTimer;
 
     template <typename T> class Timer;
@@ -38,15 +38,15 @@ namespace WebCore {
 
     class TimeScheduler {
     public:
-        TimeScheduler(DocumentImpl*);
+        TimeScheduler(Document*);
         ~TimeScheduler();
 
         // Adds singleShot Timers
-        void addTimer(SVGAnimationElementImpl*, unsigned int ms);
+        void addTimer(SVGAnimationElement*, unsigned int ms);
 
         // (Dis-)Connects to interval timer with 'staticTimerInterval'
-        void connectIntervalTimer(SVGAnimationElementImpl*);
-        void disconnectIntervalTimer(SVGAnimationElementImpl*);
+        void connectIntervalTimer(SVGAnimationElement*);
+        void disconnectIntervalTimer(SVGAnimationElement*);
 
         void startAnimations();
         void toggleAnimations();
@@ -58,7 +58,7 @@ namespace WebCore {
     private:
         friend class SVGTimer;
         void timerFired(Timer<TimeScheduler>*);
-        DocumentImpl* document() const { return m_document; }
+        Document* document() const { return m_document; }
 
     private:
         double m_creationTime;
@@ -67,7 +67,7 @@ namespace WebCore {
         SVGTimerSet m_timerSet;
         
         SVGTimer* m_intervalTimer;
-        DocumentImpl* m_document;
+        Document* m_document;
     };
 }
 

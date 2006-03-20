@@ -151,7 +151,7 @@
 			Name="kwq"
 			>
 			<File
-				RelativePath="..\..\kwq\KWQClipboard.h"
+				RelativePath="..\..\kwq\ClipboardMac.h"
 				>
 			</File>
 			<File
@@ -175,7 +175,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQExceptions.h"
+				RelativePath="..\..\kwq\BlockExceptions.h"
 				>
 			</File>
 			<File
@@ -191,7 +191,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQKJavaAppletWidget.h"
+				RelativePath="..\..\kwq\JavaAppletWidget.h"
 				>
 			</File>
 			<File
@@ -211,11 +211,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQListImpl.cpp"
+				RelativePath="..\..\kwq\DeprecatedPtrListImpl.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQListImpl.h"
+				RelativePath="..\..\kwq\DeprecatedPtrListImpl.h"
 				>
 			</File>
 			<File
@@ -227,7 +227,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQPtrList.h"
+				RelativePath="..\..\kwq\DeprecatedPtrList.h"
 				>
 			</File>
 			<File
@@ -235,19 +235,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQRegExp.cpp"
+				RelativePath="..\..\kwq\RegularExpression.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQRegExp.h"
+				RelativePath="..\..\kwq\RegularExpression.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQRenderTreeDebug.cpp"
+				RelativePath="..\..\kwq\RenderTreeAsText.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQRenderTreeDebug.h"
+				RelativePath="..\..\kwq\RenderTreeAsText.h"
 				>
 			</File>
 			<File
@@ -263,7 +263,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQTextArea.h"
+				RelativePath="..\..\kwq\WebCoreTextArea.h"
 				>
 			</File>
 			<File
@@ -271,7 +271,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQTextField.h"
+				RelativePath="..\..\kwq\WebCoreTextField.h"
 				>
 			</File>
 			<File
@@ -283,15 +283,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQValueList.h"
+				RelativePath="..\..\kwq\DeprecatedValueList.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQValueListImpl.cpp"
+				RelativePath="..\..\kwq\DeprecatedValueListImpl.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kwq\KWQValueListImpl.h"
+				RelativePath="..\..\kwq\DeprecatedValueListImpl.h"
 				>
 			</File>
 			<File
@@ -307,7 +307,7 @@
 			Name="Generated Files"
 			>
 			<File
-				RelativePath="$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources\css_grammar.cpp"
+				RelativePath="$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources\CSSGrammar.cpp"
 				>
 			</File>
 		</Filter>
@@ -318,19 +318,19 @@
 				Name="xsl"
 				>
 				<File
-					RelativePath="..\..\khtml\xsl\xsl_stylesheetimpl.cpp"
+					RelativePath="..\..\khtml\xsl\XSLStyleSheet.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\xsl\xsl_stylesheetimpl.h"
+					RelativePath="..\..\khtml\xsl\XSLStyleSheet.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\xsl\xslt_processorimpl.cpp"
+					RelativePath="..\..\khtml\xsl\XSLTProcessor.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\xsl\xslt_processorimpl.h"
+					RelativePath="..\..\khtml\xsl\XSLTProcessor.h"
 					>
 				</File>
 			</Filter>
@@ -338,11 +338,11 @@
 				Name="ecma"
 				>
 				<File
-					RelativePath="..\..\khtml\ecma\domparser.cpp"
+					RelativePath="..\..\khtml\ecma\JSDOMParser.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\ecma\domparser.h"
+					RelativePath="..\..\khtml\ecma\JSDOMParser.h"
 					>
 				</File>
 				<File
@@ -442,19 +442,19 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\ecma\xmlserializer.cpp"
+					RelativePath="..\..\khtml\ecma\JSXMLSerializer.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\ecma\xmlserializer.h"
+					RelativePath="..\..\khtml\ecma\JSXMLSerializer.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\ecma\XSLTProcessor.cpp"
+					RelativePath="..\..\khtml\ecma\JSXSLTProcessor.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\khtml\ecma\XSLTProcessor.h"
+					RelativePath="..\..\khtml\ecma\JSXSLTProcessor.h"
 					>
 				</File>
 			</Filter>
@@ -627,7 +627,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\Array.h"
+				RelativePath="..\..\platform\DeprecatedArray.h"
 				>
 			</File>
 			<File
@@ -775,7 +775,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\KeyEvent.h"
+				RelativePath="..\..\platform\PlatformKeyboardEvent.h"
 				>
 			</File>
 			<File
@@ -803,7 +803,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\MouseEvent.h"
+				RelativePath="..\..\platform\PlatformMouseEvent.h"
 				>
 			</File>
 			<File
@@ -827,19 +827,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\QString.cpp"
+				RelativePath="..\..\platform\DeprecatedString.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\QString.h"
+				RelativePath="..\..\platform\DeprecatedString.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\QStringList.cpp"
+				RelativePath="..\..\platform\DeprecatedStringList.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\QStringList.h"
+				RelativePath="..\..\platform\DeprecatedStringList.h"
 				>
 			</File>
 			<File
@@ -935,7 +935,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\platform\WheelEvent.h"
+				RelativePath="..\..\platform\PlatformWheelEvent.h"
 				>
 			</File>
 			<File
@@ -1783,15 +1783,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\css\css_computedstyle.cpp"
+				RelativePath="..\..\css\CSSComputedStyleDeclaration.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\css\css_computedstyle.h"
+				RelativePath="..\..\css\CSSComputedStyleDeclaration.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\css\css_grammar.y"
+				RelativePath="..\..\css\CSSGrammar.y"
 				>
 			</File>
 			<File
@@ -1835,7 +1835,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\css\cssproperties.in"
+				RelativePath="..\..\css\CSSPropertyNames.in"
 				>
 			</File>
 			<File
@@ -1847,7 +1847,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\css\cssvalues.in"
+				RelativePath="..\..\css\CSSValueKeywords.in"
 				>
 			</File>
 			<File
@@ -1915,27 +1915,27 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_arena.cpp"
+				RelativePath="..\..\rendering\RenderArena.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_arena.h"
+				RelativePath="..\..\rendering\RenderArena.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_box.cpp"
+				RelativePath="..\..\rendering\RenderBox.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_box.h"
+				RelativePath="..\..\rendering\RenderBox.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_br.cpp"
+				RelativePath="..\..\rendering\RenderBR.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_br.h"
+				RelativePath="..\..\rendering\RenderBR.h"
 				>
 			</File>
 			<File
@@ -1947,35 +1947,35 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_canvas.cpp"
+				RelativePath="..\..\rendering\RenderCanvas.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_canvas.h"
+				RelativePath="..\..\rendering\RenderCanvas.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_canvasimage.cpp"
+				RelativePath="..\..\rendering\RenderHTMLCanvas.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_canvasimage.h"
+				RelativePath="..\..\rendering\RenderHTMLCanvas.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_flexbox.cpp"
+				RelativePath="..\..\rendering\RenderFlexibleBox.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_flexbox.h"
+				RelativePath="..\..\rendering\RenderFlexibleBox.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_flow.cpp"
+				RelativePath="..\..\rendering\RenderFlow.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_flow.h"
+				RelativePath="..\..\rendering\RenderFlow.h"
 				>
 			</File>
 			<File
@@ -1995,27 +1995,27 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_image.cpp"
+				RelativePath="..\..\rendering\RenderImage.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_image.h"
+				RelativePath="..\..\rendering\RenderImage.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_inline.cpp"
+				RelativePath="..\..\rendering\RenderInline.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_inline.h"
+				RelativePath="..\..\rendering\RenderInline.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_layer.cpp"
+				RelativePath="..\..\rendering\RenderLayer.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_layer.h"
+				RelativePath="..\..\rendering\RenderLayer.h"
 				>
 			</File>
 			<File
@@ -2035,11 +2035,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_object.cpp"
+				RelativePath="..\..\rendering\RenderObject.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_object.h"
+				RelativePath="..\..\rendering\RenderObject.h"
 				>
 			</File>
 			<File
@@ -2059,11 +2059,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_theme.cpp"
+				RelativePath="..\..\rendering\RenderTheme.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\rendering\render_theme.h"
+				RelativePath="..\..\rendering\RenderTheme.h"
 				>
 			</File>
 			<File
@@ -2211,51 +2211,51 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\BeforeTextInsertedEventImpl.cpp"
+				RelativePath="..\..\dom\BeforeTextInsertedEvent.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\BeforeTextInsertedEventImpl.h"
+				RelativePath="..\..\dom\BeforeTextInsertedEvent.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\CDATASectionImpl.cpp"
+				RelativePath="..\..\dom\CDATASection.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\CDATASectionImpl.h"
+				RelativePath="..\..\dom\CDATASection.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\CharacterDataImpl.cpp"
+				RelativePath="..\..\dom\CharacterData.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\CharacterDataImpl.h"
+				RelativePath="..\..\dom\CharacterData.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\ChildNodeListImpl.cpp"
+				RelativePath="..\..\dom\ChildNodeList.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\ChildNodeListImpl.h"
+				RelativePath="..\..\dom\ChildNodeList.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\CommentImpl.cpp"
+				RelativePath="..\..\dom\Comment.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\CommentImpl.h"
+				RelativePath="..\..\dom\Comment.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\ContainerNodeImpl.cpp"
+				RelativePath="..\..\dom\ContainerNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\ContainerNodeImpl.h"
+				RelativePath="..\..\dom\ContainerNode.h"
 				>
 			</File>
 			<File
@@ -2263,27 +2263,27 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\DocumentFragmentImpl.cpp"
+				RelativePath="..\..\dom\DocumentFragment.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\DocumentFragmentImpl.h"
+				RelativePath="..\..\dom\DocumentFragment.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\DocumentImpl.cpp"
+				RelativePath="..\..\dom\Document.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\DocumentImpl.h"
+				RelativePath="..\..\dom\Document.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\DocumentTypeImpl.cpp"
+				RelativePath="..\..\dom\DocumentType.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\DocumentTypeImpl.h"
+				RelativePath="..\..\dom\DocumentType.h"
 				>
 			</File>
 			<File
@@ -2295,11 +2295,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\dom2_rangeimpl.cpp"
+				RelativePath="..\..\dom\Range.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\dom2_rangeimpl.h"
+				RelativePath="..\..\dom\Range.h"
 				>
 			</File>
 			<File
@@ -2311,11 +2311,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\dom2_viewsimpl.cpp"
+				RelativePath="..\..\dom\AbstractView.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\dom2_viewsimpl.h"
+				RelativePath="..\..\dom\AbstractView.h"
 				>
 			</File>
 			<File
@@ -2327,11 +2327,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\dom_position.cpp"
+				RelativePath="..\..\dom\Position.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\dom_position.h"
+				RelativePath="..\..\dom\Position.h"
 				>
 			</File>
 			<File
@@ -2343,19 +2343,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\DOMImplementationImpl.cpp"
+				RelativePath="..\..\dom\DOMImplementation.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\DOMImplementationImpl.h"
+				RelativePath="..\..\dom\DOMImplementation.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\EditingTextImpl.cpp"
+				RelativePath="..\..\dom\EditingText.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\EditingTextImpl.h"
+				RelativePath="..\..\dom\EditingText.h"
 				>
 			</File>
 			<File
@@ -2371,11 +2371,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\EventTargetNodeImpl.cpp"
+				RelativePath="..\..\dom\EventTargetNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\EventTargetNodeImpl.h"
+				RelativePath="..\..\dom\EventTargetNode.h"
 				>
 			</File>
 			<File
@@ -2383,31 +2383,31 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\NamedNodeMapImpl.h"
+				RelativePath="..\..\dom\NamedNodeMap.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\NameNodeListImpl.cpp"
+				RelativePath="..\..\dom\NameNodeList.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\NameNodeListImpl.h"
+				RelativePath="..\..\dom\NameNodeList.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\NodeImpl.cpp"
+				RelativePath="..\..\dom\Node.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\NodeImpl.h"
+				RelativePath="..\..\dom\Node.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\NodeListImpl.cpp"
+				RelativePath="..\..\dom\NodeList.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\NodeListImpl.h"
+				RelativePath="..\..\dom\NodeList.h"
 				>
 			</File>
 			<File
@@ -2419,11 +2419,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\TextImpl.cpp"
+				RelativePath="..\..\dom\Text.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\dom\TextImpl.h"
+				RelativePath="..\..\dom\Text.h"
 				>
 			</File>
 			<File
@@ -2527,7 +2527,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\editing\edit_actions.h"
+				RelativePath="..\..\editing\EditAction.h"
 				>
 			</File>
 			<File
@@ -2539,11 +2539,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\editing\html_interchange.cpp"
+				RelativePath="..\..\editing\HTMLInterchange.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\editing\html_interchange.h"
+				RelativePath="..\..\editing\HTMLInterchange.h"
 				>
 			</File>
 			<File
@@ -2603,11 +2603,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\editing\jsediting.cpp"
+				RelativePath="..\..\editing\JSEditor.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\editing\jsediting.h"
+				RelativePath="..\..\editing\JSEditor.h"
 				>
 			</File>
 			<File
@@ -2739,11 +2739,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\editing\text_affinity.h"
+				RelativePath="..\..\editing\TextAffinity.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\editing\text_granularity.h"
+				RelativePath="..\..\editing\TextGranularity.h"
 				>
 			</File>
 			<File
@@ -2755,11 +2755,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\editing\visible_text.cpp"
+				RelativePath="..\..\editing\TextIterator.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\editing\visible_text.h"
+				RelativePath="..\..\editing\TextIterator.h"
 				>
 			</File>
 			<File
@@ -2855,19 +2855,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\html_canvasimpl.cpp"
+				RelativePath="..\..\khtml\html\HTMLCanvasElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\html_canvasimpl.h"
+				RelativePath="..\..\khtml\html\HTMLCanvasElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\html_documentimpl.cpp"
+				RelativePath="..\..\khtml\html\HTMLDocument.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\html_documentimpl.h"
+				RelativePath="..\..\khtml\html\HTMLDocument.h"
 				>
 			</File>
 			<File
@@ -2919,123 +2919,123 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLBaseFontElementImpl.cpp"
+				RelativePath="..\..\khtml\html\HTMLBaseFontElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLBaseFontElementImpl.h"
+				RelativePath="..\..\khtml\html\HTMLBaseFontElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLButtonElementImpl.cpp"
+				RelativePath="..\..\khtml\html\HTMLButtonElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLButtonElementImpl.h"
+				RelativePath="..\..\khtml\html\HTMLButtonElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLCollectionImpl.cpp"
+				RelativePath="..\..\khtml\html\HTMLCollection.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLCollectionImpl.h"
+				RelativePath="..\..\khtml\html\HTMLCollection.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLElementImpl.cpp"
+				RelativePath="..\..\khtml\html\HTMLElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLElementImpl.h"
+				RelativePath="..\..\khtml\html\HTMLElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\htmlfactory.cpp"
+				RelativePath="..\..\khtml\html\HTMLElementFactory.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\htmlfactory.h"
+				RelativePath="..\..\khtml\html\HTMLElementFactory.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLFieldSetElementImpl.cpp"
+				RelativePath="..\..\khtml\html\HTMLFieldSetElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLFieldSetElementImpl.h"
+				RelativePath="..\..\khtml\html\HTMLFieldSetElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLFormCollectionImpl.cpp"
+				RelativePath="..\..\khtml\html\HTMLFormCollection.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLFormCollectionImpl.h"
+				RelativePath="..\..\khtml\html\HTMLFormCollection.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLFormElementImpl.cpp"
+				RelativePath="..\..\khtml\html\HTMLFormElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLFormElementImpl.h"
+				RelativePath="..\..\khtml\html\HTMLFormElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLGenericFormElementImpl.cpp"
+				RelativePath="..\..\khtml\html\HTMLGenericFormElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLGenericFormElementImpl.h"
+				RelativePath="..\..\khtml\html\HTMLGenericFormElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLInputElementImpl.cpp"
+				RelativePath="..\..\khtml\html\HTMLInputElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLInputElementImpl.h"
+				RelativePath="..\..\khtml\html\HTMLInputElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLIsIndexElementImpl.cpp"
+				RelativePath="..\..\khtml\html\HTMLIsIndexElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLIsIndexElementImpl.h"
+				RelativePath="..\..\khtml\html\HTMLIsIndexElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLKeygenElementImpl.cpp"
+				RelativePath="..\..\khtml\html\HTMLKeygenElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLKeygenElementImpl.h"
+				RelativePath="..\..\khtml\html\HTMLKeygenElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLLabelElementImpl.cpp"
+				RelativePath="..\..\khtml\html\HTMLLabelElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLLabelElementImpl.h"
+				RelativePath="..\..\khtml\html\HTMLLabelElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLLegendElementImpl.cpp"
+				RelativePath="..\..\khtml\html\HTMLLegendElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLLegendElementImpl.h"
+				RelativePath="..\..\khtml\html\HTMLLegendElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLNameCollectionImpl.cpp"
+				RelativePath="..\..\khtml\html\HTMLNameCollection.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLNameCollectionImpl.h"
+				RelativePath="..\..\khtml\html\HTMLNameCollection.h"
 				>
 			</File>
 			<File
@@ -3047,27 +3047,27 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLOptGroupElementImpl.cpp"
+				RelativePath="..\..\khtml\html\HTMLOptGroupElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLOptGroupElementImpl.h"
+				RelativePath="..\..\khtml\html\HTMLOptGroupElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLOptionElementImpl.cpp"
+				RelativePath="..\..\khtml\html\HTMLOptionElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLOptionElementImpl.h"
+				RelativePath="..\..\khtml\html\HTMLOptionElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLOptionsCollectionImpl.cpp"
+				RelativePath="..\..\khtml\html\HTMLOptionsCollection.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLOptionsCollectionImpl.h"
+				RelativePath="..\..\khtml\html\HTMLOptionsCollection.h"
 				>
 			</File>
 			<File
@@ -3079,27 +3079,27 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLSelectElementImpl.cpp"
+				RelativePath="..\..\khtml\html\HTMLSelectElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLSelectElementImpl.h"
+				RelativePath="..\..\khtml\html\HTMLSelectElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLTextAreaElementImpl.cpp"
+				RelativePath="..\..\khtml\html\HTMLTextAreaElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLTextAreaElementImpl.h"
+				RelativePath="..\..\khtml\html\HTMLTextAreaElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLTextFieldInnerElementImpl.cpp"
+				RelativePath="..\..\khtml\html\HTMLTextFieldInnerElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLTextFieldInnerElementImpl.h"
+				RelativePath="..\..\khtml\html\HTMLTextFieldInnerElement.h"
 				>
 			</File>
 			<File

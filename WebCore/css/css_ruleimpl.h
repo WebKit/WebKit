@@ -33,74 +33,74 @@
 namespace WebCore {
 
 class CachedCSSStyleSheet;
-class CSSMutableStyleDeclarationImpl;
+class CSSMutableStyleDeclaration;
 class CSSStyleSheet;
-class CSSStyleSheetImpl;
-class MediaListImpl;
+class CSSStyleSheet;
+class MediaList;
 
 enum CSSRuleType { UNKNOWN_RULE, STYLE_RULE, CHARSET_RULE, IMPORT_RULE, MEDIA_RULE, FONT_FACE_RULE, PAGE_RULE };
 
-class CSSRuleImpl : public StyleBaseImpl
+class CSSRule : public StyleBase
 {
 public:
-    CSSRuleImpl(StyleBaseImpl *parent)
-        : StyleBaseImpl(parent), m_type(UNKNOWN_RULE) {}
+    CSSRule(StyleBase *parent)
+        : StyleBase(parent), m_type(UNKNOWN_RULE) {}
 
     virtual bool isRule() { return true; }
     unsigned short type() const { return m_type; }
 
-    CSSStyleSheetImpl *parentStyleSheet() const;
-    CSSRuleImpl *parentRule() const;
+    CSSStyleSheet *parentStyleSheet() const;
+    CSSRule *parentRule() const;
 
-    virtual DOMString cssText() const;
-    void setCssText(DOM::DOMString str);
+    virtual String cssText() const;
+    void setCssText(WebCore::String str);
 
 protected:
     CSSRuleType m_type;
 };
 
 
-class CSSCharsetRuleImpl : public CSSRuleImpl
+class CSSCharsetRule : public CSSRule
 {
 public:
-    CSSCharsetRuleImpl(StyleBaseImpl *parent)
-        : CSSRuleImpl(parent) { m_type = CHARSET_RULE; }
+    CSSCharsetRule(StyleBase *parent)
+        : CSSRule(parent) { m_type = CHARSET_RULE; }
 
     virtual bool isCharsetRule() { return true; }
-    virtual DOMString cssText() const;
+    virtual String cssText() const;
 
-    DOMString encoding() const { return m_encoding; }
-    void setEncoding(DOMString _encoding) { m_encoding = _encoding; }
+    String encoding() const { return m_encoding; }
+    void setEncoding(String _encoding) { m_encoding = _encoding; }
 
 protected:
-    DOMString m_encoding;
+    String m_encoding;
 };
 
 
-class CSSFontFaceRuleImpl : public CSSRuleImpl
+class CSSFontFaceRule : public CSSRule
 {
 public:
-    CSSFontFaceRuleImpl(StyleBaseImpl *parent);
-    virtual ~CSSFontFaceRuleImpl();
+    CSSFontFaceRule(StyleBase *parent);
+    virtual ~CSSFontFaceRule();
 
-    CSSMutableStyleDeclarationImpl *style() const { return m_style.get(); }
+    CSSMutableStyleDeclaration *style() const { return m_style.get(); }
 
     virtual bool isFontFaceRule() { return true; }
 
 protected:
-    RefPtr<CSSMutableStyleDeclarationImpl> m_style;
+    RefPtr<CSSMutableStyleDeclaration> m_style;
 };
 
 
-class CSSImportRuleImpl : public CachedObjectClient, public CSSRuleImpl
+class CSSImportRule : public CachedObjectClient, public CSSRule
 {
 public:
-    CSSImportRuleImpl(StyleBaseImpl* parent, const String& href, MediaListImpl*);
-    virtual ~CSSImportRuleImpl();
+    CSSImportRule(StyleBase* parent, const String& href, MediaList*);
+    virtual ~CSSImportRule();
 
     String href() const { return m_strHref; }
-    MediaListImpl* media() const { return m_lstMedia.get(); }
-    CSSStyleSheetImpl* styleSheet() const { return m_styleSheet.get(); }
+    MediaList* media() const { return m_lstMedia.get(); }
+    CSSStyleSheet* styleSheet() const { return m_styleSheet.get(); }
 
     virtual bool isImportRule() { return true; }
     virtual String cssText() const;
@@ -114,108 +114,108 @@ public:
 
 protected:
     String m_strHref;
-    RefPtr<MediaListImpl> m_lstMedia;
-    RefPtr<CSSStyleSheetImpl> m_styleSheet;
+    RefPtr<MediaList> m_lstMedia;
+    RefPtr<CSSStyleSheet> m_styleSheet;
     CachedCSSStyleSheet* m_cachedSheet;
     bool m_loading;
 };
 
 class MediaList;
 
-class CSSRuleListImpl : public Shared<CSSRuleListImpl>
+class CSSRuleList : public Shared<CSSRuleList>
 {
 public:
-    CSSRuleListImpl() { }
-    CSSRuleListImpl(StyleListImpl *);
-    ~CSSRuleListImpl();
+    CSSRuleList() { }
+    CSSRuleList(StyleList *);
+    ~CSSRuleList();
 
     unsigned length() const { return m_lstCSSRules.count(); }
-    CSSRuleImpl *item ( unsigned index ) { return m_lstCSSRules.at( index ); }
+    CSSRule *item ( unsigned index ) { return m_lstCSSRules.at( index ); }
 
     /* not part of the DOM */
-    unsigned insertRule ( CSSRuleImpl *rule, unsigned index );
+    unsigned insertRule ( CSSRule *rule, unsigned index );
     void deleteRule ( unsigned index );
-    void append( CSSRuleImpl *rule );
+    void append( CSSRule *rule );
 
 protected:
-    QPtrList<CSSRuleImpl> m_lstCSSRules;
+    DeprecatedPtrList<CSSRule> m_lstCSSRules;
 };
 
-class CSSMediaRuleImpl : public CSSRuleImpl
+class CSSMediaRule : public CSSRule
 {
 public:
-    CSSMediaRuleImpl( StyleBaseImpl *parent );
-    CSSMediaRuleImpl( StyleBaseImpl *parent, const DOM::DOMString &media );
-    CSSMediaRuleImpl( StyleBaseImpl *parent, MediaListImpl *mediaList, CSSRuleListImpl *ruleList );
-    virtual ~CSSMediaRuleImpl();
+    CSSMediaRule( StyleBase *parent );
+    CSSMediaRule( StyleBase *parent, const WebCore::String &media );
+    CSSMediaRule( StyleBase *parent, MediaList *mediaList, CSSRuleList *ruleList );
+    virtual ~CSSMediaRule();
 
-    MediaListImpl *media() const { return m_lstMedia.get(); }
-    CSSRuleListImpl *cssRules() { return m_lstCSSRules.get(); }
+    MediaList *media() const { return m_lstMedia.get(); }
+    CSSRuleList *cssRules() { return m_lstCSSRules.get(); }
 
-    unsigned insertRule ( const DOM::DOMString &rule, unsigned index );
+    unsigned insertRule ( const WebCore::String &rule, unsigned index );
     void deleteRule ( unsigned index ) { m_lstCSSRules->deleteRule( index ); }
 
     virtual bool isMediaRule() { return true; }
-    virtual DOMString cssText() const;
+    virtual String cssText() const;
 
     /* Not part of the DOM */
-    unsigned append( CSSRuleImpl *rule );
+    unsigned append( CSSRule *rule );
 protected:
-    RefPtr<MediaListImpl> m_lstMedia;
-    RefPtr<CSSRuleListImpl> m_lstCSSRules;
+    RefPtr<MediaList> m_lstMedia;
+    RefPtr<CSSRuleList> m_lstCSSRules;
 };
 
 
-class CSSPageRuleImpl : public CSSRuleImpl
+class CSSPageRule : public CSSRule
 {
 public:
-    CSSPageRuleImpl(StyleBaseImpl *parent);
-    virtual ~CSSPageRuleImpl();
+    CSSPageRule(StyleBase *parent);
+    virtual ~CSSPageRule();
 
-    CSSMutableStyleDeclarationImpl *style() const { return m_style.get(); }
+    CSSMutableStyleDeclaration *style() const { return m_style.get(); }
 
     virtual bool isPageRule() { return true; }
 
-    DOM::DOMString selectorText() const;
-    void setSelectorText(DOM::DOMString str);
+    WebCore::String selectorText() const;
+    void setSelectorText(WebCore::String str);
 
 protected:
-    RefPtr<CSSMutableStyleDeclarationImpl> m_style;
+    RefPtr<CSSMutableStyleDeclaration> m_style;
 };
 
-class CSSImportantRuleImpl;
+class CSSImportantRule;
 
-class CSSStyleRuleImpl : public CSSRuleImpl
+class CSSStyleRule : public CSSRule
 {
 public:
-    CSSStyleRuleImpl(StyleBaseImpl* parent);
-    virtual ~CSSStyleRuleImpl();
+    CSSStyleRule(StyleBase* parent);
+    virtual ~CSSStyleRule();
 
-    CSSMutableStyleDeclarationImpl* style() const { return m_style.get(); }
+    CSSMutableStyleDeclaration* style() const { return m_style.get(); }
 
     virtual bool isStyleRule() { return true; }
-    virtual DOMString cssText() const;
+    virtual String cssText() const;
 
-    DOM::DOMString selectorText() const;
-    void setSelectorText(DOM::DOMString str);
+    WebCore::String selectorText() const;
+    void setSelectorText(WebCore::String str);
 
-    virtual bool parseString( const DOMString &string, bool = false );
+    virtual bool parseString( const String &string, bool = false );
 
     void setSelector(CSSSelector* selector) { m_selector = selector; }
-    void setDeclaration(PassRefPtr<CSSMutableStyleDeclarationImpl>);
+    void setDeclaration(PassRefPtr<CSSMutableStyleDeclaration>);
 
     CSSSelector* selector() { return m_selector; }
-    CSSMutableStyleDeclarationImpl* declaration() { return m_style.get(); }
+    CSSMutableStyleDeclaration* declaration() { return m_style.get(); }
  
 protected:
-    RefPtr<CSSMutableStyleDeclarationImpl> m_style;
+    RefPtr<CSSMutableStyleDeclaration> m_style;
     CSSSelector* m_selector;
 };
 
-class CSSUnknownRuleImpl : public CSSRuleImpl
+class CSSUnknownRule : public CSSRule
 {
 public:
-    CSSUnknownRuleImpl(StyleBaseImpl *parent) : CSSRuleImpl(parent) {}
+    CSSUnknownRule(StyleBase *parent) : CSSRule(parent) {}
 
     virtual bool isUnknownRule() { return true; }
 };

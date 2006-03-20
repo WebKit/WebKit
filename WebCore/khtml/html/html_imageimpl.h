@@ -29,12 +29,12 @@
 #include "Image.h"
 #include "Path.h"
 #include "html_inlineimpl.h"
-#include "render_object.h"
+#include "RenderObject.h"
 
 namespace WebCore {
 
-class HTMLCollectionImpl;
-class HTMLFormElementImpl;
+class HTMLCollection;
+class HTMLFormElement;
 class Image;
 class String;
 
@@ -42,14 +42,14 @@ struct Length;
 
 class HTMLImageLoader : public CachedObjectClient {
 public:
-    HTMLImageLoader(ElementImpl*);
+    HTMLImageLoader(Element*);
     virtual ~HTMLImageLoader();
 
     virtual void updateFromElement();
 
     void dispatchLoadEvent();
 
-    ElementImpl* element() const { return m_element; }
+    Element* element() const { return m_element; }
     bool imageComplete() const { return m_imageComplete; }
     CachedImage* image() const { return m_image; }
 
@@ -60,24 +60,24 @@ protected:
     void setLoadingImage(CachedImage*);
 
 private:
-    ElementImpl* m_element;
+    Element* m_element;
     CachedImage* m_image;
     bool m_firedLoad : 1;
     bool m_imageComplete : 1;
 };
 
-class HTMLImageElementImpl : public HTMLElementImpl {
-    friend class HTMLFormElementImpl;
+class HTMLImageElement : public HTMLElement {
+    friend class HTMLFormElement;
 public:
-    HTMLImageElementImpl(DocumentImpl*, HTMLFormElementImpl* = 0);
-    HTMLImageElementImpl(const QualifiedName& tagName, DocumentImpl*);
-    ~HTMLImageElementImpl();
+    HTMLImageElement(Document*, HTMLFormElement* = 0);
+    HTMLImageElement(const QualifiedName& tagName, Document*);
+    ~HTMLImageElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
     virtual int tagPriority() const { return 0; }
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttributeImpl*);
+    virtual void parseMappedAttribute(MappedAttribute*);
 
     virtual void attach();
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
@@ -93,7 +93,7 @@ public:
 
     String imageMap() const { return usemap; }
     
-    virtual bool isURLAttribute(AttributeImpl*) const;
+    virtual bool isURLAttribute(Attribute*) const;
 
     Image::CompositeOperator compositeOperator() const { return Image::compositeOperatorFromString(_compositeOperator.ascii()); }
 
@@ -142,24 +142,24 @@ protected:
     HTMLImageLoader m_imageLoader;
     String usemap;
     bool ismap;
-    HTMLFormElementImpl* m_form;
+    HTMLFormElement* m_form;
     String oldNameAttr;
-    QString _compositeOperator;
+    DeprecatedString _compositeOperator;
 };
 
 //------------------------------------------------------------------
 
-class HTMLAreaElementImpl : public HTMLAnchorElementImpl {
+class HTMLAreaElement : public HTMLAnchorElement {
 public:
     enum Shape { Default, Poly, Rect, Circle, Unknown };
 
-    HTMLAreaElementImpl(DocumentImpl*);
-    ~HTMLAreaElementImpl();
+    HTMLAreaElement(Document*);
+    ~HTMLAreaElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
     virtual int tagPriority() const { return 0; }
 
-    virtual void parseMappedAttribute(MappedAttributeImpl*);
+    virtual void parseMappedAttribute(MappedAttribute*);
 
     bool isDefault() const { return m_shape == Default; }
 
@@ -202,22 +202,22 @@ protected:
 
 // -------------------------------------------------------------------------
 
-class HTMLMapElementImpl : public HTMLElementImpl {
+class HTMLMapElement : public HTMLElement {
 public:
-    HTMLMapElementImpl(DocumentImpl*);
-    ~HTMLMapElementImpl();
+    HTMLMapElement(Document*);
+    ~HTMLMapElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 1; }
-    virtual bool checkDTD(const NodeImpl*);
+    virtual bool checkDTD(const Node*);
 
     const AtomicString& getName() const { return m_name; }
 
-    virtual void parseMappedAttribute(MappedAttributeImpl*);
+    virtual void parseMappedAttribute(MappedAttribute*);
 
     bool mapMouseEvent(int x, int y, int width, int height, RenderObject::NodeInfo&);
 
-    PassRefPtr<HTMLCollectionImpl> areas();
+    PassRefPtr<HTMLCollection> areas();
 
     String name() const;
     void setName(const String&);

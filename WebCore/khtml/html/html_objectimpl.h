@@ -25,7 +25,7 @@
 #ifndef HTML_OBJECTIMPL_H
 #define HTML_OBJECTIMPL_H
 
-#include "HTMLElementImpl.h"
+#include "HTMLElement.h"
 
 #if __APPLE__
 #include <JavaScriptCore/runtime.h>
@@ -33,61 +33,61 @@
 namespace KJS { namespace Bindings { class Instance; } }
 #endif
 
-namespace DOM {
+namespace WebCore {
 
-class HTMLFormElementImpl;
+class HTMLFormElement;
 class HTMLImageLoader;
 
-class HTMLAppletElementImpl : public HTMLElementImpl
+class HTMLAppletElement : public HTMLElement
 {
 public:
-    HTMLAppletElementImpl(DocumentImpl*);
-    ~HTMLAppletElementImpl();
+    HTMLAppletElement(Document*);
+    ~HTMLAppletElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 1; }
-    virtual bool checkDTD(const NodeImpl* newChild);
+    virtual bool checkDTD(const Node* newChild);
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttributeImpl*);
+    virtual void parseMappedAttribute(MappedAttribute*);
     
     virtual bool rendererIsNeeded(RenderStyle*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void closeRenderer();
     virtual void detach();
     
-    DOMString align() const;
-    void setAlign(const DOMString&);
+    String align() const;
+    void setAlign(const String&);
 
-    DOMString alt() const;
-    void setAlt(const DOMString&);
+    String alt() const;
+    void setAlt(const String&);
 
-    DOMString archive() const;
-    void setArchive(const DOMString&);
+    String archive() const;
+    void setArchive(const String&);
 
-    DOMString code() const;
-    void setCode(const DOMString&);
+    String code() const;
+    void setCode(const String&);
 
-    DOMString codeBase() const;
-    void setCodeBase(const DOMString&);
+    String codeBase() const;
+    void setCodeBase(const String&);
 
-    DOMString height() const;
-    void setHeight(const DOMString&);
+    String height() const;
+    void setHeight(const String&);
 
-    DOMString hspace() const;
-    void setHspace(const DOMString&);
+    String hspace() const;
+    void setHspace(const String&);
 
-    DOMString name() const;
-    void setName(const DOMString&);
+    String name() const;
+    void setName(const String&);
 
-    DOMString object() const;
-    void setObject(const DOMString&);
+    String object() const;
+    void setObject(const String&);
 
-    DOMString vspace() const;
-    void setVspace(const DOMString&);
+    String vspace() const;
+    void setVspace(const String&);
 
-    DOMString width() const;
-    void setWidth(const DOMString&);
+    String width() const;
+    void setWidth(const String&);
 
     virtual bool allParamsAvailable();
     void setupApplet() const;
@@ -100,8 +100,8 @@ public:
     virtual void removedFromDocument();
 
 private:
-    DOMString oldNameAttr;
-    DOMString oldIdAttr;
+    String oldNameAttr;
+    String oldIdAttr;
 
 #if __APPLE__
     mutable RefPtr<KJS::Bindings::Instance> m_appletInstance;
@@ -112,18 +112,18 @@ private:
 
 // -------------------------------------------------------------------------
 
-class HTMLEmbedElementImpl : public HTMLElementImpl
+class HTMLEmbedElement : public HTMLElement
 {
 public:
-    HTMLEmbedElementImpl(DocumentImpl*);
-    ~HTMLEmbedElementImpl();
+    HTMLEmbedElement(Document*);
+    ~HTMLEmbedElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 0; }
-    virtual bool checkDTD(const NodeImpl* newChild);
+    virtual bool checkDTD(const Node* newChild);
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttributeImpl*);
+    virtual void parseMappedAttribute(MappedAttribute*);
 
     virtual void attach();
     virtual void detach();
@@ -132,18 +132,18 @@ public:
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
     
-    virtual bool isURLAttribute(AttributeImpl*) const;
+    virtual bool isURLAttribute(Attribute*) const;
 
 #if __APPLE__
     KJS::Bindings::Instance* getEmbedInstance() const;
 #endif
 
-    QString url;
-    QString pluginPage;
-    QString serviceType;
+    DeprecatedString url;
+    DeprecatedString pluginPage;
+    DeprecatedString serviceType;
 
 private:
-    DOMString oldNameAttr;
+    String oldNameAttr;
 
 #if __APPLE__
     mutable RefPtr<KJS::Bindings::Instance> m_embedInstance;
@@ -152,20 +152,20 @@ private:
 
 // -------------------------------------------------------------------------
 
-class HTMLObjectElementImpl : public HTMLElementImpl
+class HTMLObjectElement : public HTMLElement
 {
 public:
-    HTMLObjectElementImpl(DocumentImpl*);
-    ~HTMLObjectElementImpl();
+    HTMLObjectElement(Document*);
+    ~HTMLObjectElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 7; }
-    virtual bool checkDTD(const NodeImpl* newChild);
+    virtual bool checkDTD(const Node* newChild);
 
-    HTMLFormElementImpl* form() const;
+    HTMLFormElement* form() const;
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttributeImpl*);
+    virtual void parseMappedAttribute(MappedAttribute*);
 
     virtual void attach();
     virtual bool rendererIsNeeded(RenderStyle*);
@@ -178,64 +178,64 @@ public:
     virtual void recalcStyle(StyleChange ch);
     virtual void childrenChanged();
 
-    DocumentImpl* contentDocument() const;
+    Document* contentDocument() const;
     
-    virtual bool isURLAttribute(AttributeImpl*) const;
+    virtual bool isURLAttribute(Attribute*) const;
 
     bool isImageType();
 
     void renderFallbackContent();
 
-    DOMString code() const;
-    void setCode(const DOMString&);
+    String code() const;
+    void setCode(const String&);
 
-    DOMString align() const;
-    void setAlign(const DOMString&);
+    String align() const;
+    void setAlign(const String&);
 
-    DOMString archive() const;
-    void setArchive(const DOMString&);
+    String archive() const;
+    void setArchive(const String&);
 
-    DOMString border() const;
-    void setBorder(const DOMString&);
+    String border() const;
+    void setBorder(const String&);
 
-    DOMString codeBase() const;
-    void setCodeBase(const DOMString&);
+    String codeBase() const;
+    void setCodeBase(const String&);
 
-    DOMString codeType() const;
-    void setCodeType(const DOMString&);
+    String codeType() const;
+    void setCodeType(const String&);
 
-    DOMString data() const;
-    void setData(const DOMString&);
+    String data() const;
+    void setData(const String&);
 
     bool declare() const;
     void setDeclare(bool);
 
-    DOMString height() const;
-    void setHeight(const DOMString&);
+    String height() const;
+    void setHeight(const String&);
 
-    DOMString hspace() const;
-    void setHspace(const DOMString&);
+    String hspace() const;
+    void setHspace(const String&);
 
-    DOMString name() const;
-    void setName(const DOMString&);
+    String name() const;
+    void setName(const String&);
 
-    DOMString standby() const;
-    void setStandby(const DOMString&);
+    String standby() const;
+    void setStandby(const String&);
 
     int tabIndex() const;
     void setTabIndex(int);
 
-    DOMString type() const;
-    void setType(const DOMString&);
+    String type() const;
+    void setType(const String&);
 
-    DOMString useMap() const;
-    void setUseMap(const DOMString&);
+    String useMap() const;
+    void setUseMap(const String&);
 
-    DOMString vspace() const;
-    void setVspace(const DOMString&);
+    String vspace() const;
+    void setVspace(const String&);
 
-    DOMString width() const;
-    void setWidth(const DOMString&);
+    String width() const;
+    void setWidth(const String&);
 
     bool isComplete() const { return m_complete; }
     void setComplete(bool complete);
@@ -246,17 +246,17 @@ public:
     KJS::Bindings::Instance* getObjectInstance() const;
 #endif
 
-    QString serviceType;
-    QString url;
-    DOM::DOMString classId;
+    DeprecatedString serviceType;
+    DeprecatedString url;
+    WebCore::String classId;
     bool needWidgetUpdate : 1;
     bool m_useFallbackContent : 1;
     HTMLImageLoader* m_imageLoader;
 
 private:
     void updateDocNamedItem();
-    DOMString oldIdAttr;
-    DOMString oldNameAttr;
+    String oldIdAttr;
+    String oldNameAttr;
 
 #if __APPLE__
     mutable RefPtr<KJS::Bindings::Instance> m_objectInstance;
@@ -268,31 +268,31 @@ private:
 
 // -------------------------------------------------------------------------
 
-class HTMLParamElementImpl : public HTMLElementImpl
+class HTMLParamElement : public HTMLElement
 {
-    friend class HTMLAppletElementImpl;
+    friend class HTMLAppletElement;
 public:
-    HTMLParamElementImpl(DocumentImpl*);
-    ~HTMLParamElementImpl();
+    HTMLParamElement(Document*);
+    ~HTMLParamElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
     virtual int tagPriority() const { return 0; }
 
-    virtual void parseMappedAttribute(MappedAttributeImpl*);
+    virtual void parseMappedAttribute(MappedAttribute*);
 
-    virtual bool isURLAttribute(AttributeImpl*) const;
+    virtual bool isURLAttribute(Attribute*) const;
 
-    DOMString name() const { return m_name; }
-    void setName(const DOMString&);
+    String name() const { return m_name; }
+    void setName(const String&);
 
-    DOMString type() const;
-    void setType(const DOMString&);
+    String type() const;
+    void setType(const String&);
 
-    DOMString value() const { return m_value; }
-    void setValue(const DOMString&);
+    String value() const { return m_value; }
+    void setValue(const String&);
 
-    DOMString valueType() const;
-    void setValueType(const DOMString&);
+    String valueType() const;
+    void setValueType(const String&);
 
  protected:
     AtomicString m_name;

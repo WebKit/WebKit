@@ -23,7 +23,7 @@
 #ifndef TABLE_LAYOUT_H
 #define TABLE_LAYOUT_H
 
-#include "Array.h"
+#include "DeprecatedArray.h"
 #include "Length.h"
 
 namespace WebCore {
@@ -60,7 +60,7 @@ public:
 protected:
     int calcWidthArray( int tableWidth );
 
-    Array<Length> width;
+    DeprecatedArray<Length> width;
 };
 
 // -------------------------------------------------------------------------
@@ -100,8 +100,8 @@ protected:
 	int calcWidth;
     };
 
-    Array<Layout> layoutStruct;
-    Array<RenderTableCell *>spanCells;
+    DeprecatedArray<Layout> layoutStruct;
+    DeprecatedArray<RenderTableCell *>spanCells;
     bool hasPercent : 1;
     mutable bool percentagesDirty : 1;
     mutable bool effWidthDirty : 1;

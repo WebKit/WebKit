@@ -25,8 +25,8 @@
 #include <kdom/Namespace.h>
 #include "css_valueimpl.h"
 #include <kdom/events/Event.h>
-#include <kdom/core/NodeImpl.h>
-#include <kdom/events/EventImpl.h>
+#include <kdom/core/Node.h>
+#include <kdom/events/Event.h>
 
 #include "ksvg.h"
 #include "Ecma.h"
@@ -37,9 +37,9 @@
 #include "SVGAElement.h"
 #include "SVGDocument.h"
 #include "SVGGElement.h"
-#include "SVGPaintImpl.h"
+#include "SVGPaint.h"
 #include "GlobalObject.h"
-#include "SVGColorImpl.h"
+#include "SVGColor.h"
 #include "SVGZoomEvent.h"
 #include "SVGUseElement.h"
 #include "SVGSVGElement.h"
@@ -73,7 +73,7 @@
 #include "SVGScriptElement.h"
 #include "SVGCircleElement.h"
 #include "SVGSymbolElement.h"
-#include "SVGZoomEventImpl.h"
+#include "SVGZoomEvent.h"
 #include "SVGMarkerElement.h"
 #include "SVGEllipseElement.h"
 #include "SVGAnimateElement.h"
@@ -83,7 +83,7 @@
 #include "SVGPolylineElement.h"
 #include "SVGClipPathElement.h"
 #include "SVGPathSegClosePath.h"
-#include "SVGStyledElementImpl.h"
+#include "SVGStyledElement.h"
 #include "SVGFECompositeElement.h"
 #include "SVGFEColorMatrixElement.h"
 #include "SVGFEGaussianBlurElement.h"
@@ -100,7 +100,7 @@
 
 using namespace WebCore;
 
-Ecma::Ecma(DocumentImpl *doc) : Ecma(doc)
+Ecma::Ecma(Document *doc) : Ecma(doc)
 {
 }
 
@@ -108,10 +108,10 @@ Ecma::~Ecma()
 {
 }
 
-void Ecma::setupDocument(DocumentImpl *document)
+void Ecma::setupDocument(Document *document)
 {
-    ASSERT(DOMString(document->namespaceURI()) == NS_SVG)
-    SVGDocumentImpl *svgDocument = static_cast<SVGDocumentImpl *>(document);
+    ASSERT(String(document->namespaceURI()) == NS_SVG)
+    SVGDocument *svgDocument = static_cast<SVGDocument *>(document);
     
     // Create base bridge for document
     SVGDocument docObj(svgDocument);
@@ -127,7 +127,7 @@ KJS::JSObject *Ecma::inheritedGetDOMNode(KJS::ExecState *exec, Node n)
     // Use svg element ids to distinguish between svg elements.
     KJS::JSObject *ret = 0;
 
-    NodeImpl *nodeImpl = static_cast<NodeImpl *>(n.handle());
+    Node *nodeImpl = static_cast<Node *>(n.handle());
     if(!nodeImpl)
         return ret;
 
@@ -367,19 +367,19 @@ KJS::JSObject *Ecma::inheritedGetDOMNode(KJS::ExecState *exec, Node n)
 
 KJS::JSObject *Ecma::inheritedGetDOMEvent(KJS::ExecState *exec, Event e)
 {
-    EventImpl *eventImpl = e.handle();
-    if(!eventImpl)
+    Event *event = e.handle();
+    if(!event)
         return 0;
 
-    EventImplType identifier = eventImpl->identifier();
+    EventImplType identifier = event->identifier();
     if(identifier != TypeLastEvent)
         return 0;
 
-    SVGEventImpl *test1 = dynamic_cast<SVGEventImpl *>(eventImpl);
+    SVGEvent *test1 = dynamic_cast<SVGEvent *>(event);
     if(test1)
         return SVGEvent(test1).bridge(exec);
 
-    SVGZoomEventImpl *test2 = dynamic_cast<SVGZoomEventImpl *>(eventImpl);
+    SVGZoomEvent *test2 = dynamic_cast<SVGZoomEvent *>(event);
     if(test2)
         return SVGZoomEvent(test2).bridge(exec);
 
@@ -388,21 +388,21 @@ KJS::JSObject *Ecma::inheritedGetDOMEvent(KJS::ExecState *exec, Event e)
 
 KJS::JSObject *Ecma::inheritedGetDOMCSSValue(KJS::ExecState *exec, CSSValue c)
 {
-    CSSValueImpl *impl = c.handle();
+    CSSValue *impl = c.handle();
 
-    // Keep the order, as SVGPaintImpl inherits from SVGColorImpl...
-    SVGPaintImpl *test1 = dynamic_cast<SVGPaintImpl *>(impl);
+    // Keep the order, as SVGPaint inherits from SVGColor...
+    SVGPaint *test1 = dynamic_cast<SVGPaint *>(impl);
     if(test1)
         return SVGPaint(test1).bridge(exec);
 
-    SVGColorImpl *test2 = dynamic_cast<SVGColorImpl *>(impl);
+    SVGColor *test2 = dynamic_cast<SVGColor *>(impl);
     if(test2)
         return SVGColor(test2).bridge(exec);
 
     return 0;
 }
 
-KJS::JSValue *KSVG::getSVGPathSeg(KJS::ExecState *exec, SVGPathSeg s)
+KJS::JSValue *WebCore::getSVGPathSeg(KJS::ExecState *exec, SVGPathSeg s)
 {
     if(s == SVGPathSeg::null)
         return KJS::jsNull();

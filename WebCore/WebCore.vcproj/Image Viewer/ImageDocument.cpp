@@ -37,7 +37,7 @@
 #endif
 
 using WebCore::Image;
-using WebCore::ByteArray;
+using WebCore::DeprecatedByteArray;
 
 // ImageDocument
 

@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-CachedScript::CachedScript(DocLoader* dl, const DOMString &url, KIO::CacheControl _cachePolicy, time_t _expireDate, const QString& charset)
+CachedScript::CachedScript(DocLoader* dl, const String &url, KIO::CacheControl _cachePolicy, time_t _expireDate, const DeprecatedString& charset)
     : CachedObject(url, Script, _cachePolicy, _expireDate)
     , m_encoding(charset.latin1())
 {
@@ -52,14 +52,14 @@ CachedScript::CachedScript(DocLoader* dl, const DOMString &url, KIO::CacheContro
         m_encoding = TextEncoding(Latin1Encoding);
 }
 
-CachedScript::CachedScript(const DOMString &url, const QString &script_data)
+CachedScript::CachedScript(const String &url, const DeprecatedString &script_data)
     : CachedObject(url, Script, KIO::CC_Verify, 0, script_data.length())
     , m_encoding(InvalidEncoding)
 {
     m_errorOccurred = false;
     m_loading = false;
     m_status = Persistent;
-    m_script = DOMString(script_data);
+    m_script = String(script_data);
 }
 
 CachedScript::~CachedScript()
@@ -81,14 +81,14 @@ void CachedScript::deref(CachedObjectClient *c)
       delete this;
 }
 
-void CachedScript::setCharset(const QString &chs)
+void CachedScript::setCharset(const DeprecatedString &chs)
 {
     TextEncoding encoding = TextEncoding(chs.latin1());
     if (encoding.isValid())
         m_encoding = encoding;
 }
 
-void CachedScript::data(ByteArray& data, bool eof )
+void CachedScript::data(DeprecatedByteArray& data, bool eof )
 {
     if (!eof)
         return;

@@ -92,7 +92,7 @@ public:
         m_readOffset = 0;
     }
 
-    void decode(const ByteArray& data, bool sizeOnly)
+    void decode(const DeprecatedByteArray& data, bool sizeOnly)
     {
         m_decodingSizeOnly = sizeOnly;
 
@@ -114,7 +114,7 @@ JPEGImageDecoder::~JPEGImageDecoder()
 }
 
 // Take the data and store it.
-void JPEGImageDecoder::setData(const ByteArray& data, bool allDataReceived)
+void JPEGImageDecoder::setData(const DeprecatedByteArray& data, bool allDataReceived)
 {
     if (m_failed)
         return;

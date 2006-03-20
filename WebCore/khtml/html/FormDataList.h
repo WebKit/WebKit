@@ -27,46 +27,46 @@
 #ifndef HTML_FormDataList_h
 #define HTML_FormDataList_h
 
-#include <QString.h>
+#include <DeprecatedString.h>
 #include <qvaluelist.h>
 #include "PlatformString.h"
 #include "TextEncoding.h"
 
-namespace DOM {
+namespace WebCore {
 
 struct FormDataListItem {
-    FormDataListItem(const QCString &data) : m_data(data) { }
-    FormDataListItem(const QString &path) : m_path(path) { }
+    FormDataListItem(const DeprecatedCString &data) : m_data(data) { }
+    FormDataListItem(const DeprecatedString &path) : m_path(path) { }
 
-    QString m_path;
-    QCString m_data;
+    DeprecatedString m_path;
+    DeprecatedCString m_data;
 };
 
 class FormDataList {
 public:
     FormDataList(const TextEncoding&);
 
-    void appendData(const DOMString &key, const DOMString &value)
-        { appendString(key.qstring()); appendString(value.qstring()); }
-    void appendData(const DOMString &key, const QString &value)
-        { appendString(key.qstring()); appendString(value); }
-    void appendData(const DOMString &key, const QCString &value)
-        { appendString(key.qstring()); appendString(value); }
-    void appendData(const DOMString &key, int value)
-        { appendString(key.qstring()); appendString(QString::number(value)); }
-    void appendFile(const DOMString &key, const DOMString &filename);
+    void appendData(const String &key, const String &value)
+        { appendString(key.deprecatedString()); appendString(value.deprecatedString()); }
+    void appendData(const String &key, const DeprecatedString &value)
+        { appendString(key.deprecatedString()); appendString(value); }
+    void appendData(const String &key, const DeprecatedCString &value)
+        { appendString(key.deprecatedString()); appendString(value); }
+    void appendData(const String &key, int value)
+        { appendString(key.deprecatedString()); appendString(DeprecatedString::number(value)); }
+    void appendFile(const String &key, const String &filename);
 
-    QValueListConstIterator<FormDataListItem> begin() const
+    DeprecatedValueListConstIterator<FormDataListItem> begin() const
         { return m_list.begin(); }
-    QValueListConstIterator<FormDataListItem> end() const
+    DeprecatedValueListConstIterator<FormDataListItem> end() const
         { return m_list.end(); }
 
 private:
-    void appendString(const QCString &s);
-    void appendString(const QString &s);
+    void appendString(const DeprecatedCString &s);
+    void appendString(const DeprecatedString &s);
 
     TextEncoding m_encoding;
-    QValueList<FormDataListItem> m_list;
+    DeprecatedValueList<FormDataListItem> m_list;
 };
 
 };

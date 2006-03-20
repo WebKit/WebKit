@@ -23,10 +23,10 @@
 #define KHTMLDECODER_H
 
 #include <kxmlcore/OwnPtr.h>
-#include "QString.h"
+#include "DeprecatedString.h"
 #include "TextEncoding.h"
 
-namespace khtml {
+namespace WebCore {
 
     class StreamingTextDecoder;    
     
@@ -54,19 +54,19 @@ public:
     bool visuallyOrdered() const { return m_encoding.usesVisualOrdering(); }
     const TextEncoding& encoding() const { return m_encoding; }
 
-    QString decode(const char* data, int len);
-    QString flush() const;
+    DeprecatedString decode(const char* data, int len);
+    DeprecatedString flush() const;
 
 protected:
     // encoding used for decoding. default is Latin1.
     TextEncoding m_encoding;
     OwnPtr<StreamingTextDecoder> m_decoder;
-    QCString enc;
+    DeprecatedCString enc;
     EncodingSource m_type;
 
-    // Our version of QString works well for all-8-bit characters, and allows null characters.
-    // This works better than QCString when there are null characters involved.
-    QString buffer;
+    // Our version of DeprecatedString works well for all-8-bit characters, and allows null characters.
+    // This works better than DeprecatedCString when there are null characters involved.
+    DeprecatedString buffer;
 
     bool body;
     bool beginning;

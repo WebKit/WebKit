@@ -23,7 +23,7 @@
 #ifndef DOM_DocPtr_h
 #define DOM_DocPtr_h
 
-namespace DOM {
+namespace WebCore {
 
 template <class T> class DocPtr
 {
@@ -111,6 +111,6 @@ template <class T> inline bool operator!=(const T *a, const DocPtr<T> &b)
     return a != b.get(); 
 }
 
-} // namespace DOM
+} // namespace WebCore
 
 #endif DOM_DocPtr_h

@@ -30,32 +30,32 @@
 
 #include "PlatformString.h"
 
-namespace DOM {
-    class TextImpl;
+namespace WebCore {
+    class Text;
 }
 
-namespace khtml {
+namespace WebCore {
 
 class DeleteFromTextNodeCommand : public EditCommand
 {
 public:
-    DeleteFromTextNodeCommand(DOM::DocumentImpl *document, DOM::TextImpl *node, int offset, int count);
+    DeleteFromTextNodeCommand(WebCore::Document *document, WebCore::Text *node, int offset, int count);
     virtual ~DeleteFromTextNodeCommand() { }
 
     virtual void doApply();
     virtual void doUnapply();
 
-    DOM::TextImpl *node() const { return m_node.get(); }
+    WebCore::Text *node() const { return m_node.get(); }
     int offset() const { return m_offset; }
     int count() const { return m_count; }
 
 private:
-    RefPtr<DOM::TextImpl> m_node;
+    RefPtr<WebCore::Text> m_node;
     int m_offset;
     int m_count;
-    DOM::DOMString m_text;
+    WebCore::String m_text;
 };
 
-} // namespace khtml
+} // namespace WebCore
 
 #endif // __delete_from_text_node_command_h__

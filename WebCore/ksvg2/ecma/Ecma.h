@@ -29,7 +29,7 @@
 namespace WebCore
 {
     class Node;
-    class DocumentImpl;
+    class Document;
 };
 
 namespace WebCore
@@ -37,7 +37,7 @@ namespace WebCore
     class Ecma : public Ecma
     {
     public:
-        Ecma(DocumentImpl *doc);
+        Ecma(Document *doc);
         virtual ~Ecma();
 
         // We are a KDOM user, so implement the hook to convert svg elements to kjs objects
@@ -46,7 +46,7 @@ namespace WebCore
         virtual KJS::JSObject *inheritedGetDOMCSSValue(KJS::ExecState *exec, CSSValue c);
 
     protected:
-        virtual void setupDocument(DocumentImpl *document);
+        virtual void setupDocument(Document *document);
     };
 
     // Helpers

@@ -42,9 +42,9 @@ public:
     ~QComboBox();
     
     void clear();
-    void appendItem(const QString &text, bool enabled) { appendItem(text, KWQListBoxOption, enabled); }
-    void appendGroupLabel(const QString &text) { appendItem(text, KWQListBoxGroupLabel, false); }
-    void appendSeparator() { appendItem(QString::null, KWQListBoxSeparator, true); }
+    void appendItem(const DeprecatedString &text, bool enabled) { appendItem(text, KWQListBoxOption, enabled); }
+    void appendGroupLabel(const DeprecatedString &text) { appendItem(text, KWQListBoxGroupLabel, false); }
+    void appendSeparator() { appendItem(DeprecatedString::null, KWQListBoxSeparator, true); }
 
     int currentItem() const { return _currentItem; }
     void setCurrentItem(int);
@@ -65,7 +65,7 @@ public:
     void populateMenu();
     
 private:
-    void appendItem(const QString &, KWQListBoxItemType, bool);
+    void appendItem(const DeprecatedString &, KWQListBoxItemType, bool);
     const int *dimensions() const;
     NSFont *labelFont() const;
     void setTitle(NSMenuItem *, const KWQListBoxItem &);
@@ -76,7 +76,7 @@ private:
     mutable int _currentItem;
 
     // A Vector<KWQListBoxItem> may be more efficient for large menus.
-    QValueList<KWQListBoxItem> _items;
+    DeprecatedValueList<KWQListBoxItem> _items;
     mutable bool _menuPopulated;
 
     mutable NSFont *_labelFont;

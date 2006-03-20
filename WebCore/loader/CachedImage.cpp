@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-CachedImage::CachedImage(DocLoader* dl, const DOMString &url, KIO::CacheControl _cachePolicy, time_t _expireDate)
+CachedImage::CachedImage(DocLoader* dl, const String &url, KIO::CacheControl _cachePolicy, time_t _expireDate)
     : CachedObject(url, ImageResource, _cachePolicy, _expireDate)
     , m_dataSize(0)
 {
@@ -112,7 +112,7 @@ void CachedImage::clear()
     setSize(0);
 }
 
-void CachedImage::data(ByteArray& data, bool eof)
+void CachedImage::data(DeprecatedByteArray& data, bool eof)
 {
     bool sizeAvailable = false;
     

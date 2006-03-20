@@ -25,7 +25,7 @@
 #define RenderBlock_H
 
 #include "GapRects.h"
-#include "render_flow.h"
+#include "RenderFlow.h"
 #include <qptrlist.h>
 
 namespace WebCore {
@@ -39,7 +39,7 @@ enum CaretType {
 
 class RenderBlock : public RenderFlow {
 public:
-    RenderBlock(NodeImpl*);
+    RenderBlock(Node*);
     virtual ~RenderBlock();
 
     virtual const char *renderName() const;
@@ -259,7 +259,7 @@ public:
     int rightSelectionOffset(RenderBlock* rootBlock, int y);
 
 #if !NDEBUG
-    virtual void dump(QTextStream *stream, QString ind = "") const;
+    virtual void dump(QTextStream *stream, DeprecatedString ind = "") const;
 #endif
 
     // Helper methods for computing line counts and heights for line counts.
@@ -405,8 +405,8 @@ protected:
     // End helper functions and structs used by layoutBlockChildren.
 
 protected:
-    QPtrList<FloatingObject>* m_floatingObjects;
-    QPtrList<RenderObject>* m_positionedObjects;
+    DeprecatedPtrList<FloatingObject>* m_floatingObjects;
+    DeprecatedPtrList<RenderObject>* m_positionedObjects;
     
     bool m_childrenInline : 1;
     bool m_firstLine : 1;

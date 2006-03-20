@@ -26,12 +26,12 @@
 #include "config.h"
 #include "InsertNodeBeforeCommand.h"
 
-#include "NodeImpl.h"
+#include "Node.h"
 #include <kxmlcore/Assertions.h>
 
 namespace WebCore {
 
-InsertNodeBeforeCommand::InsertNodeBeforeCommand(DocumentImpl *document, NodeImpl *insertChild, NodeImpl *refChild)
+InsertNodeBeforeCommand::InsertNodeBeforeCommand(Document *document, Node *insertChild, Node *refChild)
     : EditCommand(document), m_insertChild(insertChild), m_refChild(refChild)
 {
     ASSERT(m_insertChild);

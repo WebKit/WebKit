@@ -30,13 +30,13 @@
 
 #include <kxmlcore/Assertions.h>
 
-using DOM::DocumentImpl;
-using DOM::ElementImpl;
-using DOM::NodeImpl;
+using WebCore::Document;
+using WebCore::Element;
+using WebCore::Node;
 
-namespace khtml {
+namespace WebCore {
 
-SplitElementCommand::SplitElementCommand(DOM::DocumentImpl *document, DOM::ElementImpl *element, DOM::NodeImpl *atChild)
+SplitElementCommand::SplitElementCommand(WebCore::Document *document, WebCore::Element *element, WebCore::Node *atChild)
     : EditCommand(document), m_element2(element), m_atChild(atChild)
 {
     ASSERT(m_element2);
@@ -53,7 +53,7 @@ void SplitElementCommand::doApply()
     if (!m_element1) {
         // create only if needed.
         // if reapplying, this object will already exist.
-        m_element1 = static_pointer_cast<ElementImpl>(m_element2->cloneNode(false));
+        m_element1 = static_pointer_cast<Element>(m_element2->cloneNode(false));
         ASSERT(m_element1);
     }
 
@@ -87,4 +87,4 @@ void SplitElementCommand::doUnapply()
     ASSERT(ec == 0);
 }
 
-} // namespace khtml
+} // namespace WebCore

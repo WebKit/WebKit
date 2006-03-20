@@ -21,7 +21,7 @@
 #define __SVGPATHPARSER_H__
 #if SVG_SUPPORT
 
-class QString;
+class DeprecatedString;
 
 namespace WebCore
 {
@@ -31,7 +31,7 @@ namespace WebCore
     {
     public:
         virtual ~SVGPolyParser() { }
-        void parsePoints( const QString &points ) const;
+        void parsePoints( const DeprecatedString &points ) const;
 
     protected:
         virtual void svgPolyTo( double x1, double y1, int nr ) const = 0;
@@ -52,7 +52,7 @@ namespace WebCore
     {
     public:
         virtual ~SVGPathParser() { }
-        void parseSVG( const QString &d, bool process = false );
+        void parseSVG( const DeprecatedString &d, bool process = false );
 
     protected:
         virtual void svgMoveTo( double x1, double y1, bool closed, bool abs = true ) = 0;

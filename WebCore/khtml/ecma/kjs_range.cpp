@@ -22,9 +22,9 @@
 #include "config.h"
 #include "kjs_range.h"
 
-#include "DocumentFragmentImpl.h"
-#include "DocumentImpl.h"
-#include "dom2_rangeimpl.h"
+#include "DocumentFragment.h"
+#include "Document.h"
+#include "Range.h"
 
 #include "kjs_range.lut.h"
 
@@ -70,7 +70,7 @@ KJS_DEFINE_PROTOTYPE(DOMRangeProto)
 KJS_IMPLEMENT_PROTOFUNC(DOMRangeProtoFunc)
 KJS_IMPLEMENT_PROTOTYPE("DOMRange",DOMRangeProto,DOMRangeProtoFunc)
 
-DOMRange::DOMRange(ExecState *exec, RangeImpl *r)
+DOMRange::DOMRange(ExecState *exec, Range *r)
  : m_impl(r) 
 {
   setPrototype(DOMRangeProto::self(exec));
@@ -89,7 +89,7 @@ bool DOMRange::getOwnPropertySlot(ExecState *exec, const Identifier& propertyNam
 JSValue *DOMRange::getValueProperty(ExecState *exec, int token) const
 {
   DOMExceptionTranslator exception(exec);
-  RangeImpl &range = *m_impl;
+  Range &range = *m_impl;
   switch (token) {
   case StartContainer:
     return toJS(exec, range.startContainer(exception));
@@ -112,7 +112,7 @@ JSValue *DOMRangeProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, c
 {
   if (!thisObj->inherits(&KJS::DOMRange::info))
     return throwError(exec, TypeError);
-  RangeImpl &range = *static_cast<DOMRange *>(thisObj)->impl();
+  Range &range = *static_cast<DOMRange *>(thisObj)->impl();
   JSValue *result = jsUndefined();
   int exception = 0;
 
@@ -145,7 +145,7 @@ JSValue *DOMRangeProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, c
       range.selectNodeContents(toNode(args[0]), exception);
       break;
     case DOMRange::CompareBoundaryPoints:
-        result = jsNumber(range.compareBoundaryPoints(static_cast<RangeImpl::CompareHow>(args[0]->toInt32(exec)), toRange(args[1]), exception));
+        result = jsNumber(range.compareBoundaryPoints(static_cast<Range::CompareHow>(args[0]->toInt32(exec)), toRange(args[1]), exception));
         break;
     case DOMRange::DeleteContents:
       range.deleteContents(exception);
@@ -180,9 +180,9 @@ JSValue *DOMRangeProtoFunc::callAsFunction(ExecState *exec, JSObject *thisObj, c
   return result;
 }
 
-JSValue *toJS(ExecState *exec, RangeImpl *r)
+JSValue *toJS(ExecState *exec, Range *r)
 {
-  return cacheDOMObject<RangeImpl, DOMRange>(exec, r);
+  return cacheDOMObject<Range, DOMRange>(exec, r);
 }
 
 // -------------------------------------------------------------------------
@@ -190,10 +190,10 @@ JSValue *toJS(ExecState *exec, RangeImpl *r)
 const ClassInfo RangeConstructor::info = { "RangeConstructor", 0, &RangeConstructorTable, 0 };
 /*
 @begin RangeConstructorTable 5
-  START_TO_START	WebCore::RangeImpl::START_TO_START	DontDelete|ReadOnly
-  START_TO_END		WebCore::RangeImpl::START_TO_END	DontDelete|ReadOnly
-  END_TO_END		WebCore::RangeImpl::END_TO_END		DontDelete|ReadOnly
-  END_TO_START		WebCore::RangeImpl::END_TO_START	DontDelete|ReadOnly
+  START_TO_START	WebCore::Range::START_TO_START	DontDelete|ReadOnly
+  START_TO_END		WebCore::Range::START_TO_END	DontDelete|ReadOnly
+  END_TO_END		WebCore::Range::END_TO_END		DontDelete|ReadOnly
+  END_TO_START		WebCore::Range::END_TO_START	DontDelete|ReadOnly
 @end
 */
 bool RangeConstructor::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -212,7 +212,7 @@ JSValue *getRangeConstructor(ExecState *exec)
 }
 
 
-RangeImpl *toRange(JSValue *val)
+Range *toRange(JSValue *val)
 {
   if (!val || !val->isObject(&DOMRange::info))
     return 0;

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WebCorePageBridge.h"
 
-#import "MacFrame.h"
+#import "FrameMac.h"
 #import "Page.h"
 #import "WebCoreFrameBridge.h"
 #import "Logging.h"

@@ -26,11 +26,11 @@
 #ifndef RENDER_FORM_H
 #define RENDER_FORM_H
 
-#include "HTMLInputElementImpl.h"
-#include "HTMLSelectElementImpl.h"
-#include "HTMLTextAreaElementImpl.h"
+#include "HTMLInputElement.h"
+#include "HTMLSelectElement.h"
+#include "HTMLTextAreaElement.h"
 #include "RenderBlock.h"
-#include "render_image.h"
+#include "RenderImage.h"
 #include "render_replaced.h"
 #include <qlineedit.h>
 
@@ -39,15 +39,15 @@ class QListBox;
 namespace WebCore {
 
 class DocLoader;
-class HTMLFormElementImpl;
-class HTMLGenericFormElementImpl;
+class HTMLFormElement;
+class HTMLGenericFormElement;
 
 // -------------------------------------------------------------------------
 
-class RenderFormElement : public khtml::RenderWidget
+class RenderFormElement : public WebCore::RenderWidget
 {
 public:
-    RenderFormElement(HTMLGenericFormElementImpl* node);
+    RenderFormElement(HTMLGenericFormElement* node);
     virtual ~RenderFormElement();
 
     virtual const char *renderName() const { return "RenderForm"; }
@@ -80,8 +80,8 @@ public:
     virtual void layout();
     virtual short baselinePosition( bool, bool ) const;
 
-    HTMLGenericFormElementImpl *element() const
-    { return static_cast<HTMLGenericFormElementImpl*>(RenderObject::element()); }
+    HTMLGenericFormElement *element() const
+    { return static_cast<HTMLGenericFormElement*>(RenderObject::element()); }
 
 private:
     virtual void clicked(Widget*);
@@ -97,7 +97,7 @@ protected:
 class RenderImageButton : public RenderImage
 {
 public:
-    RenderImageButton(HTMLInputElementImpl *element);
+    RenderImageButton(HTMLInputElement *element);
 
     virtual const char *renderName() const { return "RenderImageButton"; }
     virtual bool isImageButton() const { return true; }
@@ -108,7 +108,7 @@ public:
 class RenderLineEdit : public RenderFormElement
 {
 public:
-    RenderLineEdit(HTMLInputElementImpl *element);
+    RenderLineEdit(HTMLInputElement *element);
 
     virtual void calcMinMaxWidth();
     int calcReplacedHeight() const { return intrinsicHeight(); }
@@ -130,8 +130,8 @@ public:
     void setSelectionRange(int, int);
 
     QLineEdit *widget() const { return static_cast<QLineEdit*>(m_widget); }
-    HTMLInputElementImpl* element() const
-    { return static_cast<HTMLInputElementImpl*>(RenderObject::element()); }
+    HTMLInputElement* element() const
+    { return static_cast<HTMLInputElement*>(RenderObject::element()); }
 
 public:
     void addSearchResult();
@@ -152,7 +152,7 @@ private:
 class RenderFieldset : public RenderBlock
 {
 public:
-    RenderFieldset(HTMLGenericFormElementImpl*);
+    RenderFieldset(HTMLGenericFormElement*);
 
     virtual const char* renderName() const { return "RenderFieldSet"; }
 
@@ -171,7 +171,7 @@ private:
 class RenderFileButton : public RenderFormElement
 {
 public:
-    RenderFileButton(HTMLInputElementImpl *element);
+    RenderFileButton(HTMLInputElement *element);
 
     virtual const char *renderName() const { return "RenderFileButton"; }
     virtual void calcMinMaxWidth();
@@ -180,8 +180,8 @@ public:
 
     int calcReplacedHeight() const { return intrinsicHeight(); }
 
-    HTMLInputElementImpl *element() const
-    { return static_cast<HTMLInputElementImpl*>(RenderObject::element()); }
+    HTMLInputElement *element() const
+    { return static_cast<HTMLInputElement*>(RenderObject::element()); }
 
     void click(bool sendMouseEvents);
 
@@ -198,7 +198,7 @@ private:
 class RenderLabel : public RenderFormElement
 {
 public:
-    RenderLabel(HTMLGenericFormElementImpl *element);
+    RenderLabel(HTMLGenericFormElement *element);
 
     virtual const char *renderName() const { return "RenderLabel"; }
 };
@@ -209,7 +209,7 @@ public:
 class RenderLegend : public RenderBlock
 {
 public:
-    RenderLegend(HTMLGenericFormElementImpl *element);
+    RenderLegend(HTMLGenericFormElement *element);
 
     virtual const char *renderName() const { return "RenderLegend"; }
 };
@@ -219,7 +219,7 @@ public:
 class RenderSelect : public RenderFormElement
 {
 public:
-    RenderSelect(HTMLSelectElementImpl *element);
+    RenderSelect(HTMLSelectElement *element);
 
     virtual const char *renderName() const { return "RenderSelect"; }
 
@@ -239,8 +239,8 @@ public:
 
     void updateSelection();
 
-    HTMLSelectElementImpl *element() const
-    { return static_cast<HTMLSelectElementImpl*>(RenderObject::element()); }
+    HTMLSelectElement *element() const
+    { return static_cast<HTMLSelectElement*>(RenderObject::element()); }
 
 protected:
     QListBox *createListBox();
@@ -263,7 +263,7 @@ private:
 class RenderTextArea : public RenderFormElement
 {
 public:
-    RenderTextArea(HTMLTextAreaElementImpl *element);
+    RenderTextArea(HTMLTextAreaElement *element);
 
     virtual void destroy();
 
@@ -277,8 +277,8 @@ public:
     void setEdited (bool);
     
     // don't even think about making this method virtual!
-    HTMLTextAreaElementImpl* element() const
-    { return static_cast<HTMLTextAreaElementImpl*>(RenderObject::element()); }
+    HTMLTextAreaElement* element() const
+    { return static_cast<HTMLTextAreaElement*>(RenderObject::element()); }
 
     String text();
     String textWithHardLineBreaks();
@@ -309,10 +309,10 @@ protected:
 class RenderSlider : public RenderFormElement
 {
 public:
-    RenderSlider(HTMLInputElementImpl *element);
+    RenderSlider(HTMLInputElement *element);
     
-    HTMLInputElementImpl* element() const
-    { return static_cast<HTMLInputElementImpl*>(RenderObject::element()); }
+    HTMLInputElement* element() const
+    { return static_cast<HTMLInputElement*>(RenderObject::element()); }
 
     virtual const char *renderName() const { return "RenderSlider"; }
     virtual bool canHaveIntrinsicMargins() const { return true; }

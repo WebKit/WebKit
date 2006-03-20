@@ -28,7 +28,7 @@
 
 #include <kxmlcore/Assertions.h>
 #include <kxmlcore/HashSet.h>
-#include "QString.h"
+#include "DeprecatedString.h"
 #include "StreamingTextDecoder.h"
 
 namespace WebCore {
@@ -42,7 +42,7 @@ static inline TextEncodingID effectiveEncoding(TextEncodingID encoding)
 
 // We'd like to use ICU for this on OS X as well eventually, but we need to make sure
 // it covers all the encodings that we need
-QCString TextEncoding::fromUnicode(const QString &qcs, bool allowEntities) const
+DeprecatedCString TextEncoding::fromUnicode(const DeprecatedString &qcs, bool allowEntities) const
 {
     // FIXME: We should really use the same API in both directions.
     // Currently we use ICU to decode and CFString to encode; it would be better to encode with ICU too.
@@ -51,20 +51,20 @@ QCString TextEncoding::fromUnicode(const QString &qcs, bool allowEntities) const
 
     // FIXME: Since there's no "force ASCII range" mode in CFString, we change the backslash into a yen sign.
     // Encoding will change the yen sign back into a backslash.
-    QString copy = qcs;
+    DeprecatedString copy = qcs;
     copy.replace(QChar('\\'), backslashAsCurrencySymbol());
     CFStringRef cfs = copy.getCFString();
     
     CFIndex startPos = 0;
     CFIndex charactersLeft = CFStringGetLength(cfs);
-    QCString result(1); // for trailng zero
+    DeprecatedCString result(1); // for trailng zero
 
     while (charactersLeft > 0) {
         CFRange range = CFRangeMake(startPos, charactersLeft);
         CFIndex bufferLength;
         CFStringGetBytes(cfs, range, encoding, allowEntities ? 0 : '?', false, NULL, 0x7FFFFFFF, &bufferLength);
         
-        QCString chunk(bufferLength + 1);
+        DeprecatedCString chunk(bufferLength + 1);
         CFIndex charactersConverted = CFStringGetBytes(cfs, range, encoding, allowEntities ? 0 : '?', false, reinterpret_cast<unsigned char *>(chunk.data()), bufferLength, &bufferLength);
         chunk[bufferLength] = 0;
         result.append(chunk);

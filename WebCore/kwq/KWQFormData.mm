@@ -29,13 +29,13 @@
 #import <kxmlcore/Assertions.h>
 #import "formdata.h"
 
-using khtml::FormData;
-using khtml::FormDataElement;
+using WebCore::FormData;
+using WebCore::FormDataElement;
 
 NSArray *arrayFromFormData(const FormData &d)
 {
     NSMutableArray *a = [NSMutableArray arrayWithCapacity:d.count()];
-    for (QValueListConstIterator<FormDataElement> it = d.begin(); it != d.end(); ++it) {
+    for (DeprecatedValueListConstIterator<FormDataElement> it = d.begin(); it != d.end(); ++it) {
         const FormDataElement &e = *it;
         if (e.m_type == FormDataElement::data) {
             [a addObject:[NSData dataWithBytes:e.m_data.data() length:e.m_data.size()]];

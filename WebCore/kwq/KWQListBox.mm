@@ -26,8 +26,8 @@
 #import "config.h"
 #import "KWQListBox.h"
 
-#import "KWQExceptions.h"
-#import "MacFrame.h"
+#import "BlockExceptions.h"
+#import "FrameMac.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
@@ -126,7 +126,7 @@ QListBox::QListBox()
     , _enabled(true)
     , _widthGood(false)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSScrollView *scrollView = [[KWQListBoxScrollView alloc] initWithFrame:NSZeroRect];
     setView(scrollView);
@@ -155,17 +155,17 @@ QListBox::QListBox()
     [tableView release];
     [scrollView setVerticalLineScroll:[tableView rowHeight]];
         
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 QListBox::~QListBox()
 {
     NSScrollView *scrollView = static_cast<NSScrollView *>(getView());
     
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     KWQTableView *tableView = [scrollView documentView];
     [tableView detach];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void QListBox::clear()
@@ -178,13 +178,13 @@ void QListBox::setSelectionMode(SelectionMode mode)
 {
     NSScrollView *scrollView = static_cast<NSScrollView *>(getView());
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSTableView *tableView = [scrollView documentView];
     [tableView setAllowsMultipleSelection:mode != Single];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void QListBox::appendItem(const QString &text, KWQListBoxItemType type, bool enabled)
+void QListBox::appendItem(const DeprecatedString &text, KWQListBoxItemType type, bool enabled)
 {
     _items.append(KWQListBoxItem(text, type, enabled));
     _widthGood = false;
@@ -192,20 +192,20 @@ void QListBox::appendItem(const QString &text, KWQListBoxItemType type, bool ena
 
 void QListBox::doneAppendingItems()
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSScrollView *scrollView = static_cast<NSScrollView *>(getView());
     NSTableView *tableView = [scrollView documentView];
     [tableView reloadData];
 
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void QListBox::setSelected(int index, bool selectIt)
 {
     ASSERT(index >= 0);
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSScrollView *scrollView = static_cast<NSScrollView *>(getView());
     NSTableView *tableView = [scrollView documentView];
@@ -217,7 +217,7 @@ void QListBox::setSelected(int index, bool selectIt)
         [tableView deselectRow:index];
     }
 
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 
     _changingSelection = false;
 }
@@ -226,13 +226,13 @@ bool QListBox::isSelected(int index) const
 {
     ASSERT(index >= 0);
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSScrollView *scrollView = static_cast<NSScrollView *>(getView());
     NSTableView *tableView = [scrollView documentView];
     return [tableView isRowSelected:index]; 
 
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 
     return false;
 }
@@ -241,10 +241,10 @@ void QListBox::setEnabled(bool enabled)
 {
     if (enabled != _enabled) {
         // You would think this would work, but not until AppKit bug 2177792 is fixed.
-        //KWQ_BLOCK_EXCEPTIONS;
+        //BEGIN_BLOCK_OBJC_EXCEPTIONS;
         //NSTableView *tableView = [(NSScrollView *)getView() documentView];
         //[tableView setEnabled:enabled];
-        //KWQ_UNBLOCK_EXCEPTIONS;
+        //END_BLOCK_OBJC_EXCEPTIONS;
 
         _enabled = enabled;
 
@@ -263,15 +263,15 @@ IntSize QListBox::sizeForNumberOfLines(int lines) const
 {
     NSSize size = {0,0};
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSScrollView *scrollView = static_cast<NSScrollView *>(getView());
     KWQTableView *tableView = [scrollView documentView];
     
     if (!_widthGood) {
         float width = 0;
-        QValueListConstIterator<KWQListBoxItem> i = const_cast<const QValueList<KWQListBoxItem> &>(_items).begin();
-        QValueListConstIterator<KWQListBoxItem> e = const_cast<const QValueList<KWQListBoxItem> &>(_items).end();
+        DeprecatedValueListConstIterator<KWQListBoxItem> i = const_cast<const DeprecatedValueList<KWQListBoxItem> &>(_items).begin();
+        DeprecatedValueListConstIterator<KWQListBoxItem> e = const_cast<const DeprecatedValueList<KWQListBoxItem> &>(_items).end();
         if (i != e) {
             WebCoreTextStyle style;
             WebCoreInitializeEmptyTextStyle(&style);
@@ -295,7 +295,7 @@ IntSize QListBox::sizeForNumberOfLines(int lines) const
             }
             
             do {
-                const QString &s = (*i).string;
+                const DeprecatedString &s = (*i).string;
 
                 WebCoreTextRun run;
                 int length = s.length();
@@ -317,7 +317,7 @@ IntSize QListBox::sizeForNumberOfLines(int lines) const
     size.width += [NSScroller scrollerWidthForControlSize:NSSmallControlSize] - [NSScroller scrollerWidth] + leftMargin + rightMargin;
 
     return IntSize(size);
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     return IntSize(0, 0);
 }
 
@@ -334,7 +334,7 @@ bool QListBox::checksDescendantsForFocus() const
 
 void QListBox::setWritingDirection(TextDirection d)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSScrollView *scrollView = static_cast<NSScrollView *>(getView());
     KWQTableView *tableView = [scrollView documentView];
@@ -344,7 +344,7 @@ void QListBox::setWritingDirection(TextDirection d)
         [tableView reloadData];
     }
 
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void QListBox::clearCachedTextRenderers()
@@ -395,7 +395,7 @@ void QListBox::setFont(const Font& font)
 {
     KWQTableView *documentView = [self documentView];
     Widget *widget = [documentView widget];
-    [MacFrame::bridgeForWidget(widget) makeFirstResponder:documentView];
+    [FrameMac::bridgeForWidget(widget) makeFirstResponder:documentView];
     return YES;
 }
 
@@ -502,7 +502,7 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
     if (!_box)  {
         return;
     }
-    WebCoreFrameBridge *bridge = MacFrame::bridgeForWidget(_box);
+    WebCoreFrameBridge *bridge = FrameMac::bridgeForWidget(_box);
     if (![bridge interceptKeyEvent:event toView:self]) {
     [super keyDown:event];
     }
@@ -514,7 +514,7 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
         return;
     }
     
-    WebCoreFrameBridge *bridge = MacFrame::bridgeForWidget(_box);
+    WebCoreFrameBridge *bridge = FrameMac::bridgeForWidget(_box);
     if (![bridge interceptKeyEvent:event toView:self]) {
         [super keyUp:event];
         NSString *string = [event characters];
@@ -568,7 +568,7 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
     BOOL become = [super becomeFirstResponder];
     
     if (become) {
-        if (_box && _box->client() && !MacFrame::currentEventIsMouseDownInWidget(_box))
+        if (_box && _box->client() && !FrameMac::currentEventIsMouseDownInWidget(_box))
             _box->client()->scrollToVisible(_box);
         [self _KWQ_setKeyboardFocusRingNeedsDisplay];
         if (_box && _box->client())
@@ -584,7 +584,7 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
     if (resign && _box && _box->client()) {
         _box->client()->focusOut(_box);
         if (_box)
-            [MacFrame::bridgeForWidget(_box) formControlIsResigningFirstResponder:self];
+            [FrameMac::bridgeForWidget(_box) formControlIsResigningFirstResponder:self];
     }
     return resign;
 }
@@ -599,14 +599,14 @@ static Boolean KWQTableViewTypeSelectCallback(UInt32 index, void *listDataPtr, v
 - (NSView *)nextKeyView
 {
     return _box && inNextValidKeyView
-        ? MacFrame::nextKeyViewForWidget(_box, KWQSelectingNext)
+        ? FrameMac::nextKeyViewForWidget(_box, KWQSelectingNext)
         : [super nextKeyView];
 }
 
 - (NSView *)previousKeyView
 {
     return _box && inNextValidKeyView
-        ? MacFrame::nextKeyViewForWidget(_box, KWQSelectingPrevious)
+        ? FrameMac::nextKeyViewForWidget(_box, KWQSelectingPrevious)
         : [super previousKeyView];
 }
 

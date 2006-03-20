@@ -28,7 +28,7 @@ using namespace KJS;
 
 namespace WebCore {
 
-JSSVGLazyEventListener::JSSVGLazyEventListener(const DOMString& code, KJS::Window* win, NodeImpl* node, int lineno)
+JSSVGLazyEventListener::JSSVGLazyEventListener(const String& code, KJS::Window* win, Node* node, int lineno)
     : JSLazyEventListener(code, win, node, lineno)
 {
 }

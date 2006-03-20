@@ -24,16 +24,16 @@
 #define KCanvas_RenderSVGImage_H
 #if SVG_SUPPORT
 
-#include "render_image.h"
+#include "RenderImage.h"
 #include <qmatrix.h>
 
 namespace WebCore
 {
-    class SVGImageElementImpl;
-    class SVGPreserveAspectRatioImpl;
+    class SVGImageElement;
+    class SVGPreserveAspectRatio;
     class RenderSVGImage : public RenderImage {
     public:
-        RenderSVGImage(SVGImageElementImpl *impl);
+        RenderSVGImage(SVGImageElement *impl);
         virtual ~RenderSVGImage();
         
         virtual QMatrix localTransform() const { return m_transform; }
@@ -43,7 +43,7 @@ namespace WebCore
         virtual IntRect getAbsoluteRepaintRect();
         
         virtual void imageChanged(CachedImage*);
-        void adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& srcRect, SVGPreserveAspectRatioImpl *aspectRatio);
+        void adjustRectsForAspectRatio(FloatRect& destRect, FloatRect& srcRect, SVGPreserveAspectRatio *aspectRatio);
         virtual void paint(PaintInfo& paintInfo, int parentX, int parentY);
     private:
         void translateForAttributes();

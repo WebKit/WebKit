@@ -69,11 +69,11 @@ namespace WebCore {
 
         void servePendingRequests();
 
-        QPtrList<Request> m_requestsPending;
+        DeprecatedPtrList<Request> m_requestsPending;
         typedef HashMap<TransferJob*, Request*> RequestMap;
         RequestMap m_requestsLoading;
 
-        QPtrList<Request> m_requestsBackgroundDecoding;
+        DeprecatedPtrList<Request> m_requestsBackgroundDecoding;
     };
 
 }

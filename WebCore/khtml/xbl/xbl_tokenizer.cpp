@@ -36,14 +36,14 @@
 #include "xbl_protohandler.h"
 #include "xbl_protoimplementation.h"
 
-using DOM::ElementImpl;
-using DOM::Node;
+using WebCore::Element;
+using WebCore::Node;
 
 namespace XBL {
 
 const char xblNS[] = "http://www.mozilla.org/xbl";
     
-XBLTokenHandler::XBLTokenHandler(DocumentImpl* doc)
+XBLTokenHandler::XBLTokenHandler(Document* doc)
 :   XMLHandler(doc, 0),
     m_state(eXBL_InDocument),
     m_secondaryState(eXBL_None),
@@ -61,12 +61,12 @@ XBLTokenHandler::~XBLTokenHandler()
 {
 }
 
-XBLDocumentImpl* XBLTokenHandler::xblDocument() const
+XBLDocument* XBLTokenHandler::xblDocument() const
 {
-    return static_cast<XBLDocumentImpl*>(m_doc->document());
+    return static_cast<XBLDocument*>(m_doc->document());
 }
 
-bool XBLTokenHandler::startElement(const QString& namespaceURI, const QString& localName, const QString& qName, 
+bool XBLTokenHandler::startElement(const DeprecatedString& namespaceURI, const DeprecatedString& localName, const DeprecatedString& qName, 
                                    const QXmlAttributes& attrs)
 {
     if (namespaceURI == xblNS) {
@@ -141,7 +141,7 @@ bool XBLTokenHandler::startElement(const QString& namespaceURI, const QString& l
     return true;
 }
 
-bool XBLTokenHandler::endElement(const QString& namespaceURI, const QString& localName, const QString& qName)
+bool XBLTokenHandler::endElement(const DeprecatedString& namespaceURI, const DeprecatedString& localName, const DeprecatedString& qName)
 {
     if (m_state != eXBL_InDocument) {
         if (namespaceURI == xblNS) {
@@ -205,7 +205,7 @@ bool XBLTokenHandler::endElement(const QString& namespaceURI, const QString& loc
     return XMLHandler::endElement(namespaceURI, localName, qName);
 }
 
-bool XBLTokenHandler::characters(const QString& text)
+bool XBLTokenHandler::characters(const DeprecatedString& text)
 {
     if (text.length() == 0)
         return true;
@@ -232,8 +232,8 @@ bool XBLTokenHandler::characters(const QString& text)
 
     // XBL files munch all whitespace, except when inside an anonymous content template (<content>).
     if (m_state != eXBL_InContent) {
-        uint l = text.length();
-        uint i;
+        unsigned l = text.length();
+        unsigned i;
         for (i = 0; i < l; i++) {
             if (!isspace(text[i].unicode()))
                 break;
@@ -250,8 +250,8 @@ void XBLTokenHandler::createBinding()
     if (!m_currentNode || !m_currentNode->isElementNode())
         return;
     
-    ElementImpl* elt = static_cast<ElementImpl*>(m_currentNode);
-    DOMString id = elt->getAttribute(ATTR_ID);
+    Element* elt = static_cast<Element*>(m_currentNode);
+    String id = elt->getAttribute(ATTR_ID);
     if (!id.isEmpty()) {
         m_binding = new XBLPrototypeBinding(id, elt);
         int exCode;
@@ -261,15 +261,15 @@ void XBLTokenHandler::createBinding()
 
 void XBLTokenHandler::createHandler(const QXmlAttributes& attrs)
 {
-    DOMString event;
-    DOMString modifiers;
-    DOMString button;
-    DOMString clickcount;
-    DOMString keycode;
-    DOMString charcode;
-    DOMString phase;
-    DOMString action;
-    DOMString preventdefault;
+    String event;
+    String modifiers;
+    String button;
+    String clickcount;
+    String keycode;
+    String charcode;
+    String phase;
+    String action;
+    String preventdefault;
     
     int i;
     for (i = 0; i < attrs.length(); i++) {
@@ -309,7 +309,7 @@ void XBLTokenHandler::createHandler(const QXmlAttributes& attrs)
     }
 }
 
-void XBLTokenHandler::createResource(const QString& localName, const QXmlAttributes& attrs)
+void XBLTokenHandler::createResource(const DeprecatedString& localName, const QXmlAttributes& attrs)
 {
     if (!m_binding)
         return;
@@ -333,7 +333,7 @@ void XBLTokenHandler::createImplementation(const QXmlAttributes& attrs)
     if (!m_binding)
         return;
     
-    DOMString name;    
+    String name;    
     for (int i = 0; i < attrs.length(); i++) {
         if (attrs.uri(i).length() > 0)
             continue;
@@ -373,7 +373,7 @@ void XBLTokenHandler::createDestructor()
 
 void XBLTokenHandler::createField(const QXmlAttributes& attrs)
 {
-    DOMString name;
+    String name;
     bool readonly = false;
     for (int i = 0; i < attrs.length(); i++) {
         if (attrs.uri(i).length() > 0)
@@ -390,7 +390,7 @@ void XBLTokenHandler::createField(const QXmlAttributes& attrs)
 
 void XBLTokenHandler::createProperty(const QXmlAttributes& attrs)
 {
-    DOMString name, onget, onset;
+    String name, onget, onset;
     bool readonly = false;
     for (int i = 0; i < attrs.length(); i++) {
         if (attrs.uri(i).length() > 0)
@@ -411,7 +411,7 @@ void XBLTokenHandler::createProperty(const QXmlAttributes& attrs)
 
 void XBLTokenHandler::createMethod(const QXmlAttributes& attrs)
 {
-    DOMString name;
+    String name;
     for (int i = 0; i < attrs.length(); i++) {
         if (attrs.uri(i).length() > 0)
             continue;

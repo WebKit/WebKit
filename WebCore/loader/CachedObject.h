@@ -78,7 +78,7 @@ namespace WebCore
             Uncacheable   // too big to be cached, will be destroyed as soon as possible
         };
 
-        CachedObject(const DOMString& URL, Type type, KIO::CacheControl cachePolicy, time_t expireDate, int size = 0)
+        CachedObject(const String& URL, Type type, KIO::CacheControl cachePolicy, time_t expireDate, int size = 0)
         {
             m_url = URL;
             m_type = type;
@@ -102,11 +102,11 @@ namespace WebCore
         }
         virtual ~CachedObject();
 
-        virtual void setCharset(const QString&) {}
-        virtual void data(ByteArray&, bool atEnd) = 0;
+        virtual void setCharset(const DeprecatedString&) {}
+        virtual void data(DeprecatedByteArray&, bool atEnd) = 0;
         virtual void error(int code, const char* message) = 0;
 
-        const DOMString &url() const { return m_url; }
+        const String &url() const { return m_url; }
         Type type() const { return m_type; }
 
         virtual void ref(CachedObjectClient*);
@@ -160,16 +160,16 @@ namespace WebCore
 
         // List of acceptable MIME types seperated by ",".
         // A MIME type may contain a wildcard, e.g. "text/*".
-        QString accept() const { return m_accept; }
-        void setAccept(const QString& accept) { m_accept = accept; }
+        DeprecatedString accept() const { return m_accept; }
+        void setAccept(const DeprecatedString& accept) { m_accept = accept; }
 
     protected:
         void setSize(int size);
 
         HashSet<CachedObjectClient*> m_clients;
 
-        DOMString m_url;
-        QString m_accept;
+        String m_url;
+        DeprecatedString m_accept;
         Request *m_request;
 #if __APPLE__
         NSURLResponse *m_response;

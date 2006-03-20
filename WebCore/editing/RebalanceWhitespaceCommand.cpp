@@ -26,14 +26,14 @@
 #include "config.h"
 #include "RebalanceWhitespaceCommand.h"
 
-#include "DocumentImpl.h"
+#include "Document.h"
 #include "htmlediting.h"
-#include "visible_text.h"
+#include "TextIterator.h"
 #include <kxmlcore/Assertions.h>
 
 namespace WebCore {
 
-RebalanceWhitespaceCommand::RebalanceWhitespaceCommand(DocumentImpl *document, const Position &pos)
+RebalanceWhitespaceCommand::RebalanceWhitespaceCommand(Document *document, const Position &pos)
     : EditCommand(document), m_position(pos), m_upstreamOffset(InvalidOffset)
 {
 }
@@ -48,8 +48,8 @@ void RebalanceWhitespaceCommand::doApply()
     if (m_position.isNull() || !m_position.node()->isTextNode())
         return;
         
-    TextImpl *textNode = static_cast<TextImpl *>(m_position.node());
-    DOMString text = textNode->data();
+    Text *textNode = static_cast<Text *>(m_position.node());
+    String text = textNode->data();
     if (text.length() == 0)
         return;
     
@@ -85,8 +85,8 @@ void RebalanceWhitespaceCommand::doUnapply()
         return;
     
     ASSERT(m_position.node()->isTextNode());
-    TextImpl *textNode = static_cast<TextImpl *>(m_position.node());
-    DOMString text = textNode->data();
+    Text *textNode = static_cast<Text *>(m_position.node());
+    String text = textNode->data();
     text.remove(m_upstreamOffset, m_afterString.length());
     text.insert(m_beforeString, m_upstreamOffset);
 }
@@ -96,5 +96,5 @@ bool RebalanceWhitespaceCommand::preservesTypingStyle() const
     return true;
 }
 
-} // namespace khtml
+} // namespace WebCore
 

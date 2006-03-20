@@ -27,7 +27,7 @@
 #define QLINEEDIT_H_
 
 #include "PlatformString.h"
-#include "QString.h"
+#include "DeprecatedString.h"
 #include "TextDirection.h"
 #include "Widget.h"
 
@@ -67,8 +67,8 @@ public:
     void setReadOnly(bool);
     bool isReadOnly() const;
 
-    void setText(const DOM::DOMString&);
-    DOM::DOMString text() const;
+    void setText(const WebCore::String&);
+    WebCore::String text() const;
 
     void setWritingDirection(WebCore::TextDirection);
     
@@ -76,7 +76,7 @@ public:
     bool hasSelectedText() const;
     
     int selectionStart() const;
-    QString selectedText() const;
+    DeprecatedString selectedText() const;
     void setSelection(int, int);
     
     IntSize sizeForCharacterWidth(int numCharacters) const;
@@ -88,9 +88,9 @@ public:
     Type type() const { return m_type; }
     
     void setLiveSearch(bool liveSearch);
-    void setAutoSaveName(const DOM::DOMString& name);
+    void setAutoSaveName(const WebCore::String& name);
     void setMaxResults(int maxResults);
-    void setPlaceholderString(const DOM::DOMString& placeholder);
+    void setPlaceholderString(const WebCore::String& placeholder);
     void addSearchResult();
 
 private:

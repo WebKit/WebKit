@@ -24,18 +24,18 @@
 #include <config.h>
 #include "render_applet.h"
 
-#include "DocumentImpl.h"
+#include "Document.h"
 #include "Frame.h"
 #include "html_objectimpl.h"
 #include "java/kjavaappletwidget.h"
-#include "render_canvas.h"
+#include "RenderCanvas.h"
 #include "htmlnames.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderApplet::RenderApplet(HTMLElementImpl *applet, const HashMap<DOMString, DOMString> &args )
+RenderApplet::RenderApplet(HTMLElement *applet, const HashMap<String, String> &args )
     : RenderWidget(applet), m_args(args)
 {
     // init RenderObject attributes
@@ -51,7 +51,7 @@ int RenderApplet::intrinsicWidth() const
     int rval = 150;
 
     if( m_widget )
-        rval = ((KJavaAppletWidget*)(m_widget))->sizeHint().width();
+        rval = ((JavaAppletWidget*)(m_widget))->sizeHint().width();
 
     return rval > 10 ? rval : 50;
 }
@@ -69,7 +69,7 @@ int RenderApplet::intrinsicHeight() const
 void RenderApplet::createWidgetIfNecessary()
 {
     if (!m_widget) {
-        if (static_cast<HTMLAppletElementImpl*>(element())->allParamsAvailable()) {
+        if (static_cast<HTMLAppletElement*>(element())->allParamsAvailable()) {
             // FIXME: Java applets can't be resized (this is a bug in Apple's Java implementation).
             // In order to work around this problem and have a correct size from the start, we will
             // use fixed widths/heights from the style system when we can, since the widget might
@@ -78,12 +78,12 @@ void RenderApplet::createWidgetIfNecessary()
                 m_width - borderLeft() - borderRight() - paddingLeft() - paddingRight();
             int height = style()->height().isFixed() ? style()->height().value() :
                 m_height - borderTop() - borderBottom() - paddingTop() - paddingBottom();
-            for (NodeImpl* child = element()->firstChild(); child; child = child->nextSibling())
+            for (Node* child = element()->firstChild(); child; child = child->nextSibling())
                 if (child->hasTagName(paramTag)) {
-                    HTMLParamElementImpl* p = static_cast<HTMLParamElementImpl*>(child);
+                    HTMLParamElement* p = static_cast<HTMLParamElement*>(child);
                     m_args.set(p->name(), p->value());
                 }
-            setWidget(new KJavaAppletWidget(IntSize(width, height), element()->getDocument()->frame(), m_args));
+            setWidget(new JavaAppletWidget(IntSize(width, height), element()->getDocument()->frame(), m_args));
         }
     }
 }
@@ -96,7 +96,7 @@ void RenderApplet::layout()
     calcWidth();
     calcHeight();
 
-    KJavaAppletWidget *tmp = static_cast<KJavaAppletWidget*>(m_widget);
+    JavaAppletWidget *tmp = static_cast<JavaAppletWidget*>(m_widget);
     // The applet's Widget gets created lazily upon first layout.
     if (!tmp)
         createWidgetIfNecessary();
@@ -104,7 +104,7 @@ void RenderApplet::layout()
 }
 
 
-RenderEmptyApplet::RenderEmptyApplet(DOM::NodeImpl* node)
+RenderEmptyApplet::RenderEmptyApplet(WebCore::Node* node)
   : RenderWidget(node)
 {
     // init RenderObject attributes

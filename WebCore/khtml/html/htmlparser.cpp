@@ -29,29 +29,29 @@
 #include "config.h"
 #include "htmlparser.h"
 
-#include "DocumentFragmentImpl.h"
+#include "DocumentFragment.h"
 #include "Frame.h"
 #include "FrameView.h"
-#include "HTMLFormElementImpl.h"
-#include "HTMLIsIndexElementImpl.h"
+#include "HTMLFormElement.h"
+#include "HTMLIsIndexElement.h"
 #include "LocalizedStrings.h"
-#include "cssproperties.h"
-#include "cssvalues.h"
-#include "TextImpl.h"
-#include "CommentImpl.h"
+#include "CSSPropertyNames.h"
+#include "CSSValueKeywords.h"
+#include "Text.h"
+#include "Comment.h"
 #include "html_baseimpl.h"
 #include "html_blockimpl.h"
-#include "html_canvasimpl.h"
-#include "html_documentimpl.h"
+#include "HTMLCanvasElement.h"
+#include "HTMLDocument.h"
 #include "html_headimpl.h"
 #include "html_imageimpl.h"
 #include "html_inlineimpl.h"
 #include "html_listimpl.h"
 #include "html_objectimpl.h"
 #include "html_tableimpl.h"
-#include "htmlfactory.h"
+#include "HTMLElementFactory.h"
 #include "htmltokenizer.h"
-#include "render_object.h"
+#include "RenderObject.h"
 #include <kxmlcore/HashMap.h>
 #include <kxmlcore/HashSet.h>
 
@@ -67,7 +67,7 @@ class HTMLStackElem
 public:
     HTMLStackElem(const AtomicString& _tagName,
                   int _level,
-                  NodeImpl *_node,
+                  Node *_node,
                   HTMLStackElem * _next
         )
         :
@@ -81,7 +81,7 @@ public:
     AtomicString tagName;
     int level;
     bool strayTableContent;
-    RefPtr<NodeImpl> node;
+    RefPtr<Node> node;
     HTMLStackElem* next;
 };
 
@@ -108,7 +108,7 @@ public:
  *    element or ignore the tag.
  *
  */
-HTMLParser::HTMLParser(DocumentImpl* doc) 
+HTMLParser::HTMLParser(Document* doc) 
     : document(doc)
     , current(0)
     , currentIsReferenced(false)
@@ -118,7 +118,7 @@ HTMLParser::HTMLParser(DocumentImpl* doc)
     reset();
 }
 
-HTMLParser::HTMLParser(DocumentFragmentImpl* frag)
+HTMLParser::HTMLParser(DocumentFragment* frag)
     : document(frag->getDocument())
     , current(0)
     , currentIsReferenced(false)
@@ -158,7 +158,7 @@ void HTMLParser::reset()
     discard_until = nullAtom;
 }
 
-void HTMLParser::setCurrent(NodeImpl *newCurrent) 
+void HTMLParser::setCurrent(Node *newCurrent) 
 {
     bool newCurrentIsReferenced = newCurrent && newCurrent != doc();
     if (newCurrentIsReferenced) 
@@ -169,7 +169,7 @@ void HTMLParser::setCurrent(NodeImpl *newCurrent)
     currentIsReferenced = newCurrentIsReferenced;
 }
 
-PassRefPtr<NodeImpl> HTMLParser::parseToken(Token *t)
+PassRefPtr<Node> HTMLParser::parseToken(Token *t)
 {
     if (!discard_until.isNull()) {
         if (t->tagName == discard_until && !t->beginTag)
@@ -196,14 +196,14 @@ PassRefPtr<NodeImpl> HTMLParser::parseToken(Token *t)
             haveContent = true;
     }
 
-    RefPtr<NodeImpl> n = getNode(t);
+    RefPtr<Node> n = getNode(t);
     // just to be sure, and to catch currently unimplemented stuff
     if (!n)
         return 0;
 
     // set attributes
     if (n->isHTMLElement()) {
-        HTMLElementImpl* e = static_cast<HTMLElementImpl*>(n.get());
+        HTMLElement* e = static_cast<HTMLElement*>(n.get());
         e->setAttributeMap(t->attrs.get());
 
         // take care of optional close tags
@@ -219,7 +219,7 @@ PassRefPtr<NodeImpl> HTMLParser::parseToken(Token *t)
         // we couldn't insert the node
 
         if (n->isElementNode()) {
-            ElementImpl* e = static_cast<ElementImpl*>(n.get());
+            Element* e = static_cast<Element*>(n.get());
             e->setAttributeMap(0);
         }
 
@@ -237,32 +237,32 @@ PassRefPtr<NodeImpl> HTMLParser::parseToken(Token *t)
     return n;
 }
 
-static bool isTableSection(NodeImpl* n)
+static bool isTableSection(Node* n)
 {
     return n->hasTagName(tbodyTag) || n->hasTagName(tfootTag) || n->hasTagName(theadTag);
 }
 
-static bool isTablePart(NodeImpl* n)
+static bool isTablePart(Node* n)
 {
     return n->hasTagName(trTag) || n->hasTagName(tdTag) || n->hasTagName(thTag) ||
            isTableSection(n);
 }
 
-static bool isTableRelated(NodeImpl* n)
+static bool isTableRelated(Node* n)
 {
     return n->hasTagName(tableTag) || isTablePart(n);
 }
 
-bool HTMLParser::insertNode(NodeImpl *n, bool flat)
+bool HTMLParser::insertNode(Node *n, bool flat)
 {
-    RefPtr<NodeImpl> protectNode(n);
+    RefPtr<Node> protectNode(n);
 
     const AtomicString& localName = n->localName();
-    int tagPriority = n->isHTMLElement() ? static_cast<HTMLElementImpl*>(n)->tagPriority() : 0;
+    int tagPriority = n->isHTMLElement() ? static_cast<HTMLElement*>(n)->tagPriority() : 0;
         
     // let's be stupid and just try to insert it.
     // this should work if the document is well-formed
-    NodeImpl *newNode = current->addChild(n);
+    Node *newNode = current->addChild(n);
     if (newNode) {
         // don't push elements without end tags (e.g., <img>) on the stack
         bool parentAttached = current->attached();
@@ -279,7 +279,7 @@ bool HTMLParser::insertNode(NodeImpl *n, bool flat)
                 n->attach();
             if (n->maintainsState()) {
                 doc()->registerMaintainsState(n);
-                QStringList &states = doc()->restoreState();
+                DeprecatedStringList &states = doc()->restoreState();
                 if (!states.isEmpty())
                     n->restoreState(states);
             }
@@ -291,10 +291,10 @@ bool HTMLParser::insertNode(NodeImpl *n, bool flat)
         return handleError(n, flat, localName, tagPriority); // Try to handle the error.
 }
 
-bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localName, int tagPriority)
+bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, int tagPriority)
 {
     // Error handling code.  This is just ad hoc handling of specific parent/child combinations.
-    HTMLElementImpl *e;
+    HTMLElement *e;
     bool handled = false;
 
     // 1. Check out the element's tag name to decide how to deal with errors.
@@ -302,7 +302,7 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
         if (current->hasTagName(selectTag))
             return false;
     } else if (n->isHTMLElement()) {
-        HTMLElementImpl* h = static_cast<HTMLElementImpl*>(n);
+        HTMLElement* h = static_cast<HTMLElement*>(n);
         if (h->hasLocalName(trTag) || h->hasLocalName(thTag) || h->hasLocalName(tdTag)) {
             if (inStrayTableContent && !isTableRelated(current)) {
                 // pop out to the nearest enclosing table-related tag.
@@ -329,11 +329,11 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
                 if (doc()->firstChild()->hasTagName(htmlTag)) {
                     // we have another <HTML> element.... apply attributes to existing one
                     // make sure we don't overwrite already existing attributes
-                    NamedAttrMapImpl *map = static_cast<ElementImpl*>(n)->attributes(true);
-                    ElementImpl *existingHTML = static_cast<ElementImpl*>(doc()->firstChild());
-                    NamedAttrMapImpl *bmap = existingHTML->attributes(false);
+                    NamedAttrMap *map = static_cast<Element*>(n)->attributes(true);
+                    Element *existingHTML = static_cast<Element*>(doc()->firstChild());
+                    NamedAttrMap *bmap = existingHTML->attributes(false);
                     for (unsigned l = 0; map && l < map->length(); ++l) {
-                        AttributeImpl* it = map->attributeItem(l);
+                        Attribute* it = map->attributeItem(l);
                         if (!bmap->getAttributeItem(it->name()))
                             existingHTML->setAttribute(it->name(), it->value());
                     }
@@ -344,7 +344,7 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
             if (!head)
                 createHead();
             if (head) {
-                NodeImpl *newNode = head->addChild(n);
+                Node *newNode = head->addChild(n);
                 if (newNode) {
                     pushBlock(localName, tagPriority);
                     setCurrent(newNode);
@@ -364,11 +364,11 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
                 // we have another <BODY> element.... apply attributes to existing one
                 // make sure we don't overwrite already existing attributes
                 // some sites use <body bgcolor=rightcolor>...<body bgcolor=wrongcolor>
-                NamedAttrMapImpl *map = static_cast<ElementImpl*>(n)->attributes(true);
-                ElementImpl *existingBody = doc()->body();
-                NamedAttrMapImpl *bmap = existingBody->attributes(false);
+                NamedAttrMap *map = static_cast<Element*>(n)->attributes(true);
+                Element *existingBody = doc()->body();
+                NamedAttrMap *bmap = existingBody->attributes(false);
                 for (unsigned l = 0; map && l < map->length(); ++l) {
-                    AttributeImpl* it = map->attributeItem(l);
+                    Attribute* it = map->attributeItem(l);
                     if (!bmap->getAttributeItem(it->name()))
                         existingBody->setAttribute(it->name(), it->value());
                 }
@@ -384,7 +384,7 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
                 return true;
             }
         } else if (h->hasLocalName(ddTag) || h->hasLocalName(dtTag)) {
-            e = new HTMLDListElementImpl(document);
+            e = new HTMLDListElement(document);
             if (insertNode(e)) {
                 insertNode(n);
                 return true;
@@ -400,12 +400,12 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
             return false;
         } else if (h->hasLocalName(captionTag)) {
             if (isTablePart(current)) {
-                NodeImpl* tsection = current;
+                Node* tsection = current;
                 if (current->hasTagName(trTag))
                     tsection = current->parent();
                 else if (current->hasTagName(tdTag) || current->hasTagName(thTag))
                     tsection = current->parent()->parent();
-                NodeImpl* table = tsection->parent();
+                Node* table = tsection->parent();
                 ExceptionCode ec = 0;
                 table->insertBefore(n, tsection, ec);
                 pushBlock(localName, tagPriority);
@@ -426,29 +426,29 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
     
     // 2. Next we examine our currently active element to do some further error handling.
     if (current->isHTMLElement()) {
-        HTMLElementImpl* h = static_cast<HTMLElementImpl*>(current);
+        HTMLElement* h = static_cast<HTMLElement*>(current);
         const AtomicString& currentTagName = current->localName();
         if (h->hasLocalName(htmlTag)) {
-            HTMLElementImpl* elt = n->isHTMLElement() ? static_cast<HTMLElementImpl*>(n) : 0;
+            HTMLElement* elt = n->isHTMLElement() ? static_cast<HTMLElement*>(n) : 0;
             if (elt && (elt->hasLocalName(scriptTag) || elt->hasLocalName(styleTag) ||
                 elt->hasLocalName(metaTag) || elt->hasLocalName(linkTag) ||
                 elt->hasLocalName(objectTag) || elt->hasLocalName(embedTag) ||
                 elt->hasLocalName(titleTag) || elt->hasLocalName(isindexTag) ||
                 elt->hasLocalName(baseTag))) {
                 if (!head) {
-                    head = new HTMLHeadElementImpl(document);
+                    head = new HTMLHeadElement(document);
                     e = head;
                     insertNode(e);
                     handled = true;
                 }
             } else {
                 if (n->isTextNode()) {
-                    TextImpl *t = static_cast<TextImpl *>(n);
+                    Text *t = static_cast<Text *>(n);
                     if (t->containsOnlyWhitespace())
                         return false;
                 }
                 if (!haveFrameSet) {
-                    e = new HTMLBodyElementImpl(document);
+                    e = new HTMLBodyElement(document);
                     startBody();
                     insertNode(e);
                     handled = true;
@@ -461,7 +461,7 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
                 // This means the body starts here...
                 if (!haveFrameSet) {
                     popBlock(currentTagName);
-                    e = new HTMLBodyElementImpl(document);
+                    e = new HTMLBodyElement(document);
                     startBody();
                     insertNode(e);
                     handled = true;
@@ -484,10 +484,10 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
                 bool possiblyMoveStrayContent = true;
                 ExceptionCode ec = 0;
                 if (n->isTextNode()) {
-                    TextImpl *t = static_cast<TextImpl *>(n);
+                    Text *t = static_cast<Text *>(n);
                     if (t->containsOnlyWhitespace())
                         return false;
-                    DOMStringImpl *i = t->string();
+                    StringImpl *i = t->string();
                     unsigned int pos = 0;
                     while (pos < i->length() && ((*i)[pos] == ' ' || (*i)[pos] == QChar(0xa0)))
                         pos++;
@@ -495,9 +495,9 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
                         possiblyMoveStrayContent = false;
                 }
                 if (possiblyMoveStrayContent) {
-                    NodeImpl *node = current;
-                    NodeImpl *parent = node->parentNode();
-                    NodeImpl *grandparent = parent->parentNode();
+                    Node *node = current;
+                    Node *parent = node->parentNode();
+                    Node *grandparent = parent->parentNode();
 
                     if (n->isTextNode() ||
                         (h->hasLocalName(trTag) &&
@@ -507,11 +507,11 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
                          parent->hasTagName(tableTag))) {
                         node = (node->hasTagName(tableTag)) ? node :
                                 ((node->hasTagName(trTag)) ? grandparent : parent);
-                        NodeImpl *parent = node->parentNode();
+                        Node *parent = node->parentNode();
                         parent->insertBefore(n, node, ec);
                         if (!ec) {
                             if (n->isHTMLElement() && tagPriority > 0 && 
-                                !flat && static_cast<HTMLElementImpl*>(n)->endTagRequirement() != TagStatusForbidden)
+                                !flat && static_cast<HTMLElement*>(n)->endTagRequirement() != TagStatusForbidden)
                             {
                                 pushBlock(localName, tagPriority);
                                 setCurrent(n);
@@ -524,11 +524,11 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
 
                     if (!ec) {
                         if (current->hasTagName(trTag))
-                            e = new HTMLTableCellElementImpl(tdTag, document);
+                            e = new HTMLTableCellElement(tdTag, document);
                         else if (current->hasTagName(tableTag))
-                            e = new HTMLTableSectionElementImpl(tbodyTag, document, true); // implicit 
+                            e = new HTMLTableSectionElement(tbodyTag, document, true); // implicit 
                         else
-                            e = new HTMLTableRowElementImpl(document);
+                            e = new HTMLTableRowElement(document);
                         
                         insertNode(e);
                         handled = true;
@@ -540,7 +540,7 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
             return false;
         } else if (h->hasLocalName(ulTag) || h->hasLocalName(olTag) ||
                  h->hasLocalName(dirTag) || h->hasLocalName(menuTag)) {
-            e = new HTMLDivElementImpl(document);
+            e = new HTMLDivElement(document);
             insertNode(e);
             handled = true;
         } else if (h->hasLocalName(selectTag)) {
@@ -572,7 +572,7 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
         }
     } else if (current->isDocumentNode()) {
         if (current->firstChild() == 0) {
-            e = new HTMLHtmlElementImpl(document);
+            e = new HTMLHtmlElement(document);
             insertNode(e);
             handled = true;
         }
@@ -584,31 +584,31 @@ bool HTMLParser::handleError(NodeImpl* n, bool flat, const AtomicString& localNa
     return insertNode(n);
 }
 
-typedef bool (HTMLParser::*CreateErrorCheckFunc)(Token* t, RefPtr<NodeImpl>&);
+typedef bool (HTMLParser::*CreateErrorCheckFunc)(Token* t, RefPtr<Node>&);
 typedef HashMap<AtomicStringImpl*, CreateErrorCheckFunc> FunctionMap;
 
-bool HTMLParser::textCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
+bool HTMLParser::textCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
-    result = new TextImpl(document, t->text.get());
+    result = new Text(document, t->text.get());
     return false;
 }
 
-bool HTMLParser::commentCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
+bool HTMLParser::commentCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
-    result = new CommentImpl(document, t->text.get());
+    result = new Comment(document, t->text.get());
     return false;
 }
 
-bool HTMLParser::headCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
+bool HTMLParser::headCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
     if (!head || current->localName() == htmlTag) {
-        head = new HTMLHeadElementImpl(document);
+        head = new HTMLHeadElement(document);
         result = head;
     }
     return false;
 }
 
-bool HTMLParser::bodyCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
+bool HTMLParser::bodyCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
     // body no longer allowed if we have a frameset
     if (haveFrameSet)
@@ -618,7 +618,7 @@ bool HTMLParser::bodyCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
     return true;
 }
 
-bool HTMLParser::framesetCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
+bool HTMLParser::framesetCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
     popBlock(headTag);
     if (inBody && !haveFrameSet && !haveContent) {
@@ -638,27 +638,27 @@ bool HTMLParser::framesetCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
     return true;
 }
 
-bool HTMLParser::iframeCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
+bool HTMLParser::iframeCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
     // a bit of a special case, since the frame is inlined
     setSkipMode(iframeTag);
     return true;
 }
 
-bool HTMLParser::formCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
+bool HTMLParser::formCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
     // Only create a new form if we're not already inside one.
     // This is consistent with other browsers' behavior.
     if (!form) {
-        form = new HTMLFormElementImpl(document);
+        form = new HTMLFormElement(document);
         result = form;
     }
     return false;
 }
 
-bool HTMLParser::isindexCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
+bool HTMLParser::isindexCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
-    NodeImpl *n = handleIsindex(t);
+    Node *n = handleIsindex(t);
     if (!inBody) {
         isindex = n;
     } else {
@@ -668,45 +668,45 @@ bool HTMLParser::isindexCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
     return false;
 }
 
-bool HTMLParser::selectCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
+bool HTMLParser::selectCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
     inSelect = true;
     return true;
 }
 
-bool HTMLParser::ddCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
+bool HTMLParser::ddCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
     popBlock(dtTag);
     popBlock(ddTag);
     return true;
 }
 
-bool HTMLParser::dtCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
+bool HTMLParser::dtCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
     popBlock(ddTag);
     popBlock(dtTag);
     return true;
 }
 
-bool HTMLParser::nestedCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
+bool HTMLParser::nestedCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
     popBlock(t->tagName);
     return true;
 }
 
-bool HTMLParser::nestedStyleCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
+bool HTMLParser::nestedStyleCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
     return allowNestedRedundantTag(t->tagName);
 }
 
-bool HTMLParser::tableCellCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
+bool HTMLParser::tableCellCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
     popBlock(tdTag);
     popBlock(thTag);
     return true;
 }
 
-bool HTMLParser::tableSectionCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
+bool HTMLParser::tableSectionCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
     popBlock(theadTag);
     popBlock(tbodyTag);
@@ -714,33 +714,33 @@ bool HTMLParser::tableSectionCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result
     return true;
 }
 
-bool HTMLParser::noembedCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
+bool HTMLParser::noembedCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
     setSkipMode(noembedTag);
     return true;
 }
 
-bool HTMLParser::noframesCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
+bool HTMLParser::noframesCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
     setSkipMode(noframesTag);
     return true;
 }
 
-bool HTMLParser::noscriptCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
+bool HTMLParser::noscriptCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
     if (!m_fragment && document->frame()->jScriptEnabled())
         setSkipMode(noscriptTag);
     return true;
 }
 
-bool HTMLParser::mapCreateErrorCheck(Token* t, RefPtr<NodeImpl>& result)
+bool HTMLParser::mapCreateErrorCheck(Token* t, RefPtr<Node>& result)
 {
-    map = new HTMLMapElementImpl(document);
+    map = new HTMLMapElement(document);
     result = map;
     return false;
 }
 
-PassRefPtr<NodeImpl> HTMLParser::getNode(Token* t)
+PassRefPtr<Node> HTMLParser::getNode(Token* t)
 {
     // Init our error handling table.
     static FunctionMap gFunctionMap;
@@ -782,7 +782,7 @@ PassRefPtr<NodeImpl> HTMLParser::getNode(Token* t)
     }
 
     bool proceed = true;
-    RefPtr<NodeImpl> result;
+    RefPtr<Node> result;
     if (CreateErrorCheckFunc errorCheckFunc = gFunctionMap.get(t->tagName.impl()))
         proceed = (this->*errorCheckFunc)(t, result);
     if (proceed)
@@ -849,7 +849,7 @@ bool HTMLParser::isHeaderTag(const AtomicString& tagName)
 void HTMLParser::popNestedHeaderTag()
 {
     // This function only cares about checking for nested headers that have only inlines in between them.
-    NodeImpl* currNode = current;
+    Node* currNode = current;
     for (HTMLStackElem* curr = blockStack; curr; curr = curr->next) {
         if (isHeaderTag(curr->tagName)) {
             popBlock(curr->tagName);
@@ -861,13 +861,13 @@ void HTMLParser::popNestedHeaderTag()
     }
 }
 
-bool HTMLParser::isInline(NodeImpl* node) const
+bool HTMLParser::isInline(Node* node) const
 {
     if (node->isTextNode())
         return true;
 
     if (node->isHTMLElement()) {
-        HTMLElementImpl* e = static_cast<HTMLElementImpl*>(node);
+        HTMLElement* e = static_cast<HTMLElement*>(node);
         if (e->hasLocalName(aTag) || e->hasLocalName(fontTag) || e->hasLocalName(ttTag) ||
             e->hasLocalName(uTag) || e->hasLocalName(bTag) || e->hasLocalName(iTag) ||
             e->hasLocalName(sTag) || e->hasLocalName(strikeTag) || e->hasLocalName(bigTag) ||
@@ -967,9 +967,9 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
 
     if (!curr || !maxElem || !isAffectedByResidualStyle(maxElem->tagName)) return;
 
-    NodeImpl* residualElem = prev->node.get();
-    NodeImpl* blockElem = prevMaxElem ? prevMaxElem->node.get() : current;
-    NodeImpl* parentElem = elem->node.get();
+    Node* residualElem = prev->node.get();
+    Node* blockElem = prevMaxElem ? prevMaxElem->node.get() : current;
+    Node* parentElem = elem->node.get();
 
     // Check to see if the reparenting that is going to occur is allowed according to the DOM.
     // FIXME: We should either always allow it or perform an additional fixup instead of
@@ -1005,12 +1005,12 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
         // in the block stack.
         // This will also affect how we ultimately reparent the block, since we want it to end up
         // under the reopened residual tags (e.g., the <i> in the above example.)
-        NodeImpl* prevNode = 0;
+        Node* prevNode = 0;
         currElem = maxElem;
         while (currElem->node != residualElem) {
             if (isResidualStyleTag(currElem->node->localName())) {
                 // Create a clone of this element.
-                RefPtr<NodeImpl> currNode = currElem->node->cloneNode(false);
+                RefPtr<Node> currNode = currElem->node->cloneNode(false);
 
                 // Change the stack element's node to point to the clone.
                 currElem->node = currNode;
@@ -1049,14 +1049,14 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
         blockElem->parentNode()->removeChild(blockElem, ec);
         
     // Step 2: Clone |residualElem|.
-    RefPtr<NodeImpl> newNode = residualElem->cloneNode(false); // Shallow clone. We don't pick up the same kids.
+    RefPtr<Node> newNode = residualElem->cloneNode(false); // Shallow clone. We don't pick up the same kids.
 
     // Step 3: Place |blockElem|'s children under |newNode|.  Remove all of the children of |blockElem|
     // before we've put |newElem| into the document.  That way we'll only do one attachment of all
     // the new content (instead of a bunch of individual attachments).
-    NodeImpl* currNode = blockElem->firstChild();
+    Node* currNode = blockElem->firstChild();
     while (currNode) {
-        NodeImpl* nextNode = currNode->nextSibling();
+        Node* nextNode = currNode->nextSibling();
         newNode->appendChild(currNode, ec);
         currNode = nextNode;
     }
@@ -1089,7 +1089,7 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
     while (curr && curr != maxElem) {
         // We will actually schedule this tag for reopening
         // after we complete the close of this entire block.
-        NodeImpl* currNode = current;
+        Node* currNode = current;
         if (isResidualStyleTag(curr->tagName)) {
             // We've overloaded the use of stack elements and are just reusing the
             // struct with a slightly different meaning to the variables.  Instead of chaining
@@ -1114,12 +1114,12 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
                                                     // if it becomes necessary to do so.
 }
 
-void HTMLParser::reopenResidualStyleTags(HTMLStackElem* elem, NodeImpl* malformedTableParent)
+void HTMLParser::reopenResidualStyleTags(HTMLStackElem* elem, Node* malformedTableParent)
 {
     // Loop for each tag that needs to be reopened.
     while (elem) {
         // Create a shallow clone of the DOM node for this element.
-        RefPtr<NodeImpl> newNode = elem->node->cloneNode(false); 
+        RefPtr<Node> newNode = elem->node->cloneNode(false); 
 
         // Append the new node. In the malformed table case, we need to insert before the table,
         // which will be the last child.
@@ -1183,7 +1183,7 @@ void HTMLParser::popBlock(const AtomicString& _tagName)
 
     bool isAffectedByStyle = isAffectedByResidualStyle(Elem->tagName);
     HTMLStackElem* residualStyleStack = 0;
-    NodeImpl* malformedTableParent = 0;
+    Node* malformedTableParent = 0;
     
     Elem = blockStack;
     while (Elem) {
@@ -1197,7 +1197,7 @@ void HTMLParser::popBlock(const AtomicString& _tagName)
             // If we end up needing to reopen residual style tags, the root of the reopened chain
             // must also know that it is the root of malformed content inside a <tbody>/<tr>.
             if (strayTable && (inStrayTableContent < strayTable) && residualStyleStack) {
-                NodeImpl* curr = current;
+                Node* curr = current;
                 while (curr && !curr->hasTagName(tableTag))
                     curr = curr->parentNode();
                 malformedTableParent = curr ? curr->parentNode() : 0;
@@ -1212,7 +1212,7 @@ void HTMLParser::popBlock(const AtomicString& _tagName)
 
             // Schedule this tag for reopening
             // after we complete the close of this entire block.
-            NodeImpl* currNode = current;
+            Node* currNode = current;
             if (isAffectedByStyle && isResidualStyleTag(Elem->tagName)) {
                 // We've overloaded the use of stack elements and are just reusing the
                 // struct with a slightly different meaning to the variables.  Instead of chaining
@@ -1246,7 +1246,7 @@ void HTMLParser::popOneBlock(bool delBlock)
     if (current && Elem->node != current) {
         if (current->maintainsState() && doc()) {
             doc()->registerMaintainsState(current);
-            QStringList &states = doc()->restoreState();
+            DeprecatedStringList &states = doc()->restoreState();
             if (!states.isEmpty())
                 current->restoreState(states);
         }
@@ -1282,35 +1282,35 @@ void HTMLParser::createHead()
     if (head || !doc()->firstChild())
         return;
 
-    head = new HTMLHeadElementImpl(document);
-    HTMLElementImpl* body = doc()->body();
+    head = new HTMLHeadElement(document);
+    HTMLElement* body = doc()->body();
     ExceptionCode ec = 0;
     doc()->firstChild()->insertBefore(head, body, ec);
     if (ec)
         head = 0;
 }
 
-NodeImpl* HTMLParser::handleIsindex(Token* t)
+Node* HTMLParser::handleIsindex(Token* t)
 {
-    NodeImpl* n = new HTMLDivElementImpl(document);
+    Node* n = new HTMLDivElement(document);
 
-    NamedMappedAttrMapImpl* attrs = t->attrs.get();
+    NamedMappedAttrMap* attrs = t->attrs.get();
 
-    RefPtr<HTMLIsIndexElementImpl> isIndex = new HTMLIsIndexElementImpl(document, form);
+    RefPtr<HTMLIsIndexElement> isIndex = new HTMLIsIndexElement(document, form);
     isIndex->setAttributeMap(attrs);
     isIndex->setAttribute(typeAttr, "khtml_isindex");
 
-    DOMString text = searchableIndexIntroduction();
+    String text = searchableIndexIntroduction();
     if (attrs) {
-        if (AttributeImpl *a = attrs->getAttributeItem(promptAttr))
+        if (Attribute *a = attrs->getAttributeItem(promptAttr))
             text = a->value().domString() + " ";
         t->attrs = 0;
     }
 
-    n->addChild(new HTMLHRElementImpl(document));
-    n->addChild(new TextImpl(document, text));
+    n->addChild(new HTMLHRElement(document));
+    n->addChild(new Text(document, text));
     n->addChild(isIndex.get());
-    n->addChild(new HTMLHRElementImpl(document));
+    n->addChild(new HTMLHRElement(document));
 
     return n;
 }
@@ -1331,7 +1331,7 @@ void HTMLParser::finished()
 {
     // In the case of a completely empty document, here's the place to create the HTML element.
     if (current && current->isDocumentNode() && !current->firstChild())
-        insertNode(new HTMLHtmlElementImpl(document));
+        insertNode(new HTMLHtmlElement(document));
 
     // This ensures that "current" is not left pointing to a node when the document is destroyed.
     freeBlock();

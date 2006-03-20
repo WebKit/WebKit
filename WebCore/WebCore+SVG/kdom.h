@@ -25,7 +25,7 @@
 #define KDOM_H
 #if SVG_SUPPORT
 
-#include "QString.h"
+#include "DeprecatedString.h"
 #include "PlatformString.h"
 
 /**

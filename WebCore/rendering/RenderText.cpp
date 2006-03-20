@@ -31,14 +31,14 @@
 #include "RenderBlock.h"
 #include "VisiblePosition.h"
 #include "break_lines.h"
-#include "dom2_rangeimpl.h"
-#include "render_arena.h"
+#include "Range.h"
+#include "RenderArena.h"
 #include <kxmlcore/AlwaysInline.h>
 #include <unicode/ubrk.h>
 
 namespace WebCore {
 
-static UBreakIterator* getCharacterBreakIterator(const DOMStringImpl* i)
+static UBreakIterator* getCharacterBreakIterator(const StringImpl* i)
 {
     // The locale is currently ignored when determining character cluster breaks.
     // This may change in the future, according to Deborah Goldsmith.
@@ -87,7 +87,7 @@ int RenderText::nextOffset(int current) const
     return result;
 }
 
-RenderText::RenderText(DOM::NodeImpl* node, DOMStringImpl *_str)
+RenderText::RenderText(WebCore::Node* node, StringImpl *_str)
      : RenderObject(node), str(_str), m_firstTextBox(0), m_lastTextBox(0)
      , m_minWidth(-1), m_maxWidth(-1), m_selectionState(SelectionNone)
      , m_linesDirty(false), m_containsReversedText(false)
@@ -109,7 +109,7 @@ void RenderText::setStyle(RenderStyle *_style)
         RenderObject::setStyle( _style );
 
         if (needToTransformText) {
-            RefPtr<DOMStringImpl> textToTransform = originalString();
+            RefPtr<StringImpl> textToTransform = originalString();
             if (textToTransform)
                 setText(textToTransform.get(), true);
         }
@@ -197,12 +197,12 @@ bool RenderText::isTextFragment() const
     return false;
 }
 
-PassRefPtr<DOMStringImpl> RenderText::originalString() const
+PassRefPtr<StringImpl> RenderText::originalString() const
 {
     return element() ? element()->string() : 0;
 }
 
-void RenderText::absoluteRects(QValueList<IntRect>& rects, int _tx, int _ty)
+void RenderText::absoluteRects(DeprecatedValueList<IntRect>& rects, int _tx, int _ty)
 {
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
         rects.append(IntRect(_tx + box->xPos(), 
@@ -211,9 +211,9 @@ void RenderText::absoluteRects(QValueList<IntRect>& rects, int _tx, int _ty)
                            box->height()));
 }
 
-QValueList<IntRect> RenderText::lineBoxRects()
+DeprecatedValueList<IntRect> RenderText::lineBoxRects()
 {
-    QValueList<IntRect> rects;
+    DeprecatedValueList<IntRect> rects;
     int x = 0, y = 0;
     absolutePositionForContent(x, y);
     absoluteRects(rects, x, y);
@@ -800,12 +800,12 @@ void RenderText::setSelectionState(SelectionState s)
     containingBlock()->setSelectionState(s);
 }
 
-void RenderText::setTextWithOffset(DOMStringImpl *text, uint offset, uint len, bool force)
+void RenderText::setTextWithOffset(StringImpl *text, unsigned offset, unsigned len, bool force)
 {
-    uint oldLen = str ? str->length() : 0;
-    uint newLen = text ? text->length() : 0;
+    unsigned oldLen = str ? str->length() : 0;
+    unsigned newLen = text ? text->length() : 0;
     int delta = newLen - oldLen;
-    uint end = len ? offset+len-1 : offset;
+    unsigned end = len ? offset+len-1 : offset;
 
     RootInlineBox* firstRootBox = 0;
     RootInlineBox* lastRootBox = 0;
@@ -863,7 +863,7 @@ void RenderText::setTextWithOffset(DOMStringImpl *text, uint offset, uint len, b
     setText(text, force);
 }
 
-void RenderText::setText(DOMStringImpl *text, bool force)
+void RenderText::setText(StringImpl *text, bool force)
 {
     if (!text)
         return;
@@ -885,7 +885,7 @@ void RenderText::setText(DOMStringImpl *text, bool force)
                     for (o = previousRenderer(); o && o->isInlineFlow(); o = o->previousRenderer())
                         ;
                     if (o && o->isText()) {
-                        DOMStringImpl* prevStr = static_cast<RenderText*>(o)->string();
+                        StringImpl* prevStr = static_cast<RenderText*>(o)->string();
                         previous = (*prevStr)[prevStr->length() - 1];
                     }
                     str = str->capitalize(previous);

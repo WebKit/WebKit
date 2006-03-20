@@ -28,44 +28,44 @@
 
 #include "EventNames.h"
 #include "Frame.h"
-#include "KeyEvent.h"
+#include "PlatformKeyboardEvent.h"
 #include "csshelper.h"
-#include "cssproperties.h"
+#include "CSSPropertyNames.h"
 #include "cssstyleselector.h"
-#include "cssvalues.h"
+#include "CSSValueKeywords.h"
 #include "dom2_eventsimpl.h"
-#include "html_documentimpl.h"
+#include "HTMLDocument.h"
 #include "html_imageimpl.h"
 #include "htmlnames.h"
-#include "render_flow.h"
-#include "render_image.h"
-#include "rendering/render_br.h"
+#include "RenderFlow.h"
+#include "RenderImage.h"
+#include "rendering/RenderBR.h"
 
 namespace WebCore {
 
 using namespace EventNames;
 using namespace HTMLNames;
 
-HTMLAnchorElementImpl::HTMLAnchorElementImpl(DocumentImpl *doc)
-    : HTMLElementImpl(aTag, doc)
+HTMLAnchorElement::HTMLAnchorElement(Document *doc)
+    : HTMLElement(aTag, doc)
 {
     m_hasTarget = false;
 }
 
-HTMLAnchorElementImpl::HTMLAnchorElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
-    : HTMLElementImpl(tagName, doc)
+HTMLAnchorElement::HTMLAnchorElement(const QualifiedName& tagName, Document *doc)
+    : HTMLElement(tagName, doc)
 {
     m_hasTarget = false;
 }
 
-HTMLAnchorElementImpl::~HTMLAnchorElementImpl()
+HTMLAnchorElement::~HTMLAnchorElement()
 {
 }
 
-bool HTMLAnchorElementImpl::isFocusable() const
+bool HTMLAnchorElement::isFocusable() const
 {
     if (isContentEditable())
-        return HTMLElementImpl::isFocusable();
+        return HTMLElement::isFocusable();
 
     // FIXME: Even if we are not visible, we might have a child that is visible.
     // Dave wants to fix that some day with a "has visible content" flag or the like.
@@ -79,23 +79,23 @@ bool HTMLAnchorElementImpl::isFocusable() const
         if (r->width() > 0 && r->height() > 0)
             return true;
 
-    QValueList<IntRect> rects;
+    DeprecatedValueList<IntRect> rects;
     int x = 0, y = 0;
     renderer()->absolutePosition(x, y);
     renderer()->absoluteRects(rects, x, y);
-    for (QValueList<IntRect>::ConstIterator it = rects.begin(); it != rects.end(); ++it)
+    for (DeprecatedValueList<IntRect>::ConstIterator it = rects.begin(); it != rects.end(); ++it)
         if (!(*it).isEmpty())
             return true;
 
     return false;
 }
 
-bool HTMLAnchorElementImpl::isMouseFocusable() const
+bool HTMLAnchorElement::isMouseFocusable() const
 {
     return false;
 }
 
-bool HTMLAnchorElementImpl::isKeyboardFocusable() const
+bool HTMLAnchorElement::isKeyboardFocusable() const
 {
     if (!isFocusable())
         return false;
@@ -106,32 +106,32 @@ bool HTMLAnchorElementImpl::isKeyboardFocusable() const
     return getDocument()->frame()->tabsToLinks();
 }
 
-void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
+void HTMLAnchorElement::defaultEventHandler(Event *evt)
 {
     // React on clicks and on keypresses.
     // Don't make this KEYUP_EVENT again, it makes khtml follow links it shouldn't,
     // when pressing Enter in the combo.
     if ( ( evt->type() == clickEvent ||
          ( evt->type() == keydownEvent && m_focused)) && m_isLink) {
-        MouseEventImpl *e = 0;
+        MouseEvent *e = 0;
         if ( evt->type() == clickEvent )
-            e = static_cast<MouseEventImpl*>( evt );
+            e = static_cast<MouseEvent*>( evt );
 
-        KeyboardEventImpl *k = 0;
+        KeyboardEvent *k = 0;
         if (evt->type() == keydownEvent)
-            k = static_cast<KeyboardEventImpl *>( evt );
+            k = static_cast<KeyboardEvent *>( evt );
 
-        QString utarget;
-        QString url;
+        DeprecatedString utarget;
+        DeprecatedString url;
 
         if ( e && e->button() == 2 ) {
-            HTMLElementImpl::defaultEventHandler(evt);
+            HTMLElement::defaultEventHandler(evt);
             return;
         }
 
         if ( k ) {
             if (k->keyIdentifier() != "Enter") {
-                HTMLElementImpl::defaultEventHandler(evt);
+                HTMLElement::defaultEventHandler(evt);
                 return;
             }
             if (k->keyEvent()) {
@@ -141,28 +141,28 @@ void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
             }
         }
 
-        url = khtml::parseURL(getAttribute(hrefAttr)).qstring();
+        url = WebCore::parseURL(getAttribute(hrefAttr)).deprecatedString();
 
-        utarget = getAttribute(targetAttr).qstring();
+        utarget = getAttribute(targetAttr).deprecatedString();
 
         if ( e && e->button() == 1 )
             utarget = "_blank";
 
         if (evt->target()->hasTagName(imgTag)) {
-            HTMLImageElementImpl* img = static_cast<HTMLImageElementImpl*>( evt->target() );
+            HTMLImageElement* img = static_cast<HTMLImageElement*>( evt->target() );
             if ( img && img->isServerMap() )
             {
-                khtml::RenderImage *r = static_cast<khtml::RenderImage *>(img->renderer());
+                WebCore::RenderImage *r = static_cast<WebCore::RenderImage *>(img->renderer());
                 if(r && e)
                 {
                     int absx, absy;
                     r->absolutePosition(absx, absy);
                     int x(e->clientX() - absx), y(e->clientY() - absy);
-                    url += QString("?%1,%2").arg( x ).arg( y );
+                    url += DeprecatedString("?%1,%2").arg( x ).arg( y );
                 }
                 else {
                     evt->setDefaultHandled();
-                    HTMLElementImpl::defaultEventHandler(evt);
+                    HTMLElement::defaultEventHandler(evt);
                     return;
                 }
             }
@@ -173,11 +173,11 @@ void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
         }
         evt->setDefaultHandled();
     }
-    HTMLElementImpl::defaultEventHandler(evt);
+    HTMLElement::defaultEventHandler(evt);
 }
 
 
-void HTMLAnchorElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
+void HTMLAnchorElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == hrefAttr) {
         m_isLink = !attr->isNull();
@@ -188,177 +188,177 @@ void HTMLAnchorElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
              attr->name() == relAttr) {
         // Do nothing.
     } else
-        HTMLElementImpl::parseMappedAttribute(attr);
+        HTMLElement::parseMappedAttribute(attr);
 }
 
-void HTMLAnchorElementImpl::accessKeyAction(bool sendToAnyElement)
+void HTMLAnchorElement::accessKeyAction(bool sendToAnyElement)
 {
     // send the mouse button events iff the
     // caller specified sendToAnyElement
     click(sendToAnyElement);
 }
 
-bool HTMLAnchorElementImpl::isURLAttribute(AttributeImpl *attr) const
+bool HTMLAnchorElement::isURLAttribute(Attribute *attr) const
 {
     return attr->name() == hrefAttr;
 }
 
-DOMString HTMLAnchorElementImpl::accessKey() const
+String HTMLAnchorElement::accessKey() const
 {
     return getAttribute(accesskeyAttr);
 }
 
-void HTMLAnchorElementImpl::setAccessKey(const DOMString &value)
+void HTMLAnchorElement::setAccessKey(const String &value)
 {
     setAttribute(accesskeyAttr, value);
 }
 
-DOMString HTMLAnchorElementImpl::charset() const
+String HTMLAnchorElement::charset() const
 {
     return getAttribute(charsetAttr);
 }
 
-void HTMLAnchorElementImpl::setCharset(const DOMString &value)
+void HTMLAnchorElement::setCharset(const String &value)
 {
     setAttribute(charsetAttr, value);
 }
 
-DOMString HTMLAnchorElementImpl::coords() const
+String HTMLAnchorElement::coords() const
 {
     return getAttribute(coordsAttr);
 }
 
-void HTMLAnchorElementImpl::setCoords(const DOMString &value)
+void HTMLAnchorElement::setCoords(const String &value)
 {
     setAttribute(coordsAttr, value);
 }
 
-DOMString HTMLAnchorElementImpl::href() const
+String HTMLAnchorElement::href() const
 {
-    DOMString href = getAttribute(hrefAttr);
+    String href = getAttribute(hrefAttr);
     if (href.isNull())
         return href;
     return getDocument()->completeURL(href);
 }
 
-void HTMLAnchorElementImpl::setHref(const DOMString &value)
+void HTMLAnchorElement::setHref(const String &value)
 {
     setAttribute(hrefAttr, value);
 }
 
-DOMString HTMLAnchorElementImpl::hreflang() const
+String HTMLAnchorElement::hreflang() const
 {
     return getAttribute(hreflangAttr);
 }
 
-void HTMLAnchorElementImpl::setHreflang(const DOMString &value)
+void HTMLAnchorElement::setHreflang(const String &value)
 {
     setAttribute(hreflangAttr, value);
 }
 
-DOMString HTMLAnchorElementImpl::name() const
+String HTMLAnchorElement::name() const
 {
     return getAttribute(nameAttr);
 }
 
-void HTMLAnchorElementImpl::setName(const DOMString &value)
+void HTMLAnchorElement::setName(const String &value)
 {
     setAttribute(nameAttr, value);
 }
 
-DOMString HTMLAnchorElementImpl::rel() const
+String HTMLAnchorElement::rel() const
 {
     return getAttribute(relAttr);
 }
 
-void HTMLAnchorElementImpl::setRel(const DOMString &value)
+void HTMLAnchorElement::setRel(const String &value)
 {
     setAttribute(relAttr, value);
 }
 
-DOMString HTMLAnchorElementImpl::rev() const
+String HTMLAnchorElement::rev() const
 {
     return getAttribute(revAttr);
 }
 
-void HTMLAnchorElementImpl::setRev(const DOMString &value)
+void HTMLAnchorElement::setRev(const String &value)
 {
     setAttribute(revAttr, value);
 }
 
-DOMString HTMLAnchorElementImpl::shape() const
+String HTMLAnchorElement::shape() const
 {
     return getAttribute(shapeAttr);
 }
 
-void HTMLAnchorElementImpl::setShape(const DOMString &value)
+void HTMLAnchorElement::setShape(const String &value)
 {
     setAttribute(shapeAttr, value);
 }
 
-int HTMLAnchorElementImpl::tabIndex() const
+int HTMLAnchorElement::tabIndex() const
 {
     return getAttribute(tabindexAttr).toInt();
 }
 
-void HTMLAnchorElementImpl::setTabIndex(int tabIndex)
+void HTMLAnchorElement::setTabIndex(int tabIndex)
 {
-    setAttribute(tabindexAttr, QString::number(tabIndex));
+    setAttribute(tabindexAttr, DeprecatedString::number(tabIndex));
 }
 
-DOMString HTMLAnchorElementImpl::target() const
+String HTMLAnchorElement::target() const
 {
     return getAttribute(targetAttr);
 }
 
-void HTMLAnchorElementImpl::setTarget(const DOMString &value)
+void HTMLAnchorElement::setTarget(const String &value)
 {
     setAttribute(targetAttr, value);
 }
 
-DOMString HTMLAnchorElementImpl::type() const
+String HTMLAnchorElement::type() const
 {
     return getAttribute(typeAttr);
 }
 
-void HTMLAnchorElementImpl::setType(const DOMString &value)
+void HTMLAnchorElement::setType(const String &value)
 {
     setAttribute(typeAttr, value);
 }
 
-void HTMLAnchorElementImpl::blur()
+void HTMLAnchorElement::blur()
 {
-    DocumentImpl *d = getDocument();
+    Document *d = getDocument();
     if (d->focusNode() == this)
         d->setFocusNode(0);
 }
 
-void HTMLAnchorElementImpl::focus()
+void HTMLAnchorElement::focus()
 {
     getDocument()->setFocusNode(this);
 }
 
 // -------------------------------------------------------------------------
 
-HTMLBRElementImpl::HTMLBRElementImpl(DocumentImpl *doc) : HTMLElementImpl(brTag, doc)
+HTMLBRElement::HTMLBRElement(Document *doc) : HTMLElement(brTag, doc)
 {
 }
 
-HTMLBRElementImpl::~HTMLBRElementImpl()
+HTMLBRElement::~HTMLBRElement()
 {
 }
 
-bool HTMLBRElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
+bool HTMLBRElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
     if (attrName == clearAttr) {
         result = eUniversal;
         return false;
     }
     
-    return HTMLElementImpl::mapToEntry(attrName, result);
+    return HTMLElement::mapToEntry(attrName, result);
 }
 
-void HTMLBRElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
+void HTMLBRElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == clearAttr) {
         // If the string is empty, then don't add the clear property. 
@@ -371,39 +371,39 @@ void HTMLBRElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
                 addCSSProperty(attr, CSS_PROP_CLEAR, str);
         }
     } else
-        HTMLElementImpl::parseMappedAttribute(attr);
+        HTMLElement::parseMappedAttribute(attr);
 }
 
-RenderObject *HTMLBRElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
+RenderObject *HTMLBRElement::createRenderer(RenderArena *arena, RenderStyle *style)
 {
      return new (arena) RenderBR(this);
 }
 
-DOMString HTMLBRElementImpl::clear() const
+String HTMLBRElement::clear() const
 {
     return getAttribute(clearAttr);
 }
 
-void HTMLBRElementImpl::setClear(const DOMString &value)
+void HTMLBRElement::setClear(const String &value)
 {
     setAttribute(clearAttr, value);
 }
 
 // -------------------------------------------------------------------------
 
-HTMLFontElementImpl::HTMLFontElementImpl(DocumentImpl *doc)
-    : HTMLElementImpl(fontTag, doc)
+HTMLFontElement::HTMLFontElement(Document *doc)
+    : HTMLElement(fontTag, doc)
 {
 }
 
-HTMLFontElementImpl::~HTMLFontElementImpl()
+HTMLFontElement::~HTMLFontElement()
 {
 }
 
 // Allows leading spaces.
 // Allows trailing nonnumeric characters.
 // Returns 10 for any size greater than 9.
-static bool parseFontSizeNumber(const DOMString &s, int &size)
+static bool parseFontSizeNumber(const String &s, int &size)
 {
     unsigned pos = 0;
     
@@ -446,7 +446,7 @@ static bool parseFontSizeNumber(const DOMString &s, int &size)
     return true;
 }
 
-bool HTMLFontElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
+bool HTMLFontElement::mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const
 {
     if (attrName == sizeAttr ||
         attrName == colorAttr ||
@@ -455,10 +455,10 @@ bool HTMLFontElementImpl::mapToEntry(const QualifiedName& attrName, MappedAttrib
         return false;
     }
     
-    return HTMLElementImpl::mapToEntry(attrName, result);
+    return HTMLElement::mapToEntry(attrName, result);
 }
 
-void HTMLFontElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
+void HTMLFontElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == sizeAttr) {
         int num;
@@ -485,79 +485,79 @@ void HTMLFontElementImpl::parseMappedAttribute(MappedAttributeImpl *attr)
     } else if (attr->name() == faceAttr) {
         addCSSProperty(attr, CSS_PROP_FONT_FAMILY, attr->value());
     } else
-        HTMLElementImpl::parseMappedAttribute(attr);
+        HTMLElement::parseMappedAttribute(attr);
 }
 
-DOMString HTMLFontElementImpl::color() const
+String HTMLFontElement::color() const
 {
     return getAttribute(colorAttr);
 }
 
-void HTMLFontElementImpl::setColor(const DOMString &value)
+void HTMLFontElement::setColor(const String &value)
 {
     setAttribute(colorAttr, value);
 }
 
-DOMString HTMLFontElementImpl::face() const
+String HTMLFontElement::face() const
 {
     return getAttribute(faceAttr);
 }
 
-void HTMLFontElementImpl::setFace(const DOMString &value)
+void HTMLFontElement::setFace(const String &value)
 {
     setAttribute(faceAttr, value);
 }
 
-DOMString HTMLFontElementImpl::size() const
+String HTMLFontElement::size() const
 {
     return getAttribute(sizeAttr);
 }
 
-void HTMLFontElementImpl::setSize(const DOMString &value)
+void HTMLFontElement::setSize(const String &value)
 {
     setAttribute(sizeAttr, value);
 }
 
 // -------------------------------------------------------------------------
 
-HTMLModElementImpl::HTMLModElementImpl(const QualifiedName& tagName, DocumentImpl *doc)
-    : HTMLElementImpl(tagName, doc)
+HTMLModElement::HTMLModElement(const QualifiedName& tagName, Document *doc)
+    : HTMLElement(tagName, doc)
 {
 }
 
-DOMString HTMLModElementImpl::cite() const
+String HTMLModElement::cite() const
 {
     return getAttribute(citeAttr);
 }
 
-void HTMLModElementImpl::setCite(const DOMString &value)
+void HTMLModElement::setCite(const String &value)
 {
     setAttribute(citeAttr, value);
 }
 
-DOMString HTMLModElementImpl::dateTime() const
+String HTMLModElement::dateTime() const
 {
     return getAttribute(datetimeAttr);
 }
 
-void HTMLModElementImpl::setDateTime(const DOMString &value)
+void HTMLModElement::setDateTime(const String &value)
 {
     setAttribute(datetimeAttr, value);
 }
 
 // -------------------------------------------------------------------------
 
-HTMLQuoteElementImpl::HTMLQuoteElementImpl(DocumentImpl *doc)
-    : HTMLElementImpl(qTag, doc)
+HTMLQuoteElement::HTMLQuoteElement(Document *doc)
+    : HTMLElement(qTag, doc)
 {
 }
 
-DOMString HTMLQuoteElementImpl::cite() const
+String HTMLQuoteElement::cite() const
 {
     return getAttribute(citeAttr);
 }
 
-void HTMLQuoteElementImpl::setCite(const DOMString &value)
+void HTMLQuoteElement::setCite(const String &value)
 {
     setAttribute(citeAttr, value);
 }

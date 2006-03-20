@@ -21,43 +21,43 @@
 #ifndef KHTML_FORM_DATA_H
 #define KHTML_FORM_DATA_H
 
-#include <QString.h>
+#include <DeprecatedString.h>
 #include <qvaluelist.h>
 
-class QCString;
+class DeprecatedCString;
 
-namespace khtml {
+namespace WebCore {
 
 class FormDataElement {
 public:
     FormDataElement() : m_type(data) { }
-    FormDataElement(const ByteArray &array) : m_type(data), m_data(array) { }
-    FormDataElement(const QString &filename) : m_type(encodedFile), m_filename(filename) { }
+    FormDataElement(const DeprecatedByteArray &array) : m_type(data), m_data(array) { }
+    FormDataElement(const DeprecatedString &filename) : m_type(encodedFile), m_filename(filename) { }
 
     enum { data, encodedFile } m_type;
-    ByteArray m_data;
-    QString m_filename;
+    DeprecatedByteArray m_data;
+    DeprecatedString m_filename;
 };
 
 class FormData {
 public:
     FormData();
-    FormData(const QCString &);
+    FormData(const DeprecatedCString &);
 
     void appendData(const void *data, size_t size);
-    void appendFile(const QString &filename);
+    void appendFile(const DeprecatedString &filename);
 
-    ByteArray flatten() const; // omits files
-    QString flattenToString() const; // omits files
+    DeprecatedByteArray flatten() const; // omits files
+    DeprecatedString flattenToString() const; // omits files
 
     size_t count() const { return m_elements.count(); }
-    QValueListConstIterator<FormDataElement> begin() const { return m_elements.begin(); }
-    QValueListConstIterator<FormDataElement> end() const { return m_elements.end(); }
+    DeprecatedValueListConstIterator<FormDataElement> begin() const { return m_elements.begin(); }
+    DeprecatedValueListConstIterator<FormDataElement> end() const { return m_elements.end(); }
 
 private:
-    QValueList<FormDataElement> m_elements;
+    DeprecatedValueList<FormDataElement> m_elements;
 };
 
-} // namespace khtml
+} // namespace WebCore
 
 #endif

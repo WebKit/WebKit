@@ -127,7 +127,7 @@ namespace WebCore
         }
 
         float opacity;
-        SVGPaintImpl *paint;
+        SVGPaint *paint;
 
     private:
         StyleFillData &operator=(const StyleFillData &);
@@ -148,11 +148,11 @@ namespace WebCore
         float opacity;
         unsigned int miterLimit;
 
-        CSSValueImpl *width;
-        CSSValueImpl *dashOffset;
+        CSSValue *width;
+        CSSValue *dashOffset;
 
-        SVGPaintImpl *paint;
-        CSSValueListImpl *dashArray;
+        SVGPaint *paint;
+        CSSValueList *dashArray;
 
     private:
         StyleStrokeData &operator=(const StyleStrokeData &);
@@ -189,7 +189,7 @@ namespace WebCore
             return !(*this == other);
         }
 
-        QString clipPath;
+        DeprecatedString clipPath;
 
     private:
         StyleClipData &operator=(const StyleClipData &);
@@ -204,7 +204,7 @@ namespace WebCore
         bool operator==(const StyleMaskData &other) const;
         bool operator!=(const StyleMaskData &other) const { return !(*this == other); }
 
-        QString maskElement;
+        DeprecatedString maskElement;
 
     private:
         StyleMaskData &operator=(const StyleMaskData &);
@@ -222,9 +222,9 @@ namespace WebCore
             return !(*this == other);
         }
 
-        QString startMarker;
-        QString midMarker;
-        QString endMarker;
+        DeprecatedString startMarker;
+        DeprecatedString midMarker;
+        DeprecatedString endMarker;
 
     private:
         StyleMarkerData &operator=(const StyleMarkerData &);
@@ -243,7 +243,7 @@ namespace WebCore
             return !(*this == other);
         }
 
-        QString filter;
+        DeprecatedString filter;
         Color floodColor;
         float floodOpacity;
 

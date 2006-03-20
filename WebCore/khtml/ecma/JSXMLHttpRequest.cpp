@@ -23,7 +23,7 @@
 
 #include "Frame.h"
 #include "PlatformString.h"
-#include "html_documentimpl.h"
+#include "HTMLDocument.h"
 #include "kjs_events.h"
 #include "kjs_window.h"
 #include "xmlhttprequest.h"
@@ -51,7 +51,7 @@ KJS_DEFINE_PROTOTYPE(JSXMLHttpRequestProto)
 KJS_IMPLEMENT_PROTOFUNC(JSXMLHttpRequestProtoFunc)
 KJS_IMPLEMENT_PROTOTYPE("JSXMLHttpRequest", JSXMLHttpRequestProto, JSXMLHttpRequestProtoFunc)
 
-JSXMLHttpRequestConstructorImp::JSXMLHttpRequestConstructorImp(ExecState *exec, DocumentImpl *d)
+JSXMLHttpRequestConstructorImp::JSXMLHttpRequestConstructorImp(ExecState *exec, Document *d)
     : doc(d)
 {
     putDirect(prototypePropertyName, JSXMLHttpRequestProto::self(exec), DontEnum|DontDelete|ReadOnly);
@@ -98,7 +98,7 @@ JSValue* JSXMLHttpRequest::getValueProperty(ExecState *exec, int token) const
   case ResponseText:
     return jsStringOrNull(m_impl->getResponseText());
   case ResponseXML:
-    if (DocumentImpl* responseXML = m_impl->getResponseXML())
+    if (Document* responseXML = m_impl->getResponseXML())
       return toJS(exec, responseXML);
     return jsUndefined();
   case Status: {
@@ -154,7 +154,7 @@ void JSXMLHttpRequest::mark()
 }
 
 
-JSXMLHttpRequest::JSXMLHttpRequest(ExecState *exec, DocumentImpl *d)
+JSXMLHttpRequest::JSXMLHttpRequest(ExecState *exec, Document *d)
   : m_impl(new XMLHttpRequest(d))
 {
   setPrototype(JSXMLHttpRequestProto::self(exec));
@@ -190,18 +190,18 @@ JSValue* JSXMLHttpRequestProtoFunc::callAsFunction(ExecState *exec, JSObject* th
       if (args.size() < 2 || args.size() > 5)
         return jsUndefined();
     
-      DOMString method = args[0]->toString(exec).domString();
-      KURL url = KURL(Window::retrieveActive(exec)->frame()->document()->completeURL(args[1]->toString(exec).qstring()));
+      String method = args[0]->toString(exec).domString();
+      KURL url = KURL(Window::retrieveActive(exec)->frame()->document()->completeURL(args[1]->toString(exec).deprecatedString()));
 
       bool async = true;
       if (args.size() >= 3)
         async = args[2]->toBoolean(exec);
     
-      DOMString user;
+      String user;
       if (args.size() >= 4)
         user = args[3]->toString(exec).domString();
       
-      DOMString password;
+      String password;
       if (args.size() >= 5)
         password = args[4]->toString(exec).domString();
 
@@ -214,12 +214,12 @@ JSValue* JSXMLHttpRequestProtoFunc::callAsFunction(ExecState *exec, JSObject* th
       if (args.size() > 1)
         return jsUndefined();
 
-      DOMString body;
+      String body;
 
       if (args.size() >= 1) {
         if (args[0]->toObject(exec)->inherits(&DOMDocument::info)) {
-          DocumentImpl *doc = static_cast<DocumentImpl *>(static_cast<DOMDocument *>(args[0]->toObject(exec))->impl());
-          body = doc->toString().qstring();
+          Document *doc = static_cast<Document *>(static_cast<DOMDocument *>(args[0]->toObject(exec))->impl());
+          body = doc->toString().deprecatedString();
         } else {
           // converting certain values (like null) to object can set an exception
           if (exec->hadException())

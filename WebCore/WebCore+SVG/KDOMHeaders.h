@@ -1,17 +1,17 @@
-namespace khtml {
-    class StyleListImpl;
+namespace WebCore {
+    class StyleList;
     class RenderCanvas;
 }
 
-namespace DOM {
-    class EventTargetNodeImpl;
+namespace WebCore {
+    class EventTargetNode;
 }
 
-namespace KDOM {
-    using namespace DOM;
-    using namespace khtml;
-    typedef khtml::StyleListImpl CSSStyleSelectorList;
-    typedef EventTargetNodeImpl EventTargetImpl;
+namespace WebCore {
+    using namespace WebCore;
+    using namespace WebCore;
+    typedef WebCore::StyleList CSSStyleSelectorList;
+    typedef EventTargetNode EventTarget;
 }
 
 #include "Shared.h"

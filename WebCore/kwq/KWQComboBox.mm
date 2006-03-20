@@ -26,10 +26,10 @@
 #import "config.h"
 #import "KWQComboBox.h"
 
-#import "KWQExceptions.h"
+#import "BlockExceptions.h"
 #import "FoundationExtras.h"
 #import "KWQLineEdit.h"
-#import "MacFrame.h"
+#import "FrameMac.h"
 #import "WebCoreFrameBridge.h"
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
@@ -79,7 +79,7 @@ QComboBox::QComboBox()
     , _menuPopulated(true)
     , _labelFont(nil)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     KWQPopUpButton *button = [[KWQPopUpButton alloc] init];
     setView(button);
@@ -99,19 +99,19 @@ QComboBox::QComboBox()
     [button setFont:[NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSSmallControlSize]]];
     [button setAutoenablesItems:NO];
     
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 QComboBox::~QComboBox()
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     KWQPopUpButton *button = (KWQPopUpButton *)getView();
     [button setTarget:nil];
     [[button cell] detachQComboBox];
     KWQRelease(_labelFont);
 
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void QComboBox::setTitle(NSMenuItem *menuItem, const KWQListBoxItem &title)
@@ -129,7 +129,7 @@ void QComboBox::setTitle(NSMenuItem *menuItem, const KWQListBoxItem &title)
     }    
 }
 
-void QComboBox::appendItem(const QString &text, KWQListBoxItemType type, bool enabled)
+void QComboBox::appendItem(const DeprecatedString &text, KWQListBoxItemType type, bool enabled)
 {
     const KWQListBoxItem listItem(text, type, enabled);
     _items.append(listItem);
@@ -138,7 +138,7 @@ void QComboBox::appendItem(const QString &text, KWQListBoxItemType type, bool en
         if (![[button cell] isHighlighted]) {
             _menuPopulated = false;
         } else {
-            KWQ_BLOCK_EXCEPTIONS;
+            BEGIN_BLOCK_OBJC_EXCEPTIONS;
             if (type == KWQListBoxSeparator) {
                 NSMenuItem *separator = [NSMenuItem separatorItem];
                 [[button menu] addItem:separator];
@@ -149,7 +149,7 @@ void QComboBox::appendItem(const QString &text, KWQListBoxItemType type, bool en
                 NSMenuItem *menuItem = [button lastItem];
                 setTitle(menuItem, listItem);
             }
-            KWQ_UNBLOCK_EXCEPTIONS;
+            END_BLOCK_OBJC_EXCEPTIONS;
         }
     }
     _widthGood = false;
@@ -157,14 +157,14 @@ void QComboBox::appendItem(const QString &text, KWQListBoxItemType type, bool en
 
 IntSize QComboBox::sizeHint() const 
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     KWQPopUpButton *button = (KWQPopUpButton *)getView();
     
     if (!_widthGood) {
         float width = 0;
-        QValueListConstIterator<KWQListBoxItem> i = const_cast<const QValueList<KWQListBoxItem> &>(_items).begin();
-        QValueListConstIterator<KWQListBoxItem> e = const_cast<const QValueList<KWQListBoxItem> &>(_items).end();
+        DeprecatedValueListConstIterator<KWQListBoxItem> i = const_cast<const DeprecatedValueList<KWQListBoxItem> &>(_items).begin();
+        DeprecatedValueListConstIterator<KWQListBoxItem> e = const_cast<const DeprecatedValueList<KWQListBoxItem> &>(_items).end();
         if (i != e) {
             WebCoreFont itemFont;
             WebCoreInitializeFont(&itemFont);
@@ -177,7 +177,7 @@ IntSize QComboBox::sizeHint() const
             style.applyRunRounding = NO;
             style.applyWordRounding = NO;
             do {
-                const QString &s = (*i).string;
+                const DeprecatedString &s = (*i).string;
                 bool isGroupLabel = ((*i).type == KWQListBoxGroupLabel);
                 ++i;
 
@@ -209,7 +209,7 @@ IntSize QComboBox::sizeHint() const
     return IntSize(_width + dimensions()[widthNotIncludingText],
         static_cast<int>([[button cell] cellSize].height) - (dimensions()[topMargin] + dimensions()[bottomMargin]));
 
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 
     return IntSize(0, 0);
 }
@@ -250,7 +250,7 @@ void QComboBox::setCurrentItem(int index)
 {
     ASSERT(index < (int)_items.count());
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     KWQPopUpButton *button = (KWQPopUpButton *)getView();
     if (_menuPopulated) {
@@ -262,7 +262,7 @@ void QComboBox::setCurrentItem(int index)
         setTitle(menuItem, _items[index]);
     }
 
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 
     _currentItem = index;
 }
@@ -271,7 +271,7 @@ void QComboBox::itemSelected()
 {
     ASSERT(_menuPopulated);
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     KWQPopUpButton *button = (KWQPopUpButton *)getView();
     int i = [button indexOfSelectedItem];
@@ -280,7 +280,7 @@ void QComboBox::itemSelected()
     }
     _currentItem = i;
 
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 
     if (client())
         client()->valueChanged(this);
@@ -293,7 +293,7 @@ void QComboBox::setFont(const Font& f)
     const NSControlSize size = KWQNSControlSizeForFont(f);
     NSControl * const button = static_cast<NSControl *>(getView());
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     if (size != [[button cell] controlSize]) {
         [[button cell] setControlSize:size];
@@ -303,7 +303,7 @@ void QComboBox::setFont(const Font& f)
         _widthGood = false;
     }
 
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 NSFont *QComboBox::labelFont() const
@@ -326,9 +326,9 @@ const int *QComboBox::dimensions() const
     };
     NSControl * const button = static_cast<NSControl *>(getView());
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return  w[[[button cell] controlSize]];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 
     return w[NSSmallControlSize];
 }
@@ -341,7 +341,7 @@ Widget::FocusPolicy QComboBox::focusPolicy() const
 
 void QComboBox::setWritingDirection(TextDirection direction)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     KWQPopUpButton *button = static_cast<KWQPopUpButton *>(getView());
     KWQPopUpButtonCell *cell = [button cell];
@@ -351,19 +351,19 @@ void QComboBox::setWritingDirection(TextDirection direction)
         [button setNeedsDisplay:YES];
     }
 
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void QComboBox::populateMenu()
 {
     if (!_menuPopulated) {
-        KWQ_BLOCK_EXCEPTIONS;
+        BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
         KWQPopUpButton *button = static_cast<KWQPopUpButton *>(getView());
         [button setPopulatingMenu:YES];
         [button removeAllItems];
-        QValueListConstIterator<KWQListBoxItem> i = const_cast<const QValueList<KWQListBoxItem> &>(_items).begin();
-        QValueListConstIterator<KWQListBoxItem> e = const_cast<const QValueList<KWQListBoxItem> &>(_items).end();
+        DeprecatedValueListConstIterator<KWQListBoxItem> i = const_cast<const DeprecatedValueList<KWQListBoxItem> &>(_items).begin();
+        DeprecatedValueListConstIterator<KWQListBoxItem> e = const_cast<const DeprecatedValueList<KWQListBoxItem> &>(_items).end();
         for (; i != e; ++i) {
             if ((*i).type == KWQListBoxSeparator) {
                 NSMenuItem *separator = [NSMenuItem separatorItem];
@@ -379,7 +379,7 @@ void QComboBox::populateMenu()
         [button selectItemAtIndex:_currentItem];
         [button setPopulatingMenu:NO];
 
-        KWQ_UNBLOCK_EXCEPTIONS;
+        END_BLOCK_OBJC_EXCEPTIONS;
 
         _menuPopulated = true;
     }
@@ -405,7 +405,7 @@ void QComboBox::populate()
 
 - (BOOL)trackMouse:(NSEvent *)event inRect:(NSRect)rect ofView:(NSView *)view untilMouseUp:(BOOL)flag
 {
-    WebCoreFrameBridge *bridge = box ? [MacFrame::bridgeForWidget(box) retain] : nil;
+    WebCoreFrameBridge *bridge = box ? [FrameMac::bridgeForWidget(box) retain] : nil;
 
     // we need to retain the event because it is the [NSApp currentEvent], which can change
     // and therefore be released during [super trackMouse:...]
@@ -488,7 +488,7 @@ void QComboBox::populate()
     BOOL become = [super becomeFirstResponder];
     if (become) {
         Widget* widget = [self widget];
-        if (widget && widget->client() && !MacFrame::currentEventIsMouseDownInWidget(widget))
+        if (widget && widget->client() && !FrameMac::currentEventIsMouseDownInWidget(widget))
             widget->client()->scrollToVisible(widget);
         if (widget && widget->client())
             widget->client()->focusIn(widget);
@@ -504,7 +504,7 @@ void QComboBox::populate()
         if (widget && widget->client()) {
             widget->client()->focusOut(widget);
             if (widget)
-                [MacFrame::bridgeForWidget(widget) formControlIsResigningFirstResponder:self];
+                [FrameMac::bridgeForWidget(widget) formControlIsResigningFirstResponder:self];
         }
     }
     return resign;
@@ -527,7 +527,7 @@ void QComboBox::populate()
 {
     Widget *widget = [self widget];
     return widget && inNextValidKeyView
-        ? MacFrame::nextKeyViewForWidget(widget, KWQSelectingNext)
+        ? FrameMac::nextKeyViewForWidget(widget, KWQSelectingNext)
         : [super nextKeyView];
 }
 
@@ -535,7 +535,7 @@ void QComboBox::populate()
 {
     Widget *widget = [self widget];
     return widget && inNextValidKeyView
-        ? MacFrame::nextKeyViewForWidget(widget, KWQSelectingPrevious)
+        ? FrameMac::nextKeyViewForWidget(widget, KWQSelectingPrevious)
         : [super previousKeyView];
 }
 

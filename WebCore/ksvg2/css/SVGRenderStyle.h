@@ -28,7 +28,7 @@
 #include "Shared.h"
 #include "DataRef.h"
 
-#include <ksvg2/svg/SVGPaintImpl.h>
+#include <ksvg2/svg/SVGPaint.h>
 #include <ksvg2/css/SVGRenderStyleDefs.h>
 
 #if WIN32
@@ -95,26 +95,26 @@ namespace WebCore
 
         // SVG CSS Properties (using DataRef's)
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, fill, opacity, FillOpacity, fillOpacity, 1.0)
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(SVGPaintImpl *, fill, paint, FillPaint, fillPaint, 0)
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(SVGPaint *, fill, paint, FillPaint, fillPaint, 0)
 
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, stroke, opacity, StrokeOpacity, strokeOpacity, 1.0)
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(SVGPaintImpl *, stroke, paint, StrokePaint, strokePaint, 0)
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(CSSValueListImpl *, stroke, dashArray, StrokeDashArray, strokeDashArray, 0)
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(SVGPaint *, stroke, paint, StrokePaint, strokePaint, 0)
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(CSSValueList *, stroke, dashArray, StrokeDashArray, strokeDashArray, 0)
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(unsigned int, stroke, miterLimit, StrokeMiterLimit, strokeMiterLimit, 4)
         
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(CSSValueImpl *, stroke, width, StrokeWidth, strokeWidth, 0)
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(CSSValueImpl *, stroke, dashOffset, StrokeDashOffset, strokeDashOffset, 0);
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(CSSValue *, stroke, width, StrokeWidth, strokeWidth, 0)
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(CSSValue *, stroke, dashOffset, StrokeDashOffset, strokeDashOffset, 0);
     
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, stops, opacity, StopOpacity, stopOpacity, 1.0)
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(Color, stops, color, StopColor, stopColor, Color(0, 0, 0))    
         
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(QString, clip, clipPath, ClipPath, clipPath, QString())
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(QString, mask, maskElement, MaskElement, maskElement, QString())
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(QString, markers, startMarker, StartMarker, startMarker, QString())
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(QString, markers, midMarker, MidMarker, midMarker, QString())
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(QString, markers, endMarker, EndMarker, endMarker, QString())
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(DeprecatedString, clip, clipPath, ClipPath, clipPath, DeprecatedString())
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(DeprecatedString, mask, maskElement, MaskElement, maskElement, DeprecatedString())
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(DeprecatedString, markers, startMarker, StartMarker, startMarker, DeprecatedString())
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(DeprecatedString, markers, midMarker, MidMarker, midMarker, DeprecatedString())
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(DeprecatedString, markers, endMarker, EndMarker, endMarker, DeprecatedString())
 
-        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(QString, misc, filter, Filter, filter, QString())
+        RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(DeprecatedString, misc, filter, Filter, filter, DeprecatedString())
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(float, misc, floodOpacity, FloodOpacity, floodOpacity, 1.0)
         RS_DEFINE_ATTRIBUTE_DATAREF_WITH_INITIAL(Color, misc, floodColor, FloodColor, floodColor, Color(0, 0, 0))    
 

@@ -50,7 +50,7 @@ void CachedObject::finish()
         m_status = Uncacheable;
     else
         m_status = Cached;
-    KURL url(m_url.qstring());
+    KURL url(m_url.deprecatedString());
     if (m_expireDateChanged && url.protocol().startsWith("http"))
         m_expireDateChanged = false;
 }

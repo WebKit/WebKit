@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-    class ElementImpl;
+    class Element;
     class Widget;
 
     class WidgetClient {
@@ -47,7 +47,7 @@ namespace WebCore {
         virtual void returnPressed(Widget*) { }
         virtual void performSearch(Widget*) { }
 
-        virtual ElementImpl* element(Widget*) { return 0; }
+        virtual Element* element(Widget*) { return 0; }
         virtual void sendConsumedMouseUp(Widget*) { }
         virtual bool isVisible(Widget*) { return false; }
     };

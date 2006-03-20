@@ -35,7 +35,7 @@
 #include "Frame.h"
 #include "KWQLoader.h"
 #include "Request.h"
-#include "html_documentimpl.h"
+#include "HTMLDocument.h"
 #include "TransferJob.h"
 #include "TransferJob.h"
 #include <kxmlcore/Assertions.h>
@@ -43,12 +43,12 @@
 
 namespace WebCore {
 
-static bool crossDomain(const QString &a, const QString &b)
+static bool crossDomain(const DeprecatedString &a, const DeprecatedString &b)
 {
     if (a == b) return false;
 
-    QStringList l1 = QStringList::split('.', a);
-    QStringList l2 = QStringList::split('.', b);
+    DeprecatedStringList l1 = DeprecatedStringList::split('.', a);
+    DeprecatedStringList l2 = DeprecatedStringList::split('.', b);
 
     while(l1.count() > l2.count())
         l1.pop_front();
@@ -92,7 +92,7 @@ void Loader::servePendingRequests()
   // get the first pending request
   Request *req = m_requestsPending.take(0);
 
-  KURL u(req->object->url().qstring());
+  KURL u(req->object->url().deprecatedString());
   TransferJob* job = new TransferJob(this, "GET", u);
   
   if (!req->object->accept().isEmpty())
@@ -102,9 +102,9 @@ void Loader::servePendingRequests()
       if (r.protocol().startsWith("http") && r.path().isEmpty())
           r.setPath("/");
       job->addMetaData("referrer", r.url());
-      QString domain = r.host();
+      DeprecatedString domain = r.host();
       if (req->m_docLoader->doc()->isHTMLDocument())
-         domain = static_cast<HTMLDocumentImpl*>(req->m_docLoader->doc())->domain().qstring();
+         domain = static_cast<HTMLDocument*>(req->m_docLoader->doc())->domain().deprecatedString();
       if (crossDomain(u.host(), domain))
          job->addMetaData("cross-domain", "true");
   }
@@ -153,7 +153,7 @@ void Loader::receivedResponse(TransferJob* job, PlatformResponse response)
     r->object->setResponse(response);
     r->object->setExpireDate(KWQCacheObjectExpiresTime(r->m_docLoader, response), false);
     
-    QString chs = job->queryMetaData("charset");
+    DeprecatedString chs = job->queryMetaData("charset");
     if (!chs.isNull())
         r->object->setCharset(chs);
     
@@ -193,7 +193,7 @@ int Loader::numRequests( DocLoader* dl ) const
 
     int res = 0;
 
-    QPtrListIterator<Request> pIt( m_requestsPending );
+    DeprecatedPtrListIterator<Request> pIt( m_requestsPending );
     for (; pIt.current(); ++pIt )
         if ( pIt.current()->m_docLoader == dl )
             res++;
@@ -204,7 +204,7 @@ int Loader::numRequests( DocLoader* dl ) const
         res += (r->m_docLoader == dl && !r->multipart);
     }
 
-    QPtrListIterator<Request> bdIt( m_requestsBackgroundDecoding );
+    DeprecatedPtrListIterator<Request> bdIt( m_requestsBackgroundDecoding );
     for (; bdIt.current(); ++bdIt )
         if ( bdIt.current()->m_docLoader == dl )
             res++;
@@ -217,7 +217,7 @@ int Loader::numRequests( DocLoader* dl ) const
 
 void Loader::cancelRequests(DocLoader* dl)
 {
-    QPtrListIterator<Request> pIt(m_requestsPending);
+    DeprecatedPtrListIterator<Request> pIt(m_requestsPending);
     while (pIt.current())
     {
         if (pIt.current()->m_docLoader == dl) {
@@ -245,7 +245,7 @@ void Loader::cancelRequests(DocLoader* dl)
         job->kill();
     }
 
-    QPtrListIterator<Request> bdIt( m_requestsBackgroundDecoding );
+    DeprecatedPtrListIterator<Request> bdIt( m_requestsBackgroundDecoding );
     while (bdIt.current()) {
         if (bdIt.current()->m_docLoader == dl) {
             Cache::remove( bdIt.current()->object );
@@ -263,7 +263,7 @@ void Loader::removeBackgroundDecodingRequest (Request *r)
         m_requestsBackgroundDecoding.remove(r);
 }
 
-TransferJob* Loader::jobForRequest(const DOMString& URL) const
+TransferJob* Loader::jobForRequest(const String& URL) const
 {
     RequestMap::const_iterator end = m_requestsLoading.end();
     for (RequestMap::const_iterator i = m_requestsLoading.begin(); i != end; ++i) {

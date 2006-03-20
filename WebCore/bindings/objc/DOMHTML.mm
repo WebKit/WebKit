@@ -29,31 +29,31 @@
 #import "PlatformString.h"
 #import "html_baseimpl.h"
 #import "html_blockimpl.h"
-#import "html_documentimpl.h"
-#import "HTMLElementImpl.h"
-#import "HTMLOptionsCollectionImpl.h"
-#import "HTMLFormElementImpl.h"
-#import "HTMLInputElementImpl.h"
-#import "HTMLIsIndexElementImpl.h"
-#import "HTMLSelectElementImpl.h"
-#import "HTMLOptionElementImpl.h"
-#import "HTMLTextAreaElementImpl.h"
-#import "HTMLButtonElementImpl.h"
-#import "HTMLLabelElementImpl.h"
-#import "HTMLLegendElementImpl.h"
-#import "HTMLFieldSetElementImpl.h"
-#import "HTMLOptGroupElementImpl.h"
+#import "HTMLDocument.h"
+#import "HTMLElement.h"
+#import "HTMLOptionsCollection.h"
+#import "HTMLFormElement.h"
+#import "HTMLInputElement.h"
+#import "HTMLIsIndexElement.h"
+#import "HTMLSelectElement.h"
+#import "HTMLOptionElement.h"
+#import "HTMLTextAreaElement.h"
+#import "HTMLButtonElement.h"
+#import "HTMLLabelElement.h"
+#import "HTMLLegendElement.h"
+#import "HTMLFieldSetElement.h"
+#import "HTMLOptGroupElement.h"
 #import "html_headimpl.h"
 #import "html_imageimpl.h"
 #import "html_inlineimpl.h"
 #import "html_listimpl.h"
-#import "HTMLFormCollectionImpl.h"
-#import "HTMLBaseFontElementImpl.h"
+#import "HTMLFormCollection.h"
+#import "HTMLBaseFontElement.h"
 #import "html_objectimpl.h"
 #import "html_tableimpl.h"
 #import "dom_elementimpl.h"
-#import "ContainerNodeImpl.h"
-#import "NameNodeListImpl.h"
+#import "ContainerNode.h"
+#import "NameNodeList.h"
 #import "markup.h"
 
 #import "DOMExtensions.h"
@@ -63,43 +63,43 @@
 #import <kxmlcore/Assertions.h>
 #import "FoundationExtras.h"
 
-using namespace DOM;
-using namespace DOM::HTMLNames;
+using namespace WebCore;
+using namespace WebCore::HTMLNames;
 
 // FIXME: This code should be using the impl methods instead of doing so many get/setAttribute calls.
 // FIXME: This code should be generated.
 
 @interface DOMHTMLCollection (WebCoreInternal)
-+ (DOMHTMLCollection *)_collectionWithImpl:(HTMLCollectionImpl *)impl;
++ (DOMHTMLCollection *)_collectionWith:(HTMLCollection *)impl;
 @end
 
 @interface DOMHTMLElement (WebCoreInternal)
-+ (DOMHTMLElement *)_elementWithImpl:(HTMLElementImpl *)impl;
-- (HTMLElementImpl *)_HTMLElementImpl;
++ (DOMHTMLElement *)_elementWith:(HTMLElement *)impl;
+- (HTMLElement *)_HTMLElement;
 @end
 
 @interface DOMHTMLFormElement (WebCoreInternal)
-+ (DOMHTMLFormElement *)_formElementWithImpl:(HTMLFormElementImpl *)impl;
++ (DOMHTMLFormElement *)_formElementWith:(HTMLFormElement *)impl;
 @end
 
 @interface DOMHTMLTableCaptionElement (WebCoreInternal)
-+ (DOMHTMLTableCaptionElement *)_tableCaptionElementWithImpl:(HTMLTableCaptionElementImpl *)impl;
-- (HTMLTableCaptionElementImpl *)_tableCaptionElementImpl;
++ (DOMHTMLTableCaptionElement *)_tableCaptionElementWith:(HTMLTableCaptionElement *)impl;
+- (HTMLTableCaptionElement *)_tableCaptionElement;
 @end
 
 @interface DOMHTMLTableSectionElement (WebCoreInternal)
-+ (DOMHTMLTableSectionElement *)_tableSectionElementWithImpl:(HTMLTableSectionElementImpl *)impl;
-- (HTMLTableSectionElementImpl *)_tableSectionElementImpl;
++ (DOMHTMLTableSectionElement *)_tableSectionElementWith:(HTMLTableSectionElement *)impl;
+- (HTMLTableSectionElement *)_tableSectionElement;
 @end
 
 @interface DOMHTMLTableElement (WebCoreInternal)
-+ (DOMHTMLTableElement *)_tableElementWithImpl:(HTMLTableElementImpl *)impl;
-- (HTMLTableElementImpl *)_tableElementImpl;
++ (DOMHTMLTableElement *)_tableElementWith:(HTMLTableElement *)impl;
+- (HTMLTableElement *)_tableElement;
 @end
 
 @interface DOMHTMLTableCellElement (WebCoreInternal)
-+ (DOMHTMLTableCellElement *)_tableCellElementWithImpl:(HTMLTableCellElementImpl *)impl;
-- (HTMLTableCellElementImpl *)_tableCellElementImpl;
++ (DOMHTMLTableCellElement *)_tableCellElementWith:(HTMLTableCellElement *)impl;
+- (HTMLTableCellElement *)_tableCellElement;
 @end
 
 //------------------------------------------------------------------------------------------
@@ -109,7 +109,7 @@ using namespace DOM::HTMLNames;
 - (void)dealloc
 {
     if (_internal) {
-        DOM_cast<HTMLCollectionImpl *>(_internal)->deref();
+        DOM_cast<HTMLCollection *>(_internal)->deref();
     }
     [super dealloc];
 }
@@ -117,36 +117,36 @@ using namespace DOM::HTMLNames;
 - (void)finalize
 {
     if (_internal) {
-        DOM_cast<HTMLCollectionImpl *>(_internal)->deref();
+        DOM_cast<HTMLCollection *>(_internal)->deref();
     }
     [super finalize];
 }
 
-- (HTMLCollectionImpl *)_collectionImpl
+- (HTMLCollection *)_collection
 {
-    return DOM_cast<HTMLCollectionImpl *>(_internal);
+    return DOM_cast<HTMLCollection *>(_internal);
 }
 
 - (unsigned)length
 {
-    return [self _collectionImpl]->length();
+    return [self _collection]->length();
 }
 
 - (DOMNode *)item:(unsigned)index
 {
-    return [DOMNode _nodeWithImpl:[self _collectionImpl]->item(index)];
+    return [DOMNode _nodeWith:[self _collection]->item(index)];
 }
 
 - (DOMNode *)namedItem:(NSString *)name
 {
-    return [DOMNode _nodeWithImpl:[self _collectionImpl]->namedItem(name)];
+    return [DOMNode _nodeWith:[self _collection]->namedItem(name)];
 }
 
 @end
 
 @implementation DOMHTMLCollection (WebCoreInternal)
 
-- (id)_initWithCollectionImpl:(HTMLCollectionImpl *)impl
+- (id)_initWithCollection:(HTMLCollection *)impl
 {
     ASSERT(impl);
     
@@ -157,7 +157,7 @@ using namespace DOM::HTMLNames;
     return self;
 }
 
-+ (DOMHTMLCollection *)_collectionWithImpl:(HTMLCollectionImpl *)impl
++ (DOMHTMLCollection *)_collectionWith:(HTMLCollection *)impl
 {
     if (!impl)
         return nil;
@@ -167,7 +167,7 @@ using namespace DOM::HTMLNames;
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
-    return [[[self alloc] _initWithCollectionImpl:impl] autorelease];
+    return [[[self alloc] _initWithCollection:impl] autorelease];
 }
 
 @end
@@ -177,7 +177,7 @@ using namespace DOM::HTMLNames;
 - (void)dealloc
 {
     if (_internal) {
-        DOM_cast<HTMLOptionsCollectionImpl *>(_internal)->deref();
+        DOM_cast<HTMLOptionsCollection *>(_internal)->deref();
     }
     [super dealloc];
 }
@@ -185,12 +185,12 @@ using namespace DOM::HTMLNames;
 - (void)finalize
 {
     if (_internal) {
-        DOM_cast<HTMLOptionsCollectionImpl *>(_internal)->deref();
+        DOM_cast<HTMLOptionsCollection *>(_internal)->deref();
     }
     [super finalize];
 }
 
-- (id)_initWithOptionsCollectionImpl:(HTMLOptionsCollectionImpl *)impl
+- (id)_initWithOptionsCollection:(HTMLOptionsCollection *)impl
 {
     ASSERT(impl);
     
@@ -201,7 +201,7 @@ using namespace DOM::HTMLNames;
     return self;
 }
 
-+ (DOMHTMLOptionsCollection *)_optionsCollectionWithImpl:(HTMLOptionsCollectionImpl *)impl
++ (DOMHTMLOptionsCollection *)_optionsCollectionWith:(HTMLOptionsCollection *)impl
 {
     if (!impl)
         return nil;
@@ -211,34 +211,34 @@ using namespace DOM::HTMLNames;
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
-    return [[[self alloc] _initWithOptionsCollectionImpl:impl] autorelease];
+    return [[[self alloc] _initWithOptionsCollection:impl] autorelease];
 }
 
-- (HTMLOptionsCollectionImpl *)_optionsCollectionImpl
+- (HTMLOptionsCollection *)_optionsCollection
 {
-    return DOM_cast<HTMLOptionsCollectionImpl *>(_internal);
+    return DOM_cast<HTMLOptionsCollection *>(_internal);
 }
 
 - (unsigned)length
 {
-    return [self _optionsCollectionImpl]->length();
+    return [self _optionsCollection]->length();
 }
 
 - (void)setLength:(unsigned)length
 {
     ExceptionCode ec;
-    [self _optionsCollectionImpl]->setLength(length, ec);
+    [self _optionsCollection]->setLength(length, ec);
     raiseOnDOMError(ec);
 }
 
 - (DOMNode *)item:(unsigned)index
 {
-    return [DOMNode _nodeWithImpl:[self _optionsCollectionImpl]->item(index)];
+    return [DOMNode _nodeWith:[self _optionsCollection]->item(index)];
 }
 
 - (DOMNode *)namedItem:(NSString *)name
 {
-    return [DOMNode _nodeWithImpl:[self _optionsCollectionImpl]->namedItem(name)];
+    return [DOMNode _nodeWith:[self _optionsCollection]->namedItem(name)];
 }
 
 @end
@@ -247,71 +247,71 @@ using namespace DOM::HTMLNames;
 
 - (NSString *)idName
 {
-    return [self _HTMLElementImpl]->getAttribute(idAttr);
+    return [self _HTMLElement]->getAttribute(idAttr);
 }
 
 - (void)setIdName:(NSString *)idName
 {
-    [self _HTMLElementImpl]->setAttribute(idAttr, idName);
+    [self _HTMLElement]->setAttribute(idAttr, idName);
 }
 
 - (NSString *)title
 {
-    return [self _HTMLElementImpl]->title();
+    return [self _HTMLElement]->title();
 }
 
 - (NSString *)titleDisplayString
 {
-    return [self _HTMLElementImpl]->title().replace('\\', [self _elementImpl]->getDocument()->backslashAsCurrencySymbol());
+    return [self _HTMLElement]->title().replace('\\', [self _element]->getDocument()->backslashAsCurrencySymbol());
 }
 
 - (void)setTitle:(NSString *)title
 {
-    [self _HTMLElementImpl]->setTitle(title);
+    [self _HTMLElement]->setTitle(title);
 }
 
 - (NSString *)lang
 {
-    return [self _HTMLElementImpl]->lang();
+    return [self _HTMLElement]->lang();
 }
 
 - (void)setLang:(NSString *)lang
 {
-    [self _HTMLElementImpl]->setLang(lang);
+    [self _HTMLElement]->setLang(lang);
 }
 
 - (NSString *)dir
 {
-    return [self _HTMLElementImpl]->dir();
+    return [self _HTMLElement]->dir();
 }
 
 - (void)setDir:(NSString *)dir
 {
-    [self _HTMLElementImpl]->setDir(dir);
+    [self _HTMLElement]->setDir(dir);
 }
 
 - (NSString *)className
 {
-    return [self _HTMLElementImpl]->className();
+    return [self _HTMLElement]->className();
 }
 
 - (void)setClassName:(NSString *)className
 {
-    [self _HTMLElementImpl]->setClassName(className);
+    [self _HTMLElement]->setClassName(className);
 }
 
 @end
 
 @implementation DOMHTMLElement (WebCoreInternal)
 
-+ (DOMHTMLElement *)_elementWithImpl:(HTMLElementImpl *)impl
++ (DOMHTMLElement *)_elementWith:(HTMLElement *)impl
 {
-    return static_cast<DOMHTMLElement *>([DOMNode _nodeWithImpl:impl]);
+    return static_cast<DOMHTMLElement *>([DOMNode _nodeWith:impl]);
 }
 
-- (HTMLElementImpl *)_HTMLElementImpl
+- (HTMLElement *)_HTMLElement
 {
-    return static_cast<HTMLElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLElement *>(DOM_cast<Node *>(_internal));
 }
 
 @end
@@ -320,188 +320,188 @@ using namespace DOM::HTMLNames;
 
 - (NSString *)innerHTML
 {
-    return [self _HTMLElementImpl]->innerHTML();
+    return [self _HTMLElement]->innerHTML();
 }
 
 - (void)setInnerHTML:(NSString *)innerHTML
 {
     int exception = 0;
-    [self _HTMLElementImpl]->setInnerHTML(innerHTML, exception);
+    [self _HTMLElement]->setInnerHTML(innerHTML, exception);
     raiseOnDOMError(exception);
 }
 
 - (NSString *)outerHTML
 {
-    return [self _HTMLElementImpl]->outerHTML();
+    return [self _HTMLElement]->outerHTML();
 }
 
 - (void)setOuterHTML:(NSString *)outerHTML
 {
     int exception = 0;
-    [self _HTMLElementImpl]->setOuterHTML(outerHTML, exception);
+    [self _HTMLElement]->setOuterHTML(outerHTML, exception);
     raiseOnDOMError(exception);
 }
 
 - (NSString *)innerText
 {
-    return [self _HTMLElementImpl]->innerText();
+    return [self _HTMLElement]->innerText();
 }
 
 - (void)setInnerText:(NSString *)innerText
 {
     int exception = 0;
-    [self _HTMLElementImpl]->setInnerText(innerText, exception);
+    [self _HTMLElement]->setInnerText(innerText, exception);
     raiseOnDOMError(exception);
 }
 
 - (NSString *)outerText
 {
-    return [self _HTMLElementImpl]->outerText();
+    return [self _HTMLElement]->outerText();
 }
 
 - (void)setOuterText:(NSString *)outerText
 {
     int exception = 0;
-    [self _HTMLElementImpl]->setOuterText(outerText, exception);
+    [self _HTMLElement]->setOuterText(outerText, exception);
     raiseOnDOMError(exception);
 }
 
 - (DOMHTMLCollection *)children
 {
-    HTMLCollectionImpl *collection = new HTMLCollectionImpl([self _HTMLElementImpl], HTMLCollectionImpl::NODE_CHILDREN);
-    return [DOMHTMLCollection _collectionWithImpl:collection];
+    HTMLCollection *collection = new HTMLCollection([self _HTMLElement], HTMLCollection::NODE_CHILDREN);
+    return [DOMHTMLCollection _collectionWith:collection];
 }
 
 - (NSString *)contentEditable
 {
-    return [self _HTMLElementImpl]->contentEditable();
+    return [self _HTMLElement]->contentEditable();
 }
 
 - (void)setContentEditable:(NSString *)contentEditable
 {
-    [self _HTMLElementImpl]->setContentEditable(contentEditable);
+    [self _HTMLElement]->setContentEditable(contentEditable);
 }
 
 - (BOOL)isContentEditable
 {
-    return [self _HTMLElementImpl]->isContentEditable();
+    return [self _HTMLElement]->isContentEditable();
 }
 
 @end
 
 @implementation DOMHTMLDocument
 
-- (HTMLDocumentImpl *)_HTMLDocumentImpl
+- (HTMLDocument *)_HTMLDocument
 {
-    return static_cast<HTMLDocumentImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLDocument *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)title
 {
-    return [self _HTMLDocumentImpl]->title();
+    return [self _HTMLDocument]->title();
 }
 
 - (void)setTitle:(NSString *)title
 {
-    [self _HTMLDocumentImpl]->setTitle(title);
+    [self _HTMLDocument]->setTitle(title);
 }
 
 - (NSString *)referrer
 {
-     return [self _HTMLDocumentImpl]->referrer();
+     return [self _HTMLDocument]->referrer();
 }
 
 - (NSString *)domain
 {
-     return [self _HTMLDocumentImpl]->domain();
+     return [self _HTMLDocument]->domain();
 }
 
 - (NSString *)URL
 {
-    return [self _HTMLDocumentImpl]->URL().getNSString();
+    return [self _HTMLDocument]->URL().getNSString();
 }
 
 - (DOMHTMLElement *)body
 {
-    return [DOMHTMLElement _elementWithImpl:[self _HTMLDocumentImpl]->body()];
+    return [DOMHTMLElement _elementWith:[self _HTMLDocument]->body()];
 }
 
 - (DOMHTMLCollection *)images
 {
-    HTMLCollectionImpl *collection = new HTMLCollectionImpl([self _HTMLDocumentImpl], HTMLCollectionImpl::DOC_IMAGES);
-    return [DOMHTMLCollection _collectionWithImpl:collection];
+    HTMLCollection *collection = new HTMLCollection([self _HTMLDocument], HTMLCollection::DOC_IMAGES);
+    return [DOMHTMLCollection _collectionWith:collection];
 }
 
 - (DOMHTMLCollection *)applets
 {
-    HTMLCollectionImpl *collection = new HTMLCollectionImpl([self _HTMLDocumentImpl], HTMLCollectionImpl::DOC_APPLETS);
-    return [DOMHTMLCollection _collectionWithImpl:collection];
+    HTMLCollection *collection = new HTMLCollection([self _HTMLDocument], HTMLCollection::DOC_APPLETS);
+    return [DOMHTMLCollection _collectionWith:collection];
 }
 
 - (DOMHTMLCollection *)links
 {
-    HTMLCollectionImpl *collection = new HTMLCollectionImpl([self _HTMLDocumentImpl], HTMLCollectionImpl::DOC_LINKS);
-    return [DOMHTMLCollection _collectionWithImpl:collection];
+    HTMLCollection *collection = new HTMLCollection([self _HTMLDocument], HTMLCollection::DOC_LINKS);
+    return [DOMHTMLCollection _collectionWith:collection];
 }
 
 - (DOMHTMLCollection *)forms
 {
-    HTMLCollectionImpl *collection = new HTMLCollectionImpl([self _HTMLDocumentImpl], HTMLCollectionImpl::DOC_FORMS);
-    return [DOMHTMLCollection _collectionWithImpl:collection];
+    HTMLCollection *collection = new HTMLCollection([self _HTMLDocument], HTMLCollection::DOC_FORMS);
+    return [DOMHTMLCollection _collectionWith:collection];
 }
 
 - (DOMHTMLCollection *)anchors
 {
-    HTMLCollectionImpl *collection = new HTMLCollectionImpl([self _HTMLDocumentImpl], HTMLCollectionImpl::DOC_ANCHORS);
-    return [DOMHTMLCollection _collectionWithImpl:collection];
+    HTMLCollection *collection = new HTMLCollection([self _HTMLDocument], HTMLCollection::DOC_ANCHORS);
+    return [DOMHTMLCollection _collectionWith:collection];
 }
 
 - (void)setBody:(DOMHTMLElement *)body
 {
     ExceptionCode ec = 0;
-    [self _HTMLDocumentImpl]->setBody([body _HTMLElementImpl], ec);
+    [self _HTMLDocument]->setBody([body _HTMLElement], ec);
     raiseOnDOMError(ec);
 }
 
 - (NSString *)cookie
 {
-    return [self _HTMLDocumentImpl]->cookie();
+    return [self _HTMLDocument]->cookie();
 }
 
 - (void)setCookie:(NSString *)cookie
 {
-    [self _HTMLDocumentImpl]->setCookie(cookie);
+    [self _HTMLDocument]->setCookie(cookie);
 }
 
 - (void)open
 {
-    [self _HTMLDocumentImpl]->open();
+    [self _HTMLDocument]->open();
 }
 
 - (void)close
 {
-    [self _HTMLDocumentImpl]->close();
+    [self _HTMLDocument]->close();
 }
 
 - (void)write:(NSString *)text
 {
-    [self _HTMLDocumentImpl]->write(text);
+    [self _HTMLDocument]->write(text);
 }
 
 - (void)writeln:(NSString *)text
 {
-    [self _HTMLDocumentImpl]->writeln(text);
+    [self _HTMLDocument]->writeln(text);
 }
 
 - (DOMElement *)getElementById:(NSString *)elementId
 {
-    return [DOMElement _elementWithImpl:[self _HTMLDocumentImpl]->getElementById(elementId)];
+    return [DOMElement _elementWith:[self _HTMLDocument]->getElementById(elementId)];
 }
 
 - (DOMNodeList *)getElementsByName:(NSString *)elementName
 {
-    NameNodeListImpl *nodeList = new NameNodeListImpl([self _HTMLDocumentImpl], elementName);
-    return [DOMNodeList _nodeListWithImpl:nodeList];
+    NameNodeList *nodeList = new NameNodeList([self _HTMLDocument], elementName);
+    return [DOMNodeList _nodeListWith:nodeList];
 }
 
 @end
@@ -510,80 +510,80 @@ using namespace DOM::HTMLNames;
 
 - (DOMDocumentFragment *)_createDocumentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString
 {
-    RefPtr<DocumentFragmentImpl> fragment = createFragmentFromMarkup([self _documentImpl], QString::fromNSString(markupString), QString::fromNSString(baseURLString));
-    return [DOMDocumentFragment _documentFragmentWithImpl:fragment.get()];
+    RefPtr<DocumentFragment> fragment = createFragmentFromMarkup([self _document], DeprecatedString::fromNSString(markupString), DeprecatedString::fromNSString(baseURLString));
+    return [DOMDocumentFragment _documentFragmentWith:fragment.get()];
 }
 
 - (DOMDocumentFragment *)_createDocumentFragmentWithText:(NSString *)text
 {
-    return [DOMDocumentFragment _documentFragmentWithImpl:createFragmentFromText([self _documentImpl], QString::fromNSString(text)).get()];
+    return [DOMDocumentFragment _documentFragmentWith:createFragmentFromText([self _document], DeprecatedString::fromNSString(text)).get()];
 }
 
 @end
 
 @implementation DOMHTMLHtmlElement
 
-- (HTMLHtmlElementImpl *)_HTMLHtmlElementImpl
+- (HTMLHtmlElement *)_HTMLHtmlElement
 {
-    return static_cast<HTMLHtmlElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLHtmlElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)version
 {
-    return [self _HTMLHtmlElementImpl]->version();
+    return [self _HTMLHtmlElement]->version();
 }
 
 - (void)setVersion:(NSString *)version
 {
-    [self _HTMLHtmlElementImpl]->setVersion(version);
+    [self _HTMLHtmlElement]->setVersion(version);
 }
 
 @end
 
 @implementation DOMHTMLHeadElement
 
-- (HTMLHeadElementImpl *)_headElementImpl
+- (HTMLHeadElement *)_headElement
 {
-    return static_cast<HTMLHeadElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLHeadElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)profile
 {
-    return [self _headElementImpl]->profile();
+    return [self _headElement]->profile();
 }
 
 - (void)setProfile:(NSString *)profile
 {
-    [self _headElementImpl]->setProfile(profile);
+    [self _headElement]->setProfile(profile);
 }
 
 @end
 
 @implementation DOMHTMLLinkElement
 
-- (HTMLLinkElementImpl *)_linkElementImpl
+- (HTMLLinkElement *)_linkElement
 {
-    return static_cast<HTMLLinkElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLLinkElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (BOOL)disabled
 {
-    return ![self _linkElementImpl]->disabled();
+    return ![self _linkElement]->disabled();
 }
 
 - (void)setDisabled:(BOOL)disabled
 {
-    [self _linkElementImpl]->setDisabled(disabled);
+    [self _linkElement]->setDisabled(disabled);
 }
 
 - (NSString *)charset
 {
-    return [self _linkElementImpl]->charset();
+    return [self _linkElement]->charset();
 }
 
 - (void)setCharset:(NSString *)charset
 {
-    [self _linkElementImpl]->setCharset(charset);
+    [self _linkElement]->setCharset(charset);
 }
 
 - (NSURL *)absoluteLinkURL
@@ -593,950 +593,950 @@ using namespace DOM::HTMLNames;
 
 - (NSString *)href
 {
-    return [self _linkElementImpl]->href();
+    return [self _linkElement]->href();
 }
 
 - (void)setHref:(NSString *)href
 {
-    [self _linkElementImpl]->href();
+    [self _linkElement]->href();
 }
 
 - (NSString *)hreflang
 {
-    return [self _linkElementImpl]->hreflang();
+    return [self _linkElement]->hreflang();
 }
 
 - (void)setHreflang:(NSString *)hreflang
 {
-    [self _linkElementImpl]->setHreflang(hreflang);
+    [self _linkElement]->setHreflang(hreflang);
 }
 
 - (NSString *)media
 {
-    return [self _linkElementImpl]->getAttribute(mediaAttr);
+    return [self _linkElement]->getAttribute(mediaAttr);
 }
 
 - (void)setMedia:(NSString *)media
 {
-    [self _linkElementImpl]->setAttribute(mediaAttr, media);
+    [self _linkElement]->setAttribute(mediaAttr, media);
 }
 
 - (NSString *)rel
 {
-    return [self _linkElementImpl]->getAttribute(relAttr);
+    return [self _linkElement]->getAttribute(relAttr);
 }
 
 - (void)setRel:(NSString *)rel
 {
-    [self _linkElementImpl]->setAttribute(relAttr, rel);
+    [self _linkElement]->setAttribute(relAttr, rel);
 }
 
 - (NSString *)rev
 {
-    return [self _linkElementImpl]->getAttribute(revAttr);
+    return [self _linkElement]->getAttribute(revAttr);
 }
 
 - (void)setRev:(NSString *)rev
 {
-    [self _linkElementImpl]->setAttribute(revAttr, rev);
+    [self _linkElement]->setAttribute(revAttr, rev);
 }
 
 - (NSString *)target
 {
-    return [self _linkElementImpl]->getAttribute(targetAttr);
+    return [self _linkElement]->getAttribute(targetAttr);
 }
 
 - (void)setTarget:(NSString *)target
 {
-    [self _linkElementImpl]->setAttribute(targetAttr, target);
+    [self _linkElement]->setAttribute(targetAttr, target);
 }
 
 - (NSString *)type
 {
-    return [self _linkElementImpl]->getAttribute(typeAttr);
+    return [self _linkElement]->getAttribute(typeAttr);
 }
 
 - (void)setType:(NSString *)type
 {
-    [self _linkElementImpl]->setAttribute(typeAttr, type);
+    [self _linkElement]->setAttribute(typeAttr, type);
 }
 
 @end
 
 @implementation DOMHTMLTitleElement
 
-- (HTMLTitleElementImpl *)_titleElementImpl
+- (HTMLTitleElement *)_titleElement
 {
-    return static_cast<HTMLTitleElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLTitleElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)text
 {
-    return [self _titleElementImpl]->getAttribute(textAttr);
+    return [self _titleElement]->getAttribute(textAttr);
 }
 
 - (void)setText:(NSString *)text
 {
-    [self _titleElementImpl]->setAttribute(textAttr, text);
+    [self _titleElement]->setAttribute(textAttr, text);
 }
 
 @end
 
 @implementation DOMHTMLMetaElement
 
-- (HTMLMetaElementImpl *)_metaElementImpl
+- (HTMLMetaElement *)_metaElement
 {
-    return static_cast<HTMLMetaElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLMetaElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)content
 {
-    return [self _metaElementImpl]->getAttribute(contentAttr);
+    return [self _metaElement]->getAttribute(contentAttr);
 }
 
 - (void)setContent:(NSString *)content
 {
-    [self _metaElementImpl]->setAttribute(contentAttr, content);
+    [self _metaElement]->setAttribute(contentAttr, content);
 }
 
 - (NSString *)httpEquiv
 {
-    return [self _metaElementImpl]->getAttribute(http_equivAttr);
+    return [self _metaElement]->getAttribute(http_equivAttr);
 }
 
 - (void)setHttpEquiv:(NSString *)httpEquiv
 {
-    [self _metaElementImpl]->setAttribute(http_equivAttr, httpEquiv);
+    [self _metaElement]->setAttribute(http_equivAttr, httpEquiv);
 }
 
 - (NSString *)name
 {
-    return [self _metaElementImpl]->getAttribute(nameAttr);
+    return [self _metaElement]->getAttribute(nameAttr);
 }
 
 - (void)setName:(NSString *)name
 {
-    [self _metaElementImpl]->setAttribute(nameAttr, name);
+    [self _metaElement]->setAttribute(nameAttr, name);
 }
 
 - (NSString *)scheme
 {
-    return [self _metaElementImpl]->getAttribute(schemeAttr);
+    return [self _metaElement]->getAttribute(schemeAttr);
 }
 
 - (void)setScheme:(NSString *)scheme
 {
-    [self _metaElementImpl]->setAttribute(schemeAttr, scheme);
+    [self _metaElement]->setAttribute(schemeAttr, scheme);
 }
 
 @end
 
 @implementation DOMHTMLBaseElement
 
-- (HTMLBaseElementImpl *)_baseElementImpl
+- (HTMLBaseElement *)_baseElement
 {
-    return static_cast<HTMLBaseElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLBaseElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)href
 {
-    return [self _baseElementImpl]->href();
+    return [self _baseElement]->href();
 }
 
 - (void)setHref:(NSString *)href
 {
-    [self _baseElementImpl]->setAttribute(hrefAttr, href);
+    [self _baseElement]->setAttribute(hrefAttr, href);
 }
 
 - (NSString *)target
 {
-    return [self _baseElementImpl]->getAttribute(targetAttr);
+    return [self _baseElement]->getAttribute(targetAttr);
 }
 
 - (void)setTarget:(NSString *)target
 {
-    [self _baseElementImpl]->setAttribute(schemeAttr, target);
+    [self _baseElement]->setAttribute(schemeAttr, target);
 }
 
 @end
 
 @implementation DOMHTMLStyleElement
 
-- (HTMLStyleElementImpl *)_styleElementImpl
+- (HTMLStyleElement *)_styleElement
 {
-    return static_cast<HTMLStyleElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLStyleElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (BOOL)disabled
 {
-    return ![self _styleElementImpl]->getAttribute(disabledAttr).isNull();
+    return ![self _styleElement]->getAttribute(disabledAttr).isNull();
 }
 
 - (void)setDisabled:(BOOL)disabled
 {
-    [self _styleElementImpl]->setAttribute(disabledAttr, disabled ? "" : 0);
+    [self _styleElement]->setAttribute(disabledAttr, disabled ? "" : 0);
 }
 
 - (NSString *)media
 {
-    return [self _styleElementImpl]->getAttribute(mediaAttr);
+    return [self _styleElement]->getAttribute(mediaAttr);
 }
 
 - (void)setMedia:(NSString *)media
 {
-    [self _styleElementImpl]->setAttribute(mediaAttr, media);
+    [self _styleElement]->setAttribute(mediaAttr, media);
 }
 
 - (NSString *)type
 {
-    return [self _styleElementImpl]->getAttribute(typeAttr);
+    return [self _styleElement]->getAttribute(typeAttr);
 }
 
 - (void)setType:(NSString *)type
 {
-    [self _styleElementImpl]->setAttribute(typeAttr, type);
+    [self _styleElement]->setAttribute(typeAttr, type);
 }
 
 @end
 
 @implementation DOMHTMLBodyElement
 
-- (HTMLBodyElementImpl *)_bodyElementImpl
+- (HTMLBodyElement *)_bodyElement
 {
-    return static_cast<HTMLBodyElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLBodyElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)aLink
 {
-    return [self _bodyElementImpl]->getAttribute(alinkAttr);
+    return [self _bodyElement]->getAttribute(alinkAttr);
 }
 
 - (void)setALink:(NSString *)aLink
 {
-    [self _bodyElementImpl]->setAttribute(alinkAttr, aLink);
+    [self _bodyElement]->setAttribute(alinkAttr, aLink);
 }
 
 - (NSString *)background
 {
-    return [self _bodyElementImpl]->getAttribute(backgroundAttr);
+    return [self _bodyElement]->getAttribute(backgroundAttr);
 }
 
 - (void)setBackground:(NSString *)background
 {
-    [self _bodyElementImpl]->setAttribute(backgroundAttr, background);
+    [self _bodyElement]->setAttribute(backgroundAttr, background);
 }
 
 - (NSString *)bgColor
 {
-    return [self _bodyElementImpl]->getAttribute(bgcolorAttr);
+    return [self _bodyElement]->getAttribute(bgcolorAttr);
 }
 
 - (void)setBgColor:(NSString *)bgColor
 {
-    [self _bodyElementImpl]->setAttribute(bgcolorAttr, bgColor);
+    [self _bodyElement]->setAttribute(bgcolorAttr, bgColor);
 }
 
 - (NSString *)link
 {
-    return [self _bodyElementImpl]->getAttribute(linkAttr);
+    return [self _bodyElement]->getAttribute(linkAttr);
 }
 
 - (void)setLink:(NSString *)link
 {
-    [self _bodyElementImpl]->setAttribute(linkAttr, link);
+    [self _bodyElement]->setAttribute(linkAttr, link);
 }
 
 - (NSString *)text
 {
-    return [self _bodyElementImpl]->getAttribute(textAttr);
+    return [self _bodyElement]->getAttribute(textAttr);
 }
 
 - (void)setText:(NSString *)text
 {
-    [self _bodyElementImpl]->setAttribute(textAttr, text);
+    [self _bodyElement]->setAttribute(textAttr, text);
 }
 
 - (NSString *)vLink
 {
-    return [self _bodyElementImpl]->getAttribute(vlinkAttr);
+    return [self _bodyElement]->getAttribute(vlinkAttr);
 }
 
 - (void)setVLink:(NSString *)vLink
 {
-    [self _bodyElementImpl]->setAttribute(vlinkAttr, vLink);
+    [self _bodyElement]->setAttribute(vlinkAttr, vLink);
 }
 
 @end
 
 @implementation DOMHTMLFormElement
 
-- (HTMLFormElementImpl *)_formElementImpl
+- (HTMLFormElement *)_formElement
 {
-    return static_cast<HTMLFormElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLFormElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (DOMHTMLCollection *)elements
 {
-    HTMLCollectionImpl *collection = new HTMLFormCollectionImpl([self _formElementImpl]);
-    return [DOMHTMLCollection _collectionWithImpl:collection];
+    HTMLCollection *collection = new HTMLFormCollection([self _formElement]);
+    return [DOMHTMLCollection _collectionWith:collection];
 }
 
 - (int)length
 {
-    return [self _formElementImpl]->length();
+    return [self _formElement]->length();
 }
 
 - (NSString *)name
 {
-    return [self _formElementImpl]->getAttribute(nameAttr);
+    return [self _formElement]->getAttribute(nameAttr);
 }
 
 - (void)setName:(NSString *)name
 {
-    [self _formElementImpl]->setAttribute(nameAttr, name);
+    [self _formElement]->setAttribute(nameAttr, name);
 }
 
 - (NSString *)acceptCharset
 {
-    return [self _formElementImpl]->getAttribute(accept_charsetAttr);
+    return [self _formElement]->getAttribute(accept_charsetAttr);
 }
 
 - (void)setAcceptCharset:(NSString *)acceptCharset
 {
-    [self _formElementImpl]->setAttribute(accept_charsetAttr, acceptCharset);
+    [self _formElement]->setAttribute(accept_charsetAttr, acceptCharset);
 }
 
 - (NSString *)action
 {
-    return [self _formElementImpl]->getAttribute(actionAttr);
+    return [self _formElement]->getAttribute(actionAttr);
 }
 
 - (void)setAction:(NSString *)action
 {
-    [self _formElementImpl]->setAttribute(actionAttr, action);
+    [self _formElement]->setAttribute(actionAttr, action);
 }
 
 - (NSString *)enctype
 {
-    return [self _formElementImpl]->getAttribute(enctypeAttr);
+    return [self _formElement]->getAttribute(enctypeAttr);
 }
 
 - (void)setEnctype:(NSString *)enctype
 {
-    [self _formElementImpl]->setAttribute(enctypeAttr, enctype);
+    [self _formElement]->setAttribute(enctypeAttr, enctype);
 }
 
 - (NSString *)method
 {
-    return [self _formElementImpl]->getAttribute(methodAttr);
+    return [self _formElement]->getAttribute(methodAttr);
 }
 
 - (void)setMethod:(NSString *)method
 {
-    [self _formElementImpl]->setAttribute(methodAttr, method);
+    [self _formElement]->setAttribute(methodAttr, method);
 }
 
 - (NSString *)target
 {
-    return [self _formElementImpl]->getAttribute(targetAttr);
+    return [self _formElement]->getAttribute(targetAttr);
 }
 
 - (void)setTarget:(NSString *)target
 {
-    [self _formElementImpl]->setAttribute(targetAttr, target);
+    [self _formElement]->setAttribute(targetAttr, target);
 }
 
 - (void)submit
 {
-    [self _formElementImpl]->submit(false);
+    [self _formElement]->submit(false);
 }
 
 - (void)reset
 {
-    [self _formElementImpl]->reset();
+    [self _formElement]->reset();
 }
 
 @end
 
 @implementation DOMHTMLFormElement (WebCoreInternal)
 
-+ (DOMHTMLFormElement *)_formElementWithImpl:(HTMLFormElementImpl *)impl
++ (DOMHTMLFormElement *)_formElementWith:(HTMLFormElement *)impl
 {
-    return static_cast<DOMHTMLFormElement *>([DOMNode _nodeWithImpl:impl]);
+    return static_cast<DOMHTMLFormElement *>([DOMNode _nodeWith:impl]);
 }
 
 @end
 
 @implementation DOMHTMLIsIndexElement
 
-- (HTMLIsIndexElementImpl *)_isIndexElementImpl
+- (HTMLIsIndexElement *)_isIndexElement
 {
-    return static_cast<HTMLIsIndexElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLIsIndexElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (DOMHTMLFormElement *)form
 {
-    return [DOMHTMLFormElement _formElementWithImpl:[self _isIndexElementImpl]->form()];
+    return [DOMHTMLFormElement _formElementWith:[self _isIndexElement]->form()];
 }
 
 - (NSString *)prompt
 {
-    return [self _isIndexElementImpl]->prompt();
+    return [self _isIndexElement]->prompt();
 }
 
 - (void)setPrompt:(NSString *)prompt
 {
-    [self _isIndexElementImpl]->setPrompt(prompt);
+    [self _isIndexElement]->setPrompt(prompt);
 }
 
 @end
 
 @implementation DOMHTMLSelectElement
 
-- (HTMLSelectElementImpl *)_selectElementImpl
+- (HTMLSelectElement *)_selectElement
 {
-    return static_cast<HTMLSelectElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLSelectElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)type
 {
-    return [self _selectElementImpl]->type();
+    return [self _selectElement]->type();
 }
 
 - (int)selectedIndex
 {
-    return [self _selectElementImpl]->selectedIndex();
+    return [self _selectElement]->selectedIndex();
 }
 
 - (void)setSelectedIndex:(int)selectedIndex
 {
-    [self _selectElementImpl]->setSelectedIndex(selectedIndex);
+    [self _selectElement]->setSelectedIndex(selectedIndex);
 }
 
 - (NSString *)value
 {
-    return [self _selectElementImpl]->value();
+    return [self _selectElement]->value();
 }
 
 - (void)setValue:(NSString *)value
 {
-    DOMString s(value);
-    [self _selectElementImpl]->setValue(s.impl());
+    String s(value);
+    [self _selectElement]->setValue(s.impl());
 }
 
 - (int)length
 {
-    return [self _selectElementImpl]->length();
+    return [self _selectElement]->length();
 }
 
 - (void)setLength:(int)length
 {
     // FIXME: Not yet clear what to do about this one.
     // There's some JavaScript-specific hackery in the JavaScript bindings for this.
-    //[self _selectElementImpl]->setLength(length);
+    //[self _selectElement]->setLength(length);
 }
 
 - (DOMHTMLFormElement *)form
 {
-    return [DOMHTMLFormElement _formElementWithImpl:[self _selectElementImpl]->form()];
+    return [DOMHTMLFormElement _formElementWith:[self _selectElement]->form()];
 }
 
 - (DOMHTMLOptionsCollection *)options
 {
-    return [DOMHTMLOptionsCollection _optionsCollectionWithImpl:[self _selectElementImpl]->options().get()];
+    return [DOMHTMLOptionsCollection _optionsCollectionWith:[self _selectElement]->options().get()];
 }
 
 - (BOOL)disabled
 {
-    return ![self _selectElementImpl]->disabled();
+    return ![self _selectElement]->disabled();
 }
 
 - (void)setDisabled:(BOOL)disabled
 {
-    [self _selectElementImpl]->setDisabled(disabled);
+    [self _selectElement]->setDisabled(disabled);
 }
 
 - (BOOL)multiple
 {
-    return ![self _selectElementImpl]->multiple();
+    return ![self _selectElement]->multiple();
 }
 
 - (void)setMultiple:(BOOL)multiple
 {
-    [self _selectElementImpl]->setMultiple(multiple);
+    [self _selectElement]->setMultiple(multiple);
 }
 
 - (NSString *)name
 {
-    return [self _selectElementImpl]->name();
+    return [self _selectElement]->name();
 }
 
 - (void)setName:(NSString *)name
 {
-    [self _selectElementImpl]->setName(name);
+    [self _selectElement]->setName(name);
 }
 
 - (int)size
 {
-    return [self _selectElementImpl]->size();
+    return [self _selectElement]->size();
 }
 
 - (void)setSize:(int)size
 {
-    [self _selectElementImpl]->setSize(size);
+    [self _selectElement]->setSize(size);
 }
 
 - (int)tabIndex
 {
-    return [self _selectElementImpl]->tabIndex();
+    return [self _selectElement]->tabIndex();
 }
 
 - (void)setTabIndex:(int)tabIndex
 {
-    [self _selectElementImpl]->setTabIndex(tabIndex);
+    [self _selectElement]->setTabIndex(tabIndex);
 }
 
 - (void)add:(DOMHTMLElement *)element :(DOMHTMLElement *)before
 {
     ExceptionCode ec = 0;
-    [self _selectElementImpl]->add([element _HTMLElementImpl], [before _HTMLElementImpl], ec);
+    [self _selectElement]->add([element _HTMLElement], [before _HTMLElement], ec);
     raiseOnDOMError(ec);
 }
 
 - (void)remove:(int)index
 {
-    [self _selectElementImpl]->remove(index);
+    [self _selectElement]->remove(index);
 }
 
 - (void)blur
 {
-    [self _selectElementImpl]->blur();
+    [self _selectElement]->blur();
 }
 
 - (void)focus
 {
-    [self _selectElementImpl]->focus();
+    [self _selectElement]->focus();
 }
 
 @end
 
 @implementation DOMHTMLOptGroupElement
 
-- (HTMLOptGroupElementImpl *)_optGroupElementImpl
+- (HTMLOptGroupElement *)_optGroupElement
 {
-    return static_cast<HTMLOptGroupElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLOptGroupElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (BOOL)disabled
 {
-    return ![self _optGroupElementImpl]->disabled();
+    return ![self _optGroupElement]->disabled();
 }
 
 - (void)setDisabled:(BOOL)disabled
 {
-    [self _optGroupElementImpl]->setDisabled(disabled);
+    [self _optGroupElement]->setDisabled(disabled);
 }
 
 - (NSString *)label
 {
-    return [self _optGroupElementImpl]->label();
+    return [self _optGroupElement]->label();
 }
 
 - (void)setLabel:(NSString *)label
 {
-    [self _optGroupElementImpl]->setLabel(label);
+    [self _optGroupElement]->setLabel(label);
 }
 
 @end
 
 @implementation DOMHTMLOptionElement
 
-- (HTMLOptionElementImpl *)_optionElementImpl
+- (HTMLOptionElement *)_optionElement
 {
-    return static_cast<HTMLOptionElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLOptionElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (DOMHTMLFormElement *)form
 {
-    return [DOMHTMLFormElement _formElementWithImpl:[self _optionElementImpl]->form()];
+    return [DOMHTMLFormElement _formElementWith:[self _optionElement]->form()];
 }
 
 - (BOOL)defaultSelected
 {
-    return ![self _optionElementImpl]->defaultSelected();
+    return ![self _optionElement]->defaultSelected();
 }
 
 - (void)setDefaultSelected:(BOOL)defaultSelected
 {
-    [self _optionElementImpl]->setDefaultSelected(defaultSelected);
+    [self _optionElement]->setDefaultSelected(defaultSelected);
 }
 
 - (NSString *)text
 {
-    return [self _optionElementImpl]->text();
+    return [self _optionElement]->text();
 }
 
 - (int)index
 {
-    return [self _optionElementImpl]->index();
+    return [self _optionElement]->index();
 }
 
 - (BOOL)disabled
 {
-    return ![self _optionElementImpl]->disabled();
+    return ![self _optionElement]->disabled();
 }
 
 - (void)setDisabled:(BOOL)disabled
 {
-    [self _optionElementImpl]->setDisabled(disabled);
+    [self _optionElement]->setDisabled(disabled);
 }
 
 - (NSString *)label
 {
-    return [self _optionElementImpl]->label();
+    return [self _optionElement]->label();
 }
 
 - (void)setLabel:(NSString *)label
 {
-    [self _optionElementImpl]->setLabel(label);
+    [self _optionElement]->setLabel(label);
 }
 
 - (BOOL)selected
 {
-    return [self _optionElementImpl]->selected();
+    return [self _optionElement]->selected();
 }
 
 - (void)setSelected:(BOOL)selected
 {
-    [self _optionElementImpl]->setSelected(selected);
+    [self _optionElement]->setSelected(selected);
 }
 
 - (NSString *)value
 {
-    return [self _optionElementImpl]->value();
+    return [self _optionElement]->value();
 }
 
 - (void)setValue:(NSString *)value
 {
-    DOMString string = value;
-    [self _optionElementImpl]->setValue(string.impl());
+    String string = value;
+    [self _optionElement]->setValue(string.impl());
 }
 
 @end
 
 @implementation DOMHTMLInputElement
 
-- (HTMLInputElementImpl *)_inputElementImpl
+- (HTMLInputElement *)_inputElement
 {
-    return static_cast<HTMLInputElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLInputElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)defaultValue
 {
-    return [self _inputElementImpl]->defaultValue();
+    return [self _inputElement]->defaultValue();
 }
 
 - (void)setDefaultValue:(NSString *)defaultValue
 {
-    [self _inputElementImpl]->setDefaultValue(defaultValue);
+    [self _inputElement]->setDefaultValue(defaultValue);
 }
 
 - (BOOL)defaultChecked
 {
-    return [self _inputElementImpl]->defaultChecked();
+    return [self _inputElement]->defaultChecked();
 }
 
 - (void)setDefaultChecked:(BOOL)defaultChecked
 {
-    [self _inputElementImpl]->setDefaultChecked(defaultChecked);
+    [self _inputElement]->setDefaultChecked(defaultChecked);
 }
 
 - (DOMHTMLFormElement *)form
 {
-    return [DOMHTMLFormElement _formElementWithImpl:[self _inputElementImpl]->form()];
+    return [DOMHTMLFormElement _formElementWith:[self _inputElement]->form()];
 }
 
 - (NSString *)accept
 {
-    return [self _inputElementImpl]->accept();
+    return [self _inputElement]->accept();
 }
 
 - (void)setAccept:(NSString *)accept
 {
-    [self _inputElementImpl]->setAccept(accept);
+    [self _inputElement]->setAccept(accept);
 }
 
 - (NSString *)accessKey
 {
-    return [self _inputElementImpl]->accessKey();
+    return [self _inputElement]->accessKey();
 }
 
 - (void)setAccessKey:(NSString *)accessKey
 {
-    [self _inputElementImpl]->setAccessKey(accessKey);
+    [self _inputElement]->setAccessKey(accessKey);
 }
 
 - (NSString *)align
 {
-    return [self _inputElementImpl]->align();
+    return [self _inputElement]->align();
 }
 
 - (void)setAlign:(NSString *)align
 {
-    [self _inputElementImpl]->setAlign(align);
+    [self _inputElement]->setAlign(align);
 }
 
 - (NSString *)alt
 {
-    return [self _inputElementImpl]->alt();
+    return [self _inputElement]->alt();
 }
 
 - (NSString *)altDisplayString
 {
-    return [self _inputElementImpl]->alt().replace('\\', [self _elementImpl]->getDocument()->backslashAsCurrencySymbol());
+    return [self _inputElement]->alt().replace('\\', [self _element]->getDocument()->backslashAsCurrencySymbol());
 }
 
 - (void)setAlt:(NSString *)alt
 {
-    [self _inputElementImpl]->setAlt(alt);
+    [self _inputElement]->setAlt(alt);
 }
 
 - (BOOL)checked
 {
-    return [self _inputElementImpl]->checked();
+    return [self _inputElement]->checked();
 }
 
 - (void)setChecked:(BOOL)checked
 {
-    return [self _inputElementImpl]->setChecked(checked);
+    return [self _inputElement]->setChecked(checked);
 }
 
 - (BOOL)disabled
 {
-    return [self _inputElementImpl]->disabled();
+    return [self _inputElement]->disabled();
 }
 
 - (void)setDisabled:(BOOL)disabled
 {
-    [self _inputElementImpl]->setDisabled(disabled);
+    [self _inputElement]->setDisabled(disabled);
 }
 
 - (int)maxLength
 {
-    return [self _inputElementImpl]->maxLength();
+    return [self _inputElement]->maxLength();
 }
 
 - (void)setMaxLength:(int)maxLength
 {
-    [self _inputElementImpl]->setMaxLength(maxLength);
+    [self _inputElement]->setMaxLength(maxLength);
 }
 
 - (NSString *)name
 {
-    return [self _inputElementImpl]->name();
+    return [self _inputElement]->name();
 }
 
 - (void)setName:(NSString *)name
 {
-    [self _inputElementImpl]->setName(name);
+    [self _inputElement]->setName(name);
 }
 
 - (BOOL)readOnly
 {
-    return [self _inputElementImpl]->readOnly();
+    return [self _inputElement]->readOnly();
 }
 
 - (void)setReadOnly:(BOOL)readOnly
 {
-    [self _inputElementImpl]->setReadOnly(readOnly);
+    [self _inputElement]->setReadOnly(readOnly);
 }
 
 - (unsigned)size
 {
-    return [self _inputElementImpl]->size();
+    return [self _inputElement]->size();
 }
 
 - (void)setSize:(unsigned)size
 {
-    [self _inputElementImpl]->setSize(size);
+    [self _inputElement]->setSize(size);
 }
 
 - (NSURL *)absoluteImageURL
 {
-    if (![self _inputElementImpl]->renderer() || ![self _inputElementImpl]->renderer()->isImage())
+    if (![self _inputElement]->renderer() || ![self _inputElement]->renderer()->isImage())
         return nil;
     return [self _getURLAttribute:@"src"];
 }
 
 - (NSString *)src
 {
-    return [self _inputElementImpl]->src();
+    return [self _inputElement]->src();
 }
 
 - (void)setSrc:(NSString *)src
 {
-    [self _inputElementImpl]->setSrc(src);
+    [self _inputElement]->setSrc(src);
 }
 
 - (int)tabIndex
 {
-    return [self _inputElementImpl]->tabIndex();
+    return [self _inputElement]->tabIndex();
 }
 
 - (void)setTabIndex:(int)tabIndex
 {
-    [self _inputElementImpl]->setTabIndex(tabIndex);
+    [self _inputElement]->setTabIndex(tabIndex);
 }
 
 - (NSString *)type
 {
-    return [self _inputElementImpl]->type();
+    return [self _inputElement]->type();
 }
 
 - (void)setType:(NSString *)type
 {
-    [self _inputElementImpl]->setType(type);
+    [self _inputElement]->setType(type);
 }
 
 - (NSString *)useMap
 {
-    return [self _inputElementImpl]->useMap();
+    return [self _inputElement]->useMap();
 }
 
 - (void)setUseMap:(NSString *)useMap
 {
-    [self _inputElementImpl]->setUseMap(useMap);
+    [self _inputElement]->setUseMap(useMap);
 }
 
 - (NSString *)value
 {
-    return [self _inputElementImpl]->value();
+    return [self _inputElement]->value();
 }
 
 - (void)setValue:(NSString *)value
 {
-    [self _inputElementImpl]->setValue(value);
+    [self _inputElement]->setValue(value);
 }
 
 - (void)blur
 {
-    [self _inputElementImpl]->blur();
+    [self _inputElement]->blur();
 }
 
 - (void)focus
 {
-    [self _inputElementImpl]->focus();
+    [self _inputElement]->focus();
 }
 
 - (void)select
 {
-    [self _inputElementImpl]->select();
+    [self _inputElement]->select();
 }
 
 - (void)click
 {
-    [self _inputElementImpl]->click(false);
+    [self _inputElement]->click(false);
 }
 
 @end
 
 @implementation DOMHTMLTextAreaElement
 
-- (HTMLTextAreaElementImpl *)_textAreaElementImpl
+- (HTMLTextAreaElement *)_textAreaElement
 {
-    return static_cast<HTMLTextAreaElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLTextAreaElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)defaultValue
 {
-    return [self _textAreaElementImpl]->defaultValue();
+    return [self _textAreaElement]->defaultValue();
 }
 
 - (void)setDefaultValue:(NSString *)defaultValue
 {
-    [self _textAreaElementImpl]->setDefaultValue(defaultValue);
+    [self _textAreaElement]->setDefaultValue(defaultValue);
 }
 
 - (DOMHTMLFormElement *)form
 {
-    return [DOMHTMLFormElement _formElementWithImpl:[self _textAreaElementImpl]->form()];
+    return [DOMHTMLFormElement _formElementWith:[self _textAreaElement]->form()];
 }
 
 - (NSString *)accessKey
 {
-    return [self _textAreaElementImpl]->getAttribute(accesskeyAttr);
+    return [self _textAreaElement]->getAttribute(accesskeyAttr);
 }
 
 - (void)setAccessKey:(NSString *)accessKey
 {
-    [self _textAreaElementImpl]->setAttribute(accesskeyAttr, accessKey);
+    [self _textAreaElement]->setAttribute(accesskeyAttr, accessKey);
 }
 
 - (int)cols
 {
-    return [self _textAreaElementImpl]->getAttribute(colsAttr).toInt();
+    return [self _textAreaElement]->getAttribute(colsAttr).toInt();
 }
 
 - (void)setCols:(int)cols
 {
-    DOMString value(QString::number(cols));
-    [self _textAreaElementImpl]->setAttribute(colsAttr, value);
+    String value(DeprecatedString::number(cols));
+    [self _textAreaElement]->setAttribute(colsAttr, value);
 }
 
 - (BOOL)disabled
 {
-    return [self _textAreaElementImpl]->getAttribute(disabledAttr).isNull();
+    return [self _textAreaElement]->getAttribute(disabledAttr).isNull();
 }
 
 - (void)setDisabled:(BOOL)disabled
 {
-    [self _textAreaElementImpl]->setAttribute(disabledAttr, disabled ? "" : 0);
+    [self _textAreaElement]->setAttribute(disabledAttr, disabled ? "" : 0);
 }
 
 - (NSString *)name
 {
-    return [self _textAreaElementImpl]->name();
+    return [self _textAreaElement]->name();
 }
 
 - (void)setName:(NSString *)name
 {
-    [self _textAreaElementImpl]->setName(name);
+    [self _textAreaElement]->setName(name);
 }
 
 - (BOOL)readOnly
 {
-    return [self _textAreaElementImpl]->getAttribute(readonlyAttr).isNull();
+    return [self _textAreaElement]->getAttribute(readonlyAttr).isNull();
 }
 
 - (void)setReadOnly:(BOOL)readOnly
 {
-    [self _textAreaElementImpl]->setAttribute(readonlyAttr, readOnly ? "" : 0);
+    [self _textAreaElement]->setAttribute(readonlyAttr, readOnly ? "" : 0);
 }
 
 - (int)rows
 {
-    return [self _textAreaElementImpl]->getAttribute(rowsAttr).toInt();
+    return [self _textAreaElement]->getAttribute(rowsAttr).toInt();
 }
 
 - (void)setRows:(int)rows
 {
-    DOMString value(QString::number(rows));
-    [self _textAreaElementImpl]->setAttribute(rowsAttr, value);
+    String value(DeprecatedString::number(rows));
+    [self _textAreaElement]->setAttribute(rowsAttr, value);
 }
 
 - (int)tabIndex
 {
-    return [self _textAreaElementImpl]->tabIndex();
+    return [self _textAreaElement]->tabIndex();
 }
 
 - (void)setTabIndex:(int)tabIndex
 {
-    [self _textAreaElementImpl]->setTabIndex(tabIndex);
+    [self _textAreaElement]->setTabIndex(tabIndex);
 }
 
 - (NSString *)type
 {
-    return [self _textAreaElementImpl]->type();
+    return [self _textAreaElement]->type();
 }
 
 - (void)setType:(NSString *)type
@@ -1546,646 +1546,646 @@ using namespace DOM::HTMLNames;
 
 - (NSString *)value
 {
-    return [self _textAreaElementImpl]->value();
+    return [self _textAreaElement]->value();
 }
 
 - (void)setValue:(NSString *)value
 {
-    [self _textAreaElementImpl]->setValue(value);
+    [self _textAreaElement]->setValue(value);
 }
 
 - (void)blur
 {
-    [self _textAreaElementImpl]->blur();
+    [self _textAreaElement]->blur();
 }
 
 - (void)focus
 {
-    [self _textAreaElementImpl]->focus();
+    [self _textAreaElement]->focus();
 }
 
 - (void)select
 {
-    [self _textAreaElementImpl]->select();
+    [self _textAreaElement]->select();
 }
 
 @end
 
 @implementation DOMHTMLButtonElement
 
-- (HTMLButtonElementImpl *)_buttonElementImpl
+- (HTMLButtonElement *)_buttonElement
 {
-    return static_cast<HTMLButtonElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLButtonElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (DOMHTMLFormElement *)form
 {
-    return [DOMHTMLFormElement _formElementWithImpl:[self _buttonElementImpl]->form()];
+    return [DOMHTMLFormElement _formElementWith:[self _buttonElement]->form()];
 }
 
 - (NSString *)accessKey
 {
-    return [self _buttonElementImpl]->getAttribute(accesskeyAttr);
+    return [self _buttonElement]->getAttribute(accesskeyAttr);
 }
 
 - (void)setAccessKey:(NSString *)accessKey
 {
-    [self _buttonElementImpl]->setAttribute(accesskeyAttr, accessKey);
+    [self _buttonElement]->setAttribute(accesskeyAttr, accessKey);
 }
 
 - (BOOL)disabled
 {
-    return [self _buttonElementImpl]->getAttribute(disabledAttr).isNull();
+    return [self _buttonElement]->getAttribute(disabledAttr).isNull();
 }
 
 - (void)setDisabled:(BOOL)disabled
 {
-    [self _buttonElementImpl]->setAttribute(disabledAttr, disabled ? "" : 0);
+    [self _buttonElement]->setAttribute(disabledAttr, disabled ? "" : 0);
 }
 
 - (NSString *)name
 {
-    return [self _buttonElementImpl]->name();
+    return [self _buttonElement]->name();
 }
 
 - (void)setName:(NSString *)name
 {
-    [self _buttonElementImpl]->setName(name);
+    [self _buttonElement]->setName(name);
 }
 
 - (int)tabIndex
 {
-    return [self _buttonElementImpl]->tabIndex();
+    return [self _buttonElement]->tabIndex();
 }
 
 - (void)setTabIndex:(int)tabIndex
 {
-    [self _buttonElementImpl]->setTabIndex(tabIndex);
+    [self _buttonElement]->setTabIndex(tabIndex);
 }
 
 - (NSString *)type
 {
-    return [self _buttonElementImpl]->type();
+    return [self _buttonElement]->type();
 }
 
 - (NSString *)value
 {
-    return [self _buttonElementImpl]->getAttribute(valueAttr);
+    return [self _buttonElement]->getAttribute(valueAttr);
 }
 
 - (void)setValue:(NSString *)value
 {
-    [self _buttonElementImpl]->setAttribute(valueAttr, value);
+    [self _buttonElement]->setAttribute(valueAttr, value);
 }
 
 @end
 
 @implementation DOMHTMLLabelElement
 
-- (HTMLLabelElementImpl *)_labelElementImpl
+- (HTMLLabelElement *)_labelElement
 {
-    return static_cast<HTMLLabelElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLLabelElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (DOMHTMLFormElement *)form
 {
-    ElementImpl *formElement = [self _labelElementImpl]->formElement();
+    Element *formElement = [self _labelElement]->formElement();
     if (!formElement)
         return 0;
-    return [DOMHTMLFormElement _formElementWithImpl:static_cast<HTMLGenericFormElementImpl *>(formElement)->form()];
+    return [DOMHTMLFormElement _formElementWith:static_cast<HTMLGenericFormElement *>(formElement)->form()];
 }
 
 - (NSString *)accessKey
 {
-    return [self _labelElementImpl]->getAttribute(accesskeyAttr);
+    return [self _labelElement]->getAttribute(accesskeyAttr);
 }
 
 - (void)setAccessKey:(NSString *)accessKey
 {
-    [self _labelElementImpl]->setAttribute(accesskeyAttr, accessKey);
+    [self _labelElement]->setAttribute(accesskeyAttr, accessKey);
 }
 
 - (NSString *)htmlFor
 {
-    return [self _labelElementImpl]->getAttribute(forAttr);
+    return [self _labelElement]->getAttribute(forAttr);
 }
 
 - (void)setHtmlFor:(NSString *)htmlFor
 {
-    [self _labelElementImpl]->setAttribute(forAttr, htmlFor);
+    [self _labelElement]->setAttribute(forAttr, htmlFor);
 }
 
 @end
 
 @implementation DOMHTMLFieldSetElement
 
-- (HTMLFieldSetElementImpl *)_fieldSetElementImpl
+- (HTMLFieldSetElement *)_fieldSetElement
 {
-    return static_cast<HTMLFieldSetElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLFieldSetElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (DOMHTMLFormElement *)form
 {
-    return [DOMHTMLFormElement _formElementWithImpl:[self _fieldSetElementImpl]->form()];
+    return [DOMHTMLFormElement _formElementWith:[self _fieldSetElement]->form()];
 }
 
 @end
 
 @implementation DOMHTMLLegendElement
 
-- (HTMLLegendElementImpl *)_legendElementImpl
+- (HTMLLegendElement *)_legendElement
 {
-    return static_cast<HTMLLegendElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLLegendElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (DOMHTMLFormElement *)form
 {
-    return [DOMHTMLFormElement _formElementWithImpl:[self _legendElementImpl]->form()];
+    return [DOMHTMLFormElement _formElementWith:[self _legendElement]->form()];
 }
 
 - (NSString *)accessKey
 {
-    return [self _legendElementImpl]->getAttribute(accesskeyAttr);
+    return [self _legendElement]->getAttribute(accesskeyAttr);
 }
 
 - (void)setAccessKey:(NSString *)accessKey
 {
-    [self _legendElementImpl]->setAttribute(accesskeyAttr, accessKey);
+    [self _legendElement]->setAttribute(accesskeyAttr, accessKey);
 }
 
 - (NSString *)align
 {
-    return [self _legendElementImpl]->getAttribute(alignAttr);
+    return [self _legendElement]->getAttribute(alignAttr);
 }
 
 - (void)setAlign:(NSString *)align
 {
-    [self _legendElementImpl]->setAttribute(alignAttr, align);
+    [self _legendElement]->setAttribute(alignAttr, align);
 }
 
 @end
 
 @implementation DOMHTMLUListElement
 
-- (HTMLUListElementImpl *)_uListElementImpl
+- (HTMLUListElement *)_uListElement
 {
-    return static_cast<HTMLUListElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLUListElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (BOOL)compact
 {
-    return [self _uListElementImpl]->getAttribute(compactAttr).isNull();
+    return [self _uListElement]->getAttribute(compactAttr).isNull();
 }
 
 - (void)setCompact:(BOOL)compact
 {
-    [self _uListElementImpl]->setAttribute(compactAttr, compact ? "" : 0);
+    [self _uListElement]->setAttribute(compactAttr, compact ? "" : 0);
 }
 
 - (NSString *)type
 {
-    return [self _uListElementImpl]->getAttribute(typeAttr);
+    return [self _uListElement]->getAttribute(typeAttr);
 }
 
 - (void)setType:(NSString *)type
 {
-    [self _uListElementImpl]->setAttribute(typeAttr, type);
+    [self _uListElement]->setAttribute(typeAttr, type);
 }
 
 @end
 
 @implementation DOMHTMLOListElement
 
-- (HTMLOListElementImpl *)_oListElementImpl
+- (HTMLOListElement *)_oListElement
 {
-    return static_cast<HTMLOListElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLOListElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (BOOL)compact
 {
-    return [self _oListElementImpl]->compact();
+    return [self _oListElement]->compact();
 }
 
 - (void)setCompact:(BOOL)compact
 {
-    [self _oListElementImpl]->setCompact(compact);
+    [self _oListElement]->setCompact(compact);
 }
 
 - (int)start
 {
-    return [self _oListElementImpl]->getAttribute(startAttr).toInt();
+    return [self _oListElement]->getAttribute(startAttr).toInt();
 }
 
 - (void)setStart:(int)start
 {
-    DOMString value(QString::number(start));
-    [self _oListElementImpl]->setAttribute(startAttr, value);
+    String value(DeprecatedString::number(start));
+    [self _oListElement]->setAttribute(startAttr, value);
 }
 
 - (NSString *)type
 {
-    return [self _oListElementImpl]->getAttribute(typeAttr);
+    return [self _oListElement]->getAttribute(typeAttr);
 }
 
 - (void)setType:(NSString *)type
 {
-    [self _oListElementImpl]->setAttribute(typeAttr, type);
+    [self _oListElement]->setAttribute(typeAttr, type);
 }
 
 @end
 
 @implementation DOMHTMLDListElement
 
-- (HTMLDListElementImpl *)_dListElementImpl
+- (HTMLDListElement *)_dListElement
 {
-    return static_cast<HTMLDListElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLDListElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (BOOL)compact
 {
-    return [self _dListElementImpl]->getAttribute(compactAttr).isNull();
+    return [self _dListElement]->getAttribute(compactAttr).isNull();
 }
 
 - (void)setCompact:(BOOL)compact
 {
-    [self _dListElementImpl]->setAttribute(compactAttr, compact ? "" : 0);
+    [self _dListElement]->setAttribute(compactAttr, compact ? "" : 0);
 }
 
 @end
 
 @implementation DOMHTMLDirectoryElement
 
-- (HTMLDirectoryElementImpl *)_directoryListElementImpl
+- (HTMLDirectoryElement *)_directoryListElement
 {
-    return static_cast<HTMLDirectoryElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLDirectoryElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (BOOL)compact
 {
-    return [self _directoryListElementImpl]->getAttribute(compactAttr).isNull();
+    return [self _directoryListElement]->getAttribute(compactAttr).isNull();
 }
 
 - (void)setCompact:(BOOL)compact
 {
-    [self _directoryListElementImpl]->setAttribute(compactAttr, compact ? "" : 0);
+    [self _directoryListElement]->setAttribute(compactAttr, compact ? "" : 0);
 }
 
 @end
 
 @implementation DOMHTMLMenuElement
 
-- (HTMLMenuElementImpl *)_menuListElementImpl
+- (HTMLMenuElement *)_menuListElement
 {
-    return static_cast<HTMLMenuElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLMenuElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (BOOL)compact
 {
-    return [self _menuListElementImpl]->getAttribute(compactAttr).isNull();
+    return [self _menuListElement]->getAttribute(compactAttr).isNull();
 }
 
 - (void)setCompact:(BOOL)compact
 {
-    [self _menuListElementImpl]->setAttribute(compactAttr, compact ? "" : 0);
+    [self _menuListElement]->setAttribute(compactAttr, compact ? "" : 0);
 }
 
 @end
 
 @implementation DOMHTMLLIElement
 
-- (HTMLLIElementImpl *)_liElementImpl
+- (HTMLLIElement *)_liElement
 {
-    return static_cast<HTMLLIElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLLIElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)type
 {
-    return [self _liElementImpl]->type();
+    return [self _liElement]->type();
 }
 
 - (void)setType:(NSString *)type
 {
-    [self _liElementImpl]->setType(type);
+    [self _liElement]->setType(type);
 }
 
 - (int)value
 {
-    return [self _liElementImpl]->value();
+    return [self _liElement]->value();
 }
 
 - (void)setValue:(int)value
 {
-    [self _liElementImpl]->setValue(value);
+    [self _liElement]->setValue(value);
 }
 
 @end
 
 @implementation DOMHTMLQuoteElement
 
-- (HTMLElementImpl *)_quoteElementImpl
+- (HTMLElement *)_quoteElement
 {
-    return static_cast<HTMLElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)cite
 {
-    return [self _quoteElementImpl]->getAttribute(citeAttr);
+    return [self _quoteElement]->getAttribute(citeAttr);
 }
 
 - (void)setCite:(NSString *)cite
 {
-    [self _quoteElementImpl]->setAttribute(citeAttr, cite);
+    [self _quoteElement]->setAttribute(citeAttr, cite);
 }
 
 @end
 
 @implementation DOMHTMLDivElement
 
-- (HTMLDivElementImpl *)_divElementImpl
+- (HTMLDivElement *)_divElement
 {
-    return static_cast<HTMLDivElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLDivElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)align
 {
-    return [self _divElementImpl]->getAttribute(alignAttr);
+    return [self _divElement]->getAttribute(alignAttr);
 }
 
 - (void)setAlign:(NSString *)align
 {
-    [self _divElementImpl]->setAttribute(alignAttr, align);
+    [self _divElement]->setAttribute(alignAttr, align);
 }
 
 @end
 
 @implementation DOMHTMLParagraphElement
 
-- (HTMLParagraphElementImpl *)_paragraphElementImpl
+- (HTMLParagraphElement *)_paragraphElement
 {
-    return static_cast<HTMLParagraphElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLParagraphElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)align
 {
-    return [self _paragraphElementImpl]->getAttribute(alignAttr);
+    return [self _paragraphElement]->getAttribute(alignAttr);
 }
 
 - (void)setAlign:(NSString *)align
 {
-    [self _paragraphElementImpl]->setAttribute(alignAttr, align);
+    [self _paragraphElement]->setAttribute(alignAttr, align);
 }
 
 @end
 
 @implementation DOMHTMLHeadingElement
 
-- (HTMLHeadingElementImpl *)_headingElementImpl
+- (HTMLHeadingElement *)_headingElement
 {
-    return static_cast<HTMLHeadingElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLHeadingElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)align
 {
-    return [self _headingElementImpl]->getAttribute(alignAttr);
+    return [self _headingElement]->getAttribute(alignAttr);
 }
 
 - (void)setAlign:(NSString *)align
 {
-    [self _headingElementImpl]->setAttribute(alignAttr, align);
+    [self _headingElement]->setAttribute(alignAttr, align);
 }
 
 @end
 
 @implementation DOMHTMLPreElement
 
-- (HTMLPreElementImpl *)_preElementImpl
+- (HTMLPreElement *)_preElement
 {
-    return static_cast<HTMLPreElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLPreElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (int)width
 {
-    return [self _preElementImpl]->getAttribute(widthAttr).toInt();
+    return [self _preElement]->getAttribute(widthAttr).toInt();
 }
 
 - (void)setWidth:(int)width
 {
-    DOMString string(QString::number(width));
-    [self _preElementImpl]->setAttribute(widthAttr, string);
+    String string(DeprecatedString::number(width));
+    [self _preElement]->setAttribute(widthAttr, string);
 }
 
 @end
 
 @implementation DOMHTMLBRElement
 
-- (HTMLBRElementImpl *)_BRElementImpl
+- (HTMLBRElement *)_BRElement
 {
-    return static_cast<HTMLBRElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLBRElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)clear
 {
-    return [self _BRElementImpl]->getAttribute(clearAttr);
+    return [self _BRElement]->getAttribute(clearAttr);
 }
 
 - (void)setClear:(NSString *)clear
 {
-    [self _BRElementImpl]->setAttribute(clearAttr, clear);
+    [self _BRElement]->setAttribute(clearAttr, clear);
 }
 
 @end
 
 @implementation DOMHTMLBaseFontElement
 
-- (HTMLBaseFontElementImpl *)_baseFontElementImpl
+- (HTMLBaseFontElement *)_baseFontElement
 {
-    return static_cast<HTMLBaseFontElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLBaseFontElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)color
 {
-    return [self _baseFontElementImpl]->getAttribute(colorAttr);
+    return [self _baseFontElement]->getAttribute(colorAttr);
 }
 
 - (void)setColor:(NSString *)color
 {
-    [self _baseFontElementImpl]->setAttribute(colorAttr, color);
+    [self _baseFontElement]->setAttribute(colorAttr, color);
 }
 
 - (NSString *)face
 {
-    return [self _baseFontElementImpl]->getAttribute(faceAttr);
+    return [self _baseFontElement]->getAttribute(faceAttr);
 }
 
 - (void)setFace:(NSString *)face
 {
-    [self _baseFontElementImpl]->setAttribute(faceAttr, face);
+    [self _baseFontElement]->setAttribute(faceAttr, face);
 }
 
 - (NSString *)size
 {
-    return [self _baseFontElementImpl]->getAttribute(sizeAttr);
+    return [self _baseFontElement]->getAttribute(sizeAttr);
 }
 
 - (void)setSize:(NSString *)size
 {
-    [self _baseFontElementImpl]->setAttribute(sizeAttr, size);
+    [self _baseFontElement]->setAttribute(sizeAttr, size);
 }
 
 @end
 
 @implementation DOMHTMLFontElement
 
-- (HTMLFontElementImpl *)_fontElementImpl
+- (HTMLFontElement *)_fontElement
 {
-    return static_cast<HTMLFontElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLFontElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)color
 {
-    return [self _fontElementImpl]->getAttribute(colorAttr);
+    return [self _fontElement]->getAttribute(colorAttr);
 }
 
 - (void)setColor:(NSString *)color
 {
-    [self _fontElementImpl]->setAttribute(colorAttr, color);
+    [self _fontElement]->setAttribute(colorAttr, color);
 }
 
 - (NSString *)face
 {
-    return [self _fontElementImpl]->getAttribute(faceAttr);
+    return [self _fontElement]->getAttribute(faceAttr);
 }
 
 - (void)setFace:(NSString *)face
 {
-    [self _fontElementImpl]->setAttribute(faceAttr, face);
+    [self _fontElement]->setAttribute(faceAttr, face);
 }
 
 - (NSString *)size
 {
-    return [self _fontElementImpl]->getAttribute(sizeAttr);
+    return [self _fontElement]->getAttribute(sizeAttr);
 }
 
 - (void)setSize:(NSString *)size
 {
-    [self _fontElementImpl]->setAttribute(sizeAttr, size);
+    [self _fontElement]->setAttribute(sizeAttr, size);
 }
 
 @end
 
 @implementation DOMHTMLHRElement
 
-- (HTMLHRElementImpl *)_HRElementImpl
+- (HTMLHRElement *)_HRElement
 {
-    return static_cast<HTMLHRElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLHRElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)align
 {
-    return [self _HRElementImpl]->getAttribute(alignAttr);
+    return [self _HRElement]->getAttribute(alignAttr);
 }
 
 - (void)setAlign:(NSString *)align
 {
-    [self _HRElementImpl]->setAttribute(alignAttr, align);
+    [self _HRElement]->setAttribute(alignAttr, align);
 }
 
 - (BOOL)noShade
 {
-    return [self _HRElementImpl]->getAttribute(noshadeAttr).isNull();
+    return [self _HRElement]->getAttribute(noshadeAttr).isNull();
 }
 
 - (void)setNoShade:(BOOL)noShade
 {
-    [self _HRElementImpl]->setAttribute(noshadeAttr, noShade ? "" : 0);
+    [self _HRElement]->setAttribute(noshadeAttr, noShade ? "" : 0);
 }
 
 - (NSString *)size
 {
-    return [self _HRElementImpl]->getAttribute(sizeAttr);
+    return [self _HRElement]->getAttribute(sizeAttr);
 }
 
 - (void)setSize:(NSString *)size
 {
-    [self _HRElementImpl]->setAttribute(sizeAttr, size);
+    [self _HRElement]->setAttribute(sizeAttr, size);
 }
 
 - (NSString *)width
 {
-    return [self _HRElementImpl]->getAttribute(widthAttr);
+    return [self _HRElement]->getAttribute(widthAttr);
 }
 
 - (void)setWidth:(NSString *)width
 {
-    [self _HRElementImpl]->setAttribute(widthAttr, width);
+    [self _HRElement]->setAttribute(widthAttr, width);
 }
 
 @end
 
 @implementation DOMHTMLModElement
 
-- (HTMLElementImpl *)_modElementImpl
+- (HTMLElement *)_modElement
 {
-    return static_cast<HTMLElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)cite
 {
-    return [self _modElementImpl]->getAttribute(citeAttr);
+    return [self _modElement]->getAttribute(citeAttr);
 }
 
 - (void)setCite:(NSString *)cite
 {
-    [self _modElementImpl]->setAttribute(citeAttr, cite);
+    [self _modElement]->setAttribute(citeAttr, cite);
 }
 
 - (NSString *)dateTime
 {
-    return [self _modElementImpl]->getAttribute(datetimeAttr);
+    return [self _modElement]->getAttribute(datetimeAttr);
 }
 
 - (void)setDateTime:(NSString *)dateTime
 {
-    [self _modElementImpl]->setAttribute(datetimeAttr, dateTime);
+    [self _modElement]->setAttribute(datetimeAttr, dateTime);
 }
 
 @end
 
 @implementation DOMHTMLAnchorElement
 
-- (HTMLAnchorElementImpl *)_anchorElementImpl
+- (HTMLAnchorElement *)_anchorElement
 {
-    return static_cast<HTMLAnchorElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLAnchorElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)accessKey
 {
-    return [self _anchorElementImpl]->getAttribute(accesskeyAttr);
+    return [self _anchorElement]->getAttribute(accesskeyAttr);
 }
 
 - (void)setAccessKey:(NSString *)accessKey
 {
-    [self _anchorElementImpl]->setAttribute(accesskeyAttr, accessKey);
+    [self _anchorElement]->setAttribute(accesskeyAttr, accessKey);
 }
 
 - (NSString *)charset
 {
-    return [self _anchorElementImpl]->getAttribute(charsetAttr);
+    return [self _anchorElement]->getAttribute(charsetAttr);
 }
 
 - (void)setCharset:(NSString *)charset
 {
-    [self _anchorElementImpl]->setAttribute(charsetAttr, charset);
+    [self _anchorElement]->setAttribute(charsetAttr, charset);
 }
 
 - (NSString *)coords
 {
-    return [self _anchorElementImpl]->getAttribute(coordsAttr);
+    return [self _anchorElement]->getAttribute(coordsAttr);
 }
 
 - (void)setCoords:(NSString *)coords
 {
-    [self _anchorElementImpl]->setAttribute(coordsAttr, coords);
+    [self _anchorElement]->setAttribute(coordsAttr, coords);
 }
 
 - (NSURL *)absoluteLinkURL
@@ -2195,202 +2195,202 @@ using namespace DOM::HTMLNames;
 
 - (NSString *)href
 {
-    return [self _anchorElementImpl]->href();
+    return [self _anchorElement]->href();
 }
 
 - (void)setHref:(NSString *)href
 {
-    [self _anchorElementImpl]->setAttribute(hrefAttr, href);
+    [self _anchorElement]->setAttribute(hrefAttr, href);
 }
 
 - (NSString *)hreflang
 {
-    return [self _anchorElementImpl]->hreflang();
+    return [self _anchorElement]->hreflang();
 }
 
 - (void)setHreflang:(NSString *)hreflang
 {
-    [self _anchorElementImpl]->setHreflang(hreflang);
+    [self _anchorElement]->setHreflang(hreflang);
 }
 
 - (NSString *)name
 {
-    return [self _anchorElementImpl]->name();
+    return [self _anchorElement]->name();
 }
 
 - (void)setName:(NSString *)name
 {
-    [self _anchorElementImpl]->setName(name);
+    [self _anchorElement]->setName(name);
 }
 
 - (NSString *)rel
 {
-    return [self _anchorElementImpl]->rel();
+    return [self _anchorElement]->rel();
 }
 
 - (void)setRel:(NSString *)rel
 {
-    [self _anchorElementImpl]->setRel(rel);
+    [self _anchorElement]->setRel(rel);
 }
 
 - (NSString *)rev
 {
-    return [self _anchorElementImpl]->rev();
+    return [self _anchorElement]->rev();
 }
 
 - (void)setRev:(NSString *)rev
 {
-    [self _anchorElementImpl]->setRev(rev);
+    [self _anchorElement]->setRev(rev);
 }
 
 - (NSString *)shape
 {
-    return [self _anchorElementImpl]->shape();
+    return [self _anchorElement]->shape();
 }
 
 - (void)setShape:(NSString *)shape
 {
-    [self _anchorElementImpl]->setShape(shape);
+    [self _anchorElement]->setShape(shape);
 }
 
 - (int)tabIndex
 {
-    return [self _anchorElementImpl]->tabIndex();
+    return [self _anchorElement]->tabIndex();
 }
 
 - (void)setTabIndex:(int)tabIndex
 {
-    [self _anchorElementImpl]->setTabIndex(tabIndex);
+    [self _anchorElement]->setTabIndex(tabIndex);
 }
 
 - (NSString *)target
 {
-    return [self _anchorElementImpl]->getAttribute(targetAttr);
+    return [self _anchorElement]->getAttribute(targetAttr);
 }
 
 - (void)setTarget:(NSString *)target
 {
-    [self _anchorElementImpl]->setAttribute(targetAttr, target);
+    [self _anchorElement]->setAttribute(targetAttr, target);
 }
 
 - (NSString *)type
 {
-    return [self _anchorElementImpl]->getAttribute(typeAttr);
+    return [self _anchorElement]->getAttribute(typeAttr);
 }
 
 - (void)setType:(NSString *)type
 {
-    [self _anchorElementImpl]->setAttribute(typeAttr, type);
+    [self _anchorElement]->setAttribute(typeAttr, type);
 }
 
 - (void)blur
 {
-    HTMLAnchorElementImpl *impl = [self _anchorElementImpl];
+    HTMLAnchorElement *impl = [self _anchorElement];
     if (impl->getDocument()->focusNode() == impl)
         impl->getDocument()->setFocusNode(0);
 }
 
 - (void)focus
 {
-    HTMLAnchorElementImpl *impl = [self _anchorElementImpl];
-    impl->getDocument()->setFocusNode(static_cast<ElementImpl*>(impl));
+    HTMLAnchorElement *impl = [self _anchorElement];
+    impl->getDocument()->setFocusNode(static_cast<Element*>(impl));
 }
 
 @end
 
 @implementation DOMHTMLImageElement
 
-- (HTMLImageElementImpl *)_imageElementImpl
+- (HTMLImageElement *)_imageElement
 {
-    return static_cast<HTMLImageElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLImageElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)name
 {
-    return [self _imageElementImpl]->getAttribute(nameAttr);
+    return [self _imageElement]->getAttribute(nameAttr);
 }
 
 - (void)setName:(NSString *)name
 {
-    [self _imageElementImpl]->setAttribute(nameAttr, name);
+    [self _imageElement]->setAttribute(nameAttr, name);
 }
 
 - (NSString *)align
 {
-    return [self _imageElementImpl]->getAttribute(alignAttr);
+    return [self _imageElement]->getAttribute(alignAttr);
 }
 
 - (void)setAlign:(NSString *)align
 {
-    [self _imageElementImpl]->setAttribute(alignAttr, align);
+    [self _imageElement]->setAttribute(alignAttr, align);
 }
 
 - (NSString *)alt
 {
-    return [self _imageElementImpl]->getAttribute(altAttr);
+    return [self _imageElement]->getAttribute(altAttr);
 }
 
 - (NSString *)altDisplayString
 {
-    String alt = [self _imageElementImpl]->getAttribute(altAttr);
-    return alt.replace('\\', [self _elementImpl]->getDocument()->backslashAsCurrencySymbol());
+    String alt = [self _imageElement]->getAttribute(altAttr);
+    return alt.replace('\\', [self _element]->getDocument()->backslashAsCurrencySymbol());
 }
 
 - (void)setAlt:(NSString *)alt
 {
-    [self _imageElementImpl]->setAttribute(altAttr, alt);
+    [self _imageElement]->setAttribute(altAttr, alt);
 }
 
 - (NSString *)border
 {
-    return [self _imageElementImpl]->getAttribute(borderAttr);
+    return [self _imageElement]->getAttribute(borderAttr);
 }
 
 - (void)setBorder:(NSString *)border
 {
-    [self _imageElementImpl]->setAttribute(borderAttr, border);
+    [self _imageElement]->setAttribute(borderAttr, border);
 }
 
 - (int)height
 {
-    return [self _imageElementImpl]->getAttribute(heightAttr).toInt();
+    return [self _imageElement]->getAttribute(heightAttr).toInt();
 }
 
 - (void)setHeight:(int)height
 {
-    DOMString string(QString::number(height));
-    [self _imageElementImpl]->setAttribute(heightAttr, string);
+    String string(DeprecatedString::number(height));
+    [self _imageElement]->setAttribute(heightAttr, string);
 }
 
 - (int)hspace
 {
-    return [self _imageElementImpl]->getAttribute(hspaceAttr).toInt();
+    return [self _imageElement]->getAttribute(hspaceAttr).toInt();
 }
 
 - (void)setHspace:(int)hspace
 {
-    DOMString string(QString::number(hspace));
-    [self _imageElementImpl]->setAttribute(hspaceAttr, string);
+    String string(DeprecatedString::number(hspace));
+    [self _imageElement]->setAttribute(hspaceAttr, string);
 }
 
 - (BOOL)isMap
 {
-    return [self _imageElementImpl]->getAttribute(ismapAttr).isNull();
+    return [self _imageElement]->getAttribute(ismapAttr).isNull();
 }
 
 - (void)setIsMap:(BOOL)isMap
 {
-    [self _imageElementImpl]->setAttribute(ismapAttr, isMap ? "" : 0);
+    [self _imageElement]->setAttribute(ismapAttr, isMap ? "" : 0);
 }
 
 - (NSString *)longDesc
 {
-    return [self _imageElementImpl]->getAttribute(longdescAttr);
+    return [self _imageElement]->getAttribute(longdescAttr);
 }
 
 - (void)setLongDesc:(NSString *)longDesc
 {
-    [self _imageElementImpl]->setAttribute(longdescAttr, longDesc);
+    [self _imageElement]->setAttribute(longdescAttr, longDesc);
 }
 
 - (NSURL *)absoluteImageURL
@@ -2400,489 +2400,489 @@ using namespace DOM::HTMLNames;
 
 - (NSString *)src
 {
-    return [self _imageElementImpl]->src();
+    return [self _imageElement]->src();
 }
 
 - (void)setSrc:(NSString *)src
 {
-    [self _imageElementImpl]->setAttribute(srcAttr, src);
+    [self _imageElement]->setAttribute(srcAttr, src);
 }
 
 - (NSString *)useMap
 {
-    return [self _imageElementImpl]->getAttribute(usemapAttr);
+    return [self _imageElement]->getAttribute(usemapAttr);
 }
 
 - (void)setUseMap:(NSString *)useMap
 {
-    [self _imageElementImpl]->setAttribute(usemapAttr, useMap);
+    [self _imageElement]->setAttribute(usemapAttr, useMap);
 }
 
 - (int)vspace
 {
-    return [self _imageElementImpl]->getAttribute(vspaceAttr).toInt();
+    return [self _imageElement]->getAttribute(vspaceAttr).toInt();
 }
 
 - (void)setVspace:(int)vspace
 {
-    DOMString string(QString::number(vspace));
-    [self _imageElementImpl]->setAttribute(vspaceAttr, string);
+    String string(DeprecatedString::number(vspace));
+    [self _imageElement]->setAttribute(vspaceAttr, string);
 }
 
 - (int)width
 {
-    return [self _imageElementImpl]->getAttribute(widthAttr).toInt();
+    return [self _imageElement]->getAttribute(widthAttr).toInt();
 }
 
 - (void)setWidth:(int)width
 {
-    DOMString string(QString::number(width));
-    [self _imageElementImpl]->setAttribute(widthAttr, string);
+    String string(DeprecatedString::number(width));
+    [self _imageElement]->setAttribute(widthAttr, string);
 }
 
 @end
 
 @implementation DOMHTMLObjectElement
 
-- (HTMLObjectElementImpl *)_objectElementImpl
+- (HTMLObjectElement *)_objectElement
 {
-    return static_cast<HTMLObjectElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLObjectElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (DOMHTMLFormElement *)form
 {
-    return [DOMHTMLFormElement _formElementWithImpl:[self _objectElementImpl]->form()];
+    return [DOMHTMLFormElement _formElementWith:[self _objectElement]->form()];
 }
 
 - (NSString *)code
 {
-    return [self _objectElementImpl]->getAttribute(codeAttr);
+    return [self _objectElement]->getAttribute(codeAttr);
 }
 
 - (void)setCode:(NSString *)code
 {
-    [self _objectElementImpl]->setAttribute(codeAttr, code);
+    [self _objectElement]->setAttribute(codeAttr, code);
 }
 
 - (NSString *)align
 {
-    return [self _objectElementImpl]->getAttribute(alignAttr);
+    return [self _objectElement]->getAttribute(alignAttr);
 }
 
 - (void)setAlign:(NSString *)align
 {
-    [self _objectElementImpl]->setAttribute(alignAttr, align);
+    [self _objectElement]->setAttribute(alignAttr, align);
 }
 
 - (NSString *)archive
 {
-    return [self _objectElementImpl]->getAttribute(archiveAttr);
+    return [self _objectElement]->getAttribute(archiveAttr);
 }
 
 - (void)setArchive:(NSString *)archive
 {
-    [self _objectElementImpl]->setAttribute(archiveAttr, archive);
+    [self _objectElement]->setAttribute(archiveAttr, archive);
 }
 
 - (NSString *)border
 {
-    return [self _objectElementImpl]->getAttribute(borderAttr);
+    return [self _objectElement]->getAttribute(borderAttr);
 }
 
 - (void)setBorder:(NSString *)border
 {
-    [self _objectElementImpl]->setAttribute(borderAttr, border);
+    [self _objectElement]->setAttribute(borderAttr, border);
 }
 
 - (NSString *)codeBase
 {
-    return [self _objectElementImpl]->getAttribute(codebaseAttr);
+    return [self _objectElement]->getAttribute(codebaseAttr);
 }
 
 - (void)setCodeBase:(NSString *)codeBase
 {
-    [self _objectElementImpl]->setAttribute(codebaseAttr, codeBase);
+    [self _objectElement]->setAttribute(codebaseAttr, codeBase);
 }
 
 - (NSString *)codeType
 {
-    return [self _objectElementImpl]->getAttribute(codetypeAttr);
+    return [self _objectElement]->getAttribute(codetypeAttr);
 }
 
 - (void)setCodeType:(NSString *)codeType
 {
-    [self _objectElementImpl]->setAttribute(codetypeAttr, codeType);
+    [self _objectElement]->setAttribute(codetypeAttr, codeType);
 }
 
 - (NSURL *)absoluteImageURL
 {
-    if (![self _objectElementImpl]->renderer() || ![self _objectElementImpl]->renderer()->isImage())
+    if (![self _objectElement]->renderer() || ![self _objectElement]->renderer()->isImage())
         return nil;
     return [self _getURLAttribute:@"data"];
 }
 
 - (NSString *)data
 {
-    return [self _objectElementImpl]->getAttribute(dataAttr);
+    return [self _objectElement]->getAttribute(dataAttr);
 }
 
 - (void)setData:(NSString *)data
 {
-    [self _objectElementImpl]->setAttribute(dataAttr, data);
+    [self _objectElement]->setAttribute(dataAttr, data);
 }
 
 - (BOOL)declare
 {
-    return [self _objectElementImpl]->getAttribute(declareAttr).isNull();
+    return [self _objectElement]->getAttribute(declareAttr).isNull();
 }
 
 - (void)setDeclare:(BOOL)declare
 {
-    [self _objectElementImpl]->setAttribute(declareAttr, declare ? "" : 0);
+    [self _objectElement]->setAttribute(declareAttr, declare ? "" : 0);
 }
 
 - (NSString *)height
 {
-    return [self _objectElementImpl]->getAttribute(heightAttr);
+    return [self _objectElement]->getAttribute(heightAttr);
 }
 
 - (void)setHeight:(NSString *)height
 {
-    [self _objectElementImpl]->setAttribute(heightAttr, height);
+    [self _objectElement]->setAttribute(heightAttr, height);
 }
 
 - (int)hspace
 {
-    return [self _objectElementImpl]->getAttribute(hspaceAttr).toInt();
+    return [self _objectElement]->getAttribute(hspaceAttr).toInt();
 }
 
 - (void)setHspace:(int)hspace
 {
-    DOMString string(QString::number(hspace));
-    [self _objectElementImpl]->setAttribute(hspaceAttr, string);
+    String string(DeprecatedString::number(hspace));
+    [self _objectElement]->setAttribute(hspaceAttr, string);
 }
 
 - (NSString *)name
 {
-    return [self _objectElementImpl]->getAttribute(nameAttr);
+    return [self _objectElement]->getAttribute(nameAttr);
 }
 
 - (void)setName:(NSString *)name
 {
-    [self _objectElementImpl]->setAttribute(nameAttr, name);
+    [self _objectElement]->setAttribute(nameAttr, name);
 }
 
 - (NSString *)standby
 {
-    return [self _objectElementImpl]->getAttribute(standbyAttr);
+    return [self _objectElement]->getAttribute(standbyAttr);
 }
 
 - (void)setStandby:(NSString *)standby
 {
-    [self _objectElementImpl]->setAttribute(standbyAttr, standby);
+    [self _objectElement]->setAttribute(standbyAttr, standby);
 }
 
 - (int)tabIndex
 {
-    return [self _objectElementImpl]->getAttribute(tabindexAttr).toInt();
+    return [self _objectElement]->getAttribute(tabindexAttr).toInt();
 }
 
 - (void)setTabIndex:(int)tabIndex
 {
-    DOMString string(QString::number(tabIndex));
-    [self _objectElementImpl]->setAttribute(tabindexAttr, string);
+    String string(DeprecatedString::number(tabIndex));
+    [self _objectElement]->setAttribute(tabindexAttr, string);
 }
 
 - (NSString *)type
 {
-    return [self _objectElementImpl]->getAttribute(typeAttr);
+    return [self _objectElement]->getAttribute(typeAttr);
 }
 
 - (void)setType:(NSString *)type
 {
-    [self _objectElementImpl]->setAttribute(typeAttr, type);
+    [self _objectElement]->setAttribute(typeAttr, type);
 }
 
 - (NSString *)useMap
 {
-    return [self _objectElementImpl]->getAttribute(usemapAttr);
+    return [self _objectElement]->getAttribute(usemapAttr);
 }
 
 - (void)setUseMap:(NSString *)useMap
 {
-    [self _objectElementImpl]->setAttribute(usemapAttr, useMap);
+    [self _objectElement]->setAttribute(usemapAttr, useMap);
 }
 
 - (int)vspace
 {
-    return [self _objectElementImpl]->getAttribute(vspaceAttr).toInt();
+    return [self _objectElement]->getAttribute(vspaceAttr).toInt();
 }
 
 - (void)setVspace:(int)vspace
 {
-    DOMString string(QString::number(vspace));
-    [self _objectElementImpl]->setAttribute(vspaceAttr, string);
+    String string(DeprecatedString::number(vspace));
+    [self _objectElement]->setAttribute(vspaceAttr, string);
 }
 
 - (NSString *)width
 {
-    return [self _objectElementImpl]->getAttribute(widthAttr);
+    return [self _objectElement]->getAttribute(widthAttr);
 }
 
 - (void)setWidth:(NSString *)width
 {
-    [self _objectElementImpl]->setAttribute(widthAttr, width);
+    [self _objectElement]->setAttribute(widthAttr, width);
 }
 
 - (DOMDocument *)contentDocument
 {
-    return [DOMDocument _documentWithImpl:[self _objectElementImpl]->contentDocument()];
+    return [DOMDocument _documentWith:[self _objectElement]->contentDocument()];
 }
 
 @end
 
 @implementation DOMHTMLParamElement
 
-- (HTMLParamElementImpl *)_paramElementImpl
+- (HTMLParamElement *)_paramElement
 {
-    return static_cast<HTMLParamElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLParamElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)name
 {
-    return [self _paramElementImpl]->getAttribute(nameAttr);
+    return [self _paramElement]->getAttribute(nameAttr);
 }
 
 - (void)setName:(NSString *)name
 {
-    [self _paramElementImpl]->setAttribute(nameAttr, name);
+    [self _paramElement]->setAttribute(nameAttr, name);
 }
 
 - (NSString *)type
 {
-    return [self _paramElementImpl]->getAttribute(typeAttr);
+    return [self _paramElement]->getAttribute(typeAttr);
 }
 
 - (void)setType:(NSString *)type
 {
-    [self _paramElementImpl]->setAttribute(typeAttr, type);
+    [self _paramElement]->setAttribute(typeAttr, type);
 }
 
 - (NSString *)value
 {
-    return [self _paramElementImpl]->getAttribute(valueAttr);
+    return [self _paramElement]->getAttribute(valueAttr);
 }
 
 - (void)setValue:(NSString *)value
 {
-    [self _paramElementImpl]->setAttribute(valueAttr, value);
+    [self _paramElement]->setAttribute(valueAttr, value);
 }
 
 - (NSString *)valueType
 {
-    return [self _paramElementImpl]->getAttribute(valuetypeAttr);
+    return [self _paramElement]->getAttribute(valuetypeAttr);
 }
 
 - (void)setValueType:(NSString *)valueType
 {
-    [self _paramElementImpl]->setAttribute(valuetypeAttr, valueType);
+    [self _paramElement]->setAttribute(valuetypeAttr, valueType);
 }
 
 @end
 
 @implementation DOMHTMLAppletElement
 
-- (HTMLAppletElementImpl *)_appletElementImpl
+- (HTMLAppletElement *)_appletElement
 {
-    return static_cast<HTMLAppletElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLAppletElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)align
 {
-    return [self _appletElementImpl]->getAttribute(alignAttr);
+    return [self _appletElement]->getAttribute(alignAttr);
 }
 
 - (void)setAlign:(NSString *)align
 {
-    [self _appletElementImpl]->setAttribute(alignAttr, align);
+    [self _appletElement]->setAttribute(alignAttr, align);
 }
 
 - (NSString *)alt
 {
-    return [self _appletElementImpl]->getAttribute(altAttr);
+    return [self _appletElement]->getAttribute(altAttr);
 }
 
 - (NSString *)altDisplayString
 {
-    String alt = [self _appletElementImpl]->getAttribute(altAttr);
-    return alt.replace('\\', [self _elementImpl]->getDocument()->backslashAsCurrencySymbol());
+    String alt = [self _appletElement]->getAttribute(altAttr);
+    return alt.replace('\\', [self _element]->getDocument()->backslashAsCurrencySymbol());
 }
 
 - (void)setAlt:(NSString *)alt
 {
-    [self _appletElementImpl]->setAttribute(altAttr, alt);
+    [self _appletElement]->setAttribute(altAttr, alt);
 }
 
 - (NSString *)archive
 {
-    return [self _appletElementImpl]->getAttribute(archiveAttr);
+    return [self _appletElement]->getAttribute(archiveAttr);
 }
 
 - (void)setArchive:(NSString *)archive
 {
-    [self _appletElementImpl]->setAttribute(archiveAttr, archive);
+    [self _appletElement]->setAttribute(archiveAttr, archive);
 }
 
 - (NSString *)code
 {
-    return [self _appletElementImpl]->getAttribute(codeAttr);
+    return [self _appletElement]->getAttribute(codeAttr);
 }
 
 - (void)setCode:(NSString *)code
 {
-    [self _appletElementImpl]->setAttribute(codeAttr, code);
+    [self _appletElement]->setAttribute(codeAttr, code);
 }
 
 - (NSString *)codeBase
 {
-    return [self _appletElementImpl]->getAttribute(codebaseAttr);
+    return [self _appletElement]->getAttribute(codebaseAttr);
 }
 
 - (void)setCodeBase:(NSString *)codeBase
 {
-    [self _appletElementImpl]->setAttribute(codebaseAttr, codeBase);
+    [self _appletElement]->setAttribute(codebaseAttr, codeBase);
 }
 
 - (NSString *)height
 {
-    return [self _appletElementImpl]->getAttribute(heightAttr);
+    return [self _appletElement]->getAttribute(heightAttr);
 }
 
 - (void)setHeight:(NSString *)height
 {
-    [self _appletElementImpl]->setAttribute(heightAttr, height);
+    [self _appletElement]->setAttribute(heightAttr, height);
 }
 
 - (int)hspace
 {
-    return [self _appletElementImpl]->getAttribute(hspaceAttr).toInt();
+    return [self _appletElement]->getAttribute(hspaceAttr).toInt();
 }
 
 - (void)setHspace:(int)hspace
 {
-    DOMString string(QString::number(hspace));
-    [self _appletElementImpl]->setAttribute(hspaceAttr, string);
+    String string(DeprecatedString::number(hspace));
+    [self _appletElement]->setAttribute(hspaceAttr, string);
 }
 
 - (NSString *)name
 {
-    return [self _appletElementImpl]->getAttribute(nameAttr);
+    return [self _appletElement]->getAttribute(nameAttr);
 }
 
 - (void)setName:(NSString *)name
 {
-    [self _appletElementImpl]->setAttribute(nameAttr, name);
+    [self _appletElement]->setAttribute(nameAttr, name);
 }
 
 - (NSString *)object
 {
-    return [self _appletElementImpl]->getAttribute(objectAttr);
+    return [self _appletElement]->getAttribute(objectAttr);
 }
 
 - (void)setObject:(NSString *)object
 {
-    [self _appletElementImpl]->setAttribute(objectAttr, object);
+    [self _appletElement]->setAttribute(objectAttr, object);
 }
 
 - (int)vspace
 {
-    return [self _appletElementImpl]->getAttribute(vspaceAttr).toInt();
+    return [self _appletElement]->getAttribute(vspaceAttr).toInt();
 }
 
 - (void)setVspace:(int)vspace
 {
-    DOMString string(QString::number(vspace));
-    [self _appletElementImpl]->setAttribute(vspaceAttr, string);
+    String string(DeprecatedString::number(vspace));
+    [self _appletElement]->setAttribute(vspaceAttr, string);
 }
 
 - (NSString *)width
 {
-    return [self _appletElementImpl]->getAttribute(widthAttr);
+    return [self _appletElement]->getAttribute(widthAttr);
 }
 
 - (void)setWidth:(NSString *)width
 {
-    [self _appletElementImpl]->setAttribute(widthAttr, width);
+    [self _appletElement]->setAttribute(widthAttr, width);
 }
 
 @end
 
 @implementation DOMHTMLMapElement
 
-- (HTMLMapElementImpl *)_mapElementImpl
+- (HTMLMapElement *)_mapElement
 {
-    return static_cast<HTMLMapElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLMapElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (DOMHTMLCollection *)areas
 {
-    HTMLCollectionImpl *collection = new HTMLCollectionImpl([self _mapElementImpl], HTMLCollectionImpl::MAP_AREAS);
-    return [DOMHTMLCollection _collectionWithImpl:collection];
+    HTMLCollection *collection = new HTMLCollection([self _mapElement], HTMLCollection::MAP_AREAS);
+    return [DOMHTMLCollection _collectionWith:collection];
 }
 
 - (NSString *)name
 {
-    return [self _mapElementImpl]->getAttribute(nameAttr);
+    return [self _mapElement]->getAttribute(nameAttr);
 }
 
 - (void)setName:(NSString *)name
 {
-    [self _mapElementImpl]->setAttribute(nameAttr, name);
+    [self _mapElement]->setAttribute(nameAttr, name);
 }
 
 @end
 
 @implementation DOMHTMLAreaElement
 
-- (HTMLAreaElementImpl *)_areaElementImpl
+- (HTMLAreaElement *)_areaElement
 {
-    return static_cast<HTMLAreaElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLAreaElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)accessKey
 {
-    return [self _areaElementImpl]->getAttribute(accesskeyAttr);
+    return [self _areaElement]->getAttribute(accesskeyAttr);
 }
 
 - (void)setAccessKey:(NSString *)accessKey
 {
-    [self _areaElementImpl]->setAttribute(accesskeyAttr, accessKey);
+    [self _areaElement]->setAttribute(accesskeyAttr, accessKey);
 }
 
 - (NSString *)alt
 {
-    return [self _areaElementImpl]->getAttribute(altAttr);
+    return [self _areaElement]->getAttribute(altAttr);
 }
 
 - (NSString *)altDisplayString
 {
-    String alt = [self _areaElementImpl]->getAttribute(altAttr);
-    return alt.replace('\\', [self _elementImpl]->getDocument()->backslashAsCurrencySymbol());
+    String alt = [self _areaElement]->getAttribute(altAttr);
+    return alt.replace('\\', [self _element]->getDocument()->backslashAsCurrencySymbol());
 }
 
 - (void)setAlt:(NSString *)alt
 {
-    [self _areaElementImpl]->setAttribute(altAttr, alt);
+    [self _areaElement]->setAttribute(altAttr, alt);
 }
 
 - (NSString *)coords
 {
-    return [self _areaElementImpl]->getAttribute(coordsAttr);
+    return [self _areaElement]->getAttribute(coordsAttr);
 }
 
 - (void)setCoords:(NSString *)coords
 {
-    [self _areaElementImpl]->setAttribute(coordsAttr, coords);
+    [self _areaElement]->setAttribute(coordsAttr, coords);
 }
 
 - (NSURL *)absoluteLinkURL
@@ -2892,72 +2892,72 @@ using namespace DOM::HTMLNames;
 
 - (NSString *)href
 {
-    return [self _areaElementImpl]->href();
+    return [self _areaElement]->href();
 }
 
 - (void)setHref:(NSString *)href
 {
-    [self _areaElementImpl]->setAttribute(hrefAttr, href);
+    [self _areaElement]->setAttribute(hrefAttr, href);
 }
 
 - (BOOL)noHref
 {
-    return [self _areaElementImpl]->getAttribute(nohrefAttr).isNull();
+    return [self _areaElement]->getAttribute(nohrefAttr).isNull();
 }
 
 - (void)setNoHref:(BOOL)noHref
 {
-    [self _areaElementImpl]->setAttribute(nohrefAttr, noHref ? "" : 0);
+    [self _areaElement]->setAttribute(nohrefAttr, noHref ? "" : 0);
 }
 
 - (NSString *)shape
 {
-    return [self _areaElementImpl]->getAttribute(shapeAttr);
+    return [self _areaElement]->getAttribute(shapeAttr);
 }
 
 - (void)setShape:(NSString *)shape
 {
-    [self _areaElementImpl]->setAttribute(shapeAttr, shape);
+    [self _areaElement]->setAttribute(shapeAttr, shape);
 }
 
 - (int)tabIndex
 {
-    return [self _areaElementImpl]->getAttribute(tabindexAttr).toInt();
+    return [self _areaElement]->getAttribute(tabindexAttr).toInt();
 }
 
 - (void)setTabIndex:(int)tabIndex
 {
-    DOMString string(QString::number(tabIndex));
-    [self _areaElementImpl]->setAttribute(tabindexAttr, string);
+    String string(DeprecatedString::number(tabIndex));
+    [self _areaElement]->setAttribute(tabindexAttr, string);
 }
 
 - (NSString *)target
 {
-    return [self _areaElementImpl]->getAttribute(targetAttr);
+    return [self _areaElement]->getAttribute(targetAttr);
 }
 
 - (void)setTarget:(NSString *)target
 {
-    [self _areaElementImpl]->setAttribute(targetAttr, target);
+    [self _areaElement]->setAttribute(targetAttr, target);
 }
 
 @end
 
 @implementation DOMHTMLScriptElement
 
-- (HTMLScriptElementImpl *)_scriptElementImpl
+- (HTMLScriptElement *)_scriptElement
 {
-    return static_cast<HTMLScriptElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLScriptElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)text
 {
-    return [self _scriptElementImpl]->getAttribute(textAttr);
+    return [self _scriptElement]->getAttribute(textAttr);
 }
 
 - (void)setText:(NSString *)text
 {
-    [self _scriptElementImpl]->setAttribute(textAttr, text);
+    [self _scriptElement]->setAttribute(textAttr, text);
 }
 
 - (NSString *)htmlFor
@@ -2984,42 +2984,42 @@ using namespace DOM::HTMLNames;
 
 - (NSString *)charset
 {
-    return [self _scriptElementImpl]->getAttribute(charsetAttr);
+    return [self _scriptElement]->getAttribute(charsetAttr);
 }
 
 - (void)setCharset:(NSString *)charset
 {
-    [self _scriptElementImpl]->setAttribute(charsetAttr, charset);
+    [self _scriptElement]->setAttribute(charsetAttr, charset);
 }
 
 - (BOOL)defer
 {
-    return [self _scriptElementImpl]->getAttribute(deferAttr).isNull();
+    return [self _scriptElement]->getAttribute(deferAttr).isNull();
 }
 
 - (void)setDefer:(BOOL)defer
 {
-    [self _scriptElementImpl]->setAttribute(deferAttr, defer ? "" : 0);
+    [self _scriptElement]->setAttribute(deferAttr, defer ? "" : 0);
 }
 
 - (NSString *)src
 {
-    return [self _scriptElementImpl]->getAttribute(srcAttr);
+    return [self _scriptElement]->getAttribute(srcAttr);
 }
 
 - (void)setSrc:(NSString *)src
 {
-    [self _scriptElementImpl]->setAttribute(srcAttr, src);
+    [self _scriptElement]->setAttribute(srcAttr, src);
 }
 
 - (NSString *)type
 {
-    return [self _scriptElementImpl]->getAttribute(typeAttr);
+    return [self _scriptElement]->getAttribute(typeAttr);
 }
 
 - (void)setType:(NSString *)type
 {
-    [self _scriptElementImpl]->setAttribute(typeAttr, type);
+    [self _scriptElement]->setAttribute(typeAttr, type);
 }
 
 @end
@@ -3028,26 +3028,26 @@ using namespace DOM::HTMLNames;
 
 - (NSString *)align
 {
-    return [self _tableCaptionElementImpl]->getAttribute(alignAttr);
+    return [self _tableCaptionElement]->getAttribute(alignAttr);
 }
 
 - (void)setAlign:(NSString *)align
 {
-    [self _tableCaptionElementImpl]->setAttribute(alignAttr, align);
+    [self _tableCaptionElement]->setAttribute(alignAttr, align);
 }
 
 @end
 
 @implementation DOMHTMLTableCaptionElement (WebCoreInternal)
 
-+ (DOMHTMLTableCaptionElement *)_tableCaptionElementWithImpl:(HTMLTableCaptionElementImpl *)impl
++ (DOMHTMLTableCaptionElement *)_tableCaptionElementWith:(HTMLTableCaptionElement *)impl
 {
-    return static_cast<DOMHTMLTableCaptionElement *>([DOMNode _nodeWithImpl:impl]);
+    return static_cast<DOMHTMLTableCaptionElement *>([DOMNode _nodeWith:impl]);
 }
 
-- (HTMLTableCaptionElementImpl *)_tableCaptionElementImpl
+- (HTMLTableCaptionElement *)_tableCaptionElement
 {
-    return static_cast<HTMLTableCaptionElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLTableCaptionElement *>(DOM_cast<Node *>(_internal));
 }
 
 @end
@@ -3056,62 +3056,62 @@ using namespace DOM::HTMLNames;
 
 - (NSString *)align
 {
-    return [self _tableSectionElementImpl]->getAttribute(alignAttr);
+    return [self _tableSectionElement]->getAttribute(alignAttr);
 }
 
 - (void)setAlign:(NSString *)align
 {
-    [self _tableSectionElementImpl]->setAttribute(alignAttr, align);
+    [self _tableSectionElement]->setAttribute(alignAttr, align);
 }
 
 - (NSString *)ch
 {
-    return [self _tableSectionElementImpl]->getAttribute(charoffAttr);
+    return [self _tableSectionElement]->getAttribute(charoffAttr);
 }
 
 - (void)setCh:(NSString *)ch
 {
-    [self _tableSectionElementImpl]->setAttribute(charoffAttr, ch);
+    [self _tableSectionElement]->setAttribute(charoffAttr, ch);
 }
 
 - (NSString *)chOff
 {
-    return [self _tableSectionElementImpl]->getAttribute(charoffAttr);
+    return [self _tableSectionElement]->getAttribute(charoffAttr);
 }
 
 - (void)setChOff:(NSString *)chOff
 {
-    [self _tableSectionElementImpl]->setAttribute(charoffAttr, chOff);
+    [self _tableSectionElement]->setAttribute(charoffAttr, chOff);
 }
 
 - (NSString *)vAlign
 {
-    return [self _tableSectionElementImpl]->getAttribute(valignAttr);
+    return [self _tableSectionElement]->getAttribute(valignAttr);
 }
 
 - (void)setVAlign:(NSString *)vAlign
 {
-    [self _tableSectionElementImpl]->setAttribute(valignAttr, vAlign);
+    [self _tableSectionElement]->setAttribute(valignAttr, vAlign);
 }
 
 - (DOMHTMLCollection *)rows
 {
-    HTMLCollectionImpl *collection = new HTMLCollectionImpl([self _tableSectionElementImpl], HTMLCollectionImpl::TABLE_ROWS);
-    return [DOMHTMLCollection _collectionWithImpl:collection];
+    HTMLCollection *collection = new HTMLCollection([self _tableSectionElement], HTMLCollection::TABLE_ROWS);
+    return [DOMHTMLCollection _collectionWith:collection];
 }
 
 - (DOMHTMLElement *)insertRow:(int)index
 {
     ExceptionCode ec = 0;
-    HTMLElementImpl *impl = [self _tableSectionElementImpl]->insertRow(index, ec);
+    HTMLElement *impl = [self _tableSectionElement]->insertRow(index, ec);
     raiseOnDOMError(ec);
-    return [DOMHTMLElement _elementWithImpl:impl];
+    return [DOMHTMLElement _elementWith:impl];
 }
 
 - (void)deleteRow:(int)index
 {
     ExceptionCode ec = 0;
-    [self _tableSectionElementImpl]->deleteRow(index, ec);
+    [self _tableSectionElement]->deleteRow(index, ec);
     raiseOnDOMError(ec);
 }
 
@@ -3119,14 +3119,14 @@ using namespace DOM::HTMLNames;
 
 @implementation DOMHTMLTableSectionElement (WebCoreInternal)
 
-+ (DOMHTMLTableSectionElement *)_tableSectionElementWithImpl:(HTMLTableSectionElementImpl *)impl
++ (DOMHTMLTableSectionElement *)_tableSectionElementWith:(HTMLTableSectionElement *)impl
 {
-    return static_cast<DOMHTMLTableSectionElement *>([DOMNode _nodeWithImpl:impl]);
+    return static_cast<DOMHTMLTableSectionElement *>([DOMNode _nodeWith:impl]);
 }
 
-- (HTMLTableSectionElementImpl *)_tableSectionElementImpl
+- (HTMLTableSectionElement *)_tableSectionElement
 {
-    return static_cast<HTMLTableSectionElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLTableSectionElement *>(DOM_cast<Node *>(_internal));
 }
 
 @end
@@ -3135,181 +3135,181 @@ using namespace DOM::HTMLNames;
 
 - (DOMHTMLTableCaptionElement *)caption
 {
-    return [DOMHTMLTableCaptionElement _tableCaptionElementWithImpl:[self _tableElementImpl]->caption()];
+    return [DOMHTMLTableCaptionElement _tableCaptionElementWith:[self _tableElement]->caption()];
 }
 
 - (void)setCaption:(DOMHTMLTableCaptionElement *)caption
 {
-    [self _tableElementImpl]->setCaption([caption _tableCaptionElementImpl]);
+    [self _tableElement]->setCaption([caption _tableCaptionElement]);
 }
 
 - (DOMHTMLTableSectionElement *)tHead
 {
-    return [DOMHTMLTableSectionElement _tableSectionElementWithImpl:[self _tableElementImpl]->tHead()];
+    return [DOMHTMLTableSectionElement _tableSectionElementWith:[self _tableElement]->tHead()];
 }
 
 - (void)setTHead:(DOMHTMLTableSectionElement *)tHead
 {
-    [self _tableElementImpl]->setTHead([tHead _tableSectionElementImpl]);
+    [self _tableElement]->setTHead([tHead _tableSectionElement]);
 }
 
 - (DOMHTMLTableSectionElement *)tFoot
 {
-    return [DOMHTMLTableSectionElement _tableSectionElementWithImpl:[self _tableElementImpl]->tFoot()];
+    return [DOMHTMLTableSectionElement _tableSectionElementWith:[self _tableElement]->tFoot()];
 }
 
 - (void)setTFoot:(DOMHTMLTableSectionElement *)tFoot
 {
-    [self _tableElementImpl]->setTFoot([tFoot _tableSectionElementImpl]);
+    [self _tableElement]->setTFoot([tFoot _tableSectionElement]);
 }
 
 - (DOMHTMLCollection *)rows
 {
-    HTMLCollectionImpl *collection = new HTMLCollectionImpl([self _tableElementImpl], HTMLCollectionImpl::TABLE_ROWS);
-    return [DOMHTMLCollection _collectionWithImpl:collection];
+    HTMLCollection *collection = new HTMLCollection([self _tableElement], HTMLCollection::TABLE_ROWS);
+    return [DOMHTMLCollection _collectionWith:collection];
 }
 
 - (DOMHTMLCollection *)tBodies
 {
-    HTMLCollectionImpl *collection = new HTMLCollectionImpl([self _tableElementImpl], HTMLCollectionImpl::TABLE_TBODIES);
-    return [DOMHTMLCollection _collectionWithImpl:collection];
+    HTMLCollection *collection = new HTMLCollection([self _tableElement], HTMLCollection::TABLE_TBODIES);
+    return [DOMHTMLCollection _collectionWith:collection];
 }
 
 - (NSString *)align
 {
-    return [self _tableElementImpl]->getAttribute(alignAttr);
+    return [self _tableElement]->getAttribute(alignAttr);
 }
 
 - (void)setAlign:(NSString *)align
 {
-    [self _tableElementImpl]->setAttribute(alignAttr, align);
+    [self _tableElement]->setAttribute(alignAttr, align);
 }
 
 - (NSString *)bgColor
 {
-    return [self _tableElementImpl]->getAttribute(bgcolorAttr);
+    return [self _tableElement]->getAttribute(bgcolorAttr);
 }
 
 - (void)setBgColor:(NSString *)bgColor
 {
-    [self _tableElementImpl]->setAttribute(bgcolorAttr, bgColor);
+    [self _tableElement]->setAttribute(bgcolorAttr, bgColor);
 }
 
 - (NSString *)border
 {
-    return [self _tableElementImpl]->getAttribute(borderAttr);
+    return [self _tableElement]->getAttribute(borderAttr);
 }
 
 - (void)setBorder:(NSString *)border
 {
-    [self _tableElementImpl]->setAttribute(borderAttr, border);
+    [self _tableElement]->setAttribute(borderAttr, border);
 }
 
 - (NSString *)cellPadding
 {
-    return [self _tableElementImpl]->getAttribute(cellpaddingAttr);
+    return [self _tableElement]->getAttribute(cellpaddingAttr);
 }
 
 - (void)setCellPadding:(NSString *)cellPadding
 {
-    [self _tableElementImpl]->setAttribute(cellpaddingAttr, cellPadding);
+    [self _tableElement]->setAttribute(cellpaddingAttr, cellPadding);
 }
 
 - (NSString *)cellSpacing
 {
-    return [self _tableElementImpl]->getAttribute(cellspacingAttr);
+    return [self _tableElement]->getAttribute(cellspacingAttr);
 }
 
 - (void)setCellSpacing:(NSString *)cellSpacing
 {
-    [self _tableElementImpl]->setAttribute(cellspacingAttr, cellSpacing);
+    [self _tableElement]->setAttribute(cellspacingAttr, cellSpacing);
 }
 
 - (NSString *)frameBorders
 {
-    return [self _tableElementImpl]->getAttribute(frameAttr);
+    return [self _tableElement]->getAttribute(frameAttr);
 }
 
 - (void)setFrameBorders:(NSString *)frameBorders
 {
-    [self _tableElementImpl]->setAttribute(frameAttr, frameBorders);
+    [self _tableElement]->setAttribute(frameAttr, frameBorders);
 }
 
 - (NSString *)rules
 {
-    return [self _tableElementImpl]->getAttribute(rulesAttr);
+    return [self _tableElement]->getAttribute(rulesAttr);
 }
 
 - (void)setRules:(NSString *)rules
 {
-    [self _tableElementImpl]->setAttribute(rulesAttr, rules);
+    [self _tableElement]->setAttribute(rulesAttr, rules);
 }
 
 - (NSString *)summary
 {
-    return [self _tableElementImpl]->getAttribute(summaryAttr);
+    return [self _tableElement]->getAttribute(summaryAttr);
 }
 
 - (void)setSummary:(NSString *)summary
 {
-    [self _tableElementImpl]->setAttribute(summaryAttr, summary);
+    [self _tableElement]->setAttribute(summaryAttr, summary);
 }
 
 - (NSString *)width
 {
-    return [self _tableElementImpl]->getAttribute(widthAttr);
+    return [self _tableElement]->getAttribute(widthAttr);
 }
 
 - (void)setWidth:(NSString *)width
 {
-    [self _tableElementImpl]->setAttribute(widthAttr, width);
+    [self _tableElement]->setAttribute(widthAttr, width);
 }
 
 - (DOMHTMLElement *)createTHead
 {
-    HTMLTableSectionElementImpl *impl = static_cast<HTMLTableSectionElementImpl *>([self _tableElementImpl]->createTHead());
-    return [DOMHTMLTableSectionElement _tableSectionElementWithImpl:impl];
+    HTMLTableSectionElement *impl = static_cast<HTMLTableSectionElement *>([self _tableElement]->createTHead());
+    return [DOMHTMLTableSectionElement _tableSectionElementWith:impl];
 }
 
 - (void)deleteTHead
 {
-    [self _tableElementImpl]->deleteTHead();
+    [self _tableElement]->deleteTHead();
 }
 
 - (DOMHTMLElement *)createTFoot
 {
-    HTMLTableSectionElementImpl *impl = static_cast<HTMLTableSectionElementImpl *>([self _tableElementImpl]->createTFoot());
-    return [DOMHTMLTableSectionElement _tableSectionElementWithImpl:impl];
+    HTMLTableSectionElement *impl = static_cast<HTMLTableSectionElement *>([self _tableElement]->createTFoot());
+    return [DOMHTMLTableSectionElement _tableSectionElementWith:impl];
 }
 
 - (void)deleteTFoot
 {
-    [self _tableElementImpl]->deleteTFoot();
+    [self _tableElement]->deleteTFoot();
 }
 
 - (DOMHTMLElement *)createCaption
 {
-    HTMLTableCaptionElementImpl *impl = static_cast<HTMLTableCaptionElementImpl *>([self _tableElementImpl]->createCaption());
-    return [DOMHTMLTableCaptionElement _tableCaptionElementWithImpl:impl];
+    HTMLTableCaptionElement *impl = static_cast<HTMLTableCaptionElement *>([self _tableElement]->createCaption());
+    return [DOMHTMLTableCaptionElement _tableCaptionElementWith:impl];
 }
 
 - (void)deleteCaption
 {
-    [self _tableElementImpl]->deleteCaption();
+    [self _tableElement]->deleteCaption();
 }
 
 - (DOMHTMLElement *)insertRow:(int)index
 {
     ExceptionCode ec = 0;
-    HTMLTableElementImpl *impl = static_cast<HTMLTableElementImpl *>([self _tableElementImpl]->insertRow(index, ec));
+    HTMLTableElement *impl = static_cast<HTMLTableElement *>([self _tableElement]->insertRow(index, ec));
     raiseOnDOMError(ec);
-    return [DOMHTMLTableElement _tableElementWithImpl:impl];
+    return [DOMHTMLTableElement _tableElementWith:impl];
 }
 
 - (void)deleteRow:(int)index
 {
     ExceptionCode ec = 0;
-    [self _tableElementImpl]->deleteRow(index, ec);
+    [self _tableElement]->deleteRow(index, ec);
     raiseOnDOMError(ec);
 }
 
@@ -3317,173 +3317,173 @@ using namespace DOM::HTMLNames;
 
 @implementation DOMHTMLTableElement (WebCoreInternal)
 
-+ (DOMHTMLTableElement *)_tableElementWithImpl:(HTMLTableElementImpl *)impl
++ (DOMHTMLTableElement *)_tableElementWith:(HTMLTableElement *)impl
 {
-    return static_cast<DOMHTMLTableElement *>([DOMNode _nodeWithImpl:impl]);
+    return static_cast<DOMHTMLTableElement *>([DOMNode _nodeWith:impl]);
 }
 
-- (HTMLTableElementImpl *)_tableElementImpl
+- (HTMLTableElement *)_tableElement
 {
-    return static_cast<HTMLTableElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLTableElement *>(DOM_cast<Node *>(_internal));
 }
 
 @end
 
 @implementation DOMHTMLTableColElement
 
-- (HTMLTableColElementImpl *)_tableColElementImpl
+- (HTMLTableColElement *)_tableColElement
 {
-    return static_cast<HTMLTableColElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLTableColElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)align
 {
-    return [self _tableColElementImpl]->getAttribute(alignAttr);
+    return [self _tableColElement]->getAttribute(alignAttr);
 }
 
 - (void)setAlign:(NSString *)align
 {
-    [self _tableColElementImpl]->setAttribute(alignAttr, align);
+    [self _tableColElement]->setAttribute(alignAttr, align);
 }
 
 - (NSString *)ch
 {
-    return [self _tableColElementImpl]->getAttribute(charoffAttr);
+    return [self _tableColElement]->getAttribute(charoffAttr);
 }
 
 - (void)setCh:(NSString *)ch
 {
-    [self _tableColElementImpl]->setAttribute(charoffAttr, ch);
+    [self _tableColElement]->setAttribute(charoffAttr, ch);
 }
 
 - (NSString *)chOff
 {
-    return [self _tableColElementImpl]->getAttribute(charoffAttr);
+    return [self _tableColElement]->getAttribute(charoffAttr);
 }
 
 - (void)setChOff:(NSString *)chOff
 {
-    [self _tableColElementImpl]->setAttribute(charoffAttr, chOff);
+    [self _tableColElement]->setAttribute(charoffAttr, chOff);
 }
 
 - (int)span
 {
-    return [self _tableColElementImpl]->getAttribute(spanAttr).toInt();
+    return [self _tableColElement]->getAttribute(spanAttr).toInt();
 }
 
 - (void)setSpan:(int)span
 {
-    DOMString string(QString::number(span));
-    [self _tableColElementImpl]->setAttribute(spanAttr, string);
+    String string(DeprecatedString::number(span));
+    [self _tableColElement]->setAttribute(spanAttr, string);
 }
 
 - (NSString *)vAlign
 {
-    return [self _tableColElementImpl]->getAttribute(valignAttr);
+    return [self _tableColElement]->getAttribute(valignAttr);
 }
 
 - (void)setVAlign:(NSString *)vAlign
 {
-    [self _tableColElementImpl]->setAttribute(valignAttr, vAlign);
+    [self _tableColElement]->setAttribute(valignAttr, vAlign);
 }
 
 - (NSString *)width
 {
-    return [self _tableColElementImpl]->getAttribute(widthAttr);
+    return [self _tableColElement]->getAttribute(widthAttr);
 }
 
 - (void)setWidth:(NSString *)width
 {
-    [self _tableColElementImpl]->setAttribute(widthAttr, width);
+    [self _tableColElement]->setAttribute(widthAttr, width);
 }
 
 @end
 
 @implementation DOMHTMLTableRowElement
 
-- (HTMLTableRowElementImpl *)_tableRowElementImpl
+- (HTMLTableRowElement *)_tableRowElement
 {
-    return static_cast<HTMLTableRowElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLTableRowElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (int)rowIndex
 {
-    return [self _tableRowElementImpl]->rowIndex();
+    return [self _tableRowElement]->rowIndex();
 }
 
 - (int)sectionRowIndex
 {
-    return [self _tableRowElementImpl]->sectionRowIndex();
+    return [self _tableRowElement]->sectionRowIndex();
 }
 
 - (DOMHTMLCollection *)cells
 {
-    HTMLCollectionImpl *collection = new HTMLCollectionImpl([self _tableRowElementImpl], HTMLCollectionImpl::TR_CELLS);
-    return [DOMHTMLCollection _collectionWithImpl:collection];
+    HTMLCollection *collection = new HTMLCollection([self _tableRowElement], HTMLCollection::TR_CELLS);
+    return [DOMHTMLCollection _collectionWith:collection];
 }
 
 - (NSString *)align
 {
-    return [self _tableRowElementImpl]->getAttribute(alignAttr);
+    return [self _tableRowElement]->getAttribute(alignAttr);
 }
 
 - (void)setAlign:(NSString *)align
 {
-    [self _tableRowElementImpl]->setAttribute(alignAttr, align);
+    [self _tableRowElement]->setAttribute(alignAttr, align);
 }
 
 - (NSString *)bgColor
 {
-    return [self _tableRowElementImpl]->getAttribute(bgcolorAttr);
+    return [self _tableRowElement]->getAttribute(bgcolorAttr);
 }
 
 - (void)setBgColor:(NSString *)bgColor
 {
-    [self _tableRowElementImpl]->setAttribute(bgcolorAttr, bgColor);
+    [self _tableRowElement]->setAttribute(bgcolorAttr, bgColor);
 }
 
 - (NSString *)ch
 {
-    return [self _tableRowElementImpl]->getAttribute(charoffAttr);
+    return [self _tableRowElement]->getAttribute(charoffAttr);
 }
 
 - (void)setCh:(NSString *)ch
 {
-    [self _tableRowElementImpl]->setAttribute(charoffAttr, ch);
+    [self _tableRowElement]->setAttribute(charoffAttr, ch);
 }
 
 - (NSString *)chOff
 {
-    return [self _tableRowElementImpl]->getAttribute(charoffAttr);
+    return [self _tableRowElement]->getAttribute(charoffAttr);
 }
 
 - (void)setChOff:(NSString *)chOff
 {
-    [self _tableRowElementImpl]->setAttribute(charoffAttr, chOff);
+    [self _tableRowElement]->setAttribute(charoffAttr, chOff);
 }
 
 - (NSString *)vAlign
 {
-    return [self _tableRowElementImpl]->getAttribute(valignAttr);
+    return [self _tableRowElement]->getAttribute(valignAttr);
 }
 
 - (void)setVAlign:(NSString *)vAlign
 {
-    [self _tableRowElementImpl]->setAttribute(valignAttr, vAlign);
+    [self _tableRowElement]->setAttribute(valignAttr, vAlign);
 }
 
 - (DOMHTMLElement *)insertCell:(int)index
 {
     ExceptionCode ec = 0;
-    HTMLTableCellElementImpl *impl = static_cast<HTMLTableCellElementImpl *>([self _tableRowElementImpl]->insertCell(index, ec));
+    HTMLTableCellElement *impl = static_cast<HTMLTableCellElement *>([self _tableRowElement]->insertCell(index, ec));
     raiseOnDOMError(ec);
-    return [DOMHTMLTableCellElement _tableCellElementWithImpl:impl];
+    return [DOMHTMLTableCellElement _tableCellElementWith:impl];
 }
 
 - (void)deleteCell:(int)index
 {
     ExceptionCode ec = 0;
-    [self _tableRowElementImpl]->deleteCell(index, ec);
+    [self _tableRowElement]->deleteCell(index, ec);
     raiseOnDOMError(ec);
 }
 
@@ -3493,410 +3493,410 @@ using namespace DOM::HTMLNames;
 
 - (int)cellIndex
 {
-    return [self _tableCellElementImpl]->cellIndex();
+    return [self _tableCellElement]->cellIndex();
 }
 
 - (NSString *)abbr
 {
-    return [self _tableCellElementImpl]->getAttribute(abbrAttr);
+    return [self _tableCellElement]->getAttribute(abbrAttr);
 }
 
 - (void)setAbbr:(NSString *)abbr
 {
-    [self _tableCellElementImpl]->setAttribute(abbrAttr, abbr);
+    [self _tableCellElement]->setAttribute(abbrAttr, abbr);
 }
 
 - (NSString *)align
 {
-    return [self _tableCellElementImpl]->getAttribute(alignAttr);
+    return [self _tableCellElement]->getAttribute(alignAttr);
 }
 
 - (void)setAlign:(NSString *)align
 {
-    [self _tableCellElementImpl]->setAttribute(alignAttr, align);
+    [self _tableCellElement]->setAttribute(alignAttr, align);
 }
 
 - (NSString *)axis
 {
-    return [self _tableCellElementImpl]->getAttribute(axisAttr);
+    return [self _tableCellElement]->getAttribute(axisAttr);
 }
 
 - (void)setAxis:(NSString *)axis
 {
-    [self _tableCellElementImpl]->setAttribute(axisAttr, axis);
+    [self _tableCellElement]->setAttribute(axisAttr, axis);
 }
 
 - (NSString *)bgColor
 {
-    return [self _tableCellElementImpl]->getAttribute(bgcolorAttr);
+    return [self _tableCellElement]->getAttribute(bgcolorAttr);
 }
 
 - (void)setBgColor:(NSString *)bgColor
 {
-    [self _tableCellElementImpl]->setAttribute(bgcolorAttr, bgColor);
+    [self _tableCellElement]->setAttribute(bgcolorAttr, bgColor);
 }
 
 - (NSString *)ch
 {
-    return [self _tableCellElementImpl]->getAttribute(charoffAttr);
+    return [self _tableCellElement]->getAttribute(charoffAttr);
 }
 
 - (void)setCh:(NSString *)ch
 {
-    [self _tableCellElementImpl]->setAttribute(charoffAttr, ch);
+    [self _tableCellElement]->setAttribute(charoffAttr, ch);
 }
 
 - (NSString *)chOff
 {
-    return [self _tableCellElementImpl]->getAttribute(charoffAttr);
+    return [self _tableCellElement]->getAttribute(charoffAttr);
 }
 
 - (void)setChOff:(NSString *)chOff
 {
-    [self _tableCellElementImpl]->setAttribute(charoffAttr, chOff);
+    [self _tableCellElement]->setAttribute(charoffAttr, chOff);
 }
 
 - (int)colSpan
 {
-    return [self _tableCellElementImpl]->getAttribute(colspanAttr).toInt();
+    return [self _tableCellElement]->getAttribute(colspanAttr).toInt();
 }
 
 - (void)setColSpan:(int)colSpan
 {
-    DOMString string(QString::number(colSpan));
-    [self _tableCellElementImpl]->setAttribute(colspanAttr, string);
+    String string(DeprecatedString::number(colSpan));
+    [self _tableCellElement]->setAttribute(colspanAttr, string);
 }
 
 - (NSString *)headers
 {
-    return [self _tableCellElementImpl]->getAttribute(headersAttr);
+    return [self _tableCellElement]->getAttribute(headersAttr);
 }
 
 - (void)setHeaders:(NSString *)headers
 {
-    [self _tableCellElementImpl]->setAttribute(headersAttr, headers);
+    [self _tableCellElement]->setAttribute(headersAttr, headers);
 }
 
 - (NSString *)height
 {
-    return [self _tableCellElementImpl]->getAttribute(heightAttr);
+    return [self _tableCellElement]->getAttribute(heightAttr);
 }
 
 - (void)setHeight:(NSString *)height
 {
-    [self _tableCellElementImpl]->setAttribute(heightAttr, height);
+    [self _tableCellElement]->setAttribute(heightAttr, height);
 }
 
 - (BOOL)noWrap
 {
-    return [self _tableCellElementImpl]->getAttribute(nowrapAttr).isNull();
+    return [self _tableCellElement]->getAttribute(nowrapAttr).isNull();
 }
 
 - (void)setNoWrap:(BOOL)noWrap
 {
-    [self _tableCellElementImpl]->setAttribute(nowrapAttr, noWrap ? "" : 0);
+    [self _tableCellElement]->setAttribute(nowrapAttr, noWrap ? "" : 0);
 }
 
 - (int)rowSpan
 {
-    return [self _tableCellElementImpl]->getAttribute(rowspanAttr).toInt();
+    return [self _tableCellElement]->getAttribute(rowspanAttr).toInt();
 }
 
 - (void)setRowSpan:(int)rowSpan
 {
-    DOMString string(QString::number(rowSpan));
-    [self _tableCellElementImpl]->setAttribute(rowspanAttr, string);
+    String string(DeprecatedString::number(rowSpan));
+    [self _tableCellElement]->setAttribute(rowspanAttr, string);
 }
 
 - (NSString *)scope
 {
-    return [self _tableCellElementImpl]->getAttribute(scopeAttr);
+    return [self _tableCellElement]->getAttribute(scopeAttr);
 }
 
 - (void)setScope:(NSString *)scope
 {
-    [self _tableCellElementImpl]->setAttribute(scopeAttr, scope);
+    [self _tableCellElement]->setAttribute(scopeAttr, scope);
 }
 
 - (NSString *)vAlign
 {
-    return [self _tableCellElementImpl]->getAttribute(valignAttr);
+    return [self _tableCellElement]->getAttribute(valignAttr);
 }
 
 - (void)setVAlign:(NSString *)vAlign
 {
-    [self _tableCellElementImpl]->setAttribute(valignAttr, vAlign);
+    [self _tableCellElement]->setAttribute(valignAttr, vAlign);
 }
 
 - (NSString *)width
 {
-    return [self _tableCellElementImpl]->getAttribute(widthAttr);
+    return [self _tableCellElement]->getAttribute(widthAttr);
 }
 
 - (void)setWidth:(NSString *)width
 {
-    [self _tableCellElementImpl]->setAttribute(widthAttr, width);
+    [self _tableCellElement]->setAttribute(widthAttr, width);
 }
 
 @end
 
 @implementation DOMHTMLTableCellElement (WebCoreInternal)
 
-+ (DOMHTMLTableCellElement *)_tableCellElementWithImpl:(HTMLTableCellElementImpl *)impl
++ (DOMHTMLTableCellElement *)_tableCellElementWith:(HTMLTableCellElement *)impl
 {
-    return static_cast<DOMHTMLTableCellElement *>([DOMNode _nodeWithImpl:impl]);
+    return static_cast<DOMHTMLTableCellElement *>([DOMNode _nodeWith:impl]);
 }
 
-- (HTMLTableCellElementImpl *)_tableCellElementImpl
+- (HTMLTableCellElement *)_tableCellElement
 {
-    return static_cast<HTMLTableCellElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLTableCellElement *>(DOM_cast<Node *>(_internal));
 }
 
 @end
 
 @implementation DOMHTMLFrameSetElement
 
-- (HTMLFrameSetElementImpl *)_frameSetElementImpl
+- (HTMLFrameSetElement *)_frameSetElement
 {
-    return static_cast<HTMLFrameSetElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLFrameSetElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)rows
 {
-    return [self _frameSetElementImpl]->getAttribute(rowsAttr);
+    return [self _frameSetElement]->getAttribute(rowsAttr);
 }
 
 - (void)setRows:(NSString *)rows
 {
-    [self _frameSetElementImpl]->setAttribute(rowsAttr, rows);
+    [self _frameSetElement]->setAttribute(rowsAttr, rows);
 }
 
 - (NSString *)cols
 {
-    return [self _frameSetElementImpl]->getAttribute(colsAttr);
+    return [self _frameSetElement]->getAttribute(colsAttr);
 }
 
 - (void)setCols:(NSString *)cols
 {
-    [self _frameSetElementImpl]->setAttribute(colsAttr, cols);
+    [self _frameSetElement]->setAttribute(colsAttr, cols);
 }
 
 @end
 
 @implementation DOMHTMLFrameElement
 
-- (HTMLFrameElementImpl *)_frameElementImpl
+- (HTMLFrameElement *)_frameElement
 {
-    return static_cast<HTMLFrameElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLFrameElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)frameBorder
 {
-    return [self _frameElementImpl]->getAttribute(frameborderAttr);
+    return [self _frameElement]->getAttribute(frameborderAttr);
 }
 
 - (void)setFrameBorder:(NSString *)frameBorder
 {
-    [self _frameElementImpl]->setAttribute(frameborderAttr, frameBorder);
+    [self _frameElement]->setAttribute(frameborderAttr, frameBorder);
 }
 
 - (NSString *)longDesc
 {
-    return [self _frameElementImpl]->getAttribute(longdescAttr);
+    return [self _frameElement]->getAttribute(longdescAttr);
 }
 
 - (void)setLongDesc:(NSString *)longDesc
 {
-    [self _frameElementImpl]->setAttribute(longdescAttr, longDesc);
+    [self _frameElement]->setAttribute(longdescAttr, longDesc);
 }
 
 - (NSString *)marginHeight
 {
-    return [self _frameElementImpl]->getAttribute(marginheightAttr);
+    return [self _frameElement]->getAttribute(marginheightAttr);
 }
 
 - (void)setMarginHeight:(NSString *)marginHeight
 {
-    [self _frameElementImpl]->setAttribute(marginheightAttr, marginHeight);
+    [self _frameElement]->setAttribute(marginheightAttr, marginHeight);
 }
 
 - (NSString *)marginWidth
 {
-    return [self _frameElementImpl]->getAttribute(marginwidthAttr);
+    return [self _frameElement]->getAttribute(marginwidthAttr);
 }
 
 - (void)setMarginWidth:(NSString *)marginWidth
 {
-    [self _frameElementImpl]->setAttribute(marginwidthAttr, marginWidth);
+    [self _frameElement]->setAttribute(marginwidthAttr, marginWidth);
 }
 
 - (NSString *)name
 {
-    return [self _frameElementImpl]->getAttribute(nameAttr);
+    return [self _frameElement]->getAttribute(nameAttr);
 }
 
 - (void)setName:(NSString *)name
 {
-    [self _frameElementImpl]->setAttribute(nameAttr, name);
+    [self _frameElement]->setAttribute(nameAttr, name);
 }
 
 - (BOOL)noResize
 {
-    return [self _frameElementImpl]->getAttribute(noresizeAttr).isNull();
+    return [self _frameElement]->getAttribute(noresizeAttr).isNull();
 }
 
 - (void)setNoResize:(BOOL)noResize
 {
-    [self _frameElementImpl]->setAttribute(noresizeAttr, noResize ? "" : 0);
+    [self _frameElement]->setAttribute(noresizeAttr, noResize ? "" : 0);
 }
 
 - (NSString *)scrolling
 {
-    return [self _frameElementImpl]->getAttribute(scrollingAttr);
+    return [self _frameElement]->getAttribute(scrollingAttr);
 }
 
 - (void)setScrolling:(NSString *)scrolling
 {
-    [self _frameElementImpl]->setAttribute(scrollingAttr, scrolling);
+    [self _frameElement]->setAttribute(scrollingAttr, scrolling);
 }
 
 - (NSString *)src
 {
-    return [self _frameElementImpl]->getAttribute(srcAttr);
+    return [self _frameElement]->getAttribute(srcAttr);
 }
 
 - (void)setSrc:(NSString *)src
 {
-    [self _frameElementImpl]->setAttribute(srcAttr, src);
+    [self _frameElement]->setAttribute(srcAttr, src);
 }
 
 - (DOMDocument *)contentDocument
 {
-    return [DOMDocument _documentWithImpl:[self _frameElementImpl]->contentDocument()];
+    return [DOMDocument _documentWith:[self _frameElement]->contentDocument()];
 }
 
 @end
 
 @implementation DOMHTMLIFrameElement
 
-- (HTMLIFrameElementImpl *)_IFrameElementImpl
+- (HTMLIFrameElement *)_IFrameElement
 {
-    return static_cast<HTMLIFrameElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLIFrameElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)align
 {
-    return [self _IFrameElementImpl]->getAttribute(alignAttr);
+    return [self _IFrameElement]->getAttribute(alignAttr);
 }
 
 - (void)setAlign:(NSString *)align
 {
-    [self _IFrameElementImpl]->setAttribute(alignAttr, align);
+    [self _IFrameElement]->setAttribute(alignAttr, align);
 }
 
 - (NSString *)frameBorder
 {
-    return [self _IFrameElementImpl]->getAttribute(frameborderAttr);
+    return [self _IFrameElement]->getAttribute(frameborderAttr);
 }
 
 - (void)setFrameBorder:(NSString *)frameBorder
 {
-    [self _IFrameElementImpl]->setAttribute(frameborderAttr, frameBorder);
+    [self _IFrameElement]->setAttribute(frameborderAttr, frameBorder);
 }
 
 - (NSString *)height
 {
-    return [self _IFrameElementImpl]->getAttribute(heightAttr);
+    return [self _IFrameElement]->getAttribute(heightAttr);
 }
 
 - (void)setHeight:(NSString *)height
 {
-    [self _IFrameElementImpl]->setAttribute(heightAttr, height);
+    [self _IFrameElement]->setAttribute(heightAttr, height);
 }
 
 - (NSString *)longDesc
 {
-    return [self _IFrameElementImpl]->getAttribute(longdescAttr);
+    return [self _IFrameElement]->getAttribute(longdescAttr);
 }
 
 - (void)setLongDesc:(NSString *)longDesc
 {
-    [self _IFrameElementImpl]->setAttribute(longdescAttr, longDesc);
+    [self _IFrameElement]->setAttribute(longdescAttr, longDesc);
 }
 
 - (NSString *)marginHeight
 {
-    return [self _IFrameElementImpl]->getAttribute(marginheightAttr);
+    return [self _IFrameElement]->getAttribute(marginheightAttr);
 }
 
 - (void)setMarginHeight:(NSString *)marginHeight
 {
-    [self _IFrameElementImpl]->setAttribute(marginheightAttr, marginHeight);
+    [self _IFrameElement]->setAttribute(marginheightAttr, marginHeight);
 }
 
 - (NSString *)marginWidth
 {
-    return [self _IFrameElementImpl]->getAttribute(marginwidthAttr);
+    return [self _IFrameElement]->getAttribute(marginwidthAttr);
 }
 
 - (void)setMarginWidth:(NSString *)marginWidth
 {
-    [self _IFrameElementImpl]->setAttribute(marginwidthAttr, marginWidth);
+    [self _IFrameElement]->setAttribute(marginwidthAttr, marginWidth);
 }
 
 - (NSString *)name
 {
-    return [self _IFrameElementImpl]->getAttribute(nameAttr);
+    return [self _IFrameElement]->getAttribute(nameAttr);
 }
 
 - (void)setName:(NSString *)name
 {
-    [self _IFrameElementImpl]->setAttribute(nameAttr, name);
+    [self _IFrameElement]->setAttribute(nameAttr, name);
 }
 
 - (BOOL)noResize
 {
-    return [self _IFrameElementImpl]->getAttribute(noresizeAttr).isNull();
+    return [self _IFrameElement]->getAttribute(noresizeAttr).isNull();
 }
 
 - (void)setNoResize:(BOOL)noResize
 {
-    [self _IFrameElementImpl]->setAttribute(noresizeAttr, noResize ? "" : 0);
+    [self _IFrameElement]->setAttribute(noresizeAttr, noResize ? "" : 0);
 }
 
 - (NSString *)scrolling
 {
-    return [self _IFrameElementImpl]->getAttribute(scrollingAttr);
+    return [self _IFrameElement]->getAttribute(scrollingAttr);
 }
 
 - (void)setScrolling:(NSString *)scrolling
 {
-    [self _IFrameElementImpl]->setAttribute(scrollingAttr, scrolling);
+    [self _IFrameElement]->setAttribute(scrollingAttr, scrolling);
 }
 
 - (NSString *)src
 {
-    return [self _IFrameElementImpl]->getAttribute(srcAttr);
+    return [self _IFrameElement]->getAttribute(srcAttr);
 }
 
 - (void)setSrc:(NSString *)src
 {
-    [self _IFrameElementImpl]->setAttribute(srcAttr, src);
+    [self _IFrameElement]->setAttribute(srcAttr, src);
 }
 
 - (NSString *)width
 {
-    return [self _IFrameElementImpl]->getAttribute(widthAttr);
+    return [self _IFrameElement]->getAttribute(widthAttr);
 }
 
 - (void)setWidth:(NSString *)width
 {
-    [self _IFrameElementImpl]->setAttribute(widthAttr, width);
+    [self _IFrameElement]->setAttribute(widthAttr, width);
 }
 
 - (DOMDocument *)contentDocument
 {
-    return [DOMDocument _documentWithImpl:[self _IFrameElementImpl]->contentDocument()];
+    return [DOMDocument _documentWith:[self _IFrameElement]->contentDocument()];
 }
 
 @end
@@ -3905,87 +3905,87 @@ using namespace DOM::HTMLNames;
 
 @implementation DOMHTMLEmbedElement
 
-- (HTMLEmbedElementImpl *)_embedElementImpl
+- (HTMLEmbedElement *)_embedElement
 {
-    return static_cast<HTMLEmbedElementImpl *>(DOM_cast<NodeImpl *>(_internal));
+    return static_cast<HTMLEmbedElement *>(DOM_cast<Node *>(_internal));
 }
 
 - (NSString *)align
 {
-    return [self _embedElementImpl]->getAttribute(alignAttr);
+    return [self _embedElement]->getAttribute(alignAttr);
 }
 
 - (void)setAlign:(NSString *)align
 {
-    [self _embedElementImpl]->setAttribute(alignAttr, align);
+    [self _embedElement]->setAttribute(alignAttr, align);
 }
 
 - (int)height
 {
-    return [self _embedElementImpl]->getAttribute(heightAttr).toInt();
+    return [self _embedElement]->getAttribute(heightAttr).toInt();
 }
 
 - (void)setHeight:(int)height
 {
-    DOMString string(QString::number(height));
-    [self _embedElementImpl]->setAttribute(heightAttr, string);
+    String string(DeprecatedString::number(height));
+    [self _embedElement]->setAttribute(heightAttr, string);
 }
 
 - (NSString *)name
 {
-    return [self _embedElementImpl]->getAttribute(nameAttr);
+    return [self _embedElement]->getAttribute(nameAttr);
 }
 
 - (void)setName:(NSString *)name
 {
-    [self _embedElementImpl]->setAttribute(nameAttr, name);
+    [self _embedElement]->setAttribute(nameAttr, name);
 }
 
 - (NSString *)src
 {
-    return [self _embedElementImpl]->getAttribute(srcAttr);
+    return [self _embedElement]->getAttribute(srcAttr);
 }
 
 - (void)setSrc:(NSString *)src
 {
-    [self _embedElementImpl]->setAttribute(srcAttr, src);
+    [self _embedElement]->setAttribute(srcAttr, src);
 }
 
 - (NSString *)type
 {
-    return [self _embedElementImpl]->getAttribute(typeAttr);
+    return [self _embedElement]->getAttribute(typeAttr);
 }
 
 - (void)setType:(NSString *)type
 {
-    [self _embedElementImpl]->setAttribute(typeAttr, type);
+    [self _embedElement]->setAttribute(typeAttr, type);
 }
 
 - (int)width
 {
-    return [self _embedElementImpl]->getAttribute(widthAttr).toInt();
+    return [self _embedElement]->getAttribute(widthAttr).toInt();
 }
 
 - (void)setWidth:(int)width
 {
-    DOMString string(QString::number(width));
-    [self _embedElementImpl]->setAttribute(widthAttr, string);
+    String string(DeprecatedString::number(width));
+    [self _embedElement]->setAttribute(widthAttr, string);
 }
 
 @end
 
 // These #imports and "usings" are used only by viewForElement and should be deleted 
 // when that function goes away.
-#import "render_object.h"
+#import "RenderObject.h"
 #import "render_replaced.h"
-using khtml::RenderObject;
-using khtml::RenderWidget;
+using WebCore::RenderObject;
+using WebCore::RenderWidget;
 
 // This function is used only by the two FormAutoFillTransition categories, and will go away
 // as soon as possible.
 static NSView *viewForElement(DOMElement *element)
 {
-    RenderObject *renderer = [element _elementImpl]->renderer();
+    RenderObject *renderer = [element _element]->renderer();
     if (renderer && renderer->isWidget()) {
         Widget *widget = static_cast<const RenderWidget *>(renderer)->widget();
         if (widget) {

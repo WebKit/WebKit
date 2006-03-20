@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
-#import "QStringList.h"
+#import "DeprecatedStringList.h"
 
-NSArray *QStringList::getNSArray() const
+NSArray *DeprecatedStringList::getNSArray() const
 {
     NSMutableArray *array = [NSMutableArray array];
     for (ConstIterator it = begin(); it != end(); ++it) {

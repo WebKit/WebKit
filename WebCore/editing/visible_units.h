@@ -26,9 +26,9 @@
 #ifndef KHTML_EDITING_VISIBLE_UNITS_H
 #define KHTML_EDITING_VISIBLE_UNITS_H
 
-#include "text_affinity.h"
+#include "TextAffinity.h"
 
-namespace khtml {
+namespace WebCore {
 
 class VisiblePosition;
 
@@ -85,6 +85,6 @@ bool inSameEditableContent(const VisiblePosition &, const VisiblePosition &);
 bool isStartOfEditableContent(const VisiblePosition &);
 bool isEndOfEditableContent(const VisiblePosition &);
 
-} // namespace DOM
+} // namespace WebCore
 
 #endif // KHTML_EDITING_VISIBLE_POSITION_H

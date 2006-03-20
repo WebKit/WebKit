@@ -26,16 +26,16 @@
 #include <kjs/protect.h>
 
 namespace WebCore {
-    class NodeFilterImpl;
-    class NodeIteratorImpl;
-    class TreeWalkerImpl;
+    class NodeFilter;
+    class NodeIterator;
+    class TreeWalker;
 }
 
 namespace KJS {
 
   class DOMNodeIterator : public DOMObject {
   public:
-    DOMNodeIterator(ExecState*, WebCore::NodeIteratorImpl*);
+    DOMNodeIterator(ExecState*, WebCore::NodeIterator*);
     ~DOMNodeIterator();
     virtual void mark();
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
@@ -45,9 +45,9 @@ namespace KJS {
     static const ClassInfo info;
     enum { Filter, Root, WhatToShow, ExpandEntityReferences, ReferenceNode, PointerBeforeReferenceNode,
            NextNode, PreviousNode, Detach };
-    WebCore::NodeIteratorImpl* impl() const { return m_impl.get(); }
+    WebCore::NodeIterator* impl() const { return m_impl.get(); }
   private:
-    RefPtr<WebCore::NodeIteratorImpl> m_impl;
+    RefPtr<WebCore::NodeIterator> m_impl;
   };
 
   // Constructor object NodeFilter
@@ -63,21 +63,21 @@ namespace KJS {
 
   class DOMNodeFilter : public DOMObject {
   public:
-    DOMNodeFilter(ExecState*, WebCore::NodeFilterImpl*);
+    DOMNodeFilter(ExecState*, WebCore::NodeFilter*);
     ~DOMNodeFilter();
     virtual void mark();
     // no put - all read-only
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
-    WebCore::NodeFilterImpl* impl() const { return m_impl.get(); }
+    WebCore::NodeFilter* impl() const { return m_impl.get(); }
     enum { AcceptNode };
   private:
-    RefPtr<WebCore::NodeFilterImpl> m_impl;
+    RefPtr<WebCore::NodeFilter> m_impl;
   };
 
   class DOMTreeWalker : public DOMObject {
   public:
-    DOMTreeWalker(ExecState*, WebCore::TreeWalkerImpl*);
+    DOMTreeWalker(ExecState*, WebCore::TreeWalker*);
     ~DOMTreeWalker();
     virtual void mark();
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
@@ -88,22 +88,22 @@ namespace KJS {
     enum { Root, WhatToShow, Filter, ExpandEntityReferences, CurrentNode,
            ParentNode, FirstChild, LastChild, PreviousSibling, NextSibling,
            PreviousNode, NextNode };
-    WebCore::TreeWalkerImpl* impl() const { return m_impl.get(); }
+    WebCore::TreeWalker* impl() const { return m_impl.get(); }
   private:
-    RefPtr<WebCore::TreeWalkerImpl> m_impl;
+    RefPtr<WebCore::TreeWalker> m_impl;
   };
 
-  JSValue* toJS(ExecState*, WebCore::NodeIteratorImpl*);
+  JSValue* toJS(ExecState*, WebCore::NodeIterator*);
   JSValue* getNodeFilterConstructor(ExecState*);
-  JSValue* toJS(ExecState*, WebCore::NodeFilterImpl*);
-  JSValue* toJS(ExecState*, WebCore::TreeWalkerImpl*);
+  JSValue* toJS(ExecState*, WebCore::NodeFilter*);
+  JSValue* toJS(ExecState*, WebCore::TreeWalker*);
 
-  WebCore::NodeFilterImpl* toNodeFilter(const JSValue*); // returns 0 if value is not a DOMNodeFilter
+  WebCore::NodeFilter* toNodeFilter(const JSValue*); // returns 0 if value is not a DOMNodeFilter
 
   class JSNodeFilterCondition : public WebCore::NodeFilterCondition {
   public:
     JSNodeFilterCondition(JSObject* filter);
-    virtual short acceptNode(WebCore::NodeImpl*) const;
+    virtual short acceptNode(WebCore::Node*) const;
     virtual void mark();
   protected:
     JSObject *filter;

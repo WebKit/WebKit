@@ -25,13 +25,13 @@
 #include "config.h"
 #include "InlineTextBox.h"
 
-#include "DocumentImpl.h"
+#include "Document.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "RenderBlock.h"
 #include "break_lines.h"
-#include "dom2_rangeimpl.h"
-#include "render_arena.h"
+#include "Range.h"
+#include "RenderArena.h"
 #include <kxmlcore/AlwaysInline.h>
 
 namespace WebCore {
@@ -262,7 +262,7 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
         return;
 
     // Determine whether or not we have marked text.
-    RangeImpl *markedTextRange = object()->document()->frame()->markedTextRange();
+    Range *markedTextRange = object()->document()->frame()->markedTextRange();
     int exception = 0;
     bool haveMarkedText = markedTextRange && markedTextRange->startContainer(exception) == object()->node();
     bool markedTextUsesUnderlines = object()->document()->frame()->markedTextUsesUnderlines();
@@ -289,11 +289,11 @@ void InlineTextBox::paint(RenderObject::PaintInfo& i, int tx, int ty)
     // 2. Now paint the foreground, including text and decorations like underline/overline (in quirks mode only).
     if (m_len <= 0) return;
     
-    QValueList<MarkedTextUnderline> underlines;
+    DeprecatedValueList<MarkedTextUnderline> underlines;
     if (haveMarkedText && markedTextUsesUnderlines) {
         underlines = object()->document()->frame()->markedTextUnderlines();
     }
-    QValueListIterator<MarkedTextUnderline> underlineIt = underlines.begin();
+    DeprecatedValueListIterator<MarkedTextUnderline> underlineIt = underlines.begin();
 
     Color textColor = styleToUse->color();
     
@@ -591,8 +591,8 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, int _tx, int _ty, 
 
 void InlineTextBox::paintAllMarkersOfType(GraphicsContext* pt, int _tx, int _ty, DocumentMarker::MarkerType markerType, RenderStyle* style, const Font* f)
 {
-    QValueList<DocumentMarker> markers = object()->document()->markersForNode(object()->node());
-    QValueListIterator <DocumentMarker> markerIt = markers.begin();
+    DeprecatedValueList<DocumentMarker> markers = object()->document()->markersForNode(object()->node());
+    DeprecatedValueListIterator <DocumentMarker> markerIt = markers.begin();
 
     // Give any document markers that touch this run a chance to draw before the text has been drawn.
     // Note end() points at the last char, not one past it like endOffset and ranges do.

@@ -29,7 +29,8 @@
 #define KSVG WebCore
 #define khtml WebCore
 #define DOMString String
-#define DOMStringImpl StringImpl
+#define QString DeprecatedString
+#define qstring() deprecatedString()
 
 #if __APPLE__
 #define HAVE_FUNC_USLEEP 1
@@ -44,7 +45,6 @@
 // FIXME: Should probably just dump this eventually, but it's needed for now.
 // We get this from some system place on OS X; probably better not to use it
 // in WebCore code.
-typedef unsigned uint;
 
 #include <assert.h>
 

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "KeyEvent.h"
+#include "PlatformKeyboardEvent.h"
 #include <windows.h>
 
 #define REPEAT_COUNT_MASK           0x0000FFFF
@@ -36,10 +36,10 @@
 
 namespace WebCore {
 
-KeyEvent::KeyEvent(HWND hWnd, WPARAM wParam, LPARAM lParam)
+PlatformKeyboardEvent::PlatformKeyboardEvent(HWND hWnd, WPARAM wParam, LPARAM lParam)
     : m_text(QChar(wParam))
     , m_unmodifiedText(QChar(wParam))
-    , m_keyIdentifier(QString().sprintf("U+%06X", toupper(wParam)))
+    , m_keyIdentifier(DeprecatedString().sprintf("U+%06X", toupper(wParam)))
     , m_isKeyUp(!(lParam & NEW_DOWN_STATE_MASK))
     , m_autoRepeat(lParam & REPEAT_COUNT_MASK)
     , m_WindowsKeyCode(wParam)

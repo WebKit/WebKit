@@ -29,16 +29,16 @@
 #ifndef HTMLPARSER_H
 #define HTMLPARSER_H
 
-#include "html_documentimpl.h"
+#include "HTMLDocument.h"
 
 namespace WebCore {
 
-class DocumentFragmentImpl;
+class DocumentFragment;
 class FrameView;
-class HTMLElementImpl;
-class HTMLFormElementImpl;
-class HTMLHeadElementImpl;
-class HTMLMapElementImpl;
+class HTMLElement;
+class HTMLFormElement;
+class HTMLHeadElement;
+class HTMLMapElement;
 class HTMLStackElem;
 class Token;
 
@@ -49,14 +49,14 @@ class Token;
 class HTMLParser
 {
 public:
-    HTMLParser(DocumentImpl*);
-    HTMLParser(DocumentFragmentImpl*);
+    HTMLParser(Document*);
+    HTMLParser(DocumentFragment*);
     virtual ~HTMLParser();
 
     /**
      * parses one token delivered by the tokenizer
      */
-    PassRefPtr<NodeImpl> parseToken(Token*);
+    PassRefPtr<Node> parseToken(Token*);
     
     /**
      * tokenizer says it's not going to be sending us any more tokens
@@ -72,46 +72,46 @@ public:
     bool noSpaces() const { return !inBody; }
     bool selectMode() const { return inSelect; }
 
-    HTMLDocumentImpl *doc() const { return static_cast<HTMLDocumentImpl *>(document); }
+    HTMLDocument *doc() const { return static_cast<HTMLDocument *>(document); }
 
 private:
-    void setCurrent(NodeImpl* newCurrent);
+    void setCurrent(Node* newCurrent);
     void setSkipMode(const QualifiedName& qName) { discard_until = qName.localName(); }
 
-    DocumentImpl* document;
+    Document* document;
 
     /*
      * generate a node from the token
      */
-    PassRefPtr<NodeImpl> getNode(Token*);
-    bool textCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
-    bool commentCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
-    bool headCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
-    bool bodyCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
-    bool framesetCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
-    bool iframeCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
-    bool formCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
-    bool isindexCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
-    bool selectCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
-    bool ddCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
-    bool dtCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
-    bool nestedCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
-    bool nestedStyleCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
-    bool tableCellCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
-    bool tableSectionCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
-    bool noembedCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
-    bool noscriptCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
-    bool noframesCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
-    bool nolayerCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
-    bool mapCreateErrorCheck(Token*, RefPtr<NodeImpl>&);
+    PassRefPtr<Node> getNode(Token*);
+    bool textCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool commentCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool headCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool bodyCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool framesetCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool iframeCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool formCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool isindexCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool selectCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool ddCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool dtCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool nestedCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool nestedStyleCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool tableCellCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool tableSectionCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool noembedCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool noscriptCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool noframesCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool nolayerCreateErrorCheck(Token*, RefPtr<Node>&);
+    bool mapCreateErrorCheck(Token*, RefPtr<Node>&);
 
     void processCloseTag(Token *);
 
-    bool insertNode(NodeImpl *n, bool flat = false);
-    bool handleError(NodeImpl* n, bool flat, const AtomicString& localName, int tagPriority);
+    bool insertNode(Node *n, bool flat = false);
+    bool handleError(Node* n, bool flat, const AtomicString& localName, int tagPriority);
     
     // The currently active element (the one new elements will be added to).  Can be a DocumentFragment, a Document or an Element.
-    NodeImpl* current;
+    Node* current;
 
     bool currentIsReferenced;
 
@@ -130,36 +130,36 @@ private:
     bool isResidualStyleTag(const AtomicString& tagName);
     bool isAffectedByResidualStyle(const AtomicString& tagName);
     void handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem);
-    void reopenResidualStyleTags(HTMLStackElem* elem, NodeImpl* malformedTableParent);
+    void reopenResidualStyleTags(HTMLStackElem* elem, Node* malformedTableParent);
 
     bool allowNestedRedundantTag(const AtomicString& tagName);
     
     static bool isHeaderTag(const AtomicString& tagName);
     void popNestedHeaderTag();
 
-    bool isInline(NodeImpl* node) const;
+    bool isInline(Node* node) const;
     
     /*
      * currently active form
      */
-    HTMLFormElementImpl *form;
+    HTMLFormElement *form;
 
     /*
      * current map
      */
-    HTMLMapElementImpl *map;
+    HTMLMapElement *map;
 
     /*
      * the head element. Needed for crappy html which defines <base> after </head>
      */
-    HTMLHeadElementImpl *head;
+    HTMLHeadElement *head;
 
     /*
      * a possible <isindex> element in the head. Compatibility hack for
      * html from the stone age
      */
-    RefPtr<NodeImpl> isindex;
-    NodeImpl* handleIsindex(Token*);
+    RefPtr<Node> isindex;
+    Node* handleIsindex(Token*);
 
     /*
      * inserts the stupid isIndex element.

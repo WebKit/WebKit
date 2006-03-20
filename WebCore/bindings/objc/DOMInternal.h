@@ -26,59 +26,59 @@
 #import "DOM.h"
 
 namespace WebCore {
-    class CSSStyleDeclarationImpl;
-    class CSSStyleSheetImpl;
-    class DocumentFragmentImpl;
-    class DocumentImpl;
-    class DocumentTypeImpl;
-    class ElementImpl;
-    class NodeFilterImpl;
-    class NodeImpl;
-    class NodeIteratorImpl;
-    class NodeListImpl;
-    class RangeImpl;
-    class StyleSheetListImpl;
-    class TreeWalkerImpl;
+    class CSSStyleDeclaration;
+    class CSSStyleSheet;
+    class DocumentFragment;
+    class Document;
+    class DocumentType;
+    class Element;
+    class NodeFilter;
+    class Node;
+    class NodeIterator;
+    class NodeList;
+    class Range;
+    class StyleSheetList;
+    class TreeWalker;
 
     typedef int ExceptionCode;
 }
 
 @interface DOMNode (WebCoreInternal)
-+ (DOMNode *)_nodeWithImpl:(DOM::NodeImpl *)impl;
-- (DOM::NodeImpl *)_nodeImpl;
++ (DOMNode *)_nodeWith:(WebCore::Node *)impl;
+- (WebCore::Node *)_node;
 @end
 
 @interface DOMNodeList (WebCoreInternal)
-+ (DOMNodeList *)_nodeListWithImpl:(DOM::NodeListImpl *)impl;
++ (DOMNodeList *)_nodeListWith:(WebCore::NodeList *)impl;
 @end
 
 @interface DOMElement (WebCoreInternal)
-+ (DOMElement *)_elementWithImpl:(DOM::ElementImpl *)impl;
-- (DOM::ElementImpl *)_elementImpl;
++ (DOMElement *)_elementWith:(WebCore::Element *)impl;
+- (WebCore::Element *)_element;
 @end
 
 @interface DOMDocument (WebCoreInternal)
-+ (DOMDocument *)_documentWithImpl:(DOM::DocumentImpl *)impl;
-- (DOM::DocumentImpl *)_documentImpl;
++ (DOMDocument *)_documentWith:(WebCore::Document *)impl;
+- (WebCore::Document *)_document;
 - (DOMElement *)_ownerElement;
 @end
 
 @interface DOMDocumentFragment (WebCoreInternal)
-+ (DOMDocumentFragment *)_documentFragmentWithImpl:(DOM::DocumentFragmentImpl *)impl;
-- (DOM::DocumentFragmentImpl *)_fragmentImpl;
++ (DOMDocumentFragment *)_documentFragmentWith:(WebCore::DocumentFragment *)impl;
+- (WebCore::DocumentFragment *)_fragment;
 @end
 
 @interface DOMRange (WebCoreInternal)
-+ (DOMRange *)_rangeWithImpl:(DOM::RangeImpl *)impl;
-- (DOM::RangeImpl *)_rangeImpl;
++ (DOMRange *)_rangeWith:(WebCore::Range *)impl;
+- (WebCore::Range *)_range;
 @end
 
 @interface DOMNodeIterator (WebCoreInternal)
-+ (DOMNodeIterator *)_nodeIteratorWithImpl:(DOM::NodeIteratorImpl *)impl filter:(id <DOMNodeFilter>)filter;
++ (DOMNodeIterator *)_nodeIteratorWith:(WebCore::NodeIterator *)impl filter:(id <DOMNodeFilter>)filter;
 @end
 
 @interface DOMTreeWalker (WebCoreInternal)
-+ (DOMTreeWalker *)_treeWalkerWithImpl:(DOM::TreeWalkerImpl *)impl filter:(id <DOMNodeFilter>)filter;
++ (DOMTreeWalker *)_treeWalkerWith:(WebCore::TreeWalker *)impl filter:(id <DOMNodeFilter>)filter;
 @end
 
 @interface DOMObject (WebCoreInternal)
@@ -86,20 +86,20 @@ namespace WebCore {
 @end
 
 @interface DOMCSSStyleDeclaration (WebCoreInternal)
-+ (DOMCSSStyleDeclaration *)_styleDeclarationWithImpl:(DOM::CSSStyleDeclarationImpl *)impl;
-- (DOM::CSSStyleDeclarationImpl *)_styleDeclarationImpl;
++ (DOMCSSStyleDeclaration *)_styleDeclarationWith:(WebCore::CSSStyleDeclaration *)impl;
+- (WebCore::CSSStyleDeclaration *)_styleDeclaration;
 @end
 
 @interface DOMStyleSheetList (WebCoreInternal)
-+ (DOMStyleSheetList *)_styleSheetListWithImpl:(DOM::StyleSheetListImpl *)impl;
++ (DOMStyleSheetList *)_styleSheetListWith:(WebCore::StyleSheetList *)impl;
 @end
 
 @interface DOMCSSStyleSheet (WebCoreInternal)
-+ (DOMCSSStyleSheet *)_CSSStyleSheetWithImpl:(DOM::CSSStyleSheetImpl *)impl;
++ (DOMCSSStyleSheet *)_CSSStyleSheetWith:(WebCore::CSSStyleSheet *)impl;
 @end
 
 @interface DOMNodeFilter : DOMObject <DOMNodeFilter>
-+ (DOMNodeFilter *)_nodeFilterWithImpl:(DOM::NodeFilterImpl *)impl;
++ (DOMNodeFilter *)_nodeFilterWith:(WebCore::NodeFilter *)impl;
 @end
 
 // Helper functions for DOM wrappers and gluing to Objective-C
@@ -109,11 +109,11 @@ template <class Target, class Source> Target DOM_cast(Source) { Source::failToCo
 
 // Type safe DOM wrapper access.
 
-NSObject* getDOMWrapperImpl(DOMObjectInternal*);
-void addDOMWrapperImpl(NSObject* wrapper, DOMObjectInternal*);
+NSObject* getDOMWrapper(DOMObjectInternal*);
+void addDOMWrapper(NSObject* wrapper, DOMObjectInternal*);
 
-template <class Source> inline id getDOMWrapper(Source impl) { return getDOMWrapperImpl(DOM_cast<DOMObjectInternal*>(impl)); }
-template <class Source> inline void addDOMWrapper(NSObject* wrapper, Source impl) { addDOMWrapperImpl(wrapper, DOM_cast<DOMObjectInternal*>(impl)); }
+template <class Source> inline id getDOMWrapper(Source impl) { return getDOMWrapper(DOM_cast<DOMObjectInternal*>(impl)); }
+template <class Source> inline void addDOMWrapper(NSObject* wrapper, Source impl) { addDOMWrapper(wrapper, DOM_cast<DOMObjectInternal*>(impl)); }
 void removeDOMWrapper(DOMObjectInternal*);
 
 void raiseDOMException(WebCore::ExceptionCode);
@@ -133,24 +133,24 @@ inline void raiseOnDOMError(WebCore::ExceptionCode ec)
     template <> inline class WebCore::type* DOM_cast<class WebCore::type*, DOMObjectInternal*>(DOMObjectInternal* p) \
         { return reinterpret_cast<class WebCore::type*>(p); }
 
-// No class should appear in this list if it's base class is already here.
-ALLOW_DOM_CAST(CounterImpl)
-ALLOW_DOM_CAST(CSSRuleImpl)
-ALLOW_DOM_CAST(CSSRuleListImpl)
-ALLOW_DOM_CAST(CSSStyleDeclarationImpl)
-ALLOW_DOM_CAST(CSSStyleSheetImpl)
-ALLOW_DOM_CAST(CSSValueImpl)
-ALLOW_DOM_CAST(DOMImplementationImpl)
-ALLOW_DOM_CAST(HTMLCollectionImpl)
-ALLOW_DOM_CAST(HTMLOptionsCollectionImpl)
-ALLOW_DOM_CAST(MediaListImpl)
-ALLOW_DOM_CAST(NamedNodeMapImpl)
-ALLOW_DOM_CAST(NodeFilterImpl)
-ALLOW_DOM_CAST(NodeImpl)
-ALLOW_DOM_CAST(NodeIteratorImpl)
-ALLOW_DOM_CAST(NodeListImpl)
-ALLOW_DOM_CAST(RangeImpl)
+// No class should appear in this list if its base class is already here.
+ALLOW_DOM_CAST(Counter)
+ALLOW_DOM_CAST(CSSRule)
+ALLOW_DOM_CAST(CSSRuleList)
+ALLOW_DOM_CAST(CSSStyleDeclaration)
+ALLOW_DOM_CAST(CSSStyleSheet)
+ALLOW_DOM_CAST(CSSValue)
+ALLOW_DOM_CAST(DOMImplementation)
+ALLOW_DOM_CAST(HTMLCollection)
+ALLOW_DOM_CAST(HTMLOptionsCollection)
+ALLOW_DOM_CAST(MediaList)
+ALLOW_DOM_CAST(NamedNodeMap)
+ALLOW_DOM_CAST(NodeFilter)
+ALLOW_DOM_CAST(Node)
+ALLOW_DOM_CAST(NodeIterator)
+ALLOW_DOM_CAST(NodeList)
+ALLOW_DOM_CAST(Range)
 ALLOW_DOM_CAST(RectImpl)
-ALLOW_DOM_CAST(StyleSheetImpl)
-ALLOW_DOM_CAST(StyleSheetListImpl)
-ALLOW_DOM_CAST(TreeWalkerImpl)
+ALLOW_DOM_CAST(StyleSheet)
+ALLOW_DOM_CAST(StyleSheetList)
+ALLOW_DOM_CAST(TreeWalker)

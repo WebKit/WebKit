@@ -24,7 +24,7 @@
 #define KCanvasResources_H
 #if SVG_SUPPORT
 
-#include <QString.h>
+#include <DeprecatedString.h>
 #include <q3valuelist.h>
 
 #include <kcanvas/RenderPath.h>
@@ -60,8 +60,8 @@ public:
 
     const KCanvasItemList &clients() const;
     
-    QString idInRegistry() const;
-    void setIdInRegistry(const QString& newId);
+    DeprecatedString idInRegistry() const;
+    void setIdInRegistry(const DeprecatedString& newId);
     
     virtual bool isPaintServer() const { return false; }
     virtual bool isFilter() const { return false; }
@@ -72,7 +72,7 @@ public:
     virtual QTextStream& externalRepresentation(QTextStream &) const; 
 private:
     KCanvasItemList m_clients;
-    QString registryId;
+    DeprecatedString registryId;
 };
 
 class KCanvasClipper : public KCanvasResource
@@ -150,11 +150,11 @@ private:
     bool m_useStrokeWidth;
 };
 
-KCanvasResource *getResourceById(DocumentImpl *document, const AtomicString &id);
-KCanvasMarker *getMarkerById(DocumentImpl *document, const AtomicString &id);
-KCanvasClipper *getClipperById(DocumentImpl *document, const AtomicString &id);
-KCanvasMasker *getMaskerById(DocumentImpl *document, const AtomicString &id);
-KRenderingPaintServer *getPaintServerById(DocumentImpl *document, const AtomicString &id);
+KCanvasResource *getResourceById(Document *document, const AtomicString &id);
+KCanvasMarker *getMarkerById(Document *document, const AtomicString &id);
+KCanvasClipper *getClipperById(Document *document, const AtomicString &id);
+KCanvasMasker *getMaskerById(Document *document, const AtomicString &id);
+KRenderingPaintServer *getPaintServerById(Document *document, const AtomicString &id);
 
 QTextStream &operator<<(QTextStream &ts, const KCanvasResource &r);
 

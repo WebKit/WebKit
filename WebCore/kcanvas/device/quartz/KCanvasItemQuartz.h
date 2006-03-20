@@ -34,7 +34,7 @@ namespace WebCore {
 
 class KCanvasItemQuartz : public RenderPath {
 public:
-    KCanvasItemQuartz(RenderStyle*, SVGStyledElementImpl*);
+    KCanvasItemQuartz(RenderStyle*, SVGStyledElement*);
     virtual ~KCanvasItemQuartz() { }
     
     virtual void drawMarkersIfNeeded(const FloatRect&, const KCanvasPath*) const;

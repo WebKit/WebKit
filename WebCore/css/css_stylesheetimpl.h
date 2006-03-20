@@ -30,27 +30,27 @@
 namespace WebCore {
 
 class CSSParser;
-class CSSRuleImpl;
-class CSSRuleListImpl;
-class CSSStyleRuleImpl;
+class CSSRule;
+class CSSRuleList;
+class CSSStyleRule;
 class CSSStyleSheet;
-class CSSValueImpl;
+class CSSValue;
 class CachedCSSStyleSheet;
 class DocLoader;
-class DocumentImpl;
-class MediaListImpl;
-class NodeImpl;
+class Document;
+class MediaList;
+class Node;
 class StyleSheet;
 
 typedef int ExceptionCode;
 
-class StyleSheetImpl : public StyleListImpl {
+class StyleSheet : public StyleList {
 public:
-    StyleSheetImpl(NodeImpl *ownerNode, String href = String());
-    StyleSheetImpl(StyleSheetImpl *parentSheet, String href = String());
-    StyleSheetImpl(StyleBaseImpl *owner, String href = String());
-    StyleSheetImpl(CachedCSSStyleSheet *cached, String href = String());
-    virtual ~StyleSheetImpl();
+    StyleSheet(Node *ownerNode, String href = String());
+    StyleSheet(StyleSheet *parentSheet, String href = String());
+    StyleSheet(StyleBase *owner, String href = String());
+    StyleSheet(CachedCSSStyleSheet *cached, String href = String());
+    virtual ~StyleSheet();
 
     virtual bool isStyleSheet() const { return true; }
 
@@ -59,40 +59,40 @@ public:
     bool disabled() const { return m_disabled; }
     void setDisabled(bool disabled) { m_disabled = disabled; styleSheetChanged(); }
 
-    NodeImpl *ownerNode() const { return m_parentNode; }
-    StyleSheetImpl *parentStyleSheet() const;
+    Node *ownerNode() const { return m_parentNode; }
+    StyleSheet *parentStyleSheet() const;
     String href() const { return m_strHref; }
     String title() const { return m_strTitle; }
-    MediaListImpl* media() const { return m_media.get(); }
-    void setMedia(MediaListImpl*);
+    MediaList* media() const { return m_media.get(); }
+    void setMedia(MediaList*);
 
     virtual bool isLoading() { return false; }
 
     virtual void styleSheetChanged() { }
     
 protected:
-    NodeImpl *m_parentNode;
+    Node *m_parentNode;
     String m_strHref;
     String m_strTitle;
-    RefPtr<MediaListImpl> m_media;
+    RefPtr<MediaList> m_media;
     bool m_disabled;
 };
 
-class CSSStyleSheetImpl : public StyleSheetImpl
+class CSSStyleSheet : public StyleSheet
 {
 public:
-    CSSStyleSheetImpl(NodeImpl *parentNode, String href = String(), bool _implicit = false);
-    CSSStyleSheetImpl(CSSStyleSheetImpl *parentSheet, String href = String());
-    CSSStyleSheetImpl(CSSRuleImpl *ownerRule, String href = String());
+    CSSStyleSheet(Node *parentNode, String href = String(), bool _implicit = false);
+    CSSStyleSheet(CSSStyleSheet *parentSheet, String href = String());
+    CSSStyleSheet(CSSRule *ownerRule, String href = String());
     
-    ~CSSStyleSheetImpl() { delete m_namespaces; }
+    ~CSSStyleSheet() { delete m_namespaces; }
     
     virtual bool isCSSStyleSheet() const { return true; }
 
     virtual String type() const { return "text/css"; }
 
-    CSSRuleImpl *ownerRule() const;
-    CSSRuleListImpl *cssRules();
+    CSSRule *ownerRule() const;
+    CSSRuleList *cssRules();
     unsigned insertRule(const String &rule, unsigned index, ExceptionCode&);
     void deleteRule(unsigned index, ExceptionCode&);
     unsigned addRule(const String &selector, const String &style, int index, ExceptionCode&);
@@ -109,46 +109,46 @@ public:
 
     virtual void checkLoaded();
     DocLoader* docLoader();
-    DocumentImpl* doc() { return m_doc; }
+    Document* doc() { return m_doc; }
     bool implicit() { return m_implicit; }
 
 protected:
-    DocumentImpl* m_doc;
+    Document* m_doc;
     bool m_implicit;
     CSSNamespace* m_namespaces;
 };
 
 // ----------------------------------------------------------------------------
 
-class StyleSheetListImpl : public Shared<StyleSheetListImpl>
+class StyleSheetList : public Shared<StyleSheetList>
 {
 public:
-    ~StyleSheetListImpl();
+    ~StyleSheetList();
 
     // the following two ignore implicit stylesheets
     unsigned length() const;
-    StyleSheetImpl* item(unsigned index);
+    StyleSheet* item(unsigned index);
 
-    void add(StyleSheetImpl* s);
-    void remove(StyleSheetImpl* s);
+    void add(StyleSheet* s);
+    void remove(StyleSheet* s);
 
-    QPtrList<StyleSheetImpl> styleSheets;
+    DeprecatedPtrList<StyleSheet> styleSheets;
 };
 
 // ----------------------------------------------------------------------------
 
-class MediaListImpl : public StyleBaseImpl
+class MediaList : public StyleBase
 {
 public:
-    MediaListImpl() : StyleBaseImpl(0) {}
-    MediaListImpl(CSSStyleSheetImpl* parentSheet) : StyleBaseImpl(parentSheet) {}
-    MediaListImpl(CSSStyleSheetImpl* parentSheet, const String& media);
-    MediaListImpl(CSSRuleImpl* parentRule, const String& media);
+    MediaList() : StyleBase(0) {}
+    MediaList(CSSStyleSheet* parentSheet) : StyleBase(parentSheet) {}
+    MediaList(CSSStyleSheet* parentSheet, const String& media);
+    MediaList(CSSRule* parentRule, const String& media);
 
     virtual bool isMediaList() { return true; }
 
-    CSSStyleSheetImpl* parentStyleSheet() const;
-    CSSRuleImpl* parentRule() const;
+    CSSStyleSheet* parentStyleSheet() const;
+    CSSRule* parentRule() const;
     unsigned length() const { return m_lstMedia.count(); }
     String item(unsigned index) const { return m_lstMedia[index]; }
     void deleteMedium(const String& oldMedium);
@@ -168,7 +168,7 @@ public:
     bool contains(const String& medium) const;
 
 protected:
-    QValueList<String> m_lstMedia;
+    DeprecatedValueList<String> m_lstMedia;
 };
 
 } // namespace

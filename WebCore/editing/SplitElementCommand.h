@@ -28,23 +28,23 @@
 
 #include "EditCommand.h"
 
-namespace khtml {
+namespace WebCore {
 
 class SplitElementCommand : public EditCommand
 {
 public:
-    SplitElementCommand(DOM::DocumentImpl *, DOM::ElementImpl *element, DOM::NodeImpl *atChild);
+    SplitElementCommand(WebCore::Document *, WebCore::Element *element, WebCore::Node *atChild);
     virtual ~SplitElementCommand() { }
 
     virtual void doApply();
     virtual void doUnapply();
 
 private:
-    RefPtr<DOM::ElementImpl> m_element1;
-    RefPtr<DOM::ElementImpl> m_element2;
-    RefPtr<DOM::NodeImpl> m_atChild;
+    RefPtr<WebCore::Element> m_element1;
+    RefPtr<WebCore::Element> m_element2;
+    RefPtr<WebCore::Node> m_atChild;
 };
 
-} // namespace khtml
+} // namespace WebCore
 
 #endif // __split_element_command_h__

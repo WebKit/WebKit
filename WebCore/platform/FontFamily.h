@@ -26,7 +26,7 @@
 #ifndef FONT_FAMILY_H
 #define FONT_FAMILY_H
 
-#include "QString.h"
+#include "DeprecatedString.h"
 #include "AtomicString.h"
 
 #if __APPLE__

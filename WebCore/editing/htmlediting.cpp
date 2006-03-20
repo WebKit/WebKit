@@ -26,14 +26,14 @@
 #include "config.h"
 #include "htmlediting.h"
 
-#include "DocumentImpl.h"
-#include "EditingTextImpl.h"
-#include "HTMLElementImpl.h"
-#include "TextImpl.h"
+#include "Document.h"
+#include "EditingText.h"
+#include "HTMLElement.h"
+#include "Text.h"
 #include "VisiblePosition.h"
-#include "html_interchange.h"
+#include "HTMLInterchange.h"
 #include "htmlnames.h"
-#include "render_object.h"
+#include "RenderObject.h"
 #include <qregexp.h>
 
 namespace WebCore {
@@ -42,12 +42,12 @@ using namespace HTMLNames;
 
 // Atomic means that the node has no children, or has children which are ignored for the
 // purposes of editing.
-bool isAtomicNode(const NodeImpl *node)
+bool isAtomicNode(const Node *node)
 {
     return node && (!node->hasChildNodes() || editingIgnoresContent(node));
 }
 
-bool editingIgnoresContent(const NodeImpl *node)
+bool editingIgnoresContent(const Node *node)
 {
     if (!node || !node->isHTMLElement())
         return false;
@@ -59,7 +59,7 @@ bool editingIgnoresContent(const NodeImpl *node)
             return true;
     } else {
         // widgets
-        if (static_cast<const HTMLElementImpl *>(node)->isGenericFormElement())
+        if (static_cast<const HTMLElement *>(node)->isGenericFormElement())
             return true;
         if (node->hasTagName(appletTag))
             return true;
@@ -82,7 +82,7 @@ Position rangeCompliantEquivalent(const Position& pos)
     if (pos.isNull())
         return Position();
 
-    NodeImpl *node = pos.node();
+    Node *node = pos.node();
     
     if (pos.offset() <= 0) {
         // FIXME: createMarkup has a problem with BR 0 as the starting position
@@ -127,7 +127,7 @@ Position rangeCompliantEquivalent(const VisiblePosition& vpos)
 // in a node.  It returns 1 for some elements even though they do not have children, which
 // creates technically invalid DOM Positions.  Be sure to call rangeCompliantEquivalent
 // on a Position before using it to create a DOM Range, or an exception will be thrown.
-int maxDeepOffset(const NodeImpl *node)
+int maxDeepOffset(const Node *node)
 {
     if (node->offsetInCharacters())
         return node->maxOffset();
@@ -142,26 +142,26 @@ int maxDeepOffset(const NodeImpl *node)
     return 0;
 }
 
-void rebalanceWhitespaceInTextNode(NodeImpl *node, unsigned int start, unsigned int length)
+void rebalanceWhitespaceInTextNode(Node *node, unsigned int start, unsigned int length)
 {
-    static QRegExp nonRegularWhitespace("[\xa0\n]");
-    static QString twoSpaces("  ");
-    static QString nbsp("\xa0");
-    static QString space(" ");
+    static RegularExpression nonRegularWhitespace("[\xa0\n]");
+    static DeprecatedString twoSpaces("  ");
+    static DeprecatedString nbsp("\xa0");
+    static DeprecatedString space(" ");
      
     ASSERT(node->isTextNode());
-    TextImpl *textNode = static_cast<TextImpl *>(node);
+    Text *textNode = static_cast<Text *>(node);
     String text = textNode->data();
     ASSERT(length <= text.length() && start + length <= text.length());
     
-    QString substring = text.substring(start, length).qstring();
+    DeprecatedString substring = text.substring(start, length).deprecatedString();
 
     substring.replace(nonRegularWhitespace, space);
     
     // The sequence should alternate between spaces and nbsps, always ending in a regular space.
     // Note: This pattern doesn't mimic TextEdit editing behavior on other clients that don't
     // support our -khtml-nbsp-mode: space, but it comes close.
-    static QString pattern("\xa0 ");
+    static DeprecatedString pattern("\xa0 ");
     int end = length - 1; 
     int i = substring.findRev(twoSpaces, end);
     while (i >= 0) {
@@ -180,7 +180,7 @@ void rebalanceWhitespaceInTextNode(NodeImpl *node, unsigned int start, unsigned 
     text.insert(String(substring), start);
 }
 
-bool isTableStructureNode(const NodeImpl *node)
+bool isTableStructureNode(const Node *node)
 {
     RenderObject *r = node->renderer();
     return (r && (r->isTableCell() || r->isTableRow() || r->isTableSection() || r->isTableCol()));
@@ -188,12 +188,12 @@ bool isTableStructureNode(const NodeImpl *node)
 
 const String& nonBreakingSpaceString()
 {
-    static String nonBreakingSpaceString = QString(QChar(NON_BREAKING_SPACE));
+    static String nonBreakingSpaceString = DeprecatedString(QChar(NON_BREAKING_SPACE));
     return nonBreakingSpaceString;
 }
 
 // FIXME: Why use this instead of maxDeepOffset?
-static int maxRangeOffset(NodeImpl *n)
+static int maxRangeOffset(Node *n)
 {
     if (n->offsetInCharacters())
         return n->maxOffset();
@@ -206,7 +206,7 @@ static int maxRangeOffset(NodeImpl *n)
 
 #if 1
 // FIXME: need to dump this
-bool isSpecialElement(const NodeImpl *n)
+bool isSpecialElement(const Node *n)
 {
     if (!n)
         return false;
@@ -240,7 +240,7 @@ bool isFirstVisiblePositionInSpecialElement(const Position& pos)
 {
     VisiblePosition vPos = VisiblePosition(pos, DOWNSTREAM);
 
-    for (NodeImpl *n = pos.node(); n; n = n->parentNode()) {
+    for (Node *n = pos.node(); n; n = n->parentNode()) {
         VisiblePosition checkVP = VisiblePosition(n, 0, DOWNSTREAM);
         if (checkVP != vPos) {
             if (isTableElement(n) && checkVP.next() == vPos)
@@ -256,15 +256,15 @@ bool isFirstVisiblePositionInSpecialElement(const Position& pos)
     return false;
 }
 
-Position positionBeforeContainingSpecialElement(const Position& pos, NodeImpl **containingSpecialElement)
+Position positionBeforeContainingSpecialElement(const Position& pos, Node **containingSpecialElement)
 {
     ASSERT(isFirstVisiblePositionInSpecialElement(pos));
 
     VisiblePosition vPos = VisiblePosition(pos, DOWNSTREAM);
     
-    NodeImpl *outermostSpecialElement = NULL;
+    Node *outermostSpecialElement = NULL;
 
-    for (NodeImpl *n = pos.node(); n; n = n->parentNode()) {
+    for (Node *n = pos.node(); n; n = n->parentNode()) {
         VisiblePosition checkVP = VisiblePosition(n, 0, DOWNSTREAM);
         if (checkVP != vPos) {
             if (isTableElement(n) && checkVP.next() == vPos)
@@ -296,7 +296,7 @@ bool isLastVisiblePositionInSpecialElement(const Position& pos)
 
     VisiblePosition vPos = VisiblePosition(rangePos, DOWNSTREAM);
 
-    for (NodeImpl *n = rangePos.node(); n; n = n->parentNode()) {
+    for (Node *n = rangePos.node(); n; n = n->parentNode()) {
         VisiblePosition checkVP = VisiblePosition(n, maxRangeOffset(n), DOWNSTREAM);
         if (checkVP != vPos)
             return (isTableElement(n) && checkVP.previous() == vPos);
@@ -309,7 +309,7 @@ bool isLastVisiblePositionInSpecialElement(const Position& pos)
     return false;
 }
 
-Position positionAfterContainingSpecialElement(const Position& pos, NodeImpl **containingSpecialElement)
+Position positionAfterContainingSpecialElement(const Position& pos, Node **containingSpecialElement)
 {
     ASSERT(isLastVisiblePositionInSpecialElement(pos));
 
@@ -318,9 +318,9 @@ Position positionAfterContainingSpecialElement(const Position& pos, NodeImpl **c
     Position rangePos = rangeCompliantEquivalent(VisiblePosition(pos, DOWNSTREAM));
     VisiblePosition vPos = VisiblePosition(rangePos, DOWNSTREAM);
 
-    NodeImpl *outermostSpecialElement = NULL;
+    Node *outermostSpecialElement = NULL;
 
-    for (NodeImpl *n = rangePos.node(); n; n = n->parentNode()) {
+    for (Node *n = rangePos.node(); n; n = n->parentNode()) {
         VisiblePosition checkVP = VisiblePosition(n, maxRangeOffset(n), DOWNSTREAM);
         if (checkVP != vPos) {
             if (isTableElement(n) && checkVP.previous() == vPos)
@@ -344,7 +344,7 @@ Position positionAfterContainingSpecialElement(const Position& pos, NodeImpl **c
     return result;
 }
 
-Position positionOutsideContainingSpecialElement(const Position &pos, NodeImpl **containingSpecialElement)
+Position positionOutsideContainingSpecialElement(const Position &pos, Node **containingSpecialElement)
 {
     if (isFirstVisiblePositionInSpecialElement(pos))
         return positionBeforeContainingSpecialElement(pos, containingSpecialElement);
@@ -356,26 +356,26 @@ Position positionOutsideContainingSpecialElement(const Position &pos, NodeImpl *
 }
 #endif
 
-Position positionBeforeNode(const NodeImpl *node)
+Position positionBeforeNode(const Node *node)
 {
     return Position(node->parentNode(), node->nodeIndex());
 }
 
-Position positionAfterNode(const NodeImpl *node)
+Position positionAfterNode(const Node *node)
 {
     return Position(node->parentNode(), node->nodeIndex() + 1);
 }
 
-bool isListElement(NodeImpl *n)
+bool isListElement(Node *n)
 {
     return (n && (n->hasTagName(ulTag) || n->hasTagName(olTag) || n->hasTagName(dlTag)));
 }
 
-NodeImpl *enclosingListChild (NodeImpl *node)
+Node *enclosingListChild (Node *node)
 {
     // check not just for li elements per se, but also
     // for any node whose parent is a list element
-    for (NodeImpl *n = node; n && n->parentNode(); n = n->parentNode()) {
+    for (Node *n = node; n && n->parentNode(); n = n->parentNode()) {
         if (isListElement(n->parentNode()))
             return n;
     }
@@ -384,7 +384,7 @@ NodeImpl *enclosingListChild (NodeImpl *node)
 }
 
 // FIXME: do not require renderer, so that this can be used within fragments, or rename to isRenderedTable()
-bool isTableElement(NodeImpl *n)
+bool isTableElement(Node *n)
 {
     RenderObject *renderer = n ? n->renderer() : 0;
     return (renderer && (renderer->style()->display() == TABLE || renderer->style()->display() == INLINE_TABLE));
@@ -428,7 +428,7 @@ Position positionAfterFollowingTableElement(const Position &pos)
 // FIXME: Consider editable/non-editable boundaries?
 Position positionAvoidingSpecialElementBoundary(const Position &pos)
 {
-    NodeImpl *compNode = pos.node();
+    Node *compNode = pos.node();
     if (!compNode)
         return pos;
     
@@ -455,40 +455,40 @@ Position positionAvoidingSpecialElementBoundary(const Position &pos)
     return result;
 }
 
-PassRefPtr<ElementImpl> createDefaultParagraphElement(DocumentImpl *document)
+PassRefPtr<Element> createDefaultParagraphElement(Document *document)
 {
     ExceptionCode ec = 0;
-    RefPtr<ElementImpl> element = document->createElementNS(xhtmlNamespaceURI, "div", ec);
+    RefPtr<Element> element = document->createElementNS(xhtmlNamespaceURI, "div", ec);
     ASSERT(ec == 0);
     return element.release();
 }
 
-PassRefPtr<ElementImpl> createBreakElement(DocumentImpl *document)
+PassRefPtr<Element> createBreakElement(Document *document)
 {
     ExceptionCode ec = 0;
-    RefPtr<ElementImpl> breakNode = document->createElementNS(xhtmlNamespaceURI, "br", ec);
+    RefPtr<Element> breakNode = document->createElementNS(xhtmlNamespaceURI, "br", ec);
     ASSERT(ec == 0);
     return breakNode.release();
 }
 
-bool isTabSpanNode(const NodeImpl *node)
+bool isTabSpanNode(const Node *node)
 {
-    return (node && node->isElementNode() && static_cast<const ElementImpl *>(node)->getAttribute("class") == AppleTabSpanClass);
+    return (node && node->isElementNode() && static_cast<const Element *>(node)->getAttribute("class") == AppleTabSpanClass);
 }
 
-bool isTabSpanTextNode(const NodeImpl *node)
+bool isTabSpanTextNode(const Node *node)
 {
     return (node && node->parentNode() && isTabSpanNode(node->parentNode()));
 }
 
-NodeImpl *tabSpanNode(const NodeImpl *node)
+Node *tabSpanNode(const Node *node)
 {
     return isTabSpanTextNode(node) ? node->parentNode() : 0;
 }
 
 Position positionBeforeTabSpan(const Position& pos)
 {
-    NodeImpl *node = pos.node();
+    Node *node = pos.node();
     if (isTabSpanTextNode(node))
         node = tabSpanNode(node);
     else if (!isTabSpanNode(node))
@@ -497,11 +497,11 @@ Position positionBeforeTabSpan(const Position& pos)
     return positionBeforeNode(node);
 }
 
-PassRefPtr<ElementImpl> createTabSpanElement(DocumentImpl* document, PassRefPtr<NodeImpl> tabTextNode)
+PassRefPtr<Element> createTabSpanElement(Document* document, PassRefPtr<Node> tabTextNode)
 {
     // make the span to hold the tab
     ExceptionCode ec = 0;
-    RefPtr<ElementImpl> spanElement = document->createElementNS(xhtmlNamespaceURI, "span", ec);
+    RefPtr<Element> spanElement = document->createElementNS(xhtmlNamespaceURI, "span", ec);
     assert(ec == 0);
     spanElement->setAttribute(classAttr, AppleTabSpanClass);
     spanElement->setAttribute(styleAttr, "white-space:pre");
@@ -515,17 +515,17 @@ PassRefPtr<ElementImpl> createTabSpanElement(DocumentImpl* document, PassRefPtr<
     return spanElement.release();
 }
 
-PassRefPtr<ElementImpl> createTabSpanElement(DocumentImpl* document, const String& tabText)
+PassRefPtr<Element> createTabSpanElement(Document* document, const String& tabText)
 {
     return createTabSpanElement(document, document->createTextNode(tabText));
 }
 
-PassRefPtr<ElementImpl> createTabSpanElement(DocumentImpl* document)
+PassRefPtr<Element> createTabSpanElement(Document* document)
 {
-    return createTabSpanElement(document, PassRefPtr<NodeImpl>());
+    return createTabSpanElement(document, PassRefPtr<Node>());
 }
 
-bool isNodeRendered(const NodeImpl *node)
+bool isNodeRendered(const Node *node)
 {
     if (!node)
         return false;
@@ -537,21 +537,21 @@ bool isNodeRendered(const NodeImpl *node)
     return renderer->style()->visibility() == VISIBLE;
 }
 
-NodeImpl *nearestMailBlockquote(const NodeImpl *node)
+Node *nearestMailBlockquote(const Node *node)
 {
-    for (NodeImpl *n = const_cast<NodeImpl *>(node); n; n = n->parentNode()) {
+    for (Node *n = const_cast<Node *>(node); n; n = n->parentNode()) {
         if (isMailBlockquote(n))
             return n;
     }
     return 0;
 }
 
-bool isMailBlockquote(const NodeImpl *node)
+bool isMailBlockquote(const Node *node)
 {
     if (!node || !node->renderer() || !node->isElementNode() && !node->hasTagName(blockquoteTag))
         return false;
         
-    return static_cast<const ElementImpl *>(node)->getAttribute("type") == "cite";
+    return static_cast<const Element *>(node)->getAttribute("type") == "cite";
 }
 
-} // namespace khtml
+} // namespace WebCore

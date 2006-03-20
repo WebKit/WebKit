@@ -27,7 +27,7 @@
 
 namespace WebCore
 {
-    class DocumentImpl;
+    class Document;
 }
 
 namespace WebCore
@@ -35,7 +35,7 @@ namespace WebCore
     class GlobalObject : public GlobalObject
     {
     public:
-        GlobalObject(DocumentImpl *doc);
+        GlobalObject(Document *doc);
         virtual ~GlobalObject();
 
         virtual void afterTimeout() const;

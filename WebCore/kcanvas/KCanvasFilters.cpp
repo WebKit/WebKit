@@ -79,7 +79,7 @@ QTextStream &KCanvasFilter::externalRepresentation(QTextStream &ts) const
     return ts;
 }
 
-KCanvasFilter *getFilterById(DocumentImpl *document, const AtomicString &id)
+KCanvasFilter *getFilterById(Document *document, const AtomicString &id)
 {
     KCanvasResource *resource = getResourceById(document, id);
     if (resource && resource->isFilter())
@@ -102,21 +102,21 @@ void KCanvasFilterEffect::setSubRegion(const FloatRect &subregion)
     m_subregion = subregion;
 }
 
-QString KCanvasFilterEffect::in() const
+DeprecatedString KCanvasFilterEffect::in() const
 {
     return m_in;
 }
-void KCanvasFilterEffect::setIn(const QString &in)
+void KCanvasFilterEffect::setIn(const DeprecatedString &in)
 {
     m_in = in;
 }
 
-QString KCanvasFilterEffect::result() const
+DeprecatedString KCanvasFilterEffect::result() const
 {
     return m_result;
 }
 
-void KCanvasFilterEffect::setResult(const QString &result)
+void KCanvasFilterEffect::setResult(const DeprecatedString &result)
 {
     m_result = result;
 }

@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "NodeImpl.h"
+#include "Node.h"
 #include "KWQLineEdit.h"
 #include "Font.h"
 #include "KWQFileButton.h"
@@ -18,23 +18,23 @@
 #include "loader.h"
 #include "FrameView.h"
 #include "KWQScrollBar.h"
-#include "KWQKJavaAppletWidget.h"
+#include "JavaAppletWidget.h"
 #include "KWQScrollBar.h"
 #include "Path.h"
-#include "MouseEvent.h"
+#include "PlatformMouseEvent.h"
 #include "CookieJar.h"
 #include "Screen.h"
 #include "History.h"
 #include "Language.h"
 #include "LocalizedStrings.h"
 #include "PlugInInfoStore.h"
-#include "render_theme.h"
+#include "RenderTheme.h"
 #include "FrameWin.h"
 #include "BrowserExtensionWin.h"
 #include "TransferJob.h"
 #include "RenderThemeWin.h"
 #include "TextBoundaries.h"
-#include "render_canvasimage.h"
+#include "RenderHTMLCanvas.h"
 
 using namespace WebCore;
 
@@ -80,13 +80,13 @@ void Widget::lockDrawingFocus() { notImplemented(); }
 void Widget::unlockDrawingFocus() { notImplemented(); }
 void Widget::setDrawingAlpha(float) { notImplemented(); }
 
-KJavaAppletWidget::KJavaAppletWidget(IntSize const&,Frame*,KXMLCore::HashMap<String,String> const&) { notImplemented(); }
+JavaAppletWidget::JavaAppletWidget(IntSize const&,Frame*,KXMLCore::HashMap<String,String> const&) { notImplemented(); }
 
 void QLineEdit::selectAll() { notImplemented(); }
 void QLineEdit::addSearchResult() { notImplemented(); }
 int QLineEdit::selectionStart() const { notImplemented(); return 0; }
 bool QLineEdit::hasSelectedText() const { notImplemented(); return 0; }
-QString QLineEdit::selectedText() const { notImplemented(); return QString(); }
+DeprecatedString QLineEdit::selectedText() const { notImplemented(); return DeprecatedString(); }
 void QLineEdit::setAutoSaveName(String const&) { notImplemented(); }
 bool QLineEdit::checksDescendantsForFocus() const { notImplemented(); return false; }
 void QLineEdit::setSelection(int,int) { notImplemented(); }
@@ -107,7 +107,7 @@ double QSlider::value() const { notImplemented(); return 0; }
 void QListBox::setSelected(int,bool) { notImplemented(); }
 IntSize QListBox::sizeForNumberOfLines(int) const { notImplemented(); return IntSize(); }
 bool QListBox::isSelected(int) const { notImplemented(); return 0; }
-void QListBox::appendItem(QString const&,KWQListBoxItemType,bool) { notImplemented(); }
+void QListBox::appendItem(DeprecatedString const&,KWQListBoxItemType,bool) { notImplemented(); }
 void QListBox::doneAppendingItems() { notImplemented(); }
 void QListBox::setWritingDirection(TextDirection) { notImplemented(); }
 void QListBox::setEnabled(bool) { notImplemented(); }
@@ -119,7 +119,7 @@ void KWQFileButton::click(bool) { notImplemented(); }
 IntSize KWQFileButton::sizeForCharacterWidth(int) const { notImplemented(); return IntSize(); }
 Widget::FocusPolicy KWQFileButton::focusPolicy() const { notImplemented(); return NoFocus; }
 WebCore::IntRect KWQFileButton::frameGeometry() const { notImplemented(); return IntRect(); }
-void KWQFileButton::setFilename(QString const&) { notImplemented(); }
+void KWQFileButton::setFilename(DeprecatedString const&) { notImplemented(); }
 int KWQFileButton::baselinePosition(int) const { notImplemented(); return 0; }
 void KWQFileButton::setFrameGeometry(WebCore::IntRect const&) { notImplemented(); }
 KWQFileButton::~KWQFileButton() { notImplemented(); }
@@ -131,15 +131,15 @@ Widget::FocusPolicy QLineEdit::focusPolicy() const { notImplemented(); return No
 
 Cursor::Cursor(Image*) { notImplemented(); }
 
-MouseEvent::MouseEvent() { notImplemented(); }
-bool MouseEvent::isMouseButtonDown(MouseButton) { notImplemented(); return false; }
+PlatformMouseEvent::PlatformMouseEvent() { notImplemented(); }
+bool PlatformMouseEvent::isMouseButtonDown(MouseButton) { notImplemented(); return false; }
 String WebCore::searchableIndexIntroduction() { notImplemented(); return String(); }
 
 int WebCore::findNextSentenceFromIndex(QChar const*,int,int,bool) { notImplemented(); return 0; }
 void WebCore::findSentenceBoundary(QChar const*,int,int,int*,int*) { notImplemented(); }
 int WebCore::findNextWordFromIndex(QChar const*,int,int,bool) { notImplemented(); return 0; }
 
-Array<char> KWQServeSynchronousRequest(Loader*,DocLoader*,TransferJob*,KURL&,QString&) { notImplemented(); return 0; }
+DeprecatedArray<char> KWQServeSynchronousRequest(Loader*,DocLoader*,TransferJob*,KURL&,DeprecatedString&) { notImplemented(); return 0; }
 
 void FrameWin::unfocusWindow() { notImplemented(); }
 bool FrameWin::locationbarVisible() { notImplemented(); return 0; }
@@ -157,9 +157,9 @@ bool FrameWin::passMouseDownEventToWidget(Widget*) { notImplemented(); return 0;
 void FrameWin::issueCutCommand() { notImplemented(); }
 void FrameWin::issueCopyCommand() { notImplemented(); }
 void FrameWin::openURLRequest(struct WebCore::ResourceRequest const&) { notImplemented(); }
-bool FrameWin::passWheelEventToChildWidget(NodeImpl*) { notImplemented(); return 0; }
+bool FrameWin::passWheelEventToChildWidget(Node*) { notImplemented(); return 0; }
 void FrameWin::issueUndoCommand() { notImplemented(); }
-QString FrameWin::mimeTypeForFileName(QString const&) const { notImplemented(); return QString(); }
+DeprecatedString FrameWin::mimeTypeForFileName(DeprecatedString const&) const { notImplemented(); return DeprecatedString(); }
 void FrameWin::issuePasteCommand() { notImplemented(); }
 void FrameWin::scheduleClose() { notImplemented(); }
 void FrameWin::markMisspellings(WebCore::SelectionController const&) { notImplemented(); }
@@ -169,10 +169,10 @@ bool FrameWin::statusbarVisible() { notImplemented(); return 0; }
 bool FrameWin::toolbarVisible() { notImplemented(); return 0; }
 void FrameWin::issueTransposeCommand() { notImplemented(); }
 bool FrameWin::canPaste() const { notImplemented(); return 0; }
-enum WebCore::ObjectContentType FrameWin::objectContentType(KURL const&,QString const&) { notImplemented(); return (ObjectContentType)0; }
+enum WebCore::ObjectContentType FrameWin::objectContentType(KURL const&,DeprecatedString const&) { notImplemented(); return (ObjectContentType)0; }
 bool FrameWin::canGoBackOrForward(int) const { notImplemented(); return 0; }
 void FrameWin::issuePasteAndMatchStyleCommand() { notImplemented(); }
-Plugin* FrameWin::createPlugin(KURL const&,QStringList const&,QStringList const&,QString const&) { notImplemented(); return 0; }
+Plugin* FrameWin::createPlugin(KURL const&,DeprecatedStringList const&,DeprecatedStringList const&,DeprecatedString const&) { notImplemented(); return 0; }
 
 bool BrowserExtensionWin::canRunModal() { notImplemented(); return 0; }
 void BrowserExtensionWin::createNewWindow(struct WebCore::ResourceRequest const&,struct WebCore::WindowArgs const&,Frame*&) { notImplemented(); }
@@ -181,7 +181,7 @@ void BrowserExtensionWin::runModal() { notImplemented(); }
 void BrowserExtensionWin::goBackOrForward(int) { notImplemented(); }
 void BrowserExtensionWin::createNewWindow(struct WebCore::ResourceRequest const&) { notImplemented(); }
 
-void RenderCanvasImage::setNeedsImageUpdate() { notImplemented(); }
+void RenderHTMLCanvas::setNeedsImageUpdate() { notImplemented(); }
 
 
 /********************************************************/
@@ -190,9 +190,9 @@ void RenderCanvasImage::setNeedsImageUpdate() { notImplemented(); }
 static Cursor localCursor;
 const Cursor& WebCore::moveCursor() { return localCursor; }
 
-bool WebCore::historyContains(QString const&) { return false; }
+bool WebCore::historyContains(DeprecatedString const&) { return false; }
 String WebCore::submitButtonDefaultLabel() { return "Submit"; }
-String WebCore::inputElementAltText() { return QString(); }
+String WebCore::inputElementAltText() { return DeprecatedString(); }
 String WebCore::resetButtonDefaultLabel() { return "Reset"; }
 String WebCore::defaultLanguage() { return "en"; }
 
@@ -212,29 +212,29 @@ void WebCore::TransferJob::retrieveCharset() const { }
 void FrameWin::restoreDocumentState() { }
 void FrameWin::partClearedInBegin() { }
 void FrameWin::createEmptyDocument() { }
-QString FrameWin::overrideMediaType() const { return QString(); }
+DeprecatedString FrameWin::overrideMediaType() const { return DeprecatedString(); }
 void FrameWin::setTitle(String const&) { }
 void FrameWin::handledOnloadEvents() { }
-RangeImpl* FrameWin::markedTextRange() const { return 0; }
+Range* FrameWin::markedTextRange() const { return 0; }
 bool FrameWin::passSubframeEventToSubframe(WebCore::MouseEventWithHitTestResults&) { return false; }
 bool FrameWin::lastEventIsMouseUp() const { return false; }
 void FrameWin::addMessageToConsole(String const&,unsigned int,String const&) { }
 bool FrameWin::shouldChangeSelection(SelectionController const&,SelectionController const&,WebCore::EAffinity,bool) const { return true; }
 void FrameWin::respondToChangedSelection(WebCore::SelectionController const&,bool) { }
 static int frameNumber = 0;
-Frame* FrameWin::createFrame(KURL const&,QString const&,RenderPart*,String const&) { return 0; }
+Frame* FrameWin::createFrame(KURL const&,DeprecatedString const&,RenderPart*,String const&) { return 0; }
 void FrameWin::saveDocumentState(void) { }
 void FrameWin::registerCommandForUndo(WebCore::EditCommandPtr const&) { }
 void FrameWin::clearUndoRedoOperations(void) { }
-QString FrameWin::incomingReferrer() const { return QString(); }
+DeprecatedString FrameWin::incomingReferrer() const { return DeprecatedString(); }
 void FrameWin::clearRecordedFormValues() { }
-void FrameWin::recordFormValue(QString const&,QString const&,WebCore::HTMLFormElementImpl*) { }
+void FrameWin::recordFormValue(DeprecatedString const&,DeprecatedString const&,WebCore::HTMLFormElement*) { }
 void FrameWin::submitForm(struct WebCore::ResourceRequest const&) { }
 void FrameWin::markMisspellingsInAdjacentWords(WebCore::VisiblePosition const&) { }
 void FrameWin::respondToChangedContents() { }
 
 BrowserExtensionWin::BrowserExtensionWin(WebCore::Frame*) { }
-void BrowserExtensionWin::setTypedIconURL(KURL const&,QString const&) { }
+void BrowserExtensionWin::setTypedIconURL(KURL const&,DeprecatedString const&) { }
 void BrowserExtensionWin::setIconURL(KURL const&) { }
 int BrowserExtensionWin::getHistoryLength() { return 0; }
 
@@ -297,7 +297,7 @@ void QComboBox::setFont(WebCore::Font const&) { }
 int QComboBox::baselinePosition(int) const { return 0; }
 void QComboBox::setWritingDirection(TextDirection) { }
 void QComboBox::clear() { }
-void QComboBox::appendItem(QString const&,KWQListBoxItemType,bool) { }
+void QComboBox::appendItem(DeprecatedString const&,KWQListBoxItemType,bool) { }
 void QComboBox::setCurrentItem(int) { }
 IntSize QComboBox::sizeHint() const { return IntSize(); }
 IntRect QComboBox::frameGeometry() const { return IntRect(); }

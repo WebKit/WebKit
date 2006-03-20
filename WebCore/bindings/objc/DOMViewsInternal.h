@@ -25,11 +25,11 @@
 
 #import "DOMViews.h"
 
-namespace DOM {
-    class AbstractViewImpl;
+namespace WebCore {
+    class AbstractView;
 }
 
 @interface DOMAbstractView (WebCoreInternal)
-+ (DOMAbstractView *)_abstractViewWithImpl:(DOM::AbstractViewImpl *)impl;
-- (DOM::AbstractViewImpl *)_abstractViewImpl;
++ (DOMAbstractView *)_abstractViewWith:(WebCore::AbstractView *)impl;
+- (WebCore::AbstractView *)_abstractView;
 @end

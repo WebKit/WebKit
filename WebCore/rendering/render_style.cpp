@@ -26,7 +26,7 @@
 
 #include "StringImpl.h"
 #include "cssstyleselector.h"
-#include "render_arena.h"
+#include "RenderArena.h"
 
 namespace WebCore {
 
@@ -903,8 +903,8 @@ bool RenderStyle::contentDataEquivalent(const RenderStyle* otherStyle) const
         if (c1->_contentType != c2->_contentType)
             return false;
         if (c1->_contentType == CONTENT_TEXT) {
-            DOMString c1Str(c1->_content.text);
-            DOMString c2Str(c2->_content.text);
+            String c1Str(c1->_content.text);
+            String c2Str(c2->_content.text);
             if (c1Str != c2Str)
                 return false;
         }
@@ -948,7 +948,7 @@ void RenderStyle::setContent(CachedObject* o, bool add)
     newContentData->_contentType = CONTENT_OBJECT;
 }
 
-void RenderStyle::setContent(DOMStringImpl* s, bool add)
+void RenderStyle::setContent(StringImpl* s, bool add)
 {
     if (!s)
         return; // The string is null. Nothing to do. Just bail.
@@ -961,8 +961,8 @@ void RenderStyle::setContent(DOMStringImpl* s, bool add)
     if (add && lastContent) {
         if (lastContent->_contentType == CONTENT_TEXT) {
             // We can augment the existing string and share this ContentData node.
-            DOMStringImpl* oldStr = lastContent->_content.text;
-            DOMStringImpl* newStr = oldStr->copy();
+            StringImpl* oldStr = lastContent->_content.text;
+            StringImpl* newStr = oldStr->copy();
             newStr->ref();
             oldStr->deref();
             newStr->append(s);
@@ -1014,7 +1014,7 @@ void ContentData::clearContent()
 }
 
 #ifndef KHTML_NO_XBL
-BindingURI::BindingURI(DOM::DOMStringImpl* uri) 
+BindingURI::BindingURI(WebCore::StringImpl* uri) 
 :m_next(0)
 { 
     m_uri = uri;
@@ -1050,10 +1050,10 @@ bool BindingURI::operator==(const BindingURI& o) const
     if (!m_uri || !o.m_uri)
         return false;
     
-    return DOMString(m_uri) == DOMString(o.m_uri);
+    return String(m_uri) == String(o.m_uri);
 }
 
-void RenderStyle::addBindingURI(DOM::DOMStringImpl* uri)
+void RenderStyle::addBindingURI(WebCore::StringImpl* uri)
 {
     BindingURI* binding = new BindingURI(uri);
     if (!bindingURIs())
@@ -1095,15 +1095,15 @@ bool ShadowData::operator==(const ShadowData& o) const
     return x == o.x && y == o.y && blur == o.blur && color == o.color;
 }
 
-const QValueList<StyleDashboardRegion>& RenderStyle::initialDashboardRegions()
+const DeprecatedValueList<StyleDashboardRegion>& RenderStyle::initialDashboardRegions()
 { 
-    static QValueList<StyleDashboardRegion> emptyList;
+    static DeprecatedValueList<StyleDashboardRegion> emptyList;
     return emptyList;
 }
 
-const QValueList<StyleDashboardRegion>& RenderStyle::noneDashboardRegions()
+const DeprecatedValueList<StyleDashboardRegion>& RenderStyle::noneDashboardRegions()
 { 
-    static QValueList<StyleDashboardRegion> noneList;
+    static DeprecatedValueList<StyleDashboardRegion> noneList;
     static bool noneListInitialized = false;
     
     if (!noneListInitialized) {

@@ -28,25 +28,25 @@
 
 #include "EditCommand.h"
 
-namespace khtml {
+namespace WebCore {
 
 class InsertNodeBeforeCommand : public EditCommand
 {
 public:
-    InsertNodeBeforeCommand(DOM::DocumentImpl *, DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);
+    InsertNodeBeforeCommand(WebCore::Document *, WebCore::Node *insertChild, WebCore::Node *refChild);
     virtual ~InsertNodeBeforeCommand() { }
 
     virtual void doApply();
     virtual void doUnapply();
 
-    DOM::NodeImpl *insertChild() const { return m_insertChild.get(); }
-    DOM::NodeImpl *refChild() const { return m_refChild.get(); }
+    WebCore::Node *insertChild() const { return m_insertChild.get(); }
+    WebCore::Node *refChild() const { return m_refChild.get(); }
 
 private:
-    RefPtr<DOM::NodeImpl> m_insertChild;
-    RefPtr<DOM::NodeImpl> m_refChild; 
+    RefPtr<WebCore::Node> m_insertChild;
+    RefPtr<WebCore::Node> m_refChild; 
 };
 
-} // namespace khtml
+} // namespace WebCore
 
 #endif // __insert_node_before_command_h__

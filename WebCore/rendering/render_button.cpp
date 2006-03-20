@@ -23,9 +23,9 @@
 #include "config.h"
 #include "render_button.h"
 
-#include "DocumentImpl.h"
+#include "Document.h"
 #include "GraphicsContext.h"
-#include "HTMLInputElementImpl.h"
+#include "HTMLInputElement.h"
 #include "RenderText.h"
 #include "htmlnames.h"
 
@@ -33,7 +33,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderButton::RenderButton(NodeImpl* node)
+RenderButton::RenderButton(Node* node)
     : RenderFlexibleBox(node), m_buttonText(0), m_inner(0)
 {
 }
@@ -75,8 +75,8 @@ void RenderButton::updateFromElement()
 {
     // If we're an input element, we may need to change our button text.
     if (element()->hasTagName(inputTag)) {
-        HTMLInputElementImpl* input = static_cast<HTMLInputElementImpl*>(element());
-        DOMString value = input->valueWithDefault();
+        HTMLInputElement* input = static_cast<HTMLInputElement*>(element());
+        String value = input->valueWithDefault();
         if (value.isEmpty()) {
             if (m_buttonText) {
                 m_buttonText->destroy();

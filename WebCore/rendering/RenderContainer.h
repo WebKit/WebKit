@@ -23,7 +23,7 @@
 #ifndef RenderContainer_H
 #define RenderContainer_H
 
-#include "render_box.h"
+#include "RenderBox.h"
 
 namespace WebCore {
 
@@ -35,7 +35,7 @@ class Position;
 class RenderContainer : public RenderBox
 {
 public:
-    RenderContainer(DOM::NodeImpl* node);
+    RenderContainer(WebCore::Node* node);
     virtual ~RenderContainer();
 
     RenderObject *firstChild() const { return m_first; }
@@ -61,7 +61,7 @@ public:
 
     virtual VisiblePosition positionForCoordinates(int x, int y);
     
-    virtual QValueList<IntRect> lineBoxRects();
+    virtual DeprecatedValueList<IntRect> lineBoxRects();
 
 protected:
     void setFirstChild(RenderObject *first) { m_first = first; }

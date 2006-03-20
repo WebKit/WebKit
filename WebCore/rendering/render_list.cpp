@@ -27,9 +27,9 @@
 #include "render_list.h"
 
 #include "GraphicsContext.h"
-#include "render_canvas.h"
+#include "RenderCanvas.h"
 
-#include "DocumentImpl.h"
+#include "Document.h"
 #include "CachedImage.h"
 
 #include "htmlnames.h"
@@ -41,9 +41,9 @@ using namespace HTMLNames;
 
 const int cMarkerPadding = 7;
 
-static QString toRoman( int number, bool upper )
+static DeprecatedString toRoman( int number, bool upper )
 {
-    QString roman;
+    DeprecatedString roman;
     QChar ldigits[] = { 'i', 'v', 'x', 'l', 'c', 'd', 'm' };
     QChar udigits[] = { 'I', 'V', 'X', 'L', 'C', 'D', 'M' };
     QChar *digits = upper ? udigits : ldigits;
@@ -74,9 +74,9 @@ static QString toRoman( int number, bool upper )
     return roman;
 }
 
-static QString toLetter( int number, int base ) {
+static DeprecatedString toLetter( int number, int base ) {
     number--;
-    QString letter = (QChar) (base + (number % 26));
+    DeprecatedString letter = (QChar) (base + (number % 26));
     // Add a single quote at the end of the alphabet.
     for (int i = 0; i < (number / 26); i++) {
        letter += '\'';
@@ -84,10 +84,10 @@ static QString toLetter( int number, int base ) {
     return letter;
 }
 
-static QString toHebrew( int number ) {
+static DeprecatedString toHebrew( int number ) {
     const QChar tenDigit[] = {1497, 1499, 1500, 1502, 1504, 1505, 1506, 1508, 1510};
 
-    QString letter;
+    DeprecatedString letter;
     if (number>999) {
   	letter = toHebrew(number/1000) + "'";
    	number = number%1000;
@@ -122,7 +122,7 @@ static QString toHebrew( int number ) {
 
 // -------------------------------------------------------------------------
 
-RenderListItem::RenderListItem(DOM::NodeImpl* node)
+RenderListItem::RenderListItem(WebCore::Node* node)
     : RenderBlock(node), predefVal(-1), m_marker(0), _notInList(false), m_value(-1)
 {
     // init RenderObject attributes
@@ -162,22 +162,22 @@ void RenderListItem::destroy()
     RenderBlock::destroy();
 }
 
-static NodeImpl* enclosingList(NodeImpl* node)
+static Node* enclosingList(Node* node)
 {
-    for (NodeImpl* n = node->parentNode(); n; n = n->parentNode())
+    for (Node* n = node->parentNode(); n; n = n->parentNode())
         if (n->hasTagName(ulTag) || n->hasTagName(olTag))
             return n;
     return 0;
 }
 
-static RenderListItem* previousListItem(NodeImpl* list, RenderListItem* item)
+static RenderListItem* previousListItem(Node* list, RenderListItem* item)
 {
     if (!list)
         return 0;
-    for (NodeImpl* n = item->node()->traversePreviousNode(); n != list; n = n->traversePreviousNode()) {
+    for (Node* n = item->node()->traversePreviousNode(); n != list; n = n->traversePreviousNode()) {
         RenderObject* o = n->renderer();
         if (o && o->isListItem()) {
-            NodeImpl* otherList = enclosingList(n);
+            Node* otherList = enclosingList(n);
             // This item is part of our current list, so it's what we're looking for.
             if (list == otherList)
                 return static_cast<RenderListItem*>(o);
@@ -194,7 +194,7 @@ void RenderListItem::calcValue()
     if (predefVal != -1)
         m_value = predefVal;
     else {
-        NodeImpl* list = enclosingList(node());
+        Node* list = enclosingList(node());
         RenderListItem* item = previousListItem(list, this);
         if (item) {
             // FIXME: This recurses to a possible depth of the length of the list.
@@ -203,7 +203,7 @@ void RenderListItem::calcValue()
                 item->calcValue();
             m_value = item->value() + 1;
         } else if (list && list->hasTagName(olTag))
-            m_value = static_cast<HTMLOListElementImpl*>(list)->start();
+            m_value = static_cast<HTMLOListElement*>(list)->start();
         else
             m_value = 1;
     }
@@ -341,7 +341,7 @@ IntRect RenderListItem::getAbsoluteRepaintRect()
 
 // -----------------------------------------------------------
 
-RenderListMarker::RenderListMarker(DocumentImpl* document)
+RenderListMarker::RenderListMarker(Document* document)
     : RenderBox(document), m_listImage(0)
 {
     // init RenderObject attributes

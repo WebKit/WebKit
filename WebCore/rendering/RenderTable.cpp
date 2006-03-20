@@ -31,7 +31,7 @@
 #include "RenderTableSection.h"
 #include "RenderTableCol.h"
 #include "RenderTableCell.h"
-#include "DocumentImpl.h"
+#include "Document.h"
 #include "table_layout.h"
 #include "htmlnames.h"
 #include <qtextstream.h>
@@ -40,7 +40,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderTable::RenderTable(NodeImpl* node)
+RenderTable::RenderTable(Node* node)
     : RenderBlock(node)
 {
     tCaption = 0;
@@ -401,10 +401,10 @@ void RenderTable::paint(PaintInfo& i, int _tx, int _ty)
         // have all the styles sorted, we then do individual passes, painting each style of border
         // from lowest precedence to highest precedence.
         paintInfo.phase = PaintActionCollapsedTableBorders;
-        QValueList<CollapsedBorderValue> borderStyles;
+        DeprecatedValueList<CollapsedBorderValue> borderStyles;
         collectBorders(borderStyles);
-        QValueListIterator<CollapsedBorderValue> it = borderStyles.begin();
-        QValueListIterator<CollapsedBorderValue> end = borderStyles.end();
+        DeprecatedValueListIterator<CollapsedBorderValue> it = borderStyles.begin();
+        DeprecatedValueListIterator<CollapsedBorderValue> end = borderStyles.end();
         for (; it != end; ++it) {
             m_currentBorder = &(*it);
             for (RenderObject* child = firstChild(); child; child = child->nextSibling())
@@ -790,7 +790,7 @@ IntRect RenderTable::getOverflowClipRect(int tx, int ty)
 }
 
 #ifndef NDEBUG
-void RenderTable::dump(QTextStream *stream, QString ind) const
+void RenderTable::dump(QTextStream *stream, DeprecatedString ind) const
 {
     if (tCaption)
         *stream << " tCaption";

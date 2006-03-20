@@ -30,31 +30,31 @@
 
 #include "PlatformString.h"
 
-namespace DOM {
-    class CSSStyleDeclarationImpl;
+namespace WebCore {
+    class CSSStyleDeclaration;
 }
 
-namespace khtml {
+namespace WebCore {
 
 class RemoveCSSPropertyCommand : public EditCommand
 {
 public:
-    RemoveCSSPropertyCommand(DOM::DocumentImpl *, DOM::CSSStyleDeclarationImpl *, int property);
+    RemoveCSSPropertyCommand(WebCore::Document *, WebCore::CSSStyleDeclaration *, int property);
     virtual ~RemoveCSSPropertyCommand() { }
 
     virtual void doApply();
     virtual void doUnapply();
 
-    DOM::CSSMutableStyleDeclarationImpl *styleDeclaration() const { return m_decl.get(); }
+    WebCore::CSSMutableStyleDeclaration *styleDeclaration() const { return m_decl.get(); }
     int property() const { return m_property; }
     
 private:
-    RefPtr<DOM::CSSMutableStyleDeclarationImpl> m_decl;
+    RefPtr<WebCore::CSSMutableStyleDeclaration> m_decl;
     int m_property;
-    DOM::DOMString m_oldValue;
+    WebCore::String m_oldValue;
     bool m_important;
 };
 
-} // namespace khtml
+} // namespace WebCore
 
 #endif // __remove_css_property_command_h__

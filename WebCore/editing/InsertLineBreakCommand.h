@@ -28,21 +28,21 @@
 
 #include "CompositeEditCommand.h"
 
-namespace khtml {
+namespace WebCore {
 
 class InsertLineBreakCommand : public CompositeEditCommand
 {
 public:
-    InsertLineBreakCommand(DOM::DocumentImpl *document);
+    InsertLineBreakCommand(WebCore::Document *document);
 
     virtual void doApply();
 
 private:
     virtual bool preservesTypingStyle() const;
-    void insertNodeAfterPosition(DOM::NodeImpl *node, const DOM::Position &pos);
-    void insertNodeBeforePosition(DOM::NodeImpl *node, const DOM::Position &pos);
+    void insertNodeAfterPosition(WebCore::Node *node, const WebCore::Position &pos);
+    void insertNodeBeforePosition(WebCore::Node *node, const WebCore::Position &pos);
 };
 
-} // namespace khtml
+} // namespace WebCore
 
 #endif // __insert_line_break_command_h__

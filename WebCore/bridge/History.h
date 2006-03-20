@@ -26,11 +26,11 @@
 #ifndef HISTORY_H
 #define HISTORY_H
 
-class QString;
+class DeprecatedString;
 
 namespace WebCore {
 
-    bool historyContains(const QString&);
+    bool historyContains(const DeprecatedString&);
 
 }
 

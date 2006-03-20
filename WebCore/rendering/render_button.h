@@ -23,7 +23,7 @@
 #ifndef render_button_h
 #define render_button_h
 
-#include "render_flexbox.h"
+#include "RenderFlexibleBox.h"
 
 namespace WebCore {
 
@@ -33,7 +33,7 @@ namespace WebCore {
 class RenderButton : public RenderFlexibleBox
 {
 public:
-    RenderButton(NodeImpl*);
+    RenderButton(Node*);
 
     virtual void addChild(RenderObject* newChild, RenderObject *beforeChild = 0);
     virtual void removeChild(RenderObject* oldChild);

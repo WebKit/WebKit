@@ -25,11 +25,11 @@
 
 #import "DOMEvents.h"
 
-namespace DOM {
-    class EventImpl;
+namespace WebCore {
+    class Event;
 }
 
 @interface DOMEvent (WebCoreInternal)
-+ (DOMEvent *)_eventWithImpl:(DOM::EventImpl *)impl;
-- (DOM::EventImpl *)_eventImpl;
++ (DOMEvent *)_eventWith:(WebCore::Event *)impl;
+- (WebCore::Event *)_event;
 @end

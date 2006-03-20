@@ -26,8 +26,8 @@
 #ifndef KWQLISTBOX_H_
 #define KWQLISTBOX_H_
 
-#include "KWQValueList.h"
-#include "QString.h"
+#include "DeprecatedValueList.h"
+#include "DeprecatedString.h"
 #include "ScrollView.h"
 #include "TextDirection.h"
 
@@ -39,11 +39,11 @@ enum KWQListBoxItemType {
 
 struct KWQListBoxItem
 {
-    QString string;
+    DeprecatedString string;
     KWQListBoxItemType type;
     bool enabled;
     
-    KWQListBoxItem(const QString &s, KWQListBoxItemType t, bool e) : string(s), type(t), enabled(e) { }
+    KWQListBoxItem(const DeprecatedString &s, KWQListBoxItemType t, bool e) : string(s), type(t), enabled(e) { }
 };
 
 class QListBox : public WebCore::ScrollView {
@@ -55,13 +55,13 @@ public:
 
     IntSize sizeForNumberOfLines(int numLines) const;
     
-    uint count() const { return _items.count(); }
+    unsigned count() const { return _items.count(); }
 
     void setSelectionMode(SelectionMode);
 
     void clear();
-    void appendItem(const QString &s, bool enabled) { appendItem(s, KWQListBoxOption, enabled); }
-    void appendGroupLabel(const QString &s, bool enabled) { appendItem(s, KWQListBoxGroupLabel, enabled); }
+    void appendItem(const DeprecatedString &s, bool enabled) { appendItem(s, KWQListBoxOption, enabled); }
+    void appendGroupLabel(const DeprecatedString &s, bool enabled) { appendItem(s, KWQListBoxGroupLabel, enabled); }
     void doneAppendingItems();
 
     void setSelected(int, bool);
@@ -83,10 +83,10 @@ public:
     void setFont(const WebCore::Font&);
 
 private:
-    void appendItem(const QString &, KWQListBoxItemType, bool);
+    void appendItem(const DeprecatedString &, KWQListBoxItemType, bool);
 
     // A Vector<KWQListBoxItem> might be more efficient for large lists.
-    QValueList<KWQListBoxItem> _items;
+    DeprecatedValueList<KWQListBoxItem> _items;
 
     bool _changingSelection;
     bool _enabled;

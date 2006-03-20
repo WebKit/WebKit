@@ -31,15 +31,15 @@
 #include "BrowserExtension.h"
 #include "Color.h"
 #include "FrameView.h"
-#include "NodeImpl.h"
+#include "Node.h"
 #include "Shared.h"
 #include "TransferJobClient.h"
-#include "edit_actions.h"
-#include "text_affinity.h"
-#include "text_granularity.h"
+#include "EditAction.h"
+#include "TextAffinity.h"
+#include "TextGranularity.h"
 #include <KURL.h>
 #include <qscrollbar.h>
-#include <QStringList.h>
+#include <DeprecatedStringList.h>
 #include <kxmlcore/Noncopyable.h>
 
 class KHTMLSettings;
@@ -57,18 +57,18 @@ namespace KJS {
 
 namespace WebCore {
 
-class CSSComputedStyleDeclarationImpl;
-class CSSMutableStyleDeclarationImpl;
-class CSSStyleDeclarationImpl;
+class CSSComputedStyleDeclaration;
+class CSSMutableStyleDeclaration;
+class CSSStyleDeclaration;
 class DrawContentsEvent;
 class EditCommandPtr;
 class FramePrivate;
 class FrameTree;
-class KJSProxyImpl;
+class KJSProxy;
 class Page;
 class Plugin;
 class MouseEventWithHitTestResults;
-class RangeImpl;
+class Range;
 class RenderLayer;
 class Selection;
 class SelectionController;
@@ -152,12 +152,12 @@ public:
   /**
    * Execute the specified snippet of JavaScript code.
    */
-  KJS::JSValue* executeScript(NodeImpl*, const QString& script, bool forceUserGesture = false);
+  KJS::JSValue* executeScript(Node*, const DeprecatedString& script, bool forceUserGesture = false);
 
   /**
    * Implementation of CSS property -khtml-user-drag == auto
    */
-  virtual bool shouldDragAutoNode(NodeImpl*, int x, int y) const;
+  virtual bool shouldDragAutoNode(Node*, int x, int y) const;
   
   /**
    * Specifies whether images contained in the document should be loaded
@@ -175,19 +175,19 @@ public:
   bool autoloadImages() const;
 
   KURL baseURL() const;
-  QString baseTarget() const;
+  DeprecatedString baseTarget() const;
 
   /**
    * Schedules a redirection after @p delay seconds.
    */
-  void scheduleRedirection(double delay, const QString &url, bool lockHistory = true);
+  void scheduleRedirection(double delay, const DeprecatedString &url, bool lockHistory = true);
 
   /**
    * Make a location change, or schedule one for later.
    * These are used for JavaScript-triggered location changes.
    */
-  void changeLocation(const QString &URL, const QString &referrer, bool lockHistory = true, bool userGesture = false);
-  void scheduleLocationChange(const QString &url, const QString &referrer, bool lockHistory = true, bool userGesture = false);
+  void changeLocation(const DeprecatedString &URL, const DeprecatedString &referrer, bool lockHistory = true, bool userGesture = false);
+  void scheduleLocationChange(const DeprecatedString &url, const DeprecatedString &referrer, bool lockHistory = true, bool userGesture = false);
   bool isScheduledLocationChangePending() const;
 
   /**
@@ -230,7 +230,7 @@ public:
    * parameter.
    *
    * Attention: Don't mix calls to @ref write( const char *) with calls
-   * to @ref write( const QString & ).
+   * to @ref write( const DeprecatedString & ).
    *
    * The result might not be what you want.
    */
@@ -243,7 +243,7 @@ public:
    * this function many times in sequence. But remember: The fewer calls
    * you make, the faster the widget will be.
    */
-  virtual void write( const QString &str );
+  virtual void write( const DeprecatedString &str );
 
   /**
    * Call this after your last call to @ref write().
@@ -259,14 +259,14 @@ public:
 
   void paint(GraphicsContext*, const IntRect&);
 
-  void setEncoding(const QString &encoding, bool userChosen);
+  void setEncoding(const DeprecatedString &encoding, bool userChosen);
 
   /**
    * Returns the encoding the page currently uses.
    *
    * Note that the encoding might be different from the charset.
    */
-  QString encoding() const;
+  DeprecatedString encoding() const;
 
   /**
    * Sets a user defined style sheet to be used on top of the HTML 4
@@ -284,14 +284,14 @@ public:
    * This gives a wide range of possibilities to
    * change the layout of the page.
    */
-  void setUserStyleSheet(const QString &styleSheet);
+  void setUserStyleSheet(const DeprecatedString &styleSheet);
 
   /**
    * Sets the standard font style.
    *
    * @param name The font name to use for standard text.
    */
-  void setStandardFont( const QString &name );
+  void setStandardFont( const DeprecatedString &name );
 
   /**
    * Sets the fixed font style.
@@ -299,7 +299,7 @@ public:
    * @param name The font name to use for fixed text, e.g.
    * the <tt>&lt;pre&gt;</tt> tag.
    */
-  void setFixedFont( const QString &name );
+  void setFixedFont( const DeprecatedString &name );
 
   /**
    * Finds the anchor named @p name.
@@ -308,7 +308,7 @@ public:
    * scrolls to the closest position. Returns @p if the anchor has
    * been found.
    */
-  bool gotoAnchor( const QString &name );
+  bool gotoAnchor( const DeprecatedString &name );
 
   /**
    * Sets the Zoom factor. The value is given in percent, larger values mean a
@@ -330,17 +330,17 @@ public:
   /**
    * Returns the text the user has marked.
    */
-  virtual QString selectedText() const;
+  virtual DeprecatedString selectedText() const;
 
   /**
    * Returns the granularity of the selection (character, word, line, paragraph).
    */
-  ETextGranularity selectionGranularity() const;
+  TextGranularity selectionGranularity() const;
   
   /**
    * Sets the granularity of the selection (character, word, line, paragraph).
    */
-  void setSelectionGranularity(ETextGranularity granularity) const;
+  void setSelectionGranularity(TextGranularity granularity) const;
 
   /**
    * Returns the drag caret of the HTML.
@@ -415,17 +415,17 @@ public:
    * Marks contents of node as selected.
    * Returns whether the selection changed.
    */
-  bool selectContentsOfNode(NodeImpl*);
+  bool selectContentsOfNode(Node*);
  
   /**
    * Returns whether editing should end in the given range
    */
-  virtual bool shouldBeginEditing(const RangeImpl *) const;
+  virtual bool shouldBeginEditing(const Range *) const;
 
   /**
    * Returns whether editing should end in the given range
    */
-  virtual bool shouldEndEditing(const RangeImpl *) const;
+  virtual bool shouldEndEditing(const Range *) const;
 
   /**
    * Called when editing has begun.
@@ -465,12 +465,12 @@ public:
   /**
    * Returns the typing style for the document.
    */
-  CSSMutableStyleDeclarationImpl *typingStyle() const;
+  CSSMutableStyleDeclaration *typingStyle() const;
 
   /**
    * Sets the typing style for the document.
    */
-  void setTypingStyle(CSSMutableStyleDeclarationImpl *);
+  void setTypingStyle(CSSMutableStyleDeclaration *);
 
   /**
    * Clears the typing style for the document.
@@ -489,12 +489,12 @@ public:
   /**
    * Referrer used for links in this page.
    */
-  QString referrer() const;
+  DeprecatedString referrer() const;
 
   /**
    * Last-modified date (in raw string format), if received in the [HTTP] headers.
    */
-  QString lastModified() const;
+  DeprecatedString lastModified() const;
 
   bool isPointInsideSelection(int x, int y);
 
@@ -512,16 +512,16 @@ public:
   void undo();
   virtual bool canRedo() const = 0;
   virtual bool canUndo() const = 0;
-  void computeAndSetTypingStyle(CSSStyleDeclarationImpl *, EditAction editingAction=EditActionUnspecified);
-  void applyStyle(CSSStyleDeclarationImpl *, EditAction editingAction=EditActionUnspecified);
-  void applyParagraphStyle(CSSStyleDeclarationImpl *, EditAction editingAction=EditActionUnspecified);
-  TriState selectionHasStyle(CSSStyleDeclarationImpl *) const;
-  bool selectionStartHasStyle(CSSStyleDeclarationImpl *) const;
+  void computeAndSetTypingStyle(CSSStyleDeclaration *, EditAction editingAction=EditActionUnspecified);
+  void applyStyle(CSSStyleDeclaration *, EditAction editingAction=EditActionUnspecified);
+  void applyParagraphStyle(CSSStyleDeclaration *, EditAction editingAction=EditActionUnspecified);
+  TriState selectionHasStyle(CSSStyleDeclaration *) const;
+  bool selectionStartHasStyle(CSSStyleDeclaration *) const;
   String selectionStartStylePropertyValue(int stylePropertyID) const;
   void applyEditingStyleToBodyElement() const;
   void removeEditingStyleFromBodyElement() const;
-  void applyEditingStyleToElement(ElementImpl *) const;
-  void removeEditingStyleFromElement(ElementImpl *) const;
+  void applyEditingStyleToElement(Element *) const;
+  void removeEditingStyleFromElement(Element *) const;
   virtual void print() = 0;
   virtual bool isCharacterSmartReplaceExempt(const QChar &, bool);
 
@@ -534,27 +534,27 @@ public:
    * returns a KURL object for the given url. Use when
    * you know what you're doing.
    */
-  KURL completeURL( const QString &url );
+  KURL completeURL( const DeprecatedString &url );
 
-  virtual void khtmlMouseDoubleClickEvent(const MouseEventWithHitTestResults&);
-  virtual void khtmlMousePressEvent(const MouseEventWithHitTestResults&);
-  virtual void khtmlMouseMoveEvent(const MouseEventWithHitTestResults&);
-  virtual void khtmlMouseReleaseEvent(const MouseEventWithHitTestResults&);
+  virtual void handleMouseReleaseDoubleClickEvent(const MouseEventWithHitTestResults&);
+  virtual void handleMousePressEvent(const MouseEventWithHitTestResults&);
+  virtual void handleMouseMoveEvent(const MouseEventWithHitTestResults&);
+  virtual void handleMouseReleaseEvent(const MouseEventWithHitTestResults&);
   
-  void selectClosestWordFromMouseEvent(const MouseEvent&, NodeImpl* innerNode, int x, int y);
+  void selectClosestWordFromMouseEvent(const PlatformMouseEvent&, Node* innerNode, int x, int y);
 
-  virtual void urlSelected(const QString& url, const QString& target);
-  virtual void urlSelected(const ResourceRequest&, const QString& target);
+  virtual void urlSelected(const DeprecatedString& url, const DeprecatedString& target);
+  virtual void urlSelected(const ResourceRequest&, const DeprecatedString& target);
 
 
   // Methods with platform-specific overrides (and no base class implementation).
   virtual void setTitle(const String &) = 0;
   virtual void handledOnloadEvents() = 0;
-  virtual QString userAgent() const = 0;
-  virtual QString incomingReferrer() const = 0;
-  virtual QString mimeTypeForFileName(const QString &) const = 0;
+  virtual DeprecatedString userAgent() const = 0;
+  virtual DeprecatedString incomingReferrer() const = 0;
+  virtual DeprecatedString mimeTypeForFileName(const DeprecatedString &) const = 0;
   virtual void clearRecordedFormValues() = 0;
-  virtual void recordFormValue(const QString &name, const QString &value, HTMLFormElementImpl *element) = 0;
+  virtual void recordFormValue(const DeprecatedString &name, const DeprecatedString &value, HTMLFormElement *element) = 0;
   virtual KJS::Bindings::Instance *getEmbedInstanceForWidget(Widget*) = 0;
   virtual KJS::Bindings::Instance *getObjectInstanceForWidget(Widget*) = 0;
   virtual KJS::Bindings::Instance *getAppletInstanceForWidget(Widget*) = 0;
@@ -572,7 +572,7 @@ public:
   virtual void scheduleClose() = 0;
   virtual void unfocusWindow() = 0;
   virtual void createEmptyDocument() = 0;
-  virtual RangeImpl *markedTextRange() const = 0;
+  virtual Range *markedTextRange() const = 0;
   virtual void registerCommandForUndo(const EditCommandPtr &) = 0;
   virtual void registerCommandForRedo(const EditCommandPtr &) = 0;
   virtual void clearUndoRedoOperations() = 0;
@@ -594,13 +594,13 @@ public:
   virtual void submitForm(const ResourceRequest&) = 0;
   virtual void urlSelected(const ResourceRequest&) = 0;
   virtual bool passSubframeEventToSubframe(MouseEventWithHitTestResults&) = 0;
-  virtual bool passWheelEventToChildWidget(NodeImpl *) = 0;
+  virtual bool passWheelEventToChildWidget(Node *) = 0;
   virtual bool lastEventIsMouseUp() const = 0;
-  virtual QString overrideMediaType() const = 0;
+  virtual DeprecatedString overrideMediaType() const = 0;
 protected:
-  virtual Plugin* createPlugin(const KURL& url, const QStringList& paramNames, const QStringList& paramValues, const QString& mimeType) = 0;
-  virtual Frame* createFrame(const KURL& url, const QString& name, RenderPart* renderer, const String& referrer) = 0;
-  virtual ObjectContentType objectContentType(const KURL& url, const QString& mimeType) = 0;
+  virtual Plugin* createPlugin(const KURL& url, const DeprecatedStringList& paramNames, const DeprecatedStringList& paramValues, const DeprecatedString& mimeType) = 0;
+  virtual Frame* createFrame(const KURL& url, const DeprecatedString& name, RenderPart* renderer, const String& referrer) = 0;
+  virtual ObjectContentType objectContentType(const KURL& url, const DeprecatedString& mimeType) = 0;
 
     virtual void redirectionTimerFired(Timer<Frame>*);
 
@@ -642,22 +642,22 @@ private:
   void selectionLayoutChanged();
     void caretBlinkTimerFired(Timer<Frame>*);
 
-  bool shouldUsePlugin(NodeImpl* element, const KURL& url, const QString& mimeType, bool hasFallback, bool& useFallback);
-  bool loadPlugin(RenderPart* renderer, const KURL &url, const QString &mimeType, 
-                  const QStringList& paramNames, const QStringList& paramValues, bool useFallback);
-  Frame* loadSubframe(RenderPart* renderer, const KURL& url, const QString& name, const String& referrer);
+  bool shouldUsePlugin(Node* element, const KURL& url, const DeprecatedString& mimeType, bool hasFallback, bool& useFallback);
+  bool loadPlugin(RenderPart* renderer, const KURL &url, const DeprecatedString &mimeType, 
+                  const DeprecatedStringList& paramNames, const DeprecatedStringList& paramValues, bool useFallback);
+  Frame* loadSubframe(RenderPart* renderer, const KURL& url, const DeprecatedString& name, const String& referrer);
 
 public:
-  void submitForm(const char *action, const QString &url, const FormData &formData,
-                  const QString &target, const QString& contentType = QString::null,
-                  const QString& boundary = QString::null );
+  void submitForm(const char *action, const DeprecatedString &url, const FormData &formData,
+                  const DeprecatedString &target, const DeprecatedString& contentType = DeprecatedString::null,
+                  const DeprecatedString& boundary = DeprecatedString::null );
   
-  bool requestObject(RenderPart *frame, const QString &url, const QString &frameName,
-                     const QString &serviceType, const QStringList &paramNames, const QStringList &paramValues);
-  bool requestFrame(RenderPart *frame, const QString &url, const QString &frameName);
+  bool requestObject(RenderPart *frame, const DeprecatedString &url, const DeprecatedString &frameName,
+                     const DeprecatedString &serviceType, const DeprecatedStringList &paramNames, const DeprecatedStringList &paramValues);
+  bool requestFrame(RenderPart *frame, const DeprecatedString &url, const DeprecatedString &frameName);
 
-  DocumentImpl *document() const;
-  void setDocument(DocumentImpl* newDoc);
+  Document *document() const;
+  void setDocument(Document* newDoc);
 
   // Workaround for the fact that it's hard to delete a frame.
   // Call this after doing user-triggered selections to make it easy to delete the frame you entirely selected.
@@ -671,8 +671,8 @@ private:
   void cancelRedirection(bool newLoadInProgress = false);
 
  public:
-  KJS::JSValue* executeScript(const QString& filename, int baseLine, NodeImpl*, const QString& script);
-  KJSProxyImpl *jScript();
+  KJS::JSValue* executeScript(const DeprecatedString& filename, int baseLine, Node*, const DeprecatedString& script);
+  KJSProxy *jScript();
   Frame *opener();
   void setOpener(Frame *_opener);
   bool openedByJS();
@@ -684,13 +684,13 @@ private:
   bool userGestureHint();
   void didNotOpenURL(const KURL &);
   void addData(const char *bytes, int length);
-  void addMetaData(const QString &key, const QString &value);
-  void setMediaType(const QString &);
+  void addMetaData(const DeprecatedString &key, const DeprecatedString &value);
+  void setMediaType(const DeprecatedString &);
 
   // root renderer for the document contained in this frame
   RenderObject* renderer() const;
   
-  ElementImpl* ownerElement();
+  Element* ownerElement();
   // renderer for the element that contains this frame
   RenderPart* ownerRenderer();
 
@@ -698,9 +698,9 @@ private:
   FloatRect visibleSelectionRect() const;
   bool isFrameSet() const;
 
-  HTMLFormElementImpl *currentForm() const;
+  HTMLFormElement *currentForm() const;
 
-  RenderStyle *styleForSelectionStart(NodeImpl *&nodeToRemove) const;
+  RenderStyle *styleForSelectionStart(Node *&nodeToRemove) const;
 
   // Scrolls as necessary to reveal the selection
   void revealSelection();
@@ -723,13 +723,13 @@ private:
   void restoreInterpreterBuiltins(const KJS::SavedBuiltins &interpreterBuiltins);
 
   static Frame *frameForWidget(const Widget *);
-  static NodeImpl *nodeForWidget(const Widget *);
-  static Frame *frameForNode(NodeImpl *);
+  static Node *nodeForWidget(const Widget *);
+  static Frame *frameForNode(Node *);
 
   static void clearDocumentFocus(Widget *);
 
-  static const QPtrList<Frame> &instances() { return mutableInstances(); }    
-  static QPtrList<Frame> &mutableInstances();
+  static const DeprecatedPtrList<Frame> &instances() { return mutableInstances(); }    
+  static DeprecatedPtrList<Frame> &mutableInstances();
 
   void updatePolicyBaseURL();
   void setPolicyBaseURL(const String&);
@@ -741,7 +741,7 @@ private:
   void sendScrollEvent();
   bool scrollbarsVisible();
   void scrollToAnchor(const KURL &);
-  bool canMouseDownStartSelect(NodeImpl*);
+  bool canMouseDownStartSelect(Node*);
   bool passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults&, bool isDoubleClick);
   bool passWidgetMouseDownEventToWidget(RenderWidget*);
   virtual bool passMouseDownEventToWidget(Widget*) = 0;
@@ -756,14 +756,14 @@ private:
 
   QChar backslashAsCurrencySymbol() const;
 
-  QValueList<MarkedTextUnderline> markedTextUnderlines() const;  
+  DeprecatedValueList<MarkedTextUnderline> markedTextUnderlines() const;  
   bool markedTextUsesUnderlines() const;
-  unsigned highlightAllMatchesForString(const QString &, bool caseFlag);
+  unsigned highlightAllMatchesForString(const DeprecatedString &, bool caseFlag);
 
   // Call this method before handling a new user action, like on a mouse down or key down.
   // Currently, all this does is clear the "don't submit form twice" data member.
   void prepareForUserAction();
-  NodeImpl *mousePressNode();
+  Node *mousePressNode();
 
   bool isComplete() const;
   bool isLoadingMainResource() const;
@@ -785,9 +785,9 @@ protected:
   
   void receivedFirstData();
 
-  bool handleMouseMoveEventDrag(const MouseEventWithHitTestResults&);
-  bool handleMouseMoveEventOver(const MouseEventWithHitTestResults&);
-  void handleMouseMoveEventSelection(const MouseEventWithHitTestResults&);
+  bool deleteMe1(const MouseEventWithHitTestResults&);
+  bool deleteMe2(const MouseEventWithHitTestResults&);
+  void handleMouseMoveEventPart2(const MouseEventWithHitTestResults&);
 
   /**
    * @internal Extracts anchor and tries both encoded and decoded form.
@@ -798,14 +798,14 @@ protected:
   void handleMousePressEventDoubleClick(const MouseEventWithHitTestResults&);
   void handleMousePressEventTripleClick(const MouseEventWithHitTestResults&);
 
-  CSSComputedStyleDeclarationImpl *selectionComputedStyle(NodeImpl *&nodeToRemove) const;
+  CSSComputedStyleDeclaration *selectionComputedStyle(Node *&nodeToRemove) const;
 
     virtual void setStatusBarText(const String&);
     
     void autoscrollTimerFired(Timer<Frame>*);
 
 public:
-  friend class MacFrame;
+  friend class FrameMac;
   friend class FrameWin;
 
   void checkEmitLoadEvent();
@@ -829,11 +829,11 @@ public:
   friend class FramePrivate;
   FramePrivate* d;
       
-  mutable RefPtr<NodeImpl> _elementToDraw;
+  mutable RefPtr<Node> _elementToDraw;
   mutable bool _drawSelectionOnly;
   KURL _submittedFormURL;
   bool m_markedTextUsesUnderlines;
-  QValueList<MarkedTextUnderline> m_markedTextUnderlines;
+  DeprecatedValueList<MarkedTextUnderline> m_markedTextUnderlines;
   bool m_windowHasFocus;
   int frameCount;
 };

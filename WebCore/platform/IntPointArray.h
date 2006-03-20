@@ -26,25 +26,25 @@
 #ifndef INTPOINTARRAY_H_
 #define INTPOINTARRAY_H_
 
-#include "Array.h"
+#include "DeprecatedArray.h"
 #include "IntPoint.h"
 
 namespace WebCore {
 
 class IntRect;
 
-class IntPointArray : public Array<IntPoint> {
+class IntPointArray : public DeprecatedArray<IntPoint> {
 public:
     IntPointArray() { }
-    IntPointArray(int size) : Array<IntPoint>(size) { }
+    IntPointArray(int size) : DeprecatedArray<IntPoint>(size) { }
     IntPointArray(int, const int *);
     
     IntRect boundingRect() const;
     
     IntPointArray copy() const;
     
-    void point(uint, int *, int *);
-    void setPoint(uint, int, int);
+    void point(unsigned, int *, int *);
+    void setPoint(unsigned, int, int);
     bool setPoints(int, int, int, int, int, int, int, int, int);
     bool setPoints(int nPoints, const int *points);    
 };

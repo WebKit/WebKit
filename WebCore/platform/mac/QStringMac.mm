@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "QString.h"
+#include "DeprecatedString.h"
 
 #import <kxmlcore/Assertions.h>
 #import <Foundation/Foundation.h>
@@ -32,7 +32,7 @@
 
 using namespace WebCore;
 
-void QString::setBufferFromCFString(CFStringRef cfs)
+void DeprecatedString::setBufferFromCFString(CFStringRef cfs)
 {
     if (!cfs) {
         return;
@@ -46,28 +46,28 @@ void QString::setBufferFromCFString(CFStringRef cfs)
         buffer = fixedSizeBuffer;
     }
     CFStringGetCharacters(cfs, CFRangeMake (0, size), buffer);
-    setUnicode((const QChar *)buffer, (uint)size);
+    setUnicode((const QChar *)buffer, (unsigned)size);
     if (buffer != fixedSizeBuffer) {
         fastFree(buffer);
     }
 }
 
 
-QString QString::fromCFString(CFStringRef cfs)
+DeprecatedString DeprecatedString::fromCFString(CFStringRef cfs)
 {
-    QString qs;
+    DeprecatedString qs;
     qs.setBufferFromCFString(cfs);
     return qs;
 }
 
-QString QString::fromNSString(NSString *nss)
+DeprecatedString DeprecatedString::fromNSString(NSString *nss)
 {
-    QString qs;
+    DeprecatedString qs;
     qs.setBufferFromCFString((CFStringRef)nss);
     return qs;
 }
 
-NSString *QString::getNSString() const
+NSString *DeprecatedString::getNSString() const
 {
     // The Cocoa calls in this method don't need exceptions blocked
     // because they are simple NSString calls that can't throw.

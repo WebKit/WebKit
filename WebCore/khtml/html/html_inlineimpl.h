@@ -24,18 +24,18 @@
 #ifndef HTML_INLINEIMPL_H
 #define HTML_INLINEIMPL_H
 
-#include "HTMLElementImpl.h"
+#include "HTMLElement.h"
 
-namespace DOM {
+namespace WebCore {
 
-class DOMString;
+class String;
 
-class HTMLAnchorElementImpl : public HTMLElementImpl
+class HTMLAnchorElement : public HTMLElement
 {
 public:
-    HTMLAnchorElementImpl(DocumentImpl *doc);
-    HTMLAnchorElementImpl(const QualifiedName& tagName, DocumentImpl* doc);
-    ~HTMLAnchorElementImpl();
+    HTMLAnchorElement(Document *doc);
+    HTMLAnchorElement(const QualifiedName& tagName, Document* doc);
+    ~HTMLAnchorElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 1; }
@@ -43,46 +43,46 @@ public:
     virtual bool isMouseFocusable() const;
     virtual bool isKeyboardFocusable() const;
     virtual bool isFocusable() const;
-    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
-    virtual void defaultEventHandler(EventImpl *evt);
+    virtual void parseMappedAttribute(MappedAttribute *attr);
+    virtual void defaultEventHandler(Event *evt);
     virtual void accessKeyAction(bool fullAction);
-    virtual bool isURLAttribute(AttributeImpl *attr) const;
+    virtual bool isURLAttribute(Attribute *attr) const;
 
-    DOMString accessKey() const;
-    void setAccessKey(const DOMString &);
+    String accessKey() const;
+    void setAccessKey(const String &);
 
-    DOMString charset() const;
-    void setCharset(const DOMString &);
+    String charset() const;
+    void setCharset(const String &);
 
-    DOMString coords() const;
-    void setCoords(const DOMString &);
+    String coords() const;
+    void setCoords(const String &);
 
-    DOMString href() const;
-    void setHref(const DOMString &);
+    String href() const;
+    void setHref(const String &);
 
-    DOMString hreflang() const;
-    void setHreflang(const DOMString &);
+    String hreflang() const;
+    void setHreflang(const String &);
 
-    DOMString name() const;
-    void setName(const DOMString &);
+    String name() const;
+    void setName(const String &);
 
-    DOMString rel() const;
-    void setRel(const DOMString &);
+    String rel() const;
+    void setRel(const String &);
 
-    DOMString rev() const;
-    void setRev(const DOMString &);
+    String rev() const;
+    void setRev(const String &);
 
-    DOMString shape() const;
-    void setShape(const DOMString &);
+    String shape() const;
+    void setShape(const String &);
 
     int tabIndex() const;
     void setTabIndex(int);
 
-    DOMString target() const;
-    void setTarget(const DOMString &);
+    String target() const;
+    void setTarget(const String &);
 
-    DOMString type() const;
-    void setType(const DOMString &);
+    String type() const;
+    void setType(const String &);
 
     void blur();
     void focus();
@@ -95,77 +95,77 @@ protected:
 
 //typedef enum { BRNone=0, BRLeft, BRRight, BRAll} BRClear;
 
-class HTMLBRElementImpl : public HTMLElementImpl
+class HTMLBRElement : public HTMLElement
 {
 public:
-    HTMLBRElementImpl(DocumentImpl *doc);
-    ~HTMLBRElementImpl();
+    HTMLBRElement(Document *doc);
+    ~HTMLBRElement();
     
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
     virtual int tagPriority() const { return 0; }
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttribute *attr);
     
-    virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
+    virtual WebCore::RenderObject *createRenderer(RenderArena *, WebCore::RenderStyle *);
 
-    DOMString clear() const;
-    void setClear(const DOMString &);
+    String clear() const;
+    void setClear(const String &);
 };
 
 // -------------------------------------------------------------------------
 
-class HTMLFontElementImpl : public HTMLElementImpl
+class HTMLFontElement : public HTMLElement
 {
 public:
-    HTMLFontElementImpl(DocumentImpl *doc);
-    ~HTMLFontElementImpl();
+    HTMLFontElement(Document *doc);
+    ~HTMLFontElement();
     
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 1; }
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttribute *attr);
 
-    DOMString color() const;
-    void setColor(const DOMString &);
+    String color() const;
+    void setColor(const String &);
 
-    DOMString face() const;
-    void setFace(const DOMString &);
+    String face() const;
+    void setFace(const String &);
 
-    DOMString size() const;
-    void setSize(const DOMString &);
+    String size() const;
+    void setSize(const String &);
 };
 
 // -------------------------------------------------------------------------
 
-class HTMLModElementImpl : public HTMLElementImpl
+class HTMLModElement : public HTMLElement
 {
 public:
-    HTMLModElementImpl(const QualifiedName& tagName, DocumentImpl *doc);
+    HTMLModElement(const QualifiedName& tagName, Document *doc);
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 1; }
 
-    DOMString cite() const;
-    void setCite(const DOMString &);
+    String cite() const;
+    void setCite(const String &);
 
-    DOMString dateTime() const;
-    void setDateTime(const DOMString &);
+    String dateTime() const;
+    void setDateTime(const String &);
 };
 
 // -------------------------------------------------------------------------
 
-class HTMLQuoteElementImpl : public HTMLElementImpl
+class HTMLQuoteElement : public HTMLElement
 {
 public:
-    HTMLQuoteElementImpl(DocumentImpl *doc);
+    HTMLQuoteElement(Document *doc);
     
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 1; }
 
-    DOMString cite() const;
-    void setCite(const DOMString &);
+    String cite() const;
+    void setCite(const String &);
 };
 
 } //namespace

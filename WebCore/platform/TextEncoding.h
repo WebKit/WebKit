@@ -26,7 +26,7 @@
 #ifndef TextEncoding_H
 #define TextEncoding_H
 
-#include "QString.h"
+#include "DeprecatedString.h"
 #include "KWQCString.h"
 
 namespace WebCore {
@@ -83,10 +83,10 @@ namespace WebCore {
         
         QChar backslashAsCurrencySymbol() const;
         
-        QCString fromUnicode(const QString&, bool allowEntities = false) const;
+        DeprecatedCString fromUnicode(const DeprecatedString&, bool allowEntities = false) const;
 
-        QString toUnicode(const char*, int length) const;
-        QString toUnicode(const ByteArray&, int length) const;
+        DeprecatedString toUnicode(const char*, int length) const;
+        DeprecatedString toUnicode(const DeprecatedByteArray&, int length) const;
 
         TextEncodingID encodingID() const { return m_encodingID; }
         TextEncodingFlags flags() const { return m_flags; }

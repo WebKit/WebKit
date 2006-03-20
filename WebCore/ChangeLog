@@ -1,5 +1,12 @@
 2006-03-19  Darin Adler  <darin@apple.com>
 
+        - global rename, done by script
+
+        * <lots of files>: Renamed XXXImpl to XXX, and a number of other renames.
+        See WebKitTools/Scripts/do-webcore-rename version 13392 for details.
+
+2006-03-19  Darin Adler  <darin@apple.com>
+
         - roll out fix for http://bugzilla.opendarwin.org/show_bug.cgi?id=6314
           Unclosed <style> element in <head> makes page completely blank
 

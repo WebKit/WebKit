@@ -38,7 +38,7 @@ namespace WebCore {
 
 class KCanvasContainerQuartz : public KCanvasContainer {
 public:
-    KCanvasContainerQuartz(SVGStyledElementImpl *node) : KCanvasContainer(node) { }
+    KCanvasContainerQuartz(SVGStyledElement *node) : KCanvasContainer(node) { }
     
     virtual bool canHaveChildren() const;
     

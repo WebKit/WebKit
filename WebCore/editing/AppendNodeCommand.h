@@ -28,30 +28,30 @@
 
 #include "EditCommand.h"
 
-namespace DOM {
-    class NodeImpl;
+namespace WebCore {
+    class Node;
 }
 
-namespace khtml {
+namespace WebCore {
 
 class AppendNodeCommand : public EditCommand
 {
 public:
-    AppendNodeCommand(DOM::DocumentImpl *, DOM::NodeImpl *appendChild, DOM::NodeImpl *parentNode);
+    AppendNodeCommand(WebCore::Document *, WebCore::Node *appendChild, WebCore::Node *parentNode);
     virtual ~AppendNodeCommand() { }
 
     virtual void doApply();
     virtual void doUnapply();
 
-    DOM::NodeImpl *appendChild() const { return m_appendChild.get(); }
-    DOM::NodeImpl *parentNode() const { return m_parentNode.get(); }
+    WebCore::Node *appendChild() const { return m_appendChild.get(); }
+    WebCore::Node *parentNode() const { return m_parentNode.get(); }
 
 private:
-    RefPtr<DOM::NodeImpl> m_appendChild;
-    RefPtr<DOM::NodeImpl> m_parentNode;
+    RefPtr<WebCore::Node> m_appendChild;
+    RefPtr<WebCore::Node> m_parentNode;
 };
 
-} // namespace khtml
+} // namespace WebCore
 
 #endif // __append_node_command_h__
 

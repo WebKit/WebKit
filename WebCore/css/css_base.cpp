@@ -26,34 +26,34 @@
 #include "config.h"
 #include "css_base.h"
 
-#include "DocumentImpl.h"
+#include "Document.h"
 #include "css_stylesheetimpl.h"
 #include "css_valueimpl.h"
 
 namespace WebCore {
 
-void StyleBaseImpl::checkLoaded()
+void StyleBase::checkLoaded()
 {
     if (parent()) parent()->checkLoaded();
 }
 
-StyleSheetImpl* StyleBaseImpl::stylesheet()
+StyleSheet* StyleBase::stylesheet()
 {
-    StyleBaseImpl *b = this;
+    StyleBase *b = this;
     while (b && !b->isStyleSheet())
         b = b->parent();
-    return static_cast<StyleSheetImpl *>(b);
+    return static_cast<StyleSheet *>(b);
 }
 
-DOMString StyleBaseImpl::baseURL()
+String StyleBase::baseURL()
 {
     // try to find the style sheet. If found look for its url.
     // If it has none, look for the parentsheet, or the parentNode and
     // try to find out about their url
 
-    StyleSheetImpl *sheet = stylesheet();
+    StyleSheet *sheet = stylesheet();
 
-    if(!sheet) return DOMString();
+    if(!sheet) return String();
 
     if(!sheet->href().isNull())
         return sheet->href();
@@ -63,23 +63,23 @@ DOMString StyleBaseImpl::baseURL()
         return sheet->parent()->baseURL();
 
     if(!sheet->ownerNode()) 
-        return DOMString();
+        return String();
 
     return sheet->ownerNode()->getDocument()->baseURL();
 }
 
 // ------------------------------------------------------------------------------
 
-void StyleListImpl::append(PassRefPtr<StyleBaseImpl> child)
+void StyleList::append(PassRefPtr<StyleBase> child)
 {
-    StyleBaseImpl* c = child.get();
+    StyleBase* c = child.get();
     m_children.append(child);
     c->insertedIntoParent();
 }
 
-void StyleListImpl::insert(unsigned position, PassRefPtr<StyleBaseImpl> child)
+void StyleList::insert(unsigned position, PassRefPtr<StyleBase> child)
 {
-    StyleBaseImpl* c = child.get();
+    StyleBase* c = child.get();
     if (position >= length())
         m_children.append(child);
     else
@@ -87,7 +87,7 @@ void StyleListImpl::insert(unsigned position, PassRefPtr<StyleBaseImpl> child)
     c->insertedIntoParent();
 }
 
-void StyleListImpl::remove(unsigned position)
+void StyleList::remove(unsigned position)
 {
     if (position >= length())
         return;
@@ -257,10 +257,10 @@ bool CSSSelector::operator == ( const CSSSelector &other )
     return true;
 }
 
-DOMString CSSSelector::selectorText() const
+String CSSSelector::selectorText() const
 {
     // FIXME: Support namespaces when dumping the selector text. -dwh
-    DOMString str;
+    String str;
     const CSSSelector* cs = this;
     const AtomicString& localName = cs->tag.localName();
     if (cs->match == CSSSelector::None || localName != starAtom)
@@ -280,7 +280,7 @@ DOMString CSSSelector::selectorText() const
             str += cs->value;
         } else if (cs->hasAttribute()) {
             // FIXME: Add support for dumping namespaces.
-            DOMString attrName = cs->attr.localName();
+            String attrName = cs->attr.localName();
             str += "[";
             str += attrName;
             switch (cs->match) {
@@ -320,7 +320,7 @@ DOMString CSSSelector::selectorText() const
         cs = cs->tagHistory;
     }
     if (cs->tagHistory) {
-        DOMString tagHistoryText = cs->tagHistory->selectorText();
+        String tagHistoryText = cs->tagHistory->selectorText();
         if (cs->relation() == CSSSelector::DirectAdjacent)
             str = tagHistoryText + " + " + str;
         else if (cs->relation() == CSSSelector::IndirectAdjacent)

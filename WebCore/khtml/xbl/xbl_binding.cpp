@@ -34,15 +34,15 @@
 #include "xbl_binding_manager.h"
 #include "loader.h"
 
-using DOM::DOMString;
-using DOM::ElementImpl;
-using DOM::DocumentImpl;
-using khtml::CachedXBLDocument;
+using WebCore::String;
+using WebCore::Element;
+using WebCore::Document;
+using WebCore::CachedXBLDocument;
 
 namespace XBL
 {
 
-XBLBindingChain::XBLBindingChain(ElementImpl* elt, const DOMString& uri, bool isStyleChain)
+XBLBindingChain::XBLBindingChain(Element* elt, const String& uri, bool isStyleChain)
 :m_uri(uri), m_element(elt), m_previousChain(0), m_nextChain(0), m_isStyleChain(isStyleChain), 
  m_markedForDeath(false)
 {
@@ -120,7 +120,7 @@ void XBLBindingChain::failed()
 
 // ==========================================================================================
 
-XBLBinding::XBLBinding(XBLBindingChain* ch, const DOMString& uri, XBLBinding* derivedBinding)
+XBLBinding::XBLBinding(XBLBindingChain* ch, const String& uri, XBLBinding* derivedBinding)
 :m_chain(ch), m_xblDocument(0), m_prototype(0), m_previousBinding(0), m_nextBinding(0)
 {
     if (derivedBinding)
@@ -130,10 +130,10 @@ XBLBinding::XBLBinding(XBLBindingChain* ch, const DOMString& uri, XBLBinding* de
     // Parse the URL into a document URI and a binding id.  Kick off the load of
     // the XBL document here, and cache the id that we hope to find once the document
     // has loaded in m_id.
-    DOMString docURL = uri;
+    String docURL = uri;
     int hashIndex = uri.find('#');
     if (hashIndex != -1) {
-        QString url = uri.qstring();
+        DeprecatedString url = uri.deprecatedString();
         docURL = url.left(hashIndex);
         if (int(url.length()) > hashIndex+1)
             m_id = url.right(url.length()-hashIndex-1);
@@ -142,7 +142,7 @@ XBLBinding::XBLBinding(XBLBindingChain* ch, const DOMString& uri, XBLBinding* de
         m_id = "_xbl_first_binding";
     
     // Now kick off the load of the XBL document.
-    DocumentImpl* doc = chain()->element()->getDocument();
+    Document* doc = chain()->element()->getDocument();
     m_xblDocument = doc->docLoader()->requestXBLDocument(docURL);
     if (m_xblDocument)
         m_xblDocument->ref(this);
@@ -171,7 +171,7 @@ bool XBLBinding::loaded() const
     return true;
 }
 
-void XBLBinding::setXBLDocument(const DOMString& url, XBLDocumentImpl* doc) 
+void XBLBinding::setXBLDocument(const String& url, XBLDocument* doc) 
 {
     // Locate the prototype binding.  If it doesn't exist in the XBLDocument, then the entire binding
     // chain is considered invalid and should be destroyed.
@@ -186,12 +186,12 @@ void XBLBinding::setXBLDocument(const DOMString& url, XBLDocumentImpl* doc)
         return chain()->failed(); // This binding chain failed to load. Discard the chain.
     
     // See if we have an "extends" attribute.  If so, load that binding.
-    DOMString extends = m_prototype->element()->getAttribute("extends");
+    String extends = m_prototype->element()->getAttribute("extends");
     if (!extends.isEmpty()) {
         // FIXME: Add support for : extension for built-in types, e.g., "html:img".
         // Resolve to an absolute URL.
         new XBLBinding(chain(), 
-                       KURL(m_prototype->document()->baseURL(), extends.qstring()).url(),
+                       KURL(m_prototype->document()->baseURL(), extends.deprecatedString()).url(),
                        this);
         return;
     }

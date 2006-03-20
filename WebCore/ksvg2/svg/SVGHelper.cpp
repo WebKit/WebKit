@@ -24,12 +24,12 @@
 #if SVG_SUPPORT
 #include "SVGHelper.h"
 
-#include "DocumentImpl.h"
+#include "Document.h"
 #include "FrameView.h"
-#include "SVGAnimatedLengthImpl.h"
-#include "SVGAnimatedRectImpl.h"
-#include "SVGSVGElementImpl.h"
-#include "SVGStringListImpl.h"
+#include "SVGAnimatedLength.h"
+#include "SVGAnimatedRect.h"
+#include "SVGSVGElement.h"
+#include "SVGStringList.h"
 #include "ksvg.h"
 #include <math.h>
 #include <kcanvas/KCanvas.h>
@@ -37,7 +37,7 @@
 using namespace WebCore;
 using namespace std;
 
-float SVGHelper::PercentageOfViewport(float value, const SVGElementImpl *viewportElement, LengthMode mode)
+float SVGHelper::PercentageOfViewport(float value, const SVGElement *viewportElement, LengthMode mode)
 {
     float width = 0, height = 0;
     if(!viewportElement)
@@ -45,7 +45,7 @@ float SVGHelper::PercentageOfViewport(float value, const SVGElementImpl *viewpor
  
     if(viewportElement->isSVG())
     {
-        const SVGSVGElementImpl *svg = static_cast<const SVGSVGElementImpl *>(viewportElement);
+        const SVGSVGElement *svg = static_cast<const SVGSVGElement *>(viewportElement);
         if(svg->hasAttribute(SVGNames::viewBoxAttr))
         {
             width = svg->viewBox()->baseVal()->width();
@@ -56,7 +56,7 @@ float SVGHelper::PercentageOfViewport(float value, const SVGElementImpl *viewpor
         {
             // TODO: Shouldn't w/h be multiplied with the percentage values?!
             // AFAIK, this assumes width & height == 100%, Rob??
-            DocumentImpl *doc = svg->getDocument();
+            Document *doc = svg->getDocument();
             if(doc->documentElement() == svg)
             {
                 // We have to ask the canvas for the full "canvas size"...
@@ -85,18 +85,18 @@ float SVGHelper::PercentageOfViewport(float value, const SVGElementImpl *viewpor
     return 0.0;
 }
 
-void SVGHelper::ParseSeperatedList(SVGStringListImpl *list, const QString &data, const QChar &delimiter)
+void SVGHelper::ParseSeperatedList(SVGStringList *list, const DeprecatedString &data, const QChar &delimiter)
 {
     // TODO : more error checking/reporting
     list->clear();
 
-    QStringList substrings = QStringList::split(delimiter, data);
+    DeprecatedStringList substrings = DeprecatedStringList::split(delimiter, data);
     
-    QStringList::ConstIterator it = substrings.begin();
-    QStringList::ConstIterator end = substrings.end();
+    DeprecatedStringList::ConstIterator it = substrings.begin();
+    DeprecatedStringList::ConstIterator end = substrings.end();
     for(; it != end; ++it)
     {
-        DOMStringImpl *string = new DOMStringImpl(*it);
+        StringImpl *string = new StringImpl(*it);
         string->ref();
 
         list->appendItem(string);

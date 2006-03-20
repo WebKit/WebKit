@@ -32,7 +32,7 @@
 #import "IntPointArray.h"
 #import "IntRect.h"
 #import "KRenderingDeviceQuartz.h"
-#import "KWQExceptions.h"
+#import "BlockExceptions.h"
 #import "WebCoreGraphicsBridge.h"
 #import "WebCoreImageRendererFactory.h"
 #import "WebCoreTextRenderer.h"
@@ -362,7 +362,7 @@ void GraphicsContext::drawEllipse(int x, int y, int w, int h)
         if (m_data->state.pen.style() != Pen::NoPen) {
             // stroke and fill
             setColorFromPen();
-            uint penWidth = m_data->state.pen.width();
+            unsigned penWidth = m_data->state.pen.width();
             if (penWidth == 0) 
                 penWidth++;
             CGContextSetLineWidth(context, penWidth);
@@ -373,7 +373,7 @@ void GraphicsContext::drawEllipse(int x, int y, int w, int h)
     }
     if (m_data->state.pen.style() != Pen::NoPen) {
         setColorFromPen();
-        uint penWidth = m_data->state.pen.width();
+        unsigned penWidth = m_data->state.pen.width();
         if (penWidth == 0) 
             penWidth++;
         CGContextSetLineWidth(context, penWidth);
@@ -445,7 +445,7 @@ int GraphicsContext::getCompositeOperation(CGContextRef context)
     return (int)[[WebCoreImageRendererFactory sharedFactory] CGCompositeOperationInContext:context];
 }
 
-void GraphicsContext::setCompositeOperation (CGContextRef context, const QString& op)
+void GraphicsContext::setCompositeOperation (CGContextRef context, const DeprecatedString& op)
 {
     [[WebCoreImageRendererFactory sharedFactory] setCGCompositeOperationFromString:op.getNSString() inContext:context];
 }

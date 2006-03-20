@@ -80,7 +80,7 @@ public:
     CGContextRef currentCGContext() const;
     virtual KRenderingDeviceContext *contextForImage(KCanvasImage *) const;
 
-    virtual QString stringForPath(const KCanvasPath* path);
+    virtual DeprecatedString stringForPath(const KCanvasPath* path);
 
     // Resource creation
     virtual KCanvasResource *createResource(const KCResourceType &type) const;
@@ -89,8 +89,8 @@ public:
     virtual KCanvasPath* createPath() const;
     
     // item creation
-    virtual RenderPath *createItem(RenderArena *arena, RenderStyle *style, SVGStyledElementImpl *node, KCanvasPath* path) const;
-    virtual KCanvasContainer *createContainer(RenderArena *arena, RenderStyle *style, SVGStyledElementImpl *node) const;
+    virtual RenderPath *createItem(RenderArena *arena, RenderStyle *style, SVGStyledElement *node, KCanvasPath* path) const;
+    virtual KCanvasContainer *createContainer(RenderArena *arena, RenderStyle *style, SVGStyledElement *node) const;
 
     // filters (mostly debugging)
     static bool filtersEnabled();

@@ -39,7 +39,7 @@ class NSURLResponse;
 #endif
 
 class KURL;
-class QString;
+class DeprecatedString;
 
 namespace WebCore {
     class CachedObject;
@@ -49,18 +49,18 @@ namespace WebCore {
     class Request;
     class String;
 
-    template <typename T> class Array;
+    template <typename T> class DeprecatedArray;
 
-    typedef Array<char> ByteArray;
+    typedef DeprecatedArray<char> DeprecatedByteArray;
 }
 
-WebCore::ByteArray KWQServeSynchronousRequest(WebCore::Loader*, WebCore::DocLoader*, WebCore::TransferJob*, KURL& finalURL, QString& headers);
+WebCore::DeprecatedByteArray KWQServeSynchronousRequest(WebCore::Loader*, WebCore::DocLoader*, WebCore::TransferJob*, KURL& finalURL, DeprecatedString& headers);
 
 void KWQCheckCacheObjectStatus(WebCore::DocLoader*, WebCore::CachedObject*);
 bool KWQCheckIfReloading(WebCore::DocLoader*);
 bool KWQIsResponseURLEqualToURL(NSURLResponse*, const WebCore::String& m_url);
-QString KWQResponseURL(NSURLResponse *response);
-QString KWQResponseMIMEType(NSURLResponse *response);
+DeprecatedString KWQResponseURL(NSURLResponse *response);
+DeprecatedString KWQResponseMIMEType(NSURLResponse *response);
 bool KWQResponseIsMultipart(NSURLResponse *response);
 int KWQNumberOfPendingOrLoadingRequests(WebCore::DocLoader*);
 time_t KWQCacheObjectExpiresTime(WebCore::DocLoader*, NSURLResponse*);

@@ -23,13 +23,13 @@
 #include "config.h"
 #include "break_lines.h"
 
-#include <QString.h>
+#include <DeprecatedString.h>
 
 #if __APPLE__
 #include <CoreServices/CoreServices.h>
 #endif
 
-namespace khtml {
+namespace WebCore {
 
 int nextBreakablePosition(const QChar *str, int pos, int len, bool breakNBSP)
 {

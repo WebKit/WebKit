@@ -29,20 +29,20 @@
 #import <JavaScriptCore/interpreter.h>
 #import <JavaScriptCore/property_map.h>
 
-#import "DocumentImpl.h"
+#import "Document.h"
 #import "FrameView.h"
 #import "kjs_window.h"
 
 #import <kxmlcore/Assertions.h>
 #import "FoundationExtras.h"
-#import "MacFrame.h"
+#import "FrameMac.h"
 
 using namespace WebCore;
 using namespace KJS;
 
 @implementation KWQPageState
 
-- (id)initWithDocument:(DocumentImpl *)doc URL:(const KURL &)u windowProperties:(SavedProperties *)wp locationProperties:(SavedProperties *)lp interpreterBuiltins:(SavedBuiltins *)ib pausedTimeouts:(PausedTimeouts *)pt
+- (id)initWithDocument:(Document *)doc URL:(const KURL &)u windowProperties:(SavedProperties *)wp locationProperties:(SavedProperties *)lp interpreterBuiltins:(SavedBuiltins *)ib pausedTimeouts:(PausedTimeouts *)pt
 {
     [super init];
 
@@ -50,7 +50,7 @@ using namespace KJS;
     document = doc;
     doc->setInPageCache(YES);
     
-    MacFrame *frame = static_cast<MacFrame *>(doc->frame());
+    FrameMac *frame = static_cast<FrameMac *>(doc->frame());
     mousePressNode = frame ? frame->mousePressNode() : 0;
     if (mousePressNode)
         mousePressNode->ref();
@@ -121,7 +121,7 @@ using namespace KJS;
 
         FrameView *view = document->view();
 
-        MacFrame::clearTimers(view);
+        FrameMac::clearTimers(view);
 
         bool detached = document->renderer() == 0;
         document->setInPageCache(NO);
@@ -154,7 +154,7 @@ using namespace KJS;
 
         FrameView *view = document->view();
 
-        MacFrame::clearTimers(view);
+        FrameMac::clearTimers(view);
 
         bool detached = document->renderer() == 0;
         document->setInPageCache(NO);
@@ -176,12 +176,12 @@ using namespace KJS;
     [super finalize];
 }
 
-- (DocumentImpl *)document
+- (Document *)document
 {
     return document;
 }
 
-- (NodeImpl *)mousePressNode
+- (Node *)mousePressNode
 {
     return mousePressNode;
 }

@@ -45,13 +45,13 @@
 #import "QuartzSupport.h"
 
 #import "SVGRenderStyle.h"
-#import "SVGStyledElementImpl.h"
+#import "SVGStyledElement.h"
 #import "KCanvasRenderingStyle.h"
 
 
 namespace WebCore {
 
-KCanvasItemQuartz::KCanvasItemQuartz(RenderStyle *style, SVGStyledElementImpl *node) : RenderPath(style, node)
+KCanvasItemQuartz::KCanvasItemQuartz(RenderStyle *style, SVGStyledElement *node) : RenderPath(style, node)
 {
 }
 
@@ -165,7 +165,7 @@ void DrawStartAndMidMarkers(void *info, const CGPathElement *element)
 
 void KCanvasItemQuartz::drawMarkersIfNeeded(const FloatRect& rect, const KCanvasPath *path) const
 {
-    DocumentImpl *doc = document();
+    Document *doc = document();
     const SVGRenderStyle *svgStyle = style()->svgStyle();
 
     KCanvasMarker *startMarker = getMarkerById(doc, svgStyle->startMarker().mid(1));

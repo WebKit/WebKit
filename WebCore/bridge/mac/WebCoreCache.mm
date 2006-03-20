@@ -28,7 +28,7 @@
 
 #include "Cache.h"
 
-using khtml::Cache;
+using WebCore::Cache;
 
 @implementation WebCoreCache
 

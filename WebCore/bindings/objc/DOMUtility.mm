@@ -25,7 +25,7 @@
 
 #include "config.h"
 #import "kjs_dom.h"
-#import "NodeImpl.h"
+#import "Node.h"
 
 #import "DOM.h"
 #import "DOMInternal.h"
@@ -35,9 +35,9 @@
 // This file makes use of the ObjC DOM API, and the C++ DOM API, so we need to be careful about what
 // headers are included to avoid naming conflicts.
 
-static inline id createObjCDOMNode(DOM::NodeImpl *node)
+static inline id createObjCDOMNode(WebCore::Node *node)
 {
-    return [DOMNode _nodeWithImpl:node];
+    return [DOMNode _nodeWith:node];
 }
 
 namespace KJS {

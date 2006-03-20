@@ -26,7 +26,7 @@
 #include "config.h"
 #include "Image.h"
 
-#include "Array.h"
+#include "DeprecatedArray.h"
 #include "FloatRect.h"
 #include "Image.h"
 #include "ImageAnimationObserver.h"
@@ -130,7 +130,7 @@ IntSize Image::size() const
     return m_size;
 }
 
-bool Image::setData(const ByteArray& bytes, bool allDataReceived)
+bool Image::setData(const DeprecatedByteArray& bytes, bool allDataReceived)
 {
     int length = bytes.count();
     if (length == 0)

@@ -30,12 +30,12 @@
 
 #include <kxmlcore/Assertions.h>
 
-using DOM::DocumentImpl;
-using DOM::ElementImpl;
+using WebCore::Document;
+using WebCore::Element;
 
-namespace khtml {
+namespace WebCore {
 
-MergeIdenticalElementsCommand::MergeIdenticalElementsCommand(DOM::DocumentImpl *document, DOM::ElementImpl *first, DOM::ElementImpl *second)
+MergeIdenticalElementsCommand::MergeIdenticalElementsCommand(WebCore::Document *document, WebCore::Element *first, WebCore::Element *second)
     : EditCommand(document), m_element1(first), m_element2(second)
 {
     ASSERT(m_element1);
@@ -79,4 +79,4 @@ void MergeIdenticalElementsCommand::doUnapply()
     }
 }
 
-} // namespace khtml
+} // namespace WebCore

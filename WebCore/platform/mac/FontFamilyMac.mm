@@ -29,18 +29,18 @@
 
 namespace WebCore {
 
-const void *retainDOMStringImpl(CFAllocatorRef allocator, const void *value)
+const void *retainDOMString(CFAllocatorRef allocator, const void *value)
 {
-    ((DOMStringImpl*)value)->ref();
+    ((StringImpl*)value)->ref();
     return value;
 }
 
-void releaseDOMStringImpl(CFAllocatorRef allocator, const void *value)
+void releaseDOMString(CFAllocatorRef allocator, const void *value)
 {
-    ((DOMStringImpl*)value)->deref();
+    ((StringImpl*)value)->deref();
 }
 
-const CFDictionaryKeyCallBacks CFDictionaryFamilyKeyCallBacks = { 0, retainDOMStringImpl, releaseDOMStringImpl, 0, 0, 0 };
+const CFDictionaryKeyCallBacks CFDictionaryFamilyKeyCallBacks = { 0, retainDOMString, releaseDOMString, 0, 0, 0 };
 
 NSString *FontFamily::getNSFamily() const
 {

@@ -31,17 +31,17 @@ namespace KJS {
     class PausedTimeouts;
 }
 
-namespace DOM {
-    class DocumentImpl;
-    class NodeImpl;
+namespace WebCore {
+    class Document;
+    class Node;
 }
 
 class KURL;
 
 @interface KWQPageState : NSObject
 {
-    DOM::DocumentImpl *document;
-    DOM::NodeImpl *mousePressNode;
+    WebCore::Document *document;
+    WebCore::Node *mousePressNode;
     KURL *URL;
     KJS::SavedProperties *windowProperties;
     KJS::SavedProperties *locationProperties;
@@ -49,10 +49,10 @@ class KURL;
     KJS::PausedTimeouts *pausedTimeouts;
 }
 
-- initWithDocument:(DOM::DocumentImpl *)doc URL:(const KURL &)u windowProperties:(KJS::SavedProperties *)wp locationProperties:(KJS::SavedProperties *)lp interpreterBuiltins:(KJS::SavedBuiltins *)ib pausedTimeouts:(KJS::PausedTimeouts *)pt;
+- initWithDocument:(WebCore::Document *)doc URL:(const KURL &)u windowProperties:(KJS::SavedProperties *)wp locationProperties:(KJS::SavedProperties *)lp interpreterBuiltins:(KJS::SavedBuiltins *)ib pausedTimeouts:(KJS::PausedTimeouts *)pt;
 
-- (DOM::DocumentImpl *)document;
-- (DOM::NodeImpl *)mousePressNode;
+- (WebCore::Document *)document;
+- (WebCore::Node *)mousePressNode;
 - (KURL *)URL;
 - (KJS::SavedProperties *)windowProperties;
 - (KJS::SavedProperties *)locationProperties;

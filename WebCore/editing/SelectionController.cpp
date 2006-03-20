@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SelectionController.h"
 
-#include "DocumentImpl.h"
+#include "Document.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -36,13 +36,13 @@
 #include "PlatformString.h"
 #include "VisiblePosition.h"
 #include "dom2_eventsimpl.h"
-#include "dom2_rangeimpl.h"
+#include "Range.h"
 #include "dom_elementimpl.h"
 #include "htmlediting.h"
-#include "render_canvas.h"
-#include "render_object.h"
+#include "RenderCanvas.h"
+#include "RenderObject.h"
 #include "render_style.h"
-#include "visible_text.h"
+#include "TextIterator.h"
 #include "visible_units.h"
 #include <kxmlcore/Assertions.h>
 
@@ -52,7 +52,7 @@ namespace WebCore {
 
 using namespace EventNames;
 
-void MutationListener::handleEvent(EventImpl *event, bool isWindowEvent)
+void MutationListener::handleEvent(Event *event, bool isWindowEvent)
 {
     if (!m_selectionController)
         return;
@@ -84,7 +84,7 @@ SelectionController::SelectionController(const Position &pos, EAffinity affinity
     setSelection(Selection(pos, pos, affinity));
 }
 
-SelectionController::SelectionController(const RangeImpl *r, EAffinity affinity)
+SelectionController::SelectionController(const Range *r, EAffinity affinity)
     : m_needsLayout(true)
     , m_modifyBiasSet(false)
     , m_mutationListener(new MutationListener(this))
@@ -136,7 +136,7 @@ SelectionController::SelectionController(const SelectionController &o)
 SelectionController::~SelectionController()
 {
     if (!isNone()) {
-        DocumentImpl *document = m_sel.start().node()->getDocument();
+        Document *document = m_sel.start().node()->getDocument();
         document->removeEventListener(DOMNodeRemovedEvent, m_mutationListener.get(), false);
     }
 }
@@ -185,7 +185,7 @@ void SelectionController::moveTo(const Position &pos, EAffinity affinity)
     m_needsLayout = true;
 }
 
-void SelectionController::moveTo(const RangeImpl *r, EAffinity affinity)
+void SelectionController::moveTo(const Range *r, EAffinity affinity)
 {
     setSelection(Selection(startPosition(r), endPosition(r), affinity));
     m_needsLayout = true;
@@ -200,8 +200,8 @@ void SelectionController::moveTo(const Position &base, const Position &extent, E
 void SelectionController::setSelection(const Selection &newSelection)
 {
     Selection oldSelection = m_sel;
-    DocumentImpl *oldDocument = oldSelection.start().node() ? oldSelection.start().node()->getDocument() : 0;
-    DocumentImpl *newDocument = newSelection.start().node() ? newSelection.start().node()->getDocument() : 0;
+    Document *oldDocument = oldSelection.start().node() ? oldSelection.start().node()->getDocument() : 0;
+    Document *newDocument = newSelection.start().node() ? newSelection.start().node()->getDocument() : 0;
     
     if (oldDocument != newDocument) {
         if (oldDocument)
@@ -213,15 +213,15 @@ void SelectionController::setSelection(const Selection &newSelection)
     m_sel = newSelection;
 }
 
-void SelectionController::nodeWillBeRemoved(NodeImpl *node)
+void SelectionController::nodeWillBeRemoved(Node *node)
 {
     if (isNone())
         return;
     
-    NodeImpl *base = m_sel.base().node();
-    NodeImpl *extent = m_sel.extent().node();
-    NodeImpl *start = m_sel.start().node();
-    NodeImpl *end = m_sel.end().node();
+    Node *base = m_sel.base().node();
+    Node *extent = m_sel.extent().node();
+    Node *start = m_sel.start().node();
+    Node *end = m_sel.end().node();
     
     bool baseRemoved = node == base || base->isAncestor(node);
     bool extentRemoved = node == extent || extent->isAncestor(node);
@@ -276,7 +276,7 @@ void SelectionController::setModifyBias(EAlter alter, EDirection direction)
     }
 }
 
-VisiblePosition SelectionController::modifyExtendingRightForward(ETextGranularity granularity)
+VisiblePosition SelectionController::modifyExtendingRightForward(TextGranularity granularity)
 {
     VisiblePosition pos(m_sel.extent(), m_sel.affinity());
     switch (granularity) {
@@ -298,13 +298,13 @@ VisiblePosition SelectionController::modifyExtendingRightForward(ETextGranularit
         case LineGranularity:
             pos = nextLinePosition(pos, xPosForVerticalArrowNavigation(EXTENT));
             break;
-        case LINE_BOUNDARY:
+        case LineBoundary:
             pos = endOfLine(VisiblePosition(m_sel.end(), m_sel.affinity()));
             break;
-        case PARAGRAPH_BOUNDARY:
+        case ParagraphBoundary:
             pos = endOfParagraph(VisiblePosition(m_sel.end(), m_sel.affinity()));
             break;
-        case DOCUMENT_BOUNDARY:
+        case DocumentBoundary:
             pos = endOfDocument(pos);
             break;
     }
@@ -312,7 +312,7 @@ VisiblePosition SelectionController::modifyExtendingRightForward(ETextGranularit
     return pos;
 }
 
-VisiblePosition SelectionController::modifyMovingRightForward(ETextGranularity granularity)
+VisiblePosition SelectionController::modifyMovingRightForward(TextGranularity granularity)
 {
     VisiblePosition pos;
     switch (granularity) {
@@ -336,20 +336,20 @@ VisiblePosition SelectionController::modifyMovingRightForward(ETextGranularity g
                 pos = nextLinePosition(pos, xPosForVerticalArrowNavigation(END, isRange()));
             break;
         }
-        case LINE_BOUNDARY:
+        case LineBoundary:
             pos = endOfLine(VisiblePosition(m_sel.end(), m_sel.affinity()));
             break;
-        case PARAGRAPH_BOUNDARY:
+        case ParagraphBoundary:
             pos = endOfParagraph(VisiblePosition(m_sel.end(), m_sel.affinity()));
             break;
-        case DOCUMENT_BOUNDARY:
+        case DocumentBoundary:
             pos = endOfDocument(VisiblePosition(m_sel.end(), m_sel.affinity()));
             break;
     }
     return pos;
 }
 
-VisiblePosition SelectionController::modifyExtendingLeftBackward(ETextGranularity granularity)
+VisiblePosition SelectionController::modifyExtendingLeftBackward(TextGranularity granularity)
 {
     VisiblePosition pos(m_sel.extent(), m_sel.affinity());
         
@@ -376,20 +376,20 @@ VisiblePosition SelectionController::modifyExtendingLeftBackward(ETextGranularit
         case LineGranularity:
             pos = previousLinePosition(pos, xPosForVerticalArrowNavigation(EXTENT));
             break;
-        case LINE_BOUNDARY:
+        case LineBoundary:
             pos = startOfLine(VisiblePosition(m_sel.start(), m_sel.affinity()));
             break;
-        case PARAGRAPH_BOUNDARY:
+        case ParagraphBoundary:
             pos = startOfParagraph(VisiblePosition(m_sel.start(), m_sel.affinity()));
             break;
-        case DOCUMENT_BOUNDARY:
+        case DocumentBoundary:
             pos = startOfDocument(pos);
             break;
     }
     return pos;
 }
 
-VisiblePosition SelectionController::modifyMovingLeftBackward(ETextGranularity granularity)
+VisiblePosition SelectionController::modifyMovingLeftBackward(TextGranularity granularity)
 {
     VisiblePosition pos;
     switch (granularity) {
@@ -408,22 +408,22 @@ VisiblePosition SelectionController::modifyMovingLeftBackward(ETextGranularity g
         case LineGranularity:
             pos = previousLinePosition(VisiblePosition(m_sel.start(), m_sel.affinity()), xPosForVerticalArrowNavigation(START, isRange()));
             break;
-        case LINE_BOUNDARY:
+        case LineBoundary:
             pos = startOfLine(VisiblePosition(m_sel.start(), m_sel.affinity()));
             break;
-        case PARAGRAPH_BOUNDARY:
+        case ParagraphBoundary:
             pos = startOfParagraph(VisiblePosition(m_sel.start(), m_sel.affinity()));
             break;
-        case DOCUMENT_BOUNDARY:
+        case DocumentBoundary:
             pos = startOfDocument(VisiblePosition(m_sel.start(), m_sel.affinity()));
             break;
     }
     return pos;
 }
 
-bool SelectionController::modify(const DOMString &alterString, const DOMString &directionString, const DOMString &granularityString)
+bool SelectionController::modify(const String &alterString, const String &directionString, const String &granularityString)
 {
-    DOMString alterStringLower = alterString.lower();
+    String alterStringLower = alterString.lower();
     EAlter alter;
     if (alterStringLower == "extend")
         alter = EXTEND;
@@ -432,7 +432,7 @@ bool SelectionController::modify(const DOMString &alterString, const DOMString &
     else 
         return false;
     
-    DOMString directionStringLower = directionString.lower();
+    String directionStringLower = directionString.lower();
     EDirection direction;
     if (directionStringLower == "forward")
         direction = FORWARD;
@@ -445,8 +445,8 @@ bool SelectionController::modify(const DOMString &alterString, const DOMString &
     else
         return false;
         
-    DOMString granularityStringLower = granularityString.lower();
-    ETextGranularity granularity;
+    String granularityStringLower = granularityString.lower();
+    TextGranularity granularity;
     if (granularityStringLower == "character")
         granularity = CharacterGranularity;
     else if (granularityStringLower == "word")
@@ -461,7 +461,7 @@ bool SelectionController::modify(const DOMString &alterString, const DOMString &
     return modify(alter, direction, granularity);
 }
 
-bool SelectionController::modify(EAlter alter, EDirection dir, ETextGranularity granularity)
+bool SelectionController::modify(EAlter alter, EDirection dir, TextGranularity granularity)
 {
     if (frame())
         frame()->setSelectionGranularity(granularity);
@@ -508,7 +508,7 @@ bool SelectionController::modify(EAlter alter, EDirection dir, ETextGranularity 
 static bool caretY(const VisiblePosition &c, int &y)
 {
     Position p = c.deepEquivalent();
-    NodeImpl *n = p.node();
+    Node *n = p.node();
     if (!n)
         return false;
     RenderObject *r = p.node()->renderer();
@@ -588,7 +588,7 @@ bool SelectionController::modify(EAlter alter, int verticalDistance)
     return true;
 }
 
-bool SelectionController::expandUsingGranularity(ETextGranularity granularity)
+bool SelectionController::expandUsingGranularity(TextGranularity granularity)
 {
     if (isNone())
         return false;
@@ -671,22 +671,22 @@ void SelectionController::setNeedsLayout(bool flag)
     m_needsLayout = flag;
 }
 
-DOMString SelectionController::type() const
+String SelectionController::type() const
 {
     if (isNone())
-        return DOMString("None");
+        return String("None");
     else if (isCaret())
-        return DOMString("Caret");
+        return String("Caret");
     else
-        return DOMString("Range");
+        return String("Range");
 }
 
-DOMString SelectionController::toString() const
+String SelectionController::toString() const
 {
-    return DOMString(plainText(m_sel.toRange().get()));
+    return String(plainText(m_sel.toRange().get()));
 }
 
-PassRefPtr<RangeImpl> SelectionController::getRangeAt(int index) const
+PassRefPtr<Range> SelectionController::getRangeAt(int index) const
 {
     return index == 0 ? m_sel.toRange() : 0;
 }
@@ -696,7 +696,7 @@ Frame *SelectionController::frame() const
     return !isNone() ? m_sel.start().node()->getDocument()->frame() : 0;
 }
 
-void SelectionController::setBaseAndExtent(NodeImpl *baseNode, int baseOffset, NodeImpl *extentNode, int extentOffset)
+void SelectionController::setBaseAndExtent(Node *baseNode, int baseOffset, Node *extentNode, int extentOffset)
 {
     VisiblePosition visibleBase = VisiblePosition(baseNode, baseOffset, DOWNSTREAM);
     VisiblePosition visibleExtent = VisiblePosition(extentNode, extentOffset, DOWNSTREAM);
@@ -704,12 +704,12 @@ void SelectionController::setBaseAndExtent(NodeImpl *baseNode, int baseOffset, N
     moveTo(visibleBase, visibleExtent);
 }
 
-void SelectionController::setPosition(NodeImpl *node, int offset)
+void SelectionController::setPosition(Node *node, int offset)
 {
     moveTo(VisiblePosition(node, offset, DOWNSTREAM));
 }
 
-void SelectionController::collapse(NodeImpl *node, int offset)
+void SelectionController::collapse(Node *node, int offset)
 {
     moveTo(VisiblePosition(node, offset, DOWNSTREAM));
 }
@@ -729,7 +729,7 @@ void SelectionController::empty()
     moveTo(SelectionController());
 }
 
-void SelectionController::extend(NodeImpl *node, int offset)
+void SelectionController::extend(Node *node, int offset)
 {
     moveTo(VisiblePosition(node, offset, DOWNSTREAM));
 }
@@ -834,8 +834,8 @@ void SelectionController::paintCaret(GraphicsContext *p, const IntRect &rect)
 void SelectionController::debugRenderer(RenderObject *r, bool selected) const
 {
     if (r->node()->isElementNode()) {
-        ElementImpl *element = static_cast<ElementImpl *>(r->node());
-        fprintf(stderr, "%s%s\n", selected ? "==> " : "    ", element->localName().qstring().latin1());
+        Element *element = static_cast<Element *>(r->node());
+        fprintf(stderr, "%s%s\n", selected ? "==> " : "    ", element->localName().deprecatedString().latin1());
     }
     else if (r->isText()) {
         RenderText *textRenderer = static_cast<RenderText *>(r);
@@ -845,7 +845,7 @@ void SelectionController::debugRenderer(RenderObject *r, bool selected) const
         }
         
         static const int max = 36;
-        QString text = DOMString(textRenderer->string()).qstring();
+        DeprecatedString text = String(textRenderer->string()).deprecatedString();
         int textLength = text.length();
         if (selected) {
             int offset = 0;
@@ -858,7 +858,7 @@ void SelectionController::debugRenderer(RenderObject *r, bool selected) const
             InlineTextBox *box = textRenderer->findNextInlineTextBox(offset, pos);
             text = text.mid(box->m_start, box->m_len);
             
-            QString show;
+            DeprecatedString show;
             int mid = max / 2;
             int caret = 0;
             
@@ -908,8 +908,8 @@ void SelectionController::debugRenderer(RenderObject *r, bool selected) const
 #define FormatBufferSize 1024
 void SelectionController::formatForDebugger(char *buffer, unsigned length) const
 {
-    DOMString result;
-    DOMString s;
+    String result;
+    String s;
     
     if (isNone()) {
         result = "<none>";
@@ -924,7 +924,7 @@ void SelectionController::formatForDebugger(char *buffer, unsigned length) const
         result += s;
     }
           
-    strncpy(buffer, result.qstring().latin1(), length - 1);
+    strncpy(buffer, result.deprecatedString().latin1(), length - 1);
 }
 #undef FormatBufferSize
 

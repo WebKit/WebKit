@@ -30,21 +30,21 @@
 
 #include "CachedScript.h"
 #include "DocLoader.h"
-#include "DocumentFragmentImpl.h"
+#include "DocumentFragment.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameView.h"
-#include "HTMLElementImpl.h"
+#include "HTMLElement.h"
 #include "SystemTime.h"
 #include "csshelper.h"
-#include "html_documentimpl.h"
+#include "HTMLDocument.h"
 #include "htmlnames.h"
 #include "htmlparser.h"
 #include "kjs_proxy.h"
 #include <ctype.h>
 #include <stdlib.h>
 
-#include "kentities.c"
+#include "HTMLEntityNames.c"
 
 // #define INSTRUMENT_LAYOUT_SCHEDULING 1
 
@@ -104,9 +104,9 @@ static inline QChar fixUpChar(QChar c)
     return windowsLatin1ExtensionArray[code - 0x80];
 }
 
-inline bool tagMatch(const char *s1, const QChar *s2, uint length)
+inline bool tagMatch(const char *s1, const QChar *s2, unsigned length)
 {
-    for (uint i = 0; i != length; ++i) {
+    for (unsigned i = 0; i != length; ++i) {
         char c1 = s1[i];
         char uc1 = toupper(c1);
         QChar c2 = s2[i];
@@ -116,20 +116,20 @@ inline bool tagMatch(const char *s1, const QChar *s2, uint length)
     return true;
 }
 
-void Token::addAttribute(DocumentImpl* doc, const AtomicString& attrName, const AtomicString& v)
+void Token::addAttribute(Document* doc, const AtomicString& attrName, const AtomicString& v)
 {
-    AttributeImpl* a = 0;
+    Attribute* a = 0;
     if (!attrName.isEmpty() && attrName != "/") {
-        a = new MappedAttributeImpl(attrName, v);
+        a = new MappedAttribute(attrName, v);
         if (!attrs)
-            attrs = new NamedMappedAttrMapImpl(0);
+            attrs = new NamedMappedAttrMap(0);
         attrs->insertAttribute(a);
     }
 }
 
 // ----------------------------------------------------------------------------
 
-HTMLTokenizer::HTMLTokenizer(DocumentImpl* doc)
+HTMLTokenizer::HTMLTokenizer(Document* doc)
     : buffer(0)
     , scriptCode(0)
     , scriptCodeSize(0)
@@ -145,7 +145,7 @@ HTMLTokenizer::HTMLTokenizer(DocumentImpl* doc)
     begin();
 }
 
-HTMLTokenizer::HTMLTokenizer(DocumentFragmentImpl* frag)
+HTMLTokenizer::HTMLTokenizer(DocumentFragment* frag)
     : buffer(0)
     , scriptCode(0)
     , scriptCodeSize(0)
@@ -199,7 +199,7 @@ void HTMLTokenizer::begin()
     tquote = NoQuote;
     searchCount = 0;
     m_state.setEntityState(NoEntity);
-    scriptSrc = QString::null;
+    scriptSrc = DeprecatedString::null;
     pendingSrc.clear();
     currentPrependingSrc = 0;
     noMoreData = false;
@@ -362,12 +362,12 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
                 scriptNode = 0;
         } else
             scriptNode = 0;
-        scriptSrc=QString::null;
+        scriptSrc=DeprecatedString::null;
     }
     else {
 #ifdef TOKEN_DEBUG
         kdDebug( 6036 ) << "---START SCRIPT---" << endl;
-        kdDebug( 6036 ) << QString(scriptCode, scriptCodeSize) << endl;
+        kdDebug( 6036 ) << DeprecatedString(scriptCode, scriptCodeSize) << endl;
         kdDebug( 6036 ) << "---END SCRIPT---" << endl;
 #endif
         scriptNode = 0;
@@ -375,7 +375,7 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
         doScriptExec = true;
     }
     state = processListing(SegmentedString(scriptCode, scriptCodeSize), state);
-    QString exScript( buffer, dest-buffer );
+    DeprecatedString exScript( buffer, dest-buffer );
     processToken();
     currToken.tagName = scriptTag.localName();
     currToken.beginTag = false;
@@ -410,7 +410,7 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
                 prependingSrc = src;
             setSrc(SegmentedString());
             scriptCodeSize = scriptCodeResync = 0;
-            state = scriptExecution(exScript, state, QString::null, scriptStartLineno);
+            state = scriptExecution(exScript, state, DeprecatedString::null, scriptStartLineno);
         }
     }
 
@@ -446,14 +446,14 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
     return state;
 }
 
-HTMLTokenizer::State HTMLTokenizer::scriptExecution(const QString& str, State state, QString scriptURL, int baseLine)
+HTMLTokenizer::State HTMLTokenizer::scriptExecution(const DeprecatedString& str, State state, DeprecatedString scriptURL, int baseLine)
 {
     if (m_fragment || !m_doc->frame())
         return state;
     bool oldscript = state.inScript();
     m_executingScript++;
     state.setInScript(false);
-    QString url = scriptURL.isNull() ? m_doc->frame()->document()->URL() : scriptURL;
+    DeprecatedString url = scriptURL.isNull() ? m_doc->frame()->document()->URL() : scriptURL;
 
     SegmentedString *savedPrependingSrc = currentPrependingSrc;
     SegmentedString prependingSrc;
@@ -518,7 +518,7 @@ HTMLTokenizer::State HTMLTokenizer::parseComment(SegmentedString &src, State sta
         scriptCode[ scriptCodeSize++ ] = *src;
 #if defined(TOKEN_DEBUG) && TOKEN_DEBUG > 1
         qDebug("comment is now: *%s*",
-               QConstString((QChar*)src.operator->(), kMin(16U, src.length())).qstring().latin1());
+               QConstString((QChar*)src.operator->(), kMin(16U, src.length())).deprecatedString().latin1());
 #endif
 
         if (strict) {
@@ -806,11 +806,11 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
     {
         checkBuffer();
 #if defined(TOKEN_DEBUG) && TOKEN_DEBUG > 1
-        uint l = 0;
+        unsigned l = 0;
         while(l < src.length() && (*(src.operator->()+l)).latin1() != '>')
             l++;
         qDebug("src is now: *%s*, tquote: %d",
-               QConstString((QChar*)src.operator->(), l).qstring().latin1(), tquote);
+               QConstString((QChar*)src.operator->(), l).deprecatedString().latin1(), tquote);
 #endif
         switch(state.tagState()) {
         case NoTag:
@@ -1152,7 +1152,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
 
             AtomicString tagName = currToken.tagName;
 #if defined(TOKEN_DEBUG) && TOKEN_DEBUG > 0
-            kdDebug( 6036 ) << "appending Tag: " << tagName.qstring() << endl;
+            kdDebug( 6036 ) << "appending Tag: " << tagName.deprecatedString() << endl;
 #endif
 
             // Handle <script src="foo"/> like Mozilla/Opera. We have to do this now for Dashboard
@@ -1160,19 +1160,19 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
             bool isSelfClosingScript = currToken.flat && currToken.beginTag && currToken.tagName == scriptTag;
             bool beginTag = !currToken.flat && currToken.beginTag;
             if (currToken.beginTag && currToken.tagName == scriptTag) {
-                AttributeImpl* a = 0;
+                Attribute* a = 0;
                 bool foundTypeAttribute = false;
-                scriptSrc = QString::null;
-                scriptSrcCharset = QString::null;
+                scriptSrc = DeprecatedString::null;
+                scriptSrcCharset = DeprecatedString::null;
                 if ( currToken.attrs && /* potentially have a ATTR_SRC ? */
                      parser->doc()->frame() &&
                      parser->doc()->frame()->jScriptEnabled() && /* jscript allowed at all? */
                      !m_fragment /* are we a regular tokenizer or just for innerHTML ? */
                     ) {
                     if ((a = currToken.attrs->getAttributeItem(srcAttr)))
-                        scriptSrc = parser->doc()->completeURL(parseURL(a->value()).qstring());
+                        scriptSrc = parser->doc()->completeURL(parseURL(a->value()).deprecatedString());
                     if ((a = currToken.attrs->getAttributeItem(charsetAttr)))
-                        scriptSrcCharset = a->value().qstring().stripWhiteSpace();
+                        scriptSrcCharset = a->value().deprecatedString().stripWhiteSpace();
                     if ( scriptSrcCharset.isEmpty() )
                         scriptSrcCharset = parser->doc()->frame()->encoding();
                     /* Check type before language, since language is deprecated */
@@ -1195,7 +1195,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                         Mozilla 1.5 and WinIE 6 both accept the empty string, but neither accept a whitespace-only string.
                         We want to accept all the values that either of these browsers accept, but not other values.
                      */
-                    QString type = a->value().qstring().stripWhiteSpace().lower();
+                    DeprecatedString type = a->value().deprecatedString().stripWhiteSpace().lower();
                     if( type.compare("application/x-javascript") != 0 &&
                         type.compare("text/javascript") != 0 &&
                         type.compare("text/javascript1.0") != 0 &&
@@ -1215,7 +1215,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                      Neither Mozilla 1.5 nor WinIE 6 accept leading or trailing whitespace.
                      We want to accept all the values that either of these browsers accept, but not other values.
                      */
-                    DOMString lang = a->value().domString().lower();
+                    String lang = a->value().domString().lower();
                     if( lang != "" &&
                         lang != "javascript" &&
                         lang != "javascript1.0" &&
@@ -1231,7 +1231,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                 }
             }
 
-            RefPtr<NodeImpl> n = processToken();
+            RefPtr<Node> n = processToken();
 
             if (tagName == preTag) {
                 if (beginTag)
@@ -1576,12 +1576,12 @@ void HTMLTokenizer::finish()
         scriptCode[scriptCodeSize] = 0;
         scriptCode[scriptCodeSize + 1] = 0;
         int pos;
-        QString food;
+        DeprecatedString food;
         if (m_state.inScript() || m_state.inStyle())
             food.setUnicode(scriptCode, scriptCodeSize);
         else if (m_state.inServer()) {
             food = "<";
-            food += QString(scriptCode, scriptCodeSize);
+            food += DeprecatedString(scriptCode, scriptCodeSize);
         } else {
             pos = QConstString(scriptCode, scriptCodeSize).string().find('>');
             food.setUnicode(scriptCode+pos+1, scriptCodeSize-pos-1); // deep copy
@@ -1601,20 +1601,20 @@ void HTMLTokenizer::finish()
         end(); // this actually causes us to be deleted
 }
 
-PassRefPtr<NodeImpl> HTMLTokenizer::processToken()
+PassRefPtr<Node> HTMLTokenizer::processToken()
 {
-    KJSProxyImpl* jsProxy = (!m_fragment && m_doc->frame()) ? m_doc->frame()->jScript() : 0;
+    KJSProxy* jsProxy = (!m_fragment && m_doc->frame()) ? m_doc->frame()->jScript() : 0;
     if (jsProxy)
         jsProxy->setEventHandlerLineno(tagStartLineno);
     if (dest > buffer) {
 #ifdef TOKEN_DEBUG
         if(currToken.tagName.length()) {
-            qDebug( "unexpected token: %s, str: *%s*", currToken.tagName.qstring().latin1(),QConstString( buffer,dest-buffer ).qstring().latin1() );
+            qDebug( "unexpected token: %s, str: *%s*", currToken.tagName.deprecatedString().latin1(),QConstString( buffer,dest-buffer ).deprecatedString().latin1() );
             ASSERT(0);
         }
 
 #endif
-        currToken.text = new DOMStringImpl( buffer, dest - buffer );
+        currToken.text = new StringImpl( buffer, dest - buffer );
         if (currToken.tagName != commentAtom)
             currToken.tagName = textAtom;
     } else if (currToken.tagName == nullAtom) {
@@ -1627,10 +1627,10 @@ PassRefPtr<NodeImpl> HTMLTokenizer::processToken()
     dest = buffer;
 
 #ifdef TOKEN_DEBUG
-    QString name = currToken.tagName.qstring();
-    QString text;
+    DeprecatedString name = currToken.tagName.deprecatedString();
+    DeprecatedString text;
     if(currToken.text)
-        text = QConstString(currToken.text->s, currToken.text->l).qstring();
+        text = QConstString(currToken.text->s, currToken.text->l).deprecatedString();
 
     kdDebug( 6036 ) << "Token --> " << name << endl;
     if (currToken.flat)
@@ -1641,15 +1641,15 @@ PassRefPtr<NodeImpl> HTMLTokenizer::processToken()
     if(l) {
         kdDebug( 6036 ) << "Attributes: " << l << endl;
         for (unsigned i = 0; i < l; ++i) {
-            AttributeImpl* c = currToken.attrs->attributeItem(i);
-            kdDebug( 6036 ) << "    " << c->localName().qstring()
-                            << "=\"" << c->value().qstring() << "\"" << endl;
+            Attribute* c = currToken.attrs->attributeItem(i);
+            kdDebug( 6036 ) << "    " << c->localName().deprecatedString()
+                            << "=\"" << c->value().deprecatedString() << "\"" << endl;
         }
     }
     kdDebug( 6036 ) << endl;
 #endif
 
-    RefPtr<NodeImpl> n;
+    RefPtr<Node> n;
     
     if (!m_parserStopped)
         // pass the token over to the parser, the parser DOES NOT delete the token
@@ -1703,18 +1703,18 @@ void HTMLTokenizer::notifyFinished(CachedObject */*finishedObj*/)
         CachedScript* cs = pendingScripts.dequeue();
         ASSERT(cs->accessCount() > 0);
 
-        DOMString scriptSource = cs->script();
+        String scriptSource = cs->script();
 #ifdef TOKEN_DEBUG
-        kdDebug( 6036 ) << "External script is:" << endl << scriptSource.qstring() << endl;
+        kdDebug( 6036 ) << "External script is:" << endl << scriptSource.deprecatedString() << endl;
 #endif
         setSrc(SegmentedString());
 
         // make sure we forget about the script before we execute the new one
         // infinite recursion might happen otherwise
-        QString cachedScriptUrl( cs->url().qstring() );
+        DeprecatedString cachedScriptUrl( cs->url().deprecatedString() );
         bool errorOccurred = cs->errorOccurred();
         cs->deref(this);
-        RefPtr<NodeImpl> n = scriptNode;
+        RefPtr<Node> n = scriptNode;
         scriptNode = 0;
 
 #if INSTRUMENT_LAYOUT_SCHEDULING
@@ -1725,7 +1725,7 @@ void HTMLTokenizer::notifyFinished(CachedObject */*finishedObj*/)
         if (errorOccurred)
             EventTargetNodeCast(n.get())->dispatchHTMLEvent(errorEvent, false, false);
         else {
-            m_state = scriptExecution(scriptSource.qstring(), m_state, cachedScriptUrl);
+            m_state = scriptExecution(scriptSource.deprecatedString(), m_state, cachedScriptUrl);
             EventTargetNodeCast(n.get())->dispatchHTMLEvent(loadEvent, false, false);
         }
 
@@ -1765,11 +1765,11 @@ void HTMLTokenizer::setSrc(const SegmentedString &source)
     src.resetLineCount();
 }
 
-void parseHTMLDocumentFragment(const DOMString &source, DocumentFragmentImpl *fragment)
+void parseHTMLDocumentFragment(const String &source, DocumentFragment *fragment)
 {
     HTMLTokenizer tok(fragment);
     tok.setForceSynchronous(true);
-    tok.write(source.qstring(), true);
+    tok.write(source.deprecatedString(), true);
     tok.finish();
     ASSERT(!tok.processingData());      // make sure we're done (see 3963151)
 }

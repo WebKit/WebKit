@@ -28,30 +28,30 @@
 
 #include "EditCommand.h"
 
-namespace DOM {
-    class TextImpl;
+namespace WebCore {
+    class Text;
 }
 
-namespace khtml {
+namespace WebCore {
 
 class SplitTextNodeCommand : public EditCommand
 {
 public:
-    SplitTextNodeCommand(DOM::DocumentImpl *, DOM::TextImpl *, int);
+    SplitTextNodeCommand(WebCore::Document *, WebCore::Text *, int);
     virtual ~SplitTextNodeCommand() { }
 
     virtual void doApply();
     virtual void doUnapply();
 
-    DOM::TextImpl *node() const { return m_text2.get(); }
+    WebCore::Text *node() const { return m_text2.get(); }
     int offset() const { return m_offset; }
 
 private:
-    RefPtr<DOM::TextImpl> m_text1;
-    RefPtr<DOM::TextImpl> m_text2;
+    RefPtr<WebCore::Text> m_text1;
+    RefPtr<WebCore::Text> m_text2;
     unsigned m_offset;
 };
 
-} // namespace khtml
+} // namespace WebCore
 
 #endif // __split_text_node_command_h__

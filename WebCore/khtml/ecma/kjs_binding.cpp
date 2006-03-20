@@ -29,7 +29,7 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "dom2_eventsimpl.h"
-#include "dom2_rangeimpl.h"
+#include "Range.h"
 #include "kjs_dom.h"
 #include "kjs_window.h"
 #include <kjs/collector.h>
@@ -47,8 +47,8 @@ UString DOMObject::toString(ExecState *) const
 }
 
 typedef HashMap<void*, DOMObject*> DOMObjectMap;
-typedef HashMap<NodeImpl*, DOMNode*> NodeMap;
-typedef HashMap<DocumentImpl*, NodeMap*> NodePerDocMap;
+typedef HashMap<Node*, DOMNode*> NodeMap;
+typedef HashMap<Document*, NodeMap*> NodePerDocMap;
 
 static DOMObjectMap *domObjects()
 { 
@@ -88,7 +88,7 @@ void ScriptInterpreter::forgetDOMObject(void* objectHandle)
     domObjects()->remove(objectHandle);
 }
 
-DOMNode *ScriptInterpreter::getDOMNodeForDocument(DOM::DocumentImpl *document, DOM::NodeImpl *node)
+DOMNode *ScriptInterpreter::getDOMNodeForDocument(WebCore::Document *document, WebCore::Node *node)
 {
     if (!document)
         return static_cast<DOMNode *>(domObjects()->get(node));
@@ -98,7 +98,7 @@ DOMNode *ScriptInterpreter::getDOMNodeForDocument(DOM::DocumentImpl *document, D
     return NULL;
 }
 
-void ScriptInterpreter::forgetDOMNodeForDocument(DOM::DocumentImpl *document, NodeImpl *node)
+void ScriptInterpreter::forgetDOMNodeForDocument(WebCore::Document *document, Node *node)
 {
     if (!document) {
         domObjects()->remove(node);
@@ -109,7 +109,7 @@ void ScriptInterpreter::forgetDOMNodeForDocument(DOM::DocumentImpl *document, No
         documentDict->remove(node);
 }
 
-void ScriptInterpreter::putDOMNodeForDocument(DOM::DocumentImpl *document, NodeImpl *nodeHandle, DOMNode *nodeWrapper)
+void ScriptInterpreter::putDOMNodeForDocument(WebCore::Document *document, Node *nodeHandle, DOMNode *nodeWrapper)
 {
     if (!document) {
         domObjects()->set(nodeHandle, nodeWrapper);
@@ -123,7 +123,7 @@ void ScriptInterpreter::putDOMNodeForDocument(DOM::DocumentImpl *document, NodeI
     documentDict->set(nodeHandle, nodeWrapper);
 }
 
-void ScriptInterpreter::forgetAllDOMNodesForDocument(DOM::DocumentImpl *document)
+void ScriptInterpreter::forgetAllDOMNodesForDocument(WebCore::Document *document)
 {
     assert(document);
     NodePerDocMap::iterator it = domNodesPerDocument()->find(document);
@@ -164,7 +164,7 @@ ExecState *ScriptInterpreter::globalExec()
     return Interpreter::globalExec();
 }
 
-void ScriptInterpreter::updateDOMNodeDocument(DOM::NodeImpl *node, DOM::DocumentImpl *oldDoc, DOM::DocumentImpl *newDoc)
+void ScriptInterpreter::updateDOMNodeDocument(WebCore::Node *node, WebCore::Document *oldDoc, WebCore::Document *newDoc)
 {
   DOMNode *cachedObject = getDOMNodeForDocument(oldDoc, node);
   if (cachedObject) {
@@ -233,13 +233,13 @@ void *ScriptInterpreter::createLanguageInstanceForValue (ExecState *exec, int la
 
 //////
 
-UString::UString(const QString &d)
+UString::UString(const DeprecatedString &d)
 {
   // reinterpret_cast is ugly but in this case safe, since QChar and UChar have the same memory layout
   m_rep = UString::Rep::createCopying(reinterpret_cast<const UChar *>(d.unicode()), d.length());
 }
 
-UString::UString(const DOMString &d)
+UString::UString(const String &d)
 {
   if (d.isNull()) {
     m_rep = &Rep::null;
@@ -259,22 +259,22 @@ UString::UString(const AtomicString &d)
   m_rep = UString::Rep::createCopying(reinterpret_cast<const UChar *>(d.domString().unicode()), d.domString().length());
 }
 
-DOMString UString::domString() const
+String UString::domString() const
 {
   if (isNull())
-    return DOMString();
+    return String();
   if (isEmpty())
     return "";
-  return DOMString((QChar*) data(), size());
+  return String((QChar*) data(), size());
 }
 
-QString UString::qstring() const
+DeprecatedString UString::deprecatedString() const
 {
   if (isNull())
-    return QString();
+    return DeprecatedString();
   if (isEmpty())
     return "";
-  return QString((QChar*) data(), size());
+  return DeprecatedString((QChar*) data(), size());
 }
 
 QConstString UString::qconststring() const
@@ -282,42 +282,42 @@ QConstString UString::qconststring() const
   return QConstString((QChar*) data(), size());
 }
 
-DOMString Identifier::domString() const
+String Identifier::domString() const
 {
   if (isNull())
-    return DOMString();
+    return String();
   if (isEmpty())
     return "";
-  return DOMString((QChar*) data(), size());
+  return String((QChar*) data(), size());
 }
 
-QString Identifier::qstring() const
+DeprecatedString Identifier::deprecatedString() const
 {
   if (isNull())
-    return QString();
+    return DeprecatedString();
   if (isEmpty())
     return "";
-  return QString((QChar*) data(), size());
+  return DeprecatedString((QChar*) data(), size());
 }
 
-JSValue *jsStringOrNull(const DOMString &s)
+JSValue *jsStringOrNull(const String &s)
 {
     if (s.isNull())
         return jsNull();
     return jsString(s);
 }
 
-JSValue *jsStringOrUndefined(const DOMString &s)
+JSValue *jsStringOrUndefined(const String &s)
 {
     if (s.isNull())
         return jsUndefined();
     return jsString(s);
 }
 
-DOMString valueToStringWithNullCheck(ExecState *exec, JSValue *val)
+String valueToStringWithNullCheck(ExecState *exec, JSValue *val)
 {
     if (val->isNull())
-        return DOMString();
+        return String();
     return val->toString(exec).domString();
 }
 

@@ -31,12 +31,12 @@
 #import "CachedObject.h"
 #import "DocLoader.h"
 #import "FoundationExtras.h"
-#import "KWQExceptions.h"
+#import "BlockExceptions.h"
 #import "KWQFormData.h"
 #import "TransferJob.h"
 #import "Logging.h"
 #import "KWQResourceLoader.h"
-#import "MacFrame.h"
+#import "FrameMac.h"
 #import "Request.h"
 #import "WebCoreFrameBridge.h"
 #import "loader.h"
@@ -121,21 +121,21 @@ NSString *KWQHeaderStringFromDictionary(NSDictionary *headers, int statusCode)
     return headerString;
 }
 
-ByteArray KWQServeSynchronousRequest(Loader *loader, DocLoader *docLoader, TransferJob *job, KURL &finalURL, QString &responseHeaders)
+DeprecatedByteArray KWQServeSynchronousRequest(Loader *loader, DocLoader *docLoader, TransferJob *job, KURL &finalURL, DeprecatedString &responseHeaders)
 {
-    MacFrame *frame = static_cast<MacFrame *>(docLoader->frame());
+    FrameMac *frame = static_cast<FrameMac *>(docLoader->frame());
     
     if (!frame)
-        return ByteArray();
+        return DeprecatedByteArray();
     
     WebCoreFrameBridge *bridge = frame->bridge();
 
     frame->didTellBridgeAboutLoad(job->url().url());
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSDictionary *headerDict = nil;
-    QString headerString = job->queryMetaData("customHTTPHeader");
+    DeprecatedString headerString = job->queryMetaData("customHTTPHeader");
 
     if (!headerString.isEmpty()) {
         headerDict = [[NSDictionary _webcore_dictionaryWithHeaderString:headerString.getNSString()] retain];
@@ -154,30 +154,30 @@ ByteArray KWQServeSynchronousRequest(Loader *loader, DocLoader *docLoader, Trans
     job->kill();
 
     finalURL = finalNSURL;
-    responseHeaders = QString::fromNSString(KWQHeaderStringFromDictionary(responseHeaderDict, statusCode));
+    responseHeaders = DeprecatedString::fromNSString(KWQHeaderStringFromDictionary(responseHeaderDict, statusCode));
 
-    ByteArray results([resultData length]);
+    DeprecatedByteArray results([resultData length]);
 
     memcpy( results.data(), [resultData bytes], [resultData length] );
 
     return results;
 
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 
-    return ByteArray();
+    return DeprecatedByteArray();
 }
 
-int KWQNumberOfPendingOrLoadingRequests(khtml::DocLoader *dl)
+int KWQNumberOfPendingOrLoadingRequests(WebCore::DocLoader *dl)
 {
     return Cache::loader()->numRequests(dl);
 }
 
 bool KWQCheckIfReloading(DocLoader *loader)
 {
-    KWQ_BLOCK_EXCEPTIONS;
-    if (MacFrame *frame = static_cast<MacFrame *>(loader->frame()))
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    if (FrameMac *frame = static_cast<FrameMac *>(loader->frame()))
         return [frame->bridge() isReloading];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 
     return false;
 }
@@ -202,16 +202,16 @@ void KWQCheckCacheObjectStatus(DocLoader *loader, CachedObject *cachedObject)
     ASSERT(cachedObject->response());
     
     // Notify the caller that we "loaded".
-    MacFrame *frame = static_cast<MacFrame *>(loader->frame());
+    FrameMac *frame = static_cast<FrameMac *>(loader->frame());
 
     if (frame && !frame->haveToldBridgeAboutLoad(cachedObject->url())) {
         WebCoreFrameBridge *bridge = frame->bridge();
         
-        KWQ_BLOCK_EXCEPTIONS;
-        [bridge objectLoadedFromCacheWithURL:KURL(cachedObject->url().qstring()).getNSURL()
+        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        [bridge objectLoadedFromCacheWithURL:KURL(cachedObject->url().deprecatedString()).getNSURL()
                                     response:(NSURLResponse *)cachedObject->response()
                                         data:(NSData *)cachedObject->allData()];
-        KWQ_UNBLOCK_EXCEPTIONS;
+        END_BLOCK_OBJC_EXCEPTIONS;
 
         frame->didTellBridgeAboutLoad(cachedObject->url());
     }
@@ -219,7 +219,7 @@ void KWQCheckCacheObjectStatus(DocLoader *loader, CachedObject *cachedObject)
 
 #define LOCAL_STRING_BUFFER_SIZE 1024
 
-bool KWQIsResponseURLEqualToURL(NSURLResponse *response, const DOM::DOMString &m_url)
+bool KWQIsResponseURLEqualToURL(NSURLResponse *response, const WebCore::String &m_url)
 {
     unichar _buffer[LOCAL_STRING_BUFFER_SIZE];
     unichar *urlStringCharacters;
@@ -231,7 +231,7 @@ bool KWQIsResponseURLEqualToURL(NSURLResponse *response, const DOM::DOMString &m
         return false;
         
     // Nasty hack to directly compare strings buffers of NSString
-    // and DOMString.  We do this for speed.
+    // and String.  We do this for speed.
     if ([urlString length] > LOCAL_STRING_BUFFER_SIZE) {
         urlStringCharacters = (unichar *)fastMalloc(sizeof(unichar)*[urlString length]);
     }
@@ -250,63 +250,63 @@ bool KWQIsResponseURLEqualToURL(NSURLResponse *response, const DOM::DOMString &m
     return ret;
 }
 
-QString KWQResponseURL(NSURLResponse *response)
+DeprecatedString KWQResponseURL(NSURLResponse *response)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSURL *responseURL = [(NSURLResponse *)response URL];
     NSString *urlString = [responseURL absoluteString];
     
-    QString string;
+    DeprecatedString string;
     string.setBufferFromCFString((CFStringRef)urlString);
     return string;
 
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     
     return NULL;
 }
 
-QString KWQResponseMIMEType(NSURLResponse *response)
+DeprecatedString KWQResponseMIMEType(NSURLResponse *response)
 {
-    KWQ_BLOCK_EXCEPTIONS;
-    return QString::fromNSString([(NSURLResponse *)response MIMEType]);
-    KWQ_UNBLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return DeprecatedString::fromNSString([(NSURLResponse *)response MIMEType]);
+    END_BLOCK_OBJC_EXCEPTIONS;
 
-    return QString();
+    return DeprecatedString();
 }
 
 bool KWQResponseIsMultipart(NSURLResponse *response)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return [[response MIMEType] isEqualToString:@"multipart/x-mixed-replace"];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     
     return false;
 }
 
-time_t KWQCacheObjectExpiresTime(khtml::DocLoader *docLoader, NSURLResponse *response)
+time_t KWQCacheObjectExpiresTime(WebCore::DocLoader *docLoader, NSURLResponse *response)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
-    MacFrame *frame = static_cast<MacFrame *>(docLoader->frame());
+    FrameMac *frame = static_cast<FrameMac *>(docLoader->frame());
     if (frame) {
         WebCoreFrameBridge *bridge = frame->bridge();
         return [bridge expiresTimeForResponse:(NSURLResponse *)response];
     }
     
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     
     return 0;
 }
 
-namespace khtml {
+namespace WebCore {
     
 void CachedObject::setResponse(NSURLResponse *response)
 {
     KWQRetain(response);
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     KWQRelease(m_response);
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 
     m_response = response;
 }
@@ -314,9 +314,9 @@ void CachedObject::setResponse(NSURLResponse *response)
 void CachedObject::setAllData(NSData *allData)
 {
     KWQRetain(allData);
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     KWQRelease(m_allData);
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 
     m_allData = allData;
 }

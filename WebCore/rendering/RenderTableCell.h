@@ -35,7 +35,7 @@ namespace WebCore {
 
 class RenderTableCell : public RenderBlock {
 public:
-    RenderTableCell(NodeImpl*);
+    RenderTableCell(Node*);
 
     virtual void destroy();
 
@@ -75,7 +75,7 @@ public:
     CollapsedBorderValue collapsedRightBorder(bool rtl) const;
     CollapsedBorderValue collapsedTopBorder() const;
     CollapsedBorderValue collapsedBottomBorder() const;
-    virtual void collectBorders(QValueList<CollapsedBorderValue>&);
+    virtual void collectBorders(DeprecatedValueList<CollapsedBorderValue>&);
 
     virtual void updateFromElement();
 
@@ -103,7 +103,7 @@ public:
     RenderTableSection* section() const { return static_cast<RenderTableSection*>(parent()->parent()); }
 
 #if !NDEBUG
-    virtual void dump(QTextStream *stream, QString ind = "") const;
+    virtual void dump(QTextStream *stream, DeprecatedString ind = "") const;
 #endif
 
     virtual IntRect getAbsoluteRepaintRect();

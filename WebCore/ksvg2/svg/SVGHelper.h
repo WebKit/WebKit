@@ -24,13 +24,13 @@
 #define KSVG_SVGHelper_H
 #if SVG_SUPPORT
 
-#include <QString.h>
+#include <DeprecatedString.h>
 #include <kxmlcore/RefPtr.h>
 
 namespace WebCore
 {
-    class SVGElementImpl;
-    class SVGStringListImpl;
+    class SVGElement;
+    class SVGStringList;
 
     // KSVG extension
     enum LengthMode
@@ -44,9 +44,9 @@ namespace WebCore
     class SVGHelper
     {
     public:
-        static float PercentageOfViewport(float value, const SVGElementImpl *viewportElement, LengthMode mode);
+        static float PercentageOfViewport(float value, const SVGElement *viewportElement, LengthMode mode);
 
-        static void ParseSeperatedList(SVGStringListImpl *list, const QString &data, const QChar &delimiter = ',');
+        static void ParseSeperatedList(SVGStringList *list, const DeprecatedString &data, const QChar &delimiter = ',');
     };
 
     // Lazy creation, template-based

@@ -30,30 +30,30 @@
 #import "DOMViewsInternal.h"
 #import <kxmlcore/Assertions.h>
 
-#import "DocumentImpl.h"
-#import "dom2_viewsimpl.h"
+#import "Document.h"
+#import "AbstractView.h"
 
-using DOM::AbstractViewImpl;
+using WebCore::AbstractView;
 
-ALLOW_DOM_CAST(AbstractViewImpl)
+ALLOW_DOM_CAST(AbstractView)
 
 @implementation DOMAbstractView
 
 - (DOMDocument *)document
 {
-    return [DOMDocument _documentWithImpl:[self _abstractViewImpl]->document()];
+    return [DOMDocument _documentWith:[self _abstractView]->document()];
 }
 
 @end
 
 @implementation DOMAbstractView (WebCoreInternal)
 
-- (AbstractViewImpl *)_abstractViewImpl
+- (AbstractView *)_abstractView
 {
-    return DOM_cast<AbstractViewImpl *>(_internal);
+    return DOM_cast<AbstractView *>(_internal);
 }
 
-- (id)_initWithAbstractViewImpl:(AbstractViewImpl *)impl
+- (id)_initWithAbstractView:(AbstractView *)impl
 {
     ASSERT(impl);
 
@@ -64,7 +64,7 @@ ALLOW_DOM_CAST(AbstractViewImpl)
     return self;
 }
 
-+ (DOMAbstractView *)_abstractViewWithImpl:(AbstractViewImpl *)impl
++ (DOMAbstractView *)_abstractViewWith:(AbstractView *)impl
 {
     if (!impl)
         return nil;
@@ -74,7 +74,7 @@ ALLOW_DOM_CAST(AbstractViewImpl)
     if (cachedInstance)
         return [[cachedInstance retain] autorelease];
     
-    return [[[DOMAbstractView alloc] _initWithAbstractViewImpl:impl] autorelease];
+    return [[[DOMAbstractView alloc] _initWithAbstractView:impl] autorelease];
 }
 
 @end
@@ -83,7 +83,7 @@ ALLOW_DOM_CAST(AbstractViewImpl)
 
 - (DOMAbstractView *)defaultView
 {
-    return [DOMAbstractView _abstractViewWithImpl:[self _documentImpl]->defaultView()];
+    return [DOMAbstractView _abstractViewWith:[self _document]->defaultView()];
 }
 
 @end

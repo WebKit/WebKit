@@ -31,17 +31,17 @@
 #if SVG_SUPPORT
 #include "cssstyleselector.h"
 
-#include "SVGColorImpl.h"
+#include "SVGColor.h"
 #include "SVGNames.h"
-#include "SVGPaintImpl.h"
+#include "SVGPaint.h"
 #include "SVGRenderStyle.h"
 #include "SVGRenderStyleDefs.h"
-#include "SVGStyledElementImpl.h"
+#include "SVGStyledElement.h"
 #include "css_ruleimpl.h"
-#include "cssvalues.h"
+#include "CSSValueKeywords.h"
 #include "ksvg.h"
-#include <ksvg2/css/cssproperties.h>
-#include <ksvg2/css/cssvalues.h>
+#include <ksvg2/css/CSSPropertyNames.h>
+#include <ksvg2/css/CSSValueKeywords.h>
 #include <stdlib.h>
 
 #define HANDLE_INHERIT(prop, Prop) \
@@ -84,11 +84,11 @@ if(id == propID) \
 
 namespace WebCore {
 
-void CSSStyleSelector::applySVGProperty(int id, CSSValueImpl *value)
+void CSSStyleSelector::applySVGProperty(int id, CSSValue *value)
 {
-    CSSPrimitiveValueImpl *primitiveValue = 0;
+    CSSPrimitiveValue *primitiveValue = 0;
     if(value->isPrimitiveValue())
-        primitiveValue = static_cast<CSSPrimitiveValueImpl *>(value);
+        primitiveValue = static_cast<CSSPrimitiveValue *>(value);
 
     Length l;
     SVGRenderStyle *svgstyle = style->accessSVGStyle();
@@ -373,7 +373,7 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValueImpl *value)
             HANDLE_INHERIT_AND_INITIAL(fillPaint, FillPaint)
             if(!primitiveValue && value)
             {
-                SVGPaintImpl *paint = static_cast<SVGPaintImpl *>(value);
+                SVGPaint *paint = static_cast<SVGPaint *>(value);
                 if(paint)
                     svgstyle->setFillPaint(paint);
             }
@@ -385,7 +385,7 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValueImpl *value)
             HANDLE_INHERIT_AND_INITIAL(strokePaint, StrokePaint)
             if(!primitiveValue && value)
             {
-                SVGPaintImpl *paint = static_cast<SVGPaintImpl *>(value);
+                SVGPaint *paint = static_cast<SVGPaint *>(value);
                 if(paint)
                     svgstyle->setStrokePaint(paint);
             }
@@ -406,7 +406,7 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValueImpl *value)
             HANDLE_INHERIT_AND_INITIAL(strokeDashArray, StrokeDashArray)
             if(!primitiveValue && value)
             {
-                CSSValueListImpl *dashes = static_cast<CSSValueListImpl *>(value);
+                CSSValueList *dashes = static_cast<CSSValueList *>(value);
                 if(dashes)
                     svgstyle->setStrokeDashArray(dashes);
             }
@@ -482,10 +482,10 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValueImpl *value)
             if(!primitiveValue)
                 return;
 
-            QString s;
+            DeprecatedString s;
             int type = primitiveValue->primitiveType();
             if(type == CSSPrimitiveValue::CSS_URI)
-                s = primitiveValue->getStringValue().qstring();
+                s = primitiveValue->getStringValue().deprecatedString();
             else
                 return;
 
@@ -498,10 +498,10 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValueImpl *value)
             if(!primitiveValue)
                 return;
 
-            QString s;
+            DeprecatedString s;
             int type = primitiveValue->primitiveType();
             if(type == CSSPrimitiveValue::CSS_URI)
-                s = primitiveValue->getStringValue().qstring();
+                s = primitiveValue->getStringValue().deprecatedString();
             else
                 return;
 
@@ -514,10 +514,10 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValueImpl *value)
             if(!primitiveValue)
                 return;
 
-            QString s;
+            DeprecatedString s;
             int type = primitiveValue->primitiveType();
             if(type == CSSPrimitiveValue::CSS_URI)
-                s = primitiveValue->getStringValue().qstring();
+                s = primitiveValue->getStringValue().deprecatedString();
             else
                 return;
 
@@ -568,10 +568,10 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValueImpl *value)
             if(!primitiveValue)
                 return;
 
-            QString s;
+            DeprecatedString s;
             int type = primitiveValue->primitiveType();
             if(type == CSSPrimitiveValue::CSS_URI)
-                s = primitiveValue->getStringValue().qstring();
+                s = primitiveValue->getStringValue().deprecatedString();
             else
                 return;
             svgstyle->setFilter(s);
@@ -583,10 +583,10 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValueImpl *value)
             if (!primitiveValue)
                 return;
 
-            QString s;
+            DeprecatedString s;
             int type = primitiveValue->primitiveType();
             if (type == CSSPrimitiveValue::CSS_URI)
-                s = primitiveValue->getStringValue().qstring();
+                s = primitiveValue->getStringValue().deprecatedString();
             else
                 return;
 
@@ -599,10 +599,10 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValueImpl *value)
             if(!primitiveValue)
                 return;
 
-            QString s;
+            DeprecatedString s;
             int type = primitiveValue->primitiveType();
             if(type == CSSPrimitiveValue::CSS_URI)
-                s = primitiveValue->getStringValue().qstring();
+                s = primitiveValue->getStringValue().deprecatedString();
             else
                 return;
 
@@ -651,7 +651,7 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValueImpl *value)
                 col = RenderStyle::initialColor();
             else
             {
-                SVGColorImpl *c = static_cast<SVGColorImpl *>(value);
+                SVGColor *c = static_cast<SVGColor *>(value);
                 if(!c)
                     return CSSStyleSelector::applyProperty(id, value);
                 
@@ -674,7 +674,7 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValueImpl *value)
                 col = SVGRenderStyle::initialStopColor();
             else
             {
-                SVGColorImpl *c = static_cast<SVGColorImpl *>(value);
+                SVGColor *c = static_cast<SVGColor *>(value);
                 if(!c)
                     return CSSStyleSelector::applyProperty(id, value);
 
@@ -712,7 +712,7 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValueImpl *value)
                 col = SVGRenderStyle::initialStopColor();
             else
             {
-                SVGColorImpl *c = static_cast<SVGColorImpl *>(value);
+                SVGColor *c = static_cast<SVGColor *>(value);
                 if(!c)
                     return CSSStyleSelector::applyProperty(id, value);
 

@@ -33,7 +33,7 @@
 #import <JavaScriptCore/debugger.h>
 #import <JavaScriptCore/context.h>
 
-#import "QString.h"
+#import "DeprecatedString.h"
 
 using namespace KJS;
 
@@ -312,7 +312,7 @@ class WebCoreScriptDebuggerImp : public KJS::Debugger {
 
 - (id)evaluateWebScript:(NSString *)script
 {
-    UString code(QString::fromNSString(script));
+    UString code(DeprecatedString::fromNSString(script));
 
     ExecState   *state   = _state;
     Interpreter *interp  = state->interpreter();

@@ -1,11 +1,11 @@
 #ifndef KHTML_NO_XBL
 
 #include "config.h"
-#include "QStringList.h"
-#include "QString.h"
+#include "DeprecatedStringList.h"
+#include "DeprecatedString.h"
 #include "xbl_protohandler.h"
 
-using DOM::DOMString;
+using WebCore::String;
 
 namespace XBL {
 
@@ -19,15 +19,15 @@ const int XBLPrototypeHandler::bubblingPhase = 0;
 const int XBLPrototypeHandler::capturingPhase = 1;
 const int XBLPrototypeHandler::targetPhase = 2;
 
-XBLPrototypeHandler::XBLPrototypeHandler(const DOMString& event,
-                                         const DOMString& phase,
-                                         const DOMString& action,
-                                         const DOMString& keycode,
-                                         const DOMString& charcode,
-                                         const DOMString& modifiers,
-                                         const DOMString& button,
-                                         const DOMString& clickcount,
-                                         const DOMString& preventdefault,
+XBLPrototypeHandler::XBLPrototypeHandler(const String& event,
+                                         const String& phase,
+                                         const String& action,
+                                         const String& keycode,
+                                         const String& charcode,
+                                         const String& modifiers,
+                                         const String& button,
+                                         const String& clickcount,
+                                         const String& preventdefault,
                                          XBLPrototypeBinding* binding)
 :m_binding(binding), m_next(0), m_eventName(event), 
  m_phase(bubblingPhase), m_preventDefault(false), m_keyMask(0), m_misc(0), m_button(-1)
@@ -44,9 +44,9 @@ XBLPrototypeHandler::XBLPrototypeHandler(const DOMString& event,
         m_handlerText = action;
 
     if (!modifiers.isEmpty()) {
-        QStringList result = QStringList::split(",", modifiers.qstring());
-        for (QStringList::Iterator it = result.begin(); it != result.end(); ++it) {
-            QString modifier = (*it).stripWhiteSpace();
+        DeprecatedStringList result = DeprecatedStringList::split(",", modifiers.deprecatedString());
+        for (DeprecatedStringList::Iterator it = result.begin(); it != result.end(); ++it) {
+            DeprecatedString modifier = (*it).stripWhiteSpace();
             if (modifier == "shift")
                 m_keyMask |= shiftKey;
             else if (modifier == "alt")
@@ -85,7 +85,7 @@ XBLPrototypeHandler::~XBLPrototypeHandler()
     delete m_next;
 }
 
-void XBLPrototypeHandler::appendData(const QString& ch)
+void XBLPrototypeHandler::appendData(const DeprecatedString& ch)
 {
     m_handlerText += ch;
 }

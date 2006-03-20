@@ -25,122 +25,122 @@
 #define DOM_XmlImpl_h_
 
 #include "CachedObjectClient.h"
-#include "ContainerNodeImpl.h"
+#include "ContainerNode.h"
 
-namespace khtml {
+namespace WebCore {
     class CachedCSSStyleSheet;
 }
 
-namespace DOM {
+namespace WebCore {
 
-class DocumentImpl;
-class DOMString;
+class Document;
+class String;
 class ProcessingInstruction;
-class StyleSheetImpl;
+class StyleSheet;
 
-class EntityImpl : public ContainerNodeImpl
+class Entity : public ContainerNode
 {
 public:
-    EntityImpl(DocumentImpl*);
-    EntityImpl(DocumentImpl*, const DOMString& name);
-    EntityImpl(DocumentImpl*, const DOMString& publicId, const DOMString& systemId, const DOMString& notationName);
+    Entity(Document*);
+    Entity(Document*, const String& name);
+    Entity(Document*, const String& publicId, const String& systemId, const String& notationName);
 
     // DOM methods & attributes for Entity
-    DOMString publicId() const { return m_publicId.get(); }
-    DOMString systemId() const { return m_systemId.get(); }
-    DOMString notationName() const { return m_notationName.get(); }
+    String publicId() const { return m_publicId.get(); }
+    String systemId() const { return m_systemId.get(); }
+    String notationName() const { return m_notationName.get(); }
 
-    virtual DOMString nodeName() const;
+    virtual String nodeName() const;
     virtual NodeType nodeType() const;
-    virtual PassRefPtr<NodeImpl> cloneNode(bool deep);
+    virtual PassRefPtr<Node> cloneNode(bool deep);
     virtual bool childTypeAllowed(NodeType);
-    virtual DOMString toString() const;
+    virtual String toString() const;
 
 private:
-    RefPtr<DOMStringImpl> m_publicId;
-    RefPtr<DOMStringImpl> m_systemId;
-    RefPtr<DOMStringImpl> m_notationName;
-    RefPtr<DOMStringImpl> m_name;
+    RefPtr<StringImpl> m_publicId;
+    RefPtr<StringImpl> m_systemId;
+    RefPtr<StringImpl> m_notationName;
+    RefPtr<StringImpl> m_name;
 };
 
-class EntityReferenceImpl : public ContainerNodeImpl
+class EntityReference : public ContainerNode
 {
 public:
-    EntityReferenceImpl(DocumentImpl*);
-    EntityReferenceImpl(DocumentImpl*, DOMStringImpl* entityName);
+    EntityReference(Document*);
+    EntityReference(Document*, StringImpl* entityName);
 
-    virtual DOMString nodeName() const;
+    virtual String nodeName() const;
     virtual NodeType nodeType() const;
-    virtual PassRefPtr<NodeImpl> cloneNode(bool deep);
+    virtual PassRefPtr<Node> cloneNode(bool deep);
     virtual bool childTypeAllowed(NodeType);
-    virtual DOMString toString() const;
+    virtual String toString() const;
 
 private:
-    RefPtr<DOMStringImpl> m_entityName;
+    RefPtr<StringImpl> m_entityName;
 };
 
-class NotationImpl : public ContainerNodeImpl
+class Notation : public ContainerNode
 {
 public:
-    NotationImpl(DocumentImpl*);
-    NotationImpl(DocumentImpl*, const DOMString& name, const DOMString& publicId, const DOMString& systemId);
+    Notation(Document*);
+    Notation(Document*, const String& name, const String& publicId, const String& systemId);
 
     // DOM methods & attributes for Notation
-    DOMString publicId() const { return m_publicId.get(); }
-    DOMString systemId() const { return m_systemId. get(); }
+    String publicId() const { return m_publicId.get(); }
+    String systemId() const { return m_systemId. get(); }
 
-    virtual DOMString nodeName() const;
+    virtual String nodeName() const;
     virtual NodeType nodeType() const;
-    virtual PassRefPtr<NodeImpl> cloneNode(bool deep);
+    virtual PassRefPtr<Node> cloneNode(bool deep);
     virtual bool childTypeAllowed(NodeType);
 
 private:
-    RefPtr<DOMStringImpl> m_name;
-    RefPtr<DOMStringImpl> m_publicId;
-    RefPtr<DOMStringImpl> m_systemId;
+    RefPtr<StringImpl> m_name;
+    RefPtr<StringImpl> m_publicId;
+    RefPtr<StringImpl> m_systemId;
 };
 
 
-class ProcessingInstructionImpl : public ContainerNodeImpl, private CachedObjectClient
+class ProcessingInstruction : public ContainerNode, private CachedObjectClient
 {
 public:
-    ProcessingInstructionImpl(DocumentImpl*);
-    ProcessingInstructionImpl(DocumentImpl*, const DOMString& target, const DOMString& data);
-    virtual ~ProcessingInstructionImpl();
+    ProcessingInstruction(Document*);
+    ProcessingInstruction(Document*, const String& target, const String& data);
+    virtual ~ProcessingInstruction();
 
     // DOM methods & attributes for Notation
-    DOMString target() const { return m_target.get(); }
-    DOMString data() const { return m_data.get(); }
-    void setData(const DOMString &data, ExceptionCode&);
+    String target() const { return m_target.get(); }
+    String data() const { return m_data.get(); }
+    void setData(const String &data, ExceptionCode&);
 
-    virtual DOMString nodeName() const;
+    virtual String nodeName() const;
     virtual NodeType nodeType() const;
-    virtual DOMString nodeValue() const;
-    virtual void setNodeValue(const DOMString& nodeValue, ExceptionCode&);
-    virtual PassRefPtr<NodeImpl> cloneNode(bool deep);
+    virtual String nodeValue() const;
+    virtual void setNodeValue(const String& nodeValue, ExceptionCode&);
+    virtual PassRefPtr<Node> cloneNode(bool deep);
     virtual bool childTypeAllowed(NodeType);
     virtual bool offsetInCharacters() const;
 
     // Other methods (not part of DOM)
-    DOMString localHref() const { return m_localHref.get(); }
-    StyleSheetImpl* sheet() const { return m_sheet.get(); }
+    String localHref() const { return m_localHref.get(); }
+    StyleSheet* sheet() const { return m_sheet.get(); }
     bool checkStyleSheet();
-    virtual void setStyleSheet(const DOMString& URL, const DOMString& sheet);
-    void setStyleSheet(StyleSheetImpl*);
+    virtual void setStyleSheet(const String& URL, const String& sheet);
+    void setStyleSheet(StyleSheet*);
     bool isLoading() const;
     void sheetLoaded();
-    virtual DOMString toString() const;
+    virtual String toString() const;
 
 #ifdef KHTML_XSLT
     bool isXSL() const { return m_isXSL; }
 #endif
 
 private:
-    RefPtr<DOMStringImpl> m_target;
-    RefPtr<DOMStringImpl> m_data;
-    RefPtr<DOMStringImpl> m_localHref;
+    RefPtr<StringImpl> m_target;
+    RefPtr<StringImpl> m_data;
+    RefPtr<StringImpl> m_localHref;
     CachedObject* m_cachedSheet;
-    RefPtr<StyleSheetImpl> m_sheet;
+    RefPtr<StyleSheet> m_sheet;
     bool m_loading;
 #ifdef KHTML_XSLT
     bool m_isXSL;

@@ -22,23 +22,23 @@
 #include "config.h"
 #if SVG_SUPPORT
 
-#include <kdom/core/AttrImpl.h>
+#include <kdom/core/Attr.h>
 #include <kdom/cache/KDOMLoader.h>
 #include "DocLoader.h"
-#include "DocumentImpl.h"
+#include "Document.h"
 
 #include "SVGNames.h"
-#include "SVGImageElementImpl.h"
-#include "SVGAnimatedLengthImpl.h"
-#include "SVGAnimatedStringImpl.h"
-#include "SVGMatrixImpl.h"
+#include "SVGImageElement.h"
+#include "SVGAnimatedLength.h"
+#include "SVGAnimatedString.h"
+#include "SVGMatrix.h"
 #include "KCanvasRenderingStyle.h"
 
-#include "render_image.h"
+#include "RenderImage.h"
 
 using namespace WebCore;
 
-SVGImageLoader::SVGImageLoader(SVGImageElementImpl *node) : DOM::HTMLImageLoader(node)
+SVGImageLoader::SVGImageLoader(SVGImageElement *node) : WebCore::HTMLImageLoader(node)
 {
 }
 
@@ -46,11 +46,11 @@ SVGImageLoader::~SVGImageLoader()
 {
 }
 
-// FIXME - Refactor most of this code into DOM::HTMLImageLoader or a shared DOM::ImageLoader base class
+// FIXME - Refactor most of this code into WebCore::HTMLImageLoader or a shared WebCore::ImageLoader base class
 void SVGImageLoader::updateFromElement()
 {
-    SVGImageElementImpl *imageElement = static_cast<SVGImageElementImpl *>(element());
-    DOM::DocumentImpl* doc = imageElement->ownerDocument();
+    SVGImageElement *imageElement = static_cast<SVGImageElement *>(element());
+    WebCore::Document* doc = imageElement->ownerDocument();
     
     CachedImage *newImage = 0;
     if (imageElement->href()->baseVal())

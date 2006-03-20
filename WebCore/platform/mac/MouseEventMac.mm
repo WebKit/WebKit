@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "MouseEvent.h"
+#import "PlatformMouseEvent.h"
 
 namespace WebCore {
 
@@ -111,7 +111,7 @@ static int clickCountForEvent(NSEvent *event)
     }
 }
 
-bool MouseEvent::isMouseButtonDown(MouseButton b)
+bool PlatformMouseEvent::isMouseButtonDown(MouseButton b)
 {
     CGMouseButton button;
 
@@ -129,7 +129,7 @@ bool MouseEvent::isMouseButtonDown(MouseButton b)
     return CGEventSourceButtonState(kCGEventSourceStateCombinedSessionState, button); 
 }
 
-MouseEvent::MouseEvent(NSEvent* event)
+PlatformMouseEvent::PlatformMouseEvent(NSEvent* event)
     : m_position(positionForEvent(event))
     , m_globalPosition(globalPositionForEvent(event))
     , m_button(mouseButtonForEvent(event))
@@ -141,7 +141,7 @@ MouseEvent::MouseEvent(NSEvent* event)
 {
 }
 
-MouseEvent::MouseEvent()
+PlatformMouseEvent::PlatformMouseEvent()
     : m_button(LeftButton), m_clickCount(0), m_shiftKey(false), m_ctrlKey(false), m_altKey(false), m_metaKey(false)
 {
     NSEvent* event = [NSApp currentEvent];

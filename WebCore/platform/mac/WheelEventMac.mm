@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "WheelEvent.h"
+#import "PlatformWheelEvent.h"
 
 namespace WebCore {
 
@@ -74,7 +74,7 @@ static int deltaForEvent(NSEvent *event)
     }
 }
 
-WheelEvent::WheelEvent(NSEvent* event)
+PlatformWheelEvent::PlatformWheelEvent(NSEvent* event)
     : m_position(positionForEvent(event))
     , m_globalPosition(globalPositionForEvent(event))
     , m_delta(deltaForEvent(event))

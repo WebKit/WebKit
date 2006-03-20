@@ -16,7 +16,7 @@ class XBLDocument;
 
 // This class is used to handle tokens returned from an XML parser for the purpose of building the
 // custom data structures required by an XBL document.
-class XBLTokenHandler: public khtml::XMLHandler
+class XBLTokenHandler: public WebCore::XMLHandler
 {
 typedef enum {
     eXBL_InDocument,
@@ -41,22 +41,22 @@ typedef enum {
 } XBLSecondaryState;
 
 public:
-    XBLTokenHandler(DOM::DocumentImpl *_doc);
+    XBLTokenHandler(WebCore::Document *_doc);
     ~XBLTokenHandler();
     
-    XBLDocumentImpl* xblDocument() const;
+    XBLDocument* xblDocument() const;
     
     // Overrides from XMLTokenizer
-    bool startElement(const QString& namespaceURI, const QString& localName, const QString& qName, 
+    bool startElement(const DeprecatedString& namespaceURI, const DeprecatedString& localName, const DeprecatedString& qName, 
                       const QXmlAttributes& attrs);
-    bool endElement(const QString& namespaceURI, const QString& localName, const QString& qName);
-    bool characters(const QString& ch);
+    bool endElement(const DeprecatedString& namespaceURI, const DeprecatedString& localName, const DeprecatedString& qName);
+    bool characters(const DeprecatedString& ch);
 
 protected:
     // Helper methods.
     void createBinding();
     void createHandler(const QXmlAttributes& attrs);
-    void createResource(const QString& localName, const QXmlAttributes& attrs);
+    void createResource(const DeprecatedString& localName, const QXmlAttributes& attrs);
     void createImplementation(const QXmlAttributes& attrs);
     void createConstructor();
     void createDestructor();

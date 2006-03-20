@@ -26,12 +26,12 @@
 #include "config.h"
 #include "AppendNodeCommand.h"
 
-#include "NodeImpl.h"
+#include "Node.h"
 #include <kxmlcore/Assertions.h>
 
 namespace WebCore {
 
-AppendNodeCommand::AppendNodeCommand(DocumentImpl *document, NodeImpl *appendChild, NodeImpl *parentNode)
+AppendNodeCommand::AppendNodeCommand(Document *document, Node *appendChild, Node *parentNode)
     : EditCommand(document), m_appendChild(appendChild), m_parentNode(parentNode)
 {
     ASSERT(m_appendChild);
@@ -59,4 +59,4 @@ void AppendNodeCommand::doUnapply()
     ASSERT(ec == 0);
 }
 
-} // namespace khtml
+} // namespace WebCore

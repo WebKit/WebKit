@@ -1,33 +1,33 @@
 #include "PlatformString.h"
 
-namespace DOM
+namespace WebCore
 {
-    class ElementImpl;
-    class DOMString;
+    class Element;
+    class String;
 }
 
 namespace XBL
 {
-    class XBLDocumentImpl;
+    class XBLDocument;
     class XBLPrototypeHandler;
     
 class XBLPrototypeBinding
 {
 public:
-    XBLPrototypeBinding(const DOM::DOMString& bindingID, DOM::ElementImpl* bindingElt);
+    XBLPrototypeBinding(const WebCore::String& bindingID, WebCore::Element* bindingElt);
     void initialize(); // Called once the binding and all its child elements have been parsed.
     
-    XBLDocumentImpl* document() const;
-    DOM::ElementImpl* element() const { return m_element; }
+    XBLDocument* document() const;
+    WebCore::Element* element() const { return m_element; }
     
     void setHandler(XBLPrototypeHandler* handler) { m_handler = handler; }
     XBLPrototypeHandler* handler() const { return m_handler; }
     
-    void addResource(const DOM::DOMString& type, const DOM::DOMString& src);
+    void addResource(const WebCore::String& type, const WebCore::String& src);
 
 private:
-    DOM::DOMString m_id;
-    DOM::ElementImpl* m_element;
+    WebCore::String m_id;
+    WebCore::Element* m_element;
     
     XBLPrototypeHandler* m_handler; // Our event handlers (prototypes).
 };

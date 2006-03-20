@@ -25,15 +25,15 @@
 #if SVG_SUPPORT
 #include "KSVGTimeScheduler.h"
 
-#include "DocumentImpl.h"
-#include "SVGAnimateColorElementImpl.h"
-#include "SVGAnimateTransformElementImpl.h"
-#include "SVGAnimatedTransformListImpl.h"
-#include "SVGDOMImplementationImpl.h"
-#include "SVGMatrixImpl.h"
+#include "Document.h"
+#include "SVGAnimateColorElement.h"
+#include "SVGAnimateTransformElement.h"
+#include "SVGAnimatedTransformList.h"
+#include "SVGDOMImplementation.h"
+#include "SVGMatrix.h"
 #include "SVGNames.h"
-#include "SVGStyledElementImpl.h"
-#include "SVGStyledTransformableElementImpl.h"
+#include "SVGStyledElement.h"
+#include "SVGStyledTransformableElement.h"
 #include "SystemTime.h"
 #include "Timer.h"
 #include <kcanvas/KCanvas.h>
@@ -42,7 +42,7 @@ namespace WebCore {
 
 const double staticTimerInterval = 0.050; // 50 ms
 
-typedef HashSet<SVGAnimationElementImpl*> SVGNotifySet;
+typedef HashSet<SVGAnimationElement*> SVGNotifySet;
 
 class SVGTimer : private Timer<TimeScheduler>
 {
@@ -54,8 +54,8 @@ public:
     using Timer<TimeScheduler>::isActive;
 
     void notifyAll();
-    void addNotify(SVGAnimationElementImpl*, bool enabled = false);
-    void removeNotify(SVGAnimationElementImpl*);
+    void addNotify(SVGAnimationElement*, bool enabled = false);
+    void removeNotify(SVGAnimationElement*);
 
     static SVGTimer* downcast(Timer<TimeScheduler>* t) { return static_cast<SVGTimer*>(t); }
 
@@ -113,12 +113,12 @@ void SVGTimer::notifyAll()
     // First build a list of animation elements per target element
     // This is important to decide about the order & priority of 
     // the animations -> 'additive' support is handled this way.
-    typedef HashMap<SVGElementImpl*, Vector<SVGAnimationElementImpl*> > TargetAnimationMap;
+    typedef HashMap<SVGElement*, Vector<SVGAnimationElement*> > TargetAnimationMap;
     TargetAnimationMap targetMap;
     
     SVGNotifySet::const_iterator end = m_notifySet.end();
     for (SVGNotifySet::const_iterator it = m_notifySet.begin(); it != end; ++it) {
-        SVGAnimationElementImpl* animation = *it;
+        SVGAnimationElement* animation = *it;
 
         // If we're dealing with a disabled element with fill="freeze",
         // we have to take it into account for further calculations.
@@ -129,12 +129,12 @@ void SVGTimer::notifyAll()
                 continue;
         }
 
-        SVGElementImpl* target = const_cast<SVGElementImpl *>(animation->targetElement());
+        SVGElement* target = const_cast<SVGElement *>(animation->targetElement());
         TargetAnimationMap::iterator i = targetMap.find(target);
         if (i != targetMap.end())
             i->second.append(animation);
         else {
-            Vector<SVGAnimationElementImpl*> list;
+            Vector<SVGAnimationElement*> list;
             list.append(animation);
             targetMap.set(target, list);
         }
@@ -143,12 +143,12 @@ void SVGTimer::notifyAll()
     TargetAnimationMap::iterator targetIterator = targetMap.begin();
     TargetAnimationMap::iterator tend = targetMap.end();
     for (; targetIterator != tend; ++targetIterator) {
-        HashMap<DOMString, Color> targetColor; // special <animateColor> case
-        RefPtr<SVGTransformListImpl> targetTransforms; // special <animateTransform> case    
+        HashMap<String, Color> targetColor; // special <animateColor> case
+        RefPtr<SVGTransformList> targetTransforms; // special <animateTransform> case    
 
         unsigned count = targetIterator->second.size();
         for (unsigned i = 0; i < count; ++i) {
-            SVGAnimationElementImpl* animation = targetIterator->second[i];
+            SVGAnimationElement* animation = targetIterator->second[i];
 
             double end = animation->getEndTime();
             double start = animation->getStartTime();
@@ -173,29 +173,29 @@ void SVGTimer::notifyAll()
             // Special cases for animate* objects depending on 'additive' attribute
             if(animation->hasTagName(SVGNames::animateTransformTag))
             {
-                SVGAnimateTransformElementImpl *animTransform = static_cast<SVGAnimateTransformElementImpl *>(animation);
+                SVGAnimateTransformElement *animTransform = static_cast<SVGAnimateTransformElement *>(animation);
                 if(!animTransform)
                     continue;
 
-                RefPtr<SVGMatrixImpl> transformMatrix = animTransform->transformMatrix();
+                RefPtr<SVGMatrix> transformMatrix = animTransform->transformMatrix();
                 if(!transformMatrix)
                     continue;
 
-                RefPtr<SVGMatrixImpl> initialMatrix = animTransform->initialMatrix();
-                RefPtr<SVGTransformImpl> data = new SVGTransformImpl();
+                RefPtr<SVGMatrix> initialMatrix = animTransform->initialMatrix();
+                RefPtr<SVGTransform> data = new SVGTransform();
 
                 if(!targetTransforms) // lazy creation, only if needed.
                 {
-                    targetTransforms = new SVGTransformListImpl();
+                    targetTransforms = new SVGTransformList();
 
                     if(animation->isAdditive() && initialMatrix)
                     {
-                        RefPtr<SVGMatrixImpl> matrix = new SVGMatrixImpl(initialMatrix->qmatrix());
+                        RefPtr<SVGMatrix> matrix = new SVGMatrix(initialMatrix->qmatrix());
                         
                         data->setMatrix(matrix.get());
                         targetTransforms->appendItem(data.get());
 
-                        data = new SVGTransformImpl();
+                        data = new SVGTransform();
                     }
                 }
 
@@ -215,11 +215,11 @@ void SVGTimer::notifyAll()
 #endif
             if(animation->hasTagName(SVGNames::animateColorTag))
             {
-                SVGAnimateColorElementImpl *animColor = static_cast<SVGAnimateColorElementImpl *>(animation);
+                SVGAnimateColorElement *animColor = static_cast<SVGAnimateColorElement *>(animation);
                 if(!animColor)
                     continue;
 
-                QString name = animColor->attributeName();
+                DeprecatedString name = animColor->attributeName();
                 Color color = animColor->color();
 
                 if(!targetColor.contains(name))
@@ -254,36 +254,36 @@ void SVGTimer::notifyAll()
 
         // Handle <animateTransform>.
         if (targetTransforms) {
-            SVGElementImpl* key = targetIterator->first;
+            SVGElement* key = targetIterator->first;
             if (key && key->isStyled() && key->isStyledTransformable()) {
-                SVGStyledTransformableElementImpl *transform = static_cast<SVGStyledTransformableElementImpl *>(key);
+                SVGStyledTransformableElement *transform = static_cast<SVGStyledTransformableElement *>(key);
                 transform->transform()->setAnimVal(targetTransforms.get());
                 transform->updateLocalTransform(transform->transform()->animVal());
             }
         }
 
         // Handle <animateColor>.
-        HashMap<DOMString, Color>::iterator cend = targetColor.end();
-        for(HashMap<DOMString, Color>::iterator cit = targetColor.begin(); cit != cend; ++cit)
+        HashMap<String, Color>::iterator cend = targetColor.end();
+        for(HashMap<String, Color>::iterator cit = targetColor.begin(); cit != cend; ++cit)
         {
             if(cit->second.isValid())
             {
-                SVGAnimationElementImpl::setTargetAttribute(targetIterator->first,
+                SVGAnimationElement::setTargetAttribute(targetIterator->first,
                                                             cit->first.impl(),
-                                                            DOMString(cit->second.name()).impl());
+                                                            String(cit->second.name()).impl());
             }
         }
     }
 
     // Make a second pass through the map to avoid multiple setChanged calls on the same element.
     for (targetIterator = targetMap.begin(); targetIterator != tend; ++targetIterator) {
-        SVGElementImpl *key = targetIterator->first;
+        SVGElement *key = targetIterator->first;
         if (key && key->isStyled())
-            static_cast<SVGStyledElementImpl *>(key)->setChanged(true);
+            static_cast<SVGStyledElement *>(key)->setChanged(true);
     }
 }
 
-void SVGTimer::addNotify(SVGAnimationElementImpl* element, bool enabled)
+void SVGTimer::addNotify(SVGAnimationElement* element, bool enabled)
 {
     m_notifySet.add(element);
     if (enabled)
@@ -292,7 +292,7 @@ void SVGTimer::addNotify(SVGAnimationElementImpl* element, bool enabled)
         m_enabledNotifySet.remove(element);
 }
 
-void SVGTimer::removeNotify(SVGAnimationElementImpl *element)
+void SVGTimer::removeNotify(SVGAnimationElement *element)
 {
     // FIXME: Why do we keep a pointer to the element forever (marked disabled)?
     // That can't be right!
@@ -302,7 +302,7 @@ void SVGTimer::removeNotify(SVGAnimationElementImpl *element)
         stop();
 }
 
-TimeScheduler::TimeScheduler(DocumentImpl *document)
+TimeScheduler::TimeScheduler(Document *document)
     : m_creationTime(currentTime()), m_savedTime(0), m_document(document)
 {
     // Don't start this timer yet.
@@ -315,7 +315,7 @@ TimeScheduler::~TimeScheduler()
     delete m_intervalTimer;
 }
 
-void TimeScheduler::addTimer(SVGAnimationElementImpl* element, unsigned ms)
+void TimeScheduler::addTimer(SVGAnimationElement* element, unsigned ms)
 {
     SVGTimer* svgTimer = new SVGTimer(this, ms * 0.001, true);
     svgTimer->addNotify(element, true);
@@ -323,12 +323,12 @@ void TimeScheduler::addTimer(SVGAnimationElementImpl* element, unsigned ms)
     m_intervalTimer->addNotify(element, false);
 }
 
-void TimeScheduler::connectIntervalTimer(SVGAnimationElementImpl* element)
+void TimeScheduler::connectIntervalTimer(SVGAnimationElement* element)
 {
     m_intervalTimer->addNotify(element, true);
 }
 
-void TimeScheduler::disconnectIntervalTimer(SVGAnimationElementImpl* element)
+void TimeScheduler::disconnectIntervalTimer(SVGAnimationElement* element)
 {
     m_intervalTimer->removeNotify(element);
 }
@@ -368,7 +368,7 @@ void TimeScheduler::timerFired(Timer<TimeScheduler>* baseTimer)
 {
     // Get the pointer now, because notifyAll could make the document,
     // including this TimeScheduler, go away.
-    RefPtr<DocumentImpl> doc = m_document;
+    RefPtr<Document> doc = m_document;
 
     SVGTimer* timer = SVGTimer::downcast(baseTimer);
 

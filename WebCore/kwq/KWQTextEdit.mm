@@ -29,9 +29,9 @@
 #import "Color.h"
 #import "Font.h"
 #import "IntSize.h"
-#import "KWQExceptions.h"
+#import "BlockExceptions.h"
 #import "KWQLineEdit.h"
-#import "KWQTextArea.h"
+#import "WebCoreTextArea.h"
 #import "WidgetClient.h"
 #import <kxmlcore/Assertions.h>
 
@@ -39,97 +39,97 @@ using namespace WebCore;
 
 QTextEdit::QTextEdit(Widget *parent)
 {
-    KWQ_BLOCK_EXCEPTIONS;
-    KWQTextArea *textView = [[KWQTextArea alloc] initWithQTextEdit:this];
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    WebCoreTextArea *textView = [[WebCoreTextArea alloc] initWithQTextEdit:this];
     setView(textView);
     [textView release];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 QTextEdit::~QTextEdit()
 {
-    KWQTextArea *textArea = (KWQTextArea *)getView();
+    WebCoreTextArea *textArea = (WebCoreTextArea *)getView();
     [textArea detachQTextEdit]; 
 }
 
-void QTextEdit::setText(const DOMString& string)
+void QTextEdit::setText(const String& string)
 {
-    KWQTextArea *textView = (KWQTextArea *)getView();
-    KWQ_BLOCK_EXCEPTIONS;
+    WebCoreTextArea *textView = (WebCoreTextArea *)getView();
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [textView setText:string];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-DOMString QTextEdit::text() const
+String QTextEdit::text() const
 {
-    KWQTextArea *textView = (KWQTextArea *)getView();
+    WebCoreTextArea *textView = (WebCoreTextArea *)getView();
 
-    KWQ_BLOCK_EXCEPTIONS;
-    return DOMString([textView text]);
-    KWQ_UNBLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return String([textView text]);
+    END_BLOCK_OBJC_EXCEPTIONS;
 
-    return DOMString();
+    return String();
 }
 
-DOMString QTextEdit::textWithHardLineBreaks() const
+String QTextEdit::textWithHardLineBreaks() const
 {
-    KWQTextArea *textView = (KWQTextArea *)getView();
+    WebCoreTextArea *textView = (WebCoreTextArea *)getView();
 
-    KWQ_BLOCK_EXCEPTIONS;
-    return DOMString([textView textWithHardLineBreaks]);
-    KWQ_UNBLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return String([textView textWithHardLineBreaks]);
+    END_BLOCK_OBJC_EXCEPTIONS;
     
-    return DOMString();
+    return String();
 }
 
 void QTextEdit::getCursorPosition(int *paragraph, int *index) const
 {
-    KWQTextArea *textView = (KWQTextArea *)getView();
+    WebCoreTextArea *textView = (WebCoreTextArea *)getView();
     if (index)
         *index = 0;
     if (paragraph)
         *paragraph = 0;
     
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [textView getCursorPositionAsIndex:index inParagraph:paragraph];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void QTextEdit::setCursorPosition(int paragraph, int index)
 {
-    KWQTextArea *textView = (KWQTextArea *)getView();
+    WebCoreTextArea *textView = (WebCoreTextArea *)getView();
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [textView setCursorPositionToIndex:index inParagraph:paragraph];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 QTextEdit::WrapStyle QTextEdit::wordWrap() const
 {
-    KWQTextArea *textView = (KWQTextArea *)getView();
+    WebCoreTextArea *textView = (WebCoreTextArea *)getView();
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return [textView wordWrap] ? WidgetWidth : NoWrap;
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 
     return NoWrap;
 }
 
 void QTextEdit::setWordWrap(WrapStyle style)
 {
-    KWQTextArea *textView = (KWQTextArea *)getView();
-    KWQ_BLOCK_EXCEPTIONS;
+    WebCoreTextArea *textView = (WebCoreTextArea *)getView();
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [textView setWordWrap:style == WidgetWidth];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void QTextEdit::setScrollBarModes(ScrollBarMode hMode, ScrollBarMode vMode)
 {
-    KWQTextArea *textView = (KWQTextArea *)getView();
+    WebCoreTextArea *textView = (WebCoreTextArea *)getView();
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    // this declaration must be inside the KWQ_BLOCK_EXCEPTIONS block or the deployment build fails
+    // this declaration must be inside the BEGIN_BLOCK_OBJC_EXCEPTIONS block or the deployment build fails
     bool autohides = hMode == ScrollBarAuto || vMode == ScrollBarAuto;
     
     ASSERT(!autohides || hMode != ScrollBarAlwaysOn);
@@ -139,82 +139,82 @@ void QTextEdit::setScrollBarModes(ScrollBarMode hMode, ScrollBarMode vMode)
     [textView setHasVerticalScroller:vMode != ScrollBarAlwaysOff];
     [textView setAutohidesScrollers:autohides];
 
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 bool QTextEdit::isReadOnly() const
 {
-    KWQTextArea *textView = (KWQTextArea *)getView();
+    WebCoreTextArea *textView = (WebCoreTextArea *)getView();
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return ![textView isEditable];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 
     return false;
 }
 
 void QTextEdit::setReadOnly(bool flag)
 {
-    KWQTextArea *textView = (KWQTextArea *)getView();
+    WebCoreTextArea *textView = (WebCoreTextArea *)getView();
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [textView setEditable:!flag];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 bool QTextEdit::isDisabled() const
 {
-    KWQTextArea *textView = (KWQTextArea *)getView();
+    WebCoreTextArea *textView = (WebCoreTextArea *)getView();
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return ![textView isEnabled];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 
     return false;
 }
 
 void QTextEdit::setDisabled(bool flag)
 {
-    KWQTextArea *textView = (KWQTextArea *)getView();
+    WebCoreTextArea *textView = (WebCoreTextArea *)getView();
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [textView setEnabled:!flag];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 int QTextEdit::selectionStart()
 {
-    KWQTextArea *textView = (KWQTextArea *)getView();
+    WebCoreTextArea *textView = (WebCoreTextArea *)getView();
     
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSRange range = [textView selectedRange];
     if (range.location == NSNotFound)
         return 0;
     return range.location;
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     
     return 0;
 }
 
 int QTextEdit::selectionEnd()
 {
-    KWQTextArea *textView = (KWQTextArea *)getView();
+    WebCoreTextArea *textView = (WebCoreTextArea *)getView();
     
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSRange range = [textView selectedRange];
     if (range.location == NSNotFound)
         return 0;
     return range.location + range.length; // Use NSMaxRange when 4213314 is fixed
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     
     return 0;
 }
 
 void QTextEdit::setSelectionStart(int start)
 {
-    KWQTextArea *textView = (KWQTextArea *)getView();
+    WebCoreTextArea *textView = (WebCoreTextArea *)getView();
     
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSRange range = [textView selectedRange];
     if (range.location == NSNotFound) {
         range.location = 0;
@@ -240,14 +240,14 @@ void QTextEdit::setSelectionStart(int start)
     }
     
     [textView setSelectedRange:range];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void QTextEdit::setSelectionEnd(int end)
 {
-    KWQTextArea *textView = (KWQTextArea *)getView();
+    WebCoreTextArea *textView = (WebCoreTextArea *)getView();
     
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSRange range = [textView selectedRange];
     if (range.location == NSNotFound) {
         range.location = 0;
@@ -272,34 +272,34 @@ void QTextEdit::setSelectionEnd(int end)
     }
     
     [textView setSelectedRange:range];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 bool QTextEdit::hasSelectedText() const
 {
-    KWQTextArea *textView = (KWQTextArea *)getView();
+    WebCoreTextArea *textView = (WebCoreTextArea *)getView();
     
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return [textView hasSelection];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     
     return false;
 }
 
 void QTextEdit::selectAll()
 {
-    KWQTextArea *textView = (KWQTextArea *)getView();
+    WebCoreTextArea *textView = (WebCoreTextArea *)getView();
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [textView selectAll];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void QTextEdit::setSelectionRange(int start, int length)
 {
-    KWQTextArea *textView = (KWQTextArea *)getView();
+    WebCoreTextArea *textView = (WebCoreTextArea *)getView();
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     int newStart = start;
     int newLength = length;
     if (newStart < 0) {
@@ -319,57 +319,57 @@ void QTextEdit::setSelectionRange(int start, int length)
     }
     NSRange tempRange = {newStart, newLength}; // 4213314
     [textView setSelectedRange:tempRange];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void QTextEdit::setFont(const Font& font)
 {
     Widget::setFont(font);
-    KWQTextArea *textView = (KWQTextArea *)getView();
+    WebCoreTextArea *textView = (WebCoreTextArea *)getView();
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [textView setFont:font.getNSFont()];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void QTextEdit::setAlignment(HorizontalAlignment alignment)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    KWQTextArea *textArea = static_cast<KWQTextArea *>(getView());
+    WebCoreTextArea *textArea = static_cast<WebCoreTextArea *>(getView());
     [textArea setAlignment:KWQNSTextAlignment(alignment)];
 
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void QTextEdit::setLineHeight(int lineHeight)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    KWQTextArea *textArea = static_cast<KWQTextArea *>(getView());
+    WebCoreTextArea *textArea = static_cast<WebCoreTextArea *>(getView());
     [textArea setLineHeight:lineHeight];
 
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void QTextEdit::setWritingDirection(TextDirection direction)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    KWQTextArea *textArea = static_cast<KWQTextArea *>(getView());
+    WebCoreTextArea *textArea = static_cast<WebCoreTextArea *>(getView());
     [textArea setBaseWritingDirection:(direction == RTL ? NSWritingDirectionRightToLeft : NSWritingDirectionLeftToRight)];
 
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
  
 IntSize QTextEdit::sizeWithColumnsAndRows(int numColumns, int numRows) const
 {
-    KWQTextArea *textArea = static_cast<KWQTextArea *>(getView());
+    WebCoreTextArea *textArea = static_cast<WebCoreTextArea *>(getView());
     NSSize size = {0,0};
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     size = [textArea sizeWithColumns:numColumns rows:numRows];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 
     return IntSize((int)ceil(size.width), (int)ceil(size.height));
 }
@@ -387,9 +387,9 @@ bool QTextEdit::checksDescendantsForFocus() const
 
 void QTextEdit::setColors(const Color& background, const Color& foreground)
 {
-    KWQTextArea *textArea = static_cast<KWQTextArea *>(getView());
+    WebCoreTextArea *textArea = static_cast<WebCoreTextArea *>(getView());
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
     // Below is a workaround for the following AppKit bug which causes transparent backgrounds to be 
     // drawn opaque <rdar://problem/3142730>.  Without this workaround, some textareas would be drawn with black backgrounds
@@ -404,5 +404,5 @@ void QTextEdit::setColors(const Color& background, const Color& foreground)
     [textArea setBackgroundColor:nsColor(bg)];
     [textArea setDrawsBackground:bg.alpha() != 0];
 
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }

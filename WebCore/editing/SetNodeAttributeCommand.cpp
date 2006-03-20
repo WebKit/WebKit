@@ -30,16 +30,16 @@
 
 #include <kxmlcore/Assertions.h>
 
-using DOM::DocumentImpl;
-using DOM::ElementImpl;
-using DOM::NodeImpl;
-using DOM::DOMString;
-using DOM::QualifiedName;
+using WebCore::Document;
+using WebCore::Element;
+using WebCore::Node;
+using WebCore::String;
+using WebCore::QualifiedName;
 
-namespace khtml {
+namespace WebCore {
 
-SetNodeAttributeCommand::SetNodeAttributeCommand(DocumentImpl *document, ElementImpl *element, 
-                                                 const QualifiedName& attribute, const DOMString &value)
+SetNodeAttributeCommand::SetNodeAttributeCommand(Document *document, Element *element, 
+                                                 const QualifiedName& attribute, const String &value)
     : EditCommand(document), m_element(element), m_attribute(attribute), m_value(value)
 {
     ASSERT(m_element);
@@ -69,5 +69,5 @@ void SetNodeAttributeCommand::doUnapply()
     ASSERT(ec == 0);
 }
 
-} // namespace khtml
+} // namespace WebCore
 

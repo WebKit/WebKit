@@ -28,12 +28,12 @@
 #include <kjs/protect.h>
 
 namespace WebCore {
-    class ClipboardImpl;
-    class EventImpl;
-    class KeyboardEventImpl;
-    class MouseEventImpl;
-    class MutationEventImpl;
-    class UIEventImpl;
+    class Clipboard;
+    class Event;
+    class KeyboardEvent;
+    class MouseEvent;
+    class MutationEvent;
+    class UIEvent;
 }
 
 namespace KJS {
@@ -44,7 +44,7 @@ namespace KJS {
     class JSAbstractEventListener : public WebCore::EventListener {
     public:
         JSAbstractEventListener(bool HTML = false);
-        virtual void handleEvent(WebCore::EventImpl*, bool isWindowEvent);
+        virtual void handleEvent(WebCore::Event*, bool isWindowEvent);
         virtual bool isHTMLEventListener() const;
         virtual JSObject* listenerObj() const = 0;
         virtual Window* windowObj() const = 0;
@@ -80,19 +80,19 @@ namespace KJS {
 
     class JSLazyEventListener : public JSEventListener {
     public:
-        JSLazyEventListener(const DOM::DOMString& code, Window*, DOM::NodeImpl*, int lineno = 0);
+        JSLazyEventListener(const WebCore::String& code, Window*, WebCore::Node*, int lineno = 0);
         virtual JSObject *listenerObj() const;
     private:
         virtual JSValue *eventParameterName() const;
         void parseCode() const;
 
-        mutable DOM::DOMString code;
+        mutable WebCore::String code;
         mutable bool parsed;
         int lineNumber;
-        DOM::NodeImpl* originalNode;
+        WebCore::Node* originalNode;
     };
 
-    JSValue* getNodeEventListener(DOM::NodeImpl* n, const DOM::AtomicString& eventType);
+    JSValue* getNodeEventListener(WebCore::Node* n, const WebCore::AtomicString& eventType);
 
     // Constructor for Event - currently only used for some global vars
     class EventConstructor : public DOMObject {
@@ -109,7 +109,7 @@ namespace KJS {
 
     class DOMEvent : public DOMObject {
     public:
-        DOMEvent(ExecState*, DOM::EventImpl*);
+        DOMEvent(ExecState*, WebCore::Event*);
         virtual ~DOMEvent();
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         JSValue* getValueProperty(ExecState*, int token) const;
@@ -121,15 +121,15 @@ namespace KJS {
                Cancelable, TimeStamp, StopPropagation, PreventDefault, InitEvent,
                // MS IE equivalents
                SrcElement, ReturnValue, CancelBubble, ClipboardData, DataTransfer };
-        DOM::EventImpl *impl() const { return m_impl.get(); }
+        WebCore::Event *impl() const { return m_impl.get(); }
     protected:
-        RefPtr<DOM::EventImpl> m_impl;
+        RefPtr<WebCore::Event> m_impl;
         mutable Clipboard* clipboard;
     };
 
-    JSValue* toJS(ExecState*, WebCore::EventImpl*);
+    JSValue* toJS(ExecState*, WebCore::Event*);
 
-    DOM::EventImpl* toEvent(JSValue*); // returns 0 if value is not a DOMEvent object
+    WebCore::Event* toEvent(JSValue*); // returns 0 if value is not a DOMEvent object
 
     KJS_DEFINE_PROTOTYPE(DOMEventProto)
 
@@ -148,7 +148,7 @@ namespace KJS {
 
     class DOMUIEvent : public DOMEvent {
     public:
-        DOMUIEvent(ExecState*, DOM::UIEventImpl*);
+        DOMUIEvent(ExecState*, WebCore::UIEvent*);
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         JSValue* getValueProperty(ExecState*, int token) const;
         // no put - all read-only
@@ -159,7 +159,7 @@ namespace KJS {
 
     class DOMMouseEvent : public DOMUIEvent {
     public:
-        DOMMouseEvent(ExecState*, DOM::MouseEventImpl *me);
+        DOMMouseEvent(ExecState*, WebCore::MouseEvent *me);
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         JSValue* getValueProperty(ExecState*, int token) const;
         virtual void mark();
@@ -174,7 +174,7 @@ namespace KJS {
 
     class DOMKeyboardEvent : public DOMUIEvent {
     public:
-        DOMKeyboardEvent(ExecState*, DOM::KeyboardEventImpl *ke);
+        DOMKeyboardEvent(ExecState*, WebCore::KeyboardEvent *ke);
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         JSValue* getValueProperty(ExecState*, int token) const;
         // no put - all read-only
@@ -186,7 +186,7 @@ namespace KJS {
     class Clipboard : public DOMObject {
     friend class ClipboardProtoFunc;
     public:
-        Clipboard(ExecState*, DOM::ClipboardImpl *ds);
+        Clipboard(ExecState*, WebCore::Clipboard *ds);
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         JSValue* getValueProperty(ExecState*, int token) const;
         virtual void put(ExecState*, const Identifier&, JSValue*, int attr = None);
@@ -196,7 +196,7 @@ namespace KJS {
         static const ClassInfo info;
         enum { ClearData, GetData, SetData, Types, SetDragImage, DropEffect, EffectAllowed };
     private:
-        RefPtr<DOM::ClipboardImpl> clipboard;
+        RefPtr<WebCore::Clipboard> clipboard;
     };
 
 } // namespace

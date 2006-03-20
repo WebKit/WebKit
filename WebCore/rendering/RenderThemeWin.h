@@ -23,7 +23,7 @@
 #ifndef RenderThemeWin_H
 #define RenderThemeWin_H
 
-#include "render_theme.h"
+#include "RenderTheme.h"
 
 namespace WebCore {
 

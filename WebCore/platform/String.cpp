@@ -36,7 +36,7 @@ String::String(const QChar* str, unsigned len)
         m_impl = new StringImpl(str, len);
 }
 
-String::String(const QString& str)
+String::String(const DeprecatedString& str)
 {
     if (str.isNull())
         return;
@@ -166,13 +166,13 @@ QChar* String::unicode() const
     return m_impl->s;
 }
 
-QString String::qstring() const
+DeprecatedString String::deprecatedString() const
 {
     if (!m_impl)
-        return QString::null;
+        return DeprecatedString::null;
     if (!m_impl->s)
-        return QString("", 0);
-    return QString(m_impl->s, m_impl->l);
+        return DeprecatedString("", 0);
+    return DeprecatedString(m_impl->s, m_impl->l);
 }
 
 int String::toInt() const
@@ -215,7 +215,7 @@ const char *String::ascii() const
 
 //-----------------------------------------------------------------------------
 
-bool operator==(const String& a, const QString& b)
+bool operator==(const String& a, const DeprecatedString& b)
 {
     unsigned l = a.length();
     if (l != b.length())

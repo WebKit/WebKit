@@ -23,7 +23,7 @@
 #if SVG_SUPPORT
 #include "SVGDocumentExtensions.h"
 
-#include "DocumentImpl.h"
+#include "Document.h"
 #include "EventListener.h"
 #include "Frame.h"
 #include "KSVGTimeScheduler.h"
@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-SVGDocumentExtensions::SVGDocumentExtensions(DocumentImpl *doc)
+SVGDocumentExtensions::SVGDocumentExtensions(Document *doc)
     : m_doc(doc)
     , m_timeScheduler(new TimeScheduler(doc))
 {
@@ -42,10 +42,10 @@ SVGDocumentExtensions::~SVGDocumentExtensions()
     delete m_timeScheduler;
 }
 
-PassRefPtr<EventListener> SVGDocumentExtensions::createSVGEventListener(const DOMString& code, NodeImpl *node)
+PassRefPtr<EventListener> SVGDocumentExtensions::createSVGEventListener(const String& code, Node *node)
 {
     if (Frame *frame = m_doc->frame()) {
-        if (KJSProxyImpl *proxy = frame->jScript())
+        if (KJSProxy *proxy = frame->jScript())
             return proxy->createSVGEventHandler(code, node);
     }
     return 0;

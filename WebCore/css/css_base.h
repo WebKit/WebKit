@@ -36,17 +36,17 @@ using KXMLCore::PassRefPtr;
 
 namespace WebCore {
 
-    class StyleSheetImpl;
+    class StyleSheet;
     class MediaList;
 
     class CSSSelector;
     class CSSProperty;
-    class CSSValueImpl;
-    class CSSPrimitiveValueImpl;
-    class CSSRuleImpl;
-    class CSSStyleRuleImpl;
+    class CSSValue;
+    class CSSPrimitiveValue;
+    class CSSRule;
+    class CSSStyleRule;
 
-    class DocumentImpl;
+    class Document;
 
     struct CSSNamespace {
         AtomicString m_prefix;
@@ -105,7 +105,7 @@ namespace WebCore {
         /**
          * Re-create selector text from selector's data
          */
-        DOMString selectorText() const;
+        String selectorText() const;
 
         // checks if the 2 selectors (including sub selectors) agree.
         bool operator ==(const CSSSelector&);
@@ -200,14 +200,14 @@ namespace WebCore {
     };
 
     // a style class which has a parent (almost all have)
-    class StyleBaseImpl : public Shared<StyleBaseImpl> {
+    class StyleBase : public Shared<StyleBase> {
     public:
-        StyleBaseImpl(StyleBaseImpl* parent)
+        StyleBase(StyleBase* parent)
             : m_parent(parent), m_strictParsing(!parent || parent->useStrictParsing()) { }
-        virtual ~StyleBaseImpl() { }
+        virtual ~StyleBase() { }
 
-        StyleBaseImpl* parent() const { return m_parent; }
-        void setParent(StyleBaseImpl* parent) { m_parent = parent; }
+        StyleBase* parent() const { return m_parent; }
+        void setParent(StyleBase* parent) { m_parent = parent; }
 
         // returns the url of the style sheet this object belongs to
         String baseURL();
@@ -240,27 +240,27 @@ namespace WebCore {
 
         virtual void insertedIntoParent() { }
 
-        StyleSheetImpl* stylesheet();
+        StyleSheet* stylesheet();
 
     private:
-        StyleBaseImpl* m_parent;
+        StyleBase* m_parent;
         bool m_strictParsing;
     };
 
     // a style class which has a list of children (StyleSheets for example)
-    class StyleListImpl : public StyleBaseImpl {
+    class StyleList : public StyleBase {
     public:
-        StyleListImpl(StyleBaseImpl* parent) : StyleBaseImpl(parent) { }
+        StyleList(StyleBase* parent) : StyleBase(parent) { }
 
         unsigned length() { return m_children.size(); }
-        StyleBaseImpl* item(unsigned num) { return num < length() ? m_children[num].get() : 0; }
+        StyleBase* item(unsigned num) { return num < length() ? m_children[num].get() : 0; }
 
-        void append(PassRefPtr<StyleBaseImpl>);
-        void insert(unsigned position, PassRefPtr<StyleBaseImpl>);
+        void append(PassRefPtr<StyleBase>);
+        void insert(unsigned position, PassRefPtr<StyleBase>);
         void remove(unsigned position);
 
     protected:
-        Vector<RefPtr<StyleBaseImpl> > m_children;
+        Vector<RefPtr<StyleBase> > m_children;
     };
 
     int getPropertyID(const char *tagStr, int len);

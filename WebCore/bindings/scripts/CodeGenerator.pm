@@ -98,7 +98,7 @@ sub FindTopBaseClass
   # If you are processing the 'Attr' interface, it has the single
   # parent interface 'Node', which is the topmost base class. Return it.
   #
-  # It gets trickier for ie. the 'MouseEvent' interface, whose parent is
+  # It gets trickier for ie. the 'PlatformMouseEvent' interface, whose parent is
   # the 'UIEvent' interface, whose parent is the 'Event' interface. Return it.
   my $object = shift;
 

@@ -26,13 +26,13 @@
 #ifndef HTML_BASEIMPL_H
 #define HTML_BASEIMPL_H
 
-#include "HTMLElementImpl.h"
+#include "HTMLElement.h"
 #include "ScrollBarMode.h"
 
 namespace WebCore {
 
-class CSSStyleSheetImpl;
-class DOMString;
+class CSSStyleSheet;
+class String;
 class Frame;
 class HTMLFrameElement;
 class RenderFrameSet;
@@ -43,59 +43,59 @@ struct Length;
 
 // -------------------------------------------------------------------------
 
-class HTMLBodyElementImpl : public HTMLElementImpl
+class HTMLBodyElement : public HTMLElement
 {
 public:
-    HTMLBodyElementImpl(DocumentImpl *doc);
-    ~HTMLBodyElementImpl();
+    HTMLBodyElement(Document *doc);
+    ~HTMLBodyElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 10; }
     
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttributeImpl *);
+    virtual void parseMappedAttribute(MappedAttribute *);
 
     virtual void insertedIntoDocument();
 
     void createLinkDecl();
     
-    virtual bool isURLAttribute(AttributeImpl *attr) const;
+    virtual bool isURLAttribute(Attribute *attr) const;
 
-    DOMString aLink() const;
-    void setALink(const DOMString &);
-    DOMString background() const;
-    void setBackground(const DOMString &);
-    DOMString bgColor() const;
-    void setBgColor(const DOMString &);
-    DOMString link() const;
-    void setLink(const DOMString &);
-    DOMString text() const;
-    void setText(const DOMString &);
-    DOMString vLink() const;
-    void setVLink(const DOMString &);
+    String aLink() const;
+    void setALink(const String &);
+    String background() const;
+    void setBackground(const String &);
+    String bgColor() const;
+    void setBgColor(const String &);
+    String link() const;
+    void setLink(const String &);
+    String text() const;
+    void setText(const String &);
+    String vLink() const;
+    void setVLink(const String &);
 
 protected:
-    RefPtr<CSSMutableStyleDeclarationImpl> m_linkDecl;
+    RefPtr<CSSMutableStyleDeclaration> m_linkDecl;
 };
 
 // -------------------------------------------------------------------------
 
-class HTMLFrameElementImpl : public HTMLElementImpl
+class HTMLFrameElement : public HTMLElement
 {
     friend class RenderFrame;
     friend class RenderPartObject;
 
 public:
-    HTMLFrameElementImpl(DocumentImpl *doc);
-    HTMLFrameElementImpl(const QualifiedName& tagName, DocumentImpl* doc);
-    ~HTMLFrameElementImpl();
+    HTMLFrameElement(Document *doc);
+    HTMLFrameElement(const QualifiedName& tagName, Document* doc);
+    ~HTMLFrameElement();
 
     void init();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusForbidden; }
     virtual int tagPriority() const { return 0; }
   
-    virtual void parseMappedAttribute(MappedAttributeImpl *);
+    virtual void parseMappedAttribute(MappedAttribute *);
     virtual void attach();
     void close();
     virtual void willRemove();
@@ -105,42 +105,42 @@ public:
 
     bool noResize() { return m_noResize; }
 
-    void setLocation(const DOMString&);
+    void setLocation(const String&);
 
     virtual bool isFocusable() const;
     virtual void setFocus(bool);
 
     Frame* contentFrame() const;
-    DocumentImpl* contentDocument() const;
+    Document* contentDocument() const;
     
-    virtual bool isURLAttribute(AttributeImpl *attr) const;
+    virtual bool isURLAttribute(Attribute *attr) const;
 
     ScrollBarMode scrollingMode() const { return m_scrolling; }
     int getMarginWidth() const { return m_marginWidth; }
     int getMarginHeight() const { return m_marginHeight; }
 
-    DOMString frameBorder() const;
-    void setFrameBorder(const DOMString &);
+    String frameBorder() const;
+    void setFrameBorder(const String &);
 
-    DOMString longDesc() const;
-    void setLongDesc(const DOMString &);
+    String longDesc() const;
+    void setLongDesc(const String &);
 
-    DOMString marginHeight() const;
-    void setMarginHeight(const DOMString &);
+    String marginHeight() const;
+    void setMarginHeight(const String &);
 
-    DOMString marginWidth() const;
-    void setMarginWidth(const DOMString &);
+    String marginWidth() const;
+    void setMarginWidth(const String &);
 
-    DOMString name() const;
-    void setName(const DOMString &);
+    String name() const;
+    void setName(const String &);
 
     void setNoResize(bool);
 
-    DOMString scrolling() const;
-    void setScrolling(const DOMString &);
+    String scrolling() const;
+    void setScrolling(const String &);
 
-    virtual DOMString src() const;
-    void setSrc(const DOMString &);
+    virtual String src() const;
+    void setSrc(const String &);
 
     int frameWidth() const;
     int frameHeight() const;
@@ -163,23 +163,23 @@ protected:
 
 // -------------------------------------------------------------------------
 
-class HTMLFrameSetElementImpl : public HTMLElementImpl
+class HTMLFrameSetElement : public HTMLElement
 {
     friend class RenderFrameSet;
 public:
-    HTMLFrameSetElementImpl(DocumentImpl *doc);
-    ~HTMLFrameSetElementImpl();
+    HTMLFrameSetElement(Document *doc);
+    ~HTMLFrameSetElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 10; }
-    virtual bool checkDTD(const NodeImpl* newChild);
+    virtual bool checkDTD(const Node* newChild);
 
-    virtual void parseMappedAttribute(MappedAttributeImpl *);
+    virtual void parseMappedAttribute(MappedAttribute *);
     virtual void attach();
     virtual bool rendererIsNeeded(RenderStyle *);
     virtual RenderObject *createRenderer(RenderArena *, RenderStyle *);
 
-    virtual void defaultEventHandler(EventImpl *evt);
+    virtual void defaultEventHandler(Event *evt);
 
     bool frameBorder() { return frameborder; }
     bool noResize() { return noresize; }
@@ -190,11 +190,11 @@ public:
 
     virtual void recalcStyle( StyleChange ch );
     
-    DOMString cols() const;
-    void setCols(const DOMString &);
+    String cols() const;
+    void setCols(const String &);
 
-    DOMString rows() const;
-    void setRows(const DOMString &);
+    String rows() const;
+    void setRows(const String &);
 
 protected:
     Length* m_rows;
@@ -211,50 +211,50 @@ protected:
 
 // -------------------------------------------------------------------------
 
-class HTMLHeadElementImpl : public HTMLElementImpl
+class HTMLHeadElement : public HTMLElement
 {
 public:
-    HTMLHeadElementImpl(DocumentImpl *doc);
-    ~HTMLHeadElementImpl();
+    HTMLHeadElement(Document *doc);
+    ~HTMLHeadElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusOptional; }
     virtual int tagPriority() const { return 10; }
-    virtual bool checkDTD(const NodeImpl* newChild);
+    virtual bool checkDTD(const Node* newChild);
 
-    DOMString profile() const;
-    void setProfile(const DOMString &);
+    String profile() const;
+    void setProfile(const String &);
 };
 
 // -------------------------------------------------------------------------
 
-class HTMLHtmlElementImpl : public HTMLElementImpl
+class HTMLHtmlElement : public HTMLElement
 {
 public:
-    HTMLHtmlElementImpl(DocumentImpl *doc);
-    ~HTMLHtmlElementImpl();
+    HTMLHtmlElement(Document *doc);
+    ~HTMLHtmlElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 11; }
-    virtual bool checkDTD(const NodeImpl* newChild);
+    virtual bool checkDTD(const Node* newChild);
 
-    DOMString version() const;
-    void setVersion(const DOMString &);
+    String version() const;
+    void setVersion(const String &);
 };
 
 
 // -------------------------------------------------------------------------
 
-class HTMLIFrameElementImpl : public HTMLFrameElementImpl
+class HTMLIFrameElement : public HTMLFrameElement
 {
 public:
-    HTMLIFrameElementImpl(DocumentImpl *doc);
-    ~HTMLIFrameElementImpl();
+    HTMLIFrameElement(Document *doc);
+    ~HTMLIFrameElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 1; }
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttribute *attr);
 
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
@@ -264,18 +264,18 @@ public:
     virtual RenderObject *createRenderer(RenderArena *, RenderStyle *);
     virtual void recalcStyle( StyleChange ch );
     
-    virtual bool isURLAttribute(AttributeImpl *attr) const;
+    virtual bool isURLAttribute(Attribute *attr) const;
 
-    DOMString align() const;
-    void setAlign(const DOMString &);
+    String align() const;
+    void setAlign(const String &);
 
-    DOMString height() const;
-    void setHeight(const DOMString &);
+    String height() const;
+    void setHeight(const String &);
 
-    DOMString width() const;
-    void setWidth(const DOMString &);
+    String width() const;
+    void setWidth(const String &);
 
-    virtual DOMString src() const;
+    virtual String src() const;
 
 protected:
     virtual void openURL();
@@ -283,7 +283,7 @@ protected:
     bool needWidgetUpdate;
 
  private:
-    DOMString oldNameAttr;
+    String oldNameAttr;
 };
 
 } //namespace

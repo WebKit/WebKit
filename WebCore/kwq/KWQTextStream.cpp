@@ -26,7 +26,7 @@
 #include "config.h"
 #include "KWQTextStream.h"
 
-#include "QString.h"
+#include "DeprecatedString.h"
 #include "Logging.h"
 
 const size_t integerOrPointerAsStringBufferSize = 100; // large enough for any integer or pointer in string format, including trailing null character
@@ -34,12 +34,12 @@ const char *precisionFormats[] = { "%.0f", "%.1f", "%.2f", "%.3f", "%.4f", "%.5f
 const int maxPrecision = 6; // must match to precisionFormats
 const int defaultPrecision = 6; // matches qt and sprintf(.., "%f", ...) behaviour
 
-QTextStream::QTextStream(const ByteArray &ba)
+QTextStream::QTextStream(const DeprecatedByteArray &ba)
     : _hasByteArray(true), _byteArray(ba), _string(0), _precision(defaultPrecision)
 {
 }
 
-QTextStream::QTextStream(QString *s)
+QTextStream::QTextStream(DeprecatedString *s)
     : _hasByteArray(false), _string(s), _precision(defaultPrecision)
 {
 }
@@ -47,7 +47,7 @@ QTextStream::QTextStream(QString *s)
 QTextStream &QTextStream::operator<<(char c)
 {
     if (_hasByteArray) {
-        uint oldSize = _byteArray.size();
+        unsigned oldSize = _byteArray.size();
         _byteArray.resize(oldSize + 1);
         _byteArray[oldSize] = c;
     }
@@ -116,8 +116,8 @@ QTextStream &QTextStream::operator<<(double d)
 QTextStream &QTextStream::operator<<(const char *s)
 {
     if (_hasByteArray) {
-        uint length = strlen(s);
-        uint oldSize = _byteArray.size();
+        unsigned length = strlen(s);
+        unsigned oldSize = _byteArray.size();
         _byteArray.resize(oldSize + length);
         memcpy(_byteArray.data() + oldSize, s, length);
     }
@@ -127,17 +127,17 @@ QTextStream &QTextStream::operator<<(const char *s)
     return *this;
 }
 
-QTextStream &QTextStream::operator<<(const QCString &qcs)
+QTextStream &QTextStream::operator<<(const DeprecatedCString &qcs)
 {
     const char *s = qcs;
     return *this << s;
 }
 
-QTextStream &QTextStream::operator<<(const QString &s)
+QTextStream &QTextStream::operator<<(const DeprecatedString &s)
 {
     if (_hasByteArray) {
-        uint length = s.length();
-        uint oldSize = _byteArray.size();
+        unsigned length = s.length();
+        unsigned oldSize = _byteArray.size();
         _byteArray.resize(oldSize + length);
         memcpy(_byteArray.data() + oldSize, s.latin1(), length);
     }

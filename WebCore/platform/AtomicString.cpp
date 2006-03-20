@@ -84,7 +84,7 @@ StringImpl* AtomicString::add(const char* c)
 
 struct QCharBuffer {
     const QChar* s;
-    uint length;
+    unsigned length;
 };
 
 struct QCharBufferTranslator {
@@ -95,16 +95,16 @@ struct QCharBufferTranslator {
 
     static bool equal(StringImpl* const& str, const QCharBuffer& buf)
     {
-        uint strLength = str->length();
-        uint bufLength = buf.length;
+        unsigned strLength = str->length();
+        unsigned bufLength = buf.length;
         if (strLength != bufLength)
             return false;
         
         const uint32_t* strChars = reinterpret_cast<const uint32_t*>(str->unicode());
         const uint32_t* bufChars = reinterpret_cast<const uint32_t*>(buf.s);
         
-        uint halfLength = strLength >> 1;
-        for (uint i = 0; i != halfLength; ++i) {
+        unsigned halfLength = strLength >> 1;
+        for (unsigned i = 0; i != halfLength; ++i) {
             if (*strChars++ != *bufChars++)
                 return false;
         }

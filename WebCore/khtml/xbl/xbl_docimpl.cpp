@@ -31,37 +31,37 @@
 #include "xbl_tokenizer.h"
 #include "xbl_protobinding.h"
 
-using DOM::DocumentImpl;
-using khtml::XMLHandler;
+using WebCore::Document;
+using WebCore::XMLHandler;
 
 namespace XBL {
 
-XBLDocumentImpl::XBLDocumentImpl()
-:DocumentImpl(0,0)
+XBLDocument::XBLDocument()
+:Document(0,0)
 {
     m_prototypeBindingTable.setAutoDelete(true); // The prototype bindings will be deleted when the XBL document dies.
 }
 
-XBLDocumentImpl::~XBLDocumentImpl()
+XBLDocument::~XBLDocument()
 {
 }
 
-XMLHandler* XBLDocumentImpl::createTokenHandler()
+XMLHandler* XBLDocument::createTokenHandler()
 {
     return new XBLTokenHandler(docPtr());
 }
 
-void XBLDocumentImpl::setPrototypeBinding(const DOM::DOMString& id, XBLPrototypeBinding* binding)
+void XBLDocument::setPrototypeBinding(const WebCore::String& id, XBLPrototypeBinding* binding)
 {
-    m_prototypeBindingTable.replace(id.qstring(), binding);
+    m_prototypeBindingTable.replace(id.deprecatedString(), binding);
 }
 
-XBLPrototypeBinding* XBLDocumentImpl::prototypeBinding(const DOM::DOMString& id)
+XBLPrototypeBinding* XBLDocument::prototypeBinding(const WebCore::String& id)
 {
     if (id.length() == 0)
         return 0;
     
-    return m_prototypeBindingTable.find(id.qstring());
+    return m_prototypeBindingTable.find(id.deprecatedString());
 }
 
 }

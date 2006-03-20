@@ -29,25 +29,25 @@
 
 #import "Cache.h"
 #import "DOMInternal.h"
-#import "DocumentTypeImpl.h"
+#import "DocumentType.h"
 #import "FrameTree.h"
 #import "FrameView.h"
 #import "GraphicsContext.h"
-#import "HTMLFormElementImpl.h"
-#import "HTMLInputElementImpl.h"
-#import "KWQAccObjectCache.h"
+#import "HTMLFormElement.h"
+#import "HTMLInputElement.h"
+#import "AccessibilityObjectCache.h"
 #import "CharsetNames.h"
-#import "KWQClipboard.h"
+#import "ClipboardMac.h"
 #import "KWQEditCommand.h"
 #import "FloatRect.h"
 #import "Font.h"
 #import "FoundationExtras.h"
 #import "KWQLoader.h"
 #import "KWQPageState.h"
-#import "KWQRenderTreeDebug.h"
+#import "RenderTreeAsText.h"
 #import "TextEncoding.h"
-#import "MacFrame.h"
-#import "NodeImpl.h"
+#import "FrameMac.h"
+#import "Node.h"
 #import "Page.h"
 #import "SelectionController.h"
 #import "WebCorePageBridge.h"
@@ -58,10 +58,10 @@
 #import "csshelper.h"
 #import "DeleteSelectionCommand.h"
 #import "dom2_eventsimpl.h"
-#import "dom2_rangeimpl.h"
-#import "dom2_viewsimpl.h"
-#import "dom_position.h"
-#import "html_documentimpl.h"
+#import "Range.h"
+#import "AbstractView.h"
+#import "Position.h"
+#import "HTMLDocument.h"
 #import "html_imageimpl.h"
 #import "htmlediting.h"
 #import "htmlnames.h"
@@ -71,15 +71,15 @@
 #import "markup.h"
 #import "ModifySelectionListLevelCommand.h"
 #import "MoveSelectionCommand.h"
-#import "render_canvas.h"
+#import "RenderCanvas.h"
 #import "render_frames.h"
-#import "render_image.h"
+#import "RenderImage.h"
 #import "render_replaced.h"
 #import "render_style.h"
 #import "ReplaceSelectionCommand.h"
 #import "TypingCommand.h"
 #import "VisiblePosition.h"
-#import "visible_text.h"
+#import "TextIterator.h"
 #import "visible_units.h"
 #import "xml_tokenizer.h"
 #import <JavaScriptCore/date_object.h>
@@ -155,7 +155,7 @@ static void updateRenderingForBindings (ExecState *exec, JSObject *rootObject)
     if (!window)
         return;
         
-    DocumentImpl *doc = static_cast<DocumentImpl*>(window->frame()->document());
+    Document *doc = static_cast<Document*>(window->frame()->document());
     if (doc)
         doc->updateRendering();
 }
@@ -435,7 +435,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 + (WebCoreFrameBridge *)bridgeForDOMDocument:(DOMDocument *)document
 {
-    Frame *frame = [document _documentImpl]->frame();
+    Frame *frame = [document _document]->frame();
     return frame ? Mac(frame)->bridge() : nil;
 }
 
@@ -451,7 +451,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     if (!(self = [super init]))
         return nil;
 
-    m_frame = new MacFrame([page impl], 0);
+    m_frame = new FrameMac([page impl], 0);
     m_frame->setBridge(self);
     _shouldCreateRenderers = YES;
 
@@ -470,7 +470,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     if (!(self = [super init]))
         return nil;
     
-    m_frame = new MacFrame(renderer->node()->getDocument()->frame()->page(), renderer);
+    m_frame = new FrameMac(renderer->node()->getDocument()->frame()->page(), renderer);
     m_frame->setBridge(self);
     _shouldCreateRenderers = YES;
     return self;
@@ -500,14 +500,14 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     [super finalize];
 }
 
-- (MacFrame *)part
+- (FrameMac *)part
 {
     return m_frame;
 }
 
 - (WebCoreFrameBridge *)parent
 {
-    MacFrame *parentFrame = Mac(m_frame->tree()->parent());
+    FrameMac *parentFrame = Mac(m_frame->tree()->parent());
     if (!parentFrame)
         return nil;
     return parentFrame->bridge();
@@ -531,30 +531,30 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     ResourceRequest request(m_frame->resourceRequest());
     request.reload = reload;
     if (contentType)
-        request.m_responseMIMEType = QString::fromNSString(contentType);
+        request.m_responseMIMEType = DeprecatedString::fromNSString(contentType);
     m_frame->setResourceRequest(request);
 
     // opening the URL
     if (m_frame->didOpenURL(URL)) {
         // things we have to set up after calling didOpenURL
         if (refresh) {
-            m_frame->addMetaData("http-refresh", QString::fromNSString(refresh));
+            m_frame->addMetaData("http-refresh", DeprecatedString::fromNSString(refresh));
         }
         if (lastModified) {
             NSString *modifiedString = [lastModified descriptionWithCalendarFormat:@"%a %b %d %Y %H:%M:%S" timeZone:nil locale:nil];
-            m_frame->addMetaData("modified", QString::fromNSString(modifiedString));
+            m_frame->addMetaData("modified", DeprecatedString::fromNSString(modifiedString));
         }
     }
 }
 
 - (void)setEncoding:(NSString *)encoding userChosen:(BOOL)userChosen
 {
-    m_frame->setEncoding(QString::fromNSString(encoding), userChosen);
+    m_frame->setEncoding(DeprecatedString::fromNSString(encoding), userChosen);
 }
 
 - (void)addData:(NSData *)data
 {
-    DocumentImpl *doc = m_frame->document();
+    Document *doc = m_frame->document();
     
     // Document may be nil if the part is about to redirect
     // as a result of JS executing during load, i.e. one frame
@@ -583,7 +583,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     // We might have made a page cache item, but now we're bailing out due to an error before we ever
     // transitioned to the new page (before WebFrameState==commit).  The goal here is to restore any state
     // so that the existing view (that wenever got far enough to replace) can continue being used.
-    DocumentImpl *doc = m_frame->document();
+    Document *doc = m_frame->document();
     if (doc) {
         doc->setInPageCache(NO);
     }
@@ -603,13 +603,13 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (void)saveDocumentState
 {
-    DocumentImpl* doc = m_frame->document();
+    Document* doc = m_frame->document();
     if (doc) {
-        QStringList list = doc->docState();
+        DeprecatedStringList list = doc->docState();
         NSMutableArray* documentState = [[NSMutableArray alloc] init];
-        QStringList::const_iterator end = list.constEnd();
-        for (QStringList::const_iterator i = list.constBegin(); i != end; ++i) {
-            const QString& s = *i;
+        DeprecatedStringList::const_iterator end = list.constEnd();
+        for (DeprecatedStringList::const_iterator i = list.constBegin(); i != end; ++i) {
+            const DeprecatedString& s = *i;
             [documentState addObject:[NSString stringWithCharacters:(const unichar *)s.unicode() length:s.length()]];
         }
         [self saveDocumentState:documentState];
@@ -619,14 +619,14 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (void)restoreDocumentState
 {
-    DocumentImpl *doc = m_frame->document();
+    Document *doc = m_frame->document();
     if (doc) {
         NSArray *documentState = [self documentState];
         
-        QStringList s;
-        for (uint i = 0; i < [documentState count]; i++){
+        DeprecatedStringList s;
+        for (unsigned i = 0; i < [documentState count]; i++){
             NSString *string = [documentState objectAtIndex: i];
-            s.append(QString::fromNSString(string));
+            s.append(DeprecatedString::fromNSString(string));
         }
             
         doc->setRestoreState(s);
@@ -652,7 +652,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (BOOL)saveDocumentToPageCache
 {
-    DocumentImpl *doc = m_frame->document();
+    Document *doc = m_frame->document();
     if (!doc)
         return NO;
     if (!doc->view())
@@ -736,13 +736,13 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (void)scrollToAnchor:(NSString *)a
 {
-    m_frame->gotoAnchor(QString::fromNSString(a));
+    m_frame->gotoAnchor(DeprecatedString::fromNSString(a));
 }
 
 - (BOOL)isSelectionEditable
 {
     // EDIT FIXME: This needs to consider the entire selected range
-    NodeImpl *startNode = m_frame->selection().start().node();
+    Node *startNode = m_frame->selection().start().node();
     return startNode ? startNode->isContentEditable() : NO;
 }
 
@@ -764,11 +764,11 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 - (NSString *)_documentTypeString
 {
     NSString *documentTypeString = nil;
-    DocumentImpl *doc = m_frame->document();
+    Document *doc = m_frame->document();
     if (doc) {
-        DocumentTypeImpl *doctype = doc->realDocType();
+        DocumentType *doctype = doc->realDocType();
         if (doctype) {
-            documentTypeString = doctype->toString().qstring().getNSString();
+            documentTypeString = doctype->toString().deprecatedString().getNSString();
         }
     }
     return documentTypeString;
@@ -788,11 +788,11 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
     }
 }
 
-- (NSArray *)nodesFromList:(QPtrList<NodeImpl> *)nodeList
+- (NSArray *)nodesFromList:(DeprecatedPtrList<Node> *)nodeList
 {
     NSMutableArray *nodes = [NSMutableArray arrayWithCapacity:nodeList->count()];
-    for (QPtrListIterator<NodeImpl> i(*nodeList); i.current(); ++i) {
-        [nodes addObject:[DOMNode _nodeWithImpl:i.current()]];
+    for (DeprecatedPtrListIterator<Node> i(*nodeList); i.current(); ++i) {
+        [nodes addObject:[DOMNode _nodeWith:i.current()]];
     }
     return nodes;
 }
@@ -800,8 +800,8 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 - (NSString *)markupStringFromNode:(DOMNode *)node nodes:(NSArray **)nodes
 {
     // FIXME: This is never "for interchange". Is that right? See the next method.
-    QPtrList<NodeImpl> nodeList;
-    NSString *markupString = createMarkup([node _nodeImpl], IncludeNode, nodes ? &nodeList : 0).getNSString();
+    DeprecatedPtrList<Node> nodeList;
+    NSString *markupString = createMarkup([node _node], IncludeNode, nodes ? &nodeList : 0).getNSString();
     if (nodes) {
         *nodes = [self nodesFromList:&nodeList];
     }
@@ -811,8 +811,8 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 - (NSString *)markupStringFromRange:(DOMRange *)range nodes:(NSArray **)nodes
 {
     // FIXME: This is always "for interchange". Is that right? See the previous method.
-    QPtrList<NodeImpl> nodeList;
-    NSString *markupString = createMarkup([range _rangeImpl], nodes ? &nodeList : 0, AnnotateForInterchange).getNSString();
+    DeprecatedPtrList<Node> nodeList;
+    NSString *markupString = createMarkup([range _range], nodes ? &nodeList : 0, AnnotateForInterchange).getNSString();
     if (nodes) {
         *nodes = [self nodesFromList:&nodeList];
     }
@@ -821,14 +821,14 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 - (NSString *)selectedString
 {
-    QString text = m_frame->selectedText();
+    DeprecatedString text = m_frame->selectedText();
     text.replace(QChar('\\'), m_frame->backslashAsCurrencySymbol());
     return [[text.getNSString() copy] autorelease];
 }
 
 - (NSString *)stringForRange:(DOMRange *)range
 {
-    QString text = plainText([range _rangeImpl]);
+    DeprecatedString text = plainText([range _range]);
     text.replace(QChar('\\'), m_frame->backslashAsCurrencySymbol());
     return [[text.getNSString() copy] autorelease];
 }
@@ -841,7 +841,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 - (void)deselectAll
 {
     [self deselectText];
-    DocumentImpl *doc = m_frame->document();
+    Document *doc = m_frame->document();
     if (doc) {
         doc->setFocusNode(0);
     }
@@ -861,7 +861,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 - (void)reapplyStylesForDeviceType:(WebCoreDeviceType)deviceType
 {
     m_frame->setMediaType(deviceType == WebCoreDeviceScreen ? "screen" : "print");
-    DocumentImpl *doc = m_frame->document();
+    Document *doc = m_frame->document();
     if (doc)
         doc->setPrinting(deviceType == WebCoreDevicePrinter);
     return m_frame->reparseConfiguration();
@@ -869,7 +869,7 @@ static inline WebCoreFrameBridge *bridge(Frame *frame)
 
 static BOOL nowPrinting(WebCoreFrameBridge *self)
 {
-    DocumentImpl *doc = self->m_frame->document();
+    Document *doc = self->m_frame->document();
     return doc && doc->printing();
 }
 
@@ -1070,43 +1070,43 @@ static BOOL nowPrinting(WebCoreFrameBridge *self)
         NSView <WebCoreWidgetHolder>* widgetHolder = view;
         Widget* widget = [widgetHolder widget];
         if (widget && widget->client())
-            return [DOMElement _elementWithImpl:widget->client()->element(widget)];
+            return [DOMElement _elementWith:widget->client()->element(widget)];
     }
     return nil;
 }
 
-static HTMLInputElementImpl* inputElementFromDOMElement(DOMElement* element)
+static HTMLInputElement* inputElementFromDOMElement(DOMElement* element)
 {
-    NodeImpl* node = [element _nodeImpl];
+    Node* node = [element _node];
     if (node->hasTagName(inputTag))
-        return static_cast<HTMLInputElementImpl*>(node);
+        return static_cast<HTMLInputElement*>(node);
     return nil;
 }
 
-static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
+static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 {
-    NodeImpl *node = [element _nodeImpl];
+    Node *node = [element _node];
     // This should not be necessary, but an XSL file on
     // maps.google.com crashes otherwise because it is an xslt file
     // that contains <form> elements that aren't in any namespace, so
     // they come out as generic CML elements
     if (node && node->hasTagName(formTag)) {
-        return static_cast<HTMLFormElementImpl *>(node);
+        return static_cast<HTMLFormElement *>(node);
     }
     return nil;
 }
 
 - (DOMElement *)elementWithName:(NSString *)name inForm:(DOMElement *)form
 {
-    HTMLFormElementImpl *formElement = formElementFromDOMElement(form);
+    HTMLFormElement *formElement = formElementFromDOMElement(form);
     if (formElement) {
-        Vector<HTMLGenericFormElementImpl*>& elements = formElement->formElements;
+        Vector<HTMLGenericFormElement*>& elements = formElement->formElements;
         AtomicString targetName = name;
         for (unsigned int i = 0; i < elements.size(); i++) {
-            HTMLGenericFormElementImpl *elt = elements[i];
+            HTMLGenericFormElement *elt = elements[i];
             // Skip option elements, other duds
             if (elt->name() == targetName)
-                return [DOMElement _elementWithImpl:elt];
+                return [DOMElement _elementWith:elt];
         }
     }
     return nil;
@@ -1114,26 +1114,26 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (BOOL)elementDoesAutoComplete:(DOMElement *)element
 {
-    HTMLInputElementImpl *inputElement = inputElementFromDOMElement(element);
+    HTMLInputElement *inputElement = inputElementFromDOMElement(element);
     return inputElement != nil
-        && inputElement->inputType() == HTMLInputElementImpl::TEXT
+        && inputElement->inputType() == HTMLInputElement::TEXT
         && inputElement->autoComplete();
 }
 
 - (BOOL)elementIsPassword:(DOMElement *)element
 {
-    HTMLInputElementImpl *inputElement = inputElementFromDOMElement(element);
+    HTMLInputElement *inputElement = inputElementFromDOMElement(element);
     return inputElement != nil
-        && inputElement->inputType() == HTMLInputElementImpl::PASSWORD;
+        && inputElement->inputType() == HTMLInputElement::PASSWORD;
 }
 
 - (DOMElement *)formForElement:(DOMElement *)element;
 {
-    HTMLInputElementImpl *inputElement = inputElementFromDOMElement(element);
+    HTMLInputElement *inputElement = inputElementFromDOMElement(element);
     if (inputElement) {
-        HTMLFormElementImpl *formElement = inputElement->form();
+        HTMLFormElement *formElement = inputElement->form();
         if (formElement) {
-            return [DOMElement _elementWithImpl:formElement];
+            return [DOMElement _elementWith:formElement];
         }
     }
     return nil;
@@ -1141,19 +1141,19 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (DOMElement *)currentForm
 {
-    HTMLFormElementImpl *formElement = m_frame->currentForm();
-    return formElement ? [DOMElement _elementWithImpl:formElement] : nil;
+    HTMLFormElement *formElement = m_frame->currentForm();
+    return formElement ? [DOMElement _elementWith:formElement] : nil;
 }
 
 - (NSArray *)controlsInForm:(DOMElement *)form
 {
     NSMutableArray *results = nil;
-    HTMLFormElementImpl *formElement = formElementFromDOMElement(form);
+    HTMLFormElement *formElement = formElementFromDOMElement(form);
     if (formElement) {
-        Vector<HTMLGenericFormElementImpl*>& elements = formElement->formElements;
+        Vector<HTMLGenericFormElement*>& elements = formElement->formElements;
         for (unsigned int i = 0; i < elements.size(); i++) {
             if (elements.at(i)->isEnumeratable()) { // Skip option elements, other duds
-                DOMElement *de = [DOMElement _elementWithImpl:elements.at(i)];
+                DOMElement *de = [DOMElement _elementWith:elements.at(i)];
                 if (!results) {
                     results = [NSMutableArray arrayWithObject:de];
                 } else {
@@ -1167,12 +1167,12 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (NSString *)searchForLabels:(NSArray *)labels beforeElement:(DOMElement *)element
 {
-    return m_frame->searchForLabelsBeforeElement(labels, [element _elementImpl]);
+    return m_frame->searchForLabelsBeforeElement(labels, [element _element]);
 }
 
 - (NSString *)matchLabels:(NSArray *)labels againstElement:(DOMElement *)element
 {
-    return m_frame->matchLabelsAgainstElement(labels, [element _elementImpl]);
+    return m_frame->matchLabelsAgainstElement(labels, [element _element]);
 }
 
 - (void)getInnerNonSharedNode:(DOMNode **)innerNonSharedNode innerNode:(DOMNode **)innerNode URLElement:(DOMElement **)URLElement atPoint:(NSPoint)point
@@ -1186,9 +1186,9 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     }
 
     RenderObject::NodeInfo nodeInfo = [self nodeInfoAtPoint:point];
-    *innerNonSharedNode = [DOMNode _nodeWithImpl:nodeInfo.innerNonSharedNode()];
-    *innerNode = [DOMNode _nodeWithImpl:nodeInfo.innerNode()];
-    *URLElement = [DOMElement _elementWithImpl:nodeInfo.URLElement()];
+    *innerNonSharedNode = [DOMNode _nodeWith:nodeInfo.innerNonSharedNode()];
+    *innerNode = [DOMNode _nodeWith:nodeInfo.innerNode()];
+    *URLElement = [DOMElement _elementWith:nodeInfo.URLElement()];
 }
 
 - (BOOL)isPointInsideSelection:(NSPoint)point
@@ -1198,12 +1198,12 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (NSURL *)URLWithAttributeString:(NSString *)string
 {
-    DocumentImpl *doc = m_frame->document();
+    Document *doc = m_frame->document();
     if (!doc) {
         return nil;
     }
     // FIXME: is parseURL appropriate here?
-    QString rel = parseURL(QString::fromNSString(string)).qstring();
+    DeprecatedString rel = parseURL(DeprecatedString::fromNSString(string)).deprecatedString();
     return KURL(doc->completeURL(rel)).getNSURL();
 }
 
@@ -1214,12 +1214,12 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (unsigned)highlightAllMatchesForString:(NSString *)string caseSensitive:(BOOL)caseFlag
 {
-    return m_frame->highlightAllMatchesForString(QString::fromNSString(string), caseFlag);
+    return m_frame->highlightAllMatchesForString(DeprecatedString::fromNSString(string), caseFlag);
 }
 
 - (void)clearHighlightedMatches
 {
-    DocumentImpl *doc = m_frame->document();
+    Document *doc = m_frame->document();
     if (!doc) {
         return;
     }
@@ -1238,7 +1238,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)unmarkAllMisspellings
 {
-    DocumentImpl *doc = m_frame->document();
+    Document *doc = m_frame->document();
     if (!doc) {
         return;
     }
@@ -1261,7 +1261,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (NSView *)nextKeyView
 {
-    DocumentImpl *doc = m_frame->document();
+    Document *doc = m_frame->document();
     if (!doc) {
         return nil;
     }
@@ -1270,7 +1270,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (NSView *)previousKeyView
 {
-    DocumentImpl *doc = m_frame->document();
+    Document *doc = m_frame->document();
     if (!doc) {
         return nil;
     }
@@ -1279,7 +1279,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (NSView *)nextKeyViewInsideWebFrameViews
 {
-    DocumentImpl *doc = m_frame->document();
+    Document *doc = m_frame->document();
     if (!doc) {
         return nil;
     }
@@ -1289,7 +1289,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (NSView *)previousKeyViewInsideWebFrameViews
 {
-    DocumentImpl *doc = m_frame->document();
+    Document *doc = m_frame->document();
     if (!doc) {
         return nil;
     }
@@ -1305,7 +1305,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)string forceUserGesture:(BOOL)forceUserGesture
 {
     m_frame->createEmptyDocument();
-    JSValue* result = m_frame->executeScript(0, QString::fromNSString(string), forceUserGesture);
+    JSValue* result = m_frame->executeScript(0, DeprecatedString::fromNSString(string), forceUserGesture);
     if (!result || !result->isString())
         return 0;
     JSLock lock;
@@ -1315,7 +1315,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 - (NSAppleEventDescriptor *)aeDescByEvaluatingJavaScriptFromString:(NSString *)string
 {
     m_frame->createEmptyDocument();
-    JSValue* result = m_frame->executeScript(0, QString::fromNSString(string), true);
+    JSValue* result = m_frame->executeScript(0, DeprecatedString::fromNSString(string), true);
     if (!result) // FIXME: pass errors
         return 0;
     JSLock lock;
@@ -1334,7 +1334,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (DOMDocument *)DOMDocument
 {
-    return [DOMDocument _documentWithImpl:m_frame->document()];
+    return [DOMDocument _documentWith:m_frame->document()];
 }
 
 - (DOMHTMLElement *)frameElement
@@ -1350,7 +1350,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (NSAttributedString *)attributedStringFrom:(DOMNode *)start startOffset:(int)startOffset to:(DOMNode *)end endOffset:(int)endOffset
 {
-    return m_frame->attributedString([start _nodeImpl], startOffset, [end _nodeImpl], endOffset);
+    return m_frame->attributedString([start _node], startOffset, [end _node], endOffset);
 }
 
 - (NSRect)selectionRect
@@ -1370,13 +1370,13 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (NSRect)caretRectAtNode:(DOMNode *)node offset:(int)offset affinity:(NSSelectionAffinity)affinity
 {
-    return [node _nodeImpl]->renderer()->caretRect(offset, static_cast<EAffinity>(affinity));
+    return [node _node]->renderer()->caretRect(offset, static_cast<EAffinity>(affinity));
 }
 - (NSRect)firstRectForDOMRange:(DOMRange *)range
 {
     int extraWidthToEndOfLine = 0;
-    IntRect startCaretRect = [[range startContainer] _nodeImpl]->renderer()->caretRect([range startOffset], DOWNSTREAM, &extraWidthToEndOfLine);
-    IntRect endCaretRect = [[range endContainer] _nodeImpl]->renderer()->caretRect([range endOffset], UPSTREAM);
+    IntRect startCaretRect = [[range startContainer] _node]->renderer()->caretRect([range startOffset], DOWNSTREAM, &extraWidthToEndOfLine);
+    IntRect endCaretRect = [[range endContainer] _node]->renderer()->caretRect([range endOffset], UPSTREAM);
 
     if (startCaretRect.y() == endCaretRect.y()) {
         // start and end are on the same line
@@ -1425,9 +1425,9 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (NSString *)domain
 {
-    DocumentImpl *doc = m_frame->document();
+    Document *doc = m_frame->document();
     if (doc && doc->isHTMLDocument()) {
-        return doc->domain().qstring().getNSString();
+        return doc->domain().deprecatedString().getNSString();
     }
     return nil;
 }
@@ -1514,7 +1514,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (int)numPendingOrLoadingRequests
 {
-    DocumentImpl *doc = m_frame->document();
+    Document *doc = m_frame->document();
     
     if (doc)
         return KWQNumberOfPendingOrLoadingRequests (doc->docLoader());
@@ -1523,7 +1523,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (BOOL)doneProcessingData
 {
-    DocumentImpl *doc = m_frame->document();
+    Document *doc = m_frame->document();
     if (doc) {
         Tokenizer* tok = doc->tokenizer();
         if (tok)
@@ -1563,7 +1563,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 -(id)accessibilityTree
 {
-    KWQAccObjectCache::enableAccessibility();
+    AccessibilityObjectCache::enableAccessibility();
     if (!m_frame || !m_frame->document()) return nil;
     RenderCanvas* root = static_cast<RenderCanvas *>(m_frame->document()->renderer());
     if (!root) return nil;
@@ -1595,8 +1595,8 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         
     // NOTE: The enums *must* match the very similar ones declared in SelectionController.h
     SelectionController selection(m_frame->selection());
-    selection.expandUsingGranularity(static_cast<ETextGranularity>(granularity));
-    return [DOMRange _rangeWithImpl:selection.toRange().get()];
+    selection.expandUsingGranularity(static_cast<TextGranularity>(granularity));
+    return [DOMRange _rangeWith:selection.toRange().get()];
 }
 
 - (DOMRange *)rangeByAlteringCurrentSelection:(WebSelectionAlteration)alteration direction:(WebBridgeSelectionDirection)direction granularity:(WebBridgeSelectionGranularity)granularity
@@ -1608,8 +1608,8 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     SelectionController selection(m_frame->selection());
     selection.modify(static_cast<SelectionController::EAlter>(alteration), 
                      static_cast<SelectionController::EDirection>(direction), 
-                     static_cast<ETextGranularity>(granularity));
-    return [DOMRange _rangeWithImpl:selection.toRange().get()];
+                     static_cast<TextGranularity>(granularity));
+    return [DOMRange _rangeWith:selection.toRange().get()];
 }
 
 - (void)alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebBridgeSelectionDirection)direction granularity:(WebBridgeSelectionGranularity)granularity
@@ -1621,7 +1621,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     SelectionController selection(m_frame->selection());
     selection.modify(static_cast<SelectionController::EAlter>(alteration), 
                      static_cast<SelectionController::EDirection>(direction), 
-                     static_cast<ETextGranularity>(granularity));
+                     static_cast<TextGranularity>(granularity));
 
     // save vertical navigation x position if necessary; many types of motion blow it away
     int xPos = Frame::NoXPosForVerticalArrowNavigation;
@@ -1648,7 +1648,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     // then shift-option-rightarrow, then delete needs to smart delete, per TextEdit.
     if (!((alteration == WebSelectByExtending) &&
           (granularity == WebBridgeSelectByWord) && (m_frame->selectionGranularity() == WordGranularity)))
-        m_frame->setSelectionGranularity(static_cast<ETextGranularity>(WebBridgeSelectByCharacter));
+        m_frame->setSelectionGranularity(static_cast<TextGranularity>(WebBridgeSelectByCharacter));
     
     // restore vertical navigation x position if necessary
     if (xPos != Frame::NoXPosForVerticalArrowNavigation)
@@ -1666,7 +1666,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         
     SelectionController selection(m_frame->selection());
     selection.modify(static_cast<SelectionController::EAlter>(alteration), static_cast<int>(verticalDistance));
-    return [DOMRange _rangeWithImpl:selection.toRange().get()];
+    return [DOMRange _rangeWith:selection.toRange().get()];
 }
 
 - (void)alterCurrentSelection:(WebSelectionAlteration)alteration verticalDistance:(float)verticalDistance
@@ -1680,7 +1680,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     // setting the selection always clears saved vertical navigation x position, so preserve it
     int xPos = m_frame->xPosForVerticalArrowNavigation();
     m_frame->setSelection(selection);
-    m_frame->setSelectionGranularity(static_cast<ETextGranularity>(WebBridgeSelectByCharacter));
+    m_frame->setSelectionGranularity(static_cast<TextGranularity>(WebBridgeSelectByCharacter));
     m_frame->setXPosForVerticalArrowNavigation(xPos);
 
     m_frame->selectFrameElementInParentIfFullySelected();
@@ -1696,8 +1696,8 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity closeTyping:(BOOL)closeTyping
 {
-    NodeImpl *startContainer = [[range startContainer] _nodeImpl];
-    NodeImpl *endContainer = [[range endContainer] _nodeImpl];
+    Node *startContainer = [[range startContainer] _node];
+    Node *endContainer = [[range endContainer] _node];
     ASSERT(startContainer);
     ASSERT(endContainer);
     ASSERT(startContainer->getDocument() == endContainer->getDocument());
@@ -1720,16 +1720,16 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (DOMRange *)selectedDOMRange
 {
-    return [DOMRange _rangeWithImpl:m_frame->selection().toRange().get()];
+    return [DOMRange _rangeWith:m_frame->selection().toRange().get()];
 }
 
-- (NSRange)convertToNSRange:(RangeImpl *)range
+- (NSRange)convertToNSRange:(Range *)range
 {
     if (!range || range->isDetached()) {
         return NSMakeRange(NSNotFound, 0);
     }
 
-    RefPtr<RangeImpl> fromStartRange(m_frame->document()->createRange());
+    RefPtr<Range> fromStartRange(m_frame->document()->createRange());
     int exception = 0;
 
     fromStartRange->setEnd(range->startContainer(exception), range->startOffset(exception), exception);
@@ -1741,7 +1741,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return NSMakeRange(startPosition, endPosition - startPosition);
 }
 
-- (PassRefPtr<RangeImpl>)convertToDOMRange:(NSRange)nsrange
+- (PassRefPtr<Range>)convertToDOMRange:(NSRange)nsrange
 {
     if (nsrange.location > INT_MAX)
         return 0;
@@ -1753,12 +1753,12 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (DOMRange *)convertNSRangeToDOMRange:(NSRange)nsrange
 {
-    return [DOMRange _rangeWithImpl:[self convertToDOMRange:nsrange].get()];
+    return [DOMRange _rangeWith:[self convertToDOMRange:nsrange].get()];
 }
 
 - (NSRange)convertDOMRangeToNSRange:(DOMRange *)range
 {
-    return [self convertToNSRange:[range _rangeImpl]];
+    return [self convertToNSRange:[range _range]];
 }
 
 - (void)selectNSRange:(NSRange)range
@@ -1778,23 +1778,23 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)setMarkDOMRange:(DOMRange *)range
 {
-    RangeImpl* r = [range _rangeImpl];
+    Range* r = [range _range];
     m_frame->setMark(Selection(startPosition(r), endPosition(r), SEL_DEFAULT_AFFINITY));
 }
 
 - (DOMRange *)markDOMRange
 {
-    return [DOMRange _rangeWithImpl:m_frame->mark().toRange().get()];
+    return [DOMRange _rangeWith:m_frame->mark().toRange().get()];
 }
 
 - (void)setMarkedTextDOMRange:(DOMRange *)range customAttributes:(NSArray *)attributes ranges:(NSArray *)ranges
 {
-    m_frame->setMarkedTextRange([range _rangeImpl], attributes, ranges);
+    m_frame->setMarkedTextRange([range _range], attributes, ranges);
 }
 
 - (DOMRange *)markedTextDOMRange
 {
-    return [DOMRange _rangeWithImpl:m_frame->markedTextRange()];
+    return [DOMRange _rangeWith:m_frame->markedTextRange()];
 }
 
 - (NSRange)markedTextNSRange
@@ -1809,7 +1809,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     
     int exception = 0;
 
-    RangeImpl *markedTextRange = m_frame->markedTextRange();
+    Range *markedTextRange = m_frame->markedTextRange();
     if (markedTextRange && !markedTextRange->collapsed(exception))
         TypingCommand::deleteKeyPressed(m_frame->document(), NO);
     
@@ -1821,8 +1821,8 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (BOOL)canDeleteRange:(DOMRange *)range
 {
-    NodeImpl *startContainer = [[range startContainer] _nodeImpl];
-    NodeImpl *endContainer = [[range endContainer] _nodeImpl];
+    Node *startContainer = [[range startContainer] _node];
+    Node *endContainer = [[range endContainer] _node];
     if (startContainer == nil || endContainer == nil)
         return NO;
     
@@ -1843,8 +1843,8 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 // the text surrounding the deletion.
 - (DOMRange *)smartDeleteRangeForProposedRange:(DOMRange *)proposedRange
 {
-    NodeImpl *startContainer = [[proposedRange startContainer] _nodeImpl];
-    NodeImpl *endContainer = [[proposedRange endContainer] _nodeImpl];
+    Node *startContainer = [[proposedRange startContainer] _node];
+    Node *endContainer = [[proposedRange endContainer] _node];
     if (startContainer == nil || endContainer == nil)
         return nil;
 
@@ -1861,11 +1861,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (newEnd.isNull())
         newEnd = end;
 
-    RefPtr<RangeImpl> range = m_frame->document()->createRange();
+    RefPtr<Range> range = m_frame->document()->createRange();
     int exception = 0;
     range->setStart(newStart.node(), newStart.offset(), exception);
     range->setEnd(newStart.node(), newStart.offset(), exception);
-    return [DOMRange _rangeWithImpl:range.get()];
+    return [DOMRange _rangeWith:range.get()];
 }
 
 // Determines whether whitespace needs to be added around aString to preserve proper spacing and
@@ -1881,8 +1881,8 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         *afterString = nil;
         
     // inspect destination
-    NodeImpl *startContainer = [[rangeToReplace startContainer] _nodeImpl];
-    NodeImpl *endContainer = [[rangeToReplace endContainer] _nodeImpl];
+    Node *startContainer = [[rangeToReplace startContainer] _node];
+    Node *endContainer = [[rangeToReplace endContainer] _node];
 
     Position startPos(startContainer, [rangeToReplace startOffset]);
     Position endPos(endContainer, [rangeToReplace endOffset]);
@@ -1937,8 +1937,8 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!m_frame || !m_frame->document())
         return 0;
 
-    return [DOMDocumentFragment _documentFragmentWithImpl:createFragmentFromMarkup(m_frame->document(),
-        QString::fromNSString(markupString), QString::fromNSString(baseURLString)).get()];
+    return [DOMDocumentFragment _documentFragmentWith:createFragmentFromMarkup(m_frame->document(),
+        DeprecatedString::fromNSString(markupString), DeprecatedString::fromNSString(baseURLString)).get()];
 }
 
 - (DOMDocumentFragment *)documentFragmentWithText:(NSString *)text
@@ -1946,23 +1946,23 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!frameHasSelection(self) || !text)
         return 0;
     
-    return [DOMDocumentFragment _documentFragmentWithImpl:createFragmentFromText(m_frame->document(), QString::fromNSString(text)).get()];
+    return [DOMDocumentFragment _documentFragmentWith:createFragmentFromText(m_frame->document(), DeprecatedString::fromNSString(text)).get()];
 }
 
 - (DOMDocumentFragment *)documentFragmentWithNodesAsParagraphs:(NSArray *)nodes
 {
     NSEnumerator *nodeEnum = [nodes objectEnumerator];
     DOMNode *node;
-    QPtrList<NodeImpl> nodeList;
+    DeprecatedPtrList<Node> nodeList;
     
     if (!m_frame || !m_frame->document())
         return 0;
     
     while ((node = [nodeEnum nextObject])) {
-        nodeList.append([node _nodeImpl]);
+        nodeList.append([node _node]);
     }
     
-    return [DOMDocumentFragment _documentFragmentWithImpl:createFragmentFromNodeList(m_frame->document(), nodeList).get()];
+    return [DOMDocumentFragment _documentFragmentWith:createFragmentFromNodeList(m_frame->document(), nodeList).get()];
 }
 
 - (void)replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle
@@ -1970,7 +1970,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!frameHasSelection(self) || !fragment)
         return;
     
-    EditCommandPtr(new ReplaceSelectionCommand(m_frame->document(), [fragment _fragmentImpl], selectReplacement, smartReplace, matchStyle)).apply();
+    EditCommandPtr(new ReplaceSelectionCommand(m_frame->document(), [fragment _fragment], selectReplacement, smartReplace, matchStyle)).apply();
     [self ensureSelectionVisible];
 }
 
@@ -2064,7 +2064,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 - (void)moveSelectionToDragCaret:(DOMDocumentFragment *)selectionFragment smartMove:(BOOL)smartMove
 {
     Position base = m_frame->dragCaret().base();
-    EditCommandPtr(new MoveSelectionCommand(m_frame->document(), [selectionFragment _fragmentImpl], base, smartMove)).apply();
+    EditCommandPtr(new MoveSelectionCommand(m_frame->document(), [selectionFragment _fragment], base, smartMove)).apply();
 }
 
 - (VisiblePosition)_visiblePositionForPoint:(NSPoint)point
@@ -2076,7 +2076,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     
     RenderObject::NodeInfo nodeInfo = [self nodeInfoAtPoint:point];
     
-    NodeImpl *node = nodeInfo.innerNode();
+    Node *node = nodeInfo.innerNode();
     if (!node || !node->renderer())
         return VisiblePosition();
     
@@ -2096,13 +2096,13 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (DOMRange *)dragCaretDOMRange
 {
-    return [DOMRange _rangeWithImpl:m_frame->dragCaret().toRange().get()];
+    return [DOMRange _rangeWith:m_frame->dragCaret().toRange().get()];
 }
 
 - (DOMRange *)editableDOMRangeForPoint:(NSPoint)point
 {
     VisiblePosition position = [self _visiblePositionForPoint:point];
-    return position.isNull() ? nil : [DOMRange _rangeWithImpl:SelectionController(position).toRange().get()];
+    return position.isNull() ? nil : [DOMRange _rangeWith:SelectionController(position).toRange().get()];
 }
 
 - (DOMRange *)characterRangeAtPoint:(NSPoint)point
@@ -2113,7 +2113,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     
     VisiblePosition previous = position.previous();
     if (previous.isNotNull()) {
-        DOMRange *previousCharacterRange = [DOMRange _rangeWithImpl:makeRange(previous, position).get()];
+        DOMRange *previousCharacterRange = [DOMRange _rangeWith:makeRange(previous, position).get()];
         NSRect rect = [self firstRectForDOMRange:previousCharacterRange];
         if (NSPointInRect(point, rect))
             return previousCharacterRange;
@@ -2121,7 +2121,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
     VisiblePosition next = position.next();
     if (next.isNotNull()) {
-        DOMRange *nextCharacterRange = [DOMRange _rangeWithImpl:makeRange(position, next).get()];
+        DOMRange *nextCharacterRange = [DOMRange _rangeWith:makeRange(position, next).get()];
         NSRect rect = [self firstRectForDOMRange:nextCharacterRange];
         if (NSPointInRect(point, rect))
             return nextCharacterRange;
@@ -2160,42 +2160,42 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 {
     if (!m_frame || !m_frame->typingStyle())
         return nil;
-    return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:m_frame->typingStyle()->copy().get()];
+    return [DOMCSSStyleDeclaration _styleDeclarationWith:m_frame->typingStyle()->copy().get()];
 }
 
 - (void)setTypingStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(WebUndoAction)undoAction
 {
     if (!m_frame)
         return;
-    m_frame->computeAndSetTypingStyle([style _styleDeclarationImpl], static_cast<EditAction>(undoAction));
+    m_frame->computeAndSetTypingStyle([style _styleDeclaration], static_cast<EditAction>(undoAction));
 }
 
 - (void)applyStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(WebUndoAction)undoAction
 {
     if (!m_frame)
         return;
-    m_frame->applyStyle([style _styleDeclarationImpl], static_cast<EditAction>(undoAction));
+    m_frame->applyStyle([style _styleDeclaration], static_cast<EditAction>(undoAction));
 }
 
 - (void)applyParagraphStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(WebUndoAction)undoAction
 {
     if (!m_frame)
         return;
-    m_frame->applyParagraphStyle([style _styleDeclarationImpl], static_cast<EditAction>(undoAction));
+    m_frame->applyParagraphStyle([style _styleDeclaration], static_cast<EditAction>(undoAction));
 }
 
 - (BOOL)selectionStartHasStyle:(DOMCSSStyleDeclaration *)style
 {
     if (!m_frame)
         return NO;
-    return m_frame->selectionStartHasStyle([style _styleDeclarationImpl]);
+    return m_frame->selectionStartHasStyle([style _styleDeclaration]);
 }
 
 - (NSCellStateValue)selectionHasStyle:(DOMCSSStyleDeclaration *)style
 {
     if (!m_frame)
         return NSOffState;
-    switch (m_frame->selectionHasStyle([style _styleDeclarationImpl])) {
+    switch (m_frame->selectionHasStyle([style _styleDeclaration])) {
         case Frame::falseTriState:
             return NSOffState;
         case Frame::trueTriState:
@@ -2224,14 +2224,14 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 {
     if (!m_frame)
         return;
-    m_frame->applyEditingStyleToElement([element _elementImpl]);
+    m_frame->applyEditingStyleToElement([element _element]);
 }
 
 - (void)removeEditingStyleFromElement:(DOMElement *)element
 {
     if (!m_frame)
         return;
-    m_frame->removeEditingStyleFromElement([element _elementImpl]);
+    m_frame->removeEditingStyleFromElement([element _element]);
 }
 
 - (NSFont *)fontForSelection:(BOOL *)hasMultipleFonts
@@ -2295,10 +2295,10 @@ static IntPoint globalPoint(NSWindow* window, NSPoint windowPoint)
     return IntPoint((int)screenPoint.x, (int)(NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - screenPoint.y));
 }
 
-static MouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id <NSDraggingInfo> info)
+static PlatformMouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id <NSDraggingInfo> info)
 {
     // FIXME: Fake modifier keys here.
-    return MouseEvent(IntPoint([info draggingLocation]), globalPoint(window, [info draggingLocation]),
+    return PlatformMouseEvent(IntPoint([info draggingLocation]), globalPoint(window, [info draggingLocation]),
         LeftButton, 0, false, false, false, false);
 }
 
@@ -2308,12 +2308,12 @@ static MouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id <NSDragg
     if (m_frame) {
         RefPtr<FrameView> v = m_frame->view();
         if (v) {
-            KWQClipboard::AccessPolicy policy = m_frame->baseURL().isLocalFile() ? KWQClipboard::Readable : KWQClipboard::TypesReadable;
-            RefPtr<KWQClipboard> clipboard = new KWQClipboard(true, [info draggingPasteboard], policy);
+            ClipboardMac::AccessPolicy policy = m_frame->baseURL().isLocalFile() ? ClipboardMac::Readable : ClipboardMac::TypesReadable;
+            RefPtr<ClipboardMac> clipboard = new ClipboardMac(true, [info draggingPasteboard], policy);
             NSDragOperation srcOp = [info draggingSourceOperationMask];
             clipboard->setSourceOperation(srcOp);
 
-            MouseEvent event = createMouseEventFromDraggingInfo([self window], info);
+            PlatformMouseEvent event = createMouseEventFromDraggingInfo([self window], info);
             if (v->updateDragAndDrop(event, clipboard.get())) {
                 // *op unchanged if no source op was set
                 if (!clipboard->destinationOperation(&op)) {
@@ -2334,7 +2334,7 @@ static MouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id <NSDragg
                     op = NSDragOperationNone;
                 }
             }
-            clipboard->setAccessPolicy(KWQClipboard::Numb);    // invalidate clipboard here for security
+            clipboard->setAccessPolicy(ClipboardMac::Numb);    // invalidate clipboard here for security
             return op;
         }
     }
@@ -2347,11 +2347,11 @@ static MouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id <NSDragg
         RefPtr<FrameView> v = m_frame->view();
         if (v) {
             // Sending an event can result in the destruction of the view and part.
-            KWQClipboard::AccessPolicy policy = m_frame->baseURL().isLocalFile() ? KWQClipboard::Readable : KWQClipboard::TypesReadable;
-            RefPtr<KWQClipboard> clipboard = new KWQClipboard(true, [info draggingPasteboard], policy);
+            ClipboardMac::AccessPolicy policy = m_frame->baseURL().isLocalFile() ? ClipboardMac::Readable : ClipboardMac::TypesReadable;
+            RefPtr<ClipboardMac> clipboard = new ClipboardMac(true, [info draggingPasteboard], policy);
             clipboard->setSourceOperation([info draggingSourceOperationMask]);            
             v->cancelDragAndDrop(createMouseEventFromDraggingInfo([self window], info), clipboard.get());
-            clipboard->setAccessPolicy(KWQClipboard::Numb);    // invalidate clipboard here for security
+            clipboard->setAccessPolicy(ClipboardMac::Numb);    // invalidate clipboard here for security
         }
     }
 }
@@ -2362,10 +2362,10 @@ static MouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id <NSDragg
         RefPtr<FrameView> v = m_frame->view();
         if (v) {
             // Sending an event can result in the destruction of the view and part.
-            RefPtr<KWQClipboard> clipboard = new KWQClipboard(true, [info draggingPasteboard], KWQClipboard::Readable);
+            RefPtr<ClipboardMac> clipboard = new ClipboardMac(true, [info draggingPasteboard], ClipboardMac::Readable);
             clipboard->setSourceOperation([info draggingSourceOperationMask]);
             BOOL result = v->performDragAndDrop(createMouseEventFromDraggingInfo([self window], info), clipboard.get());
-            clipboard->setAccessPolicy(KWQClipboard::Numb);    // invalidate clipboard here for security
+            clipboard->setAccessPolicy(ClipboardMac::Numb);    // invalidate clipboard here for security
             return result;
         }
     }
@@ -2376,7 +2376,7 @@ static MouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id <NSDragg
 {
     if (m_frame) {
         // FIXME: Fake modifier keys here.
-        MouseEvent event(IntPoint(windowLoc), globalPoint([self window], windowLoc),
+        PlatformMouseEvent event(IntPoint(windowLoc), globalPoint([self window], windowLoc),
             LeftButton, 0, false, false, false, false);
         m_frame->dragSourceMovedTo(event);
     }
@@ -2386,7 +2386,7 @@ static MouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id <NSDragg
 {
     if (m_frame) {
         // FIXME: Fake modifier keys here.
-        MouseEvent event(IntPoint(windowLoc), globalPoint([self window], windowLoc),
+        PlatformMouseEvent event(IntPoint(windowLoc), globalPoint([self window], windowLoc),
             LeftButton, 0, false, false, false, false);
         m_frame->dragSourceEndedAt(event, operation);
     }
@@ -2437,7 +2437,7 @@ static MouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id <NSDragg
     if (previous.isNull() || next.isNull() || caret == next || caret == previous)
         return nil;
 
-    return [DOMRange _rangeWithImpl:makeRange(previous, next).get()];
+    return [DOMRange _rangeWith:makeRange(previous, next).get()];
 }
 
 - (NSMutableDictionary *)dashboardRegions
@@ -2451,7 +2451,7 @@ static MouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id <NSDragg
 
 - (RootObject *)executionContextForView:(NSView *)aView
 {
-    MacFrame *frame = [self impl];
+    FrameMac *frame = [self impl];
     RootObject *root = new RootObject(aView);    // The root gets deleted by JavaScriptCore.
     root->setRootObjectImp(Window::retrieveWindow(frame));
     root->setInterpreter(frame->jScript()->interpreter());
@@ -2466,7 +2466,7 @@ static MouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id <NSDragg
     RenderObject::NodeInfo nodeInfo(true, true);
     renderer->layer()->hitTest(nodeInfo, (int)point.x, (int)point.y);
 
-    NodeImpl *n;
+    Node *n;
     Widget *widget = 0;
     IntPoint widgetPoint(point);
     
@@ -2477,7 +2477,7 @@ static MouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id <NSDragg
         widget = static_cast<RenderWidget *>(n->renderer())->widget();
         if (!widget || !widget->isFrameView())
             break;
-        Frame* frame = static_cast<HTMLFrameElementImpl *>(n)->contentFrame();
+        Frame* frame = static_cast<HTMLFrameElement *>(n)->contentFrame();
         if (!frame || !frame->renderer())
             break;
         int absX, absY;
@@ -2498,7 +2498,7 @@ static MouseEvent createMouseEventFromDraggingInfo(NSWindow* window, id <NSDragg
 
 @implementation WebCoreFrameBridge (WebCoreInternalUse)
 
-- (MacFrame*)impl
+- (FrameMac*)impl
 {
     return m_frame;
 }

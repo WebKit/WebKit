@@ -30,7 +30,7 @@
 #import "KRenderingPaintServerQuartz.h"
 #import "QuartzSupport.h"
 
-#import "render_object.h"
+#import "RenderObject.h"
 
 #import "kcanvas/KCanvas.h"
 #import "KCanvasRenderingStyle.h"

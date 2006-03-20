@@ -34,8 +34,8 @@ namespace WebCore {
 const int cNoTruncation = -1;
 const int cFullTruncation = -2;
 
-class DOMString;
-class DOMStringImpl;
+class String;
+class StringImpl;
 class MarkedTextUnderline;
 class Position;
 
@@ -56,12 +56,12 @@ public:
     InlineTextBox* nextTextBox() const { return static_cast<InlineTextBox*>(nextLineBox()); }
     InlineTextBox* prevTextBox() const { return static_cast<InlineTextBox*>(prevLineBox()); }
     
-    uint start() const { return m_start; }
-    uint end() const { return m_len ? m_start+m_len-1 : m_start; }
-    uint len() const { return m_len; }
+    unsigned start() const { return m_start; }
+    unsigned end() const { return m_len ? m_start+m_len-1 : m_start; }
+    unsigned len() const { return m_len; }
   
-    void setStart(uint start) { m_start = start; }
-    void setLen(uint len) { m_len = len; }
+    void setStart(unsigned start) { m_start = start; }
+    void setLen(unsigned len) { m_len = len; }
 
     void offsetRun(int d) { m_start += d; }
 

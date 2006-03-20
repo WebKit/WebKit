@@ -33,14 +33,14 @@
 #include "xbl_binding_manager.h"
 #include "xbl_binding.h"
 
-using DOM::DocumentImpl;
-using DOM::NodeImpl;
-using DOM::ElementImpl;
-using khtml::BindingURI;
+using WebCore::Document;
+using WebCore::Node;
+using WebCore::Element;
+using WebCore::BindingURI;
 
 namespace XBL {
 
-XBLBindingManager::XBLBindingManager(DocumentImpl* doc)
+XBLBindingManager::XBLBindingManager(Document* doc)
 :m_document(doc), m_bindingChainTable(0)
 {
 }
@@ -53,7 +53,7 @@ XBLBindingManager::~XBLBindingManager()
     }
 }
 
-XBLBindingChain* XBLBindingManager::getBindingChain(NodeImpl* node)
+XBLBindingChain* XBLBindingManager::getBindingChain(Node* node)
 {
     if (!m_bindingChainTable)
         return 0;
@@ -61,7 +61,7 @@ XBLBindingChain* XBLBindingManager::getBindingChain(NodeImpl* node)
     return m_bindingChainTable->find(node);
 }
 
-void XBLBindingManager::setBindingChain(NodeImpl* node, XBLBindingChain* bindingChain)
+void XBLBindingManager::setBindingChain(Node* node, XBLBindingChain* bindingChain)
 {
     if (!m_bindingChainTable)
         m_bindingChainTable = new QPtrDict<XBLBindingChain>;
@@ -72,7 +72,7 @@ void XBLBindingManager::setBindingChain(NodeImpl* node, XBLBindingChain* binding
         m_bindingChainTable->remove(node);
 }
 
-bool XBLBindingManager::loadBindings(NodeImpl* node, BindingURI* bindingURIs, 
+bool XBLBindingManager::loadBindings(Node* node, BindingURI* bindingURIs, 
                                      bool isStyleBinding, bool* resolveStyle)
 {
     if (resolveStyle) *resolveStyle = false;
@@ -107,7 +107,7 @@ bool XBLBindingManager::loadBindings(NodeImpl* node, BindingURI* bindingURIs,
     }
 
     bindingChain = getBindingChain(node);
-    ElementImpl* elt = static_cast<ElementImpl*>(node);
+    Element* elt = static_cast<Element*>(node);
     for (BindingURI* currURI = bindingURIs; currURI; currURI = currURI->next()) {
         XBLBindingChain* newBindingChain = new XBLBindingChain(elt, currURI->uri(), isStyleBinding);
         if (newBindingChain) {
@@ -136,7 +136,7 @@ bool XBLBindingManager::loadBindings(NodeImpl* node, BindingURI* bindingURIs,
     return loaded;
 }
 
-void XBLBindingManager::checkLoadState(ElementImpl* elt)
+void XBLBindingManager::checkLoadState(Element* elt)
 {
     XBLBindingChain* chain = getBindingChain(elt);
     if (chain && chain->loaded())

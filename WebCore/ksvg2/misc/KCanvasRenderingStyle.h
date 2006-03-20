@@ -65,7 +65,7 @@ typedef Q3ValueList<float> KCDashArray;
         static bool isFilled(const RenderStyle*);
         static KRenderingPaintServer* fillPaintServer(const RenderStyle*, const RenderObject*);
 
-        static double cssPrimitiveToLength(const RenderObject*, CSSValueImpl*, double defaultValue = 0.0);
+        static double cssPrimitiveToLength(const RenderObject*, CSSValue*, double defaultValue = 0.0);
     };
 };
 

@@ -26,21 +26,21 @@
 #include "config.h"
 #include "InsertTextCommand.h"
 
-#include "DocumentImpl.h"
-#include "EditingTextImpl.h"
+#include "Document.h"
+#include "EditingText.h"
 #include "Frame.h"
 #include "Logging.h"
 #include "VisiblePosition.h"
-#include "dom_position.h"
-#include "html_interchange.h"
+#include "Position.h"
+#include "HTMLInterchange.h"
 #include "htmlediting.h"
-#include "visible_text.h"
+#include "TextIterator.h"
 #include "visible_units.h"
 #include <kxmlcore/Assertions.h>
 
 namespace WebCore {
 
-InsertTextCommand::InsertTextCommand(DocumentImpl *document) 
+InsertTextCommand::InsertTextCommand(Document *document) 
     : CompositeEditCommand(document), m_charactersAdded(0)
 {
 }
@@ -58,7 +58,7 @@ Position InsertTextCommand::prepareForTextInsertion(const Position& pos)
     // (i.e. pos is at an editable/non-editable boundary).  That seems
     // like a bad assumption.
     if (!pos.node()->isTextNode()) {
-        RefPtr<NodeImpl> textNode = document()->createEditingTextNode("");
+        RefPtr<Node> textNode = document()->createEditingTextNode("");
 
         // Now insert the node in the right place
         if (pos.node()->rootEditableElement() != NULL) {
@@ -74,7 +74,7 @@ Position InsertTextCommand::prepareForTextInsertion(const Position& pos)
     }
 
     if (isTabSpanTextNode(pos.node())) {
-        RefPtr<NodeImpl> textNode = document()->createEditingTextNode("");
+        RefPtr<Node> textNode = document()->createEditingTextNode("");
         insertNodeAtTabSpanPosition(textNode.get(), pos);
         return Position(textNode.get(), 0);
     }
@@ -87,7 +87,7 @@ static inline bool isNBSP(const QChar &c)
     return c.unicode() == 0xa0;
 }
 
-void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
+void InsertTextCommand::input(const String &text, bool selectInsertedText)
 {
     assert(text.find('\n') == -1);
 
@@ -121,7 +121,7 @@ void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
         // Make sure the document is set up to receive text
         startPosition = prepareForTextInsertion(startPosition);
         removeBlockPlaceholder(startPosition.node()->enclosingBlockFlowElement());
-        TextImpl *textNode = static_cast<TextImpl *>(startPosition.node());
+        Text *textNode = static_cast<Text *>(startPosition.node());
         int offset = startPosition.offset();
 
         insertTextIntoNode(textNode, offset, text);
@@ -141,7 +141,7 @@ void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
     // Handle the case where there is a typing style.
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-    CSSMutableStyleDeclarationImpl *typingStyle = document()->frame()->typingStyle();
+    CSSMutableStyleDeclaration *typingStyle = document()->frame()->typingStyle();
     if (typingStyle && typingStyle->length() > 0)
         applyStyle(typingStyle);
 
@@ -149,26 +149,26 @@ void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
         setEndingSelection(endingSelection().end(), endingSelection().affinity());
 }
 
-DOM::Position InsertTextCommand::insertTab(Position pos)
+WebCore::Position InsertTextCommand::insertTab(Position pos)
 {
     Position insertPos = VisiblePosition(pos, DOWNSTREAM).deepEquivalent();
-    NodeImpl *node = insertPos.node();
+    Node *node = insertPos.node();
     unsigned int offset = insertPos.offset();
 
     // keep tabs coalesced in tab span
     if (isTabSpanTextNode(node)) {
-        insertTextIntoNode(static_cast<TextImpl *>(node), offset, "\t");
+        insertTextIntoNode(static_cast<Text *>(node), offset, "\t");
         return Position(node, offset + 1);
     }
     
     // create new tab span
-    RefPtr<ElementImpl> spanNode = createTabSpanElement(document());
+    RefPtr<Element> spanNode = createTabSpanElement(document());
     
     // place it
     if (!node->isTextNode()) {
         insertNodeAt(spanNode.get(), node, offset);
     } else {
-        TextImpl *textNode = static_cast<TextImpl *>(node);
+        Text *textNode = static_cast<Text *>(node);
         if (offset >= textNode->length()) {
             insertNodeAfter(spanNode.get(), textNode);
         } else {

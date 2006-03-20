@@ -26,19 +26,19 @@
 #ifndef KHTML_EDITING_VISIBLE_POSITION_H
 #define KHTML_EDITING_VISIBLE_POSITION_H
 
-#include <QString.h> // for QChar
+#include <DeprecatedString.h> // for QChar
 #include <kxmlcore/PassRefPtr.h>
 
-#include "dom_position.h"
-#include "text_affinity.h"
+#include "Position.h"
+#include "TextAffinity.h"
 #include "Shared.h"
 
-namespace DOM {
-    class NodeImpl;
-    class RangeImpl;
+namespace WebCore {
+    class Node;
+    class Range;
 }
 
-namespace khtml {
+namespace WebCore {
 
 // VisiblePosition default affinity is downstream because
 // the callers do not really care (they just want the
@@ -56,13 +56,13 @@ namespace khtml {
 class VisiblePosition
 {
 public:
-    typedef DOM::NodeImpl NodeImpl;
-    typedef DOM::Position Position;
+    typedef WebCore::Node Node;
+    typedef WebCore::Position Position;
 
     // NOTE: UPSTREAM affinity will be used only if pos is at end of a wrapped line,
     // otherwise it will be converted to DOWNSTREAM
     VisiblePosition() { m_affinity = VP_DEFAULT_AFFINITY; };
-    VisiblePosition(NodeImpl *, int offset, EAffinity);
+    VisiblePosition(Node *, int offset, EAffinity);
     VisiblePosition(const Position &pos, EAffinity affinity = VP_DEFAULT_AFFINITY);
     VisiblePosition(const VisiblePosition &);
 
@@ -101,7 +101,7 @@ public:
 private:
     void init(const Position &, EAffinity);
 
-    static int maxOffset(const NodeImpl *);
+    static int maxOffset(const Node *);
     
     static Position previousVisiblePosition(const Position &);
     static Position nextVisiblePosition(const Position &);
@@ -120,20 +120,20 @@ inline bool operator!=(const VisiblePosition &a, const VisiblePosition &b)
     return !(a == b);
 }
 
-PassRefPtr<DOM::RangeImpl> makeRange(const VisiblePosition &, const VisiblePosition &);
-bool setStart(DOM::RangeImpl *, const VisiblePosition &);
-bool setEnd(DOM::RangeImpl *, const VisiblePosition &);
-VisiblePosition startVisiblePosition(const DOM::RangeImpl *, EAffinity);
-VisiblePosition endVisiblePosition(const DOM::RangeImpl *, EAffinity);
+PassRefPtr<WebCore::Range> makeRange(const VisiblePosition &, const VisiblePosition &);
+bool setStart(WebCore::Range *, const VisiblePosition &);
+bool setEnd(WebCore::Range *, const VisiblePosition &);
+VisiblePosition startVisiblePosition(const WebCore::Range *, EAffinity);
+VisiblePosition endVisiblePosition(const WebCore::Range *, EAffinity);
 
-DOM::NodeImpl *enclosingBlockFlowElement(const VisiblePosition &);
+WebCore::Node *enclosingBlockFlowElement(const VisiblePosition &);
 
-bool isFirstVisiblePositionInNode(const VisiblePosition &, const DOM::NodeImpl *);
-bool isLastVisiblePositionInNode(const VisiblePosition &, const DOM::NodeImpl *);
+bool isFirstVisiblePositionInNode(const VisiblePosition &, const WebCore::Node *);
+bool isLastVisiblePositionInNode(const VisiblePosition &, const WebCore::Node *);
 #ifndef NDEBUG
 void showTree(const VisiblePosition *vpos);
 void showTree(const VisiblePosition &vpos);
 #endif
-} // namespace khtml
+} // namespace WebCore
 
 #endif // KHTML_EDITING_VISIBLE_POSITION_H

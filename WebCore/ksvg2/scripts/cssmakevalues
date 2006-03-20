@@ -110,7 +110,7 @@ if ($result) {
   exit $result;
 }
 
-# Avoid clashes in parser.cpp, which includes both cssvalues.c & cssproperties.c
+# Avoid clashes in parser.cpp, which includes both CSSValueKeywords.c & CSSPropertyNames.c
 system("/bin/sh", "-c", "perl -pi -e \"s/TOTAL_KEYWORDS/VAL_TOTAL_KEYWORDS/g\" $filec");
 system("/bin/sh", "-c", "perl -pi -e \"s/MIN_WORD_LENGTH/VAL_MIN_WORD_LENGTH/g\" $filec");
 system("/bin/sh", "-c", "perl -pi -e \"s/MAX_WORD_LENGTH/VAL_MAX_WORD_LENGTH/g\" $filec");

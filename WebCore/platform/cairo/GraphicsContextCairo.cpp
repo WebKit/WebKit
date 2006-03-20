@@ -374,7 +374,7 @@ void GraphicsContext::drawEllipse(int x, int y, int width, int height)
     }
     if (m_data->state.pen.style() != Pen::NoPen) {
         setColorFromPen();
-        uint penWidth = m_data->state.pen.width();
+        unsigned penWidth = m_data->state.pen.width();
         if (penWidth == 0) 
             penWidth++;
         cairo_set_line_width(context, penWidth);

@@ -28,30 +28,30 @@
 
 #include "EditCommand.h"
 
-namespace DOM {
-    class TextImpl;
+namespace WebCore {
+    class Text;
 }
 
-namespace khtml {
+namespace WebCore {
 
 class JoinTextNodesCommand : public EditCommand
 {
 public:
-    JoinTextNodesCommand(DOM::DocumentImpl *, DOM::TextImpl *, DOM::TextImpl *);
+    JoinTextNodesCommand(WebCore::Document *, WebCore::Text *, WebCore::Text *);
     virtual ~JoinTextNodesCommand() { }
 
     virtual void doApply();
     virtual void doUnapply();
 
-    DOM::TextImpl *firstNode() const { return m_text1.get(); }
-    DOM::TextImpl *secondNode() const { return m_text2.get(); }
+    WebCore::Text *firstNode() const { return m_text1.get(); }
+    WebCore::Text *secondNode() const { return m_text2.get(); }
 
 private:
-    RefPtr<DOM::TextImpl> m_text1;
-    RefPtr<DOM::TextImpl> m_text2;
+    RefPtr<WebCore::Text> m_text1;
+    RefPtr<WebCore::Text> m_text2;
     unsigned m_offset;
 };
 
-} // namespace khtml
+} // namespace WebCore
 
 #endif // __join_text_nodes_command_h__

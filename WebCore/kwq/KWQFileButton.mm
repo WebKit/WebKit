@@ -26,9 +26,9 @@
 #import "config.h"
 #import "KWQFileButton.h"
 
-#import "KWQExceptions.h"
+#import "BlockExceptions.h"
 #import "FoundationExtras.h"
-#import "MacFrame.h"
+#import "FrameMac.h"
 #import "WebCoreFrameBridge.h"
 #import "render_form.h"
 #import <kxmlcore/Assertions.h>
@@ -52,38 +52,38 @@ using namespace WebCore;
 KWQFileButton::KWQFileButton(Frame *frame)
     : _adapter(0)
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     _adapter = KWQRetainNSRelease([[KWQFileButtonAdapter alloc] initWithKWQFileButton:this]);
     setView([Mac(frame)->bridge() fileButtonWithDelegate:_adapter]);
 
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 KWQFileButton::~KWQFileButton()
 {
     _adapter->button = 0;
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     CFRelease(_adapter);
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
     
-void KWQFileButton::setFilename(const QString &f)
+void KWQFileButton::setFilename(const DeprecatedString &f)
 {
     NSView <WebCoreFileButton> *button = getView();
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [button setFilename:f.getNSString()];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 void KWQFileButton::click(bool sendMouseEvents)
 {
     NSView <WebCoreFileButton> *button = getView();
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [button performClick];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 IntSize KWQFileButton::sizeForCharacterWidth(int characters) const
@@ -92,10 +92,10 @@ IntSize KWQFileButton::sizeForCharacterWidth(int characters) const
     NSView <WebCoreFileButton> *button = getView();
 
     NSSize size = {0,0};
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     size = [button bestVisualFrameSizeForCharacterCount:characters];
     return IntSize(size);
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     return IntSize(0, 0);
 }
 
@@ -103,9 +103,9 @@ IntRect KWQFileButton::frameGeometry() const
 {
     NSView <WebCoreFileButton> *button = getView();
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return enclosingIntRect([button visualFrame]);
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     return IntRect();
 }
 
@@ -113,37 +113,37 @@ void KWQFileButton::setFrameGeometry(const IntRect &rect)
 {
     NSView <WebCoreFileButton> *button = getView();
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     [button setVisualFrame:rect];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 }
 
 int KWQFileButton::baselinePosition(int height) const
 {
     NSView <WebCoreFileButton> *button = getView();
 
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     return (int)([button frame].origin.y + [button baseline] - [button visualFrame].origin.y);
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
 
     return 0;
 }
 
 Widget::FocusPolicy KWQFileButton::focusPolicy() const
 {
-    KWQ_BLOCK_EXCEPTIONS;
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
     
-    WebCoreFrameBridge *bridge = MacFrame::bridgeForWidget(this);
+    WebCoreFrameBridge *bridge = FrameMac::bridgeForWidget(this);
     if (!bridge || ![bridge impl] || ![bridge impl]->tabsToAllControls()) {
         return NoFocus;
     }
     
-    KWQ_UNBLOCK_EXCEPTIONS;
+    END_BLOCK_OBJC_EXCEPTIONS;
     
     return Widget::focusPolicy();
 }
 
-void KWQFileButton::filenameChanged(const QString& filename)
+void KWQFileButton::filenameChanged(const DeprecatedString& filename)
 {
     m_name = filename;
     if (client())
@@ -162,13 +162,13 @@ void KWQFileButton::filenameChanged(const QString& filename)
 - (void)filenameChanged:(NSString *)filename
 {
     if (button)
-        button->filenameChanged(QString::fromNSString(filename));
+        button->filenameChanged(DeprecatedString::fromNSString(filename));
 }
 
 - (void)focusChanged:(BOOL)nowHasFocus
 {
     if (nowHasFocus) {
-        if (button && button->client() && !MacFrame::currentEventIsMouseDownInWidget(button))
+        if (button && button->client() && !FrameMac::currentEventIsMouseDownInWidget(button))
             button->client()->scrollToVisible(button);
         if (button && button->client())
             button->client()->focusIn(button);

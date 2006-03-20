@@ -26,8 +26,8 @@
 #ifndef KHTML_SETTINGS_H_
 #define KHTML_SETTINGS_H_
 
-#include "QString.h"
-#include "QStringList.h"
+#include "DeprecatedString.h"
+#include "DeprecatedStringList.h"
 #include "Font.h"
 
 class KHTMLSettings
@@ -41,12 +41,12 @@ public:
     
     KHTMLSettings() { }
     
-    const QString &stdFontName() const { return _stdFontName; }
-    const QString &fixedFontName() const { return _fixedFontName; }
-    const QString &serifFontName() const { return _serifFontName; }
-    const QString &sansSerifFontName() const { return _sansSerifFontName; }
-    const QString &cursiveFontName() const { return _cursiveFontName; }
-    const QString &fantasyFontName() const { return _fantasyFontName; }
+    const DeprecatedString &stdFontName() const { return _stdFontName; }
+    const DeprecatedString &fixedFontName() const { return _fixedFontName; }
+    const DeprecatedString &serifFontName() const { return _serifFontName; }
+    const DeprecatedString &sansSerifFontName() const { return _sansSerifFontName; }
+    const DeprecatedString &cursiveFontName() const { return _cursiveFontName; }
+    const DeprecatedString &fantasyFontName() const { return _fantasyFontName; }
 
     int minFontSize() const { return _minimumFontSize; }
     int minLogicalFontSize() const { return _minimumLogicalFontSize; }
@@ -63,24 +63,24 @@ public:
 
     bool isJavaScriptEnabled() const { return _JavaScriptEnabled; }
     bool JavaScriptCanOpenWindowsAutomatically() const { return _JavaScriptCanOpenWindowsAutomatically; }
-    bool isJavaScriptEnabled(const QString &host) const { return _JavaScriptEnabled; }
+    bool isJavaScriptEnabled(const DeprecatedString &host) const { return _JavaScriptEnabled; }
     bool isJavaEnabled() const { return _JavaEnabled; }
-    bool isJavaEnabled(const QString &host) const { return _JavaEnabled; }
+    bool isJavaEnabled(const DeprecatedString &host) const { return _JavaEnabled; }
     bool isPluginsEnabled() const { return _pluginsEnabled; }
-    bool isPluginsEnabled(const QString &host) const { return _pluginsEnabled; }
+    bool isPluginsEnabled(const DeprecatedString &host) const { return _pluginsEnabled; }
     
-    const QString &encoding() const { return _encoding; }
+    const DeprecatedString &encoding() const { return _encoding; }
 
-    const QString &userStyleSheet() const { return _userStyleSheetLocation; }
+    const DeprecatedString &userStyleSheet() const { return _userStyleSheetLocation; }
     bool shouldPrintBackgrounds() const { return _shouldPrintBackgrounds; }
     bool textAreasAreResizable() const { return _textAreasAreResizable; }
 
-    void setStdFontName(const QString &s) { _stdFontName = s; }
-    void setFixedFontName(const QString &s) { _fixedFontName = s; }
-    void setSerifFontName(const QString &s) { _serifFontName = s; }
-    void setSansSerifFontName(const QString &s) { _sansSerifFontName = s; }
-    void setCursiveFontName(const QString &s) { _cursiveFontName = s; }
-    void setFantasyFontName(const QString &s) { _fantasyFontName = s; }
+    void setStdFontName(const DeprecatedString &s) { _stdFontName = s; }
+    void setFixedFontName(const DeprecatedString &s) { _fixedFontName = s; }
+    void setSerifFontName(const DeprecatedString &s) { _serifFontName = s; }
+    void setSansSerifFontName(const DeprecatedString &s) { _sansSerifFontName = s; }
+    void setCursiveFontName(const DeprecatedString &s) { _cursiveFontName = s; }
+    void setFantasyFontName(const DeprecatedString &s) { _fantasyFontName = s; }
     
     void setMinFontSize(int s) { _minimumFontSize = s; }
     void setMinLogicalFontSize(int s) { _minimumLogicalFontSize = s; }
@@ -93,21 +93,21 @@ public:
     void setArePluginsEnabled(bool f) { _pluginsEnabled = f; }
     void setJavaScriptCanOpenWindowsAutomatically(bool f) { _JavaScriptCanOpenWindowsAutomatically = f; }
 
-    void setEncoding(const QString &s) { _encoding = s; }
+    void setEncoding(const DeprecatedString &s) { _encoding = s; }
 
-    void setUserStyleSheet(const QString &s) { _userStyleSheetLocation = s; }
+    void setUserStyleSheet(const DeprecatedString &s) { _userStyleSheetLocation = s; }
     void setShouldPrintBackgrounds(bool f) { _shouldPrintBackgrounds = f; }
     void setTextAreasAreResizable(bool f) { _textAreasAreResizable = f; }
     
 private:
-    QString _stdFontName;
-    QString _fixedFontName;
-    QString _serifFontName;
-    QString _sansSerifFontName;
-    QString _cursiveFontName;
-    QString _fantasyFontName;
-    QString _encoding;
-    QString _userStyleSheetLocation;
+    DeprecatedString _stdFontName;
+    DeprecatedString _fixedFontName;
+    DeprecatedString _serifFontName;
+    DeprecatedString _sansSerifFontName;
+    DeprecatedString _cursiveFontName;
+    DeprecatedString _fantasyFontName;
+    DeprecatedString _encoding;
+    DeprecatedString _userStyleSheetLocation;
     
     int _minimumFontSize;
     int _minimumLogicalFontSize;

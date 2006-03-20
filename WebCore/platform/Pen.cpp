@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-Pen::Pen(const Color &color, uint width, PenStyle style) : m_style(style), m_width(width), m_color(color)
+Pen::Pen(const Color &color, unsigned width, PenStyle style) : m_style(style), m_width(width), m_color(color)
 {
 }
 
@@ -37,7 +37,7 @@ const Color &Pen::color() const
     return m_color;
 }
 
-uint Pen::width() const
+unsigned Pen::width() const
 {
     return m_width;
 }
@@ -52,7 +52,7 @@ void Pen::setColor(const Color &color)
     m_color = color;
 }
 
-void Pen::setWidth(uint width)
+void Pen::setWidth(unsigned width)
 {
     m_width = width;
 }

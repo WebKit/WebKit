@@ -28,39 +28,39 @@
  * we ignore the deprecated compact attribute. Netscape does so too...
  */
 
-#include "HTMLElementImpl.h"
+#include "HTMLElement.h"
 #include "htmlnames.h"
 
 namespace WebCore
 {
 
-class HTMLUListElementImpl : public HTMLElementImpl
+class HTMLUListElement : public HTMLElement
 {
 public:
-    HTMLUListElementImpl(DocumentImpl *doc) : HTMLElementImpl(HTMLNames::ulTag, doc) {}
-    virtual ~HTMLUListElementImpl() {}
+    HTMLUListElement(Document *doc) : HTMLElement(HTMLNames::ulTag, doc) {}
+    virtual ~HTMLUListElement() {}
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 5; }
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttributeImpl *);
+    virtual void parseMappedAttribute(MappedAttribute *);
 
     virtual int start() const { return 1; }
 
     bool compact() const;
     void setCompact(bool);
 
-    DOMString type() const;
-    void setType(const DOMString &);
+    String type() const;
+    void setType(const String &);
 };
 
 // -------------------------------------------------------------------------
 
-class HTMLDirectoryElementImpl : public HTMLElementImpl
+class HTMLDirectoryElement : public HTMLElement
 {
 public:
-    HTMLDirectoryElementImpl(DocumentImpl *doc) : HTMLElementImpl(HTMLNames::dirTag, doc) {}
+    HTMLDirectoryElement(Document *doc) : HTMLElement(HTMLNames::dirTag, doc) {}
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 5; }
@@ -71,10 +71,10 @@ public:
 
 // -------------------------------------------------------------------------
 
-class HTMLMenuElementImpl : public HTMLElementImpl
+class HTMLMenuElement : public HTMLElement
 {
 public:
-    HTMLMenuElementImpl(DocumentImpl *doc) : HTMLElementImpl(HTMLNames::menuTag, doc) {}
+    HTMLMenuElement(Document *doc) : HTMLElement(HTMLNames::menuTag, doc) {}
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 5; }
@@ -85,17 +85,17 @@ public:
 
 // -------------------------------------------------------------------------
 
-class HTMLOListElementImpl : public HTMLElementImpl
+class HTMLOListElement : public HTMLElement
 {
 public:
-    HTMLOListElementImpl(DocumentImpl *doc)
-        : HTMLElementImpl(HTMLNames::olTag, doc) { _start = 1; }
+    HTMLOListElement(Document *doc)
+        : HTMLElement(HTMLNames::olTag, doc) { _start = 1; }
     
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 5; }
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttributeImpl *);
+    virtual void parseMappedAttribute(MappedAttribute *);
 
     bool compact() const;
     void setCompact(bool);
@@ -103,8 +103,8 @@ public:
     int start() const { return _start; }
     void setStart(int);
 
-    DOMString type() const;
-    void setType(const DOMString &);
+    String type() const;
+    void setType(const String &);
 
 private:
     int _start;
@@ -112,23 +112,23 @@ private:
 
 // -------------------------------------------------------------------------
 
-class HTMLLIElementImpl : public HTMLElementImpl
+class HTMLLIElement : public HTMLElement
 {
 public:
-    HTMLLIElementImpl(DocumentImpl *doc)
-        : HTMLElementImpl(HTMLNames::liTag, doc) { isValued = false; }
-    virtual ~HTMLLIElementImpl() {}
+    HTMLLIElement(Document *doc)
+        : HTMLElement(HTMLNames::liTag, doc) { isValued = false; }
+    virtual ~HTMLLIElement() {}
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusOptional; }
     virtual int tagPriority() const { return 3; }
 
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
-    virtual void parseMappedAttribute(MappedAttributeImpl *attr);
+    virtual void parseMappedAttribute(MappedAttribute *attr);
 
     virtual void attach();
 
-    DOMString type() const;
-    void setType(const DOMString &);
+    String type() const;
+    void setType(const String &);
 
     int value() const;
     void setValue(int);
@@ -140,11 +140,11 @@ private:
 
 // -------------------------------------------------------------------------
 
-class HTMLDListElementImpl : public HTMLElementImpl
+class HTMLDListElement : public HTMLElement
 {
 public:
-    HTMLDListElementImpl(DocumentImpl *doc) : HTMLElementImpl(HTMLNames::dlTag, doc) {}
-    virtual ~HTMLDListElementImpl() {}
+    HTMLDListElement(Document *doc) : HTMLElement(HTMLNames::dlTag, doc) {}
+    virtual ~HTMLDListElement() {}
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 5; }

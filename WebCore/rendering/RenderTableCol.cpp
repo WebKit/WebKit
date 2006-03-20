@@ -35,7 +35,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderTableCol::RenderTableCol(NodeImpl* node)
+RenderTableCol::RenderTableCol(Node* node)
     : RenderContainer(node), m_span(1)
 {
     // init RenderObject attributes
@@ -46,9 +46,9 @@ RenderTableCol::RenderTableCol(NodeImpl* node)
 void RenderTableCol::updateFromElement()
 {
     int oldSpan = m_span;
-    NodeImpl* node = element();
+    Node* node = element();
     if (node && (node->hasTagName(colTag) || node->hasTagName(colgroupTag))) {
-        HTMLTableColElementImpl *tc = static_cast<HTMLTableColElementImpl *>(node);
+        HTMLTableColElement *tc = static_cast<HTMLTableColElement *>(node);
         m_span = tc->span();
     } else
         m_span = !(style() && style()->display() == TABLE_COLUMN_GROUP);
@@ -64,7 +64,7 @@ bool RenderTableCol::canHaveChildren() const
 }
 
 #ifndef NDEBUG
-void RenderTableCol::dump(QTextStream* stream, QString ind) const
+void RenderTableCol::dump(QTextStream* stream, DeprecatedString ind) const
 {
     *stream << " span=" << m_span;
     RenderContainer::dump(stream, ind);

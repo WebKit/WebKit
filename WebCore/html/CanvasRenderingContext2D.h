@@ -39,17 +39,17 @@
 
 namespace WebCore {
 
-    class HTMLCanvasElementImpl;
+    class HTMLCanvasElement;
     class CanvasStyle;
-    class HTMLImageElementImpl;
+    class HTMLImageElement;
     class CanvasGradient;
     class CanvasPattern;
 
     class CanvasRenderingContext2D : public Shared<CanvasRenderingContext2D> {
     public:
-        CanvasRenderingContext2D(HTMLCanvasElementImpl*);
+        CanvasRenderingContext2D(HTMLCanvasElement*);
 
-        HTMLCanvasElementImpl* canvas() const { return m_canvas; }
+        HTMLCanvasElement* canvas() const { return m_canvas; }
 
         CanvasStyle* strokeStyle() const;
         void setStrokeStyle(PassRefPtr<CanvasStyle>);
@@ -138,12 +138,12 @@ namespace WebCore {
 
         void clearShadow();
 
-        void drawImage(HTMLImageElementImpl*, float x, float y);
-        void drawImage(HTMLImageElementImpl*, float x, float y, float width, float height);
-        void drawImage(HTMLImageElementImpl*, float sx, float sy, float sw, float sh,
+        void drawImage(HTMLImageElement*, float x, float y);
+        void drawImage(HTMLImageElement*, float x, float y, float width, float height);
+        void drawImage(HTMLImageElement*, float sx, float sy, float sw, float sh,
             float dx, float dy, float dw, float dh);
 
-        void drawImageFromRect(HTMLImageElementImpl*, float sx, float sy, float sw, float sh,
+        void drawImageFromRect(HTMLImageElement*, float sx, float sy, float sw, float sh,
             float dx, float dy, float dw, float dh, const String& compositeOperation);
 
         void setAlpha(float);
@@ -152,7 +152,7 @@ namespace WebCore {
 
         PassRefPtr<CanvasGradient> createLinearGradient(float x0, float y0, float x1, float y1);
         PassRefPtr<CanvasGradient> createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1);
-        PassRefPtr<CanvasPattern> createPattern(HTMLImageElementImpl*, const String& repetitionType);
+        PassRefPtr<CanvasPattern> createPattern(HTMLImageElement*, const String& repetitionType);
 
         void reset();
         void detachCanvas() { m_canvas = 0; }
@@ -195,7 +195,7 @@ namespace WebCore {
         CGContextRef drawingContext() const;
 #endif
 
-        HTMLCanvasElementImpl* m_canvas;
+        HTMLCanvasElement* m_canvas;
         Vector<State, 1> m_stateStack;
     };
 

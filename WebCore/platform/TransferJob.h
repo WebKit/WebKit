@@ -70,10 +70,10 @@ public:
 
     int error() const;
     void setError(int);
-    QString errorText() const;
+    DeprecatedString errorText() const;
     bool isErrorPage() const;
-    QString queryMetaData(const QString&) const;
-    void addMetaData(const QString& key, const QString& value);
+    DeprecatedString queryMetaData(const DeprecatedString&) const;
+    void addMetaData(const DeprecatedString& key, const DeprecatedString& value);
     void addMetaData(const HashMap<String, String>&);
     void kill();
 

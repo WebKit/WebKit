@@ -34,9 +34,9 @@
 namespace WebCore {
 
 struct QualifiedNameComponents {
-    DOMStringImpl *m_prefix;
-    DOMStringImpl *m_localName;
-    DOMStringImpl *m_namespace;
+    StringImpl *m_prefix;
+    StringImpl *m_localName;
+    StringImpl *m_namespace;
 };
 
 // Golden ratio - arbitrary start value to avoid mapping all 0's to all 0's
@@ -163,11 +163,11 @@ void QualifiedName::setPrefix(const AtomicString& prefix)
     *this = other;
 }
 
-DOMString QualifiedName::toString() const
+String QualifiedName::toString() const
 {
-    DOMString local = localName();
+    String local = localName();
     if (hasPrefix())
-        return DOMString(prefix()) + ":" + local;
+        return String(prefix()) + ":" + local;
     return local;
 }
 

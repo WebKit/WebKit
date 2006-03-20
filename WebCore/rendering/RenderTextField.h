@@ -25,11 +25,11 @@
 
 namespace WebCore {
 
-class HTMLTextFieldInnerElementImpl;
+class HTMLTextFieldInnerElement;
 
 class RenderTextField : public RenderBlock {
 public:
-    RenderTextField(NodeImpl*);
+    RenderTextField(Node*);
     virtual ~RenderTextField();
 
     virtual void calcMinMaxWidth();
@@ -58,7 +58,7 @@ private:
     VisiblePosition visiblePositionForIndex(int index);
     int indexForVisiblePosition(const VisiblePosition&);
     
-    RefPtr<HTMLTextFieldInnerElementImpl> m_div;
+    RefPtr<HTMLTextFieldInnerElement> m_div;
     bool m_dirty;
 
 };

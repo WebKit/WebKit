@@ -26,49 +26,49 @@
 #include "CachedCSSStyleSheet.h"
 #include "CachedXSLStyleSheet.h"
 #include "DocLoader.h"
-#include "DocumentImpl.h"
+#include "Document.h"
 #include "ExceptionCode.h"
 #include "StringImpl.h"
 #include "css_stylesheetimpl.h"
 #include "xml_tokenizer.h"
 
 #if KHTML_XSLT
-#include "xsl_stylesheetimpl.h"
+#include "XSLStyleSheet.h"
 #endif
 
 namespace WebCore {
 
-EntityImpl::EntityImpl(DocumentImpl* doc) : ContainerNodeImpl(doc)
+Entity::Entity(Document* doc) : ContainerNode(doc)
 {
 }
 
-EntityImpl::EntityImpl(DocumentImpl* doc, const DOMString& name) : ContainerNodeImpl(doc), m_name(name.impl())
+Entity::Entity(Document* doc, const String& name) : ContainerNode(doc), m_name(name.impl())
 {
 }
 
-EntityImpl::EntityImpl(DocumentImpl* doc, const DOMString& publicId, const DOMString& systemId, const DOMString& notationName)
-    : ContainerNodeImpl(doc), m_publicId(publicId.impl()), m_systemId(systemId.impl()), m_notationName(notationName.impl())
+Entity::Entity(Document* doc, const String& publicId, const String& systemId, const String& notationName)
+    : ContainerNode(doc), m_publicId(publicId.impl()), m_systemId(systemId.impl()), m_notationName(notationName.impl())
 {
 }
 
-DOMString EntityImpl::nodeName() const
+String Entity::nodeName() const
 {
     return m_name.get();
 }
 
-NodeImpl::NodeType EntityImpl::nodeType() const
+Node::NodeType Entity::nodeType() const
 {
     return ENTITY_NODE;
 }
 
-PassRefPtr<NodeImpl> EntityImpl::cloneNode(bool /*deep*/)
+PassRefPtr<Node> Entity::cloneNode(bool /*deep*/)
 {
     // Spec says cloning Entity nodes is "implementation dependent". We do not support it.
     return 0;
 }
 
 // DOM Section 1.1.1
-bool EntityImpl::childTypeAllowed(NodeType type)
+bool Entity::childTypeAllowed(NodeType type)
 {
     switch (type) {
         case ELEMENT_NODE:
@@ -84,9 +84,9 @@ bool EntityImpl::childTypeAllowed(NodeType type)
     }
 }
 
-DOMString EntityImpl::toString() const
+String Entity::toString() const
 {
-    DOMString result = "<!ENTITY' ";
+    String result = "<!ENTITY' ";
 
     if (m_name && m_name->length()) {
         result += " ";
@@ -117,28 +117,28 @@ DOMString EntityImpl::toString() const
 
 // -------------------------------------------------------------------------
 
-EntityReferenceImpl::EntityReferenceImpl(DocumentImpl* doc) : ContainerNodeImpl(doc)
+EntityReference::EntityReference(Document* doc) : ContainerNode(doc)
 {
 }
 
-EntityReferenceImpl::EntityReferenceImpl(DocumentImpl* doc, DOMStringImpl* entityName)
-    : ContainerNodeImpl(doc), m_entityName(entityName)
+EntityReference::EntityReference(Document* doc, StringImpl* entityName)
+    : ContainerNode(doc), m_entityName(entityName)
 {
 }
 
-DOMString EntityReferenceImpl::nodeName() const
+String EntityReference::nodeName() const
 {
     return m_entityName.get();
 }
 
-NodeImpl::NodeType EntityReferenceImpl::nodeType() const
+Node::NodeType EntityReference::nodeType() const
 {
     return ENTITY_REFERENCE_NODE;
 }
 
-PassRefPtr<NodeImpl> EntityReferenceImpl::cloneNode(bool deep)
+PassRefPtr<Node> EntityReference::cloneNode(bool deep)
 {
-    RefPtr<EntityReferenceImpl> clone = new EntityReferenceImpl(getDocument(), m_entityName.get());
+    RefPtr<EntityReference> clone = new EntityReference(getDocument(), m_entityName.get());
     // ### make sure children are readonly
     // ### since we are a reference, should we clone children anyway (even if not deep?)
     if (deep)
@@ -147,7 +147,7 @@ PassRefPtr<NodeImpl> EntityReferenceImpl::cloneNode(bool deep)
 }
 
 // DOM Section 1.1.1
-bool EntityReferenceImpl::childTypeAllowed(NodeType type)
+bool EntityReference::childTypeAllowed(NodeType type)
 {
     switch (type) {
         case ELEMENT_NODE:
@@ -163,9 +163,9 @@ bool EntityReferenceImpl::childTypeAllowed(NodeType type)
     }
 }
 
-DOMString EntityReferenceImpl::toString() const
+String EntityReference::toString() const
 {
-    DOMString result = "&";
+    String result = "&";
     result += m_entityName.get();
     result += ";";
 
@@ -174,33 +174,33 @@ DOMString EntityReferenceImpl::toString() const
 
 // -------------------------------------------------------------------------
 
-NotationImpl::NotationImpl(DocumentImpl* doc) : ContainerNodeImpl(doc)
+Notation::Notation(Document* doc) : ContainerNode(doc)
 {
 }
 
-NotationImpl::NotationImpl(DocumentImpl* doc, const DOMString& name, const DOMString& publicId, const DOMString& systemId)
-    : ContainerNodeImpl(doc), m_name(name.impl()), m_publicId(publicId.impl()), m_systemId(systemId.impl())
+Notation::Notation(Document* doc, const String& name, const String& publicId, const String& systemId)
+    : ContainerNode(doc), m_name(name.impl()), m_publicId(publicId.impl()), m_systemId(systemId.impl())
 {
 }
 
-DOMString NotationImpl::nodeName() const
+String Notation::nodeName() const
 {
     return m_name.get();
 }
 
-NodeImpl::NodeType NotationImpl::nodeType() const
+Node::NodeType Notation::nodeType() const
 {
     return NOTATION_NODE;
 }
 
-PassRefPtr<NodeImpl> NotationImpl::cloneNode(bool /*deep*/)
+PassRefPtr<Node> Notation::cloneNode(bool /*deep*/)
 {
     // Spec says cloning Notation nodes is "implementation dependent". We do not support it.
     return 0;
 }
 
 // DOM Section 1.1.1
-bool NotationImpl::childTypeAllowed(NodeType)
+bool Notation::childTypeAllowed(NodeType)
 {
     return false;
 }
@@ -210,29 +210,29 @@ bool NotationImpl::childTypeAllowed(NodeType)
 // ### need a way of updating these properly whenever child nodes of the processing instruction
 // change or are added/removed
 
-ProcessingInstructionImpl::ProcessingInstructionImpl(DocumentImpl* doc)
-    : ContainerNodeImpl(doc), m_cachedSheet(0), m_loading(false)
+ProcessingInstruction::ProcessingInstruction(Document* doc)
+    : ContainerNode(doc), m_cachedSheet(0), m_loading(false)
 {
 #if KHTML_XSLT
     m_isXSL = false;
 #endif
 }
 
-ProcessingInstructionImpl::ProcessingInstructionImpl(DocumentImpl* doc, const DOMString& target, const DOMString& data)
-    : ContainerNodeImpl(doc), m_target(target.impl()), m_data(data.impl()), m_cachedSheet(0), m_loading(false)
+ProcessingInstruction::ProcessingInstruction(Document* doc, const String& target, const String& data)
+    : ContainerNode(doc), m_target(target.impl()), m_data(data.impl()), m_cachedSheet(0), m_loading(false)
 {
 #if KHTML_XSLT
     m_isXSL = false;
 #endif
 }
 
-ProcessingInstructionImpl::~ProcessingInstructionImpl()
+ProcessingInstruction::~ProcessingInstruction()
 {
     if (m_cachedSheet)
         m_cachedSheet->deref(this);
 }
 
-void ProcessingInstructionImpl::setData(const DOMString& data, ExceptionCode& ec)
+void ProcessingInstruction::setData(const String& data, ExceptionCode& ec)
 {
     // NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly.
     if (isReadOnly()) {
@@ -242,52 +242,52 @@ void ProcessingInstructionImpl::setData(const DOMString& data, ExceptionCode& ec
     m_data = data.impl();
 }
 
-DOMString ProcessingInstructionImpl::nodeName() const
+String ProcessingInstruction::nodeName() const
 {
     return m_target.get();
 }
 
-NodeImpl::NodeType ProcessingInstructionImpl::nodeType() const
+Node::NodeType ProcessingInstruction::nodeType() const
 {
     return PROCESSING_INSTRUCTION_NODE;
 }
 
-DOMString ProcessingInstructionImpl::nodeValue() const
+String ProcessingInstruction::nodeValue() const
 {
     return m_data.get();
 }
 
-void ProcessingInstructionImpl::setNodeValue(const DOMString& nodeValue, ExceptionCode& ec)
+void ProcessingInstruction::setNodeValue(const String& nodeValue, ExceptionCode& ec)
 {
     // NO_MODIFICATION_ALLOWED_ERR: taken care of by setData()
     setData(nodeValue, ec);
 }
 
-PassRefPtr<NodeImpl> ProcessingInstructionImpl::cloneNode(bool /*deep*/)
+PassRefPtr<Node> ProcessingInstruction::cloneNode(bool /*deep*/)
 {
     // ### copy m_localHref
-    return new ProcessingInstructionImpl(getDocument(), m_target.get(), m_data.get());
+    return new ProcessingInstruction(getDocument(), m_target.get(), m_data.get());
 }
 
 // DOM Section 1.1.1
-bool ProcessingInstructionImpl::childTypeAllowed(NodeType)
+bool ProcessingInstruction::childTypeAllowed(NodeType)
 {
     return false;
 }
 
-bool ProcessingInstructionImpl::checkStyleSheet()
+bool ProcessingInstruction::checkStyleSheet()
 {
-    if (DOMString(m_target.get()) == "xml-stylesheet") {
+    if (String(m_target.get()) == "xml-stylesheet") {
         // see http://www.w3.org/TR/xml-stylesheet/
         // ### check that this occurs only in the prolog
         // ### support stylesheet included in a fragment of this (or another) document
         // ### make sure this gets called when adding from javascript
         bool attrsOk;
-        const HashMap<DOMString, DOMString> attrs = parseAttributes(m_data.get(), attrsOk);
+        const HashMap<String, String> attrs = parseAttributes(m_data.get(), attrsOk);
         if (!attrsOk)
             return true;
-        HashMap<DOMString, DOMString>::const_iterator i = attrs.find("type");
-        DOMString type;
+        HashMap<String, String>::const_iterator i = attrs.find("type");
+        String type;
         if (i != attrs.end())
             type = i->second;
         
@@ -301,16 +301,16 @@ bool ProcessingInstructionImpl::checkStyleSheet()
 #endif
             return true;
 
-        DOMString href = attrs.get("href");
+        String href = attrs.get("href");
 
         if (href.length() > 1) {
             if (href[0] == '#') {
                 m_localHref = href.substring(1).impl();
 #if KHTML_XSLT
-                // We need to make a synthetic XSLStyleSheetImpl that is embedded.  It needs to be able
+                // We need to make a synthetic XSLStyleSheet that is embedded.  It needs to be able
                 // to kick off import/include loads that can hang off some parent sheet.
                 if (m_isXSL) {
-                    m_sheet = new XSLStyleSheetImpl(this, m_localHref.get(), true);
+                    m_sheet = new XSLStyleSheet(this, m_localHref.get(), true);
                     m_loading = false;
                 }                    
                 return !m_isXSL;
@@ -330,7 +330,7 @@ bool ProcessingInstructionImpl::checkStyleSheet()
                         m_cachedSheet = getDocument()->docLoader()->requestXSLStyleSheet(getDocument()->completeURL(href));
                     else
 #endif
-                    m_cachedSheet = getDocument()->docLoader()->requestStyleSheet(getDocument()->completeURL(href), QString::null);
+                    m_cachedSheet = getDocument()->docLoader()->requestStyleSheet(getDocument()->completeURL(href), DeprecatedString::null);
                     if (m_cachedSheet)
                         m_cachedSheet->ref( this );
 #if KHTML_XSLT
@@ -345,7 +345,7 @@ bool ProcessingInstructionImpl::checkStyleSheet()
     return true;
 }
 
-bool ProcessingInstructionImpl::isLoading() const
+bool ProcessingInstruction::isLoading() const
 {
     if (m_loading)
         return true;
@@ -354,20 +354,20 @@ bool ProcessingInstructionImpl::isLoading() const
     return m_sheet->isLoading();
 }
 
-void ProcessingInstructionImpl::sheetLoaded()
+void ProcessingInstruction::sheetLoaded()
 {
     if (!isLoading())
         getDocument()->stylesheetLoaded();
 }
 
-void ProcessingInstructionImpl::setStyleSheet(const DOMString &url, const DOMString &sheet)
+void ProcessingInstruction::setStyleSheet(const String &url, const String &sheet)
 {
 #if KHTML_XSLT
     if (m_isXSL)
-        m_sheet = new XSLStyleSheetImpl(this, url);
+        m_sheet = new XSLStyleSheet(this, url);
     else
 #endif
-        m_sheet = new CSSStyleSheetImpl(this, url);
+        m_sheet = new CSSStyleSheet(this, url);
     m_sheet->parseString(sheet);
     if (m_cachedSheet)
         m_cachedSheet->deref(this);
@@ -380,9 +380,9 @@ void ProcessingInstructionImpl::setStyleSheet(const DOMString &url, const DOMStr
         getDocument()->stylesheetLoaded();
 }
 
-DOMString ProcessingInstructionImpl::toString() const
+String ProcessingInstruction::toString() const
 {
-    DOMString result = "<?";
+    String result = "<?";
     result += m_target.get();
     result += " ";
     result += m_data.get();
@@ -390,12 +390,12 @@ DOMString ProcessingInstructionImpl::toString() const
     return result;
 }
 
-void ProcessingInstructionImpl::setStyleSheet(StyleSheetImpl* sheet)
+void ProcessingInstruction::setStyleSheet(StyleSheet* sheet)
 {
     m_sheet = sheet;
 }
 
-bool ProcessingInstructionImpl::offsetInCharacters() const
+bool ProcessingInstruction::offsetInCharacters() const
 {
     return true;
 }
