@@ -209,6 +209,7 @@
 		935FBC4509BA00B900E230B1 /* EventListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 935FBC4409BA00B900E230B1 /* EventListener.h */; };
 		935FBCF209BA143B00E230B1 /* ExceptionCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 935FBCF109BA143B00E230B1 /* ExceptionCode.h */; };
 		936B424E09A436CD00BAA820 /* SVGCSSParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8C0F6F6089701F100BA5114 /* SVGCSSParser.cpp */; };
+		936DD03B09CEAC270056AE8C /* Range.idl in Resources */ = {isa = PBXBuildFile; fileRef = 936DD03A09CEAC270056AE8C /* Range.idl */; };
 		937A36A7097E2E3200E4EE2F /* UserAgentStyleSheets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 937A36A6097E2E3200E4EE2F /* UserAgentStyleSheets.cpp */; };
 		9380F47309A11AB4001FDB34 /* Widget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9380F47109A11AB4001FDB34 /* Widget.cpp */; };
 		9380F47409A11AB4001FDB34 /* Widget.h in Headers */ = {isa = PBXBuildFile; fileRef = 9380F47209A11AB4001FDB34 /* Widget.h */; };
@@ -256,7 +257,6 @@
 		93F198D508245E59001E9ABC /* kjs_html.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D20002DE4369018635CA /* kjs_html.h */; };
 		93F198D708245E59001E9ABC /* kjs_navigator.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D20302DE4369018635CA /* kjs_navigator.h */; };
 		93F198D908245E59001E9ABC /* kjs_proxy.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D20602DE4369018635CA /* kjs_proxy.h */; };
-		93F198DA08245E59001E9ABC /* kjs_range.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D20802DE4369018635CA /* kjs_range.h */; };
 		93F198DC08245E59001E9ABC /* kjs_traversal.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D20B02DE4369018635CA /* kjs_traversal.h */; };
 		93F198DE08245E59001E9ABC /* kjs_views.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D20E02DE4369018635CA /* kjs_views.h */; };
 		93F198E008245E59001E9ABC /* kjs_window.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D21102DE4369018635CA /* kjs_window.h */; };
@@ -383,7 +383,6 @@
 		93F19A8708245E59001E9ABC /* kjs_html.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D1FF02DE4369018635CA /* kjs_html.cpp */; };
 		93F19A8808245E59001E9ABC /* kjs_navigator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D20202DE4369018635CA /* kjs_navigator.cpp */; };
 		93F19A8908245E59001E9ABC /* kjs_proxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D20502DE4369018635CA /* kjs_proxy.cpp */; };
-		93F19A8A08245E59001E9ABC /* kjs_range.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D20702DE4369018635CA /* kjs_range.cpp */; };
 		93F19A8B08245E59001E9ABC /* kjs_traversal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D20A02DE4369018635CA /* kjs_traversal.cpp */; };
 		93F19A8C08245E59001E9ABC /* kjs_views.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D20D02DE4369018635CA /* kjs_views.cpp */; };
 		93F19A8D08245E59001E9ABC /* kjs_window.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D21002DE4369018635CA /* kjs_window.cpp */; };
@@ -1361,6 +1360,7 @@
 		935C477409AC4D8D00A6AAB4 /* GapRects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GapRects.h; sourceTree = "<group>"; };
 		935FBC4409BA00B900E230B1 /* EventListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventListener.h; sourceTree = "<group>"; };
 		935FBCF109BA143B00E230B1 /* ExceptionCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionCode.h; sourceTree = "<group>"; };
+		936DD03A09CEAC270056AE8C /* Range.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Range.idl; sourceTree = "<group>"; };
 		937A36A6097E2E3200E4EE2F /* UserAgentStyleSheets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserAgentStyleSheets.cpp; sourceTree = "<group>"; };
 		9380F47109A11AB4001FDB34 /* Widget.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Widget.cpp; path = platform/Widget.cpp; sourceTree = "<group>"; };
 		9380F47209A11AB4001FDB34 /* Widget.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Widget.h; path = platform/Widget.h; sourceTree = "<group>"; };
@@ -2208,8 +2208,6 @@
 		F523D20302DE4369018635CA /* kjs_navigator.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = kjs_navigator.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D20502DE4369018635CA /* kjs_proxy.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kjs_proxy.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D20602DE4369018635CA /* kjs_proxy.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = kjs_proxy.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D20702DE4369018635CA /* kjs_range.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kjs_range.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D20802DE4369018635CA /* kjs_range.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = kjs_range.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D20A02DE4369018635CA /* kjs_traversal.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kjs_traversal.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D20B02DE4369018635CA /* kjs_traversal.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = kjs_traversal.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D20D02DE4369018635CA /* kjs_views.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kjs_views.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -3673,8 +3671,6 @@
 				F523D20302DE4369018635CA /* kjs_navigator.h */,
 				F523D20502DE4369018635CA /* kjs_proxy.cpp */,
 				F523D20602DE4369018635CA /* kjs_proxy.h */,
-				F523D20702DE4369018635CA /* kjs_range.cpp */,
-				F523D20802DE4369018635CA /* kjs_range.h */,
 				F523D20A02DE4369018635CA /* kjs_traversal.cpp */,
 				F523D20B02DE4369018635CA /* kjs_traversal.h */,
 				F523D20D02DE4369018635CA /* kjs_views.cpp */,
@@ -3782,15 +3778,17 @@
 		F523D32402DE4478018635CA /* dom */ = {
 			isa = PBXGroup;
 			children = (
+				F523D30702DE4476018635CA /* AbstractView.cpp */,
+				F523D30802DE4476018635CA /* AbstractView.h */,
 				BC3B364705C9D5E200E42902 /* AtomicStringList.h */,
 				93EEC1E509C2877700C515D1 /* Attr.idl */,
 				AB23A32509BBA7D00067CC53 /* BeforeTextInsertedEvent.cpp */,
 				AB23A32609BBA7D00067CC53 /* BeforeTextInsertedEvent.h */,
 				6550B693099DF0270090D781 /* CDATASection.cpp */,
 				6550B694099DF0270090D781 /* CDATASection.h */,
-				93EEC1E609C2877700C515D1 /* CharacterData.idl */,
 				6550B695099DF0270090D781 /* CharacterData.cpp */,
 				6550B696099DF0270090D781 /* CharacterData.h */,
+				93EEC1E609C2877700C515D1 /* CharacterData.idl */,
 				A818721A0977D3C0005826D9 /* ChildNodeList.cpp */,
 				A81872150977D3C0005826D9 /* ChildNodeList.h */,
 				6550B697099DF0270090D781 /* Comment.cpp */,
@@ -3798,31 +3796,25 @@
 				A81872140977D3C0005826D9 /* ContainerNode.cpp */,
 				A81872110977D3C0005826D9 /* ContainerNode.h */,
 				93EEC1E709C2877700C515D1 /* DocPtr.h */,
-				A8185F3709765765005826D9 /* DocumentFragment.cpp */,
-				A8185F3509765765005826D9 /* DocumentFragment.h */,
 				A8185F3409765765005826D9 /* Document.cpp */,
 				A8185F3809765765005826D9 /* Document.h */,
+				A8185F3709765765005826D9 /* DocumentFragment.cpp */,
+				A8185F3509765765005826D9 /* DocumentFragment.h */,
 				ED2BA83B09A24B91006C0AC4 /* DocumentMarker.h */,
-				93EEC1E809C2877700C515D1 /* DocumentType.idl */,
 				A8185F3209765765005826D9 /* DocumentType.cpp */,
 				A8185F3109765765005826D9 /* DocumentType.h */,
+				93EEC1E809C2877700C515D1 /* DocumentType.idl */,
 				F523D30102DE4476018635CA /* dom2_eventsimpl.cpp */,
 				F523D30202DE4476018635CA /* dom2_eventsimpl.h */,
-				F523D30302DE4476018635CA /* Range.cpp */,
-				F523D30402DE4476018635CA /* Range.h */,
 				F523D30502DE4476018635CA /* dom2_traversalimpl.cpp */,
 				F523D30602DE4476018635CA /* dom2_traversalimpl.h */,
-				F523D30702DE4476018635CA /* AbstractView.cpp */,
-				F523D30802DE4476018635CA /* AbstractView.h */,
 				F523D2F702DE4476018635CA /* dom_elementimpl.cpp */,
 				F523D2F802DE4476018635CA /* dom_elementimpl.h */,
-				BE91FC8C06133666005E3790 /* Position.cpp */,
-				BE91FC8B06133666005E3790 /* Position.h */,
 				F523D2FF02DE4476018635CA /* dom_xmlimpl.cpp */,
 				F523D30002DE4476018635CA /* dom_xmlimpl.h */,
-				93EEC1E909C2877700C515D1 /* DOMImplementation.idl */,
 				A8185F3609765765005826D9 /* DOMImplementation.cpp */,
 				A8185F3309765765005826D9 /* DOMImplementation.h */,
+				93EEC1E909C2877700C515D1 /* DOMImplementation.idl */,
 				6550B699099DF0270090D781 /* EditingText.cpp */,
 				6550B69A099DF0270090D781 /* EditingText.h */,
 				93EEC1EA09C2877700C515D1 /* Element.idl */,
@@ -3830,6 +3822,8 @@
 				935FBC4409BA00B900E230B1 /* EventListener.h */,
 				939885C108B7E3D100E707C4 /* EventNames.cpp */,
 				939885C208B7E3D100E707C4 /* EventNames.h */,
+				14EC267E09CA07E000E1EEEC /* EventTargetNode.cpp */,
+				14EC267D09CA07E000E1EEEC /* EventTargetNode.h */,
 				935FBCF109BA143B00E230B1 /* ExceptionCode.h */,
 				93EEC1F309C2877700C515D1 /* MutationEvent.idl */,
 				A81872180977D3C0005826D9 /* NamedNodeMap.h */,
@@ -3840,17 +3834,20 @@
 				A81872160977D3C0005826D9 /* NodeList.cpp */,
 				A81872100977D3C0005826D9 /* NodeList.h */,
 				93EEC1F409C2877700C515D1 /* Notation.idl */,
+				93EEC1F709C2877700C515D1 /* PlatformWheelEvent.idl */,
+				BE91FC8C06133666005E3790 /* Position.cpp */,
+				BE91FC8B06133666005E3790 /* Position.h */,
 				93EEC1F509C2877700C515D1 /* ProcessingInstruction.idl */,
 				550A0BC7085F6039007353D6 /* QualifiedName.cpp */,
 				550A0BC8085F6039007353D6 /* QualifiedName.h */,
-				93EEC1F609C2877700C515D1 /* Text.idl */,
+				F523D30302DE4476018635CA /* Range.cpp */,
+				F523D30402DE4476018635CA /* Range.h */,
+				936DD03A09CEAC270056AE8C /* Range.idl */,
 				6550B69B099DF0270090D781 /* Text.cpp */,
 				6550B69C099DF0270090D781 /* Text.h */,
-				93EEC1F709C2877700C515D1 /* PlatformWheelEvent.idl */,
+				93EEC1F609C2877700C515D1 /* Text.idl */,
 				F523D30902DE4476018635CA /* xml_tokenizer.cpp */,
 				F523D30A02DE4476018635CA /* xml_tokenizer.h */,
-				14EC267D09CA07E000E1EEEC /* EventTargetNode.h */,
-				14EC267E09CA07E000E1EEEC /* EventTargetNode.cpp */,
 			);
 			path = dom;
 			sourceTree = "<group>";
@@ -3942,7 +3939,6 @@
 				93F198D508245E59001E9ABC /* kjs_html.h in Headers */,
 				93F198D708245E59001E9ABC /* kjs_navigator.h in Headers */,
 				93F198D908245E59001E9ABC /* kjs_proxy.h in Headers */,
-				93F198DA08245E59001E9ABC /* kjs_range.h in Headers */,
 				93F198DC08245E59001E9ABC /* kjs_traversal.h in Headers */,
 				93F198DE08245E59001E9ABC /* kjs_views.h in Headers */,
 				93F198E008245E59001E9ABC /* kjs_window.h in Headers */,
@@ -4479,7 +4475,6 @@
 				932FC1650824A8EE005B3C75 /* kjs_events.lut.h */,
 				932FC1630824A8E9005B3C75 /* kjs_html.lut.h */,
 				932FC1670824A8F6005B3C75 /* kjs_navigator.lut.h */,
-				932FC1690824A8FC005B3C75 /* kjs_range.lut.h */,
 				932FC16B0824A901005B3C75 /* kjs_traversal.lut.h */,
 				932FC16D0824A906005B3C75 /* kjs_views.lut.h */,
 				932FC16F0824A90D005B3C75 /* kjs_window.lut.h */,
@@ -4645,6 +4640,7 @@
 				930CAB8909C49EFA00229C04 /* CanvasGradient.idl in Resources */,
 				930CAB9009C49F1B00229C04 /* CanvasPattern.idl in Resources */,
 				930CAB9709C49FAA00229C04 /* CodeGeneratorJS.pm in Resources */,
+				936DD03B09CEAC270056AE8C /* Range.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4833,23 +4829,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"$CREATE_HASH_TABLE\" khtml/ecma/kjs_navigator.cpp > \"$DERIVED_FILE_DIR/kjs_navigator.lut.h\"";
-		};
-		932FC1690824A8FC005B3C75 /* kjs_range.lut.h */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(CREATE_HASH_TABLE)",
-				khtml/ecma/kjs_range.cpp,
-			);
-			name = kjs_range.lut.h;
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/kjs_range.lut.h",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"$CREATE_HASH_TABLE\" khtml/ecma/kjs_range.cpp > \"$DERIVED_FILE_DIR/kjs_range.lut.h\"";
 		};
 		932FC16B0824A901005B3C75 /* kjs_traversal.lut.h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5154,7 +5133,6 @@
 				93F19A8708245E59001E9ABC /* kjs_html.cpp in Sources */,
 				93F19A8808245E59001E9ABC /* kjs_navigator.cpp in Sources */,
 				93F19A8908245E59001E9ABC /* kjs_proxy.cpp in Sources */,
-				93F19A8A08245E59001E9ABC /* kjs_range.cpp in Sources */,
 				93F19A8B08245E59001E9ABC /* kjs_traversal.cpp in Sources */,
 				93F19A8C08245E59001E9ABC /* kjs_views.cpp in Sources */,
 				93F19A8D08245E59001E9ABC /* kjs_window.cpp in Sources */,

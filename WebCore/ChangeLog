@@ -1,3 +1,58 @@
+2006-03-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders.
+
+        - http://bugzilla.opendarwin.org/show_bug.cgi?id=7875
+          autogenerate bindings for Range
+
+        * dom/Range.idl: Added.
+        * khtml/ecma/kjs_range.cpp: Removed.
+        * khtml/ecma/kjs_range.h: Removed.
+
+        * WebCore.vcproj/WebCore/build-generated-files.sh: Removed code to generate
+        kjs_range.lut.h.
+
+        * WebCore.xcodeproj/project.pbxproj: Added Range.idl source file.
+        Removed kjs_range.h and kjs_range.cpp source files. Sorted the "dom" group.
+        Removed rule to generate kjs_range.lut.h.
+
+        * bindings/js/JSDOMCore.cpp: Added include of JSRange.cpp.
+
+        * bindings/scripts/CodeGeneratorJS.pm: Added DocumentFragment, Range, CompareHow,
+        and short to the types this script can handle. Added code to generate toRange
+        functions and the like. Added separate code to handle exceptions for getters
+        vs. setters for attributes. Changed return values for the "bad ID" case to 0
+        -- there's no need to generate the extra code to return jsUndefined() in such
+        cases, which should be unreachable. Changed exception handling to use setDOMException
+        directly instead of DOMExceptionTranslator; DOMExceptionTranslator was a trick
+        to make it easier to convert existing bindings and shouldn't be used going
+        forward. Fixed names of constructors to use the JavaScript class name (the
+        interface name), not the name of the C++ implementation class. Fixed generation
+        of code for functions that have no parameters but do raise exceptions.
+
+        * bindings/scripts/IDLParser.pm: Added parsing for separate getter and setter
+        exceptions in attributes. The syntax is not real IDL, but real IDL doesn't support
+        declaring exceptions on attributes at all. We'll probably want to revisit our
+        syntax for this some day.
+
+        * bindings/scripts/IDLStructure.pm: Removed unused exceptionName field from
+        domAttribute, and replaced raisesExceptions field with getterExceptions and
+        setterExceptions. Added regular expressions for parsing getter/setter syntax.
+        We'll probably have to redo this whole thing parse in a better way at some
+        point -- the regular expressions allow any invalid syntax in between them.
+
+        * dom/Attr.idl: Change exception declaration for setting the value attribute
+        to use setter-specific exception syntax.
+        * dom/CharacterData.idl: Change exception declaration for setting the data
+        attribute to use setter-specific exception syntax.
+        * dom/ProcessingInstruction.idl: Change exception declaration for setting the
+        data attribute to use setter-specific exception syntax.
+
+        * khtml/ecma/kjs_dom.cpp: Include JSRange.h instead of kjs_range.h.
+        * khtml/ecma/kjs_window.cpp: Include JSRange.h instead of kjs_range.h.
+        (KJS::Window::getValueProperty): Use JSRange::getConstructor instead of
+        getRangeConstructor.
+
 2006-03-20  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by hyatt.

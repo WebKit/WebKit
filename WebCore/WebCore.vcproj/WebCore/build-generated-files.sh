@@ -94,10 +94,6 @@ if [ ../JavaScriptCore/kjs/create_hash_table -nt "$DerivedSourcesDir/kjs_navigat
   ../JavaScriptCore/kjs/create_hash_table khtml/ecma/kjs_navigator.cpp > "$DerivedSourcesDir/kjs_navigator.lut.h"
 fi
 
-if [ ../JavaScriptCore/kjs/create_hash_table -nt "$DerivedSourcesDir/kjs_range.lut.h" -o khtml/ecma/kjs_range.cpp -nt "$DerivedSourcesDir/kjs_range.lut.h" ]; then
-  ../JavaScriptCore/kjs/create_hash_table khtml/ecma/kjs_range.cpp > "$DerivedSourcesDir/kjs_range.lut.h"
-fi
-
 if [ ../JavaScriptCore/kjs/create_hash_table -nt "$DerivedSourcesDir/kjs_traversal.lut.h" -o khtml/ecma/kjs_traversal.cpp -nt "$DerivedSourcesDir/kjs_traversal.lut.h" ]; then
   ../JavaScriptCore/kjs/create_hash_table khtml/ecma/kjs_traversal.cpp > "$DerivedSourcesDir/kjs_traversal.lut.h"
 fi

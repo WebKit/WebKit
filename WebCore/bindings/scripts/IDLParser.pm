@@ -249,8 +249,11 @@ sub ParseInterface
           
         ('' =~ /^/); # Reset variables needed for regexp matching
         
-        $line =~ /$IDLStructure::raisesSelector/;
-        my $attributeException = (defined($1) ? $1 : "");
+        $line =~ /$IDLStructure::getterRaisesSelector/;
+        my $getterException = (defined($1) ? $1 : "");
+      
+        $line =~ /$IDLStructure::setterRaisesSelector/;
+        my $setterException = (defined($1) ? $1 : "");
       
         my $newDataNode = new domAttribute();
         $newDataNode->type($attributeType);
@@ -263,11 +266,13 @@ sub ParseInterface
         my $arrayRef = $dataNode->attributes;
         push(@$arrayRef, $newDataNode);
 
-        print "  |  |>  Attribute; TYPE \"$attributeType\" DATA NAME \"$attributeDataName\" DATA TYPE \"$attributeDataType\" EXCEPTION? \"$attributeException\"" .
+        print "  |  |>  Attribute; TYPE \"$attributeType\" DATA NAME \"$attributeDataName\" DATA TYPE \"$attributeDataType\" GET EXCEPTION? \"$getterException\" SET EXCEPTION? \"$setterException\"" .
               dumpExtendedAttributes("\n  |                 ", $newDataNode->signature->extendedAttributes) . "\n" if(!$beQuiet);
 
-        $attributeException =~ s/\s+//g;
-        @{$newDataNode->raisesExceptions} = split(/,/, $attributeException);
+        $getterException =~ s/\s+//g;
+        $setterException =~ s/\s+//g;
+        @{$newDataNode->getterExceptions} = split(/,/, $getterException);
+        @{$newDataNode->setterExceptions} = split(/,/, $setterException);
       } elsif(($line !~ s/^\s*$//g) and ($line !~ /^\s+const/)) {
         $line =~ /$IDLStructure::interfaceMethodSelector/ or die "Parsing error!\nSource:\n$line\n)";
 

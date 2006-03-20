@@ -49,12 +49,12 @@ struct( domFunction => {
     raisesExceptions => '@',  # Possibly raised exceptions.
 });
 
-# Used to represent domClass contents (name of method, signature)
+# Used to represent domClass contents (name of attribute, signature)
 struct( domAttribute => {
     type => '$',              # Attribute type (including namespace)
-    signature => '$',          # Attribute signature
-    exceptionName => '$',      # Name of exception
-    raisesExceptions => '@',  # Possibly raised exceptions.
+    signature => '$',         # Attribute signature
+    getterExceptions => '@',  # Possibly raised exceptions.
+    setterExceptions => '@',  # Possibly raised exceptions.
 });
 
 # Used to represent a map of 'variable name' <-> 'variable type'
@@ -90,6 +90,8 @@ $moduleSelector = 'module\s*(' . $idlId . '*)\s*{';
 $moduleNSSelector = 'module\s*(' . $idlId . '*)\s*\[ns\s*(' . $idlIdNs . '*)\s*(' . $idlIdNs . '*)\]\s*;';
 $constantSelector = 'const\s*' . $supportedTypes . '\s*(' . $idlType . '*)\s*=\s*(' . $idlType . '*)';
 $raisesSelector = 'raises\s*\((' . $idlIdNsList . '*)\s*\)';
+$getterRaisesSelector = '\bgetter\s+raises\s*\((' . $idlIdNsList . '*)\s*\)';
+$setterRaisesSelector = '\bsetter\s+raises\s*\((' . $idlIdNsList . '*)\s*\)';
 
 $typeNamespaceSelector = '((?:' . $idlId . '*::)*)\s*(' . $idlDataType . '*)';
 

@@ -1,0 +1,89 @@
+/*
+ * Copyright (C) 2006 Apple Computer, Inc.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+module ranges {
+
+    interface Range {
+
+        // DOM Level 2
+
+        readonly attribute Node startContainer
+            getter raises (dom::DOMException);
+        readonly attribute long startOffset
+            getter raises (dom::DOMException);
+        readonly attribute Node endContainer
+            getter raises (dom::DOMException);
+        readonly attribute long endOffset
+            getter raises (dom::DOMException);
+        readonly attribute boolean collapsed
+            getter raises (dom::DOMException);
+        readonly attribute Node commonAncestorContainer
+            getter raises (dom::DOMException);
+
+        void setStart(in Node refNode, 
+                      in long offset)
+            raises(RangeException, dom::DOMException);
+        void setEnd(in Node refNode, 
+                    in long offset)
+            raises(RangeException, dom::DOMException);
+        void setStartBefore(in Node refNode)
+            raises(RangeException, dom::DOMException);
+        void setStartAfter(in Node refNode)
+            raises(RangeException, dom::DOMException);
+        void setEndBefore(in Node refNode)
+            raises(RangeException, dom::DOMException);
+        void setEndAfter(in Node refNode)
+            raises(RangeException, dom::DOMException);
+        void collapse(in boolean toStart)
+            raises(DOMException);
+        void selectNode(in Node refNode)
+            raises(RangeException, dom::DOMException);
+        void selectNodeContents(in Node refNode)
+            raises(RangeException, dom::DOMException);
+
+        // CompareHow
+        const unsigned short START_TO_START = 0;
+        const unsigned short START_TO_END   = 1;
+        const unsigned short END_TO_END     = 2;
+        const unsigned short END_TO_START   = 3;
+
+        short compareBoundaryPoints(in CompareHow how,
+                                    in Range sourceRange)
+            raises(dom::DOMException);
+        void deleteContents()
+            raises(dom::DOMException);
+        DocumentFragment extractContents()
+            raises(dom::DOMException);
+        DocumentFragment cloneContents()
+            raises(dom::DOMException);
+        void insertNode(in Node newNode)
+            raises(dom::DOMException, RangeException);
+        void surroundContents(in Node newParent)
+            raises(dom::DOMException, RangeException);
+        Range cloneRange()
+            raises(dom::DOMException);
+        DOMString toString()
+            raises(dom::DOMException);
+
+        void detach()
+            raises(dom::DOMException);
+
+    };
+
+}

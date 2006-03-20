@@ -26,23 +26,26 @@
 #include "Frame.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "HTMLDocument.h"
+#include "JSDOMParser.h"
 #include "JSMutationEvent.h"
+#include "JSRange.h"
 #include "JSXMLHttpRequest.h"
+#include "JSXMLSerializer.h"
 #include "Logging.h"
 #include "Page.h"
 #include "PlatformString.h"
 #include "PlugInInfoStore.h"
+#include "Position.h"
+#include "Range.h"
+#include "RenderCanvas.h"
 #include "Screen.h"
 #include "SelectionController.h"
 #include "Shared.h"
 #include "css_ruleimpl.h"
 #include "css_stylesheetimpl.h"
 #include "dom2_eventsimpl.h"
-#include "Range.h"
 #include "dom_elementimpl.h"
-#include "Position.h"
-#include "JSDOMParser.h"
-#include "HTMLDocument.h"
 #include "htmlediting.h"
 #include "khtml_settings.h"
 #include "kjs_css.h"
@@ -50,10 +53,7 @@
 #include "kjs_html.h"
 #include "kjs_navigator.h"
 #include "kjs_proxy.h"
-#include "kjs_range.h"
 #include "kjs_traversal.h"
-#include "RenderCanvas.h"
-#include "JSXMLSerializer.h"
 #include <kjs/collector.h>
 
 #if KHTML_XSLT
@@ -668,7 +668,7 @@ JSValue *Window::getValueProperty(ExecState *exec, int token) const
     case Node:
       return getNodeConstructor(exec);
     case Range:
-      return getRangeConstructor(exec);
+      return JSRange::getConstructor(exec);
     case NodeFilter:
       return getNodeFilterConstructor(exec);
     case DOMException:

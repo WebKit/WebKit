@@ -185,7 +185,10 @@ sub AddIncludesForType
       $type eq "DOMImplementation" or
       $type eq "NodeList" or 
       $type eq "Text" or 
-      $type eq "CharacterData") {
+      $type eq "CharacterData" or
+      $type eq "CanvasPattern" or
+      $type eq "Range" or
+      $type eq "DocumentFragment") {
     $implIncludes{"${type}.h"} = 1;
   } elsif ($type eq "Attr" or
            $type eq "Element") {
@@ -209,8 +212,6 @@ sub AddIncludesForType
   } elsif ($type eq "CanvasGradient") {
     $implIncludes{"CanvasGradient.h"} = 1;
     $implIncludes{"PlatformString.h"} = 1;
-  } elsif ($type eq "CanvasPattern") {
-    $implIncludes{"$type.h"} = 1;
   } elsif ($codeGenerator->IsPrimitiveType($type) or
            $type eq "DOMString") {
     # Do nothing
@@ -240,8 +241,6 @@ sub GenerateHeader
   my $interfaceName = $dataNode->name;
   my $className = "JS$interfaceName";
   my $implClassName = $interfaceName;
-  # Canvas classes don't have Impl suffix (remove this when removing the Impl suffix elsewhere).
-  $implClassName = $interfaceName if $interfaceName =~ /^Canvas/;
   
   # FIXME: If we're sure that an interface can't have more than
   # one parent we can do the check in the parser instead
@@ -378,7 +377,8 @@ sub GenerateHeader
   push(@headerContent, "};\n\n");
   
   if (!$hasParent) {
-    push(@headerContent, "KJS::JSValue* toJS(KJS::ExecState*, $implClassName*);\n\n");
+    push(@headerContent, "KJS::JSValue* toJS(KJS::ExecState*, $implClassName*);\n");
+    push(@headerContent, "$implClassName* to${interfaceName}(KJS::JSValue*);\n\n");
   }
 
   # Add prototype declaration
@@ -401,8 +401,6 @@ sub GenerateImplementation
   my $interfaceName = $dataNode->name;
   my $className = "JS$interfaceName";
   my $implClassName = $interfaceName;
-  # Canvas classes don't have Impl suffix (remove this when removing the Impl suffix elsewhere).
-  $implClassName = $interfaceName if $interfaceName =~ /^Canvas/;
   
   my $hasLegacyParent = $dataNode->extendedAttributes->{"LegacyParent"};
   my $hasRealParent = @{$dataNode->parents} > 0;
@@ -586,25 +584,26 @@ sub GenerateImplementation
     foreach my $attribute (@{$dataNode->attributes}) {
       my $name = $attribute->signature->name;
   
-      push(@implContent, "    case " . ucfirst($name) . ":\n");
-      push(@implContent, "        return " . NativeToJSValue($attribute->signature, "impl->$name()") . ";\n");
-    }
-
-    push(@implContent, "    }\n    return jsUndefined();\n}\n\n");
-    
-    # Check if we have any writable attributes and if they raise exceptions
-    my $hasReadWriteProperties = 0;
-    my $raisesExceptions = 0;
-    foreach my $attribute (@{$dataNode->attributes}) {
-      if($attribute->type !~ /^readonly\ attribute$/) {
-        $hasReadWriteProperties = 1;
-
-        if (@{$attribute->raisesExceptions}) {
-          $raisesExceptions = 1;
-        }
+      if (!@{$attribute->getterExceptions}) {
+        push(@implContent, "    case " . ucfirst($name) . ":\n");
+        push(@implContent, "        return " . NativeToJSValue($attribute->signature, "impl->$name()") . ";\n");
+      } else {
+        push(@implContent, "    case " . ucfirst($name) .": {\n");
+        push(@implContent, "        ExceptionCode ec = 0;\n");
+        push(@implContent, "        KJS::JSValue* result = " . NativeToJSValue($attribute->signature, "impl->$name(ec)") . ";\n");
+        push(@implContent, "        setDOMException(exec, ec);\n");
+        push(@implContent, "        return result;\n");
+        push(@implContent, "    }\n");
       }
     }
+
+    push(@implContent, "    }\n    return 0;\n}\n\n");
     
+    # Check if we have any writable attributes
+    my $hasReadWriteProperties = 0;
+    foreach my $attribute (@{$dataNode->attributes}) {
+      $hasReadWriteProperties = 1 if $attribute->type !~ /^readonly/;
+    }
     if ($hasReadWriteProperties) {
       push(@implContent, "void ${className}::put(ExecState* exec, const Identifier& propertyName, JSValue* value, int attr)\n");
       push(@implContent, "{\n    lookupPut<$className, $parentClassName>" .
@@ -612,51 +611,38 @@ sub GenerateImplementation
                          
       push(@implContent, "void ${className}::putValueProperty(ExecState* exec, int token, JSValue* value, int /*attr*/)\n");
       push(@implContent, "{\n");
-      if ($raisesExceptions) {
-        push(@implContent, "    DOMExceptionTranslator exception(exec);\n");
-      }
       push(@implContent, "    $implClassName* impl = static_cast<$implClassName*>(${className}::impl());\n\n");
       push(@implContent, "    switch (token) {\n");
       
       foreach my $attribute (@{$dataNode->attributes}) {
-        if($attribute->type !~ /^readonly\ attribute$/) {
+        if ($attribute->type !~ /^readonly/) {
           my $name = $attribute->signature->name;
-          push(@implContent, "    case " . ucfirst($name) .":\n");
+          push(@implContent, "    case " . ucfirst($name) .": {\n");
+          push(@implContent, "        ExceptionCode ec = 0;\n") if @{$attribute->setterExceptions};
           push(@implContent, "        impl->set" . ucfirst($name) . "(" . JSValueToNative($attribute->signature, "value"));
-          if (@{$attribute->raisesExceptions}) {
-            push(@implContent, ", exception")
-          }
-          push(@implContent, ");\n        break;\n");
+          push(@implContent, ", ec") if @{$attribute->setterExceptions};
+          push(@implContent, ");\n");
+          push(@implContent, "        setDOMException(exec, ec);\n") if @{$attribute->setterExceptions};
+          push(@implContent, "    }\n");
+          push(@implContent, "        break;\n");
         }
       }
       push(@implContent, "    }\n}\n\n");      
     }
   }
 
-    
   if ($numConstants ne 0) {
     push(@implContent, "JSValue* ${className}::getConstructor(ExecState* exec)\n{\n");
-    push(@implContent, "    return cacheGlobalObject<${className}Constructor>(exec, \"[[${className}.constructor]]\");\n");
+    push(@implContent, "    return cacheGlobalObject<${className}Constructor>(exec, \"[[${interfaceName}.constructor]]\");\n");
     push(@implContent, "}\n");
   }    
   
   # Functions
   if($numFunctions ne 0) {
-    my $raisesExceptions = 0;
-    # Check if any of the functions throw exceptions
-    foreach my $function (@{$dataNode->functions}) {
-      if (@{$function->raisesExceptions}) {
-        $raisesExceptions = 1;
-      }
-    }
     push(@implContent, "JSValue* ${className}ProtoFunc::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)\n{\n");
     push(@implContent, "    if (!thisObj->inherits(&${className}::info))\n");
     push(@implContent, "      return throwError(exec, TypeError);\n\n");
 
-    if ($raisesExceptions) {
-      push(@implContent, "    DOMExceptionTranslator exception(exec);\n");
-    }
-    
     push(@implContent, "    $implClassName* impl = static_cast<$implClassName*>(static_cast<$className*>(thisObj)->impl());\n\n");
     
     
@@ -680,33 +666,36 @@ sub GenerateImplementation
           $implIncludes{"ExceptionCode.h"} = 1;
           push(@implContent, "        if ($name < 0) {\n");
           push(@implContent, "            setDOMException(exec, INDEX_SIZE_ERR);\n");
-          push(@implContent, "            break;\n        }\n");          
+          push(@implContent, "            return jsUndefined();\n        }\n");          
         }
-        $paramIndex++;
         
-        if ($paramIndex < $numParameters) {
-          $functionString .= "$name, ";
-        } else {
-          $functionString .= "$name";
-        }         
+        $functionString .= ", " if $paramIndex;
+        $functionString .= $name;
+
+        $paramIndex++;
       }
   
       if (@{$function->raisesExceptions}) {
-        $functionString .= ", exception)";
-      } else {
-        $functionString .= ")";
+        $functionString .= ", " if $paramIndex;
+        $functionString .= "ec";
+        push(@implContent, "        ExceptionCode ec = 0;\n");
       }
+      $functionString .= ")";
       
       if ($function->signature->type eq "void") {
-        push(@implContent, "\n        $functionString;\n        return jsUndefined();\n");
+        push(@implContent, "\n        $functionString;\n");
+        push(@implContent, "        setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
+        push(@implContent, "        return jsUndefined();\n");
       } else {
-        push(@implContent, "\n        return " . NativeToJSValue($function->signature, $functionString) . ";\n");
+        push(@implContent, "\n        KJS::JSValue* result = " . NativeToJSValue($function->signature, $functionString) . ";\n");
+        push(@implContent, "        setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
+        push(@implContent, "        return result;\n");
       }
-      
+
       push(@implContent, "    }\n");
     }
     push(@implContent, "    }\n");
-    push(@implContent, "    return jsUndefined();\n");
+    push(@implContent, "    return 0;\n");
     push(@implContent, "}\n")
   }
   
@@ -714,6 +703,10 @@ sub GenerateImplementation
     push(@implContent, "KJS::JSValue* toJS(KJS::ExecState* exec, $implClassName* obj)\n");
     push(@implContent, "{\n");
     push(@implContent, "    return KJS::cacheDOMObject<$implClassName, $className>(exec, obj);\n");
+    push(@implContent, "}\n");
+    push(@implContent, "$implClassName* to${interfaceName}(KJS::JSValue* val)\n");
+    push(@implContent, "{\n");
+    push(@implContent, "    return val->isObject(&${className}::info) ? static_cast<$className*>(val)->impl() : 0;\n");
     push(@implContent, "}\n");
   }
 
@@ -748,9 +741,13 @@ sub GetNativeType
     return "String";
   } elsif ($type eq "views::AbstractView") {
     return "AbstractView*";
-  } elsif ($type eq "Node" or $type eq "Attr" or
-           $type eq "DocumentType") {
+  } elsif ($type eq "Node" or
+           $type eq "Attr" or
+           $type eq "DocumentType" or
+           $type eq "Range") {
     return "${type}*";
+  } elsif ($type eq "CompareHow") {
+    return "Range::CompareHow";
   } else {
     die "Don't know how the native type of $type";
   }
@@ -769,6 +766,8 @@ sub JSValueToNative
     return "$value->toInt32(exec)";
   } elsif ($type eq "unsigned short") {
     return "$value->toInt32(exec)";
+  } elsif ($type eq "CompareHow") {
+    return "static_cast<Range::CompareHow>($value->toInt32(exec))";
   } elsif ($type eq "float") {
     return "$value->toNumber(exec)";
   } elsif ($type eq "AtomicString") {
@@ -791,6 +790,9 @@ sub JSValueToNative
   } elsif ($type eq "DocumentType") {
       $implIncludes{"kjs_dom.h"} = 1;
       return "toDocumentType($value)";
+  } elsif ($type eq "Range") {
+      $implIncludes{"JSRange.h"} = 1;
+      return "toRange($value)";
   } else {
     die "Don't know how to convert a JS value of type $type."
   }
@@ -805,8 +807,11 @@ sub NativeToJSValue
   
   if ($type eq "boolean") {
     return "jsBoolean($value)";
-  } elsif ($type eq "long" or $type eq "unsigned long" or 
-           $type eq "unsigned short" or $type eq "float") {
+  } elsif ($type eq "long" or
+           $type eq "unsigned long" or 
+           $type eq "short" or 
+           $type eq "unsigned short" or
+           $type eq "float") {
     return "jsNumber($value)";
   } elsif ($type eq "DOMString") {
     my $conv = $signature->extendedAttributes->{"ConvertNullStringTo"};
@@ -819,10 +824,14 @@ sub NativeToJSValue
     } else {
       return "jsString($value)";
     }
-  } elsif ($type eq "Node" or $type eq "Text" or
-           $type eq "DocumentType" or $type eq "Document" or
-           $type eq "HTMLDocument" or $type eq "Element" or
-           $type eq "Attr") {
+  } elsif ($type eq "Node" or
+           $type eq "Text" or
+           $type eq "DocumentType" or
+           $type eq "Document" or
+           $type eq "HTMLDocument" or
+           $type eq "Element" or
+           $type eq "Attr" or
+           $type eq "DocumentFragment") {
     # Add necessary includes
     $implIncludes{"kjs_dom.h"} = 1;
     $implIncludes{"Node.h"} = 1;
@@ -847,6 +856,9 @@ sub NativeToJSValue
     return "toJS(exec, $value)";
   } elsif ($type eq "CanvasGradient") {
     $implIncludes{"kjs_html.h"} = 1;
+    return "toJS(exec, $value)";
+  } elsif ($type eq "Range") {
+    $implIncludes{"JSRange.h"} = 1;
     return "toJS(exec, $value)";
   } else {
     die "Don't know how to convert a value of type $type to a JS Value";
