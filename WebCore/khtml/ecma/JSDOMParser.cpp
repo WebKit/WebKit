@@ -22,7 +22,7 @@
 #include "JSDOMParser.h"
 #include "JSDOMParser.lut.h"
 
-#include "html/HTMLDocument.h"
+#include "HTMLDocument.h"
 #include "DOMImplementation.h"
 
 using namespace WebCore;

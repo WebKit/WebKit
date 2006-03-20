@@ -39,7 +39,7 @@
 #include "CSSPropertyNames.h"
 #include "dom2_eventsimpl.h"
 #include "html_imageimpl.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "render_button.h"
 #include "render_form.h"
 #include "RenderTheme.h"

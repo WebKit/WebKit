@@ -38,7 +38,7 @@
 #include "csshelper.h"
 #include "cssstyleselector.h"
 #include "HTMLDocument.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "kjs_proxy.h"
 
 namespace WebCore {

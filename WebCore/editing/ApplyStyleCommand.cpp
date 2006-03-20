@@ -39,7 +39,7 @@
 #include "Range.h"
 #include "HTMLInterchange.h"
 #include "htmlediting.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "RenderObject.h"
 #include <kxmlcore/Assertions.h>
 

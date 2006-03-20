@@ -33,7 +33,7 @@
 #include "Range.h"
 #include "Position.h"
 #include "htmlediting.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "render_line.h"
 #include "RenderObject.h"
 #include "VisiblePosition.h"

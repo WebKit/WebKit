@@ -32,7 +32,7 @@
 #include "CanvasPattern.h"
 #include "cssparser.h"
 #include "HTMLCanvasElement.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "RenderHTMLCanvas.h"
 
 namespace WebCore {

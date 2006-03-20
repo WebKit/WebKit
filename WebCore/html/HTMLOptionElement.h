@@ -26,7 +26,7 @@
 #define HTML_HTMLOptionElementImpl_H
 
 #include "HTMLGenericFormElement.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 
 namespace WebCore {
     class RenderSelect;

@@ -31,7 +31,7 @@
 #include "dom2_eventsimpl.h"
 #include "HTMLDocument.h"
 #include "HTMLInputElement.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "RenderObject.h"
 #include "RenderTextField.h"
 

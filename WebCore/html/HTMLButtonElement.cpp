@@ -34,7 +34,7 @@
 #include "render_button.h"
 
 #include "EventNames.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 
 namespace WebCore {
 

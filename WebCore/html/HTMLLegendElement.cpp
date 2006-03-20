@@ -28,7 +28,7 @@
 #include "HTMLLegendElement.h"
 
 #include "rendering/render_form.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 
 namespace WebCore {
 

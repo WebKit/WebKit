@@ -33,7 +33,7 @@
 #include "Document.h"
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 
 namespace WebCore {
 

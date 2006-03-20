@@ -26,7 +26,7 @@
 #include "NameNodeList.h"
 #include "dom_elementimpl.h"
 
-#include "htmlnames.h"
+#include "HTMLNames.h"
 
 using namespace WebCore;
 

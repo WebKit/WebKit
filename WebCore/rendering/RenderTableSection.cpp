@@ -31,7 +31,7 @@
 #include "RenderTableRow.h"
 #include "RenderTableCol.h"
 #include "Document.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include <qtextstream.h>
 
 namespace WebCore {

@@ -26,7 +26,7 @@
 #include "HTMLDocument.h"
 #include "HTMLElement.h"
 #include <kxmlcore/Vector.h>
-#include "htmlnames.h"
+#include "HTMLNames.h"
 
 namespace WebCore {
 

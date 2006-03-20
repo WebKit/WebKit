@@ -53,7 +53,7 @@
 
 #include "PlatformString.h"
 #include "AtomicString.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 
 #include <qtextstream.h>
 #include "FloatSize.h"

@@ -29,7 +29,7 @@
 #include "GraphicsContext.h"
 #include "InlineTextBox.h"
 #include "RenderBlock.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "RenderArena.h"
 #include "RenderCanvas.h"
 #include "RenderInline.h"

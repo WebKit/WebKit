@@ -25,7 +25,7 @@
 #include "Document.h"
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "render_style.h"
 
 // The methods in this file are shared by all themes on every platform.

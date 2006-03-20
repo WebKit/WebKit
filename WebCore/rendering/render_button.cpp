@@ -27,7 +27,7 @@
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
 #include "RenderText.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 
 namespace WebCore {
 

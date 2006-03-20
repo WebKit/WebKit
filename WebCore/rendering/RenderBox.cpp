@@ -33,7 +33,7 @@
 #include "GraphicsContext.h"
 #include "HTMLElement.h"
 #include "RenderTableCell.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "RenderArena.h"
 #include "RenderCanvas.h"
 #include "RenderFlexibleBox.h"

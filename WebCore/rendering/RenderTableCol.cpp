@@ -28,7 +28,7 @@
 #include "RenderTableCol.h"
 
 #include "html_tableimpl.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include <qtextstream.h>
 
 namespace WebCore {

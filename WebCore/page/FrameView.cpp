@@ -42,7 +42,7 @@
 #include "dom2_eventsimpl.h"
 #include "HTMLDocument.h"
 #include "html_inlineimpl.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "khtml_settings.h"
 #include "RenderArena.h"
 #include "RenderCanvas.h"

@@ -41,7 +41,7 @@
 #include "CSSValueKeywords.h"
 #include "dom2_eventsimpl.h"
 #include "HTMLDocument.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "loader.h"
 #include "render_frames.h"
 

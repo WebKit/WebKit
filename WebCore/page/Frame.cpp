@@ -64,7 +64,7 @@
 #include "html_imageimpl.h"
 #include "html_objectimpl.h"
 #include "htmlediting.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "khtml_settings.h"
 #include "kjs_proxy.h"
 #include "kjs_window.h"

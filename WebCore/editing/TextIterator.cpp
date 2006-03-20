@@ -27,7 +27,7 @@
 #include "config.h"
 #include "TextIterator.h"
 
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "InlineTextBox.h"
 #include "Position.h"
 #include "Range.h"

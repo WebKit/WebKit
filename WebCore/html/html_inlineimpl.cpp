@@ -24,7 +24,7 @@
 // -------------------------------------------------------------------------
 
 #include "config.h"
-#include "html/html_inlineimpl.h"
+#include "html_inlineimpl.h"
 
 #include "EventNames.h"
 #include "Frame.h"
@@ -36,7 +36,7 @@
 #include "dom2_eventsimpl.h"
 #include "HTMLDocument.h"
 #include "html_imageimpl.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "RenderFlow.h"
 #include "RenderImage.h"
 #include "rendering/RenderBR.h"

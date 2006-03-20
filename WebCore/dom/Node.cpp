@@ -34,7 +34,7 @@
 #include "FrameView.h"
 #include "Text.h"
 #include "htmlediting.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "kjs_binding.h"
 #include "RenderObject.h"
 #include <kxmlcore/Assertions.h>

@@ -27,14 +27,14 @@ fi
 
 cd "$WebCoreSourceRoot"
 
-if [ khtml/html/HTMLEntityNames.gperf -nt "$DerivedSourcesDir/HTMLEntityNames.c" ]; then
+if [ html/HTMLEntityNames.gperf -nt "$DerivedSourcesDir/HTMLEntityNames.c" ]; then
   echo "Generating entities table..."
-  gperf -a -L ANSI-C -C -G -c -o -t -k '*' -NfindEntity -D -s 2 khtml/html/HTMLEntityNames.gperf > "$DerivedSourcesDir/HTMLEntityNames.c"
+  gperf -a -L ANSI-C -C -G -c -o -t -k '*' -NfindEntity -D -s 2 html/HTMLEntityNames.gperf > "$DerivedSourcesDir/HTMLEntityNames.c"
 fi
 
-if [ khtml/html/DocTypeStrings.gperf -nt "$DerivedSourcesDir/DocTypeStrings.cpp" ]; then
+if [ html/DocTypeStrings.gperf -nt "$DerivedSourcesDir/DocTypeStrings.cpp" ]; then
   echo "Generating doctype modes table..."
-  gperf -CEot -L ANSI-C -k '*' -N findDoctypeEntry -F ,PubIDInfo::eAlmostStandards,PubIDInfo::eAlmostStandards khtml/html/DocTypeStrings.gperf > "$DerivedSourcesDir/DocTypeStrings.cpp"
+  gperf -CEot -L ANSI-C -k '*' -N findDoctypeEntry -F ,PubIDInfo::eAlmostStandards,PubIDInfo::eAlmostStandards html/DocTypeStrings.gperf > "$DerivedSourcesDir/DocTypeStrings.cpp"
 fi
 
 # Generate the CSS tokenizer using flex

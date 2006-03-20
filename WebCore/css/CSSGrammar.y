@@ -29,7 +29,7 @@
 #include "css_valueimpl.h"
 #include "cssparser.h"
 #include "PlatformString.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>

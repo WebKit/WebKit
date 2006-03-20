@@ -45,7 +45,7 @@
 #include "dom2_eventsimpl.h"
 #include "dom_elementimpl.h"
 #include "Position.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "RenderArena.h"
 #include "RenderCanvas.h"
 #include "RenderFlexibleBox.h"

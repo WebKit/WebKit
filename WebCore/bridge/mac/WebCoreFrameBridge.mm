@@ -64,7 +64,7 @@
 #import "HTMLDocument.h"
 #import "html_imageimpl.h"
 #import "htmlediting.h"
-#import "htmlnames.h"
+#import "HTMLNames.h"
 #import "kjs_proxy.h"
 #import "kjs_window.h"
 #import "loader.h"

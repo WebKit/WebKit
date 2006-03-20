@@ -1,3 +1,148 @@
+2006-03-19  Darin Adler  <darin@apple.com>
+
+        Rubber stamped by Eric.
+
+        - moved khtml/html files all into html directory
+
+        * WebCore.vcproj/WebCore/WebCore.vcproj: Updated for new paths.
+        * WebCore.vcproj/WebCore/build-generated-files.sh: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * khtml/html: Removed.
+
+        * html/DocTypeStrings.gperf: Moved.
+        * html/FormDataList.cpp: Ditto.
+        * html/FormDataList.h: Ditto.
+        * html/HTMLBaseFontElement.cpp: Ditto.
+        * html/HTMLBaseFontElement.h: Ditto.
+        * html/HTMLButtonElement.cpp: Ditto.
+        * html/HTMLButtonElement.h: Ditto.
+        * html/HTMLCanvasElement.cpp: Ditto.
+        * html/HTMLCanvasElement.h: Ditto.
+        * html/HTMLCollection.cpp: Ditto.
+        * html/HTMLCollection.h: Ditto.
+        * html/HTMLDocument.cpp: Ditto.
+        * html/HTMLDocument.h: Ditto.
+        * html/HTMLElement.cpp: Ditto.
+        * html/HTMLElement.h: Ditto.
+        * html/HTMLElementFactory.cpp: Ditto.
+        * html/HTMLElementFactory.h: Ditto.
+        * html/HTMLEntityNames.gperf: Ditto.
+        * html/HTMLFieldSetElement.cpp: Ditto.
+        * html/HTMLFieldSetElement.h: Ditto.
+        * html/HTMLFormCollection.cpp: Ditto.
+        * html/HTMLFormCollection.h: Ditto.
+        * html/HTMLFormElement.cpp: Ditto.
+        * html/HTMLFormElement.h: Ditto.
+        * html/HTMLGenericFormElement.cpp: Ditto.
+        * html/HTMLGenericFormElement.h: Ditto.
+        * html/HTMLInputElement.cpp: Ditto.
+        * html/HTMLInputElement.h: Ditto.
+        * html/HTMLIsIndexElement.cpp: Ditto.
+        * html/HTMLIsIndexElement.h: Ditto.
+        * html/HTMLKeygenElement.cpp: Ditto.
+        * html/HTMLKeygenElement.h: Ditto.
+        * html/HTMLLabelElement.cpp: Ditto.
+        * html/HTMLLabelElement.h: Ditto.
+        * html/HTMLLegendElement.cpp: Ditto.
+        * html/HTMLLegendElement.h: Ditto.
+        * html/HTMLNameCollection.cpp: Ditto.
+        * html/HTMLNameCollection.h: Ditto.
+        * html/HTMLNames.cpp: Ditto.
+        * html/HTMLNames.h: Ditto.
+        * html/HTMLOptGroupElement.cpp: Ditto.
+        * html/HTMLOptGroupElement.h: Ditto.
+        * html/HTMLOptionElement.cpp: Ditto.
+        * html/HTMLOptionElement.h: Ditto.
+        * html/HTMLOptionsCollection.cpp: Ditto.
+        * html/HTMLOptionsCollection.h: Ditto.
+        * html/HTMLParser.cpp: Ditto.
+        * html/HTMLParser.h: Ditto.
+        * html/HTMLSelectElement.cpp: Ditto.
+        * html/HTMLSelectElement.h: Ditto.
+        * html/HTMLTextAreaElement.cpp: Ditto.
+        * html/HTMLTextAreaElement.h: Ditto.
+        * html/HTMLTextFieldInnerElement.cpp: Ditto.
+        * html/HTMLTextFieldInnerElement.h: Ditto.
+        * html/HTMLTokenizer.cpp: Ditto.
+        * html/HTMLTokenizer.h: Ditto.
+        * html/html_baseimpl.cpp: Ditto.
+        * html/html_baseimpl.h: Ditto.
+        * html/html_blockimpl.cpp: Ditto.
+        * html/html_blockimpl.h: Ditto.
+        * html/html_headimpl.cpp: Ditto.
+        * html/html_headimpl.h: Ditto.
+        * html/html_imageimpl.cpp: Ditto.
+        * html/html_imageimpl.h: Ditto.
+        * html/html_inlineimpl.cpp: Ditto.
+        * html/html_inlineimpl.h: Ditto.
+        * html/html_listimpl.cpp: Ditto.
+        * html/html_listimpl.h: Ditto.
+        * html/html_objectimpl.cpp: Ditto.
+        * html/html_objectimpl.h: Ditto.
+        * html/html_tableimpl.cpp: Ditto.
+        * html/html_tableimpl.h: Ditto.
+
+        * bindings/objc/DOM.mm:
+        * bridge/mac/WebCoreEncodings.mm:
+        * bridge/mac/WebCoreFrameBridge.mm:
+        * css/CSSGrammar.y:
+        * css/cssstyleselector.cpp:
+        * dom/Document.cpp:
+        * dom/EventTargetNode.cpp:
+        * dom/NameNodeList.cpp:
+        * dom/Node.cpp:
+        * dom/Position.cpp:
+        * dom/dom_elementimpl.cpp:
+        * dom/xml_tokenizer.cpp:
+        * editing/ApplyStyleCommand.cpp:
+        * editing/BreakBlockquoteCommand.cpp:
+        * editing/CompositeEditCommand.cpp:
+        * editing/DeleteSelectionCommand.cpp:
+        * editing/InsertLineBreakCommand.cpp:
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        * editing/JSEditor.cpp:
+        * editing/ReplaceSelectionCommand.cpp:
+        * editing/TextIterator.cpp:
+        * editing/VisiblePosition.cpp:
+        * editing/htmlediting.cpp:
+        * editing/markup.cpp:
+        * editing/visible_units.cpp:
+        * html/CanvasRenderingContext2D.cpp:
+        * kcanvas/KCanvasTreeDebug.cpp:
+        * khtml/ecma/JSDOMParser.cpp:
+        * khtml/ecma/kjs_css.cpp:
+        * khtml/ecma/kjs_dom.cpp:
+        * khtml/ecma/kjs_events.cpp:
+        * khtml/misc/decoder.cpp:
+        * khtml/xsl/XSLStyleSheet.cpp:
+        * khtml/xsl/XSLTProcessor.cpp:
+        * ksvg2/misc/SVGImageLoader.h:
+        * ksvg2/svg/SVGElement.cpp:
+        * ksvg2/svg/SVGSVGElement.cpp:
+        * kwq/WebCoreAXObject.mm:
+        * page/Frame.cpp:
+        * page/FrameView.cpp:
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBox.cpp:
+        * rendering/RenderFlow.cpp:
+        * rendering/RenderHTMLCanvas.cpp:
+        * rendering/RenderImage.cpp:
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderObject.cpp:
+        * rendering/RenderTable.cpp:
+        * rendering/RenderTableCell.cpp:
+        * rendering/RenderTableCol.cpp:
+        * rendering/RenderTableRow.cpp:
+        * rendering/RenderTableSection.cpp:
+        * rendering/RenderTextField.cpp:
+        * rendering/RenderTheme.cpp:
+        * rendering/render_applet.cpp:
+        * rendering/render_button.cpp:
+        * rendering/render_frames.cpp:
+        * rendering/render_list.cpp:
+        Updated includes.
+
 2006-03-17  Eric Seidel  <eseidel@apple.com>
 
         Reviewed by darin.

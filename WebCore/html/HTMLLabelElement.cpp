@@ -29,7 +29,7 @@
 #include "HTMLFormElement.h"
 
 #include "rendering/render_form.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "EventNames.h"
 #include "Document.h"
 

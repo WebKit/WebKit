@@ -33,7 +33,7 @@
 #include "HTMLFormElement.h"
 #include "render_replaced.h"
 #include "RenderTheme.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 
 namespace WebCore {
 

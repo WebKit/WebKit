@@ -42,7 +42,7 @@
 #include "Position.h"
 #include "HTMLInterchange.h"
 #include "htmlediting.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "RenderObject.h"
 #include "SelectionController.h"
 #include "visible_units.h"

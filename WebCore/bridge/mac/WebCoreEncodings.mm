@@ -28,7 +28,7 @@
 
 #import "decoder.h"
 
-#include "htmlnames.h"
+#include "HTMLNames.h"
 
 @implementation WebCoreEncodings
 

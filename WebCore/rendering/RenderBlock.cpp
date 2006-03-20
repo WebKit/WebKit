@@ -33,7 +33,7 @@
 #include "RenderTextFragment.h"
 #include "SelectionController.h"
 #include "VisiblePosition.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "RenderCanvas.h"
 #include "RenderTheme.h"
 #include <qtextstream.h>

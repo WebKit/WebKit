@@ -34,7 +34,7 @@
 #include "Range.h"
 #include "dom_elementimpl.h"
 #include "htmlediting.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "visible_units.h"
 #include <kxmlcore/Assertions.h>
 

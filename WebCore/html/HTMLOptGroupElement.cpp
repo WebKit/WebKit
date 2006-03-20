@@ -28,7 +28,7 @@
 #include "HTMLOptGroupElement.h"
 
 #include "HTMLSelectElement.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 
 namespace WebCore {
 

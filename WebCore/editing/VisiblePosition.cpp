@@ -27,7 +27,7 @@
 #include "VisiblePosition.h"
 #include "visible_units.h"
 #include "htmlediting.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "render_line.h"
 #include "RenderObject.h"
 #include "InlineTextBox.h"

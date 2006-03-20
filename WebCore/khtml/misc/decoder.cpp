@@ -24,7 +24,7 @@
 #include "config.h"
 #include "decoder.h"
 
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include <ctype.h>
 #include <kxmlcore/Assertions.h>
 #include <qregexp.h>

@@ -33,7 +33,7 @@
 #include "css_valueimpl.h"
 #include "CSSPropertyNames.h"
 #include "htmlediting.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "html_imageimpl.h"
 #include "markup.h"
 #include "ReplaceSelectionCommand.h"

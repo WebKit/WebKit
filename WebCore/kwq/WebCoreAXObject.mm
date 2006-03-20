@@ -63,7 +63,7 @@
 #import "visible_units.h"
 #import "DOMInternal.h"
 #import "EventNames.h"
-#import "htmlnames.h"
+#import "HTMLNames.h"
 
 using namespace WebCore;
 using namespace EventNames;

@@ -35,7 +35,7 @@
 #include "Text.h"
 #include "htmlediting.h"
 #include "HTMLElement.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "RenderObject.h"
 #include "VisiblePosition.h"
 #include "visible_units.h"

@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\iconv\include&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\libxml\include&quot;;&quot;$(SolutionDir)\..\..\libxslt\include&quot;;&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\css&quot;;&quot;$(SolutionDir)\..\khtml\dom&quot;;&quot;$(SolutionDir)\..\khtml\ecma&quot;;&quot;$(SolutionDir)\..\editing&quot;;&quot;$(SolutionDir)\..\khtml\html&quot;;&quot;$(SolutionDir)\..\khtml\misc&quot;;&quot;$(SolutionDir)\..\rendering&quot;;&quot;$(SolutionDir)\..\bindings\js&quot;;&quot;$(SolutionDir)\..\dom&quot;;&quot;$(SolutionDir)\..\khtml\xsl&quot;;&quot;$(SolutionDir)\..\html&quot;;&quot;$(SolutionDir)\..\khtml&quot;;&quot;$(SolutionDir)\..\kwq&quot;;&quot;$(SolutionDir)\..\bridge&quot;;&quot;$(SolutionDir)\..\bridge\win&quot;;&quot;$(SolutionDir)\..\loader&quot;;&quot;$(SolutionDir)\..\page&quot;;&quot;$(SolutionDir)\..\platform&quot;;&quot;$(SolutionDir)\..\platform\cairo&quot;;&quot;$(SolutionDir)\..\platform\image-decoders&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\gif&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\png&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\zlib&quot;;&quot;$(SolutionDir)\..\xml&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\kjs&quot;;&quot;$(SolutionDir)..\platform\cairo\pixman\src&quot;;&quot;$(SolutionDir)\..\platform\cairo\cairo\src&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\iconv\include&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\libxml\include&quot;;&quot;$(SolutionDir)\..\..\libxslt\include&quot;;&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\css&quot;;&quot;$(SolutionDir)\..\khtml\dom&quot;;&quot;$(SolutionDir)\..\khtml\ecma&quot;;&quot;$(SolutionDir)\..\editing&quot;;&quot;$(SolutionDir)\..\khtml\misc&quot;;&quot;$(SolutionDir)\..\rendering&quot;;&quot;$(SolutionDir)\..\bindings\js&quot;;&quot;$(SolutionDir)\..\dom&quot;;&quot;$(SolutionDir)\..\khtml\xsl&quot;;&quot;$(SolutionDir)\..\html&quot;;&quot;$(SolutionDir)\..\khtml&quot;;&quot;$(SolutionDir)\..\kwq&quot;;&quot;$(SolutionDir)\..\bridge&quot;;&quot;$(SolutionDir)\..\bridge\win&quot;;&quot;$(SolutionDir)\..\loader&quot;;&quot;$(SolutionDir)\..\page&quot;;&quot;$(SolutionDir)\..\platform&quot;;&quot;$(SolutionDir)\..\platform\cairo&quot;;&quot;$(SolutionDir)\..\platform\image-decoders&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\gif&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\png&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\zlib&quot;;&quot;$(SolutionDir)\..\xml&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\kjs&quot;;&quot;$(SolutionDir)..\platform\cairo\pixman\src&quot;;&quot;$(SolutionDir)\..\platform\cairo\cairo\src&quot;"
 				PreprocessorDefinitions="WIN32; KHTML_NO_XBL; KHTML_XSLT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -106,7 +106,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\iconv\include&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\libxml\include&quot;;&quot;$(SolutionDir)\..\..\libxslt\include&quot;;&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\css&quot;;&quot;$(SolutionDir)\..\khtml\dom&quot;;&quot;$(SolutionDir)\..\khtml\ecma&quot;;&quot;$(SolutionDir)\..\editing&quot;;&quot;$(SolutionDir)\..\khtml\html&quot;;&quot;$(SolutionDir)\..\khtml\misc&quot;;&quot;$(SolutionDir)\..\rendering&quot;;&quot;$(SolutionDir)\..\bindings\js&quot;;&quot;$(SolutionDir)\..\dom&quot;;&quot;$(SolutionDir)\..\khtml\xsl&quot;;&quot;$(SolutionDir)\..\html&quot;;&quot;$(SolutionDir)\..\khtml&quot;;&quot;$(SolutionDir)\..\kwq&quot;;&quot;$(SolutionDir)\..\bridge&quot;;&quot;$(SolutionDir)\..\bridge\win&quot;;&quot;$(SolutionDir)\..\loader&quot;;&quot;$(SolutionDir)\..\page&quot;;&quot;$(SolutionDir)\..\platform&quot;;&quot;$(SolutionDir)\..\platform\cairo&quot;;&quot;$(SolutionDir)\..\platform\image-decoders&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\gif&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\png&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\zlib&quot;;&quot;$(SolutionDir)\..\xml&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\kjs&quot;;&quot;$(SolutionDir)..\platform\cairo\pixman\src&quot;;&quot;$(SolutionDir)\..\platform\cairo\cairo\src&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\iconv\include&quot;;&quot;$(SolutionDir)\..\..\icu\include&quot;;&quot;$(SolutionDir)\..\..\libxml\include&quot;;&quot;$(SolutionDir)\..\..\libxslt\include&quot;;&quot;$(SolutionDir)\..\&quot;;&quot;$(SolutionDir)\..\css&quot;;&quot;$(SolutionDir)\..\khtml\dom&quot;;&quot;$(SolutionDir)\..\khtml\ecma&quot;;&quot;$(SolutionDir)\..\editing&quot;;&quot;$(SolutionDir)\..\khtml\misc&quot;;&quot;$(SolutionDir)\..\rendering&quot;;&quot;$(SolutionDir)\..\bindings\js&quot;;&quot;$(SolutionDir)\..\dom&quot;;&quot;$(SolutionDir)\..\khtml\xsl&quot;;&quot;$(SolutionDir)\..\html&quot;;&quot;$(SolutionDir)\..\khtml&quot;;&quot;$(SolutionDir)\..\kwq&quot;;&quot;$(SolutionDir)\..\bridge&quot;;&quot;$(SolutionDir)\..\bridge\win&quot;;&quot;$(SolutionDir)\..\loader&quot;;&quot;$(SolutionDir)\..\page&quot;;&quot;$(SolutionDir)\..\platform&quot;;&quot;$(SolutionDir)\..\platform\cairo&quot;;&quot;$(SolutionDir)\..\platform\image-decoders&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\gif&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\png&quot;;&quot;$(SolutionDir)\..\platform\image-decoders\zlib&quot;;&quot;$(SolutionDir)\..\xml&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\os-win32&quot;;&quot;$(SolutionDir)\..\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\WebCore.intermediate\$(ConfigurationName)\WebCore.intermediate\DerivedSources&quot;;&quot;$(SolutionDir)\..\..\JavaScriptCore\kjs&quot;;&quot;$(SolutionDir)..\platform\cairo\pixman\src&quot;;&quot;$(SolutionDir)\..\platform\cairo\cairo\src&quot;"
 				PreprocessorDefinitions="WIN32; KHTML_NO_XBL; KHTML_XSLT"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -2831,283 +2831,283 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\FormDataList.cpp"
+				RelativePath="..\..\html\FormDataList.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\FormDataList.h"
+				RelativePath="..\..\html\FormDataList.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\html_baseimpl.cpp"
+				RelativePath="..\..\html\html_baseimpl.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\html_baseimpl.h"
+				RelativePath="..\..\html\html_baseimpl.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\html_blockimpl.cpp"
+				RelativePath="..\..\html\html_blockimpl.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\html_blockimpl.h"
+				RelativePath="..\..\html\html_blockimpl.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLCanvasElement.cpp"
+				RelativePath="..\..\html\HTMLCanvasElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLCanvasElement.h"
+				RelativePath="..\..\html\HTMLCanvasElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLDocument.cpp"
+				RelativePath="..\..\html\HTMLDocument.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLDocument.h"
+				RelativePath="..\..\html\HTMLDocument.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\html_headimpl.cpp"
+				RelativePath="..\..\html\html_headimpl.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\html_headimpl.h"
+				RelativePath="..\..\html\html_headimpl.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\html_imageimpl.cpp"
+				RelativePath="..\..\html\html_imageimpl.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\html_imageimpl.h"
+				RelativePath="..\..\html\html_imageimpl.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\html_inlineimpl.cpp"
+				RelativePath="..\..\html\html_inlineimpl.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\html_inlineimpl.h"
+				RelativePath="..\..\html\html_inlineimpl.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\html_listimpl.cpp"
+				RelativePath="..\..\html\html_listimpl.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\html_listimpl.h"
+				RelativePath="..\..\html\html_listimpl.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\html_objectimpl.cpp"
+				RelativePath="..\..\html\html_objectimpl.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\html_objectimpl.h"
+				RelativePath="..\..\html\html_objectimpl.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\html_tableimpl.cpp"
+				RelativePath="..\..\html\html_tableimpl.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\html_tableimpl.h"
+				RelativePath="..\..\html\html_tableimpl.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLBaseFontElement.cpp"
+				RelativePath="..\..\html\HTMLBaseFontElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLBaseFontElement.h"
+				RelativePath="..\..\html\HTMLBaseFontElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLButtonElement.cpp"
+				RelativePath="..\..\html\HTMLButtonElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLButtonElement.h"
+				RelativePath="..\..\html\HTMLButtonElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLCollection.cpp"
+				RelativePath="..\..\html\HTMLCollection.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLCollection.h"
+				RelativePath="..\..\html\HTMLCollection.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLElement.cpp"
+				RelativePath="..\..\html\HTMLElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLElement.h"
+				RelativePath="..\..\html\HTMLElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLElementFactory.cpp"
+				RelativePath="..\..\html\HTMLElementFactory.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLElementFactory.h"
+				RelativePath="..\..\html\HTMLElementFactory.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLFieldSetElement.cpp"
+				RelativePath="..\..\html\HTMLFieldSetElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLFieldSetElement.h"
+				RelativePath="..\..\html\HTMLFieldSetElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLFormCollection.cpp"
+				RelativePath="..\..\html\HTMLFormCollection.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLFormCollection.h"
+				RelativePath="..\..\html\HTMLFormCollection.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLFormElement.cpp"
+				RelativePath="..\..\html\HTMLFormElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLFormElement.h"
+				RelativePath="..\..\html\HTMLFormElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLGenericFormElement.cpp"
+				RelativePath="..\..\html\HTMLGenericFormElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLGenericFormElement.h"
+				RelativePath="..\..\html\HTMLGenericFormElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLInputElement.cpp"
+				RelativePath="..\..\html\HTMLInputElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLInputElement.h"
+				RelativePath="..\..\html\HTMLInputElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLIsIndexElement.cpp"
+				RelativePath="..\..\html\HTMLIsIndexElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLIsIndexElement.h"
+				RelativePath="..\..\html\HTMLIsIndexElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLKeygenElement.cpp"
+				RelativePath="..\..\html\HTMLKeygenElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLKeygenElement.h"
+				RelativePath="..\..\html\HTMLKeygenElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLLabelElement.cpp"
+				RelativePath="..\..\html\HTMLLabelElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLLabelElement.h"
+				RelativePath="..\..\html\HTMLLabelElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLLegendElement.cpp"
+				RelativePath="..\..\html\HTMLLegendElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLLegendElement.h"
+				RelativePath="..\..\html\HTMLLegendElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLNameCollection.cpp"
+				RelativePath="..\..\html\HTMLNameCollection.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLNameCollection.h"
+				RelativePath="..\..\html\HTMLNameCollection.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\htmlnames.cpp"
+				RelativePath="..\..\html\HTMLNames.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\htmlnames.h"
+				RelativePath="..\..\html\HTMLNames.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLOptGroupElement.cpp"
+				RelativePath="..\..\html\HTMLOptGroupElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLOptGroupElement.h"
+				RelativePath="..\..\html\HTMLOptGroupElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLOptionElement.cpp"
+				RelativePath="..\..\html\HTMLOptionElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLOptionElement.h"
+				RelativePath="..\..\html\HTMLOptionElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLOptionsCollection.cpp"
+				RelativePath="..\..\html\HTMLOptionsCollection.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLOptionsCollection.h"
+				RelativePath="..\..\html\HTMLOptionsCollection.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\htmlparser.cpp"
+				RelativePath="..\..\html\HTMLParser.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\htmlparser.h"
+				RelativePath="..\..\html\HTMLParser.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLSelectElement.cpp"
+				RelativePath="..\..\html\HTMLSelectElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLSelectElement.h"
+				RelativePath="..\..\html\HTMLSelectElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLTextAreaElement.cpp"
+				RelativePath="..\..\html\HTMLTextAreaElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLTextAreaElement.h"
+				RelativePath="..\..\html\HTMLTextAreaElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLTextFieldInnerElement.cpp"
+				RelativePath="..\..\html\HTMLTextFieldInnerElement.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\HTMLTextFieldInnerElement.h"
+				RelativePath="..\..\html\HTMLTextFieldInnerElement.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\htmltokenizer.cpp"
+				RelativePath="..\..\html\HTMLTokenizer.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\khtml\html\htmltokenizer.h"
+				RelativePath="..\..\html\HTMLTokenizer.h"
 				>
 			</File>
 		</Filter>

@@ -27,7 +27,7 @@
 // KDE HTML Widget -- HTML Parser
 
 #include "config.h"
-#include "htmlparser.h"
+#include "HTMLParser.h"
 
 #include "DocumentFragment.h"
 #include "Frame.h"
@@ -50,7 +50,7 @@
 #include "html_objectimpl.h"
 #include "html_tableimpl.h"
 #include "HTMLElementFactory.h"
-#include "htmltokenizer.h"
+#include "HTMLTokenizer.h"
 #include "RenderObject.h"
 #include <kxmlcore/HashMap.h>
 #include <kxmlcore/HashSet.h>

@@ -32,7 +32,7 @@
 #include "Text.h"
 #include "VisiblePosition.h"
 #include "HTMLInterchange.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "RenderObject.h"
 #include <qregexp.h>
 

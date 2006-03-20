@@ -42,7 +42,7 @@
 #include "RenderImage.h"
 #include <java/kjavaappletwidget.h>
 #include <DeprecatedString.h>
-#include "htmlnames.h"
+#include "HTMLNames.h"
 
 namespace WebCore {
 

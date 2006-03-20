@@ -33,7 +33,7 @@
 #include "CSSValueKeywords.h"
 #include "HTMLDocument.h"
 #include "RenderImage.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 
 namespace WebCore {
 

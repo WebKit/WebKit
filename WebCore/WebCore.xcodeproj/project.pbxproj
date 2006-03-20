@@ -15,8 +15,8 @@
 		1A69D382085627410009880D /* JSDOMParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A69D380085627410009880D /* JSDOMParser.cpp */; };
 		550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* QualifiedName.cpp */; };
 		550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* QualifiedName.h */; };
-		550A0BCD085F604D007353D6 /* htmlnames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BCB085F604D007353D6 /* htmlnames.cpp */; };
-		550A0BCE085F604D007353D6 /* htmlnames.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BCC085F604D007353D6 /* htmlnames.h */; };
+		550A0BCD085F604D007353D6 /* HTMLNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BCB085F604D007353D6 /* HTMLNames.cpp */; };
+		550A0BCE085F604D007353D6 /* HTMLNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BCC085F604D007353D6 /* HTMLNames.h */; };
 		651B4D8509AC83370029F1EF /* DeprecatedStringList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 651B4D8309AC83370029F1EF /* DeprecatedStringList.cpp */; };
 		651B4D8609AC83370029F1EF /* DeprecatedStringList.h in Headers */ = {isa = PBXBuildFile; fileRef = 651B4D8409AC83370029F1EF /* DeprecatedStringList.h */; };
 		651B4D8F09AC859F0029F1EF /* QStringListMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 651B4D8E09AC859F0029F1EF /* QStringListMac.mm */; };
@@ -270,8 +270,8 @@
 		93F198EB08245E59001E9ABC /* html_listimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24902DE4396018635CA /* html_listimpl.h */; };
 		93F198ED08245E59001E9ABC /* html_objectimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24D02DE4396018635CA /* html_objectimpl.h */; };
 		93F198EE08245E59001E9ABC /* html_tableimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D24F02DE4396018635CA /* html_tableimpl.h */; };
-		93F198EF08245E59001E9ABC /* htmlparser.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D25102DE4396018635CA /* htmlparser.h */; };
-		93F198F008245E59001E9ABC /* htmltokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D25302DE4396018635CA /* htmltokenizer.h */; };
+		93F198EF08245E59001E9ABC /* HTMLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D25102DE4396018635CA /* HTMLParser.h */; };
+		93F198F008245E59001E9ABC /* HTMLTokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D25302DE4396018635CA /* HTMLTokenizer.h */; };
 		93F198F608245E59001E9ABC /* decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D27902DE43D7018635CA /* decoder.h */; };
 		93F1991708245E59001E9ABC /* dom2_eventsimpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D30202DE4476018635CA /* dom2_eventsimpl.h */; };
 		93F1991808245E59001E9ABC /* Range.h in Headers */ = {isa = PBXBuildFile; fileRef = F523D30402DE4476018635CA /* Range.h */; };
@@ -397,8 +397,8 @@
 		93F19A9708245E59001E9ABC /* html_listimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24802DE4396018635CA /* html_listimpl.cpp */; };
 		93F19A9908245E59001E9ABC /* html_objectimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24C02DE4396018635CA /* html_objectimpl.cpp */; };
 		93F19A9A08245E59001E9ABC /* html_tableimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D24E02DE4396018635CA /* html_tableimpl.cpp */; };
-		93F19A9B08245E59001E9ABC /* htmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D25002DE4396018635CA /* htmlparser.cpp */; };
-		93F19A9C08245E59001E9ABC /* htmltokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D25202DE4396018635CA /* htmltokenizer.cpp */; };
+		93F19A9B08245E59001E9ABC /* HTMLParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D25002DE4396018635CA /* HTMLParser.cpp */; };
+		93F19A9C08245E59001E9ABC /* HTMLTokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D25202DE4396018635CA /* HTMLTokenizer.cpp */; };
 		93F19A9D08245E59001E9ABC /* decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D27802DE43D7018635CA /* decoder.cpp */; };
 		93F19AB308245E59001E9ABC /* dom_elementimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D2F702DE4476018635CA /* dom_elementimpl.cpp */; };
 		93F19AB708245E59001E9ABC /* dom_xmlimpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F523D2FF02DE4476018635CA /* dom_xmlimpl.cpp */; };
@@ -1143,8 +1143,8 @@
 		51F6A3D60663BF04004D2919 /* HTMLCanvasElement.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLCanvasElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		550A0BC7085F6039007353D6 /* QualifiedName.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QualifiedName.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		550A0BC8085F6039007353D6 /* QualifiedName.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = QualifiedName.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		550A0BCB085F604D007353D6 /* htmlnames.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = htmlnames.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		550A0BCC085F604D007353D6 /* htmlnames.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = htmlnames.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		550A0BCB085F604D007353D6 /* HTMLNames.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLNames.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		550A0BCC085F604D007353D6 /* HTMLNames.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLNames.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		55998A5A052B59CC0017A6C1 /* WebCoreAXObject.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreAXObject.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		55998A5B052B59CC0017A6C1 /* WebCoreAXObject.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreAXObject.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		55998A5C052B59CC0017A6C1 /* AccessibilityObjectCache.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityObjectCache.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2236,10 +2236,10 @@
 		F523D24D02DE4396018635CA /* html_objectimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = html_objectimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D24E02DE4396018635CA /* html_tableimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = html_tableimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D24F02DE4396018635CA /* html_tableimpl.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = html_tableimpl.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D25002DE4396018635CA /* htmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = htmlparser.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D25102DE4396018635CA /* htmlparser.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = htmlparser.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D25202DE4396018635CA /* htmltokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = htmltokenizer.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F523D25302DE4396018635CA /* htmltokenizer.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = htmltokenizer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F523D25002DE4396018635CA /* HTMLParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLParser.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F523D25102DE4396018635CA /* HTMLParser.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLParser.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F523D25202DE4396018635CA /* HTMLTokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLTokenizer.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F523D25302DE4396018635CA /* HTMLTokenizer.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLTokenizer.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D27802DE43D7018635CA /* decoder.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = decoder.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D27902DE43D7018635CA /* decoder.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = decoder.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F523D2F702DE4476018635CA /* dom_elementimpl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dom_elementimpl.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -2676,6 +2676,76 @@
 				930CAAD609C495B600229C04 /* CanvasRenderingContext2D.idl */,
 				93EEC27009C3218800C515D1 /* CanvasStyle.cpp */,
 				93EEC1EF09C2877700C515D1 /* CanvasStyle.h */,
+				A8136D370973A8E700D74463 /* FormDataList.cpp */,
+				A8136D360973A8E700D74463 /* FormDataList.h */,
+				F523D23702DE4396018635CA /* html_baseimpl.cpp */,
+				F523D23802DE4396018635CA /* html_baseimpl.h */,
+				F523D23902DE4396018635CA /* html_blockimpl.cpp */,
+				F523D23A02DE4396018635CA /* html_blockimpl.h */,
+				F523D24202DE4396018635CA /* html_headimpl.cpp */,
+				F523D24302DE4396018635CA /* html_headimpl.h */,
+				F523D24402DE4396018635CA /* html_imageimpl.cpp */,
+				F523D24502DE4396018635CA /* html_imageimpl.h */,
+				F523D24602DE4396018635CA /* html_inlineimpl.cpp */,
+				F523D24702DE4396018635CA /* html_inlineimpl.h */,
+				F523D24802DE4396018635CA /* html_listimpl.cpp */,
+				F523D24902DE4396018635CA /* html_listimpl.h */,
+				F523D24C02DE4396018635CA /* html_objectimpl.cpp */,
+				F523D24D02DE4396018635CA /* html_objectimpl.h */,
+				F523D24E02DE4396018635CA /* html_tableimpl.cpp */,
+				F523D24F02DE4396018635CA /* html_tableimpl.h */,
+				A8DF3FCB097FA0FB0052981B /* HTMLBaseFontElement.cpp */,
+				A8DF3FCA097FA0FB0052981B /* HTMLBaseFontElement.h */,
+				A81369B7097374F500D74463 /* HTMLButtonElement.cpp */,
+				A81369B6097374F500D74463 /* HTMLButtonElement.h */,
+				51F6A3D50663BF04004D2919 /* HTMLCanvasElement.cpp */,
+				51F6A3D60663BF04004D2919 /* HTMLCanvasElement.h */,
+				A8DF3FC9097FA0FB0052981B /* HTMLCollection.cpp */,
+				A8DF3FC8097FA0FB0052981B /* HTMLCollection.h */,
+				F523D23B02DE4396018635CA /* HTMLDocument.cpp */,
+				F523D23C02DE4396018635CA /* HTMLDocument.h */,
+				F523D23E02DE4396018635CA /* HTMLElement.cpp */,
+				F523D23F02DE4396018635CA /* HTMLElement.h */,
+				BCEF3432087B563E00BBF833 /* HTMLElementFactory.cpp */,
+				BCEF3433087B563E00BBF833 /* HTMLElementFactory.h */,
+				A81369B9097374F500D74463 /* HTMLFieldSetElement.cpp */,
+				A81369B8097374F500D74463 /* HTMLFieldSetElement.h */,
+				A8DF3FC7097FA0FB0052981B /* HTMLFormCollection.cpp */,
+				A8DF3FC6097FA0FB0052981B /* HTMLFormCollection.h */,
+				A81369B5097374F500D74463 /* HTMLFormElement.cpp */,
+				A81369B4097374F500D74463 /* HTMLFormElement.h */,
+				A81369B3097374F500D74463 /* HTMLGenericFormElement.cpp */,
+				A81369B2097374F500D74463 /* HTMLGenericFormElement.h */,
+				A81369B1097374F500D74463 /* HTMLInputElement.cpp */,
+				A81369B0097374F500D74463 /* HTMLInputElement.h */,
+				A81369AF097374F500D74463 /* HTMLIsIndexElement.cpp */,
+				A81369AE097374F500D74463 /* HTMLIsIndexElement.h */,
+				A81369C9097374F600D74463 /* HTMLKeygenElement.cpp */,
+				A81369C8097374F500D74463 /* HTMLKeygenElement.h */,
+				A81369C7097374F500D74463 /* HTMLLabelElement.cpp */,
+				A81369C6097374F500D74463 /* HTMLLabelElement.h */,
+				A81369C5097374F500D74463 /* HTMLLegendElement.cpp */,
+				A81369C4097374F500D74463 /* HTMLLegendElement.h */,
+				A8DF3FCD097FA0FB0052981B /* HTMLNameCollection.cpp */,
+				A8DF3FCC097FA0FB0052981B /* HTMLNameCollection.h */,
+				550A0BCB085F604D007353D6 /* HTMLNames.cpp */,
+				550A0BCC085F604D007353D6 /* HTMLNames.h */,
+				A81369C3097374F500D74463 /* HTMLOptGroupElement.cpp */,
+				A81369C2097374F500D74463 /* HTMLOptGroupElement.h */,
+				A81369C1097374F500D74463 /* HTMLOptionElement.cpp */,
+				A81369C0097374F500D74463 /* HTMLOptionElement.h */,
+				9327A94109968D1A0068A546 /* HTMLOptionsCollection.cpp */,
+				A81369BE097374F500D74463 /* HTMLOptionsCollection.h */,
+				F523D25002DE4396018635CA /* HTMLParser.cpp */,
+				F523D25102DE4396018635CA /* HTMLParser.h */,
+				A81369BD097374F500D74463 /* HTMLSelectElement.cpp */,
+				A81369BC097374F500D74463 /* HTMLSelectElement.h */,
+				A81369BB097374F500D74463 /* HTMLTextAreaElement.cpp */,
+				A81369BA097374F500D74463 /* HTMLTextAreaElement.h */,
+				AB23A31009BBA7760067CC53 /* HTMLTextFieldInnerElement.cpp */,
+				AB23A31109BBA7760067CC53 /* HTMLTextFieldInnerElement.h */,
+				F523D25202DE4396018635CA /* HTMLTokenizer.cpp */,
+				F523D25302DE4396018635CA /* HTMLTokenizer.h */,
 			);
 			path = html;
 			sourceTree = "<group>";
@@ -3547,7 +3617,6 @@
 			isa = PBXGroup;
 			children = (
 				F523D23402DE436B018635CA /* ecma */,
-				F523D27702DE4398018635CA /* html */,
 				F523D29C02DE43D9018635CA /* misc */,
 				BC41978B059293BE0016347F /* xbl */,
 				BC06F24406D18A35004A6FA3 /* xsl */,
@@ -3618,83 +3687,6 @@
 				A83C819F091189B9009BF4A7 /* JSXSLTProcessor.h */,
 			);
 			path = ecma;
-			sourceTree = "<group>";
-		};
-		F523D27702DE4398018635CA /* html */ = {
-			isa = PBXGroup;
-			children = (
-				AB23A31009BBA7760067CC53 /* HTMLTextFieldInnerElement.cpp */,
-				AB23A31109BBA7760067CC53 /* HTMLTextFieldInnerElement.h */,
-				A8136D370973A8E700D74463 /* FormDataList.cpp */,
-				A8136D360973A8E700D74463 /* FormDataList.h */,
-				F523D23702DE4396018635CA /* html_baseimpl.cpp */,
-				F523D23802DE4396018635CA /* html_baseimpl.h */,
-				F523D23902DE4396018635CA /* html_blockimpl.cpp */,
-				F523D23A02DE4396018635CA /* html_blockimpl.h */,
-				51F6A3D50663BF04004D2919 /* HTMLCanvasElement.cpp */,
-				51F6A3D60663BF04004D2919 /* HTMLCanvasElement.h */,
-				F523D23B02DE4396018635CA /* HTMLDocument.cpp */,
-				F523D23C02DE4396018635CA /* HTMLDocument.h */,
-				F523D24202DE4396018635CA /* html_headimpl.cpp */,
-				F523D24302DE4396018635CA /* html_headimpl.h */,
-				F523D24402DE4396018635CA /* html_imageimpl.cpp */,
-				F523D24502DE4396018635CA /* html_imageimpl.h */,
-				F523D24602DE4396018635CA /* html_inlineimpl.cpp */,
-				F523D24702DE4396018635CA /* html_inlineimpl.h */,
-				F523D24802DE4396018635CA /* html_listimpl.cpp */,
-				F523D24902DE4396018635CA /* html_listimpl.h */,
-				F523D24C02DE4396018635CA /* html_objectimpl.cpp */,
-				F523D24D02DE4396018635CA /* html_objectimpl.h */,
-				F523D24E02DE4396018635CA /* html_tableimpl.cpp */,
-				F523D24F02DE4396018635CA /* html_tableimpl.h */,
-				A8DF3FCB097FA0FB0052981B /* HTMLBaseFontElement.cpp */,
-				A8DF3FCA097FA0FB0052981B /* HTMLBaseFontElement.h */,
-				A81369B7097374F500D74463 /* HTMLButtonElement.cpp */,
-				A81369B6097374F500D74463 /* HTMLButtonElement.h */,
-				A8DF3FC9097FA0FB0052981B /* HTMLCollection.cpp */,
-				A8DF3FC8097FA0FB0052981B /* HTMLCollection.h */,
-				F523D23E02DE4396018635CA /* HTMLElement.cpp */,
-				F523D23F02DE4396018635CA /* HTMLElement.h */,
-				BCEF3432087B563E00BBF833 /* HTMLElementFactory.cpp */,
-				BCEF3433087B563E00BBF833 /* HTMLElementFactory.h */,
-				A81369B9097374F500D74463 /* HTMLFieldSetElement.cpp */,
-				A81369B8097374F500D74463 /* HTMLFieldSetElement.h */,
-				A8DF3FC7097FA0FB0052981B /* HTMLFormCollection.cpp */,
-				A8DF3FC6097FA0FB0052981B /* HTMLFormCollection.h */,
-				A81369B5097374F500D74463 /* HTMLFormElement.cpp */,
-				A81369B4097374F500D74463 /* HTMLFormElement.h */,
-				A81369B3097374F500D74463 /* HTMLGenericFormElement.cpp */,
-				A81369B2097374F500D74463 /* HTMLGenericFormElement.h */,
-				A81369B1097374F500D74463 /* HTMLInputElement.cpp */,
-				A81369B0097374F500D74463 /* HTMLInputElement.h */,
-				A81369AF097374F500D74463 /* HTMLIsIndexElement.cpp */,
-				A81369AE097374F500D74463 /* HTMLIsIndexElement.h */,
-				A81369C9097374F600D74463 /* HTMLKeygenElement.cpp */,
-				A81369C8097374F500D74463 /* HTMLKeygenElement.h */,
-				A81369C7097374F500D74463 /* HTMLLabelElement.cpp */,
-				A81369C6097374F500D74463 /* HTMLLabelElement.h */,
-				A81369C5097374F500D74463 /* HTMLLegendElement.cpp */,
-				A81369C4097374F500D74463 /* HTMLLegendElement.h */,
-				A8DF3FCD097FA0FB0052981B /* HTMLNameCollection.cpp */,
-				A8DF3FCC097FA0FB0052981B /* HTMLNameCollection.h */,
-				550A0BCB085F604D007353D6 /* htmlnames.cpp */,
-				550A0BCC085F604D007353D6 /* htmlnames.h */,
-				A81369C3097374F500D74463 /* HTMLOptGroupElement.cpp */,
-				A81369C2097374F500D74463 /* HTMLOptGroupElement.h */,
-				A81369C1097374F500D74463 /* HTMLOptionElement.cpp */,
-				A81369C0097374F500D74463 /* HTMLOptionElement.h */,
-				9327A94109968D1A0068A546 /* HTMLOptionsCollection.cpp */,
-				A81369BE097374F500D74463 /* HTMLOptionsCollection.h */,
-				F523D25002DE4396018635CA /* htmlparser.cpp */,
-				F523D25102DE4396018635CA /* htmlparser.h */,
-				A81369BD097374F500D74463 /* HTMLSelectElement.cpp */,
-				A81369BC097374F500D74463 /* HTMLSelectElement.h */,
-				A81369BB097374F500D74463 /* HTMLTextAreaElement.cpp */,
-				A81369BA097374F500D74463 /* HTMLTextAreaElement.h */,
-				F523D25202DE4396018635CA /* htmltokenizer.cpp */,
-				F523D25302DE4396018635CA /* htmltokenizer.h */,
-			);
-			path = html;
 			sourceTree = "<group>";
 		};
 		F523D29C02DE43D9018635CA /* misc */ = {
@@ -3964,8 +3956,8 @@
 				93F198EB08245E59001E9ABC /* html_listimpl.h in Headers */,
 				93F198ED08245E59001E9ABC /* html_objectimpl.h in Headers */,
 				93F198EE08245E59001E9ABC /* html_tableimpl.h in Headers */,
-				93F198EF08245E59001E9ABC /* htmlparser.h in Headers */,
-				93F198F008245E59001E9ABC /* htmltokenizer.h in Headers */,
+				93F198EF08245E59001E9ABC /* HTMLParser.h in Headers */,
+				93F198F008245E59001E9ABC /* HTMLTokenizer.h in Headers */,
 				93F198F608245E59001E9ABC /* decoder.h in Headers */,
 				93F1991708245E59001E9ABC /* dom2_eventsimpl.h in Headers */,
 				93F1991808245E59001E9ABC /* Range.h in Headers */,
@@ -4042,7 +4034,7 @@
 				93F199F108245E59001E9ABC /* WebDashboardRegion.h in Headers */,
 				1A69D381085627410009880D /* JSDOMParser.h in Headers */,
 				550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */,
-				550A0BCE085F604D007353D6 /* htmlnames.h in Headers */,
+				550A0BCE085F604D007353D6 /* HTMLNames.h in Headers */,
 				BCEF3435087B563E00BBF833 /* HTMLElementFactory.h in Headers */,
 				A8FD8B87087CB45700DC3707 /* KWQWMatrix.h in Headers */,
 				7E6FEED80898582300C44C3F /* WebCoreScriptDebugger.h in Headers */,
@@ -4721,7 +4713,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "gperf -CEot -L ANSI-C -k \"*\" -N findDoctypeEntry -F ,PubIDInfo::eAlmostStandards,PubIDInfo::eAlmostStandards khtml/html/DocTypeStrings.gperf > \"$DERIVED_FILE_DIR/DocTypeStrings.cpp\"";
+			shellScript = "gperf -CEot -L ANSI-C -k \"*\" -N findDoctypeEntry -F ,PubIDInfo::eAlmostStandards,PubIDInfo::eAlmostStandards html/DocTypeStrings.gperf > \"$DERIVED_FILE_DIR/DocTypeStrings.cpp\"";
 		};
 		932FC0D20824A2C4005B3C75 /* CharsetData.cpp */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5033,7 +5025,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "gperf -a -L ANSI-C -C -G -c -o -t -k '*' -NfindEntity -D -s 2 khtml/html/HTMLEntityNames.gperf > \"$DERIVED_FILE_DIR/HTMLEntityNames.c\"";
+			shellScript = "gperf -a -L ANSI-C -C -G -c -o -t -k '*' -NfindEntity -D -s 2 html/HTMLEntityNames.gperf > \"$DERIVED_FILE_DIR/HTMLEntityNames.c\"";
 		};
 		A83C867D0911AA19009BF4A7 /* JSXSLTProcessor.lut.h */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5176,8 +5168,8 @@
 				93F19A9708245E59001E9ABC /* html_listimpl.cpp in Sources */,
 				93F19A9908245E59001E9ABC /* html_objectimpl.cpp in Sources */,
 				93F19A9A08245E59001E9ABC /* html_tableimpl.cpp in Sources */,
-				93F19A9B08245E59001E9ABC /* htmlparser.cpp in Sources */,
-				93F19A9C08245E59001E9ABC /* htmltokenizer.cpp in Sources */,
+				93F19A9B08245E59001E9ABC /* HTMLParser.cpp in Sources */,
+				93F19A9C08245E59001E9ABC /* HTMLTokenizer.cpp in Sources */,
 				93F19A9D08245E59001E9ABC /* decoder.cpp in Sources */,
 				93F19AB308245E59001E9ABC /* dom_elementimpl.cpp in Sources */,
 				93F19AB708245E59001E9ABC /* dom_xmlimpl.cpp in Sources */,
@@ -5223,7 +5215,7 @@
 				93F19B0808245E59001E9ABC /* WebDashboardRegion.m in Sources */,
 				1A69D382085627410009880D /* JSDOMParser.cpp in Sources */,
 				550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */,
-				550A0BCD085F604D007353D6 /* htmlnames.cpp in Sources */,
+				550A0BCD085F604D007353D6 /* HTMLNames.cpp in Sources */,
 				BCEF3434087B563E00BBF833 /* HTMLElementFactory.cpp in Sources */,
 				A8FD8B86087CB44C00DC3707 /* KWQWMatrix.cpp in Sources */,
 				7E6FEED90898582300C44C3F /* WebCoreScriptDebugger.mm in Sources */,

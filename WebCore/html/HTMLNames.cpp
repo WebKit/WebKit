@@ -28,7 +28,7 @@
 #define QNAME_DEFAULT_CONSTRUCTOR 1
 #endif
 
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "StaticConstructors.h"
 
 namespace WebCore { namespace HTMLNames {

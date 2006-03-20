@@ -35,8 +35,8 @@
 #include "CSSValueKeywords.h"
 #include "dom2_eventsimpl.h"
 #include "dom_xmlimpl.h"
-#include "htmlnames.h"
-#include "htmlparser.h"
+#include "HTMLNames.h"
+#include "HTMLParser.h"
 #include "RenderCanvas.h"
 #include <qtextstream.h>
 

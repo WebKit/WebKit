@@ -25,7 +25,7 @@
 #include "Document.h"
 #include "Frame.h"
 #include "RenderText.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "HTMLInputElement.h"
 #include "HTMLTextFieldInnerElement.h"
 #include "dom_elementimpl.h"

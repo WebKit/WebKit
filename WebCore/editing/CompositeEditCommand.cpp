@@ -34,7 +34,7 @@
 #include "DeleteSelectionCommand.h"
 #include "Range.h"
 #include "htmlediting.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "InsertIntoTextNodeCommand.h"
 #include "InsertNodeBeforeCommand.h"
 #include "InsertParagraphSeparatorCommand.h"

@@ -23,7 +23,7 @@
  */
 #include "config.h"
 #include "HTMLBaseFontElement.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 
 namespace WebCore {
 

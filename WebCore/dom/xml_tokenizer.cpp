@@ -39,8 +39,8 @@
 #include "dom_xmlimpl.h"
 #include "html_headimpl.h"
 #include "html_tableimpl.h"
-#include "htmlnames.h"
-#include "htmltokenizer.h"
+#include "HTMLNames.h"
+#include "HTMLTokenizer.h"
 #include <kxmlcore/Vector.h>
 #include <libxml/parser.h>
 #include <libxml/parserInternals.h>

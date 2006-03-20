@@ -51,7 +51,7 @@
 #import "AbstractView.h"
 #import "dom_elementimpl.h"
 #import "dom_xmlimpl.h"
-#import "htmlnames.h"
+#import "HTMLNames.h"
 #import "RenderImage.h"
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
 #import <kxmlcore/Assertions.h>

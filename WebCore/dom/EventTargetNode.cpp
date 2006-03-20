@@ -35,7 +35,7 @@
 #include "PlatformWheelEvent.h"
 #include "dom2_eventsimpl.h"
 #include "kjs_proxy.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include <qptrlist.h>
 #include <qtextstream.h>
 

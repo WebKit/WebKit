@@ -29,7 +29,7 @@
 
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 
 namespace WebCore {
 

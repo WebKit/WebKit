@@ -38,8 +38,8 @@
 #include "dom2_eventsimpl.h"
 #include "html_baseimpl.h"
 #include "html_objectimpl.h"
-#include "htmlnames.h"
-#include "htmltokenizer.h"
+#include "HTMLNames.h"
+#include "HTMLTokenizer.h"
 #include "RenderArena.h"
 #include "RenderCanvas.h"
 #include <qtextstream.h>

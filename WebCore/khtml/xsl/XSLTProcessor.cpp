@@ -27,7 +27,7 @@
 #include "XSLStyleSheet.h"
 #include "xml_tokenizer.h"
 #include "Text.h"
-#include "htmltokenizer.h"
+#include "HTMLTokenizer.h"
 #include "HTMLDocument.h"
 #include "DOMImplementation.h"
 #include "loader.h"

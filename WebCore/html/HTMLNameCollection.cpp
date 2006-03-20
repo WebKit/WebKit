@@ -27,7 +27,7 @@
 
 #include "Document.h"
 #include "html_objectimpl.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 
 namespace WebCore {
 

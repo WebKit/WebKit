@@ -29,7 +29,7 @@
 #define HTMLTableElementImpl_H
 
 #include "HTMLElement.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 
 namespace WebCore {
 

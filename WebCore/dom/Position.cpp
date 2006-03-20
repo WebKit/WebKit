@@ -37,7 +37,7 @@
 #include "AbstractView.h"
 #include "dom_elementimpl.h"
 #include "htmlediting.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "RenderFlow.h"
 #include "render_line.h"
 #include "render_style.h"

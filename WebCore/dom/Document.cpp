@@ -65,7 +65,7 @@
 #include "html_headimpl.h"
 #include "html_imageimpl.h"
 #include "HTMLElementFactory.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "JSEditor.h"
 #include "khtml_settings.h"
 #include "RenderArena.h"

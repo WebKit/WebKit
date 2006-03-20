@@ -28,7 +28,7 @@
 #include "RenderTableRow.h"
 #include "RenderTableCell.h"
 #include "Document.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 
 namespace WebCore {
 

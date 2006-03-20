@@ -29,7 +29,7 @@
 #include "dom_elementimpl.h"
 #include "Text.h"
 #include "htmlediting.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "VisiblePosition.h"
 #include <kxmlcore/Assertions.h>
 

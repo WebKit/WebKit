@@ -37,7 +37,7 @@
 #include "CSSValueKeywords.h"
 #include "Font.h"
 #include "HTMLDocument.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "khtml_settings.h"
 #include "loader.h"
 #include "RenderObject.h"

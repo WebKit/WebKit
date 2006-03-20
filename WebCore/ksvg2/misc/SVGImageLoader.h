@@ -23,7 +23,7 @@
 #define KSVG_SVGImageLoader_H
 #if SVG_SUPPORT
 
-#include "khtml/html/html_imageimpl.h"
+#include "html_imageimpl.h"
 
 namespace WebCore
 {

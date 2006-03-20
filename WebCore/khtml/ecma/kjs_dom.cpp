@@ -45,7 +45,7 @@
 #include "dom_xmlimpl.h"
 #include "HTMLDocument.h"
 #include "html_objectimpl.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "khtml_settings.h"
 #include "kjs_css.h"
 #include "kjs_events.h"

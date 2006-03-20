@@ -32,7 +32,7 @@
 #include "Document.h"
 #include "CachedImage.h"
 
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "html_listimpl.h"
 
 namespace WebCore {

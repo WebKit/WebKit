@@ -28,9 +28,9 @@
 #include "css/css_stylesheetimpl.h"
 #include "css/css_valueimpl.h"
 #include "Document.h"
-#include "html/html_headimpl.h" // for HTMLStyleElement
+#include "html_headimpl.h" // for HTMLStyleElement
 #include "kjs_dom.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 
 #include "kjs_css.lut.h"
 

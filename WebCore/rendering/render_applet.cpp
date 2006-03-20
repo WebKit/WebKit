@@ -29,7 +29,7 @@
 #include "html_objectimpl.h"
 #include "java/kjavaappletwidget.h"
 #include "RenderCanvas.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 
 namespace WebCore {
 

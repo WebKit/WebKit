@@ -49,7 +49,7 @@
 #include "SVGZoomEvent.h"
 #include "StringImpl.h"
 #include "CSSPropertyNames.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "ksvg.h"
 #include <kcanvas/KCanvas.h>
 #include <kcanvas/KCanvasContainer.h>

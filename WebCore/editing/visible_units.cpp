@@ -34,7 +34,7 @@
 #include "VisiblePosition.h"
 #include "dom_elementimpl.h"
 #include "htmlediting.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 #include "TextIterator.h"
 
 namespace WebCore {

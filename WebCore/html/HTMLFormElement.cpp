@@ -38,7 +38,7 @@
 #include "Frame.h"
 
 #include "TextEncoding.h"
-#include "htmlnames.h"
+#include "HTMLNames.h"
 
 namespace WebCore {
 

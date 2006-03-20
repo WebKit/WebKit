@@ -26,7 +26,7 @@
 */
 
 #include "config.h"
-#include "htmltokenizer.h"
+#include "HTMLTokenizer.h"
 
 #include "CachedScript.h"
 #include "DocLoader.h"
@@ -38,8 +38,8 @@
 #include "SystemTime.h"
 #include "csshelper.h"
 #include "HTMLDocument.h"
-#include "htmlnames.h"
-#include "htmlparser.h"
+#include "HTMLNames.h"
+#include "HTMLParser.h"
 #include "kjs_proxy.h"
 #include <ctype.h>
 #include <stdlib.h>

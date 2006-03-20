@@ -25,38 +25,42 @@
  */
 
 #include "config.h"
-#include "HTMLIsIndexElement.h"
-#include "htmlnames.h"
+#include "HTMLFieldSetElement.h"
+
+#include "rendering/render_form.h"
+#include "HTMLNames.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLIsIndexElement::HTMLIsIndexElement(Document *doc, HTMLFormElement *f)
-    : HTMLInputElement(isindexTag, doc, f)
+HTMLFieldSetElement::HTMLFieldSetElement(Document *doc, HTMLFormElement *f)
+   : HTMLGenericFormElement(fieldsetTag, doc, f)
 {
-    m_type = TEXT;
-    m_name = "isindex";
 }
 
-void HTMLIsIndexElement::parseMappedAttribute(MappedAttribute* attr)
+HTMLFieldSetElement::~HTMLFieldSetElement()
 {
-    if (attr->name() == promptAttr)
-        setValue(attr->value());
-    else
-        // don't call HTMLInputElement::parseMappedAttribute here, as it would
-        // accept attributes this element does not support
-        HTMLGenericFormElement::parseMappedAttribute(attr);
 }
 
-String HTMLIsIndexElement::prompt() const
+bool HTMLFieldSetElement::checkDTD(const Node* newChild)
 {
-    return getAttribute(promptAttr);
+    return newChild->hasTagName(legendTag) || HTMLElement::checkDTD(newChild);
 }
 
-void HTMLIsIndexElement::setPrompt(const String &value)
+bool HTMLFieldSetElement::isFocusable() const
 {
-    setAttribute(promptAttr, value);
+    return false;
+}
+
+String HTMLFieldSetElement::type() const
+{
+    return "fieldset";
+}
+
+RenderObject* HTMLFieldSetElement::createRenderer(RenderArena* arena, RenderStyle* style)
+{
+    return new (arena) RenderFieldset(this);
 }
 
 } // namespace
