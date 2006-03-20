@@ -48,20 +48,11 @@ namespace WebCore {
 // calls in this file are all exception-safe, so we don't block
 // exceptions for those.
 
-struct GraphicsContextState {
-    GraphicsContextState() : paintingDisabled(false) { }
-    Font font;
-    Pen pen;
-    Brush brush;
-    bool paintingDisabled;
-};
 
-struct GraphicsContextPrivate {
-    GraphicsContextPrivate();
-    ~GraphicsContextPrivate();
-
-    GraphicsContextState state;    
-    Vector<GraphicsContextState> stack;
+struct GraphicsContextPlatformPrivate {
+    GraphicsContextPlatformPrivate();
+    ~GraphicsContextPlatformPrivate();
+    
     id <WebCoreTextRenderer> textRenderer;
     Font textRendererFont;
 #if SVG_SUPPORT
@@ -70,192 +61,112 @@ struct GraphicsContextPrivate {
 };
 
 // A fillRect helper to work around the fact that NSRectFill uses copy mode, not source over.
-static inline void fillRectSourceOver(float x, float y, float w, float h, const Color& col)
+static inline void fillRectSourceOver(const FloatRect& rect, const Color& col)
 {
     [nsColor(col) set];
-    NSRectFillUsingOperation(NSMakeRect(x, y, w, h), NSCompositeSourceOver);
+    NSRectFillUsingOperation(rect, NSCompositeSourceOver);
 }
 
-
-GraphicsContextPrivate::GraphicsContextPrivate()
+GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate()
     : textRenderer(0) 
 {
 }
 
-GraphicsContextPrivate::~GraphicsContextPrivate()
+GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate()
 {
     KWQRelease(textRenderer);
 }
 
 GraphicsContext::GraphicsContext()
-    : m_data(new GraphicsContextPrivate)
-    , m_focusRingWidth(0)
-    , m_focusRingOffset(0)
-    , m_isForPrinting(false)
-    , m_usesInactiveTextBackgroundColor(false)
-    , m_updatingControlTints(false)
+    : m_common(createGraphicsContextPrivate())
+    , m_data(new GraphicsContextPlatformPrivate)
 {
 }
 
 GraphicsContext::GraphicsContext(bool forPrinting)
-    : m_data(new GraphicsContextPrivate)
-    , m_focusRingWidth(0)
-    , m_focusRingOffset(0)
-    , m_isForPrinting(forPrinting)
-    , m_usesInactiveTextBackgroundColor(false)
-    , m_updatingControlTints(false)
+    : m_common(createGraphicsContextPrivate(forPrinting))
+    , m_data(new GraphicsContextPlatformPrivate)
 {
 }
 
 GraphicsContext::~GraphicsContext()
 {
+    destroyGraphicsContextPrivate(m_common);
     delete m_data;
 }
 
-const Font& GraphicsContext::font() const
+void GraphicsContext::savePlatformState()
 {
-    return m_data->state.font;
+    [NSGraphicsContext saveGraphicsState];
 }
 
-void GraphicsContext::setFont(const Font& aFont)
+void GraphicsContext::restorePlatformState()
 {
-    m_data->state.font = aFont;
-}
-
-const Pen& GraphicsContext::pen() const
-{
-    return m_data->state.pen;
-}
-
-void GraphicsContext::setPen(const Pen& pen)
-{
-    m_data->state.pen = pen;
-}
-
-void GraphicsContext::setPen(Pen::PenStyle style)
-{
-    m_data->state.pen.setStyle(style);
-    m_data->state.pen.setColor(Color::black);
-    m_data->state.pen.setWidth(0);
-}
-
-void GraphicsContext::setPen(RGBA32 rgb)
-{
-    m_data->state.pen.setStyle(Pen::SolidLine);
-    m_data->state.pen.setColor(rgb);
-    m_data->state.pen.setWidth(0);
-}
-
-void GraphicsContext::setBrush(const Brush& brush)
-{
-    m_data->state.brush = brush;
-}
-
-void GraphicsContext::setBrush(Brush::BrushStyle style)
-{
-    m_data->state.brush.setStyle(style);
-    m_data->state.brush.setColor(Color::black);
-}
-
-void GraphicsContext::setBrush(RGBA32 rgb)
-{
-    m_data->state.brush.setStyle(Brush::SolidPattern);
-    m_data->state.brush.setColor(rgb);
-}
-
-const Brush& GraphicsContext::brush() const
-{
-    return m_data->state.brush;
-}
-
-void GraphicsContext::save()
-{
-    if (m_data->state.paintingDisabled)
-        return;
-
-    m_data->stack.append(m_data->state);
-
-    [NSGraphicsContext saveGraphicsState]; 
-}
-
-void GraphicsContext::restore()
-{
-    if (m_data->state.paintingDisabled)
-        return;
-
-    if (m_data->stack.isEmpty()) {
-        LOG_ERROR("ERROR void GraphicsContext::restore() stack is empty");
-        return;
-    }
-    m_data->state = m_data->stack.last();
-    m_data->stack.removeLast();
-     
     [NSGraphicsContext restoreGraphicsState];
 }
 
 // Draws a filled rectangle with a stroked border.
-void GraphicsContext::drawRect(int x, int y, int w, int h)
+void GraphicsContext::drawRect(const IntRect& rect)
 {
-    if (m_data->state.paintingDisabled)
+    if (paintingDisabled())
         return;
          
-    if (m_data->state.brush.style() != Brush::NoBrush)
-        fillRectSourceOver(x, y, w, h, m_data->state.brush.color());
+    if (brush().style() != Brush::NoBrush)
+        fillRectSourceOver(rect, brush().color());
 
-    if (m_data->state.pen.style() != Pen::Pen::NoPen) {
+    if (pen().style() != Pen::Pen::NoPen) {
         setColorFromPen();
-        NSFrameRect(NSMakeRect(x, y, w, h));
+        NSFrameRect(rect);
     }
 }
 
 void GraphicsContext::setColorFromBrush()
 {
-    [nsColor(m_data->state.brush.color()) set];
+    [nsColor(brush().color()) set];
 }
   
 void GraphicsContext::setColorFromPen()
 {
-    [nsColor(m_data->state.pen.color()) set];
+    [nsColor(pen().color()) set];
 }
   
   // This is only used to draw borders.
-void GraphicsContext::drawLine(int x1, int y1, int x2, int y2)
+void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
 {
-    if (m_data->state.paintingDisabled)
+    if (paintingDisabled())
         return;
 
-    Pen::PenStyle penStyle = m_data->state.pen.style();
+    Pen::PenStyle penStyle = pen().style();
     if (penStyle == Pen::Pen::NoPen)
         return;
-    float width = m_data->state.pen.width();
+    float width = pen().width();
     if (width < 1)
         width = 1;
 
-    NSPoint p1 = NSMakePoint(x1, y1);
-    NSPoint p2 = NSMakePoint(x2, y2);
+    NSPoint p1 = point1;
+    NSPoint p2 = point2;
+    bool isVerticalLine = (p1.x == p2.x);
     
     // For odd widths, we add in 0.5 to the appropriate x/y so that the float arithmetic
     // works out.  For example, with a border width of 3, KHTML will pass us (y1+y2)/2, e.g.,
     // (50+53)/2 = 103/2 = 51 when we want 51.5.  It is always true that an even width gave
     // us a perfect position, but an odd width gave us a position that is off by exactly 0.5.
     if (penStyle == Pen::DotLine || penStyle == Pen::DashLine) {
-        if (x1 == x2) {
+        if (isVerticalLine) {
             p1.y += width;
             p2.y -= width;
-        }
-        else {
+        } else {
             p1.x += width;
             p2.x -= width;
         }
     }
     
     if (((int)width)%2) {
-        if (x1 == x2) {
+        if (isVerticalLine) {
             // We're a vertical line.  Adjust our x.
             p1.x += 0.5;
             p2.x += 0.5;
-        }
-        else {
+        } else {
             // We're a horizontal line. Adjust our y.
             p1.y += 0.5;
             p2.y += 0.5;
@@ -287,18 +198,19 @@ void GraphicsContext::drawLine(int x1, int y1, int x2, int y2)
     if (patWidth) {
         // Do a rect fill of our endpoints.  This ensures we always have the
         // appearance of being a border.  We then draw the actual dotted/dashed line.
-        if (x1 == x2) {
-            fillRectSourceOver(p1.x-width/2, p1.y-width, width, width, m_data->state.pen.color());
-            fillRectSourceOver(p2.x-width/2, p2.y, width, width, m_data->state.pen.color());
+        const Color& penColor = pen().color();
+        if (isVerticalLine) {
+            fillRectSourceOver(FloatRect(p1.x-width/2, p1.y-width, width, width), penColor);
+            fillRectSourceOver(FloatRect(p2.x-width/2, p2.y, width, width), penColor);
         } else {
-            fillRectSourceOver(p1.x-width, p1.y-width/2, width, width, m_data->state.pen.color());
-            fillRectSourceOver(p2.x, p2.y-width/2, width, width, m_data->state.pen.color());
+            fillRectSourceOver(FloatRect(p1.x-width, p1.y-width/2, width, width), penColor);
+            fillRectSourceOver(FloatRect(p2.x, p2.y-width/2, width, width), penColor);
         }
         
         // Example: 80 pixels with a width of 30 pixels.
         // Remainder is 20.  The maximum pixels of line we could paint
         // will be 50 pixels.
-        int distance = ((x1 == x2) ? (y2 - y1) : (x2 - x1)) - 2*(int)width;
+        int distance = (isVerticalLine ? (int)(p2.y - p1.y) : (int)(p2.x - p1.x)) - 2*(int)width;
         int remainder = distance%patWidth;
         int coverage = distance-remainder;
         int numSegments = coverage/patWidth;
@@ -341,39 +253,38 @@ void GraphicsContext::drawLine(int x1, int y1, int x2, int y2)
 
 
 // This method is only used to draw the little circles used in lists.
-void GraphicsContext::drawEllipse(int x, int y, int w, int h)
+void GraphicsContext::drawEllipse(const IntRect& rect)
 {
     // FIXME: CG added CGContextAddEllipseinRect in Tiger, so we should be able to quite easily draw an ellipse.
     // This code can only handle circles, not ellipses. But khtml only
     // uses it for circles.
-    ASSERT(w == h);
+    ASSERT(rect.width() == rect.height());
 
-    if (m_data->state.paintingDisabled)
+    if (paintingDisabled())
         return;
         
     CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
     CGContextBeginPath(context);
-    float r = (float)w / 2;
-    CGContextAddArc(context, x + r, y + r, r, 0, 2*M_PI, true);
+    float r = (float)rect.width() / 2;
+    CGContextAddArc(context, rect.x() + r, rect.y() + r, r, 0, 2*M_PI, true);
     CGContextClosePath(context);
 
-    if (m_data->state.brush.style() != Brush::NoBrush) {
+    if (brush().style() != Brush::NoBrush) {
         setColorFromBrush();
-        if (m_data->state.pen.style() != Pen::NoPen) {
+        if (pen().style() != Pen::NoPen) {
             // stroke and fill
             setColorFromPen();
-            unsigned penWidth = m_data->state.pen.width();
+            unsigned penWidth = pen().width();
             if (penWidth == 0) 
                 penWidth++;
             CGContextSetLineWidth(context, penWidth);
             CGContextDrawPath(context, kCGPathFillStroke);
-        } else {
+        } else
             CGContextFillPath(context);
-        }
     }
-    if (m_data->state.pen.style() != Pen::NoPen) {
+    if (pen().style() != Pen::NoPen) {
         setColorFromPen();
-        unsigned penWidth = m_data->state.pen.width();
+        unsigned penWidth = pen().width();
         if (penWidth == 0) 
             penWidth++;
         CGContextSetLineWidth(context, penWidth);
@@ -382,15 +293,15 @@ void GraphicsContext::drawEllipse(int x, int y, int w, int h)
 }
 
 
-void GraphicsContext::drawArc (int x, int y, int w, int h, int a, int alen)
+void GraphicsContext::drawArc(int x, int y, int w, int h, int a, int alen)
 { 
     // Only supports arc on circles.  That's all khtml needs.
     ASSERT(w == h);
 
-    if (m_data->state.paintingDisabled)
+    if (paintingDisabled())
         return;
     
-    if (m_data->state.pen.style() != Pen::NoPen) {
+    if (pen().style() != Pen::NoPen) {
         CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
         CGContextBeginPath(context);
         
@@ -400,14 +311,14 @@ void GraphicsContext::drawArc (int x, int y, int w, int h, int a, int alen)
         CGContextAddArc(context, x + r, y + r, r, -fa * M_PI/180, -falen * M_PI/180, true);
         
         setColorFromPen();
-        CGContextSetLineWidth(context, m_data->state.pen.width());
+        CGContextSetLineWidth(context, pen().width());
         CGContextStrokePath(context);
     }
 }
 
 void GraphicsContext::drawConvexPolygon(const IntPointArray& points)
 {
-    if (m_data->state.paintingDisabled)
+    if (paintingDisabled())
         return;
 
     int npoints = points.size();
@@ -426,14 +337,14 @@ void GraphicsContext::drawConvexPolygon(const IntPointArray& points)
         CGContextAddLineToPoint(context, points[i].x(), points[i].y());
     CGContextClosePath(context);
 
-    if (m_data->state.brush.style() != Brush::NoBrush) {
+    if (brush().style() != Brush::NoBrush) {
         setColorFromBrush();
         CGContextEOFillPath(context);
     }
 
-    if (m_data->state.pen.style() != Pen::NoPen) {
+    if (pen().style() != Pen::NoPen) {
         setColorFromPen();
-        CGContextSetLineWidth(context, m_data->state.pen.width());
+        CGContextSetLineWidth(context, pen().width());
         CGContextStrokePath(context);
     }
 
@@ -455,16 +366,16 @@ void GraphicsContext::setCompositeOperation (CGContextRef context, int op)
     [[WebCoreImageRendererFactory sharedFactory] setCGCompositeOperation:op inContext:context];
 }
 
-void GraphicsContext::drawFloatImage(Image* image, float x, float y, float w, float h, 
+void GraphicsContext::drawImage(Image* image, const FloatRect& dest, 
                               float sx, float sy, float sw, float sh, Image::CompositeOperator compositeOperator, void* context)
 {
-    if (m_data->state.paintingDisabled)
+    if (paintingDisabled())
         return;
 
     float tsw = sw;
     float tsh = sh;
-    float tw = w;
-    float th = h;
+    float tw = dest.width();
+    float th = dest.height();
         
     if (tsw == -1)
         tsw = image->width();
@@ -476,28 +387,28 @@ void GraphicsContext::drawFloatImage(Image* image, float x, float y, float w, fl
     if (th == -1)
         th = image->height();
 
-    image->drawInRect(FloatRect(x, y, tw, th), FloatRect(sx, sy, tsw, tsh), compositeOperator, context);
+    image->drawInRect(FloatRect(dest.location(), FloatSize(tw, th)), FloatRect(sx, sy, tsw, tsh), compositeOperator, context);
 }
 
-void GraphicsContext::drawTiledImage(Image* image, int x, int y, int w, int h, int sx, int sy, void* context)
+void GraphicsContext::drawTiledImage(Image* image, const IntRect& rect, int sx, int sy, void* context)
 {
-    if (m_data->state.paintingDisabled)
+    if (paintingDisabled())
         return;
     
-    image->tileInRect(FloatRect(x, y, w, h), FloatPoint(sx, sy), context);
+    image->tileInRect(rect, FloatPoint(sx, sy), context);
 }
 
-void GraphicsContext::drawScaledAndTiledImage(Image* image, int x, int y, int w, int h, int sx, int sy, int sw, int sh, 
+void GraphicsContext::drawScaledAndTiledImage(Image* image, const IntRect& dest, int sx, int sy, int sw, int sh, 
     Image::TileRule hRule, Image::TileRule vRule, void* context)
 {
-    if (m_data->state.paintingDisabled)
+    if (paintingDisabled())
         return;
 
     if (hRule == Image::StretchTile && vRule == Image::StretchTile)
         // Just do a scale.
-        return drawImage(image, x, y, w, h, sx, sy, sw, sh, Image::CompositeSourceOver, context);
+        return drawImage(image, dest, sx, sy, sw, sh, Image::CompositeSourceOver, context);
 
-    image->scaleAndTileInRect(FloatRect(x, y, w, h), FloatRect(sx, sy, sw, sh), hRule, vRule, context);
+    image->scaleAndTileInRect(dest, FloatRect(sx, sy, sw, sh), hRule, vRule, context);
 }
 
 static int getBlendedColorComponent(int c, int a)
@@ -511,7 +422,7 @@ static int getBlendedColorComponent(int c, int a)
 
 Color GraphicsContext::selectedTextBackgroundColor() const
 {
-    NSColor *color = m_usesInactiveTextBackgroundColor ? [NSColor secondarySelectedControlColor] : [NSColor selectedTextBackgroundColor];
+    NSColor *color = usesInactiveTextBackgroundColor() ? [NSColor secondarySelectedControlColor] : [NSColor selectedTextBackgroundColor];
     // this needs to always use device colorspace so it can de-calibrate the color for
     // Color to possibly recalibrate it
     color = [color colorUsingColorSpaceName:NSDeviceRGBColorSpace];
@@ -529,23 +440,18 @@ Color GraphicsContext::selectedTextBackgroundColor() const
     return col;
 }
 
-void GraphicsContext::fillRect(int x, int y, int w, int h, const Brush& brush)
+void GraphicsContext::fillRect(const IntRect& rect, const Brush& brush)
 {
-    if (m_data->state.paintingDisabled)
+    if (paintingDisabled())
         return;
 
     if (brush.style() == Brush::SolidPattern)
-        fillRectSourceOver(x, y, w, h, brush.color());
-}
-
-void GraphicsContext::fillRect(const IntRect& rect, const Brush& brush)
-{
-    fillRect(rect.x(), rect.y(), rect.width(), rect.height(), brush);
+        fillRectSourceOver(rect, brush.color());
 }
 
 void GraphicsContext::addClip(const IntRect& rect)
 {
-    if (m_data->state.paintingDisabled)
+    if (paintingDisabled())
         return;
 
     [NSBezierPath clipRect:rect];
@@ -554,7 +460,7 @@ void GraphicsContext::addClip(const IntRect& rect)
 void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight,
                                   const IntSize& bottomLeft, const IntSize& bottomRight)
 {
-    if (m_data->state.paintingDisabled)
+    if (paintingDisabled())
         return;
 
     // Need sufficient width and height to contain these curves.  Sanity check our top/bottom
@@ -605,16 +511,6 @@ void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& top
     CGContextClip(context);
 }
 
-void GraphicsContext::setPaintingDisabled(bool f)
-{
-    m_data->state.paintingDisabled = f;
-}
-
-bool GraphicsContext::paintingDisabled() const
-{
-    return m_data->state.paintingDisabled;
-}
-
 CGContextRef GraphicsContext::currentCGContext()
 {
     return (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
@@ -629,7 +525,7 @@ KRenderingDeviceContext* GraphicsContext::createRenderingDeviceContext()
 
 void GraphicsContext::beginTransparencyLayer(float opacity)
 {
-    if (m_data->state.paintingDisabled)
+    if (paintingDisabled())
         return;
     CGContextRef context = currentCGContext();
     CGContextSaveGState(context);
@@ -639,7 +535,7 @@ void GraphicsContext::beginTransparencyLayer(float opacity)
 
 void GraphicsContext::endTransparencyLayer()
 {
-    if (m_data->state.paintingDisabled)
+    if (paintingDisabled())
         return;
     CGContextRef context = currentCGContext();
     CGContextEndTransparencyLayer(context);
@@ -648,7 +544,7 @@ void GraphicsContext::endTransparencyLayer()
 
 void GraphicsContext::setShadow(int x, int y, int blur, const Color& color)
 {
-    if (m_data->state.paintingDisabled)
+    if (paintingDisabled())
         return;
     // Check for an invalid color, as this means that the color was not set for the shadow
     // and we should therefore just use the default shadow color.
@@ -667,7 +563,7 @@ void GraphicsContext::setShadow(int x, int y, int blur, const Color& color)
 
 void GraphicsContext::clearShadow()
 {
-    if (m_data->state.paintingDisabled)
+    if (paintingDisabled())
         return;
     CGContextRef context = currentCGContext();
     CGContextSetShadowWithColor(context, CGSizeZero, 0, NULL);
@@ -675,17 +571,18 @@ void GraphicsContext::clearShadow()
 
 void GraphicsContext::drawFocusRing(const Color& color)
 {
-    if (m_data->state.paintingDisabled)
+    if (paintingDisabled())
         return;
-    int radius = (m_focusRingWidth - 1) / 2;
-    int offset = radius + m_focusRingOffset;
+    int radius = (focusRingWidth() - 1) / 2;
+    int offset = radius + focusRingOffset();
     CGColorRef colorRef = color.isValid() ? cgColor(color) : 0;
     
     CGMutablePathRef focusRingPath = CGPathCreateMutable();
-    unsigned rectCount = m_focusRingRects.size();
+    const Vector<IntRect>& rects = focusRingRects();
+    unsigned rectCount = rects.size();
     
     for (unsigned i = 0; i < rectCount; i++)
-        CGPathAddRect(focusRingPath, 0, CGRectInset(m_focusRingRects[i], -offset, -offset));
+        CGPathAddRect(focusRingPath, 0, CGRectInset(rects[i], -offset, -offset));
     
     [[WebCoreGraphicsBridge sharedBridge] drawFocusRingWithPath:focusRingPath radius:radius color:colorRef];
     CGColorRelease(colorRef);

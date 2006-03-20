@@ -1262,38 +1262,32 @@ static HTMLFormElement *formElementFromDOMElement(DOMElement *element)
 - (NSView *)nextKeyView
 {
     Document *doc = m_frame->document();
-    if (!doc) {
+    if (!doc)
         return nil;
-    }
     return m_frame->nextKeyView(doc->focusNode(), KWQSelectingNext);
 }
 
 - (NSView *)previousKeyView
 {
     Document *doc = m_frame->document();
-    if (!doc) {
+    if (!doc)
         return nil;
-    }
     return m_frame->nextKeyView(doc->focusNode(), KWQSelectingPrevious);
 }
 
 - (NSView *)nextKeyViewInsideWebFrameViews
 {
     Document *doc = m_frame->document();
-    if (!doc) {
+    if (!doc)
         return nil;
-    }
-    
     return m_frame->nextKeyViewInFrameHierarchy(doc->focusNode(), KWQSelectingNext);
 }
 
 - (NSView *)previousKeyViewInsideWebFrameViews
 {
     Document *doc = m_frame->document();
-    if (!doc) {
+    if (!doc)
         return nil;
-    }
-
     return m_frame->nextKeyViewInFrameHierarchy(doc->focusNode(), KWQSelectingPrevious);
 }
 

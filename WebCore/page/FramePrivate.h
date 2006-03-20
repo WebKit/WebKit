@@ -96,6 +96,10 @@ namespace WebCore {
             , m_userStyleSheetLoader(0)
             , m_autoscrollTimer(thisFrame, &Frame::autoscrollTimerFired)
             , m_autoscrollLayer(0)
+            , m_drawSelectionOnly(false)
+            , m_markedTextUsesUnderlines(false)
+            , m_windowHasFocus(false)
+            , frameCount(0)
         {
         }
 
@@ -207,8 +211,20 @@ namespace WebCore {
         
         Timer<Frame> m_autoscrollTimer;
         RenderLayer* m_autoscrollLayer;
+        
+        RefPtr<Node> m_elementToDraw;
+        bool m_drawSelectionOnly;
+        
+        HashMap<String, String> m_formValuesAboutToBeSubmitted;
+        RefPtr<Element> m_formAboutToBeSubmitted;
+        KURL m_submittedFormURL;
+        
+        bool m_markedTextUsesUnderlines;
+        DeprecatedValueList<MarkedTextUnderline> m_markedTextUnderlines;
+        bool m_windowHasFocus;
+        
+        unsigned frameCount;
     };
-
 }
 
 #endif

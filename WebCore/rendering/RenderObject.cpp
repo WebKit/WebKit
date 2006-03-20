@@ -828,11 +828,11 @@ void RenderObject::drawBorder(GraphicsContext* p, int x1, int y1, int x2, int y2
             {
             case BSBottom:
             case BSTop:
-                p->drawLine(x1, (y1+y2)/2, x2, (y1+y2)/2);
+                p->drawLine(IntPoint(x1, (y1+y2)/2), IntPoint(x2, (y1+y2)/2));
                 break;
             case BSRight:
             case BSLeft:
-                p->drawLine((x1+x2)/2, y1, (x1+x2)/2, y2);
+                p->drawLine(IntPoint((x1+x2)/2, y1), IntPoint((x1+x2)/2, y2));
                 break;
             }
                 
@@ -850,29 +850,33 @@ void RenderObject::drawBorder(GraphicsContext* p, int x1, int y1, int x2, int y2
             {
             case BSTop:
             case BSBottom:
-                p->drawRect(x1, y1      , x2-x1, third);
-                p->drawRect(x1, y2-third, x2-x1, third);
+                p->drawRect(IntRect(x1, y1      , x2-x1, third));
+                p->drawRect(IntRect(x1, y2-third, x2-x1, third));
                 break;
             case BSLeft:
-                p->drawRect(x1      , y1+1, third, y2-y1-1);
-                p->drawRect(x2-third, y1+1, third, y2-y1-1);
+                p->drawRect(IntRect(x1      , y1+1, third, y2-y1-1));
+                p->drawRect(IntRect(x2-third, y1+1, third, y2-y1-1));
                 break;
             case BSRight:
-                p->drawRect(x1      , y1+1, third, y2-y1-1);
-                p->drawRect(x2-third, y1+1, third, y2-y1-1);
+                p->drawRect(IntRect(x1      , y1+1, third, y2-y1-1));
+                p->drawRect(IntRect(x2-third, y1+1, third, y2-y1-1));
                 break;
             }
         }
         else
         {
             int adjbw1bigthird;
-            if (adjbw1>0) adjbw1bigthird = adjbw1+1;
-            else adjbw1bigthird = adjbw1 - 1;
+            if (adjbw1>0)
+                adjbw1bigthird = adjbw1+1;
+            else
+                adjbw1bigthird = adjbw1 - 1;
             adjbw1bigthird /= 3;
 
             int adjbw2bigthird;
-            if (adjbw2>0) adjbw2bigthird = adjbw2 + 1;
-            else adjbw2bigthird = adjbw2 - 1;
+            if (adjbw2>0)
+                adjbw2bigthird = adjbw2 + 1;
+            else
+                adjbw2bigthird = adjbw2 - 1;
             adjbw2bigthird /= 3;
 
           switch(s)
@@ -961,11 +965,10 @@ void RenderObject::drawBorder(GraphicsContext* p, int x1, int y1, int x2, int y2
         p->setBrush(c);
         ASSERT(x2 >= x1);
         ASSERT(y2 >= y1);
-        if (adjbw1==0 && adjbw2 == 0)
-          {
-            p->drawRect(x1,y1,x2-x1,y2-y1);
+        if (adjbw1==0 && adjbw2 == 0) {
+            p->drawRect(IntRect(x1,y1,x2-x1,y2-y1));
             return;
-          }
+        }
         switch(s) {
         case BSTop:
             quad.setPoints(4,
@@ -1042,19 +1045,19 @@ bool RenderObject::paintBorderImage(GraphicsContext* p, int _tx, int _ty, int w,
         // The top left corner rect is (_tx, _ty, leftWidth, topWidth)
         // The rect to use from within the image is obtained from our slice, and is (0, 0, leftSlice, topSlice)
         if (drawTop)
-            p->drawImage(borderImage->image(), _tx, _ty, style->borderLeftWidth(), style->borderTopWidth(),
+            p->drawImage(borderImage->image(), IntRect(_tx, _ty, style->borderLeftWidth(), style->borderTopWidth()),
                          0, 0, leftSlice, topSlice);
         
         // The bottom left corner rect is (_tx, _ty + h - bottomWidth, leftWidth, bottomWidth)
         // The rect to use from within the image is (0, imageHeight - bottomSlice, leftSlice, botomSlice)
         if (drawBottom)
-            p->drawImage(borderImage->image(), _tx, _ty + h - style->borderBottomWidth(), style->borderLeftWidth(), style->borderBottomWidth(),
+            p->drawImage(borderImage->image(), IntRect(_tx, _ty + h - style->borderBottomWidth(), style->borderLeftWidth(), style->borderBottomWidth()),
                          0, imageHeight - bottomSlice, leftSlice, bottomSlice);
                       
         // Paint the left edge.
         // Have to scale and tile into the border rect.
-        p->drawScaledAndTiledImage(borderImage->image(), _tx, _ty + style->borderTopWidth(), style->borderLeftWidth(),
-                                    h - style->borderTopWidth() - style->borderBottomWidth(),
+        p->drawScaledAndTiledImage(borderImage->image(), IntRect(_tx, _ty + style->borderTopWidth(), style->borderLeftWidth(),
+                                    h - style->borderTopWidth() - style->borderBottomWidth()),
                                     0, topSlice, leftSlice, imageHeight - topSlice - bottomSlice, 
                                     Image::StretchTile, (Image::TileRule)vRule);
     }
@@ -1064,41 +1067,39 @@ bool RenderObject::paintBorderImage(GraphicsContext* p, int _tx, int _ty, int w,
         // The top right corner rect is (_tx + w - rightWidth, _ty, rightWidth, topWidth)
         // The rect to use from within the image is obtained from our slice, and is (imageWidth - rightSlice, 0, rightSlice, topSlice)
         if (drawTop)
-            p->drawImage(borderImage->image(), _tx + w - style->borderRightWidth(), _ty, style->borderRightWidth(), style->borderTopWidth(),
+            p->drawImage(borderImage->image(), IntRect(_tx + w - style->borderRightWidth(), _ty, style->borderRightWidth(), style->borderTopWidth()),
                          imageWidth - rightSlice, 0, rightSlice, topSlice);
         
         // The bottom right corner rect is (_tx + w - rightWidth, _ty + h - bottomWidth, rightWidth, bottomWidth)
         // The rect to use from within the image is (imageWidth - rightSlice, imageHeight - bottomSlice, rightSlice, botomSlice)
         if (drawBottom)
-            p->drawImage(borderImage->image(), _tx + w - style->borderRightWidth(), _ty + h - style->borderBottomWidth(), style->borderRightWidth(), style->borderBottomWidth(),
+            p->drawImage(borderImage->image(), IntRect(_tx + w - style->borderRightWidth(), _ty + h - style->borderBottomWidth(), style->borderRightWidth(), style->borderBottomWidth()),
                          imageWidth - rightSlice, imageHeight - bottomSlice, rightSlice, bottomSlice);
                       
         // Paint the right edge.
-        p->drawScaledAndTiledImage(borderImage->image(), _tx + w - style->borderRightWidth(), _ty + style->borderTopWidth(), style->borderRightWidth(),
-                          h - style->borderTopWidth() - style->borderBottomWidth(),
+        p->drawScaledAndTiledImage(borderImage->image(), IntRect(_tx + w - style->borderRightWidth(), _ty + style->borderTopWidth(), style->borderRightWidth(),
+                          h - style->borderTopWidth() - style->borderBottomWidth()),
                           imageWidth - rightSlice, topSlice, rightSlice, imageHeight - topSlice - bottomSlice,
                           Image::StretchTile, (Image::TileRule)vRule);
     }
 
     // Paint the top edge.
     if (drawTop)
-        p->drawScaledAndTiledImage(borderImage->image(), _tx + style->borderLeftWidth(), _ty, w - style->borderLeftWidth() - style->borderRightWidth(),
-                          style->borderTopWidth(),
+        p->drawScaledAndTiledImage(borderImage->image(), IntRect(_tx + style->borderLeftWidth(), _ty, w - style->borderLeftWidth() - style->borderRightWidth(), style->borderTopWidth()),
                           leftSlice, 0, imageWidth - rightSlice - leftSlice, topSlice,
                           (Image::TileRule)hRule, Image::StretchTile);
     
     // Paint the bottom edge.
     if (drawBottom)
-        p->drawScaledAndTiledImage(borderImage->image(), _tx + style->borderLeftWidth(), _ty + h - style->borderBottomWidth(), 
-                          w - style->borderLeftWidth() - style->borderRightWidth(),
-                          style->borderBottomWidth(),
+        p->drawScaledAndTiledImage(borderImage->image(), IntRect(_tx + style->borderLeftWidth(), _ty + h - style->borderBottomWidth(), 
+                          w - style->borderLeftWidth() - style->borderRightWidth(), style->borderBottomWidth()),
                           leftSlice, imageHeight - bottomSlice, imageWidth - rightSlice - leftSlice, bottomSlice,
                           (Image::TileRule)hRule, Image::StretchTile);
     
     // Paint the middle.
     if (drawMiddle)
-        p->drawScaledAndTiledImage(borderImage->image(), _tx + style->borderLeftWidth(), _ty + style->borderTopWidth(), w - style->borderLeftWidth() - style->borderRightWidth(),
-                          h - style->borderTopWidth() - style->borderBottomWidth(),
+        p->drawScaledAndTiledImage(borderImage->image(), IntRect(_tx + style->borderLeftWidth(), _ty + style->borderTopWidth(), w - style->borderLeftWidth() - style->borderRightWidth(),
+                          h - style->borderTopWidth() - style->borderBottomWidth()),
                           leftSlice, topSlice, imageWidth - rightSlice - leftSlice, imageHeight - topSlice - bottomSlice,
                           (Image::TileRule)hRule, (Image::TileRule)vRule);
 

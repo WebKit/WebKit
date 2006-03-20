@@ -442,32 +442,6 @@ bool FrameMac::findString(NSString *string, bool forward, bool caseFlag, bool wr
     return true;
 }
 
-void FrameMac::clearRecordedFormValues()
-{
-    // It's safe to assume that our own classes and Foundation data
-    // structures won't raise exceptions in dealloc
-
-    KWQRelease(_formValuesAboutToBeSubmitted);
-    _formValuesAboutToBeSubmitted = nil;
-    KWQRelease(_formAboutToBeSubmitted);
-    _formAboutToBeSubmitted = nil;
-}
-
-void FrameMac::recordFormValue(const DeprecatedString &name, const DeprecatedString &value, HTMLFormElement *element)
-{
-    // It's safe to assume that our own classes and basic Foundation
-    // data structures won't raise exceptions
-
-    if (!_formValuesAboutToBeSubmitted) {
-        _formValuesAboutToBeSubmitted = KWQRetainNSRelease([[NSMutableDictionary alloc] init]);
-        ASSERT(!_formAboutToBeSubmitted);
-        _formAboutToBeSubmitted = KWQRetain([DOMElement _elementWith:element]);
-    } else {
-        ASSERT([_formAboutToBeSubmitted _element] == element);
-    }
-    [_formValuesAboutToBeSubmitted setObject:value.getNSString() forKey:name.getNSString()];
-}
-
 void FrameMac::submitForm(const ResourceRequest& request)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
@@ -481,7 +455,7 @@ void FrameMac::submitForm(const ResourceRequest& request)
     // The form multi-submit logic here is only needed when we are submitting a form that affects this frame.
     // FIXME: Frame targeting is only one of the ways the submission could end up doing something other
     // than replacing this frame's content, so this check is flawed. On the other hand, the check is hardly
-    // needed any more now that we reset _submittedFormURL on each mouse or key down event.
+    // needed any more now that we reset d->m_submittedFormURL on each mouse or key down event.
     WebCoreFrameBridge *target = request.frameName.isEmpty() ? _bridge : [_bridge findFrameNamed:request.frameName.getNSString()];
     Frame *targetPart = [target impl];
     bool willReplaceThisFrame = false;
@@ -492,10 +466,9 @@ void FrameMac::submitForm(const ResourceRequest& request)
         }
     }
     if (willReplaceThisFrame) {
-        if (_submittedFormURL == request.url()) {
+        if (d->m_submittedFormURL == request.url())
             return;
-        }
-        _submittedFormURL = request.url();
+        d->m_submittedFormURL = request.url();
     }
 
     if (!request.doPost()) {
@@ -629,7 +602,7 @@ void FrameMac::setView(FrameView *view)
     // Only one form submission is allowed per view of a part.
     // Since this part may be getting reused as a result of being
     // pulled from the back/forward cache, reset this flag.
-    _submittedFormURL = KURL();
+    d->m_submittedFormURL = KURL();
 }
 
 void FrameMac::setTitle(const String &title)
@@ -2705,18 +2678,17 @@ NSImage *FrameMac::imageFromRect(NSRect rect) const
 
 NSImage *FrameMac::selectionImage() const
 {
-    _drawSelectionOnly = true;  // invoke special drawing mode
+    d->m_drawSelectionOnly = true;  // invoke special drawing mode
     NSImage *result = imageFromRect(visibleSelectionRect());
-    _drawSelectionOnly = false;
+    d->m_drawSelectionOnly = false;
     return result;
 }
 
 NSImage *FrameMac::snapshotDragImage(Node *node, NSRect *imageRect, NSRect *elementRect) const
 {
     RenderObject *renderer = node->renderer();
-    if (!renderer) {
+    if (!renderer)
         return nil;
-    }
     
     renderer->updateDragState(true);    // mark dragged nodes (so they pick up the right CSS)
     d->m_doc->updateLayout();        // forces style recalc - needed since changing the drag state might
@@ -2724,18 +2696,16 @@ NSImage *FrameMac::snapshotDragImage(Node *node, NSRect *imageRect, NSRect *elem
     IntRect topLevelRect;
     NSRect paintingRect = renderer->paintingRootRect(topLevelRect);
 
-    _elementToDraw = node;              // invoke special sub-tree drawing mode
+    d->m_elementToDraw = node;              // invoke special sub-tree drawing mode
     NSImage *result = imageFromRect(paintingRect);
     renderer->updateDragState(false);
     d->m_doc->updateLayout();
-    _elementToDraw = 0;
+    d->m_elementToDraw = 0;
 
-    if (elementRect) {
+    if (elementRect)
         *elementRect = topLevelRect;
-    }
-    if (imageRect) {
+    if (imageRect)
         *imageRect = paintingRect;
-    }
     return result;
 }
 
@@ -3305,25 +3275,23 @@ void FrameMac::setMarkedTextRange(const Range *range, NSArray *attributes, NSArr
     ASSERT(!range || range->collapsed(exception) || range->startContainer(exception)->isTextNode());
 
     if (attributes == nil) {
-        m_markedTextUsesUnderlines = false;
-        m_markedTextUnderlines.clear();
+        d->m_markedTextUsesUnderlines = false;
+        d->m_markedTextUnderlines.clear();
     } else {
-        m_markedTextUsesUnderlines = true;
-        m_markedTextUnderlines = convertAttributesToUnderlines(range, attributes, ranges);
+        d->m_markedTextUsesUnderlines = true;
+        d->m_markedTextUnderlines = convertAttributesToUnderlines(range, attributes, ranges);
     }
 
     if (m_markedTextRange.get() && document() && m_markedTextRange->startContainer(exception)->renderer())
         m_markedTextRange->startContainer(exception)->renderer()->repaint();
 
-    if ( range && range->collapsed(exception) ) {
+    if (range && range->collapsed(exception))
         m_markedTextRange = 0;
-    } else {
+    else
         m_markedTextRange = const_cast<Range *>(range);
-    }
 
-    if (m_markedTextRange.get() && document() && m_markedTextRange->startContainer(exception)->renderer()) {
+    if (m_markedTextRange.get() && document() && m_markedTextRange->startContainer(exception)->renderer())
         m_markedTextRange->startContainer(exception)->renderer()->repaint();
-    }
 }
 
 bool FrameMac::canGoBackOrForward(int distance) const
@@ -3339,9 +3307,8 @@ void FrameMac::didFirstLayout()
 NSMutableDictionary *FrameMac::dashboardRegionsDictionary()
 {
     Document *doc = document();
-    if (!doc) {
+    if (!doc)
         return nil;
-    }
 
     const DeprecatedValueList<DashboardRegionValue> regions = doc->dashboardRegions();
     unsigned i, count = regions.count();

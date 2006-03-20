@@ -431,10 +431,11 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* p, const Color& c, cons
 
     // Paint the color first underneath all images.
     if (!bgLayer->next() && bgColor.isValid() && bgColor.alpha() > 0) {
+        IntRect rect(_tx, clipy, w, cliph);
         // If we have an alpha and we are painting the root element, go ahead and blend with white.
         if (bgColor.alpha() < 0xFF && isRoot() && !canvas()->view()->isTransparent())
-            p->fillRect(_tx, clipy, w, cliph, Color(Color::white));
-        p->fillRect(_tx, clipy, w, cliph, bgColor);
+            p->fillRect(rect, Color(Color::white));
+        p->fillRect(rect, bgColor);
     }
     
     // no progressive loading of the background image
@@ -567,7 +568,7 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* p, const Color& c, cons
         }
 
         if (cw>0 && ch>0)
-            p->drawTiledImage(bg->image(), cx, cy, cw, ch, sx, sy);
+            p->drawTiledImage(bg->image(), IntRect(cx, cy, cw, ch), sx, sy);
     }
     
     if (bgLayer->backgroundClip() != BGBORDER)
@@ -577,11 +578,11 @@ void RenderBox::paintBackgroundExtended(GraphicsContext* p, const Color& c, cons
         p->restore(); // Undo the border radius clip
 }
 
-void RenderBox::outlineBox(GraphicsContext* p, int _tx, int _ty, const char *color)
+void RenderBox::outlineBox(GraphicsContext* p, int _tx, int _ty, const char* color)
 {
     p->setPen(Pen(Color(color), 1, Pen::DotLine));
     p->setBrush(WebCore::Brush::NoBrush);
-    p->drawRect(_tx, _ty, m_width, m_height);
+    p->drawRect(IntRect(_tx, _ty, m_width, m_height));
 }
 
 IntRect RenderBox::getOverflowClipRect(int tx, int ty)

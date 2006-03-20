@@ -1,3 +1,112 @@
+2006-03-17  Eric Seidel  <eseidel@apple.com>
+
+        Reviewed by darin.
+
+        Move Form code from MacFrame to Frame.
+        Move GraphicsContext code from GraphicsContextMac to GraphicsContext.
+        Use IntRect, FloatRect in more places throughout the code.
+        http://bugzilla.opendarwin.org/show_bug.cgi?id=7824
+
+        * bridge/mac/MacFrame.h:
+        * bridge/mac/MacFrame.mm:
+        (WebCore::MacFrame::MacFrame):
+        (WebCore::MacFrame::searchForLabelsAboveCell):
+        (WebCore::MacFrame::searchForLabelsBeforeElement):
+        (WebCore::dictionaryFromHashMap):
+        (WebCore::MacFrame::submitForm):
+        (WebCore::MacFrame::setView):
+        (WebCore::MacFrame::currentEventIsMouseDownInWidget):
+        (WebCore::MacFrame::currentEventIsKeyboardOptionTab):
+        (WebCore::MacFrame::handleKeyboardOptionTabInView):
+        (WebCore::MacFrame::tabsToAllControls):
+        (WebCore::MacFrame::shouldDragAutoNode):
+        (WebCore::MacFrame::selectionImage):
+        (WebCore::MacFrame::snapshotDragImage):
+        * bridge/mac/WebCoreFrameBridge.mm:
+        (-[WebCoreFrameBridge nextKeyView]):
+        (-[WebCoreFrameBridge previousKeyView]):
+        (-[WebCoreFrameBridge nextKeyViewInsideWebFrameViews]):
+        (-[WebCoreFrameBridge previousKeyViewInsideWebFrameViews]):
+        * kcanvas/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        (WebCore::Frame::clearRecordedFormValues):
+        (WebCore::Frame::recordFormValue):
+        (WebCore::Frame::didNotOpenURL):
+        (WebCore::scanForForm):
+        (WebCore::Frame::paint):
+        (WebCore::Frame::prepareForUserAction):
+        * page/Frame.h:
+        * platform/GraphicsContext.cpp:
+        (WebCore::GraphicsContextState::GraphicsContextState):
+        (WebCore::GraphicsContextPrivate::GraphicsContextPrivate):
+        (WebCore::GraphicsContextPrivate::~GraphicsContextPrivate):
+        (WebCore::GraphicsContext::save):
+        (WebCore::GraphicsContext::restore):
+        (WebCore::GraphicsContext::font):
+        (WebCore::GraphicsContext::setFont):
+        (WebCore::GraphicsContext::pen):
+        (WebCore::GraphicsContext::setPen):
+        (WebCore::GraphicsContext::setBrush):
+        (WebCore::GraphicsContext::brush):
+        (WebCore::GraphicsContext::setUsesInactiveTextBackgroundColor):
+        (WebCore::GraphicsContext::usesInactiveTextBackgroundColor):
+        (WebCore::GraphicsContext::updatingControlTints):
+        (WebCore::GraphicsContext::setUpdatingControlTints):
+        (WebCore::GraphicsContext::setPaintingDisabled):
+        (WebCore::GraphicsContext::paintingDisabled):
+        (WebCore::GraphicsContext::printing):
+        (WebCore::GraphicsContext::drawImageAtPoint):
+        (WebCore::GraphicsContext::drawImageInRect):
+        (WebCore::GraphicsContext::drawImage):
+        (WebCore::GraphicsContext::initFocusRing):
+        (WebCore::GraphicsContext::clearFocusRing):
+        (WebCore::GraphicsContext::addFocusRingRect):
+        (WebCore::GraphicsContext::focusRingWidth):
+        (WebCore::GraphicsContext::focusRingOffset):
+        (WebCore::GraphicsContext::focusRingRects):
+        * platform/GraphicsContext.h:
+        * platform/mac/GraphicsContextMac.mm:
+        (WebCore::fillRectSourceOver):
+        (WebCore::GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate):
+        (WebCore::GraphicsContext::GraphicsContext):
+        (WebCore::GraphicsContext::~GraphicsContext):
+        (WebCore::GraphicsContext::savePlatformState):
+        (WebCore::GraphicsContext::restorePlatformState):
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::GraphicsContext::setColorFromBrush):
+        (WebCore::GraphicsContext::setColorFromPen):
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::drawEllipse):
+        (WebCore::GraphicsContext::drawArc):
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::GraphicsContext::drawFloatImage):
+        (WebCore::GraphicsContext::drawTiledImage):
+        (WebCore::GraphicsContext::drawScaledAndTiledImage):
+        (WebCore::GraphicsContext::selectedTextBackgroundColor):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::addClip):
+        (WebCore::GraphicsContext::addRoundedRectClip):
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+        (WebCore::GraphicsContext::endTransparencyLayer):
+        (WebCore::GraphicsContext::setShadow):
+        (WebCore::GraphicsContext::clearShadow):
+        (WebCore::GraphicsContext::drawFocusRing):
+        * rendering/render_box.cpp:
+        (WebCore::RenderBox::paintBackgroundExtended):
+        (WebCore::RenderBox::outlineBox):
+        * rendering/render_frames.cpp:
+        (WebCore::RenderFrameSet::userResize):
+        * rendering/render_image.cpp:
+        (WebCore::RenderImage::paint):
+        * rendering/render_list.cpp:
+        (WebCore::RenderListMarker::paint):
+        * rendering/render_object.cpp:
+        (WebCore::RenderObject::drawBorder):
+        (WebCore::RenderObject::paintBorderImage):
+
 2006-03-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Eric.

@@ -189,9 +189,8 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
     bool isPrinting = i.p->printing();
     bool drawSelectionTint = isSelected() && !isPrinting;
     if (i.phase == PaintActionSelection) {
-        if (selectionState() == SelectionNone) {
+        if (selectionState() == SelectionNone)
             return;
-        }
         drawSelectionTint = false;
     }
         
@@ -213,7 +212,7 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
             if (!errorOccurred()) {
                 p->setPen (Color::lightGray);
                 p->setBrush (WebCore::Brush::NoBrush);
-                p->drawRect (_tx + leftBorder + leftPad, _ty + topBorder + topPad, cWidth, cHeight);
+                p->drawRect (IntRect(_tx + leftBorder + leftPad, _ty + topBorder + topPad, cWidth, cHeight));
             }
             
             bool errorPictureDrawn = false;

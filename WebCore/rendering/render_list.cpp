@@ -430,15 +430,15 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
     switch(style()->listStyleType()) {
     case DISC:
         p->setBrush(color);
-        p->drawEllipse(marker.x(), marker.y(), marker.width(), marker.height());
+        p->drawEllipse(marker);
         return;
     case CIRCLE:
         p->setBrush(WebCore::Brush::NoBrush);
-        p->drawEllipse(marker.x(), marker.y(), marker.width(), marker.height());
+        p->drawEllipse(marker);
         return;
     case SQUARE:
         p->setBrush(color);
-        p->drawRect(marker.x(), marker.y(), marker.width(), marker.height());
+        p->drawRect(marker);
         return;
     case LNONE:
         return;

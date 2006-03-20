@@ -41,20 +41,10 @@
 
 namespace WebCore {
 
-struct GraphicsContextState {
-    GraphicsContextState() : paintingDisabled(false) { }
-    Font font;
-    Pen pen;
-    Brush brush;
-    bool paintingDisabled;
-};
+struct GraphicsContextPlatformPrivate {
+    GraphicsContextPlatformPrivate();
+    ~GraphicsContextPlatformPrivate();
 
-struct GraphicsContextPrivate {
-    GraphicsContextPrivate();
-    ~GraphicsContextPrivate();
-
-    GraphicsContextState state;    
-    Vector<GraphicsContextState> stack;
     cairo_t* context;
 };
 
@@ -66,7 +56,7 @@ static inline void setColor(cairo_t* cr, const Color& col)
 }
 
 // A fillRect helper
-static inline void fillRectSourceOver(cairo_t* cr, float x, float y, float w, float h, const Color& col)
+static inline void fillRectSourceOver(cairo_t* cr, const FloatRect& rect, const Color& col)
 {
     setColor(cr, col);
     cairo_rectangle(cr, x, y, w, h);
@@ -74,45 +64,40 @@ static inline void fillRectSourceOver(cairo_t* cr, float x, float y, float w, fl
     cairo_fill(cr);
 }
 
-GraphicsContextPrivate::GraphicsContextPrivate()
+GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate()
     :  context(0)
 {
 }
 
-GraphicsContextPrivate::~GraphicsContextPrivate()
+GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate()
 {
     cairo_destroy(context);
 }
 
 GraphicsContext::GraphicsContext(HDC dc)
-    : m_data(new GraphicsContextPrivate)
-    , m_isForPrinting(false)
-    , m_usesInactiveTextBackgroundColor(false)
-    , m_updatingControlTints(false)
+    : m_common(createGraphicsContextPrivate())
+    , m_data(new GraphicsContextPlatformPrivate)
 {
     cairo_surface_t* surface = cairo_win32_surface_create(dc);
     m_data->context = cairo_create(surface);
 }
 
 GraphicsContext::GraphicsContext(cairo_t* context)
-    : m_data(new GraphicsContextPrivate)
-    , m_isForPrinting(false)
-    , m_usesInactiveTextBackgroundColor(false)
-    , m_updatingControlTints(false)
+    : m_common(createGraphicsContextPrivate())
+    , m_data(new GraphicsContextPlatformPrivate)
 {
     m_data->context = cairo_reference(context);
 }
 
 GraphicsContext::GraphicsContext(bool forPrinting)
-    : m_data(new GraphicsContextPrivate)
-    , m_isForPrinting(forPrinting)
-    , m_usesInactiveTextBackgroundColor(false)
-    , m_updatingControlTints(false)
+    : m_common(createGraphicsContextPrivate(forPrinting))
+    , m_data(new GraphicsContextPlatformPrivate)
 {
 }
 
 GraphicsContext::~GraphicsContext()
 {
+    destroyGraphicsContextPrivate(m_common);
     delete m_data;
 }
 
@@ -121,100 +106,31 @@ cairo_t* GraphicsContext::platformContext() const
     return m_data->context;
 }
 
-const Pen& GraphicsContext::pen() const
+void GraphicsContext::savePlatformState()
 {
-    return m_data->state.pen;
-}
-
-void GraphicsContext::setPen(const Pen& pen)
-{
-    m_data->state.pen = pen;
-}
-
-void GraphicsContext::setPen(Pen::PenStyle style)
-{
-    m_data->state.pen.setStyle(style);
-    m_data->state.pen.setColor(Color::black);
-    m_data->state.pen.setWidth(0);
-}
-
-void GraphicsContext::setPen(RGBA32 rgb)
-{
-    m_data->state.pen.setStyle(Pen::SolidLine);
-    m_data->state.pen.setColor(rgb);
-    m_data->state.pen.setWidth(0);
-}
-
-void GraphicsContext::setBrush(const Brush& brush)
-{
-    m_data->state.brush = brush;
-}
-
-void GraphicsContext::setBrush(Brush::BrushStyle style)
-{
-    m_data->state.brush.setStyle(style);
-    m_data->state.brush.setColor(Color::black);
-}
-
-void GraphicsContext::setBrush(RGBA32 rgb)
-{
-    m_data->state.brush.setStyle(Brush::SolidPattern);
-    m_data->state.brush.setColor(rgb);
-}
-
-const Brush& GraphicsContext::brush() const
-{
-    return m_data->state.brush;
-}
-
-const Font& GraphicsContext::font() const
-{
-    return m_data->state.font;
-}
-
-void GraphicsContext::setFont(const Font& aFont)
-{
-    m_data->state.font = aFont;
-}
-
-void GraphicsContext::save()
-{
-    if (m_data->state.paintingDisabled)
-        return;
-
-    m_data->stack.append(m_data->state);
-
     cairo_save(m_data->context);
 }
 
-void GraphicsContext::restore()
+void GraphicsContext::restorePlatformState()
 {
-    if (m_data->state.paintingDisabled)
-        return;
-
-    if (m_data->stack.isEmpty()) {
-        LOG_ERROR("ERROR void GraphicsContext::restore() stack is empty");
-        return;
-    }
-    m_data->state = m_data->stack.last();
-    m_data->stack.removeLast();
-     
     cairo_restore(m_data->context);
 }
 
 // Draws a filled rectangle with a stroked border.
-void GraphicsContext::drawRect(int x, int y, int w, int h)
+void GraphicsContext::drawRect(const IntRect& rect)
 {
-    if (m_data->state.paintingDisabled)
+    if (paintingDisabled())
         return;
     
     cairo_t* context = m_data->context;
-    if (m_data->state.brush.style() != Brush::NoBrush)
-        fillRectSourceOver(context, x, y, w, h, m_data->state.brush.color());
+    if (brush().style() != Brush::NoBrush)
+        fillRectSourceOver(context, rect, brush().color());
 
-    if (m_data->state.pen.style() != Pen::NoPen) {
+    if (pen().style() != Pen::NoPen) {
         setColorFromPen();
-        cairo_rectangle(context, x+.5, y+.5 , w-.5 , h-.5);
+        FloatRect r(rect);
+        r.inflate(-.5f);
+        cairo_rectangle(context, r.x(), r.y(), r.width(), r.height());
         cairo_set_line_width(context, 1.0);
         cairo_stroke(context);
     }
@@ -222,12 +138,12 @@ void GraphicsContext::drawRect(int x, int y, int w, int h)
 
 void GraphicsContext::setColorFromBrush()
 {
-    setColor(m_data->context, m_data->state.brush.color());
+    setColor(m_data->context, brush().color());
 }
   
 void GraphicsContext::setColorFromPen()
 {
-    setColor(m_data->context, m_data->state.brush.color());
+    setColor(m_data->context, pen().color());
 }
 
 // FIXME: Now that this is refactored, it should be shared by all contexts.
@@ -263,23 +179,24 @@ static void adjustLineToPixelBounderies(FloatPoint& p1, FloatPoint& p2, float st
 }
 
 // This is only used to draw borders.
-void GraphicsContext::drawLine(int x1, int y1, int x2, int y2)
+void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
 {
-    if (m_data->state.paintingDisabled)
+    if (paintingDisabled())
         return;
 
     cairo_t* context = m_data->context;
     cairo_save(context);
 
-    Pen::PenStyle penStyle = m_data->state.pen.style();
+    Pen::PenStyle penStyle = pen().style();
     if (penStyle == Pen::NoPen)
         return;
-    float width = m_data->state.pen.width();
+    float width = pen().width();
     if (width < 1)
         width = 1;
 
-    FloatPoint p1 = FloatPoint(x1, y1);
-    FloatPoint p2 = FloatPoint(x2, y2);
+    FloatPoint p1 = point1;
+    FloatPoint p2 = point2;
+    bool isVerticalLine = (p1.x() == p2.x());
     
     adjustLineToPixelBounderies(p1, p2, width, penStyle);
     cairo_set_line_width(context, width);
@@ -305,17 +222,17 @@ void GraphicsContext::drawLine(int x1, int y1, int x2, int y2)
         // Do a rect fill of our endpoints.  This ensures we always have the
         // appearance of being a border.  We then draw the actual dotted/dashed line.
         if (x1 == x2) {
-            fillRectSourceOver(context, p1.x()-width/2, p1.y()-width, width, width, m_data->state.pen.color());
-            fillRectSourceOver(context, p2.x()-width/2, p2.y(), width, width, m_data->state.pen.color());
+            fillRectSourceOver(context, FloatRect(p1.x()-width/2, p1.y()-width, width, width), pen().color());
+            fillRectSourceOver(context, FloatRect(p2.x()-width/2, p2.y(), width, width), pen().color());
         } else {
-            fillRectSourceOver(context, p1.x()-width, p1.y()-width/2, width, width, m_data->state.pen.color());
-            fillRectSourceOver(context, p2.x(), p2.y()-width/2, width, width, m_data->state.pen.color());
+            fillRectSourceOver(context, FloatRect(p1.x()-width, p1.y()-width/2, width, width), pen().color());
+            fillRectSourceOver(context, FloatRect(p2.x(), p2.y()-width/2, width, width), pen().color());
         }
         
         // Example: 80 pixels with a width of 30 pixels.
         // Remainder is 20.  The maximum pixels of line we could paint
         // will be 50 pixels.
-        int distance = ((x1 == x2) ? (y2 - y1) : (x2 - x1)) - 2*(int)width;
+        int distance = (isVerticalLine ? (p2.y() - p1.y()) : (p2.x() - p1.x())) - 2*(int)width;
         int remainder = distance%patWidth;
         int coverage = distance-remainder;
         int numSegments = coverage/patWidth;
@@ -354,27 +271,27 @@ void GraphicsContext::drawLine(int x1, int y1, int x2, int y2)
 }
 
 // This method is only used to draw the little circles used in lists.
-void GraphicsContext::drawEllipse(int x, int y, int width, int height)
+void GraphicsContext::drawEllipse(const IntRect& rect)
 {
-    if (m_data->state.paintingDisabled)
+    if (paintingDisabled())
         return;
     
     cairo_t* context = m_data->context;
     cairo_save(context);
-    float yRadius = .5 * height;
-    float xRadius = .5 * width;
-    cairo_translate(context, x + xRadius, y + yRadius);
+    float yRadius = .5 * rect.height();
+    float xRadius = .5 * rect.width();
+    cairo_translate(context, rect.x() + xRadius, rect.y() + yRadius);
     cairo_scale(context, xRadius, yRadius);
     cairo_arc(context, 0., 0., 1., 0., 2 * M_PI);
     cairo_restore(context);
 
-    if (m_data->state.brush.style() != Brush::NoBrush) {
+    if (brush().style() != Brush::NoBrush) {
         setColorFromBrush();
         cairo_fill(context);
     }
-    if (m_data->state.pen.style() != Pen::NoPen) {
+    if (pen().style() != Pen::NoPen) {
         setColorFromPen();
-        unsigned penWidth = m_data->state.pen.width();
+        unsigned penWidth = pen().width();
         if (penWidth == 0) 
             penWidth++;
         cairo_set_line_width(context, penWidth);
@@ -387,25 +304,25 @@ void GraphicsContext::drawArc(int x, int y, int w, int h, int a, int alen)
     // Only supports arc on circles.  That's all khtml needs.
     ASSERT(w == h);
 
-    if (m_data->state.paintingDisabled)
+    if (paintingDisabled())
         return;
     
     cairo_t* context = m_data->context;
-    if (m_data->state.pen.style() != Pen::NoPen) {        
+    if (pen().style() != Pen::NoPen) {        
         float r = (float)w / 2;
         float fa = (float)a / 16;
         float falen =  fa + (float)alen / 16;
         cairo_arc(context, x + r, y + r, r, -fa * M_PI/180, -falen * M_PI/180);
         
         setColorFromPen();
-        cairo_set_line_width(context, m_data->state.pen.width());
+        cairo_set_line_width(context, pen().width());
         cairo_stroke(context);
     }
 }
 
 void GraphicsContext::drawConvexPolygon(const IntPointArray& points)
 {
-    if (m_data->state.paintingDisabled)
+    if (paintingDisabled())
         return;
 
     int npoints = points.size();
@@ -421,81 +338,80 @@ void GraphicsContext::drawConvexPolygon(const IntPointArray& points)
         cairo_line_to(context, points[i].x(), points[i].y());
     cairo_close_path(context);
 
-    if (m_data->state.brush.style() != Brush::NoBrush) {
+    if (brush().style() != Brush::NoBrush) {
         setColorFromBrush();
         cairo_set_fill_rule(context, CAIRO_FILL_RULE_EVEN_ODD);
         cairo_fill(context);
     }
 
-    if (m_data->state.pen.style() != Pen::NoPen) {
+    if (pen().style() != Pen::NoPen) {
         setColorFromPen();
-        cairo_set_line_width(context, m_data->state.pen.width());
+        cairo_set_line_width(context, pen().width());
         cairo_stroke(context);
     }
     cairo_restore(context);
 }
 
-void GraphicsContext::drawFloatImage(Image* image, float x, float y, float w, float h, 
+void GraphicsContext::drawImage(Image* image, const FloatRect& destRect, 
                               float sx, float sy, float sw, float sh, Image::CompositeOperator compositeOperator, void* context)
 {
     if (!context)
         context = m_data->context;
 
-    if (m_data->state.paintingDisabled)
+    if (paintingDisabled())
         return;
 
     float tsw = sw;
     float tsh = sh;
-    float tw = w;
-    float th = h;
-        
+    FloatRect dest = destRect;
+            
     if (tsw == -1)
         tsw = image->width();
     if (tsh == -1)
         tsh = image->height();
 
-    if (tw == -1)
-        tw = image->width();
-    if (th == -1)
-        th = image->height();
+    if (dest.width() == -1)
+        dest.setWidth(image->width());
+    if (dest.height() == -1)
+        dest.setHeight(image->height());
 
-    image->drawInRect(FloatRect(x, y, tw, th), FloatRect(sx, sy, tsw, tsh), compositeOperator, context);
+    image->drawInRect(dest, FloatRect(sx, sy, tsw, tsh), compositeOperator, context);
 }
 
-void GraphicsContext::drawTiledImage(Image* image, int x, int y, int w, int h, int sx, int sy, void* context)
+void GraphicsContext::drawTiledImage(Image* image, const IntRect& dest, int sx, int sy, void* context)
 {
     if (!context)
         context = m_data->context;
 
-    if (m_data->state.paintingDisabled)
+    if (paintingDisabled())
         return;
     
-    image->tileInRect(FloatRect(x, y, w, h), FloatPoint(sx, sy), context);
+    image->tileInRect(dest, FloatPoint(sx, sy), context);
 }
 
-void GraphicsContext::drawScaledAndTiledImage(Image* image, int x, int y, int w, int h, int sx, int sy, int sw, int sh, 
+void GraphicsContext::drawScaledAndTiledImage(Image* image, const IntRect& dest, int sx, int sy, int sw, int sh, 
     Image::TileRule hRule, Image::TileRule vRule, void* context)
 {
     if (!context)
         context = m_data->context;
 
-    if (m_data->state.paintingDisabled)
+    if (paintingDisabled())
         return;
 
     if (hRule == Image::StretchTile && vRule == Image::StretchTile)
         // Just do a scale.
-        return drawImage(image, x, y, w, h, sx, sy, sw, sh, Image::CompositeSourceOver, context);
+        return drawImage(image, dest, sx, sy, sw, sh, Image::CompositeSourceOver, context);
 
-    image->scaleAndTileInRect(FloatRect(x, y, w, h), FloatRect(sx, sy, sw, sh), hRule, vRule, context);
+    image->scaleAndTileInRect(dest, FloatRect(sx, sy, sw, sh), hRule, vRule, context);
 }
 
-void GraphicsContext::fillRect(int x, int y, int w, int h, const Brush& brush)
+void GraphicsContext::fillRect(const IntRect& rect, const Brush& brush)
 {
-    if (m_data->state.paintingDisabled)
+    if (paintingDisabled())
         return;
 
     if (brush.style() == Brush::SolidPattern)
-        fillRectSourceOver(m_data->context, x, y, w, h, brush.color());
+        fillRectSourceOver(m_data->context, rect, brush.color());
 }
 
 void GraphicsContext::fillRect(const IntRect& rect, const Brush& brush)
@@ -505,7 +421,7 @@ void GraphicsContext::fillRect(const IntRect& rect, const Brush& brush)
 
 void GraphicsContext::addClip(const IntRect& rect)
 {
-    if (m_data->state.paintingDisabled)
+    if (paintingDisabled())
         return;
 
     cairo_t* context = m_data->context;
@@ -515,17 +431,17 @@ void GraphicsContext::addClip(const IntRect& rect)
 
 void GraphicsContext::setPaintingDisabled(bool f)
 {
-    m_data->state.paintingDisabled = f;
+    paintingDisabled() = f;
 }
 
 bool GraphicsContext::paintingDisabled() const
 {
-    return m_data->state.paintingDisabled;
+    return paintingDisabled();
 }
 
 void GraphicsContext::drawFocusRing(const Color& color)
 {
-    if (m_data->state.paintingDisabled)
+    if (paintingDisabled())
         return;
     int radius = (m_focusRingWidth - 1) / 2;
     int offset = radius + m_focusRingOffset;

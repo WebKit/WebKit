@@ -146,10 +146,6 @@ static inline Frame* parentFromOwnerRenderer(RenderPart* ownerRenderer)
 
 Frame::Frame(Page* page, RenderPart* ownerRenderer) 
     : d(new FramePrivate(page, parentFromOwnerRenderer(ownerRenderer), this, ownerRenderer))
-    , _drawSelectionOnly(false)
-    , m_markedTextUsesUnderlines(false)
-    , m_windowHasFocus(false)
-    , frameCount(0)
 {
     AtomicString::init();
     Cache::init();
@@ -1465,6 +1461,18 @@ Frame* Frame::loadSubframe(RenderPart* renderer, const KURL& url, const Deprecat
     return frame;
 }
 
+void Frame::clearRecordedFormValues()
+{
+    d->m_formAboutToBeSubmitted = 0;
+    d->m_formValuesAboutToBeSubmitted.clear();
+}
+
+void Frame::recordFormValue(const String& name, const String& value, PassRefPtr<HTMLFormElement> element)
+{
+    d->m_formAboutToBeSubmitted = element;
+    d->m_formValuesAboutToBeSubmitted.set(name, value);
+}
+
 void Frame::submitFormAgain()
 {
     FramePrivate::SubmitForm* form = d->m_submitForm;
@@ -1569,7 +1577,6 @@ void Frame::submitForm(const char *action, const DeprecatedString &url, const Fo
       submitForm(request);
   }
 }
-
 
 void Frame::parentCompleted()
 {
@@ -2569,9 +2576,8 @@ bool Frame::openURL(const KURL &URL)
 
 void Frame::didNotOpenURL(const KURL &URL)
 {
-    if (_submittedFormURL == URL) {
-        _submittedFormURL = KURL();
-    }
+    if (d->m_submittedFormURL == URL)
+        d->m_submittedFormURL = KURL();
 }
 
 // Scans logically forward from "start", including any child frames
@@ -2579,17 +2585,14 @@ static HTMLFormElement *scanForForm(Node *start)
 {
     Node *n;
     for (n = start; n; n = n->traverseNextNode()) {
-        if (n->hasTagName(formTag)) {
+        if (n->hasTagName(formTag))
             return static_cast<HTMLFormElement *>(n);
-        } else if (n->isHTMLElement()
-                   && static_cast<HTMLElement *>(n)->isGenericFormElement()) {
-            return static_cast<HTMLGenericFormElement *>(n)->form();
-        } else if (n->hasTagName(frameTag) || n->hasTagName(iframeTag)) {
+        else if (n->isHTMLElement() && static_cast<HTMLElement*>(n)->isGenericFormElement())
+            return static_cast<HTMLGenericFormElement*>(n)->form();
+        else if (n->hasTagName(frameTag) || n->hasTagName(iframeTag)) {
             Node *childDoc = static_cast<HTMLFrameElement *>(n)->contentDocument();
-            HTMLFormElement *frameResult = scanForForm(childDoc);
-            if (frameResult) {
+            if (HTMLFormElement *frameResult = scanForForm(childDoc))
                 return frameResult;
-            }
         }
     }
     return 0;
@@ -2727,9 +2730,9 @@ void Frame::paint(GraphicsContext* p, const IntRect& rect)
         fillWithRed = false; // Subframe, don't fill with red.
     else if (view() && view()->isTransparent())
         fillWithRed = false; // Transparent, don't fill with red.
-    else if (_drawSelectionOnly)
+    else if (d->m_drawSelectionOnly)
         fillWithRed = false; // Selections are transparent, don't fill with red.
-    else if (_elementToDraw)
+    else if (d->m_elementToDraw)
         fillWithRed = false; // Element images are transparent, don't fill with red.
     else
         fillWithRed = true;
@@ -2739,9 +2742,9 @@ void Frame::paint(GraphicsContext* p, const IntRect& rect)
 #endif
     
     if (renderer()) {
-        // _elementToDraw is used to draw only one element
-        RenderObject *eltRenderer = _elementToDraw ? _elementToDraw->renderer() : 0;
-        renderer()->layer()->paint(p, rect, _drawSelectionOnly, eltRenderer);
+        // d->m_elementToDraw is used to draw only one element
+        RenderObject *eltRenderer = d->m_elementToDraw ? d->m_elementToDraw->renderer() : 0;
+        renderer()->layer()->paint(p, rect, d->m_drawSelectionOnly, eltRenderer);
 
 #if __APPLE__
         // Regions may have changed as a result of the visibility/z-index of element changing.
@@ -3215,9 +3218,9 @@ void Frame::setDisplaysWithFocusAttributes(bool flag)
 
 void Frame::setWindowHasFocus(bool flag)
 {
-    if (m_windowHasFocus == flag)
+    if (d->m_windowHasFocus == flag)
         return;
-    m_windowHasFocus = flag;
+    d->m_windowHasFocus = flag;
     
     if (Document *doc = document())
         doc->dispatchWindowEvent(flag ? focusEvent : blurEvent, false, false);
@@ -3237,12 +3240,12 @@ QChar Frame::backslashAsCurrencySymbol() const
 
 bool Frame::markedTextUsesUnderlines() const
 {
-    return m_markedTextUsesUnderlines;
+    return d->m_markedTextUsesUnderlines;
 }
 
 DeprecatedValueList<MarkedTextUnderline> Frame::markedTextUnderlines() const
 {
-    return m_markedTextUnderlines;
+    return d->m_markedTextUnderlines;
 }
 
 unsigned Frame::highlightAllMatchesForString(const DeprecatedString &target, bool caseFlag)
@@ -3273,7 +3276,7 @@ void Frame::prepareForUserAction()
 {
     // Reset the multiple form submission protection code.
     // We'll let you submit the same form twice if you do two separate user actions.
-    _submittedFormURL = KURL();
+    d->m_submittedFormURL = KURL();
 }
 
 Node *Frame::mousePressNode()
